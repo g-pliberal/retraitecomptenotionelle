@@ -17,11 +17,12 @@ fécondité et les migrations (`Population(demographie=...)`), basses et
 hautes —, et la page n'en montre encore que les deux premiers. Sous une
 variante, la dépense du COR suit ce que sa pyramide change à la masse du
 système actuel, et son PIB ce qu'elle change aux 20-64 ans, l'emploi du COR
-suivant le central ; mais l'indexation des comptes et des pensions, elle, suit
-toujours la masse salariale du central : sous une fécondité ou des migrations
-plus fortes, la proposition paie les mêmes euros sur un PIB plus grand, et sa
-dépense, en part de PIB, baisse plus que si ses comptes suivaient l'emploi de
-la variante. Deux composantes croisées ne se lisent pas : l'INSEE ne les
+suivant le central ; et le compte de la proposition et sa pension servie
+s'indexent sur la masse salariale de la variante, celle du central multipliée
+par ce que la variante change aux 20-64 ans (`Pensionne.capitaux`,
+`RevalorisationServie.pour_la_proposition`). Les autres systèmes notionnels
+gardent l'indexation du central, sur la page aussi : la grille ne garde pas
+leurs cotisations. Deux composantes croisées ne se lisent pas : l'INSEE ne les
 publie pas. Les hypothèses macroéconomiques sont celles du COR, déjà décrites
 dans `data/reference/macro/hypotheses_projection.yaml`.
 

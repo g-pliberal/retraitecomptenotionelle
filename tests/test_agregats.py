@@ -396,8 +396,11 @@ def test_le_cout_sous_chaque_variante_est_celui_du_modele(contexte, montres, com
     dépense du bilan aux années que la page cite, le solde à l'horizon, le
     solde moyen projeté. Le système actuel paie plus quand la longévité monte,
     quand la fécondité ou les migrations baissent ; la proposition ne bouge
-    presque pas de la longévité à l'horizon, son diviseur l'absorbant, mais
-    suit la fécondité et les migrations, qu'il ne voit pas."""
+    presque pas à l'horizon : son diviseur absorbe la longévité, et ses comptes
+    et ses pensions, indexés sur la masse salariale de la variante, suivent le
+    PIB sous la fécondité et les migrations. Ce qui en reste, moins d'un
+    dixième de point, est le stock liquidé avant la bascule, qui garde les
+    prix."""
     figee = getattr(AGREGATS, composante)
     assert figee.hypotheses == ("basse", "centrale", "haute")
     assert figee.annees == tuple(module("pages").ANNEES_ESPERANCE_VIE)
@@ -418,11 +421,10 @@ def test_le_cout_sous_chaque_variante_est_celui_du_modele(contexte, montres, com
     liberal = [figee.part_pib(h, "notionnel_liberal", horizon) for h in figee.hypotheses]
     if composante == "esperance_vie":
         assert actuel == sorted(actuel)
-        assert max(liberal) - min(liberal) < 0.001
     else:
         assert actuel == sorted(actuel, reverse=True)
         assert liberal == sorted(liberal, reverse=True)
-        assert max(liberal) - min(liberal) > 0.005
+    assert max(liberal) - min(liberal) < 0.001
     with pytest.raises(KeyError, match="absent de la table figée"):
         figee.solde("tres_haute", "actuel")
     with pytest.raises(KeyError, match="absent de la table figée"):

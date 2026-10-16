@@ -56,11 +56,13 @@ l'affaire de l'appelant.
 
 from __future__ import annotations
 
+import copy
 import csv
 import math
 from dataclasses import dataclass, replace
 from datetime import date
 from pathlib import Path
+from typing import Callable
 
 from .calendrier import DateMois
 from .config import RevalorisationStock, SituationFoyer
@@ -1724,6 +1726,30 @@ class RevalorisationServie:
     def _valeur(self, annee: int) -> float:
         borne = min(max(annee, self.premiere_annee), self.derniere_annee)
         return self._index[borne]
+
+    #: Ce que sert la PROPOSITION : la même règle, sauf sous une variante
+    #: démographique, où la masse salariale qui l'indexe est celle de la
+    #: variante (:meth:`pour_la_proposition`). Lu à l'appel : un objet construit
+    #: sans elle se sert lui-même.
+    @property
+    def proposition(self) -> "RevalorisationServie":
+        return self.__dict__.get("_proposition", self)
+
+    def pour_la_proposition(self, facteur: Callable[[int], float]
+                            ) -> "RevalorisationServie":
+        """Une copie dont la proposition revalorise sur la masse salariale
+        multipliée, chaque année, par ``facteur`` — ce qu'une variante
+        démographique change à l'emploi (action 138, étape 7,
+        :meth:`~.donnees.population.Population.facteur_actifs`). Tous les
+        coefficients étant des rapports de l'index à deux dates, multiplier
+        l'index suffit, la règle du stock comprise. Les autres systèmes, et ce
+        que le droit a servi, gardent la règle du central."""
+        centrale = copy.copy(self)
+        variante = copy.copy(self)
+        variante._index = {annee: valeur * facteur(annee)
+                           for annee, valeur in self._index.items()}
+        centrale._proposition = variante
+        return centrale
 
     def coefficient(self, annee_liquidation: int, annee: int) -> float:
         """Ce que vaut en ``annee``, en euros constants, un euro de pension

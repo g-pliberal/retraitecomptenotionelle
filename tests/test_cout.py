@@ -2067,6 +2067,65 @@ def test_la_page_cout_suit_la_fecondite_et_les_migrations(depenses):
                      demographie="fecondite_haute")
 
 
+def test_la_proposition_s_indexe_sur_la_masse_de_la_variante(population):
+    """Sous une variante démographique (action 138, étape 7), le compte de la
+    proposition et sa pension servie suivent la masse salariale de la
+    variante : celle du central multipliée, chaque année, par ce que la
+    variante change aux 20-64 ans. Une cotisation de ``a`` liquidée en ``L``
+    gagne ``f(L) / f(a)``, la pension servie de ``L`` à ``t``, ``f(t) / f(L)`` ;
+    le diviseur ne bouge pas, et les autres systèmes non plus."""
+    from types import SimpleNamespace
+
+    from retraite_notionnelle.cout import (
+        CLES_CAS_TYPES, RESSOURCES_GARANTIE, Pensionne, VoletLiberal,
+        _capitaux_sous_la_variante, _masses)
+
+    def facteur(annee):
+        return 1.0 if annee < 2030 else 1.1
+
+    # Deux cotisations égales, de 2020 et de 2040, sans rendement : la
+    # première gagne 1,1, la seconde rien ; celle d'après le départ ne compte
+    # pas.
+    volet = VoletLiberal(annee_liquidation=2050, annee_ouverture_garantie=2050,
+                         pension=1.0, ressources_garantie=1.0,
+                         cotisations={2020: 100.0, 2040: 100.0, 2051: 50.0})
+    pensionne = Pensionne(code="x", generation=1985, annee_liquidation=2050,
+                          pensions={cle: 1.0 for cle in CLES_CAS_TYPES}, propre=volet)
+    neutre = SimpleNamespace(indexation=SimpleNamespace(coefficient=lambda a, b: 1.0))
+    capitaux = _capitaux_sous_la_variante(neutre, pensionne, facteur)
+    assert capitaux[2] == pytest.approx(1.05, rel=1e-12)
+    # La cohorte née deux ans plus tôt cotise en 2018 et en 2038, liquide en
+    # 2048, et gagne autant.
+    assert capitaux[0] == pytest.approx(1.05, rel=1e-12)
+    assert Pensionne(code="x", generation=1985, annee_liquidation=2050,
+                     pensions={}, propre=volet).capital(0) == 1.0
+
+    simulateur = Simulateur(Parametres()).pour_la_projection()
+    centrale = RevalorisationServie(simulateur, 2000, 2070)
+    assert centrale.proposition is centrale
+    variante = centrale.pour_la_proposition(facteur)
+    assert variante.coefficient(2010, 2060) == centrale.coefficient(2010, 2060)
+    assert variante.proposition.coefficient(2010, 2060) == pytest.approx(
+        centrale.coefficient(2010, 2060) * 1.1, rel=1e-12)
+    assert variante.proposition.coefficient(2040, 2060) == pytest.approx(
+        centrale.coefficient(2040, 2060), rel=1e-12)
+
+    simple = Pensionne(code="x", generation=1950, annee_liquidation=2010,
+                       pensions={cle: 1.0 for cle in CLES_CAS_TYPES},
+                       propre=VoletLiberal(annee_liquidation=2010,
+                                           annee_ouverture_garantie=2015,
+                                           pension=1.0, ressources_garantie=1.0),
+                       parts_regimes={"regime_general": 1.0})
+    portee = replace(simple, capitaux=(1.2,) * 5)
+    masses, _, _ = _masses([simple], population, 2050, {"x": 1.0}, centrale)
+    sous, _, _ = _masses([portee], population, 2050, {"x": 1.0}, variante)
+    assert sous["notionnel_liberal"] == pytest.approx(
+        masses["notionnel_liberal"] * 1.2, rel=1e-12)
+    for cle in CLES_CAS_TYPES:
+        if cle not in ("notionnel_liberal", RESSOURCES_GARANTIE):
+            assert sous[cle] == masses[cle], cle
+
+
 # -- la garantie vieillesse, chiffrée sur la distribution ---------------------
 
 

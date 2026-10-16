@@ -134,6 +134,7 @@ import math
 from dataclasses import dataclass, field, replace
 from typing import Callable, Sequence
 
+from .config import ModeIndexation
 from .castypes import (
     GRILLE_DU_COUT,
     VARIANTES_LIQUIDATION,
@@ -420,6 +421,18 @@ class Pensionne:
     #: (:class:`~retraite_notionnelle.donnees.population.CarrieresIncompletes`,
     #: action 147, étapes 11 et 14). Vide, la cohorte touche la pension entière.
     completudes: tuple[float, ...] = ()
+    #: Sous une variante démographique, ce que la masse salariale de la
+    #: variante change au compte de la proposition de chacune de ses cinq
+    #: cohortes, à sa liquidation (:func:`_capitaux_sous_la_variante`, action
+    #: 138, étape 7). Vide, celle du central.
+    capitaux: tuple[float, ...] = ()
+
+    def capital(self, decalage: int) -> float:
+        """Ce que la variante change au compte de la proposition de la cohorte
+        née ``decalage`` ans après la grille : un sous le central."""
+        if not self.capitaux:
+            return 1.0
+        return self.capitaux[decalage + _DEMI_TRANCHE]
 
     def completude(self, decalage: int) -> float:
         """La part de la pension de la grille que touche, en moyenne, la
@@ -2557,6 +2570,9 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
     # stock des réformes prospectives dès qu'on la range parmi elles — ce que
     # fait `scripts/proposition_prospective.py`. Lue à l'appel, comme la liste.
     regle_liberale = regle_revalorisation("notionnel_liberal")
+    # Sous une variante démographique, la proposition se revalorise sur la
+    # masse salariale de la variante (:meth:`RevalorisationServie.pour_la_proposition`).
+    servie = revalorisation.proposition
     for pensionne in pensionnes:
         part = poids_cas.get(pensionne.code, 0.0)
         if part <= 0.0:
@@ -2611,9 +2627,10 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
             # L'ordre des produits est celui du portage, au bit près. Rangé
             # parmi les réformes prospectives, il sert à qui est parti avant
             # la bascule le scénario 1, sous son droit jusqu'à elle.
-            masse_liberale += pese * (
+            capital = pensionne.capital(decalage)
+            masse_liberale += pese * capital * (
                 1.0 if regle_liberale == REGLE_PRIX
-                else revalorisation.coefficient_stock(
+                else servie.coefficient_stock(
                     depart, annee, prospectif=regle_liberale == REGLE_PROSPECTIVE)
                 * (1.0 if regle_liberale != REGLE_PROSPECTIVE
                    else coefficient_historique(
@@ -2630,7 +2647,7 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
             if annee >= volet.annee_ouverture_garantie + decalage:
                 poids_garantie += effectif
                 masse_garantie += pese * (
-                    revalorisation.coefficient_stock(depart, annee, prospectif=False)
+                    servie.coefficient_stock(depart, annee, prospectif=False) * capital
                     * (volet.ressources_garantie - volet.rente_garantie)
                     + revalorisation.coefficient_nominal(depart, annee)
                     * volet.rente_garantie
@@ -4448,23 +4465,90 @@ def calculer_engagements(simulateur: Simulateur, depenses: DepensesRetraite,
     )
 
 
+#: Les règles d'indexation du compte que l'emploi fait bouger : la masse
+#: salariale, et le PIB, que le dépôt fait suivre le même emploi. Les autres
+#: regardent le salaire moyen, les prix ou la productivité, qu'une variante
+#: démographique ne touche pas.
+MODES_SUIVANT_L_EMPLOI = (ModeIndexation.MASSE_SALARIALE, ModeIndexation.PIB_NOMINAL)
+
+
+def _facteur_emploi(simulateur: Simulateur,
+                    population: Population) -> Callable[[int], float] | None:
+    """Ce qu'une variante démographique change, chaque année, à la masse
+    salariale qui indexe la proposition : ses 20-64 ans sur ceux du central
+    (:meth:`Population.facteur_actifs`), la règle qui fait suivre au PIB la
+    variante (``AvenirAnnuel.facteur_pib``). ``None`` sous le central, ou sous
+    une indexation que l'emploi ne fait pas bouger."""
+    if (population.variante == "centrale"
+            or simulateur.parametres.mode_indexation not in MODES_SUIVANT_L_EMPLOI):
+        return None
+    return population.facteur_actifs
+
+
+def _capitaux_sous_la_variante(simulateur: Simulateur, pensionne: Pensionne,
+                               facteur: Callable[[int], float]) -> tuple[float, ...]:
+    """Ce que la masse salariale de la variante change au compte de la
+    proposition de chaque cohorte, à sa liquidation (action 138, étape 7).
+
+    Une cotisation de l'année ``a``, revalorisée jusqu'à la liquidation ``L``,
+    gagne sous la variante ``facteur(L) / facteur(a)`` : la masse de la variante
+    est celle du central multipliée, chaque année, par ce que la variante
+    change à l'emploi. Le compte gagne la moyenne de ce rapport, pondérée par
+    ce que chaque cotisation pèse dans le compte du central. La cohorte née
+    ``decalage`` ans après la grille cotise et liquide ``decalage`` ans plus
+    tard, sur le même profil. Le diviseur ne bouge pas : la variante ne
+    touche pas l'espérance de vie."""
+    indexation = simulateur.indexation
+    capitaux = []
+    for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
+        volet = pensionne.volet(decalage)
+        liquidation = volet.annee_liquidation
+        poids = [(annee, cotisation * indexation.coefficient(annee, liquidation))
+                 for annee, cotisation in sorted(volet.cotisations.items())
+                 if annee <= liquidation and cotisation > 0.0]
+        total = somme_ordonnee(p for _, p in poids)
+        if total <= 0.0:
+            capitaux.append(1.0)
+            continue
+        arrivee = facteur(liquidation + decalage)
+        capitaux.append(somme_ordonnee(
+            p * arrivee / facteur(annee + decalage) for annee, p in poids) / total)
+    return tuple(capitaux)
+
+
 def _sous_la_demographie(simulateur: Simulateur, pensionnes: list[Pensionne],
-                         demographie: str) -> list[Pensionne]:
-    """La grille sous une variante de fécondité ou de migrations : les
-    complétudes de ses cohortes refaites sur les arrivées tardives de la
-    variante (:class:`CarrieresIncompletes`), qui ne changent que sous les
-    migrations. La grille simulée, elle, ne change pas : la variante ne touche
-    pas le diviseur, et ``memoire.cout`` la partage avec le central."""
-    if demographie == "centrale" or not any(p.completudes for p in pensionnes):
+                         population: Population) -> list[Pensionne]:
+    """La grille sous une variante démographique.
+
+    Sous la fécondité ou les migrations, les complétudes de ses cohortes
+    refaites sur les arrivées tardives de la variante
+    (:class:`CarrieresIncompletes`), qui ne changent que sous les migrations.
+    La grille simulée, elle, ne change pas : la variante ne touche pas le
+    diviseur, et ``memoire.cout`` la partage avec le central.
+
+    Sous toute variante, l'espérance de vie comprise, le compte de la
+    proposition porté à la masse salariale de la variante
+    (:func:`_capitaux_sous_la_variante`) ; sa pension servie la suit aussi,
+    par :meth:`RevalorisationServie.pour_la_proposition`. Les autres systèmes
+    notionnels gardent l'indexation du central : la grille ne garde pas leurs
+    cotisations."""
+    demographie = population.demographie
+    if demographie != "centrale" and any(p.completudes for p in pensionnes):
+        carrieres = CarrieresIncompletes(simulateur.parametres.racine_donnees,
+                                         demographie)
+        pensionnes = [
+            replace(pensionne, completudes=tuple(
+                carrieres.completude(pensionne.generation + decalage)
+                for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1)))
+            if pensionne.completudes else pensionne
+            for pensionne in pensionnes
+        ]
+    facteur = _facteur_emploi(simulateur, population)
+    if facteur is None:
         return pensionnes
-    carrieres = CarrieresIncompletes(simulateur.parametres.racine_donnees, demographie)
-    return [
-        replace(pensionne, completudes=tuple(
-            carrieres.completude(pensionne.generation + decalage)
-            for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1)))
-        if pensionne.completudes else pensionne
-        for pensionne in pensionnes
-    ]
+    return [replace(pensionne,
+                    capitaux=_capitaux_sous_la_variante(simulateur, pensionne, facteur))
+            for pensionne in pensionnes]
 
 
 def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
@@ -4532,7 +4616,7 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
     pensionnes, echecs = (grille_simulee if grille_simulee is not None
                           else _pensionnes(simulateur, cas_types, liquidation))
     pensionnes_centraux = pensionnes
-    pensionnes = _sous_la_demographie(simulateur, pensionnes, population.demographie)
+    pensionnes = _sous_la_demographie(simulateur, pensionnes, population)
     poids = _ponderation(simulateur, ponderation, cas_types)
     poids_cotisants = _ponderation(simulateur, ponderation, cas_types, COTE_COTISANTS)
     macro = simulateur.macro
@@ -4547,6 +4631,11 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
         min((p.annee_liquidation for p in pensionnes), default=HORIZON) - _DEMI_TRANCHE,
         HORIZON,
     )
+    # Sous une variante démographique, la proposition se revalorise sur la
+    # masse salariale de la variante, comme son compte (:func:`_sous_la_demographie`).
+    facteur_emploi = _facteur_emploi(simulateur, population)
+    if facteur_emploi is not None:
+        revalorisation = revalorisation.pour_la_proposition(facteur_emploi)
     # Les poids des retraités, recalés sur la dépense de chaque groupe du COR :
     # tout ce qui suit en hérite, la garantie comme la trajectoire. Lue sur le
     # disque sans compte, la décomposition : les ressources restent un ajout,

@@ -2,13 +2,14 @@
 
 **Reprise, au 16 octobre 2026.** Fait : les quotients projetés de l'INSEE lus
 âge par âge par les deux moteurs ; la marche de 1941 ; les hypothèses
-d'espérance de vie dans le diviseur, la page Coût, puis les pages ; le 16
-octobre encore, la fécondité et les migrations de la page Coût, au modèle
-(`memoire.cout(demographie=...)`, le PIB suivant les 20-64 ans de la variante).
-Reste, dans cet ordre : leur affichage, à la session des pages ;
-l'indexation sous la variante ; la mortalité différentielle ; les départs qui
-suivent l'espérance de vie ; la queue de 85 à 98 ans ; 2025. Détail : « Ce qui
-reste », `2026-10-16-etape-7-fecondite-et-migrations.md`.
+d'espérance de vie, la fécondité et les migrations dans le diviseur, la page
+Coût et les pages ; le 16 octobre encore, l'indexation sous la variante : le
+compte et la pension de la proposition suivent la masse salariale de la
+variante (`Pensionne.capitaux`, `RevalorisationServie.pour_la_proposition`).
+Reste, une session par point : la phrase de la page Coût qui dit l'inverse, à
+la session des pages ; la mortalité différentielle ; les départs qui suivent
+l'espérance de vie ; la queue de 85 à 98 ans ; 2025. Détail : « Ce qui
+reste », `2026-10-16-etape-7-indexation-sous-la-variante.md`.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.7 ». L'étape 7 de
 l'action : « La démographie en variantes : les quotients projetés âge par âge

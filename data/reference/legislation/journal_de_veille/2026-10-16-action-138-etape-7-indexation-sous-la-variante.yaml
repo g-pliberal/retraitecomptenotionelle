@@ -1,0 +1,16 @@
+date: "2026-10-16"
+session: "action 138, étape 7 : l'indexation de la proposition sur la masse salariale de la variante démographique"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1.
+  Les variantes de population de l'INSEE déjà certifiées
+  (population_active_variantes.csv), par Population.facteur_actifs.
+trouve: >-
+  Aucun texte de droit. Indexés sur la masse salariale de la variante, le
+  compte et la pension de la proposition suivent le PIB : sa dépense de 2070
+  passe de 8,73 / 7,63 % du PIB à 8,19 / 8,11 % sous la fécondité basse et
+  haute, de 8,85 / 7,58 % à 8,20 / 8,12 % sous les migrations, pour 8,16 %
+  sous le central, inchangé.
+reste: >-
+  La phrase de la page Coût qui dit l'inverse, à la session des pages ; la
+  mortalité différentielle ; les départs qui suivent l'espérance de vie ; la
+  queue de 85 à 98 ans.
