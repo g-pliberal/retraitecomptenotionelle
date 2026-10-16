@@ -3,12 +3,13 @@
 **Reprise, au 16 octobre 2026.** Fait : chaque grille de la page Coût
 confrontée en 2020 à la distribution des pensions de l'EIR (7 octobre) ; la
 population de l'action 136 ; le 16 octobre, ses départs avec décote, les
-retraités de l'étranger, l'emploi fragmenté, puis les retraités de l'Ircantec
-rendus au salariat privé (dix-septième version) : les hommes à 10,1 % des
-liquidants de 2023 au minimum, pour 10,7 à la Cnav et 12,2 aux régimes
-alignés. Reste : les salariés agricoles et les indépendants de la population ;
-les autres départs choisis ; l'ASPA ; les limites. Au propriétaire : 152, 157,
-le CASD. Détail : `2026-10-16-etape-14-contractuels-au-salariat.md`.
+retraités de l'étranger, l'emploi fragmenté, les retraités de l'Ircantec
+rendus au salariat privé, puis les salariés agricoles distingués : 10,5 % des
+hommes au minimum en 2023, contre 29,6 dans l'EACR, faute de leur carrière
+saisonnière. Reste : cette carrière, si une source la publie ; les
+indépendants ; les autres départs choisis ; l'ASPA ; les limites. Au
+propriétaire : 152, 157, le CASD. Détail :
+`2026-10-16-etape-14-salaries-agricoles.md`.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.14 ». L'étape :
 « Ce qui demande une population ou des microdonnées, avec l'action 136 (étape

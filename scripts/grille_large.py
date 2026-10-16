@@ -623,6 +623,22 @@ DEPARTS_AVEC_DECOTE = True
 #: La grille « ensemble » et celles de la page gardent leur contractuel.
 CONTRACTUELS_AU_SALARIAT = True
 
+#: Les salariés agricoles, distingués dans la mesure du minimum contributif
+#: (action 138, étape 14, le 16 octobre 2026). Le droit de la MSA salariés est
+#: celui du régime général : une carrière du salariat privé, affiliée comme
+#: salarié agricole, y liquide la même pension et le même minimum, au centime.
+#: La population ne leur donne donc pas d'autres carrières, mais une part de
+#: chacune de celles du salariat privé (:func:`fractions_agricoles`) : celle
+#: que l'EIR donne à la MSA salariés parmi les retraités du régime général et
+#: d'elle, résidents de chaque quintile de la pension en équivalent carrière
+#: complète (``quintiles_eqcc_residents.csv``), lue sur la bande de rangs de
+#: chaque classe de centiles comme sous :data:`RANG_SELON_LA_DUREE`, et, pour
+#: les retraités de l'étranger, celle que l'EIR leur donne par différence
+#: (:func:`parts_agricoles`). La mesure en tire une part au minimum des
+#: salariés agricoles et une de la Cnav, que l'EACR juge chacune ; celle des
+#: régimes alignés ne bouge pas.
+SALARIES_AGRICOLES = True
+
 #: Les quintiles de la pension en équivalent carrière complète, dans l'ordre.
 QUINTILES_EQCC = ("q1", "q2", "q3", "q4", "q5")
 
@@ -1845,6 +1861,95 @@ def poids_des_non_residents(variantes: list[Variante], poids: list[float],
             / masses[(v.cas.sexe, tranche(v))]
             if masses[(v.cas.sexe, tranche(v))] else 0.0
             for v, p in zip(variantes, poids)]
+
+
+def parts_agricoles(racine: Path) -> dict[str, tuple[dict[str, float], float, float]]:
+    """La part des salariés agricoles parmi les retraités du régime général et
+    de la MSA salariés, sexe par sexe, telle que l'EIR de 2020 la donne à leur
+    régime principal, monopensionnés et polypensionnés de deux régimes
+    (:data:`SALARIES_AGRICOLES`) : celle de chaque classe de centiles parmi les
+    résidents, celle de tous les résidents, et celle des retraités de
+    l'étranger, par différence entre tous les retraités (``caracteristiques_retraites.csv``)
+    et les résidents (``quintiles_eqcc_residents.csv``).
+
+    Chaque quintile de la pension en équivalent carrière complète est une bande
+    de rangs du sexe, de la largeur de sa part des résidents du sexe ; une classe
+    de centiles prend la part des bandes que ses rangs couvrent. Les parts des
+    classes, pesées comme :data:`CENTILES`, redonnent celle de tous les
+    résidents. En 2020, 4,5 % des hommes résidents du groupe et 2,2 % des
+    femmes, 6 à 7 % des deux premiers quintiles d'hommes ; 12,6 % des hommes
+    de l'étranger. Une convention : le rang de la pension par année validée
+    est tenu pour celui du salaire."""
+    residents = quintiles_eqcc(racine, residents=True)
+    tous = quintiles_eqcc(racine)
+    source = eir(racine)
+    sortie = {}
+    for sexe in ("F", "H"):
+        def masses(lire, quintile: str) -> tuple[float, float]:
+            agricoles = somme_ordonnee(lire(f"part_{statut}_msa_salaries", quintile)
+                                       for statut in ("mono", "poly"))
+            generaux = somme_ordonnee(lire(f"part_{statut}_regime_general", quintile)
+                                      for statut in ("mono", "poly"))
+            return agricoles, agricoles + generaux
+
+        def du_resident(indicateur: str, quintile: str) -> float:
+            return residents[(quintile, indicateur, sexe)]
+
+        effectifs = [residents[(q, "effectifs", sexe)] for q in QUINTILES_EQCC]
+        total = somme_ordonnee(effectifs)
+        parts_q = []
+        for q in QUINTILES_EQCC:
+            agricoles, groupe = masses(du_resident, q)
+            parts_q.append(agricoles / groupe)
+        bandes, debut = [], 0.0
+        for effectif in effectifs:
+            bandes.append((debut, debut + effectif / total))
+            debut += effectif / total
+        par_classe, debut = {}, 0.0
+        for nom, largeur in CENTILES:
+            fin = debut + largeur
+            par_classe[nom] = somme_ordonnee(
+                part * max(0.0, min(fin, haut) - max(debut, bas))
+                for part, (bas, haut) in zip(parts_q, bandes)) / largeur
+            debut = fin
+        agricoles_r, groupe_r = masses(du_resident, "ensemble")
+        cible = agricoles_r / groupe_r
+        moyenne = somme_ordonnee(par_classe[nom] * largeur for nom, largeur in CENTILES)
+        par_classe = {nom: part * cible / moyenne for nom, part in par_classe.items()}
+        n_tous = tous[("ensemble", "effectifs", sexe)]
+        n_residents = residents[("ensemble", "effectifs", sexe)]
+        agricoles_t, groupe_t = masses(lambda indicateur, _: source.valeur(indicateur, sexe),
+                                       "ensemble")
+        ailleurs = ((agricoles_t * n_tous - agricoles_r * n_residents)
+                    / (groupe_t * n_tous - groupe_r * n_residents))
+        sortie[sexe] = (par_classe, cible, ailleurs)
+    return sortie
+
+
+def classe_de(v: Variante) -> str | None:
+    """La classe de centiles d'une carrière du salariat privé de la population,
+    lue dans son code ; ``None`` pour les autres."""
+    morceaux = v.cas.code.split("~")
+    if morceaux[0] != GABARIT:
+        return None
+    noms = {nom for nom, _ in CENTILES}
+    return next((m for m in morceaux if m in noms), None)
+
+
+def fractions_agricoles(variantes: list[Variante], racine: Path
+                        ) -> tuple[list[float], list[float]]:
+    """La part de chaque carrière qui est celle d'un salarié agricole
+    (:data:`SALARIES_AGRICOLES`, :func:`parts_agricoles`) : parmi les
+    résidents, celle de sa classe de centiles, et parmi les retraités de
+    l'étranger, celle de son sexe ; zéro hors du salariat privé."""
+    parts = parts_agricoles(racine)
+    residents, ailleurs = [], []
+    for v in variantes:
+        classe = classe_de(v)
+        par_classe, _, etranger = parts[v.cas.sexe]
+        residents.append(par_classe[classe] if classe else 0.0)
+        ailleurs.append(etranger if classe else 0.0)
+    return residents, ailleurs
 
 
 def femmes_ponderees(variantes: list[Variante], effectifs,

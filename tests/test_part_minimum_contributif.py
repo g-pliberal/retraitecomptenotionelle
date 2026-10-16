@@ -183,3 +183,40 @@ def test_les_retraites_de_l_etranger_se_pesent_par_tranche():
     assert len(doubles) == len(melange) == len(toutes) == 2 * len(variantes)
     assert sum(melange) == pytest.approx(sum(poids))
     assert toutes[len(variantes)][0] == len(variantes)
+
+
+def test_les_salaries_agricoles_sont_ceux_de_l_eir():
+    """Sous ``SALARIES_AGRICOLES``, la part de la MSA salariés parmi les
+    retraités du régime général et d'elle est celle de l'EIR 2020 : 4,5 % des
+    hommes résidents et 2,2 % des femmes, plus au bas de l'échelle chez les
+    hommes, 12,5 et 15,3 % des retraités de l'étranger ; les classes de
+    centiles, pesées comme elles, redonnent celle des résidents."""
+    assert P.G.SALARIES_AGRICOLES
+    parts = P.G.parts_agricoles(Parametres().racine_donnees)
+    for sexe, (cible, ailleurs) in {"F": (0.0221, 0.153), "H": (0.0448, 0.125)}.items():
+        par_classe, residents, etranger = parts[sexe]
+        assert residents == pytest.approx(cible, abs=5e-4)
+        assert etranger == pytest.approx(ailleurs, abs=5e-3)
+        assert sum(par_classe[nom] * largeur for nom, largeur in P.G.CENTILES) == (
+            pytest.approx(residents))
+    assert parts["H"][0]["p10"] > parts["H"][0]["p50"]
+
+
+def test_les_salaries_agricoles_ne_se_comptent_qu_au_salariat_prive():
+    """Une carrière du salariat privé prend la part de sa classe parmi les
+    résidents, et celle de son sexe parmi les retraités de l'étranger ; une
+    autre n'en prend aucune ; la part déduite de l'EACR est la pesée des
+    trois parts au minimum."""
+    from types import SimpleNamespace as N
+
+    racine = Parametres().racine_donnees
+    parts = P.G.parts_agricoles(racine)
+    variantes = [N(cas=N(sexe="H", code=f"{P.G.GABARIT}~h~40_plus~p10~bas1~partiel")),
+                 N(cas=N(sexe="F", code=f"{P.G.GABARIT}~f~moins_10~p75")),
+                 N(cas=N(sexe="H", code="artisan~h~40_plus~p10"))]
+    fractions = P.agricoles(variantes * 2, racine, True)
+    assert fractions == pytest.approx([parts["H"][0]["p10"], parts["F"][0]["p75"], 0.0,
+                                       parts["H"][2], parts["F"][2], 0.0])
+    eacr = {(str(a), c, s): v for (a, c, s), v in P.observees(racine).items()}
+    deduite = P.part_agricole_deduite(eacr, "2023", "H")
+    assert deduite == pytest.approx(100 * (12.15 - 10.72) / (29.62 - 10.72), abs=0.01)

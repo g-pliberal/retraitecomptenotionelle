@@ -65,7 +65,10 @@ part de ce que l'EACR mesure entre les sexes. La population de
 ``scripts/grille_large.py`` (``--grille population``, action 136, étape 6)
 donne à chaque sexe les siens, et au salariat privé le temps partiel ; elle
 ne compte que les résidents, et l'EACR tous les liquidants : sous
-:data:`NON_RESIDENTS`, les retraités de l'étranger s'y ajoutent.
+:data:`NON_RESIDENTS`, les retraités de l'étranger s'y ajoutent. Sous
+``grille_large.SALARIES_AGRICOLES``, elle distingue les salariés agricoles de
+la Cnav, par une part de chaque carrière du salariat privé, la même carrière
+liquidant à la MSA salariés la même pension qu'au régime général.
 """
 
 from __future__ import annotations
@@ -304,6 +307,16 @@ def avec_les_non_residents(variantes: list, poids: list[float], ailleurs: list[f
                             for indice, generation, mesure in lignes])
 
 
+def agricoles(variantes: list, racine: Path, avec_l_etranger: bool) -> list[float]:
+    """La part de chaque carrière qui est celle d'un salarié agricole
+    (``grille_large.SALARIES_AGRICOLES``) : celle des résidents, puis, sous
+    ``avec_l_etranger``, celle des retraités de l'étranger pour la seconde
+    moitié des variantes, que :func:`avec_les_non_residents` y a mises."""
+    n = len(variantes) // 2 if avec_l_etranger else len(variantes)
+    residents, ailleurs = G.fractions_agricoles(variantes[:n], racine)
+    return residents + (ailleurs if avec_l_etranger else [])
+
+
 def _lire_eacr(racine: Path, nom: str, colonne: str) -> dict[tuple[int, str, str], float]:
     chemin = racine / "reference" / "regimes" / nom
     with chemin.open(encoding="utf-8") as flux:
@@ -377,11 +390,15 @@ def mesurer(noms: tuple[str, ...] = GRILLES, processus: int = 1,
         coefficients = {a: simulateur.macro.coefficient_prix(a, ANNEE_EUROS)
                         for a in {m[0] for _, _, m in lignes if m is not None}}
         voulues = set(annees)
-        par_annee = parts(
-            variantes, poids, lignes, coefficients,
-            lambda generation, mesure: [
-                (annee, part) for annee, part
-                in etalement(generation, mesure[0], mesure[1]).items() if annee in voulues])
+
+        def par_annee_de(poids_: list[float]) -> dict:
+            return parts(variantes, poids_, lignes, coefficients,
+                         lambda generation, mesure: [
+                             (annee, part) for annee, part
+                             in etalement(generation, mesure[0], mesure[1]).items()
+                             if annee in voulues])
+
+        par_annee = par_annee_de(poids)
         par_generation = parts(variantes, poids, lignes, coefficients,
                                lambda generation, mesure: [(generation, 1.0)])
         resultat["grilles"][nom] = {
@@ -391,6 +408,14 @@ def mesurer(noms: tuple[str, ...] = GRILLES, processus: int = 1,
             "par_generation": {str(g): v for g, v in par_generation.items()},
             "secondes": round(time.time() - debut, 1),
         }
+        if nom == "population" and G.SALARIES_AGRICOLES:
+            fractions = agricoles(variantes, racine, etranger is not None)
+            resultat["grilles"][nom]["caisses"] = {
+                "cnav": {str(a): v for a, v in par_annee_de(
+                    [p * (1.0 - f) for p, f in zip(poids, fractions)]).items()},
+                "msa_salaries": {str(a): v for a, v in par_annee_de(
+                    [p * f for p, f in zip(poids, fractions)]).items()},
+            }
         if etranger is not None:
             seuls_v, seuls_p, seuls_l = residents_seuls
             resultat["grilles"][nom]["non_residents"] = {
@@ -431,6 +456,41 @@ def _euros(valeur: float | None) -> str:
     return "    —" if valeur is None else f"{valeur:3.0f} €"
 
 
+def part_agricole_deduite(eacr: dict, annee: str, sexe: str) -> float | None:
+    """La part des salariés agricoles parmi les liquidants des régimes alignés
+    que l'EACR laisse déduire de ses trois parts au minimum : celle des
+    alignés est la moyenne de celles de la Cnav et de la MSA salariés, pesées
+    par leurs liquidants."""
+    cnav, msa, alignes = (eacr.get((annee, caisse, sexe)) for caisse in CAISSES)
+    if None in (cnav, msa, alignes) or msa == cnav:
+        return None
+    return 100.0 * (alignes - cnav) / (msa - cnav)
+
+
+def imprimer_caisses(caisses: dict, eacr: dict) -> None:
+    """Les salariés agricoles et la Cnav, distingués (``grille_large.SALARIES_AGRICOLES``) :
+    la part au minimum de chacun, contre l'EACR, et celle des salariés
+    agricoles parmi les liquidants, contre celle que l'EACR laisse déduire."""
+    print("\nLes salariés agricoles, distingués : la part au minimum de la Cnav et de la "
+          "MSA salariés (EACR), et leur poids")
+    print("  année   sexe      Cnav (EACR)        MSA sal. (EACR)     agricoles parmi "
+          "les liquidants (déduite de l'EACR)")
+    for annee, par_sexe in caisses["msa_salaries"].items():
+        if int(annee) < 2019:
+            continue
+        for sexe in SEXES:
+            msa = par_sexe.get(sexe, {})
+            cnav = caisses["cnav"].get(annee, {}).get(sexe, {})
+            if not msa or not cnav:
+                continue
+            poids = 100.0 * msa["poids"] / (msa["poids"] + cnav["poids"])
+            deduite = part_agricole_deduite(eacr, annee, sexe)
+            print(f"  {annee}   {sexe:8s}  {_pc(cnav.get('part'))} "
+                  f"({_pc(eacr.get((annee, 'cnav', sexe))).strip()})    "
+                  f"{_pc(msa.get('part'))} ({_pc(eacr.get((annee, 'msa_salaries', sexe))).strip()})"
+                  f"      {_pc(poids)} ({_pc(deduite).strip()})")
+
+
 def imprimer(resultat: dict) -> None:
     eacr = {tuple(cle.split("/")): v for cle, v in resultat["eacr"].items()}
     montants = {tuple(cle.split("/")): v for cle, v in resultat["eacr_montants"].items()}
@@ -459,6 +519,8 @@ def imprimer(resultat: dict) -> None:
               f"{trajectoire['liquidants_2024']['avec_reforme_de_2023']} % en 2024 "
               f"({trajectoire['liquidants_2024']['sans_reforme_de_2023']} % sans la réforme "
               f"de 2023), {trajectoire['liquidants_2050']['avec_reforme_de_2023']} % en 2050")
+        if grille.get("caisses"):
+            imprimer_caisses(grille["caisses"], eacr)
         print(f"\nPar année de liquidation : le minimum moyen d'un bénéficiaire, "
               f"en euros de {ANNEE_EUROS} par mois")
         print("  année   modèle   femmes   hommes   EACR Cnav   MSA sal.   alignés")

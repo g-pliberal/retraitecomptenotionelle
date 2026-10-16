@@ -1,0 +1,22 @@
+date: "2026-10-16"
+session: "action 138, étape 14, sixième partie : les salariés agricoles de la population, distingués"
+consulte: >-
+  Aucun texte : la session n'écrit aucune règle du scénario 1, et ne touche
+  qu'à la mesure du minimum contributif de la population
+  (`scripts/grille_large.py`, `scripts/part_minimum_contributif.py`), que la
+  page ne lit pas. Données lues, déjà certifiées : la part des liquidants au
+  minimum contributif de l'EACR (`regimes/minimum_contributif_liquidants.csv`),
+  le régime principal des retraités de l'EIR 2020, par quintile
+  (`macro/quintiles_eqcc_residents.csv`) et pour tous
+  (`macro/caracteristiques_retraites.csv`).
+trouve: >-
+  Rien de neuf au droit : une carrière affiliée comme salarié agricole
+  liquide, au moteur, la même pension et le même minimum qu'au régime
+  général, au centime : le moteur aligne les deux. Distingués par
+  leur part de l'EIR, les salariés agricoles de la population ne sont au
+  minimum que pour 10,5 % des hommes liquidants de 2023, contre 29,6 % dans
+  l'EACR.
+reste: >-
+  Ceux de la note (`docs/feuille_de_route/138/2026-10-16-etape-14-salaries-agricoles.md`) :
+  la carrière propre des salariés agricoles, saisonnière, qu'aucune source du
+  dépôt ne mesure ; la dispersion des revenus des indépendants.
