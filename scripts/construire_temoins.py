@@ -1937,6 +1937,16 @@ def _pages() -> dict:
             "debut": "2012-09", "radiation_invalidite": "2019-09", "taux_invalidite": "80",
             "metier2_debut": "2019-09", "metier2_statut": "sans_activite",
         }),
+        # LA LIMITE D'ÂGE (droit/limite_age.py, action 151) : le policier saisi
+        # parti à soixante-dix ans est radié des cadres à soixante-sept, ses
+        # deux prolongations présumées ; le contractuel saisi parti à
+        # soixante-quinze voit son contrat prendre fin à soixante-dix.
+        ("simuler_limite_d_age_policier", "/simuler", {
+            **BASE, "statut": "policier", "liquidation": "70",
+        }),
+        ("simuler_limite_d_age_contractuel", "/simuler", {
+            **BASE, "statut": "contractuel_public", "liquidation": "75",
+        }),
         # Le salarié handicapé parti à cinquante-cinq ans (droit/invalidite.py) :
         # son formulaire, figé entier, montre le dépliant ouvert et l'incapacité
         # datée ; la page, sa pension au taux plein, majorée.

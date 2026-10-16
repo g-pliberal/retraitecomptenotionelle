@@ -1,0 +1,16 @@
+date: "2026-10-16"
+session: >-
+  action 151, étape 5, au site : la page dit la limite d'âge que le départ saisi
+  passe, ses reculs de droit, ses exceptions présumées et la fin de l'emploi selon
+  le statut, lues dans `radiation(moteur, carriere)`
+consulte: >-
+  Aucun texte : l'étape ne touche à aucune règle et dit ce que les fiches des
+  étapes 3 et 4 portent déjà (`limite_age_fonction_publique`,
+  `limite_age_militaires`, `limite_age_contractuels`, `limite_age_ouvriers_etat`,
+  `limite_age_sncf_ratp` et leurs exceptions).
+trouve: >-
+  Rien de neuf au droit. Le paquet du site de `main` ne portait pas encore les
+  fiches de l'étape 4 avant régénération.
+reste: >-
+  Ce que la note de l'étape 4 garde à lire : L. 556-11 et L. 556-12 du code
+  général de la fonction publique, les statuts des autres régimes spéciaux.

@@ -41,6 +41,7 @@ import { chargerFrontiere } from "./frontiere.js";
 import {
   AGIRC_ARRCO as AGIRC_ARRCO_DU_CUMUL, PRIORITE as PRIORITE_DU_CUMUL,
 } from "./droit/cumul.js";
+import { radiation as radiationALaLimite } from "./droit/limite_age.js";
 import { financer } from "./bilan.js";
 import { COMPOSANTE_GARANTIE } from "./agregats.js";
 import { CaracteristiquesRetraites } from "./caracteristiques.js";
@@ -3386,7 +3387,7 @@ const POURQUOI_CE_DEPART = {
   demande: "à la date où vous la demandez",
   invalidite: "en remplacement de votre pension d'invalidité",
   radiation: "à votre radiation des cadres pour invalidité",
-  limite_d_age: "à votre radiation des cadres par limite d'âge",
+  limite_d_age: "à la limite d'âge de votre emploi",
 };
 
 /**
@@ -3406,8 +3407,8 @@ const POURQUOI_PAS_A_CETTE_DATE = {
     + `1<sup>er</sup> ${retenue}, quelle que soit la date de votre demande`,
   radiation: (retenue) => "la pension du fonctionnaire radié des cadres pour invalidité "
     + `se liquide à sa radiation, le 1<sup>er</sup> ${retenue}`,
-  limite_d_age: (retenue) => "la loi vous radie des cadres à votre limite d'âge, et votre "
-    + `pension de fonctionnaire part de ce jour, le 1<sup>er</sup> ${retenue}`,
+  limite_d_age: (retenue) => "votre emploi prend fin à sa limite d'âge, et sa pension "
+    + `part de ce jour, le 1<sup>er</sup> ${retenue}`,
   ensemble: (retenue, complementaire) => (complementaire
     ? "elle suit la pension de base dont elle partage les années, servie le "
       + `1<sup>er</sup> ${retenue}`
@@ -3449,6 +3450,70 @@ function demandesNonSuivies(contexte, comparaison) {
 <ul>
 ${lignes.join("\n")}
 </ul></div>`;
+}
+
+/**
+ * Ce qui met fin à l'emploi à sa limite d'âge, selon la fiche qui la porte
+ * (`droit/limite_age.js`) : le fonctionnaire et le militaire sont radiés des
+ * cadres, le contrat du contractuel prend fin, l'ouvrier de l'État et l'agent
+ * de la SNCF ou de la RATP sont mis à la retraite.
+ */
+const FIN_A_LA_LIMITE = {
+  limite_age_fonction_publique: (quand) => `la loi vous radie des cadres à ${quand}`,
+  limite_age_militaires: (quand) => `la loi vous radie des cadres à ${quand}`,
+  limite_age_contractuels: (quand) => `votre contrat prend fin à ${quand}`,
+  limite_age_ouvriers_etat: (quand) => `vous êtes mis à la retraite à ${quand}`,
+  limite_age_sncf_ratp: (quand) => `vous êtes mis à la retraite à ${quand}`,
+};
+
+/**
+ * Les exceptions qui reculent la limite d'âge (`droit/limite_age.js`),
+ * nommées avec l'âge où elles mènent.
+ */
+const EXCEPTIONS_A_LA_LIMITE = {
+  recul_enfants_a_charge: (quand) => `le recul d'un an par enfant à votre charge, à ${quand}`,
+  recul_parent_de_trois_enfants: (quand) => "le recul d'un an du parent de trois enfants, "
+    + `à ${quand}`,
+  prolongation_carriere_incomplete: (quand) => "la prolongation pour carrière incomplète "
+    + `jusqu'à ${quand}`,
+  prolongation_categorie_active: (quand) => "la prolongation de l'actif jusqu'à la limite "
+    + `des sédentaires, ${quand}`,
+  maintien_jusqu_a_70_ans: (quand) => `le maintien en fonctions jusqu'à ${quand}`,
+};
+
+/**
+ * La limite d'âge que le départ saisi passe (`droit/limite_age.js`, action
+ * 151) : à quel âge l'emploi prend fin, la limite, les reculs de droit et les
+ * exceptions présumées demandées et accordées autant que le départ le
+ * demande, et ce que deviennent les années qui suivent. Rend `""` quand
+ * aucune pension ne part de la limite.
+ */
+function limiteDAgePassee(contexte, comparaison) {
+  const departs = comparaison.actuel.departs ?? [];
+  if (!departs.some((depart) => depart.motif === "limite_d_age")) return "";
+  const radiee = radiationALaLimite(contexte.simulateur().scenarioActuel, comparaison.carriere);
+  if (radiee === null || !radiee.forcee) return "";
+  // Les exceptions se suivent, chacune reculant la limite où la précédente l'a
+  // menée.
+  const joindre = (morceaux) => morceaux.join(", puis ");
+  const nommer = (recul) => (EXCEPTIONS_A_LA_LIMITE[recul.nom]
+    ?? ((quand) => `${echapper(recul.nom)}, jusqu'à ${quand}`))(age(recul.jusqu_a));
+  const fin = (FIN_A_LA_LIMITE[radiee.fiche]
+    ?? ((quand) => `votre emploi prend fin à ${quand}`))(age(radiee.age));
+  const militaire = radiee.fiche === "limite_age_militaires";
+  let texte = `La limite d'âge de votre emploi est de ${age(radiee.limite)}`
+    + (militaire ? ", la plus haute de votre catégorie : votre grade n'est pas saisi." : ".");
+  const deDroit = radiee.reculs.filter((recul) => !recul.presumee);
+  if (deDroit.length > 0) {
+    texte += ` La loi la recule de droit : ${joindre(deDroit.map(nommer))}.`;
+  }
+  if (radiee.presumees.length > 0) {
+    texte += " Nous présumons que vous avez demandé et obtenu "
+      + `${joindre(radiee.presumees.map(nommer))}, autant que votre départ le demande.`;
+  }
+  texte += ` Ainsi ${fin} : ce qui suit, jusqu'à votre départ, n'est plus de cet emploi. `
+    + "Si vous avez travaillé ces années-là, déclarez-les comme un métier de plus.";
+  return `<p>${texte}</p>\n`;
 }
 
 /**
@@ -3524,14 +3589,17 @@ votre durée d'assurance.`
         ? `<strong>Votre pension ne commence pas à votre départ.</strong> Votre
 radiation des cadres pour invalidité vous l'ouvre à cette date, à tout âge, sans
 condition de durée de services ni décote.`
-        : `<strong>Votre pension ne commence pas à votre départ.</strong> Chaque régime
+        : departs[0].motif === "limite_d_age"
+          ? `<strong>Votre pension ne commence pas à votre départ.</strong> Votre
+emploi a une limite d'âge, et votre départ la passe.`
+          : `<strong>Votre pension ne commence pas à votre départ.</strong> Chaque régime
 sert sa pension à la date où vous la demandez, au plus tôt quand vous en
 remplissez les conditions.`;
   return `<div class="note">${titre}
 <ul>
 ${lignes.join("\n")}
 </ul>
-${montant}</div>`;
+${limiteDAgePassee(contexte, comparaison)}${montant}</div>`;
 }
 
 /** Ce qui ferme une retraite progressive, dit au lecteur. */

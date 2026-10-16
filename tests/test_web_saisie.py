@@ -197,6 +197,37 @@ def test_le_site_simule_le_depart_le_plus_tardif(page):
     assert f"à {AGE_LIQUIDATION_MAXIMAL} ans" in texte
 
 
+def test_la_page_dit_la_limite_d_age_et_ses_exceptions_presumees(page):
+    """Le départ saisi passe la limite d'âge (``droit/limite_age.js``, action
+    151) : la page dit à quel âge l'emploi prend fin, dans les mots de son
+    statut, la limite, et chaque exception, de droit ou présumée demandée et
+    accordée ; puis que ce qui suit peut être un métier de plus."""
+    def lire(naissance=1975, **parametres):
+        return re.sub(r"\s+", " ", page("/simuler", naissance=naissance, debut=21, **parametres))
+
+    texte = lire(statut="fonctionnaire_etat", liquidation=75, enfants=3)
+    assert "Votre emploi a une limite d'âge, et votre départ la passe." in texte
+    assert "La limite d'âge de votre emploi est de 67 ans." in texte
+    assert "La loi la recule de droit : le recul d'un an du parent de trois enfants, " \
+        "à 68 ans." in texte
+    assert "Nous présumons que vous avez demandé et obtenu le maintien en fonctions " \
+        "jusqu'à 70 ans" in texte
+    assert "Ainsi la loi vous radie des cadres à 70 ans" in texte
+    assert "déclarez-les comme un métier de plus" in texte
+    texte = lire(statut="policier", liquidation=70)
+    assert "la prolongation pour carrière incomplète jusqu'à 59 ans et 6 mois, puis la " \
+        "prolongation de l'actif jusqu'à la limite des sédentaires, 67 ans" in texte
+    texte = lire(statut="militaire_officier", liquidation=70)
+    assert "la plus haute de votre catégorie : votre grade n'est pas saisi" in texte
+    for statut, naissance, fin in (
+            ("contractuel_public", 1975, "votre contrat prend fin à 70 ans"),
+            ("agent_sncf", 1960, "vous êtes mis à la retraite à 70 ans")):
+        assert f"Ainsi {fin}" in lire(naissance, statut=statut, liquidation=75)
+    # Parti avant sa limite, rien n'en est dit.
+    assert "La limite d'âge de votre emploi" not in lire(
+        statut="fonctionnaire_etat", liquidation=64)
+
+
 def test_les_adresses_d_avant_le_calendrier_valent_toujours():
     """Le formulaire demande des dates ; les adresses déjà partagées portaient
     des âges, en deux champs. Les deux doivent décrire la même carrière, et se
