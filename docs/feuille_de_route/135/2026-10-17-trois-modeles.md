@@ -129,6 +129,10 @@ documentation, `code.claude.com/docs/en/`, lue le 17 octobre).
   écriture, il a tourné sur `claude-haiku-5-5`, et rendu un inventaire exact
   des agents et des skills du dépôt. La règle de `CLAUDE.md` ne change pas :
   une recherche en éventail ne se lance qu'à la demande du propriétaire.
+- *Les quatre agents d'impeccable sur Sonnet*, à la demande du propriétaire :
+  `model: sonnet` au lieu du `model: inherit` que le paquet livre, qui les
+  faisait tourner sur Opus. `docs/outillage_interface.md` le dit, avec ce
+  qu'une mise à jour d'Impeccable qui les recopie doit reporter.
 
 **Ce qui reste au propriétaire.** Le modèle de chaque session, à son
 ouverture : Opus 5.5 pour le modèle, le droit et la certification des
@@ -137,6 +141,6 @@ moitié prix, pour ce que les tests tiennent serré — le site, l'outillage, la
 prose, l'archivage d'une action. L'effort `max` passe devant celui que
 déclarent les agents : l'éclaireur et Explore tournent donc à `max` sur
 Haiku, ce qui les ralentit sans peser sur la facture, et les agents
-d'impeccable, qui déclaraient `medium` ou `high`, à `max` sur Opus. Dans
+d'impeccable, qui déclarent `medium` ou `high`, à `max` sur Sonnet. Dans
 quelques jours, `python scripts/consommation.py`, ou `/usage` pour un
 abonné, dira la part que prennent les agents sur Haiku.

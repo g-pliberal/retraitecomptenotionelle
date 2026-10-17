@@ -74,6 +74,12 @@ Le hook écrit `.impeccable/hook.cache.json` à l'usage, ignoré.
 `impeccable.cmd` couvre Windows sans `sh` ; le hook commité appelle le lanceur
 POSIX, comme sur les machines Cloud.
 
+Les quatre agents `.claude/agents/impeccable-*.md` déclarent `model: sonnet`,
+quand le paquet livre `model: inherit`, le modèle de la session : Sonnet
+coûte moitié moins qu'Opus (feuille de route, action 135, note du
+17 octobre 2026). Une mise à jour d'Impeccable qui recopie ces agents remet
+`inherit` : y reporter `sonnet`.
+
 ## Playwright CLI
 
 `.playwright/cli.config.json` demande Chromium par le canal `chromium` ; c'est
