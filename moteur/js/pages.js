@@ -4280,7 +4280,9 @@ const ETAGES_ACTUEL = [
  * somme fausse.
  *
  * `assiettes` dit, étage par étage, ce que la cotisation maladie frappe : les
- * lignes des régimes de `regimesMaladie`, sans leur majoration pour enfants.
+ * lignes des régimes de `regimesMaladie`, sans leur majoration pour enfants ;
+ * `lignes`, la pension de chacun de ses régimes, sans elle non plus : la SNCF
+ * et les mines y prennent la leur.
  */
 function etagesActuels(comparaison, catalogue, regimesMaladie = new Set(),
   regimesGeneraux = new Set()) {
@@ -4292,24 +4294,30 @@ function etagesActuels(comparaison, catalogue, regimesMaladie = new Set(),
   const etages = new Map();
   const assiettes = new Map();
   const generales = new Map();
-  const porter = (code, montant, soumise = false, generale = false) => {
+  const lignes = new Map();
+  // La `ligne` d'un régime, et non sa part de la majoration pour enfants : elle
+  // seule paie une cotisation maladie.
+  const porter = (code, montant, ligne = false) => {
     const regime = catalogue.obtenir(code);
     if (isoler && regime.hors_repartition) return;
     const coefficient = coefficients.has(code) ? coefficients.get(code) : 1.0;
     etages.set(regime.etage, (etages.get(regime.etage) ?? 0.0) + montant * coefficient);
-    if (soumise) {
+    if (!ligne) return;
+    if (regimesMaladie.has(code)) {
       assiettes.set(regime.etage,
         (assiettes.get(regime.etage) ?? 0.0) + montant * coefficient);
     }
-    if (generale) {
+    if (regimesGeneraux.has(code)) {
       generales.set(regime.etage,
         (generales.get(regime.etage) ?? 0.0) + montant * coefficient);
     }
+    if (!lignes.has(regime.etage)) lignes.set(regime.etage, new Map());
+    const siennes = lignes.get(regime.etage);
+    siennes.set(code, (siennes.get(code) ?? 0.0) + montant * coefficient);
   };
   let minimum = 0.0;
   for (const pension of actuel.pensions_par_regime) {
-    porter(pension.regime, pension.montant, regimesMaladie.has(pension.regime),
-      regimesGeneraux.has(pension.regime));
+    porter(pension.regime, pension.montant, true);
   }
   for (const avantage of actuel.avantages_appliques) {
     if (avantage.code === "majoration_enfants") {
@@ -4323,7 +4331,7 @@ function etagesActuels(comparaison, catalogue, regimesMaladie = new Set(),
   let somme = minimum;
   for (const montant of etages.values()) somme += montant;
   return Math.abs(somme - total) <= 0.01
-    ? { etages, assiettes, generales, minimum, total } : null;
+    ? { etages, assiettes, generales, lignes, minimum, total } : null;
 }
 
 /**
@@ -4422,15 +4430,18 @@ function compositionActuelle(comparaison, catalogue, montants, constant) {
   const composition = etagesActuels(comparaison, catalogue, montants.regimesMaladie,
     montants.regimesGeneraux);
   if (composition === null || composition.total <= 0 || constant <= 0) return "";
-  const mensuel = (montant, assiette = 0, generale = 0) => montants.pensionDAssiette(
-    constant * montant / composition.total,
-    constant * assiette / composition.total,
-    constant * generale / composition.total) / 12;
+  const enConstants = (montant) => constant * montant / composition.total;
+  // Chaque étage paie la cotisation de la SNCF et des mines sur ses propres
+  // lignes, et le minimum vieillesse, qui n'en a pas, rien.
+  const mensuel = (montant, assiette = 0, generale = 0, lignes = new Map()) =>
+    montants.pensionDAssiette(enConstants(montant), enConstants(assiette),
+      enConstants(generale), new Map([...lignes].map(
+        ([code, ligne]) => [code, enConstants(ligne)]))) / 12;
   const termes = ETAGES_ACTUEL
     .filter(([etage]) => composition.etages.has(etage))
     .map(([etage, , libelle]) => [etage, libelle, mensuel(
       composition.etages.get(etage), composition.assiettes.get(etage) ?? 0,
-      composition.generales.get(etage) ?? 0)]);
+      composition.generales.get(etage) ?? 0, composition.lignes.get(etage))]);
   if (composition.minimum > 0) {
     termes.push(["minimum", "de minimum vieillesse", mensuel(composition.minimum)]);
   }

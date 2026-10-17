@@ -55,7 +55,8 @@ from retraite_notionnelle.saisie import (
     ErreurSaisie,
     Saisie,
 )
-from retraite_notionnelle.contexte import Contexte
+from retraite_notionnelle.contexte import Contexte, Montants
+from retraite_notionnelle.remuneration import charger_prelevements
 from retraite_notionnelle.web.site import disponible, module, rendre, site
 from outils_web import (
     FEUILLE_DE_STYLE, SIMULATION_TEMOIN, TITRES, _hors_depliants, _sans_blocs, contexte,
@@ -864,6 +865,46 @@ def test_un_regime_integre_se_dit_d_une_seule_pension():
     assert montant > 0
     assert ligne.startswith("une seule pension, sans complémentaire à part"), ligne
     assert "€" not in ligne
+
+
+def test_la_cotisation_de_la_sncf_reste_sur_son_regime_integre(contexte):
+    """Décret n° 2007-1056, art. 7, IV : l'agent de la SNCF paie 0,70 % de SA
+    pension, sous le plafond. Venu au chemin de fer après vingt-trois ans dans
+    le privé, il a aussi une retraite de base et une complémentaire : la ligne
+    sous le montant laisse toute la cotisation sur son régime intégré, au lieu
+    d'en prendre une part à chaque étage au prorata de son montant. Chaque
+    étage est, à moins d'un euro, sa part brute moins la CSG, la CRDS et la
+    CASA du taux plein, 1 % de la complémentaire et 0,70 % de la SNCF."""
+    champs = {"naissance": "1970", "statut": "salarie_prive_cadre", "debut": "22",
+              "liquidation": "65", "unite_revenu": "moyen", "salaire": "1.5",
+              "metier2_debut": "45", "metier2_statut": "agent_sncf", "montants": "net"}
+    saisie = Saisie.depuis_requete(champs)
+    comparaison = contexte.simuler(saisie)
+    assert comparaison.aujourd_hui is None
+    assert Montants.depuis(saisie, contexte.base, comparaison).tranche == "taux plein"
+    catalogue = contexte.simulateur().catalogue
+    bruts = {}
+    for pension in comparaison.actuel.pensions_par_regime:
+        etage = catalogue[pension.regime].etage
+        bruts[etage] = (bruts.get(etage, 0.0)
+                        + pension.montant * comparaison.coefficient_euros_constants / 12)
+    pensions = charger_prelevements(contexte.base.racine_donnees).pensions
+    taux = pensions.taux_total
+    plafond = pensions.regimes_speciaux[0].plafond_annuel / 12
+    attendu = {
+        "régime intégré": bruts["integre"] * (1 - taux) - 0.007 * min(bruts["integre"], plafond),
+        "retraite de base": bruts["base"] * (1 - taux),
+        "retraite complémentaire": bruts["complementaire"] * (1 - taux - 0.01),
+    }
+    montant, ligne = _systeme_actuel(champs)
+    affiches = {libelle: int(re.sub(r"\D", "", euros)) for euros, libelle in re.findall(
+        r"(\d[\d   ]*) ?€ de (régime intégré|retraite de base|retraite complémentaire)",
+        ligne)}
+    assert affiches.keys() == attendu.keys(), ligne
+    for libelle, euros in affiches.items():
+        assert abs(euros - attendu[libelle]) < 1, (
+            f"{libelle} : {euros} € affichés, {attendu[libelle]:.2f} € attendus")
+    assert sum(affiches.values()) == montant
 
 
 def test_le_detail_range_la_base_avant_les_complementaires():

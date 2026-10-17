@@ -313,6 +313,104 @@ def test_le_portage_javascript_preleve_la_maladie_de_la_sncf_et_des_mines(pensio
     assert sum(json.loads(execution.stdout), []) == pytest.approx(sum(attendu, []))
 
 
+_ETAGES_JS = """
+import { PrelevementsPension } from "./moteur/js/remuneration.js";
+import { Montants } from "./moteur/js/contexte.js";
+const { fiche, foyers, cas } = JSON.parse(process.argv[1]);
+const bareme = new PrelevementsPension(fiche);
+process.stdout.write(JSON.stringify(foyers.map(([tauxPension, champs]) => {
+  const montants = new Montants(true, tauxPension, 0, 0, { ...champs, bareme,
+    regimesMaladie: new Set(champs.regimesMaladie),
+    regimesGeneraux: new Set(champs.regimesGeneraux) });
+  return cas.map(([brut, assiette, generale, lignes]) => montants.netDAssiette(
+    brut, assiette, generale, lignes === null ? null : new Map(Object.entries(lignes))));
+})));
+"""
+
+
+def _camel(nom: str) -> str:
+    """Le nom d'un champ de ``Montants`` sous celui du portage."""
+    tete, *reste = nom.split("_")
+    return tete + "".join(mot.capitalize() for mot in reste)
+
+
+def test_un_etage_paie_la_cotisation_de_la_sncf_sur_ses_seules_lignes(pensions):
+    """Décret n° 2007-1056, art. 7, IV ; décret n° 46-2769, art. 91 : la
+    cotisation de la SNCF et des mines se prend sur LEURS pensions. Une part
+    qui dit ses lignes de régime — un étage de la page — la paie sur les
+    siennes, sous le plafond, et non plus au prorata de son montant : celle de
+    l'agent de la SNCF qui a aussi une retraite du privé tombe tout entière sur
+    son régime intégré, et les étages font toujours la pension nette. Sans
+    lignes, la part garde le prorata, exact sur un total. Dans une tranche qui
+    ne prélève pas la maladie, rien ; au non-résident, ses taux de L. 131-9.
+    Les deux moteurs."""
+    plafond = pensions.regimes_speciaux[0].plafond_annuel
+    taux = pensions.taux_total
+    # 40 000 € par an : 30 000 de la SNCF, au-delà du plafond, 6 000 du régime
+    # général, 4 000 de l'Agirc-Arrco ; puis l'étage de base d'un mineur.
+    integre, base, complementaire = 30000.0, 6000.0, 4000.0
+    total = integre + base + complementaire
+    cas = [(integre, 0.0, 0.0, {"sncf": integre}),
+           (base, 0.0, base, {"regime_general": base}),
+           (complementaire, complementaire, 0.0, {"agirc_arrco": complementaire}),
+           (16000.0, 0.0, base, {"mines": 10000.0, "regime_general": base}),
+           (complementaire, complementaire, 0.0, None)]
+    sncf = 0.007 * plafond
+    sncf_non_resident = 0.039 * plafond + 0.032 * (integre - plafond)
+    foyers = {
+        "taux plein": dict(
+            taux_pension=taux + (0.01 * complementaire + sncf) / total,
+            taux_sans_maladie=taux, taux_maladie=0.01, part_maladie=complementaire / total,
+            part_regimes_speciaux=sncf / total, taux_regimes_speciaux=sncf / total),
+        "taux réduit": dict(taux_pension=0.043, taux_sans_maladie=0.043,
+                            part_regimes_speciaux=sncf / total),
+        "non-résident": dict(
+            taux_pension=(0.032 * base + 0.042 * complementaire + sncf_non_resident) / total,
+            taux_sans_maladie=0.0, taux_maladie=0.042, part_maladie=complementaire / total,
+            taux_regime_general=0.032, part_regime_general=base / total,
+            part_regimes_speciaux=sncf_non_resident / total,
+            taux_regimes_speciaux=sncf_non_resident / total, non_resident=True, couvert=True),
+    }
+    attendu = {
+        "taux plein": [integre * (1 - taux) - sncf, base * (1 - taux),
+                       complementaire * (1 - taux - 0.01),
+                       16000.0 * (1 - taux) - 0.005 * 10000.0,
+                       complementaire * (1 - taux - 0.01 - sncf / total)],
+        "taux réduit": [montant * (1 - 0.043)
+                        for montant in (integre, base, complementaire, 16000.0, complementaire)],
+        "non-résident": [integre - sncf_non_resident, base * (1 - 0.032),
+                         complementaire * (1 - 0.042),
+                         16000.0 - 0.032 * base - 0.037 * 10000.0,
+                         complementaire * (1 - 0.042 - sncf_non_resident / total)],
+    }
+    rendus = {}
+    for nom, champs in foyers.items():
+        montants = Montants(net=True, regimes_maladie=pensions.regimes_maladie,
+                            regimes_generaux=pensions.regimes_generaux, bareme=pensions,
+                            **champs)
+        rendus[nom] = [montants.net_d_assiette(brut, assiette, generale, lignes)
+                       for brut, assiette, generale, lignes in cas]
+        assert rendus[nom] == pytest.approx(attendu[nom]), nom
+        assert sum(rendus[nom][:3]) == pytest.approx(montants.pension(total)), nom
+    assert dataclasses.replace(montants, net=False).pension_d_assiette(
+        integre, 0.0, 0.0, {"sncf": integre}) == integre
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    with open(RACINE / "data/reference/legislation/prelevements_remuneration.yaml",
+              encoding="utf-8") as flux:
+        fiche = yaml.safe_load(flux)["pensions"]
+    portes = [[champs["taux_pension"], {
+        **{_camel(nom): valeur for nom, valeur in champs.items() if nom != "taux_pension"},
+        "regimesMaladie": sorted(pensions.regimes_maladie),
+        "regimesGeneraux": sorted(pensions.regimes_generaux)}] for champs in foyers.values()]
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", _ETAGES_JS,
+         json.dumps({"fiche": fiche, "foyers": portes, "cas": cas}, default=str)],
+        cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr
+    assert sum(json.loads(execution.stdout), []) == pytest.approx(sum(rendus.values(), []))
+
+
 def test_l_abattement_de_10_pour_cent(pensions):
     """CGI, art. 158, 5 a : 10 %, au moins 454 € par pensionné, au plus 4 439 €
     pour le foyer."""

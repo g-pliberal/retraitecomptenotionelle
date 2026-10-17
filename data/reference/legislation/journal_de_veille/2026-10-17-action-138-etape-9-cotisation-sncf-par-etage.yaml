@@ -1,0 +1,17 @@
+date: "2026-10-17"
+session: "action 138, étape 9, suite de la huitième partie : la cotisation de la SNCF et des mines, étage par étage, sur la page des résultats"
+consulte: >-
+  Aucune source de droit relue : la session ne touche à aucune règle du
+  scénario 1, seulement à la façon dont la page répartit sur les étages la
+  cotisation maladie de la SNCF et des mines déjà écrite (décret
+  n° 2007-1056, art. 7, IV et VII ; décret n° 46-2769, art. 91, tels que les
+  notes du 16 octobre les citent).
+trouve: >-
+  Aucune règle n'a changé. La cotisation de la SNCF et des mines se prend sur
+  les lignes de leurs régimes, étage par étage, et non plus au prorata de
+  chaque étage. La réversion de la SNCF n'est pas portée : sa ligne vaut 0 €,
+  et le plafond de moitié du VII n'a rien où s'appliquer. Le paquet du site
+  ne porte pas les taux du non-résident de la SNCF et des mines.
+reste: >-
+  Les taux du non-résident dans le paquet du site ; le plafond de moitié avec
+  la réversion de la SNCF ; le plafond de la SNCF de 2027.

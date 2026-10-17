@@ -1211,19 +1211,23 @@ export class Montants {
 
   /**
    * Une part de pension dont `assiette` paie aussi la cotisation maladie : un
-   * étage ou une ligne du scénario 1, et non plus un total.
+   * étage ou une ligne du scénario 1, et non plus un total ; `lignes` (une
+   * `Map`), la pension de chaque régime qu'elle contient.
    */
-  pensionDAssiette(brut, assiette, assietteGenerale = 0) {
-    return this.net ? this.netDAssiette(brut, assiette, assietteGenerale) : brut;
+  pensionDAssiette(brut, assiette, assietteGenerale = 0, lignes = null) {
+    return this.net ? this.netDAssiette(brut, assiette, assietteGenerale, lignes) : brut;
   }
 
   /**
    * La même, nette quel que soit le mode : la colonne du net d'un tableau qui
-   * montre les deux.
+   * montre les deux. Voir `Montants.net_d_assiette` dans `contexte.py`.
    */
-  netDAssiette(brut, assiette, assietteGenerale = 0) {
-    // La cotisation de la SNCF et des mines s'y prend au prorata de `brut`.
-    return brut * (1 - this.tauxSansMaladie - this.tauxRegimesSpeciaux)
+  netDAssiette(brut, assiette, assietteGenerale = 0, lignes = null) {
+    // La cotisation de la SNCF et des mines sur les `lignes` de leurs régimes,
+    // sous le plafond ; sans elles, au prorata de `brut`, exacte sur un total.
+    const prorata = lignes === null ? this.tauxRegimesSpeciaux : 0;
+    const speciale = lignes === null ? 0 : this._maladieDesRegimesSpeciaux(lignes);
+    return brut * (1 - this.tauxSansMaladie - prorata) - speciale
       - this.tauxMaladie * assiette
       - this.tauxRegimeGeneral * assietteGenerale;
   }
@@ -1235,15 +1239,20 @@ export class Montants {
    */
   pensionDuRegime(brut, regime, reversion = false) {
     if (!this.net) return brut;
-    let net = brut * (1 - this.tauxSansMaladie)
+    const net = brut * (1 - this.tauxSansMaladie)
       - this.tauxMaladie * (this.regimesMaladie.has(regime) ? brut : 0)
       - this.tauxRegimeGeneral * (this.regimesGeneraux.has(regime) ? brut : 0);
-    // Au non-résident que la France couvre, à ses taux de L. 131-9.
-    if (this.tauxMaladie > 0 && this.bareme !== null) {
-      net -= this.bareme.maladieDesRegimesSpeciaux(
-        new Map([[regime, brut]]), reversion, this.nonResident);
-    }
-    return net;
+    return net - this._maladieDesRegimesSpeciaux(new Map([[regime, brut]]), reversion);
+  }
+
+  /**
+   * La cotisation de la SNCF et des mines sur `lignes`, due quand la tranche
+   * du foyer prélève la maladie des complémentaires ; au non-résident que la
+   * France couvre, à ses taux de L. 131-9.
+   */
+  _maladieDesRegimesSpeciaux(lignes, reversion = false) {
+    if (this.tauxMaladie <= 0 || this.bareme === null) return 0;
+    return this.bareme.maladieDesRegimesSpeciaux(lignes, reversion, this.nonResident);
   }
 
   /**

@@ -1128,21 +1128,27 @@ class Montants:
         return brut * (1.0 - self.taux_pension) if self.net else brut
 
     def pension_d_assiette(self, brut: float, assiette: float,
-                           assiette_generale: float = 0.0) -> float:
+                           assiette_generale: float = 0.0,
+                           lignes: dict[str, float] | None = None) -> float:
         """Une part de pension dont ``assiette`` paie aussi la cotisation
         maladie des complémentaires, et ``assiette_generale`` celle d'un
         non-résident sur la base du régime général : un étage ou une ligne du
-        scénario 1, et non plus un total."""
-        return (self.net_d_assiette(brut, assiette, assiette_generale)
+        scénario 1, et non plus un total ; ``lignes``, la pension de chaque
+        régime qu'elle contient."""
+        return (self.net_d_assiette(brut, assiette, assiette_generale, lignes)
                 if self.net else brut)
 
     def net_d_assiette(self, brut: float, assiette: float,
-                       assiette_generale: float = 0.0) -> float:
+                       assiette_generale: float = 0.0,
+                       lignes: dict[str, float] | None = None) -> float:
         """La même, nette quel que soit le mode : la colonne du net d'un
         tableau qui montre les deux. La cotisation de la SNCF et des mines s'y
-        prend au prorata de ``brut`` : exacte sur le total, elle se répartit
-        sur les étages, que la page ne distingue pas encore."""
-        return (brut * (1.0 - self.taux_sans_maladie - self.taux_regimes_speciaux)
+        prend sur les ``lignes`` de leurs régimes, majoration pour enfants
+        exclue, sous le plafond : celle d'un étage, la sienne ; sans
+        ``lignes``, au prorata de ``brut``, exacte sur un total."""
+        prorata = self.taux_regimes_speciaux if lignes is None else 0.0
+        speciale = 0.0 if lignes is None else self._maladie_des_regimes_speciaux(lignes)
+        return (brut * (1.0 - self.taux_sans_maladie - prorata) - speciale
                 - self.taux_maladie * assiette
                 - self.taux_regime_general * assiette_generale)
 
@@ -1155,13 +1161,17 @@ class Montants:
         net = (brut * (1.0 - self.taux_sans_maladie)
                - self.taux_maladie * (brut if regime in self.regimes_maladie else 0.0)
                - self.taux_regime_general * (brut if regime in self.regimes_generaux else 0.0))
-        # Due quand la tranche du foyer prélève la maladie des complémentaires,
-        # même si sa propre pension n'en sert pas : la réversion d'un autre ;
-        # au non-résident que la France couvre, à ses taux.
-        if self.taux_maladie > 0 and self.bareme is not None:
-            net -= self.bareme.maladie_des_regimes_speciaux(
-                {regime: brut}, reversion, self.non_resident)
-        return net
+        return net - self._maladie_des_regimes_speciaux({regime: brut}, reversion)
+
+    def _maladie_des_regimes_speciaux(self, lignes: dict[str, float],
+                                      reversion: bool = False) -> float:
+        """La cotisation de la SNCF et des mines sur ``lignes``, due quand la
+        tranche du foyer prélève la maladie des complémentaires, même si sa
+        propre pension n'en sert pas : la réversion d'un autre ; au
+        non-résident que la France couvre, à ses taux."""
+        if self.taux_maladie <= 0 or self.bareme is None:
+            return 0.0
+        return self.bareme.maladie_des_regimes_speciaux(lignes, reversion, self.non_resident)
 
     def net_d_un_depart(self, total: float, assiette: float,
                         minimum: float = 0.0, generale: float = 0.0) -> float:
