@@ -132,7 +132,9 @@ documentation, `code.claude.com/docs/en/`, lue le 17 octobre).
 - *Les quatre agents d'impeccable sur Sonnet*, à la demande du propriétaire :
   `model: sonnet` au lieu du `model: inherit` que le paquet livre, qui les
   faisait tourner sur Opus. `docs/outillage_interface.md` le dit, avec ce
-  qu'une mise à jour d'Impeccable qui les recopie doit reporter.
+  qu'une mise à jour d'Impeccable qui les recopie doit reporter. Un appel
+  sans effet à `impeccable-finish-reviewer`, au tour suivant, a tourné sur
+  `claude-sonnet-5-5`.
 
 **Ce qui reste au propriétaire.** Le modèle de chaque session, à son
 ouverture : Opus 5.5 pour le modèle, le droit et la certification des
