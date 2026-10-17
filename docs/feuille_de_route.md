@@ -6406,15 +6406,14 @@ d'un commit qui change le code sans test), ou l'alléger.
 
 ### 163. Ce que la revue de code d'Anthropic apprend au dépôt : le site en ligne au vert, les rouges classés, puis un relecteur — `en cours`
 
-**Reprise, au 17 octobre 2026.** Faites, les étapes 1, 2 et 4, et les quatre
-gardes que la deuxième proposait : le site ne part en ligne que d'une suite
-verte ; les rouges sont classés et comptés (`tableau_de_bord.py --cout`) ; les
-chiffres cités du parcours, du README et de l'accueil sont produits ;
-`pousser.sh` joue les tests de la feuille de route ; huit tests d'une seconde
-sont de la suite rapide ; les confrontations légères, de la zone du modèle.
-Restent les chiffres à unité du parcours, ses carrières d'abord, et les
-étapes 3, 5 et 6, que le propriétaire tranche. Détail :
-`163/2026-10-17-gardes-3-et-4.md`.
+**Reprise, au 17 octobre 2026.** Faites, les étapes 1, 2, 4 et 6, et les
+quatre gardes que la deuxième proposait : le site ne part en ligne que d'une
+suite verte ; les rouges sont classés et comptés ; les chiffres cités du
+parcours, du README et de l'accueil sont produits ; huit tests d'une seconde
+sont de la suite rapide ; `pousser.sh` joue les tests de la feuille de route,
+et refuse une garde changée sans `Garde-modifiée:`. Restent les chiffres à
+unité du parcours, ses carrières d'abord, et les étapes 3 et 5, que le
+propriétaire tranche. Détail : `163/2026-10-17-les-gardes-gardees.md`.
 
 **D'où elle vient.** Le 17 octobre 2026, le propriétaire soumet à une
 session l'article « How the Claude Code team does code review » (blog
@@ -6448,10 +6447,11 @@ lance les deux premières : « vas-y ».
    mise à jour de l'index DILA du lundi, relit une famille de règles du
    scénario 1 contre le droit en vigueur, inscrit ce qu'elle trouve sans le
    corriger, et en rend au propriétaire une explication courte.
-6. **Les gardes gardées** : `pousser.sh` exige `Garde-modifiée: <raison>` sur
-   un commit qui touche `tests.yml`, les hooks ou `pousser.sh`, et la session
-   demande d'abord au propriétaire.
+6. **Les gardes gardées**, faite le 17 octobre 2026 : `pousser.sh` exige
+   `Garde-modifiée: <raison>` sur un commit qui touche les workflows, les
+   hooks et leurs réglages, `pousser.sh` ou `publier_fabrique.sh`, et la
+   session demande d'abord au propriétaire.
 
 **Ce que le propriétaire tranche** : les chiffres à unité du parcours, puis,
-une à une, les étapes 3, 5 et 6. Les quatre gardes de l'étape 2 sont faites le
+une à une, les étapes 3 et 5. Les quatre gardes de l'étape 2 sont faites le
 17 octobre 2026.

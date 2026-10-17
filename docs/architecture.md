@@ -1679,7 +1679,10 @@ dit. `scripts/pousser.sh` refuse d'envoyer un commit qui change le code sans
 toucher aux tests, s'il ne le déclare pas par une ligne `Sans-test: <raison>`
 de son message ; et, quand un commit à publier touche la feuille de route ou
 ses notes, il joue leurs deux tests, le bloc « Reprise » et le rangement des
-notes, et refuse s'ils rougissent (action 163).
+notes, et refuse s'ils rougissent ; et il refuse un commit qui touche une
+garde — les workflows, les hooks et leurs réglages, `pousser.sh` et
+`publier_fabrique.sh` — sans ligne `Garde-modifiée: <raison>`, l'accord du
+propriétaire, demandé avant (action 163).
 
 Tout tourne sur GitHub à chaque envoi sur `main`, par
 `.github/workflows/tests.yml`, qui repart du dernier `main`, refait les

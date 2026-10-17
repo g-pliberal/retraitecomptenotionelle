@@ -209,6 +209,40 @@ FIN
     done
 fi
 
+# Les gardes gardées (action 163, étape 6) : les workflows de GitHub, les hooks
+# et leurs réglages, ce script et celui qui publie le verdict ne changent
+# qu'avec l'accord du propriétaire, demandé avant ; le commit le déclare par une
+# ligne `Garde-modifiée: <raison>`. Un ralentisseur, non un verrou : la session
+# peut l'écrire seule, mais elle s'arrête, et la trace se liste
+# (`git log --grep='^Garde-modifiée:'`). Le message se lit dans une variable, et
+# non par un tube, que `pipefail` ferait mentir, comme plus haut.
+if [ "$avance" -gt 0 ]; then
+    gardes=".github/workflows .claude/hooks .claude/settings.json scripts/pousser.sh scripts/publier_fabrique.sh"
+    declaration=$'(^|\n)Garde-modifiée: *[^[:space:]]'
+    sans_accord=""
+    # shellcheck disable=SC2086 # les chemins des gardes, un par mot
+    for commit in $(git rev-list origin/main..HEAD -- $gardes); do
+        message=$(git log -1 --format=%B "$commit")
+        if ! [[ $message =~ $declaration ]]; then
+            # shellcheck disable=SC2086
+            touchees=$(git diff-tree --no-commit-id --name-only -r "$commit" -- $gardes | tr '\n' ' ')
+            sans_accord+="    ${commit:0:7} $(git log -1 --format=%s "$commit") : $touchees"$'\n'
+        fi
+    done
+    if [ -n "$sans_accord" ]; then
+        {
+            echo "pousser: un commit à publier touche une garde du dépôt sans le déclarer, rien poussé (action 163) :"
+            printf '%s' "$sans_accord"
+            cat <<'FIN'
+Une garde ne change qu'avec l'accord du propriétaire, demandé avant. Accordé,
+le commit le déclare, la raison non vide :
+    git commit --amend --no-edit --trailer "Garde-modifiée: <ce qu'il a accordé>"
+FIN
+        } >&2
+        exit 1
+    fi
+fi
+
 # La feuille de route tient ses règles (action 163, étape 2) : du 6 au
 # 17 octobre 2026, six rouges de main venaient du bloc « Reprise », que la
 # session écrit au dernier commit, après ses tests. Quand un commit à publier

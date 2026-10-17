@@ -276,6 +276,36 @@ def test_le_code_part_avec_son_test_ou_sa_declaration(atelier, message, fichiers
     assert tete_distante(distant, "main") == tete
 
 
+@pytest.mark.parametrize("fichiers", [
+    {".github/workflows/tests.yml": "on: push\n"},
+    {".claude/settings.json": "{}\n"},
+    {".claude/hooks/tdd.py": "# le hook\n", "tests/test_hook.py": "def test_x():\n    pass\n"},
+    {"scripts/pousser.sh": "# l'envoi\n", "tests/test_envoi.py": "def test_x():\n    pass\n"},
+    {"scripts/publier_fabrique.sh": "# le verdict\n",
+     "tests/test_envoi.py": "def test_x():\n    pass\n"},
+])
+def test_une_garde_ne_change_qu_avec_sa_declaration(atelier, fichiers):
+    """Les gardes du dépôt — les workflows de GitHub, les hooks et leurs
+    réglages, ce script, celui qui publie le verdict — ne changent qu'avec
+    l'accord du propriétaire, demandé avant (action 163, étape 6). Un commit
+    qui en touche une le déclare par une ligne ``Garde-modifiée: <raison>`` ;
+    sinon rien ne part, et le refus nomme le commit et la garde."""
+    distant, session = atelier
+    avant = tete_distante(distant, "main")
+    _envoyer(session, "une garde retouchée", fichiers)
+
+    acheve = pousser(session)
+    assert acheve.returncode != 0
+    assert "une garde retouchée" in acheve.stderr and "Garde-modifiée:" in acheve.stderr
+    assert next(iter(fichiers)) in acheve.stderr
+    assert tete_distante(distant, "main") == avant, "rien poussé"
+
+    git(session, "commit", "--quiet", "--amend", "-m",
+        "une garde retouchée\n\nGarde-modifiée: le propriétaire l'a demandé")
+    acheve = pousser(session)
+    assert acheve.returncode == 0, acheve.stderr
+
+
 #: Les deux tests de la feuille de route, réduits à ce que l'atelier peut tenir :
 #: le premier exige le bloc « Reprise ».
 _PROSE = '''from pathlib import Path
