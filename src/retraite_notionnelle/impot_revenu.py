@@ -33,7 +33,7 @@ successives :
    jusqu'aux revenus de 2005, 80 % seulement de leur somme, l'abattement de
    20 % s'appréciant pour chaque membre du foyer jusqu'à sa limite (DB 5 F
    3122) ; les bénéfices d'un indépendant, sans frais professionnels, réduits
-   de l'abattement des adhérents d'un organisme de gestion agréé de 1978 à
+   de l'abattement des adhérents d'un organisme de gestion agréé de 1976 à
    2005, majorés pour qui n'y adhère pas de 2006 à 2022
    (:func:`benefice_retenu`) ;
 2. le revenu net global, puis l'abattement des personnes de plus de 65 ans ou
@@ -90,7 +90,7 @@ HORS_CHAMP = (
     "revenus autres que les salaires, les bénéfices et les pensions",
     "abattement forfaitaire des régimes micro : le bénéfice s'entend après lui",
     "revenus d'activité non salariée de la prime pour l'emploi",
-    "limites de chiffre d'affaires de l'abattement des adhérents, de 1978 à 1982",
+    "limites de chiffre d'affaires ou de recettes de l'abattement des adhérents, de 1976 à 1982",
     "charges déductibles et pensions alimentaires",
     "réductions et crédits d'impôt autres que la prime pour l'emploi, les réductions de 2001 "
     "et de 2013 et le crédit de 2008",
@@ -141,16 +141,42 @@ REGIMES_DU_BENEFICE = ("reel_adherent", "reel_non_adherent", "micro")
 #: agricoles.
 CATEGORIES_DU_BENEFICE = ("bic", "bnc", "ba")
 
-#: L'abattement des adhérents, de 20 % : la première année de revenus que
-#: l'index LEGI en donne, sa rédaction du 1er juillet 1979
-#: (LEGIARTI000006307959, « pour l'imposition des revenus de 1978 et de
-#: 1979 ») ; il naît plus tôt, dans une rédaction que l'index n'a pas. Les
-#: bénéfices non commerciaux n'y entrent qu'avec les associations agréées, à
-#: la rédaction du 15 juillet 1985 (LEGIARTI000006307964, revenus de 1984) ;
-#: avant, l'abattement ne vise que « la catégorie des bénéfices industriels
-#: et commerciaux ou des bénéfices agricoles ».
-PREMIERE_ANNEE_ABATTEMENT_ADHERENTS = 1978
-PREMIERE_ANNEE_ABATTEMENT_BNC = 1984
+#: L'abattement des adhérents naît de la loi de finances rectificative pour
+#: 1974 (n° 74-1114, art. 1er, III, que l'index n'a qu'en notice, lue le 17
+#: octobre 2026 au texte définitif que le Sénat a adopté le 20 décembre 1974) :
+#: les adhérents d'un centre de gestion agréé « placés sous un régime réel
+#: d'imposition [...] bénéficient d'un abattement de 10 % sur leur bénéfice
+#: imposable », sans seuil ni limite. Le décret n° 75-911 du 6 octobre 1975,
+#: qui fait agréer les centres, ne l'accorde qu'à qui a été adhérent « pendant
+#: toute la durée des exercices concernés », ou dont l'exercice était ouvert
+#: depuis moins de trois mois à l'agrément ou à l'adhésion (art. 17,
+#: LEGIARTI000006323772) : l'exercice de l'année 1975 n'y entre pas, celui de
+#: 1976 le premier.
+PREMIERE_ANNEE_ABATTEMENT_ADHERENTS = 1976
+TAUX_ABATTEMENT_DE_1974 = 0.10
+#: La loi de finances pour 1978 (n° 77-1467, texte définitif adopté par le
+#: Sénat le 16 décembre 1977) porte le taux « de 10 % à 20 %, sauf pour la
+#: fraction du bénéfice qui excède la limite de 150 000 F prévue à l'article
+#: 6 », dès les revenus de 1977 (art. 7, II, et 1er, III), et « aucun
+#: abattement n'est appliqué sur la fraction du bénéfice qui excède une fois
+#: et demie la limite de la dernière tranche du barème » : 1,5 fois les
+#: 238 200 F de son article 2, un barème pour deux parts, soit 357 300 F, là
+#: où celle des salaires est arrondie à la dizaine de milliers de francs
+#: supérieure (360 000 F). La loi de finances pour 1979 fixe les deux à
+#: 360 000 F pour les revenus de 1978 et de 1979 (art. 11,
+#: LEGIARTI000006273141).
+PREMIERE_ANNEE_ABATTEMENT_DE_20 = 1977
+SEUIL_ET_LIMITE_DE_1977 = (150000, 357300)
+#: Les bénéfices non commerciaux ont le leur, de mêmes taux, seuils et
+#: limites, par les associations agréées des professions libérales de la loi
+#: de finances pour 1977 (art. 64) : le 4 ter de l'article 158, de sa
+#: rédaction du 1er juillet 1979 (LEGIARTI000006307959, « pour l'imposition
+#: des revenus de 1978 et de 1979 ») à celle du 15 juillet 1985, qui le
+#: fond dans le 4 bis (LEGIARTI000006307964, revenus de 1984). Le décret
+#: n° 77-1519 du 31 décembre 1977, qui les fait agréer, veut l'adhésion de
+#: toute l'année, ou depuis moins de trois mois après son début (art. 16,
+#: LEGIARTI000006323746) : la première est 1978.
+PREMIERE_ANNEE_ABATTEMENT_BNC = 1978
 #: La dernière, avant que le barème de 2006 ne l'intègre (LEGIARTI000006307988).
 DERNIERE_ANNEE_ABATTEMENT_ADHERENTS = 2005
 
@@ -423,14 +449,15 @@ def _revenus_nets(foyer: Foyer, parametres: ParametresImpot, salaires: tuple[flo
 
 def benefice_retenu(declarant: Declarant, parametres: ParametresImpot,
                     benefice: float | None = None) -> float:
-    """Le bénéfice d'un déclarant tel que l'impôt le retient (art. 158) : réduit,
-    de 1978 à 2005, de l'abattement de 20 % de l'adhérent d'un organisme de
-    gestion agréé, à 10 % sur la fraction qui excède le seuil de l'année
-    jusqu'en 1995 (:data:`SEUILS_ABATTEMENT_REDUIT`), et nul au-delà de la
-    limite de l'abattement de 20 % des salaires (« la limite fixée au
-    cinquième alinéa du a du 5 ») ; majoré, de 2006 à 2022, pour qui n'adhère
-    pas. Un déficit, le bénéfice d'un régime micro, ceux des autres années
-    restent tels quels. ``benefice``, dans la monnaie de l'année, remplace
+    """Le bénéfice d'un déclarant tel que l'impôt le retient (art. 158) : réduit
+    de l'abattement de l'adhérent d'un organisme de gestion agréé, 10 % en
+    1976, 20 % de 1977 à 2005, à 10 % sur la fraction qui excède le seuil de
+    l'année jusqu'en 1995 (:data:`SEUILS_ABATTEMENT_REDUIT`), et nul au-delà
+    d'une limite, celle de 1977 (:data:`SEUIL_ET_LIMITE_DE_1977`), puis celle
+    de l'abattement de 20 % des salaires (« la limite fixée au cinquième
+    alinéa du a du 5 ») ; majoré, de 2006 à 2022, pour qui n'adhère pas. Un
+    déficit, le bénéfice d'un régime micro, ceux des autres années restent
+    tels quels. ``benefice``, dans la monnaie de l'année, remplace
     celui du déclarant."""
     annee = parametres.annee
     benefice = declarant.benefices if benefice is None else benefice
@@ -446,14 +473,21 @@ def benefice_retenu(declarant: Declarant, parametres: ParametresImpot,
 
 def _abattement_adherent(declarant: Declarant, parametres: ParametresImpot,
                          benefice: float) -> float:
-    """L'abattement de l'article 158, 4 bis, d'un bénéfice positif d'adhérent."""
+    """L'abattement de l'article 158, 4 bis et 4 ter, d'un bénéfice positif
+    d'adhérent, et ce qui les précède : la loi de finances rectificative pour
+    1974, la loi de finances pour 1978."""
     annee = parametres.annee
     premiere = (PREMIERE_ANNEE_ABATTEMENT_BNC if declarant.categorie == "bnc"
                 else PREMIERE_ANNEE_ABATTEMENT_ADHERENTS)
     if not premiere <= annee <= DERNIERE_ANNEE_ABATTEMENT_ADHERENTS:
         return 0.0
-    plafond = parametres["deductions"].get("vingt_pour_cent_plafond", math.inf)
-    seuil = min(SEUILS_ABATTEMENT_REDUIT.get(annee, plafond), plafond)
+    if annee < PREMIERE_ANNEE_ABATTEMENT_DE_20:
+        return _arrondir_element(annee, TAUX_ABATTEMENT_DE_1974 * benefice)
+    if annee == PREMIERE_ANNEE_ABATTEMENT_DE_20:
+        seuil, plafond = SEUIL_ET_LIMITE_DE_1977
+    else:
+        plafond = parametres["deductions"].get("vingt_pour_cent_plafond", math.inf)
+        seuil = min(SEUILS_ABATTEMENT_REDUIT.get(annee, plafond), plafond)
     abattement = 0.20 * min(benefice, seuil) + 0.10 * max(min(benefice, plafond) - seuil, 0.0)
     return _arrondir_element(annee, abattement)
 
@@ -792,9 +826,6 @@ def _remarques(foyer: Foyer, parametres: ParametresImpot, la_decote: float,
         remarques.append("invalide : les régimes des couples d'avant 1981 ne sont pas repris")
     adherents = [b for d, b in zip(foyer.declarants, benefices)
                  if b > 0 and d.regime == "reel_adherent"]
-    if adherents and annee < PREMIERE_ANNEE_ABATTEMENT_ADHERENTS:
-        remarques.append("bénéfice d'un adhérent d'avant 1978 : l'abattement de sa rédaction, "
-                         "que l'index n'a pas, n'est pas appliqué")
     if any(b > SEUILS_ABATTEMENT_REDUIT.get(annee, math.inf) for b in adherents):
         remarques.append("abattement des adhérents : le seuil de sa fraction à 10 % est celui de "
                          "la rédaction de l'année, sans l'indexation que le code prescrit, "

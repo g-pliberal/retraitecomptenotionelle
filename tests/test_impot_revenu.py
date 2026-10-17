@@ -506,8 +506,7 @@ def test_l_adherent_a_son_abattement_jusqu_en_2005(baremes):
     """Art. 158, 4 bis : 20 % du bénéfice de l'adhérent de 1978 à 2005, sans
     les 10 % de frais professionnels d'un salaire ; jusqu'en 1995, 10 % sur la
     fraction qui excède le seuil de l'année — 150 000 F en 1980 —, rien
-    au-delà de la limite de l'abattement des salaires ; les bénéfices non
-    commerciaux à partir des revenus de 1984 seulement."""
+    au-delà de la limite de l'abattement des salaires."""
     en_2005 = _benefice(baremes, 2005, 50000)
     assert en_2005.abattement_adherents == 10000 and en_2005.revenu_net_global == 40000
     en_1980 = _benefice(baremes, 1980, 300000, unite="monnaie")
@@ -517,14 +516,40 @@ def test_l_adherent_a_son_abattement_jusqu_en_2005(baremes):
     assert plafond.abattement_adherents == pytest.approx(0.2 * 150000 + 0.1 * (410000 - 150000))
     en_1997 = _benefice(baremes, 1997, 300000, unite="monnaie")
     assert en_1997.abattement_adherents == 60000
-    assert _benefice(baremes, 1983, 100000, unite="monnaie",
-                     categorie="bnc").abattement_adherents == 0
     assert _benefice(baremes, 1984, 100000, unite="monnaie",
                      categorie="bnc").abattement_adherents == 20000
-    avant = _benefice(baremes, 1975, 50000, unite="monnaie")
-    assert avant.abattement_adherents == 0 and any("avant 1978" in r for r in avant.remarques)
     with pytest.raises(ValueError, match="régime"):
         Declarant(benefices=1.0, regime="forfait")
+
+
+def test_l_adherent_d_avant_1978(baremes):
+    """La loi de finances rectificative pour 1974 (n° 74-1114, art. 1er, III,
+    texte définitif adopté par le Sénat le 20 décembre 1974) : « un abattement
+    de 10 % sur leur bénéfice imposable », sans seuil ni limite, que le décret
+    n° 75-911 du 6 octobre 1975 (art. 17) n'accorde qu'à l'adhérent de tout
+    l'exercice : rien en 1975. La loi de finances pour 1978 (n° 77-1467, texte
+    définitif du 16 décembre 1977) le porte à 20 % dès les revenus de 1977
+    (art. 7, II, et 1er, III), 10 % au-delà des 150 000 F de son article 6,
+    rien au-delà d'une fois et demie la limite de la dernière tranche du barème
+    de son article 2 (238 200 F, pour deux parts). Les bénéfices non
+    commerciaux, par les associations agréées que le décret n° 77-1519 du
+    31 décembre 1977 fait naître : 20 % dès 1978 (art. 158, 4 ter, rédaction du
+    1er juillet 1979, « pour l'imposition des revenus de 1978 et de 1979 »),
+    jusqu'à leur entrée au 4 bis."""
+    assert _benefice(baremes, 1975, 100000, unite="monnaie").abattement_adherents == 0
+    assert _benefice(baremes, 1976, 100000, unite="monnaie").abattement_adherents == 10000
+    assert _benefice(baremes, 1976, 1000000, unite="monnaie").abattement_adherents == 100000
+    assert _benefice(baremes, 1976, 100000, unite="monnaie",
+                     categorie="ba").abattement_adherents == 10000
+    en_1977 = _benefice(baremes, 1977, 300000, unite="monnaie")
+    assert en_1977.abattement_adherents == pytest.approx(0.2 * 150000 + 0.1 * 150000)
+    plafond = _benefice(baremes, 1977, 1000000, unite="monnaie")
+    assert plafond.abattement_adherents == pytest.approx(0.2 * 150000 + 0.1 * (357300 - 150000))
+    for annee, abattement in ((1976, 0), (1977, 0), (1978, 20000), (1983, 20000)):
+        assert _benefice(baremes, annee, 100000, unite="monnaie",
+                         categorie="bnc").abattement_adherents == abattement, annee
+    assert not any("avant 1978" in r
+                   for r in _benefice(baremes, 1975, 50000, unite="monnaie").remarques)
 
 
 def test_les_valeurs_lues_dans_legi_y_sont():

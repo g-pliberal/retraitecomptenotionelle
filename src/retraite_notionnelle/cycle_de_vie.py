@@ -1166,9 +1166,9 @@ def foyer_de_l_annee(carriere, annee: int, salaire: float = 0.0,
     décembre l'âge de sa génération — à 65 ans, il ouvre l'abattement des
     personnes âgées (CGI, art. 157 bis) — et déclare ``salaire``,
     ``benefice`` et ``pension``, imposables. Le bénéfice, de ``categorie``,
-    est celui d'un adhérent d'un organisme de gestion agréé, au réel : de 1978
+    est celui d'un adhérent d'un organisme de gestion agréé, au réel : de 1976
     à 2005 il a l'abattement des adhérents, de 2006 à 2022 il échappe à la
-    majoration (CGI, art. 158, 4 bis et 7 ;
+    majoration (CGI, art. 158, 4 bis, 4 ter et 7 ;
     :func:`~retraite_notionnelle.impot_revenu.benefice_retenu`)."""
     return Foyer(declarants=(Declarant(salaires=salaire, pensions=pension, benefices=benefice,
                                        categorie=categorie,

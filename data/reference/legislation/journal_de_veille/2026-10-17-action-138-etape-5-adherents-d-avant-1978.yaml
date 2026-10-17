@@ -1,0 +1,30 @@
+date: "2026-10-17"
+session: "action 138, étape 5, huitième partie : l'abattement des adhérents d'avant 1978"
+consulte: >-
+  `python scripts/veille_droit.py` : aucune fiche de la carte touchée, la
+  session n'écrivant aucune règle du scénario 1. L'index du JORF de la DILA (à
+  jour au 11 octobre 2026) : la loi n° 74-1114, en notice seule. L'index LEGI :
+  le décret n° 75-911 (art. 17), le décret n° 77-1519 (art. 16), l'article 11
+  de la loi n° 78-1239, les rédactions de l'article 158 du code général des
+  impôts du 1er juillet 1979 au 15 juillet 1985 (4 bis, 4 ter, 5 a).
+  Légifrance et Gallica refusant la session (403), les textes définitifs
+  qu'a adoptés le Sénat : la loi de finances rectificative pour 1974 (texte
+  n° 78, 1974-1975) et la loi de finances pour 1978 (texte n° 53, 1977-1978),
+  et le rapport général n° 88 (1977-1978, tome II). Le BOFiP, BOI-DJC-OA.
+trouve: >-
+  L'abattement de 10 % du bénéfice imposable des adhérents des centres de
+  gestion agréés (loi n° 74-1114, art. 1er, III), sans seuil ni limite, dès
+  l'exercice de 1976, les centres n'étant agréés qu'après le décret du 6
+  octobre 1975 ; porté à 20 % dès les revenus de 1977 (loi n° 77-1467, art. 7,
+  II, et 1er, III), 10 % au-delà de 150 000 F, rien au-delà d'une fois et
+  demie la dernière tranche du barème, 357 300 F ; les adhérents des
+  associations agréées des professions libérales dès 1978, au 4 ter de
+  l'article 158, jusqu'aux revenus de 1983. Écrits dans `impot_revenu.py` et
+  son jumeau.
+reste: >-
+  Les limites de chiffre d'affaires ou de recettes de 1976 à 1982 ; la
+  non-cumulation du 4 ter avec les déductions forfaitaires des professions
+  libérales ; l'indexation annuelle des seuils de la fraction à 10 % les
+  années où le code n'en écrit pas ; les revenus non salariés de la prime
+  pour l'emploi ; l'année de revenus de l'imposition de la majoration pour
+  enfants ; les règles d'avant 1981 sans texte lu.

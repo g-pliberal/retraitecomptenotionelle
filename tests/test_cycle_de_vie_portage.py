@@ -80,12 +80,13 @@ BALAYAGES = (
 
 #: La grille du module de l'impôt seul : des années de chaque règle — les
 #: majorations et minorations des années 1960, les paliers de 1968 et 1969, la
-#: décote de 1981 à 1985, le plafonnement, les 20 % d'avant 2006, la prime pour
-#: l'emploi, les mesures de 2001, 2008 et 2013, la réduction de 2016 à 2019 —,
-#: deux années projetées, des foyers de chaque sorte, quatre revenus.
-ANNEES_IMPOT = (1962, 1966, 1968, 1969, 1971, 1975, 1978, 1981, 1983, 1984, 1988, 1995,
-                1999, 2000, 2001, 2005, 2008, 2010, 2013, 2014, 2017, 2020, 2024, 2025,
-                2031, 2045)
+#: décote de 1981 à 1985, le plafonnement, les 20 % d'avant 2006, l'abattement
+#: des adhérents de 1976 et de 1977, la prime pour l'emploi, les mesures de
+#: 2001, 2008 et 2013, la réduction de 2016 à 2019 —, deux années projetées,
+#: des foyers de chaque sorte, quatre revenus.
+ANNEES_IMPOT = (1962, 1966, 1968, 1969, 1971, 1975, 1976, 1977, 1978, 1981, 1983, 1984,
+                1988, 1995, 1999, 2000, 2001, 2005, 2008, 2010, 2013, 2014, 2017, 2020,
+                2024, 2025, 2031, 2045)
 FOYERS_IMPOT = {
     "salarie": {"declarants": [{"salaires": 1.0}]},
     "retraite": {"declarants": [{"pensions": 0.8, "age": 70}]},
@@ -370,7 +371,7 @@ def test_l_impot_de_chaque_foyer_se_retrouve_en_javascript(les_deux):
 
 def test_la_grille_de_l_impot_a_un_objet(les_deux):
     """La grille touche chaque étape : chaque correction y joue au moins une
-    fois."""
+    fois, l'abattement des adhérents sous chacune de ses lois."""
     _, attendu = les_deux
     for etape in ("plafonnement", "reduction_complementaire", "decote",
                   "reduction_sous_condition_de_revenus", "minoration_exceptionnelle",
@@ -379,6 +380,10 @@ def test_la_grille_de_l_impot_a_un_objet(les_deux):
                   "abattement_vingt_pour_cent", "abattement_age_invalidite",
                   "abattement_adherents", "majoration_des_benefices"):
         assert any(i[etape] for i in attendu["impots"]), etape
+    abattus = {(d["nom"], d["annee"]) for d, i in zip(_demandes_d_impot(), attendu["impots"])
+               if i["abattement_adherents"]}
+    assert {("artisan_adherent", 1976), ("artisan_adherent", 1977),
+            ("liberal_adherent", 1978), ("liberal_adherent", 1983)} <= abattus
 
 
 def test_les_ages_d_equilibre_se_retrouvent_en_javascript(les_deux):

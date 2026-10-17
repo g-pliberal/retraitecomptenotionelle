@@ -59,7 +59,7 @@ export const HORS_CHAMP = Object.freeze([
   "revenus autres que les salaires, les bénéfices et les pensions",
   "abattement forfaitaire des régimes micro : le bénéfice s'entend après lui",
   "revenus d'activité non salariée de la prime pour l'emploi",
-  "limites de chiffre d'affaires de l'abattement des adhérents, de 1978 à 1982",
+  "limites de chiffre d'affaires ou de recettes de l'abattement des adhérents, de 1976 à 1982",
   "charges déductibles et pensions alimentaires",
   "réductions et crédits d'impôt autres que la prime pour l'emploi, les réductions de 2001 "
     + "et de 2013 et le crédit de 2008",
@@ -83,11 +83,16 @@ export const PREMIERE_ANNEE_PLAFONNEMENT = 1981;
 /** Depuis les revenus de 2005, le montant minimal de la prime pour l'emploi est un seuil. */
 export const PREMIERE_ANNEE_SEUIL_DE_LA_PPE = 2005;
 
-/** Le bénéfice d'un indépendant (art. 158, 4 bis et 7) : voir `impot_revenu.py`. */
+/** Le bénéfice d'un indépendant (art. 158, 4 bis, 4 ter et 7) : voir `impot_revenu.py`. */
 export const REGIMES_DU_BENEFICE = Object.freeze(["reel_adherent", "reel_non_adherent", "micro"]);
 export const CATEGORIES_DU_BENEFICE = Object.freeze(["bic", "bnc", "ba"]);
-export const PREMIERE_ANNEE_ABATTEMENT_ADHERENTS = 1978;
-export const PREMIERE_ANNEE_ABATTEMENT_BNC = 1984;
+/** L'abattement de 10 % de la loi de finances rectificative pour 1974, dès les revenus de 1976. */
+export const PREMIERE_ANNEE_ABATTEMENT_ADHERENTS = 1976;
+export const TAUX_ABATTEMENT_DE_1974 = 0.10;
+/** Les 20 % de la loi de finances pour 1978, dès les revenus de 1977, et leurs seuil et limite. */
+export const PREMIERE_ANNEE_ABATTEMENT_DE_20 = 1977;
+export const SEUIL_ET_LIMITE_DE_1977 = Object.freeze([150000, 357300]);
+export const PREMIERE_ANNEE_ABATTEMENT_BNC = 1978;
 export const DERNIERE_ANNEE_ABATTEMENT_ADHERENTS = 2005;
 /** Le seuil, en francs, au-delà duquel l'abattement des adhérents tombe à 10 %, jusqu'en 1995. */
 export const SEUILS_ABATTEMENT_REDUIT = Object.freeze({
@@ -466,8 +471,17 @@ function abattementAdherent(declarant, parametres, benefice) {
   const premiere = declarant.categorie === "bnc"
     ? PREMIERE_ANNEE_ABATTEMENT_BNC : PREMIERE_ANNEE_ABATTEMENT_ADHERENTS;
   if (annee < premiere || annee > DERNIERE_ANNEE_ABATTEMENT_ADHERENTS) return 0.0;
-  const plafond = obtenir(parametres.serie("deductions"), "vingt_pour_cent_plafond", Infinity);
-  const seuil = Math.min(obtenir(SEUILS_ABATTEMENT_REDUIT, annee, plafond), plafond);
+  if (annee < PREMIERE_ANNEE_ABATTEMENT_DE_20) {
+    return arrondirElement(annee, TAUX_ABATTEMENT_DE_1974 * benefice);
+  }
+  let seuil;
+  let plafond;
+  if (annee === PREMIERE_ANNEE_ABATTEMENT_DE_20) {
+    [seuil, plafond] = SEUIL_ET_LIMITE_DE_1977;
+  } else {
+    plafond = obtenir(parametres.serie("deductions"), "vingt_pour_cent_plafond", Infinity);
+    seuil = Math.min(obtenir(SEUILS_ABATTEMENT_REDUIT, annee, plafond), plafond);
+  }
   const abattement = 0.20 * Math.min(benefice, seuil)
     + 0.10 * Math.max(Math.min(benefice, plafond) - seuil, 0.0);
   return arrondirElement(annee, abattement);
@@ -739,10 +753,6 @@ function remarquesDe(foyer, parametres, laDecote, laMinoration, laMajoration, pp
   }
   const adherents = benefices.filter((b, i) => b > 0
     && foyer.declarants[i].regime === "reel_adherent");
-  if (adherents.length && annee < PREMIERE_ANNEE_ABATTEMENT_ADHERENTS) {
-    remarques.push("bénéfice d'un adhérent d'avant 1978 : l'abattement de sa rédaction, "
-      + "que l'index n'a pas, n'est pas appliqué");
-  }
   if (adherents.some((b) => b > obtenir(SEUILS_ABATTEMENT_REDUIT, annee, Infinity))) {
     remarques.push("abattement des adhérents : le seuil de sa fraction à 10 % est celui de "
       + "la rédaction de l'année, sans l'indexation que le code prescrit, "
