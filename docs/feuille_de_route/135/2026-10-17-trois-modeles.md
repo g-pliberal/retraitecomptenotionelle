@@ -120,15 +120,22 @@ documentation, `code.claude.com/docs/en/`, lue le 17 octobre).
   Le défaut de celui de Claude Code est rédigé pour Anthropic, et le
   propriétaire l'envoie (`/bug`, ou un ticket sur `anthropics/claude-code`,
   que cette session ne peut ouvrir faute du droit d'y pousser).
+- *L'agent Explore du dépôt*, `.claude/agents/Explore.md`, à la demande du
+  propriétaire : celui de Claude Code, qu'une session lance pour une
+  recherche en éventail, tournait sur le modèle de la session, donc sur
+  Opus ; celui du dépôt, du même nom, le remplace (`sub-agents.md`) et tourne
+  sur Haiku, au contrat de l'éclaireur, avec l'ampleur que la demande lui
+  fixe — rapide, moyenne ou très poussée. La règle de `CLAUDE.md` ne change
+  pas : une recherche en éventail ne se lance qu'à la demande du
+  propriétaire.
 
 **Ce qui reste au propriétaire.** Le modèle de chaque session, à son
 ouverture : Opus 5.5 pour le modèle, le droit et la certification des
 données, où un jugement faux part sur `main` sans relecture ; Sonnet 5.5, à
 moitié prix, pour ce que les tests tiennent serré — le site, l'outillage, la
-prose, l'archivage d'une action. Explore tourne sur le modèle de la session :
-un `Explore.md` du dépôt sur Haiku mettrait les recherches en éventail au
-prix de l'éclaireur. L'effort `max` passe devant celui que déclarent les
-agents : l'éclaireur tourne donc à `max` sur Haiku, ce qui le ralentit sans
-peser sur la facture, et les agents d'impeccable, qui déclaraient `medium` ou
-`high`, à `max` sur Opus. Dans quelques jours, `python scripts/consommation.py`,
-ou `/usage` pour un abonné, dira la part que l'éclaireur prend.
+prose, l'archivage d'une action. L'effort `max` passe devant celui que
+déclarent les agents : l'éclaireur et Explore tournent donc à `max` sur
+Haiku, ce qui les ralentit sans peser sur la facture, et les agents
+d'impeccable, qui déclaraient `medium` ou `high`, à `max` sur Opus. Dans
+quelques jours, `python scripts/consommation.py`, ou `/usage` pour un
+abonné, dira la part que prennent les agents sur Haiku.
