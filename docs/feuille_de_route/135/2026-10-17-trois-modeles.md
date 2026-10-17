@@ -109,6 +109,17 @@ documentation, `code.claude.com/docs/en/`, lue le 17 octobre).
   appel garde enfin le plus grand compte de sortie de ses entrées : le
   rapport de l'essai en portait 177 jetons sur la première, près de 7 000 sur
   la dernière, seule à dire le compte entier.
+- *Le skill `claude-api` du dépôt*, `.claude/skills/claude-api/SKILL.md`, à
+  la demande du propriétaire : un skill du projet qui porte le nom d'un skill
+  fourni le remplace (`skills.md` : « Your skill replaces the bundled
+  command »). Le sien, environ 350 mots quand celui de Claude Code pesait
+  49 000 jetons, renvoie à la page des tarifs du jour, par une commande qui
+  n'en garde que la table principale, à la documentation de Claude Code et
+  aux choix du dépôt ; ôter son dossier rend celui de Claude Code. Un
+  sous-agent sur Haiku l'a invoqué : c'est bien celui du dépôt qui se charge.
+  Le défaut de celui de Claude Code est rédigé pour Anthropic, et le
+  propriétaire l'envoie (`/bug`, ou un ticket sur `anthropics/claude-code`,
+  que cette session ne peut ouvrir faute du droit d'y pousser).
 
 **Ce qui reste au propriétaire.** Le modèle de chaque session, à son
 ouverture : Opus 5.5 pour le modèle, le droit et la certification des

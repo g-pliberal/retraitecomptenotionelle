@@ -4699,8 +4699,8 @@ l'essentiel, 3 ; le hook de démarrage ; « Économiser le contexte » ; l'arbre
 du dépôt ; le parcours `tenu` ; le contexte en cinq étapes ; la mémoire
 indexée sur le seul modèle ; `pousser.sh` publie une tête détachée ;
 `node --test` sauté quand rien de ce qu'il lit n'a bougé, les cumuls au
-hasard et le portage du coût (notes du 16) ; la lecture confiée à un agent
-sur Haiku, et `consommation.py` par modèle (note du 17, `trois-modeles`).
+hasard et le portage du coût (notes du 16) ; la lecture confiée à Haiku,
+`consommation.py` par modèle, le skill `claude-api` du dépôt (note du 17).
 Reste : `actions/cache` sur GitHub, le modèle et l'effort des sessions, que
 le propriétaire décide ; la part de l'éclaireur, à relever ; du portage
 rejoué, les pages au hasard, que la session des pages tient ; le 4 et 5.
