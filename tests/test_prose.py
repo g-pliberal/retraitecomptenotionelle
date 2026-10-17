@@ -778,6 +778,18 @@ def test_chaque_action_en_cours_s_ouvre_sur_son_bloc_reprise():
     assert not fautes, fautes
 
 
+def test_pousser_joue_les_deux_tests_de_la_feuille_de_route():
+    """``scripts/pousser.sh`` joue, avant d'envoyer un commit qui touche la
+    feuille de route, ce test-ci et le suivant (action 163) : renommés, l'envoi
+    les chercherait en vain. Ce test vit ici, et non dans ``test_pousser.py``,
+    isolé, dont l'empreinte ne lit pas ce fichier."""
+    texte = (RACINE / "scripts" / "pousser.sh").read_text(encoding="utf-8")
+    noms = re.findall(r"tests/test_prose\.py::(test_\w+)", texte)
+    assert sorted(noms) == ["test_chaque_action_en_cours_s_ouvre_sur_son_bloc_reprise",
+                            "test_les_notes_de_la_feuille_de_route_se_rangent_par_action"]
+    assert all(callable(globals().get(nom)) for nom in noms)
+
+
 def test_les_notes_de_la_feuille_de_route_se_rangent_par_action():
     """Une note de la feuille de route par fichier (action 148) : deux
     sessions sur deux étapes d'une même action n'écrivent plus au même

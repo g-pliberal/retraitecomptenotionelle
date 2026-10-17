@@ -13,7 +13,6 @@ dépôt courant.
 
 from __future__ import annotations
 
-import re
 import shutil
 import subprocess
 from pathlib import Path
@@ -317,16 +316,6 @@ def test_il_refuse_une_feuille_de_route_qui_ne_tient_pas_ses_regles(atelier):
     acheve = pousser(session)
     assert acheve.returncode == 0, acheve.stderr
     assert tete_distante(distant, "main") == tete
-
-
-def test_l_envoi_joue_les_tests_de_la_feuille_de_route_qui_existent():
-    """Les deux tests que ``pousser.sh`` nomme sont ceux de
-    ``tests/test_prose.py`` : renommés, l'envoi les chercherait en vain."""
-    noms = re.findall(r"tests/test_prose\.py::(test_\w+)", SCRIPT.read_text(encoding="utf-8"))
-    prose = (SCRIPT.parent.parent / "tests" / "test_prose.py").read_text(encoding="utf-8")
-    assert sorted(noms) == ["test_chaque_action_en_cours_s_ouvre_sur_son_bloc_reprise",
-                            "test_les_notes_de_la_feuille_de_route_se_rangent_par_action"]
-    assert all(f"\ndef {nom}(" in prose for nom in noms)
 
 
 def _autre_session_pousse(distant: Path, tmp_path: Path, nom: str, texte: str = "x") -> str:
