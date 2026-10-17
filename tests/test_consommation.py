@@ -21,7 +21,9 @@ import consommation  # noqa: E402
 DOSSIER = "/depot"
 
 
-def _appel(requete: str, contexte: int, sortie: int, blocs: list[dict]) -> list[dict]:
+def _appel(
+    requete: str, contexte: int, sortie: int, blocs: list[dict], modele: str = "claude-opus-5-5"
+) -> list[dict]:
     """Un appel de l'API, réparti comme Claude Code le fait : une entrée par bloc."""
     usage = {
         "input_tokens": 2,
@@ -34,10 +36,16 @@ def _appel(requete: str, contexte: int, sortie: int, blocs: list[dict]) -> list[
             "type": "assistant",
             "requestId": requete,
             "cwd": DOSSIER,
-            "message": {"id": "m" + requete, "content": [bloc], "usage": usage},
+            "message": {"id": "m" + requete, "model": modele, "content": [bloc], "usage": usage},
         }
         for bloc in blocs
     ]
+
+
+def _de_sous_agent(entrees: list[dict]) -> list[dict]:
+    """Claude Code 2.1.302 marque chaque entrée d'un sous-agent, dans sa
+    propre transcription aussi."""
+    return [{**entree, "isSidechain": True} for entree in entrees]
 
 
 def _outil(identifiant: str, nom: str, **entree) -> dict:
@@ -176,11 +184,22 @@ def test_une_image_se_compte_a_ses_dimensions_et_non_a_son_base64():
     assert consommation.estimer([image]) == pytest.approx(100)
 
 
+def test_un_sous_agent_se_compte_dans_sa_transcription_et_non_dans_celle_de_la_session(tmp_path):
+    """Ses appels marqués dans la transcription de la session sont les siens,
+    pas ceux de la session ; dans la sienne, ils comptent tous, avec leur
+    modèle."""
+    sous_agent = _de_sous_agent(_appel("r2", 400, 5, [{"type": "text"}], "claude-haiku-5-5"))
+    session = _ecrire(tmp_path / "s2.jsonl", [*_appel("r1", 1000, 10, [{"type": "text"}]), *sous_agent])
+    agent = _ecrire(tmp_path / "s2" / "subagents" / "agent-b.jsonl", sous_agent)
+    assert [(a.contexte, a.modele) for a in consommation.lire(session).appels] == [(1000, "claude-opus-5-5")]
+    assert [(a.contexte, a.modele) for a in consommation.lire(agent).appels] == [(400, "claude-haiku-5-5")]
+
+
 def test_le_rapport_classe_fichiers_commandes_et_hooks(tmp_path, capsys):
     _session(tmp_path)
     _ecrire(
         tmp_path / "projects" / "-depot" / "s1" / "subagents" / "agent-a.jsonl",
-        _appel("r9", 500, 5, [{"type": "text"}]),
+        _de_sous_agent(_appel("r9", 500, 5, [{"type": "text"}], "claude-haiku-5-5")),
     )
     assert consommation.main([str(tmp_path / "projects")]) == 0
     sortie = capsys.readouterr().out
@@ -188,3 +207,5 @@ def test_le_rapport_classe_fichiers_commandes_et_hooks(tmp_path, capsys):
     assert "a.py" in sortie and "b.md" in sortie
     assert "sed" in sortie and "hook SessionStart:startup" in sortie
     assert "s1/agent-a" in sortie
+    par_modele = sortie.split("Par modèle")[1].split("Par origine")[0]
+    assert "claude-opus-5-5" in par_modele and "claude-haiku-5-5" in par_modele

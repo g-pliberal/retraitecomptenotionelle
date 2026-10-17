@@ -15,7 +15,9 @@ appel au suivant à ce qui est entré entre les deux : la sortie du modèle
 les ajouts du harnais (rappels, hooks) et les messages de l'utilisateur.
 Chaque part, multipliée par le nombre d'appels qui l'ont relue, donne ses
 jetons relus ; leur somme est exactement celle des contextes de chaque
-appel. Feuille de route, action 135, étape 1 du contexte.
+appel. Feuille de route, action 135, étape 1 du contexte. Le rapport ventile
+aussi les appels par modèle, ceux des sous-agents compris (action 135, note
+du 17 octobre 2026, `trois-modeles`).
 """
 
 from __future__ import annotations
@@ -66,6 +68,7 @@ class Part:
 class Appel:
     contexte: int
     sortie: int
+    modele: str = "?"
 
 
 @dataclass
@@ -220,13 +223,17 @@ def lire(chemin: Path, nom: str | None = None) -> Session:
     attente: list[Part] = []  # ce qui est entré depuis le dernier appel
     entrees: list[list[Part]] = []  # entrees[i] : avant l'appel i
     vus: set[str] = set()
+    # Toutes les entrées d'une transcription de sous-agent portent
+    # `isSidechain` : on ne l'écarte que de celle de la session, qui ne doit
+    # pas compter les appels d'un sous-agent parmi les siens.
+    sous_agent = chemin.parent.name == "subagents"
     with open(chemin, encoding="utf-8") as flux:
         for ligne in flux:
             try:
                 entree = json.loads(ligne)
             except json.JSONDecodeError:
                 continue
-            if entree.get("isSidechain"):
+            if entree.get("isSidechain") and not sous_agent:
                 continue
             genre = entree.get("type")
             dossier = entree.get("cwd")
@@ -250,7 +257,9 @@ def lire(chemin: Path, nom: str | None = None) -> Session:
                 if cle in vus or not usage or not _contexte(usage):
                     continue
                 vus.add(cle)
-                session.appels.append(Appel(_contexte(usage), usage.get("output_tokens", 0)))
+                session.appels.append(
+                    Appel(_contexte(usage), usage.get("output_tokens", 0), message.get("model") or "?")
+                )
                 entrees.append(attente)
                 attente = []
             elif genre == "user":
@@ -404,6 +413,23 @@ def rapport(sessions: list[Session], limite: int = 15) -> str:
         f"  {'total, ' + str(len(sessions)) + ' sessions':<40} {additionner(len(s.appels) for s in sessions):>6} "
         f"{'':>7} {'':>7} {_m(total):>7} {(f'{additionner(couts):.2f} $' if couts else '—'):>7}"
     )
+
+    par_modele: dict[str, list[float]] = defaultdict(lambda: [0, 0.0, 0.0])
+    for s in sessions:
+        for appel in s.appels:
+            somme = par_modele[appel.modele]
+            somme[0] += 1
+            somme[1] += appel.contexte
+            somme[2] += appel.sortie
+    lignes += [
+        "\nPar modèle, sous-agents compris : appels, jetons relus (millions) et leur part, "
+        "sortie (kjetons).",
+        f"  {'modèle':<24} {'appels':>6} {'Mrelus':>7} {'part':>6} {'ksortie':>8}",
+    ]
+    for modele, (appels, relu, sortie) in sorted(par_modele.items(), key=lambda kv: -kv[1][1]):
+        lignes.append(
+            f"  {modele[:24]:<24} {int(appels):>6} {_m(relu):>7} {100 * relu / total:>5.1f}% {_k(sortie):>8}"
+        )
 
     def cumuler(cle_de) -> dict[str, list[float]]:
         sommes: dict[str, list[float]] = defaultdict(lambda: [0.0, 0.0, 0])
