@@ -209,6 +209,30 @@ FIN
     done
 fi
 
+# La feuille de route tient ses règles (action 163, étape 2) : du 6 au
+# 17 octobre 2026, six rouges de main venaient du bloc « Reprise », que la
+# session écrit au dernier commit, après ses tests. Quand un commit à publier
+# touche la feuille de route ou ses notes, leurs deux tests se jouent ici, en
+# une seconde ou deux. Sans Python qui ait pytest, rien ne se vérifie.
+if [ "$avance" -gt 0 ] && [ -f tests/test_prose.py ] \
+    && [ -n "$(git diff --name-only origin/main..HEAD -- docs/feuille_de_route.md docs/feuille_de_route)" ]; then
+    for python in python3 python; do
+        "$python" -c 'import pytest' >/dev/null 2>&1 || continue
+        if ! sortie=$("$python" -m pytest -q -p no:cacheprovider \
+                tests/test_prose.py::test_chaque_action_en_cours_s_ouvre_sur_son_bloc_reprise \
+                tests/test_prose.py::test_les_notes_de_la_feuille_de_route_se_rangent_par_action \
+                2>&1); then
+            {
+                echo "pousser: la feuille de route ne tient pas ses règles (le bloc « Reprise », les notes ; CLAUDE.md), rien poussé :"
+                printf '%s\n' "$sortie" | grep -E '^(FAILED|ERROR|E  )' | head -n 12 | sed 's/^/    /'
+                echo "Corriger, commiter, puis relancer."
+            } >&2
+            exit 1
+        fi
+        break
+    done
+fi
+
 if [ "$avance" -gt 0 ]; then
     avec_reprises git push --quiet origin HEAD:main || {
         echo "pousser: push vers main impossible après 5 essais" >&2; exit 1; }

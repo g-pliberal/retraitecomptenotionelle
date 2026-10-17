@@ -1677,7 +1677,9 @@ le rappelle à la première retouche du code de chaque commit, tant que pytest
 n'a vu échouer aucun test en train de s'écrire ; `tests/conftest.py` le lui
 dit. `scripts/pousser.sh` refuse d'envoyer un commit qui change le code sans
 toucher aux tests, s'il ne le déclare pas par une ligne `Sans-test: <raison>`
-de son message.
+de son message ; et, quand un commit à publier touche la feuille de route ou
+ses notes, il joue leurs deux tests, le bloc « Reprise » et le rangement des
+notes, et refuse s'ils rougissent (action 163).
 
 Tout tourne sur GitHub à chaque envoi sur `main`, par
 `.github/workflows/tests.yml`, qui repart du dernier `main`, refait les
