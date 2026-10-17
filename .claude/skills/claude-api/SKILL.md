@@ -31,10 +31,14 @@ session ou un agent, et ce qu'il coûte.
   (le modèle d'un agent, ceux que Claude Code fournit), `costs`,
   `prompt-caching` (chaque modèle a son cache) et `skills`. Un `curl` suivi
   d'un `grep` y prend la phrase utile ; la page entière ne se lit pas.
-- **Les choix du dépôt** : la lecture confiée à l'éclaireur, sur Haiku
-  (`.claude/agents/eclaireur.md`, et la règle de `CLAUDE.md`) ; le modèle de
-  chaque session et ce que l'effort `max` impose aux agents, dans la note
-  `docs/feuille_de_route/135/2026-10-17-trois-modeles.md`. Ce que les
-  sessions consomment, modèle par modèle : `python scripts/consommation.py`.
+- **Les choix du dépôt** : la lecture confiée à Haiku, par l'éclaireur et
+  Explore (`.claude/agents/`, et la règle de `CLAUDE.md`) ; trois agents
+  d'impeccable sur Sonnet, et les agents généralistes aussi
+  (`CLAUDE_CODE_SUBAGENT_MODEL`, dans `.claude/settings.json`, qui tient
+  encore l'effort `max` et la chaîne de secours, `fallbackModel`) ; Fable pour
+  une étape qui écrit une règle du scénario 1 (`CLAUDE.md`). Le détail est
+  dans la note `docs/feuille_de_route/135/2026-10-17-trois-modeles.md` ; ce
+  que les sessions consomment, modèle par modèle :
+  `python scripts/consommation.py`.
 - **Pour écrire du code qui appelle l'API**, ce skill ne suffit pas : ôter son
   dossier rend celui de Claude Code.

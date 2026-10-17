@@ -1,7 +1,9 @@
 {
   "env": {
-    "CLAUDE_CODE_EFFORT_LEVEL": "max"
+    "CLAUDE_CODE_EFFORT_LEVEL": "max",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"
   },
+  "fallbackModel": ["sonnet", "opus"],
   "hooks": {
     "SessionStart": [
       {

@@ -137,15 +137,37 @@ documentation, `code.claude.com/docs/en/`, lue le 17 octobre).
   `claude-sonnet-5-5`. Le propriétaire a ensuite remis ce relecteur en
   `inherit` : il juge le rendu fini, là où Sonnet risque le plus de manquer
   face à Opus. Les trois autres restent sur Sonnet.
+- *Les agents généralistes sur Sonnet*, à la demande du propriétaire :
+  `CLAUDE_CODE_SUBAGENT_MODEL=sonnet`, dans `.claude/settings.json`, met sur
+  Sonnet les agents qui ne disent pas leur modèle, d'abord le généraliste
+  qu'une session lance pour une tâche en plusieurs étapes. Ni Explore, ni
+  Plan, ni les agents qui déclarent le leur n'en changent (`sub-agents.md`),
+  et un `model` passé à l'appel passe devant.
+- *Fable pour une règle du scénario 1*, à la demande du propriétaire : une
+  étape qui écrit ou change une règle du scénario 1 se mène sur Fable
+  (`CLAUDE.md`). Sa lecture du cache ne coûte que 0,25 $ le million de
+  jetons, contre 0,20 pour Opus, et le reste deux fois et demie le tarif
+  d'Opus : une session y revient à 1,7 à 2 fois une session sur Opus, selon
+  la part qu'y prend la lecture du cache. Ouverte sur un autre modèle, la
+  session le dit au propriétaire dès son début, quand une bascule coûte
+  encore peu.
+- *Une chaîne de secours*, à la demande du propriétaire :
+  `"fallbackModel": ["sonnet", "opus"]`. Opus saturé ou indisponible, la
+  session passe sur Sonnet pour le tour en cours, au lieu d'échouer ; une
+  session sur Sonnet passe sur Opus, et les sous-agents suivent la même
+  chaîne (`model-config.md`). Ces deux réglages ne valent qu'aux sessions qui
+  s'ouvrent après eux : celle-ci ne les a pas éprouvés.
 
 **Ce qui reste au propriétaire.** Le modèle de chaque session, à son
-ouverture : Opus 5.5 pour le modèle, le droit et la certification des
-données, où un jugement faux part sur `main` sans relecture ; Sonnet 5.5, à
-moitié prix, pour ce que les tests tiennent serré — le site, l'outillage, la
-prose, l'archivage d'une action. L'effort `max` passe devant celui que
-déclarent les agents : l'éclaireur et Explore tournent donc à `max` sur
-Haiku, ce qui les ralentit sans peser sur la facture ; trois agents
-d'impeccable, qui déclarent `medium`, à `max` sur Sonnet, et son relecteur,
-qui déclare `high`, à `max` sur le modèle de la session. Dans
-quelques jours, `python scripts/consommation.py`, ou `/usage` pour un
-abonné, dira la part que prennent les agents sur Haiku.
+ouverture : Fable pour une étape qui écrit une règle du scénario 1, Opus 5.5
+pour le reste du modèle, du droit et de la certification des données, où un
+jugement faux part sur `main` sans relecture ; Sonnet 5.5, à moitié prix,
+pour ce que les tests tiennent serré — le site, l'outillage, la prose,
+l'archivage d'une action. L'effort `max` passe devant celui que déclarent les
+agents : l'éclaireur et Explore tournent donc à `max` sur Haiku, ce qui les
+ralentit sans peser sur la facture ; les agents généralistes à `max` sur
+Sonnet, comme trois agents d'impeccable qui déclarent `medium` ; le
+relecteur d'impeccable, qui déclare `high`, à `max` sur le modèle de la
+session. Dans quelques jours, `python scripts/consommation.py`, ou `/usage`
+pour un abonné, dira la part que prennent les agents sur Haiku et sur
+Sonnet.

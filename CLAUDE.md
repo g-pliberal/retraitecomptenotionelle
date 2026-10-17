@@ -211,3 +211,9 @@ pension, tel que la caisse l'applique. Une session qui y touche commence par
 lit avant d'écrire une règle, ce qu'elle en écrit, ce qu'elle consigne au
 journal de veille en finissant. On y cherche dans le JORF et LEGI par l'index
 de la DILA, sans jamais retélécharger les dumps.
+
+Une étape qui écrit ou change une règle du scénario 1 se mène sur Fable, plus
+cher qu'Opus mais plus sûr. Ouverte sur un autre modèle, la session le dit au
+propriétaire dès son début, qui bascule par `/model fable` tant que le
+contexte est court : chaque modèle a son cache, et une bascule le réécrit en
+entier.
