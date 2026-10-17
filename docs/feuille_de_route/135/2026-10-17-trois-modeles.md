@@ -134,7 +134,9 @@ documentation, `code.claude.com/docs/en/`, lue le 17 octobre).
   faisait tourner sur Opus. `docs/outillage_interface.md` le dit, avec ce
   qu'une mise à jour d'Impeccable qui les recopie doit reporter. Un appel
   sans effet à `impeccable-finish-reviewer`, au tour suivant, a tourné sur
-  `claude-sonnet-5-5`.
+  `claude-sonnet-5-5`. Le propriétaire a ensuite remis ce relecteur en
+  `inherit` : il juge le rendu fini, là où Sonnet risque le plus de manquer
+  face à Opus. Les trois autres restent sur Sonnet.
 
 **Ce qui reste au propriétaire.** Le modèle de chaque session, à son
 ouverture : Opus 5.5 pour le modèle, le droit et la certification des
@@ -142,7 +144,8 @@ données, où un jugement faux part sur `main` sans relecture ; Sonnet 5.5, à
 moitié prix, pour ce que les tests tiennent serré — le site, l'outillage, la
 prose, l'archivage d'une action. L'effort `max` passe devant celui que
 déclarent les agents : l'éclaireur et Explore tournent donc à `max` sur
-Haiku, ce qui les ralentit sans peser sur la facture, et les agents
-d'impeccable, qui déclarent `medium` ou `high`, à `max` sur Sonnet. Dans
+Haiku, ce qui les ralentit sans peser sur la facture ; trois agents
+d'impeccable, qui déclarent `medium`, à `max` sur Sonnet, et son relecteur,
+qui déclare `high`, à `max` sur le modèle de la session. Dans
 quelques jours, `python scripts/consommation.py`, ou `/usage` pour un
 abonné, dira la part que prennent les agents sur Haiku.

@@ -74,11 +74,12 @@ Le hook écrit `.impeccable/hook.cache.json` à l'usage, ignoré.
 `impeccable.cmd` couvre Windows sans `sh` ; le hook commité appelle le lanceur
 POSIX, comme sur les machines Cloud.
 
-Les quatre agents `.claude/agents/impeccable-*.md` déclarent `model: sonnet`,
+Trois des agents `.claude/agents/impeccable-*.md` déclarent `model: sonnet`,
 quand le paquet livre `model: inherit`, le modèle de la session : Sonnet
 coûte moitié moins qu'Opus (feuille de route, action 135, note du
-17 octobre 2026). Une mise à jour d'Impeccable qui recopie ces agents remet
-`inherit` : y reporter `sonnet`.
+17 octobre 2026). Le relecteur, `impeccable-finish-reviewer`, qui juge le
+rendu fini, garde `inherit`. Une mise à jour d'Impeccable qui recopie ces
+agents remet `inherit` partout : reporter `sonnet` sur les trois autres.
 
 ## Playwright CLI
 
