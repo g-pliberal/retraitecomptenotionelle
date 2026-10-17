@@ -89,7 +89,7 @@ entier d'un côté, et efface ce que l'autre session y a écrit.
 
 Chaque appel d'outil relit toute la conversation : ce qu'une session a lu,
 elle le repaie à chaque geste suivant, et elle coûte d'autant plus cher
-qu'elle dure. D'où cinq règles.
+qu'elle dure. D'où six règles.
 
 - **Une session, une étape.** L'étape poussée sur `main`, la session s'arrête
   et le dit au propriétaire ; l'étape suivante s'ouvre dans une session neuve.
@@ -112,6 +112,15 @@ qu'elle dure. D'où cinq règles.
   `.claude/hooks/lecture.py` refuse alors sans `limit`, ni par `cat`, qu'il
   ne voit pas ; les témoins de `tests/temoins/`, par `resumer_temoins.py` ou
   une requête ciblée.
+- **Ce dont seule la conclusion compte, l'éclaireur le lit.** Une recherche
+  de plusieurs lectures dont la session ne veut que la réponse — où une
+  règle, un chiffre ou un test se trouve, ce que la feuille de route, ses
+  notes et les fiches renvoient à une action — se confie, une à la fois, à
+  l'agent `eclaireur` (`.claude/agents/eclaireur.md`). Il tourne sur Haiku,
+  dont le jeton coûte bien moins que celui d'Opus, dans un contexte à lui :
+  ce qu'il lit n'entre pas dans celui de la session, que chaque appel relit.
+  Il rend des `fichier:ligne` et des citations exactes ; ce que la session
+  modifie ou cite, elle le relit elle-même, à la fenêtre qu'il désigne.
 - **Les sorties longues passent par `tail` ou `grep`** :
   `python -m pytest 2>&1 | tail -n 30`, de même pour `regenerer.py` et
   `resumer_temoins.py` ; jamais de `git diff` ni de `git show` entier sur un
@@ -187,9 +196,9 @@ qu'elle dure. D'où cinq règles.
 
 - **Au début d'une étape** : lire le bloc « Reprise » de son action, et celui
   de son étape s'il en a un (`python scripts/reprise.py <action>`), puis
-  relever, par `grep -n` de son numéro ou de son domaine, ce que la feuille de
-  route, ses notes et les fiches lui renvoient, avant d'écrire la moindre
-  ligne.
+  relever, par l'éclaireur ou par `grep -n` de son numéro ou de son domaine,
+  ce que la feuille de route, ses notes et les fiches lui renvoient, avant
+  d'écrire la moindre ligne.
 - **Les autres listes** sont aux consignes des dossiers : une retouche de
   `moteur/js/pages.js` et un champ de saisie de plus, dans
   `moteur/CLAUDE.md` ; un changement du modèle, dans `src/CLAUDE.md`.
