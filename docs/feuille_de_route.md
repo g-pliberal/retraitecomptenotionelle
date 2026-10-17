@@ -6408,8 +6408,8 @@ d'un commit qui change le code sans test), ou l'alléger.
 
 **Reprise, au 17 octobre 2026.** Faite, l'étape 1 : le site ne part plus en
 ligne que d'une suite verte sur `main`, `tests.yml` déployant l'arbre du
-commit publié par GitHub Actions. Au propriétaire de régler Pages sur
-« GitHub Actions » (Settings → Pages), puis de voir le premier déploiement.
+commit publié par GitHub Actions. Pages réglé sur « GitHub Actions » par le
+propriétaire, le premier déploiement a eu lieu le jour même, vérifié.
 Reste l'étape 2 : classer les 25 verdicts rouges de `main` du 6 au
 17 octobre 2026, cause par cause, et dire au propriétaire quelle garde en
 découle ; commencer par la recherche des commits « Suite ROUGE sur » et leur

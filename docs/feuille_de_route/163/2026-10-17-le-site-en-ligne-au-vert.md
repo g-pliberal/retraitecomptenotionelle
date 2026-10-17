@@ -49,3 +49,12 @@ dans l'onglet Actions et l'environnement `github-pages`.
 dans un dépôt jetable ; l'enchaînement de `tests.yml` ; l'étape qui lit la
 source de Pages, jouée sous le shell de GitHub, `gh` remplacé par sa réponse.
 Puis `python -m pytest -m rapide`.
+
+**Le même jour, sur GitHub.** Le propriétaire règle la source de Pages sur
+« GitHub Actions » pendant la course de `2405aff`. Verte, elle lit la source,
+archive et téléverse l'arbre de son verdict, `0f56c04`, et le job `en_ligne`
+le déploie à 16 h 23 UTC ; le site répond. L'environnement `github-pages`
+inscrit ce déploiement au commit qui a lancé la course, `2405aff`, non à celui
+du verdict, que la course a créé ; l'arbre en ligne est celui du verdict. La
+poussée du robot n'a déclenché aucune construction : depuis le réglage, seul
+le job publie.
