@@ -1,0 +1,15 @@
+date: "2026-10-17"
+session: "action 162 : le test d'abord, la règle et sa garde"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1,
+  seulement aux consignes (CLAUDE.md et celles des trois zones), à l'ordre de
+  l'étape 3 de la veille (docs/veille_droit.md), au § 10 de l'architecture et
+  à l'outillage de Claude Code (.claude/hooks/tdd.py, tests/conftest.py).
+trouve: >-
+  Aucune règle n'a changé. La procédure de veille faisait entrer l'exemple
+  publié dans exemples_officiels.yaml sans dire quand : il y entre désormais
+  avant le code, et se voit échouer avant que le code le fasse passer.
+reste: >-
+  L'étape 2 de l'action 162 : après une semaine de sessions, relever les
+  commits qui changent le code sans toucher aux tests, et dire au
+  propriétaire s'il faut durcir la garde ou l'alléger.

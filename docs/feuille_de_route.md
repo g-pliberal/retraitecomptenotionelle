@@ -6375,3 +6375,31 @@ d'elle-même, avant tout retrait, et se mène sur n'importe quelle paire.
 **Ce que le propriétaire tranche** : pour chaque paire, le jumeau qui reste,
 quand la règle de l'endroit ne suffit pas (note 0003) : les données, le
 lecteur de PDF.
+
+### 162. Le test d'abord : le développement piloté par les tests, sur tout le dépôt — `en cours`
+
+**Reprise, au 17 octobre 2026.** Faite, l'étape 1 : la règle du test d'abord
+(`CLAUDE.md`, « Travailler », et les listes de contrôle des trois zones), la
+veille du droit (l'exemple publié vu rouge avant le code), le § 10 de
+l'architecture, et le hook `.claude/hooks/tdd.py`, qui refuse une fois par
+commit la première retouche du code tant que pytest n'a vu échouer aucun test
+en train de s'écrire. Reste l'étape 2, après une semaine de sessions :
+relever les commits qui changent le code sans toucher aux tests, et dire au
+propriétaire s'il faut durcir la garde ou l'alléger. Détail :
+`162/2026-10-17-le-test-d-abord.md`.
+
+**D'où elle vient.** La demande du propriétaire, le 17 octobre 2026 : « Sur
+ce dépôt, je veux utiliser le TDD : Test driven development. »
+
+**Les étapes.**
+
+1. **La règle et sa garde**, faite le 17 octobre 2026 : la règle dans les
+   consignes, et le hook qui la rappelle au moment de toucher au code.
+2. **La mesure**, après une semaine de sessions : parmi les commits de la
+   semaine, ceux qui touchent au code (`src/`, `moteur/`, `scripts/`,
+   `.claude/hooks/`) sans toucher aux tests ; dans les transcriptions, les
+   rappels du hook, et ce que chaque session en a fait.
+
+**Ce que le propriétaire tranche**, à l'étape 2 : la force de la garde —
+la garder telle quelle, la durcir (refuser à chaque fois, ou refuser l'envoi
+d'un commit qui change le code sans test), ou l'alléger.

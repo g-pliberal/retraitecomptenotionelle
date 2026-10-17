@@ -78,10 +78,12 @@ retraite au Journal officiel par l'index DILA.
    documentation SRE ou CNRACL. C'est là que sont les coupures au mois, les
    arrondis, les dates d'effet.
 3. Chercher un exemple chiffré publié. S'il existe, il entre dans
-   `exemples_officiels.yaml` et le test le rejoue. S'il n'existe pas, la
-   fiche reste `transcrite`. Si le modèle ne le reproduit pas, il entre
-   quand même, en écart connu : la valeur que rend le modèle et
-   l'explication, dans son champ `ecart_connu`, et la fiche passe à
+   `exemples_officiels.yaml` avant la moindre ligne du code, et le test qui
+   le rejoue se voit échouer (le test d'abord, `CLAUDE.md`) ; le code le fait
+   passer. S'il n'existe pas, la fiche reste `transcrite`, et le test d'abord
+   est un cas posé à la main depuis le texte. Si le modèle ne le reproduit
+   pas, il entre quand même, en écart connu : la valeur que rend le modèle
+   et l'explication, dans son champ `ecart_connu`, et la fiche passe à
    `approchee` ou `a_verifier`.
 4. Écrire la fiche, ou la mettre à jour : lectures, dates, état. Chaque
    rédaction lue y prend son statut, par son identifiant : citée par une

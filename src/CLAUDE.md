@@ -49,7 +49,11 @@ de la proposition, qui s'écrit en couche (`data/CLAUDE.md`).
 
 ## Liste de contrôle
 
-- **Un changement du modèle** : le Python d'abord, puis son jumeau s'il en
-  a un (`python scripts/jumeaux.py <nom>`), le coût n'en ayant pas ;
-  `python scripts/regenerer.py`, puis `python scripts/resumer_temoins.py`, pour
+- **Un changement du modèle** : le test d'abord, vu rouge — l'exemple publié
+  de la règle, s'il existe, dans `tests/temoins/exemples_officiels.yaml`,
+  sinon un cas posé à la main depuis le texte — ; le Python, jusqu'au vert ;
+  puis son jumeau s'il en a un (`python scripts/jumeaux.py <nom>`), de même :
+  le cas qui confronte les deux moteurs, rouge, puis le JavaScript, le coût
+  n'ayant pas de jumeau ; `python scripts/regenerer.py`, puis
+  `python scripts/resumer_temoins.py`, pour
   voir ce qu'il déplace ; `-m rapide` et les tests de sa zone, puis le commit.

@@ -143,6 +143,20 @@ qu'elle dure. D'où six règles.
   avec un PyYAML qui embarque libyaml. Un « No module named pytest » dans les
   premières secondes veut dire qu'il n'a pas fini : relancer un peu plus tard,
   sans réinstaller. Sur un poste, la commande reste à lancer une fois.
+- **Le test d'abord** (TDD, action 162) : tout changement de comportement —
+  une règle du modèle, son portage, le site, la saisie, un script, un hook —
+  commence par le test qui le dit, lancé seul et vu échouer pour la raison
+  attendue ; puis vient le code le plus court qui le fait passer, puis le
+  remaniement, sous des tests verts. Un défaut se corrige de même, par le
+  test qui le reproduit. La valeur attendue vient de la source — l'exemple
+  publié, le texte, un calcul posé à la main —, jamais de ce que rend le
+  code ; un témoin refait par un script n'en tient pas lieu : il dit ce qui a
+  bougé, non ce qui devait bouger. Test et code se commitent ensemble, au
+  vert : un test rouge sur `main` mettrait toutes les sessions à le réparer.
+  Un remaniement garde verts les tests qui sont là, sans en ajouter. Le hook
+  `.claude/hooks/tdd.py` refuse une fois par commit la première retouche du
+  code quand pytest n'a vu échouer aucun test en train de s'écrire ; refaite
+  telle quelle, elle passe.
 - **Les tests** : `python -m pytest -m rapide` en travaillant, les règles et
   les étapes, sous deux minutes ; `python -m pytest -m site` après une
   retouche du site ou de la saisie, en une minute ; `python -m pytest`, la
@@ -199,6 +213,9 @@ qu'elle dure. D'où six règles.
   relever, par l'éclaireur ou par `grep -n` de son numéro ou de son domaine,
   ce que la feuille de route, ses notes et les fiches lui renvoient, avant
   d'écrire la moindre ligne.
+- **Pour chaque comportement** : le test, vu rouge ; le code, jusqu'au vert ;
+  le remaniement ; `python -m pytest -m rapide` et les tests de sa zone ; le
+  commit, test et code ensemble.
 - **Les autres listes** sont aux consignes des dossiers : une retouche de
   `moteur/js/pages.js` et un champ de saisie de plus, dans
   `moteur/CLAUDE.md` ; un changement du modèle, dans `src/CLAUDE.md`.

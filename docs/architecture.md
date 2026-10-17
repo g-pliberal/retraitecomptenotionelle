@@ -1669,6 +1669,13 @@ donne les lignes et les caractères de chaque fichier et de chaque dossier.
    données, la prose, la carte des règles (§ 6.7). Aucun ne refuse ce qui est
    déclaré (§ 9.2).
 
+Le test s'écrit avant le code qu'il éprouve (le test d'abord, `CLAUDE.md`,
+« Travailler ») : vu échouer pour la raison attendue, sa valeur tirée de la
+source, il se commite avec le code, au vert. Le hook `.claude/hooks/tdd.py`
+le rappelle à la première retouche du code de chaque commit, tant que pytest
+n'a vu échouer aucun test en train de s'écrire ; `tests/conftest.py` le lui
+dit.
+
 Tout tourne sur GitHub à chaque envoi sur `main`, par
 `.github/workflows/tests.yml`, qui repart du dernier `main`, refait les
 fichiers fabriqués, joue la suite et commite les uns et le verdict

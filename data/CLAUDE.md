@@ -15,6 +15,9 @@ règle du scénario 1 ne s'écrit qu'en suivant `docs/veille_droit.md`.
   coupe pas, `--carte` imprime le tableau des jeux de règles, et toute
   réforme qui touche un régime est coupée, absorbée ou déclarée
   `non_appliquee`.
+- **Une donnée neuve ou corrigée** arrive avec le test qui la recoupe à sa
+  source — un total publié, un exemple, une valeur lue —, écrit et vu rouge
+  avant elle (le test d'abord, `CLAUDE.md`).
 - **La proposition** : ses scénarios sont des univers de droit
   (`data/reference/univers/`), piles de couches (`data/reference/couches/`)
   posées sur le droit réel ; ce qu'elles ajoutent a sa fiche dans

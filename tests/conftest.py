@@ -42,6 +42,7 @@ import hashlib
 import inspect
 import os
 import re
+import runpy
 import shutil
 import subprocess
 import sys
@@ -132,11 +133,12 @@ CONTROLES = {
     # L'outillage du dépôt : l'index de la DILA, la publication sur main et
     # ses pilotes de fusion, ce partage-ci, le filet des déplacements
     # (docs/architecture.md, § 12), l'arbre du dépôt, ce que les sessions
-    # consomment, le hook qui refuse les lectures d'un bloc, et la carte des
-    # jumeaux Python et JavaScript (action 161).
+    # consomment, le hook qui refuse les lectures d'un bloc, celui du test
+    # d'abord (action 162), et la carte des jumeaux Python et JavaScript
+    # (action 161).
     "test_dila_index.py", "test_pousser.py", "test_fusionner.py", "test_niveaux.py",
     "test_conservation.py", "test_outillage.py", "test_arbre.py", "test_consommation.py",
-    "test_hook_lecture.py", "test_jumeaux.py",
+    "test_hook_lecture.py", "test_hook_tdd.py", "test_jumeaux.py",
     # La saisie outillée des simulateurs officiels, et la confrontation d'une
     # carrière réelle à « Mon estimation retraite » (docs/architecture.md, § 3.5).
     "test_simulateurs.py", "test_estimation_officielle.py",
@@ -417,6 +419,19 @@ def pytest_runtest_logreport(report):
         marque.touch()
     except OSError:              # la mémoire n'est qu'un raccourci
         pass
+
+
+# -- le rouge du test d'abord ----------------------------------------------------
+
+
+def pytest_sessionfinish(session, exitstatus):
+    """Le test d'abord (``CLAUDE.md``, « Travailler ») : une séance qui échoue
+    pendant qu'un test s'écrit a vu le rouge, et le hook
+    ``.claude/hooks/tdd.py``, qui le lit, laisse alors toucher au code sans
+    rappel. Le maître seul, sous xdist : il reçoit les échecs de tous."""
+    if session.testsfailed and not hasattr(session.config, "workerinput"):
+        runpy.run_path(str(RACINE / ".claude" / "hooks" / "tdd.py"))["noter_le_rouge"](
+            session.config.rootpath)
 
 
 # -- la mémoire des calculs, et ce qui la fait taire -----------------------------
