@@ -143,14 +143,18 @@ documentation, `code.claude.com/docs/en/`, lue le 17 octobre).
   qu'une session lance pour une tâche en plusieurs étapes. Ni Explore, ni
   Plan, ni les agents qui déclarent le leur n'en changent (`sub-agents.md`),
   et un `model` passé à l'appel passe devant.
-- *Fable pour une règle du scénario 1*, à la demande du propriétaire : une
-  étape qui écrit ou change une règle du scénario 1 se mène sur Fable
-  (`CLAUDE.md`). Sa lecture du cache ne coûte que 0,25 $ le million de
-  jetons, contre 0,20 pour Opus, et le reste deux fois et demie le tarif
-  d'Opus : une session y revient à 1,7 à 2 fois une session sur Opus, selon
-  la part qu'y prend la lecture du cache. Ouverte sur un autre modèle, la
-  session le dit au propriétaire dès son début, quand une bascule coûte
-  encore peu.
+- *Fable pour une règle du scénario 1, retiré le même jour.* Proposée sur la
+  foi du skill de Claude Code, qui présente Fable 5.1 comme le plus capable
+  des modèles, la règle confiait à Fable une étape qui écrit ou change une
+  règle du scénario 1, pour 1,7 à 2 fois le coût d'Opus. Le propriétaire en
+  a douté, ayant vu Opus devant dans les comparaisons ; l'annonce d'Opus 5.5
+  (22 septembre 2026) lui donne raison : il « performs at the level of
+  Claude Fable 5.1 on most work », et le devance sur chacune des mesures
+  publiées — Terminal-Bench 4.0, 66,4 % contre 55,8 % ; GDPval-AA, 1 846
+  contre 1 735 ; Humanity's Last Exam, 67,7 % contre 65,6 % —, Anthropic
+  ajoutant que l'écart réel est plus étroit que les scores. Sur une
+  traduction de HAProxy du C vers Rust, les deux réussissent, Opus 5.5 en
+  9,5 heures contre 12, pour 51 % de moins. La règle est ôtée de `CLAUDE.md`.
 - *Une chaîne de secours*, à la demande du propriétaire :
   `"fallbackModel": ["sonnet", "opus"]`. Opus saturé ou indisponible, la
   session passe sur Sonnet pour le tour en cours, au lieu d'échouer ; une
@@ -159,11 +163,10 @@ documentation, `code.claude.com/docs/en/`, lue le 17 octobre).
   s'ouvrent après eux : celle-ci ne les a pas éprouvés.
 
 **Ce qui reste au propriétaire.** Le modèle de chaque session, à son
-ouverture : Fable pour une étape qui écrit une règle du scénario 1, Opus 5.5
-pour le reste du modèle, du droit et de la certification des données, où un
-jugement faux part sur `main` sans relecture ; Sonnet 5.5, à moitié prix,
-pour ce que les tests tiennent serré — le site, l'outillage, la prose,
-l'archivage d'une action. L'effort `max` passe devant celui que déclarent les
+ouverture : Opus 5.5 pour le modèle, le droit et la certification des
+données, où un jugement faux part sur `main` sans relecture ; Sonnet 5.5, à
+moitié prix, pour ce que les tests tiennent serré — le site, l'outillage, la
+prose, l'archivage d'une action. L'effort `max` passe devant celui que déclarent les
 agents : l'éclaireur et Explore tournent donc à `max` sur Haiku, ce qui les
 ralentit sans peser sur la facture ; les agents généralistes à `max` sur
 Sonnet, comme trois agents d'impeccable qui déclarent `medium` ; le
