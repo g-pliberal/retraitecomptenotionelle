@@ -125,9 +125,10 @@ documentation, `code.claude.com/docs/en/`, lue le 17 octobre).
   recherche en éventail, tournait sur le modèle de la session, donc sur
   Opus ; celui du dépôt, du même nom, le remplace (`sub-agents.md`) et tourne
   sur Haiku, au contrat de l'éclaireur, avec l'ampleur que la demande lui
-  fixe — rapide, moyenne ou très poussée. La règle de `CLAUDE.md` ne change
-  pas : une recherche en éventail ne se lance qu'à la demande du
-  propriétaire.
+  fixe — rapide, moyenne ou très poussée. Appelé au tour qui a suivi son
+  écriture, il a tourné sur `claude-haiku-5-5`, et rendu un inventaire exact
+  des agents et des skills du dépôt. La règle de `CLAUDE.md` ne change pas :
+  une recherche en éventail ne se lance qu'à la demande du propriétaire.
 
 **Ce qui reste au propriétaire.** Le modèle de chaque session, à son
 ouverture : Opus 5.5 pour le modèle, le droit et la certification des
