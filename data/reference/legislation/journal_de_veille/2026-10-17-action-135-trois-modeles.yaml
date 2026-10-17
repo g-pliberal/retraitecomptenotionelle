@@ -1,0 +1,17 @@
+date: "2026-10-17"
+session: "action 135 : trois modèles, Opus pour juger et Haiku pour lire"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1,
+  seulement à l'outillage de Claude Code (.claude/agents/eclaireur.md,
+  CLAUDE.md, scripts/consommation.py), à sa documentation et aux tarifs de
+  l'API.
+trouve: >-
+  Aucune règle n'a changé. Sonnet 5.5 lit le cache au prix d'Opus 5.5 ;
+  Haiku 5.5 coûte de quatre à quarante fois moins qu'Opus, selon la ligne de
+  la facture et la longueur du contexte. La lecture se confie donc à un
+  agent sur Haiku, et consommation.py, qui ignorait les sous-agents, les
+  compte et ventile les appels par modèle.
+reste: >-
+  Le modèle et l'effort de chaque session, que le propriétaire choisit ;
+  relever dans quelques jours, par consommation.py, la part que l'éclaireur
+  prend.

@@ -222,7 +222,7 @@ def lire(chemin: Path, nom: str | None = None) -> Session:
     outils: dict[str, tuple[str, str | None, str | None]] = {}
     attente: list[Part] = []  # ce qui est entré depuis le dernier appel
     entrees: list[list[Part]] = []  # entrees[i] : avant l'appel i
-    vus: set[str] = set()
+    vus: dict[str, Appel] = {}
     # Toutes les entrées d'une transcription de sous-agent portent
     # `isSidechain` : on ne l'écarte que de celle de la session, qui ne doit
     # pas compter les appels d'un sous-agent parmi les siens.
@@ -254,12 +254,15 @@ def lire(chemin: Path, nom: str | None = None) -> Session:
                 # l'API) n'est pas un appel : son contexte nul passerait pour
                 # une compaction, et le contexte rechargé à l'appel suivant
                 # irait tout entier à ce qui le précède.
-                if cle in vus or not usage or not _contexte(usage):
+                if not usage or not _contexte(usage):
                     continue
-                vus.add(cle)
-                session.appels.append(
-                    Appel(_contexte(usage), usage.get("output_tokens", 0), message.get("model") or "?")
-                )
+                if cle in vus:
+                    # La dernière entrée d'une réponse porte parfois seule le
+                    # compte entier de sa sortie : le rapport d'un sous-agent.
+                    vus[cle].sortie = max(vus[cle].sortie, usage.get("output_tokens", 0))
+                    continue
+                vus[cle] = Appel(_contexte(usage), usage.get("output_tokens", 0), message.get("model") or "?")
+                session.appels.append(vus[cle])
                 entrees.append(attente)
                 attente = []
             elif genre == "user":

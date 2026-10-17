@@ -96,6 +96,15 @@ def test_un_appel_reparti_sur_plusieurs_entrees_se_compte_une_fois(tmp_path):
     assert session.cout == 0.42
 
 
+def test_un_appel_garde_le_compte_entier_de_sa_sortie(tmp_path):
+    """Le rapport d'un sous-agent, relevé le 17 octobre 2026 : sa première
+    entrée portait 177 jetons de sortie, la dernière près de 7 000."""
+    premier, dernier = _appel("r1", 1000, 10, [{"type": "thinking"}, {"type": "text", "text": "fini"}])
+    dernier["message"]["usage"] = {**dernier["message"]["usage"], "output_tokens": 500}
+    chemin = _ecrire(tmp_path / "s3.jsonl", [premier, dernier])
+    assert [(a.contexte, a.sortie) for a in consommation.lire(chemin).appels] == [(1000, 500)]
+
+
 def test_les_jetons_relus_font_exactement_la_somme_des_contextes(tmp_path):
     session = consommation.lire(_session(tmp_path))
     assert sum(p.relu for p in session.parts) == pytest.approx(session.relu)
