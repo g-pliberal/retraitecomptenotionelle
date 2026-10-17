@@ -24,8 +24,10 @@ commits de la session qu'une autre session a devancés, pousse `HEAD` sur
 `main`, puis fait suivre la branche de la session. Il refuse, sans rien
 pousser : un conflit sur une source, plus de vingt commits d'écart, des modifications non
 commitées quand il doit rebaser, aucun ancêtre commun avec `main` (le cas
-grave), un commit signé d'une adresse nominative. En avance sur `main`, il
-pousse tout ce qui est commité, même si d'autres modifications attendent :
+grave), un commit signé d'une adresse nominative, un commit qui change le
+code sans toucher aux tests, s'il ne le déclare pas (« Le test d'abord »). En
+avance sur `main`, il pousse tout ce qui est commité, même si d'autres
+modifications attendent :
 ne commiter qu'une fois ses tests passés, puisque le hook publie à chaque fin
 de tour. À la main, la recette reste
 `git fetch origin`, `git merge --ff-only origin/main`,
@@ -153,10 +155,13 @@ qu'elle dure. D'où six règles.
   code ; un témoin refait par un script n'en tient pas lieu : il dit ce qui a
   bougé, non ce qui devait bouger. Test et code se commitent ensemble, au
   vert : un test rouge sur `main` mettrait toutes les sessions à le réparer.
-  Un remaniement garde verts les tests qui sont là, sans en ajouter. Le hook
-  `.claude/hooks/tdd.py` refuse une fois par commit la première retouche du
-  code quand pytest n'a vu échouer aucun test en train de s'écrire ; refaite
-  telle quelle, elle passe.
+  Un remaniement garde verts les tests qui sont là, sans en ajouter. Deux
+  gardes tiennent la règle : le hook `.claude/hooks/tdd.py` refuse une fois
+  par commit la première retouche du code quand pytest n'a vu échouer aucun
+  test en train de s'écrire (refaite telle quelle, elle passe) ; `pousser.sh`
+  refuse d'envoyer un commit qui change le code sans toucher aux tests, sauf
+  s'il le déclare par une ligne `Sans-test: <raison>` de son message — un
+  remaniement, un commentaire.
 - **Les tests** : `python -m pytest -m rapide` en travaillant, les règles et
   les étapes, sous deux minutes ; `python -m pytest -m site` après une
   retouche du site ou de la saisie, en une minute ; `python -m pytest`, la

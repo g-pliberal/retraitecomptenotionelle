@@ -224,6 +224,35 @@ def test_il_refuse_un_conflit_de_rebasage_sans_rien_pousser(atelier, tmp_path):
 # -- la tête détachée ---------------------------------------------------------
 
 
+def test_il_refuse_un_commit_qui_change_le_code_sans_test(atelier):
+    """Le test d'abord (CLAUDE.md, action 162) : le code ne part qu'avec son
+    test, et le refus nomme le commit et dit comment déclarer un remaniement."""
+    distant, session = atelier
+    avant = tete_distante(distant, "main")
+    _envoyer(session, "le taux passe à deux", {"src/regle.py": "TAUX = 2\n"})
+
+    acheve = pousser(session)
+    assert acheve.returncode != 0
+    assert "sans toucher aux tests" in acheve.stderr
+    assert "le taux passe à deux" in acheve.stderr and "Sans-test:" in acheve.stderr
+    assert tete_distante(distant, "main") == avant, "rien poussé"
+
+
+@pytest.mark.parametrize("message, fichiers", [
+    ("le taux et son test", {"src/regle.py": "TAUX = 2\n",
+                             "tests/test_regle.py": "def test_taux():\n    pass\n"}),
+    ("un commentaire\n\nSans-test: un commentaire, rien ne change",
+     {"src/regle.py": "TAUX = 1  # le taux\n"}),
+])
+def test_le_code_part_avec_son_test_ou_sa_declaration(atelier, message, fichiers):
+    distant, session = atelier
+    tete = _envoyer(session, message, fichiers)
+
+    acheve = pousser(session)
+    assert acheve.returncode == 0, acheve.stderr
+    assert tete_distante(distant, "main") == tete
+
+
 def _autre_session_pousse(distant: Path, tmp_path: Path, nom: str, texte: str = "x") -> str:
     autre = tmp_path / "autre"
     subprocess.run(["git", "clone", "--quiet", str(distant), str(autre)], check=True)

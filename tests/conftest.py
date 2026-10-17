@@ -330,8 +330,10 @@ ISOLES: dict[str, tuple[str, ...]] = {
     # temporaire. Sous Windows, la machine chargée, un git coûte près d'une
     # seconde : ses onze cas tenaient le cinquième de la suite chaude, le
     # 4 octobre 2026. Ses pilotes de fusion, que le script donne à git
-    # (action 148, étape 3), sont de ce qu'il lit.
-    "test_pousser.py": ("scripts/pousser.sh", "scripts/fusionner.py"),
+    # (action 148, étape 3), sont de ce qu'il lit, comme le hook du test
+    # d'abord, qu'il consulte avant d'envoyer (action 162).
+    "test_pousser.py": ("scripts/pousser.sh", "scripts/fusionner.py",
+                        ".claude/hooks/tdd.py"),
     # ``node --test`` (action 135) : 13 s, la mémoire des calculs pleine. Il
     # ne lit que le portage et le site, le paquet, les témoins, les essais
     # JavaScript et les quotients de mortalité qu'il refait au bit près ; le

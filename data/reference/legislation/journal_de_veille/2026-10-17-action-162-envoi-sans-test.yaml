@@ -1,0 +1,14 @@
+date: "2026-10-17"
+session: "action 162 : l'envoi sans test refusé"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1,
+  seulement à l'outillage de publication (scripts/pousser.sh,
+  .claude/hooks/tdd.py), à ses tests et aux consignes.
+trouve: >-
+  Aucune règle n'a changé. pousser.sh refuse désormais d'envoyer un commit qui
+  change le code sans toucher aux tests, sauf s'il le déclare par une ligne
+  « Sans-test: <raison> » de son message.
+reste: >-
+  L'étape 2 de l'action 162 : après une semaine de sessions, relever les
+  commits déclarés Sans-test et leurs raisons, et les refus, pour dire au
+  propriétaire si la garde refuse à tort ou laisse passer.

@@ -178,6 +178,37 @@ FIN
     fi
 fi
 
+# Le test d'abord (CLAUDE.md, action 162) : un commit qui change le code sans
+# toucher aux tests ne part pas, sauf s'il le déclare par une ligne
+# `Sans-test: <raison>` de son message — un remaniement, un commentaire. Ce qui
+# est du code et ce qui est un test, `.claude/hooks/tdd.py` le sait, qui le
+# rappelle déjà à la session avant qu'elle touche au code. Les commits sont ici
+# rebasés sur origin/main. Sans Python, rien ne se vérifie.
+tdd="$ici/../.claude/hooks/tdd.py"
+if [ "$avance" -gt 0 ] && [ -f "$tdd" ]; then
+    for python in python3 python; do
+        "$python" -c 'import json, re, subprocess' >/dev/null 2>&1 || continue
+        sans_test=$("$python" "$tdd" --envoi origin/main..HEAD)
+        if [ -n "$sans_test" ]; then
+            {
+                echo "pousser: un commit à publier change le code sans toucher aux tests, rien poussé (le test d'abord, CLAUDE.md) :"
+                printf '%s\n' "$sans_test" | sed 's/^/    /'
+                cat <<'FIN'
+Lui joindre le test qui dit ce qu'il change, vu échouer puis passer : le
+dernier commit se reprend par `git add` du test et
+`git commit --amend --no-edit` ; plusieurs se réunissent en un par
+`git reset --soft "$(git merge-base origin/main HEAD)"`, puis `git commit`.
+Un commit qui ne change aucun comportement (un remaniement, un commentaire)
+le déclare dans son message :
+    git commit --amend --no-edit --trailer "Sans-test: <raison>"
+FIN
+            } >&2
+            exit 1
+        fi
+        break
+    done
+fi
+
 if [ "$avance" -gt 0 ]; then
     avec_reprises git push --quiet origin HEAD:main || {
         echo "pousser: push vers main impossible après 5 essais" >&2; exit 1; }

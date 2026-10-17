@@ -6378,15 +6378,15 @@ lecteur de PDF.
 
 ### 162. Le test d'abord : le développement piloté par les tests, sur tout le dépôt — `en cours`
 
-**Reprise, au 17 octobre 2026.** Faite, l'étape 1 : la règle du test d'abord
-(`CLAUDE.md`, « Travailler », et les listes de contrôle des trois zones), la
-veille du droit (l'exemple publié vu rouge avant le code), le § 10 de
-l'architecture, et le hook `.claude/hooks/tdd.py`, qui refuse une fois par
-commit la première retouche du code tant que pytest n'a vu échouer aucun test
-en train de s'écrire. Reste l'étape 2, après une semaine de sessions :
-relever les commits qui changent le code sans toucher aux tests, et dire au
-propriétaire s'il faut durcir la garde ou l'alléger. Détail :
-`162/2026-10-17-le-test-d-abord.md`.
+**Reprise, au 17 octobre 2026.** Faites, l'étape 1 — la règle du test
+d'abord dans les consignes, et le hook qui refuse une fois par commit la
+première retouche du code sans rouge vu — et, à la demande du propriétaire,
+la garde durcie : `pousser.sh` refuse d'envoyer un commit qui change le code
+sans toucher aux tests, sauf s'il le déclare (`Sans-test: <raison>`). Reste
+l'étape 2, après une semaine de sessions : relever les commits déclarés
+`Sans-test` et leurs raisons, et, dans les transcriptions, les refus, pour
+dire au propriétaire si la garde refuse à tort ou laisse passer. Détail :
+`162/2026-10-17-l-envoi-sans-test-refuse.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 17 octobre 2026 : « Sur
 ce dépôt, je veux utiliser le TDD : Test driven development. »

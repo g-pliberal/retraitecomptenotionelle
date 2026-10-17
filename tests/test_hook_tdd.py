@@ -84,6 +84,7 @@ def test_le_code_touche_sans_rouge_vu_est_refuse_une_fois_par_commit(depot):
     assert reponse["permissionDecision"] == "deny"
     raison = reponse["permissionDecisionReason"]
     assert "test" in raison and "rouge" in raison and "python -m pytest" in raison
+    assert "Sans-test:" in raison and "pousser.sh" in raison
     # Refaite telle quelle, la retouche passe : un remaniement n'a pas de test neuf.
     assert _lancer(json.dumps(_appel(code))) == ""
     # Une autre session a son propre rappel.
@@ -157,6 +158,55 @@ def test_une_seance_de_pytest_qui_echoue_note_le_rouge(depot):
     rouge = SimpleNamespace(testsfailed=1, config=SimpleNamespace(rootpath=depot))
     conftest.pytest_sessionfinish(rouge, 1)
     assert tdd.decision({**code, "session_id": "s2"}) is None
+
+
+def _commit_de(depot: Path, message: str, fichiers: dict[str, str]) -> None:
+    for chemin, texte in fichiers.items():
+        (depot / chemin).parent.mkdir(parents=True, exist_ok=True)
+        (depot / chemin).write_text(texte, encoding="utf-8")
+    _commit(depot, message)
+
+
+def _envoi(depot: Path, plage: str) -> subprocess.CompletedProcess:
+    return subprocess.run([sys.executable, str(HOOK), "--envoi", plage], cwd=depot,
+                          capture_output=True)
+
+
+def test_l_envoi_refuse_le_code_sans_test_qu_il_ne_declare_pas(depot):
+    """Ce que `pousser.sh` refuse d'envoyer : un commit qui change le code sans
+    toucher aux tests, hors des témoins fabriqués, et sans le déclarer par une
+    ligne `Sans-test: <raison>` de son message."""
+    plage = f"{_tete(depot)}..HEAD"
+    for message, fichiers in [
+        ("le code seul", {"src/regle.py": "def taux():\n    return 2\n"}),
+        ("le code et son test", {"src/regle.py": "def taux():\n    return 3\n",
+                                 "tests/test_regle.py": "def test_taux():\n    pass\n"}),
+        ("le code et un témoin fabriqué", {"src/regle.py": "def taux():\n    return 4\n",
+                                           "tests/temoins/pages.json": '{"page": 4}\n'}),
+        ("un remaniement\n\nSans-test: un nom de variable, rien ne change",
+         {"src/regle.py": "def taux():\n    return 4  # quatre\n"}),
+        ("une déclaration vide\n\nSans-test:", {"scripts/outil.sh": "echo 1\n"}),
+        ("une note", {"docs/note.md": "# Note, revue\n"}),
+    ]:
+        _commit_de(depot, message, fichiers)
+    refuses = tdd.commits_sans_test(depot, plage)
+    assert [ligne.split(" ", 1)[1] for ligne in refuses] == [
+        "le code seul", "le code et un témoin fabriqué", "une déclaration vide"]
+
+
+def test_l_envoi_se_demande_en_ligne_de_commande(depot):
+    plage = f"{_tete(depot)}..HEAD"
+    acheve = _envoi(depot, plage)
+    assert (acheve.returncode, acheve.stdout) == (0, b"")
+    _commit_de(depot, "le taux passe à deux", {"src/regle.py": "def taux():\n    return 2\n"})
+    acheve = _envoi(depot, plage)
+    assert acheve.returncode == 1
+    assert acheve.stdout.decode("utf-8").rstrip("\n").split(" ", 1)[1] == "le taux passe à deux"
+
+
+def _tete(depot: Path) -> str:
+    return subprocess.run(["git", "-C", str(depot), "rev-parse", "HEAD"], capture_output=True,
+                          check=True, text=True).stdout.strip()
 
 
 def test_le_hook_est_declare_pour_edit_et_write():

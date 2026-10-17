@@ -1674,7 +1674,9 @@ Le test s'écrit avant le code qu'il éprouve (le test d'abord, `CLAUDE.md`,
 source, il se commite avec le code, au vert. Le hook `.claude/hooks/tdd.py`
 le rappelle à la première retouche du code de chaque commit, tant que pytest
 n'a vu échouer aucun test en train de s'écrire ; `tests/conftest.py` le lui
-dit.
+dit. `scripts/pousser.sh` refuse d'envoyer un commit qui change le code sans
+toucher aux tests, s'il ne le déclare pas par une ligne `Sans-test: <raison>`
+de son message.
 
 Tout tourne sur GitHub à chaque envoi sur `main`, par
 `.github/workflows/tests.yml`, qui repart du dernier `main`, refait les

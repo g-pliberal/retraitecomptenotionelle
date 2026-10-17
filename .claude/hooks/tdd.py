@@ -13,6 +13,10 @@ test s'écrit — un fichier de `tests/` changé dans le dossier de travail, hor
 des fichiers fabriqués, que `.gitattributes` marque `-merge` — le note par
 `noter_le_rouge`, que `tests/conftest.py` appelle au bout de chaque séance.
 Les deux marques tiennent une ligne chacune, sous `.cache/`, que git ignore.
+
+L'envoi, enfin : `scripts/pousser.sh` demande, par `--envoi <plage>`, les
+commits qui changent le code sans toucher aux tests ni le déclarer par une
+ligne `Sans-test: <raison>` de leur message, et refuse de les publier.
 Jamais de blocage sur une erreur : une entrée illisible, un fichier hors d'un
 dépôt, un git absent laissent passer.
 """
@@ -21,6 +25,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import subprocess
 import sys
 
@@ -48,9 +53,25 @@ RAISON = (
     " change aucun comportement (remaniement sous des tests verts, commentaire,"
     " message), ou dont le rouge s'est vu hors de pytest (node --test), se"
     " refait telle quelle : ce rappel ne revient qu'après le prochain commit."
+    " Ce commit, s'il ne touche à aucun test, le déclare par une ligne"
+    " « Sans-test: <raison> » de son message, sans quoi pousser.sh le refuse."
 )
 
+#: La ligne d'un message de commit qui déclare un commit sans test, avec sa
+#: raison : un remaniement, un commentaire.
+SANS_TEST = re.compile(r"^Sans-test ?: *\S", re.M)
+
 _EXTENSIONS = tuple(sorted({e for extensions in CODE.values() for e in extensions}))
+
+
+def _du_code(chemin: str) -> bool:
+    """Un chemin relatif à la racine, en barres obliques, est-il du code ?"""
+    return any(chemin.startswith(f"{sous}/") and chemin.endswith(extensions)
+               for sous, extensions in CODE.items())
+
+
+def _un_test(chemin: str, fabriques: set[str]) -> bool:
+    return chemin.startswith("tests/") and chemin not in fabriques
 
 
 def _git(dossier: str, *arguments: str) -> str | None:
@@ -101,12 +122,36 @@ def _tests_qui_s_ecrivent(racine: str) -> list[str]:
             chemins.append(entree[3:])
             if {"R", "C"} & set(entree[:2]):
                 rang += 1                   # le nom d'avant le renommage
+    fabriques = _fabriques(racine, chemins)
+    return [chemin for chemin in chemins if _un_test(chemin, fabriques)]
+
+
+def _fabriques(racine: str, chemins: list[str]) -> set[str]:
+    """Ceux de ces chemins qu'un script fabrique : `.gitattributes` les marque
+    `-merge`."""
     if not chemins:
-        return []
+        return set()
     attributs = (_git(racine, "check-attr", "-z", "merge", "--", *chemins) or "").split("\0")
-    fabriques = {attributs[i] for i in range(0, len(attributs) - 2, 3)
-                 if attributs[i + 2] == "unset"}
-    return [chemin for chemin in chemins if chemin not in fabriques]
+    return {attributs[i] for i in range(0, len(attributs) - 2, 3)
+            if attributs[i + 2] == "unset"}
+
+
+def commits_sans_test(dossier, plage: str) -> list[str]:
+    """Les commits de la plage qui changent le code sans toucher aux tests, hors
+    des fabriqués, ni le déclarer (`SANS_TEST`) : « sha titre » chacun, du plus
+    ancien au plus récent. C'est ce que `pousser.sh` refuse de publier."""
+    sortie = _git(os.fspath(dossier), "-c", "core.quotePath=false", "log", "--reverse",
+                  "--no-renames", "--name-only", "--format=%x1e%h %s%x1f%B%x1f", plage)
+    commits = []
+    for bloc in (sortie or "").split("\x1e")[1:]:
+        titre, message, fichiers = bloc.split("\x1f", 2)
+        commits.append((titre, message, [f for f in fichiers.split("\n") if f]))
+    fabriques = _fabriques(os.fspath(dossier), sorted(
+        {f for _, _, fichiers in commits for f in fichiers if f.startswith("tests/")}))
+    return [titre for titre, message, fichiers in commits
+            if any(_du_code(f) for f in fichiers)
+            and not any(_un_test(f, fabriques) for f in fichiers)
+            and not SANS_TEST.search(message)]
 
 
 def noter_le_rouge(dossier) -> bool:
@@ -143,8 +188,7 @@ def decision(appel: dict) -> dict | None:
         relatif = os.path.relpath(chemin, os.path.realpath(racine)).replace(os.sep, "/")
     except ValueError:                      # un autre lecteur, sous Windows
         return None
-    if not any(relatif.startswith(f"{sous}/") and relatif.endswith(extensions)
-               for sous, extensions in CODE.items()):
+    if not _du_code(relatif):
         return None
     rappel = f"{appel.get('session_id') or '-'} {tete}"
     if _lire(racine, ROUGE) == tete or _lire(racine, RAPPEL) == rappel:
@@ -160,6 +204,10 @@ def decision(appel: dict) -> dict | None:
 
 
 def main() -> int:
+    if len(sys.argv) == 3 and sys.argv[1] == "--envoi":
+        refuses = commits_sans_test(os.getcwd(), sys.argv[2])
+        sys.stdout.buffer.write("".join(f"{ligne}\n" for ligne in refuses).encode("utf-8"))
+        return 1 if refuses else 0
     try:
         appel = json.loads(sys.stdin.buffer.read().decode("utf-8"))
     except (ValueError, OSError):
