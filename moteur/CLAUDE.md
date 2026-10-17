@@ -18,6 +18,10 @@ types et Droits non cotisés lisent ce que le Python en a fabriqué
   par `construire_temoins.py`, après le paquet, et leur diff montre ce qu'une
   page a changé. Seules les pages dont le formulaire est le sujet le figent
   entier (`FORMULAIRE_ENTIER`) ; les autres n'en gardent que la balise.
+- **Les mesures que l'accueil cite** (`MESURES_BLOCAGES`, dans `pages.js`) ne
+  s'écrivent pas à la main : `scripts/mesures_accueil.py` les refait comme
+  leurs tests, et GitHub les récrit à chaque fabrique (action 163). Une mesure
+  de plus s'y déclare, avec sa précision et son calcul.
 - **L'outillage d'audit d'interface** (Impeccable, Web Interface Guidelines,
   Playwright CLI) : `.claude/skills/`, mis en place par
   `scripts/setup_ui_tools.sh` ; voir `docs/outillage_interface.md`.

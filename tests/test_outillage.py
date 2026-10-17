@@ -11,6 +11,7 @@ from __future__ import annotations
 import multiprocessing
 import os
 import pickle
+import re
 import subprocess
 import sys
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
@@ -153,6 +154,46 @@ def test_une_garde_rouge_s_ecrit_a_part_du_verdict_de_la_suite(tmp_path):
     assert "garde des présomptions ROUGE" in titre
     verdict, titre = _publier(tmp_path / "verte", "success", "1 passed\n")
     assert verdict["presomptions"] == "vert" and "ROUGE" not in titre
+
+
+# -- les mesures de l'accueil (action 163) ----------------------------------------
+
+
+def test_chaque_mesure_de_l_accueil_s_ecrit_par_le_modele():
+    """``MESURES_BLOCAGES``, ce que les points de blocage de l'accueil citent,
+    ne porte que des mesures que ``mesures_accueil.py`` refait : écrites à la
+    main, elles ont rougi la suite trois fois du 6 au 17 octobre 2026, chaque
+    fois que le modèle les déplaçait (action 163, étape 2)."""
+    import mesures_accueil
+
+    texte = (RACINE / "moteur" / "js" / "pages.js").read_text(encoding="utf-8")
+    debut = texte.index(mesures_accueil.DEBUT)
+    bloc = texte[debut:texte.index("\n};", debut)]
+    assert sorted(re.findall(r"^\s+([a-z_0-9]+): -?\d", bloc, re.M)) \
+        == sorted(mesures_accueil.PRECISIONS)
+
+
+def test_la_reecriture_de_l_accueil_ne_change_que_les_valeurs():
+    """Chaque valeur à la précision où l'accueil l'écrit, sans zéro négatif ;
+    les commentaires restent ; une mesure absente d'un côté ou de l'autre
+    arrête tout."""
+    import mesures_accueil
+
+    texte = ("avant\nexport const MESURES_BLOCAGES = {\n  // un commentaire : 12,\n"
+             "  solde: -1.1,\n  dette: 73,\n  coefficient: 1.00,\n  tva: 0.0,\n};\naprès\n")
+    precisions = {"solde": 1, "dette": 0, "coefficient": 2, "tva": 1}
+    assert mesures_accueil.reecrire(
+        texte, {"solde": -1.2549, "dette": 76.4, "coefficient": 0.9949, "tva": -0.04},
+        precisions) == (
+        "avant\nexport const MESURES_BLOCAGES = {\n  // un commentaire : 12,\n"
+        "  solde: -1.3,\n  dette: 76,\n  coefficient: 0.99,\n  tva: 0.0,\n};\naprès\n")
+    with pytest.raises(ValueError):
+        mesures_accueil.reecrire(texte, {"solde": 1.0, "dette": 1.0, "coefficient": 1.0},
+                                 precisions)
+    with pytest.raises(ValueError):
+        mesures_accueil.reecrire(texte, {"solde": 1.0, "dette": 1.0, "coefficient": 1.0,
+                                         "tva": 0.0, "autre": 1.0},
+                                 {**precisions, "autre": 1})
 
 
 # -- le site en ligne au vert (action 163) ---------------------------------------
@@ -308,12 +349,13 @@ def test_chaque_etape_a_son_script_et_sait_verifier():
 
 def test_l_ordre_suit_ce_que_chaque_etape_lit():
     """L'inventaire avant tout ; les témoins après le paquet, dont ils rendent
-    les pages ; le tableau de bord, qui compte les témoins, puis les chiffres
-    ancrés, qui sondent tout, à la fin, et le contrôle de conservation en
-    dernier."""
+    les pages, et après les mesures de l'accueil, qu'ils rendent aussi
+    (action 163) ; le tableau de bord, qui compte les témoins, puis les
+    chiffres ancrés, qui sondent tout, à la fin, et le contrôle de
+    conservation en dernier."""
     premier, milieu, dernier = regenerer.TEMPS
     assert regenerer.INVENTAIRE in premier[0]
-    assert (regenerer.PAQUET, regenerer.TEMOINS) in milieu
+    assert (regenerer.PAQUET, regenerer.ACCUEIL, regenerer.TEMOINS) in milieu
     assert dernier == ((regenerer.TABLEAU_DE_BORD, regenerer.PROSE, regenerer.CONSERVATION),)
     assert regenerer.etapes(regenerer.TEMPS_PROSE) == [
         regenerer.TABLEAU_DE_BORD, regenerer.PROSE, regenerer.CONSERVATION]

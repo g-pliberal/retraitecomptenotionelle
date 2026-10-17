@@ -7,8 +7,9 @@
 # lancent la suite complète : c'est ici que tout se refait, sur le DERNIER
 # main — non sur le commit qui a lancé la course —, dans cet ordre :
 #
-# 1. `scripts/regenerer.py` refait le paquet, les témoins, le chiffrage, les
-#    tableaux, le tableau de bord et les chiffres ancrés de la prose ;
+# 1. `scripts/regenerer.py` refait le paquet, les mesures que l'accueil cite,
+#    les témoins, le chiffrage, les tableaux, le tableau de bord et les
+#    chiffres ancrés de la prose ;
 # 2. la suite complète, `python -m pytest`, les joue, puis la garde des
 #    présomptions rejoue les tests rapides sous d'autres présomptions ;
 # 3. `scripts/publier_fabrique.sh` commite, sous l'identité noreply du robot,

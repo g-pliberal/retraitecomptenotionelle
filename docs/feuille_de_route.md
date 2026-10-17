@@ -6406,14 +6406,15 @@ d'un commit qui change le code sans test), ou l'alléger.
 
 ### 163. Ce que la revue de code d'Anthropic apprend au dépôt : le site en ligne au vert, les rouges classés, puis un relecteur — `en cours`
 
-**Reprise, au 17 octobre 2026.** Faites, les étapes 1 et 2 : le site ne part
-en ligne que d'une suite verte sur `main` ; les 26 rouges du 6 au 17 octobre
-sont classés, et le journal des verdicts (`.github/verdicts.tsv`) en tient le
-compte, que `tableau_de_bord.py --cout` relève. Ni la suite rapide ni une file
-de fusion n'en auraient arrêté un seul ; 13 causes sur 33 sont des chiffres
-écrits à la main que le changement déplace. Au propriétaire de trancher les
-gardes que le classement propose, puis les étapes 3 à 6. Détail :
-`163/2026-10-17-les-rouges-classes.md`.
+**Reprise, au 17 octobre 2026.** Faites, les étapes 1 et 2, et les gardes 1
+et 2 que la seconde proposait : le site ne part en ligne que d'une suite
+verte ; les rouges sont classés et comptés (`tableau_de_bord.py --cout`) ; les
+comptes du parcours et du README sont ancrés, les mesures de l'accueil
+refaites par `scripts/mesures_accueil.py` à chaque fabrique ; `pousser.sh` joue
+les tests de la feuille de route qu'un envoi touche. Restent les chiffres à
+unité du parcours, ses carrières d'abord, puis les gardes 3 et 4 et les
+étapes 3 à 6, que le propriétaire tranche. Détail :
+`163/2026-10-17-les-gardes-1-et-2.md`.
 
 **D'où elle vient.** Le 17 octobre 2026, le propriétaire soumet à une
 session l'article « How the Claude Code team does code review » (blog
@@ -6451,7 +6452,8 @@ lance les deux premières : « vas-y ».
    un commit qui touche `tests.yml`, les hooks ou `pousser.sh`, et la session
    demande d'abord au propriétaire.
 
-**Ce que le propriétaire tranche** : les gardes que l'étape 2 propose —
-produire les chiffres cités, le bloc « Reprise » à l'envoi, les tests d'une
-seconde au niveau rapide, les confrontations dans la zone du modèle — ; puis,
-une à une, les étapes 3 à 6.
+**Ce que le propriétaire tranche** : les gardes 3 et 4 que l'étape 2
+propose — les tests d'une seconde au niveau rapide, les confrontations dans
+la zone du modèle —, et les chiffres à unité du parcours ; puis, une à une,
+les étapes 3 à 6. Les gardes 1 et 2, produire les chiffres cités et le bloc
+« Reprise » à l'envoi, sont faites le 17 octobre 2026.

@@ -15757,6 +15757,12 @@ contienne, et elle n'est pas petite.</p>`;
  * elles étaient écrites dans le texte, et quatre avaient vieilli sans que rien
  * ne le dise — un solde de −1,5 point, une dette de 103 % du PIB, un
  * coefficient de 0,92, une variante prospective à −3,9.
+ *
+ * Depuis le 17 octobre 2026, elles ne s'écrivent plus à la main :
+ * ``scripts/mesures_accueil.py`` les refait comme leurs tests, et GitHub les
+ * récrit à chaque fabrique, avant les témoins (action 163). Ce que les
+ * commentaires ci-dessous racontent de leurs valeurs s'arrête à ce jour ;
+ * l'histoire qui suit est celle que git garde.
  */
 export const MESURES_BLOCAGES = {
   // solde_fusion.py, hypothèse A : le taux du régime unique du modèle, en %.

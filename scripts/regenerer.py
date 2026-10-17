@@ -78,6 +78,10 @@ REGIMES = Etape("régimes", "construire_regimes_md.py", (), ("--verifier",),
 PAQUET = Etape("paquet", "construire_donnees.py", (), ("--verifier",),
                "moteur/donnees.json, data/derive/equilibre.json, "
                "data/derive/agregats.json, data/derive/calibrations_mortalite.json")
+#: Ce que l'accueil cite, que le modèle refait (action 163) : avant les
+#: témoins, qui rendent l'accueil.
+ACCUEIL = Etape("accueil", "mesures_accueil.py", (), ("--verifier",),
+                "moteur/js/pages.js (MESURES_BLOCAGES)")
 TEMOINS = Etape("témoins", "construire_temoins.py", (), ("--verifier",),
                 "tests/temoins/simulations.json, tests/temoins/pages.json")
 CHIFFRAGE = Etape("chiffrage", "chiffrage_plf.py", (), ("--verifier",),
@@ -95,7 +99,7 @@ CONSERVATION = Etape("conservation", "conservation.py", (), (),
 #: d'étapes. Les branches d'un même temps ne se lisent pas l'une l'autre.
 TEMPS: tuple[tuple[tuple[Etape, ...], ...], ...] = (
     ((INVENTAIRE, REGIMES),),
-    ((PAQUET, TEMOINS), (CHIFFRAGE,), (TABLEAUX,)),
+    ((PAQUET, ACCUEIL, TEMOINS), (CHIFFRAGE,), (TABLEAUX,)),
     ((TABLEAU_DE_BORD, PROSE, CONSERVATION),),
 )
 #: Ce que ``--prose`` relance : ce qui ne lit que les documents et les registres.
