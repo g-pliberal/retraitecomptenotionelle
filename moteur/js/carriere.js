@@ -143,6 +143,10 @@ export class AnneeCarriere {
     //: l'en dispense cette année-là (L. 613-11, D. 642-4) ; vide sinon. Voir
     //: carriere.py.
     dispense_assiette_minimale = "",
+    //: Le barème de la Lodeom de l'employeur d'outre-mer, que la fiche de paie
+    //: met à la place de la réduction générale (L. 752-3-2) ; vide sinon, et
+    //: sur une année non cotisée. Il ne change aucun droit. Voir carriere.py.
+    lodeom = "",
     //: Salaire porté au compte du régime général quand l'année est RÉTABLIE :
     //: celle d'un fonctionnaire parti sans droit à pension (L. 65 du code des
     //: pensions) — le dernier traitement soumis à retenue, sur la fraction de
@@ -167,7 +171,7 @@ export class AnneeCarriere {
       fraction_annee,
       services_fonction_publique, services_plafond_trimestres_par_enfant,
       reputes_cotises_enveloppe, reputes_cotises_plafond,
-      assiette_minimale_base, dispense_assiette_minimale, revenu_retabli,
+      assiette_minimale_base, dispense_assiette_minimale, lodeom, revenu_retabli,
       jours_de_services, micro,
     });
   }
@@ -579,6 +583,7 @@ function ligneAnnuelle({
   quotite = 1.0,
   micro = "",
   dispense = "",
+  lodeom = "",
 }) {
   const cotise = typePeriode === "emploi";
   const motifs = macro.paquet.periodes_non_travaillees ?? {};
@@ -643,6 +648,8 @@ function ligneAnnuelle({
     trimestres_valides: Math.min(trimestresMaximum, trimestres),
     assiette_minimale_base: minimale,
     dispense_assiette_minimale: dispenseRetenue,
+    // Le barème de la Lodeom de l'employeur, que seule la fiche de paie lit.
+    lodeom: cotise ? lodeom : "",
     micro,
     // Pendant une période indemnisée, les régimes complémentaires attribuent
     // des points sur le salaire d'avant. L'Unédic les paie pour le chômage ;
@@ -1392,6 +1399,7 @@ export class Carriere {
         part_primes: source.part_primes,
         trimestresMaximum: trimestresCivils(mois),
         micro: source.micro,
+        lodeom: source.lodeom,
       });
     };
     // Le mois de liquidation n'est pas travaillé.
@@ -2098,6 +2106,7 @@ function lignesDuReleve(dateNaissance, periodes, fin, macro, identifiant,
           attributs.quotite ?? 1.0)
         : 1.0,
       dispense: attributs.dispense_assiette_minimale ?? "",
+      lodeom: attributs.lodeom ?? "",
     });
   });
   return limiterChomageNonIndemnise(
@@ -2167,6 +2176,8 @@ export function prolongerReleve(releve, fin, macro, interruptions = new Map(),
       if (typePeriode === "emploi") {
         revenu *= quotiteDeLAnnee(annee, new DateMois(annee, 1), fin, progressive, quotite);
       }
+      // L'emploi prolongé est celui de la dernière année, chez le même
+      // employeur : sa Lodeom le suit.
       lignes.push({
         annee,
         affiliation: source.affiliation,
@@ -2174,6 +2185,7 @@ export function prolongerReleve(releve, fin, macro, interruptions = new Map(),
         trimestres: null,
         type_periode: typePeriode,
         quotite,
+        lodeom: typePeriode === "emploi" ? source.lodeom ?? "" : "",
       });
     });
   }
@@ -2268,6 +2280,7 @@ function lignesDuParcours(dateNaissance, periodesDeclarees, fin, macro, progress
       trimestresMaximum,
       quotite,
       micro: principal.micro ?? "",
+      lodeom: principal.lodeom ?? "",
     }));
   }
   const limitees = limiterChomageNonIndemnise(lignes, anneeNaissance);
@@ -2297,6 +2310,7 @@ function lignesDuParcours(dateNaissance, periodesDeclarees, fin, macro, progress
         part_primes: metier.part_primes,
         trimestresMaximum: trimestresCivils(mois),
         micro: metier.micro ?? "",
+        lodeom: metier.lodeom ?? "",
       }));
     }
   }

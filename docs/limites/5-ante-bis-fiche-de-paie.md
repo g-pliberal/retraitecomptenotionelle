@@ -150,6 +150,21 @@ son employeur est plus étroit de la CEG et plus large de l'Ircantec ; ce qui
 borne la réduction est alors la règle générale, qui interdit d'effacer plus que
 ce qui est dû.
 
+Pour le salarié de Guadeloupe, de Guyane, de Martinique ou de La Réunion dont
+l'employeur relève de la Lodeom — moins de onze salariés, ou l'un des secteurs
+que L. 752-3-2 énumère —, la fiche met l'exonération de son barème à la place
+de la réduction générale, qui ne la relaie pas au-delà : totale jusqu'à
+<!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:lodeom.baremes.competitivite.seuil_total)-->1,3<!--/--> SMIC (compétitivité), <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:lodeom.baremes.competitivite_renforcee.seuil_total)-->2<!--/--> (compétitivité renforcée) ou <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:lodeom.baremes.innovation_et_croissance.seuil_total)-->1,7<!--/--> (innovation et
+croissance), nulle à <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:lodeom.baremes.competitivite.seuil_de_sortie)-->2,2<!--/-->, <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:lodeom.baremes.competitivite_renforcee.seuil_de_sortie)-->2,7<!--/--> et <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:lodeom.baremes.innovation_et_croissance.seuil_de_sortie)-->3,5<!--/--> SMIC, sur le périmètre de la
+réduction générale d'avant 2025, T valant <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:lodeom.coefficient_maximal)-->0,3241<!--/--> ; l'employeur y garde
+la maladie à <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:lodeom.taux_reduits.poste=maladie.taux*100)-->7<!--/--> % et la famille à <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:lodeom.taux_reduits.poste=famille.taux*100)-->3,45<!--/--> %, jusqu'à <!--chiffre:tenu(test_les_taux_reduits_s_arretent_a_2_5_et_3_5_smic_de_2023)-->52 416<!--/--> et <!--chiffre:tenu(test_les_taux_reduits_s_arretent_a_2_5_et_3_5_smic_de_2023)-->73 382,40<!--/--> €
+par an. Elle ne déplace que le coût du travail, et, sous l'incidence
+intégrale, le brut que la proposition en tire ; le net du droit en vigueur ne
+bouge pas. Le relevé la déclare ligne par ligne ; la saisie du site ne la
+demande pas encore. Restent dehors Saint-Barthélemy et Saint-Martin, dont la
+Lodeom a ses propres barèmes (L. 752-3-3), et Mayotte, où elle n'entre qu'au
+1er juillet 2026.
+
 **Le 9 octobre 2026, les primes sur la fiche.** Jusque-là, la fiche prélevait la retenue
 pour pension et la contribution de l'État sur les primes aussi : elle sous-estimait
 le net d'un agent qui en touche, et surestimait ce que la proposition lui rend —

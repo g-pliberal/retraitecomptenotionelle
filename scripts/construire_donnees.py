@@ -2018,8 +2018,27 @@ def _prelevements_remuneration() -> dict:
             "composantes_retraite": list(bareme.composantes_retraite),
         }
 
-    def profil(fiche) -> dict:
+    def lodeom(exoneration) -> dict:
         return {
+            "libelle": exoneration.libelle,
+            "coefficient_maximal": exoneration.coefficient_maximal,
+            "composantes": dict(sorted(exoneration.composantes.items())),
+            "composantes_retraite": list(exoneration.composantes_retraite),
+            "smic_horaire_de_reference": exoneration.smic_horaire_de_reference,
+            "taux_reduits": [
+                {"poste": reduit.poste, "taux": reduit.taux,
+                 "jusqu_en_smic_de_reference": reduit.jusqu_en_smic_de_reference}
+                for reduit in exoneration.taux_reduits],
+            "baremes": {
+                code: {"code": bareme.code, "libelle": bareme.libelle,
+                       "seuil_total": bareme.seuil_total,
+                       "seuil_de_sortie": bareme.seuil_de_sortie,
+                       "palier_jusqu_en_smic": bareme.palier_jusqu_en_smic}
+                for code, bareme in exoneration.baremes.items()},
+        }
+
+    def profil(fiche) -> dict:
+        contenu = {
             "code": fiche.code,
             "libelle": fiche.libelle,
             "libelle_assiette": fiche.libelle_assiette,
@@ -2057,6 +2076,12 @@ def _prelevements_remuneration() -> dict:
                     "plafond_en_plafonds": fiche.abattement_assiette.plafond_en_plafonds,
                 }),
         }
+        # La Lodeom, outre-mer, à la place de la réduction générale : seul le
+        # profil qui en a une la porte, et le portage lit son absence comme
+        # celle de l'exonération.
+        if fiche.lodeom is not None:
+            contenu["lodeom"] = lodeom(fiche.lodeom)
+        return contenu
 
     return {
         "annee": prelevements.annee,

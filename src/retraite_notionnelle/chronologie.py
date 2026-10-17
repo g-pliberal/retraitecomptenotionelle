@@ -49,6 +49,8 @@ Ce que les faits portent, par sorte :
   partiel, entre zéro et un, absente à temps plein — un parcours coupe ses
   métiers au 1er janvier des années où elle change ; ``apprentissage`` pour
   un contrat d'apprentissage, qui est un emploi et non une période assimilée ;
+  ``lodeom``, le barème de l'exonération de l'employeur d'outre-mer, que seule
+  la fiche de paie lit ;
 * ``periode_d_interruption`` — le ``motif`` ; d'un relevé, aussi
   l'``affiliation``, le ``revenu`` de référence et les ``trimestres`` ;
 * ``periode_assimilee`` — le ``motif``, un des ``MOTIFS_D_ASSIMILATION`` ;
@@ -856,6 +858,8 @@ def du_releve(annee_naissance: int, sexe: str, releve: list["LigneRelevee"],
             attributs["quotite"] = ligne.quotite
         if emploi and ligne.dispense_assiette_minimale:
             attributs["dispense_assiette_minimale"] = ligne.dispense_assiette_minimale
+        if emploi and ligne.lodeom:
+            attributs["lodeom"] = ligne.lodeom
         periodes.append(fait(f"releve_{rang}", ASSURE, EMPLOI if emploi else INTERRUPTION,
                              f"{ligne.annee:04d}-01-01", f"{ligne.annee + 1:04d}-01-01",
                              attributs))

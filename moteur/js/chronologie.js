@@ -859,6 +859,9 @@ export function duReleve({
     if (emploi && ligne.dispense_assiette_minimale) {
       attributs.dispense_assiette_minimale = ligne.dispense_assiette_minimale;
     }
+    if (emploi && ligne.lodeom) {
+      attributs.lodeom = ligne.lodeom;
+    }
     return fait(`releve_${i + 1}`, ASSURE, emploi ? EMPLOI : INTERRUPTION,
       `${quatre(ligne.annee)}-01-01`, `${quatre(ligne.annee + 1)}-01-01`, attributs);
   });

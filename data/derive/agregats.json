@@ -1154,7 +1154,7 @@
 ],
 "lignes_lues":["reversion","majoration_enfants","minimum_vieillesse","majoration_tierce_personne","majoration_conjoint_a_charge","majoration_reversion","pension_orphelin","inaptitude_invalidite","indemnite_temporaire_retraite","retraite_du_combattant","majoration_assures_handicapes"],
 "lignes_modele":["periodes_assimilees","majoration_duree_assurance","categorie_active","minimum_contributif","bonification_cinquieme_militaires","complement_differentiel_rco","points_gratuits_rco","pension_majoree_reference","majoration_retraite_proportionnelle","minimum_garanti","minimum_vieillesse"],
-"neutralisations":["periodes_assimilees","points_gratuits_complementaires","service_national","categorie_active","age_jouissance_militaire","salaire_de_reference_des_parents","carriere_longue","retraite_anticipee_handicap","bonification_cinquieme_services_actifs","bonification_cinquieme_militaires"],
+"neutralisations":["periodes_assimilees","points_gratuits_complementaires","service_national","categorie_active","age_jouissance_militaire","salaire_de_reference_des_parents","carriere_longue","retraite_anticipee_handicap","bonification_cinquieme_services_actifs","bonification_cinquieme_militaires","apprentissage"],
 "ponderation":"effectifs",
 "refus":{"age_jouissance_militaire":"militaire : le retrait déplace la durée requise, 172 trimestres contre 171 — la proratisation change avec lui, et l'écart ne mesure plus l'avantage seul"}
 },

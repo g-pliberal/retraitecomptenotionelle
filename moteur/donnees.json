@@ -2610,7 +2610,7 @@
 ],
 "lignes_lues":["reversion","majoration_enfants","minimum_vieillesse","majoration_tierce_personne","majoration_conjoint_a_charge","majoration_reversion","pension_orphelin","inaptitude_invalidite","indemnite_temporaire_retraite","retraite_du_combattant","majoration_assures_handicapes"],
 "lignes_modele":["periodes_assimilees","majoration_duree_assurance","categorie_active","minimum_contributif","bonification_cinquieme_militaires","complement_differentiel_rco","points_gratuits_rco","pension_majoree_reference","majoration_retraite_proportionnelle","minimum_garanti","minimum_vieillesse"],
-"neutralisations":["periodes_assimilees","points_gratuits_complementaires","service_national","categorie_active","age_jouissance_militaire","salaire_de_reference_des_parents","carriere_longue","retraite_anticipee_handicap","bonification_cinquieme_services_actifs","bonification_cinquieme_militaires"],
+"neutralisations":["periodes_assimilees","points_gratuits_complementaires","service_national","categorie_active","age_jouissance_militaire","salaire_de_reference_des_parents","carriere_longue","retraite_anticipee_handicap","bonification_cinquieme_services_actifs","bonification_cinquieme_militaires","apprentissage"],
 "ponderation":"effectifs",
 "refus":{"age_jouissance_militaire":"militaire : le retrait déplace la durée requise, 172 trimestres contre 171 — la proratisation change avec lui, et l'écart ne mesure plus l'avantage seul"}
 },
@@ -14412,15 +14412,15 @@ false,
 "base_legale":["L. 6243-3 code du travail (second alinéa)","L. 222-2-1 7° CSS"],
 "code":"apprentissage",
 "creation":2014,
-"etat_modele":"absent",
+"etat_modele":"integre",
 "famille":"periodes_non_cotisees",
 "fin":null,
 "libelle":"Validation des trimestres d'apprentissage au-delà de l'assiette",
 "ligne_cascade":null,
-"mesurable_par":"aucune",
+"mesurable_par":"modele",
 "quoi":"L'assiette de l'apprenti est réduite par exonération, et ne suffirait pas à valider quatre trimestres. Un complément de cotisations est versé pour valider « un nombre de trimestres correspondant à la durée du contrat d'apprentissage » : le droit acquis cesse d'être proportionné à ce qui a été versé, et c'est un tiers qui paie la différence — le Fonds de solidarité vieillesse jusqu'en 2025, la branche vieillesse depuis.",
 "regimes":"régime général, régimes alignés",
-"sans_chiffre":"aucun cas type n'est apprenti, et aucun poste publié n'isole le complément de cotisations versé à ce titre"
+"sans_chiffre":"aucun cas type n'est apprenti, aucun poste publié n'isole le complément de cotisations versé à ce titre, et le complément, né en 2014, ne paie presque aucune pension : les apprentis, de seize à vingt-neuf ans sauf exceptions, n'atteindront pour la plupart l'âge légal qu'après 2050"
 },
 {
 "base_legale":["L. 351-3 CSS"],
@@ -16157,7 +16157,7 @@ false,
 }
 },
 "certification":{
-"dernier_passage_le":"2026-10-16",
+"dernier_passage_le":"2026-10-17",
 "series":{
 "age_annulation_decote_openfisca":{"ajoutees":0,"colonne":"age","corrigees":0,"empreinte":"f44dd24f01ee5d98","identiques":8,"niveau":"haute","source":"OpenFisca-France-Pension, aad.yaml du régime général","valeurs":8,"verifiee_le":"2026-09-14"},
 "age_conjoncturel_depart":{"ajoutees":0,"colonne":"age","corrigees":0,"empreinte":"1a04519c9e9e0628","identiques":57,"niveau":"certifiee","source":"DREES, panorama « Les retraités et les retraites »","valeurs":57,"verifiee_le":"2026-09-21"},
@@ -16261,30 +16261,41 @@ false,
 "effectifs_retraites":{"ajoutees":0,"colonne":"effectifs","corrigees":0,"empreinte":"16f187a2309d5b1b","identiques":334,"niveau":"certifiee","source":"DREES, enquête annuelle auprès des caisses de retraite (EACR)","valeurs":334,"verifiee_le":"2026-09-20"},
 "employeur_public_cnracl_gestionnaire":{"ajoutees":0,"colonne":"taux","corrigees":0,"empreinte":"9061fd34656bebfc","identiques":40,"niveau":"certifiee","source":"CNRACL, documentation juridique, « Cotisations — historique des taux applicables »","valeurs":40,"verifiee_le":"2026-09-22"},
 "employeur_public_cnracl_journal_officiel":{"ajoutees":0,"colonne":"taux","corrigees":0,"empreinte":"acd0d99a25bca141","identiques":41,"niveau":"certifiee","source":"DILA, base LEGI, décret n° 91-613 du 28 juin 1991, article 5 II, et décret n° 47-1846 du 19 septembre 1947, article 3","valeurs":41,"verifiee_le":"2026-09-22"},
-"employeur_public_comedie_francaise":{"ajoutees":0,"colonne":"taux","corrigees":0,"empreinte":"8216396ec705630f","identiques":35,"niveau":"certifiee","source":"DILA, base LEGI, décret n° 91-613 du 28 juin 1991, article 7 II","valeurs":35,"verifiee_le":"2026-09-24"},
+"employeur_public_comedie_francaise":{"ajoutees":0,"colonne":"taux","corrigees":0,"empreinte":"8216396ec705630f","identiques":35,"niveau":"certifiee","source":"DILA, base LEGI, décret n° 91-613 du 28 juin 1991, article 7 II","valeurs":35,"verifiee_le":"2026-10-17"},
 "employeur_public_etat":{"ajoutees":0,"colonne":"taux","corrigees":0,"empreinte":"adce04ab61f245f8","identiques":21,"niveau":"certifiee","source":"Service des retraites de l'État, fiche « Historique des taux de cotisations »","valeurs":21,"verifiee_le":"2026-09-22"},
 "employeur_public_etat_implicite":{"ajoutees":0,"colonne":"taux","corrigees":0,"empreinte":"f388868c5194a5a4","identiques":11,"niveau":"haute","source":"OpenFisca-France, taux implicite du jaune « pensions » du PLF 2011","valeurs":11,"verifiee_le":"2026-09-22"},
 "employeur_public_etat_militaires":{
-"ajoutees":21,
+"ajoutees":0,
 "colonne":"taux",
 "corrigees":0,
 "empreinte":"d6314d2957228ac1",
-"identiques":0,
+"identiques":21,
 "niveau":"certifiee",
 "source":"DILA, base LEGI, décrets fixant le taux de la contribution employeur de l'État pour les personnels militaires (n° 2006-23 à n° 2012-1507)",
 "valeurs":21,
-"verifiee_le":"2026-09-24"
+"verifiee_le":"2026-10-17"
 },
 "employeur_public_fspoeie":{"ajoutees":0,"colonne":"taux","corrigees":0,"empreinte":"6fe0df2c526baff4","identiques":27,"niveau":"certifiee","source":"Direction du budget, jaune pensions annexé au PLF 2027, tableau 14 (taux de contribution employeur)","valeurs":27,"verifiee_le":"2026-10-14"},
-"employeur_public_ieg":{"ajoutees":0,"colonne":"taux","corrigees":0,"empreinte":"a43043673f6c8639","identiques":16,"niveau":"certifiee","source":"DILA, arrêtés annuels pris pour l'article 3 du décret n° 2005-278 du 24 mars 2005","valeurs":16,"verifiee_le":"2026-09-24"},
-"employeur_public_mines":{"ajoutees":0,"colonne":"taux","corrigees":0,"empreinte":"aa83653a18554a82","identiques":43,"niveau":"certifiee","source":"DILA, base LEGI, décret n° 46-2769 du 27 novembre 1946, articles 52 puis 90","valeurs":43,"verifiee_le":"2026-09-24"},
-"employeur_public_opera":{"ajoutees":0,"colonne":"taux","corrigees":0,"empreinte":"78f83f9466b8dda2","identiques":35,"niveau":"certifiee","source":"DILA, base LEGI, décret n° 91-613 du 28 juin 1991, article 6 II","valeurs":35,"verifiee_le":"2026-09-24"},
-"employeur_public_ratp":{"ajoutees":0,"colonne":"taux","corrigees":0,"empreinte":"6ec2dee310929770","identiques":19,"niveau":"certifiee","source":"DILA, arrêtés annuels pris pour l'article 2 du décret n° 2005-1637 du 26 décembre 2005","valeurs":19,"verifiee_le":"2026-09-24"},
+"employeur_public_fspoeie_avant_2000":{
+"ajoutees":17,
+"colonne":"taux",
+"corrigees":0,
+"empreinte":"41a745d287c1b83b",
+"identiques":0,
+"niveau":"certifiee",
+"source":"DILA, base LEGI, décret n° 65-836 du 24 septembre 1965, article 28 IV, puis décrets n° 91-239 du 1er mars 1991, article 3, et n° 98-1169 du 21 décembre 1998, article 1er",
+"valeurs":17,
+"verifiee_le":"2026-10-17"
+},
+"employeur_public_ieg":{"ajoutees":0,"colonne":"taux","corrigees":0,"empreinte":"a43043673f6c8639","identiques":16,"niveau":"certifiee","source":"DILA, arrêtés annuels pris pour l'article 3 du décret n° 2005-278 du 24 mars 2005","valeurs":16,"verifiee_le":"2026-10-17"},
+"employeur_public_mines":{"ajoutees":0,"colonne":"taux","corrigees":0,"empreinte":"aa83653a18554a82","identiques":43,"niveau":"certifiee","source":"DILA, base LEGI, décret n° 46-2769 du 27 novembre 1946, articles 52 puis 90","valeurs":43,"verifiee_le":"2026-10-17"},
+"employeur_public_opera":{"ajoutees":0,"colonne":"taux","corrigees":0,"empreinte":"78f83f9466b8dda2","identiques":35,"niveau":"certifiee","source":"DILA, base LEGI, décret n° 91-613 du 28 juin 1991, article 6 II","valeurs":35,"verifiee_le":"2026-10-17"},
+"employeur_public_ratp":{"ajoutees":0,"colonne":"taux","corrigees":0,"empreinte":"6ec2dee310929770","identiques":19,"niveau":"certifiee","source":"DILA, arrêtés annuels pris pour l'article 2 du décret n° 2005-1637 du 26 décembre 2005","valeurs":19,"verifiee_le":"2026-10-17"},
 "employeur_public_sncf":{"ajoutees":0,"colonne":"taux","corrigees":0,"empreinte":"dc7b277485df7db5","identiques":7,"niveau":"haute","source":"OpenFisca-France, arrêtés annuels fixant les composantes T1 et T2","valeurs":7,"verifiee_le":"2026-09-22"},
-"employeur_public_sncf_avant_2007":{"ajoutees":0,"colonne":"taux","corrigees":0,"empreinte":"f093d49ffbf5ef09","identiques":15,"niveau":"certifiee","source":"DILA, base LEGI, décret n° 91-613 du 28 juin 1991, article 8 II","valeurs":15,"verifiee_le":"2026-09-24"},
+"employeur_public_sncf_avant_2007":{"ajoutees":0,"colonne":"taux","corrigees":0,"empreinte":"f093d49ffbf5ef09","identiques":15,"niveau":"certifiee","source":"DILA, base LEGI, décret n° 91-613 du 28 juin 1991, article 8 II","valeurs":15,"verifiee_le":"2026-10-17"},
 "employeur_public_sncf_textes":{"ajoutees":0,"colonne":"taux","corrigees":0,"empreinte":"1cd4a73db65abbc8","identiques":5,"niveau":"certifiee","source":"DILA, arrêtés annuels du taux T1 (base JORF) et décret n° 2007-1056 du 28 juin 2007, article 2 IV (base LEGI)","valeurs":5,"verifiee_le":"2026-09-22"},
 "engagements_retraite":{"ajoutees":0,"colonne":"part_pib","corrigees":0,"empreinte":"5e0e4e97aded5479","identiques":6,"niveau":"haute","source":"Eurostat, tableau supplémentaire sur les retraites du SEC 2010 (nasa_10_pens1, poste F63_LE)","valeurs":6,"verifiee_le":"2026-09-20"},
-"esperance_65_derivee":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"eb9ed5da75656a7a","identiques":28,"niveau":"haute","source":"dérivée des quotients INED de Vallin et Meslé","valeurs":28,"verifiee_le":"2026-10-16"},
+"esperance_65_derivee":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"eb9ed5da75656a7a","identiques":28,"niveau":"haute","source":"dérivée des quotients INED de Vallin et Meslé","valeurs":28,"verifiee_le":"2026-10-17"},
 "esperances_projetees":{"ajoutees":0,"colonne":"valeur","corrigees":508,"empreinte":"9344898fd5a7bd97","identiques":92,"niveau":"projetee","source":"INSEE, projections de population 2026, espérances publiées sous les quotients projetés","valeurs":600,"verifiee_le":"2026-10-07"},
 "esperances_projetees_variantes":{"ajoutees":1200,"colonne":"valeur","corrigees":0,"empreinte":"32a2c0044bc635d2","identiques":0,"niveau":"projetee","source":"INSEE, projections de population 2026, espérances publiées sous les quotients des hypothèses d'espérance de vie basse et haute","valeurs":1200,"verifiee_le":"2026-10-13"},
 "esperances_vie":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"0ddd59a38e01cfd9","identiques":450,"niveau":"certifiee","source":"INSEE BDM (e0, e60) et OCDE DSD_HEALTH_STAT@DF_LE (e65)","valeurs":450,"verifiee_le":"2026-09-13"},
@@ -16389,7 +16400,7 @@ false,
 "smic_horaire":{"ajoutees":0,"colonne":"smic_horaire","corrigees":0,"empreinte":"1e664f4810d8ce5f","identiques":20,"niveau":"certifiee","source":"DILA, base LEGI, décrets portant relèvement du salaire minimum de croissance","valeurs":20,"verifiee_le":"2026-09-17"},
 "structure_financement_regimes":{"ajoutees":0,"colonne":"part","corrigees":0,"empreinte":"d79e8592a3ac0fe8","identiques":930,"niveau":"haute","source":"COR, compléments du rapport annuel de juin 2024, projections détaillées par régime","valeurs":930,"verifiee_le":"2026-10-05"},
 "structure_ressources_retraite":{"ajoutees":0,"colonne":"part","corrigees":0,"empreinte":"22f206f06f991dc0","identiques":132,"niveau":"haute","source":"COR, rapport annuel, structure des ressources du système de retraite","valeurs":132,"verifiee_le":"2026-10-06"},
-"taux_cotisation_alignes":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"788c0e4df2673be1","identiques":512,"niveau":"haute","source":"la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre","valeurs":512,"verifiee_le":"2026-10-16"},
+"taux_cotisation_alignes":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"788c0e4df2673be1","identiques":512,"niveau":"haute","source":"la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre","valeurs":512,"verifiee_le":"2026-10-17"},
 "taux_cotisation_annuels":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"221f749af3a0886c","identiques":194,"niveau":"haute","source":"OpenFisca-France, barèmes datés de la cotisation vieillesse (cnav, artisans, commerçants, indépendants)","valeurs":194,"verifiee_le":"2026-09-15"},
 "taux_cotisation_avant_1967":{"ajoutees":132,"colonne":"valeur","corrigees":0,"empreinte":"a508951393a0aece","identiques":0,"niveau":"estimee","source":"COR d'après la Cnav, taux des assurances sociales 1945-1967 ; part vieillesse conventionnelle de 8,5/21","valeurs":132,"verifiee_le":"2026-09-14"},
 "taux_cotisation_journal_officiel":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"9c16ff1ba3178b7c","identiques":368,"niveau":"certifiee","source":"DILA, base LEGI, code de la sécurité sociale D. 242-4 et décret n° 81-1013 ; code rural D. 741-35 et décret n° 50-444","valeurs":368,"verifiee_le":"2026-09-15"},
@@ -16425,11 +16436,11 @@ false,
 "niveau":"haute",
 "source":"OpenFisca-France, barème IPP de la cotisation forfaitaire annuelle de la garantie minimale de points (gmp_cot_f_a), transcrit le 2 octobre 2026",
 "valeurs":29,
-"verifiee_le":"2026-10-16"
+"verifiee_le":"2026-10-17"
 },
 "valeurs_point_independants":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"3b912b67d18682a1","identiques":85,"niveau":"haute","source":"IPP, barèmes des régimes de retraite des indépendants","valeurs":85,"verifiee_le":"2026-09-13"},
 "valeurs_point_ircantec":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"08dba684ba1976e6","identiques":153,"niveau":"certifiee","source":"Caisse des dépôts, barèmes Ircantec (IRC_BAR_01 et IRC_BAR_02)","valeurs":153,"verifiee_le":"2026-10-05"},
-"valeurs_point_ircantec_publiees":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"7341e6669d5f7a9d","identiques":23,"niveau":"haute","source":"Ircantec, page « Valeur du point » et paramètres annuels, 2022-2026, lus le 23 septembre 2026","valeurs":23,"verifiee_le":"2026-10-16"},
+"valeurs_point_ircantec_publiees":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"7341e6669d5f7a9d","identiques":23,"niveau":"haute","source":"Ircantec, page « Valeur du point » et paramètres annuels, 2022-2026, lus le 23 septembre 2026","valeurs":23,"verifiee_le":"2026-10-17"},
 "valeurs_point_msa":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"6b9c64c70e7af64e","identiques":21,"niveau":"certifiee","source":"DILA, base LEGI, code rural D. 732-166","valeurs":21,"verifiee_le":"2026-09-17"},
 "valeurs_point_rafp":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"105e66ec7c4bbe5d","identiques":44,"niveau":"certifiee","source":"ERAFP, évolution des valeurs du point depuis la création du RAFP","valeurs":44,"verifiee_le":"2026-10-05"},
 "valeurs_point_rci_cnav":{"ajoutees":0,"colonne":"valeur","corrigees":0,"empreinte":"ac79db347e9e4d0e","identiques":6,"niveau":"haute","source":"Cnav, base de législation : barèmes du point RCI (circulaires Cnav 2023/33, 2024/36 et 2025/31)","valeurs":6,"verifiee_le":"2026-10-05"},
@@ -16704,6 +16715,7 @@ false,
 "1974":[0.0125,3],
 "1975":[0.0125,3]
 },
+"compensation_micro":{"activites":["vente","services","liberal"],"plancher":{"2009":200.0},"seuil":{"2010":200.0,"2011":200.0,"2012":200.0,"2013":200.0,"2014":200.0,"2015":300.0}},
 "complement_differentiel_rco":{
 "fiche":{
 "dates_qui_decident":["liquidation.date_effet"],
@@ -19251,6 +19263,23 @@ false,
 "fonction_publique_etat|2024":[0.7428,"appelee",3],
 "fonction_publique_etat|2025":[0.7828,"appelee",3],
 "fonction_publique_etat|2026":[0.8228,"appelee",3],
+"fspoeie|1983":[0.09,"appelee",3],
+"fspoeie|1984":[0.09,"appelee",3],
+"fspoeie|1985":[0.09,"appelee",3],
+"fspoeie|1986":[0.09,"appelee",3],
+"fspoeie|1987":[0.09,"appelee",3],
+"fspoeie|1988":[0.09,"appelee",3],
+"fspoeie|1989":[0.09,"appelee",3],
+"fspoeie|1990":[0.09,"appelee",3],
+"fspoeie|1991":[0.09,"appelee",3],
+"fspoeie|1992":[0.1034,"appelee",3],
+"fspoeie|1993":[0.1034,"appelee",3],
+"fspoeie|1994":[0.1034,"appelee",3],
+"fspoeie|1995":[0.1034,"appelee",3],
+"fspoeie|1996":[0.1034,"appelee",3],
+"fspoeie|1997":[0.1034,"appelee",3],
+"fspoeie|1998":[0.1034,"appelee",3],
+"fspoeie|1999":[0.24,"appelee",3],
 "fspoeie|2000":[0.24,"appelee",3],
 "fspoeie|2001":[0.24,"appelee",3],
 "fspoeie|2002":[0.24,"appelee",3],
@@ -19507,10 +19536,61 @@ false,
 ["unirs",1999,"arrco",0.387464,2]
 ],
 "cotisation_micro":{
-"cipav":{"regimes":["cnavpl","cipav_complementaire"],"taux":{"2023":[0.10053939393939393,0.06665151515151513],"2024":[0.10088787878787879,0.07831969696969697],"2025":[0.10123636363636365,0.08998787878787881],"2026":[0.10369696969696973,0.1079151515151515]}},
-"liberal":{"regimes":["regime_general","rci"],"taux":{"2023":[0.17743181818181822,0.0],"2024":[0.1775284090909091,0.013737500000000001],"2025":[0.17741818181818186,0.048454545454545465],"2026":[0.17997575757575762,0.0814545454545455]}},
-"services":{"regimes":["regime_general","rci"],"taux":{"2023":[0.17723200000000003,0.06996000000000001],"2024":[0.17723200000000003,0.06996000000000001],"2025":[0.17723200000000003,0.06996000000000001],"2026":[0.18422800000000003,0.08374000000000002]}},
-"vente":{"regimes":["regime_general","rci"],"taux":{"2023":[0.17728965517241374,0.06998275862068966],"2024":[0.17728965517241374,0.06998275862068966],"2025":[0.17728965517241374,0.06998275862068966],"2026":[0.18428793103448268,0.08376724137931033]}}
+"cipav":{
+"regimes":["cnavpl","cipav_complementaire"],
+"taux":{
+"2019":[0.10000000000000003,0.06666666666666667],
+"2020":[0.10000000000000003,0.06666666666666667],
+"2021":[0.10011818181818183,0.06663333333333334],
+"2022":[0.1003121212121212,0.06661287878787879],
+"2023":[0.10053939393939393,0.06665151515151513],
+"2024":[0.10088787878787879,0.07831969696969697],
+"2025":[0.10123636363636365,0.08998787878787881],
+"2026":[0.10369696969696973,0.1079151515151515]
+}
+},
+"liberal":{
+"regimes":["regime_general","rci"],
+"taux":{
+"2018":[0.17743333333333333,0.0],
+"2019":[0.17743333333333333,0.0],
+"2020":[0.17743333333333333,0.0],
+"2021":[0.17743333333333333,0.0],
+"2022":[0.17743295454545457,0.0],
+"2023":[0.17743181818181822,0.0],
+"2024":[0.1775284090909091,0.013737500000000001],
+"2025":[0.17741818181818186,0.048454545454545465],
+"2026":[0.17997575757575762,0.0814545454545455]
+}
+},
+"services":{
+"regimes":["regime_general","rci"],
+"taux":{
+"2018":[0.177584,0.07000399999999998],
+"2019":[0.177584,0.07000399999999998],
+"2020":[0.177584,0.07000399999999998],
+"2021":[0.177584,0.07000399999999998],
+"2022":[0.177496,0.069993],
+"2023":[0.17723200000000003,0.06996000000000001],
+"2024":[0.17723200000000003,0.06996000000000001],
+"2025":[0.17723200000000003,0.06996000000000001],
+"2026":[0.18422800000000003,0.08374000000000002]
+}
+},
+"vente":{
+"regimes":["regime_general","rci"],
+"taux":{
+"2018":[0.17792,0.07035586206896552],
+"2019":[0.17792,0.07035586206896552],
+"2020":[0.17792,0.07035586206896552],
+"2021":[0.17792,0.07035586206896552],
+"2022":[0.17776241379310342,0.07026258620689656],
+"2023":[0.17728965517241374,0.06998275862068966],
+"2024":[0.17728965517241374,0.06998275862068966],
+"2025":[0.17728965517241374,0.06998275862068966],
+"2026":[0.18428793103448268,0.08376724137931033]
+}
+}
 },
 "courbe_taux_sans_risque":{
 "date":"2026-09-17",
@@ -26810,7 +26890,7 @@ null
 "taux_hausse_csg":0.016702,
 "taux_recrutes":0.0076
 },
-"institutions_citees":41,
+"institutions_citees":42,
 "inventaire":[
 {
 "code":"cnrv",
@@ -28654,7 +28734,7 @@ null
 "famille":"non_salarie",
 "fermeture":null,
 "integre_dans":null,
-"manque":"Le statut `micro_entrepreneur` route les régimes du commerçant sur le revenu reconstitué (chiffre d'affaires après abattement). Depuis 2023, les trimestres se valident sur le revenu que la cotisation achète, taux global, part de base et taux de base, et le compte notionnel porte la part de base et la part complémentaire du forfait (`legislation/micro_social.yaml`, D. 613-4, D. 613-6, circulaire Cnav n° 2024-23) ; le barème sur le revenu abattu s'en écartait de +39 % pour le libéral de 2023, de +13 à +15 % pour la Cipav de 2023 à 2025. La saisie prend le chiffre d'affaires et l'activité (champ « micro »), l'abat de 71, 50 ou 34 % (L. 613-7, II) et route la Cipav vers les régimes du libéral. Non portés : avant 2023, la règle de validation, où le revenu abattu valide, et la répartition du forfait, que le barème approche sur le revenu abattu ; les points du RCI sur la part du forfait.",
+"manque":"Le statut `micro_entrepreneur` route les régimes du commerçant sur le revenu reconstitué (chiffre d'affaires après abattement). Depuis 2023, les trimestres se valident sur le revenu que la cotisation achète, taux global, part de base et taux de base, et le compte notionnel porte la part de base et la part complémentaire du forfait (`legislation/micro_social.yaml`, D. 613-4, D. 613-6, circulaire Cnav n° 2024-23) ; le barème sur le revenu abattu s'en écartait de +39 % pour le libéral de 2023, de +13 à +15 % pour la Cipav de 2023 à 2025. La saisie prend le chiffre d'affaires et l'activité (champ « micro »), l'abat de 71, 50 ou 34 % (L. 613-7, II) et route la Cipav vers les régimes du libéral. Depuis 2018, la table porte les clefs de la Cnav (circulaire n° 2025-20), depuis 2019 la répartition de la Cipav (D. 131-5-3), et de 2009 à 2015 la compensation de l'État (L. 133-6-8-2, D. 131-6-4). Non portés : en 2016 et 2017, les clefs, où le revenu abattu valide et le barème approche le forfait ; la règle de la CNAVPL pour la Cipav avant 2023 ; les points du RCI sur la part du forfait.",
 "nom":"Régime micro-social des micro-entrepreneurs",
 "population":"Micro-entrepreneurs (artisans, commerçants, libéraux non réglementés)",
 "raison_hors_champ":"",
@@ -37179,6 +37259,19 @@ null
 "libelle":"Salarié",
 "libelle_assiette":"Salaire brut",
 "libelle_net":"Salaire net",
+"lodeom":{
+"baremes":{
+"competitivite":{"code":"competitivite","libelle":"barème de compétitivité","palier_jusqu_en_smic":null,"seuil_de_sortie":2.2,"seuil_total":1.3},
+"competitivite_renforcee":{"code":"competitivite_renforcee","libelle":"barème de compétitivité renforcée","palier_jusqu_en_smic":null,"seuil_de_sortie":2.7,"seuil_total":2.0},
+"innovation_et_croissance":{"code":"innovation_et_croissance","libelle":"barème d'innovation et de croissance","palier_jusqu_en_smic":2.5,"seuil_de_sortie":3.5,"seuil_total":1.7}
+},
+"coefficient_maximal":0.3241,
+"composantes":{"accidents_travail":0.0049,"agirc_arrco":0.0472,"autonomie":0.003,"chomage":0.04,"equilibre_general":0.0129,"famille":0.0345,"logement":0.005,"maladie":0.07,"vieillesse_deplafonnee":0.0211,"vieillesse_plafonnee":0.0855},
+"composantes_retraite":["vieillesse_plafonnee","vieillesse_deplafonnee","agirc_arrco","equilibre_general"],
+"libelle":"Exonération Lodeom (Guadeloupe, Guyane, Martinique, La Réunion)",
+"smic_horaire_de_reference":11.52,
+"taux_reduits":[{"jusqu_en_smic_de_reference":2.5,"poste":"maladie","taux":0.07},{"jusqu_en_smic_de_reference":3.5,"poste":"famille","taux":0.0345}]
+},
 "postes":[
 {
 "cadres_seulement":false,
@@ -221615,9 +221708,9 @@ null
 },
 "validation_micro":{
 "cipav":{"2023":1.0147649029787547,"2024":1.0081740859383628,"2025":0.9442188205074804,"2026":0.978444236176195},
-"liberal":{"2023":0.9996158770806661,"2024":1.0001600512163893,"2025":0.9928269827542351,"2026":1.0071391022706078},
-"services":{"2023":0.9984901408450706,"2024":0.9984901408450706,"2025":0.9917851147174036,"2026":1.030934527140459},
-"vente":{"2023":0.998814958717824,"2024":0.998814958717824,"2025":0.9921077513845199,"2026":1.0312698994654879}
+"liberal":{"2018":0.99962441314554,"2019":0.99962441314554,"2020":0.99962441314554,"2021":0.99962441314554,"2022":0.9996222791293214,"2023":0.9996158770806661,"2024":1.0001600512163893,"2025":0.9928269827542351,"2026":1.0071391022706078},
+"services":{"2018":1.0004732394366196,"2019":1.0004732394366196,"2020":1.0004732394366196,"2021":1.0004732394366196,"2022":0.9999774647887324,"2023":0.9984901408450706,"2024":0.9984901408450706,"2025":0.9917851147174036,"2026":1.030934527140459},
+"vente":{"2018":1.0023661971830988,"2019":1.0023661971830988,"2020":1.0023661971830988,"2021":1.0023661971830988,"2022":1.0014783875667799,"2023":0.998814958717824,"2024":0.998814958717824,"2025":0.9921077513845199,"2026":1.0312698994654879}
 },
 "version":23,
 "versions_des_fiches":{

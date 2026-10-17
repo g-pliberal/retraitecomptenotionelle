@@ -7704,15 +7704,19 @@ referents:
         verification: >-
           L. 752-3-2 (LEGIARTI000053285063, dès le 1er juillet 2026)
           : non cumulable « avec une autre exonération totale ou
-          partielle de cotisations patronales »
-        etat: coupe
+          partielle de cotisations patronales ». Repris le 17 octobre
+          2026 (action 138, étape 18) : les trois barèmes de la
+          Guadeloupe, de la Guyane, de la Martinique et de La Réunion
+          (L. 752-3-2 au 1er janvier 2026, LEGIARTI000053280451 ;
+          D. 752-7), T à 0,3241, et les taux réduits de maladie et de
+          famille que l'employeur garde (loi n° 2025-1403, article
+          40, V et VI ; décret n° 2025-1446), déclarés ligne par
+          ligne sur le relevé, dans les deux moteurs
+          (`legislation/prelevements_remuneration.yaml`) ; la saisie
+          du site ne les porte pas encore, ni Saint-Barthélemy et
+          Saint-Martin (L. 752-3-3), ni Mayotte.
+        etat: repris
         chantier: "138.18"
-        raison: >-
-          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
-          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
-          octobre). Hors de la carte : la fiche de paie, dont docs/limites/5-ante-bis-
-          fiche-de-paie.md déclare les exclusions ; le net se compare entre scénarios au
-          même taux. La Lodeom, outre-mer, au lieu de la réduction générale.
       - quoi: >-
           Il calcule le précompte de l'artiste-auteur : plafonnée
           moins 0,75 point et déplafonnée nulle (prises en charge

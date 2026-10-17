@@ -557,6 +557,92 @@ class ReductionGenerale:
 
 
 @dataclass(frozen=True)
+class BaremeLodeom:
+    """Un des trois barèmes de la Lodeom (L. 752-3-2, III ; D. 752-7, II).
+
+    Les seuils sont en SMIC annuels. Sous ``seuil_total``, l'exonération
+    efface tout le périmètre ; jusqu'à ``palier_jusqu_en_smic``, quand il y en
+    a un, elle s'en tient aux cotisations d'un salaire de ``seuil_total``
+    SMIC ; elle décroît ensuite, et s'éteint à ``seuil_de_sortie``.
+    """
+
+    code: str
+    libelle: str
+    seuil_total: float
+    seuil_de_sortie: float
+    palier_jusqu_en_smic: float | None = None
+
+    def montant(self, brut: float, smic_annuel: float, maximal: float) -> float:
+        """L'exonération de ce salaire, avant que le périmètre ne la borne.
+
+        ``maximal`` est T. Le coefficient de la partie dégressive s'arrondit à
+        quatre décimales sans dépasser T, comme le BOSS le veut.
+        """
+        if brut <= 0 or smic_annuel <= 0 or brut >= self.seuil_de_sortie * smic_annuel:
+            return 0.0
+        if brut <= self.seuil_total * smic_annuel:
+            return maximal * brut
+        debut = self.seuil_total
+        if self.palier_jusqu_en_smic is not None:
+            if brut < self.palier_jusqu_en_smic * smic_annuel:
+                return maximal * self.seuil_total * smic_annuel
+            debut = self.palier_jusqu_en_smic
+        coefficient = round(
+            self.seuil_total * maximal / (self.seuil_de_sortie - debut)
+            * (self.seuil_de_sortie * smic_annuel / brut - 1.0), 4)
+        return min(maximal, coefficient) * brut
+
+
+@dataclass(frozen=True)
+class TauxReduitLodeom:
+    """Un taux patronal réduit que l'employeur de la Lodeom garde (loi
+    n° 2025-1403, article 40, V et VI), jusqu'à un montant fixe."""
+
+    poste: str
+    taux: float
+    #: En multiples de 1 820 heures du SMIC horaire de référence.
+    jusqu_en_smic_de_reference: float
+
+
+@dataclass(frozen=True)
+class Lodeom:
+    """L'exonération qui remplace la réduction générale en Guadeloupe, en
+    Guyane, en Martinique et à La Réunion, et de quoi la recalculer."""
+
+    libelle: str
+    #: T : la somme des taux du périmètre pour un salaire au SMIC, la maladie
+    #: et la famille à leurs taux réduits. Un test l'exige.
+    coefficient_maximal: float
+    composantes: dict[str, float]
+    composantes_retraite: tuple[str, ...]
+    #: Le SMIC horaire du 31 décembre 2023, d'où se comptent les seuils des
+    #: taux réduits.
+    smic_horaire_de_reference: float
+    taux_reduits: tuple[TauxReduitLodeom, ...]
+    baremes: dict[str, BaremeLodeom]
+
+    @property
+    def taux_retraite_inclus(self) -> float:
+        """Points de cotisation retraite patronale compris dans T."""
+        return somme_ordonnee(self.composantes[code] for code in self.composantes_retraite)
+
+    def coefficient_maximal_avec(self, taux_retraite_employeur: float) -> float:
+        """T quand la retraite patronale change de taux : la loi le borne à la
+        somme des taux du périmètre, comme celui de la réduction générale."""
+        return max(0.0, self.coefficient_maximal - self.taux_retraite_inclus
+                   + taux_retraite_employeur)
+
+    def taux_reduit(self, poste: str, brut: float) -> float | None:
+        """Le taux réduit de ce poste à ce salaire, ou ``None``."""
+        for reduit in self.taux_reduits:
+            if reduit.poste == poste:
+                seuil = (reduit.jusqu_en_smic_de_reference * self.smic_horaire_de_reference
+                         * HEURES_ANNUELLES_TEMPS_PLEIN)
+                return reduit.taux if brut <= seuil else None
+        return None
+
+
+@dataclass(frozen=True)
 class ProfilRemuneration:
     """Tout ce que le droit prélève sur un revenu, hors retraite acquisitive.
 
@@ -586,6 +672,9 @@ class ProfilRemuneration:
     #: L'abattement de l'assiette sociale de l'indépendant depuis 2025 ;
     #: ``None`` pour les autres profils.
     abattement_assiette: AssietteAbattue | None = None
+    #: L'exonération Lodeom que l'employeur d'outre-mer peut recevoir à la
+    #: place de la réduction générale ; ``None`` quand le profil n'en a pas.
+    lodeom: Lodeom | None = None
 
     @property
     def csg(self) -> float:
@@ -870,6 +959,32 @@ def _reduction_generale(contenu) -> ReductionGenerale | None:
     )
 
 
+def _lodeom(contenu) -> Lodeom | None:
+    if not contenu:
+        return None
+    return Lodeom(
+        libelle=contenu["libelle"],
+        coefficient_maximal=float(contenu["coefficient_maximal"]),
+        composantes={code: float(valeur)
+                     for code, valeur in contenu["composantes"].items()},
+        composantes_retraite=tuple(contenu["composantes_retraite"]),
+        smic_horaire_de_reference=float(contenu["smic_horaire_de_reference"]),
+        taux_reduits=tuple(
+            TauxReduitLodeom(poste=reduit["poste"], taux=float(reduit["taux"]),
+                             jusqu_en_smic_de_reference=float(
+                                 reduit["jusqu_en_smic_de_reference"]))
+            for reduit in contenu["taux_reduits"]),
+        baremes={
+            code: BaremeLodeom(
+                code=code, libelle=bareme["libelle"],
+                seuil_total=float(bareme["seuil_total"]),
+                seuil_de_sortie=float(bareme["seuil_de_sortie"]),
+                palier_jusqu_en_smic=(None if bareme.get("palier_jusqu_en_smic") is None
+                                      else float(bareme["palier_jusqu_en_smic"])))
+            for code, bareme in contenu["baremes"].items()},
+    )
+
+
 @lru_cache(maxsize=4)
 def _charger(chemin: str, signature: tuple) -> Prelevements:
     contenu = charger_yaml(Path(chemin))
@@ -896,6 +1011,7 @@ def _charger(chemin: str, signature: tuple) -> Prelevements:
                 fiche.get("reduction_generale")),
             fiabilite=fiabilite,
             abattement_assiette=_assiette_abattue(fiche.get("assiette_abattue")),
+            lodeom=_lodeom(fiche.get("lodeom")),
         )
     pensions = contenu["pensions"]
     return Prelevements(
@@ -1095,13 +1211,17 @@ class FicheDePaie:
     brut: float
     net: float
     lignes: tuple[Ligne, ...]
-    #: Montant de la réduction générale, déjà retranché du coût du travail.
+    #: Montant de la réduction générale — ou de l'exonération Lodeom qui la
+    #: remplace outre-mer (:attr:`lodeom`) —, déjà retranché du coût du travail.
     reduction_generale: float
     fiabilite: Fiabilite
     #: Part de la retraite dans le coefficient maximal de la réduction
     #: générale, posée à la construction : c'est la clé par laquelle la loi
     #: répartit la réduction entre les organismes qui l'encaissent.
     part_retraite_dans_la_reduction: float = 0.0
+    #: Le barème de la Lodeom que l'employeur applique ; vide sous la
+    #: réduction générale.
+    lodeom: str = ""
 
     @property
     def cotisations_salariales(self) -> float:
@@ -1162,12 +1282,42 @@ class FicheDePaie:
 
 
 class ConstructeurFiche:
-    """Construit une fiche de paie sous un bloc retraite donné, pour un profil."""
+    """Construit une fiche de paie sous un bloc retraite donné, pour un profil.
 
-    def __init__(self, profil: ProfilRemuneration) -> None:
+    ``lodeom``, le barème de la Lodeom de l'employeur, met cette exonération à
+    la place de la réduction générale et rend à la maladie et à la famille
+    leurs taux réduits. Un profil qui n'en a pas l'ignore ; un barème que le
+    profil ne connaît pas est refusé.
+    """
+
+    def __init__(self, profil: ProfilRemuneration, lodeom: str = "") -> None:
         self.profil = profil
+        self.bareme_lodeom: BaremeLodeom | None = None
+        if lodeom and profil.lodeom is not None:
+            if lodeom not in profil.lodeom.baremes:
+                raise ValueError(f"barème Lodeom inconnu : {lodeom} ; connus : "
+                                 + ", ".join(profil.lodeom.baremes))
+            self.bareme_lodeom = profil.lodeom.baremes[lodeom]
 
     # -- pièces --------------------------------------------------------------
+
+    def _employeur(self, poste: Poste, brut: float, plafond: float) -> float:
+        """La part patronale d'un poste, à son taux réduit sous la Lodeom."""
+        if self.bareme_lodeom is not None:
+            taux = self.profil.lodeom.taux_reduit(poste.code, brut)
+            if taux is not None:
+                return brut * taux
+        return _montant(poste.employeur, brut, plafond)
+
+    def _maximal(self, taux_retraite: float) -> float | None:
+        """Le coefficient maximal de l'allègement de l'employeur — T sous la
+        Lodeom, celui de la réduction générale sinon —, ``None`` sans
+        allègement."""
+        if self.bareme_lodeom is not None:
+            return self.profil.lodeom.coefficient_maximal_avec(taux_retraite)
+        if self.profil.reduction_generale is not None:
+            return self.profil.reduction_generale.coefficient_maximal_avec(taux_retraite)
+        return None
 
     def _lignes(self, bloc: BlocRetraite, brut: float, plafond: float,
                 cadre: bool) -> tuple[Ligne, ...]:
@@ -1185,7 +1335,7 @@ class ConstructeurFiche:
             lignes.append(Ligne(
                 code=poste.code, libelle=poste.libelle, retraite=poste.retraite,
                 salarie=poste.montant_salarie(brut, plafond),
-                employeur=_montant(poste.employeur, brut, plafond),
+                employeur=self._employeur(poste, brut, plafond),
             ))
         contributions = self._csg_crds(bloc, brut, plafond)
         if contributions:
@@ -1228,23 +1378,28 @@ class ConstructeurFiche:
             if poste.taux_dans_la_reduction is not None:
                 total += brut * poste.taux_dans_la_reduction
             else:
-                total += _montant(poste.employeur, brut, plafond)
+                total += self._employeur(poste, brut, plafond)
         return total
 
     def _reduction(self, bloc: BlocRetraite, brut: float, plafond: float,
                    smic_annuel: float, cadre: bool) -> float:
-        reduction = self.profil.reduction_generale
-        if reduction is None:
+        taux_retraite = bloc.taux_employeur_dans_la_reduction(self.profil)
+        if self.bareme_lodeom is not None:
+            # Elle REMPLACE la réduction générale, même au-delà du seuil où
+            # elle s'éteint : les deux ne se cumulent pas (L. 752-3-2, VI), et
+            # le simulateur de l'Urssaf écarte l'une dès que l'autre s'applique.
+            montant = self.bareme_lodeom.montant(
+                brut, smic_annuel, self._maximal(taux_retraite))
+        elif self.profil.reduction_generale is not None:
+            montant = self.profil.reduction_generale.coefficient(
+                brut, smic_annuel, taux_retraite) * brut
+        else:
             return 0.0
-        coefficient = reduction.coefficient(
-            brut, smic_annuel, bloc.taux_employeur_dans_la_reduction(self.profil)
-        )
-        if coefficient <= 0:
+        if montant <= 0:
             return 0.0
         # Une réduction ne peut pas excéder ce qui est dû : c'est la règle, et
         # c'est aussi ce qui empêche le coût du travail de devenir négatif.
-        return min(coefficient * brut,
-                   self._perimetre_reduction(bloc, brut, plafond, cadre))
+        return min(montant, self._perimetre_reduction(bloc, brut, plafond, cadre))
 
     # -- la fiche ------------------------------------------------------------
 
@@ -1257,10 +1412,9 @@ class ConstructeurFiche:
         salariales = somme_ordonnee(ligne.salarie for ligne in lignes)
         patronales = somme_ordonnee(ligne.employeur for ligne in lignes)
         part_retraite = 0.0
-        if self.profil.reduction_generale is not None:
-            taux_retraite = bloc.taux_employeur_dans_la_reduction(self.profil)
-            maximal = self.profil.reduction_generale.coefficient_maximal_avec(
-                taux_retraite)
+        taux_retraite = bloc.taux_employeur_dans_la_reduction(self.profil)
+        maximal = self._maximal(taux_retraite)
+        if maximal is not None:
             part_retraite = taux_retraite / maximal if maximal > 0 else 0.0
         return FicheDePaie(
             annee=annee,
@@ -1271,6 +1425,7 @@ class ConstructeurFiche:
             reduction_generale=reduction,
             fiabilite=self.profil.fiabilite,
             part_retraite_dans_la_reduction=min(1.0, part_retraite),
+            lodeom=self.bareme_lodeom.code if self.bareme_lodeom is not None else "",
         )
 
     def brut_a_cout_donne(self, cout: float, plafond_annuel: float,
@@ -2154,7 +2309,15 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
 
     prelevements = charger_prelevements(parametres.racine_donnees)
     profil = prelevements.profil(code_profil)
-    constructeur = ConstructeurFiche(profil)
+    # La fiche d'une année est celle de son employeur : un constructeur par
+    # barème de la Lodeom que les lignes déclarent, la réduction générale sinon.
+    constructeurs: dict[str, ConstructeurFiche] = {}
+
+    def constructeur_de(lodeom: str) -> ConstructeurFiche:
+        if lodeom not in constructeurs:
+            constructeurs[lodeom] = ConstructeurFiche(profil, lodeom)
+        return constructeurs[lodeom]
+
     # « Cadre » n'est pas une famille d'affiliation : c'est la seule chose qui
     # sépare deux statuts du privé pour la cotisation APEC, qui vaut 0,024 %.
     cadre = "cadre" in statut and "non_cadre" not in statut
@@ -2232,6 +2395,7 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
         actuel_bloc = bloc_droit_en_vigueur(catalogue, affiliations, statut, annee,
                                             primes)
         propose = bloc_propose(annee, actuel_bloc, 1.0 - primes)
+        constructeur = constructeur_de(ligne.lodeom)
         fiche_actuelle = constructeur.fiche(
             annee, brut, plafond, smic, actuel_bloc, cadre)
         brut_propose = constructeur.brut_sous_la_proposition(

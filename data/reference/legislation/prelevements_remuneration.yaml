@@ -215,6 +215,90 @@ reduction_generale: &reduction_generale
     - "Décret n° 2025-887 du 4 septembre 2025"
     - "Décret n° 2025-1446 du 31 décembre 2025"
 
+# L'exonération Lodeom, en Guadeloupe, en Guyane, en Martinique et à La Réunion
+# ------------------------------------------------------------------------------
+# L'employeur qui y a droit — moins de onze salariés, ou l'un des secteurs que
+# L. 752-3-2, II, énumère — ne reçoit pas la réduction générale : les deux ne se
+# cumulent pas (VI), et le simulateur de l'Urssaf l'écarte même au-delà du seuil
+# où la Lodeom s'éteint. Son exonération est TOTALE sous un premier seuil, puis
+# dégressive (D. 752-7, II) :
+#
+#   coefficient = seuil_total × T ÷ (seuil_de_sortie − seuil_total)
+#                 × (seuil_de_sortie × SMIC ÷ brut − 1)
+#
+# le barème d'innovation et de croissance s'en tenant, de son premier seuil à
+# `palier_jusqu_en_smic`, aux cotisations d'un salaire de 1,7 SMIC (III, C), et
+# ne décroissant qu'ensuite, `palier_jusqu_en_smic` remplaçant `seuil_total`
+# sous la division. Le coefficient s'arrondit à quatre décimales, sans dépasser
+# T : le BOSS le dit (§ 1380, cité par la fiche Sage de janvier 2026), et le
+# simulateur de l'Urssaf le fait ; D. 752-7 ne le dit pas. Le barème est
+# celui de l'employeur, que le relevé déclare ligne par ligne (`lodeom`).
+#
+# Le périmètre est celui de L. 241-13 dans sa rédaction d'avant la loi de
+# financement pour 2025 : les mêmes composantes que la réduction générale. T, la
+# valeur maximale du coefficient, en est la somme « pour une rémunération égale
+# au salaire minimum de croissance » (L. 752-3-2, IV ; D. 752-7, III) : la
+# maladie et la famille y comptent à leurs taux RÉDUITS, que l'employeur de la
+# Lodeom garde quand les autres les ont perdus le 1er janvier 2026 (loi
+# n° 2025-1403, article 40, V et VI). Le BOSS publie 0,3241 pour cinquante
+# salariés et plus — 0,3201 sous le seuil, le FNAL à 0,10 % —, et un test exige
+# que les composantes y retombent.
+#
+# Les taux réduits valent jusqu'à 2,5 fois (maladie) et 3,5 fois (famille)
+# 1 820 heures du SMIC « applicable au 31 décembre 2023 » (décret n° 2025-1446,
+# article 3) : 11,52 € de l'heure, du 1er mai 2023 (arrêté du 26 avril 2023,
+# JORFTEXT000047495817) au 31 décembre. Ce sont des montants FIXES, 52 416 € et
+# 73 382,40 € par an, que les SMIC suivants ne déplacent pas.
+#
+# Ni Saint-Barthélemy et Saint-Martin, dont la Lodeom a ses propres barèmes
+# (L. 752-3-3), ni Mayotte, où elle n'entre que le 1er juillet 2026 et dont le
+# dépôt n'a pas de fiche de paie.
+lodeom: &lodeom
+  libelle: "Exonération Lodeom (Guadeloupe, Guyane, Martinique, La Réunion)"
+  coefficient_maximal: 0.3241
+  composantes:
+    maladie: 0.0700
+    vieillesse_plafonnee: 0.0855
+    vieillesse_deplafonnee: 0.0211
+    famille: 0.0345
+    accidents_travail: 0.0049
+    autonomie: 0.0030
+    agirc_arrco: 0.0472
+    equilibre_general: 0.0129
+    chomage: 0.0400
+    logement: 0.0050
+  composantes_retraite:
+    - vieillesse_plafonnee
+    - vieillesse_deplafonnee
+    - agirc_arrco
+    - equilibre_general
+  smic_horaire_de_reference: 11.52
+  taux_reduits:
+    - {poste: maladie, taux: 0.0700, jusqu_en_smic_de_reference: 2.5}
+    - {poste: famille, taux: 0.0345, jusqu_en_smic_de_reference: 3.5}
+  baremes:
+    competitivite:
+      libelle: "barème de compétitivité"
+      seuil_total: 1.3
+      seuil_de_sortie: 2.2
+    competitivite_renforcee:
+      libelle: "barème de compétitivité renforcée"
+      seuil_total: 2.0
+      seuil_de_sortie: 2.7
+    innovation_et_croissance:
+      libelle: "barème d'innovation et de croissance"
+      seuil_total: 1.7
+      palier_jusqu_en_smic: 2.5
+      seuil_de_sortie: 3.5
+  textes:
+    - "Article L. 752-3-2 du code de la sécurité sociale, version en vigueur du 1er janvier 2026 (LEGIARTI000053280451) ; barèmes inchangés le 1er juillet 2026 (LEGIARTI000053285063)"
+    - "Article D. 752-7 du code de la sécurité sociale, version en vigueur du 1er janvier 2026 (LEGIARTI000052196887)"
+    - "Article L. 241-13 du code de la sécurité sociale, version en vigueur du 1er janvier 2021 au 27 février 2025 (LEGIARTI000042912368), I : le périmètre"
+    - "Loi n° 2025-1403 du 30 décembre 2025, article 40, V et VI (LFSS 2026) : les taux réduits"
+    - "Décret n° 2025-1446 du 31 décembre 2025, article 3 (LEGIARTI000053296358) : leurs seuils"
+    - "Arrêté du 26 avril 2023 relatif au relèvement du salaire minimum de croissance, article 2 (JORFARTI000047495827)"
+    - "BOSS, Exonérations zonées, chapitre 5, § 1380 (valeur de T au 1er janvier 2026), cité par la fiche Sage « LODEOM – DOM, barème dit de compétitivité renforcée » de janvier 2026"
+
 # Chaque poste porte deux barèmes — ce que l'assuré supporte, ce que l'employeur
 # verse — découpés par tranche de PLAFOND DE LA SÉCURITÉ SOCIALE.
 # `jusqu_en_plafonds: null` signifie « sans limite ».
@@ -605,6 +689,7 @@ profils:
     postes: *postes_regime_general
     contributions_sociales: *csg_salariee
     reduction_generale: *reduction_generale
+    lodeom: *lodeom
 
   salarie_ircantec:
     libelle: "Agent non titulaire de la fonction publique"

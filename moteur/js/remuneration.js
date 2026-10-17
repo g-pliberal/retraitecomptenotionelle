@@ -202,6 +202,85 @@ export class ReductionGenerale {
 }
 
 /**
+ * Un des trois barèmes de la Lodeom (L. 752-3-2, III ; D. 752-7, II), ses
+ * seuils en SMIC annuels : totale sous `seuil_total`, au niveau de ce seuil
+ * jusqu'à `palier_jusqu_en_smic` quand il y en a un, dégressive ensuite,
+ * éteinte à `seuil_de_sortie`. Voir remuneration.py.
+ */
+export class BaremeLodeom {
+  constructor(fiche) {
+    Object.assign(this, { palier_jusqu_en_smic: null, ...fiche });
+  }
+
+  /**
+   * L'exonération de ce salaire, avant que le périmètre ne la borne ;
+   * `maximal` est T. Le coefficient de la partie dégressive s'arrondit à
+   * quatre décimales sans dépasser T.
+   */
+  montant(brut, smicAnnuel, maximal) {
+    if (brut <= 0 || smicAnnuel <= 0 || brut >= this.seuil_de_sortie * smicAnnuel) {
+      return 0;
+    }
+    if (brut <= this.seuil_total * smicAnnuel) {
+      return maximal * brut;
+    }
+    let debut = this.seuil_total;
+    if (this.palier_jusqu_en_smic !== null) {
+      if (brut < this.palier_jusqu_en_smic * smicAnnuel) {
+        return maximal * this.seuil_total * smicAnnuel;
+      }
+      debut = this.palier_jusqu_en_smic;
+    }
+    const coefficient = Math.round(
+      this.seuil_total * maximal / (this.seuil_de_sortie - debut)
+      * ((this.seuil_de_sortie * smicAnnuel) / brut - 1) * 1e4,
+    ) / 1e4;
+    return Math.min(maximal, coefficient) * brut;
+  }
+}
+
+/**
+ * L'exonération qui remplace la réduction générale en Guadeloupe, en Guyane,
+ * en Martinique et à La Réunion, et de quoi la recalculer. Voir
+ * remuneration.py.
+ */
+export class Lodeom {
+  constructor(fiche) {
+    Object.assign(this, fiche);
+    this.baremes = Object.fromEntries(Object.entries(fiche.baremes)
+      .map(([code, bareme]) => [code, new BaremeLodeom(bareme)]));
+  }
+
+  /** Points de cotisation retraite patronale compris dans T. */
+  get tauxRetraiteInclus() {
+    return this.composantes_retraite.reduce(
+      (total, code) => total + this.composantes[code], 0,
+    );
+  }
+
+  /**
+   * T quand la retraite patronale change de taux : la loi le borne à la somme
+   * des taux du périmètre, comme celui de la réduction générale.
+   */
+  coefficientMaximalAvec(tauxRetraiteEmployeur) {
+    return Math.max(
+      0, this.coefficient_maximal - this.tauxRetraiteInclus + tauxRetraiteEmployeur,
+    );
+  }
+
+  /** Le taux réduit de ce poste à ce salaire, ou `null`. */
+  tauxReduit(poste, brut) {
+    const reduit = this.taux_reduits.find((r) => r.poste === poste);
+    if (reduit === undefined) {
+      return null;
+    }
+    const seuil = reduit.jusqu_en_smic_de_reference * this.smic_horaire_de_reference
+      * HEURES_ANNUELLES_TEMPS_PLEIN;
+    return brut <= seuil ? reduit.taux : null;
+  }
+}
+
+/**
  * Tout ce que le droit prélève sur un revenu, hors retraite acquisitive, pour
  * une situation d'employeur donnée.
  *
@@ -228,6 +307,9 @@ export class ProfilRemuneration {
     // L'abattement de l'assiette sociale de l'indépendant depuis 2025
     // (L. 136-3, III ; D. 136-5), `null` pour les autres profils.
     this.assiette_abattue = fiche.assiette_abattue ?? null;
+    // La Lodeom que l'employeur d'outre-mer peut recevoir à la place de la
+    // réduction générale ; `null` quand le profil n'en a pas.
+    this.lodeom = fiche.lodeom ? new Lodeom(fiche.lodeom) : null;
   }
 
   get csg() {
@@ -607,10 +689,50 @@ export class FicheDePaie {
   }
 }
 
-/** Construit une fiche de paie sous un bloc retraite donné, pour un profil. */
+/**
+ * Construit une fiche de paie sous un bloc retraite donné, pour un profil.
+ *
+ * `lodeom`, le barème de la Lodeom de l'employeur, met cette exonération à la
+ * place de la réduction générale et rend à la maladie et à la famille leurs
+ * taux réduits. Un profil qui n'en a pas l'ignore ; un barème que le profil ne
+ * connaît pas est refusé.
+ */
 export class ConstructeurFiche {
-  constructor(profil) {
+  constructor(profil, lodeom = "") {
     this.profil = profil;
+    this.baremeLodeom = null;
+    if (lodeom && profil.lodeom !== null) {
+      if (!(lodeom in profil.lodeom.baremes)) {
+        throw new Error(`barème Lodeom inconnu : ${lodeom} ; connus : `
+          + Object.keys(profil.lodeom.baremes).join(", "));
+      }
+      this.baremeLodeom = profil.lodeom.baremes[lodeom];
+    }
+  }
+
+  /** La part patronale d'un poste, à son taux réduit sous la Lodeom. */
+  _employeur(poste, brut, plafond) {
+    if (this.baremeLodeom !== null) {
+      const taux = this.profil.lodeom.tauxReduit(poste.code, brut);
+      if (taux !== null) {
+        return brut * taux;
+      }
+    }
+    return montant(poste.employeur, brut, plafond);
+  }
+
+  /**
+   * Le coefficient maximal de l'allègement de l'employeur — T sous la Lodeom,
+   * celui de la réduction générale sinon —, `null` sans allègement.
+   */
+  _maximal(tauxRetraite) {
+    if (this.baremeLodeom !== null) {
+      return this.profil.lodeom.coefficientMaximalAvec(tauxRetraite);
+    }
+    if (this.profil.reduction_generale !== null) {
+      return this.profil.reduction_generale.coefficientMaximalAvec(tauxRetraite);
+    }
+    return null;
   }
 
   _lignes(bloc, brut, plafond, cadre) {
@@ -633,7 +755,7 @@ export class ConstructeurFiche {
         libelle: poste.libelle,
         retraite: poste.retraite,
         salarie: montantSalarie(poste, brut, plafond),
-        employeur: montant(poste.employeur, brut, plafond),
+        employeur: this._employeur(poste, brut, plafond),
       });
     }
     // Le taux ne peut pas devenir négatif : un système qui rendrait plus que
@@ -671,25 +793,34 @@ export class ConstructeurFiche {
       total += poste.taux_dans_la_reduction !== null
         && poste.taux_dans_la_reduction !== undefined
         ? brut * poste.taux_dans_la_reduction
-        : montant(poste.employeur, brut, plafond);
+        : this._employeur(poste, brut, plafond);
     }
     return total;
   }
 
   _reduction(bloc, brut, plafond, smicAnnuel, cadre) {
-    const reduction = this.profil.reduction_generale;
-    if (reduction === null) {
+    const tauxRetraite = bloc.tauxEmployeurDansLaReduction(this.profil);
+    let montantReduit;
+    if (this.baremeLodeom !== null) {
+      // Elle REMPLACE la réduction générale, même au-delà du seuil où elle
+      // s'éteint : les deux ne se cumulent pas (L. 752-3-2, VI), et le
+      // simulateur de l'Urssaf écarte l'une dès que l'autre s'applique.
+      montantReduit = this.baremeLodeom.montant(
+        brut, smicAnnuel, this._maximal(tauxRetraite),
+      );
+    } else if (this.profil.reduction_generale !== null) {
+      montantReduit = this.profil.reduction_generale.coefficient(
+        brut, smicAnnuel, tauxRetraite,
+      ) * brut;
+    } else {
       return 0;
     }
-    const coefficient = reduction.coefficient(
-      brut, smicAnnuel, bloc.tauxEmployeurDansLaReduction(this.profil),
-    );
-    if (coefficient <= 0) {
+    if (montantReduit <= 0) {
       return 0;
     }
     // Une réduction ne peut pas excéder ce qui est dû.
     return Math.min(
-      coefficient * brut,
+      montantReduit,
       this._perimetreReduction(bloc, brut, plafond, cadre),
     );
   }
@@ -700,10 +831,9 @@ export class ConstructeurFiche {
     const salariales = lignes.reduce((total, l) => total + l.salarie, 0);
     const patronales = lignes.reduce((total, l) => total + l.employeur, 0);
     let partRetraite = 0;
-    if (this.profil.reduction_generale !== null) {
-      const tauxRetraite = bloc.tauxEmployeurDansLaReduction(this.profil);
-      const maximal = this.profil.reduction_generale
-        .coefficientMaximalAvec(tauxRetraite);
+    const tauxRetraite = bloc.tauxEmployeurDansLaReduction(this.profil);
+    const maximal = this._maximal(tauxRetraite);
+    if (maximal !== null) {
       partRetraite = maximal > 0 ? Math.min(1, tauxRetraite / maximal) : 0;
     }
     return new FicheDePaie({
@@ -715,6 +845,7 @@ export class ConstructeurFiche {
       reductionGenerale: reduction,
       fiabilite: this.profil.fiabilite,
       partRetraiteDansLaReduction: partRetraite,
+      lodeom: this.baremeLodeom !== null ? this.baremeLodeom.code : "",
     });
   }
 
@@ -1529,7 +1660,15 @@ export function remunerationDeLaCarriere(carriere, macro, catalogue, affiliation
   }
   const profil = bareme.profil(codeProfil);
 
-  const constructeur = new ConstructeurFiche(profil);
+  // La fiche d'une année est celle de son employeur : un constructeur par
+  // barème de la Lodeom que les lignes déclarent, la réduction générale sinon.
+  const constructeurs = new Map();
+  const constructeurDe = (lodeom) => {
+    if (!constructeurs.has(lodeom)) {
+      constructeurs.set(lodeom, new ConstructeurFiche(profil, lodeom));
+    }
+    return constructeurs.get(lodeom);
+  };
   // « Cadre » n'est pas une famille d'affiliation : c'est la seule chose qui
   // sépare deux statuts du privé pour la cotisation APEC, qui vaut 0,024 %.
   const cadre = statut.includes("cadre") && !statut.includes("non_cadre");
@@ -1603,6 +1742,7 @@ export function remunerationDeLaCarriere(carriere, macro, catalogue, affiliation
       catalogue, affiliations, statut, annee, primes,
     );
     const propose = blocPropose(annee, blocActuel, 1 - primes);
+    const constructeur = constructeurDe(ligne.lodeom ?? "");
     const ficheActuelle = constructeur.fiche(
       annee, brut, plafond, smic, blocActuel, cadre,
     );

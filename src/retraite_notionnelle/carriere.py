@@ -205,6 +205,10 @@ class AnneeCarriere:
     #: ``assiette_minimale_base`` est alors nulle, et celle des complémentaires
     #: des libéraux tombe aussi quand le motif les couvre.
     dispense_assiette_minimale: str = ""
+    #: Le barème de la Lodeom de l'employeur d'outre-mer, que la fiche de paie
+    #: met à la place de la réduction générale (L. 752-3-2) ; vide sinon, et
+    #: sur une année non cotisée. Il ne change aucun droit.
+    lodeom: str = ""
     #: Cette année entre-t-elle dans les SERVICES d'un régime de la fonction
     #: publique ? Ce régime-là ne proratise pas sur la durée d'assurance mais
     #: sur les services et bonifications (L. 13 du code des pensions), et
@@ -421,6 +425,12 @@ class LigneRelevee:
     #: ``activite_non_principale``, ``pensionne``
     #: (``legislation/dispenses_assiette_minimale.yaml``). Vide : aucun.
     dispense_assiette_minimale: str = ""
+    #: Le barème de la Lodeom de l'employeur, en Guadeloupe, en Guyane, en
+    #: Martinique ou à La Réunion : ``competitivite``,
+    #: ``competitivite_renforcee``, ``innovation_et_croissance``
+    #: (``legislation/prelevements_remuneration.yaml``). Vide : la réduction
+    #: générale. Seule la fiche de paie le lit.
+    lodeom: str = ""
 
 
 #: Article R. 351-12, 4°, d, du code de la sécurité sociale : le chômage NON
@@ -586,6 +596,7 @@ def _ligne_annuelle(
     quotite: float = 1.0,
     micro: str = "",
     dispense: str = "",
+    lodeom: str = "",
 ) -> AnneeCarriere:
     """Une année de carrière, une fois connus son revenu et sa nature.
 
@@ -605,6 +616,9 @@ def _ligne_annuelle(
 
     ``dispense``, le motif qui en dispense l'indépendant (le RSA, la prime
     d'activité…), annule l'assiette minimale les années où le texte le veut.
+
+    ``lodeom``, le barème de l'employeur d'outre-mer, ne sert qu'à la fiche de
+    paie d'une année cotisée.
     """
     cotise = type_periode == "emploi"
     regle = None if cotise else motifs.get(type_periode, motifs.get("sans_activite"))
@@ -657,6 +671,7 @@ def _ligne_annuelle(
         trimestres_valides=min(trimestres_maximum, trimestres),
         assiette_minimale_base=minimale,
         dispense_assiette_minimale=dispense,
+        lodeom=lodeom if cotise else "",
         cotisations_versees=cotise,
         micro=micro,
         # Pendant une période indemnisée, les régimes complémentaires
@@ -1772,6 +1787,7 @@ class Carriere:
                 part_primes=source.part_primes,
                 trimestres_maximum=trimestres_civils(mois),
                 micro=source.micro,
+                lodeom=source.lodeom,
             )
 
         # Le mois de liquidation n'est pas travaillé : l'année du départ
@@ -2176,6 +2192,7 @@ def _lignes_du_releve(date_naissance: DateMois, periodes: list[dict], fin: DateM
                                          attributs.get("quotite", 1.0))
                      if periode["sorte"] == chrono.EMPLOI else 1.0),
             dispense=attributs.get("dispense_assiette_minimale", ""),
+            lodeom=attributs.get("lodeom", ""),
         ))
     return limiter_chomage_non_indemnise(
         lignes, date_naissance.annee,
@@ -2260,9 +2277,13 @@ def prolonger_releve(releve: list[LigneRelevee], fin: DateMois, macro: DonneesMa
             if type_periode == "emploi":
                 revenu *= _quotite_de_l_annee(annee, DateMois(annee, 1), fin, progressive,
                                               quotite)
+            # L'emploi prolongé est celui de la dernière année, chez le même
+            # employeur : sa Lodeom le suit.
             lignes.append(LigneRelevee(annee=annee, affiliation=source.affiliation,
                                        revenu=revenu, type_periode=type_periode,
-                                       quotite=quotite))
+                                       quotite=quotite,
+                                       lodeom=(source.lodeom if type_periode == "emploi"
+                                               else "")))
     return lignes
 
 
@@ -2379,6 +2400,7 @@ def _lignes_du_parcours(date_naissance: DateMois, periodes: list[dict], fin: Dat
             trimestres_maximum=trimestres_maximum,
             quotite=quotite,
             micro=dominant.get("micro", ""),
+            lodeom=dominant.get("lodeom", ""),
         ))
     lignes = limiter_chomage_non_indemnise(lignes, annee_naissance)
 
@@ -2406,6 +2428,7 @@ def _lignes_du_parcours(date_naissance: DateMois, periodes: list[dict], fin: Dat
                 part_primes=metier["part_primes"],
                 trimestres_maximum=trimestres_civils(mois),
                 micro=metier.get("micro", ""),
+                lodeom=metier.get("lodeom", ""),
             ))
 
     dates_entree: dict[str, DateMois] = {}

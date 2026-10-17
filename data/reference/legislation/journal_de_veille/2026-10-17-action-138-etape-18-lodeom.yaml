@@ -1,0 +1,45 @@
+date: "2026-10-17"
+session: "action 138, étape 18, septième partie : la Lodeom, outre-mer, à la place de la réduction générale"
+consulte: >-
+  veille_droit.py. L'index LEGI du dépôt, récupéré puis mis à jour des incréments
+  jusqu'au 17 octobre 2026 ; l'index JORF. Dans LEGI : L. 752-3-2, toutes ses
+  versions (2008-2028), dont celle du 1er janvier 2026 (LEGIARTI000053280451),
+  du 1er juillet 2026 (LEGIARTI000053285063) et du 1er janvier 2028
+  (LEGIARTI000054466922) ; D. 752-7 (2019-2026, LEGIARTI000052196887) ;
+  L. 241-13 d'avant la loi de financement pour 2025 (LEGIARTI000042912368) ;
+  D. 241-7 de 2026 ; la loi n° 2025-1403, article 40 (LEGIARTI000053265326) ; le
+  décret n° 2025-1446, article 3 (LEGIARTI000053296358). Dans le JORF : l'arrêté
+  du 26 avril 2023 relatif au relèvement du SMIC (JORFARTI000047495827). La fiche
+  Sage « LODEOM – DOM, barème dit de compétitivité renforcée » de janvier 2026,
+  qui cite le BOSS (§ 1340, 1350, 1380, 1420). Le simulateur de l'Urssaf,
+  mon-entreprise, branche master : lodeom.publicodes, exonérations.publicodes,
+  cotisations.publicodes. Le BOSS et les pages de l'Urssaf, refusés au réseau de
+  la session (connexion réinitialisée ; 503 par la recherche) ; les exemples
+  chiffrés de LégiSocial, payants.
+trouve: >-
+  En Guadeloupe, en Guyane, en Martinique et à La Réunion, l'employeur de moins
+  de onze salariés ou d'un secteur que L. 752-3-2, II, énumère est exonéré des
+  cotisations patronales du I de L. 241-13 dans sa rédaction d'avant 2025 :
+  totalement sous 1,3 SMIC (compétitivité), 2 (compétitivité renforcée) ou 1,7
+  (innovation et croissance, jusqu'à 2,5 SMIC aux cotisations de 1,7 SMIC),
+  dégressivement ensuite par les formules de D. 752-7, jusqu'à 2,2, 2,7 et
+  3,5 SMIC ; sans cumul avec une autre exonération (VI), le simulateur de
+  l'Urssaf écartant la réduction générale dès que la Lodeom s'applique. T, la
+  somme des taux du périmètre au SMIC, vaut 0,3241 dans une entreprise de
+  cinquante salariés et plus et 0,3201 en deçà (BOSS, § 1380), la maladie à 7 %
+  et la famille à 3,45 % : l'employeur de la Lodeom garde ces taux réduits
+  (loi n° 2025-1403, article 40, V et VI) jusqu'à 2,5 et 3,5 fois 1 820 heures
+  du SMIC du 31 décembre 2023 (décret n° 2025-1446, article 3), 11,52 € de
+  l'heure depuis le 1er mai 2023. Le coefficient s'arrondit à quatre décimales,
+  plafonné à T (BOSS) ; D. 752-7 ne le dit pas. Les rédactions de juillet 2026
+  et de 2028, qui ouvrent Mayotte, gardent les seuils. Aucun exemple chiffré de
+  2026 lu à la source. Fait : le bloc `lodeom` de `prelevements_remuneration.yaml`,
+  le champ de relevé `lodeom`, appliqués à la fiche de paie dans les deux
+  moteurs ; point du registre (`modele_social`) de `coupe` à `repris`.
+reste: >-
+  Au BOSS et sur la page de l'Urssaf, quand la session pourra les lire :
+  l'arrondi du coefficient, et si l'employeur de la Lodeom reprend la réduction
+  générale au-delà du seuil de sortie, jusqu'à 3 SMIC. Un exemple chiffré de
+  2026. Saint-Barthélemy et Saint-Martin (L. 752-3-3), Mayotte dès le 1er juillet
+  2026. Le champ de saisie, à la session des pages. Le reste de l'étape 138.18 :
+  au fac-similé, les classes d'avant 1973.
