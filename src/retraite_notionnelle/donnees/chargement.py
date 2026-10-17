@@ -748,14 +748,16 @@ def charger_validation_micro(racine: Path) -> dict[str, dict[int, float]]:
     Cipav). Le modèle porte le revenu abattu, le chiffre d'affaires fois
     (1 - abattement) : le rapport des deux le convertit. L'année prend la
     moyenne de ses douze mois ; seules figurent les années qu'une version
-    couvre entières.
+    couvre entières. Une version marquée ``valide: false`` répartit le forfait
+    sans valider : la Cipav d'avant octobre 2022.
     """
     chemin = racine / "reference" / "legislation" / "micro_social.yaml"
     if not chemin.exists():
         return {}
     donnees = charger_yaml(chemin)
     table: dict[str, dict[int, float]] = {}
-    for activite, versions in donnees["versions"].items():
+    for activite, toutes in donnees["versions"].items():
+        versions = [v for v in toutes if v.get("valide", True)]
         part_abattue = 1.0 - donnees["abattements"][activite]
         debuts = [tuple(int(x) for x in v["debut"].split("-")) for v in versions]
         premiere = debuts[0][0] + (0 if debuts[0][1] == 1 else 1)
@@ -839,6 +841,44 @@ def rapport_validation_micro(table: dict[str, dict[int, float]], activite: str,
     if annee < premiere:
         return None
     return par_annee[min(annee, derniere)]
+
+
+@une_fois_par_instantane
+def charger_compensation_micro(racine: Path) -> dict:
+    """La compensation de l'État aux caisses de l'auto-entrepreneur, de 2009
+    à 2015 (``legislation/micro_social.yaml`` ; L. 133-6-8-2, D. 131-6-4 ;
+    action 138, étape 12) : les ``activites`` qu'elle touche, et, par année,
+    en heures de SMIC, le ``plancher`` que le revenu validant atteint au
+    moins et le ``seuil`` du revenu abattu sous lequel rien ne valide."""
+    chemin = racine / "reference" / "legislation" / "micro_social.yaml"
+    if not chemin.exists():
+        return {"activites": (), "plancher": {}, "seuil": {}}
+    compensation = charger_yaml(chemin).get("compensation") or {}
+    return {
+        "activites": tuple(compensation.get("activites", ())),
+        "plancher": {int(a): float(h) for a, h in (compensation.get("plancher") or {}).items()},
+        "seuil": {int(a): float(h) for a, h in (compensation.get("seuil") or {}).items()},
+    }
+
+
+def validant_compense(compensation: dict, activite: str, annee: int, revenu: float,
+                      validant: float, smic_horaire: float, part: float = 1.0) -> float:
+    """Le revenu qui valide, une fois la compensation de l'État appliquée :
+    rien sous le ``seuil`` — 1 885 € abattus en 2014, sous 200 heures de
+    SMIC (1 906 €), ne valident plus le trimestre que 150 heures achetaient —,
+    et au moins le ``plancher`` — 870 € abattus en 2009 en valident un —,
+    sur une année civile entière seulement (``part``, la part de l'année
+    travaillée). Un revenu pile sur le seuil est compensé : il ne lui est
+    pas inférieur."""
+    if activite not in compensation["activites"]:
+        return validant
+    seuil = compensation["seuil"].get(annee)
+    if seuil is not None and revenu / (seuil * smic_horaire) + 1e-9 < 1.0:
+        return 0.0
+    plancher = compensation["plancher"].get(annee)
+    if plancher is not None and part + 1e-9 >= 1.0:
+        return max(validant, plancher * smic_horaire)
+    return validant
 
 
 def charger_accords_internationaux(racine: Path) -> dict[str, dict]:

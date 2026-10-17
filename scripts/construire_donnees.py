@@ -1297,6 +1297,18 @@ def _cotisation_micro() -> dict:
             in sorted(charger_cotisation_micro(DONNEES).items())}
 
 
+def _compensation_micro() -> dict:
+    """La compensation de l'État à l'auto-entrepreneur, de 2009 à 2015 : les
+    activités qu'elle touche, son plancher et son seuil, en heures de SMIC
+    par année (``micro_social.yaml``)."""
+    from retraite_notionnelle.donnees.chargement import charger_compensation_micro
+
+    compensation = charger_compensation_micro(DONNEES)
+    return {"activites": list(compensation["activites"]),
+            "plancher": {str(annee): h for annee, h in compensation["plancher"].items()},
+            "seuil": {str(annee): h for annee, h in compensation["seuil"].items()}}
+
+
 def _periodes_non_travaillees() -> dict:
     """Ce qu'ouvre chaque motif d'interruption."""
     from retraite_notionnelle.donnees.chargement import charger_periodes_non_travaillees
@@ -2430,6 +2442,7 @@ def construire(bilan: bytes, agregats: bytes) -> bytes:
         "dispenses_assiette_minimale": _dispenses_assiette_minimale(),
         "validation_micro": _validation_micro(),
         "cotisation_micro": _cotisation_micro(),
+        "compensation_micro": _compensation_micro(),
         "profil_salaire_age": _profil_salaire("profil_salaire_age.csv", "annee"),
         "profil_salaire_categorie": _profil_salaire(
             "profil_salaire_categorie.csv", "categorie"),

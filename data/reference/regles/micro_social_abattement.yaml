@@ -11,7 +11,11 @@ intitule: >-
   (D. 613-6), divisé par le taux de base (D. 633-3, ou la première tranche de
   la CNAVPL), comparé à 150 SMIC horaires (circulaire Cnav n° 2024-23). Sa
   cotisation de retraite est la part du taux global que D. 613-6 affecte au
-  régime de base et à la complémentaire.
+  régime de base et à la complémentaire ; avant le décret n° 2022-1529, la
+  clef que la Cnav applique (circulaire n° 2025-20). De 2009 à 2015, l'État
+  compense ce que le forfait ne verse pas, au-dessus d'un seuil de 200 heures
+  de SMIC, de 300 en 2015 (L. 133-6-8-2, D. 131-6-4), et garantit un
+  trimestre en 2009.
 etat: approchee
 etape: acquerir_les_droits
 effet: >-
@@ -28,34 +32,48 @@ effet: >-
   D. 613-6, et non le barème sur le revenu abattu, qui s'en écartait de +39 %
   pour le libéral de 2023, sans part complémentaire jusqu'au 30 juin 2024, de
   +13 à +15 % pour la Cipav de 2023 à 2025, de +5 % puis -3 % pour la vente
-  et les services de 2025 et 2026 (le 16 octobre 2026). Approchée sur cinq
-  points : avant 2023, le revenu abattu valide, la règle d'avant le décret
-  n° 2022-1529 n'étant pas lue, et le compte porte le barème, D. 613-6 ne
-  répartissant alors que le forfait de la Cipav ; l'abattement minimal de
-  305 € n'est pas opposé ; les points du RCI se calculent au barème, non sur
-  la part du forfait, et le revenu cotisé n'entre pas dans le salaire annuel
-  moyen ; l'exonération de début d'activité (D. 131-6-3) n'est pas portée ;
-  l'année prend la moyenne de ses mois, sans les arrondis trimestriels de la
-  caisse. Une seule activité pour toute la carrière.
+  et les services de 2025 et 2026 (le 16 octobre 2026). Depuis le 17 octobre
+  2026, la table remonte à 2018 : les clefs de la Cnav, 40,31 % du forfait de
+  la vente au régime de base et 15,94 % au RCI, 40,36 et 15,91 % des
+  services, 53,23 % et rien du libéral, valident et cotisent (le revenu
+  validant de la vente, 1,0024 fois le revenu abattu ; 535,58 € au régime de
+  base pour 6 032 € de services en 2020, contre 535,34 € au barème) ; la
+  Cipav cotise depuis 2019 sa part de D. 131-5-3, puis de D. 613-6. De 2009 à
+  2015, la compensation de l'État : un trimestre au moins en 2009, sur l'année
+  civile entière (3 000 € de ventes, rien auparavant) ; rien sous 200 heures
+  de SMIC en 2014 (6 500 € de
+  ventes, un trimestre auparavant), sous 300 en 2015 (7 000 €). Ces seuils
+  sont sous les bornes de la saisie (0,1 fois le salaire moyen) : seul le
+  modèle les atteint. Approchée sur huit points : en 2016 et 2017, aucune
+  clef n'est lue, le revenu abattu valide et le compte porte le barème ; la
+  Cipav valide sur le revenu abattu avant 2023, la règle de la CNAVPL n'étant
+  pas lue ; les clefs de janvier à septembre 2022 sont celles de 2021 ; en
+  2014 et 2015, qui ne relève pas de la maladie du RSI (le salarié, l'assuré
+  au RSA) validait dès 150 heures, et le compte garde le barème sous le
+  seuil ; l'abattement minimal de 305 € n'est pas opposé ; les points du RCI
+  se calculent au barème, non sur la part du forfait, et le revenu cotisé
+  n'entre pas dans le salaire annuel moyen ; l'exonération de début
+  d'activité (D. 131-6-3) n'est pas portée ; l'année prend la moyenne de ses
+  mois, sans les arrondis trimestriels de la caisse. Une seule activité pour
+  toute la carrière.
 sources:
-  lu_le: 2026-10-14
+  lu_le: 2026-10-17
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    La validation avant le 1er octobre 2022 : D. 613-6 ne répartissait alors que
-    la cotisation de la Cipav ; la circulaire Cnav n° 2023-4 et ses devancières
-    (seuils de chiffre d'affaires de L. 133-6-8-2, 2010-2015) disent sans doute
-    la règle. Et le salaire annuel moyen : la circulaire n° 2024-23 détermine
-    « les droits » par le forfait payé, L. 613-7, II par le chiffre d'affaires
-    abattu ; lire ce que la caisse reporte au compte.
+    Les clefs de 2016 et de 2017 (taux globaux de 13,4 % et 23,1 %, circulaire
+    RSI n° 2015/007), et celles de janvier à septembre 2022, qu'aucune source
+    lue ne donne : une circulaire du RSI ou de l'Acoss, ou la convention qui
+    les fixait. La règle de la CNAVPL pour la Cipav avant octobre 2022 :
+    valide-t-elle sur la part de D. 131-5-3 et de D. 613-6, comme la Cnav ?
   - >-
-    La cotisation micro-sociale d'avant le 1er octobre 2022, pour le compte
-    notionnel : D. 131-6-1 et D. 131-6-2 (2009-2017) et D. 613-4 (2020-2022)
-    donnent le taux global, mais aucune rédaction de D. 613-6 d'avant le décret
-    n° 2022-1529 ne répartit le forfait de l'Assurance retraite ; celles de
-    2020 et de 2021 répartissent celui de la Cipav, que la table ne porte pas
-    encore. Et D. 131-6-3, la fraction du taux pendant l'exonération de début
-    d'activité.
+    Le salaire annuel moyen : la circulaire n° 2024-23 détermine « les droits »
+    par le forfait payé, L. 613-7, II par le chiffre d'affaires abattu ; la
+    circulaire RSI n° 2010/034 (point III, B) reconstitue le revenu du RAM sur
+    la cotisation et la compensation. Lire ce que la caisse reporte au compte.
+  - >-
+    D. 131-6-3, la fraction du taux pendant l'exonération de début d'activité,
+    que les circulaires n° 2023-4 et n° 2026-12 neutralisent pour les droits.
   lectures:
   - type: legifrance
     reference: >-
@@ -122,6 +140,42 @@ sources:
       2 792 € par trimestre à la Cipav)
     url: https://entreprendre.service-public.gouv.fr/vosdroits/F23369
     date: 2026-04-01
+  - type: legifrance
+    reference: >-
+      L. 133-6-8-2 CSS, LEGIARTI000021538000 (2009-2015) : sous un revenu abattu
+      que fixe un décret, l'auto-entrepreneur « n'entre pas dans le champ de la
+      compensation assurée par l'État » ; D. 131-6-4, LEGIARTI000022402023 et
+      LEGIARTI000030034478 : 200 heures de SMIC, 300 en 2015. D. 131-5-1,
+      LEGIARTI000036466353 : 12,8 %, 22 % et, pour la Cipav, 22 % de 2018 à
+      2020 ; D. 613-4, LEGIARTI000041918199 et LEGIARTI000043656794 (22,2 % pour
+      la Cipav du 1er juillet 2021). D. 131-5-3, LEGIARTI000037798349 (décret
+      n° 2018-1120, en vigueur le 13 décembre 2018), puis D. 613-6 : la Cipav,
+      25 % à la première tranche, 5 % à la seconde, 20 % à la complémentaire,
+      puis 24,80, 5 et 19,80 %. D. 633-3, LEGIARTI000031799496 : 17,15 % +
+      0,60 % depuis 2017. Lus dans l'index LEGI du dépôt
+    date: 2026-10-17
+  - type: circulaire_cnav
+    reference: >-
+      Circulaire Cnav n° 2023-4 du 13 février 2023, points 2.1 et 3 : les taux
+      globaux du 1er janvier 2018 au 30 septembre 2022 (12,80 %, 22 %, 22 %) ;
+      D. 613-6 répartissait « exclusivement » le forfait de la Cipav avant le
+      décret n° 2022-1529. Circulaire Cnav n° 2025-20 du 31 juillet 2025,
+      annexe 1, exemples 1 et 2 : les « Clefs de répartition » de 2018 à 2021
+      (au régime de base 40,31, 40,36 et 53,23 % ; au RCI 15,94, 15,91 et 0 %)
+      et les droits de 2020 et de 2021, revenu cotisé et points
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2025_20_31072025.pdf
+    date: 2025-07-31
+  - type: autre
+    reference: >-
+      Circulaires du RSI, au site de la Cnav : n° 2009/024 (un trimestre au
+      moins en 2009, à l'année civile entière), n° 2010/034 (point III : la
+      compensation, rien sous 200 heures de SMIC depuis 2010, le revenu
+      théorique au-delà), n° 2015/007 (point 2 : 300 heures en 2015, deux
+      trimestres), n° 2016/010 (point 1 : en 2014, le premier trimestre à 200
+      heures pour qui relève de la maladie du RSI, à 150 pour les autres ; la
+      compensation supprimée en 2016)
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_rsi_2016_010_15062016.pdf
+    date: 2016-06-15
 textes_a_rattacher:
 - reference: code de la sécurité sociale, L. 613-7, II (LEGIARTI000048683570)
 - reference: code de la sécurité sociale, L. 133-6-8 (de 2009 à 2017)
@@ -130,17 +184,20 @@ textes_a_rattacher:
 - reference: >-
     décret n° 2018-1120 du 10 décembre 2018, le micro-social des libéraux de la
     Cipav (LEGITEXT000037798308)
+- reference: code de la sécurité sociale, L. 133-6-8-2 et D. 131-6-4 (de 2010 à 2015)
+- reference: code de la sécurité sociale, D. 131-5-1 et D. 131-5-3 (de 2018 à 2020)
 code:
   python: >-
     saisie.py : ACTIVITES_MICRO, ABATTEMENTS_MICRO, Saisie.en_chiffre_d_affaires et
     Saisie.abattu, appelée par parcours et emploi_retraite_declare ;
     carriere.py : Metier.micro, AnneeCarriere.micro, _revenu_validant ;
     donnees/chargement.py : charger_validation_micro, charger_cotisation_micro,
-    forfait_micro ; moteur/compte.py : ConstructeurCompte._cotisation_ligne
+    forfait_micro, charger_compensation_micro, validant_compense ;
+    moteur/compte.py : ConstructeurCompte._cotisation_ligne
   javascript: moteur/js/saisie.js (enChiffreDAffaires, abattu) ; moteur/js/pages.js
     (microFormulaire, champChiffreDAffaires) ; moteur/js/carriere.js
-    (revenuValidant, forfaitMicro, paquets validation_micro et
-    cotisation_micro) ; moteur/js/compte.js (_cotisationLigne)
+    (revenuValidant, validantCompense, forfaitMicro, paquets validation_micro,
+    cotisation_micro et compensation_micro) ; moteur/js/compte.js (_cotisationLigne)
   tests: >-
     tests/test_web_saisie.py ; tests/test_micro_social.py ; témoins
     micro_entrepreneur_* et simuler_micro_entrepreneur*

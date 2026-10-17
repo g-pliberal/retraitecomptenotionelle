@@ -34,6 +34,7 @@ from .donnees.chargement import (
     assiette_minimale,
     charger_assiettes_minimales,
     charger_chomage_complementaires,
+    charger_compensation_micro,
     charger_dispenses_assiette_minimale,
     charger_periodes_non_travaillees,
     charger_table_csv,
@@ -43,6 +44,7 @@ from .donnees.chargement import (
     dispense_assiette_minimale,
     rapport_validation_micro,
     une_fois_par_instantane,
+    validant_compense,
 )
 from .donnees.macro import DonneesMacro
 from . import chronologie as chrono
@@ -541,7 +543,7 @@ def _revenu_reference(annee: int, revenu: float, type_periode: str,
 
 
 def _revenu_validant(macro: DonneesMacro, revenu: float, micro: str,
-                     annee: int) -> float:
+                     annee: int, part: float = 1.0) -> float:
     """Le revenu qui valide les trimestres d'un micro-entrepreneur.
 
     LE REVENU COTISÉ, ET NON LE REVENU ABATTU. Ses prestations « sont calculées
@@ -552,11 +554,22 @@ def _revenu_validant(macro: DonneesMacro, revenu: float, micro: str,
     (D. 633-3), comparé à 150 SMIC horaires (circulaire Cnav n° 2024-23,
     point 4). 12 100 € de ventes en 2026 font 3 509 € de revenu abattu, un
     trimestre, et 3 619 € de revenu cotisé, deux (service-public, F23369).
-    Avant 2023, la règle n'est pas lue : le revenu abattu valide.
+    De 2018 à septembre 2022, la part de base est la clef que la Cnav
+    applique (circulaire n° 2025-20) ; avant, aucune n'est lue, et le revenu
+    abattu valide, comme pour la Cipav jusqu'en 2022.
+
+    LA COMPENSATION DE L'ÉTAT, DE 2009 À 2015 : l'État payait ce que le
+    forfait ne versait pas, au-dessus d'un seuil (L. 133-6-8-2, D. 131-6-4).
+    6 500 € de ventes en 2014, 1 885 € abattus, ne valident rien : sous
+    200 heures de SMIC, l'État ne compense pas, et le forfait va à la
+    maladie (circulaire RSI n° 2016/010). En 2009, un trimestre au moins,
+    sur l'année civile entière (circulaire RSI n° 2009/024).
     """
     rapport = rapport_validation_micro(
         charger_validation_micro(macro.racine), micro, annee)
-    return revenu if rapport is None else revenu * rapport
+    validant = revenu if rapport is None else revenu * rapport
+    return validant_compense(charger_compensation_micro(macro.racine), micro, annee,
+                             revenu, validant, macro.smic_horaire(annee), part)
 
 
 def _ligne_annuelle(
@@ -618,7 +631,8 @@ def _ligne_annuelle(
     if dispense:
         minimale = 0.0
     if trimestres_declares is None:
-        validant = _revenu_validant(macro, revenu, micro, annee) if micro else revenu
+        validant = (_revenu_validant(macro, revenu, micro, annee, part)
+                    if micro else revenu)
         trimestres = (macro.trimestres_valides(max(validant, minimale), annee)
                       if cotise
                       else (regle.trimestres_assimiles if regle else 4))

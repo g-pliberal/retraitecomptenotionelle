@@ -508,19 +508,43 @@ export function limiterChomageNonIndemnise(lignes, anneeNaissance,
  * COTISÉ, le chiffre d'affaires fois le taux global, la part de base, sur le
  * taux de base, et non le revenu abattu (circulaire Cnav n° 2024-23). Le
  * paquet porte, par activité et par année, le rapport de l'un à l'autre ;
- * avant la première année lue, le revenu abattu valide. Voir carriere.py.
+ * avant la première année lue, le revenu abattu valide. De 2009 à 2015, la
+ * compensation de l'État y fixe un plancher et un seuil (`validantCompense`).
+ * Voir carriere.py.
  */
-function revenuValidant(macro, revenu, micro, annee) {
+function revenuValidant(macro, revenu, micro, annee, part = 1.0) {
   const parAnnee = (macro.paquet.validation_micro ?? {})[micro];
-  if (parAnnee === undefined) {
-    return revenu;
+  let validant = revenu;
+  if (parAnnee !== undefined) {
+    const annees = Object.keys(parAnnee).map(Number);
+    if (annee >= Math.min(...annees)) {
+      validant = revenu * parAnnee[String(Math.min(annee, Math.max(...annees)))];
+    }
   }
-  const annees = Object.keys(parAnnee).map(Number);
-  const premiere = Math.min(...annees);
-  if (annee < premiere) {
-    return revenu;
+  return validantCompense(macro.paquet.compensation_micro, micro, annee, revenu,
+    validant, macro.smic_horaire.valeur(annee), part);
+}
+
+/**
+ * Le revenu qui valide, une fois la compensation de l'État appliquée
+ * (L. 133-6-8-2, D. 131-6-4) : rien sous le seuil, en heures de SMIC, et au
+ * moins le plancher, sur une année civile entière seulement. Un revenu pile
+ * sur le seuil est compensé. Voir `validant_compense` (chargement.py).
+ */
+function validantCompense(compensation, micro, annee, revenu, validant, smicHoraire,
+  part = 1.0) {
+  if (!compensation || !compensation.activites.includes(micro)) {
+    return validant;
   }
-  return revenu * parAnnee[String(Math.min(annee, Math.max(...annees)))];
+  const seuil = compensation.seuil[String(annee)];
+  if (seuil !== undefined && revenu / (seuil * smicHoraire) + 1e-9 < 1.0) {
+    return 0.0;
+  }
+  const plancher = compensation.plancher[String(annee)];
+  if (plancher !== undefined && part + 1e-9 >= 1.0) {
+    return Math.max(validant, plancher * smicHoraire);
+  }
+  return validant;
 }
 
 /**
@@ -601,7 +625,8 @@ function ligneAnnuelle({
   // entiers que les autres régimes lisent l'arrondit au mois et demi.
   const trimestres = trimestresDeclares === null
     ? (cotise ? macro.trimestresValides(
-      Math.max(micro ? revenuValidant(macro, revenu, micro, annee) : revenu, minimale), annee)
+      Math.max(micro ? revenuValidant(macro, revenu, micro, annee, part) : revenu, minimale),
+      annee)
       : (regle !== null ? regle[0] : 4))
     : Math.floor(trimestresDeclares + 0.5);
   return new AnneeCarriere({

@@ -1,0 +1,40 @@
+date: "2026-10-17"
+session: "action 138, étape 12 : le micro-entrepreneur d'avant 2023, la validation et la répartition du forfait"
+consulte: >-
+  L'index LEGI du dépôt, mis à jour au 17 octobre 2026 : L. 133-6-8-2
+  (LEGIARTI000021538000), D. 131-6-4 (LEGIARTI000022402023,
+  LEGIARTI000030034478), D. 131-5-1 (LEGIARTI000036466353), D. 131-5-3
+  (LEGIARTI000037798349) et le décret n° 2018-1120 (JORFTEXT000037797213),
+  D. 613-4 et D. 613-6 de 2020 et de 2021, D. 633-3 (LEGIARTI000031799496),
+  D. 131-6-2 de 2016 à 2019. Au site de la Cnav (legislation.lassuranceretraite.fr,
+  recherche et PDF) : les circulaires Cnav n° 2023-4 du 13 février 2023,
+  n° 2025-20 du 31 juillet 2025 (annexe 1), n° 2025-23 et n° 2026-12, le
+  barème « Taux de répartition par risques » et les exposés « Travailleurs
+  indépendants » et « Validation des périodes de cotisations » ; les
+  circulaires du RSI n° 2009/024, 2010/034, 2015/006, 2015/007, 2016/009 et
+  2016/010.
+trouve: >-
+  De 2018 à septembre 2022, la Cnav affectait le forfait de l'Assurance
+  retraite par des clefs (au régime de base 40,31 % de la vente, 40,36 % des
+  services, 53,23 % du libéral ; au RCI 15,94 %, 15,91 % et rien) et validait
+  sur la part de base divisée par 17,75 % (circulaire n° 2025-20, exemples de
+  2020 et de 2021) ; D. 613-6 ne répartissait alors que le forfait de la Cipav
+  (circulaire n° 2023-4, point 3), depuis D. 131-5-3 du 13 décembre 2018 : 25,
+  5 et 20 %, puis 24,80, 5 et 19,80 % au 1er juillet 2021. De 2009 à 2015,
+  l'État compensait la cotisation due sur le revenu abattu : un trimestre au
+  moins en 2009 ; rien sous 200 heures de SMIC de 2010 à 2014, sous 300 en
+  2015, le forfait de qui relève de la maladie du RSI allant à ce risque ; en
+  2014, le premier trimestre à 200 heures, les suivants à 150. Portés dans
+  `legislation/micro_social.yaml` et les deux moteurs ; le scénario 1 des
+  874 témoins ne bouge pas, le compte notionnel du libéral perd 4,2 %, celui
+  de la Cipav de petites recettes 11 %. La circulaire n° 2026-12 du 7 avril
+  2026, qui remplace la n° 2025-23 pour 2026, redonne les taux que la table
+  porte : 12,3 %, 43,45 % et 19,75 % pour la vente, 25,6 % et 46,40 % pour le
+  libéral.
+reste: >-
+  Les clefs de 2016 et de 2017, et celles de janvier à septembre 2022 (la
+  table prend celles de 2021) ; la règle de validation de la CNAVPL pour la
+  Cipav avant octobre 2022 ; l'assuré qui ne relevait pas de la maladie du
+  RSI en 2014 et 2015, qui validait dès 150 heures ; le salaire annuel
+  moyen, l'arrondi trimestriel, D. 131-6-3, les points du RCI sur la part du
+  forfait.

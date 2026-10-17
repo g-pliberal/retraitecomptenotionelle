@@ -15,8 +15,9 @@
 #
 # Chaque activité porte ses versions, du mois où elles s'appliquent. L'année
 # prend la moyenne de ses douze mois ; une année qu'aucune version ne couvre
-# entière — avant 2023 — valide sur le revenu abattu, faute d'avoir lu la
-# règle d'avant le décret n° 2022-1529. Au-delà de la dernière version, la
+# entière valide sur le revenu abattu — avant 2018 pour l'Assurance retraite,
+# avant 2023 pour la Cipav, dont les versions marquées `valide: false` ne
+# répartissent que le forfait versé. Au-delà de la dernière version, la
 # dernière vaut.
 #
 # Textes lus dans l'index LEGI du dépôt, le 14 octobre 2026 :
@@ -45,6 +46,43 @@
 # (LEGIARTI000041967529) et de 2021 (LEGIARTI000043656780), ne répartissent
 # que le forfait de la Cipav ; celui de l'Assurance retraite n'avait pas de
 # répartition au code avant le décret n° 2022-1529.
+#
+# AVANT LE DÉCRET N° 2022-1529 (même étape, le 17 octobre 2026). La Cnav
+# affectait le forfait de l'Assurance retraite par des clefs : au régime de
+# base, 40,31 % de celui de la vente, 40,36 % des services, 53,23 % du
+# libéral ; au RCI, 15,94 %, 15,91 % et rien ; elle validait sur ce qu'elles
+# achètent, divisé par 17,75 % (circulaire Cnav n° 2025-20 du 31 juillet
+# 2025, annexe 1 : « Clefs de répartition » de 2018 à 2021, et ses exemples
+# de 2020 et de 2021). Les taux globaux, de 2018 à septembre 2022 : 12,8 % et
+# 22 % (D. 131-5-1, LEGIARTI000036466353, puis D. 613-4, LEGIARTI000041918199
+# et LEGIARTI000043656794) ; le taux de base, 17,15 % + 0,60 % (D. 633-3,
+# LEGIARTI000031799496 puis LEGIARTI000041967101). De janvier à septembre
+# 2022, aucune source lue ne donne les clefs : celles de 2021 valent, les
+# taux globaux n'ayant pas changé (circulaire Cnav n° 2023-4, point 2.1).
+# Avant 2018, aucune clef n'est lue.
+#   La Cipav : D. 131-5-3 (décret n° 2018-1120, en vigueur le 13 décembre
+# 2018, LEGIARTI000037798349), puis D. 613-6 (LEGIARTI000041967529 ; puis
+# LEGIARTI000043656780, du 1er juillet 2021 pour la Cipav) ; ses taux
+# globaux, 22 % puis 22,2 % (D. 131-5-1 et D. 613-4, b). Que la CNAVPL ait
+# validé sur ce versement, aucun texte lu ne le dit : ces versions ne
+# répartissent que le forfait (`valide: false`).
+#
+# LA COMPENSATION DE L'ÉTAT, DE 2009 À 2015. L'auto-entrepreneur payait son
+# forfait, et l'État compensait aux caisses la cotisation « normalement
+# due » sur son revenu abattu (circulaire RSI n° 2010/034, point III) : ses
+# trimestres se comptaient sur ce revenu, sauf aux bords. En 2009, sur une
+# année civile entière, un trimestre au moins, « quel que soit le montant de
+# son chiffre d'affaires » (circulaire RSI n° 2009/024, point I) : le
+# `plancher`, en heures de SMIC. Depuis 2010, l'État ne compense plus sous un
+# revenu abattu de 200 heures de SMIC, de 300 en 2015 (L. 133-6-8-2,
+# LEGIARTI000021538000 ; D. 131-6-4, LEGIARTI000022402023 et
+# LEGIARTI000030034478) : en deçà rien ne valide, le forfait de qui relève de
+# la maladie du RSI allant tout entier à ce risque (circulaire RSI
+# n° 2016/010, point 1) : le `seuil`. Jusqu'en 2013, c'est celui du
+# trimestre ; en 2014, le trimestre passe à 150 heures et le premier en
+# demande encore 200 ; en 2015, la compensation en valide deux d'un coup
+# (circulaire RSI n° 2015/007, point 2). Les circulaires lues sont celles du
+# RSI : la Cipav n'y est pas. La compensation cesse en 2016.
 schema_version: 1
 
 # La part du chiffre d'affaires que la saisie retire (L. 613-7, II) : le
@@ -64,25 +102,35 @@ regimes_du_forfait:
   liberal: [regime_general, rci]
   cipav: [cnavpl, cipav_complementaire]
 
+compensation:
+  activites: [vente, services, liberal]
+  plancher: {2009: 200}
+  seuil: {2010: 200, 2011: 200, 2012: 200, 2013: 200, 2014: 200, 2015: 300}
+
 versions:
   # a) vente de marchandises, 1° du 1 de l'article 50-0 du CGI.
   vente:
+    - {debut: "2018-01", taux_global: 0.128, part_base: 0.4031, taux_base: 0.1775, part_complementaire: 0.1594}
     - {debut: "2022-10", taux_global: 0.123, part_base: 0.418, taux_base: 0.1775, part_complementaire: 0.165}
     - {debut: "2025-01", taux_global: 0.123, part_base: 0.418, taux_base: 0.1787, part_complementaire: 0.165}
     - {debut: "2026-01", taux_global: 0.123, part_base: 0.4345, taux_base: 0.1787, part_complementaire: 0.1975}
   # d) services commerciaux ou artisanaux, 2° du 1 de l'article 50-0.
   services:
+    - {debut: "2018-01", taux_global: 0.22, part_base: 0.4036, taux_base: 0.1775, part_complementaire: 0.1591}
     - {debut: "2022-10", taux_global: 0.212, part_base: 0.418, taux_base: 0.1775, part_complementaire: 0.165}
     - {debut: "2025-01", taux_global: 0.212, part_base: 0.418, taux_base: 0.1787, part_complementaire: 0.165}
     - {debut: "2026-01", taux_global: 0.212, part_base: 0.4345, taux_base: 0.1787, part_complementaire: 0.1975}
   # e) libéral de l'Assurance retraite (L. 631-1 et 102 ter du CGI).
   liberal:
+    - {debut: "2018-01", taux_global: 0.22, part_base: 0.5323, taux_base: 0.1775, part_complementaire: 0.0}
     - {debut: "2022-10", taux_global: 0.211, part_base: 0.555, taux_base: 0.1775, part_complementaire: 0.0}
     - {debut: "2024-07", taux_global: 0.231, part_base: 0.5075, taux_base: 0.1775, part_complementaire: 0.0785}
     - {debut: "2025-01", taux_global: 0.246, part_base: 0.476, taux_base: 0.1787, part_complementaire: 0.13}
     - {debut: "2026-01", taux_global: 0.256, part_base: 0.464, taux_base: 0.1787, part_complementaire: 0.21}
   # b) section de la Cipav (R. 641-1, 11°) : première tranche de la CNAVPL.
   cipav:
+    - {debut: "2019-01", taux_global: 0.22, part_base: 0.25, part_base_seconde: 0.05, part_complementaire: 0.20, valide: false}
+    - {debut: "2021-07", taux_global: 0.222, part_base: 0.248, part_base_seconde: 0.05, part_complementaire: 0.198, valide: false}
     - {debut: "2022-10", taux_global: 0.212, part_base: 0.26, taux_base: 0.0823, part_base_seconde: 0.053, part_complementaire: 0.2075}
     - {debut: "2024-07", taux_global: 0.232, part_base: 0.2345, taux_base: 0.0823, part_base_seconde: 0.0535, part_complementaire: 0.256}
     - {debut: "2025-01", taux_global: 0.232, part_base: 0.2345, taux_base: 0.0873, part_base_seconde: 0.0535, part_complementaire: 0.256}

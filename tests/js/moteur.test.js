@@ -31,7 +31,10 @@ import { MinimumVieillesse } from "../../moteur/js/regimes.js";
 import {
   avantLAspa, COUPLE, DEUX_ALLOCATAIRES, PERSONNE_SEULE,
 } from "../../moteur/js/droit/foyer.js";
-import { AnneeCarriere, limiterChomageNonIndemnise } from "../../moteur/js/carriere.js";
+import {
+  AnneeCarriere, limiterChomageNonIndemnise, salaireMoyenAnnuel,
+} from "../../moteur/js/carriere.js";
+import { ABATTEMENTS_MICRO } from "../../moteur/js/saisie.js";
 import * as gabarit from "../../moteur/js/gabarit.js";
 import { Fiabilite, SerieAnnuelle } from "../../moteur/js/serie.js";
 import { PARAMETRES_DEFAUT } from "../../moteur/js/config.js";
@@ -533,6 +536,39 @@ test("le chômage non indemnisé ne valide que dans les limites de R. 351-12", (
     .reduce((total, annee) => total + valides[annee], 0);
   assert.equal(ulterieures(carriere(1955, 1975, 2016, senior)), 16);
   assert.equal(ulterieures(carriere(1965, 1985, 2016, senior)), 4);
+});
+
+/**
+ * La compensation de l'État à l'auto-entrepreneur, de 2009 à 2015
+ * (L. 133-6-8-2, D. 131-6-4) : un trimestre au moins en 2009, rien sous
+ * 200 heures de SMIC en 2014, sous 300 en 2015. Sous les bornes de la
+ * saisie, qu'aucun témoin ne franchit : rejoue
+ * `test_la_compensation_de_l_etat_de_2009_a_2015` (test_micro_social.py).
+ */
+test("la compensation de l'État compte les trimestres de l'auto-entrepreneur", () => {
+  const simulateur = new Contexte(paquet).simulateur();
+  const trimestres = (activite, annee, chiffreDAffaires, ageDebut = 20) => {
+    const niveau = chiffreDAffaires * (1 - ABATTEMENTS_MICRO[activite])
+      / salaireMoyenAnnuel(simulateur.macro, annee);
+    const carriere = simulateur.carriereParcours({
+      annee_naissance: 1975, sexe: "H", age_liquidation: 64, profil_carriere: "plat",
+      metiers: [{
+        affiliation: "micro_entrepreneur", age_debut: ageDebut, niveau_salaire: niveau,
+        micro: activite,
+      }],
+    });
+    return carriere.lignes.find((ligne) => ligne.annee === annee).trimestres_valides;
+  };
+  assert.equal(trimestres("vente", 2009, 3000), 1);
+  // Le trimestre de 2009 demande l'année civile entière.
+  assert.equal(trimestres("vente", 2009, 3000, 34.5), 0);
+  assert.equal(trimestres("vente", 2010, 6000), 0);
+  assert.equal(trimestres("vente", 2014, 6500), 0);
+  assert.equal(trimestres("vente", 2014, 6573), 1);
+  assert.equal(trimestres("services", 2014, 3700), 0);
+  assert.equal(trimestres("liberal", 2014, 2800), 0);
+  assert.equal(trimestres("vente", 2015, 7000), 0);
+  assert.equal(trimestres("vente", 2015, 9942), 2);
 });
 
 /**

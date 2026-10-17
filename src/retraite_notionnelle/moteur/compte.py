@@ -1003,8 +1003,10 @@ class ConstructeurCompte:
         # complémentaire, versées à leurs deux régimes. Le barème s'en
         # écartait de +39 % pour le libéral de 2023, dont la part
         # complémentaire était nulle, de +13 à +15 % pour la Cipav de 2023 à
-        # 2025, de -3 % pour la vente et les services de 2026. Avant 2023,
-        # faute de répartition au code, le barème reste.
+        # 2025, de -3 % pour la vente et les services de 2026. Avant le décret
+        # n° 2022-1529, la table porte les clefs que la Cnav appliquait depuis
+        # 2018 (circulaire n° 2025-20), et D. 131-5-3 pour la Cipav depuis
+        # 2019 ; plus tôt, faute de répartition lue, le barème reste.
         if ligne.micro and ligne.cotise and not acquisition_commune:
             forfait = forfait_micro(charger_cotisation_micro(self.macro.racine),
                                     ligne.micro, annee)
