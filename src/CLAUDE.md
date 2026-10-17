@@ -57,6 +57,12 @@ de la proposition, qui s'écrit en couche (`data/CLAUDE.md`).
   n'ayant pas de jumeau ; `python scripts/regenerer.py`, puis
   `python scripts/resumer_temoins.py`, pour
   voir ce qu'il déplace ; `-m rapide` et les tests de sa zone, puis le commit.
+  Les tests de sa zone comptent les confrontations légères, sept secondes
+  sans mémoire : `python -m pytest tests/test_oracle.py tests/test_destinie.py
+  tests/test_estimation_officielle.py tests/test_verification.py` ; elles ont
+  rougi `main` quatre fois du 6 au 17 octobre 2026 (action 163, garde 4). Le
+  coût et ses confrontations (`test_cout.py`, `test_facteurs_depense.py`,
+  `test_affirmations.py` : huit minutes sans mémoire) restent à GitHub.
 - **Un défaut corrigé dans une règle** : la classe, pas le cas. Avant le
   commit, chercher la même erreur dans les autres régimes et les autres
   générations, et la corriger avec lui ou l'inscrire à la feuille de route

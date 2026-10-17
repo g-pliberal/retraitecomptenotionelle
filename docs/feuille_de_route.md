@@ -6406,15 +6406,15 @@ d'un commit qui change le code sans test), ou l'alléger.
 
 ### 163. Ce que la revue de code d'Anthropic apprend au dépôt : le site en ligne au vert, les rouges classés, puis un relecteur — `en cours`
 
-**Reprise, au 17 octobre 2026.** Faites, les étapes 1 et 2, et les gardes 1
-et 2 que la seconde proposait : le site ne part en ligne que d'une suite
+**Reprise, au 17 octobre 2026.** Faites, les étapes 1, 2 et 4, et les quatre
+gardes que la deuxième proposait : le site ne part en ligne que d'une suite
 verte ; les rouges sont classés et comptés (`tableau_de_bord.py --cout`) ; les
-comptes du parcours et du README sont ancrés, les mesures de l'accueil
-refaites par `scripts/mesures_accueil.py` à chaque fabrique ; `pousser.sh` joue
-les tests de la feuille de route qu'un envoi touche. Restent les chiffres à
-unité du parcours, ses carrières d'abord, puis les gardes 3 et 4 et les
-étapes 3 à 6, que le propriétaire tranche. Détail :
-`163/2026-10-17-les-gardes-1-et-2.md`.
+chiffres cités du parcours, du README et de l'accueil sont produits ;
+`pousser.sh` joue les tests de la feuille de route ; huit tests d'une seconde
+sont de la suite rapide ; les confrontations légères, de la zone du modèle.
+Restent les chiffres à unité du parcours, ses carrières d'abord, et les
+étapes 3, 5 et 6, que le propriétaire tranche. Détail :
+`163/2026-10-17-gardes-3-et-4.md`.
 
 **D'où elle vient.** Le 17 octobre 2026, le propriétaire soumet à une
 session l'article « How the Claude Code team does code review » (blog
@@ -6452,8 +6452,6 @@ lance les deux premières : « vas-y ».
    un commit qui touche `tests.yml`, les hooks ou `pousser.sh`, et la session
    demande d'abord au propriétaire.
 
-**Ce que le propriétaire tranche** : les gardes 3 et 4 que l'étape 2
-propose — les tests d'une seconde au niveau rapide, les confrontations dans
-la zone du modèle —, et les chiffres à unité du parcours ; puis, une à une,
-les étapes 3 à 6. Les gardes 1 et 2, produire les chiffres cités et le bloc
-« Reprise » à l'envoi, sont faites le 17 octobre 2026.
+**Ce que le propriétaire tranche** : les chiffres à unité du parcours, puis,
+une à une, les étapes 3, 5 et 6. Les quatre gardes de l'étape 2 sont faites le
+17 octobre 2026.
