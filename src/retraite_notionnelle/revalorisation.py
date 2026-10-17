@@ -1166,7 +1166,7 @@ def reviser_les_exploitants(moteur, resultat, datees, regimes: list[RegimeServi]
     """La révision d'une pension des non-salariés agricoles déjà liquidée,
     menée jusqu'à l'échéance ``fin``.
 
-    LES PLANS DE REVALORISATION, pour une pension prise de 1997 à 2008 : chaque
+    LES PLANS DE REVALORISATION, pour une pension prise avant 2009 : chaque
     décret sert sa règle aux « pensions dues » à compter de sa date, quelle que
     soit leur date d'effet — le tiers en 1997, les deux tiers en 1998, puis
     entiers (décret n° 97-163, article 3), 29,23 points sans minoration en 2001
@@ -1176,7 +1176,10 @@ def reviser_les_exploitants(moteur, resultat, datees, regimes: list[RegimeServi]
     de l'année de l'échéance, 2008 au plus, sur le nombre de points de la
     liquidation (:func:`~retraite_notionnelle.droit.completer.majoration_retraite_proportionnelle`) ;
     ses points suivent ensuite la valeur du point, et remplacent ceux de la
-    liquidation.
+    liquidation. Une pension prise avant 1997, sans rien à la liquidation, est
+    révisée depuis 1997 à la règle de ses pensions dues (décret n° 97-163,
+    article 2 ; décret n° 2002-297, article 5 ; D. 732-114 à D. 732-117), sur
+    la durée de chef que ses points au compte reconstituent.
 
     LA PENSION MAJORÉE DE RÉFÉRENCE, ouverte le 1er janvier 2009 aux pensions
     prises avant (loi n° 2008-1330, article 77 ; D. 732-109 à D. 732-115) : le
@@ -1214,13 +1217,14 @@ def reviser_les_exploitants(moteur, resultat, datees, regimes: list[RegimeServi]
     au_depart = exploitant.plans.points if exploitant.plans is not None else 0.0
     coefficient = servie.coefficient(pension, a, debut, fin, mensuel_2019)[0]
 
-    # Les plans, à la règle de l'année de l'échéance, 2008 au plus.
+    # Les plans, à la règle de l'année de l'échéance, 2008 au plus : celle des
+    # pensions prises avant 1997 les révise depuis 1997.
     annee_des_plans, servis, plans = None, au_depart, 0.0
     annee = min(fin.year, DERNIERE_ANNEE_DES_PLANS)
+    quand = date(annee, 1, 1)
     regle = moteur.fiches_datees.regle(FICHE_DE_LA_MAJORATION_PROPORTIONNELLE,
-                                       debut.isoformat())
+                                       quand.isoformat())
     if annee > debut.year and regle and regle["existe"]:
-        quand = date(annee, 1, 1)
         revisee = majoration_retraite_proportionnelle(
             moteur, carriere, exploitant.eligible, exploitant.pension,
             exploitant.trimestres, quand=quand.isoformat())

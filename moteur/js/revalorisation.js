@@ -1170,14 +1170,15 @@ export function reviserLesExploitants(moteur, resultat, datees, regimes, servie,
   const auDepart = exploitant.plans !== null ? exploitant.plans.points : 0.0;
   const coefficient = servie.coefficient(pension, a, debut, fin, mensuel2019)[0];
 
-  // Les plans, à la règle de l'année de l'échéance, 2008 au plus.
+  // Les plans, à la règle de l'année de l'échéance, 2008 au plus : celle des
+  // pensions prises avant 1997 les révise depuis 1997.
   let anneeDesPlans = null;
   let servis = auDepart;
   let plans = 0.0;
   const annee = Math.min(Number(fin.slice(0, 4)), DERNIERE_ANNEE_DES_PLANS);
-  const regle = moteur.fichesDatees.regle(FICHE_DE_LA_MAJORATION_PROPORTIONNELLE, debut);
+  const quand = dateIso(annee, 1, 1);
+  const regle = moteur.fichesDatees.regle(FICHE_DE_LA_MAJORATION_PROPORTIONNELLE, quand);
   if (annee > Number(debut.slice(0, 4)) && regle && regle.existe) {
-    const quand = dateIso(annee, 1, 1);
     const revisee = majorationRetraiteProportionnelle(moteur, carriere, exploitant.eligible,
       exploitant.pension, exploitant.trimestres, quand);
     servis = revisee !== null ? revisee.points : 0.0;

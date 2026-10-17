@@ -351,9 +351,11 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   agricole qui prennent effet depuis 2009, au taux plein, au prorata de la
   durée agricole, écrêtée au plafond de toutes les pensions ; le complément
   différentiel de la complémentaire agricole, aux pensions qui prennent effet
-  depuis 2015, à qui compte <!--chiffre:valeur(data/reference/regles/complement_differentiel_rco.yaml:versions.id=complement_de_2026.contenu.parametres.seuil_chef)-->70<!--/--> trimestres de chef d'exploitation. Restent
-  dehors : la révision par les plans de revalorisation des pensions prises
-  avant 1997, et, des points que ces plans servent depuis 2002 aux années de
+  depuis 2015, à qui compte <!--chiffre:valeur(data/reference/regles/complement_differentiel_rco.yaml:versions.id=complement_de_2026.contenu.parametres.seuil_chef)-->70<!--/--> trimestres de chef d'exploitation. Les plans
+  de revalorisation révisent depuis le 17 octobre 2026 les pensions de chef
+  prises avant 1997, sur la durée de chef que leurs points au compte
+  reconstituent, ceux d'avant 1990 comptant pour leur rendement. Restent
+  dehors : des points que ces plans servent depuis 2002 aux années de
   conjoint et d'aide familial (fiche `majoration_retraite_proportionnelle`),
   ceux des pensions dues de 1998 à 2001, du rachat et de l'option tardive ; l'assiette
   forfaitaire du conjoint collaborateur et de l'aide familial, statut que la

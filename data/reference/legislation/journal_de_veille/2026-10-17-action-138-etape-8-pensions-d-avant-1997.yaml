@@ -1,0 +1,40 @@
+date: "2026-10-17"
+session: "action 138, étape 8 : avant 1997, la révision des plans de revalorisation des pensions des exploitants"
+consulte: >-
+  python scripts/veille_droit.py, qui ne nomme aucune fiche agricole à relire. Les index
+  JORF et LEGI récupérés, puis mis à jour aux incréments du 17 octobre 2026 ; python
+  scripts/textes.py --inscrire y relève 562 rédactions nouvelles, sans rapport avec la
+  règle, laissées hors du commit pour ne pas heurter les onze autres sessions du jour.
+  Dans l'index JORF : le décret n° 97-163 du 24 février 1997, articles 1er à 3
+  (JORFARTI000002386544, JORFARTI000002386545, JORFARTI000001027316) ; le décret
+  n° 99-141 du 3 mars 1999, articles 1er, 2 et 5 ; le décret n° 2000-261 du 22 mars 2000,
+  articles 1er, 6 et 9 ; le décret n° 2001-170 du 21 février 2001, article 3, et son
+  rectificatif du 3 mars 2001 (JORFARTI000001645429) ; le décret n° 2002-297 du 1er mars
+  2002, articles 1er à 8, 15 et 16 ; le décret n° 2006-1638 du 19 décembre 2006, articles
+  1er à 6 ; le décret n° 2009-173 du 13 février 2009, article 1er (D. 732-110, III). Dans
+  l'index LEGI : D. 732-114 (2005), D. 732-115 (2005, 2007), D. 732-116 (2005, 2006) et
+  D. 732-117 (2007).
+trouve: >-
+  Les retraites proportionnelles prises avant 1997 sont révisées à compter du 1er janvier
+  1997 (décret n° 97-163, article 2) : trente-deux ans et demi d'activité agricole à titre
+  exclusif ou principal, dix-sept et demi de chef « reconstitués » — les points au compte
+  divisés par seize, ramenés à la durée agricole quand ils la dépassent —, P = (20 - n) ×
+  d, sans condition de taux plein, servis au tiers en 1997 et aux deux tiers en 1998 ; deux
+  minorations, sous vingt-deux ans et demi de chef reconstitués et sous trente-sept et
+  demi d'activité agricole, la plus forte seule. Puis 23,9 points en 1999, les
+  coefficients à 15, 15, 10, 10, 10 et 40 % ; 26,96 en 2000 ; 29,23 en 2001, la minoration
+  du chef supprimée — le Journal officiel imprimait 26,23, que son rectificatif corrige,
+  et que la fiche recopiait — ; depuis 2002, A = (MV1 - AVTS) / (37,5 × VP), la durée
+  ramenée dans la limite de trente-sept ans et demi (décret n° 2002-297, article 5 ;
+  D. 732-114 à D. 732-117) ; en 2007, vingt-deux ans et demi d'activité agricole et 5,5 %
+  par année manquante, 4 % en 2008 (décret n° 2006-1638). Servi dans les deux moteurs, à
+  l'étape « faire vivre » (fiche majoration_retraite_proportionnelle, paramètre
+  pensions_prises_avant_1997) ; six rédactions de LEGI citées, le cliquet des textes à
+  9 714.
+reste: >-
+  D. 732-117 dans sa rédaction de 2005 (LEGIARTI000006597543), absent de l'index : le
+  moteur lui donne les coefficients de l'article 5, III, du décret n° 2002-297. La durée
+  de chef reconstituée dans la PMR des pensions prises avant 1997 (D. 732-110, III,
+  rédaction du décret n° 2009-173), que le moteur prend de la carrière. A égal à 20 de qui
+  reçoit la revalorisation de la réversion, non servi. Un exemple chiffré publié d'une
+  pension révisée par les plans.

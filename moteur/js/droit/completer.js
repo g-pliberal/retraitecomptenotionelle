@@ -360,6 +360,13 @@ export const PLANCHER_DES_POINTS_D_UNE_ANNEE = 16.0;
 export const POINTS_D_UNE_ANNEE_DE_CONJOINT = 16.0;
 export const CONJOINTS_DEPUIS = "1998-01-01";
 export const PLANS_DE_2002 = "2002-01-01";
+/**
+ * Une pension prise avant n'a pas de minimum à la liquidation : les plans la
+ * révisent depuis 1997, sur la durée de chef que ses points au compte, divisés
+ * par seize, reconstituent. Voir `PLANS_DE_1997` du Python.
+ */
+export const PLANS_DE_1997 = "1997-01-01";
+export const POINTS_D_UNE_ANNEE_RECONSTITUEE = 16.0;
 
 /** L'année d'effet des revalorisations des conjoints. Voir le Python. */
 function anneeDEffetDesConjoints(dateEffet) {
@@ -430,6 +437,47 @@ function pointsDesConjoints(regle, carriere, eligible, dateEffet, minimum) {
   return points > 0.0 ? [annees, points] : [0.0, 0.0];
 }
 
+/**
+ * Pour chacune des années de l'écart `manque`, son coefficient ; la fraction
+ * d'année manquante, au prorata. Voir `_minoration_des_annees` du Python.
+ */
+function minorationDesAnnees(coefficients, manque) {
+  let taux = 0;
+  (coefficients ?? []).forEach((coefficient, rang) => {
+    if (manque > rang) {
+      taux += coefficient * Math.min(1.0, manque - rang);
+    }
+  });
+  return taux;
+}
+
+/**
+ * La révision d'une pension de chef prise avant 1997 : [n, d, points ajoutés,
+ * minorés, avant la part servie], ou null quand elle ne s'ouvre pas. Voir
+ * `_points_d_avant_1997` du Python.
+ */
+function pointsDAvant1997(avant1997, points, agricole, minimum) {
+  if (agricole < avant1997.duree_minimale) {
+    return null;
+  }
+  let reconstituee = points / POINTS_D_UNE_ANNEE_RECONSTITUEE;
+  if (reconstituee > agricole) {
+    reconstituee = Math.min(agricole, avant1997.duree_ramenee_au_plus || agricole);
+  }
+  if (reconstituee < ANNEES_DE_CHEF_DU_MINIMUM) {
+    return null;
+  }
+  const moyenne = points / reconstituee;
+  const duree = Math.min(reconstituee, ANNEES_DU_MINIMUM_AU_PLUS);
+  const manque = Math.max(0.0, ANNEES_DU_MINIMUM_AU_PLUS - agricole);
+  const deLaDuree = avant1997.minorations && avant1997.minorations.length
+    ? minorationDesAnnees(avant1997.minorations, manque)
+    : (avant1997.minoration_par_annee || 0.0) * manque;
+  const taux = Math.max(minorationDesAnnees(avant1997.minorations_du_chef,
+    ANNEES_SANS_MINORATION - reconstituee), deLaDuree);
+  return [moyenne, duree, Math.max(0.0, minimum - moyenne) * duree * Math.max(0.0, 1.0 - taux)];
+}
+
 /** Le détail de la majoration. Voir `detail_des_plans` du Python. */
 export function detailDesPlans(plans) {
   const parties = [];
@@ -481,7 +529,8 @@ function minimumVieillesse(moteur, nom, annee) {
  * rien : P = (A - n) × DCE, minoré sous vingt-deux ans et demi de 1997 à 2000
  * et réduit à la part servie. `quand` (AAAA-01-01), la révision d'une pension
  * déjà liquidée : la règle des pensions dues cette année-là, A aux montants du
- * 1er janvier, n celui de la liquidation. Voir
+ * 1er janvier, n celui de la liquidation ; celle d'une pension prise avant
+ * 1997, `pensions_prises_avant_1997` (`pointsDAvant1997`). Voir
  * `majoration_retraite_proportionnelle` du Python.
  */
 export function majorationRetraiteProportionnelle(moteur, carriere, eligible, pension,
@@ -494,6 +543,13 @@ export function majorationRetraiteProportionnelle(moteur, carriere, eligible, pe
     quand ?? dateEffet);
   if (!regle || !regle.existe || trimestres <= 0) {
     return null;
+  }
+  let avant1997 = null;
+  if (dateEffet < PLANS_DE_1997) {
+    avant1997 = regle.pensions_prises_avant_1997 ?? null;
+    if (quand === null || !avant1997) {
+      return null;
+    }
   }
   const periode = periodeDeLiquidation(moteur.catalogue.obtenir(pension.regime),
     carriere.dateLiquidation);
@@ -509,10 +565,14 @@ export function majorationRetraiteProportionnelle(moteur, carriere, eligible, pe
     reduit = null;
   }
   // Les années de chef, au taux plein ; celles de conjoint, selon la règle de
-  // leur date d'effet (`pointsDesConjoints`).
+  // leur date d'effet (`pointsDesConjoints`) ; la révision d'une pension prise
+  // avant 1997 ne veut pas le taux plein.
   let minimumNomme = null;
   let chefOuvert = eligible.tauxPlein;
-  if (chefOuvert && chef >= ANNEES_DE_CHEF_DU_MINIMUM) {
+  if (avant1997 !== null) {
+    minimumNomme = avant1997.minimum;
+    chefOuvert = true;
+  } else if (chefOuvert && chef >= ANNEES_DE_CHEF_DU_MINIMUM) {
     minimumNomme = regle.minimum;
   } else if (chefOuvert && reduit && chef > 0.0 && agricole >= ANNEES_DE_CHEF_DU_MINIMUM) {
     minimumNomme = reduit;
@@ -543,7 +603,7 @@ export function majorationRetraiteProportionnelle(moteur, carriere, eligible, pe
   if (lus === null) {
     return null;
   }
-  const [, service, forfait] = lus;
+  const [pointAuDepart, service, forfait] = lus;
   let fiabilite = lus[3];
   let point = lus[0];
   let serviceServi = service;
@@ -596,7 +656,7 @@ export function majorationRetraiteProportionnelle(moteur, carriere, eligible, pe
   }
   let minimum;
   if (minimumNomme === null || minimumNomme === undefined) {
-    minimum = Number(regle.minimum_points);
+    minimum = Number((avant1997 ?? regle).minimum_points);
   } else {
     const lu = minimumDe(minimumNomme);
     if (lu === null) {
@@ -612,19 +672,26 @@ export function majorationRetraiteProportionnelle(moteur, carriere, eligible, pe
     ? forfait * Math.min(trimestres, proratisation) / proratisation
     : 0.0;
   const proportionnelle = Math.max(0.0, pension.montant / eligible.surcote - partForfaitaire);
-  const moyenne = Math.max(PLANCHER_DES_POINTS_D_UNE_ANNEE,
-    proportionnelle / service / Math.min(trimestres / 4.0, ANNEES_DU_MINIMUM_AU_PLUS));
-  const duree = Math.min(chef, ANNEES_DU_MINIMUM_AU_PLUS);
-  let points = Math.max(0.0, minimum - moyenne) * duree;
-  if (regle.minorations && chef < ANNEES_SANS_MINORATION) {
-    const manque = ANNEES_SANS_MINORATION - chef;
-    let taux = 0;
-    regle.minorations.forEach((coefficient, rang) => {
-      if (manque > rang) {
-        taux += coefficient * Math.min(1.0, manque - rang);
-      }
-    });
-    points *= Math.max(0.0, 1.0 - taux);
+  let moyenne;
+  let duree;
+  let points;
+  if (avant1997 !== null) {
+    // Les points au compte, à la valeur du point de la liquidation.
+    const revises = pointsDAvant1997(avant1997, proportionnelle / pointAuDepart, agricole,
+      minimum);
+    if (revises === null) {
+      return null;
+    }
+    [moyenne, duree, points] = revises;
+  } else {
+    moyenne = Math.max(PLANCHER_DES_POINTS_D_UNE_ANNEE,
+      proportionnelle / service / Math.min(trimestres / 4.0, ANNEES_DU_MINIMUM_AU_PLUS));
+    duree = Math.min(chef, ANNEES_DU_MINIMUM_AU_PLUS);
+    points = Math.max(0.0, minimum - moyenne) * duree;
+    if (regle.minorations && chef < ANNEES_SANS_MINORATION) {
+      points *= Math.max(0.0, 1.0 - minorationDesAnnees(regle.minorations,
+        ANNEES_SANS_MINORATION - chef));
+    }
   }
   points *= regle.part_servie;
   if (points + conjointPoints <= 0.0) {

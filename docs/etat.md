@@ -38,11 +38,11 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 
 | Statut | Rédactions |
 |---|---|
-| rattachées à une version | 1 173 |
+| rattachées à une version | 1 179 |
 | sans effet | 53 |
 | à rattacher | 417 |
 | à examiner | 3 488 |
-| sans statut | 9 720 |
+| sans statut | 9 714 |
 
 **La personne** (§ 5) : une chronologie de faits datés, dans un réseau de personnes — aujourd'hui l'assuré, ses enfants et son conjoint —, que le relevé et le parcours déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : 26 présomptions au vocabulaire, dont 3 posent leur fait dans la chronologie ; les autres s'appliquent dans le code, jusqu'à l'étape qui posera le leur.
 
@@ -236,7 +236,7 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 | `majoration_enfants_liberaux_avocats` | approchee | Les fiches de la CNAVPL, de la CNBF et de sa complémentaire ne la portaient pas : 10 % de pension en moins pour tout parent de trois enfant… |
 | `majoration_enfants_plafond_fonction_publique` | approchee | Les pensions du code des pensions que la majoration pour enfants porterait au-delà du traitement : sans surcote, à partir de sept enfants a… |
 | `majoration_exceptionnelle_2023` | approchee | Les retraités du régime général, des indépendants, des salariés agricoles et des cultes partis avant le 1er septembre 2023 au taux plein av… |
-| `majoration_retraite_proportionnelle` | approchee | Les conjoints collaborateurs partis de 1998 à 2008, servis depuis 2002 au plus tôt : une conjointe de quarante-deux ans partie en 2005 reço… |
+| `majoration_retraite_proportionnelle` | approchee | Les chefs partis avant 1997, de 1997 à 2008 : une carrière complète à faible revenu partie en 1995 reçoit 2 036 € de plus en 2008. |
 | `marins_salaire_de_reference` | approchee | Le modèle prend la catégorie de la DERNIÈRE année, rangée par le revenu, et compte les services au trimestre |
 | `mayotte_pension_de_base` | approchee | Les salariés de Mayotte : leur pension est simulée au droit depuis 2003, à leur salaire moyen près pour les nés avant 1965 |
 | `micro_social_abattement` | approchee | Le micro-entrepreneur saisit son chiffre d'affaires mensuel et son activité (champ « micro »), que la saisie abat avant de le donner au mod… |
@@ -357,7 +357,7 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   | `etape` | 75 |
   | `approximations` | 41 |
 
-- **Les textes** : 417 rédactions à rattacher à une version de la fiche qui les cite, 3 488 à examiner, et 9 720 sans statut, que le cliquet tient à 9 720 au plus. Les textes qui en ont le plus : `css` 5 023, `decret_46_2769` 942, `rural` 897, `cpcmr` 574, `decret_90_1215` 325 (`python scripts/textes.py`).
+- **Les textes** : 417 rédactions à rattacher à une version de la fiche qui les cite, 3 488 à examiner, et 9 714 sans statut, que le cliquet tient à 9 714 au plus. Les textes qui en ont le plus : `css` 5 023, `decret_46_2769` 942, `rural` 891, `cpcmr` 574, `decret_90_1215` 325 (`python scripts/textes.py`).
 - **Les relectures prévues les plus proches** : 2026-10-31 (`agirc_arrco_valeur_achat`) ; 2026-11-15 (`agirc_arrco_valeur_service`) ; 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`carriere_longue`).
 - **Les régimes hors champ** : 23, chacun avec sa raison dans l'inventaire.
 

@@ -554,6 +554,14 @@ CONJOINTS_DEPUIS = "1998-01-01"
 #: Les pensions prises depuis relèvent de L. 732-54-8 (D. 732-141 à D. 732-146) ;
 #: celles d'avant, de L. 732-54-2 (D. 732-118 à D. 732-131).
 PLANS_DE_2002 = "2002-01-01"
+#: Une pension prise avant n'a pas de minimum à la liquidation : les plans la
+#: révisent depuis le 1er janvier 1997, à la règle ``pensions_prises_avant_1997``
+#: des pensions dues (décret n° 97-163, article 2 ; décret n° 2002-297,
+#: article 5 ; D. 732-114 à D. 732-117 ; :func:`_points_d_avant_1997`).
+PLANS_DE_1997 = "1997-01-01"
+#: Les points au compte d'une pension prise avant 1997, divisés par ce nombre,
+#: donnent sa durée de chef reconstituée.
+POINTS_D_UNE_ANNEE_RECONSTITUEE = 16.0
 
 
 def _annee_d_effet_des_conjoints(date_effet: str) -> int:
@@ -633,6 +641,51 @@ def _points_des_conjoints(regle: dict, carriere: Carriere, eligible, date_effet:
     return (annees, points) if points > 0.0 else (0.0, 0.0)
 
 
+def _minoration_des_annees(coefficients: list[float] | None, manque: float) -> float:
+    """« Pour chacune des années de l'écart constaté » ``manque``, son
+    coefficient ; la fraction d'année manquante, au prorata."""
+    return somme_ordonnee(coefficient * min(1.0, manque - rang)
+                          for rang, coefficient in enumerate(coefficients or ())
+                          if manque > rang)
+
+
+def _points_d_avant_1997(avant_1997: dict, points: float, agricole: float,
+                         minimum: float) -> tuple[float, float, float] | None:
+    """La révision d'une pension de chef prise avant 1997 : le nombre annuel
+    moyen n, la durée d et les points ajoutés, minorés, avant la part servie ;
+    ``None`` quand elle ne s'ouvre pas (décret n° 97-163, article 2 ; décret
+    n° 2002-297, article 5 ; D. 732-115 à D. 732-117).
+
+    La durée de chef se reconstitue des ``points`` au compte divisés par seize.
+    Quand elle dépasse la durée ``agricole``, à titre exclusif ou principal,
+    elle y est ramenée — dans la limite de trente-sept ans et demi depuis 2002
+    (``duree_ramenee_au_plus``) — ; n est les points divisés par la durée
+    reconstituée, seize quand elle n'est pas ramenée ; d en retient trente-sept
+    et demie au plus. La révision veut dix-sept ans et demi reconstitués et la
+    durée agricole ``duree_minimale``, non le taux plein. Sous vingt-deux ans
+    et demi reconstitués (``minorations_du_chef``, jusqu'en 2000) et sous
+    trente-sept et demi d'activité agricole (``minorations``, ou
+    ``minoration_par_annee`` depuis 2007), deux coefficients : « seul le
+    coefficient de minoration le plus élevé est appliqué »."""
+    if agricole < avant_1997["duree_minimale"]:
+        return None
+    reconstituee = points / POINTS_D_UNE_ANNEE_RECONSTITUEE
+    if reconstituee > agricole:
+        reconstituee = min(agricole, avant_1997["duree_ramenee_au_plus"] or agricole)
+    if reconstituee < ANNEES_DE_CHEF_DU_MINIMUM:
+        return None
+    moyenne = points / reconstituee
+    duree = min(reconstituee, ANNEES_DU_MINIMUM_AU_PLUS)
+    manque = max(0.0, ANNEES_DU_MINIMUM_AU_PLUS - agricole)
+    if avant_1997["minorations"]:
+        de_la_duree = _minoration_des_annees(avant_1997["minorations"], manque)
+    else:
+        de_la_duree = (avant_1997["minoration_par_annee"] or 0.0) * manque
+    taux = max(_minoration_des_annees(avant_1997["minorations_du_chef"],
+                                      ANNEES_SANS_MINORATION - reconstituee), de_la_duree)
+    return moyenne, duree, max(0.0, minimum - moyenne) * duree * max(0.0, 1.0 - taux)
+
+
 def _minimum_vieillesse(moteur: ScenarioActuel, nom: str, annee: int
                         ) -> tuple[float, Fiabilite] | None:
     """Le minimum vieillesse d'une personne seule (MV1), ou l'écart entre celui
@@ -699,6 +752,12 @@ def majoration_retraite_proportionnelle(
     depuis les pensions dues en 2002, aux pensions prises de 1998 à 2001
     sans le taux plein (:func:`_points_des_conjoints`, ``conjoints`` de la
     fiche).
+
+    Une pension prise avant 1997 n'a rien à la liquidation : les plans la
+    révisent depuis 1997, à la règle ``pensions_prises_avant_1997`` des
+    pensions dues — 20 points en 1997 et 1998, 23,9 en 1999, 26,96 en 2000,
+    29,23 en 2001, A depuis 2002 —, sur la durée de chef que ses points au
+    compte reconstituent (:func:`_points_d_avant_1997`).
     """
     date_effet = date_d_effet(carriere)
     if date_effet is None or pension.montant <= 0.0:
@@ -707,6 +766,11 @@ def majoration_retraite_proportionnelle(
                                        quand or date_effet)
     if not regle or not regle["existe"] or trimestres <= 0:
         return None
+    avant_1997 = None
+    if date_effet < PLANS_DE_1997:
+        avant_1997 = regle.get("pensions_prises_avant_1997")
+        if quand is None or not avant_1997:
+            return None
     periode = periode_de_liquidation(moteur.catalogue[pension.regime],
                                      carriere.date_liquidation)
     if periode is None or periode.pension_forfaitaire_annuelle is None:
@@ -717,9 +781,12 @@ def majoration_retraite_proportionnelle(
     if reduit and date_effet < str(regle.get("minimum_reduit_depuis") or date_effet):
         reduit = None
     # Les années de chef, au taux plein ; celles de conjoint, selon la règle
-    # de leur date d'effet (:func:`_points_des_conjoints`).
+    # de leur date d'effet (:func:`_points_des_conjoints`) ; la révision d'une
+    # pension prise avant 1997 ne veut pas le taux plein.
     minimum_nomme, chef_ouvert = None, eligible.taux_plein
-    if chef_ouvert and chef >= ANNEES_DE_CHEF_DU_MINIMUM:
+    if avant_1997 is not None:
+        minimum_nomme, chef_ouvert = avant_1997["minimum"], True
+    elif chef_ouvert and chef >= ANNEES_DE_CHEF_DU_MINIMUM:
         minimum_nomme = regle["minimum"]
     elif chef_ouvert and reduit and chef > 0.0 and agricole >= ANNEES_DE_CHEF_DU_MINIMUM:
         minimum_nomme = reduit
@@ -746,7 +813,7 @@ def majoration_retraite_proportionnelle(
     lus = service_et_forfait(carriere.date_liquidation, annee)
     if lus is None:
         return None
-    _, service, forfait, fiabilite = lus
+    point_au_depart, service, forfait, fiabilite = lus
     if quand is None:
         point, service_servi, forfait_servi, an_servi = lus[0], service, forfait, annee
     else:
@@ -785,7 +852,7 @@ def majoration_retraite_proportionnelle(
             conjoint_minimum=conjoint_minimum, conjoint_annees=conjoint_annees,
             conjoint_points=conjoint_points)
     if minimum_nomme is None:
-        minimum = float(regle["minimum_points"])
+        minimum = float((avant_1997 or regle)["minimum_points"])
     else:
         lu = minimum_de(minimum_nomme)
         if lu is None:
@@ -799,19 +866,24 @@ def majoration_retraite_proportionnelle(
     part_forfaitaire = (forfait * min(trimestres, proratisation) / proratisation
                         if proratisation > 0 else 0.0)
     proportionnelle = max(0.0, pension.montant / eligible.surcote - part_forfaitaire)
-    moyenne = max(PLANCHER_DES_POINTS_D_UNE_ANNEE,
-                  proportionnelle / service
-                  / min(trimestres / 4.0, ANNEES_DU_MINIMUM_AU_PLUS))
-    duree = min(chef, ANNEES_DU_MINIMUM_AU_PLUS)
-    points = max(0.0, minimum - moyenne) * duree
-    if regle["minorations"] and chef < ANNEES_SANS_MINORATION:
-        # « Pour chacune des années de l'écart constaté » ; la fraction d'année
-        # manquante, au prorata.
-        manque = ANNEES_SANS_MINORATION - chef
-        taux = somme_ordonnee(coefficient * min(1.0, manque - rang)
-                              for rang, coefficient in enumerate(regle["minorations"])
-                              if manque > rang)
-        points *= max(0.0, 1.0 - taux)
+    if avant_1997 is not None:
+        # Les points au compte, à la valeur du point de la liquidation.
+        revises = _points_d_avant_1997(avant_1997, proportionnelle / point_au_depart,
+                                       agricole, minimum)
+        if revises is None:
+            return None
+        moyenne, duree, points = revises
+    else:
+        moyenne = max(PLANCHER_DES_POINTS_D_UNE_ANNEE,
+                      proportionnelle / service
+                      / min(trimestres / 4.0, ANNEES_DU_MINIMUM_AU_PLUS))
+        duree = min(chef, ANNEES_DU_MINIMUM_AU_PLUS)
+        points = max(0.0, minimum - moyenne) * duree
+        if regle["minorations"] and chef < ANNEES_SANS_MINORATION:
+            # « Pour chacune des années de l'écart constaté » ; la fraction
+            # d'année manquante, au prorata.
+            points *= max(0.0, 1.0 - _minoration_des_annees(
+                regle["minorations"], ANNEES_SANS_MINORATION - chef))
     points *= regle["part_servie"]
     if points + conjoint_points <= 0.0:
         return None
@@ -1059,9 +1131,10 @@ class ChefDExploitation:
 class ExploitantAgricole:
     """Ce que la révision des pensions des non-salariés agricoles déjà
     liquidées relit de leur liquidation : les plans de revalorisation de 1997
-    à 2008, servis chaque année à la règle des pensions dues cette année-là,
-    puis la pension majorée de référence que la loi n° 2008-1330 ouvre en 2009
-    aux pensions prises avant (:func:`~retraite_notionnelle.revalorisation.reviser_les_exploitants`)."""
+    à 2008, servis chaque année à la règle des pensions dues cette année-là —
+    celles prises avant 1997 comprises —, puis la pension majorée de référence
+    que la loi n° 2008-1330 ouvre en 2009 aux pensions prises avant
+    (:func:`~retraite_notionnelle.revalorisation.reviser_les_exploitants`)."""
 
     #: Le régime de base des non-salariés agricoles.
     regime: str

@@ -343,15 +343,155 @@ def test_la_minoration_tombe_en_2001(simulateur):
     assert revision.points_servis == pytest.approx((29.23 - moyenne) * 21, abs=0.02)
 
 
-def test_la_pmr_de_2009_s_ouvre_aux_pensions_prises_avant(simulateur):
-    """Une carrière complète de chef partie en 1995, que les plans ne révisent
-    pas ici, est portée le 1er janvier 2009 à la pension majorée de référence
-    entière (loi n° 2008-1330, article 77 ; D. 732-109 à D. 732-112) ; rien
-    avant."""
+# -- les pensions prises avant 1997, révisées de 1997 à 2008 ---------------------
+
+def _points_au_compte(simulateur: Simulateur, resultat) -> float:
+    """Les points de retraite proportionnelle au compte d'une pension prise
+    avant 1997 : la pension de la liquidation, moins la retraite forfaitaire
+    qu'elle porte, à la valeur du point de la liquidation."""
+    from retraite_notionnelle.droit import liquider, ouvrir
+    from retraite_notionnelle.droit.commun import periode_de_liquidation
+
+    actuel = simulateur.scenario_actuel
+    exploitant = resultat.exploitant_agricole
+    carriere = exploitant.carriere
+    periode = periode_de_liquidation(actuel.catalogue[exploitant.regime],
+                                     carriere.date_liquidation)
+    requis, _ = ouvrir.duree_requise(actuel, periode, carriere)
+    proratisation, _ = liquider.duree_proratisation(actuel, periode, carriere, requis)
+    forfait = periode.pension_forfaitaire_annuelle * actuel.macro.coefficient_prix(
+        periode.pension_forfaitaire_annee, carriere.annee_liquidation)
+    lu = valeur_du_point(actuel, exploitant.regime, carriere.date_liquidation)
+    valeur = (lu[0] if lu is not None
+              else liquider.valeur_point_fiche(actuel, periode, carriere.annee_liquidation))
+    return (exploitant.pension.montant
+            - forfait * min(exploitant.trimestres, proratisation) / proratisation) / valeur
+
+
+def _servis(simulateur: Simulateur, carriere: Carriere, resultat, annee: int) -> float:
+    """Les points des plans servis à l'échéance de ``annee``."""
+    revision = faire_vivre(simulateur, carriere, resultat, annee).exploitant
+    assert revision is not None, annee
+    assert revision.annee_des_plans == min(annee, 2008), annee
+    return revision.points_servis
+
+
+def _a_moins_seize(simulateur: Simulateur, annee: int) -> float:
+    """A - 16 des pensions dues en ``annee`` depuis 2002 : celui d'une carrière
+    complète de chef partie en 1997, que les plans portent à (A - 16) × 37,5
+    points ; le décret n° 2002-297 donne le même A aux pensions prises avant
+    1997 (article 5) et à celles prises de 1997 à 2001 (article 4)."""
+    carriere = _chef(simulateur, 1935, 62)
+    resultat, _, _ = _resultat(simulateur, carriere)
+    return _servis(simulateur, carriere, resultat, annee) / 37.5
+
+
+def test_les_pensions_prises_avant_1997_sont_revisees_des_1997(simulateur):
+    """Une carrière complète de chef partie en 1995 à faible revenu : sa durée
+    de chef se reconstitue de ses points divisés par seize, et la moyenne n
+    vaut donc seize ; P = (A - n) × d, A valant 20 en 1997 — servis au tiers —
+    et en 1998 — aux deux tiers —, 23,9 en 1999, 26,96 en 2000, 29,23 en 2001
+    (décret n° 97-163, articles 2 et 3 ; décret n° 99-141 ; décret
+    n° 2000-261 ; décret n° 2001-170 et son rectificatif), puis
+    (MV1 - AVTS) / (37,5 × VP) (décret n° 2002-297, article 5 ; D. 732-116) ;
+    les points de 2008 restent."""
     carriere = _chef(simulateur, 1930, 65)
     resultat, _, _ = _resultat(simulateur, carriere)
     assert resultat.exploitant_agricole.plans is None
+    assert faire_vivre(simulateur, carriere, resultat, 1996).exploitant is None
+    duree = _points_au_compte(simulateur, resultat) / 16.0
+    assert 17.5 < duree < resultat.exploitant_agricole.eligible.duree / 4.0
+    for annee, minimum_moins_seize, part in ((1997, 4.0, 1 / 3), (1998, 4.0, 2 / 3),
+                                             (1999, 7.9, 1.0), (2000, 10.96, 1.0),
+                                             (2001, 13.23, 1.0)):
+        assert _servis(simulateur, carriere, resultat, annee) == pytest.approx(
+            minimum_moins_seize * duree * part, rel=1e-9), annee
+    for annee in (2002, 2008):
+        assert _servis(simulateur, carriere, resultat, annee) == pytest.approx(
+            _a_moins_seize(simulateur, annee) * duree, rel=1e-9), annee
+    assert (_servis(simulateur, carriere, resultat, 2026)
+            == _servis(simulateur, carriere, resultat, 2008))
+
+
+def test_la_duree_reconstituee_se_borne_a_la_duree_agricole(simulateur):
+    """Plus de seize points par an : la durée reconstituée dépasse les
+    quarante-quatre ans d'activité agricole, et y est ramenée ; n est alors
+    les points divisés par cette durée, d en retient trente-sept et demie
+    (décret n° 97-163, article 2, I et II). Depuis 2002, la durée est ramenée
+    à trente-sept ans et demi au plus, et n se divise par elle (décret
+    n° 2002-297, article 5)."""
+    carriere = _chef(simulateur, 1930, 65, niveau=0.6)
+    resultat, _, _ = _resultat(simulateur, carriere)
+    points = _points_au_compte(simulateur, resultat)
+    agricole = resultat.exploitant_agricole.eligible.duree / 4.0
+    assert points / 16.0 > agricole > 37.5 and points / agricole < 20.0
+    for annee, minimum, part in ((1997, 20.0, 1 / 3), (1999, 23.9, 1.0)):
+        assert _servis(simulateur, carriere, resultat, annee) == pytest.approx(
+            (minimum - points / agricole) * 37.5 * part, rel=1e-9), annee
+    assert _servis(simulateur, carriere, resultat, 2002) == pytest.approx(
+        (_a_moins_seize(simulateur, 2002) + 16.0 - points / 37.5) * 37.5, rel=1e-9)
+
+
+def test_la_revision_veut_trente_deux_ans_et_demi_puis_vingt_deux_et_demi(simulateur):
+    """Vingt-six ans de chef partis en 1995 : rien tant que la révision veut
+    trente-deux ans et demi d'activité agricole ; depuis 2007, vingt-deux et
+    demi, les points minorés de 5,5 % par année manquante sous trente-sept et
+    demie, de 4 % en 2008 (décret n° 2006-1638, article 2 ; D. 732-115,
+    D. 732-117). Le taux plein n'est pas demandé."""
+    carriere = _chef(simulateur, 1930, 65, debut=40.0)
+    resultat, _, _ = _resultat(simulateur, carriere)
+    agricole = resultat.exploitant_agricole.eligible.duree / 4.0
+    duree = _points_au_compte(simulateur, resultat) / 16.0
+    assert 22.5 <= agricole < 32.5 and 17.5 < duree < agricole
+    for annee in (1997, 2001, 2006):
+        assert faire_vivre(simulateur, carriere, resultat, annee).exploitant is None, annee
+    for annee, taux in ((2007, 0.055), (2008, 0.04)):
+        assert _servis(simulateur, carriere, resultat, annee) == pytest.approx(
+            _a_moins_seize(simulateur, annee) * duree * (1.0 - taux * (37.5 - agricole)),
+            rel=1e-9), annee
+
+
+def test_la_revision_se_minore_au_plus_fort_des_deux_coefficients(simulateur):
+    """Sous vingt-deux ans et demi de chef reconstitués, et sous trente-sept
+    et demi d'activité agricole, deux coefficients : seul le plus élevé
+    s'applique (décret n° 97-163, article 2, III à V), de 15 %, 15 %, 20 %…
+    par année manquante en 1997, de 15 %, 15 %, 10 %… depuis 1999 (décret
+    n° 99-141) ; le premier tombe en 2001 (décret n° 2001-170). Sous dix-sept
+    ans et demi reconstitués, rien, quels que soient les ans de chef."""
+    def minoration(coefficients, manque):
+        return sum(c * min(1.0, manque - rang)
+                   for rang, c in enumerate(coefficients) if manque > rang)
+
+    de_1997, de_1999 = [0.15, 0.15, 0.20, 0.20, 0.20, 0.10], [0.15, 0.15, 0.10, 0.10, 0.10, 0.40]
+    for debut, niveau in ((26.0, 0.3), (29.0, 0.8)):
+        carriere = _chef(simulateur, 1932, 62, niveau=niveau, debut=debut)
+        resultat, _, _ = _resultat(simulateur, carriere)
+        agricole = resultat.exploitant_agricole.eligible.duree / 4.0
+        duree = _points_au_compte(simulateur, resultat) / 16.0
+        assert 32.5 <= agricole < 37.5 and 17.5 <= duree < agricole
+        for annee, minimum_moins_seize, part, du_chef, de_la_duree in (
+                (1997, 4.0, 1 / 3, de_1997, de_1997), (1999, 7.9, 1.0, de_1999, de_1999),
+                (2001, 13.23, 1.0, [], de_1999)):
+            taux = max(minoration(du_chef, 22.5 - duree),
+                       minoration(de_la_duree, 37.5 - agricole))
+            assert _servis(simulateur, carriere, resultat, annee) == pytest.approx(
+                minimum_moins_seize * duree * part * (1.0 - taux), rel=1e-9), (debut, annee)
+    carriere = _chef(simulateur, 1932, 62, niveau=0.6, debut=29.0)
+    resultat, _, _ = _resultat(simulateur, carriere)
+    assert _points_au_compte(simulateur, resultat) / 16.0 < 17.5
     assert faire_vivre(simulateur, carriere, resultat, 2008).exploitant is None
+
+
+def test_la_pmr_de_2009_s_ouvre_aux_pensions_prises_avant(simulateur):
+    """Une carrière complète de chef partie en 1995, que les plans révisent de
+    1997 à 2008, est portée le 1er janvier 2009 à la pension majorée de
+    référence entière (loi n° 2008-1330, article 77 ; D. 732-109 à
+    D. 732-112) ; rien avant."""
+    carriere = _chef(simulateur, 1930, 65)
+    resultat, _, _ = _resultat(simulateur, carriere)
+    assert resultat.exploitant_agricole.plans is None
+    en_2008 = faire_vivre(simulateur, carriere, resultat, 2008).exploitant
+    assert en_2008.plans > 0 and en_2008.pmr == 0 and en_2008.pmr_entiere is None
     for annee in (2009, 2026):
         vivante = faire_vivre(simulateur, carriere, resultat, annee)
         assert vivante.exploitant.pmr > 0
@@ -876,6 +1016,13 @@ CAS = [
     # en 1995, vingt ans de chef partis sans le taux plein en 2000.
     {"naissance": "1930", "liquidation": "65"},
     {"naissance": "1940", "liquidation": "60", "debut": "40"},
+    # Les pensions prises avant 1997, révisées de 1997 à 2008 : vingt-six ans
+    # de chef, servis depuis 2007 ; trente-six partis sans le taux plein en
+    # 1994, minorés ; plus de seize points par an, la durée reconstituée
+    # ramenée à la durée agricole.
+    {"naissance": "1930", "liquidation": "65", "debut": "40"},
+    {"naissance": "1932", "liquidation": "62", "debut": "26"},
+    {"naissance": "1930", "liquidation": "65", "salaire": "0.6"},
     # La PMR unique de 2022, aux pensions prises depuis 2009 : quinze ans de
     # chef après le salariat, partis en 2012 sous la durée minimale.
     {"naissance": "1950", "liquidation": "62", "statut": "salarie_prive_non_cadre",

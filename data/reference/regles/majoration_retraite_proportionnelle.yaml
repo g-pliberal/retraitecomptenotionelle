@@ -10,7 +10,9 @@ intitule: >-
   vieillesse d'une personne seule ; et, depuis 2002, le chef de moins de dix-sept ans
   et demi au différentiel du minimum d'un couple. Les années de conjoint et d'aide
   familial reçoivent le différentiel du minimum d'un couple moins seize points, depuis
-  1998 aux pensions prises depuis, au taux plein depuis 2002.
+  1998 aux pensions prises depuis, au taux plein depuis 2002. Les pensions de chef
+  prises avant 1997 sont révisées de 1997 à 2008, sur la durée de chef que leurs points
+  au compte, divisés par seize, reconstituent.
 domaine: minima
 regimes: [msa_non_salaries]
 etape: completer_tous_regimes
@@ -47,9 +49,12 @@ versions:
   contenu:
     droit: >-
       aucun minimum de points à la liquidation : les pensions prises avant 1997 sont
-      révisées à partir du 1er janvier 1997 (article 2 du décret, vingt points, puis
-      23,9 en 1999, 26,96 en 2000, 26,23 en 2001), ce que l'échéancier ne sert pas ; le
-      plan de 1994 (décret n° 94-714) ne compte que des années d'aide familial
+      révisées à partir du 1er janvier 1997 (article 2 du décret : vingt points, puis
+      23,9 en 1999, 26,96 en 2000, 29,23 en 2001 — le Journal officiel du 23 février 2001
+      imprimait 26,23, que son rectificatif du 3 mars corrige —, A au minimum vieillesse
+      depuis 2002), ce que la révision des pensions déjà liquidées sert
+      (pensions_prises_avant_1997, dans les versions de 1997 à 2008) ; le plan de 1994
+      (décret n° 94-714) ne compte que des années d'aide familial
     parametres:
       existe: false
       minimum_points: null
@@ -59,6 +64,7 @@ versions:
       part_servie: null
       minorations: null
       conjoints: null
+      pensions_prises_avant_1997: null
   exemples: aucun trouvé
 - id: plan_de_1997
   statut: lue
@@ -86,13 +92,45 @@ versions:
       l'année 1997, qu'à concurrence du tiers et, au titre de l'année 1998, qu'à
       concurrence des deux tiers »
     lu_le: 2026-10-14
+  - id: JORFARTI000002386545
+    article: décret n° 97-163 du 24 février 1997, article 2
+    en_vigueur: 1997-02-25
+    citation: >-
+      « Le nombre de points retenu pour calculer les retraites proportionnelles servies à
+      titre personnel et ayant pris effet avant le 1er janvier 1997 est, le cas échéant,
+      révisé et porté à un minimum à compter du 1er janvier 1997 » ; à qui justifie
+      « d'une durée d'activité non salariée agricole exercée à titre exclusif ou
+      principal au moins égale à trente-deux années et demie » et « d'une durée
+      reconstituée de chef d'exploitation [...] au moins égale à dix sept années et
+      demie » : « la durée de chef d'exploitation est obtenue en divisant par 16 le
+      nombre des points de retraite figurant au compte de l'intéressé » ; « Lorsque, au
+      terme de cette reconstitution, l'intéressé totalise un nombre d'annuités de chef
+      d'exploitation supérieur à sa durée de carrière non salariée agricole [...], ce
+      nombre est ramené à la durée de carrière non salariée agricole » ; « P = (20 - n)
+      x d » ; « d représente la durée d'activité de chef d'exploitation retenue [...],
+      dans la limite de trente-sept années et demie » ; n, « le nombre de points retenu
+      [...] par la durée reconstituée », ou, la durée ramenée, « divisé par la durée
+      d'activité non salariée agricole » ; sous vingt-deux ans et demi de chef
+      reconstitués (III) et sous trente-sept et demi d'activité agricole (IV), « 15 % pour
+      chacune des deux premières années manquantes ; 20 % pour chacune des troisième,
+      quatrième et cinquième années suivantes ; 10 % pour la sixième et dernière
+      année » ; « Lorsque les assurés justifient de l'application simultanée de deux
+      coefficients minorateurs, seul le coefficient de minoration le plus élevé est
+      appliqué » (V)
+    lu_le: 2026-10-17
   bornes:
     liquidation.date_effet: [1997-01-01, 1998-01-01]
   contenu:
     droit: >-
       26,933 points par année de chef, servis au tiers en 1997 ; sous vingt-deux ans et
       demi de chef, les points ajoutés minorés de 15 % pour chacune des deux premières
-      années manquantes, de 20 % pour les trois suivantes
+      années manquantes, de 20 % pour les trois suivantes. Aux pensions prises avant
+      1997, révisées : vingt points par année de chef, servis au tiers, la durée de
+      chef reconstituée des points au compte divisés par seize et ramenée au plus à la
+      durée agricole, à trente-deux ans et demi d'activité agricole et dix-sept et demi
+      de chef reconstitués, sans condition de taux plein ; sous vingt-deux ans et demi de
+      chef reconstitués et sous trente-sept et demi d'activité agricole, deux
+      coefficients de 15, 15, 20, 20, 20 et 10 %, dont seul le plus élevé s'applique
     parametres:
       existe: true
       minimum_points: 26.933
@@ -102,6 +140,14 @@ versions:
       part_servie: 0.3333333333333333
       minorations: [0.15, 0.15, 0.20, 0.20, 0.20]
       conjoints: null
+      pensions_prises_avant_1997:
+        minimum_points: 20.0
+        minimum: null
+        duree_minimale: 32.5
+        duree_ramenee_au_plus: null
+        minorations_du_chef: [0.15, 0.15, 0.20, 0.20, 0.20, 0.10]
+        minorations: [0.15, 0.15, 0.20, 0.20, 0.20, 0.10]
+        minoration_par_annee: null
   exemples: aucun trouvé
 - id: pensions_dues_en_1998
   statut: lue
@@ -114,7 +160,10 @@ versions:
   bornes:
     liquidation.date_effet: [1998-01-01, 1999-01-01]
   contenu:
-    droit: la règle de 1997, les points ajoutés servis aux deux tiers
+    droit: >-
+      la règle de 1997, les points ajoutés servis aux deux tiers, ceux des pensions
+      prises avant 1997 comme les autres (« calculé dans les conditions prévues aux
+      articles 1er et 2 »)
     parametres:
       existe: true
       minimum_points: 26.933
@@ -124,6 +173,14 @@ versions:
       part_servie: 0.6666666666666666
       minorations: [0.15, 0.15, 0.20, 0.20, 0.20]
       conjoints: null
+      pensions_prises_avant_1997:
+        minimum_points: 20.0
+        minimum: null
+        duree_minimale: 32.5
+        duree_ramenee_au_plus: null
+        minorations_du_chef: [0.15, 0.15, 0.20, 0.20, 0.20, 0.10]
+        minorations: [0.15, 0.15, 0.20, 0.20, 0.20, 0.10]
+        minoration_par_annee: null
   exemples: aucun trouvé
 - id: pensions_dues_en_1999
   statut: lue
@@ -135,12 +192,28 @@ versions:
       le décret modifie l'article 2 (pensions prises avant 1997) et l'article 4 du décret
       du 24 février 1997, non son article 1er : « Pour les pensions dues à compter du
       1er janvier 1999, la formule P = (20 - n) x d est remplacée par la formule P =
-      (23,9 - n) x d »
-    lu_le: 2026-10-14
+      (23,9 - n) x d » ; la durée de chef se reconstitue des points d'avant les plans,
+      « et des dispositions du présent article dans sa rédaction antérieure au 1er
+      janvier 1999 » ; « Aux III et IV, la dernière phrase est remplacée par les
+      dispositions suivantes : « Pour chacune des années de l'écart constaté, les
+      coefficients de minoration à appliquer sont de : « 15 % pour chacune des deux
+      premières années manquantes ; « 10 % pour chacune des trois années suivantes ;
+      « 40 % pour la sixième année. »
+    lu_le: 2026-10-17
+  - id: JORFARTI000002407995
+    article: décret n° 99-141 du 3 mars 1999, article 5
+    en_vigueur: 1999-03-04
+    citation: >-
+      « Les dispositions du présent décret sont applicables aux pensions dues à compter
+      du 1er janvier 1999. »
+    lu_le: 2026-10-17
   bornes:
     liquidation.date_effet: [1999-01-01, 2000-01-01]
   contenu:
-    droit: 26,933 points, servis entiers ; la minoration de 1997 sous vingt-deux ans et demi
+    droit: >-
+      26,933 points, servis entiers ; la minoration de 1997 sous vingt-deux ans et demi.
+      Aux pensions prises avant 1997, 23,9 points, les deux coefficients ramenés à 15,
+      15, 10, 10, 10 et 40 %
     parametres:
       existe: true
       minimum_points: 26.933
@@ -150,6 +223,14 @@ versions:
       part_servie: 1.0
       minorations: [0.15, 0.15, 0.20, 0.20, 0.20]
       conjoints: null
+      pensions_prises_avant_1997:
+        minimum_points: 23.9
+        minimum: null
+        duree_minimale: 32.5
+        duree_ramenee_au_plus: null
+        minorations_du_chef: [0.15, 0.15, 0.10, 0.10, 0.10, 0.40]
+        minorations: [0.15, 0.15, 0.10, 0.10, 0.10, 0.40]
+        minoration_par_annee: null
   exemples: aucun trouvé
 - id: pensions_dues_en_2000
   statut: lue
@@ -164,10 +245,23 @@ versions:
       chacune des deux premières années manquantes ; « 10 % pour chacune des trois
       années suivantes ; « 40 % pour la sixième année. »
     lu_le: 2026-10-14
+  - id: JORFARTI000001514279
+    article: décret n° 2000-261 du 22 mars 2000, article 1er
+    en_vigueur: 2000-03-23
+    citation: >-
+      « L'article 2 du décret du 24 février 1997 susvisé est modifié ainsi qu'il suit à
+      compter du 1er janvier 2000 » : « Pour les pensions dues à compter du 1er janvier
+      2000, la formule P = (23,9 - n) x d est remplacée par la formule P = (26,96 - n) x
+      d. Toutefois, lorsqu'[...] la majoration cumulée de la pension de réversion est
+      servie au lieu et place de la majoration cumulée de la retraite proportionnelle
+      personnelle, il est fait application [...] de la formule P = (20 - n) x d. »
+    lu_le: 2026-10-17
   bornes:
     liquidation.date_effet: [2000-01-01, 2001-01-01]
   contenu:
-    droit: 26,933 points ; la minoration ramenée à 15, 15, 10, 10 et 10 %
+    droit: >-
+      26,933 points ; la minoration ramenée à 15, 15, 10, 10 et 10 %. Aux pensions prises
+      avant 1997, 26,96 points, les coefficients de 1999
     parametres:
       existe: true
       minimum_points: 26.933
@@ -177,6 +271,14 @@ versions:
       part_servie: 1.0
       minorations: [0.15, 0.15, 0.10, 0.10, 0.10]
       conjoints: null
+      pensions_prises_avant_1997:
+        minimum_points: 26.96
+        minimum: null
+        duree_minimale: 32.5
+        duree_ramenee_au_plus: null
+        minorations_du_chef: [0.15, 0.15, 0.10, 0.10, 0.10, 0.40]
+        minorations: [0.15, 0.15, 0.10, 0.10, 0.10, 0.40]
+        minoration_par_annee: null
   exemples: aucun trouvé
 - id: pensions_dues_en_2001
   statut: lue
@@ -189,12 +291,27 @@ versions:
       (26,933 - n) est remplacée par la formule P = d x (29,23 - n). Toutefois, pour les
       personnes susceptibles de bénéficier de la revalorisation des pensions de
       réversion [...] la formule applicable à compter du 1er janvier 2001 demeure P = d
-      x (26,933 - n). » ; « Le IV de l'article 1er est supprimé. »
-    lu_le: 2026-10-14
+      x (26,933 - n). » ; « Le IV de l'article 1er est supprimé. » ; à l'article 2 :
+      « Pour les pensions dues à compter du 1er janvier 2001, la formule P = (26,96 - n)
+      x d est remplacée par la formule P = (26,23 - n) x d » ; « Le III et le V de
+      l'article 2 sont supprimés. » ; « L'article 3 est abrogé. »
+    lu_le: 2026-10-17
+  - id: JORFARTI000001645429
+    article: rectificatif au décret n° 2001-170 du 21 février 2001
+    en_vigueur: 2001-03-03
+    citation: >-
+      « au Journal officiel du 23 février 2001, page 2984, 1re colonne, art. 3, au V, 5e
+      ligne, au lieu de : « ... P = (26,23 - n) x d... », lire : « ... P = (29,23 - n) x
+      d... ». »
+    lu_le: 2026-10-17
   bornes:
     liquidation.date_effet: [2001-01-01, 2002-01-01]
   contenu:
-    droit: 29,23 points par année de chef, sans minoration
+    droit: >-
+      29,23 points par année de chef, sans minoration. Aux pensions prises avant 1997,
+      29,23 points aussi (le rectificatif) ; la minoration sous vingt-deux ans et demi de
+      chef reconstitués tombe, celle sous trente-sept ans et demi d'activité agricole
+      reste
     parametres:
       existe: true
       minimum_points: 29.23
@@ -204,6 +321,14 @@ versions:
       part_servie: 1.0
       minorations: null
       conjoints: null
+      pensions_prises_avant_1997:
+        minimum_points: 29.23
+        minimum: null
+        duree_minimale: 32.5
+        duree_ramenee_au_plus: null
+        minorations_du_chef: null
+        minorations: [0.15, 0.15, 0.10, 0.10, 0.10, 0.40]
+        minoration_par_annee: null
   exemples: aucun trouvé
 - id: au_minimum_vieillesse
   statut: lue
@@ -387,6 +512,72 @@ versions:
       x VP » ; aux années de conjoint, « un différentiel [...] égal au nombre minimal annuel
       moyen de points de retraite proportionnelle C diminué de 16 points »
     lu_le: 2026-10-16
+  - id: JORFARTI000001650492
+    article: décret n° 2002-297 du 1er mars 2002, article 5
+    en_vigueur: 2002-03-02
+    citation: >-
+      « Le nombre de points retenu pour calculer les retraites proportionnelles servies à
+      titre personnel aux chefs d'exploitation ou d'entreprise agricole et ayant pris
+      effet avant le 1er janvier 1997 est, le cas échéant, révisé et porté à un minimum » ;
+      la durée reconstituée, ramenée à la durée agricole « dans la limite de trente-sept
+      années et demie » ; « A = (MV 1 - AVTS) / 37,5 x VP », aux montants « en vigueur au
+      1er janvier de l'année considérée » ; « P = (A - n) x DCE 2 » ; « dans le cas prévu
+      au dernier alinéa du I du présent article, le nombre annuel moyen de points n est
+      égal au nombre de points divisé par la durée d'activité non salariée agricole
+      retenue dans la limite de trente-sept années et demie » ; entre trente-deux ans et
+      demi et trente-sept et demi d'activité agricole, « 15 % pour chacune des deux
+      premières années manquantes ; 10 % pour chacune des trois années suivantes ; 40 %
+      pour la sixième et dernière année »
+    lu_le: 2026-10-17
+  - id: JORFARTI000001650386
+    article: décret n° 2002-297 du 1er mars 2002, article 16
+    en_vigueur: 2002-03-02
+    citation: >-
+      « Les dispositions des articles 1er à 12 du présent décret [...] sont applicables
+      aux pensions dues à compter du 1er janvier 2002. »
+    lu_le: 2026-10-17
+  - id: LEGIARTI000006597538
+    article: D. 732-114 code rural
+    en_vigueur: 2005-04-22
+    citation: >-
+      « Le nombre de points retenu pour calculer les pensions de retraite
+      proportionnelles servies à titre personnel aux chefs d'exploitation ou d'entreprise
+      agricole et ayant pris effet avant le 1er janvier 1997 est, le cas échéant, révisé
+      et porté à un minimum dans les conditions fixées aux articles D. 732-115 à
+      D. 732-117. »
+    lu_le: 2026-10-17
+  - id: LEGIARTI000006597539
+    article: D. 732-115 code rural
+    en_vigueur: 2005-04-22
+    citation: >-
+      « une durée d'activité non salariée agricole exercée à titre exclusif ou principal
+      au moins égale à trente-deux années et demie » ; « une durée reconstituée
+      d'activité en tant que chef d'exploitation [...] au moins égale à dix-sept années et
+      demie et obtenue en divisant par 16 le nombre de points de retraite figurant au
+      compte de l'intéressé avant application des dispositions des articles D. 732-110 et
+      D. 732-111 » ; « une minoration forfaitaire de quinze points [...] pour chaque année
+      qui n'a pas donné lieu à versement des cotisations ouvrant droit à la pension de
+      retraite forfaitaire »
+    lu_le: 2026-10-17
+  - id: LEGIARTI000006597541
+    article: D. 732-116 code rural
+    en_vigueur: 2005-04-22
+    citation: >-
+      « A = (MV 1 - AVTS) / 37,5 x VP » ; « Toutefois, pour les personnes susceptibles de
+      bénéficier de la revalorisation des pensions de réversion prévue à l'article
+      L. 732-54-4, le nombre minimal annuel moyen de points A est égal à 20 » ; « P = (A -
+      n) x DCE2 »
+    lu_le: 2026-10-17
+  - id: LEGIARTI000006597542
+    article: D. 732-116 code rural
+    en_vigueur: 2006-10-12
+    citation: >-
+      la même rédaction, n obtenu « en divisant le nombre de points retenu en application
+      du 2° de l'article D. 732-115 par la durée reconstituée » ; D. 732-117, dans sa
+      rédaction de 2005, n'est pas dans l'index : le décret n° 2006-1638 en remplace la
+      phrase qui annonce les coefficients et en supprime les « deuxième, troisième et
+      quatrième alinéas », la liste de l'article 5, III, du décret n° 2002-297
+    lu_le: 2026-10-17
   bornes:
     liquidation.date_effet: [2002-01-01, 2007-01-01]
   contenu:
@@ -401,7 +592,11 @@ versions:
       avec 1999 ; aux pensions prises de 1998 à 2001, la même chose, sans condition de
       taux plein, à trente-deux ans et demi d'activité agricole (vingt-sept et demi à
       quinze ans de conjoint sans autre pension), minorée sous trente-sept et demie
-      (D. 732-118 à D. 732-124, décret n° 2002-297, article 8)
+      (D. 732-118 à D. 732-124, décret n° 2002-297, article 8). Aux pensions prises
+      avant 1997, le même A par année de chef reconstituée, la durée ramenée à la durée
+      agricole dans la limite de trente-sept ans et demi, n divisé par elle, minoré
+      sous trente-sept ans et demi d'activité agricole (décret n° 2002-297, article 5 ;
+      D. 732-114 à D. 732-117)
     parametres:
       existe: true
       minimum_points: null
@@ -419,6 +614,14 @@ versions:
           minorations: [0.15, 0.15, 0.10, 0.10, 0.10, 0.40]
           minorations_des_conjoints_au_plus: 5
           minoration_par_annee: null
+      pensions_prises_avant_1997:
+        minimum_points: null
+        minimum: minimum_vieillesse_personne_seule
+        duree_minimale: 32.5
+        duree_ramenee_au_plus: 37.5
+        minorations_du_chef: null
+        minorations: [0.15, 0.15, 0.10, 0.10, 0.10, 0.40]
+        minoration_par_annee: null
   exemples: aucun trouvé
 - id: pensions_dues_en_2007
   statut: lue
@@ -442,13 +645,49 @@ versions:
       pensions dues au titre de l'année 2007 et de 4 % au 1er janvier 2008 pour les
       pensions dues à compter du 1er janvier 2008 »
     lu_le: 2026-10-16
+  - id: JORFARTI000002473075
+    article: décret n° 2006-1638 du 19 décembre 2006, article 2
+    en_vigueur: 2006-12-21
+    citation: >-
+      « Au deuxième alinéa de l'article D. 732-115 du code rural, les mots :
+      « trente-deux années et demie » sont remplacés par les mots : « vingt-deux années
+      et demie » » ; à D. 732-117, de même, et la liste des coefficients remplacée par
+      « le coefficient de minoration à appliquer est de 5,5 % au 1er janvier 2007 pour
+      les pensions dues au titre de l'année 2007 et de 4 % au 1er janvier 2008 pour les
+      pensions dues à compter du 1er janvier 2008 »
+    lu_le: 2026-10-17
+  - id: JORFARTI000001881566
+    article: décret n° 2006-1638 du 19 décembre 2006, article 6
+    en_vigueur: 2006-12-21
+    citation: « Les dispositions du présent décret sont applicables à compter du 1er janvier 2007. »
+    lu_le: 2026-10-17
+  - id: LEGIARTI000006597540
+    article: D. 732-115 code rural
+    en_vigueur: 2007-01-01
+    citation: >-
+      « une durée d'activité non salariée agricole exercée à titre exclusif ou principal
+      au moins égale à vingt-deux années et demie »
+    lu_le: 2026-10-17
+  - id: LEGIARTI000006597544
+    article: D. 732-117 code rural
+    en_vigueur: 2007-01-01
+    citation: >-
+      « Pour les assurés qui justifient d'une durée d'activité non salariée agricole
+      comprise entre vingt-deux années et demie et trente-sept années et demie, le
+      nombre de points supplémentaires calculé conformément aux dispositions de
+      l'article D. 732-116 est minoré [...]. Pour chacune des années de l'écart constaté,
+      le coefficient de minoration à appliquer est de 5,5 % au 1er janvier 2007 pour les
+      pensions dues au titre de l'année 2007 et de 4 % au 1er janvier 2008 pour les
+      pensions dues à compter du 1er janvier 2008. »
+    lu_le: 2026-10-17
   bornes:
     liquidation.date_effet: [2007-01-01, 2008-01-01]
   contenu:
     droit: >-
       la règle de 2002, sauf aux années de conjoint des pensions prises de 1998 à 2001 :
       vingt-deux ans et demi d'activité agricole, et 5,5 % de minoration par année
-      manquante sous trente-sept et demie
+      manquante sous trente-sept et demie ; de même aux pensions prises avant 1997
+      (D. 732-115, D. 732-117)
     parametres:
       existe: true
       minimum_points: null
@@ -466,6 +705,14 @@ versions:
           minorations: null
           minorations_des_conjoints_au_plus: null
           minoration_par_annee: 0.055
+      pensions_prises_avant_1997:
+        minimum_points: null
+        minimum: minimum_vieillesse_personne_seule
+        duree_minimale: 22.5
+        duree_ramenee_au_plus: 37.5
+        minorations_du_chef: null
+        minorations: null
+        minoration_par_annee: 0.055
   exemples: aucun trouvé
 - id: pensions_dues_en_2008
   statut: lue
@@ -475,10 +722,17 @@ versions:
     en_vigueur: 2007-01-01
     citation: « et de 4 % au 1er janvier 2008 pour les pensions dues à compter du 1er janvier 2008 »
     lu_le: 2026-10-16
+  - id: LEGIARTI000006597544
+    article: D. 732-117 code rural
+    en_vigueur: 2007-01-01
+    citation: « et de 4 % au 1er janvier 2008 pour les pensions dues à compter du 1er janvier 2008 »
+    lu_le: 2026-10-17
   bornes:
     liquidation.date_effet: [2008-01-01, 2009-01-01]
   contenu:
-    droit: la règle de 2007, la minoration ramenée à 4 % par année manquante
+    droit: >-
+      la règle de 2007, la minoration ramenée à 4 % par année manquante, aux pensions
+      prises avant 1997 comme aux années de conjoint
     parametres:
       existe: true
       minimum_points: null
@@ -496,6 +750,14 @@ versions:
           minorations: null
           minorations_des_conjoints_au_plus: null
           minoration_par_annee: 0.04
+      pensions_prises_avant_1997:
+        minimum_points: null
+        minimum: minimum_vieillesse_personne_seule
+        duree_minimale: 22.5
+        duree_ramenee_au_plus: 37.5
+        minorations_du_chef: null
+        minorations: null
+        minoration_par_annee: 0.04
   exemples: aucun trouvé
 - id: remplacee_par_la_pmr
   statut: lue
@@ -523,6 +785,7 @@ versions:
       part_servie: null
       minorations: null
       conjoints: null
+      pensions_prises_avant_1997: null
   exemples: aucun trouvé
 approximations:
 - ecart: >-
@@ -591,20 +854,37 @@ approximations:
     (D. 732-112) ; le nombre n reste celui de la liquidation, et le minimum C ne
     s'ouvre pas aux pensions prises avant 2002, que le décret n° 2002-297 ne nomme pas.
     Un recul de A d'une année sur l'autre retire des points, ce que les textes
-    n'interdisent pas et que la caisse a peut-être évité ; la révision des pensions
-    prises avant 1997 (article 2 du décret n° 97-163, D. 732-114 à D. 732-117, articles
-    5 et suivants du décret n° 2002-297), qui reconstitue la durée de chef des points
-    d'avant 1994, n'est pas servie ; la surcote ne porte pas sur la majoration, ni la
-    majoration pour enfants
+    n'interdisent pas et que la caisse a peut-être évité ; la surcote ne porte pas sur
+    la majoration, ni la majoration pour enfants
+  effet: non mesuré, faible
+- ecart: >-
+    depuis le 17 octobre 2026, une pension de chef prise avant 1997 est révisée chaque
+    année de 1997 à 2008 (pensions_prises_avant_1997 ; décret n° 97-163, article 2 ;
+    décret n° 2002-297, article 5 ; D. 732-114 à D. 732-117), puis garde ses points de
+    2008. Les points au compte sont la retraite proportionnelle de la liquidation, sa
+    part forfaitaire retirée, à la valeur du point de la liquidation : ceux des années
+    d'avant 1990, que le moteur valorise au rendement faute du barème des classes, y
+    comptent pour ce que vaut leur rendement, et aucun plan n'y entre, le moteur ne
+    servant pas celui de 1994. La minoration de quinze points par année de chef à titre
+    secondaire sans cotisation à la retraite forfaitaire ne joue jamais : qui a
+    trente-deux ans et demi d'activité agricole avant 1997 (vingt-deux et demi en 2007)
+    était au régime avant 1981, et garde dans le moteur le forfait de ses années à titre
+    secondaire (R. 732-65, liquider.trimestres_hors_forfait). Ne sont pas servis : A
+    égal à 20 de qui reçoit la revalorisation de la réversion (décret n° 2000-261,
+    article 1er ; D. 732-116), la réversion n'étant pas servie à la date d'effet ; les
+    points du plan de 1994 et de D. 732-110 et D. 732-111 aux années d'aide familial
+    des chefs, que le statut du modèle ne distingue pas
   effet: >-
-    les pensions agricoles prises avant 1997, de 1997 à 2008 seulement : depuis 2009,
-    la PMR les porte au moins à son montant
+    une carrière complète de chef à 30 % du salaire moyen, partie en 1995 : 112 € de
+    plus en 1997, 1 159 € en 2001, 2 036 € en 2008, que la PMR de 2009 relaie ; à 60 %
+    du salaire moyen, la durée reconstituée ramenée à la durée agricole, les points de
+    2008 dépassent la PMR, et la pension de 2026 passe de 9 568 € à 9 767 €
 - ecart: >-
     le minimum vieillesse de 2008, que minimum_vieillesse.csv ne porte pas, est celui de
     2007 revalorisé sur les prix
   effet: quelques euros par an, en 2008
 sources:
-  lu_le: 2026-10-16
+  lu_le: 2026-10-17
   prochaine_relecture: 2027-10-31
   a_relire:
   - >-
@@ -615,9 +895,9 @@ sources:
     articles 1er à 4 ; décret n° 2000-261 ; décret n° 2001-170), le minimum de 8,63
     points et le rachat, à saisir ; les années de chef de D. 732-119, 4°.
   - >-
-    Servir la révision des pensions prises avant 1997 (article 2 du décret n° 97-163,
-    vingt points puis 23,9 en 1999 ; D. 732-114 à D. 732-117 ; décret n° 2002-297,
-    articles 5 et suivants), sur la durée de chef reconstituée des points d'avant 1994.
+    Lire D. 732-117 dans sa rédaction de 2005 (LEGIARTI000006597543), que l'index LEGI
+    du dépôt ne porte pas : le moteur lui donne les coefficients de l'article 5, III, du
+    décret n° 2002-297, qu'elle codifie.
   lectures:
   - type: jorf
     reference: >-
@@ -642,6 +922,20 @@ sources:
       (2005), dans l'index LEGI du dépôt ; décret n° 2002-297 du 1er mars 2002, articles 6,
       8 et 9, et décret n° 99-875 du 13 octobre 1999 (sa notice), dans l'index JORF
     date: 2026-10-16
+  - type: jorf
+    reference: >-
+      décret n° 97-163 du 24 février 1997, articles 1er à 3 ; décret n° 99-141 du 3 mars
+      1999, articles 1er, 2 et 5 ; décret n° 2000-261 du 22 mars 2000, articles 1er, 6 et
+      9 ; décret n° 2001-170 du 21 février 2001, article 3, et son rectificatif du 3 mars
+      2001 ; décret n° 2002-297 du 1er mars 2002, articles 1er à 8, 15 et 16 ; décret
+      n° 2006-1638 du 19 décembre 2006, articles 1er à 6 ; décret n° 2009-173 du 13 février
+      2009, article 1er (D. 732-110, III), dans l'index JORF du dépôt
+    date: 2026-10-17
+  - type: legifrance
+    reference: >-
+      D. 732-114 (2005), D. 732-115 (2005, 2007), D. 732-116 (2005, 2006) et D. 732-117
+      (2007), dans l'index LEGI du dépôt, aux incréments du 17 octobre 2026
+    date: 2026-10-17
 textes_a_rattacher: []
 code:
   python: >-
@@ -663,10 +957,17 @@ historique:
   2026-10-16 — étape 138.8 : les années de conjoint et d'aide familial (D. 732-118 à
   D. 732-131, D. 732-141 à D. 732-146), la version de 2002 coupée en 2007 et en 2008
   pour la minoration de D. 732-131.
+- >-
+  2026-10-17 — étape 138.8 : la révision des pensions de chef prises avant 1997
+  (décret n° 97-163, article 2 ; décret n° 2002-297, article 5 ; D. 732-114 à
+  D. 732-117), un paramètre pensions_prises_avant_1997 par version ; 29,23 points en
+  2001, au rectificatif, et non 26,23.
 reformes: []
 exemples: []
 effet: >-
-  Les conjoints collaborateurs partis de 1998 à 2008, servis depuis 2002 au plus tôt :
+  Les chefs partis avant 1997, de 1997 à 2008 : une carrière complète à faible revenu
+  partie en 1995 reçoit 2 036 € de plus en 2008. Les conjoints collaborateurs partis de
+  1998 à 2008, servis depuis 2002 au plus tôt :
   une conjointe de quarante-deux ans partie en 2005 reçoit 286 points de plus. Les chefs
   d'exploitation partis au taux plein de 1997 à 2008 avec une petite retraite
   proportionnelle : le moteur ne servait que le calcul contributif — un chef de
