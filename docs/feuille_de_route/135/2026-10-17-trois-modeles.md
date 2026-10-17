@@ -155,6 +155,12 @@ documentation, `code.claude.com/docs/en/`, lue le 17 octobre).
   ajoutant que l'écart réel est plus étroit que les scores. Sur une
   traduction de HAProxy du C vers Rust, les deux réussissent, Opus 5.5 en
   9,5 heures contre 12, pour 51 % de moins. La règle est ôtée de `CLAUDE.md`.
+- *Opus pour une règle du scénario 1*, à la demande du propriétaire, à la
+  place de Fable : une étape qui écrit ou change une règle du scénario 1 se
+  mène sur Opus (`CLAUDE.md`). Ouverte sur Sonnet, la session le dit au
+  propriétaire dès son début, quand une bascule coûte encore peu ; et l'agent
+  à qui elle confierait l'écriture d'une telle règle reçoit `model: opus`,
+  puisque le généraliste tourne désormais sur Sonnet.
 - *Une chaîne de secours*, à la demande du propriétaire :
   `"fallbackModel": ["sonnet", "opus"]`. Opus saturé ou indisponible, la
   session passe sur Sonnet pour le tour en cours, au lieu d'échouer ; une

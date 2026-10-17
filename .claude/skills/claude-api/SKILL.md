@@ -35,8 +35,9 @@ session ou un agent, et ce qu'il coûte.
   Explore (`.claude/agents/`, et la règle de `CLAUDE.md`) ; trois agents
   d'impeccable sur Sonnet, et les agents généralistes aussi
   (`CLAUDE_CODE_SUBAGENT_MODEL`, dans `.claude/settings.json`, qui tient
-  encore l'effort `max` et la chaîne de secours, `fallbackModel`). Pas de
-  Fable : Opus 5.5 le devance sur toutes les mesures que publie son annonce
+  encore l'effort `max` et la chaîne de secours, `fallbackModel`) ; Opus pour
+  une étape qui écrit une règle du scénario 1 (`CLAUDE.md`), et non Fable :
+  Opus 5.5 le devance sur toutes les mesures que publie son annonce
   (22 septembre 2026), pour moins cher. Le détail est
   dans la note `docs/feuille_de_route/135/2026-10-17-trois-modeles.md` ; ce
   que les sessions consomment, modèle par modèle :
