@@ -6,11 +6,13 @@ consulte: >-
   CLAUDE.md, scripts/consommation.py), à sa documentation et aux tarifs de
   l'API.
 trouve: >-
-  Aucune règle n'a changé. Sonnet 5.5 lit le cache au prix d'Opus 5.5 ;
-  Haiku 5.5 coûte de quatre à quarante fois moins qu'Opus, selon la ligne de
-  la facture et la longueur du contexte. La lecture se confie donc à un
-  agent sur Haiku, et consommation.py, qui ignorait les sous-agents, les
-  compte et ventile les appels par modèle.
+  Aucune règle n'a changé. Depuis le 7 octobre, Sonnet 5.5 coûte moitié
+  moins qu'Opus 5.5 sur chaque ligne de la facture, lecture du cache
+  comprise (0,10 $ contre 0,20 $ par million de jetons ; le skill claude-api,
+  figé au 6, dit encore 0,20) ; Haiku 5.5 coûte de quatre à quarante fois
+  moins qu'Opus, selon la ligne de la facture et la longueur du contexte. La
+  lecture se confie donc à un agent sur Haiku, et consommation.py, qui
+  ignorait les sous-agents, les compte et ventile les appels par modèle.
 reste: >-
   Le modèle et l'effort de chaque session, que le propriétaire choisit ;
   relever dans quelques jours, par consommation.py, la part que l'éclaireur
