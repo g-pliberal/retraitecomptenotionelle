@@ -77,14 +77,22 @@
 #                          (décret n° 2008-1328), puis un taux arrimé à celui
 #                          d'un non-cadre du privé, 35,01 % depuis 2019. Sans
 #                          la subvention d'équilibre des ministères, que la
-#                          note du tableau D-2 exclut. `certifiee`. Le texte
-#                          du même jaune dit le taux « fixé en 1991 à
-#                          10,34 % », « porté à 24 % en 1999 » : ces années ne
-#                          sont pas portées, faute du jour où chaque taux a
-#                          pris effet — la règle du 1er janvier ne s'applique
-#                          pas sans lui, et la retenue des mêmes ouvriers a
-#                          changé le 1er février 1991. Le décret qui les fixe
-#                          est à lire dans la base LEGI (action 159, étape 3).
+#                          note du tableau D-2 exclut. `certifiee`.
+#   FSPOEIE, 1983-1999     IV de l'article 28 du décret n° 65-836 du
+#                          24 septembre 1965 — « le taux de la contribution
+#                          de l'Etat est fixé à 9 % des mêmes émoluments »,
+#                          depuis le décret n° 82-301, pour les rémunérations
+#                          dues à compter du 1er avril 1982 —, puis les
+#                          décrets qui fixent ce taux à côté de l'article,
+#                          sans le récrire : 10,34 % à compter du 1er février
+#                          1991 (n° 91-239, article 3), 24 % à compter du
+#                          1er janvier 1999 (n° 98-1169, article 1er) — les
+#                          deux dates que le texte du jaune donne sans leur
+#                          jour. Lus dans la base LEGI
+#                          (`dila_legi_contribution_employeur.py`), au
+#                          1er janvier : 1991 garde 9 %. La base ne garde
+#                          aucune version de l'article d'avant le décret de
+#                          1982. `certifiee` (action 159, étape 3).
 #   État 1995-2005,        transcription d'OpenFisca-France — `haute`.
 #   SNCF 2012-2018
 #
@@ -199,13 +207,13 @@
 # depuis 2006), cnracl (depuis 1948), sncf (28,44 % de 1992 à 2006, puis
 # T1 + T2 de 2007 à 2018), ratp (2007-2025), ieg (2005-2020), mines
 # (1984-2026), opera_de_paris et comedie_francaise (1992-2026), fspoeie
-# (2000-2026). La ligne de l'État est celle de ses CIVILS : le 1° de l'article
+# (1983-2026). La ligne de l'État est celle de ses CIVILS : le 1° de l'article
 # L. 61 du code des pensions fixe un second taux pour ses militaires — 126,07 %
 # depuis 2013 —, qui est dans contribution_employeur_militaires.csv.
 #
 # Les régimes à `perimetre_taux: agent_seul` qui restent sans série — marins,
 # CRPCEN, Banque de France, port de Strasbourg, SEITA, chemins de fer
-# secondaires, et le FSPOEIE avant 2000 — gardent la convention d'avant : la
+# secondaires, et le FSPOEIE avant 1983 — gardent la convention d'avant : la
 # part patronale y est ESTIMÉE par l'effort d'un salarié du privé de la même
 # année, la fiabilité retombe à `estimee`, et le nombre d'années concernées est
 # affiché sous la simulation.
@@ -250,64 +258,81 @@ annee,regime,taux,nature,fiabilite
 1981,cnracl,0.130000,appelee,certifiee
 1982,cnracl,0.130000,appelee,certifiee
 1983,cnracl,0.125000,appelee,certifiee
+1983,fspoeie,0.090000,appelee,certifiee
 1984,cnracl,0.102000,appelee,certifiee
+1984,fspoeie,0.090000,appelee,certifiee
 1984,mines,0.077500,appelee,certifiee
 1985,cnracl,0.102000,appelee,certifiee
+1985,fspoeie,0.090000,appelee,certifiee
 1985,mines,0.077500,appelee,certifiee
 1986,cnracl,0.102000,appelee,certifiee
+1986,fspoeie,0.090000,appelee,certifiee
 1986,mines,0.077500,appelee,certifiee
 1987,cnracl,0.152000,appelee,certifiee
+1987,fspoeie,0.090000,appelee,certifiee
 1987,mines,0.077500,appelee,certifiee
 1988,cnracl,0.182000,appelee,certifiee
+1988,fspoeie,0.090000,appelee,certifiee
 1988,mines,0.077500,appelee,certifiee
 1989,cnracl,0.197000,appelee,certifiee
+1989,fspoeie,0.090000,appelee,certifiee
 1989,mines,0.077500,appelee,certifiee
 1990,cnracl,0.197000,appelee,certifiee
+1990,fspoeie,0.090000,appelee,certifiee
 1990,mines,0.077500,appelee,certifiee
 1991,cnracl,0.197000,appelee,certifiee
+1991,fspoeie,0.090000,appelee,certifiee
 1991,mines,0.077500,appelee,certifiee
 1992,cnracl,0.213000,appelee,certifiee
 1992,comedie_francaise,0.088000,appelee,certifiee
+1992,fspoeie,0.103400,appelee,certifiee
 1992,mines,0.077500,appelee,certifiee
 1992,opera_de_paris,0.088000,appelee,certifiee
 1992,sncf,0.284400,appelee,certifiee
 1993,cnracl,0.213000,appelee,certifiee
 1993,comedie_francaise,0.088000,appelee,certifiee
+1993,fspoeie,0.103400,appelee,certifiee
 1993,mines,0.077500,appelee,certifiee
 1993,opera_de_paris,0.088000,appelee,certifiee
 1993,sncf,0.284400,appelee,certifiee
 1994,cnracl,0.213000,appelee,certifiee
 1994,comedie_francaise,0.088000,appelee,certifiee
+1994,fspoeie,0.103400,appelee,certifiee
 1994,mines,0.077500,appelee,certifiee
 1994,opera_de_paris,0.088000,appelee,certifiee
 1994,sncf,0.284400,appelee,certifiee
 1995,cnracl,0.251000,appelee,certifiee
 1995,comedie_francaise,0.088000,appelee,certifiee
 1995,fonction_publique_etat,0.486000,implicite,haute
+1995,fspoeie,0.103400,appelee,certifiee
 1995,mines,0.077500,appelee,certifiee
 1995,opera_de_paris,0.088000,appelee,certifiee
 1995,sncf,0.284400,appelee,certifiee
 1996,cnracl,0.251000,appelee,certifiee
 1996,comedie_francaise,0.088000,appelee,certifiee
 1996,fonction_publique_etat,0.462000,implicite,haute
+1996,fspoeie,0.103400,appelee,certifiee
 1996,mines,0.077500,appelee,certifiee
 1996,opera_de_paris,0.088000,appelee,certifiee
 1996,sncf,0.284400,appelee,certifiee
 1997,cnracl,0.251000,appelee,certifiee
 1997,comedie_francaise,0.088000,appelee,certifiee
 1997,fonction_publique_etat,0.474000,implicite,haute
+1997,fspoeie,0.103400,appelee,certifiee
 1997,mines,0.077500,appelee,certifiee
 1997,opera_de_paris,0.088000,appelee,certifiee
 1997,sncf,0.284400,appelee,certifiee
 1998,cnracl,0.251000,appelee,certifiee
 1998,comedie_francaise,0.088000,appelee,certifiee
 1998,fonction_publique_etat,0.474000,implicite,haute
+1998,fspoeie,0.103400,appelee,certifiee
 1998,mines,0.077500,appelee,certifiee
 1998,opera_de_paris,0.088000,appelee,certifiee
 1998,sncf,0.284400,appelee,certifiee
 1999,cnracl,0.251000,appelee,certifiee
 1999,comedie_francaise,0.088000,appelee,certifiee
 1999,fonction_publique_etat,0.486000,implicite,haute
+1999,fspoeie,0.240000,appelee,certifiee
 1999,mines,0.077500,appelee,certifiee
 1999,opera_de_paris,0.088000,appelee,certifiee
 1999,sncf,0.284400,appelee,certifiee

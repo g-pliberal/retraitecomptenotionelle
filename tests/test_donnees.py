@@ -660,8 +660,11 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "employeur_public_comedie_francaise":
             "legislation/contribution_employeur_public.csv",
         # Le FSPOEIE depuis 2000, lu dans le tableau 14 du jaune pensions du
-        # PLF 2027 (action 159, étape 3).
+        # PLF 2027 (action 159, étape 3) ; avant, dans les décrets qui fixent
+        # son taux, lus dans la base LEGI.
         "employeur_public_fspoeie":
+            "legislation/contribution_employeur_public.csv",
+        "employeur_public_fspoeie_avant_2000":
             "legislation/contribution_employeur_public.csv",
         # Le second taux de l'État, celui de ses militaires : un fichier à part,
         # lu dans les décrets qui le fixent.
@@ -2409,21 +2412,27 @@ def test_les_regimes_publies_sont_charges(employeurs):
     )
 
 
-def test_le_fspoeie_vient_du_jaune_pensions_depuis_2000(employeurs):
-    """Le tableau 14 du jaune pensions annexé au PLF 2027 : 24 % jusqu'en
-    2008, les trois marches du décret n° 2008-1328, puis le taux arrimé à
-    celui d'un non-cadre du privé. Avant 2000, rien : le texte du jaune date
-    les taux de 1991 et de 1999 sans le jour de leur effet, et la part
-    patronale reste estimée."""
-    reperes = ((2000, 0.24), (2008, 0.24), (2009, 0.27), (2010, 0.30), (2011, 0.33),
+def test_le_fspoeie_vient_des_decrets_puis_du_jaune_pensions(employeurs):
+    """Le tableau 14 du jaune pensions annexé au PLF 2027 depuis 2000 : 24 %
+    jusqu'en 2008, les trois marches du décret n° 2008-1328, puis le taux
+    arrimé à celui d'un non-cadre du privé. Avant, les textes lus dans la base
+    LEGI : 9 % au IV de l'article 28 du décret n° 65-836 depuis le décret
+    n° 82-301, pour les rémunérations dues à compter du 1er avril 1982 ;
+    10,34 % à compter du 1er février 1991 (décret n° 91-239, article 3), que la
+    règle du 1er janvier fait commencer en 1992 ; 24 % à compter du 1er janvier
+    1999 (décret n° 98-1169). Le taux d'avant 1982 n'est pas dans la base, et
+    la part patronale y reste estimée."""
+    reperes = ((1983, 0.09), (1990, 0.09), (1991, 0.09), (1992, 0.1034), (1998, 0.1034),
+               (1999, 0.24),
+               (2000, 0.24), (2008, 0.24), (2009, 0.27), (2010, 0.30), (2011, 0.33),
                (2012, 0.33), (2013, 0.3323), (2018, 0.3463), (2019, 0.3501), (2026, 0.3501))
     for annee, attendu in reperes:
         contribution = employeurs.taux("fspoeie", annee)
         assert contribution.taux == pytest.approx(attendu), annee
         assert contribution.nature == "appelee", annee
         assert contribution.fiabilite is Fiabilite.CERTIFIEE, annee
-    assert employeurs.couverture("fspoeie") == (2000, 2026)
-    assert employeurs.taux("fspoeie", 1999) is None
+    assert employeurs.couverture("fspoeie") == (1983, 2026)
+    assert employeurs.taux("fspoeie", 1982) is None
 
 
 def test_les_six_series_lues_au_journal_officiel_sont_certifiees(employeurs):

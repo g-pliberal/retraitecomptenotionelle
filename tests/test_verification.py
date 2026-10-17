@@ -2021,3 +2021,64 @@ def test_le_taux_des_militaires_est_date_par_l_entree_en_vigueur_du_decret():
     _, _, griefs = module.serie_militaires(db)
     assert len(griefs) == 1
     assert "A06" in griefs[0] and "A11" in griefs[0]
+
+
+def test_le_fspoeie_d_avant_2000_est_date_par_les_decrets_qui_fixent_son_taux():
+    """L'article 28 du décret de 1965 dit 9 % jusqu'en 2002 ; deux décrets non.
+
+    La base LEGI garde du décret n° 65-836 une version de l'article 28 ouverte
+    le 31 décembre 1988, qui court jusqu'en 2002 et porte « le taux de la
+    contribution de l'Etat est fixé à 9 % ». Les décrets n° 91-239 et
+    n° 98-1169 fixent ce taux À CÔTÉ de l'article, sans le récrire : 10,34 %
+    pour les rémunérations versées à compter du 1er février 1991, 24 % à
+    compter du 1er janvier 1999. Ce sont eux qui datent le taux, par la date
+    d'effet qu'ils écrivent, et la règle du 1er janvier laisse 1991 à 9 %.
+    Avant la première version lue, rien ; depuis 2000, le jaune pensions prend
+    le relais. La version que les décrets contredisent est signalée.
+    """
+    import sqlite3
+
+    module = _charger_script("dila_legi_contribution_employeur", "scripts", "fetch",
+                             "dila_legi_contribution_employeur.py")
+    db = sqlite3.connect(":memory:")
+    db.execute("CREATE TABLE doc (id TEXT, date TEXT, fin TEXT, nature TEXT, "
+               "num TEXT, titre TEXT, texte TEXT)")
+    decret_1965 = ("Décret n°65-836 du 24 septembre 1965 RELATIF AU REGIME DES "
+                   "PENSIONS DES OUVRIERS DES ETABLISSEMENTS INDUSTRIELS DE L'ETAT")
+    article_28 = ("I - Les personnels visés à l'article 1er supportent une retenue "
+                  "de {} %, calculée sur les émoluments représentés […] IV - Le taux "
+                  "de la contribution de l'Etat est fixé à {} % des mêmes émoluments. "
+                  "V - La double contribution prévue aux paragraphes précédents est "
+                  "versée au fonds spécial visé à l'article 2.")
+    fixation = ("Le taux de la contribution prévue au IV de l'article 28 du décret "
+                "du 24 septembre 1965 susvisé est fixé à {}. Cette disposition est "
+                "applicable aux rémunérations versées à compter du {}.")
+    db.executemany("INSERT INTO doc VALUES (?, ?, ?, ?, ?, ?, ?)", [
+        ("A82", "1982-04-02", "1983-12-30", "Article DECRET", "28", decret_1965,
+         article_28.format("6", "9")),
+        ("A88", "1988-12-31", "2002-01-01", "Article DECRET", "28", decret_1965,
+         article_28.format("8,9", "9")),
+        ("A02", "2002-01-01", "2004-01-01", "Article DECRET", "28", decret_1965,
+         article_28.format("7,85", "24")),
+        ("D91", "1991-03-03", "1999-01-01", "Article DECRET", "3",
+         "Décret n°91-239 du 1 mars 1991 relatif aux taux des cotisations du "
+         "régime des pensions des ouvriers des établissements industriels de l'Etat",
+         fixation.format("10,34 p. 100", "1er février 1991")),
+        ("D98", "1998-12-22", "2009-01-01", "Article DECRET", "1",
+         "Décret n°98-1169 du 21 décembre 1998 relatif au taux des cotisations du "
+         "régime des pensions des ouvriers des établissements industriels de l'Etat",
+         fixation.format("24 %", "1er janvier 1999")),
+    ])
+    serie, lus, griefs = module.serie_fspoeie(db)
+    assert 1982 not in serie
+    assert serie[1983] == pytest.approx(0.09)
+    assert serie[1990] == pytest.approx(0.09)
+    assert serie[1991] == pytest.approx(0.09)
+    assert serie[1992] == pytest.approx(0.1034)
+    assert serie[1998] == pytest.approx(0.1034)
+    assert serie[1999] == pytest.approx(0.24)
+    assert max(serie) == 1999
+    assert lus == ["A82", "A88", "D91", "D98"]
+    assert len(griefs) == 2
+    assert all("A88" in grief for grief in griefs)
+    assert "D91" in griefs[0] and "D98" in griefs[1]

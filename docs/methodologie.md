@@ -1318,7 +1318,7 @@ d'effet. Pour ceux-là, **c'est le taux définitif qui compte**, non le
 provisionnel appelé d'avance : les deux diffèrent de six dixièmes de point pour
 la SNCF en 2018. Enfin, **là où la série n'existe pas, le modèle le dit** :
 avant 1992 pour la SNCF, avant 1995 pour l'État, avant 1948 pour la CNRACL,
-avant 2007 pour la RATP, après 2020 pour les IEG, avant 2000 pour le FSPOEIE,
+avant 2007 pour la RATP, après 2020 pour les IEG, avant 1983 pour le FSPOEIE,
 et pour les six régimes spéciaux qui n'en publient aucune, la part patronale est estimée par l'effort
 d'un salarié du privé de la même année, la fiabilité retombe à `estimee`, et le
 nombre d'années concernées est affiché sous la simulation.

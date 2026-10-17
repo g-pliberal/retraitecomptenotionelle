@@ -82,6 +82,12 @@ LES SIX SÉRIES, ET OÙ CHACUNE S'ARRÊTE
   pour pension » : la même assiette que la retenue de l'agent, exactement ce que
   le modèle attend.
 
+Une septième, le **FSPOEIE, 1983-1999**, se lit dans un article et dans les
+décrets qui fixent son taux à côté de lui : 9 % au IV de l'article 28 du décret
+n° 65-836 du 24 septembre 1965, puis 10,34 % (décret n° 91-239, article 3) et
+24 % (décret n° 98-1169, article 1er), chacun daté par l'effet qu'il écrit
+(``serie_fspoeie``). Le jaune pensions prend le relais en 2000.
+
 CE QU'ON NE PEUT PAS AFFIRMER
 
 La base garde les versions, pas la preuve qu'elle les garde toutes : la leçon de
@@ -94,6 +100,11 @@ Comédie-Française, et le décret n° 91-225 du 27 février 1991 déjà 28,44 %
 la SNCF ; l'article 8 du décret de 1991 est explicitement abrogé en 2007, et
 l'article 52 du décret de 1946 explicitement remplacé par l'article 90 en 1993.
 Les deux bouts de chaque chaîne sont donc tenus par un texte, et non supposés.
+Ceux du FSPOEIE aussi : le décret n° 82-301, que la base JORF résume, fixe 9 %
+« des rémunérations dues à compter du 01-04-1982 », et le jaune pensions donne
+24 % de 2000 à 2008, puis les marches du décret n° 2008-1328 ; entre les deux,
+la base JORF ne connaît aucun autre décret qui touche au IV de l'article 28,
+ceux de 1983 à 1988 n'en changeant que la retenue, au I.
 Il reste qu'une version de vingt ans — celle de l'Opéra, 1991 à 2011 — ne
 prouve pas qu'aucun décret n'a été perdu entre-temps. Le récupérateur le dit et
 ne le cache pas derrière un chiffre.
@@ -523,6 +534,106 @@ def serie_militaires(db: sqlite3.Connection
 
 
 # ---------------------------------------------------------------------------
+# Le FSPOEIE avant 2000 : un article, et les décrets qui fixent son taux à côté
+# ---------------------------------------------------------------------------
+
+
+#: « IV - Le taux de la contribution de l'Etat est fixé à 9 % des mêmes
+#: émoluments », dans l'article 28 du décret de 1965 ; « Le taux de la
+#: contribution prévue au IV de l'article 28 du décret du 24 septembre 1965
+#: susvisé est fixé à 10,34 p. 100 », dans les décrets qui le fixent ensuite.
+TAUX_FSPOEIE = re.compile(
+    r"taux de la contribution (?:de l['’][EÉ]tat|pr[ée]vue au IV de l['’]article 28 "
+    r"du d[ée]cret du 24 septembre 1965 susvis[ée]) est fix[ée] [àa] "
+    r"(\d{1,2}(?:,\d+)?)\s*(?:%|p\.\s?100)", re.I)
+
+#: « Cette disposition est applicable aux rémunérations versées à compter du
+#: 1er février 1991 » : la date d'effet que chacun de ces décrets écrit, et
+#: qui n'est pas celle où la base ouvre sa version — le 3 mars pour celui-là.
+EFFET_FSPOEIE = re.compile(
+    r"r[ée]mun[ée]rations vers[ée]es [àa] compter du 1\s?er (\w+) (\d{4})", re.I)
+
+MOIS = ("janvier", "fevrier", "mars", "avril", "mai", "juin", "juillet", "aout",
+        "septembre", "octobre", "novembre", "decembre")
+
+#: Le jaune pensions porte le taux depuis 2000 : deux sources ne se disputent
+#: pas une année.
+FIN_FSPOEIE = date(2000, 1, 1)
+
+PLAUSIBLE_FSPOEIE = (0.05, 0.40)
+
+
+def _effet_ecrit(texte: str) -> date | None:
+    trouve = EFFET_FSPOEIE.search(texte)
+    if trouve is None:
+        return None
+    mois = trouve.group(1).lower().replace("é", "e").replace("û", "u")
+    if mois not in MOIS:
+        return None
+    return date(int(trouve.group(2)), MOIS.index(mois) + 1, 1)
+
+
+def serie_fspoeie(db: sqlite3.Connection
+                  ) -> tuple[dict[int, float], list[str], list[str]]:
+    """Contribution de l'employeur au FSPOEIE, de la première version lue à 1999.
+
+    Le IV de l'article 28 du décret n° 65-836 du 24 septembre 1965 la fixe à
+    9 % depuis le décret n° 82-301, pour les rémunérations dues à compter du
+    1er avril 1982 ; la base ne garde aucune version de l'article plus
+    ancienne. Puis deux décrets fixent ce taux À CÔTÉ de l'article, sans le
+    récrire : 10,34 % à compter du 1er février 1991 (n° 91-239, article 3),
+    24 % à compter du 1er janvier 1999 (n° 98-1169, article 1er). La version de
+    l'article ouverte le 31 décembre 1988 court donc jusqu'en 2002 sur un taux
+    mort depuis 1991.
+
+    Chaque taux est daté par la date d'effet que son texte écrit, sinon par
+    l'ouverture de sa version, puis la règle du 1er janvier s'applique : 1991
+    garde 9 %. Une version de l'article qu'un décret contredit avant sa fin
+    est signalée, et c'est le décret qui l'emporte, étant daté plus tard.
+
+    Rend la série, les articles lus et les signalements.
+    """
+    lignes = db.execute(
+        "SELECT id, date, fin, titre, texte FROM doc WHERE nature LIKE '%Article%' "
+        "AND texte LIKE '%taux de la contribution%' "
+        "AND (titre LIKE '%65-836 du 24 septembre 1965%' "
+        "OR texte LIKE '%article 28 du décret du 24 septembre 1965%')").fetchall()
+    par_date: dict[date, float] = {}
+    lus: list[tuple[date, str]] = []
+    articles: list[tuple[date, date, float, str]] = []
+    decrets: list[tuple[date, float, str]] = []
+    for ident, debut, fin, titre, texte in lignes:
+        trouve = TAUX_FSPOEIE.search(texte or "")
+        if trouve is None:
+            continue
+        taux = _nombre(trouve.group(1)) / 100
+        if not PLAUSIBLE_FSPOEIE[0] <= taux <= PLAUSIBLE_FSPOEIE[1]:
+            continue
+        try:
+            ouverture, cloture = date.fromisoformat(debut), date.fromisoformat(fin)
+        except ValueError:
+            continue
+        effet = _effet_ecrit(texte or "") or ouverture
+        if effet >= FIN_FSPOEIE:
+            continue
+        par_date[effet] = taux
+        lus.append((effet, ident))
+        if "65-836" in titre:
+            articles.append((effet, cloture, taux, ident))
+        else:
+            decrets.append((effet, taux, ident))
+    griefs = [
+        f"fspoeie : la version {ident} de l'article 28 court jusqu'au {cloture} "
+        f"sur un taux que {autre} change le {changement} — c'est le décret qui "
+        "date le taux"
+        for ouverture, cloture, taux, ident in sorted(articles)
+        for changement, nouveau, autre in sorted(decrets)
+        if ouverture < changement < cloture and nouveau != taux
+    ]
+    return serie_annuelle(par_date, FIN_FSPOEIE), [i for _, i in sorted(lus)], griefs
+
+
+# ---------------------------------------------------------------------------
 # Assemblage
 # ---------------------------------------------------------------------------
 
@@ -607,7 +718,7 @@ SERIES_ARRETEES = {
 #: Ce qu'on attend de chaque série : sans ce minimum, la mise en page d'un texte
 #: a changé ou une recherche a manqué sa cible, et il vaut mieux le savoir.
 MINIMUM = {"sncf": 14, "opera_de_paris": 34, "comedie_francaise": 34,
-           "mines": 42, "ratp": 18, "ieg": 15,
+           "mines": 42, "ratp": 18, "ieg": 15, "fspoeie": 17,
            "fonction_publique_etat_militaires": 21}
 
 
@@ -701,6 +812,15 @@ def main() -> int:
         str(annee): round(taux, 6) for annee, taux in sorted(serie.items())}
     origines["fonction_publique_etat_militaires"] = lus
 
+    # Le FSPOEIE avant 2000 : l'article 28 du décret de 1965, puis les décrets
+    # qui fixent son taux à côté de lui. Depuis 2000, le jaune pensions
+    # (scripts/fetch/sre_jaune_pensions.py).
+    serie, lus, dits = serie_fspoeie(legi)
+    griefs += dits
+    series["fspoeie"] = {
+        str(annee): round(taux, 6) for annee, taux in sorted(serie.items())}
+    origines["fspoeie"] = lus
+
     for nom, minimum in MINIMUM.items():
         if len(series.get(nom, {})) < minimum:
             print(f"ÉCHEC   {nom} : {len(series.get(nom, {}))} années lues, "
@@ -740,7 +860,8 @@ def main() -> int:
                 "dans la fiche du régime. Les séries d'arrêté annuel (RATP, IEG) "
                 "portent le taux DÉFINITIF de l'exercice, non le provisionnel "
                 "appelé d'avance ; les séries d'article daté (SNCF, mines, Opéra, "
-                "Comédie-Française) portent le taux en vigueur au 1er janvier. "
+                "Comédie-Française, FSPOEIE avant 2000) portent le taux en "
+                "vigueur au 1er janvier. "
                 "Les contributions de l'État qui financent ces régimes — droits "
                 "spécifiques de la RATP, 22 % des salaires pour les mines, "
                 "subvention de l'Opéra — n'y sont pas : ce ne sont pas des "
@@ -751,7 +872,13 @@ def main() -> int:
                        "décrets fixant le taux de la contribution employeur de "
                        "l'État prévue au 1° de l'article L. 61 du code des "
                        "pensions, du n° 2006-23 au n° 2012-1507, pour les "
-                       "personnels militaires"},
+                       "personnels militaires",
+                   "fspoeie":
+                       "décret n° 65-836 du 24 septembre 1965, article 28 IV, puis "
+                       "les décrets qui fixent la contribution qu'il prévoit, "
+                       "n° 91-239 du 1er mars 1991, article 3, et n° 98-1169 du "
+                       "21 décembre 1998, article 1er ; jusqu'en 1999, le jaune "
+                       "pensions portant la suite"},
         "series": series,
         "arretes_lus": origines,
         "corrections": ecarts,

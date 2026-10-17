@@ -4469,7 +4469,7 @@ def _annees_sncf_des_textes() -> set[tuple]:
 
 
 def _employeur_du_journal_officiel(regime: str) -> dict[tuple, float]:
-    """Une des six séries lues dans les textes par ``dila_legi_contribution_employeur``."""
+    """Une des séries lues dans les textes par ``dila_legi_contribution_employeur``."""
     charge = _lire_json("dila_contribution_employeur.json",
                         "scripts/fetch/dila_legi_contribution_employeur.py")
     return {
@@ -4600,6 +4600,24 @@ def source_employeur_fspoeie() -> dict[tuple, float]:
         (annee, "fspoeie"): float(taux["fspoeie"])
         for annee, taux in sorted(tables["taux_employeur"].items())
     }
+
+
+def source_employeur_fspoeie_avant_2000() -> dict[tuple, float]:
+    """Contribution de l'employeur au FSPOEIE avant le jaune, 1983-1999.
+
+    Le IV de l'article 28 du décret n° 65-836 du 24 septembre 1965 : « le taux
+    de la contribution de l'Etat est fixé à 9 % des mêmes émoluments », depuis
+    le décret n° 82-301, pour les rémunérations dues à compter du 1er avril
+    1982. Puis les décrets qui fixent ce taux à côté de l'article : 10,34 % à
+    compter du 1er février 1991 (n° 91-239, article 3), 24 % à compter du
+    1er janvier 1999 (n° 98-1169, article 1er). Lus dans la base LEGI par
+    ``dila_legi_contribution_employeur``, au 1er janvier : 1991 garde 9 %, et
+    1982 n'est pas rendue, la base ne gardant aucune version de l'article
+    d'avant le décret de 1982. Ce sont les deux dates que le texte du jaune
+    donne sans leur jour : « fixé en 1991 à 10,34 % », « porté à 24 % en
+    1999 ».
+    """
+    return _employeur_du_journal_officiel("fspoeie")
 
 
 def source_employeur_sncf() -> dict[tuple, float]:
@@ -8974,6 +8992,21 @@ CERTIFICATIONS = (
         source=source_employeur_fspoeie,
         origine="Direction du budget, jaune pensions annexé au PLF 2027, "
                 "tableau 14 (taux de contribution employeur)",
+        decimales=6,
+        tolerance=5e-7,
+        gabarit={"nature": "appelee"},
+    ),
+    # Avant 2000, les décrets qui fixent le taux, que le texte du jaune date
+    # sans leur jour (action 159, étape 3).
+    Certification(
+        nom="employeur_public_fspoeie_avant_2000",
+        chemin=REFERENCE / "legislation" / "contribution_employeur_public.csv",
+        cles=("annee", "regime"),
+        colonne="taux",
+        source=source_employeur_fspoeie_avant_2000,
+        origine="DILA, base LEGI, décret n° 65-836 du 24 septembre 1965, "
+                "article 28 IV, puis décrets n° 91-239 du 1er mars 1991, "
+                "article 3, et n° 98-1169 du 21 décembre 1998, article 1er",
         decimales=6,
         tolerance=5e-7,
         gabarit={"nature": "appelee"},
