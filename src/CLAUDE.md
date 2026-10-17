@@ -57,3 +57,7 @@ de la proposition, qui s'écrit en couche (`data/CLAUDE.md`).
   n'ayant pas de jumeau ; `python scripts/regenerer.py`, puis
   `python scripts/resumer_temoins.py`, pour
   voir ce qu'il déplace ; `-m rapide` et les tests de sa zone, puis le commit.
+- **Un défaut corrigé dans une règle** : la classe, pas le cas. Avant le
+  commit, chercher la même erreur dans les autres régimes et les autres
+  générations, et la corriger avec lui ou l'inscrire à la feuille de route
+  (action 163, étape 4).

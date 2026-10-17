@@ -23,6 +23,27 @@ def _fonctions(fichier: str) -> set[str]:
     return {n.name for n in ast.walk(arbre) if isinstance(n, ast.FunctionDef)}
 
 
+#: Les tests d'une seconde qui ont rougi main, du 6 au 17 octobre 2026, sans
+#: qu'aucune session les ait joués : leurs fichiers ne sont pas de la suite
+#: rapide (action 163, garde 3), et le dernier garde les comptes du parcours.
+GARDES_RAPIDES = (
+    ("test_web.py", "test_les_modules_sont_tous_precharges"),
+    ("test_web.py", "test_le_README_n_ecrit_a_la_main_ni_statuts_ni_regimes"),
+    ("test_web_revues.py", "test_le_menu_des_statuts_est_groupe_par_famille"),
+    ("test_niveaux.py", "test_chaque_exception_vise_un_test_qui_existe"),
+    ("test_niveaux.py", "test_un_fichier_isole_n_importe_rien_du_depot"),
+    ("test_prose.py", "test_chaque_action_en_cours_s_ouvre_sur_son_bloc_reprise"),
+    ("test_prose.py", "test_les_notes_de_la_feuille_de_route_se_rangent_par_action"),
+    ("test_parcours.py", "test_aucun_compte_du_parcours_ne_s_ecrit_a_la_main"),
+)
+
+
+def test_les_gardes_d_une_seconde_sont_de_la_suite_rapide():
+    """Ensemble, une seconde et demie : la suite rapide, que chaque session
+    joue avant d'envoyer, les porte désormais."""
+    assert [garde for garde in GARDES_RAPIDES if conftest.niveau(*garde) != "rapide"] == []
+
+
 def test_chaque_fichier_range_existe():
     absents = sorted(f for f in conftest.COMPLETS | conftest.CONTROLES
                      if not (TESTS / f).is_file())

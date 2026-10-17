@@ -6441,9 +6441,9 @@ lance les deux premières : « vas-y ».
    reçoit une réponse dans la note d'étape ; `pousser.sh` exige `Relu:` ou
    `Sans-relecture: <raison>`. Éprouvé d'abord sur des règles corrigées après
    coup : s'il ne les trouve pas, il ne vaut pas son coût.
-4. **La classe, pas le cas** : un défaut corrigé dans une règle se cherche
-   dans les autres régimes ; une ligne de la liste de contrôle de
-   `src/CLAUDE.md`.
+4. **La classe, pas le cas**, faite le 17 octobre 2026 : un défaut corrigé
+   dans une règle se cherche dans les autres régimes ; une ligne de la liste
+   de contrôle de `src/CLAUDE.md`.
 5. **Une passe de fond chaque semaine** : une session programmée, après la
    mise à jour de l'index DILA du lundi, relit une famille de règles du
    scénario 1 contre le droit en vigueur, inscrit ce qu'elle trouve sans le
