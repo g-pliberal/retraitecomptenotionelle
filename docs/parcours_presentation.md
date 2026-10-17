@@ -241,7 +241,7 @@ Trois choses à montrer :
 
 - Les deux cartes en tête : la carrière la mieux traitée (militaire non
   officier, +14 % pour la génération 2000) et la moins bien traitée (carrière
-  interrompue, -34 %), et les 48 points qui les séparent. Dire aussitôt
+  interrompue, -34 %), et l'écart qui les sépare. Dire aussitôt
   d'où vient le premier : le droit en vigueur laisse ce militaire partir à
   48 ans et demi, après vingt-sept ans et demi de services, et la proposition
   le fait servir jusqu'à 65 ans —
@@ -335,7 +335,7 @@ Si le temps manque, garder cette page pour les questions : elle répond seule
 
 Onglet **Avantages**. La page qui explique les écarts du simulateur : ce que
 le système actuel verse sans que personne l'ait cotisé. Trois chiffres :
-42 dispositifs en vigueur, du minimum vieillesse à la bonification du
+<!--chiffre:entrees(moteur/donnees.json:avantages.avantages?famille!=ecarts_structurels&fin=None)-->42<!--/--> dispositifs en vigueur, du minimum vieillesse à la bonification du
 cinquième ; 99,8 Md € en 2024 pour les 23 que le modèle sait chiffrer, dont
 38,3 Md € de réversion, qui est lue et non calculée ; 8,2 Md € de pensions
 servies avant l'âge légal. La page dit que ces deux montants sont des
@@ -343,9 +343,9 @@ planchers. Le graphique du haut compte les dispositifs année par année depuis
 1831, où il n'y en avait qu'un.
 
 Deux comptes se croisent sur cette page, et il vaut mieux le savoir avant
-qu'on le demande : **42 dispositifs sont en vigueur aujourd'hui**, et le
-tableau du bas en recense **48 dispositifs** depuis 1831, ceux d'hier
-compris. Les 23 que le modèle chiffre se comptent sur les 48.
+qu'on le demande : **<!--chiffre:entrees(moteur/donnees.json:avantages.avantages?famille!=ecarts_structurels&fin=None)-->42<!--/--> dispositifs sont en vigueur aujourd'hui**, et le
+tableau du bas en recense **<!--chiffre:entrees(moteur/donnees.json:avantages.avantages)-->48<!--/--> dispositifs** depuis 1831, ceux d'hier
+compris. Les 23 que le modèle chiffre se comptent sur les <!--chiffre:entrees(moteur/donnees.json:avantages.avantages)-->48<!--/-->.
 
 ### 6. Méthode et Données — deux minutes, pour finir
 
@@ -353,9 +353,9 @@ Onglet **Méthode** : les trois opérations, en une phrase chacune, puis
 « Qu'est-ce qui décide du résultat ? ». On peut s'arrêter au titre.
 
 Onglet **Données**, et c'est la bonne page pour conclure : « Rien ici n'est à
-croire sur parole. » 142 133 valeurs recontrôlées automatiquement contre le
-fichier de l'institution qui les produit, sur 169 séries ; 114 régimes
-recensés dont 80 calculés ; 41 institutions citées. Ce compte mesure la
+croire sur parole. » <!--chiffre:somme(moteur/donnees.json:certification.series.*.valeurs)-->142 133<!--/--> valeurs recontrôlées automatiquement contre le
+fichier de l'institution qui les produit, sur <!--chiffre:entrees(moteur/donnees.json:certification.series)-->169<!--/--> séries ; <!--chiffre:entrees(moteur/donnees.json:inventaire)-->114<!--/--> régimes
+recensés dont <!--chiffre:entrees(moteur/donnees.json:regimes)-->80<!--/--> calculés ; <!--chiffre:valeur(moteur/donnees.json:institutions_citees)-->41<!--/--> institutions citées. Ce compte mesure la
 fidélité de la recopie, non la justesse des pensions : si on vous le demande,
 la réponse est que les pensions se contrôlent ailleurs, sur les exemples
 publiés par les caisses, et que `docs/limites.md` dit lesquels. Le code et

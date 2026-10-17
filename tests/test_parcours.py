@@ -114,9 +114,24 @@ COMPTE = re.compile(r"(?<![\d  ])(?!0\d)(\d[\d   ]*)\s("
                     + "|".join(COMPTES) + r")\b")
 
 
+#: Les ancres des chiffres que le paquet donne (action 163) : le parcours se lit
+#: comme on le lit, sans elles.
+ANCRES = re.compile(r"<!--chiffre:.*?-->|<!--/-->")
+
+
 @pytest.fixture(scope="module")
 def parcours() -> str:
-    return PARCOURS.read_text(encoding="utf-8")
+    return ANCRES.sub("", PARCOURS.read_text(encoding="utf-8"))
+
+
+def test_aucun_compte_du_parcours_ne_s_ecrit_a_la_main():
+    """Les comptes du parcours — valeurs, séries, régimes, dispositifs — sont
+    ceux que les pages tirent du paquet. Écrits à la main, ils ont rougi la
+    suite neuf fois du 6 au 17 octobre 2026, chaque fois que des données
+    entraient (action 163). Ancrés sur le paquet, GitHub les récrit avec lui ;
+    un compte ancré ne se lit plus ici, son ancre le sépare de son nom."""
+    brut = PARCOURS.read_text(encoding="utf-8")
+    assert [trouve.group(0) for trouve in COMPTE.finditer(brut)] == []
 
 
 def _prose(corps: str) -> str:

@@ -2892,39 +2892,27 @@ def test_le_README_montre_la_simulation_que_le_modele_calcule_vraiment():
     assert verifiees >= 10, "le tableau n'a plus la forme que le README colle"
 
 
-def test_le_README_dit_le_vrai_nombre_de_statuts_et_de_regimes():
+def test_le_README_n_ecrit_a_la_main_ni_statuts_ni_regimes():
     """Deux comptes annoncés en quatre endroits, et rien ne les recoupait.
 
-    Le README écrit « les 22 statuts et les 37 régimes du catalogue », et
-    répète le second deux fois de plus ; `docs/limites.md` l'écrit deux fois
-    encore. Ce sont des chiffres de données, pas de prose : ils bougent chaque
-    fois qu'une fiche ou un statut est ajouté, et rien n'obligeait la phrase à
-    suivre. Le dépôt s'est déjà fait prendre — « 472 tests pour 485 » — par la
-    main qui écrit ces lignes. Ici, les fichiers comptent eux-mêmes.
+    Le README écrivait « les 22 statuts et les 37 régimes du catalogue », et
+    répétait le second deux fois de plus ; `docs/limites.md` l'écrivait deux
+    fois encore. Ce sont des chiffres de données, pas de prose : ils bougent
+    chaque fois qu'une fiche ou un statut est ajouté. Ce test les recompta
+    d'abord, puis rougit la suite le 14 octobre 2026 (« README.md annonce
+    74 régimes, le dépôt en compte 76 »). Ils ne s'écrivent plus à la main
+    (action 163) : ancrés, `verifier_prose.py` les tient, et GitHub les
+    récrit ; un compte ancré ne se lit pas ici, son ancre le sépare de son nom.
     """
     from pathlib import Path
 
-    from retraite_notionnelle.carriere import Affiliations
-    from retraite_notionnelle.config import RACINE_DONNEES
-    from retraite_notionnelle.donnees.regimes import CatalogueRegimes
-
     racine = Path(__file__).resolve().parents[1]
-    statuts_reels = len(Affiliations(RACINE_DONNEES).codes)
-    regimes_reels = len(list(CatalogueRegimes(RACINE_DONNEES)))
-
     limites = sorted((racine / "docs" / "limites").glob("*.md"))
     for nom in ("README.md", "docs/limites.md",
                 *(p.relative_to(racine).as_posix() for p in limites)):
         texte = (racine / nom).read_text(encoding="utf-8")
-        for annonce, attendu, quoi in (
-            (r"(\d+) statuts", statuts_reels, "statuts"),
-            (r"(\d+) (?:régimes|fiches de régime|fiches du catalogue)",
-             regimes_reels, "régimes"),
-        ):
-            for trouve in re.findall(annonce, texte):
-                assert int(trouve) == attendu, (
-                    f"{nom} annonce {trouve} {quoi}, le dépôt en compte {attendu}"
-                )
+        assert re.findall(r"\d+ (?:statuts|régimes|fiches de régime|fiches du catalogue)",
+                          texte) == [], nom
 
 
 def test_les_bornes_d_assiette_sont_les_memes_des_deux_cotes():

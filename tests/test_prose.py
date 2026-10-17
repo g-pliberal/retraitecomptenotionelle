@@ -317,6 +317,27 @@ def test_les_sondes_comptent_ce_qu_elles_disent_compter():
     assert verifier_prose.sonde_poids("moteur/donnees.json") > 0
 
 
+def test_la_somme_et_les_filtres_croises_comptent_ce_que_les_pages_comptent():
+    """Ce que les pages Données et Avantages tirent du paquet, et que le
+    parcours cite (action 163) : la somme des valeurs recontrôlées, série par
+    série ; les dispositifs en vigueur, hors écarts structurels et sans date de
+    fin, deux conditions qu'un filtre croise. Compté ici sur le paquet même."""
+    import json
+
+    paquet = json.loads((RACINE / "moteur" / "donnees.json").read_text(encoding="utf-8"))
+    series = paquet["certification"]["series"].values()
+    assert verifier_prose.sonde_somme(
+        "moteur/donnees.json:certification.series.*.valeurs") == sum(
+            int(trace["valeurs"]) for trace in series)
+    avantages = paquet["avantages"]["avantages"]
+    en_vigueur = [a for a in avantages
+                  if a["famille"] != "ecarts_structurels" and a["fin"] is None]
+    assert 0 < len(en_vigueur) < len(avantages)
+    assert verifier_prose.sonde_entrees(
+        "moteur/donnees.json:avantages.avantages?famille!=ecarts_structurels&fin=None"
+    ) == len(en_vigueur)
+
+
 def test_les_tableaux_produits_ne_sont_pas_perimes():
     """Ce que le modèle calcule ne se recopie pas à la main.
 

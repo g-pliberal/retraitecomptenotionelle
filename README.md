@@ -354,7 +354,7 @@ print(simulateur.simuler(simulateur.carriere_releve(
 # Le cas général : grille cas type × génération
 print(calculer_cas_types(simulateur).tableau())
 
-# Les 73 statuts et les 80 régimes du catalogue
+# Les statuts et les régimes du catalogue
 for regime in simulateur.catalogue:
     print(f"{regime.code:<26} {regime.famille:<22} {regime.nom}")
 ```
@@ -1320,7 +1320,7 @@ data/
                                 du système de retraite, pyramide des âges,
                                 projections
     mortalite/                  espérances de vie et quotients par âge, observés et projetés
-    regimes/                    80 fiches de régime, un fichier par régime
+    regimes/                    les fiches de régime, un fichier par régime
                                 nommé de son code, + schéma + valeurs du point,
                                 et l'inventaire de tous les régimes (inventaire.yaml),
                                 fabriqué depuis ces fichiers

@@ -433,19 +433,41 @@ def sonde_entrees(argument: str) -> float:
 
     ``fichier:clé`` compte tout ; ``fichier:clé?champ=a|b`` ne compte que les
     entrées dont ``champ`` vaut l'une des valeurs données. C'est ce qui sépare,
-    dans l'inventaire, les 89 lignes des 72 régimes calculés.
+    dans l'inventaire, les 89 lignes des 72 régimes calculés. Les conditions se
+    croisent par ``&``, et ``champ!=a`` écarte : les dispositifs en vigueur de
+    la page Avantages sont ceux d'aucun écart structurel et sans date de fin
+    (action 163).
     """
-    filtre = None
+    filtres = []
     if "?" in argument:
-        argument, condition = argument.split("?", 1)
-        champ, _, valeurs = condition.partition("=")
-        filtre = (champ, set(valeurs.split("|")))
+        argument, conditions = argument.split("?", 1)
+        for condition in conditions.split("&"):
+            champ, _, valeurs = condition.partition("=")
+            filtres.append((champ.rstrip("!"), champ.endswith("!"), set(valeurs.split("|"))))
     entrees = _charge(argument)
-    if filtre is None:
+    if not filtres:
         return len(entrees)
-    champ, valeurs = filtre
     suite = entrees.values() if isinstance(entrees, dict) else entrees
-    return somme_ordonnee(1 for e in suite if str(e.get(champ)) in valeurs)
+    return somme_ordonnee(1 for e in suite
+                          if all((str(e.get(champ)) in valeurs) != ecarte
+                                 for champ, ecarte, valeurs in filtres))
+
+
+def sonde_somme(argument: str) -> float:
+    """La somme des nombres qu'un chemin désigne : ``fichier:clé.*.champ``.
+
+    La page Données additionne les valeurs recontrôlées de chaque série du
+    paquet, et le parcours cite la somme (action 163) : ``*`` traverse les
+    séries, comme pour ``partout``.
+    """
+    argument, facteur = _facteur(argument)
+    valeurs = _charge(argument)
+    valeurs = valeurs if isinstance(valeurs, list) else [valeurs]
+    nombres = [float(v) for v in valeurs
+               if isinstance(v, (int, float)) and not isinstance(v, bool)]
+    if not nombres:
+        raise ValueError(f"« {argument} » ne rend aucun nombre")
+    return somme_ordonnee(nombres) * facteur
 
 
 def sonde_valeur(argument: str) -> float:
@@ -592,6 +614,7 @@ SONDES = {
     "distinctes": sonde_distinctes,
     "partout": sonde_partout,
     "entrees": sonde_entrees,
+    "somme": sonde_somme,
     "valeur": sonde_valeur,
     "tests": sonde_tests,
     "portage": sonde_portage,
