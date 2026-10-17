@@ -71,6 +71,17 @@ de l'AWG publie ses pensionnés de 65 ans et plus : le même partage s'y fait,
 et les deux se comparent terme à terme (action 138, étape 3, note « la
 couverture de 2022-2030 »).
 
+LA PART STABLE, MESURÉE (:func:`pensionnes_de_2022`, :func:`au_perimetre`).
+L'AWG compte deux fois plus de pensionnés de moins de 65 ans que le modèle :
+l'invalidité, que sa fiche France étend à l'AAH (§ 3.1), et la réversion
+seule, que l'âge légal ne fait pas reculer. Le témoin de leurs sources
+(``tests/temoins/pensionnes_de_2022.json``) les compte au 31 décembre 2022 :
+avec les retraités d'Ancetre, ils refont ses pensionnés d'avant 60 ans à 2 %
+près ; les rentiers d'accident du travail, qu'il ne compte pas, les
+dépasseraient de 15 %. Ils gardent leur prévalence dans leur classe d'âge, non
+leur rapport aux 65 ans et plus (note du 17 octobre 2026, « la part stable
+mesurée »).
+
 CE QUI MANQUE. Les têtes de la proposition : son âge légal de 65 ans reporte
 des départs que ``AvenirAnnuel`` ne compte pas à part. La couverture de chaque
 système est donc celle du droit en vigueur, et sa prestation porte ce que le
@@ -299,7 +310,9 @@ def au_perimetre(population_65: Mapping[int, float], agees: float, jeunes: float
                  retraites: Mapping[int, float], retraites_agees: Mapping[int, float],
                  population_65_propre: Mapping[int, float],
                  grille: Sequence[int] = GRILLE_AWG,
-                 stable: float = 0.0) -> tuple[dict[int, float], dict[int, float]]:
+                 stable: float = 0.0,
+                 population_stable: Mapping[int, float] | None = None,
+                 ) -> tuple[dict[int, float], dict[int, float]]:
     """Les retraités d'une trajectoire, portés à un autre périmètre : les
     retraités de tous âges, puis ceux de 65 ans et plus, sur ``population_65``.
 
@@ -312,11 +325,16 @@ def au_perimetre(population_65: Mapping[int, float], agees: float, jeunes: float
     celui de la trajectoire, le niveau.
 
     ``stable`` est la part des plus jeunes de l'autre périmètre qui ne suit
-    pas la trajectoire, et garde son rapport aux 65 ans et plus : des
-    pensionnés que la trajectoire n'a pas — l'invalidité, que l'AWG compte
-    et que l'âge légal ne fait pas reculer.
+    pas la trajectoire : des pensionnés qu'elle n'a pas — l'invalidité, l'AAH,
+    la réversion seule, que l'AWG compte et que l'âge légal ne fait pas
+    reculer (:func:`pensionnes_de_2022`). Elle garde son rapport à
+    ``population_stable`` : aux 65 ans et plus par défaut, elle n'a pas d'effet
+    de couverture ; aux 20-64 ans, elle garde sa prévalence parmi eux, et
+    recule, rapportée aux 65 ans et plus, quand ceux-ci croissent plus vite.
     """
     premiere = grille[0]
+    if population_stable is None:
+        population_stable = population_65
 
     def couverture(serie: Mapping[int, float], annee: int) -> float:
         return serie[annee] / population_65_propre[annee]
@@ -324,13 +342,61 @@ def au_perimetre(population_65: Mapping[int, float], agees: float, jeunes: float
     def jeunes_de(annee: int) -> float:
         return couverture(retraites, annee) - couverture(retraites_agees, annee)
 
+    def stables_de(annee: int) -> float:
+        return (stable * population_stable[annee] / population_stable[premiere]
+                / (population_65[annee] / population_65[premiere]))
+
     portes_agees = {annee: population_65[annee] * agees * couverture(retraites_agees, annee)
                     / couverture(retraites_agees, premiere) for annee in grille}
     portes = {annee: portes_agees[annee]
               + population_65[annee] * jeunes
-              * (stable + (1.0 - stable) * jeunes_de(annee) / jeunes_de(premiere))
+              * (stables_de(annee) + (1.0 - stable) * jeunes_de(annee) / jeunes_de(premiere))
               for annee in grille}
     return portes, portes_agees
+
+
+#: Les tranches d'âge du témoin des pensionnés de 2022 qui font les moins de
+#: 65 ans, au 31 décembre ; la dernière du témoin, ``65_et_plus``, les autres.
+JEUNES: tuple[str, ...] = ("moins_de_55", "55_59", "60_61", "62_64")
+
+#: Ceux des pensionnés de l'AWG que le modèle n'a pas et que l'âge légal ne
+#: fait pas reculer : l'invalidité et l'AAH, que la retraite relaie sans
+#: rupture, et la réversion seule, qui n'en dépend pas.
+STABLES: tuple[str, ...] = ("invalidite", "aah", "reversion_seule")
+
+
+def pensionnes_de_2022(temoin: Mapping, rentes_at_mp: bool = False,
+                       ) -> dict[str, dict[str, float]]:
+    """Les pensionnés du 31 décembre 2022 au périmètre de l'AWG, par catégorie
+    puis par tranche d'âge, en personnes, du témoin de leurs sources
+    (``tests/temoins/pensionnes_de_2022.json``).
+
+    Les retraités de droit direct et de réversion seule d'Ancetre, résidents
+    en France ou non ; les pensionnés d'invalidité de chaque caisse de l'EACR ;
+    les bénéficiaires de l'AAH de la CNAF, portés à la France entière, MSA
+    comprise, par le total de la DREES, et avant 62 ans seulement : après, ils
+    sont aussi retraités, et Ancetre les compte déjà. ``rentes_at_mp`` y ajoute
+    les rentiers d'accident du travail de l'EACR, que l'AWG ne compte pas.
+    """
+    tranches = temoin["tranches"]
+
+    def par_caisse(categorie: str) -> dict[str, float]:
+        return {tranche: float(somme_ordonnee(caisse["tranches"][tranche]
+                                              for caisse in temoin[categorie]["caisses"].values()))
+                for tranche in tranches}
+
+    aah = temoin["aah"]
+    echelle = aah["total_france"] / aah["total"]
+    avant_62_ans = JEUNES[:3]
+    resultat = {
+        "droit_direct": {t: float(temoin["droit_direct"]["tranches"][t]) for t in tranches},
+        "reversion_seule": {t: float(temoin["reversion_seule"]["tranches"][t]) for t in tranches},
+        "invalidite": par_caisse("invalidite"),
+        "aah": {t: aah["tranches"][t] * echelle if t in avant_62_ans else 0.0 for t in tranches},
+    }
+    if rentes_at_mp:
+        resultat["rentes_at_mp"] = par_caisse("rentes_at_mp")
+    return resultat
 
 
 class _Agee:

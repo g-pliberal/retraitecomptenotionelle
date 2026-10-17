@@ -21,7 +21,11 @@ partagent pas (action 138, étape 3).
 La couverture se partage ensuite entre les retraités de 65 ans et plus et les
 plus jeunes, des deux côtés, puis la dynamique du modèle se porte au
 périmètre de l'AWG (``au_perimetre``) : ce qui reste de l'écart est celle-ci,
-ce qui part, le périmètre. ``--sans-suspension`` refait le modèle sur une copie
+ce qui part, le périmètre ; la part des pensionnés de moins de 65 ans de
+l'AWG que l'âge légal ne fait pas reculer — l'invalidité, l'AAH, la réversion
+seule — y garde sa prévalence parmi les 20-64 ans, à la mesure qu'en donnent
+leurs sources (``tests/temoins/pensionnes_de_2022.json``).
+``--sans-suspension`` refait le modèle sur une copie
 des données où la réforme de 2023 s'applique entière, sans la suspension de
 la loi de financement pour 2026 (``REFORME_2023_ENTIERE``) : l'univers de
 l'AWG, qui l'a précédée.
@@ -43,16 +47,20 @@ sys.path.insert(0, str(RACINE / "src"))
 from retraite_notionnelle.facteurs_depense import (  # noqa: E402
     FACTEURS,
     GRILLE_AWG,
+    JEUNES,
     PERIODES_AWG,
+    STABLES,
     annees_du_modele,
     au_perimetre,
     decomposer,
     partager_couverture,
+    pensionnes_de_2022,
     retraites_par_age,
 )
 from retraite_notionnelle.somme import somme_ordonnee  # noqa: E402
 
 TEMOIN = RACINE / "tests" / "temoins" / "ageing_report_france.json"
+PENSIONNES = RACINE / "tests" / "temoins" / "pensionnes_de_2022.json"
 #: Les jeux d'hypothèses du COR que le script décompose.
 PROJECTIONS = (("cor_reference", "modèle, productivité 0,7 %"),
                ("cor_productivite_haute", "modèle, productivité 1,0 %"))
@@ -63,6 +71,9 @@ NOMS = {"variation": "Dépense", "dependance": "Dépendance", "couverture": "Cou
 PARTS = {"vieillesse": "65 ans et plus", "precoce": "Moins de 65 ans"}
 #: Les sous-périodes où la couverture se partage.
 PERIODES_COUVERTURE = ((2022, 2030), (2030, 2070), (2022, 2070))
+#: Les pensionnés de 2022, par catégorie (``pensionnes_de_2022``).
+CATEGORIES = {"droit_direct": "droit direct", "reversion_seule": "réversion seule",
+              "invalidite": "invalidité", "aah": "AAH"}
 
 #: La réforme de 2023 entière, telle que l'AWG l'a projetée avant la
 #: suspension : l'âge d'ouverture et la durée requise des générations que la
@@ -108,7 +119,9 @@ def awg() -> dict:
                   "retraites": {annee: series["pensionnes"][annee] for annee in GRILLE_AWG},
                   "retraites_agees": {annee: series["pensionnes_65_plus"][annee]
                                       for annee in GRILLE_AWG},
-                  "population_65": population_65}
+                  "population_65": population_65,
+                  "population_20_64": {annee: series["population_20_64"][annee]
+                                       for annee in GRILLE_AWG}}
     return {"part_pib": {annee: series["depense_brute"][annee] for annee in (2022, 2070)},
             "periodes": periodes, "facteurs": {2022: facteurs(2022), 2070: facteurs(2070)},
             "couverture": couverture}
@@ -130,21 +143,25 @@ def parts_de_couverture(series: dict) -> dict[str, dict[str, float]]:
     return resultat
 
 
-def porte_au_perimetre(propre: dict, autre: dict, stable: float = 0.0) -> dict:
+def porte_au_perimetre(propre: dict, autre: dict, stable: float = 0.0,
+                       population_stable: dict | None = None) -> dict:
     """Les séries de couverture d'une trajectoire, portées au périmètre d'une
     autre : ses niveaux de 2022 et sa dépense, la dynamique de la première,
-    sauf la part ``stable`` des plus jeunes (``au_perimetre``)."""
+    sauf la part ``stable`` des plus jeunes, qui garde son rapport à
+    ``population_stable`` (``au_perimetre``)."""
     premiere = GRILLE_AWG[0]
     agees = autre["retraites_agees"][premiere] / autre["population_65"][premiere]
     jeunes = autre["retraites"][premiere] / autre["population_65"][premiere] - agees
     retraites, retraites_agees = au_perimetre(
         autre["population_65"], agees, jeunes, propre["retraites"],
-        propre["retraites_agees"], propre["population_65"], stable=stable)
+        propre["retraites_agees"], propre["population_65"], stable=stable,
+        population_stable=population_stable)
     return {"part_pib": autre["part_pib"], "retraites": retraites,
             "retraites_agees": retraites_agees, "population_65": autre["population_65"]}
 
 
-def part_stable(propre: dict, autre: dict, periode: str = "2022-2070") -> float:
+def part_stable(propre: dict, autre: dict, periode: str = "2022-2070",
+                population_stable: dict | None = None) -> float:
     """La part stable des plus jeunes de ``autre`` qui, portée au périmètre,
     refait leur effet sur ``periode`` : l'effet recule à mesure qu'elle
     croît, et la dichotomie la trouve entre zéro et un."""
@@ -152,12 +169,26 @@ def part_stable(propre: dict, autre: dict, periode: str = "2022-2070") -> float:
     bas, haut = 0.0, 1.0
     for _ in range(50):
         milieu = (bas + haut) / 2
-        porte = parts_de_couverture(porte_au_perimetre(propre, autre, milieu))
+        porte = parts_de_couverture(porte_au_perimetre(propre, autre, milieu,
+                                                       population_stable))
         if porte[periode]["precoce"] < cible:
             bas = milieu
         else:
             haut = milieu
     return (bas + haut) / 2
+
+
+def part_stable_mesuree(autre: dict) -> tuple[float, dict[str, float]]:
+    """La part stable des plus jeunes de ``autre`` (l'AWG), mesurée : ses
+    pensionnés de moins de 65 ans que l'âge légal ne fait pas reculer, comptés
+    à leurs sources au 31 décembre 2022 (``pensionnes_de_2022``), rapportés aux
+    siens ; et ses moins de 65 ans par catégorie, en personnes."""
+    mesures = pensionnes_de_2022(json.loads(PENSIONNES.read_text(encoding="utf-8")))
+    par_categorie = {categorie: somme_ordonnee(tranches[t] for t in JEUNES)
+                     for categorie, tranches in mesures.items()}
+    premiere = GRILLE_AWG[0]
+    jeunes = (autre["retraites"][premiere] - autre["retraites_agees"][premiere]) * 1000
+    return somme_ordonnee(par_categorie[c] for c in STABLES) / jeunes, par_categorie
 
 
 def reforme_entiere(racine: Path, destination: Path) -> Path:
@@ -271,16 +302,20 @@ def main(argv: list[str] | None = None) -> int:
           f" → {_nombre(niveaux[2070]['retraites'] / 1e6)} millions de retraités) ; de l'AWG : "
           f"{_nombre(publie[2022]['couverture'], 3)} → {_nombre(publie[2070]['couverture'], 3)}")
 
+    publiee = colonnes["Ageing Report 2024"]["couverture"]
     colonnes_couverture = {
-        "Ageing Report 2024": colonnes["Ageing Report 2024"]["couverture"],
+        "Ageing Report 2024": publiee,
         "modèle": reference["couverture"],
-        "modèle au périmètre de l'AWG": porte_au_perimetre(
-            reference["couverture"], colonnes["Ageing Report 2024"]["couverture"]),
+        "modèle au périmètre de l'AWG": porte_au_perimetre(reference["couverture"], publiee),
     }
-    stable = part_stable(reference["couverture"], colonnes["Ageing Report 2024"]["couverture"])
-    resultats["part_stable"] = stable
-    colonnes_couverture[f"et {_nombre(stable * 100, 0)} % stables"] = porte_au_perimetre(
-        reference["couverture"], colonnes["Ageing Report 2024"]["couverture"], stable)
+    stable = part_stable(reference["couverture"], publiee)
+    calee = part_stable(reference["couverture"], publiee,
+                        population_stable=publiee["population_20_64"])
+    mesuree, par_categorie = part_stable_mesuree(publiee)
+    resultats.update(part_stable=stable, part_stable_20_64=calee, part_stable_mesuree=mesuree)
+    colonnes_couverture[f"et {_nombre(mesuree * 100, 0)} % stables, mesurés"] = (
+        porte_au_perimetre(reference["couverture"], publiee, mesuree,
+                           publiee["population_20_64"]))
     if arguments.sans_suspension:
         from retraite_notionnelle.config import RACINE_DONNEES
 
@@ -301,15 +336,20 @@ def main(argv: list[str] | None = None) -> int:
         return (series["retraites"][2022] - series["retraites_agees"][2022]) / par
 
     propre = reference["couverture"]
-    publiee = colonnes["Ageing Report 2024"]["couverture"]
     print()
     print("Retraités de moins de 65 ans en 2022, en millions : modèle "
           f"{_nombre(jeunes(propre, 1e6))}, AWG {_nombre(jeunes(publiee, 1e3))} ; par "
           f"personne de 65 ans et plus : modèle "
           f"{_nombre(jeunes(propre, propre['population_65'][2022]), 3)}, AWG "
-          f"{_nombre(jeunes(publiee, publiee['population_65'][2022]), 3)} ; part stable "
-          f"des moins de 65 ans de l'AWG qui refait leur effet de 2022-2070 : "
-          f"{_nombre(stable * 100, 1)} %, {_nombre(jeunes(publiee, 1e3) * stable)} millions")
+          f"{_nombre(jeunes(publiee, publiee['population_65'][2022]), 3)}")
+    print("Pensionnés de moins de 65 ans au 31 décembre 2022, mesurés, en millions : "
+          + ", ".join(f"{CATEGORIES[nom]} {_nombre(effectif / 1e6)}"
+                      for nom, effectif in par_categorie.items())
+          + f" ; part stable (invalidité, AAH, réversion seule) : {_nombre(mesuree * 100, 1)} %,"
+          f" {_nombre(jeunes(publiee, 1e3) * mesuree)} millions. Calée pour refaire l'effet "
+          f"des moins de 65 ans de l'AWG de 2022-2070 : {_nombre(calee * 100, 1)} % si elle "
+          f"garde sa prévalence parmi les 20-64 ans, {_nombre(stable * 100, 1)} % si elle "
+          f"garde son rapport aux 65 ans et plus")
     for periode in (f"{debut}-{fin}" for debut, fin in PERIODES_COUVERTURE):
         print()
         print(f"| Couverture, {periode} | " + " | ".join(parts) + " |")

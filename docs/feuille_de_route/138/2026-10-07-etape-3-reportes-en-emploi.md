@@ -1,15 +1,15 @@
 # Étape 3, première partie : la part des reportés en emploi, lue dans les évaluations de 2010
 
-**Reprise, au 16 octobre 2026.** Fait : la part des reportés en emploi
+**Reprise, au 17 octobre 2026.** Fait : la part des reportés en emploi
 (7 octobre) ; l'Ageing Report (13) ; les leviers du COR et la CSG effective
-(14) ; le 16, Ancetre, l'EACR, la CNRACL et les civils de l'État pesés sur
-leurs départs, puis la couverture de 2022-2030 départagée : périmètre 0,23
-point, 65 ans et plus 0,15, suspension 0,09 à sa mesure, 0,07 non séparé.
-Reste, une session par point : l'Ircantec, qui demande un poids en
-équivalents carrières complètes (une décision, avec l'action 147) ; la part
-stable des moins de 65 ans de l'AWG, à mesurer ; les leviers et le taux
-effectif sur la page Coût ; au propriétaire, la table des poids (`pages.js`).
-Détail : notes « actifs de l'État », « couverture de 2022-2030 ».
+(14) ; Ancetre, l'EACR, la CNRACL et les civils de l'État (16) ; le 17, la
+part stable des moins de 65 ans de l'AWG mesurée, 48 % (invalidité, AAH,
+réversion seule), qui suit les 20-64 ans : l'écart de couverture de 2022-2030,
+0,54 point, tient au périmètre pour 0,10, aux 65 ans et plus 0,15, aux moins
+de 65 ans du modèle, qui partent plus tard, 0,29. Reste, une session par point :
+l'Ircantec (une décision, avec l'action 147) ; ces 0,29 point à séparer ; les
+leviers et le taux effectif sur la page Coût ; au propriétaire, la table des
+poids (`pages.js`). Détail : notes « actifs de l'État », « part stable mesurée ».
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.3 ». L'étape est
 vaste — sept chantiers, vingt-neuf points du registre — ; cette session en

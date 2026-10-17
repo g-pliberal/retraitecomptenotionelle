@@ -1,0 +1,320 @@
+{
+ "source": {
+  "eacr": "https://data.drees.solidarites-sante.gouv.fr/api/explore/v2.1/catalog/datasets/donnes_eacr — 62 EACR diffusée Part 1 - version du 26 mai 2026.xlsx, 62 EACR diffusée Part 2 - version du 26 mai 2026.xlsx",
+  "aah": "https://data.caf.fr/api/explore/v2.1/catalog/datasets/aah_s_sexe_age_1_nat (total : s_ben_nat), décembre 2022",
+  "aah_france": "https://data.drees.solidarites-sante.gouv.fr/api/explore/v2.1/catalog/datasets/336_minima-sociaux-rsa-et-prime-d-activite/attachments/minima_sociaux_donnees_nationales_par_dispositif_xlsx — tableau 2, France",
+  "ageing_report": "https://economy-finance.ec.europa.eu/document/download/e412927a-ea31-406d-bb6c-c925914123e9_en?filename=2024-ageing-report-country-fiche-France.pdf — tableau 12, p. 32",
+  "lu_le": "2026-10-17"
+ },
+ "date": "2022-12-31",
+ "tranches": [
+  "moins_de_55",
+  "55_59",
+  "60_61",
+  "62_64",
+  "65_et_plus"
+ ],
+ "unite": "personnes au 31 décembre ; le tableau 12 en % de la population de l'âge",
+ "droit_direct": {
+  "tranches": {
+   "moins_de_55": 101993,
+   "55_59": 131357,
+   "60_61": 344328,
+   "62_64": 1765093,
+   "65_et_plus": 14631980
+  },
+  "total": 16974753,
+  "residents": {
+   "tranches": {
+    "moins_de_55": 99084,
+    "55_59": 127829,
+    "60_61": 341091,
+    "62_64": 1742583,
+    "65_et_plus": 13751382
+   },
+   "total": 16061968
+  },
+  "feuille": "C-Droits_directs",
+  "champ": "ddir",
+  "source": "Ancetre 2022"
+ },
+ "reversion_seule": {
+  "tranches": {
+   "moins_de_55": 51544,
+   "55_59": 120382,
+   "60_61": 77024,
+   "62_64": 66051,
+   "65_et_plus": 599439
+  },
+  "total": 914435,
+  "residents": {
+   "tranches": {
+    "moins_de_55": 46671,
+    "55_59": 108705,
+    "60_61": 68607,
+    "62_64": 56117,
+    "65_et_plus": 199925
+   },
+   "total": 480024
+  },
+  "feuille": "D-Droits_dérivés",
+  "champ": "dders",
+  "source": "Ancetre 2022"
+ },
+ "invalidite": {
+  "feuille": "I-Invalidité",
+  "caisses": {
+   "0012": {
+    "caisse": "Fonction publique d'état civile",
+    "source": "EACR 2022",
+    "tranches": {
+     "moins_de_55": 4313,
+     "55_59": 6248,
+     "60_61": 4535,
+     "62_64": 0,
+     "65_et_plus": 0
+    },
+    "total": 15096
+   },
+   "0013": {
+    "caisse": "Fonction publique d'état militaire",
+    "source": "EACR 2022",
+    "tranches": {
+     "moins_de_55": 24631,
+     "55_59": 751,
+     "60_61": 237,
+     "62_64": 0,
+     "65_et_plus": 0
+    },
+    "total": 25619
+   },
+   "0015": {
+    "caisse": "CNAM, yc indépendants",
+    "source": "EACR 2022",
+    "tranches": {
+     "moins_de_55": 328033,
+     "55_59": 248586,
+     "60_61": 124794,
+     "62_64": 17190,
+     "65_et_plus": 2311
+    },
+    "total": 720914
+   },
+   "0021": {
+    "caisse": "MSA Salariés",
+    "source": "EACR 2022",
+    "tranches": {
+     "moins_de_55": 12434,
+     "55_59": 10049,
+     "60_61": 5003,
+     "62_64": 432,
+     "65_et_plus": 50
+    },
+    "total": 27968
+   },
+   "0022": {
+    "caisse": "MSA non Salariés",
+    "source": "EACR 2022",
+    "tranches": {
+     "moins_de_55": 2775,
+     "55_59": 3624,
+     "60_61": 1978,
+     "62_64": 607,
+     "65_et_plus": 206
+    },
+    "total": 9190
+   },
+   "0032": {
+    "caisse": "CNRACL",
+    "source": "EACR 2022",
+    "tranches": {
+     "moins_de_55": 12872,
+     "55_59": 16127,
+     "60_61": 10065,
+     "62_64": 0,
+     "65_et_plus": 0
+    },
+    "total": 39064
+   },
+   "0070": {
+    "caisse": "ENIM",
+    "source": "EACR 2022",
+    "tranches": {
+     "moins_de_55": 296,
+     "55_59": 59,
+     "60_61": 20,
+     "62_64": 0,
+     "65_et_plus": 0
+    },
+    "total": 375
+   },
+   "0100": {
+    "caisse": "CNIEG",
+    "source": "EACR 2022",
+    "tranches": {
+     "moins_de_55": 1735,
+     "55_59": 866,
+     "60_61": 269,
+     "62_64": 18,
+     "65_et_plus": 0
+    },
+    "total": 2888
+   },
+   "0500": {
+    "caisse": "CRPCEN",
+    "source": "EACR 2022",
+    "tranches": {
+     "moins_de_55": 518,
+     "55_59": 412,
+     "60_61": 148,
+     "62_64": 0,
+     "65_et_plus": 0
+    },
+    "total": 1078
+   },
+   "0600": {
+    "caisse": "Banque de France",
+    "source": "EACR 2022",
+    "tranches": {
+     "moins_de_55": 26,
+     "55_59": 51,
+     "60_61": 29,
+     "62_64": 0,
+     "65_et_plus": 0
+    },
+    "total": 106
+   }
+  },
+  "absentes": {
+   "0060": {
+    "caisse": "CPR SNCF",
+    "total_de_l_annee_precedente": 10784
+   },
+   "0300": {
+    "caisse": "CRP RATP",
+    "total_de_l_annee_precedente": 2573
+   }
+  }
+ },
+ "rentes_at_mp": {
+  "feuille": "J-Rentes AT-MP",
+  "caisses": {
+   "0012": {
+    "caisse": "Fonction publique d'état civile",
+    "source": "EACR 2023",
+    "tranches": {
+     "moins_de_55": 135,
+     "55_59": 293,
+     "60_61": 221,
+     "62_64": 545,
+     "65_et_plus": 4631
+    },
+    "total": 5825
+   },
+   "0015": {
+    "caisse": "CNAM",
+    "source": "EACR 2022",
+    "tranches": {
+     "moins_de_55": 201627,
+     "55_59": 116529,
+     "60_61": 55245,
+     "62_64": 87089,
+     "65_et_plus": 543703
+    },
+    "total": 1004193
+   },
+   "0021": {
+    "caisse": "MSA salariés",
+    "source": "EACR 2022",
+    "tranches": {
+     "moins_de_55": 19565,
+     "55_59": 10196,
+     "60_61": 4767,
+     "62_64": 7269,
+     "65_et_plus": 33139
+    },
+    "total": 74936
+   },
+   "0022": {
+    "caisse": "MSA non salariés",
+    "source": "EACR 2022",
+    "tranches": {
+     "moins_de_55": 2045,
+     "55_59": 1705,
+     "60_61": 916,
+     "62_64": 1439,
+     "65_et_plus": 4229
+    },
+    "total": 10334
+   },
+   "0032": {
+    "caisse": "CNRACL",
+    "source": "EACR 2022",
+    "tranches": {
+     "moins_de_55": 1420,
+     "55_59": 2026,
+     "60_61": 1398,
+     "62_64": 3019,
+     "65_et_plus": 10716
+    },
+    "total": 18579
+   },
+   "0060": {
+    "caisse": "SNCF",
+    "source": "EACR 2022",
+    "tranches": {
+     "moins_de_55": 119,
+     "55_59": 213,
+     "60_61": 455,
+     "62_64": 924,
+     "65_et_plus": 5834
+    },
+    "total": 7545
+   },
+   "0070": {
+    "caisse": "ENIM",
+    "source": "EACR 2022",
+    "tranches": {
+     "moins_de_55": 1000,
+     "55_59": 655,
+     "60_61": 298,
+     "62_64": 456,
+     "65_et_plus": 4233
+    },
+    "total": 6642
+   },
+   "0100": {
+    "caisse": "CNIEG",
+    "source": "EACR 2022",
+    "tranches": {
+     "moins_de_55": 384,
+     "55_59": 331,
+     "60_61": 261,
+     "62_64": 519,
+     "65_et_plus": 4163
+    },
+    "total": 5658
+   }
+  },
+  "absentes": {}
+ },
+ "aah": {
+  "tranches": {
+   "moins_de_55": 837139,
+   "55_59": 216601,
+   "60_61": 86357,
+   "62_64": 43760,
+   "65_et_plus": 73486
+  },
+  "indetermine": 924,
+  "total": 1258267,
+  "total_france": 1294700
+ },
+ "ageing_report": {
+  "2022": {
+   "moins_de_55": 3.1,
+   "55_59": 17.4,
+   "60_64": 64.1
+  }
+ }
+}

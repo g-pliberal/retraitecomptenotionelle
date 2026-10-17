@@ -17,10 +17,13 @@ Ce module tient trois choses :
   2070, l'AWG la fait baisser. Sous une productivité proche de la sienne, la
   prestation du modèle recule autant que la sienne ; le reste tient à la
   démographie de l'INSEE de 2026, plus vieille que celle d'Eurostat de 2023, à
-  l'emploi du COR, et à la couverture, qui recule moins de 2022 à 2030 : le
-  périmètre surtout — l'AWG compte deux fois plus de pensionnés de moins de 65
-  ans —, puis les 65 ans et plus et la suspension de 2026 (note du 16 octobre
-  2026, « la couverture de 2022-2030 »).
+  l'emploi du COR, et à la couverture, qui recule moins de 2022 à 2030. L'AWG
+  compte deux fois plus de pensionnés de moins de 65 ans, mais près de la
+  moitié — l'invalidité, l'AAH, la réversion seule, mesurées le 17 octobre
+  2026 (``tests/test_pensionnes_de_l_awg.py``) — ne recule pas avec l'âge
+  légal : le périmètre fait peu de l'écart ; les retraités de moins de 65 ans
+  du modèle, qui reculent plus tard, le plus ; puis les 65 ans et plus et la
+  suspension de 2026 (notes du 16 et du 17 octobre 2026).
 """
 
 from __future__ import annotations
@@ -287,7 +290,8 @@ def test_la_couverture_de_2022_2030_tient_au_perimetre_de_l_awg(awg):
     celle de l'AWG de 1,38 (note du 16 octobre 2026). Ses moins de 65 ans
     reculent autant, rapportés aux 65 ans et plus — 36 % contre 33 % —, mais
     l'AWG en compte deux fois plus, l'invalidité comprise : portée à son
-    périmètre, la dynamique du modèle refait l'essentiel de son effet."""
+    périmètre, la dynamique du modèle refait l'essentiel de son effet, si tous
+    la suivaient. Près de la moitié ne la suit pas (test suivant)."""
     from retraite_notionnelle import Parametres
 
     annees, decomposition = _decomposition("cor_reference", "actuel")
@@ -319,3 +323,43 @@ def test_la_couverture_de_2022_2030_tient_au_perimetre_de_l_awg(awg):
     assert ecart > 0.4
     assert abs(portee["vieillesse"][2030] + portee["precoce"][2030] - publiee) < ecart / 2
 
+
+def test_la_part_stable_mesuree_garde_sa_prevalence_parmi_les_20_64_ans(awg):
+    """Mesurée (``tests/test_pensionnes_de_l_awg.py``), la part stable des
+    moins de 65 ans de l'AWG est de 48 % : l'invalidité, l'AAH, la réversion
+    seule. Si elle gardait son rapport aux 65 ans et plus, comme la note du 16
+    octobre le supposait, la dynamique du modèle, portée au périmètre de l'AWG,
+    manquerait de plus d'un demi-point l'effet de ses moins de 65 ans de 2022
+    à 2070 ; gardant sa prévalence parmi les 20-64 ans, elle le refait à 0,15
+    point près. Reste 2022-2030 : les retraités du modèle reculent plus tard,
+    et en laissent plus de 0,2 point (note du 17 octobre 2026)."""
+    from retraite_notionnelle import Parametres
+    from retraite_notionnelle.facteurs_depense import JEUNES, STABLES, pensionnes_de_2022
+
+    annees, _decomposition_ = _decomposition("cor_reference", "actuel")
+    par_age = retraites_par_age(Parametres(scenario_projection="cor_reference"), GRILLE_AWG)
+    retraites = {annee: par_age[annee][0] for annee in GRILLE_AWG}
+    agees = {annee: par_age[annee][1] for annee in GRILLE_AWG}
+    population_65 = {annee: annees[annee].population_65 for annee in GRILLE_AWG}
+    part_pib, pensionnes, pensionnes_agees, population_65_awg = _couverture_de_l_awg(awg)
+    population_20_64 = {annee: awg["series"]["population_20_64"][annee] for annee in GRILLE_AWG}
+    mesures = pensionnes_de_2022(json.loads(
+        (RACINE / "tests" / "temoins" / "pensionnes_de_2022.json").read_text(encoding="utf-8")))
+    premiere = GRILLE_AWG[0]
+    stable = (sum(mesures[categorie][tranche] for categorie in STABLES for tranche in JEUNES)
+              / ((pensionnes[premiere] - pensionnes_agees[premiere]) * 1000))
+    vieux = pensionnes_agees[premiere] / population_65_awg[premiere]
+    plus_jeunes = pensionnes[premiere] / population_65_awg[premiere] - vieux
+
+    def precoce(population_stable=None) -> dict:
+        return partager_couverture(part_pib, *au_perimetre(
+            population_65_awg, vieux, plus_jeunes, retraites, agees, population_65,
+            stable=stable, population_stable=population_stable),
+            population_65_awg)["precoce"]
+
+    publie = partager_couverture(part_pib, pensionnes, pensionnes_agees,
+                                 population_65_awg)["precoce"]
+    aux_65_ans, aux_20_64_ans = precoce(), precoce(population_20_64)
+    assert aux_65_ans[2070] - publie[2070] > 0.5
+    assert abs(aux_20_64_ans[2070] - publie[2070]) < 0.15
+    assert aux_20_64_ans[2030] - publie[2030] > 0.2

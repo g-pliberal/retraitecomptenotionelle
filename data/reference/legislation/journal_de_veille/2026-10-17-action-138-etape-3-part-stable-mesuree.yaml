@@ -1,0 +1,24 @@
+date: "2026-10-17"
+session: "action 138, étape 3 : la part stable des moins de 65 ans de l'AWG, mesurée"
+consulte: >-
+  Aucun texte de droit : la mesure ne touche à aucune règle du scénario 1. Les
+  deux classeurs « 62 EACR diffusée » de la DREES, version du 26 mai 2026
+  (data.drees, jeu donnes_eacr) : les feuilles C-Droits_directs,
+  D-Droits_dérivés, I-Invalidité et J-Rentes AT-MP, et leur documentation de
+  mai 2026 ; les bénéficiaires de l'AAH de la CNAF par âge, décembre 2022
+  (data.caf.fr, aah_s_sexe_age_1_nat et s_ben_nat) ; les données nationales
+  des minima sociaux de la DREES, tableau 2 ; la fiche France de l'Ageing
+  Report de 2024, § 1.1.d, § 3.1 et tableau 12.
+trouve: >-
+  L'AWG range l'AAH, les rentes d'accident du travail et les pensions
+  d'invalidité dans sa dépense d'invalidité ; parmi ses pensionnés, il compte
+  l'AAH et l'invalidité, non les rentiers d'accident du travail, qui
+  dépasseraient de 15 % ses moins de 60 ans. Avant 65 ans, au 31 décembre
+  2022, l'invalidité (0,84 million), l'AAH (1,17) et la réversion seule
+  (0,32) font 47,8 % de ses 4,87 millions de pensionnés, qui gardent leur
+  prévalence dans leur classe d'âge. La documentation de l'EACR range parmi
+  les retraités de la fonction publique ses seuls invalides de 62 ans et plus.
+reste: >-
+  Rien au droit. Les doubles comptes de l'AAH et de l'invalidité, que les
+  sources lues ne mesurent pas ; l'invalidité de la SNCF et de la RATP,
+  absente de la campagne de 2022 de l'EACR.

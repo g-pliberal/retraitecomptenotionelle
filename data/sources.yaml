@@ -1150,6 +1150,30 @@ institutions:
           (`retraite_notionnelle.controle_eacr`, action 138, étape 3). Les
           mêmes classeurs que `drees_eacr`, d'autres feuilles, chacune lue
           seule.
+      - id: drees_pensionnes_2022
+        titre: >-
+          Les pensionnés du 31 décembre 2022 par tranche d'âge : retraités de
+          droit direct et de réversion seule, tous régimes (tables C et D de
+          l'EACR, tirées d'Ancetre), pensionnés d'invalidité et rentiers
+          d'accident du travail, caisse par caisse (tables I et J), et
+          allocataires de l'AAH de la France entière (minima sociaux, données
+          nationales par dispositif, tableau 2)
+        url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/donnes_eacr/
+        acces: api
+        statut_integration: controle
+        cible: tests/temoins/pensionnes_de_2022.json
+        recuperation: scripts/fetch/pensionnes_de_2022.py
+        millesime: 26 mai 2026 (EACR) ; 4 décembre 2025 (minima sociaux)
+        note: >-
+          Il n'alimente aucune valeur : `tests/test_pensionnes_de_l_awg.py`
+          compte à leurs sources les pensionnés que l'Ageing Report de 2024
+          range parmi les siens, et mesure ceux de moins de 65 ans que l'âge
+          légal ne fait pas reculer — l'invalidité, l'AAH, la réversion seule —,
+          2,33 millions, 48 % des siens (action 138, étape 3). Les mêmes
+          classeurs que `drees_eacr`, d'autres feuilles ; la campagne de 2022
+          ne porte pas l'invalidité de la SNCF ni de la RATP, que le témoin
+          dit pour 2021. Les bénéficiaires de l'AAH par âge sont ceux de la
+          CNAF (`cnaf_aah_age`), que ce total porte à la MSA.
       - id: drees_eir_caracteristiques
         titre: Caractéristiques des retraités (échantillon interrégimes de retraités)
         url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/3013_donnees-statistiques-sur-les-caracteristiques-des-retraites/
@@ -4624,6 +4648,32 @@ institutions:
           hypothèses ne sont pas celles du dépôt : la population EUROPOP2023,
           une productivité horaire de 1,03 % par an, la loi d'avant la LFSS
           pour 2026.
+
+  cnaf:
+    nom: Caisse nationale des allocations familiales
+    role: >-
+      Les prestations que versent les caisses d'allocations familiales, dont
+      l'allocation aux adultes handicapés, en données ouvertes (data.caf.fr).
+    jeux:
+      - id: cnaf_aah_age
+        titre: >-
+          AAH : les bénéficiaires selon le sexe et l'âge, France, en décembre
+          2022 (`aah_s_sexe_age_1_nat`), et leur total national
+          (`s_ben_nat`)
+        url: https://data.caf.fr/explore/dataset/aah_s_sexe_age_1_nat/
+        acces: api
+        statut_integration: controle
+        cible: tests/temoins/pensionnes_de_2022.json
+        recuperation: scripts/fetch/pensionnes_de_2022.py
+        millesime: décembre 2022
+        note: >-
+          Il n'alimente aucune valeur. L'Ageing Report de 2024 range l'AAH
+          parmi les pensions d'invalidité de la France (fiche France, § 3.1),
+          et ses bénéficiaires parmi ses pensionnés : avant 62 ans, ils font
+          1,17 million de ses 4,87 millions de pensionnés de moins de 65 ans,
+          une fois portés à la France entière par le total de la DREES
+          (`drees_pensionnes_2022`). La somme des âges refait le total
+          national publié, 1 258 267.
 
   ocde:
     nom: Organisation de coopération et de développement économiques
