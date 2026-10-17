@@ -9860,7 +9860,7 @@ varie de ${ecarts(fecondite, "actuel")} sous la fécondité, de
 ${ecarts(migrations, "actuel")} sous les migrations ; celle de la proposition
 libérale, de ${ecarts(fecondite, "notionnel_liberal")}, et de
 ${ecarts(migrations, "notionnel_liberal")}. Le diviseur ne voit pas qui
-cotise, mais ses comptes et ses pensions s'indexent sur la masse salariale de
+cotise, mais les comptes et les pensions de la proposition s'indexent sur la masse salariale de
 la variante, qui croît plus vite quand la population active est plus
 nombreuse : ils suivent le PIB, et la dépense de la proposition reste presque
 celle du central. Ce qui en reste d'écart tient aux pensions liquidées avant
@@ -12703,9 +12703,11 @@ peut ni changer ni lire ailleurs.</p>
   revenus d'activité en ${obs} à
   ${g.pourcentage(comptes.tauxPrelevement.valeur(avenir.derniereAnnee), false, 1)}
   en ${avenir.derniereAnnee}, l'assiette tenant à peu près sa part de PIB :
-  cette hypothèse est la sienne, et personne ne l'a mesurée. Seize autres
-  scénarios démographiques existent, dont l'écart mesurerait l'incertitude ;
-  cette page n'en montre aucun.</li>
+  cette hypothèse est la sienne, et personne ne l'a mesurée. Des seize
+  autres scénarios démographiques de l'INSEE, la page montre plus haut les six
+  qui ne s'écartent du central que par une composante, sous « Si l'on vit plus
+  ou moins longtemps » et « Naissances et migrations » ; aucun n'en croise
+  deux.</li>
   <li><strong>Les chiffres de la proposition ont une fourchette, étroite.</strong>
   Le rapport de masses que la page prend au modèle porte l'écart de sa propre
   trajectoire à celle du COR, qui n'est plus que de quelques points : si cet

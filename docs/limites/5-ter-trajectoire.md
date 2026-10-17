@@ -14,7 +14,7 @@ et pas 2080 — et non une préférence du dépôt. L'INSEE publie seize autres
 scénarios ; le modèle lit les six qui ne diffèrent du central que par une
 composante — l'espérance de vie (`Parametres.hypothese_esperance_vie`), la
 fécondité et les migrations (`Population(demographie=...)`), basses et
-hautes —, et la page n'en montre encore que les deux premiers. Sous une
+hautes —, et la page Coût les montre tous les six, en deux dépliants. Sous une
 variante, la dépense du COR suit ce que sa pyramide change à la masse du
 système actuel, et son PIB ce qu'elle change aux 20-64 ans, l'emploi du COR
 suivant le central ; et le compte de la proposition et sa pension servie
