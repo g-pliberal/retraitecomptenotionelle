@@ -12706,8 +12706,8 @@ peut ni changer ni lire ailleurs.</p>
   cette hypothèse est la sienne, et personne ne l'a mesurée. Des seize
   autres scénarios démographiques de l'INSEE, la page montre plus haut les six
   qui ne s'écartent du central que par une composante, sous « Si l'on vit plus
-  ou moins longtemps » et « Naissances et migrations » ; aucun n'en croise
-  deux.</li>
+  ou moins longtemps » et « Naissances et migrations » ; les dix qui en
+  croisent plusieurs n'y sont pas.</li>
   <li><strong>Les chiffres de la proposition ont une fourchette, étroite.</strong>
   Le rapport de masses que la page prend au modèle porte l'écart de sa propre
   trajectoire à celle du COR, qui n'est plus que de quelques points : si cet
