@@ -1,0 +1,32 @@
+date: "2026-10-17"
+session: "action 159, étape 3, le reste : la contribution employeur du FSPOEIE avant 2000, lue dans les décrets qui fixent son taux"
+consulte: >-
+  python scripts/veille_droit.py ; l'index DILA du dépôt (release index-dila), LEGI et
+  JORF, sans retélécharger les dumps, l'index LEGI mis à jour de sept incréments, jusqu'au
+  17 octobre 2026. LEGI : les six versions de l'article 28 du décret n° 65-836 du
+  24 septembre 1965 (LEGIARTI000006766781 à LEGIARTI000006766786, du 2 avril 1982 au
+  1er janvier 2004) ; le décret n° 91-239 du 1er mars 1991 (LEGITEXT000006067602,
+  articles 1er à 4) ; le décret n° 98-1169 du 21 décembre 1998 (LEGITEXT000005627156,
+  articles 1er à 3). JORF : le résumé du décret n° 82-301 du 31 mars 1982
+  (JORFTEXT000000879581) ; les décrets n° 83-1183, 86-885, 86-886, 87-457, 88-799 et
+  88-1213, sur la retenue ; le décret n° 2010-1749, qui abroge celui de 1991. Pour la
+  fiche fin_de_la_suspension_2028 : les versions de L. 161-17-2 et L. 161-17-3.
+trouve: >-
+  La contribution de l'État au FSPOEIE est de 9 % des rémunérations dues à compter du
+  1er avril 1982 (décret n° 82-301, au IV de l'article 28 du décret de 1965), de 10,34 %
+  pour celles versées à compter du 1er février 1991 (décret n° 91-239, article 3), de 24 %
+  à compter du 1er janvier 1999 (décret n° 98-1169, article 1er, dont l'article 2 abroge
+  l'article 3 du décret de 1991 au même jour). Les deux décrets fixent le taux à côté de
+  l'article sans le récrire : la version de l'article ouverte le 31 décembre 1988 court
+  jusqu'au 1er janvier 2002 sur 9 % et sur une retenue de 8,9 %. Aucun autre texte de la
+  base JORF ne touche au IV entre 1982 et 1999 ; ceux de 1983 à 1988 ne changent que la
+  retenue, que la fiche fspoeie porte aux mêmes dates. Dix-sept années certifiées dans
+  contribution_employeur_public.csv, sous la règle du 1er janvier : 9 % de 1983 à 1991,
+  10,34 % de 1992 à 1998, 24 % en 1999. Aux scénarios 4 et 6, dix-sept témoins passés
+  par le FSPOEIE baissent, de 2,78 % en médiane. L. 161-17-2 et L. 161-17-3 n'ont pas de
+  version postérieure à celle du 31 décembre 2025. Le scénario 1 n'est pas touché, et
+  textes.py --inscrire n'a pas été lancé.
+reste: >-
+  Le taux d'avant le 1er avril 1982, qu'aucune version de l'article ne garde et que le
+  résumé du décret n° 82-301 ne dit pas : de 1930 à 1982, la part patronale du FSPOEIE
+  reste estimée.
