@@ -647,6 +647,7 @@ avantages:
         sont pas servis : le modèle ne connaît que le statut de chef.
 
   - code: apprentissage
+    chiffre_par: scripts/cout_avantages.py
     libelle: Validation des trimestres d'apprentissage au-delà de l'assiette
     famille: periodes_non_cotisees
     quoi: >-
@@ -661,18 +662,24 @@ avantages:
     creation: 2014
     fin: null
     regimes: régime général, régimes alignés
-    etat_modele: absent
+    etat_modele: integre
     ligne_cascade: null
     pourquoi_pas_chiffre: >-
-      Aucun des treize cas types n'est apprenti, et la grille n'a pas de motif
-      d'apprentissage : le modèle n'a rien sur quoi appliquer la règle. C'est le
-      même défaut que pour la majoration pour trois enfants — un instrument de
+      L'avantage est un TRIMESTRE, qui ne compte que pour la durée
+      d'assurance : son effet se dilue dans la décote et la proratisation. Le
+      modèle le sert depuis le 16 octobre 2026 à qui déclare son contrat
+      (fiche `apprentissage`, action 130), et le mesure en refaisant la pension
+      sans la fiche. Aucun des treize cas types n'est apprenti : c'est le même
+      défaut que pour la majoration pour trois enfants — un instrument de
       rapport ne compte pas une population.
     sans_chiffre: >-
-      aucun cas type n'est apprenti, et aucun poste publié n'isole le complément
-      de cotisations versé à ce titre
+      aucun cas type n'est apprenti, aucun poste publié n'isole le complément de
+      cotisations versé à ce titre, et le complément, né en 2014, ne paie
+      presque aucune pension : les apprentis, de seize à vingt-neuf ans sauf
+      exceptions, n'atteindront pour la plupart l'âge légal qu'après 2050
     cout:
-      mesurable_par: aucune
+      mesurable_par: modele
+      source_id: dss_plfss_2024_annexe_2
       note: >-
         TROUVÉ EN CONFRONTANT L'INVENTAIRE À LA LISTE LÉGALE, et il ne pouvait
         pas être trouvé autrement : le droit n'est pas dans le code de la
@@ -682,6 +689,25 @@ avantages:
         Le montant existe pourtant quelque part : la branche le verse, et un
         décret en fixe les conditions. Il n'est isolé dans aucune publication
         que le dépôt sache lire.
+        CHIFFRÉ, depuis le 17 octobre 2026, par retrait : on refait la pension
+        sans la fiche `apprentissage`, et le contrat ne valide plus que ce que
+        ses salaires portent. L'apprenti payé quelques centaines d'euros de
+        juillet 2014 à décembre 2016 y perd dix trimestres : rien de sa pension
+        s'il fait ensuite une carrière complète ; s'il s'arrête à cinquante ans
+        et part à soixante-sept, 7,5 % de sa pension de base, proratisée sur
+        124 trimestres au lieu de 134 (`tests/test_avantages.py`). Sur la
+        grille, rien. Ce que le payeur
+        verse ne se lit qu'avec d'autres charges : les comptes du FSV portent
+        une ligne de la formation professionnelle, des périodes d'apprentissage
+        et du service national, 305 M€ en 2022 sur 13,5 Md€ de cotisations
+        prises en charge, et disent une régularisation de près de 0,2 Md€ en
+        2021 au titre des années 2015 à 2020 (annexe 2 du PLFSS 2024). Depuis
+        2022, le versement est forfaitaire : 35 % du nombre d'apprentis payés
+        moins de 33 % du SMIC dans l'année (D. 373-4, arrêté du 25 avril 2022),
+        nombre que le ministère du travail transmet au fonds sans le publier,
+        fois les taux vieillesse et veuvage, fois la moitié du plafond
+        trimestriel. Depuis 2026, la branche le paie (L. 222-2-1, 7°) : la part
+        du régime général n'est plus un transfert, mais une charge interne.
 
   - code: service_national
     chiffre_par: scripts/cout_avantages.py

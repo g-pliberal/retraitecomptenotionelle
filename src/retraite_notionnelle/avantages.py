@@ -58,7 +58,8 @@ from .cout import _DEMI_TRANCHE, _ponderation, generations
 from .donnees.chargement import charger_yaml
 from .donnees.depenses import DepensesRetraite
 from .donnees.population import Population
-from .droit.compter import FICHE_DES_MILITAIRES, FICHES_DES_EMPLOIS
+from .droit.compter import (FICHE_DE_L_APPRENTISSAGE, FICHE_DES_MILITAIRES,
+                            FICHES_DES_EMPLOIS, _contrats)
 from .scenarios.actuel import CarriereLongue, ScenarioActuel
 from .simulateur import Simulateur
 from .somme import somme_ordonnee
@@ -460,6 +461,13 @@ NEUTRALISATIONS: tuple[Neutralisation, ...] = (
              "cinquième de leur durée que la bonification y ajoute",
         par="table",
     ),
+    Neutralisation(
+        code="apprentissage",
+        quoi="la fiche de l'apprentissage est retirée : le contrat ne valide "
+             "plus que ce que ses salaires portent, sans les trimestres que le "
+             "complément de cotisations ajoute jusqu'à sa durée",
+        par="table",
+    ),
 )
 
 #: Les fiches que retire chacune des neutralisations des bonifications de
@@ -573,6 +581,14 @@ def scenarios_neutralises(simulateur: Simulateur) -> dict[str, ScenarioActuel]:
         # qu'elles bonifient y perd quelque chose.
         emplois.fiches_datees = emplois.fiches_datees.sans(*noms)
         variantes[code] = emplois
+
+    apprentissage = ScenarioActuel(simulateur.macro, simulateur.catalogue,
+                                   simulateur.affiliations, simulateur.parametres)
+    # La fiche de l'apprentissage retirée : le contrat ne valide plus que ce
+    # que ses salaires portent. Seule une carrière qui déclare un contrat y
+    # perd quelque chose (:func:`recalculer`).
+    apprentissage.fiches_datees = apprentissage.fiches_datees.sans(FICHE_DE_L_APPRENTISSAGE)
+    variantes["apprentissage"] = apprentissage
     return variantes
 
 
@@ -698,6 +714,10 @@ def recalculer(simulateur: Simulateur, cas: CasType, generation: int,
             if code == "retraite_anticipee_handicap" and carriere.incapacite_permanente is None:
                 # Une carrière qui ne déclare aucune incapacité n'a rien à
                 # perdre au retrait : aucun cas type de la grille n'en déclare.
+                continue
+            if code == "apprentissage" and not (carriere.chronologie and _contrats(carriere)):
+                # Ni une carrière sans contrat d'apprentissage : aucun cas type
+                # de la grille n'est apprenti.
                 continue
             sans = variante.calculer(carriere)
             if (code not in DUREE_REQUISE_EST_L_AVANTAGE

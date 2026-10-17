@@ -441,17 +441,19 @@ bascules:
       fichier : la version citée prouve qui paie, pas ce qui est acquis. Le
       droit lui-même est à l'article L. 6243-3 du code du travail, que ce
       document n'a pas lu — et une déduction n'est pas une lecture.
-    dispositifs: [periodes_assimilees]
+    dispositifs: [apprentissage]
     article: L. 135-2 CSS
     version: LEGIARTI000029961245
     version_precedente: LEGIARTI000025023016
     texte: null
     lu_le: 2026-09-21
-    portee_modele: non_applique
+    portee_modele: applique
     effet_modele: >-
-      Aucun cas type de la grille n'est apprenti. Le dispositif est hors de
-      portée pour la même raison que la majoration pour trois enfants : la
-      grille est un instrument de rapport, pas une population.
+      Le modèle sert le complément depuis le 16 octobre 2026 à qui déclare son
+      contrat (fiche `apprentissage`, action 130), et le mesure par retrait ;
+      aucun cas type de la grille n'est apprenti. La charge, elle, reste fondue
+      dans `fsv_cotisations`, avec la formation professionnelle et le service
+      national : aucun poste publié ne l'en sépare.
 
   - code: indemnites_journalieres_hors_fsv
     date: 2020-12-16
@@ -518,7 +520,7 @@ bascules:
       l'expression du législateur — « des avantages non contributifs mentionnés
       aux 1° à 5° et 7° du présent article ». La liste n'est donc pas perdue ;
       elle change de porteur.
-    dispositifs: [minimum_vieillesse, periodes_assimilees, service_national]
+    dispositifs: [minimum_vieillesse, periodes_assimilees, service_national, apprentissage]
     article: L. 222-2-1 CSS
     version: LEGIARTI000051288889
     version_precedente: null

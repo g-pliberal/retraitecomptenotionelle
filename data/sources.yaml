@@ -2206,6 +2206,27 @@ institutions:
           en 2011. Le site présente une chaîne de certificats que le niveau
           de sécurité par défaut d'OpenSSL refuse ; le récupérateur abaisse ce
           niveau sans rien désactiver de la vérification.
+      - id: dss_plfss_2024_annexe_2
+        titre: >-
+          Projet de loi de financement de la sécurité sociale pour 2024,
+          annexe 2 : les comptes du FSV, de la Cades, du FRR et des organismes
+          ou fonds
+        url: https://www.securite-sociale.fr/files/live/sites/SSFR/files/medias/PLFSS/2024/PLFSS%202024%20-%20Annexe2.pdf
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/legislation/avantages_non_contributifs.yaml
+        note: >-
+          Lu le 17 octobre 2026, pour le coût du complément de l'apprentissage
+          (action 130, sixième domaine, étape 6). Le tableau 1 des comptes du
+          FSV ne l'isole pas : sa ligne « Au titre de la formation
+          professionnelle des périodes d'apprentissage et du service
+          national » vaut 305 millions d'euros en 2022, sur 13 529 de
+          cotisations prises en charge, puis 322, 331 et 338 en prévision pour
+          2023, 2024 et 2025. Le texte, au 3.1, dit des périodes
+          d'apprentissage qu'elles ont connu « une régularisation en 2021
+          (pour près de 0,2 Md€) au titre des années 2015 à 2020 » : c'est le
+          seul montant publié de l'apprentissage seul qu'on ait trouvé.
+          Chiffres saisis à la lecture, aucun script ne les revérifie.
 
   cour_des_comptes:
     nom: Cour des comptes

@@ -423,8 +423,9 @@ def test_les_variantes_ne_changent_que_ce_qu_elles_retirent(script_cout):
 
     Le catalogue privé de `categorie_active` ne doit rien faire à un salarié du
     privé ; le barème de carrière longue vidé ne doit rien faire à qui est entré
-    tard. Sans ce contrôle, une variante trop large gonflerait toutes les
-    lignes à la fois, et l'erreur passerait pour un résultat.
+    tard ; la fiche de l'apprentissage retirée, rien à qui n'a pas été apprenti.
+    Sans ce contrôle, une variante trop large gonflerait toutes les lignes à la
+    fois, et l'erreur passerait pour un résultat.
     """
     from retraite_notionnelle import Parametres
     from retraite_notionnelle.castypes import CAS_TYPES
@@ -437,12 +438,79 @@ def test_les_variantes_ne_changent_que_ce_qu_elles_retirent(script_cout):
     age = cas.age_liquidation_pour(simulateur, generation)
     carriere = script_cout.carriere_variante(simulateur, cas, generation, age)
     reelle = simulateur.scenario_actuel.calculer(carriere).pension_annuelle
-    for code in ("categorie_active", "carriere_longue", "bonification_cinquieme_militaires"):
+    for code in ("categorie_active", "carriere_longue", "bonification_cinquieme_militaires",
+                 "apprentissage"):
         obtenue = variantes[code].calculer(carriere).pension_annuelle
         assert obtenue == pytest.approx(reelle), (
             f"le retrait de {code} déplace la pension d'un cadre du privé "
             f"de {reelle - obtenue:.2f} €"
         )
+
+
+def _apprenti_puis_salarie(simulateur, fin_du_salariat: int, age_liquidation: float):
+    """Né en 1998, apprenti du 1er juillet 2014 au 31 décembre 2016 pour
+    quelques centaines d'euros par an, moins que les cent cinquante heures de
+    SMIC qui valident un trimestre (R. 351-9), puis salarié à 30 000 € par an
+    de 2017 à ``fin_du_salariat`` exclue. Le relevé porte les euros sans les
+    trimestres : le modèle les valide du salaire, comme la caisse."""
+    from retraite_notionnelle import chronologie
+    from retraite_notionnelle.carriere import Carriere, LigneRelevee
+
+    apprentissage = {2014: 400.0, 2015: 900.0, 2016: 900.0}
+    salaires = {**apprentissage, **dict.fromkeys(range(2017, fin_du_salariat), 30000.0)}
+    construite = chronologie.du_releve(
+        annee_naissance=1998, sexe="H", age_liquidation=age_liquidation,
+        releve=[LigneRelevee(annee=annee, affiliation="salarie_prive_non_cadre", revenu=revenu)
+                for annee, revenu in salaires.items()])
+    for fait in construite["faits"]:
+        if fait["id"].startswith("releve_") and int(fait["debut"][:4]) in apprentissage:
+            fait["attributs"]["apprentissage"] = True
+            if fait["debut"][:4] == "2014":
+                fait["debut"] = "2014-07-01"
+    return Carriere.depuis_chronologie(chronologie.completer(construite), simulateur.macro)
+
+
+def test_le_retrait_de_l_apprentissage_ne_retire_que_le_complement(script_cout):
+    """Sans sa fiche, le contrat d'apprentissage ne valide plus que ce que ses
+    salaires portent : c'est la mesure du complément (action 130, sixième
+    domaine, étape 6).
+
+    Le contrat court du 1er juillet 2014 au 31 décembre 2016 : trente mois,
+    dix trimestres (D. 373-3), que ses salaires ne valident pas ; le
+    complément les donne tous (D. 373-4), et le retrait les ôte tous, sans
+    rien d'autre.
+
+    Ils ne comptent que pour la durée d'assurance. Salarié de dix-neuf à
+    soixante-quatre ans, l'apprenti a sans eux 180 trimestres, plus que les
+    172 que sa génération doit (L. 161-17-3) : sa pension n'en dépend pas, et
+    le complément ne lui vaut rien. Salarié de dix-neuf à cinquante ans, il en
+    a 124 de ses salaires et 134 avec eux ; parti à soixante-sept ans, l'âge
+    où la décote s'annule, il a le taux plein des deux côtés, et sa pension
+    du régime général, proratisée sur la durée (L. 351-1), est dans le
+    rapport de 134 à 124 ; sa complémentaire, faite de points, ne bouge pas.
+    """
+    from retraite_notionnelle import Parametres
+    from retraite_notionnelle.simulateur import Simulateur
+
+    simulateur = Simulateur(Parametres())
+    variante = script_cout.scenarios_neutralises(simulateur)["apprentissage"]
+
+    complete = _apprenti_puis_salarie(simulateur, 2062, 64.0)
+    reelle, sans = simulateur.scenario_actuel.calculer(complete), variante.calculer(complete)
+    assert reelle.trimestres_requis == sans.trimestres_requis == 172
+    assert (reelle.trimestres_valides, sans.trimestres_valides) == (190, 180)
+    assert sans.pension_annuelle == pytest.approx(reelle.pension_annuelle)
+
+    incomplete = _apprenti_puis_salarie(simulateur, 2048, 67.0)
+    reelle, sans = simulateur.scenario_actuel.calculer(incomplete), variante.calculer(incomplete)
+    assert (reelle.trimestres_valides, sans.trimestres_valides) == (134, 124)
+    assert reelle.taux_liquidation == sans.taux_liquidation
+    assert not reelle.minimum_applique and not sans.minimum_applique
+    avec = {pension.regime: pension.montant for pension in reelle.pensions_par_regime}
+    sans_complement = {pension.regime: pension.montant for pension in sans.pensions_par_regime}
+    assert avec.pop("regime_general") / sans_complement.pop("regime_general") == (
+        pytest.approx(134 / 124))
+    assert avec == pytest.approx(sans_complement)
 
 
 def test_toute_ligne_sans_montant_dit_pourquoi(script_cout, inventaire):

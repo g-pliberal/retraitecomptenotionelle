@@ -48,9 +48,9 @@ code employé par l'une des trois ait sa ligne, sous son code ou sous un alias.
 | État | Combien | Ce que ça veut dire |
 |---|---|---|
 | **chiffré** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=chiffre)-->14<!--/--> | Le scénario 1 le sert, et la cascade en isole le montant en euros. La somme des lignes chiffrées vaut *exactement* `pension_annuelle − total_contributif` : c'est vérifié à chaque simulation. |
-| **intégré** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=integre)-->15<!--/--> | Le scénario 1 le sert, mais l'effet passe par un trimestre, un âge ou une assiette. Il ne s'isole qu'en recalculant la pension une seconde fois, avantage retiré. **Sept le sont désormais**, par retrait : voir les §4 bis et 4 ter. Trois autres ne sont pas des dispositifs ; le dernier, le taux plein par inaptitude ou invalidité, servi depuis le 30 septembre 2026 à qui les déclare, a sa dépense lue dans les comptes de la protection sociale. |
+| **intégré** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=integre)-->16<!--/--> | Le scénario 1 le sert, mais l'effet passe par un trimestre, un âge ou une assiette. Il ne s'isole qu'en recalculant la pension une seconde fois, avantage retiré. **Onze le sont désormais**, par retrait : voir les §4 bis et 4 ter ; le dernier venu, le complément de l'apprentissage, ne pèse sur aucun cas type : aucun n'est apprenti. Trois autres ne sont pas des dispositifs ; les deux derniers, le taux plein par inaptitude ou invalidité, servi depuis le 30 septembre 2026 à qui les déclare, et la majoration de pension des assurés handicapés, ont leur dépense lue dans les comptes de la protection sociale. |
 | **déclaré** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=declare)-->2<!--/--> | Une fiche de régime le déclare, et le scénario 1 ne le sert pas à l'assuré. La réversion, qui est de ceux-là, est la pension d'un autre : le modèle la liquide, depuis le 28 septembre 2026, pour le conjoint qu'on lui déclare, mais pas pour tous les ménages, et son coût est LU dans les séries de la DREES : voir le §4 quater. |
-| **absent** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=absent)-->17<!--/--> | Ni déclaré ni servi. C'est un écart au droit positif — que les comptes de la protection sociale comblent pour dix d'entre eux, qu'ils publient poste par poste : voir les §4 quinquies et 4 sexies. |
+| **absent** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=absent)-->16<!--/--> | Ni déclaré ni servi. C'est un écart au droit positif — que les comptes de la protection sociale comblent pour dix d'entre eux, qu'ils publient poste par poste : voir les §4 quinquies et 4 sexies. |
 
 Et trois façons d'en mesurer le coût : par le **modèle** (la cascade, ou un
 recalcul de même nature), par une **série publiée**, ou par **rien** — ce
@@ -88,6 +88,7 @@ comme une source. Une déduction n'est pas une lecture.
 | Périodes assimilées | L. 351-3 CSS; R. 351-12 CSS | intégré | modèle |
 | Points de complémentaire acquis sans cotisation | accords nationaux interprofessionnels Agirc-Arrco; décret Ircantec | intégré | modèle |
 | Validation du service national | L. 351-3 CSS | intégré | modèle |
+| Validation des trimestres d'apprentissage au-delà de l'assiette | L. 6243-3 code du travail; L. 222-2-1 7° CSS | intégré | modèle |
 
 | **Droits dérivés (survivants)** | | | |
 | Pension de réversion | L. 353-1 CSS; L. 38 CPCMR | déclaré | série publiée |
