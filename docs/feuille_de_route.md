@@ -6403,3 +6403,54 @@ ce dépôt, je veux utiliser le TDD : Test driven development. »
 **Ce que le propriétaire tranche**, à l'étape 2 : la force de la garde —
 la garder telle quelle, la durcir (refuser à chaque fois, ou refuser l'envoi
 d'un commit qui change le code sans test), ou l'alléger.
+
+### 163. Ce que la revue de code d'Anthropic apprend au dépôt : le site en ligne au vert, les rouges classés, puis un relecteur — `en cours`
+
+**Reprise, au 17 octobre 2026.** Faite, l'étape 1 : le site ne part plus en
+ligne que d'une suite verte sur `main`, `tests.yml` déployant l'arbre du
+commit publié par GitHub Actions. Au propriétaire de régler Pages sur
+« GitHub Actions » (Settings → Pages), puis de voir le premier déploiement.
+Reste l'étape 2 : classer les 25 verdicts rouges de `main` du 6 au
+17 octobre 2026, cause par cause, et dire au propriétaire quelle garde en
+découle ; commencer par la recherche des commits « Suite ROUGE sur » et leur
+`.github/etat_suite.yaml`. Les étapes 3 à 6 attendent son verdict. Détail :
+`163/2026-10-17-le-site-en-ligne-au-vert.md`.
+
+**D'où elle vient.** Le 17 octobre 2026, le propriétaire soumet à une
+session l'article « How the Claude Code team does code review » (blog
+claude.dev, 15 octobre 2026) : « Est-ce que c'est utile pour notre projet ? ».
+Le service qu'il présente ne relit que des pull requests, que le dépôt n'a
+pas ; la session en tire six pratiques transposables, et le propriétaire
+lance les deux premières : « vas-y ».
+
+**Les étapes.**
+
+1. **Le site en ligne au vert**, faite le 17 octobre 2026 (leur canal
+   « latest » avant « stable ») : `publier_fabrique.sh` dit `en_ligne=oui`
+   d'une suite verte sur `main`, et `tests.yml` déploie alors l'arbre du
+   commit publié.
+2. **Les rouges classés** (leurs incidents changés en jeu d'épreuve, et leur
+   taux comme garde-fou) : pour chaque verdict rouge depuis le 6 octobre, le
+   test, la zone, et ce qui l'aurait vu avant l'envoi — `pytest -m rapide`,
+   les tests de la zone, ou rien quand le rouge naît de deux sessions que
+   `pousser.sh` a rebasées l'une sur l'autre sans relancer de test, ce
+   qu'empêche leur file de fusion ; puis le taux de rouges au tableau de bord.
+3. **Un relecteur à soi**, sur Opus, pour les étapes qui écrivent une règle
+   du scénario 1 : il dit ce qu'est un échec ici, cite `fichier:ligne` et
+   l'article de loi, renvoie l'ancien à la feuille de route ; chaque constat
+   reçoit une réponse dans la note d'étape ; `pousser.sh` exige `Relu:` ou
+   `Sans-relecture: <raison>`. Éprouvé d'abord sur des règles corrigées après
+   coup : s'il ne les trouve pas, il ne vaut pas son coût.
+4. **La classe, pas le cas** : un défaut corrigé dans une règle se cherche
+   dans les autres régimes ; une ligne de la liste de contrôle de
+   `src/CLAUDE.md`.
+5. **Une passe de fond chaque semaine** : une session programmée, après la
+   mise à jour de l'index DILA du lundi, relit une famille de règles du
+   scénario 1 contre le droit en vigueur, inscrit ce qu'elle trouve sans le
+   corriger, et en rend au propriétaire une explication courte.
+6. **Les gardes gardées** : `pousser.sh` exige `Garde-modifiée: <raison>` sur
+   un commit qui touche `tests.yml`, les hooks ou `pousser.sh`, et la session
+   demande d'abord au propriétaire.
+
+**Ce que le propriétaire tranche** : à l'étape 2, les gardes que le
+classement justifie ; puis, une à une, les étapes 3 à 6.

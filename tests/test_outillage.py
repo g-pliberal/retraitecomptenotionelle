@@ -93,9 +93,12 @@ def test_la_garde_rejoue_les_tests_rapides_sous_d_autres_presomptions():
     assert publier["env"]["GARDE"] == "${{ steps.garde.outcome }}"
 
 
-def _publier(tmp_path, garde: str, sortie: str) -> tuple[dict, str]:
+def _publier(tmp_path, garde: str, sortie: str, suite: str = "success",
+             branche: str = "main", bouge: bool = False) -> tuple[dict, str]:
     """Joue ``publier_fabrique.sh`` dans un dépôt jetable qui pousse sur un
-    dépôt nu : le verdict qu'il écrit, et le titre de son commit."""
+    dépôt nu : le verdict qu'il écrit, et le titre de son commit. Ce qu'il
+    rend à GitHub (``GITHUB_OUTPUT``) s'écrit dans ``tmp_path / "sortie_github"`` ;
+    ``bouge`` fait avancer la branche pendant la course."""
     import yaml
 
     nu, depot = tmp_path / "origine.git", tmp_path / "depot"
@@ -110,20 +113,31 @@ def _publier(tmp_path, garde: str, sortie: str) -> tuple[dict, str]:
 
     git("init", "-q", "--bare", "-b", "main", str(nu), cwd=tmp_path)
     git("clone", "-q", str(nu), str(depot), cwd=tmp_path)
+    # Suivi comme dans le dépôt, `.github` survit au nettoyage d'une suite rouge.
     (depot / ".github").mkdir()
+    (depot / ".github" / "flux.yml").write_text("", encoding="utf-8")
     (depot / "a").write_text("a", encoding="utf-8")
     git("add", "-A")
     git("commit", "-q", "-m", "a")
-    git("push", "-q", "origin", "HEAD:main")
+    git("push", "-q", "origin", f"HEAD:{branche}")
+    if bouge:
+        autre = tmp_path / "autre"
+        git("clone", "-q", "-b", branche, str(nu), str(autre), cwd=tmp_path)
+        (autre / "b").write_text("b", encoding="utf-8")
+        git("add", "-A", cwd=autre)
+        git("commit", "-q", "-m", "b", cwd=autre)
+        git("push", "-q", "origin", f"HEAD:{branche}", cwd=autre)
     (tmp_path / "suite.txt").write_text("1 passed\n", encoding="utf-8")
     (tmp_path / "garde.txt").write_text(sortie, encoding="utf-8")
+    (tmp_path / "sortie_github").write_text("", encoding="utf-8")
     subprocess.run(["bash", str(RACINE / "scripts" / "publier_fabrique.sh")], cwd=depot,
                    check=True, capture_output=True, env={
-                       **env, "GITHUB_REF_NAME": "main", "FABRICATION": "success",
-                       "SUITE": "success", "SORTIE_SUITE": str(tmp_path / "suite.txt"),
-                       "GARDE": garde, "SORTIE_GARDE": str(tmp_path / "garde.txt")})
+                       **env, "GITHUB_REF_NAME": branche, "FABRICATION": "success",
+                       "SUITE": suite, "SORTIE_SUITE": str(tmp_path / "suite.txt"),
+                       "GARDE": garde, "SORTIE_GARDE": str(tmp_path / "garde.txt"),
+                       "GITHUB_OUTPUT": str(tmp_path / "sortie_github")})
     verdict = yaml.safe_load((depot / ".github" / "etat_suite.yaml").read_text(encoding="utf-8"))
-    titre = subprocess.run(["git", "log", "-1", "--format=%s", "main"], cwd=nu,
+    titre = subprocess.run(["git", "log", "-1", "--format=%s", branche], cwd=nu,
                            capture_output=True, text=True, check=True).stdout.strip()
     return verdict, titre
 
@@ -139,6 +153,88 @@ def test_une_garde_rouge_s_ecrit_a_part_du_verdict_de_la_suite(tmp_path):
     assert "garde des présomptions ROUGE" in titre
     verdict, titre = _publier(tmp_path / "verte", "success", "1 passed\n")
     assert verdict["presomptions"] == "vert" and "ROUGE" not in titre
+
+
+# -- le site en ligne au vert (action 163) ---------------------------------------
+
+
+@pytest.mark.parametrize("suite, branche, bouge, en_ligne", [
+    ("success", "main", False, True),
+    ("failure", "main", False, False),
+    ("success", "essai", False, False),
+    ("success", "main", True, False),
+])
+def test_le_site_ne_part_en_ligne_que_d_une_suite_verte_sur_main(
+        tmp_path, suite, branche, bouge, en_ligne):
+    """``tests.yml`` ne déploie le site que quand ce script le dit : une suite
+    verte sur main, son verdict poussé. Ni une suite rouge, ni une course
+    lancée à la main sur une autre branche, ni une course que main a dépassée
+    ne le mettent en ligne."""
+    _publier(tmp_path, "success", "1 passed\n", suite=suite, branche=branche, bouge=bouge)
+    lignes = (tmp_path / "sortie_github").read_text(encoding="utf-8").splitlines()
+    assert ("en_ligne=oui" in lignes) == en_ligne
+
+
+def test_le_site_se_deploie_de_l_arbre_publie_et_de_lui_seul():
+    """Un envoi de session n'a pas passé la suite, et une poussée du jeton du
+    workflow ne déclenche pas de construction de Pages (la documentation de
+    GitHub). Le site se déploie donc de ``tests.yml``, par GitHub Actions,
+    quand ``publier_fabrique.sh`` dit ``en_ligne=oui`` et que Pages publie
+    par Actions ; ce qui part est l'arbre du commit publié (``git archive
+    HEAD``), non le répertoire de travail de la course et ses caches."""
+    import yaml
+
+    flux = yaml.safe_load((RACINE / ".github" / "workflows" / "tests.yml")
+                          .read_text(encoding="utf-8"))
+    etapes = flux["jobs"]["suite"]["steps"]
+    publier = next(e for e in etapes if "publier_fabrique.sh" in e.get("run", ""))
+    source = next(e for e in etapes if e.get("id") == "pages")
+    archive = next(e for e in etapes if "git archive HEAD" in e.get("run", ""))
+    televerser = next(e for e in etapes
+                      if str(e.get("uses", "")).startswith("actions/upload-pages-artifact@"))
+    assert source["if"] == f"steps.{publier['id']}.outputs.en_ligne == 'oui'"
+    assert archive["if"] == televerser["if"] == "steps.pages.outputs.actions == 'oui'"
+    assert '"$RUNNER_TEMP/site"' in archive["run"]
+    assert televerser["with"]["path"] == "${{ runner.temp }}/site"
+    assert (etapes.index(publier) < etapes.index(source) < etapes.index(archive)
+            < etapes.index(televerser))
+    assert flux["jobs"]["suite"]["outputs"]["en_ligne"] == "${{ steps.pages.outputs.actions }}"
+    deploiement = flux["jobs"]["en_ligne"]
+    assert deploiement["needs"] == "suite"
+    assert "needs.suite.outputs.en_ligne == 'oui'" in deploiement["if"]
+    assert deploiement["permissions"] == {"pages": "write", "id-token": "write"}
+    assert deploiement["environment"]["name"] == "github-pages"
+    assert any(str(e.get("uses", "")).startswith("actions/deploy-pages@")
+               for e in deploiement["steps"])
+
+
+@pytest.mark.parametrize("source, deploie", [
+    ("workflow", True), ("legacy", False), (None, False)])
+def test_rien_ne_se_deploie_tant_que_pages_publie_depuis_une_branche(
+        tmp_path, source, deploie):
+    """La source de Pages se règle à la main (Settings → Pages), et cet
+    envoi peut la précéder : tant que Pages publie depuis une branche
+    (``legacy``), ou si son API ne répond pas, la course ne déploie rien, et
+    n'en rougit pas. L'étape se joue sous le shell que GitHub lui donne, ``gh``
+    remplacé par sa réponse."""
+    import yaml
+
+    etapes = yaml.safe_load((RACINE / ".github" / "workflows" / "tests.yml")
+                            .read_text(encoding="utf-8"))["jobs"]["suite"]["steps"]
+    etape = next(e for e in etapes if e.get("id") == "pages")
+    assert "shell" not in etape
+    outils = tmp_path / "outils"
+    outils.mkdir()
+    gh = outils / "gh"
+    gh.write_text("#!/bin/sh\n" + (f"echo {source}\n" if source
+                                   else "echo 'HTTP 404' >&2\nexit 1\n"), encoding="utf-8")
+    gh.chmod(0o755)
+    sortie = tmp_path / "sortie_github"
+    sortie.write_text("", encoding="utf-8")
+    subprocess.run(["bash", "-e", "-c", etape["run"]], check=True, capture_output=True,
+                   env={**os.environ, "PATH": f"{outils}{os.pathsep}{os.environ['PATH']}",
+                        "GITHUB_OUTPUT": str(sortie), "GITHUB_REPOSITORY": "o/r"})
+    assert ("actions=oui" in sortie.read_text(encoding="utf-8").splitlines()) == deploie
 
 
 def test_le_hook_de_demarrage_affiche_la_garde_rouge(tmp_path):

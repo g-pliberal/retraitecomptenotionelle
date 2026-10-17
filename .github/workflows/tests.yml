@@ -16,7 +16,12 @@
 #    l'ouverture de chaque session) et, si la suite est verte, les fichiers
 #    refaits ; puis il pousse sans jamais forcer. Si main a bougé pendant la
 #    course, il ne pousse rien : la course que ce nouvel envoi a lancée refait
-#    tout. Une poussée du jeton du workflow ne relance pas de course.
+#    tout. Une poussée du jeton du workflow ne relance pas de course ;
+# 4. une suite verte sur main, son verdict poussé, met le site en ligne
+#    (action 163) : l'arbre de ce commit, déployé sur GitHub Pages par le job
+#    `en_ligne`. Un envoi de session n'a pas passé la suite, et une poussée du
+#    jeton du workflow ne déclenche pas de construction de Pages. Pages doit
+#    publier par « GitHub Actions » (Settings → Pages) ; sinon rien ne part.
 #
 # Les courses se suivent une à une (`concurrency`) : celle qui attend est
 # remplacée par la plus récente, qui part de toute façon du dernier main.
@@ -33,6 +38,7 @@ on:
 
 permissions:
   contents: write
+  pages: read
 
 concurrency:
   group: tests-${{ github.ref_name }}
@@ -42,6 +48,8 @@ jobs:
   suite:
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    outputs:
+      en_ligne: ${{ steps.pages.outputs.actions }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -91,6 +99,7 @@ jobs:
         run: PRESOMPTIONS_DECALEES=1 python -m pytest -m rapide -rfE 2>&1 | tee "$RUNNER_TEMP/garde.txt"
 
       - name: Publier le verdict et les fichiers fabriqués
+        id: publier
         env:
           FABRICATION: ${{ steps.fabriquer.outcome }}
           SUITE: ${{ steps.suite.outcome }}
@@ -100,8 +109,52 @@ jobs:
           COURSE: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: bash scripts/publier_fabrique.sh
 
+      # Le site en ligne au vert (action 163). Tant que Pages publie depuis une
+      # branche, il déploie lui-même chaque envoi, et rien ne part d'ici : la
+      # source se règle à la main, et ce workflow peut la précéder sans rougir.
+      - name: La source de Pages
+        id: pages
+        if: steps.publier.outputs.en_ligne == 'oui'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "$(gh api "repos/$GITHUB_REPOSITORY/pages" --jq .build_type 2>/dev/null)" = workflow ]; then
+            echo "actions=oui" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::Pages publie depuis une branche : rien déployé d'ici. Réglage : Settings → Pages → Source « GitHub Actions »."
+          fi
+
+      # L'arbre du commit publié, et lui seul : le répertoire de la course porte
+      # aussi ses caches.
+      - name: Le site, tel que publié
+        if: steps.pages.outputs.actions == 'oui'
+        run: |
+          mkdir -p "$RUNNER_TEMP/site"
+          git archive HEAD | tar -x -C "$RUNNER_TEMP/site"
+
+      - uses: actions/upload-pages-artifact@v5
+        if: steps.pages.outputs.actions == 'oui'
+        with:
+          path: ${{ runner.temp }}/site
+
       - name: Le verdict
         if: steps.fabriquer.outcome != 'success' || steps.suite.outcome != 'success' || steps.garde.outcome != 'success'
         run: |
           echo "::error::Rouge : voir l'étape « La suite complète », « La garde des présomptions » ou « Fabriquer »."
           exit 1
+
+  # Une garde des présomptions rouge rend la course rouge, mais ne retient ni les
+  # fichiers fabriqués ni le site : la suite est verte. D'où `!cancelled()`.
+  en_ligne:
+    needs: suite
+    if: ${{ !cancelled() && needs.suite.outputs.en_ligne == 'oui' }}
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploiement.outputs.page_url }}
+    steps:
+      - id: deploiement
+        uses: actions/deploy-pages@v5

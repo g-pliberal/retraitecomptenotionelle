@@ -16,6 +16,9 @@
 # GARDE et SORTIE_GARDE, l'issue et la sortie de la garde des présomptions
 # (action 135, levier 2), dont le verdict s'écrit à part : une garde rouge ne
 # retient pas les fichiers fabriqués, justes si la suite est verte.
+#
+# Sortie : `en_ligne=oui` dans GITHUB_OUTPUT quand une suite verte sur main est
+# poussée, et alors seulement : `tests.yml` met le site en ligne (action 163).
 
 set -euo pipefail
 
@@ -103,3 +106,6 @@ if ! git push --quiet origin "HEAD:refs/heads/$branche"; then
     exit 1
 fi
 echo "$branche ← $(git rev-parse --short HEAD) ($etat, $fabriques fichier(s) fabriqué(s))"
+if [ "$etat" = vert ] && [ "$branche" = main ]; then
+    echo "en_ligne=oui" >> "${GITHUB_OUTPUT:-/dev/null}"
+fi

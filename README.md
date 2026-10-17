@@ -235,8 +235,9 @@ sous les réglages de référence : le coût et les carrières types, que les pa
 qui agrègent lisent sans rien recalculer) et `moteur/js/`, un portage en
 JavaScript, sans aucune bibliothèque, de ce qui dépend de ce que le lecteur
 saisit : sa carrière, ses droits et sa pension. Le site est servi depuis la racine
-du dépôt, telle quelle : c'est ce que GitHub Pages publie sans aucun réglage, et
-`.nojekyll` demande que les fichiers soient servis sans transformation. Rien
+du dépôt, telle quelle, et `.nojekyll` demande que les fichiers le soient sans
+transformation ; GitHub Pages n'en publie que l'arbre d'un commit que la suite
+complète a passé, que `tests.yml` déploie (action 163). Rien
 n'est chargé depuis un CDN ou un service tiers, ce qu'un test vérifie : le site
 fonctionne derrière un réseau fermé, et survivra à la disparition de n'importe
 quel hébergeur.
