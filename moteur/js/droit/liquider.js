@@ -1749,9 +1749,17 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
   // assimilés : le dénominateur d'avant juillet 1995. Voir le Python.
   const trimestres = new Map();
   for (const ligne of carriere.lignes) {
-    if (ligne.annee >= anneeLiquidation) {
+    // L'année de la liquidation n'entre pas dans la moyenne, sauf celle où
+    // l'exploitant agricole cesse : il y cotise pour l'année entière
+    // (L. 731-10-1 du code rural), et ses droits sont arrêtés au dernier jour
+    // de l'année civile de l'entrée en jouissance (R. 732-60, 1°). Elle y
+    // entre pour douze mois, que ses lignes se partagent (`partCotiseeLigne`) :
+    // son revenu, son plancher, son plafond.
+    const entiere = carriere.anneeEntiereAgricole(ligne);
+    if (ligne.annee >= anneeLiquidation && !entiere) {
       continue;
     }
+    const fractionLigne = entiere ? carriere.partCotiseeLigne(ligne) : ligne.fraction_annee;
     if (depuis !== null && ligne.annee < depuis) {
       continue;
     }
@@ -1781,10 +1789,14 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
     } else {
       revenu = Math.max(assietteDeReference(moteur, periode, ligne),
         acquerir.assietteMinimale(moteur, [...codesAdmis], ligne));
+      if (entiere && ligne.fraction_annee > 0) {
+        // Le revenu de ses mois, porté à sa part des douze, comme à `acquerir`.
+        revenu *= fractionLigne / ligne.fraction_annee;
+      }
       if (plancher && periode.assiette_repere_smic !== null
           && periode.assiette_repere_smic !== undefined) {
         revenu = Math.max(revenu, periode.assiette_repere_smic
-          * moteur.macro.smic_horaire.valeur(ligne.annee) * ligne.fraction_annee);
+          * moteur.macro.smic_horaire.valeur(ligne.annee) * fractionLigne);
       }
       // Le collaborateur et l'aide familial n'ont pour revenu que l'assiette
       // forfaitaire de leurs cotisations (`acquerir.assietteDuCollaborateur`).
@@ -1793,7 +1805,7 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
           coordonner.REGIME_DES_NON_SALARIES_AGRICOLES, ligne)
         : null;
       if (forfait !== null) {
-        revenu = forfait * moteur.macro.smic_horaire.valeur(ligne.annee) * ligne.fraction_annee;
+        revenu = forfait * moteur.macro.smic_horaire.valeur(ligne.annee) * fractionLigne;
       }
     }
     // TRANCHE DE SALAIRE. Un régime qui liquide tranche par tranche — le
@@ -1804,14 +1816,14 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
     // partent de zéro passent par `plafonner` comme avant.
     const [borneBasse, borneHaute] = periode.bornesAssietteEnEuros(
       moteur.macro.plafond_securite_sociale.valeur(ligne.annee)
-        * ligne.fraction_annee, ligne.annee,
+        * fractionLigne, ligne.annee,
     );
     if (borneBasse > 0) {
       revenu = Math.max(0.0, Math.min(revenu, borneHaute || revenu) - borneBasse);
     }
     const [somme, fraction, plein] = parAnnee.get(ligne.annee) ?? [0.0, 0.0, 0.0];
     parAnnee.set(ligne.annee,
-      [somme + revenu, Math.max(fraction, ligne.fraction_annee),
+      [somme + revenu, Math.max(fraction, entiere ? 1.0 : fractionLigne),
         plein + revenu / ligne.quotite]);
   }
 

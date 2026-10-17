@@ -376,8 +376,11 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
     // Une ligne postérieure à la liquidation décrit une activité exercée
     // APRÈS le départ : elle n'ouvre pas de droits dans la pension qu'on
     // liquide. L'année du départ, elle, ouvre ceux de ses mois qui l'ont
-    // précédé — ni zéro ni douze, mais le compte juste.
-    const part = carriere.partRetenueLigne(ligne);
+    // précédé — ni zéro ni douze, mais le compte juste. Sauf l'année où
+    // l'exploitant agricole cesse, qu'il cotise entière (L. 731-10-1 du code
+    // rural), dont il a les points (R. 732-70, D. 732-155), et dont l'assiette
+    // est le revenu de ses mois porté à douze (L. 731-15) : voir le Python.
+    const part = carriere.partCotiseeLigne(ligne);
     if (part <= 0) {
       return;
     }
@@ -387,7 +390,7 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
     // Pendant une période indemnisée, seuls les régimes complémentaires
     // encaissent, et sur le salaire d'avant l'interruption.
     let baseLigne = ligne.cotise ? ligne.revenu : ligne.revenu_reference;
-    if (part < ligne.fraction_annee) {
+    if (part !== ligne.fraction_annee && ligne.fraction_annee > 0) {
       baseLigne *= part / ligne.fraction_annee;
     }
     const famillesAdmises = ligne.cotise ? null : new Set(ligne.familles_cotisantes);

@@ -2495,8 +2495,18 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
     # d'avant juillet 1995 met au dénominateur, et ce qu'elle écarte avant 1973.
     trimestres: dict[int, list[int]] = {}
     for ligne in carriere.lignes:
-        if ligne.annee >= annee_liquidation:
+        # L'année de la liquidation n'entre pas dans la moyenne, sauf celle où
+        # l'exploitant agricole cesse : il y cotise pour l'année entière
+        # (L. 731-10-1 du code rural), et ses droits sont arrêtés « au dernier
+        # jour de l'année civile de l'entrée en jouissance » (R. 732-60, 1°).
+        # Elle y entre pour douze mois, que ses lignes se partagent
+        # (`Carriere.part_cotisee_ligne`) : son revenu, son plancher, son
+        # plafond.
+        entiere = carriere.annee_entiere_agricole(ligne)
+        if ligne.annee >= annee_liquidation and not entiere:
             continue
+        fraction_ligne = (carriere.part_cotisee_ligne(ligne) if entiere
+                          else ligne.fraction_annee)
         if depuis is not None and ligne.annee < depuis:
             continue
         if codes_admis.isdisjoint(coordonner.regimes_de(moteur, 
@@ -2523,10 +2533,14 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
         else:
             revenu = max(assiette_de_reference(moteur, periode, ligne),
                          acquerir.assiette_minimale(moteur, codes_admis, ligne))
+            if entiere and ligne.fraction_annee > 0:
+                # Le revenu de ses mois, porté à sa part des douze, comme à
+                # `acquerir`.
+                revenu *= fraction_ligne / ligne.fraction_annee
             if plancher and periode.assiette_repere_smic is not None:
                 revenu = max(revenu, periode.assiette_repere_smic
                              * moteur.macro.smic_horaire(ligne.annee)
-                             * ligne.fraction_annee)
+                             * fraction_ligne)
             # Le collaborateur et l'aide familial n'ont pour revenu que
             # l'assiette forfaitaire de leurs cotisations : 400 SMIC jusqu'en
             # 2025, 600 depuis (`acquerir.assiette_du_collaborateur`).
@@ -2536,7 +2550,7 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
                        else None)
             if forfait is not None:
                 revenu = (forfait * moteur.macro.smic_horaire(ligne.annee)
-                          * ligne.fraction_annee)
+                          * fraction_ligne)
         # TRANCHE DE SALAIRE. Un régime qui liquide TRANCHE PAR TRANCHE —
         # le personnel navigant, dont l'article R. 426-16-1 attribue
         # 1,85 % par annuité à la première et 1,4 % à la seconde — a
@@ -2553,13 +2567,13 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
         # déplace donc aucun chiffre existant.
         borne_basse, borne_haute = periode.bornes_assiette_en_euros(
             moteur.macro.plafond_securite_sociale(ligne.annee)
-            * ligne.fraction_annee, ligne.annee
+            * fraction_ligne, ligne.annee
         )
         if borne_basse > 0:
             revenu = max(0.0, min(revenu, borne_haute or revenu) - borne_basse)
         cumul = par_annee.setdefault(ligne.annee, [0.0, 0.0, 0.0])
         cumul[0] += revenu
-        cumul[1] = max(cumul[1], ligne.fraction_annee)
+        cumul[1] = max(cumul[1], 1.0 if entiere else fraction_ligne)
         cumul[2] += revenu / ligne.quotite
 
     def borner(revenu: float, annee: int, fraction: float) -> float:

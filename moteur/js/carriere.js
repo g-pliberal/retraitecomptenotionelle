@@ -1679,7 +1679,7 @@ export class Carriere {
         const part = this.partRetenueLigne(ligne);
         this._plafonds.set(ligne.annee, Math.max(
           this._plafonds.get(ligne.annee) ?? 0,
-          this._anneeEntiereAgricole(ligne) ? 4
+          this.anneeEntiereAgricole(ligne) ? 4
             : part > 0 ? trimestresCivils(Math.round(part * 12)) : 0,
         ));
       }
@@ -1713,10 +1713,30 @@ export class Carriere {
     return this._cessationAgricole;
   }
 
-  /** La ligne agricole de l'année de cessation, qui en vaut quatre trimestres. */
-  _anneeEntiereAgricole(ligne) {
+  /**
+   * La ligne agricole de l'année de cessation, qui compte pour l'année civile
+   * entière : ses quatre trimestres, ses cotisations, et les points ou le
+   * revenu qu'elles portent au compte. Voir le Python.
+   */
+  anneeEntiereAgricole(ligne) {
     return ligne.annee === this.anneeDeCessationAgricole && ligne.cotise
       && Object.hasOwn(AFFILIATIONS_AGRICOLES, ligne.affiliation);
+  }
+
+  /**
+   * La part de l'année que cotise une ligne : `partRetenueLigne`, sauf l'année
+   * où l'exploitant agricole cesse, cotisée entière, dont ses lignes agricoles
+   * se partagent les douze mois au prorata des leurs. Voir le Python.
+   */
+  partCotiseeLigne(ligne) {
+    const part = this.partRetenueLigne(ligne);
+    if (!this.anneeEntiereAgricole(ligne)) {
+      return part;
+    }
+    const total = this.lignesDe(ligne.annee)
+      .filter((autre) => this.anneeEntiereAgricole(autre))
+      .reduce((somme, autre) => somme + this.partRetenueLigne(autre), 0.0);
+    return total > 0.0 && total <= 1.0 ? part / total : part;
   }
 
   /** Toutes les lignes d'une année, l'activité principale en tête. */
@@ -1785,7 +1805,7 @@ export class Carriere {
    * ({@link anneeDeCessationAgricole}).
    */
   trimestresRetenus(ligne) {
-    if (this._anneeEntiereAgricole(ligne)) {
+    if (this.anneeEntiereAgricole(ligne)) {
       return 4;
     }
     return this.trimestresEcoules(ligne);

@@ -1505,7 +1505,7 @@ class Carriere:
             part = self.part_retenue_ligne(ligne)
             plafonds[ligne.annee] = max(
                 plafonds.get(ligne.annee, 0),
-                4 if self._annee_entiere_agricole(ligne)
+                4 if self.annee_entiere_agricole(ligne)
                 else trimestres_civils(round(part * 12)) if part > 0 else 0,
             )
         return plafonds
@@ -1535,11 +1535,28 @@ class Carriere:
             return None
         return annee
 
-    def _annee_entiere_agricole(self, ligne: AnneeCarriere) -> bool:
-        """La ligne agricole de l'année de cessation, qui en vaut quatre
-        trimestres (:attr:`annee_de_cessation_agricole`)."""
+    def annee_entiere_agricole(self, ligne: AnneeCarriere) -> bool:
+        """La ligne agricole de l'année de cessation, qui compte pour l'année
+        civile entière (:attr:`annee_de_cessation_agricole`) : ses quatre
+        trimestres, ses cotisations, et les points (R. 732-70, D. 732-155) ou
+        le revenu (R. 732-60) qu'elles portent au compte."""
         return (ligne.annee == self.annee_de_cessation_agricole
                 and ligne.cotise and ligne.affiliation in AFFILIATIONS_AGRICOLES)
+
+    def part_cotisee_ligne(self, ligne: AnneeCarriere) -> float:
+        """La part de l'année que cotise une ligne : :meth:`part_retenue_ligne`,
+        sauf l'année où l'exploitant agricole cesse, cotisée entière
+        (L. 731-10-1 du code rural). Ses lignes agricoles s'en partagent alors
+        les douze mois au prorata des leurs : une ligne seule les a tous, deux
+        lignes n'en font pas deux années. Des lignes qui, ensemble, passent
+        l'année se chevauchent : elles gardent leurs mois."""
+        part = self.part_retenue_ligne(ligne)
+        if not self.annee_entiere_agricole(ligne):
+            return part
+        total = somme_ordonnee(self.part_retenue_ligne(autre)
+                               for autre in self.lignes_de(ligne.annee)
+                               if self.annee_entiere_agricole(autre))
+        return part / total if 0.0 < total <= 1.0 else part
 
     def plafond_trimestres(self, annee: int) -> int:
         """Trimestres civils que cette année peut valider, toutes activités
@@ -1613,7 +1630,7 @@ class Carriere:
         en février. Sauf l'exploitant agricole, qui compte les quatre de
         l'année où il cesse (:attr:`annee_de_cessation_agricole`).
         """
-        if self._annee_entiere_agricole(ligne):
+        if self.annee_entiere_agricole(ligne):
             return 4
         return self.trimestres_ecoules(ligne)
 

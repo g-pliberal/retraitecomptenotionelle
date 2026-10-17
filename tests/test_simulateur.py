@@ -5057,6 +5057,208 @@ process.stdout.write(JSON.stringify(obtenus));
     assert json.loads(execution.stdout) == attendu
 
 
+def _points_agricoles_de_l_annee(points, annee: int) -> dict[str, float]:
+    """Les points que les deux régimes des non-salariés agricoles portent au
+    compte d'une année, depuis les crédits ``(régime, année, points, …)``."""
+    cumul: dict[str, float] = {}
+    for code, annee_credit, nombre, *_ in points:
+        if annee_credit == annee and code in ("msa_non_salaries", "msa_rco"):
+            cumul[code] = cumul.get(code, 0.0) + nombre
+    return {code: round(nombre, 6) for code, nombre in cumul.items()}
+
+
+def _agricole_parti_en_aout_2024(affiliation: str) -> dict:
+    """Né en 1962, salarié de 1985 à 1990, ``affiliation`` agricole ensuite à
+    12 000 € par an, jusqu'à son départ du 1er août 2024 : 7 000 € pour les
+    sept mois de 2024."""
+    from retraite_notionnelle import chronologie
+
+    return chronologie.completer(chronologie.du_releve(
+        annee_naissance=1962, sexe="H", age_liquidation=62.5, releve=[
+            LigneRelevee(annee=annee,
+                         affiliation=affiliation if annee >= 1990 else "salarie_prive_non_cadre",
+                         revenu=7000.0 if annee == 2024 else 12000.0)
+            for annee in range(1985, 2025)]))
+
+
+def test_l_annee_ou_l_exploitant_agricole_cesse_lui_vaut_les_points_d_une_annee(simulateur):
+    """Les cotisations de l'année où l'exploitant cesse sont dues « au titre de
+    l'année civile entière » (L. 731-10-1 du code rural), sur un revenu annuel,
+    la moyenne de ceux des trois années qui précèdent (L. 731-15), et elles
+    donnent droit, « pour l'année au titre de laquelle elles sont dues », aux
+    points de la retraite proportionnelle (R. 732-70) comme à ceux de la RCO
+    (D. 732-155) : ceux d'une année, et non ceux de ses mois. Parti le
+    1er août 2024, le chef à 12 000 € par an, 7 000 € pour ses sept mois de
+    2024, a en 2024 les 30 points du 3° de R. 732-71 (entre 800 SMIC horaires,
+    9 320 €, et deux fois le minimum contributif, 17 592,76 €), et non les 23
+    de ses 7 000 € (2°), comptés pour sept douzièmes ; et les 133 points de
+    l'assiette minimale de la RCO (1 820 SMIC, 21 203 €, D. 732-155, I, 1°).
+    Le collaborateur, sur ses forfaits : 16 points (400 SMIC, 1° de R. 732-71,
+    porté au plancher de R. 732-73) et 88 (D. 732-155, II), et non leurs sept
+    douzièmes. Dans les deux moteurs."""
+    import json
+    import shutil
+    import subprocess
+
+    from retraite_notionnelle.droit import releve
+
+    construites = [_agricole_parti_en_aout_2024("exploitant_agricole"),
+                   _agricole_parti_en_aout_2024("collaborateur_agricole")]
+    carrieres = [Carriere.depuis_chronologie(c, simulateur.macro) for c in construites]
+    assert [c.annee_de_cessation_agricole for c in carrieres] == [2024, 2024]
+    attendu = [{"msa_non_salaries": 30.0, "msa_rco": 133.0},
+               {"msa_non_salaries": 16.0, "msa_rco": 88.0}]
+    assert [_points_agricoles_de_l_annee(
+        releve.construire(simulateur.scenario_actuel, c).droits.points, 2024)
+        for c in carrieres] == attendu
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    script = """
+import { readFileSync } from "node:fs";
+import { Carriere } from "./moteur/js/carriere.js";
+import { Contexte } from "./moteur/js/contexte.js";
+import { construire } from "./moteur/js/droit/releve.js";
+const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
+const simulateur = contexte.simulateur();
+const obtenus = JSON.parse(process.argv[1]).map((construite) => {
+  const carriere = Carriere.depuisChronologie(construite, simulateur.macro);
+  return [...construire(simulateur.scenarioActuel, carriere).droits.points];
+});
+process.stdout.write(JSON.stringify(obtenus));
+"""
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", script, json.dumps(construites)],
+        cwd=RACINE_TEMOINS.parent.parent, capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    assert [_points_agricoles_de_l_annee(points, 2024)
+            for points in json.loads(execution.stdout)] == attendu
+
+
+def test_les_lignes_de_l_annee_ou_l_exploitant_cesse_s_en_partagent_les_douze_mois(simulateur):
+    """Chef de 1990 à 12 000 € par an, parti le 1er août 2024, chef encore de
+    janvier à mars 2024 (3 000 €), collaborateur d'avril à juillet : l'année
+    cotisée entière (L. 731-10-1) se partage entre ses deux lignes au prorata
+    de leurs mois, trois septièmes et quatre septièmes, et non une année à
+    chacune. Leurs points ne passent pas les trente d'une année de chef à
+    12 000 € (R. 732-71, 3°), quand deux années pleines, l'une de chef, l'autre
+    de collaborateur, en feraient quarante-six. Dans les deux moteurs."""
+    import json
+    import shutil
+    import subprocess
+
+    from retraite_notionnelle.droit import releve
+
+    def lignes():
+        return ([dict(annee=annee, revenu=12000.0, affiliation="exploitant_agricole")
+                 for annee in range(1990, 2024)]
+                + [dict(annee=2024, revenu=3000.0, affiliation="exploitant_agricole",
+                        fraction_annee=3 / 12, trimestres_valides=1),
+                   dict(annee=2024, revenu=4000.0, affiliation="collaborateur_agricole",
+                        fraction_annee=4 / 12, trimestres_valides=1)])
+
+    carriere = Carriere(annee_naissance=1962, sexe="H", jour_naissance=15,
+                        lignes=[AnneeCarriere(**ligne) for ligne in lignes()],
+                        age_liquidation=62.5)
+    assert str(carriere.date_liquidation) == "août 2024"
+    assert carriere.annee_de_cessation_agricole == 2024
+    assert sorted(carriere.part_cotisee_ligne(ligne) for ligne in carriere.lignes_de(2024)) \
+        == pytest.approx([3 / 7, 4 / 7])
+    points = _points_agricoles_de_l_annee(
+        releve.construire(simulateur.scenario_actuel, carriere).droits.points, 2024)
+    assert 0.0 < points["msa_non_salaries"] <= 30.0
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    script = """
+import { readFileSync } from "node:fs";
+import { AnneeCarriere, Carriere } from "./moteur/js/carriere.js";
+import { Contexte } from "./moteur/js/contexte.js";
+import { construire } from "./moteur/js/droit/releve.js";
+const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
+const simulateur = contexte.simulateur();
+const carriere = new Carriere({
+  annee_naissance: 1962, sexe: "H", jour_naissance: 15, age_liquidation: 62.5,
+  lignes: JSON.parse(process.argv[1]).map((ligne) => new AnneeCarriere(ligne)) });
+process.stdout.write(JSON.stringify({
+  parts: carriere.lignesDe(2024).map((ligne) => carriere.partCotiseeLigne(ligne)),
+  points: [...construire(simulateur.scenarioActuel, carriere).droits.points] }));
+"""
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", script, json.dumps(lignes())],
+        cwd=RACINE_TEMOINS.parent.parent, capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    obtenu = json.loads(execution.stdout)
+    assert sorted(obtenu["parts"]) == pytest.approx([3 / 7, 4 / 7])
+    assert _points_agricoles_de_l_annee(obtenu["points"], 2024) == points
+
+
+def _exploitant_parti_en_aout_2028(revenu_2028: float) -> dict:
+    """Né en 1964, exploitant agricole de 1990 à son départ du 1er août 2028,
+    à 15 000 € par an, et à ``revenu_2028`` pour les sept mois de 2028."""
+    from retraite_notionnelle import chronologie
+
+    return chronologie.completer(chronologie.du_releve(
+        annee_naissance=1964, sexe="H", age_liquidation=64.5, releve=[
+            LigneRelevee(annee=annee, affiliation="exploitant_agricole",
+                         revenu=revenu_2028 if annee == 2028 else 15000.0)
+            for annee in range(1990, 2029)]))
+
+
+def test_le_revenu_de_l_annee_ou_l_exploitant_cesse_entre_dans_sa_moyenne(simulateur):
+    """Depuis 2026, les droits des non-salariés agricoles « sont déterminés en
+    tenant compte des cotisations versées et arrêtées au dernier jour de
+    l'année civile de l'entrée en jouissance de la pension » (R. 732-60, 1°,
+    par dérogation à R. 351-1), et celles de l'année où l'exploitant cesse
+    sont dues pour l'année entière (L. 731-10-1) : le revenu de cette année,
+    celui de ses mois porté à douze, entre dans le revenu annuel moyen du 1° de
+    L. 732-24, sous le plafond de l'année entière. Parti le 1er août 2028,
+    l'exploitant de 1990 a 52 de ses 156 trimestres depuis 2016, donc huit de
+    ses vingt-cinq années (R. 173-3-2) : 24 500 € au lieu de 21 000 € pour les
+    sept mois de 2028, l'année de sa liquidation, soit 42 000 € l'an au lieu de
+    36 000 €, ajoutent 750 € à la moyenne. Dans les deux moteurs."""
+    import json
+    import re
+    import shutil
+    import subprocess
+
+    def moyenne(detail: str) -> float:
+        trouve = re.search(r"revenu annuel moyen ([\d,]+\.\d+) €", detail)
+        assert trouve is not None, detail
+        return float(trouve.group(1).replace(",", ""))
+
+    construites = [_exploitant_parti_en_aout_2028(revenu) for revenu in (21000.0, 24500.0)]
+    carrieres = [Carriere.depuis_chronologie(c, simulateur.macro) for c in construites]
+    assert [str(c.date_liquidation) for c in carrieres] == ["août 2028"] * 2
+    assert [c.annee_de_cessation_agricole for c in carrieres] == [2028, 2028]
+    details = [next(p.detail for p in simulateur.scenario_actuel.calculer(c).pensions_par_regime
+                    if p.regime == "msa_non_salaries") for c in carrieres]
+    assert all("× 52/170" in d and "8 meilleures années depuis 2016" in d for d in details)
+    assert moyenne(details[1]) - moyenne(details[0]) == pytest.approx(750.0, abs=0.01)
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    script = """
+import { readFileSync } from "node:fs";
+import { Carriere } from "./moteur/js/carriere.js";
+import { Contexte } from "./moteur/js/contexte.js";
+const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
+const simulateur = contexte.simulateur();
+const obtenus = JSON.parse(process.argv[1]).map((construite) => {
+  const carriere = Carriere.depuisChronologie(construite, simulateur.macro);
+  return simulateur.scenarioActuel.calculer(carriere).pensions_par_regime
+    .find((p) => p.regime === "msa_non_salaries").detail;
+});
+process.stdout.write(JSON.stringify(obtenus));
+"""
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", script, json.dumps(construites)],
+        cwd=RACINE_TEMOINS.parent.parent, capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    assert [moyenne(d) for d in json.loads(execution.stdout)] == pytest.approx(
+        [moyenne(d) for d in details], abs=0.01)
+
+
 def test_la_repartition_des_annees_suit_r_173_3_2():
     """« Arrondis à chaque étape à l'entier non nul le plus proche, la fraction
     d'année égale à 0,5 étant comptée pour une année » ; les années
@@ -5109,21 +5311,26 @@ def test_la_pension_agricole_de_2026_prend_le_plus_favorable_des_deux_calculs(si
     modeste = pension(1962, niveau=0.3)
     assert "calcul provisoire de 2026 et 2027, que le recalcul de 2028 ne dépasse pas" \
         in modeste.detail
-    assert modeste.detail.startswith("(1,291.25 points × valeur de service")
+    # 1 290 points jusqu'en 2025, et les trente de 2026, l'année entière où il
+    # cesse (L. 731-10-1), au palier de R. 732-71, 3°, comme ses autres années.
+    assert modeste.detail.startswith("(1,320.00 points × valeur de service")
     assert "calcul provisoire" not in pension(1975).detail
     assert pension(1975).detail.startswith("revenu annuel moyen")
     assert "revenu annuel moyen" not in pension(1955).detail
-    # La moitié du plafond borne la pension avant la surcote : une longue
+    # La moitié du plafond borne le recalcul avant la surcote : une longue
     # carrière au triple du salaire moyen la dépasse, par ses points d'avant
     # 2016, que la proratisation ne borne pas. Installée à dix-sept ans : le
     # maximum de points de R. 732-70, qui lit l'AVTS depuis le 14 octobre 2026,
     # en donne moins qu'avec la retraite forfaitaire, et dix-huit n'y suffisent
-    # plus.
+    # plus. Le calcul provisoire, à l'ancienne section, n'a pas cette borne :
+    # avec le maximum de points de 2026, l'année entière où le chef cesse
+    # (L. 731-10-1), et non son seul mois de janvier, il la passe, et il est
+    # servi.
     haut = pension(1962, niveau=3.0, debut=17)
-    assert haut.detail.startswith(
-        "moitié du plafond 24,030.00 € × coefficient de majoration 1.0500 "
-        "(L. 732-24, III), au lieu de ")
-    assert haut.montant == pytest.approx(24_030.0 * 1.05)
+    assert haut.detail.endswith(
+        "calcul provisoire de 2026 et 2027, que le recalcul de 2028 ne dépasse pas "
+        "(25,231.50 €)")
+    assert haut.montant > 24_030.0 * 1.05
 
 
 def test_le_minimum_garanti_de_la_fonction_publique_est_servi(simulateur):

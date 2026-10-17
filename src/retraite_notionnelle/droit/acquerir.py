@@ -456,7 +456,13 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
         # exercée APRÈS le départ : elle n'ouvre pas de droits dans la
         # pension qu'on liquide. L'année du départ, elle, ouvre ceux de ses
         # mois qui l'ont précédé — ni zéro ni douze, mais le compte juste.
-        part = carriere.part_retenue_ligne(ligne)
+        # Sauf l'année où l'exploitant agricole cesse : il y cotise « au
+        # titre de l'année civile entière » (L. 731-10-1 du code rural), et
+        # ses cotisations donnent les points de l'année « au titre de
+        # laquelle elles sont dues » (R. 732-70 ; D. 732-155 à la RCO), sur
+        # un revenu annuel, celui des trois années qui précèdent (L. 731-15) :
+        # le revenu de ses mois, porté à douze (`Carriere.part_cotisee_ligne`).
+        part = carriere.part_cotisee_ligne(ligne)
         if part <= 0:
             continue
         if not ligne.cotise and not ligne.familles_cotisantes:
@@ -464,7 +470,7 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
         # Pendant une période indemnisée, seuls les régimes complémentaires
         # encaissent, et sur le salaire d'avant l'interruption.
         base_ligne = ligne.revenu if ligne.cotise else ligne.revenu_reference
-        if part < ligne.fraction_annee:
+        if part != ligne.fraction_annee and ligne.fraction_annee > 0:
             base_ligne *= part / ligne.fraction_annee
         familles_admises = (
             None if ligne.cotise else set(ligne.familles_cotisantes)

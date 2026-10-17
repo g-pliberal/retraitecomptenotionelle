@@ -257,10 +257,14 @@ def test_les_plans_portent_une_carriere_complete_au_minimum_vieillesse(simulateu
 def test_les_points_de_1997_ne_sont_servis_qu_au_tiers(simulateur):
     """26,933 points par année de chef, servis au tiers en 1997, aux deux
     tiers en 1998, entiers en 1999 (décret n° 97-163, articles 1er et 3) ; 29,23
-    en 2001 (décret n° 2001-170)."""
-    for naissance, age, minimum, part in ((1935, 62, 26.933, 1 / 3), (1937, 61, 26.933, 2 / 3),
-                                          (1939, 60, 26.933, 1.0), (1941, 60, 29.23, 1.0)):
-        majoration, _ = _majoration(simulateur, _chef(simulateur, naissance, age))
+    en 2001 (décret n° 2001-170). Le chef de 2001 naît en décembre et part le
+    1er janvier : parti en février, il compterait les trente points de l'année
+    entière où il cesse (L. 731-10-1), et sa moyenne passerait les seize."""
+    for naissance, mois, age, minimum, part in (
+            (1935, 1, 62, 26.933, 1 / 3), (1937, 1, 61, 26.933, 2 / 3),
+            (1939, 1, 60, 26.933, 1.0), (1940, 12, 60, 29.23, 1.0)):
+        majoration, _ = _majoration(simulateur, _chef(simulateur, naissance, age,
+                                                      mois_naissance=mois))
         assert majoration is not None, naissance
         assert f"({minimum:.3f} - " in majoration.detail
         assert majoration.detail.startswith(
