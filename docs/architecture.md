@@ -1563,7 +1563,8 @@ exemples officiels, les réformes, les sources à explorer, la feuille de route.
 Une maquette l'a montré avant la phase 0 (note 0001, § 14.7) ;
 `scripts/tableau_de_bord.py` en est tiré. Le coût du travail, qui se relève
 sur l'historique git, périmerait la page à chaque commit : il s'affiche à la
-demande (`--cout`), hors de `docs/etat.md`.
+demande (`--cout`), hors de `docs/etat.md`, avec les rouges de la suite sur
+`main`, que le journal des verdicts tient (`.github/verdicts.tsv`, action 163).
 
 ### 9.2 Ce qu'on apprend n'est jamais bloqué
 
@@ -1681,7 +1682,8 @@ de son message.
 Tout tourne sur GitHub à chaque envoi sur `main`, par
 `.github/workflows/tests.yml`, qui repart du dernier `main`, refait les
 fichiers fabriqués, joue la suite et commite les uns et le verdict
-(`.github/etat_suite.yaml`, que chaque session lit à son ouverture) : depuis
+(`.github/etat_suite.yaml`, que chaque session lit à son ouverture, et une
+ligne au journal des verdicts, `.github/verdicts.tsv`) : depuis
 l'action 148, une session ne passe avant d'envoyer que le premier niveau,
 `python -m pytest -m rapide`, et les tests de sa zone. Le site ne part en ligne
 que de là : une suite verte sur `main`, son verdict poussé, `tests.yml` déploie

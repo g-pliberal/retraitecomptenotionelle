@@ -30,8 +30,10 @@ Ce qu'il n'écrit pas
 Le coût du travail se relève sur l'historique git : ses chiffres changent à
 chaque commit, et une page qui les porterait serait périmée dès le suivant. Il
 s'affiche à la demande, par ``--cout``, et n'entre pas dans ``docs/etat.md``.
-La page ne porte pas non plus sa date de fabrication : son histoire est celle
-que git garde.
+Les rouges de la suite complète sur ``main`` non plus : leur journal,
+``.github/verdicts.tsv``, s'allonge à chaque course, et ``--cout`` les relève
+(action 163). La page ne porte pas non plus sa date de fabrication : son
+histoire est celle que git garde.
 """
 
 from __future__ import annotations
@@ -45,6 +47,7 @@ import re
 import statistics
 import subprocess
 import sys
+from datetime import datetime, timedelta
 from pathlib import Path
 
 import yaml
@@ -56,6 +59,9 @@ from retraite_notionnelle.noyau import univers as univers_de_droit
 
 RACINE = Path(__file__).resolve().parents[1]
 PAGE = RACINE / "docs" / "etat.md"
+#: Une ligne par course publiée de ``tests.yml`` : date, sources, état de la
+#: suite, état de la garde (``scripts/publier_fabrique.sh``, action 163).
+JOURNAL_DES_VERDICTS = RACINE / ".github" / "verdicts.tsv"
 
 #: Les caisses de l'enquête EACR de la DREES, rattachées aux régimes de
 #: l'inventaire : c'est ce qui pèse la couverture par les retraités.
@@ -664,7 +670,8 @@ def page() -> str:
       "ne les affiche pas encore.")
     w("- **Le coût du travail** se relève sur l'historique git, et change à chaque "
       "commit : il s'affiche à la demande, par `python scripts/tableau_de_bord.py --cout`, "
-      "avec la taille du dépôt — ses lignes, ses tests —, que la prose ne porte plus.")
+      "avec les rouges de la suite sur `main` et la taille du dépôt — ses lignes, ses "
+      "tests —, que la prose ne porte plus.")
     return "\n".join(L) + "\n"
 
 
@@ -722,6 +729,64 @@ def cout(n: int = 400) -> str:
     return "\n".join(L) + "\n"
 
 
+def suite(journal: Path = JOURNAL_DES_VERDICTS) -> str:
+    """Les rouges de la suite complète sur ``main``, relevés au journal des
+    verdicts (action 163). Un incident commence au premier rouge après un
+    vert, et dure jusqu'au vert suivant ; la semaine finit au dernier verdict,
+    non à l'heure où l'on regarde, pour que le relevé ne dépende que du
+    journal."""
+    L = ["## La suite sur `main`", ""]
+    verdicts = []
+    if journal.exists():
+        for ligne in journal.read_text(encoding="utf-8").splitlines():
+            champs = ligne.split("\t")
+            if len(champs) == 4:
+                quand = datetime.fromisoformat(champs[0].replace("Z", "+00:00"))
+                verdicts.append((quand, champs[2], champs[3]))
+    if not verdicts:
+        L.append("Aucun verdict au journal.")
+        return "\n".join(L) + "\n"
+    verdicts.sort()
+    incidents, debut = [], None
+    for quand, etat, _ in verdicts:
+        if etat == "rouge" and debut is None:
+            debut = quand
+        elif etat != "rouge" and debut is not None:
+            incidents.append((debut, quand))
+            debut = None
+    dernier = verdicts[-1][0]
+
+    def compte(n: int, mot: str) -> str:
+        return f"{n} {mot}{'s' if n > 1 else ''}"
+
+    def heures(a: datetime, b: datetime) -> float:
+        return (b - a).total_seconds() / 3600
+
+    def releve(depuis: datetime) -> tuple[str, list[float]]:
+        courses = [v for v in verdicts if v[0] >= depuis]
+        rouges = somme_ordonnee(1 for v in courses if v[1] == "rouge")
+        clos = [heures(a, b) for a, b in incidents if a >= depuis]
+        nombre = len(clos) + (debut is not None and debut >= depuis)
+        return (f"{compte(len(courses), 'course')}, dont {compte(rouges, 'rouge')} "
+                f"({pct(rouges, len(courses))}), en {compte(nombre, 'incident')}"), clos
+
+    tout, durees = releve(verdicts[0][0])
+    phrase_tout = (f"- {tout} ; `main` est restée rouge {virgule(somme_ordonnee(durees))} h "
+                   f"en tout, {virgule(max(durees, default=0))} h au plus")
+    gardes = somme_ordonnee(1 for v in verdicts if v[2] == "rouge")
+    if gardes:
+        phrase_tout += f" ; la garde des présomptions rouge {gardes} fois"
+    if debut is not None:
+        phrase_tout += f" ; un incident en cours, depuis {virgule(heures(debut, dernier))} h"
+    semaine, durees = releve(dernier - timedelta(days=7))
+    L += [f"Relevé au journal des verdicts (`.github/verdicts.tsv`), du "
+          f"{verdicts[0][0]:%Y-%m-%d} au {dernier:%Y-%m-%d} :", "",
+          phrase_tout + " ;",
+          f"- sur les sept jours qui finissent au dernier verdict : {semaine}, "
+          f"{virgule(somme_ordonnee(durees))} h au rouge."]
+    return "\n".join(L) + "\n"
+
+
 def taille() -> str:
     """Les chiffres qui décrivent le dépôt lui-même : la prose ne les porte
     plus, puisqu'ils changent à chaque session (docs/architecture.md, § 9.3)."""
@@ -755,7 +820,7 @@ def main() -> int:
     arguments = analyseur.parse_args()
 
     if arguments.cout:
-        print(cout() + "\n" + taille(), end="")
+        print(cout() + "\n" + suite() + "\n" + taille(), end="")
         return 0
     voulu = page()
     actuel = PAGE.read_text(encoding="utf-8") if PAGE.exists() else ""

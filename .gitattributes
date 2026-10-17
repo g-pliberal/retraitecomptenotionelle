@@ -68,3 +68,4 @@ docs/chiffrage_plf.csv         -merge
 docs/etat.md                   -merge
 data/reference/regimes/inventaire.yaml -merge
 .github/etat_suite.yaml        -merge
+.github/verdicts.tsv           -merge

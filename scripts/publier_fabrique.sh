@@ -19,6 +19,8 @@
 #
 # Sortie : `en_ligne=oui` dans GITHUB_OUTPUT quand une suite verte sur main est
 # poussée, et alors seulement : `tests.yml` met le site en ligne (action 163).
+# Chaque verdict s'inscrit aussi au journal, `.github/verdicts.tsv`, une ligne
+# par course publiée, où `tableau_de_bord.py --cout` compte les rouges.
 
 set -euo pipefail
 
@@ -48,12 +50,14 @@ if [ "${FABRICATION:-}" != success ] || [ "${SUITE:-}" != success ]; then
 fi
 
 fichier=.github/etat_suite.yaml
+journal=.github/verdicts.tsv
+quand=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 {
     echo "# Le verdict de la dernière course de tests.yml : écrit par GitHub"
     echo "# (scripts/publier_fabrique.sh), jamais à la main. Action 148."
     echo "etat: $etat"
     echo "sources: $source"
-    echo "date: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+    echo "date: $quand"
     echo "course: ${COURSE:-}"
     if [ "$etat" = rouge ]; then
         echo "echecs:"
@@ -72,11 +76,13 @@ fichier=.github/etat_suite.yaml
             | head -n 30 | sed 's/"/\\"/g; s/^/  - "/; s/$/"/' || true
     fi
 } > "$fichier"
+printf '%s\t%s\t%s\t%s\n' "$quand" "${source:0:7}" "$etat" "$garde" >> "$journal"
 
 git config user.name "github-actions[bot]"
 git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 git add -A
-fabriques=$(git diff --cached --name-only | { grep -v -x "$fichier" || true; } | wc -l)
+fabriques=$(git diff --cached --name-only \
+    | { grep -v -x -e "$fichier" -e "$journal" || true; } | wc -l)
 if [ "$etat" = vert ]; then
     titre="Fabriqué par GitHub : suite verte sur ${source:0:7}, $fabriques fichier(s) refait(s)"
 else

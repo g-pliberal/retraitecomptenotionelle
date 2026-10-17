@@ -208,6 +208,53 @@ def test_le_site_se_deploie_de_l_arbre_publie_et_de_lui_seul():
                for e in deploiement["steps"])
 
 
+def test_chaque_verdict_publie_s_inscrit_au_journal(tmp_path):
+    """Le journal des verdicts : une ligne par course publiée — sa date, ses
+    sources, l'état de la suite, celui de la garde —, que
+    ``tableau_de_bord.py --cout`` compte. Il ne compte pas parmi les fichiers
+    refaits."""
+    _, titre = _publier(tmp_path, "success", "1 passed\n", suite="failure")
+    depot = tmp_path / "depot" / ".github"
+    ecrit = dict(l.split(": ", 1) for l in (depot / "etat_suite.yaml")
+                 .read_text(encoding="utf-8").splitlines()
+                 if ": " in l and not l.startswith(("#", " ")))
+    lignes = (depot / "verdicts.tsv").read_text(encoding="utf-8").splitlines()
+    assert lignes[-1].split("\t") == [ecrit["date"], ecrit["sources"][:7], "rouge", "vert"]
+    assert "ROUGE" in titre
+    _, titre = _publier(tmp_path / "verte", "success", "1 passed\n")
+    assert "0 fichier(s) refait(s)" in titre
+
+
+def test_le_tableau_de_bord_compte_les_rouges_et_le_temps_passe_au_rouge(tmp_path):
+    """``tableau_de_bord.py --cout`` relève au journal les courses rouges, les
+    incidents — un rouge après un vert — et le temps que main est restée
+    rouge, du premier rouge au vert suivant ; puis de même sur les sept jours
+    qui finissent au dernier verdict. Les valeurs sont comptées à la main sur
+    ce journal : 2 h 30 puis 1 h au rouge, le second incident seul dans la
+    semaine ; un incident sans vert après lui est en cours."""
+    import tableau_de_bord
+
+    journal = tmp_path / "verdicts.tsv"
+    journal.write_text(
+        "2026-09-29T10:00:00Z\taaaaaaa\tvert\t\n"
+        "2026-09-29T12:00:00Z\tbbbbbbb\trouge\tvert\n"
+        "2026-09-29T13:00:00Z\tccccccc\trouge\trouge\n"
+        "2026-09-29T14:30:00Z\tddddddd\tvert\tvert\n"
+        "2026-10-07T09:00:00Z\teeeeeee\trouge\tvert\n"
+        "2026-10-07T10:00:00Z\tfffffff\tvert\tvert\n", encoding="utf-8")
+    texte = tableau_de_bord.suite(journal)
+    assert ("6 courses, dont 3 rouges (50 %), en 2 incidents ; `main` est restée "
+            "rouge 3,5 h en tout, 2,5 h au plus ; la garde des présomptions "
+            "rouge 1 fois") in texte
+    assert ("sur les sept jours qui finissent au dernier verdict : 2 courses, "
+            "dont 1 rouge (50 %), en 1 incident, 1,0 h au rouge") in texte
+    with journal.open("a", encoding="utf-8") as fichier:
+        fichier.write("2026-10-07T12:00:00Z\tggggggg\trouge\tvert\n"
+                      "2026-10-07T15:00:00Z\thhhhhhh\trouge\tvert\n")
+    assert "un incident en cours, depuis 3,0 h" in tableau_de_bord.suite(journal)
+    assert "Aucun verdict" in tableau_de_bord.suite(tmp_path / "absent.tsv")
+
+
 @pytest.mark.parametrize("source, deploie", [
     ("workflow", True), ("legacy", False), (None, False)])
 def test_rien_ne_se_deploie_tant_que_pages_publie_depuis_une_branche(

@@ -6406,15 +6406,14 @@ d'un commit qui change le code sans test), ou l'alléger.
 
 ### 163. Ce que la revue de code d'Anthropic apprend au dépôt : le site en ligne au vert, les rouges classés, puis un relecteur — `en cours`
 
-**Reprise, au 17 octobre 2026.** Faite, l'étape 1 : le site ne part plus en
-ligne que d'une suite verte sur `main`, `tests.yml` déployant l'arbre du
-commit publié par GitHub Actions. Pages réglé sur « GitHub Actions » par le
-propriétaire, le premier déploiement a eu lieu le jour même, vérifié.
-Reste l'étape 2 : classer les 25 verdicts rouges de `main` du 6 au
-17 octobre 2026, cause par cause, et dire au propriétaire quelle garde en
-découle ; commencer par la recherche des commits « Suite ROUGE sur » et leur
-`.github/etat_suite.yaml`. Les étapes 3 à 6 attendent son verdict. Détail :
-`163/2026-10-17-le-site-en-ligne-au-vert.md`.
+**Reprise, au 17 octobre 2026.** Faites, les étapes 1 et 2 : le site ne part
+en ligne que d'une suite verte sur `main` ; les 26 rouges du 6 au 17 octobre
+sont classés, et le journal des verdicts (`.github/verdicts.tsv`) en tient le
+compte, que `tableau_de_bord.py --cout` relève. Ni la suite rapide ni une file
+de fusion n'en auraient arrêté un seul ; 13 causes sur 33 sont des chiffres
+écrits à la main que le changement déplace. Au propriétaire de trancher les
+gardes que le classement propose, puis les étapes 3 à 6. Détail :
+`163/2026-10-17-les-rouges-classes.md`.
 
 **D'où elle vient.** Le 17 octobre 2026, le propriétaire soumet à une
 session l'article « How the Claude Code team does code review » (blog
@@ -6429,8 +6428,8 @@ lance les deux premières : « vas-y ».
    « latest » avant « stable ») : `publier_fabrique.sh` dit `en_ligne=oui`
    d'une suite verte sur `main`, et `tests.yml` déploie alors l'arbre du
    commit publié.
-2. **Les rouges classés** (leurs incidents changés en jeu d'épreuve, et leur
-   taux comme garde-fou) : pour chaque verdict rouge depuis le 6 octobre, le
+2. **Les rouges classés**, faite le 17 octobre 2026 (leurs incidents changés
+   en jeu d'épreuve, et leur taux comme garde-fou) : pour chaque verdict rouge depuis le 6 octobre, le
    test, la zone, et ce qui l'aurait vu avant l'envoi — `pytest -m rapide`,
    les tests de la zone, ou rien quand le rouge naît de deux sessions que
    `pousser.sh` a rebasées l'une sur l'autre sans relancer de test, ce
@@ -6452,5 +6451,7 @@ lance les deux premières : « vas-y ».
    un commit qui touche `tests.yml`, les hooks ou `pousser.sh`, et la session
    demande d'abord au propriétaire.
 
-**Ce que le propriétaire tranche** : à l'étape 2, les gardes que le
-classement justifie ; puis, une à une, les étapes 3 à 6.
+**Ce que le propriétaire tranche** : les gardes que l'étape 2 propose —
+produire les chiffres cités, le bloc « Reprise » à l'envoi, les tests d'une
+seconde au niveau rapide, les confrontations dans la zone du modèle — ; puis,
+une à une, les étapes 3 à 6.
