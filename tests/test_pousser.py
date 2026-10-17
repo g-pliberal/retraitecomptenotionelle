@@ -54,6 +54,10 @@ def modele_d_atelier(tmp_path_factory) -> Path:
     distant = racine / "origin.git"
     subprocess.run(["git", "init", "--quiet", "--bare", "--initial-branch=main",
                     str(distant)], check=True)
+    # Copiés pour chaque cas, les dépôts n'écrivent rien en arrière-plan.
+    for cle, valeur in (("maintenance.auto", "false"), ("gc.auto", "0"),
+                        ("receive.autogc", "false")):
+        git(distant, "config", cle, valeur)
 
     amorce = racine / "amorce"
     subprocess.run(["git", "clone", "--quiet", str(distant), str(amorce)], check=True)
@@ -65,6 +69,8 @@ def modele_d_atelier(tmp_path_factory) -> Path:
 
     session = racine / "session"
     subprocess.run(["git", "clone", "--quiet", str(distant), str(session)], check=True)
+    git(session, "config", "maintenance.auto", "false")
+    git(session, "config", "gc.auto", "0")
     # L'identité d'une session web : la seule adresse qu'elle publie.
     git(session, "config", "user.email", "noreply@anthropic.com")
     git(session, "config", "user.name", "Claude")
@@ -81,6 +87,23 @@ def atelier(modele_d_atelier: Path, tmp_path: Path) -> tuple[Path, Path]:
     shutil.copytree(modele_d_atelier / "session", session)
     git(session, "remote", "set-url", "origin", str(distant))
     return distant, session
+
+
+def test_l_atelier_ne_lance_aucune_maintenance(modele_d_atelier: Path):
+    """Copiés pour chaque cas, le dépôt nu et la session ne doivent rien écrire
+    en arrière-plan : la maintenance automatique que git détache après un
+    commit, ou que le dépôt nu lance en recevant une poussée
+    (``receive.autogc``), tient un verrou que la copie ne retrouve plus. Le
+    17 octobre 2026, sur GitHub, la copie du modèle de ``test_hook_tdd.py`` a
+    échoué ainsi."""
+    attendu = {"origin.git": (("maintenance.auto", "false"), ("gc.auto", "0"),
+                              ("receive.autogc", "false")),
+               "session": (("maintenance.auto", "false"), ("gc.auto", "0"))}
+    for depot, cles in attendu.items():
+        for cle, valeur in cles:
+            lu = subprocess.run(["git", "-C", str(modele_d_atelier / depot), "config",
+                                 "--get", cle], capture_output=True, text=True).stdout.strip()
+            assert lu == valeur, f"{depot} : {cle}"
 
 
 def tete_distante(distant: Path, branche: str) -> str:

@@ -53,6 +53,8 @@ def modele(tmp_path_factory):
         (racine / chemin).parent.mkdir(parents=True, exist_ok=True)
         (racine / chemin).write_text(texte, encoding="utf-8")
     _git(racine, "init", "-q")
+    _git(racine, "config", "maintenance.auto", "false")
+    _git(racine, "config", "gc.auto", "0")
     _commit(racine, "départ")
     return racine
 
@@ -60,6 +62,17 @@ def modele(tmp_path_factory):
 @pytest.fixture
 def depot(modele, tmp_path):
     return Path(shutil.copytree(modele, tmp_path / "depot"))
+
+
+def test_le_depot_modele_ne_lance_aucune_maintenance(modele):
+    """Copié pour chaque test, le modèle ne doit rien écrire en arrière-plan.
+    Le 17 octobre 2026, sur GitHub, la maintenance automatique que git
+    détache après un commit y tenait ``.git/objects/maintenance.lock`` ; le
+    verrou ôté pendant la copie, la copie a échoué, et la suite avec elle."""
+    for cle, valeur in (("maintenance.auto", "false"), ("gc.auto", "0")):
+        lu = subprocess.run(["git", "-C", str(modele), "config", "--get", cle],
+                            capture_output=True, text=True).stdout.strip()
+        assert lu == valeur, cle
 
 
 def _appel(chemin: Path, outil: str = "Edit", seance: str = "s1") -> dict:
