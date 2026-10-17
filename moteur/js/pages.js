@@ -9829,10 +9829,10 @@ carrière.</p>`, "cout-esperance-vie");
  * Ce que les variantes de fécondité et de migrations de l'INSEE déplacent du
  * coût (action 138, étape 7), comme l'espérance de vie : une table figée par
  * composante (`fecondite`, `migrations`), un tableau chacune, dans une seule
- * section. Le diviseur ne les lit pas : la proposition n'en est pas protégée
- * comme de la longévité, ses pensions se rapportant à un PIB plus petit ou
- * plus grand. Le simulateur n'offre pas ce réglage, qui ne change pas une
- * carrière.
+ * section. Le diviseur ne les lit pas, mais les comptes de la proposition et
+ * sa pension servie suivent la masse salariale de la variante, qui croît avec
+ * ses actifs : sa dépense reste presque celle du central. Le simulateur n'offre
+ * pas ce réglage, qui ne change pas une carrière.
  */
 function coutDetailDemographie(contexte) {
   const agregats = contexte.agregats();
@@ -9860,11 +9860,11 @@ varie de ${ecarts(fecondite, "actuel")} sous la fécondité, de
 ${ecarts(migrations, "actuel")} sous les migrations ; celle de la proposition
 libérale, de ${ecarts(fecondite, "notionnel_liberal")}, et de
 ${ecarts(migrations, "notionnel_liberal")}. Le diviseur ne voit pas qui
-cotise : la proposition n'en est pas protégée comme de la longévité, ses
-pensions se rapportant à un PIB plus petit ou plus grand. Ses comptes
-s'indexent ici sur la masse salariale du scénario central, quand une
-population active plus nombreuse la ferait croître plus vite et leur rendrait
-une part de ce que le PIB gagne.</p>
+cotise, mais ses comptes et ses pensions s'indexent sur la masse salariale de
+la variante, qui croît plus vite quand la population active est plus
+nombreuse : ils suivent le PIB, et la dépense de la proposition reste presque
+celle du central. Ce qui en reste d'écart tient aux pensions liquidées avant
+la bascule, que le droit revalorise sur les prix.</p>
 <p class="discret">En points de PIB, sous chaque hypothèse dans l'ordre
 ${fecondite.ordre}. La dépense du système actuel est celle du COR, que le
 modèle fait suivre la pyramide de chaque variante, et le PIB ses 20-64 ans ;

@@ -1,15 +1,15 @@
 # Étape 7, première partie : les quotients projetés de l'INSEE au lieu de la loi de Gompertz-Makeham
 
-**Reprise, au 16 octobre 2026.** Fait : les quotients projetés de l'INSEE lus
+**Reprise, au 17 octobre 2026.** Fait : les quotients projetés de l'INSEE lus
 âge par âge par les deux moteurs ; la marche de 1941 ; les hypothèses
 d'espérance de vie, la fécondité et les migrations dans le diviseur, la page
 Coût et les pages ; le 16 octobre encore, l'indexation sous la variante : le
 compte et la pension de la proposition suivent la masse salariale de la
-variante (`Pensionne.capitaux`, `RevalorisationServie.pour_la_proposition`).
-Reste, une session par point : la phrase de la page Coût qui dit l'inverse, à
-la session des pages ; la mortalité différentielle ; les départs qui suivent
-l'espérance de vie ; la queue de 85 à 98 ans ; 2025. Détail : « Ce qui
-reste », `2026-10-16-etape-7-indexation-sous-la-variante.md`.
+variante (`Pensionne.capitaux`, `RevalorisationServie.pour_la_proposition`),
+et la page Coût le dit depuis le 17. Reste, une session par point : la
+mortalité différentielle ; les départs qui suivent l'espérance de vie ; la
+queue de 85 à 98 ans ; 2025. Détail : « Ce qui reste »,
+`2026-10-16-etape-7-indexation-sous-la-variante.md`.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.7 ». L'étape 7 de
 l'action : « La démographie en variantes : les quotients projetés âge par âge
