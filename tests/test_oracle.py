@@ -1745,6 +1745,13 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         # d'entrée ni de la durée requise de la génération.
         _, sans = _carriere_exemple(simulateur, exemple, sans_enfants=True)
         return resultat.trimestres_valides - sans.trimestres_valides
+    if cle == "trimestres_de_surcote_parentale":
+        # Ceux que la surcote parentale compte dans l'année qui précède l'âge
+        # légal, comme son avantage les dit ; zéro sans elle.
+        parentale = next((a for a in resultat.avantages_appliques
+                          if a.code == "surcote_parentale"), None)
+        return 0 if parentale is None else int(
+            re.search(r"pour (\d+) trimestre", parentale.detail).group(1))
     if cle == "majoration_enfants_sur_pensions":
         # L'assiette de la majoration pour enfants, mesurée sur ce que le
         # modèle sert : la circulaire dit qu'elle porte sur la retraite

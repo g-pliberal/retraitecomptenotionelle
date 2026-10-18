@@ -4923,8 +4923,8 @@ sources:
     a_en_tirer: >-
       La surcote : trimestres entiers, point de départ, et la surcote parentale
       ouverte en 2024.
-    statut: explore
-    explore_le: "2026-09-24"
+    statut: epuise
+    explore_le: "2026-10-18"
     note: >-
       La règle que le modèle appliquait mal : trimestres de durée, comptés du
       jour où l'âge, des services après 2004 et une durée « surcote » au-delà
@@ -4935,7 +4935,14 @@ sources:
       générations 1963 à 1966 sont d'avant la suspension. Reste l'exemple 2 de
       la surcote au titre des enfants, génération 1969, deux trimestres de
       63 ans et 6 mois à 64 ans, que la suspension ne touche pas : la ligne
-      `surcote_parentale`, sans témoin, pourrait le prendre.
+      `surcote_parentale`, sans témoin, pourrait le prendre. Relue le 18
+      octobre 2026 (action 159, L. 14, V) : son « Nota » lit le V période par
+      période, et son exemple 1 de la surcote au titre des enfants sert les
+      deux surcotes en un seul coefficient, que le modèle composait (corrigé,
+      fiche surcote_parentale) ; l'exemple 2 entre aux témoins
+      (`cnracl_surcote_enfants_duree_atteinte_dans_l_annee`,
+      tests/temoins/exemples_officiels.yaml), et l'exemple 3 de droit commun
+      y est depuis l'action 132.
 
   - id: juris_cnracl_minimum_garanti
     url: https://www.juris-cnracl.retraites.fr/pension-normale/minimum-garanti

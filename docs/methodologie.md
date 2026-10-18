@@ -1063,7 +1063,11 @@ précédent, et le modèle en prenait deux à l'envers.
    trimestre de majoration pour enfants. C'est la contrepartie du recul de l'âge
    légal voulu par la loi du 14 avril 2023 : l'année de travail qu'elle impose à
    qui avait déjà sa durée ne rapportait rien, la surcote ordinaire ne comptant
-   qu'au-delà de l'âge légal. Les deux se cumulent donc sans se recouvrir. Elle
+   qu'au-delà de l'âge légal. Les deux se cumulent donc sans se recouvrir, en un
+   seul coefficient, sur la pension d'avant la surcote et, au régime général,
+   d'avant le minimum contributif (D. 351-2-1) : le V de L. 14, qui défend de
+   cumuler les deux majorations du fonctionnaire, vise une même période, comme
+   la CNRACL l'applique. Elle
    s'ouvre avec cet âge minimal : rien jusqu'à la génération 1964 ni pour les
    assurés nés au premier trimestre 1965, quatre trimestres au plus ensuite. La fenêtre est datée au mois, les trimestres de chaque année
    répartis sur ses mois. C'est le trimestre pour enfants qui ouvre le droit, et

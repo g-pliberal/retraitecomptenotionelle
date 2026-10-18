@@ -53,6 +53,9 @@
 #     ni de la durée requise de la génération. Un témoin qui l'emploie fixe
 #     son `age_debut`, sans quoi les deux parcours ne partiraient pas du même
 #     point ;
+#   trimestres_de_surcote_parentale — les trimestres que la surcote parentale
+#     compte dans l'année qui précède l'âge légal (L. 351-1-2-1, L. 14, IV),
+#     zéro sans elle ;
 #   majoration_enfants_sur_pensions — majoration pour enfants servie par les
 #     régimes de BASE, rapportée à leur pension. La circulaire dit que
 #     l'assiette est la retraite TELLE QUE CALCULÉE : appliquer les 10 % à la
@@ -938,6 +941,28 @@ exemples:
       ce jour ; né le 2, il n'en aurait eu que cinq, du 1er août 2024.
     carriere: {naissance: "1962-01-01", sexe: H, affiliation: fonctionnaire_territorial_hospitalier, liquidation: "2026-01", trimestres_valides: 176}
     attendu: {trimestres_requis: 169, age_ouverture: 62.5, taux_liquidation: 0.80625}
+
+  # La même page, relue le 18 octobre 2026 (action 159, L. 14, V), donne trois
+  # exemples de la surcote au titre des enfants. Le deuxième se rejoue : son
+  # agent, né en 1969, a soixante-quatre ans d'âge légal avant comme après la
+  # suspension de 2026. Le premier, né en 1966, et le troisième, né en 1964,
+  # datent d'avant elle : la génération 1964 n'a plus d'âge légal de 63 ans.
+  - id: cnracl_surcote_enfants_duree_atteinte_dans_l_annee
+    source: {editeur: "CNRACL", reference: "juris-cnracl.retraites.fr, « Calcul de la surcote », surcote au titre des enfants, exemple 2", verifie_le: "2026-10-18"}
+    enonce: >-
+      « Un fonctionnaire sédentaire né le 01/01/1969 a un âge de surcote de
+      droit commun fixé à 64 ans. [...] il pourrait en principe être éligible
+      au dispositif de surcote anticipé au titre des enfants à compter de ses
+      63 ans. A cette date, il bénéficie d'une bonification pour enfant.
+      Toutefois, il ne totalise le nombre de trimestres "surcote" requis pour
+      bénéficier du taux plein qu'à compter de ses 63 ans et 6 mois. [...] Il
+      pourra donc acquérir 2 trimestres de surcote au titre des enfants de ses
+      63 ans et 6 mois à ses 64 ans. Coefficient de majoration : 2 X 1.25% =
+      2.5 % ». Le modèle prête la bonification à la mère : l'agent est ici une
+      mère d'un enfant, partie à ses 64 ans avec 174 trimestres, dont 172 à
+      63 ans et 6 mois.
+    carriere: {naissance: "1969-01-01", sexe: F, affiliation: fonctionnaire_territorial_hospitalier, liquidation: "2033-01", trimestres_valides: 174, nombre_enfants: 1}
+    attendu: {trimestres_requis: 172, taux_liquidation: 0.75, trimestres_de_surcote_parentale: 2}
 
   - id: cnracl_carriere_longue_avant_soixante_ans
     source: {editeur: "CNRACL", reference: "juris-cnracl.retraites.fr, « Durée d'assurance requise - Fonctionnaire bénéficiant d'un départ anticipé avant 60 ans pour un autre motif », mise à jour du 1er septembre 2026, second exemple", verifie_le: "2026-09-24"}

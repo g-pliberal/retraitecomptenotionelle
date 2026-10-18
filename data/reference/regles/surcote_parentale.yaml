@@ -3,7 +3,8 @@ id: surcote_parentale
 intitule: >-
   1,25 % par trimestre cotisé dans l'année qui précède l'âge légal et au-delà de
   la durée requise, quatre au plus, dès que l'âge légal atteint 63 ans, à qui détient
-  un trimestre de majoration de durée d'assurance pour enfants.
+  un trimestre de majoration de durée d'assurance pour enfants ; ces trimestres entrent
+  dans le coefficient de la surcote ordinaire, sur la pension d'avant la surcote.
 etat: transcrite
 etape: completer_tous_regimes
 effet: >-
@@ -14,29 +15,40 @@ effet: >-
   quatre à chacune ; et rien du tout à qui atteignait la durée en cours de fenêtre,
   là où le texte paie les trimestres qui la dépassent. La fenêtre est datée au mois,
   les trimestres de chaque année répartis sur ses mois ; `test_la_surcote_parentale_ne_compte_que_les_trimestres_au_dela_de_la_duree`
-  tient la règle.
+  tient la règle. Jusqu'au 18 octobre 2026, le module appliquait la surcote parentale
+  à la pension déjà surcotée, et relevée au minimum contributif : 1,025 × 1,05 pour
+  deux trimestres de droit commun et quatre d'enfants, là où la CNRACL sert 1,075 ;
+  5 % du minimum, là où D. 351-2-1 calcule la surcote sur la pension d'avant lui.
+  Deux témoins de simulation sur 883 baissaient, de 0,06 % à 0,47 % ;
+  `test_la_surcote_parentale_du_fonctionnaire_entre_dans_le_coefficient_de_l_article_l14`
+  et `test_la_surcote_parentale_du_regime_general_est_la_surcote_ouverte_un_an_plus_tot`
+  tiennent la règle.
 sources:
-  lu_le: 2026-10-14
+  lu_le: 2026-10-18
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Chercher la circulaire Cnav d'application du décret n° 2023-799 et son exemple
-    chiffré : la fiche F19643 de service-public (vérifiée le 1er janvier 2026) ne
-    décrit pas la surcote parentale, et la circulaire 2026-07 non plus.
+    Chercher la circulaire Cnav d'application du décret n° 2023-799, puis de l'article
+    87 de la loi n° 2025-199, et son exemple chiffré : la fiche F19643 de service-public
+    (vérifiée le 1er janvier 2026) ne décrit pas la surcote parentale, et la circulaire
+    2026-07 non plus. Le régime général n'a ni l'une ni l'autre ; l'exemple de la CNRACL
+    ne rejoue que la fenêtre du fonctionnaire.
   - >-
-    LE FONCTIONNAIRE A SON TEXTE, ET SA RÈGLE DE NON-CUMUL. L. 14, IV, du code des
-    pensions (rédaction du 31 décembre 2023, LEGIARTI000048844775) ouvre la même
-    majoration au fonctionnaire qui détient un trimestre de bonification ou de
-    majoration au titre du b du 1° de L. 9, des b et b bis de L. 12, de L. 12 bis ou de
-    L. 12 ter ; le moteur la sert aux trois régimes de fonctionnaires, sur les trimestres
-    d'enfants qu'il compte. Mais L. 14, V, dispose que « la majoration mentionnée au III
-    et celle mentionnée au IV ne peuvent pas être cumulées », quand le moteur ajoute la
-    surcote parentale à la surcote ordinaire ; le code de la sécurité sociale, récrit
-    en 2025 (l'âge de la surcote « est abaissé d'un an »), n'a pas cette clause. Le jaune
-    pensions annexé au PLF 2027 (partie III) écrit que, passé l'âge légal, « la surcote
-    classique trouve à s'appliquer », sans trancher. Lire comment le service des
-    retraites de l'État et la CNRACL appliquent le V, et chercher un exemple chiffré
-    (action 159, étape 9).
+    LE MINIMUM GARANTI. Le moteur sert la surcote parentale en sus du minimum garanti, et
+    calculée sur lui, quand le minimum efface la surcote de L. 14, III ; or L. 14, IV,
+    majore la pension « dans les mêmes conditions que celles prévues au III ». Lire
+    comment le service des retraites de l'État et la CNRACL comparent au minimum garanti
+    la pension qui porte l'une et l'autre.
+  - >-
+    LA CNAVPL compose encore les deux coefficients : l'étape qui complète ne connaît pas
+    la surcote que la liquidation applique à ses points, et majore la pension surcotée.
+    Il faudrait que la liquidation lui passe ce coefficient, comme elle passe celui du
+    minimum contributif et la surcote de L. 14, III.
+  - >-
+    LE TRIMESTRE D'ENFANT DATÉ. La CNRACL n'ouvre la fenêtre qu'au jour où l'assuré détient
+    son trimestre d'enfant (« Calcul de la surcote », surcote au titre des enfants, exemple
+    3 : une majoration pour enfant handicapé acquise à 62 ans et 6 mois, deux trimestres
+    au lieu de quatre) ; le moteur ne date pas ce trimestre.
   lectures:
   - type: legifrance
     reference: >-
@@ -57,8 +69,56 @@ sources:
       de la surcote, « sous réserve qu'il soit égal ou supérieur à soixante-trois
       ans, est abaissé d'un an »
     date: 2026-09-23
+  - type: jorf
+    reference: >-
+      Loi n° 2023-1250 du 26 décembre 2023, article 92 (JORFARTI000048668789), lu dans
+      l'index JORF du dépôt le 18 octobre 2026 : « L'article L. 14 du code des pensions
+      civiles et militaires de retraite est complété par un V ainsi rédigé : « V.-La
+      majoration mentionnée au III et celle mentionnée au IV ne peuvent pas être
+      cumulées. » », sans autre disposition. Le V entre dans L. 14 le 28 décembre 2023
+      (LEGIARTI000048697778) ; la rédaction du 1er septembre 2023 (LEGIARTI000047452815)
+      ne l'avait pas. Le code de la sécurité sociale n'a pas de clause pareille.
+    date: 2023-12-27
+  - type: legifrance
+    reference: >-
+      D. 351-2-1 CSS, LEGIARTI000047961314, lu dans l'index LEGI du dépôt le 18 octobre
+      2026 : « La majoration prévue à l'article L. 351-1-2 est calculée sur la base du
+      montant de pension avant qu'il ne soit porté au montant minimum »
+    date: 2023-09-01
+  - type: autre
+    reference: >-
+      CNRACL, juris-cnracl, « Calcul de la surcote », publiée le 17 février 2025, lue le
+      18 octobre 2026 : la dérogation (« une surcote à un âge anticipé (un an avant l'âge
+      de surcote de droit commun) au titre de la naissance et/ou de l'éducation d'un
+      enfant ») ; « Nota : La surcote de droit commun et la surcote au titre des enfants
+      ne sont pas cumulables au titre d'une même période » ; l'exemple 1 de la surcote au
+      titre des enfants, quatre trimestres d'enfants puis deux de droit commun,
+      « Coefficient de majoration : (4 X 1.25%) + (2 X 1.25%) = 7.5 % », sur la formule
+      « Montant de la pension X [1+(coefficient de majoration applicable X nombre de
+      trimestres supplémentaires)] ». Ses exemples nés en 1964 et en 1966 datent d'avant
+      la suspension de 2026 ; celui de 1969, l'exemple 2, se rejoue.
+    date: 2025-02-17
+    url: >-
+      https://www.juris-cnracl.retraites.fr/pension-normale/duree-dassurance-decote-et-surcote/calcul-de-la-surcote-0
+  - type: autre
+    reference: >-
+      Service des retraites de l'État, page « La surcote », section « La surcote
+      spécifique famille », lue le 18 octobre 2026 : réservée depuis le 1er septembre
+      2026 « aux personnes nées à partir du 1er avril 1965 », à qui a « un âge
+      d'ouverture des droits (AOD) à partir de 63 ans pour les sédentaires » ; les
+      trimestres de l'année qui précède « seront pris en compte dans le calcul de la
+      surcote, dans la limite de quatre trimestres (soit 5 % max) ». Le moteur ne la sert
+      pas aux emplois classés, dont l'âge d'ouverture est sous 63 ans.
+    date: 2026-10-18
+    url: >-
+      https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/la-surcote
 textes_a_rattacher:
 - reference: >-
     L. 351-1-2-1 CSS (loi n° 2023-270, article 11 ; loi n° 2025-199, article 87)
+- reference: >-
+    L. 14, IV et V, CPCMR (loi n° 2023-270, article 11 ; loi n° 2023-1250, article 92)
+- reference: D. 351-2-1 CSS (LEGIARTI000047961314)
+exemples:
+- cnracl_surcote_enfants_duree_atteinte_dans_l_annee
 reformes:
 - reforme_2023
