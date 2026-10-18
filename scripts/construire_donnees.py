@@ -1309,6 +1309,16 @@ def _compensation_micro() -> dict:
             "seuil": {str(annee): h for annee, h in compensation["seuil"].items()}}
 
 
+def _seuils_micro() -> dict:
+    """Les seuils de 2017 à 2019 que la caisse publie : par activité et par
+    année, le revenu abattu qui valide un à quatre trimestres
+    (``micro_social.yaml``)."""
+    from retraite_notionnelle.donnees.chargement import charger_seuils_micro
+
+    return {activite: {str(annee): list(seuils) for annee, seuils in par_annee.items()}
+            for activite, par_annee in sorted(charger_seuils_micro(DONNEES).items())}
+
+
 def _periodes_non_travaillees() -> dict:
     """Ce qu'ouvre chaque motif d'interruption."""
     from retraite_notionnelle.donnees.chargement import charger_periodes_non_travaillees
@@ -2471,6 +2481,7 @@ def construire(bilan: bytes, agregats: bytes) -> bytes:
         "validation_micro": _validation_micro(),
         "cotisation_micro": _cotisation_micro(),
         "compensation_micro": _compensation_micro(),
+        "seuils_micro": _seuils_micro(),
         "profil_salaire_age": _profil_salaire("profil_salaire_age.csv", "annee"),
         "profil_salaire_categorie": _profil_salaire(
             "profil_salaire_categorie.csv", "categorie"),

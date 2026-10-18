@@ -17,7 +17,10 @@ intitule: >-
   clef que la Cnav applique (circulaire n° 2025-20). De 2009 à 2015, l'État
   compense ce que le forfait ne verse pas, au-dessus d'un seuil de 200 heures
   de SMIC, de 300 en 2015 (L. 133-6-8-2, D. 131-6-4), et garantit un
-  trimestre en 2009.
+  trimestre en 2009. De 2016 à 2021, le forfait va d'abord à l'impôt, à la CSG
+  et à la CRDS, puis à la maladie, puis à la vieillesse de base (L. 133-6-8-3,
+  L. 613-9, D. 133-4) ; de 2017 à 2019, ses trimestres se comptent aux seuils
+  de chiffre d'affaires que la caisse en publie.
 etat: approchee
 etape: acquerir_les_droits
 effet: >-
@@ -47,18 +50,24 @@ effet: >-
   entière, au moins la cotisation d'un trimestre, sur 200 heures de SMIC
   (3 000 € de ventes : 1 742 €, au lieu de 870 €). Les quatre témoins du
   micro-entrepreneur de l'Assurance retraite gagnent de 0,19 à 1,21 % au
-  scénario 1 ; ceux de la Cipav, liquidés en points, ne bougent pas. De 2009 à
+  scénario 1 ; ceux de la Cipav, liquidés en points, ne bougent pas. Depuis le
+  18 octobre 2026 aussi, de 2017 à 2019, les trimestres se comptent aux seuils
+  que la caisse publie : 4 085 € de ventes en valident un en 2018, au lieu de
+  5 099 € à la clef ; 3 510 € en 2017, au lieu de 5 049 € de revenu abattu ;
+  mais le libéral de 2018, dont le forfait passe moins vite la maladie, en
+  demande 9 550 € pour le quatrième, au lieu de 8 986 €. Aucun témoin ne bouge,
+  aucun n'ayant de petit chiffre d'affaires ces années-là. De 2009 à
   2015, la compensation de l'État : un trimestre au moins en 2009, sur l'année
   civile entière (3 000 € de ventes, rien auparavant) ; rien sous 200 heures
   de SMIC en 2014 (6 500 € de
   ventes, un trimestre auparavant), sous 300 en 2015 (7 000 €). Ces seuils
   sont sous les bornes de la saisie (0,1 fois le salaire moyen) : seul le
-  modèle les atteint. Approchée sur neuf points : en 2016 et 2017, aucune
-  clef n'est lue, le revenu abattu valide et le compte porte le barème ; de
-  2017 à 2019, le barème de la Cnav, de source Urssaf, fait valider les trois
-  premiers trimestres à moindre chiffre d'affaires que le modèle (4 085 € de
-  ventes pour un trimestre en 2018, quand la clef en demande 5 098 €), le
-  quatrième au même ; la
+  modèle les atteint. Approchée sur neuf points : en 2016, ni seuil ni clef
+  n'est publié, le revenu abattu valide, et le compte porte le barème, comme
+  en 2017 ; de 2017 à 2019, le revenu annuel moyen garde la clef (2018, 2019)
+  ou le revenu abattu (2017), quand l'ordre de D. 133-4 donne à la base, sous
+  11,5 % du plafond, jusqu'à la cotisation de trois trimestres, et au RCI ce
+  qui reste après elle et l'invalidité-décès ; la
   Cipav valide sur le revenu abattu avant 2023, la règle de la CNAVPL n'étant
   pas lue ; les clefs de janvier à septembre 2022 sont celles de 2021 ; en
   2014 et 2015, qui ne relève pas de la maladie du RSI (le salarié, l'assuré
@@ -77,16 +86,23 @@ sources:
     Les clefs de 2016 et de 2017 (taux globaux de 13,4 % et 23,1 %, circulaires
     RSI n° 2015/006, point D, et n° 2015/007), et celles de janvier à septembre 2022, qu'aucune source
     lue ne donne : une circulaire du RSI ou de l'Acoss, ou la convention qui
-    les fixait. La règle de la CNAVPL pour la Cipav avant octobre 2022 :
-    valide-t-elle sur la part de D. 131-5-3 et de D. 613-6, comme la Cnav ?
+    les fixait. En 2016 et 2017, D. 133-4 affecte le forfait par ordre, et
+    non par clef : il n'y en a peut-être pas. La règle de la CNAVPL pour la
+    Cipav avant octobre 2022 : valide-t-elle sur la part de D. 131-5-3 et de
+    D. 613-6, comme la Cnav ?
   - >-
-    Les seuils de 2017 à 2019 du barème de la Cnav « Chiffre d'affaire des
-    micro-entrepreneurs validant un trimestre » (source Urssaf Caisse
-    nationale) : 4 085 €, 7 185 €, 10 250 € et 20 430 € de ventes en 2018 pour
-    un à quatre trimestres, quand la clef de la circulaire n° 2025-20 (40,31 %)
-    en demande 5 098 €, 10 197 €, 15 295 € et 20 393 €. La règle qui les fait
-    (une clef selon le chiffre d'affaires ?) reste à lire, chez l'Urssaf ou
-    dans les circulaires du RSI de 2016 à 2019.
+    De 2016 à 2019, la part de base que l'ordre de D. 133-4 donne, pour le
+    revenu annuel moyen et le compte, et 2016, sans seuils publiés. Les
+    seuils de 2017 à 2019 se refont, à 6 € près en 2017 et à 18 € en 2018 et
+    2019, en servant d'abord la CSG et la CRDS, sur le revenu abattu et les
+    cotisations dues, la base et l'invalidité-décès sur au moins 11,5 % du
+    plafond ; puis la maladie, au taux de D. 612-5 et aux indemnités
+    journalières en 2017, au taux de D. 621-2 pris à 40 % du plafond (4,018 %)
+    en 2018 et 2019 ; puis la base, jusqu'à sa cotisation due. Aucun texte lu
+    ne dit que la caisse calcule ainsi : une circulaire de l'Acoss ou de la
+    Sécurité sociale des indépendants, de 2016 à 2019, le dirait. La clef de la
+    circulaire Cnav n° 2025-20, titrée « 2018 à 2020 », s'en écarte en 2018 et
+    en 2019 : la caisse ne l'applique qu'aux exemples de 2020 et de 2021.
   - >-
     D. 131-6-3, la fraction du taux pendant l'exonération de début d'activité,
     que les circulaires n° 2023-4 et n° 2026-12 neutralisent pour les droits.
@@ -237,6 +253,51 @@ sources:
       Lus le 18 octobre 2026, par l'API du site
     url: https://legislation.lassuranceretraite.fr/
     date: 2026-10-18
+  - type: legifrance
+    reference: >-
+      L. 133-6-8-3 CSS, LEGIARTI000023033721 (11 novembre 2010 au 13 juin
+      2018), puis L. 613-9, LEGIARTI000037061897 (14 juin 2018 au 31 décembre
+      2021) : « L'affectation des sommes recouvrées […] s'effectue par
+      priorité à l'impôt sur le revenu puis, dans des proportions identiques,
+      aux contributions mentionnées à l'article L. 136-3 [et à la CRDS]. Le
+      solde est affecté aux cotisations de sécurité sociale selon un ordre
+      déterminé par décret » ; LEGIARTI000044626482, depuis 2022 : la priorité
+      à l'impôt seule. D. 131-6-5, LEGIARTI000023565887 (2011 à 2015) : la
+      vieillesse de base en dernier. D. 133-4, LEGIARTI000031799444 et
+      LEGIARTI000034721650 (2016 et 2017) : « la cotisation d'assurance
+      maladie maternité ; la cotisation mentionnée à l'article L. 612-13 ; la
+      cotisation d'assurance vieillesse de base ; la cotisation d'assurance
+      invalidité-décès ; la cotisation d'assurance vieillesse
+      complémentaire ; la cotisation d'allocations familiales » ;
+      LEGIARTI000036475034 (2018 au 24 mai 2020) et LEGIARTI000041967998
+      (jusqu'en 2022) : la même, sans la cotisation de L. 612-13. Lus dans
+      l'index LEGI du dépôt, à jour au 17 octobre 2026
+    date: 2026-10-18
+  - type: legifrance
+    reference: >-
+      Pour refaire les seuils : D. 131-6-1, LEGIARTI000031799503 (2016 :
+      13,4 %, 23,1 % et 23,1 %) et LEGIARTI000034163589 (2017 : 13,1 %, 22,5 %
+      pour la Cipav, 22,7 % dans les autres cas) ; D. 612-4 et D. 612-5,
+      LEGIARTI000034163552 et LEGIARTI000034163561 (2017 : 6,50 %, moins
+      « 3,50 % × (1 - R/0,7 PSS) » sous 70 % du plafond) ; D. 621-1 et
+      D. 621-2, LEGIARTI000036469673 et LEGIARTI000036469691 (2018 au 24 mai
+      2020 : 7,20 %, « ne peut être calculée sur une assiette inférieure à
+      40 % » du plafond, réduit sous 110 %, avec T2 = 2,2 % et T3 = 0,85 %)
+    date: 2026-10-18
+  - type: autre
+    reference: >-
+      Cnav, barème « Chiffre d'affaire des micro-entrepreneurs validant un
+      trimestre », source Urssaf Caisse nationale : 2017, 2018 et 2019,
+      ventes, prestations de service BIC et BNC, un à quatre trimestres
+      (« 4 085 € », « 7 185 € », « 10 250 € », « 20 430 € » de ventes en
+      2018) ; son « Info-doc RSI » des montants d'avant 2016, mis à jour le
+      16 avril 2019 : de 2009 à 2015, rien pour 2016. Circulaire RSI
+      n° 2011/011 du 29 avril 2011, point VII, « Ordre d'affectation des
+      paiements » ; n° 2016/010, point 1 : « compte tenu des règles
+      d'affectation des cotisations, le forfait à régler est entièrement
+      imputé sur le risque maladie ». Lus le 18 octobre 2026, par l'API du site
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_rsi_2011_011_29042011.pdf
+    date: 2026-10-18
 textes_a_rattacher:
 - reference: code de la sécurité sociale, L. 613-7, II (LEGIARTI000048683570)
 - reference: code de la sécurité sociale, L. 133-6-8 (de 2009 à 2017)
@@ -247,6 +308,10 @@ textes_a_rattacher:
     Cipav (LEGITEXT000037798308)
 - reference: code de la sécurité sociale, L. 133-6-8-2 et D. 131-6-4 (de 2010 à 2015)
 - reference: code de la sécurité sociale, D. 131-5-1 et D. 131-5-3 (de 2018 à 2020)
+- reference: >-
+    code de la sécurité sociale, L. 133-6-8-3, L. 613-9 et D. 133-4 (de 2016 à
+    2021) : l'ordre d'affectation du forfait, que portent les seuils de 2017 à
+    2019
 - reference: >-
     code de la sécurité sociale, D. 131-6-4 (LEGIARTI000031799459, 2016-2017) :
     la cotisation du conjoint collaborateur d'un micro-entrepreneur, sur 58 %
@@ -267,13 +332,15 @@ code:
     Saisie.abattu, appelée par parcours et emploi_retraite_declare ;
     carriere.py : Metier.micro, AnneeCarriere.micro, revenu_cotise ;
     donnees/chargement.py : charger_validation_micro, charger_cotisation_micro,
-    forfait_micro, charger_compensation_micro, validant_compense ;
+    forfait_micro, charger_compensation_micro, validant_compense,
+    charger_seuils_micro, trimestres_aux_seuils_micro ;
     moteur/compte.py : ConstructeurCompte._cotisation_ligne ;
     droit/liquider.py : assiette_de_reference, le revenu annuel moyen
   javascript: moteur/js/saisie.js (enChiffreDAffaires, abattu) ; moteur/js/pages.js
     (microFormulaire, champChiffreDAffaires) ; moteur/js/carriere.js
-    (revenuCotise, validantCompense, forfaitMicro, paquets validation_micro,
-    cotisation_micro et compensation_micro) ; moteur/js/compte.js (_cotisationLigne) ;
+    (revenuCotise, validantCompense, forfaitMicro, trimestresAuxSeuilsMicro,
+    paquets validation_micro, cotisation_micro, compensation_micro et
+    seuils_micro) ; moteur/js/compte.js (_cotisationLigne) ;
     moteur/js/droit/liquider.js (assietteDeReference)
   tests: >-
     tests/test_web_saisie.py ; tests/test_micro_social.py ; tests/js/moteur.test.js ;

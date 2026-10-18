@@ -881,6 +881,39 @@ def validant_compense(compensation: dict, activite: str, annee: int, revenu: flo
     return validant
 
 
+@une_fois_par_instantane
+def charger_seuils_micro(racine: Path) -> dict[str, dict[int, tuple[float, ...]]]:
+    """Les seuils de 2017 à 2019 que la caisse publie, par activité et par
+    année : le revenu abattu qui valide un, deux, trois et quatre trimestres
+    (``legislation/micro_social.yaml`` ; action 138, étape 12).
+
+    De 2016 à 2021, le forfait va d'abord à la CSG et à la CRDS, puis à la
+    maladie, puis à la vieillesse de base (L. 133-6-8-3, L. 613-9, D. 133-4) :
+    aucune clef ne fait ces seuils, que le barème de la Cnav donne en chiffre
+    d'affaires, et que le modèle, qui porte le revenu abattu, abat comme lui."""
+    chemin = racine / "reference" / "legislation" / "micro_social.yaml"
+    if not chemin.exists():
+        return {}
+    donnees = charger_yaml(chemin)
+    return {
+        activite: {int(annee): tuple(seuil * (1.0 - donnees["abattements"][activite])
+                                     for seuil in seuils)
+                   for annee, seuils in par_annee.items()}
+        for activite, par_annee in (donnees.get("seuils") or {}).items()
+    }
+
+
+def trimestres_aux_seuils_micro(table: dict[str, dict[int, tuple[float, ...]]],
+                                activite: str, annee: int, revenu: float) -> int | None:
+    """Les trimestres que ``revenu``, abattu, valide aux seuils publiés de
+    l'année ; ``None`` les années qui n'en ont pas. Un revenu pile sur un seuil
+    le valide : « CA pour valider »."""
+    seuils = table.get(activite, {}).get(annee)
+    if seuils is None:
+        return None
+    return len([seuil for seuil in seuils if revenu / seuil + 1e-9 >= 1.0])
+
+
 def charger_accords_internationaux(racine: Path) -> dict[str, dict]:
     """Le tableau des accords qui coordonnent les retraites françaises avec
     celles d'un autre État : pour chaque code d'État, son ``nom``, ses

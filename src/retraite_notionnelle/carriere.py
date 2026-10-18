@@ -37,12 +37,14 @@ from .donnees.chargement import (
     charger_compensation_micro,
     charger_dispenses_assiette_minimale,
     charger_periodes_non_travaillees,
+    charger_seuils_micro,
     charger_table_csv,
     charger_validation_micro,
     charger_yaml,
     dans_un_instantane,
     dispense_assiette_minimale,
     rapport_validation_micro,
+    trimestres_aux_seuils_micro,
     une_fois_par_instantane,
     validant_compense,
 )
@@ -569,7 +571,10 @@ def revenu_cotise(macro: DonneesMacro, revenu: float, micro: str,
     trimestre, et 3 619 € de revenu cotisé, deux (service-public, F23369).
     De 2018 à septembre 2022, la part de base est la clef que la Cnav
     applique (circulaire n° 2025-20) ; avant, aucune n'est lue, et le revenu
-    abattu valide, comme pour la Cipav jusqu'en 2022.
+    abattu vaut, comme pour la Cipav jusqu'en 2022. De 2017 à 2019, les
+    trimestres se comptent aux seuils que la caisse publie
+    (:func:`~retraite_notionnelle.donnees.chargement.trimestres_aux_seuils_micro`),
+    et ce revenu ne sert plus qu'au revenu annuel moyen.
 
     LA COMPENSATION DE L'ÉTAT, DE 2009 À 2015 : l'État payait ce que le
     forfait ne versait pas, au-dessus d'un seuil (L. 133-6-8-2, D. 131-6-4).
@@ -653,6 +658,17 @@ def _ligne_annuelle(
         trimestres = (macro.trimestres_valides(max(validant, minimale), annee)
                       if cotise
                       else (regle.trimestres_assimiles if regle else 4))
+        if cotise and micro:
+            # LES SEUILS DE 2017 À 2019. Le forfait va d'abord à la CSG et à
+            # la CRDS, puis à la maladie, puis à la vieillesse de base
+            # (L. 133-6-8-3, L. 613-9, D. 133-4) : aucune clef ne les fait, et
+            # la caisse les publie (barème « Chiffre d'affaire des
+            # micro-entrepreneurs validant un trimestre », source Urssaf).
+            # 4 085 € de ventes valident un trimestre en 2018, et non 5 099 €.
+            publies = trimestres_aux_seuils_micro(
+                charger_seuils_micro(macro.racine), micro, annee, revenu)
+            if publies is not None:
+                trimestres = publies
     else:
         # Une fraction ne se déclare que des services de la fonction publique,
         # qui se comptent au jour (``jours_de_services``) ; la durée en

@@ -83,6 +83,25 @@
 # demande encore 200 ; en 2015, la compensation en valide deux d'un coup
 # (circulaire RSI n° 2015/007, point 2). Les circulaires lues sont celles du
 # RSI : la Cipav n'y est pas. La compensation cesse en 2016.
+#
+# LES SEUILS DE 2017 À 2019 (même étape, le 18 octobre 2026). De 2016 à 2021,
+# la loi affecte le forfait par ordre, et non par clef : L. 133-6-8-3
+# (LEGIARTI000023033721), puis L. 613-9 (LEGIARTI000037061897, du 14 juin 2018
+# au 31 décembre 2021), l'affectent « par priorité » à l'impôt sur le revenu,
+# puis à la CSG et à la CRDS, et « le solde » aux cotisations dans l'ordre de
+# D. 133-4 (LEGIARTI000031799444, LEGIARTI000034721650, LEGIARTI000036475034) :
+# la maladie, les indemnités journalières jusqu'en 2017, puis la vieillesse de
+# base, avant l'invalidité-décès, la complémentaire et les allocations
+# familiales. La part de base croît donc plus vite que le chiffre d'affaires,
+# jusqu'à la cotisation due. La caisse en publie les seuils de 2017 à 2019 :
+# barème « Chiffre d'affaire des micro-entrepreneurs validant un trimestre »,
+# source Urssaf Caisse nationale, ventes, prestations de service BIC et BNC,
+# lu le 18 octobre 2026 ; ils valident les trimestres de ces années, sur le
+# chiffre d'affaires de l'année. Le revenu annuel moyen garde la clef de 2018
+# et de 2019 et le revenu abattu de 2017, le compte la clef et le barème ; la
+# Cnav n'applique sa clef qu'aux exemples de 2020 et de 2021 (circulaire
+# n° 2025-20). L'« Info-doc RSI » du même barème s'arrête à 2015 : 2016 n'a
+# pas de seuils publiés.
 schema_version: 1
 
 # La part du chiffre d'affaires que la saisie retire (L. 613-7, II) : le
@@ -106,6 +125,21 @@ compensation:
   activites: [vente, services, liberal]
   plancher: {2009: 200}
   seuil: {2010: 200, 2011: 200, 2012: 200, 2013: 200, 2014: 200, 2015: 300}
+
+# Le chiffre d'affaires qui valide un, deux, trois et quatre trimestres.
+seuils:
+  vente:
+    2017: [3510, 6305, 9120, 20195]
+    2018: [4085, 7185, 10250, 20430]
+    2019: [4137, 7286, 10426, 20740]
+  services:
+    2017: [2020, 3635, 5245, 11715]
+    2018: [2375, 4185, 5975, 11850]
+    2019: [2412, 4239, 6071, 12030]
+  liberal:
+    2017: [2320, 4190, 6090, 8875]
+    2018: [2835, 4990, 7150, 9550]
+    2019: [2880, 5062, 7266, 9675]
 
 versions:
   # a) vente de marchandises, 1° du 1 de l'article 50-0 du CGI.

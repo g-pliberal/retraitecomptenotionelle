@@ -75,7 +75,10 @@ def test_de_2018_a_2022_les_clefs_que_la_cnav_applique():
     base, 40,31 % pour la vente, 40,36 % pour les services, 53,23 % pour le
     libéral — et valide sur ce qu'elles achètent, divisé par 17,75 %
     (circulaire Cnav n° 2025-20, annexe 1, « Clefs de répartition » de 2018 à
-    2021). Les taux globaux : 12,8 % et 22 % (D. 131-5-1, puis D. 613-4)."""
+    2021). Les taux globaux : 12,8 % et 22 % (D. 131-5-1, puis D. 613-4).
+    En 2018 et en 2019, les seuils publiés valident à leur place
+    (``test_les_seuils_de_2017_a_2019``) : la clef ne fait plus que le revenu
+    annuel moyen."""
     table = charger_validation_micro(DONNEES)
     assert rapport_validation_micro(table, "vente", 2018) == pytest.approx(
         0.128 * 0.4031 / 0.1775 / 0.29, rel=1e-12)
@@ -86,8 +89,9 @@ def test_de_2018_a_2022_les_clefs_que_la_cnav_applique():
     # 2022 : neuf mois aux clefs, trois au décret n° 2022-1529.
     assert rapport_validation_micro(table, "vente", 2022) == pytest.approx(
         (9 * 0.128 * 0.4031 + 3 * 0.123 * 0.418) / 12 / 0.1775 / 0.29, rel=1e-12)
-    # Avant 2018, aucune clef n'est lue : le revenu abattu valide. La Cipav
-    # aussi avant octobre 2022, la règle de la CNAVPL n'étant pas lue.
+    # Avant 2018, aucune clef n'est lue : le revenu abattu vaut, et les seuils
+    # publiés valident en 2017. La Cipav aussi avant octobre 2022, la règle de
+    # la CNAVPL n'étant pas lue.
     assert rapport_validation_micro(table, "vente", 2017) is None
     assert rapport_validation_micro(table, "cipav", 2022) is None
 
@@ -160,6 +164,36 @@ def test_la_compensation_de_l_etat_de_2009_a_2015(macro, activite, annee,
     assert ligne.trimestres_valides == trimestres
 
 
+#: Le chiffre d'affaires qui valide un, deux, trois et quatre trimestres, de
+#: 2017 à 2019 : le barème de la Cnav « Chiffre d'affaire des
+#: micro-entrepreneurs validant un trimestre », source Urssaf Caisse nationale,
+#: lu le 18 octobre 2026 (ventes, prestations de service BIC et BNC).
+SEUILS_PUBLIES = {
+    2017: {"vente": (3510, 6305, 9120, 20195), "services": (2020, 3635, 5245, 11715),
+           "liberal": (2320, 4190, 6090, 8875)},
+    2018: {"vente": (4085, 7185, 10250, 20430), "services": (2375, 4185, 5975, 11850),
+           "liberal": (2835, 4990, 7150, 9550)},
+    2019: {"vente": (4137, 7286, 10426, 20740), "services": (2412, 4239, 6071, 12030),
+           "liberal": (2880, 5062, 7266, 9675)},
+}
+
+
+@pytest.mark.parametrize("annee,activite", [
+    (annee, activite) for annee, seuils in SEUILS_PUBLIES.items() for activite in seuils])
+def test_les_seuils_de_2017_a_2019(macro, annee, activite):
+    """De 2016 à 2021, le forfait va d'abord à la CSG et à la CRDS, puis à la
+    maladie, puis à la vieillesse de base (L. 133-6-8-3, puis L. 613-9 ;
+    D. 133-4) : les seuils ne suivent aucune clef. 4 085 € de ventes valident
+    un trimestre en 2018, quand la clef de 40,31 % en demande 5 099 € ;
+    9 550 € de recettes libérales en valident quatre, quand elle en demande
+    8 986 €. Au seuil, ses trimestres ; un euro en deçà, un de moins."""
+    for trimestres, seuil in enumerate(SEUILS_PUBLIES[annee][activite], 1):
+        assert _ligne(macro, "micro_entrepreneur", activite, activite, float(seuil),
+                      annee).trimestres_valides == trimestres
+        assert _ligne(macro, "micro_entrepreneur", activite, activite, seuil - 1.0,
+                      annee).trimestres_valides == trimestres - 1
+
+
 def test_le_trimestre_de_2009_demande_l_annee_entiere(macro):
     """« En présence d'une affiliation sur une année civile complète » ; en
     début d'activité, la table ordinaire : 3 000 € de ventes au rythme d'une
@@ -198,6 +232,15 @@ def test_le_paquet_porte_la_table_du_python():
     attendu = {activite: {str(annee): rapport for annee, rapport in par_annee.items()}
                for activite, par_annee in charger_validation_micro(DONNEES).items()}
     assert paquet["validation_micro"] == attendu
+
+
+def test_le_paquet_porte_les_seuils_du_python():
+    from retraite_notionnelle.donnees.chargement import charger_seuils_micro
+
+    paquet = json.loads((RACINE / "moteur" / "donnees.json").read_text(encoding="utf-8"))
+    attendu = {activite: {str(annee): list(seuils) for annee, seuils in par_annee.items()}
+               for activite, par_annee in charger_seuils_micro(DONNEES).items()}
+    assert attendu and paquet["seuils_micro"] == attendu
 
 
 def test_le_paquet_porte_le_forfait_du_python():

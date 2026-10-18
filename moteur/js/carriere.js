@@ -516,7 +516,8 @@ export function limiterChomageNonIndemnise(lignes, anneeNaissance,
  * n° 2024-23). Le paquet porte, par activité et par année, le rapport de l'un
  * à l'autre ; avant la première année lue, le revenu abattu. De 2009 à 2015,
  * la compensation de l'État y fixe un plancher et un seuil
- * (`validantCompense`). Voir `revenu_cotise` (carriere.py).
+ * (`validantCompense`). De 2017 à 2019, les seuils publiés valident à sa
+ * place (`trimestresAuxSeuilsMicro`). Voir `revenu_cotise` (carriere.py).
  */
 export function revenuCotise(macro, revenu, micro, annee, part = 1.0) {
   const parAnnee = (macro.paquet.validation_micro ?? {})[micro];
@@ -551,6 +552,21 @@ function validantCompense(compensation, micro, annee, revenu, validant, smicHora
     return Math.max(validant, plancher * smicHoraire);
   }
   return validant;
+}
+
+/**
+ * Les trimestres que le revenu abattu d'un micro-entrepreneur valide aux
+ * seuils que la caisse publie de 2017 à 2019 : le forfait va d'abord à la
+ * CSG, à la CRDS et à la maladie (L. 613-9, D. 133-4), et aucune clef ne les
+ * fait ; `null` les années qui n'en ont pas. Un revenu pile sur un seuil le
+ * valide. Voir `trimestres_aux_seuils_micro` (chargement.py).
+ */
+export function trimestresAuxSeuilsMicro(seuilsMicro, micro, annee, revenu) {
+  const seuils = ((seuilsMicro ?? {})[micro] ?? {})[String(annee)];
+  if (seuils === undefined) {
+    return null;
+  }
+  return seuils.filter((seuil) => revenu / seuil + 1e-9 >= 1.0).length;
 }
 
 /**
@@ -630,8 +646,12 @@ function ligneAnnuelle({
   // Une fraction ne se déclare que des services de la fonction publique, qui
   // se comptent au jour (`jours_de_services`) ; la durée en trimestres
   // entiers que les autres régimes lisent l'arrondit au mois et demi.
+  // Les seuils de 2017 à 2019, que la caisse publie, valident à la place du
+  // revenu cotisé (`trimestresAuxSeuilsMicro`).
+  const publies = trimestresDeclares === null && cotise && micro
+    ? trimestresAuxSeuilsMicro(macro.paquet.seuils_micro, micro, annee, revenu) : null;
   const trimestres = trimestresDeclares === null
-    ? (cotise ? macro.trimestresValides(
+    ? (publies !== null ? publies : cotise ? macro.trimestresValides(
       Math.max(micro ? revenuCotise(macro, revenu, micro, annee, part) : revenu, minimale),
       annee)
       : (regle !== null ? regle[0] : 4))

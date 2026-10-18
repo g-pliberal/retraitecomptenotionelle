@@ -572,6 +572,47 @@ test("la compensation de l'État compte les trimestres de l'auto-entrepreneur", 
 });
 
 /**
+ * Les seuils de 2017 à 2019 que la caisse publie (barème de la Cnav « Chiffre
+ * d'affaire des micro-entrepreneurs validant un trimestre », source Urssaf) :
+ * le forfait va d'abord à la CSG, à la CRDS et à la maladie (D. 133-4), et
+ * aucune clef ne les fait. Au seuil, ses trimestres ; un euro en deçà, un de
+ * moins. Rejoue `test_les_seuils_de_2017_a_2019` (test_micro_social.py).
+ */
+test("les seuils de 2017 à 2019 comptent les trimestres du micro-entrepreneur", () => {
+  const simulateur = new Contexte(paquet).simulateur();
+  const trimestres = (activite, annee, chiffreDAffaires) => {
+    const niveau = chiffreDAffaires * (1 - ABATTEMENTS_MICRO[activite])
+      / salaireMoyenAnnuel(simulateur.macro, annee);
+    const carriere = simulateur.carriereParcours({
+      annee_naissance: 1975, sexe: "H", age_liquidation: 64, profil_carriere: "plat",
+      metiers: [{
+        affiliation: "micro_entrepreneur", age_debut: 20, niveau_salaire: niveau,
+        micro: activite,
+      }],
+    });
+    return carriere.lignes.find((ligne) => ligne.annee === annee).trimestres_valides;
+  };
+  const publies = {
+    2017: { vente: [3510, 6305, 9120, 20195], services: [2020, 3635, 5245, 11715],
+      liberal: [2320, 4190, 6090, 8875] },
+    2018: { vente: [4085, 7185, 10250, 20430], services: [2375, 4185, 5975, 11850],
+      liberal: [2835, 4990, 7150, 9550] },
+    2019: { vente: [4137, 7286, 10426, 20740], services: [2412, 4239, 6071, 12030],
+      liberal: [2880, 5062, 7266, 9675] },
+  };
+  for (const [annee, parActivite] of Object.entries(publies)) {
+    for (const [activite, seuils] of Object.entries(parActivite)) {
+      seuils.forEach((seuil, rang) => {
+        assert.equal(trimestres(activite, Number(annee), seuil), rang + 1,
+          `${activite} ${annee} ${seuil}`);
+        assert.equal(trimestres(activite, Number(annee), seuil - 1), rang,
+          `${activite} ${annee} ${seuil - 1}`);
+      });
+    }
+  }
+});
+
+/**
  * Le revenu annuel moyen du micro-entrepreneur porte son revenu cotisé, et non
  * son revenu abattu (R. 351-29, I, B ; circulaire Cnav n° 2024-23) ; en 2009,
  * le plancher de la compensation (circulaire RSI n° 2009/024). Rejoue
