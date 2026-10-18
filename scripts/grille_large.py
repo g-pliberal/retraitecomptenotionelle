@@ -196,9 +196,9 @@ temps complets, et n'atteignait jamais le minimum contributif ; la mesure le
 juge sur les anciens artisans et commerçants de l'EIR. La dix-neuvième (le
 18 octobre 2026) fait partir une part des carrières de trente années validées
 et plus après l'âge légal et le taux plein, avec une surcote
-(:data:`DEPARTS_AVEC_SURCOTE`) : 14,3 % des nés en 1953 sont partis ainsi, et
-la population, jamais ; la mesure juge les départs des générations 1950 et
-1955 sur ceux des nés en 1950 et en 1953 (:func:`departs`).
+(:data:`DEPARTS_AVEC_SURCOTE`) : 14,3 % des nés en 1953 sont partis ainsi,
+quand la population ne surcotait jamais ; la mesure juge les départs des
+générations 1950 et 1955 sur ceux des nés en 1950 et en 1953 (:func:`departs`).
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------

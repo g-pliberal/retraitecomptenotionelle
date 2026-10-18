@@ -24,10 +24,11 @@ choisir d'hypothèse que le propriétaire n'a pas tranchée.
   surcote récompensent l'attente — est un choix de modèle : le registre le dit
   `a_trancher` au point de TRAJECTOiRE (« le comportement inchangé est un
   choix écrit »), et PRISME le fait par 48 équations logistiques
-  (`a_reprendre`). Cette session n'y touche pas : chaque carrière part au même
-  âge dans chaque scénario, comme avant. Ce qu'elle fait est de la famille des
-  départs avec décote du 16 octobre : une part publiée en entrée, des
-  conventions déclarées, une mesure qui juge.
+  (`a_reprendre`). Cette session n'y touche pas : chaque carrière garde, d'un
+  scénario à l'autre, l'âge que le droit en vigueur lui donne — la
+  proposition, à 65 ans au plus tôt —, comme avant. Ce qu'elle fait est de la
+  famille des départs avec décote du 16 octobre : une part publiée en entrée,
+  des conventions déclarées, une mesure qui juge.
 - *La source* (`scripts/fetch/drees_departs_generations.py`,
   `macro/departs_generations.csv`, certifiée, `drees_eir_generations`). Le jeu
   des caractéristiques des retraités de la DREES joint, à chaque millésime,
@@ -70,9 +71,8 @@ choisir d'hypothèse que le propriétaire n'a pas tranchée.
   premières années, 1 an et 2 mois en moyenne, un tiers des femmes surcotées ;
   le reste d'avant l'année où s'annule la décote, 3 ans et 1 mois, près de la
   moitié ; cette année-là et au-delà, 5 ans et 5 mois, près d'un cinquième.
-  Quatre
-  conventions. L'attente se compte de l'âge légal, jamais avant le taux plein
-  : une carrière longue qui surcote renonce à partir avant l'âge légal. Trois
+  Quatre conventions. L'attente se compte de l'âge légal, jamais avant le taux
+  plein : une carrière longue qui surcote renonce à partir avant l'âge légal. Trois
   attentes et non sept, une par âge : la page pèse ses carrières une à une, à
   un coût qui croît comme leur carré, et sept attentes portaient la mesure de
   13 à 53 minutes ; deux âges par deux âges, la dernière tombait pile à l'âge
@@ -110,7 +110,13 @@ choisir d'hypothèse que le propriétaire n'a pas tranchée.
   (12,3). La distribution de 2020 bouge peu : la pension moyenne des hommes
   passe de 1 789 à 1 804 € (EIR 1 957), leur neuvième décile de 2 842 à
   2 945 € (3 242), l'écart de Kolmogorov de +7,0 à +6,1 points à 1 700 € ;
-  celle des femmes de 1 336 à 1 337 €.
+  celle des femmes de 1 336 à 1 337 €. Les liquidants de 2024, contre l'EACR
+  (`scripts/controle_eacr.py --population --processus 4`, table C ; le 16
+  octobre entre parenthèses, avant l'artisan et la survie propre des cas
+  types) : 58,5 % partent à 62 ans (67,7 ; EACR 26,0), 14,9 % à 63 (8,8 ;
+  18,6), 6,7 % à 65 (5,2 ; 7,1), 19,0 % à 67 (18,1 ; 10,6), 0,5 % avant
+  62 ans et aucun à 68 et au-delà (17,7 et 7,3 % dans l'EACR) ; leur âge
+  moyen passe à 63,3 ans (63,2), pour 63,6.
 - *Ce que cela dit.* La surcote rapproche de l'EIR la place des départs :
   ceux d'entre l'âge légal et l'âge d'annulation passent de la moitié de
   ceux de l'EIR aux trois quarts, et l'âge légal des femmes se dégonfle. Il
@@ -120,10 +126,12 @@ choisir d'hypothèse que le propriétaire n'a pas tranchée.
   de l'écart ne tient pas à la surcote :
   - les carrières longues des hommes, deux fois trop nombreuses dans la
     génération 1950, d'un tiers de trop dans la génération 1955. Toutes les
-    carrières pleines du salariat privé commencent quarante-quatre années
-    environ avant l'âge légal (`ENTREE_SELON_LA_GENERATION`) : à 16 ou 17 ans
-    pour ces générations, assez tôt pour y avoir droit ; dans l'EIR, une
-    partie entrait plus tard. Les femmes n'en ont aucune (5,1 et 13,0 %) ;
+    carrières pleines du salariat privé commencent, avant l'âge légal, la
+    durée des carrières pleines de leur génération
+    (`ENTREE_SELON_LA_GENERATION`) : les hommes à 16 ans dans la génération
+    1950, à 17 dans celle de 1955, assez tôt pour y avoir droit ; dans l'EIR,
+    une partie entrait plus tard. Les femmes n'en ont aucune, pour 5,1 et
+    13,0 % dans l'EIR ;
   - les invalides et les inaptes, au taux plein dès l'âge légal sans la
     durée — 7,9 et 7,0 % des nés en 1953 —, que la population fait attendre
     l'âge d'annulation ou partir décotés : d'où le taux plein par l'âge trop
