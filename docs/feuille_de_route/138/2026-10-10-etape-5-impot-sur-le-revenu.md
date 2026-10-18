@@ -4,12 +4,12 @@
 CSG déductible (11) ; l'impôt dans les indicateurs (13) ; l'effet retour (14) ;
 l'ASPA déformée, le bénéfice des indépendants (16) ; les adhérents d'avant 1978
 (17) ; le 18, la prime des non-salariés, la majoration pour enfants, les
-revenus de 1973 à 1980, puis ceux de 1969 à 1972, aux lois de finances pour
-1970 à 1973 : le barème et la réduction des salaires, la décote, les paliers.
-Reste : au propriétaire, l'effet retour dans le solde et trois décisions sur
-le bénéfice ; l'impôt au site, à la session des pages ; les revenus de 1960 à
-1968, puis l'exonération au minimum garanti. Détail :
-`2026-10-18-etape-5-lois-de-finances-de-1970-a-1973.md`, « Ce qui reste ».
+revenus de 1969 à 1980 aux lois de finances, et, au dépliant « Partir plus tôt
+ou plus tard », la pension après impôt des quatre systèmes. Reste : au
+propriétaire, l'impôt dans les cartes de résultats (le foyer, la place),
+l'effet retour dans le solde, trois décisions sur le bénéfice ; les revenus de
+1960 à 1968, puis l'exonération au minimum garanti. Détail : « Au
+propriétaire » de `2026-10-18-etape-5-impot-au-site.md`.
 
 **La demande.** Le propriétaire, le 10 octobre 2026 : l'impôt sur le revenu
 d'un foyer, de son barème à son montant, chaque année ; les barèmes de l'IPP

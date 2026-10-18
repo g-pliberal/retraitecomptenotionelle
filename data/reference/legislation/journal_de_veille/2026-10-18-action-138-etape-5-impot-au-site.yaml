@@ -1,0 +1,17 @@
+date: "2026-10-18"
+session: >-
+  action 138, étape 5, au site : la pension après impôt des quatre systèmes dans le
+  dépliant « Partir plus tôt ou plus tard », sous l'impôt d'une personne seule que
+  les deux moteurs calculent déjà (`Depart.pensions_apres_impot`)
+consulte: >-
+  Aucun texte neuf : l'étape ne touche à aucune règle et montre l'impôt que le module
+  calcule depuis les revenus de 1969 (`impot_revenu.py`, `impot-revenu.js`), sur le
+  net imposable de la CSG déductible (`parts_imposables_par_annee`).
+trouve: >-
+  Rien de neuf au droit. Les cartes de résultats prennent la CSG au foyer que la
+  saisie déclare, le dépliant l'impôt d'une personne seule : les deux ne coïncident
+  que sans conjoint ni revenu fiscal déclarés.
+reste: >-
+  Au propriétaire, l'impôt dans les cartes de résultats : le foyer, la place, le mode
+  brut et le non-résident (note `2026-10-18-etape-5-impot-au-site.md`) ; les revenus
+  de 1960 à 1968, à une autre session.
