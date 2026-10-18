@@ -663,7 +663,10 @@ export function duResume(anneeNaissance, sexe, moisNaissance = 1, ageLiquidation
  * pas cumulé, rien ne dépasse le départ. `temps_partiel` donne à une année la
  * quotité de l'activité principale : chaque métier principal se coupe au
  * 1er janvier des années où elle change, et chaque morceau à temps partiel la
- * porte (`auTempsPartiel`).
+ * porte (`coupeeAuxAnnees`). `dispenses` donne à une année le motif qui
+ * dispense l'indépendant de l'assiette minimale : chaque métier, principal ou
+ * cumulé, se coupe de même, et chaque morceau dispensé le porte
+ * (`dispense_assiette_minimale`).
  */
 export function duParcours({
   annee_naissance,
@@ -686,6 +689,7 @@ export function duParcours({
   demandes_de_pension = null,
   invalidite = null,
   etranger = null,
+  dispenses = null,
 }) {
   if (!metiers || metiers.length === 0) {
     throw new Error("une carrière compte au moins un métier");
@@ -727,11 +731,14 @@ export function duParcours({
     throw new Error("le dernier métier commence après la liquidation");
   }
 
+  const tempsPartiel = temps_partiel ?? new Map();
+  const motifs = dispenses ?? new Map();
   const periodes = [];
   principaux.forEach((metier, i) => {
     const cloture = i + 1 < bornes.length ? bornes[i + 1] : fin;
-    auTempsPartiel(bornes[i], cloture, temps_partiel ?? new Map())
-      .forEach(([de, a, quotite], morceau) => {
+    coupeeAuxAnnees(bornes[i], cloture,
+      (annee) => [tempsPartiel.get(annee) ?? 1.0, motifs.get(annee) ?? ""])
+      .forEach(([de, a, [quotite, dispense]], morceau) => {
         const attributs = {
           affiliation: metier.affiliation,
           niveau_salaire: metier.niveau_salaire,
@@ -746,6 +753,9 @@ export function duParcours({
         }
         if (quotite < 1.0) {
           attributs.quotite = quotite;
+        }
+        if (dispense) {
+          attributs.dispense_assiette_minimale = dispense;
         }
         periodes.push(fait(morceau === 0 ? `emploi_${i + 1}` : `emploi_${i + 1}_${morceau + 1}`,
           ASSURE, EMPLOI, jour(de), jour(a), attributs));
@@ -768,15 +778,22 @@ export function duParcours({
     if (cloture.rang <= ouverture.rang) {
       throw new Error("une activité cumulée doit s'arrêter après avoir commencé");
     }
-    periodes.push(fait(`cumul_${i + 1}`, ASSURE, EMPLOI, jour(ouverture), jour(cloture), {
-      affiliation: metier.affiliation,
-      niveau_salaire: metier.niveau_salaire,
-      profil: profil_carriere,
-      part_primes,
-      cumul: true,
-      ...(metier.micro ? { micro: metier.micro } : {}),
-      ...(metier.apprentissage ? { apprentissage: true } : {}),
-    }));
+    // L'activité cumulée garde le temps plein, mais la dispense est de
+    // l'année : l'activité accessoire saisonnière est souvent celle-ci.
+    coupeeAuxAnnees(ouverture, cloture, (annee) => motifs.get(annee) ?? "")
+      .forEach(([de, a, dispense], morceau) => {
+        periodes.push(fait(morceau === 0 ? `cumul_${i + 1}` : `cumul_${i + 1}_${morceau + 1}`,
+          ASSURE, EMPLOI, jour(de), jour(a), {
+            affiliation: metier.affiliation,
+            niveau_salaire: metier.niveau_salaire,
+            profil: profil_carriere,
+            part_primes,
+            cumul: true,
+            ...(metier.micro ? { micro: metier.micro } : {}),
+            ...(metier.apprentissage ? { apprentissage: true } : {}),
+            ...(dispense ? { dispense_assiette_minimale: dispense } : {}),
+          }));
+      });
   });
   const annees = interruptions ? [...interruptions.keys()].sort((a, b) => a - b) : [];
   for (const annee of annees) {
@@ -793,12 +810,17 @@ export function duParcours({
 }
 
 /**
- * La période [ouverture, cloture), coupée au 1er janvier de chaque année où la
- * quotité change : des morceaux de quotité constante, chacun avec la sienne, un
- * à temps plein. Sans temps partiel, la période reste entière. Voir
- * `_au_temps_partiel` du Python.
+ * La période [ouverture, cloture), coupée au 1er janvier de chaque année où
+ * `valeur` change — la quotité du temps partiel, le motif d'une dispense : des
+ * morceaux où elle est constante, chacun avec la sienne. Quand elle ne change
+ * pas, la période reste entière. `valeur` rend un nombre, une chaîne ou un
+ * tableau de nombres et de chaînes, comparés terme à terme. Voir
+ * `_coupee_aux_annees` du Python.
  */
-function auTempsPartiel(ouverture, cloture, tempsPartiel) {
+function coupeeAuxAnnees(ouverture, cloture, valeur) {
+  const memes = (a, b) => (Array.isArray(a)
+    ? a.length === b.length && a.every((terme, rang) => terme === b[rang])
+    : a === b);
   const morceaux = [];
   let debut = ouverture;
   for (let annee = ouverture.annee + 1; annee <= cloture.annee; annee += 1) {
@@ -806,12 +828,12 @@ function auTempsPartiel(ouverture, cloture, tempsPartiel) {
     if (coupure.rang >= cloture.rang) {
       break;
     }
-    if ((tempsPartiel.get(annee) ?? 1.0) !== (tempsPartiel.get(annee - 1) ?? 1.0)) {
-      morceaux.push([debut, coupure, tempsPartiel.get(annee - 1) ?? 1.0]);
+    if (!memes(valeur(annee), valeur(annee - 1))) {
+      morceaux.push([debut, coupure, valeur(annee - 1)]);
       debut = coupure;
     }
   }
-  morceaux.push([debut, cloture, tempsPartiel.get(debut.annee) ?? 1.0]);
+  morceaux.push([debut, cloture, valeur(debut.annee)]);
   return morceaux;
 }
 

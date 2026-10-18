@@ -672,6 +672,9 @@ export const DEFAUTS = Object.freeze({
   // Les années à temps partiel et leur quotité, en pour cent : « 2005:2014:80 ».
   // Voir `temps_partiel` dans `saisie.py`.
   temps_partiel: "",
+  // Les années où l'indépendant est dispensé de l'assiette minimale, et le
+  // motif de la dispense : « 2016:2019:rsa ». Voir `dispenses` dans `saisie.py`.
+  dispenses: "",
   indexation: "masse_salariale",
   lissage: 1,
   age_reference: "fixe_apres_bascule",
@@ -842,6 +845,7 @@ export class Saisie {
         ? null : entier(parametres, "apprentissage", 1),
       interruptions: (parametres.interruptions || "").trim(),
       temps_partiel: (parametres.temps_partiel || "").trim(),
+      dispenses: (parametres.dispenses || "").trim(),
       indexation: parmi(parametres, "indexation", INDEXATIONS, DEFAUTS.indexation),
       lissage: entier(parametres, "lissage", DEFAUTS.lissage),
       age_reference: parmi(parametres, "age_reference", AGES_REFERENCE, DEFAUTS.age_reference),
@@ -950,6 +954,7 @@ export class Saisie {
       throw new ErreurSaisie("Revenu fiscal de référence : un montant annuel positif.");
     }
     this.tempsPartielAnalyse();
+    this.dispensesAnalysees();
     this.verifierNaissances();
     this.verifierConjoint();
     this.verifierProgressive();
@@ -1533,6 +1538,65 @@ export class Saisie {
     return quotites;
   }
 
+  /**
+   * « 2016:2019:rsa, 2020:2020:activite_saisonniere » → `Map` année → motif.
+   * La forme est celle des interruptions, et leurs refus — le motif n'est
+   * contrôlé que si `motifsConnus`, lus dans le paquet, sont donnés —, et deux
+   * motifs pour une même année. Voir `dispenses_analysees` du Python.
+   */
+  dispensesAnalysees(motifsConnus = null) {
+    const connus = motifsConnus === null ? null : [...motifsConnus].sort();
+    const motifs = new Map();
+    for (const brut of this.dispenses.replace(/\n/g, ",").split(",")) {
+      const morceau = brut.trim();
+      if (!morceau) {
+        continue;
+      }
+      const parties = morceau.split(":");
+      if (parties.length !== 3 || !parties.slice(0, 2).every((partie) => estEntier(partie))
+        || !parties[2].trim()) {
+        throw new ErreurSaisie(
+          `Dispense mal formée : « ${morceau} ». Attendu `
+          + "« année_début:année_fin:motif », par exemple 2016:2019:rsa.",
+        );
+      }
+      const [debut, fin] = parties.slice(0, 2).map(Number);
+      const motif = parties[2].trim();
+      // Les années sont citées telles qu'elles ont été écrites, comme celles
+      // d'une interruption : les deux moteurs disent la même phrase.
+      for (const [texte, annee] of [[parties[0], debut], [parties[1], fin]]) {
+        if (!(annee >= ANNEE_CARRIERE_MINIMALE && annee <= ANNEE_CARRIERE_MAXIMALE)) {
+          throw new ErreurSaisie(
+            `Dispense « ${morceau} » : ${texte.trim()} ne tombe dans aucune `
+            + `carrière possible. Attendu entre ${ANNEE_CARRIERE_MINIMALE} et `
+            + `${ANNEE_CARRIERE_MAXIMALE}.`,
+          );
+        }
+      }
+      if (fin < debut) {
+        throw new ErreurSaisie(
+          `Dispense « ${morceau} » : elle finit (${fin}) avant de `
+          + `commencer (${debut}).`,
+        );
+      }
+      if (connus !== null && !connus.includes(motif)) {
+        throw new ErreurSaisie(
+          `Dispense « ${morceau} » : motif inconnu « ${motif} ». `
+          + `Attendu l'un de : ${connus.join(", ")}.`,
+        );
+      }
+      for (let annee = debut; annee <= fin; annee += 1) {
+        if (motifs.has(annee)) {
+          throw new ErreurSaisie(
+            `Dispense « ${morceau} » : l'année ${annee} a déjà son motif.`,
+          );
+        }
+        motifs.set(annee, motif);
+      }
+    }
+    return motifs;
+  }
+
   /** Vrai si la carrière est LUE plutôt que reconstituée. */
   get releveActif() {
     return this.releve.trim().length > 0;
@@ -1570,11 +1634,14 @@ export class Saisie {
    * trimestres — le relevé fait foi — et son revenu devient le salaire de
    * référence d'avant l'interruption. **Les années à temps partiel** se
    * déclarent de même, dans le champ « Temps partiel » : la ligne en prend la
-   * quotité, et garde son revenu, que le relevé porte déjà réduit.
+   * quotité, et garde son revenu, que le relevé porte déjà réduit. **Les
+   * dispenses de l'assiette minimale**, dans le leur : la ligne d'emploi en
+   * prend le motif (`dispensesAnalysees`, que `dispensesConnues` contrôle).
    */
-  releveAnalyse(motifsConnus = null) {
+  releveAnalyse(motifsConnus = null, dispensesConnues = null) {
     const interruptions = this.interruptionsAnalysees(motifsConnus);
     const tempsPartiel = this.tempsPartielAnalyse();
+    const dispenses = this.dispensesAnalysees(dispensesConnues);
     const depart = this.dateLiquidation;
     // Les lignes sont COMPTÉES avant d'être lues : le refus doit coûter le
     // découpage du texte, et rien de plus. Les analyser d'abord pour les
@@ -1671,6 +1738,7 @@ export class Saisie {
         trimestres,
         type_periode: typePeriode,
         quotite: typePeriode === "emploi" ? tempsPartiel.get(annee) ?? 1.0 : 1.0,
+        dispense_assiette_minimale: typePeriode === "emploi" ? dispenses.get(annee) ?? "" : "",
       });
     }
     return lignes;
@@ -2601,6 +2669,7 @@ export class Saisie {
       ...(this.apprentissage !== null ? { apprentissage: this.apprentissage } : {}),
       ...(this.revenu_fiscal !== null ? { revenu_fiscal: nombreBrut(this.revenu_fiscal) } : {}),
       ...(this.temps_partiel ? { temps_partiel: this.temps_partiel } : {}),
+      ...(this.dispenses ? { dispenses: this.dispenses } : {}),
       interruptions: this.interruptions, indexation: this.indexation,
       lissage: this.lissage,
       age_reference: this.age_reference, table: this.table,

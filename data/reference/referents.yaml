@@ -7428,7 +7428,8 @@ referents:
           libéral non principal ou pensionné (D. 642-4), déclarés
           ligne par ligne sur le relevé, dans les deux moteurs
           (`legislation/dispenses_assiette_minimale.yaml`) ; la saisie
-          du site ne les porte pas encore.
+          du site les déclare par années entières depuis le 18 octobre
+          2026 (champ « Dispenses de l'assiette minimale »).
         etat: repris
         chantier: "138.18"
         fiche: assiette_minimale_independants

@@ -49,6 +49,8 @@ Ce que les faits portent, par sorte :
   partiel, entre zéro et un, absente à temps plein — un parcours coupe ses
   métiers au 1er janvier des années où elle change ; ``apprentissage`` pour
   un contrat d'apprentissage, qui est un emploi et non une période assimilée ;
+  ``dispense_assiette_minimale``, le motif qui dispense l'indépendant de
+  l'assiette minimale — un parcours coupe aussi ses métiers où il change ;
   ``lodeom``, le barème de l'exonération de l'employeur d'outre-mer, que seule
   la fiche de paie lit ;
 * ``periode_d_interruption`` — le ``motif`` ; d'un relevé, aussi
@@ -91,6 +93,8 @@ from .calendrier import MOIS_PAR_AN, DateMois, en_mois, origine_des_ages
 from .noyau import vocabulaire
 
 if TYPE_CHECKING:  # pragma: no cover - annotations seulement
+    from collections.abc import Callable
+
     from .carriere import LigneRelevee, Metier
 
 #: La version du contrat C.1 que la chronologie suit.
@@ -713,7 +717,8 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
                 deces: str | None = None, retraite_progressive: dict | None = None,
                 emploi_retraite: dict | None = None,
                 demandes_de_pension: dict[str, float] | None = None,
-                invalidite: dict | None = None, etranger: dict | None = None) -> dict:
+                invalidite: dict | None = None, etranger: dict | None = None,
+                dispenses: dict[int, str] | None = None) -> dict:
     """La chronologie d'un parcours : un fait par métier, daté au mois, et un
     par année d'interruption.
 
@@ -729,7 +734,12 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
 
     ``temps_partiel`` donne à une année la quotité de l'activité principale :
     chaque métier principal se coupe au 1er janvier des années où elle change,
-    et chaque morceau à temps partiel la porte (:func:`_au_temps_partiel`).
+    et chaque morceau à temps partiel la porte (:func:`_coupee_aux_annees`).
+    ``dispenses`` donne à une année le motif qui dispense l'indépendant de
+    l'assiette minimale : chaque métier, principal ou cumulé, se coupe de même
+    où il change, et chaque morceau dispensé le porte
+    (``dispense_assiette_minimale``), que la règle ne retient que pour les
+    statuts et les années que le texte dispense.
     """
     if not metiers:
         raise ValueError("une carrière compte au moins un métier")
@@ -768,11 +778,14 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
     if bornes[-1].rang >= fin.rang:
         raise ValueError("le dernier métier commence après la liquidation")
 
+    temps_partiel = temps_partiel or {}
+    dispenses = dispenses or {}
     periodes = []
     for rang, (metier, ouverture, cloture) in enumerate(
             zip(principaux, bornes, bornes[1:] + [fin]), 1):
-        for morceau, (de, a, quotite) in enumerate(
-                _au_temps_partiel(ouverture, cloture, temps_partiel or {}), 1):
+        for morceau, (de, a, (quotite, dispense)) in enumerate(_coupee_aux_annees(
+                ouverture, cloture,
+                lambda annee: (temps_partiel.get(annee, 1.0), dispenses.get(annee, ""))), 1):
             attributs = {"affiliation": metier.affiliation,
                          "niveau_salaire": metier.niveau_salaire,
                          "profil": profil_carriere, "part_primes": part_primes}
@@ -782,6 +795,8 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
                 attributs["apprentissage"] = True
             if quotite < 1.0:
                 attributs["quotite"] = quotite
+            if dispense:
+                attributs["dispense_assiette_minimale"] = dispense
             periodes.append(fait(f"emploi_{rang}" if morceau == 1 else f"emploi_{rang}_{morceau}",
                                  ASSURE, EMPLOI, _jour(de), _jour(a), attributs))
     for rang, metier in enumerate(cumuls, 1):
@@ -801,11 +816,17 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
             raise ValueError(
                 "une activité cumulée doit s'arrêter après avoir commencé"
             )
-        periodes.append(fait(f"cumul_{rang}", ASSURE, EMPLOI, _jour(ouverture), _jour(cloture), {
-            "affiliation": metier.affiliation, "niveau_salaire": metier.niveau_salaire,
-            "profil": profil_carriere, "part_primes": part_primes, "cumul": True,
-            **({"micro": metier.micro} if metier.micro else {}),
-            **({"apprentissage": True} if metier.apprentissage else {})}))
+        # L'activité cumulée garde le temps plein, mais la dispense est de
+        # l'année : l'activité accessoire saisonnière est souvent celle-ci.
+        for morceau, (de, a, dispense) in enumerate(_coupee_aux_annees(
+                ouverture, cloture, lambda annee: dispenses.get(annee, "")), 1):
+            periodes.append(fait(f"cumul_{rang}" if morceau == 1 else f"cumul_{rang}_{morceau}",
+                                 ASSURE, EMPLOI, _jour(de), _jour(a), {
+                "affiliation": metier.affiliation, "niveau_salaire": metier.niveau_salaire,
+                "profil": profil_carriere, "part_primes": part_primes, "cumul": True,
+                **({"micro": metier.micro} if metier.micro else {}),
+                **({"apprentissage": True} if metier.apprentissage else {}),
+                **({"dispense_assiette_minimale": dispense} if dispense else {})}))
     for annee in sorted(interruptions or {}):
         periodes.append(fait(f"interruption_{annee}", ASSURE, INTERRUPTION,
                              f"{annee:04d}-01-01", f"{annee + 1:04d}-01-01",
@@ -815,21 +836,22 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
             "liens": liens}
 
 
-def _au_temps_partiel(ouverture: DateMois, cloture: DateMois,
-                      temps_partiel: dict[int, float]) -> list[tuple[DateMois, DateMois, float]]:
+def _coupee_aux_annees(ouverture: DateMois, cloture: DateMois,
+                       valeur: Callable[[int], object]) -> list[tuple[DateMois, DateMois, object]]:
     """La période [ouverture, cloture), coupée au 1er janvier de chaque année
-    où la quotité change : des morceaux de quotité constante, chacun avec la
-    sienne, un à temps plein. Sans temps partiel, la période reste entière."""
+    où ``valeur`` change — la quotité du temps partiel, le motif d'une
+    dispense : des morceaux où elle est constante, chacun avec la sienne.
+    Quand elle ne change pas, la période reste entière."""
     morceaux = []
     debut = ouverture
     for annee in range(ouverture.annee + 1, cloture.annee + 1):
         coupure = DateMois(annee, 1)
         if coupure.rang >= cloture.rang:
             break
-        if temps_partiel.get(annee, 1.0) != temps_partiel.get(annee - 1, 1.0):
-            morceaux.append((debut, coupure, temps_partiel.get(annee - 1, 1.0)))
+        if valeur(annee) != valeur(annee - 1):
+            morceaux.append((debut, coupure, valeur(annee - 1)))
             debut = coupure
-    morceaux.append((debut, cloture, temps_partiel.get(debut.annee, 1.0)))
+    morceaux.append((debut, cloture, valeur(debut.annee)))
     return morceaux
 
 

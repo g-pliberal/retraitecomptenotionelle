@@ -1949,7 +1949,9 @@ export class Carriere {
    * compris : le niveau propre à chaque métier s'y superpose, il ne remet pas
    * la progression à zéro. ``interruptions`` associe une année à une période
    * non cotisée ; ``temps_partiel`` (une `Map`), à la quotité de l'activité
-   * principale, qui réduit son revenu et les services de la fonction publique.
+   * principale, qui réduit son revenu et les services de la fonction publique ;
+   * ``dispenses`` (une `Map`), au motif qui dispense l'indépendant de
+   * l'assiette minimale, que portent toutes ses activités de l'année.
    *
    * **Une activité CUMULÉE ne remplace pas, elle s'ajoute** : un métier qui
    * porte `cumul: true` court de `age_debut` à `age_fin` (ou jusqu'à la
@@ -1979,6 +1981,7 @@ export class Carriere {
     invalidite = null,
     etranger = null,
     periodes_assimilees = [],
+    dispenses = null,
   }) {
     const chronologie = preparer(chrono.avecPeriodesAssimilees(chrono.duParcours({
       annee_naissance, sexe, metiers, age_liquidation, mois_naissance,
@@ -1986,6 +1989,7 @@ export class Carriere {
       naissances_enfants,
       jour_naissance, presomptions: macro.paquet.presomptions, conjoint, deces,
       retraite_progressive, emploi_retraite, demandes_de_pension, invalidite, etranger,
+      dispenses,
     }), periodes_assimilees), macro.paquet.presomptions);
     return Carriere.depuisChronologie(chronologie, macro, chrono.ASSURE, identifiant);
   }
@@ -2188,11 +2192,12 @@ function quotiteDeLAnnee(annee, debut, fin, progressive, tempsPartiel = 1.0) {
  * les trimestres déduits du revenu. `interruptions` (une `Map` année → motif)
  * donne à une année ajoutée son motif ; `progressive` met à temps partiel les
  * mois qu'elle touche, et `tempsPartiel` (une `Map` année → quotité) les
- * années qu'il nomme, dont la ligne ajoutée porte la quotité. Voir
+ * années qu'il nomme, dont la ligne ajoutée porte la quotité ; `dispenses`
+ * (une `Map` année → motif) donne le sien à la ligne d'emploi ajoutée. Voir
  * `prolonger_releve` du Python.
  */
 export function prolongerReleve(releve, fin, macro, interruptions = new Map(),
-  progressive = null, tempsPartiel = new Map()) {
+  progressive = null, tempsPartiel = new Map(), dispenses = new Map()) {
   const lignes = [...releve];
   if (lignes.length === 0) {
     return lignes;
@@ -2227,6 +2232,7 @@ export function prolongerReleve(releve, fin, macro, interruptions = new Map(),
         trimestres: null,
         type_periode: typePeriode,
         quotite,
+        dispense_assiette_minimale: typePeriode === "emploi" ? dispenses.get(annee) ?? "" : "",
         lodeom: typePeriode === "emploi" ? source.lodeom ?? "" : "",
       });
     });
@@ -2322,6 +2328,8 @@ function lignesDuParcours(dateNaissance, periodesDeclarees, fin, macro, progress
       trimestresMaximum,
       quotite,
       micro: principal.micro ?? "",
+      // Coupée au 1er janvier comme la quotité, la dominante la dit.
+      dispense: principal.dispense_assiette_minimale ?? "",
       lodeom: principal.lodeom ?? "",
     }));
   }
@@ -2352,6 +2360,7 @@ function lignesDuParcours(dateNaissance, periodesDeclarees, fin, macro, progress
         part_primes: metier.part_primes,
         trimestresMaximum: trimestresCivils(mois),
         micro: metier.micro ?? "",
+        dispense: metier.dispense_assiette_minimale ?? "",
         lodeom: metier.lodeom ?? "",
       }));
     }

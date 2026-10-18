@@ -24,6 +24,7 @@ from .donnees.assiette import AssietteActivite
 from .donnees.bilan import BilanFige, charger_bilan
 from .donnees.chargement import (
     charger_accords_internationaux,
+    charger_dispenses_assiette_minimale,
     charger_periodes_non_travaillees,
 )
 from .donnees.depenses import DepensesRetraite
@@ -397,6 +398,7 @@ class Contexte:
         emploi_retraite = self._emploi_retraite(simulateur, saisie)
         demandes = _demandes_de_pension(simulateur, saisie)
         etranger = _etranger(simulateur, saisie)
+        dispenses = saisie.dispenses_analysees(_dispenses_connues(simulateur))
 
         def batir(niveaux: list[float]) -> "Carriere":
             return simulateur.carriere_parcours(
@@ -422,6 +424,7 @@ class Contexte:
                 invalidite=saisie.invalidite_declaree(),
                 etranger=etranger,
                 periodes_assimilees=saisie.periodes_assimilees_declarees(),
+                dispenses=dispenses,
                 part_primes=saisie.primes,
                 identifiant="assuré",
             )
@@ -500,8 +503,9 @@ class Contexte:
         La page dit celles qu'elle a ajoutées."""
         simulateur = self.simulateur(saisie.parametres(self.base))
         motifs = charger_periodes_non_travaillees(simulateur.macro.racine)
-        return _releve_jusqu_au_depart(simulateur, saisie,
-                                       saisie.releve_analyse(motifs), motifs)
+        return _releve_jusqu_au_depart(
+            simulateur, saisie,
+            saisie.releve_analyse(motifs, _dispenses_connues(simulateur)), motifs)
 
     def _carriere_relevee(self, simulateur: Simulateur, saisie: Saisie,
                           motifs, prolonger: bool = True) -> "Carriere":
@@ -516,7 +520,7 @@ class Contexte:
         ``prolonger=False`` s'en tient au relevé, pour qui l'a déjà prolongé à
         sa façon (``scripts/estimation_officielle.py``).
         """
-        releve = saisie.releve_analyse(motifs)
+        releve = saisie.releve_analyse(motifs, _dispenses_connues(simulateur))
         for ligne in releve:
             if ligne.affiliation not in simulateur.affiliations:
                 raise ErreurSaisie(
@@ -663,7 +667,8 @@ def _releve_jusqu_au_depart(simulateur: Simulateur, saisie: Saisie,
     métiers (:meth:`Saisie.interruptions_apres`) : une période à l'étranger,
     puis le champ « Interruptions », qui garde le dernier mot —
     ``sans_activite`` pour qui ne travaille plus. Le champ « Temps partiel »
-    et la retraite progressive les mettent à temps partiel. La radiation pour invalidité, qui clôt l'emploi
+    et la retraite progressive les mettent à temps partiel ; celui des
+    dispenses de l'assiette minimale leur donne son motif. La radiation pour invalidité, qui clôt l'emploi
     de fonctionnaire, les arrête à sa date quand elle ne tombe pas avant la
     dernière année du relevé : ce qui la suit, le relevé ne le dit pas.
 
@@ -684,7 +689,15 @@ def _releve_jusqu_au_depart(simulateur: Simulateur, saisie: Saisie,
                    (saisie.date_de(declaree["age"], depart=True), declaree["quotite"]))
     return prolonger_releve(releve, fin, simulateur.macro,
                             saisie.interruptions_apres(DateMois(derniere + 1, 1), motifs),
-                            progressive, saisie.temps_partiel_analyse())
+                            progressive, saisie.temps_partiel_analyse(),
+                            saisie.dispenses_analysees())
+
+
+def _dispenses_connues(simulateur: Simulateur) -> list[str]:
+    """Les motifs de dispense de l'assiette minimale que la table connaît : la
+    saisie refuse les autres sur la table même qui calcule, comme les motifs
+    d'interruption (``legislation/dispenses_assiette_minimale.yaml``)."""
+    return sorted(charger_dispenses_assiette_minimale(simulateur.macro.racine))
 
 
 def _demandes_de_pension(simulateur: Simulateur, saisie: Saisie) -> dict[str, float] | None:

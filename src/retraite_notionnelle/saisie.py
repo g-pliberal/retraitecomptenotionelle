@@ -854,6 +854,13 @@ class Saisie:
     #: services, en entier dans la durée d'assurance. Voir
     #: :meth:`temps_partiel_analyse`.
     temps_partiel: str = ""
+    #: Les années où l'indépendant est dispensé de l'assiette minimale, et le
+    #: motif de la dispense : « 2016:2019:rsa » (fiche
+    #: ``assiette_minimale_independants`` ; les motifs sont ceux de
+    #: ``legislation/dispenses_assiette_minimale.yaml``). Toute activité de ces
+    #: années le porte, d'un relevé ou des métiers, et la règle ne le retient
+    #: que là où le texte dispense le statut. Voir :meth:`dispenses_analysees`.
+    dispenses: str = ""
     indexation: str = "masse_salariale"
     lissage: int = 1
     age_reference: str = "fixe_apres_bascule"
@@ -1032,6 +1039,7 @@ class Saisie:
                            else _entier(parametres, "apprentissage", 1)),
             interruptions=(parametres.get("interruptions") or "").strip(),
             temps_partiel=(parametres.get("temps_partiel") or "").strip(),
+            dispenses=(parametres.get("dispenses") or "").strip(),
             indexation=_parmi(parametres, "indexation", INDEXATIONS, defauts.indexation),
             lissage=_entier(parametres, "lissage", defauts.lissage),
             age_reference=_parmi(
@@ -1130,6 +1138,7 @@ class Saisie:
         if self.revenu_fiscal is not None and self.revenu_fiscal < 0:
             raise ErreurSaisie("Revenu fiscal de référence : un montant annuel positif.")
         self.temps_partiel_analyse()
+        self.dispenses_analysees()
         self._verifier_naissances()
         self._verifier_conjoint()
         self._verifier_progressive()
@@ -1760,6 +1769,61 @@ class Saisie:
                 quotites[annee] = quotite / 100.0
         return quotites
 
+    def dispenses_analysees(
+        self, motifs_connus: Iterable[str] | None = None,
+    ) -> dict[int, str]:
+        """« 2016:2019:rsa, 2020:2020:activite_saisonniere » -> {année: motif}.
+
+        La forme est celle des interruptions, et leurs refus — une ligne mal
+        formée ou sans motif, une année hors de toute carrière possible, une
+        plage à l'envers, un motif inconnu de ``motifs_connus``, que l'appelant
+        lit dans les données et sans lesquels le motif n'est pas contrôlé —,
+        et un de plus : deux motifs pour une même année. Un motif dit hors des
+        années où le texte dispense ne se refuse pas : il est sans effet
+        (:func:`~retraite_notionnelle.donnees.chargement.dispense_assiette_minimale`).
+        """
+        connus = None if motifs_connus is None else sorted(motifs_connus)
+        motifs: dict[int, str] = {}
+        for morceau in self.dispenses.replace("\n", ",").split(","):
+            morceau = morceau.strip()
+            if not morceau:
+                continue
+            parties = morceau.split(":")
+            if (len(parties) != 3 or not all(_est_entier(partie) for partie in parties[:2])
+                    or not parties[2].strip()):
+                raise ErreurSaisie(
+                    f"Dispense mal formée : « {morceau} ». Attendu "
+                    "« année_début:année_fin:motif », par exemple 2016:2019:rsa."
+                )
+            debut, fin = int(parties[0]), int(parties[1])
+            motif = parties[2].strip()
+            # Les années sont citées telles qu'elles ont été écrites, comme
+            # celles d'une interruption : les deux moteurs disent la même phrase.
+            for texte, annee in ((parties[0], debut), (parties[1], fin)):
+                if not ANNEE_CARRIERE_MINIMALE <= annee <= ANNEE_CARRIERE_MAXIMALE:
+                    raise ErreurSaisie(
+                        f"Dispense « {morceau} » : {texte.strip()} ne tombe dans "
+                        "aucune carrière possible. Attendu entre "
+                        f"{ANNEE_CARRIERE_MINIMALE} et {ANNEE_CARRIERE_MAXIMALE}."
+                    )
+            if fin < debut:
+                raise ErreurSaisie(
+                    f"Dispense « {morceau} » : elle finit ({fin}) avant de "
+                    f"commencer ({debut})."
+                )
+            if connus is not None and motif not in connus:
+                raise ErreurSaisie(
+                    f"Dispense « {morceau} » : motif inconnu « {motif} ». "
+                    "Attendu l'un de : " + ", ".join(connus) + "."
+                )
+            for annee in range(debut, fin + 1):
+                if annee in motifs:
+                    raise ErreurSaisie(
+                        f"Dispense « {morceau} » : l'année {annee} a déjà son motif."
+                    )
+                motifs[annee] = motif
+        return motifs
+
     @property
     def releve_actif(self) -> bool:
         """Vrai si la carrière est LUE plutôt que reconstituée."""
@@ -1778,6 +1842,7 @@ class Saisie:
 
     def releve_analyse(
         self, motifs_connus: Iterable[str] | None = None,
+        dispenses_connues: Iterable[str] | None = None,
     ) -> list[LigneRelevee]:
         """« 2005:salarie_prive_non_cadre:24000:4, … » -> lignes de relevé.
 
@@ -1802,7 +1867,9 @@ class Saisie:
 
         **Les années à temps partiel** se déclarent de même, dans le champ
         « Temps partiel » : la ligne en prend la quotité, et garde son revenu,
-        que le relevé porte déjà réduit.
+        que le relevé porte déjà réduit. **Les dispenses de l'assiette
+        minimale**, dans le leur : la ligne d'emploi en prend le motif
+        (:meth:`dispenses_analysees`, que ``dispenses_connues`` contrôle).
 
         Les refus sont ceux qu'``interruptions_analysees`` a appris à
         prononcer : une année hors de toute carrière possible, une ligne mal
@@ -1812,6 +1879,7 @@ class Saisie:
         """
         interruptions = self.interruptions_analysees(motifs_connus)
         temps_partiel = self.temps_partiel_analyse()
+        dispenses = self.dispenses_analysees(dispenses_connues)
         depart = self.date_liquidation
         # Les lignes sont COMPTÉES avant d'être lues : le refus doit coûter le
         # découpage du texte, et rien de plus. Les analyser d'abord pour les
@@ -1898,6 +1966,8 @@ class Saisie:
                 trimestres=trimestres,
                 type_periode=type_periode,
                 quotite=temps_partiel.get(annee, 1.0) if type_periode == "emploi" else 1.0,
+                dispense_assiette_minimale=(dispenses.get(annee, "")
+                                            if type_periode == "emploi" else ""),
             ))
         return lignes
 
@@ -2552,6 +2622,7 @@ class Saisie:
             **({"revenu_fiscal": _nombre(self.revenu_fiscal)}
                if self.revenu_fiscal is not None else {}),
             **({"temps_partiel": self.temps_partiel} if self.temps_partiel else {}),
+            **({"dispenses": self.dispenses} if self.dispenses else {}),
             "interruptions": self.interruptions, "indexation": self.indexation,
             "lissage": self.lissage,
             "age_reference": self.age_reference, "table": self.table,

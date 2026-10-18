@@ -84,10 +84,12 @@ textes_a_rattacher:
 approximations:
 - ecart: >-
     Les dispenses (`legislation/dispenses_assiette_minimale.yaml`) se déclarent ligne
-    par ligne sur le relevé (`dispense_assiette_minimale`) ; la saisie du site ne les
-    porte pas encore, et sert les trimestres de l'assiette minimale à l'indépendant au
-    RSA qui ne passe pas par le relevé. La dispense des activités saisonnières court
-    des cotisations de 2020, faute de date dans la loi.
+    par ligne sur le relevé (`dispense_assiette_minimale`), et, sur le site, par
+    années entières (champ « Dispenses de l'assiette minimale », `dispenses`) : toutes
+    les activités d'une année dispensée portent son motif, si bien que l'indépendant
+    qui en exerce deux la même année, dont une seule est accessoire saisonnière, les
+    voit dispensées toutes deux. La dispense des activités saisonnières court des
+    cotisations de 2020, faute de date dans la loi.
   effet: >-
     non mesuré sur la population ; pour une carrière de 3 000 € par an, 16 trimestres
     sur 36 ans et un tiers du régime de base, voir `effet`

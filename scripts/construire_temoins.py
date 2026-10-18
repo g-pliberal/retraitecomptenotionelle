@@ -752,6 +752,31 @@ def _cas() -> list[dict]:
                   "2024:fonctionnaire_territorial_hospitalier:17200:4",
         "temps_partiel": "2022:2024:70, 2027:2030:90",
     }))
+    # LES DISPENSES DE L'ASSIETTE MINIMALE (fiche assiette_minimale_independants ;
+    # action 138, étape 18) : l'artisane au RSA, 3 000 € par an sur son relevé,
+    # que rien ne dispense avant 2016 ; une salariée commerçante l'été, à côté,
+    # dispensée depuis 2020 ; une infirmière libérale pensionnée d'invalidité,
+    # 1 500 € par an sur son relevé, que D. 642-4 dispensait de 2004 à 2015,
+    # sauf à la CARPIMKO.
+    cas.append(("dispense_rsa_releve_artisane", {
+        "naissance": "1962-03-15", "sexe": "F", "statut": "artisan", "debut": "1990-01",
+        "liquidation": "2027-04",
+        "releve": lignes_releve(1990, 2025, "artisan", 3000, progression=1.0, trimestres=None),
+        "dispenses": "2010:2027:rsa",
+    }))
+    cas.append(("dispense_saisonniere_cumulee", {
+        "naissance": "1970-05-20", "sexe": "F", "debut": "1992-09", "liquidation": "2034-06",
+        "salaire": "0.9", "metier2_debut": "2015-06", "metier2_statut": "commercant",
+        "metier2_salaire": "0.12", "metier2_cumul": "oui", "metier2_fin": "2030-01",
+        "dispenses": "2018:2029:activite_saisonniere",
+    }))
+    cas.append(("dispense_liberale_pensionnee", {
+        "naissance": "1968-09-10", "sexe": "F", "statut": "auxiliaire_medical",
+        "debut": "2004-01", "liquidation": "2032-10",
+        "releve": lignes_releve(2004, 2015, "auxiliaire_medical", 1500, progression=1.0,
+                                trimestres=None),
+        "dispenses": "2004:2015:pensionne",
+    }))
     # LE CUMUL EMPLOI-RETRAITE : l'activité exercée après le départ, et ce que
     # chaque pension en garde (droit/cumul.py). Le cumul plafonné de la
     # première pension de 2022, réduite du dépassement, l'Agirc-Arrco

@@ -16,6 +16,7 @@ champs vides en moins — ce que fait l'écouteur de soumission d'``index.html``
 
 from __future__ import annotations
 
+import json
 import re
 from html.parser import HTMLParser
 from pathlib import Path
@@ -147,6 +148,7 @@ SAISIES = {
         **BASE, "sexe": "F", "profil": "plat", "primes": "0.2", "enfants": "3",
         "naissances": "1996,1999-04",
         "interruptions": "1995:1996:education_enfant", "temps_partiel": "1999:1999:80",
+        "dispenses": "2016:2017:rsa",
         "releve": "1998:salarie_prive_non_cadre:14200:4\n"
                   "1999:salarie_prive_non_cadre:15100:4",
     },
@@ -290,3 +292,18 @@ def test_la_saisie_n_est_gardee_que_par_le_navigateur():
     assert '<button type="button" class="second oublier" hidden>Effacer ma saisie</button>' \
         in corps
     assert 'closest?.("button.oublier")' in script and "oublierMemoire();" in script
+
+
+def test_le_champ_des_dispenses_nomme_chaque_motif_et_ses_annees():
+    """Le champ des dispenses de l'assiette minimale (action 138, étape 18) dit,
+    sous son point d'interrogation, chaque motif de la table et les années où
+    il dispense, lues dans le paquet : un motif de plus ne s'y perd pas, et une
+    année corrigée dans la table l'est aussi sur la page."""
+    html = _formulaire({"dispenses": "2016:2017:rsa"})
+    bloc = re.search(r'<div><label for="dispenses">.*?</div>', html, re.S)
+    assert bloc, "le formulaire n'a pas de champ des dispenses"
+    assert 'name="dispenses" value="2016:2017:rsa"' in bloc.group(0)
+    paquet = json.loads((RACINE / "moteur" / "donnees.json").read_text(encoding="utf-8"))
+    for motif, (_, debut, fin, _) in paquet["dispenses_assiette_minimale"].items():
+        annees = f"de {debut} à {fin}" if fin is not None else f"depuis {debut}"
+        assert re.search(f"« {motif} »[^;.]*{annees}", bloc.group(0)), (motif, annees)

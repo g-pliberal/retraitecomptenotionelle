@@ -1001,6 +1001,14 @@ export function formulaire(saisie, contexte, comparaison = null) {
       + "dans les services, et en entier dans la durée d'assurance. Le temps "
       + "partiel thérapeutique, et celui de droit pour élever un enfant né depuis "
       + "2004, jusqu'à ses trois ans, comptent à temps plein : ne les déclarez pas."),
+    // LES DISPENSES DE L'ASSIETTE MINIMALE (action 138, étape 18 ; fiche
+    // assiette_minimale_independants) : facultatif, par années entières comme le
+    // temps partiel. Sans elles, l'indépendant qui déclare peu cotise sur
+    // l'assiette minimale chaque année où elle s'applique.
+    g.champ("dispenses", "Dispenses de l'assiette minimale", saisie.dispenses,
+      "« 2016:2019:rsa » : au RSA de 2016 à 2019, séparées par des virgules", "text",
+      { autocomplete: "off", spellcheck: "false" },
+      aideDesDispenses(contexte.paquet)),
     // LE REVENU FISCAL DU FOYER (action 138, étapes 2 et 13) : facultatif. Il
     // fixe la tranche de CSG de la pension ; sans lui, le net présume un foyer
     // sans autre revenu que ses pensions.
@@ -1992,6 +2000,43 @@ export function requeteBasculee(contexte, formulaire, lien) {
  * ligne suivante propose les deux, et la dernière dit donc, quand elle est sans
  * emploi, la date à laquelle l'activité s'arrête.
  */
+/**
+ * Les motifs de dispense de l'assiette minimale, dans l'ordre où la bulle les
+ * dit, et leur libellé, celui de la table
+ * (`legislation/dispenses_assiette_minimale.yaml`, `dit`).
+ */
+const MOTIFS_DE_DISPENSE = Object.freeze({
+  rsa: "bénéficiaire du revenu de solidarité active",
+  prime_activite: "bénéficiaire de la prime d'activité",
+  activite_saisonniere: "activité accessoire saisonnière",
+  activite_non_principale: "activité libérale qui n'est pas l'activité principale",
+  pensionne: "libéral titulaire d'une retraite ou d'une pension d'invalidité",
+});
+
+/**
+ * La bulle du champ des dispenses (action 138, étape 18) : chaque motif que
+ * le paquet connaît, par son code, et les années où le texte dispense, lues
+ * au paquet (`dispenses_assiette_minimale`) — un motif de plus dans la table
+ * y paraît, sous son code.
+ */
+function aideDesDispenses(paquet) {
+  const table = paquet.dispenses_assiette_minimale ?? {};
+  const ordre = Object.keys(MOTIFS_DE_DISPENSE);
+  const rang = (motif) => (ordre.includes(motif) ? ordre.indexOf(motif) : ordre.length);
+  const motifs = Object.keys(table).sort((a, b) => rang(a) - rang(b) || a.localeCompare(b))
+    .map((motif) => {
+      const [, debut, fin] = table[motif];
+      const libelle = MOTIFS_DE_DISPENSE[motif] ? `, ${MOTIFS_DE_DISPENSE[motif]}` : "";
+      return `« ${motif} »${libelle}, `
+        + (fin === null ? `depuis ${debut}` : `de ${debut} à ${fin}`);
+    });
+  return "Artisan, commerçant ou libéral, vous cotisez au moins sur une assiette "
+    + "minimale, qui vous valide des trimestres même les années où vous déclarez "
+    + `peu. Les textes vous en dispensent : ${motifs.join(" ; ")}. Ces années-là, `
+    + "vous ne cotisez que sur votre revenu, et ne validez que ce qu'il valide. "
+    + "Si vous avez demandé à cotiser sur l'assiette minimale, ne déclarez rien.";
+}
+
 /**
  * Ce que saisit le micro-entrepreneur (action 138, étape 12) : son revenu déjà
  * abattu, comme avant, ou son chiffre d'affaires, que le modèle abat selon son

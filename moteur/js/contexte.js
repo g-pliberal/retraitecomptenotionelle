@@ -461,6 +461,7 @@ export class Contexte {
     const emploiRetraite = this.emploiRetraite(simulateur, saisie);
     const demandes = demandesDePension(simulateur, saisie);
     const etranger = etrangerDeclare(simulateur, saisie);
+    const dispenses = saisie.dispensesAnalysees(dispensesConnues(this.paquet));
     const batir = (niveaux) => simulateur.carriereParcours({
       annee_naissance: saisie.naissance,
       mois_naissance: saisie.naissance_mois,
@@ -484,6 +485,7 @@ export class Contexte {
       invalidite: saisie.invaliditeDeclaree(),
       etranger,
       periodes_assimilees: saisie.periodesAssimileesDeclarees(),
+      dispenses,
       part_primes: saisie.primes,
       identifiant: "assuré",
     });
@@ -554,7 +556,8 @@ export class Contexte {
   releveProlonge(saisie) {
     const simulateur = this.simulateur(saisie.parametres(this.base));
     const motifs = Object.keys(this.paquet.periodes_non_travaillees ?? {});
-    return releveJusquAuDepart(simulateur, saisie, saisie.releveAnalyse(motifs), motifs);
+    return releveJusquAuDepart(simulateur, saisie,
+      saisie.releveAnalyse(motifs, dispensesConnues(this.paquet)), motifs);
   }
 
   /**
@@ -569,7 +572,7 @@ export class Contexte {
    * relevé.
    */
   carriereRelevee(simulateur, saisie, motifs, prolonger = true) {
-    let releve = saisie.releveAnalyse(motifs);
+    let releve = saisie.releveAnalyse(motifs, dispensesConnues(this.paquet));
     for (const ligne of releve) {
       if (!simulateur.affiliations.contient(ligne.affiliation)) {
         throw new ErreurSaisie(
@@ -683,7 +686,7 @@ function etrangerDeclare(simulateur, saisie) {
  * estimation retraite » prolonge les revenus. Les années ajoutées prennent leur
  * motif comme celles d'une carrière de métiers (`interruptionsApres`) ; le
  * champ « Temps partiel » et la retraite progressive les mettent à temps
- * partiel ; la radiation pour invalidité
+ * partiel, et celui des dispenses leur donne son motif ; la radiation pour invalidité
  * les arrête à sa date quand elle ne tombe pas avant la dernière année du
  * relevé. Rien ne s'ajoute à qui est parti une année déjà passée. Voir
  * `_releve_jusqu_au_depart` du Python.
@@ -706,7 +709,16 @@ function releveJusquAuDepart(simulateur, saisie, releve, motifs) {
     : [saisie.dateDe(declaree.age, true), declaree.quotite];
   return prolongerReleve(releve, fin, simulateur.macro,
     saisie.interruptionsApres(new DateMois(derniere + 1, 1), motifs), progressive,
-    saisie.tempsPartielAnalyse());
+    saisie.tempsPartielAnalyse(), saisie.dispensesAnalysees());
+}
+
+/**
+ * Les motifs de dispense de l'assiette minimale que le paquet connaît : la
+ * saisie refuse les autres sur la table même qui calcule. Voir
+ * `_dispenses_connues` du Python.
+ */
+function dispensesConnues(paquet) {
+  return Object.keys(paquet.dispenses_assiette_minimale ?? {}).sort();
 }
 
 /**

@@ -2020,6 +2020,7 @@ class Carriere:
         invalidite: dict | None = None,
         etranger: dict | None = None,
         periodes_assimilees: list[dict] | tuple = (),
+        dispenses: dict[int, str] | None = None,
     ) -> "Carriere":
         """Construit une carrière à partir de la suite des métiers exercés.
 
@@ -2056,6 +2057,11 @@ class Carriere:
         ``temps_partiel`` associe une année à la quotité de son activité
         principale : le revenu de l'année en est réduit, les services de la
         fonction publique aussi (fiche ``temps_partiel_fonction_publique``).
+
+        ``dispenses`` associe une année au motif qui dispense l'indépendant de
+        l'assiette minimale (``legislation/dispenses_assiette_minimale.yaml``) :
+        toutes ses activités de l'année le portent, et la règle ne le retient
+        que pour les statuts et les années que le texte dispense.
 
         ``retraite_progressive`` déclare une retraite progressive : son
         ``age`` et la ``quotite`` du temps partiel que l'assuré garde jusqu'au
@@ -2102,7 +2108,7 @@ class Carriere:
             jour_naissance=jour_naissance, conjoint=conjoint, deces=deces,
             retraite_progressive=retraite_progressive, emploi_retraite=emploi_retraite,
             demandes_de_pension=demandes_de_pension, invalidite=invalidite,
-            etranger=etranger), periodes_assimilees))
+            etranger=etranger, dispenses=dispenses), periodes_assimilees))
         return cls.depuis_chronologie(chronologie, macro, identifiant=identifiant)
 
     @classmethod
@@ -2264,6 +2270,7 @@ def prolonger_releve(releve: list[LigneRelevee], fin: DateMois, macro: DonneesMa
                      interruptions: dict[int, str] | None = None,
                      progressive: tuple[DateMois, float] | None = None,
                      temps_partiel: dict[int, float] | None = None,
+                     dispenses: dict[int, str] | None = None,
                      ) -> list[LigneRelevee]:
     """Le relevé, poursuivi jusqu'à ``fin`` — le mois du départ, qui n'est
     plus travaillé : les années qui l'en séparent s'ajoutent après lui.
@@ -2283,7 +2290,9 @@ def prolonger_releve(releve: list[LigneRelevee], fin: DateMois, macro: DonneesMa
     (:func:`_lignes_du_releve`), et celui de la dernière année, s'il l'était
     déjà, se prolonge à temps plein avant d'y être ramené. ``temps_partiel``
     — la quotité de chaque année que le champ « Temps partiel » déclare — fait
-    de même des années qu'il nomme, et la ligne ajoutée la porte.
+    de même des années qu'il nomme, et la ligne ajoutée la porte ; ``dispenses``
+    — le motif que le champ des dispenses de l'assiette minimale donne à une
+    année — aussi, sur la ligne d'emploi.
 
     Rend le relevé tel quel quand sa dernière année touche déjà ``fin`` :
     c'est celle du départ, ou celle d'avant un départ de janvier.
@@ -2293,6 +2302,7 @@ def prolonger_releve(releve: list[LigneRelevee], fin: DateMois, macro: DonneesMa
         return lignes
     interruptions = interruptions or {}
     temps_partiel = temps_partiel or {}
+    dispenses = dispenses or {}
     derniere = max(ligne.annee for ligne in lignes)
     sources = [ligne for ligne in lignes if ligne.annee == derniere]
     # Le revenu de chaque ligne de la dernière année, ramené au temps plein.
@@ -2318,6 +2328,9 @@ def prolonger_releve(releve: list[LigneRelevee], fin: DateMois, macro: DonneesMa
             lignes.append(LigneRelevee(annee=annee, affiliation=source.affiliation,
                                        revenu=revenu, type_periode=type_periode,
                                        quotite=quotite,
+                                       dispense_assiette_minimale=(
+                                           dispenses.get(annee, "")
+                                           if type_periode == "emploi" else ""),
                                        lodeom=(source.lodeom if type_periode == "emploi"
                                                else "")))
     return lignes
@@ -2436,6 +2449,8 @@ def _lignes_du_parcours(date_naissance: DateMois, periodes: list[dict], fin: Dat
             trimestres_maximum=trimestres_maximum,
             quotite=quotite,
             micro=dominant.get("micro", ""),
+            # Coupée au 1er janvier comme la quotité, la dominante la dit.
+            dispense=dominant.get("dispense_assiette_minimale", ""),
             lodeom=dominant.get("lodeom", ""),
         ))
     lignes = limiter_chomage_non_indemnise(lignes, annee_naissance)
@@ -2464,6 +2479,7 @@ def _lignes_du_parcours(date_naissance: DateMois, periodes: list[dict], fin: Dat
                 part_primes=metier["part_primes"],
                 trimestres_maximum=trimestres_civils(mois),
                 micro=metier.get("micro", ""),
+                dispense=metier.get("dispense_assiette_minimale", ""),
                 lodeom=metier.get("lodeom", ""),
             ))
 
