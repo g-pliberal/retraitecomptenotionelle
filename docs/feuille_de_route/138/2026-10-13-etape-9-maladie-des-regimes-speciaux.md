@@ -4,12 +4,12 @@
 de tous les régimes de base calculés, sauf la SEITA, le port de Strasbourg,
 les marins, les cultes et les assemblées ; celle de la SNCF et des mines au
 site, étage par étage, leur plafond depuis 2010, leurs taux du non-résident,
-que le paquet du site porte depuis le 18 octobre, leurs avantages
-accessoires, lus (rien ne change). Reste, une session par point : la
-réversion au plafond de moitié, avec celle de la SNCF ; le plafond de 2027 ;
-la limite 5 ante ter (2), en fin d'étape ; la CNBF et la Cipav dans la fiche
-de paie ; les décrets qu'aucune marche ne rejoint. Au propriétaire : les
-décrets des exploitants de 1980 à 1989. Détail : notes des 16, 17 et 18 octobre.
+leurs avantages accessoires (rien ne change) ; le 18, la réversion de la
+SNCF, sa cotisation sous la moitié du plafond. Reste, une session par point :
+les minima de cette réversion (articles 18 et 23) ; le plafond de 2027 ; la
+limite 5 ante ter (2), en fin d'étape ; la CNBF et la Cipav dans la fiche de
+paie ; les décrets qu'aucune marche ne rejoint. Au propriétaire : les décrets
+des exploitants de 1980 à 1989. Détail : note « réversion de la SNCF ».
 
 **La demande.** Le propriétaire, le 13 octobre 2026 : « Action 138, étape 9,
 histoire des prélèvements : la maladie des pensions des exploitants d'avant

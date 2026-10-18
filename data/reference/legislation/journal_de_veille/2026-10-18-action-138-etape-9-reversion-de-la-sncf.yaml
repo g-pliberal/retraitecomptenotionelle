@@ -1,0 +1,29 @@
+date: "2026-10-18"
+session: "action 138, étape 9, suite de la huitième partie : la réversion de la SNCF, et sa cotisation maladie sous la moitié du plafond"
+consulte: >-
+  python scripts/veille_droit.py ; l'index LEGI, récupéré puis mis à jour de
+  ses sept incréments jusqu'au 17 octobre 2026, et python scripts/textes.py
+  --inscrire, qui inscrit dix-huit rédactions « à examiner » (seize de
+  L. 731-15 du code rural, deux du décret n° 2008-1072), aucune de la SNCF ;
+  dans l'index, le
+  décret n° 2008-639, articles 15, 16, 18 à 23 et 31, toutes leurs
+  rédactions, et le décret n° 2025-746, qui ne touche aucun d'eux (il modifie
+  les articles 5, 14 et 17) ; l'index JORF, où le règlement de retraites de
+  la SNCF d'avant juillet 2008 n'est pas ; la page de la caisse, « La pension
+  de réversion — régime spécial », sous son nouveau domaine (cprpf.fr), le
+  18 octobre 2026.
+trouve: >-
+  La SNCF reverse la moitié de la pension, majorée pour enfants comme elle,
+  sans âge ni ressources, au conjoint marié deux ans le jour de la cessation
+  des fonctions, ou quatre ans au décès, deux avec un enfant du mariage, sans
+  durée quand un enfant est né avant la cessation ; rien au conjoint en
+  concubinage au décès ; le remariage, le pacs ou le concubinage ultérieurs
+  la figent sans l'éteindre (décret n° 2008-639, articles 18 à 20 et 31). La
+  fiche reversion_sncf la porte dans les deux moteurs, et la page prend sa
+  cotisation maladie sous la moitié du plafond (décret n° 2007-1056, art. 7,
+  VII), hors de la majoration reversée (L. 131-2, 1°). Aucune autre règle
+  n'a changé.
+reste: >-
+  Les deux minima de la réversion de la SNCF (articles 18 et 23) ; le
+  règlement de retraites d'avant juillet 2008, à lire s'il se trouve ; le
+  plafond de la SNCF de 2027.
