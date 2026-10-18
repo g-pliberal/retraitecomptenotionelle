@@ -435,6 +435,29 @@ referents:
         preuve: >-
           BOI 5 B-6-03 du 27 janvier 2003 et 5 B-25-09 du 14
           octobre 2009 (bofip-archives)
+      - constat: >-
+          IR10. Ses barèmes des revenus de 1960 à 1972 portent
+          25 % à la quatrième tranche et, jusqu'en 1971, les
+          taux diminués des points que la réduction de
+          l'article 198 ne rend qu'aux salaires et aux
+          pensions ; ses minorations de 1968 à 1972 décroissent
+          en ligne droite, ses majorations de 1969 vont par
+          paliers de 1 000 F.
+        tranche: >-
+          Les lois de finances pour 1970, 1971 et 1973, et le
+          texte voté de celle pour 1972, disent 20 %, et un
+          barème de 5 % à 65 % en 1969, de 3 % à 63 % en 1970
+          et 1971 ; les rapports généraux du Sénat, des
+          minorations et des majorations par paliers de la
+          cotisation. Le dépôt suit les textes de 1969 à 1972
+          (scripts/fetch/ipp_impot_revenu.py, LOIS_DE_FINANCES,
+          REDUCTION_DES_SALAIRES) ; avant 1969, l'IPP, sans
+          texte lu.
+        preuve: >-
+          senat.fr/leg/1972-1973/ta1972_1973_0048.pdf, art. 2,
+          lu à l'image ; senat.fr/leg/1969-1970/
+          ta1969_1970_0055.pdf, art. 3 ; senat.fr/rap/1969-1970/
+          i1969_1970_0056_03.pdf, p. 11 et 14
     fait_mieux:
       - quoi: >-
           Il porte les séries de l'AVTS (1962-2026, 4 023,51 € en 2025) et de

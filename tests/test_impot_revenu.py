@@ -823,3 +823,204 @@ def test_la_majoration_de_1980_n_est_pas_due_sous_200_f(baremes):
                                            unite="monnaie").majoration_exceptionnelle
     assert majoration(218740) == 0
     assert majoration(222010) == 591
+
+
+# -- Les lois de finances pour 1970 à 1973 -----------------------------------------
+#
+# Les règles des revenus de 1969 à 1972, lues au texte définitif des lois de
+# finances pour 1970, 1971 et 1973 que le Sénat publie (senat.fr/leg/), et, pour
+# celle de 1972, qu'il a rejetée et que l'Assemblée nationale a adoptée en
+# lecture définitive, au texte que celle-ci a voté, que reproduit le rapport
+# général de la commission des finances du Sénat (n° 27, 1971-1972, tome II) et
+# que confirme celui sur la loi de finances pour 1973 (n° 66, 1972-1973, tome II).
+
+#: Les barèmes des revenus de 1969 à 1972, pour deux parts : la limite basse de
+#: chaque tranche après la première, et le taux de chaque tranche, en pour cent.
+#: Jusqu'en 1971, le barème porte des points de plus, que la réduction des
+#: salaires et des pensions leur rend.
+BAREMES_DE_1969_A_1972 = {
+    1969: ((5400, 9600, 16200, 24000, 38200, 76400, 152800), (5, 15, 20, 25, 35, 45, 55, 65)),
+    1970: ((5800, 10200, 17000, 25200, 40100, 80200, 160400), (3, 13, 18, 23, 33, 43, 53, 63)),
+    1971: ((6200, 10800, 17900, 26500, 42100, 84200, 168400), (3, 13, 18, 23, 33, 43, 53, 63)),
+    1972: ((6600, 11500, 19000, 28100, 44000, 87000, 173000), (0, 10, 15, 20, 30, 40, 50, 60)),
+}
+
+
+def _seul(annee, baremes, **declarant):
+    return impot_du_foyer(Foyer((Declarant(**declarant),)), annee, baremes, unite="monnaie")
+
+
+def test_les_baremes_de_1969_a_1972_sont_ceux_des_lois_de_finances(baremes):
+    """« Il est fait application du taux de : 5 % à la fraction du revenu qui
+    n'excède pas 5.400 F [...] 65 % à la fraction du revenu supérieure à
+    152.800 F » (loi n° 69-1161, art. 3, I) ; de 3 % à 63 % pour les revenus de
+    1970 (loi n° 70-1199, art. 2, II) et de 1971 (loi n° 71-1061, art. 2, I) ;
+    « Comprise entre 19.000 F et 28.100 F : 20 » pour ceux de 1972 (loi n°
+    72-1121, art. 2), lu à l'image du texte. L'IPP porte à cette tranche 25 %, de
+    1960 à 1972, et, jusqu'en 1971, les taux du barème diminués des points que
+    la réduction rend aux seuls salaires et pensions."""
+    for annee, (limites, taux) in BAREMES_DE_1969_A_1972.items():
+        parametres = baremes.lus(annee)
+        assert [2 * s for s in parametres.seuils] == [0, *limites], annee
+        assert list(parametres.taux) == pytest.approx([t / 100 for t in taux]), annee
+
+
+def test_la_reduction_des_salaires_et_des_pensions_jusqu_en_1971(baremes):
+    """« Tous les contribuables percevant des salaires ou des pensions
+    bénéficient d'une réduction d'impôt égale à 5 % du montant net imposable de
+    ces salaires ou pensions » (rapport général du Sénat n° 56, 1969-1970, tome
+    III, p. 14), « ce qui aboutit par conséquent à diminuer de 5 points le jeu du
+    barème » (n° 54, 1970-1971, tome II, p. 77) ; 3 % pour les revenus de 1970
+    (loi n° 70-1199, art. 2, III, 1) et de 1971, où elle « est maintenue et
+    étendue aux revenus autres que les traitements, salaires, pensions et rentes
+    viagères lorsqu'ils n'excèdent pas 15.000 F par contribuable » (loi n°
+    71-1061, art. 2, II, 1°) ; « totalement intégrée au barème » en 1972 (n° 66,
+    1972-1973, tome II, p. 8). Les minorations vont par paliers de la
+    cotisation : 15 % jusqu'à 1 000 F, 12 % jusqu'à 1 500 F, 10 %, 8 %, 6 %,
+    4 % de 500 F en 500 F, 2 % de 3 501 à 5 000 F (n° 56, tome III, p. 11)."""
+    # 1969 : 20 000 F de salaire, 18 000 F après 10 % de frais, 14 400 F après
+    # 20 % : 5 % de 2 700 F, 15 % de 2 100 F, 20 % de 3 300 F, 25 % de 3 900 F,
+    # 35 % de 2 400 F, 2 925 F ; moins 5 % de 14 400 F, 2 205 F ; moins 8 %,
+    # 176,40 F : 2 028,60 F.
+    salarie = _seul(1969, baremes, salaires=20000, age=40)
+    assert salarie.impot_brut == pytest.approx(2925)
+    assert salarie.reduction_des_salaires == pytest.approx(720)
+    assert salarie.minoration_exceptionnelle == pytest.approx(176.4)
+    assert salarie.impot == pytest.approx(2028.6)
+    assert not any("notes de l'IPP" in r for r in salarie.remarques)
+    # 1971 : le bénéfice de 12 000 F d'un artisan : 3 % de 3 100 F, 13 % de
+    # 2 300 F, 18 % de 3 550 F, 23 % de 3 050 F, 1 732,50 F ; moins 3 % de
+    # 12 000 F, 1 372,50 F ; moins 12 %, 164,70 F : 1 207,80 F. À 16 000 F, rien
+    # ne lui est rendu : 2 927,50 F, moins 6 %, 175,70 F : 2 751,80 F.
+    artisan = _seul(1971, baremes, benefices=12000, age=40)
+    assert artisan.reduction_des_salaires == pytest.approx(360)
+    assert artisan.impot == pytest.approx(1207.8)
+    au_dela = _seul(1971, baremes, benefices=16000, age=40)
+    assert au_dela.reduction_des_salaires == 0 and au_dela.impot == pytest.approx(2751.8)
+    # 1972 : 30 000 F de salaire, 21 600 F imposables : 10 % de 2 450 F, 15 % de
+    # 3 750 F, 20 % de 4 550 F, 30 % de 7 550 F, 3 982,50 F ; moins 2 %,
+    # 79,70 F : 3 902,80 F.
+    en_1972 = _seul(1972, baremes, salaires=30000, age=40)
+    assert en_1972.reduction_des_salaires == 0 and en_1972.impot == pytest.approx(3902.8)
+
+
+def test_les_contribuables_ages_de_1969_a_1972(baremes):
+    """Les plus de 75 ans ont, en 1969, « dans la limite de 270 F, [...] une
+    réduction d'impôt égale à 5 % de leurs revenus effectivement soumis à
+    l'impôt », qui « ne se cumule pas avec la réduction d'impôt visée à
+    l'article 198 [...], la réduction dont le montant est le plus élevé étant
+    seule retenue » (loi n° 69-1161, art. 4, II) ; 3 % dans la limite de 170 F,
+    dès 70 ans, en 1970 (loi n° 70-1199, art. 2, III et VII), et de 180 F en
+    1971 (loi n° 71-1061, art. 2, II, 2°). En 1972, qui a plus de 65 ans, ou est
+    invalide, déduit « une somme de 500 F » d'un revenu net global « inférieur à
+    12.000 F », et autant pour son conjoint (loi n° 72-1121, art. 3)."""
+    # 1969 : le bénéfice de 9 000 F d'un commerçant de 76 ans : 5 % de 2 700 F,
+    # 15 % de 2 100 F, 20 % de 3 300 F, 25 % de 900 F, 1 335 F ; moins 270 F,
+    # 1 065 F, au-dessus de la décote de ses 70 ans (900 F) ; moins 12 %,
+    # 127,80 F : 937,20 F. À 74 ans, rien ne lui est rendu : 1 335 F, moins
+    # 160,20 F.
+    assert _seul(1969, baremes, benefices=9000, age=76).impot == pytest.approx(937.2)
+    assert _seul(1969, baremes, benefices=9000, age=74).impot == pytest.approx(1174.8)
+    # Une pension de 10 000 F, 8 000 F imposables, et un bénéfice de 3 000 F :
+    # 5 % de 8 000 F, 400 F, plutôt que 270 F, et non leur somme.
+    mixte = _seul(1969, baremes, pensions=10000, benefices=3000, age=76)
+    assert mixte.reduction_des_salaires == pytest.approx(400)
+    # 1970 : 10 000 F de bénéfice à 71 ans : 3 % de 2 900 F, 13 % de 2 200 F,
+    # 18 % de 3 400 F, 23 % de 1 500 F, 1 330 F ; moins 170 F, et non 3 % de
+    # 10 000 F, 1 160 F ; moins 12 %, 139,20 F : 1 020,80 F.
+    assert _seul(1970, baremes, benefices=10000, age=71).impot == pytest.approx(1020.8)
+    # 1971 : 16 000 F de bénéfice à 72 ans : 2 927,50 F, moins 180 F,
+    # 2 747,50 F ; moins 6 %, 164,90 F : 2 582,60 F.
+    assert _seul(1971, baremes, benefices=16000, age=72).impot == pytest.approx(2582.6)
+    # 1972 : 14 900 F de pension, 11 920 F de revenu net global, 500 F déduits ;
+    # 15 000 F de pension, 12 000 F, rien.
+    assert _seul(1972, baremes, pensions=14900, age=70).abattement_age_invalidite == 500
+    assert _seul(1972, baremes, pensions=15000, age=70).abattement_age_invalidite == 0
+    couple = impot_du_foyer(Foyer((Declarant(pensions=6000, age=70),
+                                   Declarant(pensions=4000, age=66))), 1972, baremes,
+                            unite="monnaie")
+    assert couple.abattement_age_invalidite == 1000
+
+
+def test_l_exoneration_et_la_decote_de_1969_a_1972(baremes):
+    """« Les limites respectives d'application de l'exonération et de la décote
+    prévues à l'article 198 ter [...] sont fixées comme suit : 230 F et 690 F
+    pour les contribuables qui ont droit à une part, à une part et demie ou à
+    deux parts [...] ; 100 F et 300 F par part pour les autres contribuables »,
+    300 F et 900 F, ou 180 F et 540 F par part, au-delà de 70 ans (loi n°
+    69-1161, art. 4, I) ; « 380 F et 1.140 F » pour une part ou une part et
+    demie, « 230 F et 690 F par part » pour les autres, au-delà de 65 ans et
+    pour les invalides, dès 1970 (loi n° 70-1199, art. 2, V et VI). L'impôt qui
+    n'excède pas la première limite n'est pas dû."""
+    # 1969 : un couple et deux enfants, trois parts, 15 000 F de salaire,
+    # 10 800 F imposables : 5 % de 2 700 F et 15 % de 900 F par part, 810 F ;
+    # moins 540 F, 270 F, sous les 300 F de ses trois parts.
+    famille = impot_du_foyer(Foyer((Declarant(salaires=15000, age=40), Declarant(age=40)),
+                                   enfants=2), 1969, baremes, unite="monnaie")
+    assert famille.parts == 3 and famille.impot == 0
+    assert famille.decote == pytest.approx(270)
+    # 1969 : un couple de retraités de 72 ans, 10 875 F de pensions, 8 700 F
+    # imposables : 5 % de 2 700 F et 15 % de 1 650 F par part, 765 F ; moins
+    # 435 F, 330 F, sous les 360 F de leurs deux parts ; à 60 ans, au-dessus
+    # des 230 F de tous.
+    def retraites(age):
+        return impot_du_foyer(Foyer((Declarant(pensions=6000, age=age),
+                                     Declarant(pensions=4875, age=age))), 1969, baremes,
+                              unite="monnaie")
+    assert retraites(72).impot == 0 and retraites(72).decote == pytest.approx(330)
+    assert retraites(60).impot > 0
+    # 1970 : un invalide seul, une part et demie, 10 200 F de salaire, 9 000 F
+    # après le minimum de 1 200 F de frais, 7 200 F imposables : 3 % de 2 900 F
+    # et 13 % de 1 900 F par part, 501 F ; moins 216 F, 285 F, sous ses 380 F.
+    invalide = _seul(1970, baremes, salaires=10200, age=40, invalide=True)
+    assert invalide.parts == 1.5 and invalide.impot == 0
+
+
+def test_les_majorations_de_1969_vont_par_paliers(baremes):
+    """« Pour l'imposition des revenus de l'année 1969, les majorations [...]
+    sont maintenues en vigueur. Toutefois leurs taux sont réduits de moitié et
+    aucune majoration n'est applicable aux cotisations comprises entre 6.001 F
+    et 7.000 F » (loi n° 69-1161, art. 3, V) : 2 % de 7 001 à 8 000 F, 3 %,
+    4 %, 5 % de 10 001 à 10 500 F, 6 % de 10 501 à 12 000 F, 7 % jusqu'à
+    14 000 F, 7,5 % au-delà (rapport général du Sénat n° 56, 1969-1970, tome
+    III, p. 11)."""
+    def majoration(revenu):
+        return impot_d_un_revenu_imposable(Foyer((Declarant(),)), 1969, revenu, baremes,
+                                           unite="monnaie").majoration_exceptionnelle
+    # 32 940 F d'un revenu qui n'est ni salaire ni pension : 4 570 F jusqu'à
+    # 19 100 F, 45 % de 13 840 F, 10 798 F, majorés de 6 %, 647,90 F.
+    assert majoration(32940) == pytest.approx(647.9)
+
+
+def test_le_minimum_des_frais_professionnels_nait_en_1970(baremes):
+    """« Le montant de la ou des déductions forfaitaires pour frais
+    professionnels ne peut être inférieur à 1.200 F, sans pouvoir excéder le
+    montant brut de ces traitements et salaires » (loi n° 70-1199, art. 4),
+    jusqu'à ce que la loi de finances pour 1977 le porte « de 1 200 F à
+    1 500 F » (art. 2, IV) : 8 000 F de salaire, 7 200 F nets en 1969, 6 800 F
+    de 1970 à 1975."""
+    assert [_seul(annee, baremes, salaires=8000, age=40).salaires_nets
+            for annee in (1969, 1970, 1972, 1973, 1974)] == [
+        (7200,), (6800,), (6800,), (6800,), (6800,)]
+
+
+def test_l_exoneration_des_salaries_de_1972(baremes):
+    """« Les personnes physiques qui bénéficient principalement de traitements
+    et salaires sont exonérées de l'impôt sur le revenu lorsque leur revenu
+    brut n'excède pas 9.500 F » (loi n° 72-1121, art. 4) ; principalement,
+    quand « les salaires atteignent (après déduction des frais professionnels)
+    au moins la moitié du revenu net » (rapport général du Sénat n° 66,
+    1972-1973, tome II, p. 11). Le retraité ne l'a pas : il relève de
+    l'exonération de l'article 5, 2°, qui n'est pas calculée."""
+    def foyer(*declarants):
+        return impot_du_foyer(Foyer(tuple(Declarant(**d) for d in declarants)), 1972, baremes,
+                              unite="monnaie")
+    assert foyer({"salaires": 9500, "age": 30}).exonere
+    assert not foyer({"salaires": 9510, "age": 30}).exonere
+    assert not foyer({"pensions": 9000, "age": 70}).exonere
+    # 7 000 F de salaire, 5 800 F nets de frais, et 2 000 F de pension : surtout
+    # des salaires, 9 000 F bruts ; 2 600 F de pension, 9 600 F.
+    assert foyer({"salaires": 7000, "age": 40}, {"pensions": 2000, "age": 66}).exonere
+    assert not foyer({"salaires": 7000, "age": 40}, {"pensions": 2600, "age": 66}).exonere
+    # 3 000 F de salaire, 1 800 F nets, et 6 000 F de pension : surtout une pension.
+    assert not foyer({"salaires": 3000, "age": 40}, {"pensions": 6000, "age": 66}).exonere

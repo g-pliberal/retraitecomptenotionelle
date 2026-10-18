@@ -98,7 +98,19 @@ avec sa source (``origine`` de la marche) :
   de 1976 ; la limite des 20 % de 1975 et de 1976 (350 000 F, non
   340 000 F) ; les parts des enfants de 1979 et de 1980 ; le minimum de
   200 F de la majoration de 1980 ; le seuil de recouvrement de 1978, que la
-  loi chiffre — ``origine: loi``.
+  loi chiffre — ``origine: loi`` ;
+- ce que les lois de finances pour 1970 à 1973 écrivent des revenus de 1969
+  à 1972 (``LOIS_DE_FINANCES``, et, pour celle de 1972, que le Sénat a
+  rejetée, le texte voté par l'Assemblée nationale que reproduit le rapport
+  général de sa commission des finances, ``LOI_DE_FINANCES_POUR_1972``) : le
+  barème, dont l'IPP porte, jusqu'en 1971, les taux diminués des points que
+  la réduction de l'article 198 rend aux seuls salaires et pensions, et 25 %
+  au lieu de 20 % à sa quatrième tranche ; cette réduction, et celle des
+  contribuables âgés ; les limites de l'exonération et de la décote de
+  l'article 198 ter ; les minorations et les majorations de 1969, par
+  paliers ; le minimum des frais professionnels de 1970 à 1974 ; la déduction
+  de 500 F des personnes âgées et l'exonération des salariés de 1972 —
+  ``origine: loi``, ou ``rapport`` pour ce que seul le rapport chiffre.
 
 Ce qu'il écarte : la ligne de la décote datée de 1959 (7 000 F et 14 000 F),
 que l'IPP ne commente pas et qui ne peut être une décote d'impôt — elle
@@ -366,13 +378,20 @@ CORRECTIONS: dict[tuple[str, int], tuple[dict, str, str]] = {
         "legi"),
 }
 
-#: Les lois de finances pour 1974 à 1981, lues au texte définitif que le Sénat
-#: a adopté et publie : pour l'année des revenus qu'elle impose, son
-#: intitulé, la date de ce texte et son fichier sous senat.fr/leg/. L'index du
-#: JORF n'en a que la notice ; l'index LEGI, de quelques articles, une
-#: rédaction consolidée, qui peut porter les montants d'une loi postérieure
-#: (son article 12 de la loi de finances pour 1982 porte la décote de 1982).
+#: Les lois de finances pour 1970 à 1981, sauf celle de 1972, lues au texte
+#: définitif que le Sénat a adopté et publie : pour l'année des revenus
+#: qu'elle impose, son intitulé, la date de ce texte et son fichier sous
+#: senat.fr/leg/. L'index du JORF n'en a que la notice ; l'index LEGI, de
+#: quelques articles, une rédaction consolidée, qui peut porter les montants
+#: d'une loi postérieure (son article 12 de la loi de finances pour 1982 porte
+#: la décote de 1982).
 LOIS_DE_FINANCES = {
+    1969: ("Loi n° 69-1161 du 24 décembre 1969 (LF pour 1970)", "16 décembre 1969",
+           "1969-1970/ta1969_1970_0055.pdf"),
+    1970: ("Loi n° 70-1199 du 21 décembre 1970 (LF pour 1971)", "9 décembre 1970",
+           "1970-1971/ta1970_1971_0028.pdf"),
+    1972: ("Loi n° 72-1121 du 20 décembre 1972 (LF pour 1973)", "15 décembre 1972",
+           "1972-1973/ta1972_1973_0048.pdf"),
     1973: ("Loi n° 73-1150 du 27 décembre 1973 (LF pour 1974)", "18 décembre 1973",
            "1973-1974/ta1973_1974_0031.pdf"),
     1974: ("Loi n° 74-1129 du 30 décembre 1974 (LF pour 1975)", "19 décembre 1974",
@@ -398,6 +417,40 @@ def _loi(annee: int, article: str, citation: str = "") -> str:
     intitule, adoptee, fichier = LOIS_DE_FINANCES[annee]
     reference = (f"{intitule}, {article}, texte définitif adopté par le Sénat le {adoptee} "
                  f"(senat.fr/leg/{fichier})")
+    return f"{reference} : {citation}" if citation else reference
+
+
+#: La loi de finances pour 1972, que le Sénat a rejetée, en commission mixte
+#: paritaire puis en nouvelle lecture (senat.fr/leg/1971-1972/ta1971_1972_0031.pdf
+#: et _0042.pdf, qui n'en portent pas la teneur), et que l'Assemblée nationale a
+#: adoptée en lecture définitive : son texte se lit au rapport général de la
+#: commission des finances du Sénat, qui reproduit celui que l'Assemblée a voté
+#: en première lecture, et que confirme le rapport général sur la loi de
+#: finances pour 1973 (:data:`RAPPORTS`). L'IPP en écrit le numéro 71-1161.
+LOI_DE_FINANCES_POUR_1972 = (
+    "Loi n° 71-1061 du 29 décembre 1971 (LF pour 1972), JORFTEXT000000687436, que le Sénat a "
+    "rejetée et que l'Assemblée nationale a adoptée en lecture définitive")
+RAPPORT_SUR_1972 = ("rapport général du Sénat n° 27 (1971-1972), tome II "
+                    "(senat.fr/rap/1971-1972/i1971_1972_0027_02.pdf)")
+
+#: Les rapports généraux de la commission des finances du Sénat qui disent ce
+#: que les lois de finances ne chiffrent pas, ou ne citent que du code : la
+#: réduction de l'article 198, la table des minorations et des majorations.
+RAPPORTS = {
+    1969: "rapport général du Sénat n° 56 (1969-1970), tome III "
+          "(senat.fr/rap/1969-1970/i1969_1970_0056_03.pdf)",
+    1970: "rapport général du Sénat n° 54 (1970-1971), tome II "
+          "(senat.fr/rap/1970-1971/i1970_1971_0054_02.pdf)",
+    1972: "rapport général du Sénat n° 66 (1972-1973), tome II "
+          "(senat.fr/rap/1972-1973/i1972_1973_0066_02.pdf)",
+}
+
+
+def _loi_de_1972(article: str, citation: str = "") -> str:
+    """La référence d'un article de la loi de finances pour 1972, au texte que
+    l'Assemblée nationale a voté et que reproduit le rapport du Sénat."""
+    reference = (f"{LOI_DE_FINANCES_POUR_1972}, {article}, texte voté par l'Assemblée "
+                 f"nationale en première lecture, que reproduit le {RAPPORT_SUR_1972}")
     return f"{reference} : {citation}" if citation else reference
 
 
@@ -515,6 +568,183 @@ COMPLEMENTS["deductions"] = [
      "texte": _loi(1976, "art. 2, IV", "« Le montant minimal de la déduction forfaitaire pour "
                    "frais professionnels accordée aux salariés est porté de 1 200 F à 1 500 F »")},
     *COMPLEMENTS["deductions"],
+]
+
+# -- Les revenus de 1969 à 1972 : les lois de finances pour 1970 à 1973 ----------
+#
+# Le barème de la loi porte, jusqu'en 1971, des points de plus que celui des
+# salariés : la réduction de l'article 198 les rend aux salaires et aux
+# pensions (:data:`REDUCTION_DES_SALAIRES`). L'IPP ne donne que les taux des
+# salariés, et 25 % au lieu de 20 % à la quatrième tranche, de 1960 à 1972.
+MINIMUM_DE_1970 = _loi(
+    1970, "art. 4", "« le montant de la ou des déductions forfaitaires pour frais "
+    "professionnels ne peut être inférieur à 1.200 F, sans pouvoir excéder le montant brut de "
+    "ces traitements et salaires » ; porté « de 1 200 F à 1 500 F » pour les revenus de 1976 "
+    "(loi n° 76-1232, art. 2, IV)")
+CORRECTIONS.update({
+    ("bareme", 1969): (
+        {"taux": [0.05, 0.15, 0.2, 0.25, 0.35, 0.45, 0.55, 0.65]},
+        _loi(1969, "art. 3, I", "« Il est fait application du taux de : 5 % à la fraction du "
+             "revenu qui n'excède pas 5.400 F ; 15 % à la fraction du revenu comprise entre "
+             "5.400 F et 9.600 F [...] 65 % à la fraction du revenu supérieure à 152.800 F », "
+             "un barème « pour deux parts » (" + RAPPORTS[1970] + ", p. 79) ; l'IPP porte ces "
+             "taux diminués des 5 points que la réduction de l'article 198 rend aux salaires et "
+             "aux pensions, et 25 % à la quatrième tranche"),
+        "loi"),
+    ("bareme", 1970): (
+        {"taux": [0.03, 0.13, 0.18, 0.23, 0.33, 0.43, 0.53, 0.63]},
+        _loi(1970, "art. 2, II", "« N'excédant pas 5.800 F : 3 [...] Supérieure à 160.400 F : "
+             "63 », pour les revenus de 1970 ; l'IPP porte les taux de 1971 et des années "
+             "suivantes, de trois points plus bas, et 25 % à la quatrième tranche"),
+        "loi"),
+    ("bareme", 1971): (
+        {"taux": [0.03, 0.13, 0.18, 0.23, 0.33, 0.43, 0.53, 0.63]},
+        _loi_de_1972("art. 2, I", "« N'excédant pas 6.200 F : 3 [...] Supérieure à 168.400 F : "
+                     "63 », pour les revenus de 1971, que rappelle le " + RAPPORTS[1972]
+                     + ", p. 9 ; l'IPP porte les taux de 1972, de trois points plus bas, et "
+                     "25 % à la quatrième tranche"),
+        "rapport"),
+    ("bareme", 1972): (
+        {"taux": [0.0, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6]},
+        _loi(1972, "art. 2", "« Comprise entre 19.000 F et 28.100 F : 20 », pour deux parts, lu "
+             "à l'image du texte ; l'IPP porte 25 %"),
+        "loi"),
+    ("majorations_exceptionnelles", 1970): (
+        {},
+        _loi(1970, "art. 2, IX", "« cotisations comprises entre 10.001 F et 15.000 F : 1 % ; "
+             "cotisations comprises entre 15.001 F et 20.000 F : 2 % ; cotisations supérieures à "
+             "20.000 F : 3 % »"),
+        "loi"),
+    ("majorations_exceptionnelles", 1971): (
+        {},
+        _loi_de_1972("art. 2, III", "« cotisations comprises entre 15.001 et 20.000 F : 1 % ; "
+                     "cotisations supérieures à 20.000 F : 2 % »"),
+        "rapport"),
+    ("deductions", 1973): ({"frais_professionnels_minimum": 1200}, MINIMUM_DE_1970, "loi"),
+    ("deductions", 1974): ({"frais_professionnels_minimum": 1200}, MINIMUM_DE_1970, "loi"),
+})
+COMPLEMENTS["deductions"] = [
+    {"annee": 1970, "monnaie": "FRF", "frais_professionnels_taux": 0.1,
+     "frais_professionnels_minimum": 1200, "vingt_pour_cent_taux": 0.2, "origine": "loi",
+     "texte": f"{MINIMUM_DE_1970} ; les 10 % et les 20 % de l'IPP, sans référence"},
+    *COMPLEMENTS["deductions"],
+]
+#: Les limites de l'exonération et de la décote de l'article 198 ter, en impôt :
+#: ``franchise`` et ``limite`` pour le foyer jusqu'à ``parts_forfait`` parts,
+#: ``franchise_par_part`` et ``limite_par_part`` au-delà ; celles du foyer dont
+#: un déclarant a ``age_majore`` ans — ou est invalide, si
+#: ``invalides_majores`` —, suffixées de ``_majoree``. La décote, entre les
+#: deux, suit la formule continue de l'IPP : l'article 198 ter n'est pas lu.
+COMPLEMENTS["decote"] = [
+    {"annee": 1969, "monnaie": "FRF", "franchise": 230, "limite": 690, "parts_forfait": 2,
+     "franchise_par_part": 100, "limite_par_part": 300, "age_majore": 70,
+     "franchise_majoree": 300, "limite_majoree": 900, "parts_forfait_majore": 1.5,
+     "franchise_majoree_par_part": 180, "limite_majoree_par_part": 540, "origine": "loi",
+     "texte": _loi(1969, "art. 4, I", "« Les limites respectives d'application de "
+                   "l'exonération et de la décote prévues à l'article 198 ter [...] sont fixées "
+                   "comme suit : 230 F et 690 F pour les contribuables qui ont droit à une part, "
+                   "à une part et demie ou à deux parts [...] ; 100 F et 300 F par part pour les "
+                   "autres contribuables. Toutefois, ces limites sont portées à : 300 F et 900 F "
+                   "pour les contribuables âgés de plus de 70 ans [...] qui ont droit à une part "
+                   "ou à une part et demie [...] ; 180 F et 540 F par part pour les autres "
+                   "contribuables âgés de plus de 70 ans »")},
+    {"annee": 1970, "monnaie": "FRF", "franchise": 230, "limite": 690, "parts_forfait": 2,
+     "franchise_par_part": 100, "limite_par_part": 300, "age_majore": 65,
+     "invalides_majores": True, "franchise_majoree": 380, "limite_majoree": 1140,
+     "parts_forfait_majore": 1.5, "franchise_majoree_par_part": 230,
+     "limite_majoree_par_part": 690, "origine": "loi",
+     "texte": _loi(1970, "art. 2, V et VI", "pour les contribuables âgés de plus de 65 ans, "
+                   "« 380 F et 1.140 F pour les contribuables qui ont droit à une part ou à une "
+                   "part et demie ; 230 F et 690 F par part pour les autres contribuables », "
+                   "limites qui « s'appliquent aux contribuables invalides » ; les autres, "
+                   "celles de la loi n° 69-1161, art. 4, I")},
+    *COMPLEMENTS["decote"],
+]
+#: Les minorations et les majorations par paliers : jusqu'à quelle cotisation
+#: chaque taux vaut, et, pour les majorations, le taux au-delà.
+COMPLEMENTS["minorations_exceptionnelles"] = [
+    {"annee": 1969, "monnaie": "FRF",
+     "paliers": [[1000, 0.15], [1500, 0.12], [2000, 0.1], [2500, 0.08], [3000, 0.06],
+                 [3500, 0.04], [5000, 0.02]], "origine": "rapport",
+     "texte": _loi(1969, "art. 3, II", "« Les minorations des cotisations prévues par le 1-2 de "
+                   "l'article 2 de la loi n° 68-1172 du 27 décembre 1968 sont maintenues en "
+                   "vigueur » ; leur table, « sans changement » : « Cotisations n'excédant pas "
+                   "1.000 F : — 15 % ; Cotisations comprises entre 1.001 F et 1.500 F : — 12 % "
+                   "[...] Cotisations comprises entre 3.501 F et 5.000 F : — 2 % » ("
+                   + RAPPORTS[1969] + ", p. 11), qui « restent, par contre, en vigueur » pour "
+                   "les revenus de 1972 (" + RAPPORTS[1972] + ", p. 9) ; la note de l'IPP la "
+                   "fait décroître en ligne droite de 1 000 F à 3 500 F")},
+]
+COMPLEMENTS["majorations_exceptionnelles"] = [
+    {"annee": 1969, "monnaie": "FRF",
+     "paliers": [[7000, 0.0], [8000, 0.02], [9000, 0.03], [10000, 0.04], [10500, 0.05],
+                 [12000, 0.06], [14000, 0.07]], "taux_au_dela": 0.075, "origine": "rapport",
+     "texte": _loi(1969, "art. 3, V", "« leurs taux sont réduits de moitié et aucune majoration "
+                   "n'est applicable aux cotisations comprises entre 6.001 F et 7.000 F » ; leur "
+                   "table : « 7.001 et 8.000 F : + 2 % [...] 10.001 et 10.500 F : + 5 % ; "
+                   "10.501 et 12.000 F : + 6 % ; 12.001 et 14.000 F : + 7 % ; Cotisations "
+                   "supérieures à : 14.000 F : + 7,5 % » (" + RAPPORTS[1969] + ", p. 11) ; la "
+                   "note de l'IPP les fait aller par paliers de 1 000 F, 5 % jusqu'à 11 000 F")},
+]
+COMPLEMENTS["exoneration"].insert(0, {
+    "annee": 1972, "monnaie": "FRF", "limite_revenu_brut_des_salaries": 9500, "origine": "loi",
+    "texte": _loi(1972, "art. 4", "« Les personnes physiques qui bénéficient principalement de "
+                  "traitements et salaires sont exonérées de l'impôt sur le revenu lorsque leur "
+                  "revenu brut n'excède pas 9.500 F » ; principalement, quand « les salaires "
+                  "atteignent (après déduction des frais professionnels) au moins la moitié du "
+                  "revenu net » (" + RAPPORTS[1972] + ", p. 11)")})
+COMPLEMENTS["abattement_age_invalidite"].insert(0, {
+    "annee": 1972, "monnaie": "FRF", "abattement_plein": 500, "seuil_plein": 12000,
+    "seuil_plein_exclu": True, "origine": "loi",
+    "texte": _loi(1972, "art. 3", "« Les contribuables âgés de plus de soixante-cinq ans au 31 "
+                  "décembre de l'année d'imposition, ou remplissant l'une des conditions "
+                  "d'invalidité mentionnées à l'article 195 du Code général des impôts, et dont "
+                  "le revenu net global est inférieur à 12.000 F, peuvent déduire de ce revenu "
+                  "une somme de 500 F. Ils peuvent opérer une déduction identique au titre de "
+                  "leur conjoint »")})
+#: La réduction d'impôt des salaires et des pensions (art. 198), jusqu'aux
+#: revenus de 1971 : ``taux`` de leur montant net imposable, et, en 1971, des
+#: autres revenus qui n'excèdent pas ``autres_revenus_maximum`` ; ou, si elle est
+#: plus forte, celle des contribuables âgés (loi de finances pour 1970, art. 4,
+#: II) : ``taux_agees`` de leur revenu imposable, au plus ``plafond_agees``, dès
+#: ``age_agees`` ans.
+REDUCTION_DES_SALAIRES = [
+    {"annee": 1969, "monnaie": "FRF", "taux": 0.05, "age_agees": 75, "taux_agees": 0.05,
+     "plafond_agees": 270, "origine": "rapport",
+     "texte": "CGI, art. 198, non lu : « tous les contribuables percevant des salaires ou des "
+              "pensions bénéficient d'une réduction d'impôt égale à 5 % du montant net "
+              "imposable de ces salaires ou pensions » (" + RAPPORTS[1969] + ", p. 14), « ce "
+              "qui aboutit par conséquent à diminuer de 5 points le jeu du barème » ("
+              + RAPPORTS[1970] + ", p. 77) ; " + _loi(
+                  1969, "art. 4, II", "« Les contribuables âgés de plus de 75 ans [...] "
+                  "bénéficient, dans la limite de 270 F, d'une réduction d'impôt égale à 5 % de "
+                  "leurs revenus effectivement soumis à l'impôt [...] Elle ne se cumule pas avec "
+                  "la réduction d'impôt visée à l'article 198 du même code, la réduction dont le "
+                  "montant est le plus élevé étant seule retenue »")},
+    {"annee": 1970, "monnaie": "FRF", "taux": 0.03, "age_agees": 70, "taux_agees": 0.03,
+     "plafond_agees": 170, "origine": "loi",
+     "texte": _loi(1970, "art. 2, III et VII, et art. 3, I", "« Les réductions d'impôts "
+                   "prévues à l'article 198 [...] et au paragraphe II de l'article 4 de la loi "
+                   "de finances pour 1970 sont supprimées pour l'imposition des revenus des "
+                   "années 1971 et suivantes. Leur taux est fixé à 3 % pour l'imposition des "
+                   "revenus de l'année 1970 » ; la seconde « ne peut excéder 170 F » et « est "
+                   "étendue aux personnes âgées de plus de 70 ans » ; la première, « à "
+                   "l'ensemble des salaires, pensions et rentes viagères »")},
+    {"annee": 1971, "monnaie": "FRF", "taux": 0.03, "autres_revenus_maximum": 15000,
+     "age_agees": 70, "taux_agees": 0.03, "plafond_agees": 180, "origine": "rapport",
+     "texte": _loi_de_1972("art. 2, II", "« 1° Pour l'imposition des revenus de l'année 1971, "
+                           "la réduction d'impôt prévue à l'article 198 [...] est maintenue et "
+                           "étendue aux revenus autres que les traitements, salaires, pensions "
+                           "et rentes viagères lorsqu'ils n'excèdent pas 15.000 F par "
+                           "contribuable. 2° La réduction d'impôt prévue à l'article 4-II de la "
+                           "loi de finances pour 1970 est maintenue pour l'imposition des "
+                           "revenus de l'année 1971. Les plafonds de cette réduction sont fixés "
+                           "à 180 F pour la Métropole »")},
+    {"annee": 1972, "supprimee": True,
+     "texte": _loi(1972, "art. 2") + " : la réduction de 3 % « est maintenant totalement "
+              "intégrée au barème » (" + RAPPORTS[1972] + ", p. 8) ; celle des contribuables "
+              "âgés, supprimée dès 1971 (loi n° 70-1199, art. 2, III, 1), n'a été maintenue "
+              "que pour 1971"},
 ]
 
 #: L'abattement de 10 % des pensions naît des revenus de 1977 : avant, une
@@ -839,6 +1069,7 @@ def corriger(series: dict[str, list[dict]]) -> dict[str, list[dict]]:
         marche["texte"] = f"{marche['texte']} ; {texte}"
     series["reduction_proportionnelle"] = [dict(m) for m in REDUCTION_PROPORTIONNELLE]
     series["credit_exceptionnel"] = [dict(m) for m in CREDIT_EXCEPTIONNEL]
+    series["reduction_des_salaires"] = [dict(m) for m in REDUCTION_DES_SALAIRES]
     for nom, complements in COMPLEMENTS.items():
         annees = {m["annee"] for m in complements}
         series[nom] = sorted([m for m in series[nom] if m["annee"] not in annees] + complements,
@@ -908,7 +1139,9 @@ ENTETE = """\
 # base, Bulletin officiel des impôts) quand aucun des index de la DILA n'a la
 # loi de finances qui la porte, `loi` pour une valeur lue au texte définitif
 # d'une loi de finances que le Sénat a adopté (senat.fr/leg/), quand l'index
-# LEGI n'en garde pas la rédaction d'origine.
+# LEGI n'en garde pas la rédaction d'origine, `rapport` pour une valeur que
+# seul le rapport général de la commission des finances du Sénat chiffre
+# (senat.fr/rap/) : la loi qu'il a rejetée, la table que la loi « maintient ».
 # Une transcription, non une source productrice : `haute` au plus
 # (data/sources.yaml, `ipp_impot_revenu`).
 #
@@ -934,21 +1167,34 @@ ENTETE = """\
 #     de la part du premier enfant d'un parent isolé, de la demi-part de qui vit
 #     seul et a eu un enfant (case L, que le dépôt ne calcule pas) ; les
 #     réductions complémentaires de l'invalide et du veuf.
+#   reduction_des_salaires : jusqu'aux revenus de 1971, la réduction d'impôt
+#     des salaires et des pensions (art. 198), `taux` de leur montant net
+#     imposable — le barème de 1969 à 1971 porte autant de points de plus —, et
+#     celle des contribuables âgés, `taux_agees` de leur revenu imposable, au
+#     plus `plafond_agees` ; la plus forte des deux est seule retenue.
 #   decote : son taux et ses seuils, dont le sens a changé six fois (le module
-#     dit lequel vaut à chaque époque).
+#     dit lequel vaut à chaque époque) ; de 1969 à 1972, les limites de
+#     l'exonération et de la décote de l'article 198 ter, en impôt, pour le
+#     foyer (`franchise`, `limite`) jusqu'à `parts_forfait` parts, par part
+#     au-delà, et celles des contribuables âgés ou invalides (`_majoree`).
 #   reduction_sous_condition_de_revenus : de 2016 à 2019.
 #   recouvrement : le seuil de mise en recouvrement, avant et après crédits.
 #   exoneration : la limite d'exonération, de 1973 à 2013, sous laquelle le
 #     revenu du foyer, net de frais professionnels, n'est pas imposé : la
 #     limite, celle des plus de 65 ans ; de 1973 à 1976, `limite` ne vaut que
 #     pour qui vit principalement de salaires et de pensions, `limite_autres`
-#     pour les autres.
+#     pour les autres ; en 1972, celle de qui vit principalement de salaires,
+#     sur son revenu brut.
 #   deductions : les 10 % des salaires et des pensions, les 20 % d'avant 2006.
 #   abattement_age_invalidite : celui de l'article 157 bis, plein sous le
-#     premier seuil de revenu net global, réduit sous le second.
+#     premier seuil de revenu net global, réduit sous le second ; en 1972, la
+#     déduction de 500 F, sous un revenu « inférieur » au seuil
+#     (`seuil_plein_exclu`).
 #   abattement_exceptionnel_* : les deux compléments de 1978.
 #   majorations_exceptionnelles, minorations_exceptionnelles : leurs seuils et
-#     leurs taux, et la note de l'IPP qui dit comment ils s'appliquent.
+#     leurs taux, et la note de l'IPP qui dit comment ils s'appliquent ; ou,
+#     dès 1969, leurs `paliers` : la cotisation jusqu'à laquelle chaque taux
+#     vaut, et le `taux_au_dela` des majorations.
 #   reduction_exceptionnelle : celle des revenus de 2013.
 #   reduction_proportionnelle : les 5 % retranchés de l'impôt des revenus de
 #     2001, après la décote, avant les crédits d'impôt.
@@ -958,7 +1204,8 @@ ENTETE = """\
 """
 
 ORDRE = ("bareme", "quotient_familial", "parts_par_rang_d_enfant",
-         "plafonds_quotient_familial", "decote", "reduction_sous_condition_de_revenus",
+         "plafonds_quotient_familial", "reduction_des_salaires", "decote",
+         "reduction_sous_condition_de_revenus",
          "recouvrement", "exoneration", "deductions", "abattement_age_invalidite",
          "abattement_exceptionnel_ages_invalides", "abattement_exceptionnel_personnes_seules",
          "majorations_exceptionnelles", "minorations_exceptionnelles",

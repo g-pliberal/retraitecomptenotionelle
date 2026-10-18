@@ -60,7 +60,8 @@ MONTANTS = {
 
 #: Les séries qu'une année porte, dans l'ordre du fichier.
 SERIES = ("bareme", "quotient_familial", "parts_par_rang_d_enfant",
-          "plafonds_quotient_familial", "decote", "reduction_sous_condition_de_revenus",
+          "plafonds_quotient_familial", "reduction_des_salaires", "decote",
+          "reduction_sous_condition_de_revenus",
           "recouvrement", "exoneration", "deductions", "abattement_age_invalidite",
           "abattement_exceptionnel_ages_invalides", "abattement_exceptionnel_personnes_seules",
           "majorations_exceptionnelles", "minorations_exceptionnelles",

@@ -88,14 +88,16 @@ BALAYAGES = (
 
 #: La grille du module de l'impôt seul : des années de chaque règle — les
 #: majorations et minorations des années 1960, les paliers de 1968 et 1969, la
-#: décote de 1981 à 1985, le plafonnement, les 20 % d'avant 2006, l'abattement
-#: des adhérents de 1976 et de 1977, la prime pour l'emploi, celle d'un
-#: bénéfice ou d'un déficit mêlé à un salaire, les mesures de
-#: 2001, 2008 et 2013, la réduction de 2016 à 2019 —, deux années projetées,
-#: des foyers de chaque sorte, quatre revenus.
-ANNEES_IMPOT = (1962, 1966, 1968, 1969, 1971, 1975, 1976, 1977, 1978, 1981, 1983, 1984,
-                1988, 1995, 1999, 2000, 2001, 2005, 2008, 2010, 2013, 2014, 2017, 2020,
-                2024, 2025, 2031, 2045)
+#: réduction des salaires et des pensions de 1969 à 1971, les limites de la
+#: décote de 1969 et de 1970, l'exonération des salariés de 1972, la décote de
+#: 1981 à 1985, le plafonnement, les 20 % d'avant 2006, l'abattement des
+#: adhérents de 1976 et de 1977, la prime pour l'emploi, celle d'un bénéfice ou
+#: d'un déficit mêlé à un salaire, les mesures de 2001, 2008 et 2013, la
+#: réduction de 2016 à 2019 —, deux années projetées, des foyers de chaque
+#: sorte, quatre revenus.
+ANNEES_IMPOT = (1962, 1966, 1968, 1969, 1970, 1971, 1972, 1975, 1976, 1977, 1978, 1981,
+                1983, 1984, 1988, 1995, 1999, 2000, 2001, 2005, 2008, 2010, 2013, 2014,
+                2017, 2020, 2024, 2025, 2031, 2045)
 FOYERS_IMPOT = {
     "salarie": {"declarants": [{"salaires": 1.0}]},
     "retraite": {"declarants": [{"pensions": 0.8, "age": 70}]},
@@ -395,7 +397,7 @@ def test_la_grille_de_l_impot_a_un_objet(les_deux):
     sous la limite de 1975, où qui ne vit pas de salaires et de pensions a la
     sienne, et sous celle de 1977."""
     _, attendu = les_deux
-    for etape in ("plafonnement", "reduction_complementaire", "decote",
+    for etape in ("plafonnement", "reduction_complementaire", "reduction_des_salaires", "decote",
                   "reduction_sous_condition_de_revenus", "minoration_exceptionnelle",
                   "majoration_exceptionnelle", "reduction_exceptionnelle",
                   "reduction_proportionnelle", "prime_pour_l_emploi", "credit_exceptionnel",

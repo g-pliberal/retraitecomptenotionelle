@@ -43,7 +43,8 @@ export const MONTANTS = Object.freeze({
 /** Les séries qu'une année porte, dans l'ordre du fichier. */
 export const SERIES = Object.freeze([
   "bareme", "quotient_familial", "parts_par_rang_d_enfant",
-  "plafonds_quotient_familial", "decote", "reduction_sous_condition_de_revenus",
+  "plafonds_quotient_familial", "reduction_des_salaires", "decote",
+  "reduction_sous_condition_de_revenus",
   "recouvrement", "exoneration", "deductions", "abattement_age_invalidite",
   "abattement_exceptionnel_ages_invalides", "abattement_exceptionnel_personnes_seules",
   "majorations_exceptionnelles", "minorations_exceptionnelles",
@@ -69,9 +70,14 @@ export const HORS_CHAMP = Object.freeze([
   "temps partiel et activité sur une partie de l'année, pour la prime pour l'emploi",
   "seuil de restitution de l'article 1965 L (50 F, puis 8 €)",
   "exonération de l'article 5, 2° : salaires et pensions sous le minimum garanti",
-  "déduction de 500 F des personnes âgées d'avant 1973",
   "abattement de 2 000 F des contribuables à une part de 1978, et celui de l'article 157 ter",
+  "taxe complémentaire des revenus autres que les salaires et les pensions, jusqu'en 1969",
+  "exceptions à la réduction des salaires et des pensions d'avant 1972 : frontaliers, "
+    + "pensions dont la caisse ne versait pas la taxe de 3 %",
 ]);
+
+/** La première année lue aux lois de finances : avant, le barème et les corrections de l'IPP. */
+export const PREMIERE_ANNEE_DES_LOIS_LUES = 1969;
 
 /** L'âge, au 31 décembre de l'année des revenus, qui ouvre l'abattement des personnes âgées. */
 export const AGE_ABATTEMENT = 65;
@@ -498,22 +504,31 @@ function abattementAgeInvalidite(foyer, parametres, revenuNetGlobal) {
   if (vide(a)) return 0.0;
   const ayantsDroit = foyer.declarants
     .filter((d) => (d.age !== null && d.age >= AGE_ABATTEMENT) || d.invalide).length;
+  // En 1972, un revenu net global « inférieur » au seuil ; ensuite, qui ne l'excède pas.
+  const plein = obtenir(a, "seuil_plein_exclu", false)
+    ? revenuNetGlobal < a.seuil_plein : revenuNetGlobal <= a.seuil_plein;
   let montant;
-  if (revenuNetGlobal <= a.seuil_plein) montant = a.abattement_plein;
-  else if (revenuNetGlobal <= a.seuil_reduit) montant = a.abattement_reduit;
+  if (plein) montant = a.abattement_plein;
+  else if ("seuil_reduit" in a && revenuNetGlobal <= a.seuil_reduit) montant = a.abattement_reduit;
   else montant = 0.0;
   return Number(montant * ayantsDroit);
 }
 
 /**
  * Le foyer est-il exonéré, son revenu net de frais professionnels sous la
- * limite de l'année, de 1973 à 2013 : voir `exonere` dans `impot_revenu.py`.
+ * limite de l'année, de 1973 à 2013, ou son revenu brut de salarié sous celle
+ * de 1972 : voir `exonere` dans `impot_revenu.py`.
  */
-export function exonere(foyer, parametres, salairesNets, pensionsNettes, benefices) {
+export function exonere(foyer, parametres, salairesNets, pensionsNettes, benefices,
+  salairesBruts = []) {
   const e = parametres.serie("exoneration");
-  if (!("limite" in e)) return false;
   const salairesEtPensions = somme(salairesNets) + somme(pensionsNettes);
   const revenu = salairesEtPensions + somme(benefices);
+  if ("limite_revenu_brut_des_salaries" in e) {
+    const brut = revenu - somme(salairesNets) + somme(salairesBruts);
+    return somme(salairesNets) >= revenu / 2 && brut <= e.limite_revenu_brut_des_salaries;
+  }
+  if (!("limite" in e)) return false;
   if ("limite_autres" in e && !(salairesEtPensions > revenu / 2)) return revenu <= e.limite_autres;
   const age = foyer.declarants.some((d) => d.age !== null && d.age >= AGE_ABATTEMENT);
   const limite = age && "limite_plus_de_65_ans" in e ? e.limite_plus_de_65_ans : e.limite;
@@ -558,7 +573,9 @@ export function decote(foyer, parametres, impot, parts) {
   if (annee <= 1972) {
     let franchise = d.seuil_celibataire;
     let limite = d.seuil_couple;
-    if ("nombre_de_parts_limite" in d && parts <= d.nombre_de_parts_limite) {
+    if ("franchise" in d) {
+      [franchise, limite] = limitesDeLArticle198Ter(foyer, d, parts);
+    } else if ("nombre_de_parts_limite" in d && parts <= d.nombre_de_parts_limite) {
       franchise = d.seuil_1_faible_nombre_de_parts;
       limite = d.seuil_2_faible_nombre_de_parts;
     }
@@ -580,6 +597,38 @@ export function decote(foyer, parametres, impot, parts) {
   return Math.min(impot, Math.max(arrondirImpot(annee, seuil - taux * impot), 0.0));
 }
 
+/**
+ * Les limites de l'exonération et de la décote de l'article 198 ter, de 1969 à
+ * 1972 : voir `_limites_de_l_article_198_ter` dans le Python.
+ */
+function limitesDeLArticle198Ter(foyer, d, parts) {
+  const majore = "franchise_majoree" in d && foyer.declarants.some(
+    (dec) => (dec.age !== null && dec.age >= d.age_majore)
+      || (dec.invalide && obtenir(d, "invalides_majores", false)));
+  const suffixe = majore ? "_majoree" : "";
+  if (parts <= d[majore ? "parts_forfait_majore" : "parts_forfait"]) {
+    return [d[`franchise${suffixe}`], d[`limite${suffixe}`]];
+  }
+  return [d[`franchise${suffixe}_par_part`] * parts, d[`limite${suffixe}_par_part`] * parts];
+}
+
+/**
+ * La réduction des salaires et des pensions (art. 198), jusqu'en 1971, ou
+ * celle des contribuables âgés : voir `reduction_des_salaires` dans le Python.
+ */
+export function reductionDesSalaires(foyer, parametres, impot, revenu, imposables = 0.0,
+  autres = 0.0) {
+  const r = parametres.serie("reduction_des_salaires");
+  if (vide(r) || impot <= 0) return 0.0;
+  let base = imposables;
+  if (autres > 0 && autres <= obtenir(r, "autres_revenus_maximum", 0.0)) base += autres;
+  let reduction = r.taux * Math.min(base, revenu);
+  if (foyer.declarants.some((d) => d.age !== null && d.age >= r.age_agees)) {
+    reduction = Math.max(reduction, Math.min(r.taux_agees * revenu, r.plafond_agees));
+  }
+  return Math.min(arrondirImpot(parametres.annee, reduction), impot);
+}
+
 /** La réduction de 20 % des revenus de 2016 à 2019, dégressive. */
 function reductionSousCondition(foyer, parametres, impot, rfr, parts) {
   const r = parametres.serie("reduction_sous_condition_de_revenus");
@@ -595,11 +644,15 @@ function reductionSousCondition(foyer, parametres, impot, rfr, parts) {
   return arrondirImpot(parametres.annee, taux * impot);
 }
 
-/** Les minorations exceptionnelles, selon les notes de l'IPP. */
+/** Les minorations exceptionnelles : par paliers dès 1969, selon les notes de l'IPP sinon. */
 function minoration(parametres, impot, revenu, parts) {
   const m = parametres.serie("minorations_exceptionnelles");
   const annee = parametres.annee;
   if (vide(m) || impot <= 0) return 0.0;
+  if ("paliers" in m) {
+    const palier = m.paliers.find(([borne]) => impot <= borne);
+    return arrondirImpot(annee, (palier ? palier[1] : 0.0) * impot);
+  }
   if (annee <= 1972) {
     const base = annee <= 1967 ? revenu : impot;
     const s2 = m.seuil_impot_2;
@@ -628,29 +681,28 @@ function minoration(parametres, impot, revenu, parts) {
   return arrondirImpot(annee, Math.max(montant, 0.0));
 }
 
-/** Les paliers des majorations de 1968 et de 1969. */
+/** Les paliers des majorations de 1968, selon les notes de l'IPP. */
 function paliersDe1968(impot, pas, tauxHaut) {
   if (impot > 14000) return tauxHaut;
   const palier = Math.floor((Math.min(impot, 13999.99) - 6000) / 1000) + 1;
   return pas * Math.min(palier, 7);
 }
 
-/** Les majorations exceptionnelles, selon les notes de l'IPP. */
+/** Les majorations exceptionnelles : par paliers en 1969, selon les notes de l'IPP sinon. */
 function majoration(parametres, impot, revenu) {
   const m = parametres.serie("majorations_exceptionnelles");
   const annee = parametres.annee;
   if (vide(m) || impot <= 0) return 0.0;
+  if ("paliers" in m) {
+    const palier = m.paliers.find(([borne]) => impot <= borne);
+    return arrondirImpot(annee, (palier ? palier[1] : m.taux_au_dela) * impot);
+  }
   if ("seuil_revenu" in m) {
     const taux = revenu > m.seuil_revenu ? m.taux_1 : 0.0;
     return arrondirImpot(annee, taux * impot);
   }
   if (annee === 1968) {
     const taux = impot > m.seuil_1 ? paliersDe1968(impot, 0.02, m.taux_3) : 0.0;
-    return arrondirImpot(annee, taux * impot);
-  }
-  if (annee === 1969) {
-    if (impot <= m.seuil_1) return 0.0;
-    const taux = impot <= 14000 ? paliersDe1968(impot, 0.02, 2 * m.taux_3) / 2 : m.taux_3;
     return arrondirImpot(annee, taux * impot);
   }
   if (annee <= 1971 || annee === 1983) {
@@ -775,11 +827,19 @@ function remarquesDe(foyer, parametres, laDecote, laMinoration, laMajoration, pp
     remarques.push(`barème projeté (${parametres.indexation}) au-delà des revenus de `
       + `${parametres.derniere_annee_lue}`);
   }
-  if (laDecote && annee <= 1972) {
+  if (annee < PREMIERE_ANNEE_DES_LOIS_LUES) {
+    remarques.push("barème des revenus d'avant 1969 : celui de l'IPP, aux taux des "
+      + "salariés, sans texte lu");
+  }
+  if (laDecote && annee < PREMIERE_ANNEE_DES_LOIS_LUES) {
     remarques.push("franchise et décote des années 1960 : une lecture des colonnes de "
       + "l'IPP, sans texte lu");
+  } else if (laDecote && annee <= 1972) {
+    remarques.push("décote de l'article 198 ter : ses limites sont celles de la loi, sa "
+      + "formule celle de l'IPP, l'article n'étant pas lu");
   }
-  if (laMinoration || laMajoration) {
+  if ((laMinoration || laMajoration)
+    && !(PREMIERE_ANNEE_DES_LOIS_LUES <= annee && annee <= 1972)) {
     remarques.push("minoration ou majoration exceptionnelle : la règle des notes de "
       + "l'IPP, sans texte lu");
   }
@@ -834,10 +894,13 @@ export function impotAuxParametres(foyer, parametres, { unite = "euro" } = {}) {
     abattement_vingt_pour_cent: vingt, benefices, benefices_retenus: retenus,
     abattement_adherents: abattementAdherents, majoration_des_benefices: majorationBenefices,
     revenu_net_global: revenuNetGlobal, abattement_age_invalidite: abattement,
-  }, unite, vers, exonere(foyer, parametres, salairesNets, pensionsNettes, benefices));
+  }, unite, vers, exonere(foyer, parametres, salairesNets, pensionsNettes, benefices, salaires));
 }
 
-/** L'impôt d'un foyer dont on connaît le revenu net imposable, sans prime pour l'emploi ni exonération. */
+/**
+ * L'impôt d'un foyer dont on connaît le revenu net imposable, sans prime pour
+ * l'emploi, ni exonération, ni réduction des salaires et des pensions.
+ */
 export function impotDUnRevenuImposable(foyer, annee, revenuNetImposable, baremes, {
   unite = "euro", indexation = "prix", croissance = null,
 } = {}) {
@@ -859,8 +922,12 @@ function liquider(foyer, parametres, revenu, activite, assiette, unite, vers, ex
   const impotPlein = impotDuBareme(parametres, revenu, parts);
   const [impotBrut, supplement, reductionComplementaire] = plafonnement(
     foyer, parametres, revenu, parts, impotPlein);
-  const laDecote = decote(foyer, parametres, impotBrut, parts);
-  let impot = impotBrut - laDecote;
+  const imposables = somme(assiette.salaires_nets) + somme(assiette.pensions_nettes)
+    - assiette.abattement_vingt_pour_cent;
+  const reductionSalaires = reductionDesSalaires(foyer, parametres, impotBrut, revenu,
+    imposables, somme(assiette.benefices_retenus));
+  const laDecote = decote(foyer, parametres, impotBrut - reductionSalaires, parts);
+  let impot = impotBrut - reductionSalaires - laDecote;
   const reductionScr = reductionSousCondition(foyer, parametres, impot, rfr, parts);
   impot -= reductionScr;
   const laMinoration = minoration(parametres, impot, revenu, parts);
@@ -900,6 +967,7 @@ function liquider(foyer, parametres, revenu, activite, assiette, unite, vers, ex
     impot_brut: impotBrut * retour,
     plafonnement: supplement * retour,
     reduction_complementaire: reductionComplementaire * retour,
+    reduction_des_salaires: reductionSalaires * retour,
     decote: laDecote * retour,
     reduction_sous_condition_de_revenus: reductionScr * retour,
     minoration_exceptionnelle: laMinoration * retour,
