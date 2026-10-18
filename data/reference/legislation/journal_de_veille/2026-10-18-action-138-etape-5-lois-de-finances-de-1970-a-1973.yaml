@@ -1,0 +1,41 @@
+date: "2026-10-18"
+session: "action 138, étape 5, douzième partie : les règles des revenus de 1969 à 1972, lues aux lois de finances pour 1970 à 1973"
+consulte: >-
+  `python scripts/veille_droit.py` : aucune fiche de la carte touchée, la
+  session n'écrivant aucune règle de la pension. Les index JORF et LEGI de la
+  DILA, récupérés, LEGI mis à jour au 17 octobre 2026 ; `textes.py --inscrire`
+  n'a rien inscrit. Au site du Sénat, les textes définitifs des lois de
+  finances pour 1970, 1971 et 1973 (senat.fr/leg/, ta1969_1970_0055,
+  ta1970_1971_0028, ta1972_1973_0048), et, de celle pour 1972, les textes
+  qu'il a modifiés puis rejetés (ta1971_1972_0014, 0031 et 0042) ; les rapports
+  généraux de sa commission des finances sur les lois pour 1970 (n° 56, tome
+  III), 1971 (n° 54, tome II), 1972 (n° 27, tome II, qui reproduit le texte
+  voté par l'Assemblée nationale ; n° 119, sa couverture seule) et 1973 (n° 66,
+  tome II). Celui de la commission mixte de 1971 (n° 91) n'est pas servi. Au
+  JORF, la notice de la loi n° 71-1061 (JORFTEXT000000687436), sans son texte.
+  Chez l'IPP, le barème de l'impôt depuis 1945.
+trouve: >-
+  Jusqu'aux revenus de 1971, le barème de la loi porte des points de plus que
+  celui des salariés — de 5 % à 65 % en 1969, de 3 % à 63 % en 1970 et 1971 —,
+  que la réduction de l'article 198 rend aux seuls salaires et pensions, 5 %
+  puis 3 % de leur montant net imposable, aux autres revenus d'au plus
+  15 000 F en 1971, intégrée au barème en 1972 ; l'IPP ne donne que les taux
+  des salariés, et 25 % au lieu de 20 % à la quatrième tranche de 1960 à 1972.
+  La réduction des contribuables âgés (loi n° 69-1161, art. 4, II), la plus
+  forte des deux seule retenue. Les limites de l'exonération et de la décote
+  de l'article 198 ter, par part au-delà de deux parts, plus hautes pour les
+  âgés et, dès 1970, les invalides. Les minorations par paliers de la
+  cotisation jusqu'en 1972, et les majorations de 1969 (6 % de 10 501 à
+  12 000 F), où les notes de l'IPP décrivent une ligne droite et des paliers
+  de 1 000 F. Le minimum de 1 200 F des frais professionnels dès 1970. En
+  1972, la déduction de 500 F des âgés et invalides, et l'exonération de qui
+  vit principalement de salaires, sur son revenu brut (9 500 F). Écrits dans
+  la donnée, le script de l'IPP, `impot_revenu.py` et son jumeau.
+reste: >-
+  Les revenus de 1960 à 1968, aux lois de finances pour 1961 à 1969 du Sénat et
+  à la loi n° 59-1472 : le barème de la loi et la réduction de 5 %, l'article
+  198 ter (sa formule, ses limites), l'article 198 quater, les majorations et
+  les décimes, la taxe complémentaire, l'arrondi, les 20 % ; l'exonération de
+  l'article 5, 2°, sous le SMIC, à la session du minimum garanti ; le seuil de
+  recouvrement de 1970 à 1976, que la loi n° 69-1161 (art. 2) fixe à 5 F pour
+  tous les impôts directs.

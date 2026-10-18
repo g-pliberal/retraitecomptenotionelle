@@ -3,13 +3,13 @@
 **Reprise, au 18 octobre 2026.** Fait : l'impôt d'un foyer (10 octobre) ; la
 CSG déductible (11) ; l'impôt dans les indicateurs (13) ; l'effet retour (14) ;
 l'ASPA déformée, le bénéfice des indépendants (16) ; les adhérents d'avant 1978
-(17) ; le 18, la prime des non-salariés, la majoration pour enfants, puis les
-revenus de 1973 à 1980 lus aux lois de finances du Sénat : la limite
-d'exonération (1973 à 2013), les pensions sans leurs 10 % avant 1977, trois
-seuils du barème, dans les deux moteurs. Reste : au propriétaire, l'effet
-retour dans le solde et trois décisions sur le bénéfice ; l'impôt au site, à
-la session des pages ; les règles d'avant 1973, puis l'exonération au minimum
-garanti. Détail : `2026-10-18-etape-5-lois-de-finances-de-1974-a-1981.md`.
+(17) ; le 18, la prime des non-salariés, la majoration pour enfants, les
+revenus de 1973 à 1980, puis ceux de 1969 à 1972, aux lois de finances pour
+1970 à 1973 : le barème et la réduction des salaires, la décote, les paliers.
+Reste : au propriétaire, l'effet retour dans le solde et trois décisions sur
+le bénéfice ; l'impôt au site, à la session des pages ; les revenus de 1960 à
+1968, puis l'exonération au minimum garanti. Détail :
+`2026-10-18-etape-5-lois-de-finances-de-1970-a-1973.md`, « Ce qui reste ».
 
 **La demande.** Le propriétaire, le 10 octobre 2026 : l'impôt sur le revenu
 d'un foyer, de son barème à son montant, chaque année ; les barèmes de l'IPP
