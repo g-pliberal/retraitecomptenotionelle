@@ -1812,8 +1812,9 @@ affirmations:
     page: /avantages
     extrait: "Et la forme longue parle."
     porte: >-
-      le minimum vieillesse pesait le plus au début de la série, où il était
-      tout ce que le modèle reconstitue, et s'est éteint
+      le minimum vieillesse pesait le plus au début de la série, où le modèle
+      ne reconstitue que lui et la pension minimum d'avant 1983, et s'est
+      éteint ; la part que la page lui donne est la sienne
     etat: verifiee
     controle: minimum_vieillesse_s_est_eteint
 

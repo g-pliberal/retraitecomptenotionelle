@@ -2712,13 +2712,17 @@ def _(m: Modele):
     """Il pesait le plus au début de la série, et s'est éteint. Le seuil de
     20 % venait du minimum d'avant 2007 pris au montant de 2006 ramené sur
     les prix, qui le surestimait ; à deux étages, l'AVTS puis l'allocation
-    supplémentaire (action 138, étape 6), il fait 8 % de la dépense de 1959.
+    supplémentaire (action 138, étape 6), il fait 14 % de la dépense de 1959,
+    depuis que les années d'avant le 1er juillet 1930 ne valident plus rien.
 
-    La page donne au minimum vieillesse la part de TOUT ce que le modèle
-    reconstitue la première année : il doit en être le tout."""
+    La page lui donne sa part à lui la première année. Le modèle n'y
+    reconstitue que lui et la pension minimum d'avant 1983, au montant de
+    l'AVTS, que la ligne du minimum contributif porte (`droit/completer.py`) :
+    les carrières de 1959, nées avant les assurances sociales, sont courtes."""
     premiere = next(a for a in m.avantages.annees if a.observee)
-    assert premiere.modele.get("minimum_vieillesse", 0.0) == pytest.approx(
-        premiere.gratuit_modele)
+    assert set(premiere.modele) <= {"minimum_vieillesse", "minimum_contributif"}
+    assert premiere.modele.get("minimum_vieillesse", 0.0) > premiere.modele.get(
+        "minimum_contributif", 0.0)
     parts = [(a.annee, a.modele.get("minimum_vieillesse", 0.0) / a.observee)
              for a in m.avantages.annees if a.observee]
     assert parts[0][1] == max(part for _, part in parts)

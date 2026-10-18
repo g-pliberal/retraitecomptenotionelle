@@ -8881,8 +8881,11 @@ function avantages(contexte, regards = null) {
     anneesModele, bandesModele, "Md€ courants", true, 0, true, null, "", [],
     "Année", null, "", 1,
   );
+  // La part du minimum vieillesse seul : la pension minimum d'avant 1983, sur
+  // la ligne du minimum contributif, entre aussi dans ce que le modèle
+  // reconstitue la première année (action 138, étape 6).
   const partDebutModele = c.annees[0].observee
-    ? c.annees[0].gratuitModele / c.annees[0].observee : 0;
+    ? (c.annees[0].modele.minimum_vieillesse || 0) / c.annees[0].observee : 0;
   const partFinModele = derniere.observee
     ? derniere.gratuitModele / derniere.observee : 0;
 

@@ -2175,3 +2175,23 @@ def test_la_colonne_aspa_de_l_accueil_sert_le_bareme_de_l_aspa():
         plafond = seul if len(foyer) == 1 else couple
         assert g.euros(max(0.0, plafond - sum(foyer))) in rendu, foyer
     assert g.euros(1020.18) in rendu and g.euros(743.59) in rendu
+
+
+def test_la_forme_longue_donne_au_minimum_vieillesse_sa_seule_part(page):
+    """« Le minimum vieillesse faisait … de la dépense » la première année de la
+    décomposition : sa part à lui, et non celle de tout ce que le modèle
+    reconstitue, où entre aussi la pension minimum d'avant 1983, la ligne du
+    minimum contributif, depuis que les années d'avant 1946 se lisent sur la
+    retenue (action 138, étape 6)."""
+    import json
+
+    texte = html.unescape(re.sub(r"<[^>]+>", " ", page("/avantages")))
+    trouve = re.search(r"Le minimum vieillesse faisait\s+(\d+)\s*%\s+de la dépense en\s+(\d{4})",
+                       texte)
+    assert trouve, "la phrase de la forme longue a disparu"
+    paquet = json.loads((Path(__file__).resolve().parents[1] / "moteur" / "donnees.json")
+                        .read_text(encoding="utf-8"))
+    premiere = paquet["agregats"]["avantages"]["annees"][0]
+    assert int(trouve.group(2)) == premiere["annee"]
+    assert int(trouve.group(1)) == round(
+        100 * premiere["modele"]["minimum_vieillesse"] / premiere["observee"])
