@@ -19,6 +19,7 @@ import {
 import {
   FORMES_D_UNION, dateDeclaree, naissanceDeclaree, plusAns, valeur as valeurPresumee,
 } from "./chronologie.js";
+import { CONJOINTS_COLLABORATEURS } from "./carriere.js";
 import { formatG } from "./format.js";
 import * as g from "./gabarit.js";
 import { AGE_TERMINAL } from "./mortalite.js";
@@ -324,6 +325,18 @@ export const BAREMES_LODEOM = [
   ["competitivite_renforcee", "barème de compétitivité renforcée"],
   ["innovation_et_croissance", "barème d'innovation et de croissance"],
 ];
+
+/**
+ * L'option du conjoint collaborateur (D. 633-19-2), le forfait d'abord, qui
+ * est le défaut (R. 662-1), et la part du revenu du chef que chacune cotise.
+ * Voir `ASSIETTES_COLLABORATEUR` et `PARTS_COLLABORATEUR` du Python.
+ */
+export const ASSIETTES_COLLABORATEUR = [
+  ["", "le forfait, le tiers du plafond"],
+  ["tiers", "33,33 % du revenu du chef d'entreprise"],
+  ["moitie", "50 % du revenu du chef d'entreprise"],
+];
+export const PARTS_COLLABORATEUR = { "": 0.0, tiers: 0.3333, moitie: 0.5 };
 
 /** La durée de captivité et de services de guerre que la saisie admet, en mois. */
 export const MOIS_DE_GUERRE_MAXIMUM = 240;
@@ -664,6 +677,9 @@ export const DEFAUTS = Object.freeze({
   //: Le barème de la Lodeom de l'employeur d'outre-mer (`BAREMES_LODEOM`), que
   //: portent tous les emplois ; vide, la réduction générale.
   lodeom: "",
+  //: L'option du conjoint collaborateur (`ASSIETTES_COLLABORATEUR`) ; vide, le
+  //: forfait.
+  collaborateur: "",
   //: Les carrières hors de France : les périodes passées hors de France
   //: — `{pays, debut, fin, activite}`, les âges comptés comme un début
   //: d'activité —, les pensions étrangères — `{pays, montant, debut}` —,
@@ -851,6 +867,7 @@ export class Saisie {
       travail_manuel: parmi(parametres, "travail_manuel", TRAVAUX_MANUELS, ""),
       micro: parmi(parametres, "micro", ACTIVITES_MICRO, ""),
       lodeom: parmi(parametres, "lodeom", BAREMES_LODEOM, ""),
+      collaborateur: parmi(parametres, "collaborateur", ASSIETTES_COLLABORATEUR, ""),
       etranger: periodesEtrangeresSaisies(parametres, moisDeNaissance, tolerante),
       pensions_etrangeres: pensionsEtrangeresSaisies(parametres, moisDeNaissance, tolerante),
       residence: (parametres.residence || "").trim(),
@@ -1202,6 +1219,26 @@ export class Saisie {
   }
 
   /**
+   * Ce que cotise une ligne de ce statut au niveau du revenu saisi : celle du
+   * conjoint collaborateur, la part du revenu du chef que son option retient,
+   * rien au forfait. Voir `assiette_du_collaborateur` du Python.
+   */
+  assietteDuCollaborateur(niveau, statut) {
+    if (!CONJOINTS_COLLABORATEURS.has(statut)) {
+      return niveau;
+    }
+    return niveau * PARTS_COLLABORATEUR[this.collaborateur];
+  }
+
+  /**
+   * Le niveau qu'essaie l'inversion par la pension, sur chaque métier. Voir
+   * `niveaux_de_la_pension` du Python.
+   */
+  niveauxDeLaPension(niveau, parcours) {
+    return parcours.map((metier) => this.assietteDuCollaborateur(niveau, metier.affiliation));
+  }
+
+  /**
    * Ce qu'une ligne donne au modèle, `[niveau, statut]` : le chiffre
    * d'affaires abattu, la Cipav routée vers le libéral. Voir `abattu` du
    * Python.
@@ -1236,7 +1273,7 @@ export class Saisie {
       metiers.push({
         affiliation: statut,
         age_debut: ligne.debut,
-        niveau_salaire: niveau,
+        niveau_salaire: this.assietteDuCollaborateur(niveau, statut),
         cumul: ligne.cumul,
         age_fin: ligne.fin,
         micro,
@@ -2012,7 +2049,8 @@ export class Saisie {
     const [abattu, route] = this.abattu(niveau, statut);
     return {
       age: this.emploi_retraite, fin: this.emploi_retraite_fin, affiliation: route,
-      niveau_salaire: abattu, employeur: this.emploi_retraite_employeur,
+      niveau_salaire: this.assietteDuCollaborateur(abattu, route),
+      employeur: this.emploi_retraite_employeur,
       ...(micro ? { micro } : {}),
     };
   }
@@ -2683,6 +2721,7 @@ export class Saisie {
       ].filter(([, valeur]) => valeur !== null)),
       ...(this.micro ? { micro: this.micro } : {}),
       ...(this.lodeom ? { lodeom: this.lodeom } : {}),
+      ...(this.collaborateur ? { collaborateur: this.collaborateur } : {}),
       ...(this.residence ? { residence: this.residence } : {}),
       ...(this.mois_en_france !== null ? { mois_en_france: this.mois_en_france } : {}),
       ...(this.apprentissage !== null ? { apprentissage: this.apprentissage } : {}),

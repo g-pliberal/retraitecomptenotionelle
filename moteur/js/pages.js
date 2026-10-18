@@ -20,7 +20,9 @@
 import {
   MOIS_PAR_AN, NOMS_DE_MOIS, DateMois, enMois, formaterAge, moisTravailles,
 } from "./calendrier.js";
-import { ancrageSalaireMoyen, bornesDeformation, salaireMoyenAnnuel } from "./carriere.js";
+import {
+  CONJOINTS_COLLABORATEURS, ancrageSalaireMoyen, bornesDeformation, salaireMoyenAnnuel,
+} from "./carriere.js";
 import { repartition } from "./capitalisation.js";
 import { CourbeTauxSansRisque } from "./taux.js";
 import {
@@ -83,6 +85,7 @@ import {
   SALAIRE_DEFAUT, SANS_EMPLOI, SITUATIONS, SITUATIONS_FOYER, Saisie, TABLES,
   MOIS_DE_GUERRE_MAXIMUM, TRAJECTOIRES_EMPLOI, TRAVAUX_MANUELS, UNITES_REVENU, age, entier, estEntier, jourEnClair,
   ABATTEMENTS_MICRO, ACTIVITES_MICRO, STATUT_MICRO, BAREMES_LODEOM,
+  ASSIETTES_COLLABORATEUR, PARTS_COLLABORATEUR,
   nombreBrut, parmi, reel, refus,
 } from "./saisie.js";
 import {
@@ -1054,7 +1057,7 @@ export function formulaire(saisie, contexte, comparaison = null) {
   ${desaccordDeSituation(saisie, contexte)}
   <div class="grille">${identite}</div>
   <h3>La carrière, période par période${bulleDesPeriodes()}</h3>
-  ${metiersFormulaire(saisie, affiliations, echelle)}${microFormulaire(saisie)}
+  ${metiersFormulaire(saisie, affiliations, echelle)}${microFormulaire(saisie)}${collaborateurFormulaire(saisie)}
   ${blocPension(saisie)}
   ${lienAutreSaisie(saisie)}
   ${saisie.parPension ? "" : basculeUnite(saisie, echelle)}
@@ -1670,6 +1673,27 @@ function champChiffreDAffaires(nom, saisie, valeur, vide) {
 }
 
 /**
+ * Le champ d'une période de conjoint collaborateur : le revenu du chef
+ * d'entreprise, dont l'option ne cotise qu'une part, et que le forfait ignore
+ * (D. 633-19-2). Ses bornes sont celles d'un revenu, que la saisie oppose aussi.
+ */
+function champRevenuDuChef(nom, saisie, valeur, vide) {
+  const option = saisie.collaborateur;
+  const part = option
+    ? `vous en cotisez ${g.pourcentage(PARTS_COLLABORATEUR[option], false,
+      option === "tiers" ? 2 : 0)}`
+    : "sans effet au forfait";
+  if (!saisie.revenu_en_euros) {
+    return g.champ(nom, "Revenu du chef d'entreprise, en multiples du salaire moyen",
+      valeur, `${part}${vide}`, "number",
+      { min: "0.1", max: "10", step: nombreBrut(PAS_MULTIPLE) });
+  }
+  const mot = saisie.saisieEnNet ? "net" : "brut";
+  return g.champ(nom, `Revenu ${mot} mensuel du chef d'entreprise`, valeur,
+    `en euros par mois ; ${part}${vide}`, "number", { min: "0", step: "1" });
+}
+
+/**
  * Le champ « combien gagnez-vous », dans l'unité choisie. Le libellé porte le
  * mot « brut » et l'aide dit où le lire : c'est la question qui revenait le plus
  * souvent devant ce formulaire, et elle se règle là, sur le champ, plutôt que
@@ -1691,6 +1715,9 @@ function champRevenu(nom, saisie, echelle, valeur, bref = false, siVide = "",
   const vide = siVide ? ` ; ${siVide}` : "";
   if (saisie.enChiffreDAffaires(statut)) {
     return champChiffreDAffaires(nom, saisie, valeur, vide);
+  }
+  if (CONJOINTS_COLLABORATEURS.has(statut)) {
+    return champRevenuDuChef(nom, saisie, valeur, vide);
   }
   if (!saisie.revenu_en_euros) {
     const aideMultiple = bref
@@ -2102,6 +2129,34 @@ function microFormulaire(saisie) {
     + "d'affaires mensuel. Les architectes, ingénieurs-conseils, ostéopathes, "
     + "psychologues, moniteurs de ski, et qui y était affilié avant 2019, "
     + "relèvent de la Cipav.")}</div>`;
+}
+
+/**
+ * L'option du conjoint collaborateur d'un artisan ou d'un commerçant (action
+ * 138, étape 18) : le forfait, à défaut de choix, ou une part du revenu du chef
+ * d'entreprise, que ses périodes portent alors. Le menu ne paraît qu'avec une
+ * période de conjoint collaborateur, ou une option déjà dite.
+ */
+function collaborateurFormulaire(saisie) {
+  const collaborateur = saisie.lignesCarriere
+    .some((ligne) => CONJOINTS_COLLABORATEURS.has(ligne.statut))
+    || CONJOINTS_COLLABORATEURS.has(saisie.emploi_retraite_statut);
+  if (!collaborateur && !saisie.collaborateur) {
+    return "";
+  }
+  return `<div class="grille">${g.liste("collaborateur",
+    "Conjoint collaborateur, vous cotisez sur", ASSIETTES_COLLABORATEUR,
+    saisie.collaborateur, "le revenu de vos périodes est celui du chef", {},
+    "Conjoint collaborateur d'un artisan ou d'un commerçant, vous cotisez à votre "
+    + "choix sur un forfait, le tiers du plafond de la sécurité sociale, ou sur "
+    + "33,33 % ou 50 % du revenu du chef d'entreprise, partagé ou non avec lui ; "
+    + "sur le forfait si vous n'avez rien choisi (articles D. 633-19-2 et R. 662-1 "
+    + "du code de la sécurité sociale). Le revenu de vos périodes est celui du "
+    + "chef ; au forfait, il ne compte pas. Affilié d'office depuis le "
+    + "1<sup>er</sup> juillet 2007, vous ne releviez avant que d'une assurance "
+    + "volontaire : au forfait, le simulateur la tient pour non souscrite, et à "
+    + "l'option, pour souscrite sur la même part. Un relevé, qui porte votre "
+    + "assiette de chaque année, n'en dépend pas.")}</div>`;
 }
 
 function metiersFormulaire(saisie, affiliations, echelle) {

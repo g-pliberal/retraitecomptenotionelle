@@ -153,6 +153,13 @@ SAISIES = {
         "releve": "1998:salarie_prive_non_cadre:14200:4\n"
                   "1999:salarie_prive_non_cadre:15100:4",
     },
+    # Le conjoint collaborateur à l'option (action 138, étape 18) : son menu ne
+    # paraît qu'avec une période de conjoint collaborateur.
+    "une collaboratrice, à l'option": {
+        **BASE, "metier2_debut": "2008-01-01",
+        "metier2_statut": "conjoint_collaborateur_artisan", "metier2_salaire": "3000",
+        "collaborateur": "moitie",
+    },
     "des règles, dont celles qui n'ont pas de champ": {
         **BASE, "indexation": "prix", "table": "par_sexe", "lissage": "3",
         "reprise": "40", "bascule": "2030", "euros": "2025",
@@ -323,3 +330,32 @@ def test_le_menu_de_la_lodeom_offre_chaque_bareme_du_paquet():
     assert [(code, unescape(texte)) for code, _, texte in options] == [("", "non")] + [
         (code, bareme["libelle"]) for code, bareme in baremes.items()]
     assert [code for code, choisi, _ in options if choisi] == ["competitivite_renforcee"]
+
+
+def test_le_menu_du_conjoint_collaborateur_ne_parait_qu_avec_lui():
+    """Le menu de l'option du conjoint collaborateur (action 138, étape 18)
+    offre le forfait, puis 33,33 % et 50 % du revenu du chef, et ne paraît
+    qu'avec une période de conjoint collaborateur, ou une option déjà dite ; le
+    revenu de cette période se dit alors celui du chef d'entreprise, et sans
+    effet au forfait."""
+    assert 'name="collaborateur"' not in _formulaire(BASE)
+    periode = {**BASE, "metier2_debut": "2008-01-01",
+               "metier2_statut": "conjoint_collaborateur_commercant",
+               "metier2_salaire": "3000"}
+    formulaire = _formulaire(periode)
+    bloc = re.search(r'<div><label for="collaborateur">.*?</select></div>', formulaire, re.S)
+    assert bloc, "le formulaire n'a pas de menu du conjoint collaborateur"
+    options = re.findall(r'<option value="([^"]*)"( selected)?>([^<]*)</option>', bloc.group(0))
+    assert [(code, unescape(texte)) for code, _, texte in options] == [
+        ("", "le forfait, le tiers du plafond"),
+        ("tiers", "33,33 % du revenu du chef d'entreprise"),
+        ("moitie", "50 % du revenu du chef d'entreprise")]
+    assert [code for code, choisi, _ in options if choisi] == [""]
+    revenu = re.search(r'<label for="metier2_salaire">(.*?)</label>', formulaire, re.S)
+    assert revenu and "chef d" in unescape(revenu.group(1)), revenu
+    assert "sans effet au forfait" in unescape(revenu.group(1))
+    a_l_option = unescape(re.search(r'<label for="metier2_salaire">(.*?)</label>',
+                                    _formulaire({**periode, "collaborateur": "tiers"}),
+                                    re.S).group(1))
+    assert "33,33" in a_l_option and "sans effet" not in a_l_option
+    assert 'name="collaborateur"' in _formulaire({**BASE, "collaborateur": "tiers"})

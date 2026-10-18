@@ -27,7 +27,7 @@ from .calendrier import (
     origine_des_ages,
 )
 from . import chronologie
-from .carriere import LigneRelevee, Metier
+from .carriere import CONJOINTS_COLLABORATEURS, LigneRelevee, Metier
 from .config import (
     AgeConversionDroitsAcquis,
     ContributionEtat,
@@ -438,6 +438,26 @@ BAREMES_LODEOM = [
     ("innovation_et_croissance", "barème d'innovation et de croissance"),
 ]
 
+#: L'option du conjoint collaborateur d'un artisan ou d'un commerçant (fiche
+#: ``conjoint_collaborateur_independants`` ; action 138, étape 18) : il cotise
+#: « à sa demande » sur un forfait égal au tiers du plafond, ou sur 33,33 % ou
+#: 50 % du revenu d'activité du chef d'entreprise (D. 633-19-2, 1° à 3°), la
+#: même fraction pouvant se partager avec le chef ; le forfait « si aucun autre
+#: choix n'est effectué » (R. 662-1), qui est le défaut. Le revenu de ses
+#: périodes est alors celui du chef, dont la ligne ne cotise que la part de
+#: l'option (:data:`PARTS_COLLABORATEUR`) ; un relevé, qui porte l'assiette,
+#: n'en dépend pas.
+ASSIETTES_COLLABORATEUR = [
+    ("", "le forfait, le tiers du plafond"),
+    ("tiers", "33,33 % du revenu du chef d'entreprise"),
+    ("moitie", "50 % du revenu du chef d'entreprise"),
+]
+#: La part du revenu du chef que chaque option cotise. Le forfait n'en cotise
+#: rien : la ligne sans revenu prend le tiers du plafond depuis l'affiliation
+#: obligatoire de 2007, et n'a pas souscrit l'assurance volontaire avant
+#: (:func:`~retraite_notionnelle.carriere.assiette_du_conjoint_collaborateur`).
+PARTS_COLLABORATEUR = {"": 0.0, "tiers": 0.3333, "moitie": 0.5}
+
 #: La durée de captivité et de services militaires en temps de guerre que la
 #: saisie admet, en mois : de un à vingt ans.
 MOIS_DE_GUERRE_MAXIMUM = 240
@@ -838,6 +858,9 @@ class Saisie:
     #: que portent tous les emplois, métiers et lignes du relevé ; le vide, la
     #: réduction générale.
     lodeom: str = ""
+    #: L'option du conjoint collaborateur (:data:`ASSIETTES_COLLABORATEUR`) ; le
+    #: vide, le forfait. Voir :meth:`assiette_du_collaborateur`.
+    collaborateur: str = ""
     #: Les carrières hors de France (fiches
     #: ``totalisation_des_periodes_etrangeres``, ``pension_proratisee``,
     #: ``minimum_contributif_international`` et
@@ -1046,6 +1069,7 @@ class Saisie:
             travail_manuel=_parmi(parametres, "travail_manuel", TRAVAUX_MANUELS, ""),
             micro=_parmi(parametres, "micro", ACTIVITES_MICRO, ""),
             lodeom=_parmi(parametres, "lodeom", BAREMES_LODEOM, ""),
+            collaborateur=_parmi(parametres, "collaborateur", ASSIETTES_COLLABORATEUR, ""),
             etranger=_periodes_etrangeres_saisies(parametres, mois_de_naissance, tolerante),
             pensions_etrangeres=_pensions_etrangeres_saisies(parametres, mois_de_naissance,
                                                              tolerante),
@@ -1386,6 +1410,28 @@ class Saisie:
         route = STATUT_MICRO_CIPAV if self.micro == "cipav" else statut
         return niveau * (1.0 - ABATTEMENTS_MICRO[self.micro]), route
 
+    def assiette_du_collaborateur(self, niveau: float, statut: str) -> float:
+        """Ce que cotise une ligne de ce statut au niveau du revenu saisi.
+
+        Celle du conjoint collaborateur porte le revenu du chef d'entreprise,
+        dont elle ne cotise que la part de son option
+        (:data:`PARTS_COLLABORATEUR`) : rien au forfait, que le modèle donne
+        alors au tiers du plafond. Le contrôle des bornes se fait avant, sur le
+        revenu saisi : c'est le nombre que le champ porte. Les autres lignes
+        gardent leur niveau.
+        """
+        if statut not in CONJOINTS_COLLABORATEURS:
+            return niveau
+        return niveau * PARTS_COLLABORATEUR[self.collaborateur]
+
+    def niveaux_de_la_pension(self, niveau: float, parcours: list[Metier]) -> list[float]:
+        """Le niveau qu'essaie l'inversion par la pension, sur chaque métier :
+        le même revenu partout, que la ligne du conjoint collaborateur cotise
+        comme un revenu saisi (:meth:`assiette_du_collaborateur`) — au forfait,
+        le niveau n'y change rien."""
+        return [self.assiette_du_collaborateur(niveau, metier.affiliation)
+                for metier in parcours]
+
     def parcours(self, echelle: "Echelle") -> list[Metier]:
         """La carrière comme suite de MÉTIERS, le premier compris.
 
@@ -1408,6 +1454,7 @@ class Saisie:
             micro = self.micro if self.en_chiffre_d_affaires(ligne.statut) else ""
             niveau, statut = self.abattu(niveau, ligne.statut)
             self._verifier_niveau(niveau, rang, echelle, ligne.statut)
+            niveau = self.assiette_du_collaborateur(niveau, statut)
             metiers.append(Metier(affiliation=statut, age_debut=ligne.debut,
                                   niveau_salaire=niveau, cumul=ligne.cumul,
                                   age_fin=ligne.fin, micro=micro,
@@ -2109,6 +2156,7 @@ class Saisie:
             niveau = echelle.niveau(salaire)
         micro = self.micro if self.en_chiffre_d_affaires(statut) else ""
         niveau, statut = self.abattu(niveau, statut)
+        niveau = self.assiette_du_collaborateur(niveau, statut)
         return {"age": self.emploi_retraite, "fin": self.emploi_retraite_fin,
                 "affiliation": statut, "niveau_salaire": niveau,
                 "employeur": self.emploi_retraite_employeur,
@@ -2635,6 +2683,7 @@ class Saisie:
                 ("travail_manuel", self.travail_manuel or None)) if valeur is not None},
             **({"micro": self.micro} if self.micro else {}),
             **({"lodeom": self.lodeom} if self.lodeom else {}),
+            **({"collaborateur": self.collaborateur} if self.collaborateur else {}),
             **({"residence": self.residence} if self.residence else {}),
             **({"mois_en_france": self.mois_en_france}
                if self.mois_en_france is not None else {}),

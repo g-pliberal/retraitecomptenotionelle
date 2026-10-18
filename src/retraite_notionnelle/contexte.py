@@ -322,8 +322,7 @@ class Contexte:
                 simulateur, saisie, motifs))
         parcours, batir = self._parcours(simulateur, saisie, motifs)
         if saisie.par_pension:
-            return self._simuler_par_pension(simulateur, saisie, batir,
-                                             len(parcours), parcours)
+            return self._simuler_par_pension(simulateur, saisie, batir, parcours)
         return simulateur.simuler(self._carriere_parcourue(simulateur, parcours, batir))
 
     def carriere(self, saisie: Saisie) -> "Carriere":
@@ -439,14 +438,16 @@ class Contexte:
         return carriere
 
     def _simuler_par_pension(self, simulateur: Simulateur, saisie: Saisie,
-                             batir, combien: int, parcours) -> Comparaison:
+                             batir, parcours) -> Comparaison:
         """La carrière que la pension suppose, puis les quatre systèmes dessus.
 
         UN SEUL NIVEAU POUR TOUTE LA CARRIÈRE. Inverser une pension ne donne
         qu'un nombre, et une carrière en compte autant qu'elle a de métiers :
         il faut donc une convention, et la plus simple est la seule qui
         n'invente rien — le même niveau partout, que le profil de carrière
-        déforme ensuite comme il le fait toujours. Qui veut un revenu par
+        déforme ensuite comme il le fait toujours, et dont le conjoint
+        collaborateur ne cotise que la part de son option
+        (:meth:`Saisie.niveaux_de_la_pension`). Qui veut un revenu par
         métier le saisit, ou dépose son relevé.
 
         LA CIBLE EST RAMENÉE À CE QUE LE MODÈLE CALCULE, et dans cet ordre : la
@@ -479,7 +480,7 @@ class Contexte:
         cible = saisie.pension * MOIS_PAR_AN / constants
 
         def pension_de_niveau(niveau: float) -> float:
-            carriere = batir([niveau] * combien)
+            carriere = batir(saisie.niveaux_de_la_pension(niveau, parcours))
             if retraite:
                 echeancier = simulateur.echeancier(carriere)
                 return montants.pension_servie(echeancier.au_depart,
@@ -491,7 +492,7 @@ class Contexte:
                                      NIVEAU_MINIMAL, NIVEAU_MAXIMAL)
         if not trouve.atteinte:
             raise ErreurSaisie(_refus_de_pension(trouve, constants))
-        carriere = batir([trouve.niveau] * combien)
+        carriere = batir(saisie.niveaux_de_la_pension(trouve.niveau, parcours))
         _verifier_statuts_ouverts(simulateur.affiliations, carriere, parcours)
         _verifier_radiation_pour_invalidite(simulateur.affiliations, carriere)
         comparaison = simulateur.simuler(carriere)

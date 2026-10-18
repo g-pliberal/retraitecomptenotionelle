@@ -780,6 +780,22 @@ def _cas() -> list[dict]:
     # LA LODEOM (action 138, étape 18) : le salarié de La Réunion, dont
     # l'employeur applique le barème d'innovation et de croissance, cotise
     # partout le même brut ; seule sa fiche de paie, que la page montre, change.
+    # LE CONJOINT COLLABORATEUR (fiche conjoint_collaborateur_independants ;
+    # action 138, étape 18) : la conjointe d'un commerçant, collaboratrice
+    # depuis 1998, au tiers du revenu du chef, l'assurance volontaire d'avant
+    # 2007 comprise ; et la même au forfait, que son revenu ne change pas, et
+    # qui n'a rien avant 2007.
+    cas.append(("conjoint_collaborateur_au_tiers", {
+        "naissance": "1966-11-02", "sexe": "F", "debut": "1987-09", "liquidation": "2031-01",
+        "salaire": "0.8", "metier2_debut": "1998-01",
+        "metier2_statut": "conjoint_collaborateur_commercant", "metier2_salaire": "1.5",
+        "collaborateur": "tiers",
+    }))
+    cas.append(("conjoint_collaborateur_au_forfait", {
+        "naissance": "1966-11-02", "sexe": "F", "debut": "1987-09", "liquidation": "2031-01",
+        "salaire": "0.8", "metier2_debut": "1998-01",
+        "metier2_statut": "conjoint_collaborateur_commercant", "metier2_salaire": "1.5",
+    }))
     cas.append(("lodeom_innovation_et_croissance", {
         "naissance": "1985-06-12", "sexe": "F", "debut": "2007-09", "liquidation": "2049-07",
         "salaire": "1.4", "lodeom": "innovation_et_croissance",
@@ -1963,7 +1979,7 @@ FORMULAIRE_ENTIER = frozenset({
     "simuler_releve", "simuler_par_pension", "simuler_revenu_en_multiples",
     "simuler_reversion", "simuler_demande_de_pension", "simuler_radiation_invalidite",
     "simuler_carriere_hors_de_france", "simuler_handicap", "simuler_micro_entrepreneur",
-    "simuler_periodes_assimilees",
+    "simuler_periodes_assimilees", "simuler_conjoint_collaborateur",
 })
 _FORMULAIRE = re.compile(r'(<form class="carte"[^>]*>).*?(</form>)', re.DOTALL)
 
@@ -2015,6 +2031,14 @@ def _pages() -> dict:
         # d'outre-mer applique le barème de compétitivité renforcée ; sa fiche de
         # paie dit l'exonération à la place de la réduction générale.
         ("simuler_lodeom", "/simuler", {**BASE, "lodeom": "competitivite_renforcee"}),
+        # Le conjoint collaborateur (action 138, étape 18) : salariée, puis
+        # collaboratrice de son conjoint artisan à 50 % de son revenu ; le menu
+        # de l'option, et le champ qui dit « revenu du chef d'entreprise ».
+        ("simuler_conjoint_collaborateur", "/simuler", {
+            **BASE, "sexe": "F", "unite_revenu": "euros_mois", "salaire": "2200",
+            "metier2_debut": "2010-01", "metier2_statut": "conjoint_collaborateur_artisan",
+            "metier2_salaire": "3200", "collaborateur": "moitie",
+        }),
         ("simuler_regime_special", "/simuler", {
             **BASE, "statut": "agent_sncf", "naissance": "1960", "liquidation": "52",
         }),

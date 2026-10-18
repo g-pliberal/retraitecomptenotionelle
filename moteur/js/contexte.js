@@ -499,8 +499,9 @@ export class Contexte {
    * nombre, et une carrière en compte autant qu'elle a de métiers : il faut
    * donc une convention, et la plus simple est la seule qui n'invente rien —
    * le même niveau partout, que le profil de carrière déforme ensuite comme il
-   * le fait toujours. Qui veut un revenu par métier le saisit, ou dépose son
-   * relevé.
+   * le fait toujours, et dont le conjoint collaborateur ne cotise que la part de
+   * son option (`niveauxDeLaPension`). Qui veut un revenu par métier le saisit,
+   * ou dépose son relevé.
    *
    * LA CIBLE EST RAMENÉE À CE QUE LE MODÈLE CALCULE, et dans cet ordre : la
    * pension saisie est mensuelle, nette peut-être, en euros constants de
@@ -525,9 +526,8 @@ export class Contexte {
     // qui sépare une pension de sa nette dépend de sa part complémentaire,
     // donc du niveau cherché. Voir `_simuler_par_pension` dans `contexte.py`.
     const cible = saisie.pension * MOIS_PAR_AN / constants;
-    const combien = parcours.length;
     const pensionDeNiveau = (niveau) => {
-      const carriere = batir(new Array(combien).fill(niveau));
+      const carriere = batir(saisie.niveauxDeLaPension(niveau, parcours));
       if (retraite) {
         const echeancier = simulateur.echeancier(carriere);
         return montants.pensionServie(echeancier.auDepart, echeancier.aujourdhui);
@@ -540,7 +540,7 @@ export class Contexte {
     if (!trouve.atteinte) {
       throw new ErreurSaisie(refusDePension(trouve, constants));
     }
-    const carriere = batir(new Array(combien).fill(trouve.niveau));
+    const carriere = batir(saisie.niveauxDeLaPension(trouve.niveau, parcours));
     verifierStatutsOuverts(simulateur.affiliations, carriere, parcours);
     verifierRadiationPourInvalidite(simulateur.affiliations, carriere);
     const comparaison = simulateur.simuler(carriere);
