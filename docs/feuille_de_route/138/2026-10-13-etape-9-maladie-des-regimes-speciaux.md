@@ -3,13 +3,13 @@
 **Reprise, au 18 octobre 2026.** Fait : la cotisation maladie des pensions
 de tous les régimes de base calculés, sauf la SEITA, le port de Strasbourg,
 les marins, les cultes et les assemblées ; celle de la SNCF et des mines au
-site, par étage, leur plafond, le non-résident, les avantages accessoires ;
-le 18, la réversion de la SNCF, sa cotisation et son minimum (article 18).
-Reste, une session par point : le minimum de pension de l'agent (article
-15) ; le plafond de 2027 ; la limite 5 ante ter (2), en fin d'étape ; la CNBF
-et la Cipav dans la fiche de paie ; les décrets qu'aucune marche ne rejoint.
-Au propriétaire : l'ASPA de l'article 23 ; les décrets des exploitants de
-1980 à 1989. Détail : note « minimum de la réversion de la SNCF ».
+site ; la réversion de la SNCF et son minimum ; le 18, la fiche de paie des
+libéraux, égale à ce que le compte reçoit, et l'indemnité de chaque famille.
+Reste, une session par point : la date d'entrée dans la fiche de paie (SNCF,
+RATP, IEG, libéral non réglementé) ; le minimum de pension de l'agent ; le
+plafond de 2027 ; la limite 5 ante ter (2), en fin d'étape ; les décrets
+qu'aucune marche ne rejoint. Au propriétaire : l'ASPA de l'article 23 ; les
+décrets des exploitants de 1980 à 1989. Détail : note « CNBF et Cipav ».
 
 **La demande.** Le propriétaire, le 13 octobre 2026 : « Action 138, étape 9,
 histoire des prélèvements : la maladie des pensions des exploitants d'avant

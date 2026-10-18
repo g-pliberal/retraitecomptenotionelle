@@ -11,7 +11,7 @@ effet: >-
   la pension de base était celle de 2026 ramenée par les prix. Les deux sont lues
   année par année, et ancrées sur 2016 avant.
 sources:
-  lu_le: 2026-09-22
+  lu_le: 2026-10-18
   prochaine_relecture: 2027-02-28
   a_relire:
   - >-
@@ -25,6 +25,17 @@ sources:
       capture du 15 juillet 2024 à l'adresse d'origine.
     url: https://www.cnbf.fr/medias/documents/?_sft_thematique-media=baremes
     date: 2026-09-22
+  - type: autre
+    reference: >-
+      CNBF, « Barème des cotisations et prestations pour l'année 2026 », du 19 janvier
+      2026, relu : la cotisation forfaitaire de base selon l'ancienneté (363 € la
+      première année, 1 988 € dès la sixième), la proportionnelle de 3,2 % dans la
+      limite de 297 549 €, la grille du complémentaire (C1 : 7,00 % jusqu'à 42 507 €,
+      puis 10,40 %, 12,20 %, 14,00 % et 15,80 % jusqu'à 212 535 €), l'invalidité-décès
+      (68 € puis 170 €, et 163 € recouvrés auprès du barreau). La fiche de paie du site
+      prélève depuis ce jour le forfait et les tranches que le compte recevait.
+    url: https://www.cnbf.fr/wp-content/uploads/2026/01/Bareme-CNBF-2026.01.01.pdf
+    date: 2026-10-18
 textes_a_rattacher:
 - reference: >-
     R. 723-43 CSS : le montant de la retraite de base est fixé par décision de l'assemblée

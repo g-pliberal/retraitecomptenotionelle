@@ -1,0 +1,31 @@
+date: "2026-10-18"
+session: "action 138, étape 9, suite de la huitième partie : la CNBF et la Cipav dans la fiche de paie"
+consulte: >-
+  python scripts/veille_droit.py ; l'index LEGI, récupéré puis mis à jour de
+  ses sept incréments jusqu'au 17 octobre 2026, et python scripts/textes.py
+  --inscrire, qui inscrit 39 rédactions « à examiner » (R. 613-17 du code de
+  la sécurité sociale, R. 731-57 du code rural, le décret n° 84-936) ; dans
+  l'index, l'article D. 621-3 du code de la sécurité sociale, rédaction du
+  7 juillet 2024 (LEGIARTI000049904537) ; le barème des cotisations et
+  prestations de la CNBF pour 2026 (19 janvier 2026, cnbf.fr) ; la fiche
+  pratique 2022 de la Cipav, « Comment sont calculées mes cotisations ? »
+  (lacipav.fr).
+trouve: >-
+  Le complémentaire de la CNBF appelle, en classe C1, 7 % jusqu'à 42 507 €,
+  puis 10,40 %, 12,20 %, 14 % et 15,80 % par tranches de 42 507 € jusqu'à
+  212 535 € ; sa base, un forfait de 363 € à 1 988 € selon l'ancienneté et
+  3,2 % du revenu sous 297 549 €. La Cipav appelait jusqu'en 2022 une classe
+  de 1 527 € à 19 857 € selon le revenu ; son exemple : 27 000 € de revenus
+  de 2022, 2 727 € au régime de base, 3 055 € au complémentaire, qui entre
+  aux exemples officiels. L'indemnité journalière est de 0,50 % sous cinq
+  plafonds pour les indépendants de L. 631-1, de 0,30 % sous trois pour ceux
+  de L. 640-1 ; l'avocat, de L. 651-1, n'en paie pas. Les fiches de régime
+  portaient ces barèmes, que le compte lisait ; la fiche de paie les lit
+  désormais, avec l'indemnité de chaque famille. Aucune règle n'a changé.
+reste: >-
+  La date d'entrée dans la fiche de paie, que les régimes fermés (SNCF,
+  RATP, IEG) et le libéral non réglementé installé avant 2019 attendent ; le
+  plafond de la cotisation proportionnelle de la CNBF, 297 549 € en 2026, que
+  ni la fiche ni le compte ne portent ; la cotisation forfaitaire de la CNBF
+  selon l'ancienneté, prélevée à sa valeur de croisière ; l'invalidité-décès
+  propre des libéraux et des avocats.

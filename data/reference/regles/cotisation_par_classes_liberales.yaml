@@ -47,6 +47,8 @@ effet: >-
   de 2 % à 20 % au scénario 1 ; l'année de revenu et la classe de début en déplacent
   quinze de plus, de moins de 1 % pour la plupart. La grille de la CARPV de 1998 à 2015
   abaisse celles des sept cas types vétérinaires, de 3,7 % à 14,4 % au scénario 1.
+exemples:
+- cipav_cotisations_2022
 sources:
   lu_le: 2026-10-16
   prochaine_relecture: 2027-03-31
@@ -87,10 +89,6 @@ sources:
     statuts d'avant 2008 sont au Bulletin officiel du ministère, non lu. Après la phase 8 :
     ne servir à la CAVEC d'avant 1980 une grille de revenu que si ses statuts, une fois lus,
     l'écrivent.
-  - >-
-    Inscrire aux exemples officiels l'exemple de la fiche pratique 2022 de la Cipav,
-    « Comment sont calculées mes cotisations ? », que cite classes_cotisation.csv : 27 000 €
-    de revenus de 2022, classe B, 3 055 € ; relue sur lacipav.fr le 27 septembre 2026.
   - >-
     Après la phase 8 : corriger les notes des périodes. CARPV : la grille y est dite
     « indexée sur les prix », le moteur la ramène par le rapport des plafonds ; les décrets
