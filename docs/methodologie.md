@@ -432,7 +432,7 @@ prend un diviseur plus élevé, donc un capital d'ouverture plus gros, et le
 cadeau va tout entier aux générations de transition. Le défaut suit l'âge légal
 de départ de la proposition, <!--chiffre:mesure(parametre?nom=age_reference_fixe)-->65<!--/--> ans : moins que les <!--chiffre:maximum(data/reference/legislation/ages_reference.csv:age_reference)-->67<!--/--> ans du
 cliquet, et les deux scénarios prospectifs dépensent donc davantage qu'avec
-lui. Leurs soldes moyens sont, sous le défaut, de <!--chiffre:mesure(solde_moyen?scenario=3)-->+1,55<!--/--> et <!--chiffre:mesure(solde_moyen?scenario=5)-->−0,11<!--/--> % du
+lui. Leurs soldes moyens sont, sous le défaut, de <!--chiffre:mesure(solde_moyen?scenario=3)-->+1,56<!--/--> et <!--chiffre:mesure(solde_moyen?scenario=5)-->−0,11<!--/--> % du
 PIB, contre <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> pour le système actuel.
 
 ### Variantes
@@ -2161,7 +2161,7 @@ d'attendre une réforme.
 
 ### Sources
 
-`data/sources.yaml` recense les <!--chiffre:entrees(data/sources.yaml:institutions.*.jeux)-->234<!--/--> jeux de données des
+`data/sources.yaml` recense les <!--chiffre:entrees(data/sources.yaml:institutions.*.jeux)-->236<!--/--> jeux de données des
 <!--chiffre:entrees(data/sources.yaml:institutions)-->42<!--/--> institutions, avec pour chacun l'URL, le mode
 d'accès et l'état d'intégration.
 

@@ -114,8 +114,8 @@ demeure dans le rapport, et les deux contrôles qui suivent le mesurent.
 publiée, le coût du système actuel est la masse de pensions des cas types, mise
 à l'échelle par l'ancrage qui la rend égale à la dépense de cette année-là. La
 même formule, appliquée aux années publiées, devrait retrouver ce qui a été
-dépensé (`Avenir.reconstitution`) ; elle s'en écarte de <!--chiffre:mesure(reconstitution?annee=2000)-->−8,4<!--/--> % en 2000, de
-<!--chiffre:mesure(reconstitution?annee=2009)-->−11,9<!--/--> % en 2009 et de <!--chiffre:mesure(reconstitution?annee=2020)-->−1,0<!--/--> % en 2020, et de <!--chiffre:mesure(reconstitution?annee=1990)-->−15,9<!--/--> % en 1990. La masse du
+dépensé (`Avenir.reconstitution`) ; elle s'en écarte de <!--chiffre:mesure(reconstitution?annee=2000)-->−6,4<!--/--> % en 2000, de
+<!--chiffre:mesure(reconstitution?annee=2009)-->−11,3<!--/--> % en 2009 et de <!--chiffre:mesure(reconstitution?annee=2020)-->−1,0<!--/--> % en 2020, et de <!--chiffre:mesure(reconstitution?annee=1990)-->−11,0<!--/--> % en 1990. La masse du
 modèle croît donc plus vite que la dépense réelle, et l'ancrage reporte cette
 dérive sur l'avenir : c'est le symptôme le plus direct de l'écart au COR.
 L'ancrage suppose, sans le vérifier, que l'écart des cas types au réel est le
@@ -139,9 +139,9 @@ de la DREES compte, depuis 2004, les personnes qui touchent un droit direct,
 tous régimes réunis, et la masse de la réversion ; l'écart de la reconstitution
 en est le produit de trois (`Avenir.reconstitution_decomposee`). En 2009, le
 pire depuis 2000 : <!--chiffre:mesure(reconstitution?annee=2009&facteur=retraites)-->−5,4<!--/--> % de têtes,
-<!--chiffre:mesure(reconstitution?annee=2009&facteur=pension)-->−6,8<!--/--> % de pension de droit direct par tête,
+<!--chiffre:mesure(reconstitution?annee=2009&facteur=pension)-->−6,2<!--/--> % de pension de droit direct par tête,
 <!--chiffre:mesure(reconstitution?annee=2009&facteur=reversion)-->−0,1<!--/--> % de réversion ; en 2004,
-<!--chiffre:mesure(reconstitution?annee=2004&facteur=retraites)-->1,4<!--/--> %, <!--chiffre:mesure(reconstitution?annee=2004&facteur=pension)-->−6,7<!--/--> % et
+<!--chiffre:mesure(reconstitution?annee=2004&facteur=retraites)-->1,4<!--/--> %, <!--chiffre:mesure(reconstitution?annee=2004&facteur=pension)-->−5,4<!--/--> % et
 <!--chiffre:mesure(reconstitution?annee=2004&facteur=reversion)-->−1,9<!--/--> %. Les têtes suivent l'enquête en 2004,
 s'en écartent jusqu'en 2009 et y reviennent ensuite : le dessin des départs
 anticipés pour carrière longue, de 2004 à 2008, que la grille ne connaît pas,
@@ -183,7 +183,7 @@ chez le COR et de
 dans le modèle ; et sur le passé, de 2005 à 2025, elle a crû de
 <!--chiffre:mesure(decomposition?facteur=pension_relative&de=2005&a=2025&source=cor)-->8,9<!--/--> %
 quand le modèle la fait croître de
-<!--chiffre:mesure(decomposition?facteur=pension_relative&de=2005&a=2025)-->12,7<!--/--> %. L'écart
+<!--chiffre:mesure(decomposition?facteur=pension_relative&de=2005&a=2025)-->11,3<!--/--> %. L'écart
 de 2070 et celui de la reconstitution sont donc un seul et même défaut : la
 pension que la grille sert à chaque retraité progresse, d'une génération à
 l'autre, plus vite que la pension moyenne réelle. Deux tests le tiennent,
