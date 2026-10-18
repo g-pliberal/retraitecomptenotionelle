@@ -3,7 +3,8 @@
 
     python scripts/fetch/cor_cycle_de_vie.py
     python scripts/fetch/cor_cycle_de_vie.py --fichier Donnees_RA2026_P3_2.xlsx \
-        --fichier-2025 Donnees_RA2025_P3.xlsx
+        --fichier-2025 Donnees_RA2025_P3.xlsx \
+        --fichier-annexe "Donnees_RA2026_Annexe methodologique.xlsx"
 
 POURQUOI CE TÉMOIN. Le dépôt calcule, depuis l'action 138 (étape 9), les
 indicateurs de cycle de vie de ses carrières : la durée de retraite, le
@@ -32,6 +33,11 @@ publiait (classeur de la partie 3, feuille « Fig 3.7 »), BRUT : le rapport de
 (note 140). Le dépôt la retrouve, quand celle de 2026 n'en est pas la
 version nette (action 138, étape 9, note du 10 octobre 2026).
 
+ET L'ACTUALISATION SELON LES PRIX. Le classeur de l'annexe méthodologique de
+juin 2026, feuille « Fig A2.13 » : le même rendement net du cas type n° 2,
+flux actualisés selon les prix. La révision de 2026 y demeure : elle tient aux
+flux, non à l'actualisation (note du 18 octobre 2026).
+
 Le témoin est versionné : les tests le relisent sans réseau.
 """
 
@@ -51,6 +57,8 @@ URL = ("https://www.cor-retraites.fr/sites/default/files/2026-06/"
        "Donn%C3%A9es_RA2026_P3_2.xlsx")
 URL_2025 = ("https://www.cor-retraites.fr/sites/default/files/2025-10/"
             "Donn%C3%A9es_RA2025_P3.xlsx")
+URL_ANNEXE = ("https://www.cor-retraites.fr/sites/default/files/2026-06/"
+              "Donn%C3%A9es_RA2026_Annexe%20m%C3%A9thodologique.xlsx")
 SORTIE = RACINE / "tests" / "temoins" / "cor_cycle_de_vie.json"
 ENTETES = {"User-Agent": "retraite-notionnelle/0.1 (recherche publique)"}
 
@@ -114,9 +122,10 @@ def lire_duree(grille: dict) -> dict:
 
 
 def lire_rendement(grille: dict) -> dict[str, float]:
-    """La figure 3.7 : le rendement interne net du cas type n° 2."""
+    """La figure 3.7, ou la figure A2.13 de l'annexe : le rendement interne net
+    du cas type n° 2, sous la ligne des générations."""
     lignes = _lignes(grille)
-    entete = next(l for l in lignes if isinstance(l[1], str) and "cas n°2" in l[1])
+    entete = next(l for l in lignes if 1940.0 in l)
     reference = next(l for l in lignes if isinstance(l[1], str) and l[1].strip() == "Sc. Réf")
     return _serie(entete, reference)
 
@@ -155,7 +164,8 @@ def controler(temoin: dict) -> list[str]:
     for nom, serie in (("durée", temoin["duree_retraite"]["annees"]),
                        ("part de vie", temoin["duree_retraite"]["part_de_vie"]),
                        ("rendement", temoin["rendement_cas_type_2"]),
-                       ("rendement brut de 2025", temoin["rendement_cas_type_2_brut_2025"])):
+                       ("rendement brut de 2025", temoin["rendement_cas_type_2_brut_2025"]),
+                       ("rendement selon les prix", temoin["rendement_cas_type_2_prix"])):
         if sorted(serie) != attendues:
             erreurs.append(f"{nom} : générations {sorted(serie)[:3]}…")
     for qui in ("ensemble", "femmes", "hommes"):
@@ -186,9 +196,14 @@ def main(argv: list[str] | None = None) -> int:
                            help="classeur de 2026 déjà téléchargé, lu au lieu du réseau")
     analyseur.add_argument("--fichier-2025", type=Path,
                            help="classeur de 2025 déjà téléchargé, lu au lieu du réseau")
+    analyseur.add_argument("--fichier-annexe", type=Path,
+                           help="classeur de l'annexe de 2026 déjà téléchargé, lu au "
+                                "lieu du réseau")
     arguments = analyseur.parse_args(argv)
     grilles = feuilles(_classeur(arguments.fichier, URL))
     grilles_2025 = feuilles(_classeur(arguments.fichier_2025, URL_2025))
+    grilles_annexe = feuilles(_classeur(arguments.fichier_annexe, URL_ANNEXE),
+                              ("Fig A2.13",))
     temoin = {
         "source": {
             "editeur": "Conseil d'orientation des retraites",
@@ -232,6 +247,15 @@ def main(argv: list[str] | None = None) -> int:
             "lu_le": "2026-10-10",
         },
         "rendement_cas_type_2_brut_2025": lire_rendement(grilles_2025["Fig 3.7"]),
+        "source_annexe": {
+            "editeur": "Conseil d'orientation des retraites",
+            "reference": "Rapport annuel de juin 2026, annexe méthodologique en "
+                         "ligne, figure A2.13 : le rendement interne net du cas "
+                         "type n° 2, actualisation selon les prix",
+            "url": URL_ANNEXE,
+            "lu_le": "2026-10-18",
+        },
+        "rendement_cas_type_2_prix": lire_rendement(grilles_annexe["Fig A2.13"]),
     }
     erreurs = controler(temoin)
     if erreurs:

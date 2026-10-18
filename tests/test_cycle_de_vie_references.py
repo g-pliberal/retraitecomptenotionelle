@@ -302,6 +302,43 @@ def test_le_rendement_brut_du_cas_type_2_est_celui_du_cor_de_2025(cor, cas_type_
                - (brut_2025["1955"] - brut_2025["1970"])) <= 0.001
 
 
+#: Le rendement brut du cas type n° 2 de la génération 2000, actualisé selon les
+#: prix, au COR de juin 2025 : « 1,2 % » (annexe méthodologique en ligne du
+#: rapport de juin 2025, figure A2.11, lecture), au dixième de point.
+RENDEMENT_PRIX_2000_BRUT_2025 = 0.012
+
+
+def test_la_revision_de_2026_tient_aux_flux_non_a_l_actualisation(cor, cas_type_2, simulateur):
+    """Le COR publie aussi le rendement net du cas type n° 2 actualisé selon
+    les prix (annexe méthodologique de juin 2026, figure A2.13). Les deux
+    actualisations lui donnent la même pente : de 1955 à 1970, 0,29 point de
+    baisse sous les prix, 0,36 sous le salaire moyen ; au dépôt, 0,94 et 0,89.
+    Sous les prix, communs au dépôt et au COR, l'écart de pente demeure :
+    la révision de 2026 (:data:`REVISION_DE_2026`) n'est ni dans le salaire
+    moyen du COR, ni dans le passage à une rémunération nette, mais dans les
+    flux, cotisations ou pensions. La génération 2000 le dit aussi : de 2025 à
+    2026, son rendement gagne 0,33 point sous le salaire moyen (0,50 % brut,
+    0,83 % net) et autant sous les prix (1,2 %, 1,53 %) ; l'écart des deux
+    actualisations reste 0,70 point, la productivité du COR les deux années.
+    Ni le rapport, ni son annexe, ni la séance du 16 avril 2026 qui l'a
+    préparé ne disent la révision (note du 18 octobre 2026)."""
+    prix, smpt = cor["rendement_cas_type_2_prix"], cor["rendement_cas_type_2"]
+    calcules = {}
+    for generation, comparaison in cas_type_2.items():
+        flux = cycle_de_vie.flux_des_systemes(simulateur, comparaison)["actuel"]
+        calcules[generation] = cycle_de_vie.indicateurs(
+            flux, simulateur, cycle_de_vie.convention_cor(simulateur, comparaison))
+    pente_cor = prix["1955"] - prix["1970"]
+    pente_depot = calcules[1955].rendement_reel - calcules[1970].rendement_reel
+    assert abs(pente_cor - (smpt["1955"] - smpt["1970"])) <= 0.001, pente_cor
+    assert abs(pente_depot - (calcules[1955].rendement_smpt
+                              - calcules[1970].rendement_smpt)) <= 0.001, pente_depot
+    assert pente_depot > 2.0 * pente_cor, (pente_depot, pente_cor)
+    assert abs((prix["2000"] - smpt["2000"])
+               - (RENDEMENT_PRIX_2000_BRUT_2025
+                  - cor["rendement_cas_type_2_brut_2025"]["2000"])) <= 0.0005
+
+
 #: Les régimes que le COR range sous l'Agirc-Arrco.
 REGIMES_AGIRC_ARRCO = {"arrco", "arrco_tranche_2", "agirc", "agirc_arrco"}
 
