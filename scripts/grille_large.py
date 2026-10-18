@@ -627,8 +627,8 @@ DEPARTS_AVEC_DECOTE = True
 #: l'âge légal de sa génération ce qu'attendent leurs départs avec surcote, en
 #: trois attentes (:func:`attentes_des_surcotes`) ; le reste part au taux plein.
 #: Quatre conventions : l'attente se compte de l'âge légal, au milieu de chaque
-#: âge de liquidation, et jamais avant le taux plein ; les âges se regroupent
-#: deux par deux (:data:`AGES_PAR_ATTENTE`), chaque attente de plus multipliant
+#: âge de liquidation, et jamais avant le taux plein ; les âges se regroupent en
+#: trois attentes (:data:`PREMIERES_ANNEES`), chaque attente de plus multipliant
 #: les carrières que la page pèse une à une, à un coût qui croît comme leur
 #: carré ; la part ne dépend ni du rang de salaire, ni de la génération, sinon
 #: qu'aucune n'attend avant 2004 (:data:`ANNEE_DE_LA_SURCOTE`) ; les carrières
@@ -652,12 +652,12 @@ GENERATION_DES_SURCOTES = 1953
 #: l'âge légal.
 TRANCHES_DES_SURCOTES = ("30_40", "40_plus")
 
-#: Les âges de liquidation que chaque attente d'un départ avec surcote réunit,
-#: depuis l'année de l'âge légal, et le nombre de ces attentes, la dernière
-#: prenant les âges qui suivent : l'année de l'âge légal et la suivante, les
-#: deux d'après, et le reste.
-AGES_PAR_ATTENTE = 2
-ATTENTES = 3
+#: Les trois attentes d'un départ avec surcote réunissent les âges de
+#: liquidation des :data:`PREMIERES_ANNEES` premières années de l'âge légal,
+#: ceux d'avant l'année où s'annule la décote, et ceux de cette année-là et
+#: d'après : l'âge d'annulation, où beaucoup partent, ne se partage pas entre
+#: deux attentes, ni ne reçoit celle des départs d'avant lui.
+PREMIERES_ANNEES = 2
 
 #: La dix-septième version (action 138, étape 14, le 16 octobre 2026) : les
 #: retraités de l'Ircantec sont, pour la plupart, des salariés du privé passés
@@ -2014,20 +2014,19 @@ def parts_avec_surcote(publies: dict) -> dict[str, float]:
 
 
 def attentes_des_surcotes(publies: dict, racine: Path) -> dict[str, list[tuple[float, float]]]:
-    """Les départs avec surcote des nés en 1953, sexe par sexe, en
-    :data:`ATTENTES` attentes après l'âge légal de la génération, ``(attente,
-    part)`` triés. Chaque âge de liquidation pèse la part de l'âge dans la
-    génération, fois celle de ses départs qui surcotent, et attend jusqu'au
-    milieu de l'âge — de l'âge légal à l'anniversaire qui le suit pour l'année
-    de l'âge légal, l'âge et demi ensuite, « 67 ans et plus » pris pour 67 ans,
-    le dernier que l'enquête voie ; les âges se regroupent
-    :data:`AGES_PAR_ATTENTE` par :data:`AGES_PAR_ATTENTE` depuis l'année de
-    l'âge légal, chaque attente au milieu de ses âges, pondéré, et pesant leur
-    part. Nul ne surcote avant l'âge légal."""
-    from retraite_notionnelle.scenarios.actuel import AgesOuverture
+    """Les départs avec surcote des nés en 1953, sexe par sexe, en trois
+    attentes après l'âge légal de la génération (:data:`PREMIERES_ANNEES`),
+    ``(attente, part)`` triés. Chaque âge de liquidation pèse la part de l'âge
+    dans la génération, fois celle de ses départs qui surcotent, et attend
+    jusqu'au milieu de l'âge — de l'âge légal à l'anniversaire qui le suit pour
+    l'année de l'âge légal, l'âge et demi ensuite, « 67 ans et plus » pris pour
+    67 ans, le dernier que l'enquête voie ; chaque attente au milieu de ses
+    âges, pondéré, et pesant leur part. Nul ne surcote avant l'âge légal."""
+    from retraite_notionnelle.scenarios.actuel import AgesAnnulationDecote, AgesOuverture
 
     generation = GENERATION_DES_SURCOTES
     legal = AgesOuverture(racine).age(generation)[0]
+    annulation = AgesAnnulationDecote(racine).age(generation)[0]
     sortie = {}
     for sexe in ("F", "H"):
         groupes: dict[int, list[float]] = {}
@@ -2039,7 +2038,10 @@ def attentes_des_surcotes(publies: dict, racine: Path) -> dict[str, list[tuple[f
             if age + 1.0 <= legal:
                 continue
             masse = part * publies[(generation, tableau, colonne, sexe, "condition_surcote")]
-            rang = min(ATTENTES - 1, int(age - math.floor(legal)) // AGES_PAR_ATTENTE)
+            if age >= math.floor(annulation):
+                rang = 2
+            else:
+                rang = 0 if age - math.floor(legal) < PREMIERES_ANNEES else 1
             groupe = groupes.setdefault(rang, [0.0, 0.0])
             groupe[0] += masse * ((max(age, legal) + age + 1.0) / 2.0 - legal)
             groupe[1] += masse

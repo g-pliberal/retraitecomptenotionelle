@@ -1113,8 +1113,9 @@ def test_la_part_et_l_attente_des_departs_avec_surcote_se_lisent_dans_l_eir(para
     départs après l'âge légal, 61 ans et 2 mois, au milieu de chaque âge de
     liquidation — 1 an et 4 mois pour les départs de 62 ans, qui pèsent 8,9 %
     des femmes, dont 46,8 % en surcote, 5 mois pour ceux de l'année de l'âge
-    légal —, les âges réunis deux par deux : 61 et 62 ans, 63 et 64, puis 65
-    ans et au-delà. Nul ne surcote avant l'âge légal."""
+    légal —, en trois attentes : les départs de ses deux premières années, 61
+    et 62 ans, ceux d'avant l'année où s'annule la décote, à 66 ans et 2 mois,
+    et ceux de cette année-là et d'après. Nul ne surcote avant l'âge légal."""
     publies = G.departs_publies(parametres.racine_donnees)
     parts = G.parts_avec_surcote(publies)
     assert parts["F"] == pytest.approx(0.142 * 87.4 / 57.3)
@@ -1125,7 +1126,7 @@ def test_la_part_et_l_attente_des_departs_avec_surcote_se_lisent_dans_l_eir(para
     attentes = {age: (61.17 + 62.0) / 2 - 61.17 if age == 61 else age + 0.5 - 61.17
                 for age in femmes}
     total = sum(femmes.values())
-    groupes = [(61, 62), (63, 64), (65, 66, 67)]
+    groupes = [(61, 62), (63, 64, 65), (66, 67)]
     attendues = [(sum(femmes[a] * attentes[a] for a in ages) / sum(femmes[a] for a in ages),
                   sum(femmes[a] for a in ages) / total) for ages in groupes]
     assert [attente for attente, _ in lues] == pytest.approx(
