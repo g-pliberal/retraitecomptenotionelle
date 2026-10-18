@@ -12,7 +12,9 @@ et celle du COR ; depuis le 16 octobre, l'impôt sur le revenu
 ``donnees/impot_revenu.py``), donc les deux conventions après impôt, l'impôt
 de chaque année et le taux de remplacement après impôt au départ ; depuis
 le 16 octobre aussi, les âges de départ d'une carrière et ce que chacun
-donne (``ages_balayes``, ``balayage_d_une_carriere``). Des carrières de statuts et de générations variés — un départ passé, que le droit
+donne (``ages_balayes``, ``balayage_d_une_carriere``) ; depuis le 18 octobre,
+la pension du départ par étage et le revenu autour du départ
+(``pension_par_etage``, ``revenus_autour_du_depart``). Des carrières de statuts et de générations variés — un départ passé, que le droit
 a fait vivre, un départ de l'année, un départ à venir — se calculent des deux
 côtés, sous le simulateur du site, et chaque chiffre doit s'y retrouver ; le
 module de l'impôt se rejoue seul sur une grille de foyers, d'années et de
@@ -63,6 +65,10 @@ CONVENTIONS = {
 
 #: Les systèmes dont le taux de remplacement après impôt au départ se compare.
 SCENARIOS_REMPLACEMENT = ("actuel", "notionnel_retroactif", "notionnel_liberal")
+
+#: Les systèmes dont le revenu autour du départ se compare : le scénario 1, et
+#: le 6, que son âge légal fait partir plus tard et qui sert son pilier.
+SCENARIOS_AUTOUR = ("actuel", "notionnel_liberal")
 
 EQUILIBRES = ((1950, None), (1975, "F"), (1995, "H"))
 
@@ -194,6 +200,13 @@ def _python(carrieres, conventions, equilibres):
         sous_l_impot = cycle_de_vie.flux_des_systemes(simulateur, comparaison, impot="prix")
         actuel = sous_l_impot["actuel"]
         cas.append({
+            "etages": {scenario: cycle_de_vie.pension_par_etage(
+                simulateur, comparaison, scenario, systemes=sous_l_impot).dictionnaire()
+                for scenario in cycle_de_vie.SCENARIOS},
+            "autour": {scenario: [ligne.dictionnaire() for ligne in
+                                  cycle_de_vie.revenus_autour_du_depart(
+                                      simulateur, comparaison, scenario, systemes=sous_l_impot)]
+                       for scenario in SCENARIOS_AUTOUR},
             "impots": {str(annee): [i.salaire, i.benefice, i.pension, i.impot, i.sur_la_pension]
                        for annee, i in actuel.impots.items()},
             "revenus_apres_impot": _par_annee(actuel.revenus_apres_impot),
@@ -307,6 +320,7 @@ def les_deux():
         "cas": [{"carriere": _options(*c), "conventions": CONVENTIONS} for c in CARRIERES],
         "equilibres": [{"generation": g, "sexe": s} for g, s in EQUILIBRES],
         "remplacements": SCENARIOS_REMPLACEMENT,
+        "autour": SCENARIOS_AUTOUR,
         "impots": demandes,
         "balayages": [{"carriere": o, "age": a, "cor": c, "pas": p, "impot": i}
                       for o, a, c, p, i in BALAYAGES],

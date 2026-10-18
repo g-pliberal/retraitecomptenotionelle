@@ -11,7 +11,8 @@ impôt, l'impôt de chaque année est celui du foyer qui la déclare (action 138
 étape 5) ; à chaque âge de départ, de l'âge d'ouverture à l'annulation de la
 décote, en net, sous les trois productivités du COR ; l'âge d'équilibre, où
 une génération retrouve le diviseur ou la part de vie de la référence du
-compte.
+compte ; la pension du départ par étage et le revenu autour du départ, les
+tableaux 1 et 2 de Typfallsmodellen.
 La confrontation aux chiffres publiés par le COR, TRAJECTOiRE, l'OCDE, l'ETK
 et le simulateur du COR est dans ``tests/test_cycle_de_vie_references.py``.
 """
@@ -640,6 +641,150 @@ def test_une_convention_apres_impot_est_nette_et_demande_un_flux_impose(simulate
     with pytest.raises(ValueError, match="impot='prix'"):
         cycle_de_vie.indicateurs(flux, simulateur,
                                  cycle_de_vie.convention_apres_impot(simulateur, parti_en_2044))
+
+
+# -- la pension par étage et le revenu autour du départ ------------------------------
+
+#: Le tableau 1 de Typfallsmodellen, de Pensionsmyndigheten, pour l'exemple de
+#: son manuel (PID289138, version 2.2 du 27 janvier 2025, § 2.1), l'aide-soignante
+#: née en 1960 qui part à 67 ans : chaque étage en couronnes de 2024 par an
+#: (colonne B), et en pour cent du salaire de fin de carrière (colonne D).
+TABLEAU_1_TYPFALLSMODELLEN = {
+    "inkomstpension": (172_296.0, 51.6),
+    "tillaggspension": (0.0, 0.0),
+    "premiepension": (34_596.0, 10.4),
+    "garantipension": (13_572.0, 4.1),
+    "inkomstpensionstillagg": (7_200.0, 2.2),
+    "tjanstepension": (67_068.0, 20.1),
+    "privat_pensionssparande": (0.0, 0.0),
+}
+
+
+def test_chaque_etage_se_rapporte_au_dernier_salaire_comme_dans_typfallsmodellen():
+    """Typfallsmodellen rend la pension de son cas type étage par étage, chacun
+    en part du salaire de fin de carrière, et la pension après impôt en part du
+    salaire après impôt (registre, ``typfallsmodellen``, chantier « 138.9 ») :
+    de son exemple — 334 098 couronnes de salaire, 259 206 après impôt, 209 562
+    de pension après impôt —, la pension par étage refait sa colonne D au
+    dixième de point, 88,2 % au total, 80,8 % après impôt."""
+    pension = cycle_de_vie.PensionParEtage(
+        etages={etage: montant for etage, (montant, _) in TABLEAU_1_TYPFALLSMODELLEN.items()},
+        dernier_revenu=334_098.0, apres_impot=209_562.0, dernier_revenu_apres_impot=259_206.0)
+    assert {etage: round(100.0 * part, 1) for etage, part in pension.parts.items()} == {
+        etage: publie for etage, (_, publie) in TABLEAU_1_TYPFALLSMODELLEN.items()}
+    assert pension.brute == 294_732.0
+    assert round(100.0 * pension.remplacement_brut, 1) == 88.2
+    assert round(100.0 * pension.remplacement_apres_impot, 1) == 80.8
+    assert pension.remplacement_net is None
+
+
+def test_chaque_regime_sert_a_son_etage_et_la_proposition_aux_siens(
+        simulateur, parti_en_2014, parti_en_2044):
+    """Au départ, la pension du scénario 1 se range par étage, chaque régime
+    au sien : le régime général à la base, l'Arrco puis l'Agirc-Arrco à la
+    complémentaire. La fonctionnaire de l'État a un régime intégré, qui sert
+    aussi sa majoration pour trois enfants ; le RAFP, servi à part, n'y est
+    pas. Un système notionnel n'a qu'un étage, son compte, auquel le
+    scénario 6 ajoute son pilier capitalisé ; une réforme prospective garde
+    à qui part avant elle les étages du scénario 1. Leur somme est la
+    pension du départ."""
+    regimes = {p.regime: p.montant for p in parti_en_2044.actuel.pensions_par_regime}
+    assert cycle_de_vie.pension_par_etage(simulateur, parti_en_2044).etages == pytest.approx({
+        "base": regimes["regime_general"],
+        "complementaire": regimes["arrco"] + regimes["agirc_arrco"]})
+    fonctionnaire = simulateur.simuler(simulateur.carriere_simple(
+        annee_naissance=1966, sexe="F", affiliation="fonctionnaire_etat", age_debut=22,
+        age_liquidation=63.0, niveau_salaire=1.0, part_primes=0.2, nombre_enfants=3,
+        jour_naissance=15))
+    majoration = next(a for a in fonctionnaire.actuel.avantages_appliques
+                      if a.code == "majoration_enfants")
+    integre = next(p.montant for p in fonctionnaire.actuel.pensions_par_regime
+                   if p.regime == "fonction_publique_etat")
+    assert fonctionnaire.actuel.pension_hors_repartition > 0.0
+    assert cycle_de_vie.pension_par_etage(simulateur, fonctionnaire).etages == pytest.approx(
+        {"integre": integre + majoration.montant})
+    liberal = parti_en_2044.notionnel_liberal
+    assert cycle_de_vie.pension_par_etage(simulateur, parti_en_2044,
+                                          "notionnel_liberal").etages == pytest.approx({
+        "notionnel": liberal.garantie_vieillesse.pension_contributive,
+        "capitalise": liberal.rente_capitalisation_obligatoire})
+    assert cycle_de_vie.pension_par_etage(simulateur, parti_en_2044,
+                                          "notionnel_retroactif").etages == pytest.approx(
+        {"notionnel": parti_en_2044.notionnel_retroactif.pension_annuelle})
+    assert (cycle_de_vie.pension_par_etage(simulateur, parti_en_2014, "notionnel_prospectif").etages
+            == cycle_de_vie.pension_par_etage(simulateur, parti_en_2014).etages)
+    for comparaison in (parti_en_2014, parti_en_2044, fonctionnaire):
+        for scenario in cycle_de_vie.SCENARIOS:
+            assert cycle_de_vie.pension_par_etage(simulateur, comparaison, scenario).brute == (
+                pytest.approx(cycle_de_vie.pension_au_depart(simulateur, comparaison, scenario)))
+
+
+def test_la_pension_par_etage_rend_les_trois_taux_de_remplacement_au_depart(
+        simulateur, parti_en_2044, impose_en_2044):
+    """En part du dernier revenu, la pension par étage rend ce que le
+    simulateur et le module rendent déjà : brute, le taux de remplacement du
+    simulateur ; nette des prélèvements de l'année du départ, sur le dernier
+    revenu net ; après l'impôt d'une année entière de cette pension, sur le
+    dernier revenu après impôt, le taux net de l'OCDE. Avant impôt, elle n'a
+    pas de pension après impôt."""
+    assert cycle_de_vie.pension_par_etage(
+        simulateur, parti_en_2044, systemes=impose_en_2044).remplacement_brut == pytest.approx(
+        parti_en_2044.taux_remplacement_actuel)
+    retenu = cycle_de_vie.convention_nette(simulateur, parti_en_2044).retenu
+    for scenario in ("actuel", "notionnel_liberal"):
+        pension = cycle_de_vie.pension_par_etage(simulateur, parti_en_2044, scenario,
+                                                 systemes=impose_en_2044)
+        flux = impose_en_2044[scenario]
+        assert pension.remplacement_net == pytest.approx(
+            pension.brute * retenu(flux.annee_liquidation) / flux.dernier_revenu_net)
+        assert pension.remplacement_apres_impot == pytest.approx(
+            cycle_de_vie.remplacement_apres_impot(simulateur, parti_en_2044, scenario,
+                                                  systemes=impose_en_2044))
+    avant = cycle_de_vie.pension_par_etage(simulateur, parti_en_2044)
+    assert avant.nette is not None
+    assert avant.apres_impot is None and avant.remplacement_apres_impot is None
+
+
+def test_le_revenu_autour_du_depart_va_de_dix_ans_avant_a_dix_ans_apres(
+        simulateur, parti_en_2044, impose_en_2044):
+    """Le tableau 2 de Typfallsmodellen : chaque année, de dix ans avant celle
+    du départ à dix ans après, en euros de l'année du départ, le revenu
+    d'activité, la pension des mois servis, leur net et l'impôt du foyer.
+    Né le 15 janvier 1980, parti à 64 ans en février 2044, le salarié
+    travaille encore en janvier, le douzième de son dernier revenu annualisé ;
+    sa pension sert onze mois ; ensuite, menée sur les prix, elle vaut chaque
+    année, en euros de 2044, la pension du départ."""
+    lignes = cycle_de_vie.revenus_autour_du_depart(simulateur, parti_en_2044,
+                                                   systemes=impose_en_2044)
+    assert [ligne.annee for ligne in lignes] == list(range(2034, 2055))
+    flux = impose_en_2044["actuel"]
+    macro = simulateur.macro
+    retenu = cycle_de_vie.convention_nette(simulateur, parti_en_2044).retenu
+    par_annee = {ligne.annee: ligne for ligne in lignes}
+    avant = par_annee[2043]
+    euros = macro.coefficient_prix(2043, 2044)
+    assert avant.pension == 0.0
+    assert avant.revenu == pytest.approx(flux.revenus[2043] * euros)
+    assert avant.net == pytest.approx(flux.revenus_nets[2043] * euros)
+    assert avant.impot == pytest.approx(flux.impots[2043].impot * euros)
+    depart = par_annee[2044]
+    assert depart.revenu == pytest.approx(flux.dernier_revenu / 12.0)
+    assert depart.pension == pytest.approx(flux.niveaux[2044] * 11.0 / 12.0)
+    au_depart = cycle_de_vie.pension_au_depart(simulateur, parti_en_2044, "actuel")
+    for annee in (2045, 2054):
+        ligne = par_annee[annee]
+        assert ligne.revenu == 0.0
+        assert ligne.pension == pytest.approx(au_depart)
+        assert ligne.net == pytest.approx(au_depart * retenu(annee))
+        assert ligne.impot == pytest.approx(
+            flux.impots[annee].impot * macro.coefficient_prix(annee, 2044))
+    for ligne in lignes:
+        assert ligne.brut == pytest.approx(ligne.revenu + ligne.pension)
+        assert ligne.apres_impot == pytest.approx(ligne.net - ligne.impot)
+    sans_impot = cycle_de_vie.revenus_autour_du_depart(simulateur, parti_en_2044, annees=2)
+    assert [ligne.annee for ligne in sans_impot] == [2042, 2043, 2044, 2045, 2046]
+    assert all(ligne.impot is None and ligne.apres_impot is None for ligne in sans_impot)
+    assert sans_impot[1].net == pytest.approx(avant.net)
 
 
 # -- à chaque âge de départ ---------------------------------------------------------

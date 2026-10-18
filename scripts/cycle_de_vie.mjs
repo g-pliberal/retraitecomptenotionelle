@@ -6,11 +6,14 @@
  * coût lit) : le script en résout chaque case — les options de sa carrière,
  * l'âge où le pilote la fait partir — et ce programme fait le reste, comme le
  * site le fait d'une saisie (action 161, étape 5, le pont). Il reçoit sur son
- * entrée standard une demande JSON, une seule de ces trois :
+ * entrée standard une demande JSON, une seule de ces quatre :
  *
  * - `grille` : `{cas: [{cle, options}], cor, impot}` — les indicateurs des six
  *   systèmes de chaque case, sous la convention du dépôt, du COR, ou après
  *   impôt (`indicateursDesSystemes`) ;
+ * - `etages` : `{cas: [{cle, options}], impot}` — la pension du départ de
+ *   chaque case, étage par étage, et ses taux de remplacement, avant ou après
+ *   impôt (`pensionParEtage`) ;
  * - `ages` : `{cas: [{cle, productivite, options, age}], cor, impot, pas}` —
  *   chaque case à chacun de ses âges de départ, sous l'hypothèse de
  *   productivité qu'elle nomme (`balayageDUneCarriere`) ;
@@ -35,7 +38,8 @@ import { PARAMETRES_DEFAUT } from "../moteur/js/config.js";
 import { Contexte } from "../moteur/js/contexte.js";
 import {
   ageDEquilibre, ageDePartDeVieConstante, balayageDUneCarriere, Convention, conventionApresImpot,
-  conventionCor, indicateursDesSystemes, referenceDuCompte, SCENARIOS,
+  conventionCor, fluxDesSystemes, indicateursDesSystemes, pensionParEtage, referenceDuCompte,
+  SCENARIOS,
 } from "../moteur/js/cycle-de-vie.js";
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -83,6 +87,16 @@ function grille({ cas, cor, impot }) {
       convention = new Convention();
     }
     return parScenario(indicateursDesSystemes(simulateur, comparaison, convention));
+  });
+}
+
+function etages({ cas, impot }) {
+  const simulateur = contexte.simulateur();
+  return parCase(cas, ({ options }) => {
+    const comparaison = simulateur.simuler(carriere(simulateur, options));
+    const systemes = fluxDesSystemes(simulateur, comparaison, { nets: true, impot });
+    return Object.fromEntries(SCENARIOS.map((scenario) => [scenario,
+      pensionParEtage(simulateur, comparaison, scenario, systemes).dictionnaire()]));
   });
 }
 
@@ -139,7 +153,7 @@ function equilibre({ generations, cas }) {
            cas_types: resultats, echecs };
 }
 
-const MODES = { grille, ages, equilibre };
+const MODES = { grille, etages, ages, equilibre };
 const [mode] = Object.keys(demande);
 if (Object.keys(demande).length !== 1 || !(mode in MODES)) {
   throw new Error(`demande attendue : une seule de ${Object.keys(MODES).join(", ")}`);

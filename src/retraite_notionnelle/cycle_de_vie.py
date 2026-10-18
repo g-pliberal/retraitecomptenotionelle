@@ -122,6 +122,17 @@ salaire moyen ; le dépôt fait de même (:class:`Depart`), et le mène sur les
 cas types sous les trois productivités du COR (``scripts/cycle_de_vie.py
 --ages``).
 
+PAR ÉTAGE, ET AUTOUR DU DÉPART (:func:`pension_par_etage`,
+:func:`revenus_autour_du_depart`). Typfallsmodellen, le modèle des cas types de
+Pensionsmyndigheten, rend la pension du départ étage par étage, chacun en part
+du salaire de fin de carrière, avec la pension après impôt en part du salaire
+après impôt (son tableau 1), puis le revenu de chaque année, de dix ans avant
+le départ à la fin de la retraite, avant et après impôt (son tableau 2). Le
+dépôt range au scénario 1 chaque régime à son étage du catalogue — la base, la
+complémentaire, l'intégré —, sert à un système notionnel son compte, et au
+scénario 6 son pilier ; le revenu va de dix ans avant le départ à dix ans
+après, en euros de l'année du départ.
+
 L'ÂGE D'ÉQUILIBRE (:func:`age_d_equilibre`). Les indicateurs disent ce qu'une
 génération reçoit à l'âge où elle part ; deux modèles disent en plus à quel
 âge elle devrait partir pour retrouver une génération de référence. L'ETK, le
@@ -1379,6 +1390,15 @@ def _remplacement_apres_impot(simulateur, comparaison, scenario: str, flux: Flux
     dernier = flux.dernier_revenu_apres_impot
     if dernier is None or dernier <= 0.0:
         return None
+    return _pension_apres_impot(simulateur, comparaison, scenario, flux, convention,
+                                parts) / dernier
+
+
+def _pension_apres_impot(simulateur, comparaison, scenario: str, flux: Flux,
+                         convention: Convention, parts: dict[int, float]) -> float:
+    """La pension du premier mois servi, annualisée (:func:`pension_au_depart`),
+    nette des prélèvements de son année et de l'impôt d'une année entière de
+    cette pension, déclarée seule au barème de l'année du départ."""
     annee = flux.annee_liquidation
     brute = pension_au_depart(simulateur, comparaison, scenario)
     parametres = _baremes_de_l_impot(simulateur, flux.indexation_impot,
@@ -1386,7 +1406,7 @@ def _remplacement_apres_impot(simulateur, comparaison, scenario: str, flux: Flux
     impot = 0.0 if parametres is None else impot_aux_parametres(
         foyer_de_l_annee(comparaison.carriere_de(scenario), annee,
                          pension=brute * parts[annee]), parametres).impot
-    return (brute * convention.retenu(annee) - impot) / dernier
+    return brute * convention.retenu(annee) - impot
 
 
 # -- les indicateurs ---------------------------------------------------------
@@ -1720,6 +1740,230 @@ def balayage_d_une_carriere(simulateur, batir, age_demande: float, cor: bool = F
     ``age_demande``) ; avec ``impot``, après impôt (:func:`depart`)."""
     return tuple(depart(simulateur, simulateur.simuler(batir(age)), cor, age, impot)
                  for age in ages_balayes(simulateur, batir, age_demande, pas))
+
+
+# -- la pension par étage, et le revenu autour du départ ----------------------
+
+#: L'étage d'un système notionnel : son compte, où la bascule a versé les
+#: droits de tous les régimes de répartition.
+ETAGE_NOTIONNEL = "notionnel"
+#: Celui du pilier capitalisé du scénario 6.
+ETAGE_CAPITALISE = "capitalise"
+
+#: Les années que :func:`revenus_autour_du_depart` montre de part et d'autre
+#: de celle du départ : Typfallsmodellen commence son tableau 2 dix ans avant
+#: (« Int(par − 10) »).
+ANNEES_AUTOUR_DU_DEPART = 10
+
+
+@dataclass(frozen=True)
+class PensionParEtage:
+    """La pension du départ, étage par étage, et ce qu'elle remplace du
+    dernier revenu : le tableau 1 de Typfallsmodellen (:func:`pension_par_etage`).
+
+    Les montants sont annuels, dans une même unité : les euros de l'année du
+    départ pour un système du dépôt. Sans fiche de paie, le dernier revenu net
+    est ``None`` ; avant impôt, les deux champs après impôt."""
+
+    #: Le brut de chaque étage, dans l'ordre où les régimes le servent.
+    etages: dict[str, float]
+    #: Le dernier revenu d'activité annualisé (:attr:`Flux.dernier_revenu`).
+    dernier_revenu: float
+    #: La pension nette des prélèvements de l'année du départ, et le dernier
+    #: revenu net (:attr:`Flux.dernier_revenu_net`).
+    nette: float | None = None
+    dernier_revenu_net: float | None = None
+    #: La pension nette aussi de l'impôt d'une année entière d'elle seule, et
+    #: le dernier revenu après impôt (:attr:`Flux.dernier_revenu_apres_impot`).
+    apres_impot: float | None = None
+    dernier_revenu_apres_impot: float | None = None
+
+    @property
+    def brute(self) -> float:
+        # De gauche à droite, comme le jumeau.
+        total = 0.0
+        for montant in self.etages.values():
+            total += montant
+        return total
+
+    @property
+    def parts(self) -> dict[str, float]:
+        """Chaque étage en part du dernier revenu ; vide sans dernier revenu."""
+        if self.dernier_revenu <= 0.0:
+            return {}
+        return {etage: montant / self.dernier_revenu for etage, montant in self.etages.items()}
+
+    @property
+    def remplacement_brut(self) -> float | None:
+        return _rapport(self.brute, self.dernier_revenu)
+
+    @property
+    def remplacement_net(self) -> float | None:
+        return _rapport(self.nette, self.dernier_revenu_net)
+
+    @property
+    def remplacement_apres_impot(self) -> float | None:
+        """Le taux net de l'OCDE (:func:`remplacement_apres_impot`)."""
+        return _rapport(self.apres_impot, self.dernier_revenu_apres_impot)
+
+    def dictionnaire(self) -> dict:
+        return {
+            "etages": dict(self.etages), "parts": self.parts, "brute": self.brute,
+            "dernier_revenu": self.dernier_revenu, "nette": self.nette,
+            "dernier_revenu_net": self.dernier_revenu_net, "apres_impot": self.apres_impot,
+            "dernier_revenu_apres_impot": self.dernier_revenu_apres_impot,
+            "remplacement_brut": self.remplacement_brut,
+            "remplacement_net": self.remplacement_net,
+            "remplacement_apres_impot": self.remplacement_apres_impot,
+        }
+
+
+def _rapport(montant: float | None, revenu: float | None) -> float | None:
+    if montant is None or revenu is None or revenu <= 0.0:
+        return None
+    return montant / revenu
+
+
+def etages_au_depart(simulateur, comparaison, scenario: str) -> dict[str, float]:
+    """La pension brute du premier mois servi, annualisée
+    (:func:`pension_au_depart`), étage par étage, en euros de l'année du départ
+    du système. Au scénario 1, chaque régime sert l'étage que le catalogue lui
+    donne — la base, la complémentaire, l'intégré —, sa part de la majoration
+    pour enfants comprise ; un système notionnel sert son compte, et le
+    scénario 6 son pilier capitalisé. Une réforme prospective sert à qui part
+    avant elle les étages du scénario 1."""
+    if scenario != "actuel":
+        calcul = simulateur.calculs[scenario]
+        liquidation = comparaison.carriere_de(scenario).annee_liquidation
+        if not (calcul.prospectif and liquidation <= simulateur.parametres.annee_bascule):
+            resultat = getattr(comparaison, scenario)
+            etages = {ETAGE_NOTIONNEL: _pension_contributive(calcul, resultat)}
+            if resultat.rente_capitalisation_obligatoire:
+                etages[ETAGE_CAPITALISE] = resultat.rente_capitalisation_obligatoire
+            return etages
+    resultat = comparaison.actuel
+    etages: dict[str, float] = {}
+
+    def porter(regime: str, montant: float) -> None:
+        if montant:
+            etage = simulateur.catalogue[regime].etage
+            etages[etage] = etages.get(etage, 0.0) + montant
+
+    # Ce que :func:`_au_depart` additionne : les régimes de répartition, et
+    # toute la majoration pour enfants.
+    for pension in resultat.pensions_par_regime:
+        if not _hors_repartition(simulateur, pension.regime):
+            porter(pension.regime, pension.montant)
+    for avantage in resultat.avantages_appliques:
+        if avantage.code == "majoration_enfants":
+            for regime, part in avantage.par_regime:
+                porter(regime, part)
+    return etages
+
+
+def pension_par_etage(simulateur, comparaison, scenario: str = "actuel",
+                      systemes: dict[str, Flux] | None = None) -> PensionParEtage:
+    """La pension du départ du système ``scenario``, étage par étage
+    (:func:`etages_au_depart`), en part du dernier revenu annualisé : le
+    tableau 1 de Typfallsmodellen, de Pensionsmyndigheten (registre,
+    ``typfallsmodellen``, chantier « 138.9 »), qui rend chaque étage brut en
+    part du salaire de fin de carrière, et la pension après impôt en part du
+    salaire après impôt. Le brut en est le taux de remplacement du simulateur ;
+    la pension nette des prélèvements de l'année du départ, au taux plein
+    (:func:`convention_nette`), se rapporte au dernier revenu net ; sous
+    l'impôt, la pension après l'impôt d'une année entière d'elle seule, au
+    dernier revenu après impôt : le taux net de l'OCDE
+    (:func:`remplacement_apres_impot`).
+
+    ``systemes``, les flux de :func:`flux_des_systemes`, nets ou sous un
+    impôt, s'ils sont déjà calculés ; sans eux, les flux nets, avant impôt.
+
+    Comme les autres indicateurs du module, la pension n'a ni l'ASPA ni la
+    garantie vieillesse, que l'impôt finance, quand Typfallsmodellen compte sa
+    garantie (« garantipension ») ; le dernier revenu est celui de la dernière
+    année cotisée, annualisé, quand Typfallsmodellen moyenne les cinq
+    dernières, en prix constants."""
+    if systemes is None:
+        systemes = flux_des_systemes(simulateur, comparaison, nets=True)
+    flux = systemes[scenario]
+    convention = convention_nette(simulateur, comparaison)
+    pension = PensionParEtage(
+        etages=etages_au_depart(simulateur, comparaison, scenario),
+        dernier_revenu=flux.dernier_revenu,
+        dernier_revenu_net=flux.dernier_revenu_net,
+        dernier_revenu_apres_impot=flux.dernier_revenu_apres_impot)
+    apres = None
+    if flux.impots is not None:
+        apres = _pension_apres_impot(simulateur, comparaison, scenario, flux, convention,
+                                     parts_imposables_par_annee(simulateur, comparaison))
+    return replace(pension, nette=pension.brute * convention.retenu(flux.annee_liquidation),
+                   apres_impot=apres)
+
+
+@dataclass(frozen=True)
+class AnneeAutourDuDepart:
+    """Une année autour du départ, en euros de l'année du départ : ce que la
+    carrière gagne, ce que la pension sert, et ce que les prélèvements et
+    l'impôt en laissent (:func:`revenus_autour_du_depart`)."""
+
+    annee: int
+    #: Le revenu d'activité brut de l'année.
+    revenu: float
+    #: La pension brute qu'elle sert, de ses mois servis.
+    pension: float
+    #: Les deux, nets de leurs prélèvements ; ``None`` sans fiche de paie.
+    net: float | None
+    #: L'impôt sur le revenu du foyer de l'année ; ``None`` avant impôt.
+    impot: float | None
+
+    @property
+    def brut(self) -> float:
+        return self.revenu + self.pension
+
+    @property
+    def apres_impot(self) -> float | None:
+        if self.net is None or self.impot is None:
+            return None
+        return self.net - self.impot
+
+    def dictionnaire(self) -> dict:
+        return {"annee": self.annee, "revenu": self.revenu, "pension": self.pension,
+                "brut": self.brut, "net": self.net, "impot": self.impot,
+                "apres_impot": self.apres_impot}
+
+
+def revenus_autour_du_depart(simulateur, comparaison, scenario: str = "actuel",
+                             systemes: dict[str, Flux] | None = None,
+                             annees: int = ANNEES_AUTOUR_DU_DEPART
+                             ) -> tuple[AnneeAutourDuDepart, ...]:
+    """Le revenu de chaque année, de ``annees`` avant celle du départ du
+    système ``scenario`` à ``annees`` après, en euros de l'année du départ,
+    les prix déflatant chaque année : le tableau 2 de Typfallsmodellen, que
+    ses deux figures dessinent, et qui commence dix ans avant le départ. Le
+    revenu d'activité, la pension des mois servis (:meth:`Flux.servi`), leur
+    net, la pension nette des prélèvements de son année au taux plein
+    (:func:`convention_nette`), et, sous l'impôt, l'impôt du foyer de
+    l'année (:func:`impots_par_annee`). ``systemes`` comme pour
+    :func:`pension_par_etage`."""
+    if systemes is None:
+        systemes = flux_des_systemes(simulateur, comparaison, nets=True)
+    flux = systemes[scenario]
+    convention = convention_nette(simulateur, comparaison)
+    depart = flux.annee_liquidation
+    lignes = []
+    for annee in range(depart - annees, depart + annees + 1):
+        euros = simulateur.macro.coefficient_prix(annee, depart)
+        pension = flux.niveaux.get(annee, 0.0) * flux.servi(annee)
+        net = None
+        if flux.revenus_nets is not None:
+            net = (flux.revenus_nets.get(annee, 0.0) + pension * convention.retenu(annee)) * euros
+        impot = None
+        if flux.impots is not None:
+            impot = flux.impots[annee].impot * euros if annee in flux.impots else 0.0
+        lignes.append(AnneeAutourDuDepart(
+            annee=annee, revenu=flux.revenus.get(annee, 0.0) * euros, pension=pension * euros,
+            net=net, impot=impot))
+    return tuple(lignes)
 
 
 # -- l'âge d'équilibre -------------------------------------------------------

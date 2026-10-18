@@ -2,11 +2,12 @@
  * Calcule les indicateurs de cycle de vie avec le portage JavaScript.
  *
  * Reçoit un fichier JSON — `{cas: [{carriere, conventions}], equilibres:
- * [{generation, sexe}], remplacements: [scenario], impots: [{annee, foyer,
- * unite, indexation}], balayages: [{carriere, age, cor, pas, impot}]}` — et
- * écrit, pour chaque cas, les contributions
+ * [{generation, sexe}], remplacements: [scenario], autour: [scenario],
+ * impots: [{annee, foyer, unite, indexation}], balayages: [{carriere, age,
+ * cor, pas, impot}]}` — et écrit, pour chaque cas, les contributions
  * d'équilibre de la carrière, ses revenus nets et imposables, l'impôt de
- * chaque année et ses indicateurs sous chaque convention ; pour chaque
+ * chaque année, la pension du départ par étage, le revenu autour du départ
+ * et ses indicateurs sous chaque convention ; pour chaque
  * génération, ses âges d'équilibre ; pour chaque foyer, son impôt, étape par
  * étape ; pour chaque balayage, ses âges de départ et ce que chacun donne.
  * `tests/test_cycle_de_vie_portage.py` compare le tout au modèle
@@ -23,8 +24,9 @@ import { Contexte } from "../../moteur/js/contexte.js";
 import { contributionsDUneCarriere } from "../../moteur/js/contributions-equilibre.js";
 import {
   ageDeDecesCor, ageDEquilibre, ageDePartDeVieConstante, agesBalayes, balayageDUneCarriere,
-  Convention, conventionApresImpot, conventionNette, fluxDesSystemes, indicateursDesSystemes, prelevementsParAnnee,
-  remplacementApresImpot, revenusImposables, revenusNets, tauxDePrelevement,
+  Convention, conventionApresImpot, conventionNette, fluxDesSystemes, indicateursDesSystemes,
+  pensionParEtage, prelevementsParAnnee, remplacementApresImpot, revenusAutourDuDepart,
+  revenusImposables, revenusNets, SCENARIOS, tauxDePrelevement,
 } from "../../moteur/js/cycle-de-vie.js";
 import {
   chargerBaremesImpotRevenu, croissanceMacro, Declarant, Foyer, impotDuFoyer,
@@ -62,6 +64,11 @@ const cas = demande.cas.map(({ carriere: options, conventions }) => {
     const sousLImpot = fluxDesSystemes(simulateur, comparaison, { impot: "prix" });
     const actuel = sousLImpot.actuel;
     return {
+      etages: Object.fromEntries(SCENARIOS.map((scenario) => [scenario,
+        pensionParEtage(simulateur, comparaison, scenario, sousLImpot).dictionnaire()])),
+      autour: Object.fromEntries((demande.autour ?? []).map((scenario) => [scenario,
+        revenusAutourDuDepart(simulateur, comparaison, scenario, sousLImpot)
+          .map((ligne) => ligne.dictionnaire())])),
       impots: Object.fromEntries([...actuel.impots].map(([annee, i]) => [annee,
         [i.salaire, i.benefice, i.pension, i.impot, i.sur_la_pension]])),
       revenus_apres_impot: parAnnee(actuel.revenus_apres_impot),

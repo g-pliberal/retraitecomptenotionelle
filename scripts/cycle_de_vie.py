@@ -12,6 +12,7 @@
         --scenarios actuel,notionnel_liberal --cor
     python scripts/cycle_de_vie.py --equilibre        # les âges d'équilibre
     python scripts/cycle_de_vie.py --equilibre --generations 1962,1970 --json equilibre.json
+    python scripts/cycle_de_vie.py --etages --impot   # la pension par étage, après impôt
 
 Ce qu'il imprime : pour chaque indicateur et chaque système, un tableau des
 treize cas types sur les sept générations de la grille
@@ -49,6 +50,13 @@ décote, de trimestre en trimestre (``balayageDUneCarriere``), en net — la
 pension nette rapportée au minimum vieillesse, le taux de remplacement net en
 euros courants, constants et en salaire moyen, et les indicateurs de cycle de
 vie. Le scénario 1 seul, sauf ``--scenarios``.
+
+PAR ÉTAGE (``--etages``, action 138, étape 9) : pour chaque système, la pension
+du départ de chaque case, étage par étage — la base, la complémentaire,
+l'intégré ; le compte notionnel, le pilier du scénario 6 —, en part du dernier
+revenu, puis ses taux de remplacement brut, net et, avec ``--impot``, après
+impôt (``pensionParEtage``) : le tableau 1 de Typfallsmodellen, le modèle des
+cas types de Pensionsmyndigheten. Sous ``--json``, tout, case par case.
 
 L'ÂGE D'ÉQUILIBRE (``--equilibre``, action 138, étape 9) : pour chaque
 génération, sur la table commune, puis pour chaque cas type de la grille, sur
@@ -154,11 +162,10 @@ def productivites(racine_donnees) -> tuple[str, ...]:
     return tuple(sorted(scenarios, key=lambda nom: float(scenarios[nom]["productivite_reelle"])))
 
 
-def calculer(simulateur: Simulateur, cor: bool = False, impot: str | None = None) -> dict:
-    """Les indicateurs de chaque case de la grille, système par système, sous
-    ``"<code>|<génération>"`` ; après impôt avec ``impot``, l'indexation du
-    barème. Une case que le droit écarte (``carriere_de_la_grille``) ou que le
-    portage refuse en est absente."""
+def _cases(simulateur: Simulateur) -> list[dict]:
+    """Les cases de la grille, ``"<code>|<génération>"`` et les options de leur
+    carrière ; une case que le droit écarte (``carriere_de_la_grille``) n'y
+    est pas."""
     cas = []
     for code, generation in sorted((c.code, g) for c in CAS_TYPES for g in GENERATIONS):
         type_ = next(c for c in CAS_TYPES if c.code == code)
@@ -168,7 +175,24 @@ def calculer(simulateur: Simulateur, cor: bool = False, impot: str | None = None
             continue
         cas.append({"cle": f"{code}|{generation}", "options": options(
             simulateur, type_, generation, carriere.age_liquidation)})
-    return portage({"grille": {"cas": cas, "cor": cor, "impot": impot}})["resultats"]
+    return cas
+
+
+def calculer(simulateur: Simulateur, cor: bool = False, impot: str | None = None) -> dict:
+    """Les indicateurs de chaque case de la grille, système par système, sous
+    ``"<code>|<génération>"`` ; après impôt avec ``impot``, l'indexation du
+    barème. Une case que le droit écarte (``carriere_de_la_grille``) ou que le
+    portage refuse en est absente."""
+    return portage({"grille": {"cas": _cases(simulateur), "cor": cor,
+                               "impot": impot}})["resultats"]
+
+
+def etages(simulateur: Simulateur, impot: str | None = None) -> dict:
+    """La pension du départ de chaque case de la grille, système par système,
+    étage par étage, et ses taux de remplacement (``pensionParEtage``), sous
+    ``"<code>|<génération>"`` ; après impôt avec ``impot``. Les cases comme
+    pour :func:`calculer`."""
+    return portage({"etages": {"cas": _cases(simulateur), "impot": impot}})["resultats"]
 
 
 def _titre_des_conventions(cor: bool, nettes: bool, impot: str | None) -> str:
@@ -198,18 +222,82 @@ def _cellule(valeur: float | None, unite: str) -> str:
     return f"{valeur:>6.1f}"
 
 
-def tableau(resultats: dict, indicateur: str, scenario: str) -> str:
-    titre, unite = INDICATEURS[indicateur]
-    lignes = [f"{titre} — {LIBELLES[scenario]}",
-              f"{'':<46}" + " ".join(f"{generation:>6}" for generation in GENERATIONS)]
+def _grille(titre: str, resultats: dict, lire, unite: str) -> str:
+    """Un tableau des cas types sur les générations : ce que ``lire`` tire de
+    chaque case, un tiret pour une case absente."""
+    lignes = [titre, f"{'':<46}" + " ".join(f"{generation:>6}" for generation in GENERATIONS)]
     for cas in CAS_TYPES:
         cellules = []
         for generation in GENERATIONS:
             case = resultats.get(f"{cas.code}|{generation}")
-            cellules.append(_cellule(case[scenario][indicateur], unite)
-                            if case else f"{'—':>6}")
+            cellules.append(_cellule(lire(case), unite) if case else f"{'—':>6}")
         lignes.append(f"{cas.libelle[:45]:<46}" + " ".join(cellules))
     return "\n".join(lignes)
+
+
+def tableau(resultats: dict, indicateur: str, scenario: str) -> str:
+    titre, unite = INDICATEURS[indicateur]
+    return _grille(f"{titre} — {LIBELLES[scenario]}", resultats,
+                   lambda case: case[scenario][indicateur], unite)
+
+
+#: Les étages de la pension par étage (``--etages``), dans l'ordre où ils
+#: s'impriment : ceux du catalogue, puis ceux d'un système notionnel.
+ETAGES = {
+    "base": "Étage de base",
+    "complementaire": "Étage complémentaire",
+    "integre": "Régime intégré",
+    "additionnel": "Étage additionnel",
+    "notionnel": "Compte notionnel",
+    "capitalise": "Pilier capitalisé",
+}
+
+#: Les trois taux de remplacement de la pension par étage, et leur titre.
+REMPLACEMENTS = {
+    "remplacement_brut": "Taux de remplacement brut, tous étages",
+    "remplacement_net": "Taux de remplacement net des prélèvements de l'année du départ",
+    "remplacement_apres_impot": "Taux de remplacement après impôt, le taux net de l'OCDE",
+}
+
+LEGENDE_ETAGES = (
+    "La pension du premier mois servi, annualisée, étage par étage, en pour cent du "
+    "dernier revenu d'activité annualisé : chaque régime à son étage du catalogue, sa "
+    "part de la majoration pour enfants comprise ; un système notionnel, son compte, "
+    "le scénario 6 son pilier ; ni l'ASPA ni la garantie vieillesse (Typfallsmodellen, "
+    "son tableau 1). La pension nette se rapporte au dernier revenu net, après impôt "
+    "au dernier revenu après impôt.")
+
+
+def tableaux_des_etages(resultats: dict, scenario: str) -> list[str]:
+    """Les tableaux de la pension par étage d'un système : un par étage qu'un
+    cas type sert, puis les taux de remplacement qu'une case porte."""
+    servis = {etage for case in resultats.values() for etage in case[scenario]["etages"]}
+    tableaux = [_grille(f"{titre}, en part du dernier revenu — {LIBELLES[scenario]}",
+                        resultats, lambda case, etage=etage: case[scenario]["parts"].get(etage),
+                        "%")
+                for etage, titre in ETAGES.items() if etage in servis]
+    for cle, titre in REMPLACEMENTS.items():
+        if any(case[scenario][cle] is not None for case in resultats.values()):
+            tableaux.append(_grille(f"{titre} — {LIBELLES[scenario]}", resultats,
+                                    lambda case, cle=cle: case[scenario][cle], "%"))
+    return tableaux
+
+
+def _imprimer_les_etages(arguments, scenarios: list[str]) -> None:
+    resultats = etages(Simulateur(Parametres()), impot=arguments.impot)
+    titre = "La pension du départ par étage"
+    if arguments.impot is not None:
+        titre = _titre_des_conventions(False, True, arguments.impot).split(" ; ")[1]
+        titre = f"La pension du départ par étage, et {titre}"
+    print(titre)
+    print(LEGENDE_ETAGES)
+    for scenario in scenarios:
+        for texte in tableaux_des_etages(resultats, scenario):
+            print()
+            print(texte)
+    if arguments.json:
+        Path(arguments.json).write_text(json.dumps(resultats, ensure_ascii=False, indent=1),
+                                        encoding="utf-8")
 
 
 #: Les colonnes du balayage des âges : l'en-tête, l'unité, et ce qu'elle lit
@@ -419,6 +507,8 @@ def main(argv: list[str] | None = None) -> int:
                                                    "productivité, séparées par des virgules")
     analyseur.add_argument("--equilibre", action="store_true",
                            help="les âges d'équilibre de chaque génération et des cas types")
+    analyseur.add_argument("--etages", action="store_true",
+                           help="la pension du départ par étage, en part du dernier revenu")
     analyseur.add_argument("--impot", nargs="?", const="prix", choices=INDEXATIONS,
                            help="après impôt sur le revenu, le barème projeté sur les prix "
                                 "(par défaut) ou sur le salaire moyen")
@@ -438,6 +528,9 @@ def main(argv: list[str] | None = None) -> int:
             analyseur.error(f"système inconnu : {nom} ({', '.join(SCENARIOS)})")
     if arguments.ages:
         _imprimer_les_ages(arguments, analyseur, scenarios)
+        return 0
+    if arguments.etages:
+        _imprimer_les_etages(arguments, scenarios)
         return 0
 
     resultats = calculer(Simulateur(Parametres()), cor=arguments.cor, impot=arguments.impot)

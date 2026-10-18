@@ -20,7 +20,9 @@
  * (`impot-revenu.js`, étape 5), donc la convention après impôt et le taux de
  * remplacement après impôt au départ ; depuis le 16 octobre aussi, les âges
  * de départ d'une carrière (`agesBalayes`, `depart`, `balayageDUneCarriere`),
- * qu'une fonction bâtit à chaque âge. Les cas types du COR, que le Python
+ * qu'une fonction bâtit à chaque âge ; depuis le 18 octobre, la pension du
+ * départ par étage et le revenu autour du départ (`pensionParEtage`,
+ * `revenusAutourDuDepart`), les tableaux 1 et 2 de Typfallsmodellen. Les cas types du COR, que le Python
  * bâtit, passent par lui depuis le pont (action 161, étape 5) :
  * `scripts/cycle_de_vie.mjs` en calcule les indicateurs, les âges de départ
  * et les âges d'équilibre pour `scripts/cycle_de_vie.py`.
@@ -1057,6 +1059,15 @@ export function remplacementApresImpot(simulateur, comparaison, scenario = "actu
 function remplacementApresImpotDe(simulateur, comparaison, scenario, flux, convention, parts) {
   const dernier = flux.dernier_revenu_apres_impot;
   if (dernier === null || dernier <= 0.0) return null;
+  return pensionApresImpotDe(simulateur, comparaison, scenario, flux, convention, parts) / dernier;
+}
+
+/**
+ * La pension du premier mois servi, annualisée, nette des prélèvements de son
+ * année et de l'impôt d'une année entière de cette pension, déclarée seule au
+ * barème de l'année du départ. Jumeau de `_pension_apres_impot`.
+ */
+function pensionApresImpotDe(simulateur, comparaison, scenario, flux, convention, parts) {
   const annee = flux.annee_liquidation;
   const brute = pensionAuDepart(simulateur, comparaison, scenario);
   const parametres = baremesDeLImpot(simulateur, flux.indexation_impot,
@@ -1064,7 +1075,7 @@ function remplacementApresImpotDe(simulateur, comparaison, scenario, flux, conve
   const impot = parametres === undefined ? 0.0 : impotAuxParametres(
     foyerDeLAnnee(comparaison.carriereDe(scenario), annee, 0.0, brute * parts.get(annee)),
     parametres).impot;
-  return (brute * convention.retenu(annee) - impot) / dernier;
+  return brute * convention.retenu(annee) - impot;
 }
 
 // -- les indicateurs ---------------------------------------------------------
@@ -1353,6 +1364,192 @@ export function balayageDUneCarriere(simulateur, batir, ageDemande, cor = false,
   pas = PAS_DES_AGES, impot = null) {
   return agesBalayes(simulateur, batir, ageDemande, pas)
     .map((age) => depart(simulateur, simulateur.simuler(batir(age)), cor, age, impot));
+}
+
+// -- la pension par étage, et le revenu autour du départ ----------------------
+
+/** L'étage d'un système notionnel, son compte ; celui du pilier du scénario 6. */
+export const ETAGE_NOTIONNEL = "notionnel";
+export const ETAGE_CAPITALISE = "capitalise";
+
+/** Les années montrées de part et d'autre de celle du départ. */
+export const ANNEES_AUTOUR_DU_DEPART = 10;
+
+function rapport(montant, revenu) {
+  if (montant === null || revenu === null || revenu <= 0.0) return null;
+  return montant / revenu;
+}
+
+/**
+ * La pension du départ, étage par étage, et ce qu'elle remplace du dernier
+ * revenu : `etages`, `dernier_revenu`, `nette`, `dernier_revenu_net`,
+ * `apres_impot`, `dernier_revenu_apres_impot`. Jumeau de `PensionParEtage`.
+ */
+export class PensionParEtage {
+  constructor({
+    etages, dernier_revenu, nette = null, dernier_revenu_net = null, apres_impot = null,
+    dernier_revenu_apres_impot = null,
+  }) {
+    Object.assign(this, {
+      etages, dernier_revenu, nette, dernier_revenu_net, apres_impot,
+      dernier_revenu_apres_impot,
+    });
+    Object.freeze(this);
+  }
+
+  get brute() {
+    let total = 0.0;
+    for (const montant of Object.values(this.etages)) total += montant;
+    return total;
+  }
+
+  /** Chaque étage en part du dernier revenu ; vide sans dernier revenu. */
+  get parts() {
+    if (this.dernier_revenu <= 0.0) return {};
+    return Object.fromEntries(Object.entries(this.etages)
+      .map(([etage, montant]) => [etage, montant / this.dernier_revenu]));
+  }
+
+  get remplacement_brut() {
+    return rapport(this.brute, this.dernier_revenu);
+  }
+
+  get remplacement_net() {
+    return rapport(this.nette, this.dernier_revenu_net);
+  }
+
+  get remplacement_apres_impot() {
+    return rapport(this.apres_impot, this.dernier_revenu_apres_impot);
+  }
+
+  dictionnaire() {
+    return {
+      etages: { ...this.etages }, parts: this.parts, brute: this.brute,
+      dernier_revenu: this.dernier_revenu, nette: this.nette,
+      dernier_revenu_net: this.dernier_revenu_net, apres_impot: this.apres_impot,
+      dernier_revenu_apres_impot: this.dernier_revenu_apres_impot,
+      remplacement_brut: this.remplacement_brut,
+      remplacement_net: this.remplacement_net,
+      remplacement_apres_impot: this.remplacement_apres_impot,
+    };
+  }
+}
+
+/**
+ * La pension brute du premier mois servi, annualisée, étage par étage, en
+ * euros de l'année du départ du système : au scénario 1, chaque régime à son
+ * étage du catalogue, sa part de la majoration pour enfants comprise ; un
+ * système notionnel, son compte, et le scénario 6 son pilier. Jumeau de
+ * `etages_au_depart`.
+ */
+export function etagesAuDepart(simulateur, comparaison, scenario) {
+  if (scenario !== "actuel") {
+    const calcul = simulateur.calculs[scenario];
+    const liquidation = comparaison.carriereDe(scenario).anneeLiquidation;
+    if (!(calcul.prospectif && liquidation <= simulateur.parametres.annee_bascule)) {
+      const resultat = comparaison[scenario];
+      const etages = { [ETAGE_NOTIONNEL]: pensionContributive(calcul, resultat) };
+      const rente = resultat.rente_capitalisation_obligatoire ?? 0.0;
+      if (rente) etages[ETAGE_CAPITALISE] = rente;
+      return etages;
+    }
+  }
+  const resultat = comparaison.actuel;
+  const etages = {};
+  const porter = (regime, montant) => {
+    if (!montant) return;
+    const { etage } = simulateur.catalogue.obtenir(regime);
+    etages[etage] = (etages[etage] ?? 0.0) + montant;
+  };
+  for (const pension of resultat.pensions_par_regime) {
+    if (!horsRepartition(simulateur, pension.regime)) porter(pension.regime, pension.montant);
+  }
+  for (const avantage of resultat.avantages_appliques) {
+    if (avantage.code === "majoration_enfants") {
+      for (const [regime, part] of avantage.par_regime ?? []) porter(regime, part);
+    }
+  }
+  return etages;
+}
+
+/**
+ * La pension du départ du système `scenario`, étage par étage, en part du
+ * dernier revenu annualisé : le tableau 1 de Typfallsmodellen. `systemes`,
+ * les flux nets ou sous un impôt, s'ils sont déjà calculés ; sans eux, les
+ * flux nets, avant impôt. Jumeau de `pension_par_etage`.
+ */
+export function pensionParEtage(simulateur, comparaison, scenario = "actuel", systemes = null) {
+  const lesSystemes = systemes ?? fluxDesSystemes(simulateur, comparaison, { nets: true });
+  const flux = lesSystemes[scenario];
+  const convention = conventionNette(simulateur, comparaison);
+  const etages = etagesAuDepart(simulateur, comparaison, scenario);
+  const brute = new PensionParEtage({ etages, dernier_revenu: flux.dernier_revenu }).brute;
+  const apres = flux.impots === null ? null : pensionApresImpotDe(
+    simulateur, comparaison, scenario, flux, convention,
+    partsImposablesParAnnee(simulateur, comparaison));
+  return new PensionParEtage({
+    etages, dernier_revenu: flux.dernier_revenu,
+    nette: brute * convention.retenu(flux.annee_liquidation),
+    dernier_revenu_net: flux.dernier_revenu_net, apres_impot: apres,
+    dernier_revenu_apres_impot: flux.dernier_revenu_apres_impot,
+  });
+}
+
+/**
+ * Une année autour du départ, en euros de l'année du départ : `annee`,
+ * `revenu`, `pension`, `net` (`null` sans fiche de paie), `impot` (`null`
+ * avant impôt). Jumeau de `AnneeAutourDuDepart`.
+ */
+export class AnneeAutourDuDepart {
+  constructor({ annee, revenu, pension, net, impot }) {
+    Object.assign(this, { annee, revenu, pension, net, impot });
+    Object.freeze(this);
+  }
+
+  get brut() {
+    return this.revenu + this.pension;
+  }
+
+  get apres_impot() {
+    if (this.net === null || this.impot === null) return null;
+    return this.net - this.impot;
+  }
+
+  dictionnaire() {
+    return {
+      annee: this.annee, revenu: this.revenu, pension: this.pension, brut: this.brut,
+      net: this.net, impot: this.impot, apres_impot: this.apres_impot,
+    };
+  }
+}
+
+/**
+ * Le revenu de chaque année, de `annees` avant celle du départ du système
+ * `scenario` à `annees` après, en euros de l'année du départ : le tableau 2
+ * de Typfallsmodellen. Jumeau de `revenus_autour_du_depart`.
+ */
+export function revenusAutourDuDepart(simulateur, comparaison, scenario = "actuel",
+  systemes = null, annees = ANNEES_AUTOUR_DU_DEPART) {
+  const lesSystemes = systemes ?? fluxDesSystemes(simulateur, comparaison, { nets: true });
+  const flux = lesSystemes[scenario];
+  const convention = conventionNette(simulateur, comparaison);
+  const depart = flux.annee_liquidation;
+  const lignes = [];
+  for (let annee = depart - annees; annee <= depart + annees; annee += 1) {
+    const euros = simulateur.macro.coefficientPrix(annee, depart);
+    const pension = (flux.niveaux.get(annee) ?? 0.0) * flux.servi(annee);
+    const net = flux.revenus_nets === null ? null
+      : ((flux.revenus_nets.get(annee) ?? 0.0) + pension * convention.retenu(annee)) * euros;
+    let impot = null;
+    if (flux.impots !== null) {
+      impot = flux.impots.has(annee) ? flux.impots.get(annee).impot * euros : 0.0;
+    }
+    lignes.push(new AnneeAutourDuDepart({
+      annee, revenu: (flux.revenus.get(annee) ?? 0.0) * euros, pension: pension * euros,
+      net, impot,
+    }));
+  }
+  return lignes;
 }
 
 // -- l'âge d'équilibre -------------------------------------------------------

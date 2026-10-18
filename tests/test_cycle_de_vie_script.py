@@ -3,8 +3,8 @@ par le portage (action 161, étape 5).
 
 ``scripts/cycle_de_vie.py`` résout chaque case de la grille — les options de
 sa carrière (``CasType.options``), l'âge où le pilote la fait partir — et
-``scripts/cycle_de_vie.mjs`` en rend les indicateurs, les âges de départ et
-les âges d'équilibre. La concordance des deux moteurs du cycle de vie se tient
+``scripts/cycle_de_vie.mjs`` en rend les indicateurs, la pension par étage,
+les âges de départ et les âges d'équilibre. La concordance des deux moteurs du cycle de vie se tient
 dans ``test_cycle_de_vie_portage.py``, sur des carrières de la saisie ; ici,
 ce que seuls les cas types portent — un profil au SMIC, des interruptions,
 une part de primes, des enfants — arrive au portage tel que le Python le
@@ -74,6 +74,52 @@ def test_chaque_cas_type_arrive_au_portage_tel_que_le_python_le_calcule(portage,
                                                          convention).items()}
         ecarts = _ecarts(obtenu[f"{code}|{generation}"], attendu)
         assert not ecarts, f"{code}, {generation} : " + "; ".join(ecarts[:6])
+
+
+def _sans_ecart(obtenu, attendu) -> bool:
+    if isinstance(attendu, dict):
+        return (isinstance(obtenu, dict) and obtenu.keys() == attendu.keys()
+                and all(_sans_ecart(obtenu[cle], valeur) for cle, valeur in attendu.items()))
+    if isinstance(attendu, float) and isinstance(obtenu, (int, float)):
+        return math.isclose(obtenu, attendu, rel_tol=1e-9, abs_tol=1e-9)
+    return obtenu == attendu
+
+
+@pytest.mark.parametrize("impot", (None, "prix"), ids=("avant_impot", "apres_impot"))
+def test_la_pension_par_etage_d_un_cas_type_est_celle_du_python(portage, simulateur, impot):
+    """Les treize cas types, nés en 1960 et en 2000 : la pension du départ de
+    chaque système, étage par étage, et ses trois taux de remplacement, que
+    le portage calcule, sont ceux du Python (``pension_par_etage``). Le
+    fonctionnaire sédentaire n'a que son régime intégré ; l'artisan, sa base
+    et sa complémentaire."""
+    generations = (1960, 2000)
+    grille = calculer_cas_types(simulateur, generations=generations)
+    obtenu = script.etages(simulateur, impot=impot)
+    for (code, generation), comparaison in grille.resultats.items():
+        systemes = cycle_de_vie.flux_des_systemes(simulateur, comparaison, nets=True,
+                                                  impot=impot)
+        for scenario in cycle_de_vie.SCENARIOS:
+            attendu = cycle_de_vie.pension_par_etage(simulateur, comparaison, scenario,
+                                                     systemes).dictionnaire()
+            assert _sans_ecart(obtenu[f"{code}|{generation}"][scenario], attendu), (
+                code, generation, scenario)
+    assert set(obtenu["fonctionnaire_sedentaire|1960"]["actuel"]["etages"]) == {"integre"}
+    assert set(obtenu["artisan|1960"]["actuel"]["etages"]) == {"base", "complementaire"}
+
+
+def test_le_script_imprime_chaque_etage_en_part_du_dernier_revenu(portage, capsys):
+    """``--etages`` : pour chaque système, un tableau des cas types sur les
+    générations par étage servi, en pour cent du dernier revenu, puis les
+    trois taux de remplacement ; un étage qu'un cas type n'a pas y est un
+    tiret, et un étage qu'aucun n'a ne s'imprime pas."""
+    assert script.main(["--etages", "--impot", "--scenarios", "actuel"]) == 0
+    sortie = capsys.readouterr().out
+    assert "Étage de base, en part du dernier revenu — 1. Système actuel" in sortie
+    assert "Taux de remplacement après impôt" in sortie
+    assert "Compte notionnel" not in sortie
+    base = sortie.split("Étage de base")[1].split("\n\n")[0]
+    ligne = next(ligne for ligne in base.splitlines() if ligne.startswith("Fonctionnaire séd"))
+    assert set(ligne[46:].split()) == {"—"}
 
 
 def test_la_carriere_d_un_cas_type_se_batit_de_ses_options(simulateur):
