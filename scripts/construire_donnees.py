@@ -2363,20 +2363,22 @@ def _agregats(contexte=None, paquet: bytes | None = None) -> dict:
                 for (code, generation), carriere in options.items()]
     classement = pages.CLASSEMENT_COMPARE
     cas = next(cas for cas in CAS_TYPES if cas.code == classement["cas"])
-    compares_ = (cas.affiliation, classement["declassement"])
+    affiliations = (cas.affiliation, classement["declassement"])
     demandes += [{"cle": f"classement|{generation}|{affiliation}",
                   "options": {**cas.options(generation, classement["age"]),
                               "affiliation": affiliation}}
-                 for generation in classement["generations"] for affiliation in compares_]
+                 for generation in classement["generations"] for affiliation in affiliations]
     lus, refus = pont.carrieres(demandes, compares, paquet)
     for cle, motif in refus.items():
         if cle.startswith("classement|"):
             raise ValueError(f"le portage refuse le départ {cle} du classement : {motif}")
         code, generation = cle.split("|")
         echecs[(code, int(generation))] = motif
+    grille = {(code, generation): lus[f"{code}|{generation}"]
+              for code, generation in options if f"{code}|{generation}" in lus}
     departs = {
         generation: figer_departs(*(lus[f"classement|{generation}|{affiliation}"]
-                                    for affiliation in compares_))
+                                    for affiliation in affiliations))
         for generation in classement["generations"]
     }
     # LA DETTE SOUS UN TAUX DÉCALÉ, dans les deux sens : la page Coût cite ce
@@ -2396,9 +2398,8 @@ def _agregats(contexte=None, paquet: bytes | None = None) -> dict:
                            taux_tva_requis(cout.solde, contexte.base, AssietteTva(DONNEES))),
         # LA GRILLE DE CARRIÈRES TYPES : treize cas, sept générations, et
         # l'âge où chacun part. La page la montre telle quelle.
-        "cas_types": figer_cas_types(
-            {cle: lus[f"{cle[0]}|{cle[1]}"] for cle in options if f"{cle[0]}|{cle[1]}" in lus},
-            echecs, simulateur, CAS_TYPES, GENERATIONS, compares),
+        "cas_types": figer_cas_types(grille, echecs, simulateur, CAS_TYPES, GENERATIONS,
+                                     compares),
         # CE QUE COÛTENT LES AVANTAGES NON CONTRIBUTIFS, année par année, que
         # Droits non cotisés montre et que Coût cite.
         "avantages": figer_avantages(contexte.avantages(), LIGNES_LUES, NEUTRALISATIONS,
