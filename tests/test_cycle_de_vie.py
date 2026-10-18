@@ -575,6 +575,76 @@ def test_le_remplacement_apres_impot_impose_une_annee_entiere_de_chacun(
     assert attendu > nette / flux.dernier_revenu_net
 
 
+def test_la_majoration_pour_enfants_s_exonere_jusqu_aux_revenus_de_2012():
+    """« Les majorations de retraite ou de pension pour charges de famille »
+    sont affranchies de l'impôt (CGI, art. 81, 2° ter), mais « le montant
+    exonéré [...] ne peut excéder, pour un même bénéficiaire, 10 % du montant
+    de la pension pour les trois premiers enfants et 5 % par enfant au-delà du
+    troisième » (DB 5 F 1222, n° 4) ; la loi de finances pour 2014 abroge le
+    2° ter (art. 5) dès « l'impôt sur le revenu dû au titre de 2013 » (art. 1er,
+    II, 1°). La majoration et la pension sans elle, en euros de l'année."""
+    exoneree = cycle_de_vie.majoration_exoneree
+    assert exoneree(2012, 800.0, 10_000.0, 3) == 800.0
+    assert exoneree(2012, 1_500.0, 10_000.0, 3) == pytest.approx(1_000.0)
+    assert exoneree(2012, 1_500.0, 10_000.0, 4) == pytest.approx(1_500.0)
+    assert exoneree(2012, 2_500.0, 10_000.0, 5) == pytest.approx(2_000.0)
+    assert exoneree(2012, 1_500.0, 10_000.0, 1) == pytest.approx(1_000.0)
+    assert exoneree(1960, 800.0, 10_000.0, 3) == 800.0
+    assert exoneree(2013, 800.0, 10_000.0, 3) == 0.0
+    assert exoneree(2012, 0.0, 10_000.0, 0) == 0.0
+
+
+@pytest.fixture(scope="module")
+def parent_parti_en_2008(simulateur):
+    """Un salarié né en 1946, père de trois enfants, parti en 2008 : sa
+    pension porte la majoration pour enfants du régime général et de l'Arrco."""
+    return simulateur.simuler(simulateur.carriere_simple(
+        annee_naissance=1946, sexe="H", affiliation="salarie_prive_non_cadre", age_debut=21,
+        age_liquidation=62, niveau_salaire=1.0, jour_naissance=15, nombre_enfants=3,
+        naissances_enfants=("1972-03-01", "1975-06-01", "1978-09-01")))
+
+
+def test_jusqu_aux_revenus_de_2012_le_foyer_ne_declare_pas_la_majoration(
+        simulateur, parent_parti_en_2008):
+    """Le parent de trois enfants parti en 2008 déclare chaque année la part
+    imposable de sa pension sans sa majoration pour enfants jusqu'aux revenus
+    de 2012 — la CSG qui la frappe ne se déduit pas (BOI-RSA-BASE-30-30-20120912,
+    § 90) —, toute sa pension dès 2013 : « les majorations [...] perçues à
+    compter du 1er janvier 2013 sont imposables » (BOI-RSA-PENS-20-10-20140305,
+    § 1). Un système prospectif, qui lui garde jusqu'à sa bascule la pension du
+    scénario 1, l'exonère de même ; un système rétroactif, qui ne sert pas de
+    majoration, n'a rien à exonérer. Le taux de remplacement après impôt de son
+    départ l'exonère aussi."""
+    systemes = cycle_de_vie.flux_des_systemes(simulateur, parent_parti_en_2008, impot="prix")
+    parts = cycle_de_vie.parts_imposables_par_annee(simulateur, parent_parti_en_2008)
+    carriere, resultat = parent_parti_en_2008.carriere, parent_parti_en_2008.actuel
+    exonerees = {}
+    for annee in (2008, 2010, 2012, 2013, 2020):
+        vivante = faire_vivre(simulateur, carriere, resultat, annee)
+        majoration = vivante.majoration_enfants * vivante.coefficient_majoration
+        assert majoration > 0.0, annee
+        niveau = systemes["actuel"].niveaux[annee]
+        exonerees[annee] = min(majoration, 0.10 * (niveau - majoration)) if annee <= 2012 else 0.0
+        for scenario in ("actuel", "notionnel_prospectif"):
+            flux = systemes[scenario]
+            assert flux.niveaux[annee] == pytest.approx(niveau), (scenario, annee)
+            assert flux.impots[annee].pension == pytest.approx(
+                (niveau - exonerees[annee]) * flux.servi(annee) * parts[annee]), (scenario, annee)
+        retroactif = systemes["notionnel_retroactif"]
+        assert retroactif.impots[annee].pension == pytest.approx(
+            retroactif.niveaux[annee] * retroactif.servi(annee) * parts[annee]), annee
+    flux = systemes["actuel"]
+    depart = flux.annee_liquidation
+    assert depart == 2008
+    brute = cycle_de_vie.pension_au_depart(simulateur, parent_parti_en_2008, "actuel")
+    nette = brute * cycle_de_vie.convention_nette(simulateur, parent_parti_en_2008).retenu(depart)
+    declaree = brute * (1.0 - exonerees[depart] / flux.niveaux[depart]) * parts[depart]
+    impot = _impot(simulateur, depart, Declarant(pensions=declaree, age=depart - 1946))
+    assert cycle_de_vie.remplacement_apres_impot(
+        simulateur, parent_parti_en_2008, systemes=systemes) == pytest.approx(
+            (nette - impot) / flux.dernier_revenu_apres_impot)
+
+
 def test_sur_le_salaire_moyen_le_bareme_projete_prend_moins(simulateur, parti_en_2044,
                                                             impose_en_2044):
     """Les salaires montent plus vite que les prix : au-delà de la dernière

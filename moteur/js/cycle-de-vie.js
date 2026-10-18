@@ -136,12 +136,12 @@ export class Flux {
   constructor({
     scenario, cotisations, revenus, niveaux, debut, age, sexe, dernier_revenu,
     revenus_nets = null, dernier_revenu_net = null, indexation_impot = null, impots = null,
-    revenus_apres_impot = null, dernier_revenu_apres_impot = null,
+    exoneree = new Map(), revenus_apres_impot = null, dernier_revenu_apres_impot = null,
   }) {
     Object.assign(this, {
       scenario, cotisations, revenus, niveaux, debut, age, sexe, dernier_revenu,
-      revenus_nets, dernier_revenu_net, indexation_impot, impots, revenus_apres_impot,
-      dernier_revenu_apres_impot,
+      revenus_nets, dernier_revenu_net, indexation_impot, impots, exoneree,
+      revenus_apres_impot, dernier_revenu_apres_impot,
     });
   }
 
@@ -557,6 +557,7 @@ export function fluxDesSystemes(simulateur, comparaison, { nets = false, impot =
   const versees = cotisationsVersees(simulateur, carriere);
   const actuels = niveauxActuels(simulateur, comparaison, revalorisation, derniere);
   const parts = impot === null ? null : partsImposablesParAnnee(simulateur, comparaison);
+  const exonerees = impot === null ? {} : partsExonerees(simulateur, comparaison);
   // Les revenus de chaque carrière, leur net et, sous l'impôt, leur net
   // imposable : une fiche de paie par année, une fois par carrière et par
   // fiche (`_cle_des_revenus`).
@@ -598,6 +599,7 @@ export function fluxDesSystemes(simulateur, comparaison, { nets = false, impot =
       dernier_revenu: dernier,
       revenus_nets: netsDuScenario,
       dernier_revenu_net: dernierRevenuNet(dernier, bruts, netsDuScenario),
+      exoneree: exonerees[scenario] ?? new Map(),
     });
     if (impot === null) return avantImpot;
     return avecLImpot(simulateur, avantImpot, duScenario, parts, imposables, impot, derniere);
@@ -825,6 +827,66 @@ export function partsImposablesParAnnee(simulateur, comparaison) {
     .map((annee) => [annee, 1.0 - historique.tauxDeductiblePensionAnnuel(annee, parts)]));
 }
 
+/**
+ * La première année de revenus dont l'impôt prend les majorations pour
+ * charges de famille (loi de finances pour 2014, art. 5 et art. 1er, II, 1°),
+ * et la limite de leur exonération jusque-là : 10 % de la pension pour les
+ * trois premiers enfants, 5 % par enfant au-delà (DB 5 F 1222, n° 4).
+ */
+export const PREMIERE_ANNEE_MAJORATION_IMPOSABLE = 2013;
+export const TAUX_EXONERE_TROIS_ENFANTS = 0.10;
+export const TAUX_EXONERE_PAR_ENFANT_AU_DELA = 0.05;
+
+/**
+ * La part de `majoration`, que sert l'année `annee` une pension de `pension`
+ * sans elle, que l'impôt de l'année exonère. Jumeau de `majoration_exoneree`.
+ */
+export function majorationExoneree(annee, majoration, pension, enfants) {
+  if (annee >= PREMIERE_ANNEE_MAJORATION_IMPOSABLE || majoration <= 0.0) return 0.0;
+  const taux = TAUX_EXONERE_TROIS_ENFANTS
+    + TAUX_EXONERE_PAR_ENFANT_AU_DELA * Math.max(enfants - 3, 0);
+  return Math.min(majoration, taux * pension);
+}
+
+/**
+ * Pour chaque système, la part du niveau de sa pension que l'impôt de chaque
+ * année exonère : celle du scénario 1, que les systèmes prospectifs gardent
+ * à qui est parti avant la bascule. Jumeau de `parts_exonerees`.
+ */
+export function partsExonerees(simulateur, comparaison) {
+  const carriere = comparaison.carriere;
+  const resultat = comparaison.actuel;
+  const actuelle = new Map();
+  if (resultat.avantages_appliques.some((a) => a.code === "majoration_enfants")) {
+    const derniere = Math.min(PREMIERE_ANNEE_MAJORATION_IMPOSABLE - 1,
+      simulateur.parametres.annee_courante);
+    for (let annee = carriere.anneeLiquidation; annee <= derniere; annee += 1) {
+      const vivante = faireVivre(simulateur, carriere, resultat, annee);
+      const majoration = vivante.majoration_enfants * vivante.coefficient_majoration;
+      const niveau = servie(vivante);
+      const exoneree = majorationExoneree(annee, majoration, niveau - majoration,
+        carriere.nombre_enfants);
+      if (exoneree > 0.0) actuelle.set(annee, exoneree / niveau);
+    }
+  }
+  const bascule = simulateur.parametres.annee_bascule;
+  const parts = { actuel: actuelle };
+  for (const scenario of SCENARIOS.slice(1)) {
+    parts[scenario] = new Map();
+    if (!(simulateur.calculs[scenario].prospectif
+      && comparaison.carriereDe(scenario).anneeLiquidation <= bascule)) continue;
+    for (const [annee, part] of actuelle) {
+      if (annee <= bascule) parts[scenario].set(annee, part);
+    }
+    if (actuelle.has(bascule)) {
+      for (let annee = bascule + 1; annee < PREMIERE_ANNEE_MAJORATION_IMPOSABLE; annee += 1) {
+        parts[scenario].set(annee, actuelle.get(bascule));
+      }
+    }
+  }
+  return parts;
+}
+
 // -- l'impôt sur le revenu ---------------------------------------------------
 
 const chroniques = new WeakMap();
@@ -939,7 +1001,10 @@ export function impotsParAnnee(simulateur, flux, carriere, parts, salaires,
   const pensions = new Map();
   for (const [annee, niveau] of flux.niveaux) {
     const servieDansLAnnee = niveau * flux.servi(annee);
-    if (servieDansLAnnee > 0.0) pensions.set(annee, servieDansLAnnee * parts.get(annee));
+    if (servieDansLAnnee > 0.0) {
+      pensions.set(annee, servieDansLAnnee * (1.0 - (flux.exoneree.get(annee) ?? 0.0))
+        * parts.get(annee));
+    }
   }
   const annees = [...new Set([...salaires.keys(), ...benefices.keys(), ...pensions.keys()])]
     .sort((a, b) => a - b);
@@ -1072,8 +1137,9 @@ function pensionApresImpotDe(simulateur, comparaison, scenario, flux, convention
   const brute = pensionAuDepart(simulateur, comparaison, scenario);
   const parametres = baremesDeLImpot(simulateur, flux.indexation_impot,
     Math.max(...flux.niveaux.keys())).get(annee);
+  const imposable = brute * (1.0 - (flux.exoneree.get(annee) ?? 0.0)) * parts.get(annee);
   const impot = parametres === undefined ? 0.0 : impotAuxParametres(
-    foyerDeLAnnee(comparaison.carriereDe(scenario), annee, 0.0, brute * parts.get(annee)),
+    foyerDeLAnnee(comparaison.carriereDe(scenario), annee, 0.0, imposable),
     parametres).impot;
   return brute * convention.retenu(annee) - impot;
 }

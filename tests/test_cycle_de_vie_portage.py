@@ -40,15 +40,17 @@ from outils_portage import moitie_python
 
 RACINE = Path(__file__).resolve().parents[1]
 
-#: Les carrières : un statut, une génération, un âge de départ.
+#: Les carrières : un statut, une génération, un âge de départ, des enfants —
+#: trois au parent parti en 2010, dont l'impôt exonère la majoration
+#: jusqu'aux revenus de 2012.
 CARRIERES = (
-    ("salarie_prive_non_cadre", 1948, "H", 62.0),
-    ("salarie_prive_cadre", 1958, "F", 62.0),
-    ("salarie_prive_non_cadre", 1962, "H", 64.0),
-    ("salarie_prive_cadre", 1975, "H", 66.0),
-    ("fonctionnaire_etat", 1966, "F", 63.0),
-    ("artisan", 1970, "H", 64.0),
-    ("salarie_prive_non_cadre", 1990, "F", 65.0),
+    ("salarie_prive_non_cadre", 1948, "H", 62.0, 3),
+    ("salarie_prive_cadre", 1958, "F", 62.0, 0),
+    ("salarie_prive_non_cadre", 1962, "H", 64.0, 0),
+    ("salarie_prive_cadre", 1975, "H", 66.0, 0),
+    ("fonctionnaire_etat", 1966, "F", 63.0, 0),
+    ("artisan", 1970, "H", 64.0, 0),
+    ("salarie_prive_non_cadre", 1990, "F", 65.0, 0),
 )
 
 #: Les conventions que le portage sait servir ; ``construite`` nomme celles
@@ -162,9 +164,10 @@ def _impots_python(demandes: tuple) -> list[dict]:
     return resultats
 
 
-def _options(affiliation, generation, sexe, age):
+def _options(affiliation, generation, sexe, age, enfants):
     return {"annee_naissance": generation, "sexe": sexe, "affiliation": affiliation,
-            "age_debut": 21, "age_liquidation": age, "niveau_salaire": 1.3}
+            "age_debut": 21, "age_liquidation": age, "niveau_salaire": 1.3,
+            "nombre_enfants": enfants}
 
 
 def _par_annee(valeurs):
@@ -329,7 +332,7 @@ def les_deux():
 
 
 @pytest.mark.parametrize("rang", range(len(CARRIERES)),
-                         ids=[f"{a}-{g}" for a, g, _, _ in CARRIERES])
+                         ids=[f"{a}-{g}" for a, g, *_ in CARRIERES])
 def test_les_indicateurs_de_chaque_systeme_se_retrouvent_en_javascript(les_deux, rang):
     obtenu, attendu = les_deux
     cas = obtenu["cas"][rang]
@@ -425,8 +428,12 @@ def test_les_revenus_nets_ont_un_objet(les_deux):
 def test_l_impot_a_un_objet(les_deux):
     """Le contrôle de l'impôt a un objet : le salarié paie l'impôt de son
     salaire, puis de sa pension, et l'impôt déplace les indicateurs ;
-    l'artisan déclare son bénéfice, et a ses revenus après impôt."""
+    l'artisan déclare son bénéfice, et a ses revenus après impôt ; le parent
+    de trois enfants déclare sa majoration dès les revenus de 2013, et sa
+    pension déclarée y fait un saut que la revalorisation ne fait pas."""
     obtenu, _ = les_deux
+    parent = obtenu["cas"][0]
+    assert parent["impots"]["2013"][2] > 1.05 * parent["impots"]["2012"][2]
     cadre = obtenu["cas"][3]
     assert sum(1 for *_, impot, _ in cadre["impots"].values() if impot > 0) > 40
     assert sum(1 for *_, sur_la_pension in cadre["impots"].values() if sur_la_pension > 0) > 10

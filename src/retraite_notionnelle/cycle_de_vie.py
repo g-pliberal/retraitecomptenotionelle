@@ -106,7 +106,9 @@ cotisations et la CSG déductible de son année (:func:`revenus_imposables`) —
 pour un indépendant, son bénéfice, au réel et adhérent d'un organisme de
 gestion agréé (:func:`benefices_par_annee`) —,
 la pension moins la CSG déductible et la cotisation maladie de l'année où
-elle est servie (:func:`parts_imposables_par_annee`). L'année du départ, il
+elle est servie (:func:`parts_imposables_par_annee`), et, jusqu'aux revenus de
+2012, moins sa majoration pour enfants, qu'aucune de ses parts n'atteint
+(:func:`parts_exonerees`). L'année du départ, il
 déclare les deux, et leur impôt se partage au prorata (:func:`impots_par_annee`).
 Le taux de remplacement après impôt au départ (:func:`remplacement_apres_impot`)
 est le taux net de l'OCDE. Les cotisations restent brutes : l'impôt ne les
@@ -166,9 +168,11 @@ retraite de l'année courante. Après impôt, le foyer n'est jamais un couple ni
 un parent ; le bénéfice d'un indépendant est celui d'un adhérent d'un
 organisme de gestion agréé, au réel, sans la majoration de qui n'y adhère
 pas ; l'année où il est aussi salarié, il se partage le revenu imposable au
-prorata des revenus bruts ; une année d'avant 1960, sans barème lu, ne paie pas d'impôt ; la majoration
-pour enfants, exonérée jusqu'à l'abrogation du 2° ter de l'article 81 du code
-général des impôts au 1er janvier 2014, s'impose à toute époque ; la prime pour
+prorata des revenus bruts ; une année d'avant 1960, sans barème lu, ne paie pas d'impôt ; la limite
+de l'exonération de la majoration pour enfants, que la doctrine lue en 1999
+et en 2012 donne, vaut aussi pour les années d'avant, et la seconde, la
+pension majorée bornée au revenu d'activité qui l'a liquidée, n'est tenue que
+dans la fonction publique, où l'article L. 18 la fait ; la prime pour
 l'emploi d'une année incomplète se calcule comme celle d'une année entière
 (:data:`~retraite_notionnelle.impot_revenu.HORS_CHAMP`).
 
@@ -189,7 +193,7 @@ lisant les régimes un à un et le coût, que le portage n'a pas ;
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from functools import lru_cache
 
 from . import pilote
@@ -359,6 +363,10 @@ class Flux:
     #: barème, et l'impôt sur le revenu de chaque année (:func:`impots_par_annee`).
     indexation_impot: str | None = None
     impots: dict[int, ImpotDeLAnnee] | None = None
+    #: Sous un impôt aussi, la part du niveau de chaque année que l'impôt
+    #: exonère, la majoration pour enfants jusqu'aux revenus de 2012
+    #: (:func:`parts_exonerees`) ; aucune les autres années.
+    exoneree: dict[int, float] = field(default_factory=dict)
     #: Les revenus nets que l'impôt laisse, et le dernier revenu net d'une
     #: année entière d'impôt (:func:`dernier_revenu_apres_impot`) ; ``None``
     #: quand un statut n'a pas de fiche de paie.
@@ -884,6 +892,7 @@ def flux_des_systemes(simulateur, comparaison, nets: bool = False,
     versees = cotisations_versees(simulateur, carriere)
     actuels = niveaux_actuels(simulateur, comparaison, revalorisation, derniere)
     parts = None if impot is None else parts_imposables_par_annee(simulateur, comparaison)
+    exonerees = {} if impot is None else parts_exonerees(simulateur, comparaison)
     # Les revenus de chaque carrière, leur net et, sous l'impôt, leur net
     # imposable : sur la fiche du droit en vigueur, ou sur celle de la
     # proposition pour le scénario 6.
@@ -908,6 +917,7 @@ def flux_des_systemes(simulateur, comparaison, nets: bool = False,
             sexe=carriere_du_scenario.sexe, dernier_revenu=dernier,
             revenus_nets=nets_du_scenario,
             dernier_revenu_net=_dernier_revenu_net(dernier, bruts, nets_du_scenario),
+            exoneree=exonerees.get(scenario, {}),
         )
         if impot is None:
             return avant_impot
@@ -1124,6 +1134,78 @@ def parts_imposables_par_annee(simulateur, comparaison) -> dict[int, float]:
             for annee in _annees_des_pensions(comparaison)}
 
 
+#: La première année de revenus dont l'impôt prend « les majorations de
+#: retraite ou de pension pour charges de famille » : la loi de finances pour
+#: 2014 abroge le 2° ter de l'article 81 du code général des impôts, qui les
+#: exonérait depuis 1950 (art. 5), et s'applique « à l'impôt sur le revenu dû
+#: au titre de 2013 et des années suivantes » (art. 1er, II, 1°) ; « les
+#: majorations [...] perçues à compter du 1er janvier 2013 sont imposables »
+#: (BOI-RSA-PENS-20-10-20140305, § 1).
+PREMIERE_ANNEE_MAJORATION_IMPOSABLE = 2013
+
+#: Jusque-là, « le montant exonéré des majorations pour enfant à charge,
+#: augmenté, le cas échéant, des majorations pour avoir eu ou élevé au moins
+#: trois enfants, ne peut excéder, pour un même bénéficiaire, 10 % du montant
+#: de la pension pour les trois premiers enfants et 5 % par enfant au-delà du
+#: troisième » (DB 5 F 1222, n° 4, du 10 février 1999 ;
+#: BOI-RSA-PENS-20-10-20120912, § 30) : le surplus s'impose.
+TAUX_EXONERE_TROIS_ENFANTS = 0.10
+TAUX_EXONERE_PAR_ENFANT_AU_DELA = 0.05
+
+
+def majoration_exoneree(annee: int, majoration: float, pension: float, enfants: int) -> float:
+    """La part de ``majoration``, la majoration pour enfants que sert l'année
+    ``annee`` une pension de ``pension`` sans elle, que l'impôt de l'année
+    exonère : toute, jusqu'aux revenus de 2012, sous la limite de la doctrine
+    (:data:`TAUX_EXONERE_TROIS_ENFANTS`) ; rien ensuite
+    (:data:`PREMIERE_ANNEE_MAJORATION_IMPOSABLE`). Toutes les majorations des
+    régimes de base et complémentaires obligatoires y entrent, celles des
+    enfants à charge comme celles des parents de trois enfants (DB 5 F 1222,
+    n° 3)."""
+    if annee >= PREMIERE_ANNEE_MAJORATION_IMPOSABLE or majoration <= 0.0:
+        return 0.0
+    taux = TAUX_EXONERE_TROIS_ENFANTS + TAUX_EXONERE_PAR_ENFANT_AU_DELA * max(enfants - 3, 0)
+    return min(majoration, taux * pension)
+
+
+def parts_exonerees(simulateur, comparaison) -> dict[str, dict[int, float]]:
+    """Pour chaque système, la part du niveau de sa pension que l'impôt de
+    chaque année exonère (:func:`majoration_exoneree`), aux années servies
+    d'avant :data:`PREMIERE_ANNEE_MAJORATION_IMPOSABLE`. Seul le scénario 1
+    sert une majoration pour enfants, que :func:`faire_vivre` mène chaque
+    année. Un système prospectif garde sa pension à qui est parti avant la
+    bascule, et sa part avec elle, celle de la bascule ensuite, la pension
+    s'y revalorisant d'un bloc (:func:`niveaux_notionnels`) ; un système
+    rétroactif n'a rien à exonérer. Ce qu'une majoration exonérée laisse
+    de CSG ne se déduit pas (BOI-RSA-BASE-30-30-20120912, § 90) : la part
+    imposable de l'année ne porte que sur le reste."""
+    carriere, resultat = comparaison.carriere, comparaison.actuel
+    actuelle: dict[int, float] = {}
+    if any(a.code == "majoration_enfants" for a in resultat.avantages_appliques):
+        derniere = min(PREMIERE_ANNEE_MAJORATION_IMPOSABLE - 1,
+                       simulateur.parametres.annee_courante)
+        for annee in range(carriere.annee_liquidation, derniere + 1):
+            vivante = faire_vivre(simulateur, carriere, resultat, annee)
+            majoration = vivante.majoration_enfants * vivante.coefficient_majoration
+            niveau = _servie(vivante)
+            exoneree = majoration_exoneree(annee, majoration, niveau - majoration,
+                                           carriere.nombre_enfants)
+            if exoneree > 0.0:
+                actuelle[annee] = exoneree / niveau
+    bascule = simulateur.parametres.annee_bascule
+    parts = {"actuel": actuelle}
+    for scenario in SCENARIOS[1:]:
+        parts[scenario] = {}
+        if not (simulateur.calculs[scenario].prospectif
+                and comparaison.carriere_de(scenario).annee_liquidation <= bascule):
+            continue
+        parts[scenario] = {annee: part for annee, part in actuelle.items() if annee <= bascule}
+        if bascule in actuelle:
+            parts[scenario] |= {annee: actuelle[bascule] for annee
+                                in range(bascule + 1, PREMIERE_ANNEE_MAJORATION_IMPOSABLE)}
+    return parts
+
+
 def _annees_des_pensions(comparaison) -> range:
     """Du premier départ des systèmes de ``comparaison`` à la dernière année
     qu'une de leurs pensions peut atteindre."""
@@ -1247,7 +1329,8 @@ def impots_par_annee(simulateur, flux: Flux, carriere, parts: dict[int, float],
     l'année (:func:`foyer_de_l_annee`), qui déclare son salaire imposable —
     ``salaires``, ceux de :func:`revenus_imposables` que le module prend — et
     la part imposable de l'année (``parts``, :func:`parts_imposables_par_annee`)
-    de ce que la pension sert dans l'année (:meth:`Flux.servi`), au barème de
+    de ce que la pension sert dans l'année (:meth:`Flux.servi`), hors ce que
+    l'impôt en exonère (:attr:`Flux.exoneree`), au barème de
     l'année, projeté au-delà de la dernière loi de finances lue sur
     ``indexation``, jusqu'à ``derniere`` au moins. ``benefices`` donne, pour
     une année d'indépendant, son bénéfice imposable et sa catégorie
@@ -1263,7 +1346,7 @@ def impots_par_annee(simulateur, flux: Flux, carriere, parts: dict[int, float],
     for annee, niveau in flux.niveaux.items():
         servie = niveau * flux.servi(annee)
         if servie > 0.0:
-            pensions[annee] = servie * parts[annee]
+            pensions[annee] = servie * (1.0 - flux.exoneree.get(annee, 0.0)) * parts[annee]
     benefices = benefices or {}
     annees = sorted(set(salaires) | set(benefices) | set(pensions))
     if not annees:
@@ -1403,9 +1486,10 @@ def _pension_apres_impot(simulateur, comparaison, scenario: str, flux: Flux,
     brute = pension_au_depart(simulateur, comparaison, scenario)
     parametres = _baremes_de_l_impot(simulateur, flux.indexation_impot,
                                      max(flux.niveaux)).get(annee)
+    imposable = brute * (1.0 - flux.exoneree.get(annee, 0.0)) * parts[annee]
     impot = 0.0 if parametres is None else impot_aux_parametres(
         foyer_de_l_annee(comparaison.carriere_de(scenario), annee,
-                         pension=brute * parts[annee]), parametres).impot
+                         pension=imposable), parametres).impot
     return brute * convention.retenu(annee) - impot
 
 
