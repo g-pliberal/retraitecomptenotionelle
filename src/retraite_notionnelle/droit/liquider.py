@@ -892,7 +892,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                     periode, carriere, trimestres, requis_reference,
                     age_liquidation, annee_liquidation,
                     trimestres_par_regime.get(code, 0),
-                    handicap=par_le_handicap, categorie=par_categorie is not None,
+                    handicap=par_le_handicap, categorie=par_categorie,
                 )
                 # LA TRANCHE C D'AVANT 2016 GARDE LE COEFFICIENT POUR ÂGE.
                 # L'exonération au taux plein ne vaut que « sur les tranches
@@ -3440,7 +3440,7 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
                        age_liquidation: float,
                        annee_liquidation: int,
                        trimestres_regime: int = 0,
-                       handicap: bool = False, categorie: bool = False) -> float:
+                       handicap: bool = False, categorie: str | None = None) -> float:
     """Coefficient d'un régime en points : abattu avant le taux plein,
     majoré après.
 
@@ -3451,7 +3451,9 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
     ``handicap`` dit la liquidation ouverte par le départ anticipé des
     assurés handicapés : le régime général la sert au taux plein (L. 351-8,
     4° bis), et l'Agirc-Arrco, l'Ircantec et la complémentaire des
-    indépendants le suivent sans coefficient.
+    indépendants le suivent sans coefficient. ``categorie`` est la fiche du
+    taux plein par catégorie de L. 351-8 que l'assuré a au régime général
+    (:func:`~.categories.taux_plein_par_categorie`), ``None`` sans elle.
 
     « Avant le taux plein » est une condition de DURÉE autant que d'âge :
     une complémentaire est servie sans abattement dès que l'assuré a le
@@ -3487,17 +3489,23 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
         # d'anticipation ni majoration (:attr:`Carriere.au_deces`).
         return 1.0
     if periode.abattement_points in ("agirc_arrco", "ircantec"):
-        # AVANT L'ASF, L'ÂGE SEUL. Jusqu'à l'accord du 4 février 1983,
-        # l'Agirc et l'Arrco servaient le taux plein à soixante-cinq ans et
-        # abattaient toute anticipation, quelle que soit la durée : c'est
-        # l'ASF qui a financé la retraite à soixante ans sans abattement
-        # pour qui avait le taux plein au régime de base. Une période sans
-        # durée requise — ni en dur, ni lue à la génération — porte ce
-        # droit-là, et la table par durée ne s'y consulte pas.
+        # AVANT L'ASF, L'ÂGE SEUL. Jusqu'au 31 mars 1983, l'Agirc et l'Arrco
+        # servaient le taux plein à soixante-cinq ans et abattaient toute
+        # anticipation, quelle que soit la durée : c'est la structure
+        # financière (ASF), « à partir du 1er avril 1983 », qui a levé
+        # l'abattement de qui avait le taux plein au régime de base. Une
+        # période sans durée requise — ni en dur, ni lue à la génération —
+        # porte ce droit-là, et la table par durée ne s'y consulte pas ; une
+        # pension de l'Agirc ou de l'Arrco qui prend effet avant le 1er avril
+        # 1983 aussi, quelle que soit sa période : celle de 1983, ou la seule
+        # d'une fiche fermée plus tôt, comme l'UNIRS (:func:`exonerations_agirc_arrco`).
         par_age_seul = (
             periode.duree_requise_trimestres is None
             and not periode.duree_requise_par_generation
         )
+        regle = exonerations_agirc_arrco(moteur, periode, carriere)
+        if regle is not None and not regle["exoneration_au_taux_plein"]:
+            par_age_seul = True
         # L'INAPTE A LE TAUX PLEIN AU RÉGIME GÉNÉRAL, et la complémentaire le
         # suit : « sans coefficient » pour qui a obtenu la pension du régime
         # général ou agricole « à taux plein » (accord du 17 novembre 2017,
@@ -3509,11 +3517,18 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
         # celui de l'inapte.
         # L'ancien déporté, la mère de famille ouvrière, l'ancien combattant ou
         # prisonnier, au taux plein du régime général (``categorie``), de même :
-        # l'Ircantec les nomme aux 2° à 4° du même article 16.
-        inapte = ((not par_age_seul or periode.abattement_points == "ircantec")
-                  and (invalidite.taux_plein_de_l_inapte(
-                      moteur, invalidite.REGIME_DES_SALARIES, carriere, age_liquidation)
-                       or categorie))
+        # l'Ircantec les nomme aux 2° à 4° du même article 16. Avant l'ASF,
+        # l'Arrco servait déjà sans coefficient le travailleur manuel et la
+        # mère de famille ouvrière (protocole du 14 juin 1976) : la version de
+        # la fiche dit qui le régime exonère, et pour quel motif.
+        if regle is not None:
+            inapte = exonere_par_motif(moteur, regle, periode, carriere,
+                                       age_liquidation, categorie)
+        else:
+            inapte = ((not par_age_seul or periode.abattement_points == "ircantec")
+                      and (invalidite.taux_plein_de_l_inapte(
+                          moteur, invalidite.REGIME_DES_SALARIES, carriere, age_liquidation)
+                           or categorie is not None))
         # LE DÉPART ANTICIPÉ DES ASSURÉS HANDICAPÉS, au taux plein du régime
         # général, que l'Agirc-Arrco suit « à l'âge auquel il a obtenu la
         # pension [...] à taux plein » (accord du 17 novembre 2017, article
@@ -3556,6 +3571,46 @@ def abattement_points(moteur, periode: PeriodeRegime, carriere: Carriere,
         periode, carriere, trimestres, requis,
         age_liquidation, annee_liquidation, trimestres_regime,
     )
+
+
+#: La fiche dont les versions disent ce qui exonère des coefficients
+#: d'anticipation de l'Agirc et de l'Arrco, à la date d'effet de la pension.
+FICHE_DES_COEFFICIENTS_AGIRC_ARRCO = "coefficients_anticipation_agirc_arrco"
+
+
+def exonerations_agirc_arrco(moteur, periode: PeriodeRegime,
+                             carriere: Carriere) -> dict | None:
+    """Ce qui exonère des coefficients d'anticipation de l'Agirc et de l'Arrco
+    une pension qui prend effet à la date de la carrière : les paramètres de la
+    version de la fiche ``coefficients_anticipation_agirc_arrco`` qui vaut à
+    cette date — l'abattement levé ou non pour qui a la durée du taux plein
+    (``exoneration_au_taux_plein``), et les motifs que chaque régime sert sans
+    coefficient (``exonerations``) —, ``None`` pour un autre barème ou sans
+    date d'effet."""
+    date = date_d_effet(carriere)
+    if periode.abattement_points != "agirc_arrco" or date is None:
+        return None
+    return moteur.fiches_datees.regle(FICHE_DES_COEFFICIENTS_AGIRC_ARRCO, date)
+
+
+def exonere_par_motif(moteur, regle: dict, periode: PeriodeRegime, carriere: Carriere,
+                      age_liquidation: float, categorie: str | None) -> bool:
+    """La version ``regle`` exonère-t-elle la pension de ce régime pour l'un de
+    ses motifs — la catégorie de L. 351-8 qui donne à l'assuré le taux plein du
+    régime général, ou l'inaptitude au travail ? Dans les seuls régimes que
+    l'exonération nomme, dans tous quand elle n'en nomme aucun : le protocole
+    du 14 juin 1976 ne vaut qu'« auprès des régimes adhérents à l'Arrco »."""
+    for exoneration in regle["exonerations"]:
+        regimes = exoneration["regimes"]
+        if regimes is not None and periode.regime not in regimes:
+            continue
+        motifs = exoneration["motifs"]
+        if categorie is not None and categorie in motifs:
+            return True
+        if "inaptitude" in motifs and invalidite.taux_plein_de_l_inapte(
+                moteur, invalidite.REGIME_DES_SALARIES, carriere, age_liquidation):
+            return True
+    return False
 
 
 def coefficient_pour_age(moteur, periode: PeriodeRegime, carriere: Carriere,

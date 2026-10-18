@@ -393,7 +393,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
         abattement = abattementPoints(
           moteur, periode, carriere, trimestres, requisReference, ageLiquidation,
           anneeLiquidation, trimestresParRegime.get(code) ?? 0, parLeHandicap,
-          parCategorie !== null,
+          parCategorie,
         );
         // LA TRANCHE C D'AVANT 2016 GARDE LE COEFFICIENT POUR ÂGE, même au
         // taux plein : voir le Python. Le coefficient affiché est celui de la
@@ -2589,6 +2589,48 @@ export function abattementIrcec(moteur, periode, carriere, trimestres, requis, a
   ));
 }
 
+/** La fiche dont les versions disent ce qui exonère des coefficients
+ * d'anticipation de l'Agirc et de l'Arrco. */
+export const FICHE_DES_COEFFICIENTS_AGIRC_ARRCO = "coefficients_anticipation_agirc_arrco";
+
+/**
+ * Ce qui exonère des coefficients d'anticipation de l'Agirc et de l'Arrco une
+ * pension qui prend effet à la date de la carrière : les paramètres de la
+ * version de la fiche qui vaut à cette date, `null` pour un autre barème ou
+ * sans date d'effet. Voir `liquider.exonerations_agirc_arrco`.
+ */
+export function exonerationsAgircArrco(moteur, periode, carriere) {
+  const date = dateDEffet(carriere);
+  if (periode.abattement_points !== "agirc_arrco" || date === null) {
+    return null;
+  }
+  return moteur.fichesDatees.regle(FICHE_DES_COEFFICIENTS_AGIRC_ARRCO, date);
+}
+
+/**
+ * La version `regle` exonère-t-elle la pension de ce régime pour l'un de ses
+ * motifs — la catégorie de L. 351-8 au taux plein du régime général, ou
+ * l'inaptitude ? Dans les seuls régimes que l'exonération nomme, dans tous
+ * quand elle n'en nomme aucun. Voir `liquider.exonere_par_motif`.
+ */
+export function exonereParMotif(moteur, regle, periode, carriere, ageLiquidation, categorie) {
+  for (const exoneration of regle.exonerations) {
+    const regimes = exoneration.regimes;
+    if (regimes !== null && !regimes.includes(periode.regime)) {
+      continue;
+    }
+    const motifs = exoneration.motifs;
+    if (categorie !== null && motifs.includes(categorie)) {
+      return true;
+    }
+    if (motifs.includes("inaptitude") && invalidite.tauxPleinDeLInapte(
+      moteur, invalidite.REGIME_DES_SALARIES, carriere, ageLiquidation)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /**
  * Le coefficient d'anticipation de la table des âges : les trimestres qui
  * séparent la liquidation de l'âge du taux plein, arrondis au supérieur, et
@@ -2622,13 +2664,15 @@ export function coefficientConvention1947(ageLiquidation) {
 }
 
 export function abattementPoints(moteur, periode, carriere, trimestres, requis, ageLiquidation,
-  anneeLiquidation, trimestresRegime = 0, handicap = false, categorie = false) {
+  anneeLiquidation, trimestresRegime = 0, handicap = false, categorie = null) {
   // L'Ircantec a le même barème que l'Agirc-Arrco, et son texte l'écrit :
   // article 16 de l'arrêté du 30 décembre 1970, mêmes marches et mêmes deux
   // lectures. Voir le docstring du modèle Python. `trimestresRegime` est la
   // durée d'affiliation à CE régime, que la CIPAV oppose à sa surcote.
   // `handicap` : la liquidation ouverte par le départ anticipé des assurés
   // handicapés, que ces complémentaires servent sans coefficient.
+  // `categorie` : la fiche du taux plein par catégorie de L. 351-8 que
+  // l'assuré a au régime général, `null` sans elle.
   if (carriere.au_deces) {
     // La pension que l'assuré eût obtenue à son décès : la réversion d'une
     // complémentaire porte sur les points acquis, sans coefficient. Voir
@@ -2638,22 +2682,33 @@ export function abattementPoints(moteur, periode, carriere, trimestres, requis, 
   let abattement;
   if (periode.abattement_points === "agirc_arrco"
     || periode.abattement_points === "ircantec") {
-    // Avant l'ASF de 1983, l'âge seul : une période sans durée requise — ni
-    // en dur, ni lue à la génération — abat toute anticipation avant
-    // l'âge du taux plein, et la table par durée ne s'y consulte pas.
-    const parAgeSeul = (periode.duree_requise_trimestres === null
+    // Avant l'ASF du 1er avril 1983, l'âge seul : une période sans durée
+    // requise — ni en dur, ni lue à la génération — abat toute anticipation
+    // avant l'âge du taux plein, et la table par durée ne s'y consulte pas ;
+    // une pension de l'Agirc ou de l'Arrco qui prend effet avant cette date
+    // aussi, quelle que soit sa période (`exonerationsAgircArrco`).
+    let parAgeSeul = (periode.duree_requise_trimestres === null
       || periode.duree_requise_trimestres === undefined)
       && !periode.duree_requise_par_generation;
+    const regle = exonerationsAgircArrco(moteur, periode, carriere);
+    if (regle !== null && !regle.exoneration_au_taux_plein) {
+      parAgeSeul = true;
+    }
     // L'inapte a le taux plein au régime général, et la complémentaire le
     // suit : l'Agirc-Arrco depuis l'ASF (article 84, 3, de l'accord de 2017),
     // l'Ircantec dès 1971 (article 16 de l'arrêté du 30 décembre 1970).
     // L'ancien déporté, la mère de famille ouvrière, l'ancien combattant ou
     // prisonnier, au taux plein du régime général (`categorie`), de même :
-    // l'Ircantec les nomme aux 2° à 4° du même article 16.
-    const inapte = (!parAgeSeul || periode.abattement_points === "ircantec")
-      && (invalidite.tauxPleinDeLInapte(
-        moteur, invalidite.REGIME_DES_SALARIES, carriere, ageLiquidation)
-        || categorie);
+    // l'Ircantec les nomme aux 2° à 4° du même article 16. Avant l'ASF,
+    // l'Arrco servait déjà sans coefficient le travailleur manuel et la mère
+    // de famille ouvrière (protocole du 14 juin 1976) : la version de la
+    // fiche dit qui le régime exonère, et pour quel motif.
+    const inapte = regle !== null
+      ? exonereParMotif(moteur, regle, periode, carriere, ageLiquidation, categorie)
+      : (!parAgeSeul || periode.abattement_points === "ircantec")
+        && (invalidite.tauxPleinDeLInapte(
+          moteur, invalidite.REGIME_DES_SALARIES, carriere, ageLiquidation)
+          || categorie !== null);
     // Le départ anticipé des assurés handicapés, au taux plein du régime
     // général : l'Agirc-Arrco le suit (article 84, 3), l'Ircantec l'exempte
     // (article 16, 1°, b).

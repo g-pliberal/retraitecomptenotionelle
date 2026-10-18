@@ -41,17 +41,166 @@ effet: >-
   régime général ni le régime agricole. Avant 1955, l'Agirc servait une
   autre table, par année d'âge, et un ajournement : ceux de la convention d'origine
   (fiche coefficients_anticipation_agirc_1947). L'Arrco d'avant 1965 garde ici la table
-  des accords, faute du texte de 1961.
+  des accords, faute du texte de 1961. Jusqu'au 31 mars 1983, l'âge seul abat la
+  pension, quelle que soit la durée ; de juillet 1976 à mars 1983, l'Arrco en excepte
+  les travailleurs manuels et les mères de famille ouvrières au taux de soixante-cinq
+  ans du régime général (protocole du 14 juin 1976). Le moteur levait l'abattement dès
+  le 1er janvier 1983, et à toute date sur les points de l'UNIRS ; il n'exceptait pas
+  ces deux catégories (18 octobre 2026).
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la pension (§ 4.1). Le
+# moteur (droit/liquider.py, `abattement_points`, et son jumeau) y lit ce qui
+# exonère des coefficients : `exoneration_au_taux_plein`, l'abattement levé pour
+# qui a la durée du taux plein, et la table des trimestres manquants avec lui ;
+# `exonerations`, chacune des `motifs` — l'inaptitude, ou la fiche d'un taux plein
+# par catégorie de L. 351-8 — que les `regimes` nommés servent sans coefficient,
+# tous quand ils ne sont pas nommés. Les tables sont celles des périodes
+# (`bareme_anticipation`).
+versions:
+- id: l_age_seul
+  statut: supposee
+  hypothese: >-
+    jusqu'au 30 juin 1976, l'Agirc et l'Arrco abattent à l'âge seul toute liquidation
+    avant soixante-cinq ans, quelle que soit la durée, comme le modèle le servait : ce
+    que le protocole du 14 juin 1976 lève à l'Arrco pour deux catégories, et la
+    structure financière, le 1er avril 1983, pour qui a la durée. Ce qui exonérait alors
+    l'inapte ou une catégorie — l'article 18 de l'annexe A de l'accord du 8 décembre
+    1961, l'article 8 de l'annexe I de la convention de 1947, dans leur rédaction
+    d'alors — n'est pas lu, et le modèle n'en sert rien
+  fiabilite: moyenne
+  bornes:
+    liquidation.date_effet: [null, 1976-07-01]
+  contenu:
+    droit: >-
+      toute liquidation avant l'âge normal, soixante-cinq ans, prend le coefficient de
+      l'âge atteint, sans exonération
+    parametres:
+      exoneration_au_taux_plein: false
+      exonerations: []
+  exemples: aucun trouvé
+- id: protocole_du_14_juin_1976
+  statut: lue
+  textes:
+  - reference: >-
+      protocole d'accord du 14 juin 1976 concernant l'attribution d'une retraite sans
+      abattement à certains travailleurs manuels, conclu par le CNPF et la CGPME, la
+      CFDT, la CFTC, la CGC, la CGT et la CGT-FO, hors du Journal officiel ; copie du
+      Medef, https://accords.medef.com/documents/accord_391.pdf
+    en_vigueur: 1976-07-01
+    citation: >-
+      « Les travailleurs manuels visés au nouvel article 70-2 du décret du 29 décembre
+      1945 et remplissant les conditions de travail définies aux articles 70-3 et 70-4 du
+      décret précité et dont les droits prendront effet à partir du 1er juillet 1976
+      pourront bénéficier, auprès des régimes adhérents à l'Arrco, d'une retraite
+      calculée sans application de coefficients d'abattement. »
+    lu_le: 2026-10-18
+    empreinte: sha256:980b7137b5df09364577a2a5bd69c8a65290ff35330750fa498203701228e306
+  bornes:
+    liquidation.date_effet: [1976-07-01, 1983-04-01]
+  contenu:
+    droit: >-
+      l'article 70-2 met au taux de soixante-cinq ans dès soixante ans « a) Des
+      travailleurs manuels salariés », au travail de l'article 70-3, et « b) Des mères de
+      famille salariées », au travail manuel ouvrier de l'article 70-4 (fiches
+      taux_plein_travailleurs_manuels et taux_plein_meres_de_famille_ouvrieres) ; le
+      protocole, qui vise les conditions des deux articles, leur sert les points de tous
+      les régimes de l'Arrco, UNIRS et tranche 2 compris, sans coefficient. Il ne nomme
+      pas l'Agirc, qui les abat encore à l'âge seul
+    beneficiaire: >-
+      le travailleur manuel et la mère de famille ouvrière au taux de soixante-cinq ans
+      du régime général
+    parametres:
+      exoneration_au_taux_plein: false
+      exonerations:
+      - motifs: [taux_plein_travailleurs_manuels, taux_plein_meres_de_famille_ouvrieres]
+        regimes: [arrco, arrco_tranche_2, unirs]
+  exemples: aucun trouvé
+- id: structure_financiere
+  statut: lue
+  textes:
+  - id: JORFTEXT000000286775
+    reference: >-
+      arrêté du 21 mars 1983 portant agrément de l'accord du 4 février 1983 relatif à
+      l'abaissement de l'âge de la retraite dans les régimes complémentaires, dont
+      l'index JORF ne garde que la notice
+    publie_le: 1983-04-15
+    citation: « APPLICATION A COMPTER DU 01-04-1983 »
+  - reference: >-
+      accord du 23 décembre 1996 relatif à la structure financière, hors du Journal
+      officiel ; copie du Medef, https://accords.medef.com/documents/accord_232.pdf
+    article: articles 2 et 3
+    en_vigueur: 1997-01-01
+    citation: >-
+      « une allocation égale au montant des droits acquis à l'âge de départ à la retraite
+      complémentaire et calculés en supprimant les coefficients d'abattement qui leur
+      auraient été appliqués selon les modalités en vigueur avant le 1er avril 1983 » ;
+      « La structure financière, créée par les partenaires sociaux avec l'agrément de
+      l'Etat à partir du 1er avril 1983 »
+    lu_le: 2026-10-18
+    empreinte: sha256:07169c7ea0a1bc688623c31194ba8f22bef2d5030427dda42b7a3598c981e6b6
+  nee_de: JORFTEXT000000286775
+  bornes:
+    liquidation.date_effet: [1983-04-01, null]
+  contenu:
+    droit: >-
+      de soixante à soixante-cinq ans, sans coefficient pour qui a la durée du taux plein
+      et a liquidé sa pension de base, et, s'il lui manque vingt trimestres au plus, le
+      coefficient des trimestres manquants quand il est plus avantageux ; sans coefficient
+      pour l'inapte et les catégories de L. 351-8 au taux plein. Jusqu'à l'accord du 13
+      novembre 2003, l'exonération ne valait que pour les salariés en activité, les
+      chômeurs et les artisans de la CANCAVA (accord du 23 décembre 1996, article 2), ce
+      que le modèle ne sert pas (sources, à relire)
+    parametres:
+      exoneration_au_taux_plein: true
+      exonerations:
+      - motifs: [inaptitude, taux_plein_anciens_deportes_internes,
+          taux_plein_meres_de_famille_ouvrieres, taux_plein_travailleurs_manuels,
+          taux_plein_anciens_combattants_prisonniers]
+        regimes: null
+  exemples:
+  - agirc_arrco_tranche_c_63_ans_11_mois
+  - aa_livret4_minoration_64_ans_6_mois
 sources:
-  lu_le: 2026-10-16
+  lu_le: 2026-10-18
   prochaine_relecture: 2026-12-31
   a_relire:
   - >-
-    Tranche C d'avant 2016 : lire l'accord du 4 février 1983 (ASF) et ceux de l'AGFF
-    d'avant 2003, pour dater l'exonération « sur les tranches A et B » que le moteur
-    applique dès 1991. Le report sans abattement de l'article 102 est lu (16 octobre
-    2026) : une faculté de l'assuré, que servir demanderait de liquider ces points à part,
-    et de dire quand le report vaut mieux que le coefficient.
+    Les bénéficiaires de la structure financière, de 1983 à 2003. L'accord du 23 décembre
+    1996 (article 2) ne lève l'abattement, de soixante à soixante-cinq ans, qu'aux
+    salariés en activité, aux anciens salariés qui terminent leur carrière en artisans de
+    la CANCAVA, aux chômeurs indemnisés, aux chômeurs non indemnisés inscrits depuis six
+    mois au moins, aux situations que les commissions paritaires y assimilent, aux
+    mineurs et aux anciens combattants d'Afrique du Nord ; l'avenant A-208 et l'avenant
+    n° 65 du 4 juin 2002 y ajoutent qui a quitté le salariat à cinquante ans au plus tôt,
+    après douze ans au moins, pour une activité non salariée hors de la CANCAVA ;
+    l'avenant n° 76 du 3
+    décembre 2003 l'« élargit [...] à l'ensemble des personnes qui n'étaient plus
+    salariées au moment de leur demande de liquidation » (avis d'extension, Journal
+    officiel du 17 janvier 2004). Le moteur lève l'abattement de tous, dès 1983 : au
+    propriétaire, de dire s'il faut servir la condition, et comment le modèle reconnaît
+    l'activité ou le chômage au départ ; puis lire les accords de l'ASF du 4 février 1983,
+    du 1er septembre 1990 et du 30 décembre 1993, dont l'index n'a que les notices, pour
+    les années 1983 à 1996.
+  - >-
+    Tranche C d'avant 2016 : la structure financière ne finance que les droits « acquis
+    sur les tranches A et B » (accord du 23 décembre 1996, article 3, 1, b), comme l'AGFF
+    depuis 2001 et l'accord du 13 novembre 2003 : l'exonération que le moteur refuse à la
+    tranche C dès 1991 est datée par eux de 1997 au moins ; les accords de 1990 et 1993
+    restent à lire. Le report sans abattement de l'article 102 est lu (16 octobre 2026) :
+    une faculté de l'assuré, que servir demanderait de liquider ces points à part, et de
+    dire quand le report vaut mieux que le coefficient.
+  - >-
+    Avant le 1er avril 1983, ce qui exonérait l'inapte et les catégories de L. 332 à
+    l'Agirc et à l'Arrco : l'article 18 de l'annexe A de l'accord de 1961 et l'article 8 de
+    l'annexe I de la convention de 1947 dans leur rédaction d'alors, non lus. Le moteur
+    n'en sert rien, hormis le protocole du 14 juin 1976 à l'Arrco ; les points de l'UNIRS
+    liquidés avant 1983, qu'il exonérait au taux plein, prennent depuis le 18 octobre 2026
+    le coefficient de l'âge, comme ceux de l'Arrco. L'accord Arrco de 1996 ne permet
+    l'anticipation « au plus tôt à 55 ans » qu'« à compter du 1er janvier 1999 » (article
+    10) : ce que les régimes de l'Arrco permettaient avant 60 ans, de 1965 à 1998, et si
+    leurs coefficients allaient par trimestre ou par année d'âge, reste à lire ; l'Agirc
+    les écrit « par trimestre écoulé » dans sa convention mise à jour au 20 mars 2007.
   - >-
     À lire : les articles 84, 3 et 85, 3 nomment le régime général et le régime des
     assurances sociales agricoles ; le moteur accorde l'exonération et la table des
@@ -64,15 +213,17 @@ sources:
     refuse la requête — ses avenants l'ont été par les circulaires de la caisse, 2023-01-DRJ
     comprise, qui ne touche ni l'article 84, ni le 85, ni le 102 ; l'accord du 4 février
     1983 (ASF), dont seul le résumé de l'agrément est lu (arrêté du 21 mars 1983, Journal
-    officiel du 15 avril 1983), et le texte d'origine de 1961 ; celui de 1947 est lu, qui
-    ne vaut que jusqu'en 1955 (fiche coefficients_anticipation_agirc_1947). Ni l'âge seul
-    de 1955 à 1983, ni la table des trimestres manquants dès 1983, que le moteur applique,
-    ne sont donc confirmés par un texte : le COR (document n° 13 du 28 janvier 2009, p.
-    15) donne à l'Agirc, de 1955 à 1983, les nombres de la table des âges aux années
-    pleines, de 0,43 à 55 ans à 0,96 à 64 ans, et à l'Arrco, de 1965 à 1983, ceux de 60 à
-    64 ans ; les plus anciens textes lus sont l'accord Arrco du 25 avril 1996 pour l'âge
-    (65 ans, 0,43 à 55 ans, à compter de 1999) et les annexes E et V de 2018 pour les
-    trimestres.
+    officiel du 15 avril 1983), ni ceux qui l'ont prorogé avant 1997 — ni le Medef, qui
+    publie celui du 23 décembre 1996, ni le recueil de la caisse, qui commence en 1993, ne
+    les donnent —, et le texte d'origine de 1961 ; celui de 1947 est lu, qui ne vaut que
+    jusqu'en 1955 (fiche coefficients_anticipation_agirc_1947). L'accord de 1996 confirme
+    l'âge seul d'avant le 1er avril 1983, sans en écrire la table ; ni elle, de 1955 à
+    1983, ni la table des trimestres manquants dès 1983, que le moteur applique, ne sont
+    lues : le COR (document n° 13 du 28 janvier 2009, p. 15) donne à l'Agirc, de 1955 à
+    1983, les nombres de la table des âges aux années pleines, de 0,43 à 55 ans à 0,96 à
+    64 ans, et à l'Arrco, de 1965 à 1983, ceux de 60 à 64 ans ; les plus anciens textes
+    lus sont l'accord Arrco du 25 avril 1996 pour l'âge (65 ans, 0,43 à 55 ans, à compter
+    de 1999) et les annexes E et V de 2018 pour les trimestres.
   - >-
     L'Arrco d'avant 1965. Le COR et l'IPP donnent à l'UNIRS, de 1957 à 1965, 0,75 à 60
     ans, 0,80, 0,85, 0,90 et 0,95 à 64 ans, rien avant 60 ans, et un ajournement de 1,05 à
@@ -409,6 +560,95 @@ sources:
       de 65 à 69 ans ; colonne « 1965-1983 », 0,78 à 60 ans … 0,96 à 64 ans
     url: https://www.cor-retraites.fr/sites/default/files/2019-06/doc-1073.pdf
     date: 2009-01-28
+  - type: autre
+    reference: >-
+      Même document, p. 15, tableau « ARRCO (UNIRS) », lu à l'image de la page : les lignes
+      de 55 à 59 ans, de 0,43 à 0,71, ne sont remplies que dans la colonne « 1983-2008 » ;
+      l'Arrco n'aurait servi, de 1965 à 1983, aucune anticipation avant 60 ans. Et p. 13 :
+      pour la tranche C, le coefficient se lit « du nombre de trimestres manquants pour
+      atteindre l'âge de 65 ans » seul. Source secondaire, sans texte cité
+    url: https://www.cor-retraites.fr/sites/default/files/2019-06/doc-1073.pdf
+    date: 2026-10-18
+  - type: autre
+    reference: >-
+      Accord du 23 décembre 1996 relatif à la structure financière (CNPF, CGPME, UPA, CFE-CGC,
+      CFDT, CFTC, CGT-FO, CGT), copie du Medef, qui « se substitue à effet du 1er janvier
+      1997 aux dispositions de l'accord du 30 décembre 1993 » (article 1er) et vise
+      « l'accord du 4 février 1983 », « l'accord du 1er septembre 1990 », « l'accord du 30
+      décembre 1993 ». Article 2 : « Sont bénéficiaires du présent accord dès lors que, âgés
+      de 60 et 65 ans, ils justifient de la durée d'assurance prévue à l'alinéa 2 de
+      l'article R.351-45 du code de la sécurité sociale et qu'ils ont fait liquider leur
+      pension d'assurance vieillesse, les salariés affiliés aux régimes de retraites
+      complémentaires AGIRC et ARRCO et appartenant par ailleurs aux catégories suivantes :
+      les salariés en activité, les anciens salariés qui terminent leur carrière en tant
+      qu'artisans relevant du régime de la CANCAVA, les chômeurs indemnisés par le régime
+      d'assurance chômage, les chômeurs qui ne sont plus indemnisés [...] mais sont
+      toujours inscrits à l'ANPE comme demandeurs d'emploi depuis au moins 6 mois, ainsi
+      que les situations assimilées à ces catégories par les Commissions Paritaires
+      Nationales », puis les mineurs et « les anciens combattants d'AFN bénéficiant de
+      l'allocation de préparation à la retraite » ; ils « peuvent faire liquider [...] une
+      allocation égale au montant des droits acquis [...] calculés en supprimant les
+      coefficients d'abattement qui leur auraient été appliqués selon les modalités en
+      vigueur avant le 1er avril 1983 ». Article 3, 1 : « La structure financière, créée par
+      les partenaires sociaux avec l'agrément de l'Etat à partir du 1er avril 1983 », finance
+      « b. Allocations versées [...] entre 60 et 65 ans aux bénéficiaires définis à l'article
+      2 ci-dessus correspondant aux droits acquis sur les tranches A et B des rémunérations »
+    url: https://accords.medef.com/documents/accord_232.pdf
+    date: 2026-10-18
+  - type: autre
+    reference: >-
+      Protocole d'accord du 14 juin 1976 concernant l'attribution d'une retraite sans
+      abattement à certains travailleurs manuels, copie du Medef : « Les travailleurs
+      manuels visés au nouvel article 70-2 du décret du 29 décembre 1945 et remplissant les
+      conditions de travail définies aux articles 70-3 et 70-4 du décret précité et dont
+      les droits prendront effet à partir du 1er juillet 1976 pourront bénéficier, auprès
+      des régimes adhérents à l'Arrco, d'une retraite calculée sans application de
+      coefficients d'abattement »
+    url: https://accords.medef.com/documents/accord_391.pdf
+    date: 2026-10-18
+  - type: autre
+    reference: >-
+      Accord du 10 février 2001 (recueil de la caisse, p. 59 à 84), III : l'AGFF « se
+      substitue » à l'ASF et finance « le supplément de dépenses que représente pour les
+      régimes AGIRC et ARRCO l'absence d'application des coefficients d'abattement dans les
+      conditions définies par les commissions paritaires AGIRC - ARRCO en application de
+      l'accord du 23 décembre 1996 », sur des cotisations des tranches A et B ; prorogé par
+      les accords du 3 septembre 2002 et du 20 juin 2003. Accord Arrco du 25 avril 1996,
+      article 10 : les coefficients « ne s'appliquent pas en cas de liquidation des
+      allocations entre 60 et 65 ans, dans les conditions prévues à l'article 18 de
+      l'annexe A (invalides...) et à l'annexe E (structure financière) »
+    url: https://www.agirc-arrco.fr/storage/2021/11/liste_accords_paritaires_Agirc_Arrco.pdf
+    date: 2026-10-18
+  - type: jorf
+    reference: >-
+      Avis d'extension des avenants à l'annexe V de la convention de 1947 et à l'annexe E
+      de l'accord de 1961, lus dans l'index JORF du dépôt : A-197 du 5 mars 2001
+      (JORFARTI000002435434, « reformulation du titre de l'annexe V, modification de
+      l'article 2 [...] (conditions d'attribution des allocations) ») ; A-208 et n° 65 du 4
+      juin 2002 (JORFARTI000001464687, JORFARTI000001079605 : « faire bénéficier d'une
+      retraite à soixante ans sans abattement les personnes qui cessent leur activité
+      salariée au plus tôt à l'âge de cinquante ans, comptent au moins douze ans d'activité
+      salariée et terminent leur carrière par une activité non salariée ne relevant pas de
+      la CANCAVA ») ; A-211 et n° 69, A-212 et n° 70 du 1er octobre 2002, A-218 et n° 74
+      du 25 juin 2003 ;
+      n° 76 du 3 décembre 2003 (JORFARTI000002502773 : « il élargit le bénéfice d'une
+      retraite à 60 ans sans abattement à l'ensemble des personnes qui n'étaient plus
+      salariées au moment de leur demande de liquidation ») ; A-220 du 30 septembre 2003
+      (JORFARTI000001919463), qui aligne l'Agirc sur l'Arrco pour les coefficients
+      d'anticipation de « certaines catégories (par exemple les personnes reconnues inaptes
+      au travail après la liquidation de leurs droits) ». Les notices de l'accord du 30
+      décembre 1993 (JORFTEXT000000706423) et des arrêtés du 12 avril 1995 et du 29
+      décembre 2000 qui étendent ceux de 1993 et 1996 n'en donnent pas le texte
+    date: 2026-10-18
+  - type: autre
+    reference: >-
+      Convention collective nationale du 14 mars 1947, « Textes mis à jour au 20 mars
+      2007 », copie du Medef, annexe I, article 6, § 1er : « la retraite normale est
+      calculée à l'âge de 65 ans », « l'anticipation au plus tôt à 55 ans », « coefficient
+      0,43 », « majoré de : 0,0175 par trimestre écoulé entre l'âge de 55 ans et l'âge
+      atteint lors de la liquidation », puis 0,0125 de 60 à 62 ans et 0,01 de 62 à 65 ans
+    url: https://accords.medef.com/documents/accord_386.pdf
+    date: 2026-10-18
 textes_a_rattacher:
 - reference: >-
     accord national interprofessionnel du 17 novembre 2017 instituant le régime
@@ -431,9 +671,14 @@ textes_a_rattacher:
     (LEGIARTI000023030935), dans la rédaction que l'accord du 18 mars 2011 fige pour
     l'âge de référence de 2011 à 2018, et que la caisse n'a pas servie : sa table de
     2018 suit la rédaction issue de la loi n° 2011-1906 (LEGIARTI000025014605)
-exemples:
-- agirc_arrco_tranche_c_63_ans_11_mois
-- aa_livret4_minoration_64_ans_6_mois
+- reference: >-
+    accord du 23 décembre 1996 relatif à la structure financière, article 2, hors du
+    Journal officiel ; avenants A-208 et n° 65 du 4 juin 2002, n° 76 du 3 décembre 2003
+  change: >-
+    jusqu'à l'accord du 13 novembre 2003, l'exonération au taux plein ne vaut que pour les
+    salariés en activité, les chômeurs, les artisans de la CANCAVA et les situations
+    assimilées, puis, dès 2002, pour qui finit sa carrière dans une autre activité non
+    salariée ; la version `structure_financiere` l'accorde à tous (sources, à relire)
 code:
   interrupteurs:
     abattement_points: agirc_arrco
@@ -446,4 +691,7 @@ code:
     l'acquisition (`Droits.abattus`, `Droits.points_abattus`) ; la liquidation leur
     applique le coefficient de la table des âges (`liquider.coefficient_pour_age`) quand
     il est plus sévère que celui des autres points, et affiche le coefficient moyen de
-    la pension, pondéré par les montants.
+    la pension, pondéré par les montants. Les versions disent, à la date d'effet, ce qui
+    exonère (`liquider.exonerations_agirc_arrco`, `liquider.exonere_par_motif`, et leurs
+    jumeaux `exonerationsAgircArrco`, `exonereParMotif`) : avant le 1er avril 1983, l'âge
+    seul, quelle que soit la période ; tests/test_exonerations_agirc_arrco.py.

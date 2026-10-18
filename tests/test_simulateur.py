@@ -6154,12 +6154,14 @@ def test_les_generations_coupees_en_cours_d_annee_sont_lues_au_mois(simulateur):
 
 
 def test_avant_l_asf_de_1983_l_abattement_se_lit_a_l_age_seul(simulateur):
-    """Jusqu'à l'accord du 4 février 1983, l'Agirc et l'Arrco servaient le taux
-    plein à soixante-cinq ans et abattaient toute anticipation, quelle que soit
-    la durée. Une période sans durée requise porte ce droit : à soixante-deux
+    """Jusqu'au 31 mars 1983, l'Agirc et l'Arrco servaient le taux plein à
+    soixante-cinq ans et abattaient toute anticipation, quelle que soit la
+    durée. Une période sans durée requise porte ce droit : à soixante-deux
     ans, douze trimestres d'anticipation valent 0,88 même au taux plein du
-    régime de base. Depuis 1983, la durée lue à la génération rend le taux
-    plein dès soixante ans.
+    régime de base. Depuis le 1er avril 1983, la durée lue à la génération rend
+    le taux plein dès soixante ans — à une pension qui prend effet depuis : la
+    date d'effet décide, non la période (fiche
+    ``coefficients_anticipation_agirc_arrco``, ses versions).
     """
     carriere = simulateur.carriere_simple(
         annee_naissance=1920, sexe="H", affiliation="salarie_prive_cadre",
@@ -6174,8 +6176,14 @@ def test_avant_l_asf_de_1983_l_abattement_se_lit_a_l_age_seul(simulateur):
 
     apres = simulateur.catalogue["agirc"].periode(1984)
     assert apres.duree_requise_par_generation
+    en_1984 = simulateur.carriere_simple(
+        annee_naissance=1922, sexe="H", affiliation="salarie_prive_cadre",
+        age_debut=20, age_liquidation=62,
+    )
     assert liquider.abattement_points(scenario,
-        apres, carriere, 168, 150, 62.0, 1984) == pytest.approx(1.0)
+        apres, en_1984, 168, 150, 62.0, 1984) == pytest.approx(1.0)
+    assert liquider.abattement_points(scenario,
+        apres, carriere, 168, 150, 62.0, 1984) == pytest.approx(0.88)
 
 
 def test_la_surcote_ircantec_suit_les_deux_taux_de_l_arrete(simulateur):
