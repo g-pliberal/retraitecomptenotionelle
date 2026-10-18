@@ -4,7 +4,9 @@ intitule: >-
   Pension de réversion du régime spécial de la SNCF (décret n° 2008-639, articles 18 à
   23 et 31) : la moitié de la pension obtenue par l'agent ou qu'il aurait obtenue au
   jour de son décès, sans condition d'âge ni de ressources, majorée pour enfants
-  comme la pension ; au conjoint marié deux ans le jour de la cessation des
+  comme la pension, et, quand la pension de l'agent atteint le minimum de pension de
+  l'article 15, 54 % de ce minimum au moins ; au conjoint marié deux ans le jour de la
+  cessation des
   fonctions, ou quatre ans au décès, deux s'il existe un enfant issu du mariage, sans
   durée quand un enfant est né avant la cessation ; partagée avec les conjoints
   divorcés non remariés au prorata des mariages ; ni le remariage, ni le pacs, ni le
@@ -25,15 +27,19 @@ lit:
 - le ménage où vit le survivant, au décès ou après
 - la pension du défunt, servie ou qu'il aurait obtenue au jour de son décès, et sa
   majoration pour enfants
+- le minimum de pension de l'article 15 (minimum_pension_sncf.csv), revalorisé
+  comme les pensions (revalorisation_pensions.csv), à l'année des montants
 ecrit:
 - la pension de réversion du survivant, à la SNCF
 dates_qui_decident:
 - liquidation.date_effet
 # Les versions forment un partage de la date d'effet de la réversion (§ 4.1) : le
 # règlement de retraites d'avant le 1er juillet 2008, que l'index ne porte pas, puis
-# le décret n° 2008-639. Le moteur les lit par sa branche propre (droit/reversion.py
+# le décret n° 2008-639, dont les taux de passage du minimum, en 2008 et en 2009,
+# sont deux exceptions. Le moteur les lit par sa branche propre (droit/reversion.py
 # et son jumeau) : le taux, la condition de l'article 19, la part de la majoration
-# pour enfants reversée, et le concubinage au décès.
+# pour enfants reversée, le concubinage au décès, et la part du minimum de pension
+# que la réversion garde.
 versions:
 - id: avant_2008
   statut: supposee
@@ -57,6 +63,7 @@ versions:
       majoration_reversible: 0.50
       sans_jouissance_au_deces: [concubinage]
       age_minimum: null
+      part_du_minimum_de_pension: null
       fiabilite: moyenne
   exemples: aucun trouvé
 - id: conjoints_2008
@@ -73,6 +80,15 @@ versions:
   - {id: LEGIARTI000030597108, article: "décret n° 2008-639, article 22", en_vigueur: 2016-01-01}
   - {id: LEGIARTI000019108268, article: "décret n° 2008-639, article 23", en_vigueur: 2008-07-01}
   - {id: LEGIARTI000019108272, article: "décret n° 2008-639, article 31", en_vigueur: 2008-07-01}
+  - {id: LEGIARTI000019108319, article: "décret n° 2008-639, article 15", en_vigueur: 2008-07-01}
+  - {id: LEGIARTI000030598853, article: "décret n° 2008-639, article 15", en_vigueur: 2015-05-18}
+  - {id: LEGIARTI000023733127, article: "décret n° 2008-639, article 15", en_vigueur: 2017-01-01}
+  - {id: LEGIARTI000045021306, article: "décret n° 2008-639, article 15", en_vigueur: 2022-01-02}
+  - {id: LEGIARTI000048240197, article: "décret n° 2008-639, article 15", en_vigueur: 2023-10-22}
+  - {id: LEGIARTI000048896995, article: "décret n° 2008-639, article 15", en_vigueur: 2024-01-07}
+  - {id: LEGIARTI000019108274, article: "décret n° 2008-639, article 30", en_vigueur: 2008-07-01}
+  - {id: LEGIARTI000020085578, article: "décret n° 2008-639, article 30", en_vigueur: 2009-01-01}
+  - {id: LEGIARTI000029165205, article: "décret n° 2008-639, article 30", en_vigueur: 2014-06-29}
   nee_de: LEGIARTI000019108265
   bornes:
     liquidation.date_effet: [2008-07-01, null]
@@ -103,6 +119,19 @@ versions:
       (article 19, I) ; « Le conjoint survivant qui se remarie perçoit, sans
       revalorisation ultérieure, la pension dont il bénéficiait antérieurement à son
       nouvel état », le pacs et le concubinage valant remariage (article 31)
+    minimum: >-
+      « Lorsque la pension de l'agent a été portée au montant du minimum de pension
+      prévu à l'article 15, la pension de réversion est portée à 51,3 % de ce montant
+      au 1er juillet 2008, à 52,7 % de ce montant au 1er juillet 2009 et à 54 % de ce
+      montant au 1er juillet 2010. Lorsque la pension de l'agent est supérieure au
+      montant du minimum de pension prévu à l'article 15, la pension de réversion ne
+      peut être inférieure à celle qui résulterait de l'application de l'alinéa
+      précédent » (article 18) ; « Le montant du minimum de pension est égal à
+      3 367,02 € par trimestre à compter du 1er juillet 2008 et à 3 379,38 € par
+      trimestre à compter du 1er décembre 2008 », puis « à 1 215,64 euros par mois à
+      partir du 1er octobre 2014 », « revalorisé dans les conditions définies à
+      l'article 30 » (article 15, IV), « du taux et à la date prévus pour les
+      fonctionnaires de l'Etat » (article 30) : `minimum_pension_sncf.csv`
     parametres:
       taux: 0.50
       ex_conjoints: non_remaries
@@ -113,31 +142,103 @@ versions:
       majoration_reversible: 0.50
       sans_jouissance_au_deces: [concubinage]
       age_minimum: null
+      part_du_minimum_de_pension: 0.54
+      fiabilite: haute
+  exemples: aucun trouvé
+# Les taux de passage du minimum de la réversion, à sa date d'effet : 51,3 % du
+# minimum de pension au 1er juillet 2008, 52,7 % au 1er juillet 2009 (article
+# 18) ; la version conjoints_2008 pour le reste.
+- id: minimum_2008
+  statut: lue
+  textes:
+  - {id: LEGIARTI000019108265, article: "décret n° 2008-639, article 18", en_vigueur: 2008-07-01}
+  nee_de: LEGIARTI000019108265
+  exception_de: conjoints_2008
+  bornes:
+    liquidation.date_effet: [2008-07-01, 2009-07-01]
+  contenu:
+    droit: >-
+      la version conjoints_2008 ; la pension de réversion « est portée à 51,3 % de ce
+      montant au 1er juillet 2008 » (article 18)
+    parametres:
+      taux: 0.50
+      ex_conjoints: non_remaries
+      beneficiaire: conjoint
+      mariage_cessation_minimum_annees: 2
+      mariage_minimum_annees: 4
+      mariage_minimum_annees_avec_enfant: 2
+      majoration_reversible: 0.50
+      sans_jouissance_au_deces: [concubinage]
+      age_minimum: null
+      part_du_minimum_de_pension: 0.513
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: minimum_2009
+  statut: lue
+  textes:
+  - {id: LEGIARTI000019108265, article: "décret n° 2008-639, article 18", en_vigueur: 2008-07-01}
+  nee_de: LEGIARTI000019108265
+  exception_de: conjoints_2008
+  bornes:
+    liquidation.date_effet: [2009-07-01, 2010-07-01]
+  contenu:
+    droit: >-
+      la version conjoints_2008 ; la pension de réversion est portée « à 52,7 % de ce
+      montant au 1er juillet 2009 » (article 18)
+    parametres:
+      taux: 0.50
+      ex_conjoints: non_remaries
+      beneficiaire: conjoint
+      mariage_cessation_minimum_annees: 2
+      mariage_minimum_annees: 4
+      mariage_minimum_annees_avec_enfant: 2
+      majoration_reversible: 0.50
+      sans_jouissance_au_deces: [concubinage]
+      age_minimum: null
+      part_du_minimum_de_pension: 0.527
       fiabilite: haute
   exemples: aucun trouvé
 approximations:
 - version: [avant_2008]
   ecart: >-
     le règlement de retraites d'avant le 1er juillet 2008 n'a pas été lu : la règle de
-    2008 lui est prêtée, au veuf comme à la veuve
+    2008 lui est prêtée, au veuf comme à la veuve, sans son minimum, dont aucun
+    montant n'est lu avant le 1er juillet 2008
   effet: non mesuré
 - ecart: >-
-    ne sont pas portés : le minimum de la réversion, 54 % du minimum de pension de
-    l'article 15 quand la pension de l'agent l'atteint (article 18), que le modèle ne
-    porte pas non plus à la pension de l'agent ; l'allocation de solidarité aux
-    personnes âgées que la réversion de la personne seule de 55 à 64 ans atteint au
-    moins (article 23), selon ses ressources ; la pension d'orphelin et le partage
-    qu'elle impose (articles 20 et 21) ; la réversion refusée à qui recueille « un
-    avantage de même nature d'un autre chef » (article 18) ; la condition levée par
-    l'accident en service (article 19, I, 2°)
+    ne sont pas portés : l'allocation de solidarité aux personnes âgées que la
+    réversion de la personne seule de 55 à 64 ans atteint au moins (article 23),
+    « sous conditions de ressources » que la caisse dit sans les détailler, et que
+    le texte ne dit pas ; la pension d'orphelin et le partage qu'elle impose
+    (articles 20 et 21) ; la réversion refusée à qui recueille « un avantage de même
+    nature d'un autre chef » (article 18) ; la condition levée par l'accident en
+    service (article 19, I, 2°)
   effet: non mesuré
+- version: [conjoints_2008, minimum_2008, minimum_2009]
+  ecart: >-
+    le minimum de la réversion ne joue que si la pension de l'agent, telle que le
+    modèle la liquide, atteint le minimum de pension : le modèle n'y porte pas la
+    pension de l'agent (article 15, I et IV), et la réversion d'une pension qu'il y
+    aurait portée reste la moitié de la pension calculée ; ce minimum est celui des
+    pensions d'ancienneté, sans celui de l'emploi à service discontinu ni le minimum
+    réduit de la pension de réforme (article 15, I et II) ; il suit les pensions
+    depuis ses ancres de 2008 et de 2014, au coefficient de 1 % en 2020, celui des
+    pensions de 2 000 € par mois au plus, et sans la révision des montants de 2008
+    (article 15, IV ; article 36, c), qui le laisse de 2009 à 2013 à 0,3 % sous ce
+    que le décret de 2015 fixe au 1er octobre 2014 ; le taux de 51,3 % ou de 52,7 %
+    est celui de la date d'effet, que les relèvements de juillet 2009 et de juillet
+    2010 ne suivent pas
+  effet: >-
+    la réversion d'un agent sous le minimum de pension, que l'article 15 y aurait
+    porté, est sous-estimée d'au moins 4 % de ce minimum ; non mesuré
 - ecart: >-
     la cessation des fonctions est le départ, ou le décès qui le précède ; tout enfant
     déclaré est un enfant des conjoints, né avant la cessation s'il naît avant le
     départ — l'enfant conçu avant et né après ne lève pas la condition — ; la
-    majoration de la réversion est la moitié de celle de l'agent, sans le plafond de
-    la moitié de la rémunération qui a servi de base au calcul de la pension (article
-    18), comme la majoration de l'agent est servie sans le sien (fiche
+    majoration de la réversion est celle de l'agent au même taux du montant de la
+    réversion, la moitié de la sienne quand elle n'est pas portée au minimum, sans le
+    plafond de la moitié de la rémunération qui a servi de base au calcul de la
+    pension (article 18), comme la majoration de l'agent est servie sans le sien (fiche
     majoration_enfants_regimes_speciaux) ; la réversion part le premier jour du mois
     qui suit le décès, comme pour le retraité, et non le lendemain du décès de
     l'agent en activité (article 22) ; les montants sont ceux de l'année du décès
@@ -168,13 +269,29 @@ sources:
     Le règlement de retraites du personnel de la SNCF d'avant le 1er juillet 2008,
     que l'index LEGI ne porte pas et que le JORF ne publie pas : la version
     avant_2008 lui prête la règle de 2008, au veuf comme à la veuve.
+  - >-
+    La condition de ressources du minimum de l'article 23, que le texte ne dit pas et
+    que la caisse dit sans la détailler : la réversion portée à l'ASPA d'une personne
+    seule, moins ses autres ressources, comme l'allocation que L. 815-9 rend
+    différentielle ? Au propriétaire, avant de l'écrire, avec la ligne qui ne montre
+    qu'un montant, quand le survivant n'a cinquante-cinq ans qu'après la date
+    d'effet ou en atteint soixante-cinq.
+  - >-
+    Les montants du minimum de pension des années que le texte n'écrit pas : la
+    caisse n'en publie aucun que le dépôt ait trouvé ; le modèle les refait par
+    l'article 30.
   lectures:
   - type: legifrance
     reference: >-
       décret n° 2008-639, articles 18 à 23 et 31, toutes leurs rédactions dans
       l'index LEGI du dépôt, mis à jour le 18 octobre 2026 ; l'article 16
-      (LEGIARTI000048240189) pour la majoration ; l'article 15 (LEGIARTI000048896995)
-      pour le minimum de pension, 1 215,64 € par mois au 1er octobre 2014 ; le décret
+      (LEGIARTI000048240189) pour la majoration ; l'article 15, ses six rédactions
+      (LEGIARTI000019108319 à LEGIARTI000048896995), pour le minimum de pension :
+      3 367,02 € par trimestre au 1er juillet 2008, 3 379,38 € au 1er décembre 2008,
+      1 215,64 € par mois au 1er octobre 2014 ; l'article 30, ses trois rédactions,
+      pour sa revalorisation, celle des pensions de l'État ; l'article 35, III, pour
+      celle du 1er avril 2009, et l'article 36, c, pour les augmentations de salaire
+      du second semestre de 2008, qui révisent ses montants de 2008 ; le décret
       n° 2025-746 ne touche aucun d'eux (il modifie les articles 5, 14 et 17)
     date: 2026-10-18
   - type: autre
@@ -195,10 +312,11 @@ code:
   python: >-
     scenarios/actuel.py : Reversions, qui lit les versions de cette fiche ;
     droit/reversion.py : reversion, _mariage_sncf, _sans_jouissance_au_deces,
-    _part_du_survivant, _admis_ailleurs
+    _part_du_survivant, _admis_ailleurs, _minimum_de_pension
   javascript: >-
     moteur/js/regimes.js : Reversions ; moteur/js/droit/reversion.js : reversion,
-    mariageSncf, sansJouissanceAuDeces, partDuSurvivant, admisAilleurs
+    mariageSncf, sansJouissanceAuDeces, partDuSurvivant, admisAilleurs,
+    minimumDePension
   parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
   tests: [tests/test_reversion.py, tests/test_web.py]
 historique:
@@ -207,7 +325,15 @@ historique:
   réversion, et sa ligne disait « la réversion de ce régime n'est pas encore
   portée » ; la cotisation maladie de la réversion se prend sous la moitié du
   plafond (décret n° 2007-1056, article 7, VII).
+- >-
+  2026-10-18 — le minimum de l'article 18 (action 138, étape 9) : la réversion de la
+  pension qui atteint le minimum de pension de l'article 15 ne descend pas sous 54 %
+  de ce minimum, 51,3 % et 52,7 % en 2008 et en 2009 ; l'agent né en 1958, parti à
+  57 ans à 55 % du salaire moyen, trois enfants, mort en mai 2023, laisse 9 425 € par
+  an en euros de 2023 au lieu de 8 859.
 effet: >-
   Tout conjoint d'un agent de la SNCF : la moitié de sa pension, majorée pour enfants,
   sans âge ni ressources, dès que le mariage remplit la condition de l'article 19,
-  partagée avec les précédents conjoints non remariés.
+  partagée avec les précédents conjoints non remariés ; 54 % du minimum de pension au
+  moins quand la pension de l'agent l'atteint, ce qui relève la réversion des
+  pensions qui le dépassent de moins de 8 %, sous 1 428 € par mois en 2023.

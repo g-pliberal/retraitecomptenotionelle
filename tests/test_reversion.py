@@ -734,6 +734,80 @@ def test_l_union_nouvelle_ne_retire_pas_la_reversion_de_la_sncf(simulateur, unio
     assert (ligne.montant, ligne.motif, ligne.fin) == (montant, motif, None)
 
 
+#: Le minimum de pension de la SNCF (décret n° 2008-639, article 15, IV), par an :
+#: 3 379,38 € par trimestre au 1er décembre 2008, 1 215,64 € par mois au 1er
+#: octobre 2014, revalorisé entre-temps et depuis comme les pensions (article
+#: 30) : 1,01 au 1er avril 2009, 1,001 au 1er octobre 2015.
+MINIMUM_SNCF_2008 = 3379.38 * 4
+MINIMUM_SNCF_2014 = 1215.64 * 12
+
+
+@pytest.mark.parametrize("deces, annee, base, minimum, montant, motif", [
+    # La pension de l'agent dépasse le minimum de pension : la réversion « ne
+    # peut être inférieure » à 54 % de ce minimum, 7 877,35 €, où la moitié de
+    # la pension, 7 500 €, descendrait.
+    ("2014-06-10", 2014, 15000.0, 0.54 * MINIMUM_SNCF_2014, 0.54 * MINIMUM_SNCF_2014,
+     "minimum"),
+    # Portée au minimum, la pension en est le montant : 54 % aussi.
+    ("2014-06-10", 2014, MINIMUM_SNCF_2014, 0.54 * MINIMUM_SNCF_2014,
+     0.54 * MINIMUM_SNCF_2014, "minimum"),
+    # La moitié au-dessus des 54 % : la moitié.
+    ("2014-06-10", 2014, 16000.0, 0.54 * MINIMUM_SNCF_2014, 8000.0, "servie"),
+    # Sous le minimum, que la liquidation ne lui a pas fait atteindre : la
+    # moitié, sans plancher.
+    ("2014-06-10", 2014, 14000.0, 0.0, 7000.0, "servie"),
+    # Le minimum revalorisé de 1,001 au 1er octobre 2015.
+    ("2016-03-10", 2016, 15000.0, 0.54 * MINIMUM_SNCF_2014 * 1.001,
+     0.54 * MINIMUM_SNCF_2014 * 1.001, "minimum"),
+    # Les taux de passage : 51,3 % au 1er juillet 2008, 52,7 % au 1er juillet
+    # 2009, à la date d'effet de la réversion, le premier jour du mois qui suit
+    # le décès.
+    ("2008-09-10", 2008, 13600.0, 0.513 * MINIMUM_SNCF_2008, 0.513 * MINIMUM_SNCF_2008,
+     "minimum"),
+    ("2009-05-10", 2009, 13700.0, 0.513 * MINIMUM_SNCF_2008 * 1.01,
+     0.513 * MINIMUM_SNCF_2008 * 1.01, "minimum"),
+    ("2009-08-10", 2009, 13700.0, 0.527 * MINIMUM_SNCF_2008 * 1.01,
+     0.527 * MINIMUM_SNCF_2008 * 1.01, "minimum"),
+    # Avant le 1er juillet 2008, le règlement de retraites, que l'index ne
+    # porte pas : aucun minimum lu.
+    ("2005-02-10", 2005, 10000.0, 0.0, 5000.0, "servie"),
+])
+def test_la_reversion_de_la_sncf_ne_descend_pas_sous_54_pour_cent_du_minimum_de_pension(
+        simulateur, deces, annee, base, minimum, montant, motif):
+    """Décret n° 2008-639, article 18 : « Lorsque la pension de l'agent a été
+    portée au montant du minimum de pension prévu à l'article 15, la pension de
+    réversion est portée à 51,3 % de ce montant au 1er juillet 2008, à 52,7 %
+    de ce montant au 1er juillet 2009 et à 54 % de ce montant au 1er juillet
+    2010. Lorsque la pension de l'agent est supérieure au montant du minimum
+    [...], la pension de réversion ne peut être inférieure à celle qui
+    résulterait de l'application de l'alinéa précédent. »"""
+    carriere = _carriere(simulateur, 1940, 62.0, "1945", deces, mariage="1999-12")
+    ligne, = reversion(simulateur.scenario_actuel, [("sncf", base, HAUTE)], carriere,
+                       annee).regimes
+    assert (ligne.minimum, ligne.montant, ligne.motif) == (
+        pytest.approx(minimum), pytest.approx(montant), motif)
+
+
+def test_le_minimum_de_la_reversion_de_la_sncf_se_partage_et_se_majore(simulateur):
+    """Le minimum est celui de la réversion entière, que le conjoint survivant
+    partage avec le précédent conjoint au prorata des mariages (article 20,
+    1°) : 168 mois avec le survivant, 120 avec le précédent ; la réversion
+    portée au minimum est « majorée dans les conditions fixées à l'article
+    16 » (article 18), 10 % de son montant pour trois enfants, le taux de la
+    majoration de l'agent."""
+    carriere = _carriere(simulateur, 1940, 62.0, "1945", "2014-06-10", mariage="2000-06",
+                         ex_conjoints=({"naissance": "1942", "mariage": "1975-06",
+                                        "divorce": "1985-06", "remariage": None},))
+    ligne, = reversion(simulateur.scenario_actuel, [("sncf", 15000.0, HAUTE)], carriere,
+                       2014, majorations={"sncf": 1500.0}).regimes
+    part = 168 / (168 + 120)
+    minimum = 0.54 * MINIMUM_SNCF_2014 * part
+    assert (ligne.part, ligne.motif) == (pytest.approx(part), "minimum")
+    assert (ligne.minimum, ligne.majoration) == (pytest.approx(minimum),
+                                                 pytest.approx(0.10 * minimum))
+    assert ligne.montant == pytest.approx(1.10 * minimum)
+
+
 @pytest.mark.parametrize("remariage, part", [(None, 152 / (152 + 120)), ("1990-01", 1.0)])
 def test_la_sncf_partage_avec_le_conjoint_divorce_non_remarie(simulateur, remariage, part):
     """La pension « partagée entre le conjoint survivant et le ou les conjoints

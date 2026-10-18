@@ -28,7 +28,9 @@ applique à chaque régime la version de sa fiche que les dates choisissent :
   cessation des fonctions, ou quatre ans au décès, deux avec un enfant du
   mariage, sans durée quand un enfant est né avant la cessation ; rien au
   survivant en concubinage au décès, et l'union qu'il forme après ne l'éteint
-  pas (décret n° 2008-639, articles 18 à 20 et 31) ;
+  pas ; quand la pension de l'agent atteint le minimum de pension, 54 % de ce
+  minimum au moins, 51,3 % et 52,7 % avant juillet 2010 (décret n° 2008-639,
+  articles 15, 18 à 20 et 31) ;
 * le RAFP (``reversion_rafp``) : la moitié de la prestation, sans âge, sans
   ressources ni durée du mariage, et rien après un droit direct versé en
   capital — l'échéancier dit lesquels (``en_capital``) ;
@@ -164,7 +166,7 @@ SCHEMA_VERSION = 1
 #: entier.
 MOTIFS = {
     "servie": "servie",
-    "minimum": "portée au minimum de la réversion (D. 353-1)",
+    "minimum": "portée au minimum de la réversion (D. 353-1 ; décret n° 2008-639, article 18)",
     "maximum": "ramenée au maximum de la réversion, son taux du maximum des pensions",
     "ecretee": "réduite à due concurrence du plafond de ressources",
     "ressources": "ressources au-dessus du plafond",
@@ -236,7 +238,8 @@ class ReversionRegime:
     #: hors du taux : l'Agirc-Arrco la reverse en entier depuis 2019.
     majoration: float = 0.0
     #: Le minimum que D. 353-1 garantit à cette réversion du régime général ou
-    #: d'un régime aligné, soixantièmes et prorata faits ; 0 sans lui.
+    #: d'un régime aligné, soixantièmes et prorata faits, ou l'article 18 du
+    #: décret n° 2008-639 à celle de la SNCF, sa part faite ; 0 sans lui.
     minimum: float = 0.0
     #: La majoration de 10 % du survivant de trois enfants (L. 353-1, R. 353-2),
     #: comprise dans le montant.
@@ -886,6 +889,27 @@ def _part_du_minimum(parametres: dict, regime: str, durees: dict[str, int] | Non
     return min(1.0, propre / seuil)
 
 
+def _minimum_de_pension(moteur: ScenarioActuel, parametres: dict, base: float,
+                        annee: int) -> tuple[float, Fiabilite] | None:
+    """Ce que garde au moins la réversion entière de la SNCF, aux euros de
+    ``annee``, et sa fiabilité : la part ``part_du_minimum_de_pension`` du
+    minimum de pension de l'article 15, IV, quand la pension de l'agent,
+    ``base``, l'atteint — « portée au montant du minimum » ou « supérieure »
+    (décret n° 2008-639, article 18) ; ``None`` sans lui. Le minimum suit les
+    pensions de son ancre à l'année des montants (article 30), en 2020 au taux
+    des pensions de 2 000 € par mois au plus, qu'il ne dépasse pas."""
+    part = parametres.get("part_du_minimum_de_pension")
+    ancre = moteur.reversions.minimum_pension_sncf(annee)
+    if part is None or ancre is None:
+        return None
+    depuis, montant, fiabilite = ancre
+    coefficient, fiabilite_du_coefficient = moteur.revalorisations_pensions.generale(
+        date(depuis, 12, 31), date(annee, 12, 31), False, montant / 12)
+    if base < montant * coefficient:
+        return None
+    return float(part) * montant * coefficient, min(fiabilite, fiabilite_du_coefficient)
+
+
 def _enfants_de_moins_de(carriere: Carriere, deces: str, ans: int) -> int:
     """Les enfants nés au décès qui n'ont pas encore ``ans`` ans : ceux que la
     chronologie porte, déclarés ou présumés, et que le modèle tient pour à la
@@ -1087,14 +1111,26 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
                                     [jour for _, jour in carriere.naissances_des_enfants])
                       if fiche["id"] == "reversion_sncf"
                       else _mariage_ieg(parametres, conjoint, deces, depart, enfants))
+            # La réversion entière, portée au minimum de la SNCF, que le
+            # survivant partage comme elle (article 20) ; sa majoration est
+            # celle de l'agent au même taux de son montant (article 16).
+            entiere = taux * base
+            minimum, motif, releve = 0.0, "servie", 1.0
+            garanti = _minimum_de_pension(moteur, parametres, base, annee) if servie else None
+            if garanti is not None:
+                minimum = garanti[0]
+                if minimum > entiere:
+                    entiere, motif, releve = minimum, "minimum", minimum / entiere
+                    fiabilite = min(fiabilite, garanti[1])
             majoration = (float(parametres.get("majoration_reversible") or 0.0)
-                          * (majorations or {}).get(regime, 0.0) * part) if servie else 0.0
-            montant = taux * base * part + majoration if servie else 0.0
+                          * (majorations or {}).get(regime, 0.0) * part
+                          * releve) if servie else 0.0
+            montant = entiere * part + majoration if servie else 0.0
             lignes[regime] = _sans_jouissance_au_deces(_jusqu_au_remariage(replace(
-                ligne(regime, base, montant, "servie" if servie else "mariage", fiche,
+                ligne(regime, base, montant, motif if servie else "mariage", fiche,
                       version, taux, lendemain, fiabilite),
-                majoration=majoration, part=part), parametres, conjoint),
-                parametres, conjoint, deces)
+                majoration=majoration, part=part, minimum=minimum * part),
+                parametres, conjoint), parametres, conjoint, deces)
             autres_bases += lignes[regime].montant
             continue
         if fiche["id"] == "reversion_rafp":

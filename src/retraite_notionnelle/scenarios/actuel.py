@@ -1455,6 +1455,11 @@ class Reversions:
         self._limite_cumul = MinimumVieillesse._lire(legislation / "limite_cumul_reversion.csv")
         self._majoration_enfant = MinimumVieillesse._lire(
             legislation / "majoration_forfaitaire_enfant_reversion.csv")
+        #: Le minimum de pension de la SNCF (décret n° 2008-639, article 15,
+        #: IV), annuel, dont la réversion garde une part (article 18) : les
+        #: ancres que le texte écrit, que l'article 30 revalorise entre elles.
+        self._minimum_pension_sncf = MinimumVieillesse._lire(
+            legislation / "minimum_pension_sncf.csv")
 
     @staticmethod
     def _en_vigueur(table: dict[int, tuple[float, Fiabilite]],
@@ -1485,12 +1490,23 @@ class Reversions:
         euros de l'année ``annee`` ; ``None`` avant 1988."""
         return self._en_vigueur(self._majoration_enfant, annee)
 
+    def minimum_pension_sncf(self, annee: int) -> tuple[int, float, Fiabilite] | None:
+        """L'ancre du minimum de pension ANNUEL de la SNCF en vigueur l'année
+        ``annee``, ``(son année, montant, fiabilité)``, que l'article 30
+        revalorise jusqu'à ``annee`` ; ``None`` avant le 1er juillet 2008."""
+        anterieures = [a for a in self._minimum_pension_sncf if a <= annee]
+        if not anterieures:
+            return None
+        ancre = max(anterieures)
+        return (ancre, *self._minimum_pension_sncf[ancre])
+
     def series(self) -> dict[str, dict]:
         """Les séries, sous le nom que le paquet du site leur donne."""
         return {"minimum_reversion": dict(self._minimum),
                 "plafond_majoration_reversion": dict(self._plafond_majoration),
                 "limite_cumul_reversion": dict(self._limite_cumul),
-                "majoration_forfaitaire_enfant_reversion": dict(self._majoration_enfant)}
+                "majoration_forfaitaire_enfant_reversion": dict(self._majoration_enfant),
+                "minimum_pension_sncf": dict(self._minimum_pension_sncf)}
 
     def fiches(self) -> dict[str, dict]:
         """Les fiches préparées, sous leur nom : ce que le paquet du site porte."""

@@ -1421,6 +1421,10 @@ export class Reversions {
     // charge (L. 353-5, R. 353-11).
     this._limiteCumul = paquet.limite_cumul_reversion ?? {};
     this._majorationEnfant = paquet.majoration_forfaitaire_enfant_reversion ?? {};
+    // Le minimum de pension annuel de la SNCF (décret n° 2008-639, article 15,
+    // IV), dont la réversion garde une part (article 18) : les ancres que le
+    // texte écrit, que l'article 30 revalorise entre elles.
+    this._minimumPensionSncf = paquet.minimum_pension_sncf ?? {};
   }
 
   /**
@@ -1453,6 +1457,21 @@ export class Reversions {
   /** La majoration forfaitaire ANNUELLE par enfant à charge, en euros de `annee`. */
   majorationEnfant(annee) {
     return Reversions._enVigueur(this._majorationEnfant, annee);
+  }
+
+  /**
+   * L'ancre du minimum de pension ANNUEL de la SNCF en vigueur l'année
+   * `annee`, `[son année, montant, fiabilité]`, que l'article 30 revalorise
+   * jusqu'à `annee` ; `null` avant le 1er juillet 2008.
+   */
+  minimumPensionSncf(annee) {
+    const anterieures = Object.keys(this._minimumPensionSncf).map(Number)
+      .filter((a) => a <= annee);
+    if (anterieures.length === 0) {
+      return null;
+    }
+    const ancre = Math.max(...anterieures);
+    return [ancre, ...this._minimumPensionSncf[String(ancre)]];
   }
 
   /**

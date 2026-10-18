@@ -46,7 +46,7 @@ export const SCHEMA_VERSION = 1;
 /** Ce que dit une ligne dont le montant est nul, ou qui n'est pas servie en entier. */
 export const MOTIFS = Object.freeze({
   servie: "servie",
-  minimum: "portée au minimum de la réversion (D. 353-1)",
+  minimum: "portée au minimum de la réversion (D. 353-1 ; décret n° 2008-639, article 18)",
   maximum: "ramenée au maximum de la réversion, son taux du maximum des pensions",
   ecretee: "réduite à due concurrence du plafond de ressources",
   ressources: "ressources au-dessus du plafond",
@@ -129,7 +129,8 @@ export class ReversionRegime {
     // La part du montant qui reverse la majoration pour enfants du défunt,
     // hors du taux : l'Agirc-Arrco la reverse en entier depuis 2019.
     this.majoration = majoration;
-    // Le minimum de D. 353-1, soixantièmes et prorata faits ; 0 sans lui.
+    // Le minimum de D. 353-1, soixantièmes et prorata faits, ou de l'article 18
+    // du décret n° 2008-639 à la SNCF, sa part faite ; 0 sans lui.
     this.minimum = minimum;
     // La majoration de 10 % du survivant de trois enfants, comprise dans le montant.
     this.majoration_trois_enfants = majoration_trois_enfants;
@@ -896,6 +897,29 @@ function majorerLesPetitesRetraites(moteur, lignes, reduites, conjoint, retraite
 }
 
 /**
+ * Ce que garde au moins la réversion entière de la SNCF, aux euros de
+ * `annee`, et sa fiabilité, `[montant, fiabilité]` : la part
+ * `part_du_minimum_de_pension` du minimum de pension de l'article 15, IV,
+ * quand la pension de l'agent, `base`, l'atteint ; `null` sans lui. Voir
+ * `_minimum_de_pension` du Python.
+ */
+function minimumDePension(moteur, parametres, base, annee) {
+  const part = parametres.part_du_minimum_de_pension;
+  const ancre = moteur.reversions.minimumPensionSncf(annee);
+  if (part === null || part === undefined || ancre === null) {
+    return null;
+  }
+  const [depuis, montant, fiabilite] = ancre;
+  const [coefficient, fiabiliteDuCoefficient] = moteur.revalorisationsPensions.generale(
+    `${String(depuis).padStart(4, "0")}-12-31`, `${String(annee).padStart(4, "0")}-12-31`,
+    false, montant / 12);
+  if (base < montant * coefficient) {
+    return null;
+  }
+  return [Number(part) * montant * coefficient, Math.min(fiabilite, fiabiliteDuCoefficient)];
+}
+
+/**
  * Les enfants nés au décès qui n'ont pas encore `ans` ans : ceux que la
  * chronologie porte, déclarés ou présumés, et que le modèle tient pour à la
  * charge du survivant.
@@ -1005,14 +1029,32 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
         ? mariageSncf(parametres, conjoint, deces, depart,
           carriere.naissancesDesEnfants.map(([, naissance]) => naissance))
         : mariageIeg(parametres, conjoint, deces, depart, enfants);
+      // La réversion entière, portée au minimum de la SNCF, que le survivant
+      // partage comme elle ; sa majoration au même taux de son montant.
+      let entiere = taux * base;
+      let minimum = 0.0;
+      let motif = "servie";
+      let releve = 1.0;
+      let fiabiliteLigne = fiabilite;
+      const garanti = servie ? minimumDePension(moteur, parametres, base, annee) : null;
+      if (garanti !== null) {
+        minimum = garanti[0];
+        if (minimum > entiere) {
+          releve = minimum / entiere;
+          entiere = minimum;
+          motif = "minimum";
+          fiabiliteLigne = Math.min(fiabilite, garanti[1]);
+        }
+      }
       const majoration = servie
         ? Number(parametres.majoration_reversible ?? 0.0) * ((majorations ?? {})[regime] ?? 0.0)
-          * part
+          * part * releve
         : 0.0;
-      const montant = servie ? taux * base * part + majoration : 0.0;
+      const montant = servie ? entiere * part + majoration : 0.0;
       lignes.set(regime, sansJouissanceAuDeces(jusquAuRemariage(ligne(regime, base, montant,
-        servie ? "servie" : "mariage", fiche, version, taux, lendemain, fiabilite, majoration)
-        .avec({ part }), parametres, conjoint), parametres, conjoint, deces));
+        servie ? motif : "mariage", fiche, version, taux, lendemain, fiabiliteLigne, majoration)
+        .avec({ part, minimum: minimum * part }), parametres, conjoint), parametres, conjoint,
+      deces));
       autresBases += lignes.get(regime).montant;
       continue;
     }

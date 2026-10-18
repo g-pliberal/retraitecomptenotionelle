@@ -1764,6 +1764,13 @@ def _cas() -> list[dict]:
     cas.append(("reversion_agent_sncf_concubinage", {
         **reversion, "statut": "agent_sncf", "liquidation": "57",
         "nouvelle_union": "concubinage"}))
+    # La pension de l'agent dépasse de peu le minimum de pension : sa
+    # réversion ne descend pas sous 54 % de ce minimum, et la majoration pour
+    # trois enfants en suit le montant (décret n° 2008-639, articles 15, 16 et
+    # 18 ; action 138, étape 9).
+    cas.append(("reversion_agent_sncf_minimum", {
+        **reversion, "statut": "agent_sncf", "liquidation": "57", "enfants": "3",
+        "salaire": "0.55"}))
     cas.append(("reversion_mariage_court_avant_2004", {
         "naissance": "1930", "liquidation": "60", "conjoint": "1935",
         "mariage": "1994-06", "deces": "1995-03"}))
