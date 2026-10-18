@@ -747,7 +747,7 @@
    "niveau": "haute",
    "source": "dérivée des quotients INED de Vallin et Meslé",
    "valeurs": 28,
-   "verifiee_le": "2026-10-17"
+   "verifiee_le": "2026-10-18"
   },
   "esperances_projetees": {
    "ajoutees": 0,
@@ -1399,25 +1399,25 @@
    "verifiee_le": "2026-10-12"
   },
   "quotients_mortalite": {
-   "ajoutees": 0,
+   "ajoutees": 770,
    "colonne": "qx",
-   "corrigees": 156,
-   "empreinte": "196025dfc611db23",
-   "identiques": 6694,
+   "corrigees": 96,
+   "empreinte": "6f7b205d1303456b",
+   "identiques": 6850,
    "niveau": "certifiee",
    "source": "Eurostat, décès par année de naissance et population au 1er janvier, quotients par génération convertis à l'âge exact",
-   "valeurs": 6850,
-   "verifiee_le": "2026-10-10"
+   "valeurs": 7716,
+   "verifiee_le": "2026-10-18"
   },
   "quotients_mortalite_anciens": {
    "ajoutees": 0,
    "colonne": "qx",
    "corrigees": 0,
-   "empreinte": "ccd29a507d00e837",
-   "identiques": 18466,
+   "empreinte": "decdd88676860469",
+   "identiques": 18370,
    "niveau": "certifiee",
    "source": "INED, tables de Vallin et Meslé, quotients du moment par âge",
-   "valeurs": 18466,
+   "valeurs": 18370,
    "verifiee_le": "2026-10-10"
   },
   "quotients_mortalite_projetes": {
@@ -1627,7 +1627,7 @@
    "niveau": "haute",
    "source": "la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre",
    "valeurs": 512,
-   "verifiee_le": "2026-10-17"
+   "verifiee_le": "2026-10-18"
   },
   "taux_cotisation_annuels": {
    "ajoutees": 0,
@@ -1814,7 +1814,7 @@
    "niveau": "haute",
    "source": "OpenFisca-France, barème IPP de la cotisation forfaitaire annuelle de la garantie minimale de points (gmp_cot_f_a), transcrit le 2 octobre 2026",
    "valeurs": 29,
-   "verifiee_le": "2026-10-17"
+   "verifiee_le": "2026-10-18"
   },
   "valeurs_point_independants": {
    "ajoutees": 0,
@@ -1847,7 +1847,7 @@
    "niveau": "haute",
    "source": "Ircantec, page « Valeur du point » et paramètres annuels, 2022-2026, lus le 23 septembre 2026",
    "valeurs": 23,
-   "verifiee_le": "2026-10-17"
+   "verifiee_le": "2026-10-18"
   },
   "valeurs_point_msa": {
    "ajoutees": 0,

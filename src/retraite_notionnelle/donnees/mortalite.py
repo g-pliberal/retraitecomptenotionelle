@@ -5,8 +5,7 @@ Trois sources, dans cet ordre de priorité, arbitrées **couple par couple**
 
 1. ``data/reference/mortalite/quotients_periode.csv`` (colonnes
    ``annee,sexe,age,qx``) — les quotients réellement observés. Ils couvrent
-   1899-2024, jusqu'à 104 ans avant 1998, puis 84 et 94 ans selon les
-   millésimes ;
+   1899-2024, jusqu'à 104 ans avant 1998, puis 98 ans ;
 2. ``data/reference/mortalite/quotients_projetes.csv`` — les quotients que
    l'INSEE projette, hypothèse centrale de ses projections de population 2026,
    convertis à l'âge exact : de 2026 à 2125, de 0 à 120 ans. Au-delà de 2125,
@@ -15,8 +14,9 @@ Trois sources, dans cet ordre de priorité, arbitrées **couple par couple**
    ``quotients_projetes_basse.csv`` ou ``quotients_projetes_haute.csv`` ;
 3. partout ailleurs — au-delà du dernier âge observé, et en 2025, que ni
    l'observation ni la projection ne couvrent — une table paramétrique de
-   **Gompertz-Makeham** calibrée pour reproduire les espérances de vie
-   publiées à 60 et 65 ans.
+   **Gompertz-Makeham**, dont la forme est calée sur les espérances de vie
+   publiées à 60 et 65 ans, et le niveau raccordé au dernier quotient observé
+   de l'année quand elle en a.
 
 Le point 3 est une approximation assumée : elle donne la bonne espérance de vie
 aux âges qui comptent pour la retraite (celle qui pilote le diviseur), mais elle
@@ -26,17 +26,18 @@ mortalité aux grands âges. Elle servait aussi aux années projetées jusqu'au
 trop longtemps, de 0,6 à 1,0 an d'espérance de trop à 85 ans, et le point 2 l'y
 a remplacée (action 138, étape 7).
 
-**La calibration porte sur la table raccordée, pas sur la loi seule.** C'est ce
-qui a longtemps manqué : ajustée sur elle-même, la loi donnait une queue trop
-généreuse, et la table raccordée — quotients observés jusqu'à 84 ans pour les
-millésimes 1998-2013, loi au-delà — rendait une espérance à 60 ans jusqu'à
-2,5 ans supérieure à celle que publie l'INSEE. Le diviseur de conversion s'en
-trouvait surestimé de 5 %, et les pensions notionnelles minorées d'autant. Les
-paramètres sont désormais ajustés pour que la table telle que le modèle la LIT
-reproduise les espérances publiées ; là où la queue n'a pas prise sur la cible —
-millésimes dont les quotients vont jusqu'à 104 ans —, la table observée décide
-seule et l'écart résiduel avec l'INSEE, au plus 0,7 an, est celui des deux
-chaînes de production.
+**La loi prolonge la table, elle ne la corrige pas.** Ajustée sur elle-même,
+elle donnait une queue trop généreuse, et la table raccordée — quotients
+observés jusqu'à 84 ans pour les millésimes 1998-2013, loi au-delà — rendait
+une espérance à 60 ans jusqu'à 2,5 ans supérieure à celle que publie l'INSEE ;
+le diviseur de conversion s'en trouvait surestimé de 5 %. Son niveau s'est
+ensuite recalé pour que la table raccordée reproduise l'espérance publiée.
+Depuis le 18 octobre 2026, les quotients observés vont jusqu'à 98 ans, la
+queue ne pèse presque plus rien, et le recalage poussait le niveau à
+l'absurde : son niveau se raccorde désormais au dernier quotient observé, et
+la table rend seule l'espérance publiée, à 0,12 an près de 1986 à 2024 — la
+différence des deux chaînes de production, l'INSEE arrondissant au dixième
+(:func:`_calibrer`).
 
 Force de mortalité retenue :  μ(x) = A + B · exp(k · (x − 60))
 """
@@ -58,8 +59,9 @@ from ..somme import somme_ordonnee
 MORTALITE_ACCIDENTELLE = 0.0005
 
 #: Version de la méthode de calibration, qui entre dans l'empreinte de chaque
-#: loi mémorisée : la changer invalide toute la mémoire d'un coup.
-VERSION_CALIBRATION = 2
+#: loi mémorisée : la changer invalide toute la mémoire d'un coup. La 3 raccorde
+#: le niveau de la loi au dernier quotient observé (18 octobre 2026).
+VERSION_CALIBRATION = 3
 
 #: Pas d'intégration numérique, en années. 0,25 an suffit : l'écart avec un pas
 #: mensuel est inférieur à 0,01 an sur les espérances calculées, très en deçà de
@@ -155,50 +157,47 @@ def _esperance_raccordee(a: float, b: float, k: float, age: float,
     return total
 
 
-#: Tolérance sur les espérances reproduites par la calibration, en années.
-#: Au-delà, la queue paramétrique n'a pas prise sur la cible — c'est le cas des
-#: millésimes dont les quotients observés vont jusqu'à 104 ans, où la table
-#: décide seule — et la calibration retombe sur la loi pure.
-TOLERANCE_CALIBRATION = 0.05
-
-
 def _calibrer(e60_cible: float, e65_cible: float, annee: int, sexe: str,
               fiabilite: Fiabilite,
               quotients: dict[int, float] | None = None) -> LoiMortalite:
-    """Ajuste (b, k) pour que la table RACCORDÉE reproduise e60 et e65.
+    """Ajuste (b, k) : la forme sur les espérances publiées, le niveau sur la
+    table que la loi prolonge.
 
     Deux temps. La FORME de la queue — le paramètre k — vient de la calibration
     classique sur la loi seule, où e60 et e65 portent sur toute la plage d'âges
-    et le déterminent sans ambiguïté. Son NIVEAU — le paramètre b — est ensuite
-    recalé, à forme constante, pour que la table RACCORDÉE reproduise e60.
+    et le déterminent sans ambiguïté. Sans table observée — en 2025 —, son
+    NIVEAU — le paramètre b — en vient aussi. Avec une table, la loi n'en
+    prolonge que la queue, au-delà de son dernier âge, et son niveau s'y
+    RACCORDE : son quotient au dernier âge observé est celui de la table
+    (:func:`_niveau_raccorde`).
 
     Les deux bissections portent sur des fonctions monotones : à k fixé,
     l'espérance décroît quand b croît ; une fois b calé sur e60, le rapport
     e65/e60 décroît quand k croît.
 
-    **La cible porte sur la table telle que le modèle la lit**, quotients
-    observés compris, et non sur la loi paramétrique seule. C'est ce qui a
-    longtemps manqué : calibrée sur elle-même, la loi produisait une queue trop
-    généreuse — 11,3 ans d'espérance résiduelle à 85 ans pour une femme en 2010,
-    là où la cible en implique 7,5 — et le raccord au-dessus du dernier âge
-    publié faisait remonter l'espérance à 60 ans de 2,5 ans au-dessus de celle
-    que l'INSEE publie. Le diviseur de conversion s'en trouvait surestimé
-    jusqu'à 5 % pour les liquidations de 1998 à 2013.
-
-    Quand la queue n'a pas prise sur la cible — millésimes dont les quotients
-    vont jusqu'à 104 ans, où l'espérance est déterminée par les données —, la
-    calibration retombe sur la loi seule : forcer l'accord reviendrait alors à
-    déformer une table observée pour la faire coïncider avec une espérance
-    produite par une tout autre chaîne.
+    **Pourquoi raccorder.** Calibrée sur elle-même, la loi produisait une queue
+    trop généreuse — 11,3 ans d'espérance résiduelle à 85 ans pour une femme
+    en 2010, là où la cible en implique 7,5 —, et la table que le modèle lit,
+    qui s'arrêtait alors à 84 ans de 1998 à 2013, rendait une espérance à
+    60 ans de 2,5 ans au-dessus de celle de l'INSEE. Son niveau s'est d'abord
+    recalé pour que la table raccordée rende l'espérance publiée. Depuis que
+    la table va jusqu'à 98 ans, et 104 avant 1998, la queue ne pèse presque
+    plus sur l'espérance à 60 ans : pour en gagner quelques centièmes — que
+    l'INSEE arrondit au dixième —, le recalage poussait le niveau à l'absurde,
+    multiplié par 700, et tous mouraient à 99 ans, ou ramené à zéro, et plus
+    personne ne mourait. Raccordée, la queue s'en tient à ce que la table
+    observe, et la table rend seule l'espérance publiée, à 0,12 an près de
+    1986 à 2024 (action 138, étape 7). Elle surestime de 5 % en moyenne les
+    quotients de 99 à 104 ans que l'INED observe de 1986 à 1997 : une loi de
+    Gompertz ne ralentit pas.
     """
 
-    def b_pour(k: float, cible: float,
-               observes: dict[int, float] | None) -> float:
+    def b_pour(k: float, cible: float) -> float:
         bas, haut = 1e-9, 5.0
         for _ in range(50):
             milieu = math.sqrt(bas * haut)
             if _esperance_raccordee(MORTALITE_ACCIDENTELLE, milieu, k, 60.0,
-                                    observes) > cible:
+                                    None) > cible:
                 bas = milieu
             else:
                 haut = milieu
@@ -206,12 +205,12 @@ def _calibrer(e60_cible: float, e65_cible: float, annee: int, sexe: str,
 
     # 1. La FORME de la queue vient de la calibration classique, sur la loi
     #    seule : e60 et e65 y portent sur toute la plage d'âges, et déterminent
-    #    k sans ambiguïté. C'est ce que faisait le module, et c'est bien fait.
+    #    k sans ambiguïté.
     ratio_cible = e65_cible / e60_cible
     bas_k, haut_k = 0.02, 0.30
     for _ in range(30):
         k = 0.5 * (bas_k + haut_k)
-        b = b_pour(k, e60_cible, None)
+        b = b_pour(k, e60_cible)
         e60 = _esperance_makeham(MORTALITE_ACCIDENTELLE, b, k, 60.0)
         e65 = _esperance_makeham(MORTALITE_ACCIDENTELLE, b, k, 65.0)
         if e65 / e60 > ratio_cible:
@@ -219,34 +218,48 @@ def _calibrer(e60_cible: float, e65_cible: float, annee: int, sexe: str,
         else:
             haut_k = k
     k = 0.5 * (bas_k + haut_k)
-    b = b_pour(k, e60_cible, None)
+    b = b_pour(k, e60_cible)
 
-    # 2. Le NIVEAU de la queue est ensuite recalé, à forme constante, pour que
-    #    la table telle que le modèle la lit — quotients observés compris —
-    #    reproduise l'espérance publiée. C'est ce qui manquait.
-    if quotients:
-        recale = b_pour(k, e60_cible, quotients)
-        atteint = _esperance_raccordee(MORTALITE_ACCIDENTELLE, recale, k, 60.0,
-                                       quotients)
-        if abs(atteint - e60_cible) <= TOLERANCE_CALIBRATION:
-            b = recale
-        # Sinon, la queue n'a pas prise sur la cible : la table observée décide
-        # seule, et l'on conserve la forme et le niveau de la loi pure.
+    # 2. Le NIVEAU de la queue se raccorde à la table qu'elle prolonge, quand
+    #    il y en a une.
+    raccorde = _niveau_raccorde(k, quotients) if quotients else None
+    if raccorde is not None:
+        b = raccorde
 
     return LoiMortalite(MORTALITE_ACCIDENTELLE, b, k, annee, sexe, fiabilite)
+
+
+def _niveau_raccorde(k: float, quotients: dict[int, float]) -> float | None:
+    """Le niveau b dont la loi de pente ``k`` rend, au dernier âge de la table
+    dont le quotient ne vaut ni zéro ni un, ce quotient-là ; ``None`` si aucun
+    ne s'y prête.
+
+    La survie d'un an de la loi depuis l'âge x vaut
+    exp(−A − (b/k)·exp(k(x − 60))·(exp(k) − 1)), qu'on pose égale à 1 − q(x).
+    Un quotient de un éteint la table, et la queue n'y sert plus ; un quotient
+    sous la mortalité accidentelle ne donnerait pas de niveau positif.
+    """
+    raccordables = [age for age, quotient in quotients.items() if 0.0 < quotient < 1.0]
+    if not raccordables:
+        return None
+    dernier = max(raccordables)
+    force = -math.log(1.0 - quotients[dernier]) - MORTALITE_ACCIDENTELLE
+    if force <= 0.0:
+        return None
+    return force * k / (math.exp(k * (dernier - 60.0)) * (math.exp(k) - 1.0))
 
 
 def empreinte_calibration(e60: float, e65: float,
                           quotients: dict[int, float] | None) -> str:
     """Ce dont une loi calibrée dépend, résumé en seize caractères.
 
-    Les deux cibles, les quotients observés de l'année — la calibration porte
-    sur la table raccordée — et les constantes de la méthode. Une loi n'est
+    Les deux cibles, les quotients observés de l'année — la loi se raccorde à
+    leur dernier — et les constantes de la méthode. Une loi n'est
     reprise de la mémoire que si son empreinte est celle que les données
     d'aujourd'hui donneraient.
     """
     contenu = json.dumps(
-        [VERSION_CALIBRATION, MORTALITE_ACCIDENTELLE, TOLERANCE_CALIBRATION, PAS,
+        [VERSION_CALIBRATION, MORTALITE_ACCIDENTELLE, PAS,
          AGE_TERMINAL, repr(float(e60)), repr(float(e65)),
          sorted((int(age), repr(float(q))) for age, q in (quotients or {}).items())],
         separators=(",", ":"),

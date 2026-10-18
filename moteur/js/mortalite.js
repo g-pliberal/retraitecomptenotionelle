@@ -9,8 +9,9 @@
  * 2. les quotients que l'INSEE projette, de 2026 à 2125, convertis à l'âge
  *    exact, sous l'hypothèse d'espérance de vie de la simulation
  *    (``parametres.hypothese_esperance_vie``) ; au-delà de 2125, ceux de 2125 ;
- * 3. partout ailleurs, une table paramétrique de Gompertz-Makeham calibrée pour
- *    reproduire les espérances de vie publiées à 60 et 65 ans.
+ * 3. partout ailleurs, une table paramétrique de Gompertz-Makeham, dont la
+ *    forme est calée sur les espérances de vie publiées à 60 et 65 ans, et le
+ *    niveau raccordé au dernier quotient observé de l'année quand elle en a.
  *
  * Les paramètres calibrés sont livrés avec le paquet de données, calculés une
  * fois pour toutes par ``scripts/construire_donnees.py`` : le navigateur ne
@@ -154,11 +155,12 @@ export function esperanceMakeham(a, b, k, age) {
 }
 
 /**
- * Ajuste (b, k) pour reproduire simultanément e60 et e65.
- *
- * Deux bissections emboîtées, toutes deux sur des fonctions monotones : à k
- * fixé, e60 décroît quand b croît ; une fois b calé sur e60, le rapport
- * e65/e60 décroît quand k croît.
+ * Espérance de vie du moment de la table RACCORDÉE, année par année : les
+ * quotients observés là où ils existent, la loi ailleurs ; sans ``quotients``,
+ * celle de la loi seule, au pas d'un an. La calibration y cale b : deux
+ * bissections emboîtées, sur des fonctions monotones — à k fixé, e60 décroît
+ * quand b croît ; une fois b calé sur e60, le rapport e65/e60 décroît quand k
+ * croît.
  */
 export function esperanceRaccordee(a, b, k, age, quotients) {
   let total = 0.0;
@@ -181,16 +183,19 @@ export function esperanceRaccordee(a, b, k, age, quotients) {
   return total;
 }
 
-/** Tolérance sur les espérances reproduites par la calibration, en années. */
-export const TOLERANCE_CALIBRATION = 0.05;
-
+/**
+ * Ajuste (b, k) : la forme sur les espérances publiées, le niveau sur la table
+ * que la loi prolonge. La FORME — k — vient de la calibration classique sur la
+ * loi seule ; sans table observée, le NIVEAU — b — en vient aussi ; avec une
+ * table, il s'y raccorde (``niveauRaccorde``). Voir ``_calibrer`` du Python.
+ */
 export function calibrer(e60Cible, e65Cible, annee, sexe, fiabilite, quotients = null) {
-  const bPour = (k, cible, observes) => {
+  const bPour = (k, cible) => {
     let bas = 1e-9;
     let haut = 5.0;
     for (let i = 0; i < 50; i += 1) {
       const milieu = Math.sqrt(bas * haut);
-      if (esperanceRaccordee(MORTALITE_ACCIDENTELLE, milieu, k, 60.0, observes) > cible) {
+      if (esperanceRaccordee(MORTALITE_ACCIDENTELLE, milieu, k, 60.0, null) > cible) {
         bas = milieu;
       } else {
         haut = milieu;
@@ -198,14 +203,13 @@ export function calibrer(e60Cible, e65Cible, annee, sexe, fiabilite, quotients =
     }
     return Math.sqrt(bas * haut);
   };
-  const bPourE60 = (k) => bPour(k, e60Cible, null);
 
   const ratioCible = e65Cible / e60Cible;
   let basK = 0.02;
   let hautK = 0.3;
   for (let i = 0; i < 30; i += 1) {
     const k = 0.5 * (basK + hautK);
-    const b = bPourE60(k);
+    const b = bPour(k, e60Cible);
     const e60 = esperanceMakeham(MORTALITE_ACCIDENTELLE, b, k, 60.0);
     const e65 = esperanceMakeham(MORTALITE_ACCIDENTELLE, b, k, 65.0);
     if (e65 / e60 > ratioCible) {
@@ -215,21 +219,36 @@ export function calibrer(e60Cible, e65Cible, annee, sexe, fiabilite, quotients =
     }
   }
   const k = 0.5 * (basK + hautK);
-  let b = bPourE60(k);
+  let b = bPour(k, e60Cible);
 
-  // Le NIVEAU de la queue est recalé, à forme constante, pour que la table
-  // telle que le modèle la lit — quotients observés compris — reproduise
-  // l'espérance publiée. Sans ce second temps, la loi rendait 11,3 ans
-  // d'espérance résiduelle à 85 ans pour une femme en 2010, là où la cible en
-  // implique 7,5.
-  if (quotients) {
-    const recale = bPour(k, e60Cible, quotients);
-    const atteint = esperanceRaccordee(MORTALITE_ACCIDENTELLE, recale, k, 60.0, quotients);
-    if (Math.abs(atteint - e60Cible) <= TOLERANCE_CALIBRATION) {
-      b = recale;
-    }
+  // Le NIVEAU de la queue se raccorde à la table qu'elle prolonge, quand il y
+  // en a une : son quotient au dernier âge observé est celui de la table.
+  // Recalé sur l'espérance à 60 ans, il partait à l'absurde quand la table va
+  // jusqu'à 98 ans, où la queue ne pèse presque plus rien.
+  const raccorde = quotients ? niveauRaccorde(k, quotients) : null;
+  if (raccorde !== null) {
+    b = raccorde;
   }
   return new LoiMortalite(MORTALITE_ACCIDENTELLE, b, k, annee, sexe, fiabilite);
+}
+
+/**
+ * Le niveau b dont la loi de pente ``k`` rend, au dernier âge de la table dont
+ * le quotient ne vaut ni zéro ni un, ce quotient-là ; ``null`` si aucun ne s'y
+ * prête. Voir ``_niveau_raccorde`` du Python.
+ */
+export function niveauRaccorde(k, quotients) {
+  const raccordables = Object.keys(quotients).map(Number)
+    .filter((age) => quotients[String(age)] > 0.0 && quotients[String(age)] < 1.0);
+  if (raccordables.length === 0) {
+    return null;
+  }
+  const dernier = Math.max(...raccordables);
+  const force = -log(1.0 - quotients[String(dernier)]) - MORTALITE_ACCIDENTELLE;
+  if (force <= 0.0) {
+    return null;
+  }
+  return force * k / (exp(k * (dernier - 60.0)) * (exp(k) - 1.0));
 }
 
 /** Tables du moment et tables de génération pour les deux sexes. */

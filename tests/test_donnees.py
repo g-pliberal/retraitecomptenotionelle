@@ -322,12 +322,21 @@ def test_les_tables_observees_reproduisent_les_esperances_publiees(mortalite, es
     prenait le relais avec une queue calibrée sur elle-même — 11,3 ans
     d'espérance résiduelle à 85 ans pour une femme en 2010, là où la cible en
     implique 7,5.
+
+    La loi se recalait ensuite sur cette espérance même, et le contrôle ne
+    pouvait guère échouer après 1986. Depuis le 18 octobre 2026, la table va
+    jusqu'à 98 ans, la loi s'y raccorde au dernier quotient, et rien n'y vise
+    plus l'espérance de l'INSEE : la table la rend à 0,12 an près chaque année
+    de 1986 à 2024. L'INSEE arrondit au dixième, et ses valeurs les plus
+    récentes précèdent la révision des données : pour 2022, Eurostat publie
+    23,0 et 27,3 ans, la table en rend 22,99 et 27,28, l'INSEE en écrit 23,1
+    et 27,4.
     """
-    for annee in (1990, 2000, 2005, 2010, 2013, 2015, 2020, 2024):
+    for annee in range(1986, 2025):
         for sexe in ("H", "F"):
             recalculee = _esperance_de_la_table_lue(mortalite, 60, annee, sexe)
             assert recalculee == pytest.approx(
-                esperances[(annee, sexe, "e60")], abs=0.1
+                esperances[(annee, sexe, "e60")], abs=0.15
             ), (annee, sexe)
 
 
@@ -2348,40 +2357,123 @@ def test_e65_ancienne_derive_des_quotients_certifies(mortalite):
             assert mortalite._e65[sexe].brut(annee).annee == annee, (annee, sexe)
 
 
-def test_la_loi_parametrique_sous_estime_la_mortalite_des_grands_ages(mortalite):
-    """Ce que vaut le raccord au-delà du dernier âge observé, mesuré.
+def _tables_observees(quotients) -> dict[tuple[int, str], dict[int, float]]:
+    tables: dict[tuple[int, str], dict[int, float]] = {}
+    for (annee, sexe, age), quotient in quotients.items():
+        tables.setdefault((annee, sexe), {})[age] = quotient
+    return tables
 
-    Eurostat s'arrête à 84 puis 94 ans ; au-delà, le modèle reprend sa loi de
-    Gompertz-Makeham. Les tables de Vallin et Meslé couvrent 1986-1997 jusqu'à
-    104 ans : ces douze années sont le seul endroit où l'on puisse confronter la
-    loi à l'observation aux grands âges.
 
-    Le verdict était net, et toujours dans le même sens : la loi faisait mourir
-    les très vieux trop lentement, d'environ un cinquième. Elle était calibrée
-    sur elle-même — e60 et e65 de la loi PURE — et rien ne l'obligeait à rendre
-    la queue que la cible implique. Le niveau de cette queue est désormais recalé
-    pour que la table RACCORDÉE reproduise l'espérance publiée, et le biais
-    tombe de vingt-deux pour cent à moins de trois.
+def test_la_loi_prend_le_relais_au_dernier_quotient_observe(mortalite, quotients):
+    """Au-delà du dernier âge observé, la loi de Gompertz-Makeham reprend la
+    main, et elle la reprend sans marche : son quotient au dernier âge de la
+    table est celui de la table, et celui de l'âge suivant ne le dépasse que
+    de ce que sa pente y ajoute.
 
-    Ce test ne corrige rien : il FIGE l'écart résiduel, pour qu'il ne dérive pas
-    en silence et que le chiffre cité dans `docs/limites.md` reste vrai.
-    """
+    Jusqu'au 18 octobre 2026, son niveau se recalait pour que la table qu'elle
+    prolonge rende l'espérance de vie publiée à 60 ans, arrondie au dixième.
+    Quand la table va jusqu'à 98 ou 104 ans, la queue ne pèse presque plus
+    rien, et la bissection, pour gagner quelques centièmes d'année, poussait le
+    niveau à l'absurde : multiplié par 700, tous mouraient l'année suivante ;
+    ramené à zéro, plus personne ne mourait. Soixante et une des lois de 1946 à
+    1985 l'étaient. Le niveau se raccorde désormais au dernier quotient observé
+    qui ne vaille ni zéro ni un ; la forme reste celle que les espérances à 60
+    et 65 ans donnent à la loi seule (action 138, étape 7)."""
+    from retraite_notionnelle.donnees.mortalite import _calibrer
+
+    for (annee, sexe), table in sorted(_tables_observees(quotients).items()):
+        if annee < mortalite._e60[sexe].premiere_annee:
+            continue
+        loi = mortalite.loi(annee, sexe)
+        dernier = max(age for age, quotient in table.items() if 0.0 < quotient < 1.0)
+        assert 1.0 - loi.survie(dernier, 1.0) == pytest.approx(table[dernier], rel=1e-9), (
+            annee, sexe)
+        suivant = 1.0 - loi.survie(dernier + 1, 1.0)
+        assert 1.0 < suivant / table[dernier] < 1.3, (annee, sexe, suivant, table[dernier])
+        pure = _calibrer(mortalite._e60[sexe].brut(annee).valeur,
+                         mortalite._e65[sexe].brut(annee).valeur, annee, sexe, loi.fiabilite)
+        assert loi.k == pure.k, (annee, sexe)
+
+
+_CALIBRER_JS = """
+import { calibrer } from "./moteur/js/mortalite.js";
+import { Fiabilite } from "./moteur/js/serie.js";
+const cas = JSON.parse(process.argv[1]);
+console.log(JSON.stringify(cas.map(([e60, e65, annee, sexe, quotients]) => {
+  const loi = calibrer(e60, e65, annee, sexe, Fiabilite.CERTIFIEE, quotients);
+  return [loi.b, loi.k];
+})));
+"""
+
+
+@pytest.mark.skipif(shutil.which("node") is None,
+                    reason="node absent : le portage JavaScript n'est pas vérifiable ici")
+def test_le_portage_raccorde_la_loi_comme_le_python(mortalite, quotients):
+    """Le navigateur lit les lois que le paquet lui livre et ne calibre qu'à
+    défaut ; son portage de la calibration rend alors les paramètres du
+    Python : une table de 1946, que l'INED mène jusqu'à 104 ans, celles de
+    1990 et de 2022, qui vont jusqu'à 98 ans, et 2025, sans table."""
+    import json
+    import subprocess
+
+    from retraite_notionnelle.donnees.mortalite import _calibrer
+
+    tables = _tables_observees(quotients)
+    cas = []
+    for annee, sexe in ((1946, "H"), (1990, "F"), (2022, "H"), (2025, "F")):
+        table = tables.get((annee, sexe))
+        cas.append([mortalite._e60[sexe].brut(annee).valeur,
+                    mortalite._e65[sexe].brut(annee).valeur, annee, sexe,
+                    {str(age): quotient for age, quotient in table.items()} if table else None])
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", _CALIBRER_JS, json.dumps(cas)],
+        cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    for (e60, e65, annee, sexe, table), (b, k) in zip(cas, json.loads(execution.stdout)):
+        loi = _calibrer(e60, e65, annee, sexe, Fiabilite.CERTIFIEE,
+                        {int(age): quotient for age, quotient in table.items()} if table else None)
+        assert (b, k) == pytest.approx((loi.b, loi.k), rel=1e-9), (annee, sexe)
+
+
+def test_la_queue_raccordee_rend_les_quotients_de_l_ined_de_99_a_104_ans(mortalite, quotients):
+    """Ce que vaut la queue de la loi, mesuré là où l'on observe au-delà de
+    98 ans.
+
+    Les décès et les populations d'Eurostat s'arrêtent à 98 ans ; les tables
+    de Vallin et Meslé vont jusqu'à 104 ans de 1986 à 1997 : ces douze années
+    sont le seul endroit où confronter la queue de la loi à l'observation. On
+    y raccorde la loi au quotient de 98 ans d'Eurostat, comme elle se raccorde
+    à toutes les tables qui s'arrêtent là, et l'on compare ses quotients de 99
+    à 104 ans à ceux de l'INED.
+
+    Calée sur elle-même, la loi y sous-estimait la mortalité d'un cinquième ;
+    recalée sur l'espérance à 60 ans, de moins de trois pour cent, de 95 à
+    104 ans. Raccordée à 98 ans, elle la surestime de cinq pour cent en
+    moyenne et de trois en médiane : une loi de Gompertz ne ralentit pas, et
+    la mortalité des très vieux croît moins vite qu'elle ne le dit. Ce test ne
+    corrige rien : il FIGE l'écart, pour qu'il ne dérive pas en silence et que
+    le chiffre cité dans la méthodologie reste vrai."""
     import statistics
 
+    from retraite_notionnelle.donnees.mortalite import _calibrer
+
+    tables = _tables_observees(quotients)
     ecarts = []
     for annee in range(1986, 1998):
         for sexe in ("H", "F"):
-            for age in range(95, 105):
-                observe = 1.0 - mortalite.survie_annuelle(age, annee, sexe)
-                loi = 1.0 - mortalite.loi(annee, sexe).survie(age, 1.0)
-                ecarts.append((loi - observe) / observe)
+            table = tables[(annee, sexe)]
+            loi = _calibrer(mortalite._e60[sexe].brut(annee).valeur,
+                            mortalite._e65[sexe].brut(annee).valeur, annee, sexe,
+                            mortalite.loi(annee, sexe).fiabilite,
+                            quotients={age: q for age, q in table.items() if age <= 98})
+            for age in range(99, 105):
+                observe = table[age]
+                ecarts.append((1.0 - loi.survie(age, 1.0) - observe) / observe)
 
-    assert len(ecarts) == 240
-    biais = statistics.mean(ecarts)
-    # Ce qui restait un biais d'un cinquième n'est plus qu'un résidu.
-    assert -0.05 < biais < 0.05, biais
-    # Et jamais dans l'autre sens sur la médiane.
-    assert statistics.median(ecarts) < 0
+    assert len(ecarts) == 144
+    assert 0.02 < statistics.mean(ecarts) < 0.08, statistics.mean(ecarts)
+    assert 0.0 < statistics.median(ecarts) < 0.05, statistics.median(ecarts)
 
 
 def test_les_quotients_observes_ne_font_pas_de_marche_aux_generations_de_guerre(quotients):
@@ -2396,13 +2488,14 @@ def test_les_quotients_observes_ne_font_pas_de_marche_aux_generations_de_guerre(
     l'INSEE. Les quotients se calculent désormais
     génération par génération, comme l'INSEE (scripts/fetch/eurostat_mortalite.py) :
     chacune de ces diagonales suit ses voisines à 2 % près, en moyenne sur les
-    années observées par Eurostat. Une table refaite à l'ancienne échoue ici."""
+    années observées par Eurostat. Une table refaite à l'ancienne échoue ici.
+    Le contrôle va jusqu'à 98 ans, comme la table depuis le 18 octobre 2026."""
     import statistics
 
     for generation in (1915, 1916, 1919, 1920, 1940, 1941, 1942):
         for sexe in ("H", "F"):
             rapports = []
-            for age in range(60, 95):
+            for age in range(60, 99):
                 cellules = [quotients.get((generation + decalage + age, sexe, age))
                             for decalage in (-1, 0, 1)]
                 if (generation - 1 + age < 1986 or generation + 1 + age > 2024
@@ -2412,6 +2505,48 @@ def test_les_quotients_observes_ne_font_pas_de_marche_aux_generations_de_guerre(
             assert len(rapports) >= 10, (generation, sexe, len(rapports))
             assert abs(statistics.mean(rapports) - 1.0) < 0.02, (
                 generation, sexe, statistics.mean(rapports))
+
+
+def test_les_quotients_observes_vont_jusqu_a_98_ans_depuis_1986(quotients):
+    """La table d'Eurostat s'arrête à 84 ans jusqu'en 2013, à 94 ensuite ; ses
+    décès par année de naissance et ses populations au 1er janvier vont
+    jusqu'à 99 ans atteints, et le carré de 98 ans est le dernier qui s'en
+    tire (scripts/fetch/eurostat_mortalite.py). Jusqu'au 18 octobre 2026, la
+    loi de Gompertz-Makeham tenait les âges de 85 ou de 95 à 98 ans ; elle ne
+    tient plus que ceux d'au-delà. La France entière n'a pas de population de
+    99 ans au 1er janvier 2006, 2007 et 2010 : ses tables de 2005, 2006 et
+    2009 s'arrêtent à 97 ans. De 1986 à 1997, l'INED prolonge à partir de
+    99 ans, jusqu'à 104."""
+    ages: dict[tuple[int, str], set[int]] = {}
+    for annee, sexe, age in quotients:
+        ages.setdefault((annee, sexe), set()).add(age)
+    for annee in range(1986, 2025):
+        dernier = 97 if annee in (2005, 2006, 2009) else 98
+        attendus = set(range(dernier + 1)) | (set(range(99, 105)) if annee <= 1997 else set())
+        for sexe in ("H", "F"):
+            assert ages[(annee, sexe)] == attendus, (
+                annee, sexe, sorted(ages[(annee, sexe)] ^ attendus))
+
+
+def test_la_queue_d_eurostat_s_aboute_a_celle_de_l_ined(quotients):
+    """De 1986 à 1997, la table passe d'Eurostat à l'INED entre 98 et 99 ans :
+    deux chaînes de production, qui doivent décrire la même mortalité là où
+    elles se relaient. Le quotient de 99 ans de l'INED rapporté à celui de
+    98 ans d'Eurostat croît comme les quotients d'Eurostat d'un âge au
+    suivant, à 3 points près en moyenne sur les vingt-quatre tables (1,062
+    contre 1,056 le 18 octobre 2026), et aucun ne fait de marche de plus d'un
+    quart. Les deux se recouvraient aussi de 95 à 98 ans, où ils concordaient à
+    0,7 % près en médiane : l'INED n'y donne plus rien, Eurostat y étant
+    producteur."""
+    import statistics
+
+    relais, suivants = [], []
+    for annee in range(1986, 1998):
+        for sexe in ("H", "F"):
+            relais.append(quotients[(annee, sexe, 99)] / quotients[(annee, sexe, 98)])
+            suivants.append(quotients[(annee, sexe, 98)] / quotients[(annee, sexe, 97)])
+    assert abs(statistics.mean(relais) - statistics.mean(suivants)) < 0.03
+    assert all(0.75 < rapport < 1.25 for rapport in relais), relais
 
 
 # -- contribution employeur des régimes publics -------------------------------
