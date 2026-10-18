@@ -1299,6 +1299,17 @@
    "valeurs": 9900,
    "verifiee_le": "2026-10-16"
   },
+  "premier_trimestre": {
+   "ajoutees": 768,
+   "colonne": "part",
+   "corrigees": 0,
+   "empreinte": "235428f560ae5242",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DREES, échantillon interrégimes de cotisants (EIC) 2017, données détaillées",
+   "valeurs": 768,
+   "verifiee_le": "2026-10-18"
+  },
   "prestations_non_contributives": {
    "ajoutees": 20,
    "colonne": "montant_meur",

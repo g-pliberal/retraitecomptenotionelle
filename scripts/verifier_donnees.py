@@ -2709,6 +2709,27 @@ def source_departs_generations() -> dict[tuple, float]:
     }
 
 
+def source_premier_trimestre() -> dict[tuple, float]:
+    """La part des affiliés d'avant 23 ans qui ont validé un trimestre, et
+    cotisé un trimestre, à chaque âge de 16 à 23 ans, génération par
+    génération, sexe par sexe.
+
+    Les données détaillées de l'EIC 2017 que
+    ``scripts/fetch/drees_premier_trimestre.py`` lit et vérifie : la
+    population de la page en tire l'âge d'entrée de ses carrières pleines
+    (action 138, étape 14).
+
+    Clé (generation, sexe, trimestre, age).
+    """
+    charge = _lire_json("drees_premier_trimestre.json",
+                        "scripts/fetch/drees_premier_trimestre.py")
+    return {
+        (str(ligne["generation"]), ligne["sexe"], ligne["trimestre"], str(ligne["age"])):
+        ligne["part"]
+        for ligne in charge["parts"]
+    }
+
+
 def source_age_conjoncturel() -> dict[tuple, float]:
     """L'âge conjoncturel de départ à la retraite, par sexe, depuis 2004.
 
@@ -7743,6 +7764,54 @@ CERTIFICATIONS = (
             "# des nés en 1950 sont partis à 60 ans, 14,3 % des nés en 1953 avec",
             "# une surcote, 28,3 % des hommes nés en 1953 en carrière longue. Aucun",
             "# calcul du site ne la lit.",
+            "#",
+            "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
+            "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="premier_trimestre",
+        chemin=REFERENCE / "macro" / "premier_trimestre.csv",
+        cles=("generation", "sexe", "trimestre", "age"),
+        colonne="part",
+        source=source_premier_trimestre,
+        origine="DREES, échantillon interrégimes de cotisants (EIC) 2017, données détaillées",
+        decimales=1,
+        tolerance=0.05,
+        entete=(
+            "# La part des affiliés d'avant 23 ans qui ont validé, et cotisé, un",
+            "# trimestre à chaque âge de 16 à 23 ans, par génération et par sexe",
+            "# source_id: drees_eic_droits_valides",
+            "# unite: pour cent des affiliés d'avant 23 ans",
+            "# fiabilite:",
+            "#   certifiee : indicateur « Part_aff », champ « Aff_avant_23ans », du",
+            "#             fichier « eic2017_data_drees_er » du jeu « Les droits",
+            "#             validés au cours de la carrière », diffusé par la DREES",
+            "#             et recontrôlé par scripts/verifier_donnees.py.",
+            "#",
+            "# Chaque génération que l'échantillon interrégimes de cotisants de",
+            "# 2017 suit — 1942, 1946, 1950, puis une sur deux de 1954 à 1994 —,",
+            "# parmi ses affiliés d'avant 23 ans : la part de ceux qui avaient",
+            "# validé, à la fin de l'année de cet âge ou avant, au moins un",
+            "# trimestre de ce type.",
+            "#",
+            "# LES COLONNES",
+            "# ------------",
+            "# trimestre : valide, un trimestre validé, de quelque nature qu'il soit",
+            "#   (activité, service national, chômage, maladie, AVPF) ; cotise, un",
+            "#   trimestre validé au titre de l'activité professionnelle.",
+            "# age : l'âge atteint dans l'année, de 16 à 23 ans ; la part de 16 ans",
+            "#   compte aussi les trimestres d'avant.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À faire entrer les carrières pleines de la population de",
+            "# scripts/grille_large.py (action 138, étape 14) à l'âge de leur premier",
+            "# trimestre cotisé : la condition d'entrée de la carrière longue se lit",
+            "# sur les trimestres cotisés à la fin de l'année des 16, 17 ou 20 ans",
+            "# (D. 351-1-1). 38,2 % des hommes nés en 1950 avaient cotisé un",
+            "# trimestre à la fin de l'année de leurs 16 ans, 77,7 % de ceux nés en",
+            "# 1954 à celle de leurs 19 ans. Aucun calcul du site ne la lit.",
             "#",
             "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
             "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",

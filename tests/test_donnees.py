@@ -741,6 +741,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # condition de liquidation, contre lesquels la population juge ses
         # départs (action 138, étape 14).
         "departs_generations": "macro/departs_generations.csv",
+        # Et l'âge du premier trimestre cotisé, génération par génération,
+        # où la population fait entrer ses carrières pleines (action 138,
+        # étape 14).
+        "premier_trimestre": "macro/premier_trimestre.csv",
         # Le seul qui vienne d'Eurostat : aucune source française ne ventile le
         # salaire par âge pour les régimes spéciaux.
         "profil_salaire_secteur": "macro/profil_salaire_secteur.csv",
