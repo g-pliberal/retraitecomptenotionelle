@@ -597,11 +597,30 @@ class ConstructeurCompte:
                 fiabilite=Fiabilite.CERTIFIEE,
             )
 
+        # Après la bascule, un seul régime : le régime fusionné, pour ce que
+        # l'assuré et son employeur versent. Une année indemnisée n'est pas de
+        # celles-là : l'Unédic y verse ce qu'elle versait avant la bascule, et
+        # c'est cela que le compte porte, par la branche des régimes. Elle
+        # prenait jusqu'au 23 septembre 2026 le taux unifié entier sur le
+        # salaire d'avant — et le pilier capitalisé avec —, que personne ne
+        # versait : trois ans de chômage y valaient trois ans de travail.
+        unifie = (regime_fusionne is not None and annee >= regime_fusionne.annee_bascule
+                  and ligne.cotise)
+
         # Aux deux bords de la carrière, l'année n'est pas pleine : le revenu
         # ne porte que les mois travaillés, et les plafonds se proratisent sur
         # les mêmes mois. L'année du départ est en outre tronquée au point de
-        # départ, y compris quand la ligne, elle, déclare douze mois.
-        part = carriere.part_retenue_ligne(ligne)
+        # départ, y compris quand la ligne, elle, déclare douze mois. Sauf ce
+        # que l'exploitant agricole verse aux régimes : ses cotisations sont
+        # fixées pour l'année civile, dans sa situation du 1er janvier, dues
+        # pour l'année entière celle où il cesse, et pour rien celle où il
+        # s'installe ou prend un autre statut (L. 731-10-1 du code rural ;
+        # `Carriere.part_cotisee_ligne`), sur le revenu de ses mois porté à
+        # l'année, comme les droits qu'elles ouvrent (`droit.acquerir`). Le
+        # compte les lisait aux mois jusqu'au 18 octobre 2026. Le régime
+        # fusionné prélève sur les mois, comme pour tous.
+        part = (carriere.part_retenue_ligne(ligne) if unifie
+                else carriere.part_cotisee_ligne(ligne))
         if part <= 0:
             return CotisationAnnuelle(
                 annee=annee, revenu=0.0, assiette_retenue=0.0, cotisation=0.0,
@@ -612,20 +631,13 @@ class ConstructeurCompte:
         # Pendant une période indemnisée, l'assiette est le salaire d'AVANT
         # l'interruption : c'est sur lui que l'Unédic verse ses cotisations.
         base_ligne = ligne.revenu if ligne.cotise else ligne.revenu_reference
-        if part < ligne.fraction_annee:
+        if part != ligne.fraction_annee and ligne.fraction_annee > 0:
             # La ligne déclare plus de mois que le départ n'en laisse : on ne
-            # porte au compte que ceux qui l'ont précédé.
+            # porte au compte que ceux qui l'ont précédé. L'année entière de
+            # l'exploitant porte le revenu de ses mois à douze.
             base_ligne *= part / ligne.fraction_annee
 
-        # Après la bascule, un seul régime : le régime fusionné, pour ce que
-        # l'assuré et son employeur versent. Une année indemnisée n'est pas de
-        # celles-là : l'Unédic y verse ce qu'elle versait avant la bascule, et
-        # c'est cela que le compte porte, par la branche des régimes. Elle
-        # prenait jusqu'au 23 septembre 2026 le taux unifié entier sur le
-        # salaire d'avant — et le pilier capitalisé avec —, que personne ne
-        # versait : trois ans de chômage y valaient trois ans de travail.
-        if (regime_fusionne is not None and annee >= regime_fusionne.annee_bascule
-                and ligne.cotise):
+        if unifie:
             assiette = self._assiette(base_ligne, annee, 0.0, None, part)
             taux, taux_employeur, origine, fiabilite_taux = self.taux_unifie(
                 ligne, annee, regime_fusionne

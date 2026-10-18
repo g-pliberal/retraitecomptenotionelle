@@ -5615,6 +5615,79 @@ def test_le_conjoint_collaborateur_devenu_chef_garde_son_annee_de_collaborateur(
         "points": {"msa_non_salaries": 16.0, "msa_rco": 66.0}}
 
 
+def _compte_de_l_annee_en_deux_moteurs(simulateur, naissance: dict, lignes: list[dict],
+                                       annee: int) -> dict[str, float]:
+    """Ce que le compte du droit en vigueur, sans bascule, porte à chaque
+    régime l'``annee`` de la carrière de ces ``lignes``, au centime, dans les
+    deux moteurs. Le JavaScript rend la même chose, ou le test échoue ; sans
+    node, le Python seul."""
+    import json
+    import shutil
+    import subprocess
+
+    carriere = Carriere(**naissance, lignes=[AnneeCarriere(**ligne) for ligne in lignes])
+    obtenu = {code: round(montant, 2) for code, montant in
+              simulateur.constructeur_employeur.cotisation_annuelle(carriere, annee).par_regime}
+    if shutil.which("node") is None:
+        return obtenu
+    script = """
+import { readFileSync } from "node:fs";
+import { AnneeCarriere, Carriere } from "./moteur/js/carriere.js";
+import { Contexte } from "./moteur/js/contexte.js";
+const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
+const simulateur = contexte.simulateur();
+const [naissance, lignes, annee] = JSON.parse(process.argv[1]);
+const carriere = new Carriere({
+  ...naissance, lignes: lignes.map((ligne) => new AnneeCarriere(ligne)) });
+process.stdout.write(JSON.stringify(
+  simulateur.constructeurEmployeur.cotisationAnnuelle(carriere, annee).par_regime));
+"""
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", script, json.dumps([naissance, lignes, annee])],
+        cwd=RACINE_TEMOINS.parent.parent, capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    assert {code: round(montant, 2) for code, montant in json.loads(execution.stdout)} == obtenu
+    return obtenu
+
+
+def test_le_compte_porte_ce_que_l_exploitant_verse_pour_l_annee(simulateur):
+    """Le compte porte ce qui a été versé, et l'exploitant verse pour l'année
+    civile entière, dans sa situation du 1er janvier (L. 731-10-1 du code
+    rural ; R. 731-57) : qui cesse en cours d'année doit l'année entière, et
+    qui s'installe ou prend un autre statut après le 1er janvier ne doit rien
+    pour l'année dans ce statut (MSA, « Cotisations sociales des nouveaux
+    installés » ; MSA de Bourgogne, webinaire du 23 avril 2026). Le compte du
+    droit en vigueur — celui des scénarios 4 et 5, les cotisations des
+    indicateurs du cycle de vie — les lisait aux mois de ses lignes. Chef de
+    1990 à 12 000 € par an, parti le 1er août 2024 après sept mois à 7 000 € :
+    son compte reçoit pour 2024 les 17,37 % de 12 000 € au régime de base,
+    2 084,40 €, et les 4 % de l'assiette minimale de la RCO, 1 820 SMIC
+    horaires à 11,65 €, 848,12 €, et non leurs sept douzièmes, 1 215,90 € et
+    494,74 €. De même, chef de janvier à mars (3 000 €) puis collaborateur
+    d'avril à juillet : la ligne du collaborateur ne verse rien. Salarié
+    installé le 1er juillet 2010, il ne verse rien au régime agricole pour
+    2010, et le régime général garde ce que son semestre de salarié y a
+    versé. Dans les deux moteurs."""
+    naissance = dict(annee_naissance=1962, sexe="H", jour_naissance=15, age_liquidation=62.5)
+    avant = [dict(annee=annee, revenu=12000.0, affiliation="exploitant_agricole")
+             for annee in range(1990, 2024)]
+    annee_entiere = {"msa_non_salaries": 2084.40, "msa_rco": 848.12}
+    cesse = avant + [dict(annee=2024, revenu=7000.0, affiliation="exploitant_agricole",
+                          fraction_annee=7 / 12, trimestres_valides=2)]
+    assert _compte_de_l_annee_en_deux_moteurs(simulateur, naissance, cesse, 2024) == annee_entiere
+    change = avant + [dict(annee=2024, revenu=3000.0, affiliation="exploitant_agricole",
+                           fraction_annee=3 / 12, trimestres_valides=1),
+                      dict(annee=2024, revenu=4000.0, affiliation="collaborateur_agricole",
+                           fraction_annee=4 / 12, trimestres_valides=1)]
+    assert _compte_de_l_annee_en_deux_moteurs(simulateur, naissance, change, 2024) == annee_entiere
+    installe = _compte_de_l_annee_en_deux_moteurs(
+        simulateur, dict(naissance, mois_naissance=1), _installe_en_juillet(2010, 1962, 2024),
+        2010)
+    assert installe.get("regime_general", 0.0) > 0
+    assert not {"msa_non_salaries", "msa_rco"} & set(installe)
+
+
 def test_la_repartition_des_annees_suit_r_173_3_2():
     """« Arrondis à chaque étape à l'entier non nul le plus proche, la fraction
     d'année égale à 0,5 étant comptée pour une année » ; les années

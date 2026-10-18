@@ -472,11 +472,20 @@ export class ConstructeurCompte {
       };
     }
 
+    // Après la bascule, un seul régime : le régime fusionné, pour ce que
+    // l'assuré et son employeur versent. Une année indemnisée passe par la
+    // branche des régimes, où l'Unédic verse ce qu'elle versait avant la
+    // bascule : voir compte.py.
+    const unifie = regimeFusionne !== null && annee >= regimeFusionne.annee_bascule
+      && ligne.cotise;
+
     // Aux deux bords de la carrière, l'année n'est pas pleine : le revenu ne
     // porte que les mois travaillés, et les plafonds se proratisent sur les
     // mêmes mois. L'année du départ est en outre tronquée au point de départ,
-    // y compris quand la ligne, elle, déclare douze mois.
-    const part = carriere.partRetenueLigne(ligne);
+    // y compris quand la ligne, elle, déclare douze mois. Sauf ce que
+    // l'exploitant agricole verse aux régimes, pour l'année civile, dans sa
+    // situation du 1er janvier (L. 731-10-1 du code rural) : voir compte.py.
+    const part = unifie ? carriere.partRetenueLigne(ligne) : carriere.partCotiseeLigne(ligne);
     if (part <= 0) {
       return {
         annee, revenu: 0.0, assiette_retenue: 0.0, cotisation: 0.0,
@@ -489,18 +498,14 @@ export class ConstructeurCompte {
     // Pendant une période indemnisée, l'assiette est le salaire d'AVANT
     // l'interruption : c'est sur lui que l'Unédic verse ses cotisations.
     let baseLigne = ligne.cotise ? ligne.revenu : ligne.revenu_reference;
-    if (part < ligne.fraction_annee) {
+    if (part !== ligne.fraction_annee && ligne.fraction_annee > 0) {
       // La ligne déclare plus de mois que le départ n'en laisse : on ne porte
-      // au compte que ceux qui l'ont précédé.
+      // au compte que ceux qui l'ont précédé. L'année entière de l'exploitant
+      // porte le revenu de ses mois à douze.
       baseLigne *= part / ligne.fraction_annee;
     }
 
-    // Après la bascule, un seul régime : le régime fusionné, pour ce que
-    // l'assuré et son employeur versent. Une année indemnisée passe par la
-    // branche des régimes, où l'Unédic verse ce qu'elle versait avant la
-    // bascule : voir compte.py.
-    if (regimeFusionne !== null && annee >= regimeFusionne.annee_bascule
-        && ligne.cotise) {
+    if (unifie) {
       const assiette = this._assiette(baseLigne, annee, 0.0, null, part);
       const [taux, tauxEmployeur, origine, fiabiliteTaux] = this.tauxUnifie(
         ligne, annee, regimeFusionne,
