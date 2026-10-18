@@ -93,6 +93,33 @@ sources:
       en cours » ; celle à la question n° 10883 (JO du 3 février 2026) le redit
     url: https://iledefrance.msa.fr/lfp/documents/98865/79827044/D%C3%A9pliant+cotisations+sociales+des+nouveaux+install%C3%A9s.pdf
     date: 2026-10-18
+  - type: legifrance
+    reference: >-
+      Le statut du 1er janvier. Code rural, L. 731-10-1 : les cotisations « dues par les
+      personnes mentionnées aux articles L. 722-9, L. 722-10 et L. 722-15 sont fixées pour
+      chaque année civile », et L. 722-15 y range toutes les « personnes non salariées
+      occupées dans les exploitations » (LEGIARTI000006585217, de 2004 à 2025), « aux
+      collaborateurs d'exploitation [...] ainsi qu'aux aides familiaux » depuis 2026
+      (LEGIARTI000051289336). Article 3 du décret n° 84-936 du 22 octobre 1984
+      (LEGIARTI000006767567) : « En cas de cession d'exploitation en cours d'année, le
+      cédant peut demander à son successeur le remboursement de la fraction de la
+      cotisation d'allocations familiales et de la cotisation d'assurance vieillesse
+      [...] correspondant à la période comprise entre la date à laquelle la cession a
+      été effectivement réalisée et le 31 décembre de la même année » : le cédant doit
+      l'année entière, son successeur rien. Lus dans l'index LEGI du dépôt
+    date: 2026-10-18
+  - type: autre
+    reference: >-
+      MSA de Bourgogne, questions-réponses du webinaire du 23 avril 2026 (« Tout savoir sur
+      les réformes en cours ») : au conjoint « actuellement conjoint collaborateur »
+      affilié chef d'exploitation « à effet en juin 2026 », « Les premières cotisations
+      2027 seront calculées soit sur l'Assiette Forfaitaire de Nouvel Installé [...] soit
+      [...] sur le partage des revenus » ; le statut pris en cours d'année ne cotise
+      qu'à partir de l'année suivante. MSA, « Statut de conjoint collaborateur »
+      (réglementation au 1er janvier 2009) : seule la cotisation ATEXA y est « calculée
+      proportionnellement à votre durée d'affiliation pendant l'année considérée »
+    url: https://bourgogne.msa.fr/lfp/documents/98900/474637384/Questions+R%C3%A9ponses+-Tout+savoir+sur+les+r%C3%A9formes+en+cours
+    date: 2026-10-18
 textes_a_rattacher:
 - reference: L. 351-1 CSS
 - reference: R. 351-6 CSS
@@ -144,21 +171,33 @@ code:
 
     Sauf l'année où le non-salarié agricole cesse son activité, qui compte ses quatre
     trimestres dans la durée de son régime comme dans celle du taux
-    (`Carriere.annee_de_cessation_agricole`, `anneeDeCessationAgricole` en JavaScript ;
+    (`Carriere.annee_entiere_agricole`, `anneeEntiereAgricole` en JavaScript ;
     L. 731-10-1 du code rural) : au régime au 1er janvier (une ligne agricole cotisée
-    l'année d'avant), sans autre activité cotisée cette année-là (R. 731-83). Ce qui se
-    compte entre deux dates, la surcote d'abord, n'en lit que les trimestres écoulés
-    (`Carriere.trimestres_ecoules`), la circulaire n° 2004/37 (point 131) en gardant
-    les bornes. Ses cotisations et ses points le sont aussi depuis le 17 octobre 2026, au
-    revenu de ses mois porté à douze (`Carriere.part_cotisee_ligne`) : voir les fiches
-    retraite_proportionnelle_msa, assiette_minimale_agricole et
-    pension_non_salaries_agricoles_2026.
+    l'année d'avant), sans autre activité cotisée cette année-là (R. 731-83) ; celle de
+    la date d'effet depuis le 16 octobre 2026 (`Carriere.annee_de_cessation_agricole`),
+    toute autre depuis le 18. Ce qui se compte entre deux dates, la surcote d'abord, n'en
+    lit que les trimestres écoulés (`Carriere.trimestres_ecoules`), la circulaire
+    n° 2004/37 (point 131) en gardant les bornes. Ses cotisations et ses points le sont
+    aussi depuis le 17 octobre 2026, au revenu de ses mois porté à douze
+    (`Carriere.part_cotisee_ligne`) : voir les fiches retraite_proportionnelle_msa,
+    assiette_minimale_agricole et pension_non_salaries_agricoles_2026.
 
 
     L'année où il s'installe après le 1er janvier ne compte, à l'inverse, aucun
     trimestre, ni dans la durée de son régime ni dans celle du taux : il n'y doit rien
     (R. 731-57, L. 731-10-1), et n'y porte ni points ni revenu
-    (`Carriere.installation_agricole`, `installationAgricole` en JavaScript, depuis le
-    18 octobre 2026). C'est la ligne agricole d'une année que ses lignes agricoles ne
-    remplissent pas, sans ligne agricole l'année d'avant et avec une l'année d'après,
-    depuis les cotisations de 1985, les premières que fixe le décret n° 84-936.
+    (`Carriere.statut_pris_apres_le_1er_janvier`, `statutPrisApresLe1erJanvier` en
+    JavaScript, depuis le 18 octobre 2026). C'est la ligne agricole d'une année que ses
+    lignes agricoles ne remplissent pas, sans ligne agricole l'année d'avant et avec une
+    l'année d'après, depuis les cotisations de 1985, les premières que fixe le décret
+    n° 84-936.
+
+
+    Le statut du 1er janvier, depuis le 18 octobre 2026 (`Carriere._statuts_au_1er_janvier`,
+    `statutsAu1erJanvier` en JavaScript) : l'année où il passe de collaborateur à chef,
+    ou de chef à collaborateur, se cotise tout entière dans le statut de ce jour, celui
+    de l'année d'avant ou, quand elle en a eu deux, celui qu'il y a pris ; le statut pris
+    en cours d'année n'y compte rien, ni trimestres, ni points, ni revenu, comme
+    l'installation, et l'année est de ce statut pour les minima (`Carriere.qualite_agricole`).
+    Depuis les cotisations de 1985 : avant, comme quand le statut du 1er janvier ne se lit
+    pas, l'année où il cesse se partage entre ses statuts au prorata de leurs mois.

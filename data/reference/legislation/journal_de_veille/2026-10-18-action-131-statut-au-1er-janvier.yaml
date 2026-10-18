@@ -1,0 +1,43 @@
+date: "2026-10-18"
+session: >-
+  l'action 131 : le statut de l'exploitant agricole au 1er janvier, qui fixe
+  chacune de ses années, et non celle du départ seule
+consulte: >-
+  python scripts/veille_droit.py ; l'index LEGI du dépôt, mis à jour jusqu'à
+  l'incrément du 17 octobre 2026, puis python scripts/textes.py --inscrire
+  (trois rédactions « à examiner », celles de L. 722-15 du code rural, que la
+  fiche taux_plein_et_proratisation cite désormais ; une autre session avait
+  inscrit le même jour celles du décret n° 84-936, de R. 613-17 et de
+  R. 731-57) ; au code rural, L. 731-10-1, R. 731-57,
+  R. 731-83, L. 722-10, L. 722-15 (2004, 2026) et R. 321-1 (2017) ; les
+  articles 1 à 3 du décret n° 84-936. Sur le web : la question écrite n° 10883
+  et sa réponse (JO du 3 février 2026), sur le site de l'Assemblée nationale ;
+  les questions-réponses du webinaire du 23 avril 2026 de la MSA de Bourgogne ;
+  la fiche « Statut de conjoint collaborateur » de la MSA (réglementation au
+  1er janvier 2009) ; deux recherches sur le changement de statut en cours
+  d'année et le transfert entre époux, sans page qui en chiffre les points.
+trouve: >-
+  L. 731-10-1 fixe les cotisations de toutes les personnes non salariées des
+  exploitations, collaborateurs compris (L. 722-15), pour chaque année civile,
+  à la situation du 1er janvier, et fait payer l'année entière à qui cesse en
+  cours d'année, quelle qu'elle soit ; l'article 3 du décret n° 84-936 laisse
+  au cédant d'une exploitation cédée en cours d'année demander à son successeur
+  la fraction de l'année qui suit la cession. La MSA de Bourgogne : le conjoint
+  collaborateur affilié chef à effet en juin 2026 cotise en chef à partir de
+  2027. Porté dans les deux moteurs (Carriere._statuts_au_1er_janvier,
+  statut_pris_apres_le_1er_janvier, qualite_agricole) : toute année où
+  l'exploitant cesse se cotise entière dans le statut du 1er janvier, sauf
+  R. 731-83, et le statut pris en cours d'année n'y a rien, depuis les
+  cotisations de 1985. La réponse à la question n° 10883 décrit R. 731-83 comme
+  « un remboursement partiel des cotisations d'assurance maladie au prorata
+  temporis » : rien des cotisations de vieillesse. Le cliquet des textes reste
+  à 9 678.
+reste: >-
+  Les points et les trimestres d'une année cotisée au prorata (R. 731-83), au
+  propriétaire : la réponse de 2026 n'y rembourse que la maladie, ce qui
+  laisserait l'année de vieillesse entière. L'année du décès, que L. 731-10-1
+  cotise au prorata sauf option du conjoint survivant, que le modèle compte
+  entière. Une installation ou un changement de statut l'année du départ, ou
+  un passage de quelques mois sans ligne agricole avant ni après : la ligne ne
+  dit pas si elle couvre janvier. Ce que l'exploitant verse l'année où il
+  cesse, s'installe ou change de statut, aux mois dans le compte.
