@@ -22,6 +22,7 @@
  */
 
 import { Fiabilite, SerieAnnuelle } from "./serie.js";
+import { exp, log, pow } from "./libm.js";
 
 /** Mortalité « accidentelle », indépendante de l'âge (terme de Makeham). */
 export const MORTALITE_ACCIDENTELLE = 0.0005;
@@ -110,7 +111,7 @@ export class LoiMortalite {
   }
 
   force(age) {
-    return this.a + this.b * Math.exp(this.k * (age - 60.0));
+    return this.a + this.b * exp(this.k * (age - 60.0));
   }
 
   /** Probabilité de survivre ``duree`` années à partir de ``ageDebut``. */
@@ -118,10 +119,10 @@ export class LoiMortalite {
     if (duree <= 0) {
       return 1.0;
     }
-    const u = Math.exp(this.k * (ageDebut - 60.0));
+    const u = exp(this.k * (ageDebut - 60.0));
     const integrale = this.a * duree
-      + (this.b / this.k) * u * (Math.exp(this.k * duree) - 1.0);
-    return Math.exp(-integrale);
+      + (this.b / this.k) * u * (exp(this.k * duree) - 1.0);
+    return exp(-integrale);
   }
 
   /** Espérance de vie résiduelle complète à ``age``, table du moment. */
@@ -137,11 +138,11 @@ export class LoiMortalite {
 export function esperanceMakeham(a, b, k, age) {
   let total = 0.0;
   let survie = 1.0;
-  let u = Math.exp(k * (age - 60.0));
-  const facteurPas = Math.exp(k * PAS);
+  let u = exp(k * (age - 60.0));
+  const facteurPas = exp(k * PAS);
   const borne = Math.trunc((AGE_TERMINAL - age) / PAS);
   for (let pas = 0; pas < Math.max(borne, 0); pas += 1) {
-    const prochaine = survie * Math.exp(-(a * PAS + (b / k) * u * (facteurPas - 1.0)));
+    const prochaine = survie * exp(-(a * PAS + (b / k) * u * (facteurPas - 1.0)));
     total += 0.5 * (survie + prochaine) * PAS;
     survie = prochaine;
     u *= facteurPas;
@@ -169,8 +170,8 @@ export function esperanceRaccordee(a, b, k, age, quotients) {
     if (quotient !== undefined) {
       facteur = 1.0 - quotient;
     } else {
-      const u = Math.exp(k * (courant - 60.0));
-      facteur = Math.exp(-(a + (b / k) * u * (Math.exp(k) - 1.0)));
+      const u = exp(k * (courant - 60.0));
+      facteur = exp(-(a + (b / k) * u * (exp(k) - 1.0)));
     }
     const prochaine = survie * facteur;
     total += 0.5 * (survie + prochaine);
@@ -478,7 +479,7 @@ export class DonneesMortalite {
     const partAnnee = annee - anneeEntiere;
     if (partAge <= 1e-9 && partAnnee <= 1e-9) {
       const cellule = this._survieCellule(ageEntier, anneeEntiere, sexe);
-      return facteur === 1.0 ? cellule : cellule ** facteur;
+      return facteur === 1.0 ? cellule : pow(cellule, facteur);
     }
 
     // Les deux coordonnées avancent à la même vitesse : le trajet franchit
@@ -498,9 +499,9 @@ export class DonneesMortalite {
         anneeEntiere + Math.floor(partAnnee + milieu),
         sexe,
       );
-      cumul += (fin - debut) * -Math.log(Math.max(cellule, 1e-300));
+      cumul += (fin - debut) * -log(Math.max(cellule, 1e-300));
     }
-    return Math.exp(-cumul * facteur);
+    return exp(-cumul * facteur);
   }
 
   // -- tables de génération --------------------------------------------------

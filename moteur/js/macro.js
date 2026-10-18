@@ -8,6 +8,7 @@
  */
 
 import { Fiabilite, SerieAnnuelle } from "./serie.js";
+import { pow } from "./libm.js";
 
 /**
  * Première année où les salaires portés au compte sont revalorisés sur les
@@ -258,7 +259,7 @@ export class DonneesMacro {
         // Un SMIC ne baisse pas : janvier suivant part du dernier relèvement
         // en vigueur, porté au même rythme sur les mois qui restent.
         const [mois, valeur] = releve;
-        courant = valeur * (1 + croissance) ** ((13 - mois) / 12);
+        courant = valeur * pow(1 + croissance, (13 - mois) / 12);
       } else {
         courant *= 1 + croissance;
       }

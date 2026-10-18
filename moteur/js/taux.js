@@ -29,6 +29,7 @@
  */
 
 import { Fiabilite } from "./serie.js";
+import { exp } from "./libm.js";
 
 /**
  * Maturité à laquelle `primeTerme` est exprimée : trente ans, le bout de la
@@ -128,7 +129,7 @@ export class CourbeTauxSansRisque {
     const differe = Math.max(0, anneePlacement - this.annee);
     const tauxContinu = this.forwardNeutre(differe, duree) + this.prime(duree);
     return {
-      taux: Math.exp(tauxContinu) - 1.0,
+      taux: exp(tauxContinu) - 1.0,
       differe,
       duree,
       fiabilite: differe + duree <= this.maturiteMaximale

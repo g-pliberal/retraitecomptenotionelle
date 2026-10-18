@@ -23,6 +23,7 @@
  */
 
 import { Fiabilite, SerieAnnuelle } from "./serie.js";
+import { pow } from "./libm.js";
 
 /**
  * Les six postes du financement, dans l'ordre d'affichage : ce qui est cotisé
@@ -370,7 +371,7 @@ export class DecompositionDepense {
     for (const [debut, fin] of this.periodes()) {
       if (fin <= depuis || debut >= annee) continue;
       if (debut !== courant || fin > annee) return null;
-      indice *= (1.0 + this.croissances.get(`${debut}-${fin}`)[grandeur]) ** (fin - debut);
+      indice *= pow(1.0 + this.croissances.get(`${debut}-${fin}`)[grandeur], fin - debut);
       courant = fin;
     }
     return courant === annee ? indice : null;

@@ -8,6 +8,8 @@
  * moteurs rendent le même chiffre.
  */
 
+import { exp, log } from "./libm.js";
+
 export const RANGS = Object.freeze({
   d1: 0.1, d2: 0.2, d3: 0.3, d4: 0.4, mediane: 0.5, d6: 0.6,
   d7: 0.7, d8: 0.8, d9: 0.9, p95: 0.95, p99: 0.99,
@@ -19,7 +21,7 @@ export function repartitionNormale(x) {
   const t = 1.0 / (1.0 + 0.3275911 * z);
   const poly = t * (0.254829592 + t * (-0.284496736 + t * (1.421413741
     + t * (-1.453152027 + t * 1.061405429))));
-  const erf = 1.0 - poly * Math.exp(-z * z);
+  const erf = 1.0 - poly * exp(-z * z);
   return 0.5 * (1.0 + signe * erf);
 }
 
@@ -40,12 +42,12 @@ export function quantileNormal(p) {
   const [a, b, c, d] = [ACKLAM_A, ACKLAM_B, ACKLAM_C, ACKLAM_D];
   const bas = 0.02425;
   if (p < bas) {
-    const q = Math.sqrt(-2.0 * Math.log(p));
+    const q = Math.sqrt(-2.0 * log(p));
     return (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5])
       / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1.0);
   }
   if (p > 1.0 - bas) {
-    const q = Math.sqrt(-2.0 * Math.log(1.0 - p));
+    const q = Math.sqrt(-2.0 * log(1.0 - p));
     return -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5])
       / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1.0);
   }
@@ -95,10 +97,10 @@ export class DistributionPatrimoine {
         }
       }
     } else {
-      const sigma = Math.sqrt(2.0 * Math.log(this.moyenne / this.mediane));
-      const mu = Math.log(this.mediane);
+      const sigma = Math.sqrt(2.0 * log(this.moyenne / this.mediane));
+      const mu = log(this.mediane);
       for (let i = 0; i < RANGS_GRILLE; i += 1) {
-        valeurs.push(Math.exp(mu + sigma * quantileNormal((i + 0.5) / RANGS_GRILLE)));
+        valeurs.push(exp(mu + sigma * quantileNormal((i + 0.5) / RANGS_GRILLE)));
       }
     }
     this._grille = valeurs;
@@ -128,9 +130,9 @@ export class DistributionPatrimoine {
   }
 
   _esperanceMinLognormale(avance) {
-    const sigma = Math.sqrt(2.0 * Math.log(this.moyenne / this.mediane));
-    const mu = Math.log(this.mediane);
-    const z = (Math.log(avance) - mu) / sigma;
+    const sigma = Math.sqrt(2.0 * log(this.moyenne / this.mediane));
+    const mu = log(this.mediane);
+    const z = (log(avance) - mu) / sigma;
     return this.moyenne * repartitionNormale(z - sigma)
       + avance * (1.0 - repartitionNormale(z));
   }

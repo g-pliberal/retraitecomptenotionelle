@@ -20,6 +20,7 @@ import { salaireMoyenAnnuel } from "./carriere.js";
 import {
   POPULATION_PAR_NIVEAU_DE_VIE, RATTACHEMENT_PENSION, TableConversion,
 } from "./config.js";
+import { pow } from "./libm.js";
 
 /**
  * Le niveau de salaire d'une carrière, en multiples du salaire moyen : la
@@ -57,7 +58,7 @@ export function diviseurDeCourbe(courbe, tauxAnticipe = 0.0) {
   let diviseur = 0.0;
   for (let t = 0; t < courbe.length - 1; t += 1) {
     const survieMoyenne = 0.5 * (courbe[t] + courbe[t + 1]);
-    diviseur += survieMoyenne / ((1.0 + tauxAnticipe) ** (t + 0.5));
+    diviseur += survieMoyenne / pow(1.0 + tauxAnticipe, t + 0.5);
   }
   return diviseur;
 }

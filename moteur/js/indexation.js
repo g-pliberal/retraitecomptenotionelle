@@ -16,6 +16,7 @@
 
 import { ModeIndexation } from "./config.js";
 import { Fiabilite } from "./serie.js";
+import { pow } from "./libm.js";
 
 /**
  * Modes qui comparent les trois taux tels qu'ils sont publiés — deux nominaux,
@@ -65,7 +66,7 @@ export class Indexation {
       for (let a = debut; a <= annee; a += 1) {
         produit *= 1 + this._tauxBrut(a).taux;
       }
-      taux = produit ** (1 / (annee - debut + 1)) - 1;
+      taux = pow(produit, 1 / (annee - debut + 1)) - 1;
     }
 
     const plancher = this.parametres.plancher_indexation;

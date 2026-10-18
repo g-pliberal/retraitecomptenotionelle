@@ -50,6 +50,7 @@ import {
   fraisCapitalisation,
 } from "./config.js";
 import { Fiabilite } from "./serie.js";
+import { pow } from "./libm.js";
 
 /**
  * Plus longue maturité achetable : le bout de la courbe publiée, trente ans à
@@ -92,7 +93,7 @@ export function repartition(horizon) {
 export function tauxInterne(versements, anneeFinale, capital, tolerance = 1e-10) {
   if (versements.length === 0 || capital <= 0) return 0.0;
   const valeur = (taux) => versements.reduce(
-    (somme, [annee, montant]) => somme + montant * (1.0 + taux) ** (anneeFinale - annee),
+    (somme, [annee, montant]) => somme + montant * pow(1.0 + taux, anneeFinale - annee),
     0.0,
   ) - capital;
 
@@ -261,7 +262,7 @@ export class ConstructeurCapitalisation {
     let avec = 0.0;
     for (let t = 0; t < courbe.length; t += 1) {
       sans += courbe[t];
-      avec += courbe[t] / (1.0 - frais) ** t;
+      avec += courbe[t] / pow(1.0 - frais, t);
     }
     return avec > 0 ? sans / avec : 1.0;
   }

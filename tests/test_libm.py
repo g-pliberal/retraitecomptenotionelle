@@ -112,6 +112,62 @@ def _bits(x: float) -> str:
     return x.hex()
 
 
+#: Les modules du portage qui ne calculent rien que le moteur Python calcule :
+#: la présentation et la lecture des documents déposés. Eux seuls gardent les
+#: fonctions de leur navigateur.
+SANS_LIBM = {
+    "libm.js": "le module lui-même",
+    "pages.js": "le texte des pages, qui met en forme ce que le moteur a calculé",
+    "format.js": "l'écriture des nombres, en entiers exacts",
+    "releve-lu.js": "la lecture d'un relevé déposé, sans jumeau Python depuis l'étape 3",
+}
+
+
+def _code_seul(texte: str) -> str:
+    """Le JavaScript sans ses commentaires ni ses chaînes : ce qui s'exécute."""
+    sortie = []
+    i, n = 0, len(texte)
+    while i < n:
+        deux = texte[i:i + 2]
+        if deux == "//":
+            i = texte.find("\n", i)
+            i = n if i < 0 else i
+        elif deux == "/*":
+            fin = texte.find("*/", i + 2)
+            i = n if fin < 0 else fin + 2
+        elif texte[i] in "'\"`":
+            guillemet = texte[i]
+            i += 1
+            while i < n and texte[i] != guillemet:
+                i += 2 if texte[i] == "\\" else 1
+            i += 1
+        else:
+            sortie.append(texte[i])
+            i += 1
+    return "".join(sortie)
+
+
+def test_le_moteur_ne_calcule_ses_exponentielles_que_par_la_libm_du_portage():
+    """Un ``Math.exp`` ou un ``**`` dans le moteur rendrait la libm de V8, et
+    les témoins cesseraient d'être identiques au bit près : le moteur passe
+    par ``exp``, ``log`` et ``pow`` de ``libm.js``."""
+    import re
+
+    dossier = RACINE / "moteur" / "js"
+    interdits = re.compile(r"Math\s*\.\s*(?:exp|log|pow|expm1|log1p|log2|log10)\b|\*\*")
+    fautes = []
+    for chemin in sorted(dossier.rglob("*.js")):
+        nom = chemin.relative_to(dossier).as_posix()
+        if nom in SANS_LIBM:
+            continue
+        code = _code_seul(chemin.read_text(encoding="utf-8"))
+        fautes += [f"{nom} : {trouve.group(0)}" for trouve in interdits.finditer(code)]
+    assert not fautes, ("le moteur doit appeler exp, log et pow de libm.js : "
+                        + ", ".join(fautes))
+    absents = [nom for nom in SANS_LIBM if not (dossier / nom).exists()]
+    assert not absents, f"exemptés mais absents du portage : {absents}"
+
+
 def test_le_portage_rend_l_exp_le_log_et_le_pow_de_la_libm_au_bit_pres():
     raison = _hors_reference()
     if raison is not None:

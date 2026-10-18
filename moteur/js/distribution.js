@@ -12,6 +12,8 @@
  * d'individus.
  */
 
+import { pow } from "./libm.js";
+
 /** Répartition des pensions brutes de droit direct, pour un millésime d'EIR. */
 export class DistributionPensions {
   constructor(paquet, sexe = "ensemble") {
@@ -104,7 +106,7 @@ export function partFemmes(paquet, tolerance = 5e-4) {
   for (let rang = 0; rang < femmes.length; rang += 1) {
     const ecart = femmes[rang] - hommes[rang];
     numerateur += (ensemble[rang] - hommes[rang]) * ecart;
-    denominateur += ecart * ecart;
+    denominateur += pow(ecart, 2.0);
   }
   if (denominateur <= 0) {
     throw new Error(

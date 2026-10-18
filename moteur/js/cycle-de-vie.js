@@ -43,6 +43,7 @@ import {
 } from "./impot-revenu.js";
 import { agesDeLEstimation } from "./pilote.js";
 import { faireVivre, RevalorisationServie } from "./revalorisation.js";
+import { exp, log, pow } from "./libm.js";
 
 /** Les six systèmes, dans l'ordre de la comparaison. */
 export const SCENARIOS = Object.freeze([
@@ -645,8 +646,8 @@ export function integraleSurvie(courbe, debut, fin) {
     } else if (Math.abs(bas - haut) <= 1e-15 * haut) {
       total += haut * (u1 - u0);
     } else {
-      const logarithme = Math.log(bas / haut);
-      total += haut * (Math.exp(logarithme * u1) - Math.exp(logarithme * u0)) / logarithme;
+      const logarithme = log(bas / haut);
+      total += haut * (exp(logarithme * u1) - exp(logarithme * u0)) / logarithme;
     }
     x = borne;
   }
@@ -1171,7 +1172,7 @@ export function rendementInterne(flux) {
   for (const [instant] of flux) origine = Math.min(origine, instant);
   const valeur = (taux) => {
     let somme = 0.0;
-    for (const [instant, montant] of flux) somme += montant * (1.0 + taux) ** -(instant - origine);
+    for (const [instant, montant] of flux) somme += montant * pow(1.0 + taux, -(instant - origine));
     return somme;
   };
   let [bas, haut] = BORNES_RENDEMENT;
@@ -1235,7 +1236,7 @@ export function indicateurs(flux, simulateur, convention = new Convention()) {
     const liquidation = flux.annee_liquidation;
     const actualisation = 1.0 + convention.taux_actualisation;
     const aLaDate = (annee, montant, instant) => montant * prix.get(liquidation) / prix.get(annee)
-      * actualisation ** -(instant - flux.debut);
+      * pow(actualisation, -(instant - flux.debut));
     patrimoine = 0.0;
     for (const [annee, montant, instant] of esperees) patrimoine += aLaDate(annee, montant, instant);
     let capitalisees = 0.0;

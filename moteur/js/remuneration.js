@@ -54,6 +54,7 @@ import { salaireMoyenAnnuel } from "./carriere.js";
 import { pointsCsgRendus } from "./restitution.js";
 import { Fiabilite } from "./serie.js";
 import { FAMILLE_PAR_DEFAUT, familleDeLaFiche } from "./prelevements-historiques.js";
+import { pow } from "./libm.js";
 
 /** Heures d'un temps plein sur une année : 35 heures sur 52 semaines. */
 export const HEURES_ANNUELLES_TEMPS_PLEIN = 1820.0;
@@ -218,7 +219,7 @@ export class ReductionGenerale {
     const rapport = Math.max(
       0, 0.5 * ((this.plafond_en_smic * smicAnnuel) / brut - 1),
     );
-    const arrondi = Math.round(delta * rapport ** this.puissance * 1e4) / 1e4;
+    const arrondi = Math.round(delta * pow(rapport, this.puissance) * 1e4) / 1e4;
     return Math.min(maximal, this.taux_minimum + arrondi);
   }
 }

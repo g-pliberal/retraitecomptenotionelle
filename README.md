@@ -254,13 +254,12 @@ Il est traité de front : **le Python de `src/` reste la référence**, et
 <!--chiffre:entrees(tests/temoins/pages.json:)-->76<!--/--> rendus de page, dans `tests/temoins/`.
 `node --test` rejoue les simulations côté JavaScript et les compare valeur par valeur —
 <!--chiffre:portage(valeurs)-->164 411<!--/--> nombres,
-dont <!--chiffre:portage(identiques)-->97,3<!--/--> % identiques
-au bit près, l'écart relatif maximal étant de <!--chiffre:portage(pire)-->9,1<!--/--> · 10⁻¹⁵ (un *ulp*, la précision d'un flottant, vaut 2 · 10⁻¹⁶). Ce pire
-écart n'est pas celui d'un calcul mais d'une soustraction entre deux montants
-presque égaux — deux pensions dont on mesure l'écart, ou le plancher de la
-garantie vieillesse et la pension qu'il complète : les quelques *ulp* sur
-lesquels les deux moteurs diffèrent pour chaque montant en deviennent des
-centaines pour leur différence. Les pages, elles, ne s'écrivent
+dont <!--chiffre:portage(identiques)-->100,0<!--/--> % identiques
+au bit près, l'écart relatif maximal étant de <!--chiffre:portage(pire)-->0,0<!--/--> · 10⁻¹⁵ (un *ulp*, la précision d'un flottant, vaut 2 · 10⁻¹⁶). Les
+deux moteurs ne diffèrent plus d'un *ulp* : le JavaScript calcule
+l'exponentielle, le logarithme et la puissance comme la libm de Linux, dont
+le Python tient les siennes (`moteur/js/libm.js`), et non comme chaque
+navigateur calcule les siennes. Les pages, elles, ne s'écrivent
 qu'une fois, en JavaScript, et sont figées en témoins. Leur formatage à la
 française reproduit jusqu'à l'arrondi au pair de Python, pour que le site écrive
 les nombres comme la prose qui le cite, faute de quoi un
