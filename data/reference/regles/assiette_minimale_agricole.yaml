@@ -36,7 +36,14 @@ effet: >-
   aucun au compte. Depuis le même jour, toute année où il cesse, et non la seule de son
   départ, ouvre les points d'une année, dans le statut du 1er janvier : le statut pris en
   cours d'année n'en ouvre aucun, et le chef parti le 1er août 2024, collaborateur depuis
-  avril, a les 133 points de son année de chef, et non 183.
+  avril, a les 133 points de son année de chef, et non 183. Depuis le même jour encore, le
+  compte du droit en vigueur — celui des scénarios 4 et 5, et des cotisations que lisent
+  les indicateurs du cycle de vie — reçoit ce que l'exploitant verse pour l'année, dans
+  le statut du 1er janvier, et non pour les mois de ses lignes : l'année entière celle où
+  il cesse, rien celle où il s'installe ou prend un autre statut (`moteur/compte.py`). Le
+  chef parti le 1er août 2024 y verse pour 2024 2 084,40 € à la base et 848,12 € à la
+  RCO, et non 1 215,90 € et 494,74 €. Le régime fusionné de la proposition, après la
+  bascule, prélève toujours sur le revenu des mois.
 sources:
   lu_le: 2026-10-18
   prochaine_relecture: 2027-03-31

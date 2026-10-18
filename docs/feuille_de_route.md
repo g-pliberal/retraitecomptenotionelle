@@ -4163,16 +4163,16 @@ R. 111-2 ; la condition de L. 816-1 ; le tableau de 2008 des régimes
 
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
-**Reprise, au 18 octobre 2026.** Faits, des coupures au mois au statut de
-l'exploitant au 1er janvier : voir les notes. Restent : des classes, l'acte
-vétérinaire (au propriétaire), des décrets non lus ; de
-`coefficients_anticipation_agirc_arrco`, l'ASF réservée de 1983 à 2003 aux salariés
-en activité et aux chômeurs (au propriétaire) ; de `decote_avant_1983`, l'ajournement
-des artisans et commerçants et les « soixante et un ans » agricoles, aux décrets de
-1956 à 1968 (au propriétaire) ; les artisans et commerçants,
-`pension_non_salaries_agricoles_2026` ; de l'exploitant, l'année au prorata
-(R. 731-83 ; au propriétaire, la pratique de la MSA), l'année du décès et ce qu'il
-verse, aux mois dans le compte. Détail : les notes.
+**Reprise, au 18 octobre 2026.** Faits, des coupures au mois à ce que l'exploitant
+verse au compte : voir les notes. Restent : des classes, l'acte vétérinaire (au
+propriétaire), des décrets non lus ; de `coefficients_anticipation_agirc_arrco`, l'ASF
+réservée de 1983 à 2003 aux salariés en activité et aux chômeurs (au propriétaire) ;
+de `decote_avant_1983`, l'ajournement des artisans et commerçants et les « soixante et
+un ans » agricoles, aux décrets de 1956 à 1968 (au propriétaire) ; des artisans et
+commerçants, le plafond de D. 634-5 ; `pension_non_salaries_agricoles_2026` ; de
+l'exploitant, l'année au prorata (R. 731-83 ; au propriétaire, la pratique de la
+MSA), l'année du décès, au prorata depuis 2008, et au compte le forfait du
+collaborateur. Détail : les notes, la plus récente d'abord.
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre
 session, à la demande du propriétaire, après avoir vérifié qu'elle ne lui
