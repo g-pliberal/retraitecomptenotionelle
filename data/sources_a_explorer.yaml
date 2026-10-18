@@ -6228,7 +6228,7 @@ sources:
       Le modèle de projection suédois, téléchargeable : l'indice d'équilibre
       et le temps de rotation à refaire, pour éprouver le mécanisme
       d'équilibre de la proposition.
-    statut: a_explorer
+    statut: en_cours
 
   - id: suede_typfallsmodellen
     url: https://www.pensionsmyndigheten.se/statistik-och-rapporter/pensionsmodellen/typfallsmodellen
@@ -6239,7 +6239,7 @@ sources:
       Le calcul des diviseurs projetés par génération (`Calculate_Deltal`) et
       des pensions de cas types : le diviseur de la proposition, confronté à
       celui que la Suède calcule.
-    statut: a_explorer
+    statut: en_cours
 
   - id: suede_lagar_och_regler
     url: https://www.pensionsmyndigheten.se/om-pensionsmyndigheten/allmanna-handlingar/lagar-och-regler
@@ -6249,7 +6249,7 @@ sources:
     a_en_tirer: >-
       Les règlements de Pensionsmyndigheten, dont la table des diviseurs de
       2026 (PFS 2026:2) : la grille à refaire depuis les tables de mortalité.
-    statut: a_explorer
+    statut: en_cours
 
   - id: suede_orange_rapport_2025
     url: https://www.pensionsmyndigheten.se/statistik/publikationer/orange-rapport-2025/orange-rapport-2025.pdf
@@ -6259,7 +6259,7 @@ sources:
     a_en_tirer: >-
       La formule de l'indice d'équilibre (annexe B) et sa valeur de 2025,
       1,1472, à retrouver.
-    statut: a_explorer
+    statut: en_cours
 
   - id: norvege_mosart
     url: https://www.ssb.no/befolkning/metoder-og-dokumentasjon/mosart-7.5.teknisk-dokumentasjon/_/attachment/inline/4d238e34-04c3-4dc3-a324-544e5a3a572e:e14fd155e59697117b6a359d5861dbab1e74a17e/NOT2025-04.pdf
@@ -6269,7 +6269,7 @@ sources:
     a_en_tirer: >-
       La documentation technique de MOSART 7.5 : le capital, le diviseur et
       l'indexation norvégiens, tels que le modèle de projection les calcule.
-    statut: a_explorer
+    statut: en_cours
 
   - id: norvege_delingstall
     url: https://www.nav.no/redirects/delingstal
@@ -6296,7 +6296,7 @@ sources:
       Le rapport n° 27 de la RGS : la méthode des coefficients de
       transformation (annexe 1, B.1) et les projections de dépense, régime
       contributif compris.
-    statut: a_explorer
+    statut: en_cours
 
   - id: italie_coefficienti_2024
     url: https://www.lavoro.gov.it/documenti-e-norme/normativa/decreto-direttoriale-20112024-coefficienti-trasformazione.pdf
@@ -6306,7 +6306,7 @@ sources:
     a_en_tirer: >-
       Les coefficients de 2025-2026, âge par âge, 5,250 % à 65 ans : la table
       à refaire au millième.
-    statut: a_explorer
+    statut: en_cours
 
   - id: pologne_gus_esperance
     url: https://stat.gov.pl/sygnalne/komunikaty-i-obwieszczenia/lista-komunikatow-i-obwieszczen/komunikat-w-sprawie-tablicy-sredniego-dalszego-trwania-zycia-kobiet-i-mezczyzn,285,14.html
@@ -6316,7 +6316,7 @@ sources:
     a_en_tirer: >-
       La table de l'espérance de vie unisexe en mois, d'avril 2026 à mars
       2027 : le diviseur polonais, à lire à la source.
-    statut: a_explorer
+    statut: en_cours
 
   - id: lettonie_table_g
     url: https://www.vsaa.gov.lv/lv/media/5322/download?attachment=
@@ -6341,7 +6341,7 @@ sources:
     a_en_tirer: >-
       La formule du fator previdenciário : un diviseur d'espérance de vie
       sans rendement notionnel.
-    statut: a_explorer
+    statut: en_cours
 
   - id: finlande_elinaikakerroin
     url: https://www.etk.fi/suomen-elakejarjestelma/elaketurva/elinaikakerroin/elinaikakertoimen-laskentakaavat/
@@ -6351,7 +6351,7 @@ sources:
     a_en_tirer: >-
       Les formules du coefficient d'espérance de vie : un ajustement voisin du
       diviseur, 0,94643 pour la génération 1964.
-    statut: a_explorer
+    statut: en_cours
 
   - id: banque_mondiale_prost
     url: https://documents1.worldbank.org/curated/en/099061024110535659/pdf/P1777231d8367c0111800816452e83c58d7.pdf
@@ -6361,7 +6361,7 @@ sources:
     a_en_tirer: >-
       Le « Calculus for PROST 15 » : le capital initial d'une transition en
       comptes notionnels et la dette implicite, une méthode à refaire.
-    statut: a_explorer
+    statut: en_cours
 
   - id: ageing_report_2024
     url: https://economy-finance.ec.europa.eu/publications/2024-ageing-report-economic-and-budgetary-projections-eu-member-states-2022-2070_en
@@ -6390,7 +6390,7 @@ sources:
     a_en_tirer: >-
       L'outil actuariel de l'OIT, sur compte : ses conditions sont à lire
       avant tout usage.
-    statut: a_explorer
+    statut: en_cours
 
   - id: og_core
     url: https://github.com/PSLmodels/OG-Core
@@ -6401,7 +6401,7 @@ sources:
       Le module de comptes notionnels à l'italienne d'un modèle à générations
       imbriquées : les effets d'équilibre général d'une bascule, que le dépôt
       ne modélise pas.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
