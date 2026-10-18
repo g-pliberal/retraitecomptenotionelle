@@ -1,0 +1,44 @@
+date: "2026-10-18"
+session: "action 138, étape 5, onzième partie : les règles des revenus de 1973 à 1980, lues aux lois de finances pour 1974 à 1981"
+consulte: >-
+  `python scripts/veille_droit.py` : aucune fiche de la carte touchée, la
+  session n'écrivant aucune règle de la pension. Les index JORF et LEGI de la
+  DILA, récupérés puis mis à jour au 18 octobre 2026 ; `textes.py --inscrire`
+  y a inscrit des rédactions des articles D. 612-4, D. 612-5 et D. 131-6-1 du
+  code de la sécurité sociale, à examiner. Au site du Sénat, les textes
+  définitifs des lois de finances pour 1974 à 1981 (senat.fr/leg/, de
+  ta1973_1974_0031 à ta1980_1981_0039), et les deux textes de la loi de
+  finances rectificative pour 1981 qu'il a modifiés (ta1980_1981_0086 et
+  0094). Dans LEGI, les articles de ces lois qu'il garde (loi n° 73-1150, art.
+  4 et 5 ; n° 74-1129, art. 2 ; n° 75-1278, art. 2 et 14 ; n° 76-1232, art.
+  2 ; n° 77-1467, art. 2 et 3 ; n° 78-1239, art. 4 et 11 ; n° 80-30, art. 7 ;
+  n° 81-1160, art. 12), les rédactions des articles 5, 157 bis, 195 et 197 du
+  code de 1979 à 1985. Aux archives du BOFiP, la documentation de base 5 B 131
+  et 5 B 132 du 1er septembre 1999, et le BOI 5 B-9-05 du 18 février 2005.
+  Chez l'IPP, le paramètre `exo_ir`, que le script ne lisait pas.
+trouve: >-
+  Une limite d'exonération, de 1973 à 2013, que le modèle ignorait : sous elle,
+  le foyer, son revenu apprécié avant les 20 % et après les 10 % des pensions,
+  ne paie rien (lois de finances pour 1974 à 1981, art. 5, 2° bis du code, DB
+  5 B 132) ; de 1973 à 1976, une limite pour qui vit principalement de
+  salaires et de pensions, une autre pour les autres. L'abattement de 10 % des
+  pensions ne naît qu'avec les revenus de 1977 (loi n° 77-1467, art. 3, I, «
+  institué » dit la loi n° 78-1239, art. 4), quand l'IPP le donne dès 1960.
+  Trois seuils du barème de l'IPP faux (1974, 1980) ; l'abattement des
+  personnes âgées de 1973 à 1976 ; le minimum des frais professionnels et la
+  limite des 20 % de 1975 et 1976 ; les parts des enfants de 1979 et 1980 ; le
+  minimum de 200 F de la majoration de 1980. Et l'intégration au barème des
+  franchises, décotes et minorations dégressives dès 1973 (loi n° 73-1150, art.
+  2), qui date leur fin. Les rédactions consolidées des lois que LEGI garde
+  peuvent porter les montants d'une loi postérieure : la décote de 1982 dans
+  l'article 12 de la loi de finances pour 1982. Écrits dans la donnée, le
+  script de l'IPP, `impot_revenu.py` et son jumeau.
+reste: >-
+  Les règles d'avant 1973 (la franchise et la décote, les majorations et
+  minorations, l'arrondi, la déduction de 500 F des personnes âgées, le
+  minimum de 1 200 F des frais, les 20 % des pensions, l'exonération sous le
+  SMIG), aux lois de finances pour 1961 à 1973 du Sénat ; l'exonération de
+  l'article 5, 2°, au minimum garanti ; l'abattement de 2 000 F de 1978 et
+  celui de l'article 157 ter ; les couples d'invalides d'avant 1980 ; le
+  plafond des pensions par pensionné dès 1979 ; les décotes et plafonds de
+  1981 à 1985, que LEGI consolide.

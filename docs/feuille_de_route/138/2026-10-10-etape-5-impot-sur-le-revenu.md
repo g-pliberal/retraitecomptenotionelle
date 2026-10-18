@@ -1,15 +1,15 @@
 # Étape 5, première partie : l'impôt sur le revenu d'un foyer, de son barème à son montant, chaque année
 
 **Reprise, au 18 octobre 2026.** Fait : l'impôt d'un foyer (10 octobre) ; la
-CSG déductible (11) ; l'impôt dans les indicateurs de cycle de vie (13) ;
-l'effet retour, au modèle (14) ; l'ASPA déformée (16) ; le bénéfice des
-indépendants (16) ; l'abattement des adhérents d'avant 1978 (17) ; le 18, la
-prime pour l'emploi des non-salariés et sa fin aux revenus de 2014, puis la
-majoration pour enfants, exonérée jusqu'aux revenus de 2012 (loi n° 2013-1278,
-art. 1er et 5), sous la limite de la doctrine, dans les deux moteurs. Reste :
-au propriétaire, l'effet retour dans le solde et trois décisions sur le
-bénéfice ; l'impôt au site, à la session des pages ; les règles d'avant 1981.
-Détail : `2026-10-18-etape-5-majoration-pour-enfants.md`.
+CSG déductible (11) ; l'impôt dans les indicateurs (13) ; l'effet retour (14) ;
+l'ASPA déformée, le bénéfice des indépendants (16) ; les adhérents d'avant 1978
+(17) ; le 18, la prime des non-salariés, la majoration pour enfants, puis les
+revenus de 1973 à 1980 lus aux lois de finances du Sénat : la limite
+d'exonération (1973 à 2013), les pensions sans leurs 10 % avant 1977, trois
+seuils du barème, dans les deux moteurs. Reste : au propriétaire, l'effet
+retour dans le solde et trois décisions sur le bénéfice ; l'impôt au site, à
+la session des pages ; les règles d'avant 1973, puis l'exonération au minimum
+garanti. Détail : `2026-10-18-etape-5-lois-de-finances-de-1974-a-1981.md`.
 
 **La demande.** Le propriétaire, le 10 octobre 2026 : l'impôt sur le revenu
 d'un foyer, de son barème à son montant, chaque année ; les barèmes de l'IPP
