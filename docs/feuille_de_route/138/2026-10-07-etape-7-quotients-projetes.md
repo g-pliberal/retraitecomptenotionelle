@@ -4,12 +4,12 @@
 âge par âge par les deux moteurs ; la marche de 1941 ; les hypothèses
 d'espérance de vie, la fécondité et les migrations dans le diviseur, la page
 Coût et les pages ; l'indexation sous la variante ; la mortalité
-différentielle des cas types (`Pensionne.survie`). Reste, une session par
-point : la queue de 85 à 98 ans ; les inaptes de la Cnav, que la grille n'a
-pas ; 2025, que le classement range au léger, à déclarer. Au propriétaire :
-les départs qui suivent l'espérance de vie, coupés le 14 octobre ; s'il les
-rouvre, leur règle (`2026-10-18-etape-7-departs-et-esperance-de-vie.md`).
-Détail : « Ce qui reste » des notes du 16 (indexation) et du 17 (mortalité).
+différentielle des cas types ; la queue observée de 85 à 98 ans, la loi
+raccordée à son dernier quotient. Reste, une session par point : les inaptes
+de la Cnav, que la grille n'a pas ; 2025, rangé au léger, à déclarer. Au
+propriétaire : les départs qui suivent l'espérance de vie, coupés le
+14 octobre (`2026-10-18-etape-7-departs-et-esperance-de-vie.md`). Détail :
+« Ce qui reste » des notes du 16 (indexation), du 17 et du 18 (queue).
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.7 ». L'étape 7 de
 l'action : « La démographie en variantes : les quotients projetés âge par âge
