@@ -773,7 +773,7 @@ de chaque cas type :
 | Système | Cumul 1959-2024, euros de 2026 | Écart |
 |---|---|---|
 | 1. Système actuel | <!--chiffre:mesure(cumul_passe?scenario=1)-->13 767<!--/--> Md € | réf. |
-| 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(cumul_passe?scenario=2)-->2 740<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=2)-->−80,1<!--/--> % |
+| 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(cumul_passe?scenario=2)-->2 740<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=2)-->−80,3<!--/--> % |
 | 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(cumul_passe?scenario=3)-->13 767<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=3)-->+0,0<!--/--> % |
 | 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=4)-->6 441<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=4)-->−53,2<!--/--> % |
 | 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=5)-->13 767<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=5)-->+0,0<!--/--> % |
@@ -791,7 +791,7 @@ bascule était avancée avant la dernière année observée.
 
 L'écart du scénario 2 ne mesure pas, lui non plus, l'effet des comptes
 notionnels : il mesure la part salariale seule — le scénario 4, qui ajoute la
-part patronale, coûte <!--chiffre:mesure(surcout_passe?scenario=4&base=2)-->135<!--/--> % de plus — et la règle d'indexation, dont le résultat
+part patronale, coûte <!--chiffre:mesure(surcout_passe?scenario=4&base=2)-->136<!--/--> % de plus — et la règle d'indexation, dont le résultat
 1 ci-dessus montre qu'elle domine tout. Le scénario 6 est ici le scénario 4,
 et sa garantie vieillesse s'y ajoute : aucune pension servie avant 2026 n'a une année
 cotisée à <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> %.
@@ -802,7 +802,7 @@ pour que chaque groupe de régimes pèse la part que le COR donne à sa dépense
 (`docs/limites.md` § 5 ter) : l'agent de
 conduite pèse <!--chiffre:mesure(poids?cas=agent_sncf_conduite)-->1,4<!--/--> % et non <!--chiffre:mesure(poids?cas=agent_sncf_conduite&ponderation=egale)-->6,2<!--/--> %, les quatre carrières du privé <!--chiffre:mesure(poids?cas=smic_carriere_complete|salaire_moyen|cadre|carriere_interrompue)-->52<!--/--> % à elles
 quatre. Ce que la convention égalitaire valait est désormais mesuré plutôt
-qu'argumenté — elle donne <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−79,6<!--/--> % au scénario 2 contre <!--chiffre:mesure(ecart_passe?scenario=2)-->−80,1<!--/--> %, et <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−57,3<!--/--> % au
+qu'argumenté — elle donne <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−79,7<!--/--> % au scénario 2 contre <!--chiffre:mesure(ecart_passe?scenario=2)-->−80,3<!--/--> %, et <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−57,4<!--/--> % au
 scénario 4 contre <!--chiffre:mesure(ecart_passe?scenario=4)-->−53,2<!--/--> %. Le sens du biais n'était donc pas celui qu'on
 annonçait : la surreprésentation des départs très précoces faisait bien du
 scénario 4 un plancher, mais elle faisait du scénario 2 un plafond.
