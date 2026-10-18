@@ -12,6 +12,11 @@ simulateur calcule, une carrière : le coût n'y est pas, et Coût, Carrières
 types et Droits non cotisés lisent ce que le Python en a fabriqué
 (`agregats.js`, `docs/architecture.md`, § 7.1).
 
+- **Les exponentielles du moteur passent par `libm.js`** : `exp`, `log` et
+  `pow`, au bit près de la libm de Linux, dont le Python tient les siennes ;
+  jamais `Math.exp`, `Math.log` ni `**`, qui rendraient celles du navigateur,
+  et les témoins cesseraient d'être identiques (`tests/test_libm.py`). Seuls
+  la présentation et le relevé lu gardent celles du navigateur.
 - **Le texte du site ne s'écrit qu'en JavaScript** : `moteur/js/pages.js`,
   `gabarit.js`, et `moteur/style.css`, sa propre source. Le Python le lit par
   `web/site.py`, qui le fait rendre par node ; les témoins de pages se refont
