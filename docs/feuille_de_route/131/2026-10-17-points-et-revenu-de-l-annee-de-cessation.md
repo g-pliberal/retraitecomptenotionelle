@@ -72,6 +72,12 @@ provisoire, qu'aucune moitié du plafond ne borne, devant le recalcul borné à
 25 231,50 € ; le chef des plans de 2001 (`test_minima_agricoles.py`) naît en
 décembre 1940 et part le 1er janvier : parti en février, il compterait les
 trente points de son année de cessation, et sa moyenne passerait les seize.
+Un quatrième, au rebasage : le chef de 1932 que la révision des plans laisse
+sans rien (`test_la_revision_se_minore_au_plus_fort_des_deux_coefficients`,
+action 138, étape 8, poussé juste avant) avait 17,44 ans reconstitués, au bord
+du seuil ; ses points de 1994, l'année entière où il cesse, le portent à
+19,35. Il passe aux cinquante-cinq centièmes du salaire moyen : 16,17 ans, sur
+ses trente-quatre ans d'activité agricole.
 
 **Restes, trouvés en chemin.** Les années incomplètes autres que la
 cessation : l'installation en cours d'année, que L. 731-10-1 exonère (la

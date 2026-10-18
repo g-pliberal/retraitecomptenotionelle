@@ -480,7 +480,10 @@ def test_la_revision_se_minore_au_plus_fort_des_deux_coefficients(simulateur):
                        minoration(de_la_duree, 37.5 - agricole))
             assert _servis(simulateur, carriere, resultat, annee) == pytest.approx(
                 minimum_moins_seize * duree * part * (1.0 - taux), rel=1e-9), (debut, annee)
-    carriere = _chef(simulateur, 1932, 62, niveau=0.6, debut=29.0)
+    # Aux cinquante-cinq centièmes du salaire moyen : aux six dixièmes, les
+    # points de 1994, l'année entière où il cesse (L. 731-10-1), passeraient
+    # les dix-sept ans et demi.
+    carriere = _chef(simulateur, 1932, 62, niveau=0.55, debut=29.0)
     resultat, _, _ = _resultat(simulateur, carriere)
     assert _points_au_compte(simulateur, resultat) / 16.0 < 17.5
     assert faire_vivre(simulateur, carriere, resultat, 2008).exploitant is None
