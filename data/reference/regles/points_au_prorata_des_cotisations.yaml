@@ -1,0 +1,88 @@
+schema_version: 1
+id: points_au_prorata_des_cotisations
+intitule: >-
+  Au régime de base des professions libérales, les points se comptent « au prorata des
+  cotisations acquittées » : la cotisation annuelle au plafond en ouvre 525 (557 depuis
+  2025), celle de la seconde tranche 25, et une année d'affiliation incomplète, dont le
+  plafond est réduit à ses mois, n'en a que la part de sa cotisation (D. 643-1 depuis
+  2004).
+etat: transcrite
+etape: acquerir_les_droits
+effet: >-
+  Les libéraux dont une année est incomplète au régime de base de la CNAVPL : le début
+  d'activité, l'année du départ. Jusqu'au 18 octobre 2026, le barème en points du
+  modèle (`points_maximum`) leur rendait les points d'une année entière, son repère et
+  l'assiette d'une ligne incomplète étant réduits ensemble : parti le 1er juillet 2020 à
+  40 000 € par an, le libéral recevait 515,36 points pour ses six mois de 2020, au lieu
+  de 257,68.
+sources:
+  lu_le: 2026-10-18
+  prochaine_relecture: 2027-02-15
+  a_relire:
+  - >-
+    Les autres régimes du même barème, qui gardent les points d'une année entière à une
+    ligne incomplète. La RCO des non-salariés agricoles : D. 732-155 y écrit un « nombre
+    annuel de points », 100 puis 133 « par an » au minimum et P = N × RP / 1 820 SMIC
+    au-delà, sur « la totalité des revenus professionnels », jusqu'aux périodes de 2025
+    (LEGIARTI000006597593, LEGIARTI000034578860) ; depuis 2026, il les tire de « la
+    cotisation acquittée par l'assuré pour l'année considérée », P = C / [(1 820 SMIC ×
+    T) / N] (LEGIARTI000049904715). Une année que R. 731-83 fait cotiser au prorata en
+    garderait les points d'une année avant 2026, et n'en aurait que ses mois depuis : la
+    pratique de la MSA n'est pas lue. Le RAAP des artistes-auteurs (six points par an
+    de la classe spéciale), l'ORGANIC et la CANCAVA d'avant 1973 : aucun texte lu sur
+    l'année incomplète.
+  - >-
+    La caisse arrondit les points « à la décimale la plus proche » (D. 643-1) ; le
+    modèle n'arrondit pas.
+  lectures:
+  - type: legifrance
+    reference: >-
+      Code de la sécurité sociale, D. 643-1, rédactions de 2015 (LEGIARTI000029825121)
+      et de 2024 (LEGIARTI000049904642) : « Le versement de la cotisation annuelle
+      correspondant au plafond de revenu fixé au 1° de l'article D. 642-3 ouvre droit à
+      l'attribution de 525 points de retraite » (557 pour les périodes depuis 2025), 25
+      pour la seconde tranche, et « le nombre de points acquis est calculé au prorata
+      des cotisations acquittées sur chacune des tranches de revenus définies à
+      l'article D. 642-3, arrondi à la décimale la plus proche » ; la même phrase dans
+      la rédaction de 2004 (LEGIARTI000006738137). D. 642-3, rédaction de 2017
+      (LEGIARTI000034624570) : 8,23 % jusqu'au plafond, 1,87 % jusqu'à cinq plafonds, et
+      « en cas de période d'affiliation inférieure à une année, les plafonds prévus aux
+      1° et 2° ci-dessus sont réduits au prorata des trimestres d'affiliation » ;
+      rédaction de 2020 (LEGIARTI000041966479), sans cette phrase, que R. 613-17
+      (LEGIARTI000038750258, depuis le 8 juillet 2019) écrit pour tout travailleur
+      indépendant : la valeur du plafond « est réduite au prorata de la durée
+      d'affiliation ». Lus dans l'index LEGI du dépôt
+    date: 2026-10-18
+textes_a_rattacher:
+- id: LEGIARTI000029825121
+  reference: >-
+    code de la sécurité sociale, D. 643-1, rédaction du 1er janvier 2015 : 525 et 25
+    points pour la cotisation annuelle au plafond de chaque tranche, au prorata des
+    cotisations acquittées
+- id: LEGIARTI000049904642
+  reference: >-
+    code de la sécurité sociale, D. 643-1, rédaction du 7 juillet 2024 : 557 et 25
+    points, au prorata des cotisations acquittées, pour les périodes depuis 2025
+- id: LEGIARTI000034624570
+  reference: >-
+    code de la sécurité sociale, D. 642-3, rédaction du 6 mai 2017 : les deux plafonds
+    réduits au prorata des trimestres d'affiliation d'une année incomplète
+- id: LEGIARTI000041966479
+  reference: >-
+    code de la sécurité sociale, D. 642-3, rédaction du 25 mai 2020 : les deux tranches,
+    sans le prorata, passé à R. 613-17
+- id: LEGIARTI000038750258
+  reference: >-
+    code de la sécurité sociale, R. 613-17, rédaction du 8 juillet 2019 : le plafond
+    des travailleurs indépendants réduit au prorata de la durée d'affiliation
+code:
+  interrupteurs:
+    points_au_prorata_des_cotisations: true
+  moteur: >-
+    `points_au_prorata_des_cotisations`, avec `points_maximum` : les points sont ceux de
+    la cotisation annuelle au repère, et ceux d'une ligne incomplète sont multipliés
+    par la part de l'année qu'elle cotise (`acquerir`, `acquerir.js`). Le repère et
+    l'assiette d'une telle ligne sont tous deux réduits à ses mois, et leur rapport
+    rend le taux d'une année : sans l'interrupteur, une ligne de six mois reçoit les
+    points d'une année entière. Les quatorze périodes en points de la CNAVPL, de 2004 à
+    aujourd'hui, renvoient à cette fiche.

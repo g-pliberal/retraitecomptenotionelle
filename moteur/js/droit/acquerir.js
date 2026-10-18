@@ -647,8 +647,11 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
             .echelle(bareme, ligne.annee, anneeLiquidation);
           // Les points du collaborateur sont ceux que le texte écrit, entiers :
           // 66, 77 et 88 (D. 732-155, II).
+          // Les points de la cotisation ANNUELLE au repère : une année
+          // incomplète n'en a que la part de ses mois (D. 643-1).
           const pointsAnnee = forfaitCollaborateur === null
             ? periode.points_maximum * assiette / repere
+              * (periode.points_au_prorata_des_cotisations ? part : 1)
             : Math.floor(periode.points_maximum * forfaitCollaborateur
               / periode.assiette_repere_smic + 0.5) * part;
           crediter(code, ligne.annee, pointsAnnee * echelleBareme,

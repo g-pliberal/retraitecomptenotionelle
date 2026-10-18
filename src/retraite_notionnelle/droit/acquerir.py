@@ -758,6 +758,12 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                         bareme, ligne.annee, annee_liquidation
                     )
                     points_annee = periode.points_maximum * assiette / repere
+                    if periode.points_au_prorata_des_cotisations:
+                        # Les points de la cotisation ANNUELLE au repère : une
+                        # année incomplète n'en a que la part de ses mois
+                        # (D. 643-1), quand le rapport d'une assiette et d'un
+                        # repère réduits ensemble rendait ceux d'une année.
+                        points_annee *= part
                     if forfait_collaborateur is not None:
                         # Les points du collaborateur sont ceux que le texte
                         # écrit, entiers : 66, 77 et 88 (D. 732-155, II), et

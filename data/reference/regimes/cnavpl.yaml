@@ -96,6 +96,7 @@ periodes:
     taux_plein: 1.0
     decote_par_generation: bareme_minoration_regimes_en_points
     points_maximum: 450
+    points_au_prorata_des_cotisations: points_au_prorata_des_cotisations
     salaire_reference: carriere_entiere
     assiette: plafonnee_085_pass
     taux_cotisation_retraite: 0.086
@@ -149,6 +150,7 @@ periodes:
     taux_plein: 1.0
     decote_par_generation: bareme_minoration_regimes_en_points
     points_maximum: 450
+    points_au_prorata_des_cotisations: points_au_prorata_des_cotisations
     salaire_reference: carriere_entiere
     assiette: plafonnee_085_pass
     taux_cotisation_retraite: 0.086
@@ -216,6 +218,7 @@ periodes:
     taux_plein: 1.0
     decote_par_generation: bareme_minoration_regimes_en_points
     points_maximum: 450
+    points_au_prorata_des_cotisations: points_au_prorata_des_cotisations
     salaire_reference: carriere_entiere
     assiette: plafonnee_085_pass
     taux_cotisation_retraite: 0.0863
@@ -249,6 +252,7 @@ periodes:
     taux_plein: 1.0
     decote_par_generation: bareme_minoration_regimes_en_points
     points_maximum: 450
+    points_au_prorata_des_cotisations: points_au_prorata_des_cotisations
     salaire_reference: carriere_entiere
     assiette: plafonnee_085_pass
     taux_cotisation_retraite: 0.0975
@@ -281,6 +285,7 @@ periodes:
     taux_plein: 1.0
     decote_par_generation: bareme_minoration_regimes_en_points
     points_maximum: 450
+    points_au_prorata_des_cotisations: points_au_prorata_des_cotisations
     salaire_reference: carriere_entiere
     assiette: plafonnee_085_pass
     taux_cotisation_retraite: 0.101
@@ -313,6 +318,7 @@ periodes:
     taux_plein: 1.0
     decote_par_generation: bareme_minoration_regimes_en_points
     points_maximum: 100
+    points_au_prorata_des_cotisations: points_au_prorata_des_cotisations
     salaire_reference: carriere_entiere
     assiette: tranche_085_5_pass
     taux_cotisation_retraite: 0.016
@@ -345,6 +351,7 @@ periodes:
     taux_plein: 1.0
     decote_par_generation: bareme_minoration_regimes_en_points
     points_maximum: 100
+    points_au_prorata_des_cotisations: points_au_prorata_des_cotisations
     salaire_reference: carriere_entiere
     assiette: tranche_085_5_pass
     taux_cotisation_retraite: 0.016
@@ -391,6 +398,7 @@ periodes:
     taux_plein: 1.0
     decote_par_generation: bareme_minoration_regimes_en_points
     points_maximum: 100
+    points_au_prorata_des_cotisations: points_au_prorata_des_cotisations
     salaire_reference: carriere_entiere
     assiette: tranche_085_5_pass
     taux_cotisation_retraite: 0.0181
@@ -422,6 +430,7 @@ periodes:
     taux_plein: 1.0
     decote_par_generation: bareme_minoration_regimes_en_points
     points_maximum: 100
+    points_au_prorata_des_cotisations: points_au_prorata_des_cotisations
     salaire_reference: carriere_entiere
     assiette: tranche_085_5_pass
     taux_cotisation_retraite: 0.0187
@@ -454,6 +463,7 @@ periodes:
     taux_plein: 1.0
     decote_par_generation: bareme_minoration_regimes_en_points
     points_maximum: 525
+    points_au_prorata_des_cotisations: points_au_prorata_des_cotisations
     salaire_reference: carriere_entiere
     assiette: plafonnee
     taux_cotisation_retraite: 0.0823
@@ -488,6 +498,7 @@ periodes:
     taux_plein: 1.0
     decote_par_generation: bareme_minoration_regimes_en_points
     points_maximum: 525
+    points_au_prorata_des_cotisations: points_au_prorata_des_cotisations
     salaire_reference: carriere_entiere
     assiette: plafonnee
     taux_cotisation_retraite: 0.0823
@@ -538,6 +549,7 @@ periodes:
     taux_plein: 1.0
     decote_par_generation: bareme_minoration_regimes_en_points
     points_maximum: 557
+    points_au_prorata_des_cotisations: points_au_prorata_des_cotisations
     salaire_reference: carriere_entiere
     assiette: plafonnee
     taux_cotisation_retraite: 0.0873
@@ -591,6 +603,7 @@ periodes:
     taux_plein: 1.0
     decote_par_generation: bareme_minoration_regimes_en_points
     points_maximum: 25
+    points_au_prorata_des_cotisations: points_au_prorata_des_cotisations
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.0187
@@ -625,6 +638,7 @@ periodes:
     taux_plein: 1.0
     decote_par_generation: bareme_minoration_regimes_en_points
     points_maximum: 25
+    points_au_prorata_des_cotisations: points_au_prorata_des_cotisations
     salaire_reference: carriere_entiere
     assiette: plafonnee_5_pass
     taux_cotisation_retraite: 0.0187

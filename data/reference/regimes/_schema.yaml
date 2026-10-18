@@ -1038,6 +1038,15 @@ champs_periode:
       base des libéraux, 100 points pour 1 820 SMIC à la complémentaire
       agricole. `null` : les points s'achètent, cf. `valeurs_point.csv`.
 
+  points_au_prorata_des_cotisations:
+    description: >-
+      Avec `points_maximum` seulement : les points sont-ils ceux de la cotisation
+      ANNUELLE au repère, une année incomplète n'en ayant que la part de ses mois ?
+      Sans renvoi, le barème rend à toute ligne les points d'une année entière.
+    renvoi: true
+    valeurs: [true]
+    defaut: false
+
   assiette_repere_smic:
     description: >-
       Repère d'assiette, exprimé en heures de SMIC. `null` : le repère est la

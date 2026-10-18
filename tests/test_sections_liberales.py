@@ -307,3 +307,73 @@ def test_la_carpv_de_1998_a_2015_suit_le_taux_d_appel_du_decret():
     b2001 = classes.grille("carpv_complementaire", 2001)[0].cotisation
     assert b2001 / grille[0].cotisation == pytest.approx(
         0.77 / 1.04 * 27349 / 38040, rel=1e-3)
+
+
+def _points_de_l_annee(points, code: str, annee: int) -> float:
+    """Les points qu'un régime porte au compte d'une année, depuis les crédits
+    ``(régime, année, points, …)`` du relevé."""
+    return round(sum(nombre for regime, annee_credit, nombre, *_ in points
+                     if regime == code and annee_credit == annee), 6)
+
+
+def test_les_points_d_une_annee_incomplete_suivent_sa_cotisation(simulateur):
+    """« Le versement de la cotisation annuelle correspondant au plafond de
+    revenu [...] ouvre droit à l'attribution de 525 points », 25 pour la
+    seconde tranche, et « le nombre de points acquis est calculé au prorata des
+    cotisations acquittées sur chacune des tranches » (D. 643-1,
+    LEGIARTI000029825121), un plafond et cinq (D. 642-3, LEGIARTI000041966479) ;
+    une affiliation de moins d'un an réduit le plafond « au prorata de la
+    durée d'affiliation » (R. 613-17, LEGIARTI000038750258 ; « des trimestres
+    d'affiliation » jusqu'en 2020, D. 642-3). Le libéral à 40 000 € par an, parti le 1er juillet
+    2020, a cotisé en 2020 sur les 20 000 € de ses six mois : 525 × 20 000 /
+    41 136 = 255,25 points en tranche 1, et 25 × 20 000 / 205 680 = 2,43 en
+    tranche 2, la moitié de ce qu'une année entière lui vaudrait, et non les
+    515,36 points que le rapport d'une assiette et d'un repère tous deux
+    réduits à six mois rendait. L'année 2019, entière, garde les siens :
+    525 × 40 000 / 40 524 et 25 × 40 000 / 202 620. La caisse arrondit au
+    dixième de point ; le modèle n'arrondit pas. Dans les deux moteurs."""
+    import json
+    import shutil
+    import subprocess
+    from pathlib import Path
+
+    from retraite_notionnelle.carriere import AnneeCarriere
+    from retraite_notionnelle.droit import releve
+
+    def lignes():
+        return [dict(annee=annee, revenu=40_000.0, affiliation="profession_liberale")
+                for annee in range(1985, 2021)]
+
+    carriere = Carriere(annee_naissance=1958, mois_naissance=1, jour_naissance=15,
+                        sexe="H", lignes=[AnneeCarriere(**ligne) for ligne in lignes()],
+                        age_liquidation=62.0 + 5 / 12)
+    assert str(carriere.date_liquidation) == "juillet 2020"
+    attendu = {2019: 525 * 40_000 / 40_524 + 25 * 40_000 / 202_620,
+               2020: 525 * 20_000 / 41_136 + 25 * 20_000 / 205_680}
+    points = releve.construire(simulateur.scenario_actuel, carriere).droits.points
+    assert {annee: _points_de_l_annee(points, "cnavpl", annee) for annee in attendu} \
+        == pytest.approx(attendu, abs=1e-6)
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    script = """
+import { readFileSync } from "node:fs";
+import { AnneeCarriere, Carriere } from "./moteur/js/carriere.js";
+import { Contexte } from "./moteur/js/contexte.js";
+import { construire } from "./moteur/js/droit/releve.js";
+const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
+const simulateur = contexte.simulateur();
+const carriere = new Carriere({
+  annee_naissance: 1958, mois_naissance: 1, jour_naissance: 15, sexe: "H",
+  age_liquidation: 62 + 5 / 12,
+  lignes: JSON.parse(process.argv[1]).map((ligne) => new AnneeCarriere(ligne)) });
+process.stdout.write(JSON.stringify(
+  [...construire(simulateur.scenarioActuel, carriere).droits.points]));
+"""
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", script, json.dumps(lignes())],
+        cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    obtenus = json.loads(execution.stdout)
+    assert {annee: _points_de_l_annee(obtenus, "cnavpl", annee) for annee in attendu} \
+        == pytest.approx(attendu, abs=1e-6)

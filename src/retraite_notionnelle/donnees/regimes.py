@@ -552,6 +552,13 @@ class PeriodeRegime:
     #: en prix d'achat — le régime de base des libéraux, la complémentaire
     #: agricole. ``None`` : les points s'achètent, cf. ``valeurs_point.csv``.
     points_maximum: float | None
+    #: Les ``points_maximum`` sont ceux de la cotisation ANNUELLE au repère, et
+    #: une année incomplète n'en a que la part de ses mois : « le nombre de
+    #: points acquis est calculé au prorata des cotisations acquittées »
+    #: (D. 643-1). Faux : le barème rend les points d'une année entière, le
+    #: repère et l'assiette d'une ligne incomplète étant réduits ensemble.
+    #: Interrupteur, voir la fiche ``points_au_prorata_des_cotisations``.
+    points_au_prorata_des_cotisations: bool
     #: Bornes de l'assiette exprimées EN EUROS plutôt qu'en plafonds de la
     #: Sécurité sociale. La plupart des régimes découpent leur assiette en
     #: multiples du plafond, qui suit les salaires ; d'autres la fixent en
@@ -1790,6 +1797,7 @@ INTERRUPTEURS: dict[str, object] = {
     "surcote_depuis_la_duree": False,
     "assiette_plancher": False,
     "assiette_forfaitaire": False,
+    "points_au_prorata_des_cotisations": False,
     "cotisation_par_classes": False,
     "bareme_decote": "regime_aligne",
     "surcote_bareme": None,
@@ -2187,6 +2195,8 @@ class CatalogueRegimes:
                     None if p.get("points_maximum") is None
                     else float(p["points_maximum"])
                 ),
+                points_au_prorata_des_cotisations=bool(
+                    p.get("points_au_prorata_des_cotisations", False)),
                 borne_basse_euros=(
                     None if p.get("borne_basse_euros") is None
                     else float(p["borne_basse_euros"])

@@ -751,6 +751,8 @@ def _regimes() -> list[dict]:
                     "plafond_majoration_annee": p.plafond_majoration_annee,
                     "plafond_majoration_regime": p.plafond_majoration_regime,
                     "points_maximum": p.points_maximum,
+                    "points_au_prorata_des_cotisations":
+                        p.points_au_prorata_des_cotisations,
                     "points_minimum_annuels": p.points_minimum_annuels,
                     "points_par_trimestre_valide": p.points_par_trimestre_valide,
                     "points_ajustement_par_forfait": p.points_ajustement_par_forfait,
