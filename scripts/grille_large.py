@@ -632,8 +632,8 @@ DEPARTS_AVEC_DECOTE = True
 #: les carrières que la page pèse une à une, à un coût qui croît comme leur
 #: carré ; la part ne dépend ni du rang de salaire, ni de la génération, sinon
 #: qu'aucune n'attend avant 2004 (:data:`ANNEE_DE_LA_SURCOTE`) ; les carrières
-#: statutaires gardent leur départ, quand l'État et la CNRACL surcotent plus
-#: que la Cnav.
+#: statutaires gardent leur départ, quand l'État surcote deux fois plus que la
+#: Cnav (38,9 % de ses liquidants civils de 2024, pour 18,9 % ; EACR, table H).
 DEPARTS_AVEC_SURCOTE = True
 
 #: L'année où naît la surcote du régime général (L. 351-1-2 du code de la

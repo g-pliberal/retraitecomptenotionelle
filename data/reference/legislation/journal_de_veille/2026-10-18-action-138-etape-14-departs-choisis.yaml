@@ -1,0 +1,30 @@
+date: "2026-10-18"
+session: "action 138, étape 14, huitième partie : les départs choisis — la surcote, et les départs des nés en 1950 et en 1953"
+consulte: >-
+  Aucun texte : la session n'écrit aucune règle du scénario 1, et ne touche
+  qu'à la population de la page Coût (`scripts/grille_large.py`), que la page
+  ne lit pas. La fiche `surcote_regime_general` du dépôt, pour la date où naît
+  la surcote du régime général (L. 351-1-2 ; D. 351-1-4 dans sa version de
+  2004), en deçà de laquelle la population n'attend pas. Source neuve,
+  certifiée : les classeurs « Caractéristiques des retraités nés en 1950 (EIR
+  2016) » et « nés en 1953 (EIR 2020) » de la DREES, jeu
+  `3013_donnees-statistiques-sur-les-caracteristiques-des-retraites`, trois
+  feuilles chacun — l'âge de liquidation, la place du départ par rapport à
+  l'âge légal et à l'âge d'annulation de la décote, la condition de
+  liquidation dans le régime principal (`scripts/fetch/drees_departs_generations.py`,
+  `macro/departs_generations.csv`).
+trouve: >-
+  Rien de neuf au droit. Ce que le dépôt n'avait pas : les départs d'une
+  génération, âge par âge et condition par condition. 14,3 % des nés en 1953
+  sont partis avec une surcote, 53,5 % de ceux partis à 63 ans ; 20,3 % en
+  carrière longue, 28,3 % des hommes ; 9,9 % au taux plein par l'âge ; 15 %
+  au taux plein pour invalidité ou inaptitude, que la population n'a pas. Les
+  nés en 1950 : 11,7 % de surcotés, 11,5 % de carrières longues. Le classeur
+  laisse un retraité sur cent sans condition connue, et une femme née en 1953
+  sur neuf parmi celles parties à 65 ans.
+reste: >-
+  Ceux de la note (`docs/feuille_de_route/138/2026-10-18-etape-14-departs-choisis.md`) :
+  les carrières longues de la population, trop nombreuses chez les hommes ;
+  les invalides et les inaptes, au taux plein dès l'âge légal ; la surcote des
+  statutaires ; le choix de départ qui suivrait l'incitation, au propriétaire
+  (registre, `trajectoire`, `a_trancher`).
