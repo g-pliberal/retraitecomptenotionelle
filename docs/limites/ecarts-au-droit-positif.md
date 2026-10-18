@@ -328,11 +328,18 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   soixante-cinq. Depuis l'étape 8, l'agent titulaire de la Banque de France a
   la sienne, par semestre de naissance, prorogée pour enfants selon son statut
   (`limite_age_banque_de_france`) ; approché : son niveau, les plus hauts
-  partant plus tard jusqu'aux nés de 1955, traité comme les autres. Restent
-  dehors : la limite des cheminots avant 2010, des IEG avant 2008, de l'Opéra
-  avant 2008, de la Banque de France avant juillet 2012 ; la CRPCEN, les
-  mines, les marins, la Comédie-Française et le port de Strasbourg n'ont pas de
-  limite d'âge statutaire trouvée.
+  partant plus tard jusqu'aux nés de 1955, traité comme les autres. Depuis
+  l'étape 9, l'agent des IEG est admis d'office à la retraite de 1954 au
+  27 novembre 2007, à l'ouverture de son droit s'il a vingt-cinq ans de
+  services, à soixante ans au plus tard (décret n° 54-50, lu dans sa citation
+  par un arrêt) ; approché : l'agent, présumé actif comme sa pension, l'est à
+  cinquante-cinq ans, le sédentaire l'étant à soixante. Restent dehors : la
+  limite des cheminots avant 2010, de l'Opéra avant le 1er juillet 2008 — où
+  seul l'artiste du ballet, que la saisie ne distingue pas, pouvait être mis à
+  la retraite —, de la Banque de France avant juillet 2012, et celle des
+  mines, que le décret n° 54-51 fixe à l'ouverture de la pension, pas encore
+  portée ; la CRPCEN, les marins, la Comédie-Française et le port de
+  Strasbourg n'ont pas de limite d'âge statutaire trouvée.
 - **Pension militaire : la durée est servie, le grade ne l'est pas.** Les deux
   statuts militaires opposent la durée de services qui ouvre la pension —
   <!--chiffre:maximum(data/reference/legislation/duree_services_militaires.csv:annees_requises?categorie=non_officier)-->17<!--/--> ans pour un non-officier, <!--chiffre:maximum(data/reference/legislation/duree_services_militaires.csv:annees_requises?categorie=officier)-->27<!--/--> pour un officier, <!--chiffre:minimum(data/reference/legislation/duree_services_militaires.csv:annees_requises?categorie=non_officier)-->15<!--/--> et <!--chiffre:minimum(data/reference/legislation/duree_services_militaires.csv:annees_requises?categorie=officier)-->25<!--/--> avant la loi du

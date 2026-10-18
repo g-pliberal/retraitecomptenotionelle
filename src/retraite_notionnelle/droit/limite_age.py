@@ -51,10 +51,15 @@ pension part de la radiation, celle des régimes que l'emploi radié route.
 Depuis l'étape 8, l'agent titulaire de la Banque de France (fiche
 ``limite_age_banque_de_france``), dont la prorogation pour enfants est celle
 de son statut (paramètre ``enfants``), et ne se cumule pas avec la
-prolongation pour carrière incomplète (paramètre ``sans_cumul``). Les autres
-régimes spéciaux — CRPCEN, mines, marins, Comédie-Française, port de
-Strasbourg — n'ont pas de limite au modèle : leurs statuts ne sont pas dans
-l'index, ou n'en fixent pas.
+prolongation pour carrière incomplète (paramètre ``sans_cumul``). Depuis
+l'étape 9, la limite d'avant 2008 de l'agent des IEG : l'admission d'office à
+la retraite du décret n° 54-50, du 18 janvier 1954 au 27 novembre 2007, dont
+la version prête à l'agent la classe que le modèle lui présume (paramètre
+``classe_presumee``), et ne s'atteint qu'avec des années de services
+(``services_requis``), à un âge au plus tard (``a_defaut_des_services``).
+Les autres régimes spéciaux — CRPCEN, mines, marins, Comédie-Française, port
+de Strasbourg — n'ont pas de limite au modèle : leurs statuts ne sont pas
+dans l'index, ou n'en fixent pas.
 
 La limite se lit, version par version, au jour où elle est atteinte (date
 ``age_atteint``) : chaque version porte, dans ses paramètres, la limite de
@@ -328,17 +333,43 @@ def _morceaux(carriere: Carriere, version: dict, classe: str
     return [(d, f, m) for d, f, m in morceaux if m is not None]
 
 
+def _au_terme_des_services(moteur: ScenarioActuel, carriere: Carriere, nom: str,
+                           mois: int, parametres: dict) -> int:
+    """La limite, en mois, d'une version qui demande des années de services
+    dans l'emploi (``services_requis``), celle du décret n° 54-50 : l'âge de
+    la version, ou, si l'agent réunit ces services plus tard, son âge le mois
+    qui suit ; au plus tard l'âge ``a_defaut_des_services``, pour qui ne les
+    a pas encore."""
+    statuts = set()
+    for ligne in carriere.lignes:
+        emploi = _emploi(moteur, carriere, ligne)
+        if emploi is not None and emploi[0] == nom:
+            statuts.add(ligne.affiliation)
+    plafond = _mois(parametres["a_defaut_des_services"])
+    reunis = carriere.date_de_service(statuts, parametres["services_requis"])
+    if reunis is None:
+        return plafond
+    return min(max(mois, _mois(carriere.age_au(reunis.plus_mois(1)))), plafond)
+
+
 def _limite(moteur: ScenarioActuel, carriere: Carriere, nom: str, classe: str
             ) -> tuple[int, str] | None:
     """La limite d'âge de cette classe, en mois, et la version qui la donne :
-    le premier jour où l'âge atteint la limite en vigueur ce jour-là."""
+    le premier jour où l'âge atteint la limite en vigueur ce jour-là. Une
+    version peut prêter à l'agent la classe que le modèle lui présume
+    (``classe_presumee``), et ne s'atteindre qu'avec des années de services
+    (:func:`_au_terme_des_services`)."""
     fiche = _fiche(moteur, nom)
     if fiche is None:
         return None
     ordre = sorted(fiche["versions"],
                    key=lambda v: (v["bornes"].get("age_atteint") or [None])[0] or "")
     for version in ordre:
-        for debut, fin, mois in _morceaux(carriere, version, classe):
+        parametres = version["parametres"]
+        for debut, fin, mois in _morceaux(carriere, version,
+                                          parametres.get("classe_presumee", classe)):
+            if "services_requis" in parametres:
+                mois = _au_terme_des_services(moteur, carriere, nom, mois, parametres)
             jour = _jour(carriere, mois)
             if debut is not None and jour < debut:
                 jour = debut

@@ -4294,11 +4294,12 @@ def test_la_surcote_des_regimes_speciaux_ne_compte_que_depuis_juillet_2008(simul
     même alinéa dans les six décrets de la réforme. Un agent né en janvier
     1945 parti à soixante-quatre ans, en janvier 2009, n'a que les deux
     trimestres du second semestre 2008 ; la règle du régime général, que le
-    moteur lui appliquait, lui comptait ceux d'après son âge propre.
+    moteur lui appliquait, lui comptait ceux d'après son âge propre. L'agent
+    des IEG né en 1945 n'est plus là en 2008 : admis d'office à la retraite à
+    l'ouverture de son droit (décret n° 54-50, ``test_limite_age.py``).
     """
     scenario = simulateur.scenario_actuel
-    for affiliation, regime in (("agent_ieg", "ieg"), ("agent_sncf", "sncf"),
-                                ("clerc_de_notaire", "crpcen")):
+    for affiliation, regime in (("agent_sncf", "sncf"), ("clerc_de_notaire", "crpcen")):
         carriere = simulateur.carriere_simple(
             annee_naissance=1945, sexe="H", affiliation=affiliation,
             age_debut=21, age_liquidation=64.0, niveau_salaire=1.0,

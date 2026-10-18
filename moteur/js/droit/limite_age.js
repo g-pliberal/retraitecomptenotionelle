@@ -15,7 +15,10 @@
  * titulaire de la Banque de France, dont la prorogation pour enfants est celle
  * de son statut et ne se cumule pas avec la prolongation pour carrière
  * incomplète, ont chacun leur fiche, dont chaque version nomme les exceptions
- * qui jouent pour eux.
+ * qui jouent pour eux. Depuis l'étape 9, une version peut prêter à l'agent la
+ * classe que le modèle lui présume et ne s'atteindre qu'avec des années de
+ * services : l'admission d'office de l'agent des IEG avant 2008 (décret
+ * n° 54-50).
  *
  * Jumeau de `src/retraite_notionnelle/droit/limite_age.py`, qui fait foi et
  * dit le droit.
@@ -209,7 +212,32 @@ function morceaux(carriere, version, classe) {
   return liste.filter(([, , m]) => m !== null);
 }
 
-/** La limite d'âge de cette classe, en mois, et la version qui la donne. */
+/**
+ * La limite, en mois, d'une version qui demande des années de services dans
+ * l'emploi (`services_requis`), celle du décret n° 54-50. Voir
+ * `_au_terme_des_services` du Python.
+ */
+function auTermeDesServices(moteur, carriere, nom, enMois, parametres) {
+  const statuts = new Set();
+  for (const ligne of carriere.lignes) {
+    const emploi = emploiDeLaLigne(moteur, carriere, ligne);
+    if (emploi !== null && emploi[0] === nom) {
+      statuts.add(ligne.affiliation);
+    }
+  }
+  const plafond = mois(parametres.a_defaut_des_services);
+  const reunis = carriere.dateDeService(statuts, parametres.services_requis);
+  if (reunis === null) {
+    return plafond;
+  }
+  return Math.min(Math.max(enMois, mois(carriere.ageAu(reunis.plusMois(1)))), plafond);
+}
+
+/**
+ * La limite d'âge de cette classe, en mois, et la version qui la donne ; une
+ * version peut prêter à l'agent la classe que le modèle lui présume
+ * (`classe_presumee`), et ne s'atteindre qu'avec des années de services.
+ */
 function limiteDe(moteur, carriere, nom, classe) {
   const lue = fiche(moteur, nom);
   if (lue === null) {
@@ -221,7 +249,11 @@ function limiteDe(moteur, carriere, nom, classe) {
     return x < y ? -1 : x > y ? 1 : 0;
   });
   for (const version of ordre) {
-    for (const [debut, fin, m] of morceaux(carriere, version, classe)) {
+    const parametres = version.parametres;
+    for (let [debut, fin, m] of morceaux(carriere, version, parametres.classe_presumee ?? classe)) {
+      if (parametres.services_requis !== undefined) {
+        m = auTermeDesServices(moteur, carriere, nom, m, parametres);
+      }
       let jour = jourDe(carriere, m);
       if (debut !== null && jour < debut) {
         jour = debut;

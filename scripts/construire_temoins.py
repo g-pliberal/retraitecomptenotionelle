@@ -345,6 +345,13 @@ def _cas() -> list[dict]:
         ("limite_age_banque_de_france_1958", {
             "statut": "agent_banque_de_france", "naissance": "1958", "debut": "40",
             "liquidation": "72"}),
+        # Étape 9 : l'agent des IEG avant 2008, admis d'office à la retraite le
+        # jour où il réunit ses vingt-cinq ans de services, passé cinquante-cinq
+        # ans, ou à soixante ans sans eux (décret n° 54-50, article 2).
+        ("limite_age_ieg_1940_entre_a_32_ans", {
+            "statut": "agent_ieg", "naissance": "1940", "debut": "32", "liquidation": "68"}),
+        ("limite_age_ieg_1940_entre_a_40_ans", {
+            "statut": "agent_ieg", "naissance": "1940", "debut": "40", "liquidation": "68"}),
     ):
         cas.append((nom, modifications))
     cas.append(("liquidation_demi", {"liquidation": "64.5", "debut": "20.5"}))

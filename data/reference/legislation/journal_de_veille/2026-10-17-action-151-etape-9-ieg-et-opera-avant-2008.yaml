@@ -1,0 +1,37 @@
+date: "2026-10-17"
+session: "action 151, étape 9 : la limite d'âge des IEG et de l'Opéra avant 2008"
+consulte: >-
+  python scripts/veille_droit.py. Index JORF et LEGI du dépôt, récupérés ce jour, LEGI mis à
+  jour jusqu'à l'incrément du 17 octobre 2026, puis python scripts/textes.py --inscrire.
+  Statut national des IEG : annexe 3 dans sa rédaction de 1946, en vigueur jusqu'au 1er
+  juillet 2008 (LEGIARTI000006632496), et les articles de l'annexe d'avant le 5 juillet 2008 ;
+  décret n° 53-711 du 9 août 1953, articles 1er à 8 ; décret n° 54-51 du 16 janvier 1954,
+  pour les mines ; décret n° 54-50 du même jour, pour EDF et GDF, dont l'index ne porte que
+  le titre ; décret n° 2008-1072, qui l'abroge ; décret n° 2008-653, article 2. Cour de
+  cassation, chambre sociale, 9 mars 2016, n° 14-25.840, sur Juricaf ; réponses
+  ministérielles aux questions écrites n° 26598 et 28700, JO AN du 14 octobre 2008, sur le
+  site de l'Assemblée nationale. Opéra : décret n° 68-382, article 6, rédactions de 1995,
+  2002 et 2008 ; décret n° 2002-347, article 1er et notice ; décret n° 2008-240, article 3.
+  Légifrance et Gallica, qui portent le Journal officiel de 1954, refusent le réseau de la
+  session (403).
+trouve: >-
+  IEG : de 1954 à 2008, le décret n° 54-50 admet d'office à la retraite l'agent qui a l'âge
+  d'ouverture de sa pension d'ancienneté, cinquante-cinq ans pour l'actif, soixante pour le
+  sédentaire, et ses vingt-cinq ans de services, l'âge des sédentaires sans eux (article 2,
+  lu dans sa citation par la cour d'appel, dont la seconde branche est tronquée) ; depuis le
+  28 novembre 2007, une recommandation patronale laisse poursuivre l'agent qui le souhaite ;
+  le décret est abrogé le 23 octobre 2008. Le modèle n'opposait aucune limite avant le
+  5 juillet 2008 ; l'annexe 3 d'avant 2008, que la fiche disait absente de l'index, y est.
+  Opéra : le décret n° 2008-240 entre en vigueur tout entier le 1er juillet 2008 (article
+  3), et non le 10 mars, où LEGI date son article 2 ; avant, depuis le 14 mars 2002, seul
+  l'artiste du ballet peut être mis à la retraite, à quarante-deux ans (décret n° 68-382,
+  article 6, IV). Portés en Python et en JavaScript (fiches limite_age_ieg et
+  limite_age_opera) ; aucune autre fiche de limite d'âge n'a d'entrée en vigueur différée.
+reste: >-
+  Lire le décret n° 54-50 au Journal officiel du 17 janvier 1954 : la seconde branche de
+  son article 2, et un maintien en activité au-delà de soixante ans que la question écrite
+  n° 28700 lui prête. Le sédentaire des IEG, que la saisie ne distingue pas. Les décrets
+  frères de 1954 pour la SNCF (n° 54-24), la RATP (n° 54-23) et la Banque (n° 54-776), dont
+  l'index ne porte que les titres et, pour les deux premiers, un sommaire — « admission
+  d'office à la retraite » —, pour les limites d'avant 2010 et 2012 ; le décret n° 54-51,
+  pour le statut du mineur.

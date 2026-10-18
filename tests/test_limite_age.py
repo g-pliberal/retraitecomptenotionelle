@@ -280,21 +280,63 @@ def test_le_cheminot_recrute_avant_2020_a_la_limite_de_sa_generation(simulateur)
 # ``limite_age_opera`` et ``limite_age_seita``).
 
 def test_l_agent_des_ieg_est_mis_en_inactivite_a_sa_limite(simulateur):
-    """Né en 1950, il a soixante-cinq ans en 2015 ; né en 1960, sa limite est
+    """Né en 1953, il a soixante-cinq ans en 2018 ; né en 1960, sa limite est
     de soixante-six ans et quatre mois (dispositions transitoires de 2011), et
     le maintien jusqu'à soixante-dix ans lui est ouvert depuis le 1er
-    septembre 2023 ; né en 1940, il avait passé sa limite quand elle est née,
-    le 5 juillet 2008."""
+    septembre 2023. Né en 1950, il avait cinquante-cinq ans en 2005 : le
+    décret n° 54-50 le mettait alors en inactivité (test suivant)."""
     moteur = simulateur.scenario_actuel
-    ancien = limite_age.radiation(moteur, _simple(simulateur, "agent_ieg", 1950, 68))
+    ancien = limite_age.radiation(moteur, _simple(simulateur, "agent_ieg", 1953, 68))
     assert (ancien.fiche, ancien.limite, ancien.age, ancien.version, sorted(ancien.regimes)) \
         == (limite_age.FICHE_IEG, 65.0, 65.0, "decret_de_2011", ["ieg"])
     recent = limite_age.radiation(moteur, _simple(simulateur, "agent_ieg", 1960, 75))
     assert (round(recent.limite, 4), recent.age, recent.version) \
         == (round(66 + 4 / 12, 4), 70.0, "decret_de_2023")
     assert [r.nom for r in recent.reculs] == [limite_age.MAINTIEN]
-    premier = limite_age.radiation(moteur, _simple(simulateur, "agent_ieg", 1940, 70))
-    assert (premier.version, premier.date) == ("decret_de_2008", DateMois(2008, 7))
+
+
+def test_avant_2008_l_agent_des_ieg_est_mis_en_inactivite_a_l_ouverture_de_ses_droits(simulateur):
+    """Décret n° 54-50, article 2 : « l'admission à la retraite est prononcée
+    d'office quand l'intéressé a atteint l'âge d'ouverture du droit à pension
+    d'ancienneté » s'il a les vingt-cinq ans de services que le statut requiert
+    (annexe 3, article 3), et, sinon, à l'âge des sédentaires, soixante ans.
+    L'agent des IEG, que le modèle liquide comme actif, ouvre son droit à
+    cinquante-cinq ans. Né le 1er janvier 1945 et entré à vingt-deux ans, il a
+    cinquante-cinq ans le 1er janvier 2000 : sa pension part de janvier 2000,
+    l'âge d'un assuré né le 1er se comptant du mois de sa naissance. Né le 1er
+    janvier 1940 et entré le 1er janvier 1972, il réunit ses vingt-cinq ans de
+    services le 31 décembre 1996 : sa pension part de janvier 1997, à
+    cinquante-sept ans. Entré en 1980, il ne les a pas à soixante ans : il est
+    mis en inactivité à soixante ans, en janvier 2000."""
+    moteur = simulateur.scenario_actuel
+    for naissance, debut, date, age in ((1945, 22, DateMois(2000, 1), 55.0),
+                                        (1940, 32, DateMois(1997, 1), 57.0),
+                                        (1940, 40, DateMois(2000, 1), 60.0)):
+        carriere = simulateur.carriere_simple(naissance, "H", "agent_ieg", debut, 68,
+                                              jour_naissance=1)
+        radiation = limite_age.radiation(moteur, carriere)
+        assert (radiation.fiche, radiation.version, radiation.date, radiation.reculs) \
+            == (limite_age.FICHE_IEG, "decret_de_1954", date, ()), (naissance, debut)
+        assert (round(radiation.limite, 4), round(radiation.age, 4)) \
+            == (round(age, 4), round(age, 4)), (naissance, debut)
+        assert radiation.forcee and sorted(radiation.regimes) == ["ieg"]
+        assert [(d.date, d.motif) for d in departs.departs(moteur, carriere)] \
+            == [(date, departs.MOTIF_LIMITE)]
+
+
+def test_depuis_le_28_novembre_2007_l_agent_des_ieg_poursuit_s_il_le_souhaite(simulateur):
+    """La recommandation patronale du 28 novembre 2007 laisse l'agent qui le
+    souhaite poursuivre au-delà de l'ouverture de ses droits (réponse
+    ministérielle, JO AN du 14 octobre 2008) : né en novembre 1952, il a
+    cinquante-cinq ans le 15 novembre 2007 et il est mis en inactivité ; né un
+    mois plus tard, il part à soixante-deux ans, comme il le demande, avant la
+    limite de soixante-cinq ans du statut de 2008."""
+    moteur = simulateur.scenario_actuel
+    avant = limite_age.radiation(moteur, _simple(simulateur, "agent_ieg", 1952, 62,
+                                                 mois_naissance=11))
+    assert (avant.version, avant.date, avant.limite) == ("decret_de_1954", DateMois(2007, 12), 55.0)
+    apres = _simple(simulateur, "agent_ieg", 1952, 62, mois_naissance=12)
+    assert limite_age.radiation(moteur, apres) is None
 
 
 def test_la_prolongation_de_l_agent_des_ieg_s_arrete_a_cent_cinquante_trimestres(simulateur):
@@ -324,6 +366,23 @@ def test_le_personnel_de_l_opera_cesse_ses_fonctions_a_sa_limite(simulateur):
         radiation = limite_age.radiation(moteur, carriere)
         assert (radiation.fiche, radiation.limite, radiation.age, sorted(radiation.regimes)) \
             == (limite_age.FICHE_OPERA, limite, age, ["opera_de_paris"]), naissance
+
+
+def test_la_limite_de_l_opera_ne_vaut_que_du_1er_juillet_2008(simulateur):
+    """« Le présent décret entre en vigueur au 1er juillet 2008 » (décret
+    n° 2008-240, article 3) : son article 2 aussi, que LEGI date du 10 mars.
+    Né le 15 mai 1943, l'agent a soixante-cinq ans le 15 mai 2008 et cesse ses
+    fonctions le 1er juillet, sa pension partant de juillet ; né le 15 janvier
+    1938 et parti en mai 2008, il n'a pas de limite. Avant, seul l'artiste du
+    ballet, que la saisie ne distingue pas, pouvait être mis à la retraite
+    (décret n° 68-382, article 6, IV, depuis 2002)."""
+    moteur = simulateur.scenario_actuel
+    radiation = limite_age.radiation(
+        moteur, _simple(simulateur, "personnel_opera", 1943, 67, mois_naissance=5))
+    assert (radiation.version, radiation.date) == ("decret_de_2008", DateMois(2008, 7))
+    parti = _simple(simulateur, "personnel_opera", 1938, 70 + 4 / 12)
+    assert DateMois(2008, 3) < parti.date_liquidation < DateMois(2008, 7)
+    assert limite_age.radiation(moteur, parti) is None
 
 
 def test_l_agent_de_la_seita_est_retraite_a_soixante_cinq_ans(simulateur):

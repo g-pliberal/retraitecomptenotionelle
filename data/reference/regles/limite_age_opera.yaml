@@ -3,10 +3,12 @@ id: limite_age_opera
 intitule: >-
   La cessation des fonctions du personnel de l'Opéra national de Paris engagé pour une
   durée indéterminée est prononcée à l'initiative du théâtre à la limite d'âge de sa
-  catégorie : depuis le 10 mars 2008, quarante-deux ans pour les artistes chorégraphiques,
-  soixante pour les artistes du chœur, soixante-deux pour les musiciens, soixante-cinq
-  pour les autres, relevés depuis le 13 août 2011 jusqu'à soixante-sept ans pour les nés
-  depuis 1962 ; le maintien en activité pour carrière incomplète, dix trimestres au plus.
+  catégorie : depuis le 1er juillet 2008, quarante-deux ans pour les artistes
+  chorégraphiques, soixante pour les artistes du chœur, soixante-deux pour les musiciens,
+  soixante-cinq pour les autres, relevés depuis le 13 août 2011 jusqu'à soixante-sept ans
+  pour les nés depuis 1962 ; le maintien en activité pour carrière incomplète, dix
+  trimestres au plus. Depuis le 14 mars 2002, seul l'artiste du ballet pouvait être mis à
+  la retraite, à quarante-deux ans.
 domaine: age
 regimes: [opera_de_paris]
 etape: preparer_la_chronologie
@@ -22,28 +24,53 @@ ecrit:
 dates_qui_decident:
 - age_atteint
 versions:
-- id: avant_2008
+- id: avant_2002
   statut: supposee
   hypothese: >-
-    aucune limite opposée à l'agent avant le décret n° 2008-240 : les règles d'avant, s'il
-    y en avait, ne sont pas dans l'index, ni dans le décret n° 68-382 qui y est
+    aucune limite opposée à l'agent avant le décret n° 2002-347 : le décret n° 68-382
+    n'ouvre que le droit à pension, à un âge par catégorie (article 6), et l'index ne porte
+    aucune autre règle de mise à la retraite
   fiabilite: faible
-  textes: []
+  textes:
+  - {id: LEGIARTI000006765538, article: "décret n° 68-382, article 6", en_vigueur: 1995-09-01}
   bornes:
-    age_atteint: [null, 2008-03-10]
+    age_atteint: [null, 2002-03-14]
   contenu:
     parametres:
       exceptions: []
     droit: >-
       aucune limite au modèle
   exemples: aucun trouvé
+- id: decret_de_2002
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006765539, article: "décret n° 68-382, article 6, IV et V", en_vigueur: 2002-03-14}
+  nee_de: LEGIARTI000006765539
+  bornes:
+    age_atteint: [2002-03-14, 2008-07-01]
+  contenu:
+    parametres:
+      exceptions: []
+    droit: >-
+      « IV. Les artistes du ballet peuvent être mis à la retraite à l'initiative du théâtre
+      à quarante-deux ans d'âge. La mise à la retraite peut, par décision du théâtre et avec
+      accord de l'intéressé, être retardée jusqu'au 31 juillet suivant sa date
+      anniversaire » ; à titre transitoire, quarante-cinq ans pour l'artiste masculin du
+      ballet qui avait trente-neuf ans ou plus le 14 mars 2002, six ans de délai pour celui
+      qui en avait plus de trente-six (V) ; aucune limite pour les autres catégories de
+      personnel
+    transition: >-
+      l'artiste du ballet, que la saisie ne distingue pas, n'a pas de limite au modèle : tout
+      agent y est des autres catégories
+  exemples: aucun trouvé
 - id: decret_de_2008
   statut: lue
   textes:
-  - {id: LEGIARTI000018231995, article: "décret n° 2008-240, article 2", en_vigueur: 2008-03-10}
+  - {id: LEGIARTI000018231995, article: "décret n° 2008-240, article 2", en_vigueur: 2008-07-01}
+  - {id: LEGIARTI000018231999, article: "décret n° 2008-240, article 3", en_vigueur: 2008-07-01}
   nee_de: LEGIARTI000018231995
   bornes:
-    age_atteint: [2008-03-10, 2011-08-13]
+    age_atteint: [2008-07-01, 2011-08-13]
   contenu:
     parametres:
       limites: {sedentaire: 65}
@@ -58,7 +85,10 @@ versions:
       l'article 14 du décret du 5 avril 1968 susvisé, les personnels mentionnés ci-dessus
       peuvent être maintenus en activité dans la limite de dix trimestres sous réserve de
       leur aptitude au poste et lorsque l'intérêt du service n'y fait pas obstacle »
-      (article 2)
+      (article 2) ; « Le présent décret entre en vigueur au 1er juillet 2008 » (article 3)
+    transition: >-
+      l'article 2 vaut du 1er juillet 2008, comme tout le décret, et non du 10 mars, où LEGI
+      le date de sa publication ; l'article 6 du décret n° 68-382 perd son IV le même jour
   exemples: aucun trouvé
 - id: decret_de_2011
   statut: lue
@@ -104,16 +134,18 @@ presomptions:
     « autres catégories de personnel », la saisie ne disant ni le danseur, ni le choriste,
     ni le musicien
 sources:
-  lu_le: 2026-10-16
-  prochaine_relecture: 2027-10-16
+  lu_le: 2026-10-17
+  prochaine_relecture: 2027-10-17
   a_relire:
   - >-
     La catégorie de l'agent, que la saisie ne porte pas : le danseur, cessant à quarante-deux
     ans, le choriste, à soixante, le musicien, à soixante-deux, sont traités comme les autres
     catégories ; les personnels du II, B, comme ceux du II, A.
   - >-
-    La cessation des fonctions d'avant le 10 mars 2008, non lue : le modèle n'y oppose
-    aucune limite.
+    Avant le 1er juillet 2008, la seule mise à la retraite lue est celle de l'artiste du
+    ballet (décret n° 68-382, article 6, IV et V, depuis le 14 mars 2002) ; celle des autres
+    catégories, s'il y en avait une — dans la convention collective ou le règlement du
+    théâtre —, n'est pas dans l'index : le modèle n'y oppose aucune limite.
   lectures:
   - type: legifrance
     reference: >-
@@ -122,15 +154,32 @@ sources:
       5 avril 1968, articles cherchés par « limite d'âge » et « d'office ». Lus dans l'index
       LEGI du dépôt
     date: 2026-10-16
+  - type: legifrance
+    reference: >-
+      décret n° 68-382, article 6, rédactions du 1er septembre 1995 (LEGIARTI000006765538),
+      du 14 mars 2002 (LEGIARTI000006765539) et du 1er juillet 2008 (LEGIARTI000018253874) ;
+      décret n° 2008-240, article 3 (LEGIARTI000018231999). Lus dans l'index LEGI du dépôt
+    date: 2026-10-17
+  - type: jorf
+    reference: >-
+      décret n° 2002-347 du 12 mars 2002, article 1er et notice (JORFARTI000001620554,
+      JORFTEXT000000585678). Lus dans l'index JORF du dépôt
+    date: 2026-10-17
 historique:
 - >-
   2026-10-16 — née et appliquée, action 151, étape 6 : l'agent de l'Opéra national de Paris
   dont le départ saisi passe sa limite cesse ses fonctions à la limite, prolongée pour
   carrière incomplète, et sa pension du régime spécial en part, comme la décision du
   propriétaire du 14 octobre 2026 le dit du fonctionnaire.
+- >-
+  2026-10-17 — action 151, étape 9 : la limite vaut du 1er juillet 2008, où l'article 3 du
+  décret n° 2008-240 fait entrer le décret en vigueur, et non du 10 mars ; la mise à la
+  retraite de l'artiste du ballet, depuis le 14 mars 2002, est lue, et aucune autre limite
+  ne l'est avant.
 effet: >-
   Tout agent de l'Opéra national de Paris, affilié au régime spécial, dont le départ saisi
-  passe soixante-cinq ans depuis le 10 mars 2008 — soixante-sept pour les nés depuis 1962,
-  prolongés de dix trimestres au plus pour carrière incomplète — cesse ses fonctions à
-  cette limite, et sa pension du régime spécial en part. Approchée : la catégorie n'est pas
-  distinguée, et aucune limite n'est opposée avant 2008.
+  passe soixante-cinq ans depuis le 1er juillet 2008 — soixante-sept pour les nés depuis
+  1962, prolongés de dix trimestres au plus pour carrière incomplète — cesse ses fonctions
+  à cette limite, et sa pension du régime spécial en part. Approchée : la catégorie n'est
+  pas distinguée, et aucune limite n'est opposée avant le 1er juillet 2008, l'artiste du
+  ballet, mis à la retraite à quarante-deux ans depuis 2002, n'étant pas saisi.

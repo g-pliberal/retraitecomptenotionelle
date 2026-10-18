@@ -1,10 +1,12 @@
 schema_version: 1
 id: limite_age_ieg
 intitule: >-
-  L'agent statutaire des industries électriques et gazières qui atteint sa limite d'âge
-  sans avoir demandé son départ est mis en inactivité à l'initiative de son employeur :
-  soixante-cinq ans depuis le 5 juillet 2008, relevés jusqu'à soixante-sept ans pour les
-  générations nées depuis 1957, atteints par les nés depuis 1962 ; la limite est reculée
+  L'agent statutaire des industries électriques et gazières est admis d'office à la retraite,
+  depuis 1954, à l'âge d'ouverture de sa pension d'ancienneté s'il a vingt-cinq ans de
+  services, à l'âge des sédentaires sinon, jusqu'à ce que les employeurs le laissent
+  poursuivre, le 28 novembre 2007 ; depuis le 5 juillet 2008, il est mis en inactivité à
+  l'initiative de son employeur à soixante-cinq ans, relevés jusqu'à soixante-sept ans pour
+  les générations nées depuis 1957, atteints par les nés depuis 1962 ; la limite est reculée
   pour enfants et prolongée pour carrière incomplète, et, depuis le 1er septembre 2023,
   l'agent peut être maintenu en activité jusqu'à soixante-dix ans, qui bornent le tout.
 domaine: age
@@ -15,26 +17,91 @@ etat: approchee
 lit:
 - le statut d'agent des industries électriques et gazières, quand il route le régime
   spécial ; ses enfants et leurs dates de naissance, pour le recul ; ses services au
-  régime, pour la prolongation ; l'aptitude physique n'est pas saisie, et le modèle la
-  présume
+  régime, pour la prolongation, et, avant 2008, pour les vingt-cinq ans du décret
+  n° 54-50 ; l'aptitude physique n'est pas saisie, et le modèle la présume
 ecrit:
 - la date de la mise en inactivité par limite d'âge, d'où part la pension du régime
   spécial (`droit/limite_age.py`)
 dates_qui_decident:
 - age_atteint
 versions:
-- id: avant_2008
+- id: avant_1954
   statut: supposee
   hypothese: >-
-    aucune limite opposée à l'agent avant le décret n° 2008-627 : l'article 4 de l'annexe
-    du statut national, dans sa rédaction de 1959 à 2008, ne parle que du stage et de la
-    titularisation, et l'ancienne annexe 3, le règlement des retraites, n'est pas dans
-    l'index
+    aucune limite opposée à l'agent avant le décret n° 54-50 : le statut national de 1946
+    n'en porte pas — son annexe 3 ne dit que l'âge et les services qui ouvrent la pension
+    d'ancienneté, et sa mise à la retraite d'office est une sanction (article 6) —, et le
+    décret n° 53-711, article 5, n'interdit, depuis le 1er septembre 1953, que de mettre
+    l'agent à la retraite d'office avant la limite d'âge des fonctionnaires civils
   fiabilite: faible
   textes:
-  - {id: LEGIARTI000006632433, article: "statut national, annexe, article 4, rédaction de 1959", en_vigueur: 1959-11-26}
+  - {id: LEGIARTI000006632496, article: "statut national, annexe 3, article 3, rédaction de 1946", en_vigueur: 1946-06-01}
+  - {id: LEGIARTI000006501741, article: "décret n° 53-711 du 9 août 1953, article 5", en_vigueur: 1953-12-27}
   bornes:
-    age_atteint: [null, 2008-07-05]
+    age_atteint: [null, 1954-01-18]
+  contenu:
+    parametres:
+      exceptions: []
+    droit: >-
+      aucune limite au modèle
+  exemples: aucun trouvé
+- id: decret_de_1954
+  statut: supposee
+  hypothese: >-
+    l'article 2 du décret n° 54-50, dont l'index ne porte que le titre, lu dans sa citation
+    par la cour d'appel de Paris, que reproduit l'arrêt de la Cour de cassation du 9 mars
+    2016 (n° 14-25.840) : « L'admission à la retraite est prononcée d'office quand
+    l'intéressé a atteint l'âge d'ouverture du droit à pension d'ancienneté en ce qui
+    concerne les agents ayant accompli la durée des services requise à cette fin par le
+    statut national du personnel et en ce qui concerne les agents n'ayant pas atteint l'âge
+    d'ouverture du droit à pension d'ancienneté fixé pour les agents appartenant aux services
+    sédentaires ». La seconde branche, tronquée, se lit pour l'agent qui n'a pas ces services,
+    admis d'office à l'âge des sédentaires. Le Gouvernement décrit des clauses « permettant à
+    un employeur de décider la mise à la retraite d'office des agents à la date d'ouverture
+    de leurs droits à retraite » (réponses aux questions écrites n° 26598 et 28700, JO AN du
+    14 octobre 2008, p. 8831 et 8833)
+  fiabilite: moyenne
+  textes:
+  - {id: JORFTEXT000000302162, article: "décret n° 54-50 du 16 janvier 1954, article 2", en_vigueur: 1954-01-18}
+  - {reference: "Cour de cassation, chambre sociale, 9 mars 2016, n° 14-25.840, publié au bulletin : l'article 2 du décret n° 54-50, cité par la cour d'appel de Paris le 24 septembre 2014", lu_le: 2026-10-17}
+  - {id: LEGIARTI000006632496, article: "statut national, annexe 3, article 3, § 1, rédaction de 1946", en_vigueur: 1946-06-01}
+  - {id: LEGIARTI000019673153, article: "décret n° 2008-1072 du 20 octobre 2008, article 1er, qui abroge le décret n° 54-50", en_vigueur: 2008-10-23}
+  bornes:
+    age_atteint: [1954-01-18, 2007-11-28]
+  contenu:
+    parametres:
+      limites: {active: 55, sedentaire: 60}
+      classe_presumee: active
+      services_requis: 25
+      a_defaut_des_services: 60
+      exceptions: []
+    droit: >-
+      « Pour avoir droit aux prestations : pension d'ancienneté, un agent doit avoir 55 ans
+      d'âge, s'il appartient aux services insalubres ou actifs, 60 ans d'âge, s'il appartient
+      aux services sédentaires - et doit totaliser 25 ans de service décomptés conformément
+      au paragraphe 5 de l'article 1er de la présente annexe » (annexe 3, article 3, § 1) ;
+      l'admission à la retraite est prononcée d'office à cet âge pour l'agent qui a ses
+      vingt-cinq ans de services, et à l'âge des sédentaires pour les autres (décret
+      n° 54-50, article 2)
+    transition: >-
+      l'agent est présumé actif, comme le modèle liquide sa pension, ouverte à cinquante-cinq
+      ans (`classe_presumee`) ; il est mis en inactivité le premier mois qui suit celui où il
+      a son âge et ses vingt-cinq ans de services au régime (`services_requis`), à soixante
+      ans au plus tard (`a_defaut_des_services`)
+  exemples: aucun trouvé
+- id: recommandation_de_2007
+  statut: supposee
+  hypothese: >-
+    aucune limite depuis le 28 novembre 2007 : « Dès le 28 novembre 2007, les employeurs de
+    la branche ont adopté une recommandation patronale qui permet, depuis cette date, à tout
+    agent souhaitant le faire, de poursuivre son activité au-delà de la date d'ouverture de
+    ses droits à la retraite » (réponses aux questions écrites n° 26598 et 28700, JO AN du
+    14 octobre 2008), le départ saisi étant ce souhait ; le décret n° 54-50, abrogé le
+    23 octobre 2008, n'est plus appliqué
+  fiabilite: moyenne
+  textes: []
+  bornes:
+    age_atteint: [2007-11-28, 2008-07-05]
   contenu:
     parametres:
       exceptions: []
@@ -139,15 +206,36 @@ presomptions:
     présumés demandés et accordés autant que le départ saisi les demande, l'aptitude
     physique présumée ; la durée manquante se compte, comme celle du fonctionnaire, sur les
     seuls services du régime
+approximations:
+- version: [decret_de_1954]
+  ecart: >-
+    l'agent est présumé actif, comme le modèle liquide sa pension : le sédentaire, que la
+    saisie ne distingue pas, était admis d'office à soixante ans, et non à cinquante-cinq ;
+    ses quinze ans de services actifs (circulaire PERS 70 du 21 mai 1952, que l'arrêt cite)
+    sont présumés ; la bonification d'âge de la mère n'avance pas sa limite, pas plus que
+    son droit ; ses services militaires, que l'annexe 3 compte, ne comptent pas dans ses
+    vingt-cinq ans
+  effet: non mesuré
+- version: [recommandation_de_2007]
+  ecart: >-
+    le départ saisi est présumé souhaité, et la recommandation présumée suivie : un agent
+    d'EDF qui avait soixante ans en juin 2008 s'est encore vu refuser de poursuivre, sa
+    direction s'appuyant sur le décret n° 54-50 (question écrite n° 28700)
+  effet: non mesuré
 sources:
-  lu_le: 2026-10-16
-  prochaine_relecture: 2027-10-16
+  lu_le: 2026-10-17
+  prochaine_relecture: 2027-10-17
   a_relire:
   - >-
-    La mise en inactivité d'office d'avant le 5 juillet 2008 : l'ancienne annexe 3 du statut
-    national, le règlement des retraites, n'est pas dans l'index LEGI. Le modèle n'oppose
-    aucune limite avant, et met en inactivité le 5 juillet 2008 l'agent qui avait alors
-    passé soixante-cinq ans.
+    Le décret n° 54-50 du 16 janvier 1954, au Journal officiel du 17 janvier 1954, que l'index
+    ne porte que par son titre : son article 2 n'est lu que dans sa citation par la cour
+    d'appel, tronquée, et le reste du décret pas du tout — dont le maintien en activité
+    au-delà de soixante ans « afin, par exemple, de les faire bénéficier d'une retraite à taux
+    plein », que la question écrite n° 28700 lui prête. Le lire au Journal officiel, sur
+    Légifrance ou Gallica, que le réseau de la session refuse.
+  - >-
+    La recommandation patronale du 28 novembre 2007, qui n'est pas publiée : connue par les
+    réponses ministérielles seules.
   - >-
     Depuis 2023, la durée manquante est « la durée d'assurance requise » : le modèle la
     compte, comme avant, sur les seuls services du régime, sans les autres régimes ni les
@@ -164,16 +252,52 @@ sources:
       (LEGIARTI000023732109) et du 1er septembre 2023 (LEGIARTI000047908873). Lus dans
       l'index LEGI du dépôt
     date: 2026-10-16
+  - type: legifrance
+    reference: >-
+      même statut, annexe 3 dans sa rédaction de 1946, en vigueur jusqu'au 1er juillet 2008
+      (LEGIARTI000006632496), article 3, § 1 et 2 ; annexe, articles 1er à 31 dans leurs
+      rédactions d'avant le 5 juillet 2008, où la mise à la retraite d'office n'est qu'une
+      sanction (article 6) ou un dégagement des cadres de 1946 (dispositions transitoires,
+      LEGIARTI000006632498) ; décret n° 53-711 du 9 août 1953, articles 1er à 8 ; décret
+      n° 54-51 du 16 janvier 1954, pour les mines, articles 1er à 4 ; décret n° 2008-1072 du
+      20 octobre 2008, article 1er (LEGIARTI000019673153). Lus dans l'index LEGI du dépôt
+    date: 2026-10-17
+  - type: jorf
+    reference: >-
+      décret n° 54-50 du 16 janvier 1954, dont l'index JORF ne porte que le titre et la
+      mention « Texte totalement abrogé » (JORFTEXT000000302162) ; décret n° 2008-653 du
+      2 juillet 2008, article 2, qui donne à l'article 4 du statut sa section « Départ en
+      inactivité » (JORFARTI000019117631). Lus dans l'index JORF du dépôt
+    date: 2026-10-17
+  - type: autre
+    reference: >-
+      Cour de cassation, chambre sociale, 9 mars 2016, n° 14-25.840, publié au bulletin, lu
+      sur Juricaf : la lettre d'EDF du 17 janvier 2006, « En application du décret 54-50 du
+      16 janvier 1954 [...] les trois conditions pour prononcer cette mise en inactivité
+      seront réunies : . 55 ans d'âge, . 25 ans de service minimum, . 15 ans de services
+      actifs », et l'article 2 du décret, cité deux fois par les juges du fond. Réponses du
+      ministre de l'économie, de l'industrie et de l'emploi aux questions écrites n° 26598 et
+      28700, JO AN du 14 octobre 2008, p. 8831 et 8833, lues sur le site de l'Assemblée
+      nationale
+    date: 2026-10-17
 historique:
 - >-
   2026-10-16 — née et appliquée, action 151, étape 6 : l'agent des industries électriques
   et gazières dont le départ saisi passe sa limite est mis en inactivité à la limite,
   reculée et prolongée, et sa pension du régime spécial en part, comme la décision du
   propriétaire du 14 octobre 2026 le dit du fonctionnaire.
+- >-
+  2026-10-17 — action 151, étape 9 : avant le 28 novembre 2007, l'agent est admis d'office
+  à la retraite à l'ouverture de son droit, cinquante-cinq ans pour l'actif que le modèle
+  liquide, s'il a vingt-cinq ans de services, à soixante ans au plus tard (décret n° 54-50,
+  article 2) ; du 28 novembre 2007 au 5 juillet 2008, il poursuit s'il le souhaite. Le
+  modèle n'opposait aucune limite avant le 5 juillet 2008.
 effet: >-
   Tout agent des industries électriques et gazières, affilié au régime spécial, dont le
-  départ saisi passe soixante-cinq ans depuis le 5 juillet 2008 — soixante-sept pour les
-  nés depuis 1962, reculés pour enfants, prolongés pour carrière incomplète, et soixante-dix
-  depuis le 1er septembre 2023 par le maintien présumé — est mis en inactivité à cette
-  limite, et sa pension du régime spécial en part. Approchée : aucune limite n'est opposée
-  avant 2008, et la durée manquante se compte sur les seuls services du régime.
+  départ saisi passe sa limite est mis en inactivité à cette limite, et sa pension du régime
+  spécial en part : jusqu'au 27 novembre 2007, à cinquante-cinq ans, ou le jour où il réunit
+  vingt-cinq ans de services, soixante ans au plus ; depuis le 5 juillet 2008, à
+  soixante-cinq ans — soixante-sept pour les nés depuis 1962, reculés pour enfants,
+  prolongés pour carrière incomplète, et soixante-dix depuis le 1er septembre 2023 par le
+  maintien présumé. Approchée : le décret de 1954 n'est lu que dans une citation, l'agent y
+  est présumé actif, et la durée manquante se compte sur les seuls services du régime.
