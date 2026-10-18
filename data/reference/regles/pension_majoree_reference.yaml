@@ -465,13 +465,23 @@ approximations:
     la conjointe collaboratrice de 1972 à 2016 : PMR1 sur ses dix années de 1999 à 2008,
     410 € par an de plus ; l'aide familial de ces années en reçoit autant de trop
 - ecart: >-
-    la réversion n'entre ni dans la pension comparée ni dans l'écrêtement : le modèle
-    liquide la pension personnelle seule ; et le 2° de D. 732-110, II, qui sert PMR1 sur
-    toutes les périodes de qui peut prétendre à une réversion du régime (L. 732-41 à
-    L. 732-46), ne trouve personne : le modèle ne connaît pas le décès du conjoint de
-    l'assuré, que la saisie ne demande pas — le veuf ou la veuve d'un chef, collaborateur
-    toute sa vie, reçoit PMR2 au lieu de PMR1
-  effet: non mesuré
+    la réversion du régime n'entre dans la pension comparée, dans l'écrêtement et au 2°
+    de D. 732-110, II, que déclarée : depuis le 18 octobre 2026, celle que le régime sert
+    à l'assuré veuf (reversion_agricole de la chronologie, son début et son montant
+    mensuel) est retranchée de la PMR (D. 732-112), comptée au plafond (D. 732-114), et
+    porte de 2009 à 2021 toutes ses périodes au montant du chef, même nulle —
+    « susceptible d'en bénéficier » (L. 732-41 à L. 732-46) lu comme veuf d'un assuré du
+    régime, quelles que soient ses ressources —, revalorisée comme les pensions de base,
+    celle de 2020 à la tranche de son seul montant. La saisie ne la demande pas encore
+    (présomption pas_de_reversion_agricole) ; les réversions des autres régimes, que
+    l'écrêtement compte aussi (L. 732-54-3), ne se déclarent pas ; une réversion ouverte
+    après le départ n'entre qu'aux échéances que le modèle refait, depuis 2009 pour une
+    pension prise avant, depuis 2022 pour une pension prise de 2009 à 2021
+  effet: >-
+    la conjointe collaboratrice de 1972 à 2016, veuve d'un exploitant depuis 2010 : PMR1
+    sur ses 164 trimestres, 2 250,90 € de majoration en 2016 au lieu de 980,29 € ; avec
+    150 € de réversion par mois, 1 919,81 € par an en février 2016, 331,09 € ; tant que
+    la saisie ne la demande pas, aucun assuré du site n'est servi
 - ecart: >-
     la PMR attribuée le 1er janvier 2009 aux pensions liquidées avant elle (D. 732-109,
     1° et 2°) est servie depuis le 16 octobre 2026 : à l'échéance, la règle des pensions
@@ -512,8 +522,12 @@ approximations:
   effet: >-
     au plus quelques centimes par revalorisation ; le plafond de juillet 2022 retrouve
     celui que la MSA publie, 11 441,49 €
+presomptions:
+  pas_de_reversion_agricole: >-
+    la PMR, qui ne retranche, ne compte au plafond et ne sert au 2° de D. 732-110, II,
+    que la réversion du régime que l'assuré déclare
 sources:
-  lu_le: 2026-10-16
+  lu_le: 2026-10-18
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-
@@ -521,6 +535,19 @@ sources:
     pension portée à la PMR, et le rejouer dans exemples_officiels.yaml.
   - Relire les montants à chaque revalorisation de janvier.
   lectures:
+  - type: legifrance
+    reference: >-
+      D. 732-110, II, 2°, rédactions de 2009, 2010, 2011 et 2016 (LEGIARTI000020254712 à
+      LEGIARTI000032716796) : « Pour tout ou partie des périodes d'assurance non salariée
+      agricole à titre exclusif ou principal validées par les personnes susceptibles de
+      bénéficier d'une pension de réversion prévue aux articles L. 732-41 à L. 732-46 »,
+      absent des rédactions de 2022 et de 2026 ; D. 732-112 (2009 et 2026), « la somme des
+      pensions de retraite et de réversion, servies à l'assuré par le régime » ;
+      D. 732-114 (2009 et 2026), « l'ensemble des pensions de retraite et des pensions de
+      réversion servies à l'assuré » ; L. 732-54-3 (2008), « pensions de droit propre et
+      de droit dérivé » ; L. 732-41 (2008), la réversion du conjoint survivant du chef,
+      sous plafond de ressources, dans l'index LEGI du dépôt à jour au 11 octobre 2026
+    date: 2026-10-18
   - type: legifrance
     reference: >-
       L. 732-54-2 du code rural, rédaction du 1er janvier 2007 (LEGIARTI000006585628),
@@ -574,12 +601,14 @@ textes_a_rattacher:
 code:
   python: >-
     scenarios/actuel.py : PensionMajoreeReference (regle, montant) ; droit/completer.py :
-    pension_majoree, completer ; droit/liquider.py : EligibleAgricole ;
-    revalorisation.py : reviser_les_exploitants
+    pension_majoree, reversion_agricole_servie, completer ; droit/liquider.py :
+    EligibleAgricole ; revalorisation.py : reviser_les_exploitants ; carriere.py :
+    Carriere.reversion_agricole ; chronologie.py : reversion_agricole
   javascript: >-
     moteur/js/regimes.js : PensionMajoreeReference ; moteur/js/droit/completer.js :
-    pensionMajoree, completer ; moteur/js/droit/liquider.js ;
-    moteur/js/revalorisation.js : reviserLesExploitants
+    pensionMajoree, reversionAgricoleServie, completer ; moteur/js/droit/liquider.js ;
+    moteur/js/revalorisation.js : reviserLesExploitants ; moteur/js/carriere.js :
+    reversionAgricole ; moteur/js/chronologie.js : reversionAgricole
   parametres: >-
     contenu.parametres de chaque version ; data/reference/legislation/pension_majoree_reference.csv,
     écrit par scripts/fetch/dila_legi_pension_majoree.py
@@ -597,6 +626,10 @@ historique:
 - >-
   2026-10-16 — étape 138.8 : servie aux pensions liquidées avant 2009, depuis le
   1er janvier 2009, à l'étape « faire vivre » (revalorisation.reviser_les_exploitants).
+- >-
+  2026-10-18 — étape 138.8 : le 2° de D. 732-110, II, servi à qui déclare une réversion
+  du régime, et cette réversion retranchée de la PMR (D. 732-112) et comptée au plafond
+  (D. 732-114), dans les deux moteurs ; sa saisie reste à faire.
 exemples: []
 effet: >-
   Les petites pensions de base des chefs d'exploitation liquidées au taux plein depuis

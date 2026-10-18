@@ -834,6 +834,7 @@ export class Carriere {
     this._incapacitePermanente = undefined;
     this._periodesALEtranger = undefined;
     this._pensionsEtrangeres = undefined;
+    this._reversionAgricole = undefined;
     this._anneesDeclarees = undefined;
   }
 
@@ -1116,6 +1117,22 @@ export class Carriere {
             mensuel: fait.montant.mensuel })));
     }
     return this._pensionsEtrangeres;
+  }
+
+  /**
+   * La réversion que le régime des non-salariés agricoles sert à la personne,
+   * si elle la déclare : `{debut, mensuel}`, son mois en `DateMois` et son
+   * montant mensuel en euros de ce mois ; `null` sinon (présomption
+   * `pas_de_reversion_agricole`). Voir `reversion_agricole` du Python.
+   */
+  get reversionAgricole() {
+    if (this._reversionAgricole === undefined) {
+      const fait = this.chronologie
+        ? chrono.reversionAgricole(this.chronologie, this.personne) : null;
+      this._reversionAgricole = fait === null ? null : Object.freeze({
+        debut: chrono.moisDe(fait.debut), mensuel: fait.montant.mensuel });
+    }
+    return this._reversionAgricole;
   }
 
   /**
@@ -2013,12 +2030,13 @@ export class Carriere {
     invalidite = null,
     etranger = null,
     periodes_assimilees = [],
+    reversion_agricole = null,
   }) {
     const chronologie = preparer(chrono.avecPeriodesAssimilees(chrono.duReleve({
       annee_naissance, sexe, releve, age_liquidation, mois_naissance,
       nombre_enfants, part_primes, naissances_enfants, jour_naissance,
       presomptions: macro.paquet.presomptions, conjoint, deces, retraite_progressive,
-      emploi_retraite, demandes_de_pension, invalidite, etranger,
+      emploi_retraite, demandes_de_pension, invalidite, etranger, reversion_agricole,
     }), periodes_assimilees), macro.paquet.presomptions);
     return Carriere.depuisChronologie(chronologie, macro, chrono.ASSURE, identifiant);
   }
@@ -2089,6 +2107,7 @@ export class Carriere {
     etranger = null,
     periodes_assimilees = [],
     dispenses = null,
+    reversion_agricole = null,
   }) {
     const chronologie = preparer(chrono.avecPeriodesAssimilees(chrono.duParcours({
       annee_naissance, sexe, metiers, age_liquidation, mois_naissance,
@@ -2096,7 +2115,7 @@ export class Carriere {
       naissances_enfants,
       jour_naissance, presomptions: macro.paquet.presomptions, conjoint, deces,
       retraite_progressive, emploi_retraite, demandes_de_pension, invalidite, etranger,
-      dispenses,
+      dispenses, reversion_agricole,
     }), periodes_assimilees), macro.paquet.presomptions);
     return Carriere.depuisChronologie(chronologie, macro, chrono.ASSURE, identifiant);
   }

@@ -255,12 +255,15 @@ export function dateDeclaree(valeur, quoi) {
  * qui clôt le mariage ; `demandesDePension` dit, régime par régime,
  * l'âge auquel il demande sa pension ; `etranger`, la carrière hors de France :
  * ses périodes, ses pensions étrangères et l'État de sa résidence après le
- * départ. Voir `_personne` du Python.
+ * départ ; `reversionAgricole`, la réversion que le régime des non-salariés
+ * agricoles sert à l'assuré veuf : son `debut` et son montant `mensuel`. Voir
+ * `_personne` du Python.
  */
 function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnfants,
   naissancesEnfants = [], jourNaissance = null, presomptions = null, conjoint = null,
   deces = null, retraiteProgressive = null, emploiRetraite = null,
-  demandesDePension = null, invalidite = null, etranger = null) {
+  demandesDePension = null, invalidite = null, etranger = null,
+  reversionAgricole = null) {
   const assure = naissanceDeLAssure(anneeNaissance, moisNaissance, sexe, jourNaissance,
     presomptions);
   const faitsNaissance = [assure];
@@ -336,6 +339,9 @@ function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnf
   }
   if (etranger !== null && etranger !== undefined) {
     depart.push(...etrangerDeclare(assure, ageLiquidation, etranger));
+  }
+  if (reversionAgricole !== null && reversionAgricole !== undefined) {
+    depart.push(reversionAgricoleDeclaree(assure, reversionAgricole));
   }
   const role = sexe === "F" ? "mere" : "pere";
   const liens = [];
@@ -628,6 +634,27 @@ function etrangerDeclare(assure, ageLiquidation, etranger) {
   return faits;
 }
 
+/** Le régime dont la réversion ouvre le 2° de D. 732-110, II. */
+export const REGIME_DE_LA_REVERSION_AGRICOLE = "msa_non_salaries";
+
+/**
+ * La réversion que le régime des non-salariés agricoles sert à l'assuré : un
+ * acte de sa caisse, au jour où elle commence, et son montant mensuel en euros
+ * de ce jour, positif ou nul. Voir `_reversion_agricole` du Python.
+ */
+function reversionAgricoleDeclaree(assure, reversion) {
+  const [date, precision] = dateDeclaree(reversion.debut, "le début de la réversion");
+  if (date <= assure.debut) {
+    throw new Error("une réversion commence après la naissance");
+  }
+  if (!(reversion.mensuel >= 0)) {
+    throw new Error(`le montant d'une réversion : positif ou nul, reçu ${reversion.mensuel}`);
+  }
+  return fait(`reversion_agricole_${ASSURE}`, ASSURE, "acte_de_la_caisse", date, null,
+    { acte: "reversion", regime: REGIME_DE_LA_REVERSION_AGRICOLE, precision }, null,
+    { mensuel: reversion.mensuel, monnaie: "EUR" });
+}
+
 /** Le fait de naissance du conjoint déclaré : sa date et son sexe. */
 function naissanceDuConjoint(conjoint) {
   const [date, precision] = dateDeclaree(conjoint.naissance, "la naissance du conjoint");
@@ -646,11 +673,11 @@ function naissanceDuConjoint(conjoint) {
 export function duResume(anneeNaissance, sexe, moisNaissance = 1, ageLiquidation = null,
   nombreEnfants = 0, naissancesEnfants = [], jourNaissance = null, presomptions = null,
   conjoint = null, deces = null, retraiteProgressive = null, emploiRetraite = null,
-  demandesDePension = null, invalidite = null, etranger = null) {
+  demandesDePension = null, invalidite = null, etranger = null, reversionAgricole = null) {
   const [naissance, depart, liens] = personne(anneeNaissance, moisNaissance, sexe,
     ageLiquidation, nombreEnfants, naissancesEnfants, jourNaissance, presomptions,
     conjoint, deces, retraiteProgressive, emploiRetraite, demandesDePension, invalidite,
-    etranger);
+    etranger, reversionAgricole);
   return { schema_version: SCHEMA_VERSION, faits: [...naissance, ...depart], liens };
 }
 
@@ -690,6 +717,7 @@ export function duParcours({
   invalidite = null,
   etranger = null,
   dispenses = null,
+  reversion_agricole = null,
 }) {
   if (!metiers || metiers.length === 0) {
     throw new Error("une carrière compte au moins un métier");
@@ -706,7 +734,7 @@ export function duParcours({
   const [naissance, depart, liens] = personne(annee_naissance, mois_naissance, sexe,
     age_liquidation, nombre_enfants, naissances_enfants, jour_naissance, presomptions,
     conjoint, deces, retraite_progressive, emploi_retraite, demandes_de_pension,
-    invalidite, etranger);
+    invalidite, etranger, reversion_agricole);
   const moisDeNaissance = moisDe(naissance[0].debut);
   const bornes = principaux.map(
     (metier) => moisDeNaissance.plusMois(enMois(metier.age_debut)),
@@ -860,6 +888,7 @@ export function duReleve({
   demandes_de_pension = null,
   invalidite = null,
   etranger = null,
+  reversion_agricole = null,
 }) {
   if (!releve || releve.length === 0) {
     throw new Error("un relevé compte au moins une ligne");
@@ -893,7 +922,7 @@ export function duReleve({
   const [naissance, depart, liens] = personne(annee_naissance, mois_naissance, sexe,
     age_liquidation, nombre_enfants, naissances_enfants, jour_naissance, presomptions,
     conjoint, deces, retraite_progressive, emploi_retraite, demandes_de_pension,
-    invalidite, etranger);
+    invalidite, etranger, reversion_agricole);
   return {
     schema_version: SCHEMA_VERSION,
     faits: [...naissance, ...periodes, ...depart],
@@ -1204,6 +1233,15 @@ export function pensionsEtrangeres(chronologie, personne) {
   return faitsDe(chronologie, personne, "acte_de_la_caisse").filter(
     (acte) => acte.attributs.acte === "liquidation"
       && (acte.territoire ?? "metropole") !== "metropole");
+}
+
+/**
+ * La réversion que le régime des non-salariés agricoles sert à une personne, si
+ * elle la déclare : l'acte de sa caisse. Voir `reversion_agricole` du Python.
+ */
+export function reversionAgricole(chronologie, personne) {
+  return faitsDe(chronologie, personne, "acte_de_la_caisse").find(
+    (acte) => acte.attributs.acte === "reversion") ?? null;
 }
 
 /**

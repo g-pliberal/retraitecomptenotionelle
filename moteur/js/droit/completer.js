@@ -15,7 +15,7 @@
  * `Complements`, suit son schéma, `data/reference/etapes/completer_tous_regimes.yaml`.
  */
 
-import { DateMois } from "../calendrier.js";
+import { DateMois, MOIS_PAR_AN } from "../calendrier.js";
 import { AFFILIATIONS_AGRICOLES } from "../carriere.js";
 import { formatFixe, formatPourcentage } from "../format.js";
 import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
@@ -277,12 +277,33 @@ export function majorationSousLeTraitement(montant, majoration, traitement, surc
 }
 
 /**
+ * Ce que la réversion du régime des non-salariés agricoles sert par an à
+ * l'assuré au mois `mois` (DateMois) : son montant de départ, déclaré,
+ * revalorisé comme les pensions de base, hors la revalorisation du jour où elle
+ * commence ; `[montant, fiabilité]`, ou null quand elle n'a pas commencé ou que
+ * l'assuré n'en déclare pas. Voir `reversion_agricole_servie` du Python.
+ */
+export function reversionAgricoleServie(moteur, carriere, mois) {
+  const reversion = carriere.reversionAgricole;
+  if (reversion === null || reversion.debut.rang > mois.rang) {
+    return null;
+  }
+  const premier = (date) => `${String(date.annee).padStart(4, "0")}-`
+    + `${String(date.mois).padStart(2, "0")}-01`;
+  const [coefficient, fiabilite] = moteur.revalorisationsPensions.generale(
+    premier(reversion.debut), premier(mois), false, reversion.mensuel);
+  return [reversion.mensuel * MOIS_PAR_AN * coefficient, fiabilite];
+}
+
+/**
  * Ce que la pension majorée de référence (PMR) ajoute à la pension de base des
  * non-salariés agricoles ; null quand elle n'y ajoute rien. La PMR de la date
  * d'effet au prorata de la durée sur DR, au taux plein, comparée avant surcote
  * et sans la majoration pour enfants, écrêtée de ce que `ressources` — toutes
- * les pensions et majorations pour enfants — dépassent du plafond. Voir
- * `pension_majoree` du Python. Une pension déjà liquidée passe, dans `options`,
+ * les pensions et majorations pour enfants — dépassent du plafond ; la
+ * réversion du régime que l'assuré déclare s'ajoute aux deux, et porte, de 2009
+ * à 2021, toutes ses périodes au montant entier. Voir `pension_majoree` du
+ * Python. Une pension déjà liquidée passe, dans `options`,
  * la `regle` des pensions qu'elle sert, le jour `quand` (DateMois) des montants,
  * `tauxPleinRequis` et `surcoteComprise`.
  */
@@ -307,12 +328,19 @@ export function pensionMajoree(moteur, carriere, eligible, pension, ressources,
   const entiere = lu[0];
   let fiabilite = lu[1];
   const retenue = Math.min(duree, eligible.reference);
+  const servie = reversionAgricoleServie(moteur, carriere, new DateMois(annee, mois));
+  let reversion = 0.0;
+  if (servie !== null) {
+    reversion = servie[0];
+    fiabilite = Math.min(fiabilite, servie[1]);
+  }
   // De 2009 à 2021, PMR = PMR1 × DM1 / DR + PMR2 × DM2 / DR : DM1, les
   // périodes de chef et celles du collaborateur de 1999 à 2008 qui a
   // régularisé sa situation, retenues en priorité ; DM2, les autres du conjoint
   // collaborateur et de l'aide familial, et, jusqu'en 2010, celles du chef qui
   // ne l'a pas été dix-sept ans et demi (D. 732-110, II, 1°, 3° et 4° ;
-  // D. 732-111). Le 2° ne trouve personne : voir le Python.
+  // D. 732-111). Le 2° porte dans DM1 toutes les périodes de qui déclare une
+  // réversion du régime, ouverte au mois des montants, nulle ou non.
   let reduite = null;
   let dureeReduite = 0;
   if (regle.montant_reduit) {
@@ -322,12 +350,15 @@ export function pensionMajoree(moteur, carriere, eligible, pension, ressources,
     }
     reduite = luReduite[0];
     fiabilite = Math.min(fiabilite, luReduite[1]);
-    const chef = eligible.chef >= (regle.seuil_chef ?? 0) ? eligible.chef : 0;
-    dureeReduite = retenue - Math.min(chef + (eligible.collaborateurRegularise ?? 0), retenue);
+    if (servie === null) {
+      const chef = eligible.chef >= (regle.seuil_chef ?? 0) ? eligible.chef : 0;
+      dureeReduite = retenue - Math.min(chef + (eligible.collaborateurRegularise ?? 0), retenue);
+    }
   }
   const pmr = (entiere * (retenue - dureeReduite) + (reduite ?? 0.0) * dureeReduite)
     / eligible.reference;
-  const avant = Math.max(0.0, pmr - pension.montant / (surcoteComprise ? 1.0 : eligible.surcote));
+  const avant = Math.max(0.0, pmr - pension.montant / (surcoteComprise ? 1.0 : eligible.surcote)
+    - reversion);
   if (avant <= 0.0) {
     return null;
   }
@@ -341,8 +372,9 @@ export function pensionMajoree(moteur, carriere, eligible, pension, ressources,
   }
   return {
     entiere, duree: retenue, reference: eligible.reference, avantEcretement: avant,
-    complement: Math.max(0.0, Math.min(avant, plafond - ressources)),
+    complement: Math.max(0.0, Math.min(avant, plafond - ressources - reversion)),
     plafond, fiabilite: Math.min(fiabilite, fiabilitePlafond), reduite, dureeReduite,
+    reversion,
   };
 }
 
@@ -1725,6 +1757,9 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
               + `${majoree.reference}`
             : "")
           + ", au taux plein"
+          + (majoree.reversion
+            ? `, moins ${formatFixe(majoree.reversion, 2, true)} € de réversion du régime`
+            : "")
           + (majoree.complement < majoree.avantEcretement - 1e-9
             ? `, écrêtée au plafond de ${formatFixe(majoree.plafond, 2, true)} € de toutes `
               + "les pensions"

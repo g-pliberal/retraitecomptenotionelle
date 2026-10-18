@@ -591,6 +591,23 @@ listes:
           commence après la date d'effet n'entre qu'à la révision qu'elle
           ouvre (R. 173-8), que le modèle fait à chaque échéance qui la suit.
           L'ASPA, et la garantie de la proposition, la comptent de même
+      pas_de_reversion_agricole:
+        dit: >-
+          l'assuré qui ne déclare pas de réversion du régime des non-salariés
+          agricoles n'en reçoit aucune et ne peut y prétendre
+        valeur: aucune
+        appliquee_par: reversion_agricole_servie (droit/completer.py), que la pension majorée de référence lit ; son jumeau JavaScript
+        entrera_a: preparer_la_chronologie
+        raison: >-
+          la pension majorée de référence se compare à « la somme des pensions
+          de retraite et de réversion, servies à l'assuré par le régime »
+          (D. 732-112), s'écrête sur toutes ses pensions de droit propre et de
+          droit dérivé (D. 732-114), et servait de 2009 à 2021 le montant du
+          chef à toutes les périodes de qui peut prétendre à une réversion du
+          régime (D. 732-110, II, 2°) ; la saisie ne connaît une réversion que
+          déclarée, avec son montant et sa date. Une réversion déclarée prend
+          la place de la présomption ; nulle, quand les ressources du veuf
+          l'absorbent, elle ouvre le 2° sans rien retrancher
       pas_de_periode_assimilee:
         dit: >-
           l'assuré qui n'en déclare pas n'a eu ni stage de la formation

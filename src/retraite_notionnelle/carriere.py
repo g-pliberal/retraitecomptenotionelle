@@ -356,6 +356,20 @@ class PensionEtrangere:
 
 
 @dataclass(frozen=True)
+class ReversionAgricole:
+    """La réversion que le régime des non-salariés agricoles sert à la
+    personne, veuve ou veuf d'un de ses assurés (L. 732-41 à L. 732-46) : un
+    acte de sa caisse, que la pension majorée de référence lit (D. 732-110,
+    II, 2° ; D. 732-112 ; D. 732-114)."""
+
+    #: Le mois où elle commence.
+    debut: DateMois
+    #: Son montant brut mensuel, en euros de ce mois, nul quand les ressources
+    #: l'absorbent.
+    mensuel: float
+
+
+@dataclass(frozen=True)
 class Metier:
     """Un métier de la carrière : un statut, un niveau de revenu, une date.
 
@@ -1166,6 +1180,17 @@ class Carriere:
                                       mensuel=fait["montant"]["mensuel"])
                      for fait in chrono.pensions_etrangeres(self.chronologie,
                                                             self.personne))
+
+    @cached_property
+    def reversion_agricole(self) -> ReversionAgricole | None:
+        """La réversion que le régime des non-salariés agricoles sert à la
+        personne, si elle la déclare ; ``None`` sinon (présomption
+        ``pas_de_reversion_agricole``)."""
+        fait = (chrono.reversion_agricole(self.chronologie, self.personne)
+                if self.chronologie else None)
+        return (None if fait is None
+                else ReversionAgricole(debut=chrono.mois_de(fait["debut"]),
+                                       mensuel=fait["montant"]["mensuel"]))
 
     @cached_property
     def residence(self) -> str | None:
@@ -2017,6 +2042,7 @@ class Carriere:
         invalidite: dict | None = None,
         etranger: dict | None = None,
         periodes_assimilees: list[dict] | tuple = (),
+        reversion_agricole: dict | None = None,
     ) -> "Carriere":
         """Construit une carrière à partir d'un relevé, ligne par ligne.
 
@@ -2050,7 +2076,8 @@ class Carriere:
             jour_naissance=jour_naissance, conjoint=conjoint, deces=deces,
             retraite_progressive=retraite_progressive, emploi_retraite=emploi_retraite,
             demandes_de_pension=demandes_de_pension, invalidite=invalidite,
-            etranger=etranger), periodes_assimilees))
+            etranger=etranger, reversion_agricole=reversion_agricole),
+            periodes_assimilees))
         return cls.depuis_chronologie(chronologie, macro, identifiant=identifiant)
 
     @classmethod
@@ -2078,6 +2105,7 @@ class Carriere:
         demandes_de_pension: dict[str, float] | None = None,
         invalidite: dict | None = None,
         etranger: dict | None = None,
+        reversion_agricole: dict | None = None,
     ) -> "Carriere":
         """Carrière d'un seul métier, exercé du premier au dernier jour.
 
@@ -2106,6 +2134,7 @@ class Carriere:
             demandes_de_pension=demandes_de_pension,
             invalidite=invalidite,
             etranger=etranger,
+            reversion_agricole=reversion_agricole,
         )
 
     @classmethod
@@ -2134,6 +2163,7 @@ class Carriere:
         etranger: dict | None = None,
         periodes_assimilees: list[dict] | tuple = (),
         dispenses: dict[int, str] | None = None,
+        reversion_agricole: dict | None = None,
     ) -> "Carriere":
         """Construit une carrière à partir de la suite des métiers exercés.
 
@@ -2205,6 +2235,11 @@ class Carriere:
         table que :func:`chronologie.avec_periodes_assimilees` reçoit : vide,
         la présomption ``pas_de_periode_assimilee`` tient.
 
+        ``reversion_agricole`` déclare la réversion que le régime des
+        non-salariés agricoles sert à la personne, veuve ou veuf d'un de ses
+        assurés : son ``debut`` et son montant ``mensuel``
+        (:attr:`reversion_agricole`).
+
         Les deux bords sont des années INCOMPLÈTES et sont construites comme
         telles : celui qui entre en septembre ne travaille que quatre mois de
         son année d'entrée, celui qui part en août n'en travaille que sept de
@@ -2221,7 +2256,8 @@ class Carriere:
             jour_naissance=jour_naissance, conjoint=conjoint, deces=deces,
             retraite_progressive=retraite_progressive, emploi_retraite=emploi_retraite,
             demandes_de_pension=demandes_de_pension, invalidite=invalidite,
-            etranger=etranger, dispenses=dispenses), periodes_assimilees))
+            etranger=etranger, dispenses=dispenses,
+            reversion_agricole=reversion_agricole), periodes_assimilees))
         return cls.depuis_chronologie(chronologie, macro, identifiant=identifiant)
 
     @classmethod

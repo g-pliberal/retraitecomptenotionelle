@@ -834,6 +834,10 @@ Le relevé des droits et le résultat le signalent.
   - pas de pension étrangère, quand l'assuré n'en déclare pas : le minimum
     contributif n'est écrêté que de ses pensions françaises, et l'ASPA ne
     complète qu'elles (cinquième domaine, § 11) ;
+  - pas de réversion du régime des non-salariés agricoles, quand l'assuré
+    n'en déclare pas : la pension majorée de référence n'en retranche aucune,
+    et ne sert le montant du chef, de 2009 à 2021, qu'aux périodes de chef et
+    de collaborateur régularisé (action 138, étape 8) ;
   - résidence en France après le départ, quand l'assuré n'en déclare pas
     d'autre, toute l'année quand il n'en dit pas les mois : l'ASPA lui est
     servie (cinquième domaine, § 11).

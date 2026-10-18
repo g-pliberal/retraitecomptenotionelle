@@ -41,9 +41,10 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass, replace
+from datetime import date
 from typing import TYPE_CHECKING
 
-from ..calendrier import DateMois
+from ..calendrier import MOIS_PAR_AN, DateMois
 from ..carriere import AFFILIATIONS_AGRICOLES
 from ..donnees.chargement import Fiabilite
 from . import acquerir
@@ -419,6 +420,26 @@ class PensionMajoree:
     #: (D. 732-111) ; ``duree`` les compte aussi.
     reduite: float | None = None
     duree_reduite: int = 0
+    #: La réversion que le régime sert, par an, retranchée de la PMR et
+    #: comptée au plafond (D. 732-112, D. 732-114).
+    reversion: float = 0.0
+
+
+def reversion_agricole_servie(moteur: ScenarioActuel, carriere: Carriere,
+                              mois: DateMois) -> tuple[float, Fiabilite] | None:
+    """Ce que la réversion du régime des non-salariés agricoles sert par an à
+    l'assuré au mois ``mois`` : son montant de départ, déclaré, revalorisé
+    comme les pensions de base (L. 161-23-1), hors la revalorisation du jour
+    où elle commence, que son montant porte déjà, celle de 2020 à la tranche
+    de ce montant ; ``None`` quand elle n'a pas commencé, ou que l'assuré n'en
+    déclare pas (présomption ``pas_de_reversion_agricole``)."""
+    reversion = carriere.reversion_agricole
+    if reversion is None or reversion.debut.rang > mois.rang:
+        return None
+    coefficient, fiabilite = moteur.revalorisations_pensions.generale(
+        date(reversion.debut.annee, reversion.debut.mois, 1), date(mois.annee, mois.mois, 1),
+        False, reversion.mensuel)
+    return reversion.mensuel * MOIS_PAR_AN * coefficient, fiabilite
 
 
 def pension_majoree(moteur: ScenarioActuel, carriere: Carriere, eligible,
@@ -440,6 +461,14 @@ def pension_majoree(moteur: ScenarioActuel, carriere: Carriere, eligible,
     majoration pour enfants (D. 732-112) — que D. 732-38 ne fait porter que sur
     la pension calculée, non sur la majoration : la surcote reste, la majoration
     pour enfants ne s'applique pas au complément.
+
+    LA RÉVERSION DU RÉGIME, que l'assuré veuf déclare : ce qu'elle sert au mois
+    des montants (:func:`reversion_agricole_servie`) s'ajoute à la pension
+    comparée, « la somme des pensions de retraite et de réversion, servies à
+    l'assuré par le régime » (D. 732-112), et aux ressources de l'écrêtement
+    (D. 732-114) ; de 2009 à 2021, elle porte au montant entier toutes les
+    périodes de qui peut prétendre à une réversion du régime, nulle ou non
+    (D. 732-110, II, 2°).
 
     L'ÉCRÊTEMENT : la majoration ne fait pas dépasser le plafond à
     ``ressources`` — toutes les pensions de base et complémentaires de
@@ -469,14 +498,18 @@ def pension_majoree(moteur: ScenarioActuel, carriere: Carriere, eligible,
         return None
     entiere, fiabilite = lu
     retenue = min(duree, eligible.reference)
+    servie = reversion_agricole_servie(moteur, carriere, DateMois(annee, mois))
+    reversion = 0.0
+    if servie is not None:
+        reversion, fiabilite = servie[0], min(fiabilite, servie[1])
     # De 2009 à 2021, PMR = PMR1 × DM1 / DR + PMR2 × DM2 / DR : DM1, les
     # périodes de chef et celles du collaborateur de 1999 à 2008 qui a
     # régularisé sa situation, retenues en priorité ; DM2, les autres du
     # conjoint collaborateur et de l'aide familial, et, jusqu'en 2010, celles
     # du chef qui ne l'a pas été dix-sept ans et demi (D. 732-110, II, 1°, 3°
-    # et 4° ; D. 732-111). Le 2°, toutes les périodes de qui peut prétendre à
-    # une réversion du régime, ne trouve personne : le modèle ne connaît pas
-    # le veuvage de l'assuré.
+    # et 4° ; D. 732-111). Le 2° porte dans DM1 toutes les périodes de qui
+    # peut prétendre à une réversion du régime : de qui en déclare une, ouverte
+    # au mois des montants, nulle ou non.
     reduite, duree_reduite = None, 0
     if regle["montant_reduit"]:
         lu_reduite = moteur.pension_majoree_reference.montant(
@@ -484,11 +517,13 @@ def pension_majoree(moteur: ScenarioActuel, carriere: Carriere, eligible,
         if lu_reduite is None:
             return None
         reduite, fiabilite = lu_reduite[0], min(fiabilite, lu_reduite[1])
-        chef = eligible.chef if eligible.chef >= (regle["seuil_chef"] or 0) else 0
-        duree_reduite = retenue - min(chef + eligible.collaborateur_regularise, retenue)
+        if servie is None:
+            chef = eligible.chef if eligible.chef >= (regle["seuil_chef"] or 0) else 0
+            duree_reduite = retenue - min(chef + eligible.collaborateur_regularise, retenue)
     pmr = (entiere * (retenue - duree_reduite)
            + (reduite or 0.0) * duree_reduite) / eligible.reference
-    avant = max(0.0, pmr - pension.montant / (1.0 if surcote_comprise else eligible.surcote))
+    avant = max(0.0, pmr - pension.montant / (1.0 if surcote_comprise else eligible.surcote)
+                - reversion)
     if avant <= 0.0:
         return None
     if regle["plafond"] == "minimum_contributif":
@@ -498,9 +533,10 @@ def pension_majoree(moteur: ScenarioActuel, carriere: Carriere, eligible,
             regle["plafond"], annee, mois)
     return PensionMajoree(
         entiere=entiere, duree=retenue, reference=eligible.reference,
-        avant_ecretement=avant, complement=max(0.0, min(avant, plafond - ressources)),
+        avant_ecretement=avant,
+        complement=max(0.0, min(avant, plafond - ressources - reversion)),
         plafond=plafond, fiabilite=min(fiabilite, fiabilite_plafond),
-        reduite=reduite, duree_reduite=duree_reduite)
+        reduite=reduite, duree_reduite=duree_reduite, reversion=reversion)
 
 
 @dataclass(frozen=True)
@@ -1881,6 +1917,8 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                         + (f" + {majoree.reduite:,.2f} € × {majoree.duree_reduite}/"
                            f"{majoree.reference}" if majoree.duree_reduite else "")
                         + ", au taux plein"
+                        + (f", moins {majoree.reversion:,.2f} € de réversion du régime"
+                           if majoree.reversion else "")
                         + (f", écrêtée au plafond de {majoree.plafond:,.2f} € de toutes "
                            f"les pensions"
                            if majoree.complement < majoree.avant_ecretement - 1e-9 else "")),

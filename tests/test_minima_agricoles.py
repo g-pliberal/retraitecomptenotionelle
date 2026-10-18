@@ -18,6 +18,7 @@ import json
 import math
 import shutil
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 from types import SimpleNamespace
@@ -828,6 +829,137 @@ def test_le_collaborateur_de_1999_a_2008_recoit_pmr1(simulateur):
     reste = eligible.reference - 40
     assert (f"PMR {pleine:,.2f} € × 40/{eligible.reference} + {reduite:,.2f} € × "
             f"{reste}/") in avantages["pension_majoree_reference"].detail
+
+
+def _veuve(simulateur: Simulateur, reversion: dict | None) -> Carriere:
+    """La conjointe collaboratrice de vingt à soixante-quatre ans, partie le
+    1er février 2016, et la réversion que le régime lui sert, veuve d'un de
+    ses assurés, si elle en a une."""
+    metiers = [Metier("collaborateur_agricole", 20.0, niveau_salaire=0.3)]
+    return _chef(simulateur, 1952, 64, sexe="F", metiers=metiers,
+                 reversion_agricole=reversion)
+
+
+#: 150 € par mois de réversion depuis mars 2010, revalorisés comme les pensions
+#: de base jusqu'au 1er février 2016 : les coefficients publiés par la Cnav
+#: d'avril 2010, 2011, 2012 et 2013 et d'octobre 2015 (L. 161-23-1).
+REVERSION_EN_2016 = 150 * 12 * 1.009 * 1.021 * 1.021 * 1.013 * 1.001
+#: Et depuis juin 2018 jusqu'en décembre 2026 : janvier 2019, 2020 (la tranche
+#: des pensions de 2 000 € par mois au plus), 2021 et 2022, juillet 2022,
+#: janvier 2023, 2024, 2025 et 2026.
+REVERSION_EN_2026 = (150 * 12 * 1.003 * 1.01 * 1.004 * 1.011 * 1.04 * 1.008 * 1.053
+                     * 1.022 * 1.009)
+
+
+def test_qui_peut_pretendre_a_une_reversion_du_regime_recoit_pmr1_partout(simulateur):
+    """La conjointe collaboratrice partie en 2016, veuve d'un exploitant depuis
+    2010 : toutes ses périodes entrent dans DM1, au montant du chef (D. 732-110,
+    II, 2° ; D. 732-111), même quand sa réversion est nulle, ses ressources
+    l'absorbant — elle reste « susceptible d'en bénéficier ». Sans réversion,
+    elle n'a PMR1 que sur ses années de 1999 à 2008."""
+    carriere = _veuve(simulateur, {"debut": "2010-03", "mensuel": 0.0})
+    assert (carriere.annee_liquidation, carriere.mois_liquidation) == (2016, 2)
+    resultat, avantages, _ = _resultat(simulateur, carriere)
+    eligible = resultat.exploitant_agricole.eligible
+    pleine, _ = simulateur.scenario_actuel.pension_majoree_reference.montant(
+        "pmr_chef", 2016, 2)
+    retenue = min(eligible.duree, eligible.reference)
+    assert avantages["pension_majoree_reference"].detail.startswith(
+        f"PMR {pleine:,.2f} € × {retenue}/{eligible.reference}, au taux plein")
+    majoree = completer.pension_majoree(simulateur.scenario_actuel, carriere, eligible,
+                                        SimpleNamespace(montant=0.0001), 0.0)
+    assert majoree.duree_reduite == 0
+    assert majoree.avant_ecretement == pytest.approx(
+        pleine * retenue / eligible.reference, abs=1e-3)
+    sans = completer.pension_majoree(simulateur.scenario_actuel, _veuve(simulateur, None),
+                                     eligible, SimpleNamespace(montant=0.0001), 0.0)
+    assert sans.duree_reduite == retenue - 40
+
+
+def test_la_reversion_du_regime_se_retranche_de_la_pmr_et_compte_au_plafond(simulateur):
+    """La majoration est l'écart entre la PMR et « la somme des pensions de
+    retraite et de réversion, servies à l'assuré par le régime » (D. 732-112) ;
+    le plafond compte « l'ensemble des pensions de retraite et des pensions de
+    réversion servies à l'assuré » (D. 732-114). La réversion de 150 € par mois
+    de mars 2010 compte pour ce qu'elle sert en février 2016, revalorisée."""
+    carriere = _veuve(simulateur, {"debut": "2010-03", "mensuel": 150.0})
+    resultat, avantages, _ = _resultat(simulateur, carriere)
+    eligible = resultat.exploitant_agricole.eligible
+    pleine, _ = simulateur.scenario_actuel.pension_majoree_reference.montant(
+        "pmr_chef", 2016, 2)
+    retenue = min(eligible.duree, eligible.reference)
+    moteur = simulateur.scenario_actuel
+    majoree = completer.pension_majoree(moteur, carriere, eligible,
+                                        SimpleNamespace(montant=0.0001), 0.0)
+    assert majoree.reversion == pytest.approx(REVERSION_EN_2016, rel=1e-12)
+    assert majoree.avant_ecretement == pytest.approx(
+        pleine * retenue / eligible.reference - REVERSION_EN_2016, abs=1e-3)
+    ecretee = completer.pension_majoree(moteur, carriere, eligible,
+                                        SimpleNamespace(montant=0.0001),
+                                        majoree.plafond - 2500.0)
+    assert ecretee.complement == pytest.approx(2500.0 - REVERSION_EN_2016, rel=1e-12)
+    assert f", moins {REVERSION_EN_2016:,.2f} € de réversion du régime" in avantages[
+        "pension_majoree_reference"].detail
+
+
+def test_une_reversion_ouverte_apres_le_depart_n_entre_qu_a_la_pmr_unique(simulateur):
+    """Veuve en 2018, deux ans après son départ : rien ne change au départ, ni
+    jusqu'en 2021, la majoration de la liquidation menée par le coefficient ne
+    se révisant pas ; depuis 2022, la PMR unique, refaite à chaque échéance,
+    retranche la réversion servie (D. 732-112)."""
+    sans, veuve = _veuve(simulateur, None), _veuve(simulateur, {"debut": "2018-06",
+                                                                 "mensuel": 150.0})
+    resultats = [_resultat(simulateur, carriere) for carriere in (sans, veuve)]
+    assert (resultats[0][1]["pension_majoree_reference"].montant
+            == resultats[1][1]["pension_majoree_reference"].montant)
+    vivantes = {}
+    for carriere, (resultat, _, _) in zip((sans, veuve), resultats):
+        assert faire_vivre(simulateur, carriere, resultat, 2021).exploitant is None
+        vivantes[carriere is veuve] = faire_vivre(simulateur, carriere, resultat, 2026)
+    assert vivantes[True].exploitant.pmr < vivantes[False].exploitant.pmr
+    assert (_base(vivantes[False]).aujourd_hui - _base(vivantes[True]).aujourd_hui
+            == pytest.approx(REVERSION_EN_2026, rel=1e-9))
+
+
+#: Le jumeau JavaScript : la conjointe collaboratrice de :func:`_veuve`,
+#: simulée entière, sous chacune des réversions déclarées.
+_JUMEAU_DES_VEUVES = """
+import { readFileSync } from "node:fs";
+import { Simulateur } from "./moteur/js/simulateur.js";
+const cas = JSON.parse(process.argv[1]);
+const simulateur = new Simulateur(JSON.parse(readFileSync("./moteur/donnees.json", "utf8")));
+process.stdout.write(JSON.stringify(cas.map((reversion) => simulateur.simuler(
+  simulateur.carriereParcours({
+    annee_naissance: 1952, sexe: "F", age_liquidation: 64, jour_naissance: 15,
+    metiers: [{ affiliation: "collaborateur_agricole", age_debut: 20, niveau_salaire: 0.3 }],
+    reversion_agricole: reversion,
+  })).dictionnaire())));
+"""
+
+
+def test_les_deux_moteurs_servent_la_meme_pmr_aux_veuves(simulateur):
+    """Le 2° de D. 732-110, II, et la réversion retranchée et comptée au
+    plafond, au départ et à chaque échéance : le résultat entier, en Python et
+    en JavaScript, des veuves de 2010, à la réversion nulle ou de 150 € par
+    mois, et de celle de 2018."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    sys.path.insert(0, str(RACINE / "scripts"))
+    from construire_temoins import _fini
+    from test_liquidation import _ecarts
+
+    cas = [{"debut": "2010-03", "mensuel": 0.0}, {"debut": "2010-03", "mensuel": 150.0},
+           {"debut": "2018-06", "mensuel": 150.0}]
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", _JUMEAU_DES_VEUVES, json.dumps(cas)],
+        cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    ecarts: list[str] = []
+    for rang, (reversion, obtenu) in enumerate(zip(cas, json.loads(execution.stdout))):
+        attendu = json.loads(json.dumps(_fini(
+            simulateur.simuler(_veuve(simulateur, reversion)).dictionnaire())))
+        _ecarts(obtenu, attendu, f"veuve {rang}", ecarts)
+    assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])
 
 
 def test_le_complement_ne_retranche_que_les_points_de_chef(simulateur):

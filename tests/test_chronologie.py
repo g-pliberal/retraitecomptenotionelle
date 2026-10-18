@@ -194,6 +194,32 @@ def test_le_menage_du_survivant_est_un_fait_de_ses_ressources():
                               conjoint={**conjoint, "nouvelle_union": "veuvage"})
 
 
+def test_la_reversion_agricole_est_un_acte_de_la_caisse():
+    """La réversion que le régime des non-salariés agricoles sert à l'assuré,
+    veuf ou veuve d'un de ses assurés (L. 732-41 à L. 732-46) : un acte de sa
+    caisse, daté du mois où elle commence, son montant mensuel en euros de ce
+    mois, nul quand les ressources l'absorbent. Elle ne se présume pas, et
+    n'est pas une pension étrangère."""
+    complete = chronologie.completer(chronologie.du_resume(
+        1952, "F", 1, 64.0, 0, reversion_agricole={"debut": "2010-03", "mensuel": 150.0}))
+    assert chronologie.controler(complete) == []
+    acte = chronologie.reversion_agricole(complete, chronologie.ASSURE)
+    assert (acte["sorte"], acte["debut"], acte["attributs"]["acte"], acte["montant"]) == (
+        "acte_de_la_caisse", "2010-03-01", "reversion", {"mensuel": 150.0, "monnaie": "EUR"})
+    assert chronologie.pensions_etrangeres(complete, chronologie.ASSURE) == []
+    sans = chronologie.completer(chronologie.du_resume(1952, "F", 1, 64.0, 0))
+    assert chronologie.reversion_agricole(sans, chronologie.ASSURE) is None
+    nulle = chronologie.du_resume(1952, "F", 1, 64.0, 0,
+                                  reversion_agricole={"debut": "2030", "mensuel": 0.0})
+    assert chronologie.reversion_agricole(nulle, chronologie.ASSURE)["montant"]["mensuel"] == 0
+    with pytest.raises(ValueError, match="le montant d'une réversion : positif ou nul"):
+        chronologie.du_resume(1952, "F", 1, 64.0, 0,
+                              reversion_agricole={"debut": "2010-03", "mensuel": -1.0})
+    with pytest.raises(ValueError, match="une réversion commence après la naissance"):
+        chronologie.du_resume(1952, "F", 1, 64.0, 0,
+                              reversion_agricole={"debut": "1950", "mensuel": 10.0})
+
+
 def test_le_releve_garde_ses_lignes_et_leur_ordre():
     """Une ligne, un fait d'une année civile ; une interruption garde son
     statut, son revenu de référence et son motif ; les trimestres portés
@@ -612,6 +638,25 @@ SAISIES = [
                             "trimestres": 4, "type_periode": "emploi"}]}},
     {"releve": {"annee_naissance": 1962, "sexe": "F", "age_liquidation": 63.0,
                 "etranger": {"residence": "FR"},
+                "releve": [{"annee": 1984, "affiliation": "salarie_prive", "revenu": 9000.0,
+                            "trimestres": 4, "type_periode": "emploi"}]}},
+    # La réversion du régime des non-salariés agricoles (action 138, étape 8) :
+    # datée du mois où elle commence, nulle ou non ; et ce qui ne tient pas.
+    {"parcours": {"annee_naissance": 1952, "sexe": "F", "age_liquidation": 64.0,
+                  "jour_naissance": 15,
+                  "reversion_agricole": {"debut": "2010-03-20", "mensuel": 150.0},
+                  "metiers": [{"affiliation": "collaborateur_agricole", "age_debut": 20.0,
+                               "niveau_salaire": 0.3}]}},
+    {"releve": {"annee_naissance": 1950, "sexe": "H", "age_liquidation": 62.0,
+                "reversion_agricole": {"debut": "2019", "mensuel": 0},
+                "releve": [{"annee": 1984, "affiliation": "salarie_prive", "revenu": 9000.0,
+                            "trimestres": 4, "type_periode": "emploi"}]}},
+    {"releve": {"annee_naissance": 1950, "sexe": "H", "age_liquidation": 62.0,
+                "reversion_agricole": {"debut": "2019-02", "mensuel": -5},
+                "releve": [{"annee": 1984, "affiliation": "salarie_prive", "revenu": 9000.0,
+                            "trimestres": 4, "type_periode": "emploi"}]}},
+    {"releve": {"annee_naissance": 1950, "sexe": "H", "age_liquidation": 62.0,
+                "reversion_agricole": {"debut": "1949-12", "mensuel": 50},
                 "releve": [{"annee": 1984, "affiliation": "salarie_prive", "revenu": 9000.0,
                             "trimestres": 4, "type_periode": "emploi"}]}},
     # Le sixième domaine (action 130, étape 2) : l'apprentissage en attribut

@@ -71,7 +71,10 @@ Ce que les faits portent, par sorte :
   son ``territoire``, le code du tableau des accords, ou ``autre`` ;
 * ``acte_de_la_caisse`` — pour une pension étrangère : ``acte: liquidation``
   et l'``age`` où elle commence ; son ``montant`` mensuel, en euros de cette
-  date ; l'État qui la sert pour ``territoire`` ;
+  date ; l'État qui la sert pour ``territoire`` ; pour la réversion que le
+  régime des non-salariés agricoles sert à l'assuré, veuf d'un de ses
+  assurés : ``acte: reversion``, le ``regime`` et la ``precision`` de la date
+  où elle commence ; son ``montant`` mensuel, en euros de cette date ;
 * ``residence`` — l'État où la personne réside après son départ, pour
   ``territoire``, quand ce n'est pas la France.
 
@@ -303,6 +306,7 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
               demandes_de_pension: dict[str, float] | None = None,
               invalidite: dict | None = None,
               etranger: dict | None = None,
+              reversion_agricole: dict | None = None,
               ) -> tuple[list[dict], list[dict], list[dict]]:
     """Ce que toute saisie déclare de l'assuré : sa naissance, son départ,
     ses enfants, et, s'il les dit, son conjoint et son décès. Rend les
@@ -359,7 +363,13 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
     après le départ, et les ``mois_en_france`` de chaque année. Des périodes à
     l'étranger, des actes de la caisse de chaque État, une résidence, que
     :func:`periodes_a_l_etranger`, :func:`pensions_etrangeres` et
-    :func:`residence` relisent."""
+    :func:`residence` relisent.
+    ``reversion_agricole`` déclare la réversion que le régime des non-salariés
+    agricoles sert à l'assuré, veuf ou veuve d'un de ses assurés (L. 732-41 à
+    L. 732-46) : son ``debut``, une date comme le décès, après la naissance,
+    et son montant ``mensuel`` en euros de cette date, nul quand les
+    ressources l'absorbent. Un acte de la caisse, que
+    :func:`reversion_agricole` relit."""
     assure = naissance_de_l_assure(annee_naissance, mois_naissance, sexe,
                                    jour_naissance, presomptions)
     faits_naissance = [assure]
@@ -423,6 +433,8 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
         depart += _invalidite(assure, age_liquidation, invalidite)
     if etranger is not None:
         depart += _etranger(assure, age_liquidation, etranger)
+    if reversion_agricole is not None:
+        depart.append(_reversion_agricole(assure, reversion_agricole))
     role = "mere" if sexe == "F" else "pere"
     liens = [lien(f"filiation_enfant_{rang}", ASSURE, f"enfant_{rang}", "filiation",
                   {ASSURE: role, f"enfant_{rang}": "enfant"},
@@ -678,6 +690,26 @@ def _etranger(assure: dict, age_liquidation: float | None, etranger: dict) -> li
     return faits
 
 
+#: Le régime dont la réversion ouvre le 2° de D. 732-110, II.
+REGIME_DE_LA_REVERSION_AGRICOLE = "msa_non_salaries"
+
+
+def _reversion_agricole(assure: dict, reversion: dict) -> dict:
+    """La réversion que le régime des non-salariés agricoles sert à l'assuré :
+    un acte de sa caisse, au jour où elle commence, et son montant mensuel en
+    euros de ce jour, positif ou nul."""
+    jour, precision = date_declaree(reversion["debut"], "le début de la réversion")
+    if jour <= assure["debut"]:
+        raise ValueError("une réversion commence après la naissance")
+    if not reversion["mensuel"] >= 0:
+        raise ValueError(f"le montant d'une réversion : positif ou nul, reçu "
+                         f"{reversion['mensuel']}")
+    return fait(f"reversion_agricole_{ASSURE}", ASSURE, "acte_de_la_caisse", jour,
+                attributs={"acte": "reversion", "regime": REGIME_DE_LA_REVERSION_AGRICOLE,
+                           "precision": precision},
+                montant={"mensuel": reversion["mensuel"], "monnaie": "EUR"})
+
+
 def _naissance_du_conjoint(conjoint: dict) -> dict:
     """Le fait de naissance du conjoint déclaré : sa date et son sexe."""
     jour, precision = date_declaree(conjoint["naissance"], "la naissance du conjoint")
@@ -694,7 +726,8 @@ def du_resume(annee_naissance: int, sexe: str, mois_naissance: int = 1,
               deces: str | None = None, retraite_progressive: dict | None = None,
               emploi_retraite: dict | None = None,
               demandes_de_pension: dict[str, float] | None = None,
-              invalidite: dict | None = None, etranger: dict | None = None) -> dict:
+              invalidite: dict | None = None, etranger: dict | None = None,
+              reversion_agricole: dict | None = None) -> dict:
     """La chronologie d'une carrière construite ligne à ligne : la naissance,
     le départ et les enfants, sans ses périodes, que l'appelant a déjà
     traduites en années."""
@@ -705,7 +738,8 @@ def du_resume(annee_naissance: int, sexe: str, mois_naissance: int = 1,
                                          retraite_progressive=retraite_progressive,
                                          emploi_retraite=emploi_retraite,
                                          demandes_de_pension=demandes_de_pension,
-                                         invalidite=invalidite, etranger=etranger)
+                                         invalidite=invalidite, etranger=etranger,
+                                         reversion_agricole=reversion_agricole)
     return {"schema_version": SCHEMA_VERSION, "faits": naissance + depart, "liens": liens}
 
 
@@ -720,7 +754,8 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
                 emploi_retraite: dict | None = None,
                 demandes_de_pension: dict[str, float] | None = None,
                 invalidite: dict | None = None, etranger: dict | None = None,
-                dispenses: dict[int, str] | None = None) -> dict:
+                dispenses: dict[int, str] | None = None,
+                reversion_agricole: dict | None = None) -> dict:
     """La chronologie d'un parcours : un fait par métier, daté au mois, et un
     par année d'interruption.
 
@@ -760,7 +795,8 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
                                          retraite_progressive=retraite_progressive,
                                          emploi_retraite=emploi_retraite,
                                          demandes_de_pension=demandes_de_pension,
-                                         invalidite=invalidite, etranger=etranger)
+                                         invalidite=invalidite, etranger=etranger,
+                                         reversion_agricole=reversion_agricole)
     mois_de_naissance = mois_de(naissance[0]["debut"])
     bornes = [mois_de_naissance.plus_mois(en_mois(metier.age_debut)) for metier in principaux]
     debut = bornes[0]
@@ -865,7 +901,8 @@ def du_releve(annee_naissance: int, sexe: str, releve: list["LigneRelevee"],
               deces: str | None = None, retraite_progressive: dict | None = None,
               emploi_retraite: dict | None = None,
               demandes_de_pension: dict[str, float] | None = None,
-              invalidite: dict | None = None, etranger: dict | None = None) -> dict:
+              invalidite: dict | None = None, etranger: dict | None = None,
+              reversion_agricole: dict | None = None) -> dict:
     """La chronologie d'un relevé : un fait par ligne, une année civile
     chacun, dans l'ordre du relevé — la première ligne d'une année est
     l'activité principale —, avec la quotité d'une année à temps partiel."""
@@ -896,7 +933,8 @@ def du_releve(annee_naissance: int, sexe: str, releve: list["LigneRelevee"],
                                          retraite_progressive=retraite_progressive,
                                          emploi_retraite=emploi_retraite,
                                          demandes_de_pension=demandes_de_pension,
-                                         invalidite=invalidite, etranger=etranger)
+                                         invalidite=invalidite, etranger=etranger,
+                                         reversion_agricole=reversion_agricole)
     return {"schema_version": SCHEMA_VERSION, "faits": naissance + periodes + depart,
             "liens": liens}
 
@@ -1201,6 +1239,15 @@ def pensions_etrangeres(chronologie: dict, personne: str) -> list[dict]:
     return [acte for acte in faits_de(chronologie, personne, "acte_de_la_caisse")
             if acte["attributs"].get("acte") == "liquidation"
             and acte.get("territoire", "metropole") != "metropole"]
+
+
+def reversion_agricole(chronologie: dict, personne: str) -> dict | None:
+    """La réversion que le régime des non-salariés agricoles sert à une
+    personne, si elle la déclare : l'acte de sa caisse."""
+    for acte in faits_de(chronologie, personne, "acte_de_la_caisse"):
+        if acte["attributs"].get("acte") == "reversion":
+            return acte
+    return None
 
 
 def residence(chronologie: dict, personne: str) -> dict | None:
