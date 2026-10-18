@@ -2686,6 +2686,29 @@ def source_quintiles_eqcc_residents() -> dict[tuple, float]:
     }
 
 
+def source_departs_generations() -> dict[tuple, float]:
+    """Les retraités nés en 1950 et en 1953 selon leur âge de liquidation, la
+    place de leur départ par rapport à l'âge légal et à l'âge d'annulation de
+    la décote, et la condition de leur liquidation dans leur régime principal.
+
+    Les classeurs d'une génération du même jeu que les caractéristiques des
+    retraités, que ``scripts/fetch/drees_departs_generations.py`` lit et
+    vérifie : la population de la page se juge sur eux (action 138, étape 14).
+
+    Clé (generation, tableau, colonne, sexe, indicateur).
+    """
+    charge = _lire_json("drees_departs_generations.json",
+                        "scripts/fetch/drees_departs_generations.py")
+    return {
+        (generation, tableau, colonne, sexe, indicateur): valeur
+        for generation, lu in sorted(charge["generations"].items())
+        for tableau, colonnes in lu["tableaux"].items()
+        for colonne, sexes in colonnes.items()
+        for sexe, indicateurs in sexes.items()
+        for indicateur, valeur in indicateurs.items()
+    }
+
+
 def source_age_conjoncturel() -> dict[tuple, float]:
     """L'âge conjoncturel de départ à la retraite, par sexe, depuis 2004.
 
@@ -7642,6 +7665,63 @@ CERTIFICATIONS = (
             "# ce que la population n'a pas : 8,8 % des résidentes sont parties",
             "# avec une décote, 17,5 % de celles du premier quintile ; la",
             "# population part au taux plein.",
+            "#",
+            "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
+            "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="departs_generations",
+        chemin=REFERENCE / "macro" / "departs_generations.csv",
+        cles=("generation", "tableau", "colonne", "sexe", "indicateur"),
+        colonne="valeur",
+        source=source_departs_generations,
+        origine="DREES, échantillon interrégimes de retraités (EIR), classeurs d'une génération",
+        decimales=1,
+        tolerance=0.05,
+        entete=(
+            "# Les retraités nés en 1950 et en 1953 selon leur âge de liquidation et",
+            "# les conditions de leur départ",
+            "# source_id: drees_eir_generations",
+            "# unite: milliers de retraités (effectifs), pour cent (le reste)",
+            "# fiabilite:",
+            "#   certifiee : feuilles « ÂgeLiq_Détails », « ÂgeLiq » et",
+            "#             « CondLiquidation » des classeurs « Caractéristiques des",
+            "#             retraités nés en 1950 (EIR 2016) » et « nés en 1953 (EIR",
+            "#             2020) », diffusés par la DREES et recontrôlés par",
+            "#             scripts/verifier_donnees.py.",
+            "#",
+            "# Chaque génération vue l'année de son enquête, en 2016 à 66 ans, en",
+            "# 2020 à 67 ans : ses retraités de droit direct, tous lieux de",
+            "# résidence, rangés par une colonne de l'un des trois tableaux. Les",
+            "# âges et les conditions sont ceux du régime principal.",
+            "#",
+            "# LES COLONNES",
+            "# ------------",
+            "# tableau : age_liquidation, l'âge de liquidation (avant_60, 60 à 66,",
+            "#   67_plus pour les nés en 1953) ; position, la place du départ",
+            "#   (avant_age_legal, age_legal, entre l'âge légal et l'âge",
+            "#   d'annulation de la décote, age_annulation, apres_annulation) ;",
+            "#   condition, la condition de la liquidation (carriere_longue, decote,",
+            "#   decote_inapplicable, surcote, invalidite, inaptitude,",
+            "#   autres_motifs, taux_plein_age, taux_plein_duree). Chaque tableau",
+            "#   a sa colonne ensemble, toute la génération.",
+            "# indicateur : effectifs ; part, la part de la colonne dans la",
+            "#   génération ; carriere_complete, la part des carrières complètes",
+            "#   parmi les retraités de la colonne ; et, dans les tableaux",
+            "#   age_liquidation et position, condition_<condition>, la part des",
+            "#   départs de la colonne pris dans cette condition, une case vide du",
+            "#   classeur se lisant zéro. Un retraité sur cent n'a pas de",
+            "#   condition connue, et, à 65 ans, une femme née en 1953 sur neuf.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À juger les départs de la population de scripts/grille_large.py",
+            "# (action 138, étape 14) génération par génération, quand l'EACR les",
+            "# compte année par année, en vagues que les réformes découpent : 46,0 %",
+            "# des nés en 1950 sont partis à 60 ans, 14,3 % des nés en 1953 avec",
+            "# une surcote, 28,3 % des hommes nés en 1953 en carrière longue. Aucun",
+            "# calcul du site ne la lit.",
             "#",
             "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
             "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",

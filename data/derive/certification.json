@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-10-17",
+ "dernier_passage_le": "2026-10-18",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -374,6 +374,17 @@
    "source": "DILA, base LEGI, loi n° 2003-775 du 21 août 2003, article 66 III",
    "valeurs": 14,
    "verifiee_le": "2026-09-17"
+  },
+  "departs_generations": {
+   "ajoutees": 1296,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "5be916a5bb1b7068",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DREES, échantillon interrégimes de retraités (EIR), classeurs d'une génération",
+   "valeurs": 1296,
+   "verifiee_le": "2026-10-18"
   },
   "depenses_retraite": {
    "ajoutees": 0,

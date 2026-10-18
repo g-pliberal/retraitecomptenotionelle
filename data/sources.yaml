@@ -1261,6 +1261,33 @@ institutions:
           hors majorations. Elle dit ce qu'une carrière courte acquiert par
           année validée (action 136, étape 6).
 
+      - id: drees_eir_generations
+        titre: >-
+          Caractéristiques des retraités nés en 1950 (EIR 2016) et nés en 1953
+          (EIR 2020) : l'âge de liquidation et les conditions de départ
+        url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/3013_donnees-statistiques-sur-les-caracteristiques-des-retraites/
+        acces: api
+        statut_integration: certifie
+        recuperation: scripts/fetch/drees_departs_generations.py
+        cible: data/reference/macro/departs_generations.csv
+        note: >-
+          Le même jeu que les caractéristiques des retraités joint, à chaque
+          millésime, le classeur d'une génération que l'enquête voit presque
+          toute partie : celle de 1950 en 2016, à 66 ans, celle de 1953 en
+          2020, à 67. Trois de ses feuilles, par sexe : les retraités selon
+          leur âge de liquidation dans le régime principal
+          (« ÂgeLiq_Détails »), selon la place de leur départ par rapport à
+          l'âge légal et à l'âge d'annulation de la décote (« ÂgeLiq »), et
+          selon la condition de leur liquidation (« CondLiquidation ») —
+          carrière longue, décote, décote inapplicable, surcote, taux plein
+          pour invalidité, pour inaptitude, pour un autre motif, par l'âge,
+          par la durée ; dans les deux premières, la part de chaque condition
+          parmi les départs de la colonne. 14,3 % des nés en 1953 sont partis
+          avec une surcote, 53,5 % de ceux partis à 63 ans. La population de
+          la page Coût (action 138, étape 14) juge sur elles ses départs, que
+          l'EACR ne compte qu'année par année. Aucun calcul du site ne les
+          lit.
+
       - id: drees_age_conjoncturel
         titre: Âge conjoncturel moyen de départ à la retraite, selon le sexe
         url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/retraite_graphique-1-age-conjoncturel-moyen-de-depart-a-la-retraite-selon-le-se0/
