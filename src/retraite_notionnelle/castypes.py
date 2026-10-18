@@ -553,6 +553,42 @@ FONCTIONNAIRE_SUPER_ACTIF_ETAT = replace(
 GRILLE_DU_COUT: tuple[CasType, ...] = CAS_TYPES + (
     AGENT_SEDENTAIRE_CNRACL, FONCTIONNAIRE_ACTIF_ETAT, FONCTIONNAIRE_SUPER_ACTIF_ETAT)
 
+#: La carrière HEURTÉE de la maquette Osiris de la DSS (étude d'impact du
+#: projet de loi instituant un système universel de retraite, 2020, p. 202) :
+#: le non-cadre au salaire moyen du tiers inférieur à chaque âge, environ
+#: 30 000 € par an quand le salaire moyen en fait 38 000, qui perd son emploi à
+#: quarante-deux ans. L'ARE deux ans, l'ASS deux ans, puis un an et demi de
+#: chômage non indemnisé, que deux années portent : le droit n'en valide de
+#: toute façon pas plus de six trimestres. Inactif ensuite, jusqu'au départ.
+#:
+#: Elle n'est d'AUCUNE des deux grilles, et c'est au propriétaire d'en décider
+#: (action 138, étape 19, 18 octobre 2026) : partie au taux plein par l'âge,
+#: soixante-cinq puis soixante-sept ans, elle fait partir la grille plus tard
+#: que la France réelle à tout poids qu'on lui donne dans la Cnav — 0,56 an en
+#: moyenne à 12 %, la part des départs au taux plein par l'âge des nés en 1950
+#: et 1953 (EIR), au lieu de 0,29 —, la grille n'ayant pas les départs
+#: anticipés qui la compenseraient, carrières longues, inaptitude, invalidité.
+CARRIERE_HEURTEE = CasType(
+    code="carriere_heurtee",
+    libelle="Carrière heurtée (chômage à 42 ans)",
+    affiliation="salarie_prive_non_cadre",
+    age_debut=22, age_liquidation=67, niveau_salaire=0.79,
+    caisses=("cnav",),
+    interruptions_relatives=(
+        tuple((decalage, "chomage_indemnise") for decalage in (20, 21))
+        + tuple((decalage, "chomage_solidarite") for decalage in (22, 23))
+        + tuple((decalage, "chomage_non_indemnise") for decalage in (24, 25))
+        + tuple((decalage, "inactivite") for decalage in range(26, 49))),
+    commentaire=(
+        "Vingt ans d'emploi, puis le chômage et l'inactivité. Le système "
+        "actuel valide les trimestres de l'ARE, de l'ASS et d'un an et demi "
+        "de chômage non indemnisé, et l'Agirc-Arrco donne des points "
+        "pendant l'indemnisation ; le compte notionnel ne porte de ces "
+        "années que ce que l'Unédic et l'État versent aux complémentaires. "
+        "Loin de la durée requise, il part au taux plein par l'âge."
+    ),
+)
+
 
 def cas_type_affiche(code: str) -> str:
     """Le cas type de la page dont ``code`` est la variante, lui-même sinon."""

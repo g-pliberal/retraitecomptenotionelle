@@ -335,6 +335,51 @@ def test_le_cas_type_au_smic_gagne_le_smic_de_chaque_annee():
     assert 0.45 < niveau < 0.55
 
 
+def test_la_carriere_heurtee_valide_ce_que_le_droit_donne_au_chomage():
+    """La carrière heurtée de la maquette Osiris de la DSS (étude d'impact du
+    projet de loi instituant un système universel de retraite, 2020, p. 202 du
+    PDF) : un non-cadre du privé au salaire du tiers inférieur, environ
+    30 000 € par an quand le salaire moyen en fait 38 000, entré à vingt-deux
+    ans, perd son emploi à quarante-deux, touche l'ARE deux ans puis l'ASS deux
+    ans, reste un an et demi au chômage non indemnisé, puis est inactif
+    jusqu'au départ.
+
+    Le droit lui valide quatre trimestres par année d'ARE et d'ASS (R. 351-12,
+    4°, c, du code de la sécurité sociale) ; pour la première période de
+    chômage non indemnisé, six au plus si elle suit le 31 décembre 2010, quatre
+    avant (R. 351-12, 4°, d ; décret n° 2011-934, art. 2) ; rien pour
+    l'inactivité. Avec cent deux trimestres au plus, il part au taux plein par
+    l'âge (L. 351-8, 1°, fiche ``age_annulation_decote``) : soixante-sept ans,
+    né en 1955 ou après, soixante-cinq, né en 1950.
+    """
+    from retraite_notionnelle.castypes import CARRIERE_HEURTEE as cas
+    from retraite_notionnelle.simulateur import Simulateur
+
+    simulateur = Simulateur(Parametres())
+    assert (cas.affiliation, cas.age_debut, cas.caisses) == (
+        "salarie_prive_non_cadre", 22, ("cnav",))
+    assert cas.niveau_salaire == pytest.approx(30_000 / 38_000, abs=0.01)
+    for generation, depart, non_indemnise in ((1950, 65, 4), (1960, 67, 4),
+                                              (1980, 67, 6)):
+        carriere = cas.construire(simulateur, generation)
+        assert carriere.age_liquidation == depart, generation
+        par_periode: dict[str, list[int]] = {}
+        trimestres: dict[str, int] = {}
+        for ligne in carriere.lignes:
+            par_periode.setdefault(ligne.type_periode, []).append(ligne.annee - generation)
+            trimestres[ligne.type_periode] = (trimestres.get(ligne.type_periode, 0)
+                                              + ligne.trimestres_valides)
+        assert par_periode["emploi"] == list(range(22, 42)), generation
+        assert par_periode["chomage_indemnise"] == [42, 43]
+        assert par_periode["chomage_solidarite"] == [44, 45]
+        assert par_periode["chomage_non_indemnise"] == [46, 47]
+        assert par_periode["inactivite"] == list(range(48, depart + 1))
+        assert trimestres == {"emploi": 80, "chomage_indemnise": 8,
+                              "chomage_solidarite": 8,
+                              "chomage_non_indemnise": non_indemnise,
+                              "inactivite": 0}, generation
+
+
 def test_la_masse_salariale_est_la_regle_la_plus_genereuse(macro):
     """Le taux d'équilibre de la répartition n'est pas une règle d'austérité.
 
