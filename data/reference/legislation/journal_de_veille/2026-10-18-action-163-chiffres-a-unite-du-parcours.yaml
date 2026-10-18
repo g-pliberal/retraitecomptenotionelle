@@ -1,0 +1,15 @@
+date: "2026-10-18"
+session: "action 163 : les chiffres à unité du parcours, ancrés sur ce qui les produit"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1,
+  seulement à la prose du parcours de présentation, à trois sondes de la
+  prose (scripts/mesures_prose.py, scripts/verifier_prose.py) et à leurs
+  tests.
+trouve: >-
+  Aucune règle n'a changé. Le parcours donnait une baisse médiane de 12 % que
+  l'accueil chiffre à 13, et des coefficients d'équilibre de la proposition
+  d'un autre jour ; ancrés, ils sont récrits depuis la page, le paquet ou le
+  modèle.
+reste: >-
+  Les chiffres en lettres du parcours, que l'ancre ne tient pas, et les
+  étapes 3 et 5 de l'action 163, que le propriétaire tranche.
