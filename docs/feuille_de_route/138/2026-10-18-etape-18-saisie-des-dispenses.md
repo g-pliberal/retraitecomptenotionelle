@@ -78,7 +78,9 @@ nomme chaque motif du paquet avec ses années.
 - Le paquet de `main` ne portait pas la fiche `reversion_sncf`, que le commit
   `57d8328` (étape 9) a écrite sans refaire `moteur/donnees.json` : le portage
   disait la réversion de la SNCF « non portée », et `-m site` rougissait sur
-  ses trois témoins. Le paquet est refait ici ; il ne change que par elle.
+  ses trois témoins. Refait ici, il ne changeait que par elle ; la session de
+  l'étape 5 l'a refait sur `main` entre-temps (`902f642`), et `pousser.sh` a
+  gardé le sien.
 - Au modèle, non fait : l'activité exercée après le départ
   (`_lignes_apres_depart`) ne porte aucune dispense, quand D. 642-4 dispensait
   de 2004 à 2015 le libéral titulaire d'une retraite, celui-là même ; et
