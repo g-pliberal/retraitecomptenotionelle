@@ -4689,10 +4689,12 @@ institutions:
           quotients du moment par année d'âge, de 0 à 104 ans. C'est ce que la
           Human Mortality Database aurait donné, sans la barrière d'inscription
           qui la mettait hors de portée d'un script.
-          Le dépôt n'en reprend que 1899-1985 : à partir de 1986 la donnée
-          observée vient d'Eurostat, son producteur. Les deux se recouvrent de
-          1986 à 1997 et concordent à un demi-point de pourcentage près sur
-          85 âges — c'est ce recoupement qui autorise à les aboucher.
+          Le dépôt n'en reprend que 1899-1985, et de 1986 à 1997 les âges de
+          99 à 104 ans : à partir de 1986 la donnée observée vient d'Eurostat,
+          son producteur, dont les décès et les populations s'arrêtent à
+          98 ans. Les deux se recouvrent de 1986 à 1997 et concordent à un
+          demi-point de pourcentage près sur 85 âges, à 0,7 % près en médiane
+          de 95 à 98 ans — c'est ce recoupement qui autorise à les aboucher.
           Diffusé en classeur Excel 97, lu par scripts/fetch/lecture_xls.py.
 
   eurostat:
@@ -4765,9 +4767,12 @@ institutions:
           sa calibration paramétrique aux âges et années couverts : calculés
           génération par génération, comme l'INSEE, puis convertis à l'âge
           exact comme les quotients projetés (action 138, étape 7, 10 octobre
-          2026). Les quotients par âge atteint qu'on en tire retrouvent ceux de
-          l'INSEE (insee_tables_mortalite, tableau 69) à l'arrondi près.
-          Territoires FX (1986-2012) puis FR (1998-2024).
+          2026), jusqu'à 98 ans, le dernier carré qu'encadrent les âges
+          atteints que les deux jeux portent un à un (18 octobre 2026). Les
+          quotients par âge atteint qu'on en tire retrouvent ceux de l'INSEE
+          (insee_tables_mortalite, tableau 69) à l'arrondi près, jusqu'à
+          99 ans. Territoires FX (1986-2012) puis FR (1998-2024), une seule
+          source par année.
 
       - id: eurostat_mlifetable
         titre: Table de mortalité par âge et par sexe (demo_mlifetable)
@@ -4783,9 +4788,9 @@ institutions:
           générations nées pendant les deux guerres : leurs diagonales font des
           marches de 5 à 10 %, et la génération 1941 y gagnait 0,3 an
           d'espérance de vie à 60 ans. Elle ne donne plus que ses cases — 0 à
-          84 ans jusqu'en 2013, 0 à 94 ensuite, classes ouvertes écartées — et
-          un contrôle : les quotients refaits restent à 1 % près en médiane des
-          siens, chaque année.
+          84 ans jusqu'en 2013, 0 à 94 ensuite, classes ouvertes écartées —, où
+          les quotients refaits se comparent aux siens, et ce contrôle : ils en
+          restent à 1 % près en médiane, chaque année.
 
   commission_europeenne:
     nom: >-

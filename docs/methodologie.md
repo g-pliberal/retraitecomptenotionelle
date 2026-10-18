@@ -2216,7 +2216,9 @@ Trois sources, par ordre de priorité, et le partage se fait couple par couple
    (`annee,sexe,age,qx`). Ils couvrent <!--chiffre:minimum(data/reference/mortalite/quotients_periode.csv:annee)-->1899<!--/-->-<!--chiffre:maximum(data/reference/mortalite/quotients_periode.csv:annee)-->2024<!--/-->, une seule source par année : les
    tables de Vallin et Meslé publiées par l'INED jusqu'en 1985, par âge jusqu'à
    <!--chiffre:maximum(data/reference/mortalite/quotients_periode.csv:age?annee=1990)-->104<!--/--> ans, et jusqu'en 1997 aux seuls âges qu'Eurostat ne couvre pas ;
-   Eurostat ensuite, jusqu'à <!--chiffre:maximum(data/reference/mortalite/quotients_periode.csv:age?annee=2000)-->84<!--/--> ans pour les millésimes d'avant 2014 et <!--chiffre:maximum(data/reference/mortalite/quotients_periode.csv:age?annee=2020)-->94<!--/--> ans depuis.
+   Eurostat ensuite, jusqu'à <!--chiffre:maximum(data/reference/mortalite/quotients_periode.csv:age?annee=2020)-->98<!--/--> ans, le dernier âge dont ses décès par année de
+   naissance et ses populations tirent un carré (97 en 2005, 2006 et 2009,
+   où la population de l'âge suivant manque au 1er janvier d'après).
    Ces quotients-là ne sont pas la table qu'Eurostat publie : le dépôt les
    calcule de ses décès par année de naissance et de ses populations au
    1er janvier, génération par génération, comme l'INSEE, dont il retrouve les
@@ -2234,8 +2236,9 @@ Trois sources, par ordre de priorité, et le partage se fait couple par couple
    sienne, `quotients_projetes_basse.csv` ou `quotients_projetes_haute.csv` ;
 3. partout ailleurs — au-delà du dernier âge observé, et en 2025, que ni
    l'observation ni la projection ne couvrent — une table paramétrique de
-   **Gompertz-Makeham** `μ(x) = A + B·exp(k(x−60))`, dont *B* et *k* sont
-   ajustés par bissection.
+   **Gompertz-Makeham** `μ(x) = A + B·exp(k(x−60))`, dont *k* est ajusté
+   par bissection sur les espérances publiées, et *B* raccordé au dernier
+   quotient observé de l'année quand elle en a.
 
 **La cible de cet ajustement est la table RACCORDÉE, pas la loi seule**, et
 c'est ce qui a longtemps manqué. Calibrée sur elle-même, la loi n'avait aucune
@@ -2245,19 +2248,28 @@ publiée à 60 ans en implique 7,5. Comme les millésimes 1998-2013 s'arrêtent 
 84 ans, la table effectivement lue par le modèle débordait alors l'espérance de
 l'INSEE de jusqu'à 2,5 ans.
 
-L'ajustement se fait donc en deux temps. La **forme** de la queue — le
-paramètre *k* — vient de la calibration classique sur la loi seule, où e60 et
-e65 portent sur toute la plage d'âges et la déterminent sans ambiguïté. Son
-**niveau** — le paramètre *B* — est ensuite recalé, à forme constante, pour que
-la table raccordée reproduise l'espérance publiée à <!--chiffre:illustration()-->60<!--/--> ans. Là où la queue n'a
-pas prise sur la cible — millésimes dont les quotients vont jusqu'à <!--chiffre:maximum(data/reference/mortalite/quotients_periode.csv:age)-->104<!--/--> ans, où
-les données décident seules —, le recalage est abandonné plutôt que forcé.
+L'ajustement se fait en deux temps. La **forme** de la queue — le paramètre
+*k* — vient de la calibration classique sur la loi seule, où e60 et e65
+portent sur toute la plage d'âges et la déterminent sans ambiguïté. Son
+**niveau** — le paramètre *B* — se **raccorde** à la table qu'elle prolonge :
+au dernier âge observé, la loi rend le quotient de la table, et n'y ajoute
+au-delà que sa pente ; sans table, en 2025, il vient des espérances lui aussi.
+Il ne se cale pas sur l'espérance à <!--chiffre:illustration()-->60<!--/--> ans : la table allant jusqu'à
+<!--chiffre:maximum(data/reference/mortalite/quotients_periode.csv:age?annee=2020)-->98<!--/--> ans, et <!--chiffre:maximum(data/reference/mortalite/quotients_periode.csv:age?annee=1990)-->104<!--/--> ans avant 1998, la queue n'y pèse presque plus, et la
+caler sur une espérance que l'INSEE arrondit au dixième la mènerait à
+l'absurde — tout le monde mort l'année suivante, ou plus personne. Raccordée
+au quotient de <!--chiffre:maximum(data/reference/mortalite/quotients_periode.csv:age?annee=2020)-->98<!--/--> ans, la loi surestime de <!--chiffre:tenu(test_la_queue_raccordee_rend_les_quotients_de_l_ined_de_99_a_104_ans)-->5<!--/--> % en moyenne
+les quotients que l'INED observe de 99 à <!--chiffre:maximum(data/reference/mortalite/quotients_periode.csv:age?annee=1990)-->104<!--/--> ans de 1986 à 1997, seul endroit
+où l'on observe au-delà : une loi de Gompertz ne ralentit pas.
 
 Le raccord est contrôlé, et le contrôle est cette fois réel : un test recalcule
 l'espérance de vie à <!--chiffre:illustration()-->60<!--/--> ans par le seul chemin que le moteur emprunte
 (`survie_annuelle`, quotients observés puis loi) et la confronte à l'espérance
 publiée par l'INSEE, qui vient d'une tout autre chaîne de production. Les deux
-concordent à 0,1 an près sur 1990-2024. Le test précédent passait par une
+concordent à 0,12 an près chaque année de 1986 à 2024, sans que rien ne vise
+plus la cible : l'INSEE arrondit au dixième, et ses valeurs les plus récentes
+précèdent la révision des données que la table suit. Le test précédent passait
+par une
 branche qui ne consultait aucun quotient : il comparait la calibration à sa
 propre cible et ne pouvait pas échouer.
 

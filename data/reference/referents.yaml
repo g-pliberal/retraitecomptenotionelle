@@ -3306,7 +3306,13 @@ referents:
           à 90 ans de 0,9 à près de 1,5 an. Le diviseur de la population
           générale à 64 ans en bouge de −2,1 % (génération 1940) à +0,2 %
           (génération 2000) ; celui du premier vingtile de niveau de vie,
-          génération 1975, de +2,1 %, celui du dernier de −1,4 %.
+          génération 1975, de +2,1 %, celui du dernier de −1,4 %. Le
+          18 octobre 2026, la queue observée : les quotients de 85 à 98 ans se
+          calculent des décès et des populations d'Eurostat, et la loi,
+          raccordée au dernier d'entre eux au lieu d'être recalée sur e60, ne
+          tient plus que les âges d'au-delà, où elle surestime de 5 % en
+          moyenne les quotients de 99 à 104 ans que l'INED observe de 1986 à
+          1997.
         etat: repris
         chantier: "138.7"
       - quoi: >-
