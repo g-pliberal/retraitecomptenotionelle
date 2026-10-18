@@ -39,11 +39,20 @@ effet: >-
   731-10-1), sur un revenu annuel (L. 731-15), que le moteur prend du revenu de ses mois
   porté à douze ; elle ne valait que ses mois, au barème lu sur leur seul revenu — sept
   douzièmes de 23 points, et non 30, pour le chef à 12 000 € par an parti le 1er août
-  2024.
+  2024. Depuis le 18 octobre 2026, l'année où il s'installe après le 1er janvier ne lui
+  vaut aucun point : il n'y doit rien (R. 731-57, L. 731-10-1 ; voir la fiche
+  taux_plein_et_proratisation).
 sources:
-  lu_le: 2026-10-17
+  lu_le: 2026-10-18
   prochaine_relecture: 2027-03-31
   a_relire:
+  - >-
+    L'année que R. 731-83 fait cotiser au prorata, jusqu'au premier jour du mois qui
+    suit la cessation, qui quitte l'agriculture pour un autre métier : R. 732-70 et
+    R. 732-71 en donnent les points « pour l'année au titre de laquelle [les cotisations]
+    sont dues », en fonction des revenus professionnels, sans dire l'année au prorata.
+    Le moteur les compte sur le revenu de ses mois, pour ses mois. La pratique de la MSA
+    n'est pas lue (relu le 18 octobre 2026) : une source à demander à la caisse.
   - >-
     Le chef à titre secondaire des pensions prenant effet depuis 2026 : la loi n° 2025-199
     abroge L. 732-28, et le décret n° 2025-1409 R. 732-65 pour ces pensions ; la part a du

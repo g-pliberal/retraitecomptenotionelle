@@ -31,11 +31,22 @@ effet: >-
   2026 (action 131), l'année où l'exploitant cesse, qu'il cotise entière (L. 731-10-1),
   ouvre à la complémentaire les points d'une année : le collaborateur y a ses 88 points,
   et non leurs mois ; le chef les avait déjà, son revenu des mois rapporté au repère des
-  mêmes mois.
+  mêmes mois. Depuis le 18 octobre 2026, l'année où il s'installe après le 1er janvier
+  n'ouvre aucun point : sans cotisation de l'année (R. 731-57), D. 732-155 n'en porte
+  aucun au compte.
 sources:
-  lu_le: 2026-10-17
+  lu_le: 2026-10-18
   prochaine_relecture: 2027-03-31
   a_relire:
+  - >-
+    L'année que R. 731-83 fait cotiser au prorata : D. 732-155 écrit un « nombre annuel
+    de points », 100 puis 133 « par an » au minimum, P = N × RP / 1 820 SMIC au-delà,
+    jusqu'aux périodes de 2025 (LEGIARTI000006597593, LEGIARTI000034578860), et le tire
+    de « la cotisation acquittée par l'assuré pour l'année considérée » depuis 2026, P =
+    C / [(1 820 SMIC × T) / N] (LEGIARTI000049904715) : une année au prorata n'en aurait
+    plus que ses mois. Le moteur garde au chef les points d'une année, et au
+    collaborateur ceux de ses mois ; la pratique de la MSA n'est pas lue (relu le 18
+    octobre 2026).
   - >-
     Dire la première année de cotisation assise sur 600 SMIC : le décret n° 2004-783,
     publié au Journal officiel du 1er août 2004, ne la nomme pas dans ce qui en a été lu,

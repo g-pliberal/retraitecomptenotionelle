@@ -7,7 +7,7 @@ etat: conforme
 etape: liquider_chaque_regime
 effet: Toute pension du régime général et des régimes alignés.
 sources:
-  lu_le: 2026-10-16
+  lu_le: 2026-10-18
   prochaine_relecture: 2027-06-30
   lectures:
   - type: service_public
@@ -71,6 +71,28 @@ sources:
       la recherche de la base de la Cnav et sur le site de l'Assemblée nationale
     url: https://legislation.lassuranceretraite.fr/expose?file_leaf_ref=retraite_personnelle_taux_duree_assurance_pour_taux_plein_ex.aspx
     date: 2026-10-16
+  - type: legifrance
+    reference: >-
+      L'année d'installation de l'exploitant agricole. Code rural, R. 731-57
+      (LEGIARTI000006597173, depuis le 22 avril 2005) : les cotisations « sont fixées pour
+      chaque année civile », et « la situation des exploitants agricoles est appréciée au
+      premier jour de l'année civile au titre de laquelle elles sont dues » ; de même
+      l'article 2 du décret n° 84-936 du 22 octobre 1984 (LEGIARTI000006767540, jusqu'au
+      22 avril 2005), puis L. 731-10-1. R. 732-48 ne compte que l'année « au cours de
+      laquelle l'assuré s'est acquitté de l'ensemble des cotisations dont il était
+      redevable ». Lus dans l'index LEGI du dépôt
+    date: 2026-10-18
+  - type: autre
+    reference: >-
+      MSA Île-de-France, dépliant « Cotisations sociales des nouveaux installés » : « si
+      vous vous installez après le 1er janvier d'une année, vous ne serez redevable de
+      cotisations et contributions qu'à partir de l'année suivante », la cotisation
+      ATEXA seule étant due dès l'installation. Réponse du ministre de l'agriculture à la
+      question écrite n° 42225 (JO du 17 août 2004) : « les exploitants installés
+      postérieurement au 1er janvier ne sont pas redevables de cotisations pour l'année
+      en cours » ; celle à la question n° 10883 (JO du 3 février 2026) le redit
+    url: https://iledefrance.msa.fr/lfp/documents/98865/79827044/D%C3%A9pliant+cotisations+sociales+des+nouveaux+install%C3%A9s.pdf
+    date: 2026-10-18
 textes_a_rattacher:
 - reference: L. 351-1 CSS
 - reference: R. 351-6 CSS
@@ -131,3 +153,12 @@ code:
     revenu de ses mois porté à douze (`Carriere.part_cotisee_ligne`) : voir les fiches
     retraite_proportionnelle_msa, assiette_minimale_agricole et
     pension_non_salaries_agricoles_2026.
+
+
+    L'année où il s'installe après le 1er janvier ne compte, à l'inverse, aucun
+    trimestre, ni dans la durée de son régime ni dans celle du taux : il n'y doit rien
+    (R. 731-57, L. 731-10-1), et n'y porte ni points ni revenu
+    (`Carriere.installation_agricole`, `installationAgricole` en JavaScript, depuis le
+    18 octobre 2026). C'est la ligne agricole d'une année que ses lignes agricoles ne
+    remplissent pas, sans ligne agricole l'année d'avant et avec une l'année d'après,
+    depuis les cotisations de 1985, les premières que fixe le décret n° 84-936.

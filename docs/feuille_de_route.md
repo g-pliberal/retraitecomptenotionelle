@@ -4163,15 +4163,16 @@ R. 111-2 ; la condition de L. 816-1 ; le tableau de 2008 des régimes
 
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
-**Reprise, au 17 octobre 2026.** Faits, des coupures au mois à l'année où
-l'exploitant cesse, ses points et son revenu compris : voir les notes. Restent :
-des classes, l'acte vétérinaire (au propriétaire), des décrets non lus ; les
-textes d'avant 2003 de `coefficients_anticipation_agirc_arrco` ; de
-`decote_avant_1983`, l'ajournement des artisans et commerçants et les « soixante
-et un ans » agricoles, aux décrets de 1956 à 1968 (au propriétaire) ; les artisans
-et commerçants, `pension_non_salaries_agricoles_2026` ; les années incomplètes de
-l'exploitant (installation, R. 731-83, points de la RCO non proratisés), et ce
-qu'il verse l'année où il cesse, aux mois dans le compte. Détail : les notes.
+**Reprise, au 18 octobre 2026.** Faits, des coupures au mois aux années où
+l'exploitant cesse et s'installe, et les points d'une année incomplète à la
+CNAVPL : voir les notes. Restent : des classes, l'acte vétérinaire (au
+propriétaire), des décrets non lus ; les textes d'avant 2003 de
+`coefficients_anticipation_agirc_arrco` ; de `decote_avant_1983`, l'ajournement
+des artisans et commerçants et les « soixante et un ans » agricoles, aux décrets de
+1956 à 1968 (au propriétaire) ; les artisans et commerçants,
+`pension_non_salaries_agricoles_2026` ; de l'exploitant, le statut au 1er janvier
+de chaque année, les points d'une année au prorata (R. 731-83 ; au propriétaire, la
+pratique de la MSA) et ce qu'il verse, aux mois dans le compte. Détail : les notes.
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre
 session, à la demande du propriétaire, après avoir vérifié qu'elle ne lui
