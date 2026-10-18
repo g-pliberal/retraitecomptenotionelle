@@ -1876,11 +1876,13 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
   if (regle !== null
       && (reference === "25_meilleures_annees" || reference === "10_meilleures_annees")) {
     // Une année « valide » si son salaire, toutes activités du régime
-    // réunies, atteint le seuil d'un trimestre — ou si le relevé lui en
-    // reconnaît un. Voir le Python.
+    // réunies, atteint le seuil d'un trimestre — celui de son département
+    // d'outre-mer, s'il y a lieu — ou si le relevé lui en reconnaît un. Voir
+    // le Python.
     const validantes = new Set();
     for (const [annee, [somme]] of parAnnee) {
-      if (trimestres.get(annee)[0] >= 1 || moteur.macro.trimestresValides(somme, annee) >= 1) {
+      if (trimestres.get(annee)[0] >= 1
+          || moteur.macro.trimestresValides(somme, annee, carriere.outreMer(annee)) >= 1) {
         validantes.add(annee);
       }
     }

@@ -16,6 +16,7 @@
 
 import * as chrono from "./chronologie.js";
 import { preparer } from "./droit/preparer.js";
+import { DEPARTEMENTS_D_OUTRE_MER } from "./macro.js";
 import {
   MOIS_PAR_AN,
   DateMois,
@@ -154,6 +155,10 @@ export class AnneeCarriere {
     //: met à la place de la réduction générale (L. 752-3-2) ; vide sinon, et
     //: sur une année non cotisée. Il ne change aucun droit. Voir carriere.py.
     lodeom = "",
+    //: Le DÉPARTEMENT D'OUTRE-MER où l'assuré a travaillé dans l'année, qui
+    //: donne à ses trimestres leur seuil (R. 753-21, R. 351-9) ; vide en
+    //: métropole, et sur une année non cotisée. Voir carriere.py.
+    outre_mer = "",
     //: Salaire porté au compte du régime général quand l'année est RÉTABLIE :
     //: celle d'un fonctionnaire parti sans droit à pension (L. 65 du code des
     //: pensions) — le dernier traitement soumis à retenue, sur la fraction de
@@ -179,8 +184,8 @@ export class AnneeCarriere {
       fraction_annee,
       services_fonction_publique, services_plafond_trimestres_par_enfant,
       reputes_cotises_enveloppe, reputes_cotises_plafond,
-      assiette_minimale_base, dispense_assiette_minimale, lodeom, revenu_retabli,
-      jours_de_services, micro,
+      assiette_minimale_base, dispense_assiette_minimale, lodeom, outre_mer,
+      revenu_retabli, jours_de_services, micro,
     });
   }
 
@@ -609,7 +614,12 @@ function ligneAnnuelle({
   micro = "",
   dispense = "",
   lodeom = "",
+  outreMer = "",
 }) {
+  if (outreMer && !Object.hasOwn(DEPARTEMENTS_D_OUTRE_MER, outreMer)) {
+    throw new Error(`département d'outre-mer inconnu : ${outreMer} — `
+      + Object.keys(DEPARTEMENTS_D_OUTRE_MER).join(", "));
+  }
   const cotise = typePeriode === "emploi";
   const motifs = macro.paquet.periodes_non_travaillees ?? {};
   if (cotise) {
@@ -660,7 +670,7 @@ function ligneAnnuelle({
   const trimestres = trimestresDeclares === null
     ? (publies !== null ? publies : cotise ? macro.trimestresValides(
       Math.max(micro ? revenuCotise(macro, revenu, micro, annee, part) : revenu, minimale),
-      annee)
+      annee, outreMer)
       : (regle !== null ? regle[0] : 4))
     : Math.floor(trimestresDeclares + 0.5);
   return new AnneeCarriere({
@@ -679,6 +689,8 @@ function ligneAnnuelle({
     dispense_assiette_minimale: dispenseRetenue,
     // Le barème de la Lodeom de l'employeur, que seule la fiche de paie lit.
     lodeom: cotise ? lodeom : "",
+    // Le département d'outre-mer, qui a donné son seuil aux trimestres.
+    outre_mer: cotise ? outreMer : "",
     micro,
     // Pendant une période indemnisée, les régimes complémentaires attribuent
     // des points sur le salaire d'avant. L'Unédic les paie pour le chômage ;
@@ -1430,6 +1442,7 @@ export class Carriere {
         trimestresMaximum: trimestresCivils(mois),
         micro: source.micro,
         lodeom: source.lodeom,
+        outreMer: source.outre_mer,
       });
     };
     // Le mois de liquidation n'est pas travaillé.
@@ -1814,6 +1827,14 @@ export class Carriere {
   }
 
   /**
+   * Le département d'outre-mer où l'assuré a travaillé dans l'année, s'il y a
+   * travaillé : une seule de ses activités suffit (R. 351-9). Voir carriere.py.
+   */
+  outreMer(annee) {
+    return this.lignesDe(annee).find((ligne) => ligne.outre_mer)?.outre_mer ?? "";
+  }
+
+  /**
    * La qualité de non-salarié agricole de l'année : "chef" quand la ligne du
    * chef d'exploitation est l'activité principale, "chef_secondaire" quand
    * une autre activité la précède, "collaborateur" pour le conjoint
@@ -2108,6 +2129,25 @@ export class Carriere {
  * `_lignes_apres_depart` du Python.
  */
 /**
+ * R. 351-9 : depuis 1972, l'assuré qui a exercé son activité dans un
+ * département d'outre-mer « au cours de tout ou partie d'une année » y prend
+ * le SMIC de ce département.
+ */
+export const ANNEE_DU_SMIC_DU_DEPARTEMENT = 1972;
+
+/**
+ * Le département d'outre-mer de l'année d'un parcours : celui du métier qui en
+ * occupe le plus de mois, comme son statut ; depuis 1972, celui de tout métier
+ * de l'année. Voir `_departement_de_l_annee` du Python.
+ */
+function departementDeLAnnee(annee, dominant, metiers) {
+  if (dominant.outre_mer || annee < ANNEE_DU_SMIC_DU_DEPARTEMENT) {
+    return dominant.outre_mer ?? "";
+  }
+  return metiers.find((metier) => metier.outre_mer)?.outre_mer ?? "";
+}
+
+/**
  * Ce qu'une année ENTIÈRE de ce métier rapporte, en euros de l'année : son
  * niveau fois le SMIC annuel sous `PROFIL_SMIC`, fois le salaire moyen déformé
  * par le profil sinon. Voir `revenu_annuel` du Python.
@@ -2200,6 +2240,7 @@ function lignesDuReleve(dateNaissance, periodes, fin, macro, identifiant,
         : 1.0,
       dispense: attributs.dispense_assiette_minimale ?? "",
       lodeom: attributs.lodeom ?? "",
+      outreMer: attributs.outre_mer ?? "",
     });
   });
   return limiterChomageNonIndemnise(
@@ -2271,7 +2312,7 @@ export function prolongerReleve(releve, fin, macro, interruptions = new Map(),
         revenu *= quotiteDeLAnnee(annee, new DateMois(annee, 1), fin, progressive, quotite);
       }
       // L'emploi prolongé est celui de la dernière année, chez le même
-      // employeur : sa Lodeom le suit.
+      // employeur : sa Lodeom le suit, et son département.
       lignes.push({
         annee,
         affiliation: source.affiliation,
@@ -2281,6 +2322,7 @@ export function prolongerReleve(releve, fin, macro, interruptions = new Map(),
         quotite,
         dispense_assiette_minimale: typePeriode === "emploi" ? dispenses.get(annee) ?? "" : "",
         lodeom: typePeriode === "emploi" ? source.lodeom ?? "" : "",
+        outre_mer: typePeriode === "emploi" ? source.outre_mer ?? "" : "",
       });
     });
   }
@@ -2378,6 +2420,8 @@ function lignesDuParcours(dateNaissance, periodesDeclarees, fin, macro, progress
       // Coupée au 1er janvier comme la quotité, la dominante la dit.
       dispense: principal.dispense_assiette_minimale ?? "",
       lodeom: principal.lodeom ?? "",
+      outreMer: departementDeLAnnee(annee, principal,
+        periodes.filter((_, i) => moisParMetier[i] > 0).map(({ metier }) => metier)),
     }));
   }
   const limitees = limiterChomageNonIndemnise(lignes, anneeNaissance);
@@ -2409,6 +2453,7 @@ function lignesDuParcours(dateNaissance, periodesDeclarees, fin, macro, progress
         micro: metier.micro ?? "",
         dispense: metier.dispense_assiette_minimale ?? "",
         lodeom: metier.lodeom ?? "",
+        outreMer: metier.outre_mer ?? "",
       }));
     }
   }

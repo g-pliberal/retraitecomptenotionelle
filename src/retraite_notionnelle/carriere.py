@@ -48,7 +48,7 @@ from .donnees.chargement import (
     une_fois_par_instantane,
     validant_compense,
 )
-from .donnees.macro import DonneesMacro
+from .donnees.macro import DEPARTEMENTS_D_OUTRE_MER, DonneesMacro
 from . import chronologie as chrono
 from .droit.preparer import preparer
 from .somme import somme_ordonnee
@@ -217,6 +217,11 @@ class AnneeCarriere:
     #: met à la place de la réduction générale (L. 752-3-2) ; vide sinon, et
     #: sur une année non cotisée. Il ne change aucun droit.
     lodeom: str = ""
+    #: Le DÉPARTEMENT D'OUTRE-MER où l'assuré a travaillé dans l'année — une
+    #: clef de :data:`~retraite_notionnelle.donnees.macro.DEPARTEMENTS_D_OUTRE_MER` —,
+    #: qui donne à ses trimestres leur seuil (R. 753-21, R. 351-9) ; vide en
+    #: métropole, et sur une année non cotisée.
+    outre_mer: str = ""
     #: Cette année entre-t-elle dans les SERVICES d'un régime de la fonction
     #: publique ? Ce régime-là ne proratise pas sur la durée d'assurance mais
     #: sur les services et bonifications (L. 13 du code des pensions), et
@@ -440,6 +445,11 @@ class LigneRelevee:
     #: (``legislation/prelevements_remuneration.yaml``). Vide : la réduction
     #: générale. Seule la fiche de paie le lit.
     lodeom: str = ""
+    #: Le département d'outre-mer où l'assuré a travaillé cette année :
+    #: ``guadeloupe``, ``guyane``, ``martinique``, ``reunion``. Vide : la
+    #: métropole. Il donne leur seuil aux trimestres que la ligne ne déclare
+    #: pas (R. 753-21, R. 351-9).
+    outre_mer: str = ""
 
 
 #: Article R. 351-12, 4°, d, du code de la sécurité sociale : le chômage NON
@@ -611,6 +621,7 @@ def _ligne_annuelle(
     micro: str = "",
     dispense: str = "",
     lodeom: str = "",
+    outre_mer: str = "",
 ) -> AnneeCarriere:
     """Une année de carrière, une fois connus son revenu et sa nature.
 
@@ -633,7 +644,13 @@ def _ligne_annuelle(
 
     ``lodeom``, le barème de l'employeur d'outre-mer, ne sert qu'à la fiche de
     paie d'une année cotisée.
+
+    ``outre_mer``, le département d'outre-mer où l'assuré a travaillé, donne
+    leur seuil aux trimestres d'une année cotisée (R. 753-21, R. 351-9).
     """
+    if outre_mer and outre_mer not in DEPARTEMENTS_D_OUTRE_MER:
+        raise ValueError(f"département d'outre-mer inconnu : {outre_mer!r} — "
+                         + ", ".join(DEPARTEMENTS_D_OUTRE_MER))
     cotise = type_periode == "emploi"
     regle = None if cotise else motifs.get(type_periode, motifs.get("sans_activite"))
     if cotise:
@@ -661,7 +678,8 @@ def _ligne_annuelle(
     if trimestres_declares is None:
         validant = (revenu_cotise(macro, revenu, micro, annee, part)
                     if micro else revenu)
-        trimestres = (macro.trimestres_valides(max(validant, minimale), annee)
+        trimestres = (macro.trimestres_valides(max(validant, minimale), annee,
+                                               outre_mer)
                       if cotise
                       else (regle.trimestres_assimiles if regle else 4))
         if cotise and micro:
@@ -697,6 +715,7 @@ def _ligne_annuelle(
         assiette_minimale_base=minimale,
         dispense_assiette_minimale=dispense,
         lodeom=lodeom if cotise else "",
+        outre_mer=outre_mer if cotise else "",
         cotisations_versees=cotise,
         micro=micro,
         # Pendant une période indemnisée, les régimes complémentaires
@@ -1636,6 +1655,12 @@ class Carriere:
         """Toutes les lignes d'une année, l'activité principale en tête."""
         return self._lignes_par_annee.get(annee, ())
 
+    def outre_mer(self, annee: int) -> str:
+        """Le département d'outre-mer où l'assuré a travaillé dans l'année, s'il
+        y a travaillé : une seule de ses activités suffit (R. 351-9)."""
+        return next((ligne.outre_mer for ligne in self.lignes_de(annee)
+                     if ligne.outre_mer), "")
+
     def qualite_agricole(self, annee: int) -> str | None:
         """La qualité de non-salarié agricole de l'année : ``"chef"`` quand la
         ligne du chef d'exploitation est l'activité principale (« à titre
@@ -1868,6 +1893,7 @@ class Carriere:
                 trimestres_maximum=trimestres_civils(mois),
                 micro=source.micro,
                 lodeom=source.lodeom,
+                outre_mer=source.outre_mer,
             )
 
         # Le mois de liquidation n'est pas travaillé : l'année du départ
@@ -2279,6 +2305,7 @@ def _lignes_du_releve(date_naissance: DateMois, periodes: list[dict], fin: DateM
                      if periode["sorte"] == chrono.EMPLOI else 1.0),
             dispense=attributs.get("dispense_assiette_minimale", ""),
             lodeom=attributs.get("lodeom", ""),
+            outre_mer=attributs.get("outre_mer", ""),
         ))
     return limiter_chomage_non_indemnise(
         lignes, date_naissance.annee,
@@ -2368,7 +2395,7 @@ def prolonger_releve(releve: list[LigneRelevee], fin: DateMois, macro: DonneesMa
                 revenu *= _quotite_de_l_annee(annee, DateMois(annee, 1), fin, progressive,
                                               quotite)
             # L'emploi prolongé est celui de la dernière année, chez le même
-            # employeur : sa Lodeom le suit.
+            # employeur : sa Lodeom le suit, et son département.
             lignes.append(LigneRelevee(annee=annee, affiliation=source.affiliation,
                                        revenu=revenu, type_periode=type_periode,
                                        quotite=quotite,
@@ -2376,7 +2403,9 @@ def prolonger_releve(releve: list[LigneRelevee], fin: DateMois, macro: DonneesMa
                                            dispenses.get(annee, "")
                                            if type_periode == "emploi" else ""),
                                        lodeom=(source.lodeom if type_periode == "emploi"
-                                               else "")))
+                                               else ""),
+                                       outre_mer=(source.outre_mer
+                                                  if type_periode == "emploi" else "")))
     return lignes
 
 
@@ -2496,6 +2525,9 @@ def _lignes_du_parcours(date_naissance: DateMois, periodes: list[dict], fin: Dat
             # Coupée au 1er janvier comme la quotité, la dominante la dit.
             dispense=dominant.get("dispense_assiette_minimale", ""),
             lodeom=dominant.get("lodeom", ""),
+            outre_mer=_departement_de_l_annee(annee, dominant, [
+                metier for (metier, _, _), mois in zip(principaux, mois_par_metier)
+                if mois > 0]),
         ))
     lignes = limiter_chomage_non_indemnise(lignes, annee_naissance)
 
@@ -2525,12 +2557,29 @@ def _lignes_du_parcours(date_naissance: DateMois, periodes: list[dict], fin: Dat
                 micro=metier.get("micro", ""),
                 dispense=metier.get("dispense_assiette_minimale", ""),
                 lodeom=metier.get("lodeom", ""),
+                outre_mer=metier.get("outre_mer", ""),
             ))
 
     dates_entree: dict[str, DateMois] = {}
     for metier, ouverture, _ in sorted(principaux + cumuls, key=lambda p: p[1].rang):
         dates_entree.setdefault(metier["affiliation"], ouverture)
     return lignes, dates_entree
+
+
+#: R. 351-9 : depuis 1972, l'assuré qui a exercé son activité dans un
+#: département d'outre-mer « au cours de tout ou partie d'une année » y prend
+#: le SMIC de ce département.
+ANNEE_DU_SMIC_DU_DEPARTEMENT = 1972
+
+
+def _departement_de_l_annee(annee: int, dominant: dict, metiers: list[dict]) -> str:
+    """Le département d'outre-mer de l'année d'un parcours : celui du métier qui
+    en occupe le plus de mois, comme son statut ; depuis 1972, celui de tout
+    métier de l'année, R. 351-9 retenant le SMIC du département dès qu'une
+    partie de l'année y a été travaillée."""
+    if dominant.get("outre_mer") or annee < ANNEE_DU_SMIC_DU_DEPARTEMENT:
+        return dominant.get("outre_mer", "")
+    return next((metier["outre_mer"] for metier in metiers if metier.get("outre_mer")), "")
 
 
 def revenu_annuel(macro: DonneesMacro, metier: dict, age: float, annee: int,

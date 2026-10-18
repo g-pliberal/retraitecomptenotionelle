@@ -2627,12 +2627,14 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
     reference = periode.salaire_reference
     if regle is not None and reference in ("25_meilleures_annees", "10_meilleures_annees"):
         # Une année « valide » au sens de R. 351-9 si son salaire, toutes
-        # activités du régime réunies, atteint le seuil d'un trimestre — ou si
-        # le relevé lui en reconnaît un.
+        # activités du régime réunies, atteint le seuil d'un trimestre — celui
+        # de son département d'outre-mer, s'il y a lieu — ou si le relevé lui
+        # en reconnaît un.
         validantes = {
             annee for annee in par_annee
             if trimestres[annee][0] >= 1
-            or moteur.macro.trimestres_valides(par_annee[annee][0], annee) >= 1
+            or moteur.macro.trimestres_valides(par_annee[annee][0], annee,
+                                               carriere.outre_mer(annee)) >= 1
         }
         return moyenne_selon_la_regle(
             regle, list(zip(annees_des_revenus, revenus)), trimestres, validantes,

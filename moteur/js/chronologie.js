@@ -884,6 +884,9 @@ export function duReleve({
     if (emploi && ligne.lodeom) {
       attributs.lodeom = ligne.lodeom;
     }
+    if (emploi && ligne.outre_mer) {
+      attributs.outre_mer = ligne.outre_mer;
+    }
     return fait(`releve_${i + 1}`, ASSURE, emploi ? EMPLOI : INTERRUPTION,
       `${quatre(ligne.annee)}-01-01`, `${quatre(ligne.annee + 1)}-01-01`, attributs);
   });

@@ -52,7 +52,9 @@ Ce que les faits portent, par sorte :
   ``dispense_assiette_minimale``, le motif qui dispense l'indépendant de
   l'assiette minimale — un parcours coupe aussi ses métiers où il change ;
   ``lodeom``, le barème de l'exonération de l'employeur d'outre-mer, que seule
-  la fiche de paie lit ;
+  la fiche de paie lit ; ``outre_mer``, le département d'outre-mer où la
+  période s'est passée — ``guadeloupe``, ``guyane``, ``martinique``,
+  ``reunion`` —, qui donne leur seuil aux trimestres de ses années ;
 * ``periode_d_interruption`` — le ``motif`` ; d'un relevé, aussi
   l'``affiliation``, le ``revenu`` de référence et les ``trimestres`` ;
 * ``periode_assimilee`` — le ``motif``, un des ``MOTIFS_D_ASSIMILATION`` ;
@@ -882,6 +884,8 @@ def du_releve(annee_naissance: int, sexe: str, releve: list["LigneRelevee"],
             attributs["dispense_assiette_minimale"] = ligne.dispense_assiette_minimale
         if emploi and ligne.lodeom:
             attributs["lodeom"] = ligne.lodeom
+        if emploi and ligne.outre_mer:
+            attributs["outre_mer"] = ligne.outre_mer
         periodes.append(fait(f"releve_{rang}", ASSURE, EMPLOI if emploi else INTERRUPTION,
                              f"{ligne.annee:04d}-01-01", f"{ligne.annee + 1:04d}-01-01",
                              attributs))
