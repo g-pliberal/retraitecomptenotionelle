@@ -1104,8 +1104,11 @@ la saisie du lecteur : une carrière, ses droits et sa pension, sous les
 réglages du simulateur. Ce que le site ne montre que sous les réglages de
 référence — le coût agrégé, chaque année de sa cascade et sa vue des flux, le
 coût des avantages non contributifs, les carrières types, les départs qui
-classent les écarts — ne se calcule qu'en Python (action 150) :
-`scripts/construire_donnees.py` le fabrique dans la table figée,
+classent les écarts — ne se calcule pas chez le lecteur (action 150) :
+`scripts/construire_donnees.py` le fabrique en Python, et fait simuler les
+carrières types et les départs par le portage, que node fait tourner sur le
+paquet du jour (`retraite_notionnelle/pont.py`, action 161, étape 5), dans la
+table figée,
 `data/derive/agregats.json`, que le paquet porte à côté du bilan figé, et les
 deux langages la lisent par les mêmes accesseurs, `donnees/agregats.py` et
 `moteur/js/agregats.js`, qui ne calculent rien qu'une règle décide. Une page

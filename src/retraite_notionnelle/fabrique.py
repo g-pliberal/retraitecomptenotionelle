@@ -30,9 +30,12 @@ SANS_MEMOIRE = "FABRIQUE_SANS_MEMOIRE"
 
 #: Ce que chaque étape lit et écrit, en chemins du dépôt : un dossier vaut tout
 #: ce que git y suit ou y verrait. Large à dessein : une entrée oubliée
-#: laisserait passer ici un fichier périmé, que GitHub seul verrait.
+#: laisserait passer ici un fichier périmé, que GitHub seul verrait. Le paquet
+#: lit le moteur du portage, qui calcule une part de ses agrégats (action 161,
+#: étape 5), sauf le texte des pages, dont il ne prend qu'un extrait.
 ETAPES: dict[str, tuple[str, ...]] = {
-    "paquet": ("src", "data", "scripts", "moteur/donnees.json"),
+    "paquet": ("src", "data", "scripts", "moteur/donnees.json", "moteur/js",
+               ":(exclude)moteur/js/pages.js"),
     "témoins": ("src", "data", "scripts", "moteur", "index.html",
                 "tests/temoins/simulations.json", "tests/temoins/pages.json"),
     "chiffrage": ("src", "data", "scripts", "docs/chiffrage_plf.md",
@@ -65,8 +68,9 @@ def extrait(texte: str, motif: str) -> str:
     return trouve.group(0) if trouve else texte
 
 
-def empreinte(etape: str) -> str | None:
-    """L'empreinte de ce que l'étape lit et écrit ; ``None`` hors d'un dépôt git."""
+def fichiers(etape: str) -> set[str] | None:
+    """Les fichiers que l'étape lit et écrit, en chemins du dépôt, tels que git
+    les suit ou les verrait ; ``None`` hors d'un dépôt git."""
     try:
         listes = subprocess.run(
             ["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard",
@@ -74,11 +78,20 @@ def empreinte(etape: str) -> str | None:
             check=True).stdout
     except (OSError, subprocess.CalledProcessError):
         return None
+    return {os.fsdecode(chemin) for chemin in listes.split(b"\0") if chemin}
+
+
+def empreinte(etape: str) -> str | None:
+    """L'empreinte de ce que l'étape lit et écrit ; ``None`` hors d'un dépôt git."""
+    lus = fichiers(etape)
+    if lus is None:
+        return None
     somme = hashlib.sha256(sys.version.encode() + _node())
-    for chemin in sorted(set(filter(None, listes.split(b"\0")))):
+    for nom in sorted(lus, key=os.fsencode):
+        chemin = os.fsencode(nom)
         somme.update(chemin + b"\0")
         try:
-            contenu = (RACINE_PROJET / os.fsdecode(chemin)).read_bytes()
+            contenu = (RACINE_PROJET / nom).read_bytes()
         except OSError:          # au registre de git, mais effacé du répertoire
             somme.update(b"-")
             continue

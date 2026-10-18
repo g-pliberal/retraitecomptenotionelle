@@ -2316,7 +2316,7 @@ def _bilan(contexte=None) -> dict:
     }
 
 
-def _agregats(contexte=None) -> dict:
+def _agregats(contexte=None, paquet: bytes | None = None) -> dict:
     """Ce que les trois pages qui agrègent lisent du modèle, sous la référence.
 
     Coût, Carrières types et Droits non cotisés se calculaient chez le
@@ -2328,12 +2328,15 @@ def _agregats(contexte=None) -> dict:
     paquet.
 
     Les systèmes sont ceux que le site compare (``SCENARIOS_MONTRES`` de
-    ``moteur/js/pages.js``), comme dans le bilan.
+    ``moteur/js/pages.js``), comme dans le bilan. La grille des carrières
+    types et les départs du classement se calculent par le portage, sur
+    ``paquet`` — les octets d'un paquet de données ; sans lui, sur
+    ``moteur/donnees.json``.
     """
     from retraite_notionnelle.avantages import (
-        LIBELLES_MOTIFS, LIGNES_LUES, MOTIFS, NEUTRALISATIONS, carriere_variante,
+        LIBELLES_MOTIFS, LIGNES_LUES, MOTIFS, NEUTRALISATIONS,
     )
-    from retraite_notionnelle.castypes import CAS_TYPES, GENERATIONS, calculer_cas_types
+    from retraite_notionnelle.castypes import CAS_TYPES, GENERATIONS, cases_de_la_grille
     from retraite_notionnelle.contexte import Contexte
     from retraite_notionnelle.cout import (
         COMPOSANTE_GARANTIE, calculer_dette, masse_du_scenario, taux_tva_requis,
@@ -2342,23 +2345,38 @@ def _agregats(contexte=None) -> dict:
     from retraite_notionnelle.donnees.agregats import (
         figer_avantages, figer_cas_types, figer_cout, figer_departs, figer_variantes,
     )
-    from retraite_notionnelle import memoire
+    from retraite_notionnelle import memoire, pont
     from retraite_notionnelle.web.site import module
 
     contexte = contexte or Contexte()
     simulateur = contexte.simulateur()
     pages = module("pages")
     compares = [scenario for scenario in pages.SCENARIOS_MONTRES if scenario != "actuel"]
-    # LES DEUX DÉPARTS QUE COMPARE DROITS NON COTISÉS : le cas type actif, et
-    # la même carrière déclassée, partis au même âge. C'est la page qui les
-    # choisit (``CLASSEMENT_COMPARE``), et la table la suit.
+    # LA GRILLE DE CARRIÈRES TYPES, ET LES DEUX DÉPARTS QUE COMPARE DROITS NON
+    # COTISÉS : le cas type actif, et la même carrière déclassée, partis au
+    # même âge, que la page choisit (``CLASSEMENT_COMPARE``). Le portage les
+    # simule (action 161, étape 5) : le Python fixe l'âge de chaque départ et
+    # écarte les cases que le droit écarte, node calcule le reste, au bit près
+    # du moteur Python, ce que ``test_agregats.py`` exige.
+    options, echecs = cases_de_la_grille(simulateur)
+    demandes = [{"cle": f"{code}|{generation}", "options": carriere}
+                for (code, generation), carriere in options.items()]
     classement = pages.CLASSEMENT_COMPARE
     cas = next(cas for cas in CAS_TYPES if cas.code == classement["cas"])
+    compares_ = (cas.affiliation, classement["declassement"])
+    demandes += [{"cle": f"classement|{generation}|{affiliation}",
+                  "options": {**cas.options(generation, classement["age"]),
+                              "affiliation": affiliation}}
+                 for generation in classement["generations"] for affiliation in compares_]
+    lus, refus = pont.carrieres(demandes, compares, paquet)
+    for cle, motif in refus.items():
+        if cle.startswith("classement|"):
+            raise ValueError(f"le portage refuse le départ {cle} du classement : {motif}")
+        code, generation = cle.split("|")
+        echecs[(code, int(generation))] = motif
     departs = {
-        generation: figer_departs(*(
-            simulateur.simuler(carriere_variante(
-                simulateur, cas, generation, classement["age"], affiliation)).actuel
-            for affiliation in (None, classement["declassement"])))
+        generation: figer_departs(*(lus[f"classement|{generation}|{affiliation}"]
+                                    for affiliation in compares_))
         for generation in classement["generations"]
     }
     # LA DETTE SOUS UN TAUX DÉCALÉ, dans les deux sens : la page Coût cite ce
@@ -2378,8 +2396,9 @@ def _agregats(contexte=None) -> dict:
                            taux_tva_requis(cout.solde, contexte.base, AssietteTva(DONNEES))),
         # LA GRILLE DE CARRIÈRES TYPES : treize cas, sept générations, et
         # l'âge où chacun part. La page la montre telle quelle.
-        "cas_types": figer_cas_types(calculer_cas_types(simulateur), simulateur,
-                                     CAS_TYPES, GENERATIONS, compares),
+        "cas_types": figer_cas_types(
+            {cle: lus[f"{cle[0]}|{cle[1]}"] for cle in options if f"{cle[0]}|{cle[1]}" in lus},
+            echecs, simulateur, CAS_TYPES, GENERATIONS, compares),
         # CE QUE COÛTENT LES AVANTAGES NON CONTRIBUTIFS, année par année, que
         # Droits non cotisés montre et que Coût cite.
         "avantages": figer_avantages(contexte.avantages(), LIGNES_LUES, NEUTRALISATIONS,
@@ -2409,14 +2428,15 @@ def _agregats(contexte=None) -> dict:
     }
 
 
-def construire_agregats(contexte=None) -> bytes:
+def construire_agregats(contexte=None, paquet: bytes | None = None) -> bytes:
     """La table des pages qui agrègent, écrite dans ``data/derive/``, chaque
-    élément sur sa ligne (``json_en_lignes``).
+    élément sur sa ligne (``json_en_lignes``) ; le portage en calcule une part
+    sur ``paquet`` (:func:`_agregats`).
 
     Un NaN ne passerait pas : le JSON ne l'écrit pas, et le navigateur
     refuserait le paquet entier. Mieux vaut que la fabrication s'arrête ici.
     """
-    table = _agregats(contexte)
+    table = _agregats(contexte, paquet)
     json.dumps(table, allow_nan=False)
     return (json_en_lignes(table) + "\n").encode("utf-8")
 
@@ -2577,7 +2597,9 @@ def sorties(contexte=None) -> dict[Path, bytes]:
     navigateur ne peuvent alors pas diverger d'un chiffre.
     """
     bilan = construire_bilan(contexte)
-    agregats = construire_agregats(contexte)
+    # Le portage calcule une part des agrégats sur les données du jour, dont
+    # le paquet n'est pas encore écrit : ce paquet-là, sans ses agrégats.
+    agregats = construire_agregats(contexte, construire(bilan, b"{}"))
     return {EQUILIBRE: bilan, AGREGATS: agregats, PAQUET: construire(bilan, agregats),
             CALIBRATIONS: serialiser_calibrations(_table_calibrations()).encode("utf-8")}
 

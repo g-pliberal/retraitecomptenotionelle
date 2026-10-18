@@ -783,6 +783,34 @@ def carriere_de_la_grille(simulateur: Simulateur, cas: CasType, generation: int,
     return carriere
 
 
+@dans_un_instantane
+def cases_de_la_grille(
+    simulateur: Simulateur,
+    cas_types: tuple[CasType, ...] = CAS_TYPES,
+    generations: tuple[int, ...] = GENERATIONS,
+    liquidation: str = "droit",
+) -> tuple[dict[tuple[str, int], dict], dict[tuple[str, int], str]]:
+    """Les cases de la grille que le portage simule (``pont.carrieres``,
+    action 161, étape 5) : les options de la carrière d'un seul statut de
+    chacune, partie à l'âge que le pilote lui fixe ; puis les motifs des cases
+    que le droit écarte (:func:`carriere_de_la_grille`). Sous les conventions
+    de projection du COR, la carrière d'un cas type se déforme en Python
+    (:func:`primes_projetees`, l'entrée tardive) : rien ne passe."""
+    if simulateur.parametres.conventions_cor:
+        raise ValueError("les conventions de projection du COR ne passent pas au portage")
+    options: dict[tuple[str, int], dict] = {}
+    echecs: dict[tuple[str, int], str] = {}
+    for cas in cas_types:
+        for generation in generations:
+            try:
+                carriere = carriere_de_la_grille(simulateur, cas, generation, liquidation)
+            except (ValueError, KeyError) as erreur:
+                echecs[(cas.code, generation)] = str(erreur)
+                continue
+            options[(cas.code, generation)] = cas.options(generation, carriere.age_liquidation)
+    return options, echecs
+
+
 @dataclass(frozen=True)
 class EcartsMedians:
     """L'ordre de grandeur de ce que la proposition change, lu sur la grille.

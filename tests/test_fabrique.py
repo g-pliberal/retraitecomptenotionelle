@@ -18,6 +18,16 @@ def test_le_paquet_ne_lit_de_pages_js_que_les_systemes_montres():
     assert fabrique.extrait("sans motif", motif) == "sans motif"
 
 
+def test_le_paquet_suit_le_moteur_du_portage_mais_pas_le_texte_des_pages():
+    """La table des agrégats se calcule par le portage (action 161, étape 5) :
+    une retouche du moteur JavaScript refait le paquet, une retouche du texte
+    des pages non, qui n'en donne que la liste des systèmes montrés."""
+    lus = fabrique.fichiers("paquet")
+    assert {"moteur/js/simulateur.js", "moteur/js/mortalite.js", "moteur/js/libm.js",
+            "moteur/js/droit/liquider.js", "src/retraite_notionnelle/pont.mjs"} <= lus
+    assert "moteur/js/pages.js" not in lus
+
+
 def test_une_etape_retenue_est_a_jour_tant_que_rien_ne_bouge(monkeypatch, tmp_path):
     monkeypatch.setattr(fabrique, "FICHIER", tmp_path / "fabrique.json")
     empreintes = {"paquet": "a"}

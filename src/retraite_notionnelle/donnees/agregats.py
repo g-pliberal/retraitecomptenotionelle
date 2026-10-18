@@ -111,10 +111,13 @@ class CasTypesFiges:
         raise KeyError(f"cas type absent de la table figée : {code!r}")
 
 
-def figer_cas_types(resultat, simulateur, cas_types, generations,
+def figer_cas_types(resultats, echecs, simulateur, cas_types, generations,
                     scenarios) -> dict:
     """La grille de ``castypes.calculer_cas_types``, et l'âge de départ de
-    chaque case, pour les ``scenarios`` que les pages comparent."""
+    chaque case, pour les ``scenarios`` que les pages comparent. Le portage la
+    calcule (``pont.carrieres``, action 161, étape 5) : ``resultats`` est ce
+    qu'il rend de chaque case, sous ``(code, génération)``, et ``echecs`` le
+    motif de celles que le droit ou le portage écartent."""
     return {
         "generations": list(generations),
         "cas": [
@@ -130,18 +133,16 @@ def figer_cas_types(resultat, simulateur, cas_types, generations,
         ],
         "resultats": {
             _cle_grille(code, generation): {
-                "annee_liquidation": comparaison.carriere.annee_liquidation,
-                "annees_liquidation": {
-                    scenario: comparaison.carriere_de(scenario).annee_liquidation
-                    for scenario in scenarios
-                },
-                "variations": {scenario: comparaison.variation_totale(scenario)
+                "annee_liquidation": lu["annee_liquidation"],
+                "annees_liquidation": {scenario: lu["annees_liquidation"][scenario]
+                                       for scenario in scenarios},
+                "variations": {scenario: lu["variations"][scenario]
                                for scenario in scenarios},
             }
-            for (code, generation), comparaison in resultat.resultats.items()
+            for (code, generation), lu in resultats.items()
         },
         "echecs": {_cle_grille(code, generation): motif
-                   for (code, generation), motif in resultat.echecs.items()},
+                   for (code, generation), motif in echecs.items()},
     }
 
 
@@ -306,11 +307,11 @@ class ClassementFige:
 
 
 def figer_departs(actif, declasse) -> list[dict]:
-    """Les deux départs comparés, depuis le système actuel de chacune des deux
-    simulations (``Comparaison.actuel``)."""
-    return [{"pension_annuelle": actuel.pension_annuelle,
-             "trimestres_requis": actuel.trimestres_requis}
-            for actuel in (actif, declasse)]
+    """Les deux départs comparés : de chacun, la pension du système actuel et
+    la durée qu'il requiert, que le portage calcule (``pont.carrieres``)."""
+    return [{"pension_annuelle": lu["pension_annuelle"],
+             "trimestres_requis": lu["trimestres_requis"]}
+            for lu in (actif, declasse)]
 
 
 def _classement(brut: dict) -> ClassementFige:
