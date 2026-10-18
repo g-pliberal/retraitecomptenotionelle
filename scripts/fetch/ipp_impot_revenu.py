@@ -77,9 +77,11 @@ avec sa source (``origine`` de la marche) :
 - la part du veuf ayant un enfant à charge, que l'IPP ne fait naître qu'en
   2008, et que la rédaction de l'article 194 de 1996 donne déjà (« Marié ou
   veuf ayant un enfant à charge = 2,5 ») : elle vaut dès 1960 ;
-- la fin de la prime pour l'emploi, remplacée par la prime d'activité au
-  1er janvier 2016 (note de l'IPP), que la photographie de 2016 ne dit pas,
-  quelques cellules y restant pleines.
+- la fin de la prime pour l'emploi, aux revenus de 2014 : la loi de finances
+  rectificative pour 2014 (art. 28) abroge l'article 200 sexies dès
+  l'imposition des revenus de 2015 (BOI-IR-RICI-310-10-30-20150515), où la
+  note de l'IPP la fait durer jusqu'à la prime d'activité du 1er janvier
+  2016, et où sa photographie de 2016 garde quelques cellules pleines.
 
 Ce qu'il écarte : la ligne de la décote datée de 1959 (7 000 F et 14 000 F),
 que l'IPP ne commente pas et qui ne peut être une décote d'impôt — elle
@@ -206,9 +208,14 @@ BAREME = "impot_revenu.bareme_ir_depuis_1945.bareme"
 #: Les mesures que la photographie de l'IPP fait durer au-delà de leur fin :
 #: l'année de revenus où elles ne sont plus, et pourquoi.
 FINS = {
-    "prime_pour_l_emploi": (2016, "IPP, note : « À compter du 1er janvier 2016, la PPE "
-                                  "est remplacée par la prime d'activité » "
-                                  "(décrets n° 2015-1709 et 2015-1710)"),
+    "prime_pour_l_emploi": (2015, "BOI-IR-RICI-310-10-30-20150515 : ses commentaires « ne "
+                                  "trouvent plus à s'appliquer à compter de l'imposition des "
+                                  "revenus de 2015, compte tenu des dispositions de l'article "
+                                  "28 de la loi n° 2014-1655 du 29 décembre 2014 de finances "
+                                  "rectificative pour 2014 qui abroge l'article 200 sexies » ; "
+                                  "sa dernière rédaction finit le 30 décembre 2014 "
+                                  "(LEGIARTI000029042107) ; l'IPP la fait durer jusqu'au 1er "
+                                  "janvier 2016"),
 }
 
 #: Les lignes de l'IPP que le script ne reprend pas, et pourquoi (en-tête).
@@ -693,7 +700,7 @@ ENTETE = """\
 #   reduction_exceptionnelle : celle des revenus de 2013.
 #   reduction_proportionnelle : les 5 % retranchés de l'impôt des revenus de
 #     2001, après la décote, avant les crédits d'impôt.
-#   prime_pour_l_emploi : de 2000 à 2015.
+#   prime_pour_l_emploi : de 2000 à 2014.
 #   credit_exceptionnel : celui des revenus de 2008, les deux tiers de l'impôt
 #     sous le premier seuil de revenu par part, dégressif jusqu'au second.
 """

@@ -50,7 +50,7 @@ successives :
    sous condition de revenus de 2016 à 2019 ; les majorations et minorations
    exceptionnelles des années 1960 à 1992 ; la réduction exceptionnelle des
    revenus de 2013 ; les 5 % retranchés de l'impôt des revenus de 2001 ;
-6. le seuil de mise en recouvrement ; la prime pour l'emploi de 2000 à 2015,
+6. le seuil de mise en recouvrement ; la prime pour l'emploi de 2000 à 2014,
    sur le revenu d'activité de chacun — ses salaires, son bénéfice majoré de
    11,11 % (:func:`revenus_de_la_prime`) —, et le crédit d'impôt exceptionnel
    des revenus de 2008, restitués au-delà de l'impôt dû, en entier au foyer
@@ -780,7 +780,7 @@ def revenus_de_la_prime(parametres: ParametresImpot, salaires: tuple[float, ...]
 
 def prime_pour_l_emploi(foyer: Foyer, parametres: ParametresImpot,
                         revenus: tuple[float, ...], rfr: float, parts: float) -> float:
-    """La prime pour l'emploi (art. 200 sexies), de 2000 à 2015, pour un foyer
+    """La prime pour l'emploi (art. 200 sexies), de 2000 à 2014, pour un foyer
     qui travaille à temps plein toute l'année : par personne active, une part
     croissante de son revenu d'activité (:func:`revenus_de_la_prime`), puis
     décroissante ; les majorations du couple dont un seul travaille et des

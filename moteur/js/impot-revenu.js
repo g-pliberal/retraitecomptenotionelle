@@ -696,7 +696,7 @@ export function revenusDeLaPrime(parametres, salaires, benefices) {
   });
 }
 
-/** La prime pour l'emploi (art. 200 sexies), de 2000 à 2015, d'un travail à temps plein. */
+/** La prime pour l'emploi (art. 200 sexies), de 2000 à 2014, d'un travail à temps plein. */
 export function primePourLEmploi(foyer, parametres, revenus, rfr, parts) {
   const p = parametres.serie("prime_pour_l_emploi");
   if (vide(p)) return 0.0;

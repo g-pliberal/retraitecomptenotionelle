@@ -390,6 +390,21 @@ def test_le_minimum_de_la_prime_est_un_plancher_puis_un_seuil(baremes):
     assert prime(2005, 16500) == 0
 
 
+def test_la_prime_pour_l_emploi_finit_avec_les_revenus_de_2014(baremes):
+    """L'article 28 de la loi de finances rectificative pour 2014 (n° 2014-1655)
+    abroge l'article 200 sexies, dont la dernière rédaction finit le 30 décembre
+    2014 (LEGIARTI000029042107) : « Le dispositif de la PPE reste applicable en
+    2015 pour l'imposition des revenus de 2014 », ses commentaires « ne trouvent
+    plus à s'appliquer à compter de l'imposition des revenus de 2015 »
+    (BOI-IR-RICI-310-10-30-20150515). La prime d'activité qui la remplace au 1er
+    janvier 2016 n'est pas un crédit d'impôt."""
+    def prime(annee):
+        return impot_du_foyer(Foyer((Declarant(salaires=10000),)), annee,
+                              baremes).prime_pour_l_emploi
+    assert prime(2014) == round(0.077 * 10000)
+    assert prime(2015) == 0
+
+
 def test_le_foyer_qui_n_est_pas_imposable_recoit_toute_sa_prime(baremes):
     """Une cotisation sous le seuil de mise en recouvrement n'est pas due (art.
     1657, 1 bis) : la prime pour l'emploi est versée en entier (art. 200 sexies,
