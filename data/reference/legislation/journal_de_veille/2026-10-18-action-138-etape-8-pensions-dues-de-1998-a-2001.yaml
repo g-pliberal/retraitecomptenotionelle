@@ -1,0 +1,36 @@
+date: "2026-10-18"
+session: "action 138, étape 8 : les points des conjoints des pensions dues de 1998 à 2001"
+consulte: >-
+  python scripts/veille_droit.py, qui ne nomme aucune fiche agricole à relire. Les index
+  JORF et LEGI récupérés, puis mis à jour aux incréments du 18 octobre 2026 ; python
+  scripts/textes.py --inscrire y relève 18 rédactions nouvelles (L. 731-15 du code rural,
+  décret n° 2008-1072), sans rapport avec la règle, laissées hors du commit pour ne pas
+  heurter les autres sessions du jour. Dans l'index JORF : le décret n° 99-875 du 13
+  octobre 1999, articles 1er à 4 (JORFARTI000001246106, JORFARTI000001049949,
+  JORFARTI000001823278, JORFARTI000001049950) et sa notice ; le décret n° 2000-261 du 22
+  mars 2000, articles 5, 8 et 9 (JORFARTI000001964318, JORFARTI000001783221,
+  JORFARTI000001783222) ; le décret n° 2001-170 du 21 février 2001, article 5
+  (JORFARTI000001801426).
+trouve: >-
+  Aux pensions prises depuis 1998, à trente-deux ans et demi d'activité agricole et sans
+  réversion, chaque année de conjoint ou d'aide familial d'avant 1999 qui ne porte aucun
+  point reçoit 8,63 points en 1998 (décret n° 99-875, article 3) ; en 1999, 11,44 au
+  conjoint, 16 à l'aide familial (article 4) ; minorés de 15, 15, 10, 10, 10 et 40 % par
+  année manquante sous trente-sept et demie. En 2000, 16 au conjoint des pensions prises
+  en 1998 et 1999, 19,2 à l'aide familial ; aux pensions prises en 2000, 16, ou 8,63 à qui
+  est resté conjoint participant aux travaux sans opter, le total diminué de seize ;
+  vingt-sept ans et demi suffisent à qui a quinze ans de conjoint sans autre pension, sans
+  coefficient au-delà de la cinquième année manquante (décret n° 2000-261, article 5). En
+  2001, seize points et un différentiel de 3,2, celui-ci seul aux années de conjoint
+  collaborateur depuis 1999, les années d'avant 1999 diminuées de l'écart avec 1999 et
+  retenues dans la limite de trente-sept et demie moins l'écart avec 1998 (décret
+  n° 2001-170, article 5). Servi dans les deux moteurs (fiche
+  majoration_retraite_proportionnelle, paramètre conjoints des versions de 1998 à 2001) :
+  les seize points que le modèle donne à chaque année de conjoint couvrent les nombres de
+  1998 à 2000, et seuls les 3,2 points de 2001 s'y ajoutent.
+reste: >-
+  Les seize points d'une année de conjoint d'avant 1999, que la loi ne dote d'aucun et
+  qu'elle donne à l'aide familial que le même statut couvre : une présomption ou un champ
+  de saisie, au propriétaire. Les 19,2 points de l'aide familial en 2000, le minimum de
+  8,63 points de qui est resté conjoint participant aux travaux sans opter, le rachat et
+  la condition de réversion, non servis.
