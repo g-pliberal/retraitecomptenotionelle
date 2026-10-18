@@ -50,7 +50,10 @@ def baremes():
 
 def _foyer(description: dict) -> Foyer:
     declarants = tuple(Declarant(salaires=d.get("salaires", 0.0), pensions=d.get("pensions", 0.0),
-                                 age=d.get("age"), invalide=d.get("invalide", False))
+                                 age=d.get("age"), invalide=d.get("invalide", False),
+                                 benefices=d.get("benefices", 0.0),
+                                 regime=d.get("regime", "reel_adherent"),
+                                 categorie=d.get("categorie", "bic"))
                        for d in description["declarants"])
     return Foyer(declarants, enfants=description.get("enfants", 0),
                  enfants_invalides=description.get("enfants_invalides", 0),
@@ -395,6 +398,46 @@ def test_le_foyer_qui_n_est_pas_imposable_recoit_toute_sa_prime(baremes):
     calcul = impot_du_foyer(Foyer((Declarant(salaires=11650),)), 2005, baremes)
     assert 0 < calcul.impot_avant_credits < 61 and not calcul.mis_en_recouvrement
     assert calcul.impot == -calcul.prime_pour_l_emploi
+
+
+def test_la_prime_pour_l_emploi_retient_le_benefice_majore_de_11_11(baremes):
+    """Art. 200 sexies, I, B, 3° : le revenu d'activité de la prime comprend les
+    bénéfices industriels et commerciaux, agricoles et non commerciaux, et III :
+    « majorés de 11,11 % » dans la première rédaction (LEGIARTI000006303351,
+    revenus de 2000), « majorés, ou diminués en cas de déficits, de 11,11 % »
+    dès la suivante (LEGIARTI000006303352, revenus de 2001). Le déficit de qui
+    a aussi un salaire s'en déduit (BOI 5 B-12-01, n° 15 : « il est fait masse
+    ») ; le bénéfice est pris avant l'abattement des adhérents (n° 17) et
+    avant la majoration de qui n'adhère pas (BOI-IR-RICI-310-10-30, n° 90).
+    Qui n'a qu'un déficit n'est pas actif : son conjoint travaille seul."""
+    def calcul(annee, *declarants):
+        return impot_du_foyer(Foyer(declarants), annee, baremes, unite="monnaie")
+    # 2000 : le déficit de 10 000 F se déduit du salaire tel quel.
+    assert calcul(2000, Declarant(salaires=90000, benefices=-10000)).revenus_d_activite == (80000,)
+    # 2001 : minoré de 11,11 % (222 €), il retranche 1 778 € ; 4,4 % de 10 222 €.
+    mixte = calcul(2001, Declarant(salaires=12000, benefices=-2000))
+    assert mixte.revenus_d_activite == (10222,)
+    assert mixte.prime_pour_l_emploi == round(0.044 * 10222)
+    # 2005 : 9 000 € et 1 000 € de majoration, sans l'abattement de 20 % ; 6 %.
+    adherent = calcul(2005, Declarant(benefices=9000))
+    assert adherent.abattement_adherents == 1800
+    assert adherent.revenus_d_activite == (10000,) and adherent.prime_pour_l_emploi == 600
+    # 2012 : sans la majoration de 25 % du non-adhérent ; 7,7 %.
+    non_adherent = calcul(2012, Declarant(benefices=9000, regime="reel_non_adherent"))
+    assert non_adherent.benefices_retenus == (11250,)
+    assert non_adherent.revenus_d_activite == (10000,)
+    assert non_adherent.prime_pour_l_emploi == 770
+    # 2007 : deux actifs, puis un salarié dont le conjoint n'a qu'un déficit,
+    # minoré de 556 € : 83 € de plus pour le couple dont un seul travaille.
+    deux_actifs = calcul(2007, Declarant(salaires=10000), Declarant(benefices=9000))
+    assert deux_actifs.revenus_d_activite == (10000, 10000)
+    assert deux_actifs.prime_pour_l_emploi == 2 * 770
+    un_actif = calcul(2007, Declarant(salaires=10000), Declarant(benefices=-5000))
+    assert un_actif.revenus_d_activite == (10000, -4444)
+    assert un_actif.prime_pour_l_emploi == 770 + 83
+    # Hors des années de la prime, rien.
+    for annee in (1999, 2016):
+        assert calcul(annee, Declarant(salaires=10000, benefices=5000)).revenus_d_activite == ()
 
 
 def test_les_mesures_des_revenus_de_2001_et_de_2008(baremes):

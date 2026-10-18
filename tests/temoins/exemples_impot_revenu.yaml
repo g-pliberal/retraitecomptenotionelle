@@ -7,7 +7,8 @@
 # dans la monnaie de l'année.
 #
 # Le foyer : `declarants`, une liste d'un ou deux déclarants (`invalide`, `age`,
-# `salaires`, `pensions`), `enfants`, `enfants_invalides`, `veuf`, `vit_seul`.
+# `salaires`, `pensions`, `benefices` et son `regime` et sa `categorie`),
+# `enfants`, `enfants_invalides`, `veuf`, `vit_seul`.
 # Un exemple qui part du revenu imposable le donne en `revenu_net_imposable` :
 # les revenus des déclarants n'y servent pas.
 #
@@ -18,6 +19,7 @@
 # `plafonnement` (ce qu'il y ajoute), `reduction_complementaire`, `impot_brut`
 # (après plafonnement et réduction complémentaire), `decote`,
 # `reduction_sous_condition_de_revenus`, `impot_avant_credits` (la cotisation),
+# `revenus_d_activite` (par déclarant, ce que retient la prime pour l'emploi),
 # `prime_pour_l_emploi`, `credit_exceptionnel`, `impot`. Un exemple qui ne
 # donne que l'impôt brut et sa décote se rejoue par `decote_de`.
 #
@@ -809,6 +811,24 @@ exemples:
         obtenu: 320
         raison: *ppe_2000
 
+  - id: boi_5b_12_01_ppe_benefice_2000
+    source: BOI 5 B-12-01, n° 114 du 26 juin 2001, § 16 et 17
+    adresse: https://bofip-archives.impots.gouv.fr/bofip/20126-AIDA.html/identifiant%3D-20010626
+    annee: 2000
+    foyer: {declarants: [{benefices: 70000}]}
+    citation: >-
+      [...] le total des bénéfices non-salariés déclarés, après application des
+      abattements pour les contribuables relevant du régime micro-entreprise
+      [...] et imputation éventuelle des déficits constatés au titre de l'année
+      2000 résultant d'autres activités non-salariées professionnelles, est
+      majoré de 11,11 %. Exemple : [image BOI5B-12-01.002.png :] Bénéfice
+      imposable = 70 000 F ; Majoration 11,11 % = + 7 777 F ; Revenu ouvrant
+      droit à la prime = 77 777 F. 17. Les revenus d'activité professionnelle
+      non-salariée sont, dans tous les cas, retenus avant application de
+      l'abattement pour adhésion à un centre ou une association de gestion
+      agréé.
+    attendu: {revenus_d_activite: [77777]}
+
   # -- En euros, avant la réforme de 2006 : le Bulletin officiel des impôts ----------
   #
   # L'instruction qui commente chaque année l'article 2 de la loi de finances :
@@ -1125,3 +1145,86 @@ exemples:
       toutefois de la majoration pour charges de famille fixée forfaitairement à
       72 euros puisque son salaire est compris entre 17 451 euros et 26 572 euros.
     attendu: {prime_pour_l_emploi: 72}
+
+  # -- La prime pour l'emploi des non-salariés : le BOFiP et la notice 2041 GS -------
+  #
+  # Le bénéfice, avant l'abattement des adhérents et la majoration des
+  # non-adhérents, majoré de 11,11 % ; depuis les revenus de 2001, le déficit
+  # minoré de 11,11 %, qui vient en déduction des salaires (art. 200 sexies,
+  # III). La notice 2041 GS des revenus de 2014 (formulaire n° 50874#14), «
+  # document pour remplir la déclaration », la dernière de la prime. Un
+  # bénéfice au régime micro se donne au module après son abattement
+  # forfaitaire (`HORS_CHAMP`).
+
+  - id: bofip_ppe_benefice_2012
+    source: BOI-IR-RICI-310-10-30-20130522, § 80
+    adresse: https://bofip.impots.gouv.fr/bofip/3937-PGP.html/identifiant%3DBOI-IR-RICI-310-10-30-20130522
+    annee: 2012
+    foyer: {declarants: [{benefices: 7000}]}
+    citation: >-
+      Dans ce cas, par symétrie avec le dispositif applicable en présence d'un
+      bénéfice, et dans le même esprit, le III de l'article 200 sexies du CGI
+      prévoit que les déficits déclarés sont minorés de 11,11 %. Cet ajustement
+      assure l'égalité de traitement avec les salariés. Exemple : - bénéfice
+      imposable = 7 000 euros ; - majoration 11,11 % = + 777 euros ; - revenu
+      ouvrant droit à la prime = 7 777 euros.
+    attendu: {}
+    ecart_connu:
+      revenus_d_activite:
+        publie: [7777]
+        obtenu: [7778]
+        raison: >-
+          L'exemple est celui du BOI 5 B-12-01 (70 000 F, 7 777 F), divisé par
+          dix : 7 000 × 11,11 % = 777,7, qu'il tronque, quand la notice 2041 GS
+          arrondit à l'euro le plus proche (16 000 – 7 000 × 0,8889 = 9 777,7, «
+          9 778 € »), comme le module.
+
+  - id: notice_2041_gs_ppe_micro_2014
+    source: Notice 2041 GS (n° 50874#14), revenus de 2014, p. 4
+    adresse: https://impots.gouv.fr/portail/files/formulaires/2041-gs/2015/2041-gs_563.pdf
+    annee: 2014
+    foyer: {declarants: [{benefices: 4060, regime: micro}]}
+    citation: >-
+      La base PPE est donc égale au revenu net de frais professionnels
+      (c'est-à-dire : APRÈS imputation des éventuels abattements forfaitaires de
+      34 %, 50 % ou de 71 % – en cas de régime micro ou déclaratif spécial – et
+      des déficits de l'année pour le régime réel), majoré de 11,11 % (soit :
+      multiplié par 1,1111). [...] 1 – Un contribuable célibataire BIC au régime
+      micro qui déclare 14 000 € au titre de ses activités de ventes de
+      marchandises : Base PPE = [14 000 – (14 000 x 71 %)] x 1,1111 = 4 511 €.
+      Le bénéfice que reçoit le module est celui d'après l'abattement : 4 060 €.
+    attendu: {revenus_d_activite: [4511]}
+
+  - id: notice_2041_gs_ppe_deficit_2014
+    source: Notice 2041 GS (n° 50874#14), revenus de 2014, p. 4
+    adresse: https://impots.gouv.fr/portail/files/formulaires/2041-gs/2015/2041-gs_563.pdf
+    annee: 2014
+    foyer: {declarants: [{salaires: 16000, benefices: -7000}]}
+    citation: >-
+      – en cas de déficit de l'activité non salariée, celui-ci est minoré de
+      11,11 % (soit : multiplié par (1-0.1111)). – si l'activité est mixte
+      (salariée et non salariée), le déficit ainsi minoré vient en déduction de
+      l'activité salariée. [...] 2 – Un contribuable a déclaré 16 000 € en
+      salaire et un déficit BIC à hauteur de 7 000 € : Base PPE = 16 000 – [7 000
+      x (1-0,1111)] = 9 778 €.
+    attendu: {revenus_d_activite: [9778]}
+
+  - id: notice_2041_gs_ppe_agriculteur_2014
+    source: Notice 2041 GS (n° 50874#14), revenus de 2014, p. 8
+    adresse: https://impots.gouv.fr/portail/files/formulaires/2041-gs/2015/2041-gs_563.pdf
+    annee: 2014
+    foyer: {declarants: [{salaires: 5000, benefices: 6840, categorie: ba}]}
+    citation: >-
+      Il exerce une activité mixte (salarié et non salarié) : La prime peut être
+      directement calculée grâce aux formules du tableau de la page 7. Le
+      revenu à prendre en considération est égal à la somme des deux bases PPE
+      (base salariée + base non salariée). Remarque : on considère qu'une
+      personne exerçant une activité mixte travaille à plein temps dès lors
+      qu'une de ses activité au moins (salariée ou non salariée) est exercée à
+      temps plein [...]. Exemple : un agriculteur célibataire dont la base PPE
+      est égale à 5 000 € au titre des salaires (pour 1200 heures) et à 7 600 €
+      au titre des BA (sur toute l'année). Prime individuelle = 936 € soit : [
+      17 451 – ( 5 000 + 7600) ] x 19,3 %. Le bénéfice agricole n'est pas dit :
+      6 840 € est celui que la majoration de 11,11 % porte à 7 600 € (760 €
+      à l'euro le plus proche).
+    attendu: {revenus_d_activite: [12600], prime_pour_l_emploi: 936}

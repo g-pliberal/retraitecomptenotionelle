@@ -81,7 +81,8 @@ BALAYAGES = (
 #: La grille du module de l'impôt seul : des années de chaque règle — les
 #: majorations et minorations des années 1960, les paliers de 1968 et 1969, la
 #: décote de 1981 à 1985, le plafonnement, les 20 % d'avant 2006, l'abattement
-#: des adhérents de 1976 et de 1977, la prime pour l'emploi, les mesures de
+#: des adhérents de 1976 et de 1977, la prime pour l'emploi, celle d'un
+#: bénéfice ou d'un déficit mêlé à un salaire, les mesures de
 #: 2001, 2008 et 2013, la réduction de 2016 à 2019 —, deux années projetées,
 #: des foyers de chaque sorte, quatre revenus.
 ANNEES_IMPOT = (1962, 1966, 1968, 1969, 1971, 1975, 1976, 1977, 1978, 1981, 1983, 1984,
@@ -100,6 +101,8 @@ FOYERS_IMPOT = {
     "liberal_adherent": {"declarants": [{"benefices": 1.0, "categorie": "bnc"}]},
     "non_adherent": {"declarants": [{"benefices": 1.0, "regime": "reel_non_adherent"}]},
     "deficit": {"declarants": [{"salaires": 1.0}, {"benefices": -0.3, "regime": "micro"}]},
+    "pluriactif": {"declarants": [{"salaires": 0.5, "benefices": 0.2}]},
+    "pluriactif_deficit": {"declarants": [{"salaires": 0.7, "benefices": -0.1}]},
 }
 NIVEAUX_IMPOT = (0.25, 0.7, 1.6, 5.0)
 
@@ -384,6 +387,10 @@ def test_la_grille_de_l_impot_a_un_objet(les_deux):
                if i["abattement_adherents"]}
     assert {("artisan_adherent", 1976), ("artisan_adherent", 1977),
             ("liberal_adherent", 1978), ("liberal_adherent", 1983)} <= abattus
+    primes = {(d["nom"], d["annee"]) for d, i in zip(_demandes_d_impot(), attendu["impots"])
+              if i["prime_pour_l_emploi"]}
+    assert {("artisan_adherent", 2005), ("pluriactif", 2005), ("pluriactif_deficit", 2000),
+            ("pluriactif_deficit", 2001)} <= primes
 
 
 def test_les_ages_d_equilibre_se_retrouvent_en_javascript(les_deux):

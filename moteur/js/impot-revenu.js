@@ -58,7 +58,6 @@ export const CLES_DE_SOURCE = Object.freeze(["annee", "texte", "note", "origine"
 export const HORS_CHAMP = Object.freeze([
   "revenus autres que les salaires, les bénéfices et les pensions",
   "abattement forfaitaire des régimes micro : le bénéfice s'entend après lui",
-  "revenus d'activité non salariée de la prime pour l'emploi",
   "limites de chiffre d'affaires ou de recettes de l'abattement des adhérents, de 1976 à 1982",
   "charges déductibles et pensions alimentaires",
   "réductions et crédits d'impôt autres que la prime pour l'emploi, les réductions de 2001 "
@@ -82,6 +81,10 @@ export const PREMIERE_ANNEE_PLAFONNEMENT = 1981;
 
 /** Depuis les revenus de 2005, le montant minimal de la prime pour l'emploi est un seuil. */
 export const PREMIERE_ANNEE_SEUIL_DE_LA_PPE = 2005;
+
+/** Dans la prime, le bénéfice est majoré de 11,11 %, le déficit minoré dès 2001. */
+export const TAUX_NON_SALARIES_DE_LA_PPE = 0.1111;
+export const PREMIERE_ANNEE_DEFICIT_MINORE = 2001;
 
 /** Le bénéfice d'un indépendant (art. 158, 4 bis, 4 ter et 7) : voir `impot_revenu.py`. */
 export const REGIMES_DU_BENEFICE = Object.freeze(["reel_adherent", "reel_non_adherent", "micro"]);
@@ -679,29 +682,43 @@ function creditExceptionnel(foyer, parametres, impot, revenu, rfr, parts) {
     creditMaximum * (maximum - parPart) / (maximum - plein));
 }
 
+/**
+ * Par déclarant, le revenu d'activité de la prime pour l'emploi : ses salaires,
+ * son bénéfice majoré de 11,11 % ou son déficit minoré ; rien hors des années de la prime.
+ */
+export function revenusDeLaPrime(parametres, salaires, benefices) {
+  if (vide(parametres.serie("prime_pour_l_emploi"))) return [];
+  return salaires.map((salaire, i) => {
+    const benefice = benefices[i];
+    const ajustement = benefice > 0 || parametres.annee >= PREMIERE_ANNEE_DEFICIT_MINORE
+      ? auPlusProche(Math.abs(benefice) * TAUX_NON_SALARIES_DE_LA_PPE) : 0.0;
+    return salaire + benefice + ajustement;
+  });
+}
+
 /** La prime pour l'emploi (art. 200 sexies), de 2000 à 2015, d'un travail à temps plein. */
-export function primePourLEmploi(foyer, parametres, salaires, rfr, parts) {
+export function primePourLEmploi(foyer, parametres, revenus, rfr, parts) {
   const p = parametres.serie("prime_pour_l_emploi");
   if (vide(p)) return 0.0;
   const base = foyer.couple ? p.rfr_couple : p.rfr_personne_seule;
   if (rfr > base + p.rfr_par_demi_part * (parts - foyer.parts_de_base) * 2) return 0.0;
-  const actifs = salaires.filter((s) => s >= p.revenu_minimum);
+  const actifs = revenus.filter((r) => r >= p.revenu_minimum);
   const monoEmploi = foyer.couple && actifs.length === 1;
   let prime = 0.0;
   let forfaitFamille = false;
-  for (const salaire of actifs) {
+  for (const revenu of actifs) {
     let individuelle;
-    if (salaire <= p.revenu_taux_plein) individuelle = p.taux_entree * salaire;
-    else if (salaire < p.revenu_maximum) individuelle = p.taux_sortie * (p.revenu_maximum - salaire);
+    if (revenu <= p.revenu_taux_plein) individuelle = p.taux_entree * revenu;
+    else if (revenu < p.revenu_maximum) individuelle = p.taux_sortie * (p.revenu_maximum - revenu);
     else individuelle = 0.0;
     if (monoEmploi) {
-      if (salaire <= p.revenu_maximum) {
+      if (revenu <= p.revenu_maximum) {
         individuelle += p.majoration_mono_emploi;
-      } else if (salaire <= p.revenu_taux_plein_mono_emploi) {
+      } else if (revenu <= p.revenu_taux_plein_mono_emploi) {
         individuelle = p.majoration_mono_emploi;
         forfaitFamille = true;
-      } else if (salaire < p.revenu_maximum_mono_emploi) {
-        individuelle = p.taux_sortie_mono_emploi * (p.revenu_maximum_mono_emploi - salaire);
+      } else if (revenu < p.revenu_maximum_mono_emploi) {
+        individuelle = p.taux_sortie_mono_emploi * (p.revenu_maximum_mono_emploi - revenu);
         forfaitFamille = true;
       } else {
         individuelle = 0.0;
@@ -793,7 +810,7 @@ export function impotAuxParametres(foyer, parametres, { unite = "euro" } = {}) {
   const abattement = Math.min(abattementAgeInvalidite(foyer, parametres, revenuNetGlobal),
     revenuNetGlobal);
   const revenu = arrondirRevenuImposable(annee, revenuNetGlobal - abattement);
-  return liquider(foyer, parametres, revenu, salaires, {
+  return liquider(foyer, parametres, revenu, revenusDeLaPrime(parametres, salaires, benefices), {
     salaires_nets: salairesNets, pensions_nettes: pensionsNettes,
     abattement_vingt_pour_cent: vingt, benefices, benefices_retenus: retenus,
     abattement_adherents: abattementAdherents, majoration_des_benefices: majorationBenefices,
@@ -816,7 +833,7 @@ export function impotDUnRevenuImposable(foyer, annee, revenuNetImposable, bareme
 }
 
 /** Du revenu net imposable à l'impôt, dans la monnaie de l'année. */
-function liquider(foyer, parametres, revenu, salaires, assiette, unite, vers) {
+function liquider(foyer, parametres, revenu, activite, assiette, unite, vers) {
   const annee = parametres.annee;
   const rfr = revenu;
   const parts = nombreDeParts(foyer, parametres);
@@ -836,7 +853,7 @@ function liquider(foyer, parametres, revenu, salaires, assiette, unite, vers) {
   const reductionProp = reductionProportionnelle(parametres, impot);
   impot -= reductionProp;
 
-  const ppe = salaires.length ? primePourLEmploi(foyer, parametres, salaires, rfr, parts) : 0.0;
+  const ppe = activite.length ? primePourLEmploi(foyer, parametres, activite, rfr, parts) : 0.0;
   const credit = creditExceptionnel(foyer, parametres, impotBrut - laDecote, revenu, rfr, parts);
   const recouvrement = parametres.serie("recouvrement");
   const misEnRecouvrement = impot > 0 && impot >= obtenir(recouvrement, "seuil", 0.0);
@@ -869,6 +886,7 @@ function liquider(foyer, parametres, revenu, salaires, assiette, unite, vers) {
     reduction_exceptionnelle: reductionExc * retour,
     reduction_proportionnelle: reductionProp * retour,
     impot_avant_credits: impot * retour,
+    revenus_d_activite: activite.map((r) => r * retour),
     prime_pour_l_emploi: ppe * retour,
     credit_exceptionnel: credit * retour,
     mis_en_recouvrement: misEnRecouvrement,

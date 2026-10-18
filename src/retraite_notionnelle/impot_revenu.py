@@ -50,9 +50,11 @@ successives :
    sous condition de revenus de 2016 à 2019 ; les majorations et minorations
    exceptionnelles des années 1960 à 1992 ; la réduction exceptionnelle des
    revenus de 2013 ; les 5 % retranchés de l'impôt des revenus de 2001 ;
-6. le seuil de mise en recouvrement ; la prime pour l'emploi de 2000 à 2015 et
-   le crédit d'impôt exceptionnel des revenus de 2008, restitués au-delà de
-   l'impôt dû, en entier au foyer qui n'est pas imposable.
+6. le seuil de mise en recouvrement ; la prime pour l'emploi de 2000 à 2015,
+   sur le revenu d'activité de chacun — ses salaires, son bénéfice majoré de
+   11,11 % (:func:`revenus_de_la_prime`) —, et le crédit d'impôt exceptionnel
+   des revenus de 2008, restitués au-delà de l'impôt dû, en entier au foyer
+   qui n'est pas imposable.
 
 LES MONNAIES ET LES ARRONDIS. L'impôt d'une année en francs se calcule en
 francs : ``unite="euro"`` (le défaut) prend et rend des euros, convertis au
@@ -65,8 +67,8 @@ franc le plus proche depuis 1979, à la dizaine de centimes avant (art. 1657,
 
 CE QU'IL NE FAIT PAS, et que :data:`HORS_CHAMP` énumère : les revenus autres
 que les salaires, les bénéfices et les pensions, le bénéfice des régimes micro
-(qu'on lui donne déjà réduit de son abattement forfaitaire), les revenus non
-salariés de la prime pour l'emploi, les charges déductibles, les réductions et
+(qu'on lui donne déjà réduit de son abattement forfaitaire), les charges
+déductibles, les réductions et
 crédits d'impôt autres que la prime pour l'emploi, les réductions de 2001 et
 de 2013 et le crédit de 2008, les demi-parts des anciens combattants et de
 qui vit seul après avoir élevé un enfant (case L), les enfants en résidence
@@ -89,7 +91,6 @@ from .somme import somme_ordonnee
 HORS_CHAMP = (
     "revenus autres que les salaires, les bénéfices et les pensions",
     "abattement forfaitaire des régimes micro : le bénéfice s'entend après lui",
-    "revenus d'activité non salariée de la prime pour l'emploi",
     "limites de chiffre d'affaires ou de recettes de l'abattement des adhérents, de 1976 à 1982",
     "charges déductibles et pensions alimentaires",
     "réductions et crédits d'impôt autres que la prime pour l'emploi, les réductions de 2001 "
@@ -127,6 +128,19 @@ PREMIERE_ANNEE_PLAFONNEMENT = 1981
 #: pas due lorsque son montant avant imputation est inférieur à 30 Euros »
 #: (LEGIARTI000006303356).
 PREMIERE_ANNEE_SEUIL_DE_LA_PPE = 2005
+
+#: Le revenu d'activité d'un non-salarié dans la prime pour l'emploi (art.
+#: 200 sexies, I, B, 3°, c à e) : son bénéfice, avant l'abattement des
+#: adhérents (BOI 5 B-12-01, n° 17) et la majoration de qui n'adhère pas
+#: (BOI-IR-RICI-310-10-30-20130522, n° 90), « majoré de 11,11 % » (III,
+#: LEGIARTI000006303351), comme le salaire y est pris avant ses frais
+#: professionnels ; son déficit se déduit de ses salaires (BOI 5 B-12-01,
+#: n° 15 : « il est fait masse »), « diminué [...] de 11,11 % » depuis les
+#: revenus de 2001 (LEGIARTI000006303352), « multiplié par (1-0.1111) » (notice
+#: 2041 GS des revenus de 2014). La majoration s'arrondit à l'unité la plus
+#: proche (BOI 5 B-12-01, n° 16 : « Majoration 11,11 % = + 7 777 F »).
+TAUX_NON_SALARIES_DE_LA_PPE = 0.1111
+PREMIERE_ANNEE_DEFICIT_MINORE = 2001
 
 #: LE BÉNÉFICE D'UN INDÉPENDANT (art. 158, 4 bis et 7, lus dans LEGI le 16
 #: octobre 2026). Ses régimes : le réel, adhérent d'un centre ou d'une
@@ -313,6 +327,9 @@ class ImpotDuFoyer:
     reduction_proportionnelle: float
     #: La cotisation : l'impôt avant les crédits d'impôt.
     impot_avant_credits: float
+    #: Par déclarant, le revenu d'activité que retient la prime pour l'emploi
+    #: (:func:`revenus_de_la_prime`) ; rien hors des années de la prime.
+    revenus_d_activite: tuple[float, ...]
     prime_pour_l_emploi: float
     credit_exceptionnel: float
     #: La cotisation atteint-elle le seuil de mise en recouvrement ?
@@ -743,38 +760,57 @@ def _credit_exceptionnel(foyer: Foyer, parametres: ParametresImpot, impot: float
                            credit_maximum * (maximum - par_part) / (maximum - plein))
 
 
+def revenus_de_la_prime(parametres: ParametresImpot, salaires: tuple[float, ...],
+                       benefices: tuple[float, ...]) -> tuple[float, ...]:
+    """Par déclarant, le revenu d'activité de la prime pour l'emploi : ses
+    salaires avant leurs frais professionnels (BOI 5 B-12-01, n° 13), et son
+    bénéfice déclaré, majoré de 11,11 %, ou son déficit, minoré de 11,11 %
+    depuis les revenus de 2001 (:data:`TAUX_NON_SALARIES_DE_LA_PPE`) ; rien
+    hors des années de la prime."""
+    if not parametres["prime_pour_l_emploi"]:
+        return ()
+    revenus = []
+    for salaire, benefice in zip(salaires, benefices):
+        ajustement = 0.0
+        if benefice > 0 or parametres.annee >= PREMIERE_ANNEE_DEFICIT_MINORE:
+            ajustement = _au_plus_proche(abs(benefice) * TAUX_NON_SALARIES_DE_LA_PPE)
+        revenus.append(salaire + benefice + ajustement)
+    return tuple(revenus)
+
+
 def prime_pour_l_emploi(foyer: Foyer, parametres: ParametresImpot,
-                        salaires: tuple[float, ...], rfr: float, parts: float) -> float:
+                        revenus: tuple[float, ...], rfr: float, parts: float) -> float:
     """La prime pour l'emploi (art. 200 sexies), de 2000 à 2015, pour un foyer
     qui travaille à temps plein toute l'année : par personne active, une part
-    croissante de son revenu d'activité, puis décroissante ; les majorations
-    du couple dont un seul travaille et des personnes à charge."""
+    croissante de son revenu d'activité (:func:`revenus_de_la_prime`), puis
+    décroissante ; les majorations du couple dont un seul travaille et des
+    personnes à charge."""
     p = parametres["prime_pour_l_emploi"]
     if not p:
         return 0.0
     base = p["rfr_couple"] if foyer.couple else p["rfr_personne_seule"]
     if rfr > base + p["rfr_par_demi_part"] * (parts - foyer.parts_de_base) * 2:
         return 0.0
-    actifs = [s for s in salaires if s >= p["revenu_minimum"]]
+    actifs = [r for r in revenus if r >= p["revenu_minimum"]]
     mono_emploi = foyer.couple and len(actifs) == 1
     prime = 0.0
     forfait_famille = False
-    for salaire in actifs:
-        if salaire <= p["revenu_taux_plein"]:
-            prime_individuelle = p["taux_entree"] * salaire
-        elif salaire < p["revenu_maximum"]:
-            prime_individuelle = p["taux_sortie"] * (p["revenu_maximum"] - salaire)
+    for revenu in actifs:
+        if revenu <= p["revenu_taux_plein"]:
+            prime_individuelle = p["taux_entree"] * revenu
+        elif revenu < p["revenu_maximum"]:
+            prime_individuelle = p["taux_sortie"] * (p["revenu_maximum"] - revenu)
         else:
             prime_individuelle = 0.0
         if mono_emploi:
-            if salaire <= p["revenu_maximum"]:
+            if revenu <= p["revenu_maximum"]:
                 prime_individuelle += p["majoration_mono_emploi"]
-            elif salaire <= p["revenu_taux_plein_mono_emploi"]:
+            elif revenu <= p["revenu_taux_plein_mono_emploi"]:
                 prime_individuelle = p["majoration_mono_emploi"]
                 forfait_famille = True
-            elif salaire < p["revenu_maximum_mono_emploi"]:
+            elif revenu < p["revenu_maximum_mono_emploi"]:
                 prime_individuelle = p["taux_sortie_mono_emploi"] * (
-                    p["revenu_maximum_mono_emploi"] - salaire)
+                    p["revenu_maximum_mono_emploi"] - revenu)
                 forfait_famille = True
             else:
                 prime_individuelle = 0.0
@@ -887,7 +923,8 @@ def impot_aux_parametres(foyer: Foyer, parametres: ParametresImpot, *,
                 "majoration_des_benefices": majoration_benefices,
                 "revenu_net_global": revenu_net_global,
                 "abattement_age_invalidite": abattement}
-    return _liquider(foyer, parametres, revenu, salaires, assiette, unite, vers)
+    activite = revenus_de_la_prime(parametres, salaires, benefices)
+    return _liquider(foyer, parametres, revenu, activite, assiette, unite, vers)
 
 
 def impot_d_un_revenu_imposable(foyer: Foyer, annee: int, revenu_net_imposable: float,
@@ -907,7 +944,7 @@ def impot_d_un_revenu_imposable(foyer: Foyer, annee: int, revenu_net_imposable: 
 
 
 def _liquider(foyer: Foyer, parametres: ParametresImpot, revenu: float,
-              salaires: tuple[float, ...], assiette: dict, unite: str,
+              activite: tuple[float, ...], assiette: dict, unite: str,
               vers: float) -> ImpotDuFoyer:
     """Du revenu net imposable à l'impôt : les parts, le barème et son
     plafonnement, la décote et les autres corrections, la prime pour l'emploi,
@@ -932,7 +969,7 @@ def _liquider(foyer: Foyer, parametres: ParametresImpot, revenu: float,
     reduction_prop = _reduction_proportionnelle(parametres, impot)
     impot -= reduction_prop
 
-    ppe = prime_pour_l_emploi(foyer, parametres, salaires, rfr, parts) if salaires else 0.0
+    ppe = prime_pour_l_emploi(foyer, parametres, activite, rfr, parts) if activite else 0.0
     credit = _credit_exceptionnel(foyer, parametres, impot_brut - la_decote, revenu, rfr, parts)
     recouvrement = parametres["recouvrement"]
     mis_en_recouvrement = impot > 0 and impot >= recouvrement.get("seuil", 0.0)
@@ -967,6 +1004,7 @@ def _liquider(foyer: Foyer, parametres: ParametresImpot, revenu: float,
         reduction_exceptionnelle=reduction_exc * retour,
         reduction_proportionnelle=reduction_prop * retour,
         impot_avant_credits=impot * retour,
+        revenus_d_activite=tuple(r * retour for r in activite),
         prime_pour_l_emploi=ppe * retour,
         credit_exceptionnel=credit * retour,
         mis_en_recouvrement=mis_en_recouvrement,
