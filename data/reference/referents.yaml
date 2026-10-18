@@ -633,7 +633,11 @@ referents:
           Cnav donne les mêmes montants de 1949 à 1971. Les valeurs
           de 1936 à 1948 mêlent retenue et salaire (15 et 60 F chez
           l'IPP, 30 et 216 AF à la Cnav, 15 et 1 800 F au décret) :
-          à relire au décret.
+          à relire au décret. Relu le 18 octobre 2026 : le décret
+          compte 15 anciens francs de retenue, la Cnav en écrit la
+          double cotisation (30 anciens francs ; 216 en 1946, 12 %
+          de 1 800) ; le dépôt lit la retenue avant 1946 depuis ce
+          jour (fiche `trimestres_avant_1972`).
         etat: repris
         chantier: "138.6"
       - quoi: >-
@@ -2121,7 +2125,9 @@ referents:
           trimestriel de l'allocation aux vieux travailleurs
           salariés au 1er janvier de l'année considérée [...]
           jusqu'au 31 décembre 1962, ce montant est celui des villes
-          de plus de 5 000 habitants »
+          de plus de 5 000 habitants ». Les règles de 1930 à 1945 —
+          la retenue, le plafond d'assujettissement — sont reprises
+          le 18 octobre 2026 (fiche `trimestres_avant_1972`).
         etat: repris
         chantier: "138.6"
       - quoi: >-

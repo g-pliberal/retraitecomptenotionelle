@@ -1,0 +1,68 @@
+# Plafond d'assujettissement aux assurances sociales, 1930-1946, en euros
+# ---------------------------------------------------------------------
+# source_id: cnav_plafond_assujettissement
+#
+# LA RÈGLE. « Sont affiliés obligatoirement aux assurances sociales tous les
+# salariés de l'un ou l'autre sexe dont la rémunération totale annuelle, quelle
+# qu'en soit la nature, à l'exclusion des allocations familiales, ne dépasse pas
+# 15.000 fr. » (loi du 5 avril 1928 modifiée par la loi du 30 avril 1930,
+# article 1er, § 2, fac-similé de Gallica que reproduit le document n° 7 de la
+# séance du COR du 15 décembre 2022). Au-delà, le salarié n'était pas assuré :
+# aucune retenue sur son salaire, et R. 351-9 ne compte avant 1946 que les
+# trimestres de la retenue (`taux_retenue_avant_1946.csv`), de 1946 à 1948 que
+# « le salaire annuel correspondant aux retenues subies ». Le décret n° 46-1378
+# du 8 juin 1946, article 216, ne fait entrer ces années que dans l'ouverture du
+# droit, pour qui cotisait à une institution de prévoyance, et « la liquidation
+# de la pension est faite en tenant compte seulement du temps pendant lequel
+# les intéressés ont été soumis à l'assujettissement obligatoire », sauf rachat
+# avant le 24 août 1949. Le modèle lit cette table dans `donnees/macro.py`
+# (`trimestres_valides`) et son portage dans `moteur/js/macro.js`, pour les
+# seuls statuts que le routage porte aux assurances sociales.
+#
+# D'OÙ VIENNENT CES MONTANTS. Du barème « Plafond d'assujettissement avant
+# 1947 » de la Cnav (plafond_assujettissement_securite_sociale_avant_1947_bar,
+# lu par son API le 18 octobre 2026), qui date chaque montant annuel et cite
+# son texte : 15 000 anciens francs du 1er juillet 1930 au 31 décembre 1935
+# (loi du 5 avril 1928 modifiée) et en 1936 (décret-loi du 28 octobre 1935) ;
+# 21 000 du 1er janvier 1937 au 30 juin 1938 (loi du 26 août 1936 modifiée) ;
+# 30 000 du 1er juillet 1938 au 31 décembre 1941 (décret du 14 juin 1938) ;
+# 42 000 en 1942 et 1943 (loi du 6 janvier 1942) ; 48 000 du 1er janvier au
+# 31 août 1944 (loi du 24 avril 1944) ; 60 000 du 1er septembre 1944 au
+# 31 mars 1945 (ordonnance du 20 octobre 1944) ; 120 000 du 1er avril 1945 au
+# 31 décembre 1946 (ordonnance du 20 juin 1945). La valeur d'une année est la
+# moyenne de ses montants au prorata de leurs mois, comme le plafond de la
+# Sécurité sociale de ces années (`macro/plafond_securite_sociale.csv`) :
+# 25 500 anciens francs en 1938, 52 000 en 1944, 105 000 en 1945. Une année
+# incomplète le proratise encore sur ses mois travaillés. Les anciens francs
+# sont convertis au centième, puis au taux de 6,55957 ; neuf décimales, pour
+# qu'un salaire pile sur le plafond reste assujetti.
+#
+# CE QUE LA TABLE NE PORTE PAS. La loi de 1930 portait le plafond à 18 000 F
+# « dans les villes de plus de 200.000 habitants et dans les circonscriptions
+# industrielles », l'augmentait de 2 000 F pour un enfant à charge, de 4 000 F
+# pour deux, et le portait à 25 000 F pour trois ; elle ne tenait pas pour
+# salariées les personnes de moins de quatre-vingt-dix journées de travail par
+# an. Le barème de la caisse ne date que le plafond de base, et le modèle ne
+# connaît ni la ville ni les enfants à charge de l'année (fiche
+# `trimestres_avant_1972`, approximations).
+#
+# fiabilite: haute — lu au barème de la caisse, qui transcrit les textes ;
+#            les textes de 1928 à 1945 ne sont pas dans l'index de la DILA.
+annee,valeur,fiabilite
+1930,22.867352586,haute
+1931,22.867352586,haute
+1932,22.867352586,haute
+1933,22.867352586,haute
+1934,22.867352586,haute
+1935,22.867352586,haute
+1936,22.867352586,haute
+1937,32.014293620,haute
+1938,38.874499396,haute
+1939,45.734705171,haute
+1940,45.734705171,haute
+1941,45.734705171,haute
+1942,64.028587240,haute
+1943,64.028587240,haute
+1944,79.273488963,haute
+1945,160.071468099,haute
+1946,182.938820685,haute

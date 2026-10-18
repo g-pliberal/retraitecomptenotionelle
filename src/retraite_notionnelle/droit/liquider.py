@@ -2635,10 +2635,17 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
             annee for annee in par_annee
             if trimestres[annee][0] >= 1
             or moteur.macro.trimestres_valides(par_annee[annee][0], annee,
-                                               carriere.outre_mer(annee)) >= 1
+                                               carriere.outre_mer(annee),
+                                               fraction=par_annee[annee][1]) >= 1
         }
+        # Le salaire d'une année non assujettie aux assurances sociales n'est
+        # pas au compte : il n'entre pas dans la moyenne, qu'il gonflait sans
+        # trimestre quand elle se calculait au trimestre (action 138, étape 6).
+        au_compte = [(annee, valeur) for annee, valeur in zip(annees_des_revenus, revenus)
+                     if moteur.macro.salaire_au_compte(par_annee[annee][0], annee,
+                                                       par_annee[annee][1])]
         return moyenne_selon_la_regle(
-            regle, list(zip(annees_des_revenus, revenus)), trimestres, validantes,
+            regle, au_compte, trimestres, validantes,
             annees if annees is not None else nombre_d_annees_retenues(
                 moteur, periode, carriere, generation, enfants_majores),
             carriere.annee_naissance + AGE_DES_DIX_DERNIERES_ANNEES,

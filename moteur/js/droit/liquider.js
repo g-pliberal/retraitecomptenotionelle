@@ -1880,14 +1880,22 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
     // d'outre-mer, s'il y a lieu — ou si le relevé lui en reconnaît un. Voir
     // le Python.
     const validantes = new Set();
-    for (const [annee, [somme]] of parAnnee) {
+    for (const [annee, [somme, fraction]] of parAnnee) {
       if (trimestres.get(annee)[0] >= 1
-          || moteur.macro.trimestresValides(somme, annee, carriere.outreMer(annee)) >= 1) {
+          || moteur.macro.trimestresValides(somme, annee, carriere.outreMer(annee),
+            fraction) >= 1) {
         validantes.add(annee);
       }
     }
+    // Le salaire d'une année non assujettie aux assurances sociales n'est pas
+    // au compte : il n'entre pas dans la moyenne. Voir le Python.
+    const auCompte = anneesDesRevenus.map((annee, rang) => [annee, revenus[rang]])
+      .filter(([annee]) => {
+        const [somme, fraction] = parAnnee.get(annee);
+        return moteur.macro.salaireAuCompte(somme, annee, fraction);
+      });
     return moyenneSelonLaRegle(
-      regle, anneesDesRevenus.map((annee, rang) => [annee, revenus[rang]]),
+      regle, auCompte,
       trimestres, validantes,
       anneesRetenues !== null ? anneesRetenues : nombreDAnneesRetenues(
         moteur, periode, carriere, generation, enfantsMajores),

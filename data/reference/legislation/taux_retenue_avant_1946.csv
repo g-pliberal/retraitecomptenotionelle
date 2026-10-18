@@ -1,0 +1,63 @@
+# Taux de la retenue des assurances sociales, 1936-1945
+# -----------------------------------------------------
+# source_id: histoire_assurances_sociales
+#
+# LA RÈGLE. Avant 1946, le trimestre d'assurance ne se lit pas sur le salaire
+# mais sur la retenue : de 1936 à 1941, « ne comptent comme trimestres
+# d'assurance que ceux au cours desquels l'assuré a subi sur son salaire une
+# retenue au moins égale à 15 anciens francs » ; de 1942 à 1945, « autant de
+# trimestres que la retenue subie par l'assuré sur son salaire annuel représente
+# de fois 15 F (anciens) avec un maximum de quatre trimestres par année civile »
+# (décret n° 45-0179 du 29 décembre 1945, article 71, LEGIARTI000006760608 ;
+# R. 351-9, rédactions du 21 décembre 1985 et du 21 mars 2014,
+# LEGIARTI000006749353 et LEGIARTI000028751530, « 0,15 F »). De 1930 à 1935, le
+# texte compte des cotisations journalières, soixante par trimestre : le taux
+# n'y sert pas, et la table commence en 1936. Le modèle lit cette table dans
+# `donnees/macro.py` (`trimestres_valides`) et son portage dans
+# `moteur/js/macro.js` : une retenue de 15 anciens francs demande 375 anciens
+# francs de salaire de 1936 à 1944, 272,73 en 1945.
+#
+# D'OÙ VIENNENT CES TAUX. La retenue est la part de l'assuré dans la « double
+# contribution » : « des versements pour moitié à la charge de l'assuré et
+# retenus lors de sa paye au moins une fois par mois, et pour moitié à la charge
+# de l'employeur », dont le montant « représente en moyenne pour chaque
+# catégorie, 8 p. 100 du salaire annuel de base » (loi du 5 avril 1928 modifiée
+# par la loi du 30 avril 1930, article 2, §§ 1 et 3, fac-similé de Gallica que
+# reproduit le document n° 7 de la séance du COR du 15 décembre 2022). Le taux
+# de 8 %, « bloqué à 8 % depuis 1937, passe à 9 % au premier trimestre 1945 »,
+# puis à 11 % au deuxième et à 12 % aux deux derniers (P.-J. Hesse et
+# J.-P. Le Crom, dir., « La protection sociale sous le régime de Vichy »,
+# Presses universitaires de Rennes, 2001, conclusion) ; les cotisations
+# « étaient acquittées à parts égales par employeurs et bénéficiaires (le total
+# pour les assurances sociales s'élevant à 8 % des salaires) », et, à la
+# réforme, « les salariés, de leur côté, voient leur cotisation passer de 4 à
+# 6 % » (B. Valat, « Les retraites et la création de la Sécurité sociale en
+# 1945 : révolution ou restauration ? », Revue d'histoire de la protection
+# sociale, n° 13, 2020, document n° 10 de la même séance du COR). L'ordonnance
+# n° 45-2250 du 4 octobre 1945, article 32 (LEGIARTI000038154243), écrit les
+# 12 % : « La moitié de la cotisation est à la charge de l'employeur, l'autre
+# moitié à la charge du salarié ». D'où 4 % de 1936 à 1944, et en 1945 la
+# moitié de 9, 11, 12 et 12 % aux quatre trimestres, 5,5 % sur l'année. Aucun
+# texte lu ne dit le partage des deux premiers trimestres de 1945 : la moitié
+# est supposée, comme avant et après.
+#
+# CE QUE LA CAISSE EN ÉCRIT. Le barème « Salaire validant un trimestre » de la
+# Cnav porte, pour « 1936 à 1945 », 30 anciens francs : la double contribution
+# qui répond à 15 anciens francs de retenue, 8 % de 375 anciens francs.
+#
+# fiabilite: moyenne — le texte de 1930 et deux histoires des assurances
+#            sociales, non le Journal officiel de 1935 à 1945 (le décret-loi du
+#            28 octobre 1935, la loi du 6 janvier 1942, les ordonnances de la
+#            fin de 1944), que l'index de la DILA ne porte pas et qui se lit au
+#            fac-similé.
+annee,valeur,fiabilite
+1936,0.04,moyenne
+1937,0.04,moyenne
+1938,0.04,moyenne
+1939,0.04,moyenne
+1940,0.04,moyenne
+1941,0.04,moyenne
+1942,0.04,moyenne
+1943,0.04,moyenne
+1944,0.04,moyenne
+1945,0.055,moyenne

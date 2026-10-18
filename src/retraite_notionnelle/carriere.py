@@ -696,8 +696,9 @@ def _ligne_annuelle(
     if trimestres_declares is None:
         validant = (revenu_cotise(macro, revenu, micro, annee, part)
                     if micro else revenu)
-        trimestres = (macro.trimestres_valides(max(validant, minimale), annee,
-                                               outre_mer)
+        trimestres = (macro.trimestres_valides(
+                          max(validant, minimale), annee, outre_mer, fraction=part,
+                          assure_social=affiliation in macro.statuts_assures_sociaux)
                       if cotise
                       else (regle.trimestres_assimiles if regle else 4))
         if cotise and micro:

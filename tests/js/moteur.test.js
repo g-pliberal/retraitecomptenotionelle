@@ -1099,13 +1099,66 @@ test("avant 2007, le minimum vieillesse tient en deux étages", () => {
 test("avant 1972, le trimestre se valide au trimestre de l'AVTS", () => {
   const macro = new DonneesMacro(paquet);
   const valides = (francs, annee) => macro.trimestresValides(francs / 6.55957, annee);
-  assert.equal(valides(1, 1940), 4);
   assert.deepEqual([17.99, 18, 71.99, 72].map((f) => valides(f, 1946)), [0, 1, 3, 4]);
   assert.deepEqual([84.99, 85, 170].map((f) => valides(f, 1949)), [0, 1, 2]);
   assert.deepEqual([180.95, 723.79, 723.8].map((f) => valides(f, 1962)), [1, 3, 4]);
   assert.deepEqual([199.99, 200].map((f) => valides(f, 1963)), [0, 1]);
   assert.deepEqual([437.49, 437.5, 1749, 1750].map((f) => valides(f, 1971)), [0, 1, 3, 4]);
   assert.deepEqual([787, 788].map((f) => valides(f, 1972)), [0, 1]);
+});
+
+/**
+ * Le portage de `test_avant_1946_le_trimestre_se_lit_sur_la_retenue`
+ * (tests/test_salaire_annuel_moyen.py) : R. 351-9, rien avant le 1er juillet
+ * 1930, 15 anciens francs de retenue par trimestre de 1936 à 1945, à 4 % puis
+ * 5,5 % en 1945, et rien au-delà du plafond d'assujettissement.
+ */
+test("avant 1946, le trimestre se lit sur la retenue", () => {
+  const macro = new DonneesMacro(paquet);
+  const valides = (francs, annee, fraction = 1, assureSocial = true) =>
+    macro.trimestresValides(francs / 6.55957, annee, "", fraction, assureSocial);
+  assert.equal(valides(100, 1929), 0);
+  assert.equal(valides(100, 1930), 2);
+  assert.equal(valides(25, 1930, 0.25), 1);
+  assert.deepEqual([1, 150, 150.01].map((f) => valides(f, 1933)), [4, 4, 0]);
+  assert.deepEqual([3.74, 3.75, 14.99, 15].map((f) => valides(f, 1937)), [0, 1, 3, 4]);
+  assert.deepEqual([210, 210.01].map((f) => valides(f, 1937)), [4, 0]);
+  assert.deepEqual([255, 255.01].map((f) => valides(f, 1938)), [4, 0]);
+  assert.deepEqual([127.5, 127.51].map((f) => valides(f, 1938, 0.5)), [4, 0]);
+  assert.deepEqual([7.49, 7.5, 420, 420.01].map((f) => valides(f, 1943)), [1, 2, 4, 0]);
+  assert.deepEqual([520, 520.01].map((f) => valides(f, 1944)), [4, 0]);
+  assert.deepEqual([2.72, 2.73, 10.9, 10.91].map((f) => valides(f, 1945)), [0, 1, 3, 4]);
+  assert.deepEqual([1050, 1050.01].map((f) => valides(f, 1945)), [4, 0]);
+  assert.deepEqual([18, 1200, 1200.01].map((f) => valides(f, 1946)), [1, 4, 0]);
+  assert.equal(valides(1000, 1940, 1, false), 4);
+  assert.equal(valides(1, 1925, 1, false), 4);
+});
+
+/**
+ * Le portage de
+ * `test_le_salaire_d_un_non_assujetti_n_entre_pas_au_salaire_annuel_moyen`
+ * (tests/test_salaire_annuel_moyen.py) : le cadre payé au-delà du plafond
+ * d'assujettissement en 1945 et 1946 ne cotisait pas, et son salaire n'entre
+ * pas dans le salaire annuel moyen d'une pension de 1980.
+ */
+test("le salaire d'un non-assujetti n'entre pas au salaire annuel moyen", () => {
+  const simulateur = new Contexte(paquet).simulateur();
+  const macro = simulateur.macro;
+  const ligne = (annee, revenu, affiliation, trimestres) => new AnneeCarriere({
+    annee, revenu, affiliation, trimestres_valides: trimestres });
+  const lignes = [];
+  for (let annee = 1950; annee < 1976; annee += 1) {
+    lignes.push(ligne(annee, macro.plafond_securite_sociale.valeur(annee) / 2,
+      "salarie_prive_non_cadre", 4));
+  }
+  const anciennes = [ligne(1945, 1500 / 6.55957, "salarie_prive_cadre", 0),
+    ligne(1946, 2000 / 6.55957, "salarie_prive_cadre", 0)];
+  const periode = simulateur.catalogue.obtenir("regime_general").periode(1980);
+  const sam = (lignesDeLaCarriere) => salaireDeReference(simulateur.scenarioActuel,
+    "regime_general", new Carriere({ annee_naissance: 1915, sexe: "H", age_liquidation: 65,
+      jour_naissance: 1, lignes: lignesDeLaCarriere }), periode, 1980, true, 1915);
+  const attendu = sam(lignes);
+  assert.ok(Math.abs(sam([...anciennes, ...lignes]) / attendu - 1) < 1e-12);
 });
 
 /**

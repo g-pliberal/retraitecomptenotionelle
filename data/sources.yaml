@@ -770,6 +770,26 @@ institutions:
       Projections du système de retraite, cas types, paramètres historiques
       par régime, taux de remplacement, rendements.
     jeux:
+      - id: histoire_assurances_sociales
+        titre: >-
+          Séance du COR du 15 décembre 2022, « Histoire de la retraite » — la loi
+          des assurances sociales de 1930 (document n° 7) et l'article de
+          B. Valat (document n° 10) —, et « La protection sociale sous le régime
+          de Vichy » (Presses universitaires de Rennes, 2001)
+        url: https://www.cor-retraites.fr/sites/default/files/2022-12/Doc_07_lois_1928_1930.pdf
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/legislation/taux_retenue_avant_1946.csv
+        note: >-
+          Le taux de la retenue des assurances sociales de 1936 à 1945, que
+          l'index de la DILA ne porte pas : la loi de 1930, en fac-similé de
+          Gallica, met la double contribution « pour moitié à la charge de
+          l'assuré », 8 % du salaire de base en moyenne ; B. Valat (Revue
+          d'histoire de la protection sociale, n° 13, 2020) écrit les 8 % à
+          parts égales, puis la cotisation des salariés « de 4 à 6 % » ;
+          l'ouvrage de Rennes, le taux « bloqué à 8 % depuis 1937 », puis 9, 11
+          et 12 % aux trimestres de 1945. Lu le 18 octobre 2026, au niveau
+          `moyenne` : à relire au fac-similé du Journal officiel.
       - id: cor_rapport_annuel
         titre: Rapport annuel du COR — évolutions et perspectives des retraites
         url: https://www.cor-retraites.fr/documents-rapports
@@ -1581,6 +1601,21 @@ institutions:
     nom: Caisse nationale d'assurance vieillesse
     role: Régime général — paramètres, barèmes, statistiques.
     jeux:
+      - id: cnav_plafond_assujettissement
+        titre: Barème du plafond d'assujettissement aux assurances sociales, 1930-1946
+        url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=plafond_assujettissement_securite_sociale_avant_1947_bar.aspx
+        acces: api
+        statut_integration: saisi
+        cible: data/reference/legislation/plafond_assujettissement_avant_1947.csv
+        note: >-
+          Le barème « Plafond d'assujettissement avant 1947 » de la base de
+          législation de la Cnav (plafond_assujettissement_securite_sociale_avant_1947_bar),
+          lu par son API le 18 octobre 2026 : chaque montant annuel du 1er juillet
+          1930 au 31 décembre 1946, avec son texte, de 15 000 à 120 000 anciens
+          francs. Le salarié payé au-delà n'était pas assuré : il ne subissait
+          aucune retenue, et R. 351-9 ne lui compte aucun trimestre. Recopié à la
+          main, au prorata des mois de chaque montant, au niveau `haute` ; aucun
+          récupérateur ne le relit encore.
       - id: cnav_minimum_vieillesse
         titre: Barèmes du montant et du plafond de ressources de l'ASPA, 2006-2026
         url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=aspa_montant_bar.aspx

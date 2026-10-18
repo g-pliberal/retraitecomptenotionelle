@@ -147,12 +147,27 @@ def test_le_maximum_suit_le_taux_acquis_au_31_mars_1983(simulateur):
     assert pension.montant == pytest.approx(0.55 * plafond)
 
 
-def test_le_maximum_garde_le_taux_acquis_sous_la_surcote(simulateur):
+def test_le_maximum_garde_le_taux_acquis_sous_la_surcote(simulateur, monkeypatch):
     """Né en 1917, parti en 2005 à quatre-vingt-huit ans et demi : le maximum
     garde le coefficient du taux acquis de 55 % — l'arrêté du 9 octobre 1986,
     article 2, qui le dit, est en vigueur —, et la surcote de 4,5 % s'applique
     à la pension ramenée à ce maximum (circulaire n° 2007-5). Le moteur le
-    perdait dès qu'une surcote entrait en compte, depuis 2004."""
+    perdait dès qu'une surcote entrait en compte, depuis 2004.
+
+    Le cadre au plafond n'y arrive plus seul : ses années 1945 et 1946, payées
+    au-delà du plafond d'assujettissement, ne sont plus au compte (action 138,
+    étape 6), et ses autres salaires, revalorisés sur les prix depuis 1987, font
+    un salaire annuel moyen sous le plafond de 2005. Le test porte celui du
+    régime général au-dessus, pour que le maximum joue."""
+    plafond = simulateur.macro.plafond_securite_sociale(2005)
+    salaire_de_reference = liquider.salaire_de_reference
+
+    def au_dessus_du_plafond(moteur, code, *arguments, **options):
+        if code == "regime_general":
+            return 1.1 * plafond
+        return salaire_de_reference(moteur, code, *arguments, **options)
+
+    monkeypatch.setattr(liquider, "salaire_de_reference", au_dessus_du_plafond)
     carriere, pension = _regime_general(simulateur, 1917, 88.5)
     plafond = simulateur.macro.plafond_securite_sociale(carriere.annee_liquidation)
     assert carriere.annee_liquidation == 2005

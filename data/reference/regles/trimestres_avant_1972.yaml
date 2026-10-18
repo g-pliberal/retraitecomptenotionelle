@@ -7,7 +7,11 @@ intitule: >-
   celui des villes de plus de 5 000 habitants jusqu'en 1962, quatre au plus par année
   civile ; de 1946 à 1948, autant de fois 18 F, 1 800 anciens francs. Outre-mer, rien
   avant 1948, puis 1 800 F métropolitains ou 900 F CFA en 1948, l'allocation des
-  départements d'outre-mer de 1949 à 1951, et leur SMIC de 1972 à 1995.
+  départements d'outre-mer de 1949 à 1951, et leur SMIC de 1972 à 1995. Avant 1946, par
+  la retenue des assurances sociales : rien avant le 1er juillet 1930, soixante
+  cotisations journalières par trimestre jusqu'en 1935, un trimestre par retenue de
+  15 anciens francs de 1936 à 1945 ; et jusqu'en 1946, rien au salarié payé au-delà du
+  plafond d'assujettissement, qui ne subissait aucune retenue.
 etat: approchee
 effet: >-
   Les années travaillées de 1946 à 1971 dont le salaire n'atteint pas quatre fois le
@@ -20,18 +24,35 @@ effet: >-
   37,50 F au lieu de 85 F en 1949, 2 768,20 F à La Réunion et 2 966,80 F aux Antilles et
   en Guyane au lieu de 3 630 F en 1982 ; la carrière et la chronologie portent le
   département, le site n'a pas encore de champ pour le dire, et aucun témoin ne bouge.
+  Avant 1946, depuis le 18 octobre 2026 : le modèle validait quatre trimestres à toute
+  année travaillée, 1929 comprise, et au cadre payé au-delà du plafond
+  d'assujettissement ; il n'en valide plus aucun avant le 1er juillet 1930, deux en 1930,
+  ce que la retenue paie de 1936 à 1945 (375 anciens francs de salaire par trimestre,
+  272,73 en 1945), et aucun, jusqu'en 1946, au salaire qui dépasse le plafond, dont le
+  salaire annuel moyen ne retient plus l'année. Seuls les statuts que le routage porte
+  aux assurances sociales sont touchés : le fonctionnaire garde ses années. Six des 883
+  témoins perdent de 4 à 18 trimestres, aucune pension de droit direct ne bouge, une
+  réversion perd 2,8 % (`reversion_maximum_des_pensions`) ; les cas types nés de
+  1885 à 1920 en perdent assez pour que le pilote les fasse partir plus tard (le cadre
+  né en 1910, payé 2,2 fois le salaire moyen, à 65 ans au lieu de 60).
 sources:
   lu_le: 2026-10-18
   prochaine_relecture: 2027-04-30
   a_relire:
   - >-
-    Avant 1946, la règle se lit sur la retenue : une retenue d'au moins 0,15 F par
-    trimestre de 1936 à 1941, autant de trimestres que la retenue annuelle représente de
-    fois 0,15 F de 1942 à 1945, soixante cotisations journalières par trimestre de 1930 à
-    1935, vingt-deux trimestres au plus (R. 351-9, rédactions de 1985 à 2025). Le modèle,
-    qui ne connaît pas la part salariale des assurances sociales de ces années, y valide
-    quatre trimestres par année travaillée. Le barème de la Cnav écrit 30 anciens francs
-    de 1936 à 1945 et 216 pour 1946 : à rapprocher de la retenue, ce qui dirait le taux.
+    Avant 1946, les textes que l'index de la DILA ne porte pas, à lire au fac-similé : la
+    loi du 30 avril 1930 au Journal officiel (le dépôt la lit dans l'édition de 1930 que
+    reproduit la COR), le décret-loi du 28 octobre 1935, la loi du 26 août 1936, le décret
+    du 14 juin 1938, les lois du 14 mars 1941, du 6 janvier 1942 et du 24 avril 1944, les
+    ordonnances du 20 octobre et du 30 décembre 1944 et celle du 20 juin 1945. Ils diraient
+    le taux de la retenue de 1936 à 1945, lu dans deux histoires des assurances sociales
+    (`legislation/taux_retenue_avant_1946.csv`, niveau `moyenne`), le partage des deux
+    premiers trimestres de 1945, supposé par moitié, et les majorations du plafond
+    d'assujettissement, que le barème de la Cnav ne date pas. Le barème « Salaire validant
+    un trimestre » de la caisse se lit comme la double cotisation, et non le salaire : 30
+    anciens francs de 1936 à 1945, deux fois les 15 de la retenue ; 216 en 1946, 12 % de
+    1 800, le taux de l'ordonnance du 4 octobre 1945. L'écart que `cnav_avts.py` déclare
+    pour 1946 serait ainsi une autre unité, que la caisse ne nomme pas.
   - >-
     Outre-mer : les montants de l'allocation aux vieux travailleurs salariés des
     départements d'outre-mer de 1949 à 1951, 15 000, 22 500 et 32 000 anciens francs au
@@ -155,6 +176,76 @@ sources:
       `jorf_avts.py`, qui en certifie le seuil de 1971, et celui de 1946 à 1948 par
       les rédactions de R. 351-9 ; avant 1970, l'index n'a que le titre des textes
     date: 1970-10-01
+  - type: legifrance
+    reference: >-
+      décret n° 45-0179 du 29 décembre 1945, article 71, § 2 (LEGIARTI000006760608), et
+      R. 351-9 CSS, rédactions de 1985 et de 2014 (LEGIARTI000006749353,
+      LEGIARTI000028751530), lus dans l'index LEGI le 18 octobre 2026 : « Les périodes
+      d'assurance accomplies du 1er juillet 1930 au 31 décembre 1935 comptent pour autant
+      de trimestres d'assurance que, durant ce délai, l'intéressé a versé de fois
+      soixante cotisations journalières de la catégorie où il était classé, sans que le
+      nombre de trimestres entrant en compte puisse dépasser vingt-deux » ; de 1936 à
+      1941, « ne comptent comme trimestres d'assurance que ceux au cours desquels
+      l'assuré a subi sur son salaire une retenue au moins égale à 15 anciens francs » ;
+      de 1942 à 1945, « autant de trimestres que la retenue subie par l'assuré sur son
+      salaire annuel représente de fois 15 F (anciens) avec un maximum de quatre
+      trimestres par année civile »
+    date: 1983-09-01
+  - type: autre
+    reference: >-
+      loi du 5 avril 1928 modifiée par la loi du 30 avril 1930, « Texte officiel et
+      complet », 1930, fac-similé de Gallica que reproduit le document n° 7 de la séance
+      du COR du 15 décembre 2022 : article 1er, § 2, « Sont affiliés obligatoirement aux
+      assurances sociales tous les salariés [...] dont la rémunération totale annuelle
+      [...] ne dépasse pas 15.000 fr. », 18 000 F dans les villes de plus de 200 000
+      habitants, 2 000 F de plus par enfant à charge, 25 000 F pour trois, et « Ne sont pas
+      considérées comme salariées les personnes dont le nombre de journées de travail
+      salarié [...] est inférieur à 90 » ; article 2, § 1, « des versements pour moitié à
+      la charge de l'assuré et retenus lors de sa paye », § 2, les cinq catégories, la
+      cotisation mensuelle de 24 cotisations journalières des quatre premières, § 3, la
+      double cotisation, « 8 p. 100 du salaire annuel de base » en moyenne
+    url: https://www.cor-retraites.fr/sites/default/files/2022-12/Doc_07_lois_1928_1930.pdf
+    date: 1930-04-30
+  - type: circulaire_cnav
+    reference: >-
+      barème « Plafond d'assujettissement avant 1947 »
+      (plafond_assujettissement_securite_sociale_avant_1947_bar), lu par l'API de la base
+      de législation le 18 octobre 2026 : 15 000 anciens francs du 1er juillet 1930 à la
+      fin de 1936, 21 000 au 1er janvier 1937, 30 000 au 1er juillet 1938, 42 000 en 1942,
+      48 000 en 1944, 60 000 au 1er septembre 1944, 120 000 du 1er avril 1945 au
+      31 décembre 1946, chacun avec son texte (`legislation/plafond_assujettissement_avant_1947.csv`)
+    url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=plafond_assujettissement_securite_sociale_avant_1947_bar.aspx
+    date: 2024-07-25
+  - type: autre
+    reference: >-
+      le taux de la retenue de 1936 à 1945 : B. Valat, « Les retraites et la création de
+      la Sécurité sociale en 1945 : révolution ou restauration ? », Revue d'histoire de la
+      protection sociale, n° 13, 2020 (document n° 10 de la séance du COR du 15 décembre
+      2022), « acquittées à parts égales par employeurs et bénéficiaires (le total pour
+      les assurances sociales s'élevant à 8 % des salaires) » et, à la réforme, « les
+      salariés [...] voient leur cotisation passer de 4 à 6 % » ; P.-J. Hesse et
+      J.-P. Le Crom (dir.), « La protection sociale sous le régime de Vichy », Presses
+      universitaires de Rennes, 2001, conclusion : le taux, « bloqué à 8 % depuis 1937,
+      passe à 9 % au premier trimestre 1945 », à 11 % au deuxième, à 12 % aux deux
+      derniers (`legislation/taux_retenue_avant_1946.csv`)
+    url: https://www.cor-retraites.fr/sites/default/files/2022-12/Doc_10_Valat.pdf
+    date: 2022-12-15
+  - type: legifrance
+    reference: >-
+      ordonnance n° 45-2250 du 4 octobre 1945, article 32 (LEGIARTI000038154243), lu dans
+      l'index LEGI : « Le taux de la cotisation des assurances sociales est de 12 p. 100.
+      La moitié de la cotisation est à la charge de l'employeur, l'autre moitié à la
+      charge du salarié ou assimilé »
+    date: 1945-10-07
+  - type: legifrance
+    reference: >-
+      décret n° 46-1378 du 8 juin 1946, article 216 (LEGIARTI000006761396), lu dans
+      l'index LEGI : les années de prévoyance d'avant l'assujettissement, « postérieures au
+      1er juillet 1930 », n'entrent que dans l'ouverture du droit, et « La liquidation de
+      la pension est faite en tenant compte seulement du temps pendant lequel les
+      intéressés ont été soumis à l'assujettissement obligatoire aux assurances
+      sociales », sauf le versement fait avant le 24 août 1949 (§ 2)
+    date: 1949-04-02
 textes_a_rattacher:
 - id: LEGIARTI000053335598
   reference: R. 351-9 CSS, rédaction en vigueur, de 1949 à 1971
@@ -170,9 +261,37 @@ textes_a_rattacher:
   reference: R. 351-39 CSS, en vigueur, qui garde R. 753-21 avant 1952
 approximations:
 - ecart: >-
-    avant 1946, quatre trimestres par année travaillée, la règle se lisant sur la retenue
-    et non sur le salaire
-  effet: non mesuré ; aucun témoin n'a d'année travaillée avant 1946 sous le seuil
+    de 1930 à 1935, un trimestre par trimestre civil travaillé, deux en 1930, quand le
+    texte compte sur toute la période les cotisations journalières, soixante par
+    trimestre, vingt-deux trimestres au plus : le salaire ne dit pas les journées ; un
+    salarié à plein temps entré en 1931, à 288 cotisations par an selon le tableau de la
+    loi de 1930, en avait vingt-deux, le modèle lui en donne vingt
+  effet: non mesuré ; trois trimestres au plus par carrière, pour qui entre en 1932
+- ecart: >-
+    de 1936 à 1941, autant de trimestres que la retenue de l'année paie de fois 15 anciens
+    francs, comme de 1942 à 1945, quand le texte compte les seuls trimestres où la
+    retenue les atteint : une année dont la retenue s'étale sur les quatre trimestres
+    sans y atteindre 15 anciens francs n'en valide aucun
+  effet: >-
+    non mesuré ; les années de moins de 1 500 anciens francs de salaire, quelques
+    semaines de travail
+- ecart: >-
+    le plafond d'assujettissement de base, que la Cnav date : ni les 18 000 F des villes
+    de plus de 200 000 habitants, ni les majorations pour enfants à charge, ni l'exclusion
+    de qui travaillait moins de quatre-vingt-dix journées par an (loi de 1930, article 1er,
+    § 2) ; ni les années de prévoyance que le décret n° 46-1378, article 216, fait entrer
+    dans l'ouverture du droit, ni les rachats ; le salarié agricole prend la règle du
+    régime général
+  effet: >-
+    non mesuré ; un cadre payé entre 15 000 et 18 000 anciens francs dans une grande ville
+    avant 1937, ou chargé de famille, était assujetti
+- ecart: >-
+    le taux de la retenue de 1936 à 1945, lu dans deux histoires des assurances sociales
+    (niveau `moyenne`), et le partage des deux premiers trimestres de 1945, supposé par
+    moitié
+  effet: >-
+    nul en pratique : la retenue de 15 anciens francs demande 375 anciens francs de salaire
+    par trimestre, moins d'un dixième du salaire moyen dès 1940
 - ecart: >-
     le seuil de la métropole, quand l'assuré a travaillé outre-mer de 1949 à 1951 ou de
     1972 à 1995 : le site n'a pas de champ pour le dire, et la saisie ne remplit pas le
@@ -194,9 +313,22 @@ code:
     `legislation/salaire_validant_trimestre_outre_mer.csv` par le département de l'année
     (`AnneeCarriere.outre_mer`, `LigneRelevee.outre_mer`, l'attribut `outre_mer` de la
     période d'activité de la chronologie), sous `salaire_validant_outre_mer_*` au paquet.
+    Avant 1946, ils lisent la retenue (`_trimestres_de_la_retenue`,
+    `_trimestresDeLaRetenue`) dans `legislation/taux_retenue_avant_1946.csv`, et le
+    plafond d'assujettissement de 1930 à 1946 dans
+    `legislation/plafond_assujettissement_avant_1947.csv`, proratisé sur les mois de
+    l'année, que le paquet porte sous les mêmes noms ; ils ne le font que pour les
+    statuts que le routage porte aux assurances sociales
+    (`DonneesMacro.statuts_assures_sociaux`, `statutsAssuresSociaux`), que l'année de
+    carrière leur passe. Le salaire annuel moyen ne retient pas le salaire d'une année
+    non assujettie (`salaire_au_compte`, `salaireAuCompte`).
   tests: >-
-    `test_avant_1972_le_trimestre_se_valide_au_trimestre_de_l_avts` et
+    `test_avant_1972_le_trimestre_se_valide_au_trimestre_de_l_avts`,
+    `test_avant_1946_le_trimestre_se_lit_sur_la_retenue`,
+    `test_le_salaire_d_un_non_assujetti_n_entre_pas_au_salaire_annuel_moyen` et
     `test_outre_mer_le_trimestre_se_valide_au_seuil_du_departement`
     (tests/test_salaire_annuel_moyen.py), et leurs jumeaux de tests/js/moteur.test.js ;
+    `test_avant_1946_la_retenue_ne_lit_que_les_assures_sociaux` et son jumeau
+    (`test_le_portage_javascript_lit_la_retenue_comme_le_modele`) ;
     tests/test_outre_mer.py, le département dans la carrière, et son jumeau ; les
     contrôles du récupérateur (tests/test_verification.py).

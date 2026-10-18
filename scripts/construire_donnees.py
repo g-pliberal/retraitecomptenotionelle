@@ -188,6 +188,16 @@ def _series() -> dict:
             DONNEES / "reference" / "legislation"
             / "salaire_validant_trimestre_avant_1972.csv",
             "valeur", nom="salaire_validant_avant_1972"),
+        # Avant 1946, la retenue des assurances sociales : leur plafond
+        # d'assujettissement de 1930 à 1946, et la part de l'assuré dans la
+        # double contribution de 1936 à 1945 (R. 351-9).
+        "plafond_assujettissement_avant_1947": charger_serie_annuelle(
+            DONNEES / "reference" / "legislation"
+            / "plafond_assujettissement_avant_1947.csv",
+            "valeur", nom="plafond_assujettissement_avant_1947"),
+        "taux_retenue_avant_1946": charger_serie_annuelle(
+            DONNEES / "reference" / "legislation" / "taux_retenue_avant_1946.csv",
+            "valeur", nom="taux_retenue_avant_1946"),
         # Le même seuil outre-mer, de 1948 à 1995, une série par colonne du
         # barème de la Cnav (R. 753-21, puis le SMIC du département).
         **{f"salaire_validant_outre_mer_{colonne}": charger_serie_annuelle(

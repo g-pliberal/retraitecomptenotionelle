@@ -670,7 +670,7 @@ function ligneAnnuelle({
   const trimestres = trimestresDeclares === null
     ? (publies !== null ? publies : cotise ? macro.trimestresValides(
       Math.max(micro ? revenuCotise(macro, revenu, micro, annee, part) : revenu, minimale),
-      annee, outreMer)
+      annee, outreMer, part, macro.statutsAssuresSociaux.has(affiliation))
       : (regle !== null ? regle[0] : 4))
     : Math.floor(trimestresDeclares + 0.5);
   return new AnneeCarriere({

@@ -196,7 +196,7 @@ def test_avant_1972_le_trimestre_se_valide_au_trimestre_de_l_avts(simulateur):
     l'allocation aux vieux travailleurs salariés au 1er janvier », celui des
     villes de plus de 5 000 habitants jusqu'en 1962 ; de 1946 à 1948, autant de
     fois 18 F. Le modèle validait quatre trimestres à toute année travaillée
-    avant 1972 ; il le fait encore avant 1946, où la règle se lit sur la retenue.
+    avant 1972 ; avant 1946, la règle se lit sur la retenue (test suivant).
     Les montants viennent du barème de la Cnav : 34 000 anciens francs au
     1er octobre 1948, 72 380 au 1er janvier 1956, 800 F au 1er avril 1962 — qui
     ne compte qu'en 1963 —, 1 750 F au 1er octobre 1970 (décret n° 70-879)."""
@@ -205,7 +205,6 @@ def test_avant_1972_le_trimestre_se_valide_au_trimestre_de_l_avts(simulateur):
     def francs(montant: float) -> float:
         return montant / 6.55957
 
-    assert valides(francs(1.0), 1940) == 4
     assert [valides(francs(f), 1946) for f in (17.99, 18.0, 71.99, 72.0)] == [0, 1, 3, 4]
     assert [valides(francs(f), 1949) for f in (84.99, 85.0, 170.0)] == [0, 1, 2]
     assert [valides(francs(f), 1962) for f in (180.95, 723.79, 723.80)] == [1, 3, 4]
@@ -214,6 +213,154 @@ def test_avant_1972_le_trimestre_se_valide_au_trimestre_de_l_avts(simulateur):
         0, 1, 3, 4]
     # 1972 : 200 heures du SMIC de janvier, 3,94 F, la règle d'avant inchangée.
     assert [valides(francs(f), 1972) for f in (787.0, 788.0)] == [0, 1]
+
+
+def test_avant_1946_le_trimestre_se_lit_sur_la_retenue(simulateur):
+    """R. 351-9, rédactions de 1985 à 2025, et l'article 71 du décret
+    n° 45-0179 (action 138, étape 6) : les périodes d'assurance comptent « du
+    1er juillet 1930 » ; de 1936 à 1941, un trimestre « au cours [duquel]
+    l'assuré a subi sur son salaire une retenue au moins égale à 15 anciens
+    francs » ; de 1942 à 1945, autant de trimestres que la retenue annuelle
+    « représente de fois 15 F (anciens) », quatre au plus. La retenue est la
+    moitié de la double contribution (loi du 30 avril 1930, article 2) : 4 % de
+    8 % jusqu'en 1944, puis la moitié de 9, 11, 12 et 12 % aux quatre trimestres
+    de 1945, 5,5 % sur l'année. Au-delà du plafond d'assujettissement (loi du
+    30 avril 1930, article 1er), aucune retenue : 15 000 anciens francs, 21 000
+    en 1937, 30 000 au 1er juillet 1938, 42 000 en 1942, 48 000 en 1944, 60 000
+    au 1er septembre 1944, 120 000 au 1er avril 1945 et jusqu'à la fin de 1946
+    (barème de la Cnav), au prorata des mois de chaque montant. De 1930 à 1935,
+    le texte compte des cotisations journalières, soixante par trimestre, que le
+    salaire ne dit pas : le modèle en compte un par trimestre civil travaillé."""
+    valides = simulateur.macro.trimestres_valides
+
+    def francs(montant: float) -> float:
+        return montant / 6.55957
+
+    # Rien avant le 1er juillet 1930 ; deux trimestres en 1930, un pour qui
+    # commence en octobre.
+    assert valides(francs(100.0), 1929) == 0
+    assert valides(francs(100.0), 1930) == 2
+    assert valides(francs(25.0), 1930, fraction=0.25) == 1
+    # De 1931 à 1935, quatre, jusqu'au plafond d'assujettissement de 150 F.
+    assert [valides(francs(f), 1933) for f in (1.0, 150.0, 150.01)] == [4, 4, 0]
+    # 1937 : 4 % de retenue, 3,75 F de salaire par trimestre ; plafond de 210 F.
+    assert [valides(francs(f), 1937) for f in (3.74, 3.75, 14.99, 15.0)] == [0, 1, 3, 4]
+    assert [valides(francs(f), 1937) for f in (210.0, 210.01)] == [4, 0]
+    # 1938 : 210 F six mois, 300 F six mois, 255 F sur l'année, 127,50 F sur la
+    # moitié d'une année.
+    assert [valides(francs(f), 1938) for f in (255.0, 255.01)] == [4, 0]
+    assert [valides(francs(f), 1938, fraction=0.5) for f in (127.5, 127.51)] == [4, 0]
+    # 1943 : la retenue annuelle, autant de fois 0,15 F ; plafond de 420 F.
+    assert [valides(francs(f), 1943) for f in (7.49, 7.5, 420.0, 420.01)] == [1, 2, 4, 0]
+    # 1944 : 480 F huit mois, 600 F quatre mois, 520 F sur l'année.
+    assert [valides(francs(f), 1944) for f in (520.0, 520.01)] == [4, 0]
+    # 1945 : 5,5 % de retenue, 2,7272… F par trimestre ; 600 F trois mois,
+    # 1 200 F neuf mois, 1 050 F sur l'année.
+    assert [valides(francs(f), 1945) for f in (2.72, 2.73, 10.90, 10.91)] == [0, 1, 3, 4]
+    assert [valides(francs(f), 1945) for f in (1_050.0, 1_050.01)] == [4, 0]
+    # 1946 : le salaire de R. 351-9, 18 F, sous le plafond d'assujettissement
+    # de 1 200 F, que la Cnav date jusqu'au 31 décembre 1946.
+    assert [valides(francs(f), 1946) for f in (18.0, 1_200.0, 1_200.01)] == [1, 4, 0]
+    # Un statut que les assurances sociales ne couvraient pas garde ses quatre.
+    assert valides(francs(1_000.0), 1940, assure_social=False) == 4
+    assert valides(francs(1.0), 1925, assure_social=False) == 4
+
+
+def test_avant_1946_la_retenue_ne_lit_que_les_assures_sociaux(simulateur):
+    """Le statut de l'année dit si la retenue compte : un cadre payé 400 F en
+    1940, au-delà du plafond d'assujettissement de 300 F, ne cotisait pas aux
+    assurances sociales et ne valide rien ; le même traitement d'un
+    fonctionnaire de l'État, dont la pension civile compte les services, en
+    valide quatre ; 2 F de salaire, 0,08 F de retenue, aucun."""
+    from retraite_notionnelle.carriere import LigneRelevee
+
+    def francs(montant: float) -> float:
+        return montant / 6.55957
+
+    def trimestres(statut: str, montant: float) -> int:
+        carriere = simulateur.carriere_releve(
+            1915, "H", [LigneRelevee(1940, statut, francs(montant))], 60.0)
+        return {ligne.annee: ligne.trimestres_valides for ligne in carriere.lignes}[1940]
+
+    assert trimestres("salarie_prive_cadre", 400.0) == 0
+    assert trimestres("salarie_prive_non_cadre", 200.0) == 4
+    assert trimestres("salarie_prive_non_cadre", 2.0) == 0
+    assert trimestres("fonctionnaire_etat", 400.0) == 4
+
+
+def test_le_salaire_d_un_non_assujetti_n_entre_pas_au_salaire_annuel_moyen(simulateur):
+    """Le cadre payé 1 500 F en 1945 et 2 000 F en 1946, au-delà du plafond
+    d'assujettissement de 1 050 F et de 1 200 F, ne cotisait pas : la caisse n'a
+    pas son salaire, et R. 351-9 ne connaît que « le salaire annuel
+    correspondant aux retenues subies ». Ses deux années, que le routage porte
+    au régime général, n'entrent pas dans le salaire annuel moyen d'une pension
+    de 1980, qui se calcule au trimestre jusqu'en 1995 (circulaire Cnav 1/73) :
+    avec un salaire et sans trimestre, elles le gonfleraient."""
+    actuel = simulateur.scenario_actuel
+    macro = simulateur.macro
+    code = "regime_general"
+    lignes = [AnneeCarriere(annee=annee, revenu=macro.plafond_securite_sociale(annee) / 2,
+                            affiliation="salarie_prive_non_cadre", trimestres_valides=4)
+              for annee in range(1950, 1976)]
+    anciennes = [AnneeCarriere(annee=1945, revenu=1_500.0 / 6.55957,
+                               affiliation="salarie_prive_cadre", trimestres_valides=0),
+                 AnneeCarriere(annee=1946, revenu=2_000.0 / 6.55957,
+                               affiliation="salarie_prive_cadre", trimestres_valides=0)]
+    periode = simulateur.catalogue[code].periode(1980)
+
+    def sam(lignes_de_la_carriere: list[AnneeCarriere]) -> float:
+        carriere = Carriere.depuis_lignes(1915, "H", lignes_de_la_carriere,
+                                          age_liquidation=65)
+        return liquider.salaire_de_reference(actuel, code, carriere, periode, 1980, True,
+                                             1915)
+
+    assert sam(anciennes + lignes) == pytest.approx(sam(lignes))
+
+
+#: Le jumeau JavaScript du test précédent : les mêmes relevés, lus par le
+#: portage.
+_JUMEAU_RETENUE = """
+import { readFileSync } from "node:fs";
+import { Simulateur } from "./moteur/js/simulateur.js";
+const releves = JSON.parse(process.argv[1]);
+const simulateur = new Simulateur(JSON.parse(readFileSync("./moteur/donnees.json", "utf8")));
+process.stdout.write(JSON.stringify(releves.map((releve) => simulateur.carriereReleve({
+  annee_naissance: 1915, sexe: "H", releve, age_liquidation: 60,
+}).lignes.map((l) => [l.annee, l.trimestres_valides]))));
+"""
+
+
+def test_le_portage_javascript_lit_la_retenue_comme_le_modele(simulateur):
+    import json
+    import shutil
+    import subprocess
+    from pathlib import Path
+
+    from retraite_notionnelle.carriere import LigneRelevee
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    releves = [[{"annee": annee, "affiliation": statut, "revenu": francs / 6.55957}
+                for annee in (1929, 1930, 1938, 1946)]
+               for statut, francs in (("salarie_prive_cadre", 400.0),
+                                      ("salarie_prive_non_cadre", 200.0),
+                                      ("salarie_prive_non_cadre", 2.0),
+                                      ("fonctionnaire_etat", 400.0))]
+    attendus = [[[l.annee, l.trimestres_valides] for l in simulateur.carriere_releve(
+                    1915, "H", [LigneRelevee(**ligne) for ligne in releve], 60.0).lignes]
+                for releve in releves]
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", _JUMEAU_RETENUE, json.dumps(releves)],
+        cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr
+    assert json.loads(execution.stdout) == attendus
+    # 1929, 1930, 1938, 1946 : le cadre à 400 F n'est assujetti qu'en 1946 ; le
+    # non-cadre à 200 F dès que le plafond le dépasse ; 2 F de salaire valent
+    # les deux trimestres de 1930, puis trop peu de retenue ; le fonctionnaire
+    # garde les siens.
+    assert [[t for _, t in lignes] for lignes in attendus] == [
+        [0, 0, 0, 4], [0, 0, 4, 4], [0, 2, 0, 0], [4, 4, 4, 4]]
 
 
 def test_outre_mer_le_trimestre_se_valide_au_seuil_du_departement(simulateur):

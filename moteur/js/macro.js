@@ -43,6 +43,16 @@ export const DEPARTEMENTS_D_OUTRE_MER = Object.freeze({
 });
 
 /**
+ * Avant 1946, la retenue (R. 351-9, rédactions de 1985 à 2025) : les périodes
+ * d'assurance comptent du 1er juillet 1930, six mois cette année-là ; de 1936 à
+ * 1945, un trimestre par retenue de 15 anciens francs, 0,15 F, en euros. Voir
+ * le Python.
+ */
+export const DEBUT_DES_ASSURANCES_SOCIALES = 1930;
+export const MOIS_ASSURES_EN_1930 = 6;
+export const RETENUE_D_UN_TRIMESTRE = 0.15 / 6.55957;
+
+/**
  * Les trimestres qu'un revenu valide au seuil d'un trimestre, quatre au plus.
  * Un revenu qui tombe pile sur le seuil le valide : 450 SMIC horaires font
  * trois seuils, mais 450 × 11,88 / (150 × 11,88) vaut 2,999… en virgule
@@ -138,6 +148,22 @@ export class DonneesMacro {
       [...new Set(Object.values(DEPARTEMENTS_D_OUTRE_MER))]
         .filter((colonne) => `salaire_validant_outre_mer_${colonne}` in paquet.series)
         .map((colonne) => [colonne, serie(`salaire_validant_outre_mer_${colonne}`)]));
+    /**
+     * Avant 1946, la retenue des assurances sociales : leur plafond
+     * d'assujettissement de 1930 à 1946, la part de l'assuré dans la double
+     * contribution de 1936 à 1945, et les statuts que le routage leur porte. Un
+     * paquet qui ne les porte pas encore laisse quatre trimestres à toute année
+     * travaillée avant 1946. Voir le Python.
+     */
+    this.plafond_assujettissement_avant_1947 =
+      "plafond_assujettissement_avant_1947" in paquet.series
+        ? serie("plafond_assujettissement_avant_1947") : null;
+    this.taux_retenue_avant_1946 = "taux_retenue_avant_1946" in paquet.series
+      ? serie("taux_retenue_avant_1946") : null;
+    this.statutsAssuresSociaux = new Set(Object.entries(paquet.affiliations ?? {})
+      .filter(([, profil]) => (profil.periodes ?? [])
+        .some((periode) => (periode.regimes ?? []).includes("assurances_sociales")))
+      .map(([code]) => code));
     /**
      * L'assiette forfaitaire MENSUELLE de l'AVPF à chaque date du barème de la
      * Cnav, `[[AAAA-MM-JJ, euros], …]`, du 1er juillet 1972 au dernier publié.
@@ -271,6 +297,48 @@ export class DonneesMacro {
   }
 
   /**
+   * Le salaire de l'année, sur ses mois travaillés, ne dépasse pas le plafond
+   * d'assujettissement aux assurances sociales, ou l'année n'en a plus. Un
+   * micro-euro de marge : un salaire pile sur le plafond reste assujetti.
+   */
+  _assujetti(revenu, annee, fraction) {
+    const plafond = this.plafond_assujettissement_avant_1947;
+    if (plafond === null || annee < plafond.premiereAnnee || annee > plafond.derniereAnnee) {
+      return true;
+    }
+    return revenu <= plafond.valeur(annee) * fraction + 1e-6;
+  }
+
+  /**
+   * Le salaire de l'année est porté au compte de l'assuré social : ni avant le
+   * 1er juillet 1930, ni au-delà du plafond d'assujettissement jusqu'en 1946.
+   * Voir le Python.
+   */
+  salaireAuCompte(revenu, annee, fraction = 1) {
+    return annee >= DEBUT_DES_ASSURANCES_SOCIALES && this._assujetti(revenu, annee, fraction);
+  }
+
+  /**
+   * Les trimestres d'un assuré social avant 1946, que R. 351-9 lit sur la
+   * retenue : rien avant le 1er juillet 1930 ; de 1930 à 1935, un par trimestre
+   * civil travaillé, deux en 1930 ; de 1936 à 1945, autant que la retenue de
+   * l'année paie de fois 15 anciens francs. Voir le Python.
+   */
+  _trimestresDeLaRetenue(revenu, annee, fraction) {
+    if (annee < DEBUT_DES_ASSURANCES_SOCIALES) {
+      return 0;
+    }
+    const taux = this.taux_retenue_avant_1946;
+    if (annee < taux.premiereAnnee) {
+      if (annee === DEBUT_DES_ASSURANCES_SOCIALES) {
+        return Math.floor(Math.min(MOIS_ASSURES_EN_1930, Math.round(12 * fraction)) / 3);
+      }
+      return 4;
+    }
+    return trimestresAuSeuil(taux.valeur(annee) * revenu, RETENUE_D_UN_TRIMESTRE);
+  }
+
+  /**
    * Trimestres qu'un revenu d'activité valide dans l'année.
    *
    * Quatre au plus, et zéro si le revenu n'atteint pas le seuil du premier :
@@ -283,8 +351,16 @@ export class DonneesMacro {
    * de `DEPARTEMENTS_D_OUTRE_MER`), lui donne son seuil : aucun trimestre avant
    * 1948, puis `salaire_validant_outre_mer` jusqu'en 1995 ; depuis 1996, le
    * SMIC y est celui de la métropole.
+   *
+   * Avant 1946, la règle se lit sur la retenue des assurances sociales
+   * (`_trimestresDeLaRetenue`), et jusqu'en 1946 le salarié payé au-delà de
+   * leur plafond d'assujettissement n'en subissait aucune. `fraction`, la part
+   * de l'année que la carrière couvre, proratise ce plafond et dit les mois
+   * assurés de 1930 ; `assureSocial`, que le statut de l'année relevait des
+   * assurances sociales : les autres gardent avant 1946 quatre trimestres par
+   * année travaillée.
    */
-  trimestresValides(revenu, annee, outreMer = "") {
+  trimestresValides(revenu, annee, outreMer = "", fraction = 1, assureSocial = true) {
     if (revenu <= 0) {
       return 0;
     }
@@ -307,9 +383,15 @@ export class DonneesMacro {
     if (annee < this.heures_par_trimestre.premiereAnnee) {
       // Le seuil d'avant 1972 : le modèle validait quatre trimestres à toute
       // année travaillée, R. 351-9 en fixe un depuis 1946 (action 138, étape 6).
+      // Avant 1946, la retenue des assurances sociales les fait, et le cadre
+      // payé au-delà de leur plafond d'assujettissement n'en subissait aucune.
+      if (assureSocial && !this._assujetti(revenu, annee, fraction)) {
+        return 0;
+      }
       const anciens = this.salaire_validant_avant_1972;
       if (annee < anciens.premiereAnnee) {
-        return 4;
+        return assureSocial && this.taux_retenue_avant_1946 !== null
+          ? this._trimestresDeLaRetenue(revenu, annee, fraction) : 4;
       }
       seuil = anciens.valeur(annee);
     } else {
