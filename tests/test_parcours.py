@@ -26,13 +26,16 @@ mécaniques, parce que le document contient deux sortes de chiffres.
 
 La comparaison porte sur les VALEURS, jamais sur la typographie : le parcours
 arrondit à l'euro ce que la page sert au centime, et les trois espaces des
-milliers du dépôt — fine, insécable, ordinaire — se valent ici.
+milliers du dépôt — fine, insécable, ordinaire — se valent ici. Seules les
+étiquettes des chiffres en tête de page se lisent à la lettre : ce sont les
+mots de la page, que le parcours cite.
 """
 
 from __future__ import annotations
 
 import html
 import re
+import sys
 from pathlib import Path
 from urllib.parse import parse_qsl
 
@@ -440,3 +443,42 @@ def test_les_exemptions_servent_encore(parcours):
     assert not mortes, (
         f"exemptions de HORS_PAGE que le parcours n'écrit plus : {mortes} — "
         "les retirer")
+
+
+#: L'ancre d'un chiffre en tête de page (``repere``) : la page, et le rang de
+#: la fiche qu'elle lit.
+REPERE = re.compile(r"<!--chiffre:mesure\(repere\?chemin=(/[a-z-]+)&rang=(\d+)[^)]*\)-->")
+
+
+def _mots(texte: str) -> str:
+    """Les mots d'un texte, ses espaces — fine, insécable, ordinaire — repliés."""
+    return re.sub(r"\s+", " ", texte).strip()
+
+
+@site_requis
+def test_les_reperes_du_parcours_portent_l_etiquette_de_leur_page():
+    """Les trois chiffres en tête des pages Coût et Pourquoi changer se lisent,
+    dans le parcours, sous l'étiquette que la page leur donne, et avec sa
+    précision. Ancrés, leurs chiffres suivaient la page ; leurs étiquettes,
+    recopiées, ne suivaient rien : la page écrivait depuis le 17 octobre 2026
+    « Promis au-delà de ce que VOS cotisations achèteraient », le parcours
+    « ce que ces cotisations financent » (action 163). Les années qu'elles
+    portent, que la page récrit avec ses données, sont ancrées."""
+    if str(RACINE / "scripts") not in sys.path:
+        sys.path.insert(0, str(RACINE / "scripts"))
+    import mesures_prose
+
+    lues = 0
+    for ligne in PARCOURS.read_text(encoding="utf-8").splitlines():
+        designees = set(REPERE.findall(ligne))
+        if not (designees and ligne.startswith("|")):
+            continue
+        assert len(designees) == 1, f"la ligne lit deux repères : {ligne}"
+        ((chemin, rang),) = designees
+        lue = mesures_prose.reperes(chemin)[int(rang) - 1]
+        fiche = {quoi: _mots(texte) for quoi, texte in lue.items()}
+        etiquette, valeur = map(_mots, ANCRES.sub("", ligne).strip().strip("|").split("|"))
+        assert etiquette == fiche["etiquette"], f"{chemin}, repère {rang}"
+        assert fiche["precision"] in valeur, f"{chemin}, repère {rang}"
+        lues += 1
+    assert lues == 6, "le parcours ne fait plus lire les repères de Coût et Pourquoi changer"

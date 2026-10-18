@@ -276,6 +276,62 @@ def test_une_correction_garde_la_typographie_du_chiffre_qu_elle_remplace():
     assert ecrire(-79.5, "−75,9") == "−79,5"
 
 
+def test_un_nombre_en_lettres_s_ecrit_et_se_relit():
+    """L'ancre écrit les lettres comme le dépôt, dans l'orthographe d'avant
+    1990 — « soixante-deux », « vingt et un », « quatre-vingts », « quatre
+    cent mille » —, et relit aussi les traits d'union de celle de 1990."""
+    ecrire, lire = verifier_prose.en_lettres, verifier_prose.lettres_en_nombre
+    attendus = {0: "zéro", 1: "un", 16: "seize", 17: "dix-sept", 21: "vingt et un",
+                62: "soixante-deux", 71: "soixante et onze", 73: "soixante-treize",
+                80: "quatre-vingts", 81: "quatre-vingt-un", 91: "quatre-vingt-onze",
+                100: "cent", 200: "deux cents", 201: "deux cent un", 1000: "mille",
+                80_000: "quatre-vingt mille", 400_000: "quatre cent mille"}
+    assert {nombre: ecrire(nombre) for nombre in attendus} == attendus
+    assert [n for n in [*range(3000), 71_080, 999_999] if lire(ecrire(n)) != n] == []
+    assert (lire("vingt-et-un"), lire("deux-cents"), lire("Treize")) == (21, 200, 13)
+    assert sorted(verifier_prose._MOTS_NOMBRE.split("|")) == sorted(verifier_prose._VALEURS_LETTRES)
+
+
+def test_un_chiffre_en_lettres_s_ancre_comme_un_autre(monkeypatch):
+    """« le statut dans la liste (soixante-deux) » : le menu en comptait 73 le
+    18 octobre 2026, et rien ne le disait. L'ancre ne lisait que des chiffres,
+    et le parcours écrit en lettres ses comptes, ses durées, ses points
+    (action 163). Elle lit les lettres à la précision qu'elles se donnent —
+    l'entier, la demie quand elles la disent —, et les récrit en lettres, la
+    majuscule et l'unité gardées ; ce qui ne s'écrit pas en lettres se dit."""
+    valeurs = {"statuts": 73.0, "report": 16.5, "points": 10.4, "lignes": 14.0,
+               "age": 17.0, "solde": -3.0, "portage": 12_345.0}
+    monkeypatch.setitem(verifier_prose.SONDES, "essai", lambda nom: valeurs[nom])
+    texte = ("la liste (<!--chiffre:essai(statuts)-->soixante-deux<!--/-->), servie "
+             "<!--chiffre:essai(report)-->seize ans et demi<!--/--> plus tard, avec "
+             "<!--chiffre:essai(points)-->dix<!--/--> points de moins, sur "
+             "<!--chiffre:essai(portage)~5%-->douze mille<!--/--> lignes. "
+             "<!--chiffre:essai(lignes)-->Treize<!--/--> lignes, partie à "
+             "<!--chiffre:essai(age)-->seize ans et demi<!--/-->, "
+             "<!--chiffre:essai(solde)-->trois<!--/--> déficits.\n")
+    corrige, derives = verifier_prose.verifier_ancres("exemple.md", texte)
+    assert [d.mesure for d in derives] == ["essai(statuts)", "essai(lignes)", "essai(age)",
+                                           "essai(solde)"]
+    assert "ne s'écrit pas en lettres" in derives[-1].message
+    assert corrige == texte.replace(
+        "soixante-deux", "soixante-treize").replace("Treize", "Quatorze").replace(
+        "partie à <!--chiffre:essai(age)-->seize ans et demi",
+        "partie à <!--chiffre:essai(age)-->dix-sept ans")
+
+
+def test_un_chiffre_deduit_de_deux_autres_s_ancre_sur_les_deux(monkeypatch):
+    """« servie seize ans et demi plus tard » : 65 − 48,5, deux chiffres que le
+    parcours ancre déjà, et la soustraction faite à la main ne les suivait pas
+    (action 163). ``difference`` ôte la seconde sonde de la première ; une
+    mesure qu'elle cite se calcule d'avance, avec les autres."""
+    monkeypatch.setitem(verifier_prose.SONDES, "essai",
+                        lambda nom: {"age": 65.0, "radiation": 48.5}[nom])
+    assert verifier_prose.sonde_difference("essai:age;essai:radiation") == 16.5
+    texte = ("<!--chiffre:difference(mesure:parametre?nom=a;valeur:x.json:b)-->dix<!--/--> "
+             "et <!--chiffre:mesure(fiche?quoi=total)-->28<!--/-->\n")
+    assert verifier_prose.mesures_citees(texte) == ["parametre?nom=a", "fiche?quoi=total"]
+
+
 def test_un_proces_verbal_enclave_reste_gele():
     """« **Ce que ça a déplacé.** » ouvre, dans une action de la feuille de
     route, un paragraphe qui date : ses chiffres sont ceux du jour où l'action
@@ -464,8 +520,12 @@ def test_les_reperes_d_une_page_se_mesurent_comme_elle_les_affiche(monkeypatch):
     assert mesurer("rang=2") == 33
     assert mesurer("rang=3") == 5.1
     assert mesurer("rang=3&quoi=precision") == 1.2
+    # L'année que l'étiquette écrit, que la page récrit avec les données
+    # (action 163) : le parcours la cite avec l'étiquette.
+    assert mesurer("rang=1&quoi=etiquette") == 2025
     assert demandes == [("/cout", {})]
-    for absent in ("rang=2&quoi=precision", "rang=4", "rang=1&quoi=etiquette"):
+    for absent in ("rang=2&quoi=precision", "rang=4", "rang=2&quoi=etiquette",
+                   "rang=1&quoi=libelle"):
         with pytest.raises(ValueError):
             mesurer(absent)
 
@@ -519,6 +579,9 @@ def test_le_manque_d_un_coefficient_est_ce_que_ses_recettes_ne_couvrent_pas(monk
     assert mesures.mesurer("coefficient?scenario=1&annee=2025&en=manque") == pytest.approx(1.2)
     assert mesures.mesurer("coefficient?scenario=6&quoi=minimum&en=manque") == pytest.approx(17)
     assert mesures.mesurer("coefficient?scenario=6&quoi=minimum") == pytest.approx(0.83)
+    # L'année où il se lit, l'horizon qu'on l'omet : « en 2070 » (action 163).
+    assert mesures.mesurer("coefficient?scenario=1&quoi=annee") == 2070
+    assert mesures.mesurer("coefficient?scenario=1&annee=2025&quoi=annee") == 2025
     for sans_manque in ("quoi=annee_minimum&en=manque", "quoi=economie&en=manque",
                         "en=milliards"):
         with pytest.raises(ValueError):

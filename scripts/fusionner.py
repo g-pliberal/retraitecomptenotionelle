@@ -68,6 +68,12 @@ from pathlib import Path
 ANCRE = re.compile(r"<!--chiffre:(\w+)\(([^)]*)\)(?:~([\d,.]+)%)?-->(.*?)<!--/-->", re.DOTALL)
 #: Un nombre de la prose, comme ``verifier_prose._NOMBRE``.
 NOMBRE = r"[−+-]?\d{1,3}(?:[ \u00a0\u202f]\d{3})+(?:,\d+)?|[−+-]?\d+(?:,\d+)?"
+#: Un nombre en lettres, comme ``verifier_prose.LETTRES_ANCREES``.
+_MOTS_NOMBRE = ("cinquante|quarante|quatorze|soixante|quatre|quinze|treize|trente|"
+                "vingts|douze|seize|trois|vingt|cents|mille|zéro|deux|cinq|sept|huit|"
+                "neuf|onze|cent|une|six|dix|un")
+LETTRES = re.compile(
+    rf"\b(?:{_MOTS_NOMBRE})(?:(?:[- ]et)?[- ](?:{_MOTS_NOMBRE}))*\b", re.IGNORECASE)
 #: Les sondes qui ne recalculent rien : leur chiffre s'écrit à la main.
 A_LA_MAIN = frozenset({"tenu", "illustration", "a_verifier"})
 #: Le repère d'un bloc produit, comme ``verifier_prose.lignes_produites``.
@@ -169,7 +175,12 @@ def forme(contenu: str) -> str:
         ecrit = nombre.group(0)
         decimales = len(ecrit.split(",")[1]) if "," in ecrit else 0
         return f"\0{'±' if ecrit[0] in '−+' else ''}{decimales}\0"
-    return re.sub(NOMBRE, gabarit, contenu)
+    if re.search(NOMBRE, contenu):
+        return re.sub(NOMBRE, gabarit, contenu)
+    # Un nombre en lettres : ``--corriger`` en garde la majuscule et l'unité,
+    # et « et demi » quand la valeur en reste une.
+    return LETTRES.sub(lambda mots: "\0L\0" if mots.group(0)[0].isupper() else "\0l\0",
+                       contenu, count=1)
 
 
 def _correspondance(depuis: list[Fente], vers: list[Fente]) -> dict[int, int]:

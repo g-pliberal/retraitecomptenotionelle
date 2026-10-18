@@ -89,7 +89,7 @@ C'est l'accueil. Descendre lentement, sans rien cliquer.
   « Votre retraite : ce que votre régime promet → de l'ordre d'un quart de
   moins, en médiane ». La première des « Vos questions », « Ma
   retraite va-t-elle baisser ? », en donne le détail : <!--chiffre:valeur(moteur/donnees.json:bilan_equilibre.ecarts_medians.a_venir*-100)-->25<!--/--> % pour qui n'est
-  pas encore à la retraite, <!--chiffre:valeur(moteur/donnees.json:bilan_equilibre.ecarts_medians.a_venir_volontaire*-100)-->12<!--/--> % s'il place les cinq points rendus, <!--chiffre:valeur(moteur/donnees.json:bilan_equilibre.ecarts_medians.deja_liquidees*-100)-->28<!--/--> % sur
+  pas encore à la retraite, <!--chiffre:valeur(moteur/donnees.json:bilan_equilibre.ecarts_medians.a_venir_volontaire*-100)-->12<!--/--> % s'il place les <!--chiffre:mesure(parametre?nom=taux_capitalisation_volontaire)-->cinq<!--/--> points rendus, <!--chiffre:valeur(moteur/donnees.json:bilan_equilibre.ecarts_medians.deja_liquidees*-100)-->28<!--/--> % sur
   la pension d'aujourd'hui d'un retraité, garantie vieillesse comprise.
 - Le bloc « Et vous, ça donne combien ? » en haut de page est un raccourci
   vers le simulateur : on peut y saisir une date de naissance et un statut et
@@ -123,17 +123,17 @@ Comment les lire, et c'est la chose la plus importante de la présentation :
   promet. Le reste attend des cotisations que personne n'a versées. La barre
   sous la ligne le montre, et la page Risque le chiffre.
 - **Les systèmes 2 et 3 ne sont pas des propositions.** Ce sont des
-  contrefactuels : la même carrière recalculée depuis 1941 comme si le compte
+  contrefactuels : la même carrière recalculée depuis <!--chiffre:mesure(parametre?nom=annee_debut_repartition)-->1941<!--/--> comme si le compte
   avait toujours existé, avec la seule part salariale (2), puis les deux parts
   (3). L'écart entre 2 et 3 mesure exactement une chose : ce que verse
   l'employeur. Ne pas s'attarder sur le 2.
 - **Le système 4 est la proposition**, et il se lit contre le 3 : même
-  compte jusqu'à 2026, puis <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % pour tous, <!--chiffre:mesure(parametre?nom=taux_capitalisation_obligatoire)-->5<!--/--> % capitalisés par-dessus, <!--chiffre:mesure(parametre?nom=taux_capitalisation_volontaire)-->5<!--/--> %
+  compte jusqu'à <!--chiffre:mesure(parametre?nom=annee_bascule)-->2026<!--/-->, puis <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % pour tous, <!--chiffre:mesure(parametre?nom=taux_capitalisation_obligatoire)-->5<!--/--> % capitalisés par-dessus, <!--chiffre:mesure(parametre?nom=taux_capitalisation_volontaire)-->5<!--/--> %
   rendus que l'exemple suppose replacés au même endroit, et une garantie
   vieillesse payée par l'impôt. Son grand nombre est annoncé « retraite
   jusqu'à » : c'est le seul des quatre qui dépende d'une décision de
   l'assuré. La ligne sous lui écrit le plancher — répartition plus rente
-  capitalisée obligatoire, touché sans rien ajouter — puis ce que les cinq
+  capitalisée obligatoire, touché sans rien ajouter — puis ce que les <!--chiffre:mesure(parametre?nom=taux_capitalisation_volontaire)-->cinq<!--/-->
   points rendus ajoutent si on les place, sur un pilier sans risque.
 - **Pourquoi la proposition sert moins que le système actuel sur cet
   exemple :** parce que le système actuel sert à ce salarié plus que ce qu'il
@@ -167,7 +167,7 @@ Chaque adresse ouvre le simulateur avec la carrière déjà calculée. Toutes
 sont nées en janvier 1975 et partent en janvier 2039 à 64 ans, sauf la
 dernière — et la proposition, dont l'âge légal est de <!--chiffre:mesure(parametre?nom=age_legal_liberal)-->65<!--/--> ans, les fait toutes
 partir un an plus tard : le site le dit sous les résultats. Les montants sont
-nets, par mois, en euros de 2026.
+nets, par mois, en euros de <!--chiffre:mesure(parametre?nom=annee_euros_constants)-->2026<!--/-->.
 
 **Au SMIC toute sa vie**, salarié du privé non cadre depuis 1996 à 1 443 €
 net :
@@ -221,18 +221,18 @@ C'est la carrière qui cotise presque entièrement après la bascule : la
 rente capitalisée y pèse le plus, et l'écart entre 3 et 4 est le plus large
 des trois exemples. Rappeler que le système 1 de cette génération est celui
 que le Conseil d'orientation des retraites projette en déficit de <!--chiffre:mesure(coefficient?scenario=1&en=manque)-->16<!--/--> % de la
-facture en 2070 : la colonne de référence n'est pas un point fixe.
+facture en <!--chiffre:mesure(coefficient?scenario=1&quoi=annee)-->2070<!--/--> : la colonne de référence n'est pas un point fixe.
 
 Si quelqu'un veut sa propre carrière : les trois champs du haut, le statut
-dans la liste (soixante-deux, du salarié du privé au député), le revenu net
+dans la liste (<!--chiffre:entrees(moteur/donnees.json:affiliations)-->soixante-treize<!--/-->, du salarié du privé au député), le revenu net
 mensuel. « Ajouter une période » permet un deuxième métier ou une
 interruption ; « Coller un relevé de carrière » accepte un relevé
 année par année. Ne pas ouvrir « Options de modélisation » en salle.
 
 ### 3. Cas types — trois minutes
 
-Onglet **Cas types**. Une grille : treize carrières en lignes, sept
-générations en colonnes, de 1940 à 2000. Chaque case dit ce que la pension
+Onglet **Cas types**. Une grille : <!--chiffre:entrees(moteur/donnees.json:agregats.cas_types.cas)-->treize<!--/--> carrières en lignes, <!--chiffre:entrees(moteur/donnees.json:agregats.cas_types.generations)-->sept<!--/-->
+générations en colonnes, de <!--chiffre:valeur(moteur/donnees.json:agregats.cas_types.generations.0)-->1940<!--/--> à <!--chiffre:valeur(moteur/donnees.json:agregats.cas_types.generations.-1)-->2000<!--/-->. Chaque case dit ce que la pension
 deviendrait, par rapport à aujourd'hui, pour la même carrière. Rouge :
 moins. Vert : plus.
 
@@ -244,7 +244,7 @@ Trois choses à montrer :
   d'où vient le premier : le droit en vigueur laisse ce militaire partir à
   <!--chiffre:valeur(moteur/donnees.json:agregats.cas_types.cas.code=militaire.ages.-1)-->48,5<!--/--> ans, après vingt-sept ans et demi de services, et la proposition
   le fait servir jusqu'à <!--chiffre:mesure(parametre?nom=age_legal_liberal)-->65<!--/--> ans —
-  une pension mensuelle bien plus forte, servie seize ans et demi plus tard.
+  une pension mensuelle bien plus forte, servie <!--chiffre:difference(mesure:parametre?nom=age_legal_liberal;valeur:moteur/donnees.json:agregats.cas_types.cas.code=militaire.ages.-1)-->seize ans et demi<!--/--> plus tard.
 - La ligne **« Fonctionnaire sédentaire (catégorie B) »**, qui va de <!--chiffre:valeur(moteur/donnees.json:agregats.cas_types.resultats.fonctionnaire_sedentaire|1940.variations.notionnel_liberal*100)-->-61<!--/--> %
   pour la génération 1940 à <!--chiffre:valeur(moteur/donnees.json:agregats.cas_types.resultats.fonctionnaire_sedentaire|1970.variations.notionnel_liberal*100)-->-6<!--/--> % pour la génération 1970 : la même règle
   donne des résultats très éloignés selon ce que l'État a versé à chaque
@@ -264,11 +264,11 @@ lignes : ce qu'un militaire touche de plus ou de moins qu'un artisan, à
 cotisation égale. Le niveau général dépend aussi d'un réglage annuel, le
 coefficient d'équilibre, que le modèle calcule mais n'applique jamais.
 **Ne pas promettre de marge** : pour la proposition, ce coefficient
-descend à <!--chiffre:mesure(coefficient?scenario=6&quoi=minimum)-->0,83<!--/--> au plus bas, en <!--chiffre:mesure(coefficient?scenario=6&quoi=annee_minimum)-->2048<!--/-->, et vaut <!--chiffre:mesure(coefficient?scenario=6)-->0,998<!--/--> en 2070 ; appliqué,
+descend à <!--chiffre:mesure(coefficient?scenario=6&quoi=minimum)-->0,83<!--/--> au plus bas, en <!--chiffre:mesure(coefficient?scenario=6&quoi=annee_minimum)-->2048<!--/-->, et vaut <!--chiffre:mesure(coefficient?scenario=6)-->0,998<!--/--> en <!--chiffre:mesure(coefficient?scenario=6&quoi=annee)-->2070<!--/--> ; appliqué,
 il abaisserait les cases jusqu'à <!--chiffre:mesure(coefficient?scenario=6&quoi=minimum&en=manque)-->17<!--/--> %, et la page le dit dans la phrase qui
 suit. C'est le coût de transition du taux unique : pendant trente ans, la caisse paie les
-pensions de l'ancien système avec dix points de cotisation en moins. Ce qu'on
-peut dire, et qui est vrai : le système actuel est à <!--chiffre:mesure(coefficient?scenario=1)-->0,84<!--/--> en 2070 et ne se
+pensions de l'ancien système avec <!--chiffre:difference(mesure:fiche?exemple=salaire_moyen&quoi=total;mesure:parametre?nom=taux_cotisation_liberal)-->dix<!--/--> points de cotisation en moins. Ce qu'on
+peut dire, et qui est vrai : le système actuel est à <!--chiffre:mesure(coefficient?scenario=1)-->0,84<!--/--> en <!--chiffre:mesure(coefficient?scenario=1&quoi=annee)-->2070<!--/--> et ne se
 règle jamais, la proposition se règle chaque année et son manque se résorbe
 à mesure que les pensions de l'ancien système s'éteignent. La page Coût le
 chiffre. Jusqu'au 20 septembre au matin, la page affirmait l'inverse, en
@@ -280,19 +280,19 @@ Onglet **Coût**. Trois chiffres en tête, à lire dans l'ordre :
 
 | | |
 |---|---|
-| Versé aux retraités en 2025 | <!--chiffre:mesure(repere?chemin=/cout&rang=1)-->422<!--/--> Md € à <!--chiffre:mesure(repere?chemin=/cout&rang=1&quoi=precision)-->17,3<!--/--> millions de personnes |
-| Encaissé pour le payer | <!--chiffre:mesure(repere?chemin=/cout&rang=2)-->417<!--/--> Md € de cotisations et d'impôts |
+| Versé aux retraités en <!--chiffre:mesure(repere?chemin=/cout&rang=1&quoi=etiquette)-->2025<!--/--> | <!--chiffre:mesure(repere?chemin=/cout&rang=1)-->422<!--/--> Md € à <!--chiffre:mesure(repere?chemin=/cout&rang=1&quoi=precision)-->17,3<!--/--> millions de personnes |
+| Encaissé pour le payer | <!--chiffre:mesure(repere?chemin=/cout&rang=2)-->417<!--/--> Md €, cotisations et impôts |
 | Manquant | <!--chiffre:mesure(repere?chemin=/cout&rang=3)-->5,1<!--/--> Md €, soit <!--chiffre:mesure(repere?chemin=/cout&rang=3&quoi=precision)-->1,2<!--/--> % de la facture |
 
 Puis le paragraphe « En clair » : sans rien changer, il manquerait <!--chiffre:mesure(coefficient?scenario=1&en=manque)-->16<!--/--> % de la
-facture en 2070. Un système en comptes notionnels ne dépenserait pas moins,
+facture en <!--chiffre:mesure(coefficient?scenario=1&quoi=annee)-->2070<!--/-->. Un système en comptes notionnels ne dépenserait pas moins,
 il servirait le même argent réparti autrement, et se réglerait chaque année
 au lieu d'attendre une réforme.
 
 Deux graphiques, qui se lisent au survol :
 
 - **« La retraite coûte-t-elle plus qu'elle ne rapporte ? »** : ce qui sort
-  et ce qui rentre depuis 1959, en part du PIB, et à partir de 2026 ce que la
+  et ce qui rentre depuis 1959, en part du PIB, et à partir de <!--chiffre:mesure(parametre?nom=annee_bascule)-->2026<!--/--> ce que la
   proposition coûterait et encaisserait. Sources : DREES puis Conseil
   d'orientation des retraites, et c'est lui qui projette.
 - **« Qui paie ? »** : les salaires pour <!--chiffre:mesure(somme_postes?serie=structure_ressources_retraite.csv&annee=2025&postes=cotisations|contribution_equilibre_etat)-->77<!--/--> %, et l'impôt, dont la part a
@@ -314,8 +314,8 @@ cet ordre :
 | | |
 |---|---|
 | Prélevé chaque mois sur un salaire moyen | <!--chiffre:mesure(repere?chemin=/risque&rang=1)-->967<!--/--> €, cotisation salariale et patronale réunies |
-| Promis au-delà de ce que ces cotisations financent | <!--chiffre:mesure(repere?chemin=/risque&rang=2)-->33<!--/--> % de la pension |
-| Non financé en 2070, sans rien changer | <!--chiffre:mesure(repere?chemin=/risque&rang=3)-->16<!--/--> % |
+| Promis au-delà de ce que VOS cotisations achèteraient | <!--chiffre:mesure(repere?chemin=/risque&rang=2)-->33<!--/--> % de VOTRE pension, à la charge de quelqu'un d'autre |
+| Que les recettes du SYSTÈME ne couvriront pas en <!--chiffre:mesure(repere?chemin=/risque&rang=3&quoi=etiquette)-->2070<!--/--> | <!--chiffre:mesure(repere?chemin=/risque&rang=3)-->16<!--/--> % des pensions dues cette année-là |
 
 Le <!--chiffre:mesure(repere?chemin=/risque&rang=1)-->967<!--/--> € est le chiffre qui porte : c'est le premier poste de la fiche de
 paie, avant l'impôt sur le revenu et avant la maladie, et plus de quatre cent
@@ -383,11 +383,11 @@ vérifiez plutôt que de nous croire.
 - **« Les pensions baissent de 30 % ? »** Par rapport à ce que le système
   actuel promet, c'est l'ordre de grandeur, et le site le dit sans détour :
   le tableau de l'accueil et sa première question annoncent de l'ordre d'un
-  quart de moins en médiane sur les treize carrières types, retraités
+  quart de moins en médiane sur les <!--chiffre:entrees(moteur/donnees.json:agregats.cas_types.cas)-->treize<!--/--> carrières types, retraités
   d'aujourd'hui compris. Ne pas laisser entendre que le réglage annuel
   relèverait les cases : pour la proposition, il les abaisserait, jusqu'à
   <!--chiffre:mesure(coefficient?scenario=6&quoi=minimum&en=manque)-->17<!--/--> % en <!--chiffre:mesure(coefficient?scenario=6&quoi=annee_minimum)-->2048<!--/-->. Le système actuel, lui, est projeté en déficit de <!--chiffre:mesure(coefficient?scenario=1&en=manque)-->16<!--/--> % de
-  la facture en 2070, sans règle qui le règle.
+  la facture en <!--chiffre:mesure(coefficient?scenario=1&quoi=annee)-->2070<!--/-->, sans règle qui le règle.
 - **« Et les petites pensions ? »** Le plancher : <!--chiffre:mesure(parametre?nom=garantie_vieillesse_mensuelle)-->800<!--/--> € par personne plus
   <!--chiffre:mesure(parametre?nom=allocation_isolement_mensuelle)-->250<!--/--> € pour qui vit seul, dès <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, individualisé, payé par l'impôt.
   Programme, tableau du plancher, et Coût, dépliant « Ce que coûte la
@@ -396,7 +396,7 @@ vérifiez plutôt que de nous croire.
   bien plus qu'un employeur privé, et que le compte rend ce qui a été versé.
   Simuler, deuxième adresse, et Cas types, ligne du fonctionnaire.
 - **« On cotise moins, donc on touche moins ? »** <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> + <!--chiffre:mesure(parametre?nom=taux_capitalisation_obligatoire)-->5<!--/--> font <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal+taux_capitalisation_obligatoire)-->23<!--/--> contre <!--chiffre:mesure(fiche?exemple=salaire_moyen&quoi=total)-->28<!--/-->
-  aujourd'hui. Les cinq points rendus sont libres ; le simulateur les suppose
+  aujourd'hui. Les <!--chiffre:mesure(parametre?nom=taux_capitalisation_volontaire)-->cinq<!--/--> points rendus sont libres ; le simulateur les suppose
   replacés pour comparer à effort égal, et montre ce que ça change sur la
   fiche de paie. Simuler, bloc « Et pendant que vous cotisez ».
 - **« D'où viennent les chiffres ? »** INSEE, Conseil d'orientation des

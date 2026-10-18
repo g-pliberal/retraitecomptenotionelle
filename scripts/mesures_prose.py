@@ -359,9 +359,9 @@ def simulateur(**reglages: str) -> float:
 
 #: Une fiche de tête (``fiche``, dans ``gabarit.js``) : sa valeur, son
 #: étiquette, puis sa précision quand elle en a une.
-_FICHE = re.compile(r'<div class="fiche"><div class="valeur">(.*?)</div>'
-                    r'<div class="etiquette">.*?</div>'
-                    r'(?:<div class="precision">(.*?)</div>)?</div>', re.S)
+_FICHE = re.compile(r'<div class="fiche"><div class="valeur">(?P<valeur>.*?)</div>'
+                    r'<div class="etiquette">(?P<etiquette>.*?)</div>'
+                    r'(?:<div class="precision">(?P<precision>.*?)</div>)?</div>', re.S)
 
 
 @lru_cache(maxsize=None)
@@ -372,33 +372,41 @@ def _page(chemin: str) -> str:
     return rendre(chemin, {})[1]
 
 
+def reperes(chemin: str) -> list[dict[str, str]]:
+    """Les fiches qui ouvrent une page, dans l'ordre : leur valeur, leur
+    étiquette et leur précision, telles qu'on les lit."""
+    _, ouverture, reste = _page(chemin).partition('<div class="fiches reperes">')
+    if not ouverture:
+        raise ValueError(f"la page {chemin} n'a pas de repères")
+    lues = []
+    while fiche := _FICHE.match(reste):
+        lues.append({quoi: _texte(lu or "").strip() for quoi, lu in fiche.groupdict().items()})
+        reste = reste[fiche.end():]
+    return lues
+
+
 def repere(**reglages: str) -> float:
     """Ce qu'une page affiche dans ses repères, les fiches qui l'ouvrent.
 
     ``chemin=/cout`` désigne la page, ``rang`` la fiche, à partir de 1, et
-    ``quoi`` ce qu'on en lit : ``valeur``, le défaut, son grand chiffre, ou
-    ``precision``, le premier nombre de la ligne qui le précise. Le parcours
+    ``quoi`` ce qu'on en lit : ``valeur``, le défaut, son grand chiffre,
+    ``precision``, le premier nombre de la ligne qui le précise, ou
+    ``etiquette``, celui de son étiquette — l'année que la page récrit avec
+    ses données, « Versé aux retraités en 2025 ». Le parcours
     fait lire les trois chiffres en tête des pages Coût et Pourquoi changer
     dans l'ordre où elles les donnent (action 163) : le rang les désigne, et
     non l'étiquette, que les pages retouchent sans que le chiffre change —
     « VOS cotisations », le 17 octobre 2026.
     """
     quoi = reglages.get("quoi", "valeur")
-    if quoi not in ("valeur", "precision"):
-        raise ValueError(f"quoi inconnu « {quoi} » ; il y a valeur, precision")
+    if quoi not in ("valeur", "precision", "etiquette"):
+        raise ValueError(f"quoi inconnu « {quoi} » ; il y a valeur, precision, etiquette")
     chemin = reglages["chemin"]
-    _, ouverture, reste = _page(chemin).partition('<div class="fiches reperes">')
-    if not ouverture:
-        raise ValueError(f"la page {chemin} n'a pas de repères")
-    fiches = []
-    while fiche := _FICHE.match(reste):
-        fiches.append(fiche)
-        reste = reste[fiche.end():]
+    lues = reperes(chemin)
     rang = int(reglages["rang"])
-    if not 1 <= rang <= len(fiches):
-        raise ValueError(f"la page {chemin} a {len(fiches)} repères, pas de rang {rang}")
-    lu = fiches[rang - 1].group(1 if quoi == "valeur" else 2) or ""
-    trouve = re.search(_AFFICHE, _texte(lu))
+    if not 1 <= rang <= len(lues):
+        raise ValueError(f"la page {chemin} a {len(lues)} repères, pas de rang {rang}")
+    trouve = re.search(_AFFICHE, lues[rang - 1][quoi])
     if not trouve:
         raise ValueError(f"le repère {rang} de la page {chemin} n'a pas de {quoi} chiffrée")
     return _affiche(trouve.group(0))
@@ -1438,7 +1446,8 @@ def coefficient(**reglages: str) -> float:
     """Coefficient d'équilibre d'un système une année — l'horizon si on l'omet.
 
     ``quoi=minimum`` rend le plus bas des années projetées, ``quoi=annee_minimum``
-    l'année où il est atteint, ``quoi=economie`` ce qu'on lirait à tort comme
+    l'année où il est atteint, ``quoi=annee`` celle où il se lit — « en 2070 »,
+    que la prose écrit avec lui —, ``quoi=economie`` ce qu'on lirait à tort comme
     une économie, ``1 − 1/c``, en %. ``en=manque`` dit le coefficient, ou son
     plus bas, par ce qu'il laisse sans recette, ``1 − c``, en % : pour le
     système actuel, la part de sa dépense que ses recettes ne couvrent pas,
@@ -1458,7 +1467,10 @@ def coefficient(**reglages: str) -> float:
             return plus_bas.annee
         valeur = plus_bas.coefficient(scenario)
     else:
-        valeur = _solde_annee(reglages).coefficient(scenario)
+        ligne = _solde_annee(reglages)
+        if quoi == "annee":
+            return ligne.annee
+        valeur = ligne.coefficient(scenario)
         if quoi == "economie":
             return (1 - 1 / valeur) * 100
     return (1 - valeur) * 100 if en == "manque" else valeur

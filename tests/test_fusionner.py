@@ -82,6 +82,22 @@ def test_une_forme_qui_change_est_ecrite_a_la_main():
     assert fusionner.forme("79,5") != fusionner.forme("79,54")
 
 
+def test_deux_valeurs_en_lettres_d_une_meme_ancre_gardent_celle_de_main():
+    """Le parcours écrit en lettres des chiffres que GitHub récrit (action
+    163) : elles se fusionnent comme des chiffres. La demie qui tombe change
+    la forme, comme une décimale ; la majuscule aussi, que ``--corriger``
+    garde."""
+    def texte(valeur: str) -> str:
+        return (f"# Titre\n\nLa liste (soit {ancre(valeur, 'entrees(x.yaml:statuts)')}) "
+                "les range.\n\nUne autre phrase.\n")
+    base, main, session = texte("soixante-deux"), texte("soixante-treize"), texte("dix")
+    assert not fusionner.fusion_de_texte(main, base, session)[0], "git bute"
+    assert fusionner.fusionner_prose(base, main, session) == (True, main)
+    assert fusionner.forme("seize ans et demi") == fusionner.forme("vingt et un ans et demi")
+    assert fusionner.forme("seize ans et demi") != fusionner.forme("dix-sept ans")
+    assert fusionner.forme("Treize") != fusionner.forme("quatorze")
+
+
 def test_une_ancre_citee_dans_un_bloc_de_code_est_du_texte():
     def texte(valeur: str) -> str:
         return f"La forme :\n\n```\n{ancre(valeur)}\n```\n"
@@ -118,6 +134,7 @@ def test_le_pilote_lit_l_ancre_comme_verifier_prose():
     nombres = "4 251, 79,5, −28, 2874, 11 975,57, 1\u00a0569, 1\u202f569, +7,96, -3"
     assert (re.findall(fusionner.NOMBRE, nombres)
             == re.findall(verifier_prose._NOMBRE, nombres))
+    assert fusionner.LETTRES.pattern == verifier_prose.LETTRES_ANCREES.pattern
     assert fusionner.A_LA_MAIN <= set(verifier_prose.SONDES)
     assert verifier_prose.sonde_illustration() is None
     assert verifier_prose.sonde_a_verifier("une dette que l'on avoue") is None

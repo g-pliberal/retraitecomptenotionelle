@@ -62,6 +62,12 @@ Une sonde qui arrondit se déclare ::
 
     <!--chiffre:poids_comprime(moteur/donnees.json)~5%-->310<!--/-->
 
+Un chiffre en toutes lettres s'ancre de même, entier ou demi, et se récrit en
+lettres (action 163) ; ``difference`` ancre celui que la prose déduit de deux
+autres ::
+
+    servie <!--chiffre:difference(mesure:parametre?nom=age_legal_liberal;valeur:…)-->seize ans et demi<!--/--> plus tard
+
 Ce que le script NE fait pas
 ----------------------------
 
@@ -69,10 +75,9 @@ Il ne juge pas une phrase, seulement un nombre : « la bascule ne reprend aucun
 droit acquis » lui échappe entièrement. C'est l'objet de l'action 34 de la
 feuille de route, et les deux se complètent.
 
-Il ne sait pas non plus ancrer un chiffre écrit en toutes lettres. Il les
-signale dans les zones ``etat`` — « douze mille lignes » est un chiffre comme
-un autre, et il avait vieilli de dix mille — avec pour seule issue de le
-réécrire en chiffres.
+Il ne tient un chiffre écrit en toutes lettres que dans une ancre. Hors
+d'elle, il le signale dans les zones ``etat`` — « douze mille lignes » est un
+chiffre comme un autre, et il avait vieilli de dix mille.
 """
 
 from __future__ import annotations
@@ -590,6 +595,27 @@ def sonde_mesure(argument: str) -> float:
     return _mesures().mesurer(argument)
 
 
+def sonde_difference(argument: str) -> float:
+    """Deux sondes, la seconde ôtée de la première : ``mesure:…;valeur:…``.
+
+    Pour un chiffre que la prose déduit de deux autres qu'elle ancre déjà :
+    la pension du militaire, « servie seize ans et demi plus tard », 65 − 48,5
+    (action 163). Ancré sur les deux, il les suit, quand une soustraction
+    faite à la main ne suivait rien.
+    """
+    premier, second = (_lire_sonde(partie) for partie in argument.split(";"))
+    return premier - second
+
+
+def _lire_sonde(citee: str) -> float:
+    """``nom:argument`` : ce que rend la sonde ``nom``, qui doit recalculer."""
+    nom, _, argument = citee.partition(":")
+    valeur = SONDES[nom](argument)
+    if valeur is None:
+        raise ValueError(f"{nom}({argument}) ne recalcule rien")
+    return valeur
+
+
 def _mesures():
     """Le module des mesures, que ``scripts/`` porte."""
     dossier = str(RACINE / "scripts")
@@ -620,6 +646,7 @@ SONDES = {
     "tests": sonde_tests,
     "portage": sonde_portage,
     "mesure": sonde_mesure,
+    "difference": sonde_difference,
 }
 
 # --------------------------------------------------------------------------
@@ -649,7 +676,7 @@ _NOMBRE = r"[−+-]?\d{1,3}(?:[ \u00a0\u202f]\d{3})+(?:,\d+)?|[−+-]?\d+(?:,\d+
 _ESPACE = r"[ \t]*\n?[ \t]*"   # la coupe de ligne, jamais le blanc de paragraphe
 CHIFFRE = re.compile(rf"(?<![\w.-])({_NOMBRE}){_ESPACE}({_UNITE})(?![\w'’])")
 
-#: Les mêmes, en toutes lettres — ceux que l'ancre ne sait pas tenir.
+#: Les mêmes, en toutes lettres, hors d'une ancre : rien ne les tient.
 _LETTRES = (r"(?:un|une|deux|trois|quatre|cinq|six|sept|huit|neuf|dix|onze|douze|"
             r"treize|quatorze|quinze|seize|vingt|trente|quarante|cinquante|"
             r"soixante|cent|cents|mille|million|millions|milliard|milliards)")
@@ -658,6 +685,26 @@ CHIFFRE_LETTRES = re.compile(
     rf"{_ESPACE}(?:de{_ESPACE})?({_UNITE})(?![\w'’])", re.IGNORECASE)
 
 ANCRE = re.compile(r"<!--chiffre:(\w+)\(([^)]*)\)(?:~([\d,.]+)%)?-->(.*?)<!--/-->", re.DOTALL)
+
+#: Les mots d'un nombre en lettres, et ce que chacun vaut. « cent » et
+#: « mille » multiplient ; « vingt » derrière « quatre » fait quatre-vingts.
+_VALEURS_LETTRES = {
+    "zéro": 0, "un": 1, "une": 1, "deux": 2, "trois": 3, "quatre": 4, "cinq": 5,
+    "six": 6, "sept": 7, "huit": 8, "neuf": 9, "dix": 10, "onze": 11, "douze": 12,
+    "treize": 13, "quatorze": 14, "quinze": 15, "seize": 16, "vingt": 20,
+    "vingts": 20, "trente": 30, "quarante": 40, "cinquante": 50, "soixante": 60,
+    "cent": 100, "cents": 100, "mille": 1000,
+}
+#: Les mêmes, les plus longs d'abord, tels que ``fusionner.py`` les recopie.
+_MOTS_NOMBRE = ("cinquante|quarante|quatorze|soixante|quatre|quinze|treize|trente|"
+                "vingts|douze|seize|trois|vingt|cents|mille|zéro|deux|cinq|sept|huit|"
+                "neuf|onze|cent|une|six|dix|un")
+#: Le nombre en lettres que tient une ancre (action 163) : des mots de nombre
+#: liés par des espaces, des traits d'union ou « et », puis, plus loin dans
+#: l'ancre, « et demi » quand il le dit — « seize ans et demi ».
+LETTRES_ANCREES = re.compile(
+    rf"\b(?:{_MOTS_NOMBRE})(?:(?:[- ]et)?[- ](?:{_MOTS_NOMBRE}))*\b", re.IGNORECASE)
+DEMI = re.compile(r"\s+et\s+demie?\b", re.IGNORECASE)
 
 
 def _blocs_de_code(texte: str) -> set[int]:
@@ -873,6 +920,81 @@ def _ecrire_comme(valeur: float, modele: str) -> str:
     return f"{signe}{entier}" + (f",{fraction}" if fraction else "")
 
 
+_UNITES_LETTRES = ("zéro un deux trois quatre cinq six sept huit neuf dix onze douze "
+                   "treize quatorze quinze seize dix-sept dix-huit dix-neuf").split()
+_DIZAINES_LETTRES = ("", "", "vingt", "trente", "quarante", "cinquante", "soixante",
+                     "soixante", "quatre-vingt", "quatre-vingt")
+
+
+def en_lettres(nombre: int, final: bool = True) -> str:
+    """Un entier de zéro à 999 999, en lettres, dans l'orthographe d'avant 1990
+    que le dépôt écrit : « vingt et un », « quatre-vingts », « deux cent mille ».
+    ``final=False`` pour ce que « mille » suit, qui ne prend pas d'« s »."""
+    if not 0 <= nombre < 1_000_000:
+        raise ValueError(f"{nombre} ne s'écrit pas en lettres ici")
+    if nombre >= 1000:
+        milliers, reste = divmod(nombre, 1000)
+        tete = "mille" if milliers == 1 else f"{en_lettres(milliers, final=False)} mille"
+        return tete + (f" {en_lettres(reste)}" if reste else "")
+    if nombre >= 100:
+        centaines, reste = divmod(nombre, 100)
+        tete = "cent" if centaines == 1 else f"{_UNITES_LETTRES[centaines]} cent"
+        if reste:
+            return f"{tete} {en_lettres(reste, final)}"
+        return tete + ("s" if centaines > 1 and final else "")
+    if nombre < 20:
+        return _UNITES_LETTRES[nombre]
+    dizaine, unite = divmod(nombre, 10)
+    if dizaine in (7, 9):           # soixante-dix, quatre-vingt-dix : la dizaine porte dix
+        unite += 10
+    tete = _DIZAINES_LETTRES[dizaine]
+    if unite == 0:
+        return tete + ("s" if dizaine == 8 and final else "")
+    if unite in (1, 11) and dizaine < 8:
+        return f"{tete} et {_UNITES_LETTRES[unite]}"
+    return f"{tete}-{_UNITES_LETTRES[unite]}"
+
+
+def lettres_en_nombre(texte: str) -> int:
+    """Le nombre que disent des mots en lettres, traits d'union ou non."""
+    total = groupe = 0
+    for mot in re.split(r"[- ]+", texte.strip().lower()):
+        if mot == "et":
+            continue
+        valeur = _VALEURS_LETTRES[mot]
+        if valeur == 100:
+            groupe = (groupe or 1) * 100
+        elif valeur == 1000:
+            total, groupe = total + (groupe or 1) * 1000, 0
+        elif valeur == 20 and groupe % 100 == 4:     # quatre-vingt(s)
+            groupe += 76
+        else:
+            groupe += valeur
+    return total + groupe
+
+
+def _lire_lettres(ecrit: str) -> tuple[re.Match, float, bool] | None:
+    """Le nombre en lettres d'une ancre, sa valeur, et s'il dit la demie."""
+    mots = LETTRES_ANCREES.search(ecrit)
+    if mots is None:
+        return None
+    demie = DEMI.search(ecrit, mots.end()) is not None
+    return mots, lettres_en_nombre(mots.group(0)) + (0.5 if demie else 0), demie
+
+
+def _ecrire_en_lettres(valeur: float, ecrit: str, mots: re.Match) -> str:
+    """Récrit en lettres le contenu d'une ancre : les mots du nombre changent,
+    l'unité reste, et « et demi » s'en va quand la valeur tombe juste."""
+    entier = int(valeur)
+    lettres = en_lettres(entier)
+    if mots.group(0)[:1].isupper():
+        lettres = lettres[:1].upper() + lettres[1:]
+    reste = ecrit[mots.end():]
+    if valeur == entier:
+        reste = DEMI.sub("", reste, count=1)
+    return ecrit[:mots.start()] + lettres + reste
+
+
 def verifier_ancres(fichier: str, texte: str) -> tuple[str, list[Anomalie]]:
     """Recalcule chaque chiffre ancré ; rend le texte corrigé et les écarts."""
     anomalies: list[Anomalie] = []
@@ -896,7 +1018,36 @@ def verifier_ancres(fichier: str, texte: str) -> tuple[str, list[Anomalie]]:
             return trouve.group(0)
         if attendu is None:      # tenu ailleurs, illustration, ou dette avouée
             return trouve.group(0)
+
+        def poser(contenu: str) -> str:
+            # Le remplacement porte sur le CONTENU de l'ancre, jamais sur sa
+            # sonde : « 0 » provisoire autour de ``annee=2070`` réécrivait
+            # l'argument en « annee=251170 », premier « 0 » venu.
+            debut, fin = trouve.span(4)
+            return (trouve.group(0)[: debut - trouve.start()] + contenu
+                    + trouve.group(0)[fin - trouve.start():])
+
+        marge = float(tolerance.replace(",", ".")) / 100 if tolerance else 0.0
         nombres = re.findall(_NOMBRE, ecrit)
+        lettres = None if nombres else _lire_lettres(ecrit)
+        if lettres is not None:
+            mots, dit, demie = lettres
+            # Les lettres disent l'entier, ou la demie quand elles l'écrivent.
+            attendu = round(attendu * 2) / 2 if demie else round(attendu)
+            if abs(dit - attendu) <= max(marge * abs(attendu), 10 ** -9):
+                return trouve.group(0)
+            if not 0 <= attendu < 1_000_000:
+                anomalies.append(Anomalie(
+                    fichier, ligne, "derive",
+                    f"la prose dit « {ecrit} », {nom}({argument}) en donne "
+                    f"{attendu:g}, qui ne s'écrit pas en lettres", mesure=f"{nom}({argument})"))
+                return trouve.group(0)
+            contenu = _ecrire_en_lettres(attendu, ecrit, mots)
+            anomalies.append(Anomalie(
+                fichier, ligne, "derive",
+                f"la prose dit « {ecrit} », {nom}({argument}) en donne « {contenu} »",
+                mesure=f"{nom}({argument})"))
+            return poser(contenu)
         if len(nombres) != 1:
             anomalies.append(Anomalie(fichier, ligne, "derive",
                                       f"l'ancre {nom}({argument}) entoure "
@@ -907,7 +1058,6 @@ def verifier_ancres(fichier: str, texte: str) -> tuple[str, list[Anomalie]]:
         # à la précision qu'elle s'est donnée, et pas au-delà.
         decimales = len(nombres[0].split(",")[1]) if "," in nombres[0] else 0
         attendu = round(attendu, decimales)
-        marge = float(tolerance.replace(",", ".")) / 100 if tolerance else 0.0
         if abs(dit - attendu) <= max(marge * abs(attendu), 10 ** -9):
             return trouve.group(0)
         juste = _ecrire_comme(attendu, nombres[0])
@@ -915,13 +1065,7 @@ def verifier_ancres(fichier: str, texte: str) -> tuple[str, list[Anomalie]]:
             fichier, ligne, "derive",
             f"la prose dit {nombres[0]}, {nom}({argument}) en donne {juste}",
             mesure=f"{nom}({argument})"))
-        # Le remplacement porte sur le CONTENU de l'ancre, jamais sur sa
-        # sonde : « 0 » provisoire autour de ``annee=2070`` réécrivait
-        # l'argument en « annee=251170 », premier « 0 » venu.
-        debut, fin = trouve.span(4)
-        contenu = ecrit.replace(nombres[0], juste, 1)
-        return (trouve.group(0)[: debut - trouve.start()] + contenu
-                + trouve.group(0)[fin - trouve.start():])
+        return poser(ecrit.replace(nombres[0], juste, 1))
 
     return ANCRE.sub(remplacer, texte), anomalies
 
@@ -947,7 +1091,7 @@ def verifier_zones(fichier: str, texte: str, zonage: Zonage) -> list[Anomalie]:
     for motif, genre, dire in (
         (CHIFFRE, "nu", "n'est ancré sur rien"),
         (CHIFFRE_LETTRES, "lettres",
-         ": un chiffre en toutes lettres ne s'ancre pas ; le réécrire en chiffres"),
+         ": un chiffre en toutes lettres s'ancre comme un autre"),
     ):
         for trouve in motif.finditer(masque):
             numero = masque[: trouve.start()].count("\n") + 1
@@ -983,11 +1127,19 @@ def inventorier(zonage: Zonage) -> dict[str, list[str]]:
 
 
 def mesures_citees(texte: str) -> list[str]:
-    """Les arguments des ancres ``mesure`` du texte, hors des blocs de code."""
+    """Les arguments des ancres ``mesure`` du texte, hors des blocs de code, et
+    des mesures qu'une ``difference`` cite."""
     citations = _blocs_de_code(texte)
-    return [trouve.group(2) for trouve in ANCRE.finditer(texte)
-            if trouve.group(1) == "mesure"
-            and texte.count("\n", 0, trouve.start()) + 1 not in citations]
+    citees = []
+    for trouve in ANCRE.finditer(texte):
+        if texte.count("\n", 0, trouve.start()) + 1 in citations:
+            continue
+        if trouve.group(1) == "mesure":
+            citees.append(trouve.group(2))
+        elif trouve.group(1) == "difference":
+            citees += [partie.partition(":")[2] for partie in trouve.group(2).split(";")
+                       if partie.partition(":")[0] == "mesure"]
+    return citees
 
 
 def controler(zonage: Zonage, corriger: bool) -> tuple[list[Anomalie], list[str]]:
