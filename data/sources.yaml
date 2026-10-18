@@ -5675,10 +5675,10 @@ institutions:
         titre: >-
           Impôt sur le revenu — barème, quotient familial et son plafonnement,
           décote, réduction sous condition de revenus, seuil de mise en
-          recouvrement, abattements de 10 % et de 20 %, abattement des
-          personnes âgées ou invalides, majorations et minorations
-          exceptionnelles, prime pour l'emploi — chez l'IPP, des revenus de
-          1960 à ceux de 2023
+          recouvrement, limite d'exonération, abattements de 10 % et de 20 %,
+          abattement des personnes âgées ou invalides, majorations et
+          minorations exceptionnelles, prime pour l'emploi — chez l'IPP, des
+          revenus de 1960 à ceux de 2023
         url: https://baremes.ipp.eu/parameters/impot-sur-le-revenu
         acces: document
         statut_integration: saisi
@@ -5701,7 +5701,15 @@ institutions:
           et non sa table ; la part du veuf ayant un enfant à charge avant
           2008 ; la majoration de la prime pour l'emploi du premier enfant d'un
           parent isolé avant 2007. Il corrige une erreur : l'abattement des
-          personnes âgées de 2024 vaut 2 796 €, non 2 795 €. Au-delà de 2025,
+          personnes âgées de 2024 vaut 2 796 €, non 2 795 €. Relu le 18 octobre
+          2026, avec les lois de finances pour 1974 à 1981 au texte définitif
+          que le Sénat a adopté (senat.fr/leg/) : la limite d'exonération de
+          1973 à 1976, que l'IPP ne porte qu'à partir de 1977, et ses trois
+          années sans montant ; trois seuils du barème (1974 et 1980) ; les
+          pensions sans abattement de 10 % avant 1977 ; l'abattement des
+          personnes âgées de 1973 à 1976 ; le minimum des frais professionnels
+          et la limite des 20 % de 1975 et 1976 ; les parts des enfants de 1979
+          et 1980 ; le minimum de la majoration de 1980. Au-delà de 2025,
           `donnees/impot_revenu.py` projette le barème sur les prix, et sur le
           salaire moyen en variante.
 

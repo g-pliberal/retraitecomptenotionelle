@@ -81,7 +81,24 @@ avec sa source (``origine`` de la marche) :
   rectificative pour 2014 (art. 28) abroge l'article 200 sexies dès
   l'imposition des revenus de 2015 (BOI-IR-RICI-310-10-30-20150515), où la
   note de l'IPP la fait durer jusqu'à la prime d'activité du 1er janvier
-  2016, et où sa photographie de 2016 garde quelques cellules pleines.
+  2016, et où sa photographie de 2016 garde quelques cellules pleines ;
+- la limite d'exonération (``exo_ir`` de l'IPP, de 1977 à 2013 : l'article 5,
+  2° bis, du code) avant 1977 : les lois de finances pour 1974 à 1977 en
+  fixent une pour qui vit « principalement de traitements, salaires et
+  pensions », une autre pour les autres ; et ses trois années sans montant
+  (1982, 1983, 1989), par la règle d'indexation de la loi de finances pour
+  1982 (art. 12, III, 3), qui retrouve les valeurs publiées de 1984 et de
+  1990 — ``origine: loi`` ou ``indexation`` ;
+- ce que les lois de finances pour 1974 à 1981 écrivent autrement que l'IPP,
+  lues au texte définitif que le Sénat a adopté (``LOIS_DE_FINANCES``) : trois
+  seuils du barème (5 550 F et 22 950 F en 1974, 37 940 F en 1980) ; les
+  pensions, sans l'abattement de 10 % que la loi de finances pour 1978
+  institue ; l'abattement des personnes âgées de 1973 à 1976, que l'IPP ne
+  fait naître qu'en 1977 ; le minimum des frais professionnels de 1975 et
+  de 1976 ; la limite des 20 % de 1975 et de 1976 (350 000 F, non
+  340 000 F) ; les parts des enfants de 1979 et de 1980 ; le minimum de
+  200 F de la majoration de 1980 ; le seuil de recouvrement de 1978, que la
+  loi chiffre — ``origine: loi``.
 
 Ce qu'il écarte : la ligne de la décote datée de 1959 (7 000 F et 14 000 F),
 que l'IPP ne commente pas et qui ne peut être une décote d'impôt — elle
@@ -144,6 +161,10 @@ SERIES: dict[str, tuple[str, dict[str, str]]] = {
     "recouvrement": (
         "impot_revenu.calcul_impot_revenu.recouvrement",
         {"seuil": "min_avant_credits_impots", "seuil_apres_credits": "min_apres_credits_impots"}),
+    "exoneration": (
+        "impot_revenu.calcul_revenus_imposables.exo_ir",
+        {"limite": "conditions_ressources_exoneration_ir.moins_de_65_ans",
+         "limite_plus_de_65_ans": "conditions_ressources_exoneration_ir.plus_de_65_ans"}),
     "deductions": (
         "impot_revenu.calcul_revenus_imposables.deductions",
         {"frais_professionnels_taux": "abatpro.taux",
@@ -223,19 +244,25 @@ ECARTEES = {("decote", 1959)}
 
 #: Les parts de chaque rang d'enfant à charge, que le tableau de l'IPP date
 #: mal (voir l'en-tête) : à chaque marche, la part du premier, du deuxième…
-#: enfant, la dernière valant pour tous les suivants.
+#: enfant, la dernière valant pour tous les suivants ; le texte, et son origine.
 PARTS_PAR_RANG_D_ENFANT = (
-    (PREMIERE_ANNEE, (0.5,), "CGI, art. 194, I (IPP, table du quotient familial)"),
-    (1979, (0.5, 0.5, 0.5, 0.5, 1.0),
-     "Loi n° 80-30 du 18 janvier 1980 (LF pour 1980) : une part entière pour le "
-     "cinquième enfant, sur les revenus de 1979 (IPP, note des plafonds de 1979)"),
-    (1980, (0.5, 0.5, 1.0, 0.5, 1.0),
-     "Loi n° 80-1094 du 30 décembre 1980 (LF pour 1981) : une part entière pour le "
-     "troisième enfant, sur les revenus de 1980 (IPP, note des plafonds de 1979)"),
+    (PREMIERE_ANNEE, (0.5,), "CGI, art. 194, I (IPP, table du quotient familial)", "note_ipp"),
+    (1979, (0.5, 0.5, 0.5, 0.5, 1.0, 0.5),
+     "Loi n° 80-30 du 18 janvier 1980 (LF pour 1980), art. 4, I, texte définitif adopté par "
+     "le Sénat le 17 janvier 1980 : « marié ou veuf ayant cinq enfants à charge 5 [...] et "
+     "ainsi de suite, en augmentant d'une demi-part par enfant à charge » : une part "
+     "entière pour le cinquième enfant seul, sur les revenus de 1979", "loi"),
+    (1980, (0.5, 0.5, 1.0, 0.5),
+     "Loi n° 80-1094 du 30 décembre 1980 (LF pour 1981), art. 3, I, texte définitif adopté "
+     "par le Sénat : « Les contribuables qui ont au moins trois enfants à charge "
+     "bénéficient d'une demi-part supplémentaire de quotient familial. Cette disposition se "
+     "substitue à l'article 4-1 de la loi de finances pour 1980 », sur les revenus de 1980",
+     "loi"),
     (1986, (0.5, 0.5, 1.0),
      "Loi n° 86-1317 du 30 décembre 1986 (LF pour 1987) : une part entière pour "
      "chaque enfant après le troisième (IPP, note de la décote de 1986) ; CGI, "
-     "art. 194, LEGIARTI000006308279 : « en augmentant d'une part par enfant à charge »"),
+     "art. 194, LEGIARTI000006308279 : « en augmentant d'une part par enfant à charge »",
+     "note_ipp"),
 )
 
 #: Ce que les lois de finances pour 2025 et 2026, et le code qu'elles ont
@@ -337,6 +364,178 @@ CORRECTIONS: dict[tuple[str, int], tuple[dict, str, str]] = {
         "porte aux revenus de 2005 les taux que la loi de finances pour 2006 donnait à ceux de "
         "2006",
         "legi"),
+}
+
+#: Les lois de finances pour 1974 à 1981, lues au texte définitif que le Sénat
+#: a adopté et publie : pour l'année des revenus qu'elle impose, son
+#: intitulé, la date de ce texte et son fichier sous senat.fr/leg/. L'index du
+#: JORF n'en a que la notice ; l'index LEGI, de quelques articles, une
+#: rédaction consolidée, qui peut porter les montants d'une loi postérieure
+#: (son article 12 de la loi de finances pour 1982 porte la décote de 1982).
+LOIS_DE_FINANCES = {
+    1973: ("Loi n° 73-1150 du 27 décembre 1973 (LF pour 1974)", "18 décembre 1973",
+           "1973-1974/ta1973_1974_0031.pdf"),
+    1974: ("Loi n° 74-1129 du 30 décembre 1974 (LF pour 1975)", "19 décembre 1974",
+           "1974-1975/ta1974_1975_0067.pdf"),
+    1975: ("Loi n° 75-1278 du 30 décembre 1975 (LF pour 1976)", "17 décembre 1975",
+           "1975-1976/ta1975_1976_0056.pdf"),
+    1976: ("Loi n° 76-1232 du 29 décembre 1976 (LF pour 1977)", "16 décembre 1976",
+           "1976-1977/ta1976_1977_0048.pdf"),
+    1977: ("Loi n° 77-1467 du 30 décembre 1977 (LF pour 1978)", "16 décembre 1977",
+           "1977-1978/ta1977_1978_0053.pdf"),
+    1978: ("Loi n° 78-1239 du 29 décembre 1978 (LF pour 1979)", "14 décembre 1978",
+           "1978-1979/ta1978_1979_0030.pdf"),
+    1979: ("Loi n° 80-30 du 18 janvier 1980 (LF pour 1980)", "17 janvier 1980",
+           "1979-1980/ta1979_1980_0049.pdf"),
+    1980: ("Loi n° 80-1094 du 30 décembre 1980 (LF pour 1981)", "17 décembre 1980",
+           "1980-1981/ta1980_1981_0039.pdf"),
+}
+
+
+def _loi(annee: int, article: str, citation: str = "") -> str:
+    """La référence de l'article de la loi de finances qui impose les revenus
+    d'``annee``, et ce qu'il dit."""
+    intitule, adoptee, fichier = LOIS_DE_FINANCES[annee]
+    reference = (f"{intitule}, {article}, texte définitif adopté par le Sénat le {adoptee} "
+                 f"(senat.fr/leg/{fichier})")
+    return f"{reference} : {citation}" if citation else reference
+
+
+#: Ce que ces lois écrivent autrement que l'IPP, ou que l'IPP porte sans
+#: référence : corrigé, ou daté de son texte, clé par clé (voir l'en-tête).
+INTEGRATION_AU_BAREME = _loi(
+    1973, "art. 2", "« Les franchises et les décotes prévues à l'article 198 ter du Code général "
+    "des impôts, ainsi que les minorations dégressives visées à l'article 199 bis du même Code, "
+    "sont intégrées au barème »")
+CORRECTIONS.update({
+    ("bareme", 1974): (
+        {"seuils": [0, 5550, 5825, 7000, 11100, 15050, 19000, 22950, 26475, 45825, 64900,
+                    84000, 103150]},
+        _loi(1974, "art. 2, I", "« 11 100 F à 11 650 F : 5 % », « 45 900 F à 52 950 F : 35 % », "
+             "pour deux parts ; l'IPP porte 5 500 F et 24 450 F par part"),
+        "loi"),
+    ("bareme", 1980): (
+        {"seuils": [0, 9890, 10340, 12270, 19410, 24950, 31360, 37940, 43770, 72940, 100320,
+                    118660, 135000]},
+        _loi(1980, "art. 2, I", "« De 62 720 F à 75 880 F : 30 % », pour deux parts, lu à "
+             "l'image du texte ; l'IPP porte 37 970 F par part"),
+        "loi"),
+    ("deductions", 1975): (
+        {"frais_professionnels_minimum": 1200, "vingt_pour_cent_maximum": 70000,
+         "vingt_pour_cent_plafond": 350000},
+        _loi(1976, "art. 2, IV", "le minimum des frais professionnels « est porté de 1 200 F "
+             "à 1 500 F » ; la limite des 20 % est « une fois et demie la limite de la dernière "
+             "tranche du barème correspondant à deux parts, ce chiffre étant arrondi à la "
+             "dizaine de milliers de francs supérieure » (loi n° 73-1150, art. 5), 1,5 fois "
+             "226 900 F (loi n° 75-1278, art. 2, I), 340 350 F, soit 350 000 F ; l'IPP porte "
+             "340 000 F"),
+        "loi"),
+    ("decote", 1973): ({}, INTEGRATION_AU_BAREME, "loi"),
+    ("minorations_exceptionnelles", 1973): ({}, INTEGRATION_AU_BAREME, "loi"),
+    ("majorations_exceptionnelles", 1980): (
+        {"minimum": 200},
+        "Loi n° 81-734 du 3 août 1981 (LFR pour 1981), art. 1er, que l'index n'a qu'en "
+        "notice, lu aux textes que le Sénat a modifiés en première et en nouvelle lecture "
+        "(24 et 30 juillet 1981, senat.fr/leg/1980-1981/ta1980_1981_0086.pdf et _0094.pdf), "
+        "dont les deux rédactions portent : « La partie supérieure à 100.000 F de l'impôt sur "
+        "le revenu, dû au titre de l'année 1980 [...] est majorée de 25 % [...] La "
+        "majoration n'est pas due si elle est inférieure à 200 F »",
+        "loi"),
+    ("exoneration", 1977): (
+        {"limite": 15200, "limite_plus_de_65_ans": 16600},
+        _loi(1977, "art. 2, II", "« n'excède pas 15 200 F ou 16 600 F s'ils sont âgés de plus "
+             "de soixante-cinq ans [...] Ces limites sont identiques quelle que soit la nature "
+             "des revenus perçus » ; LEGIARTI000006317059"),
+        "loi"),
+    ("exoneration", 1978): (
+        {"limite": 16800, "limite_plus_de_65_ans": 18300},
+        _loi(1978, "art. 2, II") + " ; CGI, art. 5, 2° bis, LEGIARTI000006307017", "loi"),
+    ("exoneration", 1979): (
+        {"limite": 18600, "limite_plus_de_65_ans": 20300},
+        _loi(1979, "art. 3, II") + " ; CGI, art. 5, LEGIARTI000006307018, note (1)", "loi"),
+    ("exoneration", 1980): (
+        {"limite": 21100, "limite_plus_de_65_ans": 23000},
+        _loi(1980, "art. 2, III, 1") + " ; CGI, art. 5, 2° bis, LEGIARTI000006307018", "loi"),
+    ("abattement_age_invalidite", 1977): (
+        {"abattement_plein": 3400, "seuil_plein": 21000, "abattement_reduit": 1700,
+         "seuil_reduit": 34000},
+        _loi(1977, "art. 3, II") + " ; LEGIARTI000006317060", "loi"),
+    ("abattement_age_invalidite", 1978): (
+        {"abattement_plein": 3720, "seuil_plein": 23000, "abattement_reduit": 1860,
+         "seuil_reduit": 37200},
+        _loi(1978, "art. 2, III") + " ; CGI, art. 157 bis, LEGIARTI000006307950", "loi"),
+    ("abattement_age_invalidite", 1979): (
+        {"abattement_plein": 4080, "seuil_plein": 25200, "abattement_reduit": 2040,
+         "seuil_reduit": 40800},
+        _loi(1979, "art. 3, III") + " ; CGI, art. 157 bis, LEGIARTI000006307951, note (1)", "loi"),
+    ("abattement_age_invalidite", 1980): (
+        {"abattement_plein": 4630, "seuil_plein": 28600, "abattement_reduit": 2315,
+         "seuil_reduit": 46300},
+        _loi(1980, "art. 2, III, 2") + " ; CGI, art. 157 bis, LEGIARTI000006307951", "loi"),
+})
+COMPLEMENTS["exoneration"] = [
+    {"annee": 1973, "monnaie": "FRF", "limite": 10000, "limite_autres": 8000, "origine": "loi",
+     "texte": _loi(1973, "art. 4", "« Les personnes physiques qui bénéficient principalement de "
+                   "traitements, salaires et pensions sont exonérées de l'impôt sur le revenu, "
+                   "lorsque leur revenu, net de frais professionnels, n'excède pas 10 000 F » ; "
+                   "« Pour les autres personnes physiques, la limite d'exonération est fixée à "
+                   "8 000 F » ; LEGIARTI000006316777")},
+    {"annee": 1974, "monnaie": "FRF", "limite": 11400, "limite_plus_de_65_ans": 12500,
+     "limite_autres": 10000, "origine": "loi",
+     "texte": _loi(1974, "art. 2, II") + " ; LEGIARTI000006272925"},
+    {"annee": 1975, "monnaie": "FRF", "limite": 12600, "limite_plus_de_65_ans": 13800,
+     "limite_autres": 11200, "origine": "loi",
+     "texte": _loi(1975, "art. 2, II") + " ; LEGIARTI000006316887"},
+    {"annee": 1976, "monnaie": "FRF", "limite": 13800, "limite_plus_de_65_ans": 15100,
+     "limite_autres": 13100, "origine": "loi",
+     "texte": _loi(1976, "art. 2, II") + " ; LEGIARTI000006316960"},
+]
+COMPLEMENTS["abattement_age_invalidite"] = [
+    {"annee": 1973, "monnaie": "FRF", "abattement_plein": 2000, "seuil_plein": 12000,
+     "abattement_reduit": 1000, "seuil_reduit": 20000, "origine": "loi",
+     "texte": _loi(1973, "art. 3", "« La déduction de 500 F dont les personnes âgées de plus de "
+                   "soixante-cinq ans ou invalides bénéficient [...] est portée à 2 000 F pour "
+                   "celles dont le revenu net global n'excède pas 12 000 F et 1 000 F pour celles "
+                   "dont le revenu net global est compris entre 12 000 F et 20 000 F »")},
+    {"annee": 1974, "monnaie": "FRF", "abattement_plein": 2300, "seuil_plein": 14000,
+     "abattement_reduit": 1150, "seuil_reduit": 23000, "origine": "loi",
+     "texte": _loi(1974, "art. 6")},
+    {"annee": 1975, "monnaie": "FRF", "abattement_plein": 2800, "seuil_plein": 17000,
+     "abattement_reduit": 1400, "seuil_reduit": 28000, "origine": "loi",
+     "texte": _loi(1975, "art. 2, III") + " ; LEGIARTI000006316887"},
+    {"annee": 1976, "monnaie": "FRF", "abattement_plein": 3100, "seuil_plein": 19000,
+     "abattement_reduit": 1550, "seuil_reduit": 31000, "origine": "loi",
+     "texte": _loi(1976, "art. 2, III") + " ; LEGIARTI000006316960"},
+    *COMPLEMENTS["abattement_age_invalidite"],
+]
+COMPLEMENTS["deductions"] = [
+    {"annee": 1976, "monnaie": "FRF", "frais_professionnels_taux": 0.1,
+     "frais_professionnels_minimum": 1500, "vingt_pour_cent_taux": 0.2,
+     "vingt_pour_cent_maximum": 70000, "vingt_pour_cent_plafond": 350000, "origine": "loi",
+     "texte": _loi(1976, "art. 2, IV", "« Le montant minimal de la déduction forfaitaire pour "
+                   "frais professionnels accordée aux salariés est porté de 1 200 F à 1 500 F »")},
+    *COMPLEMENTS["deductions"],
+]
+
+#: L'abattement de 10 % des pensions naît des revenus de 1977 : avant, une
+#: pension n'a que les 20 % (voir :func:`_pensions_avant_1977`).
+PREMIERE_ANNEE_ABATTEMENT_DES_PENSIONS = 1977
+PENSIONS_AVANT_1977 = (
+    "sans l'abattement de 10 % des pensions, que la loi de finances pour 1979 (art. 4) dit "
+    "« institué par l'article 3-1 de la loi n° 77-1467 du 30 décembre 1977 » pour les revenus "
+    "de 1977 : « Les contribuables titulaires de pensions ou de retraites sont autorisés à "
+    "pratiquer [...] un abattement de 10 % » (" + _loi(1977, "art. 3, I") + ")")
+
+#: Les années de la limite d'exonération que l'IPP ne chiffre pas, comblées
+#: par la règle d'indexation de la loi de finances pour 1982 (art. 12, III, 3,
+#: LEGIARTI000006273482).
+ANNEES_D_EXONERATION_INDEXEES = (1982, 1983, 1989)
+
+#: Le seuil de mise en recouvrement que la loi chiffre, quand le code ne le
+#: fait pas.
+RECOUVREMENT_DES_LOIS = {
+    1978: (165, _loi(1978, "art. 2, VI, 1", "« Pour les cotisations perçues en 1979, cette "
+                     "somme est fixée à 165 F »")),
 }
 
 #: Deux mesures d'une seule année que l'IPP ne porte pas, lues dans le
@@ -556,13 +755,53 @@ def _indexer_age_invalidite(serie: list[dict], bareme: list[dict]) -> list[dict]
     return sortie
 
 
+def _pensions_avant_1977(serie: list[dict]) -> list[dict]:
+    """Les déductions des revenus d'avant 1977 sans l'abattement de 10 % des
+    pensions, que l'IPP leur donne dès 1960 (:data:`PENSIONS_AVANT_1977`)."""
+    sortie = []
+    for marche in serie:
+        if marche["annee"] < PREMIERE_ANNEE_ABATTEMENT_DES_PENSIONS and "pensions_taux" in marche:
+            marche = {cle: valeur for cle, valeur in marche.items() if cle != "pensions_taux"}
+            marche.update(origine="loi", texte=f"{marche['texte']} ; {PENSIONS_AVANT_1977}")
+        sortie.append(marche)
+    return sortie
+
+
+def _indexer_exoneration(serie: list[dict], bareme: list[dict]) -> list[dict]:
+    """Comble les années de la limite d'exonération que l'IPP ne chiffre pas
+    (:data:`ANNEES_D_EXONERATION_INDEXEES`) par la règle de la loi de finances
+    pour 1982 (art. 12, III, 3 : « relevés chaque année dans la même proportion
+    que la limite supérieure de la première tranche du barème [...] arrondis
+    [...] à la centaine de francs supérieure en ce qui concerne les plafonds de
+    ressources »). Partie de 1981, elle retrouve les 31 800 F et 34 700 F de
+    1984 ; partie de 1988, les 39 300 F et 42 800 F de 1990."""
+    sortie = list(serie)
+    for annee in ANNEES_D_EXONERATION_INDEXEES:
+        precedente = [m for m in sortie if m["annee"] < annee and "limite" in m][-1]
+        rapport = (_limite_premiere_tranche(bareme, annee)
+                   / _limite_premiere_tranche(bareme, precedente["annee"]))
+        calculee = {
+            "annee": annee, "monnaie": precedente["monnaie"],
+            "limite": _arrondi_superieur(precedente["limite"] * rapport, 100),
+            "limite_plus_de_65_ans": _arrondi_superieur(
+                precedente["limite_plus_de_65_ans"] * rapport, 100),
+            "texte": ("Loi n° 81-1160 du 30 décembre 1981 (LF pour 1982), art. 12, III, 3, "
+                      "LEGIARTI000006273482 : règle d'indexation appliquée aux limites de "
+                      f"{precedente['annee']} ; l'IPP n'en a pas"),
+            "origine": "indexation",
+        }
+        sortie = sorted([m for m in sortie if m["annee"] != annee] + [calculee],
+                        key=lambda m: m["annee"])
+    return sortie
+
+
 def _recouvrement_avant_2002(bareme: list[dict]) -> list[dict]:
     """Le seuil de mise en recouvrement de 1970 à 2001. Les années que le code
-    ne chiffre pas suivent sa règle : « relevée chaque année dans la même
-    proportion que la première tranche du barème » (LEGIARTI000006312651),
-    la première tranche imposée, arrondie aux 5 F supérieurs jusqu'en 1984 et
-    aux 10 F ensuite : ainsi se retrouvent les valeurs publiées de 1979 (185 F),
-    de 1991 (440 F) et de 1992 (460 F)."""
+    ne chiffre pas suivent la loi de finances qui le fait (1978), ou sa règle :
+    « relevée chaque année dans la même proportion que la première tranche du
+    barème » (LEGIARTI000006312651), la première tranche imposée, arrondie aux
+    5 F supérieurs jusqu'en 1984 et aux 10 F ensuite : ainsi se retrouvent les
+    valeurs publiées de 1991 (440 F) et de 1992 (460 F)."""
     lus = {annee: (seuil, apres, texte) for annee, seuil, apres, texte in RECOUVREMENT_LU}
     sortie = []
     for annee in range(1970, 2002):
@@ -573,7 +812,11 @@ def _recouvrement_avant_2002(bareme: list[dict]) -> list[dict]:
             if apres is not None:
                 marche["seuil_apres_credits"] = apres
             sortie.append(marche)
-        elif annee in (1978,) or 1985 <= annee <= 1990:
+        elif annee in RECOUVREMENT_DES_LOIS:
+            seuil, texte = RECOUVREMENT_DES_LOIS[annee]
+            sortie.append({"annee": annee, "monnaie": "FRF", "seuil": seuil, "texte": texte,
+                           "origine": "loi"})
+        elif 1985 <= annee <= 1990:
             precedente = sortie[-1]
             rapport = (_limite_premiere_tranche_imposee(bareme, annee)
                        / _limite_premiere_tranche_imposee(bareme, annee - 1))
@@ -602,6 +845,8 @@ def corriger(series: dict[str, list[dict]]) -> dict[str, list[dict]]:
                              key=lambda m: m["annee"])
     series["abattement_age_invalidite"] = _indexer_age_invalidite(
         series["abattement_age_invalidite"], bareme)
+    series["exoneration"] = _indexer_exoneration(series["exoneration"], bareme)
+    series["deductions"] = _pensions_avant_1977(series["deductions"])
     series["recouvrement"] = _recouvrement_avant_2002(bareme) + [
         m for m in series["recouvrement"] if m["annee"] >= 2002]
     for nom, (annee, texte) in FINS.items():
@@ -623,8 +868,8 @@ def corriger(series: dict[str, list[dict]]) -> dict[str, list[dict]]:
          "texte": f"{marche['texte']} ; {veuf}"}
         for marche in series["quotient_familial"]]
     series["parts_par_rang_d_enfant"] = [
-        {"annee": annee, "parts": list(parts), "texte": texte, "origine": "note_ipp"}
-        for annee, parts, texte in PARTS_PAR_RANG_D_ENFANT]
+        {"annee": annee, "parts": list(parts), "texte": texte, "origine": origine}
+        for annee, parts, texte, origine in PARTS_PAR_RANG_D_ENFANT]
     return series
 
 
@@ -661,7 +906,9 @@ ENTETE = """\
 # qu'il écrit, `note_ipp` pour une règle que seules les notes de l'IPP datent,
 # `doctrine` pour une valeur que l'administration publie (documentation de
 # base, Bulletin officiel des impôts) quand aucun des index de la DILA n'a la
-# loi de finances qui la porte.
+# loi de finances qui la porte, `loi` pour une valeur lue au texte définitif
+# d'une loi de finances que le Sénat a adopté (senat.fr/leg/), quand l'index
+# LEGI n'en garde pas la rédaction d'origine.
 # Une transcription, non une source productrice : `haute` au plus
 # (data/sources.yaml, `ipp_impot_revenu`).
 #
@@ -691,6 +938,11 @@ ENTETE = """\
 #     dit lequel vaut à chaque époque).
 #   reduction_sous_condition_de_revenus : de 2016 à 2019.
 #   recouvrement : le seuil de mise en recouvrement, avant et après crédits.
+#   exoneration : la limite d'exonération, de 1973 à 2013, sous laquelle le
+#     revenu du foyer, net de frais professionnels, n'est pas imposé : la
+#     limite, celle des plus de 65 ans ; de 1973 à 1976, `limite` ne vaut que
+#     pour qui vit principalement de salaires et de pensions, `limite_autres`
+#     pour les autres.
 #   deductions : les 10 % des salaires et des pensions, les 20 % d'avant 2006.
 #   abattement_age_invalidite : celui de l'article 157 bis, plein sous le
 #     premier seuil de revenu net global, réduit sous le second.
@@ -707,7 +959,7 @@ ENTETE = """\
 
 ORDRE = ("bareme", "quotient_familial", "parts_par_rang_d_enfant",
          "plafonds_quotient_familial", "decote", "reduction_sous_condition_de_revenus",
-         "recouvrement", "deductions", "abattement_age_invalidite",
+         "recouvrement", "exoneration", "deductions", "abattement_age_invalidite",
          "abattement_exceptionnel_ages_invalides", "abattement_exceptionnel_personnes_seules",
          "majorations_exceptionnelles", "minorations_exceptionnelles",
          "reduction_exceptionnelle", "reduction_proportionnelle", "prime_pour_l_emploi",

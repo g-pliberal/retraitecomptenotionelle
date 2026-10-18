@@ -3,7 +3,7 @@
 # source_id: ipp_impot_revenu
 #
 # ÉCRIT PAR `scripts/fetch/ipp_impot_revenu.py`, jamais à la main : les barèmes
-# de l'Institut des politiques publiques, lus le 2026-10-10, chacun avec la
+# de l'Institut des politiques publiques, lus le 2026-10-18, chacun avec la
 # référence que l'IPP cite pour sa marche, et ce que le script y ajoute, chaque
 # fois avec sa source (`origine`) : `legi` pour une valeur lue dans une
 # rédaction du code général des impôts que l'index LEGI de la DILA conserve,
@@ -11,7 +11,9 @@
 # qu'il écrit, `note_ipp` pour une règle que seules les notes de l'IPP datent,
 # `doctrine` pour une valeur que l'administration publie (documentation de
 # base, Bulletin officiel des impôts) quand aucun des index de la DILA n'a la
-# loi de finances qui la porte.
+# loi de finances qui la porte, `loi` pour une valeur lue au texte définitif
+# d'une loi de finances que le Sénat a adopté (senat.fr/leg/), quand l'index
+# LEGI n'en garde pas la rédaction d'origine.
 # Une transcription, non une source productrice : `haute` au plus
 # (data/sources.yaml, `ipp_impot_revenu`).
 #
@@ -41,6 +43,11 @@
 #     dit lequel vaut à chaque époque).
 #   reduction_sous_condition_de_revenus : de 2016 à 2019.
 #   recouvrement : le seuil de mise en recouvrement, avant et après crédits.
+#   exoneration : la limite d'exonération, de 1973 à 2013, sous laquelle le
+#     revenu du foyer, net de frais professionnels, n'est pas imposé : la
+#     limite, celle des plus de 65 ans ; de 1973 à 1976, `limite` ne vaut que
+#     pour qui vit principalement de salaires et de pensions, `limite_autres`
+#     pour les autres.
 #   deductions : les 10 % des salaires et des pensions, les 20 % d'avant 2006.
 #   abattement_age_invalidite : celui de l'article 157 bis, plein sous le
 #     premier seuil de revenu net global, réduit sous le second.
@@ -53,7 +60,7 @@
 #   prime_pour_l_emploi : de 2000 à 2014.
 #   credit_exceptionnel : celui des revenus de 2008, les deux tiers de l'impôt
 #     sous le premier seuil de revenu par part, dégressif jusqu'au second.
-lu_le: "2026-10-10"
+lu_le: "2026-10-18"
 fiabilite: haute
 premiere_annee: 1960
 
@@ -72,13 +79,13 @@ series:
     - {annee: 1971, monnaie: "FRF", seuils: [0, 3100, 5400, 8950, 13250, 21050, 42100, 84200], taux: [0.0, 0.1, 0.15, 0.25, 0.3, 0.4, 0.5, 0.6], texte: "Loi 71-1161 du 29/12/1971 (LF pour 1972)"}
     - {annee: 1972, monnaie: "FRF", seuils: [0, 3300, 5750, 9500, 14050, 22000, 43500, 86500], taux: [0.0, 0.1, 0.15, 0.25, 0.3, 0.4, 0.5, 0.6], texte: "Loi 72-1121 du 20/12/1972 (LF pour 1973)"}
     - {annee: 1973, monnaie: "FRF", seuils: [0, 4950, 5200, 6250, 9900, 14900, 22000, 46325, 92125], taux: [0.0, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6], texte: "Loi 73-1150 du 27/12/1973 (LF pour 1974)"}
-    - {annee: 1974, monnaie: "FRF", seuils: [0, 5500, 5825, 7000, 11100, 15050, 19000, 24450, 26475, 45825, 64900, 84000, 103150], taux: [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6], texte: "Loi 74-1129 du 30/12/1974 (LF pour 1975)"}
+    - {annee: 1974, monnaie: "FRF", seuils: [0, 5550, 5825, 7000, 11100, 15050, 19000, 22950, 26475, 45825, 64900, 84000, 103150], taux: [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6], origine: "loi", texte: "Loi 74-1129 du 30/12/1974 (LF pour 1975) ; Loi n° 74-1129 du 30 décembre 1974 (LF pour 1975), art. 2, I, texte définitif adopté par le Sénat le 19 décembre 1974 (senat.fr/leg/1974-1975/ta1974_1975_0067.pdf) : « 11 100 F à 11 650 F : 5 % », « 45 900 F à 52 950 F : 35 % », pour deux parts ; l'IPP porte 5 500 F et 24 450 F par part"}
     - {annee: 1975, monnaie: "FRF", seuils: [0, 6125, 6425, 7700, 12225, 16575, 20900, 25250, 29125, 50400, 71375, 92400, 113450], taux: [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6], texte: "Loi 75-1278 du 30/12/1975 (LF pour 1976)"}
     - {annee: 1976, monnaie: "FRF", seuils: [0, 6725, 7050, 8450, 13400, 17575, 22150, 26775, 30875, 53425, 73525, 95175, 113450], taux: [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6], texte: "Loi 76-1232 du 29/12/1976 (LF pour 1977)"}
     - {annee: 1977, monnaie: "FRF", seuils: [0, 7250, 7600, 9100, 14400, 18900, 23800, 28775, 33200, 57425, 79025, 100900, 119100], taux: [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6], texte: "Loi 77-1467 du 30/12/1977 (LF pour 1978)"}
     - {annee: 1978, monnaie: "FRF", seuils: [0, 7925, 8300, 9925, 15700, 20625, 25925, 31350, 36175, 62600, 86125, 105950, 125050], taux: [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6], texte: "Loi 78-1239 du 29/12/1978 (LF pour 1979)"}
     - {annee: 1979, monnaie: "FRF", seuils: [0, 8725, 9125, 10825, 17125, 22275, 28000, 33875, 39075, 65125, 89575, 105950, 125050], taux: [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6], texte: "Loi 80-30 du 18/01/1980 (LF pour 1980)"}
-    - {annee: 1980, monnaie: "FRF", seuils: [0, 9890, 10340, 12270, 19410, 24950, 31360, 37970, 43770, 72940, 100320, 118660, 135000], taux: [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6], texte: "Loi 80-1094 du 30/12/1980 (LF pour 1981)"}
+    - {annee: 1980, monnaie: "FRF", seuils: [0, 9890, 10340, 12270, 19410, 24950, 31360, 37940, 43770, 72940, 100320, 118660, 135000], taux: [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6], origine: "loi", texte: "Loi 80-1094 du 30/12/1980 (LF pour 1981) ; Loi n° 80-1094 du 30 décembre 1980 (LF pour 1981), art. 2, I, texte définitif adopté par le Sénat le 17 décembre 1980 (senat.fr/leg/1980-1981/ta1980_1981_0039.pdf) : « De 62 720 F à 75 880 F : 30 % », pour deux parts, lu à l'image du texte ; l'IPP porte 37 970 F par part"}
     - {annee: 1981, monnaie: "FRF", seuils: [0, 11230, 11740, 13930, 22030, 28320, 35590, 43060, 49680, 82790, 113860, 134680, 153200], taux: [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6], texte: "Loi 81-1160 du 30/12/1981 (LF pour 1982)"}
     - {annee: 1982, monnaie: "FRF", seuils: [0, 12620, 13190, 15640, 24740, 31810, 39970, 48370, 55790, 92970, 127860, 151250, 172040, 195000], taux: [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65], texte: "Loi 82-1126 du 29/12/1982 (LF pour 1983)"}
     - {annee: 1983, monnaie: "FRF", seuils: [0, 13770, 14390, 17070, 26990, 34700, 43610, 52760, 60870, 101430, 139500, 165010, 187700, 212750], taux: [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65], texte: "Loi 83-1179 du 29/12/1983 (LF pour 1984)"}
@@ -128,8 +135,8 @@ series:
     - {annee: 2008, conjoint: 1, veuf_avec_enfant: 1, parent_isole: 0.5, invalide: 0.5, texte: "Article 194, I. du Code général des impôts"}
   parts_par_rang_d_enfant:
     - {annee: 1960, parts: [0.5], origine: "note_ipp", texte: "CGI, art. 194, I (IPP, table du quotient familial)"}
-    - {annee: 1979, parts: [0.5, 0.5, 0.5, 0.5, 1.0], origine: "note_ipp", texte: "Loi n° 80-30 du 18 janvier 1980 (LF pour 1980) : une part entière pour le cinquième enfant, sur les revenus de 1979 (IPP, note des plafonds de 1979)"}
-    - {annee: 1980, parts: [0.5, 0.5, 1.0, 0.5, 1.0], origine: "note_ipp", texte: "Loi n° 80-1094 du 30 décembre 1980 (LF pour 1981) : une part entière pour le troisième enfant, sur les revenus de 1980 (IPP, note des plafonds de 1979)"}
+    - {annee: 1979, parts: [0.5, 0.5, 0.5, 0.5, 1.0, 0.5], origine: "loi", texte: "Loi n° 80-30 du 18 janvier 1980 (LF pour 1980), art. 4, I, texte définitif adopté par le Sénat le 17 janvier 1980 : « marié ou veuf ayant cinq enfants à charge 5 [...] et ainsi de suite, en augmentant d'une demi-part par enfant à charge » : une part entière pour le cinquième enfant seul, sur les revenus de 1979"}
+    - {annee: 1980, parts: [0.5, 0.5, 1.0, 0.5], origine: "loi", texte: "Loi n° 80-1094 du 30 décembre 1980 (LF pour 1981), art. 3, I, texte définitif adopté par le Sénat : « Les contribuables qui ont au moins trois enfants à charge bénéficient d'une demi-part supplémentaire de quotient familial. Cette disposition se substitue à l'article 4-1 de la loi de finances pour 1980 », sur les revenus de 1980"}
     - {annee: 1986, parts: [0.5, 0.5, 1.0], origine: "note_ipp", texte: "Loi n° 86-1317 du 30 décembre 1986 (LF pour 1987) : une part entière pour chaque enfant après le troisième (IPP, note de la décote de 1986) ; CGI, art. 194, LEGIARTI000006308279 : « en augmentant d'une part par enfant à charge »"}
   plafonds_quotient_familial:
     - {annee: 1981, monnaie: "FRF", general: 7500, texte: "Loi 81-1160 du 30/12/1981 (LF pour 1982)"}
@@ -184,7 +191,7 @@ series:
     - {annee: 1966, monnaie: "FRF", seuil_celibataire: 80, seuil_couple: 240, seuil_1_faible_nombre_de_parts: 190, seuil_2_faible_nombre_de_parts: 570, nombre_de_parts_limite: 1.5, texte: "IPP, sans référence"}
     - {annee: 1967, monnaie: "FRF", seuil_celibataire: 80, seuil_couple: 240, texte: "IPP, sans référence"}
     - {annee: 1969, monnaie: "FRF", seuil_celibataire: 100, seuil_couple: 300, seuil_1_faible_nombre_de_parts: 230, seuil_2_faible_nombre_de_parts: 690, nombre_de_parts_limite: 2, texte: "IPP, sans référence"}
-    - {annee: 1973, texte: "IPP, sans référence"}
+    - {annee: 1973, origine: "loi", texte: "IPP, sans référence ; Loi n° 73-1150 du 27 décembre 1973 (LF pour 1974), art. 2, texte définitif adopté par le Sénat le 18 décembre 1973 (senat.fr/leg/1973-1974/ta1973_1974_0031.pdf) : « Les franchises et les décotes prévues à l'article 198 ter du Code général des impôts, ainsi que les minorations dégressives visées à l'article 199 bis du même Code, sont intégrées au barème »"}
     - {annee: 1981, monnaie: "FRF", seuil_celibataire: 2600, seuil_une_part: 2600, seuil_une_part_et_demie: 800, texte: "Loi 81-1160 du 30/12/1981 (LF pour 1982)"}
     - {annee: 1982, monnaie: "FRF", seuil_celibataire: 3200, seuil_une_part: 3200, seuil_une_part_et_demie: 1100, texte: "Loi 82-1126 du 29/12/1982 (LF pour 1983)"}
     - {annee: 1983, monnaie: "FRF", seuil_celibataire: 3700, seuil_une_part: 3700, seuil_une_part_et_demie: 1400, texte: "Loi 83-1179 du 29/12/1983 (LF pour 1984)"}
@@ -236,7 +243,7 @@ series:
   recouvrement:
     - {annee: 1970, monnaie: "FRF", seuil: 100, origine: "legi", texte: "CGI, art. 1657, 2, LEGIARTI000049223975 : « les cotisations d'un montant inférieur à 100 francs ne sont pas mises en recouvrement »"}
     - {annee: 1977, monnaie: "FRF", seuil: 150, origine: "legi", texte: "CGI, art. 1657, 1 bis, LEGIARTI000006312651, note (1) : 150 F pour les revenus de 1977"}
-    - {annee: 1978, monnaie: "FRF", seuil: 165, origine: "indexation", texte: "CGI, art. 1657, 1 bis, LEGIARTI000006312651 : règle d'indexation, le code ne chiffrant pas l'année"}
+    - {annee: 1978, monnaie: "FRF", seuil: 165, origine: "loi", texte: "Loi n° 78-1239 du 29 décembre 1978 (LF pour 1979), art. 2, VI, 1, texte définitif adopté par le Sénat le 14 décembre 1978 (senat.fr/leg/1978-1979/ta1978_1979_0030.pdf) : « Pour les cotisations perçues en 1979, cette somme est fixée à 165 F »"}
     - {annee: 1979, monnaie: "FRF", seuil: 185, origine: "legi", texte: "LEGIARTI000006312651, note (2)"}
     - {annee: 1980, monnaie: "FRF", seuil: 210, origine: "legi", texte: "LEGIARTI000006312651, note (2)"}
     - {annee: 1981, monnaie: "FRF", seuil: 240, origine: "legi", texte: "LEGIARTI000006312651, note (2)"}
@@ -254,11 +261,54 @@ series:
     - {annee: 1993, monnaie: "FRF", seuil: 400, seuil_apres_credits: 80, origine: "legi", texte: "LEGIARTI000006312652, note (1) : loi n° 93-1352, art. 2 V"}
     - {annee: 2001, monnaie: "EUR", seuil: 61, seuil_apres_credits: 12, origine: "legi", texte: "CGI, art. 1657, 1 bis et 2, LEGIARTI000006312658 : 61 € et 12 € ; la loi de finances pour 2001 a rendu 400 F aux revenus de 2000, LEGIARTI000006312657"}
     - {annee: 2002, monnaie: "EUR", seuil: 61, seuil_apres_credits: 12, texte: "Article 1657 2. du Code général des impôts"}
+  exoneration:
+    - {annee: 1973, monnaie: "FRF", limite: 10000, limite_autres: 8000, origine: "loi", texte: "Loi n° 73-1150 du 27 décembre 1973 (LF pour 1974), art. 4, texte définitif adopté par le Sénat le 18 décembre 1973 (senat.fr/leg/1973-1974/ta1973_1974_0031.pdf) : « Les personnes physiques qui bénéficient principalement de traitements, salaires et pensions sont exonérées de l'impôt sur le revenu, lorsque leur revenu, net de frais professionnels, n'excède pas 10 000 F » ; « Pour les autres personnes physiques, la limite d'exonération est fixée à 8 000 F » ; LEGIARTI000006316777"}
+    - {annee: 1974, monnaie: "FRF", limite: 11400, limite_plus_de_65_ans: 12500, limite_autres: 10000, origine: "loi", texte: "Loi n° 74-1129 du 30 décembre 1974 (LF pour 1975), art. 2, II, texte définitif adopté par le Sénat le 19 décembre 1974 (senat.fr/leg/1974-1975/ta1974_1975_0067.pdf) ; LEGIARTI000006272925"}
+    - {annee: 1975, monnaie: "FRF", limite: 12600, limite_plus_de_65_ans: 13800, limite_autres: 11200, origine: "loi", texte: "Loi n° 75-1278 du 30 décembre 1975 (LF pour 1976), art. 2, II, texte définitif adopté par le Sénat le 17 décembre 1975 (senat.fr/leg/1975-1976/ta1975_1976_0056.pdf) ; LEGIARTI000006316887"}
+    - {annee: 1976, monnaie: "FRF", limite: 13800, limite_plus_de_65_ans: 15100, limite_autres: 13100, origine: "loi", texte: "Loi n° 76-1232 du 29 décembre 1976 (LF pour 1977), art. 2, II, texte définitif adopté par le Sénat le 16 décembre 1976 (senat.fr/leg/1976-1977/ta1976_1977_0048.pdf) ; LEGIARTI000006316960"}
+    - {annee: 1977, monnaie: "FRF", limite: 15200, limite_plus_de_65_ans: 16600, origine: "loi", texte: "IPP, sans référence ; Loi n° 77-1467 du 30 décembre 1977 (LF pour 1978), art. 2, II, texte définitif adopté par le Sénat le 16 décembre 1977 (senat.fr/leg/1977-1978/ta1977_1978_0053.pdf) : « n'excède pas 15 200 F ou 16 600 F s'ils sont âgés de plus de soixante-cinq ans [...] Ces limites sont identiques quelle que soit la nature des revenus perçus » ; LEGIARTI000006317059"}
+    - {annee: 1978, monnaie: "FRF", limite: 16800, limite_plus_de_65_ans: 18300, origine: "loi", texte: "IPP, sans référence ; Loi n° 78-1239 du 29 décembre 1978 (LF pour 1979), art. 2, II, texte définitif adopté par le Sénat le 14 décembre 1978 (senat.fr/leg/1978-1979/ta1978_1979_0030.pdf) ; CGI, art. 5, 2° bis, LEGIARTI000006307017"}
+    - {annee: 1979, monnaie: "FRF", limite: 18600, limite_plus_de_65_ans: 20300, origine: "loi", texte: "IPP, sans référence ; Loi n° 80-30 du 18 janvier 1980 (LF pour 1980), art. 3, II, texte définitif adopté par le Sénat le 17 janvier 1980 (senat.fr/leg/1979-1980/ta1979_1980_0049.pdf) ; CGI, art. 5, LEGIARTI000006307018, note (1)"}
+    - {annee: 1980, monnaie: "FRF", limite: 21100, limite_plus_de_65_ans: 23000, origine: "loi", texte: "IPP, sans référence ; Loi n° 80-1094 du 30 décembre 1980 (LF pour 1981), art. 2, III, 1, texte définitif adopté par le Sénat le 17 décembre 1980 (senat.fr/leg/1980-1981/ta1980_1981_0039.pdf) ; CGI, art. 5, 2° bis, LEGIARTI000006307018"}
+    - {annee: 1981, monnaie: "FRF", limite: 24000, limite_plus_de_65_ans: 26200, texte: "IPP, sans référence"}
+    - {annee: 1982, monnaie: "FRF", limite: 27000, limite_plus_de_65_ans: 29500, origine: "indexation", texte: "Loi n° 81-1160 du 30 décembre 1981 (LF pour 1982), art. 12, III, 3, LEGIARTI000006273482 : règle d'indexation appliquée aux limites de 1981 ; l'IPP n'en a pas"}
+    - {annee: 1983, monnaie: "FRF", limite: 29500, limite_plus_de_65_ans: 32200, origine: "indexation", texte: "Loi n° 81-1160 du 30 décembre 1981 (LF pour 1982), art. 12, III, 3, LEGIARTI000006273482 : règle d'indexation appliquée aux limites de 1982 ; l'IPP n'en a pas"}
+    - {annee: 1984, monnaie: "FRF", limite: 31800, limite_plus_de_65_ans: 34700, texte: "IPP, sans référence"}
+    - {annee: 1985, monnaie: "FRF", limite: 33600, limite_plus_de_65_ans: 36700, texte: "IPP, sans référence"}
+    - {annee: 1986, monnaie: "FRF", limite: 34500, limite_plus_de_65_ans: 37600, texte: "IPP, sans référence"}
+    - {annee: 1987, monnaie: "FRF", limite: 35700, limite_plus_de_65_ans: 38900, texte: "IPP, sans référence"}
+    - {annee: 1988, monnaie: "FRF", limite: 36700, limite_plus_de_65_ans: 40000, texte: "IPP, sans référence"}
+    - {annee: 1989, monnaie: "FRF", limite: 38000, limite_plus_de_65_ans: 41400, origine: "indexation", texte: "Loi n° 81-1160 du 30 décembre 1981 (LF pour 1982), art. 12, III, 3, LEGIARTI000006273482 : règle d'indexation appliquée aux limites de 1988 ; l'IPP n'en a pas"}
+    - {annee: 1990, monnaie: "FRF", limite: 39300, limite_plus_de_65_ans: 42800, texte: "IPP, sans référence"}
+    - {annee: 1991, monnaie: "FRF", limite: 40500, limite_plus_de_65_ans: 44100, texte: "IPP, sans référence"}
+    - {annee: 1992, monnaie: "FRF", limite: 41700, limite_plus_de_65_ans: 45400, texte: "IPP, sans référence"}
+    - {annee: 1993, monnaie: "FRF", limite: 42500, limite_plus_de_65_ans: 46300, texte: "IPP, sans référence"}
+    - {annee: 1994, monnaie: "FRF", limite: 43200, limite_plus_de_65_ans: 47000, texte: "IPP, sans référence"}
+    - {annee: 1995, monnaie: "FRF", limite: 44000, limite_plus_de_65_ans: 47900, texte: "IPP, sans référence"}
+    - {annee: 1996, monnaie: "FRF", limite: 44900, limite_plus_de_65_ans: 48900, texte: "IPP, sans référence"}
+    - {annee: 1997, monnaie: "FRF", limite: 45400, limite_plus_de_65_ans: 49500, texte: "IPP, sans référence"}
+    - {annee: 1998, monnaie: "FRF", limite: 45800, limite_plus_de_65_ans: 50000, texte: "BOI 5 B-9-01 n°44 du 02/03/2001"}
+    - {annee: 1999, monnaie: "FRF", limite: 46100, limite_plus_de_65_ans: 50300, texte: "BOI 5 B-19-00 n°163 du 05/09/2000"}
+    - {annee: 2000, monnaie: "FRF", limite: 46800, limite_plus_de_65_ans: 51100, texte: "BOI 5 B-9-01 n°44 du 02/03/2001"}
+    - {annee: 2001, monnaie: "EUR", limite: 7250, limite_plus_de_65_ans: 7920, texte: "Loi 2001-1276 du 28/12/2001 (LFR pour 2001) - art. 51"}
+    - {annee: 2002, monnaie: "EUR", limite: 7380, limite_plus_de_65_ans: 8060, texte: "BOI 5 B-6-03 n°16 du 27/01/2003"}
+    - {annee: 2003, monnaie: "EUR", limite: 7510, limite_plus_de_65_ans: 8200, texte: "BOI 5 B-8-04 n°37 du 25/02/2004"}
+    - {annee: 2004, monnaie: "EUR", limite: 7640, limite_plus_de_65_ans: 8340, texte: "BOI 5 B-9-05 n°33 du 18/02/2005"}
+    - {annee: 2005, monnaie: "EUR", limite: 7780, limite_plus_de_65_ans: 8507, texte: "Loi n°2005-32 du 18 janvier 2005 - art. 26", note: "Hausse du seuil d'exonération pour les apprentis. Ce seuil correspond désormais au Smic annuel."}
+    - {annee: 2006, monnaie: "EUR", limite: 7920, limite_plus_de_65_ans: 8660, texte: "BOI 5 B-10-07"}
+    - {annee: 2007, monnaie: "EUR", limite: 8030, limite_plus_de_65_ans: 8780, texte: "Décret 2008-294 du 01/04/2008 - art. 1", note: "Voir note (1)"}
+    - {annee: 2008, monnaie: "EUR", limite: 8270, limite_plus_de_65_ans: 9040, texte: "Décret 2009-389 du 07/04/2009 - art. 1"}
+    - {annee: 2009, monnaie: "EUR", limite: 8310, limite_plus_de_65_ans: 9080, texte: "Décret 2010-421 du 27/04/2010 - art. 1"}
+    - {annee: 2010, monnaie: "EUR", limite: 8440, limite_plus_de_65_ans: 9220, texte: "Décret 2011-645 du 09/06/2011 - art. 1"}
+    - {annee: 2012, monnaie: "EUR", limite: 8610, limite_plus_de_65_ans: 9410, texte: "Cf note (1)"}
+    - {annee: 2013, monnaie: "EUR", limite: 8680, limite_plus_de_65_ans: 9490, texte: "Cf note (1)"}
+    - {annee: 2014, texte: "Loi 2014-1654 du 29/12/2014 (LF pour 2015), art. 2"}
   deductions:
-    - {annee: 1960, frais_professionnels_taux: 0.1, pensions_taux: 0.1, vingt_pour_cent_taux: 0.2, texte: "IPP, sans référence"}
-    - {annee: 1973, monnaie: "FRF", frais_professionnels_taux: 0.1, pensions_taux: 0.1, vingt_pour_cent_taux: 0.2, vingt_pour_cent_maximum: 56000, vingt_pour_cent_plafond: 280000, texte: "IPP, sans référence"}
-    - {annee: 1974, monnaie: "FRF", frais_professionnels_taux: 0.1, pensions_taux: 0.1, vingt_pour_cent_taux: 0.2, vingt_pour_cent_maximum: 62000, vingt_pour_cent_plafond: 310000, texte: "IPP, sans référence", note: "Pour les revenus 1973 et 1974, les salariés avaient également droit à un abattement de 10 % au-delà du plafond."}
-    - {annee: 1975, monnaie: "FRF", frais_professionnels_taux: 0.1, pensions_taux: 0.1, vingt_pour_cent_taux: 0.2, vingt_pour_cent_maximum: 68000, vingt_pour_cent_plafond: 340000, texte: "IPP, sans référence"}
+    - {annee: 1960, frais_professionnels_taux: 0.1, vingt_pour_cent_taux: 0.2, origine: "loi", texte: "IPP, sans référence ; sans l'abattement de 10 % des pensions, que la loi de finances pour 1979 (art. 4) dit « institué par l'article 3-1 de la loi n° 77-1467 du 30 décembre 1977 » pour les revenus de 1977 : « Les contribuables titulaires de pensions ou de retraites sont autorisés à pratiquer [...] un abattement de 10 % » (Loi n° 77-1467 du 30 décembre 1977 (LF pour 1978), art. 3, I, texte définitif adopté par le Sénat le 16 décembre 1977 (senat.fr/leg/1977-1978/ta1977_1978_0053.pdf))"}
+    - {annee: 1973, monnaie: "FRF", frais_professionnels_taux: 0.1, vingt_pour_cent_taux: 0.2, vingt_pour_cent_maximum: 56000, vingt_pour_cent_plafond: 280000, origine: "loi", texte: "IPP, sans référence ; sans l'abattement de 10 % des pensions, que la loi de finances pour 1979 (art. 4) dit « institué par l'article 3-1 de la loi n° 77-1467 du 30 décembre 1977 » pour les revenus de 1977 : « Les contribuables titulaires de pensions ou de retraites sont autorisés à pratiquer [...] un abattement de 10 % » (Loi n° 77-1467 du 30 décembre 1977 (LF pour 1978), art. 3, I, texte définitif adopté par le Sénat le 16 décembre 1977 (senat.fr/leg/1977-1978/ta1977_1978_0053.pdf))"}
+    - {annee: 1974, monnaie: "FRF", frais_professionnels_taux: 0.1, vingt_pour_cent_taux: 0.2, vingt_pour_cent_maximum: 62000, vingt_pour_cent_plafond: 310000, origine: "loi", texte: "IPP, sans référence ; sans l'abattement de 10 % des pensions, que la loi de finances pour 1979 (art. 4) dit « institué par l'article 3-1 de la loi n° 77-1467 du 30 décembre 1977 » pour les revenus de 1977 : « Les contribuables titulaires de pensions ou de retraites sont autorisés à pratiquer [...] un abattement de 10 % » (Loi n° 77-1467 du 30 décembre 1977 (LF pour 1978), art. 3, I, texte définitif adopté par le Sénat le 16 décembre 1977 (senat.fr/leg/1977-1978/ta1977_1978_0053.pdf))", note: "Pour les revenus 1973 et 1974, les salariés avaient également droit à un abattement de 10 % au-delà du plafond."}
+    - {annee: 1975, monnaie: "FRF", frais_professionnels_taux: 0.1, vingt_pour_cent_taux: 0.2, vingt_pour_cent_maximum: 70000, vingt_pour_cent_plafond: 350000, frais_professionnels_minimum: 1200, origine: "loi", texte: "IPP, sans référence ; Loi n° 76-1232 du 29 décembre 1976 (LF pour 1977), art. 2, IV, texte définitif adopté par le Sénat le 16 décembre 1976 (senat.fr/leg/1976-1977/ta1976_1977_0048.pdf) : le minimum des frais professionnels « est porté de 1 200 F à 1 500 F » ; la limite des 20 % est « une fois et demie la limite de la dernière tranche du barème correspondant à deux parts, ce chiffre étant arrondi à la dizaine de milliers de francs supérieure » (loi n° 73-1150, art. 5), 1,5 fois 226 900 F (loi n° 75-1278, art. 2, I), 340 350 F, soit 350 000 F ; l'IPP porte 340 000 F ; sans l'abattement de 10 % des pensions, que la loi de finances pour 1979 (art. 4) dit « institué par l'article 3-1 de la loi n° 77-1467 du 30 décembre 1977 » pour les revenus de 1977 : « Les contribuables titulaires de pensions ou de retraites sont autorisés à pratiquer [...] un abattement de 10 % » (Loi n° 77-1467 du 30 décembre 1977 (LF pour 1978), art. 3, I, texte définitif adopté par le Sénat le 16 décembre 1977 (senat.fr/leg/1977-1978/ta1977_1978_0053.pdf))"}
+    - {annee: 1976, monnaie: "FRF", frais_professionnels_taux: 0.1, frais_professionnels_minimum: 1500, vingt_pour_cent_taux: 0.2, vingt_pour_cent_maximum: 70000, vingt_pour_cent_plafond: 350000, origine: "loi", texte: "Loi n° 76-1232 du 29 décembre 1976 (LF pour 1977), art. 2, IV, texte définitif adopté par le Sénat le 16 décembre 1976 (senat.fr/leg/1976-1977/ta1976_1977_0048.pdf) : « Le montant minimal de la déduction forfaitaire pour frais professionnels accordée aux salariés est porté de 1 200 F à 1 500 F »"}
     - {annee: 1977, monnaie: "FRF", frais_professionnels_taux: 0.1, frais_professionnels_minimum: 1500, pensions_taux: 0.1, pensions_maximum: 5000, vingt_pour_cent_taux: 0.2, vingt_pour_cent_maximum: 72000, vingt_pour_cent_plafond: 360000, texte: "LF pour 1978"}
     - {annee: 1978, monnaie: "FRF", frais_professionnels_taux: 0.1, frais_professionnels_minimum: 1800, pensions_taux: 0.1, pensions_minimum: 1800, pensions_maximum: 6000, vingt_pour_cent_taux: 0.2, vingt_pour_cent_maximum: 72000, vingt_pour_cent_plafond: 360000, texte: "LF pour 1979", note: "Le maximum sur les pensions est pris en compte par foyer fiscal pour l'imposition des revenus de 1977 et 1978."}
     - {annee: 1979, monnaie: "FRF", frais_professionnels_taux: 0.1, frais_professionnels_minimum: 1800, frais_professionnels_maximum: 40000, pensions_taux: 0.1, pensions_minimum: 1800, pensions_maximum: 6700, vingt_pour_cent_taux: 0.2, vingt_pour_cent_maximum: 72000, vingt_pour_cent_plafond: 360000, texte: "Article 158-6 du Code général des impôts"}
@@ -308,10 +358,14 @@ series:
     - {annee: 2024, monnaie: "EUR", frais_professionnels_taux: 0.1, frais_professionnels_minimum: 504, frais_professionnels_maximum: 14426, pensions_taux: 0.1, pensions_minimum: 450, pensions_maximum: 4399, origine: "legi", texte: "CGI, art. 83, 3°, LEGIARTI000051765287, et art. 158, 5, a, LEGIARTI000051765203 (loi n° 2025-127 du 14 février 2025, art. 2)"}
     - {annee: 2025, monnaie: "EUR", frais_professionnels_taux: 0.1, frais_professionnels_minimum: 509, frais_professionnels_maximum: 14555, pensions_taux: 0.1, pensions_minimum: 454, pensions_maximum: 4439, origine: "legi", texte: "CGI, art. 83, 3°, LEGIARTI000054373766, et art. 158, 5, a, LEGIARTI000054373673 (loi n° 2026-103 du 19 février 2026, art. 4)"}
   abattement_age_invalidite:
-    - {annee: 1977, monnaie: "FRF", abattement_plein: 3400, seuil_plein: 21000, abattement_reduit: 1700, seuil_reduit: 34000, texte: "IPP, sans référence"}
-    - {annee: 1978, monnaie: "FRF", abattement_plein: 3720, seuil_plein: 23000, abattement_reduit: 1860, seuil_reduit: 37200, texte: "IPP, sans référence"}
-    - {annee: 1979, monnaie: "FRF", abattement_plein: 4080, seuil_plein: 25200, abattement_reduit: 2040, seuil_reduit: 40800, texte: "IPP, sans référence"}
-    - {annee: 1980, monnaie: "FRF", abattement_plein: 4630, seuil_plein: 28600, abattement_reduit: 2315, seuil_reduit: 46300, texte: "IPP, sans référence"}
+    - {annee: 1973, monnaie: "FRF", abattement_plein: 2000, seuil_plein: 12000, abattement_reduit: 1000, seuil_reduit: 20000, origine: "loi", texte: "Loi n° 73-1150 du 27 décembre 1973 (LF pour 1974), art. 3, texte définitif adopté par le Sénat le 18 décembre 1973 (senat.fr/leg/1973-1974/ta1973_1974_0031.pdf) : « La déduction de 500 F dont les personnes âgées de plus de soixante-cinq ans ou invalides bénéficient [...] est portée à 2 000 F pour celles dont le revenu net global n'excède pas 12 000 F et 1 000 F pour celles dont le revenu net global est compris entre 12 000 F et 20 000 F »"}
+    - {annee: 1974, monnaie: "FRF", abattement_plein: 2300, seuil_plein: 14000, abattement_reduit: 1150, seuil_reduit: 23000, origine: "loi", texte: "Loi n° 74-1129 du 30 décembre 1974 (LF pour 1975), art. 6, texte définitif adopté par le Sénat le 19 décembre 1974 (senat.fr/leg/1974-1975/ta1974_1975_0067.pdf)"}
+    - {annee: 1975, monnaie: "FRF", abattement_plein: 2800, seuil_plein: 17000, abattement_reduit: 1400, seuil_reduit: 28000, origine: "loi", texte: "Loi n° 75-1278 du 30 décembre 1975 (LF pour 1976), art. 2, III, texte définitif adopté par le Sénat le 17 décembre 1975 (senat.fr/leg/1975-1976/ta1975_1976_0056.pdf) ; LEGIARTI000006316887"}
+    - {annee: 1976, monnaie: "FRF", abattement_plein: 3100, seuil_plein: 19000, abattement_reduit: 1550, seuil_reduit: 31000, origine: "loi", texte: "Loi n° 76-1232 du 29 décembre 1976 (LF pour 1977), art. 2, III, texte définitif adopté par le Sénat le 16 décembre 1976 (senat.fr/leg/1976-1977/ta1976_1977_0048.pdf) ; LEGIARTI000006316960"}
+    - {annee: 1977, monnaie: "FRF", abattement_plein: 3400, seuil_plein: 21000, abattement_reduit: 1700, seuil_reduit: 34000, origine: "loi", texte: "IPP, sans référence ; Loi n° 77-1467 du 30 décembre 1977 (LF pour 1978), art. 3, II, texte définitif adopté par le Sénat le 16 décembre 1977 (senat.fr/leg/1977-1978/ta1977_1978_0053.pdf) ; LEGIARTI000006317060"}
+    - {annee: 1978, monnaie: "FRF", abattement_plein: 3720, seuil_plein: 23000, abattement_reduit: 1860, seuil_reduit: 37200, origine: "loi", texte: "IPP, sans référence ; Loi n° 78-1239 du 29 décembre 1978 (LF pour 1979), art. 2, III, texte définitif adopté par le Sénat le 14 décembre 1978 (senat.fr/leg/1978-1979/ta1978_1979_0030.pdf) ; CGI, art. 157 bis, LEGIARTI000006307950"}
+    - {annee: 1979, monnaie: "FRF", abattement_plein: 4080, seuil_plein: 25200, abattement_reduit: 2040, seuil_reduit: 40800, origine: "loi", texte: "IPP, sans référence ; Loi n° 80-30 du 18 janvier 1980 (LF pour 1980), art. 3, III, texte définitif adopté par le Sénat le 17 janvier 1980 (senat.fr/leg/1979-1980/ta1979_1980_0049.pdf) ; CGI, art. 157 bis, LEGIARTI000006307951, note (1)"}
+    - {annee: 1980, monnaie: "FRF", abattement_plein: 4630, seuil_plein: 28600, abattement_reduit: 2315, seuil_reduit: 46300, origine: "loi", texte: "IPP, sans référence ; Loi n° 80-1094 du 30 décembre 1980 (LF pour 1981), art. 2, III, 2, texte définitif adopté par le Sénat le 17 décembre 1980 (senat.fr/leg/1980-1981/ta1980_1981_0039.pdf) ; CGI, art. 157 bis, LEGIARTI000006307951"}
     - {annee: 1981, monnaie: "FRF", abattement_plein: 5260, seuil_plein: 32500, abattement_reduit: 2630, seuil_reduit: 52600, texte: "IPP, sans référence"}
     - {annee: 1982, monnaie: "FRF", abattement_plein: 5920, seuil_plein: 36600, abattement_reduit: 2960, seuil_reduit: 59200, origine: "indexation", texte: "CGI, art. 157 bis, LEGIARTI000006307952 : règle d'indexation appliquée aux montants de 1981 ; l'IPP n'en a pas"}
     - {annee: 1983, monnaie: "FRF", abattement_plein: 6460, seuil_plein: 40000, abattement_reduit: 3230, seuil_reduit: 64600, origine: "indexation", texte: "CGI, art. 157 bis, LEGIARTI000006307952 : règle d'indexation appliquée aux montants de 1982 ; l'IPP n'en a pas"}
@@ -376,7 +430,7 @@ series:
     - {annee: 1970, monnaie: "FRF", seuil_1: 10000, seuil_2: 15000, seuil_3: 20000, taux_1: 0.01, taux_2: 0.02, taux_3: 0.03, texte: "Loi 70-1199 du 21/12/1970 (LF pour 1971) - art. 2-IX", note: "Majoration d'impôt de 1 % si impôt compris en seuil 1 et seuil 2, de 2 % si impôt compris en seuil 2 et seuil 3,et de 3 % si impôt supérieur à seuil 3."}
     - {annee: 1971, monnaie: "FRF", seuil_1: 15000, seuil_2: 20000, taux_1: 0.01, taux_2: 0.02, texte: "Loi 71-1061 du 29/12/1971 (LF pour 1972) - art. 3-III"}
     - {annee: 1972, texte: "IPP, sans référence"}
-    - {annee: 1980, monnaie: "FRF", seuil_1: 100000, taux_1: 0.25, texte: "Loi 81-734 du 03/08/1981 (LFR pour 1981) - art. 1"}
+    - {annee: 1980, monnaie: "FRF", seuil_1: 100000, taux_1: 0.25, minimum: 200, origine: "loi", texte: "Loi 81-734 du 03/08/1981 (LFR pour 1981) - art. 1 ; Loi n° 81-734 du 3 août 1981 (LFR pour 1981), art. 1er, que l'index n'a qu'en notice, lu aux textes que le Sénat a modifiés en première et en nouvelle lecture (24 et 30 juillet 1981, senat.fr/leg/1980-1981/ta1980_1981_0086.pdf et _0094.pdf), dont les deux rédactions portent : « La partie supérieure à 100.000 F de l'impôt sur le revenu, dû au titre de l'année 1980 [...] est majorée de 25 % [...] La majoration n'est pas due si elle est inférieure à 200 F »"}
     - {annee: 1981, monnaie: "FRF", seuil_1: 15000, taux_1: 0.1, texte: "Loi 81-1160 du 30/12/1981 (LF pour 1982) - art. 14"}
     - {annee: 1982, monnaie: "FRF", seuil_1: 28000, taux_1: 0.07, texte: "Loi 82-1126 du 29/12/1982 (LF pour 1983) - art. 2", note: "Majorations applicables uniquement à la fraction d'impôt supérieure au seuil. Pour les revenus 1981, seuls les contribuables dont l'impôt est supérieur à 25 000 FRF sont concernés."}
     - {annee: 1983, monnaie: "FRF", seuil_1: 20000, seuil_2: 30000, taux_1: 0.05, taux_2: 0.08, texte: "Loi 83-1179 du 29/12/1983 (LF pour 1984) - art. 2-VIII", note: "Majoration d'impôt de 5 % si impôt compris en seuil 1 et seuil 2 et de 8 % si impôt supérieur à seuil 2."}
@@ -386,7 +440,7 @@ series:
     - {annee: 1966, monnaie: "FRF", taux_1: 0.05, taux_5: 0.02, seuil_impot_1: 0, seuil_impot_2: 45000, seuil_impot_3: 50000, seuil_impot_4: 55000, texte: "IPP, sans référence", note: "de 5 % si revenu < 45000 à 2 % si revenu > 50000 mais < 55000"}
     - {annee: 1967, monnaie: "FRF", taux_1: 0.1, taux_5: 0.05, seuil_impot_1: 0, seuil_impot_2: 45000, seuil_impot_3: 50000, seuil_impot_4: 55000, texte: "IPP, sans référence", note: "de 10 % si revenu < 45000 à 5 % si revenu > 50000 mais < 55000"}
     - {annee: 1968, monnaie: "FRF", taux_1: 0.15, taux_5: 0.02, seuil_impot_1: 0, seuil_impot_2: 1000, seuil_impot_3: 3500, seuil_impot_4: 5000, texte: "IPP, sans référence", note: "de 15 % si impôt < 1000 à 2 % si impôt > 3500 mais < 5000"}
-    - {annee: 1973, texte: "IPP, sans référence"}
+    - {annee: 1973, origine: "loi", texte: "IPP, sans référence ; Loi n° 73-1150 du 27 décembre 1973 (LF pour 1974), art. 2, texte définitif adopté par le Sénat le 18 décembre 1973 (senat.fr/leg/1973-1974/ta1973_1974_0031.pdf) : « Les franchises et les décotes prévues à l'article 198 ter du Code général des impôts, ainsi que les minorations dégressives visées à l'article 199 bis du même Code, sont intégrées au barème »"}
     - {annee: 1984, monnaie: "FRF", taux_1: 0.05, seuil_impot_1: 0, seuil_impot_2: 21520, texte: "IPP, sans référence", note: "5 % si impôt < 21520"}
     - {annee: 1985, monnaie: "FRF", taux_1: 0.08, taux_3: 0.03, seuil_impot_1: 0, seuil_impot_2: 22730, seuil_impot_3: 28410, seuil_impot_4: 34090, taux_formule: 0.17, formule_seuil_2: 5680, texte: "IPP, sans référence", note: "En 1985, quand l'impot est compris entre 22730 FRF et 28410 FRF, la minoration est égale à 4 fois la différence entre 1420 FRF et 4.25 % de l'impot. Pour rester coherent avec les années suivantes, j'ai directement multiplié par 4 les deux paramètres."}
     - {annee: 1986, monnaie: "FRF", taux_1: 0.11, taux_3: 0.06, taux_5: 0.03, seuil_impot_1: 0, seuil_impot_2: 23280, seuil_impot_3: 29090, seuil_impot_4: 34910, seuil_impot_5: 41060, revenu_par_part_maximum: 295000, taux_formule: 0.14, formule_seuil_2: 5820, formule_seuil_4: 6980, texte: "IPP, sans référence"}

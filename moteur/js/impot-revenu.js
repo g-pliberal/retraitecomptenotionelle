@@ -44,7 +44,7 @@ export const MONTANTS = Object.freeze({
 export const SERIES = Object.freeze([
   "bareme", "quotient_familial", "parts_par_rang_d_enfant",
   "plafonds_quotient_familial", "decote", "reduction_sous_condition_de_revenus",
-  "recouvrement", "deductions", "abattement_age_invalidite",
+  "recouvrement", "exoneration", "deductions", "abattement_age_invalidite",
   "abattement_exceptionnel_ages_invalides", "abattement_exceptionnel_personnes_seules",
   "majorations_exceptionnelles", "minorations_exceptionnelles",
   "reduction_exceptionnelle", "reduction_proportionnelle", "prime_pour_l_emploi",
@@ -68,6 +68,9 @@ export const HORS_CHAMP = Object.freeze([
   "contribution exceptionnelle sur les hauts revenus",
   "temps partiel et activité sur une partie de l'année, pour la prime pour l'emploi",
   "seuil de restitution de l'article 1965 L (50 F, puis 8 €)",
+  "exonération de l'article 5, 2° : salaires et pensions sous le minimum garanti",
+  "déduction de 500 F des personnes âgées d'avant 1973",
+  "abattement de 2 000 F des contribuables à une part de 1978, et celui de l'article 157 ter",
 ]);
 
 /** L'âge, au 31 décembre de l'année des revenus, qui ouvre l'abattement des personnes âgées. */
@@ -502,6 +505,21 @@ function abattementAgeInvalidite(foyer, parametres, revenuNetGlobal) {
   return Number(montant * ayantsDroit);
 }
 
+/**
+ * Le foyer est-il exonéré, son revenu net de frais professionnels sous la
+ * limite de l'année, de 1973 à 2013 : voir `exonere` dans `impot_revenu.py`.
+ */
+export function exonere(foyer, parametres, salairesNets, pensionsNettes, benefices) {
+  const e = parametres.serie("exoneration");
+  if (!("limite" in e)) return false;
+  const salairesEtPensions = somme(salairesNets) + somme(pensionsNettes);
+  const revenu = salairesEtPensions + somme(benefices);
+  if ("limite_autres" in e && !(salairesEtPensions > revenu / 2)) return revenu <= e.limite_autres;
+  const age = foyer.declarants.some((d) => d.age !== null && d.age >= AGE_ABATTEMENT);
+  const limite = age && "limite_plus_de_65_ans" in e ? e.limite_plus_de_65_ans : e.limite;
+  return revenu <= limite;
+}
+
 /** L'impôt après plafonnement des effets du quotient familial : [retenu, supplément, réduction]. */
 function plafonnement(foyer, parametres, revenu, parts, impotPlein) {
   const plafonds = parametres.serie("plafonds_quotient_familial");
@@ -643,7 +661,8 @@ function majoration(parametres, impot, revenu) {
     return arrondirImpot(annee, taux * impot);
   }
   if (annee === 1981 && impot <= 25000) return 0.0;
-  return arrondirImpot(annee, m.taux_1 * Math.max(impot - m.seuil_1, 0.0));
+  const montant = arrondirImpot(annee, m.taux_1 * Math.max(impot - m.seuil_1, 0.0));
+  return montant >= obtenir(m, "minimum", 0.0) ? montant : 0.0;
 }
 
 /** La réduction exceptionnelle des revenus de 2013 (loi n° 2014-891, art. 1). */
@@ -815,10 +834,10 @@ export function impotAuxParametres(foyer, parametres, { unite = "euro" } = {}) {
     abattement_vingt_pour_cent: vingt, benefices, benefices_retenus: retenus,
     abattement_adherents: abattementAdherents, majoration_des_benefices: majorationBenefices,
     revenu_net_global: revenuNetGlobal, abattement_age_invalidite: abattement,
-  }, unite, vers);
+  }, unite, vers, exonere(foyer, parametres, salairesNets, pensionsNettes, benefices));
 }
 
-/** L'impôt d'un foyer dont on connaît le revenu net imposable, sans prime pour l'emploi. */
+/** L'impôt d'un foyer dont on connaît le revenu net imposable, sans prime pour l'emploi ni exonération. */
 export function impotDUnRevenuImposable(foyer, annee, revenuNetImposable, baremes, {
   unite = "euro", indexation = "prix", croissance = null,
 } = {}) {
@@ -833,7 +852,7 @@ export function impotDUnRevenuImposable(foyer, annee, revenuNetImposable, bareme
 }
 
 /** Du revenu net imposable à l'impôt, dans la monnaie de l'année. */
-function liquider(foyer, parametres, revenu, activite, assiette, unite, vers) {
+function liquider(foyer, parametres, revenu, activite, assiette, unite, vers, exoneration = false) {
   const annee = parametres.annee;
   const rfr = revenu;
   const parts = nombreDeParts(foyer, parametres);
@@ -852,6 +871,8 @@ function liquider(foyer, parametres, revenu, activite, assiette, unite, vers) {
   impot = Math.max(impot - reductionExc, 0.0);
   const reductionProp = reductionProportionnelle(parametres, impot);
   impot -= reductionProp;
+  // « sont exonérés de l'impôt sur le revenu » : la cotisation tombe, les crédits restent.
+  if (exoneration) impot = 0.0;
 
   const ppe = activite.length ? primePourLEmploi(foyer, parametres, activite, rfr, parts) : 0.0;
   const credit = creditExceptionnel(foyer, parametres, impotBrut - laDecote, revenu, rfr, parts);
@@ -890,6 +911,7 @@ function liquider(foyer, parametres, revenu, activite, assiette, unite, vers) {
     prime_pour_l_emploi: ppe * retour,
     credit_exceptionnel: credit * retour,
     mis_en_recouvrement: misEnRecouvrement,
+    exonere: exoneration,
     impot: net * retour,
     fiabilite: parametres.fiabilite,
     remarques: remarquesDe(foyer, parametres, laDecote, laMinoration, laMajoration, ppe,

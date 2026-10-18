@@ -298,16 +298,21 @@ def test_un_impot_en_francs_se_calcule_en_francs(baremes):
 
 
 def test_les_parts_des_enfants_suivent_les_lois_de_1980_et_1986(baremes):
-    """Une part entière pour le cinquième enfant sur les revenus de 1979, pour le
-    troisième sur ceux de 1980, pour chaque enfant à partir du troisième sur
-    ceux de 1986 ; une demi-part chacun avant."""
+    """Une part entière pour le cinquième enfant sur les revenus de 1979 (loi de
+    finances pour 1980, art. 4, I : « marié ou veuf ayant cinq enfants à
+    charge 5 [...] et ainsi de suite, en augmentant d'une demi-part par enfant
+    à charge ») ; sur ceux de 1980, une demi-part de plus à qui a au moins
+    trois enfants, qui « se substitue » à celle du cinquième (loi de finances
+    pour 1981, art. 3, I) ; une part pour chaque enfant à partir du troisième
+    sur ceux de 1986 ; une demi-part chacun avant 1979."""
     def parts(annee, enfants):
         return impot_d_un_revenu_imposable(
             Foyer((Declarant(), Declarant()), enfants=enfants), annee, 100000, baremes,
             unite="monnaie").parts
     assert parts(1978, 5) == 4.5
-    assert parts(1979, 5) == 5.0
-    assert parts(1980, 3) == 4.0 and parts(1980, 4) == 4.5
+    assert parts(1979, 5) == 5.0 and parts(1979, 6) == 5.5
+    assert parts(1980, 3) == 4.0 and parts(1980, 4) == 4.5 and parts(1980, 5) == 5.0
+    assert parts(1985, 6) == 5.5
     assert parts(1986, 4) == 5.0 and parts(2024, 5) == 6.0
 
 
@@ -526,8 +531,11 @@ def _texte_legi(identifiant: str) -> str | None:
     return ligne[0] if ligne else None
 
 
-def _montant(valeur) -> str:
-    return f"{int(valeur):,}".replace(",", " ")
+def _montants(valeur) -> tuple[str, str]:
+    """Un montant tel qu'une rédaction l'écrit : ses milliers séparés d'une
+    espace, ou d'un point avant les années 1990 (« 16.800 F »)."""
+    chiffres = f"{int(valeur):,}"
+    return chiffres.replace(",", " "), chiffres.replace(",", ".")
 
 
 # -- Le bénéfice d'un indépendant ---------------------------------------------------
@@ -637,7 +645,181 @@ def test_les_valeurs_lues_dans_legi_y_sont():
                         continue
                     if nombre == 0:
                         continue
-                    assert _montant(nombre) in tout, f"{serie} {marche['annee']} : {nombre} absent"
+                    assert any(forme in tout for forme in _montants(nombre)), \
+                        f"{serie} {marche['annee']} : {nombre} absent"
                     verifiees += 1
     if not verifiees:
         pytest.skip("l'index LEGI n'est pas là")
+
+
+# -- Les lois de finances pour 1974 à 1981 -----------------------------------------
+#
+# Les règles des revenus de 1973 à 1980, lues au texte définitif de chaque loi de
+# finances que le Sénat publie (senat.fr/leg/<session>/ta<session>_<numéro>.pdf),
+# et, pour la limite d'exonération, à l'article 5, 2° bis du code, que l'index
+# LEGI conserve depuis sa rédaction du 1er juillet 1979.
+
+#: Les barèmes des revenus de 1973 à 1980, que l'article 2 des lois de finances
+#: pour 1974 à 1979 et pour 1981, et l'article 3 de celle pour 1980, écrivent
+#: « (deux parts) » : la limite basse de chaque tranche imposée, et son taux en
+#: pour cent.
+TAUX_DEPUIS_1974 = (5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60)
+BAREMES_DES_LOIS_DE_FINANCES = {
+    1973: ((9900, 10400, 12500, 19800, 29800, 44000, 92650, 184250),
+           (5, 10, 15, 20, 30, 40, 50, 60)),
+    1974: ((11100, 11650, 14000, 22200, 30100, 38000, 45900, 52950, 91650, 129800, 168000,
+            206300), TAUX_DEPUIS_1974),
+    1975: ((12250, 12850, 15400, 24450, 33150, 41800, 50500, 58250, 100800, 142750, 184800,
+            226900), TAUX_DEPUIS_1974),
+    1976: ((13450, 14100, 16900, 26800, 35150, 44300, 53550, 61750, 106850, 147050, 190350,
+            226900), TAUX_DEPUIS_1974),
+    1977: ((14500, 15200, 18200, 28800, 37800, 47600, 57550, 66400, 114850, 158050, 201800,
+            238200), TAUX_DEPUIS_1974),
+    1978: ((15850, 16600, 19850, 31400, 41250, 51850, 62700, 72350, 125200, 172250, 211900,
+            250100), TAUX_DEPUIS_1974),
+    1979: ((17450, 18250, 21650, 34250, 44550, 56000, 67750, 78150, 130250, 179150, 211900,
+            250100), TAUX_DEPUIS_1974),
+    1980: ((19780, 20680, 24540, 38820, 49900, 62720, 75880, 87540, 145880, 200640, 237320,
+            270000), TAUX_DEPUIS_1974),
+}
+
+
+def test_les_baremes_de_1973_a_1980_sont_ceux_des_lois_de_finances(baremes):
+    """Le barème d'une part est la moitié de celui que la loi écrit pour deux.
+    L'IPP en diffère trois fois : 5 500 F et 24 450 F au lieu de 5 550 F et
+    22 950 F en 1974 (loi n° 74-1129, art. 2, I : « 11 100 F à 11 650 F », « 45 900
+    F à 52 950 F ») ; 37 970 F au lieu de 37 940 F en 1980 (loi n° 80-1094, art.
+    2, I : « De 62 720 F à 75 880 F », lu à l'image du texte), que confirme le
+    relèvement uniforme des tranches, de 12 % sur 1979 et de 13,5 % en 1981."""
+    for annee, (seuils, taux) in BAREMES_DES_LOIS_DE_FINANCES.items():
+        parametres = baremes.lus(annee)
+        assert [2 * s for s in parametres.seuils] == [0, *seuils], annee
+        assert list(parametres.taux) == pytest.approx([0.0, *(t / 100 for t in taux)]), annee
+
+
+def test_la_limite_d_exoneration_des_revenus_de_1973_a_2013(baremes):
+    """« Les contribuables dont le revenu, net de frais professionnels, n'excède
+    pas 15 200 F, ou 16 600 F s'ils sont âgés de plus de soixante-cinq ans, sont
+    exonérés de l'impôt sur le revenu » (loi de finances pour 1978, art. 2, II),
+    devenu l'article 5, 2° bis du code, jusqu'aux revenus de 2013 (8 680 € ou
+    9 490 €, LEGIARTI000029042469) ; de 1973 à 1976, une limite pour qui vit
+    « principalement de traitements, salaires et pensions », une autre pour
+    les autres (lois de finances pour 1974 à 1977). Le revenu s'apprécie par
+    foyer : les salaires après leurs frais professionnels, mais avant
+    l'abattement de 20 % ; les pensions après leur abattement de 10 % ; les
+    bénéfices avant celui des adhérents ; la limite des plus de 65 ans vaut si
+    l'un des époux l'est (DB 5 B 132 du 1er septembre 1999, n° 6 et 7)."""
+    def foyer(annee, *declarants, unite="monnaie"):
+        return impot_du_foyer(Foyer(tuple(Declarant(**d) for d in declarants)), annee, baremes,
+                              unite=unite)
+    # 1977 : 16 880 F de salaire, 15 192 F nets de 10 % de frais, est exonéré ;
+    # 17 000 F, 15 300 F, paie le barème sur 12 240 F, après 20 % : 5 % de
+    # 350 F, 10 % de 1 500 F et 15 % de 3 140 F.
+    exonere = foyer(1977, {"salaires": 16880, "age": 40})
+    assert exonere.exonere and exonere.impot == 0 and exonere.impot_avant_credits == 0
+    impose = foyer(1977, {"salaires": 17000, "age": 40})
+    assert not impose.exonere and impose.impot == pytest.approx(17.5 + 150 + 471)
+    # 1977 : 18 400 F de pension, 16 560 F après ses 10 % : sous la limite des
+    # plus de 65 ans, au-dessus de l'autre.
+    assert foyer(1977, {"pensions": 18400, "age": 70}).exonere
+    assert not foyer(1977, {"pensions": 18400, "age": 60}).exonere
+    # Un couple dont l'un a 66 ans : 6 500 F de salaire, net du minimum de
+    # 1 500 F de frais, et 9 900 F de pension, 16 400 F en tout.
+    assert foyer(1977, {"salaires": 8000, "age": 60}, {"pensions": 11000, "age": 66}).exonere
+    assert not foyer(1977, {"salaires": 8000, "age": 60}, {"pensions": 11000, "age": 64}).exonere
+    # 1974 : 11 400 F pour qui vit de salaires ou de pensions, 10 000 F pour les
+    # autres (loi n° 74-1129, art. 2, II) ; le bénéfice de 10 500 F d'un artisan
+    # paie le barème de la loi : 5 % de 275 F, 10 % de 1 175 F et 15 % de
+    # 3 500 F, 656,25 F, à la dizaine de centimes.
+    salarie = foyer(1974, {"salaires": 11600, "age": 40})
+    assert salarie.exonere and salarie.impot == 0
+    artisan = foyer(1974, {"benefices": 10500, "age": 40})
+    assert not artisan.exonere and artisan.impot == pytest.approx(656.3)
+    # 1973 : 10 000 F et 8 000 F (loi n° 73-1150, art. 4).
+    assert foyer(1973, {"salaires": 11000, "age": 40}).exonere
+    assert not foyer(1973, {"benefices": 9000, "age": 40}).exonere
+    # 1980 : 21 100 F ou 23 000 F (loi n° 80-1094, art. 2, III, 1) ; 25 500 F de
+    # pension, 22 950 F après ses 10 %.
+    assert foyer(1980, {"pensions": 25500, "age": 70}).exonere
+    assert not foyer(1980, {"pensions": 25500, "age": 64}).exonere
+    # 2013 : 10 500 € de pension, 9 450 € après ses 10 % ; le 2° bis ne vaut plus
+    # pour les revenus de 2014.
+    assert foyer(2013, {"pensions": 10500, "age": 70}, unite="euro").exonere
+    assert not foyer(2014, {"pensions": 10500, "age": 70}, unite="euro").exonere
+
+
+def test_les_pensions_n_ont_d_abattement_de_10_qu_a_partir_de_1977(baremes):
+    """L'abattement de 10 % des pensions est « institué par l'article 3-1 de la
+    loi n° 77-1467 du 30 décembre 1977 » (loi de finances pour 1979, art. 4) :
+    rien avant les revenus de 1977 ; 10 %, jusqu'à 5 000 F, ensuite ; au moins
+    1 800 F dès 1978 (même loi, art. 5, II). Les pensions ont les 20 % « dont
+    bénéficient les salariés et pensionnés » (loi n° 73-1150, art. 5)."""
+    def calcul(annee, pension):
+        return impot_du_foyer(Foyer((Declarant(pensions=pension, age=70),)), annee, baremes,
+                              unite="monnaie")
+    avant = calcul(1976, 30000)
+    assert avant.pensions_nettes == (30000,) and avant.abattement_vingt_pour_cent == 6000
+    assert calcul(1965, 10000).pensions_nettes == (10000,)
+    assert calcul(1977, 30000).pensions_nettes == (27000,)
+    assert calcul(1978, 10000).pensions_nettes == (8200,)
+
+
+def test_l_abattement_de_20_de_1973_a_1976(baremes):
+    """L'abattement de 20 % des salaires et des pensions ne porte, depuis les
+    revenus de 1973, que sur ce qui n'excède pas « une fois et demie la limite
+    de la dernière tranche du barème correspondant à deux parts, ce chiffre
+    étant arrondi à la dizaine de milliers de francs supérieure » (loi n°
+    73-1150, art. 5), avec 10 % au-delà jusqu'à ce que la loi de finances pour
+    1976 le supprime (art. 14). Pour 1975 et 1976, 1,5 fois 226 900 F, 340 350 F :
+    350 000 F, et non les 340 000 F de l'IPP."""
+    def vingt(annee, salaire):
+        return impot_du_foyer(Foyer((Declarant(salaires=salaire, age=40),)), annee, baremes,
+                              unite="monnaie").abattement_vingt_pour_cent
+    # 400 000 F de salaire, 360 000 F après 10 % de frais.
+    assert vingt(1974, 400000) == pytest.approx(0.2 * 310000 + 0.1 * 50000)
+    assert vingt(1975, 400000) == pytest.approx(0.2 * 350000)
+    assert vingt(1976, 400000) == pytest.approx(0.2 * 350000)
+
+
+def test_l_abattement_des_personnes_agees_de_1973_a_1976(baremes):
+    """La déduction des plus de 65 ans, « de 500 F », est portée à 2 000 F sous
+    12 000 F de revenu net global et à 1 000 F sous 20 000 F pour les revenus de
+    1973 (loi n° 73-1150, art. 3) ; puis à 2 300 F et 1 150 F sous 14 000 F et
+    23 000 F (loi n° 74-1129, art. 6), 2 800 F et 1 400 F sous 17 000 F et
+    28 000 F (loi n° 75-1278, art. 2, III), 3 100 F et 1 550 F sous 19 000 F et
+    31 000 F (loi n° 76-1232, art. 2, III). Une pension, qui n'a pas ses 10 %
+    avant 1977, y entre pour 80 %."""
+    def abattement(annee, pension):
+        return impot_du_foyer(Foyer((Declarant(pensions=pension, age=70),)), annee, baremes,
+                              unite="monnaie").abattement_age_invalidite
+    assert [abattement(1973, p) for p in (15000, 25000, 26000)] == [2000, 1000, 0]
+    assert [abattement(1974, p) for p in (17500, 28750, 30000)] == [2300, 1150, 0]
+    assert [abattement(1975, p) for p in (21250, 35000, 36000)] == [2800, 1400, 0]
+    assert [abattement(1976, p) for p in (23750, 38750, 40000)] == [3100, 1550, 0]
+
+
+def test_le_minimum_des_frais_professionnels_de_1975_a_1978(baremes):
+    """« Le montant minimal de la déduction forfaitaire pour frais
+    professionnels accordée aux salariés est porté de 1 200 F à 1 500 F » pour
+    les revenus de 1976 (loi n° 76-1232, art. 2, IV), puis « de 1 500 F à
+    1 800 F » pour ceux de 1978 (loi n° 78-1239, art. 5, I)."""
+    def nets(annee):
+        return impot_du_foyer(Foyer((Declarant(salaires=8000, age=40),)), annee, baremes,
+                              unite="monnaie").salaires_nets
+    assert [nets(annee) for annee in (1975, 1976, 1977, 1978)] == [
+        (6800,), (6500,), (6500,), (6200,)]
+
+
+def test_la_majoration_de_1980_n_est_pas_due_sous_200_f(baremes):
+    """« La partie supérieure à 100.000 F de l'impôt sur le revenu, dû au titre
+    de l'année 1980 [...] est majorée de 25 % [...]. La majoration n'est pas
+    due si elle est inférieure à 200 F » (loi de finances rectificative pour
+    1981, art. 1er, aux deux lectures du Sénat, des 24 et 30 juillet 1981). Le
+    barème d'une part de la loi n° 80-1094 donne 50 157,50 F d'impôt à 135 000 F
+    de revenu, 60 % au-delà : 100 402 F à 218 740 F, dont la majoration de
+    100,50 F n'est pas due ; 102 364 F à 222 010 F, majorés de 591 F."""
+    def majoration(revenu):
+        return impot_d_un_revenu_imposable(Foyer((Declarant(),)), 1980, revenu, baremes,
+                                           unite="monnaie").majoration_exceptionnelle
+    assert majoration(218740) == 0
+    assert majoration(222010) == 591

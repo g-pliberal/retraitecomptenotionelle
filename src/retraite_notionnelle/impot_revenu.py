@@ -50,7 +50,9 @@ successives :
    sous condition de revenus de 2016 à 2019 ; les majorations et minorations
    exceptionnelles des années 1960 à 1992 ; la réduction exceptionnelle des
    revenus de 2013 ; les 5 % retranchés de l'impôt des revenus de 2001 ;
-6. le seuil de mise en recouvrement ; la prime pour l'emploi de 2000 à 2014,
+6. l'exonération du foyer dont le revenu, net de frais professionnels,
+   n'excède pas la limite de l'année, de 1973 à 2013 (:func:`exonere`) ; le
+   seuil de mise en recouvrement ; la prime pour l'emploi de 2000 à 2014,
    sur le revenu d'activité de chacun — ses salaires, son bénéfice majoré de
    11,11 % (:func:`revenus_de_la_prime`) —, et le crédit d'impôt exceptionnel
    des revenus de 2008, restitués au-delà de l'impôt dû, en entier au foyer
@@ -75,7 +77,11 @@ qui vit seul après avoir élevé un enfant (case L), les enfants en résidence
 alternée ou majeurs rattachés, les départements d'outre-mer, la contribution
 exceptionnelle sur les hauts revenus, le travail à temps partiel de la prime
 pour l'emploi (le foyer travaille à temps plein, toute l'année), le seuil
-sous lequel une restitution n'est pas faite (art. 1965 L : 50 F, puis 8 €).
+sous lequel une restitution n'est pas faite (art. 1965 L : 50 F, puis 8 €),
+l'exonération de qui vit de salaires et de pensions sous le minimum garanti
+(art. 5, 2°), la déduction de 500 F des personnes âgées d'avant 1973,
+l'abattement de 2 000 F des contribuables à une part de 1978 (loi n°
+78-1239, art. 2, IV) et celui de l'article 157 ter.
 """
 
 from __future__ import annotations
@@ -101,6 +107,9 @@ HORS_CHAMP = (
     "contribution exceptionnelle sur les hauts revenus",
     "temps partiel et activité sur une partie de l'année, pour la prime pour l'emploi",
     "seuil de restitution de l'article 1965 L (50 F, puis 8 €)",
+    "exonération de l'article 5, 2° : salaires et pensions sous le minimum garanti",
+    "déduction de 500 F des personnes âgées d'avant 1973",
+    "abattement de 2 000 F des contribuables à une part de 1978, et celui de l'article 157 ter",
 )
 
 #: L'âge, atteint au 31 décembre de l'année des revenus, qui ouvre
@@ -334,6 +343,9 @@ class ImpotDuFoyer:
     credit_exceptionnel: float
     #: La cotisation atteint-elle le seuil de mise en recouvrement ?
     mis_en_recouvrement: bool
+    #: Le foyer est-il exonéré, son revenu net de frais professionnels sous la
+    #: limite de l'année (:func:`exonere`) ? Sa cotisation est alors nulle.
+    exonere: bool
     #: Ce que le foyer paie ; négatif, ce qui lui est restitué.
     impot: float
     fiabilite: Fiabilite = Fiabilite.HAUTE
@@ -527,6 +539,30 @@ def _abattement_age_invalidite(foyer: Foyer, parametres: ParametresImpot,
     return float(montant * ayants_droit)
 
 
+def exonere(foyer: Foyer, parametres: ParametresImpot, salaires_nets: tuple[float, ...],
+            pensions_nettes: tuple[float, ...], benefices: tuple[float, ...]) -> bool:
+    """Le foyer est-il exonéré de l'impôt, son revenu « net de frais
+    professionnels » sous la limite de l'année ? De 1973 à 2013 : les lois de
+    finances pour 1974 à 1977, puis l'article 5, 2° bis, du code. Le revenu
+    est celui du foyer : les salaires après leurs frais professionnels, mais
+    avant les 20 % ; les pensions après leurs 10 % ; les bénéfices avant
+    l'abattement des adhérents. La limite des plus de 65 ans vaut si l'un des
+    époux l'est (DB 5 B 132 du 1er septembre 1999, n° 6 et 7). De 1973 à 1976,
+    celle de qui vit « principalement » de salaires et de pensions — plus de
+    la moitié de son revenu (DB 5 B 131, n° 3) — n'est pas celle des autres
+    (``limite_autres``), qui n'ont pas celle des plus de 65 ans."""
+    e = parametres["exoneration"]
+    if "limite" not in e:
+        return False
+    salaires_et_pensions = somme_ordonnee(salaires_nets) + somme_ordonnee(pensions_nettes)
+    revenu = salaires_et_pensions + somme_ordonnee(benefices)
+    if "limite_autres" in e and not salaires_et_pensions > revenu / 2:
+        return revenu <= e["limite_autres"]
+    age = any(d.age is not None and d.age >= AGE_ABATTEMENT for d in foyer.declarants)
+    limite = e["limite_plus_de_65_ans"] if age and "limite_plus_de_65_ans" in e else e["limite"]
+    return revenu <= limite
+
+
 def _plafonnement(foyer: Foyer, parametres: ParametresImpot, revenu: float, parts: float,
                   impot_plein: float) -> tuple[float, float, float]:
     """L'impôt après plafonnement des effets du quotient familial (art. 197,
@@ -570,7 +606,8 @@ def decote(foyer: Foyer, parametres: ParametresImpot, impot: float, parts: float
       la limite (``seuil_couple``) réduit de sorte que l'impôt soit continu
       aux deux seuils ; un foyer d'au plus ``nombre_de_parts_limite`` parts a
       les siens. L'IPP ne cite aucun texte : une lecture de ses colonnes.
-    - 1973 à 1980 : aucune.
+    - 1973 à 1980 : aucune, la loi de finances pour 1974 (art. 2) les ayant
+      « intégrées au barème », avec les minorations dégressives.
     - 1981 à 1985 : la différence entre un seuil et l'impôt, pour une part ou
       une part et demie seulement (art. 197, VI, LEGIARTI000006308325).
     - 1986 à 1999 : la différence entre le seuil et l'impôt, pour tous (DB 5 B
@@ -677,7 +714,8 @@ def _majoration(parametres: ParametresImpot, impot: float, revenu: float) -> flo
     et le « demi-décime » de 1960 à 1965 au-delà d'un revenu ; de 1967 à 1971,
     un taux par tranche d'impôt, appliqué à tout l'impôt ; de 1980 à 1984, un
     taux sur la fraction de l'impôt qui excède un seuil (sur tout l'impôt, par
-    tranche, en 1983)."""
+    tranche, en 1983), qui n'est pas due sous son ``minimum`` (« inférieure à
+    200 F » en 1980 : loi de finances rectificative pour 1981, art. 1er)."""
     m = parametres["majorations_exceptionnelles"]
     annee = parametres.annee
     if not m or impot <= 0:
@@ -703,7 +741,8 @@ def _majoration(parametres: ParametresImpot, impot: float, revenu: float) -> flo
         # « Pour les revenus 1981, seuls les contribuables dont l'impôt est
         # supérieur à 25 000 FRF sont concernés » (IPP).
         return 0.0
-    return _arrondir_impot(annee, m["taux_1"] * max(impot - m["seuil_1"], 0.0))
+    majoration = _arrondir_impot(annee, m["taux_1"] * max(impot - m["seuil_1"], 0.0))
+    return majoration if majoration >= m.get("minimum", 0.0) else 0.0
 
 
 def _reduction_exceptionnelle(foyer: Foyer, parametres: ParametresImpot, impot: float,
@@ -924,7 +963,8 @@ def impot_aux_parametres(foyer: Foyer, parametres: ParametresImpot, *,
                 "revenu_net_global": revenu_net_global,
                 "abattement_age_invalidite": abattement}
     activite = revenus_de_la_prime(parametres, salaires, benefices)
-    return _liquider(foyer, parametres, revenu, activite, assiette, unite, vers)
+    exoneration = exonere(foyer, parametres, salaires_nets, pensions_nettes, benefices)
+    return _liquider(foyer, parametres, revenu, activite, assiette, unite, vers, exoneration)
 
 
 def impot_d_un_revenu_imposable(foyer: Foyer, annee: int, revenu_net_imposable: float,
@@ -932,7 +972,7 @@ def impot_d_un_revenu_imposable(foyer: Foyer, annee: int, revenu_net_imposable: 
                                 indexation: str = "prix", croissance=None) -> ImpotDuFoyer:
     """L'impôt d'un foyer dont on connaît le revenu net imposable, comme dans
     les exemples de l'administration : les revenus de ses déclarants sont
-    ignorés, et la prime pour l'emploi n'est pas calculée."""
+    ignorés, et ni la prime pour l'emploi ni l'exonération ne se calculent."""
     parametres = baremes.parametres(annee, indexation, croissance)
     vers = _conversion(parametres, unite)
     revenu = _arrondir_revenu_imposable(annee, revenu_net_imposable * vers)
@@ -945,11 +985,11 @@ def impot_d_un_revenu_imposable(foyer: Foyer, annee: int, revenu_net_imposable: 
 
 def _liquider(foyer: Foyer, parametres: ParametresImpot, revenu: float,
               activite: tuple[float, ...], assiette: dict, unite: str,
-              vers: float) -> ImpotDuFoyer:
+              vers: float, exoneration: bool = False) -> ImpotDuFoyer:
     """Du revenu net imposable à l'impôt : les parts, le barème et son
-    plafonnement, la décote et les autres corrections, la prime pour l'emploi,
-    le seuil de mise en recouvrement. Les montants sont dans la monnaie de
-    l'année ; ``vers`` y convertit l'unité demandée."""
+    plafonnement, la décote et les autres corrections, l'exonération, la prime
+    pour l'emploi, le seuil de mise en recouvrement. Les montants sont dans la
+    monnaie de l'année ; ``vers`` y convertit l'unité demandée."""
     annee = parametres.annee
     rfr = revenu
     parts = nombre_de_parts(foyer, parametres)
@@ -968,6 +1008,10 @@ def _liquider(foyer: Foyer, parametres: ParametresImpot, revenu: float,
     impot = max(impot - reduction_exc, 0.0)
     reduction_prop = _reduction_proportionnelle(parametres, impot)
     impot -= reduction_prop
+    if exoneration:
+        # « sont exonérés de l'impôt sur le revenu » : la cotisation tombe ; les
+        # crédits restent, restitués en entier au foyer qui n'est pas imposable.
+        impot = 0.0
 
     ppe = prime_pour_l_emploi(foyer, parametres, activite, rfr, parts) if activite else 0.0
     credit = _credit_exceptionnel(foyer, parametres, impot_brut - la_decote, revenu, rfr, parts)
@@ -1008,6 +1052,7 @@ def _liquider(foyer: Foyer, parametres: ParametresImpot, revenu: float,
         prime_pour_l_emploi=ppe * retour,
         credit_exceptionnel=credit * retour,
         mis_en_recouvrement=mis_en_recouvrement,
+        exonere=exoneration,
         impot=net * retour,
         fiabilite=parametres.fiabilite,
         remarques=_remarques(foyer, parametres, la_decote, minoration, majoration, ppe,
