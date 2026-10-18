@@ -133,6 +133,18 @@ presomptions:
     maximum, l'aptitude au poste et l'intérêt du service présumés ; tout agent est des
     « autres catégories de personnel », la saisie ne disant ni le danseur, ni le choriste,
     ni le musicien
+approximations:
+- version: [avant_2002, decret_de_2002]
+  ecart: >-
+    aucune limite n'est opposée avant le 1er juillet 2008 : avant 2002, l'index ne porte
+    aucune règle de mise à la retraite, et l'artiste du ballet, mis à la retraite à
+    quarante-deux ans depuis 2002, n'est pas saisi
+  effet: non mesuré
+- version: [decret_de_2008, decret_de_2011]
+  ecart: >-
+    la catégorie n'est pas distinguée : tout agent est des « autres catégories de personnel
+    », la saisie ne disant ni le danseur, ni le choriste, ni le musicien
+  effet: non mesuré
 sources:
   lu_le: 2026-10-17
   prochaine_relecture: 2027-10-17
@@ -165,6 +177,21 @@ sources:
       décret n° 2002-347 du 12 mars 2002, article 1er et notice (JORFARTI000001620554,
       JORFTEXT000000585678). Lus dans l'index JORF du dépôt
     date: 2026-10-17
+code:
+  python: >-
+    droit/limite_age.py : radiation, radier, emploi_de, _limite, _morceaux,
+    _age_de_la_version, _exceptions ; droit/departs.py : departs_et_demandes ;
+    scenarios/actuel.py : FichesDatees, ScenarioActuel.calculer ; echeancier.py :
+    Echeancier.parcourir
+  javascript: >-
+    moteur/js/droit/limite_age.js : radiation, radier, emploiDe, limiteDe, morceaux,
+    ageDeLaVersion, exceptions ; moteur/js/droit/departs.js : departsEtDemandes ;
+    moteur/js/regimes.js : FichesDatees ; moteur/js/scenario-actuel.js :
+    ScenarioActuel.calculer ; moteur/js/echeancier.js : Echeancier.parcourir
+  parametres: >-
+    contenu.parametres de chaque version : exceptions, limites, limites_avant,
+    ecart_de_reference, marche
+  tests: [tests/test_limite_age.py, tests/js/moteur.test.js, tests/temoins/simulations.json]
 historique:
 - >-
   2026-10-16 — née et appliquée, action 151, étape 6 : l'agent de l'Opéra national de Paris

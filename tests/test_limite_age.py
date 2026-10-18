@@ -18,12 +18,18 @@ catégorie. Le portage JavaScript se compare par les témoins de simulation
 
 from __future__ import annotations
 
+import re
+from pathlib import Path
+
 import pytest
 
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.carriere import Carriere, Metier
 from retraite_notionnelle.droit import departs, limite_age
+from retraite_notionnelle.noyau import carte
 from retraite_notionnelle.simulateur import Simulateur
+
+RACINE = Path(__file__).resolve().parents[1]
 
 
 @pytest.fixture(scope="module")
@@ -509,3 +515,52 @@ def test_avant_le_decret_de_1954_le_mineur_n_a_pas_de_limite(simulateur):
     assert (apres.version, apres.limite, apres.forcee) == ("decret_de_1954", 56.0, False)
     assert _reculs(apres) == [
         (limite_age.MAINTIEN_DANS_L_INTERET_DU_SERVICE, 56.0, 58.0, True)]
+
+
+# --- Action 130, la carte des fiches : les quinze fiches que ce module lit,
+# mûres (contrat C.2, ``data/reference/contrats/fiche.yaml``).
+
+#: Ce qui définit un nom dans chaque moteur — une fonction, une classe, une
+#: méthode —, et le dossier d'où le champ ``code`` d'une fiche nomme ses
+#: fichiers.
+_DEFINITIONS = {
+    "python": (Path(limite_age.__file__).resolve().parents[1],
+               r"^[ \t]*(?:async[ \t]+)?(?:def|class)[ \t]+{0}\b"),
+    "javascript": (RACINE,
+                   r"^[ \t]*(?:export[ \t]+)?(?:(?:async[ \t]+)?function|class)[ \t]+{0}\b"
+                   r"|^[ \t]*(?:static[ \t]+)?{0}[ \t]*\([^)]*\)[ \t]*\{{"),
+}
+
+
+def test_les_fiches_de_la_limite_d_age_sont_mures():
+    """Rien ne manque aux quinze fiches de ce que leur contrat exige. Chaque
+    approchée dit ses approximations, dans des versions qu'elle porte. Le code
+    de chacune nomme, dans chaque moteur, des fonctions qui sont dans les
+    fichiers qu'il nomme (« fichier : fonction, Classe.méthode ; … »), les
+    paramètres que ses versions portent, tous et rien d'autre, et des tests qui
+    existent."""
+    fiches = carte.fiches()
+    manques = carte.manques()
+    assert {nom: manques[nom] for nom in limite_age.FICHES if nom in manques} == {}
+    for nom in limite_age.FICHES:
+        fiche = fiches[nom]
+        versions = {version["id"] for version in fiche["versions"]}
+        for approximation in fiche.get("approximations") or []:
+            touchees = approximation.get("version") or []
+            touchees = touchees if isinstance(touchees, list) else [touchees]
+            assert set(touchees) <= versions, (nom, touchees)
+        code = fiche["code"]
+        for moteur, (dossier, motif) in _DEFINITIONS.items():
+            for cite in code[moteur].split(";"):
+                chemin, _, noms = (morceau.strip() for morceau in cite.partition(":"))
+                assert noms, (nom, moteur, cite)
+                texte = (dossier / chemin).read_text(encoding="utf-8")
+                for partie in (p for n in noms.split(",") for p in n.strip().split(".")):
+                    assert re.search(motif.format(re.escape(partie)), texte, re.M), \
+                        (nom, moteur, chemin, partie)
+        portes = {cle for version in fiche["versions"]
+                  for cle in (version["contenu"].get("parametres") or {})}
+        nommes = {cle.strip() for cle in code["parametres"].partition(":")[2].split(",")}
+        assert nommes == portes, (nom, sorted(nommes ^ portes))
+        for test in code["tests"]:
+            assert (RACINE / test).is_file(), (nom, test)

@@ -208,6 +208,18 @@ presomptions:
     durée du taux maximum, l'intérêt du service et l'aptitude physique présumés ; il remplace
     la prorogation pour enfants quand il mène plus loin ; tout agent prend la colonne « Limite
     d'âge », la saisie ne disant pas son niveau
+approximations:
+- version: [avant_2012]
+  ecart: >-
+    aucune limite n'est opposée avant la rédaction de l'article 241 du statut du personnel
+    publiée le 26 juillet 2012 : les limites d'avant, arrêtées par grade entre soixante et
+    soixante-cinq ans, ne sont pas lues
+  effet: non mesuré
+- version: [statut_de_2012, statut_de_2019]
+  ecart: >-
+    le niveau n'est pas distingué : tout agent prend la colonne « Limite d'âge », la saisie
+    ne disant pas son niveau
+  effet: non mesuré
 sources:
   lu_le: 2026-10-16
   prochaine_relecture: 2027-10-16
@@ -244,6 +256,22 @@ sources:
       articles 26 et 32 (LEGIARTI000047909725), qui renvoient à la limite « du grade ». Lus
       dans les index JORF et LEGI du dépôt
     date: 2026-10-16
+code:
+  python: >-
+    droit/limite_age.py : radiation, radier, emploi_de, _limite, _morceaux,
+    _age_de_la_version, _exceptions, _reculs_pour_enfants, _prorogation_du_statut ;
+    droit/departs.py : departs_et_demandes ; scenarios/actuel.py : FichesDatees,
+    ScenarioActuel.calculer ; echeancier.py : Echeancier.parcourir
+  javascript: >-
+    moteur/js/droit/limite_age.js : radiation, radier, emploiDe, limiteDe, morceaux,
+    ageDeLaVersion, exceptions, reculsPourEnfants, prorogationDuStatut ;
+    moteur/js/droit/departs.js : departsEtDemandes ; moteur/js/regimes.js : FichesDatees ;
+    moteur/js/scenario-actuel.js : ScenarioActuel.calculer ; moteur/js/echeancier.js :
+    Echeancier.parcourir
+  parametres: >-
+    contenu.parametres de chaque version : exceptions, limites_avant, ecart_de_reference,
+    marche, enfants, sans_cumul
+  tests: [tests/test_limite_age.py, tests/js/moteur.test.js, tests/temoins/simulations.json]
 historique:
 - >-
   2026-10-16 — née et appliquée, action 151, étape 8 : l'agent titulaire de la Banque de

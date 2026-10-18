@@ -152,6 +152,20 @@ sources:
       de 1993 à 2015 ; décret n° 92-1354 du 24 décembre 1992, article 2 ; décret n° 53-711 du
       9 août 1953, article 5. Lus dans l'index LEGI du dépôt
     date: 2026-10-18
+code:
+  python: >-
+    droit/limite_age.py : radiation, radier, emploi_de, _limite, _morceaux,
+    _age_de_la_version, _exceptions ; droit/departs.py : departs_et_demandes ;
+    scenarios/actuel.py : FichesDatees, ScenarioActuel.calculer ; echeancier.py :
+    Echeancier.parcourir
+  javascript: >-
+    moteur/js/droit/limite_age.js : radiation, radier, emploiDe, limiteDe, morceaux,
+    ageDeLaVersion, exceptions ; moteur/js/droit/departs.js : departsEtDemandes ;
+    moteur/js/regimes.js : FichesDatees ; moteur/js/scenario-actuel.js :
+    ScenarioActuel.calculer ; moteur/js/echeancier.js : Echeancier.parcourir
+  parametres: >-
+    contenu.parametres de chaque version : exceptions, limites
+  tests: [tests/test_limite_age.py, tests/js/moteur.test.js, tests/temoins/simulations.json]
 historique:
 - >-
   2026-10-18 — née et appliquée, action 151, étape 10 : le mineur dont le départ saisi passe

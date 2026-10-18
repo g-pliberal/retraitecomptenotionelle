@@ -152,6 +152,15 @@ versions:
       recul pour enfants, qui se compte à la limite d'âge, soixante-sept ans pour le
       sédentaire, et s'accorde aux actifs comme aux sédentaires
   exemples: aucun trouvé
+approximations:
+- ecart: >-
+    l'enfant invalide n'est pas saisi : le recul par enfant et celui du parent de trois
+    enfants, qu'il permet de cumuler, ne se cumulent jamais
+  effet: non mesuré
+- ecart: >-
+    l'enfant ouvrant droit à l'allocation aux adultes handicapés et l'enfant mort pour la
+    France ne sont pas saisis
+  effet: non mesuré
 sources:
   lu_le: 2026-10-14
   prochaine_relecture: 2027-10-10
@@ -185,6 +194,15 @@ sources:
       refuser l'autorisation » ; les mêmes reculs pour l'actif, à partir de sa limite
     url: https://www.service-public.gouv.fr/particuliers/vosdroits/F12395
     date: 2026-01-01
+code:
+  python: >-
+    droit/limite_age.py : radiation, _reculs_pour_enfants, _enfants_a_charge
+  javascript: >-
+    moteur/js/droit/limite_age.js : radiation, reculsPourEnfants, enfantsACharge
+  parametres: >-
+    contenu.parametres de chaque version : par_enfant, enfants_au_plus, age_a_charge,
+    parent_de_trois, age_du_parent, enfants_du_parent, plafond_par_enfant, plafond_du_parent
+  tests: [tests/test_limite_age.py, tests/js/moteur.test.js, tests/temoins/simulations.json]
 historique:
 - >-
   2026-10-10 — née avec l'action 151, étape 2, avec la fiche `limite_age_fonction_publique`

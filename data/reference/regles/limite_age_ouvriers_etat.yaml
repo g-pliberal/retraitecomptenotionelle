@@ -165,6 +165,17 @@ presomptions:
   exceptions_a_la_limite_d_age: >-
     la prolongation pour carrière incomplète, celle de l'insalubre et le maintien jusqu'à
     soixante-dix ans, présumés demandés et accordés autant que le départ saisi les demande
+approximations:
+- version: [avant_2004]
+  ecart: >-
+    la limite d'avant 2004 est supposée : soixante ans pour tous, l'insalubre au même âge,
+    les décrets qui l'appliquaient à chaque administration depuis 1953 n'étant pas lus
+  effet: non mesuré
+- version: [avant_2004, decret_de_2004, transition_jusqu_en_2012]
+  ecart: >-
+    l'ouvrier dont la limite était déjà de soixante-cinq ans en 2004 n'est pas distingué :
+    il prend, jusqu'en 2012, la limite plus basse des autres
+  effet: non mesuré
 sources:
   lu_le: 2026-10-16
   prochaine_relecture: 2027-10-16
@@ -187,6 +198,21 @@ sources:
       et du 1er septembre 2023), 2, 3, 3-1 et 4 ; décret n° 2004-1056, article 7 ; décret n°
       53-711, article 3. Lus dans l'index LEGI du dépôt
     date: 2026-10-16
+code:
+  python: >-
+    droit/limite_age.py : radiation, radier, emploi_de, _limite, _morceaux,
+    _age_de_la_version, _exceptions ; droit/departs.py : departs_et_demandes ;
+    scenarios/actuel.py : FichesDatees, ScenarioActuel.calculer ; echeancier.py :
+    Echeancier.parcourir
+  javascript: >-
+    moteur/js/droit/limite_age.js : radiation, radier, emploiDe, limiteDe, morceaux,
+    ageDeLaVersion, exceptions ; moteur/js/droit/departs.js : departsEtDemandes ;
+    moteur/js/regimes.js : FichesDatees ; moteur/js/scenario-actuel.js :
+    ScenarioActuel.calculer ; moteur/js/echeancier.js : Echeancier.parcourir
+  parametres: >-
+    contenu.parametres de chaque version : limites, exceptions, paliers, limites_avant,
+    ecart_de_reference, marche
+  tests: [tests/test_limite_age.py, tests/js/moteur.test.js, tests/temoins/simulations.json]
 historique:
 - >-
   2026-10-16 — née et appliquée, action 151, étape 4 : l'ouvrier de l'État dont le départ

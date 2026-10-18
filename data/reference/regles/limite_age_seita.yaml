@@ -59,6 +59,17 @@ presomptions:
   exceptions_a_la_limite_d_age: >-
     aucune : le statut n'en ouvre pas ; tout agent est de « tous les autres agents », la
     saisie ne disant pas l'emploi d'ouvrière
+approximations:
+- version: [avant_1962]
+  ecart: >-
+    aucune limite n'est opposée avant le statut du 6 juillet 1962 : les règles d'avant ne
+    sont pas lues
+  effet: non mesuré
+- version: [statut_de_1962]
+  ecart: >-
+    l'ouvrière n'est pas distinguée : tout agent est de « tous les autres agents », la
+    saisie ne disant pas l'emploi d'ouvrière
+  effet: non mesuré
 sources:
   lu_le: 2026-10-16
   prochaine_relecture: 2027-10-16
@@ -78,6 +89,20 @@ sources:
       et 137, rédactions de 1962 et de 1995 (LEGIARTI000006324816, LEGIARTI000006324817). Lus
       dans l'index LEGI du dépôt
     date: 2026-10-16
+code:
+  python: >-
+    droit/limite_age.py : radiation, radier, emploi_de, _limite, _morceaux,
+    _age_de_la_version, _exceptions ; droit/departs.py : departs_et_demandes ;
+    scenarios/actuel.py : FichesDatees, ScenarioActuel.calculer ; echeancier.py :
+    Echeancier.parcourir
+  javascript: >-
+    moteur/js/droit/limite_age.js : radiation, radier, emploiDe, limiteDe, morceaux,
+    ageDeLaVersion, exceptions ; moteur/js/droit/departs.js : departsEtDemandes ;
+    moteur/js/regimes.js : FichesDatees ; moteur/js/scenario-actuel.js :
+    ScenarioActuel.calculer ; moteur/js/echeancier.js : Echeancier.parcourir
+  parametres: >-
+    contenu.parametres de chaque version : exceptions, limites
+  tests: [tests/test_limite_age.py, tests/js/moteur.test.js, tests/temoins/simulations.json]
 historique:
 - >-
   2026-10-16 — née et appliquée, action 151, étape 6 : l'agent de la SEITA dont le départ

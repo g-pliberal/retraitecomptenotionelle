@@ -105,6 +105,14 @@ sources:
       leur cumul
     url: https://www.service-public.gouv.fr/particuliers/vosdroits/F12395
     date: 2026-01-01
+code:
+  python: >-
+    droit/limite_age.py : radiation, _exceptions
+  javascript: >-
+    moteur/js/droit/limite_age.js : radiation, exceptions
+  parametres: >-
+    contenu.parametres de chaque version : age_maximal
+  tests: [tests/test_limite_age.py, tests/js/moteur.test.js, tests/temoins/simulations.json]
 historique:
 - >-
   2026-10-10 — née avec l'action 151, étape 2 : la relation qui ordonne les exceptions à

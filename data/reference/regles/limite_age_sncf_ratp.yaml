@@ -126,6 +126,22 @@ presomptions:
   exceptions_a_la_limite_d_age: >-
     le maintien jusqu'à soixante-dix ans, présumé autorisé autant que le départ saisi le
     demande, l'agent étant présumé sédentaire
+approximations:
+- version: [avant_2010]
+  ecart: >-
+    aucune limite n'est opposée avant le décret du 28 janvier 2010 : les décrets n° 54-24 et
+    n° 54-23 du 9 janvier 1954, qu'il abroge, et les règlements de retraite des deux
+    entreprises ne sont pas lus
+  effet: non mesuré
+- version: [decret_de_2011, reforme_2023]
+  ecart: >-
+    la marche des générations 1957 à 1961 est supposée : quatre mois de plus par génération,
+    comme l'âge d'ouverture des mêmes régimes
+  effet: non mesuré
+- version: [decret_de_2010, decret_de_2011, reforme_2023]
+  ecart: >-
+    le roulant n'est pas distingué : l'agent est présumé sédentaire
+  effet: non mesuré
 sources:
   lu_le: 2026-10-16
   prochaine_relecture: 2027-10-16
@@ -191,6 +207,21 @@ sources:
       la retraite d'office d'une agente de la SNCF à cinquante-cinq ans, en 2005, « par
       application du décret n° 54-24 du 9 janvier 1954 ». Lu sur dictionnaire-juridique.com
     date: 2026-10-18
+code:
+  python: >-
+    droit/limite_age.py : radiation, radier, emploi_de, _limite, _morceaux,
+    _age_de_la_version, _exceptions ; droit/departs.py : departs_et_demandes ;
+    scenarios/actuel.py : FichesDatees, ScenarioActuel.calculer ; echeancier.py :
+    Echeancier.parcourir
+  javascript: >-
+    moteur/js/droit/limite_age.js : radiation, radier, emploiDe, limiteDe, morceaux,
+    ageDeLaVersion, exceptions ; moteur/js/droit/departs.js : departsEtDemandes ;
+    moteur/js/regimes.js : FichesDatees ; moteur/js/scenario-actuel.js :
+    ScenarioActuel.calculer ; moteur/js/echeancier.js : Echeancier.parcourir
+  parametres: >-
+    contenu.parametres de chaque version : exceptions, limites, limites_avant,
+    ecart_de_reference, marche
+  tests: [tests/test_limite_age.py, tests/js/moteur.test.js, tests/temoins/simulations.json]
 historique:
 - >-
   2026-10-16 — née et appliquée, action 151, étape 4 : l'agent de la SNCF ou de la RATP

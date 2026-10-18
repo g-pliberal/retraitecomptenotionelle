@@ -184,6 +184,17 @@ presomptions:
     le maintien jusqu'à soixante-cinq ans de la loi de 1947, la prolongation pour durée
     d'assurance incomplète et le maintien jusqu'à soixante-dix ans, présumés demandés et
     accordés autant que le départ saisi les demande
+approximations:
+- version: [loi_de_2012, code_general_2022, reforme_2023]
+  ecart: >-
+    la durée d'assurance tous régimes, qui ouvre la prolongation pour carrière incomplète,
+    se compte par les années cotisées de toute la carrière, sans les périodes assimilées
+  effet: non mesuré
+- version: [loi_de_1947]
+  ecart: >-
+    avant 2011, la limite de chaque administration est présumée la plus haute que la loi
+    permette, soixante-cinq ans
+  effet: non mesuré
 sources:
   lu_le: 2026-10-16
   prochaine_relecture: 2027-10-16
@@ -213,6 +224,21 @@ sources:
       (JORFARTI000025490328) ; loi n° 2023-270, article 10 (JORFARTI000047445097). Lus dans
       l'index JORF du dépôt
     date: 2026-10-16
+code:
+  python: >-
+    droit/limite_age.py : radiation, radier, emploi_de, _limite, _morceaux,
+    _age_de_la_version, _exceptions ; droit/departs.py : departs_et_demandes ;
+    scenarios/actuel.py : FichesDatees, ScenarioActuel.calculer ; echeancier.py :
+    Echeancier.parcourir
+  javascript: >-
+    moteur/js/droit/limite_age.js : radiation, radier, emploiDe, limiteDe, morceaux,
+    ageDeLaVersion, exceptions ; moteur/js/droit/departs.js : departsEtDemandes ;
+    moteur/js/regimes.js : FichesDatees ; moteur/js/scenario-actuel.js :
+    ScenarioActuel.calculer ; moteur/js/echeancier.js : Echeancier.parcourir
+  parametres: >-
+    contenu.parametres de chaque version : exceptions, limites, limites_avant,
+    ecart_de_reference, marche
+  tests: [tests/test_limite_age.py, tests/js/moteur.test.js, tests/temoins/simulations.json]
 historique:
 - >-
   2026-10-16 — née et appliquée, action 151, étape 4 : l'agent contractuel dont le

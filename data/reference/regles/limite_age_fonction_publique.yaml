@@ -281,6 +281,20 @@ versions:
 presomptions:
   exceptions_a_la_limite_d_age: >-
     la date de la radiation, quand le départ saisi passe la limite d'âge : les exceptions qu'il demande, présumées accordées
+approximations:
+- version: [loi_de_1936, loi_de_1975]
+  ecart: >-
+    le corps n'est pas saisi : avant 1985, le sédentaire prend la limite du corps le plus
+    haut, soixante-dix ans, puis soixante-huit
+  effet: non mesuré
+- ecart: >-
+    le corps n'est pas saisi : le policier prend la limite du corps d'encadrement et
+    d'application
+  effet: non mesuré
+- ecart: >-
+    le corps n'est pas saisi : l'actif hors de la police prend soixante-deux ans, soixante
+    avant la loi de 2010
+  effet: non mesuré
 sources:
   lu_le: 2026-10-14
   prochaine_relecture: 2027-10-10
@@ -353,6 +367,20 @@ sources:
       à soixante-deux pour la police, cinquante-neuf pour le contrôle aérien
     url: https://www.service-public.gouv.fr/particuliers/vosdroits/F12395
     date: 2026-01-01
+code:
+  python: >-
+    droit/limite_age.py : radiation, radier, emploi_de, classe_de, _limite, _morceaux,
+    _age_de_la_version ; droit/departs.py : departs_et_demandes ; scenarios/actuel.py :
+    FichesDatees, ScenarioActuel.calculer ; echeancier.py : Echeancier.parcourir
+  javascript: >-
+    moteur/js/droit/limite_age.js : radiation, radier, emploiDe, classeDe, limiteDe,
+    morceaux, ageDeLaVersion ; moteur/js/droit/departs.js : departsEtDemandes ;
+    moteur/js/regimes.js : FichesDatees ; moteur/js/scenario-actuel.js :
+    ScenarioActuel.calculer ; moteur/js/echeancier.js : Echeancier.parcourir
+  parametres: >-
+    contenu.parametres de chaque version : limites, paliers, limites_avant,
+    ecart_de_reference, marche
+  tests: [tests/test_limite_age.py, tests/js/moteur.test.js, tests/temoins/simulations.json]
 historique:
 - >-
   2026-10-10 — née avec l'action 151, étape 2. L'étape 1 avait porté le départ jusqu'à

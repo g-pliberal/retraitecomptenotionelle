@@ -99,6 +99,18 @@ versions:
 presomptions:
   exceptions_a_la_limite_d_age: >-
     la demande de la prolongation et l'accord de l'employeur, que la saisie ne porte pas
+approximations:
+- version: [loi_de_2003, code_general_2022, plafond_de_2023]
+  ecart: >-
+    la durée qui manque au taux maximum se compte sur les seuls services, sans les
+    bonifications, ce qui peut accorder un peu trop
+  effet: non mesuré
+- version: [loi_de_2003, code_general_2022, plafond_de_2023]
+  ecart: >-
+    la demande, que la saisie ne porte pas, est présumée faite autant que le départ saisi la
+    demande, et l'intérêt du service, qui peut faire refuser la prolongation, présumé ne pas
+    s'y opposer (présomption `exceptions_a_la_limite_d_age`)
+  effet: non mesuré
 sources:
   lu_le: 2026-10-14
   prochaine_relecture: 2027-10-10
@@ -128,6 +140,14 @@ sources:
       enfants ; ouverte à l'actif, demande six mois avant sa limite
     url: https://www.service-public.gouv.fr/particuliers/vosdroits/F12395
     date: 2026-01-01
+code:
+  python: >-
+    droit/limite_age.py : radiation, _prolongation_carriere_incomplete
+  javascript: >-
+    moteur/js/droit/limite_age.js : radiation, prolongationCarriereIncomplete
+  parametres: >-
+    contenu.parametres de chaque version : trimestres_au_plus
+  tests: [tests/test_limite_age.py, tests/js/moteur.test.js, tests/temoins/simulations.json]
 historique:
 - >-
   2026-10-10 — née avec l'action 151, étape 2, avec la fiche `limite_age_fonction_publique`.

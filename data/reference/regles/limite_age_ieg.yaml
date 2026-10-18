@@ -280,6 +280,24 @@ sources:
       28700, JO AN du 14 octobre 2008, p. 8831 et 8833, lues sur le site de l'Assemblée
       nationale
     date: 2026-10-17
+code:
+  python: >-
+    droit/limite_age.py : radiation, radier, emploi_de, _limite, _morceaux,
+    _age_de_la_version, _au_terme_des_services, _exceptions,
+    _prolongation_carriere_incomplete ; droit/departs.py : departs_et_demandes ;
+    scenarios/actuel.py : FichesDatees, ScenarioActuel.calculer ; echeancier.py :
+    Echeancier.parcourir
+  javascript: >-
+    moteur/js/droit/limite_age.js : radiation, radier, emploiDe, limiteDe, morceaux,
+    ageDeLaVersion, auTermeDesServices, exceptions, prolongationCarriereIncomplete ;
+    moteur/js/droit/departs.js : departsEtDemandes ; moteur/js/regimes.js : FichesDatees ;
+    moteur/js/scenario-actuel.js : ScenarioActuel.calculer ; moteur/js/echeancier.js :
+    Echeancier.parcourir
+  parametres: >-
+    contenu.parametres de chaque version : exceptions, limites, classe_presumee,
+    services_requis, a_defaut_des_services, incomplete_au_dela_de, limites_avant,
+    ecart_de_reference, marche
+  tests: [tests/test_limite_age.py, tests/js/moteur.test.js, tests/temoins/simulations.json]
 historique:
 - >-
   2026-10-16 — née et appliquée, action 151, étape 6 : l'agent des industries électriques

@@ -2227,16 +2227,16 @@ fabriqués.
 
 ### 130. L'architecture du dépôt : décidée, les phases 0 à 8 faites, les domaines à ouvrir — `en cours`
 
-**Reprise, au 17 octobre 2026.** Fait : phases 0 à 8, cinq domaines clos ;
-le sixième, les périodes assimilées manquantes, a ses étapes 1 à 6 faites : les
-quatre fiches `approchee`, comptées dans les deux moteurs et déclarées au
-simulateur ; le complément de l'apprentissage mesuré par retrait, `integre` à
-l'inventaire, nul sur la grille, son payeur fondu dans une ligne du FSV.
-Reste de lui : la septième étape, la décision de la proposition, au
-propriétaire si le README est muet. Restent aussi : les points ouverts des
-phases 2 à 8 ; la décision du propriétaire sur la retraite progressive, le
-cumul et la seconde pension (README muet) ; les restes des fiches. Détail :
-`130/2026-10-17-sixieme-domaine-etape-6.md`.
+**Reprise, au 18 octobre 2026.** Fait : phases 0 à 8, cinq domaines clos ; le
+sixième, les périodes assimilées manquantes, a ses étapes 1 à 6 faites
+(`130/2026-10-17-sixieme-domaine-etape-6.md`). Au propriétaire, README muet :
+sa septième étape, la décision de la proposition, et la retraite progressive,
+le cumul et la seconde pension. La carte mûrit : les quinze fiches de la limite
+d'âge ont leur code et leurs approximations, qu'un test tient ; restent 111
+fiches et 806 manques, dont 107 fiches à lire au droit, et les points ouverts
+des phases 2 à 8, relevés dans la note. Par quoi commencer : quatre fiches
+presque mûres, ou, après la vague, le test du code étendu à toutes. Détail :
+`130/2026-10-18-carte-des-fiches-limite-d-age.md`.
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de

@@ -136,6 +136,17 @@ versions:
 presomptions:
   exceptions_a_la_limite_d_age: >-
     la limite du militaire, dont le grade et le corps ne sont pas saisis : la plus haute de sa catégorie
+approximations:
+- ecart: >-
+    le grade et le corps ne sont pas saisis : le militaire prend la limite la plus haute de
+    sa catégorie, quand celle de son grade est souvent plus basse
+  effet: non mesuré
+- ecart: >-
+    la limite de durée de services du militaire sous contrat n'est pas saisie
+  effet: non mesuré
+- ecart: >-
+    le maintien en activité de L. 4139-17 pour les besoins des forces n'est pas présumé
+  effet: non mesuré
 sources:
   lu_le: 2026-10-14
   prochaine_relecture: 2027-10-10
@@ -160,6 +171,20 @@ sources:
     reference: >-
       décret n° 2011-2103 du 30 décembre 2011, articles 3 à 5, dans l'index JORF du dépôt
     date: 2026-10-10
+code:
+  python: >-
+    droit/limite_age.py : radiation, radier, emploi_de, classe_de, _limite, _morceaux,
+    _age_de_la_version ; droit/departs.py : departs_et_demandes ; scenarios/actuel.py :
+    FichesDatees, ScenarioActuel.calculer ; echeancier.py : Echeancier.parcourir
+  javascript: >-
+    moteur/js/droit/limite_age.js : radiation, radier, emploiDe, classeDe, limiteDe,
+    morceaux, ageDeLaVersion ; moteur/js/droit/departs.js : departsEtDemandes ;
+    moteur/js/regimes.js : FichesDatees ; moteur/js/scenario-actuel.js :
+    ScenarioActuel.calculer ; moteur/js/echeancier.js : Echeancier.parcourir
+  parametres: >-
+    contenu.parametres de chaque version : limites, limites_avant, ecart_de_reference,
+    marche
+  tests: [tests/test_limite_age.py, tests/js/moteur.test.js, tests/temoins/simulations.json]
 historique:
 - >-
   2026-10-10 — née avec l'action 151, étape 2, avec la fiche `limite_age_fonction_publique`
