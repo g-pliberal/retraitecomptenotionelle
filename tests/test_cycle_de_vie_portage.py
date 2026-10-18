@@ -86,18 +86,20 @@ BALAYAGES = (
       "age_debut": 21, "niveau_salaire": 1.3}, 64.0, False, 0.5, None),
 )
 
-#: La grille du module de l'impôt seul : des années de chaque règle — les
-#: majorations et minorations des années 1960, les paliers de 1968 et 1969, la
-#: réduction des salaires et des pensions de 1969 à 1971, les limites de la
-#: décote de 1969 et de 1970, l'exonération des salariés de 1972, la décote de
-#: 1981 à 1985, le plafonnement, les 20 % d'avant 2006, l'abattement des
-#: adhérents de 1976 et de 1977, la prime pour l'emploi, celle d'un bénéfice ou
-#: d'un déficit mêlé à un salaire, les mesures de 2001, 2008 et 2013, la
-#: réduction de 2016 à 2019 —, deux années projetées, des foyers de chaque
-#: sorte, quatre revenus.
-ANNEES_IMPOT = (1962, 1966, 1968, 1969, 1970, 1971, 1972, 1975, 1976, 1977, 1978, 1981,
-                1983, 1984, 1988, 1995, 1999, 2000, 2001, 2005, 2008, 2010, 2013, 2014,
-                2017, 2020, 2024, 2025, 2031, 2045)
+#: La grille du module de l'impôt seul : des années de chaque règle — chaque
+#: année de 1960 à 1968, leurs décimes, la décote de 1960 et ses limites par
+#: part, puis pour le foyer et les âgés, les réductions de 1966 et 1967, la
+#: majoration de 1967 et ses décotes, les paliers de 1968 et 1969, la réduction
+#: des salaires et des pensions de 1960 à 1971, les limites de la décote de 1969
+#: et de 1970, l'exonération des salariés de 1972, l'arrondi à la centaine de
+#: 1968 à 1979, la décote de 1981 à 1985, le plafonnement, les 20 % d'avant
+#: 2006, l'abattement des adhérents de 1976 et de 1977, la prime pour l'emploi,
+#: celle d'un bénéfice ou d'un déficit mêlé à un salaire, les mesures de 2001,
+#: 2008 et 2013, la réduction de 2016 à 2019 —, deux années projetées, des
+#: foyers de chaque sorte, quatre revenus.
+ANNEES_IMPOT = (1960, 1961, 1962, 1963, 1964, 1965, 1966, 1967, 1968, 1969, 1970, 1971,
+                1972, 1975, 1976, 1977, 1978, 1981, 1983, 1984, 1988, 1995, 1999, 2000,
+                2001, 2005, 2008, 2010, 2013, 2014, 2017, 2020, 2024, 2025, 2031, 2045)
 FOYERS_IMPOT = {
     "salarie": {"declarants": [{"salaires": 1.0}]},
     "retraite": {"declarants": [{"pensions": 0.8, "age": 70}]},

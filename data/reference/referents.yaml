@@ -440,24 +440,58 @@ referents:
           25 % à la quatrième tranche et, jusqu'en 1971, les
           taux diminués des points que la réduction de
           l'article 198 ne rend qu'aux salaires et aux
-          pensions ; ses minorations de 1968 à 1972 décroissent
-          en ligne droite, ses majorations de 1969 vont par
+          pensions ; ses réductions de 1966 et de 1967 et ses
+          minorations de 1968 à 1972 décroissent en ligne
+          droite, ses majorations de 1968 et de 1969 vont par
           paliers de 1 000 F.
         tranche: >-
-          Les lois de finances pour 1970, 1971 et 1973, et le
-          texte voté de celle pour 1972, disent 20 %, et un
-          barème de 5 % à 65 % en 1969, de 3 % à 63 % en 1970
-          et 1971 ; les rapports généraux du Sénat, des
+          La loi n° 59-1472, les lois de finances pour 1961 à
+          1971 et 1973, et le texte voté de celles que le Sénat
+          a rejetées, disent 20 %, et un barème de 5 % à 65 %
+          de 1960 à 1969, de 3 % à 63 % en 1970 et 1971 ; ces
+          lois et les rapports généraux du Sénat, des
+          réductions par tranche de revenu en 1966 et 1967, des
           minorations et des majorations par paliers de la
-          cotisation. Le dépôt suit les textes de 1969 à 1972
-          (scripts/fetch/ipp_impot_revenu.py, LOIS_DE_FINANCES,
-          REDUCTION_DES_SALAIRES) ; avant 1969, l'IPP, sans
-          texte lu.
+          cotisation de 1968 à 1972. Le dépôt suit les textes
+          de 1960 à 1972 (scripts/fetch/ipp_impot_revenu.py,
+          TEXTES_DU_SENAT, LOIS_DE_FINANCES,
+          REDUCTION_DES_SALAIRES).
         preuve: >-
           senat.fr/leg/1972-1973/ta1972_1973_0048.pdf, art. 2,
           lu à l'image ; senat.fr/leg/1969-1970/
           ta1969_1970_0055.pdf, art. 3 ; senat.fr/rap/1969-1970/
-          i1969_1970_0056_03.pdf, p. 11 et 14
+          i1969_1970_0056_03.pdf, p. 11 et 14 ;
+          senat.fr/leg/1960-1961/ta1960_1961_0044.pdf, art. 2 ;
+          senat.fr/rap/1964-1965/i1964_1965_0023_02.pdf, p. 59 ;
+          senat.fr/rap/1967-1968/i1967_1968_0168.pdf, p. 102 ;
+          senat.fr/rap/1968-1969/i1968_1969_0040_02.pdf, p. 68
+          et 69
+      - constat: >-
+          IR11. Sa décote de l'article 198 ter de 1961 à 1968 a
+          des limites pour le foyer, et non par part, sans
+          celles des âgés ; il date de 1962 les 80 F et 240 F
+          de 1964, et écrit en francs la ligne de 1959, 7 000 et
+          14 000 anciens francs ; il applique au revenu entier
+          le demi-décime de 1962, dû au-delà de 8 000 F par
+          part.
+        tranche: >-
+          La loi n° 59-1472 (art. 13 du texte du Sénat) dit
+          « 7.000 francs par part entière de revenu » ; la loi
+          n° 64-1279 (art. 2, II), « Les limites de 70 F et
+          210 F [...] sont portées respectivement à 80 F et
+          240 F », et 120 F pour une part, plus hautes au-delà
+          de 75 ans (art. 4) ; les lois pour 1966 et 1967, des
+          limites pour le foyer jusqu'à une part et demie puis
+          deux parts ; la loi n° 63-628, « supérieur à 8.000 F
+          par part de revenu ». Le dépôt les suit
+          (scripts/fetch/ipp_impot_revenu.py, COMPLEMENTS,
+          ECARTEES).
+        preuve: >-
+          senat.fr/leg/1959-1960/ta1959_1960_0002.pdf, art. 13,
+          lu à l'image ; senat.fr/leg/1964-1965/
+          ta1964_1965_0014.pdf, art. 2, II, lu à l'image ;
+          senat.fr/leg/1966-1967/ta1966_1967_0023.pdf, art. 2 ;
+          senat.fr/rap/1962-1963/i1962_1963_0106.pdf, p. 84
     fait_mieux:
       - quoi: >-
           Il porte les séries de l'AVTS (1962-2026, 4 023,51 € en 2025) et de

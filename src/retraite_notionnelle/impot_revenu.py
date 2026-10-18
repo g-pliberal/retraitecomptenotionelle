@@ -48,11 +48,13 @@ successives :
    complémentaires de l'invalide (depuis 1998) et du veuf (depuis 2012) ;
    jusqu'en 1971, la réduction des salaires et des pensions, ou celle des
    contribuables âgés (:func:`reduction_des_salaires`), le barème de la loi
-   portant, de 1969 à 1971, autant de points de plus ;
+   portant, de 1960 à 1971, autant de points de plus ;
 5. la décote, dont la règle a changé six fois (:func:`decote`) ; la réduction
    sous condition de revenus de 2016 à 2019 ; les majorations et minorations
-   exceptionnelles des années 1960 à 1992 ; la réduction exceptionnelle des
-   revenus de 2013 ; les 5 % retranchés de l'impôt des revenus de 2001 ;
+   exceptionnelles des années 1960 à 1992 — les décimes de 1960 à 1965, les
+   réductions de 1966 et de 1967, la majoration de 1967, les tables de 1968
+   et de 1969 — ; la réduction exceptionnelle des revenus de 2013 ; les 5 %
+   retranchés de l'impôt des revenus de 2001 ;
 6. l'exonération du foyer dont le revenu, net de frais professionnels,
    n'excède pas la limite de l'année, de 1973 à 2013, et du salarié dont le
    revenu brut n'excède pas celle de 1972 (:func:`exonere`) ; le
@@ -66,10 +68,10 @@ LES MONNAIES ET LES ARRONDIS. L'impôt d'une année en francs se calcule en
 francs : ``unite="euro"`` (le défaut) prend et rend des euros, convertis au
 taux légal ; ``unite="monnaie"`` prend et rend la monnaie de l'année. Les
 arrondis suivent le code : le revenu imposable à la dizaine de francs
-inférieure jusqu'aux revenus de 1997 (art. 193), au franc, puis à l'euro, le
-plus proche ensuite, ainsi que chaque élément qui y concourt ; l'impôt au
-franc le plus proche depuis 1979, à la dizaine de centimes avant (art. 1657,
-1), puis à l'euro le plus proche.
+inférieure jusqu'aux revenus de 1997 (art. 193), à la centaine de 1968 à
+1979, au franc, puis à l'euro, le plus proche ensuite, ainsi que chaque
+élément qui y concourt ; l'impôt au franc le plus proche depuis 1979, à la
+dizaine de centimes avant (art. 1657, 1), puis à l'euro le plus proche.
 
 CE QU'IL NE FAIT PAS, et que :data:`HORS_CHAMP` énumère : les revenus autres
 que les salaires, les bénéfices et les pensions, le bénéfice des régimes micro
@@ -87,8 +89,9 @@ l'exonération de qui vit de salaires et de pensions sous le minimum garanti
 (loi n° 78-1239, art. 2, IV) et celui de l'article 157 ter, la taxe
 complémentaire des revenus autres que les salaires et les pensions jusqu'à
 ceux de 1969, et les exceptions à la réduction des salaires et des pensions.
-Les revenus d'avant 1969 suivent le barème et les corrections de l'IPP, sans
-texte lu : ses taux sont ceux des salariés, sans la réduction qui les fait.
+Les règles des revenus de 1960 à 1980 sont lues à la loi n° 59-1472 du
+28 décembre 1959 et aux lois de finances pour 1961 à 1981, sauf la date de
+la décote de 1961 (voir :func:`decote`).
 """
 
 from __future__ import annotations
@@ -118,12 +121,25 @@ HORS_CHAMP = (
     "abattement de 2 000 F des contribuables à une part de 1978, et celui de l'article 157 ter",
     "taxe complémentaire des revenus autres que les salaires et les pensions, jusqu'en 1969",
     "exceptions à la réduction des salaires et des pensions d'avant 1972 : frontaliers, "
-    "pensions dont la caisse ne versait pas la taxe de 3 %",
+    "pensions dont la caisse ne versait pas la taxe de 3 %, et, avant 1967, pensions et rentes "
+    "d'invalidité de la sécurité sociale",
 )
 
-#: Les années dont les règles sont lues aux lois de finances pour 1970 à 1981 :
-#: avant, le barème et les corrections de l'IPP, sans texte lu.
-PREMIERE_ANNEE_DES_LOIS_LUES = 1969
+#: Les années dont les règles sont lues à la loi n° 59-1472 et aux lois de
+#: finances pour 1961 à 1981 : après, les minorations et majorations suivent
+#: les notes de l'IPP.
+PREMIERE_ANNEE_DES_LOIS_LUES = 1960
+
+#: La décote de 70 F et 210 F par part, que le rapport général du Sénat sur la
+#: loi de finances pour 1965 dit en vigueur, et que l'IPP date des revenus de
+#: 1961 : la loi qui l'écrit n'est pas lue.
+DECOTE_DATEE_PAR_L_IPP = range(1961, 1964)
+
+#: Le revenu imposable « arrondi à la centaine de francs inférieure » (loi n°
+#: 68-1172, art. 2, II ; CGI, art. 193, LEGIARTI000006308264), jusqu'à ce que
+#: la loi n° 80-1094 (art. 2, I) le ramène à la dizaine, « à compter de
+#: l'imposition des revenus de l'année 1980 » (LEGIARTI000006308266, note).
+ARRONDI_A_LA_CENTAINE = range(1968, 1980)
 
 #: L'âge, atteint au 31 décembre de l'année des revenus, qui ouvre
 #: l'abattement des personnes âgées : « âgé de plus de soixante-cinq ans au
@@ -389,10 +405,12 @@ def _arrondir_element(annee: int, valeur: float) -> float:
 def _arrondir_revenu_imposable(annee: int, valeur: float) -> float:
     """Le revenu imposable : à la dizaine de francs inférieure jusqu'aux
     revenus de 1997 (art. 193, et sa rédaction de 1950 au millier d'anciens
-    francs), au plus proche ensuite."""
+    francs), à la centaine de 1968 à 1979 (:data:`ARRONDI_A_LA_CENTAINE`), au
+    plus proche ensuite."""
     if annee >= 1998:
         return _au_plus_proche(valeur)
-    return math.floor(round(valeur / 10, 6)) * 10.0
+    pas = 100 if annee in ARRONDI_A_LA_CENTAINE else 10
+    return math.floor(round(valeur / pas, 6)) * float(pas)
 
 
 def _arrondir_impot(annee: int, valeur: float) -> float:
@@ -630,14 +648,18 @@ def _plafonnement(foyer: Foyer, parametres: ParametresImpot, revenu: float, part
 def decote(foyer: Foyer, parametres: ParametresImpot, impot: float, parts: float) -> float:
     """La décote, selon la règle de l'année.
 
-    - 1961 à 1972, l'exonération et la décote de l'article 198 ter : l'impôt
-      qui n'excède pas la première limite est effacé, celui qui reste sous la
-      seconde réduit de sorte que l'impôt soit continu aux deux, la formule de
-      l'IPP, l'article n'étant pas lu. Leurs limites, de 1969 à 1972, sont
-      celles des lois de finances (:func:`_limites_de_l_article_198_ter`) ;
-      avant, celles de l'IPP, qui ne cite aucun texte : la franchise
-      (``seuil_celibataire``) et la limite (``seuil_couple``), et celles d'un
-      foyer d'au plus ``nombre_de_parts_limite`` parts.
+    - 1960 à 1972, l'exonération et la décote de l'article 198 ter : l'impôt
+      qui n'excède pas la première limite « n'est pas perçu » ; sous la
+      seconde, la décote est « la différence existant entre le chiffre obtenu
+      en multipliant le nombre de parts par 14.000 francs et ledit montant »
+      en 1960 (loi n° 59-1472, art. 13 du texte du Sénat), « la moitié de la
+      différence » ensuite, la différence entière pour une part en 1964 (loi
+      n° 64-1279, art. 2, II) : la seconde limite étant le double ou le triple
+      de la première, l'impôt est continu aux deux. Leurs limites, par part ou
+      pour le foyer, sont celles des lois
+      (:func:`_limites_de_l_article_198_ter`) ; de 1961 à 1963, celles que le
+      rapport du Sénat sur la loi de finances pour 1965 dit en vigueur, datées
+      par l'IPP (:data:`DECOTE_DATEE_PAR_L_IPP`).
     - 1973 à 1980 : aucune, la loi de finances pour 1974 (art. 2) les ayant
       « intégrées au barème », avec les minorations dégressives.
     - 1981 à 1985 : la différence entre un seuil et l'impôt, pour une part ou
@@ -652,13 +674,7 @@ def decote(foyer: Foyer, parametres: ParametresImpot, impot: float, parts: float
     if not d or impot <= 0:
         return 0.0
     if annee <= 1972:
-        if "franchise" in d:
-            franchise, limite = _limites_de_l_article_198_ter(foyer, d, parts)
-        else:
-            franchise, limite = d["seuil_celibataire"], d["seuil_couple"]
-            if "nombre_de_parts_limite" in d and parts <= d["nombre_de_parts_limite"]:
-                franchise = d["seuil_1_faible_nombre_de_parts"]
-                limite = d["seuil_2_faible_nombre_de_parts"]
+        franchise, limite = _limites_de_l_article_198_ter(foyer, d, parts)
         if impot <= franchise:
             return impot
         if impot >= limite:
@@ -677,28 +693,31 @@ def decote(foyer: Foyer, parametres: ParametresImpot, impot: float, parts: float
 
 
 def _limites_de_l_article_198_ter(foyer: Foyer, d: dict, parts: float) -> tuple[float, float]:
-    """Les limites de l'exonération et de la décote, en impôt, de 1969 à 1972 :
-    un montant pour le foyer jusqu'à ``parts_forfait`` parts, un montant par
-    part au-delà (loi n° 69-1161, art. 4, I) ; ceux, plus hauts, des
-    contribuables âgés de plus de 70 ans, puis de 65 ans et des invalides (loi
-    n° 70-1199, art. 2, V et VI), quand l'un des déclarants l'est."""
-    majore = "franchise_majoree" in d and any(
+    """Les limites de l'exonération et de la décote, en impôt, de 1960 à 1972 :
+    un montant par part (loi n° 59-1472, art. 13 du texte du Sénat), et, dès
+    1964, un montant pour le foyer jusqu'à ``parts_forfait`` parts (loi n°
+    64-1279, art. 2, II ; loi n° 69-1161, art. 4, I) ; ceux, plus hauts, des
+    contribuables âgés de plus de 75 ans (loi n° 64-1279, art. 4), de 70 ans
+    dès 1967 (loi n° 67-1114, art. 2), de 65 ans et des invalides dès 1970
+    (loi n° 70-1199, art. 2, V et VI), quand l'un des déclarants l'est."""
+    majore = "franchise_majoree_par_part" in d and any(
         (dec.age is not None and dec.age >= d["age_majore"])
         or (dec.invalide and d.get("invalides_majores", False)) for dec in foyer.declarants)
     suffixe = "_majoree" if majore else ""
-    if parts <= d["parts_forfait_majore" if majore else "parts_forfait"]:
+    if parts <= d.get("parts_forfait_majore" if majore else "parts_forfait", 0):
         return d[f"franchise{suffixe}"], d[f"limite{suffixe}"]
     return d[f"franchise{suffixe}_par_part"] * parts, d[f"limite{suffixe}_par_part"] * parts
 
 
 def reduction_des_salaires(foyer: Foyer, parametres: ParametresImpot, impot: float,
                            revenu: float, imposables: float = 0.0, autres: float = 0.0) -> float:
-    """La réduction d'impôt des salaires et des pensions (art. 198), jusqu'aux
-    revenus de 1971 : 5 %, puis 3 % dès 1970, de leur montant net imposable,
-    ``imposables`` — après leurs frais et l'abattement de 20 % —, qui rend aux
-    salaires et aux pensions les points de plus du barème ; en 1971, aussi des
-    ``autres`` revenus du foyer, quand ils n'excèdent pas 15 000 F (loi n°
-    71-1061, art. 2, II, 1°). Ou, si elle est plus forte, celle des
+    """La réduction d'impôt des salaires et des pensions (art. 198), des
+    revenus de 1960 à ceux de 1971 : 5 % (loi n° 59-1472, art. 12 du texte du
+    Sénat), puis 3 % dès 1970, de leur montant net imposable, ``imposables`` —
+    après leurs frais et l'abattement de 20 % —, qui rend aux salaires et aux
+    pensions les points de plus du barème ; en 1971, aussi des ``autres``
+    revenus du foyer, quand ils n'excèdent pas 15 000 F (loi n° 71-1061, art.
+    2, II, 1°). Ou, de 1969 à 1971, si elle est plus forte, celle des
     contribuables âgés (loi n° 69-1161, art. 4, II) : un taux du revenu
     imposable, au plus un plafond, quand l'un des déclarants a l'âge."""
     r = parametres["reduction_des_salaires"]
@@ -708,7 +727,8 @@ def reduction_des_salaires(foyer: Foyer, parametres: ParametresImpot, impot: flo
     if 0 < autres <= r.get("autres_revenus_maximum", 0.0):
         base += autres
     reduction = r["taux"] * min(base, revenu)
-    if any(d.age is not None and d.age >= r["age_agees"] for d in foyer.declarants):
+    if "age_agees" in r and any(d.age is not None and d.age >= r["age_agees"]
+                                for d in foyer.declarants):
         reduction = max(reduction, min(r["taux_agees"] * revenu, r["plafond_agees"]))
     return min(_arrondir_impot(parametres.annee, reduction), impot)
 
@@ -734,12 +754,15 @@ def _reduction_sous_condition(foyer: Foyer, parametres: ParametresImpot, impot: 
 
 
 def _minoration(parametres: ParametresImpot, impot: float, revenu: float, parts: float) -> float:
-    """Les minorations exceptionnelles : de 1969 à 1972, un taux de la
+    """Les minorations exceptionnelles : en 1966 et en 1967, un taux par
+    tranche du revenu imposable du foyer, 5 %, 4 % et 2 % jusqu'à 45 000,
+    50 000 et 55 000 F (loi n° 66-935, art. 2, I, et son décret), puis 10 %,
+    8 % et 5 %, sans limite au-delà de trois parts (loi de finances
+    rectificative pour 1968, art. 1er) ; de 1968 à 1972, un taux de la
     cotisation par palier, 15 % jusqu'à 1 000 F… 2 % jusqu'à 5 000 F (loi n°
-    69-1161, art. 3, II) ; selon les notes de l'IPP, de 1966 à 1968, par
-    paliers de revenu ou d'impôt, et, de 1984 à 1992, un taux par tranche
-    d'impôt, raccordé entre elles par « la différence entre une somme et 14 % de
-    l'impôt » (17 % en 1985)."""
+    68-1172, art. 2, I, 2 ; loi n° 69-1161, art. 3, II) ; selon les notes de
+    l'IPP, de 1984 à 1992, un taux par tranche d'impôt, raccordé entre elles par
+    « la différence entre une somme et 14 % de l'impôt » (17 % en 1985)."""
     m = parametres["minorations_exceptionnelles"]
     annee = parametres.annee
     if not m or impot <= 0:
@@ -747,18 +770,11 @@ def _minoration(parametres: ParametresImpot, impot: float, revenu: float, parts:
     if "paliers" in m:
         taux = next((t for borne, t in m["paliers"] if impot <= borne), 0.0)
         return _arrondir_impot(annee, taux * impot)
-    if annee <= 1972:
-        base = revenu if annee <= 1967 else impot
-        s2, s3, s4 = m["seuil_impot_2"], m["seuil_impot_3"], m["seuil_impot_4"]
-        haut, bas = m["taux_1"], m.get("taux_5", 0.0)
-        if base <= s2:
-            taux = haut
-        elif base <= s3:
-            taux = haut + (bas - haut) * (base - s2) / (s3 - s2)
-        elif base <= s4:
-            taux = bas
-        else:
-            taux = 0.0
+    if "paliers_de_revenu" in m:
+        paliers = m["paliers_de_revenu"]
+        taux = next((t for borne, t in paliers if revenu <= borne), 0.0)
+        if not taux and parts > m.get("parts_sans_limite", math.inf):
+            taux = paliers[-1][1]
         return _arrondir_impot(annee, taux * impot)
     s = [m.get(f"seuil_impot_{rang}") for rang in range(1, 6)]
     if impot <= s[1]:
@@ -776,25 +792,21 @@ def _minoration(parametres: ParametresImpot, impot: float, revenu: float, parts:
     return _arrondir_impot(annee, max(montant, 0.0))
 
 
-def _paliers_de_1968(impot: float, pas: float, taux_haut: float) -> float:
-    """1968 : +2 % de 6 000 à 7 000 F d'impôt, +4 % de 7 000 à 8 000 F…
-    jusqu'à +14 % de 12 000 à 14 000 F, 15 % au-delà (IPP, notes des
-    majorations)."""
-    if impot > 14000:
-        return taux_haut
-    palier = math.floor((min(impot, 13999.99) - 6000) / 1000) + 1
-    return pas * min(palier, 7)
-
-
-def _majoration(parametres: ParametresImpot, impot: float, revenu: float) -> float:
-    """Les majorations exceptionnelles : en 1969, un taux de la cotisation par
-    palier, de 2 % au-delà de 7 000 F à 7,5 % au-delà de 14 000 F (loi n°
-    69-1161, art. 3, V) ; selon les notes de l'IPP, le « décime » et le
-    « demi-décime » de 1960 à 1965 au-delà d'un revenu ; de 1967 à 1971, un taux
-    par tranche d'impôt, appliqué à tout l'impôt ; de 1980 à 1984, un taux sur
-    la fraction de l'impôt qui excède un seuil (sur tout l'impôt, par tranche,
-    en 1983), qui n'est pas due sous son ``minimum`` (« inférieure à 200 F » en
-    1980 : loi de finances rectificative pour 1981, art. 1er)."""
+def _majoration(parametres: ParametresImpot, impot: float, revenu: float,
+                parts: float) -> float:
+    """Les majorations exceptionnelles : le « décime » de 1960 et le
+    « demi-décime » de 1961 à 1965, au-delà d'un revenu, sans le quotient
+    familial, sauf en 1962, au-delà de 8 000 F par part (loi n° 63-628) ; de
+    1967 à 1971, un taux par tranche d'impôt, appliqué à tout l'impôt, et, en
+    1967, la décote qui réduit la majoration comprise entre deux montants de la
+    différence entre le second et elle (loi n° 68-695, art. 15) ; en 1968 et en
+    1969, un taux de la cotisation par palier, de 2 % au-delà de 6 000 F à
+    15 % au-delà de 14 000 F (loi n° 68-1172, art. 2, I, 2), puis de 2 % au-delà
+    de 7 000 F à 7,5 % au-delà de 14 000 F (loi n° 69-1161, art. 3, V) ; selon
+    les notes de l'IPP, de 1980 à 1984, un taux sur la fraction de l'impôt qui
+    excède un seuil (sur tout l'impôt, par tranche, en 1983), qui n'est pas due
+    sous son ``minimum`` (« inférieure à 200 F » en 1980 : loi de finances
+    rectificative pour 1981, art. 1er)."""
     m = parametres["majorations_exceptionnelles"]
     annee = parametres.annee
     if not m or impot <= 0:
@@ -805,15 +817,19 @@ def _majoration(parametres: ParametresImpot, impot: float, revenu: float) -> flo
     if "seuil_revenu" in m:
         taux = m["taux_1"] if revenu > m["seuil_revenu"] else 0.0
         return _arrondir_impot(annee, taux * impot)
-    if annee == 1968:
-        taux = _paliers_de_1968(impot, 0.02, m["taux_3"]) if impot > m["seuil_1"] else 0.0
+    if "seuil_revenu_par_part" in m:
+        taux = m["taux_1"] if revenu / parts > m["seuil_revenu_par_part"] else 0.0
         return _arrondir_impot(annee, taux * impot)
     if annee <= 1971 or annee == 1983:
         taux = 0.0
         for rang in (1, 2, 3):
             if f"seuil_{rang}" in m and impot > m[f"seuil_{rang}"]:
                 taux = m[f"taux_{rang}"]
-        return _arrondir_impot(annee, taux * impot)
+        majoration = taux * impot
+        for bas, haut in m.get("decotes", ()):
+            if bas <= majoration <= haut:
+                majoration -= haut - majoration
+        return _arrondir_impot(annee, majoration)
     if annee == 1981 and impot <= 25000:
         # « Pour les revenus 1981, seuls les contribuables dont l'impôt est
         # supérieur à 25 000 FRF sont concernés » (IPP).
@@ -966,15 +982,9 @@ def _remarques(foyer: Foyer, parametres: ParametresImpot, la_decote: float,
     if parametres.projete:
         remarques.append(f"barème projeté ({parametres.indexation}) au-delà des revenus de "
                          f"{parametres.derniere_annee_lue}")
-    if annee < PREMIERE_ANNEE_DES_LOIS_LUES:
-        remarques.append("barème des revenus d'avant 1969 : celui de l'IPP, aux taux des "
-                         "salariés, sans texte lu")
-    if la_decote and annee < PREMIERE_ANNEE_DES_LOIS_LUES:
-        remarques.append("franchise et décote des années 1960 : une lecture des colonnes de "
-                         "l'IPP, sans texte lu")
-    elif la_decote and annee <= 1972:
-        remarques.append("décote de l'article 198 ter : ses limites sont celles de la loi, sa "
-                         "formule celle de l'IPP, l'article n'étant pas lu")
+    if la_decote and annee in DECOTE_DATEE_PAR_L_IPP:
+        remarques.append("décote de 1961 à 1963 : celle que le rapport du Sénat dit en vigueur "
+                         "en 1964, que l'IPP date de 1961, la loi qui l'écrit n'étant pas lue")
     if (minoration or majoration) and not PREMIERE_ANNEE_DES_LOIS_LUES <= annee <= 1972:
         remarques.append("minoration ou majoration exceptionnelle : la règle des notes de "
                          "l'IPP, sans texte lu")
@@ -1092,7 +1102,7 @@ def _liquider(foyer: Foyer, parametres: ParametresImpot, revenu: float,
     impot -= reduction_scr
     minoration = _minoration(parametres, impot, revenu, parts)
     impot -= minoration
-    majoration = _majoration(parametres, impot, revenu)
+    majoration = _majoration(parametres, impot, revenu, parts)
     impot += majoration
     reduction_exc = _reduction_exceptionnelle(foyer, parametres, impot, rfr, parts)
     impot = max(impot - reduction_exc, 0.0)

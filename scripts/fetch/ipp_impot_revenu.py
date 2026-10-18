@@ -110,12 +110,23 @@ avec sa source (``origine`` de la marche) :
   l'article 198 ter ; les minorations et les majorations de 1969, par
   paliers ; le minimum des frais professionnels de 1970 à 1974 ; la déduction
   de 500 F des personnes âgées et l'exonération des salariés de 1972 —
-  ``origine: loi``, ou ``rapport`` pour ce que seul le rapport chiffre.
+  ``origine: loi``, ou ``rapport`` pour ce que seul le rapport chiffre ;
+- ce que la loi n° 59-1472 du 28 décembre 1959 et les lois de finances pour
+  1961 à 1969 écrivent des revenus de 1960 à 1968 (``TEXTES_DU_SENAT``, et,
+  pour une loi que le Sénat a rejetée, le texte de l'Assemblée nationale que
+  reproduit le rapport de sa commission des finances, ``RAPPORTS_DES_ANNEES_1960``) :
+  le barème, aux taux de la loi et non des salariés, et 20 % au lieu de 25 %
+  à sa quatrième tranche ; la réduction de 5 % des salaires et des pensions ;
+  la décote de l'article 198 ter, par part, et ses limites pour le foyer et
+  pour les âgés ; le demi-décime de 1962, par part ; les réductions de 1966 et
+  de 1967, par tranche de revenu ; la majoration de 1967 et ses décotes ; la
+  table de 1968.
 
-Ce qu'il écarte : la ligne de la décote datée de 1959 (7 000 F et 14 000 F),
-que l'IPP ne commente pas et qui ne peut être une décote d'impôt — elle
-effacerait tout impôt de 1960 inférieur à 7 000 F ; la décote commence donc
-avec les revenus de 1961.
+Ce qu'il écarte (``ECARTEES``) : la ligne de la décote datée de 1959 (7 000 F
+et 14 000 F), en anciens francs que l'IPP écrit en francs — la loi n° 59-1472
+dit « 7.000 francs par part entière de revenu » et 14 000 francs par part,
+70 F et 140 F, que la marche de 1960 reprend ; celle de 1962 (80 F et 240 F),
+que la loi de finances pour 1965 ne fixe que pour les revenus de 1964.
 
 Ce qu'il ne fait pas. L'IPP est une transcription, non une source productrice :
 la donnée plafonne à ``haute``. Il n'ancre pas chaque marche au Journal
@@ -252,7 +263,10 @@ FINS = {
 }
 
 #: Les lignes de l'IPP que le script ne reprend pas, et pourquoi (en-tête).
-ECARTEES = {("decote", 1959)}
+ECARTEES = {
+    ("decote", 1959): "7 000 et 14 000 anciens francs par part, écrits en francs",
+    ("decote", 1962): "80 F et 240 F, que la loi n° 64-1279 (art. 2, II) ne fixe qu'en 1964",
+}
 
 #: Les parts de chaque rang d'enfant à charge, que le tableau de l'IPP date
 #: mal (voir l'en-tête) : à chaque marche, la part du premier, du deuxième…
@@ -747,6 +761,344 @@ REDUCTION_DES_SALAIRES = [
               "que pour 1971"},
 ]
 
+# -- Les revenus de 1960 à 1968 : la loi de 1959 et les lois de finances pour 1961
+# à 1969 --------------------------------------------------------------------------
+#
+# Le barème de la loi porte, depuis la réforme de 1959, cinq points de plus que
+# celui des salariés, que la réduction de l'article 198 leur rend ; l'IPP n'en
+# donne que les taux des salariés, et 25 % au lieu de 20 % à la quatrième
+# tranche. Les textes : ceux que le Sénat publie, définitifs, ou de première
+# lecture quand les deux assemblées y ont voté l'article dans les mêmes termes ;
+# pour une loi qu'il a rejetée, le texte de l'Assemblée nationale que reproduit
+# le rapport de sa commission des finances.
+
+#: Les lois dont le Sénat publie le texte : leur intitulé, ce qu'il en a adopté
+#: et quand, son fichier sous senat.fr/leg/.
+TEXTES_DU_SENAT = {
+    "59-1472": ("Loi n° 59-1472 du 28 décembre 1959 portant réforme du contentieux fiscal et "
+                "divers aménagements fiscaux", "texte adopté par le Sénat en première lecture "
+                "le 24 novembre 1959, qu'il dit conforme en deuxième lecture le 17 décembre "
+                "(ta1959_1960_0016.pdf)", "1959-1960/ta1959_1960_0002.pdf"),
+    "60-1384": ("Loi n° 60-1384 du 23 décembre 1960 (LF pour 1961)", "texte définitif adopté "
+                "par le Sénat le 13 décembre 1960", "1960-1961/ta1960_1961_0044.pdf"),
+    "63-1241": ("Loi n° 63-1241 du 19 décembre 1963 (LF pour 1964)", "texte définitif adopté "
+                "par le Sénat le 6 décembre 1963", "1963-1964/ta1963_1964_0026.pdf"),
+    "64-1279": ("Loi n° 64-1279 du 23 décembre 1964 (LF pour 1965)", "texte adopté par le "
+                "Sénat en première lecture le 26 novembre 1964, conforme sur ce point à celui "
+                "de l'Assemblée nationale", "1964-1965/ta1964_1965_0014.pdf"),
+    "65-997": ("Loi n° 65-997 du 29 novembre 1965 (LF pour 1966)", "texte adopté par le Sénat "
+               "en première lecture le 15 novembre 1965, conforme sur ce point à celui de "
+               "l'Assemblée nationale", "1965-1966/ta1965_1966_0014.pdf"),
+    "66-935": ("Loi n° 66-935 du 17 décembre 1966 (LF pour 1967)", "texte définitif adopté par "
+               "le Sénat le 7 décembre 1966", "1966-1967/ta1966_1967_0023.pdf"),
+    "68-695": ("Loi n° 68-695 du 31 juillet 1968 (LFR pour 1968)", "texte définitif adopté par "
+               "le Sénat le 25 juillet 1968", "1967-1968/ta1967_1968_0094.pdf"),
+}
+
+
+def _texte(loi: str, article: str, citation: str = "") -> str:
+    """La référence d'un article d'une loi de :data:`TEXTES_DU_SENAT`, et ce
+    qu'il dit."""
+    intitule, adopte, fichier = TEXTES_DU_SENAT[loi]
+    reference = f"{intitule}, {article}, {adopte} (senat.fr/leg/{fichier})"
+    return f"{reference} : {citation}" if citation else reference
+
+
+#: Les rapports de la commission des finances du Sénat qui reproduisent le
+#: texte de l'Assemblée nationale d'une loi qu'il a rejetée ou votée conforme,
+#: ou disent ce qu'aucun texte lu ne chiffre.
+RAPPORTS_DES_ANNEES_1960 = {
+    "1962-1963/106": "rapport du Sénat n° 106 (1962-1963) "
+                     "(senat.fr/rap/1962-1963/i1962_1963_0106.pdf)",
+    "1963-1964/23": "rapport général du Sénat n° 23 (1963-1964), tome II "
+                    "(senat.fr/rap/1963-1964/i1963_1964_0023_02.pdf)",
+    "1964-1965/23": "rapport général du Sénat n° 23 (1964-1965), tome II "
+                    "(senat.fr/rap/1964-1965/i1964_1965_0023_02.pdf)",
+    "1965-1966/31": "rapport général du Sénat n° 31 (1965-1966), tome II "
+                    "(senat.fr/rap/1965-1966/i1965_1966_0031_02.pdf)",
+    "1966-1967/25": "rapport général du Sénat n° 25 (1966-1967), tome II "
+                    "(senat.fr/rap/1966-1967/i1966_1967_0025_02.pdf)",
+    "1967-1968/16": "rapport général du Sénat n° 16 (1967-1968), tome II "
+                    "(senat.fr/rap/1967-1968/i1967_1968_0016_02.pdf)",
+    "1967-1968/168": "rapport du Sénat n° 168 (1967-1968) "
+                     "(senat.fr/rap/1967-1968/i1967_1968_0168.pdf)",
+    "1968-1969/40": "rapport général du Sénat n° 40 (1968-1969), tome II "
+                    "(senat.fr/rap/1968-1969/i1968_1969_0040_02.pdf)",
+}
+_R = RAPPORTS_DES_ANNEES_1960
+
+#: La loi de finances pour 1969, que le Sénat a rejetée en nouvelle lecture le
+#: 17 décembre 1968 (senat.fr/leg/1968-1969/ta1968_1969_0040.pdf), lue au texte
+#: de l'Assemblée nationale que reproduit son rapport général.
+LOI_POUR_1969 = (
+    "Loi n° 68-1172 du 27 décembre 1968 (LF pour 1969), art. 2, I, 2, au texte de l'Assemblée "
+    "nationale que reproduit le " + _R["1968-1969/40"] + ", p. 68 et 69, et que le Sénat avait "
+    "adopté en première lecture le 5 décembre 1968 (senat.fr/leg/1968-1969/ta1968_1969_0023.pdf)"
+    " : « Après application, le cas échéant, de la réduction d'impôt et de la décote prévues "
+    "respectivement aux articles 198 et 198 ter du Code général des impôts, les cotisations sont "
+    "minorées ou majorées dans les conditions suivantes »")
+TAUX_DE_LA_LOI = [0.05, 0.15, 0.2, 0.25, 0.35, 0.45, 0.55, 0.65]
+SALARIES_DE_L_IPP = ("l'IPP porte ces taux diminués des 5 points que la réduction de l'article "
+                     "198 rend aux salaires et aux pensions, et 25 % à la quatrième tranche")
+BAREME_DE_1965_RECONDUIT = _texte(
+    "66-935", "art. 2, IV", "« Le barème retenu pour l'imposition des revenus de l'année 1965 "
+    "est applicable pour l'imposition des revenus des années 1966 et 1967. Toutefois, les taux "
+    "de 55 % et de 65 % applicables aux tranches supérieures du barème sont portés "
+    "respectivement à 60 % et à 70 % pour l'imposition des revenus de l'année 1966 »")
+CORRECTIONS.update({
+    ("bareme", 1960): (
+        {"taux": TAUX_DE_LA_LOI},
+        _texte("60-1384", "art. 2, I", "« En ce qui concerne les contribuables mariés sans "
+               "enfant à charge [...] l'impôt sur le revenu des personnes physiques est [...] "
+               "calculé en appliquant le taux de : 5 % à la fraction du revenu qui n'excède pas "
+               "4.600 NF ; 15 % à la fraction comprise entre 4.600 et 7.500 NF [...] 65 % à la "
+               "fraction supérieure à 128.000 NF » ; " + SALARIES_DE_L_IPP),
+        "loi"),
+    ("bareme", 1961): (
+        {"taux": TAUX_DE_LA_LOI},
+        _texte("60-1384", "art. 2, II", "« Les chiffres de 7.500, 13.000 et 19.500 NF figurant "
+               "au barème visé au paragraphe I ci-dessus sont portés respectivement à 8.000, "
+               "13.500 et 20.000 NF » pour les revenus de 1961 ; " + SALARIES_DE_L_IPP),
+        "loi"),
+    ("bareme", 1962): (
+        {"taux": TAUX_DE_LA_LOI},
+        _texte("60-1384", "art. 2, III", "« le chiffre de 4.600 NF figurant au barème visé au "
+               "paragraphe I ci-dessus est porté à 4.800 NF » pour les revenus de 1962 ; "
+               + SALARIES_DE_L_IPP),
+        "loi"),
+    ("bareme", 1963): (
+        {"taux": [0.05, 0.15, 0.2, 0.25, 0.35, 0.45, 0.55, 0.665]},
+        _texte("63-1241", "art. 2, 1°", "« Le taux de 65 % figurant à la dernière ligne du "
+               "barème prévu à l'article 197 du Code général des impôts est porté à 66,5 % » "
+               "pour les revenus de 1963 ; la suite des barèmes depuis 1959 au "
+               + _R["1964-1965/23"] + ", p. 59 ; " + SALARIES_DE_L_IPP),
+        "loi"),
+    ("bareme", 1964): (
+        {"taux": TAUX_DE_LA_LOI},
+        _texte("64-1279", "art. 2, I", "« Fraction du revenu qui n'excède pas 4.800 F : 5 % "
+               "[...] Fraction du revenu comprise entre 14.700 F et 21.700 F : 25 % [...] "
+               "Fraction du revenu supérieure à 140.000 F : 65 % » ; " + SALARIES_DE_L_IPP),
+        "loi"),
+    ("bareme", 1965): (
+        {"taux": TAUX_DE_LA_LOI},
+        _texte("64-1279", "art. 2, III", "« les chiffres de 8.800 F, 14.700 F, 21.700 F, "
+               "35.000 F, 70.000 F et 140.000 F [...] sont portés respectivement à 9.000 F, "
+               "15.200 F, 22.500 F, 36.000 F, 72.000 F et 144.000 F » pour les revenus de 1965")
+        + " ; " + _texte("65-997", "art. 2, I", "« La limite supérieure de la première tranche "
+                         "du barème [...] est portée de 4.800 F à 5.000 F » ; " + SALARIES_DE_L_IPP),
+        "loi"),
+    ("bareme", 1966): (
+        {"taux": [0.05, 0.15, 0.2, 0.25, 0.35, 0.45, 0.6, 0.7]},
+        BAREME_DE_1965_RECONDUIT + " ; " + SALARIES_DE_L_IPP, "loi"),
+    ("bareme", 1967): (
+        {"taux": TAUX_DE_LA_LOI},
+        BAREME_DE_1965_RECONDUIT + " ; pour les revenus de 1968, « le tarif prévu à l'article "
+        "197-1 du Code général des impôts » (loi n° 68-1172, art. 2, I, 1, " + _R["1968-1969/40"]
+        + ", p. 68) ; " + SALARIES_DE_L_IPP,
+        "loi"),
+    ("majorations_exceptionnelles", 1960): (
+        {},
+        "« l'article 1er du décret n° 56-665 du 6 juillet 1956 avait institué [...] une majoration "
+        "d'un décime (10 %) sur le montant de l'impôt progressif dû par les personnes physiques. "
+        "Cette majoration ne s'appliquait qu'aux contribuables ayant un revenu net supérieur à "
+        "6.000 F, sans application du quotient familial » (" + _R["1962-1963/106"] + ", p. 84) ; "
+        "CGI, art. 199 bis, 2°",
+        "rapport"),
+    ("majorations_exceptionnelles", 1961): (
+        {},
+        _texte("60-1384", "art. 2, II", "« Pour l'imposition des revenus de l'année 1961, la "
+               "majoration d'un décime prévue à l'article 199 bis, 2°, du Code général des "
+               "impôts est réduite de moitié »"),
+        "loi"),
+    ("majorations_exceptionnelles", 1963): (
+        {},
+        _texte("63-1241", "art. 2, 2°", "« Les cotisations établies par voie de rôles sont "
+               "majorées de 5 % lorsque le revenu servant de base à l'imposition est supérieur à "
+               "36.000 F. Cette majoration est calculée après application, le cas échéant, de la "
+               "réduction d'impôt et de la décote visées respectivement aux articles 198 et 198 "
+               "ter »"),
+        "loi"),
+    ("majorations_exceptionnelles", 1964): (
+        {},
+        _texte("64-1279", "art. 2, IV", "« La majoration de 5 % visée à l'article 2, 2° de la "
+               "loi n° 63-1241 du 19 décembre 1963 est applicable aux cotisations [...] établies "
+               "par voie de rôles au titre de l'année 1964 lorsque le revenu servant de base à "
+               "l'imposition est supérieur à 45.000 F »"),
+        "loi"),
+    ("majorations_exceptionnelles", 1965): (
+        {},
+        "Loi n° 65-997 du 29 novembre 1965 (LF pour 1966), art. 2, IV, que le Sénat a rejetée, au "
+        "texte de l'Assemblée nationale que reproduit le " + _R["1965-1966/31"] + ", p. 56 : « La "
+        "majoration de 5 % visée à l'article 2-IV de la loi n° 64-1279 du 23 décembre 1964 est "
+        "applicable aux cotisations [...] établies par voie de rôles au titre de l'année 1965 "
+        "lorsque le revenu servant de base à l'imposition est supérieur à 50.000 F » ; les "
+        "contribuables « dont les revenus déclarés sont supérieurs à 50.000 F » l'ont payée ("
+        + _R["1966-1967/25"] + ", p. 79)",
+        "rapport"),
+    ("majorations_exceptionnelles", 1967): (
+        {"decotes": [[500, 700], [2000, 2500], [5000, 5300]]},
+        _texte("68-695", "art. 15", "« Les cotisations des contribuables soumis à l'impôt sur le "
+               "revenu des personnes physiques au titre des revenus de 1967 sont majorées de 10 % "
+               "quand leur montant est supérieur à 5.000 F [...] Cette majoration est portée à "
+               "20 % quand la cotisation [...] est supérieure à 10.000 F et à 25 % quand cette "
+               "cotisation est supérieure à 20.000 F. Lorsque la majoration est comprise entre "
+               "500 F et 700 F elle est établie sous déduction d'une décote égale à la différence "
+               "entre 700 F et son montant théorique » ; de même entre 2 000 F et 2 500 F, et "
+               "entre 5 000 F et 5 300 F, lu à l'image du texte"),
+        "loi"),
+})
+#: La réduction des salaires et des pensions, dès la réforme de 1959.
+REDUCTION_DES_SALAIRES.insert(0, {
+    "annee": 1960, "monnaie": "FRF", "taux": 0.05, "origine": "loi",
+    "texte": _texte("59-1472", "art. 12 du texte du Sénat", "« Le montant de l'impôt sur le "
+                    "revenu des personnes physiques [...] est, en ce qui concerne les "
+                    "bénéficiaires de traitements, salaires et pensions, réduit d'une somme égale "
+                    "à 5 % des sommes effectivement soumises à l'impôt sur le revenu des "
+                    "personnes physiques au titre de ces traitements, salaires et pensions "
+                    "lorsque ces rémunérations entrent dans le champ d'application du versement "
+                    "forfaitaire prévu par l'article 231 du Code général des impôts ou sont "
+                    "exonérés de ce versement » ; codifié à l'article 198, et étendu aux pensions "
+                    "et rentes d'invalidité de la sécurité sociale pour les revenus de 1967 (loi n° "
+                    "67-1114, art. 3)")})
+#: Les limites de l'article 198 ter de 1960 à 1968 (voir celles de 1969) : sans
+#: ``parts_forfait``, par part dès la première.
+COMPLEMENTS["decote"] = [
+    {"annee": 1960, "monnaie": "FRF", "franchise_par_part": 70, "limite_par_part": 140,
+     "origine": "loi",
+     "texte": _texte("59-1472", "art. 13 du texte du Sénat", "« Lorsque le montant de l'impôt "
+                     "[...] après application éventuelle de la réduction de 5 % prévue à "
+                     "l'article 12, n'excède pas 7.000 francs par part entière de revenu, la "
+                     "cotisation correspondante n'est pas perçue. Lorsque ce montant est compris "
+                     "entre 7.000 francs par part et 14.000 francs par part, la cotisation "
+                     "correspondante est établie sous déduction d'une décote égale à la "
+                     "différence existant entre le chiffre obtenu en multipliant le nombre de "
+                     "parts par 14.000 francs et ledit montant », soit 70 F et 140 F ; codifié à "
+                     "l'article 198 ter ; l'IPP en porte la ligne en 1959, en francs au lieu "
+                     "d'anciens francs")},
+    {"annee": 1961, "monnaie": "FRF", "franchise_par_part": 70, "limite_par_part": 210,
+     "origine": "rapport",
+     "texte": "« lorsque le montant de l'impôt sur le revenu n'excède pas 70 F par part entière "
+              "de revenu (après application éventuelle de la réduction de 5 % pour les salaires "
+              "et pensions et du crédit d'impôt), la cotisation correspondante n'est pas perçue. "
+              "Lorsque le montant de l'impôt est compris entre 70 F et 210 F, la cotisation "
+              "correspondante est établie sous déduction d'une décote égale à la moitié de la "
+              "différence existant entre le chiffre obtenu en multipliant le nombre de parts par "
+              "210 F et le montant de l'impôt » (" + _R["1964-1965/23"] + ", p. 60), « à "
+              "l'heure actuelle » ; l'IPP la date des revenus de 1961, et de 1962 les 80 F et "
+              "240 F de 1964 ; la loi qui l'écrit n'est pas lue"},
+    {"annee": 1964, "monnaie": "FRF", "franchise": 120, "limite": 240, "parts_forfait": 1,
+     "franchise_par_part": 80, "limite_par_part": 240, "age_majore": 75,
+     "franchise_majoree_par_part": 150, "limite_majoree_par_part": 450, "origine": "loi",
+     "texte": _texte("64-1279", "art. 2, II", "« Les limites de 70 F et 210 F prévues à "
+                     "l'article 198 ter du Code général des impôts sont portées respectivement à "
+                     "80 F et 240 F. Toutefois, la limite de 80 F visée à l'alinéa ci-dessus est "
+                     "portée à 120 F lorsque le redevable a droit pour le calcul de l'impôt sur "
+                     "le revenu des personnes physiques à une part. Lorsque la cotisation due par "
+                     "un contribuable bénéficiant d'une part est comprise entre 120 et 240 F, "
+                     "elle est établie sous déduction d'une décote égale à la différence "
+                     "existant entre 240 F et ledit montant » ; art. 4, I, que le Sénat a voté "
+                     "conforme, au texte que reproduit le " + _R["1964-1965/23"] + ", p. 65 : "
+                     "« Les limites prévues au II de l'article 2 de la présente loi sont portées "
+                     "respectivement à 150 F et 450 F en ce qui concerne les contribuables âgés "
+                     "de plus de 75 ans au 31 décembre de l'année de l'imposition »")},
+    {"annee": 1965, "monnaie": "FRF", "franchise": 160, "limite": 480, "parts_forfait": 1.5,
+     "franchise_par_part": 80, "limite_par_part": 240, "age_majore": 75,
+     "franchise_majoree": 250, "limite_majoree": 750, "parts_forfait_majore": 1.5,
+     "franchise_majoree_par_part": 150, "limite_majoree_par_part": 450, "origine": "loi",
+     "texte": _texte("65-997", "art. 2, II", "« Les cotisations dues par les contribuables qui "
+                     "ont droit à une part ou à une part et demie ne sont pas perçues lorsque "
+                     "leur montant n'excède pas 160 F. Lorsque ce montant est compris entre 160 F "
+                     "et 480 F, la cotisation correspondante est établie sous déduction d'une "
+                     "décote égale à la moitié de la différence existant entre 480 F et ledit "
+                     "montant » ; art. 3, I, voté conforme : celles des plus de 75 ans « portées "
+                     "respectivement à 250 F et 750 F pour les contribuables qui ont droit à une "
+                     "part ou à une part et demie », 150 F et 450 F par part pour les autres ("
+                     + _R["1966-1967/25"] + ", p. 79)")},
+    {"annee": 1966, "monnaie": "FRF", "franchise": 190, "limite": 570, "parts_forfait": 2,
+     "franchise_par_part": 80, "limite_par_part": 240, "age_majore": 75,
+     "franchise_majoree": 250, "limite_majoree": 750, "parts_forfait_majore": 1.5,
+     "franchise_majoree_par_part": 150, "limite_majoree_par_part": 450, "origine": "loi",
+     "texte": _texte("66-935", "art. 2, II", "« Les limites d'exonération et de décote fixées à "
+                     "160 F et 480 F par l'article 2-II de la loi n° 65-997 du 29 novembre 1965 "
+                     "sont portées respectivement à 190 F et 570 F. Elles s'appliquent aux "
+                     "contribuables qui ont droit à une part, une part et demie ou deux parts » ; "
+                     "les autres, sans changement (" + _R["1967-1968/16"] + ", p. 66)")},
+    {"annee": 1967, "monnaie": "FRF", "franchise": 190, "limite": 570, "parts_forfait": 2,
+     "franchise_par_part": 80, "limite_par_part": 240, "age_majore": 70,
+     "franchise_majoree": 250, "limite_majoree": 750, "parts_forfait_majore": 1.5,
+     "franchise_majoree_par_part": 150, "limite_majoree_par_part": 450, "origine": "rapport",
+     "texte": "Loi n° 67-1114 du 21 décembre 1967 (LF pour 1968), art. 2, que le Sénat a voté "
+              "conforme en première lecture (senat.fr/leg/1967-1968/ta1967_1968_0005.pdf), au "
+              "texte que reproduit le " + _R["1967-1968/16"] + ", p. 66, avec la table des "
+              "limites : « Les limites d'exonération et de décote prévues en faveur des personnes "
+              "âgées à l'article 198 ter du code général des impôts, sont applicables aux "
+              "contribuables âgés de plus de 70 ans au 31 décembre de l'année d'imposition » ; "
+              "inchangées pour les revenus de 1968 (" + RAPPORTS[1969] + ", p. 14)"},
+    *COMPLEMENTS["decote"],
+]
+#: Les réductions de 1966 et de 1967, par tranche du revenu imposable du foyer
+#: (``paliers_de_revenu``), sans limite au-delà de ``parts_sans_limite`` parts ;
+#: la table de 1968, par tranche de la cotisation.
+COMPLEMENTS["minorations_exceptionnelles"] = [
+    {"annee": 1966, "monnaie": "FRF", "paliers_de_revenu": [[45000, 0.05], [50000, 0.04],
+                                                           [55000, 0.02]],
+     "origine": "rapport",
+     "texte": _texte("66-935", "art. 2, I", "« Le montant de l'impôt sur le revenu des personnes "
+                     "physiques dû par les contribuables dont le revenu imposable n'est pas "
+                     "supérieur à 55.000 F sera réduit dans des conditions qui seront fixées par "
+                     "décret, sans que cette réduction puisse être inférieure à 5 % pour un "
+                     "revenu n'excédant pas 45.000 F. Cette réduction est calculée après "
+                     "application, s'il y a lieu, de la réduction d'impôt visée à l'article 198 "
+                     "du Code général des impôts et de la décote » ; le décret du 27 décembre "
+                     "1966 : « 5 % pour les revenus inférieurs à 45.000 F ; 4 % pour les revenus "
+                     "compris entre 45.000 et 50.000 F ; 2 % pour les revenus compris entre "
+                     "50.000 et 55.000 F » (" + _R["1967-1968/168"] + ", p. 102) ; l'IPP les fait "
+                     "décroître en ligne droite")},
+    {"annee": 1967, "monnaie": "FRF", "paliers_de_revenu": [[45000, 0.1], [50000, 0.08],
+                                                           [55000, 0.05]],
+     "parts_sans_limite": 3, "origine": "rapport",
+     "texte": "Loi de finances rectificative pour 1968, art. 1er, que le Sénat a voté conforme en "
+              "première lecture le 21 mai 1968 (senat.fr/leg/1967-1968/ta1967_1968_0068.pdf), au "
+              "texte de l'Assemblée nationale que reproduit le " + _R["1967-1968/168"] + ", p. "
+              "102 : « La réduction d'impôt prévue à l'article 2-1 de la loi de finances pour "
+              "1967 [...] est portée à : 10 % pour les contribuables dont le revenu imposable "
+              "n'excède pas 45.000 F ; 8 % pour les contribuables dont le revenu imposable est "
+              "supérieur à 45.000 F mais n'excède pas 50.000 F ; 5 % pour les contribuables dont "
+              "le revenu imposable est supérieur à 50.000 F mais n'excède pas 55.000 F. La limite "
+              "de 55.000 F prévue ci-dessus n'est pas applicable aux contribuables qui ont droit, "
+              "pour le calcul de leur impôt, à un nombre de parts supérieur à trois » ; l'IPP les "
+              "fait décroître en ligne droite, sans cette limite"},
+    {"annee": 1968, "monnaie": "FRF",
+     "paliers": [[1000, 0.15], [1500, 0.12], [2000, 0.1], [2500, 0.08], [3000, 0.06],
+                 [3500, 0.04], [5000, 0.02]], "origine": "rapport",
+     "texte": LOI_POUR_1969 + " : « cotisations n'excédant pas 1.000 F : — 15 % ; cotisations "
+              "comprises entre 1.001 F et 1.500 F : — 12 % [...] 3.501 F et 5.000 F : — 2 % ; "
+              "5.001 F et 6.000 F : 0 » ; l'IPP les fait décroître en ligne droite"},
+    *COMPLEMENTS["minorations_exceptionnelles"],
+]
+#: Le demi-décime de 1962, au-delà d'un revenu par part ; la table de 1968.
+COMPLEMENTS["majorations_exceptionnelles"] = [
+    {"annee": 1962, "monnaie": "FRF", "seuil_revenu_par_part": 8000, "taux_1": 0.05,
+     "origine": "rapport",
+     "texte": "Loi n° 63-628 du 2 juillet 1963 (LFR pour 1963), que le Sénat a rejetée, au texte "
+              "de l'Assemblée nationale que reproduit le " + _R["1962-1963/106"] + ", p. 84 : "
+              "« Les cotisations comprises dans les rôles de l'impôt sur le revenu des personnes "
+              "physiques émis ou à émettre au titre de l'année 1962 sont majorées de 5 % lorsque "
+              "le revenu servant de base à l'imposition est supérieur à 8.000 F par part de "
+              "revenu » ; elle « a rétabli cette imposition au taux réduit de 5 points et pour "
+              "les seuls contribuables dont le revenu dépasse 8.000 F par part » ("
+              + _R["1963-1964/23"] + ", p. 66) ; l'IPP l'applique au revenu entier"},
+    {"annee": 1968, "monnaie": "FRF",
+     "paliers": [[6000, 0.0], [7000, 0.02], [8000, 0.04], [9000, 0.06], [10000, 0.08],
+                 [10500, 0.1], [12000, 0.12], [14000, 0.14]], "taux_au_dela": 0.15,
+     "origine": "rapport",
+     "texte": LOI_POUR_1969 + " : « cotisations comprises entre 6.001 F et 7.000 F : + 2 % [...] "
+              "10.001 F et 10.500 F : + 10 % ; 10.501 F et 12.000 F : + 12 % ; 12.001 F et "
+              "14.000 F : + 14 % ; cotisations supérieures à 14.000 F : + 15 % » ; la note de "
+              "l'IPP les fait aller par paliers de 1 000 F, 10 % jusqu'à 11 000 F"},
+    *COMPLEMENTS["majorations_exceptionnelles"],
+]
+
 #: L'abattement de 10 % des pensions naît des revenus de 1977 : avant, une
 #: pension n'a que les 20 % (voir :func:`_pensions_avant_1977`).
 PREMIERE_ANNEE_ABATTEMENT_DES_PENSIONS = 1977
@@ -1138,10 +1490,12 @@ ENTETE = """\
 # `doctrine` pour une valeur que l'administration publie (documentation de
 # base, Bulletin officiel des impôts) quand aucun des index de la DILA n'a la
 # loi de finances qui la porte, `loi` pour une valeur lue au texte définitif
-# d'une loi de finances que le Sénat a adopté (senat.fr/leg/), quand l'index
-# LEGI n'en garde pas la rédaction d'origine, `rapport` pour une valeur que
-# seul le rapport général de la commission des finances du Sénat chiffre
-# (senat.fr/rap/) : la loi qu'il a rejetée, la table que la loi « maintient ».
+# d'une loi que le Sénat a adopté (senat.fr/leg/), ou à celui de sa première
+# lecture quand les deux assemblées y ont voté l'article dans les mêmes termes,
+# quand l'index LEGI n'en garde pas la rédaction d'origine, `rapport` pour une
+# valeur que seul un rapport de la commission des finances du Sénat chiffre
+# (senat.fr/rap/) : la loi qu'il a rejetée, la table que la loi « maintient »,
+# le décret qu'une loi annonce.
 # Une transcription, non une source productrice : `haute` au plus
 # (data/sources.yaml, `ipp_impot_revenu`).
 #
@@ -1167,16 +1521,18 @@ ENTETE = """\
 #     de la part du premier enfant d'un parent isolé, de la demi-part de qui vit
 #     seul et a eu un enfant (case L, que le dépôt ne calcule pas) ; les
 #     réductions complémentaires de l'invalide et du veuf.
-#   reduction_des_salaires : jusqu'aux revenus de 1971, la réduction d'impôt
-#     des salaires et des pensions (art. 198), `taux` de leur montant net
-#     imposable — le barème de 1969 à 1971 porte autant de points de plus —, et
-#     celle des contribuables âgés, `taux_agees` de leur revenu imposable, au
-#     plus `plafond_agees` ; la plus forte des deux est seule retenue.
+#   reduction_des_salaires : des revenus de 1960 à ceux de 1971, la réduction
+#     d'impôt des salaires et des pensions (art. 198), `taux` de leur montant
+#     net imposable — le barème porte autant de points de plus —, et, de 1969
+#     à 1971, celle des contribuables âgés, `taux_agees` de leur revenu
+#     imposable, au plus `plafond_agees` ; la plus forte des deux est seule
+#     retenue.
 #   decote : son taux et ses seuils, dont le sens a changé six fois (le module
-#     dit lequel vaut à chaque époque) ; de 1969 à 1972, les limites de
+#     dit lequel vaut à chaque époque) ; de 1960 à 1972, les limites de
 #     l'exonération et de la décote de l'article 198 ter, en impôt, pour le
 #     foyer (`franchise`, `limite`) jusqu'à `parts_forfait` parts, par part
-#     au-delà, et celles des contribuables âgés ou invalides (`_majoree`).
+#     au-delà (`_par_part`) — dès la première part, sans `parts_forfait` —, et
+#     celles des contribuables âgés ou invalides (`_majoree`).
 #   reduction_sous_condition_de_revenus : de 2016 à 2019.
 #   recouvrement : le seuil de mise en recouvrement, avant et après crédits.
 #   exoneration : la limite d'exonération, de 1973 à 2013, sous laquelle le
@@ -1193,8 +1549,13 @@ ENTETE = """\
 #   abattement_exceptionnel_* : les deux compléments de 1978.
 #   majorations_exceptionnelles, minorations_exceptionnelles : leurs seuils et
 #     leurs taux, et la note de l'IPP qui dit comment ils s'appliquent ; ou,
-#     dès 1969, leurs `paliers` : la cotisation jusqu'à laquelle chaque taux
-#     vaut, et le `taux_au_dela` des majorations.
+#     dès 1968, leurs `paliers` : la cotisation jusqu'à laquelle chaque
+#     taux vaut, et le `taux_au_dela` des majorations ; les réductions de 1966
+#     et de 1967, par tranche du revenu imposable (`paliers_de_revenu`), sans
+#     limite au-delà de `parts_sans_limite` parts ; le demi-décime de 1962,
+#     au-delà d'un revenu par part (`seuil_revenu_par_part`) ; les `decotes` de
+#     la majoration de 1967 : comprise entre deux montants, elle est réduite de
+#     la différence entre le second et elle.
 #   reduction_exceptionnelle : celle des revenus de 2013.
 #   reduction_proportionnelle : les 5 % retranchés de l'impôt des revenus de
 #     2001, après la décote, avant les crédits d'impôt.

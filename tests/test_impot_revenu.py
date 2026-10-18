@@ -713,12 +713,12 @@ def test_la_limite_d_exoneration_des_revenus_de_1973_a_2013(baremes):
         return impot_du_foyer(Foyer(tuple(Declarant(**d) for d in declarants)), annee, baremes,
                               unite=unite)
     # 1977 : 16 880 F de salaire, 15 192 F nets de 10 % de frais, est exonéré ;
-    # 17 000 F, 15 300 F, paie le barème sur 12 240 F, après 20 % : 5 % de
-    # 350 F, 10 % de 1 500 F et 15 % de 3 140 F.
+    # 17 000 F, 15 300 F, paie le barème sur 12 240 F après 20 %, 12 200 F à la
+    # centaine : 5 % de 350 F, 10 % de 1 500 F et 15 % de 3 100 F.
     exonere = foyer(1977, {"salaires": 16880, "age": 40})
     assert exonere.exonere and exonere.impot == 0 and exonere.impot_avant_credits == 0
     impose = foyer(1977, {"salaires": 17000, "age": 40})
-    assert not impose.exonere and impose.impot == pytest.approx(17.5 + 150 + 471)
+    assert not impose.exonere and impose.impot == pytest.approx(17.5 + 150 + 465)
     # 1977 : 18 400 F de pension, 16 560 F après ses 10 % : sous la limite des
     # plus de 65 ans, au-dessus de l'autre.
     assert foyer(1977, {"pensions": 18400, "age": 70}).exonere
@@ -987,9 +987,10 @@ def test_les_majorations_de_1969_vont_par_paliers(baremes):
     def majoration(revenu):
         return impot_d_un_revenu_imposable(Foyer((Declarant(),)), 1969, revenu, baremes,
                                            unite="monnaie").majoration_exceptionnelle
-    # 32 940 F d'un revenu qui n'est ni salaire ni pension : 4 570 F jusqu'à
-    # 19 100 F, 45 % de 13 840 F, 10 798 F, majorés de 6 %, 647,90 F.
-    assert majoration(32940) == pytest.approx(647.9)
+    # 32 940 F d'un revenu qui n'est ni salaire ni pension, 32 900 F à la
+    # centaine : 4 570 F jusqu'à 19 100 F, 45 % de 13 800 F, 10 780 F, majorés
+    # de 6 %, 646,80 F.
+    assert majoration(32940) == pytest.approx(646.8)
 
 
 def test_le_minimum_des_frais_professionnels_nait_en_1970(baremes):
@@ -1024,3 +1025,211 @@ def test_l_exoneration_des_salaries_de_1972(baremes):
     assert not foyer({"salaires": 7000, "age": 40}, {"pensions": 2600, "age": 66}).exonere
     # 3 000 F de salaire, 1 800 F nets, et 6 000 F de pension : surtout une pension.
     assert not foyer({"salaires": 3000, "age": 40}, {"pensions": 6000, "age": 66}).exonere
+
+
+# -- Les lois de finances pour 1961 à 1969 ------------------------------------------
+#
+# Les règles des revenus de 1960 à 1968, lues aux textes que le Sénat publie
+# (senat.fr/leg/) : la loi n° 59-1472 du 28 décembre 1959, au texte qu'il a
+# adopté en première lecture et qu'il a dit conforme en deuxième ; les lois de
+# finances pour 1961, 1964 et 1967, à leur texte définitif ; celles pour 1965 et
+# 1966, à leur texte de première lecture, que confirment les rapports généraux
+# suivants ; celles qu'il a rejetées — la loi de finances pour 1968, celle pour
+# 1969, les lois de finances rectificatives du 2 juillet 1963 et de 1968 —, au
+# texte voté par l'Assemblée nationale que reproduit le rapport de sa commission
+# des finances.
+
+#: Les barèmes des revenus de 1960 à 1968, pour deux parts : la limite basse de
+#: chaque tranche après la première, et le taux de chaque tranche, en pour cent.
+#: La loi les écrit pour « les contribuables mariés sans enfant à charge » ; la
+#: réduction de 5 % des salaires et des pensions en rend des points.
+TAUX_DES_ANNEES_1960 = (5, 15, 20, 25, 35, 45, 55, 65)
+TRANCHES_DE_1965 = (5000, 9000, 15200, 22500, 36000, 72000, 144000)
+BAREMES_DE_1960_A_1968 = {
+    1960: ((4600, 7500, 13000, 19500, 32500, 64000, 128000), TAUX_DES_ANNEES_1960),
+    1961: ((4600, 8000, 13500, 20000, 32500, 64000, 128000), TAUX_DES_ANNEES_1960),
+    1962: ((4800, 8000, 13500, 20000, 32500, 64000, 128000), TAUX_DES_ANNEES_1960),
+    1963: ((4800, 8000, 13500, 20000, 32500, 64000, 128000), (5, 15, 20, 25, 35, 45, 55, 66.5)),
+    1964: ((4800, 8800, 14700, 21700, 35000, 70000, 140000), TAUX_DES_ANNEES_1960),
+    1965: (TRANCHES_DE_1965, TAUX_DES_ANNEES_1960),
+    1966: (TRANCHES_DE_1965, (5, 15, 20, 25, 35, 45, 60, 70)),
+    1967: (TRANCHES_DE_1965, TAUX_DES_ANNEES_1960),
+    1968: (TRANCHES_DE_1965, TAUX_DES_ANNEES_1960),
+}
+
+
+def test_les_baremes_de_1960_a_1968_sont_ceux_des_lois_de_finances(baremes):
+    """« 5 % à la fraction du revenu qui n'excède pas 4.600 NF [...] 65 % à la
+    fraction supérieure à 128.000 NF », pour les revenus de 1960 ; 8 000,
+    13 500 et 20 000 NF pour ceux de 1961 ; 4 800 NF pour ceux de 1962 (loi n°
+    60-1384, art. 2, I à III) ; 66,5 % au lieu de 65 % pour ceux de 1963 (loi
+    n° 63-1241, art. 2, 1°) ; le barème de la loi n° 64-1279 (art. 2, I), puis
+    9 000 F… 144 000 F pour 1965 (art. 2, III), et 5 000 F (loi n° 65-997, art.
+    2, I) ; celui de 1965 pour 1966 et 1967, à 60 % et 70 % aux deux tranches
+    du haut en 1966 (loi n° 66-935, art. 2, IV) ; « le tarif prévu à l'article
+    197-1 » pour 1968 (loi n° 68-1172, art. 2, I, 1). Le rapport général du
+    Sénat n° 23 (1964-1965, tome II, p. 59) en retrace la suite depuis 1959.
+    L'IPP porte les taux diminués des 5 points de la réduction des salaires et
+    des pensions, et 25 % à la quatrième tranche."""
+    for annee, (limites, taux) in BAREMES_DE_1960_A_1968.items():
+        parametres = baremes.lus(annee)
+        assert [2 * s for s in parametres.seuils] == [0, *limites], annee
+        assert list(parametres.taux) == pytest.approx([t / 100 for t in taux]), annee
+
+
+def test_la_reduction_des_salaires_et_des_pensions_des_annees_1960(baremes):
+    """« Le montant de l'impôt [...] est, en ce qui concerne les bénéficiaires de
+    traitements, salaires et pensions, réduit d'une somme égale à 5 % des
+    sommes effectivement soumises à l'impôt [...] au titre de ces traitements,
+    salaires et pensions » (loi n° 59-1472, art. 12 du texte du Sénat), dès les
+    revenus de 1960 ; le bénéfice d'un indépendant paie le barème entier.
+    « Majoration d'un décime (10 %) [...] aux contribuables ayant un revenu net
+    supérieur à 6.000 F, sans application du quotient familial » (rapport du
+    Sénat n° 106, 1962-1963, p. 84), après la réduction et la décote."""
+    # 1965 : 20 000 F de salaire, 18 000 F après 10 % de frais, 14 400 F après
+    # 20 % : 5 % de 2 500 F, 15 % de 2 000 F, 20 % de 3 100 F, 25 % de 3 650 F,
+    # 35 % de 3 150 F, 3 060 F ; moins 5 % de 14 400 F, 720 F : 2 340 F.
+    salarie = _seul(1965, baremes, salaires=20000, age=40)
+    assert salarie.impot_brut == pytest.approx(3060)
+    assert salarie.reduction_des_salaires == pytest.approx(720)
+    assert salarie.impot == pytest.approx(2340)
+    assert not any("IPP" in r for r in salarie.remarques)
+    # Le bénéfice de 14 400 F d'un artisan : 3 060 F, sans réduction.
+    artisan = _seul(1965, baremes, benefices=14400, age=40)
+    assert artisan.reduction_des_salaires == 0 and artisan.impot == pytest.approx(3060)
+    # 1960 : 10 000 F de salaire, 7 200 F imposables : 5 % de 2 300 F, 15 % de
+    # 1 450 F, 20 % de 2 750 F, 25 % de 700 F, 1 057,50 F ; moins 360 F,
+    # 697,50 F ; plus le décime, 69,75 F, 69,80 F : 767,30 F.
+    en_1960 = _seul(1960, baremes, salaires=10000, age=40)
+    assert en_1960.reduction_des_salaires == pytest.approx(360)
+    assert en_1960.majoration_exceptionnelle == pytest.approx(69.8)
+    assert en_1960.impot == pytest.approx(767.3)
+
+
+def test_la_decote_de_l_article_198_ter_de_1960_a_1968(baremes):
+    """L'impôt qui « n'excède pas 7.000 francs par part entière de revenu »
+    n'est pas perçu ; entre 7 000 et 14 000 francs par part, la décote est « la
+    différence existant entre le chiffre obtenu en multipliant le nombre de
+    parts par 14.000 francs et ledit montant » (loi n° 59-1472, art. 13 du texte
+    du Sénat) : 70 F et 140 F en 1960. Puis 70 F et 210 F par part, la décote
+    étant « la moitié de la différence » (rapport du Sénat n° 23, 1964-1965,
+    tome II, p. 60, qui la dit « à l'heure actuelle ») ; 80 F et 240 F, et
+    120 F pour une part, la décote étant alors « la différence existant entre
+    240 F et ledit montant », dès 1964 (loi n° 64-1279, art. 2, II), 150 F et
+    450 F par part au-delà de 75 ans (art. 4) ; 160 F et 480 F pour une part
+    ou une part et demie en 1965 (loi n° 65-997, art. 2, II), 250 F et 750 F
+    au-delà de 75 ans (art. 3) ; 190 F et 570 F jusqu'à deux parts dès 1966
+    (loi n° 66-935, art. 2, II) ; au-delà de 70 ans dès 1967 (loi n° 67-1114,
+    art. 2)."""
+    def pensions(annee, *declarants, enfants=0):
+        return impot_du_foyer(Foyer(tuple(Declarant(**d) for d in declarants), enfants=enfants),
+                              annee, baremes, unite="monnaie")
+    # 1960 : 4 000 F de pension, 3 200 F imposables : 5 % de 2 300 F, 15 % de
+    # 900 F, 250 F ; moins 160 F, 90 F ; moins 140 F - 90 F : 40 F. À 3 500 F,
+    # 2 800 F : 190 F, moins 140 F, 50 F, sous les 70 F.
+    assert pensions(1960, {"pensions": 4000, "age": 60}).impot == pytest.approx(40)
+    assert pensions(1960, {"pensions": 3500, "age": 60}).impot == 0
+    # 1961 : un couple, 5 000 F et 3 000 F de pension, 6 400 F imposables, 250 F
+    # par part ; 500 F moins 320 F, 180 F ; moins (420 F - 180 F) / 2, 60 F ;
+    # plus le demi-décime d'un revenu de plus de 6 000 F, 3 F.
+    couple = pensions(1961, {"pensions": 5000, "age": 60}, {"pensions": 3000, "age": 60})
+    assert couple.decote == pytest.approx(120) and couple.impot == pytest.approx(63)
+    # 1962 : le même couple, 240 F par part ; 480 F moins 320 F, 160 F ; moins
+    # (420 F - 160 F) / 2 : 30 F, sans le demi-décime, à 3 200 F par part.
+    assert pensions(1962, {"pensions": 5000, "age": 60},
+                    {"pensions": 3000, "age": 60}).impot == pytest.approx(30)
+    # 1964 : 4 875 F de pension, 3 900 F imposables : 5 % de 2 400 F, 15 % de
+    # 1 500 F, 345 F ; moins 195 F, 150 F ; moins 240 F - 150 F : 60 F ; rien
+    # au-delà de 75 ans. Le couple de plus de 75 ans à 9 800 F : 696 F, moins
+    # 392 F, 304 F ; moins (900 F - 304 F) / 2 : 6 F ; sans ses 75 ans, moins
+    # (480 F - 304 F) / 2 : 216 F.
+    assert pensions(1964, {"pensions": 4875, "age": 60}).impot == pytest.approx(60)
+    assert pensions(1964, {"pensions": 4875, "age": 76}).impot == 0
+    assert pensions(1964, {"pensions": 9800, "age": 76}, {"age": 76}).impot == pytest.approx(6)
+    assert pensions(1964, {"pensions": 9800, "age": 60}, {"age": 60}).impot == pytest.approx(216)
+    # 1965 : 6 000 F de pension, 4 800 F imposables : 5 % de 2 500 F, 15 % de
+    # 2 000 F, 20 % de 300 F, 485 F ; moins 240 F, 245 F ; moins (480 F -
+    # 245 F) / 2 : 127,50 F ; rien au-delà de 75 ans (250 F).
+    assert pensions(1965, {"pensions": 6000, "age": 60}).impot == pytest.approx(127.5)
+    assert pensions(1965, {"pensions": 6000, "age": 76}).impot == 0
+    # 1966 : un couple, 10 000 F de pension, 8 000 F imposables : 350 F par
+    # part ; 700 F moins 400 F, 300 F ; moins (570 F - 300 F) / 2, 165 F ;
+    # moins 5 % (voir la minoration) : 156,70 F. À 72 ans seul, 6 000 F de
+    # pension : 245 F, moins (570 F - 245 F) / 2, 82,50 F, moins 4,10 F ; en
+    # 1967, sous les 250 F des plus de 70 ans.
+    couple = pensions(1966, {"pensions": 10000, "age": 60}, {"age": 60})
+    assert couple.decote == pytest.approx(135) and couple.impot == pytest.approx(156.7)
+    assert pensions(1966, {"pensions": 6000, "age": 72}).impot == pytest.approx(78.4)
+    assert pensions(1967, {"pensions": 6000, "age": 72}).impot == 0
+    # Trois parts en 1966 : 80 F et 240 F par part.
+    famille = pensions(1966, {"pensions": 16000, "age": 60}, {"age": 60}, enfants=2)
+    assert famille.parts == 3
+    assert decote(Foyer((Declarant(), Declarant()), enfants=2), baremes.lus(1966), 400, 3) == (
+        pytest.approx((720 - 400) / 2))
+    assert any("1961" in r for r in pensions(1962, {"pensions": 5000, "age": 60},
+                                             {"pensions": 3000, "age": 60}).remarques)
+
+
+def test_les_minorations_et_majorations_de_1960_a_1968(baremes):
+    """1962 : « majorées de 5 % lorsque le revenu servant de base à l'imposition
+    est supérieur à 8.000 F par part de revenu » (loi n° 63-628 du 2 juillet
+    1963, au texte que reproduit le rapport du Sénat n° 106, 1962-1963, p. 84).
+    1966 : la réduction de la loi n° 66-935 (art. 2, I), « 5 % pour les revenus
+    inférieurs à 45.000 F ; 4 % pour les revenus compris entre 45.000 et
+    50.000 F ; 2 % pour les revenus compris entre 50.000 et 55.000 F »
+    (rapport du Sénat n° 168, 1967-1968, p. 102) ; 1967 : « portée à 10 % [...]
+    8 % [...] 5 % », la limite de 55 000 F ne valant pas au-delà de trois parts
+    (loi de finances rectificative pour 1968, art. 1er) ; puis la majoration de
+    10 %, 20 % et 25 % au-delà de 5 000 F, 10 000 F et 20 000 F de cotisation,
+    « sous déduction d'une décote égale à la différence entre 700 F et son
+    montant théorique » quand elle est « comprise entre 500 F et 700 F » (loi
+    n° 68-695, art. 15). 1968 : de - 15 % à + 15 %, par tranches de la
+    cotisation (loi n° 68-1172, art. 2, I, 2), dont + 12 % de 10 501 à
+    12 000 F."""
+    def calcul(annee, revenu, declarants=1, enfants=0):
+        foyer = Foyer(tuple(Declarant() for _ in range(declarants)), enfants=enfants)
+        return impot_d_un_revenu_imposable(foyer, annee, revenu, baremes, unite="monnaie")
+    # 1962 : un couple à 14 000 F, 7 000 F par part : 5 % de 2 400 F, 15 % de
+    # 1 600 F, 20 % de 2 750 F, 25 % de 250 F, 972,50 F par part, 1 945 F, sans
+    # demi-décime ; seul à 9 000 F : 1 472,50 F, plus 73,60 F.
+    assert calcul(1962, 14000, declarants=2).impot == pytest.approx(1945)
+    assert calcul(1962, 9000).impot == pytest.approx(1546.1)
+    # 1966 : seul à 47 000 F, 4 320 F jusqu'à 18 000 F, 45 % de 18 000 F, 60 %
+    # de 11 000 F, 19 020 F ; moins 4 %, 760,80 F : 18 259,20 F.
+    assert calcul(1966, 47000).minoration_exceptionnelle == pytest.approx(760.8)
+    assert calcul(1966, 47000).impot == pytest.approx(18259.2)
+    # 1967 : un couple et trois enfants, 3,5 parts, à 60 000 F : 4 020 F par
+    # part, 14 070 F, moins 5 %, 703,50 F ; avec deux enfants, trois parts,
+    # rien.
+    assert calcul(1967, 60000, declarants=2, enfants=3).minoration_exceptionnelle == (
+        pytest.approx(703.5))
+    assert calcul(1967, 60000, declarants=2, enfants=2).minoration_exceptionnelle == 0
+    # 1967 : seul à 21 730 F, 4 320 F et 45 % de 3 730 F, 5 998,50 F ; moins
+    # 10 %, 599,90 F, 5 398,60 F ; plus 10 %, 539,86 F, sous déduction de
+    # 700 F - 539,86 F : 379,72 F, 379,70 F.
+    majore = calcul(1967, 21730)
+    assert majore.majoration_exceptionnelle == pytest.approx(379.7)
+    assert majore.impot == pytest.approx(5778.3)
+    # 1968 : seul à 32 450 F, 32 400 F à la centaine : 4 320 F et 45 % de
+    # 14 400 F, 10 800 F, plus 12 % : 12 096 F. À 10 650 F, 10 600 F : 125 F,
+    # 300 F, 620 F, 25 % de 3 000 F, 1 795 F, moins 10 % : 1 615,50 F.
+    assert calcul(1968, 32450).impot == pytest.approx(12096)
+    assert calcul(1968, 10650).impot == pytest.approx(1615.5)
+    assert not any("notes de l'IPP" in r for r in calcul(1968, 32450).remarques)
+
+
+def test_le_revenu_imposable_s_arrondit_a_la_centaine_de_1968_a_1979(baremes):
+    """« Pour le calcul des cotisations dues au titre de l'impôt sur le revenu
+    des personnes physiques et de la taxe complémentaire, le revenu imposable
+    est arrondi à la centaine de francs inférieure » (loi n° 68-1172, art. 2,
+    II ; CGI, art. 193, LEGIARTI000006308264), jusqu'à ce que la loi de finances
+    pour 1981 dise « arrondi à la dizaine de francs inférieure » (loi n°
+    80-1094, art. 2, I), « à compter de l'imposition des revenus de l'année
+    1980 » (LEGIARTI000006308266, note) ; à la dizaine avant 1968, le millier
+    d'anciens francs de la rédaction de 1950."""
+    def imposable(annee, revenu):
+        return impot_d_un_revenu_imposable(Foyer((Declarant(),)), annee, revenu, baremes,
+                                           unite="monnaie").revenu_net_imposable
+    assert imposable(1967, 20055) == 20050
+    assert [imposable(annee, 20055) for annee in (1968, 1975, 1979)] == [20000] * 3
+    assert imposable(1980, 20055) == 20050

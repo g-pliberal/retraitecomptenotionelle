@@ -1228,3 +1228,36 @@ exemples:
       6 840 € est celui que la majoration de 11,11 % porte à 7 600 € (760 €
       à l'euro le plus proche).
     attendu: {revenus_d_activite: [12600], prime_pour_l_emploi: 936}
+
+  # -- Avant 1973 : l'exposé des motifs, que cite le rapport général du Sénat -------
+
+  - id: expose_des_motifs_1965_retraites_maries
+    source: >-
+      Projet de loi de finances pour 1965, exposé des motifs de l'article 4, cité
+      par le rapport général du Sénat n° 23 (1964-1965), tome II, p. 65
+    adresse: https://www.senat.fr/rap/1964-1965/i1964_1965_0023_02.pdf
+    annee: 1964
+    foyer: {declarants: [{pensions: 9750, age: 76}, {age: 76}]}
+    citation: >-
+      les bénéficiaires de retraites de l'État, des collectivités publiques, de
+      la Sécurité sociale et de la plupart des caisses privées se trouveront
+      entièrement exonérés de l'impôt sur le revenu lorsque le montant annuel
+      des arrérages perçus n'excèdera pas 9.750 F s'il s'agit de contribuables
+      mariés. Cette limite d'exonération sera de 7.312 F pour les retraités veufs
+      bénéficiant d'une part et demie [...] et de 4.875 F pour les célibataires.
+      (Les contribuables de plus de 75 ans, dont la loi de finances pour 1965,
+      art. 4, porte les limites de l'article 198 ter à 150 F et 450 F par part ;
+      la part et demie du veuf qui a élevé un enfant, que le dépôt ne calcule
+      pas, n'est pas rejouée.)
+    attendu: {impot: 0}
+
+  - id: expose_des_motifs_1965_retraite_celibataire
+    source: >-
+      Projet de loi de finances pour 1965, exposé des motifs de l'article 4, cité
+      par le rapport général du Sénat n° 23 (1964-1965), tome II, p. 66
+    adresse: https://www.senat.fr/rap/1964-1965/i1964_1965_0023_02.pdf
+    annee: 1964
+    foyer: {declarants: [{pensions: 4875, age: 76}]}
+    citation: >-
+      Cette limite d'exonération sera [...] de 4.875 F pour les célibataires.
+    attendu: {impot: 0}
