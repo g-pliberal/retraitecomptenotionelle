@@ -1,0 +1,99 @@
+# Salaire qui valide un trimestre d'assurance outre-mer, en euros
+# ----------------------------------------------------------------
+# source_id: cnav_avts
+#
+# LA RÈGLE. En Guadeloupe, en Guyane, en Martinique et à La Réunion, « les
+# cotisations versées au titre de la législation sur les assurances sociales
+# [...] depuis le 1er janvier 1948 sont prises en compte » : en 1948, autant de
+# trimestres que le salaire annuel représente de fois « 1.800 F métropolitains
+# dans les départements de la Guadeloupe, de la Martinique et de la Guyane, ou
+# 900 F. C. F. A. dans le département de la Réunion » ; depuis 1949, de fois
+# « le montant trimestriel de l'allocation aux vieux travailleurs salariés au
+# 1er janvier de l'année considérée, dans les départements mentionnés à
+# l'article L. 751-1 », quatre au plus (R. 753-21, LEGIARTI000006752616, du
+# 21 décembre 1985 au 1er janvier 2026). Le décret n° 2025-1409 l'abroge, et
+# R. 351-39 le garde, « en ce qui concerne les périodes antérieures au
+# 1er janvier 1952 ». De 1972 à 2013, « le montant du salaire minimum de
+# croissance à retenir est celui qui est en vigueur dans ledit département au
+# 1er janvier de l'année considérée », calculé sur 200 heures, pour l'assuré qui
+# y a exercé son activité « au cours de tout ou partie » de l'année (R. 351-9,
+# toutes ses rédactions depuis 1985). Avant 1948, rien : aucune cotisation
+# d'assurances sociales n'y était versée.
+#
+# D'OÙ VIENNENT CES MONTANTS. Du barème « Salaire validant un trimestre » de la
+# Cnav, colonnes « Guadeloupe, Guyane, Martinique » (antilles_guyane) et
+# « Réunion » (reunion), de 1948 à 1995 (`scripts/fetch/cnav_avts.py`,
+# `bareme_seuil`). Le barème « AVTS - Validation des années de salariat », qui
+# porte la condition d'ouverture de l'allocation (D. 757-2 : l'AVTS entière,
+# puis 800 heures de SMIC), intervertit les deux colonnes de 1975 à 1991 ; les
+# arrêtés et les décrets du SMIC des départements d'outre-mer tranchent pour le
+# premier : La Réunion avait le SMIC le plus bas (392,40 F la semaine de
+# 40 heures au 1er mars 1980, 436,76 F aux Antilles et en Guyane). Le seuil de
+# 1975 aux Antilles et en Guyane est 200 fois l'heure de la semaine de 220,74 F
+# du 1er décembre 1974 ; ceux de 1982, de la semaine de 593,36 F et de 553,64 F
+# du 1er janvier (arrêté du 30 décembre 1981) ; ceux de 1991, de la semaine de
+# 39 heures à 1 048,92 F et 1 012,07 F (décret n° 90-1153), la caisse
+# tronquant au centime ; celui de 1992, de 1 094,37 F dans les quatre
+# départements (décret n° 92-17). De 1952 à 1971, le barème porte aux trois
+# colonnes le seuil de la métropole, et R. 351-39 ne garde R. 753-21 qu'avant
+# 1952. Depuis le 1er janvier 1996, le SMIC des départements d'outre-mer est
+# celui de la métropole, 36,98 F de l'heure (décret n° 95-1312, article 1er) :
+# aucune ligne, le seuil de la métropole (`validation_trimestres.csv`). Les
+# anciens francs sont convertis au centième, le franc CFA de 1948 à deux
+# anciens francs, sa parité depuis le 17 octobre 1948, les francs au taux de
+# 6,55957.
+#
+# NIVEAU. `haute` : la Cnav transcrit ce que les textes ont fixé, et les
+# montants de l'allocation des départements d'outre-mer de 1949 à 1951 ne se
+# lisent qu'au fac-similé du Journal officiel. Le modèle lit cette table dans
+# `donnees/macro.py` (`trimestres_valides`) et son portage dans
+# `moteur/js/macro.js` (action 138, étape 6).
+annee,antilles_guyane,reunion,fiabilite
+1948,2.744082310,2.744082310,haute
+1949,5.716838146,5.716838146,haute
+1950,8.575257220,8.575257220,haute
+1951,12.195921379,12.195921379,haute
+1952,22.791128077,22.791128077,haute
+1953,22.791128077,22.791128077,haute
+1954,25.077863336,25.077863336,haute
+1955,25.077863336,25.077863336,haute
+1956,27.585649669,27.585649669,haute
+1957,27.585649669,27.585649669,haute
+1958,27.585649669,27.585649669,haute
+1959,27.585649669,27.585649669,haute
+1960,27.585649669,27.585649669,haute
+1961,27.585649669,27.585649669,haute
+1962,27.585649669,27.585649669,haute
+1963,30.489803447,30.489803447,haute
+1964,34.301028878,34.301028878,haute
+1965,38.112254309,38.112254309,haute
+1966,43.829092456,43.829092456,haute
+1967,49.545930602,49.545930602,haute
+1968,55.262768749,55.262768749,haute
+1969,59.073994179,59.073994179,haute
+1970,62.885219610,62.885219610,haute
+1971,66.696445041,66.696445041,haute
+1972,100.867892255,82.439855051,haute
+1973,113.292487160,92.428314661,haute
+1974,135.146053781,110.333451735,haute
+1975,168.257980325,137.289486963,haute
+1976,196.483915866,163.333877068,haute
+1977,222.522208011,188.465097560,haute
+1978,250.267929148,216.096481934,haute
+1979,281.619069543,248.049795947,haute
+1980,321.972324405,289.272010208,haute
+1981,368.553121622,337.735552788,haute
+1982,452.285744340,422.009369517,haute
+1983,515.730451844,481.214469851,haute
+1984,578.984598076,540.232057894,haute
+1985,619.325657017,577.874769230,haute
+1986,661.878751199,617.581640260,haute
+1987,678.218236866,638.518988287,haute
+1988,707.581442076,660.229252832,haute
+1989,731.018953986,682.095015374,haute
+1990,760.266297943,695.667551379,haute
+1991,820.033935151,791.225644364,haute
+1992,855.566752089,855.566752089,haute
+1993,928.414514976,928.414514976,haute
+1994,949.147581320,949.147581320,haute
+1995,988.479427767,988.479427767,haute

@@ -1015,3 +1015,31 @@ test("avant 1972, le trimestre se valide au trimestre de l'AVTS", () => {
   assert.deepEqual([437.49, 437.5, 1749, 1750].map((f) => valides(f, 1971)), [0, 1, 3, 4]);
   assert.deepEqual([787, 788].map((f) => valides(f, 1972)), [0, 1]);
 });
+
+/**
+ * Le portage de `test_outre_mer_le_trimestre_se_valide_au_seuil_du_departement`
+ * (tests/test_salaire_annuel_moyen.py) : R. 753-21 et R. 351-9, rien avant 1948,
+ * l'AVTS des départements d'outre-mer de 1949 à 1951, leur SMIC de 1972 à 1995.
+ */
+test("outre-mer, le trimestre se valide au seuil du département", () => {
+  const macro = new DonneesMacro(paquet);
+  const valides = (francs, annee, departement) =>
+    macro.trimestresValides(francs / 6.55957, annee, departement);
+  assert.equal(valides(1000, 1947, "martinique"), 0);
+  assert.equal(valides(1000, 1940, "reunion"), 0);
+  assert.deepEqual([17.99, 18].map((f) => valides(f, 1948, "guadeloupe")), [0, 1]);
+  assert.deepEqual([17.99, 18, 72].map((f) => valides(f, 1948, "reunion")), [0, 1, 4]);
+  assert.deepEqual([37.49, 37.5, 150].map((f) => valides(f, 1949, "guyane")), [0, 1, 4]);
+  assert.equal(valides(37.5, 1949), 0);
+  assert.deepEqual([56.24, 56.25].map((f) => valides(f, 1950, "martinique")), [0, 1]);
+  assert.deepEqual([79.99, 80].map((f) => valides(f, 1951, "reunion")), [0, 1]);
+  assert.deepEqual([149.49, 149.5].map((f) => valides(f, 1952, "martinique")), [0, 1]);
+  assert.deepEqual([1103.69, 1103.7].map((f) => valides(f, 1975, "guadeloupe")), [0, 1]);
+  assert.deepEqual([2966.79, 2966.8].map((f) => valides(f, 1982, "martinique")), [0, 1]);
+  assert.deepEqual([2768.19, 2768.2].map((f) => valides(f, 1982, "reunion")), [0, 1]);
+  assert.equal(valides(2966.8, 1982), 0);
+  assert.deepEqual([5379.06, 5379.08].map((f) => valides(f, 1991, "guyane")), [0, 1]);
+  assert.deepEqual([5190.09, 5190.11].map((f) => valides(f, 1991, "reunion")), [0, 1]);
+  assert.deepEqual([5612.14, 5612.16].map((f) => valides(f, 1992, "reunion")), [0, 1]);
+  assert.deepEqual([6484, 7396.01].map((f) => valides(f, 1996, "reunion")), [0, 1]);
+});

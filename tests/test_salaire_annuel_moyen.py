@@ -214,3 +214,50 @@ def test_avant_1972_le_trimestre_se_valide_au_trimestre_de_l_avts(simulateur):
         0, 1, 3, 4]
     # 1972 : 200 heures du SMIC de janvier, 3,94 F, la règle d'avant inchangée.
     assert [valides(francs(f), 1972) for f in (787.0, 788.0)] == [0, 1]
+
+
+def test_outre_mer_le_trimestre_se_valide_au_seuil_du_departement(simulateur):
+    """R. 753-21 et R. 351-9 (action 138, étape 6) : en Guadeloupe, en Guyane,
+    en Martinique et à La Réunion, les cotisations comptent « depuis le
+    1er janvier 1948 » ; en 1948, autant de trimestres que le salaire représente
+    de fois « 1.800 F métropolitains », ou « 900 F. C. F. A. » à La Réunion ;
+    depuis 1949, le trimestre de l'allocation aux vieux travailleurs salariés au
+    1er janvier « dans les départements mentionnés à l'article L. 751-1 », que
+    R. 351-39 ne garde qu'avant 1952 — 3 750, 5 625 et 8 000 anciens francs de
+    1949 à 1951 au barème de la Cnav, le seul qui les écrive ; de 1972 à 2013,
+    200 heures du SMIC « en vigueur dans ledit département au 1er janvier ».
+    Les SMIC viennent du Journal officiel : la semaine de 40 heures à 220,74 F
+    aux Antilles et en Guyane au 1er décembre 1974 (arrêté du 29 novembre 1974),
+    à 593,36 F et 553,64 F au 1er janvier 1982 (arrêté du 30 décembre 1981) ; la
+    semaine de 39 heures à 1 048,92 F et 1 012,07 F au 1er janvier 1991 (décret
+    n° 90-1153), à 1 094,37 F dans les quatre départements en 1992 (décret
+    n° 92-17) ; 36,98 F de l'heure, celui de la métropole, au 1er janvier 1996
+    (décret n° 95-1312)."""
+    valides = simulateur.macro.trimestres_valides
+
+    def francs(montant: float) -> float:
+        return montant / 6.55957
+
+    # Avant 1948, aucune cotisation d'assurances sociales outre-mer.
+    assert valides(francs(1_000.0), 1947, "martinique") == 0
+    assert valides(francs(1_000.0), 1940, "reunion") == 0
+    assert [valides(francs(f), 1948, "guadeloupe") for f in (17.99, 18.0)] == [0, 1]
+    assert [valides(francs(f), 1948, "reunion") for f in (17.99, 18.0, 72.0)] == [0, 1, 4]
+    # De 1949 à 1951, l'allocation des départements d'outre-mer, plus basse.
+    assert [valides(francs(f), 1949, "guyane") for f in (37.49, 37.50, 150.0)] == [0, 1, 4]
+    assert valides(francs(37.50), 1949) == 0
+    assert [valides(francs(f), 1950, "martinique") for f in (56.24, 56.25)] == [0, 1]
+    assert [valides(francs(f), 1951, "reunion") for f in (79.99, 80.0)] == [0, 1]
+    # En 1952, celle de la métropole.
+    assert [valides(francs(f), 1952, "martinique") for f in (149.49, 149.50)] == [0, 1]
+    # De 1972 à 1995, le SMIC du département, plus bas à La Réunion.
+    assert [valides(francs(f), 1975, "guadeloupe") for f in (1_103.69, 1_103.70)] == [0, 1]
+    assert [valides(francs(f), 1982, "martinique") for f in (2_966.79, 2_966.80)] == [0, 1]
+    assert [valides(francs(f), 1982, "reunion") for f in (2_768.19, 2_768.20)] == [0, 1]
+    assert valides(francs(2_966.80), 1982) == 0
+    assert [valides(francs(f), 1991, "guyane") for f in (5_379.06, 5_379.08)] == [0, 1]
+    assert [valides(francs(f), 1991, "reunion") for f in (5_190.09, 5_190.11)] == [0, 1]
+    assert [valides(francs(f), 1992, "reunion") for f in (5_612.14, 5_612.16)] == [0, 1]
+    # Depuis 1996, le SMIC de la métropole : 6 484 F, le seuil de 1995, ne
+    # valident plus rien.
+    assert [valides(francs(f), 1996, "reunion") for f in (6_484.0, 7_396.01)] == [0, 1]

@@ -1508,6 +1508,28 @@
    "valeurs": 77,
    "verifiee_le": "2026-10-06"
   },
+  "salaire_validant_outre_mer_antilles_guyane_cnav": {
+   "ajoutees": 0,
+   "colonne": "antilles_guyane",
+   "corrigees": 0,
+   "empreinte": "fcd925c12cff0427",
+   "identiques": 48,
+   "niveau": "haute",
+   "source": "Cnav, barème « Salaire validant un trimestre », colonne « Guadeloupe, Guyane, Martinique »",
+   "valeurs": 48,
+   "verifiee_le": "2026-10-18"
+  },
+  "salaire_validant_outre_mer_reunion_cnav": {
+   "ajoutees": 0,
+   "colonne": "reunion",
+   "corrigees": 0,
+   "empreinte": "195938f896e191fc",
+   "identiques": 48,
+   "niveau": "haute",
+   "source": "Cnav, barème « Salaire validant un trimestre », colonne « Réunion »",
+   "valeurs": 48,
+   "verifiee_le": "2026-10-18"
+  },
   "salaire_validant_trimestre_cnav": {
    "ajoutees": 0,
    "colonne": "valeur",

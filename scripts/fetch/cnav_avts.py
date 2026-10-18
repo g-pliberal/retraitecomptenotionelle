@@ -115,6 +115,35 @@ REPERES_EN_FRANCS = {
     "as_seul|1990-07-01": 20_180.0,
 }
 
+#: Le SMIC des départements d'outre-mer, que le Journal officiel écrit à la
+#: semaine, en francs, avec ses heures : le barème des seuils doit en redonner,
+#: au centime d'euro près, 200 heures au 1er janvier (R. 351-9), ce qui dit
+#: aussi laquelle de ses deux colonnes est La Réunion :
+#: - l'arrêté du 29 novembre 1974 (JORFTEXT000000857163) : « 220,74 FRS PAR
+#:   SEMAINE » aux Antilles et en Guyane « A COMPTER DU 01-12-1974 » ;
+#: - l'arrêté du 30 décembre 1981 (JORFTEXT000000463090), « A COMPTER DU
+#:   01-01-1982 » : « 593,36 FRS PAR SEMAINE POUR 40 HEURES » aux Antilles et en
+#:   Guyane, « 553,64 FRS » à La Réunion ;
+#: - le décret n° 90-1153, article 1er (JORFARTI000001313610), « A compter du
+#:   1er janvier 1991 » : 1048,92 F et 1012,07 F « par semaine pour trente-neuf
+#:   heures » ;
+#: - le décret n° 92-17, article 1er (JORFARTI000001512356) : « 1094,37 F par
+#:   semaine pour trente neuf heures » dans les quatre départements, au
+#:   1er janvier 1992.
+SMIC_OUTRE_MER_EN_FRANCS = {
+    (1975, "antilles_guyane"): (220.74, 40),
+    (1982, "antilles_guyane"): (593.36, 40),
+    (1982, "reunion"): (553.64, 40),
+    (1991, "antilles_guyane"): (1_048.92, 39),
+    (1991, "reunion"): (1_012.07, 39),
+    (1992, "antilles_guyane"): (1_094.37, 39),
+    (1992, "reunion"): (1_094.37, 39),
+}
+#: Depuis le 1er janvier 1996, le SMIC des départements d'outre-mer est celui
+#: de la métropole (décret n° 95-1312, article 1er, JORFARTI000001402023) : le
+#: barème n'a plus de colonne pour eux.
+ANNEE_SMIC_OUTRE_MER_ALIGNE = 1996
+
 #: L'ancre certifiée de 2006 du minimum vieillesse d'une personne seule, lue
 #: dans D. 815-1 (``dila_legi_minimum_vieillesse.py``) : la somme des deux
 #: étages au 1er janvier 2006 doit la redonner au centime.
@@ -309,6 +338,17 @@ def controler(series: dict[str, list[dict]],
             erreurs.append(f"seuil {annee} : le barème porte {publie['metropole']:.2f} €, "
                            f"{nombre:.0f} SMIC horaires du dépôt font "
                            f"{nombre * smic[annee]:.2f} €")
+    for (annee, zone), (semaine, heures_semaine) in SMIC_OUTRE_MER_EN_FRANCS.items():
+        attendu = 200 * semaine / heures_semaine / FRANCS_PAR_EURO
+        publie = (bareme.get(annee) or {}).get(zone)
+        if publie is None or abs(publie - attendu) > 0.01:
+            erreurs.append(f"seuil {annee} {zone} : 200 heures du SMIC du Journal "
+                           f"officiel font {attendu:.2f} €, le barème porte {publie}")
+    for annee, publie in sorted(bareme.items()):
+        if annee >= ANNEE_SMIC_OUTRE_MER_ALIGNE and (publie["antilles_guyane"]
+                                                     or publie["reunion"]):
+            erreurs.append(f"seuil {annee} : le barème porte un seuil outre-mer, "
+                           "quand le SMIC y est celui de la métropole")
     return erreurs, ecarts
 
 
@@ -362,7 +402,9 @@ def main(argv: list[str] | None = None) -> int:
         # 1962, doit le valider, et six décimales d'euro arrondies au-dessus
         # l'en empêchaient.
         "seuil_trimestre": {str(a): round(v, 9) for a, v in sorted(seuils.items())},
-        "bareme_seuil": {str(a): {zone: None if v is None else round(v, 6)
+        # Neuf décimales aussi : les colonnes de l'outre-mer font
+        # `salaire_validant_trimestre_outre_mer.csv`.
+        "bareme_seuil": {str(a): {zone: None if v is None else round(v, 9)
                                   for zone, v in valeurs.items()}
                          for a, valeurs in sorted(bareme.items())},
         "ecarts": ecarts,

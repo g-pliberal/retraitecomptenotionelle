@@ -4043,6 +4043,27 @@ def source_salaire_validant_trimestre_journal_officiel() -> dict[tuple, float]:
     return {(annee,): valeur for annee, valeur in sorted(serie.items())}
 
 
+def _seuil_outre_mer_cnav(colonne: str) -> dict[tuple, float]:
+    """Une colonne de l'outre-mer du barème des seuils de la Cnav, de 1948 à 1995."""
+    bareme = _lire_json("cnav_avts.json", "scripts/fetch/cnav_avts.py")["bareme_seuil"]
+    return {(annee,): ligne[colonne] for annee, ligne in sorted(bareme.items())
+            if ligne[colonne] is not None}
+
+
+def source_salaire_validant_outre_mer_antilles_guyane_cnav() -> dict[tuple, float]:
+    """Le salaire qui valide un trimestre en Guadeloupe, en Guyane et en
+    Martinique (R. 753-21, puis le SMIC du département de R. 351-9), par la
+    Cnav ; le récupérateur a vérifié qu'il redonne au centime les SMIC que le
+    Journal officiel écrit. Transcription de la caisse : niveau ``haute``.
+    """
+    return _seuil_outre_mer_cnav("antilles_guyane")
+
+
+def source_salaire_validant_outre_mer_reunion_cnav() -> dict[tuple, float]:
+    """Le même seuil, à La Réunion. Niveau ``haute``."""
+    return _seuil_outre_mer_cnav("reunion")
+
+
 def _annees_relues_au_journal_officiel() -> set[tuple]:
     """Les années du minimum vieillesse d'avant l'ASPA dont toute la ligne est
     relue au Journal officiel ; aucune si le certificateur n'a pas tourné."""
@@ -7985,6 +8006,31 @@ CERTIFICATIONS = (
         decimales=9,
         tolerance=5e-3,
         unite=" €",
+    ),
+    Certification(
+        nom="salaire_validant_outre_mer_antilles_guyane_cnav",
+        chemin=REFERENCE / "legislation" / "salaire_validant_trimestre_outre_mer.csv",
+        cles=("annee",),
+        colonne="antilles_guyane",
+        source=source_salaire_validant_outre_mer_antilles_guyane_cnav,
+        origine="Cnav, barème « Salaire validant un trimestre », colonne "
+                "« Guadeloupe, Guyane, Martinique »",
+        decimales=9,
+        tolerance=5e-3,
+        unite=" €",
+        niveau="haute",
+    ),
+    Certification(
+        nom="salaire_validant_outre_mer_reunion_cnav",
+        chemin=REFERENCE / "legislation" / "salaire_validant_trimestre_outre_mer.csv",
+        cles=("annee",),
+        colonne="reunion",
+        source=source_salaire_validant_outre_mer_reunion_cnav,
+        origine="Cnav, barème « Salaire validant un trimestre », colonne « Réunion »",
+        decimales=9,
+        tolerance=5e-3,
+        unite=" €",
+        niveau="haute",
     ),
     Certification(
         nom="avts_cnav",

@@ -33,6 +33,13 @@ HEURES_AVPF_PAR_MOIS = 169
 #: qui prolonge ``smic_annuel.csv`` au-delà de la dernière année publiée.
 HEURES_ANNUELLES_SMIC = 35 * 52
 
+#: Les départements d'outre-mer, chacun avec la colonne de son seuil au barème
+#: de la Cnav (``legislation/salaire_validant_trimestre_outre_mer.csv``) : la
+#: Guadeloupe, la Guyane et la Martinique en partagent une, La Réunion a la
+#: sienne, son SMIC ayant été le plus bas jusqu'en 1991.
+DEPARTEMENTS_D_OUTRE_MER = {"guadeloupe": "antilles_guyane", "guyane": "antilles_guyane",
+                            "martinique": "antilles_guyane", "reunion": "reunion"}
+
 
 def lire_smic_releve(racine: Path, annee: int) -> tuple[int, float] | None:
     """Le dernier relèvement du SMIC en cours d'``annee``, lu sur le fichier."""
@@ -49,6 +56,18 @@ def lire_smic_releve(racine: Path, annee: int) -> tuple[int, float] | None:
             if an == annee and mois > 1 and (dernier is None or mois >= dernier[0]):
                 dernier = (mois, float(ligne["smic_horaire"]))
     return dernier
+
+
+def _trimestres_au_seuil(revenu: float, seuil: float) -> int:
+    """Les trimestres qu'un revenu valide au seuil d'un trimestre, quatre au plus."""
+    if seuil <= 0:
+        return 4
+    # UN REVENU QUI TOMBE PILE SUR LE SEUIL LE VALIDE. L'assiette minimale
+    # des indépendants vaut 450 SMIC horaires, trois seuils exactement ;
+    # mais 450 × 11,88 / (150 × 11,88) donne 2,999… en virgule flottante,
+    # et la division entière rendait deux trimestres en 2025 là où la
+    # CNAVPL et la CAVAMAC en écrivent trois.
+    return max(0, min(4, int(revenu / seuil + 1e-9)))
 
 
 @dataclass
@@ -435,7 +454,20 @@ class DonneesMacro:
             nom="salaire_validant_avant_1972",
         )
 
-    def trimestres_valides(self, revenu: float, annee: int) -> int:
+    @cached_property
+    def salaire_validant_outre_mer(self) -> dict[str, SerieAnnuelle]:
+        """Le salaire qui valide un trimestre outre-mer de 1948 à 1995, en euros,
+        par colonne du barème de la Cnav : R. 753-21 jusqu'en 1971, puis 200
+        heures du SMIC du département au 1er janvier (R. 351-9)
+        (``legislation/salaire_validant_trimestre_outre_mer.csv``).
+        """
+        chemin = (self.racine / "reference" / "legislation"
+                  / "salaire_validant_trimestre_outre_mer.csv")
+        return {colonne: charger_serie_annuelle(chemin, colonne_valeur=colonne,
+                                                nom=f"salaire_validant_outre_mer_{colonne}")
+                for colonne in sorted(set(DEPARTEMENTS_D_OUTRE_MER.values()))}
+
+    def trimestres_valides(self, revenu: float, annee: int, outre_mer: str = "") -> int:
         """Trimestres qu'un revenu d'activité valide dans l'année.
 
         Quatre au plus, et zéro si le revenu n'atteint pas le seuil du premier :
@@ -443,9 +475,26 @@ class DonneesMacro:
         salaire que R. 351-9 fixe, 18 F puis le trimestre de l'allocation aux
         vieux travailleurs salariés. Avant 1946, la règle se lit sur la retenue
         et non sur le salaire, et une année travaillée vaut quatre trimestres.
+
+        ``outre_mer``, le département où l'assuré a travaillé dans l'année (une
+        clef de :data:`DEPARTEMENTS_D_OUTRE_MER`), lui donne son seuil : aucun
+        trimestre avant 1948, puis :attr:`salaire_validant_outre_mer` jusqu'en
+        1995 ; depuis 1996, le SMIC y est celui de la métropole.
         """
         if revenu <= 0:
             return 0
+        if outre_mer:
+            # L'OUTRE-MER. Le modèle validait les années travaillées outre-mer
+            # au seuil de la métropole : R. 753-21 et R. 351-9 leur donnent le
+            # leur, plus bas de 1949 à 1951 et de 1972 à 1995, et rien n'y
+            # comptait avant 1948 (action 138, étape 6).
+            if outre_mer not in DEPARTEMENTS_D_OUTRE_MER:
+                raise ValueError(f"département d'outre-mer inconnu : {outre_mer!r}")
+            serie = self.salaire_validant_outre_mer[DEPARTEMENTS_D_OUTRE_MER[outre_mer]]
+            if annee < serie.premiere_annee:
+                return 0
+            if annee <= serie.derniere_annee:
+                return _trimestres_au_seuil(revenu, serie(annee))
         heures = self.heures_par_trimestre
         if annee < heures.premiere_annee:
             # LE SEUIL D'AVANT 1972. Le modèle validait quatre trimestres à toute
@@ -457,14 +506,7 @@ class DonneesMacro:
             seuil = anciens(annee)
         else:
             seuil = heures(annee) * self.smic_horaire(annee)
-        if seuil <= 0:
-            return 4
-        # UN REVENU QUI TOMBE PILE SUR LE SEUIL LE VALIDE. L'assiette minimale
-        # des indépendants vaut 450 SMIC horaires, trois seuils exactement ;
-        # mais 450 × 11,88 / (150 × 11,88) donne 2,999… en virgule flottante,
-        # et la division entière rendait deux trimestres en 2025 là où la
-        # CNAVPL et la CAVAMAC en écrivent trois.
-        return max(0, min(4, int(revenu / seuil + 1e-9)))
+        return _trimestres_au_seuil(revenu, seuil)
 
     @cached_property
     def plafond_securite_sociale(self) -> SerieAnnuelle:

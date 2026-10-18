@@ -31,6 +31,29 @@ export const HEURES_AVPF_PAR_MOIS = 169;
  */
 export const HEURES_ANNUELLES_SMIC = 35 * 52;
 
+/**
+ * Les départements d'outre-mer, chacun avec la colonne de son seuil au barème
+ * de la Cnav : la Guadeloupe, la Guyane et la Martinique en partagent une, La
+ * Réunion a la sienne. Voir le Python.
+ */
+export const DEPARTEMENTS_D_OUTRE_MER = Object.freeze({
+  guadeloupe: "antilles_guyane", guyane: "antilles_guyane",
+  martinique: "antilles_guyane", reunion: "reunion",
+});
+
+/**
+ * Les trimestres qu'un revenu valide au seuil d'un trimestre, quatre au plus.
+ * Un revenu qui tombe pile sur le seuil le valide : 450 SMIC horaires font
+ * trois seuils, mais 450 × 11,88 / (150 × 11,88) vaut 2,999… en virgule
+ * flottante, et l'arrondi rendait deux trimestres en 2025.
+ */
+function trimestresAuSeuil(revenu, seuil) {
+  if (seuil <= 0) {
+    return 4;
+  }
+  return Math.max(0, Math.min(4, Math.floor(revenu / seuil + 1e-9)));
+}
+
 export class DonneesMacro {
   constructor(paquet, scenarioProjection = null, trajectoireEmploi = null) {
     this.paquet = paquet;
@@ -105,6 +128,15 @@ export class DonneesMacro {
      * travailleurs salariés au 1er janvier.
      */
     this.salaire_validant_avant_1972 = serie("salaire_validant_avant_1972");
+    /**
+     * Le même seuil outre-mer, de 1948 à 1995, par colonne du barème de la Cnav
+     * (R. 753-21, puis le SMIC du département) ; un paquet qui ne les porte pas
+     * encore laisse l'outre-mer au seuil de la métropole.
+     */
+    this.salaire_validant_outre_mer = Object.fromEntries(
+      [...new Set(Object.values(DEPARTEMENTS_D_OUTRE_MER))]
+        .filter((colonne) => `salaire_validant_outre_mer_${colonne}` in paquet.series)
+        .map((colonne) => [colonne, serie(`salaire_validant_outre_mer_${colonne}`)]));
     /**
      * L'assiette forfaitaire MENSUELLE de l'AVPF à chaque date du barème de la
      * Cnav, `[[AAAA-MM-JJ, euros], …]`, du 1er juillet 1972 au dernier publié.
@@ -245,10 +277,30 @@ export class DonneesMacro {
    * salaire que R. 351-9 fixe, 18 F puis le trimestre de l'allocation aux
    * vieux travailleurs salariés. Avant 1946, la règle se lit sur la retenue et
    * non sur le salaire, et une année travaillée vaut quatre trimestres.
+   *
+   * `outreMer`, le département où l'assuré a travaillé dans l'année (une clef
+   * de `DEPARTEMENTS_D_OUTRE_MER`), lui donne son seuil : aucun trimestre avant
+   * 1948, puis `salaire_validant_outre_mer` jusqu'en 1995 ; depuis 1996, le
+   * SMIC y est celui de la métropole.
    */
-  trimestresValides(revenu, annee) {
+  trimestresValides(revenu, annee, outreMer = "") {
     if (revenu <= 0) {
       return 0;
+    }
+    if (outreMer) {
+      // L'outre-mer : R. 753-21 et R. 351-9 donnent aux années travaillées
+      // outre-mer leur seuil, plus bas de 1949 à 1951 et de 1972 à 1995, et rien
+      // n'y comptait avant 1948 (action 138, étape 6).
+      if (!Object.hasOwn(DEPARTEMENTS_D_OUTRE_MER, outreMer)) {
+        throw new Error(`département d'outre-mer inconnu : ${outreMer}`);
+      }
+      const serie = this.salaire_validant_outre_mer[DEPARTEMENTS_D_OUTRE_MER[outreMer]];
+      if (serie !== undefined && annee < serie.premiereAnnee) {
+        return 0;
+      }
+      if (serie !== undefined && annee <= serie.derniereAnnee) {
+        return trimestresAuSeuil(revenu, serie.valeur(annee));
+      }
     }
     let seuil;
     if (annee < this.heures_par_trimestre.premiereAnnee) {
@@ -262,13 +314,7 @@ export class DonneesMacro {
     } else {
       seuil = this.heures_par_trimestre.valeur(annee) * this.smic_horaire.valeur(annee);
     }
-    if (seuil <= 0) {
-      return 4;
-    }
-    // Un revenu qui tombe pile sur le seuil le valide : 450 SMIC horaires font
-    // trois seuils, mais 450 × 11,88 / (150 × 11,88) vaut 2,999… en virgule
-    // flottante, et l'arrondi rendait deux trimestres en 2025.
-    return Math.max(0, Math.min(4, Math.floor(revenu / seuil + 1e-9)));
+    return trimestresAuSeuil(revenu, seuil);
   }
 
   /**

@@ -53,7 +53,8 @@ from retraite_notionnelle.donnees.chargement import (  # noqa: E402
     journal_certification,
 )
 from retraite_notionnelle.donnees.depenses import CATEGORIES_DROITS, SYSTEMES  # noqa: E402
-from retraite_notionnelle.donnees.macro import lire_smic_releve  # noqa: E402
+from retraite_notionnelle.donnees.macro import (  # noqa: E402
+    DEPARTEMENTS_D_OUTRE_MER, lire_smic_releve)
 from retraite_notionnelle.donnees.equilibre import (  # noqa: E402
     POSTES,
     POSTES_TRANSFERTS,
@@ -187,6 +188,13 @@ def _series() -> dict:
             DONNEES / "reference" / "legislation"
             / "salaire_validant_trimestre_avant_1972.csv",
             "valeur", nom="salaire_validant_avant_1972"),
+        # Le même seuil outre-mer, de 1948 à 1995, une série par colonne du
+        # barème de la Cnav (R. 753-21, puis le SMIC du département).
+        **{f"salaire_validant_outre_mer_{colonne}": charger_serie_annuelle(
+               DONNEES / "reference" / "legislation"
+               / "salaire_validant_trimestre_outre_mer.csv",
+               colonne, nom=f"salaire_validant_outre_mer_{colonne}")
+           for colonne in sorted(set(DEPARTEMENTS_D_OUTRE_MER.values()))},
     }
     for sexe in ("H", "F"):
         for mesure in ("e60", "e65"):

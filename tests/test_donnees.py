@@ -524,6 +524,12 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # Cnav date texte par texte (action 138, étape 6).
         "salaire_validant_trimestre_cnav":
             "legislation/salaire_validant_trimestre_avant_1972.csv",
+        # Le même seuil outre-mer, de 1948 à 1995, colonne par colonne
+        # (action 138, étape 6).
+        "salaire_validant_outre_mer_antilles_guyane_cnav":
+            "legislation/salaire_validant_trimestre_outre_mer.csv",
+        "salaire_validant_outre_mer_reunion_cnav":
+            "legislation/salaire_validant_trimestre_outre_mer.csv",
         # Le minimum vieillesse d'avant l'ASPA, ses deux étages et leur
         # plafond, colonne par colonne (action 138, étape 6).
         "avts_cnav": "legislation/minimum_vieillesse_avant_2007.csv",

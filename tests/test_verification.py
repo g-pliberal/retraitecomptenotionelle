@@ -1536,32 +1536,49 @@ def test_le_seuil_d_avant_1972_est_le_trimestre_de_l_avts_du_1er_janvier():
         assert seuils[annee] == pytest.approx(_francs(francs)), annee
 
 
+def _ligne_avts(date: str, francs: float) -> dict:
+    return {"date": date, "montant": _francs(francs), "reference": ""}
+
+
+def _series_avts() -> dict[str, list[dict]]:
+    """Des séries datées que le récupérateur accepte : les montants que les
+    textes écrivent à leur date, et l'ancre de 2006 de D. 815-1."""
+    return {
+        "avts": [_ligne_avts("1948-10-01", 340.0), _ligne_avts("1956-01-01", 723.80),
+                 _ligne_avts("1962-04-01", 800.0), _ligne_avts("1970-10-01", 1_750.0),
+                 _ligne_avts("1981-01-01", 8_500.0), _ligne_avts("1990-01-01", 14_800.0),
+                 _ligne_avts("1990-07-01", 14_990.0),
+                 {"date": "2006-01-01", "montant": 3_009.45, "reference": ""}],
+        "as_seul": [_ligne_avts("1981-01-01", 8_500.0), _ligne_avts("1990-01-01", 19_920.0),
+                    _ligne_avts("1990-07-01", 20_180.0),
+                    {"date": "2006-01-01", "montant": 4_314.03, "reference": ""}],
+        "as_couple": [_ligne_avts("1990-01-01", 39_840.0)],
+        "plafond_seul": [_ligne_avts("1990-01-01", 35_620.0)],
+        "plafond_couple": [_ligne_avts("1990-01-01", 62_300.0)],
+    }
+
+
+#: Les seuils de l'outre-mer du barème de la Cnav aux années où le Journal
+#: officiel écrit le SMIC de chaque département ; la métropole n'y est pas
+#: contrôlée, ces années n'ayant pas de SMIC dans le dépôt du test.
+_SEUILS_OUTRE_MER = {
+    annee: {"metropole": None, "antilles_guyane": _francs(antilles), "reunion": _francs(reunion)}
+    for annee, antilles, reunion in ((1975, 1_103.70, 900.56), (1982, 2_966.80, 2_768.20),
+                                     (1991, 5_379.07, 5_190.10), (1992, 5_612.15, 5_612.15))
+}
+
+
 def test_le_bareme_des_seuils_est_refuse_s_il_contredit_r_351_9():
     """Le barème des seuils doit redonner au centime le quart de l'AVTS de
     chaque 1er janvier de 1949 à 1971, et les montants que le Journal officiel
     écrit se retrouver à leur date : sinon, rien ne s'écrit. Les 216 anciens
     francs de 1946, où R. 351-9 en écrit 1 800, sont un écart déclaré."""
     module = _avts_cnav()
-
-    def ligne(date, francs):
-        return {"date": date, "montant": _francs(francs), "reference": ""}
-
-    series = {
-        "avts": [ligne("1948-10-01", 340.0), ligne("1956-01-01", 723.80),
-                 ligne("1962-04-01", 800.0), ligne("1970-10-01", 1_750.0),
-                 ligne("1981-01-01", 8_500.0), ligne("1990-01-01", 14_800.0),
-                 ligne("1990-07-01", 14_990.0),
-                 {"date": "2006-01-01", "montant": 3_009.45, "reference": ""}],
-        "as_seul": [ligne("1981-01-01", 8_500.0), ligne("1990-01-01", 19_920.0),
-                    ligne("1990-07-01", 20_180.0),
-                    {"date": "2006-01-01", "montant": 4_314.03, "reference": ""}],
-        "as_couple": [ligne("1990-01-01", 39_840.0)],
-        "plafond_seul": [ligne("1990-01-01", 35_620.0)],
-        "plafond_couple": [ligne("1990-01-01", 62_300.0)],
-    }
+    series = _series_avts()
     seuils = module.seuil_trimestre(series["avts"])
     bareme = {annee: {"metropole": valeur, "antilles_guyane": None, "reunion": None}
               for annee, valeur in seuils.items()}
+    bareme.update(_SEUILS_OUTRE_MER)
     bareme[1946]["metropole"] = _francs(2.16)
     erreurs, ecarts = module.controler(series, bareme)
     assert erreurs == []
@@ -1569,9 +1586,33 @@ def test_le_bareme_des_seuils_est_refuse_s_il_contredit_r_351_9():
     bareme[1962]["metropole"] = _francs(200.0)
     erreurs, _ = module.controler(series, bareme)
     assert any(e.startswith("seuil 1962 :") for e in erreurs), erreurs
-    series["avts"][4] = ligne("1981-01-01", 8_400.0)
+    series["avts"][4] = _ligne_avts("1981-01-01", 8_400.0)
     erreurs, _ = module.controler(series, bareme)
     assert any(e.startswith("avts|1981-01-01 : attendu") for e in erreurs), erreurs
+
+
+def test_le_bareme_des_seuils_est_refuse_s_il_intervertit_l_outre_mer():
+    """Les colonnes de l'outre-mer doivent redonner, au centime d'euro, 200 heures
+    du SMIC que le Journal officiel écrit pour chaque département au 1er janvier
+    (R. 351-9) : le barème « AVTS - Validation des années de salariat », qui
+    intervertit les Antilles et La Réunion de 1975 à 1991, serait refusé. Depuis
+    1996, le SMIC y est celui de la métropole (décret n° 95-1312) : un seuil
+    outre-mer s'y refuse aussi."""
+    module = _avts_cnav()
+    series = _series_avts()
+    bareme = {annee: {"metropole": valeur, "antilles_guyane": None, "reunion": None}
+              for annee, valeur in module.seuil_trimestre(series["avts"]).items()}
+    bareme[1946]["metropole"] = _francs(18.0)
+    bareme.update(_SEUILS_OUTRE_MER)
+    assert module.controler(series, bareme)[0] == []
+
+    bareme[1982] = {"metropole": None, "antilles_guyane": _francs(2_768.20),
+                    "reunion": _francs(2_966.80)}
+    bareme[1996] = {"metropole": None, "antilles_guyane": _francs(6_484.0), "reunion": None}
+    erreurs = module.controler(series, bareme)[0]
+    assert any(e.startswith("seuil 1982 antilles_guyane :") for e in erreurs), erreurs
+    assert any(e.startswith("seuil 1982 reunion :") for e in erreurs), erreurs
+    assert any(e.startswith("seuil 1996 :") for e in erreurs), erreurs
 
 
 def _avts_journal_officiel():
