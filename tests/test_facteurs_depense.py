@@ -23,7 +23,9 @@ Ce module tient trois choses :
   2026 (``tests/test_pensionnes_de_l_awg.py``) — ne recule pas avec l'âge
   légal : le périmètre fait peu de l'écart ; les retraités de moins de 65 ans
   du modèle, qui reculent plus tard, le plus ; puis les 65 ans et plus et la
-  suspension de 2026 (notes du 16 et du 17 octobre 2026).
+  suspension de 2026 (notes du 16 et du 17 octobre 2026). Ceux-là reculent
+  plus tard surtout parce que la grille fait partir les cohortes de 1966 et
+  1967 aux conditions de la génération 1965 (note du 18 octobre 2026).
 """
 
 from __future__ import annotations
@@ -285,6 +287,39 @@ def test_les_retraites_par_age_refont_les_tetes_du_cout():
         assert 0.97 < agees / annees[annee].population_65 < 1.01, annee
 
 
+def test_chaque_cohorte_se_compte_des_l_annee_de_son_depart():
+    """Une génération de la grille représente cinq cohortes, et ``cout.py``
+    fait partir chacune l'année de la génération du milieu, décalée d'autant.
+    Datées à leur propre génération, les deux plus jeunes partent ici un an
+    plus tard : l'année de son départ, 2030, la grille compte une cohorte de
+    trop, et deux en 2029. Les 65 ans et plus se comptent à leur âge de
+    l'année ; un cas type sans poids ne compte pas."""
+    from types import SimpleNamespace
+
+    from retraite_notionnelle.facteurs_depense import compter_retraites, depart_de_la_grille
+
+    pensionnes = [SimpleNamespace(code="a", generation=1965, annee_liquidation=2028),
+                  SimpleNamespace(code="b", generation=1965, annee_liquidation=2020)]
+    population = SimpleNamespace(effectif=lambda age, annee: 1000.0 + age)
+    poids = {"a": 0.75, "b": 0.0}
+    propres = {-2: 2026, -1: 2027, 0: 2028, 1: 2030, 2: 2031}
+
+    def par_generation(pensionne, decalage: int) -> int:
+        return propres[decalage]
+
+    def compte(annee: int, depart, age: int = 0) -> float:
+        return compter_retraites(pensionnes, population, annee, poids, depart, age)
+
+    # En 2030, les cohortes de 1963 à 1967 ont de 67 à 63 ans.
+    assert compte(2030, depart_de_la_grille) == 0.75 * (1067 + 1066 + 1065 + 1064 + 1063)
+    assert compte(2030, par_generation) == 0.75 * (1067 + 1066 + 1065 + 1064)
+    assert compte(2029, depart_de_la_grille) == 0.75 * (1066 + 1065 + 1064 + 1063)
+    assert compte(2029, par_generation) == 0.75 * (1066 + 1065 + 1064)
+    for depart in (depart_de_la_grille, par_generation):
+        assert compte(2030, depart, 65) == 0.75 * (1067 + 1066 + 1065)
+    assert compte(2025, depart_de_la_grille) == 0.0
+
+
 def test_la_couverture_de_2022_2030_tient_au_perimetre_de_l_awg(awg):
     """De 2022 à 2030, la couverture du modèle recule de 0,84 point de PIB et
     celle de l'AWG de 1,38 (note du 16 octobre 2026). Ses moins de 65 ans
@@ -363,3 +398,60 @@ def test_la_part_stable_mesuree_garde_sa_prevalence_parmi_les_20_64_ans(awg):
     assert aux_65_ans[2070] - publie[2070] > 0.5
     assert abs(aux_20_64_ans[2070] - publie[2070]) < 0.15
     assert aux_20_64_ans[2030] - publie[2030] > 0.2
+
+
+def test_datee_a_sa_generation_chaque_cohorte_part_l_annee_de_son_droit(awg):
+    """La grille fait partir les cohortes de 1963 à 1967 aux conditions de la
+    génération 1965, née en janvier, que la suspension de la loi de
+    financement pour 2026 tient à 170 trimestres (L. 161-17-3) : entré à 21
+    ans, le salarié au salaire moyen part à 63 ans et demi, en 2028, et sa
+    cohorte de 1967 deux ans plus tard. Née en 1967, il lui en faut 172,
+    43 ans : il part à 64 ans, en 2031. Datées chacune à sa génération, moins
+    de cohortes de moins de 65 ans sont parties en 2030 : de 2022 à 2030,
+    leur effet, porté au périmètre de l'AWG, recule de plus de 0,15 point, et
+    son écart à celui de l'AWG, 0,29 point, tombe sous 0,15 ; de 2022 à 2070,
+    il ne change pas : la grille date les départs, elle n'en ôte aucun (note
+    du 18 octobre 2026, « la grille »)."""
+    from types import SimpleNamespace
+
+    from retraite_notionnelle import Parametres
+    from retraite_notionnelle.castypes import GRILLE_DU_COUT
+    from retraite_notionnelle.facteurs_depense import (
+        JEUNES, STABLES, depart_de_la_grille, departs_par_generation, pensionnes_de_2022)
+    from retraite_notionnelle.simulateur import Simulateur
+
+    parametres = Parametres(scenario_projection="cor_reference")
+    salarie = SimpleNamespace(code="salaire_moyen", generation=1965, annee_liquidation=2028)
+    departs = departs_par_generation(Simulateur(parametres), [salarie], GRILLE_DU_COUT)
+    assert depart_de_la_grille(salarie, 2) == 2030
+    assert departs[("salaire_moyen", 1965, 2)] == 2031
+    assert departs[("salaire_moyen", 1965, 0)] == 2028
+
+    annees, _decomposition_ = _decomposition("cor_reference", "actuel")
+    population_65 = {annee: annees[annee].population_65 for annee in GRILLE_AWG}
+    part_pib, pensionnes, pensionnes_agees, population_65_awg = _couverture_de_l_awg(awg)
+    population_20_64 = {annee: awg["series"]["population_20_64"][annee] for annee in GRILLE_AWG}
+    mesures = pensionnes_de_2022(json.loads(
+        (RACINE / "tests" / "temoins" / "pensionnes_de_2022.json").read_text(encoding="utf-8")))
+    premiere = GRILLE_AWG[0]
+    stable = (sum(mesures[categorie][tranche] for categorie in STABLES for tranche in JEUNES)
+              / ((pensionnes[premiere] - pensionnes_agees[premiere]) * 1000))
+    vieux = pensionnes_agees[premiere] / population_65_awg[premiere]
+    plus_jeunes = pensionnes[premiere] / population_65_awg[premiere] - vieux
+
+    def precoce(par_generation: bool) -> dict:
+        par_age = retraites_par_age(parametres, GRILLE_AWG, par_generation=par_generation)
+        return partager_couverture(part_pib, *au_perimetre(
+            population_65_awg, vieux, plus_jeunes,
+            {annee: par_age[annee][0] for annee in GRILLE_AWG},
+            {annee: par_age[annee][1] for annee in GRILLE_AWG}, population_65,
+            stable=stable, population_stable=population_20_64),
+            population_65_awg)["precoce"]
+
+    publie = partager_couverture(part_pib, pensionnes, pensionnes_agees,
+                                 population_65_awg)["precoce"]
+    grille, datee = precoce(False), precoce(True)
+    assert grille[2030] - publie[2030] > 0.25
+    assert grille[2030] - datee[2030] > 0.15
+    assert abs(datee[2030] - publie[2030]) < 0.15
+    assert abs(datee[2070] - grille[2070]) < 0.01

@@ -24,11 +24,14 @@ périmètre de l'AWG (``au_perimetre``) : ce qui reste de l'écart est celle-ci,
 ce qui part, le périmètre ; la part des pensionnés de moins de 65 ans de
 l'AWG que l'âge légal ne fait pas reculer — l'invalidité, l'AAH, la réversion
 seule — y garde sa prévalence parmi les 20-64 ans, à la mesure qu'en donnent
-leurs sources (``tests/temoins/pensionnes_de_2022.json``).
+leurs sources (``tests/temoins/pensionnes_de_2022.json``) ; puis chaque
+cohorte de la grille y part l'année que le droit de sa génération lui donne,
+et non celle de la génération qui la représente (``par_generation``).
 ``--sans-suspension`` refait le modèle sur une copie
 des données où la réforme de 2023 s'applique entière, sans la suspension de
 la loi de financement pour 2026 (``REFORME_2023_ENTIERE``) : l'univers de
-l'AWG, qui l'a précédée.
+l'AWG, qui l'a précédée. Le dernier tableau départage l'écart de couverture
+de 2022-2030 entre le périmètre, la grille, la suspension et ce qui reste.
 """
 
 from __future__ import annotations
@@ -74,6 +77,10 @@ PERIODES_COUVERTURE = ((2022, 2030), (2030, 2070), (2022, 2070))
 #: Les pensionnés de 2022, par catégorie (``pensionnes_de_2022``).
 CATEGORIES = {"droit_direct": "droit direct", "reversion_seule": "réversion seule",
               "invalidite": "invalidité", "aah": "AAH"}
+#: Les colonnes où chaque cohorte part l'année du droit de sa génération,
+#: au périmètre de l'AWG, la part stable mesurée (``par_generation``).
+DATEES = "et datés à leur génération"
+SANS_DATEES = "sans la suspension, datés"
 
 #: La réforme de 2023 entière, telle que l'AWG l'a projetée avant la
 #: suspension : l'âge d'ouverture et la durée requise des générations que la
@@ -191,6 +198,22 @@ def part_stable_mesuree(autre: dict) -> tuple[float, dict[str, float]]:
     return somme_ordonnee(par_categorie[c] for c in STABLES) / jeunes, par_categorie
 
 
+def departage(parts: dict, stables: str, periode: str = "2022-2030") -> dict[str, dict]:
+    """L'écart de couverture du modèle à l'AWG sur ``periode``, en points de
+    PIB, par âge et en tout, et ce qu'en font, colonne après colonne, le
+    périmètre (la part stable mesurée comprise), la grille, puis la
+    suspension, si la colonne sans elle est là ; ce qui reste. Positif quand
+    le modèle recule moins."""
+    etapes = [("le périmètre", "modèle", stables), ("la grille", stables, DATEES)]
+    if SANS_DATEES in parts:
+        etapes.append(("la suspension", DATEES, SANS_DATEES))
+    etapes += [("ce qui reste", etapes[-1][2], "Ageing Report 2024"),
+               ("l'écart", "modèle", "Ageing Report 2024")]
+    return {nom: {part: parts[de][periode][part] - parts[vers][periode][part]
+                  for part in (*PARTS, "couverture")}
+            for nom, de, vers in etapes}
+
+
 def reforme_entiere(racine: Path, destination: Path) -> Path:
     """Une copie des données de ``racine`` sous la réforme de 2023 entière
     (``REFORME_2023_ENTIERE``)."""
@@ -225,16 +248,18 @@ def modele(projection: str, scenario: str = "actuel", racine: Path | None = None
                               Population(parametres.racine_donnees),
                               Simulateur(parametres).macro, scenario)
     decomposition = decomposer(annees)
-    couverture = None
+    couverture = couverture_datee = None
     if scenario == "actuel":
-        par_age = retraites_par_age(parametres, GRILLE_AWG)
-        couverture = {"part_pib": dict(decomposition.part_pib),
-                      "retraites": {annee: par_age[annee][0] for annee in GRILLE_AWG},
-                      "retraites_agees": {annee: par_age[annee][1] for annee in GRILLE_AWG},
-                      "population_65": {annee: annees[annee].population_65
-                                        for annee in GRILLE_AWG}}
-    return {"couverture": couverture,
-            
+        def series(par_generation: bool) -> dict:
+            par_age = retraites_par_age(parametres, GRILLE_AWG, par_generation=par_generation)
+            return {"part_pib": dict(decomposition.part_pib),
+                    "retraites": {annee: par_age[annee][0] for annee in GRILLE_AWG},
+                    "retraites_agees": {annee: par_age[annee][1] for annee in GRILLE_AWG},
+                    "population_65": {annee: annees[annee].population_65
+                                      for annee in GRILLE_AWG}}
+
+        couverture, couverture_datee = series(False), series(True)
+    return {"couverture": couverture, "couverture_datee": couverture_datee,
         "part_pib": {annee: decomposition.part_pib[annee] for annee in (2022, 2070)},
         "periodes": {f"{debut}-{fin}": decomposition.entre(debut, fin)
                      for debut, fin in PERIODES_AWG},
@@ -313,9 +338,13 @@ def main(argv: list[str] | None = None) -> int:
                         population_stable=publiee["population_20_64"])
     mesuree, par_categorie = part_stable_mesuree(publiee)
     resultats.update(part_stable=stable, part_stable_20_64=calee, part_stable_mesuree=mesuree)
-    colonnes_couverture[f"et {_nombre(mesuree * 100, 0)} % stables, mesurés"] = (
-        porte_au_perimetre(reference["couverture"], publiee, mesuree,
-                           publiee["population_20_64"]))
+
+    def porte(propre: dict) -> dict:
+        return porte_au_perimetre(propre, publiee, mesuree, publiee["population_20_64"])
+
+    stables = f"et {_nombre(mesuree * 100, 0)} % stables, mesurés"
+    colonnes_couverture[stables] = porte(reference["couverture"])
+    colonnes_couverture[DATEES] = porte(reference["couverture_datee"])
     if arguments.sans_suspension:
         from retraite_notionnelle.config import RACINE_DONNEES
 
@@ -323,6 +352,7 @@ def main(argv: list[str] | None = None) -> int:
             sans = modele(PROJECTIONS[0][0], racine=reforme_entiere(RACINE_DONNEES, Path(dossier)))
         resultats["sans_suspension"] = sans
         colonnes_couverture["modèle sans la suspension"] = sans["couverture"]
+        colonnes_couverture[SANS_DATEES] = porte(sans["couverture_datee"])
         print()
         print("Sans la suspension, la référence du COR (dépense de 2022 → 2070 : "
               f"{_nombre(sans['part_pib'][2022])} → {_nombre(sans['part_pib'][2070])})")
@@ -357,6 +387,14 @@ def main(argv: list[str] | None = None) -> int:
         for nom, libelle in (*PARTS.items(), ("couverture", "Couverture")):
             print(f"| {libelle} | " + " | ".join(
                 _signe(source[periode][nom]) for source in parts.values()) + " |")
+    ecarts = departage(parts, stables)
+    resultats["departage"] = ecarts
+    print()
+    print("| L'écart de 2022-2030, départagé | " + " | ".join(
+        (*PARTS.values(), "Couverture")) + " |")
+    print("|---|" + "---|" * (len(PARTS) + 1))
+    for nom, ecart in ecarts.items():
+        print(f"| {nom} | " + " | ".join(_signe(valeur) for valeur in ecart.values()) + " |")
 
     if arguments.systemes:
         from retraite_notionnelle.cout import SCENARIOS

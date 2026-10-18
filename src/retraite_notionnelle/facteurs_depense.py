@@ -82,6 +82,16 @@ dépasseraient de 15 %. Ils gardent leur prévalence dans leur classe d'âge, no
 leur rapport aux 65 ans et plus (note du 17 octobre 2026, « la part stable
 mesurée »).
 
+LA DATE DE CHAQUE COHORTE (:func:`departs_par_generation`). La grille ne
+simule qu'une génération sur cinq, née en janvier, et fait partir les cinq
+cohortes qu'elle représente à son âge de départ. Sous la suspension de 2026,
+celle de 1965 part avec 170 trimestres, quand celles de 1966 et 1967 en
+doivent 172 : la grille les fait partir un an trop tôt, et compte trop de
+retraités de moins de 65 ans en 2030. Datée chacune à sa génération, chaque
+cohorte part l'année que le droit de la sienne lui donne
+(``retraites_par_age(..., par_generation=True)`` ; note du 18 octobre 2026,
+« la grille »).
+
 CE QUI MANQUE. Les têtes de la proposition : son âge légal de 65 ans reporte
 des départs que ``AvenirAnnuel`` ne compte pas à part. La couverture de chaque
 système est donc celle du droit en vigueur, et sa prestation porte ce que le
@@ -92,9 +102,9 @@ nouvelles que l'AWG décompose à part (fiche France, tableau 14).
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Mapping, Sequence
+from typing import Callable, Mapping, Sequence
 
-from .cout import masse_du_scenario
+from .cout import _DEMI_TRANCHE, masse_du_scenario
 from .somme import somme_ordonnee
 
 #: Les années où l'AWG fait ses pas : la première de la projection, 2022,
@@ -399,30 +409,78 @@ def pensionnes_de_2022(temoin: Mapping, rentes_at_mp: bool = False,
     return resultat
 
 
-class _Agee:
-    """La population, sans ceux qui n'ont pas encore ``age_minimum`` ans :
-    les têtes que ``cout._masses`` y compte sont celles de cet âge et plus."""
-
-    def __init__(self, population, age_minimum: int) -> None:
-        self._population = population
-        self._age_minimum = age_minimum
-
-    def effectif(self, age: int, annee: int) -> float:
-        return self._population.effectif(age, annee) if age >= self._age_minimum else 0.0
+def depart_de_la_grille(pensionne, decalage: int) -> int:
+    """L'année où ``cout.py`` fait partir une cohorte : celle de la génération
+    de la grille qui la représente, décalée d'autant (``cout._masses``)."""
+    return pensionne.annee_liquidation + decalage
 
 
-def retraites_par_age(parametres, annees: Sequence[int],
-                      age: int = AGE_VIEILLESSE) -> dict[int, tuple[float, float]]:
+def compter_retraites(pensionnes, population, annee: int, poids_cas: Mapping[str, float],
+                      depart: Callable[[object, int], int], age: int = 0,
+                      survies: Mapping[tuple[str, int, int], float] | None = None) -> float:
+    """Les retraités de l'année, en personnes : les cohortes de la grille
+    parties au plus tard cette année-là, chacune l'année que ``depart`` lui
+    donne, de la génération ``pensionne.generation + decalage``, pesées comme
+    ``cout._masses`` pèse ses têtes — l'effectif de la classe d'âge, fois la
+    survie propre du cas type, ``survies`` par ``(code, generation,
+    decalage)`` (``cout._survies_alignees``, un par défaut), fois le poids du
+    cas type. ``age`` ôte les plus jeunes."""
+    survies = survies or {}
+    total = 0.0
+    for pensionne in pensionnes:
+        part = poids_cas.get(pensionne.code, 0.0)
+        if part <= 0.0:
+            continue
+        poids = 0.0
+        for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
+            age_atteint = annee - pensionne.generation - decalage
+            if age_atteint >= age and annee >= depart(pensionne, decalage):
+                poids += population.effectif(age_atteint, annee) * survies.get(
+                    (pensionne.code, pensionne.generation, decalage), 1.0)
+        total += part * poids
+    return total
+
+
+def departs_par_generation(simulateur, pensionnes, cas_types,
+                           ) -> dict[tuple[str, int, int], int]:
+    """L'année où part chaque cohorte de la grille, datée à sa propre
+    génération, par ``(code, generation, decalage)`` : celle que le droit de
+    ``generation + decalage`` donne au cas type, comme la grille la donne à la
+    génération qu'elle simule (``castypes.carriere_de_la_grille``, sous les
+    conventions de projection). Celle-ci garde la sienne ; une cohorte que la
+    grille ne sait pas simuler garde celle de sa génération, décalée."""
+    from .castypes import carriere_de_la_grille
+
+    projection = simulateur.pour_la_projection()
+    cas_de = {cas.code: cas for cas in cas_types}
+    departs: dict[tuple[str, int, int], int] = {}
+    for pensionne in pensionnes:
+        for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
+            depart = depart_de_la_grille(pensionne, decalage)
+            if decalage:
+                try:
+                    depart = carriere_de_la_grille(
+                        projection, cas_de[pensionne.code],
+                        pensionne.generation + decalage).annee_liquidation
+                except (ValueError, KeyError):
+                    pass
+            departs[(pensionne.code, pensionne.generation, decalage)] = depart
+    return departs
+
+
+def retraites_par_age(parametres, annees: Sequence[int], age: int = AGE_VIEILLESSE,
+                      par_generation: bool = False) -> dict[int, tuple[float, float]]:
     """Chaque année, les retraités du modèle de tous âges, puis ceux d'``age``
     ans et plus, en personnes.
 
     Ce sont les têtes de ``calculer_cout`` (``AvenirAnnuel.tetes``), sous la
     démographie centrale et les réglages de la page : la même grille, que
     ``memoire.cout`` garde, les mêmes poids recalés sur les groupes du COR, la
-    même somme (``cout._masses``), sur une population dont les moins
-    d'``age`` ans sont ôtés. ``cout.py`` ne les expose pas par âge : ce geste
-    le refait, et ``tests/test_facteurs_depense.py`` vérifie qu'il redonne ses
-    têtes.
+    somme de ``cout._masses`` (:func:`compter_retraites`), qui en ôte les moins
+    d'``age`` ans. ``cout.py`` ne les expose pas par âge : ce geste le refait,
+    et ``tests/test_facteurs_depense.py`` vérifie qu'il redonne ses têtes.
+    ``par_generation`` date chaque cohorte à sa propre génération
+    (:func:`departs_par_generation`), et non à celle qui la représente.
     """
     from . import cout as module
     from . import memoire
@@ -438,6 +496,15 @@ def retraites_par_age(parametres, annees: Sequence[int],
     pensionnes, _ = memoire.memoriser_pour(
         parametres, ("grille_du_cout", parametres, grille, "droit"),
         lambda: module._pensionnes(simulateur, grille, "droit"))
+    if par_generation:
+        departs = memoire.memoriser_pour(
+            parametres, ("departs_par_generation", parametres, grille),
+            lambda: departs_par_generation(simulateur, pensionnes, grille))
+
+        def depart(pensionne, decalage: int) -> int:
+            return departs[(pensionne.code, pensionne.generation, decalage)]
+    else:
+        depart = depart_de_la_grille
     population = Population(racine, parametres.hypothese_esperance_vie)
     pensionnes = module._sous_la_demographie(simulateur, pensionnes, population)
     revalorisation = RevalorisationServie(
@@ -451,12 +518,12 @@ def retraites_par_age(parametres, annees: Sequence[int],
     poids = module._poids_par_groupe(
         module._ponderation(simulateur, "effectifs", grille), pensionnes, population,
         revalorisation, ComptesRetraite(racine, variante=variante).decomposition)
-    agee = _Agee(population, age)
     resultat: dict[int, tuple[float, float]] = {}
     for annee in annees:
         poids_annee = poids(annee)
-        _, _, toutes = module._masses(pensionnes, population, annee, poids_annee,
-                                      revalorisation)
-        _, _, agees = module._masses(pensionnes, agee, annee, poids_annee, revalorisation)
-        resultat[annee] = (toutes[module.TETES_TOUTES], agees[module.TETES_TOUTES])
+        survies = module._survies_alignees(pensionnes, poids_annee, annee)
+        resultat[annee] = tuple(
+            compter_retraites(pensionnes, population, annee, poids_annee, depart, minimum,
+                              survies)
+            for minimum in (0, age))
     return resultat

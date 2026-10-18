@@ -158,6 +158,8 @@ EXCEPTIONS = {
      "test_les_quatre_facteurs_font_la_part_de_pib_et_un_seul_qui_bouge_fait_tout"): "rapide",
     ("test_facteurs_depense.py",
      "test_la_couverture_se_partage_exactement_entre_les_ages"): "rapide",
+    ("test_facteurs_depense.py",
+     "test_chaque_cohorte_se_compte_des_l_annee_de_son_depart"): "rapide",
     # Le témoin des leviers du COR, et le geste de l'âge refait sur ses séries.
     ("test_leviers.py", "test_le_temoin_du_cor_dit_sa_source_et_redonne_le_rapport"): "rapide",
     ("test_leviers.py",
