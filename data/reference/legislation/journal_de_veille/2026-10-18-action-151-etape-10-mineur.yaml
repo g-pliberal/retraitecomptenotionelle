@@ -1,0 +1,38 @@
+date: "2026-10-18"
+session: "action 151, étape 10 : la limite d'âge du mineur, et le jour où une limite naît"
+consulte: >-
+  python scripts/veille_droit.py. Index JORF et LEGI du dépôt, récupérés ce jour, LEGI mis à
+  jour jusqu'à l'incrément du 17 octobre 2026, puis python scripts/textes.py --inscrire.
+  Décret n° 54-51 du 16 janvier 1954, visa et articles 1er à 4 ; décret n° 46-2769,
+  article 146, rédactions de 1971, 1985 et 1993, articles 125, 127, 144 et 145, rédactions de
+  1993 à 2015 ; décret n° 92-1354, article 2 ; décret n° 53-711, article 5. Décrets n° 54-24,
+  n° 54-23 et n° 54-776, dans l'index JORF, qui n'en porte que le titre et deux sommaires ;
+  Légifrance et Gallica refusent le réseau de la session (défi de Cloudflare, 403). Cour de
+  cassation, chambre sociale, 16 février 2011, n° 10-10.465, et ses moyens annexés, sur
+  dictionnaire-juridique.com. Recherches sur le web des décrets de 1954 de la SNCF, de la RATP
+  et de la Banque de France.
+trouve: >-
+  Mines : depuis le 18 janvier 1954, « L'âge limite de maintien en activité » du mineur est
+  l'âge d'ouverture de sa pension par le premier alinéa de l'article 146, cinquante-cinq ans,
+  reculé pour l'employé, le technicien et l'agent de maîtrise d'une caisse complémentaire,
+  soixante ans pour l'ingénieur ; « Tout agent peut, dans l'intérêt du service, être admis à
+  rester en activité au delà », sans autre borne (articles 2 et 3) ; depuis 1993, l'âge
+  d'ouverture est à l'article 125, l'article 146 portant l'allocation d'attente. Porté en
+  Python et en JavaScript (fiche limite_age_mines) : le maintien est présumé accordé jusqu'au
+  départ saisi, et la limite ne radie personne. En le portant, un défaut de la classe : les
+  exceptions se lisaient à l'anniversaire mensuel qui précède le jour où une version crée la
+  limite, sous la version d'avant ; elles se lisent ce jour-là, ce qui rend à l'agent de la
+  Banque en 2012 et de l'Opéra en 2008 les exceptions de leur statut. SNCF : selon la cour
+  d'appel de Paris, citée par la Cour de cassation en 2011, le règlement des retraites fixe
+  « à 60 ans l'âge limite de maintien en service », et l'article 2 du décret n° 54-24 permet
+  à l'employeur d'admettre d'office à la retraite l'agent sédentaire de cinquante-cinq ans qui
+  a ses vingt-cinq ans de services et une pension normale.
+reste: >-
+  La SNCF et la RATP avant 2010 : le règlement des retraites de la SNCF, son article 7 et sa
+  limite de soixante ans, et les décrets n° 54-24 et n° 54-23 au Journal officiel du
+  10 janvier 1954 ; puis décider si la faculté de mise à la retraite d'office est présumée
+  exercée. La Banque avant 2012 : les décrets n° 54-776 et n° 68-299, et les arrêts du Conseil
+  d'État de 2015 et de 2019 sur ses limites. Le statut du mineur (décret n° 46-1433) et la
+  rédaction de l'article 146 de 1946 à 1971, que l'index ne porte pas. Au propriétaire : le
+  maintien présumé du mineur, qu'une autre lecture remplacerait par sa mise à la retraite à la
+  limite.

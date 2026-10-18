@@ -5935,16 +5935,16 @@ changement dans les moteurs. »
 
 ### 151. Partir très tard : le départ jusqu'au bout des tables de mortalité, puis la limite d'âge des fonctionnaires et ses exceptions — `en cours`
 
-**Reprise, au 17 octobre 2026.** Faites, les étapes 1 à 9 : le départ jusqu'à
+**Reprise, au 18 octobre 2026.** Faites, les étapes 1 à 10 : le départ jusqu'à
 119 ans ; la limite d'âge lue ; la radiation à la limite des fonctionnaires, des
 militaires, des contractuels, des ouvriers de l'État, de la SNCF, de la RATP, des
-IEG (depuis 1954), de l'Opéra, de la SEITA et de la Banque de France (étapes 3, 4,
-6, 8 et 9), en Python et en JavaScript ; la page qui la dit (étape 5) ; la CARMF
-avant 2017 et le taux acquis au 31 mars 1983 (étape 7). Reste au modèle : le mineur
-(décret n° 54-51), la SNCF, la RATP et la Banque avant 2010 et 2012 (décrets frères
-de 1954). Au site : nommer la fin de l'emploi des quatre fiches neuves. Attendent le
-propriétaire : la radiation dans les comptes notionnels, l'actif d'avant 2010, les
-choix des étapes 4, 6, 8 et 9. Détail : les notes des étapes 4 et 6 à 9.
+IEG (depuis 1954), de l'Opéra, de la SEITA et de la Banque, et la limite du mineur,
+présumé maintenu au-delà (étapes 3, 4, 6, 8 à 10), en Python et en JavaScript ; la
+page (étape 5) ; la CARMF avant 2017 et le taux acquis en 1983 (étape 7). Reste au
+modèle : la SNCF, la RATP et la Banque avant 2010 et 2012, dont les textes ne se lisent
+pas d'ici (pistes : note de l'étape 10). Au site : nommer la fin de l'emploi des quatre
+fiches neuves, et le maintien du mineur. Au propriétaire : la radiation dans les comptes
+notionnels, l'actif d'avant 2010, les choix que disent les notes des étapes 4, 6 et 8 à 10.
 
 **Demande**, le 10 octobre 2026 : « Pourquoi on bloque à 75 ans ? Est-ce que
 c'est uniquement une raison technique ? Ou est-ce qu'il y a un vrai problème
