@@ -1,0 +1,42 @@
+date: "2026-10-18"
+session: "action 138, étape 5, dixième partie : l'année de revenus de l'imposition de la majoration pour enfants"
+consulte: >-
+  `python scripts/veille_droit.py` : aucune fiche de la carte touchée, la
+  session n'écrivant aucune règle de la pension. L'index LEGI de la DILA, mis
+  à jour au 17 octobre 2026 (sept incréments ; `textes.py --inscrire` y a
+  inscrit dix-huit rédactions de l'article L. 731-15 du code rural et du
+  décret n° 2008-1072, à examiner) : les cinquante rédactions de l'article 81
+  du code général des impôts parues de 1950 à 2013, et celles du 1er janvier
+  2014 (LEGIARTI000028345375, LEGIARTI000028416932). L'index JORF : la notice
+  de la loi n° 2013-1278 du 29 décembre 2013 (JORFTEXT000028399511), sans ses
+  articles. Le texte adopté en lecture définitive de la loi de finances pour
+  2014 (Assemblée nationale, TA n° 267, 19 décembre 2013), son dossier
+  législatif, et la décision n° 2013-685 DC du Conseil constitutionnel. Le
+  BOFiP : l'actualité ACTU-2014-00067 du 5 mars 2014 (jeu de données
+  « bofip-vigueur » de data.economie.gouv.fr), le BOI-RSA-PENS-20-10 du
+  12 septembre 2012 et du 5 mars 2014, le BOI-RSA-PENS-10-10-10-20 et le
+  BOI-RSA-BASE-30-30 du 12 septembre 2012. Les archives du BOFiP : la
+  documentation de base 5 F 1222 du 10 février 1999.
+trouve: >-
+  Les cinquante rédactions de l'article 81, de 1950 (2°, LEGIARTI000048121406)
+  à 2013 (2° ter, LEGIARTI000027518339), exonèrent « les majorations de
+  retraite ou de pension pour charges de famille » ; l'article 5 de la loi
+  n° 2013-1278 abroge le 2° ter, et son article 1er, II, 1° la fait
+  s'appliquer « à l'impôt sur le revenu dû au titre de 2013 » ; la décision
+  n° 2013-685 DC ne censure ni l'un ni l'autre ; « les majorations [...]
+  perçues à compter du 1er janvier 2013 sont imposables »
+  (BOI-RSA-PENS-20-10-20140305, § 1). L'exonération couvre les majorations
+  des régimes de base et complémentaires obligatoires, pour enfants à charge
+  comme pour trois enfants, dans la limite de 10 % de la pension pour les
+  trois premiers enfants et de 5 % par enfant au-delà, et de la pension
+  majorée bornée au revenu d'activité qui l'a liquidée (DB 5 F 1222, n° 2 à 4 ;
+  BOI-RSA-PENS-20-10-20120912, § 30) ; la CSG d'une majoration exonérée ne se
+  déduit pas (BOI-RSA-BASE-30-30-20120912, § 90). Le dépôt l'imposait à toute
+  époque : écrit dans `cycle_de_vie.py` et son jumeau, sous la première
+  limite, la seconde n'étant tenue que dans la fonction publique (L. 18).
+reste: >-
+  La limite de l'exonération avant 1999, que la DB de 1999, la plus ancienne
+  lue, donne aussi aux années d'avant ; la seconde limite hors de la fonction
+  publique, faute d'un texte qui dise le revenu d'activité d'une pension de
+  points ; les règles d'avant 1981 sans texte lu ; ce que la prime pour
+  l'emploi ne prend pas.

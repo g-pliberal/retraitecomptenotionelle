@@ -4,12 +4,12 @@
 CSG déductible (11) ; l'impôt dans les indicateurs de cycle de vie (13) ;
 l'effet retour, au modèle (14) ; l'ASPA déformée (16) ; le bénéfice des
 indépendants (16) ; l'abattement des adhérents d'avant 1978 (17) ; le 18, la
-prime pour l'emploi des non-salariés, sur le bénéfice majoré de 11,11 % ou le
-déficit minoré, et sa fin aux revenus de 2014 (loi n° 2014-1655), dans les
-deux moteurs. Reste : au propriétaire, l'effet retour dans le solde et trois
-décisions sur le bénéfice ; l'impôt au site, à la session des pages ; l'année
-de la majoration pour enfants ; les règles d'avant 1981. Détail :
-`2026-10-18-etape-5-prime-pour-l-emploi-des-non-salaries.md`.
+prime pour l'emploi des non-salariés et sa fin aux revenus de 2014, puis la
+majoration pour enfants, exonérée jusqu'aux revenus de 2012 (loi n° 2013-1278,
+art. 1er et 5), sous la limite de la doctrine, dans les deux moteurs. Reste :
+au propriétaire, l'effet retour dans le solde et trois décisions sur le
+bénéfice ; l'impôt au site, à la session des pages ; les règles d'avant 1981.
+Détail : `2026-10-18-etape-5-majoration-pour-enfants.md`.
 
 **La demande.** Le propriétaire, le 10 octobre 2026 : l'impôt sur le revenu
 d'un foyer, de son barème à son montant, chaque année ; les barèmes de l'IPP
