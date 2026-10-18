@@ -2,14 +2,14 @@
 
 **Reprise, au 18 octobre 2026.** Fait : le coût du travail complet d'un agent
 public (10 octobre) ; du micro-entrepreneur, la saisie par son chiffre
-d'affaires (14), ses trimestres sur ce que sa cotisation achète (14), son
-forfait au compte notionnel (16), la validation et la répartition d'avant
-2023 (17) ; le 18, son revenu annuel moyen, et ses trimestres de 2017 à 2019
-aux seuils publiés, que fait l'ordre d'affectation de D. 133-4. Reste, une
-session par point : la veille du projet de loi de financement pour 2027 ; la
-part de base de cet ordre au revenu annuel moyen de 2016 à 2019, et 2016 ;
-le 5 de `…-revenu-annuel-moyen-du-micro-entrepreneur.md`. Au propriétaire :
-cette part, reconstituée, ou la clef ? Détail : `2026-10-18-etape-12-seuils-de-2017-a-2019.md`.
+d'affaires (14), ses trimestres (14), son forfait au compte notionnel (16),
+la validation et la répartition d'avant 2023 (17) ; le 18, son revenu annuel
+moyen, ses trimestres de 2017 à 2019, ses points de RCI, de CNAVPL et de
+Cipav sur son forfait, et sa nouvelle pension en cumul. Reste, une session
+par point : la veille du projet de loi de financement pour 2027 ; la nouvelle
+pension de l'indépendant, au revenu annuel (R. 634-1, D. 634-3). Au
+propriétaire : la part de base de l'ordre de D. 133-4 de 2016 à 2019,
+reconstituée ou par la clef. Détail : `…-points-du-micro-entrepreneur.md`.
 
 **Le 10 octobre 2026, la demande.** Le propriétaire : porter sur la fiche de
 paie, en Python puis en JavaScript, la cotisation de la RAFP sur les primes,
