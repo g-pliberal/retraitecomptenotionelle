@@ -193,7 +193,12 @@ leur sert que 161 € par mois en moyenne. La dix-huitième (le 17 octobre 2026)
 donne à l'artisan la dispersion des revenus des non-salariés de son sexe
 (:data:`INDEPENDANTS_A_LEUR_DISPERSION`) : il avait celle des salaires des
 temps complets, et n'atteignait jamais le minimum contributif ; la mesure le
-juge sur les anciens artisans et commerçants de l'EIR.
+juge sur les anciens artisans et commerçants de l'EIR. La dix-neuvième (le
+18 octobre 2026) fait partir une part des carrières de trente années validées
+et plus après l'âge légal et le taux plein, avec une surcote
+(:data:`DEPARTS_AVEC_SURCOTE`) : 14,3 % des nés en 1953 sont partis ainsi, et
+la population, jamais ; la mesure juge les départs des générations 1950 et
+1955 sur ceux des nés en 1950 et en 1953 (:func:`departs`).
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -611,6 +616,49 @@ MINIMUM_AU_PREMIER_QUINTILE = True
 #: d'ouverture, et la part ne dépend ni du rang de salaire ni de la tranche.
 DEPARTS_AVEC_DECOTE = True
 
+#: La dix-neuvième version (action 138, étape 14, le 18 octobre 2026) : une part
+#: des carrières qui ont le taux plein part après lui, avec une surcote — 14,2 %
+#: des femmes et 14,5 % des hommes nés en 1953 (``departs_generations.csv``),
+#: quand la population partait toute au taux plein ou avant lui. Chaque carrière
+#: du salariat et des non-salariés de trente années validées et plus, qui part
+#: au taux plein (:func:`peut_surcoter`), se décline : la part de son sexe que
+#: l'EIR voit surcoter parmi les carrières complètes des nés en 1953 — 21,7 %
+#: des femmes, 17,7 % des hommes (:func:`parts_avec_surcote`) — attend après
+#: l'âge légal de sa génération ce qu'attendent leurs départs avec surcote, en
+#: trois attentes (:func:`attentes_des_surcotes`) ; le reste part au taux plein.
+#: Quatre conventions : l'attente se compte de l'âge légal, au milieu de chaque
+#: âge de liquidation, et jamais avant le taux plein ; les âges se regroupent
+#: deux par deux (:data:`AGES_PAR_ATTENTE`), chaque attente de plus multipliant
+#: les carrières que la page pèse une à une, à un coût qui croît comme leur
+#: carré ; la part ne dépend ni du rang de salaire, ni de la génération, sinon
+#: qu'aucune n'attend avant 2004 (:data:`ANNEE_DE_LA_SURCOTE`) ; les carrières
+#: statutaires gardent leur départ, quand l'État et la CNRACL surcotent plus
+#: que la Cnav.
+DEPARTS_AVEC_SURCOTE = True
+
+#: L'année où naît la surcote du régime général (L. 351-1-2 du code de la
+#: sécurité sociale ; D. 351-1-4 dans sa version de 2004, fiche
+#: ``surcote_regime_general``) : une génération qui atteint son âge légal avant
+#: elle n'attend pas, la loi ne servant rien à l'attente.
+ANNEE_DE_LA_SURCOTE = 2004
+
+#: La génération de l'EIR dont les départs avec surcote donnent leur part et
+#: leurs attentes à la population : les nés en 1953, les plus récents que
+#: l'enquête voie presque tous partis.
+GENERATION_DES_SURCOTES = 1953
+
+#: Les tranches de durée des carrières qui peuvent surcoter : celles de trente
+#: années validées et plus, que les enfants complètent, chez les femmes, dès
+#: l'âge légal.
+TRANCHES_DES_SURCOTES = ("30_40", "40_plus")
+
+#: Les âges de liquidation que chaque attente d'un départ avec surcote réunit,
+#: depuis l'année de l'âge légal, et le nombre de ces attentes, la dernière
+#: prenant les âges qui suivent : l'année de l'âge légal et la suivante, les
+#: deux d'après, et le reste.
+AGES_PAR_ATTENTE = 2
+ATTENTES = 3
+
 #: La dix-septième version (action 138, étape 14, le 16 octobre 2026) : les
 #: retraités de l'Ircantec sont, pour la plupart, des salariés du privé passés
 #: par un contrat public, et non des contractuels de toute une carrière.
@@ -739,6 +787,25 @@ class CasTypeLarge(CasType):
     entrees: tuple[tuple[int, float], ...] = ()
     tranche_de_base: tuple = ()
     cibles: tuple[tuple[int, float], ...] = ()
+    #: Les années qu'un départ avec surcote attend après l'âge légal de sa
+    #: génération (:data:`DEPARTS_AVEC_SURCOTE`), et ces âges légaux, paires
+    #: ``(génération, âge)`` triées.
+    attente: float = 0.0
+    legaux: tuple[tuple[int, float], ...] = ()
+
+    def age_liquidation_pour(self, simulateur: Simulateur, generation: int,
+                             variante: str = "droit") -> float:
+        """L'âge que le pilote fixe, ou, pour un départ avec surcote,
+        :attr:`attente` années après l'âge légal de sa génération, jamais
+        avant celui que le pilote fixe, et seulement si la génération atteint
+        son âge légal depuis que la surcote existe (:data:`ANNEE_DE_LA_SURCOTE`)."""
+        age = super().age_liquidation_pour(simulateur, generation, variante)
+        if not self.attente or variante == "absolu":
+            return age
+        legal = _par_generation(self.legaux, generation, 0.0)
+        if generation + legal < ANNEE_DE_LA_SURCOTE:
+            return age
+        return max(age, legal + self.attente)
 
     def niveau_de(self, generation: int) -> float:
         """Le niveau de salaire de cette génération."""
@@ -862,6 +929,9 @@ class Variante:
     #: Part-elle à l'ouverture du droit, avec une décote
     #: (:data:`DEPARTS_AVEC_DECOTE`) ?
     decote: bool = False
+    #: Les années qu'elle attend après l'âge légal, avec une surcote
+    #: (:data:`DEPARTS_AVEC_SURCOTE`) ; zéro sans elle.
+    surcote: float = 0.0
 
     def fois(self, part: float, **changements) -> "Variante":
         """La même, pour ``part`` de son poids, avec ces changements."""
@@ -1879,7 +1949,10 @@ def population(effectifs, source: CaracteristiquesRetraites,
     donnees = donnees_population(racine)
     if DEPARTS_AVEC_DECOTE:
         variantes = departs_avec_decote(variantes, effectifs, source, donnees.quintiles)
-    return salaires_population(variantes, donnees)
+    variantes = salaires_population(variantes, donnees)
+    if DEPARTS_AVEC_SURCOTE:
+        variantes = departs_avec_surcote(variantes, departs_publies(racine), racine)
+    return variantes
 
 
 def parts_avec_decote(variantes: list[Variante], effectifs,
@@ -1916,6 +1989,91 @@ def departs_avec_decote(variantes: list[Variante], effectifs,
         sortie.append(v.fois(1.0 - part))
         sortie.append(v.fois(part, decote=True, cas=replace(
             v.cas, code=f"{v.cas.code}~decote", regle_liquidation="ouverture")))
+    return sortie
+
+
+def peut_surcoter(v: Variante) -> bool:
+    """Vrai pour une carrière que :data:`DEPARTS_AVEC_SURCOTE` décline : du
+    salariat ou des non-salariés, de trente années validées et plus
+    (:data:`TRANCHES_DES_SURCOTES`), qui part au taux plein, ni décotée ni
+    déjà déclinée."""
+    return (v.groupe in GROUPES_INTERROMPUS and v.tranche in TRANCHES_DES_SURCOTES
+            and v.cas.regle_liquidation == "taux_plein" and not v.decote and not v.surcote)
+
+
+def parts_avec_surcote(publies: dict) -> dict[str, float]:
+    """La part des carrières complètes de chaque sexe qui partent avec une
+    surcote parmi les nés en 1953 (:data:`GENERATION_DES_SURCOTES`) : la part
+    des départs avec surcote, fois celle des carrières complètes parmi eux,
+    divisée par celle des carrières complètes parmi tous."""
+    generation = GENERATION_DES_SURCOTES
+    return {sexe: (publies[(generation, "condition", "surcote", sexe, "part")] / 100.0
+                   * publies[(generation, "condition", "surcote", sexe, "carriere_complete")]
+                   / publies[(generation, "condition", "ensemble", sexe, "carriere_complete")])
+            for sexe in ("F", "H")}
+
+
+def attentes_des_surcotes(publies: dict, racine: Path) -> dict[str, list[tuple[float, float]]]:
+    """Les départs avec surcote des nés en 1953, sexe par sexe, en
+    :data:`ATTENTES` attentes après l'âge légal de la génération, ``(attente,
+    part)`` triés. Chaque âge de liquidation pèse la part de l'âge dans la
+    génération, fois celle de ses départs qui surcotent, et attend jusqu'au
+    milieu de l'âge — de l'âge légal à l'anniversaire qui le suit pour l'année
+    de l'âge légal, l'âge et demi ensuite, « 67 ans et plus » pris pour 67 ans,
+    le dernier que l'enquête voie ; les âges se regroupent
+    :data:`AGES_PAR_ATTENTE` par :data:`AGES_PAR_ATTENTE` depuis l'année de
+    l'âge légal, chaque attente au milieu de ses âges, pondéré, et pesant leur
+    part. Nul ne surcote avant l'âge légal."""
+    from retraite_notionnelle.scenarios.actuel import AgesOuverture
+
+    generation = GENERATION_DES_SURCOTES
+    legal = AgesOuverture(racine).age(generation)[0]
+    sortie = {}
+    for sexe in ("F", "H"):
+        groupes: dict[int, list[float]] = {}
+        for (lue, tableau, colonne, cle, indicateur), part in publies.items():
+            if ((lue, tableau, cle, indicateur) != (generation, "age_liquidation", sexe, "part")
+                    or not colonne[0].isdigit()):
+                continue
+            age = float(colonne.split("_")[0])
+            if age + 1.0 <= legal:
+                continue
+            masse = part * publies[(generation, tableau, colonne, sexe, "condition_surcote")]
+            rang = min(ATTENTES - 1, int(age - math.floor(legal)) // AGES_PAR_ATTENTE)
+            groupe = groupes.setdefault(rang, [0.0, 0.0])
+            groupe[0] += masse * ((max(age, legal) + age + 1.0) / 2.0 - legal)
+            groupe[1] += masse
+        total = somme_ordonnee(masse for _, masse in groupes.values())
+        sortie[sexe] = sorted((attendue / masse, masse / total)
+                              for attendue, masse in groupes.values())
+    return sortie
+
+
+def departs_avec_surcote(variantes: list[Variante], publies: dict,
+                         racine: Path) -> list[Variante]:
+    """Chaque carrière qui peut surcoter (:func:`peut_surcoter`) se décline :
+    la part de son sexe (:func:`parts_avec_surcote`) attend après l'âge légal,
+    répartie comme les départs avec surcote des nés en 1953
+    (:func:`attentes_des_surcotes`), le reste part au taux plein ; les autres
+    variantes telles quelles."""
+    from retraite_notionnelle.scenarios.actuel import AgesOuverture
+
+    parts = parts_avec_surcote(publies)
+    attentes = attentes_des_surcotes(publies, racine)
+    lus = AgesOuverture(racine)
+    legaux = tuple((generation, lu[0]) for generation in C.generations()
+                   if (lu := lus.age(generation)) is not None)
+    sortie = []
+    for v in variantes:
+        part = parts[v.cas.sexe]
+        if not peut_surcoter(v) or not part:
+            sortie.append(v)
+            continue
+        sortie.append(v.fois(1.0 - part))
+        for attente, poids in attentes[v.cas.sexe]:
+            sortie.append(v.fois(part * poids, surcote=attente, cas=elargi(
+                v.cas, code=f"{v.cas.code}~surcote{attente:.2f}", attente=attente,
+                legaux=legaux)))
     return sortie
 
 
@@ -2615,24 +2773,31 @@ def _proratisations(parametres: Parametres, morceau: tuple
         calcul)
 
 
+def _par_morceaux(fonction: Callable[[Parametres, tuple], list], parametres: Parametres,
+                  couples, processus: int) -> list:
+    """``fonction(parametres, morceau)`` sur les couples ``(cas type,
+    génération)``, triés, par morceaux, chacun gardé par elle, sur
+    ``processus`` cœurs quand il y en a plusieurs : ses lignes, bout à bout."""
+    couples = sorted(couples, key=lambda couple: (couple[0].code, couple[1]))
+    taille = max(1, math.ceil(len(couples) / max(1, 2 * processus)))
+    morceaux = [tuple(couples[i:i + taille]) for i in range(0, len(couples), taille)]
+    if processus <= 1 or len(morceaux) <= 1:
+        resultats = [fonction(parametres, morceau) for morceau in morceaux]
+    else:
+        with ProcessPoolExecutor(max_workers=processus,
+                                 mp_context=multiprocessing.get_context("spawn")) as pool:
+            resultats = list(pool.map(fonction, [parametres] * len(morceaux), morceaux))
+    return [ligne for resultat in resultats for ligne in resultat]
+
+
 def proratisations(parametres: Parametres, couples, processus: int
                    ) -> dict[tuple[str, int], tuple[float, bool, float, bool]]:
     """La proratisation de chaque couple ``(cas type, génération)``, s'il est
     au minimum, sa durée validée et s'il part avec une décote : par morceaux,
     chacun gardé, sur ``processus`` cœurs quand il y en a plusieurs."""
-    couples = sorted(couples, key=lambda couple: (couple[0].code, couple[1]))
-    taille = max(1, math.ceil(len(couples) / max(1, 2 * processus)))
-    morceaux = [tuple(couples[i:i + taille]) for i in range(0, len(couples), taille)]
-    if processus <= 1 or len(morceaux) <= 1:
-        resultats = [_proratisations(parametres, morceau) for morceau in morceaux]
-    else:
-        with ProcessPoolExecutor(max_workers=processus,
-                                 mp_context=multiprocessing.get_context("spawn")) as pool:
-            resultats = list(pool.map(_proratisations, [parametres] * len(morceaux),
-                                      morceaux))
     return {(code, generation): (coefficient, minimum, annees, decote)
-            for resultat in resultats
-            for code, generation, coefficient, minimum, annees, decote in resultat}
+            for code, generation, coefficient, minimum, annees, decote
+            in _par_morceaux(_proratisations, parametres, couples, processus)}
 
 
 def quintiles_ponderes(lignes: list[tuple]) -> dict:
@@ -2846,6 +3011,222 @@ def durees_par_generation(lignes: list[tuple[int, str, float, float]],
     return sortie
 
 
+# -- les départs d'une génération, contre l'EIR ----------------------------------
+
+#: Les générations de la grille dont les départs se confrontent à l'EIR, et la
+#: génération de l'enquête qui juge chacune (``departs_generations.csv``) :
+#: celle de 1950 à elle-même ; celle de 1955 aux nés en 1953, la plus proche
+#: que l'enquête voie presque toute partie. Leurs places par rapport à l'âge
+#: légal se comparent, et leurs conditions de départ ; leurs âges quand la
+#: génération est la même — l'âge légal des nés en 1953, 61 ans et 2 mois,
+#: n'est pas celui de la grille 1955, 62 ans.
+GENERATIONS_DES_DEPARTS = {1950: 1950, 1955: 1953}
+
+#: L'année où l'EIR voit chacune de ses générations : les classeurs « nés en
+#: 1950 (EIR 2016) » et « nés en 1953 (EIR 2020) ».
+ENQUETES_DES_DEPARTS = {1950: 2016, 1953: 2020}
+
+#: Les places d'un départ, dans l'ordre de l'EIR.
+PLACES_DES_DEPARTS = ("avant_age_legal", "age_legal", "entre", "age_annulation",
+                      "apres_annulation")
+
+#: Les classes de conditions de départ que la population sait faire, et les
+#: conditions de l'EIR que chacune réunit : la population n'a ni invalides ni
+#: inaptes, ni de motif propre au taux plein ; ce qu'elle fait partir au taux
+#: plein d'un statut, sans décote, l'EIR le dit « décote inapplicable ».
+CLASSES_DE_CONDITIONS: dict[str, tuple[str, ...]] = {
+    "carriere_longue": ("carriere_longue",),
+    "decote": ("decote",),
+    "surcote": ("surcote",),
+    "taux_plein_age": ("taux_plein_age",),
+    "taux_plein_autre": ("decote_inapplicable", "invalidite", "inaptitude",
+                         "autres_motifs", "taux_plein_duree"),
+}
+
+#: L'écart à l'âge légal ou à l'âge d'annulation de la décote en deçà duquel un
+#: départ est pris à cet âge : un mois et demi.
+TOLERANCE_DE_PLACE = 0.125
+
+
+def departs_publies(racine: Path) -> dict[tuple[int, str, str, str, str], float]:
+    """Les départs des nés en 1950 et en 1953 que l'EIR compte
+    (``departs_generations.csv``), clé ``(génération, tableau, colonne, sexe,
+    indicateur)``."""
+    return {(int(l["generation"]), l["tableau"], l["colonne"], l["sexe"], l["indicateur"]):
+            float(l["valeur"]) for l in _lire_macro(racine, "departs_generations.csv")}
+
+
+def position_du_depart(age: float, legal: float, annulation: float) -> str:
+    """La place d'un départ à ``age``, comme l'EIR la range : avant l'âge
+    légal, à lui, entre lui et l'âge d'annulation de la décote, à ce dernier,
+    après lui, chacun à :data:`TOLERANCE_DE_PLACE` près."""
+    if abs(age - legal) <= TOLERANCE_DE_PLACE:
+        return "age_legal"
+    if age < legal:
+        return "avant_age_legal"
+    if abs(age - annulation) <= TOLERANCE_DE_PLACE:
+        return "age_annulation"
+    return "entre" if age < annulation else "apres_annulation"
+
+
+def age_du_depart(age: float) -> str:
+    """L'âge d'un départ en années révolues, comme l'EIR le range : avant
+    60 ans, de 60 à 66 ans, 67 ans et plus."""
+    if age < 60.0 - 1e-9:
+        return "avant_60"
+    if age >= 67.0 - 1e-9:
+        return "67_plus"
+    return str(int(age + 1e-9))
+
+
+def au_taux_plein(cas: CasType) -> CasType:
+    """Ce cas type sous la règle ``taux_plein``, sans l'attente d'un départ
+    avec surcote : celui dont le pilote fixe l'âge du taux plein."""
+    if isinstance(cas, CasTypeLarge):
+        return replace(cas, regle_liquidation="taux_plein", attente=0.0)
+    return replace(cas, regle_liquidation="taux_plein")
+
+
+def condition_au_depart(simulateur: Simulateur, cas: CasType, generation: int
+                        ) -> tuple[float, str]:
+    """L'âge où ce cas type part, étant né en ``generation``, et la classe de
+    :data:`CLASSES_DE_CONDITIONS` de son départ : en carrière longue quand le
+    droit l'ouvre par elle ; avec une décote (:func:`avec_decote`) ; avec une
+    surcote quand il part après l'âge légal de sa génération et après l'âge de
+    son taux plein ; au taux plein par l'âge quand il part à l'âge
+    d'annulation de la décote, ou après lui, sans la durée requise ; au taux
+    plein, autrement. Les générations que la mesure lit partent après 2004 :
+    la loi leur sert la surcote de tout trimestre qui passe l'un et l'autre."""
+    from retraite_notionnelle.scenarios.actuel import AgesAnnulationDecote, AgesOuverture
+
+    racine = simulateur.parametres.racine_donnees
+    age = cas.age_liquidation_pour(simulateur, generation)
+    actuel = simulateur.echeancier(cas.carriere_a(simulateur, generation, age)).au_depart
+    if actuel.motif_ouverture == "carriere_longue":
+        return age, "carriere_longue"
+    if avec_decote(simulateur, cas, generation, actuel.taux_liquidation):
+        return age, "decote"
+    legal = AgesOuverture(racine).age(generation)[0]
+    annulation = AgesAnnulationDecote(racine).age(generation)[0]
+    if cas.regle_liquidation != "services" and age > legal + TOLERANCE_DE_PLACE:
+        if age > au_taux_plein(cas).age_liquidation_pour(simulateur, generation) + 1e-6:
+            return age, "surcote"
+    if (age >= annulation - TOLERANCE_DE_PLACE
+            and actuel.trimestres_valides < actuel.trimestres_requis):
+        return age, "taux_plein_age"
+    return age, "taux_plein_autre"
+
+
+def _conditions(parametres: Parametres, morceau: tuple) -> list[tuple[str, int, float, str]]:
+    """L'âge et la condition du départ de chaque couple du morceau
+    (:func:`condition_au_depart`), au scénario 1 de la page. Gardés sous
+    l'empreinte du modèle et le code de ce script."""
+
+    def calcul():
+        simulateur = Simulateur(parametres).pour_la_projection()
+        sortie = []
+        for cas, generation in morceau:
+            try:
+                age, condition = condition_au_depart(simulateur, cas, generation)
+            except (ValueError, KeyError):
+                continue
+            sortie.append((cas.code, generation, age, condition))
+        return sortie
+
+    return memoire.memoriser_pour(
+        parametres, ("age_et_condition_de_depart_de_la_grille", parametres, morceau), calcul)
+
+
+def confronter_departs(lignes: list[tuple], publies: dict) -> dict:
+    """Les départs de chaque génération de la grille, sexe par sexe, contre
+    ceux de la génération de l'EIR qui la juge (:data:`GENERATIONS_DES_DEPARTS`) :
+    la part de chaque place, de chaque classe de conditions et, quand la
+    génération est la même, de chaque âge, ``[grille, EIR]``. Les conditions
+    de l'EIR se lisent parmi les départs dont la condition est connue.
+    ``lignes`` : ``(génération, sexe, poids, place, classe, âge)``."""
+    masses: dict[tuple[int, str], dict[str, dict[str, float]]] = {}
+    for generation, sexe, poids, place, classe, age in lignes:
+        for cle in (sexe, "ensemble"):
+            masse = masses.setdefault((generation, cle),
+                                      {"places": {}, "classes": {}, "ages": {}})
+            for champ, valeur in (("places", place), ("classes", classe), ("ages", age)):
+                masse[champ][valeur] = masse[champ].get(valeur, 0.0) + poids
+    sortie: dict = {}
+    for (generation, sexe), masse in sorted(masses.items()):
+        eir_ = GENERATIONS_DES_DEPARTS[generation]
+        total = somme_ordonnee(masse["places"].values())
+
+        def publie(tableau: str, colonne: str) -> float:
+            return publies.get((eir_, tableau, colonne, sexe, "part"), 0.0)
+
+        connues = somme_ordonnee(publie("condition", condition)
+                                 for conditions in CLASSES_DE_CONDITIONS.values()
+                                 for condition in conditions)
+        mesure = {
+            "positions": {place: [masse["places"].get(place, 0.0) / total,
+                                  publie("position", place) / 100.0]
+                          for place in PLACES_DES_DEPARTS},
+            "conditions": {classe: [masse["classes"].get(classe, 0.0) / total,
+                                    somme_ordonnee(publie("condition", c) for c in conditions)
+                                    / connues]
+                           for classe, conditions in CLASSES_DE_CONDITIONS.items()},
+        }
+        if eir_ == generation:
+            ages = {a for (g, t, a, _, _) in publies if (g, t) == (eir_, "age_liquidation")
+                    and a != "ensemble"} | set(masse["ages"])
+            mesure["ages"] = {age: [masse["ages"].get(age, 0.0) / total,
+                                    publie("age_liquidation", age) / 100.0]
+                              for age in sorted(ages, key=_rang_d_age)}
+        sortie.setdefault(str(generation), {"eir": eir_})[sexe] = mesure
+    return sortie
+
+
+def _rang_d_age(age: str) -> float:
+    """Le rang d'un âge de :func:`age_du_depart`, pour les ranger."""
+    if age == "avant_60":
+        return 0.0
+    return float(age.split("_")[0]) + (0.5 if age.endswith("_plus") else 0.0)
+
+
+def departs(parametres: Parametres, tetes: GrilleEnTetes, publies: dict,
+            processus: int = 1) -> dict:
+    """Les départs de chaque génération de :data:`GENERATIONS_DES_DEPARTS`,
+    contre ceux de la génération de l'EIR qui la juge
+    (:func:`confronter_departs`). Chaque génération se compte à l'âge où
+    l'enquête voit la sienne — 66 ans pour les nés en 1950, 67 pour les nés en
+    1953 —, ses seuls départs déjà pris à cet âge, chaque cas type du poids
+    que la page lui donne cette année-là et de sa survie propre, à nombre de
+    décès égal (``cout._survies_alignees``)."""
+    from retraite_notionnelle.scenarios.actuel import AgesAnnulationDecote, AgesOuverture
+
+    racine = parametres.racine_donnees
+    legaux, annulations = AgesOuverture(racine), AgesAnnulationDecote(racine)
+    cas_par_code = {cas.code: cas for cas in tetes.cas_types}
+    couples = {(cas_par_code[pensionne.code], pensionne.generation)
+               for pensionne in tetes.pensionnes
+               if pensionne.generation in GENERATIONS_DES_DEPARTS}
+    lus = {(code, generation): (age, condition) for code, generation, age, condition
+           in _par_morceaux(_conditions, parametres, couples, processus)}
+    lignes = []
+    for generation, eir_ in GENERATIONS_DES_DEPARTS.items():
+        vu = ENQUETES_DES_DEPARTS[eir_] - eir_
+        poids = tetes.poids(generation + vu)
+        alignees = C._survies_alignees(tetes.pensionnes, poids, generation + vu)
+        legal = legaux.age(generation)[0]
+        annulation = annulations.age(generation)[0]
+        for pensionne in tetes.pensionnes:
+            lu = lus.get((pensionne.code, pensionne.generation))
+            if pensionne.generation != generation or lu is None or lu[0] >= vu + 1.0:
+                continue
+            part = poids.get(pensionne.code, 0.0) * alignees.get(
+                (pensionne.code, generation, 0), 1.0)
+            if part > 0.0:
+                lignes.append((generation, cas_par_code[pensionne.code].sexe, part,
+                               position_du_depart(lu[0], legal, annulation), lu[1],
+                               age_du_depart(lu[0])))
+    return confronter_departs(lignes, publies)
+
+
 def processus_par_defaut() -> int:
     try:
         return len(os.sched_getaffinity(0))
@@ -2862,7 +3243,9 @@ def mesurer(noms: tuple[str, ...] = GRILLES, processus: int = 1,
     qui a des tranches de durée est en outre rangée par quintile de sa pension
     en équivalent carrière complète, contre l'EIR (:func:`eqcc`) ; une grille
     qui a des artisans les confronte aux anciens artisans et commerçants de
-    l'EIR (:func:`confronter_non_salaries`)."""
+    l'EIR (:func:`confronter_non_salaries`). Chaque grille confronte enfin les
+    départs de deux de ses générations à ceux des nés en 1950 et en 1953
+    (:func:`departs`)."""
     parametres = parametres if parametres is not None else Parametres()
     racine = parametres.racine_donnees
     source = eir(racine)
@@ -2874,6 +3257,7 @@ def mesurer(noms: tuple[str, ...] = GRILLES, processus: int = 1,
     distributions = {sexe: DistributionPensions(racine, sexe, source.millesime, "france")
                      for sexe in SEXES}
     non_salaries = pensions_non_salaries(racine)
+    publies_departs = departs_publies(racine)
     resultat = {
         "eir": {"millesime": source.millesime, **composition_eir(source)},
         "centiles": {"annee": annee_centiles,
@@ -2902,6 +3286,7 @@ def mesurer(noms: tuple[str, ...] = GRILLES, processus: int = 1,
         if any(v.tranche is not None for v in variantes):
             mesure["eqcc"] = eqcc(parametres, variantes, tetes, publies, source.millesime,
                                   processus)
+        mesure["departs"] = departs(parametres, tetes, publies_departs, processus)
         mesure["secondes"] = round(time.time() - debut, 1)
         resultat["grilles"][nom] = mesure
     return resultat
@@ -3080,6 +3465,55 @@ def imprimer_eqcc(resultat: dict) -> None:
                                              for ligne in generations))
 
 
+#: Les intitulés des places, des classes de conditions et des âges d'un départ.
+INTITULES_DES_DEPARTS = {
+    "avant_age_legal": "avant l'âge légal", "age_legal": "à l'âge légal",
+    "entre": "entre les deux", "age_annulation": "à l'âge d'annulation",
+    "apres_annulation": "après lui", "carriere_longue": "carrière longue",
+    "decote": "décote", "surcote": "surcote", "taux_plein_age": "taux plein par l'âge",
+    "taux_plein_autre": "taux plein, autrement", "avant_60": "avant 60 ans",
+    "67_plus": "67 ans et plus",
+}
+
+#: Les intitulés des trois rubriques de la mesure des départs.
+RUBRIQUES_DES_DEPARTS = {"positions": "la place du départ", "conditions": "sa condition",
+                         "ages": "son âge"}
+
+
+def imprimer_departs(resultat: dict) -> None:
+    """Les départs de deux générations de chaque grille, contre ceux des nés
+    en 1950 et en 1953 que l'EIR compte : la part de chaque place, de chaque
+    classe de conditions et, à génération égale, de chaque âge."""
+    lues = [(nom, g["departs"]) for nom, g in resultat["grilles"].items() if "departs" in g]
+    if not lues:
+        return
+    print("\nLes départs d'une génération, contre l'EIR — la grille 1950 contre les nés "
+          "en 1950 (EIR 2016), la grille 1955 contre les nés en 1953 (EIR 2020) ; part "
+          "des départs déjà pris à l'âge où l'enquête voit la génération, en %")
+    for generation in sorted({g for _, d in lues for g in d}):
+        for rubrique in ("positions", "conditions", "ages"):
+            cles = []
+            for _, d in lues:
+                for sexe in SEXES:
+                    for cle in d.get(generation, {}).get(sexe, {}).get(rubrique, {}):
+                        if cle not in cles:
+                            cles.append(cle)
+            if not cles:
+                continue
+            eir_ = lues[0][1][generation]["eir"]
+            titre = f"grille {generation}, nés en {eir_} : {RUBRIQUES_DES_DEPARTS[rubrique]}"
+            print(f"\n{titre:38}" + "".join(f"{INTITULES_SEXES[s]:>18}" for s in SEXES))
+            for cle in cles:
+                ligne = f"  {INTITULES_DES_DEPARTS.get(cle, cle + ' ans'):24}"
+                print(f"{ligne}{'EIR':>12}" + "".join(
+                    f"{lues[0][1][generation].get(s, {}).get(rubrique, {}).get(cle, [0, 0])[1] * 100:>18.1f}"
+                    for s in SEXES))
+                for nom, d in lues:
+                    print(f"{'':26}{nom[:12]:>12}" + "".join(
+                        f"{d[generation].get(s, {}).get(rubrique, {}).get(cle, [0, 0])[0] * 100:>18.1f}"
+                        for s in SEXES))
+
+
 def imprimer(resultat: dict) -> None:
     grilles = resultat["grilles"]
     base = grilles["reference"]
@@ -3102,6 +3536,7 @@ def imprimer(resultat: dict) -> None:
     imprimer_distribution(resultat)
     imprimer_non_salaries(resultat)
     imprimer_eqcc(resultat)
+    imprimer_departs(resultat)
 
     if page is not None:
         horizon = page["annee_horizon"]

@@ -416,7 +416,8 @@ def test_une_part_du_bas_reste_au_smic_toute_la_carriere(simulateur, source, par
                  if v.cas.code == f"{G.GABARIT}~h~40_plus~p10~smic").cas
     bas = [v.cas for v in variantes
            if v.cas.code.startswith(f"{G.GABARIT}~h~40_plus~p10~bas")
-           and not v.cas.code.endswith("~partiel") and "~fragmente" not in v.cas.code]
+           and not v.cas.code.endswith("~partiel") and "~fragmente" not in v.cas.code
+           and not v.surcote]
     assert len(bas) == G.SOUS_CLASSES_DU_BAS
     generation = 1960
     assert not any(cas.au_smic(simulateur, generation) for cas in bas)
@@ -1021,3 +1022,177 @@ def test_les_departs_avec_decote_se_comptent_quintile_par_quintile(parametres):
     assert "decote" not in G.confronter_eqcc([ligne[:8] for ligne in lignes],
                                              G.quintiles_eqcc(parametres.racine_donnees,
                                                               residents=True))["F"]
+
+
+# -- les départs d'une génération, contre l'EIR (action 138, étape 14) ----------
+
+def test_les_departs_publies_se_lisent_dans_le_fichier_certifie(parametres):
+    """Les départs des nés en 1950 et en 1953 que l'EIR compte, tels que le
+    fichier certifié les donne ; la grille 1950 se juge sur les nés en 1950,
+    celle de 1955 sur les nés en 1953, la génération la plus proche que
+    l'enquête voie presque toute partie."""
+    publies = G.departs_publies(parametres.racine_donnees)
+    assert publies[(1953, "condition", "surcote", "F", "part")] == 14.2
+    assert publies[(1950, "position", "age_legal", "ensemble", "part")] == 40.0
+    assert publies[(1950, "age_liquidation", "60", "H", "part")] == 41.3
+    assert G.GENERATIONS_DES_DEPARTS == {1950: 1950, 1955: 1953}
+
+
+def test_un_depart_se_range_par_sa_place_et_son_age():
+    """La place d'un départ par rapport à l'âge légal et à l'âge d'annulation
+    de la décote, chacun à un mois et demi près, et son âge en années
+    révolues, comme l'EIR les range."""
+    places = [G.position_du_depart(age, 60.0, 65.0)
+              for age in (58.5, 60.0, 60.1, 62.5, 64.95, 65.0, 66.0)]
+    assert places == ["avant_age_legal", "age_legal", "age_legal", "entre",
+                      "age_annulation", "age_annulation", "apres_annulation"]
+    assert [G.age_du_depart(age) for age in (58.5, 60.0, 64.75, 67.0, 68.5)] == [
+        "avant_60", "60", "64", "67_plus", "67_plus"]
+
+
+def test_les_departs_d_une_generation_se_confrontent_a_l_eir(parametres):
+    """Les départs d'une génération de la grille, sexe par sexe, contre ceux
+    de la génération de l'EIR qui la juge : la part de chaque place et de
+    chaque condition — carrière longue, décote, surcote, taux plein par l'âge,
+    et le reste du taux plein, par la durée ou pour un autre motif —, et,
+    quand la génération est la même, de chaque âge. Les conditions de l'EIR
+    se lisent parmi les départs dont la condition est connue : 11,2 % des
+    femmes nées en 1950 surcotent, sur 99,6 % de conditions connues."""
+    publies = G.departs_publies(parametres.racine_donnees)
+    lignes = [(1950, "F", 1.0, "age_legal", "taux_plein_autre", "60"),
+              (1950, "F", 3.0, "entre", "surcote", "62"),
+              (1950, "H", 2.0, "avant_age_legal", "carriere_longue", "avant_60"),
+              (1955, "F", 1.0, "age_annulation", "taux_plein_age", "67_plus")]
+    mesure = G.confronter_departs(lignes, publies)
+    femmes = mesure["1950"]["F"]
+    assert femmes["positions"]["entre"] == [pytest.approx(0.75), pytest.approx(0.224)]
+    assert femmes["conditions"]["surcote"] == [pytest.approx(0.75),
+                                               pytest.approx(11.2 / 99.6)]
+    assert femmes["conditions"]["taux_plein_autre"][1] == pytest.approx(
+        (4.7 + 7.1 + 8.9 + 1.5 + 34.4) / 99.6)
+    assert femmes["ages"]["62"] == [pytest.approx(0.75), pytest.approx(0.038)]
+    assert mesure["1950"]["ensemble"]["positions"]["avant_age_legal"][0] == pytest.approx(
+        2.0 / 6.0)
+    assert mesure["1950"]["eir"] == 1950 and mesure["1955"]["eir"] == 1953
+    assert mesure["1955"]["F"]["conditions"]["taux_plein_age"] == [
+        pytest.approx(1.0), pytest.approx(12.2 / 99.2)]
+    assert "ages" not in mesure["1955"]["F"]
+    assert "H" not in mesure["1955"]
+
+
+def test_la_condition_d_un_depart_se_lit_dans_sa_liquidation(simulateur, source):
+    """La condition d'un départ de la population, telle que l'EIR la range :
+    l'homme né en 1950 d'une carrière pleine du salariat privé, entré à
+    16 ans, part en carrière longue ; la femme d'une carrière courte part au taux plein par
+    l'âge, à 65 ans, ou avec une décote si elle part à l'ouverture du droit ;
+    l'agent de conduite né en 1950 part à cinquante ans au taux plein de son
+    statut, sans décote."""
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    projection = simulateur.pour_la_projection()
+
+    def condition(v, generation=1950):
+        return G.condition_au_depart(projection, v.cas, generation)
+
+    pleine = next(v for v in variantes if v.tranche == "40_plus" and v.cas.sexe == "H"
+                  and v.cas.code.startswith(G.GABARIT) and not v.decote)
+    assert condition(pleine)[1] == "carriere_longue"
+    courte = next(v for v in variantes if v.tranche == "moins_10" and v.cas.sexe == "F"
+                  and v.groupe == "regime_general" and not v.decote)
+    assert condition(courte) == (pytest.approx(65.0), "taux_plein_age")
+    decotee = next(v for v in variantes if v.tranche == "moins_10" and v.cas.sexe == "F"
+                   and v.groupe == "regime_general" and v.decote)
+    assert condition(decotee) == (pytest.approx(60.0), "decote")
+    conduite = next(v for v in variantes if v.cas.code.startswith("agent_sncf_conduite"))
+    assert condition(conduite) == (pytest.approx(50.0), "taux_plein_autre")
+
+
+def test_la_part_et_l_attente_des_departs_avec_surcote_se_lisent_dans_l_eir(parametres):
+    """La part des carrières complètes qui partent avec une surcote parmi les
+    nés en 1953, sexe par sexe : 14,2 % des femmes surcotent, dont 87,4 % à
+    carrière complète, quand 57,3 % de toutes en ont une. Et l'attente de ces
+    départs après l'âge légal, 61 ans et 2 mois, au milieu de chaque âge de
+    liquidation — 1 an et 4 mois pour les départs de 62 ans, qui pèsent 8,9 %
+    des femmes, dont 46,8 % en surcote, 5 mois pour ceux de l'année de l'âge
+    légal —, les âges réunis deux par deux : 61 et 62 ans, 63 et 64, puis 65
+    ans et au-delà. Nul ne surcote avant l'âge légal."""
+    publies = G.departs_publies(parametres.racine_donnees)
+    parts = G.parts_avec_surcote(publies)
+    assert parts["F"] == pytest.approx(0.142 * 87.4 / 57.3)
+    assert parts["H"] == pytest.approx(0.145 * 85.6 / 70.0)
+    lues = G.attentes_des_surcotes(publies, parametres.racine_donnees)["F"]
+    femmes = {61: 42.1 * 1.5, 62: 8.9 * 46.8, 63: 5.0 * 53.3, 64: 5.7 * 51.7,
+              65: 2.9 * 39.8, 66: 14.9 * 15.8, 67: 0.8 * 29.1}
+    attentes = {age: (61.17 + 62.0) / 2 - 61.17 if age == 61 else age + 0.5 - 61.17
+                for age in femmes}
+    total = sum(femmes.values())
+    groupes = [(61, 62), (63, 64), (65, 66, 67)]
+    attendues = [(sum(femmes[a] * attentes[a] for a in ages) / sum(femmes[a] for a in ages),
+                  sum(femmes[a] for a in ages) / total) for ages in groupes]
+    assert [attente for attente, _ in lues] == pytest.approx(
+        [attente for attente, _ in attendues])
+    assert [part for _, part in lues] == pytest.approx([part for _, part in attendues])
+
+
+def test_une_part_des_carrieres_de_trente_ans_et_plus_part_avec_une_surcote(
+        simulateur, source, parametres):
+    """Sous ``DEPARTS_AVEC_SURCOTE``, chaque carrière du salariat et des
+    non-salariés de trente années validées et plus, qui part au taux plein, se
+    décline : la part de son sexe que l'EIR voit surcoter parmi les carrières
+    complètes attend, après l'âge légal, autant que les départs avec surcote
+    des nés en 1953, âge par âge ; le reste part au taux plein. Les carrières
+    plus courtes, les départs avec décote et les statutaires gardent leur
+    départ."""
+    assert G.DEPARTS_AVEC_SURCOTE
+    publies = G.departs_publies(parametres.racine_donnees)
+    parts = G.parts_avec_surcote(publies)
+    attentes = G.attentes_des_surcotes(publies, parametres.racine_donnees)
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    poids = _poids(variantes, simulateur.effectifs, source.millesime)
+    for sexe in ("F", "H"):
+        du_sexe = [v for v in variantes if v.cas.sexe == sexe
+                   and (v.surcote or G.peut_surcoter(v))]
+        avec = [v for v in du_sexe if v.surcote]
+        assert (sum(poids[v.cas.code] for v in avec)
+                / sum(poids[v.cas.code] for v in du_sexe)) == pytest.approx(parts[sexe],
+                                                                            abs=1e-9)
+        par_attente: dict[float, float] = {}
+        for v in avec:
+            par_attente[v.surcote] = par_attente.get(v.surcote, 0.0) + poids[v.cas.code]
+        total = sum(par_attente.values())
+        assert {a: p / total for a, p in par_attente.items()} == pytest.approx(
+            dict(attentes[sexe])), sexe
+    assert all(v.tranche in ("30_40", "40_plus") and v.groupe in G.GROUPES_INTERROMPUS
+               and v.cas.regle_liquidation == "taux_plein" and not v.decote
+               and v.cas.attente == v.surcote for v in variantes if v.surcote)
+    assert not any(G.peut_surcoter(v) for v in variantes
+                   if v.tranche not in ("30_40", "40_plus") or v.decote
+                   or v.groupe not in G.GROUPES_INTERROMPUS)
+
+
+def test_un_depart_avec_surcote_attend_apres_l_age_legal(simulateur, source):
+    """L'homme d'une carrière pleine du salariat privé né en 1955, que la
+    carrière longue ferait partir avant 62 ans, part, s'il surcote, sa
+    première attente après lui, avec une surcote ; la femme née en 1955 d'une
+    carrière de trente à quarante années, au taux plein dès 62 ans, de même.
+    Avant 2004, la loi ne servait aucune surcote : le même homme, né en 1940,
+    part comme s'il n'en attendait pas."""
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    projection = simulateur.pour_la_projection()
+    attentes = G.attentes_des_surcotes(G.departs_publies(simulateur.parametres.racine_donnees),
+                                       simulateur.parametres.racine_donnees)
+
+    def surcotee(sexe: str, tranche: str) -> G.Variante:
+        return next(v for v in variantes if v.cas.code.startswith(G.GABARIT)
+                    and v.cas.sexe == sexe and v.tranche == tranche
+                    and v.surcote == pytest.approx(attentes[sexe][0][0]))
+
+    homme = surcotee("H", "40_plus")
+    sans = next(v for v in variantes if v.cas.code == homme.cas.code.split("~surcote")[0])
+    assert G.condition_au_depart(projection, sans.cas, 1955)[1] == "carriere_longue"
+    assert G.condition_au_depart(projection, homme.cas, 1955) == (
+        pytest.approx(62.0 + attentes["H"][0][0]), "surcote")
+    femme = surcotee("F", "30_40")
+    assert G.condition_au_depart(projection, femme.cas, 1955) == (
+        pytest.approx(62.0 + attentes["F"][0][0]), "surcote")
+    assert (homme.cas.age_liquidation_pour(projection, 1940)
+            == sans.cas.age_liquidation_pour(projection, 1940))
