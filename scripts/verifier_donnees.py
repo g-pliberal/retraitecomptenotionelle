@@ -2850,9 +2850,11 @@ def source_quotients() -> dict[tuple, float]:
     """Quotients de mortalité par âge — les vraies tables du moment.
 
     Leur présence dispense le modèle de sa calibration paramétrique aux âges
-    couverts. Ils couvrent les cases de la table d'Eurostat, jusqu'à 84 puis
-    94 ans selon les millésimes : au-delà, la loi de Gompertz-Makeham reprend
-    la main.
+    couverts. Ils vont jusqu'à 98 ans, le dernier âge dont les décès et les
+    populations d'Eurostat tirent un carré : au-delà, la loi de
+    Gompertz-Makeham reprend la main, raccordée à leur dernier quotient. Ils
+    s'arrêtaient aux cases de la table d'Eurostat, à 84 puis 94 ans selon les
+    millésimes, jusqu'au 18 octobre 2026 (action 138, étape 7).
 
     Ils ne sont plus la table d'Eurostat telle quelle depuis le 10 octobre 2026
     (action 138, étape 7) : le récupérateur les refait des décès par année de
@@ -2993,13 +2995,21 @@ def source_quotients_anciens() -> dict[tuple, float]:
     de pourcentage près ; le dépôt reprend l'INED jusqu'en 1985 et laisse à
     Eurostat, producteur de la donnée observée, tout ce qu'il publie.
 
-    S'y ajoutent, de 1986 à 1997, les seuls âges de 95 à 104 ans : Eurostat
-    s'arrête à 94 et ses classes ouvertes n'en sont pas des quotients. Ce n'est
-    donc pas un panachage — c'est une source là où l'autre se tait. Ces
-    240 valeurs ne déplacent aucune simulation ; elles servent à AUDITER la loi
-    paramétrique qui prend le relais au-delà du dernier âge observé, et
-    `tests/test_donnees.py` fige l'écart qu'elles révèlent.
+    S'y ajoutent, de 1986 à 1997, les seuls âges de 99 à 104 ans : les décès et
+    les populations d'Eurostat s'arrêtent à 99 ans atteints, d'où ses quotients
+    jusqu'à 98 ans, et ses classes ouvertes n'en sont pas des quotients. Ce
+    n'est donc pas un panachage — c'est une source là où l'autre se tait. Ces
+    144 valeurs ne déplacent presque aucune simulation ; elles servent à
+    AUDITER la loi paramétrique qui prend le relais au-delà du dernier âge
+    observé, et `tests/test_donnees.py` fige l'écart qu'elles révèlent. Le
+    complément commençait à 95 ans jusqu'au 18 octobre 2026 (action 138,
+    étape 7) : un fichier brut d'avant porte encore 95 à 98 ans, qu'Eurostat
+    couvre désormais, et qu'on écarte.
     """
+    sys.path.insert(0, str(RACINE / "scripts" / "fetch"))
+    from ined_vallin_mesle import (  # noqa: PLC0415
+        PREMIER_AGE_COMPLEMENT, PREMIERE_ANNEE_GRANDS_AGES)
+
     serie = _serie_json("ined_vallin_mesle.json", "scripts/fetch/ined_vallin_mesle.py")
     return {
         tuple(cle.split("|")): valeur
@@ -3007,6 +3017,8 @@ def source_quotients_anciens() -> dict[tuple, float]:
                                   key=lambda kv: (int(kv[0].split("|")[0]),
                                                   kv[0].split("|")[1],
                                                   int(kv[0].split("|")[2])))
+        if (int(cle.split("|")[0]) < PREMIERE_ANNEE_GRANDS_AGES
+            or int(cle.split("|")[2]) >= PREMIER_AGE_COMPLEMENT)
     }
 
 
@@ -9112,10 +9124,10 @@ CERTIFICATIONS = (
             "#",
             "# Ce fichier PRIME sur la calibration paramétrique : dès qu'un couple",
             "# (année, sexe, âge) y figure, le moteur l'utilise tel quel et n'appelle",
-            "# pas la loi de Gompertz-Makeham. Au-delà du dernier âge de la table",
-            "# d'Eurostat — 84 ans jusqu'en 2013, 94 ans ensuite — et hors des années",
-            "# couvertes, la loi paramétrique reprend la main : c'est un raccord",
-            "# assumé, pas un oubli.",
+            "# pas la loi de Gompertz-Makeham. Au-delà de 98 ans, le dernier âge",
+            "# dont les décès et les populations d'Eurostat tirent un carré, et hors",
+            "# des années couvertes, la loi paramétrique reprend la main : c'est un",
+            "# raccord assumé, pas un oubli.",
             "#",
             "# CALCULÉS PAR GÉNÉRATION, comme l'INSEE, des décès par année de",
             "# naissance et des populations au 1er janvier, puis convertis à l'âge",

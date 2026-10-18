@@ -14,14 +14,14 @@ Trois usages :
   (l'âge atteint dans l'année) et la **population au 1er janvier**, par âge.
   Le dépôt en tire ses quotients de mortalité observés de 1986 à 2024, comme
   l'INSEE calcule les siens : génération par génération, puis convertis à
-  l'âge exact comme les quotients projetés. Déposés dans
+  l'âge exact comme les quotients projetés, jusqu'à 98 ans. Déposés dans
   ``data/reference/mortalite/quotients_periode.csv``, ils priment sur la loi
   de Gompertz-Makeham sans qu'aucune ligne du moteur ne change.
 
 * ``demo_mlifetable`` — la table du moment qu'Eurostat publie. Le dépôt la
   lisait telle quelle jusqu'au 10 octobre 2026 ; elle ne donne plus que ses
-  cases — les années et les âges que couvre la table du dépôt — et un
-  contrôle des quotients refaits.
+  cases — les années et les âges où ses quotients se comparent aux quotients
+  refaits — et ce contrôle.
 
 Deux territoires sont demandés, et leur ordre de priorité est délibéré :
 
@@ -72,16 +72,33 @@ Chaque carré mêle encore deux générations, mais chacune y entre avec son
 propre quotient, et non plus avec une exposition supposée. À 0 et 1 an, le
 carré reste celui d'Eurostat (``PREMIER_AGE_PAR_GENERATION``).
 
+LA QUEUE, AU-DELÀ DES CASES D'EUROSTAT
+--------------------------------------
+La table d'Eurostat s'arrête à 84 ans jusqu'en 2013, à 94 ensuite, et sa
+classe ouverte n'est pas un quotient. Ses décès par année de naissance et ses
+populations au 1er janvier vont, âge par âge, jusqu'à 99 ans atteints, chaque
+année depuis 1986 : le carré de 98 ans est le dernier qu'encadrent deux
+parallélogrammes (``DERNIER_AGE``). Le récupérateur calcule donc tous les
+carrés jusque-là, et s'arrête à 97 ans les trois années où la France entière
+n'a pas de population de 99 ans au 1er janvier suivant, sa classe ouverte
+commençant alors à 99 ans (2005, 2006 et 2009). Jusqu'au 18 octobre 2026,
+la loi de Gompertz-Makeham tenait ces âges que l'observation couvre, de 85
+ou de 95 à 98 ans (action 138, étape 7). Une seule source par année : la
+France entière remplace la table de la métropole tout entière
+(:func:`par_annee`).
+
 Deux contrôles l'autorisent, reconduits à chaque exécution ; le script échoue
 si l'un casse :
 
 * les quotients par âge atteint retrouvent ceux que l'INSEE publie
   (« Mortalité en 2019 », tableaux de séries longues, tableau 69), de 40 à
-  94 ans, à l'arrondi près pour la métropole et à 0,2 % près en médiane pour
-  la France entière, dont les populations de 2019 ont été révisées depuis ;
+  99 ans, à l'arrondi près pour la métropole jusqu'à 98 ans (à 0,8 % près à
+  99 ans, où les décès d'un sexe se comptent par centaines) et à 0,2 % près
+  en médiane pour la France entière, dont les populations de 2019 ont été
+  révisées depuis ;
 * les carrés convertis restent, année par année, à 1 % près en médiane de
-  ceux d'Eurostat : ils ne s'en écartent qu'aux diagonales des générations
-  de guerre, que le script imprime.
+  ceux d'Eurostat, sur ses cases : ils ne s'en écartent qu'aux diagonales des
+  générations de guerre, que le script imprime.
 """
 
 from __future__ import annotations
@@ -121,6 +138,12 @@ SORTIE_QUOTIENTS = Path("data/brut/eurostat_quotients.json")
 
 DECIMALES = 6
 
+#: Le dernier âge des carrés. Les décès par année de naissance et les
+#: populations au 1er janvier vont, âge par âge, jusqu'à 99 ans atteints ;
+#: au-delà, leur classe ouverte. Le carré de 98 ans est le dernier qu'encadrent
+#: deux parallélogrammes, ceux des âges atteints 98 et 99.
+DERNIER_AGE = 98
+
 #: Le premier âge calculé par génération. À 0 et 1 an, le carré d'Eurostat :
 #: les décès de la première année se concentrent dans ses premières semaines,
 #: ce que la moyenne de deux parallélogrammes ignore — elle diviserait par
@@ -131,8 +154,9 @@ DECIMALES = 6
 PREMIER_AGE_PAR_GENERATION = 2
 
 #: Les âges des contrôles : ceux qui pilotent le diviseur, et où l'arrondi de
-#: l'INSEE, au cent-millième, ne pèse plus.
-AGES_CONTROLE = range(40, 95)
+#: l'INSEE, au cent-millième, ne pèse plus, jusqu'au dernier âge atteint dont
+#: un carré se tire.
+AGES_CONTROLE = range(40, DERNIER_AGE + 2)
 #: Écart médian toléré aux quotients de l'INSEE, par année et par sexe. Un an
 #: de décalage en vaudrait 1 à 3 %, le recul annuel de la mortalité.
 TOLERANCE_INSEE_MEDIANE = 0.005
@@ -235,6 +259,16 @@ def quotients_par_age_atteint(deces: dict, population: dict) -> dict[tuple[int, 
     return atteints
 
 
+def ages_des_carres(atteints: dict[int, float], cases: list[int]) -> list[int]:
+    """Les âges dont le récupérateur écrit le carré : les ``cases`` de la
+    table d'Eurostat, puis, au-delà, chaque âge jusqu'à ``DERNIER_AGE`` dont
+    les deux parallélogrammes existent."""
+    dernier = cases[-1]
+    while dernier < DERNIER_AGE and dernier + 2 in atteints:
+        dernier += 1
+    return list(range(dernier + 1))
+
+
 def carres(atteints: dict[int, float], ages: list[int]) -> dict[int, float]:
     """Les quotients d'âge exact des ``ages`` demandés, dès
     ``PREMIER_AGE_PAR_GENERATION``, tirés des quotients par âge atteint ;
@@ -245,6 +279,16 @@ def carres(atteints: dict[int, float], ages: list[int]) -> dict[int, float]:
         raise ValueError(f"âges atteints sans quotient : {manquants[:5]}")
     exacts = convertir({age: atteints[age] for age in plage})
     return {age: exacts[age] for age in ages if age >= PREMIER_AGE_PAR_GENERATION}
+
+
+def par_annee(serie: dict[str, float], prioritaire: dict[str, float]) -> dict[str, float]:
+    """``serie`` complétée de ``prioritaire``, qui remplace chacune de ses
+    tables (``annee|sexe``) tout entière : une seule source par année, même
+    quand la prioritaire couvre moins d'âges."""
+    tables = {cle.rsplit("|", 1)[0] for cle in prioritaire}
+    return {**{cle: valeur for cle, valeur in serie.items()
+               if cle.rsplit("|", 1)[0] not in tables},
+            **prioritaire}
 
 
 def _quotients_insee(donnees: bytes) -> dict[tuple[int, str, int], float]:
@@ -316,15 +360,16 @@ def quotients() -> tuple[dict[str, float], list[str]]:
             ages.sort()
             if ages != list(range(len(ages))):
                 raise ValueError(f"{territoire} {annee} {sexe} : âges publiés discontinus")
+            ages = ages_des_carres(atteints.get((annee, sexe), {}), ages)
             exacts = carres(atteints.get((annee, sexe), {}), ages)
             relatifs = []
             for age in ages:
-                publie = publies[(annee, sexe, age)]
+                publie = publies.get((annee, sexe, age))
                 if age < PREMIER_AGE_PAR_GENERATION:
                     valeurs[f"{annee}|{sexe}|{age}"] = publie
                     continue
                 valeurs[f"{annee}|{sexe}|{age}"] = round(exacts[age], DECIMALES)
-                if age in AGES_CONTROLE and publie > 0:
+                if publie is not None and age in AGES_CONTROLE and publie > 0:
                     relatifs.append(exacts[age] / publie - 1.0)
                     diagonales.setdefault(annee - age, []).append(exacts[age] / publie - 1.0)
             medianes.append((abs(statistics.median(relatifs)), (annee, sexe)))
@@ -341,7 +386,7 @@ def quotients() -> tuple[dict[str, float], list[str]]:
         controle = controler_insee(territoire, atteints)
         print(f"OK      contrôle INSEE {territoire} : {controle}")
         rapport.append(f"{territoire} — INSEE : {controle} ; diagonales : {ligne}")
-        serie.update(valeurs)
+        serie = par_annee(serie, valeurs)
     return serie, rapport
 
 
@@ -373,7 +418,8 @@ def main() -> int:
             methode="Quotients d'âge exact tirés des décès par année de naissance et "
                     "des populations au 1er janvier : q' par âge atteint, comme "
                     "l'INSEE, puis 1 − q(x) = √[(1 − q'(x))(1 − q'(x + 1))], sur les "
-                    "cases de la table d'Eurostat. Voir l'en-tête du récupérateur.",
+                    "cases de la table d'Eurostat et au-delà, jusqu'à 98 ans. Voir "
+                    "l'en-tête du récupérateur.",
             controles=rapport)
     return 0
 

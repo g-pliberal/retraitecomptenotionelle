@@ -215,6 +215,20 @@ def test_plafond_ancien_s_efface_devant_l_insee_et_le_journal_officiel(
     assert set(verificateur.source_plafond_journal_officiel()) == {("2001",)}
 
 
+def test_l_ined_ne_complete_eurostat_qu_au_dela_de_98_ans(verificateur, monkeypatch):
+    """De 1986 à 1997, Eurostat donne les quotients jusqu'à 98 ans depuis le
+    18 octobre 2026 : l'INED ne les complète plus qu'à partir de 99 ans, même
+    lu dans un fichier brut d'avant, qui porte encore 95 à 98 ans. Avant
+    1986, il donne tout."""
+    serie = {f"{annee}|H|{age}": 0.3 for annee in (1985, 1990) for age in range(95, 105)}
+    monkeypatch.setattr(verificateur, "_serie_json", lambda nom, *args: serie)
+    cles = set(verificateur.source_quotients_anciens())
+    assert {age for annee, _, age in cles if annee == "1990"} == {
+        str(age) for age in range(99, 105)}
+    assert {age for annee, _, age in cles if annee == "1985"} == {
+        str(age) for age in range(95, 105)}
+
+
 def test_le_plafond_ancien_survit_a_l_absence_du_journal_officiel(
         verificateur, monkeypatch):
     """Le dump JORF est long à lire : sans lui, la transcription tient tout."""
@@ -250,6 +264,46 @@ def test_classes_d_age_ouvertes_sont_ecartees_des_quotients():
     assert module._age_numerique("Y65") == 65
     assert module._age_numerique("Y_GE85") is None
     assert module._age_numerique("Y_GE95") is None
+
+
+def test_les_carres_vont_jusqu_a_98_ans_au_dela_de_la_table_d_eurostat():
+    """La table d'Eurostat s'arrête à 84 ans jusqu'en 2013, à 94 ensuite ;
+    ses décès par année de naissance et ses populations au 1er janvier vont
+    jusqu'à 99 ans atteints. Le carré de 98 ans est le dernier qu'encadrent
+    deux parallélogrammes, ceux des âges atteints 98 et 99 : le récupérateur
+    les calcule jusque-là, et s'arrête un âge plus tôt quand la population de
+    99 ans manque, comme en France entière au 1er janvier 2006, 2007 et 2010."""
+    import math
+
+    module = _charger_script("eurostat_mortalite", "scripts", "fetch", "eurostat_mortalite.py")
+    atteints = {age: 1.0 - math.exp(-5e-5 * math.exp(0.1 * age)) for age in range(1, 100)}
+    assert module.ages_des_carres(atteints, list(range(85))) == list(range(99))
+    assert module.ages_des_carres(atteints, list(range(95))) == list(range(99))
+    sans_99 = {age: quotient for age, quotient in atteints.items() if age < 99}
+    assert module.ages_des_carres(sans_99, list(range(85))) == list(range(98))
+    # Les cases de la table d'Eurostat se calculent toutes, ou le récupérateur
+    # échoue.
+    sans_90 = {age: quotient for age, quotient in atteints.items() if age != 90}
+    with pytest.raises(ValueError, match="sans quotient"):
+        module.carres(sans_90, module.ages_des_carres(sans_90, list(range(95))))
+    carres = module.carres(atteints, list(range(99)))
+    assert carres[98] == pytest.approx(
+        1.0 - math.sqrt((1.0 - atteints[98]) * (1.0 - atteints[99])), rel=1e-12)
+
+
+def test_la_france_entiere_remplace_la_metropole_annee_entiere():
+    """Une seule source par année : la France entière remplace la table de la
+    métropole de la même année tout entière, et non case par case. Elle n'a
+    pas de carré de 98 ans en 2005, 2006 et 2009, faute de population de
+    99 ans au 1er janvier suivant ; celui de la métropole n'y survit pas."""
+    module = _charger_script("eurostat_mortalite", "scripts", "fetch", "eurostat_mortalite.py")
+    metropole = {f"2005|H|{age}": 0.1 for age in range(99)}
+    metropole.update({f"1997|H|{age}": 0.1 for age in range(99)})
+    entiere = {f"2005|H|{age}": 0.2 for age in range(98)}
+    serie = module.par_annee(metropole, entiere)
+    assert {cle for cle in serie if cle.startswith("2005|")} == set(entiere)
+    assert all(serie[cle] == 0.2 for cle in entiere)
+    assert serie["1997|H|98"] == 0.1
 
 
 def test_manifeste_des_series_et_controles_se_correspondent():

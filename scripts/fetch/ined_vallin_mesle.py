@@ -30,13 +30,18 @@ trompeur. Deux reconstructions indépendantes qui concordent à ce point valent
 mieux qu'une seule.
 
 **Périmètre repris.** 1899-1985 pour tous les âges, puis 1986-1997 pour les
-seuls âges de 95 à 104 ans. Le XIXe siècle est hors du champ du modèle, dont la
+seuls âges de 99 à 104 ans. Le XIXe siècle est hors du champ du modèle, dont la
 répartition commence en 1941. À partir de 1986, Eurostat est le producteur de
-la donnée observée et le dépôt lui laisse tout ce qu'il publie — mais il
-s'arrête à 94 ans, et ses classes ouvertes (85 et plus, 95 et plus) ne sont pas
-des quotients à un âge donné. Reprendre le seul complément que l'INED apporte
-là — les dix âges qu'Eurostat ne couvre pas — n'est donc pas panacher deux
-sources sur une même donnée : c'est en ajouter une là où l'autre se tait.
+la donnée observée et le dépôt lui laisse tout ce qu'il publie — mais ses
+décès par année de naissance et ses populations s'arrêtent à 99 ans atteints,
+d'où ses quotients jusqu'à 98 ans, et ses classes ouvertes ne sont pas des
+quotients à un âge donné. Reprendre le seul complément que l'INED apporte là
+— les six âges qu'Eurostat ne couvre pas — n'est donc pas panacher deux
+sources sur une même donnée : c'est en ajouter une là où l'autre se tait. Le
+complément commençait à 95 ans jusqu'au 18 octobre 2026, quand la table du
+dépôt s'arrêtait aux cases de celle d'Eurostat, à 94 ans (action 138,
+étape 7) ; de 95 à 98 ans, les deux sources concordent à 0,7 % près en
+médiane.
 
 **Ce que ce complément mesure, et qu'il ne corrige pas.** Ces 240 quotients ne
 déplacent aucune simulation : une liquidation de 2004 ou plus tard ne traverse
@@ -47,7 +52,10 @@ et vingt-quatre couples (année, sexe) où l'on peut comparer, elle sous-estime
 la mortalité au-delà de 94 ans de 22 % en moyenne. La queue de la table pesant
 de 8 à 12 % du diviseur de conversion, cette sous-estimation gonfle le diviseur
 d'environ 1,5 % et rabote donc les pensions notionnelles d'autant. Un test le
-mesure et le fige, pour que l'écart ne dérive pas en silence.
+mesure et le fige, pour que l'écart ne dérive pas en silence. Depuis le
+18 octobre 2026, ils ne sont plus que 144, de 99 à 104 ans, et la loi qui les
+prolonge se raccorde au quotient de 98 ans : le test mesure désormais ce
+raccord (``tests/test_donnees.py``).
 """
 
 from __future__ import annotations
@@ -71,11 +79,14 @@ SORTIE = Path("data/brut/ined_vallin_mesle.json")
 #: Bornes reprises. Voir la note de périmètre ci-dessus.
 PREMIERE_ANNEE, DERNIERE_ANNEE = 1899, 1985
 
-#: Complément des grands âges : de 1986 à 1997, Eurostat publie les quotients
-#: jusqu'à 94 ans et s'arrête là. L'INED, lui, va jusqu'à 104 ans. On reprend
-#: donc ces dix âges-là, et eux seuls, sur ces douze années.
+#: Complément des grands âges : de 1986 à 1997, les décès et les populations
+#: d'Eurostat donnent les quotients jusqu'à 98 ans, depuis le 18 octobre 2026
+#: (``scripts/fetch/eurostat_mortalite.py``), et s'arrêtent là. L'INED, lui,
+#: va jusqu'à 104 ans. On reprend donc ces six âges-là, et eux seuls, sur ces
+#: douze années ; de 95 à 98 ans, il concordait avec Eurostat à 0,7 % près en
+#: médiane.
 PREMIERE_ANNEE_GRANDS_AGES, DERNIERE_ANNEE_GRANDS_AGES = 1986, 1997
-PREMIER_AGE_COMPLEMENT = 95
+PREMIER_AGE_COMPLEMENT = 99
 
 #: Feuille du classeur -> code de sexe du dépôt.
 SEXES = {"Hommes": "H", "Femmes": "F"}
@@ -188,11 +199,12 @@ def main() -> int:
             "recupere_le": date.today().isoformat(),
             "note": "quotients du moment par année d'âge, 0 à 104 ans. Le dépôt "
                     "en reprend 1899-1985 tous âges, puis 1986-1997 pour les "
-                    "seuls âges de 95 à 104 ans : à partir de 1986 la donnée "
-                    "observée vient d'Eurostat, son producteur, mais Eurostat "
-                    "s'arrête à 94 ans. Ce complément n'est pas un panachage : "
-                    "il ajoute une source là où l'autre se tait, et il sert à "
-                    "auditer la loi paramétrique qui prend le relais au-delà.",
+                    "seuls âges de 99 à 104 ans : à partir de 1986 la donnée "
+                    "observée vient d'Eurostat, son producteur, mais ses décès "
+                    "et ses populations s'arrêtent à 98 ans. Ce complément "
+                    "n'est pas un panachage : il ajoute une source là où "
+                    "l'autre se tait, et il sert à auditer la loi paramétrique "
+                    "qui prend le relais au-delà.",
             "serie": dict(sorted(
                 serie.items(),
                 key=lambda kv: (int(kv[0].split("|")[0]), kv[0].split("|")[1],
