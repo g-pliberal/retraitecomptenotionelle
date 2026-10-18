@@ -373,7 +373,11 @@ def test_la_carriere_heurtee_valide_ce_que_le_droit_donne_au_chomage():
         assert par_periode["chomage_indemnise"] == [42, 43]
         assert par_periode["chomage_solidarite"] == [44, 45]
         assert par_periode["chomage_non_indemnise"] == [46, 47]
-        assert par_periode["inactivite"] == list(range(48, depart + 1))
+        # Jusqu'au départ : l'année du départ n'a de ligne que s'il en reste
+        # un mois, ce que décide le jour de naissance présumé (R. 351-37).
+        derniere = max(ligne.annee for ligne in carriere.lignes) - generation
+        assert depart - 1 <= derniere <= depart, generation
+        assert par_periode["inactivite"] == list(range(48, derniere + 1))
         assert trimestres == {"emploi": 80, "chomage_indemnise": 8,
                               "chomage_solidarite": 8,
                               "chomage_non_indemnise": non_indemnise,
