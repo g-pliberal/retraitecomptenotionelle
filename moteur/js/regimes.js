@@ -2237,6 +2237,23 @@ export class PeriodeRegime {
       this.borne_haute_par_annee?.[annee] ?? null];
   }
 
+  /**
+   * Les bornes en euros qui priment, l'année `annee`, sur celles en plafonds,
+   * `null` pour une borne qui reste en plafonds : les tranches que la caisse
+   * fixe en euros et n'indexe pas (la CNBF, la CARPIMKO), sinon celles de
+   * l'année seule (le plafond propre du RCI). Une tranche fixée en euros sans
+   * borne haute est sans limite. Jumeau de `PeriodeRegime.bornes_en_euros`.
+   */
+  bornesEnEuros(annee) {
+    const basse = this.borne_basse_euros;
+    const haute = this.borne_haute_euros;
+    if ((basse !== null && basse !== undefined)
+        || (haute !== null && haute !== undefined)) {
+      return [basse ?? 0.0, haute ?? Infinity];
+    }
+    return this.bornesDeLAnnee(annee);
+  }
+
   /** Assiette qui ouvre droit à ``points_maximum`` points. */
   repereAssiette(pass, smicHoraire) {
     if (this.assiette_repere_smic !== null && this.assiette_repere_smic !== undefined) {
@@ -2975,6 +2992,16 @@ export class ClassesCotisation {
       : Math.min(...grilles.keys());
   }
 
+  /**
+   * La grille qui s'applique à cet exercice, celle de son millésime, ou
+   * `null` : ses classes `[revenu maximum, montant, fiabilité]`. Jumeau de
+   * `ClassesCotisation.grille`.
+   */
+  grille(regime, annee) {
+    const millesime = this.anneeGrille(regime, annee);
+    return millesime === null ? null : this._table.get(regime).get(millesime) ?? null;
+  }
+
   /** @returns {[number, number]|null} montant dû et fiabilité. */
   cotisation(regime, annee, revenu, coefficient = 1.0, rang = null) {
     const millesime = this.anneeGrille(regime, annee);
@@ -2997,6 +3024,23 @@ export class ClassesCotisation {
     const [, montant, fiabilite] = grille[grille.length - 1];
     return [montant * coefficient, fiabilite];
   }
+}
+
+
+const CLASSES_PAR_PAQUET = new WeakMap();
+
+/**
+ * Les grilles de classes du paquet, construites une fois par paquet : celles
+ * que la fiche de paie appelle, comme le compte. Jumeau de
+ * `charger_classes_cotisation`.
+ */
+export function classesCotisation(paquet) {
+  let table = CLASSES_PAR_PAQUET.get(paquet);
+  if (table === undefined) {
+    table = new ClassesCotisation(paquet);
+    CLASSES_PAR_PAQUET.set(paquet, table);
+  }
+  return table;
 }
 
 

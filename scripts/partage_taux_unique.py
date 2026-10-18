@@ -153,7 +153,7 @@ def main() -> None:
     plafond = macro.plafond_securite_sociale(annee)
     smic = smic_annuel(macro, annee)
     cadre = "cadre" in args.statut and "non_cadre" not in args.statut
-    actuel = bloc_droit_en_vigueur(catalogue, affiliations, args.statut, annee)
+    actuel = bloc_droit_en_vigueur(catalogue, affiliations, args.statut, annee, 0.0, macro)
     taux_volontaire = (parametres.taux_capitalisation_volontaire
                        if args.volontaire else 0.0)
 

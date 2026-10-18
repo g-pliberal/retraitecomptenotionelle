@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 import csv
+import math
 import re
 from dataclasses import dataclass, field, replace
 from functools import cached_property
 from pathlib import Path
 
 from ..somme import somme_ordonnee
-from .chargement import Fiabilite, charger_yaml
+from .chargement import Fiabilite, charger_yaml, une_fois_par_instantane
 
 #: Familles de régimes reconnues.
 FAMILLES = {
@@ -965,6 +966,21 @@ class PeriodeRegime:
         return (dict(self.borne_basse_par_annee).get(annee),
                 dict(self.borne_haute_par_annee).get(annee))
 
+    def bornes_en_euros(self, annee: int) -> tuple[float | None, float | None]:
+        """Les bornes en euros qui priment, l'année ``annee``, sur celles en
+        plafonds, ``None`` pour une borne qui reste en plafonds : les tranches
+        que la caisse fixe en euros et n'indexe pas (``borne_basse_euros``,
+        ``borne_haute_euros`` : la CNBF, la CARPIMKO), sinon celles de
+        l'année seule (:meth:`bornes_de_l_annee` : le plafond propre du RCI).
+        Ce sont celles de :meth:`bornes_assiette_en_euros`, que la fiche de
+        paie donne à ses segments : une tranche fixée en euros sans borne
+        haute est sans limite, quoi que dise son assiette en plafonds."""
+        if (self.borne_basse_euros is not None
+                or self.borne_haute_euros is not None):
+            return (self.borne_basse_euros or 0.0,
+                    math.inf if self.borne_haute_euros is None else self.borne_haute_euros)
+        return self.bornes_de_l_annee(annee)
+
 
 @dataclass
 class Regime:
@@ -1447,6 +1463,27 @@ class ClassesCotisation:
                 return classe.cotisation * coefficient, classe.fiabilite
         dernier = classes[-1]
         return dernier.cotisation * coefficient, dernier.fiabilite
+
+
+#: Les grilles de classes déjà lues, par la signature de leurs fichiers.
+_CLASSES: dict[tuple, ClassesCotisation] = {}
+
+
+@une_fois_par_instantane
+def charger_classes_cotisation(racine: Path) -> ClassesCotisation:
+    """Les grilles de classes, gardées sur la signature de leurs fichiers :
+    celles que la fiche de paie appelle, comme le compte (``moteur/compte.py``)."""
+    signature: list = [str(racine)]
+    for chemin in (racine / "reference" / "regimes" / "classes_cotisation.csv",
+                   racine / "reference" / "regimes" / "classes_cotisation_epoques.yaml",
+                   racine / "reference" / "macro" / "plafond_securite_sociale.csv"):
+        if chemin.exists():
+            etat = chemin.stat()
+            signature.append((chemin.name, etat.st_mtime_ns, etat.st_size))
+    cle = tuple(signature)
+    if cle not in _CLASSES:
+        _CLASSES[cle] = ClassesCotisation(racine)
+    return _CLASSES[cle]
 
 
 @dataclass(frozen=True)

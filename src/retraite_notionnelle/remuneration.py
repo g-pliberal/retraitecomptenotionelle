@@ -245,7 +245,8 @@ from pathlib import Path
 from .donnees.chargement import Fiabilite, charger_yaml
 from .donnees.indemnite_csg import charger_indemnite_csg
 from .donnees.primes import charger_primes_soumises
-from .donnees.regimes import ContributionsEmployeurPubliques, PartRetraiteSeuleEtat
+from .donnees.regimes import (ContributionsEmployeurPubliques, PartRetraiteSeuleEtat,
+                              charger_classes_cotisation)
 from .restitution import points_csg_rendus
 from .somme import somme_ordonnee
 
@@ -307,10 +308,17 @@ class Segment:
     — « jusqu'à tant de plafonds » — ne saurait pas les représenter, et c'est
     pour cela que celle-ci est explicite.
 
-    Une borne que le régime fixe en euros pour l'année — le plafond propre du
-    RCI de 2013 à 2024, ``PeriodeRegime.bornes_de_l_annee`` — prime sur celle
-    en plafonds : ``bas_euros``, ``haut_euros``, en euros ANNUELS, comme le
-    plafond que la fiche reçoit.
+    Une borne que le régime fixe en euros — le plafond propre du RCI de 2013 à
+    2024, les tranches de la CNBF et de la CARPIMKO, que la caisse n'indexe
+    pas : ``PeriodeRegime.bornes_en_euros`` — prime sur celle en plafonds :
+    ``bas_euros``, ``haut_euros``, en euros ANNUELS, comme le plafond que la
+    fiche reçoit.
+
+    ``facteur`` : l'assiette du segment, en multiple du revenu de la fiche,
+    quand elle n'est pas le revenu — les commissions de l'agent général, les
+    produits de l'office du notaire (``assiette_facteur_revenu``). Les bornes
+    portent sur elle, comme au compte : c'est l'assiette qui est plafonnée,
+    non le revenu.
     """
 
     bas_en_plafonds: float
@@ -318,6 +326,7 @@ class Segment:
     taux: float
     bas_euros: float | None = None
     haut_euros: float | None = None
+    facteur: float = 1.0
 
 
 def _montant(segments: tuple[Segment, ...], assiette: float,
@@ -327,17 +336,37 @@ def _montant(segments: tuple[Segment, ...], assiette: float,
     for segment in segments:
         if segment.taux == 0.0:
             continue
+        sienne = assiette * segment.facteur
         bas = (segment.bas_en_plafonds * plafond_annuel
                if segment.bas_euros is None else segment.bas_euros)
         if segment.haut_euros is not None:
-            haut = min(assiette, segment.haut_euros)
+            haut = min(sienne, segment.haut_euros)
         elif segment.haut_en_plafonds is None:
-            haut = assiette
+            haut = sienne
         else:
-            haut = min(assiette, segment.haut_en_plafonds * plafond_annuel)
+            haut = min(sienne, segment.haut_en_plafonds * plafond_annuel)
         if haut > bas:
             total += (haut - bas) * segment.taux
     return total
+
+
+@dataclass(frozen=True)
+class Classe:
+    """Une classe d'un barème qui appelle un MONTANT selon le revenu : le
+    revenu de la fiche jusqu'où elle vaut, en euros de l'année (``None`` pour
+    la dernière), et ce qu'elle appelle."""
+
+    revenu_maximum: float | None
+    montant: float
+
+
+def _montant_de_la_classe(classes: tuple[Classe, ...], revenu: float) -> float:
+    """Le montant de la classe où tombe le revenu, celui de la dernière
+    au-delà de toutes ; zéro sans barème."""
+    for classe in classes:
+        if classe.revenu_maximum is None or revenu <= classe.revenu_maximum:
+            return classe.montant
+    return classes[-1].montant if classes else 0.0
 
 
 def _tranches(lignes) -> tuple[Segment, ...]:
@@ -1106,6 +1135,27 @@ class ComposanteRetraite:
     #: sur la fiche, et que la proposition garde, puisqu'une réforme de la
     #: répartition ne l'atteint pas.
     hors_repartition: bool = False
+    #: Ce que l'étage appelle en MONTANT, hors de tout taux, en euros de
+    #: l'année : son forfait (``cotisation_forfaitaire_euros``), part de
+    #: l'assuré et part de l'employeur ; et, quand il range l'assuré dans une
+    #: classe selon son revenu (``cotisation_par_classes``), les montants de
+    #: ses classes, dont ``part_salariale_des_classes`` revient à l'assuré.
+    forfait_salarie: float = 0.0
+    forfait_employeur: float = 0.0
+    classes: tuple[Classe, ...] = ()
+    part_salariale_des_classes: float = 1.0
+
+    def salarial(self, brut: float, plafond_annuel: float) -> float:
+        """Ce que l'assuré verse à cet étage : ses taux, son forfait, sa classe."""
+        return (_montant(self.salarie, brut, plafond_annuel) + self.forfait_salarie
+                + _montant_de_la_classe(self.classes, brut)
+                * self.part_salariale_des_classes)
+
+    def patronal(self, brut: float, plafond_annuel: float) -> float:
+        """Ce que l'employeur verse à cet étage."""
+        return (_montant(self.employeur, brut, plafond_annuel) + self.forfait_employeur
+                + _montant_de_la_classe(self.classes, brut)
+                * (1.0 - self.part_salariale_des_classes))
 
     def taux_employeur_premiere_tranche(self) -> float:
         """Taux patronal sur la première tranche — celui qu'un décret additionne.
@@ -1160,12 +1210,10 @@ class BlocRetraite:
         return self.patronal(brut, plafond_annuel) / brut if brut else 0.0
 
     def salarial(self, brut: float, plafond_annuel: float) -> float:
-        return somme_ordonnee(_montant(c.salarie, brut, plafond_annuel)
-                   for c in self.composantes)
+        return somme_ordonnee(c.salarial(brut, plafond_annuel) for c in self.composantes)
 
     def patronal(self, brut: float, plafond_annuel: float) -> float:
-        return somme_ordonnee(_montant(c.employeur, brut, plafond_annuel)
-                   for c in self.composantes)
+        return somme_ordonnee(c.patronal(brut, plafond_annuel) for c in self.composantes)
 
     def taux_employeur_dans_la_reduction(self, profil: ProfilRemuneration) -> float:
         """Points de retraite patronale que le coefficient maximal doit compter.
@@ -1323,8 +1371,8 @@ class ConstructeurFiche:
                 cadre: bool) -> tuple[Ligne, ...]:
         lignes = [
             Ligne(code=composante.code, libelle=composante.libelle, retraite=True,
-                  salarie=_montant(composante.salarie, brut, plafond),
-                  employeur=_montant(composante.employeur, brut, plafond))
+                  salarie=composante.salarial(brut, plafond),
+                  employeur=composante.patronal(brut, plafond))
             for composante in bloc.composantes
         ]
         for poste in self.profil.postes:
@@ -1364,7 +1412,7 @@ class ConstructeurFiche:
                              plafond: float, cadre: bool) -> float:
         """Cotisations patronales que la réduction générale peut effacer."""
         total = somme_ordonnee(
-            _montant(composante.employeur, brut, plafond)
+            composante.patronal(brut, plafond)
             for composante in bloc.composantes
             if composante.dans_la_reduction_generale
         )
@@ -1460,15 +1508,22 @@ class ConstructeurFiche:
         connaît son net — la plupart des gens — le tape tel quel, et le modèle,
         qui ne raisonne qu'en brut, remonte jusqu'à lui.
 
-        Le net croît strictement avec le brut : chaque taux est inférieur à un,
-        et ceux qui dépendent du niveau — les tranches, les barèmes progressifs
-        des indépendants — ne font que changer la pente. Une dichotomie suffit
-        donc, comme pour le coût du travail. La borne haute part de trois fois
-        le net : aucun profil ne prélève deux tiers d'un revenu.
+        Le net croît avec le brut : chaque taux est inférieur à un, et ceux qui
+        dépendent du niveau — les tranches, les barèmes progressifs des
+        indépendants — ne font que changer la pente ; seule une classe, qui
+        appelle un montant par paliers, le fait reculer d'un saut à son seuil,
+        où la dichotomie s'arrête alors. Elle suffit donc, comme pour le coût
+        du travail. La borne haute part de trois fois le net, et double tant
+        qu'elle n'y suffit pas : un forfait prend plus des deux tiers d'un
+        petit revenu, 1 988 € à la CNBF en 2026.
         """
         if net <= 0:
             return 0.0
         bas, haut = net, net * 3.0
+        for _ in range(60):
+            if self.fiche(0, haut, plafond_annuel, smic_annuel, bloc, cadre).net >= net:
+                break
+            bas, haut = haut, haut * 2.0
         for _ in range(80):
             milieu = (bas + haut) / 2
             fiche = self.fiche(0, milieu, plafond_annuel, smic_annuel, bloc, cadre)
@@ -1562,7 +1617,7 @@ class ConstructeurFiche:
 
 
 def bloc_droit_en_vigueur(catalogue, affiliations, statut: str, annee: int,
-                          part_primes: float = 0.0) -> BlocRetraite:
+                          part_primes: float = 0.0, macro=None) -> BlocRetraite:
     """Ce que le droit en vigueur prélève pour la retraite, par régime.
 
     **Les primes d'un fonctionnaire.** Le brut de la fiche est la
@@ -1597,11 +1652,35 @@ def bloc_droit_en_vigueur(catalogue, affiliations, statut: str, annee: int,
     notionnel. Sans ce correctif, la fiche de paie d'un artisan aurait montré un
     employeur qui n'existe pas et aurait sous-estimé de moitié ce qu'il verse.
 
+    **Ce que la caisse fixe hors des taux et des plafonds**, comme le compte le
+    reçoit (``ConstructeurCompte``) : les tranches qu'elle fixe en euros et
+    n'indexe pas (:meth:`~.donnees.regimes.PeriodeRegime.bornes_en_euros` :
+    la CNBF, la CARPIMKO) ; l'assiette qui n'est pas le revenu
+    (``assiette_facteur_revenu`` : les commissions de l'agent général, les
+    produits de l'office du notaire) ; le forfait, dû quel que soit le revenu
+    (``cotisation_forfaitaire_euros``), ramené de son année par les prix ; la
+    classe où tombe le revenu (``cotisation_par_classes`` : la Cipav jusqu'en
+    2022, la CAVEC, la CARPV), dans la grille de son millésime ramenée par le
+    rapport des plafonds. Les deux derniers exigent ``macro``. La fiche les
+    ignorait jusqu'au 18 octobre 2026 : la complémentaire de la CNBF y
+    prélevait 59,4 % du revenu d'un avocat en 2026, la somme des taux de ses
+    cinq tranches, et la Cipav n'y paraissait qu'en 2023 (action 138, étape 9).
+    La classe se lit sur le revenu de la fiche, et non sur celui de l'année
+    que le texte désigne, la précédente ou l'avant-dernière ; la classe du
+    début d'activité n'y joue pas : la fiche n'a pas de carrière
+    (``ClassesCotisation.revenu_retenu``). Le médecin de secteur 2 paie seul
+    ses prestations complémentaires de vieillesse depuis 1980, la part de
+    l'assurance maladie comprise, comme le compte la lui porte.
+
     Ce bloc vaut pour les systèmes 1, 2 et 3 du site : ils ne changent PAS ce
     qui est prélevé, seulement ce qui est porté au compte. C'est la raison pour
     laquelle la fiche de paie de ces trois systèmes est la même, au centime.
     """
     sans_employeur = affiliations.sans_employeur(statut)
+    # Le médecin de secteur 2 paie seul, depuis 1980, ses prestations
+    # complémentaires de vieillesse, dont l'assurance maladie paie les deux
+    # tiers en secteur 1 (``Affiliations.sans_prise_en_charge``).
+    paie_seul = affiliations.sans_prise_en_charge(statut, annee)
     composantes: list[ComposanteRetraite] = []
     for code in affiliations.regimes(statut, annee):
         if code not in catalogue:
@@ -1615,21 +1694,53 @@ def bloc_droit_en_vigueur(catalogue, affiliations, statut: str, annee: int,
             continue
         salarie: list[Segment] = []
         employeur: list[Segment] = []
+        forfait_salarie = forfait_employeur = 0.0
+        classes: tuple[Classe, ...] = ()
+        part_des_classes = 1.0
         for periode in regime.periodes_actives(annee):
             basse, haute = periode.bornes_assiette_en_pass()
-            # Le plafond propre du RCI, fixé en euros pour l'année.
-            basse_euros, haute_euros = periode.bornes_de_l_annee(annee)
+            # Les bornes en euros, qui priment : le plafond propre du RCI de
+            # l'année, les tranches que la CNBF et la CARPIMKO fixent en euros.
+            basse_euros, haute_euros = periode.bornes_en_euros(annee)
+            # L'assiette qui n'est pas le revenu, que le facteur reconstitue
+            # avant les bornes, comme au compte.
+            facteur = (1.0 if periode.assiette_facteur_revenu is None
+                       else periode.assiette_facteur_revenu)
             part = 1.0 if sans_employeur else periode.part_salariale
+            # LA CLASSE, quand la période en appelle une : ni le taux ni le
+            # forfait n'y ont alors de rôle, c'est la grille qui décide.
+            if periode.cotisation_par_classes:
+                grille = _classes_de_l_annee(catalogue, code, annee,
+                                             _exige_la_macro(macro, code, periode), facteur)
+                if grille:
+                    if classes:
+                        raise ValueError(f"{code} {annee} : deux grilles de classes la même "
+                                         "année, quand la fiche n'en appelle qu'une")
+                    classes, part_des_classes = grille, part
+                    continue
+            # LE FORFAIT, dû quel que soit le revenu : la cotisation de
+            # croisière de la CNBF, celles de la CARMF, de la CAVP, de la
+            # CARCDSF, de la CARPIMKO et des PCV, ramenées par les prix.
+            if periode.cotisation_forfaitaire_euros:
+                forfait = periode.cotisation_forfaitaire_euros * _exige_la_macro(
+                    macro, code, periode).coefficient_prix(
+                        periode.cotisation_forfaitaire_annee or annee, annee)
+                if paie_seul:
+                    forfait += periode.prise_en_charge(forfait, 0.0)
+                forfait_salarie += forfait * part
+                forfait_employeur += forfait * (1.0 - part)
             traitement = 1.0 - part_primes if periode.assiette == "hors_primes" else 1.0
             # L'artisan et le commerçant, au régime général depuis 2018, paient
             # leur barème propre (D. 633-3), comme le compte le leur porte.
             plafonne, deplafonne = periode.taux_du_cotisant(sans_employeur)
             taux = (plafonne or 0.0) * traitement
+            if paie_seul:
+                taux += periode.prise_en_charge(0.0, taux)
             if taux:
                 salarie.append(Segment(basse, haute, taux * part,
-                                       basse_euros, haute_euros))
+                                       basse_euros, haute_euros, facteur))
                 employeur.append(Segment(basse, haute, taux * (1.0 - part),
-                                         basse_euros, haute_euros))
+                                         basse_euros, haute_euros, facteur))
             # Les retenues et contributions supplémentaires du policier, de
             # l'aide-soignant et du sapeur-pompier professionnel, chacune sur
             # son assiette, en taux de la rémunération entière, comme le
@@ -1649,21 +1760,56 @@ def bloc_droit_en_vigueur(catalogue, affiliations, statut: str, annee: int,
             if taux_deplafonne:
                 part_deplafonnee = (
                     1.0 if sans_employeur else periode.part_salariale_deplafonnee)
-                salarie.append(
-                    Segment(0.0, None, taux_deplafonne * part_deplafonnee))
-                employeur.append(
-                    Segment(0.0, None, taux_deplafonne * (1.0 - part_deplafonnee)))
-        if not salarie and not employeur:
+                salarie.append(Segment(0.0, None, taux_deplafonne * part_deplafonnee,
+                                       facteur=facteur))
+                employeur.append(Segment(0.0, None,
+                                         taux_deplafonne * (1.0 - part_deplafonnee),
+                                         facteur=facteur))
+        if not (salarie or employeur or forfait_salarie or forfait_employeur or classes):
             continue
         composantes.append(ComposanteRetraite(
             code=code, libelle=regime.nom, salarie=tuple(salarie),
             employeur=tuple(employeur), dans_la_reduction_generale=True,
+            forfait_salarie=forfait_salarie, forfait_employeur=forfait_employeur,
+            classes=classes, part_salariale_des_classes=part_des_classes,
         ))
     return BlocRetraite(
         libelle="Retraite (droit en vigueur)",
         composantes=tuple(composantes),
         remplace_les_contributions_d_equilibre=False,
     )
+
+
+def _exige_la_macro(macro, code: str, periode):
+    """La macro, qu'un forfait exige pour ses prix et une classe pour ses
+    plafonds : sans elle, la fiche ne les tairait pas, elle refuse."""
+    if macro is None:
+        raise ValueError(f"{code} {periode.debut} : un forfait se ramène par les prix et "
+                         "une classe par le plafond ; la fiche de ce régime exige la macro")
+    return macro
+
+
+def _classes_de_l_annee(catalogue, code: str, annee: int, macro,
+                        facteur: float) -> tuple[Classe, ...]:
+    """Les classes du régime l'année ``annee``, en euros de l'année et en
+    revenu de la fiche : la grille de son millésime, bornes et montants ramenés
+    ensemble par le rapport des plafonds, comme au compte
+    (``ConstructeurCompte._cotisation_par_classes``), ses bornes divisées par le
+    facteur de l'assiette. Vide sans grille."""
+    table = charger_classes_cotisation(catalogue.racine)
+    millesime = table.annee_grille(code, annee)
+    grille = table.grille(code, annee)
+    if millesime is None or not grille:
+        return ()
+    reference = macro.plafond_securite_sociale(millesime)
+    if reference <= 0:
+        return ()
+    coefficient = macro.plafond_securite_sociale(annee) / reference
+    return tuple(
+        Classe(revenu_maximum=(None if classe.revenu_maximum is None
+                               else classe.revenu_maximum * coefficient / facteur),
+               montant=classe.cotisation * coefficient)
+        for classe in grille)
 
 
 def _etage_hors_repartition(catalogue, regime, statut: str, annee: int,
@@ -1899,10 +2045,11 @@ def _deduits_de_reference(catalogue, affiliations, macro, statut: str,
     annee = table.annee_de_reference
     plafond = macro.plafond_securite_sociale(annee)
     if bloc is None:
-        bloc = bloc_droit_en_vigueur(catalogue, affiliations, statut, annee, part_primes)
-    retenue = somme_ordonnee(_montant(c.salarie, remuneration, plafond)
+        bloc = bloc_droit_en_vigueur(catalogue, affiliations, statut, annee, part_primes,
+                                     macro)
+    retenue = somme_ordonnee(c.salarial(remuneration, plafond)
                              for c in bloc.composantes if not c.hors_repartition)
-    rafp = somme_ordonnee(_montant(c.salarie, remuneration, plafond)
+    rafp = somme_ordonnee(c.salarial(remuneration, plafond)
                           for c in bloc.composantes if c.hors_repartition)
     return table.contribution_de_solidarite(
         remuneration, retenue + rafp, (1.0 - part_primes) * remuneration - retenue, plafond)
@@ -1988,7 +2135,8 @@ def indemnite_stylisee(macro, catalogue, affiliations, statut: str, annee: int,
     courant = salaire_moyen_annuel(macro, annee)
     poids = {a: salaire_moyen_annuel(macro, a) / courant
              for a in range(reference, annee + 1)}
-    bloc = bloc_droit_en_vigueur(catalogue, affiliations, statut, reference, part_primes)
+    bloc = bloc_droit_en_vigueur(catalogue, affiliations, statut, reference, part_primes,
+                                 macro)
 
     def indemnite(revenu: float) -> float:
         if revenu <= 0.0:
@@ -2393,7 +2541,7 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
         plafond = macro.plafond_securite_sociale(annee)
         smic = smic_annuel(macro, annee)
         actuel_bloc = bloc_droit_en_vigueur(catalogue, affiliations, statut, annee,
-                                            primes)
+                                            primes, macro)
         propose = bloc_propose(annee, actuel_bloc, 1.0 - primes)
         constructeur = constructeur_de(ligne.lodeom)
         fiche_actuelle = constructeur.fiche(
@@ -2471,7 +2619,7 @@ def salaire_brut_depuis_net(racine_donnees, macro, catalogue, affiliations,
     if indemnite is None:
         return constructeur.brut_a_net_donne(
             net_annuel, plafond, smic,
-            bloc_droit_en_vigueur(catalogue, affiliations, statut, annee, part_primes),
+            bloc_droit_en_vigueur(catalogue, affiliations, statut, annee, part_primes, macro),
             cadre,
         )
     # La même dichotomie que `brut_a_net_donne`, sur le traitement et les
@@ -2481,7 +2629,7 @@ def salaire_brut_depuis_net(racine_donnees, macro, catalogue, affiliations,
         milieu = (bas + haut) / 2
         fiche = _fiche_avec_indemnite(constructeur, catalogue, affiliations, statut,
                                       annee, milieu, part_primes, indemnite(milieu),
-                                      plafond, smic, cadre)
+                                      plafond, smic, cadre, macro)
         if fiche.net < net_annuel:
             bas = milieu
         else:
@@ -2492,13 +2640,13 @@ def salaire_brut_depuis_net(racine_donnees, macro, catalogue, affiliations,
 def _fiche_avec_indemnite(constructeur: ConstructeurFiche, catalogue, affiliations,
                           statut: str, annee: int, revenu: float, part_primes: float,
                           indemnite: float, plafond: float, smic: float,
-                          cadre: bool) -> FicheDePaie:
+                          cadre: bool, macro) -> FicheDePaie:
     """La fiche du droit en vigueur de ``revenu``, l'indemnité compensatrice
     ajoutée au brut et comptée avec les primes."""
     primes = part_primes_de_la_fiche(revenu, part_primes, indemnite)
     return constructeur.fiche(
         annee, revenu + indemnite, plafond, smic,
-        bloc_droit_en_vigueur(catalogue, affiliations, statut, annee, primes), cadre)
+        bloc_droit_en_vigueur(catalogue, affiliations, statut, annee, primes, macro), cadre)
 
 
 def salaire_net_depuis_brut(racine_donnees, macro, catalogue, affiliations,
@@ -2542,7 +2690,7 @@ def fiche_depuis_brut(racine_donnees, macro, catalogue, affiliations,
     return _fiche_avec_indemnite(
         ConstructeurFiche(profil), catalogue, affiliations, statut, annee,
         brut_annuel, part_primes, indemnite,
-        macro.plafond_securite_sociale(annee), smic_annuel(macro, annee), cadre)
+        macro.plafond_securite_sociale(annee), smic_annuel(macro, annee), cadre, macro)
 
 
 def conversion_possible(affiliations, catalogue, statut: str, annee: int) -> bool:

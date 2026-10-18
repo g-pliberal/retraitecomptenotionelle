@@ -1895,6 +1895,21 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
             versees = dict(constructeur.cotisation_annuelle(carriere, annee).par_regime)
             mesure[nom] = versees.get("agirc", 0.0)
         return mesure
+    if cle == "cotisations_de_la_fiche_de_paie":
+        # Les lignes de retraite de la fiche de paie du site, sur le revenu et
+        # l'année de l'exemple, part de l'assuré : ce que la caisse appelle.
+        from retraite_notionnelle.remuneration import fiche_depuis_brut
+
+        valeur = exemple["attendu"][cle]
+        annee, revenu = int(valeur["annee"]), float(valeur["revenu"])
+        fiche = fiche_depuis_brut(
+            simulateur.parametres.racine_donnees, simulateur.macro, simulateur.catalogue,
+            simulateur.affiliations, exemple["carriere"]["affiliation"], annee, revenu)
+        mesure = {"annee": annee, "revenu": revenu}
+        for ligne in () if fiche is None else fiche.lignes:
+            if ligne.retraite:
+                mesure[ligne.code] = ligne.salarie
+        return mesure
     if cle == "departs":
         # Les départs que l'échéancier inscrit quand les régimes ne liquident
         # pas tous au départ déclaré, chacun « AAAA-MM-JJ motif » ; aucun
@@ -2187,6 +2202,12 @@ def _concorde(cle: str, mesure, valeur) -> bool:
         return mesure["annee"] == int(valeur["annee"]) and all(
             mesure[part] == pytest.approx(valeur[part], **TOLERANCES[cle])
             for part in ("salariale", "totale") if part in valeur)
+    if cle == "cotisations_de_la_fiche_de_paie":
+        # À l'euro, que la caisse arrondit : chaque ligne de retraite de la
+        # fiche, et elles seules.
+        return set(mesure) == set(valeur) and all(
+            mesure[code] == pytest.approx(montant, abs=0.5)
+            for code, montant in valeur.items())
     if cle in TOLERANCES:
         return mesure == pytest.approx(valeur, **TOLERANCES[cle])
     return mesure == valeur
@@ -2293,7 +2314,7 @@ def test_le_temoin_des_exemples_officiels_est_source():
             "service-public.gouv.fr", "Cnav", "ENIM", "CARCDSF", "CARMF",
             "CAVAMAC", "Cour des comptes", "SRE", "COR", "CNRACL", "CNIEG",
             "Agirc-Arrco", "CRPCEN", "CLEISS", "Direction de la sécurité sociale",
-            "Union Retraite", "Audiens", "Ircantec", "ERAFP",
+            "Union Retraite", "Audiens", "Ircantec", "ERAFP", "Cipav",
         ), exemple["id"]
         assert len(source["reference"].split()) >= 4, exemple["id"]
         assert re.fullmatch(r"\d{4}-\d{2}-\d{2}", source["verifie_le"]), exemple["id"]

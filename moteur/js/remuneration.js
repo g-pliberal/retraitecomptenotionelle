@@ -45,7 +45,9 @@
  */
 
 import { tauxCapitalisationVolontaireApplique } from "./config.js";
-import { ContributionsEmployeurPubliques, PartRetraiteSeuleEtat } from "./regimes.js";
+import {
+  ContributionsEmployeurPubliques, PartRetraiteSeuleEtat, classesCotisation,
+} from "./regimes.js";
 import { primesSoumises } from "./primes.js";
 import { indemniteCsg } from "./indemnite_csg.js";
 import { salaireMoyenAnnuel } from "./carriere.js";
@@ -95,22 +97,41 @@ function montant(segments, assiette, plafondAnnuel) {
     if (segment.taux === 0) {
       continue;
     }
-    // Une borne que le régime fixe en euros pour l'année — le plafond propre
-    // du RCI de 2013 à 2024 — prime sur celle en plafonds.
+    // L'assiette du segment, quand elle n'est pas le revenu : les commissions
+    // de l'agent général, les produits de l'office du notaire. Les bornes
+    // portent sur elle, comme au compte.
+    const sienne = assiette * (segment.facteur ?? 1);
+    // Une borne que le régime fixe en euros — le plafond propre du RCI de 2013
+    // à 2024, les tranches de la CNBF et de la CARPIMKO — prime sur celle en
+    // plafonds.
     const bas = segment.basEuros ?? segment.bas * plafondAnnuel;
     let haut;
     if (segment.hautEuros !== null && segment.hautEuros !== undefined) {
-      haut = Math.min(assiette, segment.hautEuros);
+      haut = Math.min(sienne, segment.hautEuros);
     } else {
       haut = segment.haut === null
-        ? assiette
-        : Math.min(assiette, segment.haut * plafondAnnuel);
+        ? sienne
+        : Math.min(sienne, segment.haut * plafondAnnuel);
     }
     if (haut > bas) {
       total += (haut - bas) * segment.taux;
     }
   }
   return total;
+}
+
+/**
+ * Le montant de la classe où tombe le revenu, celui de la dernière au-delà de
+ * toutes ; zéro sans barème. Une classe : `{ revenuMaximum, montant }`, le
+ * revenu de la fiche jusqu'où elle vaut (`null` pour la dernière).
+ */
+function montantDeLaClasse(classes, revenu) {
+  for (const classe of classes) {
+    if (classe.revenuMaximum === null || revenu <= classe.revenuMaximum) {
+      return classe.montant;
+    }
+  }
+  return classes.length ? classes[classes.length - 1].montant : 0;
 }
 
 /**
@@ -571,7 +592,8 @@ export class BaremePrelevements {
 export class ComposanteRetraite {
   constructor({
     code, libelle, salarie, employeur, dansLaReductionGenerale = true,
-    horsRepartition = false,
+    horsRepartition = false, forfaitSalarie = 0, forfaitEmployeur = 0, classes = [],
+    partSalarialeDesClasses = 1,
   }) {
     this.code = code;
     this.libelle = libelle;
@@ -581,6 +603,26 @@ export class ComposanteRetraite {
     // Un régime provisionné, la RAFP : hors du compte notionnel, mais prélevé
     // sur la fiche, et que la proposition garde.
     this.horsRepartition = horsRepartition;
+    // Ce que l'étage appelle en MONTANT, hors de tout taux, en euros de
+    // l'année : son forfait, part de l'assuré et part de l'employeur ; et,
+    // quand il range l'assuré dans une classe selon son revenu, les montants
+    // de ses classes, dont `partSalarialeDesClasses` revient à l'assuré.
+    this.forfaitSalarie = forfaitSalarie;
+    this.forfaitEmployeur = forfaitEmployeur;
+    this.classes = classes;
+    this.partSalarialeDesClasses = partSalarialeDesClasses;
+  }
+
+  /** Ce que l'assuré verse à cet étage : ses taux, son forfait, sa classe. */
+  salarial(brut, plafond) {
+    return montant(this.salarie, brut, plafond) + this.forfaitSalarie
+      + montantDeLaClasse(this.classes, brut) * this.partSalarialeDesClasses;
+  }
+
+  /** Ce que l'employeur verse à cet étage. */
+  patronal(brut, plafond) {
+    return montant(this.employeur, brut, plafond) + this.forfaitEmployeur
+      + montantDeLaClasse(this.classes, brut) * (1 - this.partSalarialeDesClasses);
   }
 
   /** Taux patronal sur la première tranche — celui qu'un décret additionne. */
@@ -740,8 +782,8 @@ export class ConstructeurFiche {
       code: composante.code,
       libelle: composante.libelle,
       retraite: true,
-      salarie: montant(composante.salarie, brut, plafond),
-      employeur: montant(composante.employeur, brut, plafond),
+      salarie: composante.salarial(brut, plafond),
+      employeur: composante.patronal(brut, plafond),
     }));
     for (const poste of this.profil.postes) {
       if (poste.retraite && bloc.remplaceLesContributionsDEquilibre) {
@@ -779,7 +821,7 @@ export class ConstructeurFiche {
   _perimetreReduction(bloc, brut, plafond, cadre) {
     let total = bloc.composantes
       .filter((c) => c.dansLaReductionGenerale)
-      .reduce((somme, c) => somme + montant(c.employeur, brut, plafond), 0);
+      .reduce((somme, c) => somme + c.patronal(brut, plafond), 0);
     for (const poste of this.profil.postes) {
       if (!poste.dans_la_reduction_generale) {
         continue;
@@ -886,6 +928,17 @@ export class ConstructeurFiche {
     }
     let bas = net;
     let haut = net * 3;
+    // La borne haute double tant qu'elle n'y suffit pas : un forfait prend
+    // plus des deux tiers d'un petit revenu, 1 988 € à la CNBF en 2026. Une
+    // classe fait reculer le net d'un saut à son seuil, où la dichotomie
+    // s'arrête alors.
+    for (let pas = 0; pas < 60; pas += 1) {
+      if (this.fiche(0, haut, plafondAnnuel, smicAnnuel, bloc, cadre).net >= net) {
+        break;
+      }
+      bas = haut;
+      haut *= 2;
+    }
     for (let pas = 0; pas < 80; pas += 1) {
       const milieu = (bas + haut) / 2;
       const fiche = this.fiche(0, milieu, plafondAnnuel, smicAnnuel, bloc, cadre);
@@ -968,7 +1021,7 @@ export class ConstructeurFiche {
  * changent pas ce qui est prélevé — seulement ce qui est porté au compte.
  */
 export function blocDroitEnVigueur(catalogue, affiliations, statut, annee,
-  partPrimes = 0) {
+  partPrimes = 0, macro = null) {
   // Un non-salarié paie tout : la fiche d'un régime partagé avec des salariés
   // — un artisan relève du régime général — porte la répartition 45/55 d'un
   // salarié, et elle ne le concerne pas. `moteur/compte.js` en tire déjà la
@@ -978,7 +1031,16 @@ export function blocDroitEnVigueur(catalogue, affiliations, statut, annee,
   // `partDuRevenu` le fait pour le compte. La RAFP, assise sur les primes dans
   // la limite de 20 % du traitement seul, est un étage à part
   // (`etageHorsRepartition`), prélevé sur la fiche depuis le 10 octobre 2026.
+  // Ce que la caisse fixe hors des taux et des plafonds, comme le compte le
+  // reçoit : les tranches qu'elle fixe en euros, l'assiette qui n'est pas le
+  // revenu, le forfait ramené par les prix, la classe où tombe le revenu, dans
+  // la grille de son millésime ramenée par le rapport des plafonds ; les deux
+  // derniers exigent `macro` (`bloc_droit_en_vigueur`).
   const sansEmployeur = affiliations.sansEmployeur(statut);
+  // Le médecin de secteur 2 paie seul, depuis 1980, ses prestations
+  // complémentaires de vieillesse, dont l'assurance maladie paie les deux
+  // tiers en secteur 1.
+  const paieSeul = affiliations.sansPriseEnCharge(statut, annee);
   const composantes = [];
   for (const code of affiliations.regimes(statut, annee)) {
     if (!catalogue.contient(code)) {
@@ -995,21 +1057,62 @@ export function blocDroitEnVigueur(catalogue, affiliations, statut, annee,
     }
     const salarie = [];
     const employeur = [];
+    let forfaitSalarie = 0;
+    let forfaitEmployeur = 0;
+    let classes = [];
+    let partDesClasses = 1;
     for (const periode of regime.periodesActives(annee)) {
       const [basse, haute] = periode.bornesAssietteEnPass();
-      // Le plafond propre du RCI, fixé en euros pour l'année.
-      const [basEuros, hautEuros] = periode.bornesDeLAnnee(annee);
+      // Les bornes en euros, qui priment : le plafond propre du RCI de
+      // l'année, les tranches que la CNBF et la CARPIMKO fixent en euros.
+      const [basEuros, hautEuros] = periode.bornesEnEuros(annee);
+      // L'assiette qui n'est pas le revenu, que le facteur reconstitue avant
+      // les bornes, comme au compte.
+      const facteur = periode.assiette_facteur_revenu ?? 1;
       const part = sansEmployeur ? 1 : periode.part_salariale;
+      // LA CLASSE, quand la période en appelle une : ni le taux ni le forfait
+      // n'y ont alors de rôle, c'est la grille qui décide.
+      if (periode.cotisation_par_classes) {
+        const grille = classesDeLAnnee(catalogue, code, annee,
+          exigeLaMacro(macro, code, periode), facteur);
+        if (grille.length) {
+          if (classes.length) {
+            throw new Error(`${code} ${annee} : deux grilles de classes la même année, `
+              + "quand la fiche n'en appelle qu'une");
+          }
+          classes = grille;
+          partDesClasses = part;
+          continue;
+        }
+      }
+      // LE FORFAIT, dû quel que soit le revenu : la cotisation de croisière de
+      // la CNBF, celles de la CARMF, de la CAVP, de la CARCDSF, de la CARPIMKO
+      // et des PCV, ramenées par les prix.
+      if (periode.cotisation_forfaitaire_euros) {
+        let forfait = periode.cotisation_forfaitaire_euros
+          * exigeLaMacro(macro, code, periode).coefficientPrix(
+            periode.cotisation_forfaitaire_annee || annee, annee);
+        if (paieSeul) {
+          forfait += periode.priseEnCharge(forfait, 0);
+        }
+        forfaitSalarie += forfait * part;
+        forfaitEmployeur += forfait * (1 - part);
+      }
       const traitement = periode.assiette === "hors_primes" ? 1 - partPrimes : 1;
       // L'artisan et le commerçant, au régime général depuis 2018, paient leur
       // barème propre (D. 633-3), comme le compte le leur porte.
       const [plafonneDuCotisant, deplafonneDuCotisant] =
         periode.tauxDuCotisant(sansEmployeur);
-      const taux = (plafonneDuCotisant || 0) * traitement;
+      let taux = (plafonneDuCotisant || 0) * traitement;
+      if (paieSeul) {
+        taux += periode.priseEnCharge(0, taux);
+      }
       if (taux) {
-        salarie.push({ bas: basse, haut: haute, taux: taux * part, basEuros, hautEuros });
+        salarie.push({
+          bas: basse, haut: haute, taux: taux * part, basEuros, hautEuros, facteur,
+        });
         employeur.push({
-          bas: basse, haut: haute, taux: taux * (1 - part), basEuros, hautEuros,
+          bas: basse, haut: haute, taux: taux * (1 - part), basEuros, hautEuros, facteur,
         });
       }
       // Les retenues et contributions supplémentaires du policier, de
@@ -1031,18 +1134,20 @@ export function blocDroitEnVigueur(catalogue, affiliations, statut, annee,
       if (deplafonne) {
         const partDeplafonnee = sansEmployeur
           ? 1 : periode.part_salariale_deplafonnee;
-        salarie.push({ bas: 0, haut: null, taux: deplafonne * partDeplafonnee });
+        salarie.push({ bas: 0, haut: null, taux: deplafonne * partDeplafonnee, facteur });
         employeur.push({
-          bas: 0, haut: null, taux: deplafonne * (1 - partDeplafonnee),
+          bas: 0, haut: null, taux: deplafonne * (1 - partDeplafonnee), facteur,
         });
       }
     }
-    if (!salarie.length && !employeur.length) {
+    if (!salarie.length && !employeur.length && !forfaitSalarie && !forfaitEmployeur
+        && !classes.length) {
       continue;
     }
     composantes.push(new ComposanteRetraite({
       code, libelle: regime.nom, salarie, employeur,
-      dansLaReductionGenerale: true,
+      dansLaReductionGenerale: true, forfaitSalarie, forfaitEmployeur, classes,
+      partSalarialeDesClasses: partDesClasses,
     }));
   }
   return new BlocRetraite({
@@ -1050,6 +1155,44 @@ export function blocDroitEnVigueur(catalogue, affiliations, statut, annee,
     composantes,
     remplaceLesContributionsDEquilibre: false,
   });
+}
+
+/**
+ * La macro, qu'un forfait exige pour ses prix et une classe pour ses plafonds :
+ * sans elle, la fiche ne les tairait pas, elle refuse.
+ */
+function exigeLaMacro(macro, code, periode) {
+  if (macro === null || macro === undefined) {
+    throw new Error(`${code} ${periode.debut} : un forfait se ramène par les prix et `
+      + "une classe par le plafond ; la fiche de ce régime exige la macro");
+  }
+  return macro;
+}
+
+/**
+ * Les classes du régime l'année `annee`, en euros de l'année et en revenu de
+ * la fiche : la grille de son millésime, bornes et montants ramenés ensemble
+ * par le rapport des plafonds, comme au compte (`_cotisationParClasses`), ses
+ * bornes divisées par le facteur de l'assiette. Vide sans grille. Jumeau de
+ * `_classes_de_l_annee`.
+ */
+function classesDeLAnnee(catalogue, code, annee, macro, facteur) {
+  const table = classesCotisation(catalogue.paquet);
+  const millesime = table.anneeGrille(code, annee);
+  const grille = table.grille(code, annee);
+  if (millesime === null || !grille || !grille.length) {
+    return [];
+  }
+  const reference = macro.plafond_securite_sociale.valeur(millesime);
+  if (reference <= 0) {
+    return [];
+  }
+  const coefficient = macro.plafond_securite_sociale.valeur(annee) / reference;
+  return grille.map(([borne, cotisation]) => ({
+    revenuMaximum: borne === null || borne === undefined
+      ? null : borne * coefficient / facteur,
+    montant: cotisation * coefficient,
+  }));
 }
 
 /**
@@ -1343,14 +1486,14 @@ function deduitsDeReference(catalogue, affiliations, macro, statut, remuneration
   const annee = table.anneeDeReference;
   const plafond = macro.plafond_securite_sociale.valeur(annee);
   const bloc = blocDeReference
-    ?? blocDroitEnVigueur(catalogue, affiliations, statut, annee, partPrimes);
+    ?? blocDroitEnVigueur(catalogue, affiliations, statut, annee, partPrimes, macro);
   let retenue = 0;
   let rafp = 0;
   for (const c of bloc.composantes) {
     if (c.horsRepartition) {
-      rafp += montant(c.salarie, remuneration, plafond);
+      rafp += c.salarial(remuneration, plafond);
     } else {
-      retenue += montant(c.salarie, remuneration, plafond);
+      retenue += c.salarial(remuneration, plafond);
     }
   }
   return table.contributionDeSolidarite(
@@ -1443,7 +1586,8 @@ export function indemniteStylisee(macro, catalogue, affiliations, statut, annee,
   for (let a = reference; a <= annee; a += 1) {
     poids.set(a, salaireMoyenAnnuel(macro, a) / courant);
   }
-  const bloc = blocDroitEnVigueur(catalogue, affiliations, statut, reference, partPrimes);
+  const bloc = blocDroitEnVigueur(catalogue, affiliations, statut, reference, partPrimes,
+    macro);
   return (revenu) => {
     if (revenu <= 0) {
       return 0;
@@ -1460,10 +1604,10 @@ export function indemniteStylisee(macro, catalogue, affiliations, statut, annee,
 
 /** La fiche du droit en vigueur de `revenu`, l'indemnité ajoutée au brut. */
 function ficheAvecIndemnite(constructeur, catalogue, affiliations, statut, annee,
-  revenu, partPrimes, indemnite, plafond, smic, cadre) {
+  revenu, partPrimes, indemnite, plafond, smic, cadre, macro) {
   const primes = partPrimesDeLaFiche(revenu, partPrimes, indemnite);
   return constructeur.fiche(annee, revenu + indemnite, plafond, smic,
-    blocDroitEnVigueur(catalogue, affiliations, statut, annee, primes), cadre);
+    blocDroitEnVigueur(catalogue, affiliations, statut, annee, primes, macro), cadre);
 }
 
 /**
@@ -1486,7 +1630,7 @@ export function ficheDepuisBrut(bareme, macro, catalogue, affiliations, statut, 
   }
   return ficheAvecIndemnite(new ConstructeurFiche(bareme.profil(codeProfil)), catalogue,
     affiliations, statut, annee, brutAnnuel, partPrimes, montant,
-    macro.plafond_securite_sociale.valeur(annee), smicAnnuel(macro, annee), cadre);
+    macro.plafond_securite_sociale.valeur(annee), smicAnnuel(macro, annee), cadre, macro);
 }
 
 export function smicAnnuel(macro, annee) {
@@ -1739,7 +1883,7 @@ export function remunerationDeLaCarriere(carriere, macro, catalogue, affiliation
     const plafond = macro.plafond_securite_sociale.valeur(annee);
     const smic = smicAnnuel(macro, annee);
     const blocActuel = blocDroitEnVigueur(
-      catalogue, affiliations, statut, annee, primes,
+      catalogue, affiliations, statut, annee, primes, macro,
     );
     const propose = blocPropose(annee, blocActuel, 1 - primes);
     const constructeur = constructeurDe(ligne.lodeom ?? "");
@@ -1824,7 +1968,7 @@ export function salaireBrutDepuisNet(bareme, macro, catalogue, affiliations,
   if (indemnite === null) {
     return constructeur.brutANetDonne(
       netAnnuel, plafond, smic,
-      blocDroitEnVigueur(catalogue, affiliations, statut, annee, partPrimes),
+      blocDroitEnVigueur(catalogue, affiliations, statut, annee, partPrimes, macro),
       cadre,
     );
   }
@@ -1834,7 +1978,7 @@ export function salaireBrutDepuisNet(bareme, macro, catalogue, affiliations,
   for (let pas = 0; pas < 80; pas += 1) {
     const milieu = (bas + haut) / 2;
     const fiche = ficheAvecIndemnite(constructeur, catalogue, affiliations, statut,
-      annee, milieu, partPrimes, indemnite(milieu), plafond, smic, cadre);
+      annee, milieu, partPrimes, indemnite(milieu), plafond, smic, cadre, macro);
     if (fiche.net < netAnnuel) {
       bas = milieu;
     } else {
@@ -1863,6 +2007,6 @@ export function salaireNetDepuisBrut(bareme, macro, catalogue, affiliations,
   return ficheAvecIndemnite(
     new ConstructeurFiche(bareme.profil(codeProfil)), catalogue, affiliations, statut,
     annee, brutAnnuel, partPrimes, stylisee === null ? 0 : stylisee(brutAnnuel),
-    macro.plafond_securite_sociale.valeur(annee), smicAnnuel(macro, annee), cadre,
+    macro.plafond_securite_sociale.valeur(annee), smicAnnuel(macro, annee), cadre, macro,
   ).net;
 }

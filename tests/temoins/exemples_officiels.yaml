@@ -121,6 +121,12 @@
 #     près : la caisse publie douze mensualités arrondies au centime, six
 #     centimes d'écart au plus, et la fiche de régime arrondit le partage entre
 #     salarié et employeur au dix-millième.
+#   cotisations_de_la_fiche_de_paie — les cotisations de retraite que la
+#     fiche de paie du site prélève l'année `annee` sur le revenu `revenu`,
+#     régime par régime, en euros, part de l'assuré : chacune de ses lignes de
+#     retraite, et elles seules, à l'euro près, que la caisse arrondit. Le
+#     compte notionnel reçoit les mêmes. L'exemple donne le revenu de l'année,
+#     non une carrière : la sienne ne sert qu'à nommer le statut.
 #   points_de_l_annee — les points que le salaire de l'année `annee` acquiert,
 #     régime par régime, une valeur par période qui en crédite (la tranche 1,
 #     puis la 2), au centième, ou au point quand la source arrondit au point
@@ -1165,6 +1171,25 @@ exemples:
       reste.
     carriere: {naissance: "1960-08-08", sexe: H, affiliation: agent_general_assurance, liquidation: "2026-07", age_debut: 22}
     attendu: {liquidation_ouverte: true, coefficients_des_regimes: {cavamac_complementaire: 0.9375}}
+
+  # La fiche pratique 2022 de la Cipav, « Comment sont calculées mes
+  # cotisations ? », relue le 18 octobre 2026 (action 138, étape 9) : son
+  # exemple chiffre, sur un revenu, la cotisation du régime de base et celle du
+  # complémentaire, alors appelée par classes. La fiche de paie du site ne
+  # prélevait aucun complémentaire de la Cipav avant 2023, quand le compte le
+  # recevait.
+  - id: cipav_cotisations_2022
+    source: {editeur: "Cipav", reference: "lacipav.fr, fiche pratique « Comment sont calculées mes cotisations ? » (2022), exemple de M. Martin", verifie_le: "2026-10-18"}
+    enonce: >-
+      « En 2023, il déclare un revenu de 27 000 € au titre de l'année 2022 » :
+      au régime de base, « 27 000 € X 8,23 % = 2 222,10 € » et
+      « 27 000 € X 1,87 % = 504,90 € », « Total : 2 727 € » ; au
+      complémentaire, un revenu « Compris entre 26 581 € et 49 280 € »,
+      « Classe B : 3 055 € ». L'invalidité-décès, dont l'assuré choisit la
+      classe, n'est pas une cotisation de retraite. La carrière d'exemple : un
+      libéral de la Cipav né en 1970, installé à vingt-cinq ans.
+    carriere: {naissance: "1970-01", sexe: H, affiliation: profession_liberale, liquidation: "2037-01", age_debut: 25}
+    attendu: {cotisations_de_la_fiche_de_paie: {annee: 2022, revenu: 27000, cnavpl: 2727, cipav_complementaire: 3055}}
 
   # ---- Cour des comptes ----------------------------------------------------
   # La Cour n'applique pas la règle, elle la contrôle ; mais le tableau n° 20
