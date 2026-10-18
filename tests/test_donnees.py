@@ -719,6 +719,11 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # par âge, et la distribution des heures, celle des bas revenus.
         "volume_travail": "macro/volume_travail.csv",
         "heures_salariees": "macro/heures_salariees.csv",
+        # Et les revenus des non-salariés, que l'artisan de la population prend
+        # au lieu des salaires ; puis, pour l'en juger, la pension des anciens
+        # non-salariés selon leur régime principal (action 138, étape 14).
+        "revenus_non_salaries": "macro/revenus_non_salaries.csv",
+        "pensions_non_salaries": "macro/pensions_non_salaries.csv",
         # Et ce qu'une carrière courte acquiert par année validée : les
         # quintiles de la pension en équivalent carrière complète, croisés avec
         # les tranches de durée.

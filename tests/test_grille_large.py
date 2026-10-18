@@ -266,6 +266,66 @@ def test_une_carriere_resserre_la_coupe_sans_toucher_a_sa_moyenne():
         G.DISPERSION_DE_CARRIERE * ecart)
 
 
+def test_l_artisan_a_la_dispersion_des_revenus_des_non_salaries(simulateur, source,
+                                                               parametres):
+    """Sous ``INDEPENDANTS_A_LEUR_DISPERSION``, l'artisan de la population se
+    décline aux sept centiles des revenus des non-salariés classiques de son
+    sexe (fiche 1.6 de l'INSEE, 2022), et non plus des salaires : son premier
+    décile se tient sous sa médiane de 640 € sur 2 760 pour une femme, de 660
+    sur 3 000 pour un homme, son neuvième au-dessus de 7 630 et de 10 460,
+    ramenés en carrière à la puissance ``DISPERSION_DE_CARRIERE`` ; son 99e
+    centile prolonge le neuvième décile de la queue de leur ensemble (fiche
+    1.3 : 27 950 € sur 9 320). Sa femme gagne un cinquième de moins que lui,
+    comme dans la fiche (3 470 € et 4 360 en moyenne). Le libéral garde la
+    dispersion des salaires de son sexe."""
+    assert G.INDEPENDANTS_A_LEUR_DISPERSION
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    resserrement = G.DISPERSION_DE_CARRIERE
+
+    def niveaux(prefixe: str) -> dict[str, float]:
+        return {v.cas.code.rsplit("~", 1)[1]: v.cas.niveau_salaire
+                for v in variantes if v.cas.code.startswith(prefixe)
+                and v.cas.code.count("~") == prefixe.count("~")}
+
+    publies = {"f": (640.0, 2760.0, 7630.0), "h": (660.0, 3000.0, 10460.0)}
+    for sexe, (d1, mediane, d9) in publies.items():
+        artisan = niveaux(f"artisan~{sexe}~40_plus~")
+        assert set(artisan) == {nom for nom, _ in G.CENTILES}
+        assert artisan["p10"] / artisan["p50"] == pytest.approx((d1 / mediane) ** resserrement)
+        assert artisan["p90"] / artisan["p50"] == pytest.approx((d9 / mediane) ** resserrement)
+        assert artisan["p99"] / artisan["p90"] == pytest.approx(
+            (27950.0 / 9320.0) ** resserrement)
+    moyennes = {sexe: sum(niveaux(f"artisan~{sexe}~40_plus~")[nom] * part
+                          for nom, part in G.CENTILES) for sexe in publies}
+    assert moyennes["f"] / moyennes["h"] == pytest.approx(3470.0 / 4360.0, abs=0.03)
+    annee, _ = G.centiles(parametres.racine_donnees)
+    salaires = {(l["sexe"], l["centile"]): float(l["salaire_relatif"])
+                for l in G._lire_macro(parametres.racine_donnees,
+                                       "dispersion_salaires_sexe.csv")
+                if int(l["annee"]) == annee}
+    liberal = niveaux("profession_liberale~mono~h~40_plus~")
+    assert liberal["p10"] / liberal["p50"] == pytest.approx(
+        (salaires[("H", "p10")] / salaires[("H", "p50")]) ** resserrement)
+
+
+def test_l_artisan_a_la_part_de_femmes_des_anciens_artisans(simulateur, source):
+    """Sous ``INDEPENDANTS_A_LEUR_PART_DE_FEMMES``, l'artisan de la population
+    compte la part de femmes des anciens artisans et commerçants de l'EIR, 140
+    milliers sur 500 (fiche 1.11 de l'INSEE), et non celle de son groupe, le
+    régime général, où elles sont la majorité ; le salariat privé prend le
+    reste, et le groupe garde sa part de femmes."""
+    assert G.INDEPENDANTS_A_LEUR_PART_DE_FEMMES
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    poids = _poids(variantes, simulateur.effectifs, source.millesime)
+    artisans = _par([v for v in variantes if v.cas.code.startswith("artisan~")], poids,
+                    lambda v: v.cas.sexe)
+    assert artisans["F"] / (artisans["F"] + artisans["H"]) == pytest.approx(140 / 500)
+    groupe = _par([v for v in variantes if v.groupe == "regime_general"], poids,
+                  lambda v: v.cas.sexe)
+    assert groupe["F"] / (groupe["F"] + groupe["H"]) == pytest.approx(
+        G.parts_femmes(source)["regime_general"], abs=1e-12)
+
+
 def test_un_temps_complet_ne_se_paie_pas_sous_le_smic(simulateur, source):
     """Le salariat privé dont le rang tombe sous le Smic, l'année où sa
     génération a quarante-cinq ans, est payé le Smic de chaque année ; au-dessus,
@@ -821,6 +881,32 @@ def test_le_quantile_d_une_grille_est_l_un_de_ses_montants():
     assert G.quantile_pondere(lot, 0.51) == 300.0
     assert G.part_sous(lot, 200.0) == pytest.approx(0.25)
     assert G.part_sous(lot, 250.0) == pytest.approx(0.5)
+
+
+def test_les_artisans_se_confrontent_aux_anciens_artisans_de_l_eir(parametres):
+    """La pension des artisans d'une grille contre celle des anciens artisans
+    et commerçants de l'EIR (fiche 1.11 de l'INSEE) : leur part parmi les
+    retraités de leur sexe, leur moyenne et leurs quartiles, chacun contre le
+    sien ; et chaque quartile rapporté à celui de tous les retraités du sexe,
+    dans la grille comme dans la fiche, dont les quartiles de tous ne sont
+    pas ceux de la DREES."""
+    publiees = G.pensions_non_salaries(parametres.racine_donnees)
+    assert publiees[("artisans_commercants", "H", "mediane")] == 1440.0
+    lignes = [(600.0, 1.0, "F", "artisan"), (900.0, 1.0, "F", "artisan"),
+              (1200.0, 2.0, "F", "artisan"), (1000.0, 6.0, "F", G.GABARIT),
+              (1500.0, 1.0, "H", "artisan"), (2000.0, 9.0, "H", G.GABARIT)]
+    mesure = G.confronter_non_salaries(lignes, publiees)["artisans_commercants"]
+    femmes = mesure["F"]
+    assert femmes["part"] == pytest.approx(4 / 10)
+    assert femmes["part_eir"] == pytest.approx(140 / 8450)
+    assert femmes["moyenne"] == pytest.approx((600 + 900 + 2 * 1200) / 4)
+    assert femmes["moyenne_eir"] == 820.0
+    assert femmes["quantiles"] == {"q1": 600.0, "mediane": 900.0, "q3": 1200.0}
+    assert femmes["quantiles_eir"] == {"q1": 520.0, "mediane": 870.0, "q3": 1230.0}
+    assert femmes["relatifs"]["mediane"] == pytest.approx(900 / 1000)
+    assert femmes["relatifs_eir"]["mediane"] == pytest.approx(870 / 1140)
+    assert mesure["ensemble"]["part"] == pytest.approx(5 / 20)
+    assert mesure["ensemble"]["part_eir"] == pytest.approx(500 / 15650)
 
 
 def test_la_distribution_compte_les_tetes_et_les_euros_de_la_page(parametres):

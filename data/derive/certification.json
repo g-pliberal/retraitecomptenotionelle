@@ -1057,6 +1057,17 @@
    "valeurs": 10,
    "verifiee_le": "2026-09-19"
   },
+  "pensions_non_salaries": {
+   "ajoutees": 75,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "84c5f5d3a7ca8c41",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "INSEE, Emploi et revenus des indépendants 2025, fiche 1.11 (DREES, EIR 2020)",
+   "valeurs": 75,
+   "verifiee_le": "2026-10-17"
+  },
   "pensions_residence": {
    "ajoutees": 0,
    "colonne": "valeur",
@@ -1452,6 +1463,17 @@
    "source": "COR, compléments du rapport annuel de juin 2024, projections détaillées par régime",
    "valeurs": 1284,
    "verifiee_le": "2026-10-05"
+  },
+  "revenus_non_salaries": {
+   "ajoutees": 78,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "39613d9f79146f67",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "INSEE, Emploi et revenus des indépendants 2025, fiches 1.3 et 1.6",
+   "valeurs": 78,
+   "verifiee_le": "2026-10-17"
   },
   "salaire_moyen": {
    "ajoutees": 0,

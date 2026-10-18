@@ -1,0 +1,125 @@
+# Revenus d'activité mensuels des non-salariés classiques en 2022 : leur
+# distribution par sexe et par secteur
+# source_id: insee_revenus_non_salaries
+# unite: euros par mois (quantiles, moyenne) ; pour cent (part_nuls) ;
+#        milliers (effectifs)
+# fiabilite:
+#   certifiee (2022) : INSEE, « Emploi et revenus des indépendants »,
+#             Insee Références, édition 2025, fiche 1.6 (figures 1 et
+#             4) et fiche 1.3 (figure 1) ; base Non-salariés 2022 ;
+#             recontrôlé par scripts/verifier_donnees.py.
+#
+# LES COLONNES
+# ------------
+# secteur : ensemble, les non-salariés classiques, sexe par sexe ; ou
+#   l'un des sept secteurs de la fiche 1.3, les deux sexes réunis :
+#   industrie (hors artisanat commercial), construction, commerce (et
+#   artisanat commercial), transports (et entreposage),
+#   services_entreprises (et services mixtes), services_particuliers,
+#   sante (et action sociale).
+# indicateur : effectifs, au 31 décembre ; part_nuls, la part des
+#   revenus nuls ou déficitaires ; d1, q1, mediane, q3, d9 et c99, les
+#   quantiles des revenus positifs ; moyenne, revenus nuls compris.
+# Le champ : la France hors Mayotte, les non-salariés en activité au
+# 31 décembre, hors micro-entrepreneurs, hors agriculture, hors taxés
+# d'office. Le revenu : le bénéfice net des cotisations sociales payées
+# dans l'année et des charges, avant la CSG non déductible et la CRDS,
+# l'assiette des cotisations personnelles ; annualisé, ramené à une
+# année entière d'affiliation ; nul en cas de déficit.
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# À donner à l'artisan de la population de la page Coût (action 138,
+# étape 14) la dispersion des revenus des non-salariés de son sexe, au
+# lieu de celle des salaires : le premier décile des hommes non
+# salariés vaut 0,22 fois leur médiane, celui des hommes salariés du
+# privé à temps complet 0,61. Aucun calcul du site ne la lit.
+#
+# CE QU'ELLE N'EST PAS. La distribution des seuls artisans et
+# commerçants : celle des non-salariés classiques compte aussi les
+# professions libérales, dans la santé et les services aux
+# entreprises ; et la fiche par sexe ne donne pas le 99e centile. Ni
+# celle d'une carrière : une coupe de l'année, ses chocs passagers
+# compris.
+#
+# Ne pas modifier à la main : les valeurs seraient écrasées au prochain
+# scripts/verifier_donnees.py --appliquer.
+annee,secteur,sexe,indicateur,valeur,fiabilite
+2022,commerce,ensemble,c99,21770,certifiee
+2022,commerce,ensemble,d1,460,certifiee
+2022,commerce,ensemble,d9,7630,certifiee
+2022,commerce,ensemble,effectifs,321,certifiee
+2022,commerce,ensemble,mediane,2400,certifiee
+2022,commerce,ensemble,part_nuls,13.9,certifiee
+2022,commerce,ensemble,q1,1170,certifiee
+2022,commerce,ensemble,q3,4380,certifiee
+2022,construction,ensemble,c99,14800,certifiee
+2022,construction,ensemble,d1,800,certifiee
+2022,construction,ensemble,d9,5940,certifiee
+2022,construction,ensemble,effectifs,235,certifiee
+2022,construction,ensemble,mediane,2560,certifiee
+2022,construction,ensemble,part_nuls,8.7,certifiee
+2022,construction,ensemble,q1,1610,certifiee
+2022,construction,ensemble,q3,3880,certifiee
+2022,ensemble,F,d1,640,certifiee
+2022,ensemble,F,d9,7630,certifiee
+2022,ensemble,F,mediane,2760,certifiee
+2022,ensemble,F,moyenne,3470,certifiee
+2022,ensemble,F,part_nuls,9.4,certifiee
+2022,ensemble,F,q1,1460,certifiee
+2022,ensemble,F,q3,4620,certifiee
+2022,ensemble,H,d1,660,certifiee
+2022,ensemble,H,d9,10460,certifiee
+2022,ensemble,H,mediane,3000,certifiee
+2022,ensemble,H,moyenne,4360,certifiee
+2022,ensemble,H,part_nuls,11.3,certifiee
+2022,ensemble,H,q1,1560,certifiee
+2022,ensemble,H,q3,5630,certifiee
+2022,ensemble,ensemble,c99,27950,certifiee
+2022,ensemble,ensemble,d1,650,certifiee
+2022,ensemble,ensemble,d9,9320,certifiee
+2022,ensemble,ensemble,effectifs,1850,certifiee
+2022,ensemble,ensemble,mediane,2900,certifiee
+2022,ensemble,ensemble,part_nuls,10.6,certifiee
+2022,ensemble,ensemble,q1,1520,certifiee
+2022,ensemble,ensemble,q3,5190,certifiee
+2022,industrie,ensemble,c99,22020,certifiee
+2022,industrie,ensemble,d1,440,certifiee
+2022,industrie,ensemble,d9,7760,certifiee
+2022,industrie,ensemble,effectifs,66,certifiee
+2022,industrie,ensemble,mediane,2480,certifiee
+2022,industrie,ensemble,part_nuls,13.8,certifiee
+2022,industrie,ensemble,q1,1140,certifiee
+2022,industrie,ensemble,q3,4510,certifiee
+2022,sante,ensemble,c99,31070,certifiee
+2022,sante,ensemble,d1,1460,certifiee
+2022,sante,ensemble,d9,12080,certifiee
+2022,sante,ensemble,effectifs,474,certifiee
+2022,sante,ensemble,mediane,4050,certifiee
+2022,sante,ensemble,part_nuls,2.5,certifiee
+2022,sante,ensemble,q1,2550,certifiee
+2022,sante,ensemble,q3,6940,certifiee
+2022,services_entreprises,ensemble,c99,39730,certifiee
+2022,services_entreprises,ensemble,d1,710,certifiee
+2022,services_entreprises,ensemble,d9,12290,certifiee
+2022,services_entreprises,ensemble,effectifs,394,certifiee
+2022,services_entreprises,ensemble,mediane,3740,certifiee
+2022,services_entreprises,ensemble,part_nuls,13.4,certifiee
+2022,services_entreprises,ensemble,q1,1870,certifiee
+2022,services_entreprises,ensemble,q3,6850,certifiee
+2022,services_particuliers,ensemble,c99,12680,certifiee
+2022,services_particuliers,ensemble,d1,350,certifiee
+2022,services_particuliers,ensemble,d9,4370,certifiee
+2022,services_particuliers,ensemble,effectifs,297,certifiee
+2022,services_particuliers,ensemble,mediane,1610,certifiee
+2022,services_particuliers,ensemble,part_nuls,15.5,certifiee
+2022,services_particuliers,ensemble,q1,850,certifiee
+2022,services_particuliers,ensemble,q3,2660,certifiee
+2022,transports,ensemble,c99,13230,certifiee
+2022,transports,ensemble,d1,500,certifiee
+2022,transports,ensemble,d9,4520,certifiee
+2022,transports,ensemble,effectifs,62,certifiee
+2022,transports,ensemble,mediane,1670,certifiee
+2022,transports,ensemble,part_nuls,12.4,certifiee
+2022,transports,ensemble,q1,950,certifiee
+2022,transports,ensemble,q3,2790,certifiee

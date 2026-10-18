@@ -393,6 +393,56 @@ institutions:
           centième n'est pas publié. Pas de distribution par sexe : les femmes
           font 57 % des bas revenus salariaux. Aucun calcul du site ne la lit.
 
+      - id: insee_revenus_non_salaries
+        titre: >-
+          Revenus d'activité mensuels des non-salariés classiques en 2022, par
+          sexe et par secteur (« Emploi et revenus des indépendants »,
+          édition 2025, fiches 1.3 et 1.6)
+        url: https://www.insee.fr/fr/statistiques/8376549
+        acces: fichier
+        millesime: 2022
+        statut_integration: certifie
+        cible: data/reference/macro/revenus_non_salaries.csv
+        recuperation: scripts/fetch/insee_revenus_independants.py
+        note: >-
+          La base Non-salariés de l'INSEE, hors micro-entrepreneurs et hors
+          agriculture : la part des revenus nuls ou déficitaires, puis les
+          déciles et les quartiles des revenus positifs, sexe par sexe (fiche
+          1.6, figure 4, que ses rapports Q3/Q1 et D9/D1 contrôlent) et
+          secteur par secteur, le 99e centile en plus (fiche 1.3, figure 1,
+          https://www.insee.fr/fr/statistiques/8376543) ; et le revenu moyen
+          de chaque sexe, revenus nuls compris. Le revenu est l'assiette des
+          cotisations personnelles, annualisé. Le neuvième décile des hommes
+          vaut 15,8 fois le premier, celui des femmes 11,9 : le salaire d'un
+          temps complet du privé n'en fait que 3,3 et 3,2. La population de la
+          page Coût (action 138, étape 14) en donne la dispersion à l'artisan,
+          qui avait celle des salaires. Aucun calcul du site ne la lit.
+
+      - id: insee_pensions_non_salaries
+        titre: >-
+          Pension de droit direct des retraités selon leur régime principal,
+          fin 2020, dont les anciens artisans et commerçants (« Emploi et
+          revenus des indépendants », édition 2025, fiche 1.11)
+        url: https://www.insee.fr/fr/statistiques/8376559
+        acces: fichier
+        millesime: 2020
+        statut_integration: certifie
+        cible: data/reference/macro/pensions_non_salaries.csv
+        recuperation: scripts/fetch/insee_revenus_independants.py
+        note: >-
+          L'EIR de 2020, tel que l'INSEE le ventile : l'effectif, la moyenne
+          et les quartiles de la pension totale de droit direct des retraités
+          résidant en France, selon le régime de la plus grande part de leur
+          carrière — artisans et commerçants, exploitants agricoles,
+          professions libérales —, sexe par sexe. Les classeurs de la DREES ne
+          nomment pas les anciens artisans et commerçants : 500 000 retraités,
+          dont 140 000 femmes, à 1 230 € en moyenne. La ligne de tous les
+          retraités redonne les effectifs et les moyennes de la DREES, non ses
+          quartiles des femmes, plus hauts de 107 à 132 € : un quartile de la
+          fiche se compare à ceux de la fiche. La population de la page Coût
+          (action 138, étape 14) y juge son artisan. Aucun calcul du site ne la
+          lit.
+
       - id: insee_profil_salaire_public
         titre: Salaires de la fonction publique par âge, statut et versant
         url: https://api.insee.fr/melodi/data/DS_DERA_PUBLIC_ANNUEL

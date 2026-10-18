@@ -658,6 +658,37 @@ def source_volume_travail() -> dict[tuple, float]:
     return dict(sorted(valeurs.items()))
 
 
+def source_revenus_non_salaries() -> dict[tuple, float]:
+    """Les revenus d'activité mensuels des non-salariés classiques en 2022 : la
+    distribution des revenus positifs par sexe et par secteur, la part des
+    revenus nuls ou déficitaires, l'effectif, et le revenu moyen de chaque
+    sexe, revenus nuls compris ; les fiches 1.3 et 1.6 d'« Emploi et revenus
+    des indépendants », édition 2025, que le récupérateur recoupe.
+
+    Clé (annee, secteur, sexe, indicateur).
+    """
+    charge = _lire_json("insee_revenus_independants.json",
+                        "scripts/fetch/insee_revenus_independants.py")
+    annee = str(charge["revenus"]["annee"])
+    return {(annee, *cle.split("|")): float(valeur)
+            for cle, valeur in sorted(charge["revenus"]["serie"].items())}
+
+
+def source_pensions_non_salaries() -> dict[tuple, float]:
+    """La pension de droit direct tous régimes, fin 2020, des retraités
+    résidant en France selon leur régime principal, et sexe par sexe :
+    l'effectif, la moyenne et les quartiles ; la fiche 1.11 d'« Emploi et
+    revenus des indépendants », édition 2025, sur l'EIR de la DREES.
+
+    Clé (annee, regime_principal, sexe, indicateur).
+    """
+    charge = _lire_json("insee_revenus_independants.json",
+                        "scripts/fetch/insee_revenus_independants.py")
+    annee = str(charge["pensions"]["annee"])
+    return {(annee, *cle.split("|")): float(valeur)
+            for cle, valeur in sorted(charge["pensions"]["serie"].items())}
+
+
 def source_heures_salariees() -> dict[tuple, float]:
     """Les heures salariées dans l'année, centile par centile, des salariés du
     privé de 24 à 62 ans et de ceux d'entre eux à bas revenu salarial : la
@@ -5492,6 +5523,116 @@ CERTIFICATIONS = (
             "# CE QU'ELLE N'EST PAS. Une distribution par sexe : le dossier n'en",
             "# donne que la composition (57 % de femmes parmi les bas revenus",
             "# salariaux). Ni celle des carrières : celle des salariés d'une année.",
+            "#",
+            "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
+            "# scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="revenus_non_salaries",
+        chemin=REFERENCE / "macro" / "revenus_non_salaries.csv",
+        cles=("annee", "secteur", "sexe", "indicateur"),
+        colonne="valeur",
+        source=source_revenus_non_salaries,
+        origine="INSEE, Emploi et revenus des indépendants 2025, fiches 1.3 et 1.6",
+        decimales=None,
+        tolerance=0.05,
+        entete=(
+            "# Revenus d'activité mensuels des non-salariés classiques en 2022 : leur",
+            "# distribution par sexe et par secteur",
+            "# source_id: insee_revenus_non_salaries",
+            "# unite: euros par mois (quantiles, moyenne) ; pour cent (part_nuls) ;",
+            "#        milliers (effectifs)",
+            "# fiabilite:",
+            "#   certifiee (2022) : INSEE, « Emploi et revenus des indépendants »,",
+            "#             Insee Références, édition 2025, fiche 1.6 (figures 1 et",
+            "#             4) et fiche 1.3 (figure 1) ; base Non-salariés 2022 ;",
+            "#             recontrôlé par scripts/verifier_donnees.py.",
+            "#",
+            "# LES COLONNES",
+            "# ------------",
+            "# secteur : ensemble, les non-salariés classiques, sexe par sexe ; ou",
+            "#   l'un des sept secteurs de la fiche 1.3, les deux sexes réunis :",
+            "#   industrie (hors artisanat commercial), construction, commerce (et",
+            "#   artisanat commercial), transports (et entreposage),",
+            "#   services_entreprises (et services mixtes), services_particuliers,",
+            "#   sante (et action sociale).",
+            "# indicateur : effectifs, au 31 décembre ; part_nuls, la part des",
+            "#   revenus nuls ou déficitaires ; d1, q1, mediane, q3, d9 et c99, les",
+            "#   quantiles des revenus positifs ; moyenne, revenus nuls compris.",
+            "# Le champ : la France hors Mayotte, les non-salariés en activité au",
+            "# 31 décembre, hors micro-entrepreneurs, hors agriculture, hors taxés",
+            "# d'office. Le revenu : le bénéfice net des cotisations sociales payées",
+            "# dans l'année et des charges, avant la CSG non déductible et la CRDS,",
+            "# l'assiette des cotisations personnelles ; annualisé, ramené à une",
+            "# année entière d'affiliation ; nul en cas de déficit.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À donner à l'artisan de la population de la page Coût (action 138,",
+            "# étape 14) la dispersion des revenus des non-salariés de son sexe, au",
+            "# lieu de celle des salaires : le premier décile des hommes non",
+            "# salariés vaut 0,22 fois leur médiane, celui des hommes salariés du",
+            "# privé à temps complet 0,61. Aucun calcul du site ne la lit.",
+            "#",
+            "# CE QU'ELLE N'EST PAS. La distribution des seuls artisans et",
+            "# commerçants : celle des non-salariés classiques compte aussi les",
+            "# professions libérales, dans la santé et les services aux",
+            "# entreprises ; et la fiche par sexe ne donne pas le 99e centile. Ni",
+            "# celle d'une carrière : une coupe de l'année, ses chocs passagers",
+            "# compris.",
+            "#",
+            "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
+            "# scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="pensions_non_salaries",
+        chemin=REFERENCE / "macro" / "pensions_non_salaries.csv",
+        cles=("annee", "regime_principal", "sexe", "indicateur"),
+        colonne="valeur",
+        source=source_pensions_non_salaries,
+        origine="INSEE, Emploi et revenus des indépendants 2025, fiche 1.11 (DREES, EIR 2020)",
+        decimales=None,
+        tolerance=0.5,
+        entete=(
+            "# Pension de droit direct des retraités selon leur régime principal,",
+            "# fin 2020 : les anciens non-salariés",
+            "# source_id: insee_pensions_non_salaries",
+            "# unite: euros bruts par mois (moyenne, quartiles) ; milliers",
+            "#        (effectifs)",
+            "# fiabilite:",
+            "#   certifiee (2020) : INSEE, « Emploi et revenus des indépendants »,",
+            "#             Insee Références, édition 2025, fiche 1.11, figure 1 ;",
+            "#             DREES, EIR 2020 ; recontrôlé par",
+            "#             scripts/verifier_donnees.py.",
+            "#",
+            "# LES COLONNES",
+            "# ------------",
+            "# regime_principal : celui où le retraité a fait la plus grande part",
+            "#   de sa carrière ; artisans_commercants, exploitants_agricoles,",
+            "#   professions_liberales, leur ensemble non_salaries, et ensemble,",
+            "#   tous les retraités.",
+            "# indicateur : effectifs ; moyenne, q1, mediane et q3 de la pension",
+            "#   totale de droit direct, tous régimes, majoration pour trois",
+            "#   enfants comprise, hors réversion et minimum vieillesse.",
+            "# Le champ : les retraités de droit direct résidant en France au 31",
+            "# décembre 2020.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À juger l'artisan de la population de la page Coût (action 138,",
+            "# étape 14) : les classeurs de la DREES ne nomment pas les anciens",
+            "# artisans et commerçants, 500 000 retraités dont la pension moyenne,",
+            "# 1 230 €, vaut 0,80 fois celle de tous. Aucun calcul du site ne la",
+            "# lit.",
+            "#",
+            "# CE QU'ELLE N'EST PAS. Les quartiles de la DREES : la ligne de tous",
+            "# les retraités redonne ses effectifs et ses moyennes",
+            "# (pensions_residence.csv), mais non ses quartiles des femmes — 730,",
+            "# 1 140 et 1 720 €, pour 598, 1 013 et 1 613 —, quand ceux des hommes",
+            "# s'en écartent de 51 € au plus. Un quartile de la fiche se compare",
+            "# donc à celui de tous les retraités de la fiche.",
             "#",
             "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
             "# scripts/verifier_donnees.py --appliquer.",

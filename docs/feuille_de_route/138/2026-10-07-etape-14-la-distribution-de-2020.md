@@ -1,15 +1,15 @@
 # Étape 14, première partie : les pensions de 2020, simulées contre publiées
 
-**Reprise, au 16 octobre 2026.** Fait : chaque grille de la page Coût
+**Reprise, au 17 octobre 2026.** Fait : chaque grille de la page Coût
 confrontée en 2020 à la distribution des pensions de l'EIR (7 octobre) ; la
-population de l'action 136 ; le 16 octobre, ses départs avec décote, les
-retraités de l'étranger, l'emploi fragmenté, les retraités de l'Ircantec
-rendus au salariat privé, puis les salariés agricoles distingués : 10,5 % des
-hommes au minimum en 2023, contre 29,6 dans l'EACR, faute de leur carrière
-saisonnière. Reste : cette carrière, si une source la publie ; les
-indépendants ; les autres départs choisis ; l'ASPA ; les limites. Au
-propriétaire : 152, 157, le CASD. Détail :
-`2026-10-16-etape-14-salaries-agricoles.md`.
+population de l'action 136 ; le 16, ses départs avec décote, les retraités
+de l'étranger, l'emploi fragmenté, l'Ircantec, les salariés agricoles ; le
+17, l'artisan aux revenus des non-salariés de l'INSEE et à la part de femmes
+de ses anciens : 11,4 % des hommes des alignés au minimum en 2023 (EACR
+12,2), mais son bas trop bas. Reste : la part passagère du revenu des
+indépendants et la carrière saisonnière des agricoles, si une source les
+publie ; les autres départs choisis ; l'ASPA ; les limites. Au propriétaire :
+152, 157, le CASD. Détail : `2026-10-17-etape-14-independants.md`.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.14 ». L'étape :
 « Ce qui demande une population ou des microdonnées, avec l'action 136 (étape

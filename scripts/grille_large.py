@@ -189,7 +189,11 @@ les faisait basculer par blocs d'une génération à l'autre. La dix-septième
 (le même jour) rend au salariat privé les retraités de l'Ircantec
 (:data:`CONTRACTUELS_AU_SALARIAT`) : la population en faisait des
 contractuels de toute une carrière, à années entières, quand l'Ircantec ne
-leur sert que 161 € par mois en moyenne.
+leur sert que 161 € par mois en moyenne. La dix-huitième (le 17 octobre 2026)
+donne à l'artisan la dispersion des revenus des non-salariés de son sexe
+(:data:`INDEPENDANTS_A_LEUR_DISPERSION`) : il avait celle des salaires des
+temps complets, et n'atteignait jamais le minimum contributif ; la mesure le
+juge sur les anciens artisans et commerçants de l'EIR.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -639,6 +643,52 @@ CONTRACTUELS_AU_SALARIAT = True
 #: régimes alignés ne bouge pas.
 SALARIES_AGRICOLES = True
 
+#: Les indépendants à la dispersion de leurs revenus (action 138, étape 14, le
+#: 17 octobre 2026). L'artisan — les artisans et les commerçants — prenait,
+#: comme les autres groupes, la dispersion des salaires de son sexe, ceux des
+#: temps complets du privé : dans la coupe de 2024, le premier décile vaut
+#: 0,62 fois la médiane des femmes, 0,61 celle des hommes, et aucun artisan
+#: n'atteignait le minimum contributif. Sous cette constante, il prend celle
+#: des revenus des non-salariés classiques de son sexe en 2022
+#: (``revenus_non_salaries.csv``, :func:`dispersion_des_independants`) : 0,23
+#: et 0,22. Trois conventions. Les revenus nuls ou déficitaires de l'année, un
+#: dixième des non-salariés, n'y sont pas. Le 95e et le 99e centile, que la
+#: fiche par sexe ne publie pas, prolongent le neuvième décile par la queue de
+#: Pareto de l'ensemble des non-salariés classiques. Et la coupe se resserre
+#: en carrière comme celle des salaires (:data:`DISPERSION_DE_CARRIERE`), faute
+#: d'une source sur la part passagère du revenu d'un indépendant, qui la
+#: resserrerait davantage. Le champ de l'INSEE compte aussi les professions
+#: libérales : celles de la population gardent la dispersion des salaires en
+#: attendant leur déclinaison par section (action 152, au propriétaire), et
+#: l'exploitant agricole, hors du champ, la sienne. La mesure juge l'artisan
+#: sur les anciens artisans et commerçants de l'EIR
+#: (:func:`confronter_non_salaries`).
+INDEPENDANTS_A_LEUR_DISPERSION = True
+
+#: Les indépendants à leur part de femmes (le même jour). La population donnait
+#: à chaque cas type la part de femmes de son groupe : l'artisan, du régime
+#: général, en comptait 55 %, quand les anciens artisans et commerçants de
+#: l'EIR n'en comptent que 28 %, 140 milliers sur 500
+#: (``pensions_non_salaries.csv``). 3,8 % des femmes de la population étaient
+#: des artisanes, pour 1,7 % dans l'EIR, et 3,2 % de ses hommes des artisans,
+#: pour 5,0 %. Sous cette constante, l'artisan prend la part de ses anciens
+#: (:func:`femmes_des_independants`), et les hommes du reste de son groupe, le
+#: salariat privé, donnent ce qui manque à celle que l'EIR mesure au groupe.
+INDEPENDANTS_A_LEUR_PART_DE_FEMMES = True
+
+#: Les cas types dont le revenu est celui d'un non-salarié classique, et le
+#: régime principal sous lequel la fiche 1.11 de l'INSEE compte leurs anciens
+#: (``pensions_non_salaries.csv``).
+INDEPENDANTS = {"artisan": "artisans_commercants"}
+
+#: Les quantiles que la fiche par sexe publie, et le centile de la population
+#: que chacun tient.
+QUANTILES_NON_SALARIES = (("d1", "p10"), ("q1", "p25"), ("mediane", "p50"),
+                          ("q3", "p75"), ("d9", "p90"))
+
+#: Les quartiles de la pension que la fiche 1.11 publie, et leur rang.
+QUARTILES = (("q1", 0.25), ("mediane", 0.50), ("q3", 0.75))
+
 #: Les quintiles de la pension en équivalent carrière complète, dans l'ordre.
 QUINTILES_EQCC = ("q1", "q2", "q3", "q4", "q5")
 
@@ -932,7 +982,9 @@ class DonneesPopulation:
     (:data:`SOUS_CLASSES_DU_BAS`) ; ``entrees`` : l'âge d'entrée des carrières
     pleines, génération par génération (:data:`ENTREE_SELON_LA_GENERATION`) ;
     ``fragmente`` : le volume relatif d'une carrière fragmentée
-    (:data:`EMPLOI_FRAGMENTE`).
+    (:data:`EMPLOI_FRAGMENTE`) ; ``independants`` : les multiplicateurs que
+    les indépendants prennent au lieu des ``points``
+    (:data:`INDEPENDANTS_A_LEUR_DISPERSION`).
     """
 
     niveaux: dict[tuple[str, str], tuple[tuple[int, float], ...]]
@@ -948,6 +1000,7 @@ class DonneesPopulation:
     ecarts_du_bas: dict[str, tuple[tuple[int, tuple[float, ...]], ...]]
     entrees: dict[str, tuple[tuple[int, float], ...]]
     fragmente: float
+    independants: dict[str, tuple[tuple[str, float, float], ...]]
 
 
 def resserrer(relatifs: dict[str, float], moyenne: float) -> dict[str, float]:
@@ -1228,6 +1281,42 @@ def parts_des_tranches(variantes: list[Variante]) -> dict[str, dict[str, float]]
     return sortie
 
 
+def centiles_des_non_salaries(valeurs: dict[tuple[str, str], float],
+                              sexe: str) -> dict[str, float]:
+    """Les sept centiles du revenu positif des non-salariés classiques d'un
+    sexe, en euros par mois : les cinq que la fiche par sexe publie
+    (:data:`QUANTILES_NON_SALARIES`), puis le 95e et le 99e, que le neuvième
+    décile prolonge par la queue de Pareto de l'ensemble, le rapport de son 99e
+    centile à son neuvième décile. ``valeurs`` : ``(sexe, indicateur) →
+    valeur``, de ``revenus_non_salaries.csv``."""
+    sortie = {centile: valeurs[(sexe, code)] for code, centile in QUANTILES_NON_SALARIES}
+    pente = math.log(valeurs[("ensemble", "c99")] / valeurs[("ensemble", "d9")]) / math.log(10.0)
+    sortie["p95"] = sortie["p90"] * 2.0 ** pente
+    sortie["p99"] = sortie["p90"] * 10.0 ** pente
+    return sortie
+
+
+def dispersion_des_independants(racine: Path
+                                ) -> dict[str, tuple[tuple[str, float, float], ...]]:
+    """Les multiplicateurs des indépendants (:data:`INDEPENDANTS_A_LEUR_DISPERSION`),
+    sexe par sexe : les centiles du revenu des non-salariés classiques du sexe
+    (:func:`centiles_des_non_salaries`), resserrés en carrière autour de leur
+    moyenne, puis divisés par la moyenne discrétisée des deux sexes réunis,
+    comme ceux des salaires (:func:`donnees_population`)."""
+    valeurs = {(l["sexe"], l["indicateur"]): float(l["valeur"])
+               for l in _lire_macro(racine, "revenus_non_salaries.csv")
+               if l["secteur"] == "ensemble"}
+    tous = centiles_des_non_salaries(valeurs, "ensemble")
+    moyenne = somme_ordonnee(tous[nom] * part for nom, part in CENTILES)
+    points = {}
+    for sexe in ("F", "H"):
+        relatifs = centiles_des_non_salaries(valeurs, sexe)
+        resserres = resserrer(relatifs, somme_ordonnee(relatifs[nom] * part
+                                                       for nom, part in CENTILES))
+        points[sexe] = tuple((nom, part, resserres[nom] / moyenne) for nom, part in CENTILES)
+    return points
+
+
 def donnees_population(racine: Path) -> DonneesPopulation:
     """Les centiles du salaire par sexe, la part du temps partiel à 25-49 ans et
     sa quotité à 25-54 ans, certifiés le 11 octobre 2026, et la persistance au
@@ -1290,7 +1379,8 @@ def donnees_population(racine: Path) -> DonneesPopulation:
     return DonneesPopulation(niveaux, parts, par_generation, points, persistants,
                              au_smic, reste, volumes, rangs,
                              quintiles_eqcc(racine, residents=DUREES_DES_RESIDENTS), ecarts,
-                             entrees_des_carrieres_pleines(racine), volume_fragmente(racine))
+                             entrees_des_carrieres_pleines(racine), volume_fragmente(racine),
+                             dispersion_des_independants(racine))
 
 
 def durees_pleines(racine: Path) -> dict[str, tuple[tuple[int, float], ...]]:
@@ -1535,23 +1625,39 @@ def decalages_de_tranche(base: tuple[tuple[int, str], ...], duree: int, cible: i
 
 
 def femmes(variantes: list[Variante], effectifs,
-           source: CaracteristiquesRetraites) -> list[Variante]:
+           source: CaracteristiquesRetraites,
+           propres: dict[str, float] | None = None) -> list[Variante]:
     """Les femmes : dans chaque groupe, la part de l'EIR, prise sur les hommes,
-    chacune avec ses enfants."""
+    chacune avec ses enfants. Un cas type de ``propres``, par son code, prend la
+    part qu'il y porte, et les autres hommes de son groupe donnent ce qui manque
+    à celle du groupe."""
+    propres = propres or {}
     annee = source.millesime
     poids = poids_retraites(variantes, effectifs, annee)
     femmes_cibles = parts_femmes(source)
     total: dict[str, float] = {}
     deja: dict[str, float] = {}
+    hommes_propres: dict[str, float] = {}
+    femmes_propres: dict[str, float] = {}
     for v, p in zip(variantes, poids):
         total[v.groupe] = total.get(v.groupe, 0.0) + p
+        propre = propres.get(v.cas.code.split("~", 1)[0])
         if v.cas.sexe == "F":
             deja[v.groupe] = deja.get(v.groupe, 0.0) + p
+        elif propre is not None:
+            hommes_propres[v.groupe] = hommes_propres.get(v.groupe, 0.0) + p
+            femmes_propres[v.groupe] = femmes_propres.get(v.groupe, 0.0) + p * propre
     sexuees = []
     for v in variantes:
-        actuelle = deja.get(v.groupe, 0.0) / total[v.groupe]
-        cible = femmes_cibles[v.groupe]
+        cible, libre = femmes_cibles[v.groupe], total[v.groupe]
+        if v.groupe in hommes_propres:
+            libre -= hommes_propres[v.groupe]
+            cible = (cible * total[v.groupe] - femmes_propres[v.groupe]) / libre
+        actuelle = deja.get(v.groupe, 0.0) / libre
         f = 0.0 if actuelle >= cible else (cible - actuelle) / (1.0 - actuelle)
+        propre = propres.get(v.cas.code.split("~", 1)[0])
+        if propre is not None and v.cas.sexe != "F":
+            f = propre
         if v.cas.sexe == "F" or f == 0.0:
             sexuees.append(v)
             continue
@@ -1595,13 +1701,15 @@ def parts_tranches_de_tous(variantes: list[Variante], effectifs,
 
 def interruptions(variantes: list[Variante], effectifs,
                   source: CaracteristiquesRetraites,
-                  de_tous: bool = False, etalees: bool = False) -> list[Variante]:
-    """Les femmes, puis, hors des régimes statutaires, les carrières courtes et
-    les périodes assimilées, sexe par sexe : aux parts de l'EIR, ou, sous
-    ``de_tous``, à celles qui les redonnent à tous les retraités
+                  de_tous: bool = False, etalees: bool = False,
+                  propres: dict[str, float] | None = None) -> list[Variante]:
+    """Les femmes, les cas types de ``propres`` à leur part (:func:`femmes`),
+    puis, hors des régimes statutaires, les carrières courtes et les périodes
+    assimilées, sexe par sexe : aux parts de l'EIR, ou, sous ``de_tous``, à
+    celles qui les redonnent à tous les retraités
     (:func:`parts_tranches_de_tous`) ; leurs années validées sont les
     premières, ou, sous ``etalees``, étalées sur la vie active."""
-    sexuees = femmes(variantes, effectifs, source)
+    sexuees = femmes(variantes, effectifs, source, propres)
     parts = {sexe: (parts_tranches_de_tous(sexuees, effectifs, source, sexe) if de_tous
                     else parts_tranches(source, sexe))
              for sexe in ("F", "H")}
@@ -1667,7 +1775,9 @@ def salaires_population(variantes: list[Variante],
     d'activité est payée à la part de l'année travaillée à son âge, selon son
     rang aussi sous :data:`VOLUME_SELON_LE_RANG`. Les autres groupes gardent
     la dispersion de la grille élargie autour de leur niveau, celle de leur
-    sexe, resserrée en carrière, et des années entières. Sous
+    sexe, resserrée en carrière, et des années entières ; les indépendants,
+    celle des revenus des non-salariés de leur sexe sous
+    :data:`INDEPENDANTS_A_LEUR_DISPERSION`. Sous
     :data:`RANG_SELON_LA_DUREE`, chaque tranche de durée prend les classes de
     centiles dans la proportion que l'EIR lui mesure
     (:func:`rangs_selon_la_duree`), et la part de sa classe du bas payée le
@@ -1683,7 +1793,11 @@ def salaires_population(variantes: list[Variante],
         cas = elargi(v.cas)
         selon = rangs.get(cas.sexe, {}).get(v.tranche, {})
         if cas.code.split("~", 1)[0] != GABARIT:
-            for nom, part, facteur in donnees.points[cas.sexe]:
+            points = (donnees.independants[cas.sexe]
+                      if INDEPENDANTS_A_LEUR_DISPERSION
+                      and cas.code.split("~", 1)[0] in INDEPENDANTS
+                      else donnees.points[cas.sexe])
+            for nom, part, facteur in points:
                 sortie.append(v.fois(selon.get(nom, part), salaire=v.salaire * facteur,
                                      cas=replace(cas, code=f"{cas.code}~{nom}",
                                                  niveau_salaire=cas.niveau_salaire * facteur)))
@@ -1755,9 +1869,11 @@ def population(effectifs, source: CaracteristiquesRetraites,
     celle des deux sexes réunis, et ses carrières courtes étalées sur la vie
     active sous :data:`COURTES_ETALEES`."""
     retirer = () if CONTRACTUELS_AU_SALARIAT else CAISSES_DANS_LA_CNAV
+    propres = femmes_des_independants(racine) if INDEPENDANTS_A_LEUR_PART_DE_FEMMES else None
     variantes = interruptions(melees(personnes(reference_population(), effectifs, source,
                                                retirer), source), effectifs, source,
-                              de_tous=COURTES_A_LA_PART_DE_TOUS, etalees=COURTES_ETALEES)
+                              de_tous=COURTES_A_LA_PART_DE_TOUS, etalees=COURTES_ETALEES,
+                              propres=propres)
     if DUREE_DES_FEMMES_SELON_LA_GENERATION:
         variantes = femmes_selon_la_generation(variantes, effectifs, source, racine)
     donnees = donnees_population(racine)
@@ -2305,6 +2421,62 @@ def confronter(lignes: list[tuple[float, float, str]], residence: ResidenceRetra
     return sortie
 
 
+def pensions_non_salaries(racine: Path) -> dict[tuple[str, str, str], float]:
+    """La pension des retraités de 2020 selon leur régime principal, que la
+    fiche 1.11 de l'INSEE tire de l'EIR (``pensions_non_salaries.csv``) :
+    ``(régime, sexe, indicateur) → valeur``."""
+    return {(l["regime_principal"], l["sexe"], l["indicateur"]): float(l["valeur"])
+            for l in _lire_macro(racine, "pensions_non_salaries.csv")}
+
+
+def femmes_des_independants(racine: Path) -> dict[str, float]:
+    """La part des femmes parmi les anciens de chaque indépendant
+    (:data:`INDEPENDANTS`), au régime principal de l'EIR de 2020
+    (:func:`pensions_non_salaries`) : ``{cas type: part}``."""
+    publiees = pensions_non_salaries(racine)
+    return {code: (publiees[(regime, "F", "effectifs")]
+                   / publiees[(regime, "ensemble", "effectifs")])
+            for code, regime in INDEPENDANTS.items()}
+
+
+def confronter_non_salaries(lignes: list[tuple[float, float, str, str]],
+                            publiees: dict[tuple[str, str, str], float]) -> dict:
+    """La pension des indépendants de la grille contre celle de leurs anciens
+    dans l'EIR, régime par régime (:data:`INDEPENDANTS`) et sexe par sexe :
+    leur part parmi les retraités du sexe, leur moyenne et leurs quartiles,
+    chacun contre le sien ; et chaque quartile rapporté à celui de tous les
+    retraités du sexe, la grille contre la fiche, dont les quartiles de tous
+    ne sont pas ceux de la DREES. ``lignes`` : ``(pension, poids, sexe, cas
+    type)``."""
+    sortie: dict[str, dict] = {}
+    for code, regime in INDEPENDANTS.items():
+        par_sexe = {}
+        for sexe in SEXES:
+            tous = [(m, p) for m, p, s, _ in lignes if sexe == "ensemble" or s == sexe]
+            siens = [(m, p) for m, p, s, c in lignes
+                     if c == code and (sexe == "ensemble" or s == sexe)]
+            if not siens:
+                continue
+            masse = somme_ordonnee(p for _, p in siens)
+            quantiles = {q: quantile_pondere(siens, rang) for q, rang in QUARTILES}
+            de_tous = {q: quantile_pondere(tous, rang) for q, rang in QUARTILES}
+            par_sexe[sexe] = {
+                "part": masse / somme_ordonnee(p for _, p in tous),
+                "part_eir": (publiees[(regime, sexe, "effectifs")]
+                             / publiees[("ensemble", sexe, "effectifs")]),
+                "moyenne": somme_ordonnee(m * p for m, p in siens) / masse,
+                "moyenne_eir": publiees[(regime, sexe, "moyenne")],
+                "quantiles": quantiles,
+                "quantiles_eir": {q: publiees[(regime, sexe, q)] for q, _ in QUARTILES},
+                "relatifs": {q: quantiles[q] / de_tous[q] for q, _ in QUARTILES},
+                "relatifs_eir": {q: publiees[(regime, sexe, q)] / publiees[("ensemble", sexe, q)]
+                                 for q, _ in QUARTILES},
+            }
+        if par_sexe:
+            sortie[regime] = par_sexe
+    return sortie
+
+
 @dataclass(frozen=True)
 class GrilleEnTetes:
     """Ce que la page pèse d'une grille : ses couples simulés, ses cas types, le
@@ -2331,6 +2503,13 @@ class GrilleEnTetes:
         return list(cohortes_de_l_annee(self.pensionnes, self.poids(annee), self.population,
                                         self.revalorisation, self.macro, self.annee_euros,
                                         annee))
+
+    def pensions_par_cas_type(self, annee: int) -> list[tuple[float, float, str, str]]:
+        """:meth:`pensions`, chaque ligne avec le cas type dont sa carrière se
+        décline : ``(pension, poids, sexe, cas type)``."""
+        sexes = {cas.code: cas.sexe for cas in self.cas_types}
+        return [(montant, poids, sexes[pensionne.code], pensionne.code.split("~", 1)[0])
+                for pensionne, montant, poids in self.cohortes(annee)]
 
 
 def en_tetes(parametres: Parametres, variantes: list[Variante],
@@ -2676,7 +2855,9 @@ def mesurer(noms: tuple[str, ...] = GRILLES, processus: int = 1,
     dépôt, réécrite en parts, doit redonner. ``page=False`` s'en tient à la
     composition et à la distribution, que la simulation seule donne. Une grille
     qui a des tranches de durée est en outre rangée par quintile de sa pension
-    en équivalent carrière complète, contre l'EIR (:func:`eqcc`)."""
+    en équivalent carrière complète, contre l'EIR (:func:`eqcc`) ; une grille
+    qui a des artisans les confronte aux anciens artisans et commerçants de
+    l'EIR (:func:`confronter_non_salaries`)."""
     parametres = parametres if parametres is not None else Parametres()
     racine = parametres.racine_donnees
     source = eir(racine)
@@ -2687,6 +2868,7 @@ def mesurer(noms: tuple[str, ...] = GRILLES, processus: int = 1,
     residence = ResidenceRetraites(racine, source.millesime)
     distributions = {sexe: DistributionPensions(racine, sexe, source.millesime, "france")
                      for sexe in SEXES}
+    non_salaries = pensions_non_salaries(racine)
     resultat = {
         "eir": {"millesime": source.millesime, **composition_eir(source)},
         "centiles": {"annee": annee_centiles,
@@ -2708,6 +2890,10 @@ def mesurer(noms: tuple[str, ...] = GRILLES, processus: int = 1,
         mesure["composition"] = composition(variantes, effectifs, source)
         mesure["distribution"] = confronter(tetes.pensions(source.millesime),
                                             residence, distributions)
+        independants = confronter_non_salaries(tetes.pensions_par_cas_type(source.millesime),
+                                               non_salaries)
+        if independants:
+            mesure["non_salaries"] = independants
         if any(v.tranche is not None for v in variantes):
             mesure["eqcc"] = eqcc(parametres, variantes, tetes, publies, source.millesime,
                                   processus)
@@ -2748,6 +2934,36 @@ def imprimer_distribution(resultat: dict) -> None:
             print(f"{'  ' + nom:16}{d['part'] * 100:>5.1f}%{d['moyenne']:>9.0f}"
                   + "".join(f"{d['quantiles'][c]:>8.0f}" for c in codes)
                   + f"{d['kolmogorov'] * 100:>+8.1f} pt à {d['borne_kolmogorov']:.0f}")
+
+
+def imprimer_non_salaries(resultat: dict) -> None:
+    """La pension des indépendants de chaque grille contre celle de leurs
+    anciens dans l'EIR, sexe par sexe."""
+    lues = [(nom, g["non_salaries"]) for nom, g in resultat["grilles"].items()
+            if "non_salaries" in g]
+    if not lues:
+        return
+    quartiles = [q for q, _ in QUARTILES]
+    print(f"\nLa pension des anciens indépendants en {resultat['eir']['millesime']}, contre "
+          "l'EIR (INSEE, fiche 1.11) — leur part parmi les retraités du sexe, leur moyenne "
+          "et leurs quartiles, euros par mois ; chaque quartile rapporté à celui de tous")
+    for regime in INDEPENDANTS.values():
+        for sexe in SEXES:
+            mesures = [(nom, m[regime][sexe]) for nom, m in lues
+                       if regime in m and sexe in m[regime]]
+            if not mesures:
+                continue
+            print(f"\n{regime + ', ' + INTITULES_SEXES[sexe].lower():30}{'part':>7}"
+                  f"{'moyenne':>9}" + "".join(f"{q:>9}" for q in quartiles)
+                  + "".join(f"{q + '/tous':>14}" for q in quartiles))
+            eir_ = mesures[0][1]
+            print(f"{'  EIR':30}{eir_['part_eir'] * 100:>6.1f}%{eir_['moyenne_eir']:>9.0f}"
+                  + "".join(f"{eir_['quantiles_eir'][q]:>9.0f}" for q in quartiles)
+                  + "".join(f"{eir_['relatifs_eir'][q]:>14.2f}" for q in quartiles))
+            for nom, m in mesures:
+                print(f"{'  ' + nom:30}{m['part'] * 100:>6.1f}%{m['moyenne']:>9.0f}"
+                      + "".join(f"{m['quantiles'][q]:>9.0f}" for q in quartiles)
+                      + "".join(f"{m['relatifs'][q]:>14.2f}" for q in quartiles))
 
 
 def imprimer_eqcc(resultat: dict) -> None:
@@ -2879,6 +3095,7 @@ def imprimer(resultat: dict) -> None:
               f"{d.get('F', float('nan')):>9.1f}{d.get('H', float('nan')):>9.1f}"
               f"{c.get('F', float('nan'))*100:>6.1f}%{c.get('H', float('nan'))*100:>6.1f}%")
     imprimer_distribution(resultat)
+    imprimer_non_salaries(resultat)
     imprimer_eqcc(resultat)
 
     if page is not None:

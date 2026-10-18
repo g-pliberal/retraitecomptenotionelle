@@ -1,0 +1,116 @@
+# Pension de droit direct des retraités selon leur régime principal,
+# fin 2020 : les anciens non-salariés
+# source_id: insee_pensions_non_salaries
+# unite: euros bruts par mois (moyenne, quartiles) ; milliers
+#        (effectifs)
+# fiabilite:
+#   certifiee (2020) : INSEE, « Emploi et revenus des indépendants »,
+#             Insee Références, édition 2025, fiche 1.11, figure 1 ;
+#             DREES, EIR 2020 ; recontrôlé par
+#             scripts/verifier_donnees.py.
+#
+# LES COLONNES
+# ------------
+# regime_principal : celui où le retraité a fait la plus grande part
+#   de sa carrière ; artisans_commercants, exploitants_agricoles,
+#   professions_liberales, leur ensemble non_salaries, et ensemble,
+#   tous les retraités.
+# indicateur : effectifs ; moyenne, q1, mediane et q3 de la pension
+#   totale de droit direct, tous régimes, majoration pour trois
+#   enfants comprise, hors réversion et minimum vieillesse.
+# Le champ : les retraités de droit direct résidant en France au 31
+# décembre 2020.
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# À juger l'artisan de la population de la page Coût (action 138,
+# étape 14) : les classeurs de la DREES ne nomment pas les anciens
+# artisans et commerçants, 500 000 retraités dont la pension moyenne,
+# 1 230 €, vaut 0,80 fois celle de tous. Aucun calcul du site ne la
+# lit.
+#
+# CE QU'ELLE N'EST PAS. Les quartiles de la DREES : la ligne de tous
+# les retraités redonne ses effectifs et ses moyennes
+# (pensions_residence.csv), mais non ses quartiles des femmes — 730,
+# 1 140 et 1 720 €, pour 598, 1 013 et 1 613 —, quand ceux des hommes
+# s'en écartent de 51 € au plus. Un quartile de la fiche se compare
+# donc à celui de tous les retraités de la fiche.
+#
+# Ne pas modifier à la main : les valeurs seraient écrasées au prochain
+# scripts/verifier_donnees.py --appliquer.
+annee,regime_principal,sexe,indicateur,valeur,fiabilite
+2020,artisans_commercants,F,effectifs,140,certifiee
+2020,artisans_commercants,F,mediane,870,certifiee
+2020,artisans_commercants,F,moyenne,820,certifiee
+2020,artisans_commercants,F,q1,520,certifiee
+2020,artisans_commercants,F,q3,1230,certifiee
+2020,artisans_commercants,H,effectifs,360,certifiee
+2020,artisans_commercants,H,mediane,1440,certifiee
+2020,artisans_commercants,H,moyenne,1380,certifiee
+2020,artisans_commercants,H,q1,1030,certifiee
+2020,artisans_commercants,H,q3,1800,certifiee
+2020,artisans_commercants,ensemble,effectifs,500,certifiee
+2020,artisans_commercants,ensemble,mediane,1300,certifiee
+2020,artisans_commercants,ensemble,moyenne,1230,certifiee
+2020,artisans_commercants,ensemble,q1,870,certifiee
+2020,artisans_commercants,ensemble,q3,1720,certifiee
+2020,ensemble,F,effectifs,8450,certifiee
+2020,ensemble,F,mediane,1140,certifiee
+2020,ensemble,F,moyenne,1180,certifiee
+2020,ensemble,F,q1,730,certifiee
+2020,ensemble,F,q3,1720,certifiee
+2020,ensemble,H,effectifs,7200,certifiee
+2020,ensemble,H,mediane,1730,certifiee
+2020,ensemble,H,moyenne,1960,certifiee
+2020,ensemble,H,q1,1270,certifiee
+2020,ensemble,H,q3,2330,certifiee
+2020,ensemble,ensemble,effectifs,15650,certifiee
+2020,ensemble,ensemble,mediane,1440,certifiee
+2020,ensemble,ensemble,moyenne,1540,certifiee
+2020,ensemble,ensemble,q1,920,certifiee
+2020,ensemble,ensemble,q3,2050,certifiee
+2020,exploitants_agricoles,F,effectifs,390,certifiee
+2020,exploitants_agricoles,F,mediane,750,certifiee
+2020,exploitants_agricoles,F,moyenne,670,certifiee
+2020,exploitants_agricoles,F,q1,580,certifiee
+2020,exploitants_agricoles,F,q3,870,certifiee
+2020,exploitants_agricoles,H,effectifs,320,certifiee
+2020,exploitants_agricoles,H,mediane,940,certifiee
+2020,exploitants_agricoles,H,moyenne,970,certifiee
+2020,exploitants_agricoles,H,q1,860,certifiee
+2020,exploitants_agricoles,H,q3,1080,certifiee
+2020,exploitants_agricoles,ensemble,effectifs,710,certifiee
+2020,exploitants_agricoles,ensemble,mediane,870,certifiee
+2020,exploitants_agricoles,ensemble,moyenne,810,certifiee
+2020,exploitants_agricoles,ensemble,q1,710,certifiee
+2020,exploitants_agricoles,ensemble,q3,990,certifiee
+2020,non_salaries,F,effectifs,590,certifiee
+2020,non_salaries,F,mediane,830,certifiee
+2020,non_salaries,F,moyenne,840,certifiee
+2020,non_salaries,F,q1,600,certifiee
+2020,non_salaries,F,q3,1130,certifiee
+2020,non_salaries,H,effectifs,800,certifiee
+2020,non_salaries,H,mediane,1210,certifiee
+2020,non_salaries,H,moyenne,1440,certifiee
+2020,non_salaries,H,q1,910,certifiee
+2020,non_salaries,H,q3,1790,certifiee
+2020,non_salaries,ensemble,effectifs,1390,certifiee
+2020,non_salaries,ensemble,mediane,1040,certifiee
+2020,non_salaries,ensemble,moyenne,1180,certifiee
+2020,non_salaries,ensemble,q1,800,certifiee
+2020,non_salaries,ensemble,q3,1630,certifiee
+2020,professions_liberales,F,effectifs,60,certifiee
+2020,professions_liberales,F,mediane,1770,certifiee
+2020,professions_liberales,F,moyenne,1890,certifiee
+2020,professions_liberales,F,q1,1350,certifiee
+2020,professions_liberales,F,q3,2420,certifiee
+2020,professions_liberales,H,effectifs,120,certifiee
+2020,professions_liberales,H,mediane,2870,certifiee
+2020,professions_liberales,H,moyenne,2930,certifiee
+2020,professions_liberales,H,q1,1930,certifiee
+2020,professions_liberales,H,q3,3780,certifiee
+2020,professions_liberales,ensemble,effectifs,180,certifiee
+2020,professions_liberales,ensemble,mediane,2330,certifiee
+2020,professions_liberales,ensemble,moyenne,2570,certifiee
+2020,professions_liberales,ensemble,q1,1610,certifiee
+2020,professions_liberales,ensemble,q3,3410,certifiee

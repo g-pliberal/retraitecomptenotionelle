@@ -1,0 +1,28 @@
+date: "2026-10-17"
+session: "action 138, étape 14, septième partie : les indépendants de la population, à la dispersion de leurs revenus"
+consulte: >-
+  Aucun texte : la session n'écrit aucune règle du scénario 1, et ne touche
+  qu'à la population de la page Coût (`scripts/grille_large.py`), que la page
+  ne lit pas. Source neuve, certifiée : l'INSEE, « Emploi et revenus des
+  indépendants », Insee Références, édition 2025 (21 mai 2025), fiches 1.3,
+  1.6 et 1.11, lues dans leurs classeurs
+  (`scripts/fetch/insee_revenus_independants.py`) — les revenus des
+  non-salariés classiques de 2022 par sexe et par secteur
+  (`macro/revenus_non_salaries.csv`), la pension des anciens non-salariés
+  dans l'EIR de 2020 (`macro/pensions_non_salaries.csv`). Le glossaire de la
+  même publication, pour la définition du revenu d'activité : l'assiette des
+  cotisations personnelles, annualisée, nulle en cas de déficit.
+trouve: >-
+  Rien de neuf au droit. La dispersion que le dépôt n'avait pas : le premier
+  décile du revenu des non-salariés classiques vaut 0,23 fois la médiane des
+  femmes et 0,22 celle des hommes en 2022, quand celui du salaire d'un temps
+  complet du privé en vaut 0,62 et 0,61. Et la ligne des anciens artisans et
+  commerçants, que les classeurs de la DREES ne donnent pas : 500 000
+  retraités résidant en France fin 2020, à 1 230 € par mois en moyenne. La
+  fiche redonne les effectifs et les moyennes de tous les retraités de la
+  DREES, non ses quartiles des femmes, plus hauts de 107 à 132 €.
+reste: >-
+  Ceux de la note (`docs/feuille_de_route/138/2026-10-17-etape-14-independants.md`) :
+  la part passagère du revenu d'un indépendant, qui resserrerait sa
+  carrière, si une source la publie ; les libéraux de la population, à
+  l'action 152, au propriétaire.
