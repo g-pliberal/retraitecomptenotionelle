@@ -116,6 +116,17 @@ approximations:
     portés au compte
   effet: non mesuré
 - ecart: >-
+    le travailleur indépendant — artisan, commerçant, micro-entrepreneur — a le
+    salaire mensuel moyen du salarié (R. 351-29, III), que ses textes écartent : de
+    2023 à 2025, D. 634-1 exclut R. 351-29, et R. 634-1 fait son revenu annuel moyen
+    des revenus cotisés des années qui valident un trimestre, « il est tenu compte du
+    revenu annuel de l'année durant laquelle la pension mentionnée à l'article
+    L. 161-22-1-1 prend effet » ; depuis 2026, D. 634-3 applique R. 351-29, mais « Les
+    III et IV ne sont pas applicables ». Un revenu annuel, et non mensuel : une année
+    entamée y pèse de ses seuls mois. Le micro-entrepreneur y porte son revenu cotisé,
+    et non son revenu abattu
+  effet: non mesuré
+- ecart: >-
     au-delà du dernier prix d'achat publié, le salaire de référence de l'Agirc-Arrco
     suit le plafond de la sécurité sociale ; le versement en capital sous cent points,
     et annuel sous deux cents, ne se distinguent pas
@@ -125,7 +136,7 @@ approximations:
     départ, ni dans celle d'aujourd'hui, et « faire vivre » ne la revalorise pas
   effet: non mesuré
 sources:
-  lu_le: 2026-10-13
+  lu_le: 2026-10-18
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -134,12 +145,31 @@ sources:
     circulaire Cnav qui l'applique. La rédaction de 2026 de L. 161-22-1-1 ne porte plus
     la phrase du plafond, et D. 161-2-22-1 ne vise que la rédaction issue de la loi
     n° 2023-270 : les premières pensions de 2027 n'ont pas de plafond.
+  - >-
+    La nouvelle pension du travailleur indépendant : la circulaire Cnav qui applique
+    R. 634-1 (2023-2025) et D. 634-3 (depuis 2026), et son exemple ; la recherche
+    de la Cnav ne l'a pas rendue le 18 octobre 2026 (« L161-22-1-1 », « nouvelle
+    pension », « R634-1 »). Puis le revenu annuel moyen de l'indépendant, à la
+    place du salaire mensuel moyen du salarié.
   lectures:
   - type: legifrance
     reference: >-
       R. 351-29 CSS, rédaction du 1er janvier 2026 (LEGIARTI000053335651), III : le
       salaire de la nouvelle pension, dans l'index LEGI
     date: 2026-09-30
+  - type: legifrance
+    reference: >-
+      Le travailleur indépendant : D. 634-1, LEGIARTI000047961824 (1er septembre 2023
+      au 8 juillet 2024), « à l'exception des articles R. 351-11, R. 351-29,
+      R. 351-29-1 » ; R. 634-1, LEGIARTI000047961079 (1er septembre 2023 au
+      31 décembre 2025), le revenu annuel moyen des cotisations versées, et « il est
+      tenu compte du revenu annuel de l'année durant laquelle la pension mentionnée à
+      l'article L. 161-22-1-1 prend effet » ; D. 634-3, LEGIARTI000053356107 (pensions
+      prenant effet depuis le 1er janvier 2026) : R. 351-29 s'applique, « 5° Le 2° du
+      C du I n'est pas applicable au calcul de la pension liquidée en application de
+      l'article L. 161-22-1 » et « 7° Les III et IV ne sont pas applicables ». Dans
+      l'index LEGI, à jour au 17 octobre 2026
+    date: 2026-10-18
   - type: service_public
     reference: >-
       fiche F13243, « Cumul emploi-retraite du salarié », vérifiée le 1er janvier 2026 :
@@ -199,6 +229,10 @@ historique:
   2026-10-05 — la seconde retraite de l'Agirc-Arrco part au 1er janvier 2024 au plus
   tôt, non au 1er septembre 2023 (avenant n° 16, action 89), et ses points se comptent
   au taux de calcul.
+- >-
+  2026-10-18 — le micro-entrepreneur en cumul y porte son revenu cotisé, celui de ses
+  trimestres et de son revenu annuel moyen, et non son revenu abattu (action 138,
+  étape 12) ; la règle de l'indépendant, lue à ses textes, reste à écrire.
 effet: >-
   Les retraités en cumul intégral depuis 2023 : leurs cotisations, jusque-là à fonds
   perdus, leur ouvrent une seconde pension, au plus 5 % du plafond de la sécurité

@@ -12,6 +12,7 @@
  */
 
 import { DateMois } from "../calendrier.js";
+import { revenuCotise } from "../carriere.js";
 import { menerAuMois } from "../revalorisation.js";
 import * as lesDeparts from "./departs.js";
 import * as liquidation from "./liquidation.js";
@@ -180,9 +181,14 @@ export function droits(moteur, carriere, resultat, cumul) {
   if (ouverts.length > 0) {
     const dateEffet = cumul.fin.rang >= LIQUIDATION_2023 ? cumul.fin
       : DateMois.depuisRang(LIQUIDATION_2023);
+    // Celui du micro-entrepreneur, que son forfait cotise, et non son revenu
+    // abattu : voir le Python.
     const revenus = new Map();
     for (const ligne of carriere.lignes_apres_depart) {
-      revenus.set(ligne.annee, (revenus.get(ligne.annee) ?? 0.0) + ligne.revenu);
+      revenus.set(ligne.annee, (revenus.get(ligne.annee) ?? 0.0) + (ligne.micro
+        ? revenuCotise(moteur.macro, ligne.revenu, ligne.micro, ligne.annee,
+          ligne.fraction_annee)
+        : ligne.revenu));
     }
     const activite = new Map();
     for (let r = cumul.debut.rang; r < cumul.fin.rang; r += 1) {

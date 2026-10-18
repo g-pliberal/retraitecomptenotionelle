@@ -390,6 +390,24 @@ def test_la_premiere_pension_de_2027_attend_le_cumul_entier_sans_plafond(simulat
     assert carriere.cumul.integral_depuis > DateMois(2034, 12)
 
 
+def test_la_nouvelle_pension_du_micro_entrepreneur_porte_son_revenu_cotise(simulateur):
+    """Le micro-entrepreneur en cumul intégral se constitue sa nouvelle pension
+    sur le revenu que son forfait cotise, celui de ses trimestres et de son
+    revenu annuel moyen (circulaire Cnav n° 2024-23, point 4 ; R. 634-1, puis
+    R. 351-29, I, B, et D. 634-3), et non sur son revenu abattu. De février 2023
+    à juillet 2024, ses ventes portent 12,3 % × 41,80 % / 17,75 % de leur
+    montant, 0,9988 fois leur revenu abattu (D. 613-4, D. 613-6, D. 633-3)."""
+    emploi = _emploi(63, 64.5, affiliation="micro_entrepreneur", niveau=0.5)
+    metiers = [Metier("salarie_prive_non_cadre", 20.0)]
+    abattu, _ = _droits(simulateur, 1960, 62.25, emploi, metiers)
+    cotise, _ = _droits(simulateur, 1960, 62.25, emploi | {"micro": "vente"}, metiers)
+    [base_abattue] = [p for p in abattu.pensions if p.regime == "regime_general"]
+    [base_cotisee] = [p for p in cotise.pensions if p.regime == "regime_general"]
+    assert base_cotisee.trimestres == base_abattue.trimestres > 0
+    assert base_cotisee.salaire_mensuel == pytest.approx(
+        base_abattue.salaire_mensuel * 0.123 * 0.418 / 0.1775 / 0.29, rel=1e-9)
+
+
 @pytest.mark.parametrize("naissance, debut, regles", [
     (1960, 26.0, [seconde.LOI_2014, seconde.LOI_2023]),
     (1954, 20.0, [seconde.LOI_2014]),

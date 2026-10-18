@@ -763,6 +763,35 @@ test("les points du micro-entrepreneur s'achètent avec son forfait", () => {
 });
 
 /**
+ * La nouvelle pension du micro-entrepreneur en cumul intégral porte le revenu
+ * que son forfait cotise, et non son revenu abattu. Rejoue
+ * `test_la_nouvelle_pension_du_micro_entrepreneur_porte_son_revenu_cotise`
+ * (test_emploi_retraite.py).
+ */
+test("la nouvelle pension du micro-entrepreneur porte son revenu cotisé", () => {
+  const simulateur = new Contexte(paquet).simulateur();
+  const base = (micro) => {
+    const carriere = simulateur.carriereParcours({
+      annee_naissance: 1960, sexe: "F", jour_naissance: 15, age_liquidation: 62.25,
+      metiers: [{ affiliation: "salarie_prive_non_cadre", age_debut: 20, niveau_salaire: 1 }],
+      emploi_retraite: {
+        age: 63, fin: 64.5, affiliation: "micro_entrepreneur", niveau_salaire: 0.5,
+        employeur: "autre", ...(micro ? { micro } : {}),
+      },
+    });
+    const droits = simulateur.echeancier(carriere).auDepart.droits_apres_depart;
+    return droits.pensions.find((pension) => pension.regime === "regime_general");
+  };
+  const abattue = base("");
+  const cotisee = base("vente");
+  assert.ok(abattue.trimestres > 0);
+  assert.equal(cotisee.trimestres, abattue.trimestres);
+  const attendu = abattue.salaire_mensuel * 0.123 * 0.418 / 0.1775 / 0.29;
+  assert.ok(Math.abs(cotisee.salaire_mensuel / attendu - 1) < 1e-9,
+    `${cotisee.salaire_mensuel} contre ${attendu}`);
+});
+
+/**
  * Le plafond des primes du RAFP : « dans la limite de 20 % du traitement
  * indiciaire brut total » (décret n° 2004-569, art. 2). Deux agentes au même
  * traitement, primes au plafond pour l'une, au-delà pour l'autre : même

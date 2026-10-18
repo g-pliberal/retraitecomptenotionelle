@@ -49,6 +49,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from ..calendrier import DateMois
+from ..carriere import revenu_cotise
 from . import departs as _departs
 from . import liquider as _liquider
 from .commun import date_d_effet
@@ -242,9 +243,15 @@ def droits(moteur: ScenarioActuel, carriere: Carriere, resultat: ResultatActuel,
     non_calcules: set[str] = set()
     if ouverts:
         date_effet = max(cumul.fin, LIQUIDATION_2023)
+        # Le revenu de chaque année ; celui du micro-entrepreneur, que son
+        # forfait cotise, et non son revenu abattu : celui de ses trimestres et
+        # de son revenu annuel moyen (:func:`revenu_cotise`).
         revenus: dict[int, float] = {}
         for ligne in carriere.lignes_apres_depart:
-            revenus[ligne.annee] = revenus.get(ligne.annee, 0.0) + ligne.revenu
+            revenus[ligne.annee] = revenus.get(ligne.annee, 0.0) + (
+                revenu_cotise(moteur.macro, ligne.revenu, ligne.micro, ligne.annee,
+                              ligne.fraction_annee)
+                if ligne.micro else ligne.revenu)
         activite: dict[int, int] = {}
         for rang in range(cumul.debut.rang, cumul.fin.rang):
             annee = DateMois.depuis_rang(rang).annee
