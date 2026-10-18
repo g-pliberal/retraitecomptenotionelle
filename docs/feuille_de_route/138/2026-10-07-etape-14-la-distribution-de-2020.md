@@ -1,15 +1,15 @@
 # Étape 14, première partie : les pensions de 2020, simulées contre publiées
 
-**Reprise, au 18 octobre 2026.** Fait : chaque grille confrontée en 2020 à
-l'EIR (7 octobre) ; la population de l'action 136 ; le 16, la décote,
-l'étranger, l'emploi fragmenté, l'Ircantec, les salariés agricoles ; le 17,
-l'artisan ; le 18, les départs des nés en 1950 et 1953, certifiés et
-mesurés, et la surcote : 9,2 % des départs de la génération 1955 (EIR 14,4).
-Reste, une session par point : les carrières longues des hommes, trop
-nombreuses ; les invalides et les inaptes ; la surcote des statutaires ; la
-décote selon la génération ; ce qu'une source publierait des indépendants et
-des agricoles ; l'ASPA ; les limites. Au propriétaire : 152, 157, le CASD, le
-départ qui suit l'incitation. Détail : `2026-10-18-etape-14-departs-choisis.md`.
+**Reprise, au 18 octobre 2026.** Fait : chaque grille contre l'EIR en 2020
+(7 octobre) ; la population de l'action 136 ; le 16, la décote, l'étranger,
+l'emploi fragmenté, l'Ircantec, les salariés agricoles ; le 17, l'artisan ;
+le 18, les départs des nés en 1950 et 1953, la surcote, l'entrée des
+carrières pleines au premier trimestre cotisé (EIC). Reste, une session par
+point : la mesure de cette entrée, avec et sans (commande dans la note) ; les
+périodes assimilées réputées cotisées, les femmes en carrière longue ; les
+invalides et les inaptes ; la surcote des statutaires ; la décote selon la
+génération ; les indépendants et les agricoles ; l'ASPA ; les limites. Au
+propriétaire : 152, 157, le CASD, l'incitation. Détail : `2026-10-18-etape-14-carrieres-longues.md`.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.14 ». L'étape :
 « Ce qui demande une population ou des microdonnées, avec l'action 136 (étape

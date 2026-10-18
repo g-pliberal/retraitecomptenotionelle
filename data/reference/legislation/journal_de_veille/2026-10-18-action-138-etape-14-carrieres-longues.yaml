@@ -1,0 +1,34 @@
+date: "2026-10-18"
+session: "action 138, étape 14, neuvième partie : les carrières longues des hommes, l'entrée des carrières pleines au premier trimestre cotisé"
+consulte: >-
+  Aucun texte : la session n'écrit aucune règle du scénario 1, et ne touche
+  qu'à la population de la page Coût (`scripts/grille_large.py`), que la page
+  ne lit pas. La condition d'entrée de la carrière longue telle que le modèle
+  la lit (`CarriereLongue._entree_precoce`, D. 351-1-1) — cinq trimestres
+  cotisés à la fin de l'année des 16, 17, 18, 20 ou 21 ans, quatre pour qui
+  est né au dernier trimestre — et ses portes génération par génération
+  (`legislation/carriere_longue.csv`). Source neuve, certifiée : les données
+  détaillées de l'échantillon interrégimes de cotisants de 2017, jeu
+  `2596_les-droits-valides-au-cours-de-la-carriere` de la DREES, fichier
+  « eic2017_data_drees_er » — la part des affiliés d'avant 23 ans qui ont
+  validé, et cotisé, un trimestre à chaque âge de 16 à 23 ans, par génération
+  et par sexe (`scripts/fetch/drees_premier_trimestre.py`,
+  `macro/premier_trimestre.csv`).
+trouve: >-
+  Rien de neuf au droit. Ce que le dépôt n'avait pas : l'âge du premier
+  trimestre, génération par génération. Parmi les affiliés d'avant 23 ans,
+  38,2 % des hommes nés en 1950 avaient cotisé un trimestre à la fin de
+  l'année de leurs 16 ans, 72,3 % à celle de leurs 19 ans ; 29,9 et 77,7 %
+  de ceux nés en 1954 ; 3,2 et 56,9 % de ceux nés en 1970. Le service
+  national sépare le trimestre validé du trimestre cotisé : 83,4 % des hommes
+  nés en 1954 avaient validé un trimestre à 19 ans, 93,4 % à 20 ans, pour
+  84,0 % de cotisés. Chez les femmes, 75,4 % des nées en 1954 avaient cotisé
+  un trimestre à 19 ans.
+reste: >-
+  Ceux de la note (`docs/feuille_de_route/138/2026-10-18-etape-14-carrieres-longues.md`) :
+  la mesure de la population avec et sans l'entrée au premier trimestre ; la
+  nature des périodes assimilées de la population, toutes au chômage, quand
+  le service national et la maladie sont réputés cotisés pour la carrière
+  longue, chacun dans sa limite (D. 351-1-2), et les femmes qui y ont droit ;
+  les invalides et les inaptes ; la surcote des statutaires ; le choix de
+  départ qui suivrait l'incitation, au propriétaire.
