@@ -4,11 +4,12 @@
 de R. 351-9 ; le minimum vieillesse de 1941 à 2006 à deux étages ; la pension
 minimum d'avant avril 1983 dans quatre régimes ; l'AVTS dans R. 732-70,
 certifiée au Journal officiel d'octobre 1970 à 2003 ; l'outre-mer, le seuil du
-département dans les deux moteurs et dans la carrière (18 octobre). Reste, dans
-cet ordre : avant 1946, la retenue ; au fac-similé, les textes d'avant 1970, les
-plafonds de 1956 à 1981 et l'AVTS des départements d'outre-mer de 1949 à 1951.
-Au propriétaire : la forme du champ de l'outre-mer, puis le champ. Détail :
-`2026-10-18-etape-6-outre-mer.md`, `2026-10-16-etape-6-avts-au-journal-officiel.md`.
+département ; avant 1946, la retenue et le plafond d'assujettissement, dans les
+deux moteurs (18 octobre). Reste, au fac-similé : les textes de 1930 à 1945, qui
+diraient le taux de la retenue, lu ailleurs ; ceux d'avant 1970, les plafonds de
+1956 à 1981 et l'AVTS des départements d'outre-mer de 1949 à 1951. Au
+propriétaire : la forme du champ de l'outre-mer, puis le champ. Détail :
+`2026-10-18-etape-6-avant-1946.md`, `2026-10-18-etape-6-outre-mer.md`.
 
 **La demande.** L'étape 6 de l'action : « L'AVTS et le minimum vieillesse
 d'avant 2007, au Journal officiel : la validation de 1949 à 1971, la série du
