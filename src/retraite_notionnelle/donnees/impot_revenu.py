@@ -66,7 +66,7 @@ SERIES = ("bareme", "quotient_familial", "parts_par_rang_d_enfant",
           "abattement_exceptionnel_ages_invalides", "abattement_exceptionnel_personnes_seules",
           "majorations_exceptionnelles", "minorations_exceptionnelles",
           "reduction_exceptionnelle", "reduction_proportionnelle", "prime_pour_l_emploi",
-          "credit_exceptionnel")
+          "credit_exceptionnel", "taxe_complementaire")
 
 #: Les clés qui ne sont pas des valeurs : elles disent d'où vient la marche.
 CLES_DE_SOURCE = ("annee", "texte", "note", "origine")
@@ -144,6 +144,12 @@ class BaremesImpotRevenu:
     def derniere_annee(self) -> int:
         """La dernière année de revenus dont la loi de finances est lue."""
         return max(m["annee"] for m in self.series["bareme"])
+
+    def taxe_complementaire(self, annee: int) -> dict:
+        """La marche de la taxe complémentaire des revenus d'``annee``, même
+        avant :attr:`premiere_annee` : celle des revenus de 1959, payée en
+        1960, se déduit des revenus de 1960 ; vide hors de ses années."""
+        return _valeurs(_marche(self.series["taxe_complementaire"], annee))
 
     def lus(self, annee: int) -> ParametresImpot:
         """Les paramètres d'une année lue : ``premiere_annee`` à

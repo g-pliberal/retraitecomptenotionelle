@@ -1094,9 +1094,12 @@ def test_la_reduction_des_salaires_et_des_pensions_des_annees_1960(baremes):
     assert salarie.reduction_des_salaires == pytest.approx(720)
     assert salarie.impot == pytest.approx(2340)
     assert not any("IPP" in r for r in salarie.remarques)
-    # Le bénéfice de 14 400 F d'un artisan : 3 060 F, sans réduction.
-    artisan = _seul(1965, baremes, benefices=14400, age=40)
+    # Le bénéfice de 14 400 F d'un artisan : 3 060 F, sans réduction, et sans
+    # taxe complémentaire dès 1965 ; d'un commerçant, 6 % de 11 400 F en plus.
+    artisan = _seul(1965, baremes, benefices=14400, age=40, artisan=True)
     assert artisan.reduction_des_salaires == 0 and artisan.impot == pytest.approx(3060)
+    commercant = _seul(1965, baremes, benefices=14400, age=40)
+    assert commercant.impot == pytest.approx(3060 + 684)
     # 1960 : 10 000 F de salaire, 7 200 F imposables : 5 % de 2 300 F, 15 % de
     # 1 450 F, 20 % de 2 750 F, 25 % de 700 F, 1 057,50 F ; moins 360 F,
     # 697,50 F ; plus le décime, 69,75 F, 69,80 F : 767,30 F.
@@ -1233,3 +1236,102 @@ def test_le_revenu_imposable_s_arrondit_a_la_centaine_de_1968_a_1979(baremes):
     assert imposable(1967, 20055) == 20050
     assert [imposable(annee, 20055) for annee in (1968, 1975, 1979)] == [20000] * 3
     assert imposable(1980, 20055) == 20050
+
+
+# -- La taxe complémentaire, des revenus de 1959 à ceux de 1969 -----------------
+
+
+def _taxe(annee, baremes, *declarants, payee=0.0):
+    foyer = Foyer(tuple(Declarant(age=45, **d) for d in declarants),
+                  taxe_complementaire_de_l_annee_precedente=payee)
+    return impot_du_foyer(foyer, annee, baremes, unite="monnaie")
+
+
+def test_la_taxe_complementaire_des_benefices_de_1960_a_1969(baremes):
+    """Une « taxe complémentaire qui frappe les revenus des personnes physiques
+    autres que » les salaires et les pensions (loi n° 59-1472, art. 18, 1, du
+    texte du Sénat), « calculée au taux de 8 % » (art. 19), après un
+    abattement de 3 000 F sur les bénéfices industriels, commerciaux et
+    agricoles, de 4 400 F sur ceux des artisans et des professions non
+    commerciales (rapport du Sénat n° 24, 1959-1960, p. 86) ; « ramené de 8 à
+    6 % » à compter des revenus de 1961 (loi de finances pour 1962, art. 18
+    bis, au texte de l'Assemblée nationale) ; l'abattement des premiers porté
+    à 4 000 F (loi n° 68-1172, art. 3) ; « Pour l'imposition des revenus de
+    l'année 1969, la taxe ne frappe que la fraction des revenus qui excède
+    30.000 F », puis elle « est supprimée » (loi n° 69-1161, art. 5)."""
+    commercant = {"benefices": 20000}
+    assert [_taxe(annee, baremes, commercant).taxe_complementaire
+            for annee in (1960, 1961, 1967, 1968, 1969, 1970)] == [
+        1360.0, 1020.0, 1020.0, 960.0, 0.0, 0.0]
+    assert _taxe(1969, baremes, {"benefices": 50000}).taxe_complementaire == 1200.0
+    liberal = {"benefices": 20000, "categorie": "bnc"}
+    assert [_taxe(annee, baremes, liberal).taxe_complementaire
+            for annee in (1960, 1966, 1968)] == [1248.0, 936.0, 936.0]
+    assert _taxe(1965, baremes, {"salaires": 20000, "pensions": 5000}).taxe_complementaire == 0
+    assert _taxe(1966, baremes, {"salaires": 10000, "benefices": 20000}).taxe_complementaire \
+        == 1020.0
+
+
+def test_l_artisan_a_son_abattement_puis_la_moitie_du_taux_puis_rien(baremes):
+    """L'artisan a l'abattement de 4 400 F ; « Le taux de 6 % prévu à
+    l'article 204 sexies du Code général des impôts est ramené à 3 % en ce qui
+    concerne les bénéfices réalisés par les artisans visés à l'article 1649
+    quater A » pour ceux de 1964 (loi n° 64-1279, art. 3), et la taxe « cesse
+    de s'appliquer aux bénéfices réalisés par les contribuables considérés
+    comme artisans » à partir de ceux de 1965 (loi n° 65-997, art. 4)."""
+    artisan = {"benefices": 20000, "artisan": True}
+    assert [_taxe(annee, baremes, artisan).taxe_complementaire
+            for annee in (1960, 1963, 1964, 1965)] == [1248.0, 936.0, 468.0, 0.0]
+    assert _taxe(1969, baremes, {"benefices": 50000, "artisan": True}).taxe_complementaire == 0
+    with pytest.raises(ValueError):
+        Declarant(benefices=1000, categorie="bnc", artisan=True)
+
+
+def test_l_abattement_ne_passe_pas_4_400_f_par_contribuable(baremes):
+    """« En aucun cas, le montant total des revenus exonérés du fait de
+    l'abattement à la base ne pourra être supérieur à 440.000 francs pour un
+    même contribuable » (rapport n° 24, p. 86) : un commerçant et une libérale
+    imposés en commun, à 3 000 F et 4 400 F d'abattements, n'en ont que
+    4 400 F."""
+    couple = _taxe(1966, baremes, {"benefices": 10000}, {"benefices": 8000, "categorie": "bnc"})
+    assert couple.taxe_complementaire == 816.0
+
+
+def test_la_base_de_la_taxe_s_arrondit_comme_le_revenu_imposable(baremes):
+    """« Pour le calcul des cotisations dues au titre de l'impôt sur le revenu
+    des personnes physiques et de la taxe complémentaire, le revenu imposable
+    est arrondi à la centaine de francs inférieure » (loi n° 68-1172, art. 2,
+    II) ; avant 1968, à la dizaine, comme celui de l'impôt."""
+    assert _taxe(1968, baremes, {"benefices": 20090}).taxe_complementaire == 960.0
+    assert _taxe(1967, baremes, {"benefices": 20095}).taxe_complementaire == pytest.approx(1025.4)
+
+
+def test_la_taxe_de_l_annee_precedente_se_deduit_du_revenu_global(baremes):
+    """« La taxe complémentaire instituée par le présent article est admise en
+    déduction pour la détermination du revenu global net servant de base à
+    l'impôt sur le revenu des personnes physiques » (loi n° 59-1472, art. 18,
+    4) : celle que le contribuable paie dans l'année, sur ses revenus de
+    l'année précédente, comme il déduisait la taxe proportionnelle « qu'il a
+    payée l'année précédente » (rapport n° 24, p. 90). Ce que le foyer paie
+    compte la taxe de ses revenus de l'année."""
+    sans = _taxe(1966, baremes, {"benefices": 20000})
+    avec = _taxe(1966, baremes, {"benefices": 20000}, payee=1020.0)
+    assert sans.revenu_net_global == 20000 and avec.revenu_net_global == 18980
+    assert (sans.taxe_complementaire_deduite, avec.taxe_complementaire_deduite) == (0, 1020.0)
+    assert avec.impot_avant_credits < sans.impot_avant_credits
+    assert avec.taxe_complementaire == sans.taxe_complementaire == 1020.0
+    assert avec.impot == pytest.approx(avec.impot_avant_credits + 1020.0)
+
+
+def test_la_taxe_des_revenus_de_1959_se_calcule_seule(baremes):
+    """Les revenus de 1959 n'ont pas d'impôt calculé ; leur taxe, « portée de 8
+    à 9 % » (loi n° 59-1472, art. 22, rapport n° 24, p. 89), se paie en 1960 et
+    se déduit des revenus de 1960. Son abattement de 300 000 anciens francs
+    vaut 3 000 F de 1960."""
+    from retraite_notionnelle.impot_revenu import taxe_complementaire_des_revenus
+
+    commercant = Foyer((Declarant(benefices=20000),))
+    assert taxe_complementaire_des_revenus(commercant, 1959, baremes, unite="monnaie") == 1530.0
+    assert taxe_complementaire_des_revenus(commercant, 1970, baremes, unite="monnaie") == 0.0
+    en_euros = Foyer((Declarant(benefices=20000 / FRANC),))
+    assert taxe_complementaire_des_revenus(en_euros, 1959, baremes) == pytest.approx(1530 / FRANC)

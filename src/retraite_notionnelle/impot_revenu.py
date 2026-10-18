@@ -36,8 +36,11 @@ successives :
    de l'abattement des adhérents d'un organisme de gestion agréé de 1976 à
    2005, majorés pour qui n'y adhère pas de 2006 à 2022
    (:func:`benefice_retenu`) ;
-2. le revenu net global, puis l'abattement des personnes de plus de 65 ans ou
-   invalides (art. 157 bis), le revenu net imposable, arrondi ;
+2. le revenu net global, moins, des revenus de 1960 à ceux de 1970, la taxe
+   complémentaire que le foyer paie dans l'année sur ses revenus de l'année
+   précédente (loi n° 59-1472, art. 18, 4), puis l'abattement des personnes
+   de plus de 65 ans ou invalides (art. 157 bis), le revenu net imposable,
+   arrondi ;
 3. le nombre de parts (art. 194 et 195) : un, deux pour un couple ou un veuf
    ayant un enfant à charge, une demi-part par enfant, une part entière par
    enfant à partir du troisième (selon les années :
@@ -62,7 +65,9 @@ successives :
    sur le revenu d'activité de chacun — ses salaires, son bénéfice majoré de
    11,11 % (:func:`revenus_de_la_prime`) —, et le crédit d'impôt exceptionnel
    des revenus de 2008, restitués au-delà de l'impôt dû, en entier au foyer
-   qui n'est pas imposable.
+   qui n'est pas imposable ;
+7. des revenus de 1959 à ceux de 1969, la taxe complémentaire de ses
+   bénéfices (:func:`taxe_complementaire`), qui s'ajoute à ce qu'il paie.
 
 LES MONNAIES ET LES ARRONDIS. L'impôt d'une année en francs se calcule en
 francs : ``unite="euro"`` (le défaut) prend et rend des euros, convertis au
@@ -86,12 +91,15 @@ pour l'emploi (le foyer travaille à temps plein, toute l'année), le seuil
 sous lequel une restitution n'est pas faite (art. 1965 L : 50 F, puis 8 €),
 l'exonération de qui vit de salaires et de pensions sous le minimum garanti
 (art. 5, 2°), l'abattement de 2 000 F des contribuables à une part de 1978
-(loi n° 78-1239, art. 2, IV) et celui de l'article 157 ter, la taxe
-complémentaire des revenus autres que les salaires et les pensions jusqu'à
-ceux de 1969, et les exceptions à la réduction des salaires et des pensions.
+(loi n° 78-1239, art. 2, IV) et celui de l'article 157 ter, la part des
+bénéfices non commerciaux que des tiers déclarent, que la taxe
+complémentaire exonère, et les réductions de cette taxe des commerçants
+engagés à stabiliser leurs prix en 1963 et 1964, et les exceptions à la
+réduction des salaires et des pensions.
 Les règles des revenus de 1960 à 1980 sont lues à la loi n° 59-1472 du
 28 décembre 1959 et aux lois de finances pour 1961 à 1981, sauf la date de
-la décote de 1961 (voir :func:`decote`).
+la décote de 1961 (voir :func:`decote`) et le taux de la taxe complémentaire
+de 1961 (voir :func:`taxe_complementaire`).
 """
 
 from __future__ import annotations
@@ -100,7 +108,7 @@ import math
 from dataclasses import dataclass, field
 
 from .donnees.chargement import Fiabilite
-from .donnees.impot_revenu import FRANC, BaremesImpotRevenu, ParametresImpot
+from .donnees.impot_revenu import FRANC, BaremesImpotRevenu, ParametresImpot, monnaie_de
 from .somme import somme_ordonnee
 
 #: Ce que le module ne calcule pas : voir l'en-tête.
@@ -119,7 +127,9 @@ HORS_CHAMP = (
     "seuil de restitution de l'article 1965 L (50 F, puis 8 €)",
     "exonération de l'article 5, 2° : salaires et pensions sous le minimum garanti",
     "abattement de 2 000 F des contribuables à une part de 1978, et celui de l'article 157 ter",
-    "taxe complémentaire des revenus autres que les salaires et les pensions, jusqu'en 1969",
+    "taxe complémentaire : la part des bénéfices non commerciaux que des tiers déclarent, qui "
+    "en est exonérée, et les réductions des commerçants engagés à stabiliser leurs prix en 1963 "
+    "et 1964",
     "exceptions à la réduction des salaires et des pensions d'avant 1972 : frontaliers, "
     "pensions dont la caisse ne versait pas la taxe de 3 %, et, avant 1967, pensions et rentes "
     "d'invalidité de la sécurité sociale",
@@ -281,12 +291,18 @@ class Declarant:
     #: (:data:`CATEGORIES_DU_BENEFICE`).
     regime: str = "reel_adherent"
     categorie: str = "bic"
+    #: Un artisan au sens de la législation fiscale (CGI, art. 1649 quater
+    #: A), dont les bénéfices industriels et commerciaux ont leur abattement,
+    #: puis leur taux, dans la taxe complémentaire (:func:`taxe_complementaire`).
+    artisan: bool = False
 
     def __post_init__(self):
         if self.regime not in REGIMES_DU_BENEFICE:
             raise ValueError(f"régime du bénéfice inconnu : {self.regime!r}")
         if self.categorie not in CATEGORIES_DU_BENEFICE:
             raise ValueError(f"catégorie du bénéfice inconnue : {self.categorie!r}")
+        if self.artisan and self.categorie != "bic":
+            raise ValueError("un artisan a des bénéfices industriels et commerciaux")
 
 
 @dataclass(frozen=True)
@@ -306,6 +322,10 @@ class Foyer:
     #: Une personne seule qui vit seule avec ses enfants : la demi-part du
     #: parent isolé (art. 194, II, case T).
     vit_seul: bool = True
+    #: La taxe complémentaire de ses revenus de l'année précédente, que le
+    #: foyer paie dans l'année et déduit de son revenu global net (loi n°
+    #: 59-1472, art. 18, 4) : de 1960 à 1970.
+    taxe_complementaire_de_l_annee_precedente: float = 0.0
 
     def __post_init__(self):
         if len(self.declarants) not in (1, 2):
@@ -314,6 +334,8 @@ class Foyer:
             raise ValueError("un couple n'est pas veuf")
         if self.enfants < 0 or not 0 <= self.enfants_invalides <= self.enfants:
             raise ValueError("un nombre d'enfants négatif, ou plus d'enfants invalides que d'enfants")
+        if self.taxe_complementaire_de_l_annee_precedente < 0:
+            raise ValueError("une taxe complémentaire négative")
 
     @property
     def couple(self) -> bool:
@@ -346,6 +368,8 @@ class ImpotDuFoyer:
     benefices_retenus: tuple[float, ...]
     abattement_adherents: float
     majoration_des_benefices: float
+    #: La taxe complémentaire de l'année précédente, déduite du revenu global.
+    taxe_complementaire_deduite: float
     revenu_net_global: float
     abattement_age_invalidite: float
     revenu_net_imposable: float
@@ -373,12 +397,16 @@ class ImpotDuFoyer:
     revenus_d_activite: tuple[float, ...]
     prime_pour_l_emploi: float
     credit_exceptionnel: float
+    #: La taxe complémentaire des revenus de l'année, jusqu'à ceux de 1969
+    #: (:func:`taxe_complementaire`), que le foyer paie en plus de l'impôt.
+    taxe_complementaire: float
     #: La cotisation atteint-elle le seuil de mise en recouvrement ?
     mis_en_recouvrement: bool
     #: Le foyer est-il exonéré, son revenu net de frais professionnels sous la
     #: limite de l'année (:func:`exonere`) ? Sa cotisation est alors nulle.
     exonere: bool
-    #: Ce que le foyer paie ; négatif, ce qui lui est restitué.
+    #: Ce que le foyer paie, taxe complémentaire comprise ; négatif, ce qui lui
+    #: est restitué.
     impot: float
     fiabilite: Fiabilite = Fiabilite.HAUTE
     #: Ce que le calcul a laissé de côté ou approché, pour ce foyer et cette année.
@@ -972,9 +1000,78 @@ def prime_pour_l_emploi(foyer: Foyer, parametres: ParametresImpot,
     return prime
 
 
+def taxe_complementaire(foyer: Foyer, annee: int, marche: dict,
+                        benefices: tuple[float, ...]) -> float:
+    """La taxe complémentaire des bénéfices de chaque déclarant, ``benefices``
+    tels que l'impôt les retient, pour les revenus d'``annee`` ; ``marche``
+    est celle de l'année, vide hors des revenus de 1959 à 1969. Les montants
+    sont dans la monnaie de l'année.
+
+    « Une taxe complémentaire qui frappe les revenus des personnes physiques
+    autres que » les salaires et les pensions (loi n° 59-1472, art. 18, 1, du
+    texte du Sénat ; CGI, art. 204 bis), aux taux de la marche : 9 % pour les
+    revenus de 1959, 8 % pour ceux de 1960, 6 % à compter de ceux de 1961 —
+    que l'Assemblée nationale vote (loi de finances pour 1962, art. 18 bis),
+    dont le texte définitif n'est pas lu, et que le rapport du Sénat sur la
+    loi de finances rectificative de 1963 dit en vigueur ; pour les artisans,
+    3 % en 1964 (loi n° 64-1279, art. 3), rien ensuite (loi n° 65-997, art.
+    4). Elle « ne porte que sur la partie des revenus imposables qui dépasse »
+    l'abattement à la base de chaque groupe de revenus — celui des bénéfices
+    industriels, commerciaux et agricoles, celui des bénéfices des artisans
+    et des professions non commerciales —, les deux n'exonérant pas plus que
+    ``abattement_maximum`` pour un même contribuable (art. 18, 2, et rapport
+    du Sénat n° 24, 1959-1960, p. 86) ; pour les revenus de 1969, que « la
+    fraction des revenus qui excède 30.000 F » (loi n° 69-1161, art. 5, II).
+
+    La base s'arrondit comme le revenu imposable de l'impôt : à la centaine de
+    francs inférieure dès les revenus de 1968, la loi le disant des deux (loi
+    n° 68-1172, art. 2, II) ; à la dizaine avant, la règle de la taxe
+    proportionnelle, que la loi n° 59-1472 (art. 20) lui applique, n'étant
+    pas lue. La taxe s'arrondit comme une cotisation (art. 1657, 1). Un
+    déficit n'entre pas dans la base, ni ne réduit le bénéfice de l'autre
+    déclarant ; quand l'abattement maximum joue sur deux taux — un artisan de
+    1964 et un libéral imposés en commun —, chacun en a sa part au prorata de
+    ce que les abattements de son groupe lui donnent : ni l'un ni l'autre
+    n'est lu."""
+    if not marche:
+        return 0.0
+    lignes = []
+    for declarant, benefice in zip(foyer.declarants, benefices):
+        taux = marche.get("taux_artisans", marche["taux"]) if declarant.artisan else marche["taux"]
+        if benefice > 0.0 and taux > 0.0:
+            groupe = ("abattement_bnc_et_artisans"
+                      if declarant.artisan or declarant.categorie == "bnc" else "abattement")
+            lignes.append((benefice, groupe, taux))
+    totaux = {groupe: somme_ordonnee(b for b, g, _ in lignes if g == groupe)
+              for groupe in ("abattement", "abattement_bnc_et_artisans")}
+    abattements = {groupe: min(total, marche[groupe]) for groupe, total in totaux.items()}
+    abattu = somme_ordonnee(abattements.values())
+    reduction = min(marche["abattement_maximum"] / abattu, 1.0) if abattu else 1.0
+    bases: dict[float, float] = {}
+    for benefice, groupe, taux in lignes:
+        part = abattements[groupe] * reduction * benefice / totaux[groupe]
+        bases[taux] = bases.get(taux, 0.0) + benefice - part
+    return _arrondir_impot(annee, somme_ordonnee(
+        taux * _arrondir_revenu_imposable(annee, base) for taux, base in sorted(bases.items())))
+
+
+def taxe_complementaire_des_revenus(foyer: Foyer, annee: int, baremes: BaremesImpotRevenu, *,
+                                    unite: str = "euro") -> float:
+    """La taxe complémentaire du ``foyer`` sur ses revenus d'``annee``, seule :
+    pour les revenus de 1959, dont l'impôt ne se calcule pas, et dont la taxe,
+    payée en 1960, se déduit des revenus de 1960. Les bénéfices sont ceux du
+    foyer, aucun abattement ni majoration n'y jouant avant 1976 ; ``unite``
+    comme pour :func:`impot_du_foyer`."""
+    if unite not in ("euro", "monnaie"):
+        raise ValueError(f"unité inconnue : {unite!r}")
+    vers = FRANC if (unite == "euro" and monnaie_de(annee) == "FRF") else 1.0
+    benefices = tuple(_au_plus_proche(d.benefices * vers) for d in foyer.declarants)
+    return taxe_complementaire(foyer, annee, baremes.taxe_complementaire(annee), benefices) / vers
+
+
 def _remarques(foyer: Foyer, parametres: ParametresImpot, la_decote: float,
                minoration: float, majoration: float, ppe: float,
-               benefices: tuple[float, ...] = ()) -> tuple[str, ...]:
+               benefices: tuple[float, ...] = (), taxe: float = 0.0) -> tuple[str, ...]:
     """Ce que le calcul de ce foyer doit à une règle qu'aucun texte lu ne
     porte, ou à une hypothèse."""
     annee = parametres.annee
@@ -998,6 +1095,9 @@ def _remarques(foyer: Foyer, parametres: ParametresImpot, la_decote: float,
         remarques.append("abattement des adhérents : le seuil de sa fraction à 10 % est celui de "
                          "la rédaction de l'année, sans l'indexation que le code prescrit, "
                          "et sa limite celle des salaires")
+    if taxe and any(b > 0 and d.categorie == "bnc" for d, b in zip(foyer.declarants, benefices)):
+        remarques.append("taxe complémentaire : tout le bénéfice non commercial, sans la part que "
+                         "des tiers déclarent, qui en est exonérée")
     return tuple(remarques)
 
 
@@ -1042,8 +1142,9 @@ def impot_aux_parametres(foyer: Foyer, parametres: ParametresImpot, *,
     retenus = tuple(benefice_retenu(d, parametres, b) for d, b in zip(foyer.declarants, benefices))
     abattement_adherents = somme_ordonnee(max(b - r, 0.0) for b, r in zip(benefices, retenus))
     majoration_benefices = somme_ordonnee(max(r - b, 0.0) for b, r in zip(benefices, retenus))
+    deduite = _arrondir_element(annee, foyer.taxe_complementaire_de_l_annee_precedente * vers)
     revenu_net_global = max(somme_ordonnee(salaires_nets) + somme_ordonnee(pensions_nettes)
-                            - vingt + somme_ordonnee(retenus), 0.0)
+                            - vingt + somme_ordonnee(retenus) - deduite, 0.0)
     revenu_net_global = _arrondir_element(annee, revenu_net_global)
     abattement = min(_abattement_age_invalidite(foyer, parametres, revenu_net_global),
                      revenu_net_global)
@@ -1053,8 +1154,11 @@ def impot_aux_parametres(foyer: Foyer, parametres: ParametresImpot, *,
                 "benefices_retenus": retenus,
                 "abattement_adherents": abattement_adherents,
                 "majoration_des_benefices": majoration_benefices,
+                "taxe_complementaire_deduite": deduite,
                 "revenu_net_global": revenu_net_global,
-                "abattement_age_invalidite": abattement}
+                "abattement_age_invalidite": abattement,
+                "taxe_complementaire": taxe_complementaire(
+                    foyer, annee, parametres["taxe_complementaire"], retenus)}
     activite = revenus_de_la_prime(parametres, salaires, benefices)
     exoneration = exonere(foyer, parametres, salaires_nets, pensions_nettes, benefices, salaires)
     return _liquider(foyer, parametres, revenu, activite, assiette, unite, vers, exoneration)
@@ -1072,8 +1176,9 @@ def impot_d_un_revenu_imposable(foyer: Foyer, annee: int, revenu_net_imposable: 
     revenu = _arrondir_revenu_imposable(annee, revenu_net_imposable * vers)
     assiette = {"salaires_nets": (), "pensions_nettes": (), "abattement_vingt_pour_cent": 0.0,
                 "benefices_retenus": (), "abattement_adherents": 0.0,
-                "majoration_des_benefices": 0.0,
-                "revenu_net_global": revenu, "abattement_age_invalidite": 0.0}
+                "majoration_des_benefices": 0.0, "taxe_complementaire_deduite": 0.0,
+                "revenu_net_global": revenu, "abattement_age_invalidite": 0.0,
+                "taxe_complementaire": 0.0}
     return _liquider(foyer, parametres, revenu, (), assiette, unite, vers)
 
 
@@ -1124,6 +1229,7 @@ def _liquider(foyer: Foyer, parametres: ParametresImpot, revenu: float,
     net = (impot if mis_en_recouvrement else 0.0) - ppe - credit
     if 0 <= net < recouvrement.get("seuil_apres_credits", 0.0):
         net = 0.0
+    net += assiette["taxe_complementaire"]
     retour = 1.0 / vers
     return ImpotDuFoyer(
         annee=annee, monnaie=parametres.monnaie, unite=unite, parts=parts,
@@ -1133,6 +1239,7 @@ def _liquider(foyer: Foyer, parametres: ParametresImpot, revenu: float,
         benefices_retenus=tuple(b * retour for b in assiette["benefices_retenus"]),
         abattement_adherents=assiette["abattement_adherents"] * retour,
         majoration_des_benefices=assiette["majoration_des_benefices"] * retour,
+        taxe_complementaire_deduite=assiette["taxe_complementaire_deduite"] * retour,
         revenu_net_global=assiette["revenu_net_global"] * retour,
         abattement_age_invalidite=assiette["abattement_age_invalidite"] * retour,
         revenu_net_imposable=revenu * retour,
@@ -1152,10 +1259,11 @@ def _liquider(foyer: Foyer, parametres: ParametresImpot, revenu: float,
         revenus_d_activite=tuple(r * retour for r in activite),
         prime_pour_l_emploi=ppe * retour,
         credit_exceptionnel=credit * retour,
+        taxe_complementaire=assiette["taxe_complementaire"] * retour,
         mis_en_recouvrement=mis_en_recouvrement,
         exonere=exoneration,
         impot=net * retour,
         fiabilite=parametres.fiabilite,
         remarques=_remarques(foyer, parametres, la_decote, minoration, majoration, ppe,
-                             assiette.get("benefices", ())),
+                             assiette.get("benefices", ()), assiette["taxe_complementaire"]),
     )

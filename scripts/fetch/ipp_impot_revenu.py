@@ -120,7 +120,12 @@ avec sa source (``origine`` de la marche) :
   la décote de l'article 198 ter, par part, et ses limites pour le foyer et
   pour les âgés ; le demi-décime de 1962, par part ; les réductions de 1966 et
   de 1967, par tranche de revenu ; la majoration de 1967 et ses décotes ; la
-  table de 1968.
+  table de 1968 ;
+- la taxe complémentaire, que l'IPP ne porte pas, de sa création par la loi
+  n° 59-1472 à sa suppression par la loi de finances pour 1970
+  (``TAXE_COMPLEMENTAIRE``) : ses taux, celui des artisans, ses abattements à
+  la base — ``origine: loi``, ou ``rapport`` pour le taux de 1961, que la
+  loi de finances pour 1962 écrit dans un texte définitif qui n'est pas lu.
 
 Ce qu'il écarte (``ECARTEES``) : la ligne de la décote datée de 1959 (7 000 F
 et 14 000 F), en anciens francs que l'IPP écrit en francs — la loi n° 59-1472
@@ -808,6 +813,10 @@ def _texte(loi: str, article: str, citation: str = "") -> str:
 #: texte de l'Assemblée nationale d'une loi qu'il a rejetée ou votée conforme,
 #: ou disent ce qu'aucun texte lu ne chiffre.
 RAPPORTS_DES_ANNEES_1960 = {
+    "1959-1960/24": "rapport du Sénat n° 24 (1959-1960) "
+                    "(senat.fr/rap/1959-1960/i1959_1960_0024.pdf)",
+    "1961-1962/53": "rapport général du Sénat n° 53 (1961-1962), tome II "
+                    "(senat.fr/rap/1961-1962/i1961_1962_0053_02.pdf)",
     "1962-1963/106": "rapport du Sénat n° 106 (1962-1963) "
                      "(senat.fr/rap/1962-1963/i1962_1963_0106.pdf)",
     "1963-1964/23": "rapport général du Sénat n° 23 (1963-1964), tome II "
@@ -1097,6 +1106,97 @@ COMPLEMENTS["majorations_exceptionnelles"] = [
               "14.000 F : + 14 % ; cotisations supérieures à 14.000 F : + 15 % » ; la note de "
               "l'IPP les fait aller par paliers de 1 000 F, 10 % jusqu'à 11 000 F"},
     *COMPLEMENTS["majorations_exceptionnelles"],
+]
+
+#: LA TAXE COMPLÉMENTAIRE, que l'IPP ne porte pas : un impôt « à titre
+#: temporaire » sur les revenus autres que les salaires et les pensions, dû
+#: avec l'impôt sur le revenu et déductible de son revenu global (loi n°
+#: 59-1472, art. 18 du texte du Sénat), des revenus de 1959 à ceux de 1969.
+#: Chaque marche porte son taux, celui des artisans (``taux_artisans``) quand
+#: il diffère, les abattements à la base des bénéfices industriels,
+#: commerciaux et agricoles (``abattement``), de ceux des artisans et des
+#: professions non commerciales (``abattement_bnc_et_artisans``), et ce que
+#: les deux exonèrent au plus pour un même contribuable
+#: (``abattement_maximum``). La marche de 1959, en francs de 1960 (cent
+#: anciens francs, ordonnance n° 58-1341 du 27 décembre 1958), sert la taxe que
+#: le contribuable paie en 1960 et déduit de ses revenus de 1960.
+ABATTEMENTS_DE_1959 = ("« La taxe ne porte que sur la partie des revenus imposables qui dépasse "
+                       "300.000 francs ou 440.000 francs suivant les distinctions afférentes aux "
+                       "diverses catégories de revenus actuellement prévues, pour l'application du "
+                       "taux réduit de la taxe proportionnelle, à l'article premier du décret n° "
+                       "55-466 du 30 avril 1955 » (art. 18, 2) : « 300.000 francs en ce qui "
+                       "concerne les revenus fonciers, les bénéfices des professions industrielles "
+                       "et commerciales, les produits des charges et offices, les bénéfices de "
+                       "l'exploitation agricole » et les rémunérations de certains gérants, "
+                       "« 440.000 francs en ce qui concerne les bénéfices des artisans ainsi que "
+                       "les bénéfices des professions non commerciales à l'exception des charges "
+                       "et offices. En aucun cas, le montant total des revenus exonérés du fait de "
+                       "l'abattement à la base ne pourra être supérieur à 440.000 francs pour un "
+                       "même contribuable » (" + _R["1959-1960/24"] + ", p. 86)")
+TAXE_COMPLEMENTAIRE = [
+    {"annee": 1959, "monnaie": "FRF", "taux": 0.09, "abattement": 3000,
+     "abattement_bnc_et_artisans": 4400, "abattement_maximum": 4400, "origine": "loi",
+     "texte": _texte("59-1472", "art. 18 et 22 du texte du Sénat", "« il est établi, à compter "
+                     "du 1er janvier 1960 et au plus tard jusqu'au 1er janvier 1962, une taxe "
+                     "complémentaire qui frappe les revenus des personnes physiques autres que : "
+                     "1° Les traitements, salaires, indemnités, émoluments, pensions et rentes "
+                     "viagères » (art. 18, 1) ; " + ABATTEMENTS_DE_1959 + " ; « en ce qui "
+                     "concerne les revenus des personnes physiques de l'année 1959, [...] le taux "
+                     "de la taxe visée à l'article 19 [est porté] de 8 à 9 % » (art. 22, que le "
+                     "Sénat vote conforme, au texte de l'Assemblée nationale que reproduit le "
+                     "même rapport, p. 89)")},
+    {"annee": 1960, "monnaie": "FRF", "taux": 0.08, "abattement": 3000,
+     "abattement_bnc_et_artisans": 4400, "abattement_maximum": 4400, "origine": "loi",
+     "texte": _texte("59-1472", "art. 19 du texte du Sénat", "« La taxe visée à l'article "
+                     "précédent est calculée au taux de 8 % » ; codifié à l'article 204 sexies, "
+                     "et les abattements de l'article 18, 2, à l'article 204 bis")},
+    {"annee": 1961, "monnaie": "FRF", "taux": 0.06, "abattement": 3000,
+     "abattement_bnc_et_artisans": 4400, "abattement_maximum": 4400, "origine": "rapport",
+     "texte": "Loi n° 61-1396 du 21 décembre 1961 (LF pour 1962), dont le texte définitif n'est "
+              "pas lu, art. 18 bis du texte de l'Assemblée nationale, que reproduit le "
+              + _R["1961-1962/53"] + ", p. 102, et dont la commission des finances du Sénat "
+              "propose la suppression (p. 82) : « Le taux de la taxe complémentaire sur le "
+              "revenu des personnes physiques, provisoirement maintenue, est ramené de 8 à 6 %. "
+              "Le nouveau taux s'appliquera aux bénéfices et revenus réalisés à compter du 1er "
+              "janvier 1961 » ; le budget de 1962 en compte l'allègement (« Taxe complémentaire "
+              "ramenée de 8 à 6 % », p. 24), « Actuellement le taux de la taxe complémentaire "
+              "étant de 6 % » (" + _R["1962-1963/106"] + ", p. 77)"},
+    {"annee": 1964, "monnaie": "FRF", "taux": 0.06, "taux_artisans": 0.03, "abattement": 3000,
+     "abattement_bnc_et_artisans": 4400, "abattement_maximum": 4400, "origine": "loi",
+     "texte": _texte("64-1279", "art. 3, voté conforme (« Art. 3 à 5. Conformes »), au texte de "
+                     "l'Assemblée nationale que reproduit le " + _R["1964-1965/23"] + ", p. 64",
+                     "« Le taux de 6 % prévu à l'article 204 sexies du Code général des impôts "
+                     "est ramené à 3 % en ce qui concerne les bénéfices réalisés par les artisans "
+                     "visés à l'article 1649 quater A du même Code. Le nouveau taux trouve sa "
+                     "première application pour l'imposition des bénéfices de l'année 1964 »")},
+    {"annee": 1965, "monnaie": "FRF", "taux": 0.06, "taux_artisans": 0.0, "abattement": 3000,
+     "abattement_bnc_et_artisans": 4400, "abattement_maximum": 4400, "origine": "loi",
+     "texte": _texte("65-997", "art. 4, voté conforme (« Art. 3 et 4. Conformes »), au texte de "
+                     "l'Assemblée nationale que reproduit le " + _R["1965-1966/31"] + ", p. 60 "
+                     "et 95", "« La taxe complémentaire cesse de s'appliquer aux bénéfices "
+                     "réalisés par les contribuables considérés comme artisans pour l'application "
+                     "de la législation fiscale [...] pour l'imposition des bénéfices de l'année "
+                     "1965 »")},
+    {"annee": 1968, "monnaie": "FRF", "taux": 0.06, "taux_artisans": 0.0, "abattement": 4000,
+     "abattement_bnc_et_artisans": 4400, "abattement_maximum": 4400, "origine": "loi",
+     "texte": "Loi n° 68-1172 du 27 décembre 1968 (LF pour 1969), art. 3, que le Sénat vote "
+              "conforme en première lecture le 5 décembre 1968 (« Art. 3 et 4. Conformes », "
+              "senat.fr/leg/1968-1969/ta1968_1969_0023.pdf), au texte de l'Assemblée nationale "
+              "que reproduit le " + _R["1968-1969/40"] + ", p. 127 : « En ce qui concerne les "
+              "bénéfices industriels et commerciaux, les bénéfices de l'exploitation agricole, "
+              "les produits des charges et offices, les rémunérations des dirigeants de sociétés "
+              "visées à l'article 62 du Code général des impôts et les revenus fonciers, la taxe "
+              "complémentaire ne porte que sur la partie du revenu imposable qui dépasse "
+              "4.000 F » ; l'abattement « de 4.400 F pour les bénéfices des professions non "
+              "commerciales » reste (p. 73), et la moins-value se compte au budget de 1969, sur "
+              "les revenus de 1968 (p. 29)"},
+    {"annee": 1969, "monnaie": "FRF", "taux": 0.06, "taux_artisans": 0.0, "abattement": 30000,
+     "abattement_bnc_et_artisans": 30000, "abattement_maximum": 30000, "origine": "loi",
+     "texte": _loi(1969, "art. 5, II", "« Pour l'imposition des revenus de l'année 1969, la taxe "
+                   "ne frappe que la fraction des revenus qui excède 30.000 F »")},
+    {"annee": 1970, "supprimee": True,
+     "texte": _loi(1969, "art. 5, I", "« La taxe complémentaire est supprimée à compter de "
+                   "l'imposition des revenus de l'année 1970 »")},
 ]
 
 #: L'abattement de 10 % des pensions naît des revenus de 1977 : avant, une
@@ -1422,6 +1522,7 @@ def corriger(series: dict[str, list[dict]]) -> dict[str, list[dict]]:
     series["reduction_proportionnelle"] = [dict(m) for m in REDUCTION_PROPORTIONNELLE]
     series["credit_exceptionnel"] = [dict(m) for m in CREDIT_EXCEPTIONNEL]
     series["reduction_des_salaires"] = [dict(m) for m in REDUCTION_DES_SALAIRES]
+    series["taxe_complementaire"] = [dict(m) for m in TAXE_COMPLEMENTAIRE]
     for nom, complements in COMPLEMENTS.items():
         annees = {m["annee"] for m in complements}
         series[nom] = sorted([m for m in series[nom] if m["annee"] not in annees] + complements,
@@ -1562,6 +1663,14 @@ ENTETE = """\
 #   prime_pour_l_emploi : de 2000 à 2014.
 #   credit_exceptionnel : celui des revenus de 2008, les deux tiers de l'impôt
 #     sous le premier seuil de revenu par part, dégressif jusqu'au second.
+#   taxe_complementaire : des revenus de 1959 à ceux de 1969, la taxe des
+#     revenus autres que les salaires et les pensions : son `taux`, celui des
+#     artisans (`taux_artisans`) quand il diffère, l'abattement à la base des
+#     bénéfices industriels, commerciaux et agricoles (`abattement`), celui des
+#     artisans et des professions non commerciales
+#     (`abattement_bnc_et_artisans`), et ce que les deux exonèrent au plus pour
+#     un même contribuable (`abattement_maximum`) ; la marche de 1959, en
+#     francs de 1960, sert la taxe payée en 1960, que le revenu de 1960 déduit.
 """
 
 ORDRE = ("bareme", "quotient_familial", "parts_par_rang_d_enfant",
@@ -1571,7 +1680,7 @@ ORDRE = ("bareme", "quotient_familial", "parts_par_rang_d_enfant",
          "abattement_exceptionnel_ages_invalides", "abattement_exceptionnel_personnes_seules",
          "majorations_exceptionnelles", "minorations_exceptionnelles",
          "reduction_exceptionnelle", "reduction_proportionnelle", "prime_pour_l_emploi",
-         "credit_exceptionnel")
+         "credit_exceptionnel", "taxe_complementaire")
 
 
 def ecrire(series: dict[str, list[dict]], lu_le: str) -> str:

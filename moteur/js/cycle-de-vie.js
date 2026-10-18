@@ -40,6 +40,7 @@ import {
 } from "./remuneration.js";
 import {
   chargerBaremesImpotRevenu, croissanceMacro, Declarant, Foyer, impotAuxParametres, INDEXATIONS,
+  taxeComplementaireDesRevenus,
 } from "./impot-revenu.js";
 import { agesDeLEstimation } from "./pilote.js";
 import { faireVivre, RevalorisationServie } from "./revalorisation.js";
@@ -921,16 +922,18 @@ function baremesDeLImpot(simulateur, indexation, derniere) {
 /**
  * Le foyer fiscal de `carriere` l'année `annee` : une personne seule, sans
  * enfant à charge, qui a au 31 décembre l'âge de sa génération et déclare
- * `salaire`, `benefice` (de `categorie`, au réel, adhérent) et `pension`,
- * imposables. Jumeau de `foyer_de_l_annee`.
+ * `salaire`, `benefice` (de `categorie`, au réel, adhérent, d'un `artisan` ou
+ * non) et `pension`, imposables, et déduit la taxe complémentaire qu'il paie
+ * dans l'année. Jumeau de `foyer_de_l_annee`.
  */
 export function foyerDeLAnnee(carriere, annee, salaire = 0.0, pension = 0.0, benefice = 0.0,
-  categorie = "bic") {
+  categorie = "bic", artisan = false, taxeComplementairePayee = 0.0) {
   return new Foyer({
     declarants: [new Declarant({
-      salaires: salaire, pensions: pension, benefices: benefice, categorie,
+      salaires: salaire, pensions: pension, benefices: benefice, categorie, artisan,
       age: annee - carriere.annee_naissance,
     })],
+    taxe_complementaire_de_l_annee_precedente: taxeComplementairePayee,
   });
 }
 
@@ -939,8 +942,8 @@ export const FAMILLES_BNC = Object.freeze(["liberal", "avocat"]);
 
 /**
  * Les années où `carriere` a un revenu d'indépendant : une `Map` de l'année
- * à [la part de son revenu imposable qui est un bénéfice, sa catégorie].
- * Jumeau de `benefices_par_annee`.
+ * à [la part de son revenu imposable qui est un bénéfice, sa catégorie, s'il
+ * est d'un artisan]. Jumeau de `benefices_par_annee`.
  */
 export function beneficesParAnnee(simulateur, carriere) {
   const revenus = new Map();
@@ -956,7 +959,7 @@ export function beneficesParAnnee(simulateur, carriere) {
     const famille = familleDeLaFiche(profil, regimes);
     if (!independants.has(ligne.annee)) independants.set(ligne.annee, []);
     independants.get(ligne.annee).push(
-      [ligne.revenu, FAMILLES_BNC.includes(famille) ? "bnc" : "bic"]);
+      [ligne.revenu, FAMILLES_BNC.includes(famille) ? "bnc" : "bic", famille === "artisan"]);
   }
   const benefices = new Map();
   for (const [annee, lignes] of independants) {
@@ -965,7 +968,7 @@ export function beneficesParAnnee(simulateur, carriere) {
     const part = revenus.get(annee) > 0.0 ? total / revenus.get(annee) : 1.0;
     let plusFort = lignes[0];
     for (const l of lignes) if (l[0] > plusFort[0]) plusFort = l;
-    benefices.set(annee, [Math.min(part, 1.0), plusFort[1]]);
+    benefices.set(annee, [Math.min(part, 1.0), plusFort[1], plusFort[2]]);
   }
   return benefices;
 }
@@ -976,9 +979,9 @@ function partageDesImposables(simulateur, carriere, imposables) {
   const salaires = new Map();
   const benefices = new Map();
   for (const [annee, montant] of imposables) {
-    const [part, categorie] = parts.get(annee) ?? [0.0, "bic"];
+    const [part, categorie, artisan] = parts.get(annee) ?? [0.0, "bic", false];
     if (part < 1.0) salaires.set(annee, montant * (1.0 - part));
-    if (part > 0.0) benefices.set(annee, [montant * part, categorie]);
+    if (part > 0.0) benefices.set(annee, [montant * part, categorie, artisan]);
   }
   return [salaires, benefices];
 }
@@ -999,8 +1002,8 @@ function partDeLaPension(impot) {
  * L'impôt sur le revenu de chaque année d'un flux : celui du foyer de
  * l'année, qui déclare son salaire imposable (`salaires`) et la part
  * imposable (`parts`) de ce que la pension sert dans l'année, au barème de
- * l'année. Une `Map` de l'année à son `ImpotDeLAnnee`. Jumeau de
- * `impots_par_annee`.
+ * l'année, et déduit la taxe complémentaire de l'année précédente. Une `Map`
+ * de l'année à son `ImpotDeLAnnee`. Jumeau de `impots_par_annee`.
  */
 export function impotsParAnnee(simulateur, flux, carriere, parts, salaires,
   indexation = "prix", derniere = null, benefices = new Map()) {
@@ -1018,16 +1021,23 @@ export function impotsParAnnee(simulateur, flux, carriere, parts, salaires,
   if (annees.length === 0) return impots;
   const baremes = baremesDeLImpot(simulateur, indexation,
     Math.max(annees[annees.length - 1], derniere ?? 0));
+  const taxes = chargerBaremesImpotRevenu(simulateur.paquet);
   for (const annee of annees) {
     const parametres = baremes.get(annee);
     if (parametres === undefined) continue;
     const salaire = salaires.get(annee) ?? 0.0;
     const pension = pensions.get(annee) ?? 0.0;
-    const [benefice, categorie] = benefices.get(annee) ?? [0.0, "bic"];
-    const foyer = impotAuxParametres(
-      foyerDeLAnnee(carriere, annee, salaire, pension, benefice, categorie), parametres);
+    const [benefice, categorie, artisan] = benefices.get(annee) ?? [0.0, "bic", false];
+    const [precedent, categoriePrecedente, artisanPrecedent] = benefices.get(annee - 1)
+      ?? [0.0, "bic", false];
+    const payee = precedent > 0.0 ? taxeComplementaireDesRevenus(
+      foyerDeLAnnee(carriere, annee - 1, 0.0, 0.0, precedent, categoriePrecedente,
+        artisanPrecedent), annee - 1, taxes) : 0.0;
+    const foyer = impotAuxParametres(foyerDeLAnnee(carriere, annee, salaire, pension, benefice,
+      categorie, artisan, payee), parametres);
     impots.set(annee, new ImpotDeLAnnee({
-      annee, salaire, pension, foyer, sur_la_pension: foyer.impot * partDeLaPension(foyer),
+      annee, salaire, pension, foyer,
+      sur_la_pension: (foyer.impot - foyer.taxe_complementaire) * partDeLaPension(foyer),
       benefice,
     }));
   }
@@ -1074,10 +1084,10 @@ export function dernierRevenuApresImpot(simulateur, flux, imposables, indexation
   const parametres = baremesDeLImpot(simulateur, indexation,
     Math.max(depart, derniere ?? 0)).get(depart);
   if (parametres === undefined) return flux.dernier_revenu_net;
-  const [benefice, categorie] = benefices.get(annee) ?? [0.0, "bic"];
+  const [benefice, categorie, artisan] = benefices.get(annee) ?? [0.0, "bic", false];
   const part = benefice && imposables.get(annee) ? benefice / imposables.get(annee) : 0.0;
   const declarant = new Declarant({
-    salaires: imposable * (1.0 - part), benefices: imposable * part, categorie,
+    salaires: imposable * (1.0 - part), benefices: imposable * part, categorie, artisan,
   });
   const impot = impotAuxParametres(new Foyer({ declarants: [declarant] }), parametres);
   return flux.dernier_revenu_net - impot.impot;

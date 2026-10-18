@@ -26987,6 +26987,16 @@ null
 {"annee":2018,"majoration_par_demi_part":3797,"monnaie":"EUR","seuil_bas":18985,"seuil_haut":21037,"taux":0.2},
 {"annee":2019,"majoration_par_demi_part":3836,"monnaie":"EUR","seuil_bas":19176,"seuil_haut":21249,"taux":0.2},
 {"annee":2020}
+],
+"taxe_complementaire":[
+{"abattement":3000,"abattement_bnc_et_artisans":4400,"abattement_maximum":4400,"annee":1959,"monnaie":"FRF","taux":0.09},
+{"abattement":3000,"abattement_bnc_et_artisans":4400,"abattement_maximum":4400,"annee":1960,"monnaie":"FRF","taux":0.08},
+{"abattement":3000,"abattement_bnc_et_artisans":4400,"abattement_maximum":4400,"annee":1961,"monnaie":"FRF","taux":0.06},
+{"abattement":3000,"abattement_bnc_et_artisans":4400,"abattement_maximum":4400,"annee":1964,"monnaie":"FRF","taux":0.06,"taux_artisans":0.03},
+{"abattement":3000,"abattement_bnc_et_artisans":4400,"abattement_maximum":4400,"annee":1965,"monnaie":"FRF","taux":0.06,"taux_artisans":0.0},
+{"abattement":4000,"abattement_bnc_et_artisans":4400,"abattement_maximum":4400,"annee":1968,"monnaie":"FRF","taux":0.06,"taux_artisans":0.0},
+{"abattement":30000,"abattement_bnc_et_artisans":30000,"abattement_maximum":30000,"annee":1969,"monnaie":"FRF","taux":0.06,"taux_artisans":0.0},
+{"annee":1970,"supprimee":true}
 ]
 }
 },

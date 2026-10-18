@@ -49,7 +49,7 @@ export const SERIES = Object.freeze([
   "abattement_exceptionnel_ages_invalides", "abattement_exceptionnel_personnes_seules",
   "majorations_exceptionnelles", "minorations_exceptionnelles",
   "reduction_exceptionnelle", "reduction_proportionnelle", "prime_pour_l_emploi",
-  "credit_exceptionnel",
+  "credit_exceptionnel", "taxe_complementaire",
 ]);
 
 /** Les clés qui ne sont pas des valeurs : elles disent d'où vient la marche. */
@@ -71,7 +71,9 @@ export const HORS_CHAMP = Object.freeze([
   "seuil de restitution de l'article 1965 L (50 F, puis 8 €)",
   "exonération de l'article 5, 2° : salaires et pensions sous le minimum garanti",
   "abattement de 2 000 F des contribuables à une part de 1978, et celui de l'article 157 ter",
-  "taxe complémentaire des revenus autres que les salaires et les pensions, jusqu'en 1969",
+  "taxe complémentaire : la part des bénéfices non commerciaux que des tiers déclarent, qui "
+    + "en est exonérée, et les réductions des commerçants engagés à stabiliser leurs prix en 1963 "
+    + "et 1964",
   "exceptions à la réduction des salaires et des pensions d'avant 1972 : frontaliers, "
     + "pensions dont la caisse ne versait pas la taxe de 3 %, et, avant 1967, pensions et rentes "
     + "d'invalidité de la sécurité sociale",
@@ -236,6 +238,11 @@ export class BaremesImpotRevenu {
     this.derniere_annee = derniere;
   }
 
+  /** La marche de la taxe complémentaire des revenus d'`annee`, même avant la première année lue. */
+  taxeComplementaire(annee) {
+    return valeursDe(marcheDe(this.series.taxe_complementaire, annee));
+  }
+
   /** Les paramètres d'une année lue. */
   lus(annee) {
     if (!(this.premiere_annee <= annee && annee <= this.derniere_annee)) {
@@ -328,7 +335,7 @@ export function chargerBaremesImpotRevenu(paquet) {
 export class Declarant {
   constructor({
     salaires = 0.0, pensions = 0.0, age = null, invalide = false, benefices = 0.0,
-    regime = "reel_adherent", categorie = "bic",
+    regime = "reel_adherent", categorie = "bic", artisan = false,
   } = {}) {
     if (!REGIMES_DU_BENEFICE.includes(regime)) {
       throw new Error(`régime du bénéfice inconnu : '${regime}'`);
@@ -336,7 +343,12 @@ export class Declarant {
     if (!CATEGORIES_DU_BENEFICE.includes(categorie)) {
       throw new Error(`catégorie du bénéfice inconnue : '${categorie}'`);
     }
-    Object.assign(this, { salaires, pensions, age, invalide, benefices, regime, categorie });
+    if (artisan && categorie !== "bic") {
+      throw new Error("un artisan a des bénéfices industriels et commerciaux");
+    }
+    Object.assign(this, {
+      salaires, pensions, age, invalide, benefices, regime, categorie, artisan,
+    });
     Object.freeze(this);
   }
 }
@@ -345,6 +357,7 @@ export class Declarant {
 export class Foyer {
   constructor({
     declarants, enfants = 0, enfants_invalides = 0, veuf = false, vit_seul = true,
+    taxe_complementaire_de_l_annee_precedente = 0.0,
   }) {
     if (declarants.length !== 1 && declarants.length !== 2) {
       throw new Error("un foyer a un déclarant, ou deux s'il est un couple");
@@ -353,7 +366,13 @@ export class Foyer {
     if (enfants < 0 || !(enfants_invalides >= 0 && enfants_invalides <= enfants)) {
       throw new Error("un nombre d'enfants négatif, ou plus d'enfants invalides que d'enfants");
     }
-    Object.assign(this, { declarants, enfants, enfants_invalides, veuf, vit_seul });
+    if (taxe_complementaire_de_l_annee_precedente < 0) {
+      throw new Error("une taxe complémentaire négative");
+    }
+    Object.assign(this, {
+      declarants, enfants, enfants_invalides, veuf, vit_seul,
+      taxe_complementaire_de_l_annee_precedente,
+    });
     Object.freeze(this);
   }
 
@@ -823,8 +842,51 @@ export function primePourLEmploi(foyer, parametres, revenus, rfr, parts) {
   return prime;
 }
 
+/**
+ * La taxe complémentaire des bénéfices de chaque déclarant, des revenus de
+ * 1959 à ceux de 1969, dans la monnaie de l'année : voir `taxe_complementaire`.
+ */
+export function taxeComplementaire(foyer, annee, marche, benefices) {
+  if (vide(marche)) return 0.0;
+  const lignes = [];
+  foyer.declarants.forEach((declarant, i) => {
+    const taux = declarant.artisan ? obtenir(marche, "taux_artisans", marche.taux) : marche.taux;
+    if (benefices[i] > 0.0 && taux > 0.0) {
+      const groupe = declarant.artisan || declarant.categorie === "bnc"
+        ? "abattement_bnc_et_artisans" : "abattement";
+      lignes.push([benefices[i], groupe, taux]);
+    }
+  });
+  const totaux = {};
+  const abattements = {};
+  for (const groupe of ["abattement", "abattement_bnc_et_artisans"]) {
+    totaux[groupe] = somme(lignes.filter(([, g]) => g === groupe).map(([b]) => b));
+    abattements[groupe] = Math.min(totaux[groupe], marche[groupe]);
+  }
+  const abattu = somme([abattements.abattement, abattements.abattement_bnc_et_artisans]);
+  const reduction = abattu ? Math.min(marche.abattement_maximum / abattu, 1.0) : 1.0;
+  const bases = new Map();
+  for (const [benefice, groupe, taux] of lignes) {
+    const part = abattements[groupe] * reduction * benefice / totaux[groupe];
+    bases.set(taux, (bases.get(taux) ?? 0.0) + benefice - part);
+  }
+  return arrondirImpot(annee, somme([...bases.entries()].sort((a, b) => a[0] - b[0])
+    .map(([taux, base]) => taux * arrondirRevenuImposable(annee, base))));
+}
+
+/**
+ * La taxe complémentaire du `foyer` sur ses revenus d'`annee`, seule — ceux de
+ * 1959, dont la taxe se déduit des revenus de 1960 : voir `taxe_complementaire_des_revenus`.
+ */
+export function taxeComplementaireDesRevenus(foyer, annee, baremes, { unite = "euro" } = {}) {
+  if (unite !== "euro" && unite !== "monnaie") throw new Error(`unité inconnue : '${unite}'`);
+  const vers = unite === "euro" && monnaieDe(annee) === "FRF" ? FRANC : 1.0;
+  const benefices = foyer.declarants.map((d) => auPlusProche(d.benefices * vers));
+  return taxeComplementaire(foyer, annee, baremes.taxeComplementaire(annee), benefices) / vers;
+}
+
 function remarquesDe(foyer, parametres, laDecote, laMinoration, laMajoration, ppe,
-  benefices = []) {
+  benefices = [], taxe = 0.0) {
   const annee = parametres.annee;
   const remarques = [];
   if (parametres.projete) {
@@ -850,6 +912,10 @@ function remarquesDe(foyer, parametres, laDecote, laMinoration, laMajoration, pp
     remarques.push("abattement des adhérents : le seuil de sa fraction à 10 % est celui de "
       + "la rédaction de l'année, sans l'indexation que le code prescrit, "
       + "et sa limite celle des salaires");
+  }
+  if (taxe && benefices.some((b, i) => b > 0 && foyer.declarants[i].categorie === "bnc")) {
+    remarques.push("taxe complémentaire : tout le bénéfice non commercial, sans la part que "
+      + "des tiers déclarent, qui en est exonérée");
   }
   return remarques;
 }
@@ -880,8 +946,9 @@ export function impotAuxParametres(foyer, parametres, { unite = "euro" } = {}) {
   const retenus = foyer.declarants.map((d, i) => beneficeRetenu(d, parametres, benefices[i]));
   const abattementAdherents = somme(benefices.map((b, i) => Math.max(b - retenus[i], 0.0)));
   const majorationBenefices = somme(benefices.map((b, i) => Math.max(retenus[i] - b, 0.0)));
+  const deduite = arrondirElement(annee, foyer.taxe_complementaire_de_l_annee_precedente * vers);
   let revenuNetGlobal = Math.max(somme(salairesNets) + somme(pensionsNettes) - vingt
-    + somme(retenus), 0.0);
+    + somme(retenus) - deduite, 0.0);
   revenuNetGlobal = arrondirElement(annee, revenuNetGlobal);
   const abattement = Math.min(abattementAgeInvalidite(foyer, parametres, revenuNetGlobal),
     revenuNetGlobal);
@@ -890,7 +957,10 @@ export function impotAuxParametres(foyer, parametres, { unite = "euro" } = {}) {
     salaires_nets: salairesNets, pensions_nettes: pensionsNettes,
     abattement_vingt_pour_cent: vingt, benefices, benefices_retenus: retenus,
     abattement_adherents: abattementAdherents, majoration_des_benefices: majorationBenefices,
+    taxe_complementaire_deduite: deduite,
     revenu_net_global: revenuNetGlobal, abattement_age_invalidite: abattement,
+    taxe_complementaire: taxeComplementaire(foyer, annee, parametres.serie("taxe_complementaire"),
+      retenus),
   }, unite, vers, exonere(foyer, parametres, salairesNets, pensionsNettes, benefices, salaires));
 }
 
@@ -907,7 +977,8 @@ export function impotDUnRevenuImposable(foyer, annee, revenuNetImposable, bareme
   return liquider(foyer, parametres, revenu, [], {
     salaires_nets: [], pensions_nettes: [], abattement_vingt_pour_cent: 0.0,
     benefices_retenus: [], abattement_adherents: 0.0, majoration_des_benefices: 0.0,
-    revenu_net_global: revenu, abattement_age_invalidite: 0.0,
+    taxe_complementaire_deduite: 0.0, revenu_net_global: revenu, abattement_age_invalidite: 0.0,
+    taxe_complementaire: 0.0,
   }, unite, vers);
 }
 
@@ -944,6 +1015,7 @@ function liquider(foyer, parametres, revenu, activite, assiette, unite, vers, ex
   const misEnRecouvrement = impot > 0 && impot >= obtenir(recouvrement, "seuil", 0.0);
   let net = (misEnRecouvrement ? impot : 0.0) - ppe - credit;
   if (net >= 0 && net < obtenir(recouvrement, "seuil_apres_credits", 0.0)) net = 0.0;
+  net += assiette.taxe_complementaire;
   const retour = 1.0 / vers;
   return Object.freeze({
     annee,
@@ -956,6 +1028,7 @@ function liquider(foyer, parametres, revenu, activite, assiette, unite, vers, ex
     benefices_retenus: assiette.benefices_retenus.map((b) => b * retour),
     abattement_adherents: assiette.abattement_adherents * retour,
     majoration_des_benefices: assiette.majoration_des_benefices * retour,
+    taxe_complementaire_deduite: assiette.taxe_complementaire_deduite * retour,
     revenu_net_global: assiette.revenu_net_global * retour,
     abattement_age_invalidite: assiette.abattement_age_invalidite * retour,
     revenu_net_imposable: revenu * retour,
@@ -975,11 +1048,12 @@ function liquider(foyer, parametres, revenu, activite, assiette, unite, vers, ex
     revenus_d_activite: activite.map((r) => r * retour),
     prime_pour_l_emploi: ppe * retour,
     credit_exceptionnel: credit * retour,
+    taxe_complementaire: assiette.taxe_complementaire * retour,
     mis_en_recouvrement: misEnRecouvrement,
     exonere: exoneration,
     impot: net * retour,
     fiabilite: parametres.fiabilite,
     remarques: remarquesDe(foyer, parametres, laDecote, laMinoration, laMajoration, ppe,
-      assiette.benefices || []),
+      assiette.benefices || [], assiette.taxe_complementaire),
   });
 }

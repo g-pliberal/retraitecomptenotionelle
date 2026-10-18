@@ -492,6 +492,34 @@ referents:
           ta1964_1965_0014.pdf, art. 2, II, lu à l'image ;
           senat.fr/leg/1966-1967/ta1966_1967_0023.pdf, art. 2 ;
           senat.fr/rap/1962-1963/i1962_1963_0106.pdf, p. 84
+      - constat: >-
+          IR12. Ses barèmes ne portent pas la taxe
+          complémentaire, que paient de 1959 à 1969 les
+          revenus autres que les salaires et les pensions —
+          le bénéfice de l'indépendant —, et que l'impôt sur
+          le revenu déduit l'année où elle se paie.
+        tranche: >-
+          La loi n° 59-1472 l'institue (art. 18 à 22 du texte
+          du Sénat) : 9 % pour les revenus de 1959, 8 % pour
+          ceux de 1960, après un abattement de 3 000 F, ou de
+          4 400 F pour les artisans et les professions non
+          commerciales ; 6 % dès 1961 ; pour les artisans, 3 %
+          en 1964 (loi n° 64-1279, art. 3), rien ensuite (loi
+          n° 65-997, art. 4) ; 4 000 F d'abattement dès 1968
+          (loi n° 68-1172, art. 3) ; 30 000 F en 1969, puis sa
+          suppression (loi n° 69-1161, art. 5). Le dépôt
+          l'ajoute (scripts/fetch/ipp_impot_revenu.py,
+          TAXE_COMPLEMENTAIRE).
+        preuve: >-
+          senat.fr/leg/1959-1960/ta1959_1960_0002.pdf, art. 18
+          et 19 ; senat.fr/rap/1959-1960/i1959_1960_0024.pdf,
+          p. 86 à 90 ; senat.fr/rap/1961-1962/
+          i1961_1962_0053_02.pdf, p. 82 et 102 ;
+          senat.fr/rap/1964-1965/i1964_1965_0023_02.pdf, p. 64 ;
+          senat.fr/rap/1965-1966/i1965_1966_0031_02.pdf, p. 60 ;
+          senat.fr/rap/1968-1969/i1968_1969_0040_02.pdf, p. 73
+          et 127 ; senat.fr/leg/1969-1970/ta1969_1970_0055.pdf,
+          art. 5
     fait_mieux:
       - quoi: >-
           Il porte les séries de l'AVTS (1962-2026, 4 023,51 € en 2025) et de

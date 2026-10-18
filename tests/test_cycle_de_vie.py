@@ -21,15 +21,17 @@ from __future__ import annotations
 
 import math
 from dataclasses import replace
+from types import SimpleNamespace
 
 import pytest
 
 from retraite_notionnelle import cycle_de_vie
 from retraite_notionnelle.castypes import CAS_TYPES
 from retraite_notionnelle.config import RACINE_DONNEES, Parametres
-from retraite_notionnelle.donnees.impot_revenu import charger_baremes_impot_revenu
+from retraite_notionnelle.donnees.impot_revenu import FRANC, charger_baremes_impot_revenu
 from retraite_notionnelle.donnees.macro import DonneesMacro
-from retraite_notionnelle.impot_revenu import Declarant, Foyer, impot_du_foyer
+from retraite_notionnelle.impot_revenu import (
+    Declarant, Foyer, impot_du_foyer, taxe_complementaire_des_revenus)
 from retraite_notionnelle.remuneration import fiche_depuis_brut, indemnites_de_la_carriere
 from retraite_notionnelle.revalorisation import faire_vivre
 from retraite_notionnelle.simulateur import Simulateur
@@ -692,7 +694,7 @@ def test_le_benefice_d_un_independant_est_impose(simulateur):
         age_liquidation=64, niveau_salaire=1.0))
     benefices = cycle_de_vie.benefices_par_annee(simulateur, artisan.carriere)
     assert set(benefices) == set(cycle_de_vie.revenus_d_activite(artisan.carriere))
-    assert set(benefices.values()) == {(1.0, "bic")}
+    assert {valeurs[:2] for valeurs in benefices.values()} == {(1.0, "bic")}
     flux = cycle_de_vie.flux_des_systemes(simulateur, artisan, impot="prix")["actuel"]
     assert flux.revenus_apres_impot is not None and flux.dernier_revenu_apres_impot is not None
     imposables = cycle_de_vie.revenus_imposables(simulateur, artisan.carriere)
@@ -713,7 +715,7 @@ def test_le_benefice_d_un_independant_est_impose(simulateur):
     liberal = simulateur.simuler(simulateur.carriere_simple(
         annee_naissance=1970, sexe="F", affiliation="profession_liberale", age_debut=26,
         age_liquidation=64, niveau_salaire=1.5))
-    assert {c for _, c in cycle_de_vie.benefices_par_annee(
+    assert {c for _, c, _ in cycle_de_vie.benefices_par_annee(
         simulateur, liberal.carriere).values()} == {"bnc"}
     exploitant = simulateur.simuler(simulateur.carriere_simple(
         annee_naissance=1980, sexe="H", affiliation="exploitant_agricole", age_debut=20,
@@ -721,6 +723,62 @@ def test_le_benefice_d_un_independant_est_impose(simulateur):
     flux = cycle_de_vie.flux_des_systemes(simulateur, exploitant, impot="prix")["actuel"]
     assert flux.revenus_apres_impot is None
     assert all(impot.salaire == 0.0 and impot.benefice == 0.0 for impot in flux.impots.values())
+
+
+def test_la_taxe_complementaire_des_independants_d_avant_1970(simulateur):
+    """La taxe complémentaire frappe le bénéfice des revenus de 1959 à ceux de
+    1969 (loi n° 59-1472, art. 18 ; loi n° 69-1161, art. 5) : le commerçant la
+    paie chaque année, et déduit de son revenu global celle de ses revenus de
+    l'année précédente, qu'il paie dans l'année (art. 18, 4) — en 1960, celle
+    des revenus de 1959, dont l'impôt ne se calcule pas. L'artisan, que le
+    modèle tient pour l'artisan fiscal (CGI, art. 1649 quater A), a
+    l'abattement de 4 400 F, la moitié du taux pour 1964 (loi n° 64-1279, art.
+    3), et n'en paie plus dès les revenus de 1965 (loi n° 65-997, art. 4)."""
+    commercant = simulateur.simuler(simulateur.carriere_simple(
+        annee_naissance=1932, sexe="H", affiliation="commercant", age_debut=24,
+        age_liquidation=65, niveau_salaire=3.0))
+    impots = cycle_de_vie.flux_des_systemes(simulateur, commercant, impot="prix")["actuel"].impots
+    for annee, taux, abattement in ((1960, 0.08, 3000), (1966, 0.06, 3000), (1968, 0.06, 4000),
+                                    (1969, 0.06, 30000)):
+        francs = impots[annee].benefice * FRANC
+        assert impots[annee].foyer.taxe_complementaire * FRANC == pytest.approx(
+            taux * (francs - abattement), abs=taux * 100), annee
+    assert impots[1970].foyer.taxe_complementaire == 0.0
+    imposables = cycle_de_vie.revenus_imposables(simulateur, commercant.carriere)
+    de_1959 = taxe_complementaire_des_revenus(Foyer((Declarant(benefices=imposables[1959]),)),
+                                              1959, charger_baremes_impot_revenu(RACINE_DONNEES))
+    assert de_1959 * FRANC == pytest.approx(0.09 * (imposables[1959] * FRANC - 3000), abs=9)
+    assert impots[1960].foyer.taxe_complementaire_deduite == pytest.approx(de_1959)
+    for annee in range(1961, 1971):
+        assert impots[annee].foyer.taxe_complementaire_deduite == pytest.approx(
+            impots[annee - 1].foyer.taxe_complementaire), annee
+    assert impots[1970].foyer.taxe_complementaire_deduite > 0.0
+    assert impots[1971].foyer.taxe_complementaire_deduite == 0.0
+    artisan = simulateur.simuler(simulateur.carriere_simple(
+        annee_naissance=1936, sexe="H", affiliation="artisan", age_debut=21,
+        age_liquidation=64, niveau_salaire=1.0))
+    impots = cycle_de_vie.flux_des_systemes(simulateur, artisan, impot="prix")["actuel"].impots
+    for annee, taux in ((1960, 0.08), (1963, 0.06), (1964, 0.03), (1965, 0.0), (1968, 0.0)):
+        francs = impots[annee].benefice * FRANC
+        assert impots[annee].foyer.taxe_complementaire * FRANC == pytest.approx(
+            taux * (francs - 4400), abs=taux * 11 + 1e-9), annee
+
+
+def test_la_taxe_complementaire_ne_pese_pas_sur_la_pension(simulateur):
+    """La part de l'impôt que supporte une pension se prend sur l'impôt sur le
+    revenu seul : la taxe complémentaire ne frappe que le bénéfice (loi n°
+    59-1472, art. 18, 1). Un foyer de 1966 qui déclare un bénéfice et une
+    pension, comme l'année d'un départ."""
+    flux = SimpleNamespace(niveaux={1966: 1000.0}, servi=lambda annee: 1.0, exoneree={})
+    impots = cycle_de_vie.impots_par_annee(
+        simulateur, flux, SimpleNamespace(annee_naissance=1901), {1966: 1.0}, {},
+        benefices={1966: (2000.0, "bic", False)})
+    impot = impots[1966]
+    taxe = impot.foyer.taxe_complementaire
+    assert taxe > 0.0 and impot.pension > 0.0 and impot.foyer.pensions_nettes[0] > 0.0
+    part = cycle_de_vie._part_de_la_pension(impot.foyer)
+    assert impot.sur_la_pension == pytest.approx((impot.impot - taxe) * part)
+    assert impot.sur_le_salaire > taxe
 
 
 def test_une_convention_apres_impot_est_nette_et_demande_un_flux_impose(simulateur,

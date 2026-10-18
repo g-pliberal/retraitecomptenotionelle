@@ -24,7 +24,7 @@ export const FAMILLES_INDEPENDANTES = Object.freeze(["artisan", "commercant", "l
 
 const REGIMES_AVOCATS = new Set(["cnbf"]);
 const REGIMES_LIBERAUX = new Set(["cnavpl"]);
-const REGIMES_ARTISANS = new Set(["cancava"]);
+const REGIMES_ARTISANS = new Set(["cancava", "cancava_avant_1973"]);
 
 /** Les tranches d'un barème d'indépendant, en plafonds ; `null`, l'infini. */
 export const TRANCHES = Object.freeze({

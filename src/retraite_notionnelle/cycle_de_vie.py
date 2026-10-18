@@ -104,7 +104,9 @@ dernière loi de finances lue sur les prix ou, comme l'OCDE, sur le salaire
 moyen. Le foyer déclare son net imposable : le revenu d'activité moins ses
 cotisations et la CSG déductible de son année (:func:`revenus_imposables`) —
 pour un indépendant, son bénéfice, au réel et adhérent d'un organisme de
-gestion agréé (:func:`benefices_par_annee`) —,
+gestion agréé (:func:`benefices_par_annee`), qui paie jusqu'aux revenus de 1969
+la taxe complémentaire et déduit de son revenu global celle de l'année
+précédente —,
 la pension moins la CSG déductible et la cotisation maladie de l'année où
 elle est servie (:func:`parts_imposables_par_annee`), et, jusqu'aux revenus de
 2012, moins sa majoration pour enfants, qu'aucune de ses parts n'atteint
@@ -168,7 +170,9 @@ retraite de l'année courante. Après impôt, le foyer n'est jamais un couple ni
 un parent ; le bénéfice d'un indépendant est celui d'un adhérent d'un
 organisme de gestion agréé, au réel, sans la majoration de qui n'y adhère
 pas ; l'année où il est aussi salarié, il se partage le revenu imposable au
-prorata des revenus bruts ; une année d'avant 1960, sans barème lu, ne paie pas d'impôt ; la limite
+prorata des revenus bruts ; l'artisan de la sécurité sociale est l'artisan
+fiscal de la taxe complémentaire ; une année d'avant 1960, sans barème lu,
+ne paie pas d'impôt ; la limite
 de l'exonération de la majoration pour enfants, que la doctrine lue en 1999
 et en 2012 donne, vaut aussi pour les années d'avant, et la seconde, la
 pension majorée bornée au revenu d'activité qui l'a liquidée, n'est tenue que
@@ -212,7 +216,13 @@ from .donnees.prelevements_historiques import (
     famille_de_la_fiche,
 )
 from .donnees.mortalite import AGE_TERMINAL
-from .impot_revenu import Declarant, Foyer, ImpotDuFoyer, impot_aux_parametres
+from .impot_revenu import (
+    Declarant,
+    Foyer,
+    ImpotDuFoyer,
+    impot_aux_parametres,
+    taxe_complementaire_des_revenus,
+)
 from .remuneration import (
     charger_prelevements,
     fiche_depuis_brut,
@@ -1255,7 +1265,8 @@ def _baremes_de_l_impot(simulateur, indexation: str, derniere: int
 
 def foyer_de_l_annee(carriere, annee: int, salaire: float = 0.0,
                      pension: float = 0.0, benefice: float = 0.0,
-                     categorie: str = "bic") -> Foyer:
+                     categorie: str = "bic", artisan: bool = False,
+                     taxe_complementaire_payee: float = 0.0) -> Foyer:
     """Le foyer fiscal de ``carriere`` l'année ``annee`` : une personne seule,
     sans enfant à charge, comme l'OCDE calcule ses taux nets, qui a au 31
     décembre l'âge de sa génération — à 65 ans, il ouvre l'abattement des
@@ -1264,10 +1275,13 @@ def foyer_de_l_annee(carriere, annee: int, salaire: float = 0.0,
     est celui d'un adhérent d'un organisme de gestion agréé, au réel : de 1976
     à 2005 il a l'abattement des adhérents, de 2006 à 2022 il échappe à la
     majoration (CGI, art. 158, 4 bis, 4 ter et 7 ;
-    :func:`~retraite_notionnelle.impot_revenu.benefice_retenu`)."""
+    :func:`~retraite_notionnelle.impot_revenu.benefice_retenu`) ; celui d'un
+    ``artisan``, ses règles de la taxe complémentaire, que le foyer déduit de
+    son revenu global l'année où il la paie (``taxe_complementaire_payee``)."""
     return Foyer(declarants=(Declarant(salaires=salaire, pensions=pension, benefices=benefice,
-                                       categorie=categorie,
-                                       age=annee - carriere.annee_naissance),))
+                                       categorie=categorie, artisan=artisan,
+                                       age=annee - carriere.annee_naissance),),
+                 taxe_complementaire_de_l_annee_precedente=taxe_complementaire_payee)
 
 
 #: Les familles d'indépendant dont le bénéfice est non commercial ; les
@@ -1276,13 +1290,16 @@ def foyer_de_l_annee(carriere, annee: int, salaire: float = 0.0,
 FAMILLES_BNC = ("liberal", "avocat")
 
 
-def benefices_par_annee(simulateur, carriere) -> dict[int, tuple[float, str]]:
+def benefices_par_annee(simulateur, carriere) -> dict[int, tuple[float, str, bool]]:
     """Les années où ``carriere`` a un revenu d'indépendant : la part de son
     revenu imposable qui est un bénéfice — celle des revenus bruts des lignes
     d'indépendant dans ceux des lignes cotisées de l'année, un l'année où il
-    n'est qu'indépendant — et la catégorie de ce bénéfice, non commercial
-    pour le libéral et l'avocat, industriel et commercial sinon, celle de la
-    ligne au plus fort revenu quand il en a plusieurs."""
+    n'est qu'indépendant —, la catégorie de ce bénéfice, non commercial
+    pour le libéral et l'avocat, industriel et commercial sinon, et s'il est
+    celui d'un artisan, que la taxe complémentaire distingue (CGI, art. 1649
+    quater A) : l'affilié des régimes des artisans, que le modèle tient pour
+    l'artisan fiscal ; catégorie et artisan de la ligne au plus fort revenu
+    quand il en a plusieurs."""
     revenus, independants = {}, {}
     for ligne in carriere.lignes:
         if not ligne.cotise:
@@ -1296,35 +1313,36 @@ def benefices_par_annee(simulateur, carriere) -> dict[int, tuple[float, str]]:
         regimes = simulateur.affiliations.regimes(ligne.affiliation, ligne.annee, entree)
         famille = famille_de_la_fiche(profil, regimes)
         independants.setdefault(ligne.annee, []).append(
-            (ligne.revenu, "bnc" if famille in FAMILLES_BNC else "bic"))
+            (ligne.revenu, "bnc" if famille in FAMILLES_BNC else "bic", famille == "artisan"))
     benefices = {}
     for annee, lignes in independants.items():
-        total = somme_ordonnee(revenu for revenu, _ in lignes)
+        total = somme_ordonnee(revenu for revenu, _, _ in lignes)
         part = total / revenus[annee] if revenus[annee] > 0.0 else 1.0
-        benefices[annee] = (min(part, 1.0), max(lignes, key=lambda l: l[0])[1])
+        _, categorie, artisan = max(lignes, key=lambda l: l[0])
+        benefices[annee] = (min(part, 1.0), categorie, artisan)
     return benefices
 
 
 def _partage_des_imposables(simulateur, carriere, imposables: dict[int, float]
-                            ) -> tuple[dict[int, float], dict[int, tuple[float, str]]]:
+                            ) -> tuple[dict[int, float], dict[int, tuple[float, str, bool]]]:
     """Les revenus imposables de chaque année, partagés entre le salaire et
     le bénéfice (:func:`benefices_par_annee`) : les salaires, et les
-    bénéfices avec leur catégorie."""
+    bénéfices avec leur catégorie et s'ils sont d'un artisan."""
     parts = benefices_par_annee(simulateur, carriere)
     salaires, benefices = {}, {}
     for annee, montant in imposables.items():
-        part, categorie = parts.get(annee, (0.0, "bic"))
+        part, categorie, artisan = parts.get(annee, (0.0, "bic", False))
         if part < 1.0:
             salaires[annee] = montant * (1.0 - part)
         if part > 0.0:
-            benefices[annee] = (montant * part, categorie)
+            benefices[annee] = (montant * part, categorie, artisan)
     return salaires, benefices
 
 
 def impots_par_annee(simulateur, flux: Flux, carriere, parts: dict[int, float],
                      salaires: dict[int, float], indexation: str = "prix",
                      derniere: int | None = None,
-                     benefices: dict[int, tuple[float, str]] | None = None
+                     benefices: dict[int, tuple[float, str, bool]] | None = None
                      ) -> dict[int, ImpotDeLAnnee]:
     """L'impôt sur le revenu de chaque année d'un flux, de la première de la
     carrière à la dernière que la pension peut atteindre : celui du foyer de
@@ -1335,15 +1353,18 @@ def impots_par_annee(simulateur, flux: Flux, carriere, parts: dict[int, float],
     l'impôt en exonère (:attr:`Flux.exoneree`), au barème de
     l'année, projeté au-delà de la dernière loi de finances lue sur
     ``indexation``, jusqu'à ``derniere`` au moins. ``benefices`` donne, pour
-    une année d'indépendant, son bénéfice imposable et sa catégorie
-    (:func:`_partage_des_imposables`).
+    une année d'indépendant, son bénéfice imposable, sa catégorie et s'il est
+    d'un artisan (:func:`_partage_des_imposables`) ; la taxe complémentaire
+    des bénéfices de l'année précédente, celle des revenus de 1959 comprise,
+    se déduit du revenu global de l'année où le foyer la paie.
 
     Chaque année de retraite se compte vécue en entier : l'impôt plus faible
     de l'année que le décès interrompt n'est pas calculé. L'année du départ,
     le foyer déclare son dernier salaire et sa première pension, et leur impôt
     se partage au prorata des deux revenus après leurs abattements de 10 %
-    (:attr:`ImpotDeLAnnee.sur_la_pension`). Une année d'avant le premier
-    barème lu, 1960, n'a pas d'impôt."""
+    (:attr:`ImpotDeLAnnee.sur_la_pension`) — la taxe complémentaire, qui ne
+    frappe que le bénéfice, n'en est pas. Une année d'avant le premier barème
+    lu, 1960, n'a pas d'impôt."""
     pensions = {}
     for annee, niveau in flux.niveaux.items():
         servie = niveau * flux.servi(annee)
@@ -1354,18 +1375,26 @@ def impots_par_annee(simulateur, flux: Flux, carriere, parts: dict[int, float],
     if not annees:
         return {}
     baremes = _baremes_de_l_impot(simulateur, indexation, max(annees[-1], derniere or 0))
+    taxes = charger_baremes_impot_revenu(simulateur.parametres.racine_donnees)
     impots = {}
     for annee in annees:
         parametres = baremes.get(annee)
         if parametres is None:
             continue
         salaire, pension = salaires.get(annee, 0.0), pensions.get(annee, 0.0)
-        benefice, categorie = benefices.get(annee, (0.0, "bic"))
+        benefice, categorie, artisan = benefices.get(annee, (0.0, "bic", False))
+        precedent, categorie_precedente, artisan_precedent = benefices.get(
+            annee - 1, (0.0, "bic", False))
+        payee = (taxe_complementaire_des_revenus(
+            foyer_de_l_annee(carriere, annee - 1, benefice=precedent,
+                             categorie=categorie_precedente, artisan=artisan_precedent),
+            annee - 1, taxes) if precedent > 0.0 else 0.0)
         foyer = impot_aux_parametres(
-            foyer_de_l_annee(carriere, annee, salaire, pension, benefice, categorie), parametres)
+            foyer_de_l_annee(carriere, annee, salaire, pension, benefice, categorie, artisan,
+                             payee), parametres)
+        sur_la_pension = (foyer.impot - foyer.taxe_complementaire) * _part_de_la_pension(foyer)
         impots[annee] = ImpotDeLAnnee(annee=annee, salaire=salaire, pension=pension, foyer=foyer,
-                                      sur_la_pension=foyer.impot * _part_de_la_pension(foyer),
-                                      benefice=benefice)
+                                      sur_la_pension=sur_la_pension, benefice=benefice)
     return impots
 
 
@@ -1408,7 +1437,7 @@ def avec_l_impot(simulateur, flux: Flux, carriere, parts: dict[int, float],
 
 def dernier_revenu_apres_impot(simulateur, flux: Flux, imposables: dict[int, float],
                                indexation: str = "prix", derniere: int | None = None,
-                               benefices: dict[int, tuple[float, str]] | None = None
+                               benefices: dict[int, tuple[float, str, bool]] | None = None
                                ) -> float | None:
     """Le dernier revenu annualisé (:attr:`Flux.dernier_revenu`), net de ses
     prélèvements (:attr:`Flux.dernier_revenu_net`) et de l'impôt d'une année
@@ -1428,10 +1457,10 @@ def dernier_revenu_apres_impot(simulateur, flux: Flux, imposables: dict[int, flo
                                      max(depart, derniere or 0)).get(depart)
     if parametres is None:
         return flux.dernier_revenu_net
-    benefice, categorie = (benefices or {}).get(annee, (0.0, "bic"))
+    benefice, categorie, artisan = (benefices or {}).get(annee, (0.0, "bic", False))
     part = benefice / imposables[annee] if benefice and imposables.get(annee) else 0.0
     declarant = Declarant(salaires=imposable * (1.0 - part), benefices=imposable * part,
-                          categorie=categorie)
+                          categorie=categorie, artisan=artisan)
     impot = impot_aux_parametres(Foyer(declarants=(declarant,)), parametres)
     return flux.dernier_revenu_net - impot.impot
 

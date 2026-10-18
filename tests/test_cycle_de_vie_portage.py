@@ -43,7 +43,9 @@ RACINE = Path(__file__).resolve().parents[1]
 #: Les carrières : un statut, une génération, un âge de départ, des enfants —
 #: trois au parent parti en 2010, dont l'impôt exonère la majoration
 #: jusqu'aux revenus de 2012 ; un agent de la SNCF entré en 1996, qui garde son
-#: régime, et sa fiche de paie, après la fermeture de 2020.
+#: régime, et sa fiche de paie, après la fermeture de 2020 ; un commerçant et un
+#: artisan qui paient la taxe complémentaire de 1959 à 1969, et déduisent celle
+#: de l'année précédente.
 CARRIERES = (
     ("salarie_prive_non_cadre", 1948, "H", 62.0, 3),
     ("salarie_prive_cadre", 1958, "F", 62.0, 0),
@@ -53,6 +55,8 @@ CARRIERES = (
     ("artisan", 1970, "H", 64.0, 0),
     ("salarie_prive_non_cadre", 1990, "F", 65.0, 0),
     ("agent_sncf", 1975, "H", 57.0, 0),
+    ("commercant", 1936, "H", 65.0, 0),
+    ("artisan", 1936, "F", 64.0, 0),
 )
 
 #: Les conventions que le portage sait servir ; ``construite`` nomme celles
@@ -117,6 +121,11 @@ FOYERS_IMPOT = {
     "deficit": {"declarants": [{"salaires": 1.0}, {"benefices": -0.3, "regime": "micro"}]},
     "pluriactif": {"declarants": [{"salaires": 0.5, "benefices": 0.2}]},
     "pluriactif_deficit": {"declarants": [{"salaires": 0.7, "benefices": -0.1}]},
+    "artisan_fiscal": {"declarants": [{"benefices": 1.0, "artisan": True}]},
+    "couple_independant": {"declarants": [{"benefices": 0.6, "artisan": True},
+                                          {"benefices": 0.5, "categorie": "bnc"}]},
+    "taxe_payee": {"declarants": [{"benefices": 1.0}],
+                   "taxe_complementaire_de_l_annee_precedente": 0.03},
 }
 NIVEAUX_IMPOT = (0.25, 0.7, 1.6, 5.0)
 
@@ -134,11 +143,13 @@ def _demandes_d_impot() -> list[dict]:
                                      if cle in ("salaires", "pensions", "benefices")
                                      else valeur)
                                for cle, valeur in d.items()} for d in foyer["declarants"]]
+                payee = {cle: valeur * niveau * echelle for cle, valeur in foyer.items()
+                         if cle == "taxe_complementaire_de_l_annee_precedente"}
                 for unite in (("euro", "monnaie") if annee == 1975 else ("euro",)):
                     demandes.append({
                         "annee": annee, "unite": unite,
                         "indexation": "salaire_moyen" if annee == 2045 else "prix",
-                        "foyer": {**foyer, "declarants": declarants}, "nom": nom})
+                        "foyer": {**foyer, **payee, "declarants": declarants}, "nom": nom})
     return demandes
 
 
@@ -160,7 +171,9 @@ def _impots_python(demandes: tuple) -> list[dict]:
             Foyer(declarants=tuple(Declarant(**d) for d in foyer["declarants"]),
                   enfants=foyer.get("enfants", 0),
                   enfants_invalides=foyer.get("enfants_invalides", 0),
-                  veuf=foyer.get("veuf", False)),
+                  veuf=foyer.get("veuf", False),
+                  taxe_complementaire_de_l_annee_precedente=foyer.get(
+                      "taxe_complementaire_de_l_annee_precedente", 0.0)),
             demande["annee"], baremes, unite=demande["unite"],
             indexation=demande["indexation"],
             croissance=croissance_macro(simulateur.macro, demande["indexation"]))
@@ -404,15 +417,22 @@ def test_la_grille_de_l_impot_a_un_objet(les_deux):
     """La grille touche chaque étape : chaque correction y joue au moins une
     fois, l'abattement des adhérents sous chacune de ses lois, l'exonération
     sous la limite de 1975, où qui ne vit pas de salaires et de pensions a la
-    sienne, et sous celle de 1977."""
+    sienne, et sous celle de 1977 ; la taxe complémentaire, de l'artisan de
+    1964 et de son abattement partagé à l'abattement de 1969, jusqu'à sa fin."""
     _, attendu = les_deux
     for etape in ("plafonnement", "reduction_complementaire", "reduction_des_salaires", "decote",
                   "reduction_sous_condition_de_revenus", "minoration_exceptionnelle",
                   "majoration_exceptionnelle", "reduction_exceptionnelle",
                   "reduction_proportionnelle", "prime_pour_l_emploi", "credit_exceptionnel",
                   "abattement_vingt_pour_cent", "abattement_age_invalidite",
-                  "abattement_adherents", "majoration_des_benefices", "exonere"):
+                  "abattement_adherents", "majoration_des_benefices", "exonere",
+                  "taxe_complementaire", "taxe_complementaire_deduite"):
         assert any(i[etape] for i in attendu["impots"]), etape
+    taxes = {(d["nom"], d["annee"]) for d, i in zip(_demandes_d_impot(), attendu["impots"])
+             if i["taxe_complementaire"]}
+    assert {("artisan_fiscal", 1964), ("couple_independant", 1964), ("liberal_adherent", 1969),
+            ("artisan_adherent", 1969)} <= taxes
+    assert not {("artisan_fiscal", 1965), ("artisan_adherent", 1970)} & taxes
     exoneres = {(d["nom"], d["annee"]) for d, i in zip(_demandes_d_impot(), attendu["impots"])
                 if i["exonere"]}
     assert {("retraite", 1975), ("artisan_adherent", 1975), ("salarie", 1977)} <= exoneres
