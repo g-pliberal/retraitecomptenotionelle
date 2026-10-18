@@ -295,8 +295,9 @@ def test_plusieurs_ages_de_depart_cote_a_cote(contexte, page):
     """Le dépliant « Partir plus tôt ou plus tard » (action 138, étape 10) :
     la carrière de la saisie liquidée chaque année, de l'âge d'ouverture au
     taux plein automatique, et ses pensions nettes sous les quatre systèmes,
-    celles que le Python tire de ``balayage_d_une_carriere`` après impôt ;
-    rien pour qui n'a pas de départ à chiffrer."""
+    puis après impôt (étape 5), celles que le Python tire de
+    ``balayage_d_une_carriere`` après impôt, sous l'impôt d'une personne
+    seule que la bulle dit ; rien pour qui n'a pas de départ à chiffrer."""
     from retraite_notionnelle.cycle_de_vie import balayage_d_une_carriere
     from retraite_notionnelle.pilote import ages_de_l_estimation
 
@@ -318,12 +319,22 @@ def test_plusieurs_ages_de_depart_cote_a_cote(contexte, page):
     assert len(rangees) == len(departs) >= 2
     systemes = ("actuel", "notionnel_retroactif", "notionnel_retroactif_employeur",
                 "notionnel_liberal")
-    for (tete, cellules), depart in zip(rangees, departs):
-        assert f"en {depart.annee}" in tete
+    apres = bloc[bloc.index("La pension après impôt du premier mois"):]
+    rangees_apres = re.findall(r'<tr><th[^>]*scope="row">(.*?)</th>(.*?)</tr>',
+                               apres[:apres.index("</table>")])
+    assert len(rangees_apres) == len(departs)
+    for (tete, cellules), (tete_apres, cellules_apres), depart in zip(
+            rangees, rangees_apres, departs):
+        assert f"en {depart.annee}" in tete and f"en {depart.annee}" in tete_apres
         comparaison = simulateur.simuler(batir(depart.age))
-        valeurs = [_nombres(v) for v in re.findall(r"<td[^>]*>(.*?)</td>", cellules)]
-        attendus = [round(comparaison.en_euros_constants(
-            depart.pensions_nettes[scenario], scenario) / 12) for scenario in systemes]
-        assert valeurs == attendus
-    assert bloc.count("<table") == 3 and "rendement réel" in bloc
+        for lues, pensions in ((cellules, depart.pensions_nettes),
+                               (cellules_apres, depart.pensions_apres_impot)):
+            valeurs = [_nombres(v) for v in re.findall(r"<td[^>]*>(.*?)</td>", lues)]
+            attendus = [round(comparaison.en_euros_constants(
+                pensions[scenario], scenario) / 12) for scenario in systemes]
+            assert valeurs == attendus
+    assert any(depart.pensions_apres_impot["actuel"] < depart.pensions_nettes["actuel"]
+               for depart in departs)
+    assert "une personne seule, sans enfant à charge" in bloc
+    assert bloc.count("<table") == 4 and "rendement réel" in bloc
     assert "Partir plus tôt ou plus tard" not in page("/simuler", **REQUETES["parti"])

@@ -5070,8 +5070,9 @@ ${detail(contexte, comparaison)}
  * de la saisie liquidée chaque année, de l'âge d'ouverture à l'âge du taux
  * plein automatique (`balayageDeLEstimation`, contexte.js), et ce que
  * chacun des quatre systèmes en fait sur toute la retraite — la pension
- * nette du premier mois, le taux de remplacement net, après impôt, le
- * rendement réel, le patrimoine retraite —, sous la convention de l'OCDE.
+ * nette du premier mois, puis après impôt (étape 5), le taux de
+ * remplacement net, après impôt, le rendement réel, le patrimoine
+ * retraite —, sous la convention de l'OCDE : l'impôt d'une personne seule.
  * Puis l'âge d'équilibre de la génération, où son diviseur rend celui de la
  * génération de référence. Rien quand l'estimation ne se chiffre pas, ni
  * pour un seul âge.
@@ -5095,6 +5096,17 @@ function partirPlusTotOuPlusTard(contexte, saisie) {
     ]),
     ["", ...SCENARIOS_AFFICHES.map(() => "nombre")],
     `La pension nette du premier mois, en euros de ${saisie.euros}`, true);
+
+  const apresImpot = g.tableau(
+    ["Départ", ...numeros.map((numero) => `Système ${numero}`)],
+    balayage.map((ligne) => [
+      libelleDepart(ligne),
+      ...SCENARIOS_AFFICHES.map(([scenario]) => ouRien(
+        ligne.depart.pensions_apres_impot?.[scenario],
+        (v) => g.euros(ligne.comparaison.enEurosConstants(v, scenario) / 12))),
+    ]),
+    ["", ...numeros.map(() => "nombre")],
+    `La pension après impôt du premier mois, en euros de ${saisie.euros}`, true);
 
   const actuel = g.tableau(
     ["Départ", "Années de retraite", "Remplacement net", "Après impôt",
@@ -5152,8 +5164,13 @@ chance d'y être en vie.${g.bulle(
     + "projetée de l'INSEE, propre à votre génération et à votre sexe, le "
     + "patrimoine actualisé à 1,5 % par an au-dessus des prix et rapporté au "
     + "dernier revenu. Pensions et revenus sont nets de la CSG, de la CRDS et "
-    + "des cotisations de chaque année ; « après impôt », ils sont aussi nets "
-    + "de l'impôt sur le revenu, d'un barème qui suit les prix. Le "
+    + "des cotisations de chaque année. Ce qui est dit « après impôt », le "
+    + "patrimoine et le rendement sont aussi nets de l'impôt sur le revenu : "
+    + "celui d'une personne seule, sans enfant à charge, qui ne déclare que ses "
+    + "revenus d'activité et ses pensions, au barème de chaque année, que la "
+    + "page fait suivre les prix au-delà de la dernière loi de finances ; la "
+    + "pension du premier mois y paie l'impôt d'une année entière d'elle "
+    + "seule. Le "
     + "remplacement rapporte la pension du premier mois au revenu net de la "
     + "dernière année travaillée en entier, en euros constants ; le "
     + "rendement réel est le taux qui égale les cotisations versées aux "
@@ -5162,6 +5179,7 @@ chance d'y être en vie.${g.bulle(
     + "seule.",
   )}</p>
 ${pensions}
+${apresImpot}
 ${actuel}
 ${rendements}${equilibre}`);
 }
