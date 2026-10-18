@@ -15995,7 +15995,7 @@ export const MESURES_BLOCAGES = {
   // proposition, solde moyen 2026-2070, en points de PIB : ce que coûtent les
   // 18 %, l'âge légal de 65 ans de la proposition compris — il en rend un
   // demi-point.
-  cout_18_pour_cent: 2.2,
+  cout_18_pour_cent: 2.3,
   // Le coût par défaut : soldes moyens 2026-2070, dette et coefficient à
   // l'horizon, en points de PIB, en % du PIB et en valeur. Mesurés avec l'âge
   // légal de 65 ans et SANS TVA à taux unique : la proposition ne réforme plus
@@ -16032,7 +16032,7 @@ export const MESURES_BLOCAGES = {
   // 18 % à 2,2 points.
   solde_moyen_proposition: -1.1,
   solde_moyen_actuel: -1.1,
-  dette_2070_proposition: 73,
+  dette_2070_proposition: 75,
   dette_2070_actuel: 66,
   coefficient_minimum: 0.83,
   decennie_coefficient_minimum: 2040,

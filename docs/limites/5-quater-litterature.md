@@ -22,9 +22,9 @@ scénario 4 :
 |---|---:|---:|
 | 2. Notionnel rétroactif, part salariale | **<!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=2)-->−70,3<!--/--> %** | **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=2)-->−77,7<!--/--> %** |
 | 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=3)-->−23,5<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=3)-->−27,4<!--/--> % |
-| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=4)-->−26,5<!--/--> % | **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=4)-->−8,0<!--/--> %** |
-| 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=5)-->−9,4<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=5)-->−16,1<!--/--> % |
-| 6. Proposition libérale (<!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026) | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=6)-->−29,5<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=6)-->−9,0<!--/--> % |
+| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=4)-->−26,6<!--/--> % | **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=4)-->−8,1<!--/--> %** |
+| 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=5)-->−9,4<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=5)-->−16,2<!--/--> % |
+| 6. Proposition libérale (<!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026) | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=6)-->−29,6<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=6)-->−9,1<!--/--> % |
 
 ## Ce n'est pas une contradiction : c'est la somme de quatre choix
 
@@ -50,7 +50,7 @@ prises ici et pas là-bas, et chacune est chiffrée ou chiffrable.
    que la part SALARIALE, soit <!--chiffre:mesure(part_salariale_versee?exemple=litterature_prive)-->40<!--/--> % de ce que le scénario 4 y porte pour le salarié
    du privé et <!--chiffre:mesure(part_salariale_versee?exemple=litterature_etat)-->26<!--/--> % pour le fonctionnaire. La littérature raisonne toujours sur la
    cotisation entière. Le scénario 4 est la comparaison honnête, et il donne
-   <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=4)-->−26,5<!--/--> % pour le privé et **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=4)-->−8,0<!--/--> %** pour le fonctionnaire.
+   <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=4)-->−26,6<!--/--> % pour le privé et **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=4)-->−8,1<!--/--> %** pour le fonctionnaire.
 4. **L'âge de liquidation.** La CNAV suppose les âges de départ INCHANGÉS, et
    observe malgré tout que ses perdants partent à <!--chiffre:illustration()-->60<!--/--> ans et ses gagnants à 65.
    Ici, le diviseur est la seule sanction du départ précoce, et il n'est pas
