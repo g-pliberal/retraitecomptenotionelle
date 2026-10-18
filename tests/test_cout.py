@@ -698,8 +698,11 @@ RECONSTITUTION_DEPUIS = 2000
 #: servant en points, et non plus en annuités, les années d'avant 1973 des
 #: artisans et des commerçants : sous le plafond, l'équivalence de D. 634-8
 #: leur ouvre moins que la classe minimale des commerçants (voir la fiche
-#: ``points_avant_1973_independants``), et les premières générations baissent.
-RECONSTITUTION_CLIQUET = 0.142
+#: ``points_avant_1973_independants``), et les premières générations baissent ;
+#: -13,1 % le 17 octobre (-13,2 % la veille), l'étape 138.7 faisant vivre
+#: chaque cas type au rythme du vingtile de son diviseur, à nombre de décès
+#: égal : les plus fortes pensions pèsent davantage aux grands âges.
+RECONSTITUTION_CLIQUET = 0.135
 #: Ce que vise le cliquet : quelques pour cent, chaque année.
 RECONSTITUTION_CIBLE = 0.05
 
@@ -1070,13 +1073,17 @@ DECOMPOSITION_GROUPES_SUIVIS = {
 #: actifs de l'État, qui portent un départ civil sur cinq et partent de deux à
 #: huit ans avant le sédentaire (même étape), y font de même pour la FPE : sa
 #: pension relative passe de +8,0 à +5,1 %, sa dépense de +22,3 à +19,3 %.
+#: L'étape 7 de l'action 138, le 17 octobre, fait vivre chaque cas type au
+#: rythme du vingtile de son diviseur, à nombre de décès égal : la pension
+#: relative de l'Agirc-Arrco passe de +22,2 à +21,4 %, la dépense de la FPE de
+#: +19,3 à +18,9 %, celle des régimes spéciaux de -33,6 à -32,3 %.
 DECOMPOSITION_GROUPES_CLIQUETS = {
     ("pension_relative", "fpe"): 0.06,
     ("pension_relative", "cnracl"): 0.04,
-    ("pension_relative", "agirc_arrco"): 0.23,
-    ("depense_part_pib", "fpe"): 0.20,
+    ("pension_relative", "agirc_arrco"): 0.22,
+    ("depense_part_pib", "fpe"): 0.19,
     ("depense_part_pib", "cnracl"): 0.08,
-    ("depense_part_pib", "regimes_speciaux"): 0.34,
+    ("depense_part_pib", "regimes_speciaux"): 0.33,
 }
 
 
@@ -1274,6 +1281,147 @@ def test_les_arrivees_tardives_pesent_les_masses_et_non_les_tetes(population):
         regimes["regime_general"] * courtes["actuel"] / masses["actuel"], rel=1e-12)
     # Sans complétudes, la pension entière : la grille du simulateur individuel.
     assert entiere.completude(-2) == entiere.completude(2) == 1.0
+
+
+def test_chaque_cohorte_survit_au_rythme_de_sa_population(population):
+    """Les cas types ne vivent plus tous comme la population générale (action
+    138, étape 7, la mortalité différentielle), mais à nombre de décès égal :
+    passé sa liquidation, chaque cohorte garde les survivants que la pyramide
+    lui donne, répartis entre ses cas types au rythme de leur survie
+    (``Pensionne.survie``), divisée par leur moyenne pesée comme la grille les
+    pèse. Têtes et masses, dans tous les systèmes et dans chaque régime — le
+    calage des groupes compris, qui pèse les cas types un à un —, ce que
+    versent ceux qui travaillent encore et les rentes de leur pilier, chacun à
+    ses poids. Avant la liquidation, et pour un cas type seul de sa grille,
+    rien ne change."""
+    from retraite_notionnelle.cout import (
+        CLES_CAS_TYPES, RESSOURCES_GARANTIE, TETES_TOUTES, Pensionne, VoletLiberal,
+        _masses, _masses_cotisations, _masses_pilier, _masses_regimes,
+        coefficient_servi)
+
+    simulateur = Simulateur(Parametres()).pour_la_projection()
+    revalorisation = RevalorisationServie(simulateur, 2000, 2030)
+
+    def couple(code: str, montant: float) -> Pensionne:
+        # La proposition part cinq ans après le droit en vigueur, et cotise
+        # jusque-là, à son compte et à son pilier.
+        volet = VoletLiberal(
+            annee_liquidation=2015, annee_ouverture_garantie=2015, pension=montant,
+            ressources_garantie=montant,
+            cotisations={a: montant for a in range(1990, 2016)},
+            pilier={a: (montant, 0.1, 0.01, 10.0) for a in range(1990, 2016)},
+            rente_pilier=(2.0 * montant, 1.5 * montant))
+        return Pensionne(code=code, generation=1950, annee_liquidation=2010,
+                         pensions={cle: montant for cle in CLES_CAS_TYPES}, propre=volet,
+                         parts_regimes={"regime_general": 1.0})
+
+    # « a » survit deux centièmes de mieux que la population générale par
+    # année passée depuis la liquidation de sa cohorte, « b » un centième de
+    # moins : en 2020, 1,24 et 0,88 pour la cohorte née en 1948, partie en 2008.
+    communes = {"a": couple("a", 2.0), "b": couple("b", 1.0)}
+    pentes = {"a": 0.02, "b": -0.01}
+    propres = {code: replace(pensionne, survies=tuple(
+        tuple(1.0 + pentes[code] * rang for rang in range(60)) for _ in range(5)))
+        for code, pensionne in communes.items()}
+    poids = {"a": 0.25, "b": 0.75}
+    decalages = range(-2, 3)
+
+    def alignes(annee: int, montant, poids_cas: dict[str, float]) -> float:
+        """La somme posée à la main : l'effectif de la pyramide, réparti
+        entre « a » et « b » au rythme de leur survie, rapportée à leur
+        moyenne pesée."""
+        total = 0.0
+        for d in decalages:
+            survies = {c: 1.0 + pentes[c] * (annee - 2010 - d) for c in poids_cas}
+            moyenne = (sum(poids_cas[c] * survies[c] for c in poids_cas)
+                       / sum(poids_cas.values()))
+            total += population.effectif(annee - 1950 - d, annee) * sum(
+                poids_cas[c] * montant(c, d) * survies[c] / moyenne for c in poids_cas)
+        return total
+
+    assert communes["a"].survie(0, 2030) == 1.0
+    assert propres["a"].survie(0, 2005) == propres["a"].survie(0, 2010) == 1.0
+    assert propres["a"].survie(-2, 2020) == pytest.approx(1.24, rel=1e-12)
+    assert propres["b"].survie(-2, 2020) == pytest.approx(0.88, rel=1e-12)
+
+    grille, sans = list(propres.values()), list(communes.values())
+    servis = {d: coefficient_servi({"regime_general": 1.0}, revalorisation, 2010 + d, 2020)
+              for d in decalages}
+    masses, _, tetes = _masses(grille, population, 2020, poids, revalorisation)
+    communes_masses, _, tetes_communes = _masses(sans, population, 2020, poids,
+                                                 revalorisation)
+    # Les survivants sont ceux de la pyramide ; ce qu'ils touchent ne l'est plus.
+    assert tetes[TETES_TOUTES] == pytest.approx(tetes_communes[TETES_TOUTES], rel=1e-12)
+    assert masses["actuel"] == pytest.approx(alignes(
+        2020, lambda c, d: communes[c].pensions["actuel"] * servis[d], poids), rel=1e-12)
+    for cle in ("notionnel_retroactif", "notionnel_liberal", RESSOURCES_GARANTIE):
+        assert masses[cle] > 1.03 * communes_masses[cle], cle
+    regimes, tetes_regimes = _masses_regimes(grille, population, 2020, poids, revalorisation)
+    assert sum(tetes_regimes.values()) == pytest.approx(tetes[TETES_TOUTES], rel=1e-12)
+    assert sum(regimes.values()) == pytest.approx(masses["actuel"], rel=1e-12)
+    # Le calage pèse les cas types un à un, et les aligne sur toute la grille.
+    un_a_un = [_masses_regimes(grille, population, 2020, {code: part}, revalorisation,
+                               poids_alignement=poids)[0]["regime_general"]
+               for code, part in poids.items()]
+    assert sum(un_a_un) == pytest.approx(regimes["regime_general"], rel=1e-12)
+    # Seul de sa grille, un cas type vit comme la pyramide.
+    seul, _, _ = _masses([propres["a"]], population, 2020, {"a": 1.0}, revalorisation)
+    commun, _, _ = _masses([communes["a"]], population, 2020, {"a": 1.0}, revalorisation)
+    assert seul["actuel"] == pytest.approx(commun["actuel"], rel=1e-12)
+
+    # Avant toute liquidation, la pyramide telle quelle ; après celle du droit
+    # en vigueur, la proposition fait encore cotiser des survivants, et son
+    # pilier sert des rentes, chacun aligné à ses poids.
+    cotisants = {"a": 0.5, "b": 0.5}
+    assert (_masses_cotisations(grille, population, 2005, cotisants)
+            == _masses_cotisations(sans, population, 2005, cotisants))
+    versees = _masses_cotisations(grille, population, 2013, cotisants)
+    assert versees["notionnel_liberal"] == pytest.approx(alignes(
+        2013, lambda c, d: communes[c].propre.cotisations[2013 - d], cotisants), rel=1e-12)
+    assert (_masses_pilier(grille, population, 2005, cotisants, poids)
+            == _masses_pilier(sans, population, 2005, cotisants, poids))
+    rentes = _masses_pilier(grille, population, 2020, cotisants, poids)
+    assert rentes["rentes"] == pytest.approx(alignes(
+        2020, lambda c, d: communes[c].propre.rente_pilier[1], poids), rel=1e-12)
+
+
+def test_la_survie_d_un_cas_type_est_celle_du_vingtile_de_son_diviseur():
+    """La population qui fait vivre un cas type dans le coût est celle que son
+    diviseur lui rattache par défaut : le vingtile de niveau de vie où son
+    salaire le range, le quatrième pour le SMIC et le dix-neuvième pour le
+    cadre (docs/methodologie.md, § 5). Sa survie se rapporte, cohorte par
+    cohorte et depuis sa liquidation, à celle de la population générale,
+    unisexe et par génération comme la pyramide qu'elle corrige : l'INSEE
+    fait mourir le premier plus tôt, le second plus tard. Sous la table
+    commune (``population_conversion=None``), la population générale."""
+    from retraite_notionnelle.cout import _pensionnes
+
+    simulateur = Simulateur(Parametres())
+    mortalite = simulateur.mortalite
+    par_code = {cas.code: cas for cas in CAS_TYPES}
+    vingtiles = {"smic_carriere_complete": "niveau_de_vie_v04",
+                 "cadre": "niveau_de_vie_v19"}
+    pensionnes, _ = _pensionnes(simulateur, tuple(par_code[code] for code in vingtiles),
+                                "droit")
+    de_1960 = {p.code: p for p in pensionnes if p.generation == 1960}
+    assert set(de_1960) == set(vingtiles)
+    for code, pensionne in de_1960.items():
+        age = float(pensionne.annee_liquidation - 1960)
+        for decalage in range(-2, 3):
+            depart = pensionne.annee_liquidation + decalage
+            generale = mortalite.courbe(age, float(depart), None, True, None)
+            propre = mortalite.courbe(age, float(depart), None, True, vingtiles[code])
+            assert pensionne.survie(decalage, depart) == 1.0
+            for rang in (10, 25):
+                assert pensionne.survie(decalage, depart + rang) == pytest.approx(
+                    propre[rang] / generale[rang], rel=1e-12), (code, decalage, rang)
+    smic, cadre = de_1960["smic_carriere_complete"], de_1960["cadre"]
+    assert (smic.survie(0, smic.annee_liquidation + 25) < 1.0
+            < cadre.survie(0, cadre.annee_liquidation + 25))
+
+    commune = Simulateur(replace(Parametres(), population_conversion=None))
+    sans, _ = _pensionnes(commune, (par_code["cadre"],), "droit")
+    assert sans and all(p.survies == () for p in sans)
 
 
 def test_les_fonctionnaires_civils_entrent_tard_dans_leur_regime():
@@ -1854,6 +2002,43 @@ def test_l_engagement_revalorise_comme_les_masses(depenses, population, monkeypa
     for cle in scenarios[1:]:
         assert double.part_pib(cle) == pytest.approx(
             2.0 * reference.part_pib(cle), rel=1e-12), cle
+
+
+def test_l_engagement_compte_les_survivants_de_chaque_population(depenses, population,
+                                                                  monkeypatch):
+    """L'engagement acquis est la somme des masses à venir : il compte, comme
+    elles, les survivants de chaque cohorte au rythme de sa population, à
+    nombre de décès égal (``Pensionne.survie``, action 138, étape 7). Une
+    survie divisée par deux pour tous, à partir de 2030, ne change rien : la
+    pyramide garde ses morts. Pour le seul salarié au SMIC, elle reporte ses
+    survivants sur le salarié moyen, dont la pension est plus haute :
+    l'engagement monte dans chaque système, au-delà de la pyramide aussi."""
+    from retraite_notionnelle.cout import Pensionne
+
+    simulateur = Simulateur(Parametres())
+    cas = CAS_TYPES[:2]
+    assert [c.code for c in cas] == ["smic_carriere_complete", "salaire_moyen"]
+    scenarios = ["actuel", "notionnel_liberal"]
+    reference = calculer_engagements(simulateur, depenses, population, 2021,
+                                     scenarios, cas_types=cas)
+    survie = Pensionne.survie
+
+    def engagement(qui):
+        monkeypatch.setattr(
+            Pensionne, "survie",
+            lambda soi, decalage, annee: survie(soi, decalage, annee)
+            * (0.5 if annee >= 2030 and qui(soi.code) else 1.0))
+        return calculer_engagements(simulateur, depenses, population, 2021,
+                                    scenarios, cas_types=cas)
+
+    tous = engagement(lambda code: True)
+    smic = engagement(lambda code: code == "smic_carriere_complete")
+    assert reference.hors_projection > 0.0
+    for cle in scenarios:
+        assert tous.part_pib(cle) == pytest.approx(reference.part_pib(cle), rel=1e-12), cle
+        assert smic.part_pib(cle) > 1.01 * reference.part_pib(cle), cle
+    assert tous.hors_projection == pytest.approx(reference.hors_projection, rel=1e-12)
+    assert smic.hors_projection > reference.hors_projection
 
 
 # -- l'âge auquel chaque cas type liquide ------------------------------------

@@ -426,6 +426,11 @@ class Pensionne:
     #: cohortes, à sa liquidation (:func:`_capitaux_sous_la_variante`, action
     #: 138, étape 7). Vide, celle du central.
     capitaux: tuple[float, ...] = ()
+    #: La survie de chacune de ses cinq cohortes RAPPORTÉE à celle de la
+    #: population générale, année par année depuis sa liquidation : celle de
+    #: la population que son diviseur lui rattache (:func:`_survies`, action
+    #: 138, étape 7). Vide, la population générale, celle de la pyramide.
+    survies: tuple[tuple[float, ...], ...] = ()
 
     def capital(self, decalage: int) -> float:
         """Ce que la variante change au compte de la proposition de la cohorte
@@ -442,6 +447,21 @@ class Pensionne:
         if not self.completudes:
             return 1.0
         return self.completudes[decalage + _DEMI_TRANCHE]
+
+    def survie(self, decalage: int, annee: int) -> float:
+        """Ce que la mortalité de sa population fait, en ``annee``, à
+        l'effectif que la pyramide donne à la cohorte née ``decalage`` ans
+        après la grille : un jusqu'à la liquidation de la cohorte, et sous la
+        population générale. Les masses la prennent à nombre de décès égal
+        (:func:`_survies_alignees`) : qui meurt plus tôt ne touche plus rien, ne
+        cotise plus."""
+        if not self.survies:
+            return 1.0
+        rang = annee - (self.annee_liquidation + decalage)
+        courbe = self.survies[decalage + _DEMI_TRANCHE]
+        if rang <= 0 or not courbe:
+            return 1.0
+        return courbe[min(rang, len(courbe) - 1)]
 
     def volet(self, decalage: int) -> "VoletLiberal":
         """La proposition de la cohorte née ``decalage`` ans après la grille.
@@ -2213,6 +2233,7 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
             completudes=() if carrieres is None else tuple(
                 carrieres.completude(generation + decalage)
                 for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1)),
+            survies=_survies(simulateur, comparaison, generation),
             cotisations={
                 # Le dénominateur ne peut pas être le compte du scénario 4.
                 # Celui-là fusionne les régimes à la bascule et prélève ensuite
@@ -2235,6 +2256,42 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
     for motif in grille.echecs.values():
         motifs[motif] = motifs.get(motif, 0) + 1
     return pensionnes, motifs
+
+
+def _survies(simulateur: Simulateur, comparaison,
+             generation: int) -> tuple[tuple[float, ...], ...]:
+    """La survie des cinq cohortes d'un couple, rapportée à celle de la
+    population générale, année par année depuis leur liquidation
+    (:attr:`Pensionne.survies`, action 138, étape 7).
+
+    LES CAS TYPES NE VIVENT PLUS TOUS COMME LA POPULATION GÉNÉRALE. Jusqu'au
+    17 octobre 2026, la pyramide de l'INSEE comptait les survivants de chaque
+    cohorte, et le cadre vivait comme le salarié au SMIC, quand son diviseur
+    le savait vivre plus longtemps. La population est celle du diviseur, le
+    même interrupteur (``population_conversion``) : le vingtile de niveau de
+    vie où la carrière se range, par son salaire ou par la pension que le droit
+    en vigueur lui sert (:meth:`Convertisseur.population_pour_pension`) ;
+    aucune, sous la table commune, et la cohorte vit alors comme la pyramide.
+    Les deux courbes sont unisexes, par génération, comme la pyramide qu'elles
+    corrigent : un cas type pèse les retraités de sa caisse, des deux sexes.
+    Elles disent qui survit, et non combien : les masses les alignent sur la
+    pyramide (:func:`_survies_alignees`).
+    """
+    carriere = comparaison.carriere
+    population = simulateur.convertisseur.population_pour_pension(
+        comparaison.actuel.pension_annuelle, carriere.annee_liquidation, carriere)
+    if population is None:
+        return ()
+    mortalite = simulateur.mortalite
+    age = float(carriere.annee_liquidation - generation)
+    survies = []
+    for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
+        depart = float(carriere.annee_liquidation + decalage)
+        generale = mortalite.courbe(age, depart, None, True, None)
+        propre = mortalite.courbe(age, depart, None, True, population)
+        survies.append(tuple(propre[rang] / generale[rang]
+                             for rang in range(min(len(generale), len(propre)))))
+    return tuple(survies)
 
 
 def _parts_regimes(resultat) -> dict[str, float]:
@@ -2523,6 +2580,45 @@ TETES_GARANTIE = "garantie"
 MASSE_STOCK = "stock_avant_bascule"
 
 
+def _survies_alignees(pensionnes: list[Pensionne], poids_cas: dict[str, float],
+                      annee: int) -> dict[tuple[str, int, int], float]:
+    """Ce par quoi multiplier, en ``annee``, l'effectif que la pyramide donne
+    à chaque cohorte de chaque couple — clé : son code, sa génération et son
+    décalage —, À NOMBRE DE DÉCÈS ÉGAL (action 138, étape 7).
+
+    La pyramide de l'INSEE compte les survivants de toute la population ; la
+    mortalité propre des cas types n'en change que la répartition entre
+    fortes et faibles pensions (misraa). Chaque survie
+    (:meth:`Pensionne.survie`) est donc divisée par leur moyenne dans la
+    cohorte, ses cas types pesés comme ``poids_cas`` les pèse. Rapportée à la
+    population générale, la survie d'un vingtile garderait ce nombre dans une
+    population où chaque vingtile pèse un vingtième ; la grille, qui n'en est
+    pas une, en perdait : ses exploitants et ses salariés au SMIC des vieilles
+    générations portaient l'écart de ses têtes à l'enquête auprès des caisses,
+    en 2009, de −6,2 à −6,6 %. Un cas type seul de sa grille vit donc comme la
+    pyramide. Vide quand aucun couple n'a de mortalité propre : la table
+    commune."""
+    if not any(pensionne.survies for pensionne in pensionnes):
+        return {}
+    moyennes: dict[tuple[int, int], list[float]] = {}
+    for pensionne in pensionnes:
+        part = poids_cas.get(pensionne.code, 0.0)
+        if part <= 0.0:
+            continue
+        for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
+            somme = moyennes.setdefault((pensionne.generation, decalage), [0.0, 0.0])
+            somme[0] += part * pensionne.survie(decalage, annee)
+            somme[1] += part
+    alignees: dict[tuple[str, int, int], float] = {}
+    for pensionne in pensionnes:
+        for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
+            survies, parts = moyennes.get((pensionne.generation, decalage), (0.0, 0.0))
+            if survies > 0.0:
+                alignees[pensionne.code, pensionne.generation, decalage] = (
+                    pensionne.survie(decalage, annee) * parts / survies)
+    return alignees
+
+
 def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
             poids_cas: dict[str, float],
             revalorisation: RevalorisationServie) -> tuple[dict[str, float], int]:
@@ -2573,6 +2669,9 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
     # Sous une variante démographique, la proposition se revalorise sur la
     # masse salariale de la variante (:meth:`RevalorisationServie.pour_la_proposition`).
     servie = revalorisation.proposition
+    # Les survivants de chaque cohorte : ceux de la pyramide, répartis entre
+    # ses cas types au rythme de leur population (:func:`_survies_alignees`).
+    alignees = _survies_alignees(pensionnes, poids_cas, annee)
     for pensionne in pensionnes:
         part = poids_cas.get(pensionne.code, 0.0)
         if part <= 0.0:
@@ -2592,7 +2691,7 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
         for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
             effectif = population.effectif(
                 annee - pensionne.generation - decalage, annee
-            )
+            ) * alignees.get((pensionne.code, pensionne.generation, decalage), 1.0)
             # Ce que la cohorte touche de la pension d'une carrière complète
             # (:meth:`Pensionne.completude`) : il pèse ses MASSES, et non ses
             # têtes.
@@ -3024,7 +3123,8 @@ def _garantie_distribution(simulateur: Simulateur, pensionnes: list[Pensionne],
 
 
 def _masses_regimes(pensionnes: list[Pensionne], population: Population, annee: int,
-                    poids_cas: dict[str, float], revalorisation: RevalorisationServie
+                    poids_cas: dict[str, float], revalorisation: RevalorisationServie,
+                    poids_alignement: dict[str, float] | None = None,
                     ) -> tuple[dict[str, float], dict[str, float]]:
     """La masse du scénario 1 et ses têtes, régime par régime, une année.
 
@@ -3033,9 +3133,15 @@ def _masses_regimes(pensionnes: list[Pensionne], population: Population, annee: 
     revalorisée comme la masse la revalorise (:func:`coefficient_servi`) : leur
     somme est la masse ``actuel`` de :func:`_masses`. Une tête compte dans
     chacun des régimes qui la servent.
+
+    ``poids_alignement`` pèse la grille entière quand ``poids_cas`` n'en garde
+    qu'un cas type, comme le calage des groupes : ses survivants sont alors
+    ceux que la grille lui laisse (:func:`_survies_alignees`).
     """
     masses: dict[str, float] = {}
     tetes: dict[str, float] = {}
+    alignees = _survies_alignees(
+        pensionnes, poids_cas if poids_alignement is None else poids_alignement, annee)
     for pensionne in pensionnes:
         part = poids_cas.get(pensionne.code, 0.0)
         if part <= 0.0 or not pensionne.parts_regimes:
@@ -3049,7 +3155,8 @@ def _masses_regimes(pensionnes: list[Pensionne], population: Population, annee: 
             if annee < liquidation:
                 continue
             effectif = part * population.effectif(
-                annee - pensionne.generation - decalage, annee)
+                annee - pensionne.generation - decalage, annee
+            ) * alignees.get((pensionne.code, pensionne.generation, decalage), 1.0)
             # La complétude de la cohorte pèse sa masse, non ses têtes, comme
             # dans :func:`_masses`.
             pese = effectif * pensionne.completude(decalage)
@@ -3086,12 +3193,16 @@ def _masses_cotisations(pensionnes: list[Pensionne], population: Population,
     """
     cles = CLES_RECETTES + CLES_ASSIETTES
     masses = {cle: 0.0 for cle in cles}
+    # Passé la liquidation du droit en vigueur, ceux que la proposition fait
+    # encore cotiser sont des survivants, que la grille répartit à ses poids.
+    alignees = _survies_alignees(pensionnes, poids_cas, annee)
     for pensionne in pensionnes:
         part = poids_cas.get(pensionne.code, 0.0)
         if part <= 0.0:
             continue
         for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
-            poids = population.effectif(annee - pensionne.generation - decalage, annee)
+            poids = (population.effectif(annee - pensionne.generation - decalage, annee)
+                     * alignees.get((pensionne.code, pensionne.generation, decalage), 1.0))
             if poids <= 0.0:
                 continue
             # Ce que la proposition prélève, et sur quels revenus, est celui
@@ -3132,6 +3243,9 @@ def _masses_pilier(pensionnes: list[Pensionne], population: Population,
     """
     masses = {cle: 0.0 for cle in ("versements", "frais_versement", "frais_gestion",
                                    "encours", "rentes_brutes", "rentes")}
+    # Les survivants que la grille répartit, à chacun de ses deux poids.
+    cotisants = _survies_alignees(pensionnes, poids_cotisants, annee)
+    retraites = _survies_alignees(pensionnes, poids_retraites, annee)
     for pensionne in pensionnes:
         if not pensionne.propre.pilier and not (
                 pensionne.autre is not None and pensionne.autre.pilier):
@@ -3150,17 +3264,20 @@ def _masses_pilier(pensionnes: list[Pensionne], population: Population,
                 continue
             depart = volet.annee_liquidation + decalage
             flux = volet.pilier.get(annee)
+            cle = (pensionne.code, pensionne.generation, decalage)
             if (flux is not None and part_cotisants > 0.0
                     and annee <= depart):
                 versement, frais_v, frais_g, encours = flux
-                masses["versements"] += part_cotisants * poids * versement
-                masses["frais_versement"] += part_cotisants * poids * frais_v
-                masses["frais_gestion"] += part_cotisants * poids * frais_g
-                masses["encours"] += part_cotisants * poids * encours
+                vivants = part_cotisants * poids * cotisants.get(cle, 1.0)
+                masses["versements"] += vivants * versement
+                masses["frais_versement"] += vivants * frais_v
+                masses["frais_gestion"] += vivants * frais_g
+                masses["encours"] += vivants * encours
             if annee > depart and part_retraites > 0.0:
                 brute, nette = volet.rente_pilier
-                masses["rentes_brutes"] += part_retraites * poids * brute
-                masses["rentes"] += part_retraites * poids * nette
+                vivants = part_retraites * poids * retraites.get(cle, 1.0)
+                masses["rentes_brutes"] += vivants * brute
+                masses["rentes"] += vivants * nette
     return masses
 
 
@@ -3322,11 +3439,13 @@ def _poids_par_groupe(poids: Callable[[int], dict[str, float]],
     if annee is None:
         return poids
     masses: dict[str, dict[str, float]] = {}
-    for code, part in poids(annee).items():
+    bruts = poids(annee)
+    for code, part in bruts.items():
         if part <= 0.0:
             continue
+        # Chaque cas type pesé seul, ses survivants alignés sur toute la grille.
         regimes, _ = _masses_regimes(pensionnes, population, annee, {code: part},
-                                     revalorisation)
+                                     revalorisation, poids_alignement=bruts)
         groupes = {groupe: somme_ordonnee(regimes.get(regime, 0.0) for regime in membres)
                    for groupe, membres in GROUPES_DU_MODELE.items()}
         if somme_ordonnee(groupes.values()) > 0.0:
@@ -4344,6 +4463,10 @@ def calculer_engagements(simulateur: Simulateur, depenses: DepensesRetraite,
     # suppose que la dernière année publiée précède la première projetée, ce
     # qui est vrai tant que ``annee`` est une année observée.
     poids_par_annee = {a: poids(a) for a in range(annee, horizon + 1)}
+    # Les survivants de chaque cohorte, comme dans les masses dont
+    # l'engagement est la somme (:func:`_survies_alignees`).
+    alignees_par_annee = {a: _survies_alignees(pensionnes, poids_par_annee[a], a)
+                          for a in range(annee, horizon + 1)}
 
     ages_debut = {cas.code: int(cas.age_debut) for cas in cas_types}
     cohortes = {
@@ -4412,6 +4535,8 @@ def calculer_engagements(simulateur: Simulateur, depenses: DepensesRetraite,
                     else:
                         rang = millesime - depart_survie
                         effectif = effectif_bord * (courbe[rang] if rang < len(courbe) else 0.0)
+                    effectif *= alignees_par_annee[millesime].get(
+                        (pensionne.code, pensionne.generation, decalage), 1.0)
                     if effectif <= 0.0:
                         continue
                     # La complétude de la cohorte, comme dans les masses dont

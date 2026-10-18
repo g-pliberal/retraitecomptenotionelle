@@ -6061,7 +6061,11 @@ referents:
         preuve: doc. n° 9, p. 14 du PDF
         verification: >-
           Méthode, sur données de gestion ; la reprise est décrite à
-          misraa.
+          misraa. Le 17 octobre 2026 (action 138, étape 7), la page
+          Coût fait vivre chaque cas type au rythme du vingtile de
+          niveau de vie de son diviseur, à nombre de décès égal
+          (`Pensionne.survie`) ; reste le type de pension : la grille
+          n'a pas de retraité pour inaptitude.
         etat: a_reprendre
         chantier: "138.7"
       - quoi: >-
@@ -6394,8 +6398,16 @@ referents:
           espérance de vie pour le diviseur (`limites.md:439`).
           C'est le même point que misraa.
         preuve: doc. n° 10, p. 8 et 13 du PDF
-        verification: Méthode, sur les données du SRE.
-        etat: a_reprendre
+        verification: >-
+          Méthode, sur les données du SRE. Repris le 17 octobre 2026
+          (action 138, étape 7) : les fonctionnaires civils de l'État
+          vivent, dans la page Coût, au rythme du vingtile où leur
+          traitement les range, le seizième, à nombre de décès égal
+          (`Pensionne.survie`) ; ce vingtile attend les décès de 2025
+          des pensionnés civils à 4 % près
+          (`test_les_deces_de_2025_recoupent_le_facteur_des_pensionnes_civils`).
+          Les 23 tables relationnelles de Pablo ne sont pas reprises.
+        etat: repris
         chantier: "138.7"
       - quoi: >-
           Il chiffre la réforme de 2023 au régime de l'État par
@@ -6621,8 +6633,14 @@ referents:
           que la moyenne nationale ». C'est le même point que
           misraa.
         preuve: doc. n° 11, p. 19 du PDF
-        verification: Méthode, sur les données de la CNRACL.
-        etat: a_reprendre
+        verification: >-
+          Méthode, sur les données de la CNRACL. Repris le 17 octobre
+          2026 (action 138, étape 7) : les agents de la CNRACL vivent,
+          dans la page Coût, au rythme du vingtile où leur traitement
+          les range, le dixième ou le onzième, à nombre de décès égal
+          (`Pensionne.survie`). Ni le sexe ni l'invalidité n'y entrent :
+          un cas type pèse les retraités de sa caisse, des deux sexes.
+        etat: repris
         chantier: "138.7"
     bilan: >-
       Canopée fait mieux par la composition de la CNRACL : actifs ou
@@ -6778,8 +6796,16 @@ referents:
           biais est chiffré par Pablo (45 Md€ d'engagements, 2,2 Md€
           de pensions en 2034) et traité par Prisme et Canopée. Les
           tables par vingtile (Insee Résultats 2025) sont déjà au
-          dépôt (`limites.md:438`).
-        etat: a_reprendre
+          dépôt (`limites.md:438`). Repris le 17 octobre 2026 (action
+          138, étape 7), à nombre de décès égal : passé sa liquidation,
+          chaque cohorte de la grille survit, dans la page Coût, au
+          rythme du vingtile que son diviseur lui rattache, rapporté à
+          la population générale et à la moyenne de sa cohorte
+          (`Pensionne.survie`, `cout._survies_alignees`). Mesuré sur
+          `d8af61d` : en 2070, la proposition passe de 8,156 à 8,163 %
+          du PIB, le scénario 4 de 10,405 à 10,412 % ; le système
+          actuel, calé sur la dépense du COR, ne bouge pas.
+        etat: repris
         chantier: "138.7"
     bilan: >-
       MisrAA fait mieux par la mortalité différentielle, qui manque aux
