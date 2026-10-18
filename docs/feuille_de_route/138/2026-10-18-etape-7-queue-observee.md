@@ -104,10 +104,12 @@ sans elle.
   solde moyen de 2026 à 2070 passe de −1,080 à −1,065 % du PIB, la dette de
   2070 de 73,1 à 72,1 %, le creux du coefficient d'équilibre de 0,831 à 0,832.
 
-**Le paquet** : publié avec le changement. Sans lui, le portage lisait encore
-l'ancienne table et les anciens facteurs, et trente confrontations des deux
-moteurs de la suite rapide échouaient, de l'ordre de 0,2 % sur les pensions
-notionnelles.
+**Le paquet** : sans lui, le portage lit encore l'ancienne table et les
+anciens facteurs, et trente confrontations des deux moteurs de la suite rapide
+échouent, de l'ordre de 0,2 % sur les pensions notionnelles. Refait avec le
+changement, il s'est perdu au rebasage, la session de l'étape 6 ayant publié
+le sien entre-temps (`-merge` garde celui de `main`) ; refait sur `main`, il
+est publié juste après.
 
 **Ce qui reste** de l'étape :
 
