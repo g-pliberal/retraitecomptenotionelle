@@ -57,9 +57,13 @@ la retraite du décret n° 54-50, du 18 janvier 1954 au 27 novembre 2007, dont
 la version prête à l'agent la classe que le modèle lui présume (paramètre
 ``classe_presumee``), et ne s'atteint qu'avec des années de services
 (``services_requis``), à un âge au plus tard (``a_defaut_des_services``).
-Les autres régimes spéciaux — CRPCEN, mines, marins, Comédie-Française, port
-de Strasbourg — n'ont pas de limite au modèle : leurs statuts ne sont pas
-dans l'index, ou n'en fixent pas.
+Depuis l'étape 10, le mineur (fiche ``limite_age_mines``), dont la limite est
+l'âge d'ouverture de sa pension depuis le décret n° 54-51 du 16 janvier 1954,
+et qui peut, dans l'intérêt du service, rester en activité au-delà, sans
+borne (exception ``interet_du_service``) : présumé maintenu jusqu'au départ
+saisi, il n'est jamais radié par sa limite. Les autres régimes spéciaux —
+CRPCEN, marins, Comédie-Française, port de Strasbourg — n'ont pas de limite
+au modèle : leurs statuts ne sont pas dans l'index, ou n'en fixent pas.
 
 La limite se lit, version par version, au jour où elle est atteinte (date
 ``age_atteint``) : chaque version porte, dans ses paramètres, la limite de
@@ -67,7 +71,9 @@ chaque classe d'emploi — sédentaire, active, police et surveillance
 pénitentiaire, non-officier, officier —, ses paliers en cours de version, ou
 le relèvement de la loi de 2010, compté depuis l'année où l'ancien âge de
 référence est atteint. La radiation tombe le premier jour où l'âge atteint
-la limite alors en vigueur.
+la limite alors en vigueur : l'anniversaire, ou le premier jour de la
+version qui la crée, quand l'agent l'avait déjà passée ; ses exceptions se
+lisent ce jour-là, et non à l'anniversaire qui le précède.
 
 :func:`radiation` dit la radiation d'une carrière et ce qui la recule ;
 :func:`radier` rend la carrière dont les services s'arrêtent à la radiation,
@@ -104,13 +110,14 @@ FICHE_IEG = "limite_age_ieg"
 FICHE_OPERA = "limite_age_opera"
 FICHE_SEITA = "limite_age_seita"
 FICHE_BANQUE_DE_FRANCE = "limite_age_banque_de_france"
+FICHE_MINES = "limite_age_mines"
 #: Les fiches que le module lit, et que le paquet du site porte
 #: (``FichesDatees``).
 FICHES = (FICHE_DE_LA_LIMITE, FICHE_DES_MILITAIRES, FICHE_DES_ENFANTS,
           FICHE_DE_LA_CARRIERE_INCOMPLETE, FICHE_DE_L_ACTIF, FICHE_DU_MAINTIEN,
           FICHE_DU_PLAFOND, FICHE_DES_CONTRACTUELS, FICHE_DES_OUVRIERS,
           FICHE_SNCF_RATP, FICHE_IEG, FICHE_OPERA, FICHE_SEITA,
-          FICHE_BANQUE_DE_FRANCE)
+          FICHE_BANQUE_DE_FRANCE, FICHE_MINES)
 #: Les fiches du code des pensions, fonctionnaires et militaires, dont la
 #: radiation ouvre les seuls régimes de ``REGIMES_RADIES``.
 FICHES_DU_CODE_DES_PENSIONS = frozenset({FICHE_DE_LA_LIMITE, FICHE_DES_MILITAIRES})
@@ -138,7 +145,7 @@ STATUTS_CONTRACTUELS = frozenset({"contractuel_public"})
 FICHE_DU_REGIME = {"fspoeie": FICHE_DES_OUVRIERS, "sncf": FICHE_SNCF_RATP,
                    "ratp": FICHE_SNCF_RATP, "ieg": FICHE_IEG,
                    "opera_de_paris": FICHE_OPERA, "seita": FICHE_SEITA,
-                   "banque_de_france": FICHE_BANQUE_DE_FRANCE}
+                   "banque_de_france": FICHE_BANQUE_DE_FRANCE, "mines": FICHE_MINES}
 #: Le régime dont la durée d'assurance décide la prolongation du contractuel
 #: pour carrière incomplète (article 5 de la loi n° 2003-775).
 REGIME_DU_CONTRACTUEL = "regime_general"
@@ -149,6 +156,7 @@ RECUL_PARENT_DE_TROIS = "recul_parent_de_trois_enfants"
 CARRIERE_INCOMPLETE = "prolongation_carriere_incomplete"
 PROLONGATION_ACTIVE = "prolongation_categorie_active"
 MAINTIEN = "maintien_jusqu_a_70_ans"
+MAINTIEN_DANS_L_INTERET_DU_SERVICE = "maintien_dans_l_interet_du_service"
 
 #: Les exceptions qu'une version des fiches des contractuels, des ouvriers et
 #: de la SNCF et de la RATP nomme dans son paramètre ``exceptions`` ; une
@@ -160,6 +168,9 @@ JUSQU_A_70_ANS = "maintien"
 PLAFOND = "plafond"
 TOUTES = frozenset({ENFANTS, INCOMPLETE, ACTIF_JUSQU_AUX_SEDENTAIRES, JUSQU_A_70_ANS,
                     PLAFOND})
+#: Le maintien sans borne du mineur (décret n° 54-51, article 3), qu'une
+#: version ouvre en le nommant, et que le fonctionnaire n'a pas.
+INTERET_DU_SERVICE = "interet_du_service"
 
 MOIS_PAR_AN = 12
 
@@ -353,12 +364,13 @@ def _au_terme_des_services(moteur: ScenarioActuel, carriere: Carriere, nom: str,
 
 
 def _limite(moteur: ScenarioActuel, carriere: Carriere, nom: str, classe: str
-            ) -> tuple[int, str] | None:
-    """La limite d'âge de cette classe, en mois, et la version qui la donne :
-    le premier jour où l'âge atteint la limite en vigueur ce jour-là. Une
-    version peut prêter à l'agent la classe que le modèle lui présume
-    (``classe_presumee``), et ne s'atteindre qu'avec des années de services
-    (:func:`_au_terme_des_services`)."""
+            ) -> tuple[int, str, str] | None:
+    """La limite d'âge de cette classe, en mois, la version qui la donne, et le
+    jour où l'agent l'atteint : le premier jour où l'âge atteint la limite en
+    vigueur ce jour-là, son anniversaire, ou le premier jour de la version qui
+    la crée quand il l'avait déjà passée. Une version peut prêter à l'agent la
+    classe que le modèle lui présume (``classe_presumee``), et ne s'atteindre
+    qu'avec des années de services (:func:`_au_terme_des_services`)."""
     fiche = _fiche(moteur, nom)
     if fiche is None:
         return None
@@ -374,7 +386,7 @@ def _limite(moteur: ScenarioActuel, carriere: Carriere, nom: str, classe: str
             if debut is not None and jour < debut:
                 jour = debut
             if fin is None or jour < fin:
-                return max(mois, _mois_au(carriere, jour)), version["id"]
+                return max(mois, _mois_au(carriere, jour)), version["id"], jour
     return None
 
 
@@ -388,14 +400,13 @@ def _enfants_a_charge(carriere: Carriere, jour: str, age_a_charge: float) -> int
 
 
 def _prorogation_du_statut(carriere: Carriere, limite: int, nom: str, version: dict,
-                           parametres: dict) -> Recul | None:
+                           parametres: dict, jour: str) -> Recul | None:
     """La prorogation pour enfants qu'un statut écrit lui-même (paramètre
     ``enfants`` de la version de la limite), celle de la Banque de France :
-    tant d'années pour tant d'enfants à charge quand la limite est atteinte,
-    et tant d'autres élevés jusqu'à l'âge dit, que le modèle compte parmi
-    ceux qui ne sont plus à charge, la plus longue qui s'applique, sous le
-    plafond de ``au_plus`` années."""
-    jour = _jour(carriere, limite)
+    tant d'années pour tant d'enfants à charge le jour où la limite est
+    atteinte, et tant d'autres élevés jusqu'à l'âge dit, que le modèle compte
+    parmi ceux qui ne sont plus à charge, la plus longue qui s'applique, sous
+    le plafond de ``au_plus`` années."""
     a_charge = _enfants_a_charge(carriere, jour, parametres["age_a_charge"])
     annees = int(max(parametres["age_a_charge"], parametres["eleves_jusqu_a"]))
     seuil = f"{int(jour[:4]) - annees:04d}{jour[4:]}"
@@ -411,7 +422,7 @@ def _prorogation_du_statut(carriere: Carriere, limite: int, nom: str, version: d
 
 
 def _reculs_pour_enfants(moteur: ScenarioActuel, carriere: Carriere, limite: int,
-                         classe: str, nom: str = FICHE_DE_LA_LIMITE) -> Recul | None:
+                         classe: str, nom: str, jour: str) -> Recul | None:
     """Le recul de droit pour enfants, au jour où la limite est atteinte : un
     an par enfant à charge, trois au plus, ou un an pour le parent de trois
     enfants vivants à cinquante ans — le plus favorable des deux, que la loi ne
@@ -420,11 +431,10 @@ def _reculs_pour_enfants(moteur: ScenarioActuel, carriere: Carriere, limite: int
     porte (:func:`_prorogation_du_statut`)."""
     if classe in (NON_OFFICIER, OFFICIER):
         return None
-    jour = _jour(carriere, limite)
     propre = None if nom in FICHES_DU_CODE_DES_PENSIONS else _version(moteur, nom, jour)
     if propre is not None and propre["parametres"].get("enfants"):
         return _prorogation_du_statut(carriere, limite, nom, propre,
-                                      propre["parametres"]["enfants"])
+                                      propre["parametres"]["enfants"], jour)
     version = _version(moteur, FICHE_DES_ENFANTS, jour)
     if version is None or not version["parametres"]:
         return None
@@ -454,15 +464,15 @@ def _reculs_pour_enfants(moteur: ScenarioActuel, carriere: Carriere, limite: int
 
 def _prolongation_carriere_incomplete(moteur: ScenarioActuel, carriere: Carriere,
                                       depuis: int, affiliations: frozenset[str],
-                                      regime: str | None,
-                                      nom: str = FICHE_DE_LA_LIMITE) -> Recul | None:
-    """La prolongation pour carrière incomplète : jusqu'à la durée des services
-    du taux maximum (L. 13), dix trimestres au plus, que le modèle compte sur
-    les seuls services, sans les bonifications. La version de la limite qui
-    porte ``incomplete_au_dela_de``, celle des industries électriques et
-    gazières, la borne à la durée du taux maximum moins ce nombre de
-    trimestres, et la prolongation est la sienne."""
-    jour = _jour(carriere, depuis)
+                                      regime: str | None, nom: str, jour: str
+                                      ) -> Recul | None:
+    """La prolongation pour carrière incomplète, lue au jour où l'agent atteint
+    l'âge ``depuis`` : jusqu'à la durée des services du taux maximum (L. 13),
+    dix trimestres au plus, que le modèle compte sur les seuls services, sans
+    les bonifications. La version de la limite qui porte
+    ``incomplete_au_dela_de``, celle des industries électriques et gazières,
+    la borne à la durée du taux maximum moins ce nombre de trimestres, et la
+    prolongation est la sienne."""
     propre = None if nom in FICHES_DU_CODE_DES_PENSIONS else _version(moteur, nom, jour)
     au_dela_de = None if propre is None else propre["parametres"].get("incomplete_au_dela_de")
     if au_dela_de is not None:
@@ -492,11 +502,10 @@ def _prolongation_carriere_incomplete(moteur: ScenarioActuel, carriere: Carriere
 
 
 def _jusqu_a_la_limite(moteur: ScenarioActuel, carriere: Carriere, depuis: int,
-                       classe: str, nom_de_la_limite: str = FICHE_DE_LA_LIMITE
-                       ) -> Recul | None:
+                       classe: str, nom_de_la_limite: str, jour: str) -> Recul | None:
     """La prolongation de l'actif jusqu'à la limite des sédentaires, ou le
-    maintien du sédentaire jusqu'à soixante-dix ans."""
-    jour = _jour(carriere, depuis)
+    maintien du sédentaire jusqu'à soixante-dix ans, lus au jour où l'agent
+    atteint l'âge ``depuis``."""
     if classe == SEDENTAIRE:
         version = _version(moteur, FICHE_DU_MAINTIEN, jour)
         age = None if version is None else version["parametres"].get("jusqu_a")
@@ -553,9 +562,15 @@ def radiation(moteur: ScenarioActuel, carriere: Carriere) -> Radiation | None:
     lue = _limite(moteur, carriere, nom, classe)
     if lue is None:
         return None
-    limite, version = lue
+    limite, version, jour_limite = lue
     if carriere.date_de_l_age(limite / MOIS_PAR_AN) >= fin:
         return None
+
+    def au(mois: int) -> str:
+        # Le jour où l'agent atteint cet âge, jamais avant celui où il atteint
+        # sa limite, qu'une version a pu créer après son anniversaire.
+        return max(_jour(carriere, mois), jour_limite)
+
     # Les services de l'emploi : ceux du code des pensions, fonctionnaire ou
     # militaire, ensemble ; ceux de la même fiche, pour les autres, dont la
     # radiation ouvre tous les régimes que l'emploi route.
@@ -583,20 +598,19 @@ def radiation(moteur: ScenarioActuel, carriere: Carriere) -> Radiation | None:
             regime = next((code for code in sorted(_regimes(moteur, carriere, derniere))
                            if code in propres), None)
         atteint = limite
-        enfants = (_reculs_pour_enfants(moteur, carriere, atteint, classe, nom)
-                   if ENFANTS in _exceptions(moteur, nom, _jour(carriere, atteint))
-                   else None)
+        enfants = (_reculs_pour_enfants(moteur, carriere, atteint, classe, nom, au(atteint))
+                   if ENFANTS in _exceptions(moteur, nom, au(atteint)) else None)
         if enfants is not None:
             candidats.append(enfants)
             atteint = _mois(enfants.jusqu_a)
         # Sans cumul (Banque de France, article 242-1), la prolongation part
         # de la limite, et seule la plus longue des deux exceptions reste.
-        de_la_limite = None if code_des_pensions else _version(moteur, nom, _jour(carriere, limite))
+        de_la_limite = None if code_des_pensions else _version(moteur, nom, jour_limite)
         sans_cumul = bool(de_la_limite and de_la_limite["parametres"].get("sans_cumul"))
         depuis = limite if sans_cumul else atteint
         incomplete = (_prolongation_carriere_incomplete(
-            moteur, carriere, depuis, civiles, regime, nom)
-            if INCOMPLETE in _exceptions(moteur, nom, _jour(carriere, depuis)) else None)
+            moteur, carriere, depuis, civiles, regime, nom, au(depuis))
+            if INCOMPLETE in _exceptions(moteur, nom, au(depuis)) else None)
         if incomplete is not None and sans_cumul and enfants is not None:
             if incomplete.jusqu_a > enfants.jusqu_a:
                 candidats.remove(enfants)
@@ -605,16 +619,26 @@ def radiation(moteur: ScenarioActuel, carriere: Carriere) -> Radiation | None:
         if incomplete is not None:
             candidats.append(incomplete)
             atteint = _mois(incomplete.jusqu_a)
-        ouvertes = _exceptions(moteur, nom, _jour(carriere, atteint))
-        prolongee = (_jusqu_a_la_limite(moteur, carriere, atteint, classe, nom)
+        ouvertes = _exceptions(moteur, nom, au(atteint))
+        prolongee = (_jusqu_a_la_limite(moteur, carriere, atteint, classe, nom, au(atteint))
                      if (JUSQU_A_70_ANS if classe == SEDENTAIRE
                          else ACTIF_JUSQU_AUX_SEDENTAIRES) in ouvertes else None)
         if prolongee is not None:
             candidats.append(prolongee)
             atteint = _mois(prolongee.jusqu_a)
-        plafond = (_version(moteur, FICHE_DU_PLAFOND, _jour(carriere, atteint))
-                   if PLAFOND in _exceptions(moteur, nom, _jour(carriere, atteint))
-                   else None)
+        # Le maintien dans l'intérêt du service du mineur (décret n° 54-51,
+        # article 3), sans borne : présumé accordé jusqu'au départ saisi, il ne
+        # laisse jamais la limite radier.
+        if INTERET_DU_SERVICE in _exceptions(moteur, nom, au(atteint)):
+            jusqu_au_depart = _mois(carriere.age_au(declare))
+            if jusqu_au_depart > atteint:
+                candidats.append(Recul(MAINTIEN_DANS_L_INTERET_DU_SERVICE, nom,
+                                       _version(moteur, nom, au(atteint))["id"],
+                                       atteint / MOIS_PAR_AN,
+                                       jusqu_au_depart / MOIS_PAR_AN, presumee=True))
+                atteint = jusqu_au_depart
+        plafond = (_version(moteur, FICHE_DU_PLAFOND, au(atteint))
+                   if PLAFOND in _exceptions(moteur, nom, au(atteint)) else None)
         maximum = None if plafond is None else plafond["parametres"].get("age_maximal")
         if maximum is not None:
             plafonne = max(_mois(maximum), limite)

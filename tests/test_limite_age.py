@@ -194,14 +194,14 @@ def test_radier_est_idempotent(simulateur):
 
 
 def test_les_statuts_sans_limite_au_modele_n_en_ont_pas(simulateur):
-    """Le salarié, l'agent des IEG, le cheminot et l'agent de la Banque de
-    France recrutés depuis la fermeture de leur régime spécial, salariés de
-    droit commun, ne sont pas radiés, ni les régimes spéciaux dont le statut
+    """Le salarié, l'agent des IEG, le cheminot, l'agent de la Banque de France
+    et le mineur recrutés depuis la fermeture de leur régime spécial, salariés
+    de droit commun, ne sont pas radiés, ni les régimes spéciaux dont le statut
     n'est pas lu ou n'a pas de limite (étape 6)."""
     moteur = simulateur.scenario_actuel
     for statut, naissance in (("salarie_prive_non_cadre", 1990), ("agent_ieg", 2005),
                               ("agent_sncf", 2000), ("agent_banque_de_france", 2005),
-                              ("clerc_de_notaire", 1960), ("mineur", 1950), ("marin", 1990),
+                              ("clerc_de_notaire", 1960), ("mineur", 1995), ("marin", 1990),
                               ("personnel_comedie_francaise", 1990),
                               ("agent_port_strasbourg", 1990)):
         carriere = _simple(simulateur, statut, naissance, 75)
@@ -448,3 +448,64 @@ def test_la_banque_de_france_proroge_pour_enfants_selon_son_statut(simulateur):
     incomplete = radiation(("2014-01-01", "2016-01-01"), debut=45.0)
     assert [(r.nom, r.depuis, r.jusqu_a) for r in incomplete.reculs] == [
         (limite_age.CARRIERE_INCOMPLETE, 67.0, 69.5)]
+
+
+def test_l_exception_se_lit_au_jour_ou_la_limite_nait(simulateur):
+    """Né le 15 janvier 1950, l'agent de la Banque avait passé sa limite,
+    soixante-deux ans et trois mois, quand le statut l'a créée, le 26 juillet
+    2012 : il l'atteint ce jour-là, à soixante-deux ans et six mois, et les
+    exceptions se lisent ce jour-là, dans ce statut, et non à l'anniversaire du
+    15 juillet, qui précède. Ses deux enfants, nés en 2000 et en 2002, sont à
+    sa charge : un an de prorogation (article 242), et il prend sa retraite en
+    août 2013, à soixante-trois ans et six mois (action 151, étape 10)."""
+    moteur = simulateur.scenario_actuel
+    carriere = _simple(simulateur, "agent_banque_de_france", 1950, 68, nombre_enfants=2,
+                       naissances_enfants=("2000-01-01", "2002-01-01"))
+    radiation = limite_age.radiation(moteur, carriere)
+    assert (radiation.version, radiation.limite, radiation.age, radiation.date) \
+        == ("statut_de_2012", 62.5, 63.5, DateMois(2013, 8))
+    assert _reculs(radiation) == [(limite_age.RECUL_ENFANTS, 62.5, 63.5, False)]
+    assert radiation.reculs[0].fiche == limite_age.FICHE_BANQUE_DE_FRANCE
+
+
+# --- Action 151, étape 10 : le mineur (fiche ``limite_age_mines``), décret
+# n° 54-51 du 16 janvier 1954, articles 2 et 3.
+
+def test_le_mineur_passe_sa_limite_dans_l_interet_du_service(simulateur):
+    """Article 2 : « L'âge limite de maintien en activité » du mineur « est
+    l'âge fixé pour l'ouverture du droit à rente ou pension de retraite par les
+    dispositions du premier alinéa de l'article 146 » du décret n° 46-2769, qui
+    la garantit « aux affiliés âgés de cinquante-cinq ans » ; depuis 1993,
+    l'article 125 la leur garantit au même âge. Article 3 : « Tout agent peut,
+    dans l'intérêt du service, être admis à rester en activité au delà de l'âge
+    limite », maintien sans borne, présumé accordé autant que le départ saisi
+    le demande. Né en 1930, il a cinquante-cinq ans en 1985, et né en 1950, en
+    2005 : parti à soixante ans, il n'est pas radié, et sa pension part de son
+    départ."""
+    moteur = simulateur.scenario_actuel
+    for naissance, version in ((1930, "decret_de_1954"), (1950, "article_125_de_1993")):
+        carriere = _simple(simulateur, "mineur", naissance, 60)
+        radiation = limite_age.radiation(moteur, carriere)
+        assert (radiation.fiche, radiation.version, radiation.limite, radiation.age,
+                sorted(radiation.regimes)) \
+            == (limite_age.FICHE_MINES, version, 55.0, 60.0, ["mines"]), naissance
+        assert not radiation.forcee and radiation.date == carriere.date_liquidation
+        assert _reculs(radiation) == [
+            (limite_age.MAINTIEN_DANS_L_INTERET_DU_SERVICE, 55.0, 60.0, True)]
+        assert departs.departs(moteur, carriere)[0].unique
+        assert limite_age.radier(moteur, carriere) is carriere
+
+
+def test_avant_le_decret_de_1954_le_mineur_n_a_pas_de_limite(simulateur):
+    """Le décret n° 54-51 vaut du 18 janvier 1954 : né le 15 janvier 1898, le
+    mineur parti en août 1953, à cinquante-cinq ans et demi, n'a pas de limite ;
+    parti à cinquante-huit ans, il atteint la sienne ce jour-là, à cinquante-six
+    ans, et le maintien le garde jusqu'à son départ."""
+    moteur = simulateur.scenario_actuel
+    avant = _simple(simulateur, "mineur", 1898, 55.5)
+    assert avant.date_liquidation == DateMois(1953, 8)
+    assert limite_age.radiation(moteur, avant) is None
+    apres = limite_age.radiation(moteur, _simple(simulateur, "mineur", 1898, 58))
+    assert (apres.version, apres.limite, apres.forcee) == ("decret_de_1954", 56.0, False)
+    assert _reculs(apres) == [
+        (limite_age.MAINTIEN_DANS_L_INTERET_DU_SERVICE, 56.0, 58.0, True)]

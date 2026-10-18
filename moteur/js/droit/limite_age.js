@@ -18,7 +18,11 @@
  * qui jouent pour eux. Depuis l'étape 9, une version peut prêter à l'agent la
  * classe que le modèle lui présume et ne s'atteindre qu'avec des années de
  * services : l'admission d'office de l'agent des IEG avant 2008 (décret
- * n° 54-50).
+ * n° 54-50). Depuis l'étape 10, le mineur a la sienne, l'âge d'ouverture de sa
+ * pension (décret n° 54-51), et reste dans l'intérêt du service, sans borne,
+ * présumé maintenu jusqu'au départ saisi ; et les exceptions se lisent au jour
+ * où l'agent atteint sa limite, le premier de la version qui la crée quand il
+ * l'avait déjà passée.
  *
  * Jumeau de `src/retraite_notionnelle/droit/limite_age.py`, qui fait foi et
  * dit le droit.
@@ -43,6 +47,7 @@ export const FICHE_IEG = "limite_age_ieg";
 export const FICHE_OPERA = "limite_age_opera";
 export const FICHE_SEITA = "limite_age_seita";
 export const FICHE_BANQUE_DE_FRANCE = "limite_age_banque_de_france";
+export const FICHE_MINES = "limite_age_mines";
 /** Les fiches du code des pensions, fonctionnaires et militaires. */
 export const FICHES_DU_CODE_DES_PENSIONS = new Set([FICHE_DE_LA_LIMITE, FICHE_DES_MILITAIRES]);
 
@@ -62,7 +67,7 @@ export const STATUTS_CONTRACTUELS = new Set(["contractuel_public"]);
 export const FICHE_DU_REGIME = Object.freeze({
   fspoeie: FICHE_DES_OUVRIERS, sncf: FICHE_SNCF_RATP, ratp: FICHE_SNCF_RATP,
   ieg: FICHE_IEG, opera_de_paris: FICHE_OPERA, seita: FICHE_SEITA,
-  banque_de_france: FICHE_BANQUE_DE_FRANCE,
+  banque_de_france: FICHE_BANQUE_DE_FRANCE, mines: FICHE_MINES,
 });
 /** Le régime dont la durée d'assurance décide la prolongation du contractuel. */
 export const REGIME_DU_CONTRACTUEL = "regime_general";
@@ -72,6 +77,7 @@ export const RECUL_PARENT_DE_TROIS = "recul_parent_de_trois_enfants";
 export const CARRIERE_INCOMPLETE = "prolongation_carriere_incomplete";
 export const PROLONGATION_ACTIVE = "prolongation_categorie_active";
 export const MAINTIEN = "maintien_jusqu_a_70_ans";
+export const MAINTIEN_DANS_L_INTERET_DU_SERVICE = "maintien_dans_l_interet_du_service";
 
 /** Les exceptions que nomme le paramètre `exceptions` d'une version. */
 export const ENFANTS = "enfants";
@@ -80,6 +86,8 @@ export const ACTIF_JUSQU_AUX_SEDENTAIRES = "prolongation_active";
 export const JUSQU_A_70_ANS = "maintien";
 export const PLAFOND = "plafond";
 const TOUTES = new Set([ENFANTS, INCOMPLETE, ACTIF_JUSQU_AUX_SEDENTAIRES, JUSQU_A_70_ANS, PLAFOND]);
+/** Le maintien sans borne du mineur (décret n° 54-51, article 3). */
+export const INTERET_DU_SERVICE = "interet_du_service";
 
 const MOIS_PAR_AN = 12;
 const deux = (n) => String(n).padStart(2, "0");
@@ -234,9 +242,10 @@ function auTermeDesServices(moteur, carriere, nom, enMois, parametres) {
 }
 
 /**
- * La limite d'âge de cette classe, en mois, et la version qui la donne ; une
- * version peut prêter à l'agent la classe que le modèle lui présume
- * (`classe_presumee`), et ne s'atteindre qu'avec des années de services.
+ * La limite d'âge de cette classe, en mois, la version qui la donne, et le jour
+ * où l'agent l'atteint, son anniversaire ou le premier jour de la version qui
+ * la crée ; une version peut prêter à l'agent la classe que le modèle lui
+ * présume (`classe_presumee`), et ne s'atteindre qu'avec des années de services.
  */
 function limiteDe(moteur, carriere, nom, classe) {
   const lue = fiche(moteur, nom);
@@ -259,7 +268,7 @@ function limiteDe(moteur, carriere, nom, classe) {
         jour = debut;
       }
       if (fin === null || jour < fin) {
-        return [Math.max(m, moisAu(carriere, jour)), version.id];
+        return [Math.max(m, moisAu(carriere, jour)), version.id, jour];
       }
     }
   }
@@ -282,8 +291,7 @@ function recul(nom, ficheDuRecul, version, depuis, jusquA, presumee) {
  * de la version de la limite), celle de la Banque de France. Voir
  * `_prorogation_du_statut` du Python.
  */
-function prorogationDuStatut(carriere, limite, nom, version, p) {
-  const jour = jourDe(carriere, limite);
+function prorogationDuStatut(carriere, limite, nom, version, p, jour) {
   const aCharge = enfantsACharge(carriere, jour, p.age_a_charge);
   const annees = Math.trunc(Math.max(p.age_a_charge, p.eleves_jusqu_a));
   const seuil = `${String(Number(jour.slice(0, 4)) - annees).padStart(4, "0")}${jour.slice(4)}`;
@@ -298,15 +306,16 @@ function prorogationDuStatut(carriere, limite, nom, version, p) {
     (limite + valeur) / MOIS_PAR_AN, false);
 }
 
-function reculsPourEnfants(moteur, carriere, limite, classe, nomDeLaLimite = FICHE_DE_LA_LIMITE) {
+/** Le recul de droit pour enfants, au jour `jour` où la limite est atteinte. */
+function reculsPourEnfants(moteur, carriere, limite, classe, nomDeLaLimite, jour) {
   if (militaire(classe)) {
     return null;
   }
-  const jour = jourDe(carriere, limite);
   const propre = FICHES_DU_CODE_DES_PENSIONS.has(nomDeLaLimite)
     ? null : versionAu(moteur, nomDeLaLimite, jour);
   if (propre !== null && propre.parametres.enfants) {
-    return prorogationDuStatut(carriere, limite, nomDeLaLimite, propre, propre.parametres.enfants);
+    return prorogationDuStatut(carriere, limite, nomDeLaLimite, propre, propre.parametres.enfants,
+      jour);
   }
   const version = versionAu(moteur, FICHE_DES_ENFANTS, jour);
   if (version === null || Object.keys(version.parametres).length === 0) {
@@ -335,12 +344,11 @@ function reculsPourEnfants(moteur, carriere, limite, classe, nomDeLaLimite = FIC
     (limite + valeur) / MOIS_PAR_AN, false);
 }
 
-function prolongationCarriereIncomplete(moteur, carriere, depuis, affiliations, regime,
-  nom = FICHE_DE_LA_LIMITE) {
-  // La version de la limite qui porte `incomplete_au_dela_de`, celle des
-  // industries électriques et gazières, borne la prolongation à la durée du
-  // taux maximum moins ce nombre de trimestres.
-  const jour = jourDe(carriere, depuis);
+function prolongationCarriereIncomplete(moteur, carriere, depuis, affiliations, regime, nom, jour) {
+  // Lue au jour `jour` où l'agent atteint l'âge `depuis`. La version de la
+  // limite qui porte `incomplete_au_dela_de`, celle des industries électriques
+  // et gazières, borne la prolongation à la durée du taux maximum moins ce
+  // nombre de trimestres.
   const propre = FICHES_DU_CODE_DES_PENSIONS.has(nom) ? null : versionAu(moteur, nom, jour);
   const auDelaDe = propre?.parametres?.incomplete_au_dela_de ?? null;
   let fiche = nom;
@@ -372,8 +380,8 @@ function prolongationCarriereIncomplete(moteur, carriere, depuis, affiliations, 
     depuis / MOIS_PAR_AN, (depuis + prolongation) / MOIS_PAR_AN, true);
 }
 
-function jusquALaLimite(moteur, carriere, depuis, classe, nomDeLaLimite = FICHE_DE_LA_LIMITE) {
-  const jour = jourDe(carriere, depuis);
+/** La prolongation de l'actif ou le maintien du sédentaire, lus au jour `jour`. */
+function jusquALaLimite(moteur, carriere, depuis, classe, nomDeLaLimite, jour) {
   let version;
   let cible = null;
   let nom;
@@ -430,10 +438,16 @@ export function radiation(moteur, carriere) {
   if (lue === null) {
     return null;
   }
-  const [limite, version] = lue;
+  const [limite, version, jourLimite] = lue;
   if (carriere.dateDeLAge(limite / MOIS_PAR_AN).rang >= fin.rang) {
     return null;
   }
+  // Le jour où l'agent atteint cet âge, jamais avant celui où il atteint sa
+  // limite, qu'une version a pu créer après son anniversaire.
+  const au = (enMois) => {
+    const jour = jourDe(carriere, enMois);
+    return jour > jourLimite ? jour : jourLimite;
+  };
   // Les services de l'emploi : ceux du code des pensions ensemble, ceux de la
   // même fiche pour les autres, dont la radiation ouvre tous les régimes.
   const codeDesPensions = FICHES_DU_CODE_DES_PENSIONS.has(nom);
@@ -463,19 +477,20 @@ export function radiation(moteur, carriere) {
       regime = [...regimesDeLaLigne(moteur, carriere, derniere)].sort().find(propre) ?? null;
     }
     let atteint = limite;
-    const enfants = exceptions(moteur, nom, jourDe(carriere, atteint)).has(ENFANTS)
-      ? reculsPourEnfants(moteur, carriere, atteint, classe, nom) : null;
+    const enfants = exceptions(moteur, nom, au(atteint)).has(ENFANTS)
+      ? reculsPourEnfants(moteur, carriere, atteint, classe, nom, au(atteint)) : null;
     if (enfants !== null) {
       candidats.push(enfants);
       atteint = mois(enfants.jusqu_a);
     }
     // Sans cumul (Banque de France, article 242-1), la prolongation part de
     // la limite, et seule la plus longue des deux exceptions reste.
-    const deLaLimite = codeDesPensions ? null : versionAu(moteur, nom, jourDe(carriere, limite));
+    const deLaLimite = codeDesPensions ? null : versionAu(moteur, nom, jourLimite);
     const sansCumul = Boolean(deLaLimite && deLaLimite.parametres.sans_cumul);
     const depuis = sansCumul ? limite : atteint;
-    let incomplete = exceptions(moteur, nom, jourDe(carriere, depuis)).has(INCOMPLETE)
-      ? prolongationCarriereIncomplete(moteur, carriere, depuis, civiles, regime, nom) : null;
+    let incomplete = exceptions(moteur, nom, au(depuis)).has(INCOMPLETE)
+      ? prolongationCarriereIncomplete(moteur, carriere, depuis, civiles, regime, nom, au(depuis))
+      : null;
     if (incomplete !== null && sansCumul && enfants !== null) {
       if (incomplete.jusqu_a > enfants.jusqu_a) {
         candidats = candidats.filter((r) => r !== enfants);
@@ -487,15 +502,27 @@ export function radiation(moteur, carriere) {
       candidats.push(incomplete);
       atteint = mois(incomplete.jusqu_a);
     }
-    const ouvertes = exceptions(moteur, nom, jourDe(carriere, atteint));
+    const ouvertes = exceptions(moteur, nom, au(atteint));
     const prolongee = ouvertes.has(classe === SEDENTAIRE ? JUSQU_A_70_ANS : ACTIF_JUSQU_AUX_SEDENTAIRES)
-      ? jusquALaLimite(moteur, carriere, atteint, classe, nom) : null;
+      ? jusquALaLimite(moteur, carriere, atteint, classe, nom, au(atteint)) : null;
     if (prolongee !== null) {
       candidats.push(prolongee);
       atteint = mois(prolongee.jusqu_a);
     }
-    const plafond = exceptions(moteur, nom, jourDe(carriere, atteint)).has(PLAFOND)
-      ? versionAu(moteur, FICHE_DU_PLAFOND, jourDe(carriere, atteint)) : null;
+    // Le maintien dans l'intérêt du service du mineur (décret n° 54-51,
+    // article 3), sans borne : présumé accordé jusqu'au départ saisi, il ne
+    // laisse jamais la limite radier.
+    if (exceptions(moteur, nom, au(atteint)).has(INTERET_DU_SERVICE)) {
+      const jusquAuDepart = mois(carriere.ageAu(declare));
+      if (jusquAuDepart > atteint) {
+        candidats.push(recul(MAINTIEN_DANS_L_INTERET_DU_SERVICE, nom,
+          versionAu(moteur, nom, au(atteint)).id, atteint / MOIS_PAR_AN,
+          jusquAuDepart / MOIS_PAR_AN, true));
+        atteint = jusquAuDepart;
+      }
+    }
+    const plafond = exceptions(moteur, nom, au(atteint)).has(PLAFOND)
+      ? versionAu(moteur, FICHE_DU_PLAFOND, au(atteint)) : null;
     const maximum = plafond === null ? null : (plafond.parametres.age_maximal ?? null);
     if (maximum !== null) {
       const plafonne = Math.max(mois(maximum), limite);

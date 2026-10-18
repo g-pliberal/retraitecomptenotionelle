@@ -1,0 +1,166 @@
+schema_version: 1
+id: limite_age_mines
+intitule: >-
+  Depuis le 18 janvier 1954, la limite d'âge du mineur affilié au régime spécial de sécurité
+  sociale dans les mines est l'âge d'ouverture de sa pension, cinquante-cinq ans, reculée pour
+  l'employé, le technicien et l'agent de maîtrise affiliés à une caisse complémentaire,
+  soixante ans pour l'ingénieur ; tout agent peut, dans l'intérêt du service, être admis à
+  rester en activité au-delà, sans autre borne, ce maintien prenant fin à l'initiative de
+  l'une ou de l'autre partie.
+domaine: age
+regimes: [mines]
+etape: preparer_la_chronologie
+face: droit
+etat: approchee
+lit:
+- le statut de mineur, quand il route le régime spécial ; la saisie ne distingue ni
+  l'employé, le technicien et l'agent de maîtrise affiliés à une caisse complémentaire, ni
+  l'ingénieur, ni les années au fond, et le modèle traite tout mineur en agent affilié à la
+  seule caisse autonome nationale
+ecrit:
+- la limite du mineur et son maintien dans l'intérêt du service, jusqu'au départ saisi
+  (`droit/limite_age.py`) ; la limite ne radie jamais, le maintien n'ayant pas de borne
+dates_qui_decident:
+- age_atteint
+versions:
+- id: avant_1954
+  statut: supposee
+  hypothese: >-
+    aucune limite opposée au mineur avant le décret n° 54-51 : le décret n° 46-2769 ne dit que
+    l'âge d'ouverture de sa pension, et le décret n° 53-711, article 5, n'interdit, depuis le
+    1er septembre 1953, que de mettre d'office à la retraite, avant la limite d'âge des
+    fonctionnaires civils, l'agent dont l'emploi n'use pas prématurément l'organisme, des
+    règlements d'administration publique devant l'adapter à chaque entreprise ; celui des
+    mines est le décret n° 54-51
+  fiabilite: faible
+  textes:
+  - {id: LEGIARTI000006501741, article: "décret n° 53-711 du 9 août 1953, article 5", en_vigueur: 1953-12-27}
+  bornes:
+    age_atteint: [null, 1954-01-18]
+  contenu:
+    parametres:
+      exceptions: []
+    droit: >-
+      aucune limite au modèle
+  exemples: aucun trouvé
+- id: decret_de_1954
+  statut: lue
+  textes:
+  - {id: LEGIARTI000020255044, article: "décret n° 54-51 du 16 janvier 1954, article 1er", en_vigueur: 1954-01-18}
+  - {id: LEGIARTI000020255045, article: "décret n° 54-51, article 2", en_vigueur: 1954-01-18}
+  - {id: LEGIARTI000020255046, article: "décret n° 54-51, article 3", en_vigueur: 1954-01-18}
+  - {id: LEGIARTI000006765058, article: "décret n° 46-2769, article 146, rédaction du 30 décembre 1971", en_vigueur: 1971-12-30}
+  - {id: LEGIARTI000006765059, article: "décret n° 46-2769, article 146, rédaction du 16 mars 1985", en_vigueur: 1985-03-16}
+  nee_de: LEGIARTI000020255045
+  bornes:
+    age_atteint: [1954-01-18, 1993-01-01]
+  contenu:
+    parametres:
+      limites: {sedentaire: 55}
+      exceptions: [interet_du_service]
+    droit: >-
+      « L'âge limite de maintien en activité des personnels désignés à l'article 1er du
+      présent décret est l'âge fixé pour l'ouverture du droit à rente ou pension de retraite
+      par les dispositions du premier alinéa de l'article 146 du décret n° 46-2769 du
+      27 novembre 1946 portant organisation de la sécurité sociale dans les mines. Toutefois,
+      en ce qui concerne les employés, techniciens, agents de maîtrise, affiliés à l'un des
+      régimes complémentaires mentionnés à l'article 1er, cet âge est reculé jusqu'à l'âge
+      fixé pour l'ouverture du droit à pension d'ancienneté normale par les règlements desdits
+      régimes complémentaires. Pour les ingénieurs et assimilés, l'âge limite de maintien en
+      activité est fixé à soixante ans » (article 2) ; « L'assurance vieillesse garantit une
+      rente ou pension de retraite aux affiliés âgés de cinquante-cinq ans » (article 146,
+      rédactions de 1971 et de 1985) ; « Tout agent peut, dans l'intérêt du service, être
+      admis à rester en activité au delà de l'âge limite défini ci-dessus. Ce maintien au
+      service prend fin à l'initiative de l'une ou de l'autre partie, sous réserve des règles
+      applicables en matière de préavis » (article 3)
+    transition: >-
+      la rédaction de l'article 146 d'avant le 30 décembre 1971, que l'index ne porte pas, est
+      présumée garantir la pension au même âge, que la fiche du régime ouvre à cinquante-cinq
+      ans depuis 1930 ; le maintien de l'article 3 (`interet_du_service`) court jusqu'au départ
+      saisi
+  exemples: aucun trouvé
+- id: article_125_de_1993
+  statut: supposee
+  hypothese: >-
+    depuis le 1er janvier 1993, le premier alinéa de l'article 146 ne fixe plus d'âge : le
+    décret n° 92-1354 y met l'allocation d'attente de l'affilié atteint de pneumoconiose, et
+    garantit la pension « aux affiliés âgés de cinquante-cinq ans au moins » à l'article 125,
+    l'abaissement par les années au fond passant à l'article 127 ; la limite du décret
+    n° 54-51, en vigueur et jamais récrit, est présumée suivre l'âge d'ouverture où il est
+    passé
+  fiabilite: moyenne
+  textes:
+  - {id: LEGIARTI000006765060, article: "décret n° 46-2769, article 146, rédaction du 1er janvier 1993", en_vigueur: 1993-01-01}
+  - {id: LEGIARTI000006765004, article: "décret n° 46-2769, article 125, rédaction du 1er janvier 1993", en_vigueur: 1993-01-01}
+  - {id: LEGIARTI000006765005, article: "décret n° 46-2769, article 125, rédaction du 5 mai 2002", en_vigueur: 2002-05-05}
+  - {id: LEGIARTI000020255046, article: "décret n° 54-51, article 3", en_vigueur: 1954-01-18}
+  bornes:
+    age_atteint: [1993-01-01, null]
+  contenu:
+    parametres:
+      limites: {sedentaire: 55}
+      exceptions: [interet_du_service]
+    droit: >-
+      « L'assurance vieillesse garantit une pension aux affiliés âgés de cinquante-cinq ans au
+      moins, sous réserve des dispositions prévues aux articles suivants de la présente
+      section » (article 125) ; le maintien dans l'intérêt du service de l'article 3 du décret
+      n° 54-51
+  exemples: aucun trouvé
+textes_sans_effet:
+- id: LEGIARTI000020255049
+  reference: décret n° 54-51, article 4
+  motif: >-
+    l'article d'exécution : « Le ministre de l'industrie et du commerce, le ministre des
+    finances et des affaires économiques et le secrétaire d'Etat au budget sont chargé, chacun
+    en ce qui le concerne, de l'exécution du présent décret »
+presomptions:
+  exceptions_a_la_limite_d_age: >-
+    le maintien dans l'intérêt du service, présumé accordé autant que le départ saisi le
+    demande : le texte ne lui donne pas d'autre borne que la volonté de l'une ou l'autre
+    partie, et le mineur dont le départ saisi passe sa limite n'est jamais radié par elle
+approximations:
+- version: [decret_de_1954, article_125_de_1993]
+  ecart: >-
+    tout mineur est traité en agent affilié à la seule caisse autonome nationale :
+    l'employé, le technicien et l'agent de maîtrise affiliés à une caisse complémentaire
+    avaient pour limite l'âge de leur pension d'ancienneté normale, et l'ingénieur soixante
+    ans ; l'abaissement de l'âge d'ouverture par les années au fond — que la rédaction de 1985
+    écrit à l'article 146, sans que l'index dise s'il est de son premier alinéa, et que
+    l'article 127 porte depuis 1993 — n'avance pas la limite
+  effet: nul tant que le maintien est présumé, la limite ne radiant personne
+sources:
+  lu_le: 2026-10-18
+  prochaine_relecture: 2027-10-18
+  a_relire:
+  - >-
+    La rédaction de l'article 146 du décret n° 46-2769 en vigueur de 1954 au 30 décembre 1971,
+    que l'index LEGI ne porte pas, et la place de l'abaissement pour les années au fond dans
+    la rédaction de 1985, au premier alinéa ou hors de lui : l'index ne garde pas les alinéas.
+  - >-
+    Le statut du mineur (décret n° 46-1433 du 14 juin 1946) et les règles des Charbonnages
+    et des Houillères sur la mise à la retraite, que l'index ne porte pas : le maintien de
+    l'article 3 y est peut-être encadré, et la pratique d'une mise à la retraite à la limite
+    peut-être écrite.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 54-51 du 16 janvier 1954 portant règlement d'administration publique pour
+      l'application aux personnels des entreprises minières et assimilées du décret du 9 août
+      1953, visa et articles 1er à 4 (LEGITEXT000020255038, LEGIARTI000020255044 à
+      LEGIARTI000020255049), en vigueur dans l'index ; décret n° 46-2769 du 27 novembre 1946,
+      article 146, rédactions de 1971, 1985 et 1993, articles 125, 127, 144 et 145, rédactions
+      de 1993 à 2015 ; décret n° 92-1354 du 24 décembre 1992, article 2 ; décret n° 53-711 du
+      9 août 1953, article 5. Lus dans l'index LEGI du dépôt
+    date: 2026-10-18
+historique:
+- >-
+  2026-10-18 — née et appliquée, action 151, étape 10 : le mineur dont le départ saisi passe
+  cinquante-cinq ans a passé sa limite d'âge, et le modèle le présume maintenu dans l'intérêt
+  du service jusqu'à son départ ; la limite ne le radie pas. Le modèle ne lui en connaissait
+  aucune.
+effet: >-
+  Tout mineur affilié au régime spécial dont le départ saisi passe cinquante-cinq ans, depuis
+  le 18 janvier 1954, a passé sa limite d'âge, et le modèle le dit maintenu dans l'intérêt du
+  service, présumé, jusqu'à son départ : aucune pension ne bouge. Approchée : le mineur est
+  traité en agent de la seule caisse autonome nationale, et l'abaissement par les années au
+  fond n'avance pas sa limite.

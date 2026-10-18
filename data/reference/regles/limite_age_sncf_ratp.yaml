@@ -138,7 +138,19 @@ sources:
     La limite d'avant le 31 janvier 2010 : les décrets n° 54-24 et n° 54-23 du 9 janvier
     1954 et les règlements de retraite des deux entreprises, non lus. Le modèle n'y oppose
     aucune limite, et radie le 31 janvier 2010 l'agent qui avait alors passé soixante-cinq
-    ans.
+    ans. Lu le 18 octobre 2026 dans un arrêt, pour la SNCF, ce que les juges en disent :
+    « le réglement des retraites de la SNCF fixe à 60 ans l'âge limite de maintien en
+    service » ; l'article 2 du décret n° 54-24 permet « à la SNCF de prononcer d'office
+    l'admission à la retraite des agents remplissant la double condition d'âge et
+    d'ancienneté de services prévue par l'article 7 du réglement des retraites, soit à 55 ans
+    pour les agents sédentaires ayant comptabilisé 25 années de services et pouvant
+    bénéficier d'une pension de retraite normale » (cour d'appel de Paris, 10 décembre 2009,
+    citée par la Cour de cassation, chambre sociale, 16 février 2011, n° 10-10.465) ; il
+    « ouvre à la SNCF la possibilité de mettre d'office à la retraite tout agent âgé d'au
+    moins 55 ans » (pourvoi de la SNCF, même arrêt), ce que le Conseil d'État, le 19 mai
+    2006, a jugé non discriminatoire en soi. Deux règles, donc, une limite à soixante ans et
+    une faculté de l'employeur dès cinquante-cinq, à lire dans le règlement des retraites,
+    que l'index ne porte pas, avant d'en écrire la version.
   - >-
     Les industries électriques et gazières, l'Opéra et la SEITA ont leur fiche depuis le
     16 octobre 2026 (`limite_age_ieg`, `limite_age_opera`, `limite_age_seita`), la Banque
@@ -149,12 +161,11 @@ sources:
     95-356, article 15) ; le clerc de notaire, salarié de droit privé, relève de la mise
     à la retraite du code du travail, que l'employeur décide et qui n'est pas une limite ;
     aucune limite n'est trouvée pour le marin ou l'agent du port autonome de Strasbourg.
-    Le mineur en a une, que le modèle ne porte pas encore : « L'âge limite de maintien en
-    activité » est l'âge d'ouverture de sa rente ou pension, et il peut, « dans l'intérêt
-    du service, être admis à rester en activité au delà » (décret n° 54-51 du 16 janvier
-    1954, articles 2 et 3, lus le 17 octobre 2026 dans l'index LEGI). Les décrets n° 54-24
-    et n° 54-23, dont l'index JORF ne porte qu'un sommaire, prévoient une « admission
-    d'office à la retraite ».
+    Le mineur a la sienne depuis le 18 octobre 2026 (`limite_age_mines`) : « L'âge limite de
+    maintien en activité » est l'âge d'ouverture de sa rente ou pension, et il peut, « dans
+    l'intérêt du service, être admis à rester en activité au delà » (décret n° 54-51 du
+    16 janvier 1954, articles 2 et 3). Les décrets n° 54-24 et n° 54-23, dont l'index JORF ne
+    porte qu'un sommaire, prévoient une « admission d'office à la retraite ».
   lectures:
   - type: legifrance
     reference: >-
@@ -167,6 +178,19 @@ sources:
       décret n° 2011-288, notice (JORFTEXT000023728583) ; décret n° 2023-840, notice et
       article 3 (JORFTEXT000048011057, JORFARTI000048011119). Lus dans l'index JORF du dépôt
     date: 2026-10-16
+  - type: jorf
+    reference: >-
+      décrets n° 54-24 et n° 54-23 du 9 janvier 1954, dont l'index JORF ne porte que le titre
+      et un sommaire (JORFTEXT000000325381, JORFTEXT000000325380) ; Légifrance et Gallica,
+      qui portent le Journal officiel du 10 janvier 1954, refusent le réseau de la session
+    date: 2026-10-18
+  - type: autre
+    reference: >-
+      Cour de cassation, chambre sociale, 16 février 2011, n° 10-10.465, et les moyens
+      annexés, qui citent l'arrêt de la cour d'appel de Paris du 10 décembre 2009 : la mise à
+      la retraite d'office d'une agente de la SNCF à cinquante-cinq ans, en 2005, « par
+      application du décret n° 54-24 du 9 janvier 1954 ». Lu sur dictionnaire-juridique.com
+    date: 2026-10-18
 historique:
 - >-
   2026-10-16 — née et appliquée, action 151, étape 4 : l'agent de la SNCF ou de la RATP

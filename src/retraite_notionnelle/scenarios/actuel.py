@@ -1224,7 +1224,7 @@ class FichesDatees:
             "plafond_limite_age_fonction_publique", "limite_age_contractuels",
             "limite_age_ouvriers_etat", "limite_age_sncf_ratp", "limite_age_ieg",
             "limite_age_opera", "limite_age_seita", "limite_age_banque_de_france",
-            "apprentissage", "stages_formation_professionnelle",
+            "limite_age_mines", "apprentissage", "stages_formation_professionnelle",
             "sportifs_haut_niveau", "conge_supplementaire_naissance")
 
     def __init__(self, racine: Path) -> None:

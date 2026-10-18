@@ -26,6 +26,7 @@ import {
 import { appels } from "../../moteur/js/droit/liquidation.js";
 import { moyenneSelonLaRegle, salaireDeReference } from "../../moteur/js/droit/liquider.js";
 import * as ouvrir from "../../moteur/js/droit/ouvrir.js";
+import * as limiteAge from "../../moteur/js/droit/limite_age.js";
 import { DonneesMacro } from "../../moteur/js/macro.js";
 import { MinimumVieillesse } from "../../moteur/js/regimes.js";
 import {
@@ -295,6 +296,49 @@ test("les âges et la bonification des marins sont ceux du Python", () => {
   assert.equal(taux(1), 0);
   assert.ok(Math.abs(taux(2) - 0.05) < 1e-9);
   assert.ok(Math.abs(taux(5) - 0.15) < 1e-9);
+});
+
+/**
+ * La limite d'âge du mineur (action 151, étape 10) : cinquante-cinq ans depuis
+ * le décret n° 54-51, et le maintien dans l'intérêt du service, sans borne,
+ * présumé jusqu'au départ saisi, qui ne radie jamais ; et les exceptions lues
+ * au jour où une version crée la limite, comme pour l'agent de la Banque de
+ * France en juillet 2012. Une radiation qui ne force rien ne paraît dans aucun
+ * témoin : cet essai rejoue ce que `tests/test_limite_age.py` tient côté
+ * Python.
+ */
+test("la limite d'âge du mineur et le jour où elle naît sont ceux du Python", () => {
+  const contexte = new Contexte(paquet);
+  const simulateur = contexte.simulateur();
+  const scenario = simulateur.scenarioActuel;
+  const parcours = (affiliation, naissance, age, enfants = []) => simulateur.carriereParcours({
+    annee_naissance: naissance, sexe: "H", age_liquidation: age, jour_naissance: 15,
+    nombre_enfants: enfants.length, naissances_enfants: enfants,
+    metiers: [{ affiliation, age_debut: 22, niveau_salaire: 1 }],
+  });
+  const reculs = (radiee) => radiee.reculs.map((recul) => [
+    recul.nom, recul.depuis, Math.round(recul.jusqu_a * 1e4) / 1e4, recul.presumee]);
+
+  for (const [naissance, version] of [[1930, "decret_de_1954"], [1950, "article_125_de_1993"]]) {
+    const carriere = parcours("mineur", naissance, 60);
+    const radiee = limiteAge.radiation(scenario, carriere);
+    assert.deepEqual(
+      [radiee.fiche, radiee.version, radiee.limite, radiee.age, [...radiee.regimes].sort(),
+        radiee.forcee, radiee.date.rang],
+      [limiteAge.FICHE_MINES, version, 55, 60, ["mines"], false, carriere.dateLiquidation.rang]);
+    assert.deepEqual(reculs(radiee), [[limiteAge.MAINTIEN_DANS_L_INTERET_DU_SERVICE, 55, 60, true]]);
+    assert.equal(limiteAge.radier(scenario, carriere), carriere);
+  }
+  assert.equal(limiteAge.radiation(scenario, parcours("mineur", 1898, 55.5)), null);
+  const ancien = limiteAge.radiation(scenario, parcours("mineur", 1898, 58));
+  assert.deepEqual([ancien.version, ancien.limite, ancien.forcee, reculs(ancien)],
+    ["decret_de_1954", 56, false, [[limiteAge.MAINTIEN_DANS_L_INTERET_DU_SERVICE, 56, 58, true]]]);
+
+  const banque = limiteAge.radiation(scenario, parcours("agent_banque_de_france", 1950, 68,
+    ["2000-01-01", "2002-01-01"]));
+  assert.deepEqual(
+    [banque.version, banque.limite, banque.age, banque.date.annee, banque.date.mois, reculs(banque)],
+    ["statut_de_2012", 62.5, 63.5, 2013, 8, [[limiteAge.RECUL_ENFANTS, 62.5, 63.5, false]]]);
 });
 
 /**

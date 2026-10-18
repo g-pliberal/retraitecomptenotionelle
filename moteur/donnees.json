@@ -25100,6 +25100,15 @@ null
 }
 ]
 },
+"limite_age_mines":{
+"dates_qui_decident":["age_atteint"],
+"id":"limite_age_mines",
+"versions":[
+{"bornes":{"age_atteint":[null,"1954-01-18"]},"exception_de":null,"id":"avant_1954","parametres":{"exceptions":[]},"texte":"LEGIARTI000006501741"},
+{"bornes":{"age_atteint":["1954-01-18","1993-01-01"]},"exception_de":null,"id":"decret_de_1954","parametres":{"exceptions":["interet_du_service"],"limites":{"sedentaire":55}},"texte":"LEGIARTI000020255045"},
+{"bornes":{"age_atteint":["1993-01-01",null]},"exception_de":null,"id":"article_125_de_1993","parametres":{"exceptions":["interet_du_service"],"limites":{"sedentaire":55}},"texte":"LEGIARTI000006765060"}
+]
+},
 "limite_age_opera":{
 "dates_qui_decident":["age_atteint"],
 "id":"limite_age_opera",
