@@ -1,0 +1,17 @@
+date: "2026-10-18"
+session: "action 163 : la réparation de la suite rouge de la nuit du 17 octobre"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1,
+  seulement aux tests des minima agricoles et de la limite d'âge, qui
+  déclarent le jour de naissance de leurs assurés, à la distribution de la grille élargie
+  (scripts/grille_large.py) et à la prose du parcours de présentation.
+trouve: >-
+  Aucune règle n'a changé. Deux tests des minima agricoles et un de la
+  limite d'âge des IEG dépendaient du jour de naissance présumé ; la
+  distribution de la grille ne pesait pas ses
+  cohortes par la survie propre des cas types, que la page Coût prend depuis
+  2534b02 ; le parcours écrivait à la main le coût des avantages.
+reste: >-
+  Les chiffres à unité des autres sections du parcours (Programme, Cas types,
+  Coût, Risque) ; la garde des présomptions jouée à l'envoi, que le
+  propriétaire tranche.

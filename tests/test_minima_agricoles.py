@@ -41,6 +41,11 @@ def simulateur() -> Simulateur:
 
 def _chef(simulateur: Simulateur, naissance: int, liquidation: float, niveau: float = 0.3,
           debut: float = 20.0, metiers: list[Metier] | None = None, **kwargs) -> Carriere:
+    """Un chef né le 15 de son mois, que le test déclare au lieu de le présumer
+    (action 135, levier 2) : né un 1er, il partirait un mois plus tôt
+    (R. 351-37), en décembre plutôt qu'en janvier, ou le 1er janvier, sans
+    l'année du départ, que L. 731-10-1 compte entière dès qu'il y travaille."""
+    kwargs.setdefault("jour_naissance", 15)
     return Carriere.depuis_parcours(
         annee_naissance=naissance, sexe=kwargs.pop("sexe", "H"),
         metiers=metiers or [Metier("exploitant_agricole", debut, niveau_salaire=niveau)],

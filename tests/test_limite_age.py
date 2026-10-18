@@ -33,6 +33,11 @@ def simulateur() -> Simulateur:
 
 def _simple(simulateur: Simulateur, statut: str, naissance: int, depart: float,
             **kwargs) -> Carriere:
+    """Un assuré né le 15 de son mois, que le test déclare au lieu de le
+    présumer (action 135, levier 2) : né un 1er, ses âges se compteraient du
+    mois de sa naissance (R. 351-37), et chaque date racontée reculerait d'un
+    mois."""
+    kwargs.setdefault("jour_naissance", 15)
     return simulateur.carriere_simple(naissance, "H", statut, 22, depart, **kwargs)
 
 

@@ -2328,9 +2328,11 @@ def pensions_de_l_annee(pensionnes: list, cas_types: tuple[CasType, ...],
     Les têtes sont celles de la page (``cout._masses``) : chaque génération de
     la grille en représente cinq, chacune pesée par son effectif INSEE de
     l'année et comptée dès sa liquidation, chaque cas type par son poids de la
-    page. La pension est celle de la liquidation, revalorisée comme la page la
-    revalorise — le droit jusqu'au dernier barème, puis les prix, et la valeur
-    de service de l'Agirc-Arrco pour sa part (``coefficient_servi``) —, ramenée des euros constants à ceux de
+    page et par sa survie propre, à nombre de décès égal
+    (``cout._survies_alignees``). La pension est celle de la liquidation,
+    revalorisée comme la page la revalorise — le droit jusqu'au dernier
+    barème, puis les prix, et la valeur de service de l'Agirc-Arrco pour sa
+    part (``coefficient_servi``) —, ramenée des euros constants à ceux de
     l'année. Sans la complétude des cohortes (``Pensionne.completude``) : elle
     allège la MASSE d'une cohorte d'une moyenne, que la distribution ne sait
     pas répartir entre ses membres ; chaque ligne décrit une carrière.
@@ -2347,6 +2349,7 @@ def cohortes_de_l_annee(pensionnes: list, poids: dict[str, float], population: P
     """Les cohortes de :func:`pensions_de_l_annee`, chacune avec son couple :
     ``(couple, pension mensuelle, poids en têtes)``."""
     vers_l_annee = macro.coefficient_prix(annee_euros, annee) / 12.0
+    alignees = C._survies_alignees(pensionnes, poids, annee)
     for pensionne in pensionnes:
         part = poids.get(pensionne.code, 0.0)
         if part <= 0.0:
@@ -2355,7 +2358,9 @@ def cohortes_de_l_annee(pensionnes: list, poids: dict[str, float], population: P
             liquidation = pensionne.annee_liquidation + decalage
             if annee < liquidation:
                 continue
-            effectif = population.effectif(annee - pensionne.generation - decalage, annee)
+            effectif = population.effectif(
+                annee - pensionne.generation - decalage, annee
+            ) * alignees.get((pensionne.code, pensionne.generation, decalage), 1.0)
             if effectif <= 0.0:
                 continue
             montant = pensionne.pensions["actuel"] * vers_l_annee * C.coefficient_servi(

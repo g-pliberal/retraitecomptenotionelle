@@ -335,8 +335,8 @@ Si le temps manque, garder cette page pour les questions : elle répond seule
 Onglet **Avantages**. La page qui explique les écarts du simulateur : ce que
 le système actuel verse sans que personne l'ait cotisé. Trois chiffres :
 <!--chiffre:entrees(moteur/donnees.json:avantages.avantages?famille!=ecarts_structurels&fin=None)-->42<!--/--> dispositifs en vigueur, du minimum vieillesse à la bonification du
-cinquième ; 99,8 Md € en 2024 pour les 23 que le modèle sait chiffrer, dont
-38,3 Md € de réversion, qui est lue et non calculée ; 8,2 Md € de pensions
+cinquième ; <!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.gratuit/1000)-->99,6<!--/--> Md € en <!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.annee)-->2024<!--/--> pour les 23 que le modèle sait chiffrer, dont
+<!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.lignes.reversion/1000)-->38,3<!--/--> Md € de réversion, qui est lue et non calculée ; <!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.anticipee/1000)-->8,2<!--/--> Md € de pensions
 servies avant l'âge légal. La page dit que ces deux montants sont des
 planchers. Le graphique du haut compte les dispositifs année par année depuis
 1831, où il n'y en avait qu'un.
