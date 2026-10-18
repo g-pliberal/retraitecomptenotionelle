@@ -1,0 +1,30 @@
+date: "2026-10-18"
+session: "action 138, étape 9, suite de la huitième partie : le minimum de la réversion de la SNCF"
+consulte: >-
+  python scripts/veille_droit.py ; l'index LEGI, récupéré puis mis à jour de
+  ses sept incréments jusqu'au 17 octobre 2026, et python scripts/textes.py
+  --inscrire, qui n'inscrit rien ; dans l'index, le décret n° 2008-639,
+  articles 15 (ses six rédactions), 18 (ses trois), 20 à 23, 30 (ses trois),
+  35 et 36, et le code de la sécurité sociale, L. 815-9 ; la page de la
+  caisse, « La pension de réversion — régime spécial » (cprpf.fr), relue le
+  18 octobre 2026 ; une recherche des montants publiés du minimum de pension
+  de la SNCF, qui n'en trouve aucun, et la fiche du COR sur la caisse
+  (juillet 2024), qui n'en dit rien.
+trouve: >-
+  La réversion de la pension « portée au montant du minimum de pension » de
+  l'article 15, ou qui le dépasse, ne descend pas sous 51,3 % de ce minimum
+  au 1er juillet 2008, 52,7 % au 1er juillet 2009, 54 % au 1er juillet 2010
+  (article 18) ; le minimum vaut 3 379,38 € par trimestre au 1er décembre
+  2008, 1 215,64 € par mois au 1er octobre 2014, et suit les pensions de
+  l'État (articles 15, IV, et 30). La fiche reversion_sncf le porte dans les
+  deux moteurs, ses taux de passage en deux versions d'exception ; la
+  majoration pour enfants de la réversion relevée suit son montant (article
+  16). La personne seule de 55 à 64 ans a au moins l'ASPA (article 23),
+  « sous conditions de ressources » que la caisse ne détaille pas et que le
+  texte ne dit pas : rien n'en est écrit. Aucune règle n'a changé.
+reste: >-
+  Le minimum de pension de l'agent (article 15), que le modèle ne porte pas ;
+  la condition de ressources de l'article 23, au propriétaire ; les montants
+  du minimum de 2009 à 2013 et depuis 2015, que rien ne publie ; le
+  règlement de retraites d'avant juillet 2008 ; le plafond de la SNCF de
+  2027.

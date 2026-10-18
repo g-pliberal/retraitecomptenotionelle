@@ -54,9 +54,11 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   l'Agirc-Arrco, la moitié des droits du parent pour l'orphelin de père et de
   mère de moins de vingt et un ans, ou de vingt-cinq à charge (articles 114 et
   115 de l'accord de 2017) ; au RAFP, aux IEG, à la CRPCEN et à la SNCF, un
-  dixième par orphelin —, les deux minima de la réversion de la SNCF (décret
-  n° 2008-639, articles 18 et 23), la réversion des complémentaires des
-  artisans et des commerçants
+  dixième par orphelin —, le minimum de pension de l'agent de la SNCF, et la
+  réversion qui le suivrait (décret n° 2008-639, articles 15 et 18),
+  l'allocation de solidarité aux personnes âgées que la réversion de la
+  personne seule de cinquante-cinq à soixante-quatre ans y atteint (article
+  23), la réversion des complémentaires des artisans et des commerçants
   pour un décès d'avant leur fusion, et celle des autres régimes, dont la ligne
   le dit ; les approximations de chaque fiche sont déclarées. Le formulaire demande le
   conjoint dans un bloc facultatif, et la page montre sa réversion pour un
