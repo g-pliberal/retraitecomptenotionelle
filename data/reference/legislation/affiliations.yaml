@@ -283,11 +283,12 @@ affiliations:
       dit l'activité (champ « micro »), le chiffre d'affaires, qu'elle abat ;
       le statut route les mêmes régimes que le commerçant, avant 2009 comme
       lui, sauf à la Cipav, que la saisie route vers `profession_liberale`.
-      Depuis 2023, ses trimestres se valident sur le revenu que sa
-      cotisation achète (`micro_social.yaml`), sans assiette minimale, et
-      le compte notionnel porte la part de retraite de son forfait ; avant,
-      le revenu abattu valide et le compte porte le barème, la règle n'étant
-      pas lue.
+      Depuis 2018, ses trimestres se valident sur le revenu que sa
+      cotisation achète (`micro_social.yaml`), sans assiette minimale, ce
+      revenu cotisé fait son revenu annuel moyen, et le compte notionnel
+      porte la part de retraite de son forfait ; de 2009 à 2015, la
+      compensation de l'État ; en 2016 et 2017, le revenu abattu valide et
+      le compte porte le barème, la clef n'étant pas lue.
 
   parlementaire:
     libelle: Député ou sénateur (indemnité parlementaire)

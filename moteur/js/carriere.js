@@ -160,7 +160,8 @@ export class AnneeCarriere {
     jours_de_services = null,
     //: L'activité du MICRO-ENTREPRENEUR dont la ligne lit le revenu abattu ;
     //: vide hors du micro-social. Ses trimestres se valident sur le revenu
-    //: que sa cotisation achète, et l'assiette minimale ne le touche pas.
+    //: que sa cotisation achète, ce revenu cotisé est celui de son revenu
+    //: annuel moyen (`revenuCotise`), et l'assiette minimale ne le touche pas.
     //: Voir carriere.py.
     micro = "",
   }) {
@@ -508,15 +509,16 @@ export function limiterChomageNonIndemnise(lignes, anneeNaissance,
 }
 
 /**
- * Le revenu qui valide les trimestres d'un micro-entrepreneur : le revenu
- * COTISÉ, le chiffre d'affaires fois le taux global, la part de base, sur le
- * taux de base, et non le revenu abattu (circulaire Cnav n° 2024-23). Le
- * paquet porte, par activité et par année, le rapport de l'un à l'autre ;
- * avant la première année lue, le revenu abattu valide. De 2009 à 2015, la
- * compensation de l'État y fixe un plancher et un seuil (`validantCompense`).
- * Voir carriere.py.
+ * Le revenu cotisé d'un micro-entrepreneur, qui valide ses trimestres et que
+ * son régime de base porte au compte (`assietteDeReference`,
+ * droit/liquider.js) : le chiffre d'affaires fois le taux global, la part de
+ * base, sur le taux de base, et non le revenu abattu (circulaire Cnav
+ * n° 2024-23). Le paquet porte, par activité et par année, le rapport de l'un
+ * à l'autre ; avant la première année lue, le revenu abattu. De 2009 à 2015,
+ * la compensation de l'État y fixe un plancher et un seuil
+ * (`validantCompense`). Voir `revenu_cotise` (carriere.py).
  */
-function revenuValidant(macro, revenu, micro, annee, part = 1.0) {
+export function revenuCotise(macro, revenu, micro, annee, part = 1.0) {
   const parAnnee = (macro.paquet.validation_micro ?? {})[micro];
   let validant = revenu;
   if (parAnnee !== undefined) {
@@ -630,7 +632,7 @@ function ligneAnnuelle({
   // entiers que les autres régimes lisent l'arrondit au mois et demi.
   const trimestres = trimestresDeclares === null
     ? (cotise ? macro.trimestresValides(
-      Math.max(micro ? revenuValidant(macro, revenu, micro, annee, part) : revenu, minimale),
+      Math.max(micro ? revenuCotise(macro, revenu, micro, annee, part) : revenu, minimale),
       annee)
       : (regle !== null ? regle[0] : 4))
     : Math.floor(trimestresDeclares + 0.5);

@@ -33,7 +33,7 @@ from datetime import date
 from typing import TYPE_CHECKING
 
 from ..calendrier import DateMois
-from ..carriere import salaire_moyen_annuel
+from ..carriere import revenu_cotise, salaire_moyen_annuel
 from ..donnees.chargement import Fiabilite
 from .. import revalorisation
 from ..donnees.primes import charger_primes_soumises
@@ -2360,6 +2360,18 @@ def assiette_de_reference(moteur, periode: PeriodeRegime, ligne) -> float:
         if annuelle.assiette_repere_smic is not None:
             return (annuelle.assiette_repere_smic
                     * moteur.macro.smic_horaire(ligne.annee) * ligne.fraction_annee)
+    if ligne.micro:
+        # LE REVENU COTISÉ DU MICRO-ENTREPRENEUR. Le revenu de l'année est
+        # « celui correspondant […] aux cotisations versées par l'assuré au
+        # titre de cette année » (R. 351-29, I, B, que D. 634-3 applique aux
+        # indépendants ; R. 634-1 jusqu'en 2025) : la part de son forfait
+        # affectée au régime de base, divisée par le taux de base (circulaire
+        # Cnav n° 2024-23, point 4), payée ou compensée par l'État de 2009 à
+        # 2015 (circulaires RSI n° 2009/024 et n° 2013/020, point 3.2) — celle
+        # qui valide ses trimestres. Non le revenu abattu : 40 000 € de ventes
+        # portent 11 963 € au compte en 2026, et non 11 600 €.
+        return revenu_cotise(moteur.macro, ligne.revenu, ligne.micro, ligne.annee,
+                             ligne.fraction_annee)
     return _assiette_de_reference(moteur, periode, ligne)
 
 

@@ -24,7 +24,7 @@ import {
   complementMinimum, majorationOuverte, plancherDuRegime, selonLaRegle,
 } from "../../moteur/js/droit/completer.js";
 import { appels } from "../../moteur/js/droit/liquidation.js";
-import { moyenneSelonLaRegle } from "../../moteur/js/droit/liquider.js";
+import { moyenneSelonLaRegle, salaireDeReference } from "../../moteur/js/droit/liquider.js";
 import * as ouvrir from "../../moteur/js/droit/ouvrir.js";
 import { DonneesMacro } from "../../moteur/js/macro.js";
 import { MinimumVieillesse } from "../../moteur/js/regimes.js";
@@ -32,7 +32,7 @@ import {
   avantLAspa, COUPLE, DEUX_ALLOCATAIRES, PERSONNE_SEULE,
 } from "../../moteur/js/droit/foyer.js";
 import {
-  AnneeCarriere, limiterChomageNonIndemnise, salaireMoyenAnnuel,
+  AnneeCarriere, Carriere, limiterChomageNonIndemnise, salaireMoyenAnnuel,
 } from "../../moteur/js/carriere.js";
 import { ABATTEMENTS_MICRO } from "../../moteur/js/saisie.js";
 import * as gabarit from "../../moteur/js/gabarit.js";
@@ -569,6 +569,49 @@ test("la compensation de l'État compte les trimestres de l'auto-entrepreneur", 
   assert.equal(trimestres("liberal", 2014, 2800), 0);
   assert.equal(trimestres("vente", 2015, 7000), 0);
   assert.equal(trimestres("vente", 2015, 9942), 2);
+});
+
+/**
+ * Le revenu annuel moyen du micro-entrepreneur porte son revenu cotisé, et non
+ * son revenu abattu (R. 351-29, I, B ; circulaire Cnav n° 2024-23) ; en 2009,
+ * le plancher de la compensation (circulaire RSI n° 2009/024). Rejoue
+ * `test_le_revenu_annuel_moyen_porte_le_revenu_cotise` et
+ * `test_le_plancher_de_2009_entre_au_revenu_annuel_moyen` (test_micro_social.py).
+ */
+test("le revenu annuel moyen du micro-entrepreneur porte son revenu cotisé", () => {
+  const simulateur = new Contexte(paquet).simulateur();
+  const revenuAnnuelMoyen = (code, anneeNaissance, ageLiquidation, lignes) => {
+    // Le jour de naissance dit : la présomption est dans le paquet, que le
+    // constructeur ne lit pas.
+    const carriere = new Carriere({
+      annee_naissance: anneeNaissance, sexe: "H", age_liquidation: ageLiquidation,
+      jour_naissance: 1,
+      lignes: lignes.map(([annee, activite, abattu, trimestres]) => new AnneeCarriere({
+        annee, revenu: abattu, affiliation: "micro_entrepreneur", micro: activite,
+        trimestres_valides: trimestres,
+      })),
+    });
+    const annee = carriere.anneeLiquidation;
+    const periode = simulateur.catalogue.obtenir(code).periode(annee);
+    const revalorise = (perception) => simulateur.macro
+      .coefficientRevalorisationPorteeAuCompte(perception, annee, carriere.moisLiquidation);
+    return [revalorise, salaireDeReference(simulateur.scenarioActuel, code, carriere,
+      periode, annee, true, anneeNaissance)];
+  };
+  const proche = (obtenu, attendu) => assert.ok(Math.abs(obtenu / attendu - 1) < 1e-12,
+    `${obtenu} contre ${attendu}`);
+  const [revalorise, moyen] = revenuAnnuelMoyen("regime_general", 1962, 65,
+    [2023, 2026].map((annee) => [annee, "vente", 40000 * 0.29, 4]));
+  proche(moyen, (40000 * 0.123 * 0.418 / 0.1775 * revalorise(2023)
+    + 40000 * 0.123 * 0.4345 / 0.1787 * revalorise(2026)) / 2);
+  // L'exemple de la circulaire, « 1 802,82 € » en 2023, aux arrondis près.
+  const [revaloriseExemple, moyenExemple] = revenuAnnuelMoyen("regime_general", 1962, 65,
+    [[2023, "vente", 6220 * 0.29, 1]]);
+  assert.ok(Math.abs(moyenExemple / (1802.82 * revaloriseExemple(2023)) - 1) < 1e-3,
+    `${moyenExemple}`);
+  const [revalorise2009, moyen2009] = revenuAnnuelMoyen("rsi", 1950, 60.5,
+    [[2009, "vente", 3000 * 0.29, 1]]);
+  proche(moyen2009, 200 * 8.71 * revalorise2009(2009));
 });
 
 /**

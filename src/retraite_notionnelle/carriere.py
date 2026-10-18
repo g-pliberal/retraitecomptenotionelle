@@ -247,8 +247,9 @@ class AnneeCarriere:
     #: L'activité du MICRO-ENTREPRENEUR dont la ligne lit le revenu abattu
     #: (``saisie.ACTIVITES_MICRO``) ; vide hors du micro-social. Ses trimestres
     #: se valident sur le revenu que sa cotisation achète, non sur le revenu
-    #: abattu (``legislation/micro_social.yaml``), et l'assiette minimale ne le
-    #: touche pas.
+    #: abattu (``legislation/micro_social.yaml``), et ce revenu cotisé est celui
+    #: de son revenu annuel moyen (:func:`revenu_cotise`) ; l'assiette minimale
+    #: ne le touche pas.
     micro: str = ""
 
     @property
@@ -552,9 +553,11 @@ def _revenu_reference(annee: int, revenu: float, type_periode: str,
                * macro.plafond_securite_sociale(annee) * part)
 
 
-def _revenu_validant(macro: DonneesMacro, revenu: float, micro: str,
-                     annee: int, part: float = 1.0) -> float:
-    """Le revenu qui valide les trimestres d'un micro-entrepreneur.
+def revenu_cotise(macro: DonneesMacro, revenu: float, micro: str,
+                  annee: int, part: float = 1.0) -> float:
+    """Le revenu cotisé d'un micro-entrepreneur : celui qui valide ses
+    trimestres, et que son régime de base porte au compte
+    (:func:`~retraite_notionnelle.droit.liquider.assiette_de_reference`).
 
     LE REVENU COTISÉ, ET NON LE REVENU ABATTU. Ses prestations « sont calculées
     sur la base de [son] chiffre d'affaires […] après application d'un taux
@@ -612,7 +615,7 @@ def _ligne_annuelle(
     une carrière paramétrique les déduit du montant cotisé.
 
     ``micro``, l'activité d'un micro-entrepreneur, fait valider ses trimestres
-    sur le revenu que sa cotisation achète (:func:`_revenu_validant`).
+    sur le revenu que sa cotisation achète (:func:`revenu_cotise`).
 
     ``dispense``, le motif qui en dispense l'indépendant (le RSA, la prime
     d'activité…), annule l'assiette minimale les années où le texte le veut.
@@ -645,7 +648,7 @@ def _ligne_annuelle(
     if dispense:
         minimale = 0.0
     if trimestres_declares is None:
-        validant = (_revenu_validant(macro, revenu, micro, annee, part)
+        validant = (revenu_cotise(macro, revenu, micro, annee, part)
                     if micro else revenu)
         trimestres = (macro.trimestres_valides(max(validant, minimale), annee)
                       if cotise

@@ -14,7 +14,7 @@
  */
 
 import { DateMois } from "../calendrier.js";
-import { salaireMoyenAnnuel } from "../carriere.js";
+import { revenuCotise, salaireMoyenAnnuel } from "../carriere.js";
 import * as chrono from "../chronologie.js";
 import { arrondi, formatFixe, formatPourcentage } from "../format.js";
 import { FIN_PEREQUATION, coefficientTraitementDiffere, dateIso } from "../revalorisation.js";
@@ -1679,6 +1679,13 @@ export function assietteDeReference(moteur, periode, ligne) {
       return annuelle.assiette_repere_smic
         * moteur.macro.smic_horaire.valeur(ligne.annee) * ligne.fraction_annee;
     }
+  }
+  if (ligne.micro) {
+    // LE REVENU COTISÉ DU MICRO-ENTREPRENEUR : « celui correspondant […] aux
+    // cotisations versées » (R. 351-29, I, B ; D. 634-3, R. 634-1), celui qui
+    // valide ses trimestres, et non le revenu abattu. Voir le Python.
+    return revenuCotise(moteur.macro, ligne.revenu, ligne.micro, ligne.annee,
+      ligne.fraction_annee);
   }
   return _assietteDeReference(moteur, periode, ligne);
 }

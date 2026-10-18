@@ -14,7 +14,8 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.carriere import Carriere, Metier, salaire_moyen_annuel
+from retraite_notionnelle.carriere import AnneeCarriere, Carriere, Metier, salaire_moyen_annuel
+from retraite_notionnelle.droit import liquider
 from retraite_notionnelle.donnees.chargement import (
     charger_cotisation_micro,
     charger_validation_micro,
@@ -319,3 +320,64 @@ def test_avant_les_clefs_le_compte_garde_le_bareme(simulateur, statut, activite,
         1975, "H", [Metier(statut, 20.0, niveau, micro=micro)], 64.0,
         macro, profil_carriere="plat"), annee) for micro in (activite, ""))
     assert avec.cotisation == sans.cotisation
+
+
+def _revenu_annuel_moyen(simulateur, code, annee_naissance, age_liquidation, lignes):
+    """Le revenu annuel moyen que ``code`` liquide pour un micro-entrepreneur
+    dont ``lignes`` donne, par année, l'activité, le revenu abattu, la part de
+    l'année et les trimestres ; et la carrière."""
+    carriere = Carriere.depuis_lignes(
+        annee_naissance, "H",
+        [AnneeCarriere(annee=annee, revenu=abattu, affiliation="micro_entrepreneur",
+                       micro=activite, fraction_annee=part, trimestres_valides=trimestres)
+         for annee, activite, abattu, part, trimestres in lignes],
+        age_liquidation=age_liquidation)
+    annee = carriere.annee_liquidation
+    periode = simulateur.catalogue[code].periode(annee)
+    return carriere, liquider.salaire_de_reference(
+        simulateur.scenario_actuel, code, carriere, periode, annee, True, annee_naissance)
+
+
+def test_le_revenu_annuel_moyen_porte_le_revenu_cotise(simulateur):
+    """Le revenu de chaque année est « celui correspondant […] aux cotisations
+    versées par l'assuré au titre de cette année » (R. 351-29, I, B, que
+    D. 634-3 applique aux indépendants depuis 2026 ; R. 634-1 avant) : celui
+    d'un micro-entrepreneur, la part de son forfait affectée au régime de
+    base, divisée par le taux de base, le « revenu cotisé » de la caisse
+    (circulaire Cnav n° 2024-23, point 4 et annexe 2), et non le revenu abattu.
+    40 000 € de ventes, 11 600 € abattus, portent au compte 40 000 × 12,3 % ×
+    41,80 % / 17,75 % en 2023 (D. 613-4, D. 613-6, D. 633-3), et 40 000 ×
+    12,3 % × 43,45 % / 17,87 % en 2026."""
+    macro = simulateur.macro
+    carriere, revenu_annuel_moyen = _revenu_annuel_moyen(
+        simulateur, "regime_general", 1962, 65,
+        [(annee, "vente", 40_000.0 * 0.29, 1.0, 4) for annee in (2023, 2026)])
+    cotises = {2023: 40_000.0 * 0.123 * 0.418 / 0.1775,
+               2026: 40_000.0 * 0.123 * 0.4345 / 0.1787}
+    assert revenu_annuel_moyen == pytest.approx(sum(
+        revenu * macro.coefficient_revalorisation_portee_au_compte(
+            annee, carriere.annee_liquidation, carriere.mois_liquidation)
+        for annee, revenu in cotises.items()) / len(cotises), rel=1e-12)
+    # L'exemple de la circulaire : 6 220 € de ventes en 2023, « 1 802,82 € »
+    # de revenu cotisé. La caisse arrondit chaque forfait trimestriel et la
+    # somme des parts de l'année à l'euro ; le modèle prend l'année entière.
+    carriere, revenu_annuel_moyen = _revenu_annuel_moyen(
+        simulateur, "regime_general", 1962, 65, [(2023, "vente", 6_220.0 * 0.29, 1.0, 1)])
+    assert revenu_annuel_moyen == pytest.approx(
+        1_802.82 * macro.coefficient_revalorisation_portee_au_compte(
+            2023, carriere.annee_liquidation, carriere.mois_liquidation), rel=1e-3)
+
+
+def test_le_plancher_de_2009_entre_au_revenu_annuel_moyen(simulateur):
+    """En 2009, la cotisation de base retenue, payée et compensée, divisée
+    par son taux, fait le revenu du revenu annuel moyen (circulaire RSI
+    n° 2009/024, point III, A) ; sur une année civile entière, la
+    compensation la porte au moins à la cotisation d'un trimestre, sur
+    200 heures de SMIC (« 966 / 290 ») : 3 000 € de ventes, 870 € abattus,
+    portent au compte 200 × 8,71 €."""
+    macro = simulateur.macro
+    carriere, revenu_annuel_moyen = _revenu_annuel_moyen(
+        simulateur, "rsi", 1950, 60.5, [(2009, "vente", 3_000.0 * 0.29, 1.0, 1)])
+    assert revenu_annuel_moyen == pytest.approx(
+        200 * 8.71 * macro.coefficient_revalorisation_portee_au_compte(
+            2009, carriere.annee_liquidation, carriere.mois_liquidation), rel=1e-12)

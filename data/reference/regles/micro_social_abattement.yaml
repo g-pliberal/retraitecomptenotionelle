@@ -9,8 +9,10 @@ intitule: >-
   b). Ses trimestres se valident sur le revenu que sa cotisation achète : le
   chiffre d'affaires fois le taux global (D. 613-4), fois la part de base
   (D. 613-6), divisé par le taux de base (D. 633-3, ou la première tranche de
-  la CNAVPL), comparé à 150 SMIC horaires (circulaire Cnav n° 2024-23). Sa
-  cotisation de retraite est la part du taux global que D. 613-6 affecte au
+  la CNAVPL), comparé à 150 SMIC horaires (circulaire Cnav n° 2024-23) ; ce
+  revenu cotisé est aussi celui que son régime de base porte au compte, dans
+  son revenu annuel moyen (R. 351-29, I, B, et D. 634-3 ; R. 634-1 jusqu'en
+  2025). Sa cotisation de retraite est la part du taux global que D. 613-6 affecte au
   régime de base et à la complémentaire ; avant le décret n° 2022-1529, la
   clef que la Cnav applique (circulaire n° 2025-20). De 2009 à 2015, l'État
   compense ce que le forfait ne verse pas, au-dessus d'un seuil de 200 heures
@@ -38,39 +40,53 @@ effet: >-
   services, 53,23 % et rien du libéral, valident et cotisent (le revenu
   validant de la vente, 1,0024 fois le revenu abattu ; 535,58 € au régime de
   base pour 6 032 € de services en 2020, contre 535,34 € au barème) ; la
-  Cipav cotise depuis 2019 sa part de D. 131-5-3, puis de D. 613-6. De 2009 à
+  Cipav cotise depuis 2019 sa part de D. 131-5-3, puis de D. 613-6. Depuis le
+  18 octobre 2026, le revenu annuel moyen porte ce revenu cotisé, et non le
+  revenu abattu : 40 000 € de ventes portent au compte 11 586 € en 2023 et
+  11 963 € en 2026, au lieu de 11 600 € ; en 2009, sur une année civile
+  entière, au moins la cotisation d'un trimestre, sur 200 heures de SMIC
+  (3 000 € de ventes : 1 742 €, au lieu de 870 €). Les quatre témoins du
+  micro-entrepreneur de l'Assurance retraite gagnent de 0,19 à 1,21 % au
+  scénario 1 ; ceux de la Cipav, liquidés en points, ne bougent pas. De 2009 à
   2015, la compensation de l'État : un trimestre au moins en 2009, sur l'année
   civile entière (3 000 € de ventes, rien auparavant) ; rien sous 200 heures
   de SMIC en 2014 (6 500 € de
   ventes, un trimestre auparavant), sous 300 en 2015 (7 000 €). Ces seuils
   sont sous les bornes de la saisie (0,1 fois le salaire moyen) : seul le
-  modèle les atteint. Approchée sur huit points : en 2016 et 2017, aucune
-  clef n'est lue, le revenu abattu valide et le compte porte le barème ; la
+  modèle les atteint. Approchée sur neuf points : en 2016 et 2017, aucune
+  clef n'est lue, le revenu abattu valide et le compte porte le barème ; de
+  2017 à 2019, le barème de la Cnav, de source Urssaf, fait valider les trois
+  premiers trimestres à moindre chiffre d'affaires que le modèle (4 085 € de
+  ventes pour un trimestre en 2018, quand la clef en demande 5 098 €), le
+  quatrième au même ; la
   Cipav valide sur le revenu abattu avant 2023, la règle de la CNAVPL n'étant
   pas lue ; les clefs de janvier à septembre 2022 sont celles de 2021 ; en
   2014 et 2015, qui ne relève pas de la maladie du RSI (le salarié, l'assuré
   au RSA) validait dès 150 heures, et le compte garde le barème sous le
-  seuil ; l'abattement minimal de 305 € n'est pas opposé ; les points du RCI
-  se calculent au barème, non sur la part du forfait, et le revenu cotisé
-  n'entre pas dans le salaire annuel moyen ; l'exonération de début
+  seuil ; l'abattement minimal de 305 € n'est pas opposé ; les points du RCI,
+  et ceux de la CNAVPL pour la Cipav, se calculent au barème, non sur la part
+  du forfait ; l'exonération de début
   d'activité (D. 131-6-3) n'est pas portée ; l'année prend la moyenne de ses
   mois, sans les arrondis trimestriels de la caisse. Une seule activité pour
   toute la carrière.
 sources:
-  lu_le: 2026-10-17
+  lu_le: 2026-10-18
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Les clefs de 2016 et de 2017 (taux globaux de 13,4 % et 23,1 %, circulaire
-    RSI n° 2015/007), et celles de janvier à septembre 2022, qu'aucune source
+    Les clefs de 2016 et de 2017 (taux globaux de 13,4 % et 23,1 %, circulaires
+    RSI n° 2015/006, point D, et n° 2015/007), et celles de janvier à septembre 2022, qu'aucune source
     lue ne donne : une circulaire du RSI ou de l'Acoss, ou la convention qui
     les fixait. La règle de la CNAVPL pour la Cipav avant octobre 2022 :
     valide-t-elle sur la part de D. 131-5-3 et de D. 613-6, comme la Cnav ?
   - >-
-    Le salaire annuel moyen : la circulaire n° 2024-23 détermine « les droits »
-    par le forfait payé, L. 613-7, II par le chiffre d'affaires abattu ; la
-    circulaire RSI n° 2010/034 (point III, B) reconstitue le revenu du RAM sur
-    la cotisation et la compensation. Lire ce que la caisse reporte au compte.
+    Les seuils de 2017 à 2019 du barème de la Cnav « Chiffre d'affaire des
+    micro-entrepreneurs validant un trimestre » (source Urssaf Caisse
+    nationale) : 4 085 €, 7 185 €, 10 250 € et 20 430 € de ventes en 2018 pour
+    un à quatre trimestres, quand la clef de la circulaire n° 2025-20 (40,31 %)
+    en demande 5 098 €, 10 197 €, 15 295 € et 20 393 €. La règle qui les fait
+    (une clef selon le chiffre d'affaires ?) reste à lire, chez l'Urssaf ou
+    dans les circulaires du RSI de 2016 à 2019.
   - >-
     D. 131-6-3, la fraction du taux pendant l'exonération de début d'activité,
     que les circulaires n° 2023-4 et n° 2026-12 neutralisent pour les droits.
@@ -128,7 +144,9 @@ sources:
       relevant du dispositif micro-social », point 4 : revenu cotisé = parts du
       forfait affectées au régime de base / taux de cotisation de base, comparé à
       150 SMIC horaires ; exemples de 2023 (6 220 € de ventes, un trimestre) et de
-      2024
+      2024. Annexe 2, la synthèse : de la « Part affectée à la retraite de
+      base », le « Revenu cotisé de l'année concernée » et les « Trimestres
+      cotisés de l'année concernée »
     url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2024_23_16072024.pdf
     date: 2024-07-16
   - type: service_public
@@ -176,6 +194,49 @@ sources:
       compensation supprimée en 2016)
     url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_rsi_2016_010_15062016.pdf
     date: 2016-06-15
+  - type: legifrance
+    reference: >-
+      R. 634-1 CSS, LEGIARTI000038787378 (8 juillet 2019) et LEGIARTI000047961079
+      (1er septembre 2023 au 31 décembre 2025) : « Le revenu annuel moyen
+      mentionné à l'article L. 634-2 correspond aux cotisations versées dans la
+      limite du plafond […] permettant la validation d'au moins un trimestre
+      d'assurance » ; D. 634-3, LEGIARTI000053356107 (pensions prenant effet
+      depuis le 1er janvier 2026) : le revenu annuel moyen « est déterminé dans
+      les conditions prévues à l'article R. 351-29 », « salaire » devenant
+      « revenu » ; R. 351-29, LEGIARTI000053335651, I, B : « Le salaire servant
+      de base au calcul de la pension est celui correspondant, pour chaque
+      année prise en compte, aux cotisations versées par l'assuré au titre de
+      cette année ». Lus dans l'index LEGI du dépôt, à jour au 17 octobre 2026
+    date: 2026-10-18
+  - type: autre
+    reference: >-
+      Circulaires du RSI, au site de la Cnav : n° 2009/024, point III, A (« Le
+      montant de la cotisation d'assurance vieillesse de base ainsi déterminé
+      est celui retenu pour déterminer le revenu susceptible d'être pris en
+      compte pour la détermination du revenu annuel moyen […] selon la
+      formule : cotisation RVB / taux RVB » ; « 966 / 290 », la cotisation d'un
+      trimestre ; « RAM : 543 / 16,65 % = 3 261 € au lieu de 2 610 € » quand
+      le forfait passe la cotisation de droit commun) ; n° 2010/034, point III,
+      B, a, et n° 2013/020, point 3.2, a (« Le ou les revenus pris en compte
+      dans le calcul du RAM […] : (cotisation RVB année N réglée par l'assuré
+      + compensation RVB année N) / taux de cotisation RVB de l'année N ») ;
+      n° 2015/006, point D (les taux globaux de 2016 et 2017 : 13,4 %, 23,1 %,
+      22,9 puis 23,0 % pour la Cipav)
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_rsi_2013_020_05122013.pdf
+    date: 2013-12-05
+  - type: autre
+    reference: >-
+      Cnav, exposés « Revenu annuel moyen » (le revenu annuel moyen tient
+      compte « des revenus cotisés à l'ex-régime social des indépendants ») et
+      « Travailleurs indépendants » (« Il n'est pas tenu compte des réductions
+      et exonérations pour le calcul des droits à retraite. Les droits sont
+      calculés sur la base de la cotisation forfaitaire globale qui aurait été
+      due ») ; barème « Chiffre d'affaire des micro-entrepreneurs validant un
+      trimestre », de 2017 à 2019, source Urssaf Caisse nationale ; barème
+      « Taux de répartition par risques », depuis le 1er octobre 2022 seulement.
+      Lus le 18 octobre 2026, par l'API du site
+    url: https://legislation.lassuranceretraite.fr/
+    date: 2026-10-18
 textes_a_rattacher:
 - reference: code de la sécurité sociale, L. 613-7, II (LEGIARTI000048683570)
 - reference: code de la sécurité sociale, L. 133-6-8 (de 2009 à 2017)
@@ -186,18 +247,34 @@ textes_a_rattacher:
     Cipav (LEGITEXT000037798308)
 - reference: code de la sécurité sociale, L. 133-6-8-2 et D. 131-6-4 (de 2010 à 2015)
 - reference: code de la sécurité sociale, D. 131-5-1 et D. 131-5-3 (de 2018 à 2020)
+- reference: >-
+    code de la sécurité sociale, D. 131-6-4 (LEGIARTI000031799459, 2016-2017) :
+    la cotisation du conjoint collaborateur d'un micro-entrepreneur, sur 58 %
+    ou 46 % de son chiffre d'affaires, que le modèle ne porte pas
+textes_sans_effet:
+- id: LEGIARTI000038027006
+  reference: >-
+    code de la sécurité sociale, D. 131-6-4, depuis le 1er janvier 2019
+  motif: >-
+    il dit qui exerce « le contrôle effectif de l'entreprise » pour
+    l'exonération de début d'activité de L. 131-6-4, dont la caisse ne tient
+    pas compte : « Les droits sont calculés sur la base de la cotisation
+    forfaitaire globale qui aurait été due » (exposé « Travailleurs
+    indépendants » de la Cnav)
 code:
   python: >-
     saisie.py : ACTIVITES_MICRO, ABATTEMENTS_MICRO, Saisie.en_chiffre_d_affaires et
     Saisie.abattu, appelée par parcours et emploi_retraite_declare ;
-    carriere.py : Metier.micro, AnneeCarriere.micro, _revenu_validant ;
+    carriere.py : Metier.micro, AnneeCarriere.micro, revenu_cotise ;
     donnees/chargement.py : charger_validation_micro, charger_cotisation_micro,
     forfait_micro, charger_compensation_micro, validant_compense ;
-    moteur/compte.py : ConstructeurCompte._cotisation_ligne
+    moteur/compte.py : ConstructeurCompte._cotisation_ligne ;
+    droit/liquider.py : assiette_de_reference, le revenu annuel moyen
   javascript: moteur/js/saisie.js (enChiffreDAffaires, abattu) ; moteur/js/pages.js
     (microFormulaire, champChiffreDAffaires) ; moteur/js/carriere.js
-    (revenuValidant, validantCompense, forfaitMicro, paquets validation_micro,
-    cotisation_micro et compensation_micro) ; moteur/js/compte.js (_cotisationLigne)
+    (revenuCotise, validantCompense, forfaitMicro, paquets validation_micro,
+    cotisation_micro et compensation_micro) ; moteur/js/compte.js (_cotisationLigne) ;
+    moteur/js/droit/liquider.js (assietteDeReference)
   tests: >-
-    tests/test_web_saisie.py ; tests/test_micro_social.py ; témoins
-    micro_entrepreneur_* et simuler_micro_entrepreneur*
+    tests/test_web_saisie.py ; tests/test_micro_social.py ; tests/js/moteur.test.js ;
+    témoins micro_entrepreneur_* et simuler_micro_entrepreneur*
