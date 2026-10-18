@@ -462,6 +462,76 @@ def test_un_etage_paie_la_cotisation_de_la_sncf_sur_ses_seules_lignes(pensions):
     assert sum(json.loads(execution.stdout), []) == pytest.approx(sum(rendus.values(), []))
 
 
+_REGIME_JS = """
+import { PrelevementsPension } from "./moteur/js/remuneration.js";
+import { Montants } from "./moteur/js/contexte.js";
+const { fiche, foyers, cas } = JSON.parse(process.argv[1]);
+const bareme = new PrelevementsPension(fiche);
+process.stdout.write(JSON.stringify(foyers.map(([tauxPension, champs]) => {
+  const montants = new Montants(true, tauxPension, 0, 0, { ...champs, bareme,
+    regimesMaladie: new Set(champs.regimesMaladie),
+    regimesGeneraux: new Set(champs.regimesGeneraux) });
+  return cas.map(([brut, regime, reversion, majoration]) => montants.pensionDuRegime(
+    brut, regime, reversion, majoration));
+})));
+"""
+
+
+def test_une_reversion_paie_la_sncf_sous_la_moitie_du_plafond_hors_majoration(pensions):
+    """Décret n° 2007-1056, art. 7, VII : les plafonds de la SNCF sont « réduits
+    de moitié concernant les titulaires d'une pension de réversion ». La
+    majoration pour enfants qu'une ligne de réversion contient paie la CSG, la
+    CRDS et la CASA, mais aucune cotisation maladie, comme celle de l'agent
+    (L. 131-2, 1°) : ni à la SNCF, ni à l'Agirc-Arrco. Une réversion de la
+    SNCF de 16 000 € par an, dont 1 400 de majoration ; la pension de l'agent,
+    au plafond entier ; 5 000 € de l'Agirc-Arrco, dont 500 de majoration. Au
+    taux plein, puis au non-résident, que la France soigne. Les deux
+    moteurs."""
+    plafond = pensions.regimes_speciaux[0].plafond_annuel
+    taux = pensions.taux_total
+    assert 16000.0 - 1400.0 > plafond / 2
+    cas = [(16000.0, "sncf", True, 1400.0), (16000.0, "sncf", False, 1400.0),
+           (5000.0, "agirc_arrco", True, 500.0), (1400.0, "sncf", True, 1400.0)]
+    foyers = {
+        "taux plein": dict(taux_pension=taux, taux_sans_maladie=taux, taux_maladie=0.01),
+        "non-résident": dict(taux_pension=0.0, taux_sans_maladie=0.0, taux_maladie=0.042,
+                             taux_regime_general=0.032, non_resident=True, couvert=True),
+    }
+    attendu = {
+        "taux plein": [16000.0 * (1 - taux) - 0.007 * plafond / 2,
+                       16000.0 * (1 - taux) - 0.007 * 14600.0,
+                       5000.0 * (1 - taux) - 0.01 * 4500.0,
+                       1400.0 * (1 - taux)],
+        "non-résident": [16000.0 - 0.039 * plafond / 2 - 0.032 * (14600.0 - plafond / 2),
+                         16000.0 - 0.039 * 14600.0,
+                         5000.0 - 0.042 * 4500.0,
+                         1400.0],
+    }
+    rendus = {}
+    for nom, champs in foyers.items():
+        montants = Montants(net=True, regimes_maladie=pensions.regimes_maladie,
+                            regimes_generaux=pensions.regimes_generaux, bareme=pensions,
+                            **champs)
+        rendus[nom] = [montants.pension_du_regime(brut, regime, reversion, majoration)
+                       for brut, regime, reversion, majoration in cas]
+        assert rendus[nom] == pytest.approx(attendu[nom]), nom
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    with open(RACINE / "data/reference/legislation/prelevements_remuneration.yaml",
+              encoding="utf-8") as flux:
+        fiche = yaml.safe_load(flux)["pensions"]
+    portes = [[champs["taux_pension"], {
+        **{_camel(nom): valeur for nom, valeur in champs.items() if nom != "taux_pension"},
+        "regimesMaladie": sorted(pensions.regimes_maladie),
+        "regimesGeneraux": sorted(pensions.regimes_generaux)}] for champs in foyers.values()]
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", _REGIME_JS,
+         json.dumps({"fiche": fiche, "foyers": portes, "cas": cas}, default=str)],
+        cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr
+    assert sum(json.loads(execution.stdout), []) == pytest.approx(sum(rendus.values(), []))
+
+
 def test_l_abattement_de_10_pour_cent(pensions):
     """CGI, art. 158, 5 a : 10 %, au moins 454 € par pensionné, au plus 4 439 €
     pour le foyer."""

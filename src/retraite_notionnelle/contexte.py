@@ -1152,16 +1152,21 @@ class Montants:
                 - self.taux_maladie * assiette
                 - self.taux_regime_general * assiette_generale)
 
-    def pension_du_regime(self, brut: float, regime: str, reversion: bool = False) -> float:
+    def pension_du_regime(self, brut: float, regime: str, reversion: bool = False,
+                          majoration: float = 0.0) -> float:
         """La pension d'un seul régime : chaque cotisation maladie y est toute
         ou rien ; celle de la SNCF, sous son plafond, de moitié pour une
-        ``reversion``."""
+        ``reversion``. La ``majoration`` pour enfants que ``brut`` contient
+        paie la CSG, la CRDS et la CASA, mais aucune cotisation maladie
+        (L. 131-2, 1°), comme celle d'un étage."""
         if not self.net:
             return brut
+        assiette = brut - majoration
         net = (brut * (1.0 - self.taux_sans_maladie)
-               - self.taux_maladie * (brut if regime in self.regimes_maladie else 0.0)
-               - self.taux_regime_general * (brut if regime in self.regimes_generaux else 0.0))
-        return net - self._maladie_des_regimes_speciaux({regime: brut}, reversion)
+               - self.taux_maladie * (assiette if regime in self.regimes_maladie else 0.0)
+               - self.taux_regime_general * (assiette if regime in self.regimes_generaux
+                                             else 0.0))
+        return net - self._maladie_des_regimes_speciaux({regime: assiette}, reversion)
 
     def _maladie_des_regimes_speciaux(self, lignes: dict[str, float],
                                       reversion: bool = False) -> float:

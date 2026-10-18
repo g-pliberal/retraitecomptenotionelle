@@ -1235,14 +1235,17 @@ export class Montants {
   /**
    * La pension d'un seul régime : chaque cotisation maladie y est toute ou
    * rien ; celle de la SNCF, sous son plafond, de moitié pour une `reversion`.
-   * Voir `Montants.pension_du_regime` dans `contexte.py`.
+   * La `majoration` pour enfants que `brut` contient ne paie aucune cotisation
+   * maladie (L. 131-2, 1°). Voir `Montants.pension_du_regime` dans
+   * `contexte.py`.
    */
-  pensionDuRegime(brut, regime, reversion = false) {
+  pensionDuRegime(brut, regime, reversion = false, majoration = 0) {
     if (!this.net) return brut;
+    const assiette = brut - majoration;
     const net = brut * (1 - this.tauxSansMaladie)
-      - this.tauxMaladie * (this.regimesMaladie.has(regime) ? brut : 0)
-      - this.tauxRegimeGeneral * (this.regimesGeneraux.has(regime) ? brut : 0);
-    return net - this._maladieDesRegimesSpeciaux(new Map([[regime, brut]]), reversion);
+      - this.tauxMaladie * (this.regimesMaladie.has(regime) ? assiette : 0)
+      - this.tauxRegimeGeneral * (this.regimesGeneraux.has(regime) ? assiette : 0);
+    return net - this._maladieDesRegimesSpeciaux(new Map([[regime, assiette]]), reversion);
   }
 
   /**

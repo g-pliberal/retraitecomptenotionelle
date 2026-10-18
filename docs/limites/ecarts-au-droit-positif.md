@@ -9,9 +9,9 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   son conjoint survivant. Le scénario 1 la liquide pour le conjoint que la
   saisie déclare, au décès de l'assuré après son départ, ou avant lui sur la
   pension qu'il eût obtenue, sans décote (R. 353-6) : au régime général et
-  dans les régimes alignés, dans la fonction publique et au RAFP, à la CRPCEN
-  et aux IEG, à l'Agirc-Arrco, à l'Ircantec et à la complémentaire des
-  indépendants
+  dans les régimes alignés, dans la fonction publique et au RAFP, à la
+  CRPCEN, aux IEG et à la SNCF, à l'Agirc-Arrco, à l'Ircantec et à la
+  complémentaire des indépendants
   (`droit/reversion.py`, le domaine de la réversion), où l'invalidité du
   conjoint, qu'il déclare, lève l'âge requis de l'Agirc-Arrco (le domaine de
   l'invalidité et de l'inaptitude), comme deux enfants de moins de dix-huit ans
@@ -32,7 +32,10 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   au prorata des mariages en mois (L. 353-3, R. 353-4), avec les seuls non
   remariés là où le texte le dit, et s'éteint au mois qui suit l'union
   nouvelle du survivant dans les régimes qui la retirent (L. 46 du code des
-  pensions, Agirc-Arrco, Ircantec, IEG, RAFP). Toujours le 9 octobre, le droit
+  pensions, Agirc-Arrco, Ircantec, IEG, RAFP) ; la SNCF ne sert rien au
+  survivant en concubinage au décès, et l'union qu'il forme ensuite, sans
+  l'éteindre, y fige la réversion, que le modèle sert comme sans union
+  nouvelle (décret n° 2008-639, articles 19 et 31). Toujours le 9 octobre, le droit
   d'avant 2004 : l'âge de soixante-cinq ans, soixante pour l'inapte, d'avant
   1973 ; la réversion qui complète la retraite personnelle du survivant avant
   juillet 1974, puis s'y cumule dans la limite de D. 355-1, ces retraites
@@ -50,8 +53,10 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   pensions d'orphelin — à
   l'Agirc-Arrco, la moitié des droits du parent pour l'orphelin de père et de
   mère de moins de vingt et un ans, ou de vingt-cinq à charge (articles 114 et
-  115 de l'accord de 2017) ; au RAFP, aux IEG et à la CRPCEN, un dixième par
-  orphelin —, la réversion des complémentaires des artisans et des commerçants
+  115 de l'accord de 2017) ; au RAFP, aux IEG, à la CRPCEN et à la SNCF, un
+  dixième par orphelin —, les deux minima de la réversion de la SNCF (décret
+  n° 2008-639, articles 18 et 23), la réversion des complémentaires des
+  artisans et des commerçants
   pour un décès d'avant leur fusion, et celle des autres régimes, dont la ligne
   le dit ; les approximations de chaque fiche sont déclarées. Le formulaire demande le
   conjoint dans un bloc facultatif, et la page montre sa réversion pour un

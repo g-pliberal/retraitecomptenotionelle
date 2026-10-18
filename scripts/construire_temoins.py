@@ -1727,6 +1727,18 @@ def _cas() -> list[dict]:
     # précède la liquidation (action 89).
     cas.append(("reversion_agent_ieg", {
         **reversion, "statut": "agent_ieg", "liquidation": "57"}))
+    # La SNCF, la moitié majorée pour trois enfants, sans durée du mariage
+    # quand un enfant est né avant la cessation des fonctions ; un mariage de
+    # vingt-trois mois contracté après le départ, sans enfant, n'ouvre rien ;
+    # le survivant en concubinage au décès n'en jouit pas (décret n° 2008-639,
+    # articles 18 et 19 ; action 138, étape 9).
+    cas.append(("reversion_agent_sncf", {
+        **reversion, "statut": "agent_sncf", "liquidation": "57", "enfants": "3"}))
+    cas.append(("reversion_agent_sncf_mariage_tardif", {
+        **reversion, "statut": "agent_sncf", "liquidation": "57", "mariage": "2021-06"}))
+    cas.append(("reversion_agent_sncf_concubinage", {
+        **reversion, "statut": "agent_sncf", "liquidation": "57",
+        "nouvelle_union": "concubinage"}))
     cas.append(("reversion_mariage_court_avant_2004", {
         "naissance": "1930", "liquidation": "60", "conjoint": "1935",
         "mariage": "1994-06", "deces": "1995-03"}))

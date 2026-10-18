@@ -9,7 +9,8 @@
  * vivre » — et applique à chaque régime la version de sa fiche que les dates
  * choisissent : le régime général et les régimes alignés (`reversion`), la
  * fonction publique et la CNRACL (`reversion_fonction_publique`), la CRPCEN
- * (`reversion_crpcen`), les IEG (`reversion_ieg`), l'Agirc-Arrco
+ * (`reversion_crpcen`), les IEG (`reversion_ieg`), la SNCF
+ * (`reversion_sncf`), l'Agirc-Arrco
  * (`reversion_agirc_arrco`), le RAFP (`reversion_rafp`),
  * l'Ircantec (`reversion_ircantec`), la complémentaire des indépendants
  * (`reversion_rci`). Les autres régimes n'ont pas encore de fiche : leur ligne
@@ -76,7 +77,13 @@ export const MOITIE_SOUS_CONDITION_DE_MARIAGE = Object.freeze([
  * la limite forfaitaire du cumul d'avant juillet 2004 : voir le Python.
  */
 export const AUTRES_BASES = Object.freeze([...MOITIE_SOUS_CONDITION_DE_MARIAGE,
-  "reversion_ieg"]);
+  "reversion_ieg", "reversion_sncf"]);
+
+/**
+ * Les fiches qui reversent la moitié de la majoration pour enfants du défunt
+ * avec la moitié de sa pension, les IEG et la SNCF : voir le Python.
+ */
+export const MOITIE_MAJORATION_COMPRISE = Object.freeze(["reversion_ieg", "reversion_sncf"]);
 
 /** La fiche de la majoration forfaitaire pour enfant à charge (L. 353-5). */
 export const MAJORATION_FORFAITAIRE = "majoration_forfaitaire_reversion";
@@ -371,6 +378,20 @@ function jusquAuRemariage(ligne, parametres, conjoint) {
   return ligne.avec({ fin });
 }
 
+/**
+ * La ligne sans montant quand le survivant vit, au décès, dans une union que la
+ * version dit sans jouissance : voir `_sans_jouissance_au_deces` du Python.
+ */
+function sansJouissanceAuDeces(ligne, parametres, conjoint, deces) {
+  const depuis = conjoint.nouvelle_union_depuis ?? null;
+  if (ligne.montant > 0
+      && (parametres.sans_jouissance_au_deces ?? []).includes(conjoint.nouvelle_union)
+      && depuis !== null && depuis <= deces) {
+    return ligne.avec({ montant: 0.0, motif: "remariage", majoration: 0.0 });
+  }
+  return ligne;
+}
+
 function apresLAge(naissance, age) {
   return moisSuivant(chrono.plusAns(naissance, Math.trunc(age)));
 }
@@ -433,6 +454,23 @@ function mariageIeg(parametres, conjoint, deces, depart, enfants) {
   if (minimum === null || enfants > 0 || conjoint.mariage <= depart) {
     return true;
   }
+  return chrono.anneesRevolues(conjoint.mariage, deces) >= minimum;
+}
+
+/**
+ * La condition de l'article 19, I, du décret n° 2008-639 : voir `_mariage_sncf`
+ * du Python.
+ */
+function mariageSncf(parametres, conjoint, deces, depart, naissances) {
+  if (naissances.some((naissance) => naissance < depart)) {
+    return true;
+  }
+  if (chrono.anneesRevolues(conjoint.mariage, depart)
+      >= parametres.mariage_cessation_minimum_annees) {
+    return true;
+  }
+  const minimum = naissances.length > 0 ? parametres.mariage_minimum_annees_avec_enfant
+    : parametres.mariage_minimum_annees;
   return chrono.anneesRevolues(conjoint.mariage, deces) >= minimum;
 }
 
@@ -960,18 +998,21 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
       autresBases += lignes.get(regime).montant;
       continue;
     }
-    if (fiche.id === "reversion_ieg") {
-      // La moitié de la pension, majoration pour enfant comprise : voir le
-      // Python.
-      const servie = mariageIeg(parametres, conjoint, deces, depart, enfants);
+    if (MOITIE_MAJORATION_COMPRISE.includes(fiche.id)) {
+      // La moitié de la pension, majoration pour enfants comprise aux IEG,
+      // majorée comme la pension à la SNCF : voir le Python.
+      const servie = fiche.id === "reversion_sncf"
+        ? mariageSncf(parametres, conjoint, deces, depart,
+          carriere.naissancesDesEnfants.map(([, naissance]) => naissance))
+        : mariageIeg(parametres, conjoint, deces, depart, enfants);
       const majoration = servie
         ? Number(parametres.majoration_reversible ?? 0.0) * ((majorations ?? {})[regime] ?? 0.0)
           * part
         : 0.0;
       const montant = servie ? taux * base * part + majoration : 0.0;
-      lignes.set(regime, jusquAuRemariage(ligne(regime, base, montant,
+      lignes.set(regime, sansJouissanceAuDeces(jusquAuRemariage(ligne(regime, base, montant,
         servie ? "servie" : "mariage", fiche, version, taux, lendemain, fiabilite, majoration)
-        .avec({ part }), parametres, conjoint));
+        .avec({ part }), parametres, conjoint), parametres, conjoint, deces));
       autresBases += lignes.get(regime).montant;
       continue;
     }

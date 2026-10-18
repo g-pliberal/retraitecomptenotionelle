@@ -5490,6 +5490,18 @@ const MOTIFS_DE_REVERSION = Object.freeze({
 });
 
 /**
+ * Ce que chaque régime reverse de la majoration pour enfants du défunt :
+ * l'Agirc-Arrco en entier, hors du taux (accord du 17 novembre 2017, article
+ * 109) ; les IEG et la SNCF la moitié, avec la pension (annexe 3 au statut
+ * national, article 22 ; décret n° 2008-639, article 18).
+ */
+const MAJORATION_REVERSEE = Object.freeze({
+  reversion_agirc_arrco: "reversée en entier",
+  reversion_ieg: "la moitié de la vôtre",
+  reversion_sncf: "la moitié de la vôtre",
+});
+
+/**
  * La réversion que le conjoint déclaré recevrait (le domaine de la réversion,
  * docs/architecture.md, § 11) : dans le système actuel, régime par régime ;
  * dans les trois autres, rien — les comptes notionnels ne servent que les
@@ -5507,11 +5519,16 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
     reversion.annee, comparaison.parametres.annee_euros_constants);
   // Chaque ligne au taux de SON régime : la cotisation maladie de 1 % ne
   // frappe que la réversion d'une complémentaire qui la prélève. Le total est
-  // la somme des lignes, et non le total au taux du titulaire.
+  // la somme des lignes, et non le total au taux du titulaire. La réversion
+  // paie celle de la SNCF sous la moitié de son plafond (décret n° 2007-1056,
+  // art. 7, VII), quand la pension du défunt la paie sous le plafond entier ;
+  // la majoration pour enfants qu'elle reverse n'en paie aucune (L. 131-2, 1°).
   const mensuel = (annuel, regime) => montants.pensionDuRegime(
     annuel * coefficient, regime) / MOIS_PAR_AN;
+  const reverse = (annuel, ligne, majoration = ligne.majoration) => montants.pensionDuRegime(
+    annuel * coefficient, ligne.regime, true, majoration * coefficient) / MOIS_PAR_AN;
   const totalMensuel = reversion.regimes.reduce(
-    (somme, ligne) => somme + mensuel(ligne.montant, ligne.regime), 0);
+    (somme, ligne) => somme + reverse(ligne.montant, ligne), 0);
   const nomRegime = (code) => (catalogue.contient(code) ? catalogue.obtenir(code).nom : code);
   const mois = (date) => echapper(String(new DateMois(
     Number(date.slice(0, 4)), Number(date.slice(5, 7)))));
@@ -5529,14 +5546,16 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
   }
 
   // L'Agirc-Arrco reverse en entier la majoration pour enfants du défunt, hors
-  // du taux ; le régime général majore la réversion de 10 % pour trois enfants,
-  // puis de 11,1 % aux petites retraites, à l'âge du taux plein : la ligne dit
-  // quelle part du montant chacune fait, ou quand la seconde commencera.
+  // du taux, les IEG et la SNCF la moitié ; le régime général majore la
+  // réversion de 10 % pour trois enfants, puis de 11,1 % aux petites
+  // retraites, à l'âge du taux plein : la ligne dit quelle part du montant
+  // chacune fait, ou quand la seconde commencera.
   const dont = (ligne) => {
     const parts = [];
     if (ligne.majoration > 0) {
-      parts.push(`dont ${g.euros(mensuel(ligne.majoration, ligne.regime))} `
-        + "de majoration pour enfants, reversée en entier");
+      const reversee = MAJORATION_REVERSEE[ligne.fiche];
+      parts.push(`dont ${g.euros(reverse(ligne.majoration, ligne))} `
+        + `de majoration pour enfants${reversee === undefined ? "" : `, ${reversee}`}`);
     }
     if (ligne.majoration_trois_enfants > 0) {
       parts.push(`dont ${g.euros(mensuel(ligne.majoration_trois_enfants, ligne.regime))} `
@@ -5602,8 +5621,8 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
         + "que la réversion reprend)</span>"
       : ""),
     ligne.fiche === null ? "—" : g.pourcentage(ligne.taux, false, 0),
-    ligne.motif === "servie" ? g.euros(mensuel(ligne.montant, ligne.regime)) + dont(ligne)
-      : `${g.euros(mensuel(ligne.montant, ligne.regime))} <span class="discret">`
+    ligne.motif === "servie" ? g.euros(reverse(ligne.montant, ligne)) + dont(ligne)
+      : `${g.euros(reverse(ligne.montant, ligne))} <span class="discret">`
         + `(${motif(ligne)})</span>` + dont(ligne),
     ligne.date_effet === null ? "—" : mois(ligne.date_effet),
   ]);

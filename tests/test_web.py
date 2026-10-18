@@ -923,6 +923,44 @@ def test_la_cotisation_de_la_sncf_reste_sur_son_regime_integre(contexte, residen
     assert sum(affiches.values()) == montant
 
 
+def test_la_reversion_de_la_sncf_paie_sa_cotisation_sous_la_moitie_du_plafond(contexte):
+    """Décret n° 2007-1056, art. 7, VII : les plafonds de la SNCF sont
+    « réduits de moitié concernant les titulaires d'une pension de
+    réversion ». Dans la carte de la réversion, la pension de l'agent paie
+    ses 0,70 % sous le plafond entier, la réversion de son conjoint sous la
+    moitié, et sur elle seule : la majoration pour enfants qu'elle reverse ne
+    paie que la CSG, la CRDS et la CASA (L. 131-2, 1°). La ligne dit que
+    cette majoration est la moitié de celle de l'agent (décret n° 2008-639,
+    article 18). Au taux plein, pour un décès supposé cette année."""
+    champs = {"naissance": "1960", "statut": "agent_sncf", "liquidation": "57",
+              "unite_revenu": "moyen", "salaire": "2", "enfants": "3", "conjoint": "1962",
+              "montants": "net"}
+    saisie = Saisie.depuis_requete(champs)
+    comparaison = contexte.simuler(saisie)
+    montants = Montants.depuis(saisie, contexte.base, comparaison)
+    assert montants.tranche == "taux plein"
+    reversion = comparaison.dictionnaire()["reversion"]
+    ligne, = reversion["regimes"]
+    coefficient = contexte.simulateur().macro.coefficient_prix(
+        reversion["annee"], int(saisie.euros))
+    base, servie, majoration = (ligne[cle] * coefficient / 12
+                                for cle in ("base", "montant", "majoration"))
+    pensions = charger_prelevements(contexte.base.racine_donnees).pensions
+    plafond = pensions.regimes_speciaux[0].plafond_annuel / 12
+    taux = pensions.taux_total
+    assert base > plafond and servie - majoration > plafond / 2 and majoration > 0
+    attendus = (base * (1 - taux) - 0.007 * plafond,
+                servie * (1 - taux) - 0.007 * plafond / 2,
+                majoration * (1 - taux))
+    carte = _bloc(rendre("/simuler", champs)[1], 'id="resultats-reversion"',
+                  "Dans les systèmes 2, 3 et 4")
+    cellules = next(c for c in _cellules(carte) if "SNCF" in c[0])
+    (votre,), (sa, dont) = _nombres(cellules[1]), _nombres(cellules[3])
+    for affiche, attendu in zip((votre, sa, dont), attendus):
+        assert abs(affiche - attendu) < 1, f"{affiche} € affichés, {attendu:.2f} € attendus"
+    assert "de majoration pour enfants, la moitié de la vôtre" in cellules[3]
+
+
 def test_le_detail_range_la_base_avant_les_complementaires():
     """Le moteur rend les régimes dans l'ordre alphabétique de leurs codes,
     l'Agirc avant le régime général. Le détail les range par étage — la base,

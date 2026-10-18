@@ -1,0 +1,213 @@
+schema_version: 1
+id: reversion_sncf
+intitule: >-
+  Pension de réversion du régime spécial de la SNCF (décret n° 2008-639, articles 18 à
+  23 et 31) : la moitié de la pension obtenue par l'agent ou qu'il aurait obtenue au
+  jour de son décès, sans condition d'âge ni de ressources, majorée pour enfants
+  comme la pension ; au conjoint marié deux ans le jour de la cessation des
+  fonctions, ou quatre ans au décès, deux s'il existe un enfant issu du mariage, sans
+  durée quand un enfant est né avant la cessation ; partagée avec les conjoints
+  divorcés non remariés au prorata des mariages ; ni le remariage, ni le pacs, ni le
+  concubinage après le décès ne l'éteignent : ils la figent.
+domaine: reversion
+regimes:
+- sncf
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- conjoint.deces
+- union.debut, d'un mariage, et la cessation des fonctions de l'agent, pour la
+  condition de l'article 19
+- les enfants, leur naissance avant ou après la cessation des fonctions
+- les précédents conjoints de l'agent, leur mariage, leur divorce et leur remariage,
+  que le partage au prorata des mariages lit
+- le ménage où vit le survivant, au décès ou après
+- la pension du défunt, servie ou qu'il aurait obtenue au jour de son décès, et sa
+  majoration pour enfants
+ecrit:
+- la pension de réversion du survivant, à la SNCF
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la réversion (§ 4.1) : le
+# règlement de retraites d'avant le 1er juillet 2008, que l'index ne porte pas, puis
+# le décret n° 2008-639. Le moteur les lit par sa branche propre (droit/reversion.py
+# et son jumeau) : le taux, la condition de l'article 19, la part de la majoration
+# pour enfants reversée, et le concubinage au décès.
+versions:
+- id: avant_2008
+  statut: supposee
+  hypothese: >-
+    le règlement de retraites du personnel de la SNCF, qui réglait la réversion avant
+    le 1er juillet 2008 et que l'index LEGI ne porte pas, n'a pas été lu ; on lui
+    prête la règle de 2008
+  fiabilite: moyenne
+  bornes:
+    liquidation.date_effet: [null, 2008-07-01]
+  contenu:
+    droit: la moitié de la pension de l'agent, majorée pour enfants comme elle
+    beneficiaire: le conjoint survivant ; les conjoints divorcés non remariés
+    parametres:
+      taux: 0.50
+      ex_conjoints: non_remaries
+      beneficiaire: conjoint
+      mariage_cessation_minimum_annees: 2
+      mariage_minimum_annees: 4
+      mariage_minimum_annees_avec_enfant: 2
+      majoration_reversible: 0.50
+      sans_jouissance_au_deces: [concubinage]
+      age_minimum: null
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: conjoints_2008
+  statut: lue
+  textes:
+  - {id: LEGIARTI000019108265, article: "décret n° 2008-639, article 18", en_vigueur: 2008-07-01}
+  - {id: LEGIARTI000029165237, article: "décret n° 2008-639, article 18", en_vigueur: 2014-06-29}
+  - {id: LEGIARTI000045021301, article: "décret n° 2008-639, article 18", en_vigueur: 2022-01-02}
+  - {id: LEGIARTI000019108270, article: "décret n° 2008-639, article 19", en_vigueur: 2008-07-01}
+  - {id: LEGIARTI000020085560, article: "décret n° 2008-639, article 19", en_vigueur: 2009-01-01}
+  - {id: LEGIARTI000019108266, article: "décret n° 2008-639, article 20", en_vigueur: 2008-07-01}
+  - {id: LEGIARTI000019108271, article: "décret n° 2008-639, article 21", en_vigueur: 2008-07-01}
+  - {id: LEGIARTI000019108267, article: "décret n° 2008-639, article 22", en_vigueur: 2008-07-01}
+  - {id: LEGIARTI000030597108, article: "décret n° 2008-639, article 22", en_vigueur: 2016-01-01}
+  - {id: LEGIARTI000019108268, article: "décret n° 2008-639, article 23", en_vigueur: 2008-07-01}
+  - {id: LEGIARTI000019108272, article: "décret n° 2008-639, article 31", en_vigueur: 2008-07-01}
+  nee_de: LEGIARTI000019108265
+  bornes:
+    liquidation.date_effet: [2008-07-01, null]
+  contenu:
+    droit: >-
+      « La pension de retraite est reversée pour moitié au conjoint survivant et,
+      s'il y a lieu, au conjoint divorcé » (article 18) ; « tant qu'il existe un ayant
+      droit, égale à la moitié de ladite pension » (article 20) ; « Les pensions de
+      conjoints ou d'ex-conjoints sont, le cas échéant, majorées dans les conditions
+      fixées à l'article 16 » (article 18) ; au décès avant la liquidation, « les
+      mêmes droits que si l'agent avait été admis à la retraite le jour de son
+      décès » (article 18)
+    beneficiaire: >-
+      le conjoint survivant ; le conjoint divorcé qui n'a pas « contracté de nouveau
+      mariage ou conclu de pacte civil de solidarité avant le décès de l'agent » ni
+      ne vit en concubinage à ce moment (article 19, II, 1°, rédaction du
+      1er janvier 2009 ; le pacs n'y est pas avant)
+    conditions: >-
+      « si la durée de son mariage avec l'agent atteignait au moins deux ans le jour
+      de la cessation des fonctions de ce dernier ou, lorsque cette condition n'est
+      pas remplie, si la durée du mariage [...] atteignait au moins quatre ans au
+      moment du décès du retraité, cette durée étant ramenée à deux ans s'il existe
+      un ou plusieurs enfants issus du mariage » ; la première condition n'est pas
+      exigée « si, au moment du décès, il existe un enfant né ou conçu des conjoints
+      avant la date de cessation des fonctions », ni après un accident en service
+      (article 19, I) ; « Le conjoint survivant vivant en concubinage au moment du
+      décès de l'agent ou du retraité ne peut entrer en jouissance de sa pension »
+      (article 19, I) ; « Le conjoint survivant qui se remarie perçoit, sans
+      revalorisation ultérieure, la pension dont il bénéficiait antérieurement à son
+      nouvel état », le pacs et le concubinage valant remariage (article 31)
+    parametres:
+      taux: 0.50
+      ex_conjoints: non_remaries
+      beneficiaire: conjoint
+      mariage_cessation_minimum_annees: 2
+      mariage_minimum_annees: 4
+      mariage_minimum_annees_avec_enfant: 2
+      majoration_reversible: 0.50
+      sans_jouissance_au_deces: [concubinage]
+      age_minimum: null
+      fiabilite: haute
+  exemples: aucun trouvé
+approximations:
+- version: [avant_2008]
+  ecart: >-
+    le règlement de retraites d'avant le 1er juillet 2008 n'a pas été lu : la règle de
+    2008 lui est prêtée, au veuf comme à la veuve
+  effet: non mesuré
+- ecart: >-
+    ne sont pas portés : le minimum de la réversion, 54 % du minimum de pension de
+    l'article 15 quand la pension de l'agent l'atteint (article 18), que le modèle ne
+    porte pas non plus à la pension de l'agent ; l'allocation de solidarité aux
+    personnes âgées que la réversion de la personne seule de 55 à 64 ans atteint au
+    moins (article 23), selon ses ressources ; la pension d'orphelin et le partage
+    qu'elle impose (articles 20 et 21) ; la réversion refusée à qui recueille « un
+    avantage de même nature d'un autre chef » (article 18) ; la condition levée par
+    l'accident en service (article 19, I, 2°)
+  effet: non mesuré
+- ecart: >-
+    la cessation des fonctions est le départ, ou le décès qui le précède ; tout enfant
+    déclaré est un enfant des conjoints, né avant la cessation s'il naît avant le
+    départ — l'enfant conçu avant et né après ne lève pas la condition — ; la
+    majoration de la réversion est la moitié de celle de l'agent, sans le plafond de
+    la moitié de la rémunération qui a servi de base au calcul de la pension (article
+    18), comme la majoration de l'agent est servie sans le sien (fiche
+    majoration_enfants_regimes_speciaux) ; la réversion part le premier jour du mois
+    qui suit le décès, comme pour le retraité, et non le lendemain du décès de
+    l'agent en activité (article 22) ; les montants sont ceux de l'année du décès
+  effet: non mesuré
+- version: [conjoints_2008]
+  ecart: >-
+    le partage au prorata des mariages (article 20, 1°) lit les précédents conjoints
+    que la saisie déclare, deux au plus, non remariés au décès, sans leur opposer la
+    durée du mariage de l'article 19, II, 2°, ni le pacs ou le concubinage au décès ;
+    la réversion que le remariage, le pacs ou le concubinage du survivant après le
+    décès fige sans revalorisation (article 31) est servie comme sans union
+    nouvelle ; le survivant en concubinage au décès ne reçoit rien, et ce qu'il
+    recouvre seul à soixante ans n'est pas porté
+  effet: non mesuré
+presomptions:
+  mariage_des_conjoints: >-
+    la condition de l'article 19, quand la date du mariage n'est pas déclarée
+  survivant_seul: >-
+    le survivant qui ne déclare pas de ménage ne vit pas en concubinage au décès
+  deces_apres_le_depart: >-
+    la réversion que la page montre sans décès déclaré, pour un décès supposé juste
+    après le départ, ou cette année pour qui est déjà parti
+sources:
+  lu_le: 2026-10-18
+  prochaine_relecture: 2027-04-30
+  a_relire:
+  - >-
+    Le règlement de retraites du personnel de la SNCF d'avant le 1er juillet 2008,
+    que l'index LEGI ne porte pas et que le JORF ne publie pas : la version
+    avant_2008 lui prête la règle de 2008, au veuf comme à la veuve.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 2008-639, articles 18 à 23 et 31, toutes leurs rédactions dans
+      l'index LEGI du dépôt, mis à jour le 18 octobre 2026 ; l'article 16
+      (LEGIARTI000048240189) pour la majoration ; l'article 15 (LEGIARTI000048896995)
+      pour le minimum de pension, 1 215,64 € par mois au 1er octobre 2014 ; le décret
+      n° 2025-746 ne touche aucun d'eux (il modifie les articles 5, 14 et 17)
+    date: 2026-10-18
+  - type: autre
+    reference: >-
+      CPRP, « La pension de réversion — régime spécial », lue le 18 octobre 2026
+      (sans date) : « 50 % de la pension acquise » ; deux ans de mariage pendant
+      l'activité, quatre ans sinon, deux avec un enfant de l'union, aucune durée
+      avec un enfant « né, conçu ou adopté durant l'activité » ; le survivant en
+      concubinage au décès servi seulement redevenu seul, à soixante ans ; après la
+      liquidation, une nouvelle union fait que la pension « n'est plus
+      revalorisée » ; le minimum « égal à 54 % du montant du minimum de pension » ;
+      l'ASPA de 55 à 65 ans selon les ressources ; la date d'effet, le lendemain du
+      décès de l'agent en activité, le premier jour du mois qui suit celui du
+      retraité. La caisse a changé de domaine : cprpsncf.fr ne se résout plus
+    date: 2026-10-18
+    url: https://www.cprpf.fr/retraites/veuvage-et-reversion/la-pension-de-reversion-regime-special/
+code:
+  python: >-
+    scenarios/actuel.py : Reversions, qui lit les versions de cette fiche ;
+    droit/reversion.py : reversion, _mariage_sncf, _sans_jouissance_au_deces,
+    _part_du_survivant, _admis_ailleurs
+  javascript: >-
+    moteur/js/regimes.js : Reversions ; moteur/js/droit/reversion.js : reversion,
+    mariageSncf, sansJouissanceAuDeces, partDuSurvivant, admisAilleurs
+  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  tests: [tests/test_reversion.py, tests/test_web.py]
+historique:
+- >-
+  2026-10-18 — la fiche naît (action 138, étape 9) : la SNCF n'avait pas de
+  réversion, et sa ligne disait « la réversion de ce régime n'est pas encore
+  portée » ; la cotisation maladie de la réversion se prend sous la moitié du
+  plafond (décret n° 2007-1056, article 7, VII).
+effet: >-
+  Tout conjoint d'un agent de la SNCF : la moitié de sa pension, majorée pour enfants,
+  sans âge ni ressources, dès que le mariage remplit la condition de l'article 19,
+  partagée avec les précédents conjoints non remariés.

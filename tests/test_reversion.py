@@ -667,6 +667,88 @@ def test_les_ieg_reversent_la_majoration_pour_enfants_a_moitie(simulateur):
     assert (ligne.montant, ligne.majoration) == (15000.0 + 1500.0, 1500.0)
 
 
+# -- la SNCF -------------------------------------------------------------------------
+
+@pytest.mark.parametrize("naissance, mariage, deces, naissances, version, servie", [
+    # Deux ans de mariage le jour de la cessation des fonctions, au départ de
+    # février 2012 : la moitié.
+    (1950, "2009-12", "2013-02-10", (), "conjoints_2008", True),
+    # Vingt mois au départ, deux ans et huit mois au décès : rien.
+    (1950, "2010-06", "2013-02-10", (), "conjoints_2008", False),
+    # Quatre ans de mariage au décès : la moitié.
+    (1950, "2010-06", "2014-07-10", (), "conjoints_2008", True),
+    # Marié après le départ, un enfant né du mariage : deux ans de mariage au
+    # décès suffisent, vingt et un mois non — L. 39 servirait les deux.
+    (1950, "2013-05", "2015-06-10", ("2014-03-01",), "conjoints_2008", True),
+    (1950, "2013-05", "2015-02-10", ("2014-03-01",), "conjoints_2008", False),
+    # Un enfant né avant la cessation des fonctions lève la condition : cinq
+    # mois de mariage au départ, onze au décès.
+    (1950, "2011-09", "2012-08-10", ("1995-03-01",), "conjoints_2008", True),
+    # Avant le 1er juillet 2008, le règlement de retraites, que l'index ne
+    # porte pas : la fiche lui prête la règle de 2008.
+    (1940, "1999-12", "2005-02-10", (), "avant_2008", True),
+])
+def test_la_sncf_reverse_la_moitie_sous_la_condition_de_l_article_19(
+        simulateur, naissance, mariage, deces, naissances, version, servie):
+    """Décret n° 2008-639, articles 18 et 19, I : la moitié de la pension, sans
+    âge ni ressources, au conjoint marié deux ans le jour de la cessation des
+    fonctions, ou quatre ans au décès, deux s'il existe un enfant issu du
+    mariage ; sans durée, quand un enfant est né avant la cessation. Le régime
+    n'avait pas de réversion."""
+    carriere = _carriere(simulateur, naissance, 62.0, str(naissance + 10), deces,
+                         mariage=mariage, enfants=len(naissances), naissances=naissances)
+    ligne, = _lignes(simulateur, carriere, [("sncf", 30000.0)], int(deces[:4]))
+    assert (ligne[0], ligne[4]) == ("sncf", version)
+    assert ligne[2:4] == ((15000.0, "servie") if servie else (0.0, "mariage"))
+
+
+def test_la_sncf_majore_la_reversion_comme_la_pension(simulateur):
+    """« Les pensions de conjoints ou d'ex-conjoints sont, le cas échéant,
+    majorées dans les conditions fixées à l'article 16 » (article 18) : 10 %
+    de la réversion pour trois enfants, la moitié de la majoration de
+    l'agent."""
+    carriere = _carriere(simulateur, 1950, 62.0, "1960", "2015-06-10", mariage="2009-12")
+    resultat = reversion(simulateur.scenario_actuel, [("sncf", 30000.0, HAUTE)], carriere,
+                         2015, majorations={"sncf": 3000.0})
+    ligne, = resultat.regimes
+    assert (ligne.montant, ligne.majoration) == (15000.0 + 1500.0, 1500.0)
+
+
+@pytest.mark.parametrize("union, depuis, montant, motif", [
+    # En concubinage au décès, le survivant « ne peut entrer en jouissance de
+    # sa pension » (article 19, I).
+    ("concubinage", None, 0.0, "remariage"),
+    # Remarié, pacsé ou en concubinage après le décès, il « perçoit, sans
+    # revalorisation ultérieure, la pension dont il bénéficiait » (article
+    # 31) : la ligne ne s'arrête pas.
+    ("mariage", "2014-03", 15000.0, "servie"),
+    ("pacs", "2014-03", 15000.0, "servie"),
+    ("concubinage", "2014-03", 15000.0, "servie"),
+])
+def test_l_union_nouvelle_ne_retire_pas_la_reversion_de_la_sncf(simulateur, union, depuis,
+                                                                montant, motif):
+    carriere = _carriere(simulateur, 1950, 62.0, "1960", "2013-02-10", mariage="2009-12",
+                         nouvelle_union=union, union_depuis=depuis)
+    ligne, = reversion(simulateur.scenario_actuel, [("sncf", 30000.0, HAUTE)], carriere,
+                       2013).regimes
+    assert (ligne.montant, ligne.motif, ligne.fin) == (montant, motif, None)
+
+
+@pytest.mark.parametrize("remariage, part", [(None, 152 / (152 + 120)), ("1990-01", 1.0)])
+def test_la_sncf_partage_avec_le_conjoint_divorce_non_remarie(simulateur, remariage, part):
+    """La pension « partagée entre le conjoint survivant et le ou les conjoints
+    divorcés [...] au prorata de la durée respective de chaque mariage »
+    (article 20, 1°) : 152 mois avec le survivant, 120 avec le précédent
+    conjoint ; celui qui s'est remarié avant le décès n'y a pas droit
+    (article 19, II, 1°)."""
+    carriere = _carriere(simulateur, 1950, 62.0, "1960", "2013-02-10", mariage="2000-06",
+                         ex_conjoints=({"naissance": "1952", "mariage": "1975-06",
+                                        "divorce": "1985-06", "remariage": remariage},))
+    ligne, = reversion(simulateur.scenario_actuel, [("sncf", 30000.0, HAUTE)], carriere,
+                       2013).regimes
+    assert (ligne.part, ligne.montant) == (pytest.approx(part), pytest.approx(15000.0 * part))
+
+
 # -- l'Agirc-Arrco -------------------------------------------------------------------
 
 def test_l_agirc_attend_soixante_ans_avant_2019(simulateur):

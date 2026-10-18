@@ -23,6 +23,12 @@ applique à chaque régime la version de sa fiche que les dates choisissent :
   enfants comprise, sans âge ni ressources ; depuis le 1er juillet 2008, deux
   ans de mariage au décès quand il suit la liquidation, sauf enfant de
   l'union (annexe 3 au statut national, articles 22 et 24) ;
+* la SNCF (``reversion_sncf``) : la moitié de la pension, majorée pour enfants
+  comme elle, sans âge ni ressources, au conjoint marié deux ans le jour de la
+  cessation des fonctions, ou quatre ans au décès, deux avec un enfant du
+  mariage, sans durée quand un enfant est né avant la cessation ; rien au
+  survivant en concubinage au décès, et l'union qu'il forme après ne l'éteint
+  pas (décret n° 2008-639, articles 18 à 20 et 31) ;
 * le RAFP (``reversion_rafp``) : la moitié de la prestation, sans âge, sans
   ressources ni durée du mariage, et rien après un droit direct versé en
   capital — l'échéancier dit lesquels (``en_capital``) ;
@@ -97,7 +103,8 @@ publique et la CRPCEN au mariage ou au concubinage notoire (L. 46), le RAFP
 de même, l'Agirc-Arrco, l'Ircantec et les IEG au mariage ; la ligne s'arrête
 au mois qui suit l'union, ou n'est pas servie quand l'union la précède. Au
 régime général, le ménage ne compte au plafond que s'il est formé à la date
-d'effet.
+d'effet. La SNCF ne l'éteint pas, elle la fige ; mais le survivant qui vit en
+concubinage au décès n'en jouit pas (``sans_jouissance_au_deces``).
 
 CE QUI N'EST PAS ENCORE PORTÉ, et que les fiches déclarent : la révision de la
 réversion quand le ménage ou ses ressources changent, ou que la retraite du
@@ -196,7 +203,13 @@ MOITIE_SOUS_CONDITION_DE_MARIAGE = ("reversion_fonction_publique", "reversion_cr
 #: d'avant juillet 2004 retient, et sa limite forfaitaire (D. 171-1 ; article
 #: 91 du décret n° 45-179 ; exposé de la Cnav, « Retraite de réversion
 #: cumulable »).
-AUTRES_BASES = MOITIE_SOUS_CONDITION_DE_MARIAGE + ("reversion_ieg",)
+AUTRES_BASES = MOITIE_SOUS_CONDITION_DE_MARIAGE + ("reversion_ieg", "reversion_sncf")
+
+#: Les fiches qui reversent la moitié de la majoration pour enfants du défunt
+#: avec la moitié de sa pension : les IEG, « majoration pour enfant comprise »,
+#: et la SNCF, dont la réversion est « majorée dans les conditions fixées à
+#: l'article 16 ».
+MOITIE_MAJORATION_COMPRISE = ("reversion_ieg", "reversion_sncf")
 
 #: La fiche de la majoration forfaitaire pour enfant à charge (L. 353-5).
 MAJORATION_FORFAITAIRE = "majoration_forfaitaire_reversion"
@@ -442,6 +455,22 @@ def _jusqu_au_remariage(ligne_: ReversionRegime, parametres: dict,
     return replace(ligne_, fin=fin)
 
 
+def _sans_jouissance_au_deces(ligne_: ReversionRegime, parametres: dict,
+                              conjoint: Conjoint, deces: str) -> ReversionRegime:
+    """La ligne sans montant quand le survivant vit, au décès, dans une union
+    que la version dit sans jouissance (``sans_jouissance_au_deces``) : à la
+    SNCF, « Le conjoint survivant vivant en concubinage au moment du décès de
+    l'agent ou du retraité ne peut entrer en jouissance de sa pension »
+    (décret n° 2008-639, article 19, I). L'union dont la saisie ne dit pas le
+    début commence au décès."""
+    if (ligne_.montant > 0
+            and conjoint.nouvelle_union in (parametres.get("sans_jouissance_au_deces") or ())
+            and conjoint.nouvelle_union_depuis is not None
+            and conjoint.nouvelle_union_depuis <= deces):
+        return replace(ligne_, montant=0.0, motif="remariage", majoration=0.0)
+    return ligne_
+
+
 def _apres_l_age(naissance: str, age: float) -> str:
     """Le premier jour du mois qui suit celui où ``age`` est atteint (R. 353-7) :
     un anniversaire le 1er du mois ouvre le mois suivant, comme les autres."""
@@ -500,6 +529,24 @@ def _mariage_ieg(parametres: dict, conjoint: Conjoint, deces: str, depart: str,
     minimum = parametres.get("mariage_minimum_annees")
     if minimum is None or enfants > 0 or conjoint.mariage <= depart:
         return True
+    return chrono.annees_revolues(conjoint.mariage, deces) >= minimum
+
+
+def _mariage_sncf(parametres: dict, conjoint: Conjoint, deces: str, depart: str,
+                  naissances: list[str]) -> bool:
+    """La condition de l'article 19, I, du décret n° 2008-639 : deux ans de
+    mariage le jour de la cessation des fonctions — que le modèle tient pour
+    le départ —, ou quatre ans au décès, deux s'il existe un enfant issu du
+    mariage ; aucune durée quand un enfant est né avant la cessation. Le
+    modèle tient tout enfant déclaré, né aux jours ``naissances``, pour un
+    enfant des conjoints."""
+    if any(naissance < depart for naissance in naissances):
+        return True
+    if (chrono.annees_revolues(conjoint.mariage, depart)
+            >= parametres["mariage_cessation_minimum_annees"]):
+        return True
+    minimum = parametres["mariage_minimum_annees_avec_enfant" if naissances
+                         else "mariage_minimum_annees"]
     return chrono.annees_revolues(conjoint.mariage, deces) >= minimum
 
 
@@ -1031,17 +1078,23 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
                 parametres, conjoint)
             autres_bases += lignes[regime].montant
             continue
-        if fiche["id"] == "reversion_ieg":
-            # La moitié de la pension, « majoration pour enfant comprise »
-            # (annexe 3 au statut national des IEG, article 22).
-            servie = _mariage_ieg(parametres, conjoint, deces, depart, enfants)
+        if fiche["id"] in MOITIE_MAJORATION_COMPRISE:
+            # La moitié de la pension, « majoration pour enfant comprise » aux
+            # IEG (annexe 3 au statut national, article 22), « majorée dans les
+            # conditions fixées à l'article 16 » à la SNCF (décret n° 2008-639,
+            # article 18).
+            servie = (_mariage_sncf(parametres, conjoint, deces, depart,
+                                    [jour for _, jour in carriere.naissances_des_enfants])
+                      if fiche["id"] == "reversion_sncf"
+                      else _mariage_ieg(parametres, conjoint, deces, depart, enfants))
             majoration = (float(parametres.get("majoration_reversible") or 0.0)
                           * (majorations or {}).get(regime, 0.0) * part) if servie else 0.0
             montant = taux * base * part + majoration if servie else 0.0
-            lignes[regime] = _jusqu_au_remariage(replace(
+            lignes[regime] = _sans_jouissance_au_deces(_jusqu_au_remariage(replace(
                 ligne(regime, base, montant, "servie" if servie else "mariage", fiche,
                       version, taux, lendemain, fiabilite),
-                majoration=majoration, part=part), parametres, conjoint)
+                majoration=majoration, part=part), parametres, conjoint),
+                parametres, conjoint, deces)
             autres_bases += lignes[regime].montant
             continue
         if fiche["id"] == "reversion_rafp":
