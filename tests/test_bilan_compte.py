@@ -47,6 +47,26 @@ def test_le_bilan_tient_ses_identites():
         bilan.taux_cotisation + (0.14 - 0.137) / 0.42)
 
 
+def test_le_bilan_refait_l_indice_d_equilibre_suedois_de_2025():
+    """Le rapport orange 2025 de Pensionsmyndigheten, lu le 18 octobre 2026
+    (action 89), en millions de couronnes : la recette de cotisation de 2025,
+    366 783 (tableau 6.6), fois la durée de rotation de 2024, 76,31936 −
+    45,31928 = 31,00008 ans (tableau 6.8), donne l'actif de cotisation, 11 370
+    301 ; avec le fonds tampon, 2 233 988, sur la dette, 11 858 539 (tableau
+    2.2), l'indice d'équilibre de 2027, 1,1472 (ordonnance 2002:780, formules
+    B.1.1, B.1.2 et B.3.1 de son annexe B). La loi multiplie la recette de
+    l'année par la durée de l'année d'avant ; l'actif se lit au million près,
+    la recette étant arrondie."""
+    bilan = BilanCompte(annee=2025, scenario="suede", cotisations=366_783.0,
+                        age_cotisations=45.31928, age_pensions=76.31936,
+                        reserves=2_233_988.0, dette=11_858_539.0,
+                        depense=0.0, ressources=0.0, assiette=0.0)
+    assert bilan.duree_rotation == pytest.approx(31.00008, abs=1e-9)
+    assert bilan.actif_cotisation == pytest.approx(11_370_301.0, abs=2.0)
+    assert bilan.actif - bilan.dette == pytest.approx(1_745_750.0, abs=2.0)
+    assert round(bilan.ratio_equilibre, 4) == 1.1472
+
+
 def test_les_reserves_du_cor_se_somment_et_rapportent():
     """Le tableau 2.3 du COR : les réserves des régimes et le FRR font le
     total qu'il écrit ; les produits financiers nets de 2025 sur le stock de

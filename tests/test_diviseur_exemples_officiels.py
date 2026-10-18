@@ -18,6 +18,10 @@ s'explique.
   l'intervalle ouvert de 100 ans près, que la table close par ``T100/l100``.
   Le communiqué arrondit l'espérance au centième d'année AVANT de la
   multiplier par douze : sans cet arrondi, 222,76 mois donneraient 222,8.
+  Ses trente et un âges ronds, de 60 à 90 ans, se refont tous au dixième de
+  mois, sauf 64 ans, où l'arrondi tombe sur le fil : les colonnes en entiers
+  de la table D y donnent 19,30515 ans, l'espérance refaite de ses quotients
+  19,30485 ; 231,7 mois au communiqué, 231,6 au dépôt.
 * **Suède** (PFS 2026:2, décidée le 2 septembre 2026, génération 1960 ; SCB,
   ``LivslangdFemarigA``, « totalt », risques de 2020-2024, lus le 14 octobre
   2026) : 19,13 à 62 ans, 17,34 à 65 ans. Le diviseur suédois est la valeur de
@@ -170,8 +174,20 @@ ITALIE_C2_DIRECTE = {57: (21.266, 23.534, 22.400), 58: (20.678, 22.942, 21.810),
                      71: (12.971, 14.906, 13.939)}
 ITALIE_K = 0.4615
 
-#: Le communiqué du GUS, en mois, à l'âge rond.
-GUS_2026 = {60: 268.9, 62: 250.0, 65: 222.7, 67: 205.4, 70: 180.6, 80: 106.4, 90: 54.2}
+#: Le communiqué du GUS, en mois, aux âges ronds de 60 à 90 ans (la colonne
+#: des mois révolus « 0 », relue en entier le 18 octobre 2026, action 89).
+GUS_2026 = dict(zip(range(60, 91), _lire("""
+    268.9 259.4 250.0 240.7 231.7 222.7 214.1 205.4 197.0 188.8 180.6 172.6
+    164.6 156.8 149.2 141.7 134.3 127.1 120.0 113.2 106.4 100.0 93.7 87.7
+    82.0 76.6 71.5 66.7 62.3 58.1 54.2
+""")))
+
+#: Table D de 2025, à 64 ans, ses colonnes en entiers : l64 = 86 256 et T64 =
+#: 1 665 185. Leur rapport, 19,30515 ans, passe le seuil de 19,305 où
+#: l'espérance refaite des quotients publiés, 19,30485, reste en deçà : 231,7
+#: mois au communiqué, 231,6 au dépôt. Un arrondi sur le fil, non une règle.
+GUS_ARRONDI_SUR_LE_FIL = 64
+POLOGNE_L64, POLOGNE_T64 = 86_256, 1_665_185
 
 #: CSB, table IRP020 de 2024, deux sexes : survivants à 40, 45, …, 90 ans,
 #: sur 100 000 naissances (la table abrégée ne publie que ces âges).
@@ -451,10 +467,23 @@ def _mois_gus(diviseur: float, courbe: list[float]) -> float:
 def test_la_pologne_au_dixieme_de_mois(deux_moteurs):
     for moteur in deux_moteurs.values():
         for age, publie in GUS_2026.items():
-            assert _mois_gus(moteur[f"pl_{age}"], _pologne(age)) == publie, age
+            if age != GUS_ARRONDI_SUR_LE_FIL:
+                assert _mois_gus(moteur[f"pl_{age}"], _pologne(age)) == publie, age
     # L'arrondi au centième d'année fait le dixième de mois : sans lui, 222,8.
     brut = deux_moteurs["python"]["pl_65"] + _pologne(65)[-1] * POLOGNE_ESPERANCE_A_100
     assert round(brut * 12, 1) == 222.8
+
+
+def test_a_64_ans_l_arrondi_du_gus_tombe_sur_le_fil(deux_moteurs):
+    """Les entiers de la table D passent 19,305 ans, l'espérance refaite de
+    ses quotients non : le communiqué écrit 231,7 mois, le dépôt 231,6."""
+    age = GUS_ARRONDI_SUR_LE_FIL
+    gus = POLOGNE_T64 / POLOGNE_L64
+    assert round(gus, 2) == 19.31 and round(round(gus, 2) * 12, 1) == GUS_2026[age]
+    for moteur in deux_moteurs.values():
+        refaite = moteur[f"pl_{age}"] + _pologne(age)[-1] * POLOGNE_ESPERANCE_A_100
+        assert 19.3048 < refaite < 19.305 < gus < 19.3052
+        assert _mois_gus(moteur[f"pl_{age}"], _pologne(age)) == 231.6
 
 
 # ---------------------------------------------------------------------------

@@ -9880,14 +9880,42 @@ referents:
           octobre). Le décalage des indices publiés : une variante de l'indexation du
           compte.
         fiche: indexation_du_compte
+      - quoi: >-
+          Sa durée de rotation se lit sur une population stationnaire, que
+          la loi construit : l'âge des cotisations pèse les droits par tête
+          de chaque âge par une survie tirée des effectifs d'une année sur
+          l'autre (B.4.1 à B.4.5) ; l'âge de versement pèse les pensions
+          par la survie des paiements, actualisée à 1,6 % (B.6.1 à B.6.3) ;
+          l'actif de l'année prend la durée de l'année d'avant (B.1.2). Le
+          dépôt pèse ses profils par les effectifs réels de l'année
+          (`bilan_compte.py`, `profils_par_age`), sans actualisation : la
+          pyramide de 2025 entre dans sa durée de rotation, la limite que
+          dit la note de l'étape 19, et que la formule suédoise ôte par
+          construction.
+        preuve: >-
+          Ordonnance 2002:780, reproduite à l'annexe B du rapport orange
+          2025, p. 73-76 ; le rapport, p. 14 : l'écart d'âges « som skulle
+          framkomma om bokslutsperiodens ekonomiska, demografiska och
+          juridiska förhållanden vore konstanta ».
+        verification: >-
+          Méthode : la durée de rotation dit quelle dette la répartition
+          porte à structure par âge inchangée (`bilan_compte.py`, en tête),
+          ce qu'une pyramide déformée par les générations nombreuses n'est
+          pas. Lu le 18 octobre 2026 (action 89) ; l'identité du bilan est
+          bien celle de la loi, qui refait au dix-millième l'indice de 2025
+          (1,1472, `tests/test_bilan_compte.py`).
+        etat: a_reprendre
+        chantier: "138.19"
     bilan: >-
       Il apporte une mesure de solvabilité de stock, écrite dans la loi,
-      que la page Coût peut calculer sans l'appliquer. Il apporte aussi
-      un calendrier d'indexation sur des indices publiés, que le compte
-      du dépôt devance d'un an ; l'équilibrage appliqué reste au
-      propriétaire.
+      que le dépôt calcule en indicateur sans l'appliquer
+      (`bilan_compte.py`), et dont l'identité refait l'indice suédois de
+      2025 ; reste à en prendre les âges, lus sur une population
+      stationnaire. Il apporte aussi un calendrier
+      d'indexation sur des indices publiés, que le compte du dépôt devance
+      d'un an ; l'équilibrage appliqué reste au propriétaire.
     sas: [suede_orange_rapport_2025]
-    lu_le: 2026-10-04
+    lu_le: 2026-10-18
     lu_dans:
       - https://www.pensionsmyndigheten.se/statistik/publikationer/orange-rapport-2025/orange-rapport-2025.pdf
       - https://data.riksdagen.se/dokument/sfs-2010-110.text
