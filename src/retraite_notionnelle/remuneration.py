@@ -242,6 +242,7 @@ from enum import Enum
 from functools import lru_cache
 from pathlib import Path
 
+from .calendrier import DateMois
 from .donnees.chargement import Fiabilite, charger_yaml
 from .donnees.indemnite_csg import charger_indemnite_csg
 from .donnees.prelevements_historiques import FAMILLE_PAR_DEFAUT, famille_de_la_fiche
@@ -1636,8 +1637,21 @@ class ConstructeurFiche:
 
 
 def bloc_droit_en_vigueur(catalogue, affiliations, statut: str, annee: int,
-                          part_primes: float = 0.0, macro=None) -> BlocRetraite:
+                          part_primes: float = 0.0, macro=None,
+                          annee_entree: int | DateMois | None = None) -> BlocRetraite:
     """Ce que le droit en vigueur prélève pour la retraite, par régime.
+
+    **Les régimes de la date d'entrée dans le statut**, ``annee_entree``, comme
+    le compte les lit (:meth:`~.carriere.Affiliations.regimes`) : un régime
+    fermé ne l'est qu'aux nouveaux entrants, et l'agent de la SNCF recruté
+    avant 2020, ceux de la RATP, des IEG, de la CRPCEN et de la Banque de France
+    recrutés avant septembre 2023, le mineur recruté avant septembre 2010,
+    l'agent de la SEITA en fonctions avant 1981 et le libéral non réglementé
+    installé avant 2019 paient le leur jusqu'à leur retraite. Sans elle, les
+    régimes d'un nouvel entrant de l'année : la fiche les prenait à tous
+    jusqu'au 18 octobre 2026, et prélevait à ces assurés, passé la fermeture,
+    le régime général et l'Agirc-Arrco, ou le RCI, que le compte ne reçoit pas
+    (action 138, étape 9).
 
     **Les primes d'un fonctionnaire.** Le brut de la fiche est la
     rémunération entière ; un régime dont l'assiette est le seul traitement
@@ -1701,7 +1715,7 @@ def bloc_droit_en_vigueur(catalogue, affiliations, statut: str, annee: int,
     # tiers en secteur 1 (``Affiliations.sans_prise_en_charge``).
     paie_seul = affiliations.sans_prise_en_charge(statut, annee)
     composantes: list[ComposanteRetraite] = []
-    for code in affiliations.regimes(statut, annee):
+    for code in affiliations.regimes(statut, annee, annee_entree):
         if code not in catalogue:
             continue
         regime = catalogue[code]
@@ -1955,8 +1969,9 @@ def bloc_taux_unique_sans_employeur(
 
 
 def contribution_equilibre(racine_donnees: Path, affiliations, statut: str,
-                           annee: int) -> float:
-    """Ce que l'employeur public verse aujourd'hui, en fraction du traitement.
+                           annee: int, annee_entree: int | DateMois | None = None) -> float:
+    """Ce que l'employeur public verse aujourd'hui, en fraction du traitement,
+    aux régimes du statut à sa date d'entrée (:func:`bloc_droit_en_vigueur`).
 
     Zéro quand aucune série ne couvre le régime cette année-là : la fiche
     retombe alors sur l'assiette fixe, et ``brut_partage`` dit pourquoi c'est
@@ -1973,7 +1988,7 @@ def contribution_equilibre(racine_donnees: Path, affiliations, statut: str,
     table = _contributions_publiques(racine_donnees)
     militaire = statut in affiliations.categories_militaires
     total = 0.0
-    for code in affiliations.regimes(statut, annee):
+    for code in affiliations.regimes(statut, annee, annee_entree):
         contribution = table.taux(code, annee, militaire)
         if contribution is not None:
             total += contribution.taux
@@ -1981,7 +1996,7 @@ def contribution_equilibre(racine_donnees: Path, affiliations, statut: str,
 
 
 def departs_anticipes(racine_donnees: Path, affiliations, statut: str,
-                      annee: int) -> float:
+                      annee: int, annee_entree: int | DateMois | None = None) -> float:
     """Ce que ce taux paie de départs anticipés, en fraction du traitement.
 
     L'État le garde en entier quand la proposition supprime ces départs :
@@ -2003,7 +2018,7 @@ def departs_anticipes(racine_donnees: Path, affiliations, statut: str,
     militaire = statut in affiliations.categories_militaires
     population = "militaires" if militaire else "civils"
     total = 0.0
-    for code in affiliations.regimes(statut, annee):
+    for code in affiliations.regimes(statut, annee, annee_entree):
         if code != table.REGIME_DES_MILITAIRES:
             continue
         contribution = table.taux(code, annee, militaire)
@@ -2172,17 +2187,20 @@ def indemnite_stylisee(macro, catalogue, affiliations, statut: str, annee: int,
 
 
 def famille_du_statut(affiliations, code_profil: str, statut: str,
-                        annee: int) -> str | None:
+                      annee: int, annee_entree: int | DateMois | None = None) -> str | None:
     """La famille de la fiche de ``statut`` l'année ``annee`` : celle d'un
-    indépendant, que ses régimes de base de l'année disent — l'artisan, le
-    commerçant, le libéral, l'avocat (``famille_de_la_fiche``), dont les postes
-    diffèrent —, ou celle de son profil."""
-    return famille_de_la_fiche(code_profil, affiliations.regimes(statut, annee))
+    indépendant, que ses régimes de base de l'année disent, à sa date
+    d'entrée — l'artisan, le commerçant, le libéral, l'avocat
+    (``famille_de_la_fiche``), dont les postes diffèrent —, ou celle de son
+    profil."""
+    return famille_de_la_fiche(code_profil,
+                               affiliations.regimes(statut, annee, annee_entree))
 
 
-def profil_de_la_fiche(affiliations, catalogue, statut: str,
-                       annee: int) -> str | None:
-    """Le profil de fiche de paie d'un statut, ou ``None`` si aucun ne convient.
+def profil_de_la_fiche(affiliations, catalogue, statut: str, annee: int,
+                       annee_entree: int | DateMois | None = None) -> str | None:
+    """Le profil de fiche de paie d'un statut, ou ``None`` si aucun ne convient,
+    aux régimes de sa date d'entrée (:func:`bloc_droit_en_vigueur`).
 
     Le découpage est celui de ce que l'on SAIT de l'employeur, et non celui des
     familles de statut — parce que c'est cela qui décide si une ligne « coût du
@@ -2197,8 +2215,9 @@ def profil_de_la_fiche(affiliations, catalogue, statut: str,
        → ``salarie_ircantec``, qui ne doit ni CEG, ni CET, ni APEC ;
     4. le reste → ``salarie_prive``. Y tombent les statuts de la famille
        ``special`` que la fermeture des régimes spéciaux a versés au régime
-       général et à l'Agirc-Arrco : leur fiche de paie est bel et bien celle
-       d'un salarié du privé.
+       général et à l'Agirc-Arrco, pour qui y entre depuis : leur fiche de paie
+       est bel et bien celle d'un salarié du privé. L'agent entré avant garde
+       le profil de son régime.
 
     La distinction (2) se lit dans les fiches de régime plutôt que dans une
     liste de statuts : c'est elle qui suivra toute seule si un régime spécial
@@ -2215,7 +2234,7 @@ def profil_de_la_fiche(affiliations, catalogue, statut: str,
         return None
     if famille == "independant" or affiliations.sans_employeur(statut):
         return "independant"
-    for code in affiliations.regimes(statut, annee):
+    for code in affiliations.regimes(statut, annee, annee_entree):
         if code not in catalogue:
             continue
         regime = catalogue[code]
@@ -2466,7 +2485,9 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
 
     ``None`` quand il n'y a rien à montrer : aucune année d'activité après la
     bascule — la personne a déjà liquidé, et sa pension ne dépend plus d'aucune
-    cotisation —, ou un statut que ce module ne sait pas décrire.
+    cotisation —, ou un statut que ce module ne sait pas décrire. Chaque fiche
+    lit les régimes de la date d'entrée dans le statut, que la carrière donne
+    (:func:`bloc_droit_en_vigueur`).
     """
     debut = max(parametres.annee_bascule, carriere.premiere_annee)
     annees_actives = [
@@ -2478,8 +2499,9 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
         return None
 
     statut = carriere.ligne(annees_actives[0]).affiliation
+    entree = carriere.date_entree(statut)
     code_profil = profil_de_la_fiche(
-        affiliations, catalogue, statut, annees_actives[0])
+        affiliations, catalogue, statut, annees_actives[0], entree)
     if code_profil is None:
         return None
 
@@ -2544,10 +2566,10 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
             csg_rendue=csg,
             part_rendue_aux_salaires=rendue,
             contribution_equilibre_actuelle=contribution_equilibre(
-                parametres.racine_donnees, affiliations, statut, annee)
+                parametres.racine_donnees, affiliations, statut, annee, entree)
             if partage else 0.0,
             departs_anticipes=departs_anticipes(
-                parametres.racine_donnees, affiliations, statut, annee)
+                parametres.racine_donnees, affiliations, statut, annee, entree)
             if partage else 0.0,
             conservees=conservees,
             part_traitement=part_traitement,
@@ -2570,10 +2592,10 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
         plafond = macro.plafond_securite_sociale(annee)
         smic = smic_annuel(macro, annee)
         actuel_bloc = bloc_droit_en_vigueur(catalogue, affiliations, statut, annee,
-                                            primes, macro)
+                                            primes, macro, entree)
         propose = bloc_propose(annee, actuel_bloc, 1.0 - primes)
         constructeur = constructeur_de(
-            ligne.lodeom, famille_du_statut(affiliations, code_profil, statut, annee))
+            ligne.lodeom, famille_du_statut(affiliations, code_profil, statut, annee, entree))
         fiche_actuelle = constructeur.fiche(
             annee, brut, plafond, smic, actuel_bloc, cadre)
         brut_propose = constructeur.brut_sous_la_proposition(
@@ -2615,7 +2637,8 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
 
 def salaire_brut_depuis_net(racine_donnees, macro, catalogue, affiliations,
                             statut: str, annee: int, net_annuel: float,
-                            part_primes: float = 0.0) -> float:
+                            part_primes: float = 0.0,
+                            annee_entree: int | DateMois | None = None) -> float:
     """Le revenu brut annuel dont il reste ``net_annuel`` — ou lui-même.
 
     C'est l'entrée du mode « net » de la saisie : le lecteur qui connaît son
@@ -2633,10 +2656,13 @@ def salaire_brut_depuis_net(racine_donnees, macro, catalogue, affiliations,
     primes —, et que la saisie lui prête stylisée (:func:`indemnite_stylisee`) :
     la fiche de paie de sa carrière retrouve alors le net saisi, à l'écart près
     entre sa carrière et le salaire moyen.
+
+    ``annee_entree`` : l'entrée dans le statut, dont la fiche lit les régimes
+    (:func:`bloc_droit_en_vigueur`) ; sans elle, ceux d'un nouvel entrant.
     """
     if net_annuel <= 0:
         return net_annuel
-    code_profil = profil_de_la_fiche(affiliations, catalogue, statut, annee)
+    code_profil = profil_de_la_fiche(affiliations, catalogue, statut, annee, annee_entree)
     if code_profil is None:
         return net_annuel
     profil = charger_prelevements(racine_donnees).profil(code_profil)
@@ -2644,13 +2670,15 @@ def salaire_brut_depuis_net(racine_donnees, macro, catalogue, affiliations,
     plafond = macro.plafond_securite_sociale(annee)
     smic = smic_annuel(macro, annee)
     constructeur = ConstructeurFiche(
-        profil, famille=famille_du_statut(affiliations, code_profil, statut, annee))
+        profil, famille=famille_du_statut(affiliations, code_profil, statut, annee,
+                                          annee_entree))
     indemnite = indemnite_stylisee(macro, catalogue, affiliations, statut, annee,
                                    part_primes)
     if indemnite is None:
         return constructeur.brut_a_net_donne(
             net_annuel, plafond, smic,
-            bloc_droit_en_vigueur(catalogue, affiliations, statut, annee, part_primes, macro),
+            bloc_droit_en_vigueur(catalogue, affiliations, statut, annee, part_primes, macro,
+                                  annee_entree),
             cadre,
         )
     # La même dichotomie que `brut_a_net_donne`, sur le traitement et les
@@ -2660,7 +2688,7 @@ def salaire_brut_depuis_net(racine_donnees, macro, catalogue, affiliations,
         milieu = (bas + haut) / 2
         fiche = _fiche_avec_indemnite(constructeur, catalogue, affiliations, statut,
                                       annee, milieu, part_primes, indemnite(milieu),
-                                      plafond, smic, cadre, macro)
+                                      plafond, smic, cadre, macro, annee_entree)
         if fiche.net < net_annuel:
             bas = milieu
         else:
@@ -2671,18 +2699,21 @@ def salaire_brut_depuis_net(racine_donnees, macro, catalogue, affiliations,
 def _fiche_avec_indemnite(constructeur: ConstructeurFiche, catalogue, affiliations,
                           statut: str, annee: int, revenu: float, part_primes: float,
                           indemnite: float, plafond: float, smic: float,
-                          cadre: bool, macro) -> FicheDePaie:
+                          cadre: bool, macro,
+                          annee_entree: int | DateMois | None = None) -> FicheDePaie:
     """La fiche du droit en vigueur de ``revenu``, l'indemnité compensatrice
     ajoutée au brut et comptée avec les primes."""
     primes = part_primes_de_la_fiche(revenu, part_primes, indemnite)
     return constructeur.fiche(
         annee, revenu + indemnite, plafond, smic,
-        bloc_droit_en_vigueur(catalogue, affiliations, statut, annee, primes, macro), cadre)
+        bloc_droit_en_vigueur(catalogue, affiliations, statut, annee, primes, macro,
+                              annee_entree), cadre)
 
 
 def salaire_net_depuis_brut(racine_donnees, macro, catalogue, affiliations,
                             statut: str, annee: int, brut_annuel: float,
-                            part_primes: float = 0.0) -> float:
+                            part_primes: float = 0.0,
+                            annee_entree: int | DateMois | None = None) -> float:
     """Le revenu net annuel que laisse ``brut_annuel`` — ou lui-même.
 
     Le sens direct, et il sert à la BASCULE : passer du mode brut au mode net
@@ -2692,14 +2723,16 @@ def salaire_net_depuis_brut(racine_donnees, macro, catalogue, affiliations,
     if brut_annuel <= 0:
         return brut_annuel
     fiche = fiche_depuis_brut(racine_donnees, macro, catalogue, affiliations,
-                              statut, annee, brut_annuel, part_primes)
+                              statut, annee, brut_annuel, part_primes,
+                              annee_entree=annee_entree)
     return brut_annuel if fiche is None else fiche.net
 
 
 def fiche_depuis_brut(racine_donnees, macro, catalogue, affiliations,
                       statut: str, annee: int, brut_annuel: float,
                       part_primes: float = 0.0,
-                      indemnite: float | None = None) -> FicheDePaie | None:
+                      indemnite: float | None = None,
+                      annee_entree: int | DateMois | None = None) -> FicheDePaie | None:
     """La fiche de paie du droit en vigueur d'un revenu brut annuel de
     ``statut``, l'année ``annee``, dont ``part_primes`` sont des primes :
     celle dont :func:`salaire_net_depuis_brut` lit le net. ``None`` pour un
@@ -2708,8 +2741,11 @@ def fiche_depuis_brut(racine_donnees, macro, catalogue, affiliations,
     ``indemnite`` : l'indemnité compensatrice de la CSG que le brut de la
     fiche ajoute au revenu, celle que la carrière donne
     (:func:`indemnites_de_la_carriere`) ; à défaut, celle que la saisie prête
-    (:func:`indemnite_stylisee`)."""
-    code_profil = profil_de_la_fiche(affiliations, catalogue, statut, annee)
+    (:func:`indemnite_stylisee`).
+
+    ``annee_entree`` : l'entrée dans le statut, dont la fiche lit les régimes
+    (:func:`bloc_droit_en_vigueur`) ; sans elle, ceux d'un nouvel entrant."""
+    code_profil = profil_de_la_fiche(affiliations, catalogue, statut, annee, annee_entree)
     if code_profil is None:
         return None
     profil = charger_prelevements(racine_donnees).profil(code_profil)
@@ -2720,9 +2756,10 @@ def fiche_depuis_brut(racine_donnees, macro, catalogue, affiliations,
         indemnite = stylisee(brut_annuel) if stylisee is not None else 0.0
     return _fiche_avec_indemnite(
         ConstructeurFiche(profil, famille=famille_du_statut(
-            affiliations, code_profil, statut, annee)),
+            affiliations, code_profil, statut, annee, annee_entree)),
         catalogue, affiliations, statut, annee, brut_annuel, part_primes, indemnite,
-        macro.plafond_securite_sociale(annee), smic_annuel(macro, annee), cadre, macro)
+        macro.plafond_securite_sociale(annee), smic_annuel(macro, annee), cadre, macro,
+        annee_entree)
 
 
 def conversion_possible(affiliations, catalogue, statut: str, annee: int) -> bool:

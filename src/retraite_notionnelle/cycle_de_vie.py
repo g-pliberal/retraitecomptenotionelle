@@ -698,16 +698,18 @@ def _net_annualise(simulateur, carriere, ligne, indemnite: float = 0.0,
     prélèvements de l'année courante."""
     racine = simulateur.parametres.racine_donnees
     macro = simulateur.macro
+    # Les régimes de la date d'entrée dans le statut : l'agent de la SNCF
+    # entré avant 2020 paie le sien après la fermeture.
+    entree = carriere.date_entree(ligne.affiliation)
     fiche = fiche_depuis_brut(racine, macro, simulateur.catalogue, simulateur.affiliations,
                               ligne.affiliation, ligne.annee, ligne.revenu_annualise,
-                              ligne.part_primes, indemnite)
+                              ligne.part_primes, indemnite, annee_entree=entree)
     if fiche is None:
         return None
     annualise = fiche.brut
     profil = profil_de_la_fiche(simulateur.affiliations, simulateur.catalogue,
-                                ligne.affiliation, ligne.annee)
-    regimes = (simulateur.affiliations.regimes(ligne.affiliation, ligne.annee,
-                                               carriere.date_entree(ligne.affiliation))
+                                ligne.affiliation, ligne.annee, entree)
+    regimes = (simulateur.affiliations.regimes(ligne.affiliation, ligne.annee, entree)
                if profil == "independant" else ())
     famille = famille_de_la_fiche(profil, regimes)
     historique = charger_prelevements_historiques(racine)
@@ -1286,12 +1288,12 @@ def benefices_par_annee(simulateur, carriere) -> dict[int, tuple[float, str]]:
         if not ligne.cotise:
             continue
         revenus[ligne.annee] = revenus.get(ligne.annee, 0.0) + ligne.revenu
+        entree = carriere.date_entree(ligne.affiliation)
         profil = profil_de_la_fiche(simulateur.affiliations, simulateur.catalogue,
-                                    ligne.affiliation, ligne.annee)
+                                    ligne.affiliation, ligne.annee, entree)
         if profil != "independant":
             continue
-        regimes = simulateur.affiliations.regimes(ligne.affiliation, ligne.annee,
-                                                  carriere.date_entree(ligne.affiliation))
+        regimes = simulateur.affiliations.regimes(ligne.affiliation, ligne.annee, entree)
         famille = famille_de_la_fiche(profil, regimes)
         independants.setdefault(ligne.annee, []).append(
             (ligne.revenu, "bnc" if famille in FAMILLES_BNC else "bic"))

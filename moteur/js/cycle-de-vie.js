@@ -301,13 +301,18 @@ function historiqueDe(simulateur) {
  */
 function netAnnualise(simulateur, carriere, ligne, indemnite = 0.0, imposable = false) {
   const { macro, catalogue, affiliations } = simulateur;
+  // Les régimes de la date d'entrée dans le statut : l'agent de la SNCF entré
+  // avant 2020 paie le sien après la fermeture.
+  const entree = carriere.dateEntree(ligne.affiliation);
   const fiche = ficheDepuisBrut(simulateur.baremePrelevements, macro, catalogue, affiliations,
-    ligne.affiliation, ligne.annee, ligne.revenuAnnualise, ligne.part_primes, indemnite);
+    ligne.affiliation, ligne.annee, ligne.revenuAnnualise, ligne.part_primes, indemnite,
+    entree);
   if (fiche === null) return null;
   const annualise = fiche.brut;
-  const profil = profilDeLaFiche(affiliations, catalogue, ligne.affiliation, ligne.annee);
+  const profil = profilDeLaFiche(affiliations, catalogue, ligne.affiliation, ligne.annee,
+    entree);
   const regimes = profil === "independant"
-    ? affiliations.regimes(ligne.affiliation, ligne.annee, carriere.dateEntree(ligne.affiliation))
+    ? affiliations.regimes(ligne.affiliation, ligne.annee, entree)
     : [];
   const famille = familleDeLaFiche(profil, regimes);
   const historique = historiqueDe(simulateur);
@@ -942,11 +947,11 @@ export function beneficesParAnnee(simulateur, carriere) {
   for (const ligne of carriere.lignes) {
     if (!ligne.cotise) continue;
     revenus.set(ligne.annee, (revenus.get(ligne.annee) ?? 0.0) + ligne.revenu);
+    const entree = carriere.dateEntree(ligne.affiliation);
     const profil = profilDeLaFiche(simulateur.affiliations, simulateur.catalogue,
-      ligne.affiliation, ligne.annee);
+      ligne.affiliation, ligne.annee, entree);
     if (profil !== "independant") continue;
-    const regimes = simulateur.affiliations.regimes(ligne.affiliation, ligne.annee,
-      carriere.dateEntree(ligne.affiliation));
+    const regimes = simulateur.affiliations.regimes(ligne.affiliation, ligne.annee, entree);
     const famille = familleDeLaFiche(profil, regimes);
     if (!independants.has(ligne.annee)) independants.set(ligne.annee, []);
     independants.get(ligne.annee).push(

@@ -379,10 +379,12 @@ def test_la_csg_explique_a_elle_seule_l_effet_du_partage_hors_allegement(pieces)
 def test_le_profil_se_choisit_sur_ce_qu_on_sait_de_l_employeur(pieces):
     """Le découpage n'est pas celui des familles, et le test fixe pourquoi.
 
-    L'agent SNCF est de la famille `special` et relève pourtant du profil du
-    privé : la fermeture des régimes spéciaux l'a versé au régime général et à
-    l'Agirc-Arrco, et sa fiche de paie est celle d'un salarié. Le marin, lui,
-    reste sur un régime dont la fiche ne porte que la retenue de l'agent.
+    L'agent SNCF recruté depuis 2020 est de la famille `special` et relève
+    pourtant du profil du privé : la fermeture de son régime l'a versé au régime
+    général et à l'Agirc-Arrco, et sa fiche de paie est celle d'un salarié ;
+    celui qui était là avant garde la sienne (`test_fiche_date_d_entree.py`).
+    Le marin, lui, reste sur un régime dont la fiche ne porte que la retenue de
+    l'agent.
     """
     choisir = lambda statut: profil_de_la_fiche(  # noqa: E731
         pieces["affiliations"], pieces["catalogue"], statut, ANNEE)
@@ -818,7 +820,8 @@ def test_aucune_remuneration_pour_qui_a_deja_liquide():
 @pytest.mark.parametrize("statut, profil, cout_du_travail", [
     ("salarie_prive_non_cadre", "salarie_prive", True),
     ("fonctionnaire_etat", "agent_seul", False),
-    ("agent_sncf", "salarie_prive", True),
+    # Entré en 2007, il garde son régime, et la fiche qui ne porte que sa retenue.
+    ("agent_sncf", "agent_seul", False),
     ("contractuel_public", "salarie_ircantec", True),
     ("artisan", "independant", False),
 ])

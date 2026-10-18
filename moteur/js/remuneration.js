@@ -1034,7 +1034,7 @@ export class ConstructeurFiche {
  * changent pas ce qui est prélevé — seulement ce qui est porté au compte.
  */
 export function blocDroitEnVigueur(catalogue, affiliations, statut, annee,
-  partPrimes = 0, macro = null) {
+  partPrimes = 0, macro = null, anneeEntree = null) {
   // Un non-salarié paie tout : la fiche d'un régime partagé avec des salariés
   // — un artisan relève du régime général — porte la répartition 45/55 d'un
   // salarié, et elle ne le concerne pas. `moteur/compte.js` en tire déjà la
@@ -1049,13 +1049,16 @@ export function blocDroitEnVigueur(catalogue, affiliations, statut, annee,
   // revenu, le forfait ramené par les prix, la classe où tombe le revenu, dans
   // la grille de son millésime ramenée par le rapport des plafonds ; les deux
   // derniers exigent `macro` (`bloc_droit_en_vigueur`).
+  // Les régimes de la date d'entrée dans le statut, `anneeEntree`, comme le
+  // compte les lit : l'agent de la SNCF recruté avant 2020 paie le sien après
+  // la fermeture. Sans elle, ceux d'un nouvel entrant de l'année.
   const sansEmployeur = affiliations.sansEmployeur(statut);
   // Le médecin de secteur 2 paie seul, depuis 1980, ses prestations
   // complémentaires de vieillesse, dont l'assurance maladie paie les deux
   // tiers en secteur 1.
   const paieSeul = affiliations.sansPriseEnCharge(statut, annee);
   const composantes = [];
-  for (const code of affiliations.regimes(statut, annee)) {
+  for (const code of affiliations.regimes(statut, annee, anneeEntree)) {
     if (!catalogue.contient(code)) {
       continue;
     }
@@ -1329,7 +1332,8 @@ export function blocTauxUniqueSansEmployeur(tauxRepartition, tauxCapitalisation 
  * le sont déjà ailleurs : un agent peut relever d'un régime de base et d'un
  * régime additionnel.
  */
-export function contributionEquilibre(paquet, affiliations, statut, annee) {
+export function contributionEquilibre(paquet, affiliations, statut, annee,
+  anneeEntree = null) {
   let table = MEMOIRE_CONTRIBUTIONS.get(paquet);
   if (!table) {
     table = new ContributionsEmployeurPubliques(paquet);
@@ -1339,7 +1343,7 @@ export function contributionEquilibre(paquet, affiliations, statut, annee) {
   // cesserait de verser.
   const militaire = statut in affiliations.categoriesMilitaires;
   let total = 0;
-  for (const code of affiliations.regimes(statut, annee)) {
+  for (const code of affiliations.regimes(statut, annee, anneeEntree)) {
     const contribution = table.taux(code, annee, militaire);
     if (contribution !== null && contribution !== undefined) {
       total += contribution[0];
@@ -1359,7 +1363,8 @@ export function contributionEquilibre(paquet, affiliations, statut, annee) {
  * taux, donc 33,8 points chaque année depuis 2013. Zéro pour tout autre
  * employeur : seul l'État a sa décomposition.
  */
-export function departsAnticipes(paquet, affiliations, statut, annee) {
+export function departsAnticipes(paquet, affiliations, statut, annee,
+  anneeEntree = null) {
   let cour = MEMOIRE_COUR.get(paquet);
   if (!cour) {
     cour = new PartRetraiteSeuleEtat(paquet);
@@ -1376,7 +1381,7 @@ export function departsAnticipes(paquet, affiliations, statut, annee) {
   const militaire = statut in affiliations.categoriesMilitaires;
   const population = militaire ? "militaires" : "civils";
   let total = 0;
-  for (const code of affiliations.regimes(statut, annee)) {
+  for (const code of affiliations.regimes(statut, annee, anneeEntree)) {
     if (code !== REGIME_ETAT) {
       continue;
     }
@@ -1419,8 +1424,9 @@ export function ficheDePaiePossible(affiliations, statut) {
  * libéral, l'avocat, dont les postes diffèrent —, ou celle de son profil.
  * Jumeau de `famille_du_statut`.
  */
-export function familleDuStatut(affiliations, codeProfil, statut, annee) {
-  return familleDeLaFiche(codeProfil, affiliations.regimes(statut, annee));
+export function familleDuStatut(affiliations, codeProfil, statut, annee,
+  anneeEntree = null) {
+  return familleDeLaFiche(codeProfil, affiliations.regimes(statut, annee, anneeEntree));
 }
 
 /**
@@ -1438,9 +1444,11 @@ export function familleDuStatut(affiliations, codeProfil, statut, annee) {
  *    → `salarie_ircantec`, qui ne doit ni CEG, ni CET, ni APEC ;
  * 4. le reste → `salarie_prive`, où tombent les statuts de la famille
  *    `special` que la fermeture des régimes spéciaux a versés au régime
- *    général et à l'Agirc-Arrco.
+ *    général et à l'Agirc-Arrco, pour qui y entre depuis.
+ *
+ * Aux régimes de la date d'entrée, `anneeEntree`, comme `blocDroitEnVigueur`.
  */
-export function profilDeLaFiche(affiliations, catalogue, statut, annee) {
+export function profilDeLaFiche(affiliations, catalogue, statut, annee, anneeEntree = null) {
   let famille;
   try {
     famille = affiliations.famille(statut);
@@ -1457,7 +1465,7 @@ export function profilDeLaFiche(affiliations, catalogue, statut, annee) {
   if (famille === "independant" || affiliations.sansEmployeur(statut)) {
     return "independant";
   }
-  for (const code of affiliations.regimes(statut, annee)) {
+  for (const code of affiliations.regimes(statut, annee, anneeEntree)) {
     if (!catalogue.contient(code)) {
       continue;
     }
@@ -1627,10 +1635,11 @@ export function indemniteStylisee(macro, catalogue, affiliations, statut, annee,
 
 /** La fiche du droit en vigueur de `revenu`, l'indemnité ajoutée au brut. */
 function ficheAvecIndemnite(constructeur, catalogue, affiliations, statut, annee,
-  revenu, partPrimes, indemnite, plafond, smic, cadre, macro) {
+  revenu, partPrimes, indemnite, plafond, smic, cadre, macro, anneeEntree = null) {
   const primes = partPrimesDeLaFiche(revenu, partPrimes, indemnite);
   return constructeur.fiche(annee, revenu + indemnite, plafond, smic,
-    blocDroitEnVigueur(catalogue, affiliations, statut, annee, primes, macro), cadre);
+    blocDroitEnVigueur(catalogue, affiliations, statut, annee, primes, macro, anneeEntree),
+    cadre);
 }
 
 /**
@@ -1638,11 +1647,12 @@ function ficheAvecIndemnite(constructeur, catalogue, affiliations, statut, annee
  * l'année `annee`, dont `partPrimes` sont des primes ; `null` pour un statut
  * sans fiche de paie. `indemnite` : l'indemnité compensatrice de la CSG que la
  * carrière donne (`indemnitesDesLignes`) ; à défaut, celle que la saisie prête.
- * Jumeau de `fiche_depuis_brut`.
+ * `anneeEntree` : l'entrée dans le statut, dont la fiche lit les régimes ; sans
+ * elle, ceux d'un nouvel entrant. Jumeau de `fiche_depuis_brut`.
  */
 export function ficheDepuisBrut(bareme, macro, catalogue, affiliations, statut, annee,
-  brutAnnuel, partPrimes = 0, indemnite = null) {
-  const codeProfil = profilDeLaFiche(affiliations, catalogue, statut, annee);
+  brutAnnuel, partPrimes = 0, indemnite = null, anneeEntree = null) {
+  const codeProfil = profilDeLaFiche(affiliations, catalogue, statut, annee, anneeEntree);
   if (codeProfil === null) return null;
   const cadre = statut.includes("cadre") && !statut.includes("non_cadre");
   let montant = indemnite;
@@ -1652,9 +1662,10 @@ export function ficheDepuisBrut(bareme, macro, catalogue, affiliations, statut, 
     montant = stylisee === null ? 0 : stylisee(brutAnnuel);
   }
   return ficheAvecIndemnite(new ConstructeurFiche(bareme.profil(codeProfil), "",
-    familleDuStatut(affiliations, codeProfil, statut, annee)), catalogue,
+    familleDuStatut(affiliations, codeProfil, statut, annee, anneeEntree)), catalogue,
     affiliations, statut, annee, brutAnnuel, partPrimes, montant,
-    macro.plafond_securite_sociale.valeur(annee), smicAnnuel(macro, annee), cadre, macro);
+    macro.plafond_securite_sociale.valeur(annee), smicAnnuel(macro, annee), cadre, macro,
+    anneeEntree);
 }
 
 export function smicAnnuel(macro, annee) {
@@ -1820,8 +1831,10 @@ export function remunerationDeLaCarriere(carriere, macro, catalogue, affiliation
     return null;
   }
   const statut = carriere.ligne(anneesActives[0]).affiliation;
+  // Chaque fiche lit les régimes de la date d'entrée dans le statut.
+  const entree = carriere.dateEntree(statut);
   const codeProfil = profilDeLaFiche(
-    affiliations, catalogue, statut, anneesActives[0],
+    affiliations, catalogue, statut, anneesActives[0], entree,
   );
   if (codeProfil === null) {
     return null;
@@ -1884,9 +1897,9 @@ export function remunerationDeLaCarriere(carriere, macro, catalogue, affiliation
       parametres.taux_cotisation_liberal, capitalisation,
       parametres.part_salariale_taux_unique, csg, rendue,
       partage && paquet
-        ? contributionEquilibre(paquet, affiliations, statut, annee) : 0,
+        ? contributionEquilibre(paquet, affiliations, statut, annee, entree) : 0,
       partage && paquet
-        ? departsAnticipes(paquet, affiliations, statut, annee) : 0,
+        ? departsAnticipes(paquet, affiliations, statut, annee, entree) : 0,
       conservees, partTraitement,
     );
   };
@@ -1909,11 +1922,11 @@ export function remunerationDeLaCarriere(carriere, macro, catalogue, affiliation
     const plafond = macro.plafond_securite_sociale.valeur(annee);
     const smic = smicAnnuel(macro, annee);
     const blocActuel = blocDroitEnVigueur(
-      catalogue, affiliations, statut, annee, primes, macro,
+      catalogue, affiliations, statut, annee, primes, macro, entree,
     );
     const propose = blocPropose(annee, blocActuel, 1 - primes);
     const constructeur = constructeurDe(
-      ligne.lodeom ?? "", familleDuStatut(affiliations, codeProfil, statut, annee));
+      ligne.lodeom ?? "", familleDuStatut(affiliations, codeProfil, statut, annee, entree));
     const ficheActuelle = constructeur.fiche(
       annee, brut, plafond, smic, blocActuel, cadre,
     );
@@ -1978,11 +1991,11 @@ export { Fiabilite };
  * saisie lui prête stylisée (`indemniteStylisee`).
  */
 export function salaireBrutDepuisNet(bareme, macro, catalogue, affiliations,
-  statut, annee, netAnnuel, partPrimes = 0) {
+  statut, annee, netAnnuel, partPrimes = 0, anneeEntree = null) {
   if (netAnnuel <= 0) {
     return netAnnuel;
   }
-  const codeProfil = profilDeLaFiche(affiliations, catalogue, statut, annee);
+  const codeProfil = profilDeLaFiche(affiliations, catalogue, statut, annee, anneeEntree);
   if (codeProfil === null) {
     return netAnnuel;
   }
@@ -1990,13 +2003,14 @@ export function salaireBrutDepuisNet(bareme, macro, catalogue, affiliations,
   const plafond = macro.plafond_securite_sociale.valeur(annee);
   const smic = smicAnnuel(macro, annee);
   const constructeur = new ConstructeurFiche(bareme.profil(codeProfil), "",
-    familleDuStatut(affiliations, codeProfil, statut, annee));
+    familleDuStatut(affiliations, codeProfil, statut, annee, anneeEntree));
   const indemnite = indemniteStylisee(macro, catalogue, affiliations, statut, annee,
     partPrimes);
   if (indemnite === null) {
     return constructeur.brutANetDonne(
       netAnnuel, plafond, smic,
-      blocDroitEnVigueur(catalogue, affiliations, statut, annee, partPrimes, macro),
+      blocDroitEnVigueur(catalogue, affiliations, statut, annee, partPrimes, macro,
+        anneeEntree),
       cadre,
     );
   }
@@ -2006,7 +2020,8 @@ export function salaireBrutDepuisNet(bareme, macro, catalogue, affiliations,
   for (let pas = 0; pas < 80; pas += 1) {
     const milieu = (bas + haut) / 2;
     const fiche = ficheAvecIndemnite(constructeur, catalogue, affiliations, statut,
-      annee, milieu, partPrimes, indemnite(milieu), plafond, smic, cadre, macro);
+      annee, milieu, partPrimes, indemnite(milieu), plafond, smic, cadre, macro,
+      anneeEntree);
     if (fiche.net < netAnnuel) {
       bas = milieu;
     } else {
@@ -2021,11 +2036,11 @@ export function salaireBrutDepuisNet(bareme, macro, catalogue, affiliations,
  * Sert à la BASCULE, qui doit traduire le nombre saisi et non le relire.
  */
 export function salaireNetDepuisBrut(bareme, macro, catalogue, affiliations,
-  statut, annee, brutAnnuel, partPrimes = 0) {
+  statut, annee, brutAnnuel, partPrimes = 0, anneeEntree = null) {
   if (brutAnnuel <= 0) {
     return brutAnnuel;
   }
-  const codeProfil = profilDeLaFiche(affiliations, catalogue, statut, annee);
+  const codeProfil = profilDeLaFiche(affiliations, catalogue, statut, annee, anneeEntree);
   if (codeProfil === null) {
     return brutAnnuel;
   }
@@ -2034,9 +2049,10 @@ export function salaireNetDepuisBrut(bareme, macro, catalogue, affiliations,
     partPrimes);
   return ficheAvecIndemnite(
     new ConstructeurFiche(bareme.profil(codeProfil), "",
-      familleDuStatut(affiliations, codeProfil, statut, annee)),
+      familleDuStatut(affiliations, codeProfil, statut, annee, anneeEntree)),
     catalogue, affiliations, statut,
     annee, brutAnnuel, partPrimes, stylisee === null ? 0 : stylisee(brutAnnuel),
     macro.plafond_securite_sociale.valeur(annee), smicAnnuel(macro, annee), cadre, macro,
+    anneeEntree,
   ).net;
 }

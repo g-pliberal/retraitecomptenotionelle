@@ -42,7 +42,8 @@ RACINE = Path(__file__).resolve().parents[1]
 
 #: Les carrières : un statut, une génération, un âge de départ, des enfants —
 #: trois au parent parti en 2010, dont l'impôt exonère la majoration
-#: jusqu'aux revenus de 2012.
+#: jusqu'aux revenus de 2012 ; un agent de la SNCF entré en 1996, qui garde son
+#: régime, et sa fiche de paie, après la fermeture de 2020.
 CARRIERES = (
     ("salarie_prive_non_cadre", 1948, "H", 62.0, 3),
     ("salarie_prive_cadre", 1958, "F", 62.0, 0),
@@ -51,6 +52,7 @@ CARRIERES = (
     ("fonctionnaire_etat", 1966, "F", 63.0, 0),
     ("artisan", 1970, "H", 64.0, 0),
     ("salarie_prive_non_cadre", 1990, "F", 65.0, 0),
+    ("agent_sncf", 1975, "H", 57.0, 0),
 )
 
 #: Les conventions que le portage sait servir ; ``construite`` nomme celles
