@@ -2116,7 +2116,11 @@ def _(m: Modele):
     # seconde lecture ; depuis l'étape 11, elle ne s'écarte plus de celle du
     # COR que de trois points, et passe sous elle entre les deux. L'étape 19,
     # le système actuel servant les revalorisations de son droit, la porte à
-    # 3,3 points à l'horizon, et ne la laisse sous elle qu'en 2027.
+    # 3,3 points à l'horizon, et ne la laisse sous elle qu'en 2027. Le 18
+    # octobre 2026, chaque cohorte de la grille partant l'année que le droit de
+    # sa génération lui donne (action 138, étape 3), la masse de 2025, d'où la
+    # croissance se compte, perd les retraités que la grille faisait partir un
+    # an trop tôt : 5,1 points à l'horizon, et sous elle en 2026 seulement.
     avenir = m.cout.avenir
     debut, fin = avenir.premiere_annee_projetee, avenir.derniere_annee
     comptes = m.contexte.comptes()
@@ -2126,7 +2130,7 @@ def _(m: Modele):
 
     ecart = (part(avenir.annee(fin)) / part(avenir.annee(debut))
              / (comptes.depense(fin) / comptes.depense(debut)))
-    assert abs(ecart - 1.0) < 0.04
+    assert abs(ecart - 1.0) < 0.06
     assert _proche(ecart, avenir.annee(fin).derive)
     assert min(ligne.derive for ligne in avenir.projetees()) < 1.0
     tetes, pension = avenir.decomposition(avenir.premiere_annee_projetee)[avenir.derniere_annee]
@@ -2152,15 +2156,27 @@ def _(m: Modele):
         assert _proche(ligne.rapports["notionnel_liberal"],
                        basse.rapports["notionnel_liberal"] * derive)
         assert _proche(ligne.solde("actuel"), basse.solde("actuel"))
+
+
+@controle("fourchette_elargie")
+def _(m: Modele):
     # Jusqu'à l'étape 11 de l'action 147, la seconde lecture alourdissait
     # toujours la proposition : c'était la borne haute. La dérive passant sous
-    # un au milieu de la période, elle l'allège désormais en moyenne ; ce qui
-    # se contrôle est l'étroitesse de la fourchette, dans les deux sens.
-    assert abs(m.cout.dette_derive.horizon("notionnel_liberal")
-               - m.cout.dette.horizon("notionnel_liberal")) < 0.10
+    # un au milieu de la période, elle l'a allégée en moyenne ; ce qui se
+    # contrôlait était l'étroitesse de la fourchette, dans les deux sens : dix
+    # points de PIB de dette en 2070, un quart de point de solde moyen. Le 18
+    # octobre 2026, chaque cohorte de la grille partant l'année que le droit de
+    # sa génération lui donne (action 138, étape 3), la dérive de 2070 passe de
+    # 1,033 à 1,050, et la fourchette s'élargit à seize points de dette et un
+    # quart de point passé : la page, qui la dit étroite, est à revoir. Le
+    # contrôle tombe quand la fourchette se resserre.
+    haut = m.cout.solde_derive
     debut, fin = haut.premiere_annee_projetee, haut.derniere_annee
-    assert abs(haut.solde_moyen("notionnel_liberal", debut, fin) - m.solde.solde_moyen(
-        "notionnel_liberal", debut, fin)) < 0.0025
+    dette = abs(m.cout.dette_derive.horizon("notionnel_liberal")
+                - m.cout.dette.horizon("notionnel_liberal"))
+    solde = abs(haut.solde_moyen("notionnel_liberal", debut, fin) - m.solde.solde_moyen(
+        "notionnel_liberal", debut, fin))
+    assert dette > 0.10 or solde > 0.0025
 
 
 @controle("trajectoire_du_cor")

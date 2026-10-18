@@ -181,6 +181,12 @@ EXCEPTIONS = {
     ("test_controle_eacr.py",
      "test_une_cohorte_compte_ses_tetes_et_dit_si_elle_part_l_annee_meme"): "rapide",
     ("test_controle_eacr.py", "test_les_conditions_de_depart_se_lisent_en_parts"): "rapide",
+    # La date de chaque cohorte de la grille du coût, sur une grille d'essai,
+    # puis au droit de sa génération (action 138, étape 3).
+    ("test_cout.py",
+     "test_chaque_cohorte_part_l_annee_que_lui_donne_le_droit_de_sa_generation"): "rapide",
+    ("test_cout.py",
+     "test_la_grille_date_chaque_cohorte_au_droit_de_sa_generation"): "rapide",
     # Le portage JavaScript, rejoué contre le Python : deux moteurs.
     ("test_cumul_activites.py",
      "test_le_portage_javascript_concorde_sur_des_cumuls_tires_au_hasard"): "complet",

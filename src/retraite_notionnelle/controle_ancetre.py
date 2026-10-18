@@ -81,7 +81,7 @@ def pensions_mensuelles(pensionnes, population, revalorisation, vers_euros_annee
     euros: dict[str, list[float]] = {}
     for pensionne in pensionnes:
         for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
-            liquidation = pensionne.annee_liquidation + decalage
+            liquidation = pensionne.liquidation(decalage)
             if annee < liquidation:
                 continue
             effectif = population.effectif(annee - pensionne.generation - decalage, annee)

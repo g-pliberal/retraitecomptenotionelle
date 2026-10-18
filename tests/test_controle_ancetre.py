@@ -95,12 +95,20 @@ def test_la_pension_d_un_cas_type_pese_ses_cohortes_parties():
     completudes[_DEMI_TRANCHE + 1] = 0.5
     pensionne = SimpleNamespace(
         code="essai", generation=1954, annee_liquidation=2018,
+        liquidation=lambda decalage: 2018 + decalage,
         pensions={"actuel": 24_000.0}, parts_regimes={},
         completude=lambda decalage: completudes[decalage + _DEMI_TRANCHE])
     # Né en 1954, parti en 2018 : 70 ans en 2024 ; la cohorte suivante, née en
     # 1955, part en 2019 à demi-carrière ; celles d'après n'ont pas d'effectif.
     pensions = pensions_mensuelles([pensionne], population, None, 1.5, annee=2024)
     assert pensions["essai"] == pytest.approx((2 * 2000.0 + 1 * 1000.0) / 3 * 1.5)
+    # Une cohorte part l'année que le droit de sa génération lui donne
+    # (``cout.Pensionne.liquidation``) : née en 1955, partie en 2025, elle n'y
+    # est pas.
+    tardive = SimpleNamespace(**{**vars(pensionne), "liquidation": lambda decalage: {
+        0: 2018, 1: 2025}.get(decalage, 2018 + decalage)})
+    pensions = pensions_mensuelles([tardive], population, None, 1.5, annee=2024)
+    assert pensions["essai"] == pytest.approx(2000.0 * 1.5)
 
 
 def test_un_regime_principal_moyenne_ses_cas_types_a_leur_poids():

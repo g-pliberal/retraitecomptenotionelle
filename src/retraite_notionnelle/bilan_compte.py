@@ -187,8 +187,8 @@ def profils_par_age(pensionnes: Sequence[Pensionne], population: Population,
                 if versee and part_cotisants > 0.0:
                     cotisations[cle][age] = (cotisations[cle].get(age, 0.0)
                                              + part_cotisants * effectif * versee)
-                depart = (volet.annee_liquidation if liberal
-                          else pensionne.annee_liquidation) + decalage
+                depart = (pensionne.depart_liberal(decalage) if liberal
+                          else pensionne.liquidation(decalage))
                 if annee < depart or part_retraites <= 0.0:
                     continue
                 montant = volet.pension if liberal else pensionne.pensions.get(cle, 0.0)

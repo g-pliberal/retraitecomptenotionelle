@@ -147,7 +147,7 @@ def cohortes(pensionnes, poids: Mapping[str, float], population, revalorisation,
         if part <= 0.0:
             continue
         for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
-            liquidation = pensionne.annee_liquidation + decalage
+            liquidation = pensionne.liquidation(decalage)
             if annee < liquidation:
                 continue
             age = annee - pensionne.generation - decalage
@@ -158,7 +158,7 @@ def cohortes(pensionnes, poids: Mapping[str, float], population, revalorisation,
                        * coefficient_servi(pensionne.parts_regimes, revalorisation,
                                            liquidation, annee))
             sortie.append(Cohorte(pensionne.code, pensionne.generation, age,
-                                  pensionne.annee_liquidation - pensionne.generation,
+                                  liquidation - pensionne.generation - decalage,
                                   part * effectif, pension * vers_euros_annee / 12.0,
                                   liquidation == annee))
     return sortie

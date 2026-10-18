@@ -395,7 +395,7 @@ def stock_pese_comme_la_page(simulateur: Simulateur, annees: tuple[int, ...] = A
                     continue
                 pension = pensionne.pensions["actuel"] * pensionne.parts_regimes.get(regime, 0.0)
                 for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
-                    if annee < pensionne.annee_liquidation + decalage:
+                    if annee < pensionne.liquidation(decalage):
                         continue
                     effectif = population.effectif(annee - pensionne.generation - decalage,
                                                    annee)

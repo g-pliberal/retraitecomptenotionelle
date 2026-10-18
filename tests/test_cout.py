@@ -701,8 +701,12 @@ RECONSTITUTION_DEPUIS = 2000
 #: ``points_avant_1973_independants``), et les premières générations baissent ;
 #: -13,1 % le 17 octobre (-13,2 % la veille), l'étape 138.7 faisant vivre
 #: chaque cas type au rythme du vingtile de son diviseur, à nombre de décès
-#: égal : les plus fortes pensions pèsent davantage aux grands âges.
-RECONSTITUTION_CLIQUET = 0.135
+#: égal : les plus fortes pensions pèsent davantage aux grands âges ; -11,9 %
+#: le 18 octobre, l'étape 138.3 faisant partir chaque cohorte de la grille
+#: l'année que le droit de sa génération lui donne : la masse de 2024 que
+#: l'ancrage rend égale à la dépense ne compte plus les cohortes que la grille
+#: faisait partir trop tôt, et le passé se refait d'autant mieux.
+RECONSTITUTION_CLIQUET = 0.12
 #: Ce que vise le cliquet : quelques pour cent, chaque année.
 RECONSTITUTION_CIBLE = 0.05
 
@@ -1076,13 +1080,23 @@ DECOMPOSITION_GROUPES_SUIVIS = {
 #: L'étape 7 de l'action 138, le 17 octobre, fait vivre chaque cas type au
 #: rythme du vingtile de son diviseur, à nombre de décès égal : la pension
 #: relative de l'Agirc-Arrco passe de +22,2 à +21,4 %, la dépense de la FPE de
-#: +19,3 à +18,9 %, celle des régimes spéciaux de -33,6 à -32,3 %.
+#: +19,3 à +18,9 %, celle des régimes spéciaux de -33,6 à -32,3 %. L'étape 3,
+#: le 18 octobre, fait partir chaque cohorte de la grille l'année que le droit
+#: de sa génération lui donne, et le cliquet de l'Agirc-Arrco remonte, comme
+#: celui de la reconstitution le 5 octobre, parce qu'un défaut en masquait un
+#: autre : sa pension relative passe de +21,4 à +23,8 %, la dépense de la FPE
+#: de +18,9 à +22,4 %, celle de la CNRACL de +7,5 à +11,2 %. En 2025, d'où la
+#: mesure part, la grille faisait partir le cadre de 1961, le fonctionnaire
+#: sédentaire de l'État et l'agent sédentaire de la CNRACL de 1962, qui
+#: partent en 2026, à 168 et 169 trimestres : la pension moyenne de
+#: l'Agirc-Arrco et la dépense des deux fonctions publiques y étaient trop
+#: hautes, et leur croissance jusqu'à l'horizon trop basse.
 DECOMPOSITION_GROUPES_CLIQUETS = {
     ("pension_relative", "fpe"): 0.06,
     ("pension_relative", "cnracl"): 0.04,
-    ("pension_relative", "agirc_arrco"): 0.22,
-    ("depense_part_pib", "fpe"): 0.19,
-    ("depense_part_pib", "cnracl"): 0.08,
+    ("pension_relative", "agirc_arrco"): 0.24,
+    ("depense_part_pib", "fpe"): 0.23,
+    ("depense_part_pib", "cnracl"): 0.12,
     ("depense_part_pib", "regimes_speciaux"): 0.33,
 }
 
@@ -1393,7 +1407,11 @@ def test_la_survie_d_un_cas_type_est_celle_du_vingtile_de_son_diviseur():
     cohorte et depuis sa liquidation, à celle de la population générale,
     unisexe et par génération comme la pyramide qu'elle corrige : l'INSEE
     fait mourir le premier plus tôt, le second plus tard. Sous la table
-    commune (``population_conversion=None``), la population générale."""
+    commune (``population_conversion=None``), la population générale. Chaque
+    cohorte part l'année et à l'âge que le droit de sa génération lui donne
+    (action 138, étape 3) : entré à 23 ans, le cadre de 1960 part à 64 ans et
+    9 mois, en 2024, celui de 1961, à 168 trimestres au lieu de 167, à 65
+    ans, en 2026."""
     from retraite_notionnelle.cout import _pensionnes
 
     simulateur = Simulateur(Parametres())
@@ -1405,10 +1423,11 @@ def test_la_survie_d_un_cas_type_est_celle_du_vingtile_de_son_diviseur():
                                 "droit")
     de_1960 = {p.code: p for p in pensionnes if p.generation == 1960}
     assert set(de_1960) == set(vingtiles)
+    assert (de_1960["cadre"].liquidation(0), de_1960["cadre"].liquidation(1)) == (2024, 2026)
     for code, pensionne in de_1960.items():
-        age = float(pensionne.annee_liquidation - 1960)
         for decalage in range(-2, 3):
-            depart = pensionne.annee_liquidation + decalage
+            depart = pensionne.liquidation(decalage)
+            age = float(depart - 1960 - decalage)
             generale = mortalite.courbe(age, float(depart), None, True, None)
             propre = mortalite.courbe(age, float(depart), None, True, vingtiles[code])
             assert pensionne.survie(decalage, depart) == 1.0
@@ -1645,17 +1664,22 @@ def test_la_derive_mesure_l_ecart_de_la_masse_du_modele_au_cor(avenir, comptes):
     # reprennent à l'étape 14 : 0,999, puis 1,008, et 1,033 à l'étape 19, le
     # scénario 1 servant les revalorisations de son droit : son stock de 2025,
     # érodé, pèse moins dans l'ancrage, et la masse du modèle remonte sur
-    # celle du COR quand il s'éteint. Un écart à un de plus de quatre points
-    # dirait qu'un défaut est revenu.
-    assert 0.99 < horizon.derive < 1.04, horizon.derive
+    # celle du COR quand il s'éteint. Puis 1,050 le 18 octobre 2026, chaque
+    # cohorte de la grille partant l'année que le droit de sa génération lui
+    # donne (action 138, étape 3) : en 2025, d'où la dérive se compte, la
+    # grille comptait 0,25 million de retraités partis un an trop tôt, et la
+    # masse d'où elle part en était grossie. Un écart à un de plus de six
+    # points dirait qu'un défaut est revenu.
+    assert 0.99 < horizon.derive < 1.06, horizon.derive
     # Les arrivées tardives et les carrières incomplètes des natifs pèsent dès
     # 2035 : la dérive passe sous un, au plus bas à 0,975 en 2054 (0,977 avant
     # l'étape 13, quand les régimes qui se ferment privaient le privé de leur
     # part, et 0,985 en 2034 avant l'étape 14). Depuis l'étape 19, elle reste
-    # au-dessus de 0,99 et monte à 1,033 à l'horizon. Une dérive qui s'en
-    # écarterait de plus de 4 % dirait un défaut, non un écart d'hypothèses.
+    # au-dessus de 0,99 et monte à 1,033 à l'horizon, 1,050 depuis le 18
+    # octobre 2026. Une dérive qui s'en écarterait de plus de 6 % dirait un
+    # défaut, non un écart d'hypothèses.
     for ligne in avenir.projetees():
-        assert 0.97 < ligne.derive < 1.04, (ligne.annee, ligne.derive)
+        assert 0.97 < ligne.derive < 1.06, (ligne.annee, ligne.derive)
 
 
 def test_la_borne_haute_ne_touche_que_les_systemes_notionnels(cout):
@@ -1685,10 +1709,13 @@ def test_la_borne_haute_ne_touche_que_les_systemes_notionnels(cout):
     # revalorisations de son droit, la dérive repasse au-dessus d'un après
     # 2027, et la seconde lecture ALOURDIT la dette de sept points ; de cinq
     # depuis les civils de l'État pesés sur leurs départs actifs (action 138,
-    # étape 3). Les deux lectures encadrent encore la vérité.
+    # étape 3) ; de seize depuis que chaque cohorte de la grille part l'année
+    # du droit de sa génération (même étape, 18 octobre 2026), la dérive de
+    # 2070 passant de 1,033 à 1,050. Les deux lectures encadrent encore la
+    # vérité.
     ecart = cout.dette_derive.horizon("notionnel_liberal") - cout.dette.horizon(
         "notionnel_liberal")
-    assert 0.04 < ecart < 0.09, ecart
+    assert 0.12 < ecart < 0.20, ecart
 
 
 def test_le_pib_projete_croit_moins_vite_que_l_hypothese_nominale(avenir):
@@ -4537,6 +4564,116 @@ def test_une_cohorte_prend_le_volet_de_son_cote_de_la_bascule():
     assert pensionne.volet(2) is reporte
     seul = replace(pensionne, autre=None)
     assert seul.volet(-2) is reporte
+
+
+def test_chaque_cohorte_part_l_annee_que_lui_donne_le_droit_de_sa_generation(population):
+    """La grille ne simule qu'une génération sur cinq, et faisait partir les
+    cinq cohortes qu'elle représente à son âge de départ, la date décalée
+    d'autant : le salarié de janvier 1965 part en 2028 avec 170 trimestres,
+    sous la suspension de 2026, quand nés en 1966 et 1967 il lui en faut 172,
+    et la grille comptait leurs départs un an trop tôt (note du 18 octobre
+    2026, « la grille »). Chaque cohorte part désormais l'année que le droit
+    de sa génération lui donne (``Pensionne.departs``) : têtes et masses ne la
+    comptent qu'à partir de là, dans tous les systèmes et dans chaque régime,
+    sa pension se revalorise depuis et sa survie se compte de là. La
+    proposition la reporte à l'âge légal, le sien, quand elle reporte la
+    génération de la grille, et la fait partir avec elle sinon ; le côté de la
+    bascule est celui de son départ. Sans dates, celles de la grille."""
+    from retraite_notionnelle.cout import (
+        CLES_CAS_TYPES, TETES_TOUTES, Pensionne, VoletLiberal, _masses, _masses_regimes,
+        coefficient_servi)
+
+    simulateur = Simulateur(Parametres()).pour_la_projection()
+    revalorisation = RevalorisationServie(simulateur, 2000, 2040)
+    # Le salarié de 1965 part à 63 ans et demi, en 2028 ; la proposition le
+    # reporte à 65 ans, en 2030.
+    reporte = VoletLiberal(annee_liquidation=2030, annee_ouverture_garantie=2030,
+                           pension=1.0, ressources_garantie=1.0)
+    grille = Pensionne(code="x", generation=1965, annee_liquidation=2028,
+                       pensions={cle: 1.0 for cle in CLES_CAS_TYPES}, propre=reporte,
+                       parts_regimes={"regime_general": 1.0}, bascule=2026)
+    datee = replace(grille, departs=(2026, 2027, 2028, 2030, 2031))
+    decalages = range(-2, 3)
+    assert [grille.liquidation(d) for d in decalages] == [2026, 2027, 2028, 2029, 2030]
+    assert [datee.liquidation(d) for d in decalages] == [2026, 2027, 2028, 2030, 2031]
+    for pensionne in (grille, datee):
+        assert [pensionne.depart_liberal(d) for d in decalages] == [
+            2028, 2029, 2030, 2031, 2032]
+
+    # En 2030, la cohorte de 1967 n'est pas encore partie.
+    effectifs = [population.effectif(2030 - 1965 - d, 2030) for d in decalages]
+    masses, _, tetes = _masses([grille], population, 2030, {"x": 1.0}, revalorisation)
+    datees, _, tetes_datees = _masses([datee], population, 2030, {"x": 1.0}, revalorisation)
+    assert tetes[TETES_TOUTES] == pytest.approx(sum(effectifs), rel=1e-12)
+    assert tetes_datees[TETES_TOUTES] == pytest.approx(sum(effectifs[:4]), rel=1e-12)
+    parties = (2026, 2027, 2028, 2030)
+    servis = [coefficient_servi({"regime_general": 1.0}, revalorisation, depart, 2030)
+              for depart in parties]
+    assert datees["actuel"] == pytest.approx(
+        sum(e * c for e, c in zip(effectifs, servis)), rel=1e-12)
+    assert regle_revalorisation("notionnel_retroactif") == REGLE_STOCK
+    stock = [revalorisation.coefficient_stock(depart, 2030, prospectif=False)
+             for depart in parties]
+    assert datees["notionnel_retroactif"] == pytest.approx(
+        sum(e * c for e, c in zip(effectifs, stock)), rel=1e-12)
+    # La proposition part à 65 ans des deux façons.
+    assert datees["notionnel_liberal"] == pytest.approx(masses["notionnel_liberal"], rel=1e-12)
+    regimes, tetes_regimes = _masses_regimes([datee], population, 2030, {"x": 1.0},
+                                             revalorisation)
+    assert sum(tetes_regimes.values()) == pytest.approx(sum(effectifs[:4]), rel=1e-12)
+    assert sum(regimes.values()) == pytest.approx(datees["actuel"], rel=1e-12)
+
+    # Le cadre de 1965 part à 65 ans, en 2030, et la proposition avec lui ;
+    # né en 1966 ou en 1967, il part à 66 ans : en 2032, la cohorte de 1967
+    # n'est partie dans aucun système.
+    avec_lui = VoletLiberal(annee_liquidation=2030, annee_ouverture_garantie=2030,
+                            pension=1.0, ressources_garantie=1.0)
+    cadre = replace(grille, annee_liquidation=2030, propre=avec_lui,
+                    departs=(2028, 2029, 2030, 2032, 2033))
+    assert [cadre.depart_liberal(d) for d in decalages] == [2028, 2029, 2030, 2032, 2033]
+    effectifs = [population.effectif(2032 - 1965 - d, 2032) for d in decalages]
+    masses, _, tetes = _masses([cadre], population, 2032, {"x": 1.0}, revalorisation)
+    assert tetes[TETES_TOUTES] == pytest.approx(sum(effectifs[:4]), rel=1e-12)
+    assert regle_revalorisation("notionnel_liberal") == REGLE_STOCK
+    assert masses["notionnel_liberal"] == pytest.approx(
+        masses["notionnel_retroactif"], rel=1e-12)
+    _, _, tetes = _masses([replace(cadre, departs=())], population, 2032, {"x": 1.0},
+                          revalorisation)
+    assert tetes[TETES_TOUTES] == pytest.approx(sum(effectifs), rel=1e-12)
+
+    # Le cadre de 1960 part à 64 ans, en 2024 ; né en 1961, il part en 2026,
+    # après la bascule, et non en 2025 : la proposition le reporte à 65 ans.
+    avant = VoletLiberal(annee_liquidation=2024, annee_ouverture_garantie=2025,
+                         pension=1.0, ressources_garantie=1.0)
+    apres = VoletLiberal(annee_liquidation=2025, annee_ouverture_garantie=2025,
+                         pension=2.0, ressources_garantie=2.0)
+    cadre_1960 = Pensionne(code="x", generation=1960, annee_liquidation=2024, pensions={},
+                           propre=avant, autre=apres, bascule=2026,
+                           departs=(2022, 2023, 2024, 2026, 2027))
+    assert [cadre_1960.volet(d) is apres for d in decalages] == [
+        False, False, False, True, True]
+    assert [replace(cadre_1960, departs=()).volet(d) is apres for d in decalages] == [
+        False, False, False, False, True]
+    assert [cadre_1960.depart_liberal(d) for d in decalages] == [2022, 2023, 2024, 2026, 2027]
+
+    # La survie se compte depuis le départ de la cohorte.
+    vivante = replace(datee, survies=((1.0, 0.9, 0.8, 0.7),) * 5)
+    assert (vivante.survie(2, 2031), vivante.survie(2, 2032)) == (1.0, 0.9)
+    assert replace(vivante, departs=()).survie(2, 2032) == 0.8
+
+
+def test_la_grille_date_chaque_cohorte_au_droit_de_sa_generation():
+    """Le salarié au salaire moyen entré à 21 ans : né en janvier 1963, 1964
+    ou 1965, la suspension de la loi de financement pour 2026 lui demande 170
+    trimestres (L. 161-17-3) — il part à 63 ans et demi, en 2026, 2027 et
+    2028 ; né en 1966 ou en 1967, il lui en faut 172, 43 ans — il part à 64
+    ans, en 2030 et en 2031. La grille, qui ne simule que la génération 1965,
+    faisait partir ces deux-là en 2029 et en 2030."""
+    from retraite_notionnelle.cout import _departs
+
+    simulateur = Simulateur(Parametres()).pour_la_projection()
+    salarie = next(cas for cas in GRILLE_DU_COUT if cas.code == "salaire_moyen")
+    assert _departs(simulateur, salarie, 1965, 2028) == (2026, 2027, 2028, 2030, 2031)
 
 
 def test_une_cohorte_partie_avant_la_bascule_recoit_le_scenario_4():

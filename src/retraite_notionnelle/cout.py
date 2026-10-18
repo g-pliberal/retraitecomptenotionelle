@@ -34,7 +34,9 @@ projections de population de l'INSEE — observées jusqu'en 2023, projetées
 ensuite. Le dépôt supposait auparavant toutes les générations de même taille ;
 le baby-boom dément cette hypothèse d'un tiers, et elle interdisait toute
 projection. Chaque génération de la grille en représente cinq : son poids est
-l'effectif des cinq classes d'âge correspondantes.
+l'effectif des cinq classes d'âge correspondantes, chacune partie l'année que
+le droit de sa génération lui donne (:func:`_departs`), avec la pension de la
+génération simulée.
 
 CE QUE CHAQUE CAS TYPE PÈSE
 ---------------------------
@@ -140,6 +142,7 @@ from .castypes import (
     VARIANTES_LIQUIDATION,
     CasType,
     calculer_cas_types,
+    carriere_de_la_grille,
     poids_effectifs,
     poids_egaux,
 )
@@ -431,6 +434,29 @@ class Pensionne:
     #: la population que son diviseur lui rattache (:func:`_survies`, action
     #: 138, étape 7). Vide, la population générale, celle de la pyramide.
     survies: tuple[tuple[float, ...], ...] = ()
+    #: L'année où part chacune de ses cinq cohortes sous le droit en vigueur,
+    #: du ``-_DEMI_TRANCHE`` au ``+_DEMI_TRANCHE`` : celle que le droit de SA
+    #: génération donne au cas type (:func:`_departs`, action 138, étape 3).
+    #: Vide, celle de la grille, décalée d'autant.
+    departs: tuple[int, ...] = ()
+
+    def liquidation(self, decalage: int) -> int:
+        """L'année où part, sous le droit en vigueur, la cohorte née
+        ``decalage`` ans après la génération de la grille."""
+        if not self.departs:
+            return self.annee_liquidation + decalage
+        return self.departs[decalage + _DEMI_TRANCHE]
+
+    def depart_liberal(self, decalage: int) -> int:
+        """L'année où la même cohorte part sous la proposition. Quand l'âge
+        légal reporte le départ de la génération de la grille, il reporte le
+        sien à son âge à elle — à moins qu'elle ne parte plus tard ; sinon, la
+        proposition la fait partir l'année du droit en vigueur."""
+        depart = self.liquidation(decalage)
+        volet = self.volet(decalage)
+        if volet.annee_liquidation > self.annee_liquidation:
+            return max(depart, volet.annee_liquidation + decalage)
+        return depart
 
     def capital(self, decalage: int) -> float:
         """Ce que la variante change au compte de la proposition de la cohorte
@@ -457,7 +483,7 @@ class Pensionne:
         cotise plus."""
         if not self.survies:
             return 1.0
-        rang = annee - (self.annee_liquidation + decalage)
+        rang = annee - self.liquidation(decalage)
         courbe = self.survies[decalage + _DEMI_TRANCHE]
         if rang <= 0 or not courbe:
             return 1.0
@@ -467,7 +493,8 @@ class Pensionne:
         """La proposition de la cohorte née ``decalage`` ans après la grille.
 
         Chaque génération de la grille en représente cinq, qui liquident
-        chacune à sa date — celle de la grille, décalée d'autant. Une cohorte
+        chacune à sa date — celle du droit de sa génération
+        (:meth:`liquidation`). Une cohorte
         dont le départ tombe avant la bascule est partie sous le droit en
         vigueur, SANS report, et sa proposition est le scénario 4 ; une
         cohorte qui la franchit part, elle, à l'âge légal. Quand la bascule
@@ -477,7 +504,7 @@ class Pensionne:
         """
         if self.autre is None:
             return self.propre
-        franchit = self.annee_liquidation + decalage >= self.bascule
+        franchit = self.liquidation(decalage) >= self.bascule
         grille_franchit = self.annee_liquidation >= self.bascule
         return self.propre if franchit == grille_franchit else self.autre
 
@@ -2183,8 +2210,11 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
     # convention de projection, comme celles du COR que la page suit.
     carrieres = (CarrieresIncompletes(simulateur.parametres.racine_donnees)
                  if simulateur.parametres.conventions_cor else None)
+    cas_de = {cas.code: cas for cas in cas_types}
     pensionnes = []
     for (code, generation), comparaison in grille.resultats.items():
+        departs = _departs(simulateur, cas_de[code], generation,
+                           comparaison.carriere.annee_liquidation, liquidation)
         propre = _volet(comparaison.carriere_de("notionnel_liberal"),
                         comparaison.notionnel_liberal,
                         comparaison.coefficient_de("notionnel_liberal"))
@@ -2201,7 +2231,8 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
         autre = _autre_volet(
             simulateur, comparaison.carriere, propre, macro, annee_euros, bascule,
             comparaison.en_euros_constants(
-                getattr(comparaison, depart_avant).pension_annuelle, depart_avant))
+                getattr(comparaison, depart_avant).pension_annuelle, depart_avant),
+            departs)
         pensionnes.append(Pensionne(
             code=code,
             generation=generation,
@@ -2233,7 +2264,8 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
             completudes=() if carrieres is None else tuple(
                 carrieres.completude(generation + decalage)
                 for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1)),
-            survies=_survies(simulateur, comparaison, generation),
+            survies=_survies(simulateur, comparaison, generation, departs),
+            departs=departs,
             cotisations={
                 # Le dénominateur ne peut pas être le compte du scénario 4.
                 # Celui-là fusionne les régimes à la bascule et prélève ensuite
@@ -2258,11 +2290,43 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
     return pensionnes, motifs
 
 
-def _survies(simulateur: Simulateur, comparaison,
-             generation: int) -> tuple[tuple[float, ...], ...]:
+def _departs(simulateur: Simulateur, cas: CasType, generation: int,
+             annee_liquidation: int, liquidation: str = "droit") -> tuple[int, ...]:
+    """L'année où part, sous le droit en vigueur, chacune des cinq cohortes
+    que la génération ``generation`` de la grille représente, partie elle en
+    ``annee_liquidation`` (:attr:`Pensionne.departs`) : celle que le droit de
+    SA génération donne au cas type, comme la grille la donne à la génération
+    qu'elle simule (:func:`~.castypes.carriere_de_la_grille`) ; ``simulateur``
+    est celui de la projection.
+
+    LA GRILLE FAISAIT PARTIR LES CINQ À SON ÂGE. Jusqu'au 18 octobre 2026,
+    chaque cohorte partait l'année de la génération qui la représente, décalée
+    d'autant. Sous la suspension de 2026, la génération 1965 part avec 170
+    trimestres, quand celles de 1966 et 1967 en doivent 172 : la grille les
+    faisait partir un an trop tôt, et comptait 0,28 million de retraités de
+    trop en 2030 ; d'autres, que le droit de leur génération fait partir plus
+    tôt, l'étaient trop tard (action 138, étape 3, note « la grille »). La
+    pension reste celle de la génération de la grille. Une cohorte que la
+    grille ne sait pas simuler garde la date de la grille."""
+    departs = []
+    for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
+        depart = annee_liquidation + decalage
+        if decalage:
+            try:
+                depart = carriere_de_la_grille(simulateur, cas, generation + decalage,
+                                               liquidation).annee_liquidation
+            except (ValueError, KeyError):
+                pass
+        departs.append(depart)
+    return tuple(departs)
+
+
+def _survies(simulateur: Simulateur, comparaison, generation: int,
+             departs: tuple[int, ...]) -> tuple[tuple[float, ...], ...]:
     """La survie des cinq cohortes d'un couple, rapportée à celle de la
     population générale, année par année depuis leur liquidation
-    (:attr:`Pensionne.survies`, action 138, étape 7).
+    (:attr:`Pensionne.survies`, action 138, étape 7), chacune à l'âge et
+    l'année où elle part (``departs``).
 
     LES CAS TYPES NE VIVENT PLUS TOUS COMME LA POPULATION GÉNÉRALE. Jusqu'au
     17 octobre 2026, la pyramide de l'INSEE comptait les survivants de chaque
@@ -2283,10 +2347,10 @@ def _survies(simulateur: Simulateur, comparaison,
     if population is None:
         return ()
     mortalite = simulateur.mortalite
-    age = float(carriere.annee_liquidation - generation)
     survies = []
-    for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
-        depart = float(carriere.annee_liquidation + decalage)
+    for decalage, annee in zip(range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1), departs):
+        depart = float(annee)
+        age = float(annee - generation - decalage)
         generale = mortalite.courbe(age, depart, None, True, None)
         propre = mortalite.courbe(age, depart, None, True, population)
         survies.append(tuple(propre[rang] / generale[rang]
@@ -2406,15 +2470,16 @@ def _volet(carriere, liberal, coefficient: float) -> VoletLiberal:
 
 
 def _autre_volet(simulateur: Simulateur, carriere, propre: VoletLiberal, macro,
-                 annee_euros: int, bascule: int,
-                 pension_d_avant: float) -> VoletLiberal | None:
+                 annee_euros: int, bascule: int, pension_d_avant: float,
+                 departs: tuple[int, ...]) -> VoletLiberal | None:
     """La proposition de l'autre côté de la bascule, si une cohorte y tombe.
 
-    Une génération de la grille en représente cinq, décalées de deux ans au
-    plus. Quand la bascule passe entre elles, les cohortes d'un côté partent
-    sous le droit en vigueur et celles de l'autre sous la proposition : il faut
-    les deux volets. Celui d'APRÈS se calcule sur la même carrière, reportée à
-    l'âge légal ; il n'existe que si l'âge légal reporte ce départ-là.
+    Une génération de la grille en représente cinq, qui partent chacune
+    l'année de ``departs``. Quand la bascule passe entre elles, les cohortes
+    d'un côté partent sous le droit en vigueur et celles de l'autre sous la
+    proposition : il faut les deux volets. Celui d'APRÈS se calcule sur la même
+    carrière, reportée à l'âge légal ; il n'existe que si l'âge légal reporte
+    ce départ-là.
 
     Celui d'AVANT est ``pension_d_avant``, la pension du scénario dont la
     proposition part — le 4, ou le 5 pour sa variante prospective
@@ -2429,7 +2494,7 @@ def _autre_volet(simulateur: Simulateur, carriere, propre: VoletLiberal, macro,
     if carriere.age_liquidation is None:
         return None
     annee = carriere.annee_liquidation
-    if not annee - _DEMI_TRANCHE < bascule <= annee + _DEMI_TRANCHE:
+    if not min(departs) < bascule <= max(departs):
         return None
     age_legal = simulateur.parametres.age_legal_liberal
     reportee = (carriere if age_legal is None
@@ -2628,10 +2693,11 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
     Celle de la GÉNÉRATION est démographique : chaque génération de la grille en
     représente cinq, parcourues une à une, dont le poids est l'effectif réel de
     la classe d'âge publié par l'INSEE, et chacune liquide sa propre année —
-    celle de la génération de la grille, décalée d'autant. Ce décalage n'est pas
-    un raffinement gratuit : faire basculer les cinq cohortes le même jour ferait
-    entrer cinq classes d'âge d'un coup dans la masse, et la trajectoire avancerait
-    par marches de cinq ans au lieu de monter.
+    celle que le droit de sa génération lui donne (:meth:`Pensionne.liquidation`),
+    et non plus celle de la génération de la grille, décalée d'autant. Ce
+    décalage n'est pas un raffinement gratuit : faire basculer les cinq cohortes
+    le même jour ferait entrer cinq classes d'âge d'un coup dans la masse, et la
+    trajectoire avancerait par marches de cinq ans au lieu de monter.
 
     Celle du CAS TYPE est sociologique : elle dit combien de retraités ont eu
     cette carrière-là, et vient des effectifs de caisse de la DREES. Sans elle,
@@ -2696,7 +2762,7 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
             # (:meth:`Pensionne.completude`) : il pèse ses MASSES, et non ses
             # têtes.
             pese = effectif * pensionne.completude(decalage)
-            liquidation = pensionne.annee_liquidation + decalage
+            liquidation = pensionne.liquidation(decalage)
             if annee >= liquidation:
                 poids += effectif
                 poids_masse += pese
@@ -2720,7 +2786,7 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
                     pensionne.parts_regimes, revalorisation, liquidation,
                     min(annee, revalorisation.annee_bascule))
             volet = pensionne.volet(decalage)
-            depart = volet.annee_liquidation + decalage
+            depart = pensionne.depart_liberal(decalage)
             if annee < depart:
                 continue
             # L'ordre des produits est celui du portage, au bit près. Rangé
@@ -3151,7 +3217,7 @@ def _masses_regimes(pensionnes: list[Pensionne], population: Population, annee: 
             regroupees.setdefault(revalorisation.regime_de_tete(regime), []).append(
                 (regime, part_regime))
         for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
-            liquidation = pensionne.annee_liquidation + decalage
+            liquidation = pensionne.liquidation(decalage)
             if annee < liquidation:
                 continue
             effectif = part * population.effectif(
@@ -3236,10 +3302,10 @@ def _masses_pilier(pensionnes: list[Pensionne], population: Population,
     dépend de dates — la bascule, les paliers de frais —, et la cohorte née
     deux ans plus tôt n'a pas deux ans d'encours de plus en 2026, elle en a
     zéro comme tout le monde. Chaque cohorte accumule donc au calendrier de la
-    grille jusqu'à sa propre liquidation, décalée d'autant, et touche ensuite
-    la rente. Les flux d'accumulation pèsent les cotisants de chaque caisse,
-    les rentes pèsent ses retraités, comme les pensions ; la rente est
-    nominale et constante, comme le pilier la sert.
+    grille jusqu'à sa propre liquidation (:meth:`Pensionne.depart_liberal`),
+    et touche ensuite la rente. Les flux d'accumulation pèsent les cotisants
+    de chaque caisse, les rentes pèsent ses retraités, comme les pensions ; la
+    rente est nominale et constante, comme le pilier la sert.
     """
     masses = {cle: 0.0 for cle in ("versements", "frais_versement", "frais_gestion",
                                    "encours", "rentes_brutes", "rentes")}
@@ -3262,7 +3328,7 @@ def _masses_pilier(pensionnes: list[Pensionne], population: Population,
             volet = pensionne.volet(decalage)
             if not volet.pilier:
                 continue
-            depart = volet.annee_liquidation + decalage
+            depart = pensionne.depart_liberal(decalage)
             flux = volet.pilier.get(annee)
             cle = (pensionne.code, pensionne.generation, decalage)
             if (flux is not None and part_cotisants > 0.0
@@ -4513,13 +4579,14 @@ def calculer_engagements(simulateur: Simulateur, depenses: DepensesRetraite,
             volet = pensionne.volet(decalage)
             montants_liberaux = {"notionnel_liberal": volet.pension,
                                  RESSOURCES_GARANTIE: volet.ressources_garantie}
-            departs = [(pensionne.annee_liquidation, communes, True)]
-            if volet.annee_liquidation == pensionne.annee_liquidation:
-                departs[0] = (pensionne.annee_liquidation, communes + liberales, True)
+            liquidation = pensionne.liquidation(decalage)
+            depart_liberal = pensionne.depart_liberal(decalage)
+            departs = [(liquidation, communes, True)]
+            if depart_liberal == liquidation:
+                departs[0] = (liquidation, communes + liberales, True)
             elif liberales:
-                departs.append((volet.annee_liquidation, liberales, False))
-            for depart, cles_depart, etalon in departs:
-                fin_carriere = depart + decalage
+                departs.append((depart_liberal, liberales, False))
+            for fin_carriere, cles_depart, etalon in departs:
                 if fin_carriere <= debut_carriere:
                     continue
                 acquis = (annee - debut_carriere) / (fin_carriere - debut_carriere)
@@ -4621,8 +4688,9 @@ def _capitaux_sous_la_variante(simulateur: Simulateur, pensionne: Pensionne,
     change à l'emploi. Le compte gagne la moyenne de ce rapport, pondérée par
     ce que chaque cotisation pèse dans le compte du central. La cohorte née
     ``decalage`` ans après la grille cotise et liquide ``decalage`` ans plus
-    tard, sur le même profil. Le diviseur ne bouge pas : la variante ne
-    touche pas l'espérance de vie."""
+    tard, sur le même profil : son compte est celui de la grille, même quand
+    le droit de sa génération la fait partir une autre année (:func:`_departs`).
+    Le diviseur ne bouge pas : la variante ne touche pas l'espérance de vie."""
     indexation = simulateur.indexation
     capitaux = []
     for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):

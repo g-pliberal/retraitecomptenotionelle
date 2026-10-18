@@ -1163,7 +1163,7 @@ affirmations:
     porte: >-
       la part de PIB que le modèle donne lui-même au système actuel, sa masse à
       l'échelle de la dernière année publiée, croît d'ici l'horizon comme celle
-      du COR à quatre points près, et passe sous elle entre les deux ; l'écart
+      du COR à six points près, et passe sous elle entre les deux ; l'écart
       tient à la pension moyenne relative, non aux effectifs
     etat: verifiee
     controle: projection_s_ecarte_du_cor
@@ -1193,9 +1193,12 @@ affirmations:
     porte: >-
       la dette et le solde moyen de la proposition sous la seconde lecture ne
       s'écartent de ceux de la page que de dix points de PIB et d'un quart de
-      point par an au plus, dans un sens ou dans l'autre
-    etat: verifiee
-    controle: fourchette_haute_derive
+      point par an au plus, dans un sens ou dans l'autre — seize points et un
+      peu plus d'un quart de point depuis que chaque cohorte de la grille part
+      l'année du droit de sa génération (action 138, étape 3)
+    etat: contredite
+    action: 138
+    controle: fourchette_elargie
 
   - id: cout.depense_officielle
     page: /cout

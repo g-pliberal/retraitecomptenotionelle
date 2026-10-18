@@ -2618,7 +2618,7 @@ def cohortes_de_l_annee(pensionnes: list, poids: dict[str, float], population: P
         if part <= 0.0:
             continue
         for decalage in range(-C._DEMI_TRANCHE, C._DEMI_TRANCHE + 1):
-            liquidation = pensionne.annee_liquidation + decalage
+            liquidation = pensionne.liquidation(decalage)
             if annee < liquidation:
                 continue
             effectif = population.effectif(
