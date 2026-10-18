@@ -199,6 +199,12 @@ et plus après l'âge légal et le taux plein, avec une surcote
 (:data:`DEPARTS_AVEC_SURCOTE`) : 14,3 % des nés en 1953 sont partis ainsi,
 quand la population ne surcotait jamais ; la mesure juge les départs des
 générations 1950 et 1955 sur ceux des nés en 1950 et en 1953 (:func:`departs`).
+La vingtième (le même jour) fait entrer les carrières pleines du salariat
+privé à l'âge où leur génération cotise son premier trimestre, cinquième par
+cinquième, que l'échantillon interrégimes de cotisants publie
+(:data:`ENTREE_AU_PREMIER_TRIMESTRE`) : toutes entraient assez tôt pour la
+carrière longue, quand 22,3 % des hommes nés en 1954 et affiliés avant 23 ans
+n'avaient cotisé aucun trimestre à la fin de l'année de leurs 19 ans.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -475,6 +481,28 @@ AGE_FIN_ETALEMENT = 60
 #: les générations nées avant 1951, parties à 60 ans, n'y validaient que 39
 #: années, quand les carrières pleines des retraités de 2020 en comptent 44.
 ENTREE_SELON_LA_GENERATION = True
+
+#: L'entrée des carrières pleines au premier trimestre cotisé : chaque
+#: carrière pleine qui entre selon sa génération (:data:`ENTREE_SELON_LA_GENERATION`),
+#: hors des départs avec surcote, se décline en :data:`CLASSES_D_ENTREE`
+#: classes de poids égal, rangées par l'âge où leur génération cotise son
+#: premier trimestre parmi les affiliés d'avant 23 ans de leur sexe
+#: (``premier_trimestre.csv``, EIC 2017, :func:`classes_d_entree`) ; chacune
+#: entre à cet âge, ou à celui de la onzième version s'il vient plus tard. La
+#: condition d'entrée de la carrière longue se lit sur les trimestres cotisés
+#: à la fin de l'année des 16, 17 ou 20 ans (D. 351-1-1) : toutes les
+#: carrières pleines y satisfaisaient, quand 38,2 % des hommes nés en 1950
+#: avaient cotisé un trimestre à 16 ans, et 77,7 % de ceux nés en 1954 à
+#: 19 ans ; les hommes partaient en carrière longue deux fois plus que dans
+#: l'EIR. Les départs avec surcote gardent leur entrée : ils renoncent à la
+#: carrière longue, et la page pèse ses carrières à un coût qui croît comme
+#: leur carré. La vingtième version.
+ENTREE_AU_PREMIER_TRIMESTRE = True
+
+#: Les classes de l'entrée au premier trimestre : des cinquièmes, chacun
+#: entrant à l'âge du milieu de son rang ; ceux qui entrent au même âge à
+#: chaque génération n'en font qu'un — les deux premiers des hommes.
+CLASSES_D_ENTREE = 5
 
 #: La durée des carrières des femmes selon la génération : les carrières
 #: incomplètes des femmes, hors des régimes statutaires, gagnent ou perdent,
@@ -1503,6 +1531,79 @@ def entrees_des_carrieres_pleines(racine: Path) -> dict[str, tuple[tuple[int, fl
     return sortie
 
 
+def premiers_trimestres(racine: Path) -> dict[str, dict[int, dict[int, float]]]:
+    """La part des affiliés d'avant 23 ans qui ont cotisé un trimestre à la
+    fin de l'année de chaque âge, de 16 à 23 ans, génération par génération de
+    l'échantillon interrégimes de cotisants, sexe par sexe :
+    ``{sexe: {génération: {âge: part}}}``, en pour cent
+    (``premier_trimestre.csv``, :data:`ENTREE_AU_PREMIER_TRIMESTRE`)."""
+    sortie: dict[str, dict[int, dict[int, float]]] = {}
+    for ligne in _lire_macro(racine, "premier_trimestre.csv"):
+        if ligne["trimestre"] == "cotise":
+            sortie.setdefault(ligne["sexe"], {}).setdefault(
+                int(ligne["generation"]), {})[int(ligne["age"])] = float(ligne["part"])
+    return sortie
+
+
+def age_du_premier_trimestre(parts: dict[int, dict[int, float]], generation: int,
+                             rang: float) -> int:
+    """L'âge où ``generation`` cotise le premier trimestre de ce ``rang``,
+    entre zéro et un : le premier âge où la part de ses affiliés d'avant 23 ans
+    qui ont cotisé un trimestre, rapportée à celle du dernier âge, l'atteint.
+    Entre deux générations de l'échantillon (:func:`premiers_trimestres`), les
+    parts s'interpolent ; avant la première et après la dernière, elles sont
+    les leurs."""
+    lues = sorted(parts)
+    if generation <= lues[0] or generation >= lues[-1]:
+        par_age = parts[lues[0] if generation <= lues[0] else lues[-1]]
+    else:
+        bas = max(g for g in lues if g <= generation)
+        haut = min(g for g in lues if g >= generation)
+        poids = (generation - bas) / (haut - bas) if haut > bas else 0.0
+        par_age = {age: (1.0 - poids) * part + poids * parts[haut][age]
+                   for age, part in parts[bas].items()}
+    ages = sorted(par_age)
+    return next(age for age in ages if par_age[age] >= rang * par_age[ages[-1]])
+
+
+def classes_d_entree(regle: tuple[tuple[int, float], ...], parts: dict[int, dict[int, float]]
+                     ) -> list[tuple[int, tuple[tuple[int, float], ...], float]]:
+    """Les cinquièmes d'une carrière pleine (:data:`ENTREE_AU_PREMIER_TRIMESTRE`),
+    ``(rang, entrées, poids)`` : chacun entre, génération par génération, à
+    l'âge où sa génération cotise le premier trimestre du milieu de son
+    cinquième (:func:`age_du_premier_trimestre`), ou à celui de ``regle`` s'il
+    vient plus tard ; ceux qui entrent au même âge à chaque génération n'en
+    font qu'un, sous le rang du premier."""
+    classes: dict[tuple[tuple[int, float], ...], list] = {}
+    for rang in range(CLASSES_D_ENTREE):
+        milieu = (2 * rang + 1) / (2 * CLASSES_D_ENTREE)
+        entrees = tuple((generation, max(age, float(age_du_premier_trimestre(
+            parts, generation, milieu)))) for generation, age in regle)
+        classes.setdefault(entrees, [rang + 1, 0.0])[1] += 1.0 / CLASSES_D_ENTREE
+    return [(premier, entrees, poids) for entrees, (premier, poids) in classes.items()]
+
+
+def entrees_au_premier_trimestre(variantes: list[Variante], racine: Path) -> list[Variante]:
+    """Chaque carrière pleine qui entre selon sa génération, hors des départs
+    avec surcote, en ses cinquièmes (:func:`classes_d_entree`) : le premier
+    garde son code, les autres prennent leur rang, « ~entree3 » ; les autres
+    variantes telles quelles."""
+    parts = premiers_trimestres(racine)
+    classes: dict[tuple, list] = {}
+    sortie = []
+    for v in variantes:
+        if not v.cas.entrees or v.surcote:
+            sortie.append(v)
+            continue
+        cle = (v.cas.sexe, v.cas.entrees)
+        if cle not in classes:
+            classes[cle] = classes_d_entree(v.cas.entrees, parts[v.cas.sexe])
+        for rang, entrees, poids in classes[cle]:
+            code = v.cas.code if rang == 1 else f"{v.cas.code}~entree{rang}"
+            sortie.append(v.fois(poids, cas=replace(v.cas, code=code, entrees=entrees)))
+    return sortie
+
+
 def _part_eir(source: CaracteristiquesRetraites, groupe: str, sexe: str) -> float:
     """La part des retraités de ce sexe dont le régime principal est celui du
     groupe : monopensionnés et polypensionnés de deux régimes de base."""
@@ -1952,6 +2053,8 @@ def population(effectifs, source: CaracteristiquesRetraites,
     variantes = salaires_population(variantes, donnees)
     if DEPARTS_AVEC_SURCOTE:
         variantes = departs_avec_surcote(variantes, departs_publies(racine), racine)
+    if ENTREE_AU_PREMIER_TRIMESTRE:
+        variantes = entrees_au_premier_trimestre(variantes, racine)
     return variantes
 
 

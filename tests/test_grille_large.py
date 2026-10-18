@@ -417,7 +417,7 @@ def test_une_part_du_bas_reste_au_smic_toute_la_carriere(simulateur, source, par
     bas = [v.cas for v in variantes
            if v.cas.code.startswith(f"{G.GABARIT}~h~40_plus~p10~bas")
            and not v.cas.code.endswith("~partiel") and "~fragmente" not in v.cas.code
-           and not v.surcote]
+           and "~entree" not in v.cas.code and not v.surcote]
     assert len(bas) == G.SOUS_CLASSES_DU_BAS
     generation = 1960
     assert not any(cas.au_smic(simulateur, generation) for cas in bas)
@@ -538,6 +538,89 @@ def test_les_carrieres_pleines_entrent_selon_leur_generation(simulateur, source,
     assert par_code[f"{G.GABARIT}~h~30_40~p50"].debut_de(1945) == 21
     lignes = pleine.carriere_a(simulateur, 1945, 60).lignes
     assert min(l.annee for l in lignes if l.type_periode == "emploi") == 1945 + 16
+
+
+def test_l_age_du_premier_trimestre_se_lit_dans_le_fichier_certifie(parametres):
+    """L'âge où une génération cotise le premier trimestre d'un rang : le
+    premier âge où la part des affiliés d'avant 23 ans qui ont cotisé un
+    trimestre, rapportée à celle de 23 ans, atteint ce rang. Les hommes nés en
+    1950 en ont cotisé un à 16 ans pour 38,2 sur 96,1, 39,8 % : les deux
+    premiers cinquièmes, aux rangs 0,1 et 0,3 ; le troisième, au rang 0,5, à
+    17 ans (50,1) ; le quatrième à 19 ans (72,3, 75,2 % ; 62,5 à 18 ans), le
+    dernier à 22 (90,9, 94,6 % ; 84,8 à 21). Entre deux générations de
+    l'échantillon, les parts s'interpolent : nés en 1955, la moitié des nés en
+    1954 et de ceux de 1956 — 27,4 sur 96,05 à 16 ans, 50,9 à 17, 68,8 à 18,
+    84,85 à 20, 89,5 à 21."""
+    parts = G.premiers_trimestres(parametres.racine_donnees)
+    assert parts["H"][1950][16] == 38.2
+    assert parts["H"][1950][23] == 96.1
+    rangs = (0.1, 0.3, 0.5, 0.7, 0.9)
+    assert [G.age_du_premier_trimestre(parts["H"], 1950, rang) for rang in rangs] == [
+        16, 16, 17, 19, 22]
+    assert [G.age_du_premier_trimestre(parts["H"], 1955, rang) for rang in rangs] == [
+        16, 17, 17, 18, 21]
+
+
+def test_les_carrieres_pleines_entrent_au_premier_trimestre_de_leur_cinquieme(
+        simulateur, source, monkeypatch):
+    """Sous ``ENTREE_AU_PREMIER_TRIMESTRE``, chaque carrière pleine du
+    salariat privé, hors des départs avec surcote, se décline en cinq
+    cinquièmes, rangés par l'âge où leur génération cotise son premier
+    trimestre ; chacun entre à cet âge, ou à celui de la onzième version s'il
+    vient plus tard. Les hommes nés en 1950 entrent à 16 ans pour deux
+    cinquièmes, à 17, 19 et 22 ans pour un chacun ; nés en 1955, à 17 ans pour
+    trois cinquièmes — la onzième version les y faisait tous entrer —, à 18 et
+    à 21 ; nés en 1980, à 21 ans, l'entrée du gabarit, pour quatre, à 22 pour
+    le dernier. Les cinquièmes qui entrent au même âge à chaque génération
+    n'en font qu'un, sous le code de la carrière ; la carrière garde son
+    poids ; les départs avec surcote et les carrières courtes, leur entrée."""
+    assert G.ENTREE_AU_PREMIER_TRIMESTRE
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    poids = _poids(variantes, simulateur.effectifs, source.millesime)
+    pleine = f"{G.GABARIT}~h~40_plus~p50"
+    classes = [v for v in variantes
+               if v.cas.code == pleine or v.cas.code.startswith(f"{pleine}~entree")]
+    assert sorted(v.cas.code for v in classes) == [
+        pleine, f"{pleine}~entree3", f"{pleine}~entree4", f"{pleine}~entree5"]
+    total = sum(poids[v.cas.code] for v in classes)
+
+    def repartition(generation: int) -> dict[float, float]:
+        sortie: dict[float, float] = {}
+        for v in classes:
+            age = v.cas.debut_de(generation)
+            sortie[age] = sortie.get(age, 0.0) + poids[v.cas.code] / total
+        return sortie
+
+    assert repartition(1950) == pytest.approx({16.0: 0.4, 17.0: 0.2, 19.0: 0.2, 22.0: 0.2})
+    assert repartition(1955) == pytest.approx({17.0: 0.6, 18.0: 0.2, 21.0: 0.2})
+    assert repartition(1980) == pytest.approx({21.0: 0.8, 22.0: 0.2})
+    par_code = {v.cas.code: v.cas for v in variantes}
+    surcotee = next(code for code in par_code if code.startswith(f"{pleine}~surcote"))
+    assert par_code[surcotee].debut_de(1950) == 16.0
+    assert par_code[surcotee].debut_de(1955) == 17.0
+    assert par_code[f"{G.GABARIT}~h~30_40~p50"].debut_de(1950) == 21
+    monkeypatch.setattr(G, "ENTREE_AU_PREMIER_TRIMESTRE", False)
+    avant = G.grille("population", simulateur.effectifs, source, ())
+    assert _poids(avant, simulateur.effectifs, source.millesime)[pleine] == pytest.approx(total)
+
+
+def test_une_carriere_pleine_entree_tard_ne_part_pas_en_carriere_longue(simulateur, source):
+    """L'homme né en 1955 d'une carrière pleine du salariat privé dont le
+    cinquième n'a cotisé son premier trimestre qu'à 21 ans ne remplit pas la
+    condition d'entrée de la carrière longue — cinq trimestres cotisés à la
+    fin de l'année de ses 20 ans (D. 351-1-1) — : il part à 62 ans et demi,
+    quand il a validé les 166 trimestres de sa génération, au taux plein. Le
+    premier cinquième, entré à 17 ans, part avant 62 ans en carrière
+    longue."""
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    projection = simulateur.pour_la_projection()
+    par_code = {v.cas.code: v.cas for v in variantes}
+    pleine = f"{G.GABARIT}~h~40_plus~p50"
+    age, condition = G.condition_au_depart(projection, par_code[pleine], 1955)
+    assert condition == "carriere_longue"
+    assert age < 62.0
+    assert G.condition_au_depart(projection, par_code[f"{pleine}~entree5"], 1955) == (
+        pytest.approx(62.5), "taux_plein_autre")
 
 
 def test_les_carrieres_courtes_de_la_population_sont_celles_de_tous(simulateur, source):
