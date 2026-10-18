@@ -11373,7 +11373,11 @@ referents:
           de l'AWG que l'âge légal ne fait pas reculer — l'invalidité, l'AAH, la
           réversion seule —, mesurés le 17 octobre à leurs sources
           (`pensionnes_de_2022`), font 48 % de ses moins de 65 ans, et gardent
-          leur prévalence parmi les 20-64 ans (`au_perimetre`).
+          leur prévalence parmi les 20-64 ans (`au_perimetre`). Le 18
+          octobre, chaque cohorte de la grille part l'année que le droit de
+          sa génération lui donne (`par_generation`) : la grille faisait
+          partir celles de 1966 et 1967 aux 170 trimestres de la génération
+          de janvier 1965.
         etat: repris
         chantier: "138.3"
       - quoi: >-
@@ -11394,8 +11398,9 @@ referents:
           entier à 2022-2030 : l'AWG compte deux fois plus de pensionnés de
           moins de 65 ans (16 octobre), mais près de la moitié ne reculent pas
           avec l'âge légal (17 octobre) ; le périmètre ne fait que 0,10 point
-          de l'écart, 0,54, les retraités de moins de 65 ans du modèle, qui
-          reculent plus tard, 0,29, les 65 ans et plus 0,15 ;
+          de l'écart, 0,54, la grille d'une génération sur cinq, qui fait
+          partir trop tôt les cohortes de 1966 et 1967, 0,18, la suspension
+          0,07, toute aux 65 ans et plus, et il en reste 0,19 (18 octobre) ;
           prestation −3,0 contre −3,4 ; marché du travail
           −0,7 contre −1,0. Sous la variante haute du COR, une productivité de
           1,0 % proche des 1,03 % de l'AWG, la prestation fait −3,7 : la

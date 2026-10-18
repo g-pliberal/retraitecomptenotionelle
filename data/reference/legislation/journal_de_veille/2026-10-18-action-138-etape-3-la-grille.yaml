@@ -1,0 +1,20 @@
+date: "2026-10-18"
+session: "action 138, étape 3 : la grille d'une génération sur cinq, qui fait partir trop tôt les cohortes de 1966 et 1967"
+consulte: >-
+  Aucun texte de droit nouveau : la mesure ne touche à aucune règle du
+  scénario 1. Les tables du dépôt qui écrivent L. 161-17-2 et L. 161-17-3 par
+  génération — l'âge d'ouverture et la durée requise, la suspension de
+  l'article 105 de la loi n° 2025-1403 comprise (`age_ouverture_requis.csv`,
+  `duree_assurance_requise.csv`, certifiées) —, et l'univers sans elle, leurs
+  versions du 1er septembre 2023 (`REFORME_2023_ENTIERE`).
+trouve: >-
+  La grille du coût fait partir les cohortes de 1963 à 1967 aux conditions de
+  la génération de janvier 1965, que la suspension tient à 62 ans et 9 mois et
+  170 trimestres, quand celles de 1966 et 1967 en doivent 172 : le salarié au
+  salaire moyen de 1967 part en 2031, la grille le fait partir en 2030. Datée
+  à sa génération, la suspension ne change l'année de départ d'aucune cohorte
+  de moins de 65 ans en 2025 ou en 2030 ; elle retarde le cadre de janvier
+  1965, d'août 2030 à février 2031.
+reste: >-
+  Rien au droit. La date de chaque cohorte, à porter dans `cout.py` (action
+  147).
