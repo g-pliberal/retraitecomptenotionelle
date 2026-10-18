@@ -1,7 +1,9 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: vert
-sources: d6914d97f9634b4812d1a81af97a92d1099061a2
-date: 2026-10-18T07:59:44Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/39107274771
+etat: rouge
+sources: 0103a2d649f177cacac5bdb05f8e3186331e4b4d
+date: 2026-10-18T16:54:28Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/39143991097
+echecs:
+  - "FAILED tests/test_affirmations.py::test_le_controle_passe[avantages.forme_longue] - assert 310.0741767726421 == 333.90328786907264 ± 3.3e-04"
 presomptions: vert
