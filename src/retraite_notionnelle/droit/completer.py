@@ -577,7 +577,8 @@ def _points_des_conjoints(regle: dict, carriere: Carriere, eligible, date_effet:
                           minimum: float) -> tuple[float, float]:
     """Les années de conjoint et d'aide familial que les plans revalorisent,
     et les points qu'elles ajoutent, au minimum annuel ``minimum`` (B, ou C
-    sous dix-sept ans et demi de chef, que la même formule donne) ; (0, 0)
+    sous dix-sept ans et demi de chef, que la même formule donne ; aux
+    pensions dues de 1998 à 2001, le nombre que leur décret fixe) ; (0, 0)
     quand rien.
 
     Chaque année de conjoint collaborateur depuis 1999, et de conjoint
@@ -749,9 +750,13 @@ def majoration_retraite_proportionnelle(
     n° 2002-297 ne nomme pas (``minimum_reduit_depuis``).
 
     Les années de conjoint et d'aide familial reçoivent leur différentiel
-    depuis les pensions dues en 2002, aux pensions prises de 1998 à 2001
+    depuis les pensions dues en 1998, aux pensions prises de 1998 à 2001
     sans le taux plein (:func:`_points_des_conjoints`, ``conjoints`` de la
-    fiche).
+    fiche) : jusqu'en 2001, le nombre de points que fixe le décret de l'année
+    — 8,63 en 1998, 11,44 en 1999, 16 en 2000 (décret n° 99-875, articles 3
+    et 4 ; décret n° 2000-261, article 5), que les seize de chaque année
+    dépassent ou égalent, puis seize et le différentiel de 3,2 en 2001
+    (décret n° 2001-170, article 5).
 
     Une pension prise avant 1997 n'a rien à la liquidation : les plans la
     révisent depuis 1997, à la règle ``pensions_prises_avant_1997`` des
@@ -835,8 +840,13 @@ def majoration_retraite_proportionnelle(
         return (lu[0] - forfait_servi) / (ANNEES_DU_MINIMUM_AU_PLUS * point), lu[1]
 
     conjoint_minimum, conjoint_annees, conjoint_points = 0.0, 0.0, 0.0
-    if regle.get("conjoints"):
-        lu = minimum_de(regle["conjoints"]["minimum"])
+    conjoints = regle.get("conjoints")
+    if conjoints:
+        # Le nombre de points que fixe le décret des pensions dues de 1998 à
+        # 2001 ; depuis 2002, B au minimum du couple.
+        lu = ((float(conjoints["minimum_points"]), fiabilite)
+              if conjoints.get("minimum_points") is not None
+              else minimum_de(conjoints["minimum"]))
         if lu is not None:
             conjoint_annees, conjoint_points = _points_des_conjoints(
                 regle, carriere, eligible, date_effet, lu[0])

@@ -9,8 +9,10 @@ intitule: >-
   ce qui porte, avec la retraite forfaitaire, une carrière complète au minimum
   vieillesse d'une personne seule ; et, depuis 2002, le chef de moins de dix-sept ans
   et demi au différentiel du minimum d'un couple. Les années de conjoint et d'aide
-  familial reçoivent le différentiel du minimum d'un couple moins seize points, depuis
-  1998 aux pensions prises depuis, au taux plein depuis 2002. Les pensions de chef
+  familial reçoivent, aux pensions prises depuis 1998, les points des décrets des
+  pensions dues de 1998 à 2001 — 8,63, 11,44, 16, puis 19,2 —, puis le différentiel du
+  minimum d'un couple, moins les seize points que chacune porte, au taux plein depuis
+  2002. Les pensions de chef
   prises avant 1997 sont révisées de 1997 à 2008, sur la durée de chef que leurs points
   au compte, divisés par seize, reconstituent.
 domaine: minima
@@ -157,13 +159,52 @@ versions:
     en_vigueur: 1997-02-25
     citation: « au titre de l'année 1998, qu'à concurrence des deux tiers »
     lu_le: 2026-10-14
+  - id: JORFARTI000001246106
+    article: décret n° 99-875 du 13 octobre 1999, article 1er
+    en_vigueur: 1999-10-15
+    citation: >-
+      « Les personnes dont la retraite, servie à titre personnel [...], a pris effet
+      postérieurement au 31 décembre 1997, qui ont exercé leur activité non salariée
+      agricole pendant une durée minimum de trente-deux années et demie et qui ne sont pas
+      titulaires d'une pension de réversion [...] ont droit à l'attribution gratuite de
+      points de retraite proportionnelle » ; « La durée totale d'activité telle que
+      définie ci-dessus est retenue dans la limite de trente-sept années et demie. »
+    lu_le: 2026-10-18
+  - id: JORFARTI000001049949
+    article: décret n° 99-875 du 13 octobre 1999, article 2
+    en_vigueur: 1999-10-15
+    citation: >-
+      « les années comprises entre le 1er juillet 1952 et le 31 décembre 1998 [...],
+      effectuées en qualité de conjoint ou d'aide familial majeur [...], et qui ne peuvent
+      donner lieu à quelque titre que ce soit à attribution de points » ; « Lorsque la
+      durée réelle d'activité non salariée agricole excède trente-sept années et demie, le
+      nombre d'années [...] est égal à la différence entre trente-sept années et demie et
+      la durée d'activité susceptible de donner lieu à attribution de points de retraite
+      proportionnelle à un autre titre que celui de la présente mesure »
+    lu_le: 2026-10-18
+  - id: JORFARTI000001823278
+    article: décret n° 99-875 du 13 octobre 1999, article 3
+    en_vigueur: 1999-10-15
+    citation: >-
+      « Pour les retraites dues au titre de l'année 1998, le nombre de points de retraite
+      proportionnelle gratuits attribué à titre de rappel est calculé comme suit » :
+      « chacune des années donnant lieu à revalorisation [...] ouvre droit à l'attribution
+      de 8,63 points » ; sous trente-sept années et demie, « de 15 % pour chacune des deux
+      premières années manquantes ; - de 10 % pour chacune des trois années suivantes ;
+      - de 40 % pour la sixième année »
+    lu_le: 2026-10-18
   bornes:
     liquidation.date_effet: [1998-01-01, 1999-01-01]
   contenu:
     droit: >-
       la règle de 1997, les points ajoutés servis aux deux tiers, ceux des pensions
       prises avant 1997 comme les autres (« calculé dans les conditions prévues aux
-      articles 1er et 2 »)
+      articles 1er et 2 »). Aux années de conjoint et d'aide familial d'avant 1999 des
+      pensions prises depuis 1998, à trente-deux ans et demi d'activité agricole, 8,63
+      points par année, toutes, chef d'abord, trente-sept et demie au plus, minorés de 15,
+      15, 10, 10, 10 et 40 % par année manquante sous trente-sept et demie (décret
+      n° 99-875, articles 1er à 3) : les seize points que le modèle donne à chacune les
+      dépassent, et rien ne s'y ajoute
     parametres:
       existe: true
       minimum_points: 26.933
@@ -172,7 +213,16 @@ versions:
       minimum_reduit_depuis: null
       part_servie: 0.6666666666666666
       minorations: [0.15, 0.15, 0.20, 0.20, 0.20]
-      conjoints: null
+      conjoints:
+        minimum: null
+        minimum_points: 8.63
+        pensions_prises_avant_2002:
+          duree_minimale: 32.5
+          duree_minimale_des_conjoints: null
+          annees_de_conjoint: null
+          minorations: [0.15, 0.15, 0.10, 0.10, 0.10, 0.40]
+          minorations_des_conjoints_au_plus: null
+          minoration_par_annee: null
       pensions_prises_avant_1997:
         minimum_points: 20.0
         minimum: null
@@ -207,13 +257,27 @@ versions:
       « Les dispositions du présent décret sont applicables aux pensions dues à compter
       du 1er janvier 1999. »
     lu_le: 2026-10-17
+  - id: JORFARTI000001049950
+    article: décret n° 99-875 du 13 octobre 1999, article 4
+    en_vigueur: 1999-10-15
+    citation: >-
+      « Pour les retraites dues au titre de l'année 1999, chacune des années donnant lieu
+      à revalorisation [...] ouvre droit [...] à 11,44 points de retraite proportionnelle
+      si elle a été accomplie en qualité de conjoint et à 16 points de retraite
+      proportionnelle si elle a été accomplie en qualité d'aide familial. Lorsque la
+      durée est inférieure à trente-sept années et demie, il est fait application des
+      modalités prévues au II de l'article 3. »
+    lu_le: 2026-10-18
   bornes:
     liquidation.date_effet: [1999-01-01, 2000-01-01]
   contenu:
     droit: >-
       26,933 points, servis entiers ; la minoration de 1997 sous vingt-deux ans et demi.
       Aux pensions prises avant 1997, 23,9 points, les deux coefficients ramenés à 15,
-      15, 10, 10, 10 et 40 %
+      15, 10, 10, 10 et 40 %. Aux années de conjoint d'avant 1999 des pensions prises
+      depuis 1998, 11,44 points, 16 à celles d'aide familial, minorés comme en 1998
+      (décret n° 99-875, article 4) : les seize points que le modèle donne à chacune les
+      dépassent ou les égalent
     parametres:
       existe: true
       minimum_points: 26.933
@@ -222,7 +286,16 @@ versions:
       minimum_reduit_depuis: null
       part_servie: 1.0
       minorations: [0.15, 0.15, 0.20, 0.20, 0.20]
-      conjoints: null
+      conjoints:
+        minimum: null
+        minimum_points: 11.44
+        pensions_prises_avant_2002:
+          duree_minimale: 32.5
+          duree_minimale_des_conjoints: null
+          annees_de_conjoint: null
+          minorations: [0.15, 0.15, 0.10, 0.10, 0.10, 0.40]
+          minorations_des_conjoints_au_plus: null
+          minoration_par_annee: null
       pensions_prises_avant_1997:
         minimum_points: 23.9
         minimum: null
@@ -256,12 +329,40 @@ versions:
       servie au lieu et place de la majoration cumulée de la retraite proportionnelle
       personnelle, il est fait application [...] de la formule P = (20 - n) x d. »
     lu_le: 2026-10-17
+  - id: JORFARTI000001964318
+    article: décret n° 2000-261 du 22 mars 2000, article 5
+    en_vigueur: 2000-03-23
+    citation: >-
+      « Pour les pensions dues à compter du 1er janvier 2000, la durée minimum [...] est
+      toutefois ramenée à vingt-sept années et demie pour les personnes ayant effectué au
+      moins quinze années en qualité de conjoints [...] à condition qu'elles ne
+      bénéficient pas d'un autre avantage de retraite » ; « La limite du 31 décembre 1999
+      est toutefois substituée à la limite du 31 décembre 1998 lorsque la retraite a pris
+      effet au cours de l'année 1999. » ; « Il n'est pas appliqué de coefficient de
+      minoration supplémentaire au titre des années manquantes situées au-delà de la
+      cinquième. » ; « accomplie en qualité d'aide familial ouvre droit [...] à 19,2
+      points » ; « accomplie comme conjoint participant aux travaux de l'exploitation par
+      des personnes dont la retraite a pris effet en 1998 ou 1999 ouvre droit à 16
+      points » ; aux pensions prises depuis, « 8,63 points gratuits [...] pour les
+      conjoints participant aux travaux de l'exploitation au 31 décembre 1998, qui ont
+      conservé cette activité durant tout ou partie de l'année 1999 sans faire choix du
+      statut de conjoint collaborateur » ; « 16 points gratuits de retraite
+      proportionnelle dans les autres cas. Toutefois, [...] le nombre total de points
+      attribuable est minoré de 16 pour les retraites prenant effet en 2000. »
+    lu_le: 2026-10-18
   bornes:
     liquidation.date_effet: [2000-01-01, 2001-01-01]
   contenu:
     droit: >-
       26,933 points ; la minoration ramenée à 15, 15, 10, 10 et 10 %. Aux pensions prises
-      avant 1997, 26,96 points, les coefficients de 1999
+      avant 1997, 26,96 points, les coefficients de 1999. Aux années de conjoint d'avant
+      1999, d'avant 2000 quand la pension a pris effet en 1999, 16 points, ceux des
+      pensions prises en 2000 diminués de seize (8,63 par année à qui est resté conjoint
+      participant aux travaux en 1999 sans opter) ; 19,2 à celles d'aide familial ;
+      vingt-sept ans et demi d'activité agricole suffisent à qui a quinze ans de conjoint
+      sans autre pension, et aucun coefficient ne joue au-delà de la cinquième année
+      manquante (décret n° 2000-261, article 5) : les seize points que le modèle donne à
+      chacune les égalent
     parametres:
       existe: true
       minimum_points: 26.933
@@ -270,7 +371,16 @@ versions:
       minimum_reduit_depuis: null
       part_servie: 1.0
       minorations: [0.15, 0.15, 0.10, 0.10, 0.10]
-      conjoints: null
+      conjoints:
+        minimum: null
+        minimum_points: 16.0
+        pensions_prises_avant_2002:
+          duree_minimale: 32.5
+          duree_minimale_des_conjoints: 27.5
+          annees_de_conjoint: 15
+          minorations: [0.15, 0.15, 0.10, 0.10, 0.10, 0.40]
+          minorations_des_conjoints_au_plus: 5
+          minoration_par_annee: null
       pensions_prises_avant_1997:
         minimum_points: 26.96
         minimum: null
@@ -304,6 +414,28 @@ versions:
       ligne, au lieu de : « ... P = (26,23 - n) x d... », lire : « ... P = (29,23 - n) x
       d... ». »
     lu_le: 2026-10-17
+  - id: JORFARTI000001801426
+    article: décret n° 2001-170 du 21 février 2001, article 5
+    en_vigueur: 2001-02-23
+    citation: >-
+      « 2o Tout ou partie des années effectuées jusqu'au 31 décembre 1998 en qualité de
+      conjoint participant aux travaux » ; « 3o Les années effectuées à partir du 1er
+      janvier 1999 par des conjoints collaborateurs » ; « Le nombre total d'années
+      revalorisables ne peut excéder trente-sept années et demie » ; « pour les retraites
+      prenant effet à compter de 2000, le nombre d'années revalorisables afférent à la
+      période antérieure à 1999 est retenu dans une limite de trente-sept années et demie
+      minorées de l'écart entre l'année d'effet de la retraite et 1998 » ; « b) Une
+      attribution gratuite à hauteur de 16 points de retraite proportionnelle par an pour
+      les années de conjoint participant aux travaux accomplies par les personnes dont la
+      retraite a pris effet avant le 1er janvier 2000 » ; au c), « Toutefois, le nombre de
+      points gratuits est minoré de 16 par année d'écart entre l'année d'effet de la
+      retraite et 1999 » ; « e) Les périodes de conjoint ou d'aide familial peuvent donner
+      lieu à attribution d'un différentiel de 3,2 points » ; « les périodes accomplies à
+      compter du 1er janvier 1999 comme conjoint collaborateur à titre exclusif ou
+      principal donnent également droit à attribution du différentiel » ; « Dans le cas
+      prévu au deuxième alinéa de l'article 1er, il n'est pas appliqué de coefficient
+      supplémentaire au titre des années manquantes situées au-delà de la cinquième. »
+    lu_le: 2026-10-18
   bornes:
     liquidation.date_effet: [2001-01-01, 2002-01-01]
   contenu:
@@ -311,7 +443,13 @@ versions:
       29,23 points par année de chef, sans minoration. Aux pensions prises avant 1997,
       29,23 points aussi (le rectificatif) ; la minoration sous vingt-deux ans et demi de
       chef reconstitués tombe, celle sous trente-sept ans et demi d'activité agricole
-      reste
+      reste. Aux années de conjoint, seize points et le différentiel de 3,2 — 19,2 —, les
+      années d'avant 1999 diminuées de l'écart entre l'année d'effet et 1999 et retenues
+      dans la limite de trente-sept et demie moins l'écart avec 1998 ; le différentiel
+      seul aux années de conjoint collaborateur depuis 1999, qui portent seize points
+      cotisés ; minorés de 15, 15, 10, 10, 10 et 40 % par année manquante, sans coefficient
+      au-delà de la cinquième à qui a vingt-sept ans et demi (décret n° 2001-170,
+      article 5) : 3,2 points de plus par année que les seize du modèle
     parametres:
       existe: true
       minimum_points: 29.23
@@ -320,7 +458,16 @@ versions:
       minimum_reduit_depuis: null
       part_servie: 1.0
       minorations: null
-      conjoints: null
+      conjoints:
+        minimum: null
+        minimum_points: 19.2
+        pensions_prises_avant_2002:
+          duree_minimale: 32.5
+          duree_minimale_des_conjoints: 27.5
+          annees_de_conjoint: 15
+          minorations: [0.15, 0.15, 0.10, 0.10, 0.10, 0.40]
+          minorations_des_conjoints_au_plus: 5
+          minoration_par_annee: null
       pensions_prises_avant_1997:
         minimum_points: 29.23
         minimum: null
@@ -607,6 +754,7 @@ versions:
       minorations: null
       conjoints:
         minimum: differentiel_du_couple
+        minimum_points: null
         pensions_prises_avant_2002:
           duree_minimale: 32.5
           duree_minimale_des_conjoints: 27.5
@@ -698,6 +846,7 @@ versions:
       minorations: null
       conjoints:
         minimum: differentiel_du_couple
+        minimum_points: null
         pensions_prises_avant_2002:
           duree_minimale: 22.5
           duree_minimale_des_conjoints: null
@@ -743,6 +892,7 @@ versions:
       minorations: null
       conjoints:
         minimum: differentiel_du_couple
+        minimum_points: null
         pensions_prises_avant_2002:
           duree_minimale: 22.5
           duree_minimale_des_conjoints: null
@@ -830,18 +980,25 @@ approximations:
     conjoint d'avant 1999, sans points dans la loi, en porte seize dans le modèle
     (plancher de R. 732-73), plus quand le revenu saisi d'avant 2004 en ouvre
     davantage : le différentiel B - 16 la porte à B dans le premier cas, au-delà dans le
-    second. Ne sont pas servis : les pensions dues de 1998 à 2001, aux montants de leurs
-    décrets (8,63 points en 1998, 11,44 en 1999 pour un conjoint, décret n° 99-875 ;
-    décrets n° 2000-261 et 2001-170) ; les années de chef des pensions prises de 1998 à
+    second. Depuis le 18 octobre 2026, les pensions dues de 1998 à 2001 aussi, aux
+    nombres de leurs décrets (décret n° 99-875, articles 1er à 4 ; décret n° 2000-261,
+    article 5 ; décret n° 2001-170, article 5) : 8,63 points en 1998, 11,44 en 1999 pour
+    un conjoint, 16 en 2000, que les seize de chaque année dépassent ou égalent — rien ne
+    s'y ajoute, et le modèle sert 7,37 points de trop par année revalorisée en 1998, 4,56
+    en 1999 —, puis seize et le différentiel de 3,2 en 2001, soit 3,2 de plus. Aux
+    pensions prises en 2000, le décret retire seize points du total de 2000, le modèle
+    une année ; il ne sert pas les 19,2 points de l'aide familial en 2000, qu'il ne
+    distingue pas du conjoint. Ne sont pas servis : les années de chef des pensions prises de 1998 à
     2001 sous dix-sept ans et demi de chef (D. 732-119, 4°, D. 732-125) ; la condition de
     ne pas être titulaire d'une réversion à la date d'effet (D. 732-118), et la majoration
     de la réversion de D. 732-147 ; le droit de L. 732-54-8, I, deuxième alinéa, des
     conjoints qui ont opté en 1999 sans la durée du taux plein
   effet: >-
     une conjointe collaboratrice de quarante-deux ans partie en 2005 : 286 points de plus,
-    environ 950 € par an jusqu'en 2008 ; une conjointe de trente ans partie en 2000, rien
-    avant 2002, puis de 97 à 147 points ; depuis 2009, la PMR les porte au moins à son
-    montant réduit
+    environ 950 € par an jusqu'en 2008 ; une conjointe de trente et un ans partie en 2000,
+    rien en 2000, 38 points en 2001 (118 € par an), puis de 97 à 147 points ; une de
+    trente-cinq ans et demi partie en 1998, rien jusqu'en 2000, 80 points en 2001 (245 €
+    par an), 207 en 2002 ; depuis 2009, la PMR les porte au moins à son montant réduit
 - ecart: >-
     la minoration de 1997 à 2000 se proratise sur la fraction d'année manquante, quand
     le décret ne compte que des années
@@ -884,16 +1041,18 @@ approximations:
     2007 revalorisé sur les prix
   effet: quelques euros par an, en 2008
 sources:
-  lu_le: 2026-10-17
+  lu_le: 2026-10-18
   prochaine_relecture: 2027-10-31
   a_relire:
   - >-
     Chercher un exemple chiffré publié par la MSA ou le ministère d'une pension portée au
     minimum de points de 1997 à 2008, et le rejouer dans exemples_officiels.yaml.
   - >-
-    Des points des conjoints : les pensions dues de 1998 à 2001 (décret n° 99-875,
-    articles 1er à 4 ; décret n° 2000-261 ; décret n° 2001-170), le minimum de 8,63
-    points et le rachat, à saisir ; les années de chef de D. 732-119, 4°.
+    Des points des conjoints : le minimum de 8,63 points et le rachat, à saisir ; les
+    années de chef de D. 732-119, 4° ; les seize points que le modèle donne à une année
+    de conjoint d'avant 1999, que la loi ne dote d'aucun, et qui couvrent les nombres des
+    pensions dues de 1998 à 2000 — une présomption, conjoint ou aide familial, à
+    trancher, ou un champ de saisie.
   - >-
     Lire D. 732-117 dans sa rédaction de 2005 (LEGIARTI000006597543), que l'index LEGI
     du dépôt ne porte pas : le moteur lui donne les coefficients de l'article 5, III, du
@@ -909,6 +1068,15 @@ sources:
       11 et 15 ; décret n° 2002-298 du 1er mars 2002, articles 3 et 4, dans l'index JORF
       du dépôt
     date: 2026-10-14
+  - type: jorf
+    reference: >-
+      décret n° 99-875 du 13 octobre 1999, articles 1er à 4 (JORFARTI000001246106,
+      JORFARTI000001049949, JORFARTI000001823278, JORFARTI000001049950) et sa notice ;
+      décret n° 2000-261 du 22 mars 2000, articles 5, 8 et 9 ; décret n° 2001-170 du 21
+      février 2001, article 5 : les points des conjoints et des aides familiaux des
+      pensions dues de 1998 à 2001, dans l'index JORF du dépôt, aux incréments du 18
+      octobre 2026
+    date: 2026-10-18
   - type: legifrance
     reference: >-
       L. 732-54-1 à L. 732-54-4 (rédaction du 29 décembre 2001), D. 732-110 à D. 732-120

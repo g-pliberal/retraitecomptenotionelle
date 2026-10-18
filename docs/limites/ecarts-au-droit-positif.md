@@ -362,9 +362,11 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   de revalorisation révisent depuis le 17 octobre 2026 les pensions de chef
   prises avant 1997, sur la durée de chef que leurs points au compte
   reconstituent, ceux d'avant 1990 comptant pour leur rendement. Restent
-  dehors : des points que ces plans servent depuis 2002 aux années de
-  conjoint et d'aide familial (fiche `majoration_retraite_proportionnelle`),
-  ceux des pensions dues de 1998 à 2001, du rachat et de l'option tardive ; l'assiette
+  dehors : des points que ces plans servent aux années de conjoint et d'aide
+  familial (fiche `majoration_retraite_proportionnelle`), ceux du rachat et
+  de l'option tardive — le modèle donne seize points à chaque année de
+  conjoint d'avant 1999, que la loi ne dote d'aucun, plus que n'en servent
+  les pensions dues de 1998 et de 1999 — ; l'assiette
   forfaitaire du conjoint collaborateur et de l'aide familial, statut que la
   saisie propose depuis le 14 octobre 2026 et dont le modèle sert le montant
   réduit de la pension majorée de 2009 à 2021, sans points gratuits ni

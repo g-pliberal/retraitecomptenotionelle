@@ -25549,7 +25549,7 @@ null
 "exception_de":null,
 "id":"pensions_dues_en_1998",
 "parametres":{
-"conjoints":null,
+"conjoints":{"minimum":null,"minimum_points":8.63,"pensions_prises_avant_2002":{"annees_de_conjoint":null,"duree_minimale":32.5,"duree_minimale_des_conjoints":null,"minoration_par_annee":null,"minorations":[0.15,0.15,0.1,0.1,0.1,0.4],"minorations_des_conjoints_au_plus":null}},
 "existe":true,
 "minimum":null,
 "minimum_points":26.933,
@@ -25566,7 +25566,7 @@ null
 "exception_de":null,
 "id":"pensions_dues_en_1999",
 "parametres":{
-"conjoints":null,
+"conjoints":{"minimum":null,"minimum_points":11.44,"pensions_prises_avant_2002":{"annees_de_conjoint":null,"duree_minimale":32.5,"duree_minimale_des_conjoints":null,"minoration_par_annee":null,"minorations":[0.15,0.15,0.1,0.1,0.1,0.4],"minorations_des_conjoints_au_plus":null}},
 "existe":true,
 "minimum":null,
 "minimum_points":26.933,
@@ -25583,7 +25583,7 @@ null
 "exception_de":null,
 "id":"pensions_dues_en_2000",
 "parametres":{
-"conjoints":null,
+"conjoints":{"minimum":null,"minimum_points":16.0,"pensions_prises_avant_2002":{"annees_de_conjoint":15,"duree_minimale":32.5,"duree_minimale_des_conjoints":27.5,"minoration_par_annee":null,"minorations":[0.15,0.15,0.1,0.1,0.1,0.4],"minorations_des_conjoints_au_plus":5}},
 "existe":true,
 "minimum":null,
 "minimum_points":26.933,
@@ -25600,7 +25600,7 @@ null
 "exception_de":null,
 "id":"pensions_dues_en_2001",
 "parametres":{
-"conjoints":null,
+"conjoints":{"minimum":null,"minimum_points":19.2,"pensions_prises_avant_2002":{"annees_de_conjoint":15,"duree_minimale":32.5,"duree_minimale_des_conjoints":27.5,"minoration_par_annee":null,"minorations":[0.15,0.15,0.1,0.1,0.1,0.4],"minorations_des_conjoints_au_plus":5}},
 "existe":true,
 "minimum":null,
 "minimum_points":29.23,
@@ -25617,7 +25617,7 @@ null
 "exception_de":null,
 "id":"au_minimum_vieillesse",
 "parametres":{
-"conjoints":{"minimum":"differentiel_du_couple","pensions_prises_avant_2002":{"annees_de_conjoint":15,"duree_minimale":32.5,"duree_minimale_des_conjoints":27.5,"minoration_par_annee":null,"minorations":[0.15,0.15,0.1,0.1,0.1,0.4],"minorations_des_conjoints_au_plus":5}},
+"conjoints":{"minimum":"differentiel_du_couple","minimum_points":null,"pensions_prises_avant_2002":{"annees_de_conjoint":15,"duree_minimale":32.5,"duree_minimale_des_conjoints":27.5,"minoration_par_annee":null,"minorations":[0.15,0.15,0.1,0.1,0.1,0.4],"minorations_des_conjoints_au_plus":5}},
 "existe":true,
 "minimum":"minimum_vieillesse_personne_seule",
 "minimum_points":null,
@@ -25634,7 +25634,7 @@ null
 "exception_de":null,
 "id":"pensions_dues_en_2007",
 "parametres":{
-"conjoints":{"minimum":"differentiel_du_couple","pensions_prises_avant_2002":{"annees_de_conjoint":null,"duree_minimale":22.5,"duree_minimale_des_conjoints":null,"minoration_par_annee":0.055,"minorations":null,"minorations_des_conjoints_au_plus":null}},
+"conjoints":{"minimum":"differentiel_du_couple","minimum_points":null,"pensions_prises_avant_2002":{"annees_de_conjoint":null,"duree_minimale":22.5,"duree_minimale_des_conjoints":null,"minoration_par_annee":0.055,"minorations":null,"minorations_des_conjoints_au_plus":null}},
 "existe":true,
 "minimum":"minimum_vieillesse_personne_seule",
 "minimum_points":null,
@@ -25651,7 +25651,7 @@ null
 "exception_de":null,
 "id":"pensions_dues_en_2008",
 "parametres":{
-"conjoints":{"minimum":"differentiel_du_couple","pensions_prises_avant_2002":{"annees_de_conjoint":null,"duree_minimale":22.5,"duree_minimale_des_conjoints":null,"minoration_par_annee":0.04,"minorations":null,"minorations_des_conjoints_au_plus":null}},
+"conjoints":{"minimum":"differentiel_du_couple","minimum_points":null,"pensions_prises_avant_2002":{"annees_de_conjoint":null,"duree_minimale":22.5,"duree_minimale_des_conjoints":null,"minoration_par_annee":0.04,"minorations":null,"minorations_des_conjoints_au_plus":null}},
 "existe":true,
 "minimum":"minimum_vieillesse_personne_seule",
 "minimum_points":null,

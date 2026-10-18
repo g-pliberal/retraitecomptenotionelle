@@ -376,8 +376,9 @@ function anneeDEffetDesConjoints(dateEffet) {
 
 /**
  * Les années de conjoint et d'aide familial que les plans revalorisent, et les
- * points qu'elles ajoutent au minimum annuel `minimum` (B, ou C) ; [0, 0] quand
- * rien. Voir `_points_des_conjoints` du Python.
+ * points qu'elles ajoutent au minimum annuel `minimum` (B, ou C ; de 1998 à
+ * 2001, le nombre du décret) ; [0, 0] quand rien. Voir `_points_des_conjoints`
+ * du Python.
  */
 function pointsDesConjoints(regle, carriere, eligible, dateEffet, minimum) {
   const conjoints = regle.conjoints;
@@ -633,8 +634,13 @@ export function majorationRetraiteProportionnelle(moteur, carriere, eligible, pe
   let conjointMinimum = 0.0;
   let conjointAnnees = 0.0;
   let conjointPoints = 0.0;
-  if (regle.conjoints) {
-    const lu = minimumDe(regle.conjoints.minimum);
+  const conjoints = regle.conjoints;
+  if (conjoints) {
+    // Le nombre de points que fixe le décret des pensions dues de 1998 à
+    // 2001 ; depuis 2002, B au minimum du couple.
+    const lu = conjoints.minimum_points !== null && conjoints.minimum_points !== undefined
+      ? [Number(conjoints.minimum_points), fiabilite]
+      : minimumDe(conjoints.minimum);
     if (lu !== null) {
       [conjointAnnees, conjointPoints] = pointsDesConjoints(
         regle, carriere, eligible, dateEffet, lu[0]);

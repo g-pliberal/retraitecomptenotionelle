@@ -692,6 +692,42 @@ def test_les_annees_de_conjoint_d_avant_1999_se_bornent_a_l_ecart_avec_1998(simu
         37.5 - (an - 1998) + eligible.collaborateur_regularise / 4, abs=1e-12)
 
 
+def test_les_pensions_dues_de_1998_a_2001_servent_les_points_de_leurs_decrets(simulateur):
+    """Trente-cinq ans et demi de conjointe, partie en juillet 1998 : 8,63
+    points par année revalorisable en 1998 (décret n° 99-875, article 3),
+    11,44 en 1999 (article 4), 16 en 2000 (décret n° 2000-261, article 5, IV) —
+    que les seize points que le modèle donne déjà à chacune de ses années
+    dépassent ou égalent : rien —, puis, en 2001, seize points et le
+    différentiel de 3,2 (décret n° 2001-170, article 5, III) : 3,2 de plus par
+    année, minorés de 15 % pour chacune des deux années qui manquent à
+    trente-sept et demie (article 2-2). Trente et un ans de conjointe, partie
+    en février 2000 : vingt-sept ans et demi suffisent depuis les pensions
+    dues en 2000 à qui a quinze ans de conjoint sans autre pension, sans
+    coefficient au-delà de la cinquième année manquante, et ses années d'avant
+    1999 perdent l'écart avec 1999 (articles 2 et 2-2)."""
+    conjointe = _chef(simulateur, 1936, 62, sexe="F", mois_naissance=6,
+                      metiers=[Metier("collaborateur_agricole", 27.0, niveau_salaire=0.3)])
+    exploitant, plans = _plans(simulateur, conjointe)
+    eligible = exploitant.eligible
+    assert (conjointe.annee_liquidation, conjointe.mois_liquidation) == (1998, 7)
+    assert eligible.duree == eligible.conjoint_avant_1999 == 142 and plans is None
+    for quand in ("1999-01-01", "2000-01-01"):
+        assert _plans(simulateur, conjointe, quand)[1] is None, quand
+    _, plans = _plans(simulateur, conjointe, "2001-01-01")
+    assert plans.conjoint_minimum == pytest.approx(19.2, abs=1e-12)
+    assert plans.conjoint_annees == 35.5
+    assert plans.points == pytest.approx(3.2 * 35.5 * (1.0 - 0.15 - 0.15), rel=1e-12)
+    seule = _chef(simulateur, 1938, 62, sexe="F", mois_naissance=1,
+                  metiers=[Metier("collaborateur_agricole", 32.0, niveau_salaire=0.3)])
+    exploitant, plans = _plans(simulateur, seule, "2001-01-01")
+    eligible = exploitant.eligible
+    assert (seule.annee_liquidation, seule.mois_liquidation) == (2000, 2)
+    assert (eligible.duree, eligible.conjoint_avant_1999) == (124, 116)
+    # Deux années depuis 1999, et vingt-neuf avant, moins l'écart de 2000 à 1999.
+    assert plans.conjoint_annees == 2.0 + 29.0 - 1.0
+    assert plans.points == pytest.approx(3.2 * 30.0 * (1.0 - 0.6), rel=1e-12)
+
+
 def test_une_pension_decotee_n_a_ni_pmr_ni_complement(simulateur):
     """Trente-deux ans de carrière à 62 ans : la décote, et aucun des deux
     minima, qui ne s'ouvrent qu'au taux plein."""
@@ -1050,6 +1086,10 @@ CAS = [
     {"naissance": "1938", "liquidation": "62", "sexe": "F", "statut": "collaborateur_agricole",
      "debut": "32"},
     {"naissance": "1939", "liquidation": "62", "sexe": "F", "statut": "collaborateur_agricole"},
+    # Les pensions dues de 1998 à 2001 (décrets n° 99-875, 2000-261 et 2001-170) :
+    # trente-cinq ans et demi de conjointe, partie en juillet 1998.
+    {"naissance": "1936", "naissance_mois": "6", "liquidation": "62", "sexe": "F",
+     "statut": "collaborateur_agricole", "debut": "27"},
 ]
 
 
