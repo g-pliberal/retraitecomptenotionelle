@@ -20,7 +20,12 @@ intitule: >-
   trimestre en 2009. De 2016 à 2021, le forfait va d'abord à l'impôt, à la CSG
   et à la CRDS, puis à la maladie, puis à la vieillesse de base (L. 133-6-8-3,
   L. 613-9, D. 133-4) ; de 2017 à 2019, ses trimestres se comptent aux seuils
-  de chiffre d'affaires que la caisse en publie.
+  de chiffre d'affaires que la caisse en publie. Ses points s'achètent avec
+  ce qu'il a versé : au RCI, la part complémentaire de son forfait, un point
+  par revenu de référence (règlement du RCI, articles 3 et 47) ; à la CNAVPL,
+  les parts de la première et de la seconde tranche, « au prorata des
+  cotisations acquittées sur chacune des tranches » (D. 643-1) ; à la
+  complémentaire de la Cipav, la sienne.
 etat: approchee
 etape: acquerir_les_droits
 effet: >-
@@ -56,7 +61,19 @@ effet: >-
   5 099 € à la clef ; 3 510 € en 2017, au lieu de 5 049 € de revenu abattu ;
   mais le libéral de 2018, dont le forfait passe moins vite la maladie, en
   demande 9 550 € pour le quatrième, au lieu de 8 986 €. Aucun témoin ne bouge,
-  aucun n'ayant de petit chiffre d'affaires ces années-là. De 2009 à
+  aucun n'ayant de petit chiffre d'affaires ces années-là. Depuis le
+  18 octobre 2026 encore, ses points s'achètent avec son forfait, aux années
+  qui en ont la répartition, et non au barème sur son revenu abattu : le
+  libéral de l'Assurance retraite n'a aucun point de RCI de 2018 au 30 juin
+  2024, au lieu de 95 en 2023 à 40 000 € de recettes ; 12 100 € de ventes en
+  2026 en achètent 13,53, au lieu de 13,08 (service-public, F23369 :
+  « 13,53 », que la caisse compte 13) ; 48 000 € de recettes à la Cipav,
+  359,25 et 3,22 points de CNAVPL, au lieu de 367,16 et 3,30 (la caisse :
+  « 359,37 » et 3,22), et 3 418,75 € à sa complémentaire, au lieu de
+  3 545,78 €. Au scénario 1, le libéral de l'Assurance retraite perd 6,55 %,
+  la Cipav 3,57 %, la Cipav de petites recettes 12,48 %, dont les classes
+  passaient le forfait de 2019 à 2022 ; la vente et les services gagnent de
+  0,35 à 0,49 %. De 2009 à
   2015, la compensation de l'État : un trimestre au moins en 2009, sur l'année
   civile entière (3 000 € de ventes, rien auparavant) ; rien sous 200 heures
   de SMIC en 2014 (6 500 € de
@@ -72,9 +89,10 @@ effet: >-
   pas lue ; les clefs de janvier à septembre 2022 sont celles de 2021 ; en
   2014 et 2015, qui ne relève pas de la maladie du RSI (le salarié, l'assuré
   au RSA) validait dès 150 heures, et le compte garde le barème sous le
-  seuil ; l'abattement minimal de 305 € n'est pas opposé ; les points du RCI,
-  et ceux de la CNAVPL pour la Cipav, se calculent au barème, non sur la part
-  du forfait ; l'exonération de début
+  seuil ; l'abattement minimal de 305 € n'est pas opposé ; les points du RCI
+  gardent leurs décimales, que la caisse arrondit à l'entier, au plus proche
+  pour la circulaire Cnav n° 2025-20 (« 11,92 = 12 points »), à l'inférieur
+  pour service-public (« 13,53 arrondi à l'entier inférieur 13 ») ; l'exonération de début
   d'activité (D. 131-6-3) n'est pas portée ; l'année prend la moyenne de ses
   mois, sans les arrondis trimestriels de la caisse. Une seule activité pour
   toute la carrière.
@@ -298,6 +316,65 @@ sources:
       imputé sur le risque maladie ». Lus le 18 octobre 2026, par l'API du site
     url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_rsi_2011_011_29042011.pdf
     date: 2026-10-18
+  - type: legifrance
+    reference: >-
+      Règlement du RCI (arrêté du 9 février 2012), article 3,
+      LEGIARTI000054891729 et LEGIARTI000054895753 : un compte de points « au
+      crédit duquel sont portés les droits acquis, année par année, par les
+      cotisations versées par l'assuré » ; article 9, LEGIARTI000054891793 et
+      LEGIARTI000054895819 : les points « sont acquis : - par le versement de
+      cotisations au présent régime » ; article 47, LEGIARTI000054892403 et
+      LEGIARTI000054907518 : le revenu de référence « est le montant de la
+      cotisation qui donne droit, au titre de l'année en cause, à
+      l'inscription d'un point ». Articles 9-7, 9-8 et annexe 4,
+      LEGIARTI000054908865, LEGIARTI000054908863 et LEGIARTI000054908867
+      (arrêté du 21 septembre 2026, en vigueur le 1er janvier 2027) : un
+      versement facultatif, demandé de 2027 à 2033, ouvert au libéral de
+      l'Assurance retraite pour 2018 à 2025, « CA ou recettes × taux GC × taux
+      RCI » (26,1 % × 17,70 % jusqu'au 30 juin 2024, 23,1 % × 9,85 %, puis
+      24,6 % × 4,70 % en 2025), ses points « arrondi[s] au nombre entier le
+      plus proche ». D. 643-1, LEGIARTI000029825121 et LEGIARTI000049904642 :
+      525 puis 557 points pour la cotisation au plafond de la première
+      tranche, 25 pour celle de la seconde, « Le nombre de points acquis est
+      calculé au prorata des cotisations acquittées sur chacune des tranches
+      de revenus définies à l'article D. 642-3 » ; D. 613-6,
+      LEGIARTI000052218747, et D. 131-5-3, LEGIARTI000037798349 : les parts de
+      la Cipav « mentionnée au 1° » et « au 2° de l'article D. 642-3 ». Lus
+      dans l'index LEGI du dépôt, à jour au 17 octobre 2026
+    date: 2026-10-18
+  - type: service_public
+    reference: >-
+      « Régime de retraite du micro-entrepreneur », F23369, vérifié le
+      14 octobre 2026, « Déterminer le montant de votre retraite
+      complémentaire » : 19,75 % de chaque forfait trimestriel, « (102,10 € +
+      48,58 € + 55,89 € + 87,49 €) / 21,726 € = 13,53 arrondi à l'entier
+      inférieur 13 » pour 12 100 € de ventes en 2026, « 23,31 arrondi à
+      l'entier inférieur 23 » pour les mêmes en services ; à la Cipav, « 1
+      point de retraite pour tous les 47,40 € cotisés »
+    url: https://entreprendre.service-public.gouv.fr/vosdroits/F23369
+    date: 2026-10-14
+  - type: autre
+    reference: >-
+      Cipav, fiche pratique « Cotiser pour acquérir des droits à retraite »,
+      auto-entrepreneurs, 2026, déposée en mars 2026 : 48 000 € de recettes,
+      11 136 € de forfait ;
+      « Cotisation Tranche 1 = 11 136 x 24,30 % = 2 706,05 € », « 1 point pour
+      7,53 € », « 359,37 points » ; tranche 2, 579,07 € à « 1 point pour
+      179,76 € » (la fiche divise 595,07 € : « 3,31 points ») ; « Cotisations :
+      11 136 x 30,70 % = 3 418,75 € », « 72,13 points » à 47,40 €. Guide
+      pratique du micro-entrepreneur de 2018 : « Le nombre de points acquis est
+      proportionnel au montant reversé par l'Urssaf au titre de votre
+      cotisation de retraite complémentaire », « 1 point pour 36,53 € »
+    url: https://www.lacipav.fr/
+    date: 2026-03-01
+  - type: circulaire_cnav
+    reference: >-
+      Circulaire Cnav n° 2025-20 du 31 juillet 2025, annexe 1 : « Nombre de
+      points RCI pour 2020 (article 47 du règlement du RCI) », « 211 € /
+      17,691 € (valeur d'acquisition du point RCI en 2020) = 11,92 = 12
+      points » ; 2021, « 36 € / 17,765 € […] = 2,02 = 2 points »
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2025_20_31072025.pdf
+    date: 2025-07-31
 textes_a_rattacher:
 - reference: code de la sécurité sociale, L. 613-7, II (LEGIARTI000048683570)
 - reference: code de la sécurité sociale, L. 133-6-8 (de 2009 à 2017)
@@ -335,13 +412,15 @@ code:
     forfait_micro, charger_compensation_micro, validant_compense,
     charger_seuils_micro, trimestres_aux_seuils_micro ;
     moteur/compte.py : ConstructeurCompte._cotisation_ligne ;
-    droit/liquider.py : assiette_de_reference, le revenu annuel moyen
+    droit/liquider.py : assiette_de_reference, le revenu annuel moyen ;
+    droit/acquerir.py : acquerir, les points sur les parts du forfait
   javascript: moteur/js/saisie.js (enChiffreDAffaires, abattu) ; moteur/js/pages.js
     (microFormulaire, champChiffreDAffaires) ; moteur/js/carriere.js
     (revenuCotise, validantCompense, forfaitMicro, trimestresAuxSeuilsMicro,
     paquets validation_micro, cotisation_micro, compensation_micro et
     seuils_micro) ; moteur/js/compte.js (_cotisationLigne) ;
-    moteur/js/droit/liquider.js (assietteDeReference)
+    moteur/js/droit/liquider.js (assietteDeReference) ; moteur/js/droit/acquerir.js
+    (acquerir)
   tests: >-
     tests/test_web_saisie.py ; tests/test_micro_social.py ; tests/js/moteur.test.js ;
     témoins micro_entrepreneur_* et simuler_micro_entrepreneur*

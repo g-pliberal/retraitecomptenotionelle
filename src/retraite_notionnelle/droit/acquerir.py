@@ -33,7 +33,9 @@ from ..donnees.chargement import (
     Fiabilite,
     assiette_minimale as _assiette_minimale_de,
     charger_assiettes_minimales,
+    charger_cotisation_micro,
     dispense_les_complementaires,
+    forfait_micro,
 )
 from ..donnees.primes import charger_primes_soumises
 from . import compter
@@ -500,6 +502,27 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
         # modèle lui servait trente-quatre ans d'Arrco calédonien.
         services, generalisation = moteur.affiliations.services_passes(
             ligne.affiliation, ligne.annee, carriere.date_entree(ligne.affiliation))
+        # LE FORFAIT DU MICRO-ENTREPRENEUR : ses points s'achètent avec ce
+        # qu'il a versé, la part de base et la part complémentaire de son
+        # forfait (D. 613-6 ; la clef de la Cnav avant le décret n° 2022-1529),
+        # et non au barème sur son revenu abattu, qui donnait 95 points de RCI
+        # au libéral de 2023, à qui le forfait n'en achetait aucun. Le compte
+        # de points du RCI porte « les droits acquis […] par les cotisations
+        # versées » (règlement du RCI, article 3) ; ceux de la CNAVPL se
+        # comptent « au prorata des cotisations acquittées sur chacune des
+        # tranches » (D. 643-1), dont la Cipav reçoit deux parts. Chaque part va
+        # à la période de sa tranche, dans leur ordre ; plus tôt, faute de
+        # répartition lue, le barème reste.
+        parts_du_forfait: dict[str, tuple[float, ...]] = {}
+        forfait = (forfait_micro(charger_cotisation_micro(moteur.macro.racine),
+                                 ligne.micro, ligne.annee)
+                   if ligne.micro and ligne.cotise else None)
+        if forfait is not None:
+            (de_base, complementaire), (taux_base, taux_complementaire,
+                                        taux_seconde) = forfait
+            parts_du_forfait = {
+                de_base: (base_ligne * (taux_base - taux_seconde), base_ligne * taux_seconde),
+                complementaire: (base_ligne * taux_complementaire,)}
         for code in regimes:
             if code not in moteur.catalogue:
                 continue
@@ -531,7 +554,7 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
             derniere_annee_par_regime[code] = max(
                 derniere_annee_par_regime.get(code, 0), ligne.annee
             )
-            for periode in regime.periodes_actives(ligne.annee):
+            for tranche, periode in enumerate(regime.periodes_actives(ligne.annee)):
                 # BARÈME D'UN AUTRE RÉGIME : une tranche que tous les
                 # affiliés ne cotisent pas forme une fiche à part, dont les
                 # points restent ceux du régime d'origine. Voir `points_de`.
@@ -652,6 +675,13 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
                     )
                     if par_classe is not None:
                         cotisation = par_classe[0] * part
+                if code in parts_du_forfait:
+                    # Le forfait, et non le barème : l'assiette que sa part
+                    # achèterait au taux de la tranche.
+                    parts = parts_du_forfait[code]
+                    cotisation = parts[tranche] if tranche < len(parts) else 0.0
+                    assiette = (cotisation / periode.taux_cotisation_retraite
+                                if periode.taux_cotisation_retraite > 0 else 0.0)
                 if periode.bareme_points == "msa_proportionnelle":
                     # BARÈME NOMMÉ : le nombre de points ne se lit ni dans
                     # un prix d'achat ni dans un repère d'assiette, mais

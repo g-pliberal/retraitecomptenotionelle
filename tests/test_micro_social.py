@@ -15,7 +15,7 @@ from pathlib import Path
 import pytest
 
 from retraite_notionnelle.carriere import AnneeCarriere, Carriere, Metier, salaire_moyen_annuel
-from retraite_notionnelle.droit import liquider
+from retraite_notionnelle.droit import acquerir, compter, coordonner, liquider
 from retraite_notionnelle.donnees.chargement import (
     charger_cotisation_micro,
     charger_validation_micro,
@@ -424,3 +424,98 @@ def test_le_plancher_de_2009_entre_au_revenu_annuel_moyen(simulateur):
     assert revenu_annuel_moyen == pytest.approx(
         200 * 8.71 * macro.coefficient_revalorisation_portee_au_compte(
             2009, carriere.annee_liquidation, carriere.mois_liquidation), rel=1e-12)
+
+
+def _acquis(simulateur, affiliation, activite, chiffre_d_affaires, annee):
+    """Ce que le scénario 1 inscrit, l'année ``annee``, à un micro-entrepreneur
+    né en 1962 et parti à 65 ans, dont ``activite`` fait ``chiffre_d_affaires``
+    cette année-là : par régime, les points de chacune des périodes de l'année,
+    dans leur ordre — la première tranche, puis la seconde —, et les
+    cotisations, en euros de l'année."""
+    carriere = Carriere.depuis_lignes(
+        1962, "H",
+        [AnneeCarriere(annee=annee, affiliation=affiliation, micro=activite,
+                       revenu=chiffre_d_affaires * (1.0 - ABATTEMENTS_MICRO[activite]),
+                       trimestres_valides=4)],
+        age_liquidation=65)
+    actuel = simulateur.scenario_actuel
+    coordination = coordonner.coordonner(actuel, carriere)
+    droits = acquerir.acquerir(actuel, coordination, compter.compter(actuel, coordination))
+    points: dict[str, list[float]] = {}
+    for code, annee_du_credit, nombre, _ in droits.points:
+        if annee_du_credit == annee:
+            points.setdefault(code, []).append(nombre)
+    prix = simulateur.macro.coefficient_prix(annee, carriere.annee_liquidation)
+    cotisations: dict[str, float] = {}
+    for code, annee_du_credit, montant in droits.cotisations:
+        if annee_du_credit == annee:
+            cotisations[code] = cotisations.get(code, 0.0) + montant / prix
+    return points, cotisations
+
+
+@pytest.mark.parametrize("activite,chiffre_d_affaires,annee,points_du_forfait", [
+    # « (102,10 € + 48,58 € + 55,89 € + 87,49 €) / 21,726 € = 13,53 » : 12 100 €
+    # de ventes en 2026, 19,75 % de chaque forfait trimestriel (service-public,
+    # F23369, vérifié le 14 octobre 2026). Le barème du commerçant, 8,10 % du
+    # revenu abattu, en donnait 13,08.
+    ("vente", 12_100.0, 2026, 294.06 / 21.726),
+    # « (175,85 € + 83,74 € + 96,30 € + 150,73 €) / 21,726 € = 23,31 » : les
+    # mêmes 12 100 € en services (F23369) ; 22,56 au barème.
+    ("services", 12_100.0, 2026, 506.62 / 21.726),
+    # « 211 € / 17,691 € (valeur d'acquisition du point RCI en 2020) = 11,92 » :
+    # 6 032 € de services en 2020, à la clef de 15,91 % (circulaire Cnav
+    # n° 2025-20, annexe 1, exemple 1), que le barème reproduisait.
+    ("services", 6_032.0, 2020, 211.12 / 17.691),
+    # Le libéral de 2023 ne verse rien au RCI : la rédaction du 7 décembre 2022
+    # de D. 613-6 ne lui affecte aucune part, et le Conseil d'État a tenu ses
+    # effets passés pour définitifs. Aucun point, quand le barème en donnait 95.
+    ("liberal", 40_000.0, 2023, 0.0),
+    # 2024 : six mois sans part, six à 23,1 % × 7,85 % (D. 613-4 et D. 613-6,
+    # du 1er juillet 2024), au prix de 2024, 20,734 €.
+    ("liberal", 40_000.0, 2024, 40_000.0 * 0.231 * 0.0785 / 2 / 20.734),
+])
+def test_les_points_du_rci_sont_ceux_que_le_forfait_achete(simulateur, activite,
+                                                         chiffre_d_affaires, annee,
+                                                         points_du_forfait):
+    """Le compte de points du RCI porte « les droits acquis, année par année,
+    par les cotisations versées par l'assuré » (règlement du RCI, article 3),
+    un point par « revenu de référence » cotisé (article 47) : celles du
+    micro-entrepreneur sont la part complémentaire de son forfait (D. 613-6 ;
+    la clef de la Cnav avant le décret n° 2022-1529), et non le barème du
+    commerçant sur son revenu abattu. La caisse compte des points entiers, à
+    l'entier inférieur pour service-public, au plus proche pour la circulaire
+    (« 11,92 = 12 points ») ; le modèle garde les décimales."""
+    points, _ = _acquis(simulateur, "micro_entrepreneur", activite, chiffre_d_affaires,
+                        annee)
+    assert sum(points.get("rci", [])) == pytest.approx(points_du_forfait, rel=1e-3,
+                                                       abs=1e-9)
+
+
+def test_les_points_de_la_cnavpl_sont_au_prorata_des_parts_du_forfait(simulateur):
+    """Les points du régime de base des libéraux se comptent « au prorata des
+    cotisations acquittées sur chacune des tranches de revenus » (D. 643-1) :
+    celles du micro-entrepreneur de la Cipav sont les parts de son forfait que
+    D. 613-6 affecte à la première et à la seconde tranche de D. 642-3, et non
+    le barème sur son revenu abattu ; sa complémentaire reçoit la sienne.
+    48 000 € de recettes en 2026, 11 136 € de forfait : « 2 706,05 / 7,53 =
+    359,37 points » en première tranche, 579,07 € en seconde à 179,76 € le
+    point, 3,22 points — la fiche en écrit 3,31, en divisant 595,07 € —, et
+    3 418,75 € à la complémentaire, « 72,13 points » à 47,40 € (Cipav, fiche
+    pratique « Cotiser pour acquérir des droits à retraite », auto-entrepreneurs,
+    2026). Le barème en donnait 367,16 et 3,30 points, et 3 545,78 €."""
+    points, cotisations = _acquis(simulateur, "profession_liberale", "cipav", 48_000.0,
+                                  2026)
+    assert points["cnavpl"] == [pytest.approx(2_706.05 / 7.53, rel=1e-3),
+                                pytest.approx(579.07 / 179.76, rel=1e-3)]
+    assert cotisations["cipav_complementaire"] == pytest.approx(3_418.75, rel=1e-6)
+    # 2020 : D. 131-5-3 affecte 25 % du forfait de 22 % à la première tranche,
+    # 5 % à la seconde et 20 % à la complémentaire ; 40 000 € de recettes y
+    # versent 2 200, 440 et 1 760 €. 525 points pour la cotisation d'un
+    # plafond, 41 136 €, à 8,23 % ; 25 pour celle de cinq plafonds, à 1,87 %
+    # (D. 643-1 et D. 642-3, rédactions de 2015).
+    points, cotisations = _acquis(simulateur, "profession_liberale", "cipav", 40_000.0,
+                                  2020)
+    assert points["cnavpl"] == [
+        pytest.approx(525 * 2_200.0 / (41_136.0 * 0.0823), rel=1e-9),
+        pytest.approx(25 * 440.0 / (5 * 41_136.0 * 0.0187), rel=1e-9)]
+    assert cotisations["cipav_complementaire"] == pytest.approx(1_760.0, rel=1e-9)

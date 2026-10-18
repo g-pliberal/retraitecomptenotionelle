@@ -787,7 +787,9 @@ def charger_cotisation_micro(racine: Path) -> dict[str, tuple[tuple[str, str],
     abattu. Chaque activité donne les deux régimes qui les reçoivent, puis,
     par année, les deux taux sur le revenu abattu : moyenne des douze mois,
     les seules années qu'une version couvre entières, comme
-    ``charger_validation_micro``.
+    ``charger_validation_micro`` ; et un troisième, la part du taux de base
+    qui va à la seconde tranche de la CNAVPL (D. 642-3, 2°), dont les points
+    se comptent à part (D. 643-1), nulle hors de la Cipav.
     """
     chemin = racine / "reference" / "legislation" / "micro_social.yaml"
     if not chemin.exists():
@@ -801,24 +803,27 @@ def charger_cotisation_micro(racine: Path) -> dict[str, tuple[tuple[str, str],
         derniere = max(annee for annee, _ in debuts)
         par_annee = {}
         for annee in range(premiere, derniere + 1):
-            bases, complementaires = [], []
+            bases, complementaires, secondes = [], [], []
             for mois in range(1, 13):
                 rang = max(i for i, d in enumerate(debuts) if d <= (annee, mois))
                 v = versions[rang]
                 bases.append(v["taux_global"]
                              * (v["part_base"] + v.get("part_base_seconde", 0.0)))
                 complementaires.append(v["taux_global"] * v["part_complementaire"])
+                secondes.append(v["taux_global"] * v.get("part_base_seconde", 0.0))
             par_annee[annee] = (somme_ordonnee(bases) / 12.0 / part_abattue,
-                                somme_ordonnee(complementaires) / 12.0 / part_abattue)
+                                somme_ordonnee(complementaires) / 12.0 / part_abattue,
+                                somme_ordonnee(secondes) / 12.0 / part_abattue)
         base, complementaire = donnees["regimes_du_forfait"][activite]
         table[activite] = ((base, complementaire), par_annee)
     return table
 
 
 def forfait_micro(table, activite: str, annee: int
-                  ) -> tuple[tuple[str, str], tuple[float, float]] | None:
+                  ) -> tuple[tuple[str, str], tuple[float, float, float]] | None:
     """Les deux régimes du forfait et leurs taux sur le revenu abattu, cette
-    année-là ; ``None`` avant la première année lue, où le compte porte le
+    année-là, puis la part du taux de base qui va à la seconde tranche de la
+    CNAVPL ; ``None`` avant la première année lue, où le compte porte le
     barème sur le revenu abattu ; au-delà de la dernière, la dernière."""
     entree = table.get(activite)
     if not entree:

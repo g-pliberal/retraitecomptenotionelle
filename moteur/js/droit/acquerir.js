@@ -13,7 +13,7 @@
 import { DateMois } from "../calendrier.js";
 import {
   assietteMinimale as assietteMinimaleDe, chomageComplementaires,
-  dispenseLesComplementaires, salaireMoyenAnnuel,
+  dispenseLesComplementaires, forfaitMicro, salaireMoyenAnnuel,
 } from "../carriere.js";
 import { nomFiabilite, Fiabilite } from "../serie.js";
 import { primesSoumises } from "../primes.js";
@@ -413,6 +413,20 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
     // acquerir.py.
     const [services, generalisation] = moteur.affiliations.servicesPasses(
       ligne.affiliation, ligne.annee, carriere.dateEntree(ligne.affiliation));
+    // LE FORFAIT DU MICRO-ENTREPRENEUR : ses points s'achètent avec la part
+    // de base et la part complémentaire de son forfait (D. 613-6), chacune à
+    // la période de sa tranche, et non au barème sur son revenu abattu
+    // (règlement du RCI, article 3 ; D. 643-1). Voir acquerir.py.
+    const partsDuForfait = new Map();
+    const forfaitDuMicro = ligne.micro && ligne.cotise
+      ? forfaitMicro(moteur.macro, ligne.micro, ligne.annee) : null;
+    if (forfaitDuMicro !== null) {
+      const [[deBase, complementaire], [tauxBase, tauxComplementaire, tauxSeconde]] =
+        forfaitDuMicro;
+      partsDuForfait.set(deBase,
+        [baseLigne * (tauxBase - tauxSeconde), baseLigne * tauxSeconde]);
+      partsDuForfait.set(complementaire, [baseLigne * tauxComplementaire]);
+    }
     for (const code of coordination.regimes[i]) {
       if (!moteur.catalogue.contient(code)) {
         continue;
@@ -440,7 +454,7 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
       derniereAnneeParRegime.set(
         code, Math.max(derniereAnneeParRegime.get(code) ?? 0, ligne.annee),
       );
-      for (const periode of regime.periodesActives(ligne.annee)) {
+      for (const [tranche, periode] of regime.periodesActives(ligne.annee).entries()) {
         // BARÈME D'UN AUTRE RÉGIME : une tranche que tous les affiliés ne
         // cotisent pas forme une fiche à part, dont les points restent ceux
         // du régime d'origine. Voir `points_de`.
@@ -550,6 +564,14 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
           if (parClasse !== null) {
             cotisation = parClasse[0] * part;
           }
+        }
+        if (partsDuForfait.has(code)) {
+          // Le forfait, et non le barème : l'assiette que sa part achèterait
+          // au taux de la tranche.
+          const parts = partsDuForfait.get(code);
+          cotisation = tranche < parts.length ? parts[tranche] : 0.0;
+          assiette = periode.taux_cotisation_retraite > 0
+            ? cotisation / periode.taux_cotisation_retraite : 0.0;
         }
         if (periode.bareme_points === "msa_proportionnelle") {
           // BARÈME NOMMÉ : R. 732-71 écrit l'escalier, `pointsMsa` le sert.

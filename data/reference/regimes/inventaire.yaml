@@ -2545,17 +2545,19 @@ inventaire:
       (`legislation/micro_social.yaml`, D. 613-4, D. 613-6, circulaire Cnav n° 2024-23)
       ; le barème sur le revenu abattu s'en écartait de +39 % pour le libéral de 2023,
       de +13 à +15 % pour la Cipav de 2023 à 2025. Ce revenu cotisé est aussi celui
-      du revenu annuel moyen (R. 351-29, I, B, et D. 634-3 ; R. 634-1 jusqu'en 2025).
-      La saisie prend le chiffre d'affaires et l'activité (champ « micro »), l'abat
-      de 71, 50 ou 34 % (L. 613-7, II) et route la Cipav vers les régimes du libéral.
-      Depuis 2018, la table porte les clefs de la Cnav (circulaire n° 2025-20), depuis
-      2019 la répartition de la Cipav (D. 131-5-3), de 2017 à 2019 les seuils que la
-      caisse publie, le forfait allant d'abord à la CSG, à la CRDS et à la maladie (L.
-      613-9, D. 133-4), et de 2009 à 2015 la compensation de l'État (L. 133-6-8-2, D.
-      131-6-4). Non portés : en 2016, ni seuil ni clef, où le revenu abattu valide ;
-      en 2016 et 2017, les clefs, où le barème approche le forfait ; de 2017 à 2019,
-      la part de base de cet ordre dans le revenu annuel moyen et le compte ; la règle
-      de la CNAVPL pour la Cipav avant 2023 ; les points du RCI sur la part du forfait.
+      du revenu annuel moyen (R. 351-29, I, B, et D. 634-3 ; R. 634-1 jusqu'en 2025),
+      et ses parts achètent ses points de RCI, de CNAVPL et de Cipav (règlement du RCI,
+      articles 3 et 47 ; D. 643-1). La saisie prend le chiffre d'affaires et l'activité
+      (champ « micro »), l'abat de 71, 50 ou 34 % (L. 613-7, II) et route la Cipav vers
+      les régimes du libéral. Depuis 2018, la table porte les clefs de la Cnav (circulaire
+      n° 2025-20), depuis 2019 la répartition de la Cipav (D. 131-5-3), de 2017 à 2019
+      les seuils que la caisse publie, le forfait allant d'abord à la CSG, à la CRDS
+      et à la maladie (L. 613-9, D. 133-4), et de 2009 à 2015 la compensation de l'État
+      (L. 133-6-8-2, D. 131-6-4). Non portés : en 2016, ni seuil ni clef, où le revenu
+      abattu valide ; en 2016 et 2017, les clefs, où le barème approche le forfait ;
+      de 2017 à 2019, la part de base de cet ordre dans le revenu annuel moyen et le
+      compte ; la règle de la CNAVPL pour la Cipav avant 2023 ; l'arrondi des points
+      du RCI à l'entier.
 
   - code: cnavpl
     nom: >-

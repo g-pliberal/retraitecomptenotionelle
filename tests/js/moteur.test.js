@@ -27,6 +27,9 @@ import { appels } from "../../moteur/js/droit/liquidation.js";
 import { moyenneSelonLaRegle, salaireDeReference } from "../../moteur/js/droit/liquider.js";
 import * as ouvrir from "../../moteur/js/droit/ouvrir.js";
 import * as limiteAge from "../../moteur/js/droit/limite_age.js";
+import { acquerir } from "../../moteur/js/droit/acquerir.js";
+import { compter } from "../../moteur/js/droit/compter.js";
+import { coordonner } from "../../moteur/js/droit/coordonner.js";
 import { DonneesMacro } from "../../moteur/js/macro.js";
 import { MinimumVieillesse } from "../../moteur/js/regimes.js";
 import {
@@ -697,6 +700,66 @@ test("le revenu annuel moyen du micro-entrepreneur porte son revenu cotisé", ()
   const [revalorise2009, moyen2009] = revenuAnnuelMoyen("rsi", 1950, 60.5,
     [[2009, "vente", 3000 * 0.29, 1]]);
   proche(moyen2009, 200 * 8.71 * revalorise2009(2009));
+});
+
+/**
+ * Les points du micro-entrepreneur s'achètent avec son forfait, et non au
+ * barème sur son revenu abattu : au RCI, sa part complémentaire (règlement du
+ * RCI, articles 3 et 47) ; à la CNAVPL, ses deux parts de base, au prorata de
+ * chaque tranche (D. 643-1). Rejoue
+ * `test_les_points_du_rci_sont_ceux_que_le_forfait_achete` et
+ * `test_les_points_de_la_cnavpl_sont_au_prorata_des_parts_du_forfait`
+ * (test_micro_social.py).
+ */
+test("les points du micro-entrepreneur s'achètent avec son forfait", () => {
+  const simulateur = new Contexte(paquet).simulateur();
+  const actuel = simulateur.scenarioActuel;
+  const acquis = (affiliation, activite, chiffreDAffaires, annee) => {
+    const carriere = new Carriere({
+      annee_naissance: 1962, sexe: "H", age_liquidation: 65, jour_naissance: 1,
+      lignes: [new AnneeCarriere({
+        annee, affiliation, micro: activite, trimestres_valides: 4,
+        revenu: chiffreDAffaires * (1 - ABATTEMENTS_MICRO[activite]),
+      })],
+    });
+    const coordination = coordonner(actuel, carriere);
+    const droits = acquerir(actuel, coordination, compter(actuel, coordination));
+    const points = {};
+    for (const [code, anneeDuCredit, nombre] of droits.points) {
+      if (anneeDuCredit === annee) {
+        (points[code] ??= []).push(nombre);
+      }
+    }
+    const prix = simulateur.macro.coefficientPrix(annee, carriere.anneeLiquidation);
+    const cotisations = {};
+    for (const [code, anneeDuCredit, montant] of droits.cotisations) {
+      if (anneeDuCredit === annee) {
+        cotisations[code] = (cotisations[code] ?? 0) + montant / prix;
+      }
+    }
+    return [points, cotisations];
+  };
+  const proche = (obtenu, attendu, tolerance) => assert.ok(
+    Math.abs(obtenu - attendu) <= tolerance * Math.abs(attendu) + 1e-9,
+    `${obtenu} contre ${attendu}`);
+  const rci = (activite, chiffreDAffaires, annee) => (
+    acquis("micro_entrepreneur", activite, chiffreDAffaires, annee)[0].rci ?? [])
+    .reduce((total, points) => total + points, 0);
+  proche(rci("vente", 12100, 2026), 294.06 / 21.726, 1e-3);
+  proche(rci("services", 12100, 2026), 506.62 / 21.726, 1e-3);
+  proche(rci("services", 6032, 2020), 211.12 / 17.691, 1e-3);
+  proche(rci("liberal", 40000, 2023), 0, 0);
+  proche(rci("liberal", 40000, 2024), 40000 * 0.231 * 0.0785 / 2 / 20.734, 1e-3);
+  const [points2026, cotisations2026] = acquis("profession_liberale", "cipav", 48000, 2026);
+  assert.equal(points2026.cnavpl.length, 2);
+  proche(points2026.cnavpl[0], 2706.05 / 7.53, 1e-3);
+  proche(points2026.cnavpl[1], 579.07 / 179.76, 1e-3);
+  proche(cotisations2026.cipav_complementaire, 3418.75, 1e-6);
+  const [points2020, cotisations2020] = acquis("profession_liberale", "cipav", 40000, 2020);
+  assert.equal(points2020.cnavpl.length, 2);
+  proche(points2020.cnavpl[0], 525 * 2200 / (41136 * 0.0823), 1e-9);
+  proche(points2020.cnavpl[1], 25 * 440 / (5 * 41136 * 0.0187), 1e-9);
+  proche(cotisations2020.cipav_complementaire, 1760, 1e-9);
 });
 
 /**
