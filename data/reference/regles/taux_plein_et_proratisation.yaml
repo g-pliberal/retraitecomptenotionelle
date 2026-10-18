@@ -127,5 +127,7 @@ code:
     l'année d'avant), sans autre activité cotisée cette année-là (R. 731-83). Ce qui se
     compte entre deux dates, la surcote d'abord, n'en lit que les trimestres écoulés
     (`Carriere.trimestres_ecoules`), la circulaire n° 2004/37 (point 131) en gardant
-    les bornes. Ni les cotisations ni les points de cette année ne sont portés à l'année
-    entière : le revenu de la ligne reste celui de ses mois.
+    les bornes. Ses cotisations et ses points le sont aussi depuis le 17 octobre 2026, au
+    revenu de ses mois porté à douze (`Carriere.part_cotisee_ligne`) : voir les fiches
+    retraite_proportionnelle_msa, assiette_minimale_agricole et
+    pension_non_salaries_agricoles_2026.

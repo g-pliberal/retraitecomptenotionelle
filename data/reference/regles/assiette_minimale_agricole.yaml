@@ -27,9 +27,13 @@ effet: >-
   l'aide familial n'ont pas de plancher mais un forfait : 400 SMIC horaires à la base
   depuis 2004 (D. 731-123), 600 depuis 2026 ; à la RCO, 1 200 SMIC depuis 2011, qui
   ouvrent 66 points par an jusqu'en 2016, 77 en 2017 et 88 depuis (D. 732-155, II), au lieu
-  des cent points au moins que le plancher du chef leur donnait.
+  des cent points au moins que le plancher du chef leur donnait. Depuis le 17 octobre
+  2026 (action 131), l'année où l'exploitant cesse, qu'il cotise entière (L. 731-10-1),
+  ouvre à la complémentaire les points d'une année : le collaborateur y a ses 88 points,
+  et non leurs mois ; le chef les avait déjà, son revenu des mois rapporté au repère des
+  mêmes mois.
 sources:
-  lu_le: 2026-09-27
+  lu_le: 2026-10-17
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -141,6 +145,15 @@ sources:
       » ; 23 est le barème de R. 732-71 à 600 SMIC, 22,5, arrondi
     url: https://www.msa.fr/lfp/retraite/reforme-exploitants-25-meilleures-annees
     date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      code rural et de la pêche maritime, D. 732-155, rédactions du 5 mai 2017
+      (LEGIARTI000034578860) et du 7 juillet 2024 (LEGIARTI000049904715) : « Le nombre
+      annuel de points est porté au compte de l'intéressé, lorsque la cotisation de
+      l'année considérée est acquittée dans sa totalité » (III) ; le RP de la formule est
+      « la totalité des revenus professionnels », ceux de l'année que L. 731-10-1 fait
+      cotiser entière l'année de la cessation. Lu dans l'index LEGI du dépôt
+    date: 2026-10-17
 textes_a_rattacher:
 - reference: >-
     base, de 1990 à 2005 : décret n° 90-498 du 21 juin 1990, article 9, II

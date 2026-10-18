@@ -34,9 +34,14 @@ effet: >-
   retraite proportionnelle (L. 732-28), le forfait ne comptant pas ses années, sauf à qui
   était non-salarié agricole avant 1981 (R. 732-65). Le salarié de 1958, chef à côté
   depuis ses trente ans et parti en 2024, perd ainsi son forfait, qui faisait l'essentiel
-  des 4 900 € que le modèle lui servait.
+  des 4 900 € que le modèle lui servait. Depuis le 17 octobre 2026 (action 131), l'année
+  où l'exploitant cesse lui vaut les points d'une année : il la cotise entière (L.
+  731-10-1), sur un revenu annuel (L. 731-15), que le moteur prend du revenu de ses mois
+  porté à douze ; elle ne valait que ses mois, au barème lu sur leur seul revenu — sept
+  douzièmes de 23 points, et non 30, pour le chef à 12 000 € par an parti le 1er août
+  2024.
 sources:
-  lu_le: 2026-10-16
+  lu_le: 2026-10-17
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -239,6 +244,30 @@ sources:
       non-salariée agricole exercée à titre exclusif ou principal »
     url: https://www.msa.fr/lfp/retraite/non-salaries-agricoles
     date: 2026-10-16
+  - type: legifrance
+    reference: >-
+      code rural et de la pêche maritime, R. 732-70 (LEGIARTI000024113180) : la cotisation
+      donne droit, « pour l'année au titre de laquelle [elle est] due, à un nombre de
+      points qui est fonction du montant des revenus professionnels » ; L. 731-10-1
+      (LEGIARTI000019950453) : « En cas de cessation d'activité au cours d'une année
+      civile, le chef d'exploitation ou d'entreprise agricole est tenu au paiement des
+      cotisations [...] au titre de l'année civile entière » ; L. 731-15
+      (LEGIARTI000037988682, LEGIARTI000048683906) : les cotisations sont calculées « sur
+      la moyenne des revenus professionnels [...] se rapportant aux trois années
+      antérieures à celle au titre de laquelle les cotisations sont dues ». Lu dans
+      l'index LEGI du dépôt
+    date: 2026-10-17
+  - type: autre
+    reference: >-
+      Assemblée nationale, question écrite n° 96453, réponse du ministre de l'agriculture
+      publiée au Journal officiel le 26 juillet 2016 (page 6956) : l'annualité de L.
+      731-10-1 rend l'exploitant « redevable de la totalité des cotisations » l'année de
+      sa cessation, et sa remise en cause aurait des « effets négatifs [...] sur le calcul
+      des droits à retraite » ; au décès, le conjoint survivant peut garder l'annualité
+      des cotisations d'assurance vieillesse « afin de préserver les avantages prévus
+      actuellement en matière de retraite »
+    url: https://www.assemblee-nationale.fr/dyn/14/questions/QANR5L14QE96453
+    date: 2026-10-17
 textes_a_rattacher:
 - reference: >-
     code rural et de la pêche maritime, R. 732-73, D. 731-123, L. 732-28 et R. 732-65,

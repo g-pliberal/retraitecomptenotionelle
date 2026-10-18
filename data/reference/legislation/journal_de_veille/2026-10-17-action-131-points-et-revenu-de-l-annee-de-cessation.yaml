@@ -1,0 +1,37 @@
+date: "2026-10-17"
+session: >-
+  l'action 131 : les points et le revenu de l'année où l'exploitant agricole
+  cesse, cotisée entière
+consulte: >-
+  python scripts/veille_droit.py ; l'index LEGI du dépôt (récupéré, mis à jour
+  jusqu'à l'incrément du 17 octobre 2026), puis python scripts/textes.py
+  --inscrire : L. 731-10-1, L. 731-15, R. 732-70, R. 732-71, R. 732-73,
+  D. 732-155 et R. 732-60 du code rural, et le décret n° 2026-889 du
+  24 septembre 2026 (l'option de l'expérimentation de l'article 16 de la loi de
+  financement pour 2026, qui renvoie à L. 731-10-1 au décès) ; la question
+  écrite n° 96453 de la XIVe législature et sa réponse (JO du 26 juillet 2016,
+  p. 6956), sur le site de l'Assemblée nationale ; deux recherches sur le web,
+  sans page de la MSA qui chiffre les points de l'année de cessation.
+trouve: >-
+  R. 732-70 (LEGIARTI000024113180) donne les points de la proportionnelle
+  « pour l'année au titre de laquelle [la cotisation est] due », en fonction
+  des revenus professionnels, sans prorata ; D. 732-155 porte au compte le
+  « nombre annuel de points » de la RCO quand la cotisation de l'année est
+  acquittée ; L. 731-15 assied les cotisations sur la moyenne des revenus des
+  trois années antérieures, un revenu annuel. Depuis 2026, R. 732-60, 1°
+  (LEGIARTI000053336726) arrête les droits « au dernier jour de l'année civile
+  de l'entrée en jouissance ». La réponse de 2016 défend l'annualité pour ses
+  effets sur les droits à retraite en fin d'activité. Portée dans les deux
+  moteurs (Carriere.part_cotisee_ligne, acquerir, salaire_de_reference) : les
+  points d'une année, au revenu des mois porté à douze, et le revenu de
+  l'année dans la moyenne de 2026. Les fiches retraite_proportionnelle_msa,
+  assiette_minimale_agricole et pension_non_salaries_agricoles_2026 citent ces
+  lectures ; les rédactions de L. 731-15, hors de la liste des textes, ne
+  touchent pas au cliquet.
+reste: >-
+  L'année d'installation, que L. 731-10-1 exonère, et le départ vers un autre
+  métier (R. 731-83) gardent les points de leurs mois ; le chemin
+  points_maximum (la RCO, peut-être la CNAVPL) ne proratise pas une ligne
+  incomplète ; le statut au 1er janvier n'est pas lu quand l'année de
+  cessation en change ; le compte et le cycle de vie lisent encore aux mois ce
+  que l'exploitant verse l'année où il cesse.

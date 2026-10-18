@@ -34,9 +34,14 @@ effet: >-
   que le moteur prend, depuis le 16 octobre 2026, de leur assiette forfaitaire (400 SMIC
   jusqu'en 2025, 600 depuis), quand L. 732-24 le déduirait peut-être des cotisations ;
   et les années de chef à titre secondaire d'avant 2016, que le moteur garde dans la
-  part forfaitaire, L. 732-28 étant abrogé pour ces pensions.
+  part forfaitaire, L. 732-28 étant abrogé pour ces pensions. Depuis le 17 octobre 2026
+  (action 131), le revenu de l'année où l'exploitant cesse, cotisée entière (L.
+  731-10-1), entre dans le revenu annuel moyen, au revenu de ses mois porté à douze, sous
+  le plafond et au plancher de l'année entière : R. 732-60 arrête ses droits « au dernier
+  jour de l'année civile de l'entrée en jouissance ». Le moteur le compte dès la date
+  d'effet, quand R. 732-60 ne révise les droits qu'au mois qui suit l'encaissement.
 sources:
-  lu_le: 2026-09-28
+  lu_le: 2026-10-17
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -172,6 +177,17 @@ sources:
       leur est plus favorable, elle est réhaussée »
     url: https://www.msa.fr/lfp/retraite/reforme-exploitants-25-meilleures-annees
     date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      R. 732-60, 1° (LEGIARTI000053336726) : « Par dérogation à ce qui résulte du 1° de
+      l'article R. 351-1 du code de la sécurité sociale, les droits à l'assurance
+      vieillesse sont déterminés en tenant compte des cotisations versées et arrêtées au
+      dernier jour de l'année civile de l'entrée en jouissance de la pension. Lorsque des
+      cotisations sont versées entre la date de liquidation de la pension et le dernier
+      jour de l'année d'entrée en jouissance, la révision des droits prend effet à compter
+      du premier jour du mois suivant celui au cours duquel ont été encaissées les
+      cotisations dues ». Lu dans l'index LEGI du dépôt
+    date: 2026-10-17
 textes_a_rattacher:
 - id: LEGIARTI000053280317
   reference: >-
