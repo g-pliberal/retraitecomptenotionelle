@@ -1,14 +1,15 @@
 # Étape 9, première partie : les indicateurs de cycle de vie, confrontés au COR, à TRAJECTOiRE et à l'OCDE
 
-**Reprise, au 16 octobre 2026.** Fait : `cycle_de_vie.py`, onze indicateurs
+**Reprise, au 18 octobre 2026.** Fait : `cycle_de_vie.py`, onze indicateurs
 des six systèmes, sous les conventions de l'OCDE et du COR, chaque âge de
-départ, les prélèvements de chaque année, l'âge d'équilibre ; leur portage —
-les flux, les indicateurs, l'âge d'équilibre, les revenus nets, l'impôt, puis
-les âges de départ d'une carrière (`agesBalayes`, `balayageDUneCarriere`,
-16 octobre) —, rejoué contre le Python, puis affiché au site avec l'étape 10
-(`2026-10-16-etape-10-ages-de-depart-au-site.md`). Reste, dans cet ordre : la
-révision de 2026, au COR ; Typfallsmodellen. Les cas types du COR restent au
-Python. Détail : `2026-10-16-etape-9-ages-de-depart-au-portage.md`.
+départ, les prélèvements de chaque année, l'âge d'équilibre ; leur portage,
+rejoué contre le Python et affiché au site avec l'étape 10 ; le 18 octobre,
+la révision de 2026 du COR, cherchée à ses séances, que rien ne publie : sous
+les prix aussi (figure A2.13), elle tient aux flux, non à l'actualisation.
+Reste : Typfallsmodellen ; la révision, à la réponse du COR. Au propriétaire :
+demander à son secrétariat général ce qui a changé dans les cotisations ou
+les pensions du cas type n° 2 (la question est dans la note). Les cas types du
+COR restent au Python. Détail : `2026-10-18-etape-9-revision-de-2026.md`.
 
 **La demande.** L'étape 9 de l'action : « les indicateurs de cycle de vie, par
 cas type et génération, sous les six systèmes : rendement interne, durée de
