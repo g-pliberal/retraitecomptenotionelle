@@ -575,6 +575,28 @@ def test_le_remplacement_apres_impot_impose_une_annee_entiere_de_chacun(
     assert attendu > nette / flux.dernier_revenu_net
 
 
+def test_le_depart_rend_la_pension_apres_impot_de_chaque_systeme(
+        simulateur, parti_en_2044, impose_en_2044, balayage_1970):
+    """Sous l'impôt, le départ rend aussi le numérateur du taux de
+    remplacement après impôt, ce que les pages montrent (action 138, étape
+    5) : la pension nette du premier mois, annualisée, moins l'impôt d'une
+    année entière d'elle seule, déclarée par une personne seule de son âge au
+    barème de l'année du départ. Avant impôt, il n'en rend aucune."""
+    lui = cycle_de_vie.depart(simulateur, parti_en_2044, impot="prix")
+    annee = parti_en_2044.carriere.annee_liquidation
+    brute = cycle_de_vie.pension_au_depart(simulateur, parti_en_2044, "actuel")
+    part = cycle_de_vie.parts_imposables_par_annee(simulateur, parti_en_2044)[annee]
+    impot = _impot(simulateur, annee, Declarant(pensions=brute * part, age=annee - 1980))
+    assert impot > 0.0
+    assert lui.pensions_apres_impot["actuel"] == pytest.approx(
+        lui.pensions_nettes["actuel"] - impot)
+    assert lui.pensions_apres_impot.keys() == lui.pensions_nettes.keys()
+    for scenario, pension in lui.pensions_apres_impot.items():
+        assert pension == pytest.approx(lui.remplacements_apres_impot[scenario]
+                                        * impose_en_2044[scenario].dernier_revenu_apres_impot)
+    assert balayage_1970[0].pensions_apres_impot is None
+
+
 def test_la_majoration_pour_enfants_s_exonere_jusqu_aux_revenus_de_2012():
     """« Les majorations de retraite ou de pension pour charges de famille »
     sont affranchies de l'impôt (CGI, art. 81, 2° ter), mais « le montant

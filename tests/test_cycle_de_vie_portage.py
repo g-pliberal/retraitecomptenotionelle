@@ -257,6 +257,7 @@ def _depart_en_dictionnaire(depart: cycle_de_vie.Depart) -> dict:
         "remplacements": {scenario: None if r is None else dataclasses.asdict(r)
                           for scenario, r in depart.remplacements.items()},
         "remplacements_apres_impot": depart.remplacements_apres_impot,
+        "pensions_apres_impot": depart.pensions_apres_impot,
     }
 
 
@@ -348,7 +349,8 @@ def test_les_indicateurs_de_chaque_systeme_se_retrouvent_en_javascript(les_deux,
 def test_chaque_age_de_depart_se_retrouve_en_javascript(les_deux, rang):
     """Les âges balayés, et à chacun, sous les six systèmes, les indicateurs
     nets ou après impôt, la pension nette, rapportée au minimum vieillesse, le
-    taux de remplacement net en trois unités et après impôt."""
+    taux de remplacement net en trois unités et après impôt, la pension après
+    impôt."""
     obtenu, attendu = les_deux
     balayage = obtenu["balayages"][rang]
     assert "erreur" not in balayage, balayage.get("erreur")
@@ -367,6 +369,9 @@ def test_le_balayage_a_un_objet(les_deux):
     assert len(longue["departs"]) == len(longue["ages"]) > 20
     assert all(d["remplacements"]["actuel"] for d in longue["departs"])
     assert all(d["remplacements_apres_impot"]["actuel"] for d in longue["departs"])
+    assert all(d["pensions_apres_impot"]["actuel"] < d["pensions_nettes"]["actuel"]
+               for d in longue["departs"])
+    assert fonctionnaire["departs"][0]["pensions_apres_impot"] is None
     assert fonctionnaire["departs"][0]["annee"] < 2007
     assert all(d["pensions_aspa"]["actuel"] for b in attendu["balayages"]
                for d in b["departs"])

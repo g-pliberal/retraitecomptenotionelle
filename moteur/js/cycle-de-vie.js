@@ -1345,17 +1345,18 @@ export function remplacementNet(simulateur, carriere, nets, pensionNette) {
 /**
  * Un âge du balayage, et ce qu'y donne chacun des six systèmes, en net :
  * `age`, `annee` (du départ du scénario 1), `indicateurs`, `pensions_nettes`,
- * `pensions_aspa`, `remplacements`, `remplacements_apres_impot` (`null` avant
- * impôt), chacun un objet par système. Jumeau de `Depart`.
+ * `pensions_aspa`, `remplacements`, `remplacements_apres_impot` et
+ * `pensions_apres_impot` (`null` avant impôt), chacun un objet par système.
+ * Jumeau de `Depart`.
  */
 export class Depart {
   constructor({
     age, annee, indicateurs: lesIndicateurs, pensions_nettes, pensions_aspa, remplacements,
-    remplacements_apres_impot = null,
+    remplacements_apres_impot = null, pensions_apres_impot = null,
   }) {
     Object.assign(this, {
       age, annee, indicateurs: lesIndicateurs, pensions_nettes, pensions_aspa, remplacements,
-      remplacements_apres_impot,
+      remplacements_apres_impot, pensions_apres_impot,
     });
   }
 }
@@ -1363,18 +1364,21 @@ export class Depart {
 /**
  * Ce que donne, en net, le départ de `comparaison` sous les six systèmes ;
  * avec `impot`, l'indexation du barème de l'impôt sur le revenu, les
- * indicateurs après impôt et le taux de remplacement après impôt. Jumeau de
- * `depart`.
+ * indicateurs après impôt, la pension et le taux de remplacement après
+ * impôt. Jumeau de `depart`.
  */
 export function depart(simulateur, comparaison, cor = false, age = null, impot = null) {
   const convention = impot === null ? conventionNette(simulateur, comparaison, cor)
     : conventionApresImpot(simulateur, comparaison, cor, impot);
   const systemes = fluxDesSystemes(simulateur, comparaison, { nets: true, impot });
   let apres = null;
+  let pensionsApres = null;
   if (impot !== null) {
     const parts = partsImposablesParAnnee(simulateur, comparaison);
     apres = Object.fromEntries(Object.entries(systemes).map(([scenario, flux]) => [scenario,
       remplacementApresImpotDe(simulateur, comparaison, scenario, flux, convention, parts)]));
+    pensionsApres = Object.fromEntries(Object.entries(systemes).map(([scenario, flux]) => [
+      scenario, pensionApresImpotDe(simulateur, comparaison, scenario, flux, convention, parts)]));
   }
   const pensions = {};
   const aspa = {};
@@ -1397,6 +1401,7 @@ export function depart(simulateur, comparaison, cor = false, age = null, impot =
     pensions_aspa: aspa,
     remplacements,
     remplacements_apres_impot: apres,
+    pensions_apres_impot: pensionsApres,
   });
 }
 

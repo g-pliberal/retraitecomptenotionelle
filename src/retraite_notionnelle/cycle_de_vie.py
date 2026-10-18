@@ -1758,6 +1758,10 @@ class Depart:
     #: Après impôt, le taux de remplacement après impôt au départ
     #: (:func:`remplacement_apres_impot`) ; ``None`` avant impôt.
     remplacements_apres_impot: dict[str, float | None] | None = None
+    #: Après impôt, son numérateur : la pension nette du premier mois servi,
+    #: annualisée, moins l'impôt d'une année entière d'elle seule, en euros de
+    #: l'année du départ de chaque système ; ``None`` avant impôt.
+    pensions_apres_impot: dict[str, float] | None = None
 
 
 def depart(simulateur, comparaison, cor: bool = False,
@@ -1765,16 +1769,20 @@ def depart(simulateur, comparaison, cor: bool = False,
     """Ce que donne, en net, le départ de ``comparaison`` sous les six
     systèmes (:func:`convention_nette`) ; avec ``impot``, l'indexation du
     barème de l'impôt sur le revenu, les indicateurs après impôt
-    (:func:`convention_apres_impot`) et le taux de remplacement après impôt."""
+    (:func:`convention_apres_impot`), la pension et le taux de remplacement
+    après impôt."""
     convention = (convention_nette(simulateur, comparaison, cor) if impot is None
                   else convention_apres_impot(simulateur, comparaison, cor, impot))
     systemes = flux_des_systemes(simulateur, comparaison, nets=True, impot=impot)
-    apres = None
+    apres = pensions_apres = None
     if impot is not None:
         parts = parts_imposables_par_annee(simulateur, comparaison)
         apres = {scenario: _remplacement_apres_impot(simulateur, comparaison, scenario, flux,
                                                      convention, parts)
                  for scenario, flux in systemes.items()}
+        pensions_apres = {scenario: _pension_apres_impot(simulateur, comparaison, scenario,
+                                                         flux, convention, parts)
+                          for scenario, flux in systemes.items()}
     pensions, aspa, remplacements = {}, {}, {}
     for scenario, flux in systemes.items():
         carriere = comparaison.carriere_de(scenario)
@@ -1791,7 +1799,7 @@ def depart(simulateur, comparaison, cor: bool = False,
         indicateurs={scenario: indicateurs(flux, simulateur, convention)
                      for scenario, flux in systemes.items()},
         pensions_nettes=pensions, pensions_aspa=aspa, remplacements=remplacements,
-        remplacements_apres_impot=apres,
+        remplacements_apres_impot=apres, pensions_apres_impot=pensions_apres,
     )
 
 
