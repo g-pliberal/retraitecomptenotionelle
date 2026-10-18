@@ -1,0 +1,20 @@
+date: "2026-10-18"
+session: "action 138, étape 9, quatorzième partie : la pension par étage et le revenu autour du départ, les tableaux 1 et 2 de Typfallsmodellen"
+consulte: >-
+  Aucun texte de droit : la mesure ne touche à aucune règle du scénario 1. Le
+  manuel de Typfallsmodellen (Pensionsmyndigheten, PID289138, version 2.2 du
+  27 janvier 2025, § 2.1, son tableau 1), et le portage
+  `mathiasboos/Typfallsmodellen` au commit `bb46d93`, `result.ts`
+  (`buildTable1`, `buildTable2`) et `context.ts` (« Average_Earning »,
+  « rng_tabell2_startAge »).
+trouve: >-
+  Son tableau 1 rend chaque étage en part du salaire de fin de carrière, la
+  moyenne des cinq dernières années en prix constants, et la pension après
+  impôt en part du salaire après impôt : 88,2 % et 80,8 % pour l'aide-soignante
+  de son exemple. Son tableau 2 suit chaque âge de dix ans avant le départ à
+  la fin du modèle. Le dépôt les refait sur l'étage de chaque régime au
+  catalogue et sur son dernier revenu annualisé (`pension_par_etage`,
+  `revenus_autour_du_depart`).
+reste: >-
+  Rien au droit. Les pages, à la session du site ; la révision de 2026 du COR,
+  à sa réponse.

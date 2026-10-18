@@ -9388,14 +9388,31 @@ referents:
           Il rend la pension par étage, avant et après impôt, en part du
           dernier salaire, et le revenu autour du départ. Le dépôt n'a que le
           taux de remplacement (`simulateur.py:277-298`).
-        preuve: son manuel PID289138, version 2.2
+        preuve: >-
+          son manuel PID289138, version 2.2 (§ 2.1, tableau 1) ;
+          `result.ts` (`buildTable1`, `buildTable2`) du portage
+          `mathiasboos/Typfallsmodellen` au commit `bb46d93`
         verification: >-
           Le 13 octobre 2026 (138.5, troisième partie), le taux de
           remplacement après impôt au départ, toute pension
           confondue (`cycle_de_vie.remplacement_apres_impot`), et
-          les indicateurs de cycle de vie après impôt. Restent la
-          pension par étage et le revenu autour du départ.
-        etat: a_reprendre
+          les indicateurs de cycle de vie après impôt. Repris le 18
+          octobre 2026 (138.9, quatorzième partie) : la pension du
+          départ par étage (`cycle_de_vie.pension_par_etage`) —
+          chaque régime à son étage du catalogue, un système
+          notionnel à son compte, le scénario 6 à son pilier —, en
+          part du dernier revenu, brute, nette et après impôt, son
+          tableau 1, dont l'exemple du manuel se refait au dixième de
+          point ; le revenu de dix ans avant le départ à dix ans
+          après, en euros de l'année du départ
+          (`cycle_de_vie.revenus_autour_du_depart`), son tableau 2 ;
+          leurs jumeaux JavaScript, et la grille des cas types
+          (`scripts/cycle_de_vie.py --etages`). Le dépôt garde ses
+          conventions : ni l'ASPA ni la garantie vieillesse dans la
+          pension, quand il compte sa « garantipension » ; le dernier
+          revenu annualisé, quand il moyenne les cinq dernières
+          années, en prix constants (« Average_Earning »).
+        etat: repris
         chantier: "138.9"
       - quoi: >-
           Il calcule l'uttag partiel, et les droits acquis après un
