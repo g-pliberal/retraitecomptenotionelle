@@ -3191,6 +3191,7 @@ def _garantie_distribution(simulateur: Simulateur, pensionnes: list[Pensionne],
 def _masses_regimes(pensionnes: list[Pensionne], population: Population, annee: int,
                     poids_cas: dict[str, float], revalorisation: RevalorisationServie,
                     poids_alignement: dict[str, float] | None = None,
+                    alignees: dict[tuple[str, int, int], float] | None = None,
                     ) -> tuple[dict[str, float], dict[str, float]]:
     """La masse du scénario 1 et ses têtes, régime par régime, une année.
 
@@ -3202,12 +3203,15 @@ def _masses_regimes(pensionnes: list[Pensionne], population: Population, annee: 
 
     ``poids_alignement`` pèse la grille entière quand ``poids_cas`` n'en garde
     qu'un cas type, comme le calage des groupes : ses survivants sont alors
-    ceux que la grille lui laisse (:func:`_survies_alignees`).
+    ceux que la grille lui laisse (:func:`_survies_alignees`). ``alignees``,
+    ces survivants déjà alignés, en dispense : le calage les aligne une fois
+    pour tous ses cas types.
     """
     masses: dict[str, float] = {}
     tetes: dict[str, float] = {}
-    alignees = _survies_alignees(
-        pensionnes, poids_cas if poids_alignement is None else poids_alignement, annee)
+    if alignees is None:
+        alignees = _survies_alignees(
+            pensionnes, poids_cas if poids_alignement is None else poids_alignement, annee)
     for pensionne in pensionnes:
         part = poids_cas.get(pensionne.code, 0.0)
         if part <= 0.0 or not pensionne.parts_regimes:
@@ -3506,12 +3510,14 @@ def _poids_par_groupe(poids: Callable[[int], dict[str, float]],
         return poids
     masses: dict[str, dict[str, float]] = {}
     bruts = poids(annee)
+    # Chaque cas type pesé seul, ses survivants alignés sur toute la grille :
+    # l'alignement est le même pour tous, et se fait une fois.
+    alignees = _survies_alignees(pensionnes, bruts, annee)
     for code, part in bruts.items():
         if part <= 0.0:
             continue
-        # Chaque cas type pesé seul, ses survivants alignés sur toute la grille.
         regimes, _ = _masses_regimes(pensionnes, population, annee, {code: part},
-                                     revalorisation, poids_alignement=bruts)
+                                     revalorisation, alignees=alignees)
         groupes = {groupe: somme_ordonnee(regimes.get(regime, 0.0) for regime in membres)
                    for groupe, membres in GROUPES_DU_MODELE.items()}
         if somme_ordonnee(groupes.values()) > 0.0:
