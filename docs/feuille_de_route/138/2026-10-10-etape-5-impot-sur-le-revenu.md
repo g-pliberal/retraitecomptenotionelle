@@ -4,12 +4,12 @@
 CSG déductible (11) ; l'impôt dans les indicateurs (13) ; l'effet retour (14) ;
 l'ASPA déformée, le bénéfice des indépendants (16) ; les adhérents d'avant 1978
 (17) ; le 18, la prime des non-salariés, la majoration pour enfants, la pension
-après impôt au dépliant, et les règles des revenus de 1960 à 1980, lues aux
-lois. Reste : au propriétaire, l'impôt dans les cartes de résultats, l'effet
-retour dans le solde, trois décisions sur le bénéfice, la loi de la décote de
-1961, depuis un poste ; la taxe complémentaire d'avant 1970 ; l'exonération au
-minimum garanti. Détail : « Ce qui reste » de
-`2026-10-18-etape-5-lois-de-finances-de-1961-a-1969.md`.
+après impôt au dépliant, les règles des revenus de 1960 à 1980, lues aux lois,
+et la taxe complémentaire de 1959 à 1969. Reste : au propriétaire, l'impôt dans
+les cartes de résultats, l'effet retour dans le solde, trois décisions sur le
+bénéfice, la décote et le taux de la taxe de 1961, depuis un poste ; puis, à
+commencer, l'exonération au minimum garanti. Détail : « Ce qui reste » de
+`2026-10-18-etape-5-taxe-complementaire.md`.
 
 **La demande.** Le propriétaire, le 10 octobre 2026 : l'impôt sur le revenu
 d'un foyer, de son barème à son montant, chaque année ; les barèmes de l'IPP

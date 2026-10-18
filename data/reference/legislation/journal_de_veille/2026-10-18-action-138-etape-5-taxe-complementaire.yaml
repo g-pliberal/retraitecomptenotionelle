@@ -1,0 +1,46 @@
+date: "2026-10-18"
+session: "action 138, étape 5, quinzième partie : la taxe complémentaire des revenus de 1959 à 1969, lue à la loi de 1959 et aux lois de finances jusqu'à celle pour 1970"
+consulte: >-
+  `python scripts/veille_droit.py` : aucune fiche de la carte touchée, la
+  session n'écrivant aucune règle de la pension. Les index JORF et LEGI de la
+  DILA, récupérés, LEGI mis à jour au 17 octobre 2026 ; `textes.py --inscrire` :
+  aucune rédaction nouvelle. Au site du Sénat (senat.fr/leg/), les textes de la
+  loi n° 59-1472 (ta1959_1960_0002, _0016), des lois de finances pour 1961
+  (ta1960_1961_0044), 1964 (ta1963_1964_0026), 1965 (ta1964_1965_0014), 1966
+  (ta1965_1966_0014), 1967 (ta1966_1967_0023), 1969 (ta1968_1969_0023) et 1970
+  (ta1969_1970_0055) ; sous senat.fr/rap/, le rapport n° 24 (1959-1960) sur la
+  réforme de 1959, les rapports généraux n° 53 (1961-1962), 23 (1963-1964), 23
+  (1964-1965), 31 (1965-1966), 25 (1966-1967), 16 (1967-1968) et 40
+  (1968-1969), tome II, n° 56 (1969-1970), tome III, et le rapport n° 106
+  (1962-1963). Dans LEGI, les rédactions de l'article 5 du code, de 1979 à 2015 ;
+  le code n'y a aucune rédaction des articles 204 bis à 204 sexies, abrogés
+  avant 1979, ni le JORF le décret n° 55-466.
+trouve: >-
+  La taxe complémentaire frappe les revenus autres que les salaires et les
+  pensions — sauf les capitaux mobiliers retenus à la source, les bénéfices non
+  commerciaux que des tiers déclarent, les non-résidents — à 9 % pour les
+  revenus de 1959, 8 % pour ceux de 1960 (loi n° 59-1472, art. 22 et 19), 6 %
+  dès ceux de 1961 (loi de finances pour 1962, art. 18 bis du texte de
+  l'Assemblée nationale, le texte définitif n'étant pas lu), après un
+  abattement de 3 000 F pour les bénéfices industriels, commerciaux et
+  agricoles, de 4 400 F pour ceux des artisans et des professions non
+  commerciales, 4 400 F au plus par contribuable (art. 18, 2, et rapport n° 24,
+  p. 86) ; pour les artisans, 3 % en 1964 (loi n° 64-1279, art. 3), rien dès
+  1965 (loi n° 65-997, art. 4) ; 4 000 F d'abattement pour les premiers dès les
+  revenus de 1968 (loi n° 68-1172, art. 3) ; pour ceux de 1969, la seule
+  fraction au-delà de 30 000 F, puis la suppression (loi n° 69-1161, art. 5).
+  Elle se déduit du revenu global de l'année où elle se paie, la suivante (art.
+  18, 4, et rapport n° 24, p. 87 et 90). Écrits dans la donnée, le script de
+  l'IPP, `impot_revenu.py`, `cycle_de_vie.py` et leurs jumeaux ; au registre,
+  IR12. L'article 5, 2°, du code exonère, de 1979 à 2014, qui vit
+  principalement de salaires et de pensions sous le « minimum garanti prévu à
+  l'article L. 141-8 du code du travail », 38 650 F pour 2000 et 5 994,55 € pour
+  2001 dans les notes des rédactions.
+reste: >-
+  Au propriétaire, le texte définitif de la loi de finances pour 1962, qui
+  dirait le taux de 6 % des revenus de 1961, avec la loi de la décote de 1961,
+  depuis un poste. La part des bénéfices non commerciaux que les tiers
+  déclarent ; le décret n° 55-466 ; l'arrondi de la base d'avant 1968 ; les
+  décrets des commerçants de 1963 et 1964. L'exonération de l'article 5, 2°, à
+  une autre session : le minimum garanti annuel de chaque année et sa règle de
+  calcul, et l'article 13 de la loi n° 59-1472 avant 1979.
