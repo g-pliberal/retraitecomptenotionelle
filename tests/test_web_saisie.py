@@ -228,6 +228,32 @@ def test_la_page_dit_la_limite_d_age_et_ses_exceptions_presumees(page):
         statut="fonctionnaire_etat", liquidation=64)
 
 
+def test_la_page_dit_la_fin_de_l_emploi_dans_les_mots_de_chaque_statut(page):
+    """À sa limite, l'agent des industries électriques et gazières « est mis
+    en inactivité » (statut national, annexe, article 4, depuis 2008), et,
+    avant le 28 novembre 2007, son « admission à la retraite est prononcée
+    d'office » (décret n° 54-50, article 2) ; « la cessation des fonctions »
+    du personnel de l'Opéra « est prononcée » (décret n° 2008-240, article 2) ;
+    l'agent de la SEITA « est obligatoirement retraité » (décret n° 62-766,
+    article 111) ; celui de la Banque de France doit « prendre [sa] retraite »
+    (statut du personnel, article 241). Né en 1975, l'agent des IEG a pour
+    limite soixante-sept ans, et le maintien jusqu'à soixante-dix ans, présumé ;
+    né en 1945 et entré à vingt et un ans, il a ses vingt-cinq ans de services
+    à cinquante-cinq ans, l'âge où l'actif ouvre son droit. Né en 1975, l'agent
+    de l'Opéra a soixante-sept ans ; né en 1940, celui de la SEITA, soixante-cinq
+    ans, sans exception ; né en 1960, celui de la Banque, soixante-sept ans
+    (action 151, étapes 6, 8 et 9)."""
+    for statut, naissance, depart, fin in (
+            ("agent_ieg", 1975, 75, "vous êtes mis en inactivité à 70 ans"),
+            ("agent_ieg", 1945, 68, "vous êtes admis d'office à la retraite à 55 ans"),
+            ("personnel_opera", 1975, 75, "vos fonctions cessent à 67 ans"),
+            ("agent_seita", 1940, 68, "vous êtes mis à la retraite à 65 ans"),
+            ("agent_banque_de_france", 1960, 72, "vous devez prendre votre retraite à 67 ans")):
+        texte = re.sub(r"\s+", " ", page("/simuler", naissance=naissance, debut=21,
+                                         statut=statut, liquidation=depart))
+        assert f"Ainsi {fin} : ce qui suit" in texte, (statut, naissance)
+
+
 def test_les_adresses_d_avant_le_calendrier_valent_toujours():
     """Le formulaire demande des dates ; les adresses déjà partagées portaient
     des âges, en deux champs. Les deux doivent décrire la même carrière, et se

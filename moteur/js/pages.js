@@ -3558,10 +3558,13 @@ ${lignes.join("\n")}
 }
 
 /**
- * Ce qui met fin à l'emploi à sa limite d'âge, selon la fiche qui la porte
- * (`droit/limite_age.js`) : le fonctionnaire et le militaire sont radiés des
- * cadres, le contrat du contractuel prend fin, l'ouvrier de l'État et l'agent
- * de la SNCF ou de la RATP sont mis à la retraite.
+ * Ce qui met fin à l'emploi à sa limite d'âge, selon la fiche qui la porte et
+ * sa version (`droit/limite_age.js`) : le fonctionnaire et le militaire sont
+ * radiés des cadres, le contrat du contractuel prend fin, l'ouvrier de l'État
+ * et l'agent de la SNCF, de la RATP ou de la SEITA sont mis à la retraite,
+ * l'agent des IEG est mis en inactivité, et, avant le 28 novembre 2007, admis
+ * d'office à la retraite (décret n° 54-50), les fonctions du personnel de
+ * l'Opéra cessent, et l'agent de la Banque de France doit prendre sa retraite.
  */
 const FIN_A_LA_LIMITE = {
   limite_age_fonction_publique: (quand) => `la loi vous radie des cadres à ${quand}`,
@@ -3569,6 +3572,12 @@ const FIN_A_LA_LIMITE = {
   limite_age_contractuels: (quand) => `votre contrat prend fin à ${quand}`,
   limite_age_ouvriers_etat: (quand) => `vous êtes mis à la retraite à ${quand}`,
   limite_age_sncf_ratp: (quand) => `vous êtes mis à la retraite à ${quand}`,
+  limite_age_ieg: (quand, version) => (version === "decret_de_1954"
+    ? `vous êtes admis d'office à la retraite à ${quand}`
+    : `vous êtes mis en inactivité à ${quand}`),
+  limite_age_opera: (quand) => `vos fonctions cessent à ${quand}`,
+  limite_age_seita: (quand) => `vous êtes mis à la retraite à ${quand}`,
+  limite_age_banque_de_france: (quand) => `vous devez prendre votre retraite à ${quand}`,
 };
 
 /**
@@ -3604,7 +3613,7 @@ function limiteDAgePassee(contexte, comparaison) {
   const nommer = (recul) => (EXCEPTIONS_A_LA_LIMITE[recul.nom]
     ?? ((quand) => `${echapper(recul.nom)}, jusqu'à ${quand}`))(age(recul.jusqu_a));
   const fin = (FIN_A_LA_LIMITE[radiee.fiche]
-    ?? ((quand) => `votre emploi prend fin à ${quand}`))(age(radiee.age));
+    ?? ((quand) => `votre emploi prend fin à ${quand}`))(age(radiee.age), radiee.version);
   const militaire = radiee.fiche === "limite_age_militaires";
   let texte = `La limite d'âge de votre emploi est de ${age(radiee.limite)}`
     + (militaire ? ", la plus haute de votre catégorie : votre grade n'est pas saisi." : ".");
