@@ -751,8 +751,6 @@ def _regimes() -> list[dict]:
                     "plafond_majoration_annee": p.plafond_majoration_annee,
                     "plafond_majoration_regime": p.plafond_majoration_regime,
                     "points_maximum": p.points_maximum,
-                    "points_au_prorata_des_cotisations":
-                        p.points_au_prorata_des_cotisations,
                     "points_minimum_annuels": p.points_minimum_annuels,
                     "points_par_trimestre_valide": p.points_par_trimestre_valide,
                     "points_ajustement_par_forfait": p.points_ajustement_par_forfait,
@@ -809,6 +807,7 @@ def _regimes() -> list[dict]:
                     **_regles_d_avant_1983(p),
                     **_duree_majoree(p),
                     **_points_abattus(p),
+                    **_points_au_prorata(p),
                     **_bareme_anticipation(p),
                     **_non_salaries_2026(p),
                     **_fractions_des_cultes(p),
@@ -906,6 +905,15 @@ def _points_abattus(p) -> dict:
     Même raison que pour les marins.
     """
     return {"points_abattus_a_l_age": True} if p.points_abattus_a_l_age else {}
+
+
+def _points_au_prorata(p) -> dict:
+    """Les points d'un barème en points comptés au prorata des cotisations, et
+    seulement là : les périodes de la CNAVPL depuis 2004. Même raison que pour
+    les marins : le moteur JavaScript lit son absence comme sa fausseté.
+    """
+    return ({"points_au_prorata_des_cotisations": True}
+            if p.points_au_prorata_des_cotisations else {})
 
 
 def _bareme_anticipation(p) -> dict:
