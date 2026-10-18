@@ -25,7 +25,8 @@ def _fonctions(fichier: str) -> set[str]:
 
 #: Les tests d'une seconde qui ont rougi main, du 6 au 17 octobre 2026, sans
 #: qu'aucune session les ait joués : leurs fichiers ne sont pas de la suite
-#: rapide (action 163, garde 3), et le dernier garde les comptes du parcours.
+#: rapide (action 163, garde 3), et les deux derniers gardent les comptes du
+#: parcours et les tableaux de ses carrières.
 GARDES_RAPIDES = (
     ("test_web.py", "test_les_modules_sont_tous_precharges"),
     ("test_web.py", "test_le_README_n_ecrit_a_la_main_ni_statuts_ni_regimes"),
@@ -35,6 +36,7 @@ GARDES_RAPIDES = (
     ("test_prose.py", "test_chaque_action_en_cours_s_ouvre_sur_son_bloc_reprise"),
     ("test_prose.py", "test_les_notes_de_la_feuille_de_route_se_rangent_par_action"),
     ("test_parcours.py", "test_aucun_compte_du_parcours_ne_s_ecrit_a_la_main"),
+    ("test_parcours.py", "test_aucun_tableau_de_carriere_ne_s_ecrit_a_la_main"),
 )
 
 

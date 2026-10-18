@@ -1,0 +1,14 @@
+date: "2026-10-18"
+session: "action 163 : les carrières du parcours, ancrées sur la page Simuler"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1,
+  seulement à la prose du parcours de présentation, à la mesure qui lit la
+  page Simuler (scripts/mesures_prose.py) et à leurs tests.
+trouve: >-
+  Aucune règle n'a changé. Le tableau de l'exemple du parcours datait du
+  20 septembre et aucun test ne le lisait ; ancré sur la page, il est récrit
+  depuis le modèle et s'y confronte.
+reste: >-
+  Les chiffres à unité des autres sections du parcours (Programme, Coût,
+  Avantages), et les étapes 3 et 5 de l'action 163, que le propriétaire
+  tranche.

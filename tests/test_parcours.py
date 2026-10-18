@@ -77,7 +77,6 @@ HORS_PAGE: dict[str, dict[str, str]] = {
         "1 050 €": "le plancher, montré page Programme et rappelé ici",
         "82 %": "la part patronale de l'État, détaillée page Méthode",
         "16 %": "le déficit projeté par le COR, chiffré page Coût",
-        "91 %": "la part financée, que la page dessine en barre et n'écrit pas",
     },
     "/cas-types": {},
     "/cout": {},
@@ -132,6 +131,38 @@ def test_aucun_compte_du_parcours_ne_s_ecrit_a_la_main():
     un compte ancré ne se lit plus ici, son ancre le sépare de son nom."""
     brut = PARCOURS.read_text(encoding="utf-8")
     assert [trouve.group(0) for trouve in COMPTE.finditer(brut)] == []
+
+
+#: Un chiffre ancré, sa valeur comprise : ce qui reste quand on l'ôte est ce
+#: qui s'écrit à la main.
+ANCRE_ENTIERE = re.compile(r"<!--chiffre:.*?-->.*?<!--/-->", re.S)
+#: La saisie d'un chiffre ancré sur la page Simuler.
+MESURE_SIMULEE = re.compile(r"<!--chiffre:mesure\(simulateur\?([^)]*)\)-->")
+
+
+def test_aucun_tableau_de_carriere_ne_s_ecrit_a_la_main():
+    """Les pensions et les écarts des carrières du parcours sont ceux que la
+    page Simuler affiche. Écrits à la main, ils ont rougi la suite chaque fois
+    que le modèle bougeait, et le tableau de l'exemple, qu'aucune adresse ne
+    précède, datait du 20 septembre (action 163). Ancrés sur la page
+    (``mesure(simulateur…)``), GitHub les récrit avec elle, sur la saisie de
+    l'adresse qui précède le tableau : ses ancres la répètent, et une adresse
+    changée sans elles ferait dire au tableau la carrière d'avant."""
+    brut = PARCOURS.read_text(encoding="utf-8")
+    lignes = LIGNE_TABLEAU.findall(ANCRE_ENTIERE.sub("", brut))
+    assert len(lignes) >= 13, "le parcours a perdu des lignes de ses tableaux de carrières"
+    ecrits = [_ecrit(*trouve) for _numero, _libelle, *cellules in lignes
+              for trouve in NOMBRE.findall(" ".join(cellules))]
+    assert ecrits == []
+    for adresse in ADRESSE.finditer(brut):
+        saisie = dict(parse_qsl(html.unescape(adresse.group(2))))
+        tableau = brut[adresse.end():].split("\n\n", 2)[1]
+        lues = [{cle: valeur for cle, valeur in parse_qsl(argument)
+                 if cle not in ("systeme", "quoi")}
+                for argument in MESURE_SIMULEE.findall(tableau)]
+        assert lues and all(lue == saisie for lue in lues), (
+            f"le tableau sous l'adresse de {saisie.get('statut')} {saisie.get('salaire')} "
+            "ne se mesure pas sur sa saisie")
 
 
 def _prose(corps: str) -> str:
@@ -264,28 +295,46 @@ def test_le_parcours_rejoue_ses_carrieres(parcours):
         suite = parcours[adresse.end():adresse.end() + 900]
         lignes = LIGNE_TABLEAU.findall(suite)
         assert lignes, f"aucun tableau sous l'adresse de {qui}"
-        for numero, _libelle, montant, ecart in lignes:
-            assert numero in rendues, (
-                f"[{qui}] le parcours donne une ligne {numero} que la page ne rend pas")
-            _titre, pension, ecart_rendu = rendues[numero]
-            annonce = _nombre(montant)
-            assert abs(annonce - pension) <= MARGES["€"], (
-                f"[{qui}] ligne {numero} : le parcours annonce {montant}, "
-                f"la page affiche {pension:.2f} €")
-            attendu = ecart.strip()
-            if attendu == "référence":
-                assert ecart_rendu == "référence", (
-                    f"[{qui}] ligne {numero} n'est plus la référence")
-                continue
-            trouve = NOMBRE.search(ecart_rendu)
-            assert trouve, f"[{qui}] la page ne donne plus d'écart pour la ligne {numero}"
-            rendu = _nombre(trouve.group(2)) * (-1 if trouve.group(1) == "-" else 1)
-            voulu = NOMBRE.search(attendu)
-            assert voulu, f"[{qui}] le parcours n'écrit pas d'écart lisible : {ecart!r}"
-            annonce_ecart = _nombre(voulu.group(2)) * (-1 if voulu.group(1) == "-" else 1)
-            assert abs(annonce_ecart - rendu) <= MARGES["%"], (
-                f"[{qui}] ligne {numero} : le parcours annonce un écart de "
-                f"{ecart}, la page affiche {ecart_rendu}")
+        _confronter(qui, lignes, rendues)
+
+
+@site_requis
+def test_le_parcours_rejoue_l_exemple_du_simulateur(parcours):
+    """Le tableau de l'exemple, celui que la page ouvre déjà rempli, n'a pas
+    d'adresse au-dessus de lui : il se confronte à la page rendue comme le
+    parcours la décrit, en net. Aucun test ne le lisait, et il datait du
+    20 septembre (action 163)."""
+    lignes = LIGNE_TABLEAU.findall(_sections(parcours)["### 2. Simuler — six minutes, c'est le cœur"])
+    assert len(lignes) == 4, "le parcours ne donne plus les quatre lignes de l'exemple"
+    _confronter("l'exemple", lignes,
+                _lignes_rendues("/simuler", {**_saisie_par_defaut(), "montants": "net"}))
+
+
+def _confronter(qui: str, lignes: list[tuple], rendues: dict) -> None:
+    """Chaque ligne d'un tableau du parcours contre celle que la page rend : le
+    montant à l'euro près, l'écart à la décimale."""
+    for numero, _libelle, montant, ecart in lignes:
+        assert numero in rendues, (
+            f"[{qui}] le parcours donne une ligne {numero} que la page ne rend pas")
+        _titre, pension, ecart_rendu = rendues[numero]
+        annonce = _nombre(montant)
+        assert abs(annonce - pension) <= MARGES["€"], (
+            f"[{qui}] ligne {numero} : le parcours annonce {montant}, "
+            f"la page affiche {pension:.2f} €")
+        attendu = ecart.strip()
+        if attendu == "référence":
+            assert ecart_rendu == "référence", (
+                f"[{qui}] ligne {numero} n'est plus la référence")
+            continue
+        trouve = NOMBRE.search(ecart_rendu)
+        assert trouve, f"[{qui}] la page ne donne plus d'écart pour la ligne {numero}"
+        rendu = _nombre(trouve.group(2)) * (-1 if trouve.group(1) == "-" else 1)
+        voulu = NOMBRE.search(attendu)
+        assert voulu, f"[{qui}] le parcours n'écrit pas d'écart lisible : {ecart!r}"
+        annonce_ecart = _nombre(voulu.group(2)) * (-1 if voulu.group(1) == "-" else 1)
+        assert abs(annonce_ecart - rendu) <= MARGES["%"], (
+            f"[{qui}] ligne {numero} : le parcours annonce un écart de "
+            f"{ecart}, la page affiche {ecart_rendu}")
 
 
 @site_requis

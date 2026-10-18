@@ -196,7 +196,8 @@ EXCEPTIONS = {
     # Les gardes d'une seconde qui ont rougi main, du 6 au 17 octobre 2026,
     # sans qu'aucune session les ait joués (action 163, garde 3) : les modules
     # préchargés, les comptes du README et du parcours, le menu des statuts, la
-    # table des niveaux et les isolés, le bloc « Reprise » et les notes.
+    # table des niveaux et les isolés, le bloc « Reprise » et les notes ; puis
+    # les tableaux des carrières du parcours.
     ("test_web.py", "test_les_modules_sont_tous_precharges"): "rapide",
     ("test_web.py", "test_le_README_n_ecrit_a_la_main_ni_statuts_ni_regimes"): "rapide",
     ("test_web_revues.py", "test_le_menu_des_statuts_est_groupe_par_famille"): "rapide",
@@ -206,6 +207,7 @@ EXCEPTIONS = {
     ("test_prose.py",
      "test_les_notes_de_la_feuille_de_route_se_rangent_par_action"): "rapide",
     ("test_parcours.py", "test_aucun_compte_du_parcours_ne_s_ecrit_a_la_main"): "rapide",
+    ("test_parcours.py", "test_aucun_tableau_de_carriere_ne_s_ecrit_a_la_main"): "rapide",
 }
 
 

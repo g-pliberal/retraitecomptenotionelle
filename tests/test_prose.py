@@ -338,6 +338,85 @@ def test_la_somme_et_les_filtres_croises_comptent_ce_que_les_pages_comptent():
     ) == len(en_vigueur)
 
 
+#: Une page Simuler réduite à ce que la mesure ``simulateur`` en lit : la ligne
+#: de référence, celle de la proposition, et le gain du salaire net jusqu'au
+#: départ. Les chiffres sont posés à la main, avec les espaces fines du site.
+PAGE_SIMULEE = """
+<div class="scenario">
+  <div class="entete">
+    <span class="titre">1. Système de répartition actuel</span>
+    <span class="montant">
+      <span class="chiffre salaire"><span class="categorie">salaire</span>
+        <span class="somme">3 840</span><span class="unite">€ net/mois</span></span>
+      <span class="chiffre principal"><span class="categorie">retraite</span>
+        <span class="somme">2 754</span><span class="unite">€ net/mois</span></span>
+      <span class="chiffre finance"><span class="categorie">vraiment payé</span>
+        <span class="somme">2 510</span><span class="unite">€ net/mois</span></span>
+    </span>
+  </div>
+  <div class="glose">le droit en vigueur · écart au système actuel :
+    <span class="discret">référence</span> · les recettes du système n'en paient
+    que 91 %</div>
+</div>
+<div class="scenario">
+  <div class="entete">
+    <span class="titre">4. La proposition du Parti libéral français</span>
+    <span class="montant">
+      <span class="chiffre salaire"><span class="categorie">salaire</span>
+        <span class="somme">4 137</span><span class="unite">€ net/mois</span>
+        <span class="ecart">+297 € par mois</span></span>
+      <span class="chiffre principal"><span class="categorie">retraite jusqu'à</span>
+        <span class="somme">2 194</span><span class="unite">€ net/mois</span></span>
+    </span>
+  </div>
+  <div class="glose">la proposition · écart au système actuel :
+    <strong>-20,4 %</strong> · les recettes du système couvrent ce montant 1,1 fois</div>
+</div>
+<h2 id="salaire-net">Et pendant que vous cotisez</h2>
+<p>Sur les 13 années qui vous séparent de la retraite : +48 886 € en euros de 2026.</p>
+"""
+
+
+def test_le_simulateur_se_mesure_comme_la_page_l_affiche(monkeypatch):
+    """Les carrières du parcours, ancrées sur ce que la page Simuler affiche
+    (action 163) : ligne par ligne, la pension, le salaire, ce que les recettes
+    paient et l'écart au système actuel ; puis le gain du salaire net. La page
+    est ici posée à la main ; la saisie lui passe telle quelle, et elle ne se
+    rend qu'une fois pour toutes les mesures d'une même saisie."""
+    from functools import lru_cache
+
+    from retraite_notionnelle.web import site
+
+    mesures = verifier_prose._mesures()
+    demandes = []
+
+    def rendre(chemin, requete=None):
+        demandes.append((chemin, requete))
+        return "Simuler", PAGE_SIMULEE
+
+    monkeypatch.setattr(site, "rendre", rendre)
+    monkeypatch.setattr(mesures, "_page_simulee",
+                        lru_cache(maxsize=None)(mesures._page_simulee.__wrapped__))
+
+    def mesurer(reglages: str) -> float:
+        return mesures.mesurer(f"simulateur?{reglages}&naissance=1975-01-01&montants=net")
+
+    assert mesurer("systeme=1") == 2754
+    assert mesurer("systeme=1&quoi=salaire") == 3840
+    assert mesurer("systeme=1&quoi=finance") == 2510
+    assert mesurer("systeme=1&quoi=financee") == 91
+    assert mesurer("systeme=4&quoi=pension") == 2194
+    assert mesurer("systeme=4&quoi=ecart") == -20.4
+    assert mesurer("systeme=4&quoi=gain") == 297
+    assert mesurer("quoi=gain_cumule") == 48886
+    assert mesurer("quoi=annees") == 13
+    assert demandes == [("/simuler", {"naissance": "1975-01-01", "montants": "net"})]
+    # Ce que la page n'affiche pas ne se mesure pas.
+    for absent in ("systeme=1&quoi=ecart", "systeme=4&quoi=financee", "systeme=2"):
+        with pytest.raises(ValueError):
+            mesurer(absent)
+
+
 def test_les_tableaux_produits_ne_sont_pas_perimes():
     """Ce que le modèle calcule ne se recopie pas à la main.
 

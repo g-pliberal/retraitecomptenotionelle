@@ -30,8 +30,10 @@ que la prose écrit, sa docstring ce que ``--sondes`` imprime.
 from __future__ import annotations
 
 import hashlib
+import html
 import multiprocessing
 import os
+import re
 import sys
 from concurrent.futures import Executor, Future, ProcessPoolExecutor
 from contextlib import contextmanager
@@ -280,6 +282,79 @@ def conserve(**reglages: str) -> float:
 def fois_prix(**reglages: str) -> float:
     """Combien de fois les prix une règle rend de 1940 à 2025 — « onze fois »."""
     return conserve(**reglages) / 100
+
+
+#: Une ligne de résultat de la page Simuler, puis sa glose : ce que
+#: ``tests/test_parcours.py`` en lit pour confronter le parcours.
+_LIGNE_SIMULEE = re.compile(r'<div class="scenario">(.*?)<div class="glose">(.*?)</div>', re.S)
+#: Les chiffres d'une ligne — salaire, pension, ce que les recettes paient —,
+#: chacun jusqu'au suivant.
+_CHIFFRE_SIMULE = re.compile(r'<span class="chiffre (\w+)">(.*?)(?=<span class="chiffre |\Z)', re.S)
+#: Un nombre tel que la page l'écrit, l'espace fine entre les milliers :
+#: « 2 754 », « -20,4 », « +48 886 ».
+_AFFICHE = r"[+−-]?\d{1,3}(?:\s\d{3})+(?:,\d+)?|[+−-]?\d+(?:,\d+)?"
+
+
+@lru_cache(maxsize=None)
+def _page_simulee(saisie: tuple[tuple[str, str], ...]) -> str:
+    """La page Simuler de cette saisie, rendue par le portage, une fois."""
+    from retraite_notionnelle.web.site import rendre
+
+    return rendre("/simuler", dict(saisie))[1]
+
+
+def _affiche(ecrit: str) -> float:
+    return float(re.sub(r"\s", "", ecrit).replace("−", "-").replace(",", "."))
+
+
+def _texte(corps: str) -> str:
+    """Ce qu'on lit d'un morceau de page : balises ôtées, blancs repliés."""
+    return html.unescape(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", corps)))
+
+
+def simulateur(**reglages: str) -> float:
+    """Ce que la page Simuler affiche pour une saisie, à l'arrondi de l'écran.
+
+    Les réglages sont la saisie, ceux de l'adresse que la prose donne —
+    ``naissance=1975-01-01&statut=…&montants=net`` ; ``montants=net`` seul
+    pour l'exemple que la page ouvre déjà rempli. La page se rend par le
+    portage, une fois par saisie, comme ``tests/test_parcours.py`` la rend
+    pour confronter les carrières du parcours (action 163). ``systeme`` (1 à
+    4) choisit une ligne et ``quoi`` ce qu'on en lit : ``pension``, le défaut,
+    ``salaire``, ``finance`` — ce que les recettes en paient vraiment — et
+    ``gain``, ce que le salaire y gagne, en euros par mois ; ``ecart`` au
+    système actuel et ``financee``, la part que les recettes paient, en %.
+    Sous « Et pendant que vous cotisez », sans ``systeme`` : ``gain_cumule``
+    jusqu'au départ, et les ``annees`` qui l'en séparent.
+    """
+    quoi = reglages.pop("quoi", "pension")
+    systeme = reglages.pop("systeme", None)
+    page = _page_simulee(tuple(sorted(reglages.items())))
+    if quoi in ("gain_cumule", "annees"):
+        reste = re.search(rf"Sur les (\d+) années qui vous séparent de la retraite : "
+                          rf"({_AFFICHE}) €", _texte(page.partition('id="salaire-net"')[2]))
+        if not reste:
+            raise ValueError("la page ne dit pas ce que le salaire gagne jusqu'au départ")
+        return float(reste.group(1)) if quoi == "annees" else _affiche(reste.group(2))
+    ligne = next(((bloc, glose) for bloc, glose in _LIGNE_SIMULEE.findall(page)
+                  if re.search(rf'<span class="titre">{systeme}\.', bloc)), None)
+    if ligne is None:
+        raise ValueError(f"la page ne rend pas de ligne « {systeme} » pour cette saisie")
+    chiffres = dict(_CHIFFRE_SIMULE.findall(ligne[0]))
+    somme, ecart = r'<span class="somme">([^<]+)</span>', r'<span class="ecart">([^<€]+)€'
+    lus = {"pension": (chiffres.get("principal", ""), somme),
+           "salaire": (chiffres.get("salaire", ""), somme),
+           "finance": (chiffres.get("finance", ""), somme),
+           "gain": (chiffres.get("salaire", ""), ecart),
+           "ecart": (_texte(ligne[1]), rf"écart au système actuel : ({_AFFICHE}) %"),
+           "financee": (_texte(ligne[1]), rf"n'en paient que ({_AFFICHE}) %")}
+    if quoi not in lus:
+        raise ValueError(f"quoi inconnu « {quoi} » ; il y a {', '.join(lus)}, "
+                         "gain_cumule, annees")
+    trouve = re.search(lus[quoi][1], lus[quoi][0])
+    if not trouve:
+        raise ValueError(f"la ligne {systeme} de la page n'affiche pas de « {quoi} »")
+    return _affiche(trouve.group(1))
 
 
 def _cout(ponderation: str = "effectifs", age_legal: str = "", emploi_reportes: str = "",
@@ -1789,6 +1864,7 @@ MESURES = {
     "cumul_indexation": cumul_indexation,
     "conserve": conserve,
     "fois_prix": fois_prix,
+    "simulateur": simulateur,
     "cumul_passe": cumul_passe,
     "ecart_passe": ecart_passe,
     "cout_annee": cout_annee,

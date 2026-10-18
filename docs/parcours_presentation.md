@@ -105,22 +105,21 @@ systèmes »** sans rien changer.
 
 Quatre lignes apparaissent, une par système. Chaque ligne a deux chiffres :
 à gauche le salaire net pendant qu'on cotise, à droite la pension nette,
-tout en euros d'aujourd'hui, par mois. Ce que l'exemple donnait le
-20 septembre :
+tout en euros d'aujourd'hui, par mois. Ce que l'exemple donne :
 
 | Système | Pension nette par mois | Écart au système actuel |
 |---|---|---|
-| 1. Système de répartition actuel | 2 807 € | référence |
-| 2. Ce que vous avez cotisé, part salariale seule | 775 € | -72,4 % |
-| 3. Ce que vous avez cotisé, part salariale + patronale | 1 926 € | -31,4 % |
-| 4. La proposition du Parti libéral français | 1 967 € | -29,9 % |
+| 1. Système de répartition actuel | <!--chiffre:mesure(simulateur?systeme=1&montants=net)-->2 754<!--/--> € | référence |
+| 2. Ce que vous avez cotisé, part salariale seule | <!--chiffre:mesure(simulateur?systeme=2&montants=net)-->808<!--/--> € | <!--chiffre:mesure(simulateur?systeme=2&quoi=ecart&montants=net)-->-70,7<!--/--> % |
+| 3. Ce que vous avez cotisé, part salariale + patronale | <!--chiffre:mesure(simulateur?systeme=3&montants=net)-->2 007<!--/--> € | <!--chiffre:mesure(simulateur?systeme=3&quoi=ecart&montants=net)-->-27,1<!--/--> % |
+| 4. La proposition du Parti libéral français | <!--chiffre:mesure(simulateur?systeme=4&montants=net)-->2 194<!--/--> € | <!--chiffre:mesure(simulateur?systeme=4&quoi=ecart&montants=net)-->-20,4<!--/--> % |
 
 Comment les lire, et c'est la chose la plus importante de la présentation :
 
 - **Le système 1 est la référence** : le droit en vigueur, minima et
   majorations compris, recalculé règle par règle sur cette carrière. Sa ligne
-  porte un troisième chiffre, plus récent que le reste de ce parcours, et il
-  vaut d'être lu à voix haute : **financé, 2 510 €**, soit 91 % de ce qu'il
+  porte un troisième chiffre, et il vaut d'être lu à voix haute :
+  **financé, <!--chiffre:mesure(simulateur?systeme=1&quoi=finance&montants=net)-->2 510<!--/--> €**, soit <!--chiffre:mesure(simulateur?systeme=1&quoi=financee&montants=net)-->91<!--/--> % de ce qu'il
   promet. Le reste attend des cotisations que personne n'a versées. La barre
   sous la ligne le montre, et la page Risque le chiffre.
 - **Les systèmes 2 et 3 ne sont pas des propositions.** Ce sont des
@@ -145,8 +144,8 @@ Comment les lire, et c'est la chose la plus importante de la présentation :
 
 Puis, sous les quatre lignes, le bloc **« Et pendant que vous cotisez »** :
 une réforme change aussi la fiche de paie. Sur l'exemple, le salaire net
-mensuel passe de 3 840 € à 4 137 €, soit **+297 € par mois** à coût du
-travail inchangé pour l'employeur, et +48 886 € sur les treize années qui
+mensuel passe de <!--chiffre:mesure(simulateur?systeme=1&quoi=salaire&montants=net)-->3 840<!--/--> € à <!--chiffre:mesure(simulateur?systeme=4&quoi=salaire&montants=net)-->4 137<!--/--> €, soit **<!--chiffre:mesure(simulateur?systeme=4&quoi=gain&montants=net)-->+297<!--/--> € par mois** à coût du
+travail inchangé pour l'employeur, et <!--chiffre:mesure(simulateur?quoi=gain_cumule&montants=net)-->+48 886<!--/--> € sur les <!--chiffre:mesure(simulateur?quoi=annees&montants=net)-->13<!--/--> années qui
 restent avant le départ. C'est le net plein : la proposition prélève 23 %
 pour la retraite et rien d'autre, quand le droit en vigueur en prélève 28.
 Celui qui verse en plus les 5 % volontaires retrouve l'effort d'aujourd'hui,
@@ -166,7 +165,7 @@ C'est ainsi que sont faites les trois adresses ci-dessous.
 
 Chaque adresse ouvre le simulateur avec la carrière déjà calculée. Toutes
 sont nées en janvier 1975 et partent en janvier 2039 à 64 ans, sauf la
-dernière — et la proposition, dont l'âge légal est de 65 ans, les fait toutes
+dernière — et la proposition, dont l'âge légal est de <!--chiffre:mesure(parametre?nom=age_legal_liberal)-->65<!--/--> ans, les fait toutes
 partir un an plus tard : le site le dit sous les résultats. Les montants sont
 nets, par mois, en euros de 2026.
 
@@ -176,13 +175,13 @@ net :
 
 | Système | Pension nette par mois | Écart |
 |---|---|---|
-| 1. Actuel | 1 295 € | référence |
-| 3. Ce qui a été cotisé, deux parts | 1 027 € | -20,7 % |
-| 4. La proposition | 1 126 € | -13,1 % |
+| 1. Actuel | <!--chiffre:mesure(simulateur?systeme=1&naissance=1975-01-01&debut=1996-01-01&statut=salarie_prive_non_cadre&salaire=1443&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01)-->1 295<!--/--> € | référence |
+| 3. Ce qui a été cotisé, deux parts | <!--chiffre:mesure(simulateur?systeme=3&naissance=1975-01-01&debut=1996-01-01&statut=salarie_prive_non_cadre&salaire=1443&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01)-->1 027<!--/--> € | <!--chiffre:mesure(simulateur?systeme=3&quoi=ecart&naissance=1975-01-01&debut=1996-01-01&statut=salarie_prive_non_cadre&salaire=1443&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01)-->-20,7<!--/--> % |
+| 4. La proposition | <!--chiffre:mesure(simulateur?systeme=4&naissance=1975-01-01&debut=1996-01-01&statut=salarie_prive_non_cadre&salaire=1443&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01)-->1 126<!--/--> € | <!--chiffre:mesure(simulateur?systeme=4&quoi=ecart&naissance=1975-01-01&debut=1996-01-01&statut=salarie_prive_non_cadre&salaire=1443&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01)-->-13,1<!--/--> % |
 
-À montrer avec le plancher en tête : la garantie vieillesse, 1 050 € brut
-pour une personne seule dès 65 ans. Sous la proposition, cette carrière part
-à 65 ans, avec une année de cotisation en plus et un diviseur plus petit, et
+À montrer avec le plancher en tête : la garantie vieillesse, <!--chiffre:mesure(parametre?nom=garantie_vieillesse_mensuelle+allocation_isolement_mensuelle)-->1 050<!--/--> € brut
+pour une personne seule dès <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans. Sous la proposition, cette carrière part
+à <!--chiffre:mesure(parametre?nom=age_legal_liberal)-->65<!--/--> ans, avec une année de cotisation en plus et un diviseur plus petit, et
 sa pension passe au-dessus du plancher : la garantie ne lui sert rien. Le
 dépliant « Le système 4 : un taux pour tous, et une garantie payée par
 l'impôt », sous les résultats, en donne la règle.
@@ -192,13 +191,13 @@ l'impôt », sous les résultats, en donne la règle.
 
 | Système | Pension nette par mois | Écart |
 |---|---|---|
-| 1. Actuel | 2 730 € | référence |
-| 3. Ce qui a été cotisé, deux parts | 2 347 € | -14,0 % |
-| 4. La proposition | 2 542 € | -6,9 % |
+| 1. Actuel | <!--chiffre:mesure(simulateur?systeme=1&naissance=1975-01-01&debut=1998-09-01&statut=fonctionnaire_etat&salaire=3000&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01)-->2 730<!--/--> € | référence |
+| 3. Ce qui a été cotisé, deux parts | <!--chiffre:mesure(simulateur?systeme=3&naissance=1975-01-01&debut=1998-09-01&statut=fonctionnaire_etat&salaire=3000&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01)-->2 347<!--/--> € | <!--chiffre:mesure(simulateur?systeme=3&quoi=ecart&naissance=1975-01-01&debut=1998-09-01&statut=fonctionnaire_etat&salaire=3000&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01)-->-14,0<!--/--> % |
+| 4. La proposition | <!--chiffre:mesure(simulateur?systeme=4&naissance=1975-01-01&debut=1998-09-01&statut=fonctionnaire_etat&salaire=3000&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01)-->2 542<!--/--> € | <!--chiffre:mesure(simulateur?systeme=4&quoi=ecart&naissance=1975-01-01&debut=1998-09-01&statut=fonctionnaire_etat&salaire=3000&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01)-->-6,9<!--/--> % |
 
 C'est le cas qu'on attend au tournant, et il faut savoir le dire : l'État
 employeur verse pour ses fonctionnaires bien au-delà de ce qu'un employeur
-privé verse (jusqu'à 82 % du traitement en 2026). Mais ce taux n'est pas une
+privé verse (jusqu'à <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2026&regime=fonction_publique_etat)-->82<!--/--> % du traitement en 2026). Mais ce taux n'est pas une
 cotisation : il paie toutes les pensions de l'année, celles de La Poste et
 d'Orange, l'invalidité, les majorations pour enfants, les départs anticipés.
 Le compte n'en reçoit que la part que la Cour des comptes rattache à la
@@ -214,9 +213,9 @@ septembre 2022, départ en janvier 2064 à 64 ans :
 
 | Système | Pension nette par mois | Écart |
 |---|---|---|
-| 1. Actuel | 2 351 € | référence |
-| 3. Ce qui a été cotisé, deux parts | 1 555 € | -33,9 % |
-| 4. La proposition | 1 916 € | -18,5 % |
+| 1. Actuel | <!--chiffre:mesure(simulateur?systeme=1&naissance=2000-01-01&debut=2022-09-01&statut=salarie_prive_non_cadre&salaire=2751&unite_revenu=euros_mois&montants=net&liquidation=2064-01-01)-->2 351<!--/--> € | référence |
+| 3. Ce qui a été cotisé, deux parts | <!--chiffre:mesure(simulateur?systeme=3&naissance=2000-01-01&debut=2022-09-01&statut=salarie_prive_non_cadre&salaire=2751&unite_revenu=euros_mois&montants=net&liquidation=2064-01-01)-->1 555<!--/--> € | <!--chiffre:mesure(simulateur?systeme=3&quoi=ecart&naissance=2000-01-01&debut=2022-09-01&statut=salarie_prive_non_cadre&salaire=2751&unite_revenu=euros_mois&montants=net&liquidation=2064-01-01)-->-33,9<!--/--> % |
+| 4. La proposition | <!--chiffre:mesure(simulateur?systeme=4&naissance=2000-01-01&debut=2022-09-01&statut=salarie_prive_non_cadre&salaire=2751&unite_revenu=euros_mois&montants=net&liquidation=2064-01-01)-->1 916<!--/--> € | <!--chiffre:mesure(simulateur?systeme=4&quoi=ecart&naissance=2000-01-01&debut=2022-09-01&statut=salarie_prive_non_cadre&salaire=2751&unite_revenu=euros_mois&montants=net&liquidation=2064-01-01)-->-18,5<!--/--> % |
 
 C'est la carrière qui cotise presque entièrement après la bascule : la
 rente capitalisée y pèse le plus, et l'écart entre 3 et 4 est le plus large
