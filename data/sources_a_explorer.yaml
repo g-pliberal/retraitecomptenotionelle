@@ -6228,7 +6228,20 @@ sources:
       Le modèle de projection suédois, téléchargeable : l'indice d'équilibre
       et le temps de rotation à refaire, pour éprouver le mécanisme
       d'équilibre de la proposition.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-18
+    note: >-
+      Dépouillée le 18 octobre 2026 (action 89, lot des comptes notionnels
+      étrangers) : lue en entier pour le registre des modèles,
+      data/reference/referents.yaml (`pensionsmodellen`), le 4 octobre,
+      version 2.2 du 10 octobre 2024, encore la dernière ce jour-là (l'archive
+      de 2,87 Go est datée du 21 janvier 2025, la page du 20 mai 2026).
+      L'indice d'équilibre et la durée de rotation qu'elle code sont ceux de
+      l'ordonnance 2002:780, que le rapport orange reproduit
+      (`suede_orange_rapport_2025`) : le dépôt en a l'identité, éprouvée sur
+      2025 (`tests/test_bilan_compte.py`). Le reste est au registre : la
+      population par états (138.14), le scénario démographique au choix
+      (138.7), le frein, au propriétaire.
 
   - id: suede_typfallsmodellen
     url: https://www.pensionsmyndigheten.se/statistik-och-rapporter/pensionsmodellen/typfallsmodellen
@@ -6239,7 +6252,18 @@ sources:
       Le calcul des diviseurs projetés par génération (`Calculate_Deltal`) et
       des pensions de cas types : le diviseur de la proposition, confronté à
       celui que la Suède calcule.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-18
+    note: >-
+      Dépouillée le 18 octobre 2026 : lue en entier pour le registre des
+      modèles, data/reference/referents.yaml (`typfallsmodellen`), le 4
+      octobre, version 4.8 du 27 avril 2026, encore la dernière (le classeur
+      porte la même date). Son diviseur projeté (`Calculate_Deltal`) garde
+      l'écart du registre, deux coquilles de moyenne ; le diviseur officiel se
+      refait au centième (`suede_lagar_och_regler`). Le portage non officiel
+      qui en recopie le VBA (`mathiasboos/Typfallsmodellen`) est passé de
+      `bb46d93` à `3f3ad9f` (16 et 17 octobre) : une mémoire des facteurs de
+      rente et des écrans, sans changer leur calcul.
 
   - id: suede_lagar_och_regler
     url: https://www.pensionsmyndigheten.se/om-pensionsmyndigheten/allmanna-handlingar/lagar-och-regler
@@ -6249,7 +6273,18 @@ sources:
     a_en_tirer: >-
       Les règlements de Pensionsmyndigheten, dont la table des diviseurs de
       2026 (PFS 2026:2) : la grille à refaire depuis les tables de mortalité.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-18
+    note: >-
+      Relue le 18 octobre 2026 (page mise à jour le 2 octobre) : trois
+      prescriptions en 2026, toutes lues. PFS 2026:2, décidée le 2 septembre,
+      en vigueur le 12 octobre : la grille de la génération 1960 (§ 1),
+      refaite au centième de 62 à 103 ans par
+      `tests/test_diviseur_exemples_officiels.py` (138.11) ; son § 2 donne à
+      la génération 1963, de 64 à 67 ans, les mêmes diviseurs (17,34 à 65 ans)
+      : une table du moment, sans projection de génération. PFS 2026:1 (les
+      gains d'héritage de 2026) et 2026:3 (le facteur de frais, 0,999666) sont
+      au registre (`typfallsmodellen`), au propriétaire.
 
   - id: suede_orange_rapport_2025
     url: https://www.pensionsmyndigheten.se/statistik/publikationer/orange-rapport-2025/orange-rapport-2025.pdf
@@ -6259,7 +6294,19 @@ sources:
     a_en_tirer: >-
       La formule de l'indice d'équilibre (annexe B) et sa valeur de 2025,
       1,1472, à retrouver.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-18
+    note: >-
+      Dépouillée le 18 octobre 2026. L'indice d'équilibre de 2027, 1,1472, se
+      refait au dix-millième par l'identité du bilan du dépôt (`BilanCompte`,
+      `tests/test_bilan_compte.py`) : la recette de cotisation de 2025 (366
+      783 millions de couronnes, tableau 6.6) fois la durée de rotation de
+      2024 (76,31936 − 45,31928 = 31,00008 ans, tableau 6.8), plus le fonds
+      tampon (2 233 988), sur la dette (11 858 539, tableau 2.2). L'annexe B
+      lit les deux âges sur une population stationnaire, l'âge de versement
+      actualisé à 1,6 % ; le dépôt, sur la pyramide de l'année : au registre
+      (`balanstal_suede`, 138.19). L'indice lissé (1,0491) et l'accélérateur
+      sont le frein, au propriétaire.
 
   - id: norvege_mosart
     url: https://www.ssb.no/befolkning/metoder-og-dokumentasjon/mosart-7.5.teknisk-dokumentasjon/_/attachment/inline/4d238e34-04c3-4dc3-a324-544e5a3a572e:e14fd155e59697117b6a359d5861dbab1e74a17e/NOT2025-04.pdf
@@ -6269,7 +6316,17 @@ sources:
     a_en_tirer: >-
       La documentation technique de MOSART 7.5 : le capital, le diviseur et
       l'indexation norvégiens, tels que le modèle de projection les calcule.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-18
+    note: >-
+      Dépouillée le 18 octobre 2026 : lue pour le registre des modèles,
+      data/reference/referents.yaml (`mosart`), le 4 octobre, toujours la
+      version 7.5 (Notater 2025/4, publiée le 22 janvier 2025). Elle décrit la
+      machine — le code C#, les tirages et leur réduction de variance,
+      l'histoire des versions — et non l'arithmétique du compte : le capital,
+      le diviseur et l'indexation n'y sont que des noms de sortie
+      (`sim.acturial`, `sim.pension_debt`). Ils se lisent à la loi et chez NAV
+      (`norvege_delingstall`, la grille de 1965 refaite au centième).
 
   - id: norvege_delingstall
     url: https://www.nav.no/redirects/delingstal
@@ -6296,7 +6353,16 @@ sources:
       Le rapport n° 27 de la RGS : la méthode des coefficients de
       transformation (annexe 1, B.1) et les projections de dépense, régime
       contributif compris.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-18
+    note: >-
+      Dépouillée le 18 octobre 2026 : le rapport n° 27 de juillet 2026, le
+      même fichier que le registre a lu le 4 octobre (`modello_rgs`), qui en a
+      tiré les taux nets après impôt (138.5), les variantes de longévité
+      (138.7) et la décomposition de la dépense (coupée, 138.3). La méthode
+      des coefficients est celle de la Nota tecnica du décret de 2024, que
+      `tests/test_diviseur_exemples_officiels.py` refait au millième sur le
+      terme de la pension directe (`italie_coefficienti_2024`).
 
   - id: italie_coefficienti_2024
     url: https://www.lavoro.gov.it/documenti-e-norme/normativa/decreto-direttoriale-20112024-coefficienti-trasformazione.pdf
@@ -6306,7 +6372,18 @@ sources:
     a_en_tirer: >-
       Les coefficients de 2025-2026, âge par âge, 5,250 % à 65 ans : la table
       à refaire au millième.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-18
+    note: >-
+      Dépouillée le 18 octobre 2026 : le décret du 20 novembre 2024, en
+      vigueur pour 2025 et 2026, de 57 à 71 ans (19,049 et 5,250 % à 65 ans,
+      au taux de 1,5 %). Chaque diviseur somme deux termes de la Nota tecnica
+      (tableau C.2) : la pension directe, refaite au millième, sexe par sexe,
+      par `tests/test_diviseur_exemples_officiels.py` (138.11), et la
+      réversion (1,460 à 65 ans), que le registre garde au propriétaire
+      (`coefficienti_italie`). La révision suivante, pour le 1er janvier 2027,
+      n'a pas été trouvée ce jour-là (les deux dernières sont du 1er décembre
+      2022 et du 20 novembre 2024) : à chercher en décembre.
 
   - id: pologne_gus_esperance
     url: https://stat.gov.pl/sygnalne/komunikaty-i-obwieszczenia/lista-komunikatow-i-obwieszczen/komunikat-w-sprawie-tablicy-sredniego-dalszego-trwania-zycia-kobiet-i-mezczyzn,285,14.html
@@ -6316,7 +6393,17 @@ sources:
     a_en_tirer: >-
       La table de l'espérance de vie unisexe en mois, d'avril 2026 à mars
       2027 : le diviseur polonais, à lire à la source.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-18
+    note: >-
+      Dépouillée le 18 octobre 2026 : le communiqué du 25 mars 2026, qui vaut
+      d'avril 2026 à mars 2027, de 30 à 90 ans, mois par mois. Ses trente et
+      un âges ronds de 60 à 90 ans se refont au dixième de mois sur la table D
+      de 2025 (`tests/test_diviseur_exemples_officiels.py`, qui n'en jouait
+      que sept), sauf 64 ans, où l'arrondi tombe sur le fil : les colonnes en
+      entiers de la table D y donnent 19,30515 ans (T64 = 1 665 185 sur l64 =
+      86 256), l'espérance refaite de ses quotients 19,30485 ; 231,7 mois au
+      communiqué, 231,6 au dépôt.
 
   - id: lettonie_table_g
     url: https://www.vsaa.gov.lv/lv/media/5322/download?attachment=
@@ -6341,7 +6428,15 @@ sources:
     a_en_tirer: >-
       La formule du fator previdenciário : un diviseur d'espérance de vie
       sans rendement notionnel.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-18
+    note: >-
+      Relue le 18 octobre 2026 : le texte de 1999, inchangé, et la formule de
+      son annexe, au registre (`fator_previdenciario`), qui en a tout tiré :
+      l'espérance de vie se lit sur la table complète de l'IBGE, « média
+      nacional única para ambos os sexos » (art. 29, § 8, de la loi 8.213,
+      dans sa rédaction de 1999), une table du moment, unisexe, sans
+      rendement, que le diviseur du dépôt ne gagnerait rien à suivre.
 
   - id: finlande_elinaikakerroin
     url: https://www.etk.fi/suomen-elakejarjestelma/elaketurva/elinaikakerroin/elinaikakertoimen-laskentakaavat/
@@ -6351,7 +6446,20 @@ sources:
     a_en_tirer: >-
       Les formules du coefficient d'espérance de vie : un ajustement voisin du
       diviseur, 0,94643 pour la génération 1964.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-18
+    note: >-
+      Dépouillée le 18 octobre 2026 : l'adresse renvoie désormais à «
+      Elinaikakerroin ja sen määräytyminen », qui publie les coefficients de
+      1947 à 1964 (0,94759 pour 1963, 0,94643 pour 1964, fixés à 62 ans) et
+      annonce un autre calcul dès 2027, l'âge minimal suivant l'espérance de
+      vie. Seul le mémo de 2023 (`eak2024.pdf`, génération 1962) porte ses
+      quotients : il est refait au millionième (138.11) ; ceux de 2024 et de
+      2025 ne sont pas en ligne. Sur les quotients annuels de Statistics
+      Finland (tables 12ap et 12ag), cumulés sur cinq ans par leurs décès, le
+      dépôt refait les coefficients de 1960 à 1964 à quatre cent-millièmes
+      près (0,94646 pour 1964) : l'ETK ne publie pas comment elle cumule les
+      cinq années, et rien d'exact ne s'en tire.
 
   - id: banque_mondiale_prost
     url: https://documents1.worldbank.org/curated/en/099061024110535659/pdf/P1777231d8367c0111800816452e83c58d7.pdf
@@ -6361,7 +6469,19 @@ sources:
     a_en_tirer: >-
       Le « Calculus for PROST 15 » : le capital initial d'une transition en
       comptes notionnels et la dette implicite, une méthode à refaire.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-18
+    note: >-
+      Dépouillée le 18 octobre 2026 : le « Calculus for PROST 15 », mis à jour
+      le 19 novembre 2019, le même que le registre des modèles a lu le 4
+      octobre, data/reference/referents.yaml (`prost`). Sa dette implicite (§
+      3.4.1) est la valeur actuelle des droits acquis, que le dépôt calcule
+      déjà (`EngagementAcquis`) ; son capital initial valorise les droits
+      acquis au diviseur de la génération (éq. 112) ou se donne en part du
+      salaire moyen (`i_capital%`), et comble les salaires manquants : des
+      choix de transition que le registre garde au propriétaire, la
+      proposition refaisant les comptes depuis la carrière. L'outil reste
+      remis en formation, sans téléchargement.
 
   - id: ageing_report_2024
     url: https://economy-finance.ec.europa.eu/publications/2024-ageing-report-economic-and-budgetary-projections-eu-member-states-2022-2070_en
@@ -6390,7 +6510,18 @@ sources:
     a_en_tirer: >-
       L'outil actuariel de l'OIT, sur compte : ses conditions sont à lire
       avant tout usage.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-18
+    note: >-
+      Relue le 18 octobre 2026 : l'outil n'ouvre que sur un compte (courriel
+      et mot de passe), que l'OIT accorde, et le manuel lié de sa page répond
+      403. Son guide technique de 2018 (« The ILO Pension Model: A Technical
+      Guide »), lu pour le registre des modèles, data/reference/referents.yaml
+      (`ilo_pensions`), en donne la méthode, sous le droit d'auteur de l'OIT,
+      qui permet de courts extraits avec leur source. Le registre en garde ce
+      qu'il fait mieux (138.14, et la décomposition du taux d'équilibre,
+      coupée en 138.19) ; un compte n'y ajouterait que l'exécution, sur des
+      données que le dépôt devrait fournir.
 
   - id: og_core
     url: https://github.com/PSLmodels/OG-Core
@@ -6401,10 +6532,19 @@ sources:
       Le module de comptes notionnels à l'italienne d'un modèle à générations
       imbriquées : les effets d'équilibre général d'une bascule, que le dépôt
       ne modélise pas.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-18
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
-      le 1er octobre 2026).
+      le 1er octobre 2026). Dépouillée le 18 octobre 2026 : lue pour le
+      registre des modèles, data/reference/referents.yaml (`og_core`), au
+      commit `b690537` ; la tête, `81f4549` (la 0.21.2, du 14 octobre), a
+      trente-quatre commits de plus, qui touchent les pensions à prestations
+      définies et la sécurité sociale américaine, non le compte notionnel. Les
+      trois écarts du registre y tiennent : la dérivée notionnelle n'est
+      appelée nulle part hors de `pensions.py`, `tax.py:303` passe toujours 1
+      pour Y, et le coefficient de conversion lit la mortalité stationnaire
+      (`p.rho[-1]`), `indR` et `k_ret` nuls par défaut.
 
   # ---- Les API publiques, sondées le 5 octobre 2026 --------------------------
   # Ces lignes ne viennent pas non plus des 260 adresses : elles sont nées de

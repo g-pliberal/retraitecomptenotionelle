@@ -1,0 +1,26 @@
+date: "2026-10-18"
+session: "action 89 : les comptes notionnels étrangers, treize lignes de l'inventaire"
+consulte: >-
+  Les pages de Pensionsmyndigheten (Pensionsmodellen 2.2, Typfallsmodellen 4.8, ses
+  prescriptions de 2026, PFS 2026:1 à 2026:3) et son rapport orange 2025, annexe B
+  comprise (l'ordonnance 2002:780) ; la documentation technique de MOSART 7.5 (SSB,
+  2025) ; le rapport n° 27 de la RGS (juillet 2026) et le décret italien des
+  coefficients du 20 novembre 2024 ; le communiqué du GUS du 25 mars 2026 et la table D
+  de 2025 ; la loi brésilienne 9.876 de 1999 ; la page de l'ETK sur le coefficient
+  d'espérance de vie et les tables 12ap et 12ag de Statistics Finland ; le « Calculus
+  for PROST 15 » de la Banque mondiale ; la page de connexion et le guide technique de
+  2018 du modèle de l'OIT ; OG-Core à sa tête (81f4549, la 0.21.2). Le scénario 1 n'est
+  pas touché : ni veille_droit.py, ni index LEGI.
+trouve: >-
+  L'identité du bilan du compte refait l'indice d'équilibre suédois de 2027, 1,1472, au
+  dix-millième ; l'annexe B lit la durée de rotation sur une population stationnaire,
+  ce que le dépôt ne fait pas (registre, 138.19). Le communiqué du GUS se refait à ses
+  trente et un âges ronds, 64 ans tombant sur le fil de l'arrondi. Le coefficient
+  finlandais de 1964 (0,94643) ne se refait qu'à quatre cent-millièmes près, faute des
+  quotients de l'ETK. Les versions lues le 4 octobre sont les dernières, sauf OG-Core,
+  dont les trente-quatre commits laissent le compte notionnel intact.
+reste: >-
+  Les âges stationnaires de la durée de rotation (138.19). La révision italienne des
+  coefficients pour 2027, à chercher en décembre. Les mémos de l'ETK de 2024 et de
+  2025, s'ils paraissent. Les choix que le registre garde en `a_trancher`, au
+  propriétaire.
