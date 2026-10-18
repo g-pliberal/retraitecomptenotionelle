@@ -1,0 +1,35 @@
+date: "2026-10-18"
+session: "action 138, étape 5, neuvième partie : la prime pour l'emploi des non-salariés, et sa fin"
+consulte: >-
+  `python scripts/veille_droit.py` : aucune fiche de la carte touchée, la
+  session n'écrivant aucune règle de la pension. L'index LEGI de la DILA, mis
+  à jour au 17 octobre 2026 (sept incréments ; `textes.py --inscrire` y a
+  inscrit sept rédactions du code de la sécurité sociale, à examiner) : les
+  rédactions de l'article 200 sexies du code général des impôts, de celle du
+  31 mai 2001 (LEGIARTI000006303351) à celle du 30 mai 2014
+  (LEGIARTI000029042107), close le 30 décembre 2014. Les archives du BOFiP :
+  le BOI 5 B-12-01 (n° 114 du 26 juin 2001), ses huit pages et l'image de
+  l'exemple de son n° 16. Le BOFiP : BOI-IR-RICI-310-10-30, versions du 12
+  septembre 2012, du 27 novembre 2012, du 22 mai 2013 et du 15 mai 2015. La
+  notice 2041 GS des revenus de 2014 (formulaire n° 50874#14). Le projet de
+  loi de finances pour 2002 (Assemblée nationale, n° 3262), illisible en texte.
+trouve: >-
+  Le revenu d'activité de la prime comprend les bénéfices industriels et
+  commerciaux, agricoles et non commerciaux (art. 200 sexies, I, B, 3°, c à
+  e), « majorés de 11,11 % » (III) dès la première rédaction, « ou diminués en
+  cas de déficits » dès celle des revenus de 2001 (LEGIARTI000006303352) ; le
+  bénéfice s'y prend avant l'abattement des adhérents (BOI 5 B-12-01, n° 17)
+  et avant la majoration de qui n'adhère pas (BOI-IR-RICI-310-10-30, n° 90) ;
+  le déficit, « multiplié par (1-0.1111) », vient en déduction des salaires
+  (notice 2041 GS). L'exemple du BOFiP (7 000 €, 7 777 €) tronque ce que la
+  notice arrondit : écart connu d'un euro. Et la fin : l'article 28 de la loi
+  n° 2014-1655 abroge l'article 200 sexies dès l'imposition des revenus de
+  2015 (BOI-IR-RICI-310-10-30-20150515), quand le dépôt, sur une note de
+  l'IPP, la faisait durer jusqu'en 2016. Écrits dans `impot_revenu.py`, son
+  jumeau, la donnée et le script de l'IPP.
+reste: >-
+  Le temps partiel et l'activité d'une partie de l'année, dont les jours d'un
+  non-salarié ; les bénéfices exonérés et le versement libératoire ; le
+  bénéfice de l'exploitant agricole, que le cycle de vie ne déclare pas ;
+  l'année de revenus de l'imposition de la majoration pour enfants ; les
+  règles d'avant 1981 sans texte lu.

@@ -1,15 +1,15 @@
 # Étape 5, première partie : l'impôt sur le revenu d'un foyer, de son barème à son montant, chaque année
 
-**Reprise, au 17 octobre 2026.** Fait : l'impôt d'un foyer (10 octobre) ; la
+**Reprise, au 18 octobre 2026.** Fait : l'impôt d'un foyer (10 octobre) ; la
 CSG déductible (11) ; l'impôt dans les indicateurs de cycle de vie (13) ;
 l'effet retour, au modèle (14) ; l'ASPA déformée (16) ; le bénéfice des
-indépendants, lu à l'article 158 (16) ; le 17, l'abattement des adhérents
-d'avant 1978, lu aux lois de 1974 et de 1977 (10 % en 1976, 20 % dès 1977),
-et celui des libéraux dès 1978 (4 ter), dans les deux moteurs. Reste : au
-propriétaire, l'effet retour dans le solde et trois décisions sur le
-bénéfice ; l'impôt au site, à la session des pages ; la prime pour l'emploi
-des non-salariés ; les règles d'avant 1981. Détail :
-`2026-10-17-etape-5-adherents-d-avant-1978.md`.
+indépendants (16) ; l'abattement des adhérents d'avant 1978 (17) ; le 18, la
+prime pour l'emploi des non-salariés, sur le bénéfice majoré de 11,11 % ou le
+déficit minoré, et sa fin aux revenus de 2014 (loi n° 2014-1655), dans les
+deux moteurs. Reste : au propriétaire, l'effet retour dans le solde et trois
+décisions sur le bénéfice ; l'impôt au site, à la session des pages ; l'année
+de la majoration pour enfants ; les règles d'avant 1981. Détail :
+`2026-10-18-etape-5-prime-pour-l-emploi-des-non-salaries.md`.
 
 **La demande.** Le propriétaire, le 10 octobre 2026 : l'impôt sur le revenu
 d'un foyer, de son barème à son montant, chaque année ; les barèmes de l'IPP
