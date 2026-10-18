@@ -82,6 +82,13 @@ export const AFFILIATIONS_AGRICOLES = Object.freeze({
   collaborateur_agricole: "collaborateur",
 });
 
+/**
+ * Les premières cotisations des non-salariés agricoles que fixe, lue, la
+ * situation au 1er janvier de l'année : celles de 1985 (décret n° 84-936,
+ * article 2). Voir le Python.
+ */
+export const COTISATIONS_AU_1ER_JANVIER_DEPUIS = 1985;
+
 /** Une année de carrière. */
 export class AnneeCarriere {
   constructor({
@@ -799,6 +806,7 @@ export class Carriere {
     }
     this._plafonds = null;
     this._cessationAgricole = undefined;
+    this._installationsAgricoles = undefined;
     this.chronologie = chronologie ?? preparer(chrono.duResume(
       annee_naissance, sexe, mois_naissance, age_liquidation, nombre_enfants,
       naissances_enfants, jour_naissance));
@@ -1746,11 +1754,50 @@ export class Carriere {
   }
 
   /**
+   * Les années où l'assuré s'installe non-salarié agricole après le
+   * 1er janvier : ses lignes agricoles cotisées n'en remplissent pas les douze
+   * mois, aucune ligne agricole l'année d'avant, une l'année d'après, depuis
+   * les cotisations de 1985. Voir le Python.
+   */
+  get anneesDInstallationAgricole() {
+    if (this._installationsAgricoles === undefined) {
+      const couvertures = new Map();
+      for (const ligne of this.lignes) {
+        if (ligne.cotise && Object.hasOwn(AFFILIATIONS_AGRICOLES, ligne.affiliation)
+            && this.partRetenueLigne(ligne) > 0) {
+          couvertures.set(ligne.annee,
+            [...(couvertures.get(ligne.annee) ?? []), ligne.fraction_annee]);
+        }
+      }
+      this._installationsAgricoles = new Set([...couvertures]
+        .filter(([annee, fractions]) => annee >= COTISATIONS_AU_1ER_JANVIER_DEPUIS
+          && fractions.reduce((somme, fraction) => somme + fraction, 0.0) < 1.0 - 1e-9
+          && !couvertures.has(annee - 1) && couvertures.has(annee + 1))
+        .map(([annee]) => annee));
+    }
+    return this._installationsAgricoles;
+  }
+
+  /**
+   * La ligne agricole de l'année où l'assuré s'installe après le 1er janvier,
+   * qui ne doit rien pour l'année (L. 731-10-1 du code rural, R. 731-57) : ni
+   * points, ni revenu, ni trimestres. Voir le Python.
+   */
+  installationAgricole(ligne) {
+    return this.anneesDInstallationAgricole.has(ligne.annee) && ligne.cotise
+      && Object.hasOwn(AFFILIATIONS_AGRICOLES, ligne.affiliation);
+  }
+
+  /**
    * La part de l'année que cotise une ligne : `partRetenueLigne`, sauf l'année
    * où l'exploitant agricole cesse, cotisée entière, dont ses lignes agricoles
-   * se partagent les douze mois au prorata des leurs. Voir le Python.
+   * se partagent les douze mois au prorata des leurs, et sauf l'année où il
+   * s'installe après le 1er janvier, qui ne cotise rien. Voir le Python.
    */
   partCotiseeLigne(ligne) {
+    if (this.installationAgricole(ligne)) {
+      return 0.0;
+    }
     const part = this.partRetenueLigne(ligne);
     if (!this.anneeEntiereAgricole(ligne)) {
       return part;
@@ -1837,11 +1884,11 @@ export class Carriere {
    * {@link trimestresRetenus} sans l'année de cessation de l'exploitant : ceux
    * des mois couverts avant le point de départ, que lit ce qui se compte
    * entre deux dates, la surcote d'abord (circulaire Cnav n° 2004/37,
-   * point 131).
+   * point 131). Aucun l'année où l'exploitant s'installe après le 1er janvier.
    */
   trimestresEcoules(ligne) {
     const part = this.partRetenueLigne(ligne);
-    if (part <= 0) {
+    if (part <= 0 || this.installationAgricole(ligne)) {
       return 0;
     }
     return Math.min(ligne.trimestres_valides,

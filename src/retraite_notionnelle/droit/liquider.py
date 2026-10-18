@@ -2517,6 +2517,10 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
         entiere = carriere.annee_entiere_agricole(ligne)
         if ligne.annee >= annee_liquidation and not entiere:
             continue
+        # L'année où il s'installe après le 1er janvier, il ne cotise rien
+        # (`Carriere.installation_agricole`) : son revenu n'y entre pas.
+        if carriere.installation_agricole(ligne):
+            continue
         fraction_ligne = (carriere.part_cotisee_ligne(ligne) if entiere
                           else ligne.fraction_annee)
         if depuis is not None and ligne.annee < depuis:

@@ -5260,6 +5260,155 @@ process.stdout.write(JSON.stringify(obtenus));
         [moyenne(d) for d in details], abs=0.01)
 
 
+def _installe_en_juillet(installation: int, naissance: int, depart: int,
+                         revenu_du_semestre: float = 6000.0) -> list[dict]:
+    """Salarié de ses vingt-trois ans à 20 000 € par an, encore de janvier à
+    juin de l'``installation`` (10 000 €) ; exploitant agricole de juillet à
+    décembre (``revenu_du_semestre``), puis à 12 000 € par an jusqu'à
+    l'année de son ``depart``."""
+    return ([dict(annee=annee, revenu=20000.0, affiliation="salarie_prive_non_cadre")
+             for annee in range(naissance + 23, installation)]
+            + [dict(annee=installation, revenu=10000.0,
+                    affiliation="salarie_prive_non_cadre",
+                    fraction_annee=0.5, trimestres_valides=2),
+               dict(annee=installation, revenu=revenu_du_semestre,
+                    affiliation="exploitant_agricole",
+                    fraction_annee=0.5, trimestres_valides=2)]
+            + [dict(annee=annee, revenu=12000.0, affiliation="exploitant_agricole")
+               for annee in range(installation + 1, depart + 1)])
+
+
+def test_l_exploitant_installe_apres_le_1er_janvier_ne_cotise_rien_pour_l_annee(simulateur):
+    """Les cotisations des non-salariés agricoles « sont fixées pour chaque
+    année civile », et la situation de l'exploitant « est appréciée au premier
+    jour de l'année civile au titre de laquelle elles sont dues » (L. 731-10-1
+    du code rural ; R. 731-57 ; article 2 du décret n° 84-936 du 22 octobre
+    1984, depuis le 23 octobre 1984) : « si vous vous installez après le
+    1er janvier d'une année, vous ne serez redevable de cotisations et
+    contributions qu'à partir de l'année suivante » (MSA, « Cotisations
+    sociales des nouveaux installés » ; réponses ministérielles aux questions
+    écrites n° 42225 de 2004 et n° 10883 de 2026). Sans cotisation, l'année ne
+    porte au compte ni points de retraite proportionnelle (R. 732-70, « pour
+    l'année au titre de laquelle elles sont dues »), ni points de RCO
+    (D. 732-155, III), ni trimestres (R. 732-48 : l'année « au cours de
+    laquelle l'assuré s'est acquitté de l'ensemble des cotisations dont il
+    était redevable »). Installé le 1er juillet 2010, l'exploitant n'a rien au
+    régime agricole en 2010, où le régime général garde ses deux trimestres
+    salariés ; en 2011, sa première année cotisée, les 30 points du 3° de
+    R. 732-71 (12 000 €, entre 800 SMIC horaires, 7 200 €, et deux fois le
+    minimum contributif) et les 100 de l'assiette minimale de la RCO (1 820
+    SMIC, 16 380 €). Installé en juillet 1984, avant le décret, il garde les
+    deux trimestres de ses mois : la règle n'est lue que depuis les
+    cotisations de 1985. Dans les deux moteurs."""
+    import json
+    import shutil
+    import subprocess
+
+    from retraite_notionnelle.droit import releve
+
+    cas = {"2010": dict(lignes=_installe_en_juillet(2010, 1962, 2024), naissance=1962,
+                        age=62.5, annee=2010),
+           "1984": dict(lignes=_installe_en_juillet(1984, 1940, 2000), naissance=1940,
+                        age=60.0, annee=1984)}
+
+    def carriere(entree: dict) -> Carriere:
+        return Carriere(annee_naissance=entree["naissance"], mois_naissance=1,
+                        jour_naissance=15, sexe="H", age_liquidation=entree["age"],
+                        lignes=[AnneeCarriere(**ligne) for ligne in entree["lignes"]])
+
+    carrieres = {nom: carriere(entree) for nom, entree in cas.items()}
+    trimestres = {nom: [c.trimestres_retenus(ligne) for ligne in c.lignes_de(cas[nom]["annee"])]
+                  for nom, c in carrieres.items()}
+    attendus = {"2010": [2, 0], "1984": [2, 2]}
+    assert trimestres == attendus
+    points = releve.construire(simulateur.scenario_actuel, carrieres["2010"]).droits.points
+    assert _points_agricoles_de_l_annee(points, 2010) == {}
+    assert _points_agricoles_de_l_annee(points, 2011) == {"msa_non_salaries": 30.0,
+                                                          "msa_rco": 100.0}
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    script = """
+import { readFileSync } from "node:fs";
+import { AnneeCarriere, Carriere } from "./moteur/js/carriere.js";
+import { Contexte } from "./moteur/js/contexte.js";
+import { construire } from "./moteur/js/droit/releve.js";
+const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
+const simulateur = contexte.simulateur();
+const obtenus = {};
+for (const [nom, cas] of Object.entries(JSON.parse(process.argv[1]))) {
+  const carriere = new Carriere({
+    annee_naissance: cas.naissance, mois_naissance: 1, jour_naissance: 15, sexe: "H",
+    age_liquidation: cas.age, lignes: cas.lignes.map((ligne) => new AnneeCarriere(ligne)) });
+  obtenus[nom] = {
+    trimestres: carriere.lignesDe(cas.annee).map((ligne) => carriere.trimestresRetenus(ligne)),
+    points: [...construire(simulateur.scenarioActuel, carriere).droits.points] };
+}
+process.stdout.write(JSON.stringify(obtenus));
+"""
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", script, json.dumps(cas)],
+        cwd=RACINE_TEMOINS.parent.parent, capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    obtenus = json.loads(execution.stdout)
+    assert {nom: obtenu["trimestres"] for nom, obtenu in obtenus.items()} == attendus
+    assert [_points_agricoles_de_l_annee(obtenus["2010"]["points"], annee)
+            for annee in (2010, 2011)] == [{}, {"msa_non_salaries": 30.0, "msa_rco": 100.0}]
+
+
+def test_l_annee_d_installation_n_entre_pas_dans_le_revenu_moyen_agricole(simulateur):
+    """Depuis 2026, le revenu annuel moyen de l'exploitant est fait de ses
+    meilleures années de revenus cotisés depuis 2016 (L. 732-24, 1° ;
+    R. 173-3-2). L'année où il s'installe après le 1er janvier, il ne cotise
+    rien (L. 731-10-1) : le revenu de ses mois n'y entre pas. Installé le
+    1er juillet 2017, parti le 1er août 2030, l'exploitant a la même moyenne
+    que son semestre de 2017 lui ait rapporté 6 000 € ou 30 000 €, quand ces
+    30 000 € comptaient parmi ses meilleures années. Dans les deux moteurs."""
+    import json
+    import re
+    import shutil
+    import subprocess
+
+    def moyenne(detail: str) -> float:
+        trouve = re.search(r"revenu annuel moyen ([\d,]+\.\d+) €", detail)
+        assert trouve is not None, detail
+        return float(trouve.group(1).replace(",", ""))
+
+    lignes = [_installe_en_juillet(2017, 1966, 2030, revenu) for revenu in (6000.0, 30000.0)]
+    carrieres = [Carriere(annee_naissance=1966, mois_naissance=1, jour_naissance=15, sexe="H",
+                          age_liquidation=64.5,
+                          lignes=[AnneeCarriere(**ligne) for ligne in liste])
+                 for liste in lignes]
+    assert [str(c.date_liquidation) for c in carrieres] == ["août 2030"] * 2
+    details = [next(p.detail for p in simulateur.scenario_actuel.calculer(c).pensions_par_regime
+                    if p.regime == "msa_non_salaries") for c in carrieres]
+    assert moyenne(details[1]) == pytest.approx(moyenne(details[0]), abs=0.01)
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    script = """
+import { readFileSync } from "node:fs";
+import { AnneeCarriere, Carriere } from "./moteur/js/carriere.js";
+import { Contexte } from "./moteur/js/contexte.js";
+const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
+const simulateur = contexte.simulateur();
+const obtenus = JSON.parse(process.argv[1]).map((lignes) => {
+  const carriere = new Carriere({
+    annee_naissance: 1966, mois_naissance: 1, jour_naissance: 15, sexe: "H",
+    age_liquidation: 64.5, lignes: lignes.map((ligne) => new AnneeCarriere(ligne)) });
+  return simulateur.scenarioActuel.calculer(carriere).pensions_par_regime
+    .find((p) => p.regime === "msa_non_salaries").detail;
+});
+process.stdout.write(JSON.stringify(obtenus));
+"""
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", script, json.dumps(lignes)],
+        cwd=RACINE_TEMOINS.parent.parent, capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    assert [moyenne(d) for d in json.loads(execution.stdout)] == pytest.approx(
+        [moyenne(d) for d in details], abs=0.01)
+
+
 def test_la_repartition_des_annees_suit_r_173_3_2():
     """« Arrondis à chaque étape à l'entier non nul le plus proche, la fraction
     d'année égale à 0,5 étant comptée pour une année » ; les années

@@ -1766,6 +1766,11 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
     if (ligne.annee >= anneeLiquidation && !entiere) {
       continue;
     }
+    // L'année où il s'installe après le 1er janvier, il ne cotise rien
+    // (`installationAgricole`) : son revenu n'y entre pas.
+    if (carriere.installationAgricole(ligne)) {
+      continue;
+    }
     const fractionLigne = entiere ? carriere.partCotiseeLigne(ligne) : ligne.fraction_annee;
     if (depuis !== null && ligne.annee < depuis) {
       continue;

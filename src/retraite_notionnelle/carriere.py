@@ -140,6 +140,12 @@ AFFILIATIONS_AGRICOLES = {
     "collaborateur_agricole": "collaborateur",
 }
 
+#: Les premières cotisations des non-salariés agricoles que fixe, lue, la
+#: situation au 1er janvier de l'année : celles de 1985 (décret n° 84-936 du
+#: 22 octobre 1984, article 2 ; R. 731-57 du code rural depuis 2005,
+#: L. 731-10-1 depuis 2008). Avant, l'année d'installation garde ses mois.
+COTISATIONS_AU_1ER_JANVIER_DEPUIS = 1985
+
 
 @dataclass(frozen=True)
 class AnneeCarriere:
@@ -1562,13 +1568,50 @@ class Carriere:
         return (ligne.annee == self.annee_de_cessation_agricole
                 and ligne.cotise and ligne.affiliation in AFFILIATIONS_AGRICOLES)
 
+    @cached_property
+    def _annees_d_installation_agricole(self) -> frozenset[int]:
+        """Les années où l'assuré s'installe non-salarié agricole après le
+        1er janvier (:meth:`installation_agricole`) : ses lignes agricoles
+        cotisées n'en remplissent pas les douze mois ; aucune ligne agricole
+        l'année d'avant ne le met au régime au 1er janvier, la convention de
+        :attr:`annee_de_cessation_agricole` ; et une ligne agricole l'année
+        d'après dit que ses mois sont ceux de la fin de l'année, et non un
+        passage de janvier à l'été, qu'elle laisse à ses mois."""
+        couvertures: dict[int, list[float]] = {}
+        for ligne in self.lignes:
+            if (ligne.cotise and ligne.affiliation in AFFILIATIONS_AGRICOLES
+                    and self.part_retenue_ligne(ligne) > 0):
+                couvertures.setdefault(ligne.annee, []).append(ligne.fraction_annee)
+        return frozenset(
+            annee for annee, fractions in couvertures.items()
+            if annee >= COTISATIONS_AU_1ER_JANVIER_DEPUIS
+            and somme_ordonnee(fractions) < 1.0 - 1e-9
+            and annee - 1 not in couvertures and annee + 1 in couvertures)
+
+    def installation_agricole(self, ligne: AnneeCarriere) -> bool:
+        """La ligne agricole de l'année où l'assuré s'installe après le
+        1er janvier. Les cotisations « sont fixées pour chaque année civile »,
+        la situation de l'exploitant « appréciée au premier jour de l'année
+        civile au titre de laquelle elles sont dues » (L. 731-10-1 du code
+        rural ; R. 731-57) : qui s'installe après le 1er janvier ne doit rien
+        pour l'année (MSA, « Cotisations sociales des nouveaux installés » ;
+        réponses aux questions écrites n° 42225 de 2004 et n° 10883 de 2026).
+        Elle ne porte donc au compte ni points (R. 732-70, D. 732-155), ni
+        revenu (L. 732-24), ni trimestres (R. 732-48)."""
+        return (ligne.annee in self._annees_d_installation_agricole
+                and ligne.cotise and ligne.affiliation in AFFILIATIONS_AGRICOLES)
+
     def part_cotisee_ligne(self, ligne: AnneeCarriere) -> float:
         """La part de l'année que cotise une ligne : :meth:`part_retenue_ligne`,
         sauf l'année où l'exploitant agricole cesse, cotisée entière
         (L. 731-10-1 du code rural). Ses lignes agricoles s'en partagent alors
         les douze mois au prorata des leurs : une ligne seule les a tous, deux
         lignes n'en font pas deux années. Des lignes qui, ensemble, passent
-        l'année se chevauchent : elles gardent leurs mois."""
+        l'année se chevauchent : elles gardent leurs mois. Et sauf l'année où
+        il s'installe après le 1er janvier, qui ne cotise rien
+        (:meth:`installation_agricole`)."""
+        if self.installation_agricole(ligne):
+            return 0.0
         part = self.part_retenue_ligne(ligne)
         if not self.annee_entiere_agricole(ligne):
             return part
@@ -1660,9 +1703,10 @@ class Carriere:
         durée est atteinte — les lit, car l'année entière de l'exploitant
         compte pour le taux « mais ne remet[...] pas en cause les bornes de
         la période de référence » de la surcote (circulaire Cnav n° 2004/37,
-        point 131)."""
+        point 131). Aucun l'année où l'exploitant s'installe après le
+        1er janvier, qu'il ne cotise pas (:meth:`installation_agricole`)."""
         part = self.part_retenue_ligne(ligne)
-        if part <= 0:
+        if part <= 0 or self.installation_agricole(ligne):
             return 0
         return min(ligne.trimestres_valides, trimestres_civils(round(part * 12)))
 
