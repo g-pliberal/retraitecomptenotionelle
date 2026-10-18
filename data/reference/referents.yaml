@@ -11484,9 +11484,10 @@ referents:
           (`pensionnes_de_2022`), font 48 % de ses moins de 65 ans, et gardent
           leur prévalence parmi les 20-64 ans (`au_perimetre`). Le 18
           octobre, chaque cohorte de la grille part l'année que le droit de
-          sa génération lui donne (`par_generation`) : la grille faisait
-          partir celles de 1966 et 1967 aux 170 trimestres de la génération
-          de janvier 1965.
+          sa génération lui donne, mesurée d'abord à part (`par_generation`),
+          puis le même jour dans `cout.py` (`Pensionne.departs`) : la grille
+          faisait partir celles de 1966 et 1967 aux 170 trimestres de la
+          génération de janvier 1965.
         etat: repris
         chantier: "138.3"
       - quoi: >-
@@ -11510,6 +11511,10 @@ referents:
           de l'écart, 0,54, la grille d'une génération sur cinq, qui fait
           partir trop tôt les cohortes de 1966 et 1967, 0,18, la suspension
           0,07, toute aux 65 ans et plus, et il en reste 0,19 (18 octobre) ;
+          chaque cohorte datée à sa génération dans `cout.py` le même jour,
+          l'écart n'est plus que de 0,34, la couverture du modèle reculant de
+          1,04 point : le périmètre 0,08, la suspension 0,07, et les mêmes
+          0,19 qui restent ;
           prestation −3,0 contre −3,4 ; marché du travail
           −0,7 contre −1,0. Sous la variante haute du COR, une productivité de
           1,0 % proche des 1,03 % de l'AWG, la prestation fait −3,7 : la

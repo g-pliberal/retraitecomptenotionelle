@@ -3,12 +3,12 @@
 **Reprise, au 18 octobre 2026.** Fait : les reportés en emploi (7 octobre) ;
 l'Ageing Report (13) ; les leviers du COR, la CSG effective (14) ; Ancetre,
 l'EACR, la CNRACL, les civils de l'État (16) ; la part stable de l'AWG (17) ;
-le 18, les 0,29 point des moins de 65 ans séparés : la grille d'une génération
-sur cinq en fait 0,18, la suspension rien ; restent 0,11, et 0,08 aux 65 ans
-et plus. Reste, une session par point : la date de chaque cohorte dans
-`cout.py` (action 147) ; ces 0,19 point ; l'Ircantec (une décision, avec
-l'action 147) ; les leviers et le taux effectif sur la page Coût ; au
-propriétaire, la table des poids (`pages.js`). Détail : note « la grille ».
+le 18, la date de chaque cohorte dans `cout.py` : l'écart à l'AWG tombe de
+0,54 à 0,34 point. Reste, une session par point : les 0,19 point ; le coût
+des avantages (`avantages.py`, même erreur) ; l'Ircantec (une décision, avec
+l'action 147). Pour les pages : la fourchette « étroite » de la page Coût,
+contredite, les leviers, le taux effectif. Au propriétaire, la table des
+poids (`pages.js`). Détail : notes « la grille », « la date de chaque cohorte ».
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.3 ». L'étape est
 vaste — sept chantiers, vingt-neuf points du registre — ; cette session en
