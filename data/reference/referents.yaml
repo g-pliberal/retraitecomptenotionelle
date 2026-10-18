@@ -508,14 +508,15 @@ referents:
           montant du salaire minimum de croissance à retenir est
           celui qui est en vigueur dans ledit département » ; le
           barème de la Cnav (salaire_validant_un_trimestre) donne
-          les mêmes montants
-        etat: coupe
+          les mêmes montants. Repris le 18 octobre
+          2026 (action 138, étape 6) : R. 753-21 et R. 351-39 avant
+          1952, le SMIC du département de 1972 à 1995, La Réunion
+          plus bas que les Antilles et la Guyane comme les arrêtés
+          du SMIC le disent (`salaire_validant_trimestre_outre_mer.csv`),
+          par le département de l'année, dans les deux moteurs ; la
+          saisie du site ne le porte pas encore.
+        etat: repris
         chantier: "138.6"
-        raison: >-
-          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
-          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
-          octobre). Le seuil de l'outre-mer : la fiche le déclare, et la saisie n'a pas
-          de champ pour dire où l'assuré a travaillé.
         fiche: trimestres_avant_1972
       - quoi: >-
           Avant 1973, le salaire de base du régime général était la
@@ -2220,14 +2221,15 @@ referents:
           R. 351-9 en vigueur (LEGIARTI000053335598) : pour l'assuré
           qui a travaillé dans un département de L. 751-1, « le
           montant du salaire minimum de croissance à retenir est
-          celui qui est en vigueur dans ledit département »
-        etat: coupe
+          celui qui est en vigueur dans ledit département ». Repris le 18 octobre
+          2026 (action 138, étape 6) : R. 753-21 et R. 351-39 avant
+          1952, le SMIC du département de 1972 à 1995, La Réunion
+          plus bas que les Antilles et la Guyane comme les arrêtés
+          du SMIC le disent (`salaire_validant_trimestre_outre_mer.csv`),
+          par le département de l'année, dans les deux moteurs ; la
+          saisie du site ne le porte pas encore.
+        etat: repris
         chantier: "138.6"
-        raison: >-
-          Léger ou nul, coupé le 14 octobre 2026 : le propriétaire fait le lourd et le
-          moyen de l'action 138 et déclare le reste sans le faire (classement du 9
-          octobre). Le même point que baremes_ipp : le seuil de l'outre-mer, que la
-          fiche déclare.
         fiche: trimestres_avant_1972
     bilan: >-
       Ce qu'il fait de mieux tient à des paramètres datés texte par

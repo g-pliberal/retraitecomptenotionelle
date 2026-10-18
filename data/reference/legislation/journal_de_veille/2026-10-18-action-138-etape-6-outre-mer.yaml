@@ -1,0 +1,44 @@
+date: "2026-10-18"
+session: "action 138, étape 6 : l'outre-mer, le seuil d'un trimestre du département"
+consulte: >-
+  veille_droit.py (dernière veille consignée : 2026-10-18) ; les index LEGI et JORF de
+  la release `index-dila`, mis à jour des incréments jusqu'au 18 octobre 2026 (7
+  incréments LEGI, 13 JORF), puis textes.py --inscrire, qui inscrit 44 rédactions
+  « à examiner » : R. 753-21 et D. 757-2, que la fiche cite, et 39 que d'autres fiches
+  citaient déjà (R. 613-17, le décret n° 84-936). Dans l'index LEGI : R. 351-9
+  (LEGIARTI000006749353, 028751530, 053335598) et sa phrase sur les départements de
+  L. 751-1 ; R. 753-21 (LEGIARTI000006752616, du 21 décembre 1985 au 1er janvier 2026) ;
+  R. 351-39 (LEGIARTI000053327980, depuis le 1er janvier 2026) ; D. 757-2
+  (LEGIARTI000006738640) ; la loi n° 50-147, dont l'index n'a que les articles 1er et 2.
+  Dans l'index JORF : le décret n° 2025-1409, article 2, 32° et 44° (JORFARTI000053227542) ;
+  les notices des décrets n° 47-2032, 48-593, 48-603, 50-1410 et 51-1441, et de la loi
+  n° 50-147 ; les arrêtés et les décrets du SMIC des départements d'outre-mer de 1959 à
+  1996, dont l'arrêté du 29 novembre 1974, celui du 29 février 1980, celui du 30 décembre
+  1981, les décrets n° 90-1153, 92-17, 95-824 et 95-1312. L'API de la législation de la
+  Cnav : les barèmes « Salaire validant un trimestre » et « Allocation aux vieux
+  travailleurs salariés […] - Montant », récupérés le jour même (`cnav_avts.py`).
+trouve: >-
+  En Guadeloupe, en Guyane, en Martinique et à La Réunion, les cotisations comptent
+  depuis le 1er janvier 1948 : en 1948, autant de trimestres que le salaire représente de
+  fois 1 800 F métropolitains, ou 900 F CFA à La Réunion ; depuis 1949, de fois le
+  trimestre de l'allocation aux vieux travailleurs salariés « dans les départements
+  mentionnés à l'article L. 751-1 » (R. 753-21), que le décret n° 2025-1409 abroge et que
+  R. 351-39 garde pour les périodes d'avant 1952. De 1972 à 2013, l'assuré qui y a
+  travaillé « au cours de tout ou partie » de l'année prend le SMIC du département au
+  1er janvier (R. 351-9). Le barème des seuils de la Cnav porte 3 750, 5 625 et 8 000
+  anciens francs de 1949 à 1951, la métropole de 1952 à 1971, et 200 heures du SMIC de
+  chaque département de 1972 à 1995 ; il redonne au centime les SMIC que le Journal
+  officiel écrit (220,74 F la semaine aux Antilles au 1er décembre 1974 ; 593,36 F et
+  553,64 F au 1er janvier 1982 ; 1 048,92 F et 1 012,07 F pour 39 heures en 1991 ;
+  1 094,37 F en 1992). La Réunion avait le SMIC le plus bas : le barème « AVTS -
+  Validation des années de salariat », qui porte la condition d'ouverture de
+  l'allocation de D. 757-2 et intervertit les colonnes de 1975 à 1991, se trompe. Depuis
+  le 1er janvier 1996, le SMIC des départements d'outre-mer est celui de la métropole,
+  36,98 F de l'heure (décret n° 95-1312). Le scénario 1 valide désormais les années
+  travaillées outre-mer au seuil de leur département, dans les deux moteurs, et rien
+  avant 1948 ; la carrière, le relevé et la chronologie portent le département. Aucun
+  témoin ne bouge ; le site n'a pas encore de champ pour le dire.
+reste: >-
+  La présentation du champ de saisie, au propriétaire. Au fac-similé, les montants de
+  l'allocation des départements d'outre-mer de 1949 à 1951 (loi n° 50-147, article 2 ;
+  décrets n° 48-593, 50-1410 et 51-1441). Avant 1946, la règle de la retenue.

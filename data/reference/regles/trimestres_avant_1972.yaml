@@ -5,7 +5,9 @@ intitule: >-
   1971, autant de trimestres que le salaire annuel représente de fois le montant
   trimestriel de l'allocation aux vieux travailleurs salariés au 1er janvier de l'année,
   celui des villes de plus de 5 000 habitants jusqu'en 1962, quatre au plus par année
-  civile ; de 1946 à 1948, autant de fois 18 F, 1 800 anciens francs.
+  civile ; de 1946 à 1948, autant de fois 18 F, 1 800 anciens francs. Outre-mer, rien
+  avant 1948, puis 1 800 F métropolitains ou 900 F CFA en 1948, l'allocation des
+  départements d'outre-mer de 1949 à 1951, et leur SMIC de 1972 à 1995.
 etat: approchee
 effet: >-
   Les années travaillées de 1946 à 1971 dont le salaire n'atteint pas quatre fois le
@@ -14,9 +16,12 @@ effet: >-
   validait quatre trimestres, en écrivant qu'« aucun seuil de montant n'existait » ; elles
   en valident désormais ce que le salaire paie, dans les deux moteurs, et une année qui
   n'en valide aucun ne compte plus au salaire annuel moyen depuis 2004. Aucun des 737
-  témoins n'est touché.
+  témoins n'est touché. Outre-mer, depuis le 18 octobre 2026, le seuil du département :
+  37,50 F au lieu de 85 F en 1949, 2 768,20 F à La Réunion et 2 966,80 F aux Antilles et
+  en Guyane au lieu de 3 630 F en 1982 ; la carrière et la chronologie portent le
+  département, le site n'a pas encore de champ pour le dire, et aucun témoin ne bouge.
 sources:
-  lu_le: 2026-10-13
+  lu_le: 2026-10-18
   prochaine_relecture: 2027-04-30
   a_relire:
   - >-
@@ -28,14 +33,12 @@ sources:
     quatre trimestres par année travaillée. Le barème de la Cnav écrit 30 anciens francs
     de 1936 à 1945 et 216 pour 1946 : à rapprocher de la retenue, ce qui dirait le taux.
   - >-
-    Outre-mer : le seuil des Antilles, de la Guyane et de La Réunion, plus bas qu'en
-    métropole de 1949 à 1951 (l'allocation y était plus basse) et de 1972 à 1995 (le SMIC
-    du département, R. 351-9), est gardé par le récupérateur (`bareme_seuil`) ; le modèle
-    ne sait pas où l'assuré a travaillé, et le site n'a pas de champ pour le dire. Les
-    deux barèmes de la Cnav qui le portent intervertissent les colonnes des Antilles et
-    de La Réunion de 1975 à 1991 : celui du salaire validant met La Réunion plus bas,
-    comme OpenFisca et l'IPP ; à trancher au décret qui fixe le SMIC de chaque
-    département.
+    Outre-mer : les montants de l'allocation aux vieux travailleurs salariés des
+    départements d'outre-mer de 1949 à 1951, 15 000, 22 500 et 32 000 anciens francs au
+    1er janvier selon le barème de la Cnav, ne se lisent qu'au fac-similé (loi n° 50-147,
+    article 2 ; décrets n° 48-593, 50-1410 et 51-1441, dont l'index n'a que la notice).
+    Le site n'a pas de champ pour dire où l'assuré a travaillé : la carrière, le relevé
+    et la chronologie portent le département, que la saisie ne remplit pas encore.
   - >-
     Le Journal officiel ne porte dans l'index du dépôt, pour ces années, que la notice du
     décret n° 70-879 (1 750 F au 1er octobre 1970) ; les lois de 1948 à 1956 et les
@@ -43,6 +46,60 @@ sources:
     13 octobre 2026, le seuil de 1971 et ceux de 1946 à 1948 sont `certifiee`
     (`jorf_avts.py`) ; ceux de 1949 à 1970 restent `haute`.
   lectures:
+  - type: legifrance
+    reference: >-
+      R. 753-21 CSS, LEGIARTI000006752616, du 21 décembre 1985 au 1er janvier 2026, lue
+      dans l'index LEGI : « Les cotisations versées au titre de la législation sur les
+      assurances sociales dans les départements mentionnés à l'article L. 751-1 depuis le
+      1er janvier 1948 sont prises en compte [...] : 1°) pour l'année 1948, [...] autant de
+      trimestres que le salaire annuel [...] représente de fois 1.800 F métropolitains
+      dans les départements de la Guadeloupe, de la Martinique et de la Guyane, ou 900 F.
+      C. F. A. dans le département de la Réunion ; 2°) depuis le 1er janvier 1949, [...]
+      de fois le montant trimestriel de l'allocation aux vieux travailleurs salariés au
+      1er janvier de l'année considérée, dans les départements mentionnés à l'article
+      L. 751-1 avec un maximum de quatre trimestres par année civile »
+    date: 1985-12-21
+  - type: legifrance
+    reference: >-
+      R. 351-39 CSS, LEGIARTI000053327980, créé par le décret n° 2025-1409, article 2, 32°
+      (JORFARTI000053227542), qui abroge R. 753-21 (44°) : pour les assurés de plus de
+      soixante-quinze ans au 1er janvier 2026, ou assurés « au titre de périodes
+      antérieures de plus de soixante ans », « demeurent applicables [...] des quatre
+      premiers alinéas de l'article R. 351-9 [...] et, en ce qui concerne les périodes
+      antérieures au 1er janvier 1952, de l'article R. 753-21 dans leur rédaction
+      antérieure »
+    date: 2026-01-01
+  - type: legifrance
+    reference: >-
+      R. 351-9 CSS, toutes ses rédactions depuis 1985 (LEGIARTI000006749353,
+      LEGIARTI000028751530, LEGIARTI000053335598) : « En ce qui concerne les assurés
+      ayant, au cours de tout ou partie d'une année déterminée, exercé leur activité dans
+      l'un des départements mentionnés à l'article L. 751-1, le montant du salaire minimum
+      de croissance à retenir est celui qui est en vigueur dans ledit département au 1er
+      janvier de l'année considérée »
+    date: 1985-12-21
+  - type: legifrance
+    reference: >-
+      D. 757-2 CSS, LEGIARTI000006738640, du 21 décembre 1985 au 1er janvier 1991 : la
+      condition d'ouverture de l'allocation aux vieux travailleurs salariés, une
+      rémunération au moins égale à l'allocation entière de 1949 à 1971, puis à 800 heures
+      de SMIC — ce que porte le barème « AVTS - Validation des années de salariat » de la
+      Cnav, qui intervertit les Antilles et La Réunion de 1975 à 1991 ; sans effet sur le
+      trimestre
+    date: 1985-12-21
+  - type: jorf
+    reference: >-
+      les arrêtés et les décrets du SMIC des départements d'outre-mer, lus dans l'index du
+      dépôt : arrêté du 29 novembre 1974 (JORFTEXT000000857163), 220,74 F la semaine aux
+      Antilles et en Guyane au 1er décembre 1974 ; arrêté du 29 février 1980
+      (JORFTEXT000000287879), 436,76 F et 392,40 F à La Réunion pour 40 heures ; arrêté du
+      30 décembre 1981 (JORFTEXT000000463090), 593,36 F et 553,64 F au 1er janvier 1982 ;
+      décret n° 90-1153 (JORFARTI000001313610), 1 048,92 F et 1 012,07 F pour 39 heures au
+      1er janvier 1991 ; décret n° 92-17 (JORFARTI000001512356), 1 094,37 F dans les
+      quatre départements au 1er janvier 1992 ; décret n° 95-1312 (JORFARTI000001402023),
+      36,98 F de l'heure au 1er janvier 1996, celui de la métropole. La Réunion avait le
+      SMIC le plus bas : le barème du salaire validant est le bon
+    date: 1996-01-01
   - type: legifrance
     reference: >-
       R. 351-9 CSS, LEGIARTI000053335598, en vigueur depuis le 1er janvier 2026, lue dans
@@ -69,6 +126,15 @@ sources:
       1983 (LEGIARTI000006760608) : les mêmes règles, en anciens francs — « de fois 1.800
       anciens francs » de 1946 à 1948
     date: 1983-09-01
+  - type: circulaire_cnav
+    reference: >-
+      barème « Salaire validant un trimestre », colonnes « Guadeloupe, Guyane,
+      Martinique » et « Réunion », de 1948 à 1995 (`cnav_avts.py`, `bareme_seuil`) :
+      3 750, 5 625 et 8 000 anciens francs de 1949 à 1951, la métropole de 1952 à 1971,
+      200 heures du SMIC de chaque département de 1972 à 1995, que le récupérateur
+      recontrôle sur les textes du SMIC ; une seule colonne depuis 1996
+    url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=salaire_validant_un_trimestre_montant_bar.aspx
+    date: 2025-12-23
   - type: circulaire_cnav
     reference: >-
       barèmes « Allocation aux vieux travailleurs salariés, Allocation aux mères de
@@ -98,23 +164,39 @@ textes_a_rattacher:
   reference: R. 351-9 CSS, rédaction de 1985 à 2014
 - id: LEGIARTI000006760608
   reference: décret n° 45-0179 du 29 décembre 1945, article 71, § 2
+- id: LEGIARTI000006752616
+  reference: R. 753-21 CSS, de 1985 à 2025, les départements d'outre-mer depuis 1948
+- id: LEGIARTI000053327980
+  reference: R. 351-39 CSS, en vigueur, qui garde R. 753-21 avant 1952
 approximations:
 - ecart: >-
     avant 1946, quatre trimestres par année travaillée, la règle se lisant sur la retenue
     et non sur le salaire
   effet: non mesuré ; aucun témoin n'a d'année travaillée avant 1946 sous le seuil
 - ecart: >-
-    le seuil de la métropole partout, quand l'assuré a travaillé outre-mer de 1949 à 1951
-    ou de 1972 à 1995
-  effet: non mesuré ; le modèle ne connaît pas le lieu de travail
+    le seuil de la métropole, quand l'assuré a travaillé outre-mer de 1949 à 1951 ou de
+    1972 à 1995 : le site n'a pas de champ pour le dire, et la saisie ne remplit pas le
+    département que la carrière porte
+  effet: non mesuré ; aucun témoin n'a travaillé outre-mer
+- ecart: >-
+    une année partagée entre la métropole et un département d'outre-mer prend un seul
+    seuil : depuis 1972, celui du département, comme R. 351-9 le veut ; avant, celui du
+    lieu où l'assuré a passé le plus de mois, comme son statut, quand R. 753-21 compte
+    au seuil du département les seules cotisations qui y ont été versées
+  effet: non mesuré ; une année travaillée des deux côtés avant 1972
 code:
   moteur: >-
     `DonneesMacro.trimestres_valides` (`donnees/macro.py`) et `trimestresValides`
     (`moteur/js/macro.js`) lisent le seuil de 1946 à 1971 dans
     `legislation/salaire_validant_trimestre_avant_1972.csv`, que le paquet porte sous
     `salaire_validant_avant_1972`, et le divisent comme le SMIC depuis 1972 : un salaire
-    qui tombe pile sur le seuil le valide (neuf décimales d'euro).
+    qui tombe pile sur le seuil le valide (neuf décimales d'euro). Outre-mer, ils lisent
+    `legislation/salaire_validant_trimestre_outre_mer.csv` par le département de l'année
+    (`AnneeCarriere.outre_mer`, `LigneRelevee.outre_mer`, l'attribut `outre_mer` de la
+    période d'activité de la chronologie), sous `salaire_validant_outre_mer_*` au paquet.
   tests: >-
-    `test_avant_1972_le_trimestre_se_valide_au_trimestre_de_l_avts`
-    (tests/test_salaire_annuel_moyen.py) et son jumeau de tests/js/moteur.test.js ; les
+    `test_avant_1972_le_trimestre_se_valide_au_trimestre_de_l_avts` et
+    `test_outre_mer_le_trimestre_se_valide_au_seuil_du_departement`
+    (tests/test_salaire_annuel_moyen.py), et leurs jumeaux de tests/js/moteur.test.js ;
+    tests/test_outre_mer.py, le département dans la carrière, et son jumeau ; les
     contrôles du récupérateur (tests/test_verification.py).
