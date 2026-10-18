@@ -366,9 +366,10 @@ def _facteur(argument: str) -> tuple[str, float]:
     """``…*100`` ou ``…/12`` en fin d'argument : le changement d'unité.
 
     Le même que celui des sondes de CSV : une fiche stocke 0,4466 quand la
-    prose écrit 44,66 %.
+    prose écrit 44,66 %. Négatif, ``…*-100``, il dit sans signe une baisse
+    que le paquet range en écart négatif, comme l'accueil la dit (action 163).
     """
-    trouve = re.search(r"([*/])([\d.]+)$", argument)
+    trouve = re.search(r"([*/])(-?[\d.]+)$", argument)
     if not trouve:
         return argument, 1.0
     nombre = float(trouve.group(2))

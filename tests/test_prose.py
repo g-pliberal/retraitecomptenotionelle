@@ -417,6 +417,114 @@ def test_le_simulateur_se_mesure_comme_la_page_l_affiche(monkeypatch):
             mesurer(absent)
 
 
+#: Les repères d'une page, réduits à ce que la mesure ``repere`` en lit : trois
+#: fiches de tête, dont une sans précision, puis une fiche hors d'eux. Les
+#: chiffres sont posés à la main, avec les espaces fines du site.
+PAGE_REPERES = (
+    '<div class="fiches reperes">'
+    '<div class="fiche"><div class="valeur">422 Md €</div>'
+    '<div class="etiquette">Versé aux retraités en 2025</div>'
+    '<div class="precision">à 17,3 millions de personnes</div></div>'
+    '<div class="fiche"><div class="valeur">33 %</div>'
+    '<div class="etiquette">Promis au-delà de ce que VOS cotisations achèteraient</div></div>'
+    '<div class="fiche"><div class="valeur">5,1 Md €</div>'
+    '<div class="etiquette">Manquant</div>'
+    '<div class="precision">1,2 % de la facture</div></div>'
+    '</div>\n'
+    '<div class="fiches"><div class="fiche"><div class="valeur">999 €</div>'
+    '<div class="etiquette">Plus bas sur la page</div></div></div>\n'
+)
+
+
+def test_les_reperes_d_une_page_se_mesurent_comme_elle_les_affiche(monkeypatch):
+    """Les trois chiffres en tête des pages Coût et Pourquoi changer, que le
+    parcours fait lire dans l'ordre (action 163) : la valeur d'une fiche, ou
+    le premier nombre de sa précision, par son rang. La page se rend une fois
+    pour toutes ses fiches ; une fiche qu'elle n'a pas, ou une précision qui
+    lui manque, se disent plutôt que de rendre un autre chiffre."""
+    from functools import lru_cache
+
+    from retraite_notionnelle.web import site
+
+    mesures = verifier_prose._mesures()
+    demandes = []
+
+    def rendre(chemin, requete=None):
+        demandes.append((chemin, requete))
+        return "Coût", PAGE_REPERES
+
+    monkeypatch.setattr(site, "rendre", rendre)
+    monkeypatch.setattr(mesures, "_page", lru_cache(maxsize=None)(mesures._page.__wrapped__))
+
+    def mesurer(reglages: str) -> float:
+        return mesures.mesurer(f"repere?chemin=/cout&{reglages}")
+
+    assert mesurer("rang=1") == 422
+    assert mesurer("rang=1&quoi=precision") == 17.3
+    assert mesurer("rang=2") == 33
+    assert mesurer("rang=3") == 5.1
+    assert mesurer("rang=3&quoi=precision") == 1.2
+    assert demandes == [("/cout", {})]
+    for absent in ("rang=2&quoi=precision", "rang=4", "rang=1&quoi=etiquette"):
+        with pytest.raises(ValueError):
+            mesurer(absent)
+
+
+def test_une_baisse_dite_sans_signe_se_lit_par_un_facteur_negatif():
+    """L'accueil dit de combien la proposition baisse les retraites, sans
+    signe : la phrase porte le sens, et la page écrit l'opposé des médianes
+    que le paquet range. Le parcours les cite de même, par un facteur négatif
+    (action 163)."""
+    import json
+
+    paquet = json.loads((RACINE / "moteur" / "donnees.json").read_text(encoding="utf-8"))
+    baisse = paquet["bilan_equilibre"]["ecarts_medians"]["a_venir"]
+    assert baisse < 0
+    assert verifier_prose.sonde_valeur(
+        "moteur/donnees.json:bilan_equilibre.ecarts_medians.a_venir*-100"
+    ) == pytest.approx(-100 * baisse)
+
+
+def test_le_manque_d_un_coefficient_est_ce_que_ses_recettes_ne_couvrent_pas(monkeypatch):
+    """« Il manquerait 16 % de la facture en 2070 », « jusqu'à 17 % en 2048 » :
+    le coefficient d'équilibre dit ce que les recettes couvrent de la dépense,
+    son manque, ``1 − c``, ce qu'elles n'en couvrent pas — pour le système
+    actuel, la part que les pages Coût et Pourquoi changer écrivent ; pour la
+    proposition, de combien il abaisserait les cases de Cas types (action
+    163). Sur un bilan posé à la main : une année observée, deux projetées."""
+    mesures = verifier_prose._mesures()
+
+    class Ligne:
+        def __init__(self, annee, coefficient):
+            self.annee, self._coefficient = annee, coefficient
+
+        def coefficient(self, _scenario):
+            return self._coefficient
+
+    class Solde:
+        derniere_annee = 2070
+        lignes = [Ligne(2025, 0.988), Ligne(2048, 0.83), Ligne(2070, 0.844)]
+
+        def annee(self, annee):
+            return next((ligne for ligne in self.lignes if ligne.annee == annee), None)
+
+        def projetees(self):
+            return self.lignes[1:]
+
+    class Cout:
+        solde = Solde()
+
+    monkeypatch.setattr(mesures, "_cout_de", lambda _reglages: Cout())
+    assert mesures.mesurer("coefficient?scenario=1&en=manque") == pytest.approx(15.6)
+    assert mesures.mesurer("coefficient?scenario=1&annee=2025&en=manque") == pytest.approx(1.2)
+    assert mesures.mesurer("coefficient?scenario=6&quoi=minimum&en=manque") == pytest.approx(17)
+    assert mesures.mesurer("coefficient?scenario=6&quoi=minimum") == pytest.approx(0.83)
+    for sans_manque in ("quoi=annee_minimum&en=manque", "quoi=economie&en=manque",
+                        "en=milliards"):
+        with pytest.raises(ValueError):
+            mesures.mesurer(f"coefficient?scenario=6&{sans_manque}")
+
+
 def test_les_tableaux_produits_ne_sont_pas_perimes():
     """Ce que le modèle calcule ne se recopie pas à la main.
 

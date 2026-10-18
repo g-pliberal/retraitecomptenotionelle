@@ -357,6 +357,53 @@ def simulateur(**reglages: str) -> float:
     return _affiche(trouve.group(1))
 
 
+#: Une fiche de tête (``fiche``, dans ``gabarit.js``) : sa valeur, son
+#: étiquette, puis sa précision quand elle en a une.
+_FICHE = re.compile(r'<div class="fiche"><div class="valeur">(.*?)</div>'
+                    r'<div class="etiquette">.*?</div>'
+                    r'(?:<div class="precision">(.*?)</div>)?</div>', re.S)
+
+
+@lru_cache(maxsize=None)
+def _page(chemin: str) -> str:
+    """Une page du site, sans saisie, rendue par le portage, une fois."""
+    from retraite_notionnelle.web.site import rendre
+
+    return rendre(chemin, {})[1]
+
+
+def repere(**reglages: str) -> float:
+    """Ce qu'une page affiche dans ses repères, les fiches qui l'ouvrent.
+
+    ``chemin=/cout`` désigne la page, ``rang`` la fiche, à partir de 1, et
+    ``quoi`` ce qu'on en lit : ``valeur``, le défaut, son grand chiffre, ou
+    ``precision``, le premier nombre de la ligne qui le précise. Le parcours
+    fait lire les trois chiffres en tête des pages Coût et Pourquoi changer
+    dans l'ordre où elles les donnent (action 163) : le rang les désigne, et
+    non l'étiquette, que les pages retouchent sans que le chiffre change —
+    « VOS cotisations », le 17 octobre 2026.
+    """
+    quoi = reglages.get("quoi", "valeur")
+    if quoi not in ("valeur", "precision"):
+        raise ValueError(f"quoi inconnu « {quoi} » ; il y a valeur, precision")
+    chemin = reglages["chemin"]
+    _, ouverture, reste = _page(chemin).partition('<div class="fiches reperes">')
+    if not ouverture:
+        raise ValueError(f"la page {chemin} n'a pas de repères")
+    fiches = []
+    while fiche := _FICHE.match(reste):
+        fiches.append(fiche)
+        reste = reste[fiche.end():]
+    rang = int(reglages["rang"])
+    if not 1 <= rang <= len(fiches):
+        raise ValueError(f"la page {chemin} a {len(fiches)} repères, pas de rang {rang}")
+    lu = fiches[rang - 1].group(1 if quoi == "valeur" else 2) or ""
+    trouve = re.search(_AFFICHE, _texte(lu))
+    if not trouve:
+        raise ValueError(f"le repère {rang} de la page {chemin} n'a pas de {quoi} chiffrée")
+    return _affiche(trouve.group(0))
+
+
 def _cout(ponderation: str = "effectifs", age_legal: str = "", emploi_reportes: str = "",
           contribution_etat: str = ""):
     """Le coût agrégé, sous les règles par défaut — celui de la page Coût.
@@ -1392,18 +1439,29 @@ def coefficient(**reglages: str) -> float:
 
     ``quoi=minimum`` rend le plus bas des années projetées, ``quoi=annee_minimum``
     l'année où il est atteint, ``quoi=economie`` ce qu'on lirait à tort comme
-    une économie, ``1 − 1/c``, en %.
+    une économie, ``1 − 1/c``, en %. ``en=manque`` dit le coefficient, ou son
+    plus bas, par ce qu'il laisse sans recette, ``1 − c``, en % : pour le
+    système actuel, la part de sa dépense que ses recettes ne couvrent pas,
+    que les pages Coût et Pourquoi changer écrivent ; pour la proposition, de
+    combien il abaisserait les cases de la page Cas types (action 163).
     """
     scenario = _scenario(reglages["scenario"])
     quoi = reglages.get("quoi", "valeur")
+    en = reglages.get("en", "")
+    if en not in ("", "manque") or (en and quoi not in ("valeur", "minimum")):
+        raise ValueError(f"en=manque ne dit que le coefficient ou son plus bas, "
+                         f"reçu quoi={quoi}, en={en}")
     if quoi in ("minimum", "annee_minimum"):
         lignes = _cout_de(reglages).solde.projetees()
         plus_bas = min(lignes, key=lambda l: l.coefficient(scenario))
-        return plus_bas.coefficient(scenario) if quoi == "minimum" else plus_bas.annee
-    valeur = _solde_annee(reglages).coefficient(scenario)
-    if quoi == "economie":
-        return (1 - 1 / valeur) * 100
-    return valeur
+        if quoi == "annee_minimum":
+            return plus_bas.annee
+        valeur = plus_bas.coefficient(scenario)
+    else:
+        valeur = _solde_annee(reglages).coefficient(scenario)
+        if quoi == "economie":
+            return (1 - 1 / valeur) * 100
+    return (1 - valeur) * 100 if en == "manque" else valeur
 
 
 def annees_equilibrees(**reglages: str) -> float:
@@ -1865,6 +1923,7 @@ MESURES = {
     "conserve": conserve,
     "fois_prix": fois_prix,
     "simulateur": simulateur,
+    "repere": repere,
     "cumul_passe": cumul_passe,
     "ecart_passe": ecart_passe,
     "cout_annee": cout_annee,

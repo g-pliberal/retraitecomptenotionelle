@@ -165,6 +165,39 @@ def test_aucun_tableau_de_carriere_ne_s_ecrit_a_la_main():
             "ne se mesure pas sur sa saisie")
 
 
+#: Ce que le parcours écrit à la main parmi ses chiffres à unité, et pourquoi.
+#: Le reste est ancré : sur la page qui l'affiche, le paquet où elle le lit ou
+#: le modèle. Restent les saisies — ce que le présentateur tape, ce que la page
+#: pose en exemple —, un réglage de salle, une promesse que la page écrit sans
+#: la calculer, et les mots de la salle.
+ECRITS_A_LA_MAIN = {
+    "125 %": "le zoom du navigateur, un réglage de salle",
+    "150 %": "le zoom du navigateur, un réglage de salle",
+    "3 500 €": "la saisie de l'exemple, tapée par le présentateur",
+    "1 443 €": "la saisie de la carrière au SMIC",
+    "3 000 €": "la saisie de la carrière du fonctionnaire",
+    "2 751 €": "la saisie de la carrière née en 2000",
+    "300 €": "une pension du foyer que l'accueil pose en exemple (FOYERS_GARANTIE)",
+    "1 500 €": "l'autre pension du même foyer",
+    "100 %": "la quatrième promesse de l'accueil, que la page écrit sans la calculer",
+    "30 %": "la question de la salle, citée telle qu'elle vient",
+}
+
+
+def test_aucun_chiffre_a_unite_du_parcours_ne_s_ecrit_a_la_main():
+    """Les montants et les taux du parcours sont ceux que le site produit, et
+    GitHub les récrit avec lui. Écrits à la main, ils rougissaient la suite
+    chaque fois que le modèle bougeait, et ceux qu'aucune page ne confronte
+    dérivaient sans bruit : le 18 octobre 2026, le parcours donnait « 12 % »
+    d'une baisse que l'accueil chiffrait à 13, et « 8 % en 2070 » d'un
+    réglage qui n'y retirait plus rien (action 163). Seuls s'écrivent à la
+    main ceux qu'``ECRITS_A_LA_MAIN`` déclare, et chacun y sert encore."""
+    brut = PARCOURS.read_text(encoding="utf-8")
+    ecrits = {_ecrit(*trouve) for trouve in NOMBRE.findall(ANCRE_ENTIERE.sub("", brut))}
+    assert sorted(ecrits - set(ECRITS_A_LA_MAIN)) == [], "chiffres écrits à la main"
+    assert sorted(set(ECRITS_A_LA_MAIN) - ecrits) == [], "déclarations qui ne servent plus"
+
+
 def _prose(corps: str) -> str:
     """Le texte rendu, balises retirées et blancs repliés."""
     return html.unescape(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", corps)))
