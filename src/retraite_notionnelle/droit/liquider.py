@@ -2511,15 +2511,16 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
         # l'exploitant agricole cesse : il y cotise pour l'année entière
         # (L. 731-10-1 du code rural), et ses droits sont arrêtés « au dernier
         # jour de l'année civile de l'entrée en jouissance » (R. 732-60, 1°).
-        # Elle y entre pour douze mois, que ses lignes se partagent
-        # (`Carriere.part_cotisee_ligne`) : son revenu, son plancher, son
-        # plafond.
+        # Elle y entre, comme toute année où il cesse, pour douze mois, dans
+        # le statut du 1er janvier (`Carriere.part_cotisee_ligne`) : son
+        # revenu, son plancher, son plafond.
         entiere = carriere.annee_entiere_agricole(ligne)
         if ligne.annee >= annee_liquidation and not entiere:
             continue
-        # L'année où il s'installe après le 1er janvier, il ne cotise rien
-        # (`Carriere.installation_agricole`) : son revenu n'y entre pas.
-        if carriere.installation_agricole(ligne):
+        # Le statut qu'il prend après le 1er janvier ne cotise rien de l'année
+        # (`Carriere.statut_pris_apres_le_1er_janvier`) : son revenu n'y entre
+        # pas.
+        if carriere.statut_pris_apres_le_1er_janvier(ligne):
             continue
         fraction_ligne = (carriere.part_cotisee_ligne(ligne) if entiere
                           else ligne.fraction_annee)

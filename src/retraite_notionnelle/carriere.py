@@ -1555,81 +1555,119 @@ class Carriere:
         return plafonds
 
     @cached_property
+    def _statuts_au_1er_janvier(self) -> dict[int, frozenset[str]]:
+        """Les années du non-salarié agricole que fixe sa situation au
+        1er janvier, et les statuts agricoles qui les cotisent tout entières ;
+        une année absente garde les mois de ses lignes.
+
+        Ses cotisations « sont fixées pour chaque année civile », sa situation
+        « appréciée au premier jour de l'année civile au titre de laquelle
+        elles sont dues » (L. 731-10-1 du code rural ; R. 731-57 ; article 2
+        du décret n° 84-936 du 22 octobre 1984 avant 2005). Une ligne agricole
+        cotisée l'année d'avant le met au régime au 1er janvier : l'année où
+        il cesse, quelle qu'elle soit, il les doit « au titre de l'année
+        civile entière » (L. 731-10-1), dans le statut de ce jour — sauf à
+        prendre la même année un autre métier, qui ne cotise qu'au prorata
+        des mois écoulés (R. 731-83) —, et le statut qu'il prend en cours
+        d'année, de collaborateur à chef ou de chef à collaborateur, ne doit
+        rien avant l'année suivante (MSA de Bourgogne, questions-réponses du
+        webinaire du 23 avril 2026). Le statut du 1er janvier est celui de
+        l'année d'avant, ou, quand elle en a eu deux, celui qu'il y a pris.
+        Sans ligne agricole l'année d'avant, l'année où il s'installe ne lui
+        vaut rien, un ensemble vide, quand une ligne agricole l'année d'après
+        dit que ses mois sont ceux de la fin de l'année, et non un passage de
+        janvier à l'été, qu'elle laisse à ses mois. Le statut du 1er janvier
+        ne se lit que depuis les cotisations de 1985, les premières que fixe
+        le décret : avant, comme quand il ne se lit pas, l'année où
+        l'exploitant cesse se partage entre ses statuts, au prorata de leurs
+        mois (:meth:`part_cotisee_ligne`)."""
+        agricoles: dict[int, list[AnneeCarriere]] = {}
+        autres: set[int] = set()
+        for ligne in self.lignes:
+            if not ligne.cotise or self.part_retenue_ligne(ligne) <= 0:
+                continue
+            if ligne.affiliation in AFFILIATIONS_AGRICOLES:
+                agricoles.setdefault(ligne.annee, []).append(ligne)
+            else:
+                autres.add(ligne.annee)
+        statuts: dict[int, frozenset[str]] = {}
+        for annee in sorted(agricoles):
+            de_l_annee = frozenset(ligne.affiliation for ligne in agricoles[annee])
+            couverture = somme_ordonnee(self.part_retenue_ligne(ligne)
+                                        for ligne in agricoles[annee])
+            incomplete = couverture < 1.0 - 1e-9
+            if annee - 1 not in agricoles:
+                if (annee >= COTISATIONS_AU_1ER_JANVIER_DEPUIS and incomplete
+                        and annee + 1 in agricoles):
+                    statuts[annee] = frozenset()
+                continue
+            if annee in autres or couverture > 1.0 + 1e-9:
+                continue
+            if len(de_l_annee) == 1:
+                if incomplete:
+                    statuts[annee] = de_l_annee
+                continue
+            # Deux statuts : celui que l'année d'avant a fini, le sien ou
+            # celui qu'il y a pris.
+            avant = frozenset(ligne.affiliation for ligne in agricoles[annee - 1])
+            fin = avant if len(avant) == 1 else avant - statuts.get(annee - 1, avant)
+            if (annee >= COTISATIONS_AU_1ER_JANVIER_DEPUIS and len(fin) == 1
+                    and fin <= de_l_annee):
+                statuts[annee] = fin
+            elif incomplete:
+                statuts[annee] = de_l_annee
+        return statuts
+
+    @cached_property
     def annee_de_cessation_agricole(self) -> int | None:
         """L'année de la date d'effet quand le non-salarié agricole y cesse
         son activité, ``None`` sinon : ses cotisations y sont dues « au titre
         de l'année civile entière » (L. 731-10-1 du code rural), et ses
         quatre trimestres comptent « même s'il s'agit de l'année d'arrêt du
         compte » (circulaire Cnav n° 2004/8, point 3232 ; exposé « Durée
-        d'assurance pour le taux plein » de la Cnav). Il faut être au régime
-        au 1er janvier, où se lit la situation de l'exploitant : une ligne
-        agricole cotisée l'année d'avant ; et n'avoir cette année-là aucune
-        autre activité cotisée, car qui quitte l'agriculture pour un autre
-        métier ne cotise qu'au prorata des mois écoulés (R. 731-83)."""
+        d'assurance pour le taux plein » de la Cnav). Une année de cessation
+        parmi d'autres (:attr:`_statuts_au_1er_janvier`) : celle que la durée
+        d'assurance ne borne pas, à son tour, aux trimestres civils qui
+        précèdent la date d'effet (``compter.plafond_de_l_annee``)."""
         if self.age_liquidation is None:
             return None
         annee = self.annee_liquidation
-        cotisees = [ligne for ligne in self.lignes_de(annee)
-                    if ligne.cotise and self.part_retenue_ligne(ligne) > 0]
-        if not cotisees or any(ligne.affiliation not in AFFILIATIONS_AGRICOLES
-                               for ligne in cotisees):
-            return None
-        if not any(ligne.cotise and ligne.affiliation in AFFILIATIONS_AGRICOLES
-                   for ligne in self.lignes_de(annee - 1)):
-            return None
-        return annee
+        return annee if self._statuts_au_1er_janvier.get(annee) else None
 
     def annee_entiere_agricole(self, ligne: AnneeCarriere) -> bool:
-        """La ligne agricole de l'année de cessation, qui compte pour l'année
-        civile entière (:attr:`annee_de_cessation_agricole`) : ses quatre
-        trimestres, ses cotisations, et les points (R. 732-70, D. 732-155) ou
-        le revenu (R. 732-60) qu'elles portent au compte."""
-        return (ligne.annee == self.annee_de_cessation_agricole
-                and ligne.cotise and ligne.affiliation in AFFILIATIONS_AGRICOLES)
+        """La ligne agricole d'une année où l'exploitant cesse, dans le statut
+        du 1er janvier, qui compte pour l'année civile entière
+        (:attr:`_statuts_au_1er_janvier`) : ses quatre trimestres, ses
+        cotisations, et les points (R. 732-70, D. 732-155) ou le revenu
+        (R. 732-60) qu'elles portent au compte."""
+        return (ligne.cotise and ligne.affiliation
+                in self._statuts_au_1er_janvier.get(ligne.annee, frozenset()))
 
-    @cached_property
-    def _annees_d_installation_agricole(self) -> frozenset[int]:
-        """Les années où l'assuré s'installe non-salarié agricole après le
-        1er janvier (:meth:`installation_agricole`) : ses lignes agricoles
-        cotisées n'en remplissent pas les douze mois ; aucune ligne agricole
-        l'année d'avant ne le met au régime au 1er janvier, la convention de
-        :attr:`annee_de_cessation_agricole` ; et une ligne agricole l'année
-        d'après dit que ses mois sont ceux de la fin de l'année, et non un
-        passage de janvier à l'été, qu'elle laisse à ses mois."""
-        couvertures: dict[int, list[float]] = {}
-        for ligne in self.lignes:
-            if (ligne.cotise and ligne.affiliation in AFFILIATIONS_AGRICOLES
-                    and self.part_retenue_ligne(ligne) > 0):
-                couvertures.setdefault(ligne.annee, []).append(ligne.fraction_annee)
-        return frozenset(
-            annee for annee, fractions in couvertures.items()
-            if annee >= COTISATIONS_AU_1ER_JANVIER_DEPUIS
-            and somme_ordonnee(fractions) < 1.0 - 1e-9
-            and annee - 1 not in couvertures and annee + 1 in couvertures)
-
-    def installation_agricole(self, ligne: AnneeCarriere) -> bool:
-        """La ligne agricole de l'année où l'assuré s'installe après le
-        1er janvier. Les cotisations « sont fixées pour chaque année civile »,
-        la situation de l'exploitant « appréciée au premier jour de l'année
-        civile au titre de laquelle elles sont dues » (L. 731-10-1 du code
-        rural ; R. 731-57) : qui s'installe après le 1er janvier ne doit rien
-        pour l'année (MSA, « Cotisations sociales des nouveaux installés » ;
-        réponses aux questions écrites n° 42225 de 2004 et n° 10883 de 2026).
-        Elle ne porte donc au compte ni points (R. 732-70, D. 732-155), ni
-        revenu (L. 732-24), ni trimestres (R. 732-48)."""
-        return (ligne.annee in self._annees_d_installation_agricole
-                and ligne.cotise and ligne.affiliation in AFFILIATIONS_AGRICOLES)
+    def statut_pris_apres_le_1er_janvier(self, ligne: AnneeCarriere) -> bool:
+        """La ligne agricole d'un statut pris après le 1er janvier : l'année où
+        l'assuré s'installe, ou celle où il passe de collaborateur à chef, ou
+        de chef à collaborateur (:attr:`_statuts_au_1er_janvier`). Il ne doit
+        rien pour l'année dans ce statut (MSA, « Cotisations sociales des
+        nouveaux installés » ; réponses aux questions écrites n° 42225 de 2004
+        et n° 10883 de 2026). Elle ne porte donc au compte ni points
+        (R. 732-70, D. 732-155), ni revenu (L. 732-24), ni trimestres
+        (R. 732-48)."""
+        statuts = self._statuts_au_1er_janvier.get(ligne.annee)
+        return (statuts is not None and ligne.cotise
+                and ligne.affiliation in AFFILIATIONS_AGRICOLES
+                and ligne.affiliation not in statuts)
 
     def part_cotisee_ligne(self, ligne: AnneeCarriere) -> float:
         """La part de l'année que cotise une ligne : :meth:`part_retenue_ligne`,
         sauf l'année où l'exploitant agricole cesse, cotisée entière
-        (L. 731-10-1 du code rural). Ses lignes agricoles s'en partagent alors
-        les douze mois au prorata des leurs : une ligne seule les a tous, deux
+        (L. 731-10-1 du code rural) dans le statut du 1er janvier. Les lignes
+        de ses statuts s'en partagent les douze mois au prorata des leurs
+        quand ce statut ne se lit pas : une ligne seule les a tous, deux
         lignes n'en font pas deux années. Des lignes qui, ensemble, passent
-        l'année se chevauchent : elles gardent leurs mois. Et sauf l'année où
-        il s'installe après le 1er janvier, qui ne cotise rien
-        (:meth:`installation_agricole`)."""
-        if self.installation_agricole(ligne):
+        l'année se chevauchent : elles gardent leurs mois. Et sauf le statut
+        pris après le 1er janvier, qui ne cotise rien
+        (:meth:`statut_pris_apres_le_1er_janvier`)."""
+        if self.statut_pris_apres_le_1er_janvier(ligne):
             return 0.0
         part = self.part_retenue_ligne(ligne)
         if not self.annee_entiere_agricole(ligne):
@@ -1668,7 +1706,12 @@ class Carriere:
         activité la précède, ``"collaborateur"`` pour le conjoint
         collaborateur ou l'aide familial, ``None`` hors du régime. Les deux
         minima des exploitants et les points gratuits de la RCO la
-        distinguent (D. 732-110, D. 732-154, D. 732-166-1)."""
+        distinguent (D. 732-110, D. 732-154, D. 732-166-1). L'année que cotise
+        tout entière le statut du 1er janvier est la sienne
+        (:attr:`_statuts_au_1er_janvier`), quelle que soit sa ligne en tête."""
+        statuts = self._statuts_au_1er_janvier.get(annee, frozenset())
+        if len(statuts) == 1:
+            return AFFILIATIONS_AGRICOLES[next(iter(statuts))]
         lignes = self.lignes_de(annee)
         if not lignes:
             return None
@@ -1715,7 +1758,7 @@ class Carriere:
         l'année de la liquidation en vaut quatre pour qui part en janvier de
         l'année suivante, un seul pour qui part en avril, aucun pour qui part
         en février. Sauf l'exploitant agricole, qui compte les quatre de
-        l'année où il cesse (:attr:`annee_de_cessation_agricole`).
+        l'année où il cesse (:meth:`annee_entiere_agricole`).
         """
         if self.annee_entiere_agricole(ligne):
             return 4
@@ -1728,10 +1771,10 @@ class Carriere:
         durée est atteinte — les lit, car l'année entière de l'exploitant
         compte pour le taux « mais ne remet[...] pas en cause les bornes de
         la période de référence » de la surcote (circulaire Cnav n° 2004/37,
-        point 131). Aucun l'année où l'exploitant s'installe après le
-        1er janvier, qu'il ne cotise pas (:meth:`installation_agricole`)."""
+        point 131). Aucun pour le statut agricole pris après le 1er janvier,
+        qui ne cotise pas (:meth:`statut_pris_apres_le_1er_janvier`)."""
         part = self.part_retenue_ligne(ligne)
-        if part <= 0 or self.installation_agricole(ligne):
+        if part <= 0 or self.statut_pris_apres_le_1er_janvier(ligne):
             return 0
         return min(ligne.trimestres_valides, trimestres_civils(round(part * 12)))
 

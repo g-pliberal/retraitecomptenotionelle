@@ -1760,15 +1760,15 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
     // l'exploitant agricole cesse : il y cotise pour l'année entière
     // (L. 731-10-1 du code rural), et ses droits sont arrêtés au dernier jour
     // de l'année civile de l'entrée en jouissance (R. 732-60, 1°). Elle y
-    // entre pour douze mois, que ses lignes se partagent (`partCotiseeLigne`) :
-    // son revenu, son plancher, son plafond.
+    // entre, comme toute année où il cesse, pour douze mois, dans le statut du
+    // 1er janvier (`partCotiseeLigne`) : son revenu, son plancher, son plafond.
     const entiere = carriere.anneeEntiereAgricole(ligne);
     if (ligne.annee >= anneeLiquidation && !entiere) {
       continue;
     }
-    // L'année où il s'installe après le 1er janvier, il ne cotise rien
-    // (`installationAgricole`) : son revenu n'y entre pas.
-    if (carriere.installationAgricole(ligne)) {
+    // Le statut qu'il prend après le 1er janvier ne cotise rien de l'année
+    // (`statutPrisApresLe1erJanvier`) : son revenu n'y entre pas.
+    if (carriere.statutPrisApresLe1erJanvier(ligne)) {
       continue;
     }
     const fractionLigne = entiere ? carriere.partCotiseeLigne(ligne) : ligne.fraction_annee;

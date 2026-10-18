@@ -817,8 +817,7 @@ export class Carriere {
       this._parAnnee.get(ligne.annee).push(ligne);
     }
     this._plafonds = null;
-    this._cessationAgricole = undefined;
-    this._installationsAgricoles = undefined;
+    this._statutsAu1erJanvier = undefined;
     this.chronologie = chronologie ?? preparer(chrono.duResume(
       annee_naissance, sexe, mois_naissance, age_liquidation, nombre_enfants,
       naissances_enfants, jour_naissance));
@@ -1731,84 +1730,119 @@ export class Carriere {
   }
 
   /**
+   * Les années du non-salarié agricole que fixe sa situation au 1er janvier,
+   * et les statuts agricoles qui les cotisent tout entières ; une année absente
+   * garde les mois de ses lignes. L'année où il cesse, dans le statut du
+   * 1er janvier, sauf à prendre un autre métier (R. 731-83) ; rien pour le
+   * statut pris en cours d'année ; un ensemble vide l'année où il s'installe ;
+   * les statuts de l'année, à se partager, avant 1985 ou quand celui du
+   * 1er janvier ne se lit pas (L. 731-10-1 du code rural, R. 731-57). Voir le
+   * Python.
+   */
+  get statutsAu1erJanvier() {
+    if (this._statutsAu1erJanvier === undefined) {
+      const agricoles = new Map();
+      const autres = new Set();
+      for (const ligne of this.lignes) {
+        if (!ligne.cotise || this.partRetenueLigne(ligne) <= 0) {
+          continue;
+        }
+        if (Object.hasOwn(AFFILIATIONS_AGRICOLES, ligne.affiliation)) {
+          agricoles.set(ligne.annee, [...(agricoles.get(ligne.annee) ?? []), ligne]);
+        } else {
+          autres.add(ligne.annee);
+        }
+      }
+      const statuts = new Map();
+      for (const annee of [...agricoles.keys()].sort((a, b) => a - b)) {
+        const lignes = agricoles.get(annee);
+        const deLAnnee = new Set(lignes.map((ligne) => ligne.affiliation));
+        const couverture = lignes.reduce(
+          (somme, ligne) => somme + this.partRetenueLigne(ligne), 0.0);
+        const incomplete = couverture < 1.0 - 1e-9;
+        if (!agricoles.has(annee - 1)) {
+          if (annee >= COTISATIONS_AU_1ER_JANVIER_DEPUIS && incomplete
+              && agricoles.has(annee + 1)) {
+            statuts.set(annee, new Set());
+          }
+          continue;
+        }
+        if (autres.has(annee) || couverture > 1.0 + 1e-9) {
+          continue;
+        }
+        if (deLAnnee.size === 1) {
+          if (incomplete) {
+            statuts.set(annee, deLAnnee);
+          }
+          continue;
+        }
+        // Deux statuts : celui que l'année d'avant a fini, le sien ou celui
+        // qu'il y a pris.
+        const avant = new Set(agricoles.get(annee - 1).map((ligne) => ligne.affiliation));
+        const pris = statuts.get(annee - 1) ?? avant;
+        const fin = avant.size === 1 ? avant
+          : new Set([...avant].filter((statut) => !pris.has(statut)));
+        if (annee >= COTISATIONS_AU_1ER_JANVIER_DEPUIS && fin.size === 1
+            && [...fin].every((statut) => deLAnnee.has(statut))) {
+          statuts.set(annee, fin);
+        } else if (incomplete) {
+          statuts.set(annee, deLAnnee);
+        }
+      }
+      this._statutsAu1erJanvier = statuts;
+    }
+    return this._statutsAu1erJanvier;
+  }
+
+  /**
    * L'année de la date d'effet quand le non-salarié agricole y cesse son
    * activité, null sinon : ses cotisations y sont dues « au titre de l'année
    * civile entière » (L. 731-10-1 du code rural), et ses quatre trimestres
    * comptent « même s'il s'agit de l'année d'arrêt du compte » (circulaire
-   * Cnav n° 2004/8, point 3232). Au régime au 1er janvier (une ligne agricole
-   * cotisée l'année d'avant), sans autre activité cotisée cette année-là
-   * (R. 731-83).
+   * Cnav n° 2004/8, point 3232). Une année de cessation parmi d'autres
+   * ({@link statutsAu1erJanvier}). Voir le Python.
    */
   get anneeDeCessationAgricole() {
-    if (this._cessationAgricole === undefined) {
-      this._cessationAgricole = null;
-      if (this.age_liquidation !== null && this.age_liquidation !== undefined) {
-        const annee = this.anneeLiquidation;
-        const cotisees = this.lignesDe(annee)
-          .filter((ligne) => ligne.cotise && this.partRetenueLigne(ligne) > 0);
-        const agricole = (ligne) => Object.hasOwn(AFFILIATIONS_AGRICOLES, ligne.affiliation);
-        if (cotisees.length > 0 && cotisees.every(agricole)
-            && this.lignesDe(annee - 1).some((ligne) => ligne.cotise && agricole(ligne))) {
-          this._cessationAgricole = annee;
-        }
-      }
+    if (this.age_liquidation === null || this.age_liquidation === undefined) {
+      return null;
     }
-    return this._cessationAgricole;
+    const annee = this.anneeLiquidation;
+    return (this.statutsAu1erJanvier.get(annee)?.size ?? 0) > 0 ? annee : null;
   }
 
   /**
-   * La ligne agricole de l'année de cessation, qui compte pour l'année civile
-   * entière : ses quatre trimestres, ses cotisations, et les points ou le
-   * revenu qu'elles portent au compte. Voir le Python.
+   * La ligne agricole d'une année où l'exploitant cesse, dans le statut du
+   * 1er janvier, qui compte pour l'année civile entière : ses quatre
+   * trimestres, ses cotisations, et les points ou le revenu qu'elles portent
+   * au compte. Voir le Python.
    */
   anneeEntiereAgricole(ligne) {
-    return ligne.annee === this.anneeDeCessationAgricole && ligne.cotise
-      && Object.hasOwn(AFFILIATIONS_AGRICOLES, ligne.affiliation);
+    return ligne.cotise
+      && (this.statutsAu1erJanvier.get(ligne.annee)?.has(ligne.affiliation) ?? false);
   }
 
   /**
-   * Les années où l'assuré s'installe non-salarié agricole après le
-   * 1er janvier : ses lignes agricoles cotisées n'en remplissent pas les douze
-   * mois, aucune ligne agricole l'année d'avant, une l'année d'après, depuis
-   * les cotisations de 1985. Voir le Python.
-   */
-  get anneesDInstallationAgricole() {
-    if (this._installationsAgricoles === undefined) {
-      const couvertures = new Map();
-      for (const ligne of this.lignes) {
-        if (ligne.cotise && Object.hasOwn(AFFILIATIONS_AGRICOLES, ligne.affiliation)
-            && this.partRetenueLigne(ligne) > 0) {
-          couvertures.set(ligne.annee,
-            [...(couvertures.get(ligne.annee) ?? []), ligne.fraction_annee]);
-        }
-      }
-      this._installationsAgricoles = new Set([...couvertures]
-        .filter(([annee, fractions]) => annee >= COTISATIONS_AU_1ER_JANVIER_DEPUIS
-          && fractions.reduce((somme, fraction) => somme + fraction, 0.0) < 1.0 - 1e-9
-          && !couvertures.has(annee - 1) && couvertures.has(annee + 1))
-        .map(([annee]) => annee));
-    }
-    return this._installationsAgricoles;
-  }
-
-  /**
-   * La ligne agricole de l'année où l'assuré s'installe après le 1er janvier,
+   * La ligne agricole d'un statut pris après le 1er janvier — l'année où
+   * l'assuré s'installe, ou celle où il passe d'un statut agricole à l'autre —,
    * qui ne doit rien pour l'année (L. 731-10-1 du code rural, R. 731-57) : ni
    * points, ni revenu, ni trimestres. Voir le Python.
    */
-  installationAgricole(ligne) {
-    return this.anneesDInstallationAgricole.has(ligne.annee) && ligne.cotise
-      && Object.hasOwn(AFFILIATIONS_AGRICOLES, ligne.affiliation);
+  statutPrisApresLe1erJanvier(ligne) {
+    const statuts = this.statutsAu1erJanvier.get(ligne.annee);
+    return statuts !== undefined && ligne.cotise
+      && Object.hasOwn(AFFILIATIONS_AGRICOLES, ligne.affiliation)
+      && !statuts.has(ligne.affiliation);
   }
 
   /**
    * La part de l'année que cotise une ligne : `partRetenueLigne`, sauf l'année
-   * où l'exploitant agricole cesse, cotisée entière, dont ses lignes agricoles
-   * se partagent les douze mois au prorata des leurs, et sauf l'année où il
-   * s'installe après le 1er janvier, qui ne cotise rien. Voir le Python.
+   * où l'exploitant agricole cesse, cotisée entière dans le statut du
+   * 1er janvier — ses statuts s'en partagent les douze mois au prorata des
+   * leurs quand celui-ci ne se lit pas —, et sauf le statut pris après le
+   * 1er janvier, qui ne cotise rien. Voir le Python.
    */
   partCotiseeLigne(ligne) {
-    if (this.installationAgricole(ligne)) {
+    if (this.statutPrisApresLe1erJanvier(ligne)) {
       return 0.0;
     }
     const part = this.partRetenueLigne(ligne);
@@ -1839,9 +1873,14 @@ export class Carriere {
    * chef d'exploitation est l'activité principale, "chef_secondaire" quand
    * une autre activité la précède, "collaborateur" pour le conjoint
    * collaborateur ou l'aide familial, null hors du régime (D. 732-110,
-   * D. 732-154, D. 732-166-1).
+   * D. 732-154, D. 732-166-1). L'année que cotise tout entière le statut du
+   * 1er janvier est la sienne, quelle que soit sa ligne en tête.
    */
   qualiteAgricole(annee) {
+    const statuts = this.statutsAu1erJanvier.get(annee);
+    if (statuts !== undefined && statuts.size === 1) {
+      return AFFILIATIONS_AGRICOLES[[...statuts][0]];
+    }
     const lignes = this.lignesDe(annee);
     if (lignes.length === 0) return null;
     const principale = lignes[0].affiliation;
@@ -1892,7 +1931,7 @@ export class Carriere {
    * Trimestres qu'une ligne fait entrer dans la durée d'assurance, plafonnés
    * par les trimestres CIVILS écoulés avant le point de départ, sauf
    * l'exploitant agricole, qui compte les quatre de l'année où il cesse
-   * ({@link anneeDeCessationAgricole}).
+   * ({@link anneeEntiereAgricole}).
    */
   trimestresRetenus(ligne) {
     if (this.anneeEntiereAgricole(ligne)) {
@@ -1905,11 +1944,11 @@ export class Carriere {
    * {@link trimestresRetenus} sans l'année de cessation de l'exploitant : ceux
    * des mois couverts avant le point de départ, que lit ce qui se compte
    * entre deux dates, la surcote d'abord (circulaire Cnav n° 2004/37,
-   * point 131). Aucun l'année où l'exploitant s'installe après le 1er janvier.
+   * point 131). Aucun pour le statut agricole pris après le 1er janvier.
    */
   trimestresEcoules(ligne) {
     const part = this.partRetenueLigne(ligne);
-    if (part <= 0 || this.installationAgricole(ligne)) {
+    if (part <= 0 || this.statutPrisApresLe1erJanvier(ligne)) {
       return 0;
     }
     return Math.min(ligne.trimestres_valides,

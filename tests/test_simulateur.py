@@ -5136,40 +5136,30 @@ process.stdout.write(JSON.stringify(obtenus));
             for points in json.loads(execution.stdout)] == attendu
 
 
-def test_les_lignes_de_l_annee_ou_l_exploitant_cesse_s_en_partagent_les_douze_mois(simulateur):
-    """Chef de 1990 à 12 000 € par an, parti le 1er août 2024, chef encore de
-    janvier à mars 2024 (3 000 €), collaborateur d'avril à juillet : l'année
-    cotisée entière (L. 731-10-1) se partage entre ses deux lignes au prorata
-    de leurs mois, trois septièmes et quatre septièmes, et non une année à
-    chacune. Leurs points ne passent pas les trente d'une année de chef à
-    12 000 € (R. 732-71, 3°), quand deux années pleines, l'une de chef, l'autre
-    de collaborateur, en feraient quarante-six. Dans les deux moteurs."""
+def _annee_agricole_en_deux_moteurs(simulateur, naissance: dict, lignes: list[dict],
+                                    annee: int) -> dict:
+    """Ce que la carrière de ces ``lignes`` fait de l'``annee``, dans les deux
+    moteurs : la part cotisée et les trimestres de chacune de ses lignes, la
+    qualité agricole de l'année et les points qu'elle porte aux deux régimes
+    des non-salariés agricoles. Le JavaScript rend la même chose, ou le test
+    échoue ; sans node, le Python seul."""
     import json
     import shutil
     import subprocess
 
     from retraite_notionnelle.droit import releve
 
-    def lignes():
-        return ([dict(annee=annee, revenu=12000.0, affiliation="exploitant_agricole")
-                 for annee in range(1990, 2024)]
-                + [dict(annee=2024, revenu=3000.0, affiliation="exploitant_agricole",
-                        fraction_annee=3 / 12, trimestres_valides=1),
-                   dict(annee=2024, revenu=4000.0, affiliation="collaborateur_agricole",
-                        fraction_annee=4 / 12, trimestres_valides=1)])
-
-    carriere = Carriere(annee_naissance=1962, sexe="H", jour_naissance=15,
-                        lignes=[AnneeCarriere(**ligne) for ligne in lignes()],
-                        age_liquidation=62.5)
-    assert str(carriere.date_liquidation) == "août 2024"
-    assert carriere.annee_de_cessation_agricole == 2024
-    assert sorted(carriere.part_cotisee_ligne(ligne) for ligne in carriere.lignes_de(2024)) \
-        == pytest.approx([3 / 7, 4 / 7])
-    points = _points_agricoles_de_l_annee(
-        releve.construire(simulateur.scenario_actuel, carriere).droits.points, 2024)
-    assert 0.0 < points["msa_non_salaries"] <= 30.0
+    carriere = Carriere(**naissance, lignes=[AnneeCarriere(**ligne) for ligne in lignes])
+    obtenu = {
+        "parts": [round(carriere.part_cotisee_ligne(ligne), 6)
+                  for ligne in carriere.lignes_de(annee)],
+        "trimestres": [carriere.trimestres_retenus(ligne) for ligne in carriere.lignes_de(annee)],
+        "qualite": carriere.qualite_agricole(annee),
+        "points": _points_agricoles_de_l_annee(
+            releve.construire(simulateur.scenario_actuel, carriere).droits.points, annee),
+    }
     if shutil.which("node") is None:
-        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+        return obtenu
     script = """
 import { readFileSync } from "node:fs";
 import { AnneeCarriere, Carriere } from "./moteur/js/carriere.js";
@@ -5177,21 +5167,54 @@ import { Contexte } from "./moteur/js/contexte.js";
 import { construire } from "./moteur/js/droit/releve.js";
 const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
 const simulateur = contexte.simulateur();
+const [naissance, lignes, annee] = JSON.parse(process.argv[1]);
 const carriere = new Carriere({
-  annee_naissance: 1962, sexe: "H", jour_naissance: 15, age_liquidation: 62.5,
-  lignes: JSON.parse(process.argv[1]).map((ligne) => new AnneeCarriere(ligne)) });
+  ...naissance, lignes: lignes.map((ligne) => new AnneeCarriere(ligne)) });
 process.stdout.write(JSON.stringify({
-  parts: carriere.lignesDe(2024).map((ligne) => carriere.partCotiseeLigne(ligne)),
+  parts: carriere.lignesDe(annee).map((ligne) => carriere.partCotiseeLigne(ligne)),
+  trimestres: carriere.lignesDe(annee).map((ligne) => carriere.trimestresRetenus(ligne)),
+  qualite: carriere.qualiteAgricole(annee),
   points: [...construire(simulateur.scenarioActuel, carriere).droits.points] }));
 """
     execution = subprocess.run(
-        ["node", "--input-type=module", "-e", script, json.dumps(lignes())],
+        ["node", "--input-type=module", "-e", script, json.dumps([naissance, lignes, annee])],
         cwd=RACINE_TEMOINS.parent.parent, capture_output=True, text=True,
         encoding="utf-8", check=False)
     assert execution.returncode == 0, execution.stderr[-2000:]
-    obtenu = json.loads(execution.stdout)
-    assert sorted(obtenu["parts"]) == pytest.approx([3 / 7, 4 / 7])
-    assert _points_agricoles_de_l_annee(obtenu["points"], 2024) == points
+    porte = json.loads(execution.stdout)
+    porte["parts"] = [round(part, 6) for part in porte["parts"]]
+    porte["points"] = _points_agricoles_de_l_annee(porte["points"], annee)
+    assert porte == obtenu
+    return obtenu
+
+
+def test_l_annee_ou_l_exploitant_cesse_reste_au_statut_du_1er_janvier(simulateur):
+    """Les cotisations des non-salariés agricoles « sont fixées pour chaque
+    année civile », la situation du chef « appréciée au premier jour de l'année
+    civile au titre de laquelle elles sont dues », et qui cesse en cours
+    d'année les doit « au titre de l'année civile entière » (L. 731-10-1 du
+    code rural ; R. 731-57) ; le statut pris après le 1er janvier ne doit rien
+    avant l'année suivante (MSA, « Cotisations sociales des nouveaux
+    installés »). Chef de 1990 à 12 000 € par an, parti le 1er août 2024, chef
+    encore de janvier à mars 2024 (3 000 €), collaborateur d'avril à juillet :
+    l'année est celle du chef, entière, ses quatre trimestres, les 30 points
+    du 3° de R. 732-71 et les 133 de l'assiette minimale de la RCO
+    (D. 732-155, I, 1°), et la ligne du collaborateur n'a rien — quand les
+    deux lignes se partageaient les douze mois, trois septièmes et quatre
+    septièmes, et 183 points de RCO. Dans les deux moteurs."""
+    naissance = dict(annee_naissance=1962, sexe="H", jour_naissance=15, age_liquidation=62.5)
+    lignes = ([dict(annee=annee, revenu=12000.0, affiliation="exploitant_agricole")
+               for annee in range(1990, 2024)]
+              + [dict(annee=2024, revenu=3000.0, affiliation="exploitant_agricole",
+                      fraction_annee=3 / 12, trimestres_valides=1),
+                 dict(annee=2024, revenu=4000.0, affiliation="collaborateur_agricole",
+                      fraction_annee=4 / 12, trimestres_valides=1)])
+    carriere = Carriere(**naissance, lignes=[AnneeCarriere(**ligne) for ligne in lignes])
+    assert str(carriere.date_liquidation) == "août 2024"
+    assert carriere.annee_de_cessation_agricole == 2024
+    assert _annee_agricole_en_deux_moteurs(simulateur, naissance, lignes, 2024) == {
+        "parts": [1.0, 0.0], "trimestres": [4, 0], "qualite": "chef",
+        "points": {"msa_non_salaries": 30.0, "msa_rco": 133.0}}
 
 
 def _exploitant_parti_en_aout_2028(revenu_2028: float) -> dict:
@@ -5407,6 +5430,74 @@ process.stdout.write(JSON.stringify(obtenus));
     assert execution.returncode == 0, execution.stderr[-2000:]
     assert [moyenne(d) for d in json.loads(execution.stdout)] == pytest.approx(
         [moyenne(d) for d in details], abs=0.01)
+
+
+def test_l_annee_ou_l_exploitant_cesse_avant_son_depart_compte_entiere(simulateur):
+    """L. 731-10-1 du code rural ne vise pas la seule année du départ : qui
+    cesse en cours d'année, laquelle que ce soit, doit les cotisations « au
+    titre de l'année civile entière », qui lui font « valider 4 trimestres
+    supplémentaires » (réponse à la question écrite n° 10883, JO du 3 février
+    2026 ; R. 732-48) et les points de l'année « au titre de laquelle elles
+    sont dues » (R. 732-70 ; D. 732-155). Chef de 1990 à 12 000 € par an, qui
+    cesse le 1er juillet 2020 (6 000 € pour ses six mois) et part le 1er août
+    2024 sans autre activité : 2020 lui vaut quatre trimestres, et non deux,
+    124 au régime ; les 30 points du 3° de R. 732-71 (12 000 €, entre
+    800 SMIC horaires, 8 120 €, et deux fois le minimum contributif,
+    15 430,32 €), et non onze, la moitié des 22 que valent ses 6 000 € (2°) ;
+    et les 133 de l'assiette minimale de la RCO (1 820 SMIC, 18 473 €). Dans
+    les deux moteurs."""
+    from retraite_notionnelle.droit import releve
+
+    naissance = dict(annee_naissance=1962, sexe="H", jour_naissance=15, age_liquidation=62.5)
+    lignes = ([dict(annee=annee, revenu=12000.0, affiliation="exploitant_agricole")
+               for annee in range(1990, 2020)]
+              + [dict(annee=2020, revenu=6000.0, affiliation="exploitant_agricole",
+                      fraction_annee=0.5, trimestres_valides=2)])
+    carriere = Carriere(**naissance, lignes=[AnneeCarriere(**ligne) for ligne in lignes])
+    assert str(carriere.date_liquidation) == "août 2024"
+    assert carriere.annee_de_cessation_agricole is None
+    durees = releve.construire(simulateur.scenario_actuel, carriere).durees
+    assert durees.trimestres_par_regime.get("msa_non_salaries") == 124
+    assert _annee_agricole_en_deux_moteurs(simulateur, naissance, lignes, 2020) == {
+        "parts": [1.0], "trimestres": [4], "qualite": "chef",
+        "points": {"msa_non_salaries": 30.0, "msa_rco": 133.0}}
+
+
+def test_le_conjoint_collaborateur_devenu_chef_garde_son_annee_de_collaborateur(simulateur):
+    """La situation que fixent les cotisations de l'année est celle du
+    1er janvier (L. 731-10-1 du code rural ; R. 731-57) : le chef qui cesse
+    les doit pour l'année entière, celles de son collaborateur comprises, et
+    le conjoint collaborateur qui devient chef en cours d'année ne cotise en
+    chef qu'à partir de l'année suivante — affilié chef « à effet en juin
+    2026 », ses « premières cotisations » sont celles de 2027 (MSA de
+    Bourgogne, questions-réponses du webinaire du 23 avril 2026).
+    Collaboratrice de 1990 à juin 2015, cheffe de juillet 2015 à son départ
+    du 1er août 2024 : 2015 est son année de collaboratrice, entière, ses
+    quatre trimestres, 140 au régime, les 16 points de son forfait de
+    400 SMIC horaires (R. 732-71, 1° ; R. 732-73) et les 66 de la RCO
+    (1 200 SMIC, D. 732-155, II), et non deux trimestres à chaque ligne, que
+    le plafond de l'année réduisait à deux en tout (138 au régime),
+    19,5 points de retraite proportionnelle, huit et onze et demi, et 133 de
+    RCO, 33 et cent ; la ligne de cheffe n'y a rien, et l'année n'est pas de
+    cheffe pour les minima (D. 732-110), même quand sa ligne vient en tête.
+    Dans les deux moteurs."""
+    from retraite_notionnelle.droit import releve
+
+    naissance = dict(annee_naissance=1962, sexe="F", jour_naissance=15, age_liquidation=62.5)
+    lignes = ([dict(annee=annee, revenu=4000.0, affiliation="collaborateur_agricole")
+               for annee in range(1990, 2015)]
+              + [dict(annee=2015, revenu=6000.0, affiliation="exploitant_agricole",
+                      fraction_annee=0.5, trimestres_valides=2),
+                 dict(annee=2015, revenu=2000.0, affiliation="collaborateur_agricole",
+                      fraction_annee=0.5, trimestres_valides=2)]
+              + [dict(annee=annee, revenu=12000.0, affiliation="exploitant_agricole")
+                 for annee in range(2016, 2025)])
+    carriere = Carriere(**naissance, lignes=[AnneeCarriere(**ligne) for ligne in lignes])
+    durees = releve.construire(simulateur.scenario_actuel, carriere).durees
+    assert durees.trimestres_par_regime.get("msa_non_salaries") == 140
+    assert _annee_agricole_en_deux_moteurs(simulateur, naissance, lignes, 2015) == {
+        "parts": [0.0, 1.0], "trimestres": [0, 4], "qualite": "collaborateur",
+        "points": {"msa_non_salaries": 16.0, "msa_rco": 66.0}}
 
 
 def test_la_repartition_des_annees_suit_r_173_3_2():
