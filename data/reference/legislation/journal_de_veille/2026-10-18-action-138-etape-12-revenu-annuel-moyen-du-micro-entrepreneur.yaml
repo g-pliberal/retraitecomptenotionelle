@@ -1,0 +1,41 @@
+date: "2026-10-18"
+session: "action 138, étape 12 : le revenu annuel moyen du micro-entrepreneur, fait de son revenu cotisé"
+consulte: >-
+  L'index LEGI du dépôt, mis à jour au 17 octobre 2026 (incrément
+  20261017-211053) : L. 613-7 (LEGIARTI000048683570), D. 613-6
+  (LEGIARTI000052218747), R. 634-1 (LEGIARTI000038787378,
+  LEGIARTI000047961079), D. 634-3 (LEGIARTI000053356107), R. 351-29
+  (LEGIARTI000053335651), D. 131-6-4 (LEGIARTI000031799459,
+  LEGIARTI000038027006). Au site de la Cnav (legislation.lassuranceretraite.fr,
+  recherche par son API et PDF) : les circulaires Cnav n° 2023-4, n° 2024-23
+  (point 4 et annexe 2) et n° 2025-20 ; les circulaires du RSI n° 2009/024,
+  2010/034, 2013/020, 2015/006, 2016/012 et 2017/007 ; les exposés « Revenu
+  annuel moyen » et « Travailleurs indépendants » ; les barèmes « Taux de
+  répartition par risques » et « Chiffre d'affaire des micro-entrepreneurs
+  validant un trimestre ». `textes.py --inscrire` sur l'index du jour.
+trouve: >-
+  Le revenu de chaque année est « celui correspondant […] aux cotisations
+  versées par l'assuré au titre de cette année » (R. 351-29, I, B, que
+  D. 634-3 applique aux indépendants depuis 2026 ; R. 634-1 de 2019 à 2025) :
+  pour le micro-entrepreneur, la part du forfait affectée au régime de base,
+  divisée par le taux de base, le « Revenu cotisé de l'année concernée » de la
+  Cnav (circulaire n° 2024-23, annexe 2) ; de 2009 à 2015, la cotisation payée
+  et compensée, divisée par son taux (circulaires RSI n° 2009/024, point III,
+  n° 2010/034, point III, B, n° 2013/020, point 3.2). Porté dans les deux
+  moteurs : le revenu qui valide les trimestres entre au revenu annuel moyen ;
+  les quatre témoins du micro-entrepreneur de l'Assurance retraite gagnent de
+  0,19 à 1,21 % au scénario 1. Le barème de la Cnav « Chiffre d'affaire des micro-entrepreneurs
+  validant un trimestre », de source Urssaf, donne pour 2017 à 2019 des seuils
+  qu'aucune clef constante ne fait (4 085 € de ventes pour un trimestre en
+  2018, contre 5 098 € à la clef de 40,31 %). La circulaire RSI n° 2015/006
+  donne les taux globaux de 2016 et 2017 (13,4 %, 23,1 %, 22,9 puis 23 % pour
+  la Cipav), sans clef. Sept rédactions citées par la fiche du micro-social
+  depuis le 17 octobre entrent à la liste des textes.
+reste: >-
+  La règle qui fait les seuils de 2017 à 2019 ; les clefs de 2016 et de 2017,
+  et celles de janvier à septembre 2022 ; la règle de la CNAVPL pour la Cipav
+  avant octobre 2022 ; qui ne relevait pas de la maladie du RSI (en 2014 et
+  2015, le trimestre dès 150 heures ; de 2009 à 2015, la part du forfait qui
+  passe la cotisation de droit commun) ; D. 131-6-3 ; les points du RCI sur la
+  part du forfait ; l'arrondi des forfaits déclarés, léger, déclaré dans la
+  fiche.

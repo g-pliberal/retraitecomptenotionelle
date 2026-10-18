@@ -1,15 +1,15 @@
 # Étape 12, première partie : la fiche de paie d'un agent public — la RAFP, l'indemnité compensatrice de la CSG, le taux d'équilibre sur le traitement
 
-**Reprise, au 17 octobre 2026.** Fait : le coût du travail complet d'un agent
-public (10 octobre) ; le micro-entrepreneur saisi par son chiffre d'affaires,
-ses trimestres validés sur ce que sa cotisation achète (14), son forfait au
-compte notionnel (16) ; le 17, la validation et la répartition d'avant 2023 :
-les clefs de la Cnav depuis 2018, la Cipav depuis 2019, la compensation de
-l'État de 2009 à 2015, dans les deux moteurs. Reste, une session par point :
-la veille du projet de loi de financement pour 2027, à son vote ; du
-micro-entrepreneur, le salaire annuel moyen, l'arrondi, les clefs de 2016 et
-2017 à trouver ; les points légers du 5 de « Ce qui reste ». Détail : ici, et
-`2026-10-17-etape-12-micro-entrepreneur-avant-2023.md`.
+**Reprise, au 18 octobre 2026.** Fait : le coût du travail complet d'un agent
+public (10 octobre) ; du micro-entrepreneur, la saisie par son chiffre
+d'affaires (14), ses trimestres sur ce que sa cotisation achète (14), son
+forfait au compte notionnel (16), la validation et la répartition d'avant
+2023 (17) ; le 18, son revenu annuel moyen, fait du même revenu cotisé, dans
+les deux moteurs ; l'arrondi, léger, déclaré. Reste, une session par point :
+la veille du projet de loi de financement pour 2027, à son vote ; les seuils
+de 2017 à 2019 du barème de la Cnav, qu'aucune clef constante ne fait ; les
+clefs de 2016 et 2017, introuvables ; le 5 de « Ce qui reste ». Détail :
+`2026-10-18-etape-12-revenu-annuel-moyen-du-micro-entrepreneur.md`.
 
 **Le 10 octobre 2026, la demande.** Le propriétaire : porter sur la fiche de
 paie, en Python puis en JavaScript, la cotisation de la RAFP sur les primes,
