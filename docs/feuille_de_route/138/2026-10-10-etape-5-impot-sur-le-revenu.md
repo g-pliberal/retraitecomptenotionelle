@@ -3,13 +3,13 @@
 **Reprise, au 18 octobre 2026.** Fait : l'impôt d'un foyer (10 octobre) ; la
 CSG déductible (11) ; l'impôt dans les indicateurs (13) ; l'effet retour (14) ;
 l'ASPA déformée, le bénéfice des indépendants (16) ; les adhérents d'avant 1978
-(17) ; le 18, la prime des non-salariés, la majoration pour enfants, les
-revenus de 1969 à 1980 aux lois de finances, et, au dépliant « Partir plus tôt
-ou plus tard », la pension après impôt des quatre systèmes. Reste : au
-propriétaire, l'impôt dans les cartes de résultats (le foyer, la place),
-l'effet retour dans le solde, trois décisions sur le bénéfice ; les revenus de
-1960 à 1968, puis l'exonération au minimum garanti. Détail : « Au
-propriétaire » de `2026-10-18-etape-5-impot-au-site.md`.
+(17) ; le 18, la prime des non-salariés, la majoration pour enfants, la pension
+après impôt au dépliant, et les règles des revenus de 1960 à 1980, lues aux
+lois. Reste : au propriétaire, l'impôt dans les cartes de résultats, l'effet
+retour dans le solde, trois décisions sur le bénéfice, la loi de la décote de
+1961, depuis un poste ; la taxe complémentaire d'avant 1970 ; l'exonération au
+minimum garanti. Détail : « Ce qui reste » de
+`2026-10-18-etape-5-lois-de-finances-de-1961-a-1969.md`.
 
 **La demande.** Le propriétaire, le 10 octobre 2026 : l'impôt sur le revenu
 d'un foyer, de son barème à son montant, chaque année ; les barèmes de l'IPP

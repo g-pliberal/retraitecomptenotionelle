@@ -1,0 +1,45 @@
+date: "2026-10-18"
+session: "action 138, étape 5, quatorzième partie : les règles des revenus de 1960 à 1968, lues à la loi de 1959 et aux lois de finances pour 1961 à 1969"
+consulte: >-
+  `python scripts/veille_droit.py` : aucune fiche de la carte touchée, la
+  session n'écrivant aucune règle de la pension. Les index JORF et LEGI de la
+  DILA, récupérés, LEGI mis à jour au 17 octobre 2026 ; `textes.py --inscrire`
+  inscrivait, « à examiner », les 39 rédactions du décret n° 84-936, qu'une
+  autre session a inscrites sur main dans le même temps. Au site du Sénat (senat.fr/leg/), les textes de la loi n°
+  59-1472 (ta1959_1960_0002, _0016, _0033), des lois de finances pour 1961
+  (ta1960_1961_0044), 1962 (ta1961_1962_0023, _0036, _0045, _0049), 1963
+  (ta1962_1963_0004, _0016, _0018), 1964 (ta1963_1964_0018, _0026), 1965
+  (ta1964_1965_0014), 1966 (ta1965_1966_0014, _0017, _0022), 1967
+  (ta1966_1967_0014, _0023), 1968 (ta1967_1968_0005, _0008, _0016) et 1969
+  (ta1968_1969_0023, _0032, _0040), et des lois de finances rectificatives de
+  1961, 1963 et 1968 ; sous senat.fr/rap/, les rapports généraux n° 53
+  (1961-1962), 23 (1963-1964), 23 (1964-1965), 31 (1965-1966), 25 (1966-1967),
+  16 (1967-1968) et 40 (1968-1969), tome II, et les rapports n° 103 et 124
+  (1961-1962), 106 (1962-1963), 168 (1967-1968). Ne sont pas servis la première
+  partie de la loi de finances pour 1963 et son rapport, ni les rapports des
+  commissions mixtes ; archives.assemblee-nationale.fr refuse la vérification
+  TLS. Chez l'IPP, la décote et le barème depuis 1945 ; dans LEGI, les
+  rédactions de l'article 193 du code.
+trouve: >-
+  Le barème de la loi porte, de 1960 à 1968, 5 points de plus que celui des
+  salariés, que la réduction de 5 % de la loi n° 59-1472 (art. 12) leur rend,
+  et 20 % à la quatrième tranche, où l'IPP porte 25 % ; 66,5 % au-dessus en
+  1963, 60 % et 70 % aux deux tranches du haut en 1966. La décote de l'article
+  198 ter : 70 F et 140 F par part, la différence entière, en 1960 (la ligne
+  de 1959 de l'IPP, en anciens francs) ; 70 F et 210 F par part, la moitié de
+  la différence, dite en vigueur en 1964, datée de 1961 par l'IPP ; 80 F et
+  240 F par part, 120 F pour une part, en 1964 et non en 1962 ; des limites
+  pour le foyer jusqu'à une part et demie en 1965, deux parts dès 1966, plus
+  hautes au-delà de 75 ans, de 70 ans dès 1967. Le demi-décime de 1962, au-delà
+  de 8 000 F par part ; les réductions de 1966 et 1967 par tranche de revenu,
+  sans limite au-delà de trois parts en 1967 ; la majoration de 1967 et ses
+  trois décotes ; la table de 1968, + 12 % de 10 501 à 12 000 F. Le revenu
+  imposable arrondi à la centaine de 1968 à 1979, et non à la dizaine. Écrits
+  dans la donnée, le script de l'IPP, `impot_revenu.py` et son jumeau.
+reste: >-
+  Au propriétaire, la loi qui porte la décote à 70 F et 210 F par part, sans
+  doute pour les revenus de 1961, au Journal officiel ou aux débats de
+  l'Assemblée nationale, depuis un poste. La taxe complémentaire des revenus
+  autres que les salaires et les pensions jusqu'en 1969 (CGI, art. 204 bis à
+  204 sexies) ; l'exonération de l'article 5, 2°, à la session du minimum
+  garanti ; le seuil de recouvrement d'avant 1977.
