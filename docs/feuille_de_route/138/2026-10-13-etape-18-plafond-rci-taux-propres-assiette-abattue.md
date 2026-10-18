@@ -4,11 +4,12 @@
 propre des artisans, l'assiette abattue (13 octobre) ; les cotisations PCV et
 leur saisie, les points d'avant 1973 (14 octobre) ; les points d'invalidité,
 le conjoint collaborateur, les dispenses de l'assiette minimale (16 octobre) ;
-la Lodeom (17 octobre) ; le champ de saisie des dispenses (18 octobre, note
-`…-saisie-des-dispenses.md`). Les champs du conjoint collaborateur et de la
-Lodeom attendent la session des pages, que leurs notes renseignent. Reste, une
-session : au fac-similé, les classes d'avant 1973. CAVEC, CNBF : action 131 ;
-Mayotte : 121.
+la Lodeom (17 octobre) ; les champs de saisie des dispenses, de la Lodeom et de
+l'option du conjoint collaborateur, le forfait par défaut (18 octobre, notes
+`…-saisie-des-dispenses.md` et `…-champs-de-la-lodeom-et-du-collaborateur.md`).
+Reste, une session : au fac-similé, les classes d'avant 1973. Au propriétaire, à
+confirmer : ce forfait par défaut, que la note prévoyait. CAVEC, CNBF : action
+131 ; Mayotte : 121.
 
 **La demande.** Le propriétaire, le 13 octobre 2026 : « Action 138, étape 18,
 pas encore commencée : commence par l'assiette abattue des indépendants, leurs

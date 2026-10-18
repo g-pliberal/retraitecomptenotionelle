@@ -142,7 +142,9 @@ approximations:
 - ecart: >-
     le modèle ne connaît pas le revenu du chef d'entreprise : le revenu de la ligne est
     l'assiette que le conjoint a choisie, et le partage ne réduit pas l'assiette du chef,
-    qui n'est pas dans la carrière
+    qui n'est pas dans la carrière. Sur le site, la saisie tire cette assiette du revenu
+    du chef, que ses périodes saisissent, et de l'option (champ « collaborateur ») : rien
+    au forfait, qui est le défaut, 33,33 % ou 50 % sinon
   effet: aucun sur le conjoint ; le chef se saisit à part, sur son revenu après partage
 - ecart: >-
     l'année est l'unité : l'affiliation obligatoire du 1er juillet 2007 vaut pour toute
@@ -155,8 +157,12 @@ approximations:
   effet: non mesuré ; les seuls conjoints à l'option d'un petit revenu
 - ecart: >-
     avant 2007, l'assurance volontaire ne porte que la base, sur le revenu saisi : ni la
-    cotisation de l'assuré volontaire (D. 742-25), ni une complémentaire volontaire
-  effet: non mesuré
+    cotisation de l'assuré volontaire (D. 742-25), ni une complémentaire volontaire. Sur
+    le site, au forfait, elle est tenue pour non souscrite ; à l'option, pour souscrite
+    sur la même part du revenu du chef (D. 742-26)
+  effet: >-
+    non mesuré ; sur le site, au forfait, le conjoint qui n'a collaboré qu'avant 2007
+    n'a aucun droit
 - ecart: >-
     la limite de cinq ans du statut depuis le 1er janvier 2022 (code de commerce,
     L. 121-4) n'est pas opposée : le modèle prend la carrière saisie
@@ -192,14 +198,17 @@ textes_a_rattacher:
 code:
   python: >-
     carriere.py : CONJOINTS_COLLABORATEURS, assiette_du_conjoint_collaborateur,
-    _ligne_annuelle
+    _ligne_annuelle ; saisie.py : ASSIETTES_COLLABORATEUR, PARTS_COLLABORATEUR,
+    Saisie.assiette_du_collaborateur, Saisie.niveaux_de_la_pension
   javascript: >-
     moteur/js/carriere.js : CONJOINTS_COLLABORATEURS, assietteDuConjointCollaborateur,
-    ligneAnnuelle
+    ligneAnnuelle ; moteur/js/saisie.js : ASSIETTES_COLLABORATEUR, PARTS_COLLABORATEUR,
+    Saisie.assietteDuCollaborateur, Saisie.niveauxDeLaPension ; moteur/js/pages.js :
+    collaborateurFormulaire, champRevenuDuChef
   parametres: >-
     legislation/affiliations.yaml, statuts `conjoint_collaborateur_artisan` et
     `conjoint_collaborateur_commercant`
-  tests: tests/test_independants.py
+  tests: tests/test_independants.py, tests/test_saisie_du_collaborateur.py
 referents:
   modele_ti: >-
     porte le conjoint collaborateur et ses options : le tiers du plafond, un tiers ou
@@ -209,6 +218,11 @@ historique:
   2026-10-16 — action 138, étape 18 : le dépôt n'avait pas de statut pour le conjoint
   collaborateur d'un artisan ou d'un commerçant ; il en a deux, cotisant sur
   l'assiette choisie ou, à défaut, sur le tiers du plafond, dans les deux moteurs.
+- >-
+  2026-10-18 — action 138, étape 18 : la saisie du site déclare l'option, le forfait
+  par défaut ou 33,33 % ou 50 % du revenu du chef, que les périodes du conjoint
+  saisissent ; dans les deux saisies, l'activité d'après le départ et l'inversion par
+  la pension.
 effet: >-
   Les conjoints collaborateurs des artisans et des commerçants, qui n'avaient pas de
   statut. Une conjointe d'artisan née en 1962, collaboratrice de 1990 à 2025 sans revenu

@@ -160,8 +160,10 @@ réduction générale d'avant 2025, T valant <!--chiffre:valeur(data/reference/l
 la maladie à <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:lodeom.taux_reduits.poste=maladie.taux*100)-->7<!--/--> % et la famille à <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:lodeom.taux_reduits.poste=famille.taux*100)-->3,45<!--/--> %, jusqu'à <!--chiffre:tenu(test_les_taux_reduits_s_arretent_a_2_5_et_3_5_smic_de_2023)-->52 416<!--/--> et <!--chiffre:tenu(test_les_taux_reduits_s_arretent_a_2_5_et_3_5_smic_de_2023)-->73 382,40<!--/--> €
 par an. Elle ne déplace que le coût du travail, et, sous l'incidence
 intégrale, le brut que la proposition en tire ; le net du droit en vigueur ne
-bouge pas. Le relevé la déclare ligne par ligne ; la saisie du site ne la
-demande pas encore. Restent dehors Saint-Barthélemy et Saint-Martin, dont la
+bouge pas. Le site la demande d'un menu, « Lodeom de l'employeur », que tous
+les emplois portent, métiers et lignes du relevé, et la fiche dit alors
+l'exonération à la place de la réduction générale. Restent dehors
+Saint-Barthélemy et Saint-Martin, dont la
 Lodeom a ses propres barèmes (L. 752-3-3), et Mayotte, où elle n'entre qu'au
 1er juillet 2026.
 

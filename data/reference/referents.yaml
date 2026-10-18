@@ -7463,8 +7463,11 @@ referents:
           l'artisan et le commerçant : deux statuts neufs, dont le
           revenu est l'assiette choisie, le tiers du plafond à
           défaut, à la base et à la complémentaire (fiche
-          `conjoint_collaborateur_independants`). Celui du libéral
-          reste déclaré dans `un_statut_par_annee`.
+          `conjoint_collaborateur_independants`). La saisie du site
+          déclare l'option depuis le 18 octobre 2026 : le forfait par
+          défaut, ou 33,33 % ou 50 % du revenu du chef, que ses
+          périodes saisissent. Celui du libéral reste déclaré dans
+          `un_statut_par_annee`.
         etat: repris
         chantier: "138.18"
         fiche: conjoint_collaborateur_independants
@@ -7804,8 +7807,9 @@ referents:
           famille que l'employeur garde (loi n° 2025-1403, article
           40, V et VI ; décret n° 2025-1446), déclarés ligne par
           ligne sur le relevé, dans les deux moteurs
-          (`legislation/prelevements_remuneration.yaml`) ; la saisie
-          du site ne les porte pas encore, ni Saint-Barthélemy et
+          (`legislation/prelevements_remuneration.yaml`), et que la
+          saisie du site déclare depuis le 18 octobre 2026 (menu
+          « Lodeom de l'employeur ») ; ni Saint-Barthélemy et
           Saint-Martin (L. 752-3-3), ni Mayotte.
         etat: repris
         chantier: "138.18"
