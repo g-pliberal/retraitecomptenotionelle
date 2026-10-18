@@ -1,0 +1,34 @@
+date: "2026-10-18"
+session: "action 138, étape 8 : un montant de la MSA pour 2015 à 2017 et 2019, la garantie mensuelle d'une carrière complète de chef"
+consulte: >-
+  `python scripts/veille_droit.py` (trois fiches à relire, aucune de l'étape). Sur
+  statistiques.msa.fr : les Chiffres utiles nationaux de 2015 à 2021 (2015 et 2016 en
+  archive zip), l'Infostat des retraites des non-salariés agricoles de 2015, les bilans
+  démographiques et financiers de 2016 et 2017, les prévisions de 2015-2019, 2016-2020
+  et 2017-2021, l'étude des inégalités de pension au 31 décembre 2018, dix-huit tableaux
+  de bord trimestriels des retraites des non-salariés de 2015 à 2020 ; la page de la MSA
+  Mayenne-Orne-Sarthe sur le complément de 2015. Au Sénat : les rapports n° 134
+  (2015-2016), 114 (2016-2017), 77 (2017-2018), 111 (2018-2019) et 104 (2019-2020) sur
+  les PLFSS, seize tomes ; le rapport n° 315 (2017-2018) ; toutes les questions écrites
+  (dump de data.senat.fr du 18 octobre 2026). À l'Assemblée : les réponses aux questions
+  n° 97094 (XIVe législature), 4055, 5154 et 40458 (XVe) ; le rapport n° 4403 et la
+  première séance du 2 février 2017 sur la proposition de loi Chassaigne ; le rapport
+  n° 3071 ; l'étude d'impact du projet de loi instituant un système universel de
+  retraite (n° 2623, janvier 2020). Ailleurs : Agri 46 (23 juin 2016).
+trouve: >-
+  Aucun montant de la MSA pour 2015, 2016, 2017 ni 2019 : ses publications
+  statistiques n'écrivent que 73, 74 et 75 % du SMIC net, des effectifs et des montants
+  moyens ; le ministère ne répond qu'en pourcentages, au Sénat comme à l'Assemblée. Pour
+  2015, deux tiers écrivent 820 euros, à l'euro : M. Arnaud Viala en séance le 2 février
+  2017 (« 73 % du SMIC, soit 820 euros ») et Agri 46 ; le calcul donne 820,92 €, la
+  ligne reste moyenne. Pour 2017, ce qui est publié est faux : 860,30 euros (rapport
+  n° 4403), 840 et 860 euros en séance, quand le calcul donne 854,91 €. L'étude
+  d'impact de 2020 écrit « 75 % du SMIC agricole » au 1er janvier 2019 sans montant, et
+  945 € bruts par mois pour une carrière complète, que ni 2019 ni 2020 ne redonnent.
+  Rien n'a changé dans le dépôt.
+reste: >-
+  Au propriétaire, depuis un poste : l'archive du web (web.archive.org, refusé par le
+  réseau de la session) des pages de la MSA sur la garantie de 2015 à 2019 et de la page
+  de la FDSEA de Lot-et-Garonne (403 ce jour) ; la DREES, Les retraités et les retraites
+  (503 ce jour). Un montant trouvé entre dans PUBLIES de
+  scripts/fetch/msa_smic_net_agricole.py.
