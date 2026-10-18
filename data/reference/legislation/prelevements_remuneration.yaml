@@ -613,25 +613,57 @@ postes_independant: &postes_independant
       - "Article D. 621-2 du code de la sécurité sociale, version en vigueur (LEGIARTI000049904592)"
       - "Décret n° 2024-688 du 5 juillet 2024, article 6"
 
+  # L'indemnité journalière n'est pas la même selon la profession : les postes
+  # qui portent `familles` ne valent que pour elles, la famille de la fiche
+  # (`prelevements_historiques.famille_de_la_fiche`), que ses régimes de base
+  # de l'année disent.
   - code: indemnites_journalieres
     libelle: "Indemnités journalières"
     retraite: false
     dans_la_reduction_generale: false
+    familles: [artisan, commercant]
     salarie:
       - {jusqu_en_plafonds: 5, taux: 0.0050}
       - {jusqu_en_plafonds: null, taux: 0.0000}
     employeur: []
     note: >-
-      0,50 % pour les artisans, commerçants et industriels, dans la limite de
-      cinq plafonds ; 0,30 % dans la limite de trois plafonds pour les
-      professions libérales. Le module retient le premier taux, qui est celui du
-      plus grand nombre, et l'écart — 0,20 point sous trois plafonds — ne
-      déplace aucun écart entre systèmes. OpenFisca porte encore 0,70 %, taux
-      de la rédaction de 2018 : la valeur ci-dessus a été lue dans l'index LEGI,
+      0,50 % pour les travailleurs indépendants de L. 631-1 — artisans,
+      commerçants et industriels —, dans la limite de cinq plafonds ; 0,30 %
+      pour ceux de L. 640-1, les professions libérales, dans la limite de trois
+      plafonds (poste suivant). L'avocat, qui relève de la CNBF (L. 651-1) et
+      non de L. 640-1, n'en paie aucune : la CNBF sert une indemnité pour
+      invalidité temporaire, financée par sa cotisation d'invalidité-décès, et
+      La Prévoyance des Avocats couvre les quatre-vingt-dix premiers jours
+      (barème de la CNBF pour 2026). La fiche prêtait à tous, jusqu'au
+      18 octobre 2026, le taux des artisans : 0,2 point de trop au libéral sous
+      trois plafonds, 0,5 point à l'avocat, et chaque année de leur carrière
+      dans les indicateurs de cycle de vie, qui refont ce poste à l'année
+      (action 138, étape 9). OpenFisca porte encore 0,70 %, taux de la
+      rédaction de 2018 : la valeur ci-dessus a été lue dans l'index LEGI,
       comme les deux barèmes progressifs.
     textes:
       - "Article D. 621-3 du code de la sécurité sociale, version en vigueur (LEGIARTI000049904537)"
       - "Article L. 621-2 du code de la sécurité sociale"
+
+  - code: indemnites_journalieres
+    libelle: "Indemnités journalières"
+    retraite: false
+    dans_la_reduction_generale: false
+    familles: [liberal]
+    salarie:
+      - {jusqu_en_plafonds: 3, taux: 0.0030}
+      - {jusqu_en_plafonds: null, taux: 0.0000}
+    employeur: []
+    note: >-
+      « 0,30 % pour ceux mentionnés à l'article L. 640-1 », sur la part de
+      l'assiette qui n'excède pas « trois fois ce même plafond » (D. 621-3, I) :
+      les professions libérales, depuis le 1er juillet 2021 (0,15 % pour la
+      seule année 2021, décret n° 2021-755). L'assiette minimale de 40 % du
+      plafond, que l'article impose, n'est pas appliquée, comme celle de la
+      maladie.
+    textes:
+      - "Article D. 621-3 du code de la sécurité sociale, version en vigueur (LEGIARTI000049904537)"
+      - "Décret n° 2021-755 du 12 juin 2021, articles 2 et 3"
 
   - code: invalidite_deces
     libelle: "Invalidité et décès"

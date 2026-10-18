@@ -66,6 +66,8 @@ FAMILLES_INDEPENDANTES = ("artisan", "commercant", "liberal", "avocat")
 #: sécurité sociale des indépendants au régime général. Avant 1973, l'artisan
 #: relève des droits en points de la CANCAVA (action 138, étape 18).
 REGIMES_AVOCATS = frozenset({"cnbf"})
+#: La famille de l'indépendant qu'aucun de ces régimes ne range ailleurs.
+FAMILLE_PAR_DEFAUT = "commercant"
 REGIMES_LIBERAUX = frozenset({"cnavpl"})
 REGIMES_ARTISANS = frozenset({"cancava", "cancava_avant_1973"})
 
@@ -102,7 +104,7 @@ def famille_de_la_fiche(profil: str | None, regimes) -> str | None:
         return "liberal"
     if regimes & REGIMES_ARTISANS:
         return "artisan"
-    return "commercant"
+    return FAMILLE_PAR_DEFAUT
 
 
 def _tranche(revenu: float, plafond: float, bas: float, haut: float | None) -> float:

@@ -244,6 +244,7 @@ from pathlib import Path
 
 from .donnees.chargement import Fiabilite, charger_yaml
 from .donnees.indemnite_csg import charger_indemnite_csg
+from .donnees.prelevements_historiques import FAMILLE_PAR_DEFAUT, famille_de_la_fiche
 from .donnees.primes import charger_primes_soumises
 from .donnees.regimes import (ContributionsEmployeurPubliques, PartRetraiteSeuleEtat,
                               charger_classes_cotisation)
@@ -473,8 +474,18 @@ class Poste:
     #: totalité de l'assiette. Propre aux indépendants ; ``None`` ailleurs.
     progressif: BaremeProgressif | None = None
     note: str = ""
+    #: Les familles d'indépendants qui le doivent, quand il n'est pas celui de
+    #: tous (``famille_de_la_fiche`` : l'artisan, le commerçant, le libéral,
+    #: l'avocat) : l'indemnité journalière de chacun. ``None`` = toutes.
+    familles: frozenset[str] | None = None
 
-    def du(self, brut: float, plafond_annuel: float, cadre: bool) -> bool:
+    def du(self, brut: float, plafond_annuel: float, cadre: bool,
+           famille: str | None = None) -> bool:
+        """Le poste est-il dû ? ``famille`` : celle de la fiche, celle que
+        ses régimes ne rangent ailleurs à défaut (``FAMILLE_PAR_DEFAUT``)."""
+        if (self.familles is not None
+                and (famille or FAMILLE_PAR_DEFAUT) not in self.familles):
+            return False
         if self.cadres_seulement and not cadre:
             return False
         if self.due_au_dela_de_un_plafond and brut <= plafond_annuel:
@@ -959,6 +970,8 @@ def _poste(contenu) -> Poste:
             contenu.get("due_au_dela_de_un_plafond", False)),
         progressif=_progressif(contenu.get("progressif")),
         note=contenu.get("note", ""),
+        familles=(None if contenu.get("familles") is None
+                  else frozenset(contenu["familles"])),
     )
 
 
@@ -1336,10 +1349,16 @@ class ConstructeurFiche:
     la place de la réduction générale et rend à la maladie et à la famille
     leurs taux réduits. Un profil qui n'en a pas l'ignore ; un barème que le
     profil ne connaît pas est refusé.
+
+    ``famille``, celle d'un indépendant (:func:`famille_du_statut`), choisit
+    les postes qui ne sont pas ceux de tous : l'indemnité journalière de
+    l'artisan et du commerçant, celle du libéral, aucune pour l'avocat.
     """
 
-    def __init__(self, profil: ProfilRemuneration, lodeom: str = "") -> None:
+    def __init__(self, profil: ProfilRemuneration, lodeom: str = "",
+                 famille: str | None = None) -> None:
         self.profil = profil
+        self.famille = famille
         self.bareme_lodeom: BaremeLodeom | None = None
         if lodeom and profil.lodeom is not None:
             if lodeom not in profil.lodeom.baremes:
@@ -1378,7 +1397,7 @@ class ConstructeurFiche:
         for poste in self.profil.postes:
             if poste.retraite and bloc.remplace_les_contributions_d_equilibre:
                 continue
-            if not poste.du(brut, plafond, cadre):
+            if not poste.du(brut, plafond, cadre, self.famille):
                 continue
             lignes.append(Ligne(
                 code=poste.code, libelle=poste.libelle, retraite=poste.retraite,
@@ -1421,7 +1440,7 @@ class ConstructeurFiche:
                 continue
             if poste.retraite and bloc.remplace_les_contributions_d_equilibre:
                 continue
-            if not poste.du(brut, plafond, cadre):
+            if not poste.du(brut, plafond, cadre, self.famille):
                 continue
             if poste.taux_dans_la_reduction is not None:
                 total += brut * poste.taux_dans_la_reduction
@@ -2152,6 +2171,15 @@ def indemnite_stylisee(macro, catalogue, affiliations, statut: str, annee: int,
 # -- à quel profil un statut appartient --------------------------------------
 
 
+def famille_du_statut(affiliations, code_profil: str, statut: str,
+                        annee: int) -> str | None:
+    """La famille de la fiche de ``statut`` l'année ``annee`` : celle d'un
+    indépendant, que ses régimes de base de l'année disent — l'artisan, le
+    commerçant, le libéral, l'avocat (``famille_de_la_fiche``), dont les postes
+    diffèrent —, ou celle de son profil."""
+    return famille_de_la_fiche(code_profil, affiliations.regimes(statut, annee))
+
+
 def profil_de_la_fiche(affiliations, catalogue, statut: str,
                        annee: int) -> str | None:
     """Le profil de fiche de paie d'un statut, ou ``None`` si aucun ne convient.
@@ -2458,13 +2486,14 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
     prelevements = charger_prelevements(parametres.racine_donnees)
     profil = prelevements.profil(code_profil)
     # La fiche d'une année est celle de son employeur : un constructeur par
-    # barème de la Lodeom que les lignes déclarent, la réduction générale sinon.
-    constructeurs: dict[str, ConstructeurFiche] = {}
+    # barème de la Lodeom que les lignes déclarent, la réduction générale sinon,
+    # et par famille d'indépendant, que les régimes de l'année disent.
+    constructeurs: dict[tuple[str, str | None], ConstructeurFiche] = {}
 
-    def constructeur_de(lodeom: str) -> ConstructeurFiche:
-        if lodeom not in constructeurs:
-            constructeurs[lodeom] = ConstructeurFiche(profil, lodeom)
-        return constructeurs[lodeom]
+    def constructeur_de(lodeom: str, famille: str | None) -> ConstructeurFiche:
+        if (lodeom, famille) not in constructeurs:
+            constructeurs[lodeom, famille] = ConstructeurFiche(profil, lodeom, famille)
+        return constructeurs[lodeom, famille]
 
     # « Cadre » n'est pas une famille d'affiliation : c'est la seule chose qui
     # sépare deux statuts du privé pour la cotisation APEC, qui vaut 0,024 %.
@@ -2543,7 +2572,8 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
         actuel_bloc = bloc_droit_en_vigueur(catalogue, affiliations, statut, annee,
                                             primes, macro)
         propose = bloc_propose(annee, actuel_bloc, 1.0 - primes)
-        constructeur = constructeur_de(ligne.lodeom)
+        constructeur = constructeur_de(
+            ligne.lodeom, famille_du_statut(affiliations, code_profil, statut, annee))
         fiche_actuelle = constructeur.fiche(
             annee, brut, plafond, smic, actuel_bloc, cadre)
         brut_propose = constructeur.brut_sous_la_proposition(
@@ -2613,7 +2643,8 @@ def salaire_brut_depuis_net(racine_donnees, macro, catalogue, affiliations,
     cadre = "cadre" in statut and "non_cadre" not in statut
     plafond = macro.plafond_securite_sociale(annee)
     smic = smic_annuel(macro, annee)
-    constructeur = ConstructeurFiche(profil)
+    constructeur = ConstructeurFiche(
+        profil, famille=famille_du_statut(affiliations, code_profil, statut, annee))
     indemnite = indemnite_stylisee(macro, catalogue, affiliations, statut, annee,
                                    part_primes)
     if indemnite is None:
@@ -2688,8 +2719,9 @@ def fiche_depuis_brut(racine_donnees, macro, catalogue, affiliations,
                                       part_primes)
         indemnite = stylisee(brut_annuel) if stylisee is not None else 0.0
     return _fiche_avec_indemnite(
-        ConstructeurFiche(profil), catalogue, affiliations, statut, annee,
-        brut_annuel, part_primes, indemnite,
+        ConstructeurFiche(profil, famille=famille_du_statut(
+            affiliations, code_profil, statut, annee)),
+        catalogue, affiliations, statut, annee, brut_annuel, part_primes, indemnite,
         macro.plafond_securite_sociale(annee), smic_annuel(macro, annee), cadre, macro)
 
 

@@ -34,6 +34,9 @@ export const TRANCHES = Object.freeze({
   au_dela_de_cinq_plafonds: [5.0, null],
 });
 
+/** La famille de l'indépendant qu'aucun de ses régimes ne range ailleurs. */
+export const FAMILLE_PAR_DEFAUT = "commercant";
+
 /** L'indemnité journalière : ses bornes, et les familles qui la paient. */
 const INDEMNITES = Object.freeze({
   ij_sous_cinq_plafonds: [[0.0, 5.0], ["artisan", "commercant"]],
@@ -57,7 +60,7 @@ export function familleDeLaFiche(profil, regimes) {
   if (intersecte(codes, REGIMES_AVOCATS)) return "avocat";
   if (intersecte(codes, REGIMES_LIBERAUX)) return "liberal";
   if (intersecte(codes, REGIMES_ARTISANS)) return "artisan";
-  return "commercant";
+  return FAMILLE_PAR_DEFAUT;
 }
 
 function tranche(revenu, plafond, bas, haut) {

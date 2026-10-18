@@ -53,6 +53,7 @@ import { indemniteCsg } from "./indemnite_csg.js";
 import { salaireMoyenAnnuel } from "./carriere.js";
 import { pointsCsgRendus } from "./restitution.js";
 import { Fiabilite } from "./serie.js";
+import { FAMILLE_PAR_DEFAUT, familleDeLaFiche } from "./prelevements-historiques.js";
 
 /** Heures d'un temps plein sur une année : 35 heures sur 52 semaines. */
 export const HEURES_ANNUELLES_TEMPS_PLEIN = 1820.0;
@@ -375,7 +376,13 @@ export class ProfilRemuneration {
   }
 
   /** Ce poste est-il dû à ce revenu, pour cet assuré ? */
-  static du(poste, brut, plafondAnnuel, cadre) {
+  static du(poste, brut, plafondAnnuel, cadre, famille = null) {
+    // Un poste qui n'est pas celui de tous les indépendants — l'indemnité
+    // journalière — ne vaut que pour ses familles, celle que leurs régimes ne
+    // rangent ailleurs à défaut.
+    if (poste.familles && !poste.familles.includes(famille ?? FAMILLE_PAR_DEFAUT)) {
+      return false;
+    }
     if (poste.cadres_seulement && !cadre) {
       return false;
     }
@@ -740,8 +747,14 @@ export class FicheDePaie {
  * connaît pas est refusé.
  */
 export class ConstructeurFiche {
-  constructor(profil, lodeom = "") {
+  /**
+   * `famille`, celle d'un indépendant (`familleDuStatut`), choisit les postes
+   * qui ne sont pas ceux de tous : l'indemnité journalière de l'artisan et du
+   * commerçant, celle du libéral, aucune pour l'avocat.
+   */
+  constructor(profil, lodeom = "", famille = null) {
     this.profil = profil;
+    this.famille = famille;
     this.baremeLodeom = null;
     if (lodeom && profil.lodeom !== null) {
       if (!(lodeom in profil.lodeom.baremes)) {
@@ -789,7 +802,7 @@ export class ConstructeurFiche {
       if (poste.retraite && bloc.remplaceLesContributionsDEquilibre) {
         continue;
       }
-      if (!ProfilRemuneration.du(poste, brut, plafond, cadre)) {
+      if (!ProfilRemuneration.du(poste, brut, plafond, cadre, this.famille)) {
         continue;
       }
       lignes.push({
@@ -829,7 +842,7 @@ export class ConstructeurFiche {
       if (poste.retraite && bloc.remplaceLesContributionsDEquilibre) {
         continue;
       }
-      if (!ProfilRemuneration.du(poste, brut, plafond, cadre)) {
+      if (!ProfilRemuneration.du(poste, brut, plafond, cadre, this.famille)) {
         continue;
       }
       total += poste.taux_dans_la_reduction !== null
@@ -1401,6 +1414,16 @@ export function ficheDePaiePossible(affiliations, statut) {
 }
 
 /**
+ * La famille de la fiche de `statut` l'année `annee` : celle d'un indépendant,
+ * que ses régimes de base de l'année disent — l'artisan, le commerçant, le
+ * libéral, l'avocat, dont les postes diffèrent —, ou celle de son profil.
+ * Jumeau de `famille_du_statut`.
+ */
+export function familleDuStatut(affiliations, codeProfil, statut, annee) {
+  return familleDeLaFiche(codeProfil, affiliations.regimes(statut, annee));
+}
+
+/**
  * Le profil de fiche de paie d'un statut, ou `null` si aucun ne convient.
  *
  * Le découpage est celui de ce que l'on SAIT de l'employeur, et non celui des
@@ -1628,7 +1651,8 @@ export function ficheDepuisBrut(bareme, macro, catalogue, affiliations, statut, 
       partPrimes);
     montant = stylisee === null ? 0 : stylisee(brutAnnuel);
   }
-  return ficheAvecIndemnite(new ConstructeurFiche(bareme.profil(codeProfil)), catalogue,
+  return ficheAvecIndemnite(new ConstructeurFiche(bareme.profil(codeProfil), "",
+    familleDuStatut(affiliations, codeProfil, statut, annee)), catalogue,
     affiliations, statut, annee, brutAnnuel, partPrimes, montant,
     macro.plafond_securite_sociale.valeur(annee), smicAnnuel(macro, annee), cadre, macro);
 }
@@ -1805,13 +1829,15 @@ export function remunerationDeLaCarriere(carriere, macro, catalogue, affiliation
   const profil = bareme.profil(codeProfil);
 
   // La fiche d'une année est celle de son employeur : un constructeur par
-  // barème de la Lodeom que les lignes déclarent, la réduction générale sinon.
+  // barème de la Lodeom que les lignes déclarent, la réduction générale sinon,
+  // et par famille d'indépendant, que les régimes de l'année disent.
   const constructeurs = new Map();
-  const constructeurDe = (lodeom) => {
-    if (!constructeurs.has(lodeom)) {
-      constructeurs.set(lodeom, new ConstructeurFiche(profil, lodeom));
+  const constructeurDe = (lodeom, famille) => {
+    const cle = `${lodeom}|${famille}`;
+    if (!constructeurs.has(cle)) {
+      constructeurs.set(cle, new ConstructeurFiche(profil, lodeom, famille));
     }
-    return constructeurs.get(lodeom);
+    return constructeurs.get(cle);
   };
   // « Cadre » n'est pas une famille d'affiliation : c'est la seule chose qui
   // sépare deux statuts du privé pour la cotisation APEC, qui vaut 0,024 %.
@@ -1886,7 +1912,8 @@ export function remunerationDeLaCarriere(carriere, macro, catalogue, affiliation
       catalogue, affiliations, statut, annee, primes, macro,
     );
     const propose = blocPropose(annee, blocActuel, 1 - primes);
-    const constructeur = constructeurDe(ligne.lodeom ?? "");
+    const constructeur = constructeurDe(
+      ligne.lodeom ?? "", familleDuStatut(affiliations, codeProfil, statut, annee));
     const ficheActuelle = constructeur.fiche(
       annee, brut, plafond, smic, blocActuel, cadre,
     );
@@ -1962,7 +1989,8 @@ export function salaireBrutDepuisNet(bareme, macro, catalogue, affiliations,
   const cadre = statut.includes("cadre") && !statut.includes("non_cadre");
   const plafond = macro.plafond_securite_sociale.valeur(annee);
   const smic = smicAnnuel(macro, annee);
-  const constructeur = new ConstructeurFiche(bareme.profil(codeProfil));
+  const constructeur = new ConstructeurFiche(bareme.profil(codeProfil), "",
+    familleDuStatut(affiliations, codeProfil, statut, annee));
   const indemnite = indemniteStylisee(macro, catalogue, affiliations, statut, annee,
     partPrimes);
   if (indemnite === null) {
@@ -2005,7 +2033,9 @@ export function salaireNetDepuisBrut(bareme, macro, catalogue, affiliations,
   const stylisee = indemniteStylisee(macro, catalogue, affiliations, statut, annee,
     partPrimes);
   return ficheAvecIndemnite(
-    new ConstructeurFiche(bareme.profil(codeProfil)), catalogue, affiliations, statut,
+    new ConstructeurFiche(bareme.profil(codeProfil), "",
+      familleDuStatut(affiliations, codeProfil, statut, annee)),
+    catalogue, affiliations, statut,
     annee, brutAnnuel, partPrimes, stylisee === null ? 0 : stylisee(brutAnnuel),
     macro.plafond_securite_sociale.valeur(annee), smicAnnuel(macro, annee), cadre, macro,
   ).net;

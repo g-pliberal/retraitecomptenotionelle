@@ -33,8 +33,12 @@ import pytest
 from retraite_notionnelle import Parametres
 from retraite_notionnelle.carriere import AnneeCarriere, Carriere
 from retraite_notionnelle.config import PartCotisation
+from retraite_notionnelle.cycle_de_vie import POSTES_REFAITS_INDEPENDANT
+from retraite_notionnelle.donnees.prelevements_historiques import (
+    charger_prelevements_historiques, famille_de_la_fiche)
 from retraite_notionnelle.moteur.compte import ConstructeurCompte
-from retraite_notionnelle.remuneration import fiche_depuis_brut, salaire_brut_depuis_net
+from retraite_notionnelle.remuneration import (
+    charger_prelevements, fiche_depuis_brut, profil_de_la_fiche, salaire_brut_depuis_net)
 from retraite_notionnelle.simulateur import Simulateur
 
 PARAMETRES = Parametres()
@@ -148,6 +152,61 @@ def test_le_net_d_un_avocat_au_revenu_modeste_se_retrouve(simulateur):
                                    "avocat", 2026, 1_000.0)
     assert brut > 3_000.0
     assert _fiche(simulateur, "avocat", 2026, brut).net == pytest.approx(1_000.0, abs=0.01)
+
+
+# -- l'indemnité journalière, selon la profession -----------------------------
+#
+# « Le taux de la cotisation prévue à l'article L. 621-2 est fixé à 0,50 % pour
+# les travailleurs indépendants mentionnés à l'article L. 631-1 et à 0,30 % pour
+# ceux mentionnés à l'article L. 640-1 », sur la part de l'assiette
+# « n'excédant pas cinq fois le plafond annuel [...] pour les travailleurs
+# indépendants mentionnés à l'article L. 631-1 et trois fois ce même plafond
+# pour ceux mentionnés à l'article L. 640-1 » (D. 621-3, I, LEGIARTI000049904537,
+# en vigueur depuis le 7 juillet 2024). L'avocat relève de la CNBF (L. 651-1),
+# non de L. 640-1 : il n'en paie aucune.
+
+PLAFOND_2026 = 48_060.0
+
+
+@pytest.mark.parametrize("statut, revenu, attendue", [
+    ("artisan", 60_000.0, 0.005 * 60_000),
+    ("commercant", 300_000.0, 0.005 * 5 * PLAFOND_2026),
+    ("profession_liberale", 60_000.0, 0.003 * 60_000),
+    ("expert_comptable", 200_000.0, 0.003 * 3 * PLAFOND_2026),
+    ("avocat", 60_000.0, 0.0)])
+def test_l_indemnite_journaliere_est_celle_de_la_profession(
+        simulateur, statut, revenu, attendue):
+    lignes = {ligne.code: ligne.salarie
+              for ligne in _fiche(simulateur, statut, 2026, revenu).lignes}
+    assert lignes.get("indemnites_journalieres", 0.0) == pytest.approx(attendue, abs=0.01)
+
+
+@pytest.mark.parametrize("statut", ("artisan", "commercant", "profession_liberale",
+                                    "medecin_liberal", "avocat"))
+def test_la_fiche_de_l_annee_courante_preleve_ce_que_l_histoire_refait(
+        simulateur, statut):
+    """Les indicateurs de cycle de vie ôtent du net de la fiche ce que
+    l'histoire prélève l'année courante, et y mettent ce qu'elle prélève
+    l'année de la ligne (``cycle_de_vie._net_annualise``) : ils ne sont justes
+    que si la fiche de l'année courante prélève, sur les postes que l'histoire
+    refait, ce que l'histoire y prélève. Elle prêtait à tous l'indemnité des
+    artisans : 0,2 point de trop au libéral sous trois plafonds, 0,5 point à
+    l'avocat, chaque année de sa carrière."""
+    racine = PARAMETRES.racine_donnees
+    courante = charger_prelevements(racine).annee
+    historique = charger_prelevements_historiques(racine)
+    plafond = simulateur.macro.plafond_securite_sociale(courante)
+    famille = famille_de_la_fiche(
+        profil_de_la_fiche(simulateur.affiliations, simulateur.catalogue, statut, courante),
+        simulateur.affiliations.regimes(statut, courante))
+    for revenu in (20_000.0, 60_000.0, 200_000.0):
+        fiche = _fiche(simulateur, statut, courante, revenu)
+        refaits = sum(ligne.salarie for ligne in fiche.lignes
+                      if ligne.code in POSTES_REFAITS_INDEPENDANT)
+        retraite = sum(ligne.salarie for ligne in fiche.lignes
+                       if ligne.code not in POSTES_REFAITS_INDEPENDANT)
+        assert refaits == pytest.approx(historique.hors_retraite_annuel(
+            famille, courante, revenu, plafond, retraite), abs=0.05), (famille, revenu)
 
 
 # -- le portage JavaScript ----------------------------------------------------
