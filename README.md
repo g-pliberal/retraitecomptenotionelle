@@ -228,7 +228,7 @@ consultable en JSON au bas de la page.
 <summary>Comment la page fonctionne, et comment on sait qu'elle dit vrai</summary>
 
 `index.html` charge deux choses : `moteur/donnees.json`
-(<!--chiffre:poids(moteur/donnees.json)-->5 627<!--/--> Ko — les séries, les
+(<!--chiffre:poids(moteur/donnees.json)-->5 629<!--/--> Ko — les séries, les
 tables de mortalité observées de 1899 à 2024, la pyramide des âges de 1962 à
 2070, les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->80<!--/--> fiches de régime, et ce que le Python a calculé une fois pour toutes
 sous les réglages de référence : le coût et les carrières types, que les pages
@@ -487,7 +487,7 @@ cadre entré à <!--chiffre:mesure(constante?de=construire_tableaux_md&nom=AGE_D
 <!-- generations:debut -->
 | Génération | Carrière | Ligne de référence « Prix » | Ligne corrigée | Écart |
 |---|---|---|---|---|
-| 1920 | 1940-1982 | -90,4 % | -85,0 % | **+5,4 pt** |
+| 1920 | 1940-1982 | -90,4 % | -85,0 % | **+5,5 pt** |
 | 1930 | 1950-1992 | -88,9 % | -87,0 % | +1,9 pt |
 | 1945 | 1965-2007 | -84,5 % | -84,5 % | 0,0 pt |
 | 1958 | 1978-2020 | -80,3 % | -80,8 % | **-0,5 pt** |
@@ -774,11 +774,11 @@ de chaque cas type :
 | Système | Cumul 1959-2024, euros de 2026 | Écart |
 |---|---|---|
 | 1. Système actuel | <!--chiffre:mesure(cumul_passe?scenario=1)-->13 767<!--/--> Md € | réf. |
-| 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(cumul_passe?scenario=2)-->2 740<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=2)-->−80,1<!--/--> % |
+| 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(cumul_passe?scenario=2)-->2 742<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=2)-->−80,1<!--/--> % |
 | 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(cumul_passe?scenario=3)-->13 767<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=3)-->+0,0<!--/--> % |
-| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=4)-->6 426<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=4)-->−53,3<!--/--> % |
+| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=4)-->6 431<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=4)-->−53,3<!--/--> % |
 | 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=5)-->13 767<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=5)-->+0,0<!--/--> % |
-| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(cumul_passe?scenario=6)-->6 426<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=6)-->−53,3<!--/--> % |
+| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(cumul_passe?scenario=6)-->6 431<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=6)-->−53,3<!--/--> % |
 | *s'ajoute au 6 : sa garantie vieillesse, payée par l'impôt, lue sur la distribution des pensions* | *<!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 411<!--/--> Md €* | |
 
 **Les scénarios 3 et 5 coûtent exactement ce que coûte le système actuel**, et
