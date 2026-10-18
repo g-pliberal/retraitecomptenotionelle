@@ -867,21 +867,30 @@ def test_un_regime_integre_se_dit_d_une_seule_pension():
     assert "€" not in ligne
 
 
-def test_la_cotisation_de_la_sncf_reste_sur_son_regime_integre(contexte):
+@pytest.mark.parametrize("residence", [None, "ES"])
+def test_la_cotisation_de_la_sncf_reste_sur_son_regime_integre(contexte, residence):
     """Décret n° 2007-1056, art. 7, IV : l'agent de la SNCF paie 0,70 % de SA
     pension, sous le plafond. Venu au chemin de fer après vingt-trois ans dans
     le privé, il a aussi une retraite de base et une complémentaire : la ligne
     sous le montant laisse toute la cotisation sur son régime intégré, au lieu
     d'en prendre une part à chaque étage au prorata de son montant. Chaque
     étage est, à moins d'un euro, sa part brute moins la CSG, la CRDS et la
-    CASA du taux plein, 1 % de la complémentaire et 0,70 % de la SNCF."""
+    CASA du taux plein, 1 % de la complémentaire et 0,70 % de la SNCF.
+
+    Résidant en Espagne, sans pension espagnole, la France le soigne : ni CSG,
+    ni CRDS, ni CASA (L. 136-1), mais 3,20 % de la base et 4,20 % de la
+    complémentaire (L. 131-9 ; D. 242-8), et 3,90 % de la SNCF sous le
+    plafond, 3,20 % au-delà (art. 7, IV, second alinéa) — que la page ne
+    prenait pas avant le 18 octobre 2026, le paquet ne portant pas ces taux."""
     champs = {"naissance": "1970", "statut": "salarie_prive_cadre", "debut": "22",
               "liquidation": "65", "unite_revenu": "moyen", "salaire": "1.5",
               "metier2_debut": "45", "metier2_statut": "agent_sncf", "montants": "net"}
+    if residence is not None:
+        champs["residence"] = residence
     saisie = Saisie.depuis_requete(champs)
     comparaison = contexte.simuler(saisie)
     assert comparaison.aujourd_hui is None
-    assert Montants.depuis(saisie, contexte.base, comparaison).tranche == "taux plein"
+    montants = Montants.depuis(saisie, contexte.base, comparaison)
     catalogue = contexte.simulateur().catalogue
     bruts = {}
     for pension in comparaison.actuel.pensions_par_regime:
@@ -889,12 +898,19 @@ def test_la_cotisation_de_la_sncf_reste_sur_son_regime_integre(contexte):
         bruts[etage] = (bruts.get(etage, 0.0)
                         + pension.montant * comparaison.coefficient_euros_constants / 12)
     pensions = charger_prelevements(contexte.base.racine_donnees).pensions
-    taux = pensions.taux_total
     plafond = pensions.regimes_speciaux[0].plafond_annuel / 12
+    if residence is None:
+        assert montants.tranche == "taux plein"
+        sociaux, base, complementaire, sncf, au_dela = pensions.taux_total, 0.0, 0.01, 0.007, 0.0
+    else:
+        assert montants.non_resident and montants.couvert
+        sociaux, base, complementaire, sncf, au_dela = 0.0, 0.032, 0.042, 0.039, 0.032
+    assert bruts["integre"] > plafond
     attendu = {
-        "régime intégré": bruts["integre"] * (1 - taux) - 0.007 * min(bruts["integre"], plafond),
-        "retraite de base": bruts["base"] * (1 - taux),
-        "retraite complémentaire": bruts["complementaire"] * (1 - taux - 0.01),
+        "régime intégré": bruts["integre"] * (1 - sociaux) - sncf * plafond
+        - au_dela * (bruts["integre"] - plafond),
+        "retraite de base": bruts["base"] * (1 - sociaux - base),
+        "retraite complémentaire": bruts["complementaire"] * (1 - sociaux - complementaire),
     }
     montant, ligne = _systeme_actuel(champs)
     affiches = {libelle: int(re.sub(r"\D", "", euros)) for euros, libelle in re.findall(

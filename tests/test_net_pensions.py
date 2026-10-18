@@ -313,6 +313,57 @@ def test_le_portage_javascript_preleve_la_maladie_de_la_sncf_et_des_mines(pensio
     assert sum(json.loads(execution.stdout), []) == pytest.approx(sum(attendu, []))
 
 
+_LU_DU_PAQUET_JS = """
+import { PrelevementsPension } from "./moteur/js/remuneration.js";
+const lu = new PrelevementsPension(JSON.parse(process.argv[1]));
+process.stdout.write(JSON.stringify(lu,
+  (cle, valeur) => (valeur instanceof Set ? [...valeur].sort() : valeur)));
+"""
+
+
+def _comme_en_json(valeur):
+    """Une valeur de ``dataclasses.asdict``, ses ensembles triés et ses
+    n-uplets en listes, comme le portage l'écrit en JSON."""
+    if isinstance(valeur, (set, frozenset)):
+        return sorted(valeur)
+    if isinstance(valeur, (list, tuple)):
+        return [_comme_en_json(element) for element in valeur]
+    if isinstance(valeur, dict):
+        return {cle: _comme_en_json(element) for cle, element in valeur.items()}
+    return valeur
+
+
+def test_le_portage_lit_dans_le_paquet_tout_ce_que_le_modele_lit_des_pensions(pensions):
+    """Les tests du portage lui donnent le fichier de données ; le site, le
+    paquet que ``construire_donnees.py`` en fabrique, et un champ que le
+    paquet oublie, le portage le lit à zéro, sans bruit. Jusqu'au 18 octobre
+    2026, les taux du non-résident de la SNCF et des mines (L. 131-9 ; décret
+    n° 2007-1056, art. 7, IV, second alinéa ; décret n° 46-2769, art. 91) :
+    l'agent de la SNCF résidant en Espagne ne payait rien sur le site.
+    ``PrelevementsPension`` lit donc dans le paquet, champ par champ, ce que
+    le modèle lit du fichier."""
+    import importlib.util
+
+    chemin = RACINE / "scripts" / "construire_donnees.py"
+    specification = importlib.util.spec_from_file_location("construire_donnees", chemin)
+    construction = importlib.util.module_from_spec(specification)
+    specification.loader.exec_module(construction)
+    paquet = construction._prelevements_remuneration()["pensions"]
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", _LU_DU_PAQUET_JS, json.dumps(paquet)],
+        cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr
+    lu = json.loads(execution.stdout)
+    sncf, mines = (next(special for special in lu["regimes_speciaux"]
+                        if special["regimes"] == [regime]) for regime in ("sncf", "mines"))
+    # 3,90 % sous le plafond et 3,20 % au-delà ; 3,70 % aux mines, sans plafond.
+    assert (sncf["taux_non_resident"], sncf["taux_non_resident_au_dela"]) == (0.039, 0.032)
+    assert (mines["taux_non_resident"], mines["plafond_annuel"]) == (0.037, None)
+    assert lu == _comme_en_json(dataclasses.asdict(pensions))
+
+
 _ETAGES_JS = """
 import { PrelevementsPension } from "./moteur/js/remuneration.js";
 import { Montants } from "./moteur/js/contexte.js";

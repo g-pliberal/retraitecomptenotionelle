@@ -130,7 +130,7 @@ CALIBRATIONS = DONNEES / "derive" / "calibrations_mortalite.json"
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas : le site
 #: attend la sienne (``VERSION_PAQUET``, ``moteur/js/contexte.js``), et redemande
 #: au serveur un paquet qui n'a pas celle-là, depuis le 11 octobre 2026.
-VERSION = 23
+VERSION = 24
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -2125,11 +2125,14 @@ def _prelevements_remuneration() -> dict:
                 "duree_minimale_trimestres":
                     prelevements.pensions.non_residents_duree_minimale,
             },
-            # La cotisation maladie des pensions de la SNCF et des mines.
+            # La cotisation maladie des pensions de la SNCF et des mines, et
+            # ses taux du non-résident de L. 131-9.
             "maladie_regimes_speciaux": [
                 {"serie": special.serie, "taux": special.taux,
                  "plafond_annuel": special.plafond_annuel, "annee": special.annee,
-                 "regimes": sorted(special.regimes)}
+                 "regimes": sorted(special.regimes),
+                 "taux_non_resident": special.taux_non_resident,
+                 "taux_non_resident_au_dela": special.taux_non_resident_au_dela}
                 for special in prelevements.pensions.regimes_speciaux
             ],
         },
