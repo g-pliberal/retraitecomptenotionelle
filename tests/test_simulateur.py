@@ -3471,9 +3471,124 @@ def test_la_surcote_parentale_se_cumule_avec_la_surcote_ordinaire(simulateur):
                 if p.regime == "regime_general")
     # Taux plein majoré de la surcote ordinaire — onze trimestres civils
     # entiers entre 64 et 67 ans, celui de l'anniversaire ne comptant pas
-    # (D. 351-1-4) —, puis surcote parentale de 5 % par-dessus.
+    # (D. 351-1-4) —, puis surcote parentale de 5 %.
     assert "taux 56.875%" in base.detail
     assert "surcote parentale 5.00%" in base.detail
+
+
+def test_la_surcote_parentale_du_fonctionnaire_entre_dans_le_coefficient_de_l_article_l14(
+        simulateur):
+    """« La majoration mentionnée au III et celle mentionnée au IV ne peuvent
+    pas être cumulées » (L. 14, V, loi n° 2023-1250, article 92).
+
+    La CNRACL lit le V période par période : les deux surcotes « ne sont pas
+    cumulables au titre d'une même période », et l'agent qui surcote dans
+    l'année qui précède son âge légal, puis au-delà, reçoit l'une et l'autre en
+    un seul coefficient, « (4 X 1.25%) + (2 X 1.25%) = 7.5 % » de la pension
+    (« Calcul de la surcote », surcote au titre des enfants, exemple 1). Son
+    agent, né en 1966, a l'âge légal d'avant la suspension de 2026 ; celle-ci,
+    née le 1er janvier 1969, a soixante-quatre ans sous les deux calendriers :
+    quatre trimestres d'enfants de 63 à 64 ans, deux de droit commun jusqu'à
+    64 ans et demi. Le moteur appliquait la surcote parentale à la pension déjà
+    surcotée : 1,025 × 1,05, soit 7,625 %.
+    """
+    resultat = simulateur.scenario_actuel.calculer(simulateur.carriere_simple(
+        annee_naissance=1969, mois_naissance=1, jour_naissance=1, sexe="F",
+        affiliation="fonctionnaire_territorial_hospitalier", age_debut=21,
+        age_liquidation=64.5, nombre_enfants=2))
+    pension = next(p for p in resultat.pensions_par_regime if p.regime == "cnracl")
+    parentale = next(a for a in resultat.avantages_appliques
+                     if a.code == "surcote_parentale")
+    assert "4 trimestres" in parentale.detail
+    # Deux trimestres de surcote de droit commun, de 64 ans à 64 ans et demi.
+    assert resultat.taux_liquidation == pytest.approx(0.75 * (1 + 2 * 0.0125))
+    avant_surcote = (pension.montant - parentale.montant) / (1 + 2 * 0.0125)
+    assert pension.montant == pytest.approx(avant_surcote * (1 + 6 * 0.0125))
+
+
+def test_la_surcote_parentale_du_regime_general_est_la_surcote_ouverte_un_an_plus_tot(
+        simulateur):
+    """Pour le parent, l'âge de la surcote « est abaissé d'un an » (L. 351-1-2-1,
+    rédaction de la loi n° 2025-199) : les trimestres de l'année qui précède
+    l'âge légal sont des trimestres de la surcote de L. 351-1-2, qui entrent
+    dans le même coefficient que les autres, et qui se calculent comme eux « sur
+    la base du montant de pension avant qu'il ne soit porté au montant
+    minimum » (D. 351-2-1). Le moteur appliquait la surcote parentale à la
+    pension déjà surcotée, et relevée au minimum contributif.
+    """
+    def calcul(**reglages):
+        resultat = simulateur.scenario_actuel.calculer(simulateur.carriere_simple(
+            annee_naissance=1969, mois_naissance=1, jour_naissance=1, sexe="F",
+            affiliation="salarie_prive_non_cadre", nombre_enfants=2, **reglages))
+        pension = next(p for p in resultat.pensions_par_regime
+                       if p.regime == "regime_general")
+        parentale = next(a for a in resultat.avantages_appliques
+                         if a.code == "surcote_parentale")
+        assert "4 trimestres" in parentale.detail
+        return resultat, pension, parentale
+
+    # Onze trimestres civils de surcote ordinaire de 64 à 67 ans, et les quatre
+    # de l'année d'avant : 15 × 1,25 % de la pension d'avant surcote.
+    resultat, pension, parentale = calcul(age_debut=18, age_liquidation=67)
+    assert resultat.taux_liquidation == pytest.approx(0.5 * (1 + 11 * 0.0125))
+    avant_surcote = (pension.montant - parentale.montant) / (1 + 11 * 0.0125)
+    assert pension.montant == pytest.approx(avant_surcote * (1 + 15 * 0.0125))
+
+    # Une petite pension, liquidée à l'âge légal et portée au minimum
+    # contributif : la surcote parentale vaut 5 % de la pension d'avant le
+    # minimum, et s'ajoute à lui.
+    resultat, pension, parentale = calcul(age_debut=21, age_liquidation=64,
+                                          niveau_salaire=0.3)
+    assert resultat.taux_liquidation == pytest.approx(0.5)
+    minimum = next(a for a in resultat.avantages_appliques
+                   if a.code == "minimum_contributif")
+    assert parentale.montant == pytest.approx(
+        0.05 * (pension.montant - parentale.montant - minimum.montant))
+
+
+def test_les_deux_moteurs_servent_la_meme_surcote_parentale():
+    """Le jumeau JavaScript de l'étape qui complète calcule la surcote
+    parentale sur la même pension que le Python, celle d'avant la surcote :
+    à la fonctionnaire de l'État et de la CNRACL, à la salariée, portée ou non
+    au minimum contributif."""
+    import json
+    import shutil
+    import subprocess
+    import tempfile
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    from test_liquidation import _ecarts, _python
+
+    mere = {"naissance": "1969", "naissance_mois": "1", "sexe": "F", "enfants": "2",
+            "unite_revenu": "moyen", "salaire": "1"}
+    requetes = [
+        {**mere, "statut": "fonctionnaire_territorial_hospitalier", "debut": "21",
+         "liquidation": "64.5"},
+        {**mere, "statut": "fonctionnaire_etat", "debut": "21", "liquidation": "64.5"},
+        {**mere, "statut": "salarie_prive_non_cadre", "debut": "18", "liquidation": "67"},
+        {**mere, "statut": "salarie_prive_non_cadre", "debut": "21", "liquidation": "64",
+         "salaire": "0.3"},
+    ]
+    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
+                                     delete=False) as fichier:
+        json.dump(requetes, fichier)
+        chemin = fichier.name
+    try:
+        execution = subprocess.run(
+            ["node", str(Path(__file__).resolve().parent / "js" / "comparer-liquidation.mjs"),
+             chemin],
+            cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True,
+            encoding="utf-8", check=False)
+    finally:
+        Path(chemin).unlink()
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    obtenus, attendus = json.loads(execution.stdout), _python(requetes)
+    assert all("surcote_parentale" in json.dumps(attendu) for attendu in attendus), attendus
+    ecarts: list[str] = []
+    for rang, (obtenu, attendu) in enumerate(zip(obtenus, attendus)):
+        _ecarts(obtenu, attendu, f"requête {rang}", ecarts)
+    assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])
 
 
 # -- régimes que le barème en points fait sortir du rendement instantané -----

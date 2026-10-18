@@ -1427,10 +1427,15 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
     });
   }
 
-  // Surcote parentale (L. 351-1-2-1) : après les minima, avant la majoration
-  // pour enfants qui se calcule sur la pension surcotée. Elle ne compte pas
-  // les mêmes trimestres que la surcote ordinaire — celle-ci au-delà de l'âge
-  // légal, celle-là dans l'année qui le précède — et les deux se cumulent.
+  // Surcote parentale (L. 351-1-2-1, L. 14, IV) : après les minima, avant la
+  // majoration pour enfants qui se calcule sur la pension surcotée. Elle ne
+  // compte pas les mêmes trimestres que la surcote ordinaire — celle-ci
+  // au-delà de l'âge légal, celle-là dans l'année qui le précède — et les deux
+  // se cumulent, en UN coefficient sur la pension d'avant la surcote : voir le
+  // Python, qui cite la CNRACL et D. 351-2-1.
+  // Les pensions que le minimum contributif regarde, par leur indice.
+  const regardeesDuMinimum = new Map(
+    eligiblesMinimum.map((eligible) => [eligible.indice, eligible]));
   const parametresParentale = (avantagesNonContributifs
     && majorationEnfants !== null && !ignorerPenaliteAge)
     ? moteur.surcoteParentale.parametres(anneeLiquidation)
@@ -1476,12 +1481,25 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
       if (trimestres <= 0) {
         continue;
       }
-      const supplement = pension.montant * tauxParental * trimestres;
+      // La pension que le coefficient majore, celle d'avant la surcote
+      // ordinaire : la pension civile moins ce que la surcote de L. 14, III, y
+      // ajoute ; celle d'un régime que le minimum contributif regarde, d'avant
+      // sa surcote et d'avant le minimum.
+      let avantSurcote = pension.montant;
+      if (surcotesL18.has(indice)) {
+        avantSurcote = pension.montant - surcotesL18.get(indice);
+      } else if (regardeesDuMinimum.has(indice)) {
+        const eligible = regardeesDuMinimum.get(indice);
+        avantSurcote = (pension.montant - (ajoutsDuMinimum.get(indice) ?? 0.0)
+          - (eligible.horsMinimum ?? 0.0)) / eligible.surcote;
+      }
+      const supplement = avantSurcote * tauxParental * trimestres;
       pensions[indice] = {
         ...pension,
         montant: pension.montant + supplement,
         detail: `${pension.detail}, surcote parentale `
-          + `${formatPourcentage(tauxParental * trimestres, 2)}`,
+          + `${formatPourcentage(tauxParental * trimestres, 2)} de `
+          + `${formatFixe(avantSurcote, 2, true)} €`,
       };
       gainParental += supplement;
       trimestresParentaux = Math.max(trimestresParentaux, trimestres);

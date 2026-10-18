@@ -1590,12 +1590,21 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                         f"revalorisée : {initiale:,.2f} €, qui ne se recalcule "
                         f"pas avant le 8 juin 2006"))
 
-    # Surcote parentale (L. 351-1-2-1) : elle vient APRÈS les minima,
-    # comme la surcote ordinaire, et AVANT la majoration pour enfants, qui
-    # se calcule sur la pension surcotée. Elle ne récompense pas les mêmes
-    # trimestres que la surcote ordinaire — celle-ci ne compte qu'au-delà
-    # de l'âge légal, celle-là dans l'année qui le précède — et les deux se
-    # cumulent donc sans se recouvrir.
+    # Surcote parentale (L. 351-1-2-1, L. 14, IV) : elle vient APRÈS les
+    # minima, comme la surcote ordinaire, et AVANT la majoration pour
+    # enfants, qui se calcule sur la pension surcotée. Elle ne récompense pas
+    # les mêmes trimestres que la surcote ordinaire — celle-ci ne compte
+    # qu'au-delà de l'âge légal, celle-là dans l'année qui le précède — et
+    # les deux se cumulent donc sans se recouvrir : le V de L. 14, qui défend
+    # de les cumuler, vise « une même période » (CNRACL, « Calcul de la
+    # surcote »). Elles font UN coefficient, sur la pension d'avant la
+    # surcote : « (4 X 1.25%) + (2 X 1.25%) = 7.5 % » (même page, surcote au
+    # titre des enfants, exemple 1). Au régime général, l'âge de la surcote
+    # « est abaissé d'un an » (rédaction de 2025), et elle se calcule « avant
+    # qu'[elle] ne soit porté[e] au montant minimum » (D. 351-2-1).
+    #: Les pensions que le minimum contributif regarde, par leur indice : le
+    #: coefficient de leur surcote, et ce que le minimum n'en relève pas.
+    regardees_du_minimum = {eligible.indice: eligible for eligible in eligibles_minimum}
     parametres_parentale = (
         moteur.surcote_parentale.parametres(annee_liquidation)
         if (avantages_non_contributifs and majoration_enfants is not None
@@ -1656,12 +1665,28 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
             )
             if acquis_parentaux <= 0:
                 continue
-            supplement = pension.montant * taux_parental * acquis_parentaux
+            # LA PENSION QUE LE COEFFICIENT MAJORE, celle d'avant la surcote
+            # ordinaire : la pension civile moins ce que la surcote de L. 14,
+            # III, y ajoute, que le minimum garanti efface ; celle d'un régime
+            # que le minimum contributif regarde, d'avant sa surcote et d'avant
+            # le minimum. Le module majorait la pension surcotée : 1,025 × 1,05
+            # pour deux trimestres de droit commun et quatre d'enfants, là où
+            # la caisse sert 1,075.
+            if indice in surcotes_l18:
+                avant_surcote = pension.montant - surcotes_l18[indice]
+            elif indice in regardees_du_minimum:
+                eligible = regardees_du_minimum[indice]
+                avant_surcote = ((pension.montant - ajouts_du_minimum.get(indice, 0.0)
+                                  - eligible.hors_minimum) / eligible.surcote)
+            else:
+                avant_surcote = pension.montant
+            supplement = avant_surcote * taux_parental * acquis_parentaux
             pensions[indice] = replace(
                 pension,
                 montant=pension.montant + supplement,
                 detail=(pension.detail + ", surcote parentale "
-                        f"{taux_parental * acquis_parentaux:.2%}"),
+                        f"{taux_parental * acquis_parentaux:.2%} de "
+                        f"{avant_surcote:,.2f} €"),
             )
             gain_parental += supplement
             trimestres_parentaux = max(trimestres_parentaux, acquis_parentaux)
