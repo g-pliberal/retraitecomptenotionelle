@@ -1222,6 +1222,45 @@ def test_le_salaire_net_des_cartes_est_celui_de_la_fiche_de_paie():
         )
 
 
+#: Les seuils de chaque barème de la Lodeom, en SMIC (L. 752-3-2, III) :
+#: l'exonération totale, le palier de l'innovation et de la croissance, la
+#: sortie.
+SEUILS_LODEOM = {
+    "competitivite": ("barème de compétitivité", ["1,3 SMIC", "2,2 SMIC"]),
+    "competitivite_renforcee": ("barème de compétitivité renforcée",
+                                ["2 SMIC", "2,7 SMIC"]),
+    "innovation_et_croissance": ("barème d'innovation et de croissance",
+                                 ["1,7 SMIC", "2,5 SMIC", "3,5 SMIC"]),
+}
+
+
+def _allegement(corps: str) -> str:
+    """Le paragraphe de la fiche de paie qui explique l'allègement, en clair."""
+    trouve = re.search(r"<p><strong>L'allègement sur les bas salaires est calculé, "
+                       r"pas ignoré\.</strong>(.*?)</p>", corps, re.S)
+    assert trouve, "la fiche de paie n'explique pas l'allègement"
+    return " ".join(re.sub(r"<[^>]+>", " ", html.unescape(trouve.group(1)))
+                    .replace(" ", " ").replace("\xa0", " ").split())
+
+
+@pytest.mark.parametrize("bareme", list(SEUILS_LODEOM))
+def test_l_allegement_de_la_fiche_de_paie_dit_la_lodeom(bareme):
+    """Outre-mer, l'employeur de la Lodeom ne reçoit pas la réduction générale
+    (L. 752-3-2, VI) : l'explication de l'allègement nomme l'exonération et
+    son barème, sa valeur maximale T, 32,41 % au 1er janvier 2026 (BOSS,
+    § 1380), et ses seuils, au lieu des 40,21 % et des trois SMIC de la
+    réduction générale, qu'elle garde sans la Lodeom."""
+    libelle, seuils = SEUILS_LODEOM[bareme]
+    texte = _allegement(rendre("/simuler", {**SIMULATION_TEMOIN, "lodeom": bareme})[1])
+    assert "Lodeom" in texte and libelle in texte, texte
+    assert "32,41 %" in texte, texte
+    positions = [texte.find(seuil) for seuil in seuils]
+    assert -1 not in positions and positions == sorted(positions), (seuils, texte)
+    assert "40,21" not in texte and "trois SMIC" not in texte, texte
+    sans = _allegement(rendre("/simuler", SIMULATION_TEMOIN)[1])
+    assert "40,21 %" in sans and "trois SMIC" in sans and "Lodeom" not in sans
+
+
 def test_les_colonnes_derivees_de_la_page_cout_se_refont():
     """Écarts et économies de la page Coût, reconstitués depuis les cumuls affichés.
 

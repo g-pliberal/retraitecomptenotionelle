@@ -835,6 +835,8 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
                 attributs["quotite"] = quotite
             if dispense:
                 attributs["dispense_assiette_minimale"] = dispense
+            if metier.lodeom:
+                attributs["lodeom"] = metier.lodeom
             periodes.append(fait(f"emploi_{rang}" if morceau == 1 else f"emploi_{rang}_{morceau}",
                                  ASSURE, EMPLOI, _jour(de), _jour(a), attributs))
     for rang, metier in enumerate(cumuls, 1):
@@ -864,7 +866,8 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
                 "profil": profil_carriere, "part_primes": part_primes, "cumul": True,
                 **({"micro": metier.micro} if metier.micro else {}),
                 **({"apprentissage": True} if metier.apprentissage else {}),
-                **({"dispense_assiette_minimale": dispense} if dispense else {})}))
+                **({"dispense_assiette_minimale": dispense} if dispense else {}),
+                **({"lodeom": metier.lodeom} if metier.lodeom else {})}))
     for annee in sorted(interruptions or {}):
         periodes.append(fait(f"interruption_{annee}", ASSURE, INTERRUPTION,
                              f"{annee:04d}-01-01", f"{annee + 1:04d}-01-01",

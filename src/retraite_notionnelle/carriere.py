@@ -416,6 +416,10 @@ class Metier:
     #: défaut (présomption ``pas_de_periode_assimilee``) ; aucune étape ne le
     #: lit encore (action 130, sixième domaine).
     apprentissage: bool = False
+    #: Le barème de la Lodeom de l'employeur d'outre-mer
+    #: (``saisie.BAREMES_LODEOM``), que la chronologie porte (attribut
+    #: ``lodeom``) et que seule la fiche de paie lit ; vide sinon.
+    lodeom: str = ""
 
 
 @dataclass(frozen=True)

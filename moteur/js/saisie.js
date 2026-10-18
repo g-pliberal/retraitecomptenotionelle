@@ -313,6 +313,18 @@ export const ABATTEMENTS_MICRO = { vente: 0.71, services: 0.50, liberal: 0.34, c
 export const STATUT_MICRO = "micro_entrepreneur";
 export const STATUT_MICRO_CIPAV = "profession_liberale";
 
+/**
+ * Le barème de la Lodeom que l'employeur d'outre-mer applique à la place de la
+ * réduction générale (L. 752-3-2, III), le vide pour « non ». Voir
+ * `BAREMES_LODEOM` du Python.
+ */
+export const BAREMES_LODEOM = [
+  ["", "non"],
+  ["competitivite", "barème de compétitivité"],
+  ["competitivite_renforcee", "barème de compétitivité renforcée"],
+  ["innovation_et_croissance", "barème d'innovation et de croissance"],
+];
+
 /** La durée de captivité et de services de guerre que la saisie admet, en mois. */
 export const MOIS_DE_GUERRE_MAXIMUM = 240;
 
@@ -649,6 +661,9 @@ export const DEFAUTS = Object.freeze({
   //: L'activité du micro-entrepreneur (`ACTIVITES_MICRO`), vide quand son
   //: revenu est déjà abattu.
   micro: "",
+  //: Le barème de la Lodeom de l'employeur d'outre-mer (`BAREMES_LODEOM`), que
+  //: portent tous les emplois ; vide, la réduction générale.
+  lodeom: "",
   //: Les carrières hors de France : les périodes passées hors de France
   //: — `{pays, debut, fin, activite}`, les âges comptés comme un début
   //: d'activité —, les pensions étrangères — `{pays, montant, debut}` —,
@@ -835,6 +850,7 @@ export class Saisie {
         : entier(parametres, "guerre", 0),
       travail_manuel: parmi(parametres, "travail_manuel", TRAVAUX_MANUELS, ""),
       micro: parmi(parametres, "micro", ACTIVITES_MICRO, ""),
+      lodeom: parmi(parametres, "lodeom", BAREMES_LODEOM, ""),
       etranger: periodesEtrangeresSaisies(parametres, moisDeNaissance, tolerante),
       pensions_etrangeres: pensionsEtrangeresSaisies(parametres, moisDeNaissance, tolerante),
       residence: (parametres.residence || "").trim(),
@@ -1225,6 +1241,7 @@ export class Saisie {
         age_fin: ligne.fin,
         micro,
         apprentissage: index + 1 === this.apprentissage,
+        lodeom: this.lodeom,
       });
     });
     return metiers;
@@ -1739,6 +1756,7 @@ export class Saisie {
         type_periode: typePeriode,
         quotite: typePeriode === "emploi" ? tempsPartiel.get(annee) ?? 1.0 : 1.0,
         dispense_assiette_minimale: typePeriode === "emploi" ? dispenses.get(annee) ?? "" : "",
+        lodeom: typePeriode === "emploi" ? this.lodeom : "",
       });
     }
     return lignes;
@@ -2664,6 +2682,7 @@ export class Saisie {
         ["travail_manuel", this.travail_manuel || null],
       ].filter(([, valeur]) => valeur !== null)),
       ...(this.micro ? { micro: this.micro } : {}),
+      ...(this.lodeom ? { lodeom: this.lodeom } : {}),
       ...(this.residence ? { residence: this.residence } : {}),
       ...(this.mois_en_france !== null ? { mois_en_france: this.mois_en_france } : {}),
       ...(this.apprentissage !== null ? { apprentissage: this.apprentissage } : {}),

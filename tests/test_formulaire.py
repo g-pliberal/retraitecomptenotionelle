@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import json
 import re
+from html import unescape
 from html.parser import HTMLParser
 from pathlib import Path
 
@@ -148,7 +149,7 @@ SAISIES = {
         **BASE, "sexe": "F", "profil": "plat", "primes": "0.2", "enfants": "3",
         "naissances": "1996,1999-04",
         "interruptions": "1995:1996:education_enfant", "temps_partiel": "1999:1999:80",
-        "dispenses": "2016:2017:rsa",
+        "dispenses": "2016:2017:rsa", "lodeom": "competitivite",
         "releve": "1998:salarie_prive_non_cadre:14200:4\n"
                   "1999:salarie_prive_non_cadre:15100:4",
     },
@@ -307,3 +308,18 @@ def test_le_champ_des_dispenses_nomme_chaque_motif_et_ses_annees():
     for motif, (_, debut, fin, _) in paquet["dispenses_assiette_minimale"].items():
         annees = f"de {debut} à {fin}" if fin is not None else f"depuis {debut}"
         assert re.search(f"« {motif} »[^;.]*{annees}", bloc.group(0)), (motif, annees)
+
+
+def test_le_menu_de_la_lodeom_offre_chaque_bareme_du_paquet():
+    """Le menu de la Lodeom (action 138, étape 18) offre « non », puis chaque
+    barème du bloc ``lodeom`` du paquet, sous son libellé, et garde celui qu'on
+    a choisi. Replié dans les options, il ne coûte rien au formulaire vierge."""
+    formulaire = _formulaire({"lodeom": "competitivite_renforcee"})
+    bloc = re.search(r'<div><label for="lodeom">.*?</select></div>', formulaire, re.S)
+    assert bloc, "le formulaire n'a pas de menu de la Lodeom"
+    options = re.findall(r'<option value="([^"]*)"( selected)?>([^<]*)</option>', bloc.group(0))
+    paquet = json.loads((RACINE / "moteur" / "donnees.json").read_text(encoding="utf-8"))
+    baremes = paquet["prelevements_remuneration"]["profils"]["salarie_prive"]["lodeom"]["baremes"]
+    assert [(code, unescape(texte)) for code, _, texte in options] == [("", "non")] + [
+        (code, bareme["libelle"]) for code, bareme in baremes.items()]
+    assert [code for code, choisi, _ in options if choisi] == ["competitivite_renforcee"]

@@ -785,6 +785,9 @@ export function duParcours({
         if (dispense) {
           attributs.dispense_assiette_minimale = dispense;
         }
+        if (metier.lodeom) {
+          attributs.lodeom = metier.lodeom;
+        }
         periodes.push(fait(morceau === 0 ? `emploi_${i + 1}` : `emploi_${i + 1}_${morceau + 1}`,
           ASSURE, EMPLOI, jour(de), jour(a), attributs));
       });
@@ -820,6 +823,7 @@ export function duParcours({
             ...(metier.micro ? { micro: metier.micro } : {}),
             ...(metier.apprentissage ? { apprentissage: true } : {}),
             ...(dispense ? { dispense_assiette_minimale: dispense } : {}),
+            ...(metier.lodeom ? { lodeom: metier.lodeom } : {}),
           }));
       });
   });

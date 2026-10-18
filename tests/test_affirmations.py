@@ -1257,14 +1257,17 @@ def _(m: Modele):
 
 @controle("allegement_au_smic")
 def _(m: Modele):
-    """Au SMIC, le coefficient vaut la somme des taux visés : moins de retraite, moins de réduction, d'autant."""
+    """Au SMIC, le coefficient vaut la somme des taux visés : moins de retraite, moins de réduction, d'autant.
+
+    De la réduction générale comme de la Lodeom, que la page dit à sa place
+    quand l'employeur d'outre-mer l'applique."""
     from retraite_notionnelle.remuneration import charger_prelevements
-    reduction = charger_prelevements(m.base.racine_donnees).profil(
-        "salarie_prive").reduction_generale
-    assert _proche(reduction.coefficient_maximal, sum(reduction.composantes.values()))
-    un, autre = 0.16, 0.09
-    assert _proche(reduction.coefficient_maximal_avec(un) - reduction.coefficient_maximal_avec(autre),
-                   un - autre)
+    profil = charger_prelevements(m.base.racine_donnees).profil("salarie_prive")
+    for reduction in (profil.reduction_generale, profil.lodeom):
+        assert _proche(reduction.coefficient_maximal, sum(reduction.composantes.values()))
+        un, autre = 0.16, 0.09
+        assert _proche(reduction.coefficient_maximal_avec(un)
+                       - reduction.coefficient_maximal_avec(autre), un - autre)
 
 
 @controle("fiche_sans_prelevements_annexes")

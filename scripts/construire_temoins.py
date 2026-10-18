@@ -777,6 +777,13 @@ def _cas() -> list[dict]:
                                 trimestres=None),
         "dispenses": "2004:2015:pensionne",
     }))
+    # LA LODEOM (action 138, étape 18) : le salarié de La Réunion, dont
+    # l'employeur applique le barème d'innovation et de croissance, cotise
+    # partout le même brut ; seule sa fiche de paie, que la page montre, change.
+    cas.append(("lodeom_innovation_et_croissance", {
+        "naissance": "1985-06-12", "sexe": "F", "debut": "2007-09", "liquidation": "2049-07",
+        "salaire": "1.4", "lodeom": "innovation_et_croissance",
+    }))
     # LE CUMUL EMPLOI-RETRAITE : l'activité exercée après le départ, et ce que
     # chaque pension en garde (droit/cumul.py). Le cumul plafonné de la
     # première pension de 2022, réduite du dépassement, l'Agirc-Arrco
@@ -2004,6 +2011,10 @@ def _pages() -> dict:
             "unite_revenu": "euros_mois", "salaire": "3500", "micro": "vente",
             "saisie_par": "pension", "pension": "900",
         }),
+        # La Lodeom (action 138, étape 18) : le salarié dont l'employeur
+        # d'outre-mer applique le barème de compétitivité renforcée ; sa fiche de
+        # paie dit l'exonération à la place de la réduction générale.
+        ("simuler_lodeom", "/simuler", {**BASE, "lodeom": "competitivite_renforcee"}),
         ("simuler_regime_special", "/simuler", {
             **BASE, "statut": "agent_sncf", "naissance": "1960", "liquidation": "52",
         }),

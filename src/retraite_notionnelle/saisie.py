@@ -425,6 +425,19 @@ ABATTEMENTS_MICRO = {"vente": 0.71, "services": 0.50, "liberal": 0.34, "cipav": 
 STATUT_MICRO = "micro_entrepreneur"
 STATUT_MICRO_CIPAV = "profession_liberale"
 
+#: Le barème de la Lodeom que l'employeur applique, en Guadeloupe, en Guyane,
+#: en Martinique ou à La Réunion, à la place de la réduction générale
+#: (L. 752-3-2, III ; action 138, étape 18) : ceux du bloc ``lodeom`` de
+#: ``legislation/prelevements_remuneration.yaml``, sous leur libellé, qu'un
+#: test y tient. Le vide, « non », est la réduction générale. Chaque emploi le
+#: porte, et seule la fiche de paie du salarié du privé le lit.
+BAREMES_LODEOM = [
+    ("", "non"),
+    ("competitivite", "barème de compétitivité"),
+    ("competitivite_renforcee", "barème de compétitivité renforcée"),
+    ("innovation_et_croissance", "barème d'innovation et de croissance"),
+]
+
 #: La durée de captivité et de services militaires en temps de guerre que la
 #: saisie admet, en mois : de un à vingt ans.
 MOIS_DE_GUERRE_MAXIMUM = 240
@@ -821,6 +834,10 @@ class Saisie:
     #: lignes comme un chiffre d'affaires (:data:`ACTIVITES_MICRO`) ; le vide,
     #: comme un revenu déjà abattu.
     micro: str = ""
+    #: Le barème de la Lodeom de l'employeur d'outre-mer (:data:`BAREMES_LODEOM`),
+    #: que portent tous les emplois, métiers et lignes du relevé ; le vide, la
+    #: réduction générale.
+    lodeom: str = ""
     #: Les carrières hors de France (fiches
     #: ``totalisation_des_periodes_etrangeres``, ``pension_proratisee``,
     #: ``minimum_contributif_international`` et
@@ -1028,6 +1045,7 @@ class Saisie:
                             else _entier(parametres, "guerre", 0)),
             travail_manuel=_parmi(parametres, "travail_manuel", TRAVAUX_MANUELS, ""),
             micro=_parmi(parametres, "micro", ACTIVITES_MICRO, ""),
+            lodeom=_parmi(parametres, "lodeom", BAREMES_LODEOM, ""),
             etranger=_periodes_etrangeres_saisies(parametres, mois_de_naissance, tolerante),
             pensions_etrangeres=_pensions_etrangeres_saisies(parametres, mois_de_naissance,
                                                              tolerante),
@@ -1393,7 +1411,8 @@ class Saisie:
             metiers.append(Metier(affiliation=statut, age_debut=ligne.debut,
                                   niveau_salaire=niveau, cumul=ligne.cumul,
                                   age_fin=ligne.fin, micro=micro,
-                                  apprentissage=rang == self.apprentissage))
+                                  apprentissage=rang == self.apprentissage,
+                                  lodeom=self.lodeom))
         return metiers
 
     def interruptions_de_carriere(
@@ -1968,6 +1987,7 @@ class Saisie:
                 quotite=temps_partiel.get(annee, 1.0) if type_periode == "emploi" else 1.0,
                 dispense_assiette_minimale=(dispenses.get(annee, "")
                                             if type_periode == "emploi" else ""),
+                lodeom=self.lodeom if type_periode == "emploi" else "",
             ))
         return lignes
 
@@ -2614,6 +2634,7 @@ class Saisie:
                 ("guerre", self.mois_de_guerre),
                 ("travail_manuel", self.travail_manuel or None)) if valeur is not None},
             **({"micro": self.micro} if self.micro else {}),
+            **({"lodeom": self.lodeom} if self.lodeom else {}),
             **({"residence": self.residence} if self.residence else {}),
             **({"mois_en_france": self.mois_en_france}
                if self.mois_en_france is not None else {}),

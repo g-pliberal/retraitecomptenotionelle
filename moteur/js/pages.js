@@ -82,7 +82,7 @@ import {
   RELEVE_MAXIMUM, REVALORISATIONS_STOCK, SAISIES, SAISIE_DE_LA_SITUATION,
   SALAIRE_DEFAUT, SANS_EMPLOI, SITUATIONS, SITUATIONS_FOYER, Saisie, TABLES,
   MOIS_DE_GUERRE_MAXIMUM, TRAJECTOIRES_EMPLOI, TRAVAUX_MANUELS, UNITES_REVENU, age, entier, estEntier, jourEnClair,
-  ABATTEMENTS_MICRO, ACTIVITES_MICRO, STATUT_MICRO,
+  ABATTEMENTS_MICRO, ACTIVITES_MICRO, STATUT_MICRO, BAREMES_LODEOM,
   nombreBrut, parmi, reel, refus,
 } from "./saisie.js";
 import {
@@ -1009,6 +1009,12 @@ export function formulaire(saisie, contexte, comparaison = null) {
       "« 2016:2019:rsa » : au RSA de 2016 à 2019, séparées par des virgules", "text",
       { autocomplete: "off", spellcheck: "false" },
       aideDesDispenses(contexte.paquet)),
+    // LA LODEOM (action 138, étape 18 ; bloc lodeom des prélèvements) :
+    // facultative. Outre-mer, l'exonération de l'employeur remplace la réduction
+    // générale ; seule la fiche de paie du salarié du privé la lit.
+    g.liste("lodeom", "Lodeom de l'employeur", BAREMES_LODEOM, saisie.lodeom,
+      "salarié du privé outre-mer : son exonération", {},
+      aideDeLaLodeom(lodeomDuPaquet(contexte.paquet))),
     // LE REVENU FISCAL DU FOYER (action 138, étapes 2 et 13) : facultatif. Il
     // fixe la tranche de CSG de la pension ; sans lui, le net présume un foyer
     // sans autre revenu que ses pensions.
@@ -2035,6 +2041,44 @@ function aideDesDispenses(paquet) {
     + `peu. Les textes vous en dispensent : ${motifs.join(" ; ")}. Ces années-là, `
     + "vous ne cotisez que sur votre revenu, et ne validez que ce qu'il valide. "
     + "Si vous avez demandé à cotiser sur l'assiette minimale, ne déclarez rien.";
+}
+
+/** Le bloc `lodeom` du salarié du privé, au paquet. */
+function lodeomDuPaquet(paquet) {
+  return paquet.prelevements_remuneration.profils.salarie_prive.lodeom;
+}
+
+/** Un multiple du SMIC, à la française : « 2 SMIC », « 1,3 SMIC ». */
+function enSmic(multiple) {
+  return `${g.nombre(multiple, Number.isInteger(multiple) ? 0 : 1)} SMIC`;
+}
+
+/**
+ * Jusqu'où un barème de la Lodeom exonère, et où il s'éteint (L. 752-3-2,
+ * III), lus au paquet : le palier de l'innovation et de la croissance s'en
+ * tient aux cotisations de son premier seuil.
+ */
+function seuilsDeLaLodeom(bareme) {
+  const palier = bareme.palier_jusqu_en_smic === null ? ""
+    : `, puis celles d'un salaire de ${enSmic(bareme.seuil_total)} jusqu'à `
+      + enSmic(bareme.palier_jusqu_en_smic);
+  return `${enSmic(bareme.seuil_total)}${palier}, et s'éteint à `
+    + enSmic(bareme.seuil_de_sortie);
+}
+
+/**
+ * La bulle du menu de la Lodeom (action 138, étape 18) : chaque barème du
+ * paquet, et ses seuils.
+ */
+function aideDeLaLodeom(lodeom) {
+  const baremes = Object.values(lodeom.baremes).map((bareme) =>
+    `au ${bareme.libelle}, elle les efface toutes jusqu'à ${seuilsDeLaLodeom(bareme)}`);
+  return "En Guadeloupe, en Guyane, en Martinique et à La Réunion, l'employeur de "
+    + "moins de onze salariés, ou d'un secteur que la loi énumère, reçoit à la place "
+    + "de la réduction générale une exonération de ses cotisations (article "
+    + `L. 752-3-2 du code de la sécurité sociale) : ${baremes.join(" ; ")}. `
+    + "Elle ne change pas vos droits : seulement votre fiche de paie, le coût de "
+    + "votre travail et ce que la proposition vous ferait gagner.";
 }
 
 /**
@@ -5046,7 +5090,7 @@ ${revenuDeduit(contexte, comparaison, saisie, montants)}
   ${resumeParcours(contexte, saisie)}
 </div>
 ${estimationOfficielle(contexte, saisie, montants)}
-${salaireNet(comparaison, saisie)}
+${salaireNet(comparaison, saisie, contexte.paquet)}
 ${reversionDuConjoint(contexte, comparaison, saisie, montants)}
 <h2>Pour aller plus loin</h2>
 <p class="chapeau">Les quatre montants ci-dessus sont le résultat ; tout ce qui
@@ -6027,8 +6071,9 @@ function feminin(libelle) {
  * ligne « coût du travail » ne s'affiche que là où ce que verse l'employeur est
  * un prix du travail, non un taux d'équilibre. ``remuneration.py`` porte la
  * décision, ce bloc l'écrit, et accorde ce qui suit le libellé (`feminin`).
+ * Le paquet dit la Lodeom, quand l'employeur l'applique.
  */
-function salaireNet(comparaison, saisie) {
+function salaireNet(comparaison, saisie, paquet) {
   const remuneration = comparaison.remuneration;
   if (remuneration === null) {
     return "";
@@ -6114,7 +6159,7 @@ que ce qui est porté au compte. Le système 4, lui, y touche.</p>
   <div class="fiches">${ouverture}</div>
   <p>Soit <strong>${eurosSigne(gain, false)} ${sens} sur votre fiche de paie</strong>,
   ${sousQuelleHypothese}.${reste}${volontaire}</p>${rendu}
-  ${salaireNetDetail(comparaison, remuneration, saisie)}
+  ${salaireNetDetail(comparaison, remuneration, saisie, paquet)}
 </div>`;
 }
 
@@ -6176,7 +6221,7 @@ function salaireNetRendu(remuneration, net) {
 }
 
 /** La fiche de paie entière, et ce qu'il faut savoir pour la discuter. */
-function salaireNetDetail(comparaison, remuneration, saisie) {
+function salaireNetDetail(comparaison, remuneration, saisie, paquet) {
   const reference = remuneration.reference;
   const avant = reference.droitEnVigueur;
   const apres = reference.proposition;
@@ -6292,7 +6337,7 @@ ${lecture}
 ${alerte}
 ${salaireNetEpargne(reference.epargneAVotreNom / 12, remuneration,
     comparaison.parametres, saisie)}
-${salaireNetMethode(comparaison, remuneration)}`);
+${salaireNetMethode(comparaison, remuneration, paquet)}`);
 }
 
 /**
@@ -6347,7 +6392,7 @@ function salaireNetEpargne(epargne, remuneration, parametres, saisie) {
  * plus important : il dit ce que le modèle tient FIXE, et pourquoi il n'a pas
  * le choix quand l'employeur verse un taux d'équilibre.
  */
-function salaireNetMethode(comparaison, remuneration) {
+function salaireNetMethode(comparaison, remuneration, paquet) {
   const parametres = comparaison.parametres;
   const part = parametres.part_salariale_taux_unique;
   const assiette = echapper(remuneration.libelleAssiette.toLowerCase());
@@ -6355,7 +6400,7 @@ function salaireNetMethode(comparaison, remuneration) {
 <h3>Comment ce chiffre est calculé, et ce qu'il suppose</h3>
 ${salaireNetIncidence(remuneration, assiette, parametres)}
 ${salaireNetPartage(remuneration, parametres, part)}
-${salaireNetAllegement(remuneration)}
+${salaireNetAllegement(remuneration, paquet)}
 ${salaireNetPerimetre(remuneration)}
 <p class="discret">Taux hors retraite : millésime ${remuneration.millesimeBareme},
 appliqué tel quel aux années à venir — le modèle ne prévoit pas la prochaine loi
@@ -6502,8 +6547,27 @@ Le partage inverse ferait monter votre brut de près de 3 %, donc aussi ce qui
 est porté à votre compte, mais des années plus tard et amputé du quart.</p>${horsPartage}`;
 }
 
-/** L'allègement sur les bas salaires — quand il s'applique, et sinon pourquoi. */
-function salaireNetAllegement(remuneration) {
+/**
+ * L'allègement sur les bas salaires — quand il s'applique, et sinon pourquoi.
+ * Outre-mer, l'employeur de la Lodeom ne reçoit pas la réduction générale, mais
+ * une exonération (L. 752-3-2), dont le paquet dit le barème.
+ */
+function salaireNetAllegement(remuneration, paquet) {
+  const code = remuneration.reference.droitEnVigueur.lodeom;
+  if (remuneration.afficheCoutDuTravail && code) {
+    const lodeom = lodeomDuPaquet(paquet);
+    const bareme = lodeom.baremes[code];
+    return `<p><strong>L'allègement sur les bas salaires est calculé, pas ignoré.</strong>
+Outre-mer, votre employeur reçoit à sa place l'exonération Lodeom, au
+${echapper(bareme.libelle)} : elle efface la totalité des cotisations patronales
+qu'elle vise jusqu'à ${seuilsDeLaLodeom(bareme)}. Son coefficient maximal,
+${g.pourcentage(lodeom.coefficient_maximal, false, 2)}, est exactement leur somme
+au niveau du SMIC (article L. 752-3-2 du code de la sécurité sociale) ; le modèle
+refait donc l'addition sous la proposition au lieu de garder le chiffre
+d'aujourd'hui. Conséquence, et elle va à contre-courant : <strong>au SMIC, baisser
+la cotisation retraite de l'employeur ne rend rien</strong>, puisqu'il n'en
+versait déjà plus.</p>`;
+  }
   if (remuneration.afficheCoutDuTravail) {
     return `<p><strong>L'allègement sur les bas salaires est calculé, pas ignoré.</strong>
 Depuis 2026, il efface au niveau du SMIC la totalité des cotisations patronales
