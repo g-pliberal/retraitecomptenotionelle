@@ -1,0 +1,45 @@
+date: "2026-10-18"
+session: "action 138, étape 12 : les seuils de 2017 à 2019 du micro-entrepreneur, et l'ordre d'affectation du forfait"
+consulte: >-
+  L'index LEGI du dépôt, mis à jour au 17 octobre 2026 (incrément
+  20261017-211053), puis `textes.py --inscrire` (ses dix-huit rédactions, du
+  code rural et du décret n° 2008-1072, une autre session les a inscrites le
+  même jour) : L. 133-6-8
+  (LEGIARTI000031684948), L. 133-6-8-3 (LEGIARTI000023033721), L. 613-9
+  (LEGIARTI000037061897, LEGIARTI000044626482), D. 131-6-5
+  (LEGIARTI000023565887), D. 133-4 (de LEGIARTI000030034483 à
+  LEGIARTI000046885358), D. 131-6-1 (LEGIARTI000031799503,
+  LEGIARTI000034163589), D. 131-6-3, D. 612-4 et D. 612-5 de 2017, D. 621-1,
+  D. 621-2 et D. 621-3 de 2018. Au site de la Cnav
+  (legislation.lassuranceretraite.fr, recherche par son API et PDF) : le
+  barème « Chiffre d'affaire des micro-entrepreneurs validant un trimestre »
+  et son « Info-doc RSI » d'avant 2016 ; les circulaires du RSI n° 2011/011,
+  2016/009, 2016/010 et 2017/007 ; les circulaires Cnav n° 2017/1 (fiche
+  4.14), n° 2023-4, n° 2024-23, n° 2025-20 et n° 2025-23 ; l'instruction
+  ministérielle n° 2020/160.
+trouve: >-
+  De 2011 à 2021, la loi affecte les sommes que verse le micro-entrepreneur
+  par priorité à l'impôt, puis à la CSG et à la CRDS, et « le solde » aux
+  cotisations « selon un ordre déterminé par décret » (L. 133-6-8-3, puis
+  L. 613-9) : la vieillesse de base en dernier jusqu'en 2015 (D. 131-6-5),
+  puis après la maladie et les indemnités journalières en 2016 et 2017, après
+  la maladie seule de 2018 à 2022 (D. 133-4). C'est ce qui fait les seuils de
+  2017 à 2019 du barème de la Cnav, qu'aucune clef ne fait : la part qui
+  précède la base ne dépend que du revenu abattu, la même pour les trois
+  activités, et ces seuils se refont, à 6 € près en 2017 et à 18 € en 2018 et
+  2019, sur les dues d'un indépendant classique (la base et
+  l'invalidité-décès sur au moins 11,5 % du plafond, la CSG sur le revenu et
+  les cotisations, la maladie de D. 612-5 en 2017, le taux de D. 621-2 pris à
+  40 % du plafond, 4,018 %, en 2018 et 2019). Portés dans les deux moteurs :
+  de 2017 à 2019, les trimestres se comptent aux seuils publiés (4 085 € de
+  ventes pour un trimestre en 2018, au lieu de 5 099 € à la clef ; 9 550 € de
+  recettes libérales pour le quatrième, au lieu de 8 986 €) ; aucun témoin ne
+  bouge. L'Info-doc RSI donne 2009 à 2015 : 2016 n'a pas de seuils publiés.
+reste: >-
+  Le revenu annuel moyen et le compte de 2016 à 2019, qui gardent la clef ou
+  le revenu abattu quand l'ordre de D. 133-4 donne plus à la base sous 11,5 %
+  du plafond, et au RCI ce qui reste après elle ; 2016, sans seuils ; une
+  circulaire de l'Acoss ou de la Sécurité sociale des indépendants qui dise
+  ce calcul ; la clef de la circulaire n° 2025-20, titrée « 2018 à 2020 »,
+  que les seuils démentent en 2018 et en 2019 ; les clefs de janvier à
+  septembre 2022 ; la règle de la CNAVPL pour la Cipav avant octobre 2022.
