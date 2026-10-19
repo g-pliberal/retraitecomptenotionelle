@@ -1,0 +1,40 @@
+date: "2026-10-19"
+session: >-
+  l'action 131 : le minimum contributif des artisans et commerçants, borné avec leurs
+  années d'avant 1973 (D. 634-6)
+consulte: >-
+  python scripts/veille_droit.py ; l'index LEGI du dépôt, récupéré puis mis à jour
+  jusqu'à l'incrément du 18 octobre 2026 ; python scripts/textes.py --inscrire, aucune
+  rédaction parue depuis, celles qu'il apportait étant déjà sur main ; au code de la
+  sécurité sociale, D. 634-6 dans
+  ses trois rédactions, de 1988, 1990 et 2009, et D. 634-14 (1990) ; le décret
+  n° 73-937, articles 7 et 7-2 (rédactions du 5 mars 1976) ; la base de législation de
+  la Cnav, par sa recherche, ses menus et ses fichiers : les exposés du minimum
+  contributif et de la liquidation unique, les circulaires du RSI n° 2008/059 et
+  n° 2009/031, et une trentaine d'autres circulaires du RSI de 2006 à 2017, qui ne
+  disent rien de la règle.
+trouve: >-
+  D. 634-6 attribue le minimum de l'artisan ou du commerçant au titre de ses périodes
+  d'après 1972 et, s'il en a d'avant 1973, ne peut porter « le total des pensions
+  allouées au titre des périodes d'assurance antérieures et postérieures au 1er janvier
+  1973 à un montant supérieur au minimum de pension calculé au prorata de la durée
+  totale d'assurance par rapport à 150 trimestres » (1990), à la durée de L. 351-1
+  depuis 2009 ; de 1983 à 1989, l'article 7 du décret n° 73-937, en vigueur jusqu'au
+  31 décembre 1989, borne le cumul au minimum de base entier ; la rédaction de 1988 de
+  D. 634-6 ne parle que de la réversion. Le moteur servait le minimum sans compter la
+  pension en points. Porté dans les deux moteurs : les champs de période
+  pension_bornee_au_minimum_avec (depuis 1990) et pension_bornee_au_minimum_entier_avec
+  (de 1983 à 1989) nomment les droits d'avant 1973 aux périodes de la CANCAVA, de
+  l'ORGANIC et du RSI, que la période de chaque membre du groupe liquidé ensemble lit,
+  le régime général depuis 2020 compris. Les circulaires du RSI n° 2008/059 et
+  n° 2009/031 proratisent le minimum sur les seuls trimestres validés depuis 1973 et
+  comptent ceux d'avant dans les durées tous régimes, sans dire la borne. D. 634-14,
+  depuis 1990, et l'article 7-2 du décret n° 73-937 avant lui, tiennent compte des
+  réversions d'avant et d'après 1973 pour le minimum de la réversion.
+reste: >-
+  D. 634-14 et l'article 7-2 du décret n° 73-937, au minimum de la réversion des
+  artisans et commerçants, à porter (fiche reversion). Une circulaire de la CANCAVA, de
+  l'ORGANIC ou du RSI qui applique D. 634-6 avant 2006, pour la majoration dans la borne
+  et ses 150 trimestres de 2004 à 2008. La règle qui décompte en trimestres les
+  périodes de l'ancien régime des indépendants, et le texte qui majorait leur durée de
+  1984 à 1989, toujours à lire.

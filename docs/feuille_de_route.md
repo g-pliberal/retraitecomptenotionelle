@@ -4163,13 +4163,13 @@ R. 111-2 ; la condition de L. 816-1 ; le tableau de 2008 des régimes
 
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
-**Reprise, au 19 octobre 2026.** Faits, des coupures au mois à l'année du décès du chef
-d'exploitation : voir les notes. Restent : des classes, l'acte vétérinaire (au
-propriétaire), des décrets non lus ; de `coefficients_anticipation_agirc_arrco`, l'ASF
-réservée de 1983 à 2003 aux salariés en activité et aux chômeurs (au propriétaire) ;
-de `decote_avant_1983`, l'ajournement des artisans et commerçants et les « soixante et
-un ans » agricoles, aux décrets de 1956 à 1968 (au propriétaire) ; des artisans et
-commerçants, le minimum contributif que D. 634-6 borne avec leurs années d'avant 1973 ;
+**Reprise, au 19 octobre 2026.** Faits, des coupures au mois au minimum des artisans et
+commerçants que leurs années d'avant 1973 bornent (D. 634-6) : voir les notes. Restent :
+des classes, l'acte vétérinaire (au propriétaire), des décrets non lus ; de
+`coefficients_anticipation_agirc_arrco`, l'ASF réservée de 1983 à 2003 aux salariés en
+activité et aux chômeurs (au propriétaire) ; de `decote_avant_1983`, l'ajournement des
+artisans et commerçants et les « soixante et un ans » agricoles, aux décrets de 1956 à
+1968 (au propriétaire) ; de leur réversion, le minimum que D. 634-14 borne de même ;
 `pension_non_salaries_agricoles_2026` ; de l'exploitant, les années au prorata, celle du
 décès comprise (au propriétaire : la pratique de la MSA, l'option du conjoint survivant),
 et au compte le forfait du collaborateur. Détail : les notes, la plus récente d'abord.
