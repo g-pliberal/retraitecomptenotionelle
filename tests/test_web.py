@@ -3792,6 +3792,54 @@ def test_la_page_cout_ventile_ce_que_d_autres_caisses_versent():
     assert "et le système 2" in texte
 
 
+def test_la_page_cout_dit_au_rythme_de_qui_chaque_cas_type_survit():
+    """Les poids de la page Coût, depuis la mortalité différentielle des cas
+    types (action 138, étape 7) : les effectifs de chaque génération restent
+    ceux de la pyramide de l'INSEE, et chaque cas type y survit, depuis son
+    départ, au rythme du vingtile de niveau de vie où son diviseur le range, à
+    nombre de décès égal (``cout._survies_alignees``) — ce que fait la
+    référence, la seule que la page montre, dont le diviseur suit ce vingtile.
+    Chaque variante de la grille du coût qui vit à part (``CasType.mortalite``)
+    s'y nomme, avec le cas type dont la table des poids la compte
+    (``cas_type_affiche``), sans ligne à elle, et la population qu'elle suit :
+    l'inapte, avec le salarié au SMIC, au rythme des inaptes de la Cnav."""
+    from retraite_notionnelle import Parametres
+    from retraite_notionnelle.castypes import GRILLE_DU_COUT, cas_type_affiche
+    from retraite_notionnelle.config import POPULATION_PAR_NIVEAU_DE_VIE
+
+    corps = rendre("/cout", {})[1]
+    section = re.search(r'<details class="section" id="cout-scenarios">.*?</details>',
+                        corps, re.S)
+    assert section, "la page Coût n'a pas les quatre systèmes comparés"
+    texte = html.unescape(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", section.group(0))))
+    assert Parametres().population_conversion == POPULATION_PAR_NIVEAU_DE_VIE
+    assert ("Les poids sont les effectifs réels de chaque génération, lus dans la "
+            "pyramide des âges de l'INSEE. Dans chacune, chaque cas type survit, depuis "
+            "son départ, au rythme du vingtile de niveau de vie où son diviseur le "
+            "range, à nombre de décès égal : la pyramide garde ses survivants, et seule "
+            "change leur répartition entre fortes et faibles pensions.") in texte
+    # Ce que la page en dit, variante par variante : une variante de plus qui
+    # vivrait à part ferait tomber ce test, et se nommerait.
+    poids = "Ce que chaque carrière type pèse dans ces chiffres"
+    nommees = {
+        "smic_carriere_complete~inapte": (
+            "smic_carriere_complete", "cnav_inaptitude",
+            "Le salarié reconnu inapte au travail, compté avec le salarié au SMIC dans "
+            f"le dépliant « {poids} », survit, lui, au rythme des inaptes de la Cnav."),
+    }
+    a_part = {cas.code: cas for cas in GRILLE_DU_COUT if cas.mortalite}
+    assert set(a_part) == set(nommees)
+    tableau = re.search(r'<details class="section" id="cout-poids">.*?</details>', corps, re.S)
+    assert tableau and f"<span>{poids}</span>" in tableau.group(0)
+    lignes = {html.unescape(ligne) for ligne in
+              re.findall(r'<th class="[^"]*" scope="row">(.*?)</th>', tableau.group(0))}
+    libelles = {cas.code: cas.libelle for cas in GRILLE_DU_COUT}
+    for code, (affiche, population, phrase) in nommees.items():
+        assert (cas_type_affiche(code), a_part[code].mortalite) == (affiche, population)
+        assert libelles[affiche] in lignes and libelles[code] not in lignes, code
+        assert phrase in texte, code
+
+
 def test_la_page_cout_montre_le_bilan_du_compte_de_chaque_systeme():
     """Le bilan du compte à la manière suédoise (action 138, étape 19), après
     la dette que les soldes à venir accumulent : pour chacun des quatre

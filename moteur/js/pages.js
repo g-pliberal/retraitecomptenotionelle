@@ -10346,7 +10346,13 @@ supplémentaire et le minimum vieillesse ne sont la pension d'aucun des quatre
 systèmes. Avant ${depenses.premiereAnneeVentilee}, que la DREES ne ventile
 pas, la part de cette année-là est reconduite.
 Les poids sont les effectifs réels de chaque génération, lus dans la pyramide
-des âges de l'INSEE ; les écarts viennent des treize cas types croisés avec
+des âges de l'INSEE. Dans chacune, chaque cas type survit, depuis son départ,
+au rythme du vingtile de niveau de vie où son diviseur le range, à nombre de
+décès égal : la pyramide garde ses survivants, et seule change leur
+répartition entre fortes et faibles pensions. Le salarié reconnu inapte au
+travail, compté avec le salarié au SMIC dans le dépliant « Ce que chaque
+carrière type pèse dans ces chiffres », survit, lui, au rythme des inaptes de
+la Cnav. Les écarts viennent des treize cas types croisés avec
 ${c.generations.length} générations, de ${c.generations[0]} à
 ${c.generations[c.generations.length - 1]}.</p>
 
