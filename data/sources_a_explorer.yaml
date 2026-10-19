@@ -1878,7 +1878,7 @@ sources:
       `openfisca_regime_general_oracle`). Ce qui reste à en tirer est le
       MOTEUR : régimes spéciaux, fonction publique, et les paramètres qu'aucun
       script du dépôt ne récupère encore.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       La page HTML de github.com répond 403 à travers le proxy de sortie ;
       `git ls-remote` et `git clone` passent (vérifié le 22 septembre 2026).
@@ -5795,7 +5795,7 @@ sources:
       Les seize cas types de retraités, rangés par décile, et leurs
       prélèvements : de quoi confronter le taux uniforme de 9,1 % que le
       modèle applique aux pensions.
-    statut: a_explorer
+    statut: en_cours
 
   - id: ipp_taxipp
     url: https://gitlab.com/ipp/partage-public-ipp/taxipp
@@ -5806,7 +5806,7 @@ sources:
       Le chiffrage de la note IPP n° 129 (abattement de 10 %, désindexation
       des pensions de base, alignement de la CSG), à opposer à
       docs/chiffrage_plf.md.
-    statut: a_explorer
+    statut: en_cours
 
   - id: ipp_til_pension
     url: https://github.com/TaxIPP-Life/Til-Pension
@@ -5974,7 +5974,7 @@ sources:
     a_en_tirer: >-
       La CSG, la CRDS, la CASA et le minimum vieillesse de 2017, codés par la
       DG Trésor : un recoupement daté du foyer et du net.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
@@ -6041,7 +6041,7 @@ sources:
       L'abattement de 10 % des pensions (article 158, 5 a, du code général des
       impôts) en Catala, pour le jour où le dépôt calculera l'impôt du
       retraité.
-    statut: a_explorer
+    statut: en_cours
 
   - id: jrc_euromod
     url: https://github.com/ec-jrc/JRC-EUROMOD-software-source-code
@@ -6052,7 +6052,7 @@ sources:
       Les règles françaises de la CSG, de la CRDS, de la CASA et de l'ASPA,
       sous CC BY 4.0 et donc recopiables en citant : un recoupement du foyer
       et du net.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
@@ -6066,7 +6066,7 @@ sources:
       Le simulateur du COR reproduit en Python, et ses projections de 2019 :
       une confrontation agrégée possible tant que le simulateur officiel est
       fermé.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
@@ -6079,7 +6079,7 @@ sources:
     a_en_tirer: >-
       Un modèle comptable sur les séries du COR de 2026, celles que le dépôt
       lit aussi : à comparer à la page Coût, convention par convention.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
@@ -6093,7 +6093,7 @@ sources:
       La pension nette de trois cas types et ses seuils de CSG de 2026, lus
       dans l'instruction de la DSS du 11 décembre 2025 : un recoupement des
       prélèvements.
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
