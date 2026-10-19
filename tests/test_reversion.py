@@ -299,6 +299,166 @@ def test_la_reversion_se_calcule_sans_le_minimum_contributif(
         round(montant, 2), motif, base, contributif)
 
 
+# -- les droits d'avant 1973 des artisans et des commerçants ----------------------
+
+@pytest.mark.parametrize("deces, taux, version", [
+    ("1990-05-10", 0.52, "taux_52"),
+    ("2000-05-10", 0.54, "taux_54"),
+])
+def test_les_points_d_avant_1973_se_reversent_comme_la_pension_alignee(
+        simulateur, deces, taux, version):
+    """Les pensions des décrets de 1964 et de 1966 « sont accordées aux
+    conjoints survivants des assurés décédés […] au titre des périodes
+    d'assurance ou d'activité professionnelle non-salariée accomplies par
+    l'assuré antérieurement au 1er janvier 1973, lorsque sont remplies les
+    conditions fixées aux articles L. 353-1, L. 353-2, ou L. 353-3 » ; prenant
+    effet depuis le 1er décembre 1982, elles « sont égales à 52 p. 100 des
+    points de retraite dont bénéficiait ou eût bénéficié l'assuré décédé »,
+    54 % depuis le 1er janvier 1995 (décret n° 73-937, article 9, rédactions
+    de 1990 et de 1995). La veuve de l'artisan qui avait 4 000 € de points et
+    6 000 € de pension alignée reçoit les deux, au même taux, à la même
+    date."""
+    carriere = _carriere(simulateur, 1925, 65.0, "1930", deces)
+    servies = _servies(simulateur, carriere,
+                       [("cancava", 6000.0), ("cancava_avant_1973", 4000.0)],
+                       int(deces[:4]), {"cancava": 80, "cancava_avant_1973": 80})
+    assert [(servies[regime].taux, round(servies[regime].montant, 2), servies[regime].motif,
+             servies[regime].version, servies[regime].date_effet)
+            for regime in ("cancava", "cancava_avant_1973")] == [
+        (taux, round(taux * 6000.0, 2), "servie", version, f"{deces[:4]}-06-01"),
+        (taux, round(taux * 4000.0, 2), "servie", version, f"{deces[:4]}-06-01")]
+
+
+@pytest.mark.parametrize("naissance, conjoint, deces, pensions, durees, attendus", [
+    (1925, "1930", "2000-05-10", [("organic", 3000.0), ("organic_avant_1973", 1000.0)],
+     {"organic": 40, "organic_avant_1973": 40},
+     {"organic": (2182.74, "minimum"), "organic_avant_1973": (540.0, "servie")}),
+    (1925, "1930", "1990-05-10", [("cancava", 1000.0), ("cancava_avant_1973", 500.0)],
+     {"cancava": 20, "cancava_avant_1973": 25},
+     {"cancava": (1453.91, "minimum"), "cancava_avant_1973": (260.0, "servie")}),
+    (1915, "1920", "1980-05-10", [("organic", 1000.0), ("organic_avant_1973", 1000.0)],
+     {"organic": 20, "organic_avant_1973": 60},
+     {"organic": (704.35, "minimum"), "organic_avant_1973": (500.0, "servie")}),
+])
+def test_le_minimum_compte_ensemble_les_reversions_d_avant_et_d_apres_1973(
+        simulateur, naissance, conjoint, deces, pensions, durees, attendus):
+    """« Pour l'application des dispositions du deuxième alinéa de l'article
+    L. 353-1 relatives au montant minimum de la pension de réversion, il est
+    tenu compte, le cas échéant, du montant cumulé de la pension de réversion
+    allouée au titre des périodes d'assurance postérieures au 31 décembre 1972
+    dont justifiait l'assuré décédé et de l'avantage de réversion alloué au
+    titre des périodes d'assurance et d'activité non salariée de l'assuré
+    antérieures au 1er janvier 1973 » (D. 634-14, depuis 1990 ; décret
+    n° 73-937, article 7-2, depuis le 5 mars 1976). Les deux réversions n'ont
+    qu'un minimum, que la réversion alignée complète, et leurs deux durées font
+    ses soixantièmes, la réversion qu'il borne correspondant à toutes deux
+    (D. 353-1). Le commerçant mort en 2000, quarante trimestres de chaque côté
+    de 1973 : 1 620 € et 540 €, sous le minimum de 2 722,74 €, que la réversion
+    alignée porte à 2 182,74 €, et non au minimum entier, ni aux 40/60 du
+    minimum pour elle seule. L'artisan mort en 1990, vingt et vingt-cinq
+    trimestres : les 45/60 du minimum, 1 713,91 €, moins 260 €. Avant décembre
+    1982, le minimum entier : le commerçant mort en 1980, 1 204,35 € moins
+    500 €."""
+    carriere = _carriere(simulateur, naissance, 65.0, conjoint, deces)
+    servies = _servies(simulateur, carriere, pensions, int(deces[:4]), durees)
+    assert {regime: (round(ligne.montant, 2), ligne.motif)
+            for regime, ligne in servies.items()} == attendus
+
+
+@pytest.mark.parametrize("pensions, durees, attendus", [
+    ([("rsi", 1000.0)], {"cancava": 132, "rsi": 19}, {"rsi": (3406.47, "minimum")}),
+    ([("cancava_avant_1973", 100.0), ("rsi", 1000.0)],
+     {"cancava_avant_1973": 12, "cancava": 132, "rsi": 19},
+     {"cancava_avant_1973": (54.0, "servie"), "rsi": (3352.47, "minimum")}),
+])
+def test_le_minimum_suit_la_caisse_qui_succede(simulateur, pensions, durees, attendus):
+    """Le RSI succède à la CANCAVA au 1er janvier 2006, et sa pension de 2012
+    sert les années que celle-ci avait : elles sont sa durée, et chaque régime
+    « retient, le cas échéant, le montant du minimum de base au prorata de la
+    durée d'assurance accomplie en son sein » (D. 353-1, rédaction de 2004).
+    Mort en 2015, l'artisan qui avait 132 trimestres à la CANCAVA et 19 au RSI
+    laisse une réversion de 540 €, que le minimum entier, 3 406,47 €, relève,
+    et non ses 19/151, 428,63 €, la part d'une CANCAVA qui ne sert plus rien.
+    Les points d'avant 1973, liquidés avant elle, s'y joignent : 54 €, et
+    3 352,47 € au RSI."""
+    carriere = _carriere(simulateur, 1950, 62.0, "1952", "2015-05-10")
+    servies = _servies(simulateur, carriere, pensions, 2015, durees)
+    assert {regime: (round(ligne.montant, 2), ligne.motif)
+            for regime, ligne in servies.items()} == attendus
+
+
+def test_les_points_d_avant_1973_ne_portent_pas_la_majoration_pour_enfants(simulateur):
+    """L'article 9 du décret n° 73-937 ne rend applicables aux pensions
+    d'avant 1973 que les conditions de L. 353-1 à L. 353-3 et les articles
+    qu'il cite, dont n'est ni R. 353-2, ni L. 353-5 : leur réversion est égale
+    « à 54 % du montant des points de retraite », sans la majoration de 10 %
+    du survivant de trois enfants, que la réversion alignée garde."""
+    carriere = _carriere(simulateur, 1925, 65.0, "1930", "2000-05-10", enfants=3)
+    servies = _servies(simulateur, carriere,
+                       [("cancava", 6000.0), ("cancava_avant_1973", 4000.0)], 2000,
+                       {"cancava": 80, "cancava_avant_1973": 80})
+    assert [(round(servies[regime].montant, 2), servies[regime].majoration_trois_enfants)
+            for regime in ("cancava", "cancava_avant_1973")] == [
+        (3564.0, pytest.approx(324.0)), (2160.0, 0.0)]
+
+
+def test_les_deux_moteurs_reversent_les_droits_d_avant_1973():
+    """La veuve de l'artisan et celle du commerçant nés en 1928, entrés à
+    vingt-cinq ans et partis à soixante-cinq, morts en 2000, et celle de
+    l'artisan né en 1950, que le RSI liquide en 2012, morte en 2015 : chacune
+    reçoit la réversion de ses points d'avant 1973, à 54 %, et le minimum qui
+    relève la réversion alignée ne porte que leur total au minimum. Les étapes
+    de la liquidation et le journal, réversion comprise, sont les mêmes dans
+    les deux moteurs."""
+    import json
+    import shutil
+    import subprocess
+    import tempfile
+    from pathlib import Path
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    from test_liquidation import RACINE, _ecarts, _python
+    from test_minimum_pension_sncf import REQUETE
+
+    requetes = [{**REQUETE, **cas} for cas in (
+        {"naissance": "1928", "liquidation": "65", "statut": "artisan", "debut": "25",
+         "salaire": "0.2", "conjoint": "1930", "deces": "2000-05"},
+        {"naissance": "1928", "liquidation": "65", "statut": "commercant", "debut": "25",
+         "salaire": "0.3", "conjoint": "1930", "deces": "2000-05"},
+        {"naissance": "1950", "liquidation": "62", "statut": "artisan", "debut": "20",
+         "salaire": "0.2", "conjoint": "1952", "deces": "2015-05"},
+    )]
+    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
+                                     delete=False) as fichier:
+        json.dump(requetes, fichier)
+        chemin = fichier.name
+    try:
+        execution = subprocess.run(
+            ["node", str(RACINE / "tests" / "js" / "comparer-liquidation.mjs"), chemin],
+            cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
+    finally:
+        Path(chemin).unlink()
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    obtenus, attendus = json.loads(execution.stdout), _python(requetes)
+    assert not any("erreur" in attendu for attendu in attendus), attendus
+    ecarts: list[str] = []
+    for rang, (obtenu, attendu) in enumerate(zip(obtenus, attendus)):
+        _ecarts(obtenu, attendu, f"requête {rang}", ecarts)
+    assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])
+    lignes = [{ligne["regime"]: ligne for ligne in next(
+        entree["contenu"]["donnee"]["regimes"] for entree in attendu["journal"]
+        if entree["id"] == "liquidation_reversion_conjoint")} for attendu in attendus]
+    for reversions, (alignee, points) in zip(lignes, (
+            ("cancava", "cancava_avant_1973"), ("organic", "organic_avant_1973"),
+            ("rsi", "cancava_avant_1973"))):
+        assert (reversions[points]["motif"], reversions[points]["montant"]) == (
+            "servie", pytest.approx(0.54 * reversions[points]["base"]))
+        assert reversions[alignee]["motif"] == "minimum"
+        assert (reversions[alignee]["montant"] + reversions[points]["montant"]
+                == pytest.approx(reversions[alignee]["minimum"]))
+
+
 def test_l_echeancier_reverse_la_pension_sans_le_minimum_contributif(contexte):
     """Un petit salaire parti au taux plein et porté au minimum contributif :
     la part du minimum dans sa pension, menée au décès comme elle, n'entre pas

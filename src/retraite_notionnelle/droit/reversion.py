@@ -7,7 +7,9 @@ applique à chaque régime la version de sa fiche que les dates choisissent :
 
 * le régime général et les régimes alignés (fiche ``reversion``) : un taux de
   la pension, à partir d'un âge, sous un plafond de ressources — condition
-  d'ouverture avant juillet 2004, écrêtement depuis ;
+  d'ouverture avant juillet 2004, écrêtement depuis — ; les points d'avant
+  1973 des artisans et des commerçants de même, au même taux, sans les
+  majorations pour enfants (décret n° 73-937, article 9) ;
 * la fonction publique et la CNRACL (``reversion_fonction_publique``) : la
   moitié de la pension, sans âge ni ressources, sous la condition
   d'antériorité ou de durée du mariage de L. 39 ;
@@ -56,8 +58,12 @@ porté au MINIMUM de D. 353-1
 — entier à soixante trimestres du défunt dans le régime, en soixantièmes en
 deçà, et, depuis juillet 2004, au prorata de sa durée dans le régime quand
 plusieurs régimes alignés en comptent plus de soixante ; entier, sans
-soixantièmes, avant décembre 1982 — ; puis réduit du dépassement du plafond de
-ressources — 2 080 heures de SMIC, 1,6 fois pour le MÉNAGE du survivant qui
+soixantièmes, avant décembre 1982 ; le régime étant celui qui succède aux
+caisses du défunt, la CANCAVA et l'ORGANIC le RSI, et leurs droits d'avant
+1973 avec elles, dont le minimum borne avec la réversion alignée « le montant
+cumulé » (D. 634-14 ; décret n° 73-937, article 7-2) — ; puis réduit du
+dépassement du plafond de ressources — 2 080 heures de SMIC, 1,6 fois pour le
+MÉNAGE du survivant qui
 vit en couple, marié, pacsé ou en concubinage, depuis juillet 2004, ses
 revenus d'activité abattus de 30 % à cinquante-cinq ans depuis 2005 (L. 353-1,
 D. 353-1-1, R. 353-1) ; avant juillet 2004, une condition d'ouverture, ses
@@ -152,7 +158,8 @@ from typing import TYPE_CHECKING
 from .. import chronologie as chrono
 from ..donnees.chargement import Fiabilite
 from ..somme import somme_ordonnee
-from .coordonner import REGIMES_ALIGNES, lura_applicable
+from .coordonner import (REGIMES_ALIGNES, REGIMES_ALIGNES_TETE, lura_applicable,
+                         tete_de_succession)
 from .liquider import maximum_des_pensions
 
 if TYPE_CHECKING:
@@ -182,6 +189,7 @@ MOTIFS = {
 #: les salariés et non-salariés agricoles, les indépendants, les professions
 #: libérales sauf les avocats, les cultes (exposé de la Cnav, « Montant -
 #: retraite de réversion » ; circulaires n° 2005-17, § 22, et n° 2008-42, § 4).
+#: Chacun sous sa tête de succession : voir :func:`_groupes_du_minimum`.
 REGIMES_DU_MINIMUM = ("regime_general", "msa_salaries", "msa_non_salaries", "organic",
                       "cancava", "rsi", "cnavpl", "cavimac")
 
@@ -817,8 +825,8 @@ def _majoration_forfaitaire_enfants(moteur: ScenarioActuel, carriere: Carriere,
 
 def _majorations_ulterieures(parametres: dict, date_effet: str, calcule: float,
                              minimum: float, maximum: float,
-                             personnelles: tuple[tuple[str, float], ...] = ()
-                             ) -> tuple[tuple[str, float], ...]:
+                             personnelles: tuple[tuple[str, float], ...] = (),
+                             autres: float = 0.0) -> tuple[tuple[str, float], ...]:
     """Les majorations forfaitaires qui relèvent la réversion attribuée avant
     leur date (``majorations_forfaitaires``) : 4 % au 1er décembre 1982, puis
     3,846 % au 1er janvier 1995, qui la portent du taux de 50 % à celui de
@@ -829,21 +837,26 @@ def _majorations_ulterieures(parametres: dict, date_effet: str, calcule: float,
     réversion suit (``personnelles``, ``(jour, taux)``, fiche
     ``majorations_forfaitaires_1972_1982``), et qui passent, le même jour,
     avant la sienne. Chaque jour, ce qu'elles ajoutent ensemble à la
-    réversion portée au minimum et ramenée au maximum, ``(jour, montant)``."""
-    def servie(facteur: float) -> float:
-        montant = max(minimum, calcule * facteur)
+    réversion portée au minimum et ramenée au maximum, ``(jour, montant)``.
+    ``autres`` est le montant calculé des réversions que le minimum compte
+    avec elle (D. 634-14), que les majorations de la réversion relèvent aussi,
+    et que la réversion portée au minimum laisse sous lui."""
+    def servie(facteur: float, propre: float) -> float:
+        montant = max(minimum - autres * propre, calcule * facteur)
         return min(montant, maximum) if maximum > 0 else montant
     datees = sorted([(jour, 0, taux) for jour, taux in personnelles if jour > date_effet]
                     + [(str(majoration["date"]), 1, float(majoration["taux"]))
                        for majoration in parametres.get("majorations_forfaitaires") or ()
                        if str(majoration["date"]) > date_effet])
-    ecrites, facteur = [], 1.0
+    ecrites, facteur, propre = [], 1.0, 1.0
     for jour in dict.fromkeys(jour for jour, _, _ in datees):
-        nouveau = facteur
-        for _, _, taux in (datee for datee in datees if datee[0] == jour):
+        nouveau, nouveau_propre = facteur, propre
+        for _, sorte, taux in (datee for datee in datees if datee[0] == jour):
             nouveau *= 1 + taux
-        ecrites.append((jour, servie(nouveau) - servie(facteur)))
-        facteur = nouveau
+            if sorte == 1:
+                nouveau_propre *= 1 + taux
+        ecrites.append((jour, servie(nouveau, nouveau_propre) - servie(facteur, propre)))
+        facteur, propre = nouveau, nouveau_propre
     return tuple(ecrites)
 
 
@@ -866,28 +879,53 @@ def _au_taux_plein(naissance: str, age: float) -> str:
     return atteint if naissance[8:10] == "01" else mois_suivant(atteint)
 
 
+def _groupes_du_minimum(moteur: ScenarioActuel, parametres: dict, lura: bool,
+                        annee: int) -> dict[str, str]:
+    """Le régime de chacun des régimes du minimum (:data:`REGIMES_DU_MINIMUM`)
+    pour la liquidation de l'année ``annee`` : sa tête de succession, la
+    CANCAVA et l'ORGANIC étant le RSI qui leur succède en 2006, le RSI le
+    régime général en 2020 (:func:`~.coordonner.tete_de_succession`), dont la
+    pension sert leurs années et dont chacun des régimes « retient [le
+    minimum] au prorata de la durée d'assurance accomplie en son sein »
+    (D. 353-1) ; sous la liquidation unique (``lura``), les régimes alignés,
+    dont « la pension d'un des régimes qu'elle réunit est la leur » (exposé de
+    la Cnav, « Retraite de l'assuré décédé »). Les droits d'avant 1973 de
+    chaque caisse (``droits_d_avant_1973``) sont du régime qui leur succède
+    quand la version compte leur réversion avec la sienne pour le minimum
+    (``minimum_avec_les_droits_d_avant_1973`` : D. 634-14 ; décret n° 73-937,
+    article 7-2) ; sinon, ils n'ont pas de minimum."""
+    groupes: dict[str, str] = {}
+    for code in REGIMES_DU_MINIMUM:
+        if lura and code in REGIMES_ALIGNES:
+            groupes[code] = REGIMES_ALIGNES_TETE
+        else:
+            groupes[code] = (tete_de_succession(moteur, code, annee)
+                             if code in moteur.catalogue else code)
+    if parametres.get("minimum_avec_les_droits_d_avant_1973"):
+        for code, successeur in (parametres.get("droits_d_avant_1973") or {}).items():
+            groupes[code] = groupes.get(successeur, successeur)
+    return groupes
+
+
 def _part_du_minimum(parametres: dict, regime: str, durees: dict[str, int] | None,
-                     lura: bool = False) -> float:
+                     groupes: dict[str, str]) -> float:
     """La part du minimum de D. 353-1 que sert la réversion de ``regime`` :
     entière avant le 1er décembre 1982 ; ensuite, autant de soixantièmes que le
     défunt a de trimestres d'assurance dans le régime, soixante au plus ;
     depuis le 1er juillet 2004, quand ses durées dans les régimes alignés
-    (:data:`REGIMES_DU_MINIMUM`) dépassent ensemble soixante trimestres et
-    qu'il en a dans plusieurs, sa durée dans le régime rapportée à leur total.
-    Sous la liquidation unique (``lura``), la pension d'un des régimes qu'elle
-    réunit est la leur : ses durées s'y additionnent, et ils ne comptent que
-    pour un régime (exposé de la Cnav, « Retraite de l'assuré décédé »). Sans
-    durées dites, la part entière."""
+    dépassent ensemble soixante trimestres et qu'il en a dans plusieurs, sa
+    durée dans le régime rapportée à leur total. Le régime est celui de
+    ``groupes`` (:func:`_groupes_du_minimum`) : les durées de ses membres s'y
+    additionnent, et ils ne comptent que pour un. Sans durées dites, la part
+    entière."""
     if not parametres.get("minimum_proratise") or durees is None:
         return 1.0
     seuil = float(parametres["minimum_trimestres"])
-    groupes = [(r,) for r in REGIMES_DU_MINIMUM if not (lura and r in REGIMES_ALIGNES)]
-    if lura:
-        groupes.insert(0, tuple(r for r in REGIMES_DU_MINIMUM if r in REGIMES_ALIGNES))
-    durees_des_groupes = {groupe: somme_ordonnee(durees.get(r, 0) for r in groupe)
-                          for groupe in groupes}
-    propre = float(next((duree for groupe, duree in durees_des_groupes.items()
-                         if regime in groupe), durees.get(regime, 0)))
+    durees_des_groupes: dict[str, int] = {}
+    for code, groupe in groupes.items():
+        durees_des_groupes[groupe] = durees_des_groupes.get(groupe, 0) + durees.get(code, 0)
+    propre = float(durees_des_groupes[groupes[regime]] if regime in groupes
+                   else durees.get(regime, 0))
     alignes = [duree for duree in durees_des_groupes.values() if duree > 0]
     total = float(somme_ordonnee(alignes))
     if parametres.get("minimum_tous_regimes") and len(alignes) > 1 and total > seuil:
@@ -1197,6 +1235,29 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
     # l'imputent l'une après l'autre, dans l'ordre de la liquidation.
     minimum_de_l_annee = table.minimum(annee)
     lura = lura_applicable(carriere)
+    # L'année de la liquidation dont viennent les pensions, qui dit quelle
+    # caisse succède aux autres : celle du décès pour l'assuré mort avant son
+    # départ, que l'échéancier liquide alors.
+    annee_de_liquidation = int(deces[:4]) if avant_le_depart else carriere.annee_liquidation
+    #: Les droits d'avant 1973 que nomment les versions : leur réversion ne
+    #: porte pas les majorations pour enfants (décret n° 73-937, article 9).
+    d_avant_1973: set[str] = set()
+
+    def principale_de(regime_: str, base_: float, date_effet_: str) -> float:
+        # La « pension principale » (L. 353-1), que la caisse prend « avant
+        # comparaison au minimum et au maximum » : sans la majoration qui la
+        # portait au minimum contributif (L. 351-10), avec ce que le maximum
+        # des pensions en avait retiré (exposé de la Cnav, « Retraite de
+        # l'assuré décédé » ; circulaire n° 105/90, § 22). Les majorations
+        # forfaitaires de sa pension venues entre l'année des montants et la
+        # date d'effet relèvent la pension que la réversion lit.
+        principale_ = (base_ - min(base_, (minima or {}).get(regime_, 0.0))
+                       + (maxima or {}).get(regime_, (0.0, 0.0, 1.0))[0])
+        for jour, taux_majoration in (majorations_des_pensions or {}).get(regime_, ()):
+            if jour <= date_effet_:
+                principale_ *= 1 + taux_majoration
+        return principale_
+
     #: La réversion de chaque régime aligné, réduite, avant ses majorations :
     #: ce que la majoration de 11,1 % multiplie.
     reduites: dict[str, tuple[float, dict]] = {}
@@ -1228,20 +1289,10 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
         # quand sa propre retraite, qu'il date après elle, commence : ses
         # ressources n'en ont pas d'autres à la date d'effet.
         retraites = _retraites_au(conjoint, retraites_personnelles, date_effet)
-        # La « pension principale » (L. 353-1), que la caisse prend « avant
-        # comparaison au minimum et au maximum » : sans la majoration qui la
-        # portait au minimum contributif (L. 351-10), avec ce que le maximum
-        # des pensions en avait retiré (exposé de la Cnav, « Retraite de
-        # l'assuré décédé » ; circulaire n° 105/90, § 22).
         contributif = min(base, (minima or {}).get(regime, 0.0))
         ecretement, surcote, coefficient = (maxima or {}).get(regime, (0.0, 0.0, 1.0))
-        principale = base - contributif + ecretement
-        # Les majorations forfaitaires de sa pension venues entre l'année des
-        # montants et la date d'effet relèvent la pension que la réversion lit.
         personnelles = (majorations_des_pensions or {}).get(regime, ())
-        for jour, taux_majoration in personnelles:
-            if jour <= date_effet:
-                principale *= 1 + taux_majoration
+        principale = principale_de(regime, base, date_effet)
         # Partagée avec les précédents conjoints au prorata des mariages, la
         # réversion l'est avec son minimum et son maximum (circulaire Cnav
         # n° 105/90, § 3).
@@ -1250,13 +1301,29 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
         montant = taux * principale * part
         motif = "servie"
         # Le minimum de D. 353-1, avant les ressources : la caisse porte la
-        # réversion au minimum, puis la réduit du dépassement du plafond.
+        # réversion au minimum, puis la réduit du dépassement du plafond. Les
+        # réversions d'un même régime (:func:`_groupes_du_minimum`) n'en ont
+        # qu'un, que la première de leurs lignes qui n'est pas d'avant 1973 sert
+        # en complément des autres : « il est tenu compte, le cas échéant, du
+        # montant cumulé » (D. 634-14 ; décret n° 73-937, article 7-2).
+        avant_1973 = parametres.get("droits_d_avant_1973") or {}
+        d_avant_1973.update(avant_1973)
+        groupes = _groupes_du_minimum(moteur, parametres, lura, annee_de_liquidation)
+        membres = [(autre, base_autre) for autre, base_autre, _ in pensions
+                   if regime in groupes and groupes.get(autre) == groupes[regime]
+                   and (table.fiche_du_regime(autre) or {}).get("id") == "reversion"]
+        tete = next((autre for autre, _ in membres if autre not in avant_1973),
+                    membres[0][0] if membres else regime)
+        autres = 0.0
         minimum = 0.0
-        if minimum_de_l_annee is not None and parametres.get("minimum_trimestres"):
+        if (minimum_de_l_annee is not None and parametres.get("minimum_trimestres")
+                and tete == regime and (regime not in avant_1973 or regime in groupes)):
+            autres = somme_ordonnee(taux * principale_de(autre, base_autre, date_effet) * part
+                                    for autre, base_autre in membres if autre != regime)
             minimum = minimum_de_l_annee[0] * _part_du_minimum(parametres, regime, durees,
-                                                               lura) * part
-            if minimum > montant:
-                montant, motif = minimum, "minimum"
+                                                               groupes) * part
+            if minimum - autres > montant:
+                montant, motif = minimum - autres, "minimum"
                 fiabilite = min(fiabilite, minimum_de_l_annee[1])
         # Le plafond, d'une personne seule ou du ménage, et ce qu'il retient à
         # côté de la réversion : les ressources du survivant, ou du ménage, et
@@ -1298,8 +1365,8 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
                 montant, motif = maximum, "maximum"
                 fiabilite = min(fiabilite, des_pensions[1])
         calcule = taux * principale * part
-        entieres[regime] = (min(max(calcule, minimum), maximum) if maximum > 0
-                            else max(calcule, minimum))
+        entieres[regime] = (min(max(calcule, minimum - autres), maximum) if maximum > 0
+                            else max(calcule, minimum - autres))
         # Le cumul d'avant juillet 2004 avec ses retraites personnelles, après
         # le maximum : la limite « ne pouvait pas être inférieure à la
         # retraite de réversion portée au minimum ou ramenée au maximum ».
@@ -1317,15 +1384,17 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
         # réduite et hors du plafond (circulaire Cnav n° 2022-26, § 3.6), au
         # moins le dixième du minimum de la réversion (R. 353-2) ; le
         # survivant est tenu pour avoir eu les enfants que déclare le défunt.
+        # Pas sur les points d'avant 1973, dont l'article 9 du décret
+        # n° 73-937 ne cite pas la majoration.
         def des_trois_enfants(reversion_: float) -> float:
-            if reversion_ <= 0 or enfants < 3:
+            if reversion_ <= 0 or enfants < 3 or regime in avant_1973:
                 return 0.0
             return max(float(parametres["majoration_enfants_taux"]) * reversion_,
                        float(parametres.get("majoration_enfants_minimum") or 0.0) * minimum)
 
         trois_enfants = des_trois_enfants(montant)
         ulterieures = (_majorations_ulterieures(parametres, date_effet, calcule, minimum,
-                                                maximum, personnelles)
+                                                maximum, personnelles, autres)
                        if montant > 0 else ())
         # La limite revue quand sa propre retraite suit la date d'effet : ce
         # qu'elle retire alors, la majoration de 10 % suivant la réversion.
@@ -1396,9 +1465,11 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
     # La majoration forfaitaire pour enfant à charge, servie par un seul
     # régime : le régime général s'il sert une réversion, sinon le premier
     # régime aligné qui en sert une ; réduite dans la proportion de la
-    # réversion réduite à l'entière (D. 353-2 ; exposé de la Cnav).
+    # réversion réduite à l'entière (D. 353-2 ; exposé de la Cnav). Jamais
+    # celle des points d'avant 1973, dont l'article 9 du décret n° 73-937 ne
+    # cite pas L. 353-5.
     servant = next((regime for regime in sorted(
-        (r for r, (montant, _) in reduites.items() if montant > 0),
+        (r for r, (montant, _) in reduites.items() if montant > 0 and r not in d_avant_1973),
         key=lambda r: r != "regime_general")), None)
     if servant is not None:
         ligne_du_regime = lignes[servant]

@@ -37,7 +37,9 @@
 
 import * as chrono from "../chronologie.js";
 import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
-import { REGIMES_ALIGNES, luraApplicable } from "./coordonner.js";
+import {
+  REGIMES_ALIGNES, REGIMES_ALIGNES_TETE, luraApplicable, teteDeSuccession,
+} from "./coordonner.js";
 import { maximumDesPensions } from "./liquider.js";
 
 /** La version du schéma que `Reversion.donnees` suit. */
@@ -99,7 +101,7 @@ export const MAJORATION_FORFAITAIRE = "majoration_forfaitaire_reversion";
 /**
  * Les régimes dont les durées d'assurance du défunt s'additionnent pour
  * proratiser le minimum de la réversion du régime général depuis le 1er juillet
- * 2004 : voir le Python.
+ * 2004, chacun sous sa tête de succession (`groupesDuMinimum`) : voir le Python.
  */
 export const REGIMES_DU_MINIMUM = Object.freeze([
   "regime_general", "msa_salaries", "msa_non_salaries", "organic", "cancava", "rsi",
@@ -762,9 +764,11 @@ function majorationForfaitaireEnfants(moteur, carriere, conjoint, retraites, dat
  * `[jour, montant]`. Voir `_majorations_ulterieures` du Python.
  */
 function majorationsUlterieures(parametres, dateEffet, calcule, minimum, maximum,
-  personnelles = []) {
-  const servie = (facteur) => {
-    const montant = Math.max(minimum, calcule * facteur);
+  personnelles = [], autres = 0.0) {
+  // `autres` : les réversions que le minimum compte avec elle (D. 634-14), que
+  // les majorations de la réversion relèvent aussi : voir le Python.
+  const servie = (facteur, propre) => {
+    const montant = Math.max(minimum - autres * propre, calcule * facteur);
     return maximum > 0 ? Math.min(montant, maximum) : montant;
   };
   // Celles de la pension du défunt passent, le même jour, avant celle de la
@@ -779,15 +783,47 @@ function majorationsUlterieures(parametres, dateEffet, calcule, minimum, maximum
     : a[1] !== b[1] ? a[1] - b[1] : a[2] - b[2]));
   const ecrites = [];
   let facteur = 1.0;
+  let propre = 1.0;
   for (const jour of [...new Set(datees.map(([quand]) => quand))]) {
     let nouveau = facteur;
-    for (const [, , taux] of datees.filter(([quand]) => quand === jour)) {
+    let nouveauPropre = propre;
+    for (const [, sorte, taux] of datees.filter(([quand]) => quand === jour)) {
       nouveau *= 1 + taux;
+      if (sorte === 1) {
+        nouveauPropre *= 1 + taux;
+      }
     }
-    ecrites.push([jour, servie(nouveau) - servie(facteur)]);
+    ecrites.push([jour, servie(nouveau, nouveauPropre) - servie(facteur, propre)]);
     facteur = nouveau;
+    propre = nouveauPropre;
   }
   return ecrites;
+}
+
+/**
+ * Le régime de chacun des régimes du minimum pour la liquidation de l'année
+ * `annee` : sa tête de succession, ou celle des régimes alignés sous la
+ * liquidation unique ; les droits d'avant 1973 de chaque caisse avec le régime
+ * qui leur succède, quand la version compte leur réversion avec la sienne pour
+ * le minimum (D. 634-14). Une `Map`, dans l'ordre de `REGIMES_DU_MINIMUM` :
+ * voir le Python.
+ */
+function groupesDuMinimum(moteur, parametres, lura, annee) {
+  const groupes = new Map();
+  for (const code of REGIMES_DU_MINIMUM) {
+    if (lura && REGIMES_ALIGNES.has(code)) {
+      groupes.set(code, REGIMES_ALIGNES_TETE);
+    } else {
+      groupes.set(code, moteur.catalogue.contient(code)
+        ? teteDeSuccession(moteur, code, annee) : code);
+    }
+  }
+  if (parametres.minimum_avec_les_droits_d_avant_1973) {
+    for (const [code, successeur] of Object.entries(parametres.droits_d_avant_1973 ?? {})) {
+      groupes.set(code, groupes.get(successeur) ?? successeur);
+    }
+  }
+  return groupes;
 }
 
 /**
@@ -795,25 +831,22 @@ function majorationsUlterieures(parametres, dateEffet, calcule, minimum, maximum
  * avant le 1er décembre 1982 ; ensuite, autant de soixantièmes que le défunt a
  * de trimestres dans le régime, soixante au plus ; depuis le 1er juillet 2004,
  * sa durée dans le régime rapportée à celle de tous les régimes alignés quand
- * elles dépassent ensemble soixante trimestres dans plusieurs. Sans durées
- * dites, la part entière. Voir le Python.
+ * elles dépassent ensemble soixante trimestres dans plusieurs. Le régime est
+ * celui de `groupes` (`groupesDuMinimum`). Sans durées dites, la part entière.
+ * Voir le Python.
  */
-function partDuMinimum(parametres, regime, durees, lura = false) {
+function partDuMinimum(parametres, regime, durees, groupes) {
   if (!parametres.minimum_proratise || durees === null) {
     return 1.0;
   }
   const seuil = Number(parametres.minimum_trimestres);
-  // Sous la liquidation unique, les régimes qu'elle réunit ne comptent que pour
-  // un, et leurs durées s'additionnent : voir le Python.
-  const groupes = REGIMES_DU_MINIMUM.filter((r) => !(lura && REGIMES_ALIGNES.has(r)))
-    .map((r) => [r]);
-  if (lura) {
-    groupes.unshift(REGIMES_DU_MINIMUM.filter((r) => REGIMES_ALIGNES.has(r)));
+  const dureesDesGroupes = new Map();
+  for (const [code, groupe] of groupes) {
+    dureesDesGroupes.set(groupe, (dureesDesGroupes.get(groupe) ?? 0) + (durees[code] ?? 0));
   }
-  const dureeDu = (groupe) => groupe.reduce((somme, r) => somme + (durees[r] ?? 0), 0);
-  const sien = groupes.find((groupe) => groupe.includes(regime));
-  const propre = Number(sien === undefined ? (durees[regime] ?? 0) : dureeDu(sien));
-  const alignes = groupes.map(dureeDu).filter((d) => d > 0);
+  const propre = Number(groupes.has(regime) ? dureesDesGroupes.get(groupes.get(regime))
+    : (durees[regime] ?? 0));
+  const alignes = [...dureesDesGroupes.values()].filter((d) => d > 0);
   let total = 0;
   for (const duree of alignes) {
     total += duree;
@@ -1127,6 +1160,29 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
   // l'imputent l'une après l'autre, dans l'ordre de la liquidation.
   const minimumDeLAnnee = table.minimum(annee);
   const lura = luraApplicable(carriere);
+  // L'année de la liquidation dont viennent les pensions, qui dit quelle caisse
+  // succède aux autres : celle du décès pour l'assuré mort avant son départ.
+  const anneeDeLiquidation = avantLeDepart ? Number(deces.slice(0, 4))
+    : carriere.anneeLiquidation;
+  // Les droits d'avant 1973 que nomment les versions : leur réversion ne porte
+  // pas les majorations pour enfants (décret n° 73-937, article 9).
+  const dAvant1973 = new Set();
+  // La « pension principale » (L. 353-1), que la caisse prend « avant
+  // comparaison au minimum et au maximum » : sans la majoration qui la portait
+  // au minimum contributif (L. 351-10), avec ce que le maximum des pensions en
+  // avait retiré (exposé de la Cnav, « Retraite de l'assuré décédé » ;
+  // circulaire n° 105/90, § 22) ; relevée par les majorations forfaitaires de
+  // sa pension venues entre l'année des montants et la date d'effet.
+  const principaleDe = (regime, base, dateEffet) => {
+    let principale = base - Math.min(base, (minima ?? {})[regime] ?? 0.0)
+      + ((maxima ?? {})[regime] ?? [0.0, 0.0, 1.0])[0];
+    for (const [jour, tauxMajoration] of (majorationsDesPensions ?? {})[regime] ?? []) {
+      if (jour <= dateEffet) {
+        principale *= 1 + tauxMajoration;
+      }
+    }
+    return principale;
+  };
   // La réversion de chaque régime aligné, réduite, avant ses majorations : ce
   // que la majoration de 11,1 % multiplie.
   const reduites = new Map();
@@ -1158,22 +1214,10 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
     // Ses retraites personnelles, servies dès la date d'effet, ou seulement
     // quand sa propre retraite, qu'il date après elle, commence.
     const retraites = retraitesAu(conjoint, retraitesPersonnelles, dateEffet);
-    // La « pension principale » (L. 353-1), que la caisse prend « avant
-    // comparaison au minimum et au maximum » : sans la majoration qui la
-    // portait au minimum contributif (L. 351-10), avec ce que le maximum des
-    // pensions en avait retiré (exposé de la Cnav, « Retraite de l'assuré
-    // décédé » ; circulaire n° 105/90, § 22).
     const contributif = Math.min(base, (minima ?? {})[regime] ?? 0.0);
     const [ecretement, surcote, coefficient] = (maxima ?? {})[regime] ?? [0.0, 0.0, 1.0];
-    let principale = base - contributif + ecretement;
-    // Les majorations forfaitaires de sa pension venues entre l'année des
-    // montants et la date d'effet relèvent la pension que la réversion lit.
     const duDefunt = (majorationsDesPensions ?? {})[regime] ?? [];
-    for (const [jour, tauxMajoration] of duDefunt) {
-      if (jour <= dateEffet) {
-        principale *= 1 + tauxMajoration;
-      }
-    }
+    const principale = principaleDe(regime, base, dateEffet);
     // Partagée avec les précédents conjoints au prorata des mariages, la
     // réversion l'est avec son minimum et son maximum (circulaire Cnav
     // n° 105/90, § 3).
@@ -1183,12 +1227,32 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
     let motif = "servie";
     let fiabilite = fiabiliteDuRegime;
     // Le minimum de D. 353-1, avant les ressources : la caisse porte la
-    // réversion au minimum, puis la réduit du dépassement du plafond.
+    // réversion au minimum, puis la réduit du dépassement du plafond. Les
+    // réversions d'un même régime n'en ont qu'un, que la première de leurs
+    // lignes qui n'est pas d'avant 1973 sert en complément des autres
+    // (D. 634-14 ; décret n° 73-937, article 7-2) : voir le Python.
+    const avant1973 = parametres.droits_d_avant_1973 ?? {};
+    for (const code of Object.keys(avant1973)) {
+      dAvant1973.add(code);
+    }
+    const groupes = groupesDuMinimum(moteur, parametres, lura, anneeDeLiquidation);
+    const membres = servies.filter(([autre]) => groupes.has(regime)
+      && groupes.get(autre) === groupes.get(regime)
+      && table.ficheDuRegime(autre)?.id === "reversion");
+    const tete = membres.find(([autre]) => !(autre in avant1973))?.[0]
+      ?? (membres.length > 0 ? membres[0][0] : regime);
+    let autres = 0.0;
     let minimum = 0.0;
-    if (minimumDeLAnnee !== null && parametres.minimum_trimestres) {
-      minimum = minimumDeLAnnee[0] * partDuMinimum(parametres, regime, durees, lura) * part;
-      if (minimum > montant) {
-        montant = minimum;
+    if (minimumDeLAnnee !== null && parametres.minimum_trimestres && tete === regime
+        && (!(regime in avant1973) || groupes.has(regime))) {
+      for (const [autre, baseAutre] of membres) {
+        if (autre !== regime) {
+          autres += taux * principaleDe(autre, baseAutre, dateEffet) * part;
+        }
+      }
+      minimum = minimumDeLAnnee[0] * partDuMinimum(parametres, regime, durees, groupes) * part;
+      if (minimum - autres > montant) {
+        montant = minimum - autres;
         motif = "minimum";
         fiabilite = Math.min(fiabilite, minimumDeLAnnee[1]);
       }
@@ -1237,8 +1301,8 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
       }
     }
     const calcule = taux * principale * part;
-    entieres.set(regime, maximum > 0 ? Math.min(Math.max(calcule, minimum), maximum)
-      : Math.max(calcule, minimum));
+    entieres.set(regime, maximum > 0 ? Math.min(Math.max(calcule, minimum - autres), maximum)
+      : Math.max(calcule, minimum - autres));
     // Le cumul d'avant juillet 2004 avec ses retraites personnelles, après le
     // maximum (D. 355-1).
     const forfaitaire = table.limiteCumul(annee);
@@ -1254,13 +1318,16 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
     }
     autresBases += montant;
     // La majoration de 10 % du survivant de trois enfants, sur la réversion
-    // réduite et hors du plafond, au moins le dixième du minimum (R. 353-2).
-    const desTroisEnfants = (reversion_) => (reversion_ <= 0 || enfants < 3 ? 0.0
+    // réduite et hors du plafond, au moins le dixième du minimum (R. 353-2) ;
+    // pas sur les points d'avant 1973 (décret n° 73-937, article 9).
+    const desTroisEnfants = (reversion_) => (reversion_ <= 0 || enfants < 3
+      || regime in avant1973 ? 0.0
       : Math.max(Number(parametres.majoration_enfants_taux) * reversion_,
         Number(parametres.majoration_enfants_minimum ?? 0.0) * minimum));
     const troisEnfants = desTroisEnfants(montant);
     const ulterieures = montant > 0
-      ? majorationsUlterieures(parametres, dateEffet, calcule, minimum, maximum, duDefunt)
+      ? majorationsUlterieures(parametres, dateEffet, calcule, minimum, maximum, duDefunt,
+        autres)
       : [];
     // La limite revue quand sa propre retraite suit la date d'effet : ce
     // qu'elle retire alors, la majoration de 10 % suivant la réversion.
@@ -1342,8 +1409,10 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
   // La majoration forfaitaire pour enfant à charge, servie par un seul
   // régime : le régime général s'il sert une réversion, sinon le premier
   // régime aligné qui en sert une ; réduite dans la proportion de la
-  // réversion réduite à l'entière (D. 353-2).
-  const avecReversion = [...reduites].filter(([, [montant]]) => montant > 0)
+  // réversion réduite à l'entière (D. 353-2). Jamais celle des points d'avant
+  // 1973 (décret n° 73-937, article 9).
+  const avecReversion = [...reduites]
+    .filter(([regime, [montant]]) => montant > 0 && !dAvant1973.has(regime))
     .map(([regime]) => regime);
   const servant = avecReversion.includes("regime_general") ? "regime_general"
     : (avecReversion[0] ?? null);

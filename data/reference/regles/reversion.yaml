@@ -7,7 +7,11 @@ intitule: >-
   52 % en décembre 1982, 54 % depuis 1995 —, à partir d'un âge et sous plafond de
   ressources, sans passer ce pourcentage du maximum des pensions, la surcote en sus ;
   réduite à due concurrence du dépassement depuis juillet 2004, majorée de 11,1 %
-  depuis 2010 pour le survivant aux petites retraites.
+  depuis 2010 pour le survivant aux petites retraites. Les points d'avant 1973 des
+  artisans et des commerçants se reversent aux mêmes conditions et au même taux, sans
+  les majorations pour enfants (décret n° 73-937, article 9), et leur réversion n'a
+  qu'un minimum avec celle de la pension alignée, qui tient compte « du montant
+  cumulé » (D. 634-14 ; article 7-2 du même décret avant 1990).
 domaine: reversion
 regimes:
 - regime_general
@@ -16,6 +20,8 @@ regimes:
 - cancava
 - rsi
 - assurances_sociales
+- cancava_avant_1973
+- organic_avant_1973
 etape: liquider_chaque_regime
 face: droit
 etat: approchee
@@ -38,6 +44,9 @@ lit:
 - ce que le maximum des pensions en a retiré, sa surcote et le coefficient de son
   ajournement d'avant 1983, et le maximum des pensions de l'année des montants
   (fiche pension_maximale_regime_general)
+- sa pension en points d'artisan ou de commerçant d'avant 1973, et ses durées dans
+  chaque régime, sous la caisse qui succède aux autres à sa liquidation, que le minimum
+  compte ensemble
 - les enfants issus du mariage, pour la condition de durée d'avant 2004
 ecrit:
 - la pension de réversion du survivant, dans le régime du défunt, et sa majoration
@@ -106,6 +115,8 @@ versions:
       age_inaptitude: 60
       cumul: aucun
       cumul_taux: null
+      droits_d_avant_1973: {cancava_avant_1973: cancava, organic_avant_1973: organic}
+      minimum_avec_les_droits_d_avant_1973: false
       majorations_forfaitaires:
       - {date: "1982-12-01", taux: 0.04}
       - {date: "1995-01-01", taux: 0.03846}
@@ -148,6 +159,8 @@ versions:
       age_inaptitude: null
       cumul: aucun
       cumul_taux: null
+      droits_d_avant_1973: {cancava_avant_1973: cancava, organic_avant_1973: organic}
+      minimum_avec_les_droits_d_avant_1973: false
       majorations_forfaitaires:
       - {date: "1982-12-01", taux: 0.04}
       - {date: "1995-01-01", taux: 0.03846}
@@ -166,6 +179,7 @@ versions:
   textes:
   - {id: LEGIARTI000006755945, article: "loi n° 75-3, article 21", en_vigueur: 1974-07-01}
   - {id: LEGIARTI000006760643, article: "décret n° 45-179, article 90", en_vigueur: 1975-02-26}
+  - {id: LEGIARTI000006765831, article: "décret n° 73-937, article 7-2", en_vigueur: 1976-03-05}
   bornes:
     liquidation.date_effet: [1974-07-01, 1982-12-01]
   contenu:
@@ -197,6 +211,8 @@ versions:
       age_inaptitude: null
       cumul: limite
       cumul_taux: 0.50
+      droits_d_avant_1973: {cancava_avant_1973: cancava, organic_avant_1973: organic}
+      minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires:
       - {date: "1982-12-01", taux: 0.04}
       - {date: "1995-01-01", taux: 0.03846}
@@ -215,6 +231,10 @@ versions:
   - {id: LEGIARTI000006749410, article: R. 353-4, en_vigueur: 1985-12-21}
   - {id: LEGIARTI000006736555, article: D. 355-1, en_vigueur: 1985-12-21}
   - {id: LEGIARTI000006760644, article: "décret n° 45-179, article 90", en_vigueur: 1982-12-07}
+  - {id: LEGIARTI000006765831, article: "décret n° 73-937, article 7-2", en_vigueur: 1976-03-05}
+  - {id: LEGIARTI000006765860, article: "décret n° 73-937, article 13-5", en_vigueur: 1984-02-24}
+  - {id: LEGIARTI000006765834, article: "décret n° 73-937, article 9", en_vigueur: 1990-01-01}
+  - {id: LEGIARTI000006738001, article: D. 634-14, en_vigueur: 1990-01-01}
   nee_de: LEGIARTI000006736586
   bornes:
     liquidation.date_effet: [1982-12-01, 1995-01-01]
@@ -244,6 +264,8 @@ versions:
       age_inaptitude: null
       cumul: limite
       cumul_taux: 0.52
+      droits_d_avant_1973: {cancava_avant_1973: cancava, organic_avant_1973: organic}
+      minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires:
       - {date: "1995-01-01", taux: 0.03846}
       fiabilite: haute
@@ -258,6 +280,8 @@ versions:
   - {id: LEGIARTI000006742650, article: L. 353-3, en_vigueur: 1985-12-21}
   - {id: LEGIARTI000006749410, article: R. 353-4, en_vigueur: 1985-12-21}
   - {id: LEGIARTI000006736555, article: D. 355-1, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006765835, article: "décret n° 73-937, article 9", en_vigueur: 1995-01-10}
+  - {id: LEGIARTI000006738001, article: D. 634-14, en_vigueur: 1990-01-01}
   nee_de: LEGIARTI000006736587
   bornes:
     liquidation.date_effet: [1995-01-01, 2004-07-01]
@@ -287,6 +311,8 @@ versions:
       age_inaptitude: null
       cumul: limite
       cumul_taux: 0.52
+      droits_d_avant_1973: {cancava_avant_1973: cancava, organic_avant_1973: organic}
+      minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       fiabilite: haute
   exemples: aucun trouvé
@@ -302,6 +328,8 @@ versions:
   - {id: LEGIARTI000006749413, article: R. 353-6, en_vigueur: 1985-12-21}
   - {id: LEGIARTI000006749410, article: R. 353-4, en_vigueur: 1985-12-21}
   - {id: LEGIARTI000006749411, article: R. 353-4, en_vigueur: 2004-08-25}
+  - {id: LEGIARTI000006765836, article: "décret n° 73-937, article 9", en_vigueur: 2004-08-25}
+  - {id: LEGIARTI000006738001, article: D. 634-14, en_vigueur: 1990-01-01}
   nee_de: LEGIARTI000006742649
   bornes:
     liquidation.date_effet: [2004-07-01, 2005-01-01]
@@ -332,6 +360,8 @@ versions:
       age_inaptitude: null
       cumul: null
       cumul_taux: null
+      droits_d_avant_1973: {cancava_avant_1973: cancava, organic_avant_1973: organic}
+      minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       fiabilite: haute
   exemples: aucun trouvé
@@ -344,6 +374,8 @@ versions:
   - {id: LEGIARTI000006749413, article: R. 353-6, en_vigueur: 1985-12-21}
   - {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22}
   - {id: LEGIARTI000006749411, article: R. 353-4, en_vigueur: 2004-08-25}
+  - {id: LEGIARTI000006765836, article: "décret n° 73-937, article 9", en_vigueur: 2004-08-25}
+  - {id: LEGIARTI000006738001, article: D. 634-14, en_vigueur: 1990-01-01}
   nee_de: LEGIARTI000006749454
   bornes:
     liquidation.date_effet: [2005-01-01, 2005-07-01]
@@ -375,6 +407,8 @@ versions:
       age_inaptitude: null
       cumul: null
       cumul_taux: null
+      droits_d_avant_1973: {cancava_avant_1973: cancava, organic_avant_1973: organic}
+      minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       fiabilite: haute
   exemples: aucun trouvé
@@ -386,6 +420,8 @@ versions:
   - {id: LEGIARTI000006749413, article: R. 353-6, en_vigueur: 1985-12-21}
   - {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22}
   - {id: LEGIARTI000006749411, article: R. 353-4, en_vigueur: 2004-08-25}
+  - {id: LEGIARTI000006765836, article: "décret n° 73-937, article 9", en_vigueur: 2004-08-25}
+  - {id: LEGIARTI000006738001, article: D. 634-14, en_vigueur: 1990-01-01}
   nee_de: LEGIARTI000006781420
   bornes:
     liquidation.date_effet: [2005-07-01, 2007-07-01]
@@ -412,6 +448,8 @@ versions:
       age_inaptitude: null
       cumul: null
       cumul_taux: null
+      droits_d_avant_1973: {cancava_avant_1973: cancava, organic_avant_1973: organic}
+      minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       fiabilite: haute
   exemples: [cnav_2005_17_reversion_ecretee, cnav_2006_37_abattement_au_1er_aout,
@@ -426,6 +464,8 @@ versions:
   - {id: LEGIARTI000006749413, article: R. 353-6, en_vigueur: 1985-12-21}
   - {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22}
   - {id: LEGIARTI000006749411, article: R. 353-4, en_vigueur: 2004-08-25}
+  - {id: LEGIARTI000006765836, article: "décret n° 73-937, article 9", en_vigueur: 2004-08-25}
+  - {id: LEGIARTI000006738001, article: D. 634-14, en_vigueur: 1990-01-01}
   nee_de: LEGIARTI000006781420
   bornes:
     liquidation.date_effet: [2007-07-01, 2009-01-01]
@@ -452,6 +492,8 @@ versions:
       age_inaptitude: null
       cumul: null
       cumul_taux: null
+      droits_d_avant_1973: {cancava_avant_1973: cancava, organic_avant_1973: organic}
+      minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       fiabilite: haute
   exemples: aucun trouvé
@@ -464,6 +506,8 @@ versions:
   - {id: LEGIARTI000006749413, article: R. 353-6, en_vigueur: 1985-12-21}
   - {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22}
   - {id: LEGIARTI000006749411, article: R. 353-4, en_vigueur: 2004-08-25}
+  - {id: LEGIARTI000020090029, article: "décret n° 73-937, article 9", en_vigueur: 2009-01-01}
+  - {id: LEGIARTI000006738001, article: D. 634-14, en_vigueur: 1990-01-01}
   nee_de: LEGIARTI000020090020
   bornes:
     liquidation.date_effet: [2009-01-01, 2010-01-01]
@@ -493,6 +537,8 @@ versions:
       age_inaptitude: null
       cumul: null
       cumul_taux: null
+      droits_d_avant_1973: {cancava_avant_1973: cancava, organic_avant_1973: organic}
+      minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       fiabilite: haute
   exemples: aucun trouvé
@@ -504,6 +550,8 @@ versions:
   - {id: LEGIARTI000006749413, article: R. 353-6, en_vigueur: 1985-12-21}
   - {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22}
   - {id: LEGIARTI000006749411, article: R. 353-4, en_vigueur: 2004-08-25}
+  - {id: LEGIARTI000020090029, article: "décret n° 73-937, article 9", en_vigueur: 2009-01-01}
+  - {id: LEGIARTI000006738001, article: D. 634-14, en_vigueur: 1990-01-01}
   nee_de: LEGIARTI000020057504
   bornes:
     liquidation.date_effet: [2009-01-01, 2010-01-01]
@@ -532,6 +580,8 @@ versions:
       age_inaptitude: null
       cumul: null
       cumul_taux: null
+      droits_d_avant_1973: {cancava_avant_1973: cancava, organic_avant_1973: organic}
+      minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       fiabilite: haute
   exemples: aucun trouvé
@@ -544,6 +594,8 @@ versions:
   - {id: LEGIARTI000024113077, article: R. 353-6, en_vigueur: 2011-06-03}
   - {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22}
   - {id: LEGIARTI000006749411, article: R. 353-4, en_vigueur: 2004-08-25}
+  - {id: LEGIARTI000020090029, article: "décret n° 73-937, article 9", en_vigueur: 2009-01-01}
+  - {id: LEGIARTI000006738001, article: D. 634-14, en_vigueur: 1990-01-01}
   nee_de: LEGIARTI000019959401
   bornes:
     liquidation.date_effet: [2010-01-01, 2012-07-01]
@@ -572,6 +624,8 @@ versions:
       age_inaptitude: null
       cumul: null
       cumul_taux: null
+      droits_d_avant_1973: {cancava_avant_1973: cancava, organic_avant_1973: organic}
+      minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       fiabilite: haute
   exemples: [cnav_2018_4_reversion_surcote_au_maximum]
@@ -584,6 +638,8 @@ versions:
   - {id: LEGIARTI000024113077, article: R. 353-6, en_vigueur: 2011-06-03}
   - {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22}
   - {id: LEGIARTI000006749411, article: R. 353-4, en_vigueur: 2004-08-25}
+  - {id: LEGIARTI000020090029, article: "décret n° 73-937, article 9", en_vigueur: 2009-01-01}
+  - {id: LEGIARTI000006738001, article: D. 634-14, en_vigueur: 1990-01-01}
   nee_de: LEGIARTI000019959401
   bornes:
     liquidation.date_effet: [2010-01-01, 2012-07-01]
@@ -609,6 +665,8 @@ versions:
       age_inaptitude: null
       cumul: null
       cumul_taux: null
+      droits_d_avant_1973: {cancava_avant_1973: cancava, organic_avant_1973: organic}
+      minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       fiabilite: haute
   exemples: aucun trouvé
@@ -622,6 +680,8 @@ versions:
   - {id: LEGIARTI000024113077, article: R. 353-6, en_vigueur: 2011-06-03}
   - {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22}
   - {id: LEGIARTI000006749411, article: R. 353-4, en_vigueur: 2004-08-25}
+  - {id: LEGIARTI000026474709, article: "décret n° 73-937, article 9", en_vigueur: 2012-10-07}
+  - {id: LEGIARTI000006738001, article: D. 634-14, en_vigueur: 1990-01-01}
   nee_de: LEGIARTI000025018616
   bornes:
     liquidation.date_effet: [2012-07-01, 2026-01-01]
@@ -650,6 +710,8 @@ versions:
       age_inaptitude: null
       cumul: null
       cumul_taux: null
+      droits_d_avant_1973: {cancava_avant_1973: cancava, organic_avant_1973: organic}
+      minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       fiabilite: haute
   exemples: aucun trouvé
@@ -661,6 +723,8 @@ versions:
   - {id: LEGIARTI000024113077, article: R. 353-6, en_vigueur: 2011-06-03}
   - {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22}
   - {id: LEGIARTI000006749411, article: R. 353-4, en_vigueur: 2004-08-25}
+  - {id: LEGIARTI000026474709, article: "décret n° 73-937, article 9", en_vigueur: 2012-10-07}
+  - {id: LEGIARTI000006738001, article: D. 634-14, en_vigueur: 1990-01-01}
   nee_de: LEGIARTI000025018616
   bornes:
     liquidation.date_effet: [2012-07-01, 2026-01-01]
@@ -686,6 +750,8 @@ versions:
       age_inaptitude: null
       cumul: null
       cumul_taux: null
+      droits_d_avant_1973: {cancava_avant_1973: cancava, organic_avant_1973: organic}
+      minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       fiabilite: haute
   exemples: aucun trouvé
@@ -698,6 +764,8 @@ versions:
   - {id: LEGIARTI000024113077, article: R. 353-6, en_vigueur: 2011-06-03}
   - {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22}
   - {id: LEGIARTI000006749411, article: R. 353-4, en_vigueur: 2004-08-25}
+  - {id: LEGIARTI000026474709, article: "décret n° 73-937, article 9", en_vigueur: 2012-10-07}
+  - {id: LEGIARTI000006738001, article: D. 634-14, en_vigueur: 1990-01-01}
   nee_de: LEGIARTI000053356066
   bornes:
     liquidation.date_effet: [2026-01-01, null]
@@ -726,6 +794,8 @@ versions:
       age_inaptitude: null
       cumul: null
       cumul_taux: null
+      droits_d_avant_1973: {cancava_avant_1973: cancava, organic_avant_1973: organic}
+      minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       fiabilite: haute
   exemples: [ur_reversion_prive_63_ans, ur_reversion_prive_50_ans_deux_enfants,
@@ -740,6 +810,8 @@ versions:
   - {id: LEGIARTI000024113077, article: R. 353-6, en_vigueur: 2011-06-03}
   - {id: LEGIARTI000006742651, article: L. 353-3, en_vigueur: 2003-08-22}
   - {id: LEGIARTI000006749411, article: R. 353-4, en_vigueur: 2004-08-25}
+  - {id: LEGIARTI000026474709, article: "décret n° 73-937, article 9", en_vigueur: 2012-10-07}
+  - {id: LEGIARTI000006738001, article: D. 634-14, en_vigueur: 1990-01-01}
   nee_de: LEGIARTI000053356066
   bornes:
     liquidation.date_effet: [2026-01-01, null]
@@ -765,6 +837,8 @@ versions:
       age_inaptitude: null
       cumul: null
       cumul_taux: null
+      droits_d_avant_1973: {cancava_avant_1973: cancava, organic_avant_1973: organic}
+      minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       fiabilite: haute
   exemples: aucun trouvé
@@ -908,6 +982,41 @@ approximations:
     du régime général, qui compterait alors les ressources du ménage (R. 353-1-1),
     ni celle de la complémentaire des indépendants
   effet: non mesuré
+- ecart: >-
+    la réversion des points d'avant 1973 des artisans et des commerçants suit les
+    conditions de la version de sa date d'effet, que l'article 13-5 du décret
+    n° 73-937, ajouté par le décret n° 76-214 au 5 mars 1976, puis son article 9,
+    rendent applicables ; avant, le décret n° 64-994 (articles 31 et 32) et le décret
+    n° 66-248 (articles 21 et 22) en servaient la moitié des points à soixante-cinq
+    ans, soixante pour l'inapte, après deux ans de mariage chez les commerçants,
+    diminuée des autres avantages de sécurité sociale du survivant, sauf quinze
+    années de cotisations du défunt, ou 240 points de retraite chez les artisans, 90
+    chez les commerçants, et sans minimum ; le modèle ne lui sert pas de minimum jusqu'au 30
+    juin 1974, et lui applique, de juillet 1974 au 4 mars 1976, celui de l'article
+    7-2. La réglementation du 31 décembre 1972, que le survivant qui y a intérêt peut
+    préférer (article 9, II), la majoration de 25 % des points du conjoint qui a
+    versé la cotisation spéciale (article 18 du décret n° 64-994) et l'avantage du
+    conjoint qui a continué l'activité du défunt (article 33) ne sont pas portés ; la
+    réversion des points se cumule avant juillet 2004 comme une réversion de base de
+    plus (D. 171-1), et prend sa part du plafond de ressources dans l'ordre de la
+    liquidation
+  effet: >-
+    non mesuré ; les seules réversions de survivants d'artisans et de commerçants
+    morts avant 1976, à soixante-cinq ans au lieu de cinquante-cinq de 1973 à 1976
+- ecart: >-
+    le minimum qui borne ensemble les réversions d'avant et d'après 1973 (D. 634-14)
+    se proratise sur les deux durées du défunt, celles d'avant 1973 comprises : le
+    texte ne dit que « le montant cumulé », et le modèle lit la durée à laquelle
+    « correspond » la réversion portée au minimum (D. 353-1) comme les deux ; une
+    réversion des seuls points d'avant 1973, sans pension alignée, a le minimum de ses
+    seules durées, comme un régime de plus du prorata de juillet 2004. Les régimes du
+    minimum sont ceux que réunit la liquidation du défunt, à son année : depuis le 25
+    mai 2020, D. 353-1 compte ensemble le régime général et le RSI, que le modèle ne
+    réunit que pour un défunt liquidé depuis 2018 ; la réversion d'un défunt qui avait
+    une pension de chacun, liquidées avant, garde deux minima au prorata
+  effet: >-
+    non mesuré ; pour la veuve d'un artisan de vingt ans avant 1973 et de dix après,
+    mort après 1982, le minimum entier, et non ses quarante soixantièmes
 presomptions:
   mariage_des_conjoints: >-
     la condition de durée de mariage d'avant juillet 2004, quand la date du mariage
@@ -930,9 +1039,18 @@ presomptions:
     la réversion que la page montre sans décès déclaré, pour un décès supposé juste
     après le départ, ou cette année pour qui est déjà parti
 sources:
-  lu_le: 2026-10-09
+  lu_le: 2026-10-19
   prochaine_relecture: 2027-03-31
   lectures_divergentes:
+  - >-
+    D. 634-14 (1990) et l'article 7-2 du décret n° 73-937 (1976) tiennent compte, pour
+    le minimum de la réversion, « du montant cumulé » des réversions d'avant et d'après
+    1973, sans dire la durée qui le proratise ; ni les circulaires du RSI de la base de
+    la Cnav (n° 2010/016, n° 2012/016) ni l'exposé « Montant - retraite de réversion »
+    ne disent la règle. Le modèle compte les deux durées du défunt, comme D. 634-6 le
+    dit du minimum contributif, et sert le complément sur la réversion alignée : la
+    circulaire n° 2012/016 range le « complément minimum » dans « le montant du régime
+    aligné à servir ».
   - >-
     R. 353-6, dans ses deux rédactions (LEGIARTI000006749413, 024113077), calcule la
     réversion « lorsque le pensionné ou le titulaire de droits à une pension décède »
@@ -988,6 +1106,13 @@ sources:
     montant minimum de la pension de réversion », que le modèle lit comme le minimum
     de cette réversion, soixantièmes faits ; l'exemple de la circulaire Cnav
     n° 2022-26 (§ 3.6), dont le minimum n'est pas dit, ne tranche pas.
+  - >-
+    Les points d'avant 1973 : une circulaire de la CANCAVA, de l'ORGANIC ou du RSI qui
+    applique D. 634-14 et l'article 9 du décret n° 73-937, et dise la durée qui
+    proratise leur minimum (lecture divergente), ce que le cumul d'avant juillet 2004
+    et le plafond de ressources leur retiennent, et si la majoration de 10 % du
+    survivant de trois enfants, que l'article 9 ne cite pas, leur est servie ; le
+    texte de l'article 13-5 de 1976, que l'index n'a que dans sa rédaction de 1984.
   lectures:
   - type: legifrance
     reference: >-
@@ -1337,11 +1462,37 @@ sources:
       tests/test_reversion.py rejoue
     date: 1990-11-15
     url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_10590_15111990.aspx
+  - type: legifrance
+    reference: >-
+      D. 634-14 CSS (1990), et avant lui l'article 7-2 du décret n° 73-937 (du 5 mars
+      1976 au 31 décembre 1989) : « il est tenu compte, le cas échéant, du montant cumulé »
+      des réversions d'avant et d'après 1973 ; l'article 9 du même décret, ses cinq
+      rédactions de 1990 à 2012 — les conditions de L. 353-1 à L. 353-3, « compte tenu »
+      de D. 353-1, 52 % des points depuis décembre 1982, 54 % depuis 1995, la majoration
+      de L. 353-6 depuis le 7 octobre 2012 — et son article 13-5 (1984), qui renvoyait au
+      régime général ; le décret n° 84-127, articles 3 et 4 (les 4 % de décembre 1982) ;
+      le décret n° 64-994, articles 31 à 33, et le décret n° 66-248, articles 21 et 22, la
+      moitié des points de la réglementation de 1972 ; la notice du décret n° 76-214 du 27
+      février 1976 au Journal officiel, qui ajoute les articles 7-1 à 7-3 et 13-1 à 13-6 ;
+      dans l'index LEGI et JORF du dépôt, à jour au 18 octobre 2026
+    date: 2026-10-19
+  - type: autre
+    reference: >-
+      circulaires du RSI n° 2010/016 du 8 avril 2010 (la majoration de 11,1 % sur « les
+      deux composantes des pensions de réversion servies par le RSI : la pension ancien
+      régime en points [...] et la pension du régime aligné », chacune « calculée sur la
+      base de 54 % des droits de l'assuré décédé ») et n° 2012/016 du 5 octobre 2012 (le
+      « complément minimum » dans « le montant du régime aligné à servir »), par la base
+      de législation de la Cnav ; l'exposé « Montant - retraite de réversion », qui ne
+      dit rien des points d'avant 1973
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=circulaire_rsi_2010_016_08042010.pdf
+    date: 2026-10-19
 textes_a_rattacher:
 - {id: LEGIARTI000024113027, article: R. 353-1-1, en_vigueur: 2011-06-03, change: "la révision de la réversion quand les ressources varient"}
 code:
   python: >-
-    droit/reversion.py : reversion, _a_l_age, _mariage_dure, _part_du_minimum,
+    droit/reversion.py : reversion, _a_l_age, _mariage_dure, _groupes_du_minimum,
+    _part_du_minimum,
     _ressources_du_plafond, _majorer_les_petites_retraites, mois_de_mariage,
     _part_du_survivant, _remarie_avant, _admis_au_regime_general, _admis_ailleurs,
     _fin_au_remariage, _jusqu_au_remariage, _premiere_date_d_effet,
@@ -1356,7 +1507,8 @@ code:
     porte pour la réversion (PensionRegime.ecretement_du_maximum, surcote,
     coefficient_du_maximum)
   javascript: >-
-    moteur/js/droit/reversion.js : reversion, aLAge, mariageDure, partDuMinimum,
+    moteur/js/droit/reversion.js : reversion, aLAge, mariageDure, groupesDuMinimum,
+    partDuMinimum,
     ressourcesDuPlafond, majorerLesPetitesRetraites, moisDeMariage, partDuSurvivant,
     remarieAvant, admisAuRegimeGeneral, admisAilleurs, finAuRemariage,
     jusquAuRemariage, premiereDateDEffet, dateDEffetDuRegimeGeneral, cumuler,
@@ -1372,7 +1524,8 @@ code:
     ressources, plafond_smic_heures, facteur_menage, abattement_activite,
     abattement_activite_age, minimum_trimestres, minimum_proratise,
     minimum_tous_regimes, majoration_enfants_taux, majoration_enfants_minimum,
-    majoration_taux, age_inaptitude, cumul, cumul_taux, majorations_forfaitaires ; le
+    majoration_taux, age_inaptitude, cumul, cumul_taux, majorations_forfaitaires,
+    droits_d_avant_1973, minimum_avec_les_droits_d_avant_1973 ; le
     SMIC horaire du 1er janvier, dans les séries macro ; le minimum, le plafond de la
     majoration et la limite forfaitaire de cumul, dans
     legislation/minimum_reversion.csv, legislation/plafond_majoration_reversion.csv et
@@ -1468,6 +1621,17 @@ historique:
   Cnav n° 105/90, § 12 et 13, dont l'exemple est rejoué) ; la réversion suit les
   majorations forfaitaires de 1972 à 1982 de la pension du défunt (fiche
   majorations_forfaitaires_1972_1982).
+- >-
+  2026-10-19 — action 131 : les points d'avant 1973 des artisans et des commerçants,
+  dont la ligne disait la réversion « pas encore portée », se reversent comme la
+  pension alignée, aux conditions de L. 353-1 et au même taux, sans les majorations
+  pour enfants (décret n° 73-937, article 9) ; le minimum de la réversion compte « le
+  montant cumulé » des deux (D. 634-14, article 7-2 avant 1990), sur leurs deux
+  durées ; ses régimes sont ceux de la caisse qui succède aux autres à la
+  liquidation du défunt, la CANCAVA et l'ORGANIC étant le RSI, le RSI le régime
+  général — leurs durées s'additionnaient en régimes distincts, et la part de la
+  CANCAVA d'un artisan liquidé par le RSI se perdait. Deux paramètres de version,
+  droits_d_avant_1973 et minimum_avec_les_droits_d_avant_1973.
 effet: >-
   Tout conjoint, ou ex-conjoint, d'un assuré du régime général ou d'un régime aligné
   qui décède : 4,41 millions de bénéficiaires d'un droit dérivé tous régimes fin 2024
@@ -1475,4 +1639,10 @@ effet: >-
   maximum et majorations compris, sur la pension du défunt sans son minimum
   contributif et d'avant le maximum des pensions — celle qu'il eût obtenue s'il meurt
   avant son départ —, sous le plafond d'une personne seule ou du ménage qu'il déclare ;
-  sa dépense, publiée, est sur la page Coût.
+  sa dépense, publiée, est sur la page Coût. Depuis le 19 octobre 2026, le survivant
+  d'un artisan ou d'un commerçant d'avant 1973 reçoit aussi la réversion de ses points,
+  qu'il n'avait pas, et le minimum qui relève la réversion alignée ne porte que leur
+  total au minimum ; celui d'un assuré que le RSI ou le régime général liquide avec ses
+  années de la CANCAVA ou de l'ORGANIC a le minimum de toutes ces années, et non de
+  celles de la dernière caisse : 3 406,47 euros en 2015, et non 428,63, pour la veuve
+  de l'artisan de 132 trimestres à la CANCAVA et 19 au RSI.
