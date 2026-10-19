@@ -596,7 +596,7 @@ listes:
           l'assuré qui ne déclare pas de réversion du régime des non-salariés
           agricoles n'en reçoit aucune et ne peut y prétendre
         valeur: aucune
-        appliquee_par: reversion_agricole_servie (droit/completer.py), que la pension majorée de référence lit ; son jumeau JavaScript
+        appliquee_par: reversion_agricole_servie (droit/completer.py), que la pension majorée de référence lit, et les plans de revalorisation de 1997 à 2008 (majoration_retraite_proportionnelle, _points_des_conjoints, _minimum_du_veuf) ; leurs jumeaux JavaScript
         entrera_a: preparer_la_chronologie
         raison: >-
           la pension majorée de référence se compare à « la somme des pensions
@@ -607,7 +607,12 @@ listes:
           régime (D. 732-110, II, 2°) ; la saisie ne connaît une réversion que
           déclarée, avec son montant et sa date. Une réversion déclarée prend
           la place de la présomption ; nulle, quand les ressources du veuf
-          l'absorbent, elle ouvre le 2° sans rien retrancher
+          l'absorbent, elle ouvre le 2° sans rien retrancher. Les plans de 1997
+          à 2008 refusent les points des conjoints au titulaire d'une
+          réversion du régime (D. 732-118), les plafonnent quand elle vient
+          après (L. 732-54-2, II), et figent le minimum de qui reçoit la
+          majoration forfaitaire d'une réversion d'avant 1995 (D. 732-113,
+          D. 732-116)
       pas_de_periode_assimilee:
         dit: >-
           l'assuré qui n'en déclare pas n'a eu ni stage de la formation

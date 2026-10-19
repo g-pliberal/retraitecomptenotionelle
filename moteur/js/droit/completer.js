@@ -400,6 +400,47 @@ export const PLANS_DE_2002 = "2002-01-01";
  */
 export const PLANS_DE_1997 = "1997-01-01";
 export const POINTS_D_UNE_ANNEE_RECONSTITUEE = 16.0;
+/**
+ * Les réversions du régime entrées en jouissance avant le 1er janvier de cette
+ * année restent sous L. 732-46. Voir `REVERSIONS_DE_L_732_41_DEPUIS` du Python.
+ */
+export const REVERSIONS_DE_L_732_41_DEPUIS = 1995;
+
+/**
+ * Si l'assuré est titulaire, au mois `mois` (DateMois), d'une réversion du
+ * régime : déclarée, ouverte, d'un montant non nul. Voir
+ * `_titulaire_d_une_reversion` du Python.
+ */
+function titulaireDUneReversion(carriere, mois) {
+  const reversion = carriere.reversionAgricole;
+  return reversion !== null && reversion.debut.rang <= mois.rang && reversion.mensuel > 0.0;
+}
+
+/**
+ * Le nombre minimal annuel moyen de points, figé, de qui peut bénéficier de la
+ * revalorisation de la majoration forfaitaire de sa réversion d'avant 1995 :
+ * vingt points aux pensions prises avant 1997, 26,933 à celles prises de 1997
+ * à 2001 ; null pour un autre. Voir `_minimum_du_veuf` du Python.
+ */
+function minimumDuVeuf(regle, carriere, eligible, avant1997) {
+  const veuf = regle.reversion_d_avant_1995;
+  const reversion = carriere.reversionAgricole;
+  if (!veuf || reversion === null || reversion.mensuel <= 0.0
+      || reversion.debut.annee >= REVERSIONS_DE_L_732_41_DEPUIS) {
+    return null;
+  }
+  const fixe = avant1997 ? veuf.minimum_points_avant_1997 : veuf.minimum_points;
+  const agricole = eligible.duree / 4.0;
+  if (fixe === null || fixe === undefined || (agricole < veuf.duree_minimale && (
+    veuf.duree_minimale_des_conjoints === null || veuf.duree_minimale_des_conjoints === undefined
+      || agricole < veuf.duree_minimale_des_conjoints
+      || (eligible.conjointAvant1999 ?? 0) / 4.0 < veuf.annees_de_conjoint
+      || !carriere.lignes.every((ligne) => Object.hasOwn(AFFILIATIONS_AGRICOLES,
+        ligne.affiliation))))) {
+    return null;
+  }
+  return Number(fixe);
+}
 
 /** L'année d'effet des revalorisations des conjoints. Voir le Python. */
 function anneeDEffetDesConjoints(dateEffet) {
@@ -427,6 +468,11 @@ function pointsDesConjoints(regle, carriere, eligible, dateEffet, minimum) {
   }
   let minoration = 0.0;
   if (dateEffet < PLANS_DE_2002) {
+    // Pas à qui est titulaire d'une réversion du régime à la date d'effet
+    // (D. 732-118).
+    if (titulaireDUneReversion(carriere, carriere.dateLiquidation)) {
+      return [0.0, 0.0];
+    }
     const anciens = conjoints.pensions_prises_avant_2002;
     let requise = anciens.duree_minimale;
     let plafonnee = false;
@@ -657,8 +703,11 @@ export function minimumDePensionSncf(moteur, annee, mois) {
  * et réduit à la part servie. `quand` (AAAA-01-01), la révision d'une pension
  * déjà liquidée : la règle des pensions dues cette année-là, A aux montants du
  * 1er janvier, n celui de la liquidation ; celle d'une pension prise avant
- * 1997, `pensions_prises_avant_1997` (`pointsDAvant1997`). Voir
- * `majoration_retraite_proportionnelle` du Python.
+ * 1997, `pensions_prises_avant_1997` (`pointsDAvant1997`). La réversion du
+ * régime : le minimum figé du veuf d'avant 1995 (`minimumDuVeuf`), les points
+ * des conjoints refusés au titulaire d'une réversion à la date d'effet, et
+ * plafonnés quand elle vient après. Voir `majoration_retraite_proportionnelle`
+ * du Python.
  */
 export function majorationRetraiteProportionnelle(moteur, carriere, eligible, pension,
   trimestres, quand = null) {
@@ -709,6 +758,8 @@ export function majorationRetraiteProportionnelle(moteur, carriere, eligible, pe
   if (!chefOuvert && !regle.conjoints) {
     return null;
   }
+  const fige = chefOuvert && dateEffet < PLANS_DE_2002
+    ? minimumDuVeuf(regle, carriere, eligible, avant1997 !== null) : null;
   const [requis] = ouvrir.dureeRequise(moteur, periode, carriere);
   const lus = serviceEtForfait(moteur, periode, pension.regime, requis,
     carriere.dateLiquidation, annee);
@@ -762,6 +813,28 @@ export function majorationRetraiteProportionnelle(moteur, carriere, eligible, pe
       }
     }
   }
+  // La réversion obtenue après la date d'effet d'une pension prise avant 2002
+  // plafonne ses points, depuis l'année qui suit, au niveau de l'année où elle
+  // a pris effet (L. 732-54-2, II).
+  const reversion = carriere.reversionAgricole;
+  if (conjointPoints > 0.0 && quand !== null && dateEffet < PLANS_DE_2002
+      && reversion !== null && reversion.mensuel > 0.0
+      && carriere.dateLiquidation.rang < reversion.debut.rang
+      && reversion.debut.annee < anServi) {
+    const atteint = majorationRetraiteProportionnelle(moteur, carriere, eligible, pension,
+      trimestres, reversion.debut.annee <= annee ? null
+        : `${String(reversion.debut.annee).padStart(4, "0")}-01-01`);
+    if (atteint === null || atteint.conjointPoints <= 0.0) {
+      conjointMinimum = 0.0;
+      conjointAnnees = 0.0;
+      conjointPoints = 0.0;
+    } else if (atteint.conjointPoints < conjointPoints) {
+      conjointMinimum = atteint.conjointMinimum;
+      conjointAnnees = atteint.conjointAnnees;
+      conjointPoints = atteint.conjointPoints;
+      fiabilite = Math.min(fiabilite, atteint.fiabilite);
+    }
+  }
   if (!chefOuvert) {
     if (conjointPoints <= 0.0) {
       return null;
@@ -773,7 +846,9 @@ export function majorationRetraiteProportionnelle(moteur, carriere, eligible, pe
     };
   }
   let minimum;
-  if (minimumNomme === null || minimumNomme === undefined) {
+  if (fige !== null) {
+    minimum = fige;
+  } else if (minimumNomme === null || minimumNomme === undefined) {
     minimum = Number((avant1997 ?? regle).minimum_points);
   } else {
     const lu = minimumDe(minimumNomme);

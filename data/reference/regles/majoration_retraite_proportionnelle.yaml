@@ -25,6 +25,7 @@ lit:
   coefficient de durée, et la retraite forfaitaire d'une carrière complète
 - la durée de chef d'exploitation à titre exclusif ou principal, la durée d'assurance
   non salariée agricole, et le taux plein
+- la réversion du régime que l'assuré déclare, son début et son montant
 - le minimum vieillesse d'une personne seule et celui d'un couple au 1er janvier de
   l'année de la date d'effet (legislation/minimum_vieillesse_avant_2007.csv,
   minimum_vieillesse.csv, minimum_vieillesse_couple.csv)
@@ -67,6 +68,7 @@ versions:
       minorations: null
       conjoints: null
       pensions_prises_avant_1997: null
+      reversion_d_avant_1995: null
   exemples: aucun trouvé
 - id: plan_de_1997
   statut: lue
@@ -150,6 +152,7 @@ versions:
         minorations_du_chef: [0.15, 0.15, 0.20, 0.20, 0.20, 0.10]
         minorations: [0.15, 0.15, 0.20, 0.20, 0.20, 0.10]
         minoration_par_annee: null
+      reversion_d_avant_1995: null
   exemples: aucun trouvé
 - id: pensions_dues_en_1998
   statut: lue
@@ -231,6 +234,7 @@ versions:
         minorations_du_chef: [0.15, 0.15, 0.20, 0.20, 0.20, 0.10]
         minorations: [0.15, 0.15, 0.20, 0.20, 0.20, 0.10]
         minoration_par_annee: null
+      reversion_d_avant_1995: null
   exemples: aucun trouvé
 - id: pensions_dues_en_1999
   statut: lue
@@ -304,6 +308,7 @@ versions:
         minorations_du_chef: [0.15, 0.15, 0.10, 0.10, 0.10, 0.40]
         minorations: [0.15, 0.15, 0.10, 0.10, 0.10, 0.40]
         minoration_par_annee: null
+      reversion_d_avant_1995: null
   exemples: aucun trouvé
 - id: pensions_dues_en_2000
   statut: lue
@@ -350,6 +355,59 @@ versions:
       proportionnelle dans les autres cas. Toutefois, [...] le nombre total de points
       attribuable est minoré de 16 pour les retraites prenant effet en 2000. »
     lu_le: 2026-10-18
+  - id: JORFARTI000001577798
+    article: décret n° 2000-261 du 22 mars 2000, article 2
+    en_vigueur: 2000-03-23
+    citation: >-
+      à l'article 34-6-1 du décret du 31 mai 1955, la majoration forfaitaire de la
+      réversion relevée : « Pour les majorations dues à compter du 1er janvier 2000, la
+      durée minimum est toutefois ramenée à vingt-sept années et demie pour les personnes
+      ayant effectué au moins quinze années en qualité de conjoint [...] et qui ne
+      bénéficient pas d'un autre avantage de retraite que leurs avantages servis par le
+      régime » ; « le montant de la majoration forfaitaire fixé à l'article 34-6 est
+      augmenté de la somme de 3 870 F par an pour les pensions dues à compter du 1er
+      janvier 1999 : cette somme est portée à 6 328 F par an pour les pensions dues à
+      compter du 1er janvier 2000 »
+    lu_le: 2026-10-19
+  - id: LEGIARTI000006585561
+    article: L. 732-31 code rural
+    en_vigueur: 2000-06-22
+    citation: >-
+      « Les dispositions du présent article sont applicables aux personnes qui justifient
+      d'une durée d'assurance fixée par décret [...] et qui ne sont pas titulaires d'un des
+      avantages mentionnés aux articles L. 732-41 à L. 732-44 et L. 732-46 » ; « En cas
+      d'obtention d'une pension de réversion mentionnée au premier alinéa postérieurement
+      à l'attribution de points de retraite proportionnelle gratuits, le nombre de points
+      gratuits est plafonné, à compter du 1er janvier de l'année qui suit cette
+      obtention, au niveau atteint durant l'année au cours de laquelle a pris effet la
+      pension de réversion. »
+    lu_le: 2026-10-19
+  - id: LEGIARTI000006585564
+    article: L. 732-33 code rural
+    en_vigueur: 2000-06-22
+    citation: >-
+      au I, la majoration des pensions de chef prises avant 1997 : « La majoration totale
+      qui en résulte n'est pas cumulable avec celle prévue au II qui s'applique en
+      priorité. » ; au II : « Les titulaires de la majoration forfaitaire des pensions de
+      réversion prévue au IV de l'article L. 732-46 bénéficient, à compter du 1er janvier
+      1999, d'une majoration de cette dernière, lorsqu'ils justifient de périodes minimum
+      d'activité non salariée agricole accomplies à titre exclusif ou principal. [...] Au
+      titre de l'année 1999, cette majoration n'est pas cumulable avec la majoration
+      prévue au I qui s'applique en priorité. »
+    lu_le: 2026-10-19
+  - id: LEGIARTI000006585603
+    article: L. 732-46 code rural
+    en_vigueur: 2000-06-22
+    citation: >-
+      « Les pensions de réversion ayant pris effet antérieurement au 1er janvier 1995 sont
+      régies par les dispositions du présent article. » ; « IV. - Une majoration est
+      applicable dans les conditions fixées par décret aux pensions servies au titre de
+      l'assurance vieillesse aux conjoints survivants, bénéficiaires ou susceptibles de
+      bénéficier d'un avantage personnel de vieillesse ou d'invalidité. » ; « V. - Par
+      dérogation aux dispositions des I, II et III, les conjoints survivants âgés de moins
+      de soixante ans au 1er janvier 1995 peuvent, dans les conditions fixées par décret,
+      demander à bénéficier des dispositions de l'article L. 732-41 »
+    lu_le: 2026-10-19
   bornes:
     liquidation.date_effet: [2000-01-01, 2001-01-01]
   contenu:
@@ -362,7 +420,13 @@ versions:
       vingt-sept ans et demi d'activité agricole suffisent à qui a quinze ans de conjoint
       sans autre pension, et aucun coefficient ne joue au-delà de la cinquième année
       manquante (décret n° 2000-261, article 5) : les seize points que le modèle donne à
-      chacune les égalent
+      chacune les égalent. Le titulaire de la majoration forfaitaire d'une réversion
+      d'avant 1995 qui a trente-deux ans et demi d'activité agricole (vingt-sept et demi
+      à quinze ans de conjoint sans autre pension) en reçoit le relèvement en priorité,
+      et sa pension prise avant 1997 garde vingt points (décret n° 2000-261, articles 1er
+      et 2 ; L. 732-33) ; les points des conjoints ne vont pas au titulaire d'une
+      réversion à la date d'effet, et se plafonnent au niveau de l'année où elle vient
+      après (L. 732-31)
     parametres:
       existe: true
       minimum_points: 26.933
@@ -389,6 +453,12 @@ versions:
         minorations_du_chef: [0.15, 0.15, 0.10, 0.10, 0.10, 0.40]
         minorations: [0.15, 0.15, 0.10, 0.10, 0.10, 0.40]
         minoration_par_annee: null
+      reversion_d_avant_1995:
+        minimum_points: null
+        minimum_points_avant_1997: 20.0
+        duree_minimale: 32.5
+        duree_minimale_des_conjoints: 27.5
+        annees_de_conjoint: 15
   exemples: aucun trouvé
 - id: pensions_dues_en_2001
   statut: lue
@@ -436,6 +506,25 @@ versions:
       prévu au deuxième alinéa de l'article 1er, il n'est pas appliqué de coefficient
       supplémentaire au titre des années manquantes situées au-delà de la cinquième. »
     lu_le: 2026-10-18
+  - id: LEGIARTI000006585562
+    article: L. 732-31 code rural
+    en_vigueur: 2000-12-31
+    citation: >-
+      la rédaction de 2000, mot pour mot sur ce qu'elle refuse au titulaire d'une
+      réversion : « qui ne sont pas titulaires d'un des avantages mentionnés aux articles
+      L. 732-41 à L. 732-44 et L. 732-46 » ; « le nombre de points gratuits est plafonné,
+      à compter du 1er janvier de l'année qui suit cette obtention, au niveau atteint
+      durant l'année au cours de laquelle a pris effet la pension de réversion »
+    lu_le: 2026-10-19
+  - id: LEGIARTI000006585565
+    article: L. 732-33 code rural
+    en_vigueur: 2000-12-31
+    citation: >-
+      « A compter du 1er janvier 2000 puis du 1er janvier 2001, le minimum de retraite
+      proportionnelle mentionné à l'alinéa précédent est relevé par décret. La majoration
+      totale qui en résulte n'est pas cumulable avec la majoration totale prévue au II
+      qui s'applique en priorité. »
+    lu_le: 2026-10-19
   bornes:
     liquidation.date_effet: [2001-01-01, 2002-01-01]
   contenu:
@@ -449,7 +538,10 @@ versions:
       seul aux années de conjoint collaborateur depuis 1999, qui portent seize points
       cotisés ; minorés de 15, 15, 10, 10, 10 et 40 % par année manquante, sans coefficient
       au-delà de la cinquième à qui a vingt-sept ans et demi (décret n° 2001-170,
-      article 5) : 3,2 points de plus par année que les seize du modèle
+      article 5) : 3,2 points de plus par année que les seize du modèle. Qui peut
+      bénéficier de la revalorisation de la majoration forfaitaire de sa réversion
+      d'avant 1995 garde 26,933 points, et vingt aux pensions prises avant 1997 (décret
+      n° 2001-170, article 3)
     parametres:
       existe: true
       minimum_points: 29.23
@@ -476,6 +568,12 @@ versions:
         minorations_du_chef: null
         minorations: [0.15, 0.15, 0.10, 0.10, 0.10, 0.40]
         minoration_par_annee: null
+      reversion_d_avant_1995:
+        minimum_points: 26.933
+        minimum_points_avant_1997: 20.0
+        duree_minimale: 32.5
+        duree_minimale_des_conjoints: 27.5
+        annees_de_conjoint: 15
   exemples: aucun trouvé
 - id: au_minimum_vieillesse
   statut: lue
@@ -725,6 +823,125 @@ versions:
       phrase qui annonce les coefficients et en supprime les « deuxième, troisième et
       quatrième alinéas », la liste de l'article 5, III, du décret n° 2002-297
     lu_le: 2026-10-17
+  - id: LEGIARTI000006585626
+    article: L. 732-54-2 code rural
+    en_vigueur: 2001-12-29
+    citation: >-
+      au I, « qui ne sont pas titulaires d'un des avantages mentionnés aux articles
+      L. 732-41 à L. 732-44 et L. 732-46 » ; au II : « En cas d'obtention d'une pension de
+      réversion mentionnée au troisième alinéa du I, postérieurement à l'attribution de
+      points de retraite proportionnelle gratuits, le nombre de points gratuits est
+      plafonné, à compter du 1er janvier de l'année qui suit cette obtention, au niveau
+      atteint durant l'année au cours de laquelle a pris effet la pension de réversion. »
+    lu_le: 2026-10-19
+  - id: LEGIARTI000006585627
+    article: L. 732-54-2 code rural
+    en_vigueur: 2004-07-01
+    citation: >-
+      les mêmes phrases, mot pour mot : « qui ne sont pas titulaires d'un des avantages
+      mentionnés aux articles L. 732-41 à L. 732-44 et L. 732-46 » ; « le nombre de points
+      gratuits est plafonné »
+    lu_le: 2026-10-19
+  - id: LEGIARTI000006585632
+    article: L. 732-54-4 code rural
+    en_vigueur: 2001-12-29
+    citation: >-
+      « Les titulaires de la majoration forfaitaire des pensions de réversion prévue au IV
+      de l'article L. 732-46 bénéficient d'une majoration de cette dernière, lorsqu'ils
+      justifient d'une durée d'assurance fixée par décret accomplie, à titre exclusif ou
+      principal, dans le régime »
+    lu_le: 2026-10-19
+  - id: LEGIARTI000006585633
+    article: L. 732-54-4 code rural
+    en_vigueur: 2004-07-01
+    citation: la même phrase, mot pour mot
+    lu_le: 2026-10-19
+  - id: JORFARTI000001078495
+    article: décret n° 2002-297 du 1er mars 2002, article 11
+    en_vigueur: 2002-03-02
+    citation: >-
+      « le montant de la majoration forfaitaire fixé à l'article 34-6 du décret du 31 mai
+      1955 susvisé est relevé pour les conjoints survivants justifiant d'une durée
+      d'activité non salariée agricole exercée à titre exclusif ou principal au moins
+      égale à trente-deux années et demie. La durée minimum est toutefois ramenée à
+      vingt-sept années et demie pour les personnes ayant effectué au moins quinze années
+      en qualité de conjoint au sens de l'article L. 732-34 du code rural et qui ne
+      bénéficient pas d'un autre avantage de retraite que leurs avantages servis par le
+      régime » ; « Pour une durée d'activité au moins égale à trente-sept années et
+      demie, le montant de la majoration forfaitaire fixé à l'article 34-6 est augmenté
+      de 642,47 points de retraite proportionnelle. »
+    lu_le: 2026-10-19
+  - id: LEGIARTI000006597573
+    article: D. 732-139 code rural
+    en_vigueur: 2005-04-22
+    citation: >-
+      l'article 11 du décret n° 2002-297, codifié mot pour mot : « relevé pour les
+      conjoints survivants justifiant d'une durée d'activité non salariée agricole
+      exercée à titre exclusif ou principal au moins égale à trente-deux années et
+      demie » ; seule rédaction, jusqu'au 16 février 2009
+    lu_le: 2026-10-19
+  - id: LEGIARTI000006597516
+    article: D. 732-97 code rural
+    en_vigueur: 2005-04-22
+    citation: >-
+      « Ouvrent droit à la majoration prévue au IV de l'article L. 732-46 les titulaires
+      d'une pension de réversion liquidée par le régime [...] avec une date d'entrée en
+      jouissance antérieure au 1er janvier 1995, qui sont bénéficiaires d'un avantage
+      personnel de vieillesse ou d'invalidité servi par un régime de base » ; « A compter
+      du 1er janvier 2002, le montant annuel de la majoration est égal à 277,18 points de
+      retraite proportionnelle. »
+    lu_le: 2026-10-19
+  - id: LEGIARTI000006585604
+    article: L. 732-46 code rural
+    en_vigueur: 2004-07-01
+    citation: >-
+      la rédaction de 2000, mot pour mot : « Les pensions de réversion ayant pris effet
+      antérieurement au 1er janvier 1995 sont régies par les dispositions du présent
+      article » ; ses IV et V
+    lu_le: 2026-10-19
+  - id: LEGIARTI000006597555
+    article: D. 732-126 code rural
+    en_vigueur: 2005-04-22
+    citation: >-
+      « Pour les personnes dont la pension de réversion a pris effet entre le 1er janvier
+      1998 et le 31 décembre 2001 et qui justifient d'une durée d'activité non salariée
+      agricole égale à trente-sept années et demie, le nombre minimal annuel de points de
+      retraite proportionnelle est déterminé dans les conditions fixées aux articles
+      D. 732-127 à D. 732-130. »
+    lu_le: 2026-10-19
+  - id: LEGIARTI000006597556
+    article: D. 732-127 code rural
+    en_vigueur: 2005-04-22
+    citation: >-
+      « Lorsque la pension de réversion a pris effet entre le 1er janvier et le 31 décembre
+      2001 », seize points par année et le « différentiel de 3,2 points », les nombres
+      des pensions dues en 2001
+    lu_le: 2026-10-19
+  - id: LEGIARTI000006597557
+    article: D. 732-128 code rural
+    en_vigueur: 2005-04-22
+    citation: >-
+      « Lorsque la pension de réversion a pris effet entre le 1er janvier et le 31 décembre
+      2000 », seize points, 8,63 au conjoint resté participant aux travaux en 1999 sans
+      opter, « minoré de 16 pour les retraites prenant effet en 2000 » : ceux de 2000
+    lu_le: 2026-10-19
+  - id: LEGIARTI000006597558
+    article: D. 732-129 code rural
+    en_vigueur: 2005-04-22
+    citation: >-
+      « Lorsque la pension de réversion a pris effet entre le 1er janvier et le 31 décembre
+      1999, chacune des années donnant lieu à revalorisation ouvre droit à l'attribution
+      de 11,44 points de retraite proportionnelle si elle a été accomplie en qualité de
+      conjoint »
+    lu_le: 2026-10-19
+  - id: LEGIARTI000006597559
+    article: D. 732-130 code rural
+    en_vigueur: 2005-04-22
+    citation: >-
+      « Lorsque la pension de réversion a pris effet entre le 1er janvier et le 31 décembre
+      1998, chacune des années donnant lieu à revalorisation ouvre droit à l'attribution
+      de 8,63 points »
+    lu_le: 2026-10-19
   bornes:
     liquidation.date_effet: [2002-01-01, 2007-01-01]
   contenu:
@@ -743,7 +960,13 @@ versions:
       avant 1997, le même A par année de chef reconstituée, la durée ramenée à la durée
       agricole dans la limite de trente-sept ans et demi, n divisé par elle, minoré
       sous trente-sept ans et demi d'activité agricole (décret n° 2002-297, article 5 ;
-      D. 732-114 à D. 732-117)
+      D. 732-114 à D. 732-117). Qui peut bénéficier de la revalorisation de la
+      majoration forfaitaire de sa réversion d'avant 1995 garde vingt points aux
+      pensions prises avant 1997, 26,933 à celles prises de 1997 à 2001 (décret
+      n° 2002-297, articles 4, 5 et 11 ; D. 732-113, D. 732-116, D. 732-139) ; les points
+      des conjoints des pensions prises de 1998 à 2001 ne vont pas au titulaire d'une
+      réversion à leur date d'effet (D. 732-118), et se plafonnent au niveau de l'année
+      où elle vient après (L. 732-54-2, II ; D. 732-126 à D. 732-130)
     parametres:
       existe: true
       minimum_points: null
@@ -770,6 +993,12 @@ versions:
         minorations_du_chef: null
         minorations: [0.15, 0.15, 0.10, 0.10, 0.10, 0.40]
         minoration_par_annee: null
+      reversion_d_avant_1995:
+        minimum_points: 26.933
+        minimum_points_avant_1997: 20.0
+        duree_minimale: 32.5
+        duree_minimale_des_conjoints: 27.5
+        annees_de_conjoint: 15
   exemples: aucun trouvé
 - id: pensions_dues_en_2007
   statut: lue
@@ -828,6 +1057,14 @@ versions:
       pensions dues au titre de l'année 2007 et de 4 % au 1er janvier 2008 pour les
       pensions dues à compter du 1er janvier 2008. »
     lu_le: 2026-10-17
+  - id: LEGIARTI000006585628
+    article: L. 732-54-2 code rural
+    en_vigueur: 2007-01-01
+    citation: >-
+      « d'une durée d'assurance d'au moins vingt-deux années et demie [...] et qui ne sont
+      pas titulaires d'un des avantages mentionnés aux articles L. 732-41 à L. 732-44 et
+      L. 732-46 » ; le plafond du II, mot pour mot
+    lu_le: 2026-10-19
   bornes:
     liquidation.date_effet: [2007-01-01, 2008-01-01]
   contenu:
@@ -862,6 +1099,12 @@ versions:
         minorations_du_chef: null
         minorations: null
         minoration_par_annee: 0.055
+      reversion_d_avant_1995:
+        minimum_points: 26.933
+        minimum_points_avant_1997: 20.0
+        duree_minimale: 32.5
+        duree_minimale_des_conjoints: 27.5
+        annees_de_conjoint: 15
   exemples: aucun trouvé
 - id: pensions_dues_en_2008
   statut: lue
@@ -908,6 +1151,12 @@ versions:
         minorations_du_chef: null
         minorations: null
         minoration_par_annee: 0.04
+      reversion_d_avant_1995:
+        minimum_points: 26.933
+        minimum_points_avant_1997: 20.0
+        duree_minimale: 32.5
+        duree_minimale_des_conjoints: 27.5
+        annees_de_conjoint: 15
   exemples: aucun trouvé
 - id: remplacee_par_la_pmr
   statut: lue
@@ -936,6 +1185,7 @@ versions:
       minorations: null
       conjoints: null
       pensions_prises_avant_1997: null
+      reversion_d_avant_1995: null
   exemples: aucun trouvé
 approximations:
 - ecart: >-
@@ -996,10 +1246,10 @@ approximations:
     pensions prises en 2000, le décret retire seize points du total de 2000, le modèle
     une année ; il ne sert pas les 19,2 points de l'aide familial en 2000, qu'il ne
     distingue pas du conjoint. Ne sont pas servis : les années de chef des pensions prises de 1998 à
-    2001 sous dix-sept ans et demi de chef (D. 732-119, 4°, D. 732-125) ; la condition de
-    ne pas être titulaire d'une réversion à la date d'effet (D. 732-118), et la majoration
-    de la réversion de D. 732-147 ; le droit de L. 732-54-8, I, deuxième alinéa, des
-    conjoints qui ont opté en 1999 sans la durée du taux plein
+    2001 sous dix-sept ans et demi de chef (D. 732-119, 4°, D. 732-125) ; le droit de
+    L. 732-54-8, I, deuxième alinéa, des conjoints qui ont opté en 1999 sans la durée du
+    taux plein. Depuis le 19 octobre 2026, la réversion du régime que l'assuré déclare
+    joue : voir l'écart qui la lit
   effet: >-
     une conjointe collaboratrice de quarante-deux ans partie en 2005 : 286 points de plus,
     environ 950 € par an jusqu'en 2008 ; une conjointe de trente et un ans partie en 2000,
@@ -1035,11 +1285,12 @@ approximations:
     secondaire sans cotisation à la retraite forfaitaire ne joue jamais : qui a
     trente-deux ans et demi d'activité agricole avant 1997 (vingt-deux et demi en 2007)
     était au régime avant 1981, et garde dans le moteur le forfait de ses années à titre
-    secondaire (R. 732-65, liquider.trimestres_hors_forfait). Ne sont pas servis : A
-    égal à 20 de qui reçoit la revalorisation de la réversion (décret n° 2000-261,
-    article 1er ; D. 732-116), la réversion n'étant pas servie à la date d'effet ; les
-    points du plan de 1994 et de D. 732-110 et D. 732-111 aux années d'aide familial
-    des chefs, que le statut du modèle ne distingue pas
+    secondaire (R. 732-65, liquider.trimestres_hors_forfait). Depuis le 19 octobre
+    2026, A égal à 20 de qui peut bénéficier de la revalorisation de la majoration
+    forfaitaire de sa réversion (décret n° 2000-261, article 1er ; D. 732-116) est
+    servi : voir l'écart qui lit la réversion. Ne sont pas servis : les points du plan
+    de 1994 et de D. 732-110 et D. 732-111 aux années d'aide familial des chefs, que le
+    statut du modèle ne distingue pas
   effet: >-
     une carrière complète de chef à 30 % du salaire moyen, partie en 1995 : 112 € de
     plus en 1997, 1 159 € en 2001, 2 036 € en 2008, que la PMR de 2009 relaie ; à 60 %
@@ -1049,8 +1300,47 @@ approximations:
     le minimum vieillesse de 2008, que minimum_vieillesse.csv ne porte pas, est celui de
     2007 revalorisé sur les prix
   effet: quelques euros par an, en 2008
+- ecart: >-
+    depuis le 19 octobre 2026, la réversion du régime que l'assuré déclare
+    (reversion_agricole, présomption pas_de_reversion_agricole) joue aux plans. Déclarée
+    non nulle, elle fait l'assuré titulaire d'une réversion ; nulle, ses ressources
+    l'absorbent (L. 732-41), et il ne l'est pas. Titulaire à la date d'effet d'une
+    pension prise de 1998 à 2001, il n'a pas les points des conjoints (L. 732-31, puis
+    L. 732-54-2, I ; D. 732-118) ; quand elle vient après, ces points se plafonnent,
+    depuis le 1er janvier qui suit, au niveau de l'année où elle a pris effet, que la
+    règle de cette année redonne (L. 732-54-2, II ; D. 732-126 à D. 732-130, qui en
+    disent les nombres de 1998 à 2001). Commencée avant 1995, elle se lit sous
+    L. 732-46 : son titulaire, qui a sa propre pension, reçoit la majoration
+    forfaitaire du IV (D. 732-97), et, à trente-deux ans et demi d'activité agricole
+    (vingt-sept et demi à quinze ans de conjoint d'avant 1999 sans autre ligne de
+    carrière que les non-salariés agricoles), son relèvement en priorité (L. 732-33,
+    II, puis L. 732-54-4 ; D. 732-139) : sa pension prise avant 1997 garde vingt points
+    depuis 2000, celle prise de 1997 à 2001, 26,933 depuis 2001 (D. 732-113,
+    D. 732-116). Le conjoint survivant de moins de soixante ans au 1er janvier 1995 qui
+    a demandé L. 732-41 (L. 732-46, V) n'est pas distingué. Ne sont pas servis, droits
+    dérivés que le modèle, qui rend le droit propre et prend la réversion telle qu'elle
+    est déclarée, ne calcule pas : la majoration forfaitaire et son relèvement (642,47
+    points en 2002 pour trente-sept ans et demi), et la majoration de la réversion des
+    pensions prises avant 2002 (décret n° 2002-297, article 12 ; D. 732-140) et depuis
+    (décret n° 2002-298, article 5 ; D. 732-147), qui porte le droit propre et le droit
+    dérivé au minimum vieillesse au prorata de la durée agricole. La réversion déclarée
+    suit les pensions de base depuis son début, sans ces majorations, que la PMR de 2009
+    retranche peut-être
+  effet: >-
+    la conjointe de trente et un ans partie en 2000, veuve avant : rien des plans, 575 €
+    de moins par an en 2008 ; veuve en 2001, 38,40 points au lieu de 161,21 en 2008
+    (137 € au lieu de 575 €). Le chef parti en 1995 à 30 % du salaire moyen, veuf
+    depuis 1990 : 120,92 points de plans de 2000 à 2008 au lieu de 607,12 en 2008 (431 €
+    au lieu de 2 164 €), sa pension de base de 2012, PMR comprise, 5 425 € au lieu de
+    7 748 € ; celui parti en 1997, veuf depuis 1993 : 409,99 points au lieu de 753,16
+    (980 € au lieu de 2 204 €). La majoration de la réversion, non servie, en rend
+    l'essentiel en droit dérivé
+presomptions:
+  pas_de_reversion_agricole: >-
+    les plans, qui ne refusent les points des conjoints, ne les plafonnent et ne figent
+    le minimum A du veuf d'avant 1995 qu'à la réversion du régime que l'assuré déclare
 sources:
-  lu_le: 2026-10-18
+  lu_le: 2026-10-19
   prochaine_relecture: 2027-10-31
   a_relire:
   - >-
@@ -1066,6 +1356,10 @@ sources:
     Lire D. 732-117 dans sa rédaction de 2005 (LEGIARTI000006597543), que l'index LEGI
     du dépôt ne porte pas : le moteur lui donne les coefficients de l'article 5, III, du
     décret n° 2002-297, qu'elle codifie.
+  - >-
+    Chercher comment la MSA lit la réversion d'avant 1995 de qui a demandé L. 732-41
+    (L. 732-46, V), et si la majoration de la réversion de D. 732-140 et D. 732-147,
+    exprimée en points, est restée servie après 2009, que la PMR retrancherait.
   lectures:
   - type: jorf
     reference: >-
@@ -1113,6 +1407,21 @@ sources:
       D. 732-114 (2005), D. 732-115 (2005, 2007), D. 732-116 (2005, 2006) et D. 732-117
       (2007), dans l'index LEGI du dépôt, aux incréments du 17 octobre 2026
     date: 2026-10-17
+  - type: legifrance
+    reference: >-
+      la réversion aux plans : L. 732-31 (LEGIARTI000006585561, LEGIARTI000006585562),
+      L. 732-33 (LEGIARTI000006585564, LEGIARTI000006585565), L. 732-41
+      (LEGIARTI000006585593), L. 732-46 (LEGIARTI000006585603, LEGIARTI000006585604),
+      L. 732-54-1 (2001), L. 732-54-2 (2001, 2004, 2007), L. 732-54-4 (2001, 2004),
+      L. 732-54-8 (LEGIARTI000006585642, LEGIARTI000006585645), D. 732-97,
+      D. 732-113 (2005), D. 732-116 (2005, 2006), D. 732-118 (2005, 2007), D. 732-119,
+      D. 732-121, D. 732-126 à D. 732-130, D. 732-139, et, pour les majorations de la
+      réversion que le modèle ne sert pas, D. 732-140 (LEGIARTI000006597574) et D. 732-147
+      (LEGIARTI000006597582), dans l'index LEGI du dépôt à jour au 18 octobre 2026 ;
+      décret n° 2000-261, articles 1er et 2, décret n° 2001-170, article 3, décret
+      n° 2002-297, articles 4, 5, 11 et 12, décret n° 2002-298, article 5, dans l'index
+      JORF
+    date: 2026-10-19
 textes_a_rattacher: []
 code:
   python: >-
@@ -1143,6 +1452,12 @@ historique:
   2026-10-19 — étape 138.8 : la part forfaitaire que la retraite proportionnelle
   retranche ne compte plus les années de chef à titre secondaire sans forfait
   (L. 732-28), dans les deux moteurs.
+- >-
+  2026-10-19 — étape 138.8 : la réversion du régime déclarée joue aux plans — les points
+  des conjoints refusés au titulaire d'une réversion à la date d'effet (D. 732-118) et
+  plafonnés quand elle vient après (L. 732-54-2, II), le minimum figé à 20 et à 26,933
+  points du veuf d'avant 1995 (D. 732-113, D. 732-116), un paramètre
+  reversion_d_avant_1995 par version, dans les deux moteurs.
 reformes: []
 exemples: []
 effet: >-

@@ -890,6 +890,111 @@ def test_les_pensions_dues_de_1998_a_2001_servent_les_points_de_leurs_decrets(si
     assert plans.points == pytest.approx(3.2 * 30.0 * (1.0 - 0.6), rel=1e-12)
 
 
+# -- la réversion du régime, aux plans de 1997 à 2008 ---------------------------
+
+def _conjointe_de_2000(simulateur: Simulateur, reversion: dict | None = None) -> Carriere:
+    """Trente et un ans de conjointe, partie le 1er février 2000, et la
+    réversion que le régime lui sert, veuve d'un de ses assurés, si elle en a
+    une."""
+    return _chef(simulateur, 1938, 62, sexe="F", mois_naissance=1,
+                 metiers=[Metier("collaborateur_agricole", 32.0, niveau_salaire=0.3)],
+                 reversion_agricole=reversion)
+
+
+def test_qui_est_titulaire_d_une_reversion_a_son_depart_n_a_pas_les_points_des_conjoints(
+        simulateur):
+    """Les plans des pensions prises de 1998 à 2001 ne vont qu'à qui n'est pas
+    titulaire, à la date d'effet de sa pension, d'une réversion du régime
+    (L. 732-31, puis L. 732-54-2, I ; D. 732-118) : la conjointe de 2000, veuve
+    depuis mai 1999, n'a aucun point, ni en 2001, ni depuis 2002 ; sa réversion
+    absorbée par ses ressources, déclarée nulle, ne l'en prive pas."""
+    seule = _conjointe_de_2000(simulateur)
+    veuve = _conjointe_de_2000(simulateur, {"debut": "1999-05", "mensuel": 120.0})
+    absorbee = _conjointe_de_2000(simulateur, {"debut": "1999-05", "mensuel": 0.0})
+    for quand in ("2001-01-01", "2002-01-01", "2007-01-01", "2008-01-01"):
+        servis = _plans(simulateur, seule, quand)[1]
+        assert servis is not None and servis.conjoint_points > 0.0, quand
+        assert _plans(simulateur, veuve, quand)[1] is None, quand
+        assert _plans(simulateur, absorbee, quand)[1].points == pytest.approx(
+            servis.points, rel=1e-12), quand
+
+
+def test_une_reversion_venue_apres_le_depart_plafonne_les_points_des_conjoints(simulateur):
+    """« En cas d'obtention d'une pension de réversion [...] postérieurement à
+    l'attribution de points de retraite proportionnelle gratuits, le nombre de
+    points gratuits est plafonné, à compter du 1er janvier de l'année qui suit
+    cette obtention, au niveau atteint durant l'année au cours de laquelle a
+    pris effet la pension de réversion » (L. 732-31, puis L. 732-54-2, II ;
+    D. 732-126 à D. 732-130) : veuve en juin 2001, la conjointe de 2000 garde
+    les seize points et le différentiel de 3,2 de 2001, minorés de 60 %
+    (D. 732-127) ; veuve en juin 2003, B de 2003, minoré de 60 %, au lieu des
+    5,5 % puis 4 % par année manquante de 2007 et 2008 (D. 732-131)."""
+    seule = _conjointe_de_2000(simulateur)
+    en_2001 = _conjointe_de_2000(simulateur, {"debut": "2001-06", "mensuel": 120.0})
+    en_2003 = _conjointe_de_2000(simulateur, {"debut": "2003-06", "mensuel": 120.0})
+    niveaux = {}
+    for veuve, annee in ((en_2001, 2001), (en_2003, 2003)):
+        niveaux[annee] = _plans(simulateur, seule, f"{annee}-01-01")[1].points
+        assert _plans(simulateur, veuve, f"{annee}-01-01")[1].points == pytest.approx(
+            niveaux[annee], rel=1e-12)
+        assert _plans(simulateur, veuve, "2008-01-01")[1].points == pytest.approx(
+            niveaux[annee], rel=1e-12), annee
+        for quand in range(annee + 1, 2008):
+            servis = _plans(simulateur, seule, f"{quand}-01-01")[1].points
+            assert _plans(simulateur, veuve, f"{quand}-01-01")[1].points == pytest.approx(
+                min(servis, niveaux[annee]), rel=1e-12), (annee, quand)
+    assert niveaux[2001] == pytest.approx(3.2 * 30.0 * (1.0 - 0.6), rel=1e-12)
+    assert _plans(simulateur, seule, "2008-01-01")[1].points > niveaux[2003] > niveaux[2001]
+    assert _plans(simulateur, en_2003, "2002-01-01")[1].points == pytest.approx(
+        _plans(simulateur, seule, "2002-01-01")[1].points, rel=1e-12)
+
+
+def test_le_veuf_d_avant_1995_parti_avant_1997_garde_vingt_points(simulateur):
+    """Le titulaire d'une réversion du régime entrée en jouissance avant 1995
+    qui a sa propre pension reçoit la majoration forfaitaire de L. 732-46, IV
+    (D. 732-97), que L. 732-33, II, puis L. 732-54-4, relèvent depuis 1999 à qui
+    a trente-deux ans et demi d'activité agricole (décret n° 2002-297, article
+    11 ; D. 732-139). Elle s'applique en priorité depuis 2000, et la pension
+    prise avant 1997 garde alors P = (20 - n) × d (décret n° 2000-261, article
+    1er ; décret n° 2001-170, article 3 ; décret n° 2002-297, article 5 ;
+    D. 732-116) ; en 1999, la majoration de la retraite passait la première, à
+    23,9 (L. 732-33, II). Veuf depuis 1996, sous L. 732-41, le chef parti en
+    1995 a les plans de tous."""
+    sans = _chef(simulateur, 1930, 65)
+    resultat, _, _ = _resultat(simulateur, sans)
+    duree = _points_au_compte(simulateur, resultat) / 16.0
+    veuf = _chef(simulateur, 1930, 65, reversion_agricole={"debut": "1990-03", "mensuel": 150.0})
+    depuis_1996 = _chef(simulateur, 1930, 65,
+                        reversion_agricole={"debut": "1996-03", "mensuel": 150.0})
+    for carriere, avec in ((veuf, True), (depuis_1996, False)):
+        resultat, _, _ = _resultat(simulateur, carriere)
+        for annee, minimum_moins_seize, part in ((1997, 4.0, 1 / 3), (1998, 4.0, 2 / 3),
+                                                 (1999, 7.9, 1.0)):
+            assert _servis(simulateur, carriere, resultat, annee) == pytest.approx(
+                minimum_moins_seize * duree * part, rel=1e-9), (avec, annee)
+        for annee, autres in ((2000, 10.96), (2001, 13.23), (2002, None), (2008, None)):
+            if autres is None:
+                autres = _a_moins_seize(simulateur, annee)
+            assert _servis(simulateur, carriere, resultat, annee) == pytest.approx(
+                (4.0 if avec else autres) * duree, rel=1e-9), (avec, annee)
+
+
+def test_le_veuf_d_avant_1995_parti_de_1997_a_2001_garde_26_933_points(simulateur):
+    """Aux pensions prises de 1997 à 2001, qui peut bénéficier de la
+    revalorisation de la majoration forfaitaire de sa réversion garde
+    A = 26,933, quand celui des autres passe à 29,23 en 2001, puis au minimum
+    vieillesse de chaque année (L. 732-54-1, II ; décret n° 2001-170, article
+    3 ; décret n° 2002-297, article 4 ; D. 732-113)."""
+    veuf = _chef(simulateur, 1935, 62, reversion_agricole={"debut": "1993-03", "mensuel": 150.0})
+    resultat, avantages, _ = _resultat(simulateur, veuf)
+    assert avantages["majoration_retraite_proportionnelle"].detail.startswith(
+        f"{(26.933 - 16.0) * 37.5 / 3:,.2f} points")
+    for annee in (1999, 2001, 2002, 2008):
+        assert _servis(simulateur, veuf, resultat, annee) == pytest.approx(
+            (26.933 - 16.0) * 37.5, rel=1e-12), annee
+    assert _a_moins_seize(simulateur, 2002) > 26.933 - 16.0
+
+
 def test_une_pension_decotee_n_a_ni_pmr_ni_complement(simulateur):
     """Trente-deux ans de carrière à 62 ans : la décote, et aucun des deux
     minima, qui ne s'ouvrent qu'au taux plein."""
@@ -1235,6 +1340,25 @@ _REVISIONS = [
         {"affiliation": "exploitant_agricole", "age_debut": 51, "niveau_salaire": 0.1,
          "cumul": True, "age_fin": 56},
         {"affiliation": "exploitant_agricole", "age_debut": 56, "niveau_salaire": 0.1}]}, 2015),
+    # La réversion du régime aux plans : la conjointe de 2000, veuve avant son
+    # départ, sans les points des conjoints (D. 732-118), puis veuve en 2001,
+    # ses points plafonnés à ceux de 2001 (L. 732-54-2, II) ; le chef parti en
+    # 1995, veuf depuis 1990, à vingt points (D. 732-116), celui parti en 1997,
+    # veuf depuis 1993, à 26,933 (D. 732-113).
+    ({**_COLLABORATRICE, "annee_naissance": 1938, "age_liquidation": 62, "mois_naissance": 1,
+      "metiers": [{"affiliation": "collaborateur_agricole", "age_debut": 32,
+                   "niveau_salaire": 0.3}],
+      "reversion_agricole": {"debut": "1999-05", "mensuel": 120.0}}, 2012),
+    ({**_COLLABORATRICE, "annee_naissance": 1938, "age_liquidation": 62, "mois_naissance": 1,
+      "metiers": [{"affiliation": "collaborateur_agricole", "age_debut": 32,
+                   "niveau_salaire": 0.3}],
+      "reversion_agricole": {"debut": "2001-06", "mensuel": 120.0}}, 2008),
+    ({**_CHEF_D_AVANT_1997, "metiers": [
+        {"affiliation": "exploitant_agricole", "age_debut": 20, "niveau_salaire": 0.3}],
+      "reversion_agricole": {"debut": "1990-03", "mensuel": 150.0}}, 2005),
+    ({**_CHEF_D_AVANT_1997, "annee_naissance": 1935, "age_liquidation": 62, "metiers": [
+        {"affiliation": "exploitant_agricole", "age_debut": 20, "niveau_salaire": 0.3}],
+      "reversion_agricole": {"debut": "1993-03", "mensuel": 150.0}}, 2004),
 ]
 
 
@@ -1244,8 +1368,8 @@ def test_les_deux_moteurs_revisent_la_meme_majoration(simulateur):
     demandé plus tard, la pension prise depuis 2022, jusqu'au-delà du dernier
     barème, où sa PMR et son plafond suivent les prix ; la PMR de 2009 des
     pensions prises avant 1997, sur leur durée de chef reconstituée ; la
-    revalorisation de chaque régime et la révision de l'exploitant, en Python
-    et en JavaScript."""
+    réversion du régime aux plans de 1997 à 2008 ; la revalorisation de chaque
+    régime et la révision de l'exploitant, en Python et en JavaScript."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     from dataclasses import asdict
@@ -1274,7 +1398,7 @@ def test_les_deux_moteurs_revisent_la_meme_majoration(simulateur):
             "exploitant": None if vivante.exploitant is None else asdict(vivante.exploitant)}))
         revisees += attendu["exploitant"] is not None
         _ecarts(obtenu, attendu, f"révision {rang}", ecarts)
-    assert revisees == 10
+    assert revisees == 14
     assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])
 
 

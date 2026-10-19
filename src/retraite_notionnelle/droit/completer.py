@@ -642,6 +642,56 @@ PLANS_DE_1997 = "1997-01-01"
 #: Les points au compte d'une pension prise avant 1997, divisés par ce nombre,
 #: donnent sa durée de chef reconstituée.
 POINTS_D_UNE_ANNEE_RECONSTITUEE = 16.0
+#: Les réversions du régime entrées en jouissance avant le 1er janvier de cette
+#: année restent sous L. 732-46, dont le IV majore celle du titulaire qui a sa
+#: propre pension (D. 732-97) ; les autres relèvent de L. 732-41
+#: (:func:`_minimum_du_veuf`).
+REVERSIONS_DE_L_732_41_DEPUIS = 1995
+
+
+def _titulaire_d_une_reversion(carriere: Carriere, mois: DateMois) -> bool:
+    """Si l'assuré est titulaire, au mois ``mois``, d'une réversion du régime :
+    déclarée, ouverte, d'un montant non nul — ses ressources l'absorbent quand
+    il la déclare nulle (L. 732-41), et il n'en est pas titulaire."""
+    reversion = carriere.reversion_agricole
+    return (reversion is not None and reversion.debut.rang <= mois.rang
+            and reversion.mensuel > 0.0)
+
+
+def _minimum_du_veuf(regle: dict, carriere: Carriere, eligible,
+                     avant_1997: bool) -> float | None:
+    """Le nombre minimal annuel moyen de points, figé, de qui peut bénéficier de
+    la revalorisation de la majoration forfaitaire de sa réversion ; ``None``
+    pour un autre, ou quand la règle n'en fige pas.
+
+    La majoration forfaitaire de L. 732-46, IV, va au titulaire d'une réversion
+    du régime entrée en jouissance avant 1995 qui a sa propre pension
+    (D. 732-97) ; L. 732-33, II, puis L. 732-54-4, la relèvent depuis 1999 à qui
+    a trente-deux ans et demi d'activité agricole, vingt-sept et demi à quinze
+    ans de conjoint sans autre pension depuis 2000 (décret n° 2000-261, article
+    2 ; décret n° 2002-297, article 11 ; D. 732-139). Elle passe depuis 2000
+    avant la majoration de la retraite proportionnelle des pensions prises
+    avant 1997, qui garde vingt points (D. 732-116), et depuis 2001 avant le
+    relèvement de celle des pensions prises de 1997 à 2001, qui gardent
+    26,933 (D. 732-113). La réversion
+    déclarée, non nulle, qui commence avant 1995 se lit sous L. 732-46 : qui en
+    a demandé l'échange contre L. 732-41 (L. 732-46, V) n'est pas distingué
+    (``reversion_d_avant_1995`` de la fiche)."""
+    veuf = regle.get("reversion_d_avant_1995")
+    reversion = carriere.reversion_agricole
+    if (not veuf or reversion is None or reversion.mensuel <= 0.0
+            or reversion.debut.annee >= REVERSIONS_DE_L_732_41_DEPUIS):
+        return None
+    fixe = veuf["minimum_points_avant_1997" if avant_1997 else "minimum_points"]
+    agricole = eligible.duree / 4.0
+    if fixe is None or (agricole < veuf["duree_minimale"] and (
+            veuf["duree_minimale_des_conjoints"] is None
+            or agricole < veuf["duree_minimale_des_conjoints"]
+            or eligible.conjoint_avant_1999 / 4.0 < veuf["annees_de_conjoint"]
+            or not all(ligne.affiliation in AFFILIATIONS_AGRICOLES
+                       for ligne in carriere.lignes))):
+        return None
+    return float(fixe)
 
 
 def _annee_d_effet_des_conjoints(date_effet: str) -> int:
@@ -673,8 +723,10 @@ def _points_des_conjoints(regle: dict, carriere: Carriere, eligible, date_effet:
     demandent trente-deux ans et demi d'activité agricole, vingt-sept et demi
     à qui a quinze ans de conjoint et aucune autre pension, vingt-deux et demi
     depuis 2007, et se minorent sous trente-sept et demie (D. 732-118,
-    D. 732-131) ; celles prises depuis 2002, le taux plein et dix-sept ans et
-    demi (D. 732-141)."""
+    D. 732-131) ; elles ne vont pas à qui est titulaire, à leur date d'effet,
+    d'une réversion du régime (L. 732-31, puis L. 732-54-2, I ; D. 732-118).
+    Celles prises depuis 2002 veulent le taux plein et dix-sept ans et demi
+    (D. 732-141)."""
     conjoints = regle.get("conjoints")
     if not conjoints or date_effet < CONJOINTS_DEPUIS:
         return 0.0, 0.0
@@ -685,6 +737,8 @@ def _points_des_conjoints(regle: dict, carriere: Carriere, eligible, date_effet:
         return 0.0, 0.0
     minoration = 0.0
     if date_effet < PLANS_DE_2002:
+        if _titulaire_d_une_reversion(carriere, carriere.date_liquidation):
+            return 0.0, 0.0
         anciens = conjoints["pensions_prises_avant_2002"]
         requise = anciens["duree_minimale"]
         plafonnee = False
@@ -934,6 +988,16 @@ def majoration_retraite_proportionnelle(
     pensions dues — 20 points en 1997 et 1998, 23,9 en 1999, 26,96 en 2000,
     29,23 en 2001, A depuis 2002 —, sur la durée de chef que ses points au
     compte reconstituent (:func:`_points_d_avant_1997`).
+
+    LA RÉVERSION DU RÉGIME que l'assuré déclare : titulaire de la majoration
+    forfaitaire d'une réversion d'avant 1995, il garde 20 points depuis 2000,
+    26,933 depuis 2001 (:func:`_minimum_du_veuf`) ; titulaire d'une réversion à
+    la date d'effet d'une pension prise de 1998 à 2001, il n'a pas les points
+    des conjoints (:func:`_points_des_conjoints`), et, quand elle vient après,
+    « le nombre de points gratuits est plafonné, à compter du 1er janvier de
+    l'année qui suit cette obtention, au niveau atteint durant l'année au cours
+    de laquelle a pris effet la pension de réversion » (L. 732-31, puis
+    L. 732-54-2, II ; D. 732-126 à D. 732-130).
     """
     date_effet = date_d_effet(carriere)
     if date_effet is None or pension.montant <= 0.0:
@@ -970,6 +1034,8 @@ def majoration_retraite_proportionnelle(
         chef_ouvert = False
     if not chef_ouvert and not regle.get("conjoints"):
         return None
+    fige = (_minimum_du_veuf(regle, carriere, eligible, avant_1997 is not None)
+            if chef_ouvert and date_effet < PLANS_DE_2002 else None)
     requis, _ = ouvrir.duree_requise(moteur, periode, carriere)
     lus = _service_et_forfait(moteur, periode, pension.regime, requis,
                               carriere.date_liquidation, annee)
@@ -1011,6 +1077,24 @@ def majoration_retraite_proportionnelle(
             if conjoint_points > 0.0:
                 conjoint_minimum = lu[0]
                 fiabilite = min(fiabilite, lu[1])
+    # La réversion obtenue après la date d'effet d'une pension prise avant
+    # 2002 plafonne ses points, depuis l'année qui suit, au niveau de l'année
+    # où elle a pris effet, que la règle de cette année-là redonne.
+    reversion = carriere.reversion_agricole
+    if (conjoint_points > 0.0 and quand is not None and date_effet < PLANS_DE_2002
+            and reversion is not None and reversion.mensuel > 0.0
+            and carriere.date_liquidation.rang < reversion.debut.rang
+            and reversion.debut.annee < an_servi):
+        atteint = majoration_retraite_proportionnelle(
+            moteur, carriere, eligible, pension, trimestres,
+            quand=(None if reversion.debut.annee <= annee
+                   else f"{reversion.debut.annee:04d}-01-01"))
+        if atteint is None or atteint.conjoint_points <= 0.0:
+            conjoint_minimum, conjoint_annees, conjoint_points = 0.0, 0.0, 0.0
+        elif atteint.conjoint_points < conjoint_points:
+            conjoint_minimum, conjoint_annees, conjoint_points = (
+                atteint.conjoint_minimum, atteint.conjoint_annees, atteint.conjoint_points)
+            fiabilite = min(fiabilite, atteint.fiabilite)
     if not chef_ouvert:
         if conjoint_points <= 0.0:
             return None
@@ -1019,7 +1103,9 @@ def majoration_retraite_proportionnelle(
             complement=conjoint_points * service_servi, fiabilite=fiabilite,
             conjoint_minimum=conjoint_minimum, conjoint_annees=conjoint_annees,
             conjoint_points=conjoint_points)
-    if minimum_nomme is None:
+    if fige is not None:
+        minimum = fige
+    elif minimum_nomme is None:
         minimum = float((avant_1997 or regle)["minimum_points"])
     else:
         lu = minimum_de(minimum_nomme)
