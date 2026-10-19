@@ -88,7 +88,27 @@ sources:
 effet: >-
   Les petites pensions des IEG — une courte carrière dans la branche, une réversion —
   sous le plafond de ressources : le modèle ne les relève pas.
+code:
+  moteur: >-
+    la règle manque : la pension de vieillesse des IEG est liquidée et complétée, et sa
+    réversion servie, sans le minimum de l'article 19, II, ni l'assiette minimale de
+    l'article 19, I ; elle entrera dans ces fonctions une fois décidé ce que valent, au
+    départ, les ressources de l'année qui précède le versement (sources.a_relire)
+  python: >-
+    droit/liquider.py : liquider_chaque_regime ; droit/completer.py : completer ;
+    droit/reversion.py : reversion
+  javascript: >-
+    moteur/js/droit/liquider.js : liquiderChaqueRegime ; moteur/js/droit/completer.js :
+    completer ; moteur/js/droit/reversion.js : reversion
+  parametres: >-
+    aucun : ni les montants du minimum, ni ses durées de services, ni le plafond de
+    ressources ne sont encore des données du dépôt
+  tests: [tests/test_simulateur.py, tests/test_reversion.py, tests/js/moteur.test.js,
+    tests/temoins/simulations.json]
 historique:
 - >-
   2026-10-05 — la fiche naît (action 89), de la page de la CNIEG et de l'article 19
   lus le même jour ; la règle reste à porter.
+- >-
+  2026-10-19 — action 130 : la fiche dit les fonctions où la règle manque, dans les deux
+  moteurs ; elle reste manquante.

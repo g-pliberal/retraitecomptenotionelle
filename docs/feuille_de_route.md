@@ -2227,16 +2227,16 @@ fabriqués.
 
 ### 130. L'architecture du dépôt : décidée, les phases 0 à 8 faites, les domaines à ouvrir — `en cours`
 
-**Reprise, au 18 octobre 2026.** Fait : phases 0 à 8, cinq domaines clos ; le
+**Reprise, au 19 octobre 2026.** Fait : phases 0 à 8, cinq domaines clos ; le
 sixième, les périodes assimilées manquantes, a ses étapes 1 à 6 faites
 (`130/2026-10-17-sixieme-domaine-etape-6.md`). Au propriétaire, README muet :
 sa septième étape, la décision de la proposition, et la retraite progressive,
-le cumul et la seconde pension. La carte mûrit : les quinze fiches de la limite
-d'âge ont leur code et leurs approximations, qu'un test tient ; restent 111
-fiches et 806 manques, dont 107 fiches à lire au droit, et les points ouverts
-des phases 2 à 8, relevés dans la note. Par quoi commencer : quatre fiches
-presque mûres, ou, après la vague, le test du code étendu à toutes. Détail :
-`130/2026-10-18-carte-des-fiches-limite-d-age.md`.
+le cumul et la seconde pension. La carte mûrit : dix-neuf fiches, la limite
+d'âge et les quatre presque mûres, sont tenues par un test ; restent les 107
+fiches à lire au droit, 800 manques, et les points ouverts des phases 2 à 8.
+Par quoi commencer : après la vague, le test du code étendu à toutes, dont 146
+écrivent le leur en prose. Détail :
+`130/2026-10-19-carte-des-fiches-presque-mures.md`.
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de

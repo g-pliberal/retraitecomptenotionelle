@@ -142,6 +142,77 @@ versions:
       n° 75-891, article 7-2, et n° 81-1046, article 2) : les règlements approuvés le 10
       juillet 2026 ne sont pas lus ici
   exemples: aucun trouvé
+approximations:
+- version: [regimes_en_lettres_cles, forfaits_en_euros]
+  ecart: >-
+    les points d'avant les forfaits en euros, que l'index ne chiffre pas, sont présumés :
+    ceux de la règle de 2010 pour l'auxiliaire médical avant 2008, 24,5 par an, de la
+    règle de 2007 pour le chirurgien-dentiste avant 2007, dix par an, de la règle de 2008
+    pour le directeur de laboratoire avant 2008, 262 par an sans ajustement ; et le
+    forfait de la première année en euros projeté en arrière sur les prix, celui de 2008
+    pour la sage-femme, 229 €, quand le texte d'avant en faisait une fois et demie le
+    forfait d'accouchement simple (D. 645-2)
+  effet: non mesuré
+- version: [regimes_en_lettres_cles]
+  ecart: >-
+    les points acquis avant 2006 sont servis à la valeur de service des points d'après,
+    la seule que le modèle connaisse par régime, quand les décrets de 2007 et de 2008
+    leur en donnent une par tranche d'années : pour l'auxiliaire médical, de 2,30 € pour
+    les points de 1960 à 1975 à 1,60 € pour ceux de 1998 à 2005, à compter de 2011 ; pour
+    le directeur de laboratoire, de 0,35 à 1,40 € en 2008, plus hautes que celle des
+    points d'après ; pour le chirurgien-dentiste, une grille par année d'acquisition
+  effet: non mesuré
+- version: [regimes_en_lettres_cles, forfaits_en_euros, quatre_forfaits]
+  ecart: >-
+    le partage du forfait et de l'ajustement avec l'assurance maladie, lu pour 2025 au
+    guide de la CNAVPL — les deux tiers du forfait, 60 % de l'ajustement de l'auxiliaire
+    médical, la moitié de celui du chirurgien-dentiste et du directeur de laboratoire —,
+    est présumé à toutes les années
+  effet: non mesuré
+- version: [regimes_en_lettres_cles, forfaits_en_euros, quatre_forfaits]
+  ecart: >-
+    les âges et la minoration, lus au guide de la CNAVPL de 2025, sont présumés à toutes
+    les années : pour l'auxiliaire médical, le taux plein à soixante-cinq ans et le départ
+    dès soixante, au coefficient de 0,75 à 0,95 ; pour le directeur de laboratoire, le
+    taux plein à soixante-sept ans et le départ dès soixante, au coefficient de
+    l'auxiliaire, que le guide ne chiffre pas ; pour le chirurgien-dentiste et la
+    sage-femme, le taux plein à soixante-sept ans et 1,25 % par trimestre manquant
+  effet: non mesuré
+- version: [forfaits_en_euros, quatre_forfaits]
+  ecart: >-
+    les points d'ajustement ne sont pas arrondis, au dixième supérieur pour l'auxiliaire
+    médical et le directeur de laboratoire, au centième pour le chirurgien-dentiste ; et
+    l'ajustement de l'auxiliaire et du directeur est assis sur le revenu de l'année, quand
+    le texte l'assied sur celui de l'avant-dernière, de la dernière pour l'auxiliaire
+    depuis la rédaction du 14 novembre 2025
+  effet: non mesuré
+- version: [forfaits_en_euros, quatre_forfaits]
+  ecart: >-
+    les forfaits et les valeurs de service fixés en euros sont projetés sur les prix entre
+    deux textes ; la valeur de service de la sage-femme, 6,10 € en 2025, est ramenée aux
+    autres années par les prix, quand le décret la fige en euros pour les points liquidés
+    depuis 2012 ; le forfait du directeur de laboratoire, revalorisé depuis 2023 sur le
+    coefficient de L. 161-25 majoré de deux points, et sa valeur de service, minorée d'un
+    demi-point depuis 2022, suivent les prix
+  effet: non mesuré
+- version: [regimes_en_lettres_cles, forfaits_en_euros, quatre_forfaits]
+  regime: asv_chirurgiens_dentistes
+  ecart: >-
+    la prestation du chirurgien-dentiste n'est pas bornée aux 420 points que le décret n°
+    78-283 lui oppose jusqu'en 2021 (article 3)
+  effet: non mesuré
+- version: [regimes_en_lettres_cles]
+  ecart: >-
+    le rachat des années d'exercice d'avant l'obligation, de 1946 à 1977 pour le
+    chirurgien-dentiste, de 1946 à 1983 pour la sage-femme, six points l'année, n'est pas
+    porté
+  effet: non mesuré
+- version: [quatre_forfaits]
+  ecart: >-
+    les règlements des quatre sections approuvés par l'arrêté du 10 juillet 2026, où le
+    décret n° 2026-418 renvoie les conditions d'attribution et de service, ne sont pas
+    lus : le modèle garde, depuis, les règles des décrets
+  effet: non mesuré
 sources:
   lu_le: 2026-10-14
   prochaine_relecture: 2027-10-14
@@ -199,6 +270,25 @@ sources:
       sages-femmes et des auxiliaires médicaux
       (https://www.cnavpl.fr/wp-content/uploads/2025/07/Guide-2025.pdf)
     date: 2026-10-14
+code:
+  python: >-
+    droit/acquerir.py : acquerir ; donnees/regimes.py : PeriodeRegime.ajustement_total,
+    PeriodeRegime.prise_en_charge ; droit/liquider.py : liquider_chaque_regime,
+    valeur_point_fiche ; moteur/compte.py : ConstructeurCompte._cotisation_ligne ;
+    remuneration.py : bloc_droit_en_vigueur
+  javascript: >-
+    moteur/js/droit/acquerir.js : acquerir ; moteur/js/regimes.js :
+    PeriodeRegime.ajustementTotal, PeriodeRegime.priseEnCharge ; moteur/js/droit/liquider.js
+    : liquiderChaqueRegime, valeurPointFiche ; moteur/js/compte.js :
+    ConstructeurCompte._cotisationLigne ; moteur/js/remuneration.js : blocDroitEnVigueur
+  parametres: >-
+    regimes/asv_auxiliaires_medicaux.yaml, regimes/asv_chirurgiens_dentistes.yaml,
+    regimes/asv_sages_femmes.yaml, regimes/asv_directeurs_laboratoire.yaml :
+    cotisation_forfaitaire_euros, cotisation_forfaitaire_annee,
+    points_par_trimestre_valide, taux_cotisation_retraite, points_ajustement_par_forfait,
+    points_ajustement_au_plafond, part_assurance_maladie_forfait,
+    part_assurance_maladie_taux, valeur_point_euros, valeur_point_annee
+  tests: [tests/test_pcv_sante.py, tests/temoins/simulations.json]
 historique:
 - >-
   2026-10-13 — écrite à l'étape 2 de l'action 145 : l'inventaire nomme les cinq

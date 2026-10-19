@@ -119,6 +119,27 @@ def _ecrire(dossier: Path, fiche: dict) -> None:
         yaml.safe_dump(fiche, allow_unicode=True, sort_keys=False), encoding="utf-8")
 
 
+#: Les fiches à qui, le 18 octobre 2026, ne manquaient qu'un champ ou deux
+#: (action 130, note ``130/2026-10-18-carte-des-fiches-limite-d-age.md``).
+PRESQUE_MURES = ("asv_autres_professions_de_sante",
+                 "cultes_retraite_complementaire_taux_specifiques",
+                 "minimum_pension_ieg", "rafp_majoration_capital")
+
+
+def test_les_fiches_presque_mures_le_sont(fiches):
+    """Rien ne manque plus aux quatre fiches presque mûres — leur code, leurs
+    approximations, leurs versions, leur étape —, et ce qu'elles disent
+    d'elles-mêmes tient : leurs approximations touchent leurs versions, leur
+    code nomme des fonctions que les deux moteurs définissent, des paramètres
+    que leurs versions ou leurs fiches de régime portent, des tests qui
+    existent (``outils_carte``)."""
+    from outils_carte import ecarts
+
+    manques = carte.manques()
+    assert {nom: manques[nom] for nom in PRESQUE_MURES if nom in manques} == {}
+    assert [e for nom in PRESQUE_MURES for e in ecarts(fiches[nom])] == []
+
+
 def test_une_fiche_complete_est_mure(tmp_path):
     """La fiche A.1 de l'architecture, posée seule dans une carte : ni erreur,
     ni manque."""

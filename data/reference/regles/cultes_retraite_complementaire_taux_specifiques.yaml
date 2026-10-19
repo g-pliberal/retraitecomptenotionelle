@@ -17,6 +17,84 @@ ecrit:
 - les points de l'Arrco, puis de l'Agirc-Arrco, que la cotisation au taux spécifique achète au-delà de celle au taux de base
 dates_qui_decident:
 - periode.debut
+# Les versions coupent la période de cotisation aux circulaires lues : le dépôt
+# n'en a lu aucune d'avant 2020, et la première qui énumère les huit taux, la n°
+# 2021/04, les dit « inchangés ».
+versions:
+- id: avant_les_circulaires_lues
+  statut: supposee
+  hypothese: >-
+    le taux de base seul, celui de la tranche 1 de l'Arrco, puis de l'Agirc-Arrco depuis
+    2019 (fiche cultes_retraite_complementaire), la retraite complémentaire des cultes
+    naissant le 1er janvier 2006 : aucune circulaire de la CAVIMAC d'avant celle de
+    janvier 2020 n'est lue, et la page des montants de 2019, que le site ne sert plus,
+    porterait les taux de 2018 et de 2019
+  fiabilite: faible
+  bornes:
+    periode.debut: [null, 2020-01-01]
+  contenu:
+    droit: le taux de base seul, présumé
+  exemples: aucun trouvé
+- id: un_taux_publie
+  statut: lue
+  textes:
+  - reference: >-
+      CAVIMAC, circulaires n° 2020/01 du 17 janvier 2020 et n° 2021/01 du 15
+      janvier 2021, hors JORF, images numérisées : avant les huit taux, un seul
+    citation: >-
+      « Taux contractuel de référence » « 10, 02 % » ; « Part collective (60%) » ;
+      « Part personnelle (40 %) »
+    lu_le: 2026-10-13
+    empreinte: >-
+      sha256:c6bffbf68ced8681401e4491b83c4affab9e65b71d1174c0879aaad24050b6af (n° 2020/01),
+      sha256:c6073e2197e5b868e34252bed4a5b826edc45002bea99b18c2d22ec787c0134b (n° 2021/01)
+  bornes:
+    periode.debut: [2020-01-01, 2021-10-01]
+  contenu:
+    droit: >-
+      les circulaires n'appellent la cotisation qu'à un taux, le « taux contractuel de
+      référence » de 10,02 %, pour 60 % à la charge de la collectivité et 40 % à celle du
+      ministre, sur le forfait de 1 539 € en 2020, de 1 555 € en 2021
+    conditions: >-
+      la circulaire n° 2021/04, la première qui énumère les huit taux spécifiques, les dit
+      « inchangés » : ils pouvaient exister avant, sans que les circulaires lues les
+      publient
+  exemples: aucun trouvé
+- id: huit_taux_specifiques
+  statut: lue
+  textes:
+  - reference: >-
+      CAVIMAC, circulaire n° 2021/04 du 15 octobre 2021, cotisations « à compter
+      de l'échéance du 15 novembre 2021 (au titre du mois d'octobre 2021) », hors
+      JORF : la première qui énumère les huit taux spécifiques
+    citation: >-
+      « Les taux de cotisation demeurent, eux, inchangés » ; « Tous cultes - taux
+      spécifique n° 1 1 589 11,13% » […] « Tous cultes - taux spécifique n° 8
+      1 589 21,31% »
+    lu_le: 2026-10-13
+    empreinte: sha256:0c191c0d44bc6d1987bd55eb6be30b1da4bb54a732f14a90bedc304f1346a456
+  - reference: >-
+      CAVIMAC, circulaire n° 2026/03 du 27 mai 2026, cotisations « à compter du
+      1er juin 2026 », hors JORF : la dernière
+    citation: >-
+      « Tous cultes - taux spécifique n° 1 1 867 11,13% 208 » ; « n° 2 1 867
+      12,00% 224 » ; « n° 3 1 867 13,06% 244 » ; « n° 4 1 867 14,30% 267 » ;
+      « n° 5 1 867 15,27% 285 » ; « n° 6 1 867 17,21% 321 » ; « n° 7 1 867
+      18,83% 352 » ; « n° 8 1 867 21,31% 398 »
+    lu_le: 2026-10-13
+    empreinte: sha256:7cb68acf8170f440047f8c531ec8547da8b628a3e61a761e15f5b1580567b35e
+  bornes:
+    periode.debut: [2021-10-01, null]
+  contenu:
+    droit: >-
+      à côté du taux de base de 10,02 % — 6,01 % pour la collectivité, 4,01 % pour le
+      ministre —, huit « taux spécifiques » sur le même forfait, de 11,13 % (n° 1) à 21,31
+      % (n° 8), les mêmes de la circulaire n° 2021/04 à la n° 2026/03, sans part ni
+      définition
+    conditions: >-
+      rien de publié ne dit quelles collectivités les appliquent, depuis quand, ni quelle
+      part de chaque taux ouvre des points
+  exemples: aucun trouvé
 effet: >-
   Le ministre dont la collectivité applique un taux spécifique cotise de 11 à
   113 % de plus qu'au taux de base, et le modèle ne lui compte que les points du
@@ -84,43 +162,31 @@ sources:
       déclaration sociale nominative : rien sur les taux spécifiques
     url: https://www.cavimac.fr/publications
     date: 2026-10-13
+code:
+  moteur: >-
+    le modèle n'applique que le taux de base : ces fonctions achètent les points de l'Arrco,
+    puis de l'Agirc-Arrco, au taux de la fiche de régime, sur le forfait du SMIC, et
+    prélèvent la contribution d'équilibre sur le même forfait ; un taux spécifique y
+    entrera quand on saura ce qu'il achète
+  python: >-
+    droit/acquerir.py : acquerir ; contributions_equilibre.py : _forfait
+  javascript: >-
+    moteur/js/droit/acquerir.js : acquerir ; moteur/js/contributions-equilibre.js : forfait
+  parametres: >-
+    regimes/arrco_cultes.yaml : taux_cotisation_retraite, part_salariale,
+    assiette_forfaitaire, assiette_repere_smic, points_de
+  tests: [tests/test_simulateur.py, tests/js/moteur.test.js, tests/temoins/simulations.json]
 historique:
 - >-
   2026-10-13 — née avec l'action 119 : les huit taux spécifiques que la fiche
   `cultes_retraite_complementaire` laissait à relire, lus dans toutes les
   circulaires de cotisations que la CAVIMAC publie, et que rien de publié ne
   définit.
-textes_a_rattacher:
-- reference: >-
-    CAVIMAC, circulaire n° 2021/04 du 15 octobre 2021, cotisations « à compter
-    de l'échéance du 15 novembre 2021 (au titre du mois d'octobre 2021) », hors
-    JORF : la première qui énumère les huit taux spécifiques
-  citation: >-
-    « Les taux de cotisation demeurent, eux, inchangés » ; « Tous cultes - taux
-    spécifique n° 1 1 589 11,13% » […] « Tous cultes - taux spécifique n° 8
-    1 589 21,31% »
-  lu_le: 2026-10-13
-  empreinte: sha256:0c191c0d44bc6d1987bd55eb6be30b1da4bb54a732f14a90bedc304f1346a456
-- reference: >-
-    CAVIMAC, circulaire n° 2026/03 du 27 mai 2026, cotisations « à compter du
-    1er juin 2026 », hors JORF : la dernière
-  citation: >-
-    « Tous cultes - taux spécifique n° 1 1 867 11,13% 208 » ; « n° 2 1 867
-    12,00% 224 » ; « n° 3 1 867 13,06% 244 » ; « n° 4 1 867 14,30% 267 » ;
-    « n° 5 1 867 15,27% 285 » ; « n° 6 1 867 17,21% 321 » ; « n° 7 1 867
-    18,83% 352 » ; « n° 8 1 867 21,31% 398 »
-  lu_le: 2026-10-13
-  empreinte: sha256:7cb68acf8170f440047f8c531ec8547da8b628a3e61a761e15f5b1580567b35e
-- reference: >-
-    CAVIMAC, circulaires n° 2020/01 du 17 janvier 2020 et n° 2021/01 du 15
-    janvier 2021, hors JORF, images numérisées : avant les huit taux, un seul
-  citation: >-
-    « Taux contractuel de référence » « 10, 02 % » ; « Part collective (60%) » ;
-    « Part personnelle (40 %) »
-  lu_le: 2026-10-13
-  empreinte: >-
-    sha256:c6bffbf68ced8681401e4491b83c4affab9e65b71d1174c0879aaad24050b6af (n° 2020/01),
-    sha256:c6073e2197e5b868e34252bed4a5b826edc45002bea99b18c2d22ec787c0134b (n° 2021/01)
+- >-
+  2026-10-19 — action 130 : les circulaires lues, coupées en trois versions de la période
+  de cotisation ; les conventions de la CAVIMAC avec l'Arrco, non publiées, passent aux
+  textes à relire. Le modèle n'en change pas.
+textes_a_relire:
 - reference: >-
     les conventions de partenariat de la CAVIMAC avec les institutions de
     l'Arrco, depuis 2006, non publiées ; l'espace partenaires de la CAVIMAC en
