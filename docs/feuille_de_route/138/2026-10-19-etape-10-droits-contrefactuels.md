@@ -45,8 +45,8 @@ du 28 février 2025 et du 31 décembre 2025 ; L. 161-17-3 dans celles de 2014, d
   l'une d'elles ne la redemanderait pas. Les durées des deux états
   existaient : `duree_requise_avant_reforme_2023.csv`,
   `duree_requise_avant_suspension.csv`. Les fiches `age_legal_par_generation` et
-  `duree_requise_par_generation` disent l'usage ; le cliquet des textes descend
-  à 9 639 rédactions sans statut, dont deux que la première cite.
+  `duree_requise_par_generation` disent l'usage ; deux rédactions que la première
+  cite prennent un statut, et le cliquet des textes descend d'autant.
 - La page des résultats : le dépliant « Avec ou sans la réforme de 2023 »
   (`avecOuSansLaReforme`, `pages.js`), après « Partir plus tôt ou plus tard ».
   Pour chaque état du droit, les deux premiers départs de l'estimation
