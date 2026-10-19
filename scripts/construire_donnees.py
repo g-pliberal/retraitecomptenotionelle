@@ -131,7 +131,7 @@ CALIBRATIONS = DONNEES / "derive" / "calibrations_mortalite.json"
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas : le site
 #: attend la sienne (``VERSION_PAQUET``, ``moteur/js/contexte.js``), et redemande
 #: au serveur un paquet qui n'a pas celle-là, depuis le 11 octobre 2026.
-VERSION = 27
+VERSION = 28
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -2370,8 +2370,9 @@ def _agregats(contexte=None, paquet: bytes | None = None) -> dict:
     from retraite_notionnelle.bilan_compte import Reserves, bilans_gardes
     from retraite_notionnelle.donnees.agregats import (
         figer_avantages, figer_bilan_compte, figer_cas_types, figer_cout, figer_departs,
-        figer_variantes,
+        figer_leviers, figer_variantes,
     )
+    from retraite_notionnelle.leviers import leviers_du_modele
     from retraite_notionnelle import memoire, pont
     from retraite_notionnelle.web.site import module
 
@@ -2462,6 +2463,13 @@ def _agregats(contexte=None, paquet: bytes | None = None) -> dict:
         "bilan_compte": figer_bilan_compte(
             bilans_gardes(contexte, reserves.derniere_annee(), list(pages.SCENARIOS_MONTRES)),
             reserves.rendement(reserves.derniere_annee())),
+        # LES LEVIERS DE L'ÉQUILIBRE, À LA MANIÈRE DU COR (action 138, étape
+        # 3) : ce que la pension, le taux de prélèvement ou l'âge devrait
+        # faire, seul, pour équilibrer chaque système chaque année, et
+        # l'ajustement immédiat qui l'équilibrerait en moyenne jusqu'à chaque
+        # horizon du COR. Lus sur le bilan du coût, que ``memoire`` garde.
+        "leviers": figer_leviers({scenario: leviers_du_modele(contexte.base, scenario)
+                                  for scenario in pages.SCENARIOS_MONTRES}),
     }
 
 

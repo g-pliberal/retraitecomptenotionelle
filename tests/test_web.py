@@ -3834,6 +3834,75 @@ def test_la_page_cout_montre_le_bilan_du_compte_de_chaque_systeme():
     assert f"rapporté {g.pourcentage(bilan.rendement, decimales=1)} en {bilan.annee}" in texte
 
 
+def _ecart_signe(valeur: float, decimales: int) -> str:
+    """« +3,0 » ou « -2,5 », sans signe quand l'arrondi tombe sur zéro."""
+    texte = g.nombre(abs(valeur), decimales)
+    if texte == g.nombre(0.0, decimales):
+        return texte
+    return ("+" if valeur > 0 else "-") + texte
+
+
+def test_la_page_cout_donne_les_trois_leviers_de_l_equilibre():
+    """Sous le coefficient d'équilibre, les trois leviers qui feraient tomber
+    une année juste, à la manière du COR (action 138, étape 3) : rogner la
+    pension, relever le taux de prélèvement, reculer l'âge, pour chacun des
+    quatre systèmes, aux années ``ANNEES_LEVIERS``, tels que la table figée
+    les porte ; une case vide quand nul âge des bornes cherchées n'équilibre
+    l'année, et la page dit ces bornes ; et l'ajustement immédiat qui
+    équilibrerait en moyenne jusqu'à l'horizon, le « tax gap » du COR, pour
+    le système actuel et pour la proposition."""
+    from retraite_notionnelle.config import RACINE_DONNEES
+    from retraite_notionnelle.donnees.agregats import charger_agregats
+
+    leviers = charger_agregats(RACINE_DONNEES).leviers
+    fin = leviers.annees[-1]
+    assert pages.ANNEES_LEVIERS[-1] == fin
+    corps = rendre("/cout", {})[1]
+    section = re.search(r'<details class="section" id="cout-equilibre">.*?</details>',
+                        corps, re.S)
+    assert section, "la page Coût n'a pas la section du coefficient d'équilibre"
+    tableau = re.search(r"<caption><span>Ce que chaque levier, seul, devrait faire"
+                        r".*?</table>", section.group(0), re.S)
+    assert tableau, "les leviers n'ont pas leur tableau"
+    entetes = re.findall(r'<th class="[^"]*" scope="col">(.*?)</th>', tableau.group(0))
+    assert entetes[1:] == [f"{levier} {annee}" for annee in pages.ANNEES_LEVIERS
+                           for levier in ("Pension", "Taux", "Âge")]
+    lignes = re.findall(r'<tr><th class="" scope="row">(\d)\. .*?</th>(.*?)</tr>',
+                        tableau.group(0), re.S)
+    assert [numero for numero, _ in lignes] == ["1", "2", "3", "4"]
+
+    def unite(valeur: float, mot: str) -> str:
+        return mot + ("s" if abs(valeur) >= 2 else "")
+
+    vides = 0
+    for (scenario, _), (_, cellules) in zip(pages.SCENARIOS_COMPARES, lignes):
+        attendues = []
+        for annee in pages.ANNEES_LEVIERS:
+            ligne = leviers.annee(scenario, annee)
+            points = 100 * ligne.prelevement
+            attendues += [
+                f"{_ecart_signe(100 * ligne.pension, 0)}\u202f%",
+                f"{_ecart_signe(points, 1)}\u202f{unite(points, 'point')}",
+                "—" if ligne.age is None
+                else f"{_ecart_signe(ligne.age, 1)}\u202f{unite(ligne.age, 'an')}",
+            ]
+            vides += ligne.age is None
+        assert re.findall(r'<td class="nombre">(.*?)</td>', cellules) == attendues, scenario
+    # Les retours à la ligne de la source, et eux seuls : l'espace fine est un
+    # blanc pour ``\s``.
+    texte = re.sub(r"[ \n]+", " ", section.group(0))
+    actuel, proposition = (leviers.horizon(scenario, fin).tax_gap
+                           for scenario in ("actuel", "notionnel_liberal"))
+    assert (f"de {leviers.debut} à {fin}, le « tax gap » du COR, vaut "
+            f"{_ecart_signe(100 * actuel, 1)}\u202f{unite(100 * actuel, 'point')} de taux "
+            f"pour le système actuel, {_ecart_signe(100 * proposition, 1)} pour la "
+            "proposition") in texte
+    bas, haut = leviers.recul
+    bornes = (f"aucun âge, de {g.nombre(-bas, 0)} ans plus tôt à {g.nombre(haut, 0)} ans "
+              "plus tard, n'équilibrerait l'année")
+    assert (bornes in texte) == bool(vides)
+
+
 def test_la_page_cout_dit_ce_que_chaque_ministere_verse_au_compte_pensions():
     """La figure 3B du jaune « Pensions » du PLF 2027, que le document trace
     sans en imprimer une valeur, se lit dans le dépliant des ressources :

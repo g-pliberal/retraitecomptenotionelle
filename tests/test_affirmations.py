@@ -2204,6 +2204,29 @@ def _(m: Modele):
     assert m.cout.dette_derive.horizon(scenario) > m.cout.dette.horizon(scenario)
 
 
+@controle("leviers_du_cor")
+def _(m: Modele):
+    # Le classeur du COR (figure 2.24) donne, chaque année, la trajectoire
+    # spontanée de chaque levier et son niveau d'équilibre ; le levier est leur
+    # écart, ou leur rapport pour la pension. Les écarts du 19 octobre 2026 :
+    # 0,05 an, 0,07 point de taux et 0,7 point de pension au plus.
+    from retraite_notionnelle.leviers import leviers_du_modele
+
+    cor = json.loads((RACINE / "tests" / "temoins" / "cor_leviers_2026.json").read_text(
+        encoding="utf-8"))["leviers"]
+    annuels = leviers_du_modele(m.base, "actuel").annuels
+    for annee in range(2030, 2071):
+        cle, modele = str(annee), annuels[annee]
+        age = cor["age"]["equilibre"][cle] - cor["age"]["spontane"][cle]
+        taux = (cor["taux_prelevement"]["equilibre"][cle]
+                - cor["taux_prelevement"]["spontane"][cle])
+        pension = (cor["pension_relative"]["equilibre"][cle]
+                   / cor["pension_relative"]["spontane"][cle] - 1.0)
+        assert abs(modele.pension - pension) < 0.01, (annee, modele.pension, pension)
+        assert abs(modele.prelevement - taux) < 0.001, (annee, modele.prelevement, taux)
+        assert abs(modele.age - age) < 0.1, (annee, modele.age, age)
+
+
 @controle("trajectoire_du_cor")
 def _(m: Modele):
     comptes = m.contexte.comptes()

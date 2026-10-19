@@ -10988,6 +10988,7 @@ du PIB et un coefficient de
 ${g.nombre(c.soldeDerive.annee(c.soldeDerive.derniereAnnee)
     .coefficient("notionnel_liberal"), 2)} en ${solde.derniereAnnee} : le
 dépliant des quatre systèmes donne la fourchette.</p>
+${coutLeviers(contexte)}
 
 <div class="note"><strong>Dix-huit pour cent de quoi ?</strong> Le système 4
 remplace tous les taux de cotisation par un seul, parts salariale et patronale
@@ -11023,6 +11024,87 @@ sont toutes deux calculées, et la page a retenu la plus sévère.</div>
 
 ${noteLectureCoefficient(reglageProposition(solde))}
 `, "cout-equilibre");
+}
+
+/**
+ * Les années où la page Coût montre les leviers de l'équilibre : le milieu de
+ * la transition et l'horizon. La table les porte toutes, de 2025 à 2070 ; la
+ * fabrique n'en lit rien.
+ */
+export const ANNEES_LEVIERS = [2050, 2070];
+
+/** Un écart signé, « +3,0 » ou « -2,5 », sans signe quand l'arrondi tombe sur zéro. */
+function ecartSigne(valeur, decimales) {
+  const texte = g.nombre(Math.abs(valeur), decimales);
+  if (texte === g.nombre(0, decimales)) return texte;
+  return `${valeur > 0 ? "+" : "-"}${texte}`;
+}
+
+/** « +5,6 points », « +0,1 point » : l'unité au pluriel à partir de deux. */
+function avecUnite(valeur, decimales, mot) {
+  return `${ecartSigne(valeur, decimales)}${"\u202f"}${mot}${Math.abs(valeur) >= 2 ? "s" : ""}`;
+}
+
+/**
+ * Les trois leviers qui feraient tomber une année juste, à la manière du COR
+ * (rapport de juin 2026, figure 2.24 et tableau 2.11 ; action 138, étape 3) :
+ * rogner toutes les pensions — le coefficient d'équilibre, moins un —,
+ * relever le taux de prélèvement, ou reculer l'âge effectif de départ. La
+ * table les porte chaque année pour chaque système, et l'ajustement immédiat
+ * qui équilibrerait en moyenne jusqu'à chaque horizon (`leviers`) ; la page
+ * en montre `ANNEES_LEVIERS` et l'horizon, sans en refaire aucune opération.
+ * Le classeur du COR n'alimente aucun chiffre : la page dit seulement que le
+ * modèle le retrouve, ce que le catalogue des affirmations contrôle.
+ */
+function coutLeviers(contexte) {
+  const leviers = contexte.agregats().leviers;
+  const fin = leviers.annees[leviers.annees.length - 1];
+  let vides = 0;
+  const lignes = SCENARIOS_COMPARES.map(([scenario, libelle]) => [
+    nomScenario(scenario, libelle),
+    ...ANNEES_LEVIERS.flatMap((annee) => {
+      const ligne = leviers.annee(scenario, annee);
+      if (ligne.age === null) vides += 1;
+      return [
+        `${ecartSigne(100 * ligne.pension, 0)}${"\u202f"}%`,
+        avecUnite(100 * ligne.prelevement, 1, "point"),
+        ligne.age === null ? "—" : avecUnite(ligne.age, 1, "an"),
+      ];
+    }),
+  ]);
+  const ecart = (scenario) => 100 * leviers.horizon(scenario, fin).taxGap;
+  const [reculMinimal, reculMaximal] = leviers.recul;
+  const caseVide = vides === 0 ? "" : ` Une case vide : aucun âge, de
+${g.nombre(-reculMinimal, 0)} ans plus tôt à ${g.nombre(reculMaximal, 0)} ans plus tard,
+n'équilibrerait l'année.`;
+  return `
+<h4>Rogner, prélever plus ou partir plus tard</h4>
+<p>Le coefficient n'est que l'un des trois leviers qui feraient tomber une
+année juste, ceux que le Conseil d'orientation des retraites chiffre chaque
+année pour le système actuel : rogner toutes les pensions, relever le taux de
+prélèvement sur les revenus d'activité, ou reculer l'âge effectif de départ,
+ce qui retire des retraités et ajoute des cotisants. Chacun est chiffré seul,
+les deux autres laissés où ils sont, et mécaniquement : partir plus tard ne
+change pas la pension de qui part, et prélever davantage n'ôte rien au
+PIB.</p>
+${g.tableau(
+    ["Système", ...ANNEES_LEVIERS.flatMap((annee) => [
+      `Pension ${annee}`, `Taux ${annee}`, `Âge ${annee}`])],
+    lignes,
+    ["", ...ANNEES_LEVIERS.flatMap(() => ["nombre", "nombre", "nombre"])],
+    "Ce que chaque levier, seul, devrait faire pour que l'année tombe juste : "
+    + "la pension, le taux de prélèvement, en points de revenu d'activité, et "
+    + "l'âge effectif de départ, en années de plus ou de moins",
+    true,
+  )}
+<p class="discret"><strong>Pour le système actuel, le COR trouve les mêmes
+leviers.</strong> Chaque année de 2030 à 2070, ceux du modèle sont les siens à
+un point de pension, un dixième de point de taux et un dixième d'année près
+(rapport de juin 2026, figure 2.24). L'ajustement immédiat et durable qui
+équilibrerait en moyenne les années de ${leviers.debut} à ${fin}, le « tax
+gap » du COR, vaut ${avecUnite(ecart("actuel"), 1, "point")} de taux pour le
+système actuel, ${ecartSigne(ecart("notionnel_liberal"), 1)} pour la
+proposition.${caseVide}</p>`;
 }
 
 /**

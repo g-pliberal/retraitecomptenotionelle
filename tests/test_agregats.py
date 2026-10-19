@@ -497,3 +497,73 @@ def test_les_deux_lecteurs_lisent_le_meme_bilan_du_compte(montres):
         lu, systeme = js.systeme(scenario), fige.systeme(scenario)
         for champ in agregats.CHAMPS_BILAN_COMPTE:
             assert getattr(lu, champ) == getattr(systeme, champ), (scenario, champ)
+
+
+# -- les leviers de l'équilibre, à la manière du COR ------------------------------
+
+
+@pytest.fixture(scope="module")
+def leviers(contexte, montres):
+    from retraite_notionnelle.leviers import leviers_du_modele
+
+    return {scenario: leviers_du_modele(contexte.base, scenario) for scenario in montres}
+
+
+def test_les_leviers_figes_sont_ceux_que_le_modele_calcule(leviers, montres):
+    """La table porte les trois leviers qui équilibreraient chaque système
+    (action 138, étape 3) — la pension, le taux de prélèvement, l'âge —,
+    chaque année de 2025 à 2070, et ses écarts sur les horizons du COR, le
+    pension gap et le tax gap, tels que ``leviers.leviers_du_modele`` les
+    calcule. Un âge que nul recul des bornes cherchées ne donne reste
+    ``None`` : le système 2, qui encaisse plus qu'il ne sert. Le lecteur n'en
+    refait aucune opération."""
+    from dataclasses import fields
+
+    from retraite_notionnelle.leviers import (
+        DEBUT_AJUSTEMENT, HORIZONS_COR, RECUL_MAXIMAL, RECUL_MINIMAL, EcartsSurHorizon,
+        Leviers,
+    )
+
+    assert {champ.name for champ in fields(Leviers)} - {"annee"} == set(
+        agregats.CHAMPS_LEVIERS)
+    assert {champ.name for champ in fields(EcartsSurHorizon)} - {"debut", "fin"} == set(
+        agregats.CHAMPS_ECARTS_HORIZON)
+    fige = AGREGATS.leviers
+    assert fige.debut == DEBUT_AJUSTEMENT
+    assert fige.horizons == HORIZONS_COR
+    assert fige.recul == (RECUL_MINIMAL, RECUL_MAXIMAL)
+    assert set(leviers) == set(montres)
+    for scenario in montres:
+        assert fige.annees == tuple(sorted(leviers[scenario].annuels)), scenario
+        for annee, ligne in leviers[scenario].annuels.items():
+            lu = fige.annee(scenario, annee)
+            for champ in agregats.CHAMPS_LEVIERS:
+                assert getattr(lu, champ) == getattr(ligne, champ), (scenario, annee, champ)
+        for fin, ecart in leviers[scenario].horizons.items():
+            lu = fige.horizon(scenario, fin)
+            for champ in agregats.CHAMPS_ECARTS_HORIZON:
+                assert getattr(lu, champ) == getattr(ecart, champ), (scenario, fin, champ)
+    assert fige.annee("notionnel_retroactif", fige.annees[-1]).age is None
+    with pytest.raises(KeyError, match="absent de la table figée"):
+        fige.annee("notionnel_bascule", fige.annees[-1])
+    with pytest.raises(KeyError, match="absent de la table figée"):
+        fige.annee("actuel", fige.annees[-1] + 1)
+    with pytest.raises(KeyError, match="absent de la table figée"):
+        fige.horizon("actuel", 2040)
+
+
+@sans_node
+def test_les_deux_lecteurs_lisent_les_memes_leviers(montres):
+    js = site().contexte.agregats().leviers
+    fige = AGREGATS.leviers
+    assert (js.debut, tuple(js.annees), tuple(js.horizons), tuple(js.recul)) == (
+        fige.debut, fige.annees, fige.horizons, fige.recul)
+    for scenario in montres:
+        for annee in fige.annees:
+            lu, ligne = js.annee(scenario, annee), fige.annee(scenario, annee)
+            for champ in agregats.CHAMPS_LEVIERS:
+                assert getattr(lu, champ) == getattr(ligne, champ), (scenario, annee, champ)
+        for fin in fige.horizons:
+            lu, ecart = js.horizon(scenario, fin), fige.horizon(scenario, fin)
+            for champ in agregats.CHAMPS_ECARTS_HORIZON:
+                assert getattr(lu, champ) == getattr(ecart, champ), (scenario, fin, champ)

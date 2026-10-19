@@ -1054,6 +1054,87 @@ class BilanCompteFige:
         return BilanSystemeFige(_lire(self._systemes, scenario, "système"))
 
 
+# -- les leviers de l'équilibre ------------------------------------------------
+
+#: Ce que la table porte des leviers d'une année (``leviers.Leviers``) et des
+#: écarts d'un horizon (``leviers.EcartsSurHorizon``), sous leurs noms.
+CHAMPS_LEVIERS = ("pension", "prelevement", "age")
+CHAMPS_ECARTS_HORIZON = ("pension_gap", "tax_gap")
+
+
+def figer_leviers(leviers: dict) -> dict:
+    """Les trois leviers qui équilibreraient chaque système chaque année, et
+    ses écarts sur les horizons du COR (``leviers``, par système, ce que
+    ``leviers.leviers_du_modele`` rend). Tous les systèmes ont les mêmes
+    années et les mêmes horizons, qui partent tous de la même année ; l'âge
+    d'une année que nul recul des bornes cherchées n'équilibre reste ``None``,
+    et la table porte ces bornes."""
+    from ..leviers import RECUL_MAXIMAL, RECUL_MINIMAL
+
+    annees = {tuple(sorted(systeme.annuels)) for systeme in leviers.values()}
+    horizons = {tuple(sorted(systeme.horizons)) for systeme in leviers.values()}
+    debuts = {ecart.debut for systeme in leviers.values() for ecart in systeme.horizons.values()}
+    if len(annees) != 1 or len(horizons) != 1 or len(debuts) != 1:
+        raise ValueError(f"les systèmes n'ont pas les mêmes années : {annees}, {horizons}, "
+                         f"{debuts}")
+    return {
+        "debut": debuts.pop(),
+        "annees": list(annees.pop()),
+        "horizons": list(horizons.pop()),
+        "recul": [RECUL_MINIMAL, RECUL_MAXIMAL],
+        "systemes": {
+            scenario: {
+                "annuels": {str(annee): {champ: getattr(ligne, champ)
+                                         for champ in CHAMPS_LEVIERS}
+                            for annee, ligne in sorted(systeme.annuels.items())},
+                "horizons": {str(fin): {champ: getattr(ecart, champ)
+                                        for champ in CHAMPS_ECARTS_HORIZON}
+                             for fin, ecart in sorted(systeme.horizons.items())},
+            }
+            for scenario, systeme in leviers.items()},
+    }
+
+
+class LeviersAnnuelsFiges(_Ligne):
+    """Les leviers d'un système une année, sous les noms de ``leviers.Leviers``."""
+
+    def __init__(self, brut: dict) -> None:
+        super().__init__(brut, CHAMPS_LEVIERS)
+
+
+class EcartsHorizonFiges(_Ligne):
+    """Les écarts d'un système sur un horizon, sous les noms de
+    ``leviers.EcartsSurHorizon``."""
+
+    def __init__(self, brut: dict) -> None:
+        super().__init__(brut, CHAMPS_ECARTS_HORIZON)
+
+
+class LeviersFiges:
+    """Ce que chaque levier, seul, devrait faire pour équilibrer chaque système
+    chaque année — rogner la pension, relever le taux de prélèvement, reculer
+    l'âge —, et l'ajustement immédiat qui l'équilibrerait en moyenne depuis
+    ``debut`` jusqu'à chaque horizon du COR (action 138, étape 3). La page Coût
+    les met sous le coefficient d'équilibre."""
+
+    def __init__(self, brut: dict) -> None:
+        self._systemes = brut["systemes"]
+        self.debut: int = int(brut["debut"])
+        self.annees: tuple[int, ...] = tuple(int(annee) for annee in brut["annees"])
+        self.horizons: tuple[int, ...] = tuple(int(fin) for fin in brut["horizons"])
+        #: Les bornes du recul cherché, en années, hors desquelles l'âge vaut
+        #: ``None``.
+        self.recul: tuple[float, float] = tuple(brut["recul"])
+
+    def annee(self, scenario: str, annee: int) -> LeviersAnnuelsFiges:
+        annuels = _lire(self._systemes, scenario, "système")["annuels"]
+        return LeviersAnnuelsFiges(_lire(annuels, str(annee), "année"))
+
+    def horizon(self, scenario: str, fin: int) -> EcartsHorizonFiges:
+        horizons = _lire(self._systemes, scenario, "système")["horizons"]
+        return EcartsHorizonFiges(_lire(horizons, str(fin), "horizon"))
+
+
 # -- la table ------------------------------------------------------------------
 
 
@@ -1069,6 +1150,7 @@ class AgregatsFiges:
     fecondite: VariantesFigees
     migrations: VariantesFigees
     bilan_compte: BilanCompteFige
+    leviers: LeviersFiges
 
 
 def depuis_dictionnaire(donnees: dict) -> AgregatsFiges:
@@ -1082,6 +1164,7 @@ def depuis_dictionnaire(donnees: dict) -> AgregatsFiges:
         fecondite=VariantesFigees(donnees["fecondite"]),
         migrations=VariantesFigees(donnees["migrations"]),
         bilan_compte=BilanCompteFige(donnees["bilan_compte"]),
+        leviers=LeviersFiges(donnees["leviers"]),
     )
 
 

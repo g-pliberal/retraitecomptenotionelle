@@ -1260,6 +1260,21 @@ affirmations:
     etat: verifiee
     controle: note_du_coefficient_suit_son_signe
 
+  # Les trois leviers de l'équilibre, sous le coefficient (action 138, étape
+  # 3) : le classeur du COR est au statut `controle`, il n'alimente aucun
+  # chiffre de la page, qui dit seulement que le modèle le retrouve.
+  - id: cout.leviers_du_cor
+    page: /cout
+    extrait: "Pour le système actuel, le COR trouve les mêmes leviers."
+    porte: >-
+      chaque année de 2030 à 2070, la baisse de la pension, le relèvement du taux
+      de prélèvement et le recul de l'âge qui équilibreraient le système actuel,
+      tels que le modèle les chiffre, sont ceux de la figure 2.24 du rapport du
+      COR de juin 2026 à un point de pension, un dixième de point de taux et un
+      dixième d'année près
+    etat: verifiee
+    controle: leviers_du_cor
+
   - id: cout.total_des_ressources
     page: /cout
     extrait: "Total des ressources"

@@ -604,12 +604,52 @@ export class BilanCompteFige {
   }
 }
 
+// -- les leviers de l'équilibre ------------------------------------------------
+
+/**
+ * Ce que la table porte des leviers d'une année (`leviers.Leviers`) et des
+ * écarts d'un horizon (`leviers.EcartsSurHorizon`).
+ */
+const CHAMPS_LEVIERS = ["pension", "prelevement", "age"];
+const CHAMPS_ECARTS_HORIZON = ["pension_gap", "tax_gap"];
+
+/**
+ * Ce que chaque levier, seul, devrait faire pour équilibrer chaque système
+ * chaque année — rogner la pension, relever le taux de prélèvement, reculer
+ * l'âge —, et l'ajustement immédiat qui l'équilibrerait en moyenne depuis
+ * `debut` jusqu'à chaque horizon du COR (action 138, étape 3). L'âge d'une
+ * année que nul recul de `recul` n'équilibre vaut `null`. `figer_leviers`
+ * (`donnees/agregats.py`) l'écrit.
+ */
+export class LeviersFiges {
+  constructor(brut) {
+    this._systemes = brut.systemes;
+    this.debut = Number(brut.debut);
+    this.annees = brut.annees.map(Number);
+    this.horizons = brut.horizons.map(Number);
+    /** Les bornes du recul cherché, en années, hors desquelles l'âge vaut `null`. */
+    this.recul = brut.recul.map(Number);
+  }
+
+  /** Les leviers d'un système une année : `pension`, `prelevement`, `age`. */
+  annee(scenario, annee) {
+    const annuels = lire(this._systemes, scenario, "système").annuels;
+    return champs(lire(annuels, String(annee), "année"), CHAMPS_LEVIERS);
+  }
+
+  /** Les écarts d'un système sur un horizon : `pensionGap`, `taxGap`. */
+  horizon(scenario, fin) {
+    const horizons = lire(this._systemes, scenario, "système").horizons;
+    return champs(lire(horizons, String(fin), "horizon"), CHAMPS_ECARTS_HORIZON);
+  }
+}
+
 // -- la table -----------------------------------------------------------------
 
 /** Ce que les trois pages qui agrègent lisent, tel que la table le porte. */
 export class AgregatsFiges {
   constructor(casTypes, avantages, classement, cout, esperanceVie, fecondite, migrations,
-    bilanCompte) {
+    bilanCompte, leviers) {
     this.casTypes = casTypes;
     this.avantages = avantages;
     this.classement = classement;
@@ -618,6 +658,7 @@ export class AgregatsFiges {
     this.fecondite = fecondite;
     this.migrations = migrations;
     this.bilanCompte = bilanCompte;
+    this.leviers = leviers;
   }
 }
 
@@ -632,5 +673,6 @@ export function chargerAgregats(donnees) {
     new VariantesFigees(donnees.fecondite),
     new VariantesFigees(donnees.migrations),
     new BilanCompteFige(donnees.bilan_compte),
+    new LeviersFiges(donnees.leviers),
   );
 }

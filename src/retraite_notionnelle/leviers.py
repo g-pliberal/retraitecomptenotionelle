@@ -21,6 +21,9 @@ année, pour une pension (:class:`~.cout.PensionFinancee`), et écartait l'âge
 système, sur le bilan que ``cout.py`` calcule, sans y toucher, et les horizons ;
 ``tests/test_leviers.py`` se confronte au COR
 (``tests/temoins/cor_leviers_2026.json``, ``scripts/fetch/cor_leviers.py``).
+La table du paquet les fige sous la référence pour la page Coût (``leviers``
+d'``agregats.json``, depuis le 19 octobre 2026), qui les met sous le
+coefficient d'équilibre.
 
 LA PENSION ET LE PRÉLÈVEMENT se lisent dans le bilan : l'équilibre de l'année
 multiplie les pensions par le coefficient de ``SoldeAnnuel`` — la pension
