@@ -96,11 +96,21 @@ approximations:
   effet: non mesuré
 - version: quatre_taux
   ecart: >-
+    Un quart de part majore chaque seuil de la moitié d'une demi-part, sans l'arrondir :
+    2 277,50 € au taux réduit, que l'instruction de la DSS du 11 décembre 2025 arrondit à
+    2 278 € (annexe 2), comme L. 136-8, III ter, arrondit ses seuils, « la fraction
+    d'euro égale à 0,50 étant comptée pour 1 ». À 1,25 part, un revenu fiscal de 19 335 €
+    reste au taux réduit pour la caisse, et passe au taux médian au dépôt.
+  effet: >-
+    un euro de revenu fiscal, au seul seuil du taux réduit, à 1,25, 1,75, 2,25 et 2,75
+    parts ; les deux autres majorations, 3 484 € et 7 066 €, se partagent sans reste
+- version: quatre_taux
+  ecart: >-
     Les cinq scénarios notionnels gardent le taux de la personne au scénario 1 : une
     hypothèse, que la page dit, décidée le 4 octobre 2026 par le propriétaire.
   effet: le net de chaque scénario garde le rapport de son brut à celui du scénario 1
 sources:
-  lu_le: 2026-10-04
+  lu_le: 2026-10-19
   prochaine_relecture: 2027-01-15
   lectures_divergentes:
   - >-
@@ -155,6 +165,20 @@ sources:
       ceux de L. 136-8 revalorisés chaque année au III ter, arrondis à l'euro
     date: 2026-10-05
     url: https://www.agirc-arrco.fr/storage/2026-Calculette-determination-fiscale-clients-V3.html
+  - type: autre
+    reference: >-
+      Instruction de la direction de la sécurité sociale du 11 décembre 2025, « Modalités
+      d'assujettissement des prélèvements sociaux sur les revenus de remplacement
+      applicables au 1er janvier 2026 », lue le 19 octobre 2026 à l'action 89, que cite
+      `retraites_2027` : en annexe 2, les seuils de 2026 de la métropole, 13 048, 17 057 et
+      26 472 € pour la première part, majorés de 3 484, 4 555 et 7 066 € par demi-part et
+      de 1 742, 2 278 et 3 533 € par quart de part, de 1 à 3 parts, ceux de la Guadeloupe,
+      de la Martinique et de La Réunion (15 437 et 18 661 €) et de la Guyane et de Mayotte
+      (16 141 et 19 546 €) ; le taux réduit au revenu « supérieur à » 13 048 €, le médian
+      « supérieur à » 17 057 €, le plein « égal ou supérieur à » 26 472 €, les bornes du
+      dépôt ; en annexe 3, le lissage par l'antépénultième année
+    date: 2025-12-11
+    url: https://legislation.lassuranceretraite.fr/Pdf/instruction_ministerielle_11122025.pdf
 textes_a_rattacher:
 - reference: L. 131-9 du code de la sécurité sociale, les non-résidents
 - reference: CGI, article 194, le quotient familial
@@ -181,6 +205,9 @@ referents:
   destinie_2: trois cas, sans le taux médian, et le revenu approché par les pensions
   euromod: les seuils de 2026 et leurs majorations par demi-part, sans le lissage
   simulateur_aurain: les seuils à plusieurs parts et le lissage sur deux ans
+  retraites_2027: >-
+    les seuils de 2026 à une et à deux parts, lus dans l'instruction de la DSS du 11
+    décembre 2025, ceux du dépôt
 historique:
 - >-
   2026-10-04 — née avec l'action 138, étape 2 : le dépôt retenait le taux plein pour tout
@@ -189,6 +216,11 @@ historique:
   2026-10-05 — relue à l'action 89 contre la calculette fiscale de l'Agirc-Arrco : mêmes
   taux, mêmes seuils, même lissage ; le quart de part y vaut une demi-majoration, et les
   deux moteurs, qui arrondissaient différemment le nombre de demi-parts, la suivent.
+- >-
+  2026-10-19 — relue à l'action 89 contre l'instruction de la DSS du 11 décembre 2025, que
+  cite `retraites_2027` : mêmes seuils, et les bornes du dépôt, dont celle du taux plein,
+  que la fiche F2971 comprenait au taux médian ; le quart de part y est arrondi à l'euro,
+  au taux réduit 2 278 € et non 2 277,50 €, une approximation de plus, d'un euro.
 effet: >-
   Tout retraité en mode net : un foyer d'une part sous 13 048 € de revenu fiscal n'est plus
   prélevé ; au salaire moyen, la pension passe du taux plein au taux médian.

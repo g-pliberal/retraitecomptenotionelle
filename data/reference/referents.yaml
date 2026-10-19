@@ -2455,6 +2455,9 @@ referents:
       - openfisca_arrco_oracle
       - openfisca_minimum_contributif
       - openfisca_parametres_generation
+      - openfisca_points_enfants_arrco_oracle
+      - openfisca_salaire_annuel_moyen_oracle
+      - openfisca_periodes_assimilees_oracle
     sas: [openfisca_france_pension]
     lu_le: 2026-10-14
     lu_dans:
@@ -2476,7 +2479,8 @@ referents:
       dernière activité en décembre 2024). Les témoins de l'Agirc et de
       l'Ircantec n'ont pas de ligne au manifeste : ils sortent de
       `scripts/fetch/openfisca_agirc.py` et `openfisca_ircantec.py`.
-      Ce dernier commit est `1c45423`.
+      Ce dernier commit est `1c45423`, encore sa tête le 19 octobre 2026 ; des
+      régimes spéciaux, ses paramètres n'ont que les cotisations de la SNCF.
 
   - id: leximpact
     nom: LexImpact (simulateur socio-fiscal)
@@ -2606,7 +2610,7 @@ referents:
       que le dépôt ne peut pas reproduire ; son dépôt de réformes pour
       2027 est en chantier.
     sas: [leximpact_reformes]
-    lu_le: 2026-10-04
+    lu_le: 2026-10-19
     lu_dans:
       - https://git.leximpact.dev/leximpact/simulateur-socio-fiscal/openfisca/openfisca-france-reforms
       - https://socio-fiscal.leximpact.an.fr/accueil
@@ -2618,7 +2622,13 @@ referents:
       avec OpenFisca et l'IPP). Son baromètre de l'application des lois suit
       la parution des décrets d'application, ce qui sert la veille.
       Comparé au dépôt le 1er octobre 2026 au commit `6e2fabf`
-      d'openfisca-france-reforms.
+      d'openfisca-france-reforms. Relu le 19 octobre 2026 (action 89) : sa
+      tête est passée le 7 octobre à `eb3dd8e`, qui met à jour ses paquets et
+      récrit l'abattement du PLF pour 2027 (`indu_plaf_abat_pen` devient
+      `abattement_pensions_retraites`), le plafond de 3 000 € par foyer des
+      retraites gardé (`abatpen/max_retraites.yaml`, au 1er janvier 2026) ;
+      les cas types de leximpact-socio-fiscal-openfisca-json n'ont pas bougé
+      depuis `15fe1cc` (tête `c7f5e45`).
 
   - id: taxipp
     nom: TAXIPP
@@ -2640,7 +2650,12 @@ referents:
       Des résultats publiés à retrouver : la note IPP n° 129 (septembre
       2026) chiffre l'abattement de 10 % à 5,4 Md€, la désindexation des
       pensions de base à 5,2 Md€, l'alignement de la CSG à 4,2 Md€, à
-      opposer au chiffrage du dépôt (`docs/chiffrage_plf.md`).
+      opposer au chiffrage du dépôt (`docs/chiffrage_plf.md`). Lue le 19
+      octobre 2026 : le dépôt ne chiffre aucune des trois mesures,
+      `docs/chiffrage_plf.md` chiffrant la proposition ; l'effet direct du gel,
+      6,6 Md€ sous 2,5 % d'inflation au 1er janvier 2027, dit environ 264 Md€
+      de pensions de base des retraités de 2026, une masse que la page Coût
+      peut opposer à la sienne (138.3).
     ecarts:
       - constat: >-
           Son taux de CSG des pensions vient d'un seul revenu fiscal
@@ -2673,6 +2688,12 @@ referents:
           injecte le revenu fiscal de Félin en N−1 et N−2
           (`simulation/scenarios/fideli_felin_dads/scenario.py:363-376`,
           au commit `28e2f0a`)
+        verification: >-
+          Le 14 octobre 2026 (138.3, quatrième partie), le dépôt tire de
+          la DREES le taux que les prélèvements sociaux prennent vraiment
+          à la masse des pensions, un moins la nette sur la brute
+          (`depense_nette.taux_effectifs`) : 6,8 % de 2020 à 2022. La page
+          Coût ne le lit pas encore.
         etat: a_reprendre
         chantier: "138.3"
       - quoi: >-
@@ -2716,9 +2737,10 @@ referents:
       données — un taux de CSG tiré du revenu fiscal réel, un recours à
       l'ASPA calé sur les allocataires observés. Le reste exige le CASD.
     sas: [ipp_taxipp]
-    lu_le: 2026-10-04
+    lu_le: 2026-10-19
     lu_dans:
       - https://gitlab.com/ipp/partage-public-ipp/taxipp
+      - https://www.ipp.eu/wp-content/uploads/2026/09/Note_contribution_retraites_129.pdf
       - https://github.com/openfisca/openfisca-france-data
       - https://drees.solidarites-sante.gouv.fr/communique-de-presse-jeux-de-donnees/241216_DATA_minimum-vieillesse-donnees-2023
     note: >-
@@ -2727,7 +2749,10 @@ referents:
       à relire avant tout usage. Sa version historique, TAXIPP 0.3, est en
       Stata, sans licence (`abozio/TAXIPP0-3`, 2013).
       Comparé au dépôt le 1er octobre 2026 au commit `28e2f0a`, avec
-      openfisca-france-data au commit `1a96eeb`.
+      openfisca-france-data au commit `1a96eeb`, encore leurs têtes le 19
+      octobre 2026. La note IPP n° 129 (P. Aubert, S. Duchesne et M. Tô) le
+      prend en version 2.4.2, enrichie du partage entre base et
+      complémentaire imputé de l'EIR, qui ne se lit qu'au CASD.
 
   - id: til_pension
     nom: TIL (TaxIPP-Life) et Til-Pension
@@ -8725,7 +8750,9 @@ referents:
       leviers budgétaires.
     confrontation: >-
       Des prélèvements à comparer : ses seuils de CSG citent l'instruction de
-      la DSS du 11 décembre 2025, et rejoignent ceux d'OpenFisca-France.
+      la DSS du 11 décembre 2025, et rejoignent ceux d'OpenFisca-France. Lue
+      le 19 octobre 2026, l'instruction donne en annexe 2 ceux du dépôt, à une
+      et à deux parts, et leurs bornes.
     ecarts:
       - constat: >-
           Il dit 29 % des retraités au taux plein de CSG, d'après la CFDT
@@ -8764,17 +8791,22 @@ referents:
     bilan: >-
       Son seul avantage reste le net par foyer (138.2), qui est déjà au
       registre. Rien d'autre ne fait mieux que le dépôt, et sa borne
-      d'impôt contient une erreur de calcul.
+      d'impôt contient une erreur de calcul. Il a mené le dépôt à
+      l'instruction de la DSS du 11 décembre 2025, qui confirme les seuils
+      de CSG de 2026 du dépôt et arrondit à l'euro la majoration d'un quart de part
+      (la fiche `csg_des_pensions_selon_le_revenu`).
     sas: [tilloy_retraites_2027]
-    lu_le: 2026-10-04
+    lu_le: 2026-10-19
     lu_dans:
       - https://github.com/AntoineTilloy/retraites-2027
+      - https://legislation.lassuranceretraite.fr/Pdf/instruction_ministerielle_11122025.pdf
     note: >-
       Dernier commit le 20 septembre 2026, en JavaScript.
       Comparé au dépôt le 1er octobre 2026 à ce commit, `431dd9f`. Son
       deuxième seuil d'impôt, 30 091 € (`params.js:62`), s'écarte des 30 171 €
       que donnent 29 579 € revalorisés de 2 % : un calcul, qu'aucun texte lu
-      ne tranche encore.
+      ne tranche encore. Le 19 octobre 2026 : l'écart ci-dessus le tranche,
+      par l'article 197 du CGI ; sa tête est encore `431dd9f`.
 
   - id: simulateur_aurain
     nom: Simulateur de dépense publique, volet retraites

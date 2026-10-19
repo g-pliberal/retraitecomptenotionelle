@@ -18,10 +18,13 @@ ne jouent qu'aux deux derniers taux, et l'allocataire de l'ASPA n'est prélevé
 de rien. Une pension de <!--chiffre:illustration()-->660<!--/--> € par mois, seule ressource d'une personne
 seule, n'est ainsi pas prélevée, comme le droit le veut.
 
-Trois choses restent approchées : une seule année de revenu, si bien que le
+Quatre choses restent approchées : une seule année de revenu, si bien que le
 lissage par l'antépénultième année ne joue pas ; ni les demi-parts des
 enfants à charge, des invalides ou des parents isolés ; les seuils de la
-métropole partout. Les cinq systèmes notionnels gardent le taux de la
+métropole partout ; et la majoration d'un quart de part, que la caisse
+arrondit à l'euro (instruction de la DSS du 11 décembre 2025) et le dépôt
+non, d'où un euro de revenu fiscal au seuil du taux réduit. Les cinq
+systèmes notionnels gardent le taux de la
 personne au système 1, et la page le dit sous la clé de lecture.
 
 **2. La cotisation maladie de <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.maladie_complementaire.taux*100)-->1<!--/--> % sur la retraite complémentaire est comptée

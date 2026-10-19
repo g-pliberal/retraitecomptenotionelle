@@ -1,0 +1,27 @@
+date: "2026-10-19"
+session: >-
+  l'action 89 : les neuf modèles du registre (OpenFisca-France-Pension,
+  LexImpact, TAXIPP, Saphir, ir-catala, EUROMOD, Scherrer, Corral, Tilloy),
+  leurs lignes du sas closes
+consulte: >-
+  La tête des neuf dépôts, par git ls-remote, et les deux commits de
+  LexImpact du 7 octobre 2026 ; la page de téléchargement d'EUROMOD ; la note
+  IPP n° 129 (septembre 2026) ; l'instruction de la direction de la sécurité
+  sociale du 11 décembre 2025 sur les prélèvements des revenus de
+  remplacement de 2026 (legislation.lassuranceretraite.fr), ses annexes 2 et
+  3 ; L. 136-8, III ter (LEGIARTI000054336623), dans l'index LEGI récupéré à
+  jour au 18 octobre 2026 ; la fiche csg_des_pensions_selon_le_revenu.
+trouve: >-
+  L'annexe 2 de l'instruction donne les seuils de 2026 du dépôt, pour une
+  part et par demi-part, et ses bornes : le taux plein au revenu « égal ou
+  supérieur à » 26 472 €, ce qui tranche contre la fiche F2971. Elle arrondit
+  à 2 278 € la majoration d'un quart de part au taux réduit, que le dépôt
+  garde à 2 277,50 € : un euro de revenu fiscal, à 1,25, 1,75, 2,25 et 2,75
+  parts, déclaré dans la fiche et dans docs/limites/5-ante-ter-net-et-brut.md,
+  sans être codé. Elle donne aussi les seuils de l'outre-mer, que le dépôt
+  n'applique pas. La note n° 129 concorde avec le dépôt sur l'abattement de
+  10 % (4 439 € et 454 €) et sur les seuils de 2025.
+reste: >-
+  Arrondir la majoration du quart de part dans les deux moteurs, une session
+  du modèle. Les seuils de l'outre-mer, quand une session lèvera
+  l'approximation de la métropole.

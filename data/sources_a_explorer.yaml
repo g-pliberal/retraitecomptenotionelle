@@ -1878,11 +1878,26 @@ sources:
       `openfisca_regime_general_oracle`). Ce qui reste à en tirer est le
       MOTEUR : régimes spéciaux, fonction publique, et les paramètres qu'aucun
       script du dépôt ne récupère encore.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-19"
     note: >-
       La page HTML de github.com répond 403 à travers le proxy de sortie ;
       `git ls-remote` et `git clone` passent (vérifié le 22 septembre 2026).
       Lire le dépôt cloné, pas le site.
+      Dépouillée le 19 octobre 2026 (action 89, lot des modèles du registre) :
+      sa tête est encore `1c45423`, du 13 mai 2026, le commit que l'action 153
+      a lu. Son moteur y a été confronté famille par famille, du temps partiel
+      des fonctionnaires aux périodes assimilées, ses sorties figées en
+      témoins (`tests/temoins/openfisca_*.json`) et rejouées contre le
+      scénario 1 : vingt-sept erreurs chez lui, quatre chez nous. Des régimes
+      spéciaux, il n'a que les taux de cotisation de la SNCF : il ne code que
+      le régime général, la fonction publique de l'État, la CNRACL, l'Arrco,
+      l'Agirc et l'Ircantec. Ses paramètres sont les barèmes de l'IPP,
+      recoupés table par table le 19 octobre 2026 (`baremes_ipp`). Ce qui en
+      reste est au registre des modèles, data/reference/referents.yaml
+      (`openfisca_france_pension`) : la trace des calculs (155.2), le
+      versionnage (156.1), la population (157.1), et les deux décisions du
+      propriétaire qui closent l'action 153.
 
   # ---- Urssaf : mon-entreprise -------------------------------------------
   # Le versant COTISATIONS, celui que le dépôt paie deux fois — assiettes et
@@ -3639,6 +3654,10 @@ sources:
       désaccord : la fiche écrit le taux médian « de 17 058 € à 26 472 €
       », seuil compris, quand le dépôt suit la loi, « inférieurs à » (L.
       136-8, III bis, 2°).
+      Tranché le 19 octobre 2026 (action 89, lot des modèles du registre) :
+      l'instruction de la DSS du 11 décembre 2025, que la caisse applique,
+      soumet au taux plein le revenu fiscal « égal ou supérieur à » 26 472 €
+      (annexe 2), comme le dépôt (`tilloy_retraites_2027`).
 
   - id: sp_f33841_micro_entrepreneur
     url: https://entreprendre.service-public.gouv.fr/vosdroits/F33841
@@ -5795,7 +5814,24 @@ sources:
       Les seize cas types de retraités, rangés par décile, et leurs
       prélèvements : de quoi confronter le taux uniforme de 9,1 % que le
       modèle applique aux pensions.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-19"
+    note: >-
+      Dépouillée le 19 octobre 2026 (action 89, lot des modèles du registre) :
+      lue le 4 octobre pour le registre des modèles,
+      data/reference/referents.yaml (`leximpact`), au commit `6e2fabf`. Sa
+      tête a avancé le 7 octobre, à `eb3dd8e` : des paquets mis à jour, et
+      l'abattement des pensions du PLF pour 2027 récrit
+      (`plf_plfss_2027/abattement_retraite.py`, la variable
+      `abattement_pensions_retraites` au lieu de `indu_plaf_abat_pen`), qui
+      garde aux retraites le plafond de 3 000 € par foyer. Ses seize cas types
+      de retraités (`custom/test_cases/` de
+      leximpact-socio-fiscal-openfisca-json) n'ont pas bougé depuis le commit
+      lu, `15fe1cc` ; leur confrontation au net du foyer a été coupée le 14
+      octobre 2026, légère ou nulle (138.2). Le taux uniforme de 9,1 % qu'elle
+      visait n'est plus celui du modèle, qui prend depuis le 4 octobre la
+      tranche de CSG du foyer, présumée ou dite (138.2). Ce qui en reste est
+      au registre : le codage des projets de loi pour 2027 (138.12).
 
   - id: ipp_taxipp
     url: https://gitlab.com/ipp/partage-public-ipp/taxipp
@@ -5806,7 +5842,25 @@ sources:
       Le chiffrage de la note IPP n° 129 (abattement de 10 %, désindexation
       des pensions de base, alignement de la CSG), à opposer à
       docs/chiffrage_plf.md.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-19"
+    note: >-
+      Dépouillée le 19 octobre 2026 (action 89, lot des modèles du registre) :
+      sa tête est encore `28e2f0a`, et celle d'openfisca-france-data
+      `1a96eeb`, les commits lus pour le registre des modèles,
+      data/reference/referents.yaml (`taxipp`). La note IPP n° 129 (P. Aubert,
+      S. Duchesne et M. Tô, septembre 2026), lue le même jour, chiffre pour
+      2027, par TAXIPP 2.4.2 enrichi de l'EIR, la suppression de l'abattement
+      de 10 % à 5,4 Md€, le gel des pensions de base à 6,6 Md€ d'économie
+      directe et 5,2 Md€ nets, l'alignement des taux médian et plein de la CSG
+      sur 9,2 % à 4,2 Md€. Rien à opposer dans docs/chiffrage_plf.md, qui
+      chiffre la proposition et aucune de ces trois mesures. Ses repères
+      concordent avec le dépôt : l'abattement de 4 439 € et 454 €, les quatre
+      taux, et les seuils de 2025, que le dépôt tient des barèmes de l'IPP :
+      une confirmation de la même famille. Laissé à la page Coût (138.3), au
+      registre : les 6,6 Md€ du gel, sous 2,5 % d'inflation, disent environ
+      264 Md€ de pensions de base des retraités de 2026, une masse à opposer à
+      la sienne.
 
   - id: ipp_til_pension
     url: https://github.com/TaxIPP-Life/Til-Pension
@@ -5974,10 +6028,22 @@ sources:
     a_en_tirer: >-
       La CSG, la CRDS, la CASA et le minimum vieillesse de 2017, codés par la
       DG Trésor : un recoupement daté du foyer et du net.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-19"
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
+      Dépouillée le 19 octobre 2026 (action 89, lot des modèles du registre) :
+      lue le 4 octobre pour le registre des modèles,
+      data/reference/referents.yaml (`saphir`), au commit `7bc72c9`, du 5
+      septembre 2018, son seul, encore sa tête. Ce qu'il fait mieux que le
+      dépôt est repris : la CSG des pensions selon le revenu fiscal et les
+      parts, l'ASPA du couple (138.2), l'impôt des pensions de 2016 et 2017
+      (138.5). Le recoupement daté tient : ses seuils de 2017 pour une part,
+      10 996 € et 14 375 €, sont ceux de `csg_pensions_seuils.csv`, lus dans
+      L. 136-8, III (LEGIARTI000033712894). Son abattement des revenus
+      d'activité dans les ressources de l'ASPA est faux, une fois 0,9 SMIC
+      mensuel au lieu de quatre : l'écart est au registre.
 
   - id: dgtresor_dt_2021_5
     url: https://www.tresor.economie.gouv.fr/Articles/3c47cb70-d0bf-46c7-b159-c5d710f4d3bb/files/01908fa8-153b-4c87-abb1-639a7782a28f
@@ -6041,7 +6107,20 @@ sources:
       L'abattement de 10 % des pensions (article 158, 5 a, du code général des
       impôts) en Catala, pour le jour où le dépôt calculera l'impôt du
       retraité.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-19"
+    note: >-
+      Dépouillée le 19 octobre 2026 (action 89, lot des modèles du registre) :
+      lue le 4 octobre pour le registre des modèles,
+      data/reference/referents.yaml (`ir_catala`), au commit `7f5fe83`, du 2
+      octobre 2024, encore sa tête à sa nouvelle adresse, vers laquelle
+      l'ancienne renvoie. Le jour qu'elle attendait est venu : le dépôt
+      calcule l'impôt du retraité depuis le 10 octobre 2026
+      (`impot_revenu.py`, 138.5), l'abattement de 10 % à 4 439 € et 454 €,
+      quand Catala en est resté aux montants de 2022, 4 123 € et 422 €. Reste
+      au registre, pour 138.5, les demi-parts des anciens combattants de plus
+      de 74 ans et des veuves de guerre (CGI, art. 195), qui se lisent au code
+      général des impôts plutôt que dans Catala.
 
   - id: jrc_euromod
     url: https://github.com/ec-jrc/JRC-EUROMOD-software-source-code
@@ -6052,10 +6131,22 @@ sources:
       Les règles françaises de la CSG, de la CRDS, de la CASA et de l'ASPA,
       sous CC BY 4.0 et donc recopiables en citant : un recoupement du foyer
       et du net.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-19"
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
+      Dépouillée le 19 octobre 2026 (action 89, lot des modèles du registre) :
+      lue le 4 octobre pour le registre des modèles,
+      data/reference/referents.yaml (`euromod`), dans le paquet du modèle
+      J2.54+, de septembre 2026, que la page de téléchargement sert encore
+      comme le dernier, avec le logiciel 3.8.9 ; ses règles ne sont pas dans
+      ce dépôt de code, dont la tête est `ed02e6c`. Ce qu'il fait mieux est
+      repris : la CSG et la CASA graduées par le revenu fiscal et les parts,
+      aux seuils de 2026, et l'ASPA hors des prélèvements (138.2) ; l'impôt
+      des pensions, sauf au net du site, qui n'en affiche aucun : c'est ce qui
+      reste au registre (138.5). Ses écarts tiennent, le modèle n'ayant pas
+      changé.
 
   - id: scherrer_retraites
     url: https://github.com/brunoscherrer/retraites
@@ -6066,10 +6157,22 @@ sources:
       Le simulateur du COR reproduit en Python, et ses projections de 2019 :
       une confrontation agrégée possible tant que le simulateur officiel est
       fermé.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-19"
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
+      Dépouillée le 19 octobre 2026 (action 89, lot des modèles du registre) :
+      lue le 4 octobre pour le registre des modèles,
+      data/reference/referents.yaml (`retraites_scherrer`), au commit
+      `f3c2d92`, du 30 septembre 2020, encore sa tête. Ses projections sont
+      celles du COR de 2019 ; ce qu'il fait mieux est repris sur celles de
+      2026 : les leviers qui rééquilibrent chaque système, l'âge compris
+      (`leviers.py`, confrontés à la figure 2.24 du rapport de juin 2026,
+      138.3), la part de la vie passée en retraite et l'âge qui la tient
+      (138.9) ; l'incertitude par Monte-Carlo est coupée (138.19). Restent au
+      registre, pour la page Coût, le niveau de vie relatif et la part de vie
+      comme leviers.
 
   - id: corral_retraites_cor2026
     url: https://github.com/AxelCorral/retraites-cor2026
@@ -6079,10 +6182,20 @@ sources:
     a_en_tirer: >-
       Un modèle comptable sur les séries du COR de 2026, celles que le dépôt
       lit aussi : à comparer à la page Coût, convention par convention.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-19"
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
+      Dépouillée le 19 octobre 2026 (action 89, lot des modèles du registre) :
+      lue le 4 octobre pour le registre des modèles,
+      data/reference/referents.yaml (`retraites_cor2026`), au commit
+      `b75b211`, du 16 juin 2026, encore sa tête. Comparée à la page Coût :
+      une maquette moins fine, qui oublie l'effet de noria (40,4 % de pension
+      relative en 2070, contre 45,3 % au COR) et écrit des hypothèses
+      économiques que le COR n'a plus et que son code ne lit pas. Son seul
+      apport, les variantes démographiques de l'INSEE de 2026, est repris
+      (138.7) : le modèle les lit dans le diviseur et la page Coût.
 
   - id: tilloy_retraites_2027
     url: https://github.com/AntoineTilloy/retraites-2027
@@ -6093,10 +6206,26 @@ sources:
       La pension nette de trois cas types et ses seuils de CSG de 2026, lus
       dans l'instruction de la DSS du 11 décembre 2025 : un recoupement des
       prélèvements.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-19"
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
+      Dépouillée le 19 octobre 2026 (action 89, lot des modèles du registre) :
+      lue le 4 octobre pour le registre des modèles,
+      data/reference/referents.yaml (`retraites_2027`), au commit `431dd9f`,
+      du 20 septembre 2026, encore sa tête. L'instruction de la DSS du 11
+      décembre 2025, qu'il cite, lue le même jour sur
+      legislation.lassuranceretraite.fr : son annexe 2 donne les seuils de
+      2026 du dépôt, 13 048, 17 057 et 26 472 € pour une part, majorés de 3
+      484, 4 555 et 7 066 € par demi-part, et leurs bornes, « supérieur à »
+      les deux premiers, « égal ou supérieur à » le dernier, que la fiche
+      F2971 lit autrement (`sp_f2971_csg_crds`). Elle arrondit à 2 278 € la
+      majoration d'un quart de part au taux réduit, que le dépôt garde à 2
+      277,50 € : un euro de revenu fiscal, déclaré dans la fiche
+      `csg_des_pensions_selon_le_revenu`. Son net par foyer est repris (138.2)
+      ; ses deux écarts, 29 % de retraités au taux plein et une borne d'impôt
+      de 30 091 €, sont les siens.
 
   - id: aurain_retraites_simulateur
     url: https://github.com/ManZanau/retraites-simulateur
