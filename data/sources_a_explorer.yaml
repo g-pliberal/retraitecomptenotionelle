@@ -6201,7 +6201,7 @@ sources:
     a_en_tirer: >-
       Les trois leviers du COR et leurs projections, quand il rouvrira : il
       est « temporairement fermé pour révision des scénarios économiques ».
-    statut: a_explorer
+    statut: en_cours
 
   - id: cor_modeles_microsimulation_2020
     url: https://www.cor-retraites.fr/node/530
@@ -6213,7 +6213,7 @@ sources:
       PENSIPP, TRAJECTOiRE, PRISME, Pablo, Canopée et le modèle de
       l'Agirc-Arrco décrits par leurs auteurs, et le recensement des modèles
       français et étrangers.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cor_suivi_statistique_2024
     url: https://www.cor-retraites.fr/reunions-du-cor/suivi-statistique-systeme-retraite
@@ -6224,7 +6224,7 @@ sources:
       Les systèmes d'information et les modèles de la DREES, de la Cnav, de
       l'Agirc-Arrco, du SRE, de la Caisse des dépôts et du RGCU, décrits par
       eux-mêmes en décembre 2024.
-    statut: a_explorer
+    statut: en_cours
 
   - id: suede_pensionsmodellen
     url: https://www.pensionsmyndigheten.se/statistik-och-rapporter/pensionsmodellen/pensionsmodellen
