@@ -81,6 +81,13 @@ maladie du salarié du privé de février à novembre 1981, celle des agents
 publics de juillet 1987 à juin 1988 ; en chemin, une date qu'il avance de six
 mois, celle des collectivités en 1991.
 
+LA DATE D'EFFET DE CHAQUE MARCHE DE L'IPP, que l'ancrage ne vérifie pas :
+``dates_des_marches.py`` nomme le document de l'index qui la dit et ses mots,
+ou pourquoi elle ne se lit pas, et le script imprime les marches qu'il ne
+nomme pas. Il a vu deux dates fausses, dans le seuil de la contribution de
+solidarité : mars et septembre 1988, que l'IPP date du 21 et du 23 du mois
+(``CORRECTIONS``).
+
 Ce qu'il ne fait pas. L'IPP est une transcription, non une source productrice :
 la donnée plafonne à ``haute``, et l'ancrage n'y change rien : il vérifie la
 chronologie, non la valeur.
@@ -100,6 +107,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+from dates_des_marches import DATES_LUES, cles, marches_sans_date  # noqa: E402
 from decrets_des_prelevements import decrets_ignores  # noqa: E402
 from dila_index import chemin_index, meta, recuperer  # noqa: E402
 from maladie_des_pensions import (  # noqa: E402
@@ -229,8 +237,9 @@ def _taux_reduit_2018(revenu_en_plafonds: float) -> float:
 
 #: Ce que les textes disent autrement que l'IPP, lus dans les index JORF et LEGI
 #: de la DILA. ``ipp`` nomme la marche de l'IPP que la correction ôte, ``lue``
-#: celle qu'elle met, ses autres taux étant ceux de la marche qui la précède ;
-#: une correction dont la marche a disparu de l'IPP arrête le script.
+#: celle qu'elle met, ses autres taux étant ceux de la marche qui la précède —
+#: ou ceux de la marche ôtée, quand ``lue`` n'en dit que la date ; une
+#: correction dont la marche a disparu de l'IPP arrête le script.
 CORRECTIONS: dict[str, list[dict]] = {
     "maladie_artisans_commercants": [
         {"ipp": "1991-08-01", "lue": None},
@@ -380,6 +389,22 @@ CORRECTIONS["maladie_collectivites"] = [
     {"ipp": "1991-01-01", "lue": {"depuis": "1991-07-01", "tout_salaire": 0.0605},
      "texte": "Décret 91-615 du 28/06/1991, art. 4 et 5 (JORFTEXT000000719893) : aux "
               "traitements versés à compter du 1er juillet 1991 (JORFARTI000001566429)"},
+]
+
+#: LE SEUIL DE LA CONTRIBUTION DE SOLIDARITÉ, deux dates
+#: (``dates_des_marches.py``). Avant 1989, l'IPP le tient du Fonds de solidarité,
+#: sans texte, à des jours qui ne sont pas des dates : le 21 mars et le
+#: 23 septembre 1988. Ses valeurs de 1988 sont, au franc près, le douzième du
+#: traitement de l'indice majoré 250 (68 133 F et 68 808 F par an) à la valeur
+#: du point que l'article 3 du décret n° 85-1148 fixe « à compter du 1er mars
+#: 1988 », puis « du 1er septembre 1988 » (LEGI) : le seuil change avec elle.
+CORRECTIONS["solidarite_public"] = [
+    {"ipp": "1988-03-21", "lue": {"depuis": "1988-03-01"},
+     "texte": "Valeur du point de la fonction publique, 27 253 F à compter du 1er mars 1988 "
+              "(LEGIARTI000006454427)"},
+    {"ipp": "1988-09-23", "lue": {"depuis": "1988-09-01"},
+     "texte": "Valeur du point de la fonction publique, 27 523 F à compter du 1er septembre "
+              "1988 (LEGIARTI000006454428)"},
 ]
 
 #: LA CSG DÉDUCTIBLE (action 138, étape 5, deuxième partie) : la part de la CSG
@@ -532,17 +557,22 @@ def corriger(nom: str, lues: list[dict]) -> list[dict]:
     """Les marches de l'IPP, aux corrections des textes près (:data:`CORRECTIONS`)."""
     par_date = {marche["depuis"]: marche for marche in lues}
     for correction in CORRECTIONS.get(nom, ()):
+        otee = None
         if correction["ipp"] is not None:
             if correction["ipp"] not in par_date:
                 raise SystemExit(f"{nom} : l'IPP n'a plus de marche au {correction['ipp']}, "
                                  "la correction est à relire")
-            del par_date[correction["ipp"]]
+            otee = par_date.pop(correction["ipp"])
         lue = correction["lue"]
         if lue is None:
             continue
-        avant = [m for depuis, m in sorted(par_date.items()) if depuis <= lue["depuis"]]
-        precedente = {k: v for k, v in (avant[-1] if avant else {}).items() if not _hors_taux(k)}
-        par_date[lue["depuis"]] = {"depuis": lue["depuis"], **precedente, **lue,
+        if otee is not None and set(lue) == {"depuis"}:
+            reprise = otee
+        else:
+            avant = [m for depuis, m in sorted(par_date.items()) if depuis <= lue["depuis"]]
+            reprise = avant[-1] if avant else {}
+        taux = {k: v for k, v in reprise.items() if not _hors_taux(k)}
+        par_date[lue["depuis"]] = {"depuis": lue["depuis"], **taux, **lue,
                                    "texte": correction["texte"]}
     return [par_date[depuis] for depuis in sorted(par_date)]
 
@@ -646,12 +676,19 @@ def _motifs(titre: str) -> tuple[str, ...]:
 
 def _chercher(db, motifs: tuple[str, ...], publie: str | None) -> tuple[str, str] | None:
     """Le premier texte du JORF dont le titre répond à un motif, publié ce
-    jour-là quand ``publie`` le dit : le texte plutôt que l'un de ses articles."""
+    jour-là quand ``publie`` le dit : le texte plutôt que l'un de ses articles,
+    et celui qui porte le numéro en tête de son titre, non un texte qui le vise
+    — le décret n° 2017-1889, « pris en application de l'article 113 de la loi
+    n° 2017-1837 », publié avec elle."""
     if not motifs:
         return None
     requete = ("SELECT id, date FROM doc WHERE num = '' AND ("
                + " OR ".join("titre LIKE ?" for _ in motifs) + ")")
     valeurs = list(motifs)
+    numero = re.search(r"\d{2,4}-\d{1,5}", motifs[0])
+    if numero:
+        requete += " AND instr(titre, ?) BETWEEN 1 AND 20"
+        valeurs.append(numero.group(0))
     if publie is not None:
         requete += " AND date = ?"
         valeurs.append(publie)
@@ -728,6 +765,27 @@ def ancrer_series(db, series: dict[tuple[str, str], list[dict]]) -> dict[str, in
     return compte
 
 
+def textes_ecrits() -> set[str]:
+    """Les textes des marches que le script écrit lui-même : ses corrections et
+    ses lectures aux textes, que la donnée écrit sans guillemet droit."""
+    textes = {correction["texte"] for corrections in CORRECTIONS.values()
+              for correction in corrections if correction.get("texte")}
+    textes |= {marche["texte"] for marches_lues in LUES_AUX_TEXTES.values()
+               for marche in marches_lues}
+    textes |= {marche["texte"] for marche in ASSIETTE_CSG}
+    textes |= {marche["texte"] for marches_lues in PENSIONS_LUES_AUX_TEXTES.values()
+               for marche in marches_lues}
+    return {texte.replace(chr(34), chr(39)) for texte in textes}
+
+
+def marches_de_l_ipp(contenu: dict) -> list[tuple[str, str]]:
+    """Les marches de l'IPP dans la donnée écrite, (série, date) : celles de ses
+    séries que ni une correction ni une lecture aux textes n'a écrites."""
+    ecrits = textes_ecrits()
+    return [(nom, str(marche["depuis"])) for partie, nom in SERIES
+            for marche in contenu[partie][nom] if marche["texte"] not in ecrits]
+
+
 def independant(nom: str, lues: list[dict]) -> list[dict]:
     """Une série d'indépendant : l'IPP corrigé, ses taux modulés en paliers, puis
     les marches lues aux textes, qui prennent le relais à leur première date."""
@@ -777,6 +835,12 @@ ENTETE = """\
 # il dément celle de l'IPP. Une marche lue aux textes porte le texte du Journal
 # officiel qu'elle cite, ou l'article de LEGI. L'ancrage rend vérifiable la
 # CHRONOLOGIE d'une série, non sa valeur : il ne la certifie pas.
+#
+# LA DATE D'EFFET. L'ancrage relie un texte à sa publication, non à l'article
+# qui dit sa date : {datees} des {ipp} marches de l'IPP ont la leur dans un
+# document de l'index — un article, la notice ou le titre d'un texte du JORF,
+# une version d'article de LEGI — que nomme `scripts/fetch/dates_des_marches.py`,
+# avec les mots qui la disent ; les autres y disent pourquoi elle ne se lit pas.
 #
 # QUI LE LIT. Les indicateurs de cycle de vie nets
 # (`retraite_notionnelle/cycle_de_vie.py`, action 138, étape 9) : la pension
@@ -843,7 +907,9 @@ ENTETE = """\
 # collectivités est relevée à 5,15 % au 1er juillet 1987, à titre exceptionnel
 # (décret n° 87-470), un an avant que le décret n° 88-795 ne tienne ce taux ;
 # celle des collectivités passe à 6,05 % au 1er juillet 1991, avec celle de
-# l'État, et non au 1er janvier (décret n° 91-615, article 5).
+# l'État, et non au 1er janvier (décret n° 91-615, article 5) ; le seuil de la
+# contribution de solidarité change le 1er mars et le 1er septembre 1988, avec
+# la valeur du point (décret n° 85-1148, article 3), et non le 21 et le 23.
 #
 # LES DÉCRETS QU'AUCUNE MARCHE NE REJOINT. Chaque décret du Journal officiel
 # dont le titre annonce, depuis 1967, des taux de ces cotisations est cité par
@@ -924,10 +990,19 @@ def main(argv: list[str] | None = None) -> int:
         series[("pensions", nom)] = [a_ecrire(marche) for marche in lues]
     series[("independants", "assiette_csg")] = _normaliser(ASSIETTE_CSG)
     verifier_deductible(series)
+    de_l_ipp = [(nom, marche["depuis"]) for (_, nom), lues in series.items()
+                for marche in lues if "_reference" in marche]
+    sans_date = marches_sans_date(de_l_ipp)
     jorf = _ouvrir("jorf")
     compte = ancrer_series(jorf, series)
-    ancrage = {**compte, "index": meta(jorf, "dernier_increment") or "?"}
+    lues_aux_dates = cles(DATES_LUES)
+    ancrage = {**compte, "index": meta(jorf, "dernier_increment") or "?",
+               "datees": sum(marche in lues_aux_dates for marche in de_l_ipp)}
     print(f"Ancrage : {compte['ancrees']} des {compte['ipp']} marches de l'IPP au Journal officiel")
+    print(f"Date d'effet : {ancrage['datees']} des {len(de_l_ipp)} marches de l'IPP lues ; "
+          f"ni lues ni expliquées : {len(sans_date)}")
+    for ligne in sans_date:
+        print(f"        {ligne}")
     ignores = decrets_ignores(jorf, [marche for lues in series.values() for marche in lues])
     print(f"Décrets qu'aucune marche ne rejoint ni aucune liste n'explique : {len(ignores)}")
     for ligne in ignores:

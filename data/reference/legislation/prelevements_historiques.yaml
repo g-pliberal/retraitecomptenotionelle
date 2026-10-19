@@ -9,13 +9,19 @@
 #
 # L'ANCRAGE. Chaque marche de l'IPP porte, en `jorf`, le texte qu'il cite tel
 # que l'index JORF de la DILA le trouve, au numéro — au jour pour un arrêté —
-# et à la date de publication qu'il annonce : 158 des 222 marches de
+# et à la date de publication qu'il annonce : 158 des 220 marches de
 # l'IPP le sont (index à jour au 20261018-205213). Les autres disent, en `ancrage`, ce
 # qui manque : une date au Journal officiel, un texte numéroté — un article de
 # code, une convention, une circulaire —, ou la date que l'index donne quand
 # il dément celle de l'IPP. Une marche lue aux textes porte le texte du Journal
 # officiel qu'elle cite, ou l'article de LEGI. L'ancrage rend vérifiable la
 # CHRONOLOGIE d'une série, non sa valeur : il ne la certifie pas.
+#
+# LA DATE D'EFFET. L'ancrage relie un texte à sa publication, non à l'article
+# qui dit sa date : 147 des 220 marches de l'IPP ont la leur dans un
+# document de l'index — un article, la notice ou le titre d'un texte du JORF,
+# une version d'article de LEGI — que nomme `scripts/fetch/dates_des_marches.py`,
+# avec les mots qui la disent ; les autres y disent pourquoi elle ne se lit pas.
 #
 # QUI LE LIT. Les indicateurs de cycle de vie nets
 # (`retraite_notionnelle/cycle_de_vie.py`, action 138, étape 9) : la pension
@@ -82,7 +88,9 @@
 # collectivités est relevée à 5,15 % au 1er juillet 1987, à titre exceptionnel
 # (décret n° 87-470), un an avant que le décret n° 88-795 ne tienne ce taux ;
 # celle des collectivités passe à 6,05 % au 1er juillet 1991, avec celle de
-# l'État, et non au 1er janvier (décret n° 91-615, article 5).
+# l'État, et non au 1er janvier (décret n° 91-615, article 5) ; le seuil de la
+# contribution de solidarité change le 1er mars et le 1er septembre 1988, avec
+# la valeur du point (décret n° 85-1148, article 3), et non le 21 et le 23.
 #
 # LES DÉCRETS QU'AUCUNE MARCHE NE REJOINT. Chaque décret du Journal officiel
 # dont le titre annonce, depuis 1967, des taux de ces cotisations est cité par
@@ -354,8 +362,8 @@ salaires:
     - {depuis: "1987-03-22", taux: 0.01, seuil_mensuel: 844.42, texte: "IPP, sans référence", ancrage: "sans référence"}
     - {depuis: "1987-05-23", taux: 0.01, seuil_mensuel: 852.8, texte: "IPP, sans référence", ancrage: "sans référence"}
     - {depuis: "1987-08-24", taux: 0.01, seuil_mensuel: 856.99, texte: "IPP, sans référence", ancrage: "sans référence"}
-    - {depuis: "1988-03-21", taux: 0.01, seuil_mensuel: 865.57, texte: "IPP, sans référence", ancrage: "sans référence"}
-    - {depuis: "1988-09-23", taux: 0.01, seuil_mensuel: 874.14, texte: "IPP, sans référence", ancrage: "sans référence"}
+    - {depuis: "1988-03-01", taux: 0.01, seuil_mensuel: 865.57, texte: "Valeur du point de la fonction publique, 27 253 F à compter du 1er mars 1988 (LEGIARTI000006454427)", ancrage: "lue dans LEGI (LEGIARTI000006454427)"}
+    - {depuis: "1988-09-01", taux: 0.01, seuil_mensuel: 874.14, texte: "Valeur du point de la fonction publique, 27 523 F à compter du 1er septembre 1988 (LEGIARTI000006454428)", ancrage: "lue dans LEGI (LEGIARTI000006454428)"}
     - {depuis: "1989-09-01", taux: 0.01, seuil_mensuel: 907.68, texte: "Décret 89-598 du 30/08/1989", ancrage: "absente de l'index"}
     - {depuis: "1990-01-01", taux: 0.01, seuil_mensuel: 912.23, texte: "Décret 90-321 du 05/04/1990", jorf: "JORFTEXT000000166950"}
     - {depuis: "1990-04-01", taux: 0.01, seuil_mensuel: 923.1, texte: "Décret 90-332 du 05/04/1990", ancrage: "absente de l'index"}
@@ -405,7 +413,7 @@ salaires:
     - {depuis: "2013-01-01", taux: 0.01, seuil_mensuel: 1430.76, texte: "Décret 2013-33 du 10/01/2013", jorf: "JORFTEXT000026924624"}
     - {depuis: "2016-07-01", taux: 0.01, seuil_mensuel: 1447.98, texte: "Décret 2016-670 du 25/05/2016", jorf: "JORFTEXT000032584286"}
     - {depuis: "2017-02-01", taux: 0.01, seuil_mensuel: 1439.35, texte: "Décret 2016-670 du 25/05/2016", jorf: "JORFTEXT000032584286"}
-    - {depuis: "2018-01-01", taux: 0, seuil_mensuel: 0, texte: "Loi 2017-1837 du 30/12/2017 (LF pour 2018)", jorf: "JORFTEXT000036342240"}
+    - {depuis: "2018-01-01", taux: 0, seuil_mensuel: 0, texte: "Loi 2017-1837 du 30/12/2017 (LF pour 2018)", jorf: "JORFTEXT000036339197"}
 
 independants:
   maladie_artisans_commercants:

@@ -700,6 +700,103 @@ def test_une_pension_nette_suit_les_prelevements_de_chaque_annee(simulateur):
     assert convention.retenu(2015) == pytest.approx(1.0 - taux[2015])
 
 
+# -- La date d'effet des marches de l'IPP (action 138, étape 9) -----------------
+
+def _dates():
+    """La garde des dates d'effet des marches de l'IPP."""
+    sys.path.insert(0, str(RACINE_PROJET / "scripts" / "fetch"))
+    import dates_des_marches
+
+    return dates_des_marches
+
+
+def test_des_mots_disent_leur_date_d_effet():
+    """Des mots disent une date écrite en lettres ou en chiffres ; le lendemain
+    de celle que précède « postérieures au » ou « jusqu'au » ; l'année la plus
+    proche d'un jour et d'un mois qui n'ont pas la leur ; le 1er janvier d'une
+    année ou d'un exercice."""
+    dites = _dates().dates_dites
+    assert "1980-07-01" in dites("VERSES AU TITRE DES PERIODES POSTERIEURES AU 30-06-1980")
+    assert "2001-01-01" in dites("dues au titre des périodes d'activité postérieures au "
+                                 "31 décembre 2000")
+    assert "1991-07-01" in dites("versés à compter du 1er juillet 1991")
+    assert "1998-01-01" in dites("aux revenus perçus à compter du 1 er janvier 1998")
+    assert "1979-08-01" in dites("DU 01-08 AU 31-12-1979")
+    assert "2018-10-01" in dites("Pour l'année 2018, [...] à compter du 1er octobre")
+    assert "1990-01-01" in dites("dues au titre de l'année 1990")
+    assert "2007-01-01" in dites("cotisations exigibles à partir de l'exercice 2007")
+    assert "1991-01-01" not in dites("versés à compter du 1er juillet 1991")
+    assert dites("Art. L. 136-1, 2,4 p. 100, 29784F") == set()
+
+
+def test_chaque_marche_de_l_ipp_dit_sa_date_ou_pourquoi():
+    """Chaque marche de l'IPP a sa date lue dans un document de l'index — un
+    article, la notice ou le titre d'un texte du JORF, une version d'article de
+    LEGI —, ou dit pourquoi elle ne l'est pas ; aucune ne l'est deux fois, et
+    aucune date lue ou déclarée ne vise une marche que la donnée n'a pas."""
+    dates = _dates()
+    marches = _script().marches_de_l_ipp(charger_yaml(RACINE_DONNEES / CHEMIN))
+    lues, non_lues = dates.cles(dates.DATES_LUES), dates.cles(dates.DATES_NON_LUES)
+    assert len(lues) == sum(len(series) for _, series, _, _ in dates.DATES_LUES)
+    assert len(non_lues) == sum(len(series) for _, series, _ in dates.DATES_NON_LUES)
+    assert not lues & non_lues
+    assert lues | non_lues == set(marches)
+    assert dates.marches_sans_date(marches) == []
+
+
+def test_les_dates_lues_se_relisent_dans_l_index():
+    """Les mots de chaque date lue sont dans le titre ou le texte du document de
+    l'index qu'elle nomme, et ils disent la date de ses marches, quand les index
+    sont là (``python scripts/fetch/dila_index.py jorf --recuperer``, de même
+    ``legi``)."""
+    bases = {}
+    for nom in ("legi", "jorf"):
+        chemin = RACINE_DONNEES / "brut" / "dila" / f"{nom}.sqlite"
+        if chemin.exists():
+            bases[nom] = sqlite3.connect(f"file:{chemin}?mode=ro", uri=True)
+    if not bases:
+        pytest.skip("les index LEGI et JORF ne sont pas là")
+    dates = _dates()
+    relues = 0
+    try:
+        for depuis, series, identifiant, mots in dates.DATES_LUES:
+            assert depuis in dates.dates_dites(mots), (depuis, series)
+            base = bases.get("legi" if identifiant.startswith("LEGI") else "jorf")
+            if base is None:
+                continue
+            lu = base.execute("select titre, texte from doc where id = ?",
+                              (identifiant,)).fetchone()
+            assert lu, (depuis, series, identifiant)
+            texte = " ".join(f"{lu[0]} {lu[1]}".split())
+            assert " ".join(mots.split()) in texte, (depuis, series, identifiant)
+            relues += 1
+    finally:
+        for base in bases.values():
+            base.close()
+    assert relues
+
+
+def test_le_seuil_de_solidarite_suit_le_point_de_mars_et_de_septembre_1988(historique):
+    """La valeur du point est fixée « à compter du 1er mars 1988 », puis « à
+    compter du 1er septembre 1988 » (décret n° 85-1148, article 3, LEGI) ; le
+    seuil de la contribution de solidarité, que l'IPP tient du Fonds de
+    solidarité, change avec elle, et non le 21 et le 23 du mois."""
+    seuil = historique.salaires["solidarite_public"]
+    for jour, francs in ((dt.date(1988, 2, 29), 5621.5), (dt.date(1988, 3, 1), 5677.75),
+                         (dt.date(1988, 8, 31), 5677.75), (dt.date(1988, 9, 1), 5734.0)):
+        assert seuil.valeur(jour, "seuil_mensuel") == pytest.approx(francs / 6.55957, abs=0.006), jour
+
+
+def test_l_ancrage_prend_le_texte_cite_et_non_celui_qui_le_vise():
+    """Le texte que l'IPP cite, et non un texte du même jour dont le titre le
+    vise : la fin de la contribution de solidarité est la loi de finances pour
+    2018, et non le décret n° 2017-1889 « pris en application de l'article 113
+    de la loi n° 2017-1837 »."""
+    contenu = charger_yaml(RACINE_DONNEES / CHEMIN)
+    solidarite = {m["depuis"]: m for m in contenu["salaires"]["solidarite_public"]}
+    assert solidarite["2018-01-01"]["jorf"] == "JORFTEXT000036339197"
+
+
 # -- La CSG déductible et le net imposable (action 138, étape 5) ----------------
 
 def _script():

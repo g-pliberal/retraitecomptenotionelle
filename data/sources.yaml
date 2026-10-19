@@ -5793,7 +5793,7 @@ institutions:
           gardée pour chacune, et, depuis le 10 octobre 2026, ANCRÉE au
           Journal officiel par l'index JORF de la DILA, au numéro et à la
           date de publication que l'IPP annonce, comme ipp_taux_cotisation :
-          158 des 222 marches de l'IPP le sont ; les autres citent un
+          158 des 220 marches de l'IPP le sont ; les autres citent un
           accord, une circulaire, un article de code, rien, ou un texte que
           l'index n'a pas — sauf six, dont l'index dément la date : les
           décrets n° 93-93, 98-945, 2002-1295, 2009-1158, 2012-853 et
@@ -5839,7 +5839,17 @@ institutions:
           du salarié du privé à 4,5 % du 1er février au 13 novembre 1981
           (décrets n° 79-650 et 81-1013), celle des agents publics à 5,15 % du
           1er juillet 1987 (n° 87-470), celle des collectivités à 6,05 % au
-          1er juillet 1991 et non au 1er janvier (n° 91-615, art. 5). LA CSG
+          1er juillet 1991 et non au 1er janvier (n° 91-615, art. 5). LA DATE
+          D'EFFET DE CHAQUE MARCHE DE L'IPP, que l'ancrage ne vérifie pas, lue
+          le 19 octobre 2026 dans les index JORF et LEGI
+          (`scripts/fetch/dates_des_marches.py`) : 147 des 220 marches ont
+          leur date dans un article, une notice, un titre ou une version
+          d'article ; les autres disent pourquoi elle ne se lit pas — un
+          accord de l'Unédic, un texte que l'index n'a pas, ou qu'en notice
+          sans date. Deux dates sont fausses : le seuil de la contribution de
+          solidarité de mars et de septembre 1988, que l'IPP, qui le tient du
+          Fonds de solidarité, date du 21 et du 23 ; il suit la valeur du
+          point, fixée au 1er du mois (décret n° 85-1148, art. 3). LA CSG
           DÉDUCTIBLE, relue le 11 octobre 2026 (étape 5,
           deuxième partie) : la colonne `deductible` des barèmes de CSG
           d'activité et des pensions, à chaque taux, que le script confronte
