@@ -37189,7 +37189,7 @@ null
 "tenue_avant":false
 }
 },
-"lu_le":"2026-10-16",
+"lu_le":"2026-10-19",
 "pensions":{
 "casa":{"marches":[["2013-04-01",{"taux":0.003}]],"tenue_avant":false},
 "crds":{"marches":[["1996-02-01",{"taux":0.005}]],"tenue_avant":false},
@@ -37203,7 +37203,7 @@ null
 "maladie_complementaires":{"marches":[["1980-07-01",{"taux":0.02}],["1987-07-01",{"taux":0.024}],["1996-01-01",{"taux":0.036}],["1997-01-01",{"taux":0.038}],["1998-01-01",{"taux":0.01}]],"tenue_avant":false},
 "maladie_crpcen":{"marches":[["1980-07-31",{"taux":0.015}],["1986-01-01",{"taux":0.0225}],["1987-07-01",{"taux":0.0265}],["1996-06-01",{"taux":0.0305}],["1997-01-01",{"taux":0.028}],["1998-01-01",{"taux":0.0}]],"tenue_avant":false},
 "maladie_exploitants":{"marches":[["1990-01-01",{"taux":0.038}],["1997-01-01",{"taux":0.028}],["1998-01-01",{"taux":0.0}]],"tenue_avant":false},
-"maladie_fonction_publique":{"marches":[["1976-10-01",{"taux":0.0225}],["1988-07-01",{"taux":0.0265}],["1996-03-01",{"taux":0.0305}],["1997-01-01",{"taux":0.028}],["1998-01-01",{"taux":0.0}]],"tenue_avant":false},
+"maladie_fonction_publique":{"marches":[["1976-10-01",{"taux":0.0225}],["1987-07-01",{"taux":0.0265}],["1988-07-01",{"taux":0.0265}],["1996-03-01",{"taux":0.0305}],["1997-01-01",{"taux":0.028}],["1998-01-01",{"taux":0.0}]],"tenue_avant":false},
 "maladie_ieg":{"marches":[["1980-11-22",{"taux":0.015}],["1987-07-01",{"taux":0.019}],["1991-07-01",{"taux":0.019}],["1996-10-01",{"taux":0.0285}],["1997-01-01",{"taux":0.0185}],["1997-07-01",{"taux":0.028}],["1998-01-01",{"taux":0.0}]],"tenue_avant":false},
 "maladie_independants":{
 "marches":[
@@ -37304,8 +37304,9 @@ null
 ["1979-01-01",{"sous_plafond":0.0025,"tout_salaire":0.035}],
 ["1980-01-01",{"sous_plafond":0.0,"tout_salaire":0.0375}],
 ["1981-11-01",{"sous_plafond":0.0,"tout_salaire":0.0475}],
+["1987-07-01",{"sous_plafond":0.0,"tout_salaire":0.0515}],
 ["1988-07-01",{"sous_plafond":0.0,"tout_salaire":0.0515}],
-["1991-01-01",{"sous_plafond":0.0,"tout_salaire":0.0605}],
+["1991-07-01",{"sous_plafond":0.0,"tout_salaire":0.0605}],
 ["1997-01-01",{"sous_plafond":0.0,"tout_salaire":0.0475}],
 ["1998-01-01",{"sous_plafond":0.0,"tout_salaire":0.0}]
 ],
@@ -37319,6 +37320,7 @@ null
 ["1979-01-01",{"sous_plafond":0.0025,"tout_salaire":0.035}],
 ["1980-01-01",{"sous_plafond":0.0,"tout_salaire":0.0375}],
 ["1981-11-01",{"sous_plafond":0.0,"tout_salaire":0.0475}],
+["1987-07-01",{"sous_plafond":0.0,"tout_salaire":0.0515}],
 ["1988-07-01",{"sous_plafond":0.0,"tout_salaire":0.0515}],
 ["1991-07-01",{"sous_plafond":0.0,"tout_salaire":0.0605}],
 ["1997-01-01",{"sous_plafond":0.0,"tout_salaire":0.0475}],
@@ -37334,6 +37336,8 @@ null
 ["1979-01-01",{"au_dela_du_plafond":0.035,"sous_plafond":0.01,"tout_salaire":0.0}],
 ["1979-08-01",{"au_dela_du_plafond":0.045,"sous_plafond":0.01,"tout_salaire":0.0}],
 ["1980-01-01",{"au_dela_du_plafond":0.0,"sous_plafond":0.0,"tout_salaire":0.055}],
+["1981-02-01",{"au_dela_du_plafond":0.0,"sous_plafond":0.0,"tout_salaire":0.045}],
+["1981-11-14",{"au_dela_du_plafond":0.0,"sous_plafond":0.0,"tout_salaire":0.055}],
 ["1987-07-01",{"au_dela_du_plafond":0.0,"sous_plafond":0.0,"tout_salaire":0.059}],
 ["1991-07-01",{"au_dela_du_plafond":0.0,"sous_plafond":0.0,"tout_salaire":0.068}],
 ["1997-01-01",{"au_dela_du_plafond":0.0,"sous_plafond":0.0,"tout_salaire":0.055}],
