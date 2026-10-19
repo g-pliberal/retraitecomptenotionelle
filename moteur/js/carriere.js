@@ -90,6 +90,13 @@ export const AFFILIATIONS_AGRICOLES = Object.freeze({
  */
 export const COTISATIONS_AU_1ER_JANVIER_DEPUIS = 1985;
 
+/**
+ * Les premières cotisations que le décès du chef d'exploitation calcule au
+ * prorata de l'année écoulée : celles de 2009 (L. 731-10-1 du code rural, en
+ * vigueur depuis le 19 décembre 2008). Voir le Python.
+ */
+export const COTISATIONS_AU_PRORATA_DU_DECES_DEPUIS = 2009;
+
 /** Une année de carrière. */
 export class AnneeCarriere {
   constructor({
@@ -1753,8 +1760,10 @@ export class Carriere {
    * 1er janvier, sauf à prendre un autre métier (R. 731-83) ; rien pour le
    * statut pris en cours d'année ; un ensemble vide l'année où il s'installe ;
    * les statuts de l'année, à se partager, avant 1985 ou quand celui du
-   * 1er janvier ne se lit pas (L. 731-10-1 du code rural, R. 731-57). Voir le
-   * Python.
+   * 1er janvier ne se lit pas (L. 731-10-1 du code rural, R. 731-57). Sauf
+   * l'année du décès du chef d'exploitation, dans la carrière arrêtée au
+   * décès (`au_deces`), cotisée au prorata depuis 2009 (L. 731-10-1), qui
+   * garde ses mois. Voir le Python.
    */
   get statutsAu1erJanvier() {
     if (this._statutsAu1erJanvier === undefined) {
@@ -1804,6 +1813,15 @@ export class Carriere {
           statuts.set(annee, fin);
         } else if (incomplete) {
           statuts.set(annee, deLAnnee);
+        }
+      }
+      if (this.au_deces && this.age_liquidation !== null
+          && this.age_liquidation !== undefined) {
+        const annee = this.anneeLiquidation;
+        const statut = statuts.get(annee);
+        if (annee >= COTISATIONS_AU_PRORATA_DU_DECES_DEPUIS && statut?.size === 1
+            && statut.has("exploitant_agricole")) {
+          statuts.delete(annee);
         }
       }
       this._statutsAu1erJanvier = statuts;

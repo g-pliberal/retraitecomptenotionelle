@@ -146,6 +146,15 @@ AFFILIATIONS_AGRICOLES = {
 #: L. 731-10-1 depuis 2008). Avant, l'année d'installation garde ses mois.
 COTISATIONS_AU_1ER_JANVIER_DEPUIS = 1985
 
+#: Les premières cotisations que le décès du chef d'exploitation calcule « au
+#: prorata de la fraction de l'année considérée comprise entre le 1er janvier
+#: et la date du décès » : celles de 2009. L. 731-10-1 du code rural
+#: (LEGIARTI000019950453) est en vigueur depuis le 19 décembre 2008 ; un décès
+#: des treize derniers jours de 2008 en cotise au moins 354 jours sur 366, et
+#: l'année entière en est plus près que les neuf mois de la carrière arrêtée
+#: au premier jour du trimestre civil du décès.
+COTISATIONS_AU_PRORATA_DU_DECES_DEPUIS = 2009
+
 
 @dataclass(frozen=True)
 class AnneeCarriere:
@@ -1610,7 +1619,16 @@ class Carriere:
         ne se lit que depuis les cotisations de 1985, les premières que fixe
         le décret : avant, comme quand il ne se lit pas, l'année où
         l'exploitant cesse se partage entre ses statuts, au prorata de leurs
-        mois (:meth:`part_cotisee_ligne`)."""
+        mois (:meth:`part_cotisee_ligne`).
+
+        Sauf l'année du décès du chef d'exploitation, dans la carrière arrêtée
+        au décès (:attr:`au_deces`) : ses cotisations sont « calculées au
+        prorata de la fraction de l'année considérée comprise entre le
+        1er janvier et la date du décès » (L. 731-10-1, depuis les cotisations
+        de 2009 : :data:`COTISATIONS_AU_PRORATA_DU_DECES_DEPUIS`), et elle
+        garde ses mois, comme celle de R. 731-83. Le conjoint survivant peut
+        opter pour l'année entière des cotisations d'assurance vieillesse
+        (D. 731-57-1) : le modèle ne lit pas l'option."""
         agricoles: dict[int, list[AnneeCarriere]] = {}
         autres: set[int] = set()
         for ligne in self.lignes:
@@ -1646,6 +1664,11 @@ class Carriere:
                 statuts[annee] = fin
             elif incomplete:
                 statuts[annee] = de_l_annee
+        if self.au_deces and self.age_liquidation is not None:
+            annee = self.annee_liquidation
+            if (annee >= COTISATIONS_AU_PRORATA_DU_DECES_DEPUIS
+                    and statuts.get(annee) == {"exploitant_agricole"}):
+                del statuts[annee]
         return statuts
 
     @cached_property

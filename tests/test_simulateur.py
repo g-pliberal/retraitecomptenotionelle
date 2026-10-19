@@ -5410,6 +5410,57 @@ def test_l_annee_ou_l_exploitant_cesse_reste_au_statut_du_1er_janvier(simulateur
         "points": {"msa_non_salaries": 30.0, "msa_rco": 133.0}}
 
 
+def test_l_annee_du_deces_du_chef_d_exploitation_se_cotise_au_prorata(simulateur):
+    """En cas de décès du chef d'exploitation, les cotisations « dues au titre
+    de l'année au cours de laquelle est survenu le décès sont calculées au
+    prorata de la fraction de l'année considérée comprise entre le 1er janvier
+    et la date du décès » (L. 731-10-1 du code rural, depuis le 19 décembre
+    2008 ; réponse à la question écrite n° 10883, JO du 3 février 2026), sauf
+    option du conjoint survivant pour l'année entière (D. 731-57-1), que le
+    modèle ne lit pas. L'année n'est plus cotisée entière, comme celle où il
+    cesse, mais au prorata, comme celle où il prend un autre métier
+    (R. 731-83). Mort le 15 août 2024, le chef de 1990 à 12 000 € par an, dont
+    la carrière s'arrête au 1er juillet, premier jour du trimestre civil du
+    décès (exposé de la Cnav, « Retraite de l'assuré décédé »), cotise les six
+    mois de 2024, et non douze ; ses trimestres, ceux de ses mois, deux et non
+    quatre ; ses points, ceux d'une année au prorata : à la proportionnelle,
+    les 19 points du 2° de R. 732-71 pour les 6 000 € de ses six mois (entre
+    400 et 800 SMIC horaires à 11,65 €), comptés pour six mois, 9,5 au lieu
+    de 30 ; à la RCO, le « nombre annuel de points » de D. 732-155, les 133 de
+    l'assiette minimale. Mort en août 2005, avant la loi, il cotise l'année
+    entière ; le collaborateur mort en août 2024 aussi : le prorata est celui
+    du décès du chef. Dans les deux moteurs."""
+    from retraite_notionnelle.calendrier import DateMois
+
+    def au_deces(annee: int, affiliation: str) -> tuple[dict, list[dict]]:
+        lignes = [dict(annee=a, revenu=12000.0, affiliation=affiliation)
+                  for a in range(1990, annee + 1)]
+        vivante = Carriere(annee_naissance=1962, sexe="H", jour_naissance=15,
+                           age_liquidation=64.0,
+                           lignes=[AnneeCarriere(**ligne) for ligne in lignes])
+        arretee = vivante.arretee_au_deces(DateMois(annee, 7))
+        assert str(arretee.date_liquidation) == f"juillet {annee}"
+        return dict(annee_naissance=1962, sexe="H", jour_naissance=15,
+                    age_liquidation=arretee.age_liquidation, au_deces=True), lignes
+
+    cas = {"chef 2024": (2024, "exploitant_agricole"), "chef 2005": (2005, "exploitant_agricole"),
+           "collaborateur 2024": (2024, "collaborateur_agricole")}
+    obtenus = {}
+    for nom, (annee, affiliation) in cas.items():
+        naissance, lignes = au_deces(annee, affiliation)
+        carriere = Carriere(**naissance, lignes=[AnneeCarriere(**ligne) for ligne in lignes])
+        obtenus[nom] = (carriere.annee_de_cessation_agricole,
+                        _annee_agricole_en_deux_moteurs(simulateur, naissance, lignes, annee))
+    assert obtenus["chef 2024"] == (None, {
+        "parts": [0.5], "trimestres": [2], "qualite": "chef",
+        "points": {"msa_non_salaries": 9.5, "msa_rco": 133.0}})
+    cessation, annee_2005 = obtenus["chef 2005"]
+    assert (cessation, annee_2005["parts"], annee_2005["trimestres"]) == (2005, [1.0], [4])
+    assert obtenus["collaborateur 2024"] == (2024, {
+        "parts": [1.0], "trimestres": [4], "qualite": "collaborateur",
+        "points": {"msa_non_salaries": 16.0, "msa_rco": 88.0}})
+
+
 def _exploitant_parti_en_aout_2028(revenu_2028: float) -> dict:
     """Né en 1964, exploitant agricole de 1990 à son départ du 1er août 2028,
     à 15 000 € par an, et à ``revenu_2028`` pour les sept mois de 2028."""

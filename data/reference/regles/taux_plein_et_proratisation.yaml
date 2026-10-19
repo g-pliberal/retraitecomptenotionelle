@@ -7,7 +7,7 @@ etat: conforme
 etape: liquider_chaque_regime
 effet: Toute pension du régime général et des régimes alignés.
 sources:
-  lu_le: 2026-10-18
+  lu_le: 2026-10-19
   prochaine_relecture: 2027-06-30
   lectures:
   - type: service_public
@@ -120,6 +120,30 @@ sources:
       proportionnellement à votre durée d'affiliation pendant l'année considérée »
     url: https://bourgogne.msa.fr/lfp/documents/98900/474637384/Questions+R%C3%A9ponses+-Tout+savoir+sur+les+r%C3%A9formes+en+cours
     date: 2026-10-18
+  - type: legifrance
+    reference: >-
+      L'année du décès du chef d'exploitation. Code rural, L. 731-10-1
+      (LEGIARTI000019950453), créé par l'article 18 de la loi n° 2008-1330
+      (JORFARTI000019943089), sans date d'effet propre : « En cas de décès du chef
+      d'exploitation ou d'entreprise agricole, les cotisations mentionnées au premier
+      alinéa dues au titre de l'année au cours de laquelle est survenu le décès sont
+      calculées au prorata de la fraction de l'année considérée comprise entre le
+      1er janvier et la date du décès. Toutefois, le conjoint survivant peut opter pour le
+      calcul des cotisations d'assurance vieillesse prévu au premier alinéa. » D. 731-57-1,
+      créé par l'article 1er du décret n° 2009-1236 (JORFARTI000021158799) : la caisse
+      informe le conjoint survivant de l'option, dont la demande « doit intervenir dans
+      les douze mois qui suivent le décès ». Lus dans les index LEGI et JORF du dépôt
+    date: 2026-10-19
+  - type: autre
+    reference: >-
+      Assemblée nationale, question écrite n° 10883, réponse du ministre de l'agriculture
+      publiée au Journal officiel le 3 février 2026 (page 928) : « en cas de décès du chef
+      d'exploitation ou d'entreprise agricole responsable du paiement d'une ou de
+      plusieurs cotisations, celles-ci sont calculées au prorata de la durée effective
+      d'activité, pour tenir compte de la situation des héritiers ou du conjoint
+      survivant »
+    url: https://www.assemblee-nationale.fr/dyn/17/questions/QANR5L17QE10883
+    date: 2026-10-19
 textes_a_rattacher:
 - reference: L. 351-1 CSS
 - reference: R. 351-6 CSS
@@ -201,3 +225,16 @@ code:
     l'installation, et l'année est de ce statut pour les minima (`Carriere.qualite_agricole`).
     Depuis les cotisations de 1985 : avant, comme quand le statut du 1er janvier ne se lit
     pas, l'année où il cesse se partage entre ses statuts au prorata de leurs mois.
+
+
+    Sauf l'année du décès du chef d'exploitation, depuis le 19 octobre 2026 : ses
+    cotisations sont « calculées au prorata de la fraction de l'année considérée comprise
+    entre le 1er janvier et la date du décès » (L. 731-10-1), et la carrière arrêtée au
+    décès, que lit la pension qu'il « eût obtenue » (`Carriere.au_deces`), la garde à ses
+    mois, comme celle de R. 731-83 : mort le 15 août 2024, le chef compte deux trimestres
+    en 2024, ceux d'avant le 1er juillet, et non quatre. Depuis les cotisations de 2009
+    (`COTISATIONS_AU_PRORATA_DU_DECES_DEPUIS`), L. 731-10-1 étant en vigueur depuis le
+    19 décembre 2008 ; ni le collaborateur, dont le décès n'est pas celui du chef, ni le
+    défunt d'avant 2009 ne sont touchés. Le conjoint survivant peut opter pour l'année
+    entière des cotisations d'assurance vieillesse (D. 731-57-1), ce que le modèle ne lit
+    pas ; les trimestres d'une année au prorata restent la question de R. 731-83.

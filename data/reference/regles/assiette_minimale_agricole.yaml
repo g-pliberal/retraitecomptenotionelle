@@ -43,9 +43,14 @@ effet: >-
   il cesse, rien celle où il s'installe ou prend un autre statut (`moteur/compte.py`). Le
   chef parti le 1er août 2024 y verse pour 2024 2 084,40 € à la base et 848,12 € à la
   RCO, et non 1 215,90 € et 494,74 €. Le régime fusionné de la proposition, après la
-  bascule, prélève toujours sur le revenu des mois.
+  bascule, prélève toujours sur le revenu des mois. Depuis le 19 octobre 2026, l'année du
+  décès du chef, qu'il cotise au prorata depuis 2009 (L. 731-10-1), est une année au
+  prorata, comme celle de R. 731-83, dans la carrière arrêtée au décès : la
+  complémentaire en garde au chef les points d'une année, 133 pour le chef mort le
+  15 août 2024, et le compte qui lit cette carrière n'en reçoit que les cotisations de
+  ses mois.
 sources:
-  lu_le: 2026-10-18
+  lu_le: 2026-10-19
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -56,7 +61,8 @@ sources:
     C / [(1 820 SMIC × T) / N] (LEGIARTI000049904715) : une année au prorata n'en aurait
     plus que ses mois. Le moteur garde au chef les points d'une année, et au
     collaborateur ceux de ses mois ; la pratique de la MSA n'est pas lue (relu le 18
-    octobre 2026).
+    octobre 2026). De même l'année du décès du chef, que L. 731-10-1 fait cotiser au
+    prorata depuis 2009 (relu le 19 octobre 2026).
   - >-
     Dire la première année de cotisation assise sur 600 SMIC : le décret n° 2004-783,
     publié au Journal officiel du 1er août 2004, ne la nomme pas dans ce qui en a été lu,
