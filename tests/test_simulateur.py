@@ -4887,6 +4887,163 @@ def test_les_annees_d_avant_1973_bornent_la_duree_majoree_des_independants(simul
     assert details[4].endswith(f"× 121/150, 93 {majores}")
 
 
+def _pensions_en_deux_moteurs(simulateur, construites: list[dict]) -> list[dict]:
+    """Le montant et le détail de chaque pension de chacune des carrières
+    ``construites``, par régime, dans les deux moteurs : le JavaScript rend les
+    mêmes, à un milliardième près sur les montants, ou le test échoue ; sans
+    node, le Python seul."""
+    import json
+    import shutil
+    import subprocess
+
+    pensions = [{p.regime: [p.montant, p.detail] for p in simulateur.scenario_actuel.calculer(
+        Carriere.depuis_chronologie(construite, simulateur.macro)).pensions_par_regime}
+        for construite in construites]
+    if shutil.which("node") is None:
+        return pensions
+    script = """
+import { readFileSync } from "node:fs";
+import { Carriere } from "./moteur/js/carriere.js";
+import { Contexte } from "./moteur/js/contexte.js";
+const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
+const simulateur = contexte.simulateur();
+process.stdout.write(JSON.stringify(JSON.parse(process.argv[1]).map((construite) =>
+  Object.fromEntries(simulateur.scenarioActuel.calculer(
+    Carriere.depuisChronologie(construite, simulateur.macro))
+    .pensions_par_regime.map((p) => [p.regime, [p.montant, p.detail]])))));
+"""
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", script, json.dumps(construites)],
+        cwd=RACINE_TEMOINS.parent.parent, capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    for portees, attendues in zip(json.loads(execution.stdout), pensions, strict=True):
+        assert sorted(portees) == sorted(attendues)
+        for regime, (montant, detail) in attendues.items():
+            assert portees[regime] == [pytest.approx(montant, rel=1e-9), detail], regime
+    return pensions
+
+
+def test_les_annees_d_avant_1973_bornent_le_minimum_des_independants(simulateur):
+    """Le minimum de l'artisan ou du commerçant « est attribué au titre des
+    périodes d'assurance postérieures au 31 décembre 1972 » ; « Toutefois,
+    lorsque l'assuré justifie également de périodes d'assurance ou d'activité
+    professionnelle non salariée antérieures au 1er janvier 1973 […],
+    l'application dudit article L. 351-10 ne peut avoir pour effet de porter le
+    total des pensions allouées au titre des périodes d'assurance antérieures et
+    postérieures au 1er janvier 1973 à un montant supérieur au minimum de
+    pension calculé au prorata de la durée totale d'assurance par rapport à 150
+    trimestres » (D. 634-6, rédaction du 1er janvier 1990), « par rapport à la
+    durée d'assurance prévue au troisième alinéa de l'article L. 351-1 » depuis
+    2009 ; jusqu'au 31 décembre 1989, « à un montant supérieur à celui du
+    minimum de base entier » (décret n° 73-937, article 7, rédaction de 1976).
+    Les années d'avant 1973 ont leur pension, en points : chaque artisan entre
+    dans le métier au double du salaire moyen, puis gagne le dixième dès 1973,
+    et son minimum ne relève plus que ce que le total laisse sous la borne.
+    L'artisan né en mai 1922, entré en 1950 et parti à soixante-cinq ans en
+    juin 1987 : le minimum entier, 4 612,79 €, moins 4 270,71 € de points et
+    161,62 € de pension, laisse 180,47 € au minimum, et non 730,19 €. Né en
+    1928, entré en 1953 et parti en 1993 :
+    41 trimestres d'après 1972 et 78 d'avant, et la pension en points dépasse
+    déjà les 119/150 du minimum, qui ne relève plus rien. Le commerçant né en
+    1940, sans activité de 1973 à 1984, que le RSI liquide en 2010 à
+    soixante-dix ans : 75 trimestres majorés et 30 d'avant 1973, les 105/150 du
+    minimum, 5 003,43 €, moins 1 904,22 € et 824,66 €, laissent 2 274,54 € et
+    non 2 749,22 €. L'artisan né en 1952, entré à trois fois le salaire moyen,
+    sans activité de 1973 à 1989, que le régime général liquide en 2022 : 90
+    et 10, les 100/164 du minimum, 4 775,13 €, moins 945,60 € et 1 077,05 €,
+    laissent 2 752,49 € et non 3 220,57 €. Le régime
+    général ne connaît pas la borne : l'artisan d'avant 1973 devenu salarié a
+    son minimum entier sur ses 40 trimestres. Dans les deux moteurs."""
+    from retraite_notionnelle import chronologie
+
+    def construite(naissance, metier, debut, age, sans_activite=(), ensuite=None,
+                   niveau=2.0):
+        # Né en mai : le 1er janvier 1973 tombe à huit mois de l'anniversaire.
+        en_1973 = 1973 - naissance - 1 + 8 / 12
+        return chronologie.completer(chronologie.du_parcours(
+            annee_naissance=naissance, sexe="H", mois_naissance=5, age_liquidation=age,
+            metiers=[Metier(metier, debut, niveau), Metier(ensuite or metier, en_1973, 0.1)],
+            interruptions={annee: "inactivite" for annee in sans_activite} or None))
+
+    pensions = _pensions_en_deux_moteurs(simulateur, [
+        construite(1922, "artisan", 28, 65),
+        construite(1928, "artisan", 25, 65),
+        construite(1940, "commercant", 25, 70, range(1973, 1985)),
+        construite(1952, "artisan", 18, 70, range(1973, 1990), niveau=3.0),
+        construite(1928, "artisan", 25, 65, ensuite="salarie_prive_non_cadre"),
+    ])
+    minimum = simulateur.scenario_actuel.minimum_contributif
+
+    def entier(annee):
+        return minimum.valeurs(annee, 6)[0]
+
+    porte = "porté au minimum contributif par"
+    artisan_1987, artisan_1993, commercant, artisan_2022, salarie = pensions
+    assert artisan_1987["cancava"][1].endswith("× 29/150 = 161.62 €, " + porte + " + 180.47 €")
+    assert (artisan_1987["cancava"][0] + artisan_1987["cancava_avant_1973"][0]
+            == pytest.approx(entier(1987)))
+    assert artisan_1993["cancava"][1].endswith("× 41/150")
+    assert artisan_1993["cancava_avant_1973"][0] > entier(1993) * 119 / 150
+    assert "× 75/150" in commercant["rsi"][1]
+    assert commercant["rsi"][1].endswith("= 824.66 €, " + porte + " + 2,274.54 €")
+    assert (commercant["rsi"][0] + commercant["organic_avant_1973"][0]
+            == pytest.approx(entier(2010) * 105 / 150))
+    assert "× 90/164" in artisan_2022["regime_general"][1]
+    assert artisan_2022["regime_general"][1].endswith(
+        "= 1,077.05 €, " + porte + " + 2,752.49 €")
+    assert (artisan_2022["regime_general"][0] + artisan_2022["cancava_avant_1973"][0]
+            == pytest.approx(entier(2022) * 100 / 164))
+    assert salarie["regime_general"][1].endswith("× 40/150 = 573.15 €, " + porte + " + 889.39 €")
+    assert salarie["regime_general"][0] == pytest.approx(entier(1993) * 40 / 150)
+
+
+def test_sans_annees_d_avant_1973_la_borne_ne_joue_pas():
+    """La borne ne vaut que « lorsque l'assuré justifie également de périodes
+    d'assurance ou d'activité professionnelle non salariée antérieures au 1er
+    janvier 1973 » (D. 634-6). Sans elles, le minimum de l'artisane que la
+    règle tous régimes proratise sur ses 167 trimestres, 100 dans le régime,
+    reste le sien, 7 831,22 € × 100/167 + 726,16 € × 100/167 × 120/166 ; le
+    minimum recalculé sur la durée de proratisation, sa majoration au prorata
+    de ses 53 trimestres cotisés sur 166, serait plus bas. Dans les deux
+    moteurs."""
+    import json
+    import shutil
+    import subprocess
+
+    from retraite_notionnelle.droit import completer
+
+    base, majore = 7_831.22, 8_557.38
+    eligible = liquider.EligibleMinimum(
+        indice=0, prorata_assurance=100 / 166, prorata_cotise=53 / 166, taux_plein=True,
+        duree_regime=100, cotisee_regime=53, proratisation=166, requis=166,
+        duree_tous_regimes=167, cotisee_tous_regimes=120, bornee_avec=("cancava_avant_1973",))
+    regle = {"majoration": "periodes_cotisees"}
+    plancher = completer.plancher_du_regime(eligible, base, majore, True, True)
+    assert plancher == pytest.approx(base * 100 / 167 + (majore - base) * 100 / 167 * 120 / 166)
+    assert completer.borne_avec_les_droits_d_avant_1973(
+        plancher, eligible, 0.0, 0, 0, base, majore, True, regle, 0) == plancher
+    if shutil.which("node") is None:
+        return
+    script = """
+import { borneAvecLesDroitsDAvant1973, plancherDuRegime } from "./moteur/js/droit/completer.js";
+const [base, majore] = [7831.22, 8557.38];
+const eligible = {
+  prorataAssurance: 100 / 166, prorataCotise: 53 / 166, dureeRegime: 100, cotiseeRegime: 53,
+  proratisation: 166, requis: 166, dureeTousRegimes: 167, cotiseeTousRegimes: 120,
+  borneeAvec: ["cancava_avant_1973"], borneeAuMinimumEntier: false };
+const plancher = plancherDuRegime(eligible, base, majore, true, true);
+process.stdout.write(JSON.stringify([plancher, borneAvecLesDroitsDAvant1973(
+  plancher, eligible, 0.0, 0, 0, base, majore, true, { majoration: "periodes_cotisees" }, 0)]));
+"""
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", script],
+        cwd=RACINE_TEMOINS.parent.parent, capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    assert json.loads(execution.stdout) == [plancher, plancher]
+
+
 def test_la_tranche_c_d_avant_2016_garde_le_coefficient_pour_age(simulateur):
     """L'exonération au taux plein ne vaut que « sur les tranches A et B des
     rémunérations » (accords du 13 novembre 2003 et du 18 mars 2011) : les

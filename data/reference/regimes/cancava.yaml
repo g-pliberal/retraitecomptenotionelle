@@ -84,12 +84,17 @@ periodes:
     taux_cotisation_retraite: 0.1431
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
+    pension_bornee_au_minimum_entier_avec: [cancava_avant_1973]
     avantages_non_contributifs:
       [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
        reversion, periodes_assimilees]
     notes: >-
       1983 : le minimum contributif est créé, et la décote tombe à 1,25 % par
       trimestre. La durée requise reste de 150 trimestres.
+      Le minimum relève les seules périodes d'après 1972, sans porter le
+      cumul avec l'avantage d'avant 1973 au-delà du minimum entier (décret
+      n° 73-937, article 7) ; depuis 1990, au-delà du minimum au prorata de
+      la durée totale (D. 634-6 ; fiche `minimum_contributif`).
       TAUX DE COTISATION : 14.31 % est la moyenne 1983-1989 des taux datés
       que transcrit OpenFisca-France
       (`cotisations_taxes_independants_artisans_commercants/ret_ac/artisans/sous_pss`,
@@ -116,6 +121,7 @@ periodes:
     surcote_par_trimestre: null
     duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
     duree_majoree_bornee_avec: [cancava_avant_1973]
+    pension_bornee_au_minimum_avec: [cancava_avant_1973]
     avantages_non_contributifs:
       [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
        reversion, periodes_assimilees]
@@ -159,6 +165,7 @@ periodes:
     surcote_par_trimestre: null
     duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
     duree_majoree_bornee_avec: [cancava_avant_1973]
+    pension_bornee_au_minimum_avec: [cancava_avant_1973]
     avantages_non_contributifs:
       [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
        reversion, periodes_assimilees]
@@ -197,6 +204,7 @@ periodes:
     duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
     duree_majoree_tous_regimes: majoration_duree_apres_65_ans
     duree_majoree_bornee_avec: [cancava_avant_1973]
+    pension_bornee_au_minimum_avec: [cancava_avant_1973]
     surcote_bareme: surcote_regime_general
     avantages_non_contributifs:
       [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,

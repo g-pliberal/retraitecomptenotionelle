@@ -616,6 +616,26 @@ champs_periode:
       que nomme la période de chacun de ses membres.
     defaut: []
 
+  pension_bornee_au_minimum_avec:
+    description: >-
+      Régimes dont la pension s'ajoute à celle du régime, et la durée à sa
+      durée, sous le minimum qui borne leur total : les droits d'avant 1973
+      des artisans et des commerçants, dont le minimum contributif ne peut
+      porter le total des pensions d'avant et d'après 1973 « à un montant
+      supérieur au minimum de pension calculé au prorata de la durée totale
+      d'assurance » par rapport à la durée de proratisation (D. 634-6, depuis
+      1990 ; fiche `minimum_contributif`). Le groupe liquidé ensemble lit ceux
+      que nomme la période de chacun de ses membres.
+    defaut: []
+
+  pension_bornee_au_minimum_entier_avec:
+    description: >-
+      Les mêmes régimes, de 1983 à 1989, sous le minimum entier : le minimum
+      ne peut porter le montant cumulé des deux pensions « à un montant
+      supérieur à celui du minimum de base entier » (décret n° 73-937, article
+      7, rédaction de 1976, en vigueur jusqu'au 31 décembre 1989).
+    defaut: []
+
   decote_par_la_duree_seule:
     description: >-
       La décote se compte-t-elle sur la SEULE durée manquante, l'âge

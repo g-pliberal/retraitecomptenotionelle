@@ -888,6 +888,8 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
           && moteur.catalogue.contient(autre)
           && ["base", "integre"].includes(moteur.catalogue.obtenir(autre).etage))
         .map(([autre]) => autre);
+      const [borneeAvec, borneeAuMinimumEntier] = regimesQuiBornentLeMinimum(
+        moteur, carriere, membres);
       eligiblesMinimum.push({
         indice: indicePension,
         prorataAssurance: prorata,
@@ -909,6 +911,10 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
         cotiseeTousRegimes: cotiseeRegime + autresDeBase.reduce(
           (somme, autre) => somme + cumulPlafonne("cotises", [autre]), 0),
         porteAvpf: membres.includes("regime_general"),
+        // Les droits d'avant 1973 des artisans et des commerçants, qui bornent
+        // leur minimum (D. 634-6) : voir `EligibleMinimum` du Python.
+        borneeAvec,
+        borneeAuMinimumEntier,
       });
     }
     if (periode.avantages_non_contributifs.includes("minimum_garanti")) {
@@ -2502,6 +2508,29 @@ export function regimesQuiBornentLaDureeMajoree(moteur, carriere, membres) {
     }
   }
   return [...codes].sort();
+}
+
+/**
+ * Les régimes que nomment `pension_bornee_au_minimum_avec` et
+ * `pension_bornee_au_minimum_entier_avec` dans la période de liquidation de
+ * chacun des membres, et si la borne est le minimum entier :
+ * `[codes, entier]`. Voir `liquider.regimes_qui_bornent_le_minimum`.
+ */
+export function regimesQuiBornentLeMinimum(moteur, carriere, membres) {
+  const codes = new Set();
+  let entier = false;
+  for (const membre of membres) {
+    const periode = periodeDeLiquidation(moteur.catalogue.obtenir(membre),
+      carriere.dateLiquidation);
+    for (const code of periode?.pension_bornee_au_minimum_avec ?? []) {
+      codes.add(code);
+    }
+    for (const code of periode?.pension_bornee_au_minimum_entier_avec ?? []) {
+      codes.add(code);
+      entier = true;
+    }
+  }
+  return [[...codes].sort(), entier];
 }
 
 export function retrancheDecote(moteur, periode, carriere) {

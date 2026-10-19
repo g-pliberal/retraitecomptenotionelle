@@ -960,6 +960,36 @@ export function complementDesAlignes(pension, eligible, montant, regle, exInvali
 }
 
 /**
+ * Le minimum d'un artisan ou d'un commerçant qui a des années d'avant 1973,
+ * borné avec la pension qu'elles lui valent : le total des deux pensions ne
+ * passe pas le minimum que le régime calcule sur ses durées augmentées de
+ * celles d'avant 1973 (D. 634-6), ni, de 1983 à 1989, le minimum entier
+ * (décret n° 73-937, article 7) ; sans années d'avant 1973, rien ne le borne.
+ * Voir `borne_avec_les_droits_d_avant_1973` du Python.
+ */
+export function borneAvecLesDroitsDAvant1973(plancher, eligible, avant1973, dureeAvant1973,
+  cotiseeAvant1973, montantBase, montantMajore, majoration, regle, avpf) {
+  if (dureeAvant1973 <= 0 && avant1973 <= 0.0) {
+    return plancher;
+  }
+  let borne;
+  if (eligible.borneeAuMinimumEntier) {
+    borne = montantBase;
+  } else {
+    const cotisee = eligible.cotiseeRegime + cotiseeAvant1973;
+    const totale = {
+      ...eligible,
+      prorataAssurance: eligible.prorataAssurance + dureeAvant1973 / eligible.proratisation,
+      cotiseeRegime: cotisee,
+      prorataCotise: Math.min(cotisee, eligible.proratisation) / eligible.proratisation,
+    };
+    borne = plancherDuRegime(selonLaRegle(totale, regle, avpf), montantBase, montantMajore,
+      majoration, false);
+  }
+  return Math.min(plancher, borne - avant1973);
+}
+
+/**
  * Les durées cotisées de l'éligible, telles que la majoration de cette date les
  * lit : la durée d'assurance de janvier 2004 à juin 2005, l'AVPF et l'AVA en
  * plus au régime général depuis septembre 2023. Voir `selon_la_regle` du
@@ -1194,10 +1224,22 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
     const complementDu = (pension, eligible, plancher) => (!eligible.tauxPlein ? 0.0
       : complementMinimum((pension.montant - (eligible.horsMinimum ?? 0.0)) / eligible.surcote,
         plancher, eligible.surcote, dateEffet));
+    // Les années d'avant 1973 des artisans et des commerçants bornent leur
+    // minimum : voir `borneAvecLesDroitsDAvant1973`.
+    const borne = (eligible, plancher, majoration) => ((eligible.borneeAvec ?? []).length === 0
+      ? plancher
+      : borneAvecLesDroitsDAvant1973(plancher, eligible,
+        pensions.filter((p) => eligible.borneeAvec.includes(p.regime))
+          .reduce((somme, p) => somme + p.montant, 0.0),
+        eligible.borneeAvec.reduce(
+          (somme, code) => somme + (durees.trimestresParRegime.get(code) ?? 0), 0),
+        eligible.borneeAvec.reduce(
+          (somme, code) => somme + durees.cumulPlafonne("cotises", [code]), 0),
+        montantBase, montantMajore, majoration, regle, avpf));
     const plancherNational = (eligible, majoration) => (pensionMinimum !== null
       ? plancherDAvant1983(eligible, montantBase, pensionMinimum, exInvalide)
-      : plancherDuRegime(selonLaRegle(eligible, regle, avpf), montantBase, montantMajore,
-        majoration, regle.duree_tous_regimes));
+      : borne(eligible, plancherDuRegime(selonLaRegle(eligible, regle, avpf), montantBase,
+        montantMajore, majoration, regle.duree_tous_regimes), majoration));
     // LA PENSION PRORATISÉE ET LA PENSION NATIONALE : quand un accord les
     // compare, chacune est portée à SON minimum, puis la plus élevée est
     // servie — la proratisée à égalité.
@@ -1241,10 +1283,10 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
         complement = complementDu(pension, eligible, plancherNational(eligible, majoree));
       } else {
         const plancher = international
-          ? plancherInternational(selonLaRegle(eligible, regle, avpf), montantBase,
-            montantMajore, dureeTotale,
+          ? borne(eligible, plancherInternational(selonLaRegle(eligible, regle, avpf),
+            montantBase, montantMajore, dureeTotale,
             regle.majoration === "sans_distinction" ? dureeTotale : trimestresCotises + avpf,
-            majoree)
+            majoree), majoree)
           : plancherNational(eligible, majoree);
         complement = complementDu(pension, eligible, plancher);
         const [nationale, eligibleNational] = alternative;

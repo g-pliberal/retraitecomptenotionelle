@@ -454,6 +454,14 @@ class EligibleMinimum:
     #: Le régime valide-t-il l'AVPF et l'AVA, que la majoration compte depuis
     #: septembre 2023 ? Le régime général, seul.
     porte_avpf: bool = False
+    #: Les régimes dont la pension s'ajoute à celle-ci, et la durée à sa durée,
+    #: sous le minimum qui borne leur total : les droits d'avant 1973 des
+    #: artisans et des commerçants (D. 634-6), que nomme la période de chacun
+    #: des membres liquidés ensemble ; vide ailleurs.
+    bornee_avec: tuple[str, ...] = ()
+    #: La borne est-elle le minimum entier, et non le minimum au prorata de la
+    #: durée totale ? De 1983 à 1989 (décret n° 73-937, article 7).
+    bornee_au_minimum_entier: bool = False
 
 
 @dataclass(frozen=True)
@@ -1478,6 +1486,8 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                 autre for autre, nombre in durees.trimestres_par_regime.items()
                 if autre not in membres and nombre > 0 and autre in moteur.catalogue
                 and moteur.catalogue[autre].etage in ("base", "integre")]
+            bornee_avec, bornee_au_minimum_entier = regimes_qui_bornent_le_minimum(
+                moteur, carriere, membres)
             eligibles_minimum.append(EligibleMinimum(
                 indice=len(pensions),
                 prorata_assurance=prorata,
@@ -1495,6 +1505,8 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                 cotisee_tous_regimes=cotisee_regime + somme_ordonnee(
                     cumul_plafonne("cotises", (autre,)) for autre in autres_de_base),
                 porte_avpf="regime_general" in membres,
+                bornee_avec=bornee_avec,
+                bornee_au_minimum_entier=bornee_au_minimum_entier,
             ))
         if "minimum_garanti" in periode.avantages_non_contributifs:
             # Depuis la loi du 9 novembre 2010, le minimum garanti n'est dû
@@ -3533,6 +3545,25 @@ def regimes_qui_bornent_la_duree_majoree(moteur, carriere: Carriere,
         if periode is not None:
             codes.update(periode.duree_majoree_bornee_avec)
     return tuple(sorted(codes))
+
+
+def regimes_qui_bornent_le_minimum(moteur, carriere: Carriere, membres: tuple[str, ...]
+                                   ) -> tuple[tuple[str, ...], bool]:
+    """Les régimes que nomment ``pension_bornee_au_minimum_avec`` et
+    ``pension_bornee_au_minimum_entier_avec`` dans la période de liquidation de
+    chacun des ``membres``, et si la borne est le minimum entier : voir
+    :func:`~.completer.borne_avec_les_droits_d_avant_1973`. Le régime général,
+    qui liquide depuis 2020 les années des indépendants qu'il réunit, garde leur
+    borne, et ne l'oppose pas à ses seuls salariés."""
+    codes: set[str] = set()
+    entier = False
+    for membre in membres:
+        periode = periode_de_liquidation(moteur.catalogue[membre], carriere.date_liquidation)
+        if periode is not None:
+            codes.update(periode.pension_bornee_au_minimum_avec)
+            codes.update(periode.pension_bornee_au_minimum_entier_avec)
+            entier = entier or bool(periode.pension_bornee_au_minimum_entier_avec)
+    return tuple(sorted(codes)), entier
 
 
 def retranche_decote(moteur, periode: PeriodeRegime, carriere: Carriere) -> int:

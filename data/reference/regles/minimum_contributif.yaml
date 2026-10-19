@@ -13,7 +13,9 @@ intitule: >-
   L. 345, au montant de l'allocation aux vieux travailleurs salariés, entière à soixante
   trimestres dans le régime ou à l'ex-invalide, en soixantièmes en dessous ; aux
   artisans et aux commerçants, au titre des seules périodes d'après 1972, sans porter le
-  cumul avec l'avantage d'avant 1973 au-delà du minimum entier.
+  cumul avec l'avantage d'avant 1973 au-delà du minimum entier, règle que le minimum
+  contributif garde jusqu'en 1989 ; depuis 1990, sans porter le total des pensions
+  d'avant et d'après 1973 au-delà du minimum calculé au prorata de leur durée totale.
 domaine: minima
 regimes: [regime_general, msa_salaries, cancava, organic, rsi, cavimac]
 etape: completer_tous_regimes
@@ -31,6 +33,8 @@ lit:
   minimum (legislation/pension_minimum_avant_1983.csv)
 - avant le 1er avril 1983, la pension d'invalidité que la pension de vieillesse remplace
 - les pensions déjà servies et les pensions étrangères, pour l'écrêtement
+- d'un artisan ou d'un commerçant, la pension, la durée d'assurance et la durée cotisée
+  de ses droits d'avant 1973, que nomme la période de chaque régime liquidé ensemble
 ecrit:
 - le complément de chaque régime porté au minimum, majoration des périodes cotisées
   comprise, après la limitation du cumul ou l'écrêtement que sa date d'effet demande
@@ -209,6 +213,16 @@ versions:
     article: L. 351-10 CSS
     en_vigueur: 1985-12-21
     lu_le: 2026-10-04
+  - id: LEGIARTI000006765827
+    reference: >-
+      décret n° 73-937 du 2 octobre 1973, article 7 (rédaction du 5 mars 1976, en vigueur
+      jusqu'au 31 décembre 1989), aux artisans et aux commerçants : le minimum de L. 345
+      « est attribué, au titre des périodes d'assurance postérieures au 31 décembre
+      1972 » ; avec des périodes d'avant 1973, son application « ne peut avoir pour effet
+      de porter à un montant supérieur à celui du minimum de base entier le montant
+      cumulé » des deux avantages
+    en_vigueur: 1976-03-05
+    lu_le: 2026-10-19
   nee_de: JORFTEXT000000687040
   bornes:
     liquidation.date_effet: [1983-04-01, 1984-12-01]
@@ -216,7 +230,10 @@ versions:
     droit: >-
       le minimum entier si la durée d'assurance au régime atteint la durée de
       proratisation, 150 trimestres pour les générations qui partent alors, réduit au
-      prorata sinon ; aucune majoration, aucun écrêtement ; revalorisé comme les pensions
+      prorata sinon ; aucune majoration, aucun écrêtement ; revalorisé comme les pensions.
+      Aux artisans et aux commerçants, jusqu'au 31 décembre 1989, au titre des seules
+      périodes d'après 1972, sans porter le cumul avec la pension d'avant 1973 au-delà du
+      minimum entier (décret n° 73-937, article 7)
     parametres:
       existe: true
       majoration: aucune
@@ -254,6 +271,20 @@ versions:
       proportionnel à leur durée d'assurance » (R. 173-11) ; pour les retraites attribuées
       depuis le 01/12/1984
     lu_le: 2026-10-04
+  - id: LEGIARTI000006738000
+    article: D. 634-6 CSS
+    en_vigueur: 1990-01-01
+    citation: >-
+      « Le montant minimum prévu à l'article L. 351-10 est attribué au titre des périodes
+      d'assurance postérieures au 31 décembre 1972 dans les conditions fixées par
+      l'article R. 351-25. Toutefois, lorsque l'assuré justifie également de périodes
+      d'assurance ou d'activité professionnelle non salariée antérieures au 1er janvier
+      1973, valables au titre du régime d'assurance vieillesse en vigueur au 31 décembre
+      1972, l'application dudit article L. 351-10 ne peut avoir pour effet de porter le
+      total des pensions allouées au titre des périodes d'assurance antérieures et
+      postérieures au 1er janvier 1973 à un montant supérieur au minimum de pension
+      calculé au prorata de la durée totale d'assurance par rapport à 150 trimestres »
+    lu_le: 2026-10-19
   nee_de: JORFTEXT000000508140
   bornes:
     liquidation.date_effet: [1984-12-01, 2004-01-01]
@@ -261,7 +292,11 @@ versions:
     droit: >-
       la règle de 1983, et le total des pensions portées au minimum dans plusieurs régimes
       de base limité au minimum entier ; le régime de la plus longue durée sert sa pension
-      portée au minimum, les autres un complément différentiel au prorata de leurs durées
+      portée au minimum, les autres un complément différentiel au prorata de leurs durées.
+      Aux artisans et aux commerçants qui ont des périodes d'avant 1973, le cumul borné au
+      minimum entier jusqu'au 31 décembre 1989 ; depuis le 1er janvier 1990, le total des
+      pensions d'avant et d'après 1973 au minimum calculé au prorata de la durée totale,
+      celle d'avant 1973 comprise, sur la durée de proratisation (D. 634-6)
     parametres:
       existe: true
       majoration: aucune
@@ -341,6 +376,14 @@ versions:
       puis leurs montants sont répartis » ; six exemples chiffrés
     publie_le: 2005-07-04
     lu_le: 2026-10-04
+  - id: LEGIARTI000020090074
+    article: D. 634-6 CSS
+    en_vigueur: 2009-01-01
+    citation: >-
+      la même règle, « dans les conditions fixées par l'article D. 351-2-1 », le minimum
+      de pension « calculé au prorata de la durée totale d'assurance par rapport à la
+      durée d'assurance prévue au troisième alinéa de l'article L. 351-1 »
+    lu_le: 2026-10-19
   bornes:
     liquidation.date_effet: [2005-07-01, 2009-04-01]
   contenu:
@@ -350,7 +393,10 @@ versions:
       -delà de la durée requise tous régimes, le minimum au prorata de la durée du régime
       sur la durée tous régimes, la majoration de même, et en outre au prorata de la durée
       cotisée tous régimes sur la durée de proratisation quand elle ne l'atteint pas ;
-      aucune durée cotisée n'est exigée
+      aucune durée cotisée n'est exigée. Aux artisans et aux commerçants qui ont des
+      périodes d'avant 1973, le total des pensions borné au minimum au prorata de la
+      durée totale (D. 634-6), sur la durée de L. 351-1 depuis 2009 et non plus sur 150
+      trimestres
     parametres:
       existe: true
       majoration: periodes_cotisees
@@ -566,10 +612,30 @@ approximations:
     la condition de subsidiarité (L. 351-10-1), depuis 2012, se présume remplie : toutes les
     pensions auxquelles l'assuré peut prétendre sont demandées
   effet: non mesuré
+- ecart: >-
+    aux artisans et aux commerçants qui ont des années d'avant 1973, « le minimum de
+    pension calculé au prorata de la durée totale d'assurance » (D. 634-6) se lit comme le
+    minimum que le régime calcule, sa durée d'assurance et sa durée cotisée augmentées de
+    celles d'avant 1973, la majoration au prorata de la durée cotisée ; aucune circulaire
+    lue ne l'applique. La durée de proratisation tient lieu des « 150 trimestres » que la
+    rédaction de 1990 dit encore de 2004 à 2008, quand celle des générations 1944 à 1948
+    les dépasse, comme pour D. 634-5 (fiche majoration_duree_apres_65_ans). De 1983 à
+    1989, le minimum entier de l'article 7 du décret n° 73-937, lu à la lettre. Les
+    années d'avant 1973 comptent les trimestres que le modèle leur valide : la règle qui
+    décompte les périodes de l'ancien régime n'est pas lue
+  effet: >-
+    aucun des témoins de simulation ni des rendus de pages ne bouge (19 octobre 2026) :
+    aucune de leurs carrières n'a d'années d'indépendant d'avant 1973 et une pension
+    d'après portée au minimum
 sources:
-  lu_le: 2026-10-14
+  lu_le: 2026-10-19
   prochaine_relecture: 2027-01-31
   a_relire:
+  - >-
+    Une circulaire de la CANCAVA, de l'ORGANIC ou du RSI qui applique D. 634-6 depuis
+    1990, que la base de législation de la Cnav ne garde pas avant 2006 : ce que vaut le
+    minimum qui borne le total quand la majoration des périodes cotisées est due, et la
+    durée sur laquelle la caisse le proratisait de 2004 à 2008.
   - >-
     Avant le 12 mai 1976 : l'article 13 de l'ordonnance n° 45-170, L. 345 du code de 1956
     et les rédactions du décret n° 45-0179 d'avant 1976, au fac-similé du Journal
@@ -638,31 +704,59 @@ sources:
   - type: service_public
     reference: actualité A15703, montants 2026
     date: 2026-02-12
+  - type: legifrance
+    reference: >-
+      D. 634-6 CSS, ses trois rédactions : du 8 mai 1988 (la réversion seule), du 1er
+      janvier 1990 et du 1er janvier 2009 ; décret n° 73-937, articles 7 et 7-2, rédactions
+      du 5 mars 1976, en vigueur jusqu'au 31 décembre 1989 ; dans l'index LEGI du dépôt à
+      jour au 18 octobre 2026
+    date: 2026-10-19
+  - type: autre
+    reference: >-
+      circulaires du RSI n° 2008/059 du 7 octobre 2008 (point 7) et n° 2009/031 du 9 juin
+      2009 (points 1.2.2 et 2.2), par la base de législation de la Cnav : le minimum des
+      artisans et des commerçants se proratise sur leurs seuls trimestres validés depuis
+      1973, quand leurs trimestres d'avant 1973 comptent dans la durée tous régimes et,
+      cotisés, dans la durée cotisée tous régimes ; ni l'une ni l'autre ne dit la borne de
+      D. 634-6
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=circulaire_rsi_2009_031_09062009.pdf
+    date: 2026-10-19
 textes_a_rattacher:
 - reference: L. 351-10 CSS
 - reference: D. 351-2-1 CSS, dernier alinéa (décret n° 2008-1509, articles 6 et 8)
 - reference: L. 173-2 CSS
+textes_sans_effet:
+- id: LEGIARTI000006737999
+  motif: >-
+    D. 634-6 du 8 mai 1988 au 31 décembre 1989 : « Les dispositions des articles R. 353-9 à
+    R. 353-11 et D. 353-2 sont applicables aux régimes d'assurance vieillesse mentionnés à
+    l'article L. 634-2 » ; la réversion, et non le minimum
 code:
   python: >-
     scenarios/actuel.py : MinimumContributif (valeurs, pension_minimum, regle) ;
     droit/completer.py : completer, plancher_national, plancher_d_avant_1983,
-    complement_des_alignes,
+    complement_des_alignes, borne_avec_les_droits_d_avant_1973,
     avpf_retenue, limiter_le_cumul, complement_minimum ;
     droit/liquider.py : EligibleMinimum (duree_tous_regimes, cotisee_tous_regimes,
-    porte_avpf)
+    porte_avpf, bornee_avec, bornee_au_minimum_entier), regimes_qui_bornent_le_minimum
   javascript: >-
     moteur/js/regimes.js : MinimumContributif ; moteur/js/droit/completer.js :
-    completer, plancherNational, plancherDAvant1983, complementDesAlignes, avpfRetenue,
-    limiterLeCumul ;
-    moteur/js/droit/liquider.js
+    completer, plancherNational, plancherDAvant1983, complementDesAlignes,
+    borneAvecLesDroitsDAvant1973, avpfRetenue, limiterLeCumul ;
+    moteur/js/droit/liquider.js : regimesQuiBornentLeMinimum
   parametres: >-
     contenu.parametres de chaque version ; data/reference/legislation/minimum_contributif.csv,
-    data/reference/legislation/pension_minimum_avant_1983.csv
+    data/reference/legislation/pension_minimum_avant_1983.csv ; les champs de période
+    pension_bornee_au_minimum_avec (depuis 1990) et pension_bornee_au_minimum_entier_avec
+    (de 1983 à 1989) de la CANCAVA, de l'ORGANIC et du RSI
   tests: >-
     tests/test_simulateur.py et tests/js/moteur.test.js : les exemples des circulaires
     2005/30 et 2009/17 rejoués dans les deux moteurs ; tests/test_pension_minimum_avant_1983.py :
     la pension minimum d'avant avril 1983, dans les deux moteurs, celle des artisans et des
-    commerçants comprise
+    commerçants comprise ; tests/test_simulateur.py,
+    test_les_annees_d_avant_1973_bornent_le_minimum_des_independants : la borne de D. 634-6
+    et du décret n° 73-937, de 1987 à 2022, dans les deux moteurs, et
+    test_sans_annees_d_avant_1973_la_borne_ne_joue_pas : sans elles, aucune
 historique:
 - >-
   2026-09-23 — la surcote ajoutée au minimum depuis avril 2009, et non le minimum
@@ -685,6 +779,12 @@ historique:
   article 55-5) ; les artisans et les commerçants portés au minimum de base au titre de
   leurs périodes d'après 1972, le cumul avec l'avantage d'avant 1973 borné au minimum
   entier (décret n° 73-937, article 7) ; deux pensions portées au minimum se cumulent.
+- >-
+  2026-10-19 — après le 1er avril 1983, les artisans et les commerçants qui ont des années
+  d'avant 1973 : le minimum contributif, qui les relevait sans compter leur pension en
+  points, ne porte plus le total des deux au-delà du minimum entier jusqu'en 1989
+  (décret n° 73-937, article 7), ni au-delà du minimum au prorata de leur durée totale
+  depuis 1990 (D. 634-6), au régime général aussi depuis 2020 (action 131).
 exemples:
 - cnav_2005_30_minimum_majore_monopensionne
 - sp_a15703_minimum_contributif_2026
@@ -694,7 +794,8 @@ effet: >-
   toute date depuis 1983, le seuil de 120 trimestres opposé avant avril 2009 ; un
   polypensionné au-delà de la durée requise recevait son minimum au prorata de la durée
   de proratisation et non de sa durée tous régimes ; l'AVPF n'entrait pas dans la
-  majoration depuis septembre 2023.
+  majoration depuis septembre 2023 ; l'artisan ou le commerçant qui a des années d'avant
+  1973 recevait, depuis 1983, son minimum en plus de sa pension en points.
 referents:
   trajectoire:
     equivalent: >-

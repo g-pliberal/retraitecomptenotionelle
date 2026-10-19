@@ -824,6 +824,7 @@ def _regimes() -> list[dict]:
                     **({"date_effet": list(p.date_effet)} if p.date_effet is not None else {}),
                     **_regles_d_avant_1983(p),
                     **_duree_majoree(p),
+                    **_minimum_borne(p),
                     **_points_abattus(p),
                     **_points_au_prorata(p),
                     **_bareme_anticipation(p),
@@ -914,6 +915,19 @@ def _duree_majoree(p) -> dict:
         "duree_majoree_apres_taux_plein": p.duree_majoree_apres_taux_plein or None,
         "duree_majoree_tous_regimes": p.duree_majoree_tous_regimes or None,
         "duree_majoree_bornee_avec": list(p.duree_majoree_bornee_avec) or None,
+    }
+    return {cle: valeur for cle, valeur in champs.items() if valeur is not None}
+
+
+def _minimum_borne(p) -> dict:
+    """Les droits d'avant 1973 qui bornent le minimum des artisans et des
+    commerçants, et seulement là : les périodes de la CANCAVA, de l'ORGANIC et
+    du RSI depuis 1983. Même raison que pour les marins.
+    """
+    champs = {
+        "pension_bornee_au_minimum_avec": list(p.pension_bornee_au_minimum_avec) or None,
+        "pension_bornee_au_minimum_entier_avec":
+            list(p.pension_bornee_au_minimum_entier_avec) or None,
     }
     return {cle: valeur for cle, valeur in champs.items() if valeur is not None}
 

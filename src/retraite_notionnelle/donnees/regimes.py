@@ -448,6 +448,16 @@ class PeriodeRegime:
     #: la durée totale des périodes d'assurance antérieures au 1er janvier 1973
     #: et postérieures au 31 décembre 1972 ».
     duree_majoree_bornee_avec: tuple[str, ...]
+    #: Les régimes dont la pension s'ajoute à celle du régime, et la durée à sa
+    #: durée, sous le minimum qui borne leur total : les droits d'avant 1973 des
+    #: artisans et des commerçants, que le minimum ne peut porter, avec la
+    #: pension d'après 1972, « à un montant supérieur au minimum de pension
+    #: calculé au prorata de la durée totale d'assurance » (D. 634-6).
+    pension_bornee_au_minimum_avec: tuple[str, ...]
+    #: Les mêmes, de 1983 à 1989, sous le minimum entier : « à un montant
+    #: supérieur à celui du minimum de base entier » (décret n° 73-937,
+    #: article 7).
+    pension_bornee_au_minimum_entier_avec: tuple[str, ...]
     #: Âge dès lequel une femme qui réunit la durée écrite dans les régimes
     #: nommés reçoit le taux de l'âge du taux plein : soixante-trois ans en
     #: 1978, soixante ans de 1979 au 31 mars 1983, pour trente-sept ans et demi
@@ -2153,6 +2163,12 @@ class CatalogueRegimes:
                 ),
                 duree_majoree_bornee_avec=tuple(
                     p.get("duree_majoree_bornee_avec") or ()
+                ),
+                pension_bornee_au_minimum_avec=tuple(
+                    p.get("pension_bornee_au_minimum_avec") or ()
+                ),
+                pension_bornee_au_minimum_entier_avec=tuple(
+                    p.get("pension_bornee_au_minimum_entier_avec") or ()
                 ),
                 age_taux_plein_femmes=(
                     None if p.get("age_taux_plein_femmes") is None

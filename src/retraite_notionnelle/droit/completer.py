@@ -307,6 +307,49 @@ def complement_des_alignes(pension: float, eligible, montant: float, regle: dict
     return complement
 
 
+def borne_avec_les_droits_d_avant_1973(plancher: float, eligible, avant_1973: float,
+                                       duree_avant_1973: int, cotisee_avant_1973: int,
+                                       montant_base: float, montant_majore: float,
+                                       majoration: bool, regle: dict, avpf: int) -> float:
+    """Le minimum d'un artisan ou d'un commerçant qui a des années d'avant 1973,
+    borné avec la pension qu'elles lui valent (``avant_1973``).
+
+    « Le montant minimum prévu à l'article L. 351-10 est attribué au titre des
+    périodes d'assurance postérieures au 31 décembre 1972 […]. Toutefois,
+    lorsque l'assuré justifie également de périodes d'assurance ou d'activité
+    professionnelle non salariée antérieures au 1er janvier 1973 […],
+    l'application dudit article L. 351-10 ne peut avoir pour effet de porter le
+    total des pensions allouées au titre des périodes d'assurance antérieures et
+    postérieures au 1er janvier 1973 à un montant supérieur au minimum de
+    pension calculé au prorata de la durée totale d'assurance par rapport à 150
+    trimestres » (D. 634-6, rédaction du 1er janvier 1990), « par rapport à la
+    durée d'assurance prévue au troisième alinéa de l'article L. 351-1 » depuis
+    2009 : le minimum que le régime calcule, ses durées d'assurance et cotisée
+    augmentées de celles d'avant 1973 (``duree_avant_1973``,
+    ``cotisee_avant_1973``), sur la durée de proratisation. De 1983 à 1989,
+    « à un montant supérieur à celui du minimum de base entier » (décret
+    n° 73-937, article 7, rédaction de 1976). Le plancher du régime ne passe
+    pas la borne, moins la pension d'avant 1973 : le minimum ne relève plus que
+    ce que leur total laisse dessous. Sans années d'avant 1973, rien ne le
+    borne : le minimum recalculé sur la durée de proratisation passerait sous
+    celui que la règle tous régimes proratise."""
+    if duree_avant_1973 <= 0 and avant_1973 <= 0.0:
+        return plancher
+    if eligible.bornee_au_minimum_entier:
+        borne = montant_base
+    else:
+        cotisee = eligible.cotisee_regime + cotisee_avant_1973
+        totale = replace(
+            eligible,
+            prorata_assurance=eligible.prorata_assurance
+            + duree_avant_1973 / eligible.proratisation,
+            cotisee_regime=cotisee,
+            prorata_cotise=min(cotisee, eligible.proratisation) / eligible.proratisation)
+        borne = plancher_du_regime(selon_la_regle(totale, regle, avpf), montant_base,
+                                   montant_majore, majoration, False)
+    return min(plancher, borne - avant_1973)
+
+
 def selon_la_regle(eligible, regle: dict, avpf: int):
     """Les durées cotisées de l'éligible, telles que la majoration de cette date
     les lit.
@@ -1368,13 +1411,27 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                 (pension.montant - eligible.hors_minimum) / eligible.surcote, plancher,
                 eligible.surcote, date_effet)
 
+        def borne(eligible, plancher: float, majoration: bool) -> float:
+            # Les années d'avant 1973 des artisans et des commerçants bornent
+            # leur minimum : voir :func:`borne_avec_les_droits_d_avant_1973`.
+            if not eligible.bornee_avec:
+                return plancher
+            return borne_avec_les_droits_d_avant_1973(
+                plancher, eligible,
+                somme_ordonnee(p.montant for p in pensions if p.regime in eligible.bornee_avec),
+                somme_ordonnee(durees.trimestres_par_regime.get(code, 0)
+                               for code in eligible.bornee_avec),
+                somme_ordonnee(durees.cumul_plafonne("cotises", (code,))
+                               for code in eligible.bornee_avec),
+                montant_base, montant_majore, majoration, regle, avpf)
+
         def plancher_national(eligible, majoration: bool) -> float:
             if pension_minimum:
                 return plancher_d_avant_1983(eligible, montant_base, pension_minimum,
                                              ex_invalide)
-            return plancher_du_regime(
+            return borne(eligible, plancher_du_regime(
                 selon_la_regle(eligible, regle, avpf), montant_base, montant_majore,
-                majoration, regle["duree_tous_regimes"])
+                majoration, regle["duree_tous_regimes"]), majoration)
 
         # LA PENSION PRORATISÉE ET LA PENSION NATIONALE : quand un accord les
         # compare, chacune est portée à SON minimum, puis la plus élevée est
@@ -1417,11 +1474,11 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                     pension, eligible, plancher_national(eligible, majoree))
             else:
                 plancher = (
-                    plancher_international(
+                    borne(eligible, plancher_international(
                         selon_la_regle(eligible, regle, avpf), montant_base,
                         montant_majore, duree_totale,
                         (duree_totale if regle["majoration"] == "sans_distinction"
-                         else trimestres_cotises + avpf), majoree)
+                         else trimestres_cotises + avpf), majoree), majoree)
                     if international else plancher_national(eligible, majoree))
                 complement = complement_du(pension, eligible, plancher)
                 nationale, eligible_national = alternative
