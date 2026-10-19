@@ -860,11 +860,19 @@ def _cas() -> list[dict]:
     # 2023, écrêtée à 5 % du plafond au-delà ; celle d'une première pension de
     # 2027, sans plafond, à l'âge du taux plein automatique ; les droits que
     # la pension militaire n'éteint pas ; ceux du fonctionnaire parti en 2011,
-    # que le régime général, qui ne lui sert rien, ouvre encore.
+    # que le régime général, qui ne lui sert rien, ouvre encore. Celle du
+    # commerçant, sur son revenu annuel moyen (R. 634-1, D. 634-3 ; action 138,
+    # étape 12) : trente mois sur trois années civiles.
     cas.append(("seconde_pension_2025", {
         "naissance": "1960", "sexe": "F", "debut": "20", "liquidation": "62.25",
         "unite_revenu": "moyen", "salaire": "1", "emploi_retraite": "2023-02",
         "emploi_retraite_fin": "2025-02", "emploi_retraite_salaire": "0.5",
+    }))
+    cas.append(("seconde_pension_commercant_2025", {
+        "naissance": "1960", "sexe": "F", "debut": "20", "liquidation": "62.25",
+        "unite_revenu": "moyen", "salaire": "1", "emploi_retraite": "2023-02",
+        "emploi_retraite_fin": "2025-08", "emploi_retraite_salaire": "0.5",
+        "emploi_retraite_statut": "commercant",
     }))
     cas.append(("seconde_pension_plafonnee_2027", {
         "naissance": "1960", "sexe": "F", "debut": "20", "liquidation": "62.25",

@@ -14,7 +14,9 @@ dans le régime de base de son activité, liquidée depuis le 1er septembre 2023
 (L. 161-22-1-1) : au taux plein, sur les seules périodes cotisées de cumul
 intégral accomplies depuis le 1er janvier 2023, sans majoration ni minimum. Son
 salaire de base est le salaire mensuel moyen des années qui valident au moins
-un trimestre, sur les mois d'assurance de la période (R. 351-29, III) ; elle se
+un trimestre, sur les mois d'assurance de la période (R. 351-29, III) ; celui
+de l'indépendant, le revenu annuel moyen de ces années, l'année de l'effet
+comprise (R. 634-1 jusqu'en 2025, D. 634-3 depuis) ; elle se
 proratise par la durée requise, et ne dépasse pas 5 % du plafond annuel de la
 sécurité sociale (D. 161-2-22-1), sauf pour les premières pensions de 2027,
 dont la rédaction ne porte plus ce plafond — et qui ne la constituent qu'en
@@ -99,6 +101,9 @@ HEURES_PAR_TRIMESTRE = 150
 #: Les régimes de base dont le modèle calcule la nouvelle pension.
 REGIMES_CALCULES = frozenset({"regime_general", "msa_salaries"})
 AGIRC_ARRCO = "agirc_arrco"
+#: Le groupe de l'activité des artisans, des commerçants et des
+#: micro-entrepreneurs (:func:`.cumul.groupe_de_l_activite`).
+INDEPENDANTS = "independants"
 
 
 @dataclass(frozen=True)
@@ -124,8 +129,9 @@ class NouvellePension:
 
     regime: str
     date_effet: DateMois
-    #: Les trimestres validés et le salaire mensuel moyen de la période, en
-    #: euros de l'année de la date d'effet ; les points, pour l'Agirc-Arrco.
+    #: Les trimestres validés et le salaire mensuel moyen de la période — le
+    #: revenu annuel moyen, pour l'indépendant —, en euros de l'année de la
+    #: date d'effet ; les points, pour l'Agirc-Arrco.
     trimestres: int
     salaire_mensuel: float
     points: float
@@ -134,10 +140,12 @@ class NouvellePension:
     brute: float
     plafond: float | None
     montant: float
+    revenu_annuel_moyen: float = 0.0
 
     def donnees(self) -> dict:
         return {"regime": self.regime, "date_effet": jour(self.date_effet),
                 "trimestres": self.trimestres, "salaire_mensuel": self.salaire_mensuel,
+                "revenu_annuel_moyen": self.revenu_annuel_moyen,
                 "points": self.points, "brute": self.brute, "plafond": self.plafond,
                 "montant": self.montant}
 
@@ -273,7 +281,8 @@ def droits(moteur: ScenarioActuel, carriere: Carriere, resultat: ResultatActuel,
                 continue
             pension = _nouvelle_pension(moteur, code, salaires, periode, date_effet,
                                         resultat.trimestres_requis,
-                                        premiere < PREMIERE_2027)
+                                        premiere < PREMIERE_2027,
+                                        annuel=cumul.groupe == INDEPENDANTS)
             if pension is not None:
                 pensions.append(pension)
         if AGIRC_ARRCO in regimes:
@@ -287,14 +296,27 @@ def droits(moteur: ScenarioActuel, carriere: Carriere, resultat: ResultatActuel,
 
 def _nouvelle_pension(moteur: ScenarioActuel, code: str, salaires: dict[int, float],
                       periode: dict[int, int], date_effet: DateMois, requis: int,
-                      plafonnee: bool) -> NouvellePension | None:
+                      plafonnee: bool, annuel: bool = False) -> NouvellePension | None:
     """La nouvelle pension d'un régime aligné : le salaire mensuel moyen des
     années qui valident un trimestre (R. 351-29, III), revalorisé et écrêté au
-    plafond, au taux plein, proratisé par la durée requise."""
+    plafond, au taux plein, proratisé par la durée requise.
+
+    ``annuel`` : celle de l'indépendant, sur le revenu annuel moyen de ces
+    années. De 2023 à 2025, D. 634-1 écarte R. 351-29, et R. 634-1 fait la
+    moyenne des revenus cotisés des années civiles qui valident un trimestre :
+    « il est tenu compte du revenu annuel de l'année durant laquelle la pension
+    mentionnée à l'article L. 161-22-1-1 prend effet ». Depuis 2026, D. 634-3
+    applique R. 351-29, mais « Les III et IV ne sont pas applicables », et
+    l'année de l'entrée en jouissance y reste (5°). Une année entamée y pèse
+    de ses seuls mois, comme une année entière : les trente mois d'un cumul de
+    février 2023 à juillet 2025, sur trois années civiles, font une moyenne de
+    dix fois le salaire mensuel, et non de douze. La période ne passe pas
+    vingt-cinq années avant 2048 : toutes entrent dans la moyenne."""
     macro = moteur.macro
     trimestres = 0
     total = 0.0
     mois = 0
+    annees = 0
     for annee, salaire in salaires.items():
         valides = min(4, math.floor(
             salaire / (HEURES_PAR_TRIMESTRE * macro.smic_horaire(annee)) + 1e-9))
@@ -305,16 +327,20 @@ def _nouvelle_pension(moteur: ScenarioActuel, code: str, salaires: dict[int, flo
         total += plafonne * macro.coefficient_revalorisation_portee_au_compte(
             annee, date_effet.annee, date_effet.mois)
         mois += periode[annee]
+        annees += 1
     if trimestres == 0 or mois == 0 or requis <= 0:
         return None
-    salaire_mensuel = total / mois
-    brute = salaire_mensuel * 12.0 * TAUX_PLEIN * min(1.0, trimestres / requis)
+    salaire_mensuel = 0.0 if annuel else total / mois
+    revenu_annuel_moyen = total / annees if annuel else 0.0
+    base = revenu_annuel_moyen if annuel else salaire_mensuel * 12.0
+    brute = base * TAUX_PLEIN * min(1.0, trimestres / requis)
     plafond = (PLAFOND_EN_PASS * macro.plafond_securite_sociale(date_effet.annee)
                if plafonnee else None)
     montant = brute if plafond is None else min(brute, plafond)
     return NouvellePension(regime=code, date_effet=date_effet, trimestres=trimestres,
                            salaire_mensuel=salaire_mensuel, points=0.0, brute=brute,
-                           plafond=plafond, montant=montant)
+                           plafond=plafond, montant=montant,
+                           revenu_annuel_moyen=revenu_annuel_moyen)
 
 
 def _prix_du_point(moteur: ScenarioActuel, annee: int) -> tuple[float, float] | None:

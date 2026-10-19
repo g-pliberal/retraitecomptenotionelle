@@ -245,7 +245,10 @@ class Echeancier:
         self._inscrire(evenement, evenement.id, "evenement", evenement, date)
         for pension in pensions:
             ident = f"seconde_{pension.regime}"
-            detail = (f"nouvelle pension, {pension.trimestres} trimestres sur "
+            detail = (f"nouvelle pension, {pension.trimestres} trimestres sur un revenu "
+                      f"annuel moyen de {pension.revenu_annuel_moyen:,.2f} €"
+                      if pension.revenu_annuel_moyen > 0 else
+                      f"nouvelle pension, {pension.trimestres} trimestres sur "
                       f"{pension.salaire_mensuel:,.2f} € par mois"
                       if pension.points == 0 else
                       f"seconde retraite complémentaire, {pension.points:,.2f} points")

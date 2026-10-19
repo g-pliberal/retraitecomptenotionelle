@@ -49,6 +49,8 @@ export const PLAFOND_EN_PASS = 0.05;
 export const HEURES_PAR_TRIMESTRE = 150;
 export const REGIMES_CALCULES = new Set(["regime_general", "msa_salaries"]);
 export const AGIRC_ARRCO = "agirc_arrco";
+/** Le groupe de l'activité des artisans, des commerçants et des micro-entrepreneurs. */
+export const INDEPENDANTS = "independants";
 
 /** Des mois consécutifs d'activité que le droit traite de même. */
 export class PeriodeDeDroits {
@@ -68,7 +70,7 @@ export class PeriodeDeDroits {
 /** La nouvelle pension d'un régime, ou la seconde retraite complémentaire. */
 export class NouvellePension {
   constructor({ regime, dateEffet, trimestres, salaireMensuel, points, brute, plafond,
-    montant }) {
+    montant, revenuAnnuelMoyen = 0.0 }) {
     this.regime = regime;
     this.date_effet = dateEffet;
     this.trimestres = trimestres;
@@ -77,11 +79,13 @@ export class NouvellePension {
     this.brute = brute;
     this.plafond = plafond;
     this.montant = montant;
+    this.revenu_annuel_moyen = revenuAnnuelMoyen;
   }
 
   donnees() {
     return { regime: this.regime, date_effet: jour(this.date_effet),
       trimestres: this.trimestres, salaire_mensuel: this.salaire_mensuel,
+      revenu_annuel_moyen: this.revenu_annuel_moyen,
       points: this.points, brute: this.brute, plafond: this.plafond,
       montant: this.montant };
   }
@@ -212,7 +216,8 @@ export function droits(moteur, carriere, resultat, cumul) {
         continue;
       }
       const pension = nouvellePension(moteur, code, salaires, periode, dateEffet,
-        resultat.trimestres_requis, premiere.rang < PREMIERE_2027);
+        resultat.trimestres_requis, premiere.rang < PREMIERE_2027,
+        cumul.groupe === INDEPENDANTS);
       if (pension !== null) pensions.push(pension);
     }
     if (regimes.has(AGIRC_ARRCO)) {
@@ -228,13 +233,17 @@ export function droits(moteur, carriere, resultat, cumul) {
 /**
  * La nouvelle pension d'un régime aligné : le salaire mensuel moyen des années
  * qui valident un trimestre (R. 351-29, III), revalorisé et écrêté au plafond,
- * au taux plein, proratisé par la durée requise.
+ * au taux plein, proratisé par la durée requise. `annuel` : celle de
+ * l'indépendant, sur le revenu annuel moyen de ces années, l'année de l'effet
+ * comprise (R. 634-1, puis D. 634-3) : voir le Python.
  */
-function nouvellePension(moteur, code, salaires, periode, dateEffet, requis, plafonnee) {
+function nouvellePension(moteur, code, salaires, periode, dateEffet, requis, plafonnee,
+  annuel = false) {
   const macro = moteur.macro;
   let trimestres = 0;
   let total = 0.0;
   let mois = 0;
+  let annees = 0;
   for (const [annee, salaire] of salaires) {
     const valides = Math.min(4, Math.floor(
       salaire / (HEURES_PAR_TRIMESTRE * macro.smic_horaire.valeur(annee)) + 1e-9));
@@ -245,15 +254,18 @@ function nouvellePension(moteur, code, salaires, periode, dateEffet, requis, pla
     total += plafonne * macro.coefficientRevalorisationPorteeAuCompte(
       annee, dateEffet.annee, dateEffet.mois);
     mois += periode.get(annee);
+    annees += 1;
   }
   if (trimestres === 0 || mois === 0 || requis <= 0) return null;
-  const salaireMensuel = total / mois;
-  const brute = salaireMensuel * 12.0 * TAUX_PLEIN * Math.min(1.0, trimestres / requis);
+  const salaireMensuel = annuel ? 0.0 : total / mois;
+  const revenuAnnuelMoyen = annuel ? total / annees : 0.0;
+  const base = annuel ? revenuAnnuelMoyen : salaireMensuel * 12.0;
+  const brute = base * TAUX_PLEIN * Math.min(1.0, trimestres / requis);
   const plafond = plafonnee
     ? PLAFOND_EN_PASS * macro.plafond_securite_sociale.valeur(dateEffet.annee) : null;
   const montant = plafond === null ? brute : Math.min(brute, plafond);
   return new NouvellePension({ regime: code, dateEffet, trimestres, salaireMensuel,
-    points: 0.0, brute, plafond, montant });
+    points: 0.0, brute, plafond, montant, revenuAnnuelMoyen });
 }
 
 /**

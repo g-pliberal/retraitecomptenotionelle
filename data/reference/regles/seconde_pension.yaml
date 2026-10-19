@@ -43,6 +43,18 @@ versions:
   - {id: LEGIARTI000051289731, article: "L. 161-22-1-1 CSS", en_vigueur: 2025-02-28}
   - {id: LEGIARTI000047958952, article: "D. 161-2-22-1 CSS", en_vigueur: 2023-09-01}
   - {id: LEGIARTI000047960982, article: "R. 161-19-2 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000053335651, article: "R. 351-29 CSS, III : le salaire mensuel moyen du salarié",
+     en_vigueur: 2026-01-01}
+  - {id: LEGIARTI000047961824, article: "D. 634-1 CSS, qui écarte R. 351-29 pour l'indépendant",
+     en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000049917702, article: "D. 634-1 CSS, qui écarte R. 351-29 pour l'indépendant",
+     en_vigueur: 2024-07-09}
+  - {id: LEGIARTI000047961079, article: "R. 634-1 CSS : le revenu annuel moyen de l'indépendant",
+     en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000053356087, article: "D. 634-1 CSS, qui n'écarte plus R. 351-29",
+     en_vigueur: 2026-01-01}
+  - {id: LEGIARTI000053356107, article: "D. 634-3 CSS : R. 351-29 pour l'indépendant, sans ses III et IV",
+     en_vigueur: 2026-01-01}
   nee_de: JORFARTI000047445113
   bornes:
     liquidation.date_effet: [2023-09-01, null]
@@ -79,6 +91,27 @@ versions:
       validation d'au moins un trimestre », sur « les mois d'assurance entre la date à
       laquelle l'assuré remplit les conditions prévues au 2° de l'article L. 161-22-1
       et la date d'entrée en jouissance de la nouvelle pension » (R. 351-29, III)
+    revenu_de_base_de_l_independant: >-
+      l'artisan, le commerçant, le micro-entrepreneur : leur revenu annuel moyen, et
+      non le salaire mensuel moyen du salarié. Pour les pensions prenant effet de
+      2023 à 2025, D. 634-1 applique les règles du régime général « à l'exception des
+      articles R. 351-11, R. 351-29, R. 351-29-1 », et le revenu annuel moyen
+      « correspond aux cotisations versées dans la limite du plafond […] permettant la
+      validation d'au moins un trimestre d'assurance […] et versées au cours des années
+      civiles de la carrière », les vingt-cinq meilleures au-delà ; « Par dérogation
+      aux alinéas précédents, il est tenu compte du revenu annuel de l'année durant
+      laquelle la pension mentionnée à l'article L. 161-22-1-1 prend effet » (R. 634-1).
+      Depuis le 1er janvier 2026, D. 634-1 n'écarte plus R. 351-29 ; le revenu annuel
+      moyen « est déterminé dans les conditions prévues à l'article R. 351-29 sous
+      réserve des adaptations suivantes », dont « 5° Le 2° du C du I n'est pas
+      applicable au calcul de la pension liquidée en application de l'article
+      L. 161-22-1 » — l'année d'entrée en jouissance — et « 7° Les III et IV ne sont
+      pas applicables » (D. 634-3). La Cnav : « le salaire mensuel moyen (travailleurs
+      salariés) ou le revenu annuel moyen (travailleurs indépendants) de la période de
+      référence » (exposé « Retraite personnelle issue d'un cumul emploi retraite »),
+      ce revenu étant la « Somme des revenus et/ou salaires annuels revalorisés des x
+      meilleures années retenues ÷ Nombre d'années correspondant » (exposé « Revenu
+      annuel moyen »)
     parametres:
       taux_plein: true
       plafond_en_pass: 0.05
@@ -116,16 +149,21 @@ approximations:
     portés au compte
   effet: non mesuré
 - ecart: >-
-    le travailleur indépendant — artisan, commerçant, micro-entrepreneur — a le
-    salaire mensuel moyen du salarié (R. 351-29, III), que ses textes écartent : de
-    2023 à 2025, D. 634-1 exclut R. 351-29, et R. 634-1 fait son revenu annuel moyen
-    des revenus cotisés des années qui valident un trimestre, « il est tenu compte du
-    revenu annuel de l'année durant laquelle la pension mentionnée à l'article
-    L. 161-22-1-1 prend effet » ; depuis 2026, D. 634-3 applique R. 351-29, mais « Les
-    III et IV ne sont pas applicables ». Un revenu annuel, et non mensuel : une année
-    entamée y pèse de ses seuls mois. Le micro-entrepreneur y porte son revenu cotisé,
-    et non son revenu abattu
-  effet: non mesuré
+    l'indépendant — artisan, commerçant, micro-entrepreneur — a son revenu annuel
+    moyen (R. 634-1, puis D. 634-3) : la somme des revenus revalorisés des années de
+    la période qui valident un trimestre, divisée par leur nombre, l'année de l'effet
+    comprise, le micro-entrepreneur y portant son revenu cotisé ; une année entamée y
+    pèse de ses seuls mois, comme une année entière. Restent approchés : la part
+    d'une année dans la période, celle de ses mois dans un revenu qui est annuel ; les
+    revenus, que la caisse arrondit à l'euro ; plus de vingt-cinq années de cumul,
+    qui ne se voient pas avant 2048, toutes retenues, et non les vingt-cinq
+    meilleures. La Cnav n'en a publié ni instruction ni exemple : « Le dispositif
+    réglementaire n'est pas encore entièrement défini »
+  effet: >-
+    mesuré le 19 octobre 2026 : au même revenu, de la moitié à la totalité de la
+    nouvelle pension d'une salariée — 631 € au lieu de 757 € pour trente mois, de
+    février 2023 à juillet 2025, sur trois années civiles ; 119 € au lieu de 239 € pour
+    six mois de 2023 ; autant quand la période tombe sur des années civiles entières
 - ecart: >-
     au-delà du dernier prix d'achat publié, le salaire de référence de l'Agirc-Arrco
     suit le plafond de la sécurité sociale ; le versement en capital sous cent points,
@@ -136,7 +174,7 @@ approximations:
     départ, ni dans celle d'aujourd'hui, et « faire vivre » ne la revalorise pas
   effet: non mesuré
 sources:
-  lu_le: 2026-10-18
+  lu_le: 2026-10-19
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -146,11 +184,16 @@ sources:
     la phrase du plafond, et D. 161-2-22-1 ne vise que la rédaction issue de la loi
     n° 2023-270 : les premières pensions de 2027 n'ont pas de plafond.
   - >-
-    La nouvelle pension du travailleur indépendant : la circulaire Cnav qui applique
-    R. 634-1 (2023-2025) et D. 634-3 (depuis 2026), et son exemple ; la recherche
-    de la Cnav ne l'a pas rendue le 18 octobre 2026 (« L161-22-1-1 », « nouvelle
-    pension », « R634-1 »). Puis le revenu annuel moyen de l'indépendant, à la
-    place du salaire mensuel moyen du salarié.
+    La nouvelle pension du travailleur indépendant, calculée le 19 octobre 2026 sur
+    son revenu annuel moyen : la « Circulaire Cnav RAM », dont l'exposé de la Cnav
+    cite le § 5 sans lien, et son exemple. Sa recherche ne la rend pas le 19 octobre
+    2026 (« D634-3 », « revenu annuel moyen », « nouvelle pension », « salaire
+    mensuel moyen ») ; l'exposé l'attend : « Le site sera mis à jour lors de la
+    publication des instructions réglementaires stabilisées ». D. 634-3, 5°, vise
+    « la pension liquidée en application de l'article L. 161-22-1 » : la nouvelle
+    pension est celle de L. 161-22-1-1, que R. 634-1 nommait. Pour qui calculera
+    celle de l'exploitant agricole : R. 732-60 du code rural écarte aussi, depuis
+    2026, « Le 2° du C du I et le III de l'article R. 351-29 ».
   lectures:
   - type: legifrance
     reference: >-
@@ -170,6 +213,38 @@ sources:
       l'article L. 161-22-1 » et « 7° Les III et IV ne sont pas applicables ». Dans
       l'index LEGI, à jour au 17 octobre 2026
     date: 2026-10-18
+  - type: legifrance
+    reference: >-
+      D. 634-1, LEGIARTI000049917702 (9 juillet 2024 au 31 décembre 2025) : « à
+      l'exception des articles R. 351-11, R. 351-29, R. 351-29-1, R. 351-37-1 à
+      R. 351-37-11 » ; LEGIARTI000053356087 (pensions prenant effet depuis le 1er
+      janvier 2026) : « à l'exception des articles R. 351-11, R. 351-37-1 à
+      R. 351-37-11 ». R. 634-1 n'a pas de rédaction après le 31 décembre 2025. Dans
+      l'index LEGI, à jour au 18 octobre 2026
+    date: 2026-10-19
+  - type: autre
+    reference: >-
+      base de législation de l'Assurance retraite, exposé « Retraite personnelle issue
+      d'un cumul emploi retraite », modifié le 28 septembre 2026 : « Le montant de la
+      retraite est calculé compte tenu de 3 éléments : le salaire mensuel moyen
+      (travailleurs salariés) ou le revenu annuel moyen (travailleurs indépendants) de
+      la période de référence ; le taux ; la durée d'assurance au régime général » ;
+      « Les salaires de la dernière année sont retenus même si cette année est
+      incomplète » (R. 351-29, III ; D. 634-3, 5° ; « Circulaire Cnav RAM § 5 », sans
+      lien) ; « Le dispositif réglementaire n'est pas encore entièrement défini »
+    url: >-
+      https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=retraite_personnelle_retraite_personnelle_cumul_emploi_retraite_retraite_personnelle_issue_cumul_emploi_retraite_exex.aspx
+    date: 2026-10-19
+  - type: autre
+    reference: >-
+      base de législation de l'Assurance retraite, exposé « Revenu annuel moyen »,
+      modifié le 20 juillet 2026 : « Somme des revenus et/ou salaires annuels
+      revalorisés des x meilleures années retenues (selon l'année de naissance) ÷
+      Nombre d'années correspondant » ; « Les revenus sont arrondis à l'euro le plus
+      proche »
+    url: >-
+      https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=retraite_personnelle_salaire_annuel_moyen_salaire_annuel_moyen_ex.aspx
+    date: 2026-10-19
   - type: service_public
     reference: >-
       fiche F13243, « Cumul emploi-retraite du salarié », vérifiée le 1er janvier 2026 :
@@ -233,9 +308,16 @@ historique:
   2026-10-18 — le micro-entrepreneur en cumul y porte son revenu cotisé, celui de ses
   trimestres et de son revenu annuel moyen, et non son revenu abattu (action 138,
   étape 12) ; la règle de l'indépendant, lue à ses textes, reste à écrire.
+- >-
+  2026-10-19 — l'indépendant en cumul a sa nouvelle pension sur son revenu annuel
+  moyen, l'année de l'effet comprise, et non sur le salaire mensuel moyen du salarié
+  (R. 634-1, D. 634-3 ; action 138, étape 12), dans les deux moteurs ; les exposés de
+  la Cnav, lus, le disent.
 effet: >-
   Les retraités en cumul intégral depuis 2023 : leurs cotisations, jusque-là à fonds
   perdus, leur ouvrent une seconde pension, au plus 5 % du plafond de la sécurité
   sociale, soit 2 403 € par an en 2026. La salariée partie au taux plein en 2022, qui
   travaille à la moitié du salaire moyen de février 2023 à janvier 2025, se constitue
-  496 € par an au régime général et 183 € à l'Agirc-Arrco.
+  496 € par an au régime général et 183 € à l'Agirc-Arrco. Le commerçant au même
+  revenu, de février 2023 à juillet 2025, se constitue 631 € sur son revenu annuel
+  moyen, quand la salariée en aurait 757 €.

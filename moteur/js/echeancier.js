@@ -252,10 +252,13 @@ export class Echeancier {
     this._inscrire(evenement, evenement.id, "evenement", evenement, date);
     for (const pension of pensions) {
       const ident = `seconde_${pension.regime}`;
-      const detail = pension.points === 0
-        ? `nouvelle pension, ${pension.trimestres} trimestres sur `
-          + `${formatFixe(pension.salaire_mensuel, 2, true)} € par mois`
-        : `seconde retraite complémentaire, ${formatFixe(pension.points, 2, true)} points`;
+      const detail = pension.revenu_annuel_moyen > 0
+        ? `nouvelle pension, ${pension.trimestres} trimestres sur un revenu annuel moyen `
+          + `de ${formatFixe(pension.revenu_annuel_moyen, 2, true)} €`
+        : pension.points === 0
+          ? `nouvelle pension, ${pension.trimestres} trimestres sur `
+            + `${formatFixe(pension.salaire_mensuel, 2, true)} € par mois`
+          : `seconde retraite complémentaire, ${formatFixe(pension.points, 2, true)} points`;
       this._inscrire(evenement, ident, "composante", {
         id: ident, beneficiaire: carriere.personne, regime: pension.regime,
         montant: { annuel: pension.montant, monnaie: "EUR" }, debut: date, detail,

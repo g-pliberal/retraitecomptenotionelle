@@ -390,6 +390,53 @@ def test_la_premiere_pension_de_2027_attend_le_cumul_entier_sans_plafond(simulat
     assert carriere.cumul.integral_depuis > DateMois(2034, 12)
 
 
+def test_la_nouvelle_pension_de_l_independant_porte_son_revenu_annuel_moyen(simulateur):
+    """Le commerçant en cumul intégral de février 2023 à juillet 2025 se
+    constitue sa nouvelle pension sur son revenu annuel moyen, et non sur le
+    salaire mensuel moyen du salarié (R. 351-29, III) : de 2023 à 2025,
+    D. 634-1 écarte R. 351-29, et R. 634-1 fait la moyenne des revenus des
+    années civiles qui valident un trimestre, « il est tenu compte du revenu
+    annuel de l'année durant laquelle la pension mentionnée à l'article
+    L. 161-22-1-1 prend effet » ; depuis 2026, D. 634-3 applique R. 351-29,
+    dont « Les III et IV ne sont pas applicables ». Ses trente mois tombent
+    sur trois années civiles, 2025, l'année de l'effet, comprise : la moyenne
+    de ses revenus revalorisés vaut dix fois le salaire mensuel moyen d'une
+    salariée au même revenu, et non douze."""
+    metiers = [Metier("salarie_prive_non_cadre", 20.0)]
+    emploi = _emploi(63, 65.5, affiliation="commercant", niveau=0.5)
+    carriere = Carriere.depuis_parcours(
+        annee_naissance=1960, sexe="F", metiers=metiers, age_liquidation=62.25,
+        macro=simulateur.macro, jour_naissance=15, emploi_retraite=emploi)
+    echeancier = simulateur.echeancier(carriere)
+    [base] = [p for p in echeancier.au_depart.droits_apres_depart.pensions
+              if p.regime == "regime_general"]
+    salariee, _ = _droits(simulateur, 1960, 62.25, emploi | {
+        "affiliation": "salarie_prive_non_cadre"}, metiers)
+    [du_salarie] = [p for p in salariee.pensions if p.regime == "regime_general"]
+    assert base.date_effet == DateMois(2025, 8)
+    assert base.trimestres == du_salarie.trimestres == 12
+    # Les revenus de 2023, 2024 et 2025, sur onze, douze et sept mois, chacun
+    # sous le plafond de ses mois, revalorisés au mois de l'effet.
+    macro = simulateur.macro
+    lignes = {ligne.annee: ligne.revenu for ligne in carriere.lignes_apres_depart}
+    assert sorted(lignes) == [2023, 2024, 2025]
+    for annee, mois in ((2023, 11), (2024, 12), (2025, 7)):
+        assert lignes[annee] < macro.plafond_securite_sociale(annee) * mois / 12
+    revalorises = [lignes[annee] * macro.coefficient_revalorisation_portee_au_compte(
+        annee, 2025, 8) for annee in (2023, 2024, 2025)]
+    assert base.revenu_annuel_moyen == pytest.approx(sum(revalorises) / 3, rel=1e-12)
+    assert base.revenu_annuel_moyen == pytest.approx(du_salarie.salaire_mensuel * 10,
+                                                     rel=1e-12)
+    assert base.salaire_mensuel == 0.0
+    requis = echeancier.au_depart.trimestres_requis
+    assert base.brute == pytest.approx(base.revenu_annuel_moyen * 0.5 * min(1.0, 12 / requis))
+    assert base.montant == pytest.approx(min(base.brute, base.plafond))
+    # Le journal dit sur quoi elle se calcule.
+    servies = {e.id: e for e in echeancier.journal.servi(
+        cumul.jour(base.date_effet), None, "composante")}
+    assert "revenu annuel moyen" in servies["seconde_regime_general"].contenu["detail"]
+
+
 def test_la_nouvelle_pension_du_micro_entrepreneur_porte_son_revenu_cotise(simulateur):
     """Le micro-entrepreneur en cumul intégral se constitue sa nouvelle pension
     sur le revenu que son forfait cotise, celui de ses trimestres et de son
@@ -404,8 +451,9 @@ def test_la_nouvelle_pension_du_micro_entrepreneur_porte_son_revenu_cotise(simul
     [base_abattue] = [p for p in abattu.pensions if p.regime == "regime_general"]
     [base_cotisee] = [p for p in cotise.pensions if p.regime == "regime_general"]
     assert base_cotisee.trimestres == base_abattue.trimestres > 0
-    assert base_cotisee.salaire_mensuel == pytest.approx(
-        base_abattue.salaire_mensuel * 0.123 * 0.418 / 0.1775 / 0.29, rel=1e-9)
+    assert base_abattue.revenu_annuel_moyen > 0
+    assert base_cotisee.revenu_annuel_moyen == pytest.approx(
+        base_abattue.revenu_annuel_moyen * 0.123 * 0.418 / 0.1775 / 0.29, rel=1e-9)
 
 
 @pytest.mark.parametrize("naissance, debut, regles", [

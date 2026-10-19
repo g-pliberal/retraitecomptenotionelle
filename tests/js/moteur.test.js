@@ -763,6 +763,53 @@ test("les points du micro-entrepreneur s'achètent avec son forfait", () => {
 });
 
 /**
+ * La nouvelle pension de l'indépendant en cumul intégral se calcule sur son
+ * revenu annuel moyen, l'année de l'effet comprise, et non sur le salaire
+ * mensuel moyen du salarié (R. 634-1, puis D. 634-3, qui écarte le III de
+ * R. 351-29) : trente mois sur trois années civiles font dix fois le salaire
+ * mensuel moyen, et non douze. Rejoue
+ * `test_la_nouvelle_pension_de_l_independant_porte_son_revenu_annuel_moyen`
+ * (test_emploi_retraite.py).
+ */
+test("la nouvelle pension de l'indépendant porte son revenu annuel moyen", () => {
+  const simulateur = new Contexte(paquet).simulateur();
+  const enCumul = (affiliation) => {
+    const carriere = simulateur.carriereParcours({
+      annee_naissance: 1960, sexe: "F", jour_naissance: 15, age_liquidation: 62.25,
+      metiers: [{ affiliation: "salarie_prive_non_cadre", age_debut: 20, niveau_salaire: 1 }],
+      emploi_retraite: {
+        age: 63, fin: 65.5, affiliation, niveau_salaire: 0.5, employeur: "autre",
+      },
+    });
+    const echeancier = simulateur.echeancier(carriere);
+    const base = echeancier.auDepart.droits_apres_depart.pensions
+      .find((pension) => pension.regime === "regime_general");
+    return { carriere, echeancier, base };
+  };
+  const { carriere, echeancier, base } = enCumul("commercant");
+  const salariee = enCumul("salarie_prive_non_cadre").base;
+  assert.deepEqual([base.date_effet.annee, base.date_effet.mois], [2025, 8]);
+  assert.equal(base.trimestres, 12);
+  assert.equal(salariee.trimestres, 12);
+  const macro = simulateur.macro;
+  const lignes = new Map(carriere.lignes_apres_depart.map((ligne) => [ligne.annee,
+    ligne.revenu]));
+  assert.deepEqual([...lignes.keys()].sort((a, b) => a - b), [2023, 2024, 2025]);
+  const revalorises = [2023, 2024, 2025].map((annee) => lignes.get(annee)
+    * macro.coefficientRevalorisationPorteeAuCompte(annee, 2025, 8));
+  const proche = (obtenu, attendu) => assert.ok(Math.abs(obtenu / attendu - 1) < 1e-12,
+    `${obtenu} contre ${attendu}`);
+  proche(base.revenu_annuel_moyen, (revalorises[0] + revalorises[1] + revalorises[2]) / 3);
+  proche(base.revenu_annuel_moyen, salariee.salaire_mensuel * 10);
+  assert.equal(base.salaire_mensuel, 0);
+  proche(base.brute, base.revenu_annuel_moyen * 0.5
+    * Math.min(1, 12 / echeancier.auDepart.trimestres_requis));
+  const entree = echeancier.journal.servi("2025-08-01", null, "composante")
+    .find((e) => e.id === "seconde_regime_general");
+  assert.ok(entree.contenu.detail.includes("revenu annuel moyen"), entree.contenu.detail);
+});
+
+/**
  * La nouvelle pension du micro-entrepreneur en cumul intégral porte le revenu
  * que son forfait cotise, et non son revenu abattu. Rejoue
  * `test_la_nouvelle_pension_du_micro_entrepreneur_porte_son_revenu_cotise`
@@ -786,9 +833,10 @@ test("la nouvelle pension du micro-entrepreneur porte son revenu cotisé", () =>
   const cotisee = base("vente");
   assert.ok(abattue.trimestres > 0);
   assert.equal(cotisee.trimestres, abattue.trimestres);
-  const attendu = abattue.salaire_mensuel * 0.123 * 0.418 / 0.1775 / 0.29;
-  assert.ok(Math.abs(cotisee.salaire_mensuel / attendu - 1) < 1e-9,
-    `${cotisee.salaire_mensuel} contre ${attendu}`);
+  assert.ok(abattue.revenu_annuel_moyen > 0);
+  const attendu = abattue.revenu_annuel_moyen * 0.123 * 0.418 / 0.1775 / 0.29;
+  assert.ok(Math.abs(cotisee.revenu_annuel_moyen / attendu - 1) < 1e-9,
+    `${cotisee.revenu_annuel_moyen} contre ${attendu}`);
 });
 
 /**
