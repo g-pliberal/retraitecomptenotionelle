@@ -224,7 +224,7 @@ sources:
 
   - id: union_retraite_progressive
     url: https://parcours.info-retraite.fr/retraite-progressive
-    nature: simulateur
+    nature: regle
     acces: chaine_incomplete
     regimes: []
     a_en_tirer: >-
@@ -232,18 +232,54 @@ sources:
       âge, durée d'assurance, quotité de travail, et ce que la pension
       partielle vaut. Le dépôt ne modélise pas la retraite progressive ;
       c'est de quoi la chiffrer, ou dire dans limites.md ce qu'elle déplace.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-10-19"
+    note: >-
+      Un parcours d'information, qui ne calcule rien : ses quinze questions et
+      vingt-cinq réponses sont dans la page (`_rawDataParcours`), lues sans
+      une saisie, d'où `regle` plutôt que `simulateur`. Le modèle sert la
+      retraite progressive depuis le 29 septembre 2026, et le parcours
+      concorde avec sa fiche (`retraite_progressive`) : soixante ans depuis le
+      1er septembre 2025, cent cinquante trimestres tous régimes, de 40 à 80 %
+      du temps de travail, de 50 à 90 % pour un fonctionnaire, la fraction
+      égale à ce qui manque à la quotité pour faire 100 % (80 % de temps, 20 %
+      de retraite ; 65 %, 35 %). Il a fait relire deux règles que le modèle
+      n'applique pas, déclarées dans la fiche et dans
+      docs/limites/ecarts-au-droit-positif.md : la fraction d'un non-salarié
+      servie au 1er janvier qui suit la demande (D. 161-2-24-2), et la
+      retraite progressive que les décrets de la SNCF, de la RATP et de la
+      Banque de France ouvrent à leurs agents depuis 2023. Détail : feuille de
+      route, action 89, note du 19 octobre 2026 sur les parcours.
 
   - id: union_retraite_expatriation
     url: https://parcours.info-retraite.fr/retraite_expatriation
-    nature: simulateur
+    nature: regle
     acces: chaine_incomplete
     regimes: []
     a_en_tirer: >-
       Le traitement des périodes à l'étranger : conventions, totalisation,
       proratisation. `docs/limites.md` déclare les carrières internationales
       hors modèle ; ce parcours dit ce que ce mur laisse dehors.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-10-19"
+    note: >-
+      Un parcours d'information, comme celui de la retraite progressive :
+      cinquante questions et quatre-vingt-quinze réponses dans la page, lues
+      sans une saisie, et dix-huit brochures de 2019 et 2020, dont les trois
+      plus complètes sont lues (salariés, indépendants, clercs de notaire). Le
+      modèle sert les carrières hors de France depuis le 1er octobre 2026, et
+      son tableau des accords (data/reference/legislation/accords_internationaux.yaml)
+      concorde avec le parcours : ses quarante-deux territoires conventionnés,
+      ses dix-sept États pour les indépendants, ses sept accords qui totalisent
+      un État tiers, et les types d'accords des brochures. Quatre exemples des
+      brochures entrent au témoin et concordent (`ur_expatries_*`,
+      tests/temoins/exemples_officiels.yaml). Deux pistes vont à la fiche
+      `totalisation_des_periodes_etrangeres` : l'EEE ou la Suisse, que le
+      parcours sépare, et le recalcul de la pension quand l'autre État
+      liquide. Le volontariat international, que le parcours compte et dont
+      le dépôt ne dit rien, est laissé à la session de D. 351-1-2. Le lexique
+      omet l'Islande de l'EEE, que les brochures portaient. Détail : feuille
+      de route, action 89, note du 19 octobre 2026 sur les parcours.
 
   # ---- Cnav / Assurance retraite ----------------------------------------
 

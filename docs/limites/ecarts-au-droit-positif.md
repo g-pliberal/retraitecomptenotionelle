@@ -224,8 +224,11 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   se lit à temps plein —, sans descendre sous la pension provisoire
   revalorisée, sauf au fonctionnaire ; avant le décret du 8 juin 2006, elle
   était la pension provisoire. Restent dehors : les changements de quotité et
-  la suspension, la baisse de revenus qui fait la fraction d'un non-salarié,
-  les décrets propres des régimes spéciaux et les règles propres des
+  la suspension ; la baisse de revenus qui fait la fraction d'un non-salarié,
+  et le 1er janvier qui suit sa demande, où elle prend effet depuis 2023
+  (D. 161-2-24-2) ; les décrets propres des régimes spéciaux — ceux de la
+  SNCF, de la RATP et de la Banque de France l'ouvrent pourtant à leurs agents
+  depuis 2023, et le modèle la leur refuse ; et les règles propres des
   complémentaires. Elle se déclare au formulaire, dans le même dépliant que
   le cumul, ou par l'adresse (fiche `retraite_progressive`). Les systèmes 2
   à 6 n'en servent pas de fraction : le temps partiel y réduit seulement la

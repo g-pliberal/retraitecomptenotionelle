@@ -238,7 +238,11 @@ approximations:
 - ecart: >-
     le non-salarié ne déclare pas la baisse de ses revenus, qui fait sa fraction
     (D. 634-16, D. 161-2-24-3, 2°) : sa quotité en tient lieu, et la réduction de son
-    revenu est celle d'un temps partiel
+    revenu est celle d'un temps partiel. Sa fraction se sert aussi à la date qu'il
+    déclare, quand elle « prend effet au 1er janvier qui suit la demande » depuis le
+    1er septembre 2023 (D. 161-2-24-2), sans les dix-huit mois à 50 % « à titre
+    provisionnel » des pensions de 2026 et après (D. 161-2-24-3, II), ni la condition
+    d'un revenu d'au moins 40 % du SMIC (D. 161-2-24-1, 1°)
   effet: non mesuré
 - ecart: >-
     la décote de la pension provisoire, bornée à 25 % du 18 décembre 2014 au 1er
@@ -257,10 +261,18 @@ approximations:
     avant 2023, les régimes spéciaux ne liquident rien avec la retraite progressive, et
     depuis, seuls ceux que les décrets n° 2023-751 et 2023-753 nomment, et les IEG, dont
     l'annexe 3 au statut rend le code applicable (article 21-1), l'ouvrent à qui y
-    travaille ; les autres (SNCF, RATP, Banque de France, marins) liquident à titre
-    provisoire la pension de qui a travaillé chez eux, L. 161-22-1-5 visant tous les
-    régimes de base, mais leurs décrets propres ne sont pas relus
-  effet: non mesuré
+    travaille ; les autres liquident à titre provisoire la pension de qui a travaillé
+    chez eux, L. 161-22-1-5 visant tous les régimes de base. Leurs décrets propres, lus
+    le 19 octobre 2026, l'ouvrent pourtant à leurs agents : la RATP (décret n° 2008-637,
+    article 22 bis) et la Banque de France (annexe au décret n° 2007-262, article
+    35 bis, la pension partielle du code des pensions civiles) depuis le 1er septembre
+    2023, la SNCF (décret n° 2008-639, article 6 bis) depuis le 22 octobre 2023, et le
+    modèle la refuse à qui y travaille ; la Comédie-Française, que le modèle ne sert
+    pas, liquide sans la cessation d'activité qu'elle exige d'ordinaire (décret
+    n° 68-960, article 26) ; l'index LEGI ne dit rien des marins
+  effet: >-
+    l'agent de la SNCF, de la RATP ou de la Banque de France à temps partiel qui la
+    demande depuis 2023 ne la reçoit pas ; non mesuré
 - ecart: >-
     le plancher de la pension complète se compare régime par régime, à la pension
     provisoire revalorisée par la revalorisation de chaque régime, sans les majorations
@@ -273,8 +285,17 @@ sources:
   a_relire:
   - >-
     Appliquée le 29 septembre 2026, avec le domaine des départs multiples (étape 3).
-    Aucun exemple chiffré publié n'a été trouvé : en chercher un (service-public, Cnav,
-    info-retraite, simulateur de l'Agirc-Arrco) avant de la dire conforme.
+    Aucun exemple chiffré publié n'a été trouvé : le parcours d'info-retraite, lu le
+    19 octobre 2026, ne chiffre que la fraction (« pour un temps de travail à 80%, la
+    retraite progressive est de 20% ; pour un temps de travail à 65%, elle est de
+    35% »), que le modèle rend. En chercher un (service-public, Cnav, simulateur de
+    l'Agirc-Arrco) avant de la dire conforme.
+  - >-
+    Couper en versions ce que le parcours d'info-retraite a fait relire le 19 octobre
+    2026 : le 1er janvier qui suit la demande, les dix-huit mois à 50 % et le revenu
+    minimal des non-salariés (D. 161-2-24-1 à D. 161-2-24-3), et la retraite
+    progressive des agents de la SNCF, de la RATP et de la Banque de France
+    (approximations ci-dessus).
   - >-
     La pratique de la CNAVPL avant 2023 : L. 351-15 nomme les professions libérales
     parmi les régimes qui liquident avec le salarié, mais aucune lecture ne dit qu'elle
@@ -324,9 +345,39 @@ sources:
       traitement de référence se lit donc à temps plein, au départ d'un 1er janvier comme
       dans la pension différée
     date: 2026-10-10
+  - type: autre
+    reference: >-
+      Union Retraite, parcours « Retraite progressive » d'info-retraite.fr, quinze
+      questions et vingt-cinq réponses, tout l'arbre dans la page : soixante ans pour
+      les retraites progressives prenant effet à partir du 1er septembre 2025,
+      fonctionnaires de toutes catégories compris ; 150 trimestres « toutes activités
+      confondues » ; de 40 à 80 % de la durée du travail, de 50 à 90 % pour un
+      fonctionnaire ; la fraction égale à ce qui manque à la quotité pour faire 100 % ;
+      la CRPCEN, la CNIEG et la caisse de la SNCF l'ouvrent « depuis la réforme des
+      retraites de 2023 », la CRPN non, qui a son temps alterné ; pour un libéral, « au
+      1er janvier de l'année suivant la demande »
+    date: 2026-10-19
+    url: https://parcours.info-retraite.fr/retraite-progressive
+  - type: legifrance
+    reference: >-
+      D. 161-2-24-1 CSS (LEGIARTI000047959195, LEGIARTI000053355888), D. 161-2-24-2
+      (LEGIARTI000047959201) et D. 161-2-24-3 (LEGIARTI000053355891) ; décret
+      n° 2008-639 (SNCF), article 6 bis (LEGIARTI000048238069, LEGIARTI000048897033) ;
+      décret n° 2008-637 (RATP), article 22 bis (LEGIARTI000047909945) ; annexe au décret
+      n° 2007-262 (Banque de France), article 35 bis (LEGIARTI000047909413,
+      LEGIARTI000047909725) ; décret n° 68-960 (Comédie-Française), article 26
+      (LEGIARTI000048031544), dans l'index LEGI mis à jour le 18 octobre 2026 : le
+      revenu minimal, le 1er janvier et la fraction provisionnelle des non-salariés, la
+      retraite progressive des agents des régimes spéciaux
+    date: 2026-10-19
 textes_a_rattacher:
 - {id: LEGIARTI000006749395, article: "R. 351-40 CSS", en_vigueur: 1988-05-04, change: "les pièces de la demande"}
 - {id: LEGIARTI000006749398, article: "R. 351-42 CSS", en_vigueur: 1988-05-04, change: "la fraction révisée quand la quotité change"}
+- {id: LEGIARTI000047959201, article: "D. 161-2-24-2 CSS", en_vigueur: 2023-09-01, change: "la fraction d'un non-salarié servie au 1er janvier qui suit la demande"}
+- {id: LEGIARTI000053355891, article: "D. 161-2-24-3 CSS", en_vigueur: 2026-01-01, change: "la fraction d'un non-salarié à 50 % pendant dix-huit mois, à titre provisionnel"}
+- {id: LEGIARTI000047909945, article: "décret n° 2008-637, article 22 bis (RATP)", en_vigueur: 2023-09-01, change: "la retraite progressive ouverte aux agents de la RATP"}
+- {id: LEGIARTI000047909413, article: "annexe au décret n° 2007-262, article 35 bis (Banque de France)", en_vigueur: 2023-09-01, change: "la pension partielle des fonctionnaires ouverte aux agents de la Banque de France"}
+- {id: LEGIARTI000048238069, article: "décret n° 2008-639, article 6 bis (SNCF)", en_vigueur: 2023-10-22, change: "la retraite progressive ouverte aux agents de la SNCF"}
 code:
   python: >-
     droit/progressive.py : examiner, fraction, age_minimum, duree_requise,
@@ -368,6 +419,12 @@ historique:
   42 330,16 €. La conversion des droits acquis à la bascule du 1er janvier 2026 en sort
   corrigée (feuille de route, action 135, note du 10 octobre 2026 sur le traitement de
   janvier).
+- >-
+  2026-10-19 — confrontée au parcours « Retraite progressive » d'Union Retraite (action
+  89) : l'âge, la durée, les quotités et la fraction concordent. Deux écarts s'y ajoutent,
+  déclarés sans être codés : la fraction d'un non-salarié servie au 1er janvier qui suit
+  la demande, et la retraite progressive que les décrets de la SNCF, de la RATP et de la
+  Banque de France ouvrent à leurs agents, et que le modèle leur refuse.
 effet: >-
   Les salariés, les indépendants et, depuis 2023, les fonctionnaires, les libéraux et les
   avocats qui passent à temps partiel en fin de carrière. Une salariée née en 1965,

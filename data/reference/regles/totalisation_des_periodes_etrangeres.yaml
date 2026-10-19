@@ -291,6 +291,26 @@ sources:
     général valide gratuitement (loi n° 64-1330, protocole n° 3 du 19 janvier 1965),
     sont des périodes françaises : elles relèvent du domaine des périodes assimilées,
     non de celui-ci.
+  - >-
+    L'EEE et la Suisse, que le tableau des accords range sous un seul instrument : le
+    parcours « Retraite et expatriation » d'Union Retraite, lu le 19 octobre 2026, et ses
+    brochures de 2019 et 2020 écrivent qu'à qui a travaillé « dans un pays de l'EEE et en
+    Suisse, les périodes prises en compte seront soit les périodes EEE, soit les
+    périodes suisses ». L'instruction ministérielle 2002/5, que la Cnav diffuse le
+    10 juillet 2002, totalise au contraire les périodes « d'un ou plusieurs Etats membres
+    et en Suisse », celles « accomplies en dehors de ces territoires » restant dehors :
+    l'Espagne de l'exemple du parcours compterait donc avec la Suisse, et la règle ne
+    viserait que l'Islande, le Liechtenstein et la Norvège. Lire l'exposé de la Cnav sur
+    l'accord avec la Suisse avant de séparer les deux instruments.
+  - >-
+    Le recalcul de la pension déjà servie quand l'autre État liquide la sienne : les
+    brochures du même parcours font partir Aline à 62 ans en France, puis travailler en
+    Italie jusqu'à 67 ans, et « la France recalcule le montant de sa retraite européenne
+    en tenant compte des 5 années supplémentaires travaillées » ; « Aline bénéficie
+    également d'une surcote grâce à cette période d'activité en Italie ». Le modèle ne
+    révise, quand une pension étrangère commence après le départ, que l'écrêtement du
+    minimum contributif, et ne fait la surcote que des trimestres accomplis en France
+    (approximations ci-dessus) : à lire dans les exposés de la Cnav.
   lectures:
   - type: autre
     reference: >-
@@ -351,6 +371,22 @@ sources:
       institution européenne ou d'une organisation internationale »
     url: https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/la-duree-dassurance
     date: 2026-10-01
+  - type: autre
+    reference: >-
+      Union Retraite, parcours « Retraite et expatriation » d'info-retraite.fr, cinquante
+      questions et leur lexique, tout l'arbre dans la page, et trois de ses dix-huit
+      brochures (salariés, indépendants, clercs de notaire ; 2019 et 2020) : le tableau
+      des accords concorde. Ses quarante-deux territoires conventionnés sont les
+      trente-sept conventions en vigueur, Madagascar et les quatre collectivités qui ont
+      leur régime ; ses dix-sept États qui couvrent les indépendants, les quatorze
+      conventions `salaries_et_non_salaries` et trois de ces collectivités ; ses sept
+      accords qui totalisent un État tiers, les sept qui en ont la liste ; les trois
+      types d'accords des brochures, le `calcul` des trente-sept conventions en vigueur
+      au 1er janvier 2020, la Serbie sous sa convention de 1950. Le détachement compte comme
+      la France, l'État tiers ne compte pas, la Caisse des Français de l'étranger reste
+      facultative
+    url: https://parcours.info-retraite.fr/retraite_expatriation
+    date: 2026-10-19
 code:
   python: >-
     droit/etranger.py : coordonner_les_periodes, compter_les_periodes, famille_du_regime,

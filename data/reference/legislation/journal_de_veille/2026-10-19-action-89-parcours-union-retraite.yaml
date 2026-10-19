@@ -1,0 +1,44 @@
+date: "2026-10-19"
+session: >-
+  l'action 89 : les deux parcours d'Union Retraite, la retraite progressive et
+  l'expatriation, confrontés aux fiches du modèle
+consulte: >-
+  Les parcours « Retraite progressive » et « Retraite et expatriation » de
+  parcours.info-retraite.fr, leur arbre entier lu dans la page, et trois de
+  leurs dix-huit brochures (2019 et 2020) ; l'index LEGI du dépôt, récupéré à
+  jour au 18 octobre 2026 : D. 161-2-24-1 (2023, 2026), D. 161-2-24-2,
+  D. 161-2-24-3 (2026) CSS, l'article 6 bis du décret n° 2008-639 (SNCF),
+  l'article 22 bis du décret n° 2008-637 (RATP), l'article 35 bis de
+  l'annexe au décret n° 2007-262 (Banque de France), l'article 26 du décret
+  n° 68-960 (Comédie-Française), L. 122-15 du code du service national ; la
+  base législative de la Cnav, par sa recherche (/api/v1/search/custom),
+  phrases « périodes suisses » et « accomplies en Suisse » : l'instruction
+  ministérielle 2002/5 diffusée le 10 juillet 2002, la circulaire
+  DSS/DACI/2012/207 ; les fiches retraite_progressive,
+  totalisation_des_periodes_etrangeres et carriere_longue_reputes_cotises_autres.
+trouve: >-
+  La fiche retraite_progressive concorde avec le parcours (soixante ans
+  depuis le 1er septembre 2025, 150 trimestres, quotités de 40 à 80 % et de
+  50 à 90 %, fraction complémentaire de la quotité). Deux règles que le modèle
+  n'applique pas, déclarées dans la fiche et dans
+  docs/limites/ecarts-au-droit-positif.md : la fraction d'un non-salarié
+  « prend effet au 1er janvier qui suit la demande » (D. 161-2-24-2,
+  LEGIARTI000047959201, depuis le 1er septembre 2023), provisionnelle à 50 %
+  dix-huit mois depuis 2026 ; la retraite progressive ouverte aux agents de la
+  RATP (22 bis, LEGIARTI000047909945) et de la Banque de France (35 bis,
+  LEGIARTI000047909413) depuis le 1er septembre 2023, de la SNCF (6 bis,
+  LEGIARTI000048238069) depuis le 22 octobre 2023, que le modèle leur refuse.
+  Le tableau des accords internationaux concorde avec le parcours ; quatre
+  exemples des brochures entrent au témoin, et le modèle les rend. Le cliquet
+  des textes passe à 9 646.
+reste: >-
+  Couper ces deux règles en versions, dans les deux moteurs (une session du
+  modèle). Lire l'exposé de la Cnav sur l'accord avec la Suisse : le parcours
+  ne totalise que l'EEE ou la Suisse, l'instruction de 2002 les États membres
+  et la Suisse ensemble, et le tableau des accords range l'Islande, le
+  Liechtenstein, la Norvège et la Suisse sous un seul instrument ; et le
+  recalcul de la pension française quand l'autre État liquide. Le volontariat
+  international (L. 122-15 du code du service national, LEGIARTI000021960477 et
+  LEGIARTI000051289102 ; quatre trimestres au plus à la carrière longue, dit le
+  parcours), dont le dépôt ne dit rien, est laissé à la session de
+  D. 351-1-2.

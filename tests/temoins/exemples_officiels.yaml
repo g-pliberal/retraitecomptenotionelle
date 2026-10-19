@@ -2056,6 +2056,81 @@ exemples:
     carriere: {naissance: "1949-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2009-07", debut: "1993-01", etranger: [{pays: "DE", debut: "1969-07", fin: "1988-01"}, {pays: "BE", debut: "1988-01", fin: "1993-01"}]}
     attendu: {trimestres_valides: 160, annees_du_salaire_annuel_moyen: 10}
 
+  # ---- Union Retraite : les brochures des expatriés ----------------------
+  # Le parcours « Retraite et expatriation » d'info-retraite.fr, lu le
+  # 19 octobre 2026 (action 89), finit sur dix-huit brochures personnalisées
+  # de 2019 et 2020, dont les exemples suivent le droit d'alors : l'âge légal
+  # à 62 ans. Comme ceux du CLEISS, ils ne donnent ni les dates ni le
+  # salaire : le témoin date les périodes au mois, la carrière française
+  # finissant la veille du départ, à l'âge légal. Le prorata ne se compare
+  # pas : une note des brochures réduit les vingt-cinq années du revenu
+  # annuel moyen quand le régime étranger est « équivalent », ce que la
+  # pension rapportée au salaire des vingt-cinq ne mesure pas. Celles de la
+  # CRPCEN écrivent la pension européenne « Taux de la retraite (70,48%) X
+  # (156/166) », quand 70,48 % vaut déjà 75 % x 156/166 : seul le calcul
+  # national s'y rejoue, le modèle ne comptant pas les périodes étrangères
+  # dans un régime spécial (fiche totalisation_des_periodes_etrangeres).
+  - id: ur_expatries_jean_espagne
+    source: {editeur: "Union Retraite", reference: "info-retraite.fr, parcours « Retraite et expatriation », brochure des salariés en contrat local dans l'UE, l'EEE ou la Suisse, un territoire conventionné et un État tiers (PDF du 11 juin 2020), exemple de Jean", verifie_le: "2026-10-19"}
+    enonce: >-
+      « Jean est né en 1956. Il lui faut 166 trimestres pour obtenir le taux
+      plein. Il a acquis : 156 trimestres en France (39 ans d'activité, soit
+      4 trimestres par an) ; et 12 trimestres en Espagne (3 ans d'activité,
+      soit 4 trimestres par an) ». En France seule, « Jean n'a pas le taux
+      plein car il lui manque 10 trimestres » : « Taux minoré (43,750%) » ;
+      avec l'Espagne, « Jean a le taux plein grâce à ses 168 trimestres
+      (156+12) » : « Revenu annuel moyen (25 meilleures années) X Taux plein
+      (50%) X (166/166) X (156/166) », la plus élevée. Le témoin le fait
+      naître en décembre et partir à 62 ans, le 1er janvier 2019.
+    carriere: {naissance: "1956-12", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2019-01", debut: "1980-01", niveau_salaire: 1.5, etranger: [{pays: "ES", debut: "1977-01", fin: "1980-01"}]}
+    attendu: {trimestres_requis: 166, trimestres_valides: 168, taux_liquidation: 0.5}
+
+  - id: ur_expatries_jean_finlande_artisan
+    source: {editeur: "Union Retraite", reference: "info-retraite.fr, parcours « Retraite et expatriation », brochure des travailleurs indépendants en contrat local dans l'UE, l'EEE ou la Suisse, un territoire conventionné et un État tiers (PDF du 9 décembre 2019), exemple de Jean", verifie_le: "2026-10-19"}
+    enonce: >-
+      La brochure des indépendants reprend Jean avec la Finlande : « Jean est
+      né en 1956. Il lui faut 166 trimestres pour obtenir le taux plein. Il a
+      acquis : 156 trimestres en France (39 ans d'activité, soit 4 trimestres
+      par an) ; et 12 trimestres en Finlande (3 ans d'activité, soit 4
+      trimestres par an) » ; « Taux minoré (43,750%) » en France seule, « Taux
+      plein (50%) X (166/166) X (156/166) » avec l'Europe. Le témoin en fait
+      un artisan, à son compte en Finlande, parti comme le salarié.
+    carriere: {naissance: "1956-12", sexe: H, affiliation: artisan, liquidation: "2019-01", debut: "1980-01", niveau_salaire: 1.5, etranger: [{pays: "FI", debut: "1977-01", fin: "1980-01", activite: non_salariee}]}
+    attendu: {trimestres_requis: 166, trimestres_valides: 168, taux_liquidation: 0.5}
+
+  - id: ur_expatries_crpcen_jean_nationale
+    source: {editeur: "Union Retraite", reference: "info-retraite.fr, parcours « Retraite et expatriation », brochure des clercs et employés de notaires en contrat local dans l'UE, l'EEE ou la Suisse, un territoire conventionné et un État tiers (PDF du 22 janvier 2020), exemple de Jean", verifie_le: "2026-10-19"}
+    enonce: >-
+      « Jean est né en 1959. Il lui faut 166 trimestres pour obtenir une
+      retraite sans décote. Il a acquis : 156 trimestres en France (39 ans
+      d'activité) » et 10 en Espagne. « Calcul de la retraite avec l'activité
+      en France uniquement : Jean a une décote car il lui manque 10
+      trimestres » : « Salaire annuel moyen (10 meilleures années) X Taux de
+      la retraite (70,48%) X Coefficient de minoration ou décote de 12,5 %
+      (1,25x10) », 70,48 % valant 75 % x 156/166. Seul ce calcul se rejoue,
+      sans l'Espagne ; le témoin le fait naître en mars, les 166 trimestres
+      étant ceux du premier semestre 1959, et partir à 61 ans, l'âge légal
+      que la brochure donne à Yves, le mois même, la CRPCEN servant sa
+      pension dès l'âge atteint.
+    carriere: {naissance: "1959-03", sexe: H, affiliation: clerc_de_notaire, liquidation: "2020-03", trimestres_valides: 156}
+    attendu: {trimestres_requis: 166, taux_liquidation: 0.65625}
+
+  - id: ur_expatries_crpcen_yves_nationale
+    source: {editeur: "Union Retraite", reference: "info-retraite.fr, parcours « Retraite et expatriation », brochure des clercs et employés de notaires en contrat local dans l'UE, l'EEE ou la Suisse, un territoire conventionné et un État tiers (PDF du 22 janvier 2020), exemple d'Yves", verifie_le: "2026-10-19"}
+    enonce: >-
+      « Yves est né en 1959. Il lui faut 166 trimestres pour obtenir » une
+      retraite sans décote ; il a « 16 trimestres au Québec (4 ans
+      d'activité) » et « 150 trimestres en France (37,5 ans d'activité) ».
+      « Dès 61 ans (âge légal de sa retraite CRPCEN) », sa retraite
+      nationale : « Yves a une décote car il lui manque 16 trimestres » :
+      « Taux de retraite (67,77%) X Coefficient de minoration ou décote de
+      20 % (1,25x16) », 67,77 % valant 75 % x 150/166. Le témoin le fait
+      naître en mars 1959 et partir le mois même de ses 61 ans : un mois plus
+      tard, l'âge d'annulation de 2020, 65 ans, ne laisse plus que quinze
+      trimestres à décompter.
+    carriere: {naissance: "1959-03", sexe: H, affiliation: clerc_de_notaire, liquidation: "2020-03", trimestres_valides: 150}
+    attendu: {trimestres_requis: 166, date_age_legal: "2020-03", taux_liquidation: 0.6}
+
   # ---- Union Retraite : deux simulateurs d'info-retraite, saisis à la main ----
   # Interrogés le 1er octobre 2026 par le propriétaire, une saisie par borne
   # (docs/architecture.md, § 3.5), chaque prédiction du modèle écrite avant la
