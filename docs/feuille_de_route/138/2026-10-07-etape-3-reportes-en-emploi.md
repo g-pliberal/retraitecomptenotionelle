@@ -1,14 +1,15 @@
 # Étape 3, première partie : la part des reportés en emploi, lue dans les évaluations de 2010
 
-**Reprise, au 18 octobre 2026.** Fait : les reportés en emploi (7 octobre) ;
+**Reprise, au 19 octobre 2026.** Fait : les reportés en emploi (7 octobre) ;
 l'Ageing Report (13) ; les leviers du COR, la CSG effective (14) ; Ancetre,
 l'EACR, la CNRACL, les civils de l'État (16) ; la part stable de l'AWG (17) ;
-le 18, la date de chaque cohorte dans `cout.py` : l'écart à l'AWG tombe de
-0,54 à 0,34 point. Reste, une session par point : les 0,19 point ; le coût
-des avantages (`avantages.py`, même erreur) ; l'Ircantec (une décision, avec
-l'action 147). Pour les pages : la fourchette « étroite » de la page Coût,
-contredite, les leviers, le taux effectif. Au propriétaire, la table des
-poids (`pages.js`). Détail : notes « la grille », « la date de chaque cohorte ».
+la date de chaque cohorte, dans `cout.py` (18), puis dans `avantages.py`, au
+mois (19) : 10,6 milliards servis avant l'âge légal en 2024, et non 8,2. Reste,
+une session par point : les 0,19 point ; l'Ircantec (une décision, avec
+l'action 147) ; `mortalite_population.py`, même erreur (étape 7). Pour les
+pages : la fourchette « étroite » de la page Coût, contredite, les leviers, le
+taux effectif. Au propriétaire, la table des poids (`pages.js`). Détail :
+notes « la date de chaque cohorte », « le coût des avantages ».
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.3 ». L'étape est
 vaste — sept chantiers, vingt-neuf points du registre — ; cette session en
