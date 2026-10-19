@@ -52,12 +52,38 @@ vie vaut donc capital × (sa durée / durée moyenne), plus grande pour qui vit
 longtemps — et qui vit longtemps a les plus gros capitaux. Le diviseur par
 vingtile ramène chaque masse à son capital. L'écart est ce que le diviseur
 commun coûte, et il se lit sur les têtes de la trajectoire de la page Coût :
-les mêmes couples (cas type, génération), les mêmes effectifs INSEE par âge,
-les mêmes poids de caisse — la survie de chaque cas type étant corrigée de
-celle de son vingtile, ce que la page ne fait pas. La page compte tout le
-monde à la mortalité générale ; appliquer les diviseurs sans corriger la
-survie donnerait un chiffre plus grand et faux, imprimé ici en regard pour
-qu'on voie l'écart. Le scénario 1 n'a pas de diviseur : rien ne bouge.
+les couples (cas type, génération) de sa grille, variantes comprises
+(``GRILLE``), les effectifs INSEE par âge, les poids de caisse de sa
+dernière année observée, et sa survie. Depuis le 17 octobre 2026, la page
+fait vivre chaque cas type au rythme de la population de son diviseur, le
+vingtile où le salaire de sa carrière le range, ou de la sienne, pour
+l'inapte, à nombre de décès égal : chaque cohorte garde les survivants de la
+pyramide, que cette survie répartit entre fortes et faibles pensions
+(``cout._survies``, ``_survies_alignees``). Le script prend la même, par les
+mêmes fonctions, sur les mêmes vingtiles.
+
+La page ne la compte que sous le diviseur par vingtile, le défaut du site :
+l'interrupteur est le même, et sous la table commune, d'où partent les
+soldes imprimés ici, elle revient à la pyramide seule. Le premier tableau dit
+ce que cette survie déplace à diviseur commun : la masse du système actuel,
+et le rapport de masses, seule chose que la page applique à la dépense
+observée. Le second, ce que le diviseur par vingtile fait baisser la dépense
+à cette survie, et, en regard, à la mortalité générale, comme la page le
+comptait jusqu'au 17 octobre : les gros capitaux, que le diviseur baisse, y
+sont servis moins longtemps, et la baisse, stock compris, en paraît plus
+petite. Le solde « avec le diviseur par vingtile » ajoute cette baisse au
+solde de la table commune ; celui du site compte aussi la survie. Aux
+scénarios 3 et 5, le rapport des diviseurs grossit la baisse : il s'applique
+à toute la pension, quand ils gardent au stock d'avant la bascule le droit
+en vigueur, et que les droits acquis à la bascule passent par le diviseur à
+l'entrée comme à la sortie. Le scénario 1 n'a pas de diviseur : rien ne
+bouge.
+
+Jusqu'au 19 octobre 2026, le script disait la page à la mortalité générale,
+et ses colonnes « page » l'y mesuraient ; il faisait vivre chaque cas type au
+rythme de son vingtile rapporté à la population générale, sans aligner, ne
+relisait que les cas types de la page Cas types, sans leurs cinq variantes,
+et rangeait chacun au vingtile de son niveau écrit (action 138, étape 7).
 
 LE GARDE-FOU
 ------------
@@ -73,17 +99,22 @@ from __future__ import annotations
 
 import argparse
 import sys
+from dataclasses import replace
 from pathlib import Path
 
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 
 from retraite_notionnelle.somme import somme_ordonnee
-from retraite_notionnelle.castypes import CAS_TYPES, GENERATIONS  # noqa: E402
+from retraite_notionnelle.castypes import CAS_TYPES, GENERATIONS, GRILLE_DU_COUT  # noqa: E402
 from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS, Simulateur  # noqa: E402
 
 POPULATION_DEFAUT = "fonctionnaires_civils_etat"
+
+#: La grille que ``--deficit`` relit : celle que la page Coût pèse
+#: (``calculer_cout``), les cas types de la page Cas types et leurs variantes.
+GRILLE = GRILLE_DU_COUT
 
 #: Les cas types qui APPARTIENNENT à chaque population : ceux dont la caisse
 #: est celle que le régime publiant l'espérance de vie sert.
@@ -160,11 +191,11 @@ def _euros(montant: float) -> str:
     return f"{montant:,.0f}".replace(",", "\u202f")
 
 
-def _cohortes(pensionne, mortalite, vingtile: str):
-    """Les cinq cohortes d'un couple de la page Coût, du ``-_DEMI_TRANCHE`` au
-    ``+_DEMI_TRANCHE`` : le rapport des diviseurs (ce que la pension devient
-    sous le diviseur du vingtile) et les deux courbes de survie, chacune prise
-    à l'âge et à l'année où la cohorte part, ceux que le droit de SA génération
+def _rapports(pensionne, mortalite, vingtile: str) -> tuple[float, ...]:
+    """Le rapport des diviseurs de chacune des cinq cohortes d'un couple de la
+    page Coût, du ``-_DEMI_TRANCHE`` au ``+_DEMI_TRANCHE`` : ce que sa pension
+    devient sous le diviseur de son vingtile. Ses deux courbes se prennent à
+    l'âge et à l'année où la cohorte part, ceux que le droit de SA génération
     lui donne (``Pensionne.liquidation``), comme la page date sa survie
     (``cout._survies``).
 
@@ -172,10 +203,11 @@ def _cohortes(pensionne, mortalite, vingtile: str):
     les faisait partir à l'âge de la génération que la grille simule, l'année
     décalée d'autant — l'erreur que la page a quittée le 18 octobre —, et
     prenait le rapport et les courbes une fois par couple, à cet âge et à
-    cette année (action 138, étape 3)."""
+    cette année (action 138, étape 3). Les courbes lui donnaient aussi sa
+    survie, jusqu'au même jour : la page la donne désormais (:func:`_couple`)."""
     from retraite_notionnelle.cout import _DEMI_TRANCHE
 
-    cohortes = []
+    rapports = []
     for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
         depart = pensionne.liquidation(decalage)
         age = depart - pensionne.generation - decalage
@@ -185,47 +217,93 @@ def _cohortes(pensionne, mortalite, vingtile: str):
                                    for k in range(len(commune) - 1))
         e_propre = somme_ordonnee(0.5 * (propre[k] + propre[k + 1])
                                   for k in range(len(propre) - 1))
-        cohortes.append((e_commune / e_propre, commune, propre))
-    return tuple(cohortes)
+        rapports.append(e_commune / e_propre)
+    return tuple(rapports)
+
+
+def _couple(pensionne, simulateur, vingtile: str, propre: str = ""):
+    """Un couple de la page Coût, tel que le déficit le lit : le couple, sa
+    survie posée comme la page la pose sous le diviseur par vingtile, et le
+    rapport des diviseurs de ses cinq cohortes (:func:`_rapports`). Sa survie
+    est celle de la population de son diviseur, ``vingtile``, ou de la
+    sienne, ``propre``, pour l'inapte (``CasType.mortalite``), chaque cohorte
+    depuis son départ (``cout._survies``) ; son diviseur reste celui de son
+    vingtile."""
+    from retraite_notionnelle.cout import _DEMI_TRANCHE, _survies
+
+    departs = tuple(pensionne.liquidation(decalage)
+                    for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1))
+    survies = _survies(simulateur, vingtile, pensionne.generation, departs, propre)
+    return (replace(pensionne, survies=survies),
+            _rapports(pensionne, simulateur.mortalite, vingtile))
+
+
+def _vingtiles(simulateur, cas_types, liquidation: str) -> dict[tuple[str, int], str]:
+    """Le vingtile de chaque couple de la grille, celui que le diviseur de la
+    page lui donne sous le défaut du site, et sa survie avec lui : où le
+    salaire de SA carrière, telle que la page la construit, la place — la
+    somme de ses revenus cotisés rapportée à celle des salaires moyens des
+    mêmes années (``niveau_relatif``, ``Convertisseur.population_de``).
+
+    LE NIVEAU ÉCRIT. Jusqu'au 19 octobre 2026, le script rangeait chaque cas
+    type au vingtile de son niveau écrit (``CasType.niveau_relatif``), quand
+    la page range sa carrière : le salarié au salaire moyen au treizième, que
+    la page met au quatorzième ou au quinzième, et 189 couples sur 345 dans un
+    autre vingtile que celui de la page (action 138, étape 7)."""
+    from retraite_notionnelle.castypes import carrieres_de_la_grille
+    from retraite_notionnelle.cout import generations
+    from retraite_notionnelle.moteur.conversion import niveau_relatif
+
+    projection = simulateur.pour_la_projection()
+    carrieres, _ = carrieres_de_la_grille(projection, cas_types, generations(), liquidation)
+    return {cle: projection.mortalite.population_niveau_de_vie(
+                niveau_relatif(carriere, projection.macro))
+            for cle, carriere in carrieres.items()}
 
 
 def _masses(couples, poids: dict[str, float], population, annee: int, cles: list[str],
             depuis: int | None = None) -> dict[str, dict[str, float]]:
-    """Masses par scénario : page (survie générale) et vraies (survie du
-    vingtile), sous le diviseur commun et sous le diviseur propre. ``couples``
-    sont les couples de la page et leurs cohortes (:func:`_cohortes`) : chacune
-    compte depuis l'année où elle part, et ``depuis`` choisit le flux sur son
-    départ à elle."""
-    from retraite_notionnelle.cout import _DEMI_TRANCHE
+    """Masses par scénario, sous le diviseur commun et sous le diviseur
+    propre, à deux survies : celle de la page (``vrai_``), et la mortalité
+    générale (``generale_``), que la page comptait jusqu'au 17 octobre 2026 et
+    compte encore sous la table commune. ``couples`` sont les couples de la
+    page et les rapports des diviseurs de leurs cohortes (:func:`_couple`) :
+    chaque cohorte compte depuis l'année où elle part, et garde les survivants
+    de la pyramide, que la survie de leur population répartit entre ses cas
+    types, pesés par ``poids`` (``cout._survies_alignees``) ; ``depuis``
+    choisit le flux sur son départ à elle.
 
-    total = {s: {"page_commun": 0.0, "page_propre": 0.0,
+    LA SURVIE N'ÉTAIT PAS ALIGNÉE. Jusqu'au 19 octobre 2026, la survie vraie
+    était celle du vingtile rapportée à la population générale, et la grille,
+    qui n'est pas une population, n'y gardait pas le nombre des décès ; les
+    clés ``page_`` disaient la page à la mortalité générale (action 138,
+    étape 7)."""
+    from retraite_notionnelle.cout import _DEMI_TRANCHE, _survies_alignees
+
+    total = {s: {"generale_commun": 0.0, "generale_propre": 0.0,
                  "vrai_commun": 0.0, "vrai_propre": 0.0} for s in cles}
-    for pensionne, cohortes in couples:
+    alignees = _survies_alignees([pensionne for pensionne, _ in couples], poids, annee)
+    for pensionne, rapports in couples:
         part = poids.get(pensionne.code, 0.0)
         if part <= 0.0:
             continue
-        for decalage, (rapport, commune, propre) in zip(
-                range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1), cohortes):
+        for decalage, rapport in zip(range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1), rapports):
             liquidation = pensionne.liquidation(decalage)
             if annee < liquidation:
                 continue
             effectif = population.effectif(annee - pensionne.generation - decalage, annee)
-            duree = annee - liquidation
-            survie = (propre[duree] / commune[duree]
-                      if duree < min(len(commune), len(propre)) and commune[duree] > 0
-                      else 0.0)
+            survie = alignees.get((pensionne.code, pensionne.generation, decalage), 1.0)
             applique = rapport if depuis is None or liquidation >= depuis else 1.0
             for s in cles:
-                pension = pensionne.pensions.get(s, 0.0)
-                base = part * effectif * pension
-                total[s]["page_commun"] += base
-                total[s]["page_propre"] += base * applique
+                base = part * effectif * pensionne.pensions.get(s, 0.0)
+                total[s]["generale_commun"] += base
+                total[s]["generale_propre"] += base * applique
                 total[s]["vrai_commun"] += base * survie
                 total[s]["vrai_propre"] += base * survie * applique
     return total
 
 
-def _deficit(mortalite, depuis: int | None = None) -> int:
+def _deficit(depuis: int | None = None) -> int:
     """Ce que le diviseur commun coûte au régime, sur la trajectoire de la page Coût.
 
     ``depuis`` restreint la mesure au FLUX : seules les pensions liquidées à
@@ -244,52 +322,53 @@ def _deficit(mortalite, depuis: int | None = None) -> int:
     racine = simulateur.parametres.racine_donnees
     population = Population(racine)
     cout = calculer_cout(simulateur, DepensesRetraite(racine), population,
-                         ComptesRetraite(racine), assiette=AssietteActivite(racine))
-    pensionnes, _ = _pensionnes(simulateur, CAS_TYPES, cout.liquidation)
-    par_code = {cas.code: cas for cas in CAS_TYPES}
-    vingtiles = {
-        (pensionne.code, pensionne.generation): mortalite.population_niveau_de_vie(
-            par_code[pensionne.code].niveau_relatif(simulateur, pensionne.generation))
-        for pensionne in pensionnes}
-    scenarios = [cle for cle, _, _ in SCENARIOS_NOTIONNELS]
-
-    couples = [(pensionne, _cohortes(pensionne, mortalite,
-                                     vingtiles[pensionne.code, pensionne.generation]))
+                         ComptesRetraite(racine), cas_types=GRILLE,
+                         assiette=AssietteActivite(racine))
+    pensionnes, _ = _pensionnes(simulateur, GRILLE, cout.liquidation)
+    vingtiles = _vingtiles(simulateur, GRILLE, cout.liquidation)
+    propres = {cas.code: cas.mortalite for cas in GRILLE}
+    # La survie se prend sous les conventions de la page, comme sa grille.
+    projection = simulateur.pour_la_projection()
+    couples = [_couple(pensionne, projection, vingtiles[pensionne.code, pensionne.generation],
+                       propres[pensionne.code])
                for pensionne in pensionnes]
+    scenarios = [cle for cle, _, _ in SCENARIOS_NOTIONNELS]
 
     def masses(annee: int, avec_actuel: bool = False) -> dict[str, dict[str, float]]:
         cles = ["actuel", *scenarios] if avec_actuel else scenarios
         return _masses(couples, cout.poids, population, annee, cles, depuis)
 
-    print("Chaque cas type au vingtile où son salaire le place ; les têtes, les poids et les "
-          "pensions sont ceux de la trajectoire de la page Coût.")
+    print("Chaque cas type au vingtile où le salaire de sa carrière le place, et à la survie "
+          "que la page Coût lui donne ; les têtes, les poids et les pensions sont ceux de sa "
+          "trajectoire, sous la table commune.")
     print("Le diviseur par vingtile s'applique "
           + (f"aux seules pensions liquidées à compter de {depuis} ; le stock garde le "
              "diviseur commun." if depuis else "à toutes les pensions, stock compris.")
           + "\n")
 
-    # D'abord le biais de la page elle-même : elle compte tout le monde à la
-    # mortalité générale. Sous les règles actuelles (diviseur commun), de
-    # combien la masse vraie — survie du vingtile — dépasse-t-elle la masse
-    # comptée, et de combien le RAPPORT de masses, seule chose que la page
-    # applique à la dépense observée, en est-il déplacé ?
-    print("Ce que la page sous-compte en comptant tout le monde à la mortalité générale :\n")
-    print("| Année | Masse vraie / masse comptée, système actuel | Rapport de masses corrigé / "
-          "rapport de la page, scénario 2 | scénario 4 | scénario 6 |")
+    # D'abord ce que la survie de la page déplace, à diviseur commun : la
+    # masse du système actuel, et le RAPPORT de masses, seule chose que la
+    # page applique à la dépense observée. La page la compte sous le diviseur
+    # par vingtile ; sous la table commune, elle revient à la pyramide.
+    print("Ce que la survie de la page, chaque cas type au rythme de sa population et à "
+          "nombre de décès égal, déplace à diviseur commun, contre la mortalité générale :\n")
+    print("| Année | Masse à la survie de la page / à la mortalité générale, système actuel | "
+          "Rapport de masses, à la survie de la page / à la mortalité générale, scénario 2 | "
+          "scénario 4 | scénario 6 |")
     print("|---:|---:|---:|---:|---:|")
     for annee in (2030, 2050, 2070):
         m = masses(annee, avec_actuel=True)
-        biais = {s: m[s]["vrai_commun"] / m[s]["page_commun"] - 1.0
-                 for s in m if m[s]["page_commun"] > 0}
-        rapports = {s: (1.0 + biais[s]) / (1.0 + biais["actuel"]) - 1.0
-                    for s in scenarios if s in biais}
-        print(f"| {annee} | {biais['actuel']:+.1%} | {rapports['notionnel_retroactif']:+.1%} | "
+        survie = {s: m[s]["vrai_commun"] / m[s]["generale_commun"] - 1.0
+                  for s in m if m[s]["generale_commun"] > 0}
+        rapports = {s: (1.0 + survie[s]) / (1.0 + survie["actuel"]) - 1.0
+                    for s in scenarios if s in survie}
+        print(f"| {annee} | {survie['actuel']:+.1%} | {rapports['notionnel_retroactif']:+.1%} | "
               f"{rapports['notionnel_retroactif_employeur']:+.1%} | "
               f"{rapports['notionnel_liberal']:+.1%} |")
     print()
-    print("| Scénario | Année | Baisse de la dépense, survie du vingtile | Baisse si la page "
-          "l'appliquait sans corriger la survie | Solde sous la table commune, part de PIB | "
-          "Solde avec le diviseur par vingtile (le défaut du site) |")
+    print("| Scénario | Année | Baisse de la dépense, à la survie de la page | Baisse à la "
+          "mortalité générale, comme la page la comptait jusqu'au 17 octobre 2026 | Solde sous "
+          "la table commune, part de PIB | Solde avec le diviseur par vingtile |")
     print("|---|---:|---:|---:|---:|---:|")
     cumul = {s: [] for s in scenarios}
     for ligne in cout.solde.projetees():
@@ -298,15 +377,16 @@ def _deficit(mortalite, depuis: int | None = None) -> int:
             if m[s]["vrai_commun"] <= 0.0:
                 continue
             vraie = 1.0 - m[s]["vrai_propre"] / m[s]["vrai_commun"]
-            page = 1.0 - m[s]["page_propre"] / m[s]["page_commun"]
+            generale = 1.0 - m[s]["generale_propre"] / m[s]["generale_commun"]
             gain = ligne.depense(s) * vraie
-            cumul[s].append((ligne.annee, vraie, page, ligne.solde(s), ligne.solde(s) + gain))
+            cumul[s].append((ligne.annee, vraie, generale, ligne.solde(s),
+                             ligne.solde(s) + gain))
     libelles = {cle: f"{n} · {lib}" for cle, n, lib in SCENARIOS_NOTIONNELS}
     for s in scenarios:
-        for annee, vraie, page, avant, apres in cumul[s]:
+        for annee, vraie, generale, avant, apres in cumul[s]:
             if annee in (2030, 2050, 2070):
                 print(f"| {libelles[s].format(bascule=simulateur.parametres.annee_bascule)} | "
-                      f"{annee} | {vraie:.1%} | {page:.1%} | {avant:+.2%} | {apres:+.2%} |")
+                      f"{annee} | {vraie:.1%} | {generale:.1%} | {avant:+.2%} | {apres:+.2%} |")
         moyen_avant = somme_ordonnee(l[3] for l in cumul[s]) / len(cumul[s])
         moyen_apres = somme_ordonnee(l[4] for l in cumul[s]) / len(cumul[s])
         print(f"| {libelles[s].format(bascule=simulateur.parametres.annee_bascule)} | "
@@ -377,9 +457,9 @@ def main() -> int:
                               "gardant le diviseur commun")
     args = parseur.parse_args()
 
-    mortalite = _simulateur(None).mortalite
     if args.deficit:
-        return _deficit(mortalite, args.depuis)
+        return _deficit(args.depuis)
+    mortalite = _simulateur(None).mortalite
     if args.niveau_de_vie:
         return _par_niveau_de_vie(mortalite, args.generations or [1975])
     if args.population not in mortalite.populations:
