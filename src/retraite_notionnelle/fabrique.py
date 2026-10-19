@@ -24,6 +24,7 @@ import sys
 import threading
 
 from .config import RACINE_PROJET
+from .pont import version_de_node
 
 FICHIER = RACINE_PROJET / ".cache" / "fabrique.json"
 SANS_MEMOIRE = "FABRIQUE_SANS_MEMOIRE"
@@ -65,14 +66,6 @@ EXTRAITS: dict[str, tuple[tuple[str, str], ...]] = {
 _VERROU = threading.Lock()
 
 
-def _node() -> bytes:
-    try:
-        return subprocess.run(["node", "--version"], capture_output=True,
-                              check=True).stdout
-    except (OSError, subprocess.CalledProcessError):
-        return b"-"
-
-
 def extrait(texte: str, motif: str) -> str:
     """Ce que le motif retient du texte ; le texte entier s'il ne retient rien."""
     trouve = re.search(motif, texte, re.DOTALL)
@@ -97,7 +90,7 @@ def empreinte(etape: str) -> str | None:
     lus = fichiers(etape)
     if lus is None:
         return None
-    somme = hashlib.sha256(sys.version.encode() + _node())
+    somme = hashlib.sha256(sys.version.encode() + version_de_node())
     for nom in sorted(lus, key=os.fsencode):
         chemin = os.fsencode(nom)
         somme.update(chemin + b"\0")

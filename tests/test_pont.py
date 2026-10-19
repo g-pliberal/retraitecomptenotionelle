@@ -21,6 +21,7 @@ from __future__ import annotations
 import json
 import shutil
 import subprocess
+import sys
 from dataclasses import fields, replace
 
 import pytest
@@ -370,3 +371,32 @@ def test_sur_des_donnees_d_ailleurs_le_cout_simule_sa_grille_en_python(tmp_path)
     assert not cout._par_le_portage(replace(Parametres(), racine_donnees=tmp_path))
     with memoire.modele_modifie():
         assert not cout._par_le_portage(Parametres())
+
+
+def test_le_paquet_du_jour_suit_les_sources(monkeypatch, tmp_path):
+    """Le paquet du jour se bâtit une fois par état des sources de la mémoire
+    des calculs, et non une fois par processus : une donnée retouchée pendant
+    qu'un processus calcule entre dans le paquet de son calcul suivant, et la
+    mémoire ne garde pas, sous l'empreinte des données nouvelles, une grille
+    simulée sur le paquet des anciennes."""
+    from retraite_notionnelle import memoire
+
+    depot = tmp_path / "depot"
+    (depot / "data").mkdir(parents=True)
+    subprocess.run(["git", "init", "-q", str(depot)], check=True)
+    donnee = depot / "data" / "taux.csv"
+    donnee.write_text("annee,taux\n2026,1\n", encoding="utf-8")
+    monkeypatch.setattr(memoire, "RACINE_PROJET", depot)
+    reel, batis = subprocess.run, []
+
+    def batir(commande, *arguments, **options):
+        if commande[0] != sys.executable:
+            return reel(commande, *arguments, **options)
+        batis.append(commande)
+        return subprocess.CompletedProcess(commande, 0, f"paquet {len(batis)}".encode(), b"")
+
+    monkeypatch.setattr(subprocess, "run", batir)
+    assert pont.paquet_des_donnees() == b"paquet 1"
+    assert pont.paquet_des_donnees() == b"paquet 1"
+    donnee.write_text("annee,taux\n2026,1.5\n", encoding="utf-8")
+    assert pont.paquet_des_donnees() == b"paquet 2"

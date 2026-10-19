@@ -6309,15 +6309,15 @@ de `contribution_etat`.
 
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
-**Reprise, au 19 octobre 2026.** Faites, les étapes 1 à 4, et quatre parties
+**Reprise, au 19 octobre 2026.** Faites, les étapes 1 à 4, et cinq parties
 de l'étape 5 : les cas types du COR par le portage ; la libm du portage et la
 grille des agrégats par le pont (`retraite_notionnelle/pont.py`) ; la grille
-et les exemples du bilan figé ; puis la grille du coût, ses carrières passées
-au portage en données, et avec elle l'engagement acquis du bilan. Reste :
-`memoire.py` indexée sur le portage, qui ne suit encore ni `moteur/js` ni le
-paquet du jour (`pont.paquet_des_donnees`) ; puis le test des références et le
-retrait de `cycle_de_vie.py`, qui l'attendent. Détail :
-`2026-10-19-etape-5-quatrieme-partie-la-grille-du-cout.md`.
+et les exemples du bilan figé ; la grille du coût, ses carrières passées au
+portage en données ; puis `memoire.py` indexée sur le portage, `moteur/js`
+hors des pages et le paquet du jour, rebâti à chaque état des sources. Reste,
+à commencer par lui : le test des références, à faire lire au portage, puis le
+retrait de `cycle_de_vie.py`, qui l'attend. Détail :
+`2026-10-19-etape-5-cinquieme-partie-la-memoire-indexee-sur-le-portage.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

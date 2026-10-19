@@ -700,6 +700,24 @@ def test_aucun_calcul_garde_ne_lit_ce_que_l_empreinte_ignore():
         f"champs documentaires lus par un calcul gardé, que l'empreinte ignore : {documentaires}")
 
 
+def test_le_portage_que_le_pont_fait_tourner_est_dans_l_empreinte():
+    """La grille du coût se simule par le portage (action 161, étape 5) :
+    l'empreinte lit chaque module que le pont importe — le moteur du portage,
+    hors du texte des pages, qu'aucun n'importe —, et aucun ne lit, du paquet
+    du jour, ce qu'il tient des seuls fichiers qu'elle ignore : les crédits
+    des ministères et le compte des institutions du manifeste des sources,
+    que le site seul montre (``pont.paquet_des_donnees``)."""
+    import jumeaux
+
+    importes = jumeaux.JavaScript(RACINE, jumeaux.fichiers_suivis()).fermeture(
+        ["src/retraite_notionnelle/pont.mjs"])
+    assert len(importes) > 50 and "moteur/js/simulateur.js" in importes
+    assert [chemin for chemin in sorted(importes) if not memoire.du_modele(chemin)] == []
+    for chemin in importes:
+        texte = (RACINE / chemin).read_text(encoding="utf-8")
+        assert not re.search(r"\b(?:credits_ministeres|institutions_citees)\b", texte), chemin
+
+
 def test_l_empreinte_d_une_fiche_ignore_sa_seule_documentation():
     """Chaque fiche de règles, privée par le texte de ses champs documentaires
     (``memoire._sans_documentation``), se lit comme la fiche privée de ces
@@ -775,6 +793,40 @@ def test_l_empreinte_suit_les_sources_que_git_voit(monkeypatch, memoire_isolee, 
     ailleurs.mkdir()
     monkeypatch.setattr(memoire_isolee, "RACINE_PROJET", ailleurs)
     assert memoire_isolee.empreinte() is None
+
+
+def test_l_empreinte_suit_le_portage(monkeypatch, memoire_isolee, tmp_path):
+    """La grille du coût se simule par le portage (action 161, étape 5) :
+    l'empreinte suit son moteur, hors du texte des pages, la fabrique du
+    paquet du jour qu'il lit, et la version de node qui le fait tourner. Le
+    reste du site, et les autres scripts, ne la changent pas."""
+    depot = tmp_path / "depot"
+    (depot / "src").mkdir(parents=True)
+    subprocess.run(["git", "init", "-q", str(depot)], check=True)
+    (depot / "src" / "modele.py").write_text("TAUX = 1\n", encoding="utf-8")
+    monkeypatch.setattr(memoire_isolee, "RACINE_PROJET", depot)
+    premiere = memoire_isolee.empreinte()
+    for chemin in ("moteur/js/pages.js", "moteur/style.css", "index.html",
+                   "scripts/regenerer.py"):
+        (depot / chemin).parent.mkdir(parents=True, exist_ok=True)
+        (depot / chemin).write_text("hors du modèle", encoding="utf-8")
+    assert memoire_isolee.empreinte() == premiere
+    (depot / "moteur" / "js" / "regimes.js").write_text("export const TAUX = 1;\n",
+                                                        encoding="utf-8")
+    avec_le_moteur = memoire_isolee.empreinte()
+    assert avec_le_moteur != premiere
+    (depot / "scripts" / "construire_donnees.py").write_text("VERSION = 1\n", encoding="utf-8")
+    avec_la_fabrique = memoire_isolee.empreinte()
+    assert avec_la_fabrique != avec_le_moteur
+    reel = subprocess.run
+
+    def un_autre_node(commande, *arguments, **options):
+        if commande[0] == "node":
+            return subprocess.CompletedProcess(commande, 0, b"v0.0.0\n", b"")
+        return reel(commande, *arguments, **options)
+
+    monkeypatch.setattr(subprocess, "run", un_autre_node)
+    assert memoire_isolee.empreinte() not in (premiere, avec_le_moteur, avec_la_fabrique)
 
 
 def test_une_option_par_defaut_ecrite_ou_non_est_le_meme_cout(monkeypatch, memoire_isolee):

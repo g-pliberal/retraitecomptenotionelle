@@ -19,14 +19,15 @@ CE QUI SE GARDE, ET SOUS QUOI
 -----------------------------
 Un calcul se garde sous sa CLÉ — ses paramètres, ses options, ce qu'il ne
 tient pas des sources — et sous l'EMPREINTE du modèle : tout ce que git voit
-sous ``src/`` et ``data/``, octet par octet, hors de ce qu'aucun calcul ne lit
+sous ``src/`` et ``data/``, et du portage, par lequel le coût fait simuler sa
+grille (:data:`SOURCES`), octet par octet, hors de ce qu'aucun calcul ne lit
 (:data:`HORS_DU_MODELE`), des fiches de règles sans leur documentation
-(:data:`CHAMPS_DOCUMENTAIRES`), et la version de Python. Qu'un de ces fichiers
-bouge, et tout se refait ; un calcul pendant lequel l'un d'eux a bougé ne se
-garde pas. Un calcul écrit hors du modèle, dans un script ou un test, porte en
-plus dans sa clé son propre code et celui qu'il importe à côté de lui
-(:func:`_code_hors_du_modele`) : une retouche de ``scripts/`` ne refait que
-les calculs des scripts qu'elle touche. Il se relit d'abord du processus,
+(:data:`CHAMPS_DOCUMENTAIRES`), et les versions de Python et de node. Qu'un
+de ces fichiers bouge, et tout se refait ; un calcul pendant lequel l'un d'eux
+a bougé ne se garde pas. Un calcul écrit hors du modèle, dans un script ou un
+test, porte en plus dans sa clé son propre code et celui qu'il importe à côté
+de lui (:func:`_code_hors_du_modele`) : une retouche de ``scripts/`` ne refait
+que les calculs des scripts qu'elle touche. Il se relit d'abord du processus,
 puis de ``.cache/calculs/<empreinte>/``, que git ignore, dans le dépôt
 principal, que tous ses worktrees partagent (:func:`dossier_commun`) ; les
 seize empreintes les plus récentes y restent. Un calcul ne se fait
@@ -66,6 +67,7 @@ from typing import Callable, TypeVar
 
 from .config import RACINE_DONNEES, RACINE_PROJET, Parametres
 from .donnees.chargement import instantane
+from .pont import version_de_node
 
 T = TypeVar("T")
 
@@ -110,11 +112,14 @@ EMPREINTES_GARDEES = 16
 #: on le refait soi-même. La recherche d'âges a pris un quart d'heure sous
 #: Windows, la machine chargée de trois suites.
 ATTENTE_MAX = 30 * 60
-#: Ce dont un calcul du modèle dépend, tel que git le voit. Ce qu'il ignore n'en
-#: est pas : ``data/brut``, les téléchargements, ne se lit que par les scripts
-#: de récupération. Les scripts n'en sont plus : un calcul qui y est écrit porte
-#: son code dans sa clé (:func:`_code_hors_du_modele`).
-SOURCES = ("src", "data")
+#: Ce dont un calcul du modèle dépend, tel que git le voit : le modèle et ses
+#: données, et le portage, par lequel le coût fait simuler sa grille (action
+#: 161, étape 5) — son moteur, et la fabrique du paquet du jour, qu'il lit
+#: (``pont.paquet_des_donnees``). Ce que git ignore n'en est pas : ``data/brut``,
+#: les téléchargements, ne se lit que par les scripts de récupération. Les
+#: autres scripts n'en sont plus : un calcul qui y est écrit porte son code dans
+#: sa clé (:func:`_code_hors_du_modele`).
+SOURCES = ("src", "data", "moteur/js", "scripts/construire_donnees.py")
 #: Ce que git voit sous les sources et qu'aucun calcul gardé ne lit : la veille,
 #: les registres, la prose, le catalogue du site, les textes, l'outillage du
 #: site et des tests ; et, partout, les consignes de Claude Code
@@ -155,6 +160,9 @@ HORS_DU_MODELE = (
     # montre par le paquet, et qu'aucun calcul ne lit (action 159, étape 8).
     "data/reference/macro/credits_ministeres.csv",
     "src/retraite_notionnelle/donnees/credits_ministeres.py",
+    # Le texte des pages, qu'aucun module du portage que le pont importe
+    # n'importe (action 161, étape 5) : ``tests/test_outillage.py`` le tient.
+    "moteur/js/pages.js",
 )
 
 #: Les calculs de ce processus, par leur nom : l'objet picklé, dont chaque
@@ -176,7 +184,7 @@ class Absent(Exception):
 
 def du_modele(chemin: str) -> bool:
     """Un chemin du dépôt, en barres obliques, est-il de ce que l'empreinte lit ?"""
-    return (chemin.startswith(tuple(f"{s}/" for s in SOURCES))
+    return (any(chemin == source or chemin.startswith(f"{source}/") for source in SOURCES)
             and not chemin.startswith(HORS_DU_MODELE)
             and chemin.rsplit("/", 1)[-1] != "CLAUDE.md")
 
@@ -236,7 +244,7 @@ def empreinte() -> str | None:
     chemins = _sources()
     if chemins is None:
         return None
-    somme = hashlib.sha256(sys.version.encode())
+    somme = hashlib.sha256(sys.version.encode() + version_de_node())
     for chemin in chemins:
         somme.update(chemin + b"\0")
         try:
@@ -248,6 +256,27 @@ def empreinte() -> str | None:
             contenu = _sans_documentation(contenu)
         somme.update(b"+" + len(contenu).to_bytes(8, "little") + contenu)
     return somme.hexdigest()[:24]
+
+
+def signature() -> str | None:
+    """Les sources de l'empreinte telles que le disque les décrit — le chemin,
+    la taille et la date de chacune —, sans les lire : de quoi voir, en
+    quelques millièmes de seconde, qu'une a bougé (``pont.paquet_des_donnees``),
+    sans que le relevé de ce que lisent les calculs gardés
+    (``scripts/lectures_du_modele.py``) la compte pour lue. ``None`` hors d'un
+    dépôt git."""
+    chemins = _sources()
+    if chemins is None:
+        return None
+    somme = hashlib.sha256()
+    for chemin in chemins:
+        try:
+            etat = (RACINE_PROJET / os.fsdecode(chemin)).stat()
+        except OSError:          # au registre de git, mais effacé du répertoire
+            somme.update(chemin + b"\0-\0")
+            continue
+        somme.update(chemin + b"\0" + f"{etat.st_size}:{etat.st_mtime_ns}".encode() + b"\0")
+    return somme.hexdigest()
 
 
 def _code_retouche() -> bool:

@@ -32,7 +32,6 @@ from __future__ import annotations
 
 import dataclasses
 import enum
-import functools
 import json
 import math
 import os
@@ -50,6 +49,17 @@ PROGRAMME = Path(__file__).with_name("pont.mjs")
 class PontIndisponible(RuntimeError):
     """Node manque : ce que le pont calcule ne se calcule pas, et rien ne prend
     le relais."""
+
+
+def version_de_node() -> bytes:
+    """La version de node, qui fait tourner le portage, telle qu'il l'écrit ;
+    « - » sans lui. Les empreintes de la mémoire des calculs et de la fabrique
+    la lisent."""
+    try:
+        return subprocess.run(["node", "--version"], capture_output=True,
+                              check=True).stdout
+    except (OSError, subprocess.CalledProcessError):
+        return b"-"
 
 
 def _demander(demande: dict, paquet: bytes | None) -> dict:
@@ -169,7 +179,11 @@ sys.stdout.buffer.write(module.construire(b"{}", b"{}"))
 """
 
 
-@functools.cache
+#: Le dernier paquet du jour que ce processus a bâti, sous la signature des
+#: sources d'où il l'a bâti (``memoire.signature``).
+_PAQUET: tuple[str | None, bytes] | None = None
+
+
 def paquet_des_donnees() -> bytes:
     """Le paquet des données du jour, tel que la fabrique l'écrira, sans le
     bilan ni les agrégats, que la simulation d'une carrière ne lit pas : celui
@@ -178,11 +192,27 @@ def paquet_des_donnees() -> bytes:
     Il ne se lit pas dans ``moteur/donnees.json`` : une retouche des données
     n'y entre qu'à la fabrique suivante, et la fabrique, qui l'écrit pendant
     que d'autres étapes calculent le coût, le leur donnerait à demi écrit. Il
-    se bâtit donc depuis ``data/``, une fois par processus, par la fabrique
-    elle-même (``scripts/construire_donnees.py``), dans un processus à elle,
-    comme node fait tourner le moteur JavaScript dans le sien : ce qu'elle lit
-    pour le site seul — les crédits des ministères, le manifeste des sources,
-    qu'aucun calcul ne lit — n'entre ni dans les mémoires des chargeurs de ce
+    se bâtit donc depuis ``data/``, une fois par état des sources de la
+    mémoire des calculs (``memoire.signature``), et non une fois par
+    processus : une donnée retouchée pendant qu'un processus calcule entre
+    dans le paquet de son calcul suivant, et la mémoire ne garde pas, sous
+    l'empreinte des données nouvelles, une grille simulée sur le paquet des
+    anciennes."""
+    global _PAQUET
+    from .memoire import signature
+
+    etat = signature()
+    if _PAQUET is None or _PAQUET[0] != etat:
+        _PAQUET = (etat, _batir_le_paquet())
+    return _PAQUET[1]
+
+
+def _batir_le_paquet() -> bytes:
+    """Le paquet du jour, bâti par la fabrique elle-même
+    (``scripts/construire_donnees.py``), dans un processus à elle, comme node
+    fait tourner le moteur JavaScript dans le sien : ce qu'elle lit pour le
+    site seul — les crédits des ministères, le manifeste des sources, qu'aucun
+    calcul ne lit — n'entre ni dans les mémoires des chargeurs de ce
     processus-ci, ni dans le relevé de ce que lisent les calculs gardés
     (``memoire.HORS_DU_MODELE``)."""
     environnement = {**os.environ, "PYTHONPATH": os.pathsep.join(filter(None, (
