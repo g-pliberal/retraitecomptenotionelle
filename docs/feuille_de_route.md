@@ -6309,15 +6309,15 @@ de `contribution_etat`.
 
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
-**Reprise, au 19 octobre 2026.** Faites, les étapes 1 à 4, et trois parties
-de l'étape 5 : les cas types du COR par le portage ; le portage qui calcule
-exp, log et pow comme la libm de Linux (`moteur/js/libm.js`), et la grille
-des carrières types des agrégats, que la fabrique fait simuler par le pont
-(`retraite_notionnelle/pont.py`) ; puis, par le même pont, la grille et les
-exemples du bilan figé. Reste : la grille du coût, dont les carrières doivent
-passer en données, avec l'engagement acquis du bilan, et `memoire.py` indexée
-sur le portage ; le test des références et le retrait de `cycle_de_vie.py`
-l'attendent. Détail : `2026-10-19-etape-5-troisieme-partie-le-bilan-fige.md`.
+**Reprise, au 19 octobre 2026.** Faites, les étapes 1 à 4, et quatre parties
+de l'étape 5 : les cas types du COR par le portage ; la libm du portage et la
+grille des agrégats par le pont (`retraite_notionnelle/pont.py`) ; la grille
+et les exemples du bilan figé ; puis la grille du coût, ses carrières passées
+au portage en données, et avec elle l'engagement acquis du bilan. Reste :
+`memoire.py` indexée sur le portage, qui ne suit encore ni `moteur/js` ni le
+paquet du jour (`pont.paquet_des_donnees`) ; puis le test des références et le
+retrait de `cycle_de_vie.py`, qui l'attendent. Détail :
+`2026-10-19-etape-5-quatrieme-partie-la-grille-du-cout.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
