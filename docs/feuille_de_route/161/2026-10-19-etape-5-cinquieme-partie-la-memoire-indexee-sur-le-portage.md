@@ -43,7 +43,11 @@ indexée aussi sur l'empreinte du portage, était la dernière qui manquait au
 pont du coût. Le budget : l'empreinte passe, à chaud, de 36 à 46 millièmes de
 seconde, la version de node et le portage compris ; la signature en prend
 dix ; le paquet, trois secondes et sept dixièmes, ne se rebâtit qu'après une
-retouche des sources. Une retouche du seul portage refait désormais, en local,
+retouche des sources. Pendant `regenerer.py`, le chiffrage calcule pendant que
+la fabrique réécrit le bilan et les calibrations, sans condition : il rebâtit
+son paquet une fois de plus, deux au pire, après ces écritures ; une lecture
+des calibrations à demi écrites les fait recalibrer, sans échec (`mortalite.py`
+rattrape l'erreur). Une retouche du seul portage refait désormais, en local,
 les calculs gardés, le coût compris ; une retouche de `pages.js` n'en refait
 aucun. Aucune dépendance nouvelle.
 
