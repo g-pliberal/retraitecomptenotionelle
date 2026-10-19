@@ -456,6 +456,96 @@ def test_la_nouvelle_pension_du_micro_entrepreneur_porte_son_revenu_cotise(simul
         base_abattue.revenu_annuel_moyen * 0.123 * 0.418 / 0.1775 / 0.29, rel=1e-9)
 
 
+def test_la_cotisation_minimale_porte_la_nouvelle_pension_de_l_artisane(simulateur):
+    """L'artisane en cumul intégral de janvier 2024 à décembre 2025 déclare 5 %
+    du salaire moyen, quelque 2 000 € par an. Elle cotise pourtant sur « 450
+    fois le montant horaire du salaire minimum de croissance en vigueur le 1er
+    janvier de l'année considérée » (D. 633-2), que rien n'écarte pour le
+    pensionné, et ces cotisations valident trois trimestres par an (R. 351-9).
+    Sa nouvelle pension « correspond aux cotisations versées » (R. 634-1 ;
+    R. 351-29, I, B, par D. 634-3) : six trimestres, sur le revenu annuel moyen
+    des deux assiettes minimales revalorisées, 450 × 11,65 € en 2024 et
+    450 × 11,88 € en 2025, et non deux trimestres sur son revenu déclaré."""
+    emploi = _emploi(63 + 11 / 12, 65 + 11 / 12, affiliation="artisan", niveau=0.05)
+    carriere = Carriere.depuis_parcours(
+        annee_naissance=1960, sexe="F", metiers=[Metier("salarie_prive_non_cadre", 20.0)],
+        age_liquidation=62.25, macro=simulateur.macro, jour_naissance=15,
+        emploi_retraite=emploi)
+    minimales = {2024: 450 * 11.65, 2025: 450 * 11.88}
+    lignes = {ligne.annee: ligne for ligne in carriere.lignes_apres_depart}
+    assert sorted(lignes) == [2024, 2025]
+    assert all(lignes[annee].fraction_annee == 1.0 for annee in lignes)
+    assert all(lignes[annee].revenu < minimales[annee] / 2 for annee in lignes)
+    droits = simulateur.echeancier(carriere).au_depart.droits_apres_depart
+    [base] = [p for p in droits.pensions if p.regime == "regime_general"]
+    assert base.date_effet == DateMois(2026, 1)
+    assert base.trimestres == 6
+    macro = simulateur.macro
+    revalorisees = [minimales[annee] * macro.coefficient_revalorisation_portee_au_compte(
+        annee, 2026, 1) for annee in (2024, 2025)]
+    assert base.revenu_annuel_moyen == pytest.approx(sum(revalorisees) / 2, rel=1e-12)
+
+
+def test_le_rci_ouvre_une_seconde_retraite_sur_les_periodes_de_2025(simulateur):
+    """Le commerçant en cumul intégral de février 2023 à juillet 2025 se
+    constitue des droits au RCI, mais sur ses seuls mois de 2025 : le règlement
+    du régime ne les ouvre en cumul intégral que par son article 27, dans la
+    rédaction de l'arrêté du 19 juin 2024, en vigueur le 1er janvier 2025
+    (article 2 de l'arrêté) ; jusque-là, « les cotisations versées au présent
+    régime par un retraité de ce régime afférentes à des périodes postérieures à
+    la date d'arrêt du compte ne sont pas productives de droits » (article 4).
+    Ses points s'achètent avec 8,1 % de son revenu sous le plafond (D. 635-7),
+    au prix de 2025, 21,532 € ; la seconde pension, « calculée, liquidée et
+    servie dans les conditions applicables à la pension de vieillesse du présent
+    régime » et demandée « en même temps que celle du régime de base », les sert
+    sans coefficient, la nouvelle pension de base étant au taux plein, à sa
+    date, au point de 2025, 1,335 €."""
+    metiers = [Metier("salarie_prive_non_cadre", 20.0)]
+    emploi = _emploi(63, 65.5, affiliation="commercant", niveau=0.5)
+    carriere = Carriere.depuis_parcours(
+        annee_naissance=1960, sexe="F", metiers=metiers, age_liquidation=62.25,
+        macro=simulateur.macro, jour_naissance=15, emploi_retraite=emploi)
+    droits = simulateur.echeancier(carriere).au_depart.droits_apres_depart
+    pensions = {p.regime: p for p in droits.pensions}
+    assert set(pensions) == {"regime_general", "rci"}
+    rci = pensions["rci"]
+    assert rci.date_effet == pensions["regime_general"].date_effet == DateMois(2025, 8)
+    [revenu] = [ligne.revenu for ligne in carriere.lignes_apres_depart if ligne.annee == 2025]
+    assert revenu < simulateur.macro.plafond_securite_sociale(2025) * 7 / 12
+    assert rci.points == pytest.approx(revenu * 0.081 / 21.532, rel=1e-12)
+    assert rci.montant == pytest.approx(rci.points * 1.335, rel=1e-12)
+    assert (rci.trimestres, rci.plafond, rci.revenu_annuel_moyen) == (0, None, 0.0)
+
+
+def test_avant_2025_le_rci_n_ouvre_rien_au_retraite(simulateur):
+    """Le même commerçant, en cumul jusqu'en juillet 2024 : sa nouvelle pension
+    de base, et rien au RCI, ses cotisations de retraité n'y étant « pas
+    productives de droits » avant le 1er janvier 2025 (règlement, article 4)."""
+    droits, _ = _droits(simulateur, 1960, 62.25,
+                        _emploi(63, 64.5, affiliation="commercant", niveau=0.5),
+                        [Metier("salarie_prive_non_cadre", 20.0)])
+    assert {p.regime for p in droits.pensions} == {"regime_general"}
+
+
+def test_le_micro_entrepreneur_achete_ses_points_de_rci_avec_son_forfait(simulateur):
+    """Le micro-entrepreneur vendeur en cumul intégral jusqu'en juillet 2025 :
+    ses points de RCI de 2025 s'achètent avec la part complémentaire de son
+    forfait, 16,5 % de ses 12,3 % de ventes (D. 613-4, D. 613-6), comme ceux de
+    sa première pension, au prix de 2025, 21,532 €."""
+    emploi = _emploi(63, 65.5, affiliation="micro_entrepreneur", niveau=0.5) | {
+        "micro": "vente"}
+    carriere = Carriere.depuis_parcours(
+        annee_naissance=1960, sexe="F", metiers=[Metier("salarie_prive_non_cadre", 20.0)],
+        age_liquidation=62.25, macro=simulateur.macro, jour_naissance=15,
+        emploi_retraite=emploi)
+    droits = simulateur.echeancier(carriere).au_depart.droits_apres_depart
+    [rci] = [p for p in droits.pensions if p.regime == "rci"]
+    [abattu] = [ligne.revenu for ligne in carriere.lignes_apres_depart if ligne.annee == 2025]
+    ventes = abattu / 0.29
+    assert rci.points == pytest.approx(ventes * 0.123 * 0.165 / 21.532, rel=1e-12)
+    assert rci.montant == pytest.approx(rci.points * 1.335, rel=1e-12)
+
+
 @pytest.mark.parametrize("naissance, debut, regles", [
     (1960, 26.0, [seconde.LOI_2014, seconde.LOI_2023]),
     (1954, 20.0, [seconde.LOI_2014]),

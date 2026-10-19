@@ -862,7 +862,9 @@ def _cas() -> list[dict]:
     # la pension militaire n'éteint pas ; ceux du fonctionnaire parti en 2011,
     # que le régime général, qui ne lui sert rien, ouvre encore. Celle du
     # commerçant, sur son revenu annuel moyen (R. 634-1, D. 634-3 ; action 138,
-    # étape 12) : trente mois sur trois années civiles.
+    # étape 12) : trente mois sur trois années civiles, et sa seconde retraite
+    # du RCI sur ses mois de 2025 ; celle de l'artisane qui déclare moins que
+    # l'assiette minimale, qui porte ses trimestres (D. 633-2).
     cas.append(("seconde_pension_2025", {
         "naissance": "1960", "sexe": "F", "debut": "20", "liquidation": "62.25",
         "unite_revenu": "moyen", "salaire": "1", "emploi_retraite": "2023-02",
@@ -873,6 +875,12 @@ def _cas() -> list[dict]:
         "unite_revenu": "moyen", "salaire": "1", "emploi_retraite": "2023-02",
         "emploi_retraite_fin": "2025-08", "emploi_retraite_salaire": "0.5",
         "emploi_retraite_statut": "commercant",
+    }))
+    cas.append(("seconde_pension_artisane_au_minimum_2026", {
+        "naissance": "1960", "sexe": "F", "debut": "20", "liquidation": "62.25",
+        "unite_revenu": "moyen", "salaire": "1", "emploi_retraite": "2024-01",
+        "emploi_retraite_fin": "2026-01", "emploi_retraite_salaire": "0.1",
+        "emploi_retraite_statut": "artisan",
     }))
     cas.append(("seconde_pension_plafonnee_2027", {
         "naissance": "1960", "sexe": "F", "debut": "20", "liquidation": "62.25",

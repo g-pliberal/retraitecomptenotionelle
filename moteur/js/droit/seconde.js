@@ -7,13 +7,15 @@
  * droit, pour qui la prend depuis 2015, puis pour tous depuis 2023, sauf, en
  * cumul intégral, une nouvelle pension dans le régime de base de l'activité
  * — au taux plein, plafonnée à 5 % du plafond de la sécurité sociale avant les
- * premières pensions de 2027 — et une seconde retraite de l'Agirc-Arrco, sur
- * les points de la tranche 1 : voir le Python, qui dit les textes.
+ * premières pensions de 2027 —, une seconde retraite de l'Agirc-Arrco, sur
+ * les points de la tranche 1, et une du RCI, sur les périodes de 2025 et après :
+ * voir le Python, qui dit les textes.
  */
 
 import { DateMois } from "../calendrier.js";
-import { revenuCotise } from "../carriere.js";
+import { forfaitMicro, revenuCotise } from "../carriere.js";
 import { menerAuMois } from "../revalorisation.js";
+import { assietteMinimale } from "./acquerir.js";
 import * as lesDeparts from "./departs.js";
 import * as liquidation from "./liquidation.js";
 import { valeurDuPoint } from "./liquider.js";
@@ -42,6 +44,9 @@ export const LIQUIDATION_2023 = rang(2023, 9);
 // La seconde retraite de l'Agirc-Arrco « prend effet, au plus tôt, le 1er
 // janvier 2024 » (avenant n° 16 ; voir seconde.py).
 export const LIQUIDATION_AGIRC_ARRCO = rang(2024, 1);
+// Le RCI n'ouvre de droits au retraité en cumul intégral que depuis le 1er
+// janvier 2025 (règlement du RCI, articles 4 et 27 ; voir seconde.py).
+export const DROITS_RCI = rang(2025, 1);
 export const PREMIERE_2027 = rang(2027, 1);
 
 export const TAUX_PLEIN = 0.5;
@@ -49,6 +54,7 @@ export const PLAFOND_EN_PASS = 0.05;
 export const HEURES_PAR_TRIMESTRE = 150;
 export const REGIMES_CALCULES = new Set(["regime_general", "msa_salaries"]);
 export const AGIRC_ARRCO = "agirc_arrco";
+export const RCI = "rci";
 /** Le groupe de l'activité des artisans, des commerçants et des micro-entrepreneurs. */
 export const INDEPENDANTS = "independants";
 
@@ -185,15 +191,7 @@ export function droits(moteur, carriere, resultat, cumul) {
   if (ouverts.length > 0) {
     const dateEffet = cumul.fin.rang >= LIQUIDATION_2023 ? cumul.fin
       : DateMois.depuisRang(LIQUIDATION_2023);
-    // Celui du micro-entrepreneur, que son forfait cotise, et non son revenu
-    // abattu : voir le Python.
-    const revenus = new Map();
-    for (const ligne of carriere.lignes_apres_depart) {
-      revenus.set(ligne.annee, (revenus.get(ligne.annee) ?? 0.0) + (ligne.micro
-        ? revenuCotise(moteur.macro, ligne.revenu, ligne.micro, ligne.annee,
-          ligne.fraction_annee)
-        : ligne.revenu));
-    }
+    const lignes = carriere.lignes_apres_depart;
     const activite = new Map();
     for (let r = cumul.debut.rang; r < cumul.fin.rang; r += 1) {
       const annee = DateMois.depuisRang(r).annee;
@@ -201,10 +199,14 @@ export function droits(moteur, carriere, resultat, cumul) {
     }
     const periode = new Map();
     for (const mois of ouverts) periode.set(mois.annee, (periode.get(mois.annee) ?? 0) + 1);
-    // Le salaire de chaque année, sur ses seuls mois de la période.
+    // Le salaire de chaque année, sur ses seuls mois de la période : celui que
+    // `code` cotise (`revenus`).
     const annees = [...periode.keys()].sort((a, b) => a - b);
-    const salaires = new Map(annees.map((annee) => [annee,
-      (revenus.get(annee) ?? 0.0) / activite.get(annee) * periode.get(annee)]));
+    const salaires = (code = null) => {
+      const parAnnee = revenus(moteur, lignes, code);
+      return new Map(annees.map((annee) => [annee,
+        (parAnnee.get(annee) ?? 0.0) / activite.get(annee) * periode.get(annee)]));
+    };
     const regimes = new Set();
     for (const annee of periode.keys()) {
       for (const code of moteur.affiliations.regimes(cumul.affiliation, annee)) regimes.add(code);
@@ -215,19 +217,48 @@ export function droits(moteur, carriere, resultat, cumul) {
         nonCalcules.add(code);
         continue;
       }
-      const pension = nouvellePension(moteur, code, salaires, periode, dateEffet,
+      const pension = nouvellePension(moteur, code, salaires(code), periode, dateEffet,
         resultat.trimestres_requis, premiere.rang < PREMIERE_2027,
         cumul.groupe === INDEPENDANTS);
       if (pension !== null) pensions.push(pension);
     }
     if (regimes.has(AGIRC_ARRCO)) {
-      const pension = secondeRetraiteComplementaire(moteur, salaires, periode,
+      const pension = secondeRetraiteComplementaire(moteur, salaires(), periode,
         dateEffet.rang >= LIQUIDATION_AGIRC_ARRCO ? dateEffet
           : DateMois.depuisRang(LIQUIDATION_AGIRC_ARRCO));
       if (pension !== null) pensions.push(pension);
     }
+    if (regimes.has(RCI)) {
+      const pension = secondeRetraiteRci(moteur, lignes, activite, periode,
+        dateEffet.rang >= DROITS_RCI ? dateEffet : DateMois.depuisRang(DROITS_RCI));
+      if (pension !== null) pensions.push(pension);
+    }
   }
   return new DroitsApresDepart({ periodes, pensions, nonCalcules: [...nonCalcules].sort() });
+}
+
+/**
+ * Le revenu de chaque année de l'activité, que la ligne déclare ; celui du
+ * micro-entrepreneur, que son forfait cotise. Avec `code`, celui sur lequel ce
+ * régime de base a cotisé : l'assiette minimale de l'artisan et du commerçant
+ * qui déclare moins (D. 633-2), dont rien ne dispense le pensionné. Voir
+ * `_revenus` (seconde.py).
+ */
+function revenus(moteur, lignes, code = null) {
+  const parAnnee = new Map();
+  for (const ligne of lignes) {
+    let revenu;
+    if (ligne.micro) {
+      revenu = revenuCotise(moteur.macro, ligne.revenu, ligne.micro, ligne.annee,
+        ligne.fraction_annee);
+    } else if (code === null) {
+      revenu = ligne.revenu;
+    } else {
+      revenu = Math.max(ligne.revenu, assietteMinimale(moteur, [code], ligne));
+    }
+    parAnnee.set(ligne.annee, (parAnnee.get(ligne.annee) ?? 0.0) + revenu);
+  }
+  return parAnnee;
 }
 
 /**
@@ -307,6 +338,50 @@ function secondeRetraiteComplementaire(moteur, salaires, periode, dateEffet) {
   if (points <= 0 || valeur === null) return null;
   const montant = points * valeur[0];
   return new NouvellePension({ regime: AGIRC_ARRCO, dateEffet, trimestres: 0,
+    salaireMensuel: 0.0, points, brute: montant, plafond: null, montant });
+}
+
+/**
+ * La seconde retraite du RCI : les points que les cotisations des mois de
+ * cumul intégral achètent depuis le 1er janvier 2025, servis sans coefficient,
+ * à la date de la nouvelle pension de base (règlement du RCI, article 27) ;
+ * ceux de la première pension, sur le revenu déclaré, ou la part
+ * complémentaire du forfait du micro-entrepreneur. Voir seconde.py.
+ */
+function secondeRetraiteRci(moteur, lignes, activite, periode, dateEffet) {
+  const macro = moteur.macro;
+  const anneeDesDroits = DateMois.depuisRang(DROITS_RCI).annee;
+  let points = 0.0;
+  for (const ligne of lignes) {
+    const annee = ligne.annee;
+    if (annee < anneeDesDroits || !periode.has(annee)) continue;
+    const achat = moteur.valeursPoint.achatProlonge(RCI, annee, macro);
+    if (achat === null) continue;
+    const [reference, tauxAppel] = achat;
+    // La part de l'année que la période garde, et le revenu de ses mois.
+    const part = periode.get(annee) / activite.get(annee);
+    const forfait = ligne.micro ? forfaitMicro(macro, ligne.micro, annee) : null;
+    let cotisation = 0.0;
+    if (forfait !== null) {
+      const [[, complementaire], [, tauxComplementaire]] = forfait;
+      cotisation = complementaire === RCI ? ligne.revenu * tauxComplementaire * part : 0.0;
+    } else {
+      const plafond = macro.plafond_securite_sociale.valeur(annee);
+      const fraction = periode.get(annee) / 12.0;
+      const revenu = ligne.revenu * part;
+      for (const tranche of moteur.catalogue.obtenir(RCI).periodesActives(annee)) {
+        const [basse, haute] = tranche.bornesAssietteEnEuros(plafond, annee);
+        const plafonne = haute === null ? revenu : Math.min(revenu, haute * fraction);
+        cotisation += Math.max(0.0, plafonne - basse * fraction)
+          * tranche.taux_cotisation_retraite;
+      }
+    }
+    points += cotisation / (tauxAppel * reference);
+  }
+  const valeur = valeurDuPoint(moteur, RCI, dateEffet);
+  if (points <= 0 || valeur === null) return null;
+  const montant = points * valeur[0];
+  return new NouvellePension({ regime: RCI, dateEffet, trimestres: 0,
     salaireMensuel: 0.0, points, brute: montant, plafond: null, montant });
 }
 

@@ -55,6 +55,18 @@ versions:
      en_vigueur: 2026-01-01}
   - {id: LEGIARTI000053356107, article: "D. 634-3 CSS : R. 351-29 pour l'indépendant, sans ses III et IV",
      en_vigueur: 2026-01-01}
+  - {id: LEGIARTI000048838330, article: "D. 633-2 CSS : l'assiette minimale de l'artisan et du commerçant, sans dispense du pensionné",
+     en_vigueur: 2023-12-31}
+  - {id: LEGIARTI000054891743, article: "règlement du RCI, article 4 : les cotisations du retraité « ne sont pas productives de droits »",
+     en_vigueur: 2013-01-01}
+  - {id: LEGIARTI000054895766, article: "règlement du RCI, article 4, « Sous réserve des dispositions du deuxième alinéa de l'article 27 »",
+     en_vigueur: 2024-06-26}
+  - {id: LEGIARTI000054892085, article: "règlement du RCI, article 27 : le service de la pension en cumul, sans droit nouveau",
+     en_vigueur: 2013-01-01}
+  - {id: LEGIARTI000054906642, article: "règlement du RCI, article 27, réduit à son premier alinéa jusqu'en 2025",
+     en_vigueur: 2024-06-26}
+  - {id: LEGIARTI000054906651, article: "règlement du RCI, article 27 : la seconde pension du RCI en cumul intégral",
+     en_vigueur: 2025-01-01}
   nee_de: JORFARTI000047445113
   bornes:
     liquidation.date_effet: [2023-09-01, null]
@@ -85,6 +97,38 @@ versions:
       pension issue des activités cotisées en cumul emploi retraite […] prend effet, au
       plus tôt, le 1er janvier 2024 », et « Les articles 93, 94, 95 et 99 ne sont pas
       applicables » ; ses points au taux de calcul de 6,20 %
+    complementaire_des_independants: >-
+      le RCI, sur les seules périodes courant depuis le 1er janvier 2025. Jusque-là, « les
+      cotisations versées au régime d'assurance vieillesse complémentaire obligatoire
+      par un retraité de ce régime afférentes à des périodes postérieures à la date
+      d'arrêt du compte ne sont pas productives de droits » (règlement du RCI, article
+      4) ; l'arrêté du 19 juin 2024 réserve depuis le 26 juin 2024 « les dispositions du
+      deuxième alinéa de l'article 27 », qui « entrent en vigueur le 1er janvier 2025 »
+      (son article 2) : « Lorsque les conditions mentionnées aux alinéas 3 à 6 de
+      l'article L. 634-6 du code de la sécurité sociale sont réunies, l'assuré se
+      constitue de nouveaux droits à pension au titre du présent régime » ; « La
+      seconde pension de vieillesse est calculée, liquidée et servie dans les
+      conditions applicables à la pension de vieillesse du présent régime », sa demande
+      « effectuée en même temps que celle du régime de base » (article 27). Ses points
+      s'achètent comme ceux de la première pension, au taux de chaque tranche (D. 635-7)
+      ou, pour le micro-entrepreneur, par la part complémentaire de son forfait
+      (D. 613-6), au prix de l'année ; la nouvelle pension de base étant au taux plein,
+      la seconde du RCI est « servie entière » (exposé de la Cnav « Retraite personnelle
+      complémentaire »)
+    assiette_minimale: >-
+      l'artisan ou le commerçant qui déclare peu cotise sur l'assiette minimale :
+      « La cotisation annuelle ne peut être calculée sur une assiette inférieure à 450
+      fois le montant horaire du salaire minimum de croissance en vigueur le 1er janvier
+      de l'année considérée », pour qui a quatre-vingt-dix jours d'affiliation dans
+      l'année, « à compter des cotisations annuelles dues au titre de l'année 2023 »
+      (D. 633-2) ; aucun texte n'en dispense le pensionné, et la Cnav ne l'écarte pas :
+      « Une cotisation minimale de retraite de base permet aux travailleurs
+      indépendants de valider 3 trimestres de retraite par an » (exposé « Travailleurs
+      indépendants »). Les trimestres de la nouvelle pension « sont validés dans les
+      conditions de droit commun » (exposé « Retraite personnelle issue d'un cumul
+      emploi retraite »), et son revenu annuel moyen « correspond aux cotisations
+      versées » (R. 634-1 ; R. 351-29, I, B, par D. 634-3) : l'assiette minimale y entre
+      quand le revenu déclaré n'y atteint pas
     salaire_de_base: >-
       « le salaire mensuel moyen correspondant aux cotisations versées au cours de
       chaque année civile ayant donné lieu, au titre de la nouvelle pension, à la
@@ -120,6 +164,8 @@ versions:
   statut: lue
   textes:
   - {id: LEGIARTI000053279747, article: "L. 161-22-1-1 CSS", en_vigueur: 2026-01-01}
+  - {id: LEGIARTI000054908896, article: "règlement du RCI, article 27, au cumul entier du 3° du A du III de L. 161-22",
+     en_vigueur: 2027-01-01}
   nee_de: LEGIARTI000053279747
   bornes:
     liquidation.date_effet: [2023-09-01, null]
@@ -129,7 +175,11 @@ versions:
       la version loi_2023, ouverte au seul cumul entier — à partir de l'âge du taux
       plein automatique, sauf les exceptions de L. 161-22-1-2 —, pour qui « entre[ ] en
       jouissance de [sa] première pension de vieillesse de base à compter du 1er
-      janvier 2027 » ; la rédaction ne porte plus la phrase du plafond annuel
+      janvier 2027 » ; la rédaction ne porte plus la phrase du plafond annuel. Le RCI
+      suit, par la rédaction de son article 27 qu'approuve l'arrêté du 21 septembre
+      2026, en vigueur le 1er janvier 2027 : « Lorsque les conditions mentionnées au 3°
+      du A du III de l'article L. 161-22 du code de la sécurité sociale sont réunies,
+      l'assuré se constitue de nouveaux droits à pension au titre du présent régime »
     parametres:
       taux_plein: true
       plafond_en_pass: null
@@ -137,10 +187,13 @@ versions:
 approximations:
 - ecart: >-
     le modèle calcule la nouvelle pension du régime général et des salariés agricoles,
-    au mois qui suit la fin de l'activité, au 1er septembre 2023 au plus tôt, et la
-    seconde retraite de l'Agirc-Arrco au 1er janvier 2024 au plus tôt ; celle des libéraux, des avocats, des exploitants
+    au mois qui suit la fin de l'activité, au 1er septembre 2023 au plus tôt, la
+    seconde retraite de l'Agirc-Arrco au 1er janvier 2024 au plus tôt, et celle du
+    RCI, sur les périodes de 2025 et après ; celle des libéraux, des avocats, des exploitants
     agricoles, des fonctionnaires et des régimes spéciaux n'est pas calculée, et le
-    résultat nomme leur régime
+    résultat nomme leur régime ; les secondes retraites des autres complémentaires —
+    celle de l'Ircantec, sur l'activité exercée depuis le 1er septembre 2024, celles de
+    la RCO des exploitants et des sections libérales — ne sont ni calculées ni nommées
   effet: non mesuré
 - ecart: >-
     le salaire de la période est la part de ses mois dans le revenu de l'année, et ses
@@ -164,6 +217,29 @@ approximations:
     nouvelle pension d'une salariée — 631 € au lieu de 757 € pour trente mois, de
     février 2023 à juillet 2025, sur trois années civiles ; 119 € au lieu de 239 € pour
     six mois de 2023 ; autant quand la période tombe sur des années civiles entières
+- ecart: >-
+    l'artisan et le commerçant y portent l'assiette minimale sur laquelle ils ont
+    cotisé (D. 633-2), comme à leur première pension, sur l'année de leur activité.
+    Restent approchés : l'année du départ, l'activité poursuivie a deux assiettes
+    minimales, une de chaque côté du départ, là où la caisse n'appelle qu'une
+    cotisation annuelle ; le pensionné au RSA ou à la prime d'activité, que la saisie
+    du cumul ne dit pas, n'en est pas dispensé (L. 613-11)
+  effet: >-
+    mesuré le 19 octobre 2026 : l'artisane qui déclare 5 % du salaire moyen en cumul
+    de janvier 2024 à décembre 2025 a six trimestres et 97 € par an, au lieu de deux
+    trimestres et 13 €
+- ecart: >-
+    la seconde retraite du RCI est servie quel que soit son nombre de points, quand le
+    règlement remplace par « un versement forfaitaire unique » la pension de « moins
+    de 40 points de retraite », ces points au revenu de référence du jour de l'effet
+    (article 39), et toute pension dont la base a fait l'objet d'un tel versement
+    (article 40) : le modèle ne le fait pas non plus à la première pension du RCI. Le
+    nombre de points n'est pas arrondi ; au-delà du dernier prix d'achat publié, celui
+    que le régime prolonge (`ValeursPoint.achat_prolonge`)
+  effet: >-
+    mesuré le 19 octobre 2026 : le commerçant au demi-salaire moyen de février 2023 à
+    juillet 2025, 45,7 points, 61 € par an ; l'artisane au minimum, 7,8 points, 10,55 €
+    par an, que le règlement verserait une fois, quelque 170 €
 - ecart: >-
     au-delà du dernier prix d'achat publié, le salaire de référence de l'Agirc-Arrco
     suit le plafond de la sécurité sociale ; le versement en capital sous cent points,
@@ -194,7 +270,63 @@ sources:
     pension est celle de L. 161-22-1-1, que R. 634-1 nommait. Pour qui calculera
     celle de l'exploitant agricole : R. 732-60 du code rural écarte aussi, depuis
     2026, « Le 2° du C du I et le III de l'article R. 351-29 ».
+  - >-
+    La seconde retraite du RCI, calculée le 19 octobre 2026 sur le règlement du
+    régime : aucune instruction de la Cnav ni page de l'Urssaf, que le réseau de la
+    session refuse, ne la décrit ; ni exemple. L'article 27 dit aussi, depuis 2013,
+    que la pension du RCI se sert en cumul selon les règles de la base (L. 634-6) :
+    le modèle la sert entière en cumul plafonné (fiche
+    cumul_emploi_retraite_et_retraite_progressive).
   lectures:
+  - type: legifrance
+    reference: >-
+      Règlement du RCI (arrêté du 9 février 2012), dans l'index LEGI à jour au 18
+      octobre 2026 : article 4, LEGIARTI000054891743 (2013 au 25 juin 2024), « les
+      cotisations versées au régime d'assurance vieillesse complémentaire obligatoire
+      par un retraité de ce régime afférentes à des périodes postérieures à la date
+      d'arrêt du compte ne sont pas productives de droits », puis LEGIARTI000054895766,
+      « Sous réserve des dispositions du deuxième alinéa de l'article 27 et de
+      l'article 31 » ; article 27, LEGIARTI000054892085 (2013 au 25 juin 2024 : le
+      service en cumul, suspendu avec la base), LEGIARTI000054906642 (26 juin au 31
+      décembre 2024 : son premier alinéa seul), LEGIARTI000054906651 (2025 et 2026 : les
+      nouveaux droits et la seconde pension), LEGIARTI000054908896 (depuis 2027 : au
+      cumul entier de L. 161-22) ; articles 39 et 40 (LEGIARTI000054907326,
+      LEGIARTI000054907340) : le versement forfaitaire unique sous quarante points
+    date: 2026-10-19
+  - type: jorf
+    reference: >-
+      Arrêté du 19 juin 2024 (JORFTEXT000049776019), son annexe, 5° et 24° : les
+      modifications des articles 4 et 27 ; son article 2 : « Les dispositions prévues
+      aux deuxième à cinquième alinéas de l'article 27 de l'annexe au présent arrêté
+      entrent en vigueur le 1er janvier 2025 » ; arrêté du 21 septembre 2026
+      (JORFTEXT000054888294), « Le présent arrêté entre en vigueur le 1er janvier
+      2027 ». Dans l'index JORF, à jour au 18 octobre 2026
+    date: 2026-10-19
+  - type: legifrance
+    reference: >-
+      D. 633-2 CSS, LEGIARTI000048838330 (décret n° 2023-1352, « à compter des
+      cotisations annuelles dues au titre de l'année 2023 ») : « Pour les assurés en
+      activité », l'assiette minimale de 450 SMIC horaires, « aux travailleurs
+      indépendants dont la durée d'affiliation est au moins égale à quatre-vingt-dix
+      jours au cours de cette même année », sans dispense du pensionné ; aucun autre
+      article de l'index LEGI n'en dispense l'artisan ou le commerçant pensionné
+      (recherche du 19 octobre 2026)
+    date: 2026-10-19
+  - type: autre
+    reference: >-
+      base de législation de l'Assurance retraite : exposé « Travailleurs
+      indépendants », modifié le 7 avril 2026, « Une cotisation minimale de retraite de
+      base permet aux travailleurs indépendants de valider 3 trimestres de retraite par
+      an » ; exposé « Retraite personnelle complémentaire », modifié le 6 mars 2026,
+      « Si le retraité a obtenu sa retraite de base au taux maximum de 50 %, la retraite
+      complémentaire est servie entière », et « Les règles du cumul emploi-retraite du
+      régime de base des travailleurs indépendants s'appliquent au régime
+      complémentaire » ; aucun exposé ni circulaire sur la seconde pension du RCI
+      (recherches « RCI cumul emploi retraite », « seconde pension », « article 27
+      règlement RCI », « cotisations minimales retraité »)
+    url: >-
+      https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=cotisation_salaire_type_activite_travailleur_independant_ex.aspx
+    date: 2026-10-19
   - type: legifrance
     reference: >-
       R. 351-29 CSS, rédaction du 1er janvier 2026 (LEGIARTI000053335651), III : le
@@ -280,15 +412,16 @@ sources:
     date: 2026-10-13
 code:
   python: >-
-    droit/seconde.py : droits, _nouvelle_pension, _seconde_retraite_complementaire,
-    _prix_du_point ; echeancier.py : Echeancier._constituer ; scenarios/actuel.py :
+    droit/seconde.py : droits, _revenus, _nouvelle_pension,
+    _seconde_retraite_complementaire, _prix_du_point, _seconde_retraite_rci ;
+    echeancier.py : Echeancier._constituer ; scenarios/actuel.py :
     ResultatActuel.droits_apres_depart
   javascript: >-
     moteur/js/droit/seconde.js ; moteur/js/echeancier.js : Echeancier._constituer ;
     moteur/js/pages.js : droitsDuCumul
   parametres: >-
     constantes de droit/seconde.py : TAUX_PLEIN, PLAFOND_EN_PASS, HEURES_PAR_TRIMESTRE,
-    les dates de 2023 et de 2027
+    les dates de 2023, de 2025 (DROITS_RCI) et de 2027
   tests: >-
     tests/test_emploi_retraite.py ; les témoins seconde_pension_* des simulations et
     simuler_seconde_pension des pages ; l'exemple sp_f13243_nouvelle_pension_plafond
@@ -313,11 +446,16 @@ historique:
   moyen, l'année de l'effet comprise, et non sur le salaire mensuel moyen du salarié
   (R. 634-1, D. 634-3 ; action 138, étape 12), dans les deux moteurs ; les exposés de
   la Cnav, lus, le disent.
+- >-
+  2026-10-19 — l'artisan et le commerçant y portent l'assiette minimale sur laquelle
+  ils ont cotisé (D. 633-2), et le RCI leur ouvre une seconde retraite sur les
+  périodes de 2025 et après (règlement du RCI, articles 4 et 27), dans les deux
+  moteurs (action 138, étape 12).
 effet: >-
   Les retraités en cumul intégral depuis 2023 : leurs cotisations, jusque-là à fonds
   perdus, leur ouvrent une seconde pension, au plus 5 % du plafond de la sécurité
   sociale, soit 2 403 € par an en 2026. La salariée partie au taux plein en 2022, qui
   travaille à la moitié du salaire moyen de février 2023 à janvier 2025, se constitue
-  496 € par an au régime général et 183 € à l'Agirc-Arrco. Le commerçant au même
+  507 € par an au régime général et 187 € à l'Agirc-Arrco. Le commerçant au même
   revenu, de février 2023 à juillet 2025, se constitue 631 € sur son revenu annuel
-  moyen, quand la salariée en aurait 757 €.
+  moyen, quand la salariée en aurait 757 €, et 61 € au RCI sur ses mois de 2025.

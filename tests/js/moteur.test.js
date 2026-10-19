@@ -840,6 +840,68 @@ test("la nouvelle pension du micro-entrepreneur porte son revenu cotisé", () =>
 });
 
 /**
+ * L'indépendant en cumul intégral : sa nouvelle pension porte l'assiette
+ * minimale sur laquelle il a cotisé (D. 633-2 ; R. 634-1, R. 351-29, I, B) ;
+ * le RCI lui ouvre une seconde retraite sur ses seules périodes de 2025 et
+ * après (règlement du RCI, articles 4 et 27), achetée par son revenu déclaré
+ * ou, micro-entrepreneur, par la part complémentaire de son forfait. Rejoue
+ * `test_la_cotisation_minimale_porte_la_nouvelle_pension_de_l_artisane`,
+ * `test_le_rci_ouvre_une_seconde_retraite_sur_les_periodes_de_2025`,
+ * `test_avant_2025_le_rci_n_ouvre_rien_au_retraite` et
+ * `test_le_micro_entrepreneur_achete_ses_points_de_rci_avec_son_forfait`
+ * (test_emploi_retraite.py).
+ */
+test("l'indépendant en cumul : l'assiette minimale, et la seconde retraite du RCI", () => {
+  const simulateur = new Contexte(paquet).simulateur();
+  const macro = simulateur.macro;
+  const enCumul = (emploi) => {
+    const carriere = simulateur.carriereParcours({
+      annee_naissance: 1960, sexe: "F", jour_naissance: 15, age_liquidation: 62.25,
+      metiers: [{ affiliation: "salarie_prive_non_cadre", age_debut: 20, niveau_salaire: 1 }],
+      emploi_retraite: { employeur: "autre", ...emploi },
+    });
+    const droits = simulateur.echeancier(carriere).auDepart.droits_apres_depart;
+    const pensions = new Map(droits.pensions.map((pension) => [pension.regime, pension]));
+    const revenus = new Map(carriere.lignes_apres_depart.map((ligne) => [ligne.annee,
+      ligne.revenu]));
+    return { pensions, revenus };
+  };
+  const proche = (obtenu, attendu) => assert.ok(Math.abs(obtenu / attendu - 1) < 1e-12,
+    `${obtenu} contre ${attendu}`);
+  // L'artisane au minimum : six trimestres, sur les deux assiettes minimales.
+  const artisane = enCumul({ age: 63 + 11 / 12, fin: 65 + 11 / 12, affiliation: "artisan",
+    niveau_salaire: 0.05 });
+  const minimales = new Map([[2024, 450 * 11.65], [2025, 450 * 11.88]]);
+  assert.deepEqual([...artisane.revenus.keys()].sort((a, b) => a - b), [2024, 2025]);
+  for (const [annee, revenu] of artisane.revenus) assert.ok(revenu < minimales.get(annee) / 2);
+  const base = artisane.pensions.get("regime_general");
+  assert.deepEqual([base.date_effet.annee, base.date_effet.mois], [2026, 1]);
+  assert.equal(base.trimestres, 6);
+  proche(base.revenu_annuel_moyen, [2024, 2025].reduce((total, annee) => total
+    + minimales.get(annee) * macro.coefficientRevalorisationPorteeAuCompte(annee, 2026, 1),
+  0) / 2);
+  // Le commerçant, de février 2023 à juillet 2025 : les sept mois de 2025.
+  const commercant = enCumul({ age: 63, fin: 65.5, affiliation: "commercant",
+    niveau_salaire: 0.5 });
+  assert.deepEqual([...commercant.pensions.keys()].sort(), ["rci", "regime_general"]);
+  const rci = commercant.pensions.get("rci");
+  assert.deepEqual([rci.date_effet.annee, rci.date_effet.mois], [2025, 8]);
+  assert.ok(commercant.revenus.get(2025) < macro.plafond_securite_sociale.valeur(2025) * 7 / 12);
+  proche(rci.points, commercant.revenus.get(2025) * 0.081 / 21.532);
+  proche(rci.montant, rci.points * 1.335);
+  assert.deepEqual([rci.trimestres, rci.plafond, rci.revenu_annuel_moyen], [0, null, 0]);
+  // Jusqu'en juillet 2024 : rien au RCI.
+  const avant = enCumul({ age: 63, fin: 64.5, affiliation: "commercant", niveau_salaire: 0.5 });
+  assert.deepEqual([...avant.pensions.keys()], ["regime_general"]);
+  // Le micro-entrepreneur vendeur : la part complémentaire de son forfait.
+  const micro = enCumul({ age: 63, fin: 65.5, affiliation: "micro_entrepreneur",
+    niveau_salaire: 0.5, micro: "vente" });
+  const sienne = micro.pensions.get("rci");
+  proche(sienne.points, micro.revenus.get(2025) / 0.29 * 0.123 * 0.165 / 21.532);
+  proche(sienne.montant, sienne.points * 1.335);
+});
+
+/**
  * Le plafond des primes du RAFP : « dans la limite de 20 % du traitement
  * indiciaire brut total » (décret n° 2004-569, art. 2). Deux agentes au même
  * traitement, primes au plafond pour l'une, au-delà pour l'autre : même

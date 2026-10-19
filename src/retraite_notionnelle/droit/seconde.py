@@ -16,7 +16,9 @@ intégral accomplies depuis le 1er janvier 2023, sans majoration ni minimum. Son
 salaire de base est le salaire mensuel moyen des années qui valident au moins
 un trimestre, sur les mois d'assurance de la période (R. 351-29, III) ; celui
 de l'indépendant, le revenu annuel moyen de ces années, l'année de l'effet
-comprise (R. 634-1 jusqu'en 2025, D. 634-3 depuis) ; elle se
+comprise (R. 634-1 jusqu'en 2025, D. 634-3 depuis), sur ce que ses cotisations
+ont porté, l'assiette minimale de l'artisan et du commerçant comprise
+(D. 633-2) ; elle se
 proratise par la durée requise, et ne dépasse pas 5 % du plafond annuel de la
 sécurité sociale (D. 161-2-22-1), sauf pour les premières pensions de 2027,
 dont la rédaction ne porte plus ce plafond — et qui ne la constituent qu'en
@@ -24,13 +26,14 @@ cumul entier, à l'âge du taux plein automatique. La reprise chez le dernier
 employeur dans les six mois de la pension n'en ouvre jamais (L. 161-22-1,
 2°). L'Agirc-Arrco attribue des points sur la tranche 1 des salaires perçus en
 cumul intégral depuis le 1er janvier 2023, qui forment une seconde retraite
-complémentaire, sans coefficient.
+complémentaire, sans coefficient ; le RCI, sur les périodes de cumul intégral
+courant depuis le 1er janvier 2025 (règlement du régime, articles 4 et 27).
 
 Le modèle calcule la nouvelle pension du régime général et des salariés
-agricoles, et la seconde retraite de l'Agirc-Arrco, au mois qui suit la fin de
-l'activité, et au 1er septembre 2023 au plus tôt. Les autres régimes de base —
-libéraux, avocats, exploitants agricoles, fonctionnaires, régimes spéciaux —
-ne la calculent pas encore, et le résultat les nomme.
+agricoles, et les secondes retraites de l'Agirc-Arrco et du RCI, au mois qui
+suit la fin de l'activité, et au 1er septembre 2023 au plus tôt. Les autres
+régimes de base — libéraux, avocats, exploitants agricoles, fonctionnaires,
+régimes spéciaux — ne la calculent pas encore, et le résultat les nomme.
 
 Les droits qu'ouvrent les années d'activité dans un régime qui ne sert pas de
 pension — avant 2023 pour une première pension d'avant 2015, toujours pour
@@ -52,6 +55,8 @@ from typing import TYPE_CHECKING
 
 from ..calendrier import DateMois
 from ..carriere import revenu_cotise
+from ..donnees.chargement import charger_cotisation_micro, forfait_micro
+from . import acquerir as _acquerir
 from . import departs as _departs
 from . import liquider as _liquider
 from .commun import date_d_effet
@@ -90,6 +95,12 @@ LIQUIDATION_2023 = DateMois(2023, 9)
 #: janvier 2024 » (accord du 17 novembre 2017, article 91, rédaction de
 #: l'avenant n° 16 ; circulaire 2024-04-DRJ).
 LIQUIDATION_AGIRC_ARRCO = DateMois(2024, 1)
+#: Le RCI n'ouvre de droits au retraité en cumul intégral que depuis le 1er
+#: janvier 2025 : son règlement les ouvre par l'article 27, dans la rédaction
+#: de l'arrêté du 19 juin 2024, dont l'article 2 met ces alinéas en vigueur à
+#: cette date ; avant, ses cotisations « ne sont pas productives de droits »
+#: (article 4).
+DROITS_RCI = DateMois(2025, 1)
 PREMIERE_2027 = DateMois(2027, 1)
 
 #: La nouvelle pension : le taux plein du régime général, le plafond en part du
@@ -101,6 +112,7 @@ HEURES_PAR_TRIMESTRE = 150
 #: Les régimes de base dont le modèle calcule la nouvelle pension.
 REGIMES_CALCULES = frozenset({"regime_general", "msa_salaries"})
 AGIRC_ARRCO = "agirc_arrco"
+RCI = "rci"
 #: Le groupe de l'activité des artisans, des commerçants et des
 #: micro-entrepreneurs (:func:`.cumul.groupe_de_l_activite`).
 INDEPENDANTS = "independants"
@@ -251,15 +263,7 @@ def droits(moteur: ScenarioActuel, carriere: Carriere, resultat: ResultatActuel,
     non_calcules: set[str] = set()
     if ouverts:
         date_effet = max(cumul.fin, LIQUIDATION_2023)
-        # Le revenu de chaque année ; celui du micro-entrepreneur, que son
-        # forfait cotise, et non son revenu abattu : celui de ses trimestres et
-        # de son revenu annuel moyen (:func:`revenu_cotise`).
-        revenus: dict[int, float] = {}
-        for ligne in carriere.lignes_apres_depart:
-            revenus[ligne.annee] = revenus.get(ligne.annee, 0.0) + (
-                revenu_cotise(moteur.macro, ligne.revenu, ligne.micro, ligne.annee,
-                              ligne.fraction_annee)
-                if ligne.micro else ligne.revenu)
+        lignes = carriere.lignes_apres_depart
         activite: dict[int, int] = {}
         for rang in range(cumul.debut.rang, cumul.fin.rang):
             annee = DateMois.depuis_rang(rang).annee
@@ -267,8 +271,12 @@ def droits(moteur: ScenarioActuel, carriere: Carriere, resultat: ResultatActuel,
         periode: dict[int, int] = {}
         for mois in ouverts:
             periode[mois.annee] = periode.get(mois.annee, 0) + 1
-        # Le salaire de chaque année, sur ses seuls mois de la période.
-        salaires = {annee: revenus.get(annee, 0.0) / activite[annee] * mois
+
+        def salaires(code: str | None = None) -> dict[int, float]:
+            """Le salaire de chaque année, sur ses seuls mois de la période :
+            celui que ``code`` cotise (:func:`_revenus`)."""
+            revenus = _revenus(moteur, lignes, code)
+            return {annee: revenus.get(annee, 0.0) / activite[annee] * mois
                     for annee, mois in sorted(periode.items())}
         regimes = set()
         for annee in periode:
@@ -279,7 +287,7 @@ def droits(moteur: ScenarioActuel, carriere: Carriere, resultat: ResultatActuel,
             if code not in REGIMES_CALCULES:
                 non_calcules.add(code)
                 continue
-            pension = _nouvelle_pension(moteur, code, salaires, periode, date_effet,
+            pension = _nouvelle_pension(moteur, code, salaires(code), periode, date_effet,
                                         resultat.trimestres_requis,
                                         premiere < PREMIERE_2027,
                                         annuel=cumul.groupe == INDEPENDANTS)
@@ -287,11 +295,40 @@ def droits(moteur: ScenarioActuel, carriere: Carriere, resultat: ResultatActuel,
                 pensions.append(pension)
         if AGIRC_ARRCO in regimes:
             pension = _seconde_retraite_complementaire(
-                moteur, salaires, periode, max(date_effet, LIQUIDATION_AGIRC_ARRCO))
+                moteur, salaires(), periode, max(date_effet, LIQUIDATION_AGIRC_ARRCO))
+            if pension is not None:
+                pensions.append(pension)
+        if RCI in regimes:
+            pension = _seconde_retraite_rci(moteur, lignes, activite, periode,
+                                            max(date_effet, DROITS_RCI))
             if pension is not None:
                 pensions.append(pension)
     return DroitsApresDepart(periodes=tuple(periodes), pensions=tuple(pensions),
                              non_calcules=tuple(sorted(non_calcules)))
+
+
+def _revenus(moteur: ScenarioActuel, lignes, code: str | None = None) -> dict[int, float]:
+    """Le revenu de chaque année de l'activité, que la ligne déclare ; celui du
+    micro-entrepreneur, que son forfait cotise, et non son revenu abattu : celui
+    de ses trimestres et de son revenu annuel moyen (:func:`revenu_cotise`).
+
+    Avec ``code``, celui sur lequel ce régime de base a cotisé : l'artisan ou le
+    commerçant qui déclare peu cotise sur l'assiette minimale (D. 633-2), dont
+    rien ne dispense le pensionné, et sa nouvelle pension « correspond aux
+    cotisations versées » (R. 634-1 ; R. 351-29, I, B, par D. 634-3) : en 2024,
+    450 SMIC horaires, 5 242,50 €, qui valident trois trimestres là où 2 000 €
+    déclarés en valident un (:func:`.acquerir.assiette_minimale`)."""
+    revenus: dict[int, float] = {}
+    for ligne in lignes:
+        if ligne.micro:
+            revenu = revenu_cotise(moteur.macro, ligne.revenu, ligne.micro, ligne.annee,
+                                   ligne.fraction_annee)
+        elif code is None:
+            revenu = ligne.revenu
+        else:
+            revenu = max(ligne.revenu, _acquerir.assiette_minimale(moteur, (code,), ligne))
+        revenus[ligne.annee] = revenus.get(ligne.annee, 0.0) + revenu
+    return revenus
 
 
 def _nouvelle_pension(moteur: ScenarioActuel, code: str, salaires: dict[int, float],
@@ -386,6 +423,63 @@ def _seconde_retraite_complementaire(moteur: ScenarioActuel, salaires: dict[int,
         return None
     montant = points * valeur[0]
     return NouvellePension(regime=AGIRC_ARRCO, date_effet=date_effet, trimestres=0,
+                           salaire_mensuel=0.0, points=points, brute=montant,
+                           plafond=None, montant=montant)
+
+
+def _seconde_retraite_rci(moteur: ScenarioActuel, lignes, activite: dict[int, int],
+                          periode: dict[int, int],
+                          date_effet: DateMois) -> NouvellePension | None:
+    """La seconde retraite du RCI : les points que les cotisations des mois de
+    cumul intégral achètent depuis le 1er janvier 2025 (:data:`DROITS_RCI`),
+    servis sans coefficient.
+
+    « Lorsque les conditions mentionnées aux alinéas 3 à 6 de l'article
+    L. 634-6 du code de la sécurité sociale sont réunies, l'assuré se constitue
+    de nouveaux droits à pension au titre du présent régime », et « La seconde
+    pension de vieillesse est calculée, liquidée et servie dans les conditions
+    applicables à la pension de vieillesse du présent régime », demandée « en
+    même temps que celle du régime de base » (règlement du RCI, article 27) :
+    à la date de la nouvelle pension de base, au taux plein, donc entière. Ses
+    points sont ceux de la première pension (:func:`.acquerir.acquerir`) : le
+    revenu déclaré, sans l'assiette minimale, que le RCI n'a pas, au taux de
+    chaque tranche sur ses bornes réduites aux mois de la période (D. 635-7) ;
+    pour le micro-entrepreneur, la part complémentaire de son forfait
+    (D. 613-6) ; au prix d'achat de l'année."""
+    macro = moteur.macro
+    table = charger_cotisation_micro(macro.racine)
+    points = 0.0
+    for ligne in lignes:
+        annee = ligne.annee
+        if annee < DROITS_RCI.annee or annee not in periode:
+            continue
+        achat = moteur.valeurs_point.achat_prolonge(RCI, annee, macro)
+        if achat is None:
+            continue
+        reference, taux_appel, _ = achat
+        # La part de l'année que la période garde, et le revenu de ses mois.
+        part = periode[annee] / activite[annee]
+        forfait = forfait_micro(table, ligne.micro, annee) if ligne.micro else None
+        if forfait is not None:
+            (_, complementaire), (_, taux_complementaire, _) = forfait
+            cotisation = (ligne.revenu * taux_complementaire * part
+                          if complementaire == RCI else 0.0)
+        else:
+            plafond = macro.plafond_securite_sociale(annee)
+            fraction = periode[annee] / 12.0
+            revenu = ligne.revenu * part
+            cotisation = 0.0
+            for tranche in moteur.catalogue[RCI].periodes_actives(annee):
+                basse, haute = tranche.bornes_assiette_en_euros(plafond, annee)
+                plafonne = revenu if haute is None else min(revenu, haute * fraction)
+                cotisation += (max(0.0, plafonne - basse * fraction)
+                               * tranche.taux_cotisation_retraite)
+        points += cotisation / (taux_appel * reference)
+    valeur = _liquider.valeur_du_point(moteur, RCI, date_effet)
+    if points <= 0 or valeur is None:
+        return None
+    montant = points * valeur[0]
+    return NouvellePension(regime=RCI, date_effet=date_effet, trimestres=0,
                            salaire_mensuel=0.0, points=points, brute=montant,
                            plafond=None, montant=montant)
 
