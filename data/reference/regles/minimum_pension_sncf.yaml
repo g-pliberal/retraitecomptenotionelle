@@ -186,6 +186,14 @@ approximations:
     abaissée les agents ayant quitté le cadre permanent ou l'emploi de conduite après
     vingt-cinq ans de services accomplis avant le 21 mars 2011
   effet: non mesuré
+- version: [anciennete_2008, taux_plein_2017]
+  ecart: >-
+    la pension que l'agent mort en activité « eût obtenue » le jour de son décès,
+    que sa réversion lit (article 18), n'est portée au minimum que s'il avait l'âge
+    de l'article 1er et, depuis 2017, le taux plein : la fiction de l'admission à la
+    retraite au jour du décès lèverait peut-être ces deux conditions, que le texte
+    ne dit pas
+  effet: non mesuré
 - version: [taux_plein_2017]
   ecart: >-
     l'âge de liquidation de 2008 que le droit ancien lit est celui de l'agent de

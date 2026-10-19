@@ -133,7 +133,9 @@ le 18 octobre.**
 3. *Non portés*, déclarés dans la fiche : le minimum du grade à service
    discontinu et celui de la pension de réforme, que le modèle ne liquide pas ;
    les motifs de l'enfant invalide, de l'amiante et du handicap ; le 5° du I
-   de l'article 37-1 ; le règlement d'avant juillet 2008.
+   de l'article 37-1 ; le règlement d'avant juillet 2008 ; la pension que
+   l'agent mort en activité « eût obtenue », portée au minimum seulement s'il
+   avait l'âge de l'article 1er et, depuis 2017, le taux plein.
 
 **Au propriétaire : l'écrêtement du IV.** Jusqu'au 21 octobre 2023, le texte
 renvoyait ses modalités au décret de L. 17, qui n'a jamais paru : ni
