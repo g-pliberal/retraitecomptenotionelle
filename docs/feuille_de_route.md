@@ -6309,16 +6309,15 @@ de `contribution_etat`.
 
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
-**Reprise, au 18 octobre 2026.** Faites, les étapes 1 à 4, et deux parties
-de l'étape 5 : les cas types du COR par le portage ; puis le portage qui
-calcule exp, log et pow comme la libm de Linux (`moteur/js/libm.js`), ses
-témoins devenus identiques au bit près à ceux du Python, et la grille des
-carrières types des agrégats, que la fabrique fait simuler par le pont
-(`retraite_notionnelle/pont.py`). Reste : la grille et les exemples du bilan,
-puis la grille du coût, dont les carrières doivent passer en données, et
-`memoire.py` indexée sur le portage ; le test des références et le retrait de
-`cycle_de_vie.py` l'attendent. Détail :
-`2026-10-18-etape-5-deuxieme-partie-la-libm-et-le-pont-de-la-grille.md`.
+**Reprise, au 19 octobre 2026.** Faites, les étapes 1 à 4, et trois parties
+de l'étape 5 : les cas types du COR par le portage ; le portage qui calcule
+exp, log et pow comme la libm de Linux (`moteur/js/libm.js`), et la grille
+des carrières types des agrégats, que la fabrique fait simuler par le pont
+(`retraite_notionnelle/pont.py`) ; puis, par le même pont, la grille et les
+exemples du bilan figé. Reste : la grille du coût, dont les carrières doivent
+passer en données, avec l'engagement acquis du bilan, et `memoire.py` indexée
+sur le portage ; le test des références et le retrait de `cycle_de_vie.py`
+l'attendent. Détail : `2026-10-19-etape-5-troisieme-partie-le-bilan-fige.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
