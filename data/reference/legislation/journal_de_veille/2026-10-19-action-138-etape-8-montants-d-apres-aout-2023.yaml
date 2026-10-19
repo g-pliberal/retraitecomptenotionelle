@@ -1,0 +1,44 @@
+date: "2026-10-19"
+session: "action 138, étape 8 : la PMR et le plafond d'après août 2023 des pensions prises avant septembre 2023"
+consulte: >-
+  `python scripts/veille_droit.py` (trois fiches à relire, aucune de l'étape). L'index
+  LEGI du dépôt, mis à jour au 18 octobre 2026 (huit incréments), puis
+  `python scripts/textes.py --inscrire` : dix-neuf rédactions du décret n° 2011-291
+  (SNCF), que des fiches de l'étape 9 citent, laissées à sa session. Dans l'index LEGI :
+  D. 732-111 de 2022, 2023 et 2026 ; D. 732-113 de 2009, 2010, 2022, 2023 et 2026
+  (LEGIARTI000020254692, LEGIARTI000021803611, LEGIARTI000044944264,
+  LEGIARTI000047961228, LEGIARTI000053365737). Dans l'index JORF, à jour au 11 octobre
+  2026 : les décrets qui écrivent D. 732-113, n° 2009-173 (JORFARTI000020252116),
+  n° 2010-126 (JORFARTI000021801973), n° 2021-1919 (JORFARTI000044792136), n° 2023-754
+  (JORFARTI000047956510) et n° 2025-1410 (JORFARTI000053227637). Sur le web : le guide
+  MSA « Préparer sa retraite - non-salariés agricoles » (octobre 2023) ; les tableaux de
+  bord des retraites des non-salariés au 31 décembre 2023 (stock), 2024 et 2025 (stock et
+  flux), les bilans de 2024 et 2025 et les Chiffres utiles de 2026 (statistiques.msa.fr) ; la
+  fiche du COR sur les régimes des non-salariés agricoles (juillet 2024) ; la question
+  écrite n° 1975 de la XVIIe législature et sa réponse. Le site de la DREES ne répond pas.
+trouve: >-
+  PMRmax des pensions prises avant le 1er septembre 2023 « est revalorisé aux mêmes
+  dates et dans les mêmes conditions que celles prévues pour les pensions de vieillesse
+  de base par l'article L. 161-23-1 » (D. 732-111, 2023 et 2026). D. 732-113 a deux
+  alinéas en 2009 : le montant, puis « Le montant du plafond est revalorisé aux mêmes
+  dates et dans les mêmes conditions que celles prévues pour les pensions de vieillesse
+  de base » ; le décret n° 2023-754 (article 1er, 2°) remplace « le premier alinéa » par
+  le I et ajoute un II dont « Le montant du plafond est revalorisé aux mêmes dates et
+  dans les mêmes proportions que le salaire minimum de croissance » est le second
+  alinéa ; le décret n° 2025-1410 modifie « le premier alinéa du II ». Le I garde donc
+  la revalorisation des pensions de base ; la consolidation de LEGI omet cet alinéa et
+  range la phrase du SMIC après le III. Revalorisé ainsi, le plafond reste l'ASPA d'une
+  personne seule, son minimum (L. 732-54-3) : 12 144,27 € en 2024, « 1 012,02 euros au
+  1er janvier 2024 » selon la question écrite n° 1975 (JO du 12 novembre 2024), que la
+  réponse ne dément pas ; le guide de la MSA de 2023 dit le plafond « aligné sur le
+  montant de l'Allocation de solidarité aux personnes âgées (Aspa) servi pour une
+  personne seule, soit 961,08 euros par mois ». Aucune publication de la MSA n'écrit un
+  montant d'après 2022. Servi, dans les deux moteurs : la PMR et le plafond des pensions
+  prises avant septembre 2023 portés jusqu'au barème de janvier 2026 (9 741,00 € et
+  12 523,14 €), puis sur les prix ; le plafond du II jusqu'en 2026, sur le SMIC.
+reste: >-
+  La durée de chef reconstituée de D. 732-110, III. Aux plans de 1997 à 2008, ce que la
+  réversion déclarée permet de servir : D. 732-116, D. 732-118 et D. 732-147. Chaque
+  janvier, la série à porter jusqu'au nouveau barème. Aucun exemple chiffré publié par
+  la MSA d'une majoration servie après août 2023 ; le plafond qu'elle sert depuis 2024
+  aux pensions prises avant septembre 2023, que seuls les décrets disent, à lui demander.
