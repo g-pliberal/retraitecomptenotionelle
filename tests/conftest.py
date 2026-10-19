@@ -222,8 +222,8 @@ EXCEPTIONS = {
 
 #: Le filet du site : le budget de mots du formulaire vierge, ses bornes
 #: opposées hors du navigateur, les pages figées et leur portage, et le
-#: catalogue des affirmations, et les étiquettes des repères que le parcours
-#: de présentation cite. Ce sont eux qu'une retouche de
+#: catalogue des affirmations, et les étiquettes des repères et les noms des
+#: onglets que le parcours de présentation cite. Ce sont eux qu'une retouche de
 #: ``moteur/js/pages.js`` fait tomber, et la suite complète ne les montrait
 #: qu'au bout de cinq minutes.
 SITE = {
@@ -235,6 +235,7 @@ SITE = {
     ("test_web_saisie.py", "test_les_bornes_des_calendriers_sont_opposables_hors_du_navigateur"),
     ("test_affirmations.py", "test_rien_n_echappe_au_catalogue"),
     ("test_parcours.py", "test_les_reperes_du_parcours_portent_l_etiquette_de_leur_page"),
+    ("test_parcours.py", "test_le_parcours_nomme_les_onglets_comme_la_barre"),
 }
 
 

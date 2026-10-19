@@ -42,7 +42,7 @@ from urllib.parse import parse_qsl
 import pytest
 
 from retraite_notionnelle.saisie import Saisie
-from retraite_notionnelle.web.site import disponible, rendre
+from retraite_notionnelle.web.site import disponible, module, rendre
 
 RACINE = Path(__file__).resolve().parents[1]
 #: Le document que ce test tient, et lui seul : `zones.yaml` le dit `tenu` par
@@ -57,11 +57,11 @@ PAGES_DES_SECTIONS = {
     "### 1. Programme — trois minutes": "/",
     "### 2. Simuler — six minutes, c'est le cœur": "/simuler",
     "### Trois carrières prêtes à cliquer": "/simuler",
-    "### 3. Cas types — trois minutes": "/cas-types",
+    "### 3. Carrières types — trois minutes": "/cas-types",
     "### 4. Coût — trois minutes": "/cout",
-    "### 4 bis. Risque — deux minutes, si on a le temps": "/risque",
-    "### 5. Avantages — deux minutes": "/avantages",
-    "### 6. Méthode et Données — deux minutes, pour finir": "/donnees",
+    "### 4 bis. Pourquoi changer — deux minutes, si on a le temps": "/risque",
+    "### 5. Droits non cotisés — deux minutes": "/avantages",
+    "### 6. Méthode et sources — deux minutes, pour finir": "/methode",
 }
 
 #: Ce qu'une section décrivant une page peut écrire sans que la page le porte.
@@ -85,7 +85,7 @@ HORS_PAGE: dict[str, dict[str, str]] = {
     "/cout": {},
     "/risque": {},
     "/avantages": {},
-    "/donnees": {},
+    "/methode": {},
 }
 
 #: Un nombre suivi de son unité, tel que le parcours et les pages l'écrivent.
@@ -482,3 +482,51 @@ def test_les_reperes_du_parcours_portent_l_etiquette_de_leur_page():
         assert fiche["precision"] in valeur, f"{chemin}, repère {rang}"
         lues += 1
     assert lues == 6, "le parcours ne fait plus lire les repères de Coût et Pourquoi changer"
+
+
+#: Ce qui, dans le parcours, nomme un onglet : le titre d'une section
+#: numérotée, l'onglet que le texte fait ouvrir, la page ou la section qu'il
+#: désigne.
+SECTION_NUMEROTEE = re.compile(r"^### \d+(?: bis)?\. (.+?) — ")
+ONGLET_OUVERT = re.compile(r"[Oo]nglet \*\*([^*]+)\*\*")
+PAGE_NOMMEE = re.compile(r"\b((?:[Pp]age|section) ([A-ZÉ][^,.;:()]*))")
+
+
+@site_requis
+def test_le_parcours_nomme_les_onglets_comme_la_barre(parcours):
+    """Le parcours fait ouvrir des onglets, et les nomme comme la barre du site.
+    Il faisait encore ouvrir, le 19 octobre 2026, les onglets Risque, Cas
+    types, Avantages et Données, que la barre appelle Pourquoi changer,
+    Carrières types, Droits non cotisés et Méthode et sources — Données n'y est
+    plus qu'une partie de Méthode —, et sa description de la barre en oubliait
+    un, Le saviez-vous ? : ses noms s'écrivaient à la main, et rien ne les
+    relisait (action 163). Chaque section numérotée porte le nom de l'onglet de
+    sa page (``TITRES``, dans ``pages.js``) ; chaque onglet que le texte fait
+    ouvrir, chaque page ou section qu'il nomme, est un onglet de la barre ; le
+    paragraphe qui la décrit la nomme groupe par groupe (``GROUPES_NAVIGATION``,
+    dans ``gabarit.js``). Il est du filet ``-m site`` : un onglet renommé le
+    fait tomber avant l'envoi."""
+    titres = module("pages").TITRES
+    noms = tuple(titres.values())
+    ecarts = []
+    for titre in _sections(parcours):
+        numerote = SECTION_NUMEROTEE.match(titre)
+        if numerote and numerote.group(1) != titres.get(PAGES_DES_SECTIONS.get(titre)):
+            ecarts.append(titre)
+    # Un paragraphe se lit d'un tenant, ses lignes rejointes : un nom coupé en
+    # fin de ligne reste un nom, et le titre qui le précède n'en fait pas partie.
+    paragraphes = [" ".join(paragraphe.split()) for paragraphe in parcours.split("\n\n")]
+    for paragraphe in paragraphes:
+        ecarts += [f"Onglet **{nom}**" for nom in ONGLET_OUVERT.findall(paragraphe)
+                   if nom not in noms]
+        ecarts += [designe for designe, nom in PAGE_NOMMEE.findall(paragraphe)
+                   if not nom.startswith(noms)]
+    assert ecarts == [], f"noms que la barre ne porte pas : {ecarts}"
+
+    barre = next((paragraphe for paragraphe in paragraphes
+                  if paragraphe.startswith("La barre du haut")), "")
+    decrits = [[nom.strip() for nom in liste.split(",")]
+               for liste in re.findall(r"\(([^)]*)\)", barre)]
+    assert decrits == [[nom for _chemin, nom in liens]
+                       for _etiquette, liens in module("gabarit").GROUPES_NAVIGATION], (
+        "le paragraphe « La barre du haut » ne la nomme plus groupe par groupe")

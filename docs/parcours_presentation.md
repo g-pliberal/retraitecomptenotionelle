@@ -47,7 +47,7 @@ ce document-ci qui fait foi, puisque son test le tient. Sa diapositive 12 et
 ses notes répondent aussi à « tout est rouge, donc les pensions baissent ? »
 comme le site le faisait avant le 23 septembre 2026 — « ce ne sont pas des
 baisses de pension » : ne pas la projeter telle quelle, c'est la réponse de
-la section Cas types ci-dessous qui vaut désormais.
+la section Carrières types ci-dessous qui vaut désormais.
 
 ## L'idée en une phrase
 
@@ -61,12 +61,12 @@ Pologne et de la Lettonie.
 
 ## Le parcours, page par page
 
-La barre du haut porte huit onglets, en deux voix : ceux de l'électeur
-(Programme, Simuler, Coût, Pourquoi changer, Partager), puis, derrière
-l'étiquette « Pour vérifier » — un bouton, sur un téléphone —, ceux qui
-prouvent (Carrières types, Droits non cotisés, Méthode et sources). Le
-parcours ci-dessous en montre six, dans l'ordre, et laisse les autres pour
-les questions.
+La barre du haut range ses onglets en trois groupes : ceux de l'électeur
+(Programme, Simuler, Coût, Pourquoi changer), ceux qui font connaître le
+programme (Partager, Le saviez-vous ?), puis, derrière l'étiquette « Pour
+vérifier » — un bouton, sur un téléphone —, ceux qui prouvent (Carrières
+types, Droits non cotisés, Méthode et sources). Le parcours ci-dessous en
+montre six, dans l'ordre, et laisse les autres pour les questions.
 
 ### 1. Programme — trois minutes
 
@@ -121,7 +121,7 @@ Comment les lire, et c'est la chose la plus importante de la présentation :
   porte un troisième chiffre, et il vaut d'être lu à voix haute :
   **financé, <!--chiffre:mesure(simulateur?systeme=1&quoi=finance&montants=net)-->2 510<!--/--> €**, soit <!--chiffre:mesure(simulateur?systeme=1&quoi=financee&montants=net)-->91<!--/--> % de ce qu'il
   promet. Le reste attend des cotisations que personne n'a versées. La barre
-  sous la ligne le montre, et la page Risque le chiffre.
+  sous la ligne le montre, et la page Pourquoi changer le chiffre.
 - **Les systèmes 2 et 3 ne sont pas des propositions.** Ce sont des
   contrefactuels : la même carrière recalculée depuis <!--chiffre:mesure(parametre?nom=annee_debut_repartition)-->1941<!--/--> comme si le compte
   avait toujours existé, avec la seule part salariale (2), puis les deux parts
@@ -137,10 +137,10 @@ Comment les lire, et c'est la chose la plus importante de la présentation :
   points rendus ajoutent si on les place, sur un pilier sans risque.
 - **Pourquoi la proposition sert moins que le système actuel sur cet
   exemple :** parce que le système actuel sert à ce salarié plus que ce qu'il
-  a cotisé — c'est ce que la page Avantages chiffre. Ces pensions sont
-  calculées avant le réglage annuel du système, que la page Cas types
-  explique, et ce réglage ne joue pas en faveur de la proposition : voir plus
-  bas, la question viendra.
+  a cotisé — c'est ce que la page Droits non cotisés chiffre. Ces pensions
+  sont calculées avant le réglage annuel du système, que la page Carrières
+  types explique, et ce réglage ne joue pas en faveur de la proposition :
+  voir plus bas, la question viendra.
 
 Puis, sous les quatre lignes, le bloc **« Et pendant que vous cotisez »** :
 une réforme change aussi la fiche de paie. Sur l'exemple, le salaire net
@@ -229,9 +229,9 @@ mensuel. « Ajouter une période » permet un deuxième métier ou une
 interruption ; « Coller un relevé de carrière » accepte un relevé
 année par année. Ne pas ouvrir « Options de modélisation » en salle.
 
-### 3. Cas types — trois minutes
+### 3. Carrières types — trois minutes
 
-Onglet **Cas types**. Une grille : <!--chiffre:entrees(moteur/donnees.json:agregats.cas_types.cas)-->treize<!--/--> carrières en lignes, <!--chiffre:entrees(moteur/donnees.json:agregats.cas_types.generations)-->sept<!--/-->
+Onglet **Carrières types**. Une grille : <!--chiffre:entrees(moteur/donnees.json:agregats.cas_types.cas)-->treize<!--/--> carrières en lignes, <!--chiffre:entrees(moteur/donnees.json:agregats.cas_types.generations)-->sept<!--/-->
 générations en colonnes, de <!--chiffre:valeur(moteur/donnees.json:agregats.cas_types.generations.0)-->1940<!--/--> à <!--chiffre:valeur(moteur/donnees.json:agregats.cas_types.generations.-1)-->2000<!--/-->. Chaque case dit ce que la pension
 deviendrait, par rapport à aujourd'hui, pour la même carrière. Rouge :
 moins. Vert : plus.
@@ -304,12 +304,12 @@ coefficient d'équilibre, la dette, ce que coûte la garantie vieillesse,
 les réserves à lire avant de citer ces chiffres. Ouvrir « Ce que coûte la
 garantie vieillesse » seulement si on demande combien coûte le plancher.
 
-### 4 bis. Risque — deux minutes, si on a le temps
+### 4 bis. Pourquoi changer — deux minutes, si on a le temps
 
-Onglet **Risque**. La page est arrivée après ce parcours, et elle change
-l'ordre des arguments : elle ne compare pas deux systèmes, elle dit ce que le
-système actuel prend et ce qu'il ne rendra pas. Trois chiffres en tête, dans
-cet ordre :
+Onglet **Pourquoi changer**. La page est arrivée après ce parcours, et elle
+change l'ordre des arguments : elle ne compare pas deux systèmes, elle dit ce
+que le système actuel prend et ce qu'il ne rendra pas. Trois chiffres en
+tête, dans cet ordre :
 
 | | |
 |---|---|
@@ -330,10 +330,11 @@ aux huit objections du discours rassuriste. La page cite ses sources en bas.
 Si le temps manque, garder cette page pour les questions : elle répond seule
 à « pourquoi changer ? ».
 
-### 5. Avantages — deux minutes
+### 5. Droits non cotisés — deux minutes
 
-Onglet **Avantages**. La page qui explique les écarts du simulateur : ce que
-le système actuel verse sans que personne l'ait cotisé. Trois chiffres :
+Onglet **Droits non cotisés**. La page qui explique les écarts du
+simulateur : ce que le système actuel verse sans que personne l'ait cotisé.
+Trois chiffres :
 <!--chiffre:entrees(moteur/donnees.json:avantages.avantages?famille!=ecarts_structurels&fin=None)-->42<!--/--> dispositifs en vigueur, du minimum vieillesse à la bonification du
 cinquième ; <!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.gratuit/1000)-->99,6<!--/--> Md € en <!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.annee)-->2024<!--/--> pour les 23 que le modèle sait chiffrer, dont
 <!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.lignes.reversion/1000)-->38,3<!--/--> Md € de réversion, qui est lue et non calculée ; <!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.anticipee/1000)-->8,2<!--/--> Md € de pensions
@@ -346,12 +347,13 @@ qu'on le demande : **<!--chiffre:entrees(moteur/donnees.json:avantages.avantages
 tableau du bas en recense **<!--chiffre:entrees(moteur/donnees.json:avantages.avantages)-->48<!--/--> dispositifs** depuis 1831, ceux d'hier
 compris. Les 23 que le modèle chiffre se comptent sur les <!--chiffre:entrees(moteur/donnees.json:avantages.avantages)-->48<!--/-->.
 
-### 6. Méthode et Données — deux minutes, pour finir
+### 6. Méthode et sources — deux minutes, pour finir
 
-Onglet **Méthode** : les trois opérations, en une phrase chacune, puis
-« Qu'est-ce qui décide du résultat ? ». On peut s'arrêter au titre.
+Onglet **Méthode et sources** : les trois opérations, en une phrase chacune,
+puis « Qu'est-ce qui décide du résultat ? ». On peut s'arrêter au titre.
 
-Onglet **Données**, et c'est la bonne page pour conclure : « Rien ici n'est à
+Puis descendre, par-dessus « Pour aller plus loin », jusqu'à « D'où viennent
+les chiffres », le bon endroit pour conclure : « Rien ici n'est à
 croire sur parole. » <!--chiffre:somme(moteur/donnees.json:certification.series.*.valeurs)-->145 233<!--/--> valeurs recontrôlées automatiquement contre le
 fichier de l'institution qui les produit, sur <!--chiffre:entrees(moteur/donnees.json:certification.series)-->176<!--/--> séries ; <!--chiffre:entrees(moteur/donnees.json:inventaire)-->114<!--/--> régimes
 recensés dont <!--chiffre:entrees(moteur/donnees.json:regimes)-->80<!--/--> calculés ; <!--chiffre:valeur(moteur/donnees.json:institutions_citees)-->42<!--/--> institutions citées. Ce compte mesure la
@@ -369,6 +371,9 @@ vérifiez plutôt que de nous croire.
   partir plus tôt « rapporte plus ».
 - **Partager** : quatre cartes prêtes à publier, au format des réseaux, avec
   leur message rédigé.
+- **Le saviez-vous ?** : des règles du système actuel — les seuils, les
+  cotisations sans droits, la réversion, les caisses à part —, une carte
+  chacune, avec le texte officiel qui la fonde.
 - Les sections repliées de chaque page : « Pour aller plus loin », et sur
   l'accueil les treize « Vos questions », dont chacune range derrière sa
   réponse courte le développement qui la traite.
@@ -394,13 +399,14 @@ vérifiez plutôt que de nous croire.
   garantie vieillesse ».
 - **« Pourquoi le fonctionnaire gagne ? »** Parce que l'État cotise pour lui
   bien plus qu'un employeur privé, et que le compte rend ce qui a été versé.
-  Simuler, deuxième adresse, et Cas types, ligne du fonctionnaire.
+  Simuler, deuxième adresse, et Carrières types, ligne du fonctionnaire.
 - **« On cotise moins, donc on touche moins ? »** <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> + <!--chiffre:mesure(parametre?nom=taux_capitalisation_obligatoire)-->5<!--/--> font <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal+taux_capitalisation_obligatoire)-->23<!--/--> contre <!--chiffre:mesure(fiche?exemple=salaire_moyen&quoi=total)-->28<!--/-->
   aujourd'hui. Les <!--chiffre:mesure(parametre?nom=taux_capitalisation_volontaire)-->cinq<!--/--> points rendus sont libres ; le simulateur les suppose
   replacés pour comparer à effort égal, et montre ce que ça change sur la
   fiche de paie. Simuler, bloc « Et pendant que vous cotisez ».
 - **« D'où viennent les chiffres ? »** INSEE, Conseil d'orientation des
-  retraites, DREES, Cnav, Légifrance. Page Données, et sous chaque graphique.
+  retraites, DREES, Cnav, Légifrance. Page Méthode et sources, partie du même
+  nom, et sous chaque graphique.
 - **« C'est officiel ? »** Non, et chaque page le dit en bas. Seule la
   caisse fait foi.
 - **« Qui a fait ça ? »** Un outil du Parti libéral français, modèle ouvert,
