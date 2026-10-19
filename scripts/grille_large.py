@@ -204,7 +204,16 @@ privé à l'âge où leur génération cotise son premier trimestre, cinquième 
 cinquième, que l'échantillon interrégimes de cotisants publie
 (:data:`ENTREE_AU_PREMIER_TRIMESTRE`) : toutes entraient assez tôt pour la
 carrière longue, quand 22,3 % des hommes nés en 1954 et affiliés avant 23 ans
-n'avaient cotisé aucun trimestre à la fin de l'année de leurs 19 ans.
+n'avaient cotisé aucun trimestre à la fin de l'année de leurs 19 ans. La
+vingt et unième (le 19 octobre 2026) fait précéder du service national le
+cinquième d'homme dont la génération valide un trimestre avant d'en cotiser
+un (:data:`SERVICE_AVANT_LE_PREMIER_TRIMESTRE`) : le dernier de la génération
+1950 valide son service à 21 ans, cotise à 22, et part à 61 ans et demi au lieu
+de 62 ans et demi. La vingt-deuxième (le même jour) donne à chaque classe de
+centiles la part de périodes assimilées des quintiles de la pension que ses
+rangs couvrent (:data:`ASSIMILEES_SELON_LE_RANG`) : huit années de la carrière
+pleine d'une femme de la classe p10, une de celle des classes p95 et p99, au
+lieu de cinq pour toutes ; aucune femme ne partait en carrière longue.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -504,6 +513,48 @@ ENTREE_AU_PREMIER_TRIMESTRE = True
 #: chaque génération n'en font qu'un — les deux premiers des hommes.
 CLASSES_D_ENTREE = 5
 
+#: La vingt et unième version (action 138, étape 14, le 19 octobre 2026) : le
+#: service national avant le premier trimestre cotisé. Sous
+#: :data:`ENTREE_AU_PREMIER_TRIMESTRE`, chaque cinquième d'une carrière pleine
+#: entre à l'âge où sa génération COTISE son premier trimestre ; elle en VALIDE
+#: un plus tôt, de ce qu'un affilié valide sans cotiser — chez les hommes, le
+#: service national : 93,2 % des hommes nés en 1950 et affiliés avant 23 ans
+#: avaient validé un trimestre à la fin de l'année de leurs 21 ans, 84,8 % en
+#: avaient cotisé un (``premier_trimestre.csv``, la série des trimestres
+#: validés). Le cinquième d'homme dont le rang valide avant de cotiser fait son
+#: service (``service_militaire``) les années qui séparent les deux âges, avant
+#: d'entrer (:func:`classes_d_entree`) : le dernier, à 21 ans quand il cotise à
+#: 22 dans la génération 1950, à 20 et 21 ans dans celle de 1946. Sa durée
+#: d'assurance commence plus tôt, et son service est réputé cotisé pour la
+#: carrière longue dans la limite de quatre trimestres (D. 351-1-2) ; la
+#: condition d'entrée, qui ne lit que les trimestres cotisés, ne change pas.
+#: Les femmes gardent leur entrée : un cinquième de trois de leurs générations
+#: valide un an avant de cotiser, d'une nature que l'échantillon ne dit pas.
+SERVICE_AVANT_LE_PREMIER_TRIMESTRE = True
+
+#: La vingt-deuxième version (le même jour) : les périodes assimilées selon le
+#: rang. Chaque carrière du salariat et des non-salariés en comptait la même
+#: part, celle que l'EIR mesure à tous les résidents de son sexe — 12,5 % de la
+#: durée validée hors majorations des femmes (32 années, dont 28 cotisées),
+#: 10 % de celle des hommes (40, dont 36) —, toutes au chômage indemnisé : cinq
+#: années de la carrière pleine d'une femme, quatre de celle d'un homme, dont
+#: quatre trimestres seulement sont réputés cotisés pour la carrière longue
+#: (D. 351-1-2). Aucune femme n'y partait, quand l'EIR en compte 13,0 % des
+#: nées en 1953. La part suit pourtant la pension : l'EIR mesure aux résidentes
+#: du premier quintile de la pension en équivalent carrière complète 23 années
+#: validées pour 17 cotisées, 26,1 % d'assimilées, à celles du cinquième 39
+#: pour 38, 2,6 % ; aux résidents, 12,5 % au premier et au deuxième, de 4,9 à
+#: 9,8 % aux autres (``quintiles_eqcc_residents.csv``). Sous cette constante,
+#: chaque classe de centiles prend, dans chaque tranche de durée, la part des
+#: bandes de quintiles que ses rangs couvrent, comme sous
+#: :data:`RANG_SELON_LA_DUREE`, les retraités au minimum portant celle de leur
+#: quintile dans la bande du premier (:func:`parts_assimilees_des_classes`) : la
+#: carrière pleine d'une femme compte huit années assimilées dans la classe p10,
+#: une dans les classes p95 et p99. Deux conventions : la part d'un quintile vaut
+#: pour toutes ses tranches de durée, et l'EIR arrondissant ses durées à
+#: l'année, elle se lit à une année près.
+ASSIMILEES_SELON_LE_RANG = True
+
 #: La durée des carrières des femmes selon la génération : les carrières
 #: incomplètes des femmes, hors des régimes statutaires, gagnent ou perdent,
 #: génération par génération, les mêmes années validées
@@ -802,7 +853,9 @@ class CasTypeLarge(CasType):
     l'année)`` triées — paie chaque année d'activité à la part de l'année
     travaillée à son âge. ``entrees`` — paires ``(génération, âge)`` triées —
     fait commencer la carrière de chaque génération à son âge, les années
-    d'interruption comptées de lui.
+    d'interruption comptées de lui ; ``services`` — paires ``(génération,
+    années)`` triées — la fait précéder d'autant d'années de service national
+    (:data:`SERVICE_AVANT_LE_PREMIER_TRIMESTRE`).
     """
 
     avant: tuple[tuple[str, float], ...] = ()
@@ -813,6 +866,7 @@ class CasTypeLarge(CasType):
     persistante: bool = False
     volumes: tuple[tuple[int, float], ...] = ()
     entrees: tuple[tuple[int, float], ...] = ()
+    services: tuple[tuple[int, float], ...] = ()
     tranche_de_base: tuple = ()
     cibles: tuple[tuple[int, float], ...] = ()
     #: Les années qu'un départ avec surcote attend après l'âge légal de sa
@@ -856,6 +910,11 @@ class CasTypeLarge(CasType):
         celui du cas type."""
         return _par_generation(self.entrees, generation, self.age_debut)
 
+    def service_de(self, generation: int) -> int:
+        """Les années de service national que cette génération fait avant son
+        entrée (:data:`SERVICE_AVANT_LE_PREMIER_TRIMESTRE`) ; zéro sans elles."""
+        return int(round(_par_generation(self.services, generation, 0.0)))
+
     def au_smic(self, simulateur: Simulateur, generation: int) -> bool:
         """Vrai si la carrière se paie au Smic : persistante, ou, sous
         plancher, si son rang tombe sous lui l'année où sa génération a
@@ -896,13 +955,16 @@ class CasTypeLarge(CasType):
 
     def _carriere(self, simulateur: Simulateur, generation: int, age_liquidation: float):
         if not (self.avant or self.niveaux or self.ages_partiel or self.volumes
-                or self.entrees or self.cibles):
+                or self.entrees or self.services or self.cibles):
             return super()._carriere(simulateur, generation, age_liquidation)
         entree = self.debut_de(generation)
         interruptions = {
             int(generation + entree + decalage): motif
             for decalage, motif in self.decalages_de(generation)
         }
+        service = self.service_de(generation)
+        for annee in range(int(generation + entree) - service, int(generation + entree)):
+            interruptions[annee] = "service_militaire"
         niveau, profil = self.niveau_de(generation), self.profil_carriere
         if self.au_smic(simulateur, generation):
             niveau, profil = 1.0, PROFIL_SMIC
@@ -913,6 +975,9 @@ class CasTypeLarge(CasType):
             age += annees
         metiers.append(Metier(affiliation=self.affiliation, age_debut=age,
                               niveau_salaire=niveau))
+        if service:
+            # Le service se fait sous le premier métier, les années d'avant l'entrée.
+            metiers[0] = replace(metiers[0], age_debut=entree - service)
         return simulateur.carriere_parcours(
             annee_naissance=generation, sexe=self.sexe, metiers=metiers,
             age_liquidation=age_liquidation, profil_carriere=profil,
@@ -1288,38 +1353,113 @@ def association_rang_duree(quintiles: dict, sexe: str) -> dict[str, dict[str, fl
     reçoit la part que ses rangs couvrent. Sous
     :data:`MINIMUM_AU_PREMIER_QUINTILE`, la part de chaque quintile au minimum
     passe, avec ses tranches, dans la bande du premier."""
-    effectifs = [quintiles[(q, "effectifs", sexe)] for q in QUINTILES_EQCC]
-    total = somme_ordonnee(effectifs)
-    au_minimum = [quintiles[(q, "part_minimum_pension_regime_principal", sexe)] / 100.0
-                  if MINIMUM_AU_PREMIER_QUINTILE and rang > 0 else 0.0
-                  for rang, q in enumerate(QUINTILES_EQCC)]
-
-    def au_premier(parts: list[float]) -> list[float]:
-        """Des parts de quintile, celles au minimum passées au premier."""
-        restes = [part * (1.0 - minimum) for part, minimum in zip(parts, au_minimum)]
-        restes[0] += somme_ordonnee(part * minimum for part, minimum in zip(parts, au_minimum))
-        return restes
-
-    bandes, debut = [], 0.0
-    for largeur in au_premier([effectif / total for effectif in effectifs]):
-        bandes.append((debut, debut + largeur))
-        debut += largeur
-    classes, debut = [], 0.0
-    for nom, part in CENTILES:
-        classes.append((nom, debut, debut + part))
-        debut += part
+    bandes = BandesDesQuintiles(quintiles, sexe)
     tableau = {}
     for tranche, _ in TRANCHES:
-        masses = au_premier([
-            effectif / total
-            * quintiles[(q, f"part_duree_validee_hors_majoration_{tranche}", sexe)] / 100.0
-            for q, effectif in zip(QUINTILES_EQCC, effectifs)])
-        tableau[tranche] = {
-            nom: somme_ordonnee(masse * max(0.0, min(fin, haut) - max(bas, plancher))
-                                / (haut - plancher)
-                                for masse, (plancher, haut) in zip(masses, bandes))
-            for nom, bas, fin in classes}
+        masses = bandes.au_premier(bandes.masses(tranche))
+        tableau[tranche] = {nom: bandes.sur_la_classe(masses, bas, fin)
+                            for nom, bas, fin in bandes.classes}
     return tableau
+
+
+class BandesDesQuintiles:
+    """Les quintiles de la pension en équivalent carrière complète d'un sexe
+    lus comme des bandes de ses rangs (:func:`association_rang_duree`) :
+    ``parts``, la part de chaque quintile parmi les retraités du sexe ;
+    ``au_minimum``, celle de ses retraités au minimum, que
+    :data:`MINIMUM_AU_PREMIER_QUINTILE` fait passer dans la bande du premier,
+    nulle pour celui-ci ; ``bandes``, la bande de rangs de chacun ;
+    ``classes``, celle de chaque classe de centiles, ``(nom, bas, fin)``."""
+
+    def __init__(self, quintiles: dict, sexe: str) -> None:
+        self.quintiles, self.sexe = quintiles, sexe
+        effectifs = [quintiles[(q, "effectifs", sexe)] for q in QUINTILES_EQCC]
+        total = somme_ordonnee(effectifs)
+        self.parts = [effectif / total for effectif in effectifs]
+        self.au_minimum = [quintiles[(q, "part_minimum_pension_regime_principal", sexe)] / 100.0
+                           if MINIMUM_AU_PREMIER_QUINTILE and rang > 0 else 0.0
+                           for rang, q in enumerate(QUINTILES_EQCC)]
+        self.bandes, debut = [], 0.0
+        for largeur in self.au_premier(self.parts):
+            self.bandes.append((debut, debut + largeur))
+            debut += largeur
+        self.classes, debut = [], 0.0
+        for nom, part in CENTILES:
+            self.classes.append((nom, debut, debut + part))
+            debut += part
+
+    def au_premier(self, parts: list[float]) -> list[float]:
+        """Des parts de quintile, celles au minimum passées au premier."""
+        restes = [part * (1.0 - minimum) for part, minimum in zip(parts, self.au_minimum)]
+        restes[0] += somme_ordonnee(part * minimum
+                                    for part, minimum in zip(parts, self.au_minimum))
+        return restes
+
+    def masses(self, tranche: str) -> list[float]:
+        """La masse de la tranche de durée dans chaque quintile, en parts des
+        retraités du sexe."""
+        return [part * self.quintiles[(q, f"part_duree_validee_hors_majoration_{tranche}",
+                                       self.sexe)] / 100.0
+                for q, part in zip(QUINTILES_EQCC, self.parts)]
+
+    def sur_la_classe(self, masses: list[float], bas: float, fin: float) -> float:
+        """Ce que la classe des rangs de ``bas`` à ``fin`` reçoit de masses
+        réparties chacune sur sa bande."""
+        return somme_ordonnee(masse * max(0.0, min(fin, haut) - max(bas, plancher))
+                              / (haut - plancher)
+                              for masse, (plancher, haut) in zip(masses, self.bandes))
+
+
+def parts_assimilees_des_classes(quintiles: dict, sexe: str, tranche: str
+                                 ) -> dict[str, float]:
+    """La part assimilée de la durée validée hors majorations de chaque classe
+    de centiles d'une tranche de durée, pour un sexe
+    (:data:`ASSIMILEES_SELON_LE_RANG`) : celle des bandes de quintiles que ses
+    rangs couvrent (:class:`BandesDesQuintiles`), chacune pesée par la masse
+    de la tranche qui y tombe. Celle d'un quintile est la part de sa durée
+    validée hors majorations qui n'est pas cotisée ; ses retraités au minimum
+    la portent dans la bande du premier. Une classe où la tranche n'a pas de
+    masse prend la part de la tranche."""
+    bandes = BandesDesQuintiles(quintiles, sexe)
+    assimilees = [1.0 - quintiles[(q, "duree_cotisee", sexe)]
+                  / quintiles[(q, "duree_validee_hors_majoration", sexe)]
+                  for q in QUINTILES_EQCC]
+    masses = bandes.masses(tranche)
+    dans_les_bandes = bandes.au_premier(masses)
+    portees = bandes.au_premier([masse * part for masse, part in zip(masses, assimilees)])
+    moyenne = somme_ordonnee(portees) / somme_ordonnee(dans_les_bandes)
+    sortie = {}
+    for nom, bas, fin in bandes.classes:
+        masse = bandes.sur_la_classe(dans_les_bandes, bas, fin)
+        sortie[nom] = bandes.sur_la_classe(portees, bas, fin) / masse if masse else moyenne
+    return sortie
+
+
+def assimilees_selon_le_rang(variantes: list[Variante], quintiles: dict) -> list[Variante]:
+    """Chaque carrière d'une tranche de durée à la part assimilée de sa classe
+    de centiles (:func:`parts_assimilees_des_classes`), ses années validées
+    redécoupées comme à la tranche (:func:`decalages_de_tranche`), celles d'une
+    femme qui suit sa génération comprises ; les autres variantes telles
+    quelles (:data:`ASSIMILEES_SELON_LE_RANG`)."""
+    noms = {nom for nom, _ in CENTILES}
+    parts: dict[tuple[str, str], dict[str, float]] = {}
+    sortie = []
+    for v in variantes:
+        classe = next((m for m in v.cas.code.split("~") if m in noms), None)
+        if v.tranche is None or classe is None:
+            sortie.append(v)
+            continue
+        if (v.cas.sexe, v.tranche) not in parts:
+            parts[(v.cas.sexe, v.tranche)] = parts_assimilees_des_classes(
+                quintiles, v.cas.sexe, v.tranche)
+        part = parts[(v.cas.sexe, v.tranche)][classe]
+        base, duree, _, etalee = v.cas.tranche_de_base
+        cible = None if v.tranche == "40_plus" else v.duree
+        cas = replace(v.cas, tranche_de_base=(base, duree, part, etalee),
+                      interruptions_relatives=decalages_de_tranche(
+                          base, duree, cible, part, etalee, v.cas.age_debut))
+        sortie.append(replace(v, cas=cas, assimilees=int(round(part * v.duree))))
+    return sortie
 
 
 def caler(tableau: dict[str, dict[str, float]], lignes: dict[str, float],
@@ -1531,15 +1671,18 @@ def entrees_des_carrieres_pleines(racine: Path) -> dict[str, tuple[tuple[int, fl
     return sortie
 
 
-def premiers_trimestres(racine: Path) -> dict[str, dict[int, dict[int, float]]]:
+def premiers_trimestres(racine: Path, trimestre: str = "cotise"
+                        ) -> dict[str, dict[int, dict[int, float]]]:
     """La part des affiliés d'avant 23 ans qui ont cotisé un trimestre à la
     fin de l'année de chaque âge, de 16 à 23 ans, génération par génération de
     l'échantillon interrégimes de cotisants, sexe par sexe :
     ``{sexe: {génération: {âge: part}}}``, en pour cent
-    (``premier_trimestre.csv``, :data:`ENTREE_AU_PREMIER_TRIMESTRE`)."""
+    (``premier_trimestre.csv``, :data:`ENTREE_AU_PREMIER_TRIMESTRE`) ; ou,
+    ``trimestre`` valant ``"valide"``, qui en ont validé un, de quelque nature
+    qu'il soit (:data:`SERVICE_AVANT_LE_PREMIER_TRIMESTRE`)."""
     sortie: dict[str, dict[int, dict[int, float]]] = {}
     for ligne in _lire_macro(racine, "premier_trimestre.csv"):
-        if ligne["trimestre"] == "cotise":
+        if ligne["trimestre"] == trimestre:
             sortie.setdefault(ligne["sexe"], {}).setdefault(
                 int(ligne["generation"]), {})[int(ligne["age"])] = float(ligne["part"])
     return sortie
@@ -1566,29 +1709,48 @@ def age_du_premier_trimestre(parts: dict[int, dict[int, float]], generation: int
     return next(age for age in ages if par_age[age] >= rang * par_age[ages[-1]])
 
 
-def classes_d_entree(regle: tuple[tuple[int, float], ...], parts: dict[int, dict[int, float]]
-                     ) -> list[tuple[int, tuple[tuple[int, float], ...], float]]:
+def classes_d_entree(regle: tuple[tuple[int, float], ...], parts: dict[int, dict[int, float]],
+                     valides: dict[int, dict[int, float]] | None = None
+                     ) -> list[tuple[int, tuple[tuple[int, float], ...],
+                                     tuple[tuple[int, float], ...], float]]:
     """Les cinquièmes d'une carrière pleine (:data:`ENTREE_AU_PREMIER_TRIMESTRE`),
-    ``(rang, entrées, poids)`` : chacun entre, génération par génération, à
-    l'âge où sa génération cotise le premier trimestre du milieu de son
-    cinquième (:func:`age_du_premier_trimestre`), ou à celui de ``regle`` s'il
-    vient plus tard ; ceux qui entrent au même âge à chaque génération n'en
-    font qu'un, sous le rang du premier."""
-    classes: dict[tuple[tuple[int, float], ...], list] = {}
+    ``(rang, entrées, services, poids)`` : chacun entre, génération par
+    génération, à l'âge où sa génération cotise le premier trimestre du milieu
+    de son cinquième (:func:`age_du_premier_trimestre`), ou à celui de
+    ``regle`` s'il vient plus tard. Sous ``valides``, la part des affiliés qui
+    ont validé un trimestre, il fait son service national les années d'avant,
+    depuis l'âge où sa génération valide ce premier trimestre, jamais avant
+    celui de ``regle`` (:data:`SERVICE_AVANT_LE_PREMIER_TRIMESTRE`) ; sans
+    elles, ``services`` est vide. Ceux qui entrent au même âge et servent les
+    mêmes années à chaque génération n'en font qu'un, sous le rang du premier."""
+    classes: dict[tuple, list] = {}
     for rang in range(CLASSES_D_ENTREE):
         milieu = (2 * rang + 1) / (2 * CLASSES_D_ENTREE)
         entrees = tuple((generation, max(age, float(age_du_premier_trimestre(
             parts, generation, milieu)))) for generation, age in regle)
-        classes.setdefault(entrees, [rang + 1, 0.0])[1] += 1.0 / CLASSES_D_ENTREE
-    return [(premier, entrees, poids) for entrees, (premier, poids) in classes.items()]
+        services: tuple[tuple[int, float], ...] = ()
+        if valides is not None:
+            services = tuple(
+                (generation, max(0.0, entree - max(age, float(age_du_premier_trimestre(
+                    valides, generation, milieu)))))
+                for (generation, age), (_, entree) in zip(regle, entrees))
+            if not any(annees for _, annees in services):
+                services = ()
+        classes.setdefault((entrees, services), [rang + 1, 0.0])[1] += 1.0 / CLASSES_D_ENTREE
+    return [(premier, entrees, services, poids)
+            for (entrees, services), (premier, poids) in classes.items()]
 
 
 def entrees_au_premier_trimestre(variantes: list[Variante], racine: Path) -> list[Variante]:
     """Chaque carrière pleine qui entre selon sa génération, hors des départs
-    avec surcote, en ses cinquièmes (:func:`classes_d_entree`) : le premier
-    garde son code, les autres prennent leur rang, « ~entree3 » ; les autres
-    variantes telles quelles."""
+    avec surcote, en ses cinquièmes (:func:`classes_d_entree`), ceux des hommes
+    précédés de leur service national sous
+    :data:`SERVICE_AVANT_LE_PREMIER_TRIMESTRE` : le premier garde son code,
+    les autres prennent leur rang, « ~entree3 » ; les autres variantes telles
+    quelles."""
     parts = premiers_trimestres(racine)
+    valides = ({"H": premiers_trimestres(racine, "valide")["H"]}
+               if SERVICE_AVANT_LE_PREMIER_TRIMESTRE else {})
     classes: dict[tuple, list] = {}
     sortie = []
     for v in variantes:
@@ -1597,10 +1759,12 @@ def entrees_au_premier_trimestre(variantes: list[Variante], racine: Path) -> lis
             continue
         cle = (v.cas.sexe, v.cas.entrees)
         if cle not in classes:
-            classes[cle] = classes_d_entree(v.cas.entrees, parts[v.cas.sexe])
-        for rang, entrees, poids in classes[cle]:
+            classes[cle] = classes_d_entree(v.cas.entrees, parts[v.cas.sexe],
+                                            valides.get(v.cas.sexe))
+        for rang, entrees, services, poids in classes[cle]:
             code = v.cas.code if rang == 1 else f"{v.cas.code}~entree{rang}"
-            sortie.append(v.fois(poids, cas=replace(v.cas, code=code, entrees=entrees)))
+            sortie.append(v.fois(poids, cas=replace(v.cas, code=code, entrees=entrees,
+                                                    services=services)))
     return sortie
 
 
@@ -1766,9 +1930,8 @@ def _interrompre(v: Variante, nom: str, cible: int | None, part: float,
                      interruptions_relatives=decalages_de_tranche(
                          cas.interruptions_relatives, duree, cible, assimilee, etalee,
                          cas.age_debut),
-                     tranche_de_base=(() if cible is None else
-                                      (cas.interruptions_relatives, duree, assimilee,
-                                       etalee)))
+                     tranche_de_base=(cas.interruptions_relatives, duree, assimilee,
+                                      etalee))
     return v.fois(part, cas=nouveau, duree=validee, assimilees=assimilees, tranche=nom)
 
 
@@ -2052,6 +2215,8 @@ def population(effectifs, source: CaracteristiquesRetraites,
     if DEPARTS_AVEC_DECOTE:
         variantes = departs_avec_decote(variantes, effectifs, source, donnees.quintiles)
     variantes = salaires_population(variantes, donnees)
+    if ASSIMILEES_SELON_LE_RANG:
+        variantes = assimilees_selon_le_rang(variantes, donnees.quintiles)
     if DEPARTS_AVEC_SURCOTE:
         variantes = departs_avec_surcote(variantes, departs_publies(racine), racine)
     if ENTREE_AU_PREMIER_TRIMESTRE:

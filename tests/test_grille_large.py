@@ -608,10 +608,11 @@ def test_une_carriere_pleine_entree_tard_ne_part_pas_en_carriere_longue(simulate
     """L'homme né en 1955 d'une carrière pleine du salariat privé dont le
     cinquième n'a cotisé son premier trimestre qu'à 21 ans ne remplit pas la
     condition d'entrée de la carrière longue — cinq trimestres cotisés à la
-    fin de l'année de ses 20 ans (D. 351-1-1) — : il part à 62 ans et demi,
-    quand il a validé les 166 trimestres de sa génération, au taux plein. Le
-    premier cinquième, entré à 17 ans, part avant 62 ans en carrière
-    longue."""
+    fin de l'année de ses 20 ans (D. 351-1-1) — : son service national, à
+    20 ans, est validé sans être cotisé. Il part à 62 ans, l'âge légal de sa
+    génération, au taux plein : il a validé les 166 trimestres de sa
+    génération à 61 ans et demi, de 20 ans à 61 ans et demi. Le premier
+    cinquième, entré à 17 ans, part avant 62 ans en carrière longue."""
     variantes = G.grille("population", simulateur.effectifs, source, ())
     projection = simulateur.pour_la_projection()
     par_code = {v.cas.code: v.cas for v in variantes}
@@ -620,7 +621,127 @@ def test_une_carriere_pleine_entree_tard_ne_part_pas_en_carriere_longue(simulate
     assert condition == "carriere_longue"
     assert age < 62.0
     assert G.condition_au_depart(projection, par_code[f"{pleine}~entree5"], 1955) == (
+        pytest.approx(62.0), "taux_plein_autre")
+
+
+def test_le_premier_trimestre_valide_precede_le_premier_cotise(parametres):
+    """La part des affiliés d'avant 23 ans qui ont VALIDÉ un trimestre à la fin
+    de l'année de chaque âge (``premier_trimestre.csv``) passe celle de ceux
+    qui en ont cotisé un de ce qu'un affilié valide sans cotiser : le service
+    national, pour les hommes. Nés en 1950, 93,2 % avaient validé un trimestre
+    à 21 ans, sur 99,2 à 23 ans, 94,0 % ; 84,8 % en avaient cotisé un, sur
+    96,1, 88,2 %. Au rang 0,9 du dernier cinquième, le premier trimestre
+    validé tombe donc à 21 ans (85,6 à 20 ans, 86,3 %), le premier cotisé à
+    22 ; les quatre autres rangs valident et cotisent au même âge. Nés en
+    1946, le dernier valide à 20 ans (91,0 sur 99,5, 91,5 %) et cotise à 22
+    (83,9 sur 95,7 à 21 ans, 87,7 % ; 90,8 à 22)."""
+    valides = G.premiers_trimestres(parametres.racine_donnees, "valide")
+    cotises = G.premiers_trimestres(parametres.racine_donnees)
+    assert valides["H"][1950][21] == 93.2
+    assert valides["H"][1950][23] == 99.2
+    rangs = (0.1, 0.3, 0.5, 0.7, 0.9)
+    assert [G.age_du_premier_trimestre(valides["H"], 1950, rang) for rang in rangs] == [
+        16, 16, 17, 19, 21]
+    assert [G.age_du_premier_trimestre(cotises["H"], 1950, rang) for rang in rangs] == [
+        16, 16, 17, 19, 22]
+    assert G.age_du_premier_trimestre(valides["H"], 1946, 0.9) == 20
+    assert G.age_du_premier_trimestre(cotises["H"], 1946, 0.9) == 22
+
+
+def test_le_dernier_cinquieme_des_hommes_fait_son_service_avant_de_cotiser(
+        simulateur, source, monkeypatch):
+    """Sous ``SERVICE_AVANT_LE_PREMIER_TRIMESTRE``, le cinquième d'une
+    carrière pleine d'homme dont la génération valide son premier trimestre
+    avant d'en cotiser un fait son service national les années qui les
+    séparent : celui de la génération 1950 qui cotise à 22 ans valide son
+    service à 21 ans. Sa durée d'assurance commence un an plus tôt : il part
+    à 61 ans et demi au taux plein par la durée — les 162 trimestres de sa
+    génération, de 21 ans à 61 ans et demi —, et non à 62 ans et demi. Né en
+    1946, il fait deux années de service, à 20 et 21 ans. Le premier
+    cinquième, qui valide et cotise à 16 ans, n'en fait pas ; aucune femme
+    non plus."""
+    assert G.SERVICE_AVANT_LE_PREMIER_TRIMESTRE
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    projection = simulateur.pour_la_projection()
+    par_code = {v.cas.code: v.cas for v in variantes}
+    pleine = f"{G.GABARIT}~h~40_plus~p50"
+    dernier = par_code[f"{pleine}~entree5"]
+    assert dernier.debut_de(1950) == 22.0
+    assert dernier.service_de(1950) == 1
+    assert dernier.service_de(1946) == 2
+    lignes = dernier.carriere_a(projection, 1950, 61.5).lignes
+    assert [l.type_periode for l in lignes if l.annee == 1950 + 21] == ["service_militaire"]
+    assert min(l.annee for l in lignes if l.type_periode == "emploi") == 1950 + 22
+    assert G.condition_au_depart(projection, dernier, 1950) == (
+        pytest.approx(61.5), "taux_plein_autre")
+    assert par_code[pleine].service_de(1950) == 0
+    assert not any(v.cas.service_de(generation)
+                   for v in variantes if v.cas.sexe == "F" and isinstance(v.cas, G.CasTypeLarge)
+                   for generation in (1942, 1946, 1950, 1970))
+    monkeypatch.setattr(G, "SERVICE_AVANT_LE_PREMIER_TRIMESTRE", False)
+    avant = {v.cas.code: v.cas for v in G.grille("population", simulateur.effectifs,
+                                                 source, ())}
+    assert G.condition_au_depart(projection, avant[f"{pleine}~entree5"], 1950) == (
         pytest.approx(62.5), "taux_plein_autre")
+
+
+def test_la_part_assimilee_suit_le_quintile_de_la_classe(parametres):
+    """La part de la durée validée hors majorations qui n'est pas cotisée suit
+    le quintile de la pension en équivalent carrière complète : l'EIR mesure
+    aux résidentes du premier quintile 23 années validées pour 17 cotisées,
+    26,1 % d'assimilées ; du deuxième, 34 pour 27 ; du troisième, 38 pour 35 ;
+    du quatrième, 38 pour 36 ; du cinquième, 39 pour 38, 2,6 %
+    (``quintiles_eqcc_residents.csv``). Chaque classe de centiles prend la part
+    des bandes de quintiles que ses rangs couvrent, comme sous
+    ``RANG_SELON_LA_DUREE``, chaque retraité au minimum gardant celle de son
+    quintile dans la bande du premier.
+
+    Les classes p95 et p99 des femmes tombent toutes dans la bande du
+    cinquième quintile, de 88,1 % à 100 % de leurs rangs — 1 005 milliers de
+    résidentes sur 8 373, 0,9 % au minimum — : 1/39. Celles des hommes de
+    même, de 70,7 % à 100 % : 4/41. La classe p10 des femmes, de 0 à 17,5 %,
+    tombe dans celle du premier, de 0 à 48,3 % : dans la tranche de quarante
+    années et plus, 0,0401 des résidentes du premier quintile à 6/23, 0,0457
+    du deuxième au minimum à 7/34, 0,0171 du troisième à 3/38, 0,0079 du
+    quatrième à 2/38, 0,0005 du cinquième à 1/39 — 19,5 %."""
+    quintiles = G.quintiles_eqcc(parametres.racine_donnees, residents=True)
+    femmes = G.parts_assimilees_des_classes(quintiles, "F", "40_plus")
+    hommes = G.parts_assimilees_des_classes(quintiles, "H", "40_plus")
+    assert femmes["p95"] == pytest.approx(1 / 39)
+    assert femmes["p99"] == pytest.approx(1 / 39)
+    assert hommes["p95"] == pytest.approx(4 / 41)
+    assert femmes["p10"] == pytest.approx(0.1946, abs=5e-4)
+    assert set(femmes) == {nom for nom, _ in G.CENTILES}
+
+
+def test_la_carriere_pleine_d_une_femme_du_haut_part_en_carriere_longue(
+        simulateur, source, monkeypatch):
+    """Sous ``ASSIMILEES_SELON_LE_RANG``, la femme née en 1953 d'une carrière
+    pleine du salariat privé de la classe p95, entrée à 17 ans, ne compte plus
+    qu'une année assimilée sur ses 43 (1/39 de l'EIR), et non cinq (4/32) :
+    ses quatre trimestres de chômage indemnisé sont réputés cotisés
+    (D. 351-1-2), et elle a, à 60 ans, 172 trimestres cotisés ou réputés tels,
+    pour 165 que sa génération doit : elle part à 60 ans en carrière longue.
+    Avec cinq années assimilées, elle n'en avait que 156 — 172, moins seize
+    trimestres de chômage non réputés —, et partait à 61 ans et deux mois,
+    l'âge légal de sa génération. La carrière pleine de la classe p10 en
+    compte huit (19,5 %)."""
+    assert G.ASSIMILEES_SELON_LE_RANG
+    variantes = {v.cas.code: v for v in G.grille("population", simulateur.effectifs,
+                                                  source, ())}
+    projection = simulateur.pour_la_projection()
+    haute = variantes[f"{G.GABARIT}~f~40_plus~p95"]
+    assert haute.duree == 43 and haute.assimilees == 1
+    assert haute.cas.debut_de(1953) == 17.0
+    assert G.condition_au_depart(projection, haute.cas, 1953) == (
+        pytest.approx(60.0), "carriere_longue")
+    assert variantes[f"{G.GABARIT}~f~40_plus~p10~bas1"].assimilees == 8
+    monkeypatch.setattr(G, "ASSIMILEES_SELON_LE_RANG", False)
+    avant = {v.cas.code: v for v in G.grille("population", simulateur.effectifs,
+                                              source, ())}
+    assert avant[f"{G.GABARIT}~f~40_plus~p95"].assimilees == 5
+    assert G.condition_au_depart(projection, avant[f"{G.GABARIT}~f~40_plus~p95"].cas,
+                                 1953) == (pytest.approx(61.17), "taux_plein_autre")
 
 
 def test_les_carrieres_courtes_de_la_population_sont_celles_de_tous(simulateur, source):
@@ -674,12 +795,15 @@ def test_une_carriere_courte_de_la_population_s_etale_sur_la_vie_active(simulate
     interruptions garde les premières années
     (``test_une_carriere_courte_s_arrete_a_la_duree_de_sa_tranche``). Celle
     d'un homme : celle d'une femme change de durée avec sa génération
-    (``test_les_carrieres_des_femmes_suivent_la_duree_de_leur_generation``)."""
+    (``test_les_carrieres_des_femmes_suivent_la_duree_de_leur_generation``).
+    Ses périodes assimilées sont celles de sa classe
+    (``test_la_part_assimilee_suit_le_quintile_de_la_classe``)."""
     assert G.COURTES_ETALEES
     variantes = G.grille("population", simulateur.effectifs, source, ())
     courte = next(v for v in variantes if v.cas.code == f"{G.GABARIT}~h~10_20~p50")
+    quintiles = G.quintiles_eqcc(simulateur.parametres.racine_donnees, residents=True)
     assert courte.duree == 15 and courte.assimilees == round(
-        G.part_assimilee(source, "H") * 15)
+        G.parts_assimilees_des_classes(quintiles, "H", "10_20")["p50"] * 15)
     generation = 1960
     carriere = courte.cas.construire(simulateur, generation)
     validees = [ligne.annee - generation for ligne in carriere.lignes
@@ -1165,19 +1289,18 @@ def test_les_departs_d_une_generation_se_confrontent_a_l_eir(parametres):
 
 def test_la_condition_d_un_depart_se_lit_dans_sa_liquidation(simulateur, source):
     """La condition d'un départ de la population, telle que l'EIR la range :
-    l'homme né en 1950 d'une carrière pleine du salariat privé, entré à
-    16 ans, part en carrière longue ; la femme d'une carrière courte part au taux plein par
-    l'âge, à 65 ans, ou avec une décote si elle part à l'ouverture du droit ;
-    l'agent de conduite né en 1950 part à cinquante ans au taux plein de son
-    statut, sans décote."""
+    l'homme né en 1950 d'une carrière pleine du salariat privé de la classe
+    médiane, entré à 16 ans, part en carrière longue ; la femme d'une carrière
+    courte part au taux plein par l'âge, à 65 ans, ou avec une décote si elle
+    part à l'ouverture du droit ; l'agent de conduite né en 1950 part à
+    cinquante ans au taux plein de son statut, sans décote."""
     variantes = G.grille("population", simulateur.effectifs, source, ())
     projection = simulateur.pour_la_projection()
 
     def condition(v, generation=1950):
         return G.condition_au_depart(projection, v.cas, generation)
 
-    pleine = next(v for v in variantes if v.tranche == "40_plus" and v.cas.sexe == "H"
-                  and v.cas.code.startswith(G.GABARIT) and not v.decote)
+    pleine = next(v for v in variantes if v.cas.code == f"{G.GABARIT}~h~40_plus~p50")
     assert condition(pleine)[1] == "carriere_longue"
     courte = next(v for v in variantes if v.tranche == "moins_10" and v.cas.sexe == "F"
                   and v.groupe == "regime_general" and not v.decote)
@@ -1254,12 +1377,12 @@ def test_une_part_des_carrieres_de_trente_ans_et_plus_part_avec_une_surcote(
 
 
 def test_un_depart_avec_surcote_attend_apres_l_age_legal(simulateur, source):
-    """L'homme d'une carrière pleine du salariat privé né en 1955, que la
-    carrière longue ferait partir avant 62 ans, part, s'il surcote, sa
-    première attente après lui, avec une surcote ; la femme née en 1955 d'une
-    carrière de trente à quarante années, au taux plein dès 62 ans, de même.
-    Avant 2004, la loi ne servait aucune surcote : le même homme, né en 1940,
-    part comme s'il n'en attendait pas."""
+    """L'homme d'une carrière pleine du salariat privé de la classe médiane né
+    en 1955, que la carrière longue ferait partir avant 62 ans, part, s'il
+    surcote, sa première attente après lui, avec une surcote ; la femme née en
+    1955 d'une carrière de trente à quarante années de la même classe, au taux
+    plein dès 62 ans, de même. Avant 2004, la loi ne servait aucune surcote :
+    le même homme, né en 1940, part comme s'il n'en attendait pas."""
     variantes = G.grille("population", simulateur.effectifs, source, ())
     projection = simulateur.pour_la_projection()
     attentes = G.attentes_des_surcotes(G.departs_publies(simulateur.parametres.racine_donnees),
@@ -1268,6 +1391,7 @@ def test_un_depart_avec_surcote_attend_apres_l_age_legal(simulateur, source):
     def surcotee(sexe: str, tranche: str) -> G.Variante:
         return next(v for v in variantes if v.cas.code.startswith(G.GABARIT)
                     and v.cas.sexe == sexe and v.tranche == tranche
+                    and G.classe_de(v) == "p50"
                     and v.surcote == pytest.approx(attentes[sexe][0][0]))
 
     homme = surcotee("H", "40_plus")
