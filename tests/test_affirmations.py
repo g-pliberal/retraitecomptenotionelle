@@ -2003,6 +2003,29 @@ def _(m: Modele):
         assert normaliser(g.pourcentage(valeur, decimales=0)) in cout, valeur
 
 
+@controle("bilan_du_compte_du_depot")
+def _(m: Modele):
+    """Le bilan du compte à la manière suédoise (action 138, étape 19), tel que
+    le modèle le calcule à la dernière année dont le COR publie les réserves :
+    le système actuel doit plus que ses cotisations et ses réserves ne portent,
+    son ratio d'équilibre est sous un ; la proposition, qui promet moins, doit
+    moins et porte mieux ce qu'elle doit. La page écrit les deux ratios et les
+    deux dettes."""
+    from retraite_notionnelle.bilan_compte import Reserves, bilans_gardes
+
+    annee = Reserves.charger(m.base.racine_donnees).derniere_annee()
+    bilans = bilans_gardes(m.contexte, annee, list(pages.SCENARIOS_MONTRES))
+    actuel, proposition = bilans["actuel"], bilans["notionnel_liberal"]
+    assert actuel.ratio_equilibre < 1.0, actuel.ratio_equilibre
+    assert proposition.dette < actuel.dette
+    assert proposition.ratio_equilibre > actuel.ratio_equilibre
+
+    cout = TEMOINS_PAR_NOM["cout"]["texte"]
+    for bilan in (actuel, proposition):
+        assert normaliser(f"{g.pourcentage(bilan.dette, decimales=0)} du PIB") in cout
+        assert normaliser(g.nombre(bilan.ratio_equilibre, 2)) in cout
+
+
 @controle("deficit_se_creuse")
 def _(m: Modele):
     """Le solde du système actuel se creuse, et les pages écrivent ses nombres."""

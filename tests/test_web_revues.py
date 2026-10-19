@@ -290,7 +290,7 @@ def test_les_pages_longues_portent_leur_plan():
                    "cout-demographie",
                    "cout-cascade",
                    "cout-equilibre", "cout-postes",
-                   "cout-dette",
+                   "cout-dette", "cout-bilan-compte",
                    "cout-frise", "cout-garantie", "cout-capitalisation", "cout-poids", "cout-sources",
                    "cout-limites"]),
     ):
@@ -551,7 +551,7 @@ def test_chaque_tableau_de_scenarios_distingue_proposition_et_contrefactuel():
     """Un badge là où l'erreur de lecture se produit, non dans un préambule.
 
     Sur Cas types, chaque panneau porte le sien dans son titre ; sur Coût, les
-    sept tableaux qui alignent les systèmes le portent en tête de ligne.
+    huit tableaux qui alignent les systèmes le portent en tête de ligne.
     Le système actuel n'en a pas : c'est la référence.
     """
     cas_types = rendre("/cas-types", {})[1]
@@ -564,13 +564,13 @@ def test_chaque_tableau_de_scenarios_distingue_proposition_et_contrefactuel():
     cout = rendre("/cout", {})[1]
     lignes = re.findall(r'<th class="" scope="row">(\d)\. [^<]*(?:<span class="badge (\w+)">)?',
                         cout)
-    # Sept tableaux à quatre lignes : le passé, l'avenir, l'espérance de vie,
+    # Huit tableaux à quatre lignes : le passé, l'avenir, l'espérance de vie,
     # la fécondité et les migrations (action 138, étape 7), l'équilibre, la
-    # dette.
-    assert lignes.count(("1", "")) == 7, lignes
-    assert lignes.count(("4", "proposition")) == 7
+    # dette, le bilan du compte (action 138, étape 19).
+    assert lignes.count(("1", "")) == 8, lignes
+    assert lignes.count(("4", "proposition")) == 8
     for numero in "23":
-        assert lignes.count((numero, "contrefactuel")) == 7, numero
+        assert lignes.count((numero, "contrefactuel")) == 8, numero
     assert ".badge.proposition" in FEUILLE_DE_STYLE
 
 

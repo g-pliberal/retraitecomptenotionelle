@@ -1004,6 +1004,56 @@ class VariantesFigees:
                            scenario, "système"))
 
 
+# -- le bilan du compte ----------------------------------------------------------
+
+#: Ce que la table porte du bilan d'un système (``bilan_compte.BilanCompte``) :
+#: ses champs, puis les indicateurs qu'il en tire, figés eux aussi pour que le
+#: lecteur n'en refasse aucune opération.
+CHAMPS_BILAN_COMPTE = (
+    "cotisations", "age_cotisations", "age_pensions", "reserves", "dette", "depense",
+    "ressources", "assiette", "duree_rotation", "actif_cotisation", "actif",
+    "ratio_equilibre", "taux_equilibre", "taux_cotisation", "taux_cotisation_equilibre",
+)
+
+
+def figer_bilan_compte(bilans: dict, rendement: float | None) -> dict:
+    """Le bilan du compte de chaque système (``bilans``, ce que
+    ``bilan_compte.bilans_gardes`` rend, une seule année), et le rendement
+    comptable des réserves cette année-là, ``None`` si le COR ne le donne
+    pas."""
+    annees = {bilan.annee for bilan in bilans.values()}
+    if len(annees) != 1:
+        raise ValueError(f"les bilans ne sont pas d'une seule année : {annees}")
+    return {
+        "annee": annees.pop(),
+        "rendement": rendement,
+        "systemes": {cle: {champ: getattr(bilan, champ) for champ in CHAMPS_BILAN_COMPTE}
+                     for cle, bilan in bilans.items()},
+    }
+
+
+class BilanSystemeFige(_Ligne):
+    """Le bilan d'un système, sous les noms de ``bilan_compte.BilanCompte``."""
+
+    def __init__(self, brut: dict) -> None:
+        super().__init__(brut, CHAMPS_BILAN_COMPTE)
+
+
+class BilanCompteFige:
+    """Le bilan du compte notionnel de chaque système, à la manière suédoise
+    (action 138, étape 19), une année : ce qu'il doit au titre des droits
+    acquis, et ce que ses cotisations et ses réserves peuvent porter. La page
+    Coût le met après la dette que les soldes à venir accumulent."""
+
+    def __init__(self, brut: dict) -> None:
+        self._systemes = brut["systemes"]
+        self.annee: int = int(brut["annee"])
+        self.rendement: float | None = brut["rendement"]
+
+    def systeme(self, scenario: str) -> BilanSystemeFige:
+        return BilanSystemeFige(_lire(self._systemes, scenario, "système"))
+
+
 # -- la table ------------------------------------------------------------------
 
 
@@ -1018,6 +1068,7 @@ class AgregatsFiges:
     esperance_vie: VariantesFigees
     fecondite: VariantesFigees
     migrations: VariantesFigees
+    bilan_compte: BilanCompteFige
 
 
 def depuis_dictionnaire(donnees: dict) -> AgregatsFiges:
@@ -1030,6 +1081,7 @@ def depuis_dictionnaire(donnees: dict) -> AgregatsFiges:
         esperance_vie=VariantesFigees(donnees["esperance_vie"]),
         fecondite=VariantesFigees(donnees["fecondite"]),
         migrations=VariantesFigees(donnees["migrations"]),
+        bilan_compte=BilanCompteFige(donnees["bilan_compte"]),
     )
 
 

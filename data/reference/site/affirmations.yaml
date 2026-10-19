@@ -1076,6 +1076,22 @@ affirmations:
     etat: verifiee
     controle: engagement_acquis_du_depot
 
+  # LE BILAN DU COMPTE, à la manière suédoise (action 138, étape 19, 19
+  # octobre 2026) : le stock que la Suède publie chaque année, pour les
+  # quatre systèmes.
+  - id: cout.bilan_du_compte
+    page: /cout
+    extrait: "Le système actuel doit plus que ses cotisations et ses réserves ne portent."
+    porte: le ratio d'équilibre du système actuel, actif de cotisation et réserves sur la dette des droits acquis, est sous un ; la proposition doit moins
+    etat: verifiee
+    controle: bilan_du_compte_du_depot
+
+  - id: cout.duree_de_rotation
+    page: /cout
+    extrait: "multipliées par la durée de rotation, le temps moyen"
+    porte: le terme que la phrase définit
+    etat: sans_portee
+
   # ------------------------------------------------------------------------
   # Coût
   # ------------------------------------------------------------------------

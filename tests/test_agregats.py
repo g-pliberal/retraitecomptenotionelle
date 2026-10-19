@@ -449,3 +449,51 @@ def test_les_deux_lecteurs_lisent_les_memes_variantes(montres, composante):
             for annee in figee.annees:
                 assert js.partPib(hypothese, scenario, annee) == figee.part_pib(
                     hypothese, scenario, annee)
+
+
+# -- le bilan du compte, à la manière suédoise -----------------------------------
+
+
+@pytest.fixture(scope="module")
+def bilans(contexte, montres):
+    from retraite_notionnelle.bilan_compte import bilans_gardes
+
+    return bilans_gardes(contexte, AGREGATS.bilan_compte.annee, montres)
+
+
+def test_le_bilan_du_compte_fige_est_celui_que_le_modele_calcule(bilans, montres):
+    """La table porte le bilan du compte de chaque système (action 138, étape
+    19) à la dernière année dont le COR publie les réserves, et leur rendement
+    comptable cette année-là : chaque champ de ``BilanCompte`` et chaque
+    indicateur qu'il en tire, tels que ``bilan_compte`` les calcule. Le lecteur
+    n'en refait aucune opération, la durée de rotation, l'actif, le ratio et
+    les taux d'équilibre compris : il les rend."""
+    from dataclasses import fields
+
+    from retraite_notionnelle.bilan_compte import BilanCompte, Reserves
+
+    assert {champ.name for champ in fields(BilanCompte)} - {"annee", "scenario"} <= set(
+        agregats.CHAMPS_BILAN_COMPTE)
+    fige = AGREGATS.bilan_compte
+    reserves = Reserves.charger(RACINE_DONNEES)
+    assert fige.annee == reserves.derniere_annee()
+    assert fige.rendement == reserves.rendement(fige.annee)
+    assert set(bilans) == set(montres)
+    for scenario in montres:
+        systeme = fige.systeme(scenario)
+        for champ in agregats.CHAMPS_BILAN_COMPTE:
+            assert getattr(systeme, champ) == getattr(bilans[scenario], champ), (
+                scenario, champ)
+    with pytest.raises(KeyError, match="absent de la table figée"):
+        fige.systeme("notionnel_bascule")
+
+
+@sans_node
+def test_les_deux_lecteurs_lisent_le_meme_bilan_du_compte(montres):
+    js = site().contexte.agregats().bilanCompte
+    fige = AGREGATS.bilan_compte
+    assert (js.annee, js.rendement) == (fige.annee, fige.rendement)
+    for scenario in montres:
+        lu, systeme = js.systeme(scenario), fige.systeme(scenario)
+        for champ in agregats.CHAMPS_BILAN_COMPTE:
+            assert getattr(lu, champ) == getattr(systeme, champ), (scenario, champ)

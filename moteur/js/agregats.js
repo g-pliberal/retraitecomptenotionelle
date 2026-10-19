@@ -572,11 +572,44 @@ export class VariantesFigees {
   }
 }
 
+// -- le bilan du compte -------------------------------------------------------
+
+/**
+ * Ce que la table porte du bilan d'un système (`bilan_compte.BilanCompte`) :
+ * ses champs, puis les indicateurs qu'il en tire, que le lecteur rend sans en
+ * refaire aucune opération.
+ */
+const CHAMPS_BILAN_COMPTE = [
+  "cotisations", "age_cotisations", "age_pensions", "reserves", "dette", "depense",
+  "ressources", "assiette", "duree_rotation", "actif_cotisation", "actif",
+  "ratio_equilibre", "taux_equilibre", "taux_cotisation", "taux_cotisation_equilibre",
+];
+
+/**
+ * Le bilan du compte notionnel de chaque système, à la manière suédoise
+ * (action 138, étape 19), une année : ce qu'il doit au titre des droits
+ * acquis, et ce que ses cotisations et ses réserves peuvent porter.
+ * `figer_bilan_compte` (`donnees/agregats.py`) l'écrit.
+ */
+export class BilanCompteFige {
+  constructor(brut) {
+    this._systemes = brut.systemes;
+    this.annee = Number(brut.annee);
+    this.rendement = brut.rendement;
+  }
+
+  /** Le bilan d'un système, sous les noms du portage : `dureeRotation`… */
+  systeme(scenario) {
+    return champs(lire(this._systemes, scenario, "système"), CHAMPS_BILAN_COMPTE);
+  }
+}
+
 // -- la table -----------------------------------------------------------------
 
 /** Ce que les trois pages qui agrègent lisent, tel que la table le porte. */
 export class AgregatsFiges {
-  constructor(casTypes, avantages, classement, cout, esperanceVie, fecondite, migrations) {
+  constructor(casTypes, avantages, classement, cout, esperanceVie, fecondite, migrations,
+    bilanCompte) {
     this.casTypes = casTypes;
     this.avantages = avantages;
     this.classement = classement;
@@ -584,6 +617,7 @@ export class AgregatsFiges {
     this.esperanceVie = esperanceVie;
     this.fecondite = fecondite;
     this.migrations = migrations;
+    this.bilanCompte = bilanCompte;
   }
 }
 
@@ -597,5 +631,6 @@ export function chargerAgregats(donnees) {
     new VariantesFigees(donnees.esperance_vie),
     new VariantesFigees(donnees.fecondite),
     new VariantesFigees(donnees.migrations),
+    new BilanCompteFige(donnees.bilan_compte),
   );
 }

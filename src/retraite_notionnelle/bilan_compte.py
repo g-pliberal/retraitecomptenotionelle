@@ -49,9 +49,10 @@ le taux qui paierait tout sur l'assiette, et celui qui ne paie que ce que les
 autres ressources laissent — le levier du prélèvement de ``leviers.py``
 (138.3), limité aux cotisations, et sur l'assiette de l'année.
 
-Rien ici ne se calcule pour le site : c'est un indicateur, que
-``scripts/bilan_compte.py`` imprime, et que la table du paquet pourra porter
-quand une page le montrera.
+Rien ici ne se calcule chez le lecteur : ``scripts/bilan_compte.py``
+l'imprime, et la table du paquet le fige sous la référence
+(``bilan_compte`` d'``agregats.json``, depuis le 19 octobre 2026), à la
+dernière année dont le COR publie les réserves, pour la page Coût.
 """
 
 from __future__ import annotations
@@ -245,6 +246,11 @@ class Reserves:
     def annees(self) -> tuple[int, ...]:
         return tuple(sorted({annee for annee, _ in self.lignes}))
 
+    def derniere_annee(self) -> int:
+        """La dernière année dont le COR donne le stock, FRR compris : celle
+        du bilan que la page Coût montre."""
+        return max(annee for annee in self.annees() if self.montant(annee) is not None)
+
     def montant(self, annee: int, poste: str = "reserves_totales") -> float | None:
         ligne = self.lignes.get((annee, poste))
         return None if ligne is None else ligne[0]
@@ -365,10 +371,11 @@ def calculer_bilans(contexte, annee: int, scenarios: Sequence[str],
     ``contexte`` (:class:`~retraite_notionnelle.contexte.Contexte`).
 
     ``engagement`` rend la dette d'un système en part de PIB ; par défaut,
-    l'engagement acquis de la page Coût à la même date. ``cas_types``
-    restreint la grille, pour les tests.
+    l'engagement acquis de la page Coût à la même date. ``cas_types`` est,
+    par défaut, la grille du coût (``GRILLE_DU_COUT``), celle de ses masses et
+    de son engagement ; un test la restreint.
     """
-    from .castypes import CAS_TYPES
+    from .castypes import GRILLE_DU_COUT
     from .cout import (
         COTE_COTISANTS,
         _pensionnes,
@@ -376,7 +383,7 @@ def calculer_bilans(contexte, annee: int, scenarios: Sequence[str],
         calculer_engagements,
     )
 
-    cas_types = CAS_TYPES if cas_types is None else cas_types
+    cas_types = GRILLE_DU_COUT if cas_types is None else cas_types
     simulateur = contexte.simulateur()
     population = contexte.population()
     solde = contexte.cout().solde
@@ -407,3 +414,16 @@ def calculer_bilans(contexte, annee: int, scenarios: Sequence[str],
         stock = montant * 1000.0 / ligne.pib if montant and ligne.pib > 0.0 else 0.0
     return {cle: bilan(ligne, cle, profils[cle], engagement(cle), stock)
             for cle in profils}
+
+
+def bilans_gardes(contexte, annee: int, scenarios: Sequence[str]) -> dict[str, BilanCompte]:
+    """:func:`calculer_bilans` sous les réglages du ``contexte``, fait une
+    fois : ``memoire`` le garde comme le coût qu'il lit. Il simule deux fois la
+    grille du coût, pour l'engagement et pour les profils, soit plus d'une
+    minute ; la table du paquet le fige (``_agregats``), et son test le relit."""
+    from . import memoire
+
+    scenarios = tuple(scenarios)
+    return memoire.memoriser_pour(
+        contexte.base, ("bilan_compte", contexte.base, annee, scenarios),
+        lambda: calculer_bilans(contexte, annee, scenarios))

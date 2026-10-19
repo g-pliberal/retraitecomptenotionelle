@@ -80,6 +80,16 @@ def test_les_reserves_du_cor_se_somment_et_rapportent():
     assert reserves.rendement(2024) is None
 
 
+def test_les_reserves_du_bilan_sont_celles_de_la_derniere_annee_publiee():
+    """La dernière année dont le COR donne le stock des réserves, FRR compris :
+    une ligne de l'année d'après qui n'en porterait que les produits ne la
+    déplace pas."""
+    reserves = Reserves({(2024, "reserves_totales"): (234.2, None),
+                         (2025, "reserves_totales"): (244.6, 0.082),
+                         (2026, "produits_financiers_nets"): (4.0, None)})
+    assert reserves.derniere_annee() == 2025
+
+
 def test_un_cotisant_de_moins_de_50_ans_est_compte_a_ses_50_ans():
     population = Population(RACINE_DONNEES)
     assert effectif_cotisant(population, 60, 2025) == population.effectif(60, 2025)
@@ -106,3 +116,32 @@ def test_la_grille_donne_une_duree_de_rotation_a_la_suedoise():
     assert 0.05 < actuel.cotisations < 0.15
     assert actuel.ratio_equilibre == pytest.approx(
         (actuel.actif_cotisation + actuel.reserves) / 4.0)
+
+
+def test_le_bilan_se_pese_sur_la_grille_du_cout(monkeypatch):
+    """Le bilan lit le coût de la page Coût : ses cotisations, sa dépense, et
+    l'engagement acquis qui fait sa dette, tous pesés sur la grille du coût
+    (``GRILLE_DU_COUT``), où les agents actifs de l'État et de la CNRACL
+    pèsent leurs départs depuis le 16 octobre 2026 (étape 3). Ses profils par
+    âge se pèsent donc sur elle aussi, et non sur les treize carrières de la
+    page Carrières types. La grille simulée est remplacée par une grille vide,
+    le coût par sa table figée : le test ne regarde que la grille demandée."""
+    from retraite_notionnelle import cout
+    from retraite_notionnelle.castypes import GRILLE_DU_COUT
+    from retraite_notionnelle.contexte import Contexte
+    from retraite_notionnelle.donnees.agregats import charger_agregats
+
+    demandees = []
+
+    def pensionnes(simulateur, cas_types, liquidation="droit"):
+        demandees.append(cas_types)
+        return [], {}
+
+    class SurLaTable(Contexte):
+        def cout(self):
+            return charger_agregats(RACINE_DONNEES).cout
+
+    monkeypatch.setattr(cout, "_pensionnes", pensionnes)
+    bilans = calculer_bilans(SurLaTable(), 2025, ["actuel"], engagement=lambda cle: 4.0)
+    assert demandees == [GRILLE_DU_COUT]
+    assert bilans["actuel"].dette == 4.0

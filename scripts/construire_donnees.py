@@ -131,7 +131,7 @@ CALIBRATIONS = DONNEES / "derive" / "calibrations_mortalite.json"
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas : le site
 #: attend la sienne (``VERSION_PAQUET``, ``moteur/js/contexte.js``), et redemande
 #: au serveur un paquet qui n'a pas celle-là, depuis le 11 octobre 2026.
-VERSION = 26
+VERSION = 27
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -2367,8 +2367,10 @@ def _agregats(contexte=None, paquet: bytes | None = None) -> dict:
         COMPOSANTE_GARANTIE, calculer_dette, masse_du_scenario, taux_tva_requis,
     )
     from retraite_notionnelle.donnees.tva import AssietteTva
+    from retraite_notionnelle.bilan_compte import Reserves, bilans_gardes
     from retraite_notionnelle.donnees.agregats import (
-        figer_avantages, figer_cas_types, figer_cout, figer_departs, figer_variantes,
+        figer_avantages, figer_bilan_compte, figer_cas_types, figer_cout, figer_departs,
+        figer_variantes,
     )
     from retraite_notionnelle import memoire, pont
     from retraite_notionnelle.web.site import module
@@ -2414,6 +2416,7 @@ def _agregats(contexte=None, paquet: bytes | None = None) -> dict:
     decalees = {decalage: calculer_dette(cout.solde, cout.avenir, simulateur.courbe_taux,
                                          decalage)
                 for decalage in (-ecart, ecart)}
+    reserves = Reserves.charger(contexte.base.racine_donnees)
     return {
         # LE COÛT AGRÉGÉ : le passé et l'avenir de chaque système, le bilan
         # de chaque année et la dette qu'il accumule. La page Coût le lit en
@@ -2451,6 +2454,14 @@ def _agregats(contexte=None, paquet: bytes | None = None) -> dict:
              for hypothese in ("basse", "centrale", "haute")},
             list(pages.SCENARIOS_MONTRES), pages.ANNEES_ESPERANCE_VIE)
            for composante in ("fecondite", "migrations")},
+        # LE BILAN DU COMPTE, À LA MANIÈRE SUÉDOISE (action 138, étape 19) : ce
+        # que chaque système doit au titre des droits acquis, et ce que ses
+        # cotisations et ses réserves peuvent porter, à la dernière année dont
+        # le COR publie les réserves. Plus d'une minute la première fois, la
+        # grille du coût s'y simulant deux fois : ``memoire`` le garde.
+        "bilan_compte": figer_bilan_compte(
+            bilans_gardes(contexte, reserves.derniere_annee(), list(pages.SCENARIOS_MONTRES)),
+            reserves.rendement(reserves.derniere_annee())),
     }
 
 

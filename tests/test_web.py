@@ -3575,7 +3575,9 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # celle de la cascade : vingt-deux mots de plus — le sélecteur, une phrase
     # de la source qui dit à quel PIB les flux sont comptés, et les
     # successions, qui rendent une part de la garantie et paient avec l'impôt.
-    "/cout": (970, 2, 0, 0),
+    # Le bilan du compte à la suédoise, le 19 octobre 2026 (action 138, étape
+    # 19), est replié : sept mots de plus, ceux de son titre dans le plan.
+    "/cout": (977, 2, 0, 0),
     # LA SEULE PAGE DU SITE QUI DÉPASSE LE MILLIER DE MOTS, et c'est son objet
     # même. Elle affirme qu'il existe trente-neuf avantages non contributifs :
     # elle doit donc les NOMMER tous, dire ce que chacun coûte, et — pour les
@@ -3788,6 +3790,48 @@ def test_la_page_cout_ventile_ce_que_d_autres_caisses_versent():
     assert "Le coefficient d'équilibre du dépliant suivant retire les deux autres" in texte
     assert re.search(r"la proposition afficherait \d,\d\d en 20\d\d au lieu de \d,\d\d", texte)
     assert "et le système 2" in texte
+
+
+def test_la_page_cout_montre_le_bilan_du_compte_de_chaque_systeme():
+    """Le bilan du compte à la manière suédoise (action 138, étape 19), après
+    la dette que les soldes à venir accumulent : pour chacun des quatre
+    systèmes, la durée de rotation, l'actif de cotisation et la dette des
+    droits acquis, en part du PIB et en milliards, le ratio d'équilibre et le
+    taux de cotisation d'équilibre, tels que la table figée les porte, à la
+    dernière année dont le COR publie les réserves ; et ces réserves, et ce
+    qu'elles ont rapporté."""
+    from retraite_notionnelle.config import RACINE_DONNEES
+    from retraite_notionnelle.donnees.agregats import charger_agregats
+
+    bilan = charger_agregats(RACINE_DONNEES).bilan_compte
+    corps = rendre("/cout", {})[1]
+    section = re.search(r'<details class="section" id="cout-bilan-compte">.*?</details>',
+                        corps, re.S)
+    assert section, "la page Coût n'a pas le bilan du compte"
+    assert corps.index(' id="cout-dette"') < section.start()
+    tableau = re.search(rf"<caption><span>Le bilan de chaque système fin {bilan.annee}"
+                        r".*?</table>", section.group(0), re.S)
+    assert tableau, "le bilan du compte n'a pas son tableau"
+    lignes = re.findall(r'<tr><th class="" scope="row">(\d)\. .*?</th>(.*?)</tr>',
+                        tableau.group(0), re.S)
+    assert [numero for numero, _ in lignes] == ["1", "2", "3", "4"]
+    for (scenario, _), (_, cellules) in zip(pages.SCENARIOS_COMPARES, lignes):
+        systeme = bilan.systeme(scenario)
+        valeurs = re.findall(r'<td class="nombre">(.*?)</td>', cellules)
+        assert len(valeurs) == 5, scenario
+        assert valeurs[0] == f"{g.nombre(systeme.duree_rotation, 1)} ans", scenario
+        assert valeurs[1].startswith(
+            f"{g.pourcentage(systeme.actif_cotisation, decimales=0)} · "), scenario
+        assert valeurs[2].startswith(f"{g.pourcentage(systeme.dette, decimales=0)} · "), scenario
+        assert valeurs[3] == g.nombre(systeme.ratio_equilibre, 2), scenario
+        assert valeurs[4] == g.pourcentage(systeme.taux_cotisation_equilibre,
+                                           decimales=1), scenario
+    # Les retours à la ligne de la source, et eux seuls : l'espace fine du
+    # pourcentage est un blanc pour ``\s``.
+    texte = re.sub(r"[ \n]+", " ", section.group(0))
+    actuel = bilan.systeme("actuel")
+    assert f"{g.pourcentage(actuel.reserves, decimales=1)} du PIB" in texte
+    assert f"rapporté {g.pourcentage(bilan.rendement, decimales=1)} en {bilan.annee}" in texte
 
 
 def test_la_page_cout_dit_ce_que_chaque_ministere_verse_au_compte_pensions():

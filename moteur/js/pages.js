@@ -8562,6 +8562,7 @@ plus large que les cartes).
     coutDetailEquilibre(contexte),
     coutDetailPostes(contexte),
     coutDetailDette(contexte),
+    coutDetailBilanCompte(contexte),
     coutDetailFrise(contexte),
     coutDetailGarantie(contexte),
     coutDetailCapitalisation(contexte),
@@ -11852,6 +11853,101 @@ ${g.milliards(moins.horizon("actuel") * pibFin)} à
 ${g.milliards(plus.horizon("actuel") * pibFin)}${auPibFin}.</div>
 `,
     "cout-dette",
+  );
+}
+
+/**
+ * Le bilan du compte de chaque système, à la manière suédoise (action 138,
+ * étape 19) : le STOCK, après ce que les soldes à venir accumulent.
+ *
+ * LA SUÈDE PUBLIE CHAQUE ANNÉE LE BILAN DE SON COMPTE NOTIONNEL, et c'est lui
+ * qui règle ses pensions : quand l'actif passe sous la dette, la revalorisation
+ * des comptes et des pensions est rognée d'autant. L'actif est fait des
+ * réserves et de l'« actif de cotisation », les cotisations de l'année
+ * multipliées par la durée de rotation, le temps moyen qu'un euro passe dans
+ * le système. Le dépôt le calcule pour les quatre systèmes (`bilan_compte.py`),
+ * à la dernière année dont le COR publie les réserves ; la table le fige
+ * (`bilanCompte`), et la page n'en refait aucune opération.
+ */
+function coutDetailBilanCompte(contexte) {
+  const bilan = contexte.agregats().bilanCompte;
+  const comptes = contexte.comptes();
+  const annee = bilan.annee;
+  const pib = pibDeConversion(comptes, annee);
+  const lignes = SCENARIOS_COMPARES.map(([scenario, libelle]) => {
+    const systeme = bilan.systeme(scenario);
+    return [
+      nomScenario(scenario, libelle),
+      `${g.nombre(systeme.dureeRotation, 1)} ans`,
+      partEtMilliards(systeme.actifCotisation, systeme.actifCotisation * pib, 0),
+      partEtMilliards(systeme.dette, systeme.dette * pib, 0),
+      g.nombre(systeme.ratioEquilibre, 2),
+      g.pourcentage(systeme.tauxCotisationEquilibre, false, 1),
+    ];
+  });
+  const actuel = bilan.systeme("actuel");
+  const proposition = bilan.systeme("notionnel_liberal");
+  // Le COR ne donne pas toujours les produits de l'année : la phrase se tait
+  // plutôt que d'écrire un rendement nul.
+  const rendement = bilan.rendement === null ? "" : ` Elles ont rapporté
+${g.pourcentage(bilan.rendement, false, 1)} en ${annee}, produits financiers
+nets sur le stock de la fin de ${annee - 1}.`;
+  return g.depliant(
+    "Le bilan du compte, à la suédoise", `
+<p>Un solde dit ce qui manque une année, et la section précédente ce que ces
+manques accumulent. Ni l'un ni l'autre ne dit ce que le système doit déjà. La
+Suède, qui verse ses retraites en comptes notionnels, le publie chaque année
+dans un <strong>bilan</strong>, et c'est ce bilan qui règle ses pensions. Au
+passif, la dette : ce que les droits déjà acquis feront verser. À l'actif, les
+réserves, et surtout ce que les cotisations peuvent porter : celles de
+l'année, multipliées par la <strong>durée de rotation</strong>, le temps moyen
+qu'un euro passe dans le système, de la cotisation qui l'acquiert à la pension
+qui le rend. Quand l'actif passe sous la dette, la loi suédoise rogne d'autant
+la revalorisation des comptes et des pensions, jusqu'à ce que le rapport des
+deux, le <strong>ratio d'équilibre</strong>, revienne à un. Voici ce bilan
+pour les quatre systèmes, fin ${annee}.</p>
+
+${g.tableau(
+    ["Système", "Durée de rotation", "Actif de cotisation", "Dette des droits acquis",
+      "Ratio d'équilibre", "Taux de cotisation d'équilibre"],
+    lignes,
+    ["", "nombre", "nombre", "nombre", "nombre", "nombre"],
+    `Le bilan de chaque système fin ${annee}, en part du PIB et en milliards `
+    + `d'euros${auPib(comptes, annee)}`,
+    true,
+  )}
+
+<p><strong>Le système actuel doit plus que ses cotisations et ses réserves ne
+portent.</strong> Les droits déjà acquis lui feront verser
+${g.pourcentage(actuel.dette, false, 0)} du PIB,
+${enMilliards(comptes, actuel.dette, annee)}. Un euro y est cotisé en moyenne
+à ${g.nombre(actuel.ageCotisations, 1)} ans et rendu en pension à
+${g.nombre(actuel.agePensions, 1)} ans : ses cotisations de l'année,
+${g.pourcentage(actuel.cotisations, false, 1)} du PIB, en portent
+${g.pourcentage(actuel.actifCotisation, false, 0)}, et ses réserves
+${g.pourcentage(actuel.reserves, false, 1)} : un ratio de
+${g.nombre(actuel.ratioEquilibre, 2)}. Pour payer ${annee} par ses seules
+cotisations, les impôts et les transferts gardés, il lui faudrait prélever
+${g.pourcentage(actuel.tauxCotisationEquilibre, false, 1)} de l'assiette des
+revenus d'activité, au lieu de ${g.pourcentage(actuel.tauxCotisation, false, 1)}.
+La proposition, qui promet moins, doit
+${g.pourcentage(proposition.dette, false, 0)} du PIB, et son ratio est de
+${g.nombre(proposition.ratioEquilibre, 2)}.</p>
+
+<p class="discret">Un bilan en coupe, sur une seule année, comme le suédois :
+la durée de rotation y suppose une structure par âge qui ne bouge pas, et la
+France de ${annee} a ses générations nombreuses à la retraite, qui allongent
+l'âge moyen des pensions ; Pensionsmyndigheten trouve un peu plus de trente ans
+pour la Suède. La dette est l'engagement acquis au prorata des carrières, la
+convention commune aux quatre systèmes, et son niveau dépend du taux qui
+l'actualise, comme le dit le dépliant « D'où viennent ces chiffres » ; la
+Suède met au passif la somme des comptes, qu'un système à prestations définies
+n'a pas. La pension servie ne compte pas la réversion, que la dette compte en
+partie. Les réserves sont celles que le COR recense, Fonds de réserve pour les
+retraites compris : ${g.pourcentage(actuel.reserves, false, 1)} du PIB,
+${enMilliards(comptes, actuel.reserves, annee)}, les mêmes pour les quatre
+systèmes, le programme ne disant pas ce qu'il en ferait.${rendement}</p>`,
+    "cout-bilan-compte",
   );
 }
 

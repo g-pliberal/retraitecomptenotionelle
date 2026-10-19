@@ -9935,7 +9935,10 @@ referents:
           de cotisation, les réserves du COR et, pour dette,
           l'engagement acquis de la page Coût ; le ratio vaut 0,65
           pour le système actuel, 0,92 pour la proposition
-          (`scripts/bilan_compte.py`). Aucune page ne l'affiche.
+          (`scripts/bilan_compte.py`). La page Coût l'affiche depuis
+          le 19 octobre 2026, pour les quatre systèmes que le site
+          compare, figé dans la table du paquet sur la grille du coût
+          (« Le bilan du compte, à la suédoise »).
         etat: repris
         chantier: "138.19"
       - quoi: >-
