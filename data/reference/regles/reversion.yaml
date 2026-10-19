@@ -1045,9 +1045,11 @@ sources:
   - >-
     D. 634-14 (1990) et l'article 7-2 du décret n° 73-937 (1976) tiennent compte, pour
     le minimum de la réversion, « du montant cumulé » des réversions d'avant et d'après
-    1973, sans dire la durée qui le proratise ; ni les circulaires du RSI de la base de
-    la Cnav (n° 2010/016, n° 2012/016) ni l'exposé « Montant - retraite de réversion »
-    ne disent la règle. Le modèle compte les deux durées du défunt, comme D. 634-6 le
+    1973, sans dire la durée qui le proratise ; aucune des circulaires du RSI, de
+    l'ORGANIC et de la CANCAVA que publie la base de la Cnav, relue le 19 octobre 2026,
+    ni ses exposés « Montant - retraite de réversion » et « Liquidation unique de la
+    retraite personnelle des régimes alignés » ne disent la règle. Le modèle compte
+    les deux durées du défunt, comme D. 634-6 le
     dit du minimum contributif, et sert le complément sur la réversion alignée : la
     circulaire n° 2012/016 range le « complément minimum » dans « le montant du régime
     aligné à servir ».
@@ -1107,12 +1109,17 @@ sources:
     de cette réversion, soixantièmes faits ; l'exemple de la circulaire Cnav
     n° 2022-26 (§ 3.6), dont le minimum n'est pas dit, ne tranche pas.
   - >-
-    Les points d'avant 1973 : une circulaire de la CANCAVA, de l'ORGANIC ou du RSI qui
-    applique D. 634-14 et l'article 9 du décret n° 73-937, et dise la durée qui
-    proratise leur minimum (lecture divergente), ce que le cumul d'avant juillet 2004
-    et le plafond de ressources leur retiennent, et si la majoration de 10 % du
-    survivant de trois enfants, que l'article 9 ne cite pas, leur est servie ; le
-    texte de l'article 13-5 de 1976, que l'index n'a que dans sa rédaction de 1984.
+    Les points d'avant 1973 : la durée qui proratise leur minimum (lecture
+    divergente), qu'aucune circulaire publiée ne dit. La base de la Cnav ne garde de
+    l'ORGANIC et de la CANCAVA que cinq circulaires, sur autre chose ; celles qui ont
+    appliqué l'article 7-2 de 1976 puis D. 634-14 n'y sont pas, ni les circulaires de
+    la CANCAVA et de l'ORGANIC que citent celles du RSI. La Cnav, qui gère depuis 2020
+    les droits des travailleurs indépendants, peut dire sa pratique : à lui demander
+    (au propriétaire). Restent aussi, d'une circulaire qui applique l'article 9 du
+    décret n° 73-937, ce que le cumul d'avant juillet 2004 et le plafond de ressources
+    leur retiennent, et si la majoration de 10 % du survivant de trois enfants, que
+    l'article 9 ne cite pas, leur est servie ; le texte de l'article 13-5 de 1976, que
+    l'index n'a que dans sa rédaction de 1984.
   lectures:
   - type: legifrance
     reference: >-
@@ -1486,6 +1493,24 @@ sources:
       de législation de la Cnav ; l'exposé « Montant - retraite de réversion », qui ne
       dit rien des points d'avant 1973
     url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=circulaire_rsi_2010_016_08042010.pdf
+    date: 2026-10-19
+  - type: autre
+    reference: >-
+      la base de législation de la Cnav, par sa recherche (/api/v1/search/custom, en
+      phrase exacte et en « tous ces mots ») : les circulaires du RSI n° 2006/042,
+      2007/002, 2007/041, 2007/061 (les régimes communiquent « le montant de leur
+      pension de réversion (54 % de la pension de l'assuré décédé, après comparaison
+      avec le minimum et le maximum [...]) »), 2007/090, 2007/109, 2008/054, 2009/031,
+      2009/035, 2009/044, 2010/005, 2011/006, 2012/001, 2012/008, 2012/019, 2013/014,
+      2013/021, 2016/011 et 2017/002 ; de l'ORGANIC et de la CANCAVA, les cinq que la
+      base garde, n° 81/139, 90/08, 98/75, 99/69 et 04/15, sur autre chose ; de la Cnav,
+      les n° 2005/17 (§ 22), 2008/42, 2009/64, 2017/27 et 2018/20 (§ 6 : « tous les
+      trimestres validés par les régimes d'assurance vieillesse visés à l'article
+      R. 173-17 »), et les exposés « Montant - retraite de réversion » (la durée « prise
+      en compte pour le calcul de la retraite telle qu'indiquée par ces régimes ») et
+      « Liquidation unique de la retraite personnelle des régimes alignés ». Aucune ne
+      dit si la durée du minimum de D. 634-14 compte les années d'avant 1973
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=circulaire_rsi_2007_061_24042007.pdf
     date: 2026-10-19
 textes_a_rattacher:
 - {id: LEGIARTI000024113027, article: R. 353-1-1, en_vigueur: 2011-06-03, change: "la révision de la réversion quand les ressources varient"}

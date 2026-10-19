@@ -1,0 +1,35 @@
+date: "2026-10-19"
+session: >-
+  l'action 131 : la durée du minimum de la réversion des points d'avant 1973 des
+  artisans et commerçants (D. 634-14), cherchée dans les circulaires publiées
+consulte: >-
+  python scripts/veille_droit.py ; l'index LEGI du dépôt, récupéré, à jour à
+  l'incrément du 18 octobre 2026, aucun paru depuis ; python scripts/textes.py
+  --inscrire, aucune rédaction nouvelle ; la base de législation de la Cnav, par sa
+  recherche (/api/v1/search/custom, en phrase exacte et en « tous ces mots ») : les
+  circulaires du RSI n° 2006/042, 2007/002, 2007/041, 2007/061, 2007/090, 2007/109,
+  2008/054, 2009/031, 2009/035, 2009/044, 2010/005, 2011/006, 2012/001, 2012/008,
+  2012/019, 2013/014, 2013/021, 2016/011 et 2017/002, en plus de celles que la session
+  de la réversion des points avait lues ; les cinq circulaires de l'ORGANIC et de la
+  CANCAVA que la base garde ; de la Cnav, les n° 2005/17, 2008/42, 2009/64, 2017/27 et
+  2018/20, et dix autres de 2018 à 2020 que la recherche rendait ; les exposés
+  « Montant - retraite de réversion » et « Liquidation unique de la retraite
+  personnelle des régimes alignés » ; sur le web, les fiches RET G010 et RET G030 de
+  Gereso (2015), et les extraits des réponses ministérielles que rend la recherche.
+trouve: >-
+  Aucune circulaire publiée ne dit la durée qui proratise le minimum de D. 634-14. La
+  base de la Cnav ne garde de l'ORGANIC et de la CANCAVA que cinq circulaires, sur autre
+  chose, et non celles qui ont appliqué l'article 7-2 de 1976 puis D. 634-14, ni celles
+  que citent les circulaires du RSI. Le RSI fait communiquer à chaque régime sa
+  réversion « après comparaison avec le minimum et le maximum » (n° 2007/061) et réduit
+  le minimum « si l'assuré décédé avait cotisé une durée inférieure à 60 trimestres »
+  (n° 2012/016) ; la Cnav retient, pour proratiser son minimum entre régimes, la durée
+  « prise en compte pour le calcul de la retraite telle qu'indiquée par ces régimes »
+  (l'exposé) et « tous les trimestres validés » (n° 2018/20, § 6) : aucune ne parle des
+  années d'avant 1973. Le scénario 1 ne bouge pas : la lecture du modèle reste déclarée
+  divergente dans la fiche reversion.
+reste: >-
+  La pratique de la Cnav, qui gère depuis 2020 les droits des travailleurs
+  indépendants : sur quelle durée elle proratise le minimum de la réversion d'un
+  artisan ou d'un commerçant qui a des points d'avant 1973 (au propriétaire) ; les
+  autres questions des points d'avant 1973, que la fiche reversion garde.

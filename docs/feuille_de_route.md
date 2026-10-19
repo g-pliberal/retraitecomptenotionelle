@@ -4164,15 +4164,15 @@ R. 111-2 ; la condition de L. 816-1 ; le tableau de 2008 des régimes
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **Reprise, au 19 octobre 2026.** Faits, des coupures au mois à la réversion des points
-d'avant 1973 des artisans et commerçants (D. 634-14). Restent : des classes, l'acte
-vétérinaire (au propriétaire), des décrets non lus ; de
-`coefficients_anticipation_agirc_arrco`, l'ASF réservée de 1983 à 2003 aux salariés en
-activité et aux chômeurs (au propriétaire) ; de `decote_avant_1983`, l'ajournement des
-artisans et commerçants et les « soixante et un ans » agricoles, aux décrets de 1956 à
-1968 (au propriétaire) ; de cette réversion, la durée de son minimum, dans une
-circulaire à trouver ; `pension_non_salaries_agricoles_2026` ; de l'exploitant, les
-années au prorata, celle du décès comprise (au propriétaire : la pratique de la MSA,
-l'option du conjoint survivant), et au compte le forfait du collaborateur. Détail : les notes.
+d'avant 1973 (D. 634-14). Restent : des classes, l'acte vétérinaire (au propriétaire),
+des décrets non lus ; de `coefficients_anticipation_agirc_arrco`, l'ASF réservée de
+1983 à 2003 aux salariés en activité et aux chômeurs (au propriétaire) ; de
+`decote_avant_1983`, l'ajournement des artisans et commerçants et les « soixante et un
+ans » agricoles, aux décrets de 1956 à 1968 (au propriétaire) ; de cette réversion, la
+durée de son minimum, qu'aucune circulaire publiée ne dit (à demander à la Cnav, au
+propriétaire) ; `pension_non_salaries_agricoles_2026` ; de l'exploitant, les années au
+prorata, celle du décès comprise (au propriétaire : la pratique de la MSA, l'option du
+conjoint survivant), et au compte le forfait du collaborateur. Détail : les notes.
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre
 session, à la demande du propriétaire, après avoir vérifié qu'elle ne lui
