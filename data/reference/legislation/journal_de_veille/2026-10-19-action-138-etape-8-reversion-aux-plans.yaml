@@ -1,0 +1,48 @@
+date: "2026-10-19"
+session: "action 138, étape 8 : la réversion du régime aux plans de revalorisation de 1997 à 2008"
+consulte: >-
+  `python scripts/veille_droit.py` (trois fiches à relire, aucune de l'étape). Les index
+  LEGI et JORF du dépôt, récupérés à jour au 18 octobre 2026, aucun incrément depuis, puis
+  `python scripts/textes.py --inscrire` (aucune rédaction nouvelle). Dans l'index LEGI :
+  L. 732-31 de 2000 (LEGIARTI000006585561, LEGIARTI000006585562), L. 732-33 de 2000
+  (LEGIARTI000006585564, LEGIARTI000006585565), L. 732-41 de 2000
+  (LEGIARTI000006585593), L. 732-46 (LEGIARTI000006585603, LEGIARTI000006585604),
+  L. 732-54-1 de 2001 (LEGIARTI000006585622), L. 732-54-2 de 2001, 2004 et 2007
+  (LEGIARTI000006585626 à LEGIARTI000006585628), L. 732-54-4 (LEGIARTI000006585632,
+  LEGIARTI000006585633), L. 732-54-8 de 2001 et 2005 (LEGIARTI000006585642,
+  LEGIARTI000006585645), D. 732-97 (LEGIARTI000006597516), D. 732-113 de 2005
+  (LEGIARTI000006597537), D. 732-116 de 2005 et 2006, D. 732-118 de 2005 et 2007,
+  D. 732-119, D. 732-121, D. 732-126 à D. 732-130 (LEGIARTI000006597555 à
+  LEGIARTI000006597559), D. 732-139 (LEGIARTI000006597573), D. 732-140
+  (LEGIARTI000006597574) et D. 732-147 (LEGIARTI000006597582). Dans l'index JORF : le
+  décret n° 2000-261, articles 1er et 2 ; le décret n° 2001-170, article 3 ; le décret
+  n° 2002-297, articles 4, 5, 11 et 12 ; le décret n° 2002-298, article 5.
+trouve: >-
+  Quatre règles. Les points des conjoints des pensions prises de 1998 à 2001 ne vont
+  qu'aux personnes « qui ne sont pas titulaires d'un des avantages mentionnés aux
+  articles L. 732-41 à L. 732-44 et L. 732-46 » (L. 732-31, puis L. 732-54-2, I), « à la
+  date d'effet de leur pension de retraite personnelle » (D. 732-118) ; obtenue après,
+  la réversion plafonne « le nombre de points gratuits [...], à compter du 1er janvier
+  de l'année qui suit cette obtention, au niveau atteint durant l'année au cours de
+  laquelle a pris effet la pension de réversion » (mêmes articles, II ; D. 732-126 à
+  D. 732-130 pour 1998 à 2001). La réversion entrée en jouissance avant 1995 reste sous
+  L. 732-46, dont le IV majore celle du titulaire qui a sa propre pension (D. 732-97) ;
+  L. 732-33, II, puis L. 732-54-4, relèvent cette majoration forfaitaire depuis 1999, à
+  trente-deux ans et demi d'activité agricole (vingt-sept et demi à quinze ans de
+  conjoint sans autre pension depuis 2000 ; D. 732-139), et ce relèvement passe avant la
+  majoration de la retraite proportionnelle, sauf en 1999 : la pension prise avant 1997
+  garde « P = (20 - n) x d » depuis 2000 (décret n° 2000-261, article 1er ; D. 732-116),
+  celle prise de 1997 à 2001 « demeure P = d x (26,933 - n) » depuis 2001 (décret
+  n° 2001-170, article 3 ; D. 732-113). De 2002 à 2008, une majoration de la réversion
+  porte le droit propre et le droit dérivé au minimum vieillesse au prorata de la durée
+  agricole, aux pensions prises avant 2002 (décret n° 2002-297, article 12 ; D. 732-140)
+  comme depuis (décret n° 2002-298, article 5 ; D. 732-147). Servis, dans les deux
+  moteurs : l'exclusion, le plafond et le minimum figé ; non servis, les majorations de
+  la réversion, droits dérivés que le modèle ne calcule pas.
+reste: >-
+  Au propriétaire : montrer ou non, dans les résultats, les majorations de la réversion,
+  qui rendent en droit dérivé l'essentiel de ce que le veuf d'avant 1995 perd en droit
+  propre. À demander à la MSA : comment elle lit la réversion d'avant 1995 de qui a
+  demandé L. 732-41 (L. 732-46, V), et si les majorations de D. 732-140 et D. 732-147,
+  exprimées en points, sont restées servies après 2009, que la PMR retrancherait. Aucun
+  exemple chiffré publié d'une pension de veuf servie par les plans.
