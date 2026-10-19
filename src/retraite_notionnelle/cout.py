@@ -2308,17 +2308,27 @@ def _departs(simulateur: Simulateur, cas: CasType, generation: int,
     tôt, l'étaient trop tard (action 138, étape 3, note « la grille »). La
     pension reste celle de la génération de la grille. Une cohorte que la
     grille ne sait pas simuler garde la date de la grille."""
-    departs = []
+    return tuple(annee_liquidation + decalage if carriere is None else carriere.annee_liquidation
+                 for decalage, carriere in _carrieres_voisines(simulateur, cas, generation,
+                                                               liquidation))
+
+
+def _carrieres_voisines(simulateur: Simulateur, cas: CasType, generation: int,
+                        liquidation: str = "droit"):
+    """Chacune des cinq cohortes que la génération ``generation`` de la grille
+    représente, du ``-_DEMI_TRANCHE`` au ``+_DEMI_TRANCHE`` : son décalage, et
+    sa carrière sous le droit de sa génération (:func:`_departs`) — ``None``
+    pour la génération de la grille, que l'appelant a déjà, et pour une
+    cohorte que la grille ne sait pas simuler."""
     for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
-        depart = annee_liquidation + decalage
+        carriere = None
         if decalage:
             try:
-                depart = carriere_de_la_grille(simulateur, cas, generation + decalage,
-                                               liquidation).annee_liquidation
+                carriere = carriere_de_la_grille(simulateur, cas, generation + decalage,
+                                                 liquidation)
             except (ValueError, KeyError):
                 pass
-        departs.append(depart)
-    return tuple(departs)
+        yield decalage, carriere
 
 
 def _survies(simulateur: Simulateur, comparaison, generation: int,

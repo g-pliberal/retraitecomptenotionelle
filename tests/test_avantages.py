@@ -783,7 +783,7 @@ def test_les_retraites_de_moins_de_soixante_ans_confrontes_au_jaune_pensions_202
         if part <= 0.0:
             continue
         for decalage in range(-script_cout._DEMI_TRANCHE, script_cout._DEMI_TRANCHE + 1):
-            if annee < pensionne.annee_liquidation + decalage:
+            if annee < pensionne.liquidation(decalage):
                 continue
             age = annee - (pensionne.generation + decalage)
             effectif = part * population.effectif(age, annee)
@@ -804,3 +804,108 @@ def test_les_retraites_de_moins_de_soixante_ans_confrontes_au_jaune_pensions_202
     assert 0.005 < observee["fonctionnaire_actif"] < 0.02
     assert grille["fonctionnaire_sedentaire"] == 0.0
     assert observee["fonctionnaire_sedentaire"] > 0.005
+
+
+def test_chaque_cohorte_part_l_annee_que_lui_donne_le_droit_de_sa_generation(script_cout):
+    """La grille des avantages ne simule qu'une génération sur cinq, et
+    faisait partir les cinq cohortes qu'elle représente à son âge de départ,
+    la date décalée d'autant : l'erreur que la grille du coût a quittée le
+    18 octobre 2026 (note « la date de chaque cohorte »). Le salarié au SMIC
+    entré à 18 ans, né en janvier 1965, part au titre des carrières longues à
+    61 ans, en 2026 ; né en 1963, à 60 ans, en 2023 ; né en 1964, à 60 ans et
+    9 mois, en 2024 ; né en 1966 ou en 1967, à 61 ans, en 2027 et en 2028.
+    Chaque cohorte part désormais l'année et à l'âge que le droit de sa
+    génération lui donne (``Pensionne.departs``, ``Pensionne.ages_depart``) :
+    les masses ne la comptent qu'à partir de là, et ses années servies avant
+    l'âge légal se comptent au sien — 62 ans et 9 mois nés de 1963 à 1965,
+    63 ans et 3 mois en 1966, 63 ans et demi en 1967 (L. 161-17-2, sous la
+    suspension de 2026) —, au prorata de l'année passée entre son départ et
+    cet âge. Sans dates, celles de la grille, et l'âge légal de la grille."""
+    from dataclasses import replace
+
+    from retraite_notionnelle import Parametres
+    from retraite_notionnelle.donnees.population import Population
+    from retraite_notionnelle.simulateur import Simulateur
+
+    parts = {script_cout.CONTRIBUTIF: 1.0, "periodes_assimilees": 0.25}
+    grille = script_cout.Pensionne(code="x", generation=1965, annee_liquidation=2026,
+                                   age_liquidation=61.0, parts=parts,
+                                   motif="carriere_longue")
+    datee = replace(grille, departs=(2023, 2024, 2026, 2027, 2028),
+                    ages_depart=(60.0, 60.75, 61.0, 61.0, 61.0))
+    decalages = range(-2, 3)
+    assert [grille.liquidation(d) for d in decalages] == [2024, 2025, 2026, 2027, 2028]
+    assert [datee.liquidation(d) for d in decalages] == [2023, 2024, 2026, 2027, 2028]
+    assert [grille.age_de_depart(d) for d in decalages] == [61.0] * 5
+    assert [datee.age_de_depart(d) for d in decalages] == [60.0, 60.75, 61.0, 61.0, 61.0]
+
+    population = Population(RACINE_DONNEES)
+    simulateur = Simulateur(Parametres())
+
+    def effectif(cohorte: int, annee: int) -> float:
+        return population.effectif(annee - cohorte, annee)
+
+    # En 2024, les cohortes de 1963 et de 1964 sont parties ; la grille ne
+    # faisait partir que celle de 1963. La première passe l'année entière
+    # avant l'âge légal, à 61 ans ; la seconde, partie à 60 ans et 9 mois, en
+    # passe le dernier quart.
+    parties = effectif(1963, 2024) + effectif(1964, 2024)
+    assert script_cout.masses([datee], population, 2024, {"x": 1.0}) == pytest.approx(
+        {cle: parties * montant for cle, montant in parts.items()}, rel=1e-12)
+    assert script_cout.masses_anticipees([datee], simulateur, population, 2024,
+                                         {"x": 1.0}) == pytest.approx(
+        (1.25 * parties,
+         {"carriere_longue": 1.25 * (effectif(1963, 2024) + 0.25 * effectif(1964, 2024)),
+          "classement": 0.0, "regime_special": 0.0}), rel=1e-12)
+    seule = effectif(1963, 2024)
+    assert script_cout.masses([grille], population, 2024, {"x": 1.0}) == pytest.approx(
+        {cle: seule * montant for cle, montant in parts.items()}, rel=1e-12)
+
+    # Toutes parties, en 2029 : la cohorte de 1966, à 63 ans, passe son
+    # premier trimestre avant l'âge légal de sa génération, celle de 1967, à
+    # 62 ans, l'année entière. Sous l'âge légal de la grille, 62 ans et 9 mois,
+    # la première n'y passait rien, la seconde trois trimestres.
+    toutes = sum(effectif(1965 + d, 2029) for d in decalages)
+    totale, par_motif = script_cout.masses_anticipees([datee], simulateur, population,
+                                                      2029, {"x": 1.0})
+    assert totale == pytest.approx(1.25 * toutes, rel=1e-12)
+    assert par_motif["carriere_longue"] == pytest.approx(
+        1.25 * (0.25 * effectif(1966, 2029) + effectif(1967, 2029)), rel=1e-12)
+    _, par_motif = script_cout.masses_anticipees([grille], simulateur, population, 2029,
+                                                 {"x": 1.0})
+    assert par_motif["carriere_longue"] == pytest.approx(
+        1.25 * 0.75 * effectif(1967, 2029), rel=1e-12)
+
+    # Partie à l'heure, une cohorte n'est jamais anticipée : la carrière
+    # interrompue née en 1962 part en 2024 à 62 ans et demi, son âge légal, et
+    # l'année de son départ ne passait avant lui que comptée à l'année.
+    a_l_heure = script_cout.Pensionne(
+        code="x", generation=1960, annee_liquidation=2022, age_liquidation=62.0,
+        parts=parts, motif="regime_special", departs=(2020, 2021, 2022, 2023, 2024),
+        ages_depart=(62.0, 62.0, 62.0, 62.0, 62.5))
+    totale, par_motif = script_cout.masses_anticipees([a_l_heure], simulateur, population,
+                                                      2024, {"x": 1.0})
+    assert totale == pytest.approx(1.25 * sum(effectif(1960 + d, 2024) for d in decalages),
+                                   rel=1e-12)
+    assert par_motif == {"carriere_longue": 0.0, "classement": 0.0, "regime_special": 0.0}
+
+
+def test_la_decomposition_date_chaque_cohorte_au_droit_de_sa_generation(script_cout,
+                                                                         monkeypatch):
+    """Le salarié au salaire moyen entré à 21 ans : né en janvier 1963, 1964
+    ou 1965, la suspension de la loi de financement pour 2026 lui demande 170
+    trimestres (L. 161-17-3) — il part à 63 ans et demi, en 2026, 2027 et
+    2028 ; né en 1966 ou en 1967, il lui en faut 172, 43 ans — il part à
+    64 ans, en 2030 et en 2031. La décomposition, qui ne simule que la
+    génération 1965, faisait partir ces deux-là en 2029 et en 2030."""
+    from retraite_notionnelle import Parametres
+    from retraite_notionnelle.simulateur import Simulateur
+
+    salarie = next(cas for cas in script_cout.CAS_TYPES if cas.code == "salaire_moyen")
+    monkeypatch.setattr(script_cout, "CAS_TYPES", (salarie,))
+    monkeypatch.setattr(script_cout, "generations", lambda: (1965,))
+    pensionnes, _ = script_cout.decomposer(Simulateur(Parametres()))
+    assert [(p.code, p.generation, p.annee_liquidation) for p in pensionnes] == [
+        ("salaire_moyen", 1965, 2028)]
+    assert pensionnes[0].departs == (2026, 2027, 2028, 2030, 2031)
+    assert pensionnes[0].ages_depart == (63.5, 63.5, 63.5, 64.0, 64.0)

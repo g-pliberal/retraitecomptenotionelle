@@ -54,7 +54,7 @@ from pathlib import Path
 
 from .calendrier import DateMois
 from .castypes import CAS_TYPES, CasType
-from .cout import _DEMI_TRANCHE, _ponderation, generations
+from .cout import _DEMI_TRANCHE, _carrieres_voisines, _ponderation, generations
 from .donnees.chargement import charger_yaml
 from .donnees.depenses import DepensesRetraite
 from .donnees.population import Population
@@ -761,6 +761,27 @@ class Pensionne:
     #: référence. Les clés sont les lignes de coût ; leur somme vaut la pension.
     parts: dict[str, float]
     motif: str
+    #: L'année où part chacune des cinq cohortes que la génération représente,
+    #: du ``-_DEMI_TRANCHE`` au ``+_DEMI_TRANCHE`` : celle que le droit de SA
+    #: génération donne au cas type (:func:`_departs_des_cohortes`, action 138,
+    #: étape 3). Vide, celle de la grille, décalée d'autant.
+    departs: tuple[int, ...] = ()
+    #: L'âge où part chacune, de même. Vide, celui de la grille.
+    ages_depart: tuple[float, ...] = ()
+
+    def liquidation(self, decalage: int) -> int:
+        """L'année où part la cohorte née ``decalage`` ans après la génération
+        de la grille."""
+        if not self.departs:
+            return self.annee_liquidation + decalage
+        return self.departs[decalage + _DEMI_TRANCHE]
+
+    def age_de_depart(self, decalage: int) -> float:
+        """L'âge où part la cohorte née ``decalage`` ans après la génération
+        de la grille."""
+        if not self.ages_depart:
+            return self.age_liquidation
+        return self.ages_depart[decalage + _DEMI_TRANCHE]
 
 
 @dataclass
@@ -840,6 +861,12 @@ def decomposer(simulateur: Simulateur, liquidation: str = "droit"
     porte qu'un morceau de sa population — un agrégat biaisé, et dont le biais
     serait invisible. Une ligne refusée quelque part est donc retirée PARTOUT,
     et son montant rendu à la part contributive d'où il venait.
+
+    CHAQUE COHORTE PART L'ANNÉE DE SON DROIT. Un couple représente cinq
+    cohortes, et chacune part l'année et à l'âge que le droit de sa génération
+    donne au cas type (:func:`_departs_des_cohortes`), comme dans la grille du
+    coût ; sa pension, et ce qu'elle porte d'avantages, restent ceux de la
+    génération simulée.
     """
     macro = simulateur.macro
     annee_euros = simulateur.parametres.annee_euros_constants
@@ -872,6 +899,8 @@ def decomposer(simulateur: Simulateur, liquidation: str = "droit"
                 parts[ligne] = parts.get(ligne, 0.0) + montant
                 parts[CONTRIBUTIF] -= montant
             coefficient = macro.coefficient_prix(carriere.annee_liquidation, annee_euros)
+            departs, ages_depart = _departs_des_cohortes(simulateur, cas, generation, carriere,
+                                                         liquidation)
             pensionnes.append(Pensionne(
                 code=cas.code,
                 generation=generation,
@@ -879,6 +908,8 @@ def decomposer(simulateur: Simulateur, liquidation: str = "droit"
                 age_liquidation=age,
                 parts={cle: valeur * coefficient for cle, valeur in parts.items()},
                 motif=motif_de_depart(cas, actuel),
+                departs=departs,
+                ages_depart=ages_depart,
             ))
     for pensionne in pensionnes:
         for ligne in refus:
@@ -887,13 +918,33 @@ def decomposer(simulateur: Simulateur, liquidation: str = "droit"
     return pensionnes, refus
 
 
+def _departs_des_cohortes(simulateur: Simulateur, cas: CasType, generation: int,
+                          carriere, liquidation: str = "droit"
+                          ) -> tuple[tuple[int, ...], tuple[float, ...]]:
+    """L'année et l'âge où part chacune des cinq cohortes que la génération
+    ``generation`` de la grille représente, partie elle sur ``carriere`` : ceux
+    que le droit de SA génération donne au cas type, comme dans la grille du
+    coût (:func:`~.cout._departs`). Une cohorte que la grille ne sait pas
+    simuler part à l'âge de la grille, l'année décalée d'autant."""
+    departs, ages = [], []
+    for decalage, voisine in _carrieres_voisines(simulateur, cas, generation, liquidation):
+        if voisine is None:
+            departs.append(carriere.annee_liquidation + decalage)
+            ages.append(float(carriere.age_liquidation))
+        else:
+            departs.append(voisine.annee_liquidation)
+            ages.append(float(voisine.age_liquidation))
+    return tuple(departs), tuple(ages)
+
+
 def masses(pensionnes: list[Pensionne], population: Population, annee: int,
            poids_cas: dict[str, float]) -> dict[str, float]:
     """La masse de chaque part une année donnée.
 
     Copie fidèle de la pondération de :func:`cout._masses` pour le scénario 1 :
     chaque génération de la grille en représente cinq, parcourues une à une,
-    chacune liquidant sa propre année. Le scénario 1 n'est pas revalorisé — le
+    chacune partie l'année que le droit de sa génération lui donne
+    (:meth:`Pensionne.liquidation`). Le scénario 1 n'est pas revalorisé — le
     droit l'indexe sur les prix et les masses sont déjà en euros constants —, si
     bien qu'un seul poids suffit, celui des têtes.
     """
@@ -904,7 +955,7 @@ def masses(pensionnes: list[Pensionne], population: Population, annee: int,
             continue
         poids = 0.0
         for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
-            if annee < pensionne.annee_liquidation + decalage:
+            if annee < pensionne.liquidation(decalage):
                 continue
             poids += population.effectif(annee - pensionne.generation - decalage, annee)
         if poids <= 0.0:
@@ -939,24 +990,9 @@ def masses_anticipees(pensionnes: list[Pensionne], simulateur: Simulateur,
         if part_cas <= 0.0:
             continue
         pension = somme_ordonnee(pensionne.parts.values())
-        # L'ÂGE LÉGAL EST CELUI DE LA GÉNÉRATION DE LA GRILLE, et il est lu une
-        # seule fois — non celui de chacune des cinq cohortes que la tranche
-        # représente. La nuance n'est pas un raffinement.
-        #
-        # L'âge de DÉPART a été calculé une fois, pour la génération de la
-        # grille, et les cinq cohortes le portent tel quel : c'est la convention
-        # de `cout._masses`, qui décale l'année de liquidation et garde l'âge.
-        # Opposer cet âge-là à l'âge légal d'une cohorte plus jeune revenait
-        # donc à déclarer anticipé un départ que rien n'avançait, et la réforme
-        # de 2023 — un trimestre d'âge légal par génération — faisait tripler la
-        # série sur ses deux dernières années par ce seul effet de bord. Un
-        # départ est anticipé ou il ne l'est pas ; il ne l'est pas à moitié
-        # parce que la tranche est large de cinq ans.
-        legal = ages.age(pensionne.generation)
-        seuil = None if legal is None else legal[0]
         for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
             cohorte = pensionne.generation + decalage
-            if annee < pensionne.annee_liquidation + decalage:
+            if annee < pensionne.liquidation(decalage):
                 continue
             age_atteint = annee - cohorte
             effectif = population.effectif(age_atteint, annee)
@@ -964,11 +1000,39 @@ def masses_anticipees(pensionnes: list[Pensionne], simulateur: Simulateur,
                 continue
             masse = part_cas * effectif * pension
             totale += masse
+            # L'ÂGE LÉGAL EST CELUI DE LA GÉNÉRATION DONT LE DROIT DATE LE
+            # DÉPART. La nuance n'est pas un raffinement.
+            #
+            # Chaque cohorte part l'année et à l'âge que le droit de SA
+            # génération donne au cas type (`Pensionne.departs`) : ses années
+            # précoces se comptent à son âge légal à elle. Jusqu'au 19 octobre
+            # 2026, les cinq cohortes partaient à l'âge de la génération de la
+            # grille, la date décalée d'autant, et l'âge légal se lisait une
+            # seule fois, pour elle : opposer cet âge de départ-là à l'âge légal
+            # d'une cohorte plus jeune déclarait anticipé un départ que rien
+            # n'avançait, et la réforme de 2023 — un trimestre d'âge légal par
+            # génération — faisait tripler la série sur ses deux dernières
+            # années par ce seul effet de bord. Sans dates, la cohorte part
+            # encore à l'âge de la grille, et l'âge légal reste celui de la
+            # grille. Un départ est anticipé ou il ne l'est pas ; il ne l'est
+            # pas à moitié parce que la tranche est large de cinq ans.
+            legal = ages.age(cohorte if pensionne.departs else pensionne.generation)
+            if legal is None:
+                continue
             # Et seules les ANNÉES précoces comptent, non toute la retraite de
             # qui est parti tôt : la grandeur cherchée est l'annuité servie
-            # avant l'âge légal, qui s'éteint le jour où l'assuré l'atteint.
-            if seuil is not None and age_atteint < seuil:
-                par_motif[pensionne.motif] += masse
+            # avant l'âge légal, qui s'éteint le jour où l'assuré l'atteint. La
+            # part de l'année qu'elle couvre va du départ, s'il tombe cette
+            # année-là, à l'âge légal, s'il y tombe aussi. Comptée à l'année,
+            # toute l'année où la cohorte atteint son âge légal passait avant
+            # lui : l'âge légal n'étant plus rond — 62 ans et demi nés en
+            # 1962 —, une cohorte partie à l'heure devenait anticipée l'année
+            # de son départ, et la grille, aux âges légaux ronds de ses
+            # générations jusqu'à 1960, ne le montrait pas avant 2027.
+            precoce = (min(legal[0], age_atteint + 1.0)
+                       - max(pensionne.age_de_depart(decalage), float(age_atteint)))
+            if precoce > 0.0:
+                par_motif[pensionne.motif] += masse * precoce
     return totale, par_motif
 
 

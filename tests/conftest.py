@@ -187,6 +187,11 @@ EXCEPTIONS = {
      "test_chaque_cohorte_part_l_annee_que_lui_donne_le_droit_de_sa_generation"): "rapide",
     ("test_cout.py",
      "test_la_grille_date_chaque_cohorte_au_droit_de_sa_generation"): "rapide",
+    # De même, la date de chaque cohorte de la grille des avantages.
+    ("test_avantages.py",
+     "test_chaque_cohorte_part_l_annee_que_lui_donne_le_droit_de_sa_generation"): "rapide",
+    ("test_avantages.py",
+     "test_la_decomposition_date_chaque_cohorte_au_droit_de_sa_generation"): "rapide",
     # Le portage JavaScript, rejoué contre le Python : deux moteurs.
     ("test_cumul_activites.py",
      "test_le_portage_javascript_concorde_sur_des_cumuls_tires_au_hasard"): "complet",
