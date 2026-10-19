@@ -26,13 +26,13 @@
 #
 # À QUOI CETTE SÉRIE SERT
 # ------------------------
-# À faire vivre l'inapte de la grille du coût au rythme des inaptes de la
-# Cnav (action 138, étape 7). Comme les pensionnés civils de l'État
-# (esperances_vie_populations.csv), chaque type est une population dont le
-# modèle cale un FACTEUR sur la force de mortalité de la table générale de
-# l'année observée, de sorte qu'elle rende l'espérance à 65 ans publiée ici,
-# puis le tient constant ; les autres âges ne servent qu'au contrôle
-# (tests/test_donnees.py).
+# À faire vivre l'inapte et l'ex-invalide de la grille du coût au rythme des
+# inaptes et des ex-invalides de la Cnav (action 138, étape 7). Comme les
+# pensionnés civils de l'État (esperances_vie_populations.csv), chaque type
+# est une population dont le modèle cale un FACTEUR sur la force de
+# mortalité de la table générale de l'année observée, de sorte qu'elle
+# rende l'espérance à 65 ans publiée ici, puis le tient constant ; les
+# autres âges ne servent qu'au contrôle (tests/test_donnees.py).
 #
 # CE QU'IL FAUT SAVOIR AVANT DE S'EN SERVIR
 # ------------------------------------------

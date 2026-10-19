@@ -6354,9 +6354,11 @@ referents:
           sur l'espérance à 65 ans de 2017). Le même jour, son
           ex-invalide (`castypes.EX_INVALIDE_CNAV`), à la part des
           départs d'ex-invalides, 8,8 % de la Cnav, sa carrière finissant
-          en invalidité ; il vit encore au rythme du vingtile de son
-          salaire : reste sa mortalité (`cnav_ex_invalide`), avec la
-          phrase de la page Coût qui la nommera.
+          en invalidité, qui vit au rythme des ex-invalides de la Cnav
+          (`cnav_ex_invalide`), comme la page Coût le dit. Reste la forme
+          de leur surmortalité : un facteur constant, calé à 65 ans, quand
+          Prisme a des quotients à chaque âge, et que la Cnav voit ses
+          inaptes rejoindre la population générale vers 85 ans.
         etat: a_reprendre
         chantier: "138.7"
       - quoi: >-

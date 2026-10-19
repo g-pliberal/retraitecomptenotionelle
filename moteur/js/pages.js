@@ -10546,9 +10546,10 @@ des âges de l'INSEE. Dans chacune, chaque cas type survit, depuis son départ,
 au rythme du vingtile de niveau de vie où son diviseur le range, à nombre de
 décès égal : la pyramide garde ses survivants, et seule change leur
 répartition entre fortes et faibles pensions. Le salarié reconnu inapte au
-travail, compté avec le salarié au SMIC dans le dépliant « Ce que chaque
-carrière type pèse dans ces chiffres », survit, lui, au rythme des inaptes de
-la Cnav. Les écarts viennent des treize cas types croisés avec
+travail et le salarié ex-invalide, comptés avec le salarié au SMIC dans le
+dépliant « Ce que chaque carrière type pèse dans ces chiffres », survivent,
+eux, l'un au rythme des inaptes de la Cnav, l'autre au rythme de ses
+ex-invalides. Les écarts viennent des treize cas types croisés avec
 ${c.generations.length} générations, de ${c.generations[0]} à
 ${c.generations[c.generations.length - 1]}.</p>
 
@@ -16454,7 +16455,7 @@ export const MESURES_BLOCAGES = {
   // 18 % à 2,2 points.
   solde_moyen_proposition: -1.1,
   solde_moyen_actuel: -1.1,
-  dette_2070_proposition: 76,
+  dette_2070_proposition: 73,
   dette_2070_actuel: 66,
   coefficient_minimum: 0.83,
   decennie_coefficient_minimum: 2040,

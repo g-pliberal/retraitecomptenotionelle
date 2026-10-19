@@ -434,8 +434,8 @@ class Pensionne:
     #: La survie de chacune de ses cinq cohortes RAPPORTÉE à celle de la
     #: population générale, année par année depuis sa liquidation : celle de
     #: la population que son diviseur lui rattache, ou de la sienne, pour
-    #: l'inapte (:func:`_survies`, action 138, étape 7). Vide, la population
-    #: générale, celle de la pyramide.
+    #: l'inapte et l'ex-invalide (:func:`_survies`, action 138, étape 7).
+    #: Vide, la population générale, celle de la pyramide.
     survies: tuple[tuple[float, ...], ...] = ()
     #: L'année où part chacune de ses cinq cohortes sous le droit en vigueur,
     #: du ``-_DEMI_TRANCHE`` au ``+_DEMI_TRANCHE`` : celle que le droit de SA
@@ -2505,9 +2505,10 @@ def _survies(simulateur: Simulateur, population: str | None, generation: int,
     diviseur rattache à sa carrière, telle que la simulation la rend, ou
     ``None`` sous la table commune. ``propre`` nomme la population d'un
     cas type qui ne vit pas comme celle de son diviseur
-    (:attr:`~retraite_notionnelle.castypes.CasType.mortalite`) : l'inapte,
-    qui vit comme les inaptes de la Cnav, et non comme le vingtile de son
-    salaire ; sous la table commune, il vit comme la pyramide, lui aussi.
+    (:attr:`~retraite_notionnelle.castypes.CasType.mortalite`) : l'inapte et
+    l'ex-invalide, qui vivent comme les inaptes et les ex-invalides de la
+    Cnav, et non comme le vingtile de leur salaire ; sous la table commune,
+    ils vivent comme la pyramide, eux aussi.
 
     LES CAS TYPES NE VIVENT PLUS TOUS COMME LA POPULATION GÉNÉRALE. Jusqu'au
     17 octobre 2026, la pyramide de l'INSEE comptait les survivants de chaque

@@ -444,7 +444,8 @@ def test_l_ex_invalide_de_la_cnav_part_au_taux_plein_des_l_age_legal():
     from retraite_notionnelle.castypes import EX_INVALIDE_CNAV as cas, cas_type_affiche
 
     simulateur = Simulateur(Parametres())
-    assert not cas.inaptitude and cas_type_affiche(cas.code) == "smic_carriere_complete"
+    assert not cas.inaptitude and cas.mortalite == "cnav_ex_invalide"
+    assert cas_type_affiche(cas.code) == "smic_carriere_complete"
     assert (cas.affiliation, cas.age_debut, cas.niveau_salaire, cas.caisses) == (
         "salarie_prive_non_cadre", 18, 1.29, ("cnav",))
     inactif = replace(cas, interruptions_relatives=tuple(

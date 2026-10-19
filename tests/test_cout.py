@@ -1496,6 +1496,46 @@ def test_l_inapte_vit_au_rythme_des_inaptes_de_la_cnav():
     assert pensionnes and not any(p.survies for p in pensionnes)
 
 
+def test_l_ex_invalide_vit_au_rythme_des_ex_invalides_de_la_cnav():
+    """L'ex-invalide de la grille du coût ne vit pas comme le vingtile où son
+    salaire le range, mais comme les ex-invalides de la Cnav, qui vivent, à
+    soixante-deux ans, 6,2 ans de moins que les pensions normales chez les
+    hommes et 4,4 chez les femmes, quand les inaptes en vivent 4,7 et 4,1 de
+    moins (Cadr'@ge n° 40 ; action 138, étape 7) : sa survie, cohorte par
+    cohorte et depuis sa liquidation, est celle de la population
+    ``cnav_ex_invalide`` rapportée à la population générale, unisexe et par
+    génération. Parti la même année que l'inapte, au même âge, il meurt plus
+    vite que lui, et l'inapte que le salarié au SMIC ; son diviseur, lui,
+    garde le vingtile de son salaire. Sous la table commune
+    (``population_conversion=None``), la pyramide seule, comme tous."""
+    from retraite_notionnelle.cout import _pensionnes
+
+    simulateur = Simulateur(Parametres())
+    mortalite = simulateur.mortalite
+    smic = next(cas for cas in CAS_TYPES if cas.code == "smic_carriere_complete")
+    pensionnes, _ = _pensionnes(simulateur, (smic, INAPTE_CNAV, EX_INVALIDE_CNAV), "droit")
+    de_1960 = {p.code: p for p in pensionnes if p.generation == 1960}
+    ex_invalide, inapte = de_1960[EX_INVALIDE_CNAV.code], de_1960[INAPTE_CNAV.code]
+    for decalage in range(-2, 3):
+        depart = ex_invalide.liquidation(decalage)
+        age = float(depart - 1960 - decalage)
+        generale = mortalite.courbe(age, float(depart), None, True, None)
+        propre = mortalite.courbe(age, float(depart), None, True, "cnav_ex_invalide")
+        assert ex_invalide.survie(decalage, depart) == 1.0
+        for rang in (10, 25):
+            assert ex_invalide.survie(decalage, depart + rang) == pytest.approx(
+                propre[rang] / generale[rang], rel=1e-12), (decalage, rang)
+    smic_1960 = de_1960["smic_carriere_complete"]
+    assert ex_invalide.annee_liquidation == inapte.annee_liquidation == 2022
+    assert (ex_invalide.survie(0, 2047) < inapte.survie(0, 2047)
+            < smic_1960.survie(0, smic_1960.annee_liquidation + 25) < 1.0)
+    assert simulateur.convertisseur.population_de(
+        EX_INVALIDE_CNAV.construire(simulateur, 1960)).startswith("niveau_de_vie_v")
+    commune = Simulateur(Parametres(population_conversion=None))
+    pensionnes, _ = _pensionnes(commune, (EX_INVALIDE_CNAV,), "droit")
+    assert pensionnes and not any(p.survies for p in pensionnes)
+
+
 def test_les_fonctionnaires_civils_entrent_tard_dans_leur_regime():
     """Action 147, étape 11, puis action 159, étape 5 : sous les conventions
     du COR, les deux fonctionnaires civils commencent leur carrière

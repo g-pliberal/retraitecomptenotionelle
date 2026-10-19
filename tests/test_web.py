@@ -3802,7 +3802,8 @@ def test_la_page_cout_dit_au_rythme_de_qui_chaque_cas_type_survit():
     Chaque variante de la grille du coût qui vit à part (``CasType.mortalite``)
     s'y nomme, avec le cas type dont la table des poids la compte
     (``cas_type_affiche``), sans ligne à elle, et la population qu'elle suit :
-    l'inapte, avec le salarié au SMIC, au rythme des inaptes de la Cnav."""
+    l'inapte et l'ex-invalide, avec le salarié au SMIC, au rythme des inaptes
+    et des ex-invalides de la Cnav."""
     from retraite_notionnelle import Parametres
     from retraite_notionnelle.castypes import GRILLE_DU_COUT, cas_type_affiche
     from retraite_notionnelle.config import POPULATION_PAR_NIVEAU_DE_VIE
@@ -3821,11 +3822,15 @@ def test_la_page_cout_dit_au_rythme_de_qui_chaque_cas_type_survit():
     # Ce que la page en dit, variante par variante : une variante de plus qui
     # vivrait à part ferait tomber ce test, et se nommerait.
     poids = "Ce que chaque carrière type pèse dans ces chiffres"
+    a_la_cnav = (
+        "Le salarié reconnu inapte au travail et le salarié ex-invalide, comptés avec le "
+        f"salarié au SMIC dans le dépliant « {poids} », survivent, eux, l'un au rythme "
+        "des inaptes de la Cnav, l'autre au rythme de ses ex-invalides.")
     nommees = {
         "smic_carriere_complete~inapte": (
-            "smic_carriere_complete", "cnav_inaptitude",
-            "Le salarié reconnu inapte au travail, compté avec le salarié au SMIC dans "
-            f"le dépliant « {poids} », survit, lui, au rythme des inaptes de la Cnav."),
+            "smic_carriere_complete", "cnav_inaptitude", a_la_cnav),
+        "smic_carriere_complete~ex_invalide": (
+            "smic_carriere_complete", "cnav_ex_invalide", a_la_cnav),
     }
     a_part = {cas.code: cas for cas in GRILLE_DU_COUT if cas.mortalite}
     assert set(a_part) == set(nommees)

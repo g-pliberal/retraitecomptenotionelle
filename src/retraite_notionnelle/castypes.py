@@ -629,13 +629,12 @@ INAPTE_CNAV = replace(
 #: 1,29 SMIC, il a le salaire annuel moyen publié, né en 1959 et parti en
 #: 2021, quand le SMIC de chaque année, que ce salaire revalorise sur les
 #: prix, n'en ferait que 75 %. Il porte la part de la caisse que ses départs
-#: lui donnent (:data:`PART_EX_INVALIDES_CNAV`). Variante du salarié au SMIC,
-#: auquel les poids que la page affiche le rapportent
-#: (:func:`cas_type_affiche`). Il vit encore au rythme du vingtile de son
-#: salaire, comme les cas types de la page, quand les ex-invalides de la Cnav
-#: vivent, à soixante-deux ans, six ans de moins que les pensions normales
-#: chez les hommes et quatre chez les femmes (``cnav_ex_invalide``) : la page
-#: Coût devra le dire quand il les suivra.
+#: lui donnent (:data:`PART_EX_INVALIDES_CNAV`) et vit au rythme des
+#: ex-invalides de la Cnav, à soixante-deux ans six ans de moins que les
+#: pensions normales chez les hommes et quatre chez les femmes, plus vite que
+#: les inaptes (Cadr'@ge n° 40, ``esperances_vie_pensions_cnav.csv``).
+#: Variante du salarié au SMIC, auquel les poids que la page affiche le
+#: rapportent (:func:`cas_type_affiche`).
 EX_INVALIDE_CNAV = replace(
     _cas("smic_carriere_complete"),
     code="smic_carriere_complete~ex_invalide",
@@ -643,6 +642,7 @@ EX_INVALIDE_CNAV = replace(
     age_liquidation=62, niveau_salaire=1.29,
     interruptions_relatives=tuple((decalage, "invalidite") for decalage in range(28, 52)),
     parts_caisses=(("cnav", PART_EX_INVALIDES_CNAV),),
+    mortalite="cnav_ex_invalide",
     commentaire=(
         "À 1,29 SMIC de dix-huit à quarante-cinq ans, en invalidité ensuite : "
         "à l'âge légal, la pension de vieillesse remplace sa pension "

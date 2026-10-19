@@ -57,10 +57,10 @@ les couples (cas type, génération) de sa grille, variantes comprises
 dernière année observée, et sa survie. Depuis le 17 octobre 2026, la page
 fait vivre chaque cas type au rythme de la population de son diviseur, le
 vingtile où le salaire de sa carrière le range, ou de la sienne, pour
-l'inapte, à nombre de décès égal : chaque cohorte garde les survivants de la
-pyramide, que cette survie répartit entre fortes et faibles pensions
-(``cout._survies``, ``_survies_alignees``). Le script prend la même, par les
-mêmes fonctions, sur les mêmes vingtiles.
+l'inapte et l'ex-invalide, à nombre de décès égal : chaque cohorte garde les
+survivants de la pyramide, que cette survie répartit entre fortes et faibles
+pensions (``cout._survies``, ``_survies_alignees``). Le script prend la même,
+par les mêmes fonctions, sur les mêmes vingtiles.
 
 La page ne la compte que sous le diviseur par vingtile, le défaut du site :
 l'interrupteur est le même, et sous la table commune, d'où partent les
@@ -226,9 +226,9 @@ def _couple(pensionne, simulateur, vingtile: str, propre: str = ""):
     survie posée comme la page la pose sous le diviseur par vingtile, et le
     rapport des diviseurs de ses cinq cohortes (:func:`_rapports`). Sa survie
     est celle de la population de son diviseur, ``vingtile``, ou de la
-    sienne, ``propre``, pour l'inapte (``CasType.mortalite``), chaque cohorte
-    depuis son départ (``cout._survies``) ; son diviseur reste celui de son
-    vingtile."""
+    sienne, ``propre``, pour l'inapte et l'ex-invalide (``CasType.mortalite``),
+    chaque cohorte depuis son départ (``cout._survies``) ; son diviseur reste
+    celui de son vingtile."""
     from retraite_notionnelle.cout import _DEMI_TRANCHE, _survies
 
     departs = tuple(pensionne.liquidation(decalage)
