@@ -1,0 +1,31 @@
+date: "2026-10-19"
+session: "action 138, étape 9, suite de la huitième partie : le minimum de pension de l'agent de la SNCF"
+consulte: >-
+  python scripts/veille_droit.py ; l'index LEGI, récupéré puis mis à jour de
+  ses huit incréments jusqu'au 18 octobre 2026, et python scripts/textes.py
+  --inscrire, qui n'inscrit aucune rédaction nouvelle ; dans l'index, le
+  décret n° 2008-639, article 15 (ses six rédactions), article 1er (sept),
+  article 3 (six), article 37-1 (quatre), articles 4, 5, 13 et 16, et le
+  décret n° 2011-291, article 18 ; L. 17 du code des pensions civiles et
+  militaires ; les pages de la caisse « Comprendre ses droits » et « Retraite
+  anticipée des travailleurs handicapés » (cprpf.fr), et la fiche du COR sur
+  la caisse (juillet 2024), le 19 octobre 2026.
+trouve: >-
+  La pension d'ancienneté de la SNCF — vingt-cinq ans de services valables
+  pour la retraite, vingt-sept depuis 2017, abaissés pour qui en comptait
+  vingt-cinq avant 2022 (article 37-1, I, 3°) — ne peut être inférieure au
+  minimum de pension de l'article 15, IV ; depuis le 1er janvier 2017, au taux
+  plein seulement (durée requise ou âge d'annulation de la décote), sauf à
+  l'agent qui avait l'âge de liquidation de 2008 avant cette date (décret
+  n° 2011-291, article 18, II). La pension proportionnelle n'y a pas droit.
+  La fiche minimum_pension_sncf le porte dans les deux moteurs ; le minimum de
+  la réversion de l'article 18 joue de lui-même sur la pension qu'il relève.
+  L'écrêtement du IV et la condition d'avoir liquidé toutes ses pensions
+  renvoient au décret de L. 17, qui n'a jamais paru : ils ne sont pas
+  appliqués, comme à la fonction publique. Aucune autre règle n'a changé.
+reste: >-
+  L'écrêtement du IV depuis le 22 octobre 2023, où la phrase qui renvoyait ses
+  modalités au décret de L. 17 a disparu : au propriétaire, avec une question à
+  la CPRP ; l'ASPA de l'article 23 (au propriétaire) ; le minimum du grade à
+  service discontinu, celui de la pension de réforme ; le règlement de
+  retraites d'avant juillet 2008 ; le plafond de la SNCF de 2027.

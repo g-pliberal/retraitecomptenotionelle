@@ -1,0 +1,270 @@
+schema_version: 1
+id: minimum_pension_sncf
+intitule: >-
+  Le minimum de pension de la SNCF (décret n° 2008-639, article 15, I et IV) : la
+  pension d'ancienneté — vingt-cinq ans de services valables pour la retraite,
+  vingt-sept depuis 2017, abaissés pour qui en comptait vingt-cinq avant 2022 — ne
+  peut être inférieure à 3 379,38 € par trimestre au 1er décembre 2008, 1 215,64 € par
+  mois au 1er octobre 2014, revalorisés comme les pensions de l'État ; depuis 2017,
+  au taux plein seulement — la durée requise, ou l'âge d'annulation de la décote —,
+  sauf à l'agent qui avait atteint avant cette date l'âge de liquidation de 2008.
+domaine: minima
+regimes:
+- sncf
+etape: completer_tous_regimes
+face: droit
+etat: approchee
+lit:
+- les années de services valables pour la retraite à la SNCF, et le mois où elles
+  atteignent vingt-cinq ans
+- l'âge de liquidation, l'âge d'ouverture de l'article 1er et l'âge d'annulation de la
+  décote, que l'étape qui liquide calcule
+- la durée d'assurance de l'article 13, III, et la durée requise de l'article 12
+- la pension calculée, surcote comprise
+- le minimum de pension de l'article 15, IV (minimum_pension_sncf.csv), revalorisé
+  comme les pensions (revalorisation_pensions.csv), à la date d'effet
+ecrit:
+- le complément qui porte la pension d'ancienneté au minimum de pension
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la pension (§ 4.1) : le
+# règlement de retraites d'avant le 1er juillet 2008, que l'index ne porte pas, puis
+# l'article 15 de 2008, puis celui que le décret n° 2011-291 applique aux pensions
+# prenant effet à compter du 1er janvier 2017 (article 18, II). L'étape qui liquide
+# dit si le minimum est ouvert (droit/liquider.py, minimum_de_pension_ouvert, et son
+# jumeau) ; celle qui complète porte la pension à son montant (droit/completer.py,
+# minimum_de_pension_sncf, et son jumeau).
+versions:
+- id: avant_2008
+  statut: supposee
+  hypothese: >-
+    le règlement de retraites du personnel de la SNCF, qui réglait les pensions avant
+    le 1er juillet 2008 et que l'index LEGI ne porte pas, n'a pas été lu, ni aucun
+    montant de son minimum : le modèle n'en sert pas
+  fiabilite: moyenne
+  bornes:
+    liquidation.date_effet: [null, 2008-07-01]
+  contenu:
+    droit: aucun minimum servi
+    parametres:
+      existe: false
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: anciennete_2008
+  statut: lue
+  textes:
+  - {id: LEGIARTI000019108319, article: "décret n° 2008-639, article 15", en_vigueur: 2008-07-01}
+  - {id: LEGIARTI000030598853, article: "décret n° 2008-639, article 15", en_vigueur: 2015-05-18}
+  - {id: LEGIARTI000019108252, article: "décret n° 2008-639, article 1er", en_vigueur: 2008-07-01}
+  - {id: LEGIARTI000019108259, article: "décret n° 2008-639, article 3", en_vigueur: 2008-07-01}
+  - {id: LEGIARTI000023733100, article: "décret n° 2008-639, article 3", en_vigueur: 2011-03-21}
+  - {id: LEGIARTI000032935184, article: "décret n° 2008-639, article 3", en_vigueur: 2016-07-24}
+  - {id: LEGIARTI000023730143, article: "décret n° 2011-291, article 18", en_vigueur: 2011-03-21}
+  nee_de: LEGIARTI000019108319
+  bornes:
+    liquidation.date_effet: [2008-07-01, 2017-01-01]
+  contenu:
+    droit: >-
+      « Lorsqu'il est procédé à la liquidation de la pension d'ancienneté, le montant
+      de celle-ci ne peut être inférieur à un montant minimal défini au IV
+      ci-dessous » ; « Le montant du minimum de pension est égal à 3 367,02 € par
+      trimestre à compter du 1er juillet 2008 et à 3 379,38 € par trimestre à compter
+      du 1er décembre 2008 », puis « à 1 215,64 euros par mois à partir du 1er octobre
+      2014 », « revalorisé dans les conditions définies à l'article 30 » (article 15,
+      I et IV) : `minimum_pension_sncf.csv`
+    beneficiaire: >-
+      l'agent qui « a droit à une pension de retraite lorsqu'il a au moins vingt-cinq
+      années de services valables pour la retraite et atteint l'âge » de l'article 1er
+      (rédaction de 2008) ; celui qui ne peut y prétendre a « une pension de retraite
+      proportionnelle » (article 3), sans minimum
+    conditions: >-
+      aucune autre : ni durée d'assurance ni âge du taux plein ; la pension calculée
+      sur un grade à service discontinu a un autre minimum, « 90 % du traitement fixe
+      [...] d'un agent en début de carrière » (article 15, I)
+    parametres:
+      existe: true
+      services_requis_mois: 300
+      taux_plein: false
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: taux_plein_2017
+  statut: lue
+  textes:
+  - {id: LEGIARTI000023733127, article: "décret n° 2008-639, article 15", en_vigueur: 2017-01-01}
+  - {id: LEGIARTI000045021306, article: "décret n° 2008-639, article 15", en_vigueur: 2022-01-02}
+  - {id: LEGIARTI000048240197, article: "décret n° 2008-639, article 15", en_vigueur: 2023-10-22}
+  - {id: LEGIARTI000048896995, article: "décret n° 2008-639, article 15", en_vigueur: 2024-01-07}
+  - {id: LEGIARTI000023733092, article: "décret n° 2008-639, article 1er", en_vigueur: 2011-03-21}
+  - {id: LEGIARTI000032935195, article: "décret n° 2008-639, article 1er", en_vigueur: 2016-07-24}
+  - {id: LEGIARTI000041417135, article: "décret n° 2008-639, article 1er", en_vigueur: 2020-01-01}
+  - {id: LEGIARTI000045021371, article: "décret n° 2008-639, article 1er", en_vigueur: 2022-01-02}
+  - {id: LEGIARTI000048240230, article: "décret n° 2008-639, article 1er", en_vigueur: 2023-10-22}
+  - {id: LEGIARTI000048897095, article: "décret n° 2008-639, article 1er", en_vigueur: 2024-01-07}
+  - {id: LEGIARTI000041417176, article: "décret n° 2008-639, article 3", en_vigueur: 2020-01-01}
+  - {id: LEGIARTI000045021364, article: "décret n° 2008-639, article 3", en_vigueur: 2022-01-02}
+  - {id: LEGIARTI000048897100, article: "décret n° 2008-639, article 3", en_vigueur: 2024-01-07}
+  - {id: LEGIARTI000023732614, article: "décret n° 2008-639, article 37-1", en_vigueur: 2017-01-01}
+  - {id: LEGIARTI000029165223, article: "décret n° 2008-639, article 37-1", en_vigueur: 2017-01-01}
+  - {id: LEGIARTI000048240186, article: "décret n° 2008-639, article 37-1", en_vigueur: 2023-10-22}
+  - {id: LEGIARTI000048896987, article: "décret n° 2008-639, article 37-1", en_vigueur: 2024-01-07}
+  - {id: LEGIARTI000023730143, article: "décret n° 2011-291, article 18", en_vigueur: 2011-03-21}
+  nee_de: LEGIARTI000023733127
+  bornes:
+    liquidation.date_effet: [2017-01-01, null]
+  contenu:
+    droit: >-
+      « Si le nombre de trimestres de durée d'assurance, telle que définie au III de
+      l'article 13, est égal au nombre de trimestres nécessaire pour obtenir le
+      pourcentage maximum de la pension mentionné à l'article 12 ou si l'intéressé a
+      atteint l'âge auquel s'annule le coefficient de minoration prévu au I de
+      l'article 13 ou si la liquidation intervient pour les motifs prévus au II de
+      l'article 3, à l'article 4 et à l'article 5, le montant de la pension
+      d'ancienneté ne peut être inférieur à un montant minimal défini au IV
+      ci-dessous » (article 15, I) ; le montant de 2014, revalorisé de même (IV)
+    beneficiaire: >-
+      l'agent qui a « au moins vingt-sept années de services valables pour la
+      retraite » et l'âge de l'article 1er ; « la durée de services de vingt-sept
+      ans [...] est abaissée : ― à vingt-cinq ans pour les agents qui atteignent la
+      durée de services de vingt-cinq ans [...] avant le 1er janvier 2017 ; ― à
+      vingt-cinq ans et quatre mois [...] en 2017 ; ― à vingt-cinq ans et huit mois
+      [...] en 2018 ; ― à vingt-six ans [...] en 2019 ; ― à vingt-six ans et quatre
+      mois [...] en 2020 ; ― à vingt-six ans et huit mois [...] en 2021 » (article
+      37-1, I, 3°)
+    conditions: >-
+      « les agents qui ont atteint, avant cette date, l'âge de liquidation qui leur
+      était applicable en vertu du I de l'article 1er du décret du 30 juin 2008
+      susvisé, dans sa rédaction antérieure à l'entrée en vigueur du présent décret,
+      conservent le bénéfice des dispositions de l'article 15 [...] dans leur
+      rédaction antérieure » (décret n° 2011-291, article 18, II) : cinquante ans pour
+      l'agent de conduite, cinquante-cinq pour les autres. Le minimum « est versé sous
+      réserve que le montant mensuel total des pensions personnelles de retraite de
+      droit direct [...] n'excède pas le montant fixé par le décret prévu à
+      l'antépénultième alinéa de l'article L. 17 du code des pensions civiles et
+      militaires de retraite » ou le minimum lui-même s'il est plus élevé, et aux
+      seuls agents qui « ont fait valoir leurs droits aux pensions personnelles de
+      retraite de droit direct » (article 15, IV) ; « Les modalités d'application des
+      deux précédents alinéas sont celles fixées par le décret prévu au dernier alinéa
+      de l'article L. 17 » jusqu'au 21 octobre 2023 : ce décret n'a jamais paru, et la
+      fonction publique n'applique ni l'un ni l'autre (fiche minimum_garanti)
+    parametres:
+      existe: true
+      services_requis_mois: 324
+      seuil_des_services_abaisses_mois: 300
+      services_abaisses_mois: [[2016, 300], [2017, 304], [2018, 308], [2019, 312],
+                               [2020, 316], [2021, 320]]
+      taux_plein: true
+      age_du_droit_ancien: 50
+      droit_ancien_avant: 2017-01-01
+      fiabilite: haute
+  exemples: aucun trouvé
+approximations:
+- version: [avant_2008]
+  ecart: >-
+    le règlement de retraites d'avant le 1er juillet 2008 n'a pas été lu : aucun
+    minimum n'est servi aux pensions qui prennent effet avant
+  effet: non mesuré
+- version: [anciennete_2008, taux_plein_2017]
+  ecart: >-
+    le minimum d'une année est celui qu'elle a au 31 décembre, revalorisé par
+    l'article 30 jusqu'à la date d'effet : de juillet à novembre 2008, celui de
+    décembre, 0,4 % au-dessus des 3 367,02 € du texte ; de janvier à septembre 2014,
+    celui d'octobre, 0,3 % au-dessus du minimum de 2008 revalorisé ; la révision des
+    montants de 2008 « pour tenir compte d'éventuelles augmentations générales de
+    salaire intervenant au deuxième semestre de l'année 2008 » (article 36, c) n'est
+    pas portée, et le laisse de 2009 à 2013 à 0,3 % sous celui de 2014
+  effet: >-
+    la pension portée au minimum, de 0,3 % à 0,4 % aux dates dites ; non mesuré
+- version: [anciennete_2008, taux_plein_2017]
+  ecart: >-
+    ne sont pas portés : le minimum de la pension calculée sur un grade à service
+    discontinu, 90 % du traitement fixe d'un agent en début de carrière de ce grade
+    (article 15, I) ; celui de la pension de réforme, réduit au rapport à vingt-cinq
+    ans des services (II, III et V), que le modèle ne liquide pas ; les motifs du II
+    de l'article 3, de l'article 4 et de l'article 5 — l'enfant invalide, l'amiante,
+    le handicap —, qui ouvrent le minimum sans le taux plein et que le modèle ne
+    porte pas à la SNCF ; le 5° du I de l'article 37-1, qui écarte de la durée
+    abaissée les agents ayant quitté le cadre permanent ou l'emploi de conduite après
+    vingt-cinq ans de services accomplis avant le 21 mars 2011
+  effet: non mesuré
+- version: [taux_plein_2017]
+  ecart: >-
+    l'âge de liquidation de 2008 que le droit ancien lit est celui de l'agent de
+    conduite, cinquante ans, que le modèle prête à tout agent de la SNCF (fiche du
+    régime) : l'agent sédentaire né de 1962 à 1966, qui n'avait cinquante-cinq ans
+    qu'après 2016, garde le minimum sans le taux plein, que le droit lui refuse ;
+    l'écrêtement du IV et la condition d'avoir liquidé toutes ses pensions ne sont
+    pas appliqués, faute du décret de L. 17 qui en fixe le montant
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-19
+  prochaine_relecture: 2027-04-30
+  a_relire:
+  - >-
+    L'écrêtement du IV depuis le 22 octobre 2023 : la phrase qui renvoyait ses
+    « modalités d'application » au décret de L. 17, qui n'a jamais paru, a disparu
+    (rédaction LEGIARTI000048240197), et le texte borne le total des pensions au
+    montant « fixé par le décret prévu à l'antépénultième alinéa de l'article L. 17
+    [...] ou, si celui-ci est plus élevé, [au] montant du minimum ». Le modèle ne
+    l'applique pas, comme la fonction publique ; une lecture le bornerait au minimum
+    lui-même, qui deviendrait différentiel sur toutes les pensions de droit direct.
+    La caisse ne publie rien de ses conditions : au propriétaire, avec la question
+    à poser à la CPRP.
+  - >-
+    Le règlement de retraites d'avant le 1er juillet 2008 et son minimum, que
+    l'index LEGI ne porte pas : la version avant_2008 n'en sert aucun.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 2008-639, article 15, ses six rédactions (LEGIARTI000019108319 à
+      LEGIARTI000048896995), l'article 1er (sept rédactions), l'article 3 (six),
+      l'article 37-1, I, 3° (quatre), et le décret n° 2011-291, article 18, II, dans
+      l'index LEGI du dépôt, mis à jour le 19 octobre 2026 ; l'article 13, II et III
+      (LEGIARTI000054622824), pour la surcote, qui « s'applique au montant de la
+      pension calculée en application de l'article 12 », et la durée d'assurance ;
+      l'article 16 (LEGIARTI000048240189), la majoration « de 10 % de leur pension » ;
+      L. 17 du code des pensions civiles et militaires (LEGIARTI000048697797), dont
+      l'écrêtement attend son décret
+    date: 2026-10-19
+  - type: autre
+    reference: >-
+      CPRP, « Comprendre ses droits » (régime spécial), lue le 19 octobre 2026 (sans
+      date) : « Si vous avez plus de 27 années de services valables pour la
+      retraite, vous bénéficiez d'une pension d'ancienneté » ; « La pension
+      d'ancienneté permet de bénéficier du minimum de pension » ; aucun montant, ni
+      condition de taux plein, ni écrêtement. « Retraite anticipée des travailleurs
+      handicapés » : « Si la pension calculée (sans majoration) est inférieure au
+      minimum de pension, elle est portée à ce minimum »
+    date: 2026-10-19
+    url: https://www.cprpf.fr/actifs/preparer-ma-retraite/preparer-ma-retraite-rs/comprendre-ses-droits-transfere/
+  - type: autre
+    reference: >-
+      COR, fiche « CPRPF (SNCF) », juillet 2024 : la pension d'ancienneté à
+      cinquante-cinq ans (cinquante pour l'agent de conduite) et vingt-cinq ans de
+      services, portés à cinquante-neuf (cinquante-quatre) et vingt-sept ; la pension
+      proportionnelle, un an de services, quinze pour qui a quitté la SNCF avant le
+      1er juillet 2008 ; rien du minimum
+    date: 2026-10-19
+    url: https://cor-retraites.fr/sites/default/files/2024-07/Fiche_CPRPF%20%28SNCF%29.pdf
+code:
+  python: >-
+    scenarios/actuel.py : FichesDatees, qui lit les versions de cette fiche, et
+    Reversions.minimum_pension_sncf, la série ; droit/liquider.py :
+    minimum_de_pension_ouvert, EligibleMinimumDePension ; droit/completer.py :
+    minimum_de_pension_sncf, completer
+  javascript: >-
+    moteur/js/regimes.js : FichesDatees, Reversions ; moteur/js/droit/liquider.js :
+    minimumDePensionOuvert ; moteur/js/droit/completer.js : minimumDePensionSncf,
+    completer
+  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  tests: [tests/test_minimum_pension_sncf.py]
+historique:
+- >-
+  2026-10-19 — la fiche naît (action 138, étape 9) : le modèle ne portait pas le
+  minimum de pension de l'agent de la SNCF, que le minimum de la réversion de
+  l'article 18 suppose.
+effet: >-
+  Les petites pensions d'ancienneté de la SNCF — l'agent à 30 % du salaire moyen
+  parti à cinquante-cinq ans en 2010 passe de 6 461 € à 13 653 € par an — et, par
+  elles, les réversions portées à 54 % du minimum : sa veuve, en 2023, de 3 744 € à
+  8 568 €. Aucun des 886 témoins, ni la grille du coût, n'a de pension de la SNCF
+  sous le minimum.

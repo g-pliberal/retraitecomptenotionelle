@@ -13,7 +13,7 @@
  * `data/reference/etapes/liquider_chaque_regime.yaml`.
  */
 
-import { DateMois } from "../calendrier.js";
+import { DateMois, MOIS_PAR_AN } from "../calendrier.js";
 import { revenuCotise, salaireMoyenAnnuel } from "../carriere.js";
 import * as chrono from "../chronologie.js";
 import { arrondi, formatFixe, formatPourcentage } from "../format.js";
@@ -80,7 +80,8 @@ export const ANNEE_DES_REVENUS_AGRICOLES = 2016;
 /** Ce que l'étape « liquider chaque régime » écrit. */
 export class Pensions {
   constructor({ personne, regimes, minimum, garanti, requis, taux, fiabilite,
-    agricole = null, plafonds = [], anticipations = [], supplements = [] }) {
+    agricole = null, plafonds = [], anticipations = [], supplements = [],
+    minimaDePension = [] }) {
     this.personne = personne;
     this.regimes = regimes;
     this.minimum = minimum;
@@ -109,6 +110,11 @@ export class Pensions {
      * qui complète ajoute : `{indice, montant, detail, fiche}`.
      */
     this.supplements = supplements;
+    /**
+     * Les pensions de la SNCF que le minimum de pension peut relever :
+     * `{indice, ouvert}` (`minimumDePensionOuvert`).
+     */
+    this.minimaDePension = minimaDePension;
   }
 
   /** Les pensions, telles que le schéma de l'étape les décrit. */
@@ -158,6 +164,9 @@ export class Pensions {
       regimes[eligible.indice].supplement = {
         montant: eligible.montant, detail: eligible.detail, fiche: eligible.fiche,
       };
+    }
+    for (const eligible of this.minimaDePension) {
+      regimes[eligible.indice].minimum_de_pension = { ouvert: eligible.ouvert };
     }
     return {
       schema_version: SCHEMA_VERSION, personne: this.personne, regimes,
@@ -209,6 +218,8 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
   const eligiblesMinimum = [];
   // Régimes de la fonction publique qui portent le minimum garanti.
   const eligiblesGaranti = [];
+  // Les pensions de la SNCF que le minimum de pension peut relever.
+  const eligiblesMinimumDePension = [];
   // Les pensions du code des pensions, que le plafond de L. 18 borne.
   const eligiblesPlafond = [];
   // Les suppléments de pension des primes soumises à retenue.
@@ -941,6 +952,17 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
           ? proratisation : null,
       });
     }
+    if (periode.avantages_non_contributifs.includes("minimum_pension_sncf")) {
+      // LE MINIMUM DE PENSION DE LA SNCF (décret n° 2008-639, article 15) :
+      // l'étape qui complète porte à son montant la pension d'ancienneté
+      // qu'il relève, quand la version de la date d'effet en sert un.
+      const ouvert = minimumDePensionOuvert(
+        moteur, periode, carriere, trimestres + majorationsEmplois + ecartAuJour,
+        requis, ageLiquidation, ageAnnulation, ignorerPenaliteAge);
+      if (ouvert !== null) {
+        eligiblesMinimumDePension.push({ indice: indicePension, ouvert });
+      }
+    }
     if (REGIMES_CODE_DES_PENSIONS.has(code) && !forfaitaire) {
       // LE PLAFOND DE L. 18 : la pension majorée pour enfants ne peut excéder
       // le traitement ou la solde qui l'a liquidée. Voir le Python.
@@ -1020,7 +1042,58 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
     plafonds: eligiblesPlafond,
     anticipations,
     supplements: eligiblesSupplement,
+    minimaDePension: eligiblesMinimumDePension,
   });
+}
+
+/**
+ * La fiche du minimum de pension de la SNCF, que `FichesDatees` lit à la date
+ * d'effet.
+ */
+const FICHE_DU_MINIMUM_DE_PENSION = "minimum_pension_sncf";
+
+/**
+ * Le minimum de pension de la SNCF relève-t-il cette pension ? `null` quand la
+ * version de la date d'effet n'en sert aucun. La pension d'ancienneté seule —
+ * l'âge de l'article 1er, et vingt-cinq ou vingt-sept ans de services,
+ * abaissés pour qui a atteint vingt-cinq ans de 2017 à 2021 ; depuis 2017, au
+ * taux plein, sauf chez l'agent qui avait avant cette date l'âge de
+ * liquidation de 2008. Voir `minimum_de_pension_ouvert` du Python.
+ */
+export function minimumDePensionOuvert(moteur, periode, carriere, assurance, requis,
+  ageLiquidation, ageAnnulation, sansDecote) {
+  const regle = moteur.fichesDatees.regle(FICHE_DU_MINIMUM_DE_PENSION, dateDEffet(carriere));
+  if (regle === null || !regle.existe) {
+    return null;
+  }
+  const { statuts, servies } = ouvrir.servicesDansLeRegime(moteur, periode, carriere);
+  let requisMois = Number(regle.services_requis_mois);
+  const abaisses = regle.services_abaisses_mois;
+  if (abaisses && abaisses.length) {
+    const seuil = carriere.dateDeService(
+      statuts, Number(regle.seuil_des_services_abaisses_mois) / MOIS_PAR_AN);
+    if (seuil !== null) {
+      const abaisse = abaisses.find(([annee]) => seuil.annee <= Number(annee));
+      if (abaisse !== undefined) {
+        requisMois = Number(abaisse[1]);
+      }
+    }
+  }
+  const ageOuverture = ouvrir.ageOuverture(moteur, periode, carriere, true, false);
+  if (servies * MOIS_PAR_AN + 1e-6 < requisMois || ageLiquidation + 1e-9 < ageOuverture) {
+    return false;
+  }
+  if (!regle.taux_plein) {
+    return true;
+  }
+  const avant = regle.droit_ancien_avant;
+  if (avant !== null && avant !== undefined
+      && carriere.moisDeLAnniversaire(Number(regle.age_du_droit_ancien)).rang
+      < new DateMois(Number(avant.slice(0, 4)), Number(avant.slice(5, 7))).rang) {
+    return true;
+  }
+  return sansDecote || assurance >= requis - 1e-9
+    || (ageAnnulation !== null && ageLiquidation + 1e-9 >= ageAnnulation);
 }
 
 /**

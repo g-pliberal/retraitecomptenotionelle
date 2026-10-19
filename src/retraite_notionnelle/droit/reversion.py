@@ -213,6 +213,12 @@ AUTRES_BASES = MOITIE_SOUS_CONDITION_DE_MARIAGE + ("reversion_ieg", "reversion_s
 #: l'article 16 ».
 MOITIE_MAJORATION_COMPRISE = ("reversion_ieg", "reversion_sncf")
 
+#: Les lignes de la cascade dont :func:`reversion` lit la part dans chaque
+#: pension (``minima``) : le minimum contributif, sans lequel le régime général
+#: reverse la pension, et le minimum de pension de la SNCF, dont la pension
+#: relevée se reverse au minimum de l'article 18.
+MINIMA_REVERSES = ("minimum_contributif", "minimum_pension_sncf")
+
 #: La fiche de la majoration forfaitaire pour enfant à charge (L. 353-5).
 MAJORATION_FORFAITAIRE = "majoration_forfaitaire_reversion"
 
@@ -890,14 +896,18 @@ def _part_du_minimum(parametres: dict, regime: str, durees: dict[str, int] | Non
 
 
 def _minimum_de_pension(moteur: ScenarioActuel, parametres: dict, base: float,
-                        annee: int) -> tuple[float, Fiabilite] | None:
+                        annee: int, portee: bool = False
+                        ) -> tuple[float, Fiabilite] | None:
     """Ce que garde au moins la réversion entière de la SNCF, aux euros de
     ``annee``, et sa fiabilité : la part ``part_du_minimum_de_pension`` du
     minimum de pension de l'article 15, IV, quand la pension de l'agent,
-    ``base``, l'atteint — « portée au montant du minimum » ou « supérieure »
-    (décret n° 2008-639, article 18) ; ``None`` sans lui. Le minimum suit les
-    pensions de son ancre à l'année des montants (article 30), en 2020 au taux
-    des pensions de 2 000 € par mois au plus, qu'il ne dépasse pas."""
+    ``base``, a été « portée au montant du minimum » à sa liquidation —
+    ``portee`` —, ou lui est « supérieure » (décret n° 2008-639, article 18) ;
+    ``None`` sans lui. Le minimum suit les pensions de son ancre à l'année des
+    montants (article 30), en 2020 au taux des pensions de 2 000 € par mois au
+    plus, qu'il ne dépasse pas ; la pension portée au minimum avant octobre
+    2014, revalorisée comme les pensions, reste 0,3 % sous celui que le décret
+    de 2015 écrit, et n'en est pas moins portée au minimum."""
     part = parametres.get("part_du_minimum_de_pension")
     ancre = moteur.reversions.minimum_pension_sncf(annee)
     if part is None or ancre is None:
@@ -905,7 +915,7 @@ def _minimum_de_pension(moteur: ScenarioActuel, parametres: dict, base: float,
     depuis, montant, fiabilite = ancre
     coefficient, fiabilite_du_coefficient = moteur.revalorisations_pensions.generale(
         date(depuis, 12, 31), date(annee, 12, 31), False, montant / 12)
-    if base < montant * coefficient:
+    if not portee and base < montant * coefficient:
         return None
     return float(part) * montant * coefficient, min(fiabilite, fiabilite_du_coefficient)
 
@@ -1028,7 +1038,9 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
     compris, que le minimum du régime général proratise ; sans elle, il est
     servi entier. ``minima`` donne, régime par régime, la part de la pension
     que le minimum contributif y ajoute, aux mêmes euros : le régime général
-    et les régimes alignés reversent la pension sans elle. ``maxima`` donne,
+    et les régimes alignés reversent la pension sans elle ; ou celle que le
+    minimum de pension de la SNCF y ajoute, qui la dit portée au minimum
+    (:data:`MINIMA_REVERSES`). ``maxima`` donne,
     régime par régime, ce que le maximum des pensions a retiré de la pension,
     ce que la surcote y ajoute, aux mêmes euros, et le coefficient de
     l'ajournement d'avant 1983 ou du taux acquis au 31 mars 1983, qui
@@ -1116,7 +1128,9 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
             # celle de l'agent au même taux de son montant (article 16).
             entiere = taux * base
             minimum, motif, releve = 0.0, "servie", 1.0
-            garanti = _minimum_de_pension(moteur, parametres, base, annee) if servie else None
+            garanti = (_minimum_de_pension(moteur, parametres, base, annee,
+                                           bool((minima or {}).get(regime)))
+                       if servie else None)
             if garanti is not None:
                 minimum = garanti[0]
                 if minimum > entiere:

@@ -32,7 +32,7 @@ from dataclasses import dataclass
 from datetime import date
 from typing import TYPE_CHECKING
 
-from ..calendrier import DateMois
+from ..calendrier import MOIS_PAR_AN, DateMois
 from ..carriere import revenu_cotise, salaire_moyen_annuel
 from ..donnees.chargement import Fiabilite
 from .. import revalorisation
@@ -474,6 +474,18 @@ class EligibleMinimumGaranti:
 
 
 @dataclass(frozen=True)
+class EligibleMinimumDePension:
+    """La pension de la SNCF que le minimum de pension de l'article 15 du décret
+    n° 2008-639 peut relever (:func:`minimum_de_pension_ouvert`)."""
+
+    #: Indice de la pension dans :attr:`Pensions.regimes`.
+    indice: int
+    #: Est-ce une pension d'ancienneté, et, depuis 2017, au taux plein ou de
+    #: l'agent qui avait l'âge de liquidation de 2008 avant cette date ?
+    ouvert: bool
+
+
+@dataclass(frozen=True)
 class EligiblePlafondEnfants:
     """La pension d'un régime du code des pensions, dont le plafond de L. 18,
     V, borne la majoration pour enfants au traitement qui l'a liquidée
@@ -585,6 +597,8 @@ class Pensions:
     anticipations: tuple[tuple[str, float], ...] = ()
     #: Les suppléments de pension des primes soumises à retenue.
     supplements: tuple[EligibleSupplement, ...] = ()
+    #: Les pensions de la SNCF que le minimum de pension peut relever.
+    minima_de_pension: tuple[EligibleMinimumDePension, ...] = ()
 
     def donnees(self) -> dict:
         """Les pensions, telles que le schéma de l'étape les décrit."""
@@ -628,6 +642,8 @@ class Pensions:
                 "montant": eligible.montant, "detail": eligible.detail,
                 "fiche": eligible.fiche,
             }
+        for eligible in self.minima_de_pension:
+            regimes[eligible.indice]["minimum_de_pension"] = {"ouvert": eligible.ouvert}
         return {"schema_version": SCHEMA_VERSION, "personne": self.personne,
                 "regimes": regimes, "requis": self.requis, "taux": self.taux,
                 "fiabilite": self.fiabilite.name.lower()}
@@ -687,6 +703,8 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
     eligibles_minimum: list[EligibleMinimum] = []
     #: Régimes de la fonction publique qui portent le minimum garanti.
     eligibles_garanti: list[EligibleMinimumGaranti] = []
+    #: Les pensions de la SNCF que le minimum de pension peut relever.
+    eligibles_minimum_de_pension: list[EligibleMinimumDePension] = []
     #: Les pensions du code des pensions, que le plafond de L. 18 borne.
     eligibles_plafond: list[EligiblePlafondEnfants] = []
     eligibles_supplement: list[EligibleSupplement] = []
@@ -1536,6 +1554,17 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
                     else None
                 ),
             ))
+        if "minimum_pension_sncf" in periode.avantages_non_contributifs:
+            # LE MINIMUM DE PENSION DE LA SNCF (décret n° 2008-639, article
+            # 15) : l'étape qui complète porte à son montant la pension
+            # d'ancienneté qu'il relève, quand la version de la date d'effet
+            # en sert un.
+            ouvert = minimum_de_pension_ouvert(
+                moteur, periode, carriere, trimestres + majorations_emplois + ecart_au_jour,
+                requis, age_liquidation, age_annulation, ignorer_penalite_age)
+            if ouvert is not None:
+                eligibles_minimum_de_pension.append(EligibleMinimumDePension(
+                    indice=len(pensions), ouvert=ouvert))
         if (code in coordonner.REGIMES_CODE_DES_PENSIONS
                 and periode.pension_forfaitaire_annuelle is None):
             # LE PLAFOND DE L. 18 : la pension majorée pour enfants ne peut
@@ -1616,7 +1645,59 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
         plafonds=tuple(eligibles_plafond),
         supplements=tuple(eligibles_supplement),
         anticipations=tuple(anticipations),
+        minima_de_pension=tuple(eligibles_minimum_de_pension),
     )
+
+
+#: La fiche du minimum de pension de la SNCF, que :class:`FichesDatees
+#: <retraite_notionnelle.scenarios.actuel.FichesDatees>` lit à la date d'effet.
+FICHE_DU_MINIMUM_DE_PENSION = "minimum_pension_sncf"
+
+
+def minimum_de_pension_ouvert(moteur, periode: PeriodeRegime, carriere: Carriere,
+                              assurance: float, requis: int, age_liquidation: float,
+                              age_annulation: float | None,
+                              sans_decote: bool) -> bool | None:
+    """Le minimum de pension de la SNCF relève-t-il cette pension ? ``None``
+    quand la version de la date d'effet n'en sert aucun.
+
+    Il ne relève que la pension d'ANCIENNETÉ (décret n° 2008-639, article 15,
+    I) : celle de l'agent qui a l'âge de l'article 1er et ses années de
+    services valables pour la retraite — vingt-cinq jusqu'en 2016, vingt-sept
+    depuis, abaissées pour qui a atteint vingt-cinq ans avant 2022 d'autant
+    moins qu'il les a atteintes tôt (article 37-1, I, 3°) ; la pension
+    proportionnelle de l'article 3 n'y a pas droit. Depuis 2017, il ne la
+    relève qu'au taux plein — la durée d'assurance ``assurance`` à la durée
+    requise ``requis``, ou l'âge d'annulation de la décote atteint —, sauf
+    chez l'agent qui avait atteint avant le 1er janvier 2017 l'âge de
+    liquidation de 2008 (décret n° 2011-291, article 18, II). ``sans_decote``
+    dit que le calcul neutralise la décote : la pension est alors au taux
+    plein."""
+    regle = moteur.fiches_datees.regle(FICHE_DU_MINIMUM_DE_PENSION, date_d_effet(carriere))
+    if regle is None or not regle.get("existe"):
+        return None
+    statuts, servies = ouvrir.services_dans_le_regime(moteur, periode, carriere)
+    requis_mois = int(regle["services_requis_mois"])
+    abaisses = regle.get("services_abaisses_mois")
+    if abaisses:
+        seuil = carriere.date_de_service(
+            statuts, int(regle["seuil_des_services_abaisses_mois"]) / MOIS_PAR_AN)
+        if seuil is not None:
+            requis_mois = next((int(mois) for annee, mois in abaisses
+                                if seuil.annee <= int(annee)), requis_mois)
+    age_ouverture = ouvrir.age_ouverture(moteur, periode, carriere, parents_compris=False)
+    if (servies * MOIS_PAR_AN + 1e-6 < requis_mois
+            or age_liquidation + 1e-9 < age_ouverture):
+        return False
+    if not regle.get("taux_plein"):
+        return True
+    avant = regle.get("droit_ancien_avant")
+    if avant is not None and (
+            carriere.mois_de_l_anniversaire(float(regle["age_du_droit_ancien"])).rang
+            < DateMois(int(avant[:4]), int(avant[5:7])).rang):
+        return True
+    return (sans_decote or assurance >= requis - 1e-9
+            or (age_annulation is not None and age_liquidation + 1e-9 >= age_annulation))
 
 
 def annuites_au_taux_de_leur_annee(moteur, code: str, carriere: Carriere, durees,

@@ -36,6 +36,7 @@ export const SCHEMA_VERSION = 1;
 export const FICHES = {
   minimum_contributif: "minimum_contributif",
   minimum_garanti: "minimum_garanti",
+  minimum_pension_sncf: "minimum_pension_sncf",
   surcote_parentale: "surcote_parentale",
   majoration_enfants: "majoration_dix_pour_cent",
   pension_majoree_reference: "pension_majoree_reference",
@@ -554,6 +555,26 @@ function minimumVieillesse(moteur, nom, annee) {
     return null;
   }
   return [couple[0] - seule[0], Math.min(seule[1], couple[1])];
+}
+
+/**
+ * Le minimum de pension ANNUEL de la SNCF à la date d'effet `annee` et `mois`,
+ * et sa fiabilité, `[montant, fiabilité]` : l'ancre de l'année que le décret
+ * n° 2008-639 écrit (article 15, IV), revalorisée depuis le 31 décembre de la
+ * sienne comme les pensions de l'État (article 30) ; `null` avant le 1er
+ * juillet 2008. Voir `minimum_de_pension_sncf` du Python.
+ */
+export function minimumDePensionSncf(moteur, annee, mois) {
+  const ancre = moteur.reversions.minimumPensionSncf(annee);
+  if (ancre === null) {
+    return null;
+  }
+  const [depuis, montant, fiabilite] = ancre;
+  const [coefficient, fiabiliteDuCoefficient] = moteur.revalorisationsPensions.generale(
+    `${String(depuis).padStart(4, "0")}-12-31`,
+    `${String(annee).padStart(4, "0")}-${String(mois).padStart(2, "0")}-01`,
+    false, montant / 12);
+  return [montant * coefficient, Math.min(fiabilite, fiabiliteDuCoefficient)];
 }
 
 /**
@@ -1398,6 +1419,45 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
         libelle: "Minimum garanti de la fonction publique",
         montant: releveGaranti,
         detail: "barème de l'article L. 17, sur la durée de services",
+      });
+    }
+  }
+
+  const ouverts = liquidees.minimaDePension.filter((eligible) => eligible.ouvert);
+  if (avantagesNonContributifs && ouverts.length > 0) {
+    // LE MINIMUM DE PENSION DE LA SNCF : la pension d'ancienneté ne peut être
+    // inférieure au montant de l'article 15, IV ; il se compare à la pension
+    // surcotée, s'y substitue, et la majoration pour enfants se calcule sur
+    // lui. Voir le Python.
+    let releveSncf = 0.0;
+    const partsSncf = [];
+    const plancher = minimumDePensionSncf(moteur, anneeLiquidation, carriere.moisLiquidation);
+    for (const eligible of ouverts) {
+      const pension = pensions[eligible.indice];
+      if (plancher !== null && pension.montant > 0 && pension.montant < plancher[0]) {
+        const complement = plancher[0] - pension.montant;
+        releveSncf += complement;
+        partsSncf.push([pension.regime, complement]);
+        fiabiliteGlobale = Math.min(fiabiliteGlobale, plancher[1]);
+        pensions[eligible.indice] = {
+          ...pension,
+          montant: plancher[0],
+          detail: `${pension.detail} = `
+            + `${formatFixe(pension.montant, 2, true)} €, porté au minimum `
+            + `de pension par + ${formatFixe(complement, 2, true)} €`,
+        };
+      }
+    }
+    if (releveSncf > 0) {
+      total += releveSncf;
+      avantages.push({
+        code: "minimum_pension_sncf",
+        libelle: "Minimum de pension de la SNCF",
+        montant: releveSncf,
+        detail: "article 15 du décret n° 2008-639, sur la pension d'ancienneté",
+        // La pension relevée : sa réversion est portée à 54 % du minimum
+        // (article 18), quoi que sa revalorisation en fasse.
+        par_regime: partsSncf,
       });
     }
   }

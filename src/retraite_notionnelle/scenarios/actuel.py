@@ -1198,7 +1198,8 @@ class FichesDatees:
     que ``completer.majoration_retraite_proportionnelle`` lit, et la limite
     d'âge des agents publics et ses exceptions, que ``limite_age.radiation``
     lit au jour où la limite est atteinte (date ``age_atteint``,
-    :data:`~retraite_notionnelle.droit.limite_age.FICHES`).
+    :data:`~retraite_notionnelle.droit.limite_age.FICHES`), et le minimum de
+    pension de la SNCF, que ``liquider.minimum_de_pension_ouvert`` lit.
     """
 
     NOMS = ("salaire_annuel_moyen", "revenu_annuel_moyen_independants",
@@ -1228,7 +1229,8 @@ class FichesDatees:
             "limite_age_ouvriers_etat", "limite_age_sncf_ratp", "limite_age_ieg",
             "limite_age_opera", "limite_age_seita", "limite_age_banque_de_france",
             "limite_age_mines", "apprentissage", "stages_formation_professionnelle",
-            "sportifs_haut_niveau", "conge_supplementaire_naissance")
+            "sportifs_haut_niveau", "conge_supplementaire_naissance",
+            "minimum_pension_sncf")
 
     def __init__(self, racine: Path) -> None:
         self._fiches: dict[str, dict] = {}

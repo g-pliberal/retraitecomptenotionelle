@@ -25,8 +25,8 @@ lit:
 - les précédents conjoints de l'agent, leur mariage, leur divorce et leur remariage,
   que le partage au prorata des mariages lit
 - le ménage où vit le survivant, au décès ou après
-- la pension du défunt, servie ou qu'il aurait obtenue au jour de son décès, et sa
-  majoration pour enfants
+- la pension du défunt, servie ou qu'il aurait obtenue au jour de son décès, portée
+  au minimum de pension (fiche minimum_pension_sncf), et sa majoration pour enfants
 - le minimum de pension de l'article 15 (minimum_pension_sncf.csv), revalorisé
   comme les pensions (revalorisation_pensions.csv), à l'année des montants
 ecrit:
@@ -217,20 +217,17 @@ approximations:
 - version: [conjoints_2008, minimum_2008, minimum_2009]
   ecart: >-
     le minimum de la réversion ne joue que si la pension de l'agent, telle que le
-    modèle la liquide, atteint le minimum de pension : le modèle n'y porte pas la
-    pension de l'agent (article 15, I et IV), et la réversion d'une pension qu'il y
-    aurait portée reste la moitié de la pension calculée ; ce minimum est celui des
-    pensions d'ancienneté, sans celui de l'emploi à service discontinu ni le minimum
-    réduit de la pension de réforme (article 15, I et II) ; il suit les pensions
+    modèle la liquide, atteint le minimum de pension, que la liquidation sert à la
+    pension d'ancienneté depuis le 19 octobre 2026 (fiche minimum_pension_sncf) :
+    sans celui de l'emploi à service discontinu ni le minimum réduit de la pension
+    de réforme (article 15, I et II), qu'elle ne porte pas ; il suit les pensions
     depuis ses ancres de 2008 et de 2014, au coefficient de 1 % en 2020, celui des
     pensions de 2 000 € par mois au plus, et sans la révision des montants de 2008
     (article 15, IV ; article 36, c), qui le laisse de 2009 à 2013 à 0,3 % sous ce
     que le décret de 2015 fixe au 1er octobre 2014 ; le taux de 51,3 % ou de 52,7 %
     est celui de la date d'effet, que les relèvements de juillet 2009 et de juillet
     2010 ne suivent pas
-  effet: >-
-    la réversion d'un agent sous le minimum de pension, que l'article 15 y aurait
-    porté, est sous-estimée d'au moins 4 % de ce minimum ; non mesuré
+  effet: non mesuré
 - ecart: >-
     la cessation des fonctions est le départ, ou le décès qui le précède ; tout enfant
     déclaré est un enfant des conjoints, né avant la cessation s'il naît avant le
@@ -318,7 +315,7 @@ code:
     mariageSncf, sansJouissanceAuDeces, partDuSurvivant, admisAilleurs,
     minimumDePension
   parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
-  tests: [tests/test_reversion.py, tests/test_web.py]
+  tests: [tests/test_reversion.py, tests/test_web.py, tests/test_minimum_pension_sncf.py]
 historique:
 - >-
   2026-10-18 — la fiche naît (action 138, étape 9) : la SNCF n'avait pas de
@@ -331,6 +328,12 @@ historique:
   de ce minimum, 51,3 % et 52,7 % en 2008 et en 2009 ; l'agent né en 1958, parti à
   57 ans à 55 % du salaire moyen, trois enfants, mort en mai 2023, laisse 9 425 € par
   an en euros de 2023 au lieu de 8 859.
+- >-
+  2026-10-19 — le minimum de pension de l'agent (fiche minimum_pension_sncf, action
+  138, étape 9) : la réversion de la pension qu'il relève est portée à 54 % du
+  minimum quel que soit son montant à l'année du décès, que la revalorisation de
+  2009 à 2014 laisse 0,3 % sous le minimum ; la veuve de l'agent parti en 2010 à
+  30 % du salaire moyen, en 2023, a 8 568 € au lieu de 3 744 €.
 effet: >-
   Tout conjoint d'un agent de la SNCF : la moitié de sa pension, majorée pour enfants,
   sans âge ni ressources, dès que le mariage remplit la condition de l'article 19,

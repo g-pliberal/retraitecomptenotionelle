@@ -388,7 +388,7 @@ class Echeancier:
 
         majorations = parts(parts_de_la_majoration(liquidation.avantages, a_charge=False))
         minima = parts(part for avantage in liquidation.avantages
-                       if avantage.code == "minimum_contributif"
+                       if avantage.code in _reversion.MINIMA_REVERSES
                        for part in avantage.par_regime)
         maxima = {p.regime: (p.ecretement_du_maximum, p.surcote, p.coefficient_du_maximum)
                   for p in liquidation.regimes
@@ -406,7 +406,8 @@ class Echeancier:
         année, les régimes qui lui ont versé leur droit en capital avant son
         décès, sa majoration pour enfants, régime par régime, menée comme la
         pension qui la porte, et de même la part de chaque pension que le
-        minimum contributif y ajoute ; enfin, régime par régime, ce que le
+        minimum contributif ou le minimum de pension de la SNCF y ajoute ;
+        enfin, régime par régime, ce que le
         maximum des pensions en a retiré et ce que la surcote y ajoute, menés
         de même, et le coefficient qui multiplie son maximum."""
         annee = max(carriere.annee_liquidation,
@@ -463,12 +464,15 @@ class Echeancier:
                   if p.regime in ecretements or p.regime in surcotes
                   or p.coefficient_du_maximum != 1.0}
 
+        # La part que chaque minimum reversé ajoute à la pension, menée de même.
+        minima = {regime: part for code in _reversion.MINIMA_REVERSES
+                  for regime, part in menees(code).items()}
         depart = (f"{carriere.date_liquidation.annee:04d}"
                   f"-{carriere.date_liquidation.mois:02d}-01")
         return annee, servies + [(p.regime, p.montant, p.fiabilite)
                                  for p in self.au_depart.pensions_par_regime
                                  if p.regime not in vues], en_capital, menees(
-            MAJORATION_ENFANTS), menees("minimum_contributif"), maxima, _majorations_apres(
+            MAJORATION_ENFANTS), minima, maxima, _majorations_apres(
             self.moteur, departs, depart, annee)
 
     def _progresser(self, carriere: Carriere) -> None:

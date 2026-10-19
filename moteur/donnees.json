@@ -14437,6 +14437,20 @@ false,
 "sans_chiffre":""
 },
 {
+"base_legale":["décret n° 2008-639 article 15","décret n° 2011-291 article 18"],
+"code":"minimum_pension_sncf",
+"creation":2008,
+"etat_modele":"chiffre",
+"famille":"minima_de_pension",
+"fin":null,
+"libelle":"Minimum de pension de la SNCF",
+"ligne_cascade":"minimum_pension_sncf",
+"mesurable_par":"modele",
+"quoi":"Le plancher de la pension d'ancienneté du régime spécial de la SNCF, un montant fixe revalorisé comme les pensions de l'État, ouvert sans autre condition jusqu'en 2016, au taux plein depuis, sauf à l'agent qui avait avant 2017 l'âge de liquidation de 2008. La réversion de la pension qui l'atteint en garde 54 %.",
+"regimes":"SNCF",
+"sans_chiffre":"La ligne reste vide quand aucune carrière de la SNCF de la grille du coût n'a sa pension d'ancienneté sous le minimum : il ne relève que les petites pensions, que les cas types du régime dépassent."
+},
+{
 "base_legale":["L. 815-1 CSS et suivants","L. 816-2 CSS","L. 161-25 CSS"],
 "code":"minimum_vieillesse",
 "creation":1956,
@@ -25864,6 +25878,21 @@ null
 {"bornes":{"liquidation.date_effet":["1973-01-01","1974-01-01"]},"exception_de":null,"id":"en_1973","parametres":{"fiabilite":"haute","majorations":[{"date":"1982-12-01","duree_maximum":true,"regimes":["regime_general","msa_salaries"],"taux":0.055}]},"texte":"LEGIARTI000006756135"},
 {"bornes":{"liquidation.date_effet":["1974-01-01","1975-01-01"]},"exception_de":null,"id":"en_1974","parametres":{"fiabilite":"haute","majorations":[{"date":"1982-12-01","duree_maximum":true,"regimes":["regime_general","msa_salaries"],"taux":0.015}]},"texte":"LEGIARTI000006756135"},
 {"bornes":{"liquidation.date_effet":["1975-01-01",null]},"exception_de":null,"id":"depuis_1975","parametres":{"fiabilite":"haute","majorations":[]},"texte":"LEGIARTI000006756135"}
+]
+},
+"minimum_pension_sncf":{
+"dates_qui_decident":["liquidation.date_effet"],
+"id":"minimum_pension_sncf",
+"versions":[
+{"bornes":{"liquidation.date_effet":[null,"2008-07-01"]},"exception_de":null,"id":"avant_2008","parametres":{"existe":false,"fiabilite":"moyenne"},"texte":null},
+{"bornes":{"liquidation.date_effet":["2008-07-01","2017-01-01"]},"exception_de":null,"id":"anciennete_2008","parametres":{"existe":true,"fiabilite":"haute","services_requis_mois":300,"taux_plein":false},"texte":"LEGIARTI000019108319"},
+{
+"bornes":{"liquidation.date_effet":["2017-01-01",null]},
+"exception_de":null,
+"id":"taux_plein_2017",
+"parametres":{"age_du_droit_ancien":50,"droit_ancien_avant":"2017-01-01","existe":true,"fiabilite":"haute","services_abaisses_mois":[[2016,300],[2017,304],[2018,308],[2019,312],[2020,316],[2021,320]],"services_requis_mois":324,"seuil_des_services_abaisses_mois":300,"taux_plein":true},
+"texte":"LEGIARTI000023733127"
+}
 ]
 },
 "pension_maximale_regime_general":{
@@ -201685,7 +201714,7 @@ null
 "assiette_minimale_pass":null,
 "assiette_plancher":false,
 "assiette_repere_smic":null,
-"avantages_non_contributifs":["enfants_sncf","categorie_active","majoration_enfants","reversion"],
+"avantages_non_contributifs":["enfants_sncf","categorie_active","majoration_enfants","reversion","minimum_pension_sncf"],
 "bareme_decote":"regime_aligne",
 "bareme_points":null,
 "bareme_trimestre":null,
@@ -201764,7 +201793,7 @@ null
 "assiette_minimale_pass":null,
 "assiette_plancher":false,
 "assiette_repere_smic":null,
-"avantages_non_contributifs":["enfants_sncf","categorie_active","majoration_enfants","reversion"],
+"avantages_non_contributifs":["enfants_sncf","categorie_active","majoration_enfants","reversion","minimum_pension_sncf"],
 "bareme_decote":"regimes_speciaux",
 "bareme_points":null,
 "bareme_trimestre":null,
@@ -201843,7 +201872,7 @@ null
 "assiette_minimale_pass":null,
 "assiette_plancher":false,
 "assiette_repere_smic":null,
-"avantages_non_contributifs":["enfants_sncf","categorie_active","majoration_enfants","reversion"],
+"avantages_non_contributifs":["enfants_sncf","categorie_active","majoration_enfants","reversion","minimum_pension_sncf"],
 "bareme_decote":"regimes_speciaux",
 "bareme_points":null,
 "bareme_trimestre":null,
@@ -201922,7 +201951,7 @@ null
 "assiette_minimale_pass":null,
 "assiette_plancher":false,
 "assiette_repere_smic":null,
-"avantages_non_contributifs":["enfants_sncf","categorie_active","majoration_enfants","reversion"],
+"avantages_non_contributifs":["enfants_sncf","categorie_active","majoration_enfants","reversion","minimum_pension_sncf"],
 "bareme_decote":"regimes_speciaux",
 "bareme_points":null,
 "bareme_trimestre":null,

@@ -54,8 +54,9 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   l'Agirc-Arrco, la moitié des droits du parent pour l'orphelin de père et de
   mère de moins de vingt et un ans, ou de vingt-cinq à charge (articles 114 et
   115 de l'accord de 2017) ; au RAFP, aux IEG, à la CRPCEN et à la SNCF, un
-  dixième par orphelin —, le minimum de pension de l'agent de la SNCF, et la
-  réversion qui le suivrait (décret n° 2008-639, articles 15 et 18),
+  dixième par orphelin —, les minima de la pension de réforme de l'agent de la
+  SNCF et de sa pension sur un grade à service discontinu (décret n° 2008-639,
+  article 15, I et II), et la réversion qui les suivrait (article 18),
   l'allocation de solidarité aux personnes âgées que la réversion de la
   personne seule de cinquante-cinq à soixante-quatre ans y atteint (article
   23), la réversion des complémentaires des artisans et des commerçants

@@ -71,6 +71,7 @@ SCHEMA_VERSION = 1
 FICHES = {
     "minimum_contributif": "minimum_contributif",
     "minimum_garanti": "minimum_garanti",
+    "minimum_pension_sncf": "minimum_pension_sncf",
     "surcote_parentale": "surcote_parentale",
     "majoration_enfants": "majoration_dix_pour_cent",
     "pension_majoree_reference": "pension_majoree_reference",
@@ -745,6 +746,23 @@ def _minimum_vieillesse(moteur: ScenarioActuel, nom: str, annee: int
     if couple is None:
         return None
     return couple[0] - seule[0], min(seule[1], couple[1])
+
+
+def minimum_de_pension_sncf(moteur: ScenarioActuel, annee: int, mois: int
+                            ) -> tuple[float, Fiabilite] | None:
+    """Le minimum de pension ANNUEL de la SNCF à la date d'effet ``annee`` et
+    ``mois``, et sa fiabilité : l'ancre de l'année que le décret n° 2008-639
+    écrit (article 15, IV), revalorisée depuis le 31 décembre de la sienne
+    « du taux et à la date prévus pour les fonctionnaires de l'Etat » (article
+    30), en 2020 au taux des pensions de 2 000 € par mois au plus ; ``None``
+    avant le 1er juillet 2008."""
+    ancre = moteur.reversions.minimum_pension_sncf(annee)
+    if ancre is None:
+        return None
+    depuis, montant, fiabilite = ancre
+    coefficient, fiabilite_du_coefficient = moteur.revalorisations_pensions.generale(
+        date(depuis, 12, 31), date(annee, mois, 1), False, montant / 12)
+    return montant * coefficient, min(fiabilite, fiabilite_du_coefficient)
 
 
 def majoration_retraite_proportionnelle(
@@ -1565,6 +1583,42 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                 libelle="Minimum garanti de la fonction publique",
                 montant=releve_garanti,
                 detail="barème de l'article L. 17, sur la durée de services",
+            ))
+
+    ouverts = [eligible for eligible in liquidees.minima_de_pension if eligible.ouvert]
+    if avantages_non_contributifs and ouverts:
+        # LE MINIMUM DE PENSION DE LA SNCF : la pension d'ancienneté « ne peut
+        # être inférieure » au montant de l'article 15, IV, du décret
+        # n° 2008-639. Il se compare à la pension surcotée, s'y substitue, et
+        # la majoration pour enfants, qui suit, se calcule sur lui (article
+        # 16 : « de leur pension »).
+        releve_sncf = 0.0
+        parts_sncf: list[tuple[str, float]] = []
+        plancher = minimum_de_pension_sncf(moteur, annee_liquidation,
+                                           carriere.mois_liquidation)
+        for eligible in ouverts:
+            pension = pensions[eligible.indice]
+            if plancher is not None and 0 < pension.montant < plancher[0]:
+                complement = plancher[0] - pension.montant
+                releve_sncf += complement
+                parts_sncf.append((pension.regime, complement))
+                fiabilite_globale = min(fiabilite_globale, plancher[1])
+                pensions[eligible.indice] = replace(
+                    pension,
+                    montant=plancher[0],
+                    detail=(f"{pension.detail} = {pension.montant:,.2f} €, "
+                            f"porté au minimum de pension par + {complement:,.2f} €"),
+                )
+        if releve_sncf > 0:
+            total += releve_sncf
+            avantages.append(AvantageApplique(
+                code="minimum_pension_sncf",
+                libelle="Minimum de pension de la SNCF",
+                montant=releve_sncf,
+                detail="article 15 du décret n° 2008-639, sur la pension d'ancienneté",
+                # La pension relevée : sa réversion est portée à 54 % du
+                # minimum (article 18), quoi que sa revalorisation en fasse.
+                par_regime=tuple(parts_sncf),
             ))
 
     # LA PENSION COMPLÈTE D'UNE RETRAITE PROGRESSIVE (droit/progressive.py) :

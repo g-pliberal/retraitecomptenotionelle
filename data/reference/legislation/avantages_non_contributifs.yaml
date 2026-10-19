@@ -437,6 +437,32 @@ avantages:
         pensions » a été gelée en 2014 et sous-indexée depuis, et projeter une
         ancre certifiée sur l'IPC surestime de 4,6 % le minimum garanti de 2024.
 
+  - code: minimum_pension_sncf
+    libelle: Minimum de pension de la SNCF
+    famille: minima_de_pension
+    quoi: >-
+      Le plancher de la pension d'ancienneté du régime spécial de la SNCF, un
+      montant fixe revalorisé comme les pensions de l'État, ouvert sans autre
+      condition jusqu'en 2016, au taux plein depuis, sauf à l'agent qui avait
+      avant 2017 l'âge de liquidation de 2008. La réversion de la pension qui
+      l'atteint en garde 54 %.
+    base_legale: [décret n° 2008-639 article 15, décret n° 2011-291 article 18]
+    fiches: [minimum_pension_sncf]
+    creation: 2008
+    fin: null
+    regimes: SNCF
+    etat_modele: chiffre
+    ligne_cascade: minimum_pension_sncf
+    sans_chiffre: >-
+      La ligne reste vide quand aucune carrière de la SNCF de la grille du coût
+      n'a sa pension d'ancienneté sous le minimum : il ne relève que les petites
+      pensions, que les cas types du régime dépassent.
+    cout:
+      mesurable_par: modele
+      note: >-
+        Un plancher, comme le minimum garanti : il ne coûte que ce qui manque à
+        la pension pour l'atteindre, et rien aux pensions au-dessus.
+
   - code: minimum_vieillesse
     libelle: Minimum vieillesse (ASPA)
     famille: minima_de_pension

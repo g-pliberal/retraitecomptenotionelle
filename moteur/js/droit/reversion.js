@@ -85,6 +85,14 @@ export const AUTRES_BASES = Object.freeze([...MOITIE_SOUS_CONDITION_DE_MARIAGE,
  */
 export const MOITIE_MAJORATION_COMPRISE = Object.freeze(["reversion_ieg", "reversion_sncf"]);
 
+/**
+ * Les lignes de la cascade dont `reversion` lit la part dans chaque pension
+ * (`minima`) : le minimum contributif, sans lequel le régime général reverse la
+ * pension, et le minimum de pension de la SNCF, dont la pension relevée se
+ * reverse au minimum de l'article 18.
+ */
+export const MINIMA_REVERSES = Object.freeze(["minimum_contributif", "minimum_pension_sncf"]);
+
 /** La fiche de la majoration forfaitaire pour enfant à charge (L. 353-5). */
 export const MAJORATION_FORFAITAIRE = "majoration_forfaitaire_reversion";
 
@@ -900,10 +908,11 @@ function majorerLesPetitesRetraites(moteur, lignes, reduites, conjoint, retraite
  * Ce que garde au moins la réversion entière de la SNCF, aux euros de
  * `annee`, et sa fiabilité, `[montant, fiabilité]` : la part
  * `part_du_minimum_de_pension` du minimum de pension de l'article 15, IV,
- * quand la pension de l'agent, `base`, l'atteint ; `null` sans lui. Voir
+ * quand la pension de l'agent, `base`, a été portée au minimum à sa
+ * liquidation — `portee` —, ou lui est supérieure ; `null` sans lui. Voir
  * `_minimum_de_pension` du Python.
  */
-function minimumDePension(moteur, parametres, base, annee) {
+function minimumDePension(moteur, parametres, base, annee, portee = false) {
   const part = parametres.part_du_minimum_de_pension;
   const ancre = moteur.reversions.minimumPensionSncf(annee);
   if (part === null || part === undefined || ancre === null) {
@@ -913,7 +922,7 @@ function minimumDePension(moteur, parametres, base, annee) {
   const [coefficient, fiabiliteDuCoefficient] = moteur.revalorisationsPensions.generale(
     `${String(depuis).padStart(4, "0")}-12-31`, `${String(annee).padStart(4, "0")}-12-31`,
     false, montant / 12);
-  if (base < montant * coefficient) {
+  if (!portee && base < montant * coefficient) {
     return null;
   }
   return [Number(part) * montant * coefficient, Math.min(fiabilite, fiabiliteDuCoefficient)];
@@ -1036,7 +1045,9 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
       let motif = "servie";
       let releve = 1.0;
       let fiabiliteLigne = fiabilite;
-      const garanti = servie ? minimumDePension(moteur, parametres, base, annee) : null;
+      const garanti = servie
+        ? minimumDePension(moteur, parametres, base, annee, Boolean((minima ?? {})[regime]))
+        : null;
       if (garanti !== null) {
         minimum = garanti[0];
         if (minimum > entiere) {

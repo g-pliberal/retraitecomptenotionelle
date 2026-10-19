@@ -36,7 +36,7 @@ import { ageDeLAspa } from "./droit/invalidite.js";
 import * as limiteAge from "./droit/limite_age.js";
 import * as liquidation from "./droit/liquidation.js";
 import * as lesProgressives from "./droit/progressive.js";
-import { moisSuivant, reversion } from "./droit/reversion.js";
+import { MINIMA_REVERSES, moisSuivant, reversion } from "./droit/reversion.js";
 import * as laSeconde from "./droit/seconde.js";
 import { Entree, Journal } from "./journal.js";
 import {
@@ -412,7 +412,7 @@ export class Echeancier {
     };
     const majorations = parts(partsDeLaMajoration(resultat.avantages, null, false));
     const minima = parts(resultat.avantages
-      .filter((avantage) => avantage.code === "minimum_contributif")
+      .filter((avantage) => MINIMA_REVERSES.includes(avantage.code))
       .flatMap((avantage) => avantage.par_regime ?? []));
     const maxima = {};
     for (const p of resultat.regimes) {
@@ -502,10 +502,12 @@ export class Echeancier {
           coefficient];
       }
     }
+    // La part que chaque minimum reversé ajoute à la pension, menée de même.
+    const minima = Object.assign({}, ...MINIMA_REVERSES.map((code) => menees(code)));
     return [annee, [...servies, ...this.auDepart.pensions_par_regime
       .filter((p) => !vues.has(p.regime))
       .map((p) => [p.regime, p.montant, p.fiabilite])], enCapital,
-    menees(MAJORATION_ENFANTS), menees("minimum_contributif"), maxima,
+    menees(MAJORATION_ENFANTS), minima, maxima,
     majorationsApres(this.moteur, departs, `${String(carriere.dateLiquidation.annee)
       .padStart(4, "0")}-${String(carriere.dateLiquidation.mois).padStart(2, "0")}-01`, annee)];
   }

@@ -1393,9 +1393,10 @@ def _refaire_la_formule(detail: str) -> float | None:
         surcote = re.search(r"surcote parentale ([\d.]+)%", detail)
         if surcote:
             montant *= 1 + float(surcote.group(1)) / 100
-        # Les deux planchers disent de combien ils relèvent la pension.
+        # Les trois planchers disent de combien ils relèvent la pension.
         plancher = re.search(
-            r"porté au minimum (?:contributif|garanti) par \+ ([\d,]+\.\d+) €", detail)
+            r"porté au minimum (?:contributif|garanti|de pension) par \+ ([\d,]+\.\d+) €",
+            detail)
         # Le supplément de pension de l'aide-soignant, servi après la décote et
         # le minimum garanti, dit son montant.
         supplements = re.findall(
@@ -1511,7 +1512,7 @@ def test_toute_formule_affichee_retrouve_le_montant_de_sa_ligne(contexte):
                     continue
                 controlees += 1
                 for marqueur in ("minimum contributif", "minimum garanti",
-                                 "coefficient d'anticipation",
+                                 "minimum de pension", "coefficient d'anticipation",
                                  "coefficient de majoration", "surcote parentale",
                                  "pension majorée de référence",
                                  "complément différentiel"):
@@ -1536,7 +1537,7 @@ def test_toute_formule_affichee_retrouve_le_montant_de_sa_ligne(contexte):
                 continue
             controlees += 1
             for marqueur in ("minimum contributif", "minimum garanti",
-                             "coefficient d'anticipation",
+                             "minimum de pension", "coefficient d'anticipation",
                              "coefficient de majoration", "surcote parentale",
                              "pension majorée de référence", "complément différentiel"):
                 if marqueur in pension.detail:
@@ -1552,7 +1553,7 @@ def test_toute_formule_affichee_retrouve_le_montant_de_sa_ligne(contexte):
     # branches sont le garde-fou. Écrit une première fois, ce test dépaquetait
     # mal les statuts et contrôlait ZÉRO formule, en vert.
     assert controlees > 150, f"{controlees} formules seulement ont été refaites"
-    assert branches == {"minimum contributif", "minimum garanti",
+    assert branches == {"minimum contributif", "minimum garanti", "minimum de pension",
                         "coefficient d'anticipation",
                         "coefficient de majoration", "surcote parentale",
                         "pension majorée de référence", "complément différentiel"}, (
