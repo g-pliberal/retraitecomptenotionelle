@@ -41,7 +41,9 @@ Ce récupérateur écrit donc les deux, séparément : les valeurs arrêtées, v
 au niveau `certifiee`, et **la valeur de service en vigueur dans l'année en
 cours**, versée au niveau `haute` — elle est publiée et opposable, mais la
 décision de novembre peut encore la déplacer avant le 31 décembre.
-`docs/limites.md` le dit aussi.
+`docs/limites.md` le dit aussi. De la parution de la compilation au
+31 décembre, l'année a sa décision et la suivante n'a pas commencé : rien ne se
+reconduit, ce qui présumerait un gel au 1er novembre suivant.
 
 LES TABLES D'AVANT LA FUSION SONT DANS LE MÊME DOCUMENT, et elles y sont
 désormais lues. Cette page écrivait qu'elles étaient « sous une présentation
@@ -101,7 +103,7 @@ from source_locale import lire_ou_telecharger, option_fichier  # noqa: E402
 #: Compilation publiée par la fédération. L'adresse porte le millésime de la
 #: revalorisation : à reprendre chaque automne.
 URL = ("https://www.agirc-arrco.fr/storage/2024/10/"
-       "Compilation_valeurs_de_point_novembre_2025.pdf")
+       "Compilation_valeurs_de_point_novembre_2026.pdf")
 
 SORTIE = Path("data/brut/agirc_arrco_valeurs_point.json")
 ENTETES = {"User-Agent": "retraite-notionnelle/0.1 (recherche publique)"}
@@ -459,6 +461,18 @@ def valeurs_de_service(tete: str) -> dict[int, float]:
     return par_annee
 
 
+def valeur_en_cours(service: dict[int, float], annee_courante: int) -> dict[str, float]:
+    """La valeur de service de l'année en cours, tant que la compilation n'en
+    imprime pas la décision de novembre : la dernière, en vigueur depuis le
+    1er janvier, reconduite. Rien quand l'année a sa décision : la suivante n'a
+    pas commencé, et la reconduire y présumerait un gel au 1er novembre.
+    """
+    annee = max(service) + 1
+    if annee > annee_courante:
+        return {}
+    return {f"agirc_arrco|{annee}|valeur_service": service[max(service)]}
+
+
 def valeurs_d_achat(tete: str) -> dict[int, float]:
     """Valeur d'achat du point, que la fédération publie par ANNÉE CIVILE."""
     depart = tete.find("Valeur d'achat du point")
@@ -538,14 +552,10 @@ def main(argv: list[str] | None = None) -> int:
               for annee, valeur in sorted(achat.items())}
     serie |= historiques
 
-    # L'année qui suit la dernière décision de novembre : sa valeur de service
-    # est celle-là, en vigueur depuis le 1er janvier, jusqu'à la décision de
-    # novembre suivante. Publiée et opposable, mais pas encore arrêtée au
-    # 31 décembre — d'où un niveau en retrait.
-    en_cours = max(service) + 1
-    serie_en_cours = {
-        f"agirc_arrco|{en_cours}|valeur_service": service[max(service)]
-    }
+    # L'année en cours, si sa décision de novembre manque : sa valeur de service
+    # est la dernière, en vigueur depuis le 1er janvier. Publiée et opposable,
+    # mais pas encore arrêtée au 31 décembre — d'où un niveau en retrait.
+    serie_en_cours = valeur_en_cours(service, date.today().year)
 
     SORTIE.parent.mkdir(parents=True, exist_ok=True)
     SORTIE.write_text(
@@ -576,11 +586,14 @@ def main(argv: list[str] | None = None) -> int:
         f"{regime} {premiere}-{derniere}"
         for regime, (_, premiere, derniere, _) in TABLES_HISTORIQUES.items()
     )
+    en_cours = "; ".join(
+        f"valeur de service en vigueur en {cle.split('|')[1]} reconduite à {valeur} €"
+        for cle, valeur in serie_en_cours.items()
+    ) or f"la décision de {max(service)} imprimée, rien à reconduire"
     print(
         f"{SORTIE} : {len(serie)} valeurs arrêtées — régime unifié, service "
         f"{min(service)}-{max(service)} et achat {min(achat)}-{max(achat)} ; "
-        f"tables d'avant la fusion, {couverture} ; valeur de service en vigueur "
-        f"en {en_cours} reconduite à {service[max(service)]} €"
+        f"tables d'avant la fusion, {couverture} ; {en_cours}"
     )
     return 0
 

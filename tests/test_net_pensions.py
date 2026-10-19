@@ -69,7 +69,10 @@ def test_le_scenario_1_paie_le_1_pour_cent_sur_sa_complementaire(contexte, pensi
     """La pension nette du scénario 1 est la brute, moins la CSG, la CRDS et la
     CASA de sa tranche sur le tout, moins 1 % de ce que servent les
     complémentaires. Au salaire moyen, présumée seule ressource, la pension
-    tombe au taux médian."""
+    frôle le seuil du taux plein : 6 € de revenu fiscal en deçà avec le point
+    Agirc-Arrco gelé, 87 € au-delà depuis son relèvement du 1er novembre 2026.
+    Le test prend donc la tranche du revenu fiscal, quelle qu'elle soit, pourvu
+    qu'elle soit de celles qui paient le 1 %."""
     comparaison, montants = _simuler(contexte, PRIVE)
     actuel = comparaison.actuel
     assert comparaison.aujourd_hui is None
@@ -78,7 +81,8 @@ def test_le_scenario_1_paie_le_1_pour_cent_sur_sa_complementaire(contexte, pensi
     total = actuel.pension_annuelle
     assert 0 < complementaire < total
     tranche = pensions.tranche(montants.revenu_fiscal, montants.parts)
-    assert tranche.libelle == montants.tranche == "taux médian"
+    assert tranche.libelle == montants.tranche
+    assert tranche.maladie, tranche.libelle
     attendu = (total - pensions.taux_de_la_tranche(tranche) * total
                - 0.01 * complementaire)
     assert montants.pension(total) == pytest.approx(attendu, rel=1e-12)

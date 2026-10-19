@@ -136,14 +136,14 @@ approximations:
     vaut pour l'Arrco d'avant 1999, que l'UNIRS remplace au niveau moyenne.
   effet: non mesuré ; la valeur du 31 décembre de chaque année est celle que la fédération certifie
 sources:
-  lu_le: 2026-10-05
-  prochaine_relecture: 2026-11-15
+  lu_le: 2026-10-19
+  prochaine_relecture: 2027-01-15
   a_relire:
   - >-
-    La décision du conseil d'administration de la fédération, le 14 octobre 2026, sur la
-    valeur de service au 1er novembre 2026 : une ligne agirc_arrco de plus dans
-    regimes/valeurs_service_datees.csv, et la valeur annuelle de 2026 certifiée dans
-    regimes/valeurs_point.csv, que le test des deux tables refuse l'une sans l'autre.
+    L'accord national interprofessionnel de 2027 à 2030, que le communiqué du 14 octobre
+    2026 annonce : s'il change la date ou la règle du relèvement de novembre, la version
+    regime_unifie se coupe. Et, dès janvier 2027, la valeur reconduite de l'année en
+    cours (scripts/fetch/agirc_arrco_valeurs_point.py, valeur_en_cours).
   - >-
     Le texte de l'accord du 30 octobre 2015, dont le JORF ne publie que les avis
     d'extension : son titre 1 reporte la revalorisation au 1er novembre.
@@ -160,11 +160,39 @@ sources:
     url: https://www.agirc-arrco.fr/storage/2024/10/Compilation_valeurs_de_point_novembre_2025.pdf
   - type: autre
     reference: >-
+      la même compilation, au 1er novembre 2026 (copie datée,
+      sha256:868a8a652688240323ae387676dd26da11f1f86de7ef72388e666593c0bc8c4a), lue le
+      19 octobre 2026 : « A compter du 1er novembre 2026 » 1,4587 €, évolution 1,40 % ;
+      les 275 valeurs annuelles que le récupérateur lisait dans la précédente, au
+      millionième près les mêmes ; la valeur d'achat s'arrête à 2026. Celle de 2025 ne
+      répond plus à son adresse
+    date: 2026-11-01
+    url: https://www.agirc-arrco.fr/storage/2024/10/Compilation_valeurs_de_point_novembre_2026.pdf
+  - type: autre
+    reference: >-
+      communiqué de presse de la fédération du 14 octobre 2026 (copie datée,
+      sha256:ddf5ab2a71837903c01049e3cdd6cfe5f6edfaf507523e6026ede865640b87d7) : le conseil
+      d'administration relève les pensions de 1,4 % au 1er novembre 2026, dans la marge
+      de l'accord du 5 octobre 2023 (de 1,2 à 1,9 % pour 2026), sans en imprimer la valeur
+      de service ; la valeur d'achat de 2027 est renvoyée à la négociation de l'accord de
+      2027 à 2030. La page « Paramètres et données statistiques » de la fédération, lue
+      le 19 octobre 2026, imprime 1,4587 € « À compter du 1er novembre 2026 »
+    date: 2026-10-14
+    url: https://www.agirc-arrco.fr/storage/261014_Communique-de-presse_Revalorisation-valeur-du-point-Agirc-Arrco.pdf
+  - type: autre
+    reference: >-
       base réglementaire de la fédération, barème « Valeur de service du point
-      Agirc-Arrco », lu le 5 octobre 2026 : les mêmes valeurs, « à compter du » 1er
-      novembre de chaque année de 2018 (1,2588 €) à 2025 (1,4386 €)
+      Agirc-Arrco », lu le 5 octobre 2026 et relu le 19 octobre 2026 : les mêmes valeurs,
+      « à compter du » 1er novembre de chaque année de 2018 (1,2588 €) à 2025 (1,4386 €),
+      sans encore celle de 2026
     date: 2025-11-01
     url: https://reglementation.agirc-arrco.fr/home/baremes/listes-area/baremes-1/valeur-de-service-du-point-agirc-arrco.html
+  - type: service_public
+    reference: >-
+      actualité A17790 du 15 octobre 2026, « Quelle revalorisation pour les retraites
+      complémentaires du privé ? » : la même décision, sans la valeur de service
+    date: 2026-10-15
+    url: https://www.service-public.gouv.fr/particuliers/actualites/A17790
   - type: autre
     reference: >-
       accord national interprofessionnel du 17 novembre 2017, articles 27 et 92 (copie de
@@ -203,13 +231,16 @@ code:
     moteur/js/droit/seconde.js ; le paquet porte valeurs_service_datees
     (scripts/construire_donnees.py)
   parametres: >-
-    regimes/valeurs_service_datees.csv : 268 valeurs datées, Agirc 1947-2018, UNIRS et
-    Arrco 1961-2018, Agirc-Arrco 2019-2025 ; regimes/valeurs_point.csv au-delà
+    regimes/valeurs_service_datees.csv : 269 valeurs datées, Agirc 1947-2018, UNIRS et
+    Arrco 1961-2018, Agirc-Arrco 2019-2026 ; regimes/valeurs_point.csv au-delà
   tests: >-
     tests/test_revalorisation.py : test_la_liquidation_sert_la_valeur_du_point_du_jour,
     test_la_pension_menee_recoit_le_relevement_de_novembre,
     test_les_pensions_de_2018_passent_au_point_unifie_sans_changer ; tests/test_donnees.py :
-    test_la_valeur_datee_du_31_decembre_est_celle_de_l_annee ; tests/test_oracle.py :
+    test_la_valeur_datee_du_31_decembre_est_celle_de_l_annee,
+    test_chaque_valeur_de_service_agirc_arrco_suit_le_relevement_publie ;
+    tests/test_verification.py :
+    test_l_annee_suivante_ne_se_reconduit_pas_avant_d_avoir_commence ; tests/test_oracle.py :
     l'exemple agirc_arrco_drj_2020_02_valeur_du_1er_janvier_2019, et OpenFisca au
     1er janvier ; tests/test_trajectoire.py et tests/test_destinie.py ; les témoins de
     simulation, que le portage rejoue

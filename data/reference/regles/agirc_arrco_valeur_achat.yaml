@@ -275,16 +275,17 @@ approximations:
     simulation du scénario 1 baissaient, −1,20 % en médiane, jusqu'à −4,1 % pour une
     carrière qui liquide loin dans l'avenir
 sources:
-  lu_le: 2026-10-12
-  prochaine_relecture: 2026-10-31
+  lu_le: 2026-10-19
+  prochaine_relecture: 2026-12-31
   a_relire:
   - >-
-    La décision du conseil d'administration attendue le 14 octobre 2026 : la valeur de
-    service au 1er novembre 2026 et la valeur d'achat de 2027, « déterminée, chaque
-    année, au même moment que la valeur de service du point » (article 28). Publiée, la
-    valeur d'achat de 2027 entre dans regimes/valeurs_point.csv par le récupérateur de la
+    La valeur d'achat de 2027, que l'article 28 fait déterminer « au même moment que la
+    valeur de service du point » : le conseil d'administration du 14 octobre 2026, qui
+    relève celle-ci de 1,4 % au 1er novembre 2026, la renvoie à la négociation de
+    l'accord de 2027 à 2030, et la compilation au 1er novembre 2026 s'arrête à 2026.
+    Publiée, elle entre dans regimes/valeurs_point.csv par le récupérateur de la
     fédération (scripts/fetch/agirc_arrco_valeurs_point.py), et le prolongement part de
-    2028.
+    2028 ; d'ici là, de 2027.
   - >-
     L'accord national interprofessionnel de 2027 à 2030, dès sa signature : s'il corrige
     la valeur d'achat d'un facteur de soutenabilité, rattrape le gel de 2026 ou indexe
@@ -373,6 +374,15 @@ sources:
       sha256:a97f2c387043cd3ef8dc8506f9b719b0786ad70d8691b41f4241ae103a6f87ff)
     date: 2025-10-17
     url: https://www.agirc-arrco.fr/storage/20251017_CP_Revalorisation-valeur-du-point-Agirc-Arrco.pdf
+  - type: autre
+    reference: >-
+      Agirc-Arrco, communiqué de presse du 14 octobre 2026 : les pensions relevées de
+      1,4 % au 1er novembre 2026 ; la valeur d'achat, « habituellement fixée lors du
+      Conseil d'administration d'octobre », renvoyée à la négociation de l'accord de 2027
+      à 2030 (copie datée,
+      sha256:ddf5ab2a71837903c01049e3cdd6cfe5f6edfaf507523e6026ede865640b87d7)
+    date: 2026-10-14
+    url: https://www.agirc-arrco.fr/storage/261014_Communique-de-presse_Revalorisation-valeur-du-point-Agirc-Arrco.pdf
   - type: autre
     reference: >-
       presse spécialisée de septembre 2026 (Meilleurtaux Placement, 28 septembre 2026) : le

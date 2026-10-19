@@ -208,7 +208,8 @@ def test_les_points_d_avant_1999_changent_d_echelle_avec_l_arrco(simulateur):
     assert depart.annee == 1990
     valeur_1990 = liquider.valeur_du_point(simulateur.scenario_actuel, "arrco", depart)[0]
     assert arrco.regle == REGLE_POINT
-    assert arrco.coefficient == pytest.approx(0.387464 * 1.4386 / valeur_1990, rel=1e-12)
+    assert arrco.coefficient == pytest.approx(0.387464 * POINT_AGIRC_ARRCO_2026 / valeur_1990,
+                                             rel=1e-12)
 
 
 def test_la_liquidation_sert_la_valeur_du_point_du_jour(simulateur):
@@ -417,9 +418,11 @@ REVALORISATIONS_DEPUIS_2012 = (
 
 #: Valeur de service du point Arrco au jour du départ, en janvier 2012 — celle
 #: du 1er avril 2011, la hausse de 2012 ne venant qu'au 1er avril, à 1,2414 € —,
-#: et du point Agirc-Arrco en 2026, gelé depuis le 1er novembre 2024.
+#: et du point Agirc-Arrco en vigueur à la fin de 2026 : gelé du 1er novembre
+#: 2024 au 31 octobre 2026, relevé de 1,4 % au 1er novembre 2026 (décision du
+#: conseil d'administration du 14 octobre 2026).
 POINT_ARRCO_JANVIER_2012 = 1.2135
-POINT_AGIRC_ARRCO_2026 = 1.4386
+POINT_AGIRC_ARRCO_2026 = 1.4587
 
 
 def test_le_cas_type_d_un_retraite_se_refait_a_la_main(simulateur):

@@ -2795,7 +2795,7 @@ institutions:
       - id: agirc_arrco_valeurs_point
         titre: Valeurs de service et d'achat du point — régime unifié 2019-2026,
           Agirc 1947-2018, Arrco 1999-2018, UNIRS 1961-1998
-        url: https://www.agirc-arrco.fr/storage/2024/10/Compilation_valeurs_de_point_novembre_2025.pdf
+        url: https://www.agirc-arrco.fr/storage/2024/10/Compilation_valeurs_de_point_novembre_2026.pdf
         acces: document
         statut_integration: automatise
         cible: data/reference/regimes/valeurs_point.csv
@@ -2821,7 +2821,10 @@ institutions:
           de 2026 est arrêtée. La valeur de service l'est par date d'effet, au
           1er novembre, et la règle du dépôt retient celle du 31 décembre :
           celle de 2026 est donc reconduite au niveau `haute`, la décision de
-          novembre pouvant encore la déplacer.
+          novembre pouvant encore la déplacer. La compilation au 1er novembre
+          2026, lue le 19 octobre 2026, l'arrête à 1,4587 € (+ 1,40 %, décision
+          du 14 octobre) : certifiée, et rien ne se reconduit pour 2027 avant
+          qu'elle commence.
           PÉRIMÈTRE, ÉLARGI AUX TABLES D'AVANT LA FUSION. Cette note disait que
           les barèmes de l'Agirc et de l'Arrco d'avant 2019 « figurent dans le
           même document sous une présentation différente, et restent transcrits

@@ -1,0 +1,38 @@
+date: "2026-10-19"
+session: >-
+  veille hors action : la valeur de service Agirc-Arrco du 1er novembre 2026,
+  sur un audit juridique externe du dépôt (état au 19 octobre 2026) et le
+  correctif qui l'accompagnait, que le propriétaire a soumis à vérification
+consulte: >-
+  Le communiqué de presse de la fédération Agirc-Arrco du 14 octobre 2026
+  (copie datée, sha256:ddf5ab2a71837903c01049e3cdd6cfe5f6edfaf507523e6026ede865640b87d7) ;
+  l'actualité A17790 de service-public.fr, du 15 octobre 2026 ; la page
+  « Paramètres et données statistiques » de la fédération ; sa compilation des
+  valeurs de point au 1er novembre 2026 (copie datée,
+  sha256:868a8a652688240323ae387676dd26da11f1f86de7ef72388e666593c0bc8c4a), celle de
+  novembre 2025 ne répondant plus à son adresse ; le barème « Valeur de service
+  du point Agirc-Arrco » de sa base réglementaire ; les fiches
+  agirc_arrco_valeur_service et agirc_arrco_valeur_achat. Ni le JORF ni LEGI :
+  la décision est celle du conseil d'administration d'un régime conventionnel,
+  qu'aucun texte du Journal officiel ne porte.
+trouve: >-
+  Le conseil d'administration relève les pensions de 1,4 % au 1er novembre
+  2026 ; la compilation imprime 1,4587 € (+ 1,40 %), et ses 275 autres valeurs
+  sont celles de la précédente, au bit près. Le correctif de l'audit portait la
+  bonne valeur, mais au niveau `haute`, en attribuait le montant à l'actualité
+  A17790, qui ne donne que le taux, laissait le récupérateur sur la
+  compilation de 2025, retirée, qui reconduisait 1,4386 € pour 2026, et élargissait
+  le test de la CSG à deux tranches sans dire pourquoi son cas change de
+  tranche : 6 € de revenu fiscal sous le seuil du taux plein avec le point
+  gelé, 87 € au-dessus après le relèvement.
+  La valeur est certifiée dans les deux tables, et le journal de certification
+  suit ; le récupérateur lit la compilation de 2026, et ne reconduit plus rien
+  pour l'année qui suit avant qu'elle commence, ce qui y présumerait un gel au
+  1er novembre 2027. La valeur d'achat de 2027 n'est pas fixée : le
+  communiqué la renvoie à l'accord de 2027 à 2030.
+reste: >-
+  La base réglementaire de la fédération n'imprime pas encore la valeur de
+  2026. Dès janvier 2027, le récupérateur reconduira la valeur de 2027, gel
+  présumé au 1er novembre 2027 comme la règle l'a fait pour 2026. L'accord de
+  2027 à 2030 et la valeur d'achat de 2027. Les autres constats de l'audit,
+  déjà connus du dépôt, ne sont pas repris ici.

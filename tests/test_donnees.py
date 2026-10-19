@@ -793,7 +793,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
     appoint = {"valeurs_point_insee", "employeur_public_texte",
                # Depuis que le tableau du gestionnaire de la CNRACL est lu,
                # la transcription d'OpenFisca n'a plus rien à combler.
-               "employeur_public_cnracl"}
+               "employeur_public_cnracl",
+               # La valeur de l'année en cours, reconduite : rien à dire de la
+               # parution de la compilation de novembre au 31 décembre.
+               "valeurs_point_agirc_arrco_en_cours"}
     assert set(journal["series"]) <= set(fichiers)
     assert set(fichiers) - set(journal["series"]) <= appoint
 
@@ -4006,6 +4009,37 @@ def test_la_valeur_datee_du_31_decembre_est_celle_de_l_annee():
     unifie = datees["agirc_arrco"]
     assert unifie[0][:2] == ((2019, 1), 1.2588)
     assert all(mois == 11 for (_, mois), _, _ in unifie[1:])
+
+
+#: Les relèvements du point Agirc-Arrco, que la compilation de la fédération au
+#: 1er novembre 2026 imprime en regard de chaque valeur (page 2), gels compris ;
+#: celui de 2026, le conseil d'administration l'a décidé le 14 octobre 2026.
+RELEVEMENTS_AGIRC_ARRCO = {
+    "2019-11-01": 0.01, "2020-11-01": 0.0, "2021-11-01": 0.01, "2022-11-01": 0.0512,
+    "2023-11-01": 0.049, "2024-11-01": 0.016, "2025-11-01": 0.0, "2026-11-01": 0.014,
+}
+
+
+def test_chaque_valeur_de_service_agirc_arrco_suit_le_relevement_publie():
+    """Chaque valeur de service datée est la précédente relevée du taux que la
+    fédération imprime en regard, arrondie au dix-millième d'euro — au plus
+    près, non tronquée, ce qui eût donné 1,2713 € en 2019 et 1,4385 € en 2024.
+    La dernière, 1,4587 € au 1er novembre 2026, est certifiée comme les
+    autres."""
+    with (RACINE_DONNEES / "reference" / "regimes" / "valeurs_service_datees.csv").open(
+            encoding="utf-8") as f:
+        unifie = {
+            l["date_effet"]: (float(l["valeur"]), l["fiabilite"])
+            for l in csv.DictReader(x for x in f if not x.startswith("#"))
+            if l["regime"] == "agirc_arrco"
+        }
+    dates = sorted(unifie)
+    assert dates[1:] == sorted(RELEVEMENTS_AGIRC_ARRCO)
+    for avant, date_effet in zip(dates, dates[1:]):
+        attendue = round(unifie[avant][0] * (1 + RELEVEMENTS_AGIRC_ARRCO[date_effet]), 4)
+        assert unifie[date_effet][0] == attendue, date_effet
+    assert unifie["2026-11-01"] == (1.4587, "certifiee")
+    assert {fiabilite for _, fiabilite in unifie.values()} == {"certifiee"}
 
 
 # -- les interrupteurs, renvois aux fiches (phase 6) -------------------------

@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-10-18",
+ "dernier_passage_le": "2026-10-19",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -1743,23 +1743,12 @@
    "ajoutees": 0,
    "colonne": "valeur",
    "corrigees": 0,
-   "empreinte": "b3071e53b07b541a",
-   "identiques": 275,
+   "empreinte": "fed5dd855daa2204",
+   "identiques": 276,
    "niveau": "certifiee",
    "source": "Fédération Agirc-Arrco, compilation des valeurs de point (régime unifié, Agirc, Arrco et UNIRS)",
-   "valeurs": 275,
-   "verifiee_le": "2026-10-05"
-  },
-  "valeurs_point_agirc_arrco_en_cours": {
-   "ajoutees": 0,
-   "colonne": "valeur",
-   "corrigees": 0,
-   "empreinte": "e398b564f1c064df",
-   "identiques": 1,
-   "niveau": "haute",
-   "source": "Fédération Agirc-Arrco, valeur en vigueur dans l'année en cours",
-   "valeurs": 1,
-   "verifiee_le": "2026-10-05"
+   "valeurs": 276,
+   "verifiee_le": "2026-10-19"
   },
   "valeurs_point_avant_1973": {
    "ajoutees": 0,

@@ -3176,6 +3176,10 @@ def source_valeurs_point_agirc_arrco_en_cours() -> dict[tuple, float]:
     publie un gel à 1,4386 € jusqu'au 1er novembre 2026. Entre inventer une
     décision et reconduire celle qui est en vigueur, la seconde a une source —
     d'où un niveau en retrait, et non une absence.
+
+    Source d'appoint : de la parution de la compilation de novembre au
+    31 décembre, l'année a sa décision, que la fédération certifie, et la
+    suivante n'a pas commencé — rien à reconduire.
     """
     charge = _lire_json("agirc_arrco_valeurs_point.json",
                         "scripts/fetch/agirc_arrco_valeurs_point.py")
@@ -8420,6 +8424,7 @@ CERTIFICATIONS = (
         decimales=6,
         tolerance=5e-7,
         niveau="haute",
+        complementaire=True,
     ),
     Certification(
         nom="taux_moyens_agirc_arrco",

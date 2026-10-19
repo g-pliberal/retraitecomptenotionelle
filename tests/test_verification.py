@@ -772,6 +772,22 @@ def test_une_table_sans_intitule_qui_redonne_les_memes_annees_n_est_pas_une_suit
     assert module.table_de("Arrco", pages) == pages[0]
 
 
+def test_l_annee_suivante_ne_se_reconduit_pas_avant_d_avoir_commence():
+    """La compilation de novembre 2025 laissait 2026, l'année en cours, sans sa
+    décision : la valeur en vigueur se reconduisait. Celle de novembre 2026
+    imprime la décision de l'année ; reconduire dès octobre la valeur de 2027,
+    année qui n'a pas commencé, y présumerait un gel au 1er novembre 2027."""
+    module = _charger_script("agirc_arrco_valeurs_point", "scripts", "fetch",
+                             "agirc_arrco_valeurs_point.py")
+    service = {2024: 1.4386, 2025: 1.4386}
+    assert module.valeur_en_cours(service, 2026) == {
+        "agirc_arrco|2026|valeur_service": 1.4386}
+    service[2026] = 1.4587
+    assert module.valeur_en_cours(service, 2026) == {}
+    assert module.valeur_en_cours(service, 2027) == {
+        "agirc_arrco|2027|valeur_service": 1.4587}
+
+
 # -- valeurs du point du RAFP, lues chez l'ERAFP -----------------------------
 
 #: Le tableau de l'ERAFP, tel que le PDF le rend : trois lignes par tranche, et

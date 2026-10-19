@@ -5,7 +5,11 @@
 #            référence / valeurs d'achat du point — Historique », au
 #            1er novembre 2025 (Compilation_valeurs_de_point_novembre_2025.pdf,
 #            sha256:b1262a855f12906ef5fe8feeef2dab5f6bdccaf9932efadab61d5df0d3308aa1),
-#            pages 2 à 5 et 59, lue le 5 octobre 2026.
+#            pages 2 à 5 et 59, lue le 5 octobre 2026 ; la ligne du
+#            1er novembre 2026, de la compilation au 1er novembre 2026
+#            (Compilation_valeurs_de_point_novembre_2026.pdf,
+#            sha256:868a8a652688240323ae387676dd26da11f1f86de7ef72388e666593c0bc8c4a),
+#            page 2, lue le 19 octobre 2026.
 #
 # POURQUOI CE FICHIER EXISTE. valeurs_point.csv garde, pour chaque année, la
 # valeur en vigueur au 31 décembre. Une pension se liquide pourtant à SA date
@@ -37,7 +41,9 @@
 #                 vigueur à chacune, changée ou non, et la ligne le redit ;
 #   agirc_arrco : 1er janvier 2019, la valeur de l'Arrco, puis le 1er novembre
 #                 de chaque année (accord du 17 novembre 2017, article 27),
-#                 gels de 2020 et de 2025 compris.
+#                 gels de 2020 et de 2025 compris ; le 1er novembre 2026,
+#                 1,4587 € (+ 1,40 %), que le conseil d'administration a
+#                 décidé le 14 octobre 2026.
 # Le 1er novembre vient de l'accord du 30 octobre 2015, qui l'a substitué au
 # 1er avril pour l'Agirc et l'Arrco ; une note du document le dit.
 #
@@ -167,6 +173,7 @@ agirc_arrco,2022-11-01,1.349800,certifiee
 agirc_arrco,2023-11-01,1.415900,certifiee
 agirc_arrco,2024-11-01,1.438600,certifiee
 agirc_arrco,2025-11-01,1.438600,certifiee
+agirc_arrco,2026-11-01,1.458700,certifiee
 arrco,1961-01-01,0.029453,moyenne
 arrco,1961-10-01,0.031344,moyenne
 arrco,1962-10-01,0.033295,moyenne
