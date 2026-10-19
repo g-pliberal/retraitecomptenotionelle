@@ -315,15 +315,17 @@ def test_la_pension_d_un_agent_sncf_paie_encore_sa_maladie(simulateur):
 
 
 def test_la_pension_des_chemins_de_fer_secondaires_paie_jusqu_a_60_ans(simulateur):
-    """Un agent des chemins de fer secondaires né en janvier 1910, le 15
-    présumé, parti à 55 ans en 1965 : la part de sa pension que sert le régime
-    paie 2,5 % jusqu'à ses 60 ans, janvier 1970 compris, au premier jour
-    duquel il ne les a pas ; puis rien jusqu'au 31 juillet 1980, quand naît la
-    cotisation des régimes spéciaux placés sous le régime général. Rien
-    d'autre ne prélève sa pension avant 1980."""
+    """Un agent des chemins de fer secondaires né le 15 janvier 1910, parti à
+    55 ans en 1965 : la part de sa pension que sert le régime paie 2,5 %
+    jusqu'à ses 60 ans, janvier 1970 compris, au premier jour duquel il ne les
+    a pas ; puis rien jusqu'au 31 juillet 1980, quand naît la cotisation des
+    régimes spéciaux placés sous le régime général. Rien d'autre ne prélève sa
+    pension avant 1980. Le jour se déclare, puisque la coupure se compte
+    depuis lui (feuille de route, action 135, levier 2)."""
     comparaison = simulateur.simuler(simulateur.carriere_simple(
         annee_naissance=1910, sexe="H", affiliation="agent_chemins_fer_secondaires",
-        age_debut=20, age_liquidation=55, niveau_salaire=1.0))
+        mois_naissance=1, jour_naissance=15, age_debut=20, age_liquidation=55,
+        niveau_salaire=1.0))
     taux = cycle_de_vie.prelevements_par_annee(simulateur, comparaison)
     part = cycle_de_vie._parts_assujetties(simulateur, comparaison.actuel)[
         "maladie_regimes_speciaux"]
@@ -335,17 +337,19 @@ def test_la_pension_des_chemins_de_fer_secondaires_paie_jusqu_a_60_ans(simulateu
 
 
 def test_a_60_ans_la_pension_des_chemins_de_fer_secondaires_change_de_cotisation(simulateur):
-    """Un agent des chemins de fer secondaires né en janvier 1930, parti à 55
-    ans en 1985 : la part de sa pension que sert le régime paie 2,7 % en 1987,
-    la moyenne des 2,5 % et des 2,9 % du décret n° 87-463, et 2,9 % en 1989 ;
-    au 1er février 1990, il a 60 ans, et elle paie la cotisation des régimes
-    spéciaux placés sous le régime général, 1,9 %, dont le décret n° 80-598
-    laissait jusque-là « régis par les dispositions qui les concernent » ceux
-    qui en payaient une. Sa pension n'est comptée qu'une fois, avant comme
-    après, et son revenu imposable déduit l'une et l'autre."""
+    """Un agent des chemins de fer secondaires né le 15 janvier 1930, parti à
+    55 ans en 1985 : la part de sa pension que sert le régime paie 2,7 % en
+    1987, la moyenne des 2,5 % et des 2,9 % du décret n° 87-463, et 2,9 % en
+    1989 ; au 1er février 1990, il a 60 ans, et elle paie la cotisation des
+    régimes spéciaux placés sous le régime général, 1,9 %, dont le décret
+    n° 80-598 laissait jusque-là « régis par les dispositions qui les
+    concernent » ceux qui en payaient une. Sa pension n'est comptée qu'une
+    fois, avant comme après, et son revenu imposable déduit l'une et l'autre.
+    Le jour se déclare, comme celui du test qui précède."""
     comparaison = simulateur.simuler(simulateur.carriere_simple(
         annee_naissance=1930, sexe="H", affiliation="agent_chemins_fer_secondaires",
-        age_debut=20, age_liquidation=55, niveau_salaire=1.0))
+        mois_naissance=1, jour_naissance=15, age_debut=20, age_liquidation=55,
+        niveau_salaire=1.0))
     taux = cycle_de_vie.prelevements_par_annee(simulateur, comparaison)
     imposables = cycle_de_vie.parts_imposables_par_annee(simulateur, comparaison)
     apres = cycle_de_vie._parts_assujetties(simulateur, comparaison.actuel, 1985)
