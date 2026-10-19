@@ -90,7 +90,7 @@ un modèle de population complet et une méthode qui n'a rien de commun avec
 celle-ci : il trouve <!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2024&poste=depenses)-->13,9<!--/--> % du PIB en 2024 et **<!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2070&poste=depenses)-->15,3<!--/--> % en 2070** (rapport annuel
 de juin 2026, champ « ensemble des régimes légalement obligatoires, y compris
 FSV, hors RAFP »). Le modèle, laissé à lui-même — sa masse de pensions mise à
-l'échelle de la dernière année publiée —, trouve <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % et **<!--chiffre:mesure(trajectoire_propre?annee=2070)-->15,62<!--/--> %**. Trois dixièmes de point
+l'échelle de la dernière année publiée —, trouve <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % et **<!--chiffre:mesure(trajectoire_propre?annee=2070)-->15,66<!--/--> %**. Trois dixièmes de point
 d'écart au départ — l'affaire du périmètre, la répartition obligatoire des
 Comptes de la protection sociale n'étant pas exactement celle du COR — et
 **trois dixièmes au-dessus à l'arrivée** : depuis l'étape 19 de l'action 147,
@@ -179,7 +179,7 @@ retraités de plus, le modèle
 les têtes que la trajectoire s'écarte. La pension moyenne relative, elle, recule
 de <!--chiffre:mesure(decomposition?facteur=pension_relative&de=2025&a=2070&source=cor)-->−17,2<!--/--> %
 chez le COR et de
-<!--chiffre:mesure(decomposition?facteur=pension_relative&de=2025&a=2070)-->−12,8<!--/--> % seulement
+<!--chiffre:mesure(decomposition?facteur=pension_relative&de=2025&a=2070)-->−12,6<!--/--> % seulement
 dans le modèle ; et sur le passé, de 2005 à 2025, elle a crû de
 <!--chiffre:mesure(decomposition?facteur=pension_relative&de=2005&a=2025&source=cor)-->8,9<!--/--> %
 quand le modèle la fait croître de
@@ -229,7 +229,7 @@ le COR les tient stables. La Cnav du modèle suit celle du COR ; la fonction pub
 de l'État du modèle recule de
 <!--chiffre:mesure(decomposition?facteur=pension_relative&groupe=fpe&de=2025&a=2070)-->−33,5<!--/--> %,
 moins que la sienne, et l'Agirc-Arrco de
-<!--chiffre:mesure(decomposition?facteur=pension_relative&groupe=agirc_arrco&de=2025&a=2070)-->−28,5<!--/--> %.
+<!--chiffre:mesure(decomposition?facteur=pension_relative&groupe=agirc_arrco&de=2025&a=2070)-->−27,5<!--/--> %.
 Ce qui reste de ce dernier écart tient aux têtes : le COR fait croître les
 retraités de l'Agirc-Arrco plus vite que ceux de la Cnav, ce que la grille,
 dont chaque carrière du privé a les deux, ne peut pas faire. La dépense des
@@ -345,7 +345,7 @@ avec lui.
 (action 147, étape 17).** Ce qui manque aux complémentaires n'est pas une
 pension par tête : celle que la grille sert à un retraité de l'Agirc-Arrco,
 rapportée au revenu d'activité moyen, recule de
-<!--chiffre:mesure(decomposition?facteur=pension_relative&groupe=agirc_arrco&de=2025&a=2050)-->−19,1<!--/--> % d'ici 2050, moins que chez le COR
+<!--chiffre:mesure(decomposition?facteur=pension_relative&groupe=agirc_arrco&de=2025&a=2050)-->−18,2<!--/--> % d'ici 2050, moins que chez le COR
 (<!--chiffre:mesure(decomposition?facteur=pension_relative&groupe=agirc_arrco&de=2025&a=2050&source=cor)-->−27,1<!--/--> %). Ce sont ses retraités : le classeur par régime du COR de
 juin 2024 les fait croître de <!--chiffre:mesure(decomposition?facteur=retraites&groupe=agirc_arrco&de=2025&a=2050&source=cor)-->44,6<!--/--> % d'ici 2050, bien plus vite que ceux de
 la Cnav (<!--chiffre:mesure(decomposition?facteur=retraites&groupe=cnav&de=2025&a=2050&source=cor)-->27,3<!--/--> %), quand la grille n'en compte que <!--chiffre:mesure(decomposition?facteur=retraites&groupe=agirc_arrco&de=2025&a=2050)-->25,2<!--/--> % de plus.
@@ -380,8 +380,8 @@ modèle rapportée à celle de la dépense du COR depuis la première année
 projetée, <!--chiffre:mesure(derive_cor?annee=2050)-->+3<!--/--> % en 2050, <!--chiffre:mesure(derive_cor?annee=2070)-->+5<!--/--> % à l'horizon
 (`rapport_derive`, `Cout.solde_derive`, `Cout.dette_derive`). La proposition coûte alors <!--chiffre:mesure(part_pib?scenario=6&annee=2070&borne=haute)-->8,5<!--/--> % du PIB en 2070
 (<!--chiffre:mesure(part_pib?scenario=6&annee=2070)-->8,1<!--/--> dans la première lecture), son solde moyen 2026-2070 est de <!--chiffre:mesure(solde_moyen?scenario=6&borne=haute)-->−1,33<!--/--> %
-(<!--chiffre:mesure(solde_moyen?scenario=6)-->−1,05<!--/-->), son coefficient d'équilibre de <!--chiffre:mesure(coefficient?scenario=6&borne=haute)-->0,95<!--/--> (<!--chiffre:mesure(coefficient?scenario=6)-->1,00<!--/-->), et sa dette en
-2070 de <!--chiffre:mesure(dette?scenario=6&borne=haute)-->89<!--/--> % du PIB (<!--chiffre:mesure(dette?scenario=6)-->71<!--/-->). Le système actuel ne bouge dans aucune
+(<!--chiffre:mesure(solde_moyen?scenario=6)-->−1,03<!--/-->), son coefficient d'équilibre de <!--chiffre:mesure(coefficient?scenario=6&borne=haute)-->0,95<!--/--> (<!--chiffre:mesure(coefficient?scenario=6)-->1,01<!--/-->), et sa dette en
+2070 de <!--chiffre:mesure(dette?scenario=6&borne=haute)-->89<!--/--> % du PIB (<!--chiffre:mesure(dette?scenario=6)-->70<!--/-->). Le système actuel ne bouge dans aucune
 des deux lectures, ni la garantie vieillesse, lue sur la distribution des
 pensions. La page Coût donne les deux lectures côte à côte. La seconde a été la
 borne haute de la proposition jusqu'à l'étape 11 de l'action 147 ; la dérive

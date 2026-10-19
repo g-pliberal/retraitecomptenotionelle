@@ -6354,7 +6354,7 @@ année.
 |---|---|
 | Système actuel, convention du COR | **<!--chiffre:mesure(engagement)-->497<!--/--> %** |
 | — dont retraités (pension entière acquise) | <!--chiffre:mesure(engagement?quoi=retraites)-->200<!--/--> % |
-| — dont actifs, au prorata de la carrière faite | <!--chiffre:mesure(engagement?quoi=actifs)-->297<!--/--> % |
+| — dont actifs, au prorata de la carrière faite | <!--chiffre:mesure(engagement?quoi=actifs)-->298<!--/--> % |
 | Proposition (système 6) | <!--chiffre:mesure(engagement?scenario=6)-->359<!--/--> % |
 | Notionnel part salariale (système 2) | <!--chiffre:mesure(engagement?scenario=2)-->158<!--/--> % |
 | Publié par Eurostat, tableau 29 | <!--chiffre:mesure(engagement?quoi=publie)-->397<!--/--> % |
@@ -6372,7 +6372,7 @@ plus haut ; un test double désormais la règle notionnelle et vérifie que
 l'engagement du système actuel ne bouge pas.
 
 **L'écart avec le chiffre publié est un TAUX, pas un droit.** Les mêmes droits,
-actualisés **<!--chiffre:mesure(engagement?quoi=ecart)-->1,1<!--/--> point de plus par an**, valent exactement les
+actualisés **<!--chiffre:mesure(engagement?quoi=ecart)-->1,2<!--/--> point de plus par an**, valent exactement les
 <!--chiffre:mesure(engagement?quoi=publie)-->397<!--/--> % d'Eurostat. Ni l'un ni l'autre n'est faux : un engagement acquis n'a pas de
 niveau propre, il a un taux. C'est la même démonstration que les soixante points
 d'écart entre deux transmissions, faite cette fois de l'intérieur, et c'est
