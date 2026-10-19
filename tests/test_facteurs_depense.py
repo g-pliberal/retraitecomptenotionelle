@@ -379,13 +379,14 @@ def test_l_entree_dans_l_emploi_recule_d_un_an_de_la_generation_1960_a_1966():
 
 def test_entre_plus_tard_le_salarie_part_plus_tard_et_le_militaire_a_son_heure():
     """Entré à 21 ans, le salarié au salaire moyen né en janvier 1966 doit 172
-    trimestres (L. 161-17-3), 43 ans : il part à 64 ans, en février 2030, la
-    cohorte de 1966 que la génération 1965 de la grille représente. Entré un an
-    plus tard, comme sa génération après celle de 1960, il part à 65 ans, en
-    février 2031. Le militaire, qui part après ses services et non au taux
-    plein, garde sa date."""
+    trimestres (L. 161-17-3), 43 ans : il part à 64 ans, en 2030, la cohorte de
+    1966 que la génération 1965 de la grille représente. Entré un an plus tard,
+    comme sa génération après celle de 1960, il part à 65 ans, douze mois plus
+    tard, en 2031. Le mois, celui qui suit son anniversaire ou le sien s'il est
+    né le premier (R. 351-37), tient au jour de naissance que la grille présume,
+    et le test ne le dit pas. Le militaire, qui part après ses services et non
+    au taux plein, garde sa date."""
     from retraite_notionnelle import Parametres
-    from retraite_notionnelle.calendrier import DateMois
     from retraite_notionnelle.castypes import GRILLE_DU_COUT
     from retraite_notionnelle.facteurs_depense import dates_des_departs
 
@@ -394,8 +395,9 @@ def test_entre_plus_tard_le_salarie_part_plus_tard_et_le_militaire_a_son_heure()
     grille = dates_des_departs(parametres, cas_types=cas, generations=(1965,))
     entree = dates_des_departs(parametres, entree_depuis=1960, cas_types=cas,
                                generations=(1965,))
-    assert grille[("salaire_moyen", 1965, 1)] == DateMois(2030, 2)
-    assert entree[("salaire_moyen", 1965, 1)] == DateMois(2031, 2)
+    assert grille[("salaire_moyen", 1965, 1)].annee == 2030
+    assert entree[("salaire_moyen", 1965, 1)].annee == 2031
+    assert entree[("salaire_moyen", 1965, 1)].rang - grille[("salaire_moyen", 1965, 1)].rang == 12
     assert all(entree[("militaire", 1965, decalage)] == grille[("militaire", 1965, decalage)]
                for decalage in range(-2, 3))
 
