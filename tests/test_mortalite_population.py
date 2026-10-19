@@ -14,6 +14,7 @@ from __future__ import annotations
 import sys
 from dataclasses import replace
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -94,3 +95,14 @@ def test_chaque_cohorte_part_l_annee_que_lui_donne_le_droit_de_sa_generation():
     masses = M._masses([(grille, M._cohortes(grille, _Mortalite(), "v10"))], poids,
                        _Population(), 2030, cles)
     assert masses["actuel"]["page_commun"] == pytest.approx(0.5 * (262 + 63), rel=1e-12)
+
+
+def test_un_point_de_pib_en_vaut_le_centieme():
+    """Le PIB des lignes du solde est en millions d'euros courants : 2 991
+    milliards en 2025 font un point de 29,9 milliards, 30 à l'euro près du
+    script. Jusqu'au 19 octobre 2026, il imprimait le PIB entier pour un
+    point. Sans PIB publié, rien."""
+    annees = [SimpleNamespace(annee=2025, pib=2_991_000.0),
+              SimpleNamespace(annee=2026, pib=0.0)]
+    assert M._point_de_pib(annees) == "Un point de PIB vaut 30 Md€ au PIB de 2025."
+    assert M._point_de_pib(annees[1:]) == ""

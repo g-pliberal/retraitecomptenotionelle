@@ -311,11 +311,21 @@ def _deficit(mortalite, depuis: int | None = None) -> int:
         moyen_apres = somme_ordonnee(l[4] for l in cumul[s]) / len(cumul[s])
         print(f"| {libelles[s].format(bascule=simulateur.parametres.annee_bascule)} | "
               f"moyenne {cumul[s][0][0]}-{cumul[s][-1][0]} | | | {moyen_avant:+.2%} | {moyen_apres:+.2%} |")
-    pib = next((l.pib for l in reversed(cout.solde.annees) if l.pib > 0), 0.0)
-    annee_pib = next((l.annee for l in reversed(cout.solde.annees) if l.pib > 0), 0)
-    if pib:
-        print(f"\nUn point de PIB vaut {_euros(pib / 1000)} Md€ au PIB de {annee_pib}.")
+    point = _point_de_pib(cout.solde.annees)
+    if point:
+        print(f"\n{point}")
     return 0
+
+
+def _point_de_pib(annees) -> str:
+    """Ce que vaut un point de PIB, au dernier PIB publié des ``annees`` du
+    solde, en millions d'euros courants ; vide sans PIB publié. Jusqu'au
+    19 octobre 2026, la phrase donnait le PIB entier pour un point."""
+    publiee = next((ligne for ligne in reversed(annees) if ligne.pib > 0), None)
+    if publiee is None:
+        return ""
+    milliards = publiee.pib / 100 / 1000
+    return f"Un point de PIB vaut {_euros(milliards)} Md€ au PIB de {publiee.annee}."
 
 
 def _par_niveau_de_vie(mortalite, generations: list[int]) -> int:
