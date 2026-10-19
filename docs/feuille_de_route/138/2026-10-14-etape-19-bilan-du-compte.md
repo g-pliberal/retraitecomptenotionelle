@@ -1,14 +1,14 @@
 # Étape 19, première partie : le bilan du compte notionnel, à la manière suédoise
 
-**Reprise, au 18 octobre 2026.** Fait : le bilan du compte, en indicateur
-(`bilan_compte.py`, 14 octobre) ; la carrière heurtée d'Osiris, écrite et
-éprouvée sur le droit, hors des deux grilles (`CARRIERE_HEURTEE`, 18 octobre).
-Au propriétaire : le biais des cotisants de moins de 50 ans de `cout.py`
-(« Trouvé en chemin ») ; le poids de la carrière heurtée, qui fait partir la
-grille trop tard à toute part de la Cnav, faute des départs anticipés du privé
-(trois voies, note du 18 octobre). À une session des pages : le bilan sur la
-page Coût, et « treize carrières » si la grille s'agrandit. Coupés le 14 :
-l'incertitude, la rétro-projection, la solidarité de la Cnav, `d × r`.
+**Reprise, au 19 octobre 2026.** Fait : le bilan du compte (`bilan_compte.py`,
+14 octobre) ; la carrière heurtée d'Osiris, hors des grilles
+(`CARRIERE_HEURTEE`, 18) ; le 19, le bilan pesé sur la grille du coût, figé
+dans la table du paquet et montré sur la page Coût. Au propriétaire : le
+biais des cotisants de moins de 50 ans de `cout.py` (note du 14, « Trouvé en
+chemin ») ; le poids de la carrière heurtée, faute des départs anticipés du
+privé (trois voies, note du 18). À une session des pages, si la grille
+s'agrandit : « treize carrières ». Coupés le 14 : l'incertitude, la
+rétro-projection, la solidarité de la Cnav, `d × r`. Détail : note du 19.
 
 **La demande.** Session du 14 octobre 2026, la n° 12 de dix-neuf : « action
 138, étape 19, jamais commencée […] Commence par le bilan du compte
