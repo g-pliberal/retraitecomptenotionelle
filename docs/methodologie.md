@@ -680,16 +680,20 @@ distinguer, et ils ne suivent pas la même règle :
   qu'à une chose : la carrière longue, qui ne compte pas la durée d'assurance
   mais celle qui a donné lieu à cotisations. L'article D. 351-1-2 y ajoute une
   liste fermée de périodes qu'il RÉPUTE cotisées, chacune sous sa propre limite,
-  comptée sur toute la carrière et tous régimes confondus : service national,
-  incapacité temporaire, chômage indemnisé, invalidité et assurance vieillesse
-  des parents au foyer. La maternité est la seule que le décret n'écrête pas, et
-  le chômage NON indemnisé la seule période assimilée qu'il ne reprenne jamais.
+  comptée sur toute la carrière et tous régimes confondus, et selon sa rédaction
+  à la date d'effet de la pension : le service national et l'incapacité
+  temporaire depuis 2004, le chômage indemnisé depuis novembre 2012,
+  l'invalidité depuis avril 2014, l'assurance vieillesse des parents au foyer
+  depuis septembre 2023. La maternité est la seule que le décret n'écrête plus,
+  depuis avril 2014, et le chômage NON indemnisé la seule période assimilée
+  qu'il n'ait jamais reprise.
 
 Une année de chômage indemnisé n'est donc pas vide à l'Agirc-Arrco alors
 qu'elle l'est à la CNAV ; une année de chômage non indemnisé est vide partout.
 Et les mêmes cinq années de chômage, qui valident vingt trimestres de durée
 d'assurance à la CNAV, n'ouvrent aucun service à l'État et quatre trimestres
-seulement à la carrière longue.
+seulement à la carrière longue — deux à une pension prise de novembre 2012 à
+mars 2014, aucun avant.
 
 ### La validation des trimestres
 

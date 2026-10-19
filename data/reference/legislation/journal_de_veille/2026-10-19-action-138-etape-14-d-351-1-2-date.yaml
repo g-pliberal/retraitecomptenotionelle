@@ -1,0 +1,38 @@
+date: "2026-10-19"
+session: "action 138, étape 14, au modèle : D. 351-1-2 daté, chaque rédaction à sa date d'effet"
+consulte: >-
+  python scripts/veille_droit.py. Index LEGI et JORF du dépôt, récupérés ce jour, à jour de
+  l'incrément du 18 octobre 2026 (aucun à appliquer), puis python scripts/textes.py --inscrire
+  (aucune rédaction nouvelle). D. 351-1-2 CSS, ses six rédactions : LEGIARTI000006736522
+  (31 octobre 2003), LEGIARTI000026139944 (1er novembre 2012), LEGIARTI000028751938
+  (1er avril 2014), LEGIARTI000043506391 (16 mai 2021), LEGIARTI000047634564 (1er septembre
+  2023), LEGIARTI000053356011 (1er janvier 2026), comparées clause par clause. R. 351-12,
+  rédaction LEGIARTI000006750030 (2004 à 2011), pour les renvois des deux premières. Au Journal
+  officiel, les dates d'application : décret n° 2003-1036, pensions prenant effet
+  « postérieurement au 31-12-2003 » ; décret n° 2012-847, article 14 ; décret n° 2014-350,
+  article 5 ; décret n° 2023-436, article 9 ; et le VI de D. 634-1 que le décret n° 2012-847
+  crée pour les artisans et les commerçants, lu dans son article 2 seulement. Circulaires Cnav
+  2003-46 du 18 novembre 2003, 2012-60 du 4 septembre 2012, 2014-26 du 1er avril 2014 et
+  2023-14 du 10 juillet 2023, lues sur legislation.lassuranceretraite.fr, que la session joint
+  par l'API du site.
+trouve: >-
+  Le modèle réputait cotisées, à toute date d'effet, les périodes de la rédaction de 2026. Il y
+  en a eu quatre qui comptent : jusqu'en octobre 2012, le service national et l'incapacité
+  temporaire — maladie, maternité, accident du travail —, quatre trimestres chacun, « soit 8
+  trimestres réputés cotisés au maximum » (circulaire 2003-46), sans chômage ; de novembre 2012
+  à mars 2014, deux trimestres de chômage indemnisé, et six de maladie, de maternité et
+  d'accident du travail dont quatre au plus de maladie et d'accident du travail ; d'avril 2014
+  à août 2023, quatre de chômage, la maternité sans limite, deux d'invalidité ; depuis
+  septembre 2023, quatre d'AVPF en plus. La rédaction de 2021 n'ajoute que l'activité
+  partielle, que le modèle ne porte pas ; celle de 2026 reprend celle de 2023 mot pour mot.
+  Porté en Python et en JavaScript : la fiche carriere_longue_reputes_cotises_autres porte les
+  versions, et la table des motifs ne garde que leur nature. L'ouvrier né en 1950 qui a connu
+  trois années de chômage indemnisé ne part plus pour carrière longue à cinquante-neuf ans en
+  février 2009. Ni les témoins, ni le coût ne bougent.
+reste: >-
+  Le VI de D. 634-1, la rédaction propre aux artisans et aux commerçants des 2° et 3° de
+  D. 351-1-2 depuis le 1er novembre 2012, à lire rédaction par rédaction : le modèle leur
+  applique celle du régime général. Les exemples des circulaires 2012-60 et 2026-29 mêlent dans
+  une même année trimestres cotisés et assimilés, que le modèle ne sait pas porter. La
+  condition de début d'activité de D. 351-1-3, sur une « durée d'assurance », reste à trancher
+  par la circulaire. La population de l'étape 14 est à remesurer.

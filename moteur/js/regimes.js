@@ -1747,6 +1747,10 @@ export class CarriereLongue {
     //   fiabilité], …] }
     this._table = paquet.carriere_longue ?? {};
     this._dates = Object.keys(this._table).map(Number).sort((a, b) => a - b);
+    // Les rédactions de D. 351-1-2, que le paquet porte parmi les versions
+    // des fiches : ses natures réputées cotisées et leurs limites.
+    this._reputes = (paquet.versions_des_fiches ?? {})[CarriereLongue.FICHE_DES_REPUTES]
+      ?? null;
   }
 
   /**
@@ -1821,15 +1825,16 @@ export class CarriereLongue {
    *
    * Deux listes fermées s'ajoutent aux trimestres réellement cotisés :
    * l'article D. 351-1-2 — service national, incapacité temporaire, chômage
-   * indemnisé, maternité, invalidité, AVPF —, chacune sous sa propre limite,
-   * que {@link CarriereLongue.reputesAssimiles} tient ; et l'article
+   * indemnisé, maternité, invalidité, AVPF —, chacune sous sa propre limite et
+   * selon sa rédaction à la date d'effet, que
+   * {@link CarriereLongue#reputesAssimiles} tient ; et l'article
    * D. 351-1-2-1, qui répute cotisés jusqu'à deux trimestres de la majoration
    * pour enfants pour les pensions prenant effet au 1er septembre 2026 (LFSS
    * 2026 article 104 ; décret n° 2026-700 ; circulaire Cnav 2026-29, point
    * 1.2.3.8).
    */
   cotisesReputes(carriere, trimestresCotises, trimestresEnfants) {
-    const cotises = trimestresCotises + CarriereLongue.reputesAssimiles(carriere);
+    const cotises = trimestresCotises + this.reputesAssimiles(carriere);
     if (trimestresEnfants <= 0 || carriere.age_liquidation === null) {
       return cotises;
     }
@@ -1843,32 +1848,55 @@ export class CarriereLongue {
   /**
    * Ce que les périodes assimilées ajoutent à la durée cotisée.
    *
-   * Chaque enveloppe de D. 351-1-2 a son plafond, et deux motifs qui la
-   * partagent le partagent : maladie et accident du travail tiennent ensemble
-   * dans quatre trimestres. Le budget se consomme dans l'ordre de la carrière,
-   * et une enveloppe sans plafond — la maternité — n'en consomme aucun.
+   * La rédaction de D. 351-1-2 en vigueur à la date d'effet dit quelles
+   * natures il répute cotisées, et sous quelles limites, chacune sur toute la
+   * carrière : rien avant 2004, le chômage depuis novembre 2012, l'invalidité
+   * depuis avril 2014, l'AVPF depuis septembre 2023. Une période dont la
+   * nature est dans plusieurs limites les consomme toutes ; une limite sans
+   * plafond — la maternité depuis avril 2014 — n'en consomme aucun. Voir le
+   * Python.
    */
-  static reputesAssimiles(carriere) {
+  reputesAssimiles(carriere) {
     const anneeLiquidation = carriere.anneeLiquidation;
-    const budgets = new Map();
+    const date = carriere.dateLiquidation;
+    const version = this._reputes === null ? null : applicable(this._reputes, {
+      "liquidation.date_effet":
+        `${String(date.annee).padStart(4, "0")}-${String(date.mois).padStart(2, "0")}-01`,
+    });
+    if (version === null) {
+      return 0;
+    }
+    const limites = version.parametres.limites;
+    const restants = limites.map((limite) => limite.trimestres);
     let reputes = 0;
     for (const ligne of carriere.lignes) {
-      if (ligne.cotise || !ligne.reputes_cotises_enveloppe
+      if (ligne.cotise || !ligne.reputes_cotises_nature
           || ligne.annee > anneeLiquidation) {
         continue;
       }
-      const retenus = carriere.trimestresRetenus(ligne);
-      if (retenus <= 0) {
+      const siennes = [];
+      limites.forEach((limite, rang) => {
+        if (limite.natures.includes(ligne.reputes_cotises_nature)) {
+          siennes.push(rang);
+        }
+      });
+      if (siennes.length === 0) {
         continue;
       }
-      const plafond = ligne.reputes_cotises_plafond;
-      if (!plafond) {
-        reputes += retenus;
+      let pris = carriere.trimestresRetenus(ligne);
+      for (const rang of siennes) {
+        if (restants[rang] !== null) {
+          pris = Math.min(pris, restants[rang]);
+        }
+      }
+      if (pris <= 0) {
         continue;
       }
-      const restant = budgets.get(ligne.reputes_cotises_enveloppe) ?? plafond;
-      const pris = Math.min(retenus, restant);
-      budgets.set(ligne.reputes_cotises_enveloppe, restant - pris);
+      for (const rang of siennes) {
+        if (restants[rang] !== null) {
+          restants[rang] -= pris;
+        }
+      }
       reputes += pris;
     }
     return reputes;
@@ -1986,6 +2014,8 @@ CarriereLongue.PORTES_FONCTION_PUBLIQUE_DEPUIS = new Map([
 /** Et la durée y était fixe jusqu'à la rédaction du 19 décembre 2008. */
 CarriereLongue.DUREE_FIXE_FONCTION_PUBLIQUE = 160;
 CarriereLongue.DUREE_FIXE_FONCTION_PUBLIQUE_AVANT = new DateMois(2009, 1).rang;
+/** Les rédactions de D. 351-1-2, une version par rédaction qui change ce qu'il répute cotisé. */
+CarriereLongue.FICHE_DES_REPUTES = "carriere_longue_reputes_cotises_autres";
 
 /**
  * Barème DATÉ de la surcote — D. 351-1-4 du code de la sécurité sociale,

@@ -95,6 +95,7 @@ from retraite_notionnelle.scenarios.actuel import (  # noqa: E402
     AgesSurcoteRegimesSpeciaux,
     AnneesRevenuAnnuelMoyenIndependants,
     AnneesSalaireReference,
+    CarriereLongue,
     CarrieresHorsDeFrance,
     FichesDatees,
     CoefficientsMinoration,
@@ -1371,8 +1372,7 @@ def _periodes_non_travaillees() -> dict:
                 regle.ouvre_droits_complementaires, int(regle.fiabilite),
                 regle.avpf, regle.services_fonction_publique,
                 regle.services_plafond_trimestres_par_enfant,
-                regle.reputes_cotises_enveloppe,
-                regle.reputes_cotises_plafond,
+                regle.reputes_cotises_nature,
                 regle.cotisations_complementaires_versees]
         for motif, regle in sorted(charger_periodes_non_travaillees(DONNEES).items())
     }
@@ -1863,9 +1863,11 @@ def _versions_des_fiches() -> dict:
     leurs dates qui décident, et chaque version avec ses bornes, son texte et
     ses paramètres (``noyau/versions.py``). Aujourd'hui, les trimestres des
     enfants, la réversion, l'invalidité et l'inaptitude, les carrières hors de
-    France, dont chaque fiche dit aussi ses régimes."""
+    France, dont chaque fiche dit aussi ses régimes, et les périodes que la
+    carrière longue répute cotisées."""
     return (MajorationsPourEnfants(DONNEES).fiches() | Reversions(DONNEES).fiches()
-            | Invalidites(DONNEES).fiches() | CarrieresHorsDeFrance(DONNEES).fiches())
+            | Invalidites(DONNEES).fiches() | CarrieresHorsDeFrance(DONNEES).fiches()
+            | CarriereLongue(DONNEES).fiches())
 
 
 def _accords_internationaux() -> dict:
@@ -1950,8 +1952,6 @@ def _carriere_longue() -> dict:
     porte la génération à partir de laquelle elle vaut, ``1900`` pour la
     règle générale.
     """
-    from retraite_notionnelle.scenarios.actuel import CarriereLongue
-
     return {
         _sans_zeros(date_effet): [
             [generation, age_max, trimestres, age_depart, supplement, int(fiabilite)]

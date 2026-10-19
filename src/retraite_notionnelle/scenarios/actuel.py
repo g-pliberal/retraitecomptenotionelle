@@ -91,7 +91,7 @@ from ..droit import progressive as _progressive
 from ..droit import seconde as _seconde
 # Ce que les étapes créent, que les appelants du scénario 1 lisent ici.
 from ..droit.commun import AvantageApplique, PensionRegime  # noqa: F401
-from ..droit.commun import fusionner_les_charges
+from ..droit.commun import date_d_effet, fusionner_les_charges
 from ..noyau import versions
 from ..revalorisation import (DEBUT_REGLE_GENERALE_PUBLIC, RevalorisationsPensions,
                               mener_au_mois, produit)
@@ -2089,7 +2089,13 @@ class CarriereLongue:
     DUREE_FIXE_FONCTION_PUBLIQUE = 160
     DUREE_FIXE_FONCTION_PUBLIQUE_AVANT = DateMois(2009, 1)
 
+    #: Les rédactions de D. 351-1-2, une version par rédaction qui change ce
+    #: qu'il répute cotisé : ses natures et leurs limites, à la date d'effet.
+    FICHE_DES_REPUTES = "carriere_longue_reputes_cotises_autres"
+
     def __init__(self, racine: Path) -> None:
+        fiche = racine / "reference" / "regles" / f"{self.FICHE_DES_REPUTES}.yaml"
+        self._reputes = versions.preparer(charger_yaml(fiche)) if fiche.exists() else None
         self._table: dict[float, list[tuple[float, int, int, float, int, Fiabilite]]] = {}
         chemin = racine / "reference" / "legislation" / "carriere_longue.csv"
         if not chemin.exists():
@@ -2107,6 +2113,11 @@ class CarriereLongue:
                     Fiabilite.depuis_texte(ligne["fiabilite"]),
                 ))
         self._dates = sorted(self._table)
+
+    def fiches(self) -> dict[str, dict]:
+        """La fiche préparée des périodes réputées cotisées, sous son nom : ce
+        que le paquet du site porte."""
+        return {} if self._reputes is None else {self._reputes["id"]: self._reputes}
 
     @staticmethod
     def _annee_decimale(date: DateMois) -> float:
@@ -2220,8 +2231,8 @@ class CarriereLongue:
         RÉPUTE cotisées. L'article D. 351-1-2 porte la première — service
         national, incapacité temporaire, chômage indemnisé, maternité,
         invalidité, assurance vieillesse des parents au foyer —, chacune sous sa
-        propre limite, comptée sur toute la carrière ; c'est
-        :meth:`_reputes_assimiles` qui la tient, sur la table des motifs. Et
+        propre limite, comptée sur toute la carrière, et selon sa rédaction à la
+        date d'effet ; c'est :meth:`_reputes_assimiles` qui la tient. Et
         l'article D. 351-1-2-1 porte la seconde, pour les pensions prenant effet
         depuis le 1er septembre 2026 : jusqu'à deux trimestres de la majoration
         pour enfants.
@@ -2239,39 +2250,55 @@ class CarriereLongue:
             self.ENFANTS_REPUTES_COTISES_MAXIMUM, trimestres_enfants
         )
 
-    @staticmethod
-    def _reputes_assimiles(carriere: Carriere) -> int:
+    def _reputes_assimiles(self, carriere: Carriere) -> int:
         """Ce que les périodes assimilées ajoutent à la durée cotisée.
 
-        Chaque enveloppe de l'article D. 351-1-2 a son plafond, et deux motifs
-        qui la partagent le partagent : maladie et accident du travail tiennent
-        ensemble dans quatre trimestres, parce que le 2° vise l'incapacité
-        temporaire et non l'une ou l'autre. Le budget se consomme dans l'ordre
-        de la carrière, et une enveloppe sans plafond — la maternité — n'en
-        consomme aucun.
+        La rédaction de l'article D. 351-1-2 en vigueur à la date d'effet dit
+        quelles natures il répute cotisées, et sous quelles limites (fiche
+        :attr:`FICHE_DES_REPUTES`) : rien avant 2004 ; le service national et
+        l'incapacité temporaire jusqu'en octobre 2012 ; le chômage depuis
+        novembre 2012, l'invalidité depuis avril 2014, l'AVPF depuis septembre
+        2023. Le modèle lisait la rédaction de 2026 à toute date, et comptait à
+        un départ de 2009 un chômage que celle de 2003 ne réputait pas cotisé.
+
+        Chaque limite vaut pour toute la carrière, et deux natures qui la
+        partagent la partagent : maladie et accident du travail tiennent
+        toujours ensemble, parce que l'article vise l'incapacité temporaire et
+        non l'une ou l'autre, et la maternité les rejoignait jusqu'en mars
+        2014. Une période dont la nature est dans plusieurs limites les
+        consomme toutes ; une limite sans plafond — la maternité depuis avril
+        2014 — n'en consomme aucun. Les limites se consomment dans l'ordre de
+        la carrière, et le total n'en dépend pas : celles d'une rédaction sont
+        emboîtées ou disjointes.
 
         Le plafond annuel de quatre trimestres que l'article pose par ailleurs
         est tenu d'avance : une année ne porte ici qu'un statut, et
         :meth:`Carriere.trimestres_retenus` n'en rend jamais plus de quatre.
         """
         annee_liquidation = carriere.annee_liquidation
-        budgets: dict[str, int] = {}
+        version = (None if self._reputes is None else versions.applicable(
+            self._reputes, {"liquidation.date_effet": date_d_effet(carriere)}))
+        if version is None:
+            return 0
+        limites = version["parametres"]["limites"]
+        restants = [limite["trimestres"] for limite in limites]
         reputes = 0
         for ligne in carriere.lignes:
-            if ligne.cotise or not ligne.reputes_cotises_enveloppe:
+            if ligne.cotise or not ligne.reputes_cotises_nature:
                 continue
             if ligne.annee > annee_liquidation:
                 continue
-            retenus = carriere.trimestres_retenus(ligne)
-            if retenus <= 0:
+            siennes = [rang for rang, limite in enumerate(limites)
+                       if ligne.reputes_cotises_nature in limite["natures"]]
+            if not siennes:
                 continue
-            plafond = ligne.reputes_cotises_plafond
-            if not plafond:
-                reputes += retenus
+            pris = min([carriere.trimestres_retenus(ligne)]
+                       + [restants[rang] for rang in siennes if restants[rang] is not None])
+            if pris <= 0:
                 continue
-            restant = budgets.setdefault(ligne.reputes_cotises_enveloppe, plafond)
-            pris = min(retenus, restant)
-            budgets[ligne.reputes_cotises_enveloppe] = restant - pris
+            for rang in siennes:
+                if restants[rang] is not None:
+                    restants[rang] -= pris
             reputes += pris
         return reputes
 

@@ -456,11 +456,16 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   Les six enveloppes de l'article D. 351-1-2 sont servies depuis le
   22 septembre 2026 — service national, incapacité temporaire, chômage
   indemnisé, maternité, invalidité, assurance vieillesse des parents au foyer —,
-  chacune sous sa limite. Restent dehors le 6° du I, majoration de durée
-  d'assurance du compte professionnel de prévention, que le modèle ne calcule
-  pas, et la part du 7° qui vise les fonctionnaires affiliés à un régime spécial
-  tout en remplissant les conditions de L. 381-1, qu'il ne distingue pas. Reste
-  aussi une lecture qui manque : l'article D. 351-1-3 pose la condition de DÉBUT
+  chacune sous sa limite, et depuis le 19 octobre 2026 selon la rédaction en
+  vigueur à la date d'effet : rien avant 2004, le chômage depuis novembre 2012,
+  l'invalidité depuis avril 2014, l'AVPF depuis septembre 2023 (fiche
+  `carriere_longue_reputes_cotises_autres`). Restent dehors le 6° du I,
+  majoration de durée d'assurance du compte professionnel de prévention, que le
+  modèle ne calcule pas, et la part du 7° qui vise les fonctionnaires affiliés à
+  un régime spécial tout en remplissant les conditions de L. 381-1, qu'il ne
+  distingue pas. Restent aussi deux lectures qui manquent : la rédaction propre
+  aux artisans et aux commerçants que le VI de D. 634-1 pose depuis 2012 ; et
+  l'article D. 351-1-3, qui pose la condition de DÉBUT
   d'activité sur une « durée d'assurance » de cinq trimestres, quand le modèle
   n'y compte que les trimestres cotisés — plus dur que la lettre du décret, en
   attendant la circulaire qui l'applique.

@@ -145,12 +145,10 @@ export class AnneeCarriere {
     //: Zéro quand il n'y en a pas — le décompte se fait sur toute la carrière,
     //: et c'est le scénario qui tient le budget.
     services_plafond_trimestres_par_enfant = 0,
-    //: Enveloppe de l'article D. 351-1-2 sous laquelle cette année est RÉPUTÉE
-    //: COTISÉE pour la carrière longue, et plafond de cette enveloppe sur toute
-    //: la carrière. Enveloppe vide : jamais réputée cotisée. Plafond nul :
-    //: réputée cotisée sans limite, ce qui n'est vrai que de la maternité.
-    reputes_cotises_enveloppe = "",
-    reputes_cotises_plafond = 0,
+    //: Nature de cette année au sens de l'article D. 351-1-2, qui la RÉPUTE
+    //: COTISÉE pour la carrière longue sous la limite que sa rédaction à la
+    //: date d'effet fixe (`CarriereLongue`). Vide : jamais réputée cotisée.
+    reputes_cotises_nature = "",
     //: ASSIETTE MINIMALE du régime de base d'un indépendant (D. 633-2,
     //: D. 642-4), en euros de l'année ; nulle pour tout autre statut.
     assiette_minimale_base = 0.0,
@@ -190,7 +188,7 @@ export class AnneeCarriere {
       revenu_reference, familles_cotisantes, familles_financees, revenu_avpf,
       fraction_annee,
       services_fonction_publique, services_plafond_trimestres_par_enfant,
-      reputes_cotises_enveloppe, reputes_cotises_plafond,
+      reputes_cotises_nature,
       assiette_minimale_base, dispense_assiette_minimale, lodeom, outre_mer,
       revenu_retabli, jours_de_services, micro,
     });
@@ -636,7 +634,7 @@ function ligneAnnuelle({
   const ouvreComplementaires = regle !== null && regle[1] === true;
   // Ces points sont-ils PAYÉS ? Par l'Unédic pour le chômage ; la maladie les
   // reçoit sans contrepartie de cotisations.
-  const complementairesVersees = ouvreComplementaires && regle[8] === true;
+  const complementairesVersees = ouvreComplementaires && regle[7] === true;
   const ouvreAvpf = regle !== null && regle[3] === true;
   // Services et durée d'assurance ne sont pas la même case : la première
   // proratise la pension de la fonction publique, la seconde celle du régime
@@ -646,8 +644,7 @@ function ligneAnnuelle({
   const plafondServices = (cotise || regle === null) ? 0 : regle[5];
   // La carrière longue compte la durée COTISÉE, que D. 351-1-2 complète d'une
   // liste fermée de périodes qu'il répute telles, chacune sous sa limite.
-  const enveloppeReputes = (cotise || regle === null) ? "" : regle[6];
-  const plafondReputes = (cotise || regle === null) ? 0 : regle[7];
+  const natureReputes = (cotise || regle === null) ? "" : regle[6];
   // L'ASSIETTE MINIMALE DES INDÉPENDANTS : un artisan qui déclare 3 000 €
   // cotise en 2026 sur 450 SMIC horaires et valide trois trimestres au lieu
   // d'un. Le revenu de la ligne reste celui qu'il a déclaré.
@@ -719,8 +716,7 @@ function ligneAnnuelle({
       : 0.0,
     services_fonction_publique: ouvreServices,
     services_plafond_trimestres_par_enfant: plafondServices,
-    reputes_cotises_enveloppe: enveloppeReputes,
-    reputes_cotises_plafond: plafondReputes,
+    reputes_cotises_nature: natureReputes,
     jours_de_services: trimestresDeclares === null
       ? null : Math.floor(trimestresDeclares * 90 + 0.5),
   });

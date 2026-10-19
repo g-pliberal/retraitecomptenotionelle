@@ -1254,7 +1254,7 @@ export function indemnisationBornee(moteur, carriere) {
       return new AnneeCarriere({
         ...ligne, type_periode: "sans_activite", trimestres_valides: 0,
         revenu_reference: 0.0, familles_cotisantes: [], familles_financees: [],
-        reputes_cotises_enveloppe: "", reputes_cotises_plafond: 0,
+        reputes_cotises_nature: "",
       });
     }
     if (coupee(ligne)) {

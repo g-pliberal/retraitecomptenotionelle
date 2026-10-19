@@ -7740,26 +7740,28 @@ def test_carriere_longue_quatre_trimestres_pour_qui_est_ne_au_dernier_trimestre(
 
 # --- Les périodes que le droit RÉPUTE cotisées (D. 351-1-2) ----------------
 
-def _carriere_hachee(simulateur, interruptions: dict[int, str]) -> Carriere:
+def _carriere_hachee(simulateur, interruptions: dict[int, str],
+                     annee_naissance: int = 1965, age_liquidation: float = 60.0) -> Carriere:
     """Un ouvrier entré à seize ans et demi, qui liquide à soixante ans.
 
     Sans interruption, la carrière longue lui est ouverte : c'est l'étalon
     dont chaque motif s'écarte.
     """
     return Carriere.depuis_parcours(
-        annee_naissance=1965,
+        annee_naissance=annee_naissance,
         sexe="H",
         metiers=[Metier(affiliation="salarie_prive_non_cadre", age_debut=16.5,
                         niveau_salaire=0.8)],
-        age_liquidation=60.0,
+        age_liquidation=age_liquidation,
         macro=simulateur.macro,
         interruptions=interruptions,
     )
 
 
-def _cotises(simulateur, interruptions: dict[int, str]) -> tuple[int, int]:
+def _cotises(simulateur, interruptions: dict[int, str], annee_naissance: int = 1965,
+             age_liquidation: float = 60.0) -> tuple[int, int]:
     """Durée réellement cotisée, puis celle que la carrière longue oppose."""
-    carriere = _carriere_hachee(simulateur, interruptions)
+    carriere = _carriere_hachee(simulateur, interruptions, annee_naissance, age_liquidation)
     cotises = sum(carriere.trimestres_retenus(ligne)
                   for ligne in carriere.lignes if ligne.cotise)
     dispositif = simulateur.scenario_actuel.carriere_longue
@@ -7843,6 +7845,136 @@ def test_une_annee_de_chomage_rouvre_la_carriere_longue(simulateur):
     actuel = simulateur.scenario_actuel
     interrompue = _carriere_hachee(simulateur, {1990: "chomage_indemnise"})
     assert actuel.calculer(interrompue).motif_ouverture == "carriere_longue"
+
+
+# Chaque rédaction de D. 351-1-2, à une date d'effet qu'elle régit : le modèle
+# lisait celle du 1er janvier 2026 à toute date. Les dates d'application sont
+# celles des décrets — n° 2003-1036, « pensions prenant effet postérieurement
+# au 31-12-2003 » ; n° 2012-847, article 14, au 1er novembre 2012 ; n° 2014-350,
+# article 5, au 1er avril 2014 ; n° 2023-436, article 9, au 1er septembre 2023 —
+# et les circulaires Cnav 2003-46, 2012-60, 2014-26 et 2023-14 les appliquent.
+# Une liquidation à soixante ans prend effet en février.
+_REPUTES_SELON_LA_REDACTION = [
+    # LEGIARTI000006736522 (février 2009) : le service national, quatre
+    # trimestres ; l'incapacité temporaire — maladie, maternité, accident du
+    # travail —, quatre pour toutes ensemble ; ni chômage, ni invalidité, ni
+    # assurance des parents au foyer.
+    ("2009-chomage", 1950, 59.0, {1980: "chomage_indemnise"}, 0),
+    ("2009-invalidite", 1950, 59.0, {1980: "invalidite"}, 0),
+    ("2009-avpf", 1950, 59.0, {1980: "education_enfant"}, 0),
+    ("2009-service", 1950, 59.0, {1980: "service_militaire"}, 4),
+    ("2009-maladie-et-maternite", 1950, 59.0, {1980: "maladie", 1981: "maternite"}, 4),
+    # LEGIARTI000026139944 (février 2013) : deux trimestres de chômage
+    # indemnisé ; six de maladie, de maternité et d'accident du travail, dont
+    # quatre au plus de maladie et d'accident du travail.
+    ("2013-chomage", 1953, 60.0, {1980: "chomage_indemnise", 1981: "chomage_indemnise"}, 2),
+    ("2013-maladie-puis-maternite", 1953, 60.0,
+     {1980: "maladie", 1981: "maladie", 1982: "maternite"}, 6),
+    ("2013-maternite-puis-incapacite", 1953, 60.0,
+     {1980: "maternite", 1981: "maladie", 1982: "accident_travail"}, 6),
+    ("2013-maternite", 1953, 60.0, {1980: "maternite", 1981: "maternite"}, 6),
+    ("2013-invalidite", 1953, 60.0, {1980: "invalidite"}, 0),
+    # LEGIARTI000028751938 (février 2015) : quatre de chômage, la maternité
+    # sans limite, deux d'invalidité ; pas encore l'AVPF.
+    ("2015-chomage", 1955, 60.0, {annee: "chomage_indemnise" for annee in range(1980, 1983)}, 4),
+    ("2015-maternite", 1955, 60.0, {annee: "maternite" for annee in range(1980, 1983)}, 12),
+    ("2015-invalidite", 1955, 60.0, {annee: "invalidite" for annee in range(1980, 1983)}, 2),
+    ("2015-avpf", 1955, 60.0, {1980: "education_enfant"}, 0),
+    # LEGIARTI000047634564 (février 2024) : l'AVPF, quatre trimestres.
+    ("2024-avpf", 1964, 60.0, {1990: "education_enfant", 1991: "education_enfant"}, 4),
+]
+
+
+@pytest.mark.parametrize("annee_naissance, age, interruptions, reputes",
+                         [cas[1:] for cas in _REPUTES_SELON_LA_REDACTION],
+                         ids=[cas[0] for cas in _REPUTES_SELON_LA_REDACTION])
+def test_les_periodes_reputees_cotisees_sont_celles_de_la_redaction_a_la_date_d_effet(
+        simulateur, annee_naissance, age, interruptions, reputes):
+    """D. 351-1-2 a eu quatre rédactions qui changent ce que la carrière
+    longue répute cotisé, chacune pour les pensions prenant effet à compter de
+    sa date. Le nombre réputé ne dépend pas de l'ordre des périodes : la
+    circulaire 2012-60 retient d'abord la maladie et l'accident du travail,
+    puis complète par la maternité, jusqu'à six."""
+    cotises, opposes = _cotises(simulateur, interruptions, annee_naissance, age)
+    assert opposes - cotises == reputes
+
+
+def test_avant_novembre_2012_le_chomage_ne_rouvrait_pas_la_carriere_longue(simulateur):
+    """Ce que la date change pour l'assuré. Né en 1950, entré à seize ans et
+    demi, trois années de chômage indemnisé : 158 trimestres cotisés à
+    cinquante-neuf ans, en février 2009, quand la rédaction de 2003 ne répute
+    pas le chômage cotisé. La porte reste fermée jusqu'à l'âge légal. Trois
+    années de maladie à la place, réputées cotisées dans leur limite de quatre
+    trimestres, la lui ouvrent. Le modèle comptait au chômeur les quatre
+    trimestres de la rédaction de 2026, et le faisait partir à cinquante-neuf
+    ans."""
+    actuel = simulateur.scenario_actuel
+    chomeur, malade = (
+        _carriere_hachee(simulateur, {annee: motif for annee in range(1980, 1983)},
+                         annee_naissance=1950, age_liquidation=59.0)
+        for motif in ("chomage_indemnise", "maladie"))
+    assert actuel.calculer(malade).motif_ouverture == "carriere_longue"
+    assert actuel.calculer(chomeur).motif_ouverture == "non_ouverte"
+    assert ouvrir.age_ouverture_droit(actuel, chomeur) == pytest.approx(60.0)
+
+
+def test_le_portage_lit_la_redaction_a_la_date_d_effet(simulateur):
+    """Les mêmes trimestres réputés cotisés dans les deux moteurs, rédaction
+    par rédaction, et le même départ fermé au chômeur de 2009 : le JavaScript
+    lit la fiche datée que le paquet porte. Sans node, le Python seul."""
+    import json
+    import shutil
+    import subprocess
+
+    from retraite_notionnelle import chronologie
+
+    cas = [(naissance, age, interruptions)
+           for _, naissance, age, interruptions, _ in _REPUTES_SELON_LA_REDACTION]
+    cas += [(1950, 59.0, {annee: motif for annee in range(1980, 1983)})
+            for motif in ("chomage_indemnise", "maladie")]
+    construites = [chronologie.completer(chronologie.du_parcours(
+        annee_naissance=naissance, sexe="H", age_liquidation=age,
+        metiers=[Metier(affiliation="salarie_prive_non_cadre", age_debut=16.5,
+                        niveau_salaire=0.8)],
+        interruptions=interruptions)) for naissance, age, interruptions in cas]
+    attendus = [[reputes, None] for *_, reputes in _REPUTES_SELON_LA_REDACTION]
+    attendus += [[0, "non_ouverte"], [4, "carriere_longue"]]
+
+    actuel = simulateur.scenario_actuel
+    rendus = []
+    for rang, construite in enumerate(construites):
+        carriere = Carriere.depuis_chronologie(construite, simulateur.macro)
+        cotises = sum(carriere.trimestres_retenus(ligne)
+                      for ligne in carriere.lignes if ligne.cotise)
+        rendus.append([actuel.carriere_longue.cotises_reputes(carriere, cotises, 0) - cotises,
+                       actuel.calculer(carriere).motif_ouverture
+                       if attendus[rang][1] is not None else None])
+    assert rendus == attendus
+    if shutil.which("node") is None:
+        return
+    script = """
+import { readFileSync } from "node:fs";
+import { Carriere } from "./moteur/js/carriere.js";
+import { Contexte } from "./moteur/js/contexte.js";
+const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
+const simulateur = contexte.simulateur();
+const actuel = simulateur.scenarioActuel;
+const [construites, ouvertures] = JSON.parse(process.argv[1]);
+process.stdout.write(JSON.stringify(construites.map((construite, rang) => {
+  const carriere = Carriere.depuisChronologie(construite, simulateur.macro);
+  const cotises = carriere.lignes.filter((ligne) => ligne.cotise)
+    .reduce((somme, ligne) => somme + carriere.trimestresRetenus(ligne), 0);
+  return [actuel.carriereLongue.cotisesReputes(carriere, cotises, 0) - cotises,
+    ouvertures[rang] ? actuel.calculer(carriere).motif_ouverture : null];
+})));
+"""
+    ouvertures = [attendu[1] is not None for attendu in attendus]
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", script, json.dumps([construites, ouvertures])],
+        cwd=RACINE_TEMOINS.parent.parent, capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    assert json.loads(execution.stdout) == attendus
 
 
 # --- La durée requise des emplois classés (XXIV, B de la loi de 2023) ------

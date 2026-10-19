@@ -567,15 +567,12 @@ class PeriodeNonTravaillee:
     #: L. 9 excepte le congé parental « dans la limite de trois ans par
     #: enfant ». Zéro quand la période n'est pas plafonnée.
     services_plafond_trimestres_par_enfant: int = 0
-    #: Enveloppe de l'article D. 351-1-2 sous laquelle cette période est
-    #: RÉPUTÉE COTISÉE pour la carrière longue. Vide quand elle ne l'est
-    #: jamais — le chômage non indemnisé, que le 3° ne reprend pas. Deux
-    #: motifs qui portent la même enveloppe se partagent son plafond.
-    reputes_cotises_enveloppe: str = ""
-    #: Plafond de cette enveloppe, en trimestres, compté sur TOUTE la carrière
-    #: et tous régimes confondus. Zéro quand il n'y en a pas : la maternité est
-    #: réputée cotisée sans limite.
-    reputes_cotises_plafond: int = 0
+    #: Nature de cette période au sens de l'article D. 351-1-2, qui la RÉPUTE
+    #: COTISÉE pour la carrière longue sous une limite que chaque rédaction
+    #: fixe (fiche ``carriere_longue_reputes_cotises_autres``). Vide quand
+    #: elle ne l'est jamais — le chômage non indemnisé, que l'article ne
+    #: reprend pas.
+    reputes_cotises_nature: str = ""
     fiabilite: Fiabilite = Fiabilite.ESTIMEE
 
 
@@ -968,10 +965,7 @@ def charger_periodes_non_travaillees(racine: Path) -> dict[str, PeriodeNonTravai
                 avpf=ligne.get("avpf", "non").strip().lower() == "oui",
                 services_fonction_publique=services,
                 services_plafond_trimestres_par_enfant=plafond_services,
-                reputes_cotises_enveloppe=ligne.get(
-                    "reputes_cotises_enveloppe", "").strip(),
-                reputes_cotises_plafond=int(
-                    ligne.get("reputes_cotises_plafond", "").strip() or 0),
+                reputes_cotises_nature=ligne.get("reputes_cotises_nature", "").strip(),
                 fiabilite=Fiabilite.depuis_texte(ligne["fiabilite"]),
             )
     return table

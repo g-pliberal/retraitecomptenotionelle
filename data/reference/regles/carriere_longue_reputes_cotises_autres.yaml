@@ -1,63 +1,293 @@
 schema_version: 1
 id: carriere_longue_reputes_cotises_autres
 intitule: >-
-  Trimestres réputés cotisés : chômage, maladie et accidents du travail, maternité,
-  invalidité (deux), service national, compte professionnel de prévention, AVPF
-  (quatre), dans des limites propres à chacun.
+  Trimestres réputés cotisés pour la carrière longue (D. 351-1-2), selon la rédaction
+  en vigueur à la date d'effet de la pension : depuis 2004, le service national et
+  l'incapacité temporaire, quatre trimestres chacun ; depuis novembre 2012, deux de
+  chômage indemnisé, et six de maladie, de maternité et d'accident du travail ;
+  depuis avril 2014, quatre de chômage, la maternité sans limite, deux d'invalidité ;
+  depuis septembre 2023, quatre d'assurance vieillesse des parents au foyer.
+domaine: depart_anticipe
+regimes: [regime_general]
+etape: ouvrir_le_droit
+face: droit
 etat: conforme
+lit:
+- >-
+  chaque année non cotisée de la carrière, jusqu'à la liquidation, et la nature que
+  son motif a au sens de l'article (`reputes_cotises_nature` de
+  `legislation/periodes_non_travaillees.csv`)
+- les trimestres que chacune de ces années valide, quatre au plus
+- liquidation.date_effet
+ecrit:
+- >-
+  les trimestres que la carrière longue ajoute à la durée cotisée, chaque nature dans
+  sa limite, comptée sur toute la carrière
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la pension (§ 4.1) : chaque
+# rédaction vaut pour les pensions prenant effet à compter de la date que son décret
+# fixe. Le moteur (scenarios/actuel.py, `CarriereLongue.cotises_reputes`, et son
+# jumeau) lit `limites` : chacune nomme ses natures et ses trimestres sur toute la
+# carrière, `null` quand elle n'en a pas ; une période dont la nature est dans
+# plusieurs limites les consomme toutes, et une nature qu'aucune limite ne nomme
+# n'est pas réputée cotisée. Les natures sont celles de la colonne
+# `reputes_cotises_nature` de `legislation/periodes_non_travaillees.csv` :
+# service_national, incapacite_temporaire (maladie, accident du travail),
+# maternite, chomage (b et c du 4° de R. 351-12), invalidite, avpf.
+versions:
+- id: avant_la_carriere_longue
+  statut: supposee
+  hypothese: >-
+    l'article naît du décret n° 2003-1036 du 30 octobre 2003, dont les dispositions
+    « sont applicables aux pensions prenant effet postérieurement au 31-12-2003 » :
+    avant, aucun départ pour carrière longue, rien n'est réputé cotisé
+  fiabilite: haute
+  bornes:
+    liquidation.date_effet: [null, 2004-01-01]
+  contenu:
+    droit: aucune période réputée cotisée
+    parametres:
+      limites: []
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: service_national_et_incapacite_temporaire
+  statut: lue
+  textes:
+  - id: LEGIARTI000006736522
+    article: D. 351-1-2 CSS, rédaction du décret n° 2003-1036 du 30 octobre 2003
+    en_vigueur: 2003-10-31
+    lu_le: 2026-10-19
+  nee_de: LEGIARTI000006736522
+  bornes:
+    liquidation.date_effet: [2004-01-01, 2012-11-01]
+  contenu:
+    droit: >-
+      « sont réputées avoir donné lieu à cotisations : 1° Les périodes de service
+      national, à raison d'un trimestre par période d'au moins quatre-vingt-dix jours,
+      consécutifs ou non ; 2° Les périodes comptées comme périodes d'assurance en
+      application des 1°, 2° et 5° au titre de l'incapacité temporaire de l'article
+      R. 351-12 ; […] Les périodes mentionnées au 1° et au 2° du présent article sont
+      retenues respectivement dans la limite de quatre trimestres et sans que le nombre
+      de trimestres ayant donné lieu à cotisations ou réputés tels puisse excéder quatre
+      pour une même année civile. »
+    a_dire: >-
+      les 1°, 2° et 5° de R. 351-12 (rédaction LEGIARTI000006750030) sont la maladie,
+      la maternité et l'accident du travail indemnisé : « l'ensemble de ces périodes
+      est retenu dans la limite de quatre trimestres sur la totalité de la carrière »
+      (circulaire Cnav 2003-46 du 18 novembre 2003, point 11232), « soit 8 trimestres
+      réputés cotisés au maximum » avec le service national (point 1123) ; ni le
+      chômage, ni l'invalidité
+    parametres:
+      limites:
+      - {natures: [service_national], trimestres: 4}
+      - {natures: [incapacite_temporaire, maternite], trimestres: 4}
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: deux_trimestres_de_chomage
+  statut: lue
+  textes:
+  - id: LEGIARTI000026139944
+    article: D. 351-1-2 CSS, rédaction du décret n° 2012-847 du 2 juillet 2012
+    en_vigueur: 2012-11-01
+    lu_le: 2026-10-19
+  nee_de: LEGIARTI000026139944
+  bornes:
+    liquidation.date_effet: [2012-11-01, 2014-04-01]
+  contenu:
+    droit: >-
+      « 2° Les périodes comptées comme périodes d'assurance en application des 1°, 2°
+      et 5° au titre de l'incapacité temporaire de l'article R. 351-12, dans la limite
+      totale de six trimestres, sans que le nombre total de périodes validées en
+      application des 1° et 5° de l'article R. 351-12 ne puisse excéder quatre
+      trimestres ; 3° Les périodes comptées comme périodes d'assurance en application
+      des b et c du 4° de l'article R. 351-12, dans la limite de deux trimestres. » ; le
+      service national garde ses quatre trimestres
+    a_dire: >-
+      « Les articles 1er à 4 du présent décret sont applicables aux pensions prenant
+      effet à compter du 1er novembre 2012 » (décret n° 2012-847, article 14) ; la
+      circulaire Cnav 2012-60 du 4 septembre 2012 (point 32) examine « en priorité
+      […] les trimestres assimilés maladie et accident du travail dans la limite de 4
+      sur toute la carrière », puis complète « par des périodes assimilées maternité,
+      dans la limite de 6 trimestres » : le total ne dépend pas de cet ordre, et le
+      moteur consomme les limites dans l'ordre de la carrière ; la circulaire Cnav
+      2014-26 borne la rédaction aux retraites prenant effet « au plus tard au
+      1er mars 2014 inclus »
+    parametres:
+      limites:
+      - {natures: [service_national], trimestres: 4}
+      - {natures: [incapacite_temporaire], trimestres: 4}
+      - {natures: [incapacite_temporaire, maternite], trimestres: 6}
+      - {natures: [chomage], trimestres: 2}
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: quatre_de_chomage_et_la_maternite
+  statut: lue
+  textes:
+  - id: LEGIARTI000028751938
+    article: D. 351-1-2 CSS, rédaction du décret n° 2014-350 du 19 mars 2014
+    en_vigueur: 2014-04-01
+    lu_le: 2026-10-19
+  - id: LEGIARTI000043506391
+    article: D. 351-1-2 CSS, rédaction du décret n° 2021-593 du 14 mai 2021
+    en_vigueur: 2021-05-16
+    lu_le: 2026-10-19
+    change: >-
+      le 3° vise aussi le 10° de R. 351-12, l'activité partielle, « au titre des
+      périodes d'activité partielle courant à compter du 1er mars 2020 pour les
+      pensions de vieillesse prenant effet à compter du 12 mars 2020 » (article 3 du
+      décret) : le modèle n'a pas de motif d'activité partielle, et ses limites ne
+      bougent pas
+  nee_de: LEGIARTI000028751938
+  bornes:
+    liquidation.date_effet: [2014-04-01, 2023-09-01]
+  contenu:
+    droit: >-
+      « 2° Les périodes comptées comme périodes d'assurance en application des 1° et 5°
+      au titre de l'incapacité temporaire de l'article R. 351-12, dans la limite de
+      quatre trimestres ; 3° […] des b et c du 4° de l'article R. 351-12, dans la
+      limite de quatre trimestres ; 4° […] du 2° de l'article R. 351-12 ; 5° […] du 3°
+      de l'article R. 351-12, dans la limite de deux trimestres ; 6° Les trimestres de
+      majoration de durée d'assurance acquis au titre de l'article L. 351-6-1. »
+    a_dire: >-
+      « applicables aux pensions prenant effet à compter du 1er avril 2014 » (décret
+      n° 2014-350, article 5) ; « 4 trimestres assimilés au titre du chômage indemnisé ;
+      toutes les périodes assimilées maternité ; 2 périodes assimilées au titre de la
+      perception d'une pension d'invalidité » (circulaire Cnav 2014-26 du 1er avril 2014,
+      point 2.1) ; le 6°, le compte de prévention, que le modèle ne calcule pas
+    parametres:
+      limites:
+      - {natures: [service_national], trimestres: 4}
+      - {natures: [incapacite_temporaire], trimestres: 4}
+      - {natures: [chomage], trimestres: 4}
+      - {natures: [maternite], trimestres: null}
+      - {natures: [invalidite], trimestres: 2}
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: l_assurance_des_parents_au_foyer
+  statut: lue
+  textes:
+  - id: LEGIARTI000047634564
+    article: D. 351-1-2 CSS, rédaction du décret n° 2023-436 du 3 juin 2023
+    en_vigueur: 2023-09-01
+    lu_le: 2026-10-19
+  - id: LEGIARTI000053356011
+    article: D. 351-1-2 CSS, rédaction du décret n° 2025-1410 du 30 décembre 2025
+    en_vigueur: 2026-01-01
+    lu_le: 2026-10-19
+    change: >-
+      aucun mot du I ni du II : la rédaction de 2023 reprise mot pour mot, pour les
+      pensions prenant effet à compter du 1er janvier 2026 (II de l'article 2 du décret)
+  nee_de: LEGIARTI000047634564
+  bornes:
+    liquidation.date_effet: [2023-09-01, null]
+  contenu:
+    droit: >-
+      « 7° Les périodes validées en application des articles L. 381-1 et L. 381-2 et
+      les périodes pendant lesquelles les fonctionnaires, les magistrats et les
+      militaires vérifiaient les conditions d'affiliation à l'assurance vieillesse du
+      régime général mentionnées aux mêmes articles mais étaient affiliés à un régime
+      spécial, dans la limite de quatre trimestres. » ; les 1° à 6° de 2014
+    a_dire: >-
+      « ces dispositions s'appliquent aux pensions prenant effet à compter du
+      1er septembre 2023 » (décret n° 2023-436, article 9) ; circulaire Cnav 2023-14 du
+      10 juillet 2023, point 1.2.4, et circulaire Cnav 2026-29 du 4 septembre 2026,
+      points 1.2.3.1 à 1.2.3.7 ; la part du 7° qui vise les fonctionnaires affiliés à
+      un régime spécial, que le modèle ne distingue pas
+    parametres:
+      limites:
+      - {natures: [service_national], trimestres: 4}
+      - {natures: [incapacite_temporaire], trimestres: 4}
+      - {natures: [chomage], trimestres: 4}
+      - {natures: [maternite], trimestres: null}
+      - {natures: [invalidite], trimestres: 2}
+      - {natures: [avpf], trimestres: 4}
+      fiabilite: haute
+  exemples: aucun trouvé
 effet: >-
-  PORTÉ LE 22 SEPTEMBRE 2026. Les six enveloppes sont en table, motif par motif,
-  dans `periodes_non_travaillees.csv`, et le moteur les consomme dans l'ordre de
-  la carrière. Ce que cela change : une seule année de chômage indemnisé suffisait
-  à fermer un départ que le droit ouvre, et trois ans de maternité le fermaient
-  tout autant alors que le 4° ne leur oppose aucune limite. Deux motifs partagent
-  leur enveloppe, parce que le 2° vise l'incapacité temporaire et non l'un ou l'autre
-  : maladie et accident du travail tiennent ensemble dans quatre trimestres.
+  Les départs pour carrière longue d'une carrière qui porte des périodes assimilées.
+  Le modèle lisait la rédaction de 2026 à toute date d'effet : avant novembre 2012,
+  il comptait quatre trimestres de chômage indemnisé, deux d'invalidité et quatre
+  d'AVPF que le droit ne réputait pas cotisés, et séparait de la maladie la maternité
+  qui en partageait la limite. L'ouvrier né en 1950 entré à seize ans et demi, qui a
+  connu trois années de chômage indemnisé, partait à cinquante-neuf ans en février
+  2009 ; il attend l'âge légal.
 sources:
-  lu_le: 2026-09-22
-  prochaine_relecture: 2027-03-31
+  lu_le: 2026-10-19
+  prochaine_relecture: 2027-04-19
   a_relire:
   - >-
-    RESTE HORS DU MODÈLE, et c'est écrit dans `docs/limites.md` : le 6° du I — majoration
-    de durée d'assurance du compte professionnel de prévention, que le modèle ne
-    calcule pas — et la part du 7° qui vise les fonctionnaires affiliés à un régime
-    spécial, qu'il ne distingue pas. RESTE À TRANCHER, ET C'EST UNE LECTURE QUI
-    MANQUE : l'article D. 351-1-3, version LEGIARTI000053356007, pose la condition
-    de DÉBUT D'ACTIVITÉ sur une « durée d'assurance d'au moins cinq trimestres »,
-    là où le modèle ne compte que les trimestres COTISÉS de ces années-là. Le texte
-    est plus large que le modèle ; la doctrine Cnav ne l'est peut-être pas, et le
-    site legislation.cnav.fr n'est pas joignable depuis une session du dépôt. La
-    condition reste donc telle quelle, plus dure que la lettre du décret, en attendant
-    la circulaire. LES TROIS EXEMPLES du point 1.2 de la circulaire 2026-29, lus
-    le 21 septembre 2026, ne se rejouent toujours pas : ils arbitrent, année par
-    année, entre des périodes assimilées de nature différente et retiennent la combinaison
-    la plus favorable, quand une carrière du modèle ne porte qu'un motif par année.
+    RESTE HORS DU MODÈLE : le 6° du I — majoration de durée d'assurance du compte
+    professionnel de prévention, que le modèle ne calcule pas — ; la part du 7° qui vise
+    les fonctionnaires affiliés à un régime spécial, qu'il ne distingue pas ;
+    l'activité partielle (10° de R. 351-12, depuis la rédaction de 2021), qui n'a pas
+    de motif ; et la rédaction propre aux artisans et aux commerçants, que le VI de
+    D. 634-1 pose depuis le décret n° 2012-847 (« Les 2° et 3° du I de l'article
+    D. 351-1-2 sont remplacés […] »), qu'aucune session n'a lue en entier.
+  - >-
+    RESTE À TRANCHER, ET C'EST UNE LECTURE QUI MANQUE : l'article D. 351-1-3, version
+    LEGIARTI000053356007, pose la condition de DÉBUT D'ACTIVITÉ sur une « durée
+    d'assurance d'au moins cinq trimestres », là où le modèle ne compte que les
+    trimestres COTISÉS de ces années-là. La condition reste telle quelle, plus dure que
+    la lettre du décret, en attendant la circulaire.
+  - >-
+    LES EXEMPLES ne se rejouent pas : ceux de la circulaire 2012-60 (point 32, deux
+    assurées mères de trois et de cinq enfants) et les trois du point 1.2 de la
+    circulaire 2026-29 mêlent, dans une même année, des trimestres cotisés et des
+    périodes assimilées de nature différente, et retiennent la combinaison la plus
+    favorable, quand une carrière du modèle ne porte qu'un motif par année.
   lectures:
+  - type: legifrance
+    reference: >-
+      D. 351-1-2 CSS, ses six rédactions dans l'index LEGI du dépôt, à jour du
+      18 octobre 2026 : LEGIARTI000006736522 (31 octobre 2003), LEGIARTI000026139944
+      (1er novembre 2012), LEGIARTI000028751938 (1er avril 2014), LEGIARTI000043506391
+      (16 mai 2021), LEGIARTI000047634564 (1er septembre 2023), LEGIARTI000053356011
+      (1er janvier 2026), comparées clause par clause
+    date: 2026-10-19
+  - type: legifrance
+    reference: >-
+      R. 351-12 CSS, LEGIARTI000006750030 (2004 à 2011) pour les renvois des deux
+      premières rédactions — 1° maladie, 2° accouchement, 3° invalidité, 5° accident
+      du travail — et LEGIARTI000054425288 pour les suivantes : 4° b et c chômage
+      indemnisé, d chômage NON indemnisé, 10° activité partielle
+    date: 2026-10-19
+  - type: jorf
+    reference: >-
+      les dates d'application des décrets, lues dans l'index JORF du dépôt : n°
+      2003-1036, pensions prenant effet « postérieurement au 31-12-2003 » ; n° 2012-847,
+      article 14 ; n° 2014-350, article 5 ; n° 2023-436, article 9
+    date: 2026-10-19
   - type: circulaire_cnav
-    reference: 2026-29 du 4 septembre 2026, points 1.2.3.1 à 1.2.3.7
-    date: 2026-09-04
-  - type: legifrance
     reference: >-
-      D. 351-1-2 CSS, LEGIARTI000053356011, version du 1er janvier 2026, lue en
-      entier dans l'index LEGI du dépôt : « sont réputées avoir donné lieu à cotisations
-      : 1° Les périodes de service national […] dans la limite de quatre trimestres
-      ; 2° Les périodes comptées comme périodes d'assurance en application des 1°
-      et 5° au titre de l'incapacité temporaire de l'article R. 351-12, dans la
-      limite de quatre trimestres ; 3° Les périodes comptées […] en application
-      des b et c du 4° et du 10° de l'article R. 351-12, dans la limite de quatre
-      trimestres ; 4° Les périodes comptées […] en application du 2° de l'article
-      R. 351-12 ; 5° […] du 3° de l'article R. 351-12, dans la limite de deux trimestres
-      ; […] 7° Les périodes validées en application des articles L. 381-1 et L.
-      381-2 […] dans la limite de quatre trimestres. »
-    date: 2026-09-22
-  - type: legifrance
-    reference: >-
-      R. 351-12 CSS, LEGIARTI000054425288, lu pour la correspondance des renvois
-      : 1° maladie indemnisée, 2° maternité, 3° invalidité, 4° b et c chômage indemnisé
-      et d chômage NON indemnisé, 5° accident du travail, 10° activité partielle.
-    date: 2026-09-22
+      2003-46 du 18 novembre 2003, points 1123 à 11233 ; 2012-60 du 4 septembre 2012,
+      point 3 ; 2014-26 du 1er avril 2014, points 1 à 3 ; 2023-14 du 10 juillet 2023,
+      points 1.2.4 et 1.2.5 ; 2026-29 du 4 septembre 2026, points 1.2.3.1 à 1.2.3.7 ; lues
+      sur legislation.lassuranceretraite.fr
+    date: 2026-10-19
 textes_a_rattacher:
 - reference: D. 351-1-1 CSS
-- reference: D. 351-1-2 CSS
 - reference: D. 351-1-2-1 CSS
-- reference: R. 351-12 CSS
+- reference: D. 634-1 CSS, VI
+code:
+  python: >-
+    scenarios/actuel.py : CarriereLongue (cotises_reputes, _reputes_assimiles,
+    FICHE_DES_REPUTES, fiches) ; carriere.py et donnees/chargement.py, le champ
+    reputes_cotises_nature
+  javascript: >-
+    moteur/js/regimes.js : CarriereLongue (cotisesReputes, reputesAssimiles) ;
+    moteur/js/carriere.js, le champ reputes_cotises_nature
+  parametres: >-
+    les limites de chaque version (contenu.parametres), que le paquet du site porte
+    sous versions_des_fiches
+  tests: [tests/test_simulateur.py]
+historique:
+- >-
+  2026-09-22 — portée : les six enveloppes de la rédaction de 2026 en table, motif par
+  motif, dans `periodes_non_travaillees.csv`, consommées dans l'ordre de la carrière.
+  Une seule année de chômage indemnisé suffisait à fermer un départ que le droit
+  ouvre, et trois ans de maternité le fermaient tout autant.
+- >-
+  2026-10-19 — datée (action 138, étape 14) : les limites passent de la table des
+  motifs aux versions de la fiche, une par rédaction qui les change, lues à la date
+  d'effet ; la table ne garde que la nature de chaque motif.

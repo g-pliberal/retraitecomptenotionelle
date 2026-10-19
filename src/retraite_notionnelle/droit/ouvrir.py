@@ -1429,7 +1429,7 @@ def indemnisation_bornee(moteur, carriere: Carriere) -> Carriere:
             return replace(
                 ligne, type_periode="sans_activite", trimestres_valides=0,
                 revenu_reference=0.0, familles_cotisantes=(), familles_financees=(),
-                reputes_cotises_enveloppe="", reputes_cotises_plafond=0)
+                reputes_cotises_nature="")
         if coupee(ligne):
             return replace(
                 ligne, fraction_annee=mois / MOIS_PAR_AN,

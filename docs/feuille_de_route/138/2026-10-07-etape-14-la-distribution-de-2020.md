@@ -3,13 +3,13 @@
 **Reprise, au 19 octobre 2026.** Fait : chaque grille contre l'EIR en 2020
 (7 octobre) ; la population de l'action 136 ; du 16 au 18, la décote,
 l'étranger, l'emploi fragmenté, l'Ircantec, les agricoles, l'artisan, les
-départs, la surcote, l'entrée au premier trimestre cotisé ; le 19, sa mesure,
-puis le service national et les périodes assimilées selon le rang : 5,5 % de
-femmes en carrière longue dans la génération 1955 (EIR 13,0), aucune avant.
-Reste, une session par point : les femmes de 30 à 40 années, toutes entrées à
-21 ans ; les invalides et les inaptes ; la surcote des statutaires ; la décote
-selon la génération ; les indépendants et les agricoles ; l'ASPA ; les limites.
-Au propriétaire : 152, 157, le CASD, l'incitation. Au modèle : D. 351-1-2 daté. Détail : `…-service-national-et-periodes-assimilees.md`.
+départs, la surcote, l'entrée au premier trimestre cotisé ; le 19, le service
+national, les périodes assimilées selon le rang (5,5 % de femmes de 1955 en
+carrière longue, EIR 13,0), puis D. 351-1-2 daté au modèle, sans remesure.
+Reste, une session par point : remesurer ; les femmes de 30 à 40 années,
+entrées à 21 ans ; les invalides et les inaptes ; la surcote des statutaires ;
+la décote selon la génération ; les indépendants, les agricoles ; l'ASPA ; les
+limites. Au propriétaire : 152, 157, le CASD, l'incitation. Détail : `…-d-351-1-2-date.md`.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.14 ». L'étape :
 « Ce qui demande une population ou des microdonnées, avec l'action 136 (étape
