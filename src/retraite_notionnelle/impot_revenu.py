@@ -59,8 +59,10 @@ successives :
    et de 1969 — ; la réduction exceptionnelle des revenus de 2013 ; les 5 %
    retranchés de l'impôt des revenus de 2001 ;
 6. l'exonération du foyer dont le revenu, net de frais professionnels,
-   n'excède pas la limite de l'année, de 1973 à 2013, et du salarié dont le
-   revenu brut n'excède pas celle de 1972 (:func:`exonere`) ; le
+   n'excède pas la limite de l'année, de 1973 à 2013, du salarié dont le
+   revenu brut n'excède pas celle de 1972, et de qui vit principalement de
+   salaires et de pensions sous le minimum garanti, les années dont le montant
+   est lu (art. 5, 2°, :func:`sous_le_minimum_garanti`) (:func:`exonere`) ; le
    seuil de mise en recouvrement ; la prime pour l'emploi de 2000 à 2014,
    sur le revenu d'activité de chacun — ses salaires, son bénéfice majoré de
    11,11 % (:func:`revenus_de_la_prime`) —, et le crédit d'impôt exceptionnel
@@ -90,7 +92,8 @@ exceptionnelle sur les hauts revenus, le travail à temps partiel de la prime
 pour l'emploi (le foyer travaille à temps plein, toute l'année), le seuil
 sous lequel une restitution n'est pas faite (art. 1965 L : 50 F, puis 8 €),
 l'exonération de qui vit de salaires et de pensions sous le minimum garanti
-(art. 5, 2°), l'abattement de 2 000 F des contribuables à une part de 1978
+(art. 5, 2°) les années dont le montant n'est pas lu, l'abattement de 2 000 F
+des contribuables à une part de 1978
 (loi n° 78-1239, art. 2, IV) et celui de l'article 157 ter, la part des
 bénéfices non commerciaux que des tiers déclarent, que la taxe
 complémentaire exonère, et les réductions de cette taxe des commerçants
@@ -125,7 +128,8 @@ HORS_CHAMP = (
     "contribution exceptionnelle sur les hauts revenus",
     "temps partiel et activité sur une partie de l'année, pour la prime pour l'emploi",
     "seuil de restitution de l'article 1965 L (50 F, puis 8 €)",
-    "exonération de l'article 5, 2° : salaires et pensions sous le minimum garanti",
+    "exonération de l'article 5, 2°, sous le minimum garanti, les années dont le montant n'est "
+    "pas lu : 1960 à 1970, 1972 à 1992, 2011 à 2013",
     "abattement de 2 000 F des contribuables à une part de 1978, et celui de l'article 157 ter",
     "taxe complémentaire : la part des bénéfices non commerciaux que des tiers déclarent, qui "
     "en est exonérée, et les réductions des commerçants engagés à stabiliser leurs prix en 1963 "
@@ -157,6 +161,11 @@ ARRONDI_A_LA_CENTAINE = range(1968, 1980)
 #: entend comme né avant le 1er janvier de l'année des revenus moins 64
 #: (brochure pratique 2025 : « né avant le 1.1.1960 » pour les revenus 2024).
 AGE_ABATTEMENT = 65
+
+#: La première année dont la doctrine chiffre le minimum garanti de l'article
+#: 5, 2° (DB 5 B 131 du 1er septembre 1999, n° 2) : avant, le seuil d'un
+#: rapport du Sénat (1971), sur le revenu que décrit cette documentation.
+PREMIERE_ANNEE_DU_MINIMUM_GARANTI_DE_LA_DOCTRINE = 1993
 
 #: « Jusqu'à l'imposition des revenus 1978, cette part supplémentaire n'est
 #: appliquée qu'aux enfants majeurs invalides à charge » (IPP, note de la
@@ -605,12 +614,34 @@ def _abattement_age_invalidite(foyer: Foyer, parametres: ParametresImpot,
     return float(montant * ayants_droit)
 
 
+def sous_le_minimum_garanti(parametres: ParametresImpot, salaires_nets: tuple[float, ...],
+                            pensions_nettes: tuple[float, ...],
+                            benefices: tuple[float, ...]) -> bool:
+    """Le foyer est-il affranchi de l'impôt par l'article 5, 2°, du code ? Il
+    vit « principalement » de salaires, de pensions et de rentes viagères —
+    plus de la moitié de son revenu —, et son revenu global n'excède pas le
+    minimum garanti de l'année, quelles que soient sa situation et ses charges
+    de famille. Les salaires s'y comptent après leurs frais professionnels,
+    les pensions après leurs 10 %, avant les 20 %, les autres revenus pour
+    leur montant net déclaré, le tout avant l'abattement des personnes âgées
+    (DB 5 B 131 du 1er septembre 1999, n° 1 à 5). Rien les années dont le
+    montant n'est pas lu."""
+    minimum = parametres["minimum_garanti"]
+    if "montant" not in minimum:
+        return False
+    salaires_et_pensions = somme_ordonnee(salaires_nets) + somme_ordonnee(pensions_nettes)
+    revenu = salaires_et_pensions + somme_ordonnee(benefices)
+    return salaires_et_pensions > revenu / 2 and revenu <= minimum["montant"]
+
+
 def exonere(foyer: Foyer, parametres: ParametresImpot, salaires_nets: tuple[float, ...],
             pensions_nettes: tuple[float, ...], benefices: tuple[float, ...],
             salaires_bruts: tuple[float, ...] = ()) -> bool:
-    """Le foyer est-il exonéré de l'impôt, son revenu « net de frais
-    professionnels » sous la limite de l'année ? De 1973 à 2013 : les lois de
-    finances pour 1974 à 1977, puis l'article 5, 2° bis, du code. Le revenu
+    """Le foyer est-il exonéré de l'impôt ? Sous le minimum garanti
+    (:func:`sous_le_minimum_garanti`), ou son revenu « net de frais
+    professionnels » sous la limite de l'année, la plus avantageuse des deux
+    exonérations s'appliquant (DB 5 B 131, n° 6). La limite, de 1973 à 2013 :
+    les lois de finances pour 1974 à 1977, puis l'article 5, 2° bis. Le revenu
     est celui du foyer : les salaires après leurs frais professionnels, mais
     avant les 20 % ; les pensions après leurs 10 % ; les bénéfices avant
     l'abattement des adhérents. La limite des plus de 65 ans vaut si l'un des
@@ -622,6 +653,8 @@ def exonere(foyer: Foyer, parametres: ParametresImpot, salaires_nets: tuple[floa
     leurs frais, au moins la moitié de son revenu — l'est, sur son revenu
     brut, salaires ``salaires_bruts`` avant leurs frais (loi n° 72-1121, art.
     4)."""
+    if sous_le_minimum_garanti(parametres, salaires_nets, pensions_nettes, benefices):
+        return True
     e = parametres["exoneration"]
     salaires_et_pensions = somme_ordonnee(salaires_nets) + somme_ordonnee(pensions_nettes)
     revenu = salaires_et_pensions + somme_ordonnee(benefices)
@@ -1071,9 +1104,11 @@ def taxe_complementaire_des_revenus(foyer: Foyer, annee: int, baremes: BaremesIm
 
 def _remarques(foyer: Foyer, parametres: ParametresImpot, la_decote: float,
                minoration: float, majoration: float, ppe: float,
-               benefices: tuple[float, ...] = (), taxe: float = 0.0) -> tuple[str, ...]:
+               benefices: tuple[float, ...] = (), taxe: float = 0.0,
+               minimum_garanti: bool = False) -> tuple[str, ...]:
     """Ce que le calcul de ce foyer doit à une règle qu'aucun texte lu ne
-    porte, ou à une hypothèse."""
+    porte, ou à une hypothèse ; ``minimum_garanti``, s'il est sous le minimum
+    garanti (:func:`sous_le_minimum_garanti`)."""
     annee = parametres.annee
     remarques = []
     if parametres.projete:
@@ -1098,6 +1133,9 @@ def _remarques(foyer: Foyer, parametres: ParametresImpot, la_decote: float,
     if taxe and any(b > 0 and d.categorie == "bnc" for d, b in zip(foyer.declarants, benefices)):
         remarques.append("taxe complémentaire : tout le bénéfice non commercial, sans la part que "
                          "des tiers déclarent, qui en est exonérée")
+    if minimum_garanti and annee < PREMIERE_ANNEE_DU_MINIMUM_GARANTI_DE_LA_DOCTRINE:
+        remarques.append("exonération de l'article 5, 2° : le seuil qu'un rapport du Sénat "
+                         "chiffre, sur le revenu que décrit la documentation de base de 1999")
     return tuple(remarques)
 
 
@@ -1158,7 +1196,9 @@ def impot_aux_parametres(foyer: Foyer, parametres: ParametresImpot, *,
                 "revenu_net_global": revenu_net_global,
                 "abattement_age_invalidite": abattement,
                 "taxe_complementaire": taxe_complementaire(
-                    foyer, annee, parametres["taxe_complementaire"], retenus)}
+                    foyer, annee, parametres["taxe_complementaire"], retenus),
+                "sous_le_minimum_garanti": sous_le_minimum_garanti(
+                    parametres, salaires_nets, pensions_nettes, benefices)}
     activite = revenus_de_la_prime(parametres, salaires, benefices)
     exoneration = exonere(foyer, parametres, salaires_nets, pensions_nettes, benefices, salaires)
     return _liquider(foyer, parametres, revenu, activite, assiette, unite, vers, exoneration)
@@ -1265,5 +1305,6 @@ def _liquider(foyer: Foyer, parametres: ParametresImpot, revenu: float,
         impot=net * retour,
         fiabilite=parametres.fiabilite,
         remarques=_remarques(foyer, parametres, la_decote, minoration, majoration, ppe,
-                             assiette.get("benefices", ()), assiette["taxe_complementaire"]),
+                             assiette.get("benefices", ()), assiette["taxe_complementaire"],
+                             assiette.get("sous_le_minimum_garanti", False)),
     )

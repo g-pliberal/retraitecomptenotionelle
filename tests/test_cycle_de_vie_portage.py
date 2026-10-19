@@ -418,9 +418,10 @@ def test_l_impot_de_chaque_foyer_se_retrouve_en_javascript(les_deux):
 def test_la_grille_de_l_impot_a_un_objet(les_deux):
     """La grille touche chaque étape : chaque correction y joue au moins une
     fois, l'abattement des adhérents sous chacune de ses lois, l'exonération
-    sous la limite de 1975, où qui ne vit pas de salaires et de pensions a la
-    sienne, et sous celle de 1977 ; la taxe complémentaire, de l'artisan de
-    1964 et de son abattement partagé à l'abattement de 1969, jusqu'à sa fin."""
+    au minimum garanti de 1971, d'un salaire et d'un déficit, sous la limite
+    de 1975, où qui ne vit pas de salaires et de pensions a la sienne, et sous
+    celle de 1977 ; la taxe complémentaire, de l'artisan de 1964 et de son
+    abattement partagé à l'abattement de 1969, jusqu'à sa fin."""
     _, attendu = les_deux
     for etape in ("plafonnement", "reduction_complementaire", "reduction_des_salaires", "decote",
                   "reduction_sous_condition_de_revenus", "minoration_exceptionnelle",
@@ -437,7 +438,8 @@ def test_la_grille_de_l_impot_a_un_objet(les_deux):
     assert not {("artisan_fiscal", 1965), ("artisan_adherent", 1970)} & taxes
     exoneres = {(d["nom"], d["annee"]) for d, i in zip(_demandes_d_impot(), attendu["impots"])
                 if i["exonere"]}
-    assert {("retraite", 1975), ("artisan_adherent", 1975), ("salarie", 1977)} <= exoneres
+    assert {("invalide", 1971), ("deficit", 1971), ("retraite", 1975),
+            ("artisan_adherent", 1975), ("salarie", 1977)} <= exoneres
     abattus = {(d["nom"], d["annee"]) for d, i in zip(_demandes_d_impot(), attendu["impots"])
                if i["abattement_adherents"]}
     assert {("artisan_adherent", 1976), ("artisan_adherent", 1977),

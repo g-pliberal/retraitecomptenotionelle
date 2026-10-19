@@ -629,7 +629,9 @@ def test_les_valeurs_lues_dans_legi_y_sont():
     verifiees = 0
     corrections = [(serie, [{"annee": annee, "texte": texte, **valeurs}])
                    for (serie, annee), (valeurs, texte, _) in script.CORRECTIONS.items()]
-    for serie, marches in [*script.COMPLEMENTS.items(), *corrections]:
+    minimum_garanti = [m for m in script.MINIMUM_GARANTI if m.get("origine") == "legi"]
+    for serie, marches in [*script.COMPLEMENTS.items(), *corrections,
+                           ("minimum_garanti", minimum_garanti)]:
         for marche in marches:
             identifiants = [mot.strip(",;()") for mot in marche["texte"].split()
                             if mot.startswith("LEGIARTI")]
@@ -1335,3 +1337,102 @@ def test_la_taxe_des_revenus_de_1959_se_calcule_seule(baremes):
     assert taxe_complementaire_des_revenus(commercant, 1970, baremes, unite="monnaie") == 0.0
     en_euros = Foyer((Declarant(benefices=20000 / FRANC),))
     assert taxe_complementaire_des_revenus(en_euros, 1959, baremes) == pytest.approx(1530 / FRANC)
+
+
+# -- L'exonération au minimum garanti (art. 5, 2°) --------------------------------
+
+#: Le montant annuel du minimum garanti, sous lequel qui vit principalement de
+#: salaires, de pensions et de rentes viagères est exonéré (CGI, art. 5, 2°) :
+#: 7 440 F pour 1971 (rapport général du Sénat n° 66, 1972-1973, tome II,
+#: p. 11) ; de 1993 à 1998, la documentation de base 5 B 131 du 1er septembre
+#: 1999, n° 2 ; de 1999 à 2010, l'instruction qui commente chaque année les
+#: limites d'exonération (de la B.O.I. n° 11 du 17 janvier 2000 à la n° 26 du
+#: 28 mars 2011) ; 2000 et 2001, aussi les notes du code (LEGIARTI000006307020
+#: et LEGIARTI000006307021).
+MINIMUM_GARANTI = {1971: 7440, 1993: 35400, 1994: 35990, 1995: 36520, 1996: 37520,
+                   1997: 37770, 1998: 38080, 1999: 38320, 2000: 38650, 2001: 5994.55,
+                   2002: 6094, 2003: 6187.88, 2004: 6302.28, 2005: 6416.68, 2006: 6531,
+                   2007: 6635, 2008: 6805, 2009: 6885, 2010: 6885}
+
+
+def test_le_minimum_garanti_de_chaque_annee_lue(baremes):
+    """Chaque année dont un texte lu chiffre le minimum garanti le porte, et
+    elle seule : son montant n'est pas lu de 1960 à 1970, sous le salaire
+    minimum interprofessionnel garanti (loi n° 59-1472, art. 13), de 1972 à
+    1992 et de 2011 à 2013 ; et le 2° n'est plus après les revenus de 2013."""
+    for annee in range(baremes.premiere_annee, baremes.derniere_annee + 1):
+        assert (baremes.lus(annee)["minimum_garanti"].get("montant")
+                == MINIMUM_GARANTI.get(annee)), annee
+
+
+def test_l_exoneration_au_minimum_garanti(baremes):
+    """« Sont affranchis de l'impôt sur le revenu : [...] 2° Les personnes
+    physiques qui bénéficient principalement de traitements, salaires,
+    pensions et rentes viagères et dont le revenu global n'est pas supérieur
+    au montant du minimum garanti » (CGI, art. 5, LEGIARTI000006307017 à
+    LEGIARTI000029042469) : principalement, quand ils font plus de la moitié
+    du revenu, les salaires après leurs frais professionnels, les pensions
+    après leur abattement de 10 %, avant celui de 20 % ; le revenu global, leur
+    total et celui des autres revenus, avant l'abattement des personnes âgées ;
+    une exonération « indépendante de la situation et des charges de famille »
+    (DB 5 B 131, n° 1, 3, 4 et 5). En 1971, « le seuil d'imposition a été, par
+    application de cette disposition, fixé à 7.440 F » (rapport général du
+    Sénat n° 66, 1972-1973, tome II, p. 11)."""
+    def foyer(annee, *declarants, enfants=0):
+        return impot_du_foyer(Foyer(tuple(Declarant(**d) for d in declarants), enfants=enfants),
+                              annee, baremes, unite="monnaie")
+    # 1971 : 8 640 F de salaire, 7 440 F après le minimum de 1 200 F de frais ;
+    # 8 650 F, 7 450 F.
+    salarie = foyer(1971, {"salaires": 8640, "age": 40})
+    assert salarie.exonere and salarie.impot == 0 and salarie.impot_avant_credits == 0
+    assert not foyer(1971, {"salaires": 8650, "age": 40}).exonere
+    # Une pension, qui n'a pas d'abattement de 10 % avant 1977.
+    assert foyer(1971, {"pensions": 7440, "age": 70}).exonere
+    assert not foyer(1971, {"pensions": 7450, "age": 70}).exonere
+    # Un couple et deux enfants, le même seuil : 3 440 F de salaire net et
+    # 4 000 F de pension ; puis 3 450 F.
+    assert foyer(1971, {"salaires": 4640, "age": 40}, {"pensions": 4000, "age": 66},
+                 enfants=2).exonere
+    assert not foyer(1971, {"salaires": 4650, "age": 40}, {"pensions": 4000, "age": 66},
+                     enfants=2).exonere
+    # Principalement : 3 000 F de salaire net et 2 900 F de bénéfice, plus de
+    # la moitié des 5 900 F ; 2 800 F et 3 000 F, moins de la moitié.
+    assert foyer(1971, {"salaires": 4200, "benefices": 2900, "age": 40}).exonere
+    assert not foyer(1971, {"salaires": 4000, "benefices": 3000, "age": 40}).exonere
+    # Le bénéfice mêlé au salaire n'a pas les 20 % : 3 800 F de salaire net et
+    # 3 600 F de bénéfice, 7 400 F, ne paient rien ; 3 700 F, 7 500 F, paient
+    # l'impôt que la franchise ne couvre plus.
+    mele = foyer(1971, {"salaires": 5000, "benefices": 3600, "age": 40})
+    assert mele.exonere and mele.impot == 0
+    assert foyer(1971, {"salaires": 5000, "benefices": 3700, "age": 40}).impot > 0
+    # Le revenu de 1971 s'apprécie comme le dit la documentation de 1999 : le
+    # calcul le remarque.
+    assert any("5, 2°" in remarque for remarque in salarie.remarques)
+    assert not any("5, 2°" in remarque for remarque in foyer(1971, {"salaires": 8650}).remarques)
+    # 1970 et 1972 : le montant n'est pas lu.
+    assert not foyer(1970, {"pensions": 5000, "age": 70}).exonere
+    assert not foyer(1972, {"pensions": 7000, "age": 70}).exonere
+
+
+def test_le_minimum_garanti_reste_sous_la_limite_du_2_bis_de_1993_a_2010(baremes):
+    """« en pratique le 2° de l'article 5 ne trouvera pas à s'appliquer pour
+    l'imposition des revenus de 2010 dès lors que le montant du minimum
+    garanti pour 2010 (6 885 €) est inférieur aux limites d'exonération »
+    (B.O.I. n° 26 du 28 mars 2011, n° 8), et de même chaque année depuis 1999 ;
+    de 1993 à 1998 aussi. Les deux exonérations se calculent : la plus
+    avantageuse s'applique (DB 5 B 131, n° 6)."""
+    from retraite_notionnelle.impot_revenu import sous_le_minimum_garanti
+
+    for annee, montant in MINIMUM_GARANTI.items():
+        if annee >= 1993:
+            assert montant < baremes.lus(annee)["exoneration"]["limite"], annee
+    parametres = baremes.lus(1998)
+    assert sous_le_minimum_garanti(parametres, (38080.0,), (), ())
+    assert not sous_le_minimum_garanti(parametres, (38090.0,), (), ())
+    assert sous_le_minimum_garanti(parametres, (15001.0,), (), (14999.0,))
+    assert not sous_le_minimum_garanti(parametres, (15000.0,), (), (15000.0,))
+    # 42 322 F de salaire, 38 090 F nets de 10 % de frais : au-dessus du
+    # minimum garanti, sous la limite du 2° bis, 45 800 F.
+    au_dessus = impot_du_foyer(Foyer((Declarant(salaires=42322, age=40),)), 1998, baremes,
+                               unite="monnaie")
+    assert au_dessus.salaires_nets == (38090,) and au_dessus.exonere

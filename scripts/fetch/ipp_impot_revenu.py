@@ -125,7 +125,16 @@ avec sa source (``origine`` de la marche) :
   n° 59-1472 à sa suppression par la loi de finances pour 1970
   (``TAXE_COMPLEMENTAIRE``) : ses taux, celui des artisans, ses abattements à
   la base — ``origine: loi``, ou ``rapport`` pour le taux de 1961, que la
-  loi de finances pour 1962 écrit dans un texte définitif qui n'est pas lu.
+  loi de finances pour 1962 écrit dans un texte définitif qui n'est pas lu ;
+- l'exonération de l'article 5, 2°, que l'IPP ne porte pas
+  (``MINIMUM_GARANTI``) : le montant annuel du minimum garanti, sous lequel
+  qui vit principalement de salaires, de pensions et de rentes viagères n'est
+  pas imposé, que chiffrent, pour 1971, le rapport général du Sénat sur la loi
+  de finances pour 1973, de 1993 à 1998 la documentation de base 5 B 131, de
+  1999 à 2010 l'instruction qui commente chaque année les limites
+  d'exonération, et les notes du code pour 2000 et 2001 — ``origine:
+  rapport``, ``doctrine`` ou ``legi`` ; les autres années de 1960 à 2013, une
+  marche sans montant.
 
 Ce qu'il écarte (``ECARTEES``) : la ligne de la décote datée de 1959 (7 000 F
 et 14 000 F), en anciens francs que l'IPP écrit en francs — la loi n° 59-1472
@@ -1199,6 +1208,106 @@ TAXE_COMPLEMENTAIRE = [
                    "l'imposition des revenus de l'année 1970 »")},
 ]
 
+#: L'instruction qui commente chaque année les limites d'exonération, et dit
+#: que le 2° de l'article 5 ne trouvera pas à s'appliquer, le minimum garanti
+#: étant sous elles : pour l'année des revenus, sa référence, son numéro, son
+#: document aux archives du BOFiP (bofip-archives.impots.gouv.fr) et le montant
+#: qu'elle écrit.
+INSTRUCTIONS_DU_MINIMUM_GARANTI = {
+    1999: ("BOI 5 B-5-00 (B.O.I. n° 11 du 17 janvier 2000)", 7, 20154, 38320, "38 320 F"),
+    2000: ("BOI 5 B-9-01 (B.O.I. n° 44 du 2 mars 2001)", 9, 20135, 38650, "38 650 F"),
+    2001: ("BOI 5 B-3-02 (B.O.I. n° 18 du 25 janvier 2002)", 9, 20104, 5994.55, "5 994,55 €"),
+    2002: ("BOI 5 B-6-03 (B.O.I. n° 16 du 27 janvier 2003)", 9, 20063, 6094, "6 094 €"),
+    2003: ("BOI 5 B-8-04 (B.O.I. n° 37 du 25 février 2004)", 8, 20036, 6187.88, "6 187,88 €"),
+    2004: ("BOI 5 B-9-05 (B.O.I. n° 33 du 18 février 2005)", 7, 20005, 6302.28, "6 302,28 €"),
+    2005: ("BOI 5 B-6-06 (B.O.I. n° 8 du 18 janvier 2006)", 7, 19924, 6416.68, "6 416,68 €"),
+    2006: ("B.O.I. n° 47 du 29 mars 2007", 57, 19821, 6531, "6 531 €"),
+    2007: ("BOI 5 B-11-08 (B.O.I. n° 28 du 4 mars 2008)", 7, 19764, 6635, "6 635 €"),
+    2008: ("BOI 5 B-9-09 (B.O.I. n° 35 du 31 mars 2009)", 7, 19717, 6805, "6 805 €"),
+    2009: ("BOI 5 B-13-10 (B.O.I. n° 22 du 16 février 2010)", 7, 19600, 6885, "6 885 €"),
+    2010: ("BOI 5 B-7-11 (B.O.I. n° 26 du 28 mars 2011)", 8, 19562, 6885, "6 885 €"),
+}
+
+
+#: Les notes du code qui chiffrent le minimum garanti de 2000 et de 2001.
+NOTES_DU_MINIMUM_GARANTI = {
+    2000: "CGI, art. 5, 2°, LEGIARTI000006307020, note (1) : « Au titre de 2000, le montant "
+          "s'élève à 38 650 F »",
+    2001: "CGI, art. 5, 2°, LEGIARTI000006307021, note : « Au titre de 2001, le montant du "
+          "minimum garanti s'élève à 5 994,55 euros »",
+}
+
+
+def _minimum_de_l_instruction(annee: int) -> dict:
+    """La marche du minimum garanti qu'une instruction chiffre, et la note du
+    code qui le chiffre aussi."""
+    reference, numero, document, montant, ecrit = INSTRUCTIONS_DU_MINIMUM_GARANTI[annee]
+    instruction = (f"{reference}, n° {numero} (bofip-archives, document {document}) : « le 2° "
+                   f"de l'article 5 ne trouvera pas à s'appliquer pour l'imposition des revenus "
+                   f"de {annee} [...] le montant du minimum garanti pour {annee} ({ecrit}) est "
+                   f"inférieur aux [...] limites d'exonération »")
+    note = NOTES_DU_MINIMUM_GARANTI.get(annee)
+    return {"annee": annee, "monnaie": "FRF" if annee <= 2000 else "EUR", "montant": montant,
+            "origine": "legi" if note else "doctrine",
+            "texte": f"{note} ; {instruction}" if note else instruction}
+
+
+#: Le minimum garanti de la documentation de base, pour les revenus de 1993 à
+#: 1998.
+DB_5_B_131 = {1993: 35400, 1994: 35990, 1995: 36520, 1996: 37520, 1997: 37770, 1998: 38080}
+
+
+def _minimum_de_la_documentation(annee: int) -> dict:
+    """La marche du minimum garanti que la documentation de base chiffre."""
+    ecrit = f"{DB_5_B_131[annee]:,}".replace(",", " ")
+    return {"annee": annee, "monnaie": "FRF", "montant": DB_5_B_131[annee], "origine": "doctrine",
+            "texte": "DB 5 B 131 du 1er septembre 1999, n° 2 (bofip-archives, document 27837) : "
+                     "« le montant annuel du “minimum garanti” auquel doit être comparé le revenu "
+                     f"global du contribuable s'élève à : [...] {ecrit} F pour les revenus "
+                     f"imposables au titre de {annee} »"}
+
+#: L'exonération de l'article 5, 2°, du code, que l'IPP ne porte pas : qui vit
+#: principalement de salaires, de pensions et de rentes viagères n'est pas
+#: imposé si son revenu global n'excède pas le montant annuel du minimum
+#: garanti. Une marche porte ce ``montant`` quand un texte lu le chiffre ; une
+#: marche sans montant est une année où l'exonération vaut sans que son montant
+#: soit lu.
+MINIMUM_GARANTI = [
+    {"annee": 1960, "origine": "loi",
+     "texte": _texte("59-1472", "art. 13 du texte du Sénat, dernier alinéa", "« Les "
+                     "contribuables salariés dont l'unique revenu n'est pas supérieur au salaire "
+                     "minimum interprofessionnel garanti ne sont pas assujettis à l'impôt sur le "
+                     "revenu des personnes physiques » ; ni le montant annuel de ce salaire, ni "
+                     "le texte qui étend l'exonération aux pensions et aux rentes viagères, au "
+                     "2° de l'article 5 du code, ne sont lus")},
+    {"annee": 1971, "monnaie": "FRF", "montant": 7440, "origine": "rapport",
+     "texte": RAPPORTS[1972] + ", p. 11 : « conformément aux dispositions de l'article 5-2° du "
+              "Code général des Impôts, les contribuables dont le revenu, constitué "
+              "principalement par des salaires, pensions ou rentes viagères, n'est pas supérieur "
+              "au S. M. I. C., sont exonérés d'impôt sur le revenu. C'est ainsi que pour l'année "
+              "1971 le seuil d'imposition a été, par application de cette disposition, fixé à "
+              "7.440 F »"},
+    {"annee": 1972, "origine": "legi",
+     "texte": "CGI, art. 5, 2°, dans ses rédactions de 1979 à 2002, LEGIARTI000006307017 à "
+              "LEGIARTI000006307020 : « Les personnes "
+              "physiques qui bénéficient principalement de traitements, salaires, pensions et "
+              "rentes viagères et dont le revenu global n'est pas supérieur au montant du "
+              "minimum garanti prévu à l'article L 141-8 du code du travail » — qui remplace le "
+              "SMIG dans toutes les dispositions qui s'y réfèrent depuis la loi n° 70-7 du "
+              "2 janvier 1970 (LEGIARTI000006646471) ; le montant des revenus de 1972 à 1992 "
+              "n'est pas lu"},
+    *[_minimum_de_la_documentation(annee) for annee in DB_5_B_131],
+    *[_minimum_de_l_instruction(annee) for annee in INSTRUCTIONS_DU_MINIMUM_GARANTI],
+    {"annee": 2011, "origine": "legi",
+     "texte": "CGI, art. 5, 2°, LEGIARTI000024189626 à LEGIARTI000029042469 : le montant des "
+              "revenus de 2011 à 2013 n'est pas lu"},
+    {"annee": 2014, "supprimee": True,
+     "texte": "la dernière rédaction de l'article 5 qui porte le 2°, LEGIARTI000029042469, est "
+              "close le 1er janvier 2015, et l'index LEGI n'a pas la suivante ; l'IPP fait finir "
+              "le 2° bis avec les revenus de 2013, par la loi n° 2014-1654 du 29 décembre 2014 "
+              "(LF pour 2015), art. 2, qu'aucun des deux index n'a"},
+]
+
 #: L'abattement de 10 % des pensions naît des revenus de 1977 : avant, une
 #: pension n'a que les 20 % (voir :func:`_pensions_avant_1977`).
 PREMIERE_ANNEE_ABATTEMENT_DES_PENSIONS = 1977
@@ -1523,6 +1632,7 @@ def corriger(series: dict[str, list[dict]]) -> dict[str, list[dict]]:
     series["credit_exceptionnel"] = [dict(m) for m in CREDIT_EXCEPTIONNEL]
     series["reduction_des_salaires"] = [dict(m) for m in REDUCTION_DES_SALAIRES]
     series["taxe_complementaire"] = [dict(m) for m in TAXE_COMPLEMENTAIRE]
+    series["minimum_garanti"] = [dict(m) for m in MINIMUM_GARANTI]
     for nom, complements in COMPLEMENTS.items():
         annees = {m["annee"] for m in complements}
         series[nom] = sorted([m for m in series[nom] if m["annee"] not in annees] + complements,
@@ -1642,6 +1752,12 @@ ENTETE = """\
 #     pour qui vit principalement de salaires et de pensions, `limite_autres`
 #     pour les autres ; en 1972, celle de qui vit principalement de salaires,
 #     sur son revenu brut.
+#   minimum_garanti : le montant annuel du minimum garanti de l'article 5, 2°,
+#     sous lequel le revenu global de qui vit principalement de salaires, de
+#     pensions et de rentes viagères n'est pas imposé (`montant`) ; une marche
+#     sans montant, une année où l'exonération vaut sans que son montant soit
+#     lu : de 1960 à 1970, sous le salaire minimum de la loi n° 59-1472, de
+#     1972 à 1992, de 2011 à 2013.
 #   deductions : les 10 % des salaires et des pensions, les 20 % d'avant 2006.
 #   abattement_age_invalidite : celui de l'article 157 bis, plein sous le
 #     premier seuil de revenu net global, réduit sous le second ; en 1972, la
@@ -1676,7 +1792,8 @@ ENTETE = """\
 ORDRE = ("bareme", "quotient_familial", "parts_par_rang_d_enfant",
          "plafonds_quotient_familial", "reduction_des_salaires", "decote",
          "reduction_sous_condition_de_revenus",
-         "recouvrement", "exoneration", "deductions", "abattement_age_invalidite",
+         "recouvrement", "exoneration", "minimum_garanti", "deductions",
+         "abattement_age_invalidite",
          "abattement_exceptionnel_ages_invalides", "abattement_exceptionnel_personnes_seules",
          "majorations_exceptionnelles", "minorations_exceptionnelles",
          "reduction_exceptionnelle", "reduction_proportionnelle", "prime_pour_l_emploi",

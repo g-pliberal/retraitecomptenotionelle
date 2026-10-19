@@ -45,7 +45,7 @@ export const SERIES = Object.freeze([
   "bareme", "quotient_familial", "parts_par_rang_d_enfant",
   "plafonds_quotient_familial", "reduction_des_salaires", "decote",
   "reduction_sous_condition_de_revenus",
-  "recouvrement", "exoneration", "deductions", "abattement_age_invalidite",
+  "recouvrement", "exoneration", "minimum_garanti", "deductions", "abattement_age_invalidite",
   "abattement_exceptionnel_ages_invalides", "abattement_exceptionnel_personnes_seules",
   "majorations_exceptionnelles", "minorations_exceptionnelles",
   "reduction_exceptionnelle", "reduction_proportionnelle", "prime_pour_l_emploi",
@@ -69,7 +69,8 @@ export const HORS_CHAMP = Object.freeze([
   "contribution exceptionnelle sur les hauts revenus",
   "temps partiel et activité sur une partie de l'année, pour la prime pour l'emploi",
   "seuil de restitution de l'article 1965 L (50 F, puis 8 €)",
-  "exonération de l'article 5, 2° : salaires et pensions sous le minimum garanti",
+  "exonération de l'article 5, 2°, sous le minimum garanti, les années dont le montant n'est "
+    + "pas lu : 1960 à 1970, 1972 à 1992, 2011 à 2013",
   "abattement de 2 000 F des contribuables à une part de 1978, et celui de l'article 157 ter",
   "taxe complémentaire : la part des bénéfices non commerciaux que des tiers déclarent, qui "
     + "en est exonérée, et les réductions des commerçants engagés à stabiliser leurs prix en 1963 "
@@ -90,6 +91,9 @@ export const ARRONDI_A_LA_CENTAINE = Object.freeze([1968, 1979]);
 
 /** L'âge, au 31 décembre de l'année des revenus, qui ouvre l'abattement des personnes âgées. */
 export const AGE_ABATTEMENT = 65;
+
+/** La doctrine chiffre le minimum garanti de l'article 5, 2°, depuis les revenus de 1993. */
+export const PREMIERE_ANNEE_DU_MINIMUM_GARANTI_DE_LA_DOCTRINE = 1993;
 
 /** Le mineur invalide a sa demi-part depuis les revenus de 1979. */
 export const PREMIERE_ANNEE_ENFANT_INVALIDE = 1979;
@@ -546,12 +550,27 @@ function abattementAgeInvalidite(foyer, parametres, revenuNetGlobal) {
 }
 
 /**
- * Le foyer est-il exonéré, son revenu net de frais professionnels sous la
- * limite de l'année, de 1973 à 2013, ou son revenu brut de salarié sous celle
- * de 1972 : voir `exonere` dans `impot_revenu.py`.
+ * Le foyer est-il affranchi de l'impôt par l'article 5, 2°, qui vit
+ * principalement de salaires et de pensions sous le minimum garanti de
+ * l'année : voir `sous_le_minimum_garanti` dans `impot_revenu.py`.
+ */
+export function sousLeMinimumGaranti(parametres, salairesNets, pensionsNettes, benefices) {
+  const minimum = parametres.serie("minimum_garanti");
+  if (!("montant" in minimum)) return false;
+  const salairesEtPensions = somme(salairesNets) + somme(pensionsNettes);
+  const revenu = salairesEtPensions + somme(benefices);
+  return salairesEtPensions > revenu / 2 && revenu <= minimum.montant;
+}
+
+/**
+ * Le foyer est-il exonéré, sous le minimum garanti, ou son revenu net de
+ * frais professionnels sous la limite de l'année, de 1973 à 2013, ou son
+ * revenu brut de salarié sous celle de 1972 : voir `exonere` dans
+ * `impot_revenu.py`.
  */
 export function exonere(foyer, parametres, salairesNets, pensionsNettes, benefices,
   salairesBruts = []) {
+  if (sousLeMinimumGaranti(parametres, salairesNets, pensionsNettes, benefices)) return true;
   const e = parametres.serie("exoneration");
   const salairesEtPensions = somme(salairesNets) + somme(pensionsNettes);
   const revenu = salairesEtPensions + somme(benefices);
@@ -886,7 +905,7 @@ export function taxeComplementaireDesRevenus(foyer, annee, baremes, { unite = "e
 }
 
 function remarquesDe(foyer, parametres, laDecote, laMinoration, laMajoration, ppe,
-  benefices = [], taxe = 0.0) {
+  benefices = [], taxe = 0.0, minimumGaranti = false) {
   const annee = parametres.annee;
   const remarques = [];
   if (parametres.projete) {
@@ -916,6 +935,10 @@ function remarquesDe(foyer, parametres, laDecote, laMinoration, laMajoration, pp
   if (taxe && benefices.some((b, i) => b > 0 && foyer.declarants[i].categorie === "bnc")) {
     remarques.push("taxe complémentaire : tout le bénéfice non commercial, sans la part que "
       + "des tiers déclarent, qui en est exonérée");
+  }
+  if (minimumGaranti && annee < PREMIERE_ANNEE_DU_MINIMUM_GARANTI_DE_LA_DOCTRINE) {
+    remarques.push("exonération de l'article 5, 2° : le seuil qu'un rapport du Sénat "
+      + "chiffre, sur le revenu que décrit la documentation de base de 1999");
   }
   return remarques;
 }
@@ -961,6 +984,8 @@ export function impotAuxParametres(foyer, parametres, { unite = "euro" } = {}) {
     revenu_net_global: revenuNetGlobal, abattement_age_invalidite: abattement,
     taxe_complementaire: taxeComplementaire(foyer, annee, parametres.serie("taxe_complementaire"),
       retenus),
+    sous_le_minimum_garanti: sousLeMinimumGaranti(parametres, salairesNets, pensionsNettes,
+      benefices),
   }, unite, vers, exonere(foyer, parametres, salairesNets, pensionsNettes, benefices, salaires));
 }
 
@@ -1054,6 +1079,7 @@ function liquider(foyer, parametres, revenu, activite, assiette, unite, vers, ex
     impot: net * retour,
     fiabilite: parametres.fiabilite,
     remarques: remarquesDe(foyer, parametres, laDecote, laMinoration, laMajoration, ppe,
-      assiette.benefices || [], assiette.taxe_complementaire),
+      assiette.benefices || [], assiette.taxe_complementaire,
+      assiette.sous_le_minimum_garanti || false),
   });
 }

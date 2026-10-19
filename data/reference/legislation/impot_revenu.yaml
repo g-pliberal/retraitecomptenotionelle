@@ -3,7 +3,7 @@
 # source_id: ipp_impot_revenu
 #
 # ÉCRIT PAR `scripts/fetch/ipp_impot_revenu.py`, jamais à la main : les barèmes
-# de l'Institut des politiques publiques, lus le 2026-10-18, chacun avec la
+# de l'Institut des politiques publiques, lus le 2026-10-19, chacun avec la
 # référence que l'IPP cite pour sa marche, et ce que le script y ajoute, chaque
 # fois avec sa source (`origine`) : `legi` pour une valeur lue dans une
 # rédaction du code général des impôts que l'index LEGI de la DILA conserve,
@@ -63,6 +63,12 @@
 #     pour qui vit principalement de salaires et de pensions, `limite_autres`
 #     pour les autres ; en 1972, celle de qui vit principalement de salaires,
 #     sur son revenu brut.
+#   minimum_garanti : le montant annuel du minimum garanti de l'article 5, 2°,
+#     sous lequel le revenu global de qui vit principalement de salaires, de
+#     pensions et de rentes viagères n'est pas imposé (`montant`) ; une marche
+#     sans montant, une année où l'exonération vaut sans que son montant soit
+#     lu : de 1960 à 1970, sous le salaire minimum de la loi n° 59-1472, de
+#     1972 à 1992, de 2011 à 2013.
 #   deductions : les 10 % des salaires et des pensions, les 20 % d'avant 2006.
 #   abattement_age_invalidite : celui de l'article 157 bis, plein sous le
 #     premier seuil de revenu net global, réduit sous le second ; en 1972, la
@@ -92,7 +98,7 @@
 #     (`abattement_bnc_et_artisans`), et ce que les deux exonèrent au plus pour
 #     un même contribuable (`abattement_maximum`) ; la marche de 1959, en
 #     francs de 1960, sert la taxe payée en 1960, que le revenu de 1960 déduit.
-lu_le: "2026-10-18"
+lu_le: "2026-10-19"
 fiabilite: haute
 premiere_annee: 1960
 
@@ -343,6 +349,30 @@ series:
     - {annee: 2012, monnaie: "EUR", limite: 8610, limite_plus_de_65_ans: 9410, texte: "Cf note (1)"}
     - {annee: 2013, monnaie: "EUR", limite: 8680, limite_plus_de_65_ans: 9490, texte: "Cf note (1)"}
     - {annee: 2014, texte: "Loi 2014-1654 du 29/12/2014 (LF pour 2015), art. 2"}
+  minimum_garanti:
+    - {annee: 1960, origine: "loi", texte: "Loi n° 59-1472 du 28 décembre 1959 portant réforme du contentieux fiscal et divers aménagements fiscaux, art. 13 du texte du Sénat, dernier alinéa, texte adopté par le Sénat en première lecture le 24 novembre 1959, qu'il dit conforme en deuxième lecture le 17 décembre (ta1959_1960_0016.pdf) (senat.fr/leg/1959-1960/ta1959_1960_0002.pdf) : « Les contribuables salariés dont l'unique revenu n'est pas supérieur au salaire minimum interprofessionnel garanti ne sont pas assujettis à l'impôt sur le revenu des personnes physiques » ; ni le montant annuel de ce salaire, ni le texte qui étend l'exonération aux pensions et aux rentes viagères, au 2° de l'article 5 du code, ne sont lus"}
+    - {annee: 1971, monnaie: "FRF", montant: 7440, origine: "rapport", texte: "rapport général du Sénat n° 66 (1972-1973), tome II (senat.fr/rap/1972-1973/i1972_1973_0066_02.pdf), p. 11 : « conformément aux dispositions de l'article 5-2° du Code général des Impôts, les contribuables dont le revenu, constitué principalement par des salaires, pensions ou rentes viagères, n'est pas supérieur au S. M. I. C., sont exonérés d'impôt sur le revenu. C'est ainsi que pour l'année 1971 le seuil d'imposition a été, par application de cette disposition, fixé à 7.440 F »"}
+    - {annee: 1972, origine: "legi", texte: "CGI, art. 5, 2°, dans ses rédactions de 1979 à 2002, LEGIARTI000006307017 à LEGIARTI000006307020 : « Les personnes physiques qui bénéficient principalement de traitements, salaires, pensions et rentes viagères et dont le revenu global n'est pas supérieur au montant du minimum garanti prévu à l'article L 141-8 du code du travail » — qui remplace le SMIG dans toutes les dispositions qui s'y réfèrent depuis la loi n° 70-7 du 2 janvier 1970 (LEGIARTI000006646471) ; le montant des revenus de 1972 à 1992 n'est pas lu"}
+    - {annee: 1993, monnaie: "FRF", montant: 35400, origine: "doctrine", texte: "DB 5 B 131 du 1er septembre 1999, n° 2 (bofip-archives, document 27837) : « le montant annuel du “minimum garanti” auquel doit être comparé le revenu global du contribuable s'élève à : [...] 35 400 F pour les revenus imposables au titre de 1993 »"}
+    - {annee: 1994, monnaie: "FRF", montant: 35990, origine: "doctrine", texte: "DB 5 B 131 du 1er septembre 1999, n° 2 (bofip-archives, document 27837) : « le montant annuel du “minimum garanti” auquel doit être comparé le revenu global du contribuable s'élève à : [...] 35 990 F pour les revenus imposables au titre de 1994 »"}
+    - {annee: 1995, monnaie: "FRF", montant: 36520, origine: "doctrine", texte: "DB 5 B 131 du 1er septembre 1999, n° 2 (bofip-archives, document 27837) : « le montant annuel du “minimum garanti” auquel doit être comparé le revenu global du contribuable s'élève à : [...] 36 520 F pour les revenus imposables au titre de 1995 »"}
+    - {annee: 1996, monnaie: "FRF", montant: 37520, origine: "doctrine", texte: "DB 5 B 131 du 1er septembre 1999, n° 2 (bofip-archives, document 27837) : « le montant annuel du “minimum garanti” auquel doit être comparé le revenu global du contribuable s'élève à : [...] 37 520 F pour les revenus imposables au titre de 1996 »"}
+    - {annee: 1997, monnaie: "FRF", montant: 37770, origine: "doctrine", texte: "DB 5 B 131 du 1er septembre 1999, n° 2 (bofip-archives, document 27837) : « le montant annuel du “minimum garanti” auquel doit être comparé le revenu global du contribuable s'élève à : [...] 37 770 F pour les revenus imposables au titre de 1997 »"}
+    - {annee: 1998, monnaie: "FRF", montant: 38080, origine: "doctrine", texte: "DB 5 B 131 du 1er septembre 1999, n° 2 (bofip-archives, document 27837) : « le montant annuel du “minimum garanti” auquel doit être comparé le revenu global du contribuable s'élève à : [...] 38 080 F pour les revenus imposables au titre de 1998 »"}
+    - {annee: 1999, monnaie: "FRF", montant: 38320, origine: "doctrine", texte: "BOI 5 B-5-00 (B.O.I. n° 11 du 17 janvier 2000), n° 7 (bofip-archives, document 20154) : « le 2° de l'article 5 ne trouvera pas à s'appliquer pour l'imposition des revenus de 1999 [...] le montant du minimum garanti pour 1999 (38 320 F) est inférieur aux [...] limites d'exonération »"}
+    - {annee: 2000, monnaie: "FRF", montant: 38650, origine: "legi", texte: "CGI, art. 5, 2°, LEGIARTI000006307020, note (1) : « Au titre de 2000, le montant s'élève à 38 650 F » ; BOI 5 B-9-01 (B.O.I. n° 44 du 2 mars 2001), n° 9 (bofip-archives, document 20135) : « le 2° de l'article 5 ne trouvera pas à s'appliquer pour l'imposition des revenus de 2000 [...] le montant du minimum garanti pour 2000 (38 650 F) est inférieur aux [...] limites d'exonération »"}
+    - {annee: 2001, monnaie: "EUR", montant: 5994.55, origine: "legi", texte: "CGI, art. 5, 2°, LEGIARTI000006307021, note : « Au titre de 2001, le montant du minimum garanti s'élève à 5 994,55 euros » ; BOI 5 B-3-02 (B.O.I. n° 18 du 25 janvier 2002), n° 9 (bofip-archives, document 20104) : « le 2° de l'article 5 ne trouvera pas à s'appliquer pour l'imposition des revenus de 2001 [...] le montant du minimum garanti pour 2001 (5 994,55 €) est inférieur aux [...] limites d'exonération »"}
+    - {annee: 2002, monnaie: "EUR", montant: 6094, origine: "doctrine", texte: "BOI 5 B-6-03 (B.O.I. n° 16 du 27 janvier 2003), n° 9 (bofip-archives, document 20063) : « le 2° de l'article 5 ne trouvera pas à s'appliquer pour l'imposition des revenus de 2002 [...] le montant du minimum garanti pour 2002 (6 094 €) est inférieur aux [...] limites d'exonération »"}
+    - {annee: 2003, monnaie: "EUR", montant: 6187.88, origine: "doctrine", texte: "BOI 5 B-8-04 (B.O.I. n° 37 du 25 février 2004), n° 8 (bofip-archives, document 20036) : « le 2° de l'article 5 ne trouvera pas à s'appliquer pour l'imposition des revenus de 2003 [...] le montant du minimum garanti pour 2003 (6 187,88 €) est inférieur aux [...] limites d'exonération »"}
+    - {annee: 2004, monnaie: "EUR", montant: 6302.28, origine: "doctrine", texte: "BOI 5 B-9-05 (B.O.I. n° 33 du 18 février 2005), n° 7 (bofip-archives, document 20005) : « le 2° de l'article 5 ne trouvera pas à s'appliquer pour l'imposition des revenus de 2004 [...] le montant du minimum garanti pour 2004 (6 302,28 €) est inférieur aux [...] limites d'exonération »"}
+    - {annee: 2005, monnaie: "EUR", montant: 6416.68, origine: "doctrine", texte: "BOI 5 B-6-06 (B.O.I. n° 8 du 18 janvier 2006), n° 7 (bofip-archives, document 19924) : « le 2° de l'article 5 ne trouvera pas à s'appliquer pour l'imposition des revenus de 2005 [...] le montant du minimum garanti pour 2005 (6 416,68 €) est inférieur aux [...] limites d'exonération »"}
+    - {annee: 2006, monnaie: "EUR", montant: 6531, origine: "doctrine", texte: "B.O.I. n° 47 du 29 mars 2007, n° 57 (bofip-archives, document 19821) : « le 2° de l'article 5 ne trouvera pas à s'appliquer pour l'imposition des revenus de 2006 [...] le montant du minimum garanti pour 2006 (6 531 €) est inférieur aux [...] limites d'exonération »"}
+    - {annee: 2007, monnaie: "EUR", montant: 6635, origine: "doctrine", texte: "BOI 5 B-11-08 (B.O.I. n° 28 du 4 mars 2008), n° 7 (bofip-archives, document 19764) : « le 2° de l'article 5 ne trouvera pas à s'appliquer pour l'imposition des revenus de 2007 [...] le montant du minimum garanti pour 2007 (6 635 €) est inférieur aux [...] limites d'exonération »"}
+    - {annee: 2008, monnaie: "EUR", montant: 6805, origine: "doctrine", texte: "BOI 5 B-9-09 (B.O.I. n° 35 du 31 mars 2009), n° 7 (bofip-archives, document 19717) : « le 2° de l'article 5 ne trouvera pas à s'appliquer pour l'imposition des revenus de 2008 [...] le montant du minimum garanti pour 2008 (6 805 €) est inférieur aux [...] limites d'exonération »"}
+    - {annee: 2009, monnaie: "EUR", montant: 6885, origine: "doctrine", texte: "BOI 5 B-13-10 (B.O.I. n° 22 du 16 février 2010), n° 7 (bofip-archives, document 19600) : « le 2° de l'article 5 ne trouvera pas à s'appliquer pour l'imposition des revenus de 2009 [...] le montant du minimum garanti pour 2009 (6 885 €) est inférieur aux [...] limites d'exonération »"}
+    - {annee: 2010, monnaie: "EUR", montant: 6885, origine: "doctrine", texte: "BOI 5 B-7-11 (B.O.I. n° 26 du 28 mars 2011), n° 8 (bofip-archives, document 19562) : « le 2° de l'article 5 ne trouvera pas à s'appliquer pour l'imposition des revenus de 2010 [...] le montant du minimum garanti pour 2010 (6 885 €) est inférieur aux [...] limites d'exonération »"}
+    - {annee: 2011, origine: "legi", texte: "CGI, art. 5, 2°, LEGIARTI000024189626 à LEGIARTI000029042469 : le montant des revenus de 2011 à 2013 n'est pas lu"}
+    - {annee: 2014, supprimee: true, texte: "la dernière rédaction de l'article 5 qui porte le 2°, LEGIARTI000029042469, est close le 1er janvier 2015, et l'index LEGI n'a pas la suivante ; l'IPP fait finir le 2° bis avec les revenus de 2013, par la loi n° 2014-1654 du 29 décembre 2014 (LF pour 2015), art. 2, qu'aucun des deux index n'a"}
   deductions:
     - {annee: 1960, frais_professionnels_taux: 0.1, vingt_pour_cent_taux: 0.2, origine: "loi", texte: "IPP, sans référence ; sans l'abattement de 10 % des pensions, que la loi de finances pour 1979 (art. 4) dit « institué par l'article 3-1 de la loi n° 77-1467 du 30 décembre 1977 » pour les revenus de 1977 : « Les contribuables titulaires de pensions ou de retraites sont autorisés à pratiquer [...] un abattement de 10 % » (Loi n° 77-1467 du 30 décembre 1977 (LF pour 1978), art. 3, I, texte définitif adopté par le Sénat le 16 décembre 1977 (senat.fr/leg/1977-1978/ta1977_1978_0053.pdf))"}
     - {annee: 1970, monnaie: "FRF", frais_professionnels_taux: 0.1, frais_professionnels_minimum: 1200, vingt_pour_cent_taux: 0.2, origine: "loi", texte: "Loi n° 70-1199 du 21 décembre 1970 (LF pour 1971), art. 4, texte définitif adopté par le Sénat le 9 décembre 1970 (senat.fr/leg/1970-1971/ta1970_1971_0028.pdf) : « le montant de la ou des déductions forfaitaires pour frais professionnels ne peut être inférieur à 1.200 F, sans pouvoir excéder le montant brut de ces traitements et salaires » ; porté « de 1 200 F à 1 500 F » pour les revenus de 1976 (loi n° 76-1232, art. 2, IV) ; les 10 % et les 20 % de l'IPP, sans référence"}
