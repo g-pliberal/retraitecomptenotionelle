@@ -2,14 +2,14 @@
 
 **Reprise, au 19 octobre 2026.** Fait : les quotients projetés, la marche de
 1941, les variantes démographiques et l'indexation sous elles ; la mortalité
-différentielle des cas types ; la queue observée ; le 19, les inaptes de la
-Cnav, 2025 sous la loi seule, les ex-invalides dans la grille du coût, puis
-la prémisse du déficit (`--deficit` relu sur la survie, la grille et les
-vingtiles de la page). Reste : à une session qui tienne la page Coût, la
-mortalité des ex-invalides et sa phrase, puis l'inapte recalé ; à une autre,
-le déficit des scénarios 3 et 5 ; à la fin de l'étape, la limite. Au
-propriétaire : les départs qui suivent l'espérance de vie. Détail : « Ce qui
-reste » des notes « ex-invalides de la Cnav » et « la prémisse du déficit ».
+différentielle des cas types ; la queue observée ; le 19, 2025 sous la loi
+seule, la prémisse du déficit, les inaptes et les ex-invalides de la Cnav
+dans la grille du coût, chacun à sa mortalité, que la page Coût nomme, et
+l'inapte recalé sur sa part cotisée. Reste, une session par point : le
+déficit des scénarios 3 et 5 ; aux pages, les décimales du coefficient
+au-dessus de un ; la forme de la surmortalité ; à la fin de l'étape, la
+limite. Au propriétaire : les départs qui suivent l'espérance de vie. Détail :
+« Ce qui reste » de la note « mortalité des ex-invalides et inapte recalé ».
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.7 ». L'étape 7 de
 l'action : « La démographie en variantes : les quotients projetés âge par âge
