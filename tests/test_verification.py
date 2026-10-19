@@ -2177,3 +2177,187 @@ def test_le_fspoeie_d_avant_2000_est_date_par_les_decrets_qui_fixent_son_taux():
     assert len(griefs) == 2
     assert all("A88" in grief for grief in griefs)
     assert "D91" in griefs[0] and "D98" in griefs[1]
+
+
+# -- le recoupement aux barèmes de l'IPP (action 89) ---------------------------
+
+
+def test_le_recuperateur_de_l_ipp_rend_chaque_parametre_a_son_chemin(tmp_path):
+    """Ses dates en texte, la valeur nulle qui ferme le paramètre, son unité, et
+    la référence que l'IPP donne à une marche : celles du fichier valent pour
+    chacun de ses paramètres. Les fichiers d'index ne portent pas de valeur."""
+    module = _charger_script("ipp_baremes_retraites", "scripts", "fetch",
+                             "ipp_baremes_retraites.py")
+    dossier = tmp_path / "retraites" / "secteur_prive" / "agirc"
+    dossier.mkdir(parents=True)
+    (dossier / "index.yaml").write_text("description: Agirc\n", encoding="utf-8")
+    (dossier / "gmp.yaml").write_text(
+        "description: Garantie minimale de points\n"
+        "metadata:\n"
+        "  reference:\n"
+        "    1997-01-01:\n"
+        "      title: BSP n° 36 du 31/01/1997\n"
+        "garantie_minimale_points:\n"
+        "  description: Garantie\n"
+        "  values:\n"
+        "    1947-01-01:\n"
+        "      value: 144\n"
+        "    1997-01-01:\n"
+        "      value: 120\n"
+        "    2018-01-12:\n"
+        "      value: null\n"
+        "  metadata:\n"
+        "    unit: point\n",
+        encoding="utf-8")
+    assert module.feuilles(tmp_path, ("retraites",)) == {
+        "retraites/secteur_prive/agirc/gmp/garantie_minimale_points": {
+            "valeurs": {"1947-01-01": 144, "1997-01-01": 120, "2018-01-12": None},
+            "unite": "point",
+            "references": {"1997-01-01": ["BSP n° 36 du 31/01/1997"]},
+        }
+    }
+
+
+def test_la_valeur_nulle_de_l_ipp_ferme_son_parametre(verificateur):
+    valeurs = {"1947-01-01": 144, "1997-01-01": 120, "2018-01-12": None}
+    assert verificateur._ipp_en_vigueur(valeurs, "1996-12-31") == ("1947-01-01", 144)
+    assert verificateur._ipp_en_vigueur(valeurs, "2019-01-01") == ("2018-01-12", None)
+    assert verificateur._ipp_en_vigueur(valeurs, "1946-12-31") == (None, None)
+
+
+def test_un_ecart_a_l_ipp_n_est_admis_que_declare_et_tant_qu_il_dure(verificateur):
+    """Le recoupement ne certifie rien. Il dit OK quand les deux lectures
+    concordent à l'arrondi du dépôt, et compte les écarts que le dépôt a
+    tranchés ; un écart que rien ne déclare est SUSPECT, et une déclaration
+    que l'IPP rejoint, ou qui ne vise plus aucune marche, l'est aussi."""
+    lignes = verificateur._verdict_ipp("revalorisation_salaires", [
+        ("1983-01-01", 1.04, 1.04, 5e-4),
+        ("1983-07-01", 1.04, 1.0, 5e-4),
+        ("1984-01-01", 1.018, 1.0182, 5e-4),
+        ("1989-01-01", 1.013, 1.0, 5e-4),
+        ("1990-01-01", 1.0215, 1.0215, 5e-4),
+    ], {"1983-07-01": "E11", "1990-01-01": "E11", "1995-01-01": "E11"})
+    assert lignes[0].startswith("OK")
+    assert "2 marches concordent" in lignes[0] and "1 écart tranché" in lignes[0]
+    suspects = [ligne for ligne in lignes[1:] if ligne.startswith("SUSPECT")]
+    assert len(suspects) == 3 and len(lignes) == 4
+    assert "1989-01-01" in suspects[0] and "rien ne le déclare" in suspects[0]
+    assert "1990-01-01" in suspects[1] and "concorde" in suspects[1]
+    assert "1995-01-01" in suspects[2] and "aucune marche" in suspects[2]
+
+
+def test_deux_series_datees_se_comparent_a_chaque_date_de_l_une_ou_de_l_autre(
+        verificateur):
+    """Une marche que l'IPP date six mois trop tôt se voit à sa date : la valeur
+    en vigueur au dépôt n'y est pas encore la sienne. Hors de la période que
+    les deux séries couvrent, rien ne se compare."""
+    depot = {"2003-01-01": "7.7313", "2004-01-01": "7.8627",
+             "2019-01-01": "9.2238", "2020-01-01": "9.3160"}
+    ipp = {"2002-01-01": 7.6171, "2003-01-01": 7.7313, "2003-07-01": 7.8627,
+           "2019-01-01": 9.2238}
+    assert [c[:3] for c in verificateur._marches_datees(depot, ipp)] == [
+        ("2003-01-01", 7.7313, 7.7313),
+        ("2003-07-01", 7.7313, 7.8627),
+        ("2004-01-01", 7.8627, 7.8627),
+        ("2019-01-01", 9.2238, 9.2238),
+    ]
+    # Un coefficient vaut à sa date, et 1 là où rien n'est revalorisé ; les
+    # francs de l'IPP se lisent en euros, à la parité légale.
+    coefficients = verificateur._marches_datees(
+        {"2008-01-01": "1.011", "2008-09-01": "1.008"},
+        {"2008-01-01": 1.011, "2008-06-01": 1.002, "2008-09-01": 1.008},
+        coefficient=True)
+    assert [c[:3] for c in coefficients] == [
+        ("2008-01-01", 1.011, 1.011), ("2008-06-01", 1.0, 1.002),
+        ("2008-09-01", 1.008, 1.008)]
+    (_, depot_francs, ipp_francs, tolerance), = verificateur._marches_datees(
+        {"1972-07-01": "101.732278"}, {"1972-07-01": 667.32}, unite="francs")
+    assert ipp_francs == pytest.approx(667.32 / 6.55957)
+    # La tolérance est l'arrondi le plus large des deux lectures : ici le
+    # centime de franc de l'IPP. Il écrit l'Arrco à quatre décimales, et en
+    # euros dès 2001. Un entier de l'IPP est tenu pour exact : 1 593,67 €
+    # contre 1 594 € reste un écart.
+    assert tolerance == pytest.approx(0.005 / 6.55957)
+    arrco = verificateur._marches_datees(
+        {"2000-04-01": "1.017090", "2001-04-01": "1.036390"},
+        {"2000-04-01": 6.6717, "2001-04-01": 1.0364}, unite="francs", euros_des=2001)
+    assert [c[2] for c in arrco] == [pytest.approx(6.6717 / 6.55957), 1.0364]
+    assert [c[3] for c in arrco] == [pytest.approx(5e-5 / 6.55957), pytest.approx(5e-5)]
+    (_, _, _, tolerance), = verificateur._marches_datees(
+        {"2014-01-01": "1593.67"}, {"2014-01-01": 1594})
+    assert tolerance == pytest.approx(0.005)
+
+
+def test_deux_colonnes_de_la_cnav_rendent_le_coefficient_que_l_ipp_date(verificateur):
+    """La Cnav publie des colonnes, l'IPP des coefficients : le rapport de deux
+    colonnes voisines, lu sur l'année du plus fort coefficient, est le produit
+    des coefficients de l'IPP entre leurs dates — 1 quand il n'en date aucun —,
+    à un demi pour mille près, ou à l'arrondi des deux valeurs s'il est plus
+    large : toutes les colonnes de la Cnav ne sont pas le produit exact de la
+    précédente, et la plus petite revalorisation, 1,001, reste au-dessus."""
+    colonnes = {
+        "1982-07-01": {1950: "100.00", 1960: "50.00"},
+        "1983-01-01": {1950: "104.00", 1960: "52.00"},
+        "1983-07-01": {1950: "108.16", 1960: "54.08"},
+        "1984-01-01": {1950: "110.11", 1960: "55.05"},
+    }
+    comparaisons = verificateur._rapports_de_colonnes(
+        colonnes, {"1983-01-01": 1.04, "1984-01-01": 1.018})
+    assert [c[0] for c in comparaisons] == ["1983-01-01", "1983-07-01", "1984-01-01"]
+    assert comparaisons[0][1:3] == (pytest.approx(1.04), pytest.approx(1.04))
+    assert comparaisons[1][1:3] == (pytest.approx(1.04), 1.0)
+    assert comparaisons[2][1:3] == (pytest.approx(110.11 / 108.16), pytest.approx(1.018))
+    assert comparaisons[1][3] == pytest.approx(5e-4 * 1.04)
+    (_, _, _, large), = verificateur._rapports_de_colonnes(
+        {"1953-04-01": {1947: "3.26"}, "1955-04-01": {1947: "3.55"}},
+        {"1955-04-01": 1.09})
+    assert large == pytest.approx(3.55 / 3.26 * (0.005 / 3.26 + 0.005 / 3.55))
+
+
+def test_une_generation_de_l_ipp_se_lit_a_la_feuille_de_sa_date_de_naissance(
+        verificateur):
+    """L'IPP range ses générations par date de naissance (« after_1961_09_01 ») ;
+    le dépôt écrit 1961,667 les assurés nés à compter du 1er septembre 1961. La
+    valeur est celle de la législation en vigueur au jour dit ; un âge se lit
+    en années et en mois."""
+    feuilles = {
+        "p/before_1934_01_01": {"valeurs": {"1983-01-01": 150}},
+        "p/after_1961_01_01": {"valeurs": {"1983-01-01": None, "2015-01-01": 168}},
+        "p/after_1961_09_01": {"valeurs": {"1983-01-01": None, "2015-01-01": 168,
+                                           "2023-09-01": 169}},
+    }
+    assert verificateur._ipp_generation(feuilles, "p", 1961.667, "2026-08-31") == 169
+    assert verificateur._ipp_generation(feuilles, "p", 1961.667, "2023-08-31") == 168
+    assert verificateur._ipp_generation(feuilles, "p", 1961, "2026-08-31") == 168
+    assert verificateur._ipp_generation(feuilles, "p", 1930, "2026-08-31") == 150
+    ages = {"a/after_1956_07_01/annee": {"valeurs": {"2011-07-01": 55}},
+            "a/after_1956_07_01/mois": {"valeurs": {"2011-07-01": 4}}}
+    assert verificateur._ipp_generation(ages, "a", 1956.5, "2026-12-31",
+                                        age=True) == pytest.approx(55 + 4 / 12)
+
+
+def test_le_controle_de_l_ipp_lit_les_tables_telles_qu_elles_sont_ecrites(
+        verificateur, monkeypatch):
+    """Une revalorisation des pensions que l'IPP daterait autrement que le
+    dépôt est SUSPECTE ; les tables dont l'IPP ne porte pas le paramètre sont
+    dites hors de sa portée, sans fausse réussite ; sans fichier, rien."""
+    lignes = verificateur.charger_csv(
+        verificateur.REFERENCE / "legislation" / "revalorisation_pensions.csv")
+    pensions = {ligne["date_effet"]: float(ligne["coefficient"]) for ligne in lignes}
+    pensions["1950-01-01"] = 1.20
+    brut = {"commit": "fe2cdff", "date": "2026-09-21", "feuilles": {
+        "retraites/secteur_prive/regime_general_cnav/revalorisation_pension": {
+            "valeurs": pensions, "unite": "/1", "references": {}}}}
+    monkeypatch.setattr(verificateur, "_lire_json", lambda nom, script: brut)
+    messages = verificateur.controle_recoupement_ipp()
+    suspects = [m for m in messages if m.startswith("SUSPECT")]
+    assert len(suspects) == 1 and "revalorisation_pensions" in suspects[0]
+    assert "1950-01-01" in suspects[0]
+    assert any(m.startswith("IGNORÉ") and "valeurs_service_datees" in m for m in messages)
+
+    def absent(nom, script):
+        raise verificateur.SourceAbsente(f"{nom} absent (lancer {script})")
+
+    monkeypatch.setattr(verificateur, "_lire_json", absent)
+    (ignore,) = verificateur.controle_recoupement_ipp()
+    assert ignore.startswith("IGNORÉ") and "ipp_baremes_retraites.py" in ignore

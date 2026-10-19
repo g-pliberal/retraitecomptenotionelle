@@ -10874,6 +10874,394 @@ def controle_ancrage_taux_cotisation() -> list[str]:
     return messages + anomalies
 
 
+# -- recoupement aux barèmes de l'IPP (action 89) ------------------------------
+
+#: Où l'IPP range ses paramètres de retraite, sous ``parameters/``.
+_IPP = "retraites/"
+_IPP_RG = _IPP + "secteur_prive/regime_general_cnav/"
+_IPP_FP = _IPP + "secteur_public/pension_civile/"
+_IPP_COMPLEMENTAIRES = _IPP + "secteur_prive/regimes_complementaires/"
+_IPP_AVANT_1973 = "valeur_point_retraite_{}_regime_base_droits_acquis_avant_1973"
+
+
+def _ipp_en_vigueur(valeurs: dict, jour: str) -> tuple[str | None, float | None]:
+    """La marche de l'IPP en vigueur au ``jour`` (AAAA-MM-JJ) : sa date et sa
+    valeur. Une valeur nulle ferme le paramètre : l'IPP n'y dit plus rien."""
+    dates = [d for d in sorted(valeurs) if d <= jour]
+    return (dates[-1], valeurs[dates[-1]]) if dates else (None, None)
+
+
+def _ipp_en_euros(jour: str, valeur: float, unite: str, euros_des: int = 2002) -> float:
+    """``euros``, ``francs`` jusqu'à ``euros_des``, ou ``anciens francs``
+    jusqu'en 1959 puis des francs : l'unité dans laquelle l'IPP écrit la série."""
+    annee = int(jour[:4])
+    if unite == "euros" or annee >= euros_des:
+        return valeur
+    if unite == "anciens francs" and annee < 1960:
+        valeur /= 100
+    return valeur / 6.55957
+
+
+def _demi_unite(texte: str) -> float:
+    """L'arrondi d'une valeur écrite : la moitié de son dernier chiffre."""
+    return 0.5 * 10 ** -(len(texte.split(".")[1]) if "." in texte else 0)
+
+
+def _arrondi_ipp(valeur: float) -> float:
+    """L'arrondi d'une valeur de l'IPP ; un entier y est tenu pour exact."""
+    return 0.0 if float(valeur).is_integer() else _demi_unite(repr(float(valeur)))
+
+
+def _marches_datees(depot: dict[str, str], ipp: dict, *, coefficient: bool = False,
+                    unite: str = "euros",
+                    euros_des: int = 2002) -> list[tuple[str, float, float, float]]:
+    """Deux séries datées, comparées à chaque date de l'une ou de l'autre sur la
+    période qu'elles couvrent toutes deux : (date, dépôt, IPP, tolérance).
+
+    Une série de niveaux se lit à la valeur en vigueur ; une série de
+    coefficients, à sa date, et vaut 1 là où rien n'est revalorisé. La
+    tolérance est l'arrondi le plus large des deux lectures."""
+    dates_ipp = sorted(d for d, v in ipp.items() if v is not None)
+    if not depot or not dates_ipp:
+        return []
+    debut, fin = max(min(depot), dates_ipp[0]), min(max(depot), dates_ipp[-1])
+    rendu = []
+    for jour in sorted(set(depot) | set(ipp)):
+        if not debut <= jour <= fin:
+            continue
+        if coefficient:
+            texte = depot.get(jour)
+            brute = ipp.get(jour)
+            rendu.append((jour, float(texte) if texte else 1.0,
+                          1.0 if brute is None else brute,
+                          _demi_unite(texte) if texte else 5e-7))
+            continue
+        texte = depot[max(d for d in depot if d <= jour)]
+        date_ipp, brute = _ipp_en_vigueur(ipp, jour)
+        if brute is not None:
+            rendu.append((jour, float(texte),
+                          _ipp_en_euros(date_ipp, brute, unite, euros_des),
+                          max(_demi_unite(texte), _ipp_en_euros(
+                              date_ipp, _arrondi_ipp(brute), unite, euros_des))))
+    return rendu
+
+
+def _rapports_de_colonnes(colonnes: dict[str, dict[int, str]],
+                          coefficients: dict) -> list[tuple[str, float, float, float]]:
+    """La Cnav publie des colonnes, l'IPP des coefficients. Le rapport de deux
+    colonnes voisines, lu sur l'année du plus fort coefficient — l'arrondi y
+    pèse le moins —, face au produit des coefficients que l'IPP date entre
+    elles. La tolérance est d'un demi pour mille, ou l'arrondi des deux
+    valeurs s'il est plus large : toutes les colonnes de la Cnav ne sont pas
+    le produit exact de la précédente (celle du 1er juillet 1990 s'en écarte
+    de 0,4 % selon l'année), et la plus petite revalorisation, 1,001 en 2015,
+    reste au-dessus. Les années trop proches de la colonne, qu'elle porte
+    parfois au coefficient 1, sont laissées."""
+    dates = sorted(colonnes)
+    rendu = []
+    for avant, apres in zip(dates, dates[1:]):
+        communes = [annee for annee in colonnes[avant]
+                    if annee in colonnes[apres] and annee < int(avant[:4]) - 1]
+        if not communes:
+            continue
+        annee = max(communes, key=lambda a: float(colonnes[avant][a]))
+        x, y = colonnes[avant][annee], colonnes[apres][annee]
+        rapport = float(y) / float(x)
+        produit = 1.0
+        for jour, valeur in sorted(coefficients.items()):
+            if avant < jour <= apres and valeur is not None:
+                produit *= valeur
+        rendu.append((apres, rapport, produit, rapport * max(
+            5e-4, _demi_unite(x) / float(x) + _demi_unite(y) / float(y))))
+    return rendu
+
+
+def _ipp_generation(feuilles: dict, prefixe: str, generation: float, jour: str,
+                    age: bool = False) -> float | None:
+    """Ce que l'IPP donne aux assurés d'une génération, sous la législation du
+    ``jour`` : sa feuille ``after_AAAA_MM_JJ`` de la plus tardive date de
+    naissance qui les précède, ``before_…`` à défaut. Le dépôt écrit 1961,667
+    les assurés nés à compter du 1er septembre 1961. Un âge se lit en années et
+    en mois."""
+    annee = int(generation)
+    naissance = f"{annee:04d}_{round((generation - annee) * 12) + 1:02d}_01"
+    noms = {chemin[len(prefixe) + 1:].split("/")[0]
+            for chemin in feuilles if chemin.startswith(prefixe + "/")}
+    apres = sorted(n for n in noms if n.startswith("after_") and n[6:] <= naissance)
+    avant = sorted(n for n in noms if n.startswith("before_"))
+    if not apres and not avant:
+        return None
+    feuille = f"{prefixe}/{apres[-1] if apres else avant[0]}"
+
+    def lire(chemin: str) -> float | None:
+        return (_ipp_en_vigueur(feuilles[chemin]["valeurs"], jour)[1]
+                if chemin in feuilles else None)
+
+    if not age:
+        return lire(feuille)
+    annees = lire(feuille + "/annee")
+    return None if annees is None else annees + (lire(feuille + "/mois") or 0) / 12
+
+
+def _verdict_ipp(nom: str, comparaisons: list[tuple[str, float, float, float]],
+                 declares: dict[str, str]) -> list[str]:
+    """OK si les deux lectures concordent à l'arrondi du dépôt, hors les écarts
+    que le dépôt a tranchés ; SUSPECT un écart que rien ne déclare, comme une
+    déclaration que l'IPP rejoint ou qui ne vise plus aucune marche."""
+    concordent, tranches, suspects, vues = 0, [], [], set()
+    for cle, depot, ipp, tolerance in comparaisons:
+        vues.add(cle)
+        ecart = abs(depot - ipp) > tolerance + 1e-12
+        if cle in declares and ecart:
+            tranches.append(cle)
+        elif cle in declares:
+            suspects.append(
+                f"SUSPECT recoupement à l'IPP, {nom} {cle} : déclaré "
+                f"({declares[cle][:40]}…), mais l'IPP y concorde — ôter la déclaration")
+        elif ecart:
+            suspects.append(
+                f"SUSPECT recoupement à l'IPP, {nom} {cle} : le dépôt lit {depot:.6g}, "
+                f"l'IPP {ipp:.6g} ; rien ne le déclare")
+        else:
+            concordent += 1
+    suspects.extend(
+        f"SUSPECT recoupement à l'IPP, {nom} {cle} : déclaré, mais ne vise aucune "
+        "marche comparée — ôter la déclaration"
+        for cle in sorted(set(declares) - vues))
+    ligne = f"OK      recoupement à l'IPP, {nom} : {concordent} marches concordent"
+    if tranches:
+        pluriel = "s" if len(tranches) > 1 else ""
+        ligne += (f", {len(tranches)} écart{pluriel} tranché{pluriel} par le dépôt "
+                  f"({', '.join(tranches)})")
+    return [ligne] + suspects
+
+
+def _ipp_pensions(feuilles: dict) -> list:
+    """Les revalorisations des pensions du régime général. En 2020, le dépôt
+    module le taux selon le montant ; l'IPP ne porte que la tranche sans
+    plafond, 1,003."""
+    depot = {ligne["date_effet"]: ligne["coefficient"]
+             for ligne in charger_csv(REFERENCE / "legislation" / "revalorisation_pensions.csv")
+             if not ligne["mensuel_au_plus"]}
+    return _marches_datees(depot, feuilles[_IPP_RG + "revalorisation_pension"]["valeurs"],
+                           coefficient=True)
+
+
+def _ipp_salaires(feuilles: dict) -> list:
+    """Les colonnes de la Cnav des salaires portés au compte, face aux
+    coefficients annuels de l'IPP, depuis la colonne de l'arrêté du 2 octobre
+    1952 : avant, chaque année de perception avait le sien, et le rapport de
+    deux colonnes n'y vaut pas revalorisation (en-tête de la table ancienne)."""
+    colonnes: dict[str, dict[int, str]] = {}
+    for fichier in ("revalorisation_salaires_anciennes.csv", "revalorisation_salaires.csv"):
+        for ligne in charger_csv(REFERENCE / "legislation" / fichier):
+            if ligne["date_effet"] >= "1952-04-01":
+                colonnes.setdefault(ligne["date_effet"], {})[
+                    int(ligne["annee_perception"])] = ligne["coefficient"]
+    return _rapports_de_colonnes(colonnes, feuilles[_IPP_RG + "reval_s"]["valeurs"])
+
+
+def _ipp_pensions_fonction_publique(feuilles: dict) -> list:
+    depot = {ligne["date_effet"]: ligne["coefficient"] for ligne in charger_csv(
+        REFERENCE / "legislation" / "revalorisation_pensions_fonction_publique.csv")}
+    return _marches_datees(depot, feuilles[_IPP_FP + "revalorisation_pension"]["valeurs"],
+                           coefficient=True)
+
+
+def _ipp_valeurs_de_service(regime: str, parametre: str, unite: str, depuis: str = "",
+                            euros_des: int = 2002) -> Callable[[dict], list]:
+    """Les valeurs de service datées d'un régime en points."""
+    def lire(feuilles: dict) -> list:
+        depot = {ligne["date_effet"]: ligne["valeur"]
+                 for ligne in charger_csv(REFERENCE / "regimes" / "valeurs_service_datees.csv")
+                 if ligne["regime"] == regime and ligne["date_effet"] >= depuis}
+        return _marches_datees(depot, feuilles[parametre]["valeurs"], unite=unite,
+                               euros_des=euros_des)
+    return lire
+
+
+def _ipp_avpf(feuilles: dict) -> list:
+    depot = {ligne["date_effet"]: ligne["assiette_mensuelle"]
+             for ligne in charger_csv(REFERENCE / "legislation" / "assiette_avpf.csv")}
+    return _marches_datees(depot, feuilles[
+        "prestations_sociales/solidarite_insertion/minimum_vieillesse/avpf/"
+        "salaire_forfaitaire/metropole"]["valeurs"], unite="francs")
+
+
+def _ipp_par_generation(fichier: str, lectures: tuple[tuple[str, str, bool], ...],
+                        jour: str, garder: Callable[[dict], bool] = lambda ligne: True,
+                        cle: str = "generation") -> Callable[[dict], list]:
+    """Une table rangée par génération : chaque colonne lue, face à la feuille
+    de l'IPP de la génération, sous la législation du ``jour``."""
+    def lire(feuilles: dict) -> list:
+        for _, prefixe, _ in lectures:
+            if not any(chemin.startswith(prefixe + "/") for chemin in feuilles):
+                raise KeyError(prefixe)
+        rendu = []
+        for ligne in charger_csv(REFERENCE / "legislation" / fichier):
+            if not garder(ligne):
+                continue
+            for colonne, prefixe, age in lectures:
+                valeur = _ipp_generation(feuilles, prefixe, float(ligne[cle]), jour, age)
+                if valeur is not None:
+                    rendu.append((f"{ligne[cle]} {colonne}", float(ligne[colonne]),
+                                  float(valeur), _demi_unite(ligne[colonne])))
+        return rendu
+    return lire
+
+
+def _ipp_services_actifs(feuilles: dict) -> list:
+    rendu = []
+    for classement, nom in (("active", "actif"), ("super_active", "super_actif")):
+        prefixe = (f"{_IPP_FP}duree_seuil_{nom}/"
+                   f"duree_service_minimale_considere_comme_{nom}")
+        lire = _ipp_par_generation(
+            "duree_services_actifs.csv", (("annees_requises", prefixe, False),),
+            "9999-12-31", lambda ligne, c=classement: ligne["classement"] == c,
+            cle="annee_atteinte")
+        rendu += [(f"{classement} {c}", *reste) for c, *reste in lire(feuilles)]
+    return rendu
+
+
+#: La surcote du régime général et de la fonction publique : (barème, début,
+#: rang minimum, après 65 ans) -> le paramètre de l'IPP et sa date.
+_SURCOTE_IPP = {
+    ("regime_general", "2004", "1", "0"): ("apres_01_01_2004/moins_de_4_trimestres",
+                                           "2004-01-01"),
+    ("regime_general", "2007", "1", "0"): ("apres_01_01_2004/moins_de_4_trimestres",
+                                           "2007-01-01"),
+    ("regime_general", "2007", "5", "0"): ("apres_01_01_2004/plus_de_5_trimestres",
+                                           "2007-01-01"),
+    ("regime_general", "2007", "1", "1"): ("apres_01_01_2004/partir_65_ans", "2007-01-01"),
+    ("regime_general", "2009", "1", "0"): ("apres_01_01_2009", "2009-04-01"),
+    ("fonction_publique", "2004", "1", "0"): (None, "2004-01-01"),
+    ("fonction_publique", "2009", "1", "0"): (None, "2009-01-01"),
+}
+
+
+def _ipp_surcote(feuilles: dict) -> list:
+    rendu = []
+    for ligne in charger_csv(REFERENCE / "legislation" / "surcote_baremes.csv"):
+        cle = (ligne["bareme"], ligne["debut"], ligne["rang_minimum"], ligne["apres_65_ans"])
+        if cle not in _SURCOTE_IPP:
+            continue
+        feuille, jour = _SURCOTE_IPP[cle]
+        parametre = (_IPP_FP + "surcote/taux_surcote_par_trimestre" if feuille is None
+                     else _IPP_RG + "surcote/taux_surcote_par_trimestre_cotise_selon_"
+                     "date_cotisation/" + feuille)
+        taux = _ipp_en_vigueur(feuilles[parametre]["valeurs"], jour)[1]
+        if taux is not None:
+            rendu.append((" ".join(cle), float(ligne["taux"]), taux,
+                          _demi_unite(ligne["taux"])))
+    return rendu
+
+
+#: Ce que l'IPP lit autrement que le dépôt, et que le dépôt a tranché : la clé
+#: de la marche, et le constat du registre (``baremes_ipp``) qui le dit.
+_IPP_E11 = ("E11 : l'IPP omet cette revalorisation des salaires portés au compte, "
+            "que sa propre série des pensions porte")
+_IPP_E14 = ("E14 : l'IPP y avance une date, décale une valeur d'un an, recopie celle "
+            "des artisans ou perd un chiffre ; le dépôt suit les fiches de la Cnav")
+
+#: Les tables qu'aucun autre contrôle ne recoupe, et ce que l'IPP en porte :
+#: (nom, lecture, écarts tranchés).
+RECOUPEMENTS_IPP: tuple[tuple[str, Callable[[dict], list], dict[str, str]], ...] = (
+    ("revalorisation_pensions", _ipp_pensions, {}),
+    ("revalorisation_salaires", _ipp_salaires,
+     {"1983-07-01": _IPP_E11, "1989-01-01": _IPP_E11}),
+    ("revalorisation_pensions_fonction_publique", _ipp_pensions_fonction_publique, {}),
+    ("duree_requise_avant_reforme_2023", _ipp_par_generation(
+        "duree_requise_avant_reforme_2023.csv",
+        (("trimestres", _IPP_RG + "trimtp/nombre_trimestres_cibles_par_generation", False),),
+        "2023-08-31"), {}),
+    ("duree_requise_avant_suspension", _ipp_par_generation(
+        "duree_requise_avant_suspension.csv",
+        (("trimestres", _IPP_RG + "trimtp/nombre_trimestres_cibles_par_generation", False),),
+        "2026-08-31"), {}),
+    # Les actifs que la réforme de 2023 n'atteint pas, nés avant le 1er septembre
+    # 1966 : l'IPP s'arrête à la loi de 2010 (E6).
+    ("categorie_active", _ipp_par_generation(
+        "categorie_active.csv",
+        (("age_ouverture", _IPP_FP + "aod_a/age_ouverture_droits_fonction_publique_"
+          "active_selon_annee_naissance", True),
+         ("age_annulation", _IPP_FP + "la_a/age_limite_fonction_publique_active_selon_"
+          "annee_naissance", True)),
+        "9999-12-31",
+        lambda ligne: ligne["classement"] == "active" and float(ligne["generation"]) < 1966.6),
+     {}),
+    ("duree_services_actifs", _ipp_services_actifs, {}),
+    ("surcote_baremes", _ipp_surcote, {}),
+    ("assiette_avpf", _ipp_avpf,
+     {"2014-01-01": "l'IPP arrondit à l'euro 169 fois le SMIC du 1er juillet 2013, "
+                    "1 593,67 €"}),
+    ("valeurs_service_datees, agirc", _ipp_valeurs_de_service(
+        "agirc", _IPP_COMPLEMENTAIRES + "agirc/point/valeur_point_en_euros", "euros"), {}),
+    # Sa colonne en euros arrondit les francs à quatre décimales : la nominale,
+    # en francs jusqu'en 2000, se lit au centime près.
+    ("valeurs_service_datees, arrco", _ipp_valeurs_de_service(
+        "arrco", _IPP_COMPLEMENTAIRES + "arrco/point/valeur_point_en_nominal", "francs",
+        euros_des=2001), {}),
+    ("valeurs_service_datees, unirs", _ipp_valeurs_de_service(
+        "unirs", _IPP_COMPLEMENTAIRES + "unirs/point/valeur_point_en_euros", "euros"),
+     {"1996-01-01": "E15 : l'IPP date du 1er avril 1996 la valeur que la compilation "
+                    "de la fédération sert dès le 1er janvier"}),
+    ("valeurs_service_datees, agirc_arrco", _ipp_valeurs_de_service(
+        "agirc_arrco", _IPP_COMPLEMENTAIRES + "agirc_arrco/point/valeur_point_en_euros",
+        "euros"), {}),
+    # Avant 1988, le dépôt tient ces valeurs de l'IPP lui-même
+    # (cnav_points_avant_1973.py) : les comparer ne vérifierait qu'une copie.
+    ("valeurs_service_datees, cancava_avant_1973", _ipp_valeurs_de_service(
+        "cancava_avant_1973", _IPP + "independants/pt_cancava/"
+        + _IPP_AVANT_1973.format("cancava") + "/valeur_annuelle", "francs", "1988-01-01"),
+     {"2003-07-01": _IPP_E14}),
+    ("valeurs_service_datees, organic_avant_1973", _ipp_valeurs_de_service(
+        "organic_avant_1973", _IPP + "independants/pt_organic/"
+        + _IPP_AVANT_1973.format("organic") + "/valeur_point_acquis_par_cotisations",
+        "francs", "1988-01-01"),
+     {"2009-04-01": _IPP_E14, "2011-04-01": _IPP_E14, "2012-04-01": _IPP_E14}),
+)
+
+
+def controle_recoupement_ipp() -> list[str]:
+    """Une seconde lecture des tables qu'aucun autre contrôle ne recoupe.
+
+    Les barèmes de l'Institut des politiques publiques transcrivent, date par
+    date, les paramètres que le dépôt lit au Journal officiel ou chez la
+    caisse. Ce contrôle les y confronte et ne certifie rien : l'IPP est une
+    source secondaire, et c'est lui qui s'est trompé chaque fois que les deux
+    lectures divergeaient (action 89, le 19 octobre 2026). Chaque écart
+    tranché a son constat au registre (``baremes_ipp``) ; un écart neuf est
+    SUSPECT jusqu'à ce qu'un texte le tranche. Les tables certifiées par
+    ailleurs n'y sont pas : leur source primaire les recontrôle déjà.
+    """
+    try:
+        brut = _lire_json("ipp_baremes_retraites.json",
+                          "scripts/fetch/ipp_baremes_retraites.py")
+    except SourceAbsente as erreur:
+        return [f"IGNORÉ  recoupement à l'IPP : {erreur}"]
+    feuilles = brut["feuilles"]
+    marches = somme_ordonnee(len(feuille["valeurs"]) for feuille in feuilles.values())
+    citees = somme_ordonnee(
+        len(set(feuille["valeurs"]) & set(feuille.get("references") or {}))
+        for feuille in feuilles.values())
+    messages = [
+        f"        recoupement à l'IPP, commit {brut.get('commit', '?')} du "
+        f"{brut.get('date', '?')} : {len(feuilles)} paramètres, {marches} marches, "
+        f"dont {citees} citent leur texte — une seconde lecture, qui ne certifie rien"]
+    for nom, lire, declares in RECOUPEMENTS_IPP:
+        try:
+            comparaisons = lire(feuilles)
+        except KeyError as manque:
+            messages.append(f"IGNORÉ  recoupement à l'IPP, {nom} : l'IPP ne porte pas "
+                            f"{manque}")
+            continue
+        if not comparaisons:
+            messages.append(f"IGNORÉ  recoupement à l'IPP, {nom} : aucune marche commune")
+            continue
+        messages.extend(_verdict_ipp(nom, comparaisons, declares))
+    return messages
+
+
 #: Régime, assiette -> séries d'OpenFisca à additionner pour obtenir
 #: la grandeur que la fiche porte, et le champ de la fiche quand ce n'est pas
 #: `taux_cotisation_retraite`. La retenue de l'agent (`agent_seul`) se lit
@@ -11234,6 +11622,7 @@ def main(argv: list[str] | None = None) -> int:
     messages.extend(controle_vraisemblance_plafond())
     messages.extend(controle_vraisemblance_cotisations())
     messages.extend(controle_ancrage_taux_cotisation())
+    messages.extend(controle_recoupement_ipp())
     messages.extend(controle_vraisemblance_minimum_contributif())
     messages.extend(controle_montant_minimum_contributif())
     messages.extend(controle_vraisemblance_rendements())
