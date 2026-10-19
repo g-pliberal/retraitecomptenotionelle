@@ -1958,6 +1958,26 @@ def test_les_quotients_projetes_remplacent_la_loi_aux_annees_projetees(mortalite
         mortalite.loi(2025, "H").survie(70.0, 1.0))
 
 
+def test_l_annee_sans_table_est_declaree_dans_la_fiche_du_diviseur(mortalite):
+    """Une année qu'Eurostat ne publie pas encore et que la projection de
+    l'INSEE ne couvre pas, la loi la tient seule, à tous les âges : 2025, le
+    19 octobre 2026. Le classement du 9 octobre range l'écart au léger, que la
+    coupe du 14 déclare sans le faire (action 138, étape 7) : la fiche du
+    diviseur le dit tant que l'année reste sans table, et plus du tout après."""
+    from retraite_notionnelle.noyau import carte
+
+    derniere_observee = max(annee for annee, _ in mortalite._quotients_observes)
+    sans_table = list(range(derniere_observee + 1, mortalite.annees_projetees[0]))
+    fiche = carte.fiches_de_la_proposition()["coefficient_de_conversion"]
+    declarees = [a["ecart"] for a in fiche.get("approximations") or []
+                 if "Gompertz-Makeham seule" in a["ecart"]]
+    if not sans_table:
+        assert declarees == [], "l'année a sa table : l'approximation est à retirer"
+    else:
+        assert len(declarees) == 1, f"{sans_table} sans table, et la fiche ne le dit pas"
+        assert all(str(annee) in declarees[0] for annee in sans_table), sans_table
+
+
 def test_la_table_projetee_reproduit_les_esperances_publiees(mortalite, esperances):
     """Le contrôle du récupérateur, refait sur la table que le modèle LIT.
 

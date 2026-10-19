@@ -5,11 +5,11 @@
 d'espérance de vie, la fécondité et les migrations dans le diviseur, la page
 Coût et les pages ; l'indexation sous la variante ; la mortalité
 différentielle des cas types ; la queue observée de 85 à 98 ans ; le 19, les
-inaptes de la Cnav dans la grille du coût. Reste, une session par point : les
-ex-invalides de la Cnav ; 2025, rangé au léger, à déclarer. Au propriétaire :
-les départs qui suivent l'espérance de vie, coupés le 14 octobre
-(`2026-10-18-etape-7-departs-et-esperance-de-vie.md`). Détail : « Ce qui
-reste » des notes du 16 (indexation), du 17, du 18 (queue) et du 19.
+inaptes de la Cnav dans la grille du coût, puis 2025, sous la loi seule,
+déclaré dans la fiche du diviseur. Reste, une session : les ex-invalides de
+la Cnav. Au propriétaire : les départs qui suivent l'espérance de vie, coupés
+le 14 octobre (`2026-10-18-etape-7-departs-et-esperance-de-vie.md`). Détail :
+« Ce qui reste » de la note « 2025, sous la loi seule » (19 octobre).
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.7 ». L'étape 7 de
 l'action : « La démographie en variantes : les quotients projetés âge par âge

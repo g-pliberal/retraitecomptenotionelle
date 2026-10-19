@@ -50,6 +50,26 @@ versions:
     tient dans le compte la place que la décote et la surcote tiennent dans le
     droit réel, d'où son domaine.
   exemples: aucun trouvé
+approximations:
+- version: coefficient_de_conversion_proposition
+  ecart: >-
+    En 2025, qu'Eurostat ne publie pas encore et que la projection de l'INSEE,
+    ouverte en 2026, ne couvre pas, la table lit à tous les âges la loi de
+    Gompertz-Makeham seule, sa forme et son niveau calés sur l'espérance de vie
+    à 60 ans que l'INSEE publie pour l'année et sur celle à 65 ans, interpolée
+    entre 2024 et 2026 (`donnees/mortalite.py`). Calée sur deux espérances,
+    elle fait mourir trop tôt vers 75 ans et vivre trop longtemps au-delà de
+    90 : ses quotients de 75 ans dépassent de 14 % (hommes) et 26 % (femmes) la
+    moyenne géométrique de ceux de 2024, observés, et de 2026, projetés ; ceux
+    de 95 ans lui restent inférieurs de 30 et 27 %. Un diviseur ne lit 2025 que
+    sur ce que l'assuré en vit après son départ : une année au plus pour tout
+    départ d'avant 2026, rien pour ceux d'après.
+  effet: >-
+    mesuré le 19 octobre 2026, contre 2025 refait de cette moyenne : au plus
+    0,28 % du diviseur unisexe, 0,29 % par sexe — trop court pour les
+    générations qui ont de 70 à 80 ans en 2025, trop long pour celles qui en
+    ont 90 ; léger : la coupe du 14 octobre 2026 le déclare sans le faire
+    (action 138, classement du 9 octobre)
 sources:
   lu_le: 2026-09-27
   prochaine_relecture: 2027-03-31
