@@ -730,6 +730,16 @@ class Parametres:
     #: la dépense qu'elle multiplie ne compte pas le minimum vieillesse.
     minimum_vieillesse_dans_le_scenario_actuel: bool = True
 
+    #: L'état du droit que le scénario 1 applique : ``None``, celui qui
+    #: s'applique, l'étalon ; ou l'un des droits contrefactuels que le moteur
+    #: connaît (``scenarios.actuel.DROITS_CONTREFACTUELS``) — la loi de 2023
+    #: sans la suspension de 2026 (``"loi_2023_sans_suspension"``), le droit en
+    #: vigueur au 31 août 2023 (``"au_31_aout_2023"``). Ils ne changent que
+    #: l'âge légal, la durée requise et les âges de la carrière longue ; la page
+    #: des résultats les montre à côté du droit en vigueur (action 138, étape
+    #: 10). Un nom que le moteur ne connaît pas l'arrête.
+    droit_contrefactuel: str | None = None
+
     # --- Scénario 6 : la proposition libérale --------------------------------
     #: Le scénario 6 est le scénario 4 — compte rétroactif, cotisation salariale
     #: et patronale confondues, même indexation, même liquidation — à trois

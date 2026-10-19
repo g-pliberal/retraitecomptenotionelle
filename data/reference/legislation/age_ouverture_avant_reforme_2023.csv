@@ -1,0 +1,24 @@
+# Âge légal d'ouverture des droits que la réforme de 2023 a relevé : celui du
+# droit en vigueur au 31 août 2023, pour le droit contrefactuel qui le garde
+# ---------------------------------------------------------------------------
+# source_id: legifrance_textes
+#
+# La loi n° 2023-270 du 14 avril 2023 (article 10, I) a relevé de trois mois par
+# génération l'âge des assurés nés à compter du 1er septembre 1961, jusqu'à
+# soixante-quatre ans pour ceux de 1968 ; elle vaut pour les pensions prenant
+# effet à compter du 1er septembre 2023. Avant, L. 161-17-2 dans sa version du
+# 23 décembre 2011 (LEGIARTI000025014605) fixe l'âge « à soixante-deux ans pour
+# les assurés nés à compter du 1er janvier 1955 », et D. 161-2-1-9 dans sa
+# version du 31 décembre 2011 (LEGIARTI000025089933) le dit de même : « 6°
+# Soixante deux ans pour les assurés nés à compter du 1er janvier 1955 ». Les
+# deux versions lues dans l'index LEGI du dépôt, à jour au 18 octobre 2026, le
+# 19 octobre 2026 ; niveau `haute` : lues, non recontrôlées par un récupérateur.
+#
+# Aucune liquidation n'a pu prendre effet sous cette table aux générations
+# qu'elle porte : un assuré né en septembre 1961 n'atteint soixante-deux ans
+# qu'en septembre 2023. Elle ne sert donc qu'au droit contrefactuel
+# `au_31_aout_2023` (`DROITS_CONTREFACTUELS`, `scenarios/actuel.py`), qui la
+# pose sur `age_ouverture_requis.csv` : en deçà de sa première génération, la
+# table du droit en vigueur répond.
+generation,age,fiabilite
+1961.667,62.00,haute

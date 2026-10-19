@@ -95,4 +95,8 @@ code:
     sert que de repli pour les générations hors table. C'est la règle depuis la loi du
     22 juillet 1993 : deux assurés qui liquident le même jour n'ont pas la même exigence
     s'ils ne sont pas de la même génération. Sans renvoi, la durée est celle de la période,
-    lue à l'année de liquidation — ce qui reste correct avant 1993.
+    lue à l'année de liquidation — ce qui reste correct avant 1993. Les deux droits
+    contrefactuels de la page des résultats (action 138, étape 10) posent sur elle la
+    table qu'ils gardent (`TableRecouverte`, `ScenarioActuel._sous_le_droit`) : celle
+    d'avant la suspension pour la loi de 2023 sans elle, celle de 2014 au 31 août 2023,
+    qui vaut alors aussi pour les pensions d'avant septembre 2026.

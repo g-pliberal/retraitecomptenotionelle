@@ -59,6 +59,7 @@ enchaîne. Les fiches et leurs versions remplaceront les tables (phase 6).
 
 from __future__ import annotations
 
+import copy
 import csv
 from bisect import bisect_right
 from dataclasses import dataclass, field, replace
@@ -928,6 +929,53 @@ class AgesOuverture(TableParGeneration):
 
     def age(self, generation: float) -> tuple[float, Fiabilite] | None:
         return self.valeur(generation)
+
+
+class AgesOuvertureAvantReforme2023(AgesOuverture):
+    """Âge légal que la loi du 14 avril 2023 a relevé : celui du droit en
+    vigueur au 31 août 2023, soixante-deux ans dès la génération 1955
+    (D. 161-2-1-9, version du 31 décembre 2011). Aucune pension n'a pris effet
+    sous lui aux générations qu'il porte : il ne sert qu'au droit
+    contrefactuel ``au_31_aout_2023``. Voir
+    ``age_ouverture_avant_reforme_2023.csv``."""
+
+    def __init__(self, racine: Path) -> None:
+        TableParGeneration.__init__(
+            self, racine, "age_ouverture_avant_reforme_2023.csv", "age")
+
+
+class AgesOuvertureAvantSuspension(AgesOuverture):
+    """Âge légal que la suspension de 2026 a abaissé : celui de la loi de 2023,
+    soixante-trois ans pour les nés en 1964, soixante-quatre dès 1968
+    (D. 161-2-1-9, version du 1er septembre 2023). Il ne sert qu'au droit
+    contrefactuel ``loi_2023_sans_suspension``. Voir
+    ``age_ouverture_avant_suspension.csv``."""
+
+    def __init__(self, racine: Path) -> None:
+        TableParGeneration.__init__(
+            self, racine, "age_ouverture_avant_suspension.csv", "age")
+
+
+class TableRecouverte:
+    """Une table par génération qu'une autre recouvre, de sa première
+    génération à toutes les suivantes : ce qu'un droit contrefactuel change à
+    l'âge légal ou à la durée requise. En deçà, la table du droit en vigueur
+    répond. Elle se lit comme les deux tables qu'elle assemble."""
+
+    def __init__(self, dessus: TableParGeneration, dessous: TableParGeneration) -> None:
+        self._dessus = dessus
+        self._dessous = dessous
+
+    def valeur(self, generation: float) -> tuple[float, Fiabilite] | None:
+        lue = self._dessus.valeur(generation)
+        return lue if lue is not None else self._dessous.valeur(generation)
+
+    def age(self, generation: float) -> tuple[float, Fiabilite] | None:
+        return self.valeur(generation)
+
+    def trimestres(self, generation: float) -> tuple[int, Fiabilite] | None:
+        valeur = self.valeur(generation)
+        return None if valeur is None else (int(valeur[0]), valeur[1])
 
 
 class AgesSurcoteRegimesSpeciaux(TableParGeneration):
@@ -2119,6 +2167,19 @@ class CarriereLongue:
         que le paquet du site porte."""
         return {} if self._reputes is None else {self._reputes["id"]: self._reputes}
 
+    def avant(self, date: DateMois) -> CarriereLongue:
+        """La même table, sans les textes qui prennent effet à compter de
+        ``date`` : la carrière longue d'un droit contrefactuel. Au droit du
+        31 août 2023, les portes du décret du 2 juillet 2012 valent à toute
+        date d'effet ; à la loi de 2023 sans la suspension, celles du décret
+        du 3 juin 2023."""
+        copie = copy.copy(self)
+        limite = self._annee_decimale(date)
+        copie._table = {effet: portes for effet, portes in self._table.items()
+                        if effet < limite - 1e-9}
+        copie._dates = sorted(copie._table)
+        return copie
+
     @staticmethod
     def _annee_decimale(date: DateMois) -> float:
         """L'année décimale d'une date d'effet, à la précision de la table.
@@ -3138,6 +3199,21 @@ class ValeursPoint:
         return annee if mois >= datees[0][-1][1] else annee - 1
 
 
+#: Les droits contrefactuels du scénario 1 (action 138, étape 10), et la date
+#: d'effet des textes que chacun écarte : la loi de 2023 sans la suspension
+#: écarte l'article 105 de la loi n° 2025-1403 du 30 décembre 2025, qui vaut
+#: pour les pensions prenant effet à compter du 1er septembre 2026 ; le droit
+#: au 31 août 2023, la loi n° 2023-270 du 14 avril 2023, qui vaut à compter du
+#: 1er septembre 2023, et la suspension avec elle. Ils ne changent que l'âge
+#: légal, la durée requise et les âges de la carrière longue
+#: (:meth:`ScenarioActuel._sous_le_droit`) : le reste du droit est celui
+#: d'aujourd'hui.
+DROITS_CONTREFACTUELS: dict[str, DateMois] = {
+    "loi_2023_sans_suspension": DateMois(2026, 9),
+    "au_31_aout_2023": DateMois(2023, 9),
+}
+
+
 class ScenarioActuel:
     """Le moteur du scénario 1 : les tables du droit en vigueur, que les
     étapes de ``droit/`` lisent, et :meth:`calculer`, qui les enchaîne."""
@@ -3242,6 +3318,39 @@ class ScenarioActuel:
                 attribuants = self.points_gratuits_par_base.get(base, ())
                 if regime.code not in attribuants:
                     self.points_gratuits_par_base[base] = (*attribuants, regime.code)
+        if parametres.droit_contrefactuel is not None:
+            self._sous_le_droit(parametres.droit_contrefactuel)
+
+    def _sous_le_droit(self, droit: str) -> None:
+        """Le moteur sous un droit contrefactuel (:data:`DROITS_CONTREFACTUELS`).
+
+        Trois tables changent, et rien d'autre. L'âge légal et la durée requise
+        de la génération sont ceux des textes d'avant la date que le droit
+        écarte, posés sur les tables du droit en vigueur
+        (:class:`TableRecouverte`) : D. 161-2-1-9 et L. 161-17-3 dans leurs
+        versions du 1er septembre 2023 pour la loi de 2023 sans la suspension,
+        dans celles de 2011 et de 2014 pour le droit au 31 août 2023. La
+        carrière longue perd les décrets qui prennent effet à compter de cette
+        date (:meth:`CarriereLongue.avant`). Et la durée que le droit en vigueur
+        garde aux pensions d'avant septembre 2026
+        (:func:`~retraite_notionnelle.droit.ouvrir.duree_requise`) devient, au
+        31 août 2023, celle de 2014 : sans la loi de 2023, rien n'est à garder.
+        """
+        if droit not in DROITS_CONTREFACTUELS:
+            raise ValueError(
+                f"droit contrefactuel inconnu : {droit!r} ; le moteur connaît "
+                + ", ".join(sorted(DROITS_CONTREFACTUELS)))
+        racine = self.parametres.racine_donnees
+        if droit == "au_31_aout_2023":
+            ages = AgesOuvertureAvantReforme2023(racine)
+            durees = self.durees_requises_avant_reforme_2023
+            self.durees_requises_avant_suspension = durees
+        else:
+            ages = AgesOuvertureAvantSuspension(racine)
+            durees = self.durees_requises_avant_suspension
+        self.ages_ouverture = TableRecouverte(ages, self.ages_ouverture)
+        self.durees_requises = TableRecouverte(durees, self.durees_requises)
+        self.carriere_longue = self.carriere_longue.avant(DROITS_CONTREFACTUELS[droit])
 
     # -- ce que les étapes lisent sur le moteur ------------------------------
     #

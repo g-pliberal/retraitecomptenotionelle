@@ -3,10 +3,12 @@
  * JavaScript (`Contexte.departsDeLEstimation`).
  *
  * Reçoit en argument un fichier JSON — une liste de requêtes du formulaire — et
- * écrit sur la sortie standard, pour chacune, ses départs, ou l'erreur levée.
- * `tests/test_estimation_du_site.py` compare le tout au Python.
+ * écrit sur la sortie standard, pour chacune, ses départs, ou l'erreur levée ;
+ * un second argument nomme le droit contrefactuel sous lequel les dater
+ * (`droit_contrefactuel`, action 138, étape 10). `tests/test_estimation_du_site.py`
+ * compare le tout au Python.
  *
- *     node tests/js/comparer-estimation.mjs requetes.json
+ *     node tests/js/comparer-estimation.mjs requetes.json [droit]
  */
 
 import { readFileSync } from "node:fs";
@@ -17,7 +19,9 @@ import { Saisie } from "../../moteur/js/saisie.js";
 import { Contexte } from "../../moteur/js/contexte.js";
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-const contexte = new Contexte(JSON.parse(readFileSync(join(RACINE, "moteur/donnees.json"), "utf8")));
+const partage = new Contexte(JSON.parse(readFileSync(join(RACINE, "moteur/donnees.json"), "utf8")));
+const contexte = process.argv[3] === undefined ? partage
+  : partage.pour({ ...partage.base, droit_contrefactuel: process.argv[3] });
 const requetes = JSON.parse(readFileSync(process.argv[2], "utf8"));
 
 const sortie = requetes.map((requete) => {

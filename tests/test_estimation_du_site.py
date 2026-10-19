@@ -40,6 +40,11 @@ REQUETES = {
     "trois_ages": {"naissance": "1968-05-01", "debut": "1990-09", "liquidation": "2032-01"},
     "carriere_longue": {"naissance": "1966-02-01", "debut": "1984-09",
                         "liquidation": "2030-01"},
+    # La même, coupée de deux ans de chômage indemnisé, dont D. 351-1-2 répute
+    # cotisés quatre trimestres, sous chaque état du droit.
+    "carriere_longue_chomage": {"naissance": "1966-02-01", "debut": "1984-09",
+                                "liquidation": "2030-01",
+                                "interruptions": "2008:2009:chomage_indemnise"},
     "fonctionnaire": {"naissance": "1975-01-01", "statut": "fonctionnaire_etat",
                       "debut": "1998-09", "primes": "0.2"},
     "cadre": {"naissance": "1976-04-01", "statut": "salarie_prive_cadre", "debut": "1999-09"},
@@ -108,36 +113,69 @@ def _ecarts(obtenu, attendu, chemin: str, ecarts: list[str]) -> None:
         ecarts.append(f"{chemin} : python={attendu} js={obtenu}")
 
 
-def test_les_deux_moteurs_datent_et_chiffrent_les_memes_departs(contexte):
+def _departs_du_portage(droit: str | None = None) -> list:
+    """Les départs de chaque requête, datés et chiffrés par le portage, sous le
+    droit contrefactuel ``droit`` s'il en nomme un
+    (``tests/js/comparer-estimation.mjs``)."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    requetes = list(REQUETES.values())
     with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
                                      delete=False) as fichier:
-        json.dump(requetes, fichier)
+        json.dump(list(REQUETES.values()), fichier)
         chemin = fichier.name
     try:
         execution = subprocess.run(
-            ["node", str(RACINE / "tests" / "js" / "comparer-estimation.mjs"), chemin],
+            ["node", str(RACINE / "tests" / "js" / "comparer-estimation.mjs"), chemin,
+             *([droit] if droit else [])],
             cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
     finally:
         Path(chemin).unlink()
     assert execution.returncode == 0, execution.stderr[-2000:]
-    obtenus = json.loads(execution.stdout)
-    attendus = [[{"quoi": list(depart.quoi), "age": depart.age, "date": depart.date,
-                  "etages": depart.etages, "total": depart.total,
-                  "minimum_vieillesse": depart.minimum_vieillesse,
-                  "trimestres": depart.trimestres,
-                  "trimestres_requis": depart.trimestres_requis,
-                  "motif_ouverture": depart.motif_ouverture,
-                  "assiette_maladie": depart.assiette_maladie,
-                  "assiette_regime_general": depart.assiette_regime_general}
-                 for depart in _departs(contexte, nom)] for nom in REQUETES]
+    return json.loads(execution.stdout)
+
+
+def _en_donnees(departs) -> list[dict]:
+    return [{"quoi": list(depart.quoi), "age": depart.age, "date": depart.date,
+             "etages": depart.etages, "total": depart.total,
+             "minimum_vieillesse": depart.minimum_vieillesse,
+             "trimestres": depart.trimestres,
+             "trimestres_requis": depart.trimestres_requis,
+             "motif_ouverture": depart.motif_ouverture,
+             "assiette_maladie": depart.assiette_maladie,
+             "assiette_regime_general": depart.assiette_regime_general}
+            for depart in departs]
+
+
+def test_les_deux_moteurs_datent_et_chiffrent_les_memes_departs(contexte):
+    obtenus = _departs_du_portage()
+    attendus = [_en_donnees(_departs(contexte, nom)) for nom in REQUETES]
     ecarts: list[str] = []
     for nom, obtenu, attendu in zip(REQUETES, obtenus, attendus):
         _ecarts(obtenu, attendu, nom, ecarts)
     assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])
     assert sum(len(departs) for departs in attendus) >= 15
+
+
+@pytest.mark.parametrize("droit", ["loi_2023_sans_suspension", "au_31_aout_2023"])
+def test_les_deux_moteurs_datent_les_memes_departs_sous_chaque_droit_contrefactuel(
+        contexte, droit):
+    """Les droits contrefactuels du scénario 1 (action 138, étape 10) : sous la
+    loi de 2023 sans la suspension, et sous le droit au 31 août 2023, les deux
+    moteurs datent et chiffrent les mêmes départs. Et ce ne sont pas ceux du
+    droit en vigueur pour le né en 1968, que les deux lois ont touché : sa
+    première pension s'ouvre à soixante-quatre ans sous la première, à
+    soixante-deux ans sous le second (``tests/test_droits_contrefactuels.py``)."""
+    obtenus = _departs_du_portage(droit)
+    sous = contexte.pour(contexte.base.avec(droit_contrefactuel=droit))
+    attendus = [_en_donnees(sous.departs_de_l_estimation(Saisie.depuis_requete(requete)))
+                for requete in REQUETES.values()]
+    ecarts: list[str] = []
+    for nom, obtenu, attendu in zip(REQUETES, obtenus, attendus):
+        _ecarts(obtenu, attendu, nom, ecarts)
+    assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])
+    premier = attendus[list(REQUETES).index("trois_ages")][0]
+    assert premier["age"] == pytest.approx(
+        {"loi_2023_sans_suspension": 64.0, "au_31_aout_2023": 62.0}[droit])
 
 
 def test_chaque_age_est_atteint_une_fois_dans_l_ordre_de_la_synthese(contexte):
@@ -338,3 +376,53 @@ def test_plusieurs_ages_de_depart_cote_a_cote(contexte, page):
     assert "une personne seule, sans enfant à charge" in bloc
     assert bloc.count("<table") == 4 and "rendement réel" in bloc
     assert "Partir plus tôt ou plus tard" not in page("/simuler", **REQUETES["parti"])
+
+
+def _avec_ou_sans(corps: str) -> str:
+    debut = corps.index("Avec ou sans la réforme de 2023")
+    return corps[debut:corps.index("</details>", debut)]
+
+
+def test_les_departs_sous_trois_etats_du_droit(contexte, page):
+    """Le dépliant « Avec ou sans la réforme de 2023 » (action 138, étape 10) :
+    au plus tôt et au taux plein, l'âge, le mois et le net du premier mois de
+    la carrière saisie sous le droit qui s'applique, sous la loi de 2023 sans
+    la suspension et sous le droit au 31 août 2023, avec l'écart au premier,
+    et la durée requise : ceux que le Python date sous chaque droit. Le né en
+    mai 1968 part au plus tôt à 63 ans et 9 mois, 3 mois plus tard sans la
+    suspension, 1 an et 9 mois plus tôt sans la réforme ; rien pour qui n'a
+    pas de départ à chiffrer."""
+    from retraite_notionnelle.calendrier import formater_age
+
+    bloc = _avec_ou_sans(page("/simuler", **REQUETES["trois_ages"]))
+    entetes = re.findall(r'<th class="[^"]*" scope="col">([^<]*)</th>', bloc)
+    assert entetes == ["État du droit", "Au plus tôt", "Net au plus tôt", "Au taux plein",
+                       "Net au taux plein", "Durée requise"]
+    rangees = re.findall(r'<tr><th[^>]*scope="row">(.*?)</th>(.*?)</tr>', bloc)
+    assert len(rangees) == 3
+    saisie = Saisie.depuis_requete(REQUETES["trois_ages"])
+    montants = Montants.depuis(saisie, contexte.base)
+
+    def net(depart) -> int:
+        return round(montants.net_d_un_depart(
+            depart.total, depart.assiette_maladie, depart.minimum_vieillesse) / 12)
+
+    for (_, cellules), droit in zip(rangees, (None, "loi_2023_sans_suspension",
+                                               "au_31_aout_2023")):
+        departs = contexte.pour(contexte.base.avec(droit_contrefactuel=droit)) \
+            .departs_de_l_estimation(saisie)
+        tot = next(depart for depart in departs if "legal" in depart.quoi)
+        plein = next(depart for depart in departs if "taux_plein" in depart.quoi)
+        valeurs = re.findall(r"<td[^>]*>(.*?)</td>", cellules)
+        assert valeurs[0].startswith(formater_age(tot.age)), droit
+        assert valeurs[2].startswith(formater_age(plein.age)), droit
+        assert [_nombres(valeurs[1]), _nombres(valeurs[3]), _nombres(valeurs[4])] == [
+            net(tot), net(plein), tot.trimestres_requis], droit
+    premiers = [re.findall(r"<td[^>]*>(.*?)</td>", cellules)[0] for _, cellules in rangees]
+    assert premiers[0].startswith("63 ans et 9 mois")
+    assert premiers[1].startswith("64 ans") and "3 mois plus tard" in premiers[1]
+    assert premiers[2].startswith("62 ans") and "1 an et 9 mois plus tôt" in premiers[2]
+    assert [html.unescape(tete) for tete, _ in rangees] == [
+        "Le droit qui s'applique", "La loi de 2023, sans la suspension",
+        "Le droit du 31 août 2023"]
+    assert "Avec ou sans la réforme de 2023" not in page("/simuler", **REQUETES["parti"])

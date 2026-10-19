@@ -306,6 +306,12 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   //: personne seule sans autre ressource, et toujours comme une ligne SÉPARÉE
   //: de la cascade.
   minimum_vieillesse_dans_le_scenario_actuel: true,
+  //: L'état du droit que le scénario 1 applique : `null`, celui qui s'applique,
+  //: l'étalon ; ou un droit contrefactuel que le moteur connaît
+  //: (`DROITS_CONTREFACTUELS`, scenario-actuel.js) — `loi_2023_sans_suspension`,
+  //: `au_31_aout_2023`. Seuls l'âge légal, la durée requise et les âges de la
+  //: carrière longue en changent.
+  droit_contrefactuel: null,
 
   // --- Scénario 6 : la proposition libérale ----------------------------------
   //: Le scénario 6 est le scénario 4 — compte rétroactif, cotisation entière,

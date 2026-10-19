@@ -8,9 +8,12 @@ etape: ouvrir_le_droit
 effet: >-
   Toute liquidation. Les soixante-dix-neuf segments de la table sont certifiés :
   lus dans L. 161-17-2 et D. 161-2-1-9, chaque version à sa date d'effet (action
-  27).
+  27). Les deux droits contrefactuels de la page des résultats (action 138, étape
+  10) posent sur elle l'âge des versions qu'ils gardent : celui du 31 août 2023,
+  62 ans dès 1955 (`age_ouverture_avant_reforme_2023.csv`) ; la loi de 2023 sans
+  la suspension, 63 ans pour 1964 et 64 ans dès 1968 (`age_ouverture_avant_suspension.csv`).
 sources:
-  lu_le: 2026-09-17
+  lu_le: 2026-10-19
   prochaine_relecture: 2026-12-31
   lectures:
   - type: legifrance
@@ -22,6 +25,17 @@ sources:
     reference: D. 161-2-1-9 CSS, LEGIARTI000047634502, version du 1er septembre
       2023
     date: 2026-09-17
+  - type: legifrance
+    reference: >-
+      Pour les droits contrefactuels, lues dans l'index LEGI à jour au 18 octobre
+      2026 : L. 161-17-2 CSS, LEGIARTI000025014605, version du 23 décembre 2011 («
+      soixante-deux ans pour les assurés nés à compter du 1er janvier 1955 ») et
+      LEGIARTI000051289659, version du 28 février 2025, la dernière d'avant la
+      suspension (« soixante-quatre ans pour les assurés nés à compter du 1er janvier
+      1968 ») ; D. 161-2-1-9 CSS, LEGIARTI000025089933, version du 31 décembre 2011
+      (« 6° Soixante deux ans pour les assurés nés à compter du 1er janvier 1955 »),
+      et LEGIARTI000047634502, version du 1er septembre 2023, 10° à 14°
+    date: 2026-10-19
   - type: circulaire_cnav
     reference: 2026-07 du 5 mars 2026, point 1.1 et annexe 1
     date: 2026-03-05
@@ -52,4 +66,6 @@ code:
     `age_ouverture_par_generation` : l'âge d'ouverture est lu dans `legislation/age_ouverture_requis.csv`
     à l'ANNÉE DE NAISSANCE, et la valeur de la période (`age_ouverture`) ne sert que de
     repli. Réservé aux régimes alignés sur l'âge légal général : les régimes spéciaux
-    gardent le leur.
+    gardent le leur. Sous un droit contrefactuel (`Parametres.droit_contrefactuel`),
+    `TableRecouverte` pose sur cette table celle du droit qu'il garde, de sa première
+    génération à toutes les suivantes (`ScenarioActuel._sous_le_droit`).

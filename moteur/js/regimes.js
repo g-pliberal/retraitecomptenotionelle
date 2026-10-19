@@ -284,6 +284,55 @@ export class AgesOuverture extends TableParGeneration {
 }
 
 /**
+ * Âge légal que la loi du 14 avril 2023 a relevé : celui du droit en vigueur au
+ * 31 août 2023, soixante-deux ans dès 1955 — portage de
+ * `AgesOuvertureAvantReforme2023`, qui ne sert qu'au droit contrefactuel
+ * `au_31_aout_2023`.
+ */
+export class AgesOuvertureAvantReforme2023 extends AgesOuverture {
+  constructor(paquet) {
+    super({ ages_ouverture: paquet.ages_ouverture_avant_reforme_2023 });
+  }
+}
+
+/**
+ * Âge légal que la suspension de 2026 a abaissé : celui de la loi de 2023,
+ * soixante-trois ans pour 1964, soixante-quatre dès 1968 — portage de
+ * `AgesOuvertureAvantSuspension`, qui ne sert qu'au droit contrefactuel
+ * `loi_2023_sans_suspension`.
+ */
+export class AgesOuvertureAvantSuspension extends AgesOuverture {
+  constructor(paquet) {
+    super({ ages_ouverture: paquet.ages_ouverture_avant_suspension });
+  }
+}
+
+/**
+ * Une table par génération qu'une autre recouvre, de sa première génération à
+ * toutes les suivantes : ce qu'un droit contrefactuel change à l'âge légal ou à
+ * la durée requise. En deçà, la table du droit en vigueur répond. Portage de
+ * `TableRecouverte`.
+ */
+export class TableRecouverte {
+  constructor(dessus, dessous) {
+    this._dessus = dessus;
+    this._dessous = dessous;
+  }
+
+  valeur(generation) {
+    return this._dessus.valeur(generation) ?? this._dessous.valeur(generation);
+  }
+
+  age(generation) {
+    return this.valeur(generation);
+  }
+
+  trimestres(generation) {
+    return this.valeur(generation);
+  }
+}
+
+/**
  * Âge d'où la SNCF et la RATP comptent la surcote, par génération : l'âge
  * légal décalé de cinq générations, soixante-quatre ans à compter de 1970.
  */
@@ -1751,6 +1800,22 @@ export class CarriereLongue {
     // des fiches : ses natures réputées cotisées et leurs limites.
     this._reputes = (paquet.versions_des_fiches ?? {})[CarriereLongue.FICHE_DES_REPUTES]
       ?? null;
+  }
+
+  /**
+   * La même table, sans les textes qui prennent effet à compter de `[annee,
+   * mois]` : la carrière longue d'un droit contrefactuel — portage de
+   * `CarriereLongue.avant`.
+   */
+  avant([annee, mois]) {
+    const limite = Math.round((annee + (mois - 1) / 12.0) * 1000) / 1000;
+    // Une copie, comme le Python : le reste de l'instance — les rédactions de
+    // D. 351-1-2 — reste celui du droit en vigueur.
+    const copie = Object.assign(Object.create(CarriereLongue.prototype), this);
+    copie._table = Object.fromEntries(Object.entries(this._table)
+      .filter(([effet]) => Number(effet) < limite - 1e-9));
+    copie._dates = Object.keys(copie._table).map(Number).sort((a, b) => a - b);
+    return copie;
   }
 
   /**

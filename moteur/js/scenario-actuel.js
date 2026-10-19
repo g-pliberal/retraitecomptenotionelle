@@ -25,7 +25,8 @@
 
 import {
   AgesAnnulationDecote, AgesCategorieActive, AgesJouissanceMilitaire,
-  AgesOuverture, AgesRegimes, AgesSurcoteRegimesSpeciaux, AnneesSalaireReference,
+  AgesOuverture, AgesOuvertureAvantReforme2023, AgesOuvertureAvantSuspension,
+  AgesRegimes, AgesSurcoteRegimesSpeciaux, AnneesSalaireReference,
   AnneesRevenuAnnuelMoyenIndependants, BaremesTrimestre, CarriereLongue, FichesDatees,
   CoefficientsMinoration, DecoteFonctionPublique, DecoteRegimesSpeciaux,
   DureesProratisation, DureesRequises, DureesRequisesAvantSoixanteAns,
@@ -38,7 +39,7 @@ import {
   ClassesCotisation, ConversionsPoints, Rendements, SalairesForfaitaires,
   CarrieresHorsDeFrance, Invalidites, MajorationsEnfantsPoints, Reversions,
   ServicesOuvrantPension, SurcoteBaremes,
-  SurcoteParentale,
+  SurcoteParentale, TableRecouverte,
   ValeursPoint,
 } from "./regimes.js";
 import { formatFixe } from "./format.js";
@@ -54,6 +55,17 @@ import * as lesProgressives from "./droit/progressive.js";
 
 /** Rang du mois de septembre 2026 : premières pensions des parents à 24/23 ans. */
 const PARENTS_MEILLEURES_ANNEES_DEPUIS = 2026 * 12 + 8;
+
+/**
+ * Les droits contrefactuels du scénario 1 (action 138, étape 10), et la date
+ * d'effet des textes que chacun écarte, `[année, mois]` : la suspension de 2026
+ * pour la loi de 2023 sans elle, la loi du 14 avril 2023 et la suspension pour
+ * le droit au 31 août 2023. Voir `DROITS_CONTREFACTUELS` du Python.
+ */
+export const DROITS_CONTREFACTUELS = {
+  loi_2023_sans_suspension: [2026, 9],
+  au_31_aout_2023: [2023, 9],
+};
 
 export class ScenarioActuel {
   constructor(paquet, macro, catalogue, affiliations, parametres) {
@@ -134,6 +146,38 @@ export class ScenarioActuel {
         }
       }
     }
+    if (parametres.droit_contrefactuel !== null && parametres.droit_contrefactuel !== undefined) {
+      this._sousLeDroit(paquet, parametres.droit_contrefactuel);
+    }
+  }
+
+  /**
+   * Le moteur sous un droit contrefactuel (`DROITS_CONTREFACTUELS`) : l'âge
+   * légal et la durée requise des textes d'avant la date qu'il écarte, posés
+   * sur les tables du droit en vigueur, et la carrière longue sans les décrets
+   * qui prennent effet à compter d'elle. Au 31 août 2023, la durée que le droit
+   * en vigueur garde aux pensions d'avant septembre 2026 devient celle de 2014.
+   * Portage de `_sous_le_droit`.
+   */
+  _sousLeDroit(paquet, droit) {
+    // Une faute de programme, qui doit remonter : `contexte.js` tait les autres.
+    if (!Object.hasOwn(DROITS_CONTREFACTUELS, droit)) {
+      throw new RangeError(`droit contrefactuel inconnu : '${droit}' ; le moteur connaît `
+        + Object.keys(DROITS_CONTREFACTUELS).sort().join(", "));
+    }
+    let ages;
+    let durees;
+    if (droit === "au_31_aout_2023") {
+      ages = new AgesOuvertureAvantReforme2023(paquet);
+      durees = this.dureesRequisesAvantReforme2023;
+      this.dureesRequisesAvantSuspension = durees;
+    } else {
+      ages = new AgesOuvertureAvantSuspension(paquet);
+      durees = this.dureesRequisesAvantSuspension;
+    }
+    this.agesOuverture = new TableRecouverte(ages, this.agesOuverture);
+    this.dureesRequises = new TableRecouverte(durees, this.dureesRequises);
+    this.carriereLongue = this.carriereLongue.avant(DROITS_CONTREFACTUELS[droit]);
   }
 
   /**

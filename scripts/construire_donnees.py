@@ -92,6 +92,8 @@ from retraite_notionnelle.scenarios.actuel import (  # noqa: E402
     AgesAnnulationDecote,
     AgesJouissanceMilitaire,
     AgesOuverture,
+    AgesOuvertureAvantReforme2023,
+    AgesOuvertureAvantSuspension,
     AgesSurcoteRegimesSpeciaux,
     AnneesRevenuAnnuelMoyenIndependants,
     AnneesSalaireReference,
@@ -132,7 +134,7 @@ CALIBRATIONS = DONNEES / "derive" / "calibrations_mortalite.json"
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas : le site
 #: attend la sienne (``VERSION_PAQUET``, ``moteur/js/contexte.js``), et redemande
 #: au serveur un paquet qui n'a pas celle-là, depuis le 11 octobre 2026.
-VERSION = 30
+VERSION = 31
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -2559,6 +2561,12 @@ def construire(bilan: bytes, agregats: bytes) -> bytes:
         "revalorisation_salaires_anciennes": _revalorisation_salaires(anciennes=True),
         "revalorisation_pensions": _revalorisation_pensions(),
         "ages_ouverture": _table_par_generation(AgesOuverture),
+        # Les âges que les droits contrefactuels posent sur la table du
+        # droit en vigueur (``DROITS_CONTREFACTUELS``, action 138, étape 10).
+        "ages_ouverture_avant_reforme_2023": _table_par_generation(
+            AgesOuvertureAvantReforme2023),
+        "ages_ouverture_avant_suspension": _table_par_generation(
+            AgesOuvertureAvantSuspension),
         "ages_surcote_regimes_speciaux": _table_par_generation(AgesSurcoteRegimesSpeciaux),
         "ages_annulation_decote": _table_par_generation(AgesAnnulationDecote),
         "ages_regimes": _ages_regimes(),

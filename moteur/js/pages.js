@@ -5193,7 +5193,7 @@ voir.</p>
 ${pensionDAujourdhui(contexte, comparaison, saisie)}
 ${financement(contexte, comparaison, finances, montants)}
 ${trajectoire(contexte, comparaison, saisie)}
-${partirPlusTotOuPlusTard(contexte, saisie)}
+${partirPlusTotOuPlusTard(contexte, saisie)}${avecOuSansLaReforme(contexte, saisie, montants)}
 ${fourchette(contexte, saisie, comparaison)}
 ${decomposition(contexte, saisie, comparaison)}
 ${contributionEmployeur(comparaison)}
@@ -5320,6 +5320,100 @@ ${pensions}
 ${apresImpot}
 ${actuel}
 ${rendements}${equilibre}`);
+}
+
+/**
+ * Les trois états du droit du dépliant « Avec ou sans la réforme de 2023 » :
+ * le droit qui s'applique, puis les deux droits contrefactuels que le moteur
+ * connaît (`DROITS_CONTREFACTUELS`, scenario-actuel.js).
+ */
+const DROITS_DE_LA_PAGE = [
+  [null, "Le droit qui s'applique"],
+  ["loi_2023_sans_suspension", "La loi de 2023, sans la suspension"],
+  ["au_31_aout_2023", "Le droit du 31 août 2023"],
+];
+
+/** L'écart de deux âges en clair : « 3 mois plus tard », « 1 an et 9 mois plus tôt ». */
+function ecartDAge(ecart) {
+  const mois = Math.round(ecart * 12);
+  if (mois === 0) return "au même âge";
+  const annees = Math.floor(Math.abs(mois) / 12);
+  const reste = Math.abs(mois) % 12;
+  const morceaux = [
+    ...(annees > 0 ? [`${annees} an${annees > 1 ? "s" : ""}`] : []),
+    ...(reste > 0 ? [`${reste} mois`] : []),
+  ];
+  return `${morceaux.join(" et ")} ${mois > 0 ? "plus tard" : "plus tôt"}`;
+}
+
+/**
+ * La carrière saisie sous trois états du droit (action 138, étape 10) : celui
+ * qui s'applique, la loi du 14 avril 2023 sans la suspension que la loi du
+ * 30 décembre 2025 y a mise, et le droit en vigueur au 31 août 2023, avant
+ * elle (`droit_contrefactuel`). Pour chacun, les deux premiers départs de
+ * l'estimation officielle (`departsDeLEstimation`) — au plus tôt, au taux
+ * plein —, leur mois et l'écart au droit qui s'applique, le net du premier
+ * mois, puis la durée requise. Un départ d'une année déjà passée s'écrit
+ * « — », comme l'estimation l'omet. Rien quand elle ne se chiffre pas.
+ */
+function avecOuSansLaReforme(contexte, saisie, montants) {
+  const etats = DROITS_DE_LA_PAGE.map(([droit, libelle]) => {
+    const sous = droit === null ? contexte
+      : contexte.pour({ ...contexte.base, droit_contrefactuel: droit });
+    const departs = sous.departsDeLEstimation(saisie);
+    const premier = (quoi) => departs.find((depart) => depart.quoi.includes(quoi)) ?? null;
+    return { libelle, departs, tot: premier("legal"), plein: premier("taux_plein") };
+  });
+  const [enVigueur] = etats;
+  if (enVigueur.departs.length === 0) return "";
+  const quand = (depart, reference) => {
+    if (depart === null) return "—";
+    const [annee, mois] = depart.date.split("-").map(Number);
+    const ecart = reference === null ? "" : `, ${ecartDAge(depart.age - reference.age)}`;
+    return `${age(depart.age)}<span class="aide">${echapper(String(new DateMois(annee, mois)))}`
+      + `${ecart}</span>`;
+  };
+  const net = (depart) => (depart === null ? "—" : g.euros(montants.netDUnDepart(
+    depart.total, depart.assiette_maladie, depart.minimum_vieillesse,
+    depart.assiette_regime_general) / 12));
+  const tableau = g.tableau(
+    ["État du droit", "Au plus tôt", "Net au plus tôt", "Au taux plein", "Net au taux plein",
+      "Durée requise"],
+    etats.map(({ libelle, departs, tot, plein }, rang) => {
+      const requis = (tot ?? plein ?? departs[0])?.trimestres_requis;
+      return [
+        echapper(libelle),
+        quand(tot, rang === 0 ? null : enVigueur.tot),
+        net(tot),
+        quand(plein, rang === 0 ? null : enVigueur.plein),
+        net(plein),
+        requis === undefined ? "—" : `${requis}${"\u202f"}trimestres`,
+      ];
+    }),
+    ["", "", "nombre", "", "nombre", "nombre"],
+    `Le système 1, par mois, en euros de ${saisie.euros}`, true);
+  return g.depliant("Avec ou sans la réforme de 2023", `
+<p>Les départs de votre estimation officielle, au plus tôt et au taux plein,
+sous trois états du droit : celui qui s'applique ; la loi du 14 avril 2023 sans
+la suspension que la loi du 30 décembre 2025 y a mise ; le droit en vigueur au
+31 août 2023, avant la réforme. Seuls changent l'âge légal, la durée requise et
+les âges de la carrière longue : le reste du droit est celui
+d'aujourd'hui.${g.bulle(
+    "Ce que retient chaque état du droit",
+    "Sans la suspension : l'âge et la durée des versions du 1er septembre 2023 des "
+    + "articles D. 161-2-1-9 et L. 161-17-3 du code de la sécurité sociale — "
+    + "63 ans pour la génération 1964, 64 ans dès 1968, 171 trimestres pour 1964, "
+    + "172 dès 1965 —, et la carrière longue du décret du 3 juin 2023. Au 31 août "
+    + "2023 : 62 ans dès la génération 1955, la durée de la loi du 20 janvier 2014 "
+    + "— 169 trimestres de 1964 à 1966, 172 dès 1973 —, et la carrière longue du "
+    + "décret du 2 juillet 2012. Dans les trois, le reste est le droit "
+    + "d'aujourd'hui : la décote, la surcote, le minimum contributif relevé en "
+    + "septembre 2023, les règles de l'Agirc-Arrco, sans les coefficients de "
+    + "solidarité qu'elle appliquait encore en août 2023 ; et les âges propres "
+    + "des catégories actives, des militaires et des régimes spéciaux, que ce "
+    + "calcul ne change pas.",
+  )}</p>
+${tableau}`);
 }
 
 /**
