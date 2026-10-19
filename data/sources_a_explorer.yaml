@@ -6201,7 +6201,16 @@ sources:
     a_en_tirer: >-
       Les trois leviers du COR et leurs projections, quand il rouvrira : il
       est « temporairement fermé pour révision des scénarios économiques ».
-    statut: en_cours
+    statut: a_explorer
+    note: >-
+      Toujours fermé le 19 octobre 2026, comme le 4 : la page, inchangée
+      depuis le 29 juillet 2026 (son `Last-Modified`), dit « Le simulateur est
+      temporairement fermé pour révision des scénarios économiques », et
+      toute adresse sous `/simulateur/`, sa documentation comprise, sert la
+      même ; l'accueil du COR offre pourtant toujours de le « lancer ». Rien à
+      en tirer d'ici là : sa documentation de 2016 est au registre des
+      modèles (data/reference/referents.yaml, `simulateur_cor`), qui en a
+      repris le facteur de 0,5 (138.3). À rouvrir quand il rouvrira.
 
   - id: cor_modeles_microsimulation_2020
     url: https://www.cor-retraites.fr/node/530
@@ -6213,7 +6222,30 @@ sources:
       PENSIPP, TRAJECTOiRE, PRISME, Pablo, Canopée et le modèle de
       l'Agirc-Arrco décrits par leurs auteurs, et le recensement des modèles
       français et étrangers.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-19"
+    note: >-
+      Dépouillée le 19 octobre 2026 (action 89, lot du COR) : les dix-huit
+      fichiers de la séance, douze documents, cinq diaporamas et le dossier
+      en bref. Les documents n° 6 et 9 à 12 étaient déjà lus au registre des
+      modèles (data/reference/referents.yaml : `aphrodite`, `prisme`,
+      `pablo`, `oscar`, `ariane`, `canopee`, `misraa`) ; les n° 5, 7 et 8 y
+      étaient cités sans être lus, leurs modèles l'ayant été par leur code.
+      Le n° 7, les notes 43 et 44 de l'IPP (juin 2019), entre à `pensipp` :
+      ses chocs confirment deux choix que le dépôt applique, la masse
+      salariale du README, que le secrétariat du COR pose en règle
+      d'équilibre (document n° 1, note 14), et la pension servie revalorisée
+      au taux du compte divisé par 1 + ν, son « avance sur pension » ; ses
+      résultats par décile attendent la population de 138.14. Le n° 5 entre
+      à `destinie_2`, avec les rapports interdéciles d'Aubert et Bachelet
+      (2012). Le n° 8 n'apporte que l'étude de la DREES qui applique aux
+      fonctionnaires nés en 1958 les règles du privé (62 % atteindraient le
+      taux plein au même âge, 27 % plus tard, 11 % plus tôt), qu'aucun
+      scénario du dépôt ne confronte. Les revues des modèles (n° 3, sept
+      modèles français ; n° 4, les administrations étrangères ; n° 2,
+      l'histoire de F. Legendre) ne nomment aucun modèle de retraite qui
+      manque au registre, dont l'en-tête dit ce qu'il laisse de côté. Rien
+      ne contredit le dépôt.
 
   - id: cor_suivi_statistique_2024
     url: https://www.cor-retraites.fr/reunions-du-cor/suivi-statistique-systeme-retraite
@@ -6224,7 +6256,27 @@ sources:
       Les systèmes d'information et les modèles de la DREES, de la Cnav, de
       l'Agirc-Arrco, du SRE, de la Caisse des dépôts et du RGCU, décrits par
       eux-mêmes en décembre 2024.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-10-19"
+    note: >-
+      Dépouillée le 19 octobre 2026 (action 89, lot du COR) : les quatorze
+      fichiers de la séance, neuf documents, quatre diaporamas et le dossier
+      en bref. Les documents n° 3 et 5 à 8 étaient déjà lus au registre des
+      modèles (data/reference/referents.yaml : `ancetre`, `misraa`, `pablo`,
+      `canopee`, `mistral`, `rgcu_mvc`). Le n° 4, la Cnav, confirme ce que le
+      registre dit de PRISME (un vingtième des assurés, 5 millions
+      d'individus tirés du SNGI, nourris du SNGC et du SNSP) et annonçait son
+      branchement sur le RGCU pour la mi-2025 ; les bases de ses études (la
+      « Base Retraités », 11 millions de nouveaux retraités de 2004 à 2021)
+      ne s'ouvrent que par convention (diaporama du COR), et le site de ses
+      séries est déjà au manifeste. Le
+      n° 9 (juin 2021) et le diaporama de la DSS entrent à `rgcu_mvc` : le
+      CASD promis pour 2022, les migrations jusqu'à la mi-2028, le grain des
+      carrières reprises. Les n° 1 et 2 et les diaporamas du COR, de la DREES
+      et d'A. Bozio décrivent les sources (EIR, EIC, EACR, EIRR, l'accès par
+      le CASD) sans nommer d'autre modèle que deux outils de court terme,
+      Paco du SRE et celui de la CNRACL, que l'en-tête du registre déclare.
+      Rien ne contredit le dépôt.
 
   - id: suede_pensionsmodellen
     url: https://www.pensionsmyndigheten.se/statistik-och-rapporter/pensionsmodellen/pensionsmodellen

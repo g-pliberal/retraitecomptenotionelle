@@ -12,15 +12,24 @@
 # existe et ce qui ne se lit pas ; et, à l'étranger, ceux des pays à comptes
 # notionnels et des organisations internationales, qui confrontent
 # l'arithmétique de la proposition. Les modèles des autres administrations
-# étrangères sont recensés par le COR (séance du 5 mars 2020, document n° 4).
+# étrangères sont recensés par le COR (séance du 5 mars 2020, document n° 4 :
+# MIDAS-BE, DyPeS, PENSIM II). Ses revues des modèles français, relues le 19
+# octobre 2026 (même séance, documents n° 2 et 3 ; séance du 19 décembre 2024,
+# documents n° 1 et 2), ne nomment aucun modèle de retraite qui manque ici,
+# hors deux outils de court terme, ci-dessous.
 #
 # Ce qui n'y est pas, et pourquoi. Les simulateurs officiels des caisses : ce
 # sont des sources d'APPLICATION, au registre des sources, que le § 3.5 dit
 # comment interroger. Les modèles qui ne confrontent rien du dépôt : la
 # macroéconomie (Mésange, e-mod.fr de l'OFCE), la politique familiale (Myriade
 # de la Cnaf), les systèmes à points de 2020 (le fork de Destinie 2 de Nos
-# Retraites, `salaires_pensions` de B. Scherrer). Les copies du simulateur du
-# COR, que sa ligne nomme. Et les dépôts personnels que personne n'a lus.
+# Retraites, `salaires_pensions` de B. Scherrer), les modèles fiscaux que
+# l'histoire de la microsimulation recense (Mir, Sysiff, Misme, Prometheus :
+# COR, 5 mars 2020, document n° 2), dont aucun ne calcule une retraite. Les
+# outils de prévision à court terme des régimes (Paco du SRE, celui de la
+# CNRACL, à cinq ans pour la DSS : COR, 19 décembre 2024, document n° 2), que
+# rien ne décrit au-delà de leur nom. Les copies du simulateur du COR, que sa
+# ligne nomme. Et les dépôts personnels que personne n'a lus.
 #
 # Les pistes du 1er octobre, vérifiées le 16 octobre 2026, qui n'y entrent
 # pas. Les caisses des professions libérales projettent leurs régimes par
@@ -2729,7 +2738,14 @@ referents:
     confrontation: >-
       Lire sa conversion en comptes notionnels de 2013 — revalorisation des
       cotisations, actualisation, traitement de l'AVPF — et la confronter à la
-      proposition ; l'exécuter demande l'accord de l'IPP.
+      proposition ; l'exécuter demande l'accord de l'IPP. Des résultats publiés
+      aussi, à retrouver quand la population de l'étape 138.14 ventilera une
+      génération par décile : chez les monopensionnés du régime général nés en
+      1946, une formule strictement contributive relève de 60 % en médiane
+      les pensions du premier décile de salaires cumulés et ôte moins de
+      10 % à celles du dernier, à âge de départ inchangé et hors dispositifs
+      de solidarité ; au moins 90 % de chacun des trois premiers déciles y
+      gagnent (note IPP n° 44, juin 2019, graphique 5).
     ecarts:
       - constat: >-
           Son salaire de base est toujours la moyenne des meilleures
@@ -2848,11 +2864,23 @@ referents:
       règle en vigueur : ses apports sont des choix de programme
       (comportement de départ, crédits non cotisés dans le compte,
       diviseur avec gain d'héritage) et des contrefactuels par millésime
-      de législation.
+      de législation. Ses notes de juin 2019 (document n° 7 du COR, 5 mars
+      2020) éprouvent par des chocs un système à rendement défini dont le
+      point suit le salaire moyen, pour l'équité contributive : il absorbe
+      la productivité et l'espérance de vie, « pas du tout » la fécondité,
+      et l'IPP propose une correction démographique ou l'équilibrage
+      suédois. Le secrétariat du COR, qui les résume, pose qu'un tel
+      système ne s'équilibre que si droits et pensions suivent la masse
+      salariale (document n° 1, note 14) : le défaut du README. Leur
+      « avance sur pension », 1 + r̃ = (1 + g)(1 + n)/(1 + s), est, sous
+      l'indexation par défaut, la règle de `RevalorisationServie` pour
+      ν = s ; leurs chocs sont ceux, stylisés, du COR (maquette_sg_cor).
     sas: [ipp_pensipp]
-    lu_le: 2026-10-04
+    lu_le: 2026-10-19
     lu_dans:
       - https://github.com/abozio/PENSIPP
+      - https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%207_PENSIPP_IPP.pdf
+      - https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%201_presentation_generale_1.pdf
     note: >-
       Dernier commit le 22 mai 2013, aucun fichier de licence ; l'IPP donne
       le projet pour terminé. Ses paramètres viennent des barèmes de l'IPP et
@@ -2898,6 +2926,12 @@ referents:
       aussi ; le régime général à 0,2 % près, la pension civile à 0,6 % ;
       les majorations de 10 % ; la réversion de 54 %, de 50 % et de 60 %, sur
       les points de chacun. Le reste est aux écarts et aux points ci-dessous.
+      Des résultats publiés aussi, à retrouver quand la population de l'étape
+      138.14 ventilera une génération par décile : chez les salariés nés de
+      1955 à 1964, le rapport interdécile vaut 5,85 sur les salaires de toute
+      la carrière, 6,66 sur les pensions du « cœur du système », 4,10 sur les
+      pensions de droit propre, solidarité comprise (Aubert et Bachelet,
+      2012, que cite le document n° 5 du COR, 5 mars 2020).
     ecarts:
       - constat: >-
           Il lève au régime général la condition d'âge de 55 ans de la
@@ -3632,11 +3666,14 @@ referents:
       avant l'âge pour les nés de fin d'année, revalorisation moyenne de
       2020, base et plafond de la réversion majorée, valeur du point de
       2024 projetée. Les taux contractuels moyens sont une convention à
-      trancher.
+      trancher. Le document n° 5 du COR (2020) y ajoute sa mesure de la
+      redistribution, mécanisme par mécanisme neutralisé, qui attend une
+      génération ventilée par décile (138.14).
     sas: [insee_destinie_2]
-    lu_le: 2026-10-05
+    lu_le: 2026-10-19
     lu_dans:
       - https://github.com/InseeFr/Destinie-2
+      - https://www.cor-retraites.fr/sites/default/files/2020-03/Doc%205_Destinie_INSEE.pdf
       - https://www.insee.fr/fr/information/3606338
       - https://www.insee.fr/fr/statistiques/8563753
       - tests/temoins/destinie_2.json
@@ -6340,13 +6377,22 @@ referents:
       stockés suite à un calcul ») : aucune sortie ne se confronte, et
       ses règles sont celles que le dépôt applique déjà. Il annonce des
       extractions complètes pour le CASD « à une date qui reste à
-      préciser » (p. 23), utiles un jour à l'étape 14.
-    lu_le: 2026-10-04
+      préciser » (p. 23), utiles un jour à l'étape 14 : en juin 2021, ses
+      promoteurs les donnaient « d'ici le début de l'année 2022 »
+      (document n° 9), et les migrations des régimes doivent s'achever
+      « d'ici mi-2028 » (diaporama de la DSS, 19 décembre 2024).
+    lu_le: 2026-10-19
     lu_dans:
       - https://www.cor-retraites.fr/sites/default/files/2024-12/Doc_08_RGCU%20-DSS.pdf
+      - https://www.cor-retraites.fr/sites/default/files/2024-12/Doc_09_RGCU.pdf
+      - https://www.cor-retraites.fr/sites/default/files/2024-12/3.RGCU_DSS.pptx
     note: >-
       Le manifeste porte déjà la documentation du répertoire
-      (`info_retraite_referentiel`), pas les sorties de son moteur.
+      (`info_retraite_referentiel`), pas les sorties de son moteur. Le
+      document n° 9 (Courrier des statistiques de l'Insee, n° 6, juin 2021)
+      dit le grain des carrières du régime général qu'il reprend : avant
+      1970, des salaires annuels saisis sans employeur ni période ; de 1970
+      à 2000, par année et par employeur ; de date à date depuis 2000.
 
   - id: marel
     nom: Moteur de « Mon estimation retraite » (M@rel)
