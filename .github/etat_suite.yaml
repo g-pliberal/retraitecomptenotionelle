@@ -1,7 +1,11 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: vert
-sources: 9311cc510cd9b2bb9dc2d9eb01c15ca13bdff185
-date: 2026-10-19T18:20:52Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/39296029247
+etat: rouge
+sources: 8e2be69f1240c00fc0a3dbf7793d6009a46b00e0
+date: 2026-10-19T21:58:54Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/39328861171
+echecs:
+  - "FAILED tests/test_web_revues.py::test_le_retraite_lit_le_chemin_de_sa_pension_depuis_son_depart - assert '385,12 € ×1,1855 456,56 €' in 'id=\"resultats-aujourdhui\"> Votre pension, de votre départ à aujourd&#x27;hui Votre pension a pris effet en janvier 20...e de 2026, puis les prix, comme sur la page Coût. Depuis votre départ, elle y a varié de +17,8 % en pouvoir d\'achat. '"
+  - "FAILED tests/test_cout.py::test_la_projection_suit_le_cor_groupe_par_groupe - AssertionError: ('depense_part_pib', 'complementaires') : +6.3% du COR à l'horizon, tolérance 6%"
+  - "FAILED tests/test_cout.py::test_l_ecart_au_cor_groupe_par_groupe - AssertionError: ('pension_relative', 'agirc_arrco') : +24.8% du COR à l'horizon, cliquet 24%"
 presomptions: vert
