@@ -134,8 +134,9 @@ def test_la_grille_compte_ses_retraites_aux_ages_de_l_eacr(grille, eacr):
 def test_la_grille_part_trop_tot_et_trop_groupee(grille, eacr):
     """Les nouveaux retraités de la grille en 2024 : un âge moyen de
     liquidation plus jeune que celui de l'EACR, d'un demi à un an et demi
-    (62,3 contre 63,6 ; 62,7 le 16 octobre 2026), trois sur dix à 62 ans pour
-    un quart — plus du tiers jusqu'au 18 octobre, presque la moitié avant que
+    (62,3 contre 63,6 ; 62,7 le 16 octobre 2026), plus du tiers à 62 ans pour
+    un quart — trois sur dix le 18 octobre, avant que l'inapte et l'ex-invalide
+    de la Cnav n'y partent (action 138, étape 7), presque la moitié avant que
     l'agent sédentaire de la CNRACL ne porte quatre cinquièmes de sa caisse —,
     et aucun à 66 ou au-delà de 67 (carrières incomplètes qui attendent le
     taux plein). Aucun non plus à 60 ans jusqu'au 18 octobre, où chaque
@@ -143,15 +144,15 @@ def test_la_grille_part_trop_tot_et_trop_groupee(grille, eacr):
     entré à 18 ans, le salarié au SMIC né en 1964 part au titre des carrières
     longues à 60 ans et 9 mois, en 2024, quand la grille le faisait partir à
     61 ans, en 2025, à l'âge de la génération 1965 ; sa cohorte fait à elle
-    seule près d'un départ de l'année sur cinq, à 60 ans, plus de trois fois
-    la part de l'EACR. Un
-    écart qui se referme dit que la population de l'étape 14 a remplacé la
-    grille, ou qu'un âge a bougé."""
+    seule un départ de l'année sur sept, à 60 ans, près de trois fois la part
+    de l'EACR — un sur six avant que l'ex-invalide ne prenne sa part de la
+    Cnav. Un écart qui se referme dit que la population de l'étape 14 a
+    remplacé la grille, ou qu'un âge a bougé."""
     serie = eacr["droits_directs_par_age"]["series"]["nl_ddir"]["ensemble"]
     ecart = M.age_moyen_publie(serie) - M.age_moyen(grille)
     assert 0.5 < ecart < 1.5
     flux, publie = M.parts(M.grille_par_age(grille)), M.parts(M.publie_par_depart(serie))
     assert flux["62"] > 1.1 * publie["62"]
-    assert flux["60"] > 3 * publie["60"]
+    assert flux["60"] > 2.5 * publie["60"]
     for cle in ("66", "68_plus"):
         assert flux.get(cle, 0.0) < 0.01 < publie[cle], cle

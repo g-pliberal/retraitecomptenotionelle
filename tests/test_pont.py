@@ -185,6 +185,7 @@ def test_sans_node_le_pont_s_arrete_sans_repli(monkeypatch):
 #: proposition reporte.
 CASES_DU_COUT = (("fonctionnaire_sedentaire", 1990), ("fonctionnaire_actif", 1975),
                  ("militaire", 1980), ("smic_carriere_complete~inapte", 1960),
+                 ("smic_carriere_complete~ex_invalide", 1965),
                  ("carriere_interrompue", 1950), ("salaire_moyen", 1970))
 
 

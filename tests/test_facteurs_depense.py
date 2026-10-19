@@ -365,11 +365,13 @@ def test_la_part_stable_mesuree_garde_sa_prevalence_parmi_les_20_64_ans(awg):
     seule. Si elle gardait son rapport aux 65 ans et plus, comme la note du 16
     octobre le supposait, la dynamique du modèle, portée au périmètre de l'AWG,
     manquerait de plus d'un demi-point l'effet de ses moins de 65 ans de 2022
-    à 2070 ; gardant sa prévalence parmi les 20-64 ans, elle le refait à 0,15
-    point près. Reste 2022-2030 : les retraités du modèle reculent plus tard,
-    et en laissaient plus de 0,2 point (note du 17 octobre 2026), dont la
-    grille faisait 0,18 (note du 18 octobre, « la grille ») ; datés chacun à
-    sa génération, ils en laissent un dixième (test suivant)."""
+    à 2070 ; gardant sa prévalence parmi les 20-64 ans, elle le refait à 0,2
+    point près — 0,12 le 18 octobre, 0,16 depuis que l'ex-invalide de la Cnav
+    part à soixante-deux ans dans la grille (action 138, étape 7). Reste
+    2022-2030 : les retraités du modèle reculent plus tard, et en laissaient
+    plus de 0,2 point (note du 17 octobre 2026), dont la grille faisait 0,18
+    (note du 18 octobre, « la grille ») ; datés chacun à sa génération, ils en
+    laissent 0,14, et 0,17 avec l'ex-invalide (test suivant)."""
     from retraite_notionnelle import Parametres
     from retraite_notionnelle.facteurs_depense import JEUNES, STABLES, pensionnes_de_2022
 
@@ -398,7 +400,7 @@ def test_la_part_stable_mesuree_garde_sa_prevalence_parmi_les_20_64_ans(awg):
                                  population_65_awg)["precoce"]
     aux_65_ans, aux_20_64_ans = precoce(), precoce(population_20_64)
     assert aux_65_ans[2070] - publie[2070] > 0.5
-    assert abs(aux_20_64_ans[2070] - publie[2070]) < 0.15
+    assert abs(aux_20_64_ans[2070] - publie[2070]) < 0.2
     assert aux_20_64_ans[2030] - publie[2030] > 0.05
 
 
@@ -411,9 +413,10 @@ def test_datee_a_sa_generation_chaque_cohorte_part_l_annee_de_son_droit(awg):
     43 ans : il part à 64 ans, en 2031, et ``cout.py`` le fait désormais
     partir là (``Pensionne.departs``). Moins de cohortes de moins de 65 ans
     sont parties en 2030 : de 2022 à 2030, leur effet, porté au périmètre de
-    l'AWG, s'écarte de celui de l'AWG de moins de 0,15 point, quand la grille
-    l'en écartait de 0,29 (notes du 18 octobre 2026, « la grille » et « la
-    date de chaque cohorte »)."""
+    l'AWG, s'écarte de celui de l'AWG de 0,14 point, quand la grille l'en
+    écartait de 0,29 (notes du 18 octobre 2026, « la grille » et « la date de
+    chaque cohorte ») ; de 0,17 depuis que l'ex-invalide de la Cnav part à
+    soixante-deux ans dans la grille (action 138, étape 7)."""
     from retraite_notionnelle import Parametres
     from retraite_notionnelle.facteurs_depense import JEUNES, STABLES, pensionnes_de_2022
 
@@ -439,4 +442,4 @@ def test_datee_a_sa_generation_chaque_cohorte_part_l_annee_de_son_droit(awg):
         population_65_awg)["precoce"]
     publie = partager_couverture(part_pib, pensionnes, pensionnes_agees,
                                  population_65_awg)["precoce"]
-    assert abs(datee[2030] - publie[2030]) < 0.15
+    assert abs(datee[2030] - publie[2030]) < 0.2

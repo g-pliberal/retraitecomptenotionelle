@@ -297,17 +297,19 @@ PART_SUPER_ACTIVE_ETAT = (DEPARTS_ETAT_CIVILS_2025["active_52"]
 #: Les nouveaux retraités de droit direct du régime général de 2020 à 2024,
 #: par type de pension, aux séries labellisées de la Cnav
 #: (``regimes/nouveaux_retraites_cnav.csv``) : un sur douze part pour
-#: inaptitude au travail, et la Cnav n'avait que des pensions normales
-#: (action 138, étape 7). Le flux, comme pour la CNRACL : le poids d'un cas
-#: type est sa part de la caisse à la liquidation, sa mortalité faisant
-#: ensuite le stock. Les ex-invalides restent aux quatre carrières du privé.
+#: inaptitude au travail, presque autant en ex-invalides, et la Cnav n'avait
+#: que des pensions normales (action 138, étape 7). Le flux, comme pour la
+#: CNRACL : le poids d'un cas type est sa part de la caisse à la liquidation,
+#: sa mortalité faisant ensuite le stock.
 DEPARTS_CNAV_2020_2024 = {"normale": 2_815_070, "ex_invalide": 298_196,
                           "inaptitude": 284_204}
 PART_INAPTES_CNAV = (DEPARTS_CNAV_2020_2024["inaptitude"]
                      / somme_ordonnee(DEPARTS_CNAV_2020_2024.values()))
+PART_EX_INVALIDES_CNAV = (DEPARTS_CNAV_2020_2024["ex_invalide"]
+                          / somme_ordonnee(DEPARTS_CNAV_2020_2024.values()))
 #: Ce que chacune des quatre carrières du privé porte de la Cnav : le reste,
 #: également, faute de savoir combien de ses retraités ont été cadres.
-PART_PRIVE_CNAV = (1.0 - PART_INAPTES_CNAV) / 4
+PART_PRIVE_CNAV = (1.0 - PART_INAPTES_CNAV - PART_EX_INVALIDES_CNAV) / 4
 
 #: Jeu de cas types couvrant les principales configurations du système.
 CAS_TYPES: tuple[CasType, ...] = (
@@ -613,11 +615,49 @@ INAPTE_CNAV = replace(
     ),
 )
 
+#: L'EX-INVALIDE de la Cnav, que la page Coût pèse avec les quatre carrières
+#: du privé et que la page Cas types ne montre pas (action 138, étape 7) : les
+#: nouveaux retraités de 2021 dont la pension de vieillesse a remplacé la
+#: pension d'invalidité (L. 341-15), que la Cnav décrit (étude 2023-014,
+#: tableaux 2 à 4 et graphique 3) — un premier trimestre l'année de leurs
+#: dix-huit ans, 171 trimestres en moyenne, dont 64 % cotisés, un salaire
+#: annuel moyen de 97 % du SMIC de 2021. Entré en invalidité l'année de ses
+#: quarante-six ans, il a la part cotisée publiée : le chômage, la maladie et
+#: l'AVPF, qui font avec l'invalidité le reste de leur durée, se fondent dans
+#: la sienne, quand, à cinquante-cinq ans, un ex-invalide sur quatre travaille
+#: encore et la moitié touche sa pension d'invalidité (graphique 3). À
+#: 1,29 SMIC, il a le salaire annuel moyen publié, né en 1959 et parti en
+#: 2021, quand le SMIC de chaque année, que ce salaire revalorise sur les
+#: prix, n'en ferait que 75 %. Il porte la part de la caisse que ses départs
+#: lui donnent (:data:`PART_EX_INVALIDES_CNAV`). Variante du salarié au SMIC,
+#: auquel les poids que la page affiche le rapportent
+#: (:func:`cas_type_affiche`). Il vit encore au rythme du vingtile de son
+#: salaire, comme les cas types de la page, quand les ex-invalides de la Cnav
+#: vivent, à soixante-deux ans, six ans de moins que les pensions normales
+#: chez les hommes et quatre chez les femmes (``cnav_ex_invalide``) : la page
+#: Coût devra le dire quand il les suivra.
+EX_INVALIDE_CNAV = replace(
+    _cas("smic_carriere_complete"),
+    code="smic_carriere_complete~ex_invalide",
+    libelle="Salarié ex-invalide",
+    age_liquidation=62, niveau_salaire=1.29,
+    interruptions_relatives=tuple((decalage, "invalidite") for decalage in range(28, 52)),
+    parts_caisses=(("cnav", PART_EX_INVALIDES_CNAV),),
+    commentaire=(
+        "À 1,29 SMIC de dix-huit à quarante-cinq ans, en invalidité ensuite : "
+        "à l'âge légal, la pension de vieillesse remplace sa pension "
+        "d'invalidité, au taux plein quelle que soit sa durée — soixante-deux "
+        "ans, que la réforme de 2023 lui garde. Sous la proposition, son compte "
+        "se liquide à l'âge légal de tous, et l'invalidité, qui ne cotise pas, "
+        "le couvre jusque-là."
+    ),
+)
+
 #: La grille de la page Coût : les cas types de la page Cas types, et les
 #: variantes qui partagent leur caisse avec eux.
 GRILLE_DU_COUT: tuple[CasType, ...] = CAS_TYPES + (
     AGENT_SEDENTAIRE_CNRACL, FONCTIONNAIRE_ACTIF_ETAT, FONCTIONNAIRE_SUPER_ACTIF_ETAT,
-    INAPTE_CNAV)
+    INAPTE_CNAV, EX_INVALIDE_CNAV)
 
 #: La carrière HEURTÉE de la maquette Osiris de la DSS (étude d'impact du
 #: projet de loi instituant un système universel de retraite, 2020, p. 202) :

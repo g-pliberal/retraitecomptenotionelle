@@ -23,6 +23,7 @@ from retraite_notionnelle.castypes import (
     DEPARTS_CNAV_2020_2024,
     DEPARTS_CNRACL_2025,
     DEPARTS_ETAT_CIVILS_2025,
+    EX_INVALIDE_CNAV,
     FONCTIONNAIRE_ACTIF_ETAT,
     FONCTIONNAIRE_SUPER_ACTIF_ETAT,
     GENERATIONS,
@@ -30,6 +31,7 @@ from retraite_notionnelle.castypes import (
     INAPTE_CNAV,
     PART_ACTIVE_CNRACL,
     PART_ACTIVE_ETAT,
+    PART_EX_INVALIDES_CNAV,
     PART_INAPTES_CNAV,
     PART_SUPER_ACTIVE_ETAT,
     cas_type_affiche,
@@ -708,8 +710,10 @@ RECONSTITUTION_DEPUIS = 2000
 #: le 18 octobre, l'étape 138.3 faisant partir chaque cohorte de la grille
 #: l'année que le droit de sa génération lui donne : la masse de 2024 que
 #: l'ancrage rend égale à la dépense ne compte plus les cohortes que la grille
-#: faisait partir trop tôt, et le passé se refait d'autant mieux.
-RECONSTITUTION_CLIQUET = 0.12
+#: faisait partir trop tôt, et le passé se refait d'autant mieux ; -11,0 % le
+#: 19 octobre, l'étape 138.7 donnant aux inaptes de la Cnav leur part de la
+#: caisse, et -10,7 % le même jour, aux ex-invalides la leur.
+RECONSTITUTION_CLIQUET = 0.11
 #: Ce que vise le cliquet : quelques pour cent, chaque année.
 RECONSTITUTION_CIBLE = 0.05
 
@@ -994,12 +998,18 @@ def test_la_pension_moyenne_relative_s_ecarte_de_celle_du_cor(avenir, comptes):
 #: non-salariés relevée à 6 %). Elle relève en 2025 les pensions des
 #: générations que leurs revenus agricoles laissaient basses, et lie moins
 #: celles qui suivent : la pension relative du groupe ne croît plus que de
-#: 3 % jusqu'en 2070, au lieu de 6.
+#: 3 % jusqu'en 2070, au lieu de 6. Le 19 octobre, l'inapte de la Cnav, puis
+#: l'ex-invalide (action 138, étape 7) : complémentaires +5,2 %, non-salariés
+#: +8,2 %, +6,0 avec le seul inapte (tolérances relevées à 6 et 9 %).
+#: L'ex-invalide sert LURA et les complémentaires dans d'autres proportions que
+#: les quatre carrières du privé dont il prend la part, et déplace le calage
+#: des poids par groupe (``_poids_par_groupe``) : sous la table commune même,
+#: les non-salariés pèsent 2,4 % de plus en 2070.
 DECOMPOSITION_GROUPES_SUIVIS = {
     ("pension_relative", "cnav"): 0.04,
     ("depense_part_pib", "lura"): 0.05,
-    ("depense_part_pib", "complementaires"): 0.05,
-    ("depense_part_pib", "non_salaries_base"): 0.06,
+    ("depense_part_pib", "complementaires"): 0.06,
+    ("depense_part_pib", "non_salaries_base"): 0.09,
 }
 #: Et ce qu'elle ne suit pas encore : des CLIQUETS, qui ne doivent que
 #: descendre, comme celui de la pension moyenne relative de l'ensemble. Mesurés
@@ -1852,8 +1862,9 @@ def test_la_cnracl_se_partage_entre_ses_departs_actifs_et_sedentaires():
         1.0 - PART_ACTIVE_CNRACL)
     assert parts_des_caisses(CAS_TYPES)[("fonctionnaire_actif", "cnracl")] == 1.0
     # La Cnav, que ses quatre carrières du privé partagent également, une fois
-    # ses inaptes servis.
-    assert parts[("cadre", "cnav")] == pytest.approx((1.0 - PART_INAPTES_CNAV) / 4)
+    # ses inaptes et ses ex-invalides servis.
+    assert parts[("cadre", "cnav")] == pytest.approx(
+        (1.0 - PART_INAPTES_CNAV - PART_EX_INVALIDES_CNAV) / 4)
     effectifs = EffectifsRetraites(RACINE_DONNEES)
     grille, page = poids_effectifs(effectifs, 2024, GRILLE_DU_COUT), poids_effectifs(effectifs, 2024)
     assert (grille["fonctionnaire_actif"] + grille[AGENT_SEDENTAIRE_CNRACL.code]
@@ -1869,10 +1880,11 @@ def test_l_inapte_porte_la_part_de_la_cnav_que_ses_departs_lui_donnent():
     de droit direct par type de pension, que ce test relit et recoupe par
     leurs totaux publiés : les trois types font le total, et les deux sexes
     l'ensemble. De 2020 à 2024, 284 204 des 3 397 470 sont partis pour
-    inaptitude, 8,4 %. La grille du coût donne cette part de la caisse à
-    l'inapte — sa part à la liquidation, sa mortalité faisant ensuite le stock —,
-    les quatre carrières du privé se partageant également le reste ; la page
-    Cas types, qui n'a pas l'inapte, garde le partage égal."""
+    inaptitude, 8,4 %, et 298 196 en ex-invalides, 8,8 %. La grille du coût
+    donne sa part de la caisse à l'inapte et à l'ex-invalide — leur part à la
+    liquidation, leur mortalité faisant ensuite le stock —, les quatre
+    carrières du privé se partageant également le reste ; la page Cas types,
+    qui n'a ni l'un ni l'autre, garde le partage égal."""
     lues: dict[tuple[int, str, str, str], int] = {}
     with open(RACINE_DONNEES / "reference" / "regimes" / "nouveaux_retraites_cnav.csv",
               encoding="utf-8") as flux:
@@ -1896,20 +1908,23 @@ def test_l_inapte_porte_la_part_de_la_cnav_que_ses_departs_lui_donnent():
                           for annee in range(2020, 2025))
                    for t in types + ("droits_directs",)}
     assert DEPARTS_CNAV_2020_2024 == {t: depuis_2020[t] for t in types}
-    assert depuis_2020["inaptitude"] == 284_204
+    assert (depuis_2020["inaptitude"], depuis_2020["ex_invalide"]) == (284_204, 298_196)
     assert PART_INAPTES_CNAV == pytest.approx(284_204 / 3_397_470)
+    assert PART_EX_INVALIDES_CNAV == pytest.approx(298_196 / 3_397_470)
     parts = parts_des_caisses(GRILLE_DU_COUT)
     assert parts[(INAPTE_CNAV.code, "cnav")] == pytest.approx(PART_INAPTES_CNAV)
+    assert parts[(EX_INVALIDE_CNAV.code, "cnav")] == pytest.approx(PART_EX_INVALIDES_CNAV)
+    reste = 1.0 - PART_INAPTES_CNAV - PART_EX_INVALIDES_CNAV
     page = parts_des_caisses(CAS_TYPES)
     for code in ("smic_carriere_complete", "salaire_moyen", "cadre", "carriere_interrompue"):
-        assert parts[(code, "cnav")] == pytest.approx((1.0 - PART_INAPTES_CNAV) / 4), code
+        assert parts[(code, "cnav")] == pytest.approx(reste / 4), code
         assert page[(code, "cnav")] == pytest.approx(0.25), code
-    assert cas_type_affiche(INAPTE_CNAV.code) == "smic_carriere_complete"
-    assert INAPTE_CNAV in GRILLE_DU_COUT and INAPTE_CNAV not in CAS_TYPES
     effectifs = EffectifsRetraites(RACINE_DONNEES)
     grille = poids_effectifs(effectifs, 2024, GRILLE_DU_COUT)
-    assert grille[INAPTE_CNAV.code] == pytest.approx(
-        PART_INAPTES_CNAV * 4 * grille["cadre"] / (1.0 - PART_INAPTES_CNAV))
+    for cas, part in ((INAPTE_CNAV, PART_INAPTES_CNAV), (EX_INVALIDE_CNAV, PART_EX_INVALIDES_CNAV)):
+        assert cas_type_affiche(cas.code) == "smic_carriere_complete"
+        assert cas in GRILLE_DU_COUT and cas not in CAS_TYPES
+        assert grille[cas.code] == pytest.approx(part * 4 * grille["cadre"] / reste)
 
 
 def test_les_civils_de_l_etat_se_partagent_entre_leurs_trois_departs():

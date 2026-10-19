@@ -2085,9 +2085,9 @@ def salaires(variantes: list[Variante], points) -> list[Variante]:
 
 def reference_population() -> list[Variante]:
     """La grille du dépôt, son salariat privé réduit au gabarit : les quatre cas
-    types de la Cnav lui cèdent chacun sa part de la caisse, et l'inapte de la
-    grille du coût, leur variante, la sienne ; le contractuel aussi sous
-    :data:`CONTRACTUELS_AU_SALARIAT`."""
+    types de la Cnav lui cèdent chacun sa part de la caisse, et l'inapte et
+    l'ex-invalide de la grille du coût, leurs variantes, la leur ; le
+    contractuel aussi sous :data:`CONTRACTUELS_AU_SALARIAT`."""
     retires = SALARIAT_PRIVE + (("contractuel_public",) if CONTRACTUELS_AU_SALARIAT else ())
     variantes = [v for v in reference() if cas_type_affiche(v.cas.code) not in retires]
     moyen = next(cas for cas in CAS_TYPES if cas.code == "salaire_moyen")

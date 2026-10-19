@@ -991,11 +991,15 @@ affirmations:
   # L'autre branche de la phrase du réglage, quand la proposition est sous un
   # chaque année projetée : la page l'affiche depuis le 16 octobre 2026, la
   # CNRACL pesée sur ses départs (action 138, étape 3) ayant fait passer le
-  # coefficient de 2070 sous un. Le contrôle vérifie le signe sur le solde.
+  # coefficient de 2070 sous un. Le 19 octobre, l'ex-invalide de la Cnav
+  # (action 138, étape 7) le repasse au-dessus, d'un millième (1,0013) : la
+  # page dit la branche du milieu, sous un quarante-quatre années sur
+  # quarante-cinq ; l'identifiant reste. Le contrôle vérifie le signe sur le
+  # solde, chaque branche comprise.
   - id: cas_types.coefficient_sous_un
     page: /cas-types
-    extrait: "Un coefficient inférieur à un est un manque"
-    porte: la proposition est sous un chaque année projetée, et la page le dit depuis le solde, avec son plus bas et son dernier coefficient
+    extrait: "Au-dessus de un, il permettrait de relever les cases d'autant"
+    porte: la proposition est sous un chaque année projetée sauf 2070, où elle le dépasse d'un millième, et la page le dit depuis le solde, avec son plus bas et son dernier coefficient
     etat: verifiee
     controle: note_du_coefficient_suit_son_signe
 

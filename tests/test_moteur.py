@@ -418,6 +418,59 @@ def test_l_inapte_de_la_cnav_part_au_taux_plein_des_l_age_legal():
         assert sans.construire(simulateur, generation).age_liquidation == annulation, generation
 
 
+def test_l_ex_invalide_de_la_cnav_part_au_taux_plein_des_l_age_legal():
+    """L'ex-invalide de la grille du coût (action 138, étape 7) : les nouveaux
+    retraités de 2021 dont la pension de vieillesse remplace la pension
+    d'invalidité, que la Cnav décrit (étude 2023-014, tableaux 2 à 4 et
+    graphique 3) — 56 914 personnes : un premier trimestre l'année de leurs
+    dix-huit ans, 171 trimestres en moyenne, dont 64 % cotisés, un salaire
+    annuel moyen de 97 % du SMIC de 2021 (19 073,64 €). Le cas type travaille
+    de dix-huit à quarante-cinq ans, puis touche une pension d'invalidité
+    jusqu'au départ : 112 trimestres cotisés sur 176, 64 %. Son salaire de
+    1,29 SMIC fait, né en 1959 et parti en 2021, le salaire annuel moyen
+    publié, à un point près.
+
+    La pension d'invalidité prend fin à l'âge légal, et la pension de vieillesse
+    « allouée en cas d'inaptitude au travail » la remplace (L. 341-15, fiche
+    ``pension_d_invalidite_substituee``) : le taux plein quelle que soit la
+    durée (L. 351-8, 2°), à soixante ans né en 1950, à soixante-deux né en 1955
+    et après, la réforme de 2023 lui gardant cet âge. Inactive au lieu
+    d'invalide, la même carrière n'aurait que ses trimestres cotisés, et
+    attendrait l'âge d'annulation de la décote, soixante-cinq puis soixante-sept
+    ans."""
+    import re
+    from dataclasses import replace
+
+    from retraite_notionnelle.castypes import EX_INVALIDE_CNAV as cas, cas_type_affiche
+
+    simulateur = Simulateur(Parametres())
+    assert not cas.inaptitude and cas_type_affiche(cas.code) == "smic_carriere_complete"
+    assert (cas.affiliation, cas.age_debut, cas.niveau_salaire, cas.caisses) == (
+        "salarie_prive_non_cadre", 18, 1.29, ("cnav",))
+    inactif = replace(cas, interruptions_relatives=tuple(
+        (decalage, "inactivite") for decalage, _ in cas.interruptions_relatives))
+    for generation, depart, invalides, annulation in ((1950, 60, 56, 65), (1955, 62, 64, 67),
+                                                      (1980, 62, 64, 67)):
+        carriere = cas.construire(simulateur, generation)
+        assert carriere.age_liquidation == depart, generation
+        invalidite = carriere.pension_d_invalidite
+        assert invalidite is not None and invalidite.debut.annee == generation + 46, generation
+        trimestres: dict[str, int] = {}
+        for ligne in carriere.lignes:
+            if ligne.annee <= carriere.annee_liquidation:
+                trimestres[ligne.type_periode] = (trimestres.get(ligne.type_periode, 0)
+                                                  + ligne.trimestres_valides)
+        assert trimestres == {"emploi": 112, "invalidite": invalides}, generation
+        assert inactif.construire(simulateur, generation).age_liquidation == annulation, generation
+    general = next(pension for pension in simulateur.simuler(
+        cas.construire(simulateur, 1959)).actuel.pensions_par_regime
+        if pension.regime == "regime_general")
+    salaire_annuel_moyen = float(re.search(r"SR ([\d,]+\.\d\d) €", general.detail)
+                                 .group(1).replace(",", ""))
+    assert salaire_annuel_moyen / 19_073.64 == pytest.approx(0.97, abs=0.01)
+    assert "taux 50.000%" in general.detail
+
+
 def test_la_masse_salariale_est_la_regle_la_plus_genereuse(macro):
     """Le taux d'équilibre de la répartition n'est pas une règle d'austérité.
 
