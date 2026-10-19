@@ -5793,7 +5793,7 @@ institutions:
           gardée pour chacune, et, depuis le 10 octobre 2026, ANCRÉE au
           Journal officiel par l'index JORF de la DILA, au numéro et à la
           date de publication que l'IPP annonce, comme ipp_taux_cotisation :
-          159 des 223 marches de l'IPP le sont ; les autres citent un
+          158 des 222 marches de l'IPP le sont ; les autres citent un
           accord, une circulaire, un article de code, rien, ou un texte que
           l'index n'a pas — sauf six, dont l'index dément la date : les
           décrets n° 93-93, 98-945, 2002-1295, 2009-1158, 2012-853 et
@@ -5819,13 +5819,23 @@ institutions:
           indépendants est dans la branche des indépendants de l'IPP
           (assures_retraites), sur leur seule pension de base (D. 612-3), sans
           le 3,1 % du 1er janvier 1986 qu'aucun texte ne porte ; celle de la
-          fonction publique, 2,25 % en 1976, 2,65 % en 1988, 3,05 % en mars
-          1996, 2,80 % en 1997, est lue dans LEGI (D. 712-39, D. 713-16,
-          décret n° 67-850, art. 3) ; les salariés agricoles paient celle du
-          régime général (décret n° 80-481 et ses modificatifs). Ne sont pas
-          écrites celle des exploitants agricoles retraités, connue en 1997
-          seulement (décret n° 97-140), et celle des régimes spéciaux (D. 711-3
-          à D. 711-5). LA CSG DÉDUCTIBLE, relue le 11 octobre 2026 (étape 5,
+          fonction publique, 2,25 % en 1976, 2,65 % en juillet 1987 (à titre
+          exceptionnel, décret n° 87-470) puis en 1988, 3,05 % en mars 1996,
+          2,80 % en 1997, est lue dans LEGI (D. 712-39, D. 713-16, décrets
+          n° 67-850 et 67-851, art. 3) ; les salariés agricoles paient celle
+          du régime général (décret n° 80-481 et ses modificatifs). Celle des
+          exploitants agricoles retraités et celle des régimes spéciaux sont
+          lues aux textes depuis le 13 octobre 2026
+          (`scripts/fetch/maladie_des_pensions.py`). LES DÉCRETS QU'AUCUNE
+          MARCHE NE REJOINT, cherchés le 19 octobre 2026 (étape 9) dans
+          l'index JORF par `scripts/fetch/decrets_des_prelevements.py`, comme
+          ipp_taux_cotisation pour la vieillesse : trois marches des salaires
+          que l'IPP n'a pas, ou pas à leur date, sont corrigées — la maladie
+          du salarié du privé à 4,5 % du 1er février au 13 novembre 1981
+          (décrets n° 79-650 et 81-1013), celle des agents publics à 5,15 % du
+          1er juillet 1987 (n° 87-470), celle des collectivités à 6,05 % au
+          1er juillet 1991 et non au 1er janvier (n° 91-615, art. 5). LA CSG
+          DÉDUCTIBLE, relue le 11 octobre 2026 (étape 5,
           deuxième partie) : la colonne `deductible` des barèmes de CSG
           d'activité et des pensions, à chaque taux, que le script confronte
           aux versions de l'article 154 quinquies du code général des impôts

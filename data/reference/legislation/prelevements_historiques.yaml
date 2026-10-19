@@ -3,14 +3,14 @@
 # source_id: ipp_prelevements_sociaux
 #
 # ÉCRIT PAR `scripts/fetch/ipp_prelevements_sociaux.py`, jamais à la main : les
-# barèmes de l'Institut des politiques publiques, lus le 2026-10-16, chacun avec la
+# barèmes de l'Institut des politiques publiques, lus le 2026-10-19, chacun avec la
 # référence que l'IPP cite pour sa marche. Une transcription, non une source
 # productrice : `haute` au plus (data/sources.yaml, `ipp`).
 #
 # L'ANCRAGE. Chaque marche de l'IPP porte, en `jorf`, le texte qu'il cite tel
 # que l'index JORF de la DILA le trouve, au numéro — au jour pour un arrêté —
-# et à la date de publication qu'il annonce : 159 des 223 marches de
-# l'IPP le sont (index à jour au 20261011-210356). Les autres disent, en `ancrage`, ce
+# et à la date de publication qu'il annonce : 158 des 222 marches de
+# l'IPP le sont (index à jour au 20261018-205213). Les autres disent, en `ancrage`, ce
 # qui manque : une date au Journal officiel, un texte numéroté — un article de
 # code, une convention, une circulaire —, ou la date que l'index donne quand
 # il dément celle de l'IPP. Une marche lue aux textes porte le texte du Journal
@@ -74,13 +74,32 @@
 # 0,25 % pour l'année 2000 (D. 612-9) ; l'invalidité-décès n'y est pas, et garde
 # les taux de l'année courante.
 #
+# LES SALAIRES, CE QUE LES TEXTES DISENT AUTREMENT QUE L'IPP. La maladie du
+# salarié du privé revient à 4,5 % au 1er février 1981, quand prend fin la
+# majoration exceptionnelle du décret n° 79-650, et le décret n° 81-1013 la
+# refixe à 5,5 % au 14 novembre ; celle des agents de l'État et des
+# collectivités est relevée à 5,15 % au 1er juillet 1987, à titre exceptionnel
+# (décret n° 87-470), un an avant que le décret n° 88-795 ne tienne ce taux ;
+# celle des collectivités passe à 6,05 % au 1er juillet 1991, avec celle de
+# l'État, et non au 1er janvier (décret n° 91-615, article 5).
+#
+# LES DÉCRETS QU'AUCUNE MARCHE NE REJOINT. Chaque décret du Journal officiel
+# dont le titre annonce, depuis 1967, des taux de ces cotisations est cité par
+# une marche, ou dit ce qu'il fait à l'histoire : rien, le plus souvent — une
+# autre population, un autre risque, la part de l'employeur —, ou ce qu'elle ne
+# porte pas encore (`scripts/fetch/decrets_des_prelevements.py`). Les salaires
+# sont ceux du privé et des agents publics : l'agent d'un régime spécial et le
+# militaire y prennent les taux du salarié du privé ou du fonctionnaire, comme
+# sur la fiche de paie du site.
+#
 # LA MALADIE DES PENSIONS DES AUTRES RÉGIMES DE BASE, que la branche du régime
 # général de l'IPP n'écrit pas. Celle des retraités indépendants est dans sa
 # branche des indépendants : le dépôt la prend, sans le 3,1 % du 1er janvier
 # 1986, qu'aucun texte ne porte. Les salariés agricoles paient celle du régime
 # général, taux pour taux. Les autres sont lues aux textes, dans les index JORF
 # et LEGI (`scripts/fetch/maladie_des_pensions.py`, qui dit ce qu'il n'a pas pu
-# lire) : la fonction publique depuis 1976 ; les exploitants agricoles depuis
+# lire) : la fonction publique depuis 1976, relevée à titre exceptionnel au
+# 1er juillet 1987 (décret n° 87-470) ; les exploitants agricoles depuis
 # 1990, sur leur pension de base ; les régimes spéciaux placés sous le régime
 # général pour la maladie (Opéra, Comédie-Française, chemins de fer
 # secondaires), les IEG et les clercs de notaires depuis 1980 ; la SNCF, la
@@ -99,7 +118,7 @@
 # art. 3). Ce sont les valeurs de l'IPP, que le script confronte aux versions
 # de l'article (`DEDUCTIBLE_AUX_TEXTES`). Le reste de la CSG, la CRDS et la
 # CASA ne se déduisent pas ; les cotisations, si (CGI, art. 83).
-lu_le: "2026-10-16"
+lu_le: "2026-10-19"
 fiabilite: haute
 tenues_avant_leur_premiere_marche: [maladie_prive, maladie_etat, maladie_collectivites, famille]
 
@@ -161,7 +180,8 @@ pensions:
     - {depuis: "1997-01-01", taux: 0.024, texte: "Décret 96-1167 du 26/12/1996, art. 3", jorf: "JORFTEXT000000197223"}
     - {depuis: "1998-01-01", taux: 0, texte: "Décret 97-1252 du 29/12/1997, art. 3", jorf: "JORFTEXT000000753406"}
   maladie_fonction_publique:
-    - {depuis: "1976-10-01", taux: 0.0225, texte: "Décret 76-896 du 29/09/1976 (JORFTEXT000000861798) : décret 67-850 du 30/09/1967, art. 3 (LEGIARTI000006770629)", jorf: "JORFTEXT000000861798"}
+    - {depuis: "1976-10-01", taux: 0.0225, texte: "Décret 76-896 du 29/09/1976 (JORFTEXT000000861798) : décret 67-850 du 30/09/1967, art. 3 (LEGIARTI000006770629) ; pour les militaires, décret 76-897 du 29/09/1976 : décret 67-851 du 30/09/1967, art. 3 (LEGIARTI000006766149)", jorf: "JORFTEXT000000861798"}
+    - {depuis: "1987-07-01", taux: 0.0265, texte: "Décret 87-470 du 30/06/1987, art. 7 à 9 (JORFTEXT000000332799) : à titre exceptionnel, jusqu'au 30 juin 1988", jorf: "JORFTEXT000000332799"}
     - {depuis: "1988-07-01", taux: 0.0265, texte: "Décret 88-795 du 22/06/1988 (JORFTEXT000000693584) : CSS, D. 712-39 et D. 713-16 ; décret 67-850, art. 3", jorf: "JORFTEXT000000693584"}
     - {depuis: "1996-03-01", taux: 0.0305, texte: "Décret 96-155 du 28/02/1996, art. 1 et 2 (JORFTEXT000000557800)", jorf: "JORFTEXT000000557800"}
     - {depuis: "1997-01-01", taux: 0.028, texte: "Décret 96-1151 du 26/12/1996, art. 10 : CSS, D. 712-39 (LEGIARTI000006739102) ; décret 67-850, art. 3 (LEGIARTI000006770632)", jorf: "JORFTEXT000000381201"}
@@ -236,6 +256,8 @@ salaires:
     - {depuis: "1979-01-01", tout_salaire: 0, sous_plafond: 0.01, au_dela_du_plafond: 0.035, texte: "Décret 78-1213 du 26/12/1978", jorf: "JORFTEXT000000328707"}
     - {depuis: "1979-08-01", tout_salaire: 0, sous_plafond: 0.01, au_dela_du_plafond: 0.045, texte: "Décret 79-650 du 30/07/1979", jorf: "JORFTEXT000000518706"}
     - {depuis: "1980-01-01", tout_salaire: 0.055, sous_plafond: 0, au_dela_du_plafond: 0, texte: "Décret 79-650 du 30/07/1979", jorf: "JORFTEXT000000518706"}
+    - {depuis: "1981-02-01", tout_salaire: 0.045, sous_plafond: 0, au_dela_du_plafond: 0, texte: "Décret 79-650 du 30/07/1979 : la majoration exceptionnelle prend fin au 31 janvier 1981 ; décret 67-803, art. 2 (LEGIARTI000006761083)", jorf: "JORFTEXT000000518706"}
+    - {depuis: "1981-11-14", tout_salaire: 0.055, sous_plafond: 0, au_dela_du_plafond: 0, texte: "Décret 81-1013 du 13/11/1981, art. 1 et 6 (JORFTEXT000000503485) : sur les gains versés dès sa publication (LEGIARTI000006762049)", jorf: "JORFTEXT000000503485"}
     - {depuis: "1987-07-01", tout_salaire: 0.059, sous_plafond: 0, au_dela_du_plafond: 0, texte: "Décret 87-453 du 29/06/1987", jorf: "JORFTEXT000000516870"}
     - {depuis: "1991-07-01", tout_salaire: 0.068, sous_plafond: 0, au_dela_du_plafond: 0, texte: "Décret 91-614 du 28/06/1991", jorf: "JORFTEXT000000719897"}
     - {depuis: "1997-01-01", tout_salaire: 0.055, sous_plafond: 0, au_dela_du_plafond: 0, texte: "Décret 96-1167 du 26/12/1996", jorf: "JORFTEXT000000197223"}
@@ -285,6 +307,7 @@ salaires:
     - {depuis: "1979-01-01", tout_salaire: 0.035, sous_plafond: 0.0025, texte: "Décret 78-1215 du 26/12/1978", jorf: "JORFTEXT000000697278"}
     - {depuis: "1980-01-01", tout_salaire: 0.0375, sous_plafond: 0, texte: "Décret 78-1215 du 26/12/1978", jorf: "JORFTEXT000000697278"}
     - {depuis: "1981-11-01", tout_salaire: 0.0475, sous_plafond: 0, texte: "Décret 81-1015 du 13/11/1981", jorf: "JORFTEXT000000680650"}
+    - {depuis: "1987-07-01", tout_salaire: 0.0515, sous_plafond: 0, texte: "Décret 87-470 du 30/06/1987, art. 1 (JORFTEXT000000332799) : à titre exceptionnel, jusqu'au 30 juin 1988 (LEGIARTI000006770219)", jorf: "JORFTEXT000000332799"}
     - {depuis: "1988-07-01", tout_salaire: 0.0515, sous_plafond: 0, texte: "Décret 88-795 du 22/06/1988, art. 1", jorf: "JORFTEXT000000693584"}
     - {depuis: "1991-07-01", tout_salaire: 0.0605, sous_plafond: 0, texte: "Décret 91-615 du 28/06/1991, art. 1", jorf: "JORFTEXT000000719893"}
     - {depuis: "1997-01-01", tout_salaire: 0.0475, sous_plafond: 0, texte: "Décret 96-1151 du 26/12/1996, art. 6", jorf: "JORFTEXT000000381201"}
@@ -296,8 +319,9 @@ salaires:
     - {depuis: "1979-01-01", tout_salaire: 0.035, sous_plafond: 0.0025, texte: "Décret 78-1215 du 26/12/1978", jorf: "JORFTEXT000000697278"}
     - {depuis: "1980-01-01", tout_salaire: 0.0375, sous_plafond: 0, texte: "Décret 78-1215 du 26/12/1978", jorf: "JORFTEXT000000697278"}
     - {depuis: "1981-11-01", tout_salaire: 0.0475, sous_plafond: 0, texte: "Décret 81-1015 du 13/11/1981", jorf: "JORFTEXT000000680650"}
+    - {depuis: "1987-07-01", tout_salaire: 0.0515, sous_plafond: 0, texte: "Décret 87-470 du 30/06/1987, art. 6 (JORFTEXT000000332799) : à titre exceptionnel, jusqu'au 30 juin 1988 (LEGIARTI000006770225)", jorf: "JORFTEXT000000332799"}
     - {depuis: "1988-07-01", tout_salaire: 0.0515, sous_plafond: 0, texte: "Décret 88-795 du 22/06/1988, art. 4", jorf: "JORFTEXT000000693584"}
-    - {depuis: "1991-01-01", tout_salaire: 0.0605, sous_plafond: 0, texte: "Décret 91-615 du 28/06/1991, art. 4", jorf: "JORFTEXT000000719893"}
+    - {depuis: "1991-07-01", tout_salaire: 0.0605, sous_plafond: 0, texte: "Décret 91-615 du 28/06/1991, art. 4 et 5 (JORFTEXT000000719893) : aux traitements versés à compter du 1er juillet 1991 (JORFARTI000001566429)", jorf: "JORFTEXT000000719893"}
     - {depuis: "1997-01-01", tout_salaire: 0.0475, sous_plafond: 0, texte: "Décret 96-1151 du 26/12/1996, art. 8", jorf: "JORFTEXT000000381201"}
     - {depuis: "1998-01-01", tout_salaire: 0, sous_plafond: 0, texte: "Décret 97-1249 du 29/12/1997, art. 8", jorf: "JORFTEXT000000753405"}
   solidarite_public:

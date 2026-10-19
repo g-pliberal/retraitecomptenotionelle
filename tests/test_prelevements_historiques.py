@@ -105,6 +105,45 @@ def test_les_marches_connues_y_sont(historique):
     assert salaires["solidarite_public"].valeur(dt.date(2010, 6, 1)) == pytest.approx(0.01)
 
 
+def test_la_maladie_du_salarie_de_1981_suit_le_point_exceptionnel(historique):
+    """Le point exceptionnel du décret n° 79-650 porte la maladie du salarié à
+    5,5 % jusqu'au 31 janvier 1981 ; l'article 2 du décret n° 67-803 la ramène à
+    4,5 % ; le décret n° 81-1013 la refixe à 5,5 % des gains versés dès sa
+    publication, le 14 novembre 1981 (articles 1er et 6). L'IPP tenait 5,5 % de
+    1980 à 1987."""
+    maladie = historique.salaires["maladie_prive"]
+    for jour, taux in ((dt.date(1981, 1, 31), 0.055), (dt.date(1981, 2, 1), 0.045),
+                       (dt.date(1981, 11, 13), 0.045), (dt.date(1981, 11, 14), 0.055)):
+        assert maladie.valeur(jour, "tout_salaire") == pytest.approx(taux), jour
+
+
+def test_la_maladie_de_la_fonction_publique_relevee_en_1987(historique):
+    """Le décret n° 87-470 relève à titre exceptionnel, du 1er juillet 1987 au
+    30 juin 1988, la maladie des agents de l'État et des collectivités à 5,15 %
+    (articles 1er et 6), celle des pensions civiles, militaires et des ouvriers
+    de l'État à 2,65 % (articles 7 à 9) ; le décret n° 88-795 tient ces taux
+    depuis. L'IPP et la série lue aux textes sautaient cette première année."""
+    avant, apres = dt.date(1987, 6, 30), dt.date(1987, 7, 1)
+    pension = historique.pensions["maladie_fonction_publique"]
+    assert pension.valeur(avant) == pytest.approx(0.0225)
+    assert pension.valeur(apres) == pytest.approx(0.0265)
+    for serie in ("maladie_etat", "maladie_collectivites"):
+        salaire = historique.salaires[serie]
+        assert salaire.valeur(avant, "tout_salaire") == pytest.approx(0.0475), serie
+        assert salaire.valeur(apres, "tout_salaire") == pytest.approx(0.0515), serie
+
+
+def test_la_maladie_des_agents_de_1991_suit_les_traitements_de_juillet(historique):
+    """Le décret n° 91-615 porte la maladie des agents de l'État (article 3) et
+    des collectivités (article 4) à 6,05 % des traitements versés à compter du
+    1er juillet 1991 (article 5) ; l'IPP datait celle des collectivités du
+    1er janvier."""
+    for serie in ("maladie_etat", "maladie_collectivites"):
+        salaire = historique.salaires[serie]
+        assert salaire.valeur(dt.date(1991, 6, 30), "tout_salaire") == pytest.approx(0.0515), serie
+        assert salaire.valeur(dt.date(1991, 7, 1), "tout_salaire") == pytest.approx(0.0605), serie
+
+
 def test_la_maladie_d_avant_1967_tient_les_taux_de_1967(historique):
     """Les barèmes de l'IPP prennent la maladie en 1967 ; elle existait
     avant : ses premiers taux valent en deçà, et la donnée le dit. La CSG,
@@ -519,8 +558,45 @@ def test_chaque_marche_dit_son_ancrage_au_journal_officiel():
     assert contenu["pensions"]["maladie_regime_general"][0]["jorf"] == "JORFTEXT000000328902"
     solidarite = {m["depuis"]: m for m in contenu["salaires"]["solidarite_public"]}
     assert "2012-07-06" in solidarite["2012-07-01"]["ancrage"]
-    fonction_publique = contenu["pensions"]["maladie_fonction_publique"]
-    assert fonction_publique[1]["jorf"] == "JORFTEXT000000693584"
+    fonction_publique = {m["depuis"]: m for m in contenu["pensions"]["maladie_fonction_publique"]}
+    assert fonction_publique["1988-07-01"]["jorf"] == "JORFTEXT000000693584"
+
+
+def _decrets():
+    """La garde des décrets qu'aucune marche ne rejoint."""
+    sys.path.insert(0, str(RACINE_PROJET / "scripts" / "fetch"))
+    import decrets_des_prelevements
+
+    return decrets_des_prelevements
+
+
+def test_chaque_decret_des_taux_rejoint_une_marche_ou_dit_pourquoi():
+    """Chaque décret du Journal officiel que la requête de la garde ramène
+    depuis 1967 — son titre annonce les taux d'une cotisation maladie, de
+    veuvage, d'allocations familiales, des pensionnés ou des retraités — est
+    cité par une marche, ou dit ce qu'il fait à l'histoire : rien, le plus
+    souvent, ou ce qu'elle ne porte pas encore. Comme ``ipp_taux_cotisation.py``
+    pour la vieillesse, quand l'index JORF est là (``python
+    scripts/fetch/dila_index.py jorf --recuperer``). Aucun décret n'est déclaré
+    que la requête ne ramène pas, ou qu'une marche cite."""
+    chemin = RACINE_DONNEES / "brut" / "dila" / "jorf.sqlite"
+    if not chemin.exists():
+        pytest.skip("l'index JORF n'est pas là")
+    decrets = _decrets()
+    contenu = charger_yaml(RACINE_DONNEES / CHEMIN)
+    marches = [marche for partie in ("pensions", "salaires", "independants")
+               for serie in contenu[partie].values() for marche in serie]
+    base = sqlite3.connect(f"file:{chemin}?mode=ro", uri=True)
+    try:
+        assert decrets.decrets_ignores(base, marches) == []
+        ramenes = {decrets.cle(ident, titre) for ident, _, titre in decrets.candidats(base)}
+        cites = decrets.numeros_cites(base, marches)
+    finally:
+        base.close()
+    sans_effet, en_suspens = set(decrets.DECRETS_SANS_EFFET), set(decrets.DECRETS_EN_SUSPENS)
+    assert not sans_effet & en_suspens
+    assert sans_effet | en_suspens <= ramenes
+    assert not (sans_effet | en_suspens) & cites
 
 
 def test_une_pension_nette_suit_les_prelevements_de_chaque_annee(simulateur):

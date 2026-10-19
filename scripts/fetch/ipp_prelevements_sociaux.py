@@ -73,10 +73,17 @@ absent), à son numéro et à cette date, et écrit dans la marche ce qu'il trou
 quand ce n'est pas celle de l'IPP. Une marche lue aux textes est liée au texte
 qu'elle cite.
 
+LES DÉCRETS QU'AUCUNE MARCHE NE REJOINT, comme ``ipp_taux_cotisation.py`` pour
+la vieillesse : ``decrets_des_prelevements.py`` les cherche dans l'index JORF,
+et le script imprime ceux qu'aucune de ses deux listes n'explique. Elle a vu
+deux marches qui manquaient à l'IPP, dans les salaires (``CORRECTIONS``) : la
+maladie du salarié du privé de février à novembre 1981, celle des agents
+publics de juillet 1987 à juin 1988 ; en chemin, une date qu'il avance de six
+mois, celle des collectivités en 1991.
+
 Ce qu'il ne fait pas. L'IPP est une transcription, non une source productrice :
 la donnée plafonne à ``haute``, et l'ancrage n'y change rien : il vérifie la
-chronologie, non la valeur. Il ne cherche pas, comme ``ipp_taux_cotisation.py``,
-les décrets du Journal officiel qu'aucune marche ne rejoint.
+chronologie, non la valeur.
 """
 
 from __future__ import annotations
@@ -93,6 +100,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+from decrets_des_prelevements import decrets_ignores  # noqa: E402
 from dila_index import chemin_index, meta, recuperer  # noqa: E402
 from maladie_des_pensions import (  # noqa: E402
     PENSIONS_LUES_AUX_TEXTES,
@@ -341,6 +349,38 @@ CORRECTIONS["maladie_independants"] = [{"ipp": "1986-01-01", "lue": None}]
 #: agricoles, les régimes spéciaux —, lue aux textes, et les régimes dont chaque
 #: série prélève la part : ``maladie_des_pensions.py``.
 
+#: LES SALAIRES, deux décrets qu'aucune marche de l'IPP ne rejoignait
+#: (``decrets_des_prelevements.py``). La maladie du salarié du privé revient à
+#: 4,5 % au 1er février 1981, quand prend fin la majoration exceptionnelle du
+#: décret n° 79-650 (« du 01-01-1980 au 31-01-1981 », son titre), et le décret
+#: n° 81-1013 la refixe à 5,5 % des gains versés dès sa publication : l'IPP tient
+#: 5,5 % de 1980 à 1987. Le décret n° 87-470 relève à 5,15 %, à titre
+#: exceptionnel, la maladie des agents de l'État et des collectivités au
+#: 1er juillet 1987, un an avant le décret n° 88-795, que l'IPP cite. Et une date :
+#: le décret n° 91-615 porte celle des collectivités à 6,05 % des traitements
+#: versés à compter du 1er juillet 1991 (article 5), que l'IPP met au 1er janvier.
+CORRECTIONS["maladie_prive"] = [
+    {"ipp": None, "lue": {"depuis": "1981-02-01", "tout_salaire": 0.045},
+     "texte": "Décret 79-650 du 30/07/1979 : la majoration exceptionnelle prend fin au "
+              "31 janvier 1981 ; décret 67-803, art. 2 (LEGIARTI000006761083)"},
+    {"ipp": None, "lue": {"depuis": "1981-11-14", "tout_salaire": 0.055},
+     "texte": "Décret 81-1013 du 13/11/1981, art. 1 et 6 (JORFTEXT000000503485) : sur les "
+              "gains versés dès sa publication (LEGIARTI000006762049)"},
+]
+CORRECTIONS["maladie_etat"] = [
+    {"ipp": None, "lue": {"depuis": "1987-07-01", "tout_salaire": 0.0515},
+     "texte": "Décret 87-470 du 30/06/1987, art. 1 (JORFTEXT000000332799) : à titre "
+              "exceptionnel, jusqu'au 30 juin 1988 (LEGIARTI000006770219)"},
+]
+CORRECTIONS["maladie_collectivites"] = [
+    {"ipp": None, "lue": {"depuis": "1987-07-01", "tout_salaire": 0.0515},
+     "texte": "Décret 87-470 du 30/06/1987, art. 6 (JORFTEXT000000332799) : à titre "
+              "exceptionnel, jusqu'au 30 juin 1988 (LEGIARTI000006770225)"},
+    {"ipp": "1991-01-01", "lue": {"depuis": "1991-07-01", "tout_salaire": 0.0605},
+     "texte": "Décret 91-615 du 28/06/1991, art. 4 et 5 (JORFTEXT000000719893) : aux "
+              "traitements versés à compter du 1er juillet 1991 (JORFARTI000001566429)"},
+]
+
 #: LA CSG DÉDUCTIBLE (action 138, étape 5, deuxième partie) : la part de la CSG
 #: que le revenu imposable déduit (CGI, art. 154 quinquies). La colonne
 #: ``deductible`` de l'IPP doit rendre, à chaque date, le taux que les textes
@@ -501,7 +541,8 @@ def corriger(nom: str, lues: list[dict]) -> list[dict]:
             continue
         avant = [m for depuis, m in sorted(par_date.items()) if depuis <= lue["depuis"]]
         precedente = {k: v for k, v in (avant[-1] if avant else {}).items() if not _hors_taux(k)}
-        par_date[lue["depuis"]] = {**precedente, **lue, "texte": correction["texte"]}
+        par_date[lue["depuis"]] = {"depuis": lue["depuis"], **precedente, **lue,
+                                   "texte": correction["texte"]}
     return [par_date[depuis] for depuis in sorted(par_date)]
 
 
@@ -793,13 +834,32 @@ ENTETE = """\
 # 0,25 % pour l'année 2000 (D. 612-9) ; l'invalidité-décès n'y est pas, et garde
 # les taux de l'année courante.
 #
+# LES SALAIRES, CE QUE LES TEXTES DISENT AUTREMENT QUE L'IPP. La maladie du
+# salarié du privé revient à 4,5 % au 1er février 1981, quand prend fin la
+# majoration exceptionnelle du décret n° 79-650, et le décret n° 81-1013 la
+# refixe à 5,5 % au 14 novembre ; celle des agents de l'État et des
+# collectivités est relevée à 5,15 % au 1er juillet 1987, à titre exceptionnel
+# (décret n° 87-470), un an avant que le décret n° 88-795 ne tienne ce taux ;
+# celle des collectivités passe à 6,05 % au 1er juillet 1991, avec celle de
+# l'État, et non au 1er janvier (décret n° 91-615, article 5).
+#
+# LES DÉCRETS QU'AUCUNE MARCHE NE REJOINT. Chaque décret du Journal officiel
+# dont le titre annonce, depuis 1967, des taux de ces cotisations est cité par
+# une marche, ou dit ce qu'il fait à l'histoire : rien, le plus souvent — une
+# autre population, un autre risque, la part de l'employeur —, ou ce qu'elle ne
+# porte pas encore (`scripts/fetch/decrets_des_prelevements.py`). Les salaires
+# sont ceux du privé et des agents publics : l'agent d'un régime spécial et le
+# militaire y prennent les taux du salarié du privé ou du fonctionnaire, comme
+# sur la fiche de paie du site.
+#
 # LA MALADIE DES PENSIONS DES AUTRES RÉGIMES DE BASE, que la branche du régime
 # général de l'IPP n'écrit pas. Celle des retraités indépendants est dans sa
 # branche des indépendants : le dépôt la prend, sans le 3,1 % du 1er janvier
 # 1986, qu'aucun texte ne porte. Les salariés agricoles paient celle du régime
 # général, taux pour taux. Les autres sont lues aux textes, dans les index JORF
 # et LEGI (`scripts/fetch/maladie_des_pensions.py`, qui dit ce qu'il n'a pas pu
-# lire) : la fonction publique depuis 1976 ; les exploitants agricoles depuis
+# lire) : la fonction publique depuis 1976, relevée à titre exceptionnel au
+# 1er juillet 1987 (décret n° 87-470) ; les exploitants agricoles depuis
 # 1990, sur leur pension de base ; les régimes spéciaux placés sous le régime
 # général pour la maladie (Opéra, Comédie-Française, chemins de fer
 # secondaires), les IEG et les clercs de notaires depuis 1980 ; la SNCF, la
@@ -850,6 +910,8 @@ def main(argv: list[str] | None = None) -> int:
         series[cle] = marches(telecharges[parametre], colonnes)
         if cle[0] == "independants":
             series[cle] = independant(cle[1], series[cle])
+        elif cle[0] == "salaires":
+            series[cle] = corriger(cle[1], series[cle])
     retraites = corriger("maladie_independants", series[("pensions", "maladie_independants")])
     series[("pensions", "maladie_independants")] = _sans_redite(
         [pension_sous_le_plafond(marche) for marche in retraites])
@@ -861,6 +923,10 @@ def main(argv: list[str] | None = None) -> int:
     compte = ancrer_series(jorf, series)
     ancrage = {**compte, "index": meta(jorf, "dernier_increment") or "?"}
     print(f"Ancrage : {compte['ancrees']} des {compte['ipp']} marches de l'IPP au Journal officiel")
+    ignores = decrets_ignores(jorf, [marche for lues in series.values() for marche in lues])
+    print(f"Décrets qu'aucune marche ne rejoint ni aucune liste n'explique : {len(ignores)}")
+    for ligne in ignores:
+        print(f"        {ligne}")
     texte = ecrire(series, dt.date.today().isoformat(), ancrage)
     if arguments.lister:
         print(texte)

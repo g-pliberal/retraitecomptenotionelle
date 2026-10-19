@@ -53,13 +53,34 @@ PENSIONS_LUES_AUX_TEXTES: dict[str, list[dict]] = {}
 
 #: LA FONCTION PUBLIQUE — État, militaires, ouvriers de l'État, collectivités
 #: locales —, précomptée dans la limite du plafond : D. 712-39, D. 713-16 et
-#: l'article 3 du décret n° 67-850, que LEGI date du 30 septembre 1976. Avant
-#: le décret n° 76-896, son taux n'est pas lu, et le plafond n'est pas appliqué.
+#: l'article 3 du décret n° 67-850, que LEGI date du 30 septembre 1976, comme
+#: celui du décret n° 67-851 pour les militaires. Avant les décrets n° 76-896 et
+#: 76-897, son taux n'est pas lu, et le plafond n'est pas appliqué. Le décret
+#: n° 87-470 la relève à titre exceptionnel du 1er juillet 1987 au 30 juin 1988,
+#: au taux que le décret n° 88-795 tient depuis.
 PENSIONS_LUES_AUX_TEXTES["maladie_fonction_publique"] = [
     {"depuis": "1976-10-01", "taux": 0.0225,
      "texte": "Décret 76-896 du 29/09/1976 (JORFTEXT000000861798) : décret 67-850 du "
-              "30/09/1967, art. 3 (LEGIARTI000006770629)",
-     "lu": (("LEGIARTI000006770629", "ou à leurs familles, est fixé à 2,25 p. 100"),)},
+              "30/09/1967, art. 3 (LEGIARTI000006770629) ; pour les militaires, décret 76-897 du "
+              "29/09/1976 : décret 67-851 du 30/09/1967, art. 3 (LEGIARTI000006766149)",
+     "lu": (("LEGIARTI000006770629", "ou à leurs familles, est fixé à 2,25 p. 100"),
+            ("LEGIARTI000006766149", "servies aux retraités militaires ou à leurs familles dans "
+                                     "la limite du plafond prévu à l'article 2 ci-dessus est fixé "
+                                     "à 2,25 %"))},
+    {"depuis": "1987-07-01", "taux": 0.0265,
+     "texte": "Décret 87-470 du 30/06/1987, art. 7 à 9 (JORFTEXT000000332799) : à titre "
+              "exceptionnel, jusqu'au 30 juin 1988",
+     "lu": (("LEGIARTI000006770226", "versées aux fonctionnaires de l'Etat ou à leur famille, à "
+                                     "compter du 1er juillet 1987 et jusqu'au 30 juin 1988, est "
+                                     "fixé à 2,65 p. 100"),
+            ("LEGIARTI000006770227", "servies aux retraités militaires ou à leur famille dans la "
+                                     "limite du plafond mentionné à l'article L. 241-3 dudit code, "
+                                     "à compter du 1er juillet 1987 et jusqu'au 30 juin 1988, est "
+                                     "fixé à 2,65 p. 100"),
+            ("LEGIARTI000006770228", "aux ouvriers de l'Etat et aux agents des collectivités "
+                                     "locales et de leurs établissements publics n'ayant pas le "
+                                     "caractère industriel ou commercial, ou à leur famille, est "
+                                     "fixé à 2,65 p. 100"))},
     {"depuis": "1988-07-01", "taux": 0.0265,
      "texte": "Décret 88-795 du 22/06/1988 (JORFTEXT000000693584) : CSS, D. 712-39 et D. 713-16 ; "
               "décret 67-850, art. 3",
