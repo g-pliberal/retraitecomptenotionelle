@@ -38,11 +38,11 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 
 | Statut | Rédactions |
 |---|---|
-| rattachées à une version | 1 321 |
+| rattachées à une version | 1 323 |
 | sans effet | 57 |
 | à rattacher | 504 |
 | à examiner | 4 195 |
-| sans statut | 9 639 |
+| sans statut | 9 637 |
 
 **La personne** (§ 5) : une chronologie de faits datés, dans un réseau de personnes — aujourd'hui l'assuré, ses enfants et son conjoint —, que le relevé et le parcours déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : 27 présomptions au vocabulaire, dont 3 posent leur fait dans la chronologie ; les autres s'appliquent dans le code, jusqu'à l'étape qui posera le leur.
 
@@ -341,8 +341,8 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu
   - 162. Le test d'abord : le développement piloté par les tests, sur tout le dépôt
   - 163. Ce que la revue de code d'Anthropic apprend au dépôt : le site en ligne au vert, les rouges classés, puis un relecteur
-- **Les sources à exploiter** : 16 à explorer sur 324 (122 explorées, 186 épuisées). 0 d'entre elles visent un régime partiel, et pourraient le compléter :
-  - et 12 sources sans régime désigné.
+- **Les sources à exploiter** : 7 à explorer sur 324 (122 explorées, 186 épuisées). 0 d'entre elles visent un régime partiel, et pourraient le compléter :
+  - et 3 sources sans régime désigné.
 - **Les autres modèles** (§ 3.4) : 70 au registre (`data/reference/referents.yaml`) : 32 au code ouvert, 1 sur demande, 13 documenté(s) sans leur code, 24 non public(s). 15 ont déjà été confrontés au dépôt ou lui donnent des valeurs (Barèmes IPP, OpenFisca-France, OpenFisca-France-Pension, Destinie 2, Ines, TRAJECTOiRE, ANCETRE, legiretraite (paquet R), Maquette globale de projection du COR, Maquette simplifiée du secrétariat général du COR, PRISME (Projection des Retraites, Simulations, Modélisation et Évaluations), modele-ti, modele-social, Les modèles de pension de l'OCDE, Ageing Report et ses fiches pays), et 213 écarts y ont été trouvés. 13 sont à confronter au scénario 1 en premier, parce que leur code est ouvert, qu'ils ne l'ont jamais été et qu'ils ne dépendent d'aucune autre source du registre ; dans l'ordre du registre, qui range les administrations d'abord : `edifis`, `saphir`, `modele_as`, `catala`, `ir_catala`, `euromod`, et 7 autres.
 - **Ce que les autres modèles font mieux** (action 138) : 288 points, lus chez 66 modèles : 57 à reprendre, 47 à trancher par le propriétaire (des choix du programme), 137 repris, 10 écartés, 37 coupés (léger ou nul, déclaré sans être fait). Les points à reprendre, par chantier de la feuille de route : 138.2 (1), 138.3 (10), 138.5 (5), 138.7 (3), 138.8 (1), 138.10 (8), 138.11 (1), 138.12 (1), 138.14 (13), 138.18 (5), 138.19 (2), 155.1 (1), 155.2 (1), 155.3 (3), 156.1 (1), 157.1 (1).
 - **Les fiches sans exemple officiel** : 186.
@@ -361,7 +361,7 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   | `code` | 57 |
   | `approximations` | 28 |
 
-- **Les textes** : 504 rédactions à rattacher à une version de la fiche qui les cite, 4 195 à examiner, et 9 639 sans statut, que le cliquet tient à 9 639 au plus. Les textes qui en ont le plus : `css` 5 000, `decret_46_2769` 938, `rural` 888, `cpcmr` 574, `decret_90_1215` 325 (`python scripts/textes.py`).
+- **Les textes** : 504 rédactions à rattacher à une version de la fiche qui les cite, 4 195 à examiner, et 9 637 sans statut, que le cliquet tient à 9 637 au plus. Les textes qui en ont le plus : `css` 5 000, `decret_46_2769` 938, `rural` 886, `cpcmr` 574, `decret_90_1215` 325 (`python scripts/textes.py`).
 - **Les relectures prévues les plus proches** : 2026-10-31 (`agirc_arrco_valeur_achat`) ; 2026-11-15 (`agirc_arrco_valeur_service`) ; 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`carriere_longue`).
 - **Les régimes hors champ** : 23, chacun avec sa raison dans l'inventaire.
 
