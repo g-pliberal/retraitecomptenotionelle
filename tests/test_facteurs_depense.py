@@ -25,11 +25,14 @@ Ce module tient trois choses :
   du modèle, qui reculent plus tard, le plus ; puis les 65 ans et plus et la
   suspension de 2026 (notes du 16 et du 17 octobre 2026). Ceux-là reculent
   plus tard surtout parce que la grille fait partir les cohortes de 1966 et
-  1967 aux conditions de la génération 1965 (note du 18 octobre 2026).
+  1967 aux conditions de la génération 1965 (note du 18 octobre 2026) ; ce
+  qui en restait, parce qu'elle les fait entrer dans l'emploi au même âge à
+  chaque génération (note du 19 octobre 2026, « l'entrée dans l'emploi »).
 """
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import math
 from functools import lru_cache
@@ -317,6 +320,143 @@ def test_chaque_cohorte_se_compte_des_l_annee_de_son_depart():
     assert compte(2025) == 0.0
 
 
+def test_nee_toute_l_annee_une_cohorte_n_a_que_ses_partis_l_annee_de_son_depart():
+    """La grille fait naître ses cas types en janvier : partie en octobre, une
+    cohorte se compte toute au 31 décembre. Née toute l'année, au même âge,
+    elle n'a encore que ses natifs de janvier à mars de partis, le quart, et
+    toute l'année suivante ; partie en février, les onze douzièmes, son natif
+    de décembre partant en janvier. ``mois`` dit le mois du départ de chaque
+    cohorte, née en janvier ; celle qu'il ne nomme pas se compte toute."""
+    from types import SimpleNamespace
+
+    from retraite_notionnelle.facteurs_depense import compter_retraites, depart_de_la_grille
+
+    propres = {-2: 2026, -1: 2027, 0: 2028, 1: 2030, 2: 2031}
+    pensionnes = [SimpleNamespace(code="a", generation=1965, liquidation=propres.get)]
+    population = SimpleNamespace(effectif=lambda age, annee: 1000.0 + age)
+    mois = {("a", 1965, 1): 10, ("a", 1965, 2): 2}
+
+    def compte(annee: int, age: int = 0) -> float:
+        return compter_retraites(pensionnes, population, annee, {"a": 1.0},
+                                 depart_de_la_grille, age, mois=mois)
+
+    # En 2030, la cohorte de 1966 a 64 ans et part en octobre ; celle de 1967,
+    # en février 2031, à 64 ans.
+    assert compte(2030) == pytest.approx(1067 + 1066 + 1065 + 1064 * 3 / 12)
+    assert compte(2031) == pytest.approx(1068 + 1067 + 1066 + 1065 + 1064 * 11 / 12)
+    assert compte(2031, 65) == pytest.approx(1068 + 1067 + 1066 + 1065)
+    assert compte(2028) == pytest.approx(1065 + 1064 + 1063)
+
+
+def test_l_entree_dans_l_emploi_recule_d_un_an_de_la_generation_1960_a_1966():
+    """La grille fait entrer ses cas types au même âge à chaque génération
+    (limite n° 2 de ``cout.py``) ; l'échantillon interrégimes de cotisants de
+    2017 voit les générations entrer plus tard (``macro/premier_trimestre.csv``,
+    ses affiliés d'avant 23 ans). Né en 1960, un homme sur deux avait cotisé un
+    trimestre à 17 ans et 10 mois : 42,7 % à la fin de l'année de ses 17 ans,
+    atteinte en moyenne à 17 ans et demi, 63,8 % à celle de ses 18 ans ; né en
+    1966, à 18 ans et 10 mois (45,6 et 59,3 % à 18 et 19 ans) : un an plus
+    tard, au trimestre près ; une femme née en 1966, à 19 ans et demi (33,2 et
+    50,1 %). Une génération que l'EIC ne suit pas lit ses deux voisines, 1967
+    entre 1966 et 1968 (19,22 ans) ; une génération d'avant la première, la
+    première."""
+    from retraite_notionnelle.config import RACINE_DONNEES
+    from retraite_notionnelle.facteurs_depense import (
+        ages_medians_du_premier_trimestre,
+        decalage_d_entree,
+    )
+
+    medianes = ages_medians_du_premier_trimestre(RACINE_DONNEES)
+    assert medianes[("H", 1960)] == pytest.approx(17.5 + 7.3 / 21.1)
+    assert medianes[("H", 1966)] == pytest.approx(18.5 + 4.4 / 13.7)
+    assert medianes[("F", 1966)] == pytest.approx(18.5 + 16.8 / 16.9)
+    assert decalage_d_entree(medianes, "H", 1960, 1960) == 0.0
+    assert decalage_d_entree(medianes, "H", 1966, 1960) == 1.0
+    assert decalage_d_entree(medianes, "H", 1967, 1960) == 1.25
+    assert (decalage_d_entree(medianes, "F", 1930, 1960)
+            == decalage_d_entree(medianes, "F", 1942, 1960))
+
+
+def test_entre_plus_tard_le_salarie_part_plus_tard_et_le_militaire_a_son_heure():
+    """Entré à 21 ans, le salarié au salaire moyen né en janvier 1966 doit 172
+    trimestres (L. 161-17-3), 43 ans : il part à 64 ans, en février 2030, la
+    cohorte de 1966 que la génération 1965 de la grille représente. Entré un an
+    plus tard, comme sa génération après celle de 1960, il part à 65 ans, en
+    février 2031. Le militaire, qui part après ses services et non au taux
+    plein, garde sa date."""
+    from retraite_notionnelle import Parametres
+    from retraite_notionnelle.calendrier import DateMois
+    from retraite_notionnelle.castypes import GRILLE_DU_COUT
+    from retraite_notionnelle.facteurs_depense import dates_des_departs
+
+    cas = tuple(c for c in GRILLE_DU_COUT if c.code in ("salaire_moyen", "militaire"))
+    parametres = Parametres(scenario_projection="cor_reference")
+    grille = dates_des_departs(parametres, cas_types=cas, generations=(1965,))
+    entree = dates_des_departs(parametres, entree_depuis=1960, cas_types=cas,
+                               generations=(1965,))
+    assert grille[("salaire_moyen", 1965, 1)] == DateMois(2030, 2)
+    assert entree[("salaire_moyen", 1965, 1)] == DateMois(2031, 2)
+    assert all(entree[("militaire", 1965, decalage)] == grille[("militaire", 1965, decalage)]
+               for decalage in range(-2, 3))
+
+
+def _script():
+    spec = importlib.util.spec_from_file_location(
+        "script_facteurs_depense", RACINE / "scripts" / "facteurs_depense.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_le_departage_compte_les_naissances_de_l_annee_avant_ce_qui_reste():
+    """``--naissances`` ajoute la réforme entière aux cohortes nées toute
+    l'année (``retraites_par_age(..., nes_toute_l_annee=True)``) : le
+    départage de 2022-2030 la place après la suspension, et ce qui reste se
+    compte depuis elle ; l'écart, lui, ne change pas."""
+    script = _script()
+
+    def part(agees: float, jeunes: float) -> dict:
+        return {"2022-2030": {"vieillesse": agees, "precoce": jeunes,
+                              "couverture": agees + jeunes}}
+
+    stables = "et 48 % stables, mesurés"
+    parts = {"Ageing Report 2024": part(-0.22, -1.16), "modèle": part(-0.08, -0.92),
+             stables: part(-0.07, -1.02), script.SANS_SUSPENSION: part(-0.14, -1.02)}
+    sans_naissances = script.departage(parts, stables)
+    parts[script.NES_TOUTE_L_ANNEE] = part(-0.17, -0.99)
+    ecarts = script.departage(parts, stables)
+    assert list(ecarts) == ["le périmètre", "la suspension", "les naissances de l'année",
+                            "ce qui reste", "l'écart"]
+    assert ecarts["les naissances de l'année"]["vieillesse"] == pytest.approx(0.03)
+    assert ecarts["les naissances de l'année"]["precoce"] == pytest.approx(-0.03)
+    assert ecarts["ce qui reste"]["vieillesse"] == pytest.approx(0.05)
+    assert ecarts["ce qui reste"]["precoce"] == pytest.approx(0.17)
+    assert ecarts["l'écart"] == sans_naissances["l'écart"]
+
+
+def test_le_departage_compte_l_entree_dans_l_emploi_apres_les_naissances():
+    """``--entree`` fait en outre entrer chaque génération dans l'emploi à son
+    âge, celui que l'EIC lui donne : le départage la place après les
+    naissances, et ce qui reste se compte depuis elle."""
+    script = _script()
+
+    def part(agees: float, jeunes: float) -> dict:
+        return {"2022-2030": {"vieillesse": agees, "precoce": jeunes,
+                              "couverture": agees + jeunes}}
+
+    stables = "et 48 % stables, mesurés"
+    parts = {"Ageing Report 2024": part(-0.22, -1.16), "modèle": part(-0.08, -0.92),
+             stables: part(-0.07, -1.02), script.SANS_SUSPENSION: part(-0.14, -1.02),
+             script.NES_TOUTE_L_ANNEE: part(-0.17, -0.99),
+             script.ENTREE_SELON_LA_GENERATION: part(-0.28, -1.15)}
+    ecarts = script.departage(parts, stables)
+    assert list(ecarts) == ["le périmètre", "la suspension", "les naissances de l'année",
+                            "l'entrée dans l'emploi", "ce qui reste", "l'écart"]
+    assert ecarts["l'entrée dans l'emploi"]["vieillesse"] == pytest.approx(0.11)
+    assert ecarts["l'entrée dans l'emploi"]["precoce"] == pytest.approx(0.16)
+    assert ecarts["ce qui reste"]["couverture"] == pytest.approx(-0.06 + 0.01)
+
+
 def test_la_couverture_de_2022_2030_tient_au_perimetre_de_l_awg(awg):
     """De 2022 à 2030, la couverture du modèle recule de 0,84 point de PIB et
     celle de l'AWG de 1,38 (note du 16 octobre 2026) ; de 1,04 depuis que
@@ -443,3 +583,55 @@ def test_datee_a_sa_generation_chaque_cohorte_part_l_annee_de_son_droit(awg):
     publie = partager_couverture(part_pib, pensionnes, pensionnes_agees,
                                  population_65_awg)["precoce"]
     assert abs(datee[2030] - publie[2030]) < 0.2
+
+
+def test_entree_selon_sa_generation_la_grille_recule_comme_l_awg_avant_65_ans(awg):
+    """La grille fait entrer ses cas types au même âge à chaque génération,
+    quand l'EIC de 2017 voit celles de 1966 à 1970 entrer un an après celle de
+    1960 (test du recul de l'entrée) ; Destinie, le modèle de l'AWG pour la
+    France, fait partir plus tard ceux qui ont fini leurs études plus tard
+    (fiche France, § 3.3). Nées toute l'année, puis entrées selon leur
+    génération depuis 1960, les cohortes de la grille ont de 2022 à 2030 une
+    couverture qui, portée au périmètre de l'AWG, recule de plus de 0,15 point
+    de PIB de plus : ce qui restait de l'écart. Leurs moins de 65 ans reculent
+    alors comme ceux de l'AWG, à 0,1 point près, de 2022 à 2030 comme de 2030 à
+    2070 ; leurs 65 ans et plus, de 2030 à 2070, de plus de 0,1 point de plus :
+    la grille fait partir chacun au taux plein, au-delà de 65 ans quand il
+    entre plus tard (note du 19 octobre 2026, « l'entrée dans l'emploi »)."""
+    from retraite_notionnelle import Parametres
+    from retraite_notionnelle.facteurs_depense import JEUNES, STABLES, pensionnes_de_2022
+
+    parametres = Parametres(scenario_projection="cor_reference")
+    annees, _decomposition_ = _decomposition("cor_reference", "actuel")
+    population_65 = {annee: annees[annee].population_65 for annee in GRILLE_AWG}
+    part_pib, pensionnes, pensionnes_agees, population_65_awg = _couverture_de_l_awg(awg)
+    population_20_64 = {annee: awg["series"]["population_20_64"][annee] for annee in GRILLE_AWG}
+    mesures = pensionnes_de_2022(json.loads(
+        (RACINE / "tests" / "temoins" / "pensionnes_de_2022.json").read_text(encoding="utf-8")))
+    premiere = GRILLE_AWG[0]
+    stable = (sum(mesures[categorie][tranche] for categorie in STABLES for tranche in JEUNES)
+              / ((pensionnes[premiere] - pensionnes_agees[premiere]) * 1000))
+    vieux = pensionnes_agees[premiere] / population_65_awg[premiere]
+    plus_jeunes = pensionnes[premiere] / population_65_awg[premiere] - vieux
+
+    def portee(**options) -> dict:
+        par_age = retraites_par_age(parametres, GRILLE_AWG, nes_toute_l_annee=True, **options)
+        return partager_couverture(part_pib, *au_perimetre(
+            population_65_awg, vieux, plus_jeunes,
+            {annee: par_age[annee][0] for annee in GRILLE_AWG},
+            {annee: par_age[annee][1] for annee in GRILLE_AWG}, population_65,
+            stable=stable, population_stable=population_20_64),
+            population_65_awg)
+
+    def entre(serie: dict, debut: int, fin: int) -> float:
+        return serie[fin] - (serie[debut] if debut > premiere else 0.0)
+
+    nes, entres = portee(), portee(entree_depuis=1960)
+    publie = partager_couverture(part_pib, pensionnes, pensionnes_agees, population_65_awg)
+    assert (sum(nes[part][2030] for part in nes)
+            - sum(entres[part][2030] for part in entres)) > 0.15
+    for debut, fin in ((2022, 2030), (2030, 2070)):
+        assert abs(entre(entres["precoce"], debut, fin)
+                   - entre(publie["precoce"], debut, fin)) < 0.1, (debut, fin)
+    assert (entre(entres["vieillesse"], 2030, 2070)
+            < entre(publie["vieillesse"], 2030, 2070) - 0.1)

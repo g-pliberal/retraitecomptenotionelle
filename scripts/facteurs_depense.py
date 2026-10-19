@@ -4,6 +4,8 @@
     python scripts/facteurs_depense.py              # le système actuel contre l'AWG
     python scripts/facteurs_depense.py --systemes   # et les six systèmes
     python scripts/facteurs_depense.py --sans-suspension  # et la réforme de 2023 entière
+    python scripts/facteurs_depense.py --naissances  # et ses cohortes nées toute l'année
+    python scripts/facteurs_depense.py --entree      # et l'entrée selon la génération
     python scripts/facteurs_depense.py --json f.json
 
 Ce que l'Ageing Report de 2024 publie pour la France — la dépense de pensions
@@ -29,8 +31,17 @@ la grille y part l'année que le droit de sa génération lui donne
 (``cout.Pensionne.departs``). ``--sans-suspension`` refait le modèle sur une
 copie des données où la réforme de 2023 s'applique entière, sans la
 suspension de la loi de financement pour 2026 (``REFORME_2023_ENTIERE``) :
-l'univers de l'AWG, qui l'a précédée. Le dernier tableau départage l'écart de
-couverture de 2022-2030 entre le périmètre, la suspension et ce qui reste.
+l'univers de l'AWG, qui l'a précédée. ``--naissances`` y fait en outre naître
+chaque cohorte toute l'année, au même âge, et non en janvier comme la grille
+(``dates_des_departs``) : au 31 décembre de l'année de son départ, elle n'a que
+ses natifs des premiers mois de partis. ``--entree`` y fait de plus entrer
+chaque génération dans l'emploi à son âge, que l'échantillon interrégimes de
+cotisants de 2017 donne, quand la grille les fait toutes entrer au même : un
+cas type qui part au taux plein entre d'autant plus tard que la génération de
+référence que l'âge médian du premier trimestre cotisé de son sexe recule
+(``decalage_d_entree``). Le dernier tableau départage l'écart de couverture de
+2022-2030 entre le périmètre, la suspension, les naissances, l'entrée dans
+l'emploi et ce qui reste.
 """
 
 from __future__ import annotations
@@ -79,6 +90,13 @@ CATEGORIES = {"droit_direct": "droit direct", "reversion_seule": "réversion seu
 #: La colonne de la réforme de 2023 entière, au périmètre de l'AWG, la part
 #: stable mesurée (``--sans-suspension``).
 SANS_SUSPENSION = "sans la suspension, au périmètre"
+#: La même, ses cohortes nées toute l'année et non en janvier (``--naissances``).
+NES_TOUTE_L_ANNEE = "sans la suspension, nés toute l'année, au périmètre"
+#: La même encore, chaque génération entrée dans l'emploi à son âge (``--entree``).
+ENTREE_SELON_LA_GENERATION = "et l'entrée selon la génération"
+#: La génération dont la grille garde l'âge d'entrée, sous ``--entree`` : celle
+#: du milieu des retraités de moins de 65 ans de 2022, de 60 à 64 ans.
+ENTREE_DE_REFERENCE = 1960
 
 #: La réforme de 2023 entière, telle que l'AWG l'a projetée avant la
 #: suspension : l'âge d'ouverture et la durée requise des générations que la
@@ -200,11 +218,17 @@ def departage(parts: dict, stables: str, periode: str = "2022-2030") -> dict[str
     """L'écart de couverture du modèle à l'AWG sur ``periode``, en points de
     PIB, par âge et en tout, et ce qu'en font, colonne après colonne, le
     périmètre (la part stable mesurée comprise), puis la suspension, si la
-    colonne sans elle est là ; ce qui reste. Positif quand le modèle recule
-    moins."""
+    colonne sans elle est là, puis les naissances de toute l'année et l'entrée
+    dans l'emploi selon la génération, si les leurs y sont ; ce qui reste.
+    Positif quand le modèle recule moins."""
     etapes = [("le périmètre", "modèle", stables)]
     if SANS_SUSPENSION in parts:
         etapes.append(("la suspension", stables, SANS_SUSPENSION))
+        if NES_TOUTE_L_ANNEE in parts:
+            etapes.append(("les naissances de l'année", SANS_SUSPENSION, NES_TOUTE_L_ANNEE))
+            if ENTREE_SELON_LA_GENERATION in parts:
+                etapes.append(("l'entrée dans l'emploi", NES_TOUTE_L_ANNEE,
+                               ENTREE_SELON_LA_GENERATION))
     etapes += [("ce qui reste", etapes[-1][2], "Ageing Report 2024"),
                ("l'écart", "modèle", "Ageing Report 2024")]
     return {nom: {part: parts[de][periode][part] - parts[vers][periode][part]
@@ -230,6 +254,21 @@ def reforme_entiere(racine: Path, destination: Path) -> Path:
                 raise ValueError(f"{nom} : la génération {generation} manque")
         fichier.write_text(texte, encoding="utf-8")
     return copie
+
+
+def recomptee(couverture: dict, projection: str, racine: Path,
+              entree_depuis: int | None = None) -> dict:
+    """Les séries de couverture d'une trajectoire (``modele``), ses retraités
+    recomptés aux cohortes nées toute l'année, et, avec ``entree_depuis``, à
+    chaque génération entrée dans l'emploi à son âge (``retraites_par_age``) :
+    sa dépense et sa population ne changent pas."""
+    from retraite_notionnelle import Parametres
+
+    par_age = retraites_par_age(Parametres(scenario_projection=projection, racine_donnees=racine),
+                                GRILLE_AWG, nes_toute_l_annee=True, entree_depuis=entree_depuis)
+    return {**couverture,
+            "retraites": {annee: par_age[annee][0] for annee in GRILLE_AWG},
+            "retraites_agees": {annee: par_age[annee][1] for annee in GRILLE_AWG}}
 
 
 def modele(projection: str, scenario: str = "actuel", racine: Path | None = None) -> dict:
@@ -292,8 +331,18 @@ def main(argv: list[str] | None = None) -> int:
                            help="décompose aussi les six systèmes, sous la référence du COR")
     analyseur.add_argument("--sans-suspension", action="store_true",
                            help="refait le modèle sous la réforme de 2023 entière")
+    analyseur.add_argument("--naissances", action="store_true",
+                           help="et, sous la réforme entière, fait naître les cohortes toute "
+                                "l'année")
+    analyseur.add_argument("--entree", type=int, nargs="?", const=ENTREE_DE_REFERENCE,
+                           metavar="GENERATION",
+                           help="et y fait entrer chaque génération dans l'emploi à son âge, "
+                                "celle-ci gardant celui de la grille "
+                                f"({ENTREE_DE_REFERENCE} par défaut)")
     analyseur.add_argument("--json", type=Path, help="écrit les résultats dans ce fichier")
     arguments = analyseur.parse_args(argv)
+    arguments.naissances |= arguments.entree is not None
+    arguments.sans_suspension |= arguments.naissances
 
     colonnes = {"Ageing Report 2024": awg()}
     for projection, libelle in PROJECTIONS:
@@ -339,14 +388,27 @@ def main(argv: list[str] | None = None) -> int:
 
     stables = f"et {_nombre(mesuree * 100, 0)} % stables, mesurés"
     colonnes_couverture[stables] = porte(reference["couverture"])
+    nes = entree = None
     if arguments.sans_suspension:
         from retraite_notionnelle.config import RACINE_DONNEES
 
         with tempfile.TemporaryDirectory() as dossier:
-            sans = modele(PROJECTIONS[0][0], racine=reforme_entiere(RACINE_DONNEES, Path(dossier)))
+            racine = reforme_entiere(RACINE_DONNEES, Path(dossier))
+            sans = modele(PROJECTIONS[0][0], racine=racine)
+            if arguments.naissances:
+                nes = recomptee(sans["couverture"], PROJECTIONS[0][0], racine)
+            if arguments.entree is not None:
+                entree = recomptee(sans["couverture"], PROJECTIONS[0][0], racine,
+                                   arguments.entree)
         resultats["sans_suspension"] = sans
         colonnes_couverture["modèle sans la suspension"] = sans["couverture"]
         colonnes_couverture[SANS_SUSPENSION] = porte(sans["couverture"])
+        if nes is not None:
+            resultats["nes_toute_l_annee"] = nes
+            colonnes_couverture[NES_TOUTE_L_ANNEE] = porte(nes)
+        if entree is not None:
+            resultats["entree_selon_la_generation"] = entree
+            colonnes_couverture[ENTREE_SELON_LA_GENERATION] = porte(entree)
         print()
         print("Sans la suspension, la référence du COR (dépense de 2022 → 2070 : "
               f"{_nombre(sans['part_pib'][2022])} → {_nombre(sans['part_pib'][2070])})")
@@ -356,8 +418,11 @@ def main(argv: list[str] | None = None) -> int:
     parts = {nom: parts_de_couverture(series) for nom, series in colonnes_couverture.items()}
     resultats["couverture"] = parts
 
+    def jeunes_de(series: dict, annee: int) -> float:
+        return series["retraites"][annee] - series["retraites_agees"][annee]
+
     def jeunes(series: dict, par: float) -> float:
-        return (series["retraites"][2022] - series["retraites_agees"][2022]) / par
+        return jeunes_de(series, 2022) / par
 
     propre = reference["couverture"]
     print()
@@ -374,6 +439,15 @@ def main(argv: list[str] | None = None) -> int:
           f"des moins de 65 ans de l'AWG de 2022-2070 : {_nombre(calee * 100, 1)} % si elle "
           f"garde sa prévalence parmi les 20-64 ans, {_nombre(stable * 100, 1)} % si elle "
           f"garde son rapport aux 65 ans et plus")
+    if nes is not None:
+        recomptes = [sans["couverture"], nes] + ([entree] if entree is not None else [])
+        print("Retraités de moins de 65 ans du modèle sous la réforme entière, en millions, "
+              "nés en janvier, puis toute l'année"
+              + (f", puis entrés selon la génération depuis {arguments.entree}"
+                 if entree is not None else "") + " : " + " ; ".join(
+                  f"{annee} " + " → ".join(_nombre(jeunes_de(series, annee) / 1e6)
+                                           for series in recomptes)
+                  for annee in (2022, 2025, 2030)))
     for periode in (f"{debut}-{fin}" for debut, fin in PERIODES_COUVERTURE):
         print()
         print(f"| Couverture, {periode} | " + " | ".join(parts) + " |")

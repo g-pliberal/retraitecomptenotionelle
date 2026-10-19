@@ -93,6 +93,18 @@ droit de sa génération lui donne (``cout.Pensionne.departs``), et les têtes
 qu'on en refait la comptent de là (note du 18 octobre 2026, « la date de
 chaque cohorte »).
 
+LES NAISSANCES DE L'ANNÉE ET L'ENTRÉE DANS L'EMPLOI (:func:`dates_des_departs`),
+deux mesures que ``cout.py`` ne fait pas, la pension restant celle de la
+grille. Née toute l'année et non en janvier, une cohorte n'a, au 31 décembre
+de l'année de son départ, que ses natifs des premiers mois de partis
+(:func:`compter_retraites`). Entrée dans l'emploi à l'âge que l'échantillon
+interrégimes de cotisants de 2017 donne à sa génération, et non au même âge à
+chacune (limite n° 2 de ``cout.py``), elle part au taux plein d'autant plus
+tard (:func:`decalage_d_entree`) : les générations de 1966 à 1970 entrent un an
+après celle de 1960, et Destinie, le modèle de l'AWG pour la France, les fait
+partir plus tard (fiche, § 3.3 ; note du 19 octobre 2026, « l'entrée dans
+l'emploi »).
+
 CE QUI MANQUE. Les têtes de la proposition : son âge légal de 65 ans reporte
 des départs que ``AvenirAnnuel`` ne compte pas à part. La couverture de chaque
 système est donc celle du droit en vigueur, et sa prestation porte ce que le
@@ -102,10 +114,13 @@ nouvelles que l'AWG décompose à part (fiche France, tableau 14).
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
+from pathlib import Path
 from typing import Callable, Mapping, Sequence
 
+from .calendrier import DateMois
 from .cout import _DEMI_TRANCHE, masse_du_scenario
+from .donnees.chargement import charger_table_csv, dans_un_instantane
 from .somme import somme_ordonnee
 
 #: Les années où l'AWG fait ses pas : la première de la projection, 2022,
@@ -418,15 +433,22 @@ def depart_de_la_grille(pensionne, decalage: int) -> int:
 
 def compter_retraites(pensionnes, population, annee: int, poids_cas: Mapping[str, float],
                       depart: Callable[[object, int], int], age: int = 0,
-                      survies: Mapping[tuple[str, int, int], float] | None = None) -> float:
+                      survies: Mapping[tuple[str, int, int], float] | None = None,
+                      mois: Mapping[tuple[str, int, int], int] | None = None) -> float:
     """Les retraités de l'année, en personnes : les cohortes de la grille
     parties au plus tard cette année-là, chacune l'année que ``depart`` lui
     donne, de la génération ``pensionne.generation + decalage``, pesées comme
     ``cout._masses`` pèse ses têtes — l'effectif de la classe d'âge, fois la
     survie propre du cas type, ``survies`` par ``(code, generation,
     decalage)`` (``cout._survies_alignees``, un par défaut), fois le poids du
-    cas type. ``age`` ôte les plus jeunes."""
+    cas type. ``age`` ôte les plus jeunes.
+
+    ``mois``, par la même clé, fait naître chaque cohorte toute l'année, et
+    non en janvier comme la grille : partie, née en janvier, le mois ``m`` de
+    l'année de son départ, elle n'en a au 31 décembre que les ``(13 - m) / 12``
+    de partis, au même âge (:func:`dates_des_departs`)."""
     survies = survies or {}
+    mois = mois or {}
     total = 0.0
     for pensionne in pensionnes:
         part = poids_cas.get(pensionne.code, 0.0)
@@ -435,15 +457,114 @@ def compter_retraites(pensionnes, population, annee: int, poids_cas: Mapping[str
         poids = 0.0
         for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
             age_atteint = annee - pensionne.generation - decalage
-            if age_atteint >= age and annee >= depart(pensionne, decalage):
-                poids += population.effectif(age_atteint, annee) * survies.get(
-                    (pensionne.code, pensionne.generation, decalage), 1.0)
+            parti = depart(pensionne, decalage)
+            if age_atteint >= age and annee >= parti:
+                cle = (pensionne.code, pensionne.generation, decalage)
+                partis = (13 - mois[cle]) / 12 if annee == parti and cle in mois else 1.0
+                poids += partis * population.effectif(age_atteint, annee) * survies.get(cle, 1.0)
         total += part * poids
     return total
 
 
+def ages_medians_du_premier_trimestre(racine: Path) -> dict[tuple[str, int], float]:
+    """L'âge où la moitié des affiliés d'avant 23 ans de chaque génération de
+    l'échantillon interrégimes de cotisants de 2017, sexe par sexe, avaient
+    cotisé un trimestre (``macro/premier_trimestre.csv``), par ``(sexe,
+    génération)`` : la part de chaque âge est celle de la fin de l'année où il
+    est atteint, en moyenne à cet âge et demi, et l'âge se lit entre deux
+    parts, en droite ligne."""
+    table, _fiabilites = charger_table_csv(
+        Path(racine) / "reference" / "macro" / "premier_trimestre.csv",
+        ("sexe", "generation", "trimestre", "age"), "part")
+    parts: dict[tuple[str, int], dict[int, float]] = {}
+    for (sexe, generation, trimestre, age), part in table.items():
+        if trimestre == "cotise":
+            parts.setdefault((sexe, int(generation)), {})[int(age)] = part
+    medianes = {}
+    for cle, par_age in parts.items():
+        ages = sorted(par_age)
+        for avant, apres in zip(ages, ages[1:]):
+            if par_age[avant] < 50.0 <= par_age[apres]:
+                medianes[cle] = (avant + 0.5 + (50.0 - par_age[avant])
+                                 / (par_age[apres] - par_age[avant]) * (apres - avant))
+                break
+    return medianes
+
+
+def decalage_d_entree(medianes: Mapping[tuple[str, int], float], sexe: str,
+                      generation: int, reference: int) -> float:
+    """De combien la génération ``generation`` entre dans l'emploi plus tard
+    que ``reference``, au trimestre près : l'écart de leurs âges médians du
+    premier trimestre cotisé (:func:`ages_medians_du_premier_trimestre`), lus
+    entre les deux générations voisines quand l'EIC ne suit pas la leur, à la
+    première ou à la dernière au-delà."""
+    def mediane(annee: int) -> float:
+        suivies = sorted(g for s, g in medianes if s == sexe)
+        annee = min(max(annee, suivies[0]), suivies[-1])
+        apres = next(g for g in suivies if g >= annee)
+        if apres == annee:
+            return medianes[(sexe, annee)]
+        avant = max(g for g in suivies if g < annee)
+        return (medianes[(sexe, avant)] + (medianes[(sexe, apres)] - medianes[(sexe, avant)])
+                * (annee - avant) / (apres - avant))
+
+    return round((mediane(generation) - mediane(reference)) * 4) / 4
+
+
+@dans_un_instantane
+def dates_des_departs(parametres, entree_depuis: int | None = None,
+                      cas_types: tuple | None = None,
+                      generations: tuple[int, ...] | None = None,
+                      ) -> dict[tuple[str, int, int], DateMois]:
+    """Le mois où part, née en janvier comme la grille, chacune des cinq
+    cohortes de chaque couple de la grille du coût, par ``(code, generation,
+    decalage)`` (:func:`compter_retraites`) : celui de la carrière que le droit
+    de sa génération lui donne, comme ``cout._carrieres_voisines`` la refait,
+    ou celui de la génération de la grille, décalé d'autant d'années, pour une
+    cohorte qu'elle ne sait pas simuler. Les carrières se refont sans rien
+    simuler : ``Pensionne`` ne garde que l'année.
+
+    ``entree_depuis`` fait entrer dans l'emploi chaque génération d'un cas type
+    qui part au taux plein plus tard que la génération ``entree_depuis``,
+    d'autant que celles de son sexe dans l'EIC (:func:`decalage_d_entree`), quand
+    la grille les fait toutes entrer au même âge (limite n° 2 de ``cout.py``) ;
+    ceux qui partent à un âge ou après leurs services gardent leur date."""
+    from . import cout as module
+    from .castypes import GRILLE_DU_COUT, carriere_de_la_grille, carrieres_de_la_grille
+    from .simulateur import Simulateur
+
+    simulateur = Simulateur(parametres).pour_la_projection()
+    cas_types = GRILLE_DU_COUT if cas_types is None else cas_types
+    generations = module.generations() if generations is None else generations
+    medianes = (None if entree_depuis is None
+                else ages_medians_du_premier_trimestre(parametres.racine_donnees))
+    cas_de = {cas.code: cas for cas in cas_types}
+    carrieres, _ecartees = carrieres_de_la_grille(simulateur, cas_types, generations, "droit")
+    dates = {}
+    for (code, generation), carriere in carrieres.items():
+        cas = cas_de[code]
+        for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
+            propre = cas
+            if medianes is not None and cas.regle_liquidation == "taux_plein":
+                entree = decalage_d_entree(medianes, cas.sexe, generation + decalage,
+                                           entree_depuis)
+                if entree:
+                    propre = replace(cas, age_debut=cas.age_debut + entree)
+            date = DateMois(carriere.annee_liquidation + decalage, carriere.mois_liquidation)
+            if decalage or propre is not cas:
+                try:
+                    date = carriere_de_la_grille(simulateur, propre, generation + decalage,
+                                                 "droit").date_liquidation
+                except (ValueError, KeyError):
+                    pass
+            dates[(code, generation, decalage)] = date
+    return dates
+
+
 def retraites_par_age(parametres, annees: Sequence[int],
-                      age: int = AGE_VIEILLESSE) -> dict[int, tuple[float, float]]:
+                      age: int = AGE_VIEILLESSE,
+                      nes_toute_l_annee: bool = False,
+                      entree_depuis: int | None = None) -> dict[int, tuple[float, float]]:
     """Chaque année, les retraités du modèle de tous âges, puis ceux d'``age``
     ans et plus, en personnes.
 
@@ -453,6 +574,10 @@ def retraites_par_age(parametres, annees: Sequence[int],
     somme de ``cout._masses`` (:func:`compter_retraites`), qui en ôte les moins
     d'``age`` ans. ``cout.py`` ne les expose pas par âge : ce geste le refait,
     et ``tests/test_facteurs_depense.py`` vérifie qu'il redonne ses têtes.
+    ``nes_toute_l_annee`` fait naître chaque cohorte toute l'année, et
+    ``entree_depuis`` entrer chaque génération dans l'emploi à son âge
+    (:func:`dates_des_departs`) : ce ne sont plus les têtes de ``cout.py``, et
+    la pension reste celle de la grille.
     """
     from . import cout as module
     from . import memoire
@@ -481,12 +606,21 @@ def retraites_par_age(parametres, annees: Sequence[int],
     poids = module._poids_par_groupe(
         module._ponderation(simulateur, "effectifs", grille), pensionnes, population,
         revalorisation, ComptesRetraite(racine, variante=variante).decomposition)
+    depart, mois = depart_de_la_grille, None
+    if nes_toute_l_annee or entree_depuis is not None:
+        dates = dates_des_departs(parametres, entree_depuis)
+        if entree_depuis is not None:
+            def depart(pensionne, decalage: int) -> int:
+                date = dates.get((pensionne.code, pensionne.generation, decalage))
+                return depart_de_la_grille(pensionne, decalage) if date is None else date.annee
+        if nes_toute_l_annee:
+            mois = {cle: date.mois for cle, date in dates.items()}
     resultat: dict[int, tuple[float, float]] = {}
     for annee in annees:
         poids_annee = poids(annee)
         survies = module._survies_alignees(pensionnes, poids_annee, annee)
         resultat[annee] = tuple(
             compter_retraites(pensionnes, population, annee, poids_annee,
-                              depart_de_la_grille, minimum, survies)
+                              depart, minimum, survies, mois)
             for minimum in (0, age))
     return resultat
