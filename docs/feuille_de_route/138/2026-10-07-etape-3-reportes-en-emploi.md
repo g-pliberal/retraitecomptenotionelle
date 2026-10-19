@@ -3,13 +3,13 @@
 **Reprise, au 19 octobre 2026.** Fait : les reportés en emploi (7 octobre) ;
 l'Ageing Report (13) ; les leviers du COR, la CSG effective (14) ; Ancetre,
 l'EACR, la CNRACL, l'État (16) ; la part stable de l'AWG (17) ; la date de
-chaque cohorte (18, 19) ; la page Coût (19) ; les 0,19 point, que l'entrée dans
-l'emploi selon la génération explique (19). Reste, une session par point : les
-départs hors du taux plein, aux 65 ans et plus ; les naissances de l'année dans
-`cout.py` ; le taux effectif ; à l'étape 7, la prémisse du déficit. Au
-propriétaire : l'entrée selon la génération dans la grille ; l'Ircantec (avec
-l'action 147) ; la table des poids (`pages.js`). Détail : « Ce qui reste » de
-la note « l'entrée dans l'emploi ».
+chaque cohorte (18, 19) ; la page Coût, l'entrée dans l'emploi, les départs
+avec décote (19). Reste, une session par point : les 65 ans et plus d'après
+2030, que la décote n'explique pas ; les naissances de l'année dans `cout.py` ;
+le taux effectif ; à l'étape 7, la prémisse du déficit. Au propriétaire :
+l'entrée selon la génération dans la grille ; l'Ircantec (avec l'action 147) ;
+la table des poids (`pages.js`). Détail : « Ce qui reste » des notes « les
+départs hors du taux plein » et « l'entrée dans l'emploi ».
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.3 ». L'étape est
 vaste — sept chantiers, vingt-neuf points du registre — ; cette session en
