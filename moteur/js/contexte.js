@@ -562,6 +562,69 @@ export class Contexte {
   }
 
   /**
+   * Le contrôle du relevé de la saisie (action 138, étape 10) : chacune de ses
+   * années de salarié du régime général ou des salariés agricoles dont il
+   * porte les trimestres (`auRevenu`), avec ceux que le calcul en `retenus`,
+   * ceux que son revenu `valides` — ceux de la carrière du même relevé rebâtie
+   * sans ses trimestres, que le modèle déduit du revenu, sous les mêmes bornes,
+   * dont celle de l'année du départ — et le `seuil` d'un trimestre de l'année
+   * (`seuilDUnTrimestre`, R. 351-9). Le calcul, lui, garde les trimestres du
+   * relevé. Vide quand la saisie n'est pas un relevé, qu'aucune année ne se
+   * contrôle, ou que la saisie refuse la carrière. Le site seul le montre : il
+   * n'a pas de jumeau dans le contexte Python.
+   */
+  controleDuReleve(saisie) {
+    if (!saisie.releveActif) {
+      return [];
+    }
+    try {
+      const simulateur = this.simulateur(saisie.parametres(this.base));
+      const motifs = Object.keys(this.paquet.periodes_non_travaillees ?? {});
+      const releve = saisie.releveAnalyse(motifs, dispensesConnues(this.paquet));
+      const controlees = releve.filter((ligne) => ligne.trimestres !== null
+        && ligne.type_periode === "emploi"
+        && simulateur.affiliations.contient(ligne.affiliation)
+        && auRevenu(simulateur.affiliations, ligne.affiliation, ligne.annee));
+      if (controlees.length === 0) {
+        return [];
+      }
+      const compter = (relevee) => {
+        const parAnnee = new Map();
+        for (const ligne of this.carriereRelevee(simulateur, relevee, motifs, false).lignes) {
+          if (ligne.type_periode === "emploi" && !parAnnee.has(ligne.annee)) {
+            parAnnee.set(ligne.annee, ligne.trimestres_valides);
+          }
+        }
+        return parAnnee;
+      };
+      const retenus = compter(saisie);
+      const valides = compter(new Saisie({
+        ...saisie,
+        releve: releve.map((ligne) => `${ligne.annee}:${ligne.affiliation}:${ligne.revenu}`)
+          .join("\n"),
+      }));
+      return controlees
+        .filter((ligne) => retenus.has(ligne.annee) && valides.has(ligne.annee))
+        .map((ligne) => ({
+          annee: ligne.annee,
+          affiliation: ligne.affiliation,
+          revenu: ligne.revenu,
+          retenus: retenus.get(ligne.annee),
+          valides: valides.get(ligne.annee),
+          seuil: simulateur.macro.seuilDUnTrimestre(ligne.annee),
+        }));
+    } catch (erreur) {
+      // Comme `departsDeLEstimation` : une carrière que la saisie refuse tait
+      // le contrôle ; une faute de programme remonte.
+      if (erreur instanceof TypeError || erreur instanceof ReferenceError
+          || erreur instanceof RangeError || erreur instanceof SyntaxError) {
+        throw erreur;
+      }
+      return [];
+    }
+  }
+
+  /**
    * La carrière telle que le relevé la donne, sans rien reconstituer.
    *
    * Aucune échelle des salaires n'intervient : le relevé est déjà en euros de
@@ -859,6 +922,24 @@ function auJour(affiliations, affiliation, annee) {
   return affiliations.periodes(affiliation).some((periode) => periode.debut <= annee
     && (periode.fin === null || periode.fin === undefined || annee <= periode.fin)
     && (periode.regimes ?? []).some((code) => REGIMES_CODE_DES_PENSIONS.has(code)));
+}
+
+/** Les régimes de base qui valident l'année d'un salarié à son revenu. */
+const REGIMES_AU_REVENU = new Set(["regime_general", "msa_salaries"]);
+
+/**
+ * L'année d'un statut se contrôle-t-elle au revenu ? Celle d'un salarié du
+ * régime général ou des salariés agricoles : R. 351-9 lui compte autant de
+ * trimestres que son revenu atteint de fois le seuil de l'année. Ni la
+ * fonction publique et les régimes spéciaux, qui comptent leurs services au
+ * temps, ni l'indépendant, qui valide aussi par son assiette minimale et les
+ * cotisations qu'il a payées (`controleDuReleve`).
+ */
+function auRevenu(affiliations, affiliation, annee) {
+  return !affiliations.sansEmployeur(affiliation)
+    && affiliations.periodes(affiliation).some((periode) => periode.debut <= annee
+      && (periode.fin === null || periode.fin === undefined || annee <= periode.fin)
+      && (periode.regimes ?? []).some((code) => REGIMES_AU_REVENU.has(code)));
 }
 
 function verifierStatutsOuverts(affiliations, carriere, parcours) {

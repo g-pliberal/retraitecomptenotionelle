@@ -408,3 +408,38 @@ def test_outre_mer_le_trimestre_se_valide_au_seuil_du_departement(simulateur):
     # Depuis 1996, le SMIC de la métropole : 6 484 F, le seuil de 1995, ne
     # valident plus rien.
     assert [valides(francs(f), 1996, "reunion") for f in (6_484.0, 7_396.01)] == [0, 1]
+
+
+def test_le_seuil_d_un_trimestre_est_celui_qu_un_releve_se_lit_contre(simulateur):
+    """Le revenu qui valide un trimestre, année par année (R. 351-9), que le
+    contrôle d'un relevé montre en regard de chaque année (action 138,
+    étape 10) : 200 heures du SMIC du 1er janvier de 1972 à 2013 — 8,71 € de
+    l'heure en 2009, 1 742 € ; 9,43 € en 2013, 1 886 € —, 150 heures depuis
+    2014 — 9,53 €, 1 429,50 € ; 9,61 € en 2015, 1 441,50 € ; de 1946 à 1971, le
+    salaire que R. 351-9 fixe, 18 F en 1946, 437,5 F en 1971. Outre-mer, celui
+    du département (R. 753-21), 3 750 anciens francs en Guyane en 1949, rien
+    avant 1948 : un seuil infini ; le SMIC de la métropole depuis 1996. Avant
+    1946, aucun montant : la retenue des assurances sociales les fait."""
+    seuil = simulateur.macro.seuil_d_un_trimestre
+
+    def francs(montant: float) -> float:
+        return montant / 6.55957
+
+    assert seuil(2009) == pytest.approx(1_742.0)
+    assert seuil(2013) == pytest.approx(1_886.0)
+    assert seuil(2014) == pytest.approx(1_429.50)
+    assert seuil(2015) == pytest.approx(1_441.50)
+    assert seuil(1946) == pytest.approx(francs(18.0))
+    assert seuil(1971) == pytest.approx(francs(437.5))
+    assert seuil(1945) is None
+    assert seuil(1947, "martinique") == float("inf")
+    assert seuil(1949, "guyane") == pytest.approx(francs(37.50))
+    assert seuil(1949) == pytest.approx(francs(85.0))
+    assert seuil(1996, "reunion") == seuil(1996)
+    # Le seuil est celui que les trimestres valident : un revenu qui l'atteint
+    # en valide un, un centime de moins aucun.
+    for annee, departement in ((1950, ""), (1975, "guadeloupe"), (2009, ""), (2026, "")):
+        montant = seuil(annee, departement)
+        valides = simulateur.macro.trimestres_valides
+        assert valides(montant, annee, departement) == 1
+        assert valides(montant - 0.01, annee, departement) == 0

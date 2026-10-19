@@ -1298,3 +1298,31 @@ test("outre-mer, le trimestre se valide au seuil du département", () => {
   assert.deepEqual([5612.14, 5612.16].map((f) => valides(f, 1992, "reunion")), [0, 1]);
   assert.deepEqual([6484, 7396.01].map((f) => valides(f, 1996, "reunion")), [0, 1]);
 });
+
+/**
+ * Le portage de `test_le_seuil_d_un_trimestre_est_celui_qu_un_releve_se_lit_contre`
+ * (tests/test_salaire_annuel_moyen.py) : R. 351-9, le revenu qui valide un
+ * trimestre, que le contrôle d'un relevé montre en regard de chaque année.
+ */
+test("le seuil d'un trimestre est celui qu'un relevé se lit contre", () => {
+  const macro = new DonneesMacro(paquet);
+  const seuil = (annee, departement = "") => macro.seuilDUnTrimestre(annee, departement);
+  const proche = (obtenu, attendu) => assert.ok(Math.abs(obtenu - attendu) < 1e-9,
+    `${obtenu} ≠ ${attendu}`);
+  proche(seuil(2009), 1742);
+  proche(seuil(2013), 1886);
+  proche(seuil(2014), 1429.5);
+  proche(seuil(2015), 1441.5);
+  proche(seuil(1946), 18 / 6.55957);
+  proche(seuil(1971), 437.5 / 6.55957);
+  assert.equal(seuil(1945), null);
+  assert.equal(seuil(1947, "martinique"), Infinity);
+  proche(seuil(1949, "guyane"), 37.5 / 6.55957);
+  proche(seuil(1949), 85 / 6.55957);
+  assert.equal(seuil(1996, "reunion"), seuil(1996));
+  for (const [annee, departement] of [[1950, ""], [1975, "guadeloupe"], [2009, ""], [2026, ""]]) {
+    const montant = seuil(annee, departement);
+    assert.equal(macro.trimestresValides(montant, annee, departement), 1);
+    assert.equal(macro.trimestresValides(montant - 0.01, annee, departement), 0);
+  }
+});

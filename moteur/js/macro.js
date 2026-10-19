@@ -364,22 +364,13 @@ export class DonneesMacro {
     if (revenu <= 0) {
       return 0;
     }
-    if (outreMer) {
+    const serie = outreMer ? this._salaireValidantDuDepartement(outreMer) : undefined;
+    if (serie !== undefined && annee <= serie.derniereAnnee) {
       // L'outre-mer : R. 753-21 et R. 351-9 donnent aux années travaillées
       // outre-mer leur seuil, plus bas de 1949 à 1951 et de 1972 à 1995, et rien
       // n'y comptait avant 1948 (action 138, étape 6).
-      if (!Object.hasOwn(DEPARTEMENTS_D_OUTRE_MER, outreMer)) {
-        throw new Error(`département d'outre-mer inconnu : ${outreMer}`);
-      }
-      const serie = this.salaire_validant_outre_mer[DEPARTEMENTS_D_OUTRE_MER[outreMer]];
-      if (serie !== undefined && annee < serie.premiereAnnee) {
-        return 0;
-      }
-      if (serie !== undefined && annee <= serie.derniereAnnee) {
-        return trimestresAuSeuil(revenu, serie.valeur(annee));
-      }
+      return trimestresAuSeuil(revenu, this.seuilDUnTrimestre(annee, outreMer));
     }
-    let seuil;
     if (annee < this.heures_par_trimestre.premiereAnnee) {
       // Le seuil d'avant 1972 : le modèle validait quatre trimestres à toute
       // année travaillée, R. 351-9 en fixe un depuis 1946 (action 138, étape 6).
@@ -388,16 +379,43 @@ export class DonneesMacro {
       if (assureSocial && !this._assujetti(revenu, annee, fraction)) {
         return 0;
       }
-      const anciens = this.salaire_validant_avant_1972;
-      if (annee < anciens.premiereAnnee) {
+      if (annee < this.salaire_validant_avant_1972.premiereAnnee) {
         return assureSocial && this.taux_retenue_avant_1946 !== null
           ? this._trimestresDeLaRetenue(revenu, annee, fraction) : 4;
       }
-      seuil = anciens.valeur(annee);
-    } else {
-      seuil = this.heures_par_trimestre.valeur(annee) * this.smic_horaire.valeur(annee);
     }
-    return trimestresAuSeuil(revenu, seuil);
+    return trimestresAuSeuil(revenu, this.seuilDUnTrimestre(annee));
+  }
+
+  /**
+   * Le revenu d'activité qui valide un trimestre dans l'année, en euros
+   * courants : 200 heures de SMIC depuis 1972, 150 depuis 2014 ; de 1946 à
+   * 1971, le salaire que R. 351-9 fixe. `outreMer` lui donne celui du
+   * département, infini avant 1948 ; `null` avant 1946, où la retenue des
+   * assurances sociales les fait. C'est le seuil qu'un relevé de carrière se
+   * lit contre (action 138, étape 10). Voir `seuil_d_un_trimestre` du Python.
+   */
+  seuilDUnTrimestre(annee, outreMer = "") {
+    const serie = outreMer ? this._salaireValidantDuDepartement(outreMer) : undefined;
+    if (serie !== undefined && annee < serie.premiereAnnee) {
+      return Infinity;
+    }
+    if (serie !== undefined && annee <= serie.derniereAnnee) {
+      return serie.valeur(annee);
+    }
+    if (annee >= this.heures_par_trimestre.premiereAnnee) {
+      return this.heures_par_trimestre.valeur(annee) * this.smic_horaire.valeur(annee);
+    }
+    const anciens = this.salaire_validant_avant_1972;
+    return annee >= anciens.premiereAnnee ? anciens.valeur(annee) : null;
+  }
+
+  /** La série de `salaire_validant_outre_mer` du département `outreMer`. */
+  _salaireValidantDuDepartement(outreMer) {
+    if (!Object.hasOwn(DEPARTEMENTS_D_OUTRE_MER, outreMer)) {
+      throw new Error(`département d'outre-mer inconnu : ${outreMer}`);
+    }
+    return this.salaire_validant_outre_mer[DEPARTEMENTS_D_OUTRE_MER[outreMer]];
   }
 
   /**

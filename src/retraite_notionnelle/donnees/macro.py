@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from bisect import bisect_right
 from dataclasses import dataclass
 from functools import cached_property
@@ -573,20 +574,13 @@ class DonneesMacro:
         """
         if revenu <= 0:
             return 0
-        if outre_mer:
+        if outre_mer and annee <= self._salaire_validant_du_departement(outre_mer).derniere_annee:
             # L'OUTRE-MER. Le modèle validait les années travaillées outre-mer
             # au seuil de la métropole : R. 753-21 et R. 351-9 leur donnent le
             # leur, plus bas de 1949 à 1951 et de 1972 à 1995, et rien n'y
             # comptait avant 1948 (action 138, étape 6).
-            if outre_mer not in DEPARTEMENTS_D_OUTRE_MER:
-                raise ValueError(f"département d'outre-mer inconnu : {outre_mer!r}")
-            serie = self.salaire_validant_outre_mer[DEPARTEMENTS_D_OUTRE_MER[outre_mer]]
-            if annee < serie.premiere_annee:
-                return 0
-            if annee <= serie.derniere_annee:
-                return _trimestres_au_seuil(revenu, serie(annee))
-        heures = self.heures_par_trimestre
-        if annee < heures.premiere_annee:
+            return _trimestres_au_seuil(revenu, self.seuil_d_un_trimestre(annee, outre_mer))
+        if annee < self.heures_par_trimestre.premiere_annee:
             # LE SEUIL D'AVANT 1972. Le modèle validait quatre trimestres à toute
             # année travaillée, en écrivant qu'« aucun seuil de montant
             # n'existait » : R. 351-9 en fixe un depuis 1946 (action 138, étape 6).
@@ -595,14 +589,41 @@ class DonneesMacro:
             # 1929 : la retenue des assurances sociales les fait (étape 6).
             if assure_social and not self._assujetti(revenu, annee, fraction):
                 return 0
-            anciens = self.salaire_validant_avant_1972
-            if annee < anciens.premiere_annee:
+            if annee < self.salaire_validant_avant_1972.premiere_annee:
                 return (self._trimestres_de_la_retenue(revenu, annee, fraction)
                         if assure_social else 4)
-            seuil = anciens(annee)
-        else:
-            seuil = heures(annee) * self.smic_horaire(annee)
-        return _trimestres_au_seuil(revenu, seuil)
+        return _trimestres_au_seuil(revenu, self.seuil_d_un_trimestre(annee))
+
+    def seuil_d_un_trimestre(self, annee: int, outre_mer: str = "") -> float | None:
+        """Le revenu d'activité qui valide un trimestre dans l'année, en euros
+        courants : 200 heures de SMIC depuis 1972, 150 depuis 2014 ; de 1946 à
+        1971, le salaire que R. 351-9 fixe, 18 F puis le trimestre de
+        l'allocation aux vieux travailleurs salariés.
+
+        ``outre_mer`` lui donne celui du département (:meth:`trimestres_valides`),
+        infini avant 1948, quand rien n'y comptait. ``None`` avant 1946 : aucun
+        montant ne les fait, mais la retenue des assurances sociales
+        (:meth:`_trimestres_de_la_retenue`). C'est le seuil qu'un relevé de
+        carrière se lit contre, année par année (action 138, étape 10).
+        """
+        if outre_mer:
+            serie = self._salaire_validant_du_departement(outre_mer)
+            if annee < serie.premiere_annee:
+                return math.inf
+            if annee <= serie.derniere_annee:
+                return serie(annee)
+        heures = self.heures_par_trimestre
+        if annee >= heures.premiere_annee:
+            return heures(annee) * self.smic_horaire(annee)
+        anciens = self.salaire_validant_avant_1972
+        return anciens(annee) if annee >= anciens.premiere_annee else None
+
+    def _salaire_validant_du_departement(self, outre_mer: str) -> SerieAnnuelle:
+        """La série de :attr:`salaire_validant_outre_mer` du département
+        ``outre_mer``, une clef de :data:`DEPARTEMENTS_D_OUTRE_MER`."""
+        if outre_mer not in DEPARTEMENTS_D_OUTRE_MER:
+            raise ValueError(f"département d'outre-mer inconnu : {outre_mer!r}")
+        return self.salaire_validant_outre_mer[DEPARTEMENTS_D_OUTRE_MER[outre_mer]]
 
     @cached_property
     def plafond_securite_sociale(self) -> SerieAnnuelle:

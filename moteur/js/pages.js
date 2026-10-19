@@ -2343,9 +2343,9 @@ function majuscule(texte) {
  * pour une carrière d'un seul métier : il n'y a rien à récapituler, le
  * formulaire juste au-dessus le dit déjà.
  */
-function resumeParcours(contexte, saisie) {
+function resumeParcours(contexte, saisie, controle = []) {
   if (saisie.releveActif) {
-    return resumeReleve(contexte, saisie);
+    return resumeReleve(contexte, saisie, controle);
   }
   const lignes = saisie.lignesCarriere;
   if (lignes.length < 2) {
@@ -2401,9 +2401,11 @@ function resumeParcours(contexte, saisie) {
  * relevé d'info-retraite date —, parce que c'est la seule approximation que ce
  * chemin conserve. Puis par ce que le site
  * y ajoute : les années qui séparent le relevé du départ
- * (`Contexte.releveProlonge`), et comment les dire sans emploi.
+ * (`Contexte.releveProlonge`), et comment les dire sans emploi. Enfin, quand
+ * `controle` en trouve, les années qui retiennent moins de trimestres que leur
+ * revenu n'en valide, et le renvoi au dépliant qui les montre.
  */
-function resumeReleve(contexte, saisie) {
+function resumeReleve(contexte, saisie, controle = []) {
   const releve = saisie.releveAnalyse(
     Object.keys(contexte.paquet.periodes_non_travaillees ?? {}),
   );
@@ -2422,7 +2424,103 @@ function resumeReleve(contexte, saisie) {
     + "sont lus un par un. Une ligne vaut une année civile entière, sauf "
     + "celle du départ, que la date de liquidation tronque : la saisie ne garde "
     + "que l'année, jamais le mois, et l'année d'entrée dans la vie active reste "
-    + `donc comptée pour une année pleine.${suiteDuReleve(contexte, saisie, releve)}</p>`;
+    + `donc comptée pour une année pleine.${suiteDuReleve(contexte, saisie, releve)}`
+    + `${sousValidees(controle)}</p>`;
+}
+
+/**
+ * Le renvoi au contrôle du relevé (`releveControle`), quand des années y
+ * retiennent moins de trimestres que leur revenu n'en valide : ce qu'il faut
+ * voir sans avoir à ouvrir le dépliant.
+ */
+function sousValidees(controle) {
+  const moins = controle.filter((annee) => annee.valides > annee.retenus).length;
+  if (moins === 0) {
+    return "";
+  }
+  return ` Sur votre relevé, ${moins > 1 ? `${moins} années` : "une année"} `
+    + `${moins > 1 ? "retiennent" : "retient"} moins de trimestres que `
+    + `${moins > 1 ? "leur" : "son"} revenu n'en valide : `
+    + `<a href="${g.route("/simuler")}" data-vers="releve-controle">voyez `
+    + `${moins > 1 ? "lesquelles" : "laquelle"}</a>.`;
+}
+
+/**
+ * Le relevé contrôlé à son revenu (action 138, étape 10) : ses années de
+ * salarié du régime général ou des salariés agricoles, chacune contre les
+ * trimestres que son revenu valide au seuil de l'année (`controleDuReleve`,
+ * contexte.js) — celles qui diffèrent, en un tableau, puis ce qu'il faut en
+ * dire. Moins de trimestres que le revenu n'en valide : la ligne est à
+ * vérifier, sur le relevé puis auprès de la caisse ; plus : le relevé y compte
+ * d'ordinaire des périodes validées sans revenu. Le calcul garde les
+ * trimestres du relevé. Rien quand la saisie n'est pas un relevé, ou
+ * qu'aucune de ses années ne se contrôle.
+ */
+function releveControle(controle) {
+  if (controle.length === 0) {
+    return "";
+  }
+  const trimestres = (nombre) => `${nombre}${" "}trimestre${nombre > 1 ? "s" : ""}`;
+  const enLesAnnees = (lignes) => {
+    const annees = lignes.map((ligne) => ligne.annee);
+    return annees.length < 2 ? `En ${annees[0]}`
+      : `En ${annees.slice(0, -1).join(", ")} et ${annees[annees.length - 1]}`;
+  };
+  const nombre = controle.length;
+  const chapeau = `<p>Sur votre relevé, ${nombre > 1 ? `${nombre} années` : "une année"} `
+    + `${nombre > 1 ? "se contrôlent" : "se contrôle"} ainsi : `
+    + `${nombre > 1 ? "celles" : "celle"} de salarié du régime général ou des salariés `
+    + "agricoles dont il porte les trimestres. Chacune en valide autant que son "
+    + `revenu atteint de fois le seuil de son année, quatre au plus.${g.bulle(
+      "Ce que le contrôle regarde",
+      "L'article R. 351-9 du code de la sécurité sociale compte un trimestre par "
+      + "tranche de revenu égale à 150 heures du SMIC du 1er janvier depuis 2014, "
+      + "200 heures de 1972 à 2013, et, de 1949 à 1971, le trimestre de "
+      + "l'allocation aux vieux travailleurs salariés ; ses rédactions antérieures, "
+      + "18 F de 1946 à 1948, et avant 1946 la retenue des assurances sociales, "
+      + "sans montant. Le contrôle laisse "
+      + "de côté la fonction publique et les régimes spéciaux, qui comptent leurs "
+      + "services au temps, et les indépendants, qui valident aussi par leur "
+      + "assiette minimale et les cotisations qu'ils ont payées.",
+    )}</p>`;
+  const ecarts = controle.filter((annee) => annee.valides !== annee.retenus);
+  if (ecarts.length === 0) {
+    return g.depliant("Votre relevé, contrôlé", `${chapeau}
+<p>Chacune valide à son revenu autant de trimestres que le relevé en retient.</p>`,
+    "releve-controle");
+  }
+  const seuil = (montant) => (montant === null || !Number.isFinite(montant) ? "—"
+    : g.eurosCentimes(montant));
+  const tableau = g.tableau(
+    ["Année", "Revenu du relevé", "Seuil d'un trimestre", "Le revenu valide",
+      "Le relevé retient"],
+    ecarts.map((annee) => [String(annee.annee), g.eurosCentimes(annee.revenu),
+      seuil(annee.seuil), trimestres(annee.valides), trimestres(annee.retenus)]),
+    ["", "nombre", "nombre", "nombre", "nombre"],
+    "Les années où le relevé et son revenu ne s'accordent pas", true);
+  const moins = ecarts.filter((annee) => annee.valides > annee.retenus);
+  const plus = ecarts.filter((annee) => annee.valides < annee.retenus);
+  const manque = moins.reduce((somme, annee) => somme + annee.valides - annee.retenus, 0);
+  const phrases = [];
+  if (moins.length > 0) {
+    phrases.push(`<p>${enLesAnnees(moins)}, votre relevé retient moins de trimestres que `
+      + `votre revenu n'en valide : ${trimestres(manque)} de moins`
+      + `${moins.length > 1 ? " en tout" : ""}. Vérifiez `
+      + `${moins.length > 1 ? "ces lignes" : "cette ligne"} sur le relevé lui-même, `
+      + "qu'une lecture ou une saisie a pu mal recopier ; s'il les porte ainsi, "
+      + "demandez à votre caisse de le corriger, bulletins de paie à l'appui. Le "
+      + "calcul de cette page retient les trimestres du relevé : ce sont eux que la "
+      + "caisse liquide, tant qu'elle ne l'a pas corrigé.</p>");
+  }
+  if (plus.length > 0) {
+    phrases.push(`<p>${enLesAnnees(plus)}, votre relevé retient plus de trimestres que `
+      + "votre revenu n'en valide : le plus souvent des trimestres validés sans "
+      + "revenu — chômage indemnisé, maladie, maternité, service national —, qu'il "
+      + "compte avec l'emploi de l'année.</p>");
+  }
+  return g.depliant("Votre relevé, contrôlé", `${chapeau}
+${tableau}
+${phrases.join("\n")}`, "releve-controle");
 }
 
 /**
@@ -5160,6 +5258,10 @@ ${uniteReference}.</p>`;
   }
   aSavoir = `<p class="discret">${aSavoir}${noteDuMode(montants)}</p>`;
 
+  // Le relevé contrôlé à son revenu : le résumé du relevé y renvoie, le
+  // dépliant le montre (action 138, étape 10).
+  const controle = contexte.controleDuReleve(saisie);
+
   // Le résumé d'abord, la clé de lecture ensuite, les montants enfin, et les
   // repères techniques après eux.
   return `
@@ -5181,7 +5283,7 @@ ${revenuDeduit(contexte, comparaison, saisie, montants)}
 </div>
 <div class="carte">
   <div class="fiches">${fiches}</div>
-  ${resumeParcours(contexte, saisie)}
+  ${resumeParcours(contexte, saisie, controle)}
 </div>
 ${estimationOfficielle(contexte, saisie, montants)}
 ${salaireNet(comparaison, saisie, contexte.paquet)}
@@ -5190,7 +5292,7 @@ ${reversionDuConjoint(contexte, comparaison, saisie, montants)}
 <p class="chapeau">Les quatre montants ci-dessus sont le résultat ; tout ce qui
 suit est le détail du calcul, rangé par question. Ouvrez ce que vous voulez
 voir.</p>
-${pensionDAujourdhui(contexte, comparaison, saisie)}
+${releveControle(controle)}${pensionDAujourdhui(contexte, comparaison, saisie)}
 ${financement(contexte, comparaison, finances, montants)}
 ${trajectoire(contexte, comparaison, saisie)}
 ${partirPlusTotOuPlusTard(contexte, saisie)}${avecOuSansLaReforme(contexte, saisie, montants)}
