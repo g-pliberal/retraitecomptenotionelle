@@ -2946,7 +2946,7 @@ referents:
           proratisation par date de législation (durée requise :
           1983, 1994, 2009, 2011, 2015, 2023, 2026) : de quoi écrire
           les millésimes qui manquent au dépôt.
-        etat: a_reprendre
+        etat: repris
         chantier: "138.10"
       - quoi: >-
           Son coefficient de conversion vaut
@@ -8991,7 +8991,7 @@ referents:
         preuve: >-
           `src/lib/boite-a-outils/retraite/outil.js:41-102`, au commit
           `94616bc`
-        etat: a_reprendre
+        etat: repris
         chantier: "138.10"
     bilan: >-
       Rien de neuf au-delà du point contrefactuel déjà au registre ;

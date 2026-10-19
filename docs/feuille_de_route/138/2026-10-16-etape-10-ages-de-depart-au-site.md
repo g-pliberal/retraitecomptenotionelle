@@ -1,13 +1,14 @@
 # Étape 10, première partie : plusieurs âges de départ côte à côte, sur la page des résultats
 
-**Reprise, au 16 octobre 2026.** Fait : plusieurs âges de départ côte à côte
-pour la carrière saisie, avec les indicateurs de cycle de vie de l'étape 9,
-dans le dépliant « Partir plus tôt ou plus tard » de la page des résultats
-(`partirPlusTotOuPlusTard`, `pages.js` ; `balayageDeLEstimation`,
-`contexte.js`). Reste, une session par point : les droits contrefactuels (au
-31 août 2023, la loi de 2023 sans suspension) ; le contrôle d'un relevé ;
-l'indice majoré ; le solveur inverse. Puis le retrait du jumeau
-`cycle_de_vie.py` (action 161). Détail : « Ce qui reste », ici.
+**Reprise, au 19 octobre 2026.** Fait : plusieurs âges de départ côte à côte
+(16 octobre, `partirPlusTotOuPlusTard`) ; le 19, les droits contrefactuels —
+la carrière saisie au 31 août 2023 et sous la loi de 2023 sans la suspension,
+l'âge légal, la durée et la carrière longue recouverts
+(`Parametres.droit_contrefactuel`), dans le dépliant « Avec ou sans la réforme
+de 2023 » (`avecOuSansLaReforme`, `pages.js`). Reste, une session par point :
+le contrôle d'un relevé ; l'indice majoré ; le solveur inverse. Puis le retrait
+du jumeau `cycle_de_vie.py` (action 161). Détail : « Ce qui reste » de la note
+`2026-10-19-etape-10-droits-contrefactuels.md`.
 
 **La demande.** Le premier point de l'étape 10 de l'action, le reste 1 de la
 note `2026-10-16-etape-9-ages-de-depart-au-portage.md` : montrer, pour la
