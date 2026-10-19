@@ -2177,6 +2177,82 @@ class Cout:
         return None
 
 
+def _volet_brut(resultat, carriere) -> dict:
+    """Ce que le coût lit de la proposition calculée sur ``carriere`` : son
+    départ, les revenus d'activité qu'elle fait cotiser, sa garantie, son
+    compte, et son pilier capitalisé quand il a reçu quelque chose. Le contrat
+    que le portage rend aussi (``voletDuCout`` de ``pont.mjs``), ses montants
+    en flottants comme le portage les rend : le moteur Python tient pour entier
+    le zéro d'une somme vide, les frais de gestion du pilier l'année où il
+    s'ouvre."""
+    garantie = resultat.garantie_vieillesse
+    pilier = resultat.capitalisation
+    return {
+        "annee_liquidation": carriere.annee_liquidation,
+        "revenus": {annee: float(revenu)
+                    for annee, revenu in _revenus_activite(carriere).items()},
+        "garantie": {"annee_ouverture": garantie.annee_ouverture,
+                     **{champ: float(getattr(garantie, champ)) for champ in (
+                         "pension_contributive", "ressources", "rente_capitalisee")}},
+        "cotisations": {ligne.annee: float(ligne.cotisation)
+                        for ligne in resultat.compte.cotisations},
+        "pilier": None if pilier is None or not pilier.actif else {
+            "annees": {annee.annee: tuple(float(flux) for flux in (
+                annee.versement_brut, annee.frais_versement, annee.frais_gestion,
+                annee.encours)) for annee in pilier.annees},
+            "capital": float(pilier.capital),
+            "diviseur": float(pilier.conversion.diviseur),
+            "rente_annuelle": float(pilier.rente_annuelle),
+        },
+    }
+
+
+def _simulations_en_python(simulateur: Simulateur, cas: list[dict], scenarios,
+                           ) -> tuple[dict[str, dict], dict[str, str]]:
+    """Les cases de la grille, ``{"cle", "carriere", "propositions"}``,
+    simulées par le moteur Python : sous sa clé, ce que le coût lit de
+    chacune — la pension de chaque système en euros constants, la proposition
+    sur la carrière où elle se calcule, le report de son départ, ce que le
+    droit en vigueur prélève, année par année, la part de chaque régime, la
+    population de sa mortalité — et la proposition seule sur chaque carrière
+    de ``propositions`` ; puis les motifs des cases que la simulation refuse.
+    Le jumeau de ``pont.grille_du_cout``."""
+    resultats: dict[str, dict] = {}
+    echecs: dict[str, str] = {}
+    for un in cas:
+        carriere = un["carriere"]
+        try:
+            comparaison = simulateur.simuler(carriere)
+        except (ValueError, KeyError) as erreur:
+            echecs[un["cle"]] = str(erreur)
+            continue
+        actuel = comparaison.actuel
+        # Ce qui est PRÉLEVÉ, et non ce qui est porté au compte : de l'État, le
+        # taux entier (voir ``Simulateur.constructeur_prelevement``).
+        preleve = simulateur.constructeur_prelevement.construire(
+            carriere, annee_liquidation=carriere.annee_liquidation,
+            annee_debut=carriere.premiere_annee)
+        resultats[un["cle"]] = {
+            "pensions": {scenario: float(comparaison.en_euros_constants(
+                getattr(comparaison, scenario).pension_annuelle, scenario))
+                for scenario in scenarios},
+            "depart_reporte": comparaison.depart_reporte,
+            "liberal": _volet_brut(comparaison.notionnel_liberal,
+                                   comparaison.carriere_de("notionnel_liberal")),
+            "coefficient_liberal": float(comparaison.coefficient_de("notionnel_liberal")),
+            "prelevement": {ligne.annee: float(ligne.cotisation)
+                            for ligne in preleve.cotisations},
+            "pension_actuelle": float(actuel.pension_annuelle),
+            "pensions_par_regime": [(pension.regime, float(pension.montant))
+                                    for pension in actuel.pensions_par_regime],
+            "population": simulateur.convertisseur.population_pour_pension(
+                actuel.pension_annuelle, carriere.annee_liquidation, carriere),
+            "propositions": {nom: _volet_brut(simulateur.proposition(autre), autre)
+                             for nom, autre in un["propositions"].items()},
+        }
+    return resultats, echecs
+
+
 def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
                 liquidation: str = "droit",
                 ) -> tuple[list[Pensionne], dict[str, int]]:

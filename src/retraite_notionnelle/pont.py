@@ -18,14 +18,27 @@ calcule ses exponentielles comme la libm de Linux (``moteur/js/libm.js``) :
 ce qu'il rend est, au bit près, ce que le moteur Python calcule, et
 ``tests/test_agregats.py``, ``tests/test_cout.py`` et
 ``tests/test_affirmations.py`` l'exigent des deux tables.
+
+La grille du coût passe le pont autrement : sous les conventions de
+projection du COR, la carrière d'un cas type se déforme en Python — l'entrée
+tardive d'un fonctionnaire, la part des primes que le décrochage du
+traitement porte (``castypes.primes_projetees``) —, et le portage, qui n'en
+garde pas de copie, la reçoit en données (:func:`carriere_en_donnees`), sous
+les paramètres du simulateur (:func:`parametres_en_donnees`), sur le paquet
+des données du jour (:func:`paquet_des_donnees`).
 """
 
 from __future__ import annotations
 
+import dataclasses
+import enum
+import functools
+import importlib.util
 import json
 import math
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 
 from .config import RACINE_PROJET
@@ -100,6 +113,125 @@ def carrieres(cas: list[dict], scenarios, paquet: bytes | None = None,
             "pensions_totales": _par_scenario(lu["pensions_totales"]),
             "rentes_volontaires": _par_scenario(lu["rentes_volontaires"]),
             "aujourd_hui": _aujourd_hui(lu["aujourd_hui"]),
+        }
+        for cle, lu in reponse["resultats"].items()
+    }
+    return resultats, reponse["echecs"]
+
+
+def _en_donnees(valeur):
+    """Une valeur telle que JSON l'écrit et que le portage la lit : un membre
+    d'énumération par sa valeur, un dataclass par ses champs, une suite en
+    liste."""
+    if isinstance(valeur, enum.Enum):
+        return valeur.value
+    if dataclasses.is_dataclass(valeur):
+        return {champ.name: _en_donnees(getattr(valeur, champ.name))
+                for champ in dataclasses.fields(valeur)}
+    if isinstance(valeur, (list, tuple)):
+        return [_en_donnees(element) for element in valeur]
+    if isinstance(valeur, dict):
+        return {cle: _en_donnees(element) for cle, element in valeur.items()}
+    return valeur
+
+
+def parametres_en_donnees(parametres) -> dict:
+    """Les paramètres d'un simulateur tels que le portage les lit, sous les
+    mêmes noms (``PARAMETRES_DEFAUT`` de ``moteur/js/config.js``) : tous, sauf
+    la racine des données, dont le paquet tient lieu."""
+    return {champ.name: _en_donnees(getattr(parametres, champ.name))
+            for champ in dataclasses.fields(parametres) if champ.name != "racine_donnees"}
+
+
+def carriere_en_donnees(carriere) -> dict:
+    """La carrière telle que le portage la relit (``carriereDesDonnees`` de
+    ``pont.mjs``) : chacun de ses champs, chacune de ses lignes entière, et la
+    chronologie dont elle est la vue, telle que le Python l'a complétée. Ce que
+    le Python a fait de la carrière passe ainsi tel quel, et le portage n'en
+    garde pas de copie."""
+    donnees = {}
+    for champ in dataclasses.fields(carriere):
+        valeur = getattr(carriere, champ.name)
+        if champ.name == "dates_entree":
+            valeur = {statut: [date.annee, date.mois] for statut, date in valeur.items()}
+        donnees[champ.name] = _en_donnees(valeur)
+    return donnees
+
+
+@functools.cache
+def paquet_des_donnees() -> bytes:
+    """Le paquet des données du jour, tel que la fabrique l'écrira, sans le
+    bilan ni les agrégats, que la simulation d'une carrière ne lit pas : celui
+    sur lequel le coût fait simuler sa grille. Il se construit une fois par
+    processus, depuis ``data/`` (``scripts/construire_donnees.py``), et ne se
+    lit pas dans ``moteur/donnees.json`` : une retouche des données n'y entre
+    qu'à la fabrique suivante, et la fabrique, qui l'écrit pendant que d'autres
+    étapes calculent le coût, le leur donnerait à demi écrit."""
+    nom = "_fabrique_du_paquet"
+    spec = importlib.util.spec_from_file_location(
+        nom, RACINE_PROJET / "scripts" / "construire_donnees.py")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[nom] = module
+    try:
+        spec.loader.exec_module(module)
+        return module.construire(b"{}", b"{}")
+    finally:
+        del sys.modules[nom]
+
+
+def _serie(paires) -> dict[int, float]:
+    return {annee: _flottant(nombre) for annee, nombre in paires}
+
+
+def _volet_du_cout(lu: dict) -> dict:
+    garantie, pilier = lu["garantie"], lu["pilier"]
+    return {
+        "annee_liquidation": lu["annee_liquidation"],
+        "revenus": _serie(lu["revenus"]),
+        "garantie": {
+            "annee_ouverture": garantie["annee_ouverture"],
+            **{champ: _flottant(garantie[champ])
+               for champ in ("pension_contributive", "ressources", "rente_capitalisee")},
+        },
+        "cotisations": _serie(lu["cotisations"]),
+        "pilier": None if pilier is None else {
+            "annees": {annee: tuple(_flottant(nombre) for nombre in flux)
+                       for annee, *flux in pilier["annees"]},
+            **{champ: _flottant(pilier[champ])
+               for champ in ("capital", "diviseur", "rente_annuelle")},
+        },
+    }
+
+
+def grille_du_cout(cas: list[dict], scenarios, parametres, paquet: bytes | None = None,
+                   ) -> tuple[dict[str, dict], dict[str, str]]:
+    """Chaque case de la grille du coût, ``{"cle", "carriere",
+    "propositions"}`` — sa carrière, et celles, nommées, sur lesquelles le coût
+    calcule la proposition seule —, simulée par le portage sous
+    ``parametres``, ceux de la projection : sous sa clé, ce que le coût en lit,
+    tel que ``cout._simulations_en_python`` le tire du moteur Python, son
+    jumeau. Puis, sous leur clé, les motifs des cases que le portage refuse."""
+    reponse = _demander({"grille_du_cout": {
+        "parametres": parametres_en_donnees(parametres),
+        "scenarios": list(scenarios),
+        "cas": [{"cle": un["cle"], "carriere": carriere_en_donnees(un["carriere"]),
+                 "propositions": {nom: carriere_en_donnees(carriere)
+                                  for nom, carriere in un["propositions"].items()}}
+                for un in cas],
+    }}, paquet)
+    resultats = {
+        cle: {
+            "pensions": _par_scenario(lu["pensions"]),
+            "depart_reporte": lu["depart_reporte"],
+            "liberal": _volet_du_cout(lu["liberal"]),
+            "coefficient_liberal": _flottant(lu["coefficient_liberal"]),
+            "prelevement": _serie(lu["prelevement"]),
+            "pension_actuelle": _flottant(lu["pension_actuelle"]),
+            "pensions_par_regime": [(regime, _flottant(montant))
+                                    for regime, montant in lu["pensions_par_regime"]],
+            "population": lu["population"],
+            "propositions": {nom: _volet_du_cout(volet)
+                             for nom, volet in lu["propositions"].items()},
         }
         for cle, lu in reponse["resultats"].items()
     }

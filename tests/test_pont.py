@@ -9,21 +9,30 @@ exige, à l'égalité exacte, que la table soit ce que le moteur Python calcule.
 Puis le bilan figé : la même grille, dont il tire les écarts médians, et les
 carrières d'exemple de « Pourquoi changer », simulées comme le site simule une
 saisie ; ``test_cout.py`` et le contrôle de ``test_affirmations.py`` exigent
-de même la table du moteur Python. Ici : le pont rend au bit près ce que le
+de même la table du moteur Python. Puis la grille du coût, sous les
+conventions de projection du COR, dont les carrières se déforment en Python :
+elles passent au portage en données. Ici : le pont rend au bit près ce que le
 moteur Python simule, chaque nombre sous le type que le Python lui donne ; et,
 sans node, il s'arrête, sans repli sur le moteur Python.
 """
 
 from __future__ import annotations
 
+import json
 import shutil
+import subprocess
+from dataclasses import fields, replace
 
 import pytest
 
-from retraite_notionnelle import pont
-from retraite_notionnelle.castypes import CAS_TYPES, carriere_de_la_grille, cases_de_la_grille
+from retraite_notionnelle import Parametres, pont
+from retraite_notionnelle.carriere import AnneeCarriere, Carriere
+from retraite_notionnelle.castypes import (
+    CAS_TYPES, GRILLE_DU_COUT, carriere_de_la_grille, cases_de_la_grille)
+from retraite_notionnelle.config import RACINE_PROJET
 from retraite_notionnelle.contexte import Contexte
 from retraite_notionnelle.saisie import Saisie
+from retraite_notionnelle.simulateur import Simulateur
 
 SCENARIOS = ("notionnel_retroactif", "notionnel_retroactif_employeur", "notionnel_liberal")
 
@@ -161,3 +170,145 @@ def test_sans_node_le_pont_s_arrete_sans_repli(monkeypatch):
         pont.carrieres([{"cle": "cadre|2000", "options": {}}], SCENARIOS)
     with pytest.raises(pont.PontIndisponible, match="node"):
         pont.saisies([{"cle": "0", "saisie": SAISIES[0]}], SCENARIOS)
+    with pytest.raises(pont.PontIndisponible, match="node"):
+        pont.grille_du_cout([], SCENARIOS, Parametres())
+
+
+# -- la grille du coût : ses carrières passent en données ------------------------
+
+#: Des cases de la grille du coût où passe ce que les conventions de projection
+#: du COR déforment en Python : l'entrée tardive dans le régime de l'État et
+#: dans celui de la CNRACL, la part des primes que le décrochage du traitement
+#: porte, l'inaptitude reconnue ; et, sans déformation, une carrière de mère de
+#: deux enfants interrompue, déjà partie, et le salarié que l'âge légal de la
+#: proposition reporte.
+CASES_DU_COUT = (("fonctionnaire_sedentaire", 1990), ("fonctionnaire_actif", 1975),
+                 ("militaire", 1980), ("smic_carriere_complete~inapte", 1960),
+                 ("carriere_interrompue", 1950), ("salaire_moyen", 1970))
+
+
+def _carriere_du_cout(simulateur, code: str, generation: int):
+    return carriere_de_la_grille(
+        simulateur, next(cas for cas in GRILLE_DU_COUT if cas.code == code), generation)
+
+
+def _types(valeur):
+    """La structure de ``valeur``, chaque nombre remplacé par son type : deux
+    lectures égales dont un entier serait ici un flottant ne s'écrivent pas de
+    même dans un fichier fabriqué."""
+    if isinstance(valeur, dict):
+        return {cle: _types(lu) for cle, lu in valeur.items()}
+    if isinstance(valeur, (list, tuple)):
+        return type(valeur)(_types(lu) for lu in valeur)
+    return type(valeur).__name__
+
+
+def test_une_carriere_passe_en_donnees_champ_par_champ():
+    """Sous les conventions du COR, la carrière d'un cas type se déforme en
+    Python (``primes_projetees``, l'entrée tardive) ; le portage n'en garde pas
+    de copie : il la lit en données. Tous les champs de la carrière, chaque
+    ligne entière et la chronologie dont elle est la vue, en JSON strict — un
+    champ qui naîtrait sans passer le pont ferait échouer ce test."""
+    simulateur = Simulateur(Parametres()).pour_la_projection()
+    carriere = _carriere_du_cout(simulateur, "fonctionnaire_sedentaire", 1990)
+    donnees = pont.carriere_en_donnees(carriere)
+    assert set(donnees) == {champ.name for champ in fields(Carriere)}
+    for ligne in donnees["lignes"]:
+        assert set(ligne) == {champ.name for champ in fields(AnneeCarriere)}
+    assert json.loads(json.dumps(donnees, allow_nan=False)) == donnees
+    assert donnees["chronologie"] == carriere.chronologie
+    # Déformée : entrée tard dans le régime de l'État, après des années de
+    # contractuel, sa part des primes portée par le décrochage du traitement.
+    assert {ligne["affiliation"] for ligne in donnees["lignes"]} == {
+        "contractuel_public", "fonctionnaire_etat"}
+    assert donnees["dates_entree"]["fonctionnaire_etat"] == [
+        carriere.dates_entree["fonctionnaire_etat"].annee,
+        carriere.dates_entree["fonctionnaire_etat"].mois]
+    assert len({ligne["part_primes"] for ligne in donnees["lignes"]
+                if ligne["affiliation"] == "fonctionnaire_etat"}) > 1
+
+
+def test_les_parametres_passent_en_donnees_sous_les_noms_du_portage():
+    """Tous les paramètres du Python, sauf la racine des données, dont le
+    paquet tient lieu ; ceux de référence sont, valeur pour valeur, ceux du
+    portage (``PARAMETRES_DEFAUT`` de ``moteur/js/config.js``)."""
+    donnees = pont.parametres_en_donnees(Parametres())
+    assert set(donnees) == {champ.name for champ in fields(Parametres)} - {"racine_donnees"}
+    assert json.loads(json.dumps(donnees, allow_nan=False)) == donnees
+    projection = pont.parametres_en_donnees(Simulateur(Parametres()).pour_la_projection().parametres)
+    assert (projection["conventions_cor"],
+            projection["minimum_vieillesse_dans_le_scenario_actuel"]) == (True, False)
+    if shutil.which("node") is None:
+        pytest.skip("node absent : les paramètres du portage ne se lisent pas ici")
+    lus = subprocess.run(
+        ["node", "--input-type=module", "-e",
+         'const m = await import("./moteur/js/config.js");'
+         "process.stdout.write(JSON.stringify(m.PARAMETRES_DEFAUT));"],
+        cwd=RACINE_PROJET, capture_output=True, check=True).stdout
+    assert donnees == json.loads(lus)
+
+
+def test_la_grille_du_cout_passe_le_pont_au_bit_pres_du_moteur_python():
+    """Ce que le coût lit de chaque case de sa grille — la pension de chaque
+    système en euros constants ; la proposition sur la carrière où elle se
+    calcule, sa garantie, son compte et son pilier ; le report de l'âge légal ;
+    ce que le droit en vigueur prélève, année par année ; la part de chaque
+    régime ; la population de sa mortalité — et la proposition seule sur les
+    carrières qu'il en dérive : le portage le rend, sur des carrières passées
+    en données et sous les paramètres de la projection, au bit près de ce que
+    le moteur Python calcule (``cout._simulations_en_python``), chaque nombre
+    sous son type."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from retraite_notionnelle import cout
+
+    simulateur = Simulateur(Parametres()).pour_la_projection()
+    macro = simulateur.macro
+    age_legal = simulateur.parametres.age_legal_liberal
+    cas = []
+    for code, generation in CASES_DU_COUT:
+        carriere = _carriere_du_cout(simulateur, code, generation)
+        cas.append({"cle": f"{code}|{generation}", "carriere": carriere, "propositions": {
+            "sans_report": carriere,
+            "reportee": carriere.prolongee(age_legal, macro),
+            "attente": carriere.prolongee(age_legal, macro, attente_travaillee=False)}})
+    scenarios = [cle for cle, _ in cout.SCENARIOS]
+    attendus, refus = cout._simulations_en_python(simulateur, cas, scenarios)
+    assert not refus
+    resultats, echecs = pont.grille_du_cout(cas, scenarios, simulateur.parametres,
+                                            pont.paquet_des_donnees())
+    assert not echecs
+    assert _types(resultats) == _types(attendus)
+    assert resultats == attendus
+    # Ce que les cases font traverser : un report, un départ déjà pris, un
+    # pilier, une population de mortalité, une pension de deux régimes.
+    lus = resultats.values()
+    assert {lu["depart_reporte"] for lu in lus} == {True, False}
+    assert any(lu["liberal"]["pilier"] is not None for lu in lus)
+    assert any(lu["liberal"]["pilier"] is None for lu in lus)
+    assert any(lu["population"] is not None for lu in lus)
+    assert any(len(lu["pensions_par_regime"]) > 1 for lu in lus)
+
+
+def test_les_parametres_du_cout_passent_le_pont():
+    """Une variante de la projection — la bascule en 2030 — se simule sous ses
+    paramètres, non sous ceux de référence : le pilier ne s'ouvre qu'à elle."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    from retraite_notionnelle import cout
+
+    variante = replace(Parametres(), annee_bascule=2030)
+    scenarios = ["actuel", "notionnel_liberal"]
+    lus = {}
+    for parametres in (Parametres(), variante):
+        simulateur = Simulateur(parametres).pour_la_projection()
+        carriere = _carriere_du_cout(simulateur, "salaire_moyen", 1975)
+        cas = [{"cle": "salaire_moyen|1975", "carriere": carriere, "propositions": {}}]
+        attendus, _ = cout._simulations_en_python(simulateur, cas, scenarios)
+        resultats, _ = pont.grille_du_cout(cas, scenarios, simulateur.parametres,
+                                           pont.paquet_des_donnees())
+        assert resultats == attendus
+        lus[parametres.annee_bascule] = resultats["salaire_moyen|1975"]
+    assert min(lus[2026]["liberal"]["pilier"]["annees"]) == 2026
+    assert min(lus[2030]["liberal"]["pilier"]["annees"]) == 2030
+    assert lus[2030]["pensions"]["notionnel_liberal"] != lus[2026]["pensions"]["notionnel_liberal"]

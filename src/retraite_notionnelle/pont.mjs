@@ -21,6 +21,11 @@
  *   de référence sous le droit en vigueur, ou `null` sans fiche, le passage
  *   aux euros constants, la pension du système actuel et celle de chaque
  *   scénario.
+ * - `grille_du_cout` : `{cas: [{cle, carriere, propositions}], scenarios,
+ *   parametres}` — chaque case de la grille du coût, sa carrière passée en
+ *   données (`carriere_en_donnees` de `pont.py`), simulée sous les paramètres
+ *   de la projection : ce que le coût lit de la comparaison, et la proposition
+ *   seule sur chacune des carrières nommées de `propositions`.
  *
  * Il écrit `{resultats, echecs}` : une carrière que le portage refuse en est
  * absente, et son motif est dans `echecs`. Un nombre non fini s'écrit `null`,
@@ -31,6 +36,9 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { DateMois } from "../../moteur/js/calendrier.js";
+import { AnneeCarriere, Carriere } from "../../moteur/js/carriere.js";
+import { PARAMETRES_DEFAUT, avec } from "../../moteur/js/config.js";
 import { Contexte } from "../../moteur/js/contexte.js";
 import { Saisie } from "../../moteur/js/saisie.js";
 
@@ -38,6 +46,12 @@ const RACINE = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const { paquet, demande } = JSON.parse(readFileSync(0, "utf8"));
 const contexte = new Contexte(
   paquet ?? JSON.parse(readFileSync(join(RACINE, "moteur/donnees.json"), "utf8")));
+
+/** Une erreur du programme, que le pont ne range pas parmi les refus. */
+function erreurDuProgramme(erreur) {
+  return erreur instanceof TypeError || erreur instanceof ReferenceError
+    || erreur instanceof RangeError || erreur instanceof SyntaxError;
+}
 
 /** Chaque cas, ou son motif dans `echecs` quand le portage le refuse. */
 function parCas(cas, calculer) {
@@ -47,8 +61,7 @@ function parCas(cas, calculer) {
     try {
       resultats[un.cle] = calculer(un);
     } catch (erreur) {
-      if (erreur instanceof TypeError || erreur instanceof ReferenceError
-          || erreur instanceof RangeError || erreur instanceof SyntaxError) {
+      if (erreurDuProgramme(erreur)) {
         throw erreur;
       }
       echecs[un.cle] = String(erreur.message ?? erreur);
@@ -107,7 +120,112 @@ function saisies({ cas, scenarios }) {
   });
 }
 
-const LECTURES = { carrieres, saisies };
+/**
+ * La carrière que `pont.py` a passée en données : ses champs, ses lignes
+ * entières, la chronologie dont elle est la vue, telle que le Python l'a
+ * complétée. Ce que le Python a fait de la carrière — l'entrée tardive d'un
+ * fonctionnaire, la part des primes que les conventions du COR portent — se lit
+ * ici tel quel : le portage n'en garde pas de copie.
+ */
+function carriereDesDonnees({ lignes, lignes_apres_depart, dates_entree, ...champs }) {
+  const ligne = (donnees) => new AnneeCarriere(donnees);
+  return new Carriere({
+    ...champs,
+    lignes: lignes.map(ligne),
+    lignes_apres_depart: lignes_apres_depart.map(ligne),
+    dates_entree: Object.fromEntries(Object.entries(dates_entree)
+      .map(([statut, [annee, mois]]) => [statut, new DateMois(annee, mois)])),
+  });
+}
+
+/**
+ * Le simulateur sous les paramètres que `pont.py` a passés en données : ceux
+ * du Python, que le portage connaît tous. Un paramètre qu'il ne connaîtrait pas
+ * arrête le pont, au lieu de se perdre.
+ */
+function simulateurSous(parametres) {
+  const inconnus = Object.keys(parametres)
+    .filter((nom) => !Object.hasOwn(PARAMETRES_DEFAUT, nom));
+  if (inconnus.length > 0) {
+    throw new Error(`paramètres que le portage ne connaît pas : ${inconnus.join(", ")}`);
+  }
+  return contexte.simulateur(avec(PARAMETRES_DEFAUT, parametres));
+}
+
+/** Ce que le coût lit de la proposition calculée sur `carriere` (`_volet_brut` de `cout.py`). */
+function voletDuCout(resultat, carriere) {
+  const garantie = resultat.garantie_vieillesse;
+  const pilier = resultat.capitalisation;
+  return {
+    annee_liquidation: carriere.anneeLiquidation,
+    revenus: carriere.lignes.filter((ligne) => ligne.cotise)
+      .map((ligne) => [ligne.annee, ligne.revenu]),
+    garantie: {
+      annee_ouverture: garantie.annee_ouverture,
+      pension_contributive: garantie.pension_contributive,
+      ressources: garantie.ressources,
+      rente_capitalisee: garantie.rente_capitalisee,
+    },
+    cotisations: resultat.compte.cotisations.map((ligne) => [ligne.annee, ligne.cotisation]),
+    pilier: pilier === null || !pilier.actif ? null : {
+      annees: pilier.annees.map((annee) => [annee.annee, annee.versement_brut,
+        annee.frais_versement, annee.frais_gestion, annee.encours]),
+      capital: pilier.capital,
+      diviseur: pilier.conversion.diviseur,
+      rente_annuelle: pilier.rente_annuelle,
+    },
+  };
+}
+
+/**
+ * Chaque case de la grille du coût : ce que `cout.py` lit de la comparaison
+ * (`_simulations_en_python`, son jumeau Python), et la proposition seule sur
+ * chaque carrière nommée de `propositions`. Seule la comparaison peut refuser
+ * une case, comme `calculer_cas_types` ne range parmi les échecs que ce que
+ * la simulation refuse.
+ */
+function grilleDuCout({ cas, scenarios, parametres }) {
+  const simulateur = simulateurSous(parametres);
+  const resultats = {};
+  const echecs = {};
+  for (const { cle, carriere: donnees, propositions } of cas) {
+    const carriere = carriereDesDonnees(donnees);
+    let comparaison;
+    try {
+      comparaison = simulateur.simuler(carriere);
+    } catch (erreur) {
+      if (erreurDuProgramme(erreur)) {
+        throw erreur;
+      }
+      echecs[cle] = String(erreur.message ?? erreur);
+      continue;
+    }
+    const actuel = comparaison.actuel;
+    resultats[cle] = {
+      pensions: parScenario(scenarios, (scenario) => comparaison.enEurosConstants(
+        comparaison[scenario].pension_annuelle, scenario)),
+      depart_reporte: comparaison.departReporte,
+      liberal: voletDuCout(comparaison.notionnel_liberal,
+        comparaison.carriereDe("notionnel_liberal")),
+      coefficient_liberal: comparaison.coefficientDe("notionnel_liberal"),
+      prelevement: simulateur.constructeurPrelevement.construire(
+        carriere, carriere.anneeLiquidation, carriere.premiereAnnee,
+      ).cotisations.map((ligne) => [ligne.annee, ligne.cotisation]),
+      pension_actuelle: actuel.pension_annuelle,
+      pensions_par_regime: actuel.pensions_par_regime
+        .map((pension) => [pension.regime, pension.montant]),
+      population: simulateur.convertisseur.populationPourPension(
+        actuel.pension_annuelle, carriere.anneeLiquidation, carriere),
+      propositions: Object.fromEntries(Object.entries(propositions).map(([nom, lue]) => {
+        const autre = carriereDesDonnees(lue);
+        return [nom, voletDuCout(simulateur.proposition(autre), autre)];
+      })),
+    };
+  }
+  return { resultats, echecs };
+}
+
+const LECTURES = { carrieres, saisies, grille_du_cout: grilleDuCout };
 const [lecture] = Object.keys(demande);
 if (Object.keys(demande).length !== 1 || !(lecture in LECTURES)) {
   throw new Error(`demande attendue : une seule de ${Object.keys(LECTURES).join(", ")}`);
