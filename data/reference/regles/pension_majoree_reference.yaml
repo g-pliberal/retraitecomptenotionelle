@@ -327,13 +327,44 @@ versions:
       plafond d'écrêtement tous régimes [...] au niveau [...] de l'allocation de
       solidarité aux personnes âgées servie pour une personne seule »
     lu_le: 2026-10-07
+  - id: LEGIARTI000047961256
+    article: D. 732-111 code rural
+    en_vigueur: 2023-08-12
+    citation: >-
+      « PMRmax est égal à 8 970,86 euros au 1er janvier 2023 pour les personnes dont la
+      pension de retraite servie à titre personnel a pris effet avant le 1er septembre
+      2023 » ; « Pour les personnes dont la pension de retraite servie à titre personnel
+      a pris effet avant le 1er septembre 2023, le montant minimum annuel PMRmax est
+      revalorisé aux mêmes dates et dans les mêmes conditions que celles prévues pour les
+      pensions de vieillesse de base par l'article L. 161-23-1 du code de la sécurité
+      sociale »
+    lu_le: 2026-10-19
+  - id: LEGIARTI000047961228
+    article: D. 732-113 code rural
+    en_vigueur: 2023-09-01
+    citation: >-
+      « I.-Pour les personnes dont la pension de retraite servie à titre personnel a pris
+      effet avant le 1er septembre 2023, le montant annuel du plafond prévu à l'article
+      L. 732-54-3 est fixé à 11 533,02 euros au 1er janvier 2023 »
+    lu_le: 2026-10-19
+  - id: JORFARTI000020252116
+    publie_le: 2009-02-15
+    reference: >-
+      décret n° 2009-173 du 13 février 2009, article 1er, second alinéa de D. 732-113 :
+      « Le montant du plafond est revalorisé aux mêmes dates et dans les mêmes conditions
+      que celles prévues pour les pensions de vieillesse de base par l'article L. 161-23-1
+      du code de la sécurité sociale », que les décrets n° 2010-126, n° 2021-1919 et
+      n° 2023-754, qui ne touchent que le premier, laissent au I ; la consolidation de
+      LEGI l'omet depuis 2023
+    lu_le: 2026-10-19
   nee_de: JORFTEXT000044792131
   bornes:
     liquidation.date_effet: [2022-01-01, 2023-09-01]
   contenu:
     droit: >-
       un seul montant, quel que soit le statut : PMRmax × durée / DR ; le plafond relevé
-      à l'ASPA d'une personne seule
+      à l'ASPA d'une personne seule ; l'un et l'autre suivent les pensions de base, avant
+      comme après août 2023
     parametres:
       existe: true
       duree_minimale: 0
@@ -533,11 +564,11 @@ approximations:
     qu'une pension étrangère ou une autre pension commence, le mois qui suit, la
     majoration se refait à l'échéance à la règle de la date d'effet, sur les montants
     et toutes les pensions de l'échéance (L. 732-54-3). Entre deux révisions, elle suit
-    le coefficient, comme la PMR et le plafond suivent L. 161-23-1 jusqu'en août 2023
-    (D. 732-111, D. 732-113) : ce que les complémentaires, revalorisées autrement, et
-    le plafond, qui suit le SMIC depuis septembre 2023, changent à l'écrêtement ne la
-    révise pas ; une pension commencée le mois de l'échéance compte aux ressources
-    d'une révision qu'un autre changement ouvre
+    le coefficient, comme la PMR et le plafond d'une pension prise avant septembre 2023
+    suivent L. 161-23-1 (D. 732-111 ; D. 732-113, I) : ce que les complémentaires,
+    revalorisées autrement, et le plafond d'une pension prise depuis, qui suit le SMIC,
+    changent à l'écrêtement ne la révise pas ; une pension commencée le mois de
+    l'échéance compte aux ressources d'une révision qu'un autre changement ouvre
   effet: >-
     la veuve de juin 2018 partie en 2016 : 468,91 € de majoration en décembre 2018 au
     lieu de 988,13 € ; une pension étrangère de 500 € par mois ou un régime général
@@ -557,17 +588,16 @@ approximations:
     au plus quelques centimes par revalorisation ; le plafond de juillet 2022 retrouve
     celui que la MSA publie, 11 441,49 €
 - ecart: >-
-    pour les pensions prises avant le 1er septembre 2023, la table ne porte la PMR et le
-    plafond que jusqu'au 31 août 2023, ce que la liquidation seule lisait : aux
-    échéances d'après, que le modèle refait — la PMR de 2009, la PMR unique, la
-    révision —, il les extrapole (fiabilité estimée), quand D. 732-111 revalorise
-    PMRmax « aux mêmes dates et dans les mêmes conditions que celles prévues pour les
-    pensions de vieillesse de base », et que D. 732-113 dit, après ses I et II, le
-    plafond « revalorisé aux mêmes dates et dans les mêmes proportions que le salaire
-    minimum de croissance »
+    la table porte les montants jusqu'au dernier barème, celui de janvier 2026 ; aux
+    échéances d'après, le modèle prolonge la PMR et le plafond des pensions prises avant
+    septembre 2023 sur les prix, comme les pensions de base qu'ils suivent (D. 732-111 ;
+    D. 732-113, I), ceux des pensions prises depuis sur le SMIC, comme le minimum
+    contributif et le plafond de L. 173-2 (fiabilité estimée) ; depuis le 19 octobre
+    2026, la table ne s'arrête plus en août 2023 pour les premières ni en 2025 pour le
+    plafond du II, que les révisions relisent
   effet: >-
-    la PMR entière de décembre 2026 à 9 567,86 € au lieu de 9 741,00 € (8 970,86 € de
-    janvier 2023 revalorisés de 5,3 %, 2,2 % et 0,9 %, au centime inférieur)
+    estimé au-delà de 2026 ; la PMR entière de décembre 2026, que le SMIC menait à
+    9 567,86 €, est celle de la série, 9 741,00 €
 presomptions:
   pas_de_reversion_agricole: >-
     la PMR, qui ne retranche, ne compte au plafond et ne sert au 2° de D. 732-110, II,
@@ -579,8 +609,44 @@ sources:
   - >-
     Chercher un exemple chiffré publié par la MSA (circulaire, fiche, simulateur) d'une
     pension portée à la PMR, et le rejouer dans exemples_officiels.yaml.
-  - Relire les montants à chaque revalorisation de janvier.
+  - >-
+    Relire les montants à chaque revalorisation de janvier, et porter jusqu'à elle les
+    FINS de scripts/fetch/dila_legi_pension_majoree.py.
   lectures:
+  - type: jorf
+    reference: >-
+      D. 732-113, alinéa par alinéa, aux décrets qui l'écrivent : n° 2009-173, article 1er
+      (JORFARTI000020252116), « Art. D. 732-113.-Le montant annuel du plafond [...] est
+      fixé à 9 000 euros au 1er janvier 2009. « Le montant du plafond est revalorisé aux
+      mêmes dates et dans les mêmes conditions que celles prévues pour les pensions de
+      vieillesse de base », deux alinéas ; n° 2010-126 (JORFARTI000021801973), « Le
+      premier alinéa de l'article D. 732-113 est remplacé » ; n° 2021-1919
+      (JORFARTI000044792136), « Au premier alinéa de l'article D. 732-113 [...] la phrase
+      est complétée par les mots : « au 1er janvier 2022 » » ; n° 2023-754, article 1er,
+      2° (JORFARTI000047956510), « a) Le premier alinéa est remplacé par les dispositions
+      suivantes : « I.-[...] » ; b) Est ajouté un II ainsi rédigé : « II.-[...] au 1er
+      septembre 2023. « Le montant du plafond est revalorisé aux mêmes dates et dans les
+      mêmes proportions que le salaire minimum de croissance. » » ; n° 2025-1410,
+      article 1er, 38° (JORFARTI000053227637), « Au premier alinéa du II [...] » et « Il
+      est complété par un III ». Le second alinéa de 2009 reste donc au I, la phrase du
+      SMIC est le second alinéa du II ; la consolidation de LEGI (LEGIARTI000047961228,
+      LEGIARTI000053365737) omet le premier et range la seconde après le III. Dans
+      l'index JORF du dépôt à jour au 11 octobre 2026
+    date: 2026-10-19
+  - type: autre
+    reference: >-
+      Le plafond servi après août 2023, cherché : la MSA, guide « Préparer sa retraite -
+      non-salariés agricoles » (octobre 2023), « le plafond des pensions de retraite
+      applicable à cette majoration est aligné sur le montant de l'Allocation de
+      solidarité aux personnes âgées (Aspa) servi pour une personne seule, soit 961,08
+      euros par mois » ; question écrite n° 1975 (XVIIe législature, JO du 12 novembre
+      2024), le seuil d'écrêtement « porté au montant de l'allocation de solidarité aux
+      personnes âgées (ASPA), soit 1 012,02 euros au 1er janvier 2024 », que la réponse
+      du ministère (JO du 1er avril 2025) ne dément pas ; les tableaux de bord des
+      retraites des non-salariés au 31 décembre 2023, 2024 et 2025 et les Chiffres utiles
+      de 2026 n'en écrivent aucun montant d'après 2022
+    url: https://questions.assemblee-nationale.fr/dyn/17/questions/QANR5L17QE1975.pdf
+    date: 2026-10-19
   - type: legifrance
     reference: >-
       D. 732-114 (2009 et 2026, LEGIARTI000020254688 et LEGIARTI000053365740) : « Toute
@@ -698,6 +764,11 @@ historique:
   pension commence après le départ, dans les deux moteurs, la saisie de la réversion
   faite le même jour ; les montants d'après 2023 des pensions prises avant septembre 2023,
   que la table n'a pas, déclarés.
+- >-
+  2026-10-19 — étape 138.8 : la PMR et le plafond des pensions prises avant septembre
+  2023 portés jusqu'au barème de 2026, comme les pensions de base (D. 732-111 ;
+  D. 732-113, I, lu aux décrets qui l'écrivent), et au-delà sur les prix ; le plafond du
+  II jusqu'en 2026, sur le SMIC, dans les deux moteurs.
 exemples: []
 effet: >-
   Les petites pensions de base des chefs d'exploitation liquidées au taux plein depuis

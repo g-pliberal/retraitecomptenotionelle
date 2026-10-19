@@ -130893,11 +130893,11 @@
      "fiabilite": "moyenne",
      "majoration_enfants": 0,
      "mensuel_decembre_2019": 613.8096370277949,
-     "minimum_vieillesse": 4013.962427867664,
+     "minimum_vieillesse": 3840.818434966155,
      "par_regime": [
       {
        "au_depart": 7152.542812369973,
-       "aujourd_hui": 8352.528440532336,
+       "aujourd_hui": 8525.672433433845,
        "coefficient": 1.1798641678938226,
        "fiabilite": "haute",
        "majoration_exceptionnelle": 0.0,

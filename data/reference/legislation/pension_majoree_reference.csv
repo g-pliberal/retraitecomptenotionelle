@@ -13,18 +13,21 @@
 #   pmr_chef     PMR1 (D. 732-111, 2009) : la part des chefs d'exploitation de
 #                dix-sept ans et demi, puis, depuis 2022, la PMR unique
 #                (PMRmax), relevée au minimum contributif majoré ; pour les
-#                pensions prenant effet avant le 1er septembre 2023 ;
+#                pensions prenant effet avant le 1er septembre 2023,
+#                revalorisée comme les pensions de base, après août 2023 aussi ;
 #   pmr_conjoint PMR2 : les autres périodes, jusqu'en 2021 ;
 #   pmr_depuis_septembre_2023
 #                PMRmax des pensions prenant effet depuis le 1er septembre
 #                2023 : 10 170,86 €, revalorisée comme le minimum contributif,
 #                qu'elle vaut ;
-#   plafond      le plafond de l'écrêtement (D. 732-113), pour les pensions
-#                prenant effet avant le 1er septembre 2023 ;
+#   plafond      le plafond de l'écrêtement (D. 732-113, I), pour les pensions
+#                prenant effet avant le 1er septembre 2023, revalorisé comme les
+#                pensions de base, depuis 2009 et après août 2023 ;
 #   plafond_depuis_septembre_2023
-#                celui des pensions prenant effet de septembre 2023 à 2025, qui
-#                suit le SMIC comme le plafond de l'article L. 173-2. Depuis
-#                2026, le plafond est celui-ci (L. 732-54-3, 2°) :
+#                celui des pensions prenant effet de septembre 2023 à 2025 (II),
+#                qui suit le SMIC comme le plafond de l'article L. 173-2, à leur
+#                départ et à leurs échéances. Pour les pensions prenant effet
+#                depuis 2026, le plafond est celui-ci (L. 732-54-3, 2°) :
 #                minimum_contributif.csv.
 #
 # Fiabilité : certifiee pour une ancre relue dans LEGI ; moyenne pour un
@@ -47,10 +50,15 @@ plafond,2021-01-01,10497.17,moyenne
 plafond,2022-01-01,11001.44,certifiee
 plafond,2022-07-01,11441.49,moyenne
 plafond,2023-01-01,11533.02,certifiee
+plafond,2024-01-01,12144.27,moyenne
+plafond,2025-01-01,12411.44,moyenne
+plafond,2026-01-01,12523.14,moyenne
 plafond_depuis_septembre_2023,2023-09-01,12732.96,certifiee
 plafond_depuis_septembre_2023,2024-01-01,12876.84,moyenne
 plafond_depuis_septembre_2023,2024-11-01,13130.42,moyenne
 plafond_depuis_septembre_2023,2025-01-01,13130.42,moyenne
+plafond_depuis_septembre_2023,2026-01-01,13285.31,moyenne
+plafond_depuis_septembre_2023,2026-06-01,13605.47,moyenne
 pmr_chef,2009-01-01,7596.00,certifiee
 pmr_chef,2009-04-01,7671.96,moyenne
 pmr_chef,2010-04-01,7741.00,moyenne
@@ -65,6 +73,9 @@ pmr_chef,2021-01-01,8388.94,moyenne
 pmr_chef,2022-01-01,8557.38,certifiee
 pmr_chef,2022-07-01,8899.67,moyenne
 pmr_chef,2023-01-01,8970.86,certifiee
+pmr_chef,2024-01-01,9446.31,moyenne
+pmr_chef,2025-01-01,9654.12,moyenne
+pmr_chef,2026-01-01,9741.00,moyenne
 pmr_conjoint,2009-01-01,6036.00,certifiee
 pmr_conjoint,2009-04-01,6096.36,moyenne
 pmr_conjoint,2010-04-01,6151.22,moyenne

@@ -729,6 +729,13 @@ export const SANS_PENSION_MAJOREE = Object.freeze({
 });
 
 /**
+ * Les mesures que leur texte revalorise comme les pensions de base : la PMR et
+ * le plafond des pensions prises avant septembre 2023 (D. 732-111, D. 732-113,
+ * I) ; au-delà du dernier barème, sur les prix, comme elles.
+ */
+export const PMR_SUR_LES_PRIX = new Set(["pmr_chef", "pmr_conjoint", "plafond"]);
+
+/**
  * La pension majorée de référence des non-salariés agricoles (PMR), le plafond
  * de son écrêtement, et la règle que leur applique la date d'effet : des
  * montants datés, une série par mesure (`pmr_chef`, `pmr_conjoint`,
@@ -761,7 +768,9 @@ export class PensionMajoreeReference {
   /**
    * Le montant de la mesure en vigueur le premier jour du mois, en euros par
    * an ; null pour une mesure inconnue. Un mois qui précède la série lit son
-   * premier montant ; au-delà du dernier, ce dernier revalorisé sur le SMIC.
+   * premier montant ; au-delà du dernier, ce dernier revalorisé sur les prix
+   * pour une mesure qui suit les pensions de base (`PMR_SUR_LES_PRIX`), sur le
+   * SMIC pour les autres.
    *
    * @returns {[number, number]|null} valeur, et fiabilité.
    */
@@ -779,7 +788,9 @@ export class PensionMajoreeReference {
     let [, valeur, fiabilite] = datees[rang - 1];
     const derniere = Number(datees[datees.length - 1][0].slice(0, 4));
     if (rang === datees.length && annee > derniere) {
-      valeur *= this.macro.coefficientSmic(derniere, annee);
+      valeur *= PMR_SUR_LES_PRIX.has(mesure)
+        ? this.macro.coefficientPrix(derniere, annee)
+        : this.macro.coefficientSmic(derniere, annee);
       fiabilite = Math.min(fiabilite, Fiabilite.ESTIMEE);
     }
     return [valeur, fiabilite];

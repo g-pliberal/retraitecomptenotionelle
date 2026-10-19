@@ -29,6 +29,16 @@ se ferme sur l'ancre suivante, qui la remplace : le décret n° 2021-1919 relèv
 la PMR au minimum contributif majoré au 1er janvier 2022, plus haut que la
 revalorisation ne l'aurait portée.
 
+Pour les pensions prises avant le 1er septembre 2023, la PMR et le plafond
+suivent ainsi les pensions de base après août 2023, aux échéances que la PMR
+unique et la révision refont : D. 732-111 le dit de PMRmax ; de leur plafond,
+le second alinéa de D. 732-113 de 2009, que le décret n° 2023-754 laisse au I
+en n'en remplaçant que le premier, la phrase du SMIC étant le second alinéa de
+son II (le décret n° 2025-1410 modifie « le premier alinéa du II »). La
+consolidation de LEGI, qui omet cet alinéa et range la phrase du SMIC après le
+III, ne le dit pas ; la série retrouve l'ASPA d'une personne seule, que
+L. 732-54-3 donne pour minimum au plafond.
+
 Pour les pensions prenant effet depuis le 1er septembre 2023, la PMR est
 revalorisée comme le minimum contributif (L. 732-54-2 renvoie au dernier alinéa
 de L. 351-10) et part du même montant, 10 170,86 € : elle VAUT le minimum
@@ -39,9 +49,9 @@ lui applique les rapports de celui-ci. Depuis 2026, le plafond EST celui de
 l'article L. 173-2 (L. 732-54-3, 2°), que le modèle lit dans
 ``minimum_contributif.csv`` : ce fichier ne le répète pas.
 
-Montants en euros PAR AN. Le fichier n'a besoin que des montants en vigueur à
-une date d'effet : chaque mesure s'arrête où la version suivante de la règle
-cesse de la lire.
+Montants en euros PAR AN. Chaque mesure s'arrête où la règle cesse de la
+lire : à la date d'effet de la version suivante, ou, pour une mesure que la
+PMR unique et la révision relisent à chaque échéance, au dernier barème.
 """
 
 from __future__ import annotations
@@ -89,13 +99,14 @@ ANCRES: tuple[tuple[str, str, float, str, str, str], ...] = (
      "LEGIARTI000047961228", "fixé à 12 732,96 euros au 1er septembre 2023"),
 )
 
-#: Où chaque mesure s'arrête : la dernière date d'effet que la règle lui
-#: confie (``data/reference/regles/pension_majoree_reference.yaml``).
+#: Où chaque mesure s'arrête : la dernière échéance que la règle lui confie
+#: (``data/reference/regles/pension_majoree_reference.yaml``), celle du dernier
+#: barème pour une mesure que la PMR unique ou la révision relit encore.
 FINS = {
-    "pmr_chef": "2023-08-31",
+    "pmr_chef": "2026-12-31",
     "pmr_conjoint": "2021-12-31",
-    "plafond": "2023-08-31",
-    "plafond_depuis_septembre_2023": "2025-12-31",
+    "plafond": "2026-12-31",
+    "plafond_depuis_septembre_2023": "2026-12-31",
     "pmr_depuis_septembre_2023": "2026-12-31",
 }
 
@@ -211,18 +222,21 @@ ENTETE = """\
 #   pmr_chef     PMR1 (D. 732-111, 2009) : la part des chefs d'exploitation de
 #                dix-sept ans et demi, puis, depuis 2022, la PMR unique
 #                (PMRmax), relevée au minimum contributif majoré ; pour les
-#                pensions prenant effet avant le 1er septembre 2023 ;
+#                pensions prenant effet avant le 1er septembre 2023,
+#                revalorisée comme les pensions de base, après août 2023 aussi ;
 #   pmr_conjoint PMR2 : les autres périodes, jusqu'en 2021 ;
 #   pmr_depuis_septembre_2023
 #                PMRmax des pensions prenant effet depuis le 1er septembre
 #                2023 : 10 170,86 €, revalorisée comme le minimum contributif,
 #                qu'elle vaut ;
-#   plafond      le plafond de l'écrêtement (D. 732-113), pour les pensions
-#                prenant effet avant le 1er septembre 2023 ;
+#   plafond      le plafond de l'écrêtement (D. 732-113, I), pour les pensions
+#                prenant effet avant le 1er septembre 2023, revalorisé comme les
+#                pensions de base, depuis 2009 et après août 2023 ;
 #   plafond_depuis_septembre_2023
-#                celui des pensions prenant effet de septembre 2023 à 2025, qui
-#                suit le SMIC comme le plafond de l'article L. 173-2. Depuis
-#                2026, le plafond est celui-ci (L. 732-54-3, 2°) :
+#                celui des pensions prenant effet de septembre 2023 à 2025 (II),
+#                qui suit le SMIC comme le plafond de l'article L. 173-2, à leur
+#                départ et à leurs échéances. Pour les pensions prenant effet
+#                depuis 2026, le plafond est celui-ci (L. 732-54-3, 2°) :
 #                minimum_contributif.csv.
 #
 # Fiabilité : certifiee pour une ancre relue dans LEGI ; moyenne pour un

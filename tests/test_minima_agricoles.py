@@ -26,6 +26,7 @@ from types import SimpleNamespace
 import pytest
 
 from retraite_notionnelle.carriere import Carriere, Metier
+from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.droit import completer
 from retraite_notionnelle.droit.liquider import valeur_du_point
 from retraite_notionnelle.echeancier import Echeancier
@@ -72,16 +73,22 @@ def _cible(simulateur: Simulateur, carriere: Carriere) -> float:
 
 # -- les données et les règles ------------------------------------------------
 
+def _recuperateur_de_la_pmr():
+    """Le script qui écrit ``pension_majoree_reference.csv``."""
+    chemin = RACINE / "scripts" / "fetch" / "dila_legi_pension_majoree.py"
+    spec = importlib.util.spec_from_file_location("dila_legi_pension_majoree", chemin)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def test_les_montants_de_la_pmr_se_refont_de_leurs_ancres():
     """Le fichier est ce que son récupérateur écrit : les ancres de D. 732-111
     et D. 732-113, revalorisées par les coefficients de l'article L. 161-23-1
     au centime inférieur. Le plafond de juillet 2022 retrouve celui que la MSA
     publie, et la PMR des pensions de septembre 2023 vaut le minimum
     contributif majoré, que la loi lui fait suivre."""
-    chemin = RACINE / "scripts" / "fetch" / "dila_legi_pension_majoree.py"
-    spec = importlib.util.spec_from_file_location("dila_legi_pension_majoree", chemin)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+    module = _recuperateur_de_la_pmr()
     lues = [(l["mesure"], l["date"], float(l["valeur"]), l["fiabilite"])
             for l in module._lignes(module.SORTIE)]
     assert lues == module.serie()
@@ -94,6 +101,50 @@ def test_les_montants_de_la_pmr_se_refont_de_leurs_ancres():
     for (mesure, jour), valeur in valeurs.items():
         if mesure == "pmr_depuis_septembre_2023":
             assert valeur == majore[jour], jour
+
+
+def test_la_pmr_et_le_plafond_d_avant_septembre_2023_suivent_les_pensions_de_base():
+    """Les échéances d'après août 2023 des pensions prises avant septembre 2023
+    lisent leur PMR et leur plafond (la PMR unique, la révision) : D. 732-111
+    revalorise leur PMRmax comme les pensions de base ; leur plafond aussi, par
+    le second alinéa de D. 732-113 de 2009, que le décret n° 2023-754 laisse
+    au I en n'en remplaçant que le premier, la phrase du SMIC étant le second
+    alinéa de son II (« Au premier alinéa du II », décret n° 2025-1410).
+    8 970,86 € et 11 533,02 € de janvier 2023, revalorisés de 5,3, 2,2 et
+    0,9 %, au centime inférieur : le plafond reste l'ASPA d'une personne
+    seule, son minimum (L. 732-54-3), 1 012,02 € par mois en 2024. Le plafond
+    du II suit le SMIC en 2026, quand se révisent les pensions prises de
+    septembre 2023 à 2025 : 12 732,96 € menés comme le plafond de L. 173-2,
+    de 1 352,23 à 1 410,89 € par mois."""
+    valeurs = {(mesure, jour): valeur
+               for mesure, jour, valeur, _ in _recuperateur_de_la_pmr().serie()}
+    janviers = [f"{annee}-01-01" for annee in (2024, 2025, 2026)]
+    assert [valeurs[("pmr_chef", jour)] for jour in janviers] == [9446.31, 9654.12, 9741.00]
+    assert [valeurs[("plafond", jour)] for jour in janviers] == [12144.27, 12411.44, 12523.14]
+    assert round(valeurs[("plafond", "2024-01-01")] / 12, 2) == 1012.02
+    assert valeurs[("plafond_depuis_septembre_2023", "2026-01-01")] == 13285.31
+
+
+def test_au_dela_du_dernier_bareme_la_pmr_d_avant_septembre_2023_suit_les_prix(simulateur):
+    """En décembre 2026, la PMR entière des pensions prises avant septembre
+    2023 est celle de la série, 9 741,00 €, et non les 9 567,86 € que le SMIC
+    faisait de janvier 2023. Au-delà du dernier barème, elle et son plafond
+    suivent les pensions de base, que le modèle revalorise sur les prix
+    (D. 732-111, D. 732-113, I) ; la PMR et le plafond des pensions prises
+    depuis, le SMIC, comme le minimum contributif et le plafond de L. 173-2."""
+    pmr = simulateur.scenario_actuel.pension_majoree_reference
+    macro = simulateur.macro
+    assert pmr.montant("pmr_chef", 2026, 12) == (9741.00, Fiabilite.MOYENNE)
+    assert pmr.montant("plafond", 2026, 12) == (12523.14, Fiabilite.MOYENNE)
+    for mesure, en_2026 in (("pmr_chef", 9741.00), ("plafond", 12523.14)):
+        valeur, fiabilite = pmr.montant(mesure, 2030, 6)
+        assert valeur == pytest.approx(en_2026 * macro.coefficient_prix(2026, 2030), abs=1e-9)
+        assert fiabilite == Fiabilite.ESTIMEE
+    valeur, _ = pmr.montant("pmr_depuis_septembre_2023", 2030, 6)
+    assert valeur == pytest.approx(10847.22 * macro.coefficient_smic(2026, 2030), abs=1e-9)
+    valeur, _ = pmr.montant("plafond_depuis_septembre_2023", 2030, 6)
+    assert valeur == pytest.approx(13605.47 * macro.coefficient_smic(2026, 2030), abs=1e-9)
+    assert macro.coefficient_prix(2026, 2030) != macro.coefficient_smic(2026, 2030)
 
 
 def test_la_pmr_suit_la_version_de_sa_date_d_effet(simulateur):
@@ -1057,13 +1108,16 @@ _REVISIONS = [
       "reversion_agricole": {"debut": "2023-03", "mensuel": 150.0}}, 2023),
     ({**_COLLABORATRICE, "annee_naissance": 1960, "age_liquidation": 62,
       "reversion_agricole": {"debut": "2023-03", "mensuel": 150.0}}, 2026),
+    ({**_COLLABORATRICE, "annee_naissance": 1960, "age_liquidation": 62,
+      "reversion_agricole": {"debut": "2023-03", "mensuel": 150.0}}, 2030),
 ]
 
 
 def test_les_deux_moteurs_revisent_la_meme_majoration(simulateur):
     """La révision de D. 732-114, à l'échéance : la réversion qui commence
     après le départ, la pension étrangère le mois qui suit, le régime général
-    demandé plus tard, la pension prise depuis 2022 ; la revalorisation de
+    demandé plus tard, la pension prise depuis 2022, jusqu'au-delà du dernier
+    barème, où sa PMR et son plafond suivent les prix ; la revalorisation de
     chaque régime et la révision de l'exploitant, en Python et en JavaScript."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
@@ -1092,7 +1146,7 @@ def test_les_deux_moteurs_revisent_la_meme_majoration(simulateur):
             "exploitant": None if vivante.exploitant is None else asdict(vivante.exploitant)}))
         revisees += attendu["exploitant"] is not None
         _ecarts(obtenu, attendu, f"révision {rang}", ecarts)
-    assert revisees == 6
+    assert revisees == 7
     assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])
 
 

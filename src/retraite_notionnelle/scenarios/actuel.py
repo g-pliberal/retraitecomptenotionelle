@@ -3530,6 +3530,11 @@ SANS_PENSION_MAJOREE = {
     "seuil_chef": None, "plafond": None, "majorations_de_duree": False,
 }
 
+#: Les mesures que leur texte revalorise comme les pensions de base : la PMR
+#: et le plafond des pensions prises avant septembre 2023 (D. 732-111,
+#: D. 732-113, I) ; au-delà du dernier barème, sur les prix, comme elles.
+PMR_SUR_LES_PRIX = frozenset({"pmr_chef", "pmr_conjoint", "plafond"})
+
 
 class PensionMajoreeReference:
     """La pension majorée de référence des non-salariés agricoles (PMR), le
@@ -3590,8 +3595,9 @@ class PensionMajoreeReference:
         par an ; ``None`` pour une mesure inconnue. Un mois qui précède la
         série lit son premier montant — la PMR des pensions de septembre 2023
         que le complément de la RCO lit au 1er janvier 2023 ; au-delà du
-        dernier, ce dernier revalorisé sur le SMIC, comme le minimum
-        contributif qu'elle vaut."""
+        dernier, ce dernier revalorisé sur les prix pour une mesure qui suit
+        les pensions de base (``PMR_SUR_LES_PRIX``), sur le SMIC pour les
+        autres, comme le minimum contributif et le plafond de L. 173-2."""
         datees = self._table.get(mesure)
         if not datees:
             return None
@@ -3600,7 +3606,8 @@ class PensionMajoreeReference:
         _, valeur, fiabilite = datees[rang - 1]
         derniere = int(datees[-1][0][:4])
         if rang == len(datees) and annee > derniere:
-            valeur *= self.macro.coefficient_smic(derniere, annee)
+            valeur *= (self.macro.coefficient_prix(derniere, annee) if mesure in PMR_SUR_LES_PRIX
+                       else self.macro.coefficient_smic(derniere, annee))
             fiabilite = min(fiabilite, Fiabilite.ESTIMEE)
         return valeur, fiabilite
 
