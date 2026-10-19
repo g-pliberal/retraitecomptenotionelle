@@ -5731,7 +5731,7 @@ sources:
       Les 155 fichiers de `retraites/`, à jour de la loi du 30 décembre 2025 :
       un recoupement de chaque table du dépôt qui n'en a pas, et la référence
       de chaque marche quand ils la portent (un tiers des dates).
-    statut: a_explorer
+    statut: en_cours
     note: >-
       Mesuré le 1er octobre 2026 par `scripts/fetch/sonder_sources.py` : la
       page est une coquille que le JavaScript remplit. Le code, lui, se
