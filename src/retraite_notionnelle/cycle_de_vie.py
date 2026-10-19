@@ -187,10 +187,11 @@ Depuis le pont (action 161, étape 5), ``scripts/cycle_de_vie.py`` mène les
 cas types du COR par lui : le Python les bâtit (:mod:`~retraite_notionnelle.castypes`,
 que le coût lit), le portage en calcule le cycle de vie, et les noms qui ne
 servaient qu'aux cas types — leurs âges de départ, leur balayage, leurs âges
-d'équilibre, les productivités du COR — sont partis. Ce module reste, que plus
-rien ne lit hors des tests : ``tests/test_cycle_de_vie_references.py``
-confronte aux publications du COR et de l'OCDE des carrières bâties ici, en
-lisant les régimes un à un et le coût, que le portage n'a pas ;
+d'équilibre, les productivités du COR — sont partis. Depuis le 19 octobre
+2026, la confrontation aux publications du COR, de TRAJECTOiRE, de l'OCDE et
+de l'ETK (``tests/test_cycle_de_vie_references.py``) passe aussi par le
+portage, les comptes régime par régime compris, sur le paquet des données du
+jour. Ce module reste, que plus rien ne lit hors des tests :
 ``tests/test_cycle_de_vie_portage.py`` tient les deux jumeaux ensemble.
 """
 

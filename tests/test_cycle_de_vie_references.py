@@ -2,9 +2,9 @@
 
 Le dépôt calcule depuis l'action 138 (étape 9) la durée de retraite, le taux de
 récupération, le rendement interne et le patrimoine retraite de ses carrières
-(``retraite_notionnelle.cycle_de_vie`` ; définitions dans
-``tests/test_cycle_de_vie.py``). Cinq références en publient, chacune sous ses
-conventions, et ce module les refait sous les mêmes :
+(``moteur/js/cycle-de-vie.js``, que ce module fait tourner par node ;
+définitions dans ``tests/test_cycle_de_vie.py``). Cinq références en publient,
+chacune sous ses conventions, et ce module les refait sous les mêmes :
 
 * LE COR, rapport annuel de juin 2026 (``tests/temoins/cor_cycle_de_vie.json``,
   ``scripts/fetch/cor_cycle_de_vie.py``) : l'espérance de vie à 60 ans de chaque
@@ -94,6 +94,19 @@ projeté sur le salaire moyen, redonne son taux net à 0,4 point près au salair
 moyen et à deux fois ; à la moitié, où rien n'est imposé, l'écart, 1,2 point,
 est celui de la CSG, que le dépôt tient au taux plein. Sa rente nette suit sa
 rente brute à 1,2 % près, comme celle de l'OCDE à 0,5 % près.
+
+Le 19 octobre 2026, le portage (action 161, étape 5) : ces grandeurs se
+calculent par le portage du cycle de vie, celui que le site fait tourner, et
+non plus par son jumeau Python (``tests/js/cycle-de-vie-references.mjs``), sur
+le paquet des données du jour. Le Python ne résout que les carrières des
+références — la saisie que TRAJECTOiRE a bâtie, les options d'un cas type et
+l'âge où le pilote le fait partir, celles du salarié de l'OCDE — et ce
+qu'elles publient ; le portage simule et calcule le reste, les comptes régime
+par régime et la valeur de service de l'Agirc-Arrco compris. Les 4 267 nombres
+que rendent ses lectures, confrontés un à un à ceux du jumeau Python, sont les
+mêmes au bit près. Sur le paquet du dépôt, en retard ce jour-là sur le code qui
+le lit, les cotisations que l'Unédic verse pour le chômeur du cas type n° 3
+manquaient.
 """
 
 from __future__ import annotations
@@ -101,30 +114,43 @@ from __future__ import annotations
 import datetime as dt
 import json
 import re
-from dataclasses import replace
+import shutil
+import subprocess
 from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle import cycle_de_vie
+from retraite_notionnelle import pont
 from retraite_notionnelle.castypes import CAS_TYPES, CasType
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.contexte import Contexte
-from retraite_notionnelle.cout import coefficient_actuel
-from retraite_notionnelle.donnees.impot_revenu import charger_baremes_impot_revenu
 from retraite_notionnelle.donnees.prelevements_historiques import (
     charger_prelevements_historiques,
 )
-from retraite_notionnelle.impot_revenu import impot_du_foyer
-from retraite_notionnelle.saisie import Saisie
 from retraite_notionnelle.simulateur import Simulateur
 
 RACINE = Path(__file__).resolve().parents[1]
 TEMOINS = RACINE / "tests" / "temoins"
+#: Le programme par lequel le portage calcule ce que ce module confronte.
+PORTAGE = RACINE / "tests" / "js" / "cycle-de-vie-references.mjs"
 
 
 def _temoin(nom: str) -> dict:
     return json.loads((TEMOINS / nom).read_text(encoding="utf-8"))
+
+
+def _au_portage(**lectures) -> dict:
+    """Ce que le portage du cycle de vie rend de chacune des ``lectures``, sous
+    son nom (``tests/js/cycle-de-vie-references.mjs``), sur le paquet des
+    données du jour (``pont.paquet_des_donnees``) : celui du dépôt n'est refait
+    qu'à la fabrique suivante, et un portage qui le lit en retard sur son code
+    le lit de travers."""
+    entree = (b'{"paquet":' + pont.paquet_des_donnees()
+              + b',"demande":' + json.dumps(lectures).encode("utf-8") + b"}")
+    execution = subprocess.run(["node", str(PORTAGE)], input=entree, cwd=RACINE,
+                               capture_output=True, check=False)
+    assert execution.returncode == 0, execution.stderr.decode("utf-8", "replace")[-4000:]
+    return json.loads(execution.stdout)
 
 
 @pytest.fixture(scope="module")
@@ -150,6 +176,15 @@ def contexte() -> Contexte:
 @pytest.fixture(scope="module")
 def simulateur(contexte) -> Simulateur:
     return contexte.simulateur()
+
+
+@pytest.fixture(scope="module")
+def portage():
+    """Le cycle de vie se calcule par le portage, que node fait tourner ; sous
+    les présomptions décalées, que le Python seul suit, ses tests se taisent
+    comme toute confrontation au portage (``tests/conftest.py``)."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le cycle de vie ne se calcule pas ici")
 
 
 # ---------------------------------------------------------------------------
@@ -192,10 +227,14 @@ GENERATIONS_CAS_TYPE_2 = (1955, 1960, 1963, 1964, 1970)
 
 
 @pytest.fixture(scope="module")
-def cas_type_2(trajectoire, contexte, simulateur) -> dict[int, object]:
-    return {generation: contexte.simuler(Saisie.depuis_requete(
-                dict(trajectoire["cas"][f"cor_2_{generation}"]["requete"])))
-            for generation in GENERATIONS_CAS_TYPE_2}
+def cas_type_2(trajectoire, portage) -> dict[int, dict]:
+    """Les indicateurs de chaque génération du cas type n° 2, sur la carrière
+    que TRAJECTOiRE a bâtie pour lui, simulée comme le site simule une saisie :
+    sous les conventions du COR, et sous les mêmes, la pension brute."""
+    lus = _au_portage(indicateurs={"conventions": ["cor", "cor_brute"], "cas": [
+        {"cle": str(generation), "requete": trajectoire["cas"][f"cor_2_{generation}"]["requete"]}
+        for generation in GENERATIONS_CAS_TYPE_2]})["indicateurs"]
+    return {generation: lus[str(generation)] for generation in GENERATIONS_CAS_TYPE_2}
 
 
 #: Les générations dont le rendement du cas type n° 2 s'écarte de celui du COR
@@ -217,7 +256,7 @@ REVISION_DE_2026 = {1955: (-0.0020, 0.0000), 1960: (-0.0010, 0.0010),
                     1970: (0.0035, 0.0050)}
 
 
-def test_le_rendement_interne_du_cas_type_2_est_celui_du_cor(cor, cas_type_2, simulateur):
+def test_le_rendement_interne_du_cas_type_2_est_celui_du_cor(cor, cas_type_2):
     """Le COR publie le rendement interne net de son cas type n° 2, flux
     actualisés selon le salaire moyen (figure 3.7). Sous ses conventions —
     les deux sexes réunis, le décès à 60 ans plus l'espérance de vie à 60 ans
@@ -240,11 +279,8 @@ def test_le_rendement_interne_du_cas_type_2_est_celui_du_cor(cor, cas_type_2, si
     octobre 2026)."""
     publie = cor["rendement_cas_type_2"]
     calcules = {}
-    for generation, comparaison in cas_type_2.items():
-        flux = cycle_de_vie.flux_des_systemes(simulateur, comparaison)["actuel"]
-        calcules[generation] = cycle_de_vie.indicateurs(
-            flux, simulateur, cycle_de_vie.convention_cor(simulateur, comparaison)
-        ).rendement_smpt
+    for generation, lus in cas_type_2.items():
+        calcules[generation] = lus["cor"]["rendement_smpt"]
         ecart = calcules[generation] - publie[str(generation)]
         if generation in ECARTS_RENDEMENT:
             bas, haut = ECARTS_RENDEMENT[generation]
@@ -259,7 +295,7 @@ def test_le_rendement_interne_du_cas_type_2_est_celui_du_cor(cor, cas_type_2, si
             > 2.0 * (publie["1955"] - publie["1970"]))
 
 
-def test_le_rendement_brut_du_cas_type_2_est_celui_du_cor_de_2025(cor, cas_type_2, simulateur):
+def test_le_rendement_brut_du_cas_type_2_est_celui_du_cor_de_2025(cor, cas_type_2):
     """Jusqu'en juin 2025, le COR publiait le rendement interne BRUT de son
     cas type n° 2 : il « était évalué à partir des rémunérations brutes »
     (rapport de juin 2026, note 140). Sous les mêmes conventions, pension
@@ -285,13 +321,9 @@ def test_le_rendement_brut_du_cas_type_2_est_celui_du_cor_de_2025(cor, cas_type_
     brut_2025 = cor["rendement_cas_type_2_brut_2025"]
     net_2026 = cor["rendement_cas_type_2"]
     bruts = {}
-    for generation, comparaison in cas_type_2.items():
-        flux = cycle_de_vie.flux_des_systemes(simulateur, comparaison)["actuel"]
-        convention = cycle_de_vie.convention_cor(simulateur, comparaison)
-        net = cycle_de_vie.indicateurs(flux, simulateur, convention).rendement_smpt
-        bruts[generation] = cycle_de_vie.indicateurs(
-            flux, simulateur, replace(convention, prelevement=0.0, prelevements=None)
-        ).rendement_smpt
+    for generation, lus in cas_type_2.items():
+        net = lus["cor"]["rendement_smpt"]
+        bruts[generation] = lus["cor_brute"]["rendement_smpt"]
         cle = str(generation)
         assert abs(bruts[generation] - brut_2025[cle]) <= 0.002, (generation, bruts[generation])
         assert -0.0035 <= net - bruts[generation] <= -0.0025, (generation, net - bruts[generation])
@@ -308,7 +340,7 @@ def test_le_rendement_brut_du_cas_type_2_est_celui_du_cor_de_2025(cor, cas_type_
 RENDEMENT_PRIX_2000_BRUT_2025 = 0.012
 
 
-def test_la_revision_de_2026_tient_aux_flux_non_a_l_actualisation(cor, cas_type_2, simulateur):
+def test_la_revision_de_2026_tient_aux_flux_non_a_l_actualisation(cor, cas_type_2):
     """Le COR publie aussi le rendement net du cas type n° 2 actualisé selon
     les prix (annexe méthodologique de juin 2026, figure A2.13). Les deux
     actualisations lui donnent la même pente : de 1955 à 1970, 0,29 point de
@@ -323,16 +355,12 @@ def test_la_revision_de_2026_tient_aux_flux_non_a_l_actualisation(cor, cas_type_
     Ni le rapport, ni son annexe, ni la séance du 16 avril 2026 qui l'a
     préparé ne disent la révision (note du 18 octobre 2026)."""
     prix, smpt = cor["rendement_cas_type_2_prix"], cor["rendement_cas_type_2"]
-    calcules = {}
-    for generation, comparaison in cas_type_2.items():
-        flux = cycle_de_vie.flux_des_systemes(simulateur, comparaison)["actuel"]
-        calcules[generation] = cycle_de_vie.indicateurs(
-            flux, simulateur, cycle_de_vie.convention_cor(simulateur, comparaison))
+    calcules = {generation: lus["cor"] for generation, lus in cas_type_2.items()}
     pente_cor = prix["1955"] - prix["1970"]
-    pente_depot = calcules[1955].rendement_reel - calcules[1970].rendement_reel
+    pente_depot = calcules[1955]["rendement_reel"] - calcules[1970]["rendement_reel"]
     assert abs(pente_cor - (smpt["1955"] - smpt["1970"])) <= 0.001, pente_cor
-    assert abs(pente_depot - (calcules[1955].rendement_smpt
-                              - calcules[1970].rendement_smpt)) <= 0.001, pente_depot
+    assert abs(pente_depot - (calcules[1955]["rendement_smpt"]
+                              - calcules[1970]["rendement_smpt"])) <= 0.001, pente_depot
     assert pente_depot > 2.0 * pente_cor, (pente_depot, pente_cor)
     assert abs((prix["2000"] - smpt["2000"])
                - (RENDEMENT_PRIX_2000_BRUT_2025
@@ -343,53 +371,27 @@ def test_la_revision_de_2026_tient_aux_flux_non_a_l_actualisation(cor, cas_type_
 REGIMES_AGIRC_ARRCO = {"arrco", "arrco_tranche_2", "agirc", "agirc_arrco"}
 
 
-def _rendements_par_regime(simulateur, comparaison) -> dict[str, float]:
-    """Le rendement interne net de la Cnav et celui de l'Agirc-Arrco, avec et
-    sans les contributions d'équilibre, sous les conventions du COR : chacun
-    sur ses cotisations et sa pension. La carrière part après l'année
-    courante : la pension de la Cnav suit les prix, celle de l'Agirc-Arrco la
-    règle de :func:`cycle_de_vie.niveaux_actuels`, les prix aussi sous le
+@pytest.fixture(scope="module")
+def generation_2000(simulateur, portage) -> dict[str, dict[str, float]]:
+    """Le salarié au salaire moyen et le cadre de la grille, nés en 2000, partis
+    à l'âge où le pilote les fait partir : leur rendement interne net sous les
+    conventions du COR, en tout, et celui de la Cnav et de l'Agirc-Arrco, avec
+    et sans les contributions d'équilibre, chacun sur ses cotisations et sa
+    pension (``rendements_par_regime`` du programme). La carrière part après
+    l'année courante : la pension de la Cnav suit les prix, celle de
+    l'Agirc-Arrco la règle de ``niveauxActuels``, les prix aussi sous le
     simulateur individuel, qui n'a pas la valeur de service que le COR
     projette (``Parametres.conventions_cor``)."""
-    flux = cycle_de_vie.flux_des_systemes(simulateur, comparaison)["actuel"]
-    carriere = comparaison.carriere
-    liquidation = carriere.annee_liquidation
-    assert liquidation > simulateur.parametres.annee_courante
-    compte = simulateur.constructeur_employeur.construire(
-        carriere, annee_liquidation=liquidation, annee_debut=carriere.premiere_annee)
-    cotisations: dict[str, dict[int, float]] = {"cnav": {}, "agirc_arrco": {}}
-    for ligne in compte.cotisations:
-        for regime, montant in ligne.par_regime:
-            famille = cotisations["agirc_arrco" if regime in REGIMES_AGIRC_ARRCO else "cnav"]
-            famille[ligne.annee] = famille.get(ligne.annee, 0.0) + montant
-    avec = dict(cotisations["agirc_arrco"])
-    for annee, montant in cycle_de_vie.contributions_d_une_carriere(simulateur, carriere).items():
-        avec[annee] = avec.get(annee, 0.0) + montant
-    pensions = {"cnav": 0.0, "agirc_arrco": 0.0}
-    for pension in comparaison.actuel.pensions_par_regime:
-        pensions["agirc_arrco" if pension.regime in REGIMES_AGIRC_ARRCO else "cnav"] += (
-            pension.montant)
-    revalorisation = cycle_de_vie._revalorisation(simulateur, max(flux.niveaux))
-    prix = {annee: simulateur.macro.coefficient_prix(liquidation, annee) for annee in flux.niveaux}
-    points = {annee: coefficient_actuel({"agirc_arrco": 1.0}, revalorisation, liquidation, annee)
-              for annee in flux.niveaux}
-    convention = cycle_de_vie.convention_cor(simulateur, comparaison)
-
-    def rendement(versees: dict[int, float], niveaux: dict[int, float]) -> float:
-        return cycle_de_vie.indicateurs(replace(flux, cotisations=versees, niveaux=niveaux),
-                                        simulateur, convention).rendement_smpt
-
-    return {
-        "cnav": rendement(cotisations["cnav"],
-                          {a: pensions["cnav"] * prix[a] for a in flux.niveaux}),
-        **{cle: rendement(versees, {a: pensions["agirc_arrco"] * prix[a] * points[a]
-                                    for a in flux.niveaux})
-           for cle, versees in (("agirc_arrco", avec),
-                                ("agirc_arrco_sans_contributions", cotisations["agirc_arrco"]))},
-    }
+    cas = []
+    for code in ("salaire_moyen", "cadre"):
+        type_ = next(c for c in CAS_TYPES if c.code == code)
+        cas.append({"cle": code,
+                    "options": type_.options(2000, type_.age_liquidation_pour(simulateur, 2000))})
+    return _au_portage(rendements_par_regime={
+        "cas": cas, "agirc_arrco": sorted(REGIMES_AGIRC_ARRCO)})["rendements_par_regime"]
 
 
-def test_le_cor_compte_les_contributions_d_equilibre_comme_des_cotisations(cor, simulateur):
+def test_le_cor_compte_les_contributions_d_equilibre_comme_des_cotisations(cor, generation_2000):
     """Le COR ne compte que « les cotisations » ; les contributions
     d'équilibre de l'Agirc-Arrco en sont-elles ? Il publie, pour la
     génération 2000, le rendement de chaque régime (figure 3.A). Le dépôt est
@@ -403,9 +405,7 @@ def test_le_cor_compte_les_contributions_d_equilibre_comme_des_cotisations(cor, 
     9 octobre 2026 (``contributions_equilibre.py``)."""
     publie = cor["rendement_generation_2000"]
     for code, profil in (("salaire_moyen", "non_cadre"), ("cadre", "cadre")):
-        cas = next(c for c in CAS_TYPES if c.code == code)
-        rendements = _rendements_par_regime(
-            simulateur, simulateur.simuler(cas.construire(simulateur, 2000)))
+        rendements = generation_2000[code]
         cnav = rendements["cnav"] - publie[profil]["cnav"]
         avec = rendements["agirc_arrco"] - publie[profil]["agirc_arrco"]
         sans = rendements["agirc_arrco_sans_contributions"] - publie[profil]["agirc_arrco"]
@@ -414,7 +414,7 @@ def test_le_cor_compte_les_contributions_d_equilibre_comme_des_cotisations(cor, 
         assert sans - cnav >= 0.007, (profil, cnav, sans)
 
 
-def test_le_rendement_du_cadre_est_sous_celui_du_non_cadre_comme_au_cor(cor, simulateur):
+def test_le_rendement_du_cadre_est_sous_celui_du_non_cadre_comme_au_cor(cor, generation_2000):
     """Génération 2000 (figure 3.A) : le cadre rend 0,04 %, le non-cadre
     0,83 %, parce qu'une part de la rémunération du cadre cotise au-dessus du
     plafond sans ouvrir de droit au régime général. Sous les mêmes
@@ -426,15 +426,7 @@ def test_le_rendement_du_cadre_est_sous_celui_du_non_cadre_comme_au_cor(cor, sim
     ceux du COR."""
     publie = cor["rendement_generation_2000"]
     ecart_publie = publie["cadre"]["total"] - publie["non_cadre"]["total"]
-    rendements = {}
-    for code in ("cadre", "salaire_moyen"):
-        cas = next(c for c in CAS_TYPES if c.code == code)
-        comparaison = simulateur.simuler(cas.construire(simulateur, 2000))
-        flux = cycle_de_vie.flux_des_systemes(simulateur, comparaison)["actuel"]
-        rendements[code] = cycle_de_vie.indicateurs(
-            flux, simulateur, cycle_de_vie.convention_cor(simulateur, comparaison)
-        ).rendement_smpt
-    ecart = rendements["cadre"] - rendements["salaire_moyen"]
+    ecart = generation_2000["cadre"]["total"] - generation_2000["salaire_moyen"]["total"]
     assert ecart < 0.0 and ecart_publie < 0.0
     assert abs(ecart - ecart_publie) <= 0.0025, (ecart, ecart_publie)
 
@@ -469,16 +461,30 @@ def _cas_du_cor(trajectoire: dict) -> list[tuple[str, int, dict]]:
 
 
 @pytest.fixture(scope="module")
-def flux_trajectoire(trajectoire, contexte, simulateur) -> dict[str, tuple]:
-    """Chaque carrière du témoin rejouée, et le flux du scénario 1."""
-    rejoues = {}
+def flux_trajectoire(trajectoire, simulateur, portage) -> dict[str, dict]:
+    """Chaque carrière du témoin rejouée comme le site simule une saisie, et ce
+    que le portage tire du flux de son scénario 1 (``trajectoire`` du
+    programme) : l'âge du départ et les années de carrière ; les indicateurs
+    sous le décès que le rapport de TRAJECTOiRE implique, les deux sexes
+    réunis, ceux du flux recalé sur sa pension de départ, et ceux des
+    cotisations refaites aux taux moyens de l'Arrco, ou à la seule retenue de
+    l'agent les années à l'État ; le remplacement net de sa pension nette."""
+    historique = charger_prelevements_historiques(simulateur.parametres.racine_donnees)
+    cas = []
     for cle, contenu in sorted(trajectoire["cas"].items()):
         if "requete" not in contenu or not contenu["trajectoire"].get("indicateurs"):
             continue
-        comparaison = contexte.simuler(Saisie.depuis_requete(dict(contenu["requete"])))
-        rejoues[cle] = (comparaison,
-                        cycle_de_vie.flux_des_systemes(simulateur, comparaison)["actuel"])
-    return rejoues
+        cas.append({
+            "cle": cle, "requete": contenu["requete"],
+            "duree_relative": contenu["trajectoire"]["indicateurs"][
+                "dureeRetraiteRelativeDureeCotisation"],
+            "pension": _pension_de_trajectoire(contenu),
+            "pension_nette": _pension_nette_de_trajectoire(contenu, historique),
+        })
+    return _au_portage(trajectoire={
+        "cas": cas, "taux_moyens_arrco": _taux_moyens_arrco(trajectoire),
+        "regimes_arrco": list(REGIMES_ARRCO), "regimes_etat": sorted(REGIMES_ETAT),
+    })["trajectoire"]
 
 
 def test_la_duree_de_retraite_rapportee_a_la_carriere_est_celle_de_trajectoire(
@@ -489,9 +495,9 @@ def test_la_duree_de_retraite_rapportee_a_la_carriere_est_celle_de_trajectoire(
     l'âge de décès que son rapport implique est celui de la génération, au
     mois près, sauf où l'un compte des années que l'autre ne compte pas."""
     for cle, generation, contenu in _cas_du_cor(trajectoire):
-        _, flux = flux_trajectoire[cle]
+        lus = flux_trajectoire[cle]
         rapport = contenu["trajectoire"]["indicateurs"]["dureeRetraiteRelativeDureeCotisation"]
-        implicite = flux.age + rapport * flux.duree_carriere
+        implicite = lus["age"] + rapport * lus["duree_carriere"]
         attendu = AGES_DE_DECES_TRAJECTOIRE[generation]
         if cle in CARRIERES_COMPTEES_AUTREMENT:
             assert abs(implicite - attendu) > 1.0 / 12.0, cle
@@ -514,15 +520,7 @@ def _pension_de_trajectoire(contenu: dict) -> float:
                       if nom != "Rafp")
 
 
-def _convention_trajectoire(contenu: dict, flux) -> cycle_de_vie.Convention:
-    """Le décès que le rapport de TRAJECTOiRE implique, les deux sexes réunis."""
-    rapport = contenu["trajectoire"]["indicateurs"]["dureeRetraiteRelativeDureeCotisation"]
-    return cycle_de_vie.Convention(age_deces=flux.age + rapport * flux.duree_carriere,
-                                   unisexe=True)
-
-
-def test_le_flux_des_pensions_a_l_allure_de_celui_de_trajectoire(trajectoire, flux_trajectoire,
-                                                                  simulateur):
+def test_le_flux_des_pensions_a_l_allure_de_celui_de_trajectoire(trajectoire, flux_trajectoire):
     """Le taux d'annuité de TRAJECTOiRE (``txAnnuite``) rapporte la somme des
     pensions de la retraite à celle des revenus de la carrière, en salaire
     moyen. La pension de départ des deux modèles est confrontée ailleurs
@@ -533,16 +531,11 @@ def test_le_flux_des_pensions_a_l_allure_de_celui_de_trajectoire(trajectoire, fl
     réelle, le dépôt à 0,7 % ; il projette ses paramètres depuis 2024, et
     revalorise la pension au mois, le dépôt à l'année, au niveau du 31
     décembre ; il sert la RAFP, que le dépôt sert à part."""
-    for cle, (comparaison, flux) in flux_trajectoire.items():
+    for cle, lus in flux_trajectoire.items():
         if not cle.startswith(UN_SEUL_STATUT):
             continue
-        contenu = trajectoire["cas"][cle]
-        rapport = _pension_de_trajectoire(contenu) / flux.niveaux[flux.annee_liquidation]
-        recale = replace(flux, niveaux={annee: niveau * rapport
-                                        for annee, niveau in flux.niveaux.items()})
-        annuite = cycle_de_vie.indicateurs(
-            recale, simulateur, _convention_trajectoire(contenu, flux)).taux_annuite
-        ratio = annuite / contenu["trajectoire"]["indicateurs"]["txAnnuite"]
+        ratio = (lus["recale"]["taux_annuite"]
+                 / trajectoire["cas"][cle]["trajectoire"]["indicateurs"]["txAnnuite"])
         assert 0.88 <= ratio <= 1.05, (cle, ratio)
 
 
@@ -551,10 +544,14 @@ PRIVE_NON_CADRE = ("cor_2_", "cor_2bis_", "rg_salaire_moyen", "rg_bas_salaire",
                    "rg_pere_trois_enfants", "rg_ne_en_octobre", "loi_2023_salaire_moyen")
 
 
-def _taux_de_cotisation(indicateurs) -> float:
+#: Les régimes de l'Arrco, dont TRAJECTOiRE prend le taux contractuel moyen.
+REGIMES_ARRCO = ("arrco", "agirc_arrco")
+
+
+def _taux_de_cotisation(indicateurs: dict) -> float:
     """Cotisations sur revenus, en salaire moyen : le taux d'annuité divisé
     par le taux de récupération."""
-    return indicateurs.taux_annuite / indicateurs.taux_recuperation
+    return indicateurs["taux_annuite"] / indicateurs["taux_recuperation"]
 
 
 def _taux_moyens_arrco(trajectoire: dict) -> dict[int, float]:
@@ -570,7 +567,7 @@ def _taux_moyens_arrco(trajectoire: dict) -> dict[int, float]:
 
 
 def test_le_taux_de_cotisation_du_prive_est_celui_de_trajectoire_aux_conventions_pres(
-        trajectoire, flux_trajectoire, simulateur):
+        trajectoire, flux_trajectoire):
     """TRAJECTOiRE compte, comme le dépôt depuis le 9 octobre 2026, les
     contributions d'équilibre de l'Agirc-Arrco — l'ASF de 1984 au 31 mars
     2001, l'AGFF jusqu'en 2018, la CEG depuis 2019 —, que le compte
@@ -581,30 +578,14 @@ def test_le_taux_de_cotisation_du_prive_est_celui_de_trajectoire_aux_conventions
     3 à 5 % sous le sien ; aux taux moyens de TRAJECTOiRE, il est le sien à
     0,4 % près. Le 7 octobre, sans les contributions d'équilibre, il était de
     10 à 12 % sous le sien, et de 7 à 8 % aux taux moyens."""
-    moyens = _taux_moyens_arrco(trajectoire)
-    for cle, (comparaison, flux) in flux_trajectoire.items():
+    for cle, lus in flux_trajectoire.items():
         if not cle.startswith(PRIVE_NON_CADRE):
             continue
-        contenu = trajectoire["cas"][cle]
-        convention = _convention_trajectoire(contenu, flux)
-        publie = (contenu["trajectoire"]["indicateurs"]["txAnnuite"]
-                  / contenu["trajectoire"]["indicateurs"]["txRecuperation"])
-        rapport = _taux_de_cotisation(cycle_de_vie.indicateurs(flux, simulateur, convention)) / publie
+        indicateurs = trajectoire["cas"][cle]["trajectoire"]["indicateurs"]
+        publie = indicateurs["txAnnuite"] / indicateurs["txRecuperation"]
+        rapport = _taux_de_cotisation(lus["indicateurs"]) / publie
         assert 0.94 <= rapport <= 0.98, (cle, rapport)
-        carriere = comparaison.carriere
-        compte = simulateur.constructeur_employeur.construire(
-            carriere, annee_liquidation=carriere.annee_liquidation,
-            annee_debut=carriere.premiere_annee)
-        aux_taux_moyens: dict[int, float] = {}
-        for ligne in compte.cotisations:
-            for regime, montant in ligne.par_regime:
-                if regime in ("arrco", "agirc_arrco"):
-                    montant *= moyens.get(ligne.annee, 1.0)
-                aux_taux_moyens[ligne.annee] = aux_taux_moyens.get(ligne.annee, 0.0) + montant
-        for annee, montant in cycle_de_vie.contributions_d_une_carriere(simulateur, carriere).items():
-            aux_taux_moyens[annee] = aux_taux_moyens.get(annee, 0.0) + montant
-        refait = _taux_de_cotisation(cycle_de_vie.indicateurs(
-            replace(flux, cotisations=aux_taux_moyens), simulateur, convention)) / publie
+        refait = _taux_de_cotisation(lus["aux_taux_moyens"]) / publie
         assert refait - rapport >= 0.02, (cle, rapport, refait)
         assert 0.99 <= refait <= 1.005, (cle, refait)
 
@@ -616,7 +597,7 @@ REGIMES_ETAT = {"fonction_publique_etat", "fonction_publique_etat_civile",
 
 
 def test_pour_l_etat_trajectoire_ne_compte_que_la_retenue_de_l_agent(
-        trajectoire, flux_trajectoire, simulateur):
+        trajectoire, flux_trajectoire):
     """TRAJECTOiRE ne compte, pour l'État, aucune contribution d'employeur
     (``fonctionsCalculsDivers.R``, l. 403-407), comme le COR, pour qui elle
     « ne reflète que le montant de la contribution qui permet de garantir en
@@ -625,29 +606,14 @@ def test_pour_l_etat_trajectoire_ne_compte_que_la_retenue_de_l_agent(
     cotisation est trois à six fois celui de TRAJECTOiRE. Réduit à la seule
     retenue les années à l'État, il est le sien à la RAFP près, que
     TRAJECTOiRE compte et que le dépôt sert à part."""
-    salariale = simulateur.constructeur_de(simulateur.calculs["notionnel_retroactif"])
-    for cle, (comparaison, flux) in flux_trajectoire.items():
+    for cle, lus in flux_trajectoire.items():
         if not cle.startswith(ETAT):
             continue
-        contenu = trajectoire["cas"][cle]
-        convention = _convention_trajectoire(contenu, flux)
-        publie = (contenu["trajectoire"]["indicateurs"]["txAnnuite"]
-                  / contenu["trajectoire"]["indicateurs"]["txRecuperation"])
-        rapport = _taux_de_cotisation(cycle_de_vie.indicateurs(flux, simulateur, convention)) / publie
+        indicateurs = trajectoire["cas"][cle]["trajectoire"]["indicateurs"]
+        publie = indicateurs["txAnnuite"] / indicateurs["txRecuperation"]
+        rapport = _taux_de_cotisation(lus["indicateurs"]) / publie
         assert 3.0 <= rapport <= 6.0, (cle, rapport)
-        carriere = comparaison.carriere
-        bornes = dict(annee_liquidation=carriere.annee_liquidation,
-                      annee_debut=carriere.premiere_annee)
-        retenues = salariale.construire(carriere, **bornes).cotisations
-        entieres = simulateur.constructeur_employeur.construire(carriere, **bornes).cotisations
-        refaites: dict[int, float] = {}
-        for retenue, entiere in zip(retenues, entieres):
-            assert retenue.annee == entiere.annee
-            etat = any(regime in REGIMES_ETAT for regime in entiere.regimes)
-            refaites[entiere.annee] = (refaites.get(entiere.annee, 0.0)
-                                       + (retenue.cotisation if etat else entiere.cotisation))
-        refait = _taux_de_cotisation(cycle_de_vie.indicateurs(
-            replace(flux, cotisations=refaites), simulateur, convention)) / publie
+        refait = _taux_de_cotisation(lus["retenue_de_l_etat"]) / publie
         assert 0.74 <= refait <= 0.97, (cle, refait)
 
 
@@ -699,15 +665,33 @@ ECARTS_REMPLACEMENT_NET = {
 SMPT_INCOMPARABLE = ("cor_3_",)
 
 
+def _pension_nette_de_trajectoire(contenu: dict, historique) -> float:
+    """La pension annuelle de TRAJECTOiRE au départ, RAFP comprise, nette des
+    prélèvements de son année, la CSG de sa catégorie : l'histoire que l'IPP
+    retrace (``prelevements_historiques.yaml``)."""
+    pensions = historique.pensions
+    liquidation = contenu["trajectoire"]["liquidation"]
+    jour = dt.date.fromisoformat(liquidation["date"] + "-01")
+    taux = CATEGORIES_CSG[liquidation["categorie_csg"]]
+    caisses = contenu["trajectoire"]["caisses"]
+    brute = 12.0 * sum(caisse["pension_mensuelle"] for caisse in caisses.values())
+    maladie = 12.0 * sum(caisses[nom]["pension_mensuelle"] for nom in CAISSES_MALADIE
+                         if nom in caisses)
+    prelevement = (historique.taux_csg_pension(jour, taux) + pensions["crds"].valeur(jour)
+                   + (pensions["casa"].valeur(jour) if taux != "reduit" else 0.0))
+    return (brute * (1.0 - prelevement)
+            - maladie * pensions["maladie_complementaires"].valeur(jour))
+
+
 def test_le_remplacement_net_de_trajectoire_se_retrouve_aux_prelevements_de_l_annee(
-        trajectoire, flux_trajectoire, simulateur):
+        trajectoire, flux_trajectoire):
     """TRAJECTOiRE rapporte la pension nette du départ, RAFP comprise, au revenu
     net de l'année d'avant (``txRemplacementNet``, en euros constants ;
     ``txRemplacementNetSmpt``, en salaire moyen), chacun aux prélèvements de
     son année, la pension à ceux de sa catégorie de CSG. Sa pension, nette des
     mêmes prélèvements (l'histoire que l'IPP retrace,
     ``prelevements_historiques.yaml``), rapportée au revenu net que le dépôt
-    tire de la même carrière (``cycle_de_vie.remplacement_net``), retrouve son
+    tire de la même carrière (``remplacementNet`` du portage), retrouve son
     taux à 1,5 % près sur 65 des 75 cas du témoin ; le policier et
     l'aide-soignante sont déclarés, dont TRAJECTOiRE prélève autrement les
     retenues de l'indemnité et de la prime. Jusqu'au 9 octobre 2026, les deux
@@ -717,28 +701,12 @@ def test_le_remplacement_net_de_trajectoire_se_retrouve_aux_prelevements_de_l_an
     point, et compte l'indemnité compensatrice de la hausse de la CSG, que
     TRAJECTOiRE ne porte pas, ce qui les en éloigne d'autant pour les départs
     depuis 2019 : les deux se compensent, à 0,8 % près."""
-    historique = charger_prelevements_historiques(simulateur.parametres.racine_donnees)
-    pensions = historique.pensions
     ecarts: dict[str, list[float]] = {prefixe: [] for prefixe in ECARTS_REMPLACEMENT_NET}
     concordants = 0
-    for cle, (comparaison, _) in flux_trajectoire.items():
-        contenu = trajectoire["cas"][cle]
-        liquidation = contenu["trajectoire"]["liquidation"]
-        jour = dt.date.fromisoformat(liquidation["date"] + "-01")
-        taux = CATEGORIES_CSG[liquidation["categorie_csg"]]
-        caisses = contenu["trajectoire"]["caisses"]
-        brute = 12.0 * sum(caisse["pension_mensuelle"] for caisse in caisses.values())
-        maladie = 12.0 * sum(caisses[nom]["pension_mensuelle"] for nom in CAISSES_MALADIE
-                             if nom in caisses)
-        prelevement = (historique.taux_csg_pension(jour, taux) + pensions["crds"].valeur(jour)
-                       + (pensions["casa"].valeur(jour) if taux != "reduit" else 0.0))
-        nette = (brute * (1.0 - prelevement)
-                 - maladie * pensions["maladie_complementaires"].valeur(jour))
-        carriere = comparaison.carriere
-        remplacement = cycle_de_vie.remplacement_net(
-            simulateur, carriere, cycle_de_vie.revenus_nets(simulateur, carriere), nette)
-        indicateurs = contenu["trajectoire"]["indicateurs"]
-        rapport = remplacement.constants / indicateurs["txRemplacementNet"]
+    for cle, lus in flux_trajectoire.items():
+        remplacement = lus["remplacement_net"]
+        indicateurs = trajectoire["cas"][cle]["trajectoire"]["indicateurs"]
+        rapport = remplacement["constants"] / indicateurs["txRemplacementNet"]
         declare = next((prefixe for prefixe in ECARTS_REMPLACEMENT_NET
                         if cle.startswith(prefixe)), None)
         if declare is not None:
@@ -749,7 +717,7 @@ def test_le_remplacement_net_de_trajectoire_se_retrouve_aux_prelevements_de_l_an
         concordants += 1
         assert rapport == pytest.approx(1.0, abs=TOLERANCE_REMPLACEMENT_NET), (cle, rapport)
         if not cle.startswith(SMPT_INCOMPARABLE):
-            assert remplacement.salaire_moyen / indicateurs["txRemplacementNetSmpt"] == (
+            assert remplacement["salaire_moyen"] / indicateurs["txRemplacementNetSmpt"] == (
                 pytest.approx(1.0, abs=TOLERANCE_REMPLACEMENT_NET_SMPT)), cle
     assert concordants == 65
     for prefixe, rapports in ecarts.items():
@@ -761,28 +729,56 @@ def test_le_remplacement_net_de_trajectoire_se_retrouve_aux_prelevements_de_l_an
 # ---------------------------------------------------------------------------
 
 
+#: Les hypothèses macroéconomiques de l'OCDE, un jeu de projection du dépôt.
+PROJECTION_OCDE = "ocde_2025"
+
+#: Le sexe de chaque carrière, sous le nom que l'OCDE lui donne.
+SEXES_OCDE = {"H": "hommes", "F": "femmes"}
+
+
 @pytest.fixture(scope="module")
 def simulateur_ocde() -> Simulateur:
-    return Simulateur(Parametres(scenario_projection="ocde_2025"))
+    return Simulateur(Parametres(scenario_projection=PROJECTION_OCDE))
 
 
 @pytest.fixture(scope="module")
-def carrieres_ocde(ocde, simulateur_ocde) -> dict[tuple[str, str], object]:
+def options_ocde(ocde, simulateur_ocde) -> dict[tuple[str, str], dict]:
     """Le salarié de l'OCDE : né en 2002, entré à 22 ans, toute sa carrière
     au même multiple du salaire moyen de l'OCDE, parti à l'âge qu'elle lui
-    donne, et non cadre — l'Agirc-Arrco ne distingue plus depuis 2019."""
-    macro = simulateur_ocde.macro
+    donne, et non cadre — l'Agirc-Arrco ne distingue plus depuis 2019. Les
+    options de sa carrière, celles de ``carriere_simple`` et de son portage."""
     age = ocde["age_de_depart"]["futur"]["hommes"]
-    salaire_moyen = ocde["salaire_moyen"] / macro.salaire_moyen_niveau(2024)
-    carrieres = {}
-    for sexe in ("H", "F"):
-        for multiple in ("0.5", "1", "2"):
-            carriere = simulateur_ocde.carriere_simple(
-                annee_naissance=2002, sexe=sexe, affiliation="salarie_prive_non_cadre",
-                age_debut=22, age_liquidation=age,
-                niveau_salaire=float(multiple) * salaire_moyen, profil_carriere="plat")
-            carrieres[(sexe, multiple)] = simulateur_ocde.simuler(carriere)
-    return carrieres
+    salaire_moyen = ocde["salaire_moyen"] / simulateur_ocde.macro.salaire_moyen_niveau(2024)
+    return {(sexe, multiple): {
+                "annee_naissance": 2002, "sexe": sexe, "affiliation": "salarie_prive_non_cadre",
+                "age_debut": 22, "age_liquidation": age,
+                "niveau_salaire": float(multiple) * salaire_moyen, "profil_carriere": "plat"}
+            for sexe in SEXES_OCDE for multiple in ("0.5", "1", "2")}
+
+
+@pytest.fixture(scope="module")
+def carrieres_ocde(options_ocde, simulateur_ocde) -> dict[tuple[str, str], object]:
+    """Le salarié de l'OCDE, simulé par le moteur Python."""
+    return {cle: simulateur_ocde.simuler(simulateur_ocde.carriere_simple(**options))
+            for cle, options in options_ocde.items()}
+
+
+@pytest.fixture(scope="module")
+def ocde_au_portage(ocde, options_ocde, portage) -> dict[tuple[str, str], dict]:
+    """Le salarié de l'OCDE simulé par le portage sous les mêmes hypothèses, et
+    ce que le flux de son scénario 1 donne (``ocde`` du programme) : son taux
+    de remplacement brut et son patrimoine retraite ; sous l'impôt au barème
+    projeté sur le salaire moyen, son dernier revenu, brut, net et après
+    impôt, la part de sa pension que retiennent les prélèvements et le revenu
+    imposable du départ, l'impôt d'une année entière de la pension brute que
+    l'OCDE publie, son patrimoine après impôt et son taux de remplacement
+    après impôt."""
+    lus = _au_portage(ocde={
+        "projection": PROJECTION_OCDE, "indexation": "salaire_moyen",
+        "cas": [{"cle": f"{sexe}|{multiple}", "options": options,
+                 "taux_brut": ocde["taux_remplacement_brut"][SEXES_OCDE[sexe]][multiple] / 100.0}
+                for (sexe, multiple), options in options_ocde.items()]})["ocde"]
+    return {(sexe, multiple): lus[f"{sexe}|{multiple}"] for sexe, multiple in options_ocde}
 
 
 def test_le_salarie_de_l_ocde_part_au_taux_plein_a_l_age_qu_elle_lui_donne(ocde, simulateur_ocde):
@@ -825,8 +821,7 @@ def test_le_taux_de_remplacement_brut_de_l_ocde_se_retrouve_a_l_agirc_arrco_pres
     assert 100.0 * carrieres_ocde[("H", "0.5")].taux_remplacement_actuel > publies["0.5"]
 
 
-def test_le_patrimoine_retraite_de_l_ocde_se_retrouve_a_la_mortalite_pres(
-        ocde, carrieres_ocde, simulateur_ocde):
+def test_le_patrimoine_retraite_de_l_ocde_se_retrouve_a_la_mortalite_pres(ocde, ocde_au_portage):
     """Le patrimoine retraite est le taux de remplacement multiplié par la
     valeur d'un euro de rente : celle-ci, à 1,5 % réel sur la survie de
     génération, est celle de l'OCDE à 3 % près pour les hommes. Pour les
@@ -836,10 +831,8 @@ def test_le_patrimoine_retraite_de_l_ocde_se_retrouve_a_la_mortalite_pres(
     for sexe, qui, bas, haut in (("H", "hommes", -0.03, 0.03),
                                  ("F", "femmes", -0.08, -0.03)):
         for multiple in ("0.5", "1"):
-            comparaison = carrieres_ocde[(sexe, multiple)]
-            flux = cycle_de_vie.flux_des_systemes(simulateur_ocde, comparaison)["actuel"]
-            patrimoine = cycle_de_vie.indicateurs(flux, simulateur_ocde).patrimoine
-            rente = patrimoine / comparaison.taux_remplacement_actuel
+            lus = ocde_au_portage[(sexe, multiple)]
+            rente = lus["patrimoine"] / lus["taux_remplacement_actuel"]
             rente_publiee = (ocde["patrimoine_brut"][qui][multiple]
                              / (ocde["taux_remplacement_brut"][qui][multiple] / 100.0))
             ecart = rente / rente_publiee - 1.0
@@ -851,38 +844,29 @@ def test_le_patrimoine_retraite_de_l_ocde_se_retrouve_a_la_mortalite_pres(
 TOLERANCE_REMPLACEMENT_APRES_IMPOT = 0.5
 
 
-def test_le_taux_net_de_l_ocde_se_retrouve_de_sa_pension_brute(ocde, carrieres_ocde,
-                                                                simulateur_ocde):
+def test_le_taux_net_de_l_ocde_se_retrouve_de_sa_pension_brute(ocde, ocde_au_portage):
     """Le taux net de l'OCDE est sa pension brute, nette des prélèvements et
     de l'impôt sur le revenu d'une personne seule, sur le dernier salaire, net
     des siens. Le dépôt fait passer la pension brute de l'OCDE — son taux brut
     fois le dernier revenu — par ses prélèvements et son impôt d'une année
     entière, au barème projeté sur le salaire moyen, l'OCDE tenant le système
-    constant (``cycle_de_vie.remplacement_apres_impot``) : il retrouve son taux
+    constant (``remplacementApresImpot`` du portage) : il retrouve son taux
     net à 0,4 point près au salaire moyen et à deux fois. À la moitié du
     salaire moyen, ni la pension ni le salaire ne paient d'impôt, et le dépôt
     est 1,2 point sous l'OCDE : la pension y perd la CSG au taux plein, quand
     le revenu fiscal d'un tel retraité ouvrirait un taux moindre ou nul
     (action 138, étape 2)."""
-    baremes = charger_baremes_impot_revenu(simulateur_ocde.parametres.racine_donnees)
     bruts, nets = (ocde[cle]["hommes"] for cle in ("taux_remplacement_brut",
                                                     "taux_remplacement_net"))
     for multiple in ("0.5", "1", "2"):
-        comparaison = carrieres_ocde[("H", multiple)]
-        flux = cycle_de_vie.flux_des_systemes(simulateur_ocde, comparaison,
-                                              impot="salaire_moyen")["actuel"]
-        depart = flux.annee_liquidation
-        brute = bruts[multiple] / 100.0 * flux.dernier_revenu
-        part = cycle_de_vie.parts_imposables_par_annee(simulateur_ocde, comparaison)[depart]
-        nette = brute * cycle_de_vie.convention_nette(simulateur_ocde, comparaison).retenu(depart)
-        impot = impot_du_foyer(
-            cycle_de_vie.foyer_de_l_annee(comparaison.carriere, depart, pension=brute * part),
-            depart, baremes, indexation="salaire_moyen",
-            croissance=simulateur_ocde.macro.salaire_moyen).impot
-        taux = 100.0 * (nette - impot) / flux.dernier_revenu_apres_impot
+        lus = ocde_au_portage[("H", multiple)]
+        brute = bruts[multiple] / 100.0 * lus["dernier_revenu"]
+        nette = brute * lus["retenu"]
+        impot = lus["impot_de_la_pension_brute"]
+        taux = 100.0 * (nette - impot) / lus["dernier_revenu_apres_impot"]
         if multiple == "0.5":
             assert impot == 0.0
-            assert flux.dernier_revenu_apres_impot == pytest.approx(flux.dernier_revenu_net)
+            assert lus["dernier_revenu_apres_impot"] == pytest.approx(lus["dernier_revenu_net"])
             assert -2.0 <= taux - nets[multiple] <= -TOLERANCE_REMPLACEMENT_APRES_IMPOT, taux
         else:
             assert impot > 0.0
@@ -890,7 +874,7 @@ def test_le_taux_net_de_l_ocde_se_retrouve_de_sa_pension_brute(ocde, carrieres_o
 
 
 def test_la_rente_nette_de_l_ocde_suit_sa_rente_brute_comme_celle_du_depot(
-        ocde, carrieres_ocde, simulateur_ocde):
+        ocde, ocde_au_portage):
     """Le patrimoine net de l'OCDE, en années de salaire net, est son taux net
     multiplié par la valeur d'un euro de rente nette : celle d'un euro de
     rente brute, à 0,6 % près, l'arrondi de ses patrimoines au dixième. Celle
@@ -903,18 +887,11 @@ def test_la_rente_nette_de_l_ocde_suit_sa_rente_brute_comme_celle_du_depot(
     rentes brutes, la mortalité, à 1,5 % près."""
     for sexe, qui in (("H", "hommes"), ("F", "femmes")):
         for multiple in ("0.5", "1"):
-            comparaison = carrieres_ocde[(sexe, multiple)]
-            systemes = cycle_de_vie.flux_des_systemes(simulateur_ocde, comparaison,
-                                                      impot="salaire_moyen")
-            flux = systemes["actuel"]
-            convention = cycle_de_vie.convention_apres_impot(simulateur_ocde, comparaison,
-                                                             indexation="salaire_moyen")
-            patrimoine = (cycle_de_vie.indicateurs(flux, simulateur_ocde, convention).patrimoine
-                          * flux.dernier_revenu / flux.dernier_revenu_apres_impot)
-            nette = patrimoine / cycle_de_vie.remplacement_apres_impot(
-                simulateur_ocde, comparaison, indexation="salaire_moyen", systemes=systemes)
-            brute = (cycle_de_vie.indicateurs(flux, simulateur_ocde).patrimoine
-                     / comparaison.taux_remplacement_actuel)
+            lus = ocde_au_portage[(sexe, multiple)]
+            patrimoine = (lus["patrimoine_apres_impot"]
+                          * lus["dernier_revenu"] / lus["dernier_revenu_apres_impot"])
+            nette = patrimoine / lus["remplacement_apres_impot"]
+            brute = lus["patrimoine"] / lus["taux_remplacement_actuel"]
             publiees = {nature: ocde[f"patrimoine_{nature}"][qui][multiple]
                         / (ocde[f"taux_remplacement_{nature}"][qui][multiple] / 100.0)
                         for nature in ("brut", "net")}
@@ -942,11 +919,22 @@ ETK_GENERATION_1962 = {"eal_2009": 16.778288, "eal_2024": 17.718722,
 MAJORATION_ETK = 0.004
 
 
+#: Les mois de report où l'âge cible se cherche : de l'âge minimal au report
+#: le plus long que le portage cherche (``REPORT_MAXIMAL``, ``cycle-de-vie.js``).
+MOIS_DE_REPORT = range(601)
+
+
 def _majoration_finlandaise(mois: int) -> float:
     return 1.0 + MAJORATION_ETK * mois
 
 
-def test_l_age_cible_de_l_etk_se_retrouve_sur_son_memo():
+def _majorations_finlandaises() -> list[float]:
+    """La majoration finlandaise de chaque mois de report, que l'âge cible du
+    portage lit mois par mois."""
+    return [_majoration_finlandaise(mois) for mois in MOIS_DE_REPORT]
+
+
+def test_l_age_cible_de_l_etk_se_retrouve_sur_son_memo(portage):
     """L'âge cible (« tavoite-eläkeikä ») est le premier mois où la majoration
     pour report, comptée depuis l'âge minimal, est « au moins aussi grande »
     que ce que le coefficient retire. La génération 1962, d'âge minimal 65
@@ -955,13 +943,19 @@ def test_l_age_cible_de_l_etk_se_retrouve_sur_son_memo():
     memo = ETK_GENERATION_1962
     coefficient = round(memo["eal_2009"] / memo["eal_2024"], 5)
     assert coefficient == memo["coefficient"]
-    assert cycle_de_vie.age_cible(coefficient, _majoration_finlandaise,
-                                  memo["age_minimal"]) == memo["age_cible"]
+    majorations = _majorations_finlandaises()
+    ages = _au_portage(ages_cibles={"cas": [
+        {"cle": "1962", "coefficient": coefficient, "majorations": majorations,
+         "age_minimal": memo["age_minimal"]},
+        {"cle": "sans_reduction", "coefficient": 1.0, "majorations": majorations,
+         "age_minimal": 65.0},
+    ]})["ages_cibles"]
+    assert ages["1962"] == memo["age_cible"]
     assert coefficient * _majoration_finlandaise(14) < 1.0 <= coefficient * _majoration_finlandaise(15)
-    assert cycle_de_vie.age_cible(1.0, _majoration_finlandaise, 65.0) == 65.0
+    assert ages["sans_reduction"] == 65.0
 
 
-def test_sous_le_compte_le_critere_de_l_etk_est_l_egalite_des_diviseurs(simulateur):
+def test_sous_le_compte_le_critere_de_l_etk_est_l_egalite_des_diviseurs(portage):
     """Transposé au compte, le coefficient est le rapport du diviseur de la
     référence à celui de la génération au même âge, et la majoration pour
     report, ce dont le diviseur baisse quand l'âge monte : actuarielle, 0,31 %
@@ -971,22 +965,23 @@ def test_sous_le_compte_le_critere_de_l_etk_est_l_egalite_des_diviseurs(simulate
     sur une référence de 2026 et non de 2009 ; sous la majoration finlandaise,
     plus généreuse, la génération 2000 partirait à 68 ans et 2 mois, et non à
     69 ans."""
+    ages = {"65": 65.0, "65+1": 65.0 + 1 / 12}
+    lus = _au_portage(
+        diviseurs={"cas": [{"cle": f"{generation}|{nom}", "generation": generation, "age": age}
+                           for generation in (1961, 2000) for nom, age in ages.items()]},
+        equilibres={"generations": [1962, 1970, 1980, 2000], "age_minimal": 65.0,
+                    "majorations": _majorations_finlandaises()})
     for generation in (1961, 2000):
-        a_65 = cycle_de_vie.diviseur_a(simulateur, generation, 65.0)
-        mensuelle = a_65 / cycle_de_vie.diviseur_a(simulateur, generation, 65.0 + 1 / 12) - 1.0
+        mensuelle = (lus["diviseurs"][f"{generation}|65"]
+                     / lus["diviseurs"][f"{generation}|65+1"] - 1.0)
         assert 0.0029 <= mensuelle <= 0.0032, (generation, mensuelle)
     for generation in (1962, 1970, 1980, 2000):
-        equilibre = cycle_de_vie.age_d_equilibre(simulateur, generation)
-        a_65 = equilibre.diviseur_a_l_age_de_reference
-        assert cycle_de_vie.age_cible(
-            equilibre.coefficient,
-            lambda mois: a_65 / cycle_de_vie.diviseur_a(simulateur, generation, 65.0 + mois / 12),
-            65.0) == equilibre.au_mois
-    assert cycle_de_vie.age_d_equilibre(simulateur, 1962).au_mois == 65.0 + 2 / 12
-    equilibre = cycle_de_vie.age_d_equilibre(simulateur, 2000)
-    assert equilibre.au_mois == 69.0
-    assert cycle_de_vie.age_cible(equilibre.coefficient, _majoration_finlandaise,
-                                  65.0) == 68.0 + 2 / 12
+        equilibre = lus["equilibres"][str(generation)]
+        assert equilibre["age_cible_des_diviseurs"] == equilibre["au_mois"], generation
+    assert lus["equilibres"]["1962"]["au_mois"] == 65.0 + 2 / 12
+    equilibre = lus["equilibres"]["2000"]
+    assert equilibre["au_mois"] == 69.0
+    assert equilibre["age_cible_des_majorations"] == 68.0 + 2 / 12
 
 
 # ---------------------------------------------------------------------------
@@ -1020,39 +1015,50 @@ ECARTS_SIMULATEUR_DU_COR = {2020: ((1.0, 1.4), (-0.012, -0.008)),
                             2070: ((3.0, 3.4), (-0.027, -0.021))}
 
 
-def _age_qui_tient(simulateur, annee: int, part: float) -> float:
+def _generations_qui_partent(annee: int) -> range:
+    """Les générations où :func:`_age_qui_tient` cherche celle qui part en ``annee``."""
+    return range(annee - 75, annee - 50)
+
+
+def _age_qui_tient(ages_de_deces: dict[str, float], annee: int, part: float) -> float:
     """L'âge auquel partir l'année ``annee`` pour passer en retraite la part
     ``part`` de sa vie, par la méthode du simulateur du COR : la génération est
-    celle qui part cette année-là à cet âge, d'où un point fixe."""
-    mortalite = simulateur.mortalite
-    for generation in range(annee - 75, annee - 50):
-        age = (1.0 - part) * cycle_de_vie.age_de_deces_cor(mortalite, generation)
+    celle qui part cette année-là à cet âge, d'où un point fixe.
+    ``ages_de_deces`` : l'âge de décès des cas types du COR de chaque
+    génération, sous son nom (``ages_de_deces_cor`` du programme)."""
+    for generation in _generations_qui_partent(annee):
+        age = (1.0 - part) * ages_de_deces[str(generation)]
         if round(annee + 0.5 - age) == generation:
             return age
     raise AssertionError(f"pas d'âge qui tienne {part} en {annee}")
 
 
 def test_la_part_de_vie_du_simulateur_du_cor_se_retrouve_a_ses_esperances_de_vie_pres(
-        simulateur):
+        portage):
     """Sa part de vie est celle du dépôt sous la convention du COR,
     (60 + e60 − âge) / (60 + e60) : sur ses espérances de vie, la formule rend
     ses 29,05 % de 2020 et 32,25 % de 2070. Sur les tables du dépôt, les mêmes
     départs passent en retraite 28,1 % et 29,9 % de leur vie : ses
     espérances de vie à 60 ans dépassent celles du dépôt de 1,2 an pour la
     génération 1958, de 3,2 ans pour la génération 2007."""
-    mortalite = simulateur.mortalite
+    lus = _au_portage(
+        ages_de_deces_cor={"generations": [generation
+                                           for _, generation, _, _ in SIMULATEUR_DU_COR.values()]},
+        parts_de_vie={"cor": True, "cas": [
+            {"cle": str(annee), "age": age, "debut": generation + age}
+            for annee, (age, generation, _, _) in SIMULATEUR_DU_COR.items()]})
     for annee, (age, generation, esperance, part) in SIMULATEUR_DU_COR.items():
         assert round(annee + 0.5 - age) == generation
         assert (60.0 + esperance - age) / (60.0 + esperance) == pytest.approx(part, abs=1e-12)
-        e60 = cycle_de_vie.age_de_deces_cor(mortalite, generation) - 60.0
-        depot = cycle_de_vie.part_de_vie(simulateur, age, generation + age, cor=True)
+        e60 = lus["ages_de_deces_cor"][str(generation)] - 60.0
+        depot = lus["parts_de_vie"][str(annee)]
         assert depot == pytest.approx((60.0 + e60 - age) / (60.0 + e60), abs=1e-12)
         (bas_e60, haut_e60), (bas, haut) = ECARTS_SIMULATEUR_DU_COR[annee]
         assert bas_e60 <= esperance - e60 <= haut_e60, (annee, esperance - e60)
         assert bas <= depot - part <= haut, (annee, depot - part)
 
 
-def test_l_age_qui_tient_la_part_de_2020_monte_moins_sur_les_tables_du_depot(simulateur):
+def test_l_age_qui_tient_la_part_de_2020_monte_moins_sur_les_tables_du_depot(portage):
     """Par la méthode du simulateur, l'âge qui tiendrait en 2070 la part de
     2020 est 66,7 ans sur ses espérances de vie. Sur celles du dépôt, il est
     65,4 ans, pour tenir la part de 2020 du dépôt, 28,09 % ; 64,6 ans pour
@@ -1064,18 +1070,20 @@ def test_l_age_qui_tient_la_part_de_2020_monte_moins_sur_les_tables_du_depot(sim
     sien = (1.0 - part_2020) * (60.0 + esperance)
     assert round(2070 + 0.5 - sien) == generation
     assert sien == pytest.approx(66.70, abs=0.005)
-    part_du_depot = cycle_de_vie.part_de_vie(simulateur, age_2020, generation_2020 + age_2020,
-                                             cor=True)
+    lus = _au_portage(
+        ages_de_deces_cor={"generations": sorted({*_generations_qui_partent(2070), 1958, 2005})},
+        parts_de_vie={"cor": True, "cas": [
+            {"cle": "2020", "age": age_2020, "debut": generation_2020 + age_2020}]})
+    ages_de_deces = lus["ages_de_deces_cor"]
+    part_du_depot = lus["parts_de_vie"]["2020"]
     assert part_du_depot == pytest.approx(0.2809, abs=0.0005)
-    assert _age_qui_tient(simulateur, 2070, part_du_depot) == pytest.approx(65.41, abs=0.05)
-    assert _age_qui_tient(simulateur, 2070, part_2020) == pytest.approx(64.59, abs=0.05)
-    mortalite = simulateur.mortalite
+    assert _age_qui_tient(ages_de_deces, 2070, part_du_depot) == pytest.approx(65.41, abs=0.05)
+    assert _age_qui_tient(ages_de_deces, 2070, part_2020) == pytest.approx(64.59, abs=0.05)
     assert esperance - esperance_2020 == pytest.approx(6.39, abs=0.01)
-    assert (cycle_de_vie.age_de_deces_cor(mortalite, 2005)
-            - cycle_de_vie.age_de_deces_cor(mortalite, 1958)) == pytest.approx(4.51, abs=0.1)
+    assert ages_de_deces["2005"] - ages_de_deces["1958"] == pytest.approx(4.51, abs=0.1)
 
 
-def test_la_part_de_vie_de_chaque_generation_est_celle_du_cor_de_2026(cor, simulateur):
+def test_la_part_de_vie_de_chaque_generation_est_celle_du_cor_de_2026(cor, portage):
     """Le COR de juin 2026 publie, génération par génération, la durée de la
     retraite et sa part dans la vie (figure 3.6), à l'âge moyen de départ
     qu'il projette, 60 + e60 − durée. À cet âge, la part de vie du dépôt, sous
@@ -1083,8 +1091,12 @@ def test_la_part_de_vie_de_chaque_generation_est_celle_du_cor_de_2026(cor, simul
     1940 à la génération 2000 : leurs espérances de vie sont les mêmes, ce que
     celles du simulateur, du COR de 2019, ne sont plus."""
     duree = cor["duree_retraite"]
+    cas = []
     for generation in range(1940, 2001):
         cle = str(generation)
         age = 60.0 + duree["esperance_60"]["ensemble"][cle] - duree["annees"][cle]
-        depot = cycle_de_vie.part_de_vie(simulateur, age, generation + age, cor=True)
-        assert depot == pytest.approx(duree["part_de_vie"][cle], abs=0.001), generation
+        cas.append({"cle": cle, "age": age, "debut": generation + age})
+    parts = _au_portage(parts_de_vie={"cor": True, "cas": cas})["parts_de_vie"]
+    for generation in range(1940, 2001):
+        cle = str(generation)
+        assert parts[cle] == pytest.approx(duree["part_de_vie"][cle], abs=0.001), generation
