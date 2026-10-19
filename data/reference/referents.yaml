@@ -6207,7 +6207,12 @@ referents:
           Coût fait vivre chaque cas type au rythme du vingtile de
           niveau de vie de son diviseur, à nombre de décès égal
           (`Pensionne.survie`) ; reste le type de pension : la grille
-          n'a pas de retraité pour inaptitude.
+          n'a pas de retraité pour inaptitude. Le 19 octobre, elle a
+          son inapte (`castypes.INAPTE_CNAV`), à la part des départs
+          pour inaptitude de 2020 à 2024, 8,4 % de la Cnav, qui vit au
+          rythme des inaptes de la Cnav (Cadr'@ge n° 40, facteur calé
+          sur l'espérance à 65 ans de 2017) ; reste l'ex-invalide, que
+          les quatre carrières du privé portent encore.
         etat: a_reprendre
         chantier: "138.7"
       - quoi: >-

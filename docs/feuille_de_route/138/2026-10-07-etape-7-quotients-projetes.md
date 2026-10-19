@@ -1,15 +1,15 @@
 # Étape 7, première partie : les quotients projetés de l'INSEE au lieu de la loi de Gompertz-Makeham
 
-**Reprise, au 18 octobre 2026.** Fait : les quotients projetés de l'INSEE lus
+**Reprise, au 19 octobre 2026.** Fait : les quotients projetés de l'INSEE lus
 âge par âge par les deux moteurs ; la marche de 1941 ; les hypothèses
 d'espérance de vie, la fécondité et les migrations dans le diviseur, la page
 Coût et les pages ; l'indexation sous la variante ; la mortalité
-différentielle des cas types ; la queue observée de 85 à 98 ans, la loi
-raccordée à son dernier quotient. Reste, une session par point : les inaptes
-de la Cnav, que la grille n'a pas ; 2025, rangé au léger, à déclarer. Au
-propriétaire : les départs qui suivent l'espérance de vie, coupés le
-14 octobre (`2026-10-18-etape-7-departs-et-esperance-de-vie.md`). Détail :
-« Ce qui reste » des notes du 16 (indexation), du 17 et du 18 (queue).
+différentielle des cas types ; la queue observée de 85 à 98 ans ; le 19, les
+inaptes de la Cnav dans la grille du coût. Reste, une session par point : les
+ex-invalides de la Cnav ; 2025, rangé au léger, à déclarer. Au propriétaire :
+les départs qui suivent l'espérance de vie, coupés le 14 octobre
+(`2026-10-18-etape-7-departs-et-esperance-de-vie.md`). Détail : « Ce qui
+reste » des notes du 16 (indexation), du 17, du 18 (queue) et du 19.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.7 ». L'étape 7 de
 l'action : « La démographie en variantes : les quotients projetés âge par âge
