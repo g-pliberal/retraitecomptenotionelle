@@ -387,17 +387,29 @@ def test_la_carriere_heurtee_valide_ce_que_le_droit_donne_au_chomage():
 def test_l_inapte_de_la_cnav_part_au_taux_plein_des_l_age_legal():
     """L'inapte de la grille du coût (action 138, étape 7) : les nouveaux
     retraités de 2021 pour inaptitude au travail hors ex-invalides, que la
-    Cnav décrit (étude 2023-014, tableaux 2 à 4) — les anciens titulaires de
-    l'AAH et les autres inaptes, 46 690 personnes : un premier trimestre à
-    vingt ans, 116 trimestres en moyenne, un salaire annuel moyen de 68 % du
-    SMIC. Le cas type travaille à 70 % du SMIC de vingt à quarante-neuf ans,
-    puis n'a plus d'activité jusqu'au départ : 116 trimestres.
+    Cnav décrit (étude 2023-014, tableaux 2 à 4) — 19 358 anciens titulaires
+    de l'AAH et 27 332 autres inaptes : un premier trimestre l'année de leurs
+    vingt ans ; 94 et 131 trimestres, 116 en moyenne ; 56 et 71 % de ces
+    trimestres cotisés, quelque 76 sur 116 ; un salaire annuel moyen de 56 et
+    77 % du SMIC de 2021 (19 073,64 €), 68 % en moyenne. Le chômage fait
+    l'essentiel de leurs périodes assimilées, avec, pour les femmes, l'AVPF et
+    la majoration pour enfants, et pour les autres inaptes la maladie en fin
+    de carrière (graphique 1) ; l'emploi et le chômage se mêlent à tout âge
+    jusque vers cinquante ans, et les années sans report se multiplient
+    ensuite (graphiques 5 à 8). Le cas type travaille à 0,90 SMIC de vingt à
+    quarante-sept ans, une année sur trois au chômage indemnisé, de vingt et
+    un à quarante-huit ans, puis n'a plus d'activité : 76 trimestres cotisés
+    sur 116. Il a, né en 1959 et parti en 2021, le salaire annuel moyen
+    publié. Jusqu'au 19 octobre 2026, il travaillait à 70 % du SMIC de vingt
+    à quarante-neuf ans, ses 116 trimestres tous cotisés, pour un salaire
+    annuel moyen de 55 % du SMIC.
 
     Reconnu inapte, il a le taux plein dès l'âge légal quelle que soit sa durée
     (L. 351-8, 2°, fiche ``inaptitude_au_travail``) : à soixante ans né en
     1950, à soixante-deux né en 1960 et après, la réforme de 2023 lui gardant
     cet âge. Sans l'inaptitude, la même carrière attendrait l'âge d'annulation
     de la décote, soixante-cinq puis soixante-sept ans."""
+    import re
     from dataclasses import replace
 
     from retraite_notionnelle.castypes import INAPTE_CNAV as cas
@@ -405,17 +417,27 @@ def test_l_inapte_de_la_cnav_part_au_taux_plein_des_l_age_legal():
     simulateur = Simulateur(Parametres())
     assert cas.inaptitude and cas.mortalite == "cnav_inaptitude"
     assert (cas.affiliation, cas.age_debut, cas.niveau_salaire, cas.caisses) == (
-        "salarie_prive_non_cadre", 20, 0.7, ("cnav",))
+        "salarie_prive_non_cadre", 20, 0.9, ("cnav",))
     sans = replace(cas, inaptitude=False)
     for generation, depart, annulation in ((1950, 60, 65), (1960, 62, 67),
                                            (1980, 62, 67)):
         carriere = cas.construire(simulateur, generation)
         assert carriere.age_liquidation == depart, generation
         assert carriere.inaptitude, generation
-        assert carriere.trimestres_cumules(
-            ligne for ligne in carriere.lignes
-            if ligne.annee <= carriere.annee_liquidation) == 116, generation
+        trimestres: dict[str, int] = {}
+        for ligne in carriere.lignes:
+            if ligne.annee <= carriere.annee_liquidation and ligne.trimestres_valides:
+                trimestres[ligne.type_periode] = (trimestres.get(ligne.type_periode, 0)
+                                                  + ligne.trimestres_valides)
+        assert trimestres == {"emploi": 76, "chomage_indemnise": 40}, generation
         assert sans.construire(simulateur, generation).age_liquidation == annulation, generation
+    general = next(pension for pension in simulateur.simuler(
+        cas.construire(simulateur, 1959)).actuel.pensions_par_regime
+        if pension.regime == "regime_general")
+    salaire_annuel_moyen = float(re.search(r"SR ([\d,]+\.\d\d) €", general.detail)
+                                 .group(1).replace(",", ""))
+    assert salaire_annuel_moyen / 19_073.64 == pytest.approx(0.68, abs=0.01)
+    assert "taux 50.000%" in general.detail
 
 
 def test_l_ex_invalide_de_la_cnav_part_au_taux_plein_des_l_age_legal():

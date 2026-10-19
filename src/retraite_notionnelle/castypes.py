@@ -590,9 +590,16 @@ FONCTIONNAIRE_SUPER_ACTIF_ETAT = replace(
 #: nouveaux retraités de 2021 pour inaptitude au travail hors ex-invalides,
 #: que la Cnav décrit (étude 2023-014, tableaux 2 à 4), anciens titulaires de
 #: l'AAH et autres inaptes, entrés à vingt ans, avec 116 trimestres en
-#: moyenne et un salaire annuel moyen de 68 % du SMIC. Il porte la part de la
-#: caisse que ses départs lui donnent (:data:`PART_INAPTES_CNAV`) et vit au
-#: rythme des inaptes de la Cnav, quatre ans de moins à 62 ans que les
+#: moyenne, dont quelque 76 cotisés, et un salaire annuel moyen de 68 % du
+#: SMIC. Le chômage fait l'essentiel de leurs périodes assimilées, et se mêle
+#: à l'emploi à tout âge jusque vers cinquante ans (graphiques 1 et 5 à 8) :
+#: le cas type passe au chômage indemnisé une année sur trois, de vingt et un
+#: à quarante-huit ans, l'AVPF, la majoration pour enfants et la maladie, qu'il
+#: n'a pas, se fondant dans son chômage. À 0,90 SMIC, il a le salaire annuel
+#: moyen publié, né en 1959 et parti en 2021 ; jusqu'au 19 octobre 2026, ses
+#: 116 trimestres étaient tous cotisés, à 70 % du SMIC, pour 55 %. Il porte la
+#: part de la caisse que ses départs lui donnent (:data:`PART_INAPTES_CNAV`) et
+#: vit au rythme des inaptes de la Cnav, quatre ans de moins à 62 ans que les
 #: pensions normales (Cadr'@ge n° 40, ``esperances_vie_pensions_cnav.csv``).
 #: Variante du salarié au SMIC, auquel les poids que la page affiche le
 #: rapportent (:func:`cas_type_affiche`).
@@ -600,18 +607,21 @@ INAPTE_CNAV = replace(
     _cas("smic_carriere_complete"),
     code="smic_carriere_complete~inapte",
     libelle="Salarié reconnu inapte au travail",
-    age_debut=20, niveau_salaire=0.7,
-    interruptions_relatives=tuple((decalage, "inactivite") for decalage in range(29, 50)),
+    age_debut=20, niveau_salaire=0.9,
+    interruptions_relatives=(
+        tuple((decalage, "chomage_indemnise") for decalage in range(1, 29, 3))
+        + tuple((decalage, "inactivite") for decalage in range(29, 50))),
     parts_caisses=(("cnav", PART_INAPTES_CNAV),),
     inaptitude=True,
     mortalite="cnav_inaptitude",
     commentaire=(
-        "Au SMIC à temps partiel de vingt à quarante-neuf ans, sans activité "
-        "ensuite : reconnu inapte au travail à la demande de sa pension, il a "
-        "le taux plein dès l'âge légal, quelle que soit sa durée — soixante-"
-        "deux ans, que la réforme de 2023 lui garde. Sous la proposition, son "
-        "compte se liquide à l'âge légal de tous, et l'invalidité le couvre "
-        "jusque-là."
+        "À 0,90 SMIC de vingt à quarante-sept ans, au chômage une année sur "
+        "trois, sans activité après quarante-huit ans : reconnu inapte au "
+        "travail à la demande de sa pension, il a le taux plein dès l'âge "
+        "légal, quelle que soit sa durée — soixante-deux ans, que la réforme "
+        "de 2023 lui garde. Sous la proposition, son compte ne porte de son "
+        "chômage que ce que l'Unédic verse aux complémentaires ; il se liquide "
+        "à l'âge légal de tous, et l'invalidité le couvre jusque-là."
     ),
 )
 

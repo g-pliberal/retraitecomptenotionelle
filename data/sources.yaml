@@ -1975,7 +1975,11 @@ institutions:
           en part du SMIC et leur âge de départ (tableaux 2 à 4) font la
           carrière de l'inapte de la grille du coût (`castypes.INAPTE_CNAV`) :
           les deux derniers groupes ensemble entrent à vingt ans, valident
-          116 trimestres, à un salaire annuel moyen de 68 % du SMIC.
+          116 trimestres, dont quelque 76 cotisés (56 et 71 %), à un salaire
+          annuel moyen de 68 % du SMIC ; le chômage fait l'essentiel du reste
+          (graphique 1). Ceux de l'ex-invalide (`castypes.EX_INVALIDE_CNAV`) :
+          un premier trimestre à dix-huit ans, 171 trimestres, dont 64 %
+          cotisés, à 97 % du SMIC.
 
       - id: cnav_comptes_notionnels_2009
         titre: >-
