@@ -1004,11 +1004,14 @@ def test_la_pension_moyenne_relative_s_ecarte_de_celle_du_cor(avenir, comptes):
 #: L'ex-invalide sert LURA et les complémentaires dans d'autres proportions que
 #: les quatre carrières du privé dont il prend la part, et déplace le calage
 #: des poids par groupe (``_poids_par_groupe``) : sous la table commune même,
-#: les non-salariés pèsent 2,4 % de plus en 2070.
+#: les non-salariés pèsent 2,4 % de plus en 2070. Le 20 octobre, la valeur de
+#: service de l'Agirc-Arrco relevée de 1,4 % au 1er novembre 2026 (décision du
+#: 14 octobre), que le dépôt reconduisait gelée : complémentaires de +5,2 à
+#: +6,3 % (tolérance relevée à 7 %).
 DECOMPOSITION_GROUPES_SUIVIS = {
     ("pension_relative", "cnav"): 0.04,
     ("depense_part_pib", "lura"): 0.05,
-    ("depense_part_pib", "complementaires"): 0.06,
+    ("depense_part_pib", "complementaires"): 0.07,
     ("depense_part_pib", "non_salaries_base"): 0.09,
 }
 #: Et ce qu'elle ne suit pas encore : des CLIQUETS, qui ne doivent que
@@ -1106,11 +1109,14 @@ DECOMPOSITION_GROUPES_SUIVIS = {
 #: hautes, et leur croissance jusqu'à l'horizon trop basse. L'étape 7, le
 #: 19 octobre, donne à la Cnav ses inaptes, à leur part de ses départs et à
 #: leur mortalité : la dépense de la FPE passe de +22,4 à +22,0 %, celle de la
-#: CNRACL de +11,2 à +10,9 %.
+#: CNRACL de +11,2 à +10,9 %. Le 20 octobre, la valeur de service de
+#: l'Agirc-Arrco relevée de 1,4 % au 1er novembre 2026, que le dépôt
+#: reconduisait gelée : sa pension relative passe de +23,1 à +24,8 %, et son
+#: cliquet remonte : la règle est le droit.
 DECOMPOSITION_GROUPES_CLIQUETS = {
     ("pension_relative", "fpe"): 0.06,
     ("pension_relative", "cnracl"): 0.04,
-    ("pension_relative", "agirc_arrco"): 0.24,
+    ("pension_relative", "agirc_arrco"): 0.25,
     ("depense_part_pib", "fpe"): 0.22,
     ("depense_part_pib", "cnracl"): 0.11,
     ("depense_part_pib", "regimes_speciaux"): 0.33,

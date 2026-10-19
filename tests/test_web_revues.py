@@ -829,10 +829,11 @@ def test_le_resume_dit_au_retraite_que_sa_pension_serait_recalculee():
 def test_le_retraite_lit_le_chemin_de_sa_pension_depuis_son_depart():
     """Le cas type de ``tests/test_revalorisation.py``, saisi sur le site : un
     non-cadre né en 1950, parti en janvier 2012. Sa pension de 2026 est
-    1 821,75 € bruts par mois — celle de son départ, 1 502,73 €, menée par
+    1 828,13 € bruts par mois — celle de son départ, 1 502,73 €, menée par
     les treize revalorisations du régime général (×1,2215) et la valeur du
-    point Agirc-Arrco (×1,1855), depuis celle de son départ, fixée en avril
-    2011 (étape 138.20). Le dépliant refait ce chemin régime par régime, dit
+    point Agirc-Arrco de la fin de 2026 (×1,2021), depuis celle de son départ,
+    fixée en avril 2011 (étape 138.20) ; ×1,1855 avant le relèvement du
+    1er novembre 2026. Le dépliant refait ce chemin régime par régime, dit
     la tranche de 2020 — 1 573,32 € en décembre 2019, donc 1 % — et ce que la
     page affichait avant : la pension du départ ramenée par les prix,
     1 875,63 €, que ce retraité n'a jamais touchée."""
@@ -844,9 +845,9 @@ def test_le_retraite_lit_le_chemin_de_sa_pension_depuis_son_depart():
     bloc = corps[debut:corps.index("</details>", debut)]
     texte = re.sub(r"[ \t\n]+", " ", re.sub(r"<[^>]+>", " ", bloc)).replace("\u202f", " ")
     assert "Votre pension a pris effet en janvier 2012." in texte
-    assert "385,12 € ×1,1855 456,56 €" in texte
+    assert "385,12 € ×1,2021 462,94 €" in texte
     assert "1 117,61 € ×1,2215 1 365,18 €" in texte
-    assert "Pension du système actuel 1 502,73 € ×1,2123 1 821,75 €" in texte
+    assert "Pension du système actuel 1 502,73 € ×1,2165 1 828,13 €" in texte
     assert "votre pension de départ vaudrait 1 875,63 € bruts par mois" in texte
     assert "Pour vous, 1 573,32 € en décembre 2019 : +1,0 %." in texte
 
