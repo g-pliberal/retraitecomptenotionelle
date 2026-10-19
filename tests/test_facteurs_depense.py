@@ -28,6 +28,11 @@ Ce module tient trois choses :
   1967 aux conditions de la génération 1965 (note du 18 octobre 2026) ; ce
   qui en restait, parce qu'elle les fait entrer dans l'emploi au même âge à
   chaque génération (note du 19 octobre 2026, « l'entrée dans l'emploi »).
+  Entrées selon leur génération, ses 65 ans et plus reculent plus que ceux de
+  l'AWG ; partie pour une part à l'âge légal avec une décote, comme la
+  génération 1953, la grille les en rapproche sous la réforme de 2023 entière
+  avant 2030, non après (note du 19 octobre 2026, « les départs hors du taux
+  plein »).
 """
 
 from __future__ import annotations
@@ -348,6 +353,39 @@ def test_nee_toute_l_annee_une_cohorte_n_a_que_ses_partis_l_annee_de_son_depart(
     assert compte(2028) == pytest.approx(1065 + 1064 + 1063)
 
 
+def test_une_part_de_la_cohorte_part_avant_son_taux_plein_avec_une_decote():
+    """La grille fait partir chacun au taux plein ; ``decotes`` fait partir
+    une part de la cohorte plus tôt, avec une décote, à la date qu'il lui
+    donne, et le reste au taux plein. La cohorte qu'il ne nomme pas part toute
+    au taux plein. Née toute l'année, la part décotée n'a de partis, l'année
+    de son départ, que ses natifs des premiers mois, comme le reste ; née en
+    janvier, elle se compte toute dès cette année-là."""
+    from types import SimpleNamespace
+
+    from retraite_notionnelle.facteurs_depense import compter_retraites, depart_de_la_grille
+
+    propres = {-2: 2026, -1: 2027, 0: 2028, 1: 2030, 2: 2031}
+    pensionnes = [SimpleNamespace(code="a", generation=1965, liquidation=propres.get)]
+    population = SimpleNamespace(effectif=lambda age, annee: 1000.0 + age)
+    # La cohorte de 1967 part au taux plein en février 2031, à 64 ans ; un
+    # cinquième part en octobre 2029, à 62 ans, avec une décote.
+    decotes = {("a", 1965, 2): (0.2, 2029, 10)}
+
+    def compte(annee: int, age: int = 0, mois: dict | None = None) -> float:
+        return compter_retraites(pensionnes, population, annee, {"a": 1.0},
+                                 depart_de_la_grille, age, mois=mois, decotes=decotes)
+
+    # En 2029, les cohortes de 1963 à 1967 ont de 66 à 62 ans.
+    assert compte(2029) == pytest.approx(1066 + 1065 + 1064 + 0.2 * 1062)
+    assert compte(2030) == pytest.approx(1067 + 1066 + 1065 + 1064 + 0.2 * 1063)
+    assert compte(2031) == pytest.approx(1068 + 1067 + 1066 + 1065 + 1064)
+    assert compte(2029, 65) == pytest.approx(1066 + 1065)
+    nes = {("a", 1965, 2): 2}
+    assert compte(2029, mois=nes) == pytest.approx(1066 + 1065 + 1064 + 0.2 * 1062 * 3 / 12)
+    assert compte(2031, mois=nes) == pytest.approx(
+        1068 + 1067 + 1066 + 1065 + 1064 * (0.8 * 11 / 12 + 0.2))
+
+
 def test_l_entree_dans_l_emploi_recule_d_un_an_de_la_generation_1960_a_1966():
     """La grille fait entrer ses cas types au même âge à chaque génération
     (limite n° 2 de ``cout.py``) ; l'échantillon interrégimes de cotisants de
@@ -400,6 +438,60 @@ def test_entre_plus_tard_le_salarie_part_plus_tard_et_le_militaire_a_son_heure()
     assert entree[("salaire_moyen", 1965, 1)].rang - grille[("salaire_moyen", 1965, 1)].rang == 12
     assert all(entree[("militaire", 1965, decalage)] == grille[("militaire", 1965, decalage)]
                for decalage in range(-2, 3))
+
+
+def test_la_generation_1953_est_partie_decotee_des_l_age_legal_a_9_4_pour_cent():
+    """L'EIR de 2020 range les retraités nés en 1953 par la place de leur
+    départ (``macro/departs_generations.csv``, certifiée) : 31,2 % à l'âge
+    légal, dont 13,8 % avec une décote ; 26,6 % entre lui et l'âge
+    d'annulation de la décote, dont 19,0 % ; 8,3 % à cet âge, dont 0,2 % ;
+    3,1 % après, dont 0,1 % — 9,4 % de la génération, des 10,6 % de départs
+    décotés qu'elle compte. Les autres, 3,9 % des 30,9 % partis avant l'âge
+    légal, relèvent des régimes qui ouvrent plus tôt, catégories actives et
+    régimes spéciaux."""
+    from retraite_notionnelle.config import RACINE_DONNEES
+    from retraite_notionnelle.facteurs_depense import part_decotee_des_l_age_legal
+
+    assert part_decotee_des_l_age_legal(RACINE_DONNEES) == pytest.approx(
+        (31.2 * 13.8 + 26.6 * 19.0 + 8.3 * 0.2 + 3.1 * 0.1) / 1e4)
+
+
+def test_la_part_decotee_se_rapporte_aux_cohortes_qui_peuvent_decoter():
+    """La grille ne peut faire partir avec une décote que les cohortes dont le
+    taux plein vient après l'âge légal : la part de la génération partie ainsi
+    se rapporte à leur poids parmi toutes les siennes, comme la population de
+    l'étape 14 rapporte la part de l'EIR à ses carrières incomplètes. 9,4 % de
+    la génération, quand ses cohortes qui peuvent décoter en pèsent les trois
+    quarts : 12,5 % de chacune ; aucune ne le pouvant, rien ; et jamais plus
+    que toutes."""
+    from retraite_notionnelle.facteurs_depense import part_avec_decote
+
+    poids = {("a", 1955, -2): 0.5, ("b", 1955, -2): 0.25, ("c", 1955, -2): 0.25}
+    assert part_avec_decote(0.094, poids, {("a", 1955, -2), ("b", 1955, -2)}) == pytest.approx(
+        0.094 / 0.75)
+    assert part_avec_decote(0.094, poids, set()) == 0.0
+    assert part_avec_decote(0.9, poids, {("c", 1955, -2)}) == 1.0
+
+
+def test_a_l_age_legal_peut_partir_celui_dont_le_taux_plein_vient_apres():
+    """Entré à 22 ans, comme sa génération après celle de 1960, le salarié au
+    salaire moyen né en janvier 1966 n'a le taux plein qu'à 65 ans, en 2031
+    (172 trimestres, L. 161-17-3) ; son droit s'ouvre à 63 ans et 3 mois,
+    l'âge légal de sa génération sous la suspension de 2026 (L. 161-17-2) : il
+    peut partir en 2029, avec une décote. L'agent actif de la CNRACL, que son
+    classement ouvre à 57 ans, garde son départ ; de même le salarié au SMIC
+    entré à 18 ans, qui a le taux plein dès l'ouverture, en carrière longue, et
+    le militaire, qui part après ses services."""
+    from retraite_notionnelle import Parametres
+    from retraite_notionnelle.castypes import GRILLE_DU_COUT
+    from retraite_notionnelle.facteurs_depense import dates_a_l_age_legal
+
+    codes = ("salaire_moyen", "fonctionnaire_actif", "smic_carriere_complete", "militaire")
+    cas = tuple(c for c in GRILLE_DU_COUT if c.code in codes)
+    legales = dates_a_l_age_legal(Parametres(scenario_projection="cor_reference"),
+                                  entree_depuis=1960, cas_types=cas, generations=(1965,))
+    assert legales[("salaire_moyen", 1965, 1)].annee == 2029
+    assert {code for code, _generation, _decalage in legales} == {"salaire_moyen"}
 
 
 def _script():
@@ -457,6 +549,35 @@ def test_le_departage_compte_l_entree_dans_l_emploi_apres_les_naissances():
     assert ecarts["l'entrée dans l'emploi"]["vieillesse"] == pytest.approx(0.11)
     assert ecarts["l'entrée dans l'emploi"]["precoce"] == pytest.approx(0.16)
     assert ecarts["ce qui reste"]["couverture"] == pytest.approx(-0.06 + 0.01)
+
+
+def test_le_departage_compte_les_departs_hors_du_taux_plein_apres_l_entree():
+    """``--decote`` fait en outre partir à l'âge légal, avec une décote, une
+    part des cohortes qui n'ont le taux plein qu'après lui : le départage la
+    place après l'entrée dans l'emploi, et ce qui reste se compte depuis elle ;
+    l'écart ne change pas."""
+    script = _script()
+
+    def part(agees: float, jeunes: float) -> dict:
+        return {"2022-2030": {"vieillesse": agees, "precoce": jeunes,
+                              "couverture": agees + jeunes}}
+
+    stables = "et 48 % stables, mesurés"
+    parts = {"Ageing Report 2024": part(-0.22, -1.16), "modèle": part(-0.08, -0.92),
+             stables: part(-0.07, -1.02), script.SANS_SUSPENSION: part(-0.14, -1.02),
+             script.NES_TOUTE_L_ANNEE: part(-0.17, -0.99),
+             script.ENTREE_SELON_LA_GENERATION: part(-0.28, -1.15)}
+    sans_decote = script.departage(parts, stables)
+    parts[script.AVEC_DECOTE] = part(-0.25, -1.18)
+    ecarts = script.departage(parts, stables)
+    assert list(ecarts) == ["le périmètre", "la suspension", "les naissances de l'année",
+                            "l'entrée dans l'emploi", "les départs hors du taux plein",
+                            "ce qui reste", "l'écart"]
+    assert ecarts["les départs hors du taux plein"]["vieillesse"] == pytest.approx(-0.03)
+    assert ecarts["les départs hors du taux plein"]["precoce"] == pytest.approx(0.03)
+    assert ecarts["ce qui reste"]["vieillesse"] == pytest.approx(-0.03)
+    assert ecarts["ce qui reste"]["precoce"] == pytest.approx(-0.02)
+    assert ecarts["l'écart"] == sans_decote["l'écart"]
 
 
 def test_la_couverture_de_2022_2030_tient_au_perimetre_de_l_awg(awg):
@@ -636,4 +757,60 @@ def test_entree_selon_sa_generation_la_grille_recule_comme_l_awg_avant_65_ans(aw
         assert abs(entre(entres["precoce"], debut, fin)
                    - entre(publie["precoce"], debut, fin)) < 0.1, (debut, fin)
     assert (entre(entres["vieillesse"], 2030, 2070)
+            < entre(publie["vieillesse"], 2030, 2070) - 0.1)
+
+
+def test_partis_a_l_age_legal_avec_une_decote_les_65_ans_et_plus_reculent_moins(awg):
+    """Entrée selon sa génération, la grille porte au-delà de 65 ans le taux
+    plein du salarié au salaire moyen, du fonctionnaire sédentaire et du cadre
+    (test précédent). La génération 1953 est partie avec une décote dès l'âge
+    légal à 9,4 % (EIR) : la même part de la génération, prise à ses cohortes
+    de la grille qui n'ont le taux plein qu'après lui, part à l'âge légal
+    (``avec_decote``). Chaque année compte au moins autant de retraités ; leurs
+    65 ans et plus, portés au périmètre de l'AWG, reculent de 0,02 point de
+    PIB de moins au moins, de 2022 à 2030 comme de 2030 à 2070, mais toujours
+    de plus de 0,1 point de plus que ceux de l'AWG après 2030 ; leurs moins de
+    65 ans bougent de moins de 0,03 point (note du 19 octobre 2026, « les
+    départs hors du taux plein »)."""
+    from retraite_notionnelle import Parametres
+    from retraite_notionnelle.facteurs_depense import JEUNES, STABLES, pensionnes_de_2022
+
+    parametres = Parametres(scenario_projection="cor_reference")
+    annees, _decomposition_ = _decomposition("cor_reference", "actuel")
+    population_65 = {annee: annees[annee].population_65 for annee in GRILLE_AWG}
+    part_pib, pensionnes, pensionnes_agees, population_65_awg = _couverture_de_l_awg(awg)
+    population_20_64 = {annee: awg["series"]["population_20_64"][annee] for annee in GRILLE_AWG}
+    mesures = pensionnes_de_2022(json.loads(
+        (RACINE / "tests" / "temoins" / "pensionnes_de_2022.json").read_text(encoding="utf-8")))
+    premiere = GRILLE_AWG[0]
+    stable = (sum(mesures[categorie][tranche] for categorie in STABLES for tranche in JEUNES)
+              / ((pensionnes[premiere] - pensionnes_agees[premiere]) * 1000))
+    vieux = pensionnes_agees[premiere] / population_65_awg[premiere]
+    plus_jeunes = pensionnes[premiere] / population_65_awg[premiere] - vieux
+    comptes = {decote: retraites_par_age(parametres, GRILLE_AWG, nes_toute_l_annee=True,
+                                         entree_depuis=1960, avec_decote=decote)
+               for decote in (False, True)}
+    for annee in GRILLE_AWG:
+        assert all(avec >= sans - 1e-6 for avec, sans in zip(comptes[True][annee],
+                                                              comptes[False][annee])), annee
+
+    def portee(par_age: dict) -> dict:
+        return partager_couverture(part_pib, *au_perimetre(
+            population_65_awg, vieux, plus_jeunes,
+            {annee: par_age[annee][0] for annee in GRILLE_AWG},
+            {annee: par_age[annee][1] for annee in GRILLE_AWG}, population_65,
+            stable=stable, population_stable=population_20_64),
+            population_65_awg)
+
+    def entre(serie: dict, debut: int, fin: int) -> float:
+        return serie[fin] - (serie[debut] if debut > premiere else 0.0)
+
+    entres, decotes = portee(comptes[False]), portee(comptes[True])
+    publie = partager_couverture(part_pib, pensionnes, pensionnes_agees, population_65_awg)
+    for debut, fin in ((2022, 2030), (2030, 2070)):
+        assert (entre(decotes["vieillesse"], debut, fin)
+                > entre(entres["vieillesse"], debut, fin) + 0.02), (debut, fin)
+        assert abs(entre(decotes["precoce"], debut, fin)
+                   - entre(entres["precoce"], debut, fin)) < 0.03, (debut, fin)
+    assert (entre(decotes["vieillesse"], 2030, 2070)
             < entre(publie["vieillesse"], 2030, 2070) - 0.1)

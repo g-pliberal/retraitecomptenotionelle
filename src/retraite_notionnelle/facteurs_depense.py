@@ -105,6 +105,15 @@ après celle de 1960, et Destinie, le modèle de l'AWG pour la France, les fait
 partir plus tard (fiche, § 3.3 ; note du 19 octobre 2026, « l'entrée dans
 l'emploi »).
 
+LES DÉPARTS HORS DU TAUX PLEIN (:func:`dates_a_l_age_legal`), une troisième
+mesure. La grille fait partir chacun au taux plein ; la génération 1953 est
+partie à 9,4 % avec une décote dès l'âge légal (EIR,
+:func:`part_decotee_des_l_age_legal`). La même part de la génération, prise à
+ses cohortes qui n'ont le taux plein qu'après lui (:func:`part_avec_decote`),
+part à l'âge légal : ses 65 ans et plus reculent moins, les moins de 65 ans
+presque comme avant (note du 19 octobre 2026, « les départs hors du taux
+plein »).
+
 CE QUI MANQUE. Les têtes de la proposition : son âge légal de 65 ans reporte
 des départs que ``AvenirAnnuel`` ne compte pas à part. La couverture de chaque
 système est donc celle du droit en vigueur, et sa prestation porte ce que le
@@ -116,7 +125,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, replace
 from pathlib import Path
-from typing import Callable, Mapping, Sequence
+from typing import Callable, Collection, Mapping, Sequence
 
 from .calendrier import DateMois
 from .cout import _DEMI_TRANCHE, masse_du_scenario
@@ -434,7 +443,9 @@ def depart_de_la_grille(pensionne, decalage: int) -> int:
 def compter_retraites(pensionnes, population, annee: int, poids_cas: Mapping[str, float],
                       depart: Callable[[object, int], int], age: int = 0,
                       survies: Mapping[tuple[str, int, int], float] | None = None,
-                      mois: Mapping[tuple[str, int, int], int] | None = None) -> float:
+                      mois: Mapping[tuple[str, int, int], int] | None = None,
+                      decotes: Mapping[tuple[str, int, int], tuple[float, int, int]] | None = None,
+                      ) -> float:
     """Les retraités de l'année, en personnes : les cohortes de la grille
     parties au plus tard cette année-là, chacune l'année que ``depart`` lui
     donne, de la génération ``pensionne.generation + decalage``, pesées comme
@@ -446,9 +457,15 @@ def compter_retraites(pensionnes, population, annee: int, poids_cas: Mapping[str
     ``mois``, par la même clé, fait naître chaque cohorte toute l'année, et
     non en janvier comme la grille : partie, née en janvier, le mois ``m`` de
     l'année de son départ, elle n'en a au 31 décembre que les ``(13 - m) / 12``
-    de partis, au même âge (:func:`dates_des_departs`)."""
+    de partis, au même âge (:func:`dates_des_departs`).
+
+    ``decotes``, par la même clé, fait partir une part de la cohorte avant son
+    taux plein, avec une décote, et le reste au taux plein : ``(part, annee,
+    mois)``, la date de ce départ-là, dont le mois ne compte que si ``mois``
+    fait naître la cohorte toute l'année (:func:`dates_a_l_age_legal`)."""
     survies = survies or {}
     mois = mois or {}
+    decotes = decotes or {}
     total = 0.0
     for pensionne in pensionnes:
         part = poids_cas.get(pensionne.code, 0.0)
@@ -457,13 +474,27 @@ def compter_retraites(pensionnes, population, annee: int, poids_cas: Mapping[str
         poids = 0.0
         for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
             age_atteint = annee - pensionne.generation - decalage
-            parti = depart(pensionne, decalage)
-            if age_atteint >= age and annee >= parti:
-                cle = (pensionne.code, pensionne.generation, decalage)
-                partis = (13 - mois[cle]) / 12 if annee == parti and cle in mois else 1.0
+            if age_atteint < age:
+                continue
+            cle = (pensionne.code, pensionne.generation, decalage)
+            decotee, annee_decotee, mois_decote = decotes.get(cle, (0.0, 0, 0))
+            partis = ((1.0 - decotee) * _partis(annee, depart(pensionne, decalage), mois.get(cle))
+                      + decotee * _partis(annee, annee_decotee,
+                                          mois_decote if cle in mois else None))
+            if partis:
                 poids += partis * population.effectif(age_atteint, annee) * survies.get(cle, 1.0)
         total += part * poids
     return total
+
+
+def _partis(annee: int, parti: int, mois: int | None) -> float:
+    """La part d'une cohorte partie au 31 décembre de ``annee`` : rien avant
+    l'année ``parti`` de son départ ; cette année-là, ``(13 - mois) / 12``
+    quand elle est née toute l'année et partie, née en janvier, le mois
+    ``mois`` ; toute ensuite."""
+    if annee < parti:
+        return 0.0
+    return (13 - mois) / 12 if annee == parti and mois is not None else 1.0
 
 
 def ages_medians_du_premier_trimestre(racine: Path) -> dict[tuple[str, int], float]:
@@ -511,10 +542,56 @@ def decalage_d_entree(medianes: Mapping[tuple[str, int], float], sexe: str,
     return round((mediane(generation) - mediane(reference)) * 4) / 4
 
 
+#: La génération de l'EIR dont les départs avec décote donnent leur part à la
+#: grille (:func:`part_decotee_des_l_age_legal`) : les nés en 1953, les plus
+#: récents que l'enquête de 2020 voie presque tous partis, comme pour la
+#: surcote de la population (``scripts/grille_large.py``).
+GENERATION_DES_DECOTES = 1953
+#: L'année de l'enquête qui compte la génération :data:`GENERATION_DES_DECOTES`,
+#: celle dont les poids rapportent sa part à la grille (:func:`part_avec_decote`).
+ANNEE_DES_DECOTES = 2020
+#: Les places du départ que l'EIR range à l'âge légal ou après lui : à cet âge,
+#: entre lui et l'âge d'annulation de la décote, à ce dernier, au-delà.
+PLACES_DES_L_AGE_LEGAL: tuple[str, ...] = ("age_legal", "entre", "age_annulation",
+                                           "apres_annulation")
+
+
+def part_decotee_des_l_age_legal(racine: Path) -> float:
+    """La part de la génération :data:`GENERATION_DES_DECOTES` partie avec une
+    décote à l'âge légal ou après lui, tous régimes, que l'EIR range par la
+    place de leur départ dans leur régime principal
+    (``macro/departs_generations.csv``) : la part de chaque place dans la
+    génération, fois celle de ses départs pris avec une décote. Avant l'âge
+    légal ne décotent que les régimes qui ouvrent plus tôt, catégories actives
+    et régimes spéciaux, dont la grille garde le départ (:func:`dates_a_l_age_legal`)."""
+    table, _fiabilites = charger_table_csv(
+        Path(racine) / "reference" / "macro" / "departs_generations.csv",
+        ("generation", "tableau", "colonne", "sexe", "indicateur"), "valeur")
+    generation = str(GENERATION_DES_DECOTES)
+    return somme_ordonnee(
+        table[(generation, "position", place, "ensemble", "part")]
+        * table[(generation, "position", place, "ensemble", "condition_decote")]
+        for place in PLACES_DES_L_AGE_LEGAL) / 1e4
+
+
+def part_avec_decote(cible: float, poids: Mapping[tuple[str, int, int], float],
+                     decotables: Collection[tuple[str, int, int]]) -> float:
+    """La part de chaque cohorte ``decotables`` qui part avec une décote à
+    l'âge légal : ``cible``, la part de sa génération partie ainsi
+    (:func:`part_decotee_des_l_age_legal`), rapportée au poids de ces cohortes
+    parmi toutes celles de la génération, ``poids`` par ``(code, generation,
+    decalage)``, comme la population de l'étape 14 rapporte la part de l'EIR à
+    ses carrières incomplètes ; une au plus, rien sans cohorte qui le puisse."""
+    toutes = somme_ordonnee(poids.values())
+    eligibles = somme_ordonnee(p for cle, p in poids.items() if cle in decotables)
+    return min(1.0, cible * toutes / eligibles) if eligibles else 0.0
+
+
 @dans_un_instantane
 def dates_des_departs(parametres, entree_depuis: int | None = None,
                       cas_types: tuple | None = None,
                       generations: tuple[int, ...] | None = None,
+                      a_l_ouverture: bool = False,
                       ) -> dict[tuple[str, int, int], DateMois]:
     """Le mois où part, née en janvier comme la grille, chacune des cinq
     cohortes de chaque couple de la grille du coût, par ``(code, generation,
@@ -528,7 +605,10 @@ def dates_des_departs(parametres, entree_depuis: int | None = None,
     qui part au taux plein plus tard que la génération ``entree_depuis``,
     d'autant que celles de son sexe dans l'EIC (:func:`decalage_d_entree`), quand
     la grille les fait toutes entrer au même âge (limite n° 2 de ``cout.py``) ;
-    ceux qui partent à un âge ou après leurs services gardent leur date."""
+    ceux qui partent à un âge ou après leurs services gardent leur date.
+    ``a_l_ouverture`` fait partir chaque cohorte d'un cas type qui part au
+    taux plein dès l'ouverture de son droit, avec une décote si le taux plein
+    vient après (``regle_liquidation="ouverture"``)."""
     from . import cout as module
     from .castypes import GRILLE_DU_COUT, carriere_de_la_grille, carrieres_de_la_grille
     from .simulateur import Simulateur
@@ -550,6 +630,8 @@ def dates_des_departs(parametres, entree_depuis: int | None = None,
                                            entree_depuis)
                 if entree:
                     propre = replace(cas, age_debut=cas.age_debut + entree)
+            if a_l_ouverture and cas.regle_liquidation == "taux_plein":
+                propre = replace(propre, regle_liquidation="ouverture")
             date = DateMois(carriere.annee_liquidation + decalage, carriere.mois_liquidation)
             if decalage or propre is not cas:
                 try:
@@ -561,10 +643,41 @@ def dates_des_departs(parametres, entree_depuis: int | None = None,
     return dates
 
 
+@dans_un_instantane
+def dates_a_l_age_legal(parametres, entree_depuis: int | None = None,
+                        cas_types: tuple | None = None,
+                        generations: tuple[int, ...] | None = None,
+                        ) -> dict[tuple[str, int, int], DateMois]:
+    """Le mois où partirait avec une décote, à l'âge légal de sa génération
+    (L. 161-17-2), chaque cohorte de la grille du coût qui n'a le taux plein
+    qu'après lui, par ``(code, generation, decalage)``
+    (:func:`dates_des_departs`, dont ``entree_depuis``) : celle d'un cas type
+    qui part au taux plein, dont le droit s'ouvre à cet âge et non avant. Les
+    catégories actives, que leur classement ouvre plus tôt, gardent leur
+    départ, comme ceux qui ont le taux plein dès l'ouverture, carrières
+    longues et inaptes, et ceux qui partent à un âge ou après leurs
+    services."""
+    from .simulateur import Simulateur
+
+    ages_legaux = Simulateur(parametres).scenario_actuel.ages_ouverture
+    taux_plein = dates_des_departs(parametres, entree_depuis, cas_types, generations)
+    ouvertures = dates_des_departs(parametres, entree_depuis, cas_types, generations,
+                                   a_l_ouverture=True)
+    legales = {}
+    for (code, generation, decalage), date in ouvertures.items():
+        legal = ages_legaux.age(generation + decalage)
+        mois_atteints = (date.annee - generation - decalage) * 12 + date.mois - 1
+        if (legal is not None and date.rang < taux_plein[(code, generation, decalage)].rang
+                and mois_atteints >= round(legal[0] * 12)):
+            legales[(code, generation, decalage)] = date
+    return legales
+
+
 def retraites_par_age(parametres, annees: Sequence[int],
                       age: int = AGE_VIEILLESSE,
                       nes_toute_l_annee: bool = False,
-                      entree_depuis: int | None = None) -> dict[int, tuple[float, float]]:
+                      entree_depuis: int | None = None,
+                      avec_decote: bool = False) -> dict[int, tuple[float, float]]:
     """Chaque année, les retraités du modèle de tous âges, puis ceux d'``age``
     ans et plus, en personnes.
 
@@ -577,7 +690,12 @@ def retraites_par_age(parametres, annees: Sequence[int],
     ``nes_toute_l_annee`` fait naître chaque cohorte toute l'année, et
     ``entree_depuis`` entrer chaque génération dans l'emploi à son âge
     (:func:`dates_des_departs`) : ce ne sont plus les têtes de ``cout.py``, et
-    la pension reste celle de la grille.
+    la pension reste celle de la grille. ``avec_decote`` fait partir à l'âge
+    légal, avec une décote, une part de chaque cohorte qui n'a le taux plein
+    qu'après lui (:func:`dates_a_l_age_legal`) : la part de la génération
+    :data:`GENERATION_DES_DECOTES` partie ainsi
+    (:func:`part_decotee_des_l_age_legal`), rapportée au poids de ses cohortes
+    qui le peuvent, en :data:`ANNEE_DES_DECOTES` (:func:`part_avec_decote`).
     """
     from . import cout as module
     from . import memoire
@@ -615,12 +733,26 @@ def retraites_par_age(parametres, annees: Sequence[int],
                 return depart_de_la_grille(pensionne, decalage) if date is None else date.annee
         if nes_toute_l_annee:
             mois = {cle: date.mois for cle, date in dates.items()}
+    decotes = None
+    if avec_decote:
+        legales = dates_a_l_age_legal(parametres, entree_depuis)
+        poids_enquete = poids(ANNEE_DES_DECOTES)
+        survies_enquete = module._survies_alignees(pensionnes, poids_enquete, ANNEE_DES_DECOTES)
+        generation = {
+            (pensionne.code, pensionne.generation, decalage):
+                poids_enquete.get(pensionne.code, 0.0)
+                * survies_enquete.get((pensionne.code, pensionne.generation, decalage), 1.0)
+            for pensionne in pensionnes
+            for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1)
+            if pensionne.generation + decalage == GENERATION_DES_DECOTES}
+        part = part_avec_decote(part_decotee_des_l_age_legal(racine), generation, legales)
+        decotes = {cle: (part, date.annee, date.mois) for cle, date in legales.items()}
     resultat: dict[int, tuple[float, float]] = {}
     for annee in annees:
         poids_annee = poids(annee)
         survies = module._survies_alignees(pensionnes, poids_annee, annee)
         resultat[annee] = tuple(
             compter_retraites(pensionnes, population, annee, poids_annee,
-                              depart, minimum, survies, mois)
+                              depart, minimum, survies, mois, decotes)
             for minimum in (0, age))
     return resultat
