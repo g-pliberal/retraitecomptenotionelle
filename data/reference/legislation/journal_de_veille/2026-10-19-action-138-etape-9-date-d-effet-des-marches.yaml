@@ -1,0 +1,41 @@
+date: "2026-10-19"
+session: "action 138, étape 9, suite de la huitième partie : la date d'effet de chaque marche de l'IPP"
+consulte: >-
+  python scripts/veille_droit.py ; les index JORF et LEGI, récupérés puis mis
+  à jour de leurs incréments jusqu'au 18 octobre 2026 (aucun nouveau), et
+  python scripts/textes.py --inscrire (trois rédactions de D. 161-2-24-1 et
+  D. 161-2-24-2, qu'une autre session cite) ; les barèmes de l'IPP, en CSV,
+  et leurs notes ; dans l'index JORF, pour chacune des 222 marches de l'IPP,
+  le titre, la notice et les articles du texte qu'elle cite, et ceux qui la
+  datent ailleurs (loi n° 2003-775, art. 31 ; LFSS pour 2018, art. 8 ; loi
+  de finances pour 2018, art. 112 ; loi n° 2018-1213, art. 3 ; LFR pour
+  1997, art. 30 ; décret n° 82-1039) ; dans l'index LEGI, les versions de
+  l'article 3 du décret n° 85-1148 de 1985 à 2017, des articles 1er, 2 et 6
+  du décret n° 67-803, 1er à 3 du décret n° 67-850, 10 du décret n° 74-810,
+  de L. 136-2, L. 136-8, D. 242-3, D. 242-4, D. 612-4 et D. 612-9, le
+  19 octobre 2026.
+trouve: >-
+  Des 222 marches de l'IPP, 149 ont leur date dans un document de l'index :
+  147 la date que l'IPP leur donne, deux une autre. Le seuil de la
+  contribution de solidarité, que l'IPP tient du Fonds de solidarité, change
+  le 1er mars et le 1er septembre 1988 avec la valeur du point (décret
+  n° 85-1148, art. 3 : « 27 253 F à compter du 1er mars 1988 », « 27 523 F à
+  compter du 1er septembre 1988 »), et non le 21 et le 23 ; ses autres
+  marches d'avant 1989 ont un jour qui n'est pas une date. La fin du veuvage
+  au 1er juillet 2004 est datée par la loi n° 2003-775 (art. 31, V), non par
+  le décret n° 2004-858. L'abattement de la CSG de 2011 et de 2012 (LFSS,
+  art. 20 et 17) et la cotisation maternité des indépendants de 1995 (décret
+  n° 95-337) ne disent pas de date : LEGI date leurs versions du jour ou du
+  lendemain de la publication, sans effet sur un mois. Le décret n° 81-1015
+  (maladie des agents publics, novembre 1981) n'est qu'en notice ; LEGI date
+  du 14 novembre ses versions, l'IPP du 1er. L'ancrage de la fin de la
+  contribution de solidarité visait le décret n° 2017-1889, et non la loi de
+  finances pour 2018 : corrigé.
+reste: >-
+  Le seuil de la solidarité de 1987 à 1989 : la marche de mars 1989 que l'IPP
+  n'a pas, l'indice de référence, ses valeurs de mai et d'août 1987 ; deux
+  ancrages d'arrêtés de l'assurance chômage (1993, 2006) ; au fac-similé, les
+  décrets que l'index n'a qu'en notice sans date, le n° 81-1015 d'abord.
+  Inchangés, de l'étape : le plafond de 2027, la date d'entrée dans la saisie
+  en net, la limite 5 ante ter (2) ; au propriétaire, la CAMIEG,
+  l'écrêtement du minimum de la SNCF, l'ASPA de l'article 23.
