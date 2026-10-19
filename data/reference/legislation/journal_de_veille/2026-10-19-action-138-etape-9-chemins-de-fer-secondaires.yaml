@@ -1,0 +1,36 @@
+date: "2026-10-19"
+session: "action 138, étape 9, suite de la huitième partie : la cotisation des chemins de fer secondaires avant 60 ans"
+consulte: >-
+  python scripts/veille_droit.py ; les index JORF et LEGI, récupérés puis mis
+  à jour de leurs incréments jusqu'au 18 octobre 2026 (aucun nouveau), et
+  python scripts/textes.py --inscrire (rien de nouveau) ; dans l'index LEGI,
+  les neuf rédactions de l'article 6 du décret n° 50-1448, de 1950 à 1997,
+  les articles 1er et 2 du décret n° 87-463, l'article 1er du décret
+  n° 80-598, R. 711-8 dans sa rédaction de 1988 et D. 711-3 dans celle de
+  1991 ; dans l'index JORF, les notices des décrets n° 51-1411, 54-102,
+  87-463, 88-787, 96-680 et 96-1151, les articles 5 du décret n° 96-471, 16
+  du décret n° 96-1151, 16 et 17 du décret n° 97-1249, le 19 octobre 2026.
+trouve: >-
+  Le pensionné des chemins de fer secondaires, agent retraité sur une pension
+  fondée sur la durée des services ou veuve, supporte « jusqu'à [son]
+  soixantième anniversaire » une cotisation maladie sur sa pension, dans la
+  limite du plafond (décret n° 50-1448, art. 6, § 3) : 2,5 % depuis le décret
+  n° 54-102, publié le 28 janvier 1954 ; 2,9 % du 1er juillet 1987 au 30 juin
+  1988, à titre exceptionnel (n° 87-463), puis à compter du 1er juillet 1988
+  (n° 88-787) ; 3,05 % pour les pensions dues à compter du 1er juin 1996
+  (n° 96-471, art. 5) ; 2,80 % en 1997, au lieu des 3,80 % prévus (n° 96-1151,
+  art. 16) ; abrogée au 1er janvier 1998 (n° 97-1249, art. 16 et 17). De 1952
+  à 1954, il payait une cotisation « égale à celle imposée aux retraités de
+  l'Etat », à tout âge (n° 51-1411). Passé 60 ans, celle des régimes spéciaux
+  placés sous le régime général, que le décret n° 80-598 ne lui imposait pas
+  avant : « les pensionnés des régimes spéciaux déjà assujettis à une
+  cotisation [...] continuent d'être régis par les dispositions qui les
+  concernent » ; la notice du décret n° 96-680 vise les chemins de fer
+  secondaires « s'ils sont âgés de plus de 60 ans ». L'histoire des
+  prélèvements la porte depuis ce jour, série bornée par l'âge.
+reste: >-
+  Au fac-similé, le taux de 1952 à 1954, celui des retraités de l'État, que le
+  dépôt ne lit pas avant 1976. Inchangés, de l'étape : le plafond de 2027, la
+  date d'entrée dans la saisie en net, la limite 5 ante ter (2), la date
+  d'effet de chaque marche de l'IPP ; au propriétaire, la CAMIEG,
+  l'écrêtement du minimum de la SNCF, l'ASPA de l'article 23.
