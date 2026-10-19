@@ -1,0 +1,42 @@
+date: "2026-10-19"
+session: >-
+  l'action 131 : la réversion des points d'avant 1973 des artisans et commerçants, et
+  son minimum avec la pension alignée (D. 634-14)
+consulte: >-
+  python scripts/veille_droit.py ; l'index LEGI du dépôt, récupéré puis mis à jour
+  jusqu'à l'incrément du 18 octobre 2026, et l'index JORF ; python scripts/textes.py
+  --inscrire, aucune rédaction parue depuis ; L. 161-17-2 et L. 161-17-3, sans
+  rédaction postérieure au 31 décembre 2025 ; au code de la sécurité sociale, D. 634-14
+  (1990), D. 353-1 (1985, 2004, 2020), R. 353-2 ; le décret n° 73-937, articles 7-1 à
+  7-3 (1976), 9 (ses cinq rédactions de 1990 à 2012), 13-1 à 13-8 (1980 à 1984), et sa
+  notice de 1973 ; la notice du décret n° 76-214 du 27 février 1976 ; le décret
+  n° 84-127, articles 3 et 4 ; le décret n° 64-994, articles 31 à 33 ; le décret
+  n° 66-248, articles 21 et 22 ; la base de législation de la Cnav, par sa recherche
+  (références et exposés) : les circulaires du RSI n° 2006/055, 2007/023, 2007/038,
+  2008/031, 2008/059, 2009/010, 2009/011, 2010/016, 2011/017, 2012/005, 2012/016,
+  2013/004, 2014/008, 2015/004, 2017/007, de l'Organic n° 81/139, 1990/008, 1998/075
+  et 99/69, de la Cancava n° 2004/15, et l'exposé « Montant - retraite de réversion ».
+trouve: >-
+  D. 634-14, depuis 1990, et l'article 7-2 du décret n° 73-937, ajouté au 5 mars 1976
+  par le décret n° 76-214, tiennent compte, pour le minimum de la réversion, « du
+  montant cumulé » des réversions d'avant et d'après 1973. L'avantage d'avant 1973,
+  l'article 9 du décret le donne aux conditions de L. 353-1 à L. 353-3, « compte tenu »
+  de D. 353-1, à 52 % des points depuis décembre 1982 et 54 % depuis 1995, majoré comme
+  L. 353-6 le dit depuis le 7 octobre 2012 ; avant 1990, son article 13-5 renvoyait au
+  régime général ; avant 1976, les décrets de 1964 et 1966 en servaient la moitié à
+  soixante-cinq ans. La circulaire du RSI n° 2010/016 dit les « deux composantes » de la
+  réversion du RSI, chacune à 54 % ; la n° 2012/016 range le « complément minimum » dans
+  le montant du régime aligné. Le moteur ne servait pas la réversion des points (« pas
+  encore portée »), et la part du minimum comptait la CANCAVA à part du RSI qui la
+  liquidait. Porté dans les deux moteurs : les points se reversent sous la fiche
+  reversion, sans les majorations pour enfants ; les régimes du minimum sont les têtes
+  de succession de la liquidation du défunt, les droits d'avant 1973 avec la caisse
+  qui leur succède, et leurs réversions n'ont qu'un minimum, sur leurs durées réunies,
+  que la réversion alignée complète.
+reste: >-
+  Une circulaire de la CANCAVA, de l'ORGANIC ou du RSI qui applique D. 634-14 et dise la
+  durée de son minimum, ce que le cumul d'avant juillet 2004 et le plafond retiennent
+  des points, et si la majoration de 10 % du survivant de trois enfants leur est servie ;
+  le texte de l'article 13-5 de 1976 ; le régime général et le RSI, un seul régime du
+  minimum depuis le 25 mai 2020, que le modèle ne réunit que pour un défunt liquidé
+  depuis 2018.
