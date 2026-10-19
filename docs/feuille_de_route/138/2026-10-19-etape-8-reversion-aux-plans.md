@@ -109,3 +109,14 @@ veuf depuis 1990 : 120,92 points de plans de 2000 à 2008, au lieu de 607,12 en
 
 Aucun témoin ne bouge : le seul qui déclare une réversion du régime, la veuve
 de 2010 partie en 2016, n'a pas de plans.
+
+**Le 19 octobre au soir, la suite rouge.** Le paquet de cette partie, refait
+sur le modèle du jour, porte le coefficient d'équilibre de la proposition à
+1,0013 en 2070, 44 années sur 45 sous un, quand celui qu'il remplaçait, figé
+plus tôt, le gardait sous un jusqu'au bout (0,9955) : les changements du coût
+faits depuis, les ex-invalides de la Cnav dans la grille entre autres, l'y
+avaient porté, non la réversion, qu'aucune carrière du coût ne déclare. La page
+Cas types a pris sa lecture « mixte », sans le manque de 17 %, et
+`tests/test_parcours.py` a rougi sur GitHub. Le parcours
+(`docs/parcours_presentation.md`, section 3) dit désormais une phrase vraie de
+part et d'autre de un.
