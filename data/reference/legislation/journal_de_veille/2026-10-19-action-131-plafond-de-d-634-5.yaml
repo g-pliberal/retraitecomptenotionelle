@@ -1,0 +1,34 @@
+date: "2026-10-19"
+session: >-
+  l'action 131 : la majoration de durée des artisans et commerçants, bornée
+  avec leurs années d'avant 1973 (D. 634-5)
+consulte: >-
+  python scripts/veille_droit.py ; l'index LEGI du dépôt, récupéré puis mis à
+  jour jusqu'à l'incrément du 18 octobre 2026 ; python scripts/textes.py
+  --inscrire, aucune rédaction nouvelle ; au code de la sécurité sociale,
+  D. 634-5 dans ses sept rédactions, de 1985 à 2023, et D. 634-6 dans ses deux,
+  de 1990 et de 2009 ; l'article 1er du décret n° 73-937 (rédaction de 1990) ;
+  D. 171-11-1 (rédaction du 31 octobre 2003).
+trouve: >-
+  D. 634-5 ne majore que les trimestres d'après 1972, « sans que cette
+  majoration puisse avoir pour effet de porter au-delà de 150 trimestres » —
+  la durée de L. 351-1 depuis 2009 — « la durée totale des périodes
+  d'assurance antérieures au 1er janvier 1973 et postérieures au 31 décembre
+  1972 », le total arrondi au trimestre supérieur ; le moteur ne bornait que
+  les trimestres d'après 1972. Porté dans les deux moteurs : le champ de
+  période duree_majoree_bornee_avec nomme les régimes d'avant 1973 aux périodes
+  de la CANCAVA, de l'ORGANIC et du RSI depuis 1990, et la période de chaque
+  membre du groupe liquidé ensemble le lit, le régime général depuis 2020
+  compris. La rédaction de D. 634-5 de 1985 à 1989 ne parle que de la
+  réversion (R. 353-2). D. 634-6 borne de même le minimum contributif de qui a
+  des années d'avant 1973, au minimum proratisé sur la durée totale par
+  rapport à 150 trimestres, puis à la durée de L. 351-1 depuis 2009 ; le
+  moteur ne porte la règle qu'au minimum d'avant 1983 (décret n° 73-937,
+  article 7). D. 171-11-1 ne décompte que la durée cotisée des carrières
+  longues, et non les trimestres d'avant 1973 des indépendants.
+reste: >-
+  D. 634-6, au minimum contributif des artisans et commerçants qui ont des
+  années d'avant 1973, à porter. La règle qui décompte en trimestres les
+  périodes d'assurance de l'ancien régime des indépendants, que D. 634-5
+  compte sous la limite, à lire. Le texte qui majorait les artisans et
+  commerçants de 1984 à 1989, toujours à lire.
