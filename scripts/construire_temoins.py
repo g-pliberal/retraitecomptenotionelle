@@ -800,6 +800,16 @@ def _cas() -> list[dict]:
         "naissance": "1985-06-12", "sexe": "F", "debut": "2007-09", "liquidation": "2049-07",
         "salaire": "1.4", "lodeom": "innovation_et_croissance",
     }))
+    # LA RÉVERSION DES NON-SALARIÉS AGRICOLES (fiche pension_majoree_reference ;
+    # action 138, étape 8) : la conjointe collaboratrice partie en 2016, veuve
+    # d'un exploitant depuis mars 2010, à 150 € par mois ; toutes ses périodes
+    # au montant du chef (D. 732-110, II, 2°), qui en retranche ce que sa
+    # réversion sert au départ.
+    cas.append(("reversion_agricole_veuve_de_2010", {
+        "naissance": "1952-01-15", "sexe": "F", "statut": "collaborateur_agricole",
+        "debut": "1972-01", "liquidation": "2016-02", "salaire": "0.3",
+        "reversion_agricole": "2010-03", "reversion_agricole_mensuel": "150",
+    }))
     # LE CUMUL EMPLOI-RETRAITE : l'activité exercée après le départ, et ce que
     # chaque pension en garde (droit/cumul.py). Le cumul plafonné de la
     # première pension de 2022, réduite du dépassement, l'Agirc-Arrco
@@ -1980,6 +1990,7 @@ FORMULAIRE_ENTIER = frozenset({
     "simuler_reversion", "simuler_demande_de_pension", "simuler_radiation_invalidite",
     "simuler_carriere_hors_de_france", "simuler_handicap", "simuler_micro_entrepreneur",
     "simuler_periodes_assimilees", "simuler_conjoint_collaborateur",
+    "simuler_reversion_agricole",
 })
 _FORMULAIRE = re.compile(r'(<form class="carte"[^>]*>).*?(</form>)', re.DOTALL)
 
@@ -2038,6 +2049,15 @@ def _pages() -> dict:
             **BASE, "sexe": "F", "unite_revenu": "euros_mois", "salaire": "2200",
             "metier2_debut": "2010-01", "metier2_statut": "conjoint_collaborateur_artisan",
             "metier2_salaire": "3200", "collaborateur": "moitie",
+        }),
+        # La réversion des non-salariés agricoles (action 138, étape 8) : la
+        # conjointe collaboratrice veuve d'un exploitant depuis 2010 ; les deux
+        # champs de sa réversion, et la PMR qui la retranche.
+        ("simuler_reversion_agricole", "/simuler", {
+            **BASE, "naissance": "1952-01-15", "sexe": "F",
+            "statut": "collaborateur_agricole", "debut": "1972-01",
+            "liquidation": "2016-02", "salaire": "0.3",
+            "reversion_agricole": "2010-03", "reversion_agricole_mensuel": "150",
         }),
         ("simuler_regime_special", "/simuler", {
             **BASE, "statut": "agent_sncf", "naissance": "1960", "liquidation": "52",

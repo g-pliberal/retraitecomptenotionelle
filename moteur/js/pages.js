@@ -21,7 +21,8 @@ import {
   MOIS_PAR_AN, NOMS_DE_MOIS, DateMois, enMois, formaterAge, moisTravailles,
 } from "./calendrier.js";
 import {
-  CONJOINTS_COLLABORATEURS, ancrageSalaireMoyen, bornesDeformation, salaireMoyenAnnuel,
+  AFFILIATIONS_AGRICOLES, CONJOINTS_COLLABORATEURS, ancrageSalaireMoyen, bornesDeformation,
+  salaireMoyenAnnuel,
 } from "./carriere.js";
 import { repartition } from "./capitalisation.js";
 import { CourbeTauxSansRisque } from "./taux.js";
@@ -1057,7 +1058,7 @@ export function formulaire(saisie, contexte, comparaison = null) {
   ${desaccordDeSituation(saisie, contexte)}
   <div class="grille">${identite}</div>
   <h3>La carrière, période par période${bulleDesPeriodes()}</h3>
-  ${metiersFormulaire(saisie, affiliations, echelle)}${microFormulaire(saisie)}${collaborateurFormulaire(saisie)}
+  ${metiersFormulaire(saisie, affiliations, echelle)}${microFormulaire(saisie)}${collaborateurFormulaire(saisie)}${reversionAgricoleFormulaire(saisie)}
   ${blocPension(saisie)}
   ${lienAutreSaisie(saisie)}
   ${saisie.parPension ? "" : basculeUnite(saisie, echelle)}
@@ -2157,6 +2158,44 @@ function collaborateurFormulaire(saisie) {
     + "volontaire : au forfait, le simulateur la tient pour non souscrite, et à "
     + "l'option, pour souscrite sur la même part. Un relevé, qui porte votre "
     + "assiette de chaque année, n'en dépend pas.")}</div>`;
+}
+
+/**
+ * La réversion que le régime des non-salariés agricoles sert à l'assuré, veuf
+ * d'un de ses assurés (action 138, étape 8) : le mois où elle commence et son
+ * montant brut de ce mois, que la pension majorée de référence lit (D. 732-110,
+ * II, 2° ; D. 732-112 ; D. 732-114). Les deux champs ne paraissent qu'avec une
+ * période de chef ou de collaborateur agricole, aux métiers ou au relevé, ou
+ * une réversion déjà dite.
+ */
+function reversionAgricoleFormulaire(saisie) {
+  const agricole = (statut) => Object.hasOwn(AFFILIATIONS_AGRICOLES, statut);
+  const offerte = saisie.lignesCarriere.some((ligne) => agricole(ligne.statut))
+    || (saisie.releveActif && saisie.releve.split(/[\n,;]/)
+      .some((morceau) => agricole((morceau.split(":")[1] ?? "").trim())))
+    || Boolean(saisie.reversion_agricole) || saisie.reversion_agricole_mensuel !== null;
+  if (!offerte) {
+    return "";
+  }
+  return `<div class="grille">${g.champ("reversion_agricole",
+    "Réversion de la MSA, depuis", saisie.reversion_agricole,
+    "facultatif : « 2010-03 », celle d'un conjoint non salarié agricole", "text",
+    { autocomplete: "off", spellcheck: "false" },
+    "Veuve ou veuf d'un exploitant ou d'un autre non-salarié agricole, vous recevez de "
+    + "la MSA une pension de réversion (articles L. 732-41 à L. 732-46 du code "
+    + "rural) : dites le mois où elle a commencé, et son montant brut de ce mois, tel "
+    + "que la MSA l'a notifié, zéro si vos ressources l'absorbent ; un montant en "
+    + "francs, d'avant 2002, se divise par 6,55957. De 2009 à 2021, elle portait "
+    + "toutes vos périodes au montant du chef d'exploitation dans la pension majorée "
+    + "de référence (article D. 732-110) ; elle s'en retranche, et compte sous son "
+    + "plafond (articles D. 732-112 et D. 732-114). Sans réversion déclarée, le "
+    + "simulateur n'en retranche aucune, et ne sert de 2009 à 2021 le montant du chef "
+    + "qu'à vos années de chef, et à celles de conjoint collaborateur de 1999 à 2008.")
+  }${g.champ("reversion_agricole_mensuel", "Son montant au début",
+    saisie.reversion_agricole_mensuel === null
+      ? "" : nombreBrut(saisie.reversion_agricole_mensuel),
+    "en euros bruts par mois ; 0 si vos ressources l'absorbent", "number",
+    { min: "0", step: "0.01" })}</div>`;
 }
 
 function metiersFormulaire(saisie, affiliations, echelle) {

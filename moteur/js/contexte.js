@@ -486,6 +486,7 @@ export class Contexte {
       etranger,
       periodes_assimilees: saisie.periodesAssimileesDeclarees(),
       dispenses,
+      reversion_agricole: saisie.reversionAgricoleDeclaree(),
       part_primes: saisie.primes,
       identifiant: "assuré",
     });
@@ -610,6 +611,7 @@ export class Contexte {
       invalidite: saisie.invaliditeDeclaree(),
       etranger: etrangerDeclare(simulateur, saisie),
       periodes_assimilees: saisie.periodesAssimileesDeclarees(),
+      reversion_agricole: saisie.reversionAgricoleDeclaree(),
       part_primes: saisie.primes,
       identifiant: "assuré",
     });

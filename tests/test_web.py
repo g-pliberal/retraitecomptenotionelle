@@ -1853,6 +1853,14 @@ def test_les_refus_de_saisie_disent_le_mot_du_modele(contexte):
          "pension_etrangere1_debut": f"{1975 + AGE_LIQUIDATION_MAXIMAL + 1}-01"},
         {"etranger1_pays": "ZZ", "etranger1_debut": "1995-01", "etranger1_fin": "1999-01"},
         {"residence": "OI"},
+        # La réversion des non-salariés agricoles (action 138, étape 8) : un
+        # montant sans mois, un mois sans montant, illisible, au mois de la
+        # naissance, du 15 janvier présumé, un montant négatif.
+        {"reversion_agricole_mensuel": "150"},
+        {"reversion_agricole": "2010-03"},
+        {"reversion_agricole": "2010-13", "reversion_agricole_mensuel": "150"},
+        {"reversion_agricole": "1975-01", "reversion_agricole_mensuel": "150"},
+        {"reversion_agricole": "2010-03", "reversion_agricole_mensuel": "-1"},
     ]
     # Les voisines immédiates de ces refus, qui doivent au contraire calculer :
     # une borne posée d'un cran trop loin se verrait ici, et nulle part ailleurs.
@@ -1878,6 +1886,7 @@ def test_les_refus_de_saisie_disent_le_mot_du_modele(contexte):
          "residence": "PT"},
         {"etranger1_pays": "autre", "etranger1_debut": "1995-01", "etranger1_fin": "1999-01",
          "etranger2_pays": "OI", "etranger2_debut": "1999-01", "etranger2_fin": "2001-01"},
+        {"reversion_agricole": "1975-02", "reversion_agricole_mensuel": "0"},
     ]
 
     for champs_, refuse in ((refuses, True), (acceptees, False)):

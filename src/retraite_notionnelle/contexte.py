@@ -424,6 +424,7 @@ class Contexte:
                 etranger=etranger,
                 periodes_assimilees=saisie.periodes_assimilees_declarees(),
                 dispenses=dispenses,
+                reversion_agricole=saisie.reversion_agricole_declaree(),
                 part_primes=saisie.primes,
                 identifiant="assuré",
             )
@@ -555,6 +556,7 @@ class Contexte:
             invalidite=saisie.invalidite_declaree(),
             etranger=_etranger(simulateur, saisie),
             periodes_assimilees=saisie.periodes_assimilees_declarees(),
+            reversion_agricole=saisie.reversion_agricole_declaree(),
             part_primes=saisie.primes,
             identifiant="assuré",
         )

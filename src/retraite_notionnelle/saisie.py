@@ -861,6 +861,14 @@ class Saisie:
     #: L'option du conjoint collaborateur (:data:`ASSIETTES_COLLABORATEUR`) ; le
     #: vide, le forfait. Voir :meth:`assiette_du_collaborateur`.
     collaborateur: str = ""
+    #: La réversion que le régime des non-salariés agricoles sert à l'assuré,
+    #: veuf d'un de ses assurés (fiche ``pension_majoree_reference`` ; action
+    #: 138, étape 8) : le mois où elle commence (AAAA ou AAAA-MM) et son
+    #: montant mensuel brut de ce mois, en euros, nul quand les ressources
+    #: l'absorbent. Vide, la présomption ``pas_de_reversion_agricole``. Voir
+    #: :meth:`reversion_agricole_declaree`.
+    reversion_agricole: str = ""
+    reversion_agricole_mensuel: float | None = None
     #: Les carrières hors de France (fiches
     #: ``totalisation_des_periodes_etrangeres``, ``pension_proratisee``,
     #: ``minimum_contributif_international`` et
@@ -1070,6 +1078,10 @@ class Saisie:
             micro=_parmi(parametres, "micro", ACTIVITES_MICRO, ""),
             lodeom=_parmi(parametres, "lodeom", BAREMES_LODEOM, ""),
             collaborateur=_parmi(parametres, "collaborateur", ASSIETTES_COLLABORATEUR, ""),
+            reversion_agricole=(parametres.get("reversion_agricole") or "").strip(),
+            reversion_agricole_mensuel=(
+                None if parametres.get("reversion_agricole_mensuel") in (None, "")
+                else _reel(parametres, "reversion_agricole_mensuel", 0.0)),
             etranger=_periodes_etrangeres_saisies(parametres, mois_de_naissance, tolerante),
             pensions_etrangeres=_pensions_etrangeres_saisies(parametres, mois_de_naissance,
                                                              tolerante),
@@ -1183,6 +1195,7 @@ class Saisie:
         self.dispenses_analysees()
         self._verifier_naissances()
         self._verifier_conjoint()
+        self._verifier_reversion_agricole()
         self._verifier_progressive()
         self._verifier_emploi_retraite()
         self._verifier_demandes()
@@ -2096,6 +2109,15 @@ class Saisie:
         """Le décès de l'assuré que la saisie déclare, ou ``None``."""
         return self.deces or None
 
+    def reversion_agricole_declaree(self) -> dict | None:
+        """La réversion du régime des non-salariés agricoles que la saisie
+        déclare, telle que la chronologie la reçoit
+        (:func:`chronologie._reversion_agricole`) : son ``debut`` et son
+        montant ``mensuel`` en euros de ce mois ; ``None`` sans elle."""
+        if not self.reversion_agricole:
+            return None
+        return {"debut": self.reversion_agricole, "mensuel": self.reversion_agricole_mensuel}
+
     def retraite_progressive_declaree(self) -> dict | None:
         """La retraite progressive que la saisie déclare, telle que la
         chronologie la reçoit : son âge et sa quotité, entre zéro et un."""
@@ -2576,6 +2598,34 @@ class Saisie:
                     "La nouvelle union du conjoint précède votre décès : elle le suit.")
         self._verifier_ex_conjoints(dates)
 
+    def _verifier_reversion_agricole(self) -> None:
+        """La réversion des non-salariés agricoles se dit entière : le mois où
+        elle commence, après la naissance, comme la chronologie l'exige, et son
+        montant, positif ou nul. Qu'une période agricole la lise, c'est au
+        calcul de le dire : sans elle, la réversion ne change rien."""
+        if not self.reversion_agricole:
+            if self.reversion_agricole_mensuel is not None:
+                raise ErreurSaisie(
+                    "« reversion_agricole_mensuel » ne sert qu'à la réversion de la MSA : "
+                    "dites aussi le mois où elle commence (« reversion_agricole »).")
+            return
+        quoi = f"Réversion de la MSA « {self.reversion_agricole} »"
+        try:
+            debut, _ = chronologie.date_declaree(self.reversion_agricole,
+                                                 "le début de la réversion")
+        except ValueError:
+            raise ErreurSaisie(
+                f"{quoi} : le mois où elle commence, attendu en AAAA ou AAAA-MM, par "
+                "exemple 2010 ou 2010-03.") from None
+        if debut <= self.naissance_iso:
+            raise ErreurSaisie(f"{quoi} : elle suit votre naissance.")
+        if self.reversion_agricole_mensuel is None:
+            raise ErreurSaisie(
+                f"{quoi} : dites aussi son montant mensuel brut à ce mois "
+                "(« reversion_agricole_mensuel »), zéro si vos ressources l'absorbent.")
+        if self.reversion_agricole_mensuel < 0:
+            raise ErreurSaisie("Réversion de la MSA : son montant mensuel est positif ou nul.")
+
     def _verifier_ex_conjoints(self, dates: dict[str, str]) -> None:
         """Les précédents conjoints : des dates lisibles, un mariage après les
         deux naissances, un divorce après lui et avant le mariage suivant, un
@@ -2684,6 +2734,10 @@ class Saisie:
             **({"micro": self.micro} if self.micro else {}),
             **({"lodeom": self.lodeom} if self.lodeom else {}),
             **({"collaborateur": self.collaborateur} if self.collaborateur else {}),
+            **{nom: valeur for nom, valeur in (
+                ("reversion_agricole", self.reversion_agricole or None),
+                ("reversion_agricole_mensuel", None if self.reversion_agricole_mensuel is None
+                 else _nombre(self.reversion_agricole_mensuel))) if valeur is not None},
             **({"residence": self.residence} if self.residence else {}),
             **({"mois_en_france": self.mois_en_france}
                if self.mois_en_france is not None else {}),

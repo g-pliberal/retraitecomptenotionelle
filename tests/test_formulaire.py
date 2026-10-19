@@ -160,6 +160,12 @@ SAISIES = {
         "metier2_statut": "conjoint_collaborateur_artisan", "metier2_salaire": "3000",
         "collaborateur": "moitie",
     },
+    # La réversion des non-salariés agricoles (action 138, étape 8) : ses deux
+    # champs ne paraissent qu'avec une période agricole ; nulle, elle reste dite.
+    "une veuve d'exploitant, à la réversion nulle": {
+        **BASE, "statut": "exploitant_agricole", "reversion_agricole": "2010-03",
+        "reversion_agricole_mensuel": "0",
+    },
     "des règles, dont celles qui n'ont pas de champ": {
         **BASE, "indexation": "prix", "table": "par_sexe", "lissage": "3",
         "reprise": "40", "bascule": "2030", "euros": "2025",
@@ -359,3 +365,34 @@ def test_le_menu_du_conjoint_collaborateur_ne_parait_qu_avec_lui():
                                     re.S).group(1))
     assert "33,33" in a_l_option and "sans effet" not in a_l_option
     assert 'name="collaborateur"' in _formulaire({**BASE, "collaborateur": "tiers"})
+
+
+def test_la_reversion_agricole_ne_parait_qu_avec_une_periode_agricole():
+    """Les deux champs de la réversion des non-salariés agricoles (action 138,
+    étape 8) — le mois où elle commence, son montant brut de ce mois, borné à
+    zéro — ne paraissent qu'avec une période de chef ou de collaborateur
+    agricole, aux métiers ou au relevé, ou une réversion déjà dite ; leur bulle
+    annonce la présomption qui tient sans eux (``pas_de_reversion_agricole``)."""
+    assert 'name="reversion_agricole' not in _formulaire(BASE)
+    for requete in ({**BASE, "statut": "exploitant_agricole"},
+                    {**BASE, "metier2_debut": "2008-01-01",
+                     "metier2_statut": "collaborateur_agricole", "metier2_salaire": "1500"},
+                    {**BASE, "releve": "1998:salarie_prive_non_cadre:14200:4\n"
+                                       "1999 : exploitant_agricole : 9000"},
+                    {**BASE, "reversion_agricole": "2010-03",
+                     "reversion_agricole_mensuel": "0"}):
+        formulaire = _formulaire(requete)
+        assert 'name="reversion_agricole"' in formulaire, requete
+        assert re.search(r'<input type="number" id="reversion_agricole_mensuel" '
+                         r'name="reversion_agricole_mensuel" value="[^"]*" min="0"',
+                         formulaire), requete
+    dite = _formulaire({**BASE, "statut": "exploitant_agricole",
+                        "reversion_agricole": "2010-03", "reversion_agricole_mensuel": "0"})
+    assert 'id="reversion_agricole" name="reversion_agricole" value="2010-03"' in dite
+    assert 'name="reversion_agricole_mensuel" value="0"' in dite
+    libelle = re.search(r'<label for="reversion_agricole">(.*?)</label>', dite, re.S)
+    assert libelle, "le champ de la réversion n'a pas de libellé"
+    bulle = unescape(re.sub(r"<[^>]+>", "", libelle.group(1)))
+    for phrase in ("L. 732-41", "D. 732-110", "Sans réversion déclarée",
+                   "de 1999 à 2008", "6,55957"):
+        assert phrase in bulle, phrase

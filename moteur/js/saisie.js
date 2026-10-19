@@ -680,6 +680,12 @@ export const DEFAUTS = Object.freeze({
   //: L'option du conjoint collaborateur (`ASSIETTES_COLLABORATEUR`) ; vide, le
   //: forfait.
   collaborateur: "",
+  //: La réversion que le régime des non-salariés agricoles sert à l'assuré : le
+  //: mois où elle commence (AAAA ou AAAA-MM) et son montant mensuel brut de ce
+  //: mois, nul quand les ressources l'absorbent ; vide, la présomption
+  //: `pas_de_reversion_agricole`. Voir `reversionAgricoleDeclaree`.
+  reversion_agricole: "",
+  reversion_agricole_mensuel: null,
   //: Les carrières hors de France : les périodes passées hors de France
   //: — `{pays, debut, fin, activite}`, les âges comptés comme un début
   //: d'activité —, les pensions étrangères — `{pays, montant, debut}` —,
@@ -868,6 +874,10 @@ export class Saisie {
       micro: parmi(parametres, "micro", ACTIVITES_MICRO, ""),
       lodeom: parmi(parametres, "lodeom", BAREMES_LODEOM, ""),
       collaborateur: parmi(parametres, "collaborateur", ASSIETTES_COLLABORATEUR, ""),
+      reversion_agricole: (parametres.reversion_agricole || "").trim(),
+      reversion_agricole_mensuel: [undefined, null, ""].includes(
+        parametres.reversion_agricole_mensuel)
+        ? null : reel(parametres, "reversion_agricole_mensuel", 0.0),
       etranger: periodesEtrangeresSaisies(parametres, moisDeNaissance, tolerante),
       pensions_etrangeres: pensionsEtrangeresSaisies(parametres, moisDeNaissance, tolerante),
       residence: (parametres.residence || "").trim(),
@@ -990,6 +1000,7 @@ export class Saisie {
     this.dispensesAnalysees();
     this.verifierNaissances();
     this.verifierConjoint();
+    this.verifierReversionAgricole();
     this.verifierProgressive();
     this.verifierEmploiRetraite();
     this.verifierDemandes();
@@ -1964,6 +1975,18 @@ export class Saisie {
   }
 
   /**
+   * La réversion du régime des non-salariés agricoles que la saisie déclare,
+   * telle que la chronologie la reçoit : `{debut, mensuel}` ; `null` sans
+   * elle. Voir `reversion_agricole_declaree` du Python.
+   */
+  reversionAgricoleDeclaree() {
+    if (!this.reversion_agricole) {
+      return null;
+    }
+    return { debut: this.reversion_agricole, mensuel: this.reversion_agricole_mensuel };
+  }
+
+  /**
    * La retraite progressive que la saisie déclare, telle que la chronologie la
    * reçoit : son âge et sa quotité, entre zéro et un ; `null` sans elle.
    */
@@ -2595,6 +2618,45 @@ export class Saisie {
   }
 
   /**
+   * La réversion des non-salariés agricoles se dit entière : le mois où elle
+   * commence, après la naissance, et son montant, positif ou nul. Voir
+   * `_verifier_reversion_agricole` du Python.
+   */
+  verifierReversionAgricole() {
+    if (!this.reversion_agricole) {
+      if (this.reversion_agricole_mensuel !== null) {
+        throw new ErreurSaisie(
+          "« reversion_agricole_mensuel » ne sert qu'à la réversion de la MSA : "
+          + "dites aussi le mois où elle commence (« reversion_agricole »).",
+        );
+      }
+      return;
+    }
+    const quoi = `Réversion de la MSA « ${this.reversion_agricole} »`;
+    let debut;
+    try {
+      [debut] = dateDeclaree(this.reversion_agricole, "le début de la réversion");
+    } catch {
+      throw new ErreurSaisie(
+        `${quoi} : le mois où elle commence, attendu en AAAA ou AAAA-MM, par `
+        + "exemple 2010 ou 2010-03.",
+      );
+    }
+    if (debut <= this.naissanceIso) {
+      throw new ErreurSaisie(`${quoi} : elle suit votre naissance.`);
+    }
+    if (this.reversion_agricole_mensuel === null) {
+      throw new ErreurSaisie(
+        `${quoi} : dites aussi son montant mensuel brut à ce mois `
+        + "(« reversion_agricole_mensuel »), zéro si vos ressources l'absorbent.",
+      );
+    }
+    if (this.reversion_agricole_mensuel < 0) {
+      throw new ErreurSaisie("Réversion de la MSA : son montant mensuel est positif ou nul.");
+    }
+  }
+
+  /**
    * Les précédents conjoints : des dates lisibles, un mariage après les deux
    * naissances, un divorce après lui et avant le mariage suivant, un remariage
    * après le divorce ; le mariage du conjoint, qu'il faut dater, les suit.
@@ -2722,6 +2784,11 @@ export class Saisie {
       ...(this.micro ? { micro: this.micro } : {}),
       ...(this.lodeom ? { lodeom: this.lodeom } : {}),
       ...(this.collaborateur ? { collaborateur: this.collaborateur } : {}),
+      ...Object.fromEntries([
+        ["reversion_agricole", this.reversion_agricole || null],
+        ["reversion_agricole_mensuel", this.reversion_agricole_mensuel === null
+          ? null : nombreBrut(this.reversion_agricole_mensuel)],
+      ].filter(([, valeur]) => valeur !== null)),
       ...(this.residence ? { residence: this.residence } : {}),
       ...(this.mois_en_france !== null ? { mois_en_france: this.mois_en_france } : {}),
       ...(this.apprentissage !== null ? { apprentissage: this.apprentissage } : {}),
