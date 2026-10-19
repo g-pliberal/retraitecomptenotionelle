@@ -1,0 +1,38 @@
+date: "2026-10-19"
+session: "action 138, étape 8 : la durée de chef reconstituée des pensions prises avant 1997 (D. 732-110, III)"
+consulte: >-
+  `python scripts/veille_droit.py` (trois fiches à relire, aucune de l'étape). L'index
+  LEGI du dépôt, récupéré à jour au 18 octobre 2026, aucun incrément depuis, puis
+  `python scripts/textes.py --inscrire` (aucune rédaction nouvelle). Dans l'index LEGI :
+  D. 732-110 de 2009, 2010, 2011, 2016, 2022 et 2026 (LEGIARTI000020254712,
+  LEGIARTI000021803615, LEGIARTI000023395298, LEGIARTI000032716796,
+  LEGIARTI000044944285, LEGIARTI000053365690) ; D. 732-111 de 2009
+  (LEGIARTI000020254705) ; toute rédaction qui divise des points « par 16 » (décret
+  n° 97-163, article 2 ; décret n° 2002-297, article 5 ; D. 732-115 ; D. 732-110). Dans
+  l'index JORF, à jour au 18 octobre 2026 : le décret n° 2021-1919, article 1er
+  (JORFARTI000044792136). Sur le web : l'application de la MSA (circulaires de 2009,
+  questions écrites de la XIIIe législature), cherchée sans être trouvée.
+trouve: >-
+  « Pour les personnes dont la pension de retraite servie à titre personnel a pris effet
+  avant le 1er janvier 1997, la durée d'assurance en qualité de chef d'exploitation ou
+  d'entreprise agricole à titre exclusif ou principal est obtenue en divisant par 16 le
+  nombre de points de retraite figurant au compte de l'intéressé avant application » des
+  plans de 1997 à 2008 ; « une minoration forfaitaire de quinze points est appliquée pour
+  chaque année qui n'a pas donné lieu à versement des cotisations ouvrant droit à la
+  pension de retraite forfaitaire », quand une partie de la carrière est de chef à titre
+  secondaire et de salarié à titre principal ; au-delà de la durée agricole, « ce nombre
+  est ramené à cette durée d'assurance non salariée agricole dans la limite prévue au
+  troisième alinéa du I » (D. 732-110, III, de 2009 à 2021, mot pour mot ; le II depuis
+  2022, le décret n° 2021-1919 écrivant « Le II est abrogé ; b) Le III devient le II »).
+  DM1 compte les périodes « retenues dans les conditions et limites prévues aux I et III »
+  (D. 732-111, 2009) : la reconstitution partage, de 2009 à 2021, la durée agricole entre
+  PMR1 et PMR2, et décide en 2009 et 2010 des dix-sept ans et demi du 1° ; la PMR unique
+  de 2022 ne la lit plus. Servi, dans les deux moteurs, avec le forfait que la retraite
+  proportionnelle retranche, qui ne compte plus les années de chef à titre secondaire
+  (L. 732-28), ce que les plans de 1997 à 2008 lisent aussi.
+reste: >-
+  Aux plans de 1997 à 2008, ce que la réversion déclarée permet de servir : D. 732-116,
+  D. 732-118 et D. 732-147. À demander à la MSA : à quel montant elle servait, de 2009 à
+  2021, la durée agricole d'une pension prise avant 1997 qui dépasse la durée de chef
+  reconstituée, PMR2, comme le modèle, ou rien, DM2 ne comptant que les périodes du 4°.
+  Aucun exemple chiffré publié par la MSA d'une PMR servie à une pension prise avant 1997.
