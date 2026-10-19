@@ -902,23 +902,198 @@ def test_la_reversion_du_regime_se_retranche_de_la_pmr_et_compte_au_plafond(simu
         "pension_majoree_reference"].detail
 
 
-def test_une_reversion_ouverte_apres_le_depart_n_entre_qu_a_la_pmr_unique(simulateur):
-    """Veuve en 2018, deux ans après son départ : rien ne change au départ, ni
-    jusqu'en 2021, la majoration de la liquidation menée par le coefficient ne
-    se révisant pas ; depuis 2022, la PMR unique, refaite à chaque échéance,
-    retranche la réversion servie (D. 732-112)."""
+#: Et depuis juin 2018 jusqu'en décembre 2021 : janvier 2019, 2020 (la tranche
+#: des pensions de 2 000 € par mois au plus) et 2021.
+REVERSION_EN_2021 = 150 * 12 * 1.003 * 1.01 * 1.004
+
+
+def _revisee(simulateur: Simulateur, resultat, vivante, annee: int,
+             reversion: float) -> float:
+    """La majoration de décembre de ``annee``, refaite de son texte : la PMR du
+    chef ce mois-là sur la durée retenue, moins la pension de base avant
+    surcote menée à l'échéance et la réversion du régime qu'elle sert
+    (D. 732-110 à D. 732-112), sans écrêtement."""
+    exploitant = resultat.exploitant_agricole
+    eligible = exploitant.eligible
+    pleine, _ = simulateur.scenario_actuel.pension_majoree_reference.montant(
+        "pmr_chef", annee, 12)
+    base = exploitant.pension.montant * _base(vivante).coefficient
+    return (pleine * min(eligible.duree, eligible.reference) / eligible.reference
+            - base / eligible.surcote - reversion)
+
+
+def test_une_reversion_ouverte_apres_le_depart_revise_la_majoration(simulateur):
+    """Veuve en juin 2018, deux ans après son départ : « Toute modification de
+    la situation familiale ou du montant des ressources donne lieu à une
+    révision de la majoration de pension » (D. 732-114). Dès le mois où sa
+    réversion commence, qui suit le décès, le 2° de D. 732-110, II, porte
+    toutes ses périodes au montant du chef, et la réversion se retranche de la
+    PMR (D. 732-112) : 468,91 € en décembre 2018, au lieu des 988,13 € de la
+    liquidation menés par le coefficient. Rien ne change avant, ni sans
+    réversion ; depuis 2022, la PMR unique la retranche de même."""
     sans, veuve = _veuve(simulateur, None), _veuve(simulateur, {"debut": "2018-06",
                                                                  "mensuel": 150.0})
     resultats = [_resultat(simulateur, carriere) for carriere in (sans, veuve)]
     assert (resultats[0][1]["pension_majoree_reference"].montant
             == resultats[1][1]["pension_majoree_reference"].montant)
-    vivantes = {}
-    for carriere, (resultat, _, _) in zip((sans, veuve), resultats):
-        assert faire_vivre(simulateur, carriere, resultat, 2021).exploitant is None
-        vivantes[carriere is veuve] = faire_vivre(simulateur, carriere, resultat, 2026)
+    resultat = resultats[1][0]
+    assert faire_vivre(simulateur, sans, resultats[0][0], 2021).exploitant is None
+    assert faire_vivre(simulateur, veuve, resultat, 2017).exploitant is None
+    for annee, reversion in ((2018, 150 * 12), (2021, REVERSION_EN_2021)):
+        vivante = faire_vivre(simulateur, veuve, resultat, annee)
+        revisee = _revisee(simulateur, resultat, vivante, annee, reversion)
+        menee = resultat.exploitant_agricole.pmr * _base(vivante).coefficient
+        assert vivante.exploitant.pmr == pytest.approx(revisee - menee, abs=1e-6)
+        if annee == 2018:
+            assert (round(revisee, 2), round(menee, 2)) == (468.91, 988.13)
+    vivantes = {carriere is veuve: faire_vivre(simulateur, carriere, r, 2026)
+                for carriere, (r, _, _) in zip((sans, veuve), resultats)}
     assert vivantes[True].exploitant.pmr < vivantes[False].exploitant.pmr
     assert (_base(vivantes[False]).aujourd_hui - _base(vivantes[True]).aujourd_hui
             == pytest.approx(REVERSION_EN_2026, rel=1e-9))
+
+
+def test_la_revision_prend_effet_le_mois_qui_suit_la_modification(simulateur):
+    """Une pension allemande de 500 € par mois, commencée en décembre 2017 :
+    « La majoration de pension recalculée prend effet à compter du premier jour
+    du mois suivant la date à laquelle est constatée la modification »
+    (D. 732-114), en janvier 2018. Le plafond compte les pensions « français[es]
+    et étranger[e]s » (L. 732-54-3) : elle écrête la majoration entière."""
+    carriere = _chef(simulateur, 1952, 64, sexe="F", metiers=[
+        Metier("collaborateur_agricole", 20.0, niveau_salaire=0.3)],
+        etranger={"pensions": [{"pays": "DE", "age": 65 + 11 / 12, "mensuel": 500.0}]})
+    assert [(p.debut.annee, p.debut.mois) for p in carriere.pensions_etrangeres] == [
+        (2017, 12)]
+    resultat, _, _ = _resultat(simulateur, carriere)
+    exploitant = resultat.exploitant_agricole
+    assert exploitant.pmr > 0
+    assert faire_vivre(simulateur, carriere, resultat, 2017).exploitant is None
+    vivante = faire_vivre(simulateur, carriere, resultat, 2018)
+    coefficient = _base(vivante).coefficient
+    assert vivante.exploitant.pmr == pytest.approx(-exploitant.pmr * coefficient, rel=1e-12)
+    assert _base(vivante).aujourd_hui == pytest.approx(
+        exploitant.pension.montant * coefficient, rel=1e-12)
+
+
+def test_une_pension_demandee_apres_la_pension_agricole_revise_la_majoration(simulateur):
+    """Vingt ans de salarié puis vingt-deux de chef, parti en février 2012, son
+    régime général demandé à soixante-cinq ans : la majoration de la
+    liquidation, que seules les pensions agricoles écrêtaient, se révise en
+    mars 2015, le mois qui suit le régime général et l'Arrco, que le plafond
+    compte (D. 732-114) — rien n'en reste."""
+    metiers = [Metier("salarie_prive_non_cadre", 20.0, niveau_salaire=1.0),
+               Metier("exploitant_agricole", 40.0, niveau_salaire=0.3)]
+    carriere = _chef(simulateur, 1950, 62, metiers=metiers,
+                     demandes_de_pension={"regime_general": 65})
+    resultat, _, _ = _resultat(simulateur, carriere)
+    exploitant = resultat.exploitant_agricole
+    assert exploitant.pmr > 0
+    assert {p.regime: p.date_effet for p in resultat.pensions_par_regime}[
+        "regime_general"] == "2015-02-01"
+    assert faire_vivre(simulateur, carriere, resultat, 2014).exploitant is None
+    pmr = simulateur.scenario_actuel.pension_majoree_reference
+    for annee in (2015, 2021):
+        vivante = faire_vivre(simulateur, carriere, resultat, annee)
+        coefficient = _base(vivante).coefficient
+        assert vivante.exploitant.pmr == pytest.approx(-exploitant.pmr * coefficient,
+                                                       rel=1e-12)
+        assert sum(r.aujourd_hui for r in vivante.regimes) > pmr.montant(
+            "plafond", annee, 12)[0]
+
+
+def test_une_pension_prise_depuis_2022_se_revise_aussi(simulateur):
+    """La conjointe collaboratrice partie en février 2022, au montant unique,
+    veuve en mars 2023 : sa majoration se révise (D. 732-114) et perd ce que
+    sa réversion sert, 1 800 € par an en décembre 2023 (D. 732-112)."""
+    carriere = _chef(simulateur, 1960, 62, sexe="F", metiers=[
+        Metier("collaborateur_agricole", 20.0, niveau_salaire=0.3)],
+        reversion_agricole={"debut": "2023-03", "mensuel": 150.0})
+    assert (carriere.annee_liquidation, carriere.mois_liquidation) == (2022, 2)
+    resultat, _, _ = _resultat(simulateur, carriere)
+    assert faire_vivre(simulateur, carriere, resultat, 2022).exploitant is None
+    vivante = faire_vivre(simulateur, carriere, resultat, 2023)
+    revisee = _revisee(simulateur, resultat, vivante, 2023, 150 * 12)
+    menee = resultat.exploitant_agricole.pmr * _base(vivante).coefficient
+    assert vivante.exploitant.pmr == pytest.approx(revisee - menee, abs=1e-6)
+    assert vivante.exploitant.pmr == pytest.approx(-1800.0, abs=0.05)
+
+
+#: Le jumeau JavaScript de « faire vivre » : chaque carrière, construite de ses
+#: options, liquidée, puis menée à l'année dite.
+_JUMEAU_DES_REVISIONS = """
+import { readFileSync } from "node:fs";
+import { Simulateur } from "./moteur/js/simulateur.js";
+import { faireVivre } from "./moteur/js/revalorisation.js";
+const cas = JSON.parse(process.argv[1]);
+const simulateur = new Simulateur(JSON.parse(readFileSync("./moteur/donnees.json", "utf8")));
+process.stdout.write(JSON.stringify(cas.map(([options, annee]) => {
+  const carriere = simulateur.carriereParcours(options);
+  const resultat = simulateur.scenarioActuel.calculer(carriere);
+  const vivante = faireVivre(simulateur, carriere, resultat, annee);
+  return { donnees: vivante.donnees(), exploitant: vivante.exploitant };
+})));
+"""
+
+#: Les carrières des quatre révisions, telles que les deux moteurs les construisent.
+_COLLABORATRICE = {"sexe": "F", "age_liquidation": 64, "jour_naissance": 15,
+                   "metiers": [{"affiliation": "collaborateur_agricole", "age_debut": 20,
+                                "niveau_salaire": 0.3}]}
+_REVISIONS = [
+    ({**_COLLABORATRICE, "annee_naissance": 1952,
+      "reversion_agricole": {"debut": "2018-06", "mensuel": 150.0}}, 2018),
+    ({**_COLLABORATRICE, "annee_naissance": 1952,
+      "reversion_agricole": {"debut": "2018-06", "mensuel": 150.0}}, 2021),
+    ({**_COLLABORATRICE, "annee_naissance": 1952, "etranger": {
+        "pensions": [{"pays": "DE", "age": 65 + 11 / 12, "mensuel": 500.0}]}}, 2017),
+    ({**_COLLABORATRICE, "annee_naissance": 1952, "etranger": {
+        "pensions": [{"pays": "DE", "age": 65 + 11 / 12, "mensuel": 500.0}]}}, 2018),
+    ({"annee_naissance": 1950, "sexe": "H", "age_liquidation": 62, "jour_naissance": 15,
+      "metiers": [{"affiliation": "salarie_prive_non_cadre", "age_debut": 20,
+                   "niveau_salaire": 1.0},
+                  {"affiliation": "exploitant_agricole", "age_debut": 40,
+                   "niveau_salaire": 0.3}],
+      "demandes_de_pension": {"regime_general": 65}}, 2015),
+    ({**_COLLABORATRICE, "annee_naissance": 1960, "age_liquidation": 62,
+      "reversion_agricole": {"debut": "2023-03", "mensuel": 150.0}}, 2023),
+    ({**_COLLABORATRICE, "annee_naissance": 1960, "age_liquidation": 62,
+      "reversion_agricole": {"debut": "2023-03", "mensuel": 150.0}}, 2026),
+]
+
+
+def test_les_deux_moteurs_revisent_la_meme_majoration(simulateur):
+    """La révision de D. 732-114, à l'échéance : la réversion qui commence
+    après le départ, la pension étrangère le mois qui suit, le régime général
+    demandé plus tard, la pension prise depuis 2022 ; la revalorisation de
+    chaque régime et la révision de l'exploitant, en Python et en JavaScript."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    from dataclasses import asdict
+
+    from test_liquidation import _ecarts
+
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", _JUMEAU_DES_REVISIONS,
+         json.dumps(_REVISIONS)],
+        cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    ecarts: list[str] = []
+    revisees = 0
+    for rang, ((options, annee), obtenu) in enumerate(zip(_REVISIONS,
+                                                          json.loads(execution.stdout))):
+        metiers = [Metier(m["affiliation"], m["age_debut"], niveau_salaire=m["niveau_salaire"])
+                   for m in options["metiers"]]
+        carriere = Carriere.depuis_parcours(
+            **{cle: valeur for cle, valeur in options.items() if cle != "metiers"},
+            metiers=metiers, macro=simulateur.macro)
+        resultat = simulateur.scenario_actuel.calculer(carriere)
+        vivante = faire_vivre(simulateur, carriere, resultat, annee)
+        attendu = json.loads(json.dumps({
+            "donnees": vivante.donnees(),
+            "exploitant": None if vivante.exploitant is None else asdict(vivante.exploitant)}))
+        revisees += attendu["exploitant"] is not None
+        _ecarts(obtenu, attendu, f"révision {rang}", ecarts)
+    assert revisees == 6
+    assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])
 
 
 #: Le jumeau JavaScript : la conjointe collaboratrice de :func:`_veuve`,

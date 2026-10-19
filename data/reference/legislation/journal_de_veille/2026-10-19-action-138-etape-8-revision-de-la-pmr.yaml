@@ -1,0 +1,37 @@
+date: "2026-10-19"
+session: "action 138, étape 8 : la pension majorée de référence revue quand la situation ou les ressources changent"
+consulte: >-
+  `python scripts/veille_droit.py` (trois fiches à relire, aucune de l'étape). L'index
+  LEGI du dépôt, mis à jour au 18 octobre 2026 (huit incréments), puis
+  `python scripts/textes.py --inscrire` : aucune rédaction nouvelle. Dans l'index :
+  D. 732-114 de 2009 et de 2026 (LEGIARTI000020254688, LEGIARTI000053365740) ;
+  L. 732-54-3 de 2008, 2023 et 2026 (LEGIARTI000019959457, LEGIARTI000047453330,
+  LEGIARTI000051289513) ; L. 732-54-2 de 2008 à 2026 ; D. 732-111 de 2009, 2017, 2022,
+  2023 et 2026 ; D. 732-112 de 2009 et de 2026 ; D. 732-113 de 2005 à 2026.
+trouve: >-
+  « Toute modification de la situation familiale ou du montant des ressources donne
+  lieu à une révision de la majoration de pension. La majoration de pension recalculée
+  prend effet à compter du premier jour du mois suivant la date à laquelle est
+  constatée la modification » (D. 732-114, 2009 et 2026, même phrase) ; « Le cas
+  échéant, le montant de la majoration est recalculé en fonction du montant des
+  pensions versées au bénéficiaire, de l'évolution du montant minimum [...] et de
+  l'évolution du plafond » (L. 732-54-3, 2008, 2023 et 2026). PMR1 et PMR2, puis
+  PMRmax, et le plafond sont revalorisés comme les pensions de base (D. 732-111,
+  D. 732-113) ; depuis septembre 2023, PMRmax des pensions prises avant le reste, et
+  D. 732-113 dit, après ses I et II, le plafond « revalorisé aux mêmes dates et dans
+  les mêmes proportions que le salaire minimum de croissance ». Servie, dans les deux
+  moteurs, à toute pension prise depuis 2009 : la révision, quand une réversion du
+  régime, une pension étrangère ou une autre pension commence après le départ, la
+  majoration refaite à l'échéance à la règle de sa date d'effet. D. 732-114 de 2026 et
+  L. 732-54-3 de 2023 rattachés à leurs versions : le cliquet des textes descend de
+  deux. Trouvé en chemin : la table de la PMR arrête au 31 août 2023 la PMR et le
+  plafond des pensions prises avant septembre 2023, que le modèle extrapole depuis
+  aux échéances qu'il refait (9 567,86 € de PMR entière en décembre 2026 au lieu de
+  9 741,00 €) ; déclaré dans la fiche.
+reste: >-
+  Les montants d'après août 2023 des pensions prises avant septembre 2023 : la PMR
+  revalorisée comme les pensions de base, le plafond, en lisant si la phrase du SMIC
+  de D. 732-113 vaut pour son I. La durée de chef reconstituée de D. 732-110, III. Aux
+  plans de 1997 à 2008, ce que la réversion déclarée permet de servir : D. 732-116,
+  D. 732-118 et D. 732-147. Aucun exemple chiffré publié par la MSA d'une majoration
+  révisée.

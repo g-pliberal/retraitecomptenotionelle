@@ -180,8 +180,11 @@ versions:
       pensions de retraite et des pensions de réversion servies à l'assuré par les
       régimes de base et par les régimes complémentaires légalement obligatoires
       d'assurance vieillesse imposables, ainsi que des majorations pour enfants
-      rattachées à ces pensions »
-    lu_le: 2026-10-07
+      rattachées à ces pensions » ; « Toute modification de la situation familiale ou
+      du montant des ressources donne lieu à une révision de la majoration de pension.
+      La majoration de pension recalculée prend effet à compter du premier jour du mois
+      suivant la date à laquelle est constatée la modification »
+    lu_le: 2026-10-19
   - id: JORFARTI000021801973
     publie_le: 2010-02-10
     reference: >-
@@ -369,6 +372,17 @@ versions:
       revalorisé aux mêmes dates et dans les mêmes proportions que le salaire minimum de
       croissance »
     lu_le: 2026-10-07
+  - id: LEGIARTI000047453330
+    article: L. 732-54-3 code rural
+    en_vigueur: 2023-09-01
+    citation: >-
+      « un plafond dont le montant est fixé par décret et est au moins égal à celui de
+      l'allocation de solidarité aux personnes âgées » ; « Le cas échéant, le montant de
+      la majoration est recalculé en fonction du montant des pensions versées au
+      bénéficiaire, de l'évolution du montant minimum prévu à l'article L. 732-54-2 du
+      présent code et de l'évolution du plafond prévu au premier alinéa du présent
+      article »
+    lu_le: 2026-10-19
   bornes:
     liquidation.date_effet: [2023-09-01, 2026-01-01]
   contenu:
@@ -432,6 +446,15 @@ versions:
       égal à douze fois le montant prévu à l'article D. 173-21-4 du code de la sécurité
       sociale »
     lu_le: 2026-10-07
+  - id: LEGIARTI000053365740
+    article: D. 732-114 code rural
+    en_vigueur: 2026-01-01
+    citation: >-
+      « Toute modification de la situation familiale ou du montant des ressources donne
+      lieu à une révision de la majoration de pension. La majoration de pension
+      recalculée prend effet à compter du premier jour du mois suivant la date à
+      laquelle est constatée la modification »
+    lu_le: 2026-10-19
   bornes:
     liquidation.date_effet: [2026-01-01, null]
   contenu:
@@ -472,16 +495,17 @@ approximations:
     porte de 2009 à 2021 toutes ses périodes au montant du chef, même nulle —
     « susceptible d'en bénéficier » (L. 732-41 à L. 732-46) lu comme veuf d'un assuré du
     régime, quelles que soient ses ressources —, revalorisée comme les pensions de base,
-    celle de 2020 à la tranche de son seul montant. La saisie ne la demande pas encore
-    (présomption pas_de_reversion_agricole) ; les réversions des autres régimes, que
-    l'écrêtement compte aussi (L. 732-54-3), ne se déclarent pas ; une réversion ouverte
-    après le départ n'entre qu'aux échéances que le modèle refait, depuis 2009 pour une
-    pension prise avant, depuis 2022 pour une pension prise de 2009 à 2021
+    celle de 2020 à la tranche de son seul montant. La saisie la demande depuis le
+    19 octobre 2026 à qui a une période agricole, sinon la présomption
+    pas_de_reversion_agricole ; les réversions des autres régimes, que l'écrêtement
+    compte aussi (L. 732-54-3), ne se déclarent pas ; une réversion ouverte après le
+    départ révise la majoration dès le mois où elle commence, qui suit le décès
+    (D. 732-114)
   effet: >-
     la conjointe collaboratrice de 1972 à 2016, veuve d'un exploitant depuis 2010 : PMR1
     sur ses 164 trimestres, 2 250,90 € de majoration en 2016 au lieu de 980,29 € ; avec
-    150 € de réversion par mois, 1 919,81 € par an en février 2016, 331,09 € ; tant que
-    la saisie ne la demande pas, aucun assuré du site n'est servi
+    150 € de réversion par mois, 1 919,81 € par an en février 2016, 331,09 € ; veuve en
+    juin 2018, 468,91 € en décembre 2018 au lieu des 988,13 € de la liquidation
 - ecart: >-
     la PMR attribuée le 1er janvier 2009 aux pensions liquidées avant elle (D. 732-109,
     1° et 2°) est servie depuis le 16 octobre 2026 : à l'échéance, la règle des pensions
@@ -502,14 +526,24 @@ approximations:
     n° 2021-1679 ; D. 732-111, décret n° 2021-1919, article 2), servie depuis le
     16 octobre 2026 : comparée à la pension de base avant surcote, écrêtée sur toutes
     les pensions de l'échéance, la durée minimale restant celle de la date d'effet,
-    ce que les textes ne disent pas. Sa révision quand les ressources changent de 2009
-    à 2021, et celle d'une pension prise depuis 2022, ne sont pas servies ; depuis
-    2022, la majoration refaite peut descendre sous celle du départ menée par le
-    coefficient, quand les ressources ont crû
+    ce que les textes ne disent pas ; elle peut descendre sous celle du départ menée
+    par le coefficient, quand les ressources ont crû. Sa révision (D. 732-114) est
+    servie depuis le 19 octobre 2026 à toute pension prise depuis 2009 : quand une
+    réversion du régime s'ouvre après le départ, dès le mois où elle commence, ou
+    qu'une pension étrangère ou une autre pension commence, le mois qui suit, la
+    majoration se refait à l'échéance à la règle de la date d'effet, sur les montants
+    et toutes les pensions de l'échéance (L. 732-54-3). Entre deux révisions, elle suit
+    le coefficient, comme la PMR et le plafond suivent L. 161-23-1 jusqu'en août 2023
+    (D. 732-111, D. 732-113) : ce que les complémentaires, revalorisées autrement, et
+    le plafond, qui suit le SMIC depuis septembre 2023, changent à l'écrêtement ne la
+    révise pas ; une pension commencée le mois de l'échéance compte aux ressources
+    d'une révision qu'un autre changement ouvre
   effet: >-
-    de 2009 à 2021, les pensions qu'une pension étrangère ou une seconde pension vient
-    écrêter après le départ ; depuis 2022, aucun pour les conjoints collaborateurs
-    partis de 2009 à 2021, que la règle unique porte au montant du chef
+    la veuve de juin 2018 partie en 2016 : 468,91 € de majoration en décembre 2018 au
+    lieu de 988,13 € ; une pension étrangère de 500 € par mois ou un régime général
+    demandé après le départ l'écrêtent entière ; entre deux révisions, non mesuré,
+    faible ; depuis 2022, aucun pour les conjoints collaborateurs partis de 2009 à
+    2021, que la règle unique porte au montant du chef
 - ecart: >-
     la durée de référence DR est la durée de proratisation de la retraite forfaitaire que
     le modèle lit, 150 trimestres au moins ; pour les générations 1944 à 1948, R. 732-61
@@ -522,12 +556,24 @@ approximations:
   effet: >-
     au plus quelques centimes par revalorisation ; le plafond de juillet 2022 retrouve
     celui que la MSA publie, 11 441,49 €
+- ecart: >-
+    pour les pensions prises avant le 1er septembre 2023, la table ne porte la PMR et le
+    plafond que jusqu'au 31 août 2023, ce que la liquidation seule lisait : aux
+    échéances d'après, que le modèle refait — la PMR de 2009, la PMR unique, la
+    révision —, il les extrapole (fiabilité estimée), quand D. 732-111 revalorise
+    PMRmax « aux mêmes dates et dans les mêmes conditions que celles prévues pour les
+    pensions de vieillesse de base », et que D. 732-113 dit, après ses I et II, le
+    plafond « revalorisé aux mêmes dates et dans les mêmes proportions que le salaire
+    minimum de croissance »
+  effet: >-
+    la PMR entière de décembre 2026 à 9 567,86 € au lieu de 9 741,00 € (8 970,86 € de
+    janvier 2023 revalorisés de 5,3 %, 2,2 % et 0,9 %, au centime inférieur)
 presomptions:
   pas_de_reversion_agricole: >-
     la PMR, qui ne retranche, ne compte au plafond et ne sert au 2° de D. 732-110, II,
     que la réversion du régime que l'assuré déclare
 sources:
-  lu_le: 2026-10-18
+  lu_le: 2026-10-19
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-
@@ -535,6 +581,22 @@ sources:
     pension portée à la PMR, et le rejouer dans exemples_officiels.yaml.
   - Relire les montants à chaque revalorisation de janvier.
   lectures:
+  - type: legifrance
+    reference: >-
+      D. 732-114 (2009 et 2026, LEGIARTI000020254688 et LEGIARTI000053365740) : « Toute
+      modification de la situation familiale ou du montant des ressources donne lieu à
+      une révision de la majoration de pension. La majoration de pension recalculée
+      prend effet à compter du premier jour du mois suivant la date à laquelle est
+      constatée la modification » ; L. 732-54-3 (2008, 2023 et 2026), « Le cas échéant,
+      le montant de la majoration est recalculé en fonction du montant des pensions
+      versées au bénéficiaire, de l'évolution du montant minimum [...] et de
+      l'évolution du plafond » ; D. 732-111 (2009, 2017, 2022, 2023 et 2026), PMR1, PMR2 puis
+      PMRmax « revalorisés aux mêmes dates et dans les mêmes conditions que celles
+      prévues pour les pensions de vieillesse de base », celui des pensions prises avant
+      le 1er septembre 2023 depuis ; D. 732-113 (2009 à 2026), le plafond revalorisé
+      comme les pensions de base, puis, depuis septembre 2023, comme le SMIC, dans
+      l'index LEGI du dépôt à jour au 18 octobre 2026
+    date: 2026-10-19
   - type: legifrance
     reference: >-
       D. 732-110, II, 2°, rédactions de 2009, 2010, 2011 et 2016 (LEGIARTI000020254712 à
@@ -630,6 +692,12 @@ historique:
   2026-10-18 — étape 138.8 : le 2° de D. 732-110, II, servi à qui déclare une réversion
   du régime, et cette réversion retranchée de la PMR (D. 732-112) et comptée au plafond
   (D. 732-114), dans les deux moteurs ; sa saisie reste à faire.
+- >-
+  2026-10-19 — étape 138.8 : la révision de D. 732-114 servie à toute pension prise
+  depuis 2009, quand une réversion du régime, une pension étrangère ou une autre
+  pension commence après le départ, dans les deux moteurs, la saisie de la réversion
+  faite le même jour ; les montants d'après 2023 des pensions prises avant septembre 2023,
+  que la table n'a pas, déclarés.
 exemples: []
 effet: >-
   Les petites pensions de base des chefs d'exploitation liquidées au taux plein depuis

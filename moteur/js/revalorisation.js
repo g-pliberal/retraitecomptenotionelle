@@ -1149,13 +1149,42 @@ export const TAUX_PLEIN_DE_LA_PMR_DEPUIS = "2002-01-01";
 export const PMR_UNIQUE = "2022-01-01";
 
 /**
+ * Si la situation familiale ou les ressources de l'assuré ont changé depuis la
+ * date d'effet `debut` de sa pension des non-salariés agricoles, autrement que
+ * par les revalorisations, à temps pour réviser sa majoration à l'échéance
+ * `fin` (D. 732-114, la révision prenant effet le mois qui suit) : la
+ * réversion du régime ouverte depuis, au plus tard le mois de l'échéance ;
+ * une pension étrangère ou une autre pension de `datees` commencée depuis, au
+ * plus tard le mois qui précède. Voir `modification_constatee` du Python.
+ */
+export function modificationConstatee(carriere, datees, debut, fin) {
+  const rang = (jour) => {
+    const [annee, mois] = jour.split("-").map(Number);
+    return new DateMois(annee, mois).rang;
+  };
+  const depart = rang(debut);
+  const echeance = rang(fin);
+  const reversion = carriere.reversionAgricole;
+  if (reversion !== null && depart < reversion.debut.rang && reversion.debut.rang <= echeance) {
+    return true;
+  }
+  if (carriere.pensionsEtrangeres.some((p) => depart < p.debut.rang && p.debut.rang < echeance)) {
+    return true;
+  }
+  return datees.some(([, , d]) => depart < rang(d) && rang(d) < echeance);
+}
+
+/**
  * La révision d'une pension des non-salariés agricoles déjà liquidée, menée
  * jusqu'à l'échéance `fin` : les plans de revalorisation, à la règle des
  * pensions dues l'année de l'échéance, 2008 au plus, puis la pension majorée
  * de référence ouverte en 2009 aux pensions prises avant, écrêtée sur toutes
  * les pensions et les majorations pour enfants `enfants` ; depuis 2022, la PMR
  * unique, refaite à la règle des pensions dues, à la place de celle d'une
- * pension prise de 2009 à 2021. Modifie la base de
+ * pension prise de 2009 à 2021 ; la révision, quand la situation familiale ou
+ * les ressources ont changé depuis le départ (D. 732-114,
+ * `modificationConstatee`), qui refait à l'échéance la majoration d'une
+ * pension prise depuis 2009 à la règle de sa date d'effet. Modifie la base de
  * `regimes` en place et rend le calcul, ou `null`. Voir
  * `reviser_les_exploitants` du Python.
  */
@@ -1215,8 +1244,9 @@ export function reviserLesExploitants(moteur, resultat, datees, regimes, servie,
       entiere = majoree.entiere;
       pmr = majoree.complement;
     }
-  } else if (PMR_DES_PENSIONS_PRISES_AVANT <= debut && debut < PMR_UNIQUE
-    && PMR_UNIQUE <= fin) {
+  } else if (PMR_DES_PENSIONS_PRISES_AVANT <= debut && (
+    (debut < PMR_UNIQUE && PMR_UNIQUE <= fin)
+    || modificationConstatee(carriere, datees, debut, fin))) {
     const servieAuDepart = (exploitant.pmr ?? 0.0) * coefficient;
     let base = 0.0;
     let ressources = enfants - servieAuDepart;
@@ -1228,7 +1258,9 @@ export function reviserLesExploitants(moteur, resultat, datees, regimes, servie,
     const [anneeFin, moisFin] = fin.split("-").map(Number);
     ressources += pensionsEtrangeresServies(moteur.macro, carriere,
       new DateMois(anneeFin, moisFin));
-    const reglePmr = {
+    // La PMR unique, à la règle des pensions dues ; la révision, à celle de
+    // la date d'effet, que la liquidation a servie.
+    const reglePmr = !(debut < PMR_UNIQUE && PMR_UNIQUE <= fin) ? null : {
       ...moteur.pensionMajoreeReference.regle(
         fin < DERNIERE_REGLE_DES_PENSIONS_PRISES_AVANT
           ? fin : DERNIERE_REGLE_DES_PENSIONS_PRISES_AVANT),

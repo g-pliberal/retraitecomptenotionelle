@@ -404,7 +404,9 @@ class RevisionAgricole:
     #: La pension majorée de référence d'une pension prise avant 2009, à
     #: l'échéance : entière, et la majoration servie, écrêtée ; d'une pension
     #: prise de 2009 à 2021, depuis 2022 : entière, et ce que la règle unique
-    #: change à la majoration de la liquidation menée par le coefficient.
+    #: change à la majoration de la liquidation menée par le coefficient ; d'une
+    #: pension prise depuis 2009 que sa révision refait (D. 732-114) : entière,
+    #: et ce que la révision y change.
     pmr_entiere: float | None
     pmr: float
 
@@ -1159,6 +1161,28 @@ TAUX_PLEIN_DE_LA_PMR_DEPUIS = date(2002, 1, 1)
 PMR_UNIQUE = date(2022, 1, 1)
 
 
+def modification_constatee(carriere, datees, debut: date, fin: date) -> bool:
+    """Si la situation familiale ou les ressources de l'assuré ont changé depuis
+    la date d'effet ``debut`` de sa pension des non-salariés agricoles,
+    autrement que par les revalorisations, à temps pour réviser sa majoration
+    à l'échéance ``fin`` : « Toute modification de la situation familiale ou
+    du montant des ressources donne lieu à une révision de la majoration de
+    pension », qui « prend effet à compter du premier jour du mois suivant la
+    date à laquelle est constatée la modification » (D. 732-114). La
+    réversion du régime ouverte depuis, au plus tard le mois de l'échéance :
+    elle commence le mois qui suit le décès, le veuvage qui la révise ; une
+    pension étrangère ou une autre pension de ``datees`` commencée depuis, au
+    plus tard le mois qui précède."""
+    depart = DateMois(debut.year, debut.month).rang
+    echeance = DateMois(fin.year, fin.month).rang
+    reversion = carriere.reversion_agricole
+    if reversion is not None and depart < reversion.debut.rang <= echeance:
+        return True
+    if any(depart < p.debut.rang < echeance for p in carriere.pensions_etrangeres):
+        return True
+    return any(depart < DateMois(d.year, d.month).rang < echeance for _, _, d, _ in datees)
+
+
 def reviser_les_exploitants(moteur, resultat, datees, regimes: list[RegimeServi],
                             servie: PensionServie, mensuel_2019: float | None, fin: date,
                             enfants: float
@@ -1198,6 +1222,16 @@ def reviser_les_exploitants(moteur, resultat, datees, regimes: list[RegimeServi]
     pensions de l'échéance ; la durée minimale reste celle de la date d'effet
     (D. 732-109). La base porte la différence, qui peut être négative quand
     les ressources ont crû.
+
+    LA RÉVISION, quand la situation familiale ou les ressources ont changé
+    depuis le départ (D. 732-114, :func:`modification_constatee`) : la
+    majoration d'une pension prise depuis 2009, menée par le coefficient, se
+    refait à l'échéance à la règle de sa date d'effet — « le montant de la
+    majoration est recalculé en fonction du montant des pensions versées au
+    bénéficiaire » (L. 732-54-3) —, la réversion du régime retranchée et
+    comptée au plafond, écrêtée sur toutes les pensions de l'échéance ; la
+    base porte la différence. Depuis 2022, la PMR unique la refait déjà aux
+    pensions prises avant.
 
     Rend les régimes, la base portant la révision en euros de l'échéance, et
     le calcul ; rien quand elle n'ajoute rien.
@@ -1253,17 +1287,22 @@ def reviser_les_exploitants(moteur, resultat, datees, regimes: list[RegimeServi]
             taux_plein_requis=debut >= TAUX_PLEIN_DE_LA_PMR_DEPUIS, surcote_comprise=True)
         if majoree is not None:
             entiere, pmr = majoree.entiere, majoree.complement
-    elif PMR_DES_PENSIONS_PRISES_AVANT <= debut < PMR_UNIQUE <= fin:
+    elif PMR_DES_PENSIONS_PRISES_AVANT <= debut and (
+            debut < PMR_UNIQUE <= fin or modification_constatee(carriere, datees, debut, fin)):
         servie_au_depart = exploitant.pmr * coefficient
         base = (next(r for r in regimes if r.regime == exploitant.regime).aujourd_hui
                 - servie_au_depart)
         ressources = (somme_ordonnee(r.aujourd_hui for r in regimes) - servie_au_depart
                       + enfants + pensions_etrangeres_servies(moteur.macro, carriere,
                                                               DateMois(fin.year, fin.month)))
-        regle = dict(moteur.pension_majoree_reference.regle(
-            min(fin, DERNIERE_REGLE_DES_PENSIONS_PRISES_AVANT).isoformat()))
-        regle["duree_minimale"] = moteur.pension_majoree_reference.regle(
-            debut.isoformat())["duree_minimale"]
+        # La PMR unique, à la règle des pensions dues ; la révision, à celle
+        # de la date d'effet, que la liquidation a servie.
+        regle = None
+        if debut < PMR_UNIQUE <= fin:
+            regle = dict(moteur.pension_majoree_reference.regle(
+                min(fin, DERNIERE_REGLE_DES_PENSIONS_PRISES_AVANT).isoformat()))
+            regle["duree_minimale"] = moteur.pension_majoree_reference.regle(
+                debut.isoformat())["duree_minimale"]
         majoree = pension_majoree(
             moteur, carriere, exploitant.eligible, replace(exploitant.pension, montant=base),
             ressources, quand=DateMois(fin.year, fin.month), regle=regle)
