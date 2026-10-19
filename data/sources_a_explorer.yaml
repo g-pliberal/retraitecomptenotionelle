@@ -232,7 +232,7 @@ sources:
       âge, durée d'assurance, quotité de travail, et ce que la pension
       partielle vaut. Le dépôt ne modélise pas la retraite progressive ;
       c'est de quoi la chiffrer, ou dire dans limites.md ce qu'elle déplace.
-    statut: a_explorer
+    statut: en_cours
 
   - id: union_retraite_expatriation
     url: https://parcours.info-retraite.fr/retraite_expatriation
@@ -243,7 +243,7 @@ sources:
       Le traitement des périodes à l'étranger : conventions, totalisation,
       proratisation. `docs/limites.md` déclare les carrières internationales
       hors modèle ; ce parcours dit ce que ce mur laisse dehors.
-    statut: a_explorer
+    statut: en_cours
 
   # ---- Cnav / Assurance retraite ----------------------------------------
 
