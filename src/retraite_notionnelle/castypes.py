@@ -116,6 +116,15 @@ class CasType:
     #: celle de l'État, que le COR fait croître de six ans d'ici la génération
     #: 2000, ou celle de la CNRACL, que rien ne fait varier.
     serie_entree: str = "entree_fonction_publique"
+    #: L'inaptitude au travail, reconnue à la demande de la pension (fiche
+    #: ``inaptitude_au_travail``) : le taux plein dès l'âge légal, quelle que
+    #: soit la durée (action 138, étape 7).
+    inaptitude: bool = False
+    #: La population dont ce cas type a la mortalité sur la page Coût, quand ce
+    #: n'est pas celle que son diviseur lui rattache : une population de
+    #: :class:`~retraite_notionnelle.donnees.mortalite.DonneesMortalite`
+    #: (:func:`~retraite_notionnelle.cout._survies`). Vide, celle du diviseur.
+    mortalite: str = ""
 
     def niveau_relatif(self, simulateur: Simulateur, generation: int) -> float:
         """Son salaire en multiples du salaire moyen : ce qui le RATTACHE à un
@@ -186,8 +195,13 @@ class CasType:
             nombre_enfants=self.nombre_enfants,
             part_primes=self.part_primes,
             identifiant=f"{self.libelle} (génération {generation})",
+            **self._invalidite(),
         )
         return primes_projetees(carriere, simulateur.macro)
+
+    def _invalidite(self) -> dict:
+        """Ce que la carrière déclare de l'inaptitude (:attr:`inaptitude`)."""
+        return {"invalidite": {"inaptitude": True}} if self.inaptitude else {}
 
     def options(self, generation: int, age_liquidation: float) -> dict:
         """Les options de la carrière d'un seul statut de ce cas type, né en
@@ -209,6 +223,7 @@ class CasType:
             "nombre_enfants": self.nombre_enfants,
             "part_primes": self.part_primes,
             "identifiant": f"{self.libelle} (génération {generation})",
+            **self._invalidite(),
         }
 
     def _carriere(self, simulateur: Simulateur, generation: int,
@@ -279,6 +294,21 @@ PART_ACTIVE_ETAT = (DEPARTS_ETAT_CIVILS_2025["active_57"]
 PART_SUPER_ACTIVE_ETAT = (DEPARTS_ETAT_CIVILS_2025["active_52"]
                           / somme_ordonnee(DEPARTS_ETAT_CIVILS_2025.values()))
 
+#: Les nouveaux retraités de droit direct du régime général de 2020 à 2024,
+#: par type de pension, aux séries labellisées de la Cnav
+#: (``regimes/nouveaux_retraites_cnav.csv``) : un sur douze part pour
+#: inaptitude au travail, et la Cnav n'avait que des pensions normales
+#: (action 138, étape 7). Le flux, comme pour la CNRACL : le poids d'un cas
+#: type est sa part de la caisse à la liquidation, sa mortalité faisant
+#: ensuite le stock. Les ex-invalides restent aux quatre carrières du privé.
+DEPARTS_CNAV_2020_2024 = {"normale": 2_815_070, "ex_invalide": 298_196,
+                          "inaptitude": 284_204}
+PART_INAPTES_CNAV = (DEPARTS_CNAV_2020_2024["inaptitude"]
+                     / somme_ordonnee(DEPARTS_CNAV_2020_2024.values()))
+#: Ce que chacune des quatre carrières du privé porte de la Cnav : le reste,
+#: également, faute de savoir combien de ses retraités ont été cadres.
+PART_PRIVE_CNAV = (1.0 - PART_INAPTES_CNAV) / 4
+
 #: Jeu de cas types couvrant les principales configurations du système.
 CAS_TYPES: tuple[CasType, ...] = (
     CasType(
@@ -291,6 +321,7 @@ CAS_TYPES: tuple[CasType, ...] = (
         age_debut=18, age_liquidation=64, niveau_salaire=1.0,
         profil_carriere=PROFIL_SMIC,
         caisses=("cnav",),
+        parts_caisses=(("cnav", PART_PRIVE_CNAV),),
         commentaire="Carrière longue à bas salaire : le cas où les minima pèsent le plus.",
     ),
     CasType(
@@ -299,6 +330,7 @@ CAS_TYPES: tuple[CasType, ...] = (
         affiliation="salarie_prive_non_cadre",
         age_debut=21, age_liquidation=64, niveau_salaire=1.0,
         caisses=("cnav",),
+        parts_caisses=(("cnav", PART_PRIVE_CNAV),),
         commentaire="Référence centrale.",
     ),
     CasType(
@@ -307,6 +339,7 @@ CAS_TYPES: tuple[CasType, ...] = (
         affiliation="salarie_prive_cadre",
         age_debut=23, age_liquidation=64, niveau_salaire=2.2,
         caisses=("cnav",),
+        parts_caisses=(("cnav", PART_PRIVE_CNAV),),
         commentaire="Forte part de rémunération au-dessus du plafond.",
     ),
     CasType(
@@ -316,6 +349,7 @@ CAS_TYPES: tuple[CasType, ...] = (
         age_debut=21, age_liquidation=64, niveau_salaire=0.9,
         sexe="F", nombre_enfants=2,
         caisses=("cnav",),
+        parts_caisses=(("cnav", PART_PRIVE_CNAV),),
         interruptions_relatives=tuple((decalage, "education_enfant") for decalage in range(8, 13)),
         commentaire=(
             "Cinq années sans cotisation. Le système actuel les couvre par des "
@@ -549,10 +583,41 @@ FONCTIONNAIRE_SUPER_ACTIF_ETAT = replace(
     ),
 )
 
+#: L'INAPTE de la Cnav, que la page Coût pèse avec les quatre carrières du
+#: privé et que la page Cas types ne montre pas (action 138, étape 7) : les
+#: nouveaux retraités de 2021 pour inaptitude au travail hors ex-invalides,
+#: que la Cnav décrit (étude 2023-014, tableaux 2 à 4), anciens titulaires de
+#: l'AAH et autres inaptes, entrés à vingt ans, avec 116 trimestres en
+#: moyenne et un salaire annuel moyen de 68 % du SMIC. Il porte la part de la
+#: caisse que ses départs lui donnent (:data:`PART_INAPTES_CNAV`) et vit au
+#: rythme des inaptes de la Cnav, quatre ans de moins à 62 ans que les
+#: pensions normales (Cadr'@ge n° 40, ``esperances_vie_pensions_cnav.csv``).
+#: Variante du salarié au SMIC, auquel les poids que la page affiche le
+#: rapportent (:func:`cas_type_affiche`).
+INAPTE_CNAV = replace(
+    _cas("smic_carriere_complete"),
+    code="smic_carriere_complete~inapte",
+    libelle="Salarié reconnu inapte au travail",
+    age_debut=20, niveau_salaire=0.7,
+    interruptions_relatives=tuple((decalage, "inactivite") for decalage in range(29, 50)),
+    parts_caisses=(("cnav", PART_INAPTES_CNAV),),
+    inaptitude=True,
+    mortalite="cnav_inaptitude",
+    commentaire=(
+        "Au SMIC à temps partiel de vingt à quarante-neuf ans, sans activité "
+        "ensuite : reconnu inapte au travail à la demande de sa pension, il a "
+        "le taux plein dès l'âge légal, quelle que soit sa durée — soixante-"
+        "deux ans, que la réforme de 2023 lui garde. Sous la proposition, son "
+        "compte se liquide à l'âge légal de tous, et l'invalidité le couvre "
+        "jusque-là."
+    ),
+)
+
 #: La grille de la page Coût : les cas types de la page Cas types, et les
 #: variantes qui partagent leur caisse avec eux.
 GRILLE_DU_COUT: tuple[CasType, ...] = CAS_TYPES + (
-    AGENT_SEDENTAIRE_CNRACL, FONCTIONNAIRE_ACTIF_ETAT, FONCTIONNAIRE_SUPER_ACTIF_ETAT)
+    AGENT_SEDENTAIRE_CNRACL, FONCTIONNAIRE_ACTIF_ETAT, FONCTIONNAIRE_SUPER_ACTIF_ETAT,
+    INAPTE_CNAV)
 
 #: La carrière HEURTÉE de la maquette Osiris de la DSS (étude d'impact du
 #: projet de loi instituant un système universel de retraite, 2020, p. 202) :

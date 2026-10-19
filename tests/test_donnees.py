@@ -2179,6 +2179,67 @@ def test_une_population_reproduit_l_esperance_que_son_regime_publie(mortalite):
         mortalite.esperance_residuelle(65, 2024, "H", population="cadres")
 
 
+#: L'espérance de vie de 2017 à 62, 65, 70, 75, 80 et 85 ans des retraités du
+#: régime général, par type de pension et par sexe, que la Cnav publie (Goujon,
+#: Cadr'@ge n° 40, juin 2019, données chiffrées du graphique 2).
+AGES_CADRAGE_40 = (62, 65, 70, 75, 80, 85)
+ESPERANCES_CADRAGE_40 = {
+    ("cnav_pension_normale", "H"): (22.9, 20.4, 16.5, 12.9, 9.5, 6.7),
+    ("cnav_inaptitude", "H"): (18.2, 16.5, 13.9, 11.2, 8.5, 6.3),
+    ("cnav_ex_invalide", "H"): (16.7, 15.1, 12.5, 10.1, 7.8, 5.7),
+    ("cnav_pension_normale", "F"): (27.5, 24.7, 20.2, 16.0, 11.9, 8.4),
+    ("cnav_inaptitude", "F"): (23.4, 21.2, 17.7, 14.2, 10.9, 8.2),
+    ("cnav_ex_invalide", "F"): (23.1, 20.8, 17.0, 13.4, 10.2, 7.3),
+}
+
+
+def test_les_inaptes_de_la_cnav_vivent_au_moins_quatre_ans_de_moins(mortalite):
+    """La mortalité des retraités du régime général par type de pension, que
+    la Cnav mesure sur ses fichiers et que son modèle Prisme leur applique
+    (action 138, étape 7) : l'espérance de vie de 2017 des pensions normales,
+    pour inaptitude et d'ex-invalide, relue telle que le Cadr'@ge n° 40 la
+    publie. À 62 ans, les inaptes vivent 4,7 ans de moins que les pensions
+    normales chez les hommes, 4,1 chez les femmes ; les ex-invalides, 6,2 et
+    4,4.
+
+    Chaque type est une population, que son facteur cale sur l'espérance à
+    65 ans publiée, appliquée telle quelle à la table générale de 2017, comme
+    celle des pensionnés civils de l'État. Tenu constant, il rend l'espérance
+    des inaptes à 62 ans à quatre dixièmes près ; mais il les fait mourir trop
+    vite au-delà de quatre-vingts ans, où la Cnav les voit rejoindre la
+    population générale : c'est la limite d'un facteur, qu'un test ne doit pas
+    taire."""
+    chemin = RACINE_DONNEES / "reference" / "mortalite" / "esperances_vie_pensions_cnav.csv"
+    with chemin.open(encoding="utf-8") as flux:
+        lignes = list(csv.DictReader(l for l in flux if not l.lstrip().startswith("#")))
+    lues = {(l["population"], l["sexe"], l["mesure"]): float(l["valeur"])
+            for l in lignes if l["annee"] == "2017"}
+    assert lues == {(population, sexe, f"e{age}"): valeur
+                    for (population, sexe), valeurs in ESPERANCES_CADRAGE_40.items()
+                    for age, valeur in zip(AGES_CADRAGE_40, valeurs)}
+    for sexe in mortalite.SEXES:
+        normale = ESPERANCES_CADRAGE_40[("cnav_pension_normale", sexe)]
+        for population in ("cnav_inaptitude", "cnav_ex_invalide"):
+            assert normale[0] - ESPERANCES_CADRAGE_40[(population, sexe)][0] >= 4.0
+        for population in ("cnav_pension_normale", "cnav_inaptitude", "cnav_ex_invalide"):
+            publiees = ESPERANCES_CADRAGE_40[(population, sexe)]
+            assert mortalite.esperance_publiee(population, sexe) == (2017, publiees[1])
+            assert mortalite.esperance_residuelle(
+                65, 2017, sexe, generation=False, population=population,
+            ) == pytest.approx(publiees[1], abs=0.01), (population, sexe)
+        # La table générale de 2017 est entre les pensions normales et les
+        # autres : le facteur les fait vivre plus longtemps, ou moins.
+        assert mortalite.facteur_population("cnav_pension_normale", sexe) < 1.0
+        assert 1.0 < mortalite.facteur_population("cnav_inaptitude", sexe) < 2.0
+        inaptes = ESPERANCES_CADRAGE_40[("cnav_inaptitude", sexe)]
+        assert mortalite.esperance_residuelle(
+            62, 2017, sexe, generation=False, population="cnav_inaptitude",
+        ) == pytest.approx(inaptes[0], abs=0.4), sexe
+        assert mortalite.esperance_residuelle(
+            85, 2017, sexe, generation=False, population="cnav_inaptitude",
+        ) < inaptes[-1] - 1.0, sexe
+
+
 #: Les tranches d'âge du tableau A-2 du jaune pensions annexé au PLF 2027, âge
 #: atteint au 31 décembre : « < 35 » est prise à partir de vingt ans, « > 94 »
 #: jusqu'à cent cinq.

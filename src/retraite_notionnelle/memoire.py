@@ -147,6 +147,10 @@ HORS_DU_MODELE = (
     # types statutaires confrontent, et qu'aucun calcul ne lit (action 159,
     # étape 4).
     "data/reference/macro/caracteristiques_fonction_publique.csv",
+    # Les nouveaux retraités du régime général par type de pension, dont la
+    # grille tire la part de l'inapte, écrite en dur dans ``castypes.py``, et
+    # qu'aucun calcul ne lit (action 138, étape 7).
+    "data/reference/regimes/nouveaux_retraites_cnav.csv",
     # Ce que chaque ministère verse au compte « Pensions », que la page Coût
     # montre par le paquet, et qu'aucun calcul ne lit (action 159, étape 8).
     "data/reference/macro/credits_ministeres.csv",

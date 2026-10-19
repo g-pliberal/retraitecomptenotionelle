@@ -431,8 +431,9 @@ class Pensionne:
     capitaux: tuple[float, ...] = ()
     #: La survie de chacune de ses cinq cohortes RAPPORTÉE à celle de la
     #: population générale, année par année depuis sa liquidation : celle de
-    #: la population que son diviseur lui rattache (:func:`_survies`, action
-    #: 138, étape 7). Vide, la population générale, celle de la pyramide.
+    #: la population que son diviseur lui rattache, ou de la sienne, pour
+    #: l'inapte (:func:`_survies`, action 138, étape 7). Vide, la population
+    #: générale, celle de la pyramide.
     survies: tuple[tuple[float, ...], ...] = ()
     #: L'année où part chacune de ses cinq cohortes sous le droit en vigueur,
     #: du ``-_DEMI_TRANCHE`` au ``+_DEMI_TRANCHE`` : celle que le droit de SA
@@ -2264,7 +2265,8 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
             completudes=() if carrieres is None else tuple(
                 carrieres.completude(generation + decalage)
                 for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1)),
-            survies=_survies(simulateur, comparaison, generation, departs),
+            survies=_survies(simulateur, comparaison, generation, departs,
+                             cas_de[code].mortalite),
             departs=departs,
             cotisations={
                 # Le dénominateur ne peut pas être le compte du scénario 4.
@@ -2332,11 +2334,15 @@ def _carrieres_voisines(simulateur: Simulateur, cas: CasType, generation: int,
 
 
 def _survies(simulateur: Simulateur, comparaison, generation: int,
-             departs: tuple[int, ...]) -> tuple[tuple[float, ...], ...]:
+             departs: tuple[int, ...], propre: str = "") -> tuple[tuple[float, ...], ...]:
     """La survie des cinq cohortes d'un couple, rapportée à celle de la
     population générale, année par année depuis leur liquidation
     (:attr:`Pensionne.survies`, action 138, étape 7), chacune à l'âge et
-    l'année où elle part (``departs``).
+    l'année où elle part (``departs``). ``propre`` nomme la population d'un
+    cas type qui ne vit pas comme celle de son diviseur
+    (:attr:`~retraite_notionnelle.castypes.CasType.mortalite`) : l'inapte,
+    qui vit comme les inaptes de la Cnav, et non comme le vingtile de son
+    salaire ; sous la table commune, il vit comme la pyramide, lui aussi.
 
     LES CAS TYPES NE VIVENT PLUS TOUS COMME LA POPULATION GÉNÉRALE. Jusqu'au
     17 octobre 2026, la pyramide de l'INSEE comptait les survivants de chaque
@@ -2356,6 +2362,7 @@ def _survies(simulateur: Simulateur, comparaison, generation: int,
         comparaison.actuel.pension_annuelle, carriere.annee_liquidation, carriere)
     if population is None:
         return ()
+    population = propre or population
     mortalite = simulateur.mortalite
     survies = []
     for decalage, annee in zip(range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1), departs):

@@ -1,0 +1,82 @@
+# Espérances de vie des retraités du RÉGIME GÉNÉRAL par type de pension —
+# normale, pour inaptitude au travail, d'ex-invalide —, telles que la Cnav
+# les mesure sur ses fichiers
+# source_id: cnav_cadrage_40
+# unite: années
+# sexe: H | F
+# mesure: e62, e65, e70, e75, e80, e85 (à 62 ans, à 65 ans… à 85 ans)
+# fiabilite:
+#   moyenne : valeur SAISIE à la lecture du Cadr'@ge n° 40 de la Cnav
+#             (juin 2019, données chiffrées du graphique 2), téléchargé le
+#             19 octobre 2026 ; aucun script ne la revérifie.
+#
+# CE QUE LA CNAV MESURE
+# ---------------------
+# L'espérance de vie DU MOMENT de 2017, à chaque âge, de ses prestataires de
+# droits propres, par sexe et par type de pension : la pension normale ; la
+# pension pour inaptitude au travail, des assurés reconnus inaptes au départ
+# et de catégories « assimilées » qui s'éteignent (anciens déportés ou
+# internés, anciens combattants, mères de famille ouvrières) ; la pension
+# d'ex-invalide, qui remplace à l'âge légal la pension d'invalidité. Les
+# tables sont tirées des décès et des stocks de prestataires du Système
+# national statistiques prestataires (SNSP). Prisme, le modèle de projection
+# de la Cnav, applique à ses retraités des quotients estimés de même sur 2013
+# et 2014, par type de pension (COR, document n° 9 de la séance de mars 2020,
+# p. 14 du PDF).
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# À faire vivre l'inapte de la grille du coût au rythme des inaptes de la
+# Cnav (action 138, étape 7). Comme les pensionnés civils de l'État
+# (esperances_vie_populations.csv), chaque type est une population dont le
+# modèle cale un FACTEUR sur la force de mortalité de la table générale de
+# l'année observée, de sorte qu'elle rende l'espérance à 65 ans publiée ici,
+# puis le tient constant ; les autres âges ne servent qu'au contrôle
+# (tests/test_donnees.py).
+#
+# CE QU'IL FAUT SAVOIR AVANT DE S'EN SERVIR
+# ------------------------------------------
+# La Cnav mesure ses pensions normales plus longévives que la table générale
+# du dépôt pour 2017 — d'un an à 65 ans pour les hommes, d'un an et demi pour
+# les femmes —, et ses inaptes la rejoignent vers 85 ans. La valeur publiée
+# est prise telle quelle : la Cnav ne publie pas l'ensemble de ses retraités,
+# auquel la rapporter. Un facteur constant rend l'espérance des inaptes à
+# 62 ans à quatre dixièmes près, mais les fait mourir trop vite au-delà de
+# 80 ans : 4,8 ans à 85 ans pour les hommes, quand la Cnav en mesure 6,3.
+annee,population,sexe,mesure,valeur,fiabilite
+2017,cnav_pension_normale,H,e62,22.9,moyenne
+2017,cnav_pension_normale,H,e65,20.4,moyenne
+2017,cnav_pension_normale,H,e70,16.5,moyenne
+2017,cnav_pension_normale,H,e75,12.9,moyenne
+2017,cnav_pension_normale,H,e80,9.5,moyenne
+2017,cnav_pension_normale,H,e85,6.7,moyenne
+2017,cnav_inaptitude,H,e62,18.2,moyenne
+2017,cnav_inaptitude,H,e65,16.5,moyenne
+2017,cnav_inaptitude,H,e70,13.9,moyenne
+2017,cnav_inaptitude,H,e75,11.2,moyenne
+2017,cnav_inaptitude,H,e80,8.5,moyenne
+2017,cnav_inaptitude,H,e85,6.3,moyenne
+2017,cnav_ex_invalide,H,e62,16.7,moyenne
+2017,cnav_ex_invalide,H,e65,15.1,moyenne
+2017,cnav_ex_invalide,H,e70,12.5,moyenne
+2017,cnav_ex_invalide,H,e75,10.1,moyenne
+2017,cnav_ex_invalide,H,e80,7.8,moyenne
+2017,cnav_ex_invalide,H,e85,5.7,moyenne
+2017,cnav_pension_normale,F,e62,27.5,moyenne
+2017,cnav_pension_normale,F,e65,24.7,moyenne
+2017,cnav_pension_normale,F,e70,20.2,moyenne
+2017,cnav_pension_normale,F,e75,16.0,moyenne
+2017,cnav_pension_normale,F,e80,11.9,moyenne
+2017,cnav_pension_normale,F,e85,8.4,moyenne
+2017,cnav_inaptitude,F,e62,23.4,moyenne
+2017,cnav_inaptitude,F,e65,21.2,moyenne
+2017,cnav_inaptitude,F,e70,17.7,moyenne
+2017,cnav_inaptitude,F,e75,14.2,moyenne
+2017,cnav_inaptitude,F,e80,10.9,moyenne
+2017,cnav_inaptitude,F,e85,8.2,moyenne
+2017,cnav_ex_invalide,F,e62,23.1,moyenne
+2017,cnav_ex_invalide,F,e65,20.8,moyenne
+2017,cnav_ex_invalide,F,e70,17.0,moyenne
+2017,cnav_ex_invalide,F,e75,13.4,moyenne
+2017,cnav_ex_invalide,F,e80,10.2,moyenne
+2017,cnav_ex_invalide,F,e85,7.3,moyenne

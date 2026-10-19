@@ -1,0 +1,310 @@
+# Nouveaux retraités de droit direct du régime général, par année de départ
+# de leur pension, par sexe et par type de pension
+# source_id: cnav_series_labellisees
+# unite: personnes
+# fiabilite:
+#   moyenne : valeurs extraites le 19 octobre 2026 de la feuille « Nouveaux
+#             retraités D. Direct » des séries labellisées de la Cnav
+#             (classeur de février 2026), au format Excel 97, qu'aucun script
+#             ne relit ; chaque année se recoupe par ses totaux publiés
+#             (tests/test_cout.py).
+#
+# LES COLONNES
+# ------------
+# champ : salaries, le régime général des salariés, de 2003 à 2019 ;
+#   salaries_independants, élargi aux travailleurs indépendants, de 2019 à
+#   2024 — la feuille donne les deux champs en 2019, l'année de la rupture.
+# sexe : H, F, ou ensemble.
+# type_pension : droits_directs, tous les nouveaux retraités ; normale ;
+#   ex_invalide, la pension de vieillesse qui remplace à l'âge légal la
+#   pension d'invalidité ; inaptitude, la pension pour inaptitude au travail.
+#   Les trois types font le total, et les deux sexes l'ensemble, à l'unité.
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# À donner à l'inapte de la grille du coût sa part de la Cnav (action 138,
+# étape 7) : celle des départs pour inaptitude dans les départs de 2020 à
+# 2024, 8,4 % (`castypes.PART_INAPTES_CNAV`). Le poids d'un cas type est la
+# part de sa caisse qu'il porte à la liquidation, sa mortalité faisant
+# ensuite le stock : c'est le flux qui le donne, comme les départs de la
+# CNRACL donnent sa part à l'agent actif. Elle était de 9,8 à 12,9 % de 2003
+# à 2010, de 6,2 à 7,1 % de 2012 à 2016, quand l'âge légal montait. La part
+# est écrite en dur dans `castypes.py`, que le test relit : aucun calcul ne
+# lit cette série (`memoire.HORS_DU_MODELE`).
+annee,champ,sexe,type_pension,effectif,fiabilite
+2003,salaries,H,droits_directs,266896,moyenne
+2003,salaries,H,normale,219858,moyenne
+2003,salaries,H,ex_invalide,19067,moyenne
+2003,salaries,H,inaptitude,27971,moyenne
+2003,salaries,F,droits_directs,252109,moyenne
+2003,salaries,F,normale,197988,moyenne
+2003,salaries,F,ex_invalide,15056,moyenne
+2003,salaries,F,inaptitude,39065,moyenne
+2003,salaries,ensemble,droits_directs,519005,moyenne
+2003,salaries,ensemble,normale,417846,moyenne
+2003,salaries,ensemble,ex_invalide,34123,moyenne
+2003,salaries,ensemble,inaptitude,67036,moyenne
+2004,salaries,H,droits_directs,376369,moyenne
+2004,salaries,H,normale,329022,moyenne
+2004,salaries,H,ex_invalide,19575,moyenne
+2004,salaries,H,inaptitude,27772,moyenne
+2004,salaries,F,droits_directs,280690,moyenne
+2004,salaries,F,normale,227691,moyenne
+2004,salaries,F,ex_invalide,15345,moyenne
+2004,salaries,F,inaptitude,37654,moyenne
+2004,salaries,ensemble,droits_directs,657059,moyenne
+2004,salaries,ensemble,normale,556713,moyenne
+2004,salaries,ensemble,ex_invalide,34920,moyenne
+2004,salaries,ensemble,inaptitude,65426,moyenne
+2005,salaries,H,droits_directs,351306,moyenne
+2005,salaries,H,normale,305024,moyenne
+2005,salaries,H,ex_invalide,19733,moyenne
+2005,salaries,H,inaptitude,26549,moyenne
+2005,salaries,F,droits_directs,288078,moyenne
+2005,salaries,F,normale,234102,moyenne
+2005,salaries,F,ex_invalide,16499,moyenne
+2005,salaries,F,inaptitude,37477,moyenne
+2005,salaries,ensemble,droits_directs,639384,moyenne
+2005,salaries,ensemble,normale,539126,moyenne
+2005,salaries,ensemble,ex_invalide,36232,moyenne
+2005,salaries,ensemble,inaptitude,64026,moyenne
+2006,salaries,H,droits_directs,381699,moyenne
+2006,salaries,H,normale,328153,moyenne
+2006,salaries,H,ex_invalide,24208,moyenne
+2006,salaries,H,inaptitude,29338,moyenne
+2006,salaries,F,droits_directs,333856,moyenne
+2006,salaries,F,normale,269129,moyenne
+2006,salaries,F,ex_invalide,21363,moyenne
+2006,salaries,F,inaptitude,43364,moyenne
+2006,salaries,ensemble,droits_directs,715555,moyenne
+2006,salaries,ensemble,normale,597282,moyenne
+2006,salaries,ensemble,ex_invalide,45571,moyenne
+2006,salaries,ensemble,inaptitude,72702,moyenne
+2007,salaries,H,droits_directs,391663,moyenne
+2007,salaries,H,normale,335728,moyenne
+2007,salaries,H,ex_invalide,25058,moyenne
+2007,salaries,H,inaptitude,30877,moyenne
+2007,salaries,F,droits_directs,361593,moyenne
+2007,salaries,F,normale,293959,moyenne
+2007,salaries,F,ex_invalide,23414,moyenne
+2007,salaries,F,inaptitude,44220,moyenne
+2007,salaries,ensemble,droits_directs,753256,moyenne
+2007,salaries,ensemble,normale,629687,moyenne
+2007,salaries,ensemble,ex_invalide,48472,moyenne
+2007,salaries,ensemble,inaptitude,75097,moyenne
+2008,salaries,H,droits_directs,395255,moyenne
+2008,salaries,H,normale,338271,moyenne
+2008,salaries,H,ex_invalide,25495,moyenne
+2008,salaries,H,inaptitude,31489,moyenne
+2008,salaries,F,droits_directs,373930,moyenne
+2008,salaries,F,normale,305721,moyenne
+2008,salaries,F,ex_invalide,24221,moyenne
+2008,salaries,F,inaptitude,43988,moyenne
+2008,salaries,ensemble,droits_directs,769185,moyenne
+2008,salaries,ensemble,normale,643992,moyenne
+2008,salaries,ensemble,ex_invalide,49716,moyenne
+2008,salaries,ensemble,inaptitude,75477,moyenne
+2009,salaries,H,droits_directs,321705,moyenne
+2009,salaries,H,normale,264112,moyenne
+2009,salaries,H,ex_invalide,25665,moyenne
+2009,salaries,H,inaptitude,31928,moyenne
+2009,salaries,F,droits_directs,361569,moyenne
+2009,salaries,F,normale,293596,moyenne
+2009,salaries,F,ex_invalide,24804,moyenne
+2009,salaries,F,inaptitude,43169,moyenne
+2009,salaries,ensemble,droits_directs,683274,moyenne
+2009,salaries,ensemble,normale,557708,moyenne
+2009,salaries,ensemble,ex_invalide,50469,moyenne
+2009,salaries,ensemble,inaptitude,75097,moyenne
+2010,salaries,H,droits_directs,346808,moyenne
+2010,salaries,H,normale,288348,moyenne
+2010,salaries,H,ex_invalide,25659,moyenne
+2010,salaries,H,inaptitude,32801,moyenne
+2010,salaries,F,droits_directs,379081,moyenne
+2010,salaries,F,normale,309694,moyenne
+2010,salaries,F,ex_invalide,26010,moyenne
+2010,salaries,F,inaptitude,43377,moyenne
+2010,salaries,ensemble,droits_directs,725889,moyenne
+2010,salaries,ensemble,normale,598042,moyenne
+2010,salaries,ensemble,ex_invalide,51669,moyenne
+2010,salaries,ensemble,inaptitude,76178,moyenne
+2011,salaries,H,droits_directs,284122,moyenne
+2011,salaries,H,normale,242315,moyenne
+2011,salaries,H,ex_invalide,17667,moyenne
+2011,salaries,H,inaptitude,24140,moyenne
+2011,salaries,F,droits_directs,322052,moyenne
+2011,salaries,F,normale,273325,moyenne
+2011,salaries,F,ex_invalide,17625,moyenne
+2011,salaries,F,inaptitude,31102,moyenne
+2011,salaries,ensemble,droits_directs,606174,moyenne
+2011,salaries,ensemble,normale,515640,moyenne
+2011,salaries,ensemble,ex_invalide,35292,moyenne
+2011,salaries,ensemble,inaptitude,55242,moyenne
+2012,salaries,H,droits_directs,276361,moyenne
+2012,salaries,H,normale,244387,moyenne
+2012,salaries,H,ex_invalide,14389,moyenne
+2012,salaries,H,inaptitude,17585,moyenne
+2012,salaries,F,droits_directs,296906,moyenne
+2012,salaries,F,normale,259129,moyenne
+2012,salaries,F,ex_invalide,15148,moyenne
+2012,salaries,F,inaptitude,22629,moyenne
+2012,salaries,ensemble,droits_directs,573267,moyenne
+2012,salaries,ensemble,normale,503516,moyenne
+2012,salaries,ensemble,ex_invalide,29537,moyenne
+2012,salaries,ensemble,inaptitude,40214,moyenne
+2013,salaries,H,droits_directs,331451,moyenne
+2013,salaries,H,normale,289191,moyenne
+2013,salaries,H,ex_invalide,20873,moyenne
+2013,salaries,H,inaptitude,21387,moyenne
+2013,salaries,F,droits_directs,355626,moyenne
+2013,salaries,F,normale,305349,moyenne
+2013,salaries,F,ex_invalide,22855,moyenne
+2013,salaries,F,inaptitude,27422,moyenne
+2013,salaries,ensemble,droits_directs,687077,moyenne
+2013,salaries,ensemble,normale,594540,moyenne
+2013,salaries,ensemble,ex_invalide,43728,moyenne
+2013,salaries,ensemble,inaptitude,48809,moyenne
+2014,salaries,H,droits_directs,319843,moyenne
+2014,salaries,H,normale,280139,moyenne
+2014,salaries,H,ex_invalide,20118,moyenne
+2014,salaries,H,inaptitude,19586,moyenne
+2014,salaries,F,droits_directs,337388,moyenne
+2014,salaries,F,normale,290607,moyenne
+2014,salaries,F,ex_invalide,21971,moyenne
+2014,salaries,F,inaptitude,24810,moyenne
+2014,salaries,ensemble,droits_directs,657231,moyenne
+2014,salaries,ensemble,normale,570746,moyenne
+2014,salaries,ensemble,ex_invalide,42089,moyenne
+2014,salaries,ensemble,inaptitude,44396,moyenne
+2015,salaries,H,droits_directs,286696,moyenne
+2015,salaries,H,normale,255348,moyenne
+2015,salaries,H,ex_invalide,15182,moyenne
+2015,salaries,H,inaptitude,16166,moyenne
+2015,salaries,F,droits_directs,301088,moyenne
+2015,salaries,F,normale,263422,moyenne
+2015,salaries,F,ex_invalide,17263,moyenne
+2015,salaries,F,inaptitude,20403,moyenne
+2015,salaries,ensemble,droits_directs,587784,moyenne
+2015,salaries,ensemble,normale,518770,moyenne
+2015,salaries,ensemble,ex_invalide,32445,moyenne
+2015,salaries,ensemble,inaptitude,36569,moyenne
+2016,salaries,H,droits_directs,296606,moyenne
+2016,salaries,H,normale,261411,moyenne
+2016,salaries,H,ex_invalide,17198,moyenne
+2016,salaries,H,inaptitude,17997,moyenne
+2016,salaries,F,droits_directs,309654,moyenne
+2016,salaries,F,normale,266525,moyenne
+2016,salaries,F,ex_invalide,20194,moyenne
+2016,salaries,F,inaptitude,22935,moyenne
+2016,salaries,ensemble,droits_directs,606260,moyenne
+2016,salaries,ensemble,normale,527936,moyenne
+2016,salaries,ensemble,ex_invalide,37392,moyenne
+2016,salaries,ensemble,inaptitude,40932,moyenne
+2017,salaries,H,droits_directs,305255,moyenne
+2017,salaries,H,normale,262286,moyenne
+2017,salaries,H,ex_invalide,23324,moyenne
+2017,salaries,H,inaptitude,19645,moyenne
+2017,salaries,F,droits_directs,332276,moyenne
+2017,salaries,F,normale,276653,moyenne
+2017,salaries,F,ex_invalide,28348,moyenne
+2017,salaries,F,inaptitude,27275,moyenne
+2017,salaries,ensemble,droits_directs,637531,moyenne
+2017,salaries,ensemble,normale,538939,moyenne
+2017,salaries,ensemble,ex_invalide,51672,moyenne
+2017,salaries,ensemble,inaptitude,46920,moyenne
+2018,salaries,H,droits_directs,296296,moyenne
+2018,salaries,H,normale,253131,moyenne
+2018,salaries,H,ex_invalide,24492,moyenne
+2018,salaries,H,inaptitude,18673,moyenne
+2018,salaries,F,droits_directs,352944,moyenne
+2018,salaries,F,normale,294298,moyenne
+2018,salaries,F,ex_invalide,30369,moyenne
+2018,salaries,F,inaptitude,28277,moyenne
+2018,salaries,ensemble,droits_directs,649240,moyenne
+2018,salaries,ensemble,normale,547429,moyenne
+2018,salaries,ensemble,ex_invalide,54861,moyenne
+2018,salaries,ensemble,inaptitude,46950,moyenne
+2019,salaries,H,droits_directs,279864,moyenne
+2019,salaries,H,normale,235584,moyenne
+2019,salaries,H,ex_invalide,24455,moyenne
+2019,salaries,H,inaptitude,19825,moyenne
+2019,salaries,F,droits_directs,334325,moyenne
+2019,salaries,F,normale,274667,moyenne
+2019,salaries,F,ex_invalide,30463,moyenne
+2019,salaries,F,inaptitude,29195,moyenne
+2019,salaries,ensemble,droits_directs,614189,moyenne
+2019,salaries,ensemble,normale,510251,moyenne
+2019,salaries,ensemble,ex_invalide,54918,moyenne
+2019,salaries,ensemble,inaptitude,49020,moyenne
+2019,salaries_independants,H,droits_directs,305366,moyenne
+2019,salaries_independants,H,normale,256598,moyenne
+2019,salaries_independants,H,ex_invalide,24856,moyenne
+2019,salaries_independants,H,inaptitude,23912,moyenne
+2019,salaries_independants,F,droits_directs,345837,moyenne
+2019,salaries_independants,F,normale,284244,moyenne
+2019,salaries_independants,F,ex_invalide,30578,moyenne
+2019,salaries_independants,F,inaptitude,31015,moyenne
+2019,salaries_independants,ensemble,droits_directs,651203,moyenne
+2019,salaries_independants,ensemble,normale,540842,moyenne
+2019,salaries_independants,ensemble,ex_invalide,55434,moyenne
+2019,salaries_independants,ensemble,inaptitude,54927,moyenne
+2020,salaries_independants,H,droits_directs,306113,moyenne
+2020,salaries_independants,H,normale,258326,moyenne
+2020,salaries_independants,H,ex_invalide,25037,moyenne
+2020,salaries_independants,H,inaptitude,22750,moyenne
+2020,salaries_independants,F,droits_directs,335555,moyenne
+2020,salaries_independants,F,normale,275454,moyenne
+2020,salaries_independants,F,ex_invalide,30851,moyenne
+2020,salaries_independants,F,inaptitude,29250,moyenne
+2020,salaries_independants,ensemble,droits_directs,641668,moyenne
+2020,salaries_independants,ensemble,normale,533780,moyenne
+2020,salaries_independants,ensemble,ex_invalide,55888,moyenne
+2020,salaries_independants,ensemble,inaptitude,52000,moyenne
+2021,salaries_independants,H,droits_directs,319916,moyenne
+2021,salaries_independants,H,normale,269193,moyenne
+2021,salaries_independants,H,ex_invalide,26382,moyenne
+2021,salaries_independants,H,inaptitude,24341,moyenne
+2021,salaries_independants,F,droits_directs,356520,moyenne
+2021,salaries_independants,F,normale,292933,moyenne
+2021,salaries_independants,F,ex_invalide,32645,moyenne
+2021,salaries_independants,F,inaptitude,30942,moyenne
+2021,salaries_independants,ensemble,droits_directs,676436,moyenne
+2021,salaries_independants,ensemble,normale,562126,moyenne
+2021,salaries_independants,ensemble,ex_invalide,59027,moyenne
+2021,salaries_independants,ensemble,inaptitude,55283,moyenne
+2022,salaries_independants,H,droits_directs,335937,moyenne
+2022,salaries_independants,H,normale,283918,moyenne
+2022,salaries_independants,H,ex_invalide,26513,moyenne
+2022,salaries_independants,H,inaptitude,25506,moyenne
+2022,salaries_independants,F,droits_directs,372513,moyenne
+2022,salaries_independants,F,normale,307611,moyenne
+2022,salaries_independants,F,ex_invalide,32605,moyenne
+2022,salaries_independants,F,inaptitude,32297,moyenne
+2022,salaries_independants,ensemble,droits_directs,708450,moyenne
+2022,salaries_independants,ensemble,normale,591529,moyenne
+2022,salaries_independants,ensemble,ex_invalide,59118,moyenne
+2022,salaries_independants,ensemble,inaptitude,57803,moyenne
+2023,salaries_independants,H,droits_directs,341156,moyenne
+2023,salaries_independants,H,normale,287772,moyenne
+2023,salaries_independants,H,ex_invalide,27166,moyenne
+2023,salaries_independants,H,inaptitude,26218,moyenne
+2023,salaries_independants,F,droits_directs,365910,moyenne
+2023,salaries_independants,F,normale,299163,moyenne
+2023,salaries_independants,F,ex_invalide,34315,moyenne
+2023,salaries_independants,F,inaptitude,32432,moyenne
+2023,salaries_independants,ensemble,droits_directs,707066,moyenne
+2023,salaries_independants,ensemble,normale,586935,moyenne
+2023,salaries_independants,ensemble,ex_invalide,61481,moyenne
+2023,salaries_independants,ensemble,inaptitude,58650,moyenne
+2024,salaries_independants,H,droits_directs,316935,moyenne
+2024,salaries_independants,H,normale,262039,moyenne
+2024,salaries_independants,H,ex_invalide,27636,moyenne
+2024,salaries_independants,H,inaptitude,27260,moyenne
+2024,salaries_independants,F,droits_directs,346915,moyenne
+2024,salaries_independants,F,normale,278661,moyenne
+2024,salaries_independants,F,ex_invalide,35046,moyenne
+2024,salaries_independants,F,inaptitude,33208,moyenne
+2024,salaries_independants,ensemble,droits_directs,663850,moyenne
+2024,salaries_independants,ensemble,normale,540700,moyenne
+2024,salaries_independants,ensemble,ex_invalide,62682,moyenne
+2024,salaries_independants,ensemble,inaptitude,60468,moyenne

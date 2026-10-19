@@ -341,9 +341,13 @@ class DonneesMortalite:
         """Les espérances de vie à 65 ans publiées pour des populations
         particulières : ``{population: {sexe: (annee, e65, e65_ensemble)}}``.
 
-        Deux fichiers. ``esperances_vie_populations.csv`` porte ce qu'un
+        Trois fichiers. ``esperances_vie_populations.csv`` porte ce qu'un
         régime publie pour ses pensionnés, sans ensemble de référence : la
         valeur est calée telle quelle sur la table générale de l'année.
+        ``esperances_vie_pensions_cnav.csv`` fait de même des retraités du
+        régime général par type de pension — normale, pour inaptitude,
+        d'ex-invalide —, que la Cnav publie de 62 à 85 ans : l'espérance à
+        65 ans seule fait la population, les autres âges contrôlent.
         ``esperances_vie_niveau_de_vie.csv`` porte les vingtiles de niveau de
         vie de l'INSEE, avec l'« ensemble » de la même étude : un vingtile
         est calé sur son RAPPORT à cet ensemble, appliqué à la table
@@ -353,8 +357,10 @@ class DonneesMortalite:
         publiée sert de population.
         """
         table: dict[str, dict[str, tuple[int, float, float | None]]] = {}
-        chemin = self.racine / "reference" / "mortalite" / "esperances_vie_populations.csv"
-        if chemin.exists():
+        for nom in ("esperances_vie_populations.csv", "esperances_vie_pensions_cnav.csv"):
+            chemin = self.racine / "reference" / "mortalite" / nom
+            if not chemin.exists():
+                continue
             with chemin.open(encoding="utf-8") as flux:
                 lignes = (l for l in flux if not l.lstrip().startswith("#"))
                 for ligne in csv.DictReader(lignes):

@@ -384,6 +384,40 @@ def test_la_carriere_heurtee_valide_ce_que_le_droit_donne_au_chomage():
                               "inactivite": 0}, generation
 
 
+def test_l_inapte_de_la_cnav_part_au_taux_plein_des_l_age_legal():
+    """L'inapte de la grille du coût (action 138, étape 7) : les nouveaux
+    retraités de 2021 pour inaptitude au travail hors ex-invalides, que la
+    Cnav décrit (étude 2023-014, tableaux 2 à 4) — les anciens titulaires de
+    l'AAH et les autres inaptes, 46 690 personnes : un premier trimestre à
+    vingt ans, 116 trimestres en moyenne, un salaire annuel moyen de 68 % du
+    SMIC. Le cas type travaille à 70 % du SMIC de vingt à quarante-neuf ans,
+    puis n'a plus d'activité jusqu'au départ : 116 trimestres.
+
+    Reconnu inapte, il a le taux plein dès l'âge légal quelle que soit sa durée
+    (L. 351-8, 2°, fiche ``inaptitude_au_travail``) : à soixante ans né en
+    1950, à soixante-deux né en 1960 et après, la réforme de 2023 lui gardant
+    cet âge. Sans l'inaptitude, la même carrière attendrait l'âge d'annulation
+    de la décote, soixante-cinq puis soixante-sept ans."""
+    from dataclasses import replace
+
+    from retraite_notionnelle.castypes import INAPTE_CNAV as cas
+
+    simulateur = Simulateur(Parametres())
+    assert cas.inaptitude and cas.mortalite == "cnav_inaptitude"
+    assert (cas.affiliation, cas.age_debut, cas.niveau_salaire, cas.caisses) == (
+        "salarie_prive_non_cadre", 20, 0.7, ("cnav",))
+    sans = replace(cas, inaptitude=False)
+    for generation, depart, annulation in ((1950, 60, 65), (1960, 62, 67),
+                                           (1980, 62, 67)):
+        carriere = cas.construire(simulateur, generation)
+        assert carriere.age_liquidation == depart, generation
+        assert carriere.inaptitude, generation
+        assert carriere.trimestres_cumules(
+            ligne for ligne in carriere.lignes
+            if ligne.annee <= carriere.annee_liquidation) == 116, generation
+        assert sans.construire(simulateur, generation).age_liquidation == annulation, generation
+
+
 def test_la_masse_salariale_est_la_regle_la_plus_genereuse(macro):
     """Le taux d'équilibre de la répartition n'est pas une règle d'austérité.
 

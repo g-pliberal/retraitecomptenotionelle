@@ -1913,6 +1913,69 @@ institutions:
           servi par `statistiques-recherche.lassuranceretraite.fr` — au
           singulier —, que `cnav_comptes_notionnels_2009` citait déjà sans que
           personne fasse le rapprochement. Joint le 22 septembre 2026.
+      - id: cnav_cadrage_40
+        titre: >-
+          Goujon S., « Retraites pour inaptitude : une espérance de vie
+          inférieure d'au moins 4 ans », Cadr'@ge n° 40, Cnav, juin 2019
+        url: https://www.statistiques-recherche.lassuranceretraite.fr/app/uploads/2019/06/Cadrage-40_cadrage.pdf
+        acces: document
+        statut_integration: saisi
+        millesime: juin 2019
+        cible: data/reference/mortalite/esperances_vie_pensions_cnav.csv
+        note: >-
+          Lu le 19 octobre 2026 (action 138, étape 7). L'espérance de vie du
+          moment de 2017, à 62, 65, 70, 75, 80 et 85 ans, des retraités du
+          régime général par sexe et par type de pension — normale, pour
+          inaptitude, d'ex-invalide —, tirée des décès et des stocks du SNSP :
+          les données chiffrées du graphique 2, SAISIES. À 62 ans, les inaptes
+          vivent 4,7 ans de moins que les pensions normales chez les hommes,
+          4,1 chez les femmes ; les ex-invalides, 6,2 et 4,4. C'est la
+          mortalité que Prisme applique à ses retraités par type de pension
+          (COR, document n° 9 de mars 2020, p. 14 du PDF, qui y renvoie).
+          L'ancienne adresse du document, sous `statistiques-recherches.cnav.fr`,
+          ne répond plus.
+      - id: cnav_series_labellisees
+        titre: >-
+          Séries statistiques labellisées du régime général : les nouveaux
+          retraités selon l'année de départ de leur pension (classeur
+          « Series-labellisees-Nouveaux-retraites », février 2026)
+        url: https://www.statistiques-recherche.lassuranceretraite.fr/app/uploads/2026/02/Series-labellisees-Nouveaux-retraites.xls
+        acces: fichier
+        statut_integration: saisi
+        millesime: février 2026
+        cible: data/reference/regimes/nouveaux_retraites_cnav.csv
+        note: >-
+          Lu le 19 octobre 2026 (action 138, étape 7). La feuille « Nouveaux
+          retraités D. Direct » compte, de 2003 à 2024, les nouveaux retraités
+          de droit direct du régime général par sexe et par type de pension :
+          normale, d'ex-invalide, pour inaptitude au travail. Le champ s'élargit
+          en 2019 aux travailleurs indépendants, et la feuille donne cette
+          année-là les deux champs. Le classeur est au format Excel 97, que la
+          bibliothèque standard ne lit pas : les valeurs sont extraites une
+          fois, puis recoupées par leurs totaux publiés (tests/test_cout.py).
+          Le classeur du stock, « Series-labellisees-2025-Stock.xlsx », compte
+          de même les retraités en paiement au 31 décembre de 2003 à 2025 :
+          8,2 % de pensions pour inaptitude et 6,4 % d'ex-invalides en 2025,
+          13,0 et 5,9 % en 2009. Aucun calcul ne le lit.
+      - id: cnav_inaptitude_2021
+        titre: >-
+          Couhin J., Floderer S., « Quel est le profil des nouveaux retraités
+          qui obtiennent une pension au titre de l'inaptitude au régime
+          général en 2021 ? », étude 2023-014, Cnav, février 2023
+        url: https://www.statistiques-recherche.lassuranceretraite.fr/app/uploads/2023/04/inaptitude-2021_dispositifs-retraite.pdf
+        acces: document
+        statut_integration: saisi
+        millesime: février 2023
+        cible: src/retraite_notionnelle/castypes.py
+        note: >-
+          Lu le 19 octobre 2026 (action 138, étape 7). Les nouveaux retraités
+          de 2021 pour inaptitude, en trois groupes : 56 914 ex-invalides,
+          19 358 anciens titulaires de l'AAH, 27 332 autres inaptes. Leur
+          premier trimestre, leur durée d'assurance, leur salaire annuel moyen
+          en part du SMIC et leur âge de départ (tableaux 2 à 4) font la
+          carrière de l'inapte de la grille du coût (`castypes.INAPTE_CNAV`) :
+          les deux derniers groupes ensemble entrent à vingt ans, valident
+          116 trimestres, à un salaire annuel moyen de 68 % du SMIC.
 
       - id: cnav_comptes_notionnels_2009
         titre: >-
