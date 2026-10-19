@@ -28,8 +28,12 @@ effet: >-
   retranchait ce mois-là à qui est né un 1er jusqu'au 28 septembre 2026 (action 132).
   Les artisans et commerçants liquidés à part des salariés, que D. 634-5 majore
   depuis 1990, le sont depuis le même jour, sur les périodes de la CANCAVA, de l'ORGANIC
-  et du RSI. Restent approchés : leurs années d'avant 1973, que D. 634-5 exclut de la
-  base de la majoration et que le moteur, qui les liquide comme les suivantes, y laisse ;
+  et du RSI. Leurs années d'avant 1973, que D. 634-5 ne majore pas, ont leur régime
+  (`cancava_avant_1973`, `organic_avant_1973`) et ne sont plus dans la base de la
+  majoration ; elles comptent sous sa limite depuis le 19 octobre 2026, que le moteur
+  n'opposait qu'aux trimestres d'après 1972 : l'artisan né en mai 1928, entré en 1965 et
+  parti en juin 1996, a 93 trimestres majorés de 30 %, 121, que ses 30 trimestres d'avant
+  1973 ramènent à 120. Restent approchés :
   de 1984 à 1989, leur majoration, dont le texte n'est pas lu ; le troisième exemple de la circulaire n° 22/83, que le
   maximum des pensions décide sur un salaire moyen de 1,7 plafond, qu'aucune carrière
   plafonnée n'atteint ; l'égalité des décimales entre régimes, que R. 173-4-2 tranche et
@@ -37,15 +41,21 @@ effet: >-
   assurés du 1° bis, du 2° et du 6° de L. 351-8, pour qui le moteur compte depuis l'âge
   d'annulation qu'il leur applique.
 sources:
-  lu_le: 2026-09-28
+  lu_le: 2026-10-19
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
     Artisans et commerçants : lire le texte qui les majorait de 1984 à 1989, que l'index
     ne porte pas — l'article 2 du décret n° 73-937, qui leur rend applicable « l'article
     70-6 » du décret de 1945, le vise dans sa rédaction d'avant 1982, la date d'entrée en
-    jouissance —, et retirer de la base de la majoration leurs années d'avant 1973, comme
-    D. 634-5 le dit.
+    jouissance ; la rédaction de D. 634-5 de 1985 à 1989 ne parle que de la réversion.
+  - >-
+    Artisans et commerçants : les trimestres d'avant 1973 que D. 634-5 compte sous la
+    limite sont ceux que le moteur valide aux années d'avant 1973 de leur régime en points.
+    La règle qui décompte en trimestres les périodes de l'ancien régime n'est pas lue :
+    l'article 1er du décret n° 73-937 (rédaction de 1990, LEGIARTI000006765812) dit
+    seulement qu'elles et celles d'après 1972 « sont totalisées » pour l'ouverture du
+    droit.
   - >-
     Chercher un exemple publié d'une pension prise après soixante-sept ans, circulaire
     Cnav ou fiche de l'Assurance retraite.
@@ -160,6 +170,20 @@ sources:
       indépendants), de 2020 (LEGIARTI000041966606, les travailleurs indépendants) et de
       2023 (LEGIARTI000047634717). Lu dans l'index LEGI du dépôt
     date: 2026-09-28
+  - type: legifrance
+    reference: >-
+      code de la sécurité sociale, D. 634-5, ses six rédactions de 1990 à 2023, relues
+      entières : la majoration « est applicable aux trimestres d'assurance postérieurs au
+      31 décembre 1972 », « sans que cette majoration puisse avoir pour effet de porter
+      au-delà de 150 trimestres » — « de la durée d'assurance prévue au troisième alinéa de
+      l'article L. 351-1 » depuis 2009 — « la durée totale des périodes d'assurance
+      antérieures au 1er janvier 1973 et postérieures au 31 décembre 1972 », et « Le nombre
+      total des trimestres d'assurance obtenus en application des deux alinéas précédents
+      est éventuellement arrondi au chiffre immédiatement supérieur sans pouvoir excéder
+      150 ». La rédaction du 21 décembre 1985 au 31 décembre 1989 (LEGIARTI000006737997)
+      rend applicable R. 353-2 aux régimes de L. 634-2, et rien d'autre. Lu dans l'index
+      LEGI du dépôt
+    date: 2026-10-19
   - type: circulaire_cnav
     reference: >-
       circulaire Cnav n° 8/89 du 18 janvier 1989 : « Les trimestres d'ajournement se
@@ -238,6 +262,12 @@ textes_a_rattacher:
   reference: >-
     code de la sécurité sociale, D. 634-5, rédaction du 1er janvier 1990 : la majoration
     de R. 351-7 aux artisans et commerçants, sur leurs trimestres d'après 1972
+textes_sans_effet:
+- id: LEGIARTI000006737997
+  motif: >-
+    D. 634-5 du 21 décembre 1985 au 31 décembre 1989 : « Les dispositions de l'article R.
+    353-2 sont applicables aux régimes d'assurance vieillesse mentionnés à l'article L.
+    634-2 » ; la majoration de durée n'y est pas
 exemples:
 - cnav_22_83_taux_acquis_60_trimestres
 - cnav_8_89_duree_corrigee_80_trimestres
@@ -254,7 +284,11 @@ code:
     durée de proratisation, pour qui ne l'atteint pas (`liquider.duree_majoree_apres_taux_plein`,
     `dureeMajoreeApresTauxPlein` dans le portage) ; `duree_majoree_tous_regimes`, depuis
     2004, en ouvre le droit sur la durée de tous les régimes de base, trimestres superposés
-    compris, et borne la part d'un régime aligné liquidé à part (R. 173-4-2). La durée
+    compris, et borne la part d'un régime aligné liquidé à part (R. 173-4-2) ;
+    `duree_majoree_bornee_avec`, sur les périodes de la CANCAVA, de l'ORGANIC et du RSI
+    depuis 1990, compte sous la limite, sans les majorer, les trimestres de leurs régimes
+    d'avant 1973 (D. 634-5), que la période de chaque membre d'un groupe liquidé ensemble
+    nomme (`liquider.regimes_qui_bornent_la_duree_majoree`). La durée
     majorée entre au prorata de la pension et à celui du minimum contributif ; qui avait
     passé soixante-cinq ans au 1er avril 1983 a la plus forte des deux pensions, 50 % sur la
     durée majorée ou le taux acquis sur la durée non majorée

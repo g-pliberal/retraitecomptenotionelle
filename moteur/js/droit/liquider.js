@@ -2358,8 +2358,9 @@ export function trimestresDAjournement(carriere, ageTauxPlein) {
  * l'âge du taux plein, pour qui n'a pas la durée (décret n° 45-0179, article
  * 70-6, puis R. 351-7 ; décret n° 50-1225, article 55-6) ; depuis 2004, la
  * durée de tous les régimes de base ouvre et borne la majoration, et un régime
- * aligné liquidé à part ne reçoit que sa part (L. 351-6, R. 173-4-2). Voir
- * `liquider.duree_majoree_apres_taux_plein`.
+ * aligné liquidé à part ne reçoit que sa part (L. 351-6, R. 173-4-2) ; les
+ * années d'avant 1973 des artisans et commerçants comptent sous la limite sans
+ * être majorées (D. 634-5). Voir `liquider.duree_majoree_apres_taux_plein`.
  */
 export function dureeMajoreeApresTauxPlein(moteur, periode, carriere, durees, membres,
                                            trimestresRegime, proratisation, ageAnnulation) {
@@ -2391,6 +2392,11 @@ export function dureeMajoreeApresTauxPlein(moteur, periode, carriere, durees, me
   // 2,5 %, c'est un quarantième : le calcul en entiers évite que 140 × 1,05
   // ne s'arrondisse à 148.
   let majores = Math.min(Math.ceil((trimestresRegime * (40 + ajournement)) / 40), limite);
+  let anterieures = 0;
+  for (const code of regimesQuiBornentLaDureeMajoree(moteur, carriere, membres)) {
+    anterieures += durees.trimestresParRegime.get(code) ?? 0;
+  }
+  majores = Math.min(majores, Math.max(trimestresRegime, limite - anterieures));
   if (periode.duree_majoree_tous_regimes) {
     const alignes = [...dureesDeBase].filter(([code]) => coordonner.REGIMES_ALIGNES.has(code));
     if (alignes.some(([code]) => !membres.includes(code)) && majores + horsRegime > limite) {
@@ -2406,6 +2412,23 @@ export function dureeMajoreeApresTauxPlein(moteur, periode, carriere, durees, me
     }
   }
   return majores;
+}
+
+/**
+ * Les régimes que nomme `duree_majoree_bornee_avec` dans la période de
+ * liquidation de chacun des membres. Voir
+ * `liquider.regimes_qui_bornent_la_duree_majoree`.
+ */
+export function regimesQuiBornentLaDureeMajoree(moteur, carriere, membres) {
+  const codes = new Set();
+  for (const membre of membres) {
+    const periode = periodeDeLiquidation(moteur.catalogue.obtenir(membre),
+      carriere.dateLiquidation);
+    for (const code of periode?.duree_majoree_bornee_avec ?? []) {
+      codes.add(code);
+    }
+  }
+  return [...codes].sort();
 }
 
 export function retrancheDecote(moteur, periode, carriere) {

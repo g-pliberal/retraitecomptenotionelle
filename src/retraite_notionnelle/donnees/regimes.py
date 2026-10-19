@@ -441,6 +441,13 @@ class PeriodeRegime:
     #: partage entre régimes alignés (L. 351-6 de la loi du 21 août 2003,
     #: R. 173-4-2) ; avant, le seul régime qui liquide.
     duree_majoree_tous_regimes: bool
+    #: Les régimes dont la durée s'ajoute, sans être majorée, à la durée
+    #: majorée du régime sous la limite qui la borne : les droits d'avant 1973
+    #: des artisans et des commerçants, que D. 634-5 compte « sans que cette
+    #: majoration puisse avoir pour effet de porter au-delà de 150 trimestres
+    #: la durée totale des périodes d'assurance antérieures au 1er janvier 1973
+    #: et postérieures au 31 décembre 1972 ».
+    duree_majoree_bornee_avec: tuple[str, ...]
     #: Âge dès lequel une femme qui réunit la durée écrite dans les régimes
     #: nommés reçoit le taux de l'âge du taux plein : soixante-trois ans en
     #: 1978, soixante ans de 1979 au 31 mars 1983, pour trente-sept ans et demi
@@ -2143,6 +2150,9 @@ class CatalogueRegimes:
                 ),
                 duree_majoree_tous_regimes=bool(
                     p.get("duree_majoree_tous_regimes", False)
+                ),
+                duree_majoree_bornee_avec=tuple(
+                    p.get("duree_majoree_bornee_avec") or ()
                 ),
                 age_taux_plein_femmes=(
                     None if p.get("age_taux_plein_femmes") is None

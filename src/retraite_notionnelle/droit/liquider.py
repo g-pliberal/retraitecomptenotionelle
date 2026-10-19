@@ -3391,6 +3391,20 @@ def duree_majoree_apres_taux_plein(moteur, periode: PeriodeRegime, carriere: Car
     agricoles, majorés de 5 %, font 147 au régime général, que le partage
     ramène à 145. Un régime spécial ne partage rien : 59 trimestres au
     régime général et 90 dans un régime spécial en font 62 et 90.
+
+    **Les années d'avant 1973 des artisans et commerçants** ne sont pas
+    majorées, mais comptent sous la limite (``duree_majoree_bornee_avec``) :
+    leur majoration « est applicable aux trimestres d'assurance postérieurs
+    au 31 décembre 1972 », « sans que cette majoration puisse avoir pour
+    effet de porter au-delà de 150 trimestres la durée totale des périodes
+    d'assurance antérieures au 1er janvier 1973 et postérieures au 31
+    décembre 1972 », la durée du troisième alinéa de L. 351-1 depuis 2009
+    (D. 634-5). L'artisan né en mai 1928, entré en 1965 et parti en juin
+    1996 : 93 trimestres majorés de 30 % en font 121, et ses 30 trimestres
+    d'avant 1973 n'en laissent que 120. La période de chaque membre du groupe
+    nomme ces régimes : le régime général, qui liquide depuis 2020 les
+    années des indépendants qu'il réunit, garde leur borne, et ne l'oppose
+    pas à ses seuls salariés.
     """
     if not periode.duree_majoree_apres_taux_plein or age_annulation is None:
         return trimestres_regime
@@ -3410,6 +3424,10 @@ def duree_majoree_apres_taux_plein(moteur, periode: PeriodeRegime, carriere: Car
     # 2,5 %, c'est un quarantième : le calcul en entiers évite que 140 × 1,05
     # ne s'arrondisse à 148.
     majores = min(-(-trimestres_regime * (40 + ajournement) // 40), limite)
+    anterieures = somme_ordonnee(
+        durees.trimestres_par_regime.get(code, 0)
+        for code in regimes_qui_bornent_la_duree_majoree(moteur, carriere, membres))
+    majores = min(majores, max(trimestres_regime, limite - anterieures))
     if periode.duree_majoree_tous_regimes:
         alignes = {code: nombre for code, nombre in durees_de_base.items()
                    if code in coordonner.REGIMES_ALIGNES}
@@ -3421,6 +3439,19 @@ def duree_majoree_apres_taux_plein(moteur, periode: PeriodeRegime, carriere: Car
             part = (2 * numerateur + total_alignes) // (2 * total_alignes)
             majores = min(majores, trimestres_regime + max(0, part))
     return majores
+
+
+def regimes_qui_bornent_la_duree_majoree(moteur, carriere: Carriere,
+                                         membres: tuple[str, ...]) -> tuple[str, ...]:
+    """Les régimes que nomme ``duree_majoree_bornee_avec`` dans la période de
+    liquidation de chacun des ``membres`` : voir
+    :func:`duree_majoree_apres_taux_plein`."""
+    codes: set[str] = set()
+    for membre in membres:
+        periode = periode_de_liquidation(moteur.catalogue[membre], carriere.date_liquidation)
+        if periode is not None:
+            codes.update(periode.duree_majoree_bornee_avec)
+    return tuple(sorted(codes))
 
 
 def retranche_decote(moteur, periode: PeriodeRegime, carriere: Carriere) -> int:

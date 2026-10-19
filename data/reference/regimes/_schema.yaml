@@ -604,6 +604,18 @@ champs_periode:
     valeurs: [true]
     defaut: false
 
+  duree_majoree_bornee_avec:
+    description: >-
+      Régimes dont la durée s'ajoute, sans être majorée, à la durée majorée de
+      `duree_majoree_apres_taux_plein` sous la limite qui la borne : les droits
+      d'avant 1973 des artisans et des commerçants, que D. 634-5 compte « sans
+      que cette majoration puisse avoir pour effet de porter au-delà de 150
+      trimestres la durée totale des périodes d'assurance antérieures au 1er
+      janvier 1973 et postérieures au 31 décembre 1972 » (fiche
+      `majoration_duree_apres_65_ans`). Le groupe liquidé ensemble lit ceux
+      que nomme la période de chacun de ses membres.
+    defaut: []
+
   decote_par_la_duree_seule:
     description: >-
       La décote se compte-t-elle sur la SEULE durée manquante, l'âge

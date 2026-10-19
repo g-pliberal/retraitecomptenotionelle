@@ -115,6 +115,7 @@ periodes:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
+    duree_majoree_bornee_avec: [cancava_avant_1973]
     avantages_non_contributifs:
       [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
        reversion, periodes_assimilees]
@@ -157,6 +158,7 @@ periodes:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: null
     duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
+    duree_majoree_bornee_avec: [cancava_avant_1973]
     avantages_non_contributifs:
       [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,
        reversion, periodes_assimilees]
@@ -194,6 +196,7 @@ periodes:
     surcote_par_trimestre: 0.0075
     duree_majoree_apres_taux_plein: majoration_duree_apres_65_ans
     duree_majoree_tous_regimes: majoration_duree_apres_65_ans
+    duree_majoree_bornee_avec: [cancava_avant_1973]
     surcote_bareme: surcote_regime_general
     avantages_non_contributifs:
       [minimum_contributif, minimum_vieillesse, majoration_enfants, mda,

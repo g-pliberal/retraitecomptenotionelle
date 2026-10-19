@@ -913,6 +913,7 @@ def _duree_majoree(p) -> dict:
     champs = {
         "duree_majoree_apres_taux_plein": p.duree_majoree_apres_taux_plein or None,
         "duree_majoree_tous_regimes": p.duree_majoree_tous_regimes or None,
+        "duree_majoree_bornee_avec": list(p.duree_majoree_bornee_avec) or None,
     }
     return {cle: valeur for cle, valeur in champs.items() if valeur is not None}
 

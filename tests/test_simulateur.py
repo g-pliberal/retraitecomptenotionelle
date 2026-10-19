@@ -4809,6 +4809,84 @@ def test_depuis_2004_la_duree_majoree_regarde_tous_les_regimes(simulateur):
     assert majores(regime_general=100, sncf=50) == 100
 
 
+def _durees_majorees_en_deux_moteurs(simulateur, construites: list[dict]) -> list[str]:
+    """Le détail de la pension en annuités de chacune des carrières
+    ``construites``, des chronologies complétées, dans les deux moteurs : le
+    JavaScript rend le même, ou le test échoue ; sans node, le Python seul."""
+    import json
+    import shutil
+    import subprocess
+
+    details = [next(
+        p.detail for p in simulateur.scenario_actuel.calculer(
+            Carriere.depuis_chronologie(construite, simulateur.macro)).pensions_par_regime
+        if p.type_calcul == "annuites") for construite in construites]
+    if shutil.which("node") is None:
+        return details
+    script = """
+import { readFileSync } from "node:fs";
+import { Carriere } from "./moteur/js/carriere.js";
+import { Contexte } from "./moteur/js/contexte.js";
+const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
+const simulateur = contexte.simulateur();
+process.stdout.write(JSON.stringify(JSON.parse(process.argv[1]).map((construite) =>
+  simulateur.scenarioActuel.calculer(Carriere.depuisChronologie(construite, simulateur.macro))
+    .pensions_par_regime.find((p) => p.type_calcul === "annuites").detail)));
+"""
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", script, json.dumps(construites)],
+        cwd=RACINE_TEMOINS.parent.parent, capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    assert json.loads(execution.stdout) == details
+    return details
+
+
+def test_les_annees_d_avant_1973_bornent_la_duree_majoree_des_independants(simulateur):
+    """La majoration des artisans et commerçants « est applicable aux
+    trimestres d'assurance postérieurs au 31 décembre 1972 », « sans que cette
+    majoration puisse avoir pour effet de porter au-delà de 150 trimestres la
+    durée totale des périodes d'assurance antérieures au 1er janvier 1973 et
+    postérieures au 31 décembre 1972 », le total arrondi au trimestre
+    supérieur (D. 634-5, rédaction du 1er janvier 1990) ; au-delà de la durée
+    du troisième alinéa de L. 351-1 depuis 2009. L'artisan né en mai 1928,
+    entré à trente-sept ans et parti le 1er juin 1996 : 93 trimestres d'après
+    1972, douze d'ajournement, 93 × 1,3 = 120,9, soit 121, quand ses 30
+    trimestres d'avant 1973 n'en laissent que 120 ; de même du commerçant. La
+    borne suit les régimes qui leur succèdent : le commerçant né en 1940,
+    entré en 1965, sans activité de 1973 à 1984 et parti à soixante-dix ans,
+    au RSI, 101 trimestres majorés de 50 % et 30 d'avant 1973, 120 et non
+    150 ; l'artisan né en 1952, entré à dix-huit ans, sans activité de 1973 à
+    1989, que le régime général liquide en 2022, 129 trimestres et 10 d'avant
+    1973, 154 et non 164. Le régime général ne la connaît pas : l'artisan
+    d'avant 1973 devenu salarié garde ses 121 trimestres. Dans les deux
+    moteurs."""
+    from retraite_notionnelle import chronologie
+
+    def construite(naissance, metiers, age, sans_activite=()):
+        return chronologie.completer(chronologie.du_parcours(
+            annee_naissance=naissance, sexe="H", mois_naissance=5, age_liquidation=age,
+            metiers=[Metier(affiliation, debut, 1.0) for affiliation, debut in metiers],
+            interruptions={annee: "inactivite" for annee in sans_activite} or None))
+
+    details = _durees_majorees_en_deux_moteurs(simulateur, [
+        construite(1928, [("artisan", 37)], 68),
+        construite(1928, [("commercant", 37)], 68),
+        construite(1940, [("commercant", 25)], 70, range(1973, 1985)),
+        construite(1952, [("artisan", 18)], 70, range(1973, 1990)),
+        construite(1928, [("artisan", 37), ("salarie_prive_non_cadre", 44 + 8 / 12)], 68),
+    ])
+    majores = "trimestres majorés après l'âge du taux plein"
+    assert details[0].endswith(f"× 120/150, 93 {majores}")
+    assert details[1].endswith(f"× 120/150, 93 {majores}")
+    assert details[2].endswith(
+        f"× 120/150, 101 {majores}, 2 caisses liquidées ensemble (organic puis rsi)")
+    assert details[3].endswith(
+        f"× 154/164, 129 {majores}, 3 caisses liquidées ensemble "
+        "(cancava, rsi puis regime_general)")
+    assert details[4].endswith(f"× 121/150, 93 {majores}")
+
+
 def test_la_tranche_c_d_avant_2016_garde_le_coefficient_pour_age(simulateur):
     """L'exonération au taux plein ne vaut que « sur les tranches A et B des
     rémunérations » (accords du 13 novembre 2003 et du 18 mars 2011) : les
