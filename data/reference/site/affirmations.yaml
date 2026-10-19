@@ -1205,16 +1205,16 @@ affirmations:
 
   - id: cout.borne_basse
     page: /cout
-    extrait: "Les chiffres de la proposition ont une fourchette, étroite."
+    extrait: "Les chiffres de la proposition sont la plus favorable de deux lectures."
     porte: >-
-      la dette et le solde moyen de la proposition sous la seconde lecture ne
-      s'écartent de ceux de la page que de dix points de PIB et d'un quart de
-      point par an au plus, dans un sens ou dans l'autre — seize points et un
-      peu plus d'un quart de point depuis que chaque cohorte de la grille part
-      l'année du droit de sa génération (action 138, étape 3)
-    etat: contredite
-    action: 138
-    controle: fourchette_elargie
+      sur les quatre chiffres que le dépliant des quatre systèmes donne de la
+      proposition — sa dépense de l'horizon, son solde moyen des années
+      projetées, son coefficient d'équilibre et sa dette de l'horizon —, la
+      seconde lecture, où l'écart du modèle au COR tient tout entier au système
+      actuel, lui est moins favorable que celle de la page : plus de dépense, un
+      solde et un coefficient plus bas, plus de dette
+    etat: verifiee
+    controle: fourchette_favorable
 
   - id: cout.depense_officielle
     page: /cout

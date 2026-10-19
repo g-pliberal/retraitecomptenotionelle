@@ -9936,20 +9936,21 @@ function coutFourchette(contexte) {
   const plusBasse = avenir.projetees().reduce(
     (bas, ligne) => (ligne.derive < bas.derive ? ligne : bas), horizon);
   // Les années où la dérive passe sous un, les seules où la seconde lecture
-  // allège la proposition (2026 à 2028 depuis l'étape 19 de l'action 147).
+  // allège la proposition (2026 à 2028 depuis l'étape 19 de l'action 147,
+  // 2026 seule depuis le 18 octobre 2026, action 138, étape 3).
   const sous = avenir.projetees().filter((ligne) => ligne.derive < 1)
     .map((ligne) => ligne.annee);
-  const periodeSous = sous.length === 1 ? `en ${sous[0]}`
-    : `de ${sous[0]} à ${sous[sous.length - 1]}`;
+  const allege = sous.length === 1
+    ? `qu'en ${sous[0]}, de ${g.pourcentage(1 - plusBasse.derive, false, 1)}`
+    : `que de ${sous[0]} à ${sous[sous.length - 1]}, de
+${g.pourcentage(1 - plusBasse.derive, false, 1)} au plus en ${plusBasse.annee}`;
   const phraseSecondeLecture = sous.length === 0
     ? `La seconde lecture borne donc la proposition par le haut : elle
 l'alourdit chaque année, de ${g.pourcentage(horizon.derive - 1, false, 1)} en
 ${fin}.`
-    : `La seconde lecture redevient donc, à peu de chose près, la borne haute
-de la proposition : elle ne l'allège que ${periodeSous}, de
-${g.pourcentage(1 - plusBasse.derive, false, 1)} au plus en ${plusBasse.annee},
-et l'alourdit ensuite, de ${g.pourcentage(horizon.derive - 1, false, 1)} en
-${fin}.`;
+    : `La seconde lecture est donc, à peu de chose près, la borne haute de la
+proposition : elle ne l'allège ${allege}, et l'alourdit ensuite, de
+${g.pourcentage(horizon.derive - 1, false, 1)} en ${fin}.`;
   const scenario = "notionnel_liberal";
   const moyenne = (bilan) => bilan.soldeMoyen(scenario, debut, bilan.derniereAnnee);
   const lignes = [
@@ -9984,8 +9985,8 @@ carrières françaises courtes, qui tirent vers la première. La page suit trois
 de ses hypothèses, sur l'Agirc-Arrco, les primes et l'entrée tardive des
 fonctionnaires dans leur régime, et la masse de chaque génération porte les
 carrières courtes de ceux qui sont arrivés en France adultes : l'écart qui
-reste est petit, et il change de signe. ${phraseSecondeLecture} La vérité est
-entre les deux colonnes, qui se tiennent de près.</p>
+reste est de quelques points. ${phraseSecondeLecture} La vérité est entre les
+deux colonnes.</p>
 ${g.tableau(
     ["La proposition libérale", "Si l'écart est partagé (cette page)",
       "Si l'écart est propre au système actuel"],
@@ -13067,14 +13068,16 @@ peut ni changer ni lire ailleurs.</p>
   qui ne s'écartent du central que par une composante, sous « Si l'on vit plus
   ou moins longtemps » et « Naissances et migrations » ; les dix qui en
   croisent plusieurs n'y sont pas.</li>
-  <li><strong>Les chiffres de la proposition ont une fourchette, étroite.</strong>
-  Le rapport de masses que la page prend au modèle porte l'écart de sa propre
-  trajectoire à celle du COR, qui n'est plus que de quelques points : si cet
-  écart tenait tout entier au système actuel, la dette de la proposition en
-  ${c.dette.derniereAnnee} serait de
+  <li><strong>Les chiffres de la proposition sont la plus favorable de deux
+  lectures.</strong> Le rapport de masses que la page prend au modèle porte
+  l'écart de sa propre trajectoire à celle du COR, qui atteint
+  ${g.pourcentage(avenir.annee(avenir.derniereAnnee).derive - 1, false, 0)} en
+  ${avenir.derniereAnnee} : si cet écart tenait tout entier au système actuel,
+  la dette de la proposition en ${c.dette.derniereAnnee} serait de
   ${g.pourcentage(c.detteDerive.horizon("notionnel_liberal"), false, 0)} du PIB
-  et non de ${g.pourcentage(c.dette.horizon("notionnel_liberal"), false, 0)}.
-  Le dépliant des quatre systèmes donne les deux lectures.</li>
+  et non de ${g.pourcentage(c.dette.horizon("notionnel_liberal"), false, 0)}. La
+  vérité est entre les deux, que le dépliant des quatre systèmes donne côte à
+  côte.</li>
   <li><strong>Les réserves d'aujourd'hui ne sont pas comptées.</strong> Le
   système de retraite détient des réserves financières que le COR chiffre à
   part ; un solde annuel négatif peut être couvert par elles pendant des

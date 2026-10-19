@@ -188,8 +188,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->1713<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->8 814<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->1714<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->8 816<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Neuf pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -974,8 +974,8 @@ serait si tous travaillaient, ou aucun. Le scénario accumule en
 2070 une dette de <!--chiffre:mesure(dette?scenario=6)-->76<!--/--> % du PIB, <!--chiffre:mesure(dette?scenario=6&en=milliards)-->2271<!--/--> Md€, contre <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le
 système actuel, <!--chiffre:mesure(dette?scenario=1&en=milliards)-->1 976<!--/--> Md€.
 
-**Ces chiffres de la proposition ont une fourchette, étroite.** Ils
-appliquent à la dépense du COR le rapport de masses du modèle, et ce rapport
+**Ces chiffres de la proposition sont la plus favorable de deux lectures.**
+Ils appliquent à la dépense du COR le rapport de masses du modèle, et ce rapport
 porte l'écart de la trajectoire propre du modèle à celle du COR
 (`docs/limites.md` § 5 ter) : quelques points, depuis que la masse de chaque
 génération porte les carrières françaises courtes de ceux qui sont arrivés en

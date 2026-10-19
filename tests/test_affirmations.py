@@ -2182,25 +2182,26 @@ def _(m: Modele):
         assert _proche(ligne.solde("actuel"), basse.solde("actuel"))
 
 
-@controle("fourchette_elargie")
+@controle("fourchette_favorable")
 def _(m: Modele):
-    # Jusqu'à l'étape 11 de l'action 147, la seconde lecture alourdissait
-    # toujours la proposition : c'était la borne haute. La dérive passant sous
-    # un au milieu de la période, elle l'a allégée en moyenne ; ce qui se
-    # contrôlait était l'étroitesse de la fourchette, dans les deux sens : dix
-    # points de PIB de dette en 2070, un quart de point de solde moyen. Le 18
-    # octobre 2026, chaque cohorte de la grille partant l'année que le droit de
-    # sa génération lui donne (action 138, étape 3), la dérive de 2070 passe de
-    # 1,033 à 1,050, et la fourchette s'élargit à seize points de dette et un
-    # quart de point passé : la page, qui la dit étroite, est à revoir. Le
-    # contrôle tombe quand la fourchette se resserre.
+    # Les quatre lignes du tableau de la fourchette : la seconde lecture y
+    # alourdit la proposition, la page en donne le côté favorable. Elle l'a
+    # été jusqu'à l'étape 11 de l'action 147, ne l'était plus de l'étape 14 à
+    # l'étape 18, la dérive passant sous un au milieu de la période — la page
+    # disait alors la fourchette étroite —, et l'est redevenue : depuis le 18
+    # octobre 2026, la dérive ne passe plus sous un qu'en 2026, d'un millième,
+    # et la fourchette s'est élargie à seize points de dette (action 138,
+    # étape 3). Une dérive qui repasserait sous un ferait tomber la phrase.
+    scenario = "notionnel_liberal"
     haut = m.cout.solde_derive
-    debut, fin = haut.premiere_annee_projetee, haut.derniere_annee
-    dette = abs(m.cout.dette_derive.horizon("notionnel_liberal")
-                - m.cout.dette.horizon("notionnel_liberal"))
-    solde = abs(haut.solde_moyen("notionnel_liberal", debut, fin) - m.solde.solde_moyen(
-        "notionnel_liberal", debut, fin))
-    assert dette > 0.10 or solde > 0.0025
+    debut, fin = m.solde.premiere_annee_projetee, m.solde.derniere_annee
+    horizon = m.cout.avenir.annee(fin)
+    assert horizon.part_pib_derive(scenario) > horizon.part_pib(scenario)
+    assert (haut.solde_moyen(scenario, debut, haut.derniere_annee)
+            < m.solde.solde_moyen(scenario, debut, fin))
+    assert (haut.annee(haut.derniere_annee).coefficient(scenario)
+            < m.horizon.coefficient(scenario))
+    assert m.cout.dette_derive.horizon(scenario) > m.cout.dette.horizon(scenario)
 
 
 @controle("trajectoire_du_cor")
