@@ -850,6 +850,36 @@ def carriere_de_la_grille(simulateur: Simulateur, cas: CasType, generation: int,
 
 
 @dans_un_instantane
+def carrieres_de_la_grille(
+    simulateur: Simulateur,
+    cas_types: tuple[CasType, ...] = CAS_TYPES,
+    generations: tuple[int, ...] = GENERATIONS,
+    liquidation: str = "droit",
+) -> tuple[dict[tuple[str, int], Carriere], dict[tuple[str, int], str]]:
+    """Les carrières de la grille, chacune partie à l'âge que le pilote lui
+    fixe, et déformée, sous les conventions de projection du COR, comme le COR
+    projette ses cas types (:func:`primes_projetees`, l'entrée tardive) ; puis
+    les motifs des cases que le droit écarte (:func:`carriere_de_la_grille`).
+    La grille du coût les fait simuler au portage, en données
+    (``pont.grille_du_cout``, action 161, étape 5)."""
+    if liquidation not in VARIANTES_LIQUIDATION:
+        raise ValueError(
+            f"variante de liquidation inconnue : {liquidation!r} "
+            f"(attendu : {VARIANTES_LIQUIDATION})"
+        )
+    carrieres: dict[tuple[str, int], Carriere] = {}
+    echecs: dict[tuple[str, int], str] = {}
+    for cas in cas_types:
+        for generation in generations:
+            try:
+                carrieres[(cas.code, generation)] = carriere_de_la_grille(
+                    simulateur, cas, generation, liquidation)
+            except (ValueError, KeyError) as erreur:
+                echecs[(cas.code, generation)] = str(erreur)
+    return carrieres, echecs
+
+
+@dans_un_instantane
 def cases_de_la_grille(
     simulateur: Simulateur,
     cas_types: tuple[CasType, ...] = CAS_TYPES,
@@ -861,20 +891,14 @@ def cases_de_la_grille(
     chacune, partie à l'âge que le pilote lui fixe ; puis les motifs des cases
     que le droit écarte (:func:`carriere_de_la_grille`). Sous les conventions
     de projection du COR, la carrière d'un cas type se déforme en Python
-    (:func:`primes_projetees`, l'entrée tardive) : rien ne passe."""
+    (:func:`primes_projetees`, l'entrée tardive) : ses options ne la disent
+    plus, et elle passe en données (:func:`carrieres_de_la_grille`)."""
     if simulateur.parametres.conventions_cor:
         raise ValueError("les conventions de projection du COR ne passent pas au portage")
-    options: dict[tuple[str, int], dict] = {}
-    echecs: dict[tuple[str, int], str] = {}
-    for cas in cas_types:
-        for generation in generations:
-            try:
-                carriere = carriere_de_la_grille(simulateur, cas, generation, liquidation)
-            except (ValueError, KeyError) as erreur:
-                echecs[(cas.code, generation)] = str(erreur)
-                continue
-            options[(cas.code, generation)] = cas.options(generation, carriere.age_liquidation)
-    return options, echecs
+    carrieres, echecs = carrieres_de_la_grille(simulateur, cas_types, generations, liquidation)
+    cas_de = {cas.code: cas for cas in cas_types}
+    return ({(code, generation): cas_de[code].options(generation, carriere.age_liquidation)
+             for (code, generation), carriere in carrieres.items()}, echecs)
 
 
 @dataclass(frozen=True)

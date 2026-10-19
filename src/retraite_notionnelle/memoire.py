@@ -511,6 +511,13 @@ def modele_modifie():
         _MODIFICATIONS -= 1
 
 
+def modele_intact() -> bool:
+    """Aucun remplacement du modèle n'est ouvert (:func:`modele_modifie`) : le
+    moteur Python est celui que le portage copie, et la grille du coût peut
+    passer le pont (``cout._par_le_portage``)."""
+    return not _MODIFICATIONS
+
+
 @contextmanager
 def lecture_seule():
     """Ne rend que ce qui est gardé ; le reste lève ``Absent`` au lieu de se

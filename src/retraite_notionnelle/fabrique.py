@@ -32,14 +32,15 @@ SANS_MEMOIRE = "FABRIQUE_SANS_MEMOIRE"
 #: ce que git y suit ou y verrait. Large à dessein : une entrée oubliée
 #: laisserait passer ici un fichier périmé, que GitHub seul verrait. Le paquet
 #: lit le moteur du portage, qui calcule une part de ses agrégats (action 161,
-#: étape 5), sauf le texte des pages, dont il ne prend qu'un extrait.
+#: étape 5), sauf le texte des pages, dont il ne prend qu'un extrait ; le
+#: chiffrage aussi, le coût faisant simuler sa grille au portage.
 ETAPES: dict[str, tuple[str, ...]] = {
     "paquet": ("src", "data", "scripts", "moteur/donnees.json", "moteur/js",
                ":(exclude)moteur/js/pages.js"),
     "témoins": ("src", "data", "scripts", "moteur", "index.html",
                 "tests/temoins/simulations.json", "tests/temoins/pages.json"),
-    "chiffrage": ("src", "data", "scripts", "docs/chiffrage_plf.md",
-                  "docs/chiffrage_plf.csv"),
+    "chiffrage": ("src", "data", "scripts", "moteur/js", ":(exclude)moteur/js/pages.js",
+                  "docs/chiffrage_plf.md", "docs/chiffrage_plf.csv"),
     "prose": ("src", "data", "scripts", "moteur", "index.html", "tests", "docs",
               "README.md", "CLAUDE.md"),
 }

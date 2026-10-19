@@ -57,6 +57,16 @@ def test_le_paquet_suit_le_moteur_du_portage_mais_pas_le_texte_des_pages():
     assert "moteur/js/pages.js" not in lus
 
 
+def test_le_chiffrage_suit_le_moteur_du_portage_mais_pas_le_texte_des_pages():
+    """La grille du coût se simule par le portage (action 161, étape 5) : une
+    retouche du moteur JavaScript refait le chiffrage, une retouche du texte
+    des pages non."""
+    lus = fabrique.fichiers("chiffrage")
+    assert {"moteur/js/simulateur.js", "moteur/js/libm.js",
+            "src/retraite_notionnelle/pont.mjs"} <= lus
+    assert "moteur/js/pages.js" not in lus
+
+
 def test_une_etape_retenue_est_a_jour_tant_que_rien_ne_bouge(monkeypatch, tmp_path):
     monkeypatch.setattr(fabrique, "FICHIER", tmp_path / "fabrique.json")
     empreintes = {"paquet": "a"}

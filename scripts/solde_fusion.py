@@ -226,26 +226,35 @@ class RegimeUniqueVariante:
     @staticmethod
     def _pensionnes(original):
         def pensionnes(simulateur, cas_types, liquidation="droit"):
-            # La grille est calculée une fois : ``_pensionnes`` la demande, et
-            # on la relit ici pour le compte du scénario 4 — taux réels avant
-            # la bascule, régime unique après, part totale.
-            memo: dict = {}
-            calculer = C.calculer_cas_types
+            # Le contexte remplace une fonction du moteur Python : la grille se
+            # simule donc par lui (``cout._par_le_portage``), une fois, et l'on
+            # garde au passage le compte du scénario 4 de chaque case — taux
+            # réels avant la bascule, régime unique après, part totale.
+            comptes: dict = {}
+            en_python = C._simulations_en_python
 
-            def memorisee(*args, **kwargs):
-                if "grille" not in memo:
-                    memo["grille"] = calculer(*args, **kwargs)
-                return memo["grille"]
-            C.calculer_cas_types = memorisee
+            def simulations(projection, cas, scenarios):
+                simuler = projection.simuler
+                cles = {id(un["carriere"]): un["cle"] for un in cas}
+
+                def gardee(carriere):
+                    comparaison = simuler(carriere)
+                    comptes[cles[id(carriere)]] = (
+                        comparaison.notionnel_retroactif_employeur.compte.cotisations)
+                    return comparaison
+                projection.simuler = gardee
+                try:
+                    return en_python(projection, cas, scenarios)
+                finally:
+                    del projection.simuler
+            C._simulations_en_python = simulations
             try:
                 pensionnes, motifs = original(simulateur, cas_types, liquidation)
-                grille = memorisee(simulateur, cas_types, C.generations(), liquidation)
             finally:
-                C.calculer_cas_types = calculer
+                C._simulations_en_python = en_python
             complets = []
             for pensionne in pensionnes:
-                comparaison = grille.resultats[(pensionne.code, pensionne.generation)]
-                lignes = comparaison.notionnel_retroactif_employeur.compte.cotisations
+                lignes = comptes[f"{pensionne.code}|{pensionne.generation}"]
                 cotisations = dict(pensionne.cotisations)
                 cotisations[FUSION] = {l.annee: l.cotisation for l in lignes}
                 cotisations[REVENU] = {l.annee: l.revenu for l in lignes}

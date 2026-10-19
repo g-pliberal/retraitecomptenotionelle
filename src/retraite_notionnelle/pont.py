@@ -33,9 +33,9 @@ from __future__ import annotations
 import dataclasses
 import enum
 import functools
-import importlib.util
 import json
 import math
+import os
 import shutil
 import subprocess
 import sys
@@ -158,25 +158,43 @@ def carriere_en_donnees(carriere) -> dict:
     return donnees
 
 
+#: Le programme qui bâtit le paquet des données du jour, dans un processus à lui.
+_BATIR_LE_PAQUET = """\
+import importlib.util, sys
+spec = importlib.util.spec_from_file_location("construire_donnees", sys.argv[1])
+module = importlib.util.module_from_spec(spec)
+sys.modules[spec.name] = module
+spec.loader.exec_module(module)
+sys.stdout.buffer.write(module.construire(b"{}", b"{}"))
+"""
+
+
 @functools.cache
 def paquet_des_donnees() -> bytes:
     """Le paquet des données du jour, tel que la fabrique l'écrira, sans le
     bilan ni les agrégats, que la simulation d'une carrière ne lit pas : celui
-    sur lequel le coût fait simuler sa grille. Il se construit une fois par
-    processus, depuis ``data/`` (``scripts/construire_donnees.py``), et ne se
-    lit pas dans ``moteur/donnees.json`` : une retouche des données n'y entre
-    qu'à la fabrique suivante, et la fabrique, qui l'écrit pendant que d'autres
-    étapes calculent le coût, le leur donnerait à demi écrit."""
-    nom = "_fabrique_du_paquet"
-    spec = importlib.util.spec_from_file_location(
-        nom, RACINE_PROJET / "scripts" / "construire_donnees.py")
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[nom] = module
-    try:
-        spec.loader.exec_module(module)
-        return module.construire(b"{}", b"{}")
-    finally:
-        del sys.modules[nom]
+    sur lequel le coût fait simuler sa grille.
+
+    Il ne se lit pas dans ``moteur/donnees.json`` : une retouche des données
+    n'y entre qu'à la fabrique suivante, et la fabrique, qui l'écrit pendant
+    que d'autres étapes calculent le coût, le leur donnerait à demi écrit. Il
+    se bâtit donc depuis ``data/``, une fois par processus, par la fabrique
+    elle-même (``scripts/construire_donnees.py``), dans un processus à elle,
+    comme node fait tourner le moteur JavaScript dans le sien : ce qu'elle lit
+    pour le site seul — les crédits des ministères, le manifeste des sources,
+    qu'aucun calcul ne lit — n'entre ni dans les mémoires des chargeurs de ce
+    processus-ci, ni dans le relevé de ce que lisent les calculs gardés
+    (``memoire.HORS_DU_MODELE``)."""
+    environnement = {**os.environ, "PYTHONPATH": os.pathsep.join(filter(None, (
+        str(RACINE_PROJET / "src"), os.environ.get("PYTHONPATH"))))}
+    execution = subprocess.run(
+        [sys.executable, "-c", _BATIR_LE_PAQUET,
+         str(RACINE_PROJET / "scripts" / "construire_donnees.py")],
+        cwd=RACINE_PROJET, env=environnement, capture_output=True, check=False)
+    if execution.returncode != 0:
+        raise RuntimeError("le paquet des données du jour ne se bâtit pas : "
+                           + execution.stderr.decode("utf-8", "replace").strip()[-2000:])
+    return execution.stdout
 
 
 def _serie(paires) -> dict[int, float]:

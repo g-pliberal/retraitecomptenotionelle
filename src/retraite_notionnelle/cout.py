@@ -134,20 +134,22 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass, field, replace
+from pathlib import Path
 from typing import Callable, Sequence
 
-from .config import ModeIndexation
+from . import memoire, pont
+from .config import RACINE_DONNEES, ModeIndexation
 from .castypes import (
     GRILLE_DU_COUT,
     VARIANTES_LIQUIDATION,
     CasType,
-    calculer_cas_types,
     carriere_de_la_grille,
+    carrieres_de_la_grille,
     poids_effectifs,
     poids_egaux,
 )
 from .donnees.assiette import AssietteActivite
-from .donnees.chargement import Fiabilite, SerieAnnuelle
+from .donnees.chargement import Fiabilite, SerieAnnuelle, dans_un_instantane
 from .donnees.depenses import DepensesRetraite
 from .donnees.distribution import (
     DistributionPensions,
@@ -2253,10 +2255,108 @@ def _simulations_en_python(simulateur: Simulateur, cas: list[dict], scenarios,
     return resultats, echecs
 
 
+def _par_le_portage(parametres) -> bool:
+    """La grille du coût se simule-t-elle par le portage (action 161, étape 5) ?
+
+    Oui, le modèle intact et sur les données du dépôt : le portage calcule sur
+    leur paquet (``pont.paquet_des_donnees``). Non sous un contexte qui
+    remplace une fonction du moteur Python (``memoire.modele_modifie``, les
+    tests qui prennent ``monkeypatch``, ``scripts/solde_fusion.py``), ni sur des
+    données d'ailleurs, une copie que l'on a retouchée : le portage ne voit ni
+    l'un ni l'autre, et le moteur Python, le seul qui les voie, simule. Ce
+    n'est pas un repli : sans node, la grille du modèle intact s'arrête
+    (``pont.PontIndisponible``). Le retrait du moteur Python (étape 6) devra
+    leur trouver un autre chemin."""
+    try:
+        du_depot = Path(parametres.racine_donnees).resolve() == RACINE_DONNEES.resolve()
+    except OSError:
+        du_depot = False
+    return du_depot and memoire.modele_intact()
+
+
+def _simulations(simulateur: Simulateur, cas: list[dict],
+                 ) -> tuple[dict[str, dict], dict[str, str]]:
+    """Les cases de la grille simulées, par le portage ou par le moteur Python
+    (:func:`_par_le_portage`) : le même contrat des deux côtés
+    (:func:`_simulations_en_python`, ``pont.grille_du_cout``)."""
+    scenarios = [cle for cle, _ in SCENARIOS]
+    if _par_le_portage(simulateur.parametres):
+        return pont.grille_du_cout(cas, scenarios, simulateur.parametres,
+                                   pont.paquet_des_donnees())
+    return _simulations_en_python(simulateur, cas, scenarios)
+
+
+#: Les carrières sur lesquelles le coût calcule la proposition seule, hors de la
+#: comparaison du couple (:func:`_propositions`) : l'attente de l'âge légal sans
+#: activité, et l'autre côté de la bascule, sans report ou reporté.
+ATTENTE, SANS_REPORT, REPORTEE = "attente", "sans_report", "reportee"
+
+
+def _propositions(simulateur: Simulateur, carriere, departs: tuple[int, ...]) -> dict:
+    """Les carrières, nommées, sur lesquelles le coût calcule la proposition
+    seule pour ce couple, sa grille partie avec ``carriere`` et ses cohortes
+    les années de ``departs`` : celle qui attend l'âge légal sans activité,
+    pour la part des reportés qui ne travaillent pas (:func:`_reporte`) ; et,
+    quand la bascule passe entre ses cohortes, celle de l'autre côté
+    (:func:`_autre_volet`) — la carrière elle-même, sans report, quand la
+    grille part après la bascule, sinon la carrière reportée à l'âge légal.
+    Rien quand l'âge légal ne reporte pas ce départ-là. Le Python les
+    construit, le portage les simule avec la grille."""
+    parametres = simulateur.parametres
+    age_legal = parametres.age_legal_liberal
+    if age_legal is None:
+        return {}
+    macro = simulateur.macro
+    reportee = carriere.prolongee(age_legal, macro)
+    if reportee is carriere:
+        return {}
+    bascule = parametres.annee_bascule
+    franchie = min(departs) < bascule <= max(departs)
+    propositions = {}
+    if parametres.part_reportes_en_emploi < 1.0 and (
+            carriere.annee_liquidation >= bascule or franchie):
+        propositions[ATTENTE] = carriere.prolongee(age_legal, macro, attente_travaillee=False)
+    if franchie:
+        if carriere.annee_liquidation >= bascule:
+            propositions[SANS_REPORT] = carriere
+        else:
+            propositions[REPORTEE] = reportee
+    return propositions
+
+
+@dans_un_instantane
+def _carrieres_du_cout(simulateur: Simulateur, cas_types: tuple[CasType, ...],
+                       liquidation: str) -> tuple[list[dict], dict, dict]:
+    """Ce que le Python construit de la grille, avant que rien ne se simule :
+    chaque case, sa carrière et celles de ses propositions
+    (:func:`_propositions`), sous sa clé et ses ``code`` et ``generation`` ;
+    les années où partent ses cinq cohortes (:func:`_departs`) ; puis les
+    motifs des cases que le droit écarte."""
+    carrieres, ecartees = carrieres_de_la_grille(simulateur, cas_types, generations(),
+                                                 liquidation)
+    cas_de = {cas.code: cas for cas in cas_types}
+    departs = {
+        (code, generation): _departs(simulateur, cas_de[code], generation,
+                                     carriere.annee_liquidation, liquidation)
+        for (code, generation), carriere in carrieres.items()
+    }
+    cas = [{"cle": f"{code}|{generation}", "code": code, "generation": generation,
+            "carriere": carriere,
+            "propositions": _propositions(simulateur, carriere, departs[(code, generation)])}
+           for (code, generation), carriere in carrieres.items()]
+    return cas, departs, ecartees
+
+
 def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
                 liquidation: str = "droit",
                 ) -> tuple[list[Pensionne], dict[str, int]]:
-    """Simule la grille et en tire, pour chaque couple, sa pension par système."""
+    """Simule la grille et en tire, pour chaque couple, sa pension par système.
+
+    Le Python construit chaque carrière — l'âge où le pilote la fait partir,
+    ce que le droit écarte, ce que les conventions du COR déforment — et celles
+    que la proposition fait partir ailleurs ; le portage les simule, en
+    données (:func:`_simulations`, action 161, étape 5) ; le Python en tire ce
+    que le coût lit."""
     # La page Coût se lit contre le COR : elle suit ses conventions de
     # projection (``Parametres.conventions_cor``), que le simulateur
     # individuel ne suit pas. Et son scénario 1 ne sert pas l'ASPA, que la
@@ -2265,20 +2365,8 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
     # l'exploitant agricole de 1890 à 1920, au libéral de 1885 à 1900, et
     # l'économie des années observées en était grossie (action 136).
     simulateur = simulateur.pour_la_projection()
-    grille = calculer_cas_types(simulateur, cas_types, generations(), liquidation)
-    # Ce que le droit en vigueur prélève sur chacune de ces carrières, année par
-    # année et sans bascule : le dénominateur du rapport de recettes. Un compte
-    # de plus par couple, soit un sixième de calcul en plus sur la grille. Ce
-    # qui est PRÉLEVÉ, et non ce qui est porté au compte : de l'État, le taux
-    # entier (voir ``Simulateur.constructeur_prelevement``).
-    reels = {
-        (code, generation): simulateur.constructeur_prelevement.construire(
-            comparaison.carriere,
-            annee_liquidation=comparaison.carriere.annee_liquidation,
-            annee_debut=comparaison.carriere.premiere_annee,
-        ).cotisations
-        for (code, generation), comparaison in grille.resultats.items()
-    }
+    cas, departs, ecartees = _carrieres_du_cout(simulateur, cas_types, liquidation)
+    simulees, refusees = _simulations(simulateur, cas)
     macro = simulateur.macro
     annee_euros = simulateur.parametres.annee_euros_constants
     bascule = simulateur.parametres.annee_bascule
@@ -2287,17 +2375,17 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
     # convention de projection, comme celles du COR que la page suit.
     carrieres = (CarrieresIncompletes(simulateur.parametres.racine_donnees)
                  if simulateur.parametres.conventions_cor else None)
-    cas_de = {cas.code: cas for cas in cas_types}
+    cas_de = {cas_type.code: cas_type for cas_type in cas_types}
     pensionnes = []
-    for (code, generation), comparaison in grille.resultats.items():
-        departs = _departs(simulateur, cas_de[code], generation,
-                           comparaison.carriere.annee_liquidation, liquidation)
-        propre = _volet(comparaison.carriere_de("notionnel_liberal"),
-                        comparaison.notionnel_liberal,
-                        comparaison.coefficient_de("notionnel_liberal"))
-        if comparaison.depart_reporte:
-            propre = _reporte(simulateur, comparaison.carriere, propre, macro,
-                              annee_euros)
+    for un in cas:
+        simulee = simulees.get(un["cle"])
+        if simulee is None:
+            continue
+        carriere, code, generation = un["carriere"], un["code"], un["generation"]
+        propositions = simulee["propositions"]
+        propre = _volet(simulee["liberal"], simulee["coefficient_liberal"])
+        if simulee["depart_reporte"]:
+            propre = _reporte(simulateur, propre, propositions, annee_euros)
         # Ce que la proposition sert à une cohorte partie avant la bascule :
         # la pension du scénario dont elle part, le 4, ou le 5 quand on la
         # range parmi les réformes prospectives — ce que fait
@@ -2305,22 +2393,15 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
         depart_avant = ("notionnel_prospectif_employeur"
                         if "notionnel_liberal" in CLES_PROSPECTIVES
                         else "notionnel_retroactif_employeur")
-        autre = _autre_volet(
-            simulateur, comparaison.carriere, propre, macro, annee_euros, bascule,
-            comparaison.en_euros_constants(
-                getattr(comparaison, depart_avant).pension_annuelle, depart_avant),
-            departs)
+        autre = _autre_volet(simulateur, carriere, propre, macro, annee_euros, bascule,
+                             simulee["pensions"][depart_avant],
+                             departs[(code, generation)], propositions)
         pensionnes.append(Pensionne(
             code=code,
             generation=generation,
-            annee_liquidation=comparaison.carriere.annee_liquidation,
+            annee_liquidation=carriere.annee_liquidation,
             pensions={
-                **{
-                    scenario: comparaison.en_euros_constants(
-                        getattr(comparaison, scenario).pension_annuelle, scenario
-                    )
-                    for scenario, _ in SCENARIOS
-                },
+                **{scenario: simulee["pensions"][scenario] for scenario, _ in SCENARIOS},
                 # Le scénario 6 est ramené à sa part CONTRIBUTIVE : la garantie
                 # est financée par l'impôt, elle ne pèse pas sur le compte des
                 # cotisants, et la porter dans les deux lignes reviendrait à la
@@ -2337,15 +2418,18 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
             propre=propre,
             autre=autre,
             bascule=bascule,
-            parts_regimes=_parts_regimes(comparaison.actuel),
+            parts_regimes=_parts_regimes(simulee["pension_actuelle"],
+                                         simulee["pensions_par_regime"]),
             completudes=() if carrieres is None else tuple(
                 carrieres.completude(generation + decalage)
                 for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1)),
-            survies=_survies(simulateur, comparaison, generation, departs,
-                             cas_de[code].mortalite),
-            departs=departs,
+            survies=_survies(simulateur, simulee["population"], generation,
+                             departs[(code, generation)], cas_de[code].mortalite),
+            departs=departs[(code, generation)],
             cotisations={
-                # Le dénominateur ne peut pas être le compte du scénario 4.
+                # Ce que le droit en vigueur prélève sur la carrière, année par
+                # année et sans bascule : le dénominateur du rapport de
+                # recettes. Il ne peut pas être le compte du scénario 4.
                 # Celui-là fusionne les régimes à la bascule et prélève ensuite
                 # le taux du statut pivot privé pour TOUT LE MONDE : c'est déjà
                 # une réforme, et la comparer au scénario 6 reviendrait à
@@ -2353,18 +2437,21 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
                 # VIGUEUR prélèverait, régime par régime, sur les mêmes
                 # carrières et jusqu'en 2070 — c'est-à-dire le même compte
                 # SANS régime fusionné.
-                TAUX_REELS: {
-                    ligne.annee: ligne.cotisation
-                    for ligne in reels[(code, generation)]
-                },
+                TAUX_REELS: dict(simulee["prelevement"]),
                 # Les revenus d'activité aux âges du droit en vigueur ; ceux
                 # de la proposition sont dans ses volets.
-                ASSIETTE_ACTUELLE: _revenus_activite(comparaison.carriere),
+                ASSIETTE_ACTUELLE: _revenus_activite(carriere),
             },
         ))
+    # Les motifs dans l'ordre de la grille, que le droit écarte une case ou
+    # que la simulation la refuse.
     motifs: dict[str, int] = {}
-    for motif in grille.echecs.values():
-        motifs[motif] = motifs.get(motif, 0) + 1
+    for un_cas in cas_types:
+        for generation in generations():
+            motif = ecartees.get((un_cas.code, generation),
+                                 refusees.get(f"{un_cas.code}|{generation}"))
+            if motif is not None:
+                motifs[motif] = motifs.get(motif, 0) + 1
     return pensionnes, motifs
 
 
@@ -2409,12 +2496,14 @@ def _carrieres_voisines(simulateur: Simulateur, cas: CasType, generation: int,
         yield decalage, carriere
 
 
-def _survies(simulateur: Simulateur, comparaison, generation: int,
+def _survies(simulateur: Simulateur, population: str | None, generation: int,
              departs: tuple[int, ...], propre: str = "") -> tuple[tuple[float, ...], ...]:
     """La survie des cinq cohortes d'un couple, rapportée à celle de la
     population générale, année par année depuis leur liquidation
     (:attr:`Pensionne.survies`, action 138, étape 7), chacune à l'âge et
-    l'année où elle part (``departs``). ``propre`` nomme la population d'un
+    l'année où elle part (``departs``). ``population`` est celle que le
+    diviseur rattache à sa carrière, telle que la simulation la rend, ou
+    ``None`` sous la table commune. ``propre`` nomme la population d'un
     cas type qui ne vit pas comme celle de son diviseur
     (:attr:`~retraite_notionnelle.castypes.CasType.mortalite`) : l'inapte,
     qui vit comme les inaptes de la Cnav, et non comme le vingtile de son
@@ -2433,9 +2522,6 @@ def _survies(simulateur: Simulateur, comparaison, generation: int,
     Elles disent qui survit, et non combien : les masses les alignent sur la
     pyramide (:func:`_survies_alignees`).
     """
-    carriere = comparaison.carriere
-    population = simulateur.convertisseur.population_pour_pension(
-        comparaison.actuel.pension_annuelle, carriere.annee_liquidation, carriere)
     if population is None:
         return ()
     population = propre or population
@@ -2451,15 +2537,16 @@ def _survies(simulateur: Simulateur, comparaison, generation: int,
     return tuple(survies)
 
 
-def _parts_regimes(resultat) -> dict[str, float]:
-    """La part de la pension du scénario 1 que sert chaque régime."""
-    if resultat.pension_annuelle <= 0.0:
+def _parts_regimes(pension_annuelle: float,
+                   pensions_par_regime: list[tuple[str, float]]) -> dict[str, float]:
+    """La part de la pension du scénario 1, ``pension_annuelle``, que sert
+    chaque régime, de ses pensions ``(régime, montant)``."""
+    if pension_annuelle <= 0.0:
         return {}
     parts: dict[str, float] = {}
-    for pension in resultat.pensions_par_regime:
-        if pension.montant > 0.0:
-            parts[pension.regime] = (parts.get(pension.regime, 0.0)
-                                     + pension.montant / resultat.pension_annuelle)
+    for regime, montant in pensions_par_regime:
+        if montant > 0.0:
+            parts[regime] = parts.get(regime, 0.0) + montant / pension_annuelle
     return parts
 
 
@@ -2541,30 +2628,33 @@ def _revenus_activite(carriere) -> dict[int, float]:
     return {ligne.annee: ligne.revenu for ligne in carriere.lignes if ligne.cotise}
 
 
-def _volet(carriere, liberal, coefficient: float) -> VoletLiberal:
-    """La proposition d'un couple pour un départ : celui de ``carriere``.
+def _volet(brut: dict, coefficient: float) -> VoletLiberal:
+    """La proposition d'un couple pour un départ, de ce que la simulation en
+    rend (:func:`_volet_brut`) : les flux du pilier capitalisé, en euros
+    courants, et sa rente, brute — le capital divisé par le diviseur — puis
+    nette de ses frais.
 
     ``coefficient`` passe les euros de SON année de liquidation aux euros
     constants.
     """
-    garantie = liberal.garantie_vieillesse
+    garantie, pilier = brut["garantie"], brut["pilier"]
     return VoletLiberal(
-        annee_liquidation=carriere.annee_liquidation,
-        annee_ouverture_garantie=garantie.annee_ouverture,
-        pension=garantie.pension_contributive * coefficient,
-        ressources_garantie=garantie.ressources * coefficient,
-        cotisations={ligne.annee: ligne.cotisation
-                     for ligne in liberal.compte.cotisations},
-        assiette=_revenus_activite(carriere),
-        pilier=_flux_pilier(liberal),
-        rente_pilier=_rente_pilier(liberal),
-        rente_garantie=garantie.rente_capitalisee * coefficient,
+        annee_liquidation=brut["annee_liquidation"],
+        annee_ouverture_garantie=garantie["annee_ouverture"],
+        pension=garantie["pension_contributive"] * coefficient,
+        ressources_garantie=garantie["ressources"] * coefficient,
+        cotisations=dict(brut["cotisations"]),
+        assiette=dict(brut["revenus"]),
+        pilier={} if pilier is None else dict(pilier["annees"]),
+        rente_pilier=((0.0, 0.0) if pilier is None
+                      else (pilier["capital"] / pilier["diviseur"], pilier["rente_annuelle"])),
+        rente_garantie=garantie["rente_capitalisee"] * coefficient,
     )
 
 
 def _autre_volet(simulateur: Simulateur, carriere, propre: VoletLiberal, macro,
                  annee_euros: int, bascule: int, pension_d_avant: float,
-                 departs: tuple[int, ...]) -> VoletLiberal | None:
+                 departs: tuple[int, ...], propositions: dict) -> VoletLiberal | None:
     """La proposition de l'autre côté de la bascule, si une cohorte y tombe.
 
     Une génération de la grille en représente cinq, qui partent chacune
@@ -2583,6 +2673,9 @@ def _autre_volet(simulateur: Simulateur, carriere, propre: VoletLiberal, macro,
     d'elle, report excepté : la dépense du scénario 6 s'écartait de celle du
     scénario 4 dès 2024, et la marche du taux unique ne valait plus rien
     l'année observée qu'à l'arrondi près.
+
+    La proposition de l'autre côté est simulée avec la grille, sur la carrière
+    que :func:`_propositions` a nommée pour ce couple.
     """
     if carriere.age_liquidation is None:
         return None
@@ -2597,17 +2690,16 @@ def _autre_volet(simulateur: Simulateur, carriere, propre: VoletLiberal, macro,
         if reportee is carriere:
             sans_report = propre
         else:
+            simulee = propositions[SANS_REPORT]
             sans_report = _volet(
-                carriere, simulateur.proposition(carriere),
-                macro.coefficient_prix(carriere.annee_liquidation, annee_euros))
+                simulee, macro.coefficient_prix(simulee["annee_liquidation"], annee_euros))
         return _avant_la_bascule(sans_report, pension_d_avant)
     if reportee is carriere:
         return None
     # La grille part avant : l'autre côté est celui d'après, à l'âge légal.
-    liberal = simulateur.proposition(reportee)
-    coefficient = macro.coefficient_prix(reportee.annee_liquidation, annee_euros)
-    return _reporte(simulateur, carriere, _volet(reportee, liberal, coefficient),
-                    macro, annee_euros)
+    simulee = propositions[REPORTEE]
+    coefficient = macro.coefficient_prix(simulee["annee_liquidation"], annee_euros)
+    return _reporte(simulateur, _volet(simulee, coefficient), propositions, annee_euros)
 
 
 def _avant_la_bascule(volet: VoletLiberal, pension: float) -> VoletLiberal:
@@ -2625,43 +2717,22 @@ def _avant_la_bascule(volet: VoletLiberal, pension: float) -> VoletLiberal:
                    rente_pilier=(0.0, 0.0), rente_garantie=0.0)
 
 
-def _reporte(simulateur: Simulateur, carriere, en_emploi: VoletLiberal, macro,
+def _reporte(simulateur: Simulateur, en_emploi: VoletLiberal, propositions: dict,
              annee_euros: int) -> VoletLiberal:
     """Le volet d'un départ que l'âge légal reporte, pour toute la cohorte.
 
     ``en_emploi`` est celui de qui travaille jusqu'à l'âge légal ; la part
     ``1 − Parametres.part_reportes_en_emploi`` attend sans activité, sur la
-    même carrière arrêtée à son départ d'avant, et liquide au même âge. Rien
-    ne se calcule de plus quand tous travaillent.
+    même carrière arrêtée à son départ d'avant, et liquide au même âge : la
+    proposition de l'attente, simulée avec la grille (:func:`_propositions`).
+    Rien ne se calcule de plus quand tous travaillent.
     """
     part = simulateur.parametres.part_reportes_en_emploi
     if part >= 1.0:
         return en_emploi
-    attente = carriere.prolongee(simulateur.parametres.age_legal_liberal, macro,
-                                 attente_travaillee=False)
-    coefficient = macro.coefficient_prix(attente.annee_liquidation, annee_euros)
-    sans_activite = _volet(attente, simulateur.proposition(attente), coefficient)
-    return en_emploi.melange(sans_activite, part)
-
-
-def _flux_pilier(liberal) -> dict[int, tuple[float, float, float, float]]:
-    """Les flux annuels du pilier capitalisé d'une carrière, en euros courants."""
-    pilier = liberal.capitalisation
-    if pilier is None or not pilier.actif:
-        return {}
-    return {
-        annee.annee: (annee.versement_brut, annee.frais_versement,
-                      annee.frais_gestion, annee.encours)
-        for annee in pilier.annees
-    }
-
-
-def _rente_pilier(liberal) -> tuple[float, float]:
-    """La rente du pilier d'une carrière, brute puis nette de ses frais."""
-    pilier = liberal.capitalisation
-    if pilier is None or not pilier.actif:
-        return (0.0, 0.0)
-    return (pilier.capital / pilier.conversion.diviseur, pilier.rente_annuelle)
+    attente = propositions[ATTENTE]
+    coefficient = simulateur.macro.coefficient_prix(attente["annee_liquidation"], annee_euros)
+    return en_emploi.melange(_volet(attente, coefficient), part)
 
 
 #: Demi-largeur de la tranche d'âges qu'une génération de la grille représente.
