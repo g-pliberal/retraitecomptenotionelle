@@ -767,6 +767,79 @@ def _points_d_avant_1997(avant_1997: dict, points: float, agricole: float,
     return moyenne, duree, max(0.0, minimum - moyenne) * duree * max(0.0, 1.0 - taux)
 
 
+def _service_et_forfait(moteur: ScenarioActuel, periode, regime: str, requis: int,
+                        quand: DateMois, an: int
+                        ) -> tuple[float, float, float, Fiabilite] | None:
+    """La valeur du point des non-salariés agricoles, celle d'une année de la
+    durée requise ``requis``, et la retraite forfaitaire d'une carrière
+    complète, au jour ``quand`` de l'année ``an``."""
+    valeur = liquider.valeur_du_point(moteur, periode.points_de or regime, quand)
+    if valeur is None and periode.valeur_point_euros is not None:
+        valeur = liquider.valeur_point_fiche(moteur, periode, an), Fiabilite.MOYENNE
+    if valeur is None or valeur[0] <= 0.0:
+        return None
+    return (valeur[0], valeur[0] * (37.5 / (requis / 4.0) if requis > 0 else 1.0),
+            periode.pension_forfaitaire_annuelle * moteur.macro.coefficient_prix(
+                periode.pension_forfaitaire_annee or an, an), valeur[1])
+
+
+def _retraite_proportionnelle(moteur: ScenarioActuel, periode, carriere: Carriere, eligible,
+                              pension: PensionRegime, trimestres: int, requis: int,
+                              forfait: float) -> float:
+    """La retraite proportionnelle de la liquidation : la pension avant
+    surcote, moins la part forfaitaire qu'elle porte, ``forfait`` au prorata de
+    ses ``trimestres`` hors ceux des années de chef à titre secondaire, que la
+    retraite forfaitaire ne compte pas (L. 732-28)."""
+    proratisation, _ = liquider.duree_proratisation(moteur, periode, carriere, requis)
+    au_forfait = min(max(0, trimestres - eligible.hors_forfait), proratisation)
+    part_forfaitaire = forfait * au_forfait / proratisation if proratisation > 0 else 0.0
+    return max(0.0, pension.montant / eligible.surcote - part_forfaitaire)
+
+
+#: Les points qu'une année de chef à titre secondaire sans forfait retranche
+#: des points au compte, avant que la durée de chef ne s'en reconstitue
+#: (D. 732-110, III).
+POINTS_D_UNE_ANNEE_SECONDAIRE = 15.0
+
+
+def duree_de_chef_reconstituee(moteur: ScenarioActuel, carriere: Carriere, eligible,
+                               pension: PensionRegime, trimestres: int) -> float | None:
+    """La durée de chef d'une pension prise avant 1997, en trimestres, que la
+    pension majorée de référence retient ; ``None`` pour une autre.
+
+    « Pour les personnes dont la pension de retraite servie à titre personnel
+    a pris effet avant le 1er janvier 1997, la durée d'assurance en qualité de
+    chef d'exploitation [...] est obtenue en divisant par 16 le nombre de
+    points de retraite figurant au compte de l'intéressé » avant les plans de
+    1997 à 2008, moins quinze points par année de chef à titre secondaire
+    sans le forfait ; au-delà de la durée agricole, elle « est ramenée à cette
+    durée [...] dans la limite » de DR (D. 732-110, III, décret n° 2009-173 ;
+    II depuis le décret n° 2021-1919). Les points sont ceux que la pension de
+    la liquidation porte hors son forfait, à la valeur du point de la
+    liquidation, comme les plans les lisent (:func:`_points_d_avant_1997`).
+    ``eligible`` est l':class:`~retraite_notionnelle.droit.liquider.EligibleAgricole`
+    du régime ; ``trimestres``, sa durée d'assurance."""
+    date_effet = date_d_effet(carriere)
+    if date_effet is None or date_effet >= PLANS_DE_1997 or pension.montant <= 0.0:
+        return None
+    periode = periode_de_liquidation(moteur.catalogue[pension.regime],
+                                     carriere.date_liquidation)
+    if periode is None or periode.pension_forfaitaire_annuelle is None:
+        return None
+    requis, _ = ouvrir.duree_requise(moteur, periode, carriere)
+    lus = _service_et_forfait(moteur, periode, pension.regime, requis,
+                              carriere.date_liquidation, carriere.annee_liquidation)
+    if lus is None:
+        return None
+    points = (_retraite_proportionnelle(moteur, periode, carriere, eligible, pension,
+                                        trimestres, requis, lus[2]) / lus[0]
+              - POINTS_D_UNE_ANNEE_SECONDAIRE * eligible.annees_hors_forfait)
+    reconstituee = 4.0 * max(0.0, points) / POINTS_D_UNE_ANNEE_RECONSTITUEE
+    if reconstituee > eligible.duree:
+        reconstituee = min(eligible.duree, eligible.reference)
+    return reconstituee
+
+
 def _minimum_vieillesse(moteur: ScenarioActuel, nom: str, annee: int
                         ) -> tuple[float, Fiabilite] | None:
     """Le minimum vieillesse d'une personne seule (MV1), ou l'écart entre celui
@@ -832,9 +905,10 @@ def majoration_retraite_proportionnelle(
 
     L'AVTS est la retraite forfaitaire d'une carrière complète, que le décret
     lui égale ; n se lit sur la retraite proportionnelle, la pension avant
-    surcote moins sa part forfaitaire, en points de la liquidation par année
-    de la durée agricole, trente-sept et demie au plus (fiche
-    ``majoration_retraite_proportionnelle``).
+    surcote moins sa part forfaitaire, qui ne compte pas les années de chef à
+    titre secondaire (:func:`_retraite_proportionnelle`), en points de la
+    liquidation par année de la durée agricole, trente-sept et demie au plus
+    (fiche ``majoration_retraite_proportionnelle``).
     ``eligible`` est l':class:`~retraite_notionnelle.droit.liquider.EligibleAgricole`
     du régime ; ``trimestres``, sa durée d'assurance.
 
@@ -897,22 +971,8 @@ def majoration_retraite_proportionnelle(
     if not chef_ouvert and not regle.get("conjoints"):
         return None
     requis, _ = ouvrir.duree_requise(moteur, periode, carriere)
-
-    def service_et_forfait(quand_point: DateMois, an: int
-                           ) -> tuple[float, float, float, Fiabilite] | None:
-        """La valeur du point, celle d'une année de la durée requise, et la
-        retraite forfaitaire d'une carrière complète, au jour ``quand_point``."""
-        valeur = liquider.valeur_du_point(moteur, periode.points_de or pension.regime,
-                                          quand_point)
-        if valeur is None and periode.valeur_point_euros is not None:
-            valeur = liquider.valeur_point_fiche(moteur, periode, an), Fiabilite.MOYENNE
-        if valeur is None or valeur[0] <= 0.0:
-            return None
-        return (valeur[0], valeur[0] * (37.5 / (requis / 4.0) if requis > 0 else 1.0),
-                periode.pension_forfaitaire_annuelle * moteur.macro.coefficient_prix(
-                    periode.pension_forfaitaire_annee or an, an), valeur[1])
-
-    lus = service_et_forfait(carriere.date_liquidation, annee)
+    lus = _service_et_forfait(moteur, periode, pension.regime, requis,
+                              carriere.date_liquidation, annee)
     if lus is None:
         return None
     point_au_depart, service, forfait, fiabilite = lus
@@ -920,7 +980,8 @@ def majoration_retraite_proportionnelle(
         point, service_servi, forfait_servi, an_servi = lus[0], service, forfait, annee
     else:
         an_servi = int(quand[:4])
-        servis = service_et_forfait(DateMois(an_servi, 1), an_servi)
+        servis = _service_et_forfait(moteur, periode, pension.regime, requis,
+                                     DateMois(an_servi, 1), an_servi)
         if servis is None:
             return None
         point, service_servi, forfait_servi, fiabilite_servie = servis
@@ -966,13 +1027,11 @@ def majoration_retraite_proportionnelle(
             return None
         minimum = lu[0]
         fiabilite = min(fiabilite, lu[1])
-    # La retraite proportionnelle : la pension avant surcote, moins sa part
-    # forfaitaire, en points de la liquidation par année agricole, trente-sept
-    # et demie au plus — une carrière complète de chef a ainsi le minimum.
-    proratisation, _ = liquider.duree_proratisation(moteur, periode, carriere, requis)
-    part_forfaitaire = (forfait * min(trimestres, proratisation) / proratisation
-                        if proratisation > 0 else 0.0)
-    proportionnelle = max(0.0, pension.montant / eligible.surcote - part_forfaitaire)
+    # La retraite proportionnelle, en points de la liquidation par année
+    # agricole, trente-sept et demie au plus — une carrière complète de chef a
+    # ainsi le minimum.
+    proportionnelle = _retraite_proportionnelle(moteur, periode, carriere, eligible, pension,
+                                                trimestres, requis, forfait)
     if avant_1997 is not None:
         # Les points au compte, à la valeur du point de la liquidation.
         revises = _points_d_avant_1997(avant_1997, proportionnelle / point_au_depart,
@@ -1259,6 +1318,10 @@ class ExploitantAgricole:
     #: la date d'effet : celle d'une pension prise de 2009 à 2021 se refait
     #: depuis 2022 à la règle unique (loi n° 2021-1679, article 1er, II).
     pmr: float = 0.0
+    #: La durée de chef d'une pension prise avant 1997, en trimestres, que ses
+    #: points au compte reconstituent pour la pension majorée de référence de
+    #: 2009 (:func:`duree_de_chef_reconstituee`) ; ``None`` pour une autre.
+    chef_reconstitue: float | None = None
 
 
 @dataclass(frozen=True)
@@ -2018,7 +2081,10 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
         exploitant = ExploitantAgricole(
             regime=base.regime, carriere=carriere, eligible=agricole,
             trimestres=durees.trimestres_par_regime.get(base.regime, 0),
-            pension=base, plans=proportionnelle)
+            pension=base, plans=proportionnelle,
+            chef_reconstitue=duree_de_chef_reconstituee(
+                moteur, carriere, agricole, base,
+                durees.trimestres_par_regime.get(base.regime, 0)))
         if proportionnelle is not None:
             base = replace(
                 base, montant=base.montant + proportionnelle.complement,

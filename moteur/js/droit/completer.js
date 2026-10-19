@@ -512,6 +512,79 @@ function pointsDAvant1997(avant1997, points, agricole, minimum) {
   return [moyenne, duree, Math.max(0.0, minimum - moyenne) * duree * Math.max(0.0, 1.0 - taux)];
 }
 
+/**
+ * La valeur du point des non-salariés agricoles, celle d'une année de la durée
+ * requise `requis`, la retraite forfaitaire d'une carrière complète au jour
+ * `quand` (DateMois) de l'année `an`, et leur fiabilité ; null sans valeur du
+ * point. Voir `_service_et_forfait` du Python.
+ */
+function serviceEtForfait(moteur, periode, regime, requis, quand, an) {
+  let valeur = liquider.valeurDuPoint(moteur, periode.points_de ?? regime, quand);
+  if (valeur === null && periode.valeur_point_euros !== null
+      && periode.valeur_point_euros !== undefined) {
+    valeur = [liquider.valeurPointFiche(moteur, periode, an), Fiabilite.MOYENNE];
+  }
+  if (valeur === null || valeur[0] <= 0.0) {
+    return null;
+  }
+  return [valeur[0], valeur[0] * (requis > 0 ? 37.5 / (requis / 4.0) : 1.0),
+    periode.pension_forfaitaire_annuelle * moteur.macro.coefficientPrix(
+      periode.pension_forfaitaire_annee ?? an, an), valeur[1]];
+}
+
+/**
+ * La retraite proportionnelle de la liquidation : la pension avant surcote,
+ * moins la part forfaitaire qu'elle porte, `forfait` au prorata de ses
+ * `trimestres` hors ceux des années de chef à titre secondaire. Voir
+ * `_retraite_proportionnelle` du Python.
+ */
+function retraiteProportionnelle(moteur, periode, carriere, eligible, pension, trimestres,
+  requis, forfait) {
+  const [proratisation] = liquider.dureeProratisation(moteur, periode, carriere, requis);
+  const auForfait = Math.min(Math.max(0, trimestres - (eligible.horsForfait ?? 0)),
+    proratisation);
+  const partForfaitaire = proratisation > 0 ? forfait * auForfait / proratisation : 0.0;
+  return Math.max(0.0, pension.montant / eligible.surcote - partForfaitaire);
+}
+
+/** Les points qu'une année de chef à titre secondaire sans forfait retranche
+ * des points au compte (D. 732-110, III). Voir le Python. */
+export const POINTS_D_UNE_ANNEE_SECONDAIRE = 15.0;
+
+/**
+ * La durée de chef d'une pension prise avant 1997, en trimestres, que la
+ * pension majorée de référence retient : les points au compte, moins quinze
+ * par année de chef à titre secondaire sans le forfait, divisés par seize,
+ * ramenés à la durée agricole quand ils la dépassent, DR au plus ; null pour
+ * une autre. Voir `duree_de_chef_reconstituee` du Python.
+ */
+export function dureeDeChefReconstituee(moteur, carriere, eligible, pension, trimestres) {
+  const dateEffet = dateDEffet(carriere);
+  if (dateEffet === null || dateEffet >= PLANS_DE_1997 || pension.montant <= 0.0) {
+    return null;
+  }
+  const periode = periodeDeLiquidation(moteur.catalogue.obtenir(pension.regime),
+    carriere.dateLiquidation);
+  if (periode === null || periode.pension_forfaitaire_annuelle === null
+      || periode.pension_forfaitaire_annuelle === undefined) {
+    return null;
+  }
+  const [requis] = ouvrir.dureeRequise(moteur, periode, carriere);
+  const lus = serviceEtForfait(moteur, periode, pension.regime, requis,
+    carriere.dateLiquidation, carriere.anneeLiquidation);
+  if (lus === null) {
+    return null;
+  }
+  const points = retraiteProportionnelle(moteur, periode, carriere, eligible, pension,
+    trimestres, requis, lus[2]) / lus[0]
+    - POINTS_D_UNE_ANNEE_SECONDAIRE * (eligible.anneesHorsForfait ?? 0);
+  let reconstituee = 4.0 * Math.max(0.0, points) / POINTS_D_UNE_ANNEE_RECONSTITUEE;
+  if (reconstituee > eligible.duree) {
+    reconstituee = Math.min(eligible.duree, eligible.reference);
+  }
+  return reconstituee;
+}
+
 /** Le détail de la majoration. Voir `detail_des_plans` du Python. */
 export function detailDesPlans(plans) {
   const parties = [];
@@ -637,23 +710,8 @@ export function majorationRetraiteProportionnelle(moteur, carriere, eligible, pe
     return null;
   }
   const [requis] = ouvrir.dureeRequise(moteur, periode, carriere);
-  // La valeur du point, celle d'une année de la durée requise, et la retraite
-  // forfaitaire d'une carrière complète, au jour `quandPoint`.
-  const serviceEtForfait = (quandPoint, an) => {
-    let valeur = liquider.valeurDuPoint(moteur, periode.points_de ?? pension.regime,
-      quandPoint);
-    if (valeur === null && periode.valeur_point_euros !== null
-        && periode.valeur_point_euros !== undefined) {
-      valeur = [liquider.valeurPointFiche(moteur, periode, an), Fiabilite.MOYENNE];
-    }
-    if (valeur === null || valeur[0] <= 0.0) {
-      return null;
-    }
-    return [valeur[0], valeur[0] * (requis > 0 ? 37.5 / (requis / 4.0) : 1.0),
-      periode.pension_forfaitaire_annuelle * moteur.macro.coefficientPrix(
-        periode.pension_forfaitaire_annee ?? an, an), valeur[1]];
-  };
-  const lus = serviceEtForfait(carriere.dateLiquidation, annee);
+  const lus = serviceEtForfait(moteur, periode, pension.regime, requis,
+    carriere.dateLiquidation, annee);
   if (lus === null) {
     return null;
   }
@@ -665,7 +723,8 @@ export function majorationRetraiteProportionnelle(moteur, carriere, eligible, pe
   let anServi = annee;
   if (quand !== null) {
     anServi = Number(quand.slice(0, 4));
-    const servis = serviceEtForfait(new DateMois(anServi, 1), anServi);
+    const servis = serviceEtForfait(moteur, periode, pension.regime, requis,
+      new DateMois(anServi, 1), anServi);
     if (servis === null) {
       return null;
     }
@@ -726,11 +785,8 @@ export function majorationRetraiteProportionnelle(moteur, carriere, eligible, pe
   }
   // La retraite proportionnelle, en points de la liquidation par année
   // agricole, trente-sept et demie au plus.
-  const [proratisation] = liquider.dureeProratisation(moteur, periode, carriere, requis);
-  const partForfaitaire = proratisation > 0
-    ? forfait * Math.min(trimestres, proratisation) / proratisation
-    : 0.0;
-  const proportionnelle = Math.max(0.0, pension.montant / eligible.surcote - partForfaitaire);
+  const proportionnelle = retraiteProportionnelle(moteur, periode, carriere, eligible, pension,
+    trimestres, requis, forfait);
   let moyenne;
   let duree;
   let points;
@@ -1835,6 +1891,8 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
       regime: base.regime, carriere, eligible: agricole,
       trimestres: durees.trimestresParRegime.get(base.regime) ?? 0,
       pension: base, plans: proportionnelle, pmr: 0.0,
+      chefReconstitue: dureeDeChefReconstituee(moteur, carriere, agricole, base,
+        durees.trimestresParRegime.get(base.regime) ?? 0),
     };
     if (proportionnelle !== null) {
       base = {

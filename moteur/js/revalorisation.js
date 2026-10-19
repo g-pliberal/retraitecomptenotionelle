@@ -1235,7 +1235,11 @@ export function reviserLesExploitants(moteur, resultat, datees, regimes, servie,
     const reglePmr = moteur.pensionMajoreeReference.regle(
       fin < DERNIERE_REGLE_DES_PENSIONS_PRISES_AVANT
         ? fin : DERNIERE_REGLE_DES_PENSIONS_PRISES_AVANT);
-    const majoree = pensionMajoree(moteur, carriere, exploitant.eligible,
+    // La durée de chef d'une pension prise avant 1997, celle que ses points
+    // au compte reconstituent (D. 732-110, III).
+    const eligible = (exploitant.chefReconstitue ?? null) === null ? exploitant.eligible
+      : { ...exploitant.eligible, chef: exploitant.chefReconstitue };
+    const majoree = pensionMajoree(moteur, carriere, eligible,
       { ...exploitant.pension, montant: base }, ressources, {
         quand: new DateMois(anneeFin, moisFin), regle: reglePmr,
         tauxPleinRequis: debut >= TAUX_PLEIN_DE_LA_PMR_DEPUIS, surcoteComprise: true,

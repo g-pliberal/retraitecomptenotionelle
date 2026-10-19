@@ -954,8 +954,15 @@ approximations:
     quand le décret ne dit pas sur quelles années d'une carrière plus longue la
     moyenne se prend —, au plancher de seize points en moyenne et non année par
     année ; les points d'années de conjoint ou d'aide familial y comptent ; les années d'avant 1990, que le moteur valorise au rendement faute de
-    barème, y entrent pour ce que vaut leur rendement
-  effet: non mesuré, faible quand toute la carrière agricole est de chef
+    barème, y entrent pour ce que vaut leur rendement. Depuis le 19 octobre 2026, la
+    part forfaitaire retirée de la pension ne compte plus les années de chef à titre
+    secondaire, que le forfait ne compte pas (L. 732-28) : elle les comptait, et n en
+    était trop bas
+  effet: >-
+    non mesuré, faible quand toute la carrière agricole est de chef ; le salarié chef à
+    titre secondaire de 1982 à 1985, puis à titre principal jusqu'en 2005 : n de 28,390
+    au lieu de 24,771, 148,40 points de plans au lieu de 220,78, 494,93 € par an au
+    lieu de 736,30 €
 - ecart: >-
     les années d'aide familial, que D. 732-113 et D. 732-144 ajoutent à la durée de chef
     dans la limite de quatre, n'y entrent pas : le statut du modèle ne distingue pas
@@ -1019,7 +1026,9 @@ approximations:
     année de 1997 à 2008 (pensions_prises_avant_1997 ; décret n° 97-163, article 2 ;
     décret n° 2002-297, article 5 ; D. 732-114 à D. 732-117), puis garde ses points de
     2008. Les points au compte sont la retraite proportionnelle de la liquidation, sa
-    part forfaitaire retirée, à la valeur du point de la liquidation : ceux des années
+    part forfaitaire retirée — celle des seules années que le forfait compte —, à la
+    valeur du point de la liquidation, comme la PMR de 2009 les lit pour la durée de
+    chef reconstituée (D. 732-110, III, fiche pension_majoree_reference) : ceux des années
     d'avant 1990, que le moteur valorise au rendement faute du barème des classes, y
     comptent pour ce que vaut leur rendement, et aucun plan n'y entre, le moteur ne
     servant pas celui de 1994. La minoration de quinze points par année de chef à titre
@@ -1130,6 +1139,10 @@ historique:
   (décret n° 97-163, article 2 ; décret n° 2002-297, article 5 ; D. 732-114 à
   D. 732-117), un paramètre pensions_prises_avant_1997 par version ; 29,23 points en
   2001, au rectificatif, et non 26,23.
+- >-
+  2026-10-19 — étape 138.8 : la part forfaitaire que la retraite proportionnelle
+  retranche ne compte plus les années de chef à titre secondaire sans forfait
+  (L. 732-28), dans les deux moteurs.
 reformes: []
 exemples: []
 effet: >-

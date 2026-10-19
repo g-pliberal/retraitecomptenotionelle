@@ -1211,7 +1211,8 @@ def reviser_les_exploitants(moteur, resultat, datees, regimes: list[RegimeServi]
     la pension de base, plans compris, surcote comprise (D. 732-112), écrêté au
     plafond de toutes les pensions et des majorations pour enfants ``enfants``
     (D. 732-114) ; le taux plein n'est exigé que des pensions prises depuis
-    2002 (D. 732-109, 2°).
+    2002 (D. 732-109, 2°). La durée de chef d'une pension prise avant 1997 est
+    celle que ses points au compte reconstituent (D. 732-110, III).
 
     LA PENSION MAJORÉE DE RÉFÉRENCE UNIQUE DE 2022, servie aux pensions prises
     depuis 2009 (loi n° 2021-1679, article 1er, II ; décret n° 2021-1919,
@@ -1281,8 +1282,12 @@ def reviser_les_exploitants(moteur, resultat, datees, regimes: list[RegimeServi]
                                                     DateMois(fin.year, fin.month)))
         regle = moteur.pension_majoree_reference.regle(
             min(fin, DERNIERE_REGLE_DES_PENSIONS_PRISES_AVANT).isoformat())
+        # La durée de chef d'une pension prise avant 1997, celle que ses
+        # points au compte reconstituent (D. 732-110, III).
+        eligible = (exploitant.eligible if exploitant.chef_reconstitue is None
+                    else replace(exploitant.eligible, chef=exploitant.chef_reconstitue))
         majoree = pension_majoree(
-            moteur, carriere, exploitant.eligible, replace(exploitant.pension, montant=base),
+            moteur, carriere, eligible, replace(exploitant.pension, montant=base),
             ressources, quand=DateMois(fin.year, fin.month), regle=regle,
             taux_plein_requis=debut >= TAUX_PLEIN_DE_LA_PMR_DEPUIS, surcote_comprise=True)
         if majoree is not None:

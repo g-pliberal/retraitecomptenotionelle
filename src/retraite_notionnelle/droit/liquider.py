@@ -574,6 +574,13 @@ class EligibleAgricole:
     #: aux travaux, que les plans de revalorisation de 1998 à 2008 portent à un
     #: minimum de points (D. 732-123, D. 732-145) ; ``chef`` ne la compte pas.
     conjoint_avant_1999: int = 0
+    #: Les trimestres et les années de chef à titre secondaire que la retraite
+    #: forfaitaire ne compte pas (:func:`annees_hors_forfait`) : la retraite
+    #: proportionnelle est la pension moins le forfait des autres, et la durée
+    #: de chef reconstituée d'une pension prise avant 1997 se minore de quinze
+    #: points par année (D. 732-110, III).
+    hors_forfait: int = 0
+    annees_hors_forfait: int = 0
 
 
 @dataclass(frozen=True)
@@ -1755,10 +1762,11 @@ ANNEE_DU_CONJOINT_COLLABORATEUR = COLLABORATEUR_REGULARISE[0]
 ANNEE_DU_TITRE_ACCESSOIRE = 1981
 
 
-def trimestres_hors_forfait(carriere: Carriere, durees, code: str,
-                            annee_liquidation: int) -> int:
-    """Les trimestres du régime des non-salariés agricoles que la retraite
-    forfaitaire ne compte pas : ceux des années de chef à titre secondaire.
+def annees_hors_forfait(carriere: Carriere, durees, code: str,
+                        annee_liquidation: int) -> dict[int, int]:
+    """Les années du régime des non-salariés agricoles que la retraite
+    forfaitaire ne compte pas, et leurs trimestres : celles de chef à titre
+    secondaire.
 
     « Les personnes ayant exercé, concurremment avec une activité salariée,
     une activité agricole non salariée ne présentant qu'un caractère
@@ -1772,14 +1780,22 @@ def trimestres_hors_forfait(carriere: Carriere, durees, code: str,
     les pensions d'avant 2026."""
     if (code != coordonner.REGIME_DES_NON_SALARIES_AGRICOLES
             or annee_liquidation >= ANNEE_DU_TITRE_SECONDAIRE):
-        return 0
+        return {}
     par_annee = durees.par_annee["assurance"].get(code, {})
     if any(annee < ANNEE_DU_TITRE_ACCESSOIRE and nombre > 0
            for annee, nombre in par_annee.items()):
-        return 0
-    return somme_ordonnee(min(nombre, carriere.plafond_trimestres(annee))
-                          for annee, nombre in par_annee.items()
-                          if carriere.qualite_agricole(annee) == "chef_secondaire")
+        return {}
+    return {annee: min(nombre, carriere.plafond_trimestres(annee))
+            for annee, nombre in par_annee.items()
+            if nombre > 0 and carriere.qualite_agricole(annee) == "chef_secondaire"}
+
+
+def trimestres_hors_forfait(carriere: Carriere, durees, code: str,
+                            annee_liquidation: int) -> int:
+    """Les trimestres du régime des non-salariés agricoles que la retraite
+    forfaitaire ne compte pas (:func:`annees_hors_forfait`)."""
+    return somme_ordonnee(annees_hors_forfait(carriere, durees, code,
+                                              annee_liquidation).values())
 
 
 def eligible_agricole(moteur, periode: PeriodeRegime, carriere: Carriere, releve: Releve,
@@ -1822,6 +1838,7 @@ def eligible_agricole(moteur, periode: PeriodeRegime, carriere: Carriere, releve
         lambda annee: annee < ANNEE_DU_CONJOINT_COLLABORATEUR and qualite(annee) == "collaborateur")
     annees = durees.cumul_plafonne("assurance", membres, lambda annee: True)
     toutes = durees.cumul_plafonne("assurance", membres)
+    hors_forfait = annees_hors_forfait(carriere, durees, code, carriere.annee_liquidation)
     return EligibleAgricole(
         indice=indice,
         taux_plein=(trimestres >= requis
@@ -1837,6 +1854,8 @@ def eligible_agricole(moteur, periode: PeriodeRegime, carriere: Carriere, releve
         reference=max(150, proratisation),
         collaborateur_regularise=regularise,
         conjoint_avant_1999=avant_1999,
+        hors_forfait=somme_ordonnee(hors_forfait.values()),
+        annees_hors_forfait=len(hors_forfait),
     )
 
 

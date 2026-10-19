@@ -354,6 +354,37 @@ def test_ni_plan_avant_1997_ni_sans_le_taux_plein(simulateur):
     assert majoration is None
 
 
+def test_le_forfait_que_les_plans_retranchent_ne_compte_pas_les_annees_secondaires(simulateur):
+    """Salarié, chef à titre secondaire de 1982 à 1985, puis à titre principal,
+    parti en 2005 : ses années secondaires n'ouvrent que la retraite
+    proportionnelle (L. 732-28). La moyenne n des plans se lit sur la pension
+    moins le forfait qu'elle porte, qui ne les compte pas, en points par année
+    d'assurance (décret n° 2002-297, article 4 ; D. 732-144)."""
+    from retraite_notionnelle.droit import ouvrir, releve
+    from retraite_notionnelle.droit.commun import periode_de_liquidation
+
+    metiers = [Metier("salarie_prive_non_cadre", 20.0, niveau_salaire=0.3),
+               Metier("exploitant_agricole", 42.0, niveau_salaire=0.3, cumul=True,
+                      age_fin=46.0),
+               Metier("exploitant_agricole", 46.0, niveau_salaire=0.5)]
+    carriere = _chef(simulateur, 1940, 65, metiers=metiers)
+    par_annee = releve.construire(simulateur.scenario_actuel, carriere).durees.par_annee[
+        "assurance"]["msa_non_salaries"]
+    secondaires = [a for a in par_annee if carriere.qualite_agricole(a) == "chef_secondaire"]
+    assert secondaires == list(range(1982, 1986)) and min(par_annee) == 1982
+    resultat, avantages, _ = _resultat(simulateur, carriere)
+    exploitant = resultat.exploitant_agricole
+    periode = periode_de_liquidation(simulateur.scenario_actuel.catalogue[exploitant.regime],
+                                     carriere.date_liquidation)
+    requis, _ = ouvrir.duree_requise(simulateur.scenario_actuel, periode, carriere)
+    points = _points_au_compte(simulateur, resultat,
+                               sum(min(par_annee[a], 4) for a in secondaires))
+    # Les points de la liquidation, à la valeur d'une année de la durée requise.
+    moyenne = points * requis / 4.0 / 37.5 / min(exploitant.trimestres / 4.0, 37.5)
+    assert moyenne > 16.0
+    assert f" - {moyenne:.3f}) × " in avantages["majoration_retraite_proportionnelle"].detail
+
+
 def _base(vivante):
     return next(r for r in vivante.regimes if r.regime == "msa_non_salaries")
 
@@ -406,10 +437,11 @@ def test_la_minoration_tombe_en_2001(simulateur):
 
 # -- les pensions prises avant 1997, révisées de 1997 à 2008 ---------------------
 
-def _points_au_compte(simulateur: Simulateur, resultat) -> float:
-    """Les points de retraite proportionnelle au compte d'une pension prise
-    avant 1997 : la pension de la liquidation, moins la retraite forfaitaire
-    qu'elle porte, à la valeur du point de la liquidation."""
+def _points_au_compte(simulateur: Simulateur, resultat, hors_forfait: int = 0) -> float:
+    """Les points de retraite proportionnelle au compte de la liquidation : la
+    pension avant surcote, moins la retraite forfaitaire qu'elle porte, à la
+    valeur du point de la liquidation. Le forfait ne compte pas les
+    ``hors_forfait`` trimestres de chef à titre secondaire (L. 732-28)."""
     from retraite_notionnelle.droit import liquider, ouvrir
     from retraite_notionnelle.droit.commun import periode_de_liquidation
 
@@ -425,8 +457,9 @@ def _points_au_compte(simulateur: Simulateur, resultat) -> float:
     lu = valeur_du_point(actuel, exploitant.regime, carriere.date_liquidation)
     valeur = (lu[0] if lu is not None
               else liquider.valeur_point_fiche(actuel, periode, carriere.annee_liquidation))
-    return (exploitant.pension.montant
-            - forfait * min(exploitant.trimestres, proratisation) / proratisation) / valeur
+    return (exploitant.pension.montant / exploitant.eligible.surcote
+            - forfait * min(exploitant.trimestres - hors_forfait, proratisation)
+            / proratisation) / valeur
 
 
 def _servis(simulateur: Simulateur, carriere: Carriere, resultat, annee: int) -> float:
@@ -546,23 +579,100 @@ def test_la_revision_se_minore_au_plus_fort_des_deux_coefficients(simulateur):
     assert faire_vivre(simulateur, carriere, resultat, 2008).exploitant is None
 
 
+def _pmr_sur_la_duree_reconstituee(simulateur: Simulateur, annee: int, chef: float,
+                                   agricole: float) -> float:
+    """La PMR de décembre de ``annee``, de 2009 à 2021 : PMR1 sur la durée de
+    chef, en années, PMR2 sur le reste de la durée agricole, l'une et l'autre
+    sur les trente-sept ans et demi de DR, DM1 retenue en priorité et DM1 + DM2
+    au plus DR (D. 732-111)."""
+    pmr = simulateur.scenario_actuel.pension_majoree_reference
+    retenue = min(agricole, 37.5)
+    return (pmr.montant("pmr_chef", annee, 12)[0] * min(chef, retenue)
+            + pmr.montant("pmr_conjoint", annee, 12)[0] * (retenue - min(chef, retenue))) / 37.5
+
+
 def test_la_pmr_de_2009_s_ouvre_aux_pensions_prises_avant(simulateur):
     """Une carrière complète de chef partie en 1995, que les plans révisent de
     1997 à 2008, est portée le 1er janvier 2009 à la pension majorée de
-    référence entière (loi n° 2008-1330, article 77 ; D. 732-109 à
-    D. 732-112) ; rien avant."""
+    référence (loi n° 2008-1330, article 77 ; D. 732-109 à D. 732-112) ; rien
+    avant. Sa durée de chef est celle que ses points au compte, divisés par
+    seize, reconstituent : trente ans sur ses quarante-quatre, PMR1 sur eux,
+    PMR2 sur le reste de DR (D. 732-110, III ; D. 732-111) ; depuis 2022, la
+    PMR unique, entière."""
     carriere = _chef(simulateur, 1930, 65)
     resultat, _, _ = _resultat(simulateur, carriere)
     assert resultat.exploitant_agricole.plans is None
     en_2008 = faire_vivre(simulateur, carriere, resultat, 2008).exploitant
     assert en_2008.plans > 0 and en_2008.pmr == 0 and en_2008.pmr_entiere is None
-    for annee in (2009, 2026):
+    chef = _points_au_compte(simulateur, resultat) / 16.0
+    agricole = resultat.exploitant_agricole.eligible.duree / 4.0
+    assert 17.5 < chef < 37.5 < agricole
+    for annee in (2009, 2021):
         vivante = faire_vivre(simulateur, carriere, resultat, annee)
         assert vivante.exploitant.pmr > 0
-        assert _base(vivante).aujourd_hui == pytest.approx(vivante.exploitant.pmr_entiere,
-                                                           rel=1e-12)
+        assert _base(vivante).aujourd_hui == pytest.approx(
+            _pmr_sur_la_duree_reconstituee(simulateur, annee, chef, agricole), rel=1e-12), annee
+    vivante = faire_vivre(simulateur, carriere, resultat, 2026)
+    assert vivante.exploitant.pmr > 0
+    assert _base(vivante).aujourd_hui == pytest.approx(vivante.exploitant.pmr_entiere,
+                                                       rel=1e-12)
     pmr = simulateur.scenario_actuel.pension_majoree_reference.montant("pmr_chef", 2026, 12)
     assert vivante.exploitant.pmr_entiere == pytest.approx(pmr[0], rel=1e-12)
+
+
+def test_sous_dix_sept_ans_et_demi_reconstitues_la_pmr_de_2009_ne_sert_que_pmr2(simulateur):
+    """Vingt-huit ans et trois quarts de chef partis en 1995 à faible revenu :
+    leurs points au compte ne reconstituent pas treize ans de chef, sous les
+    dix-sept ans et demi qu'exige le 1° de D. 732-110, II, dans sa rédaction
+    de 2009 ; en 2009 et 2010, toute la durée est servie à PMR2 (D. 732-110,
+    II, 4°, et III). Depuis 2011, la condition tombée, PMR1 sur la durée
+    reconstituée, PMR2 sur le reste ; depuis 2022, la PMR unique."""
+    carriere = _chef(simulateur, 1930, 65, niveau=0.1)
+    resultat, _, _ = _resultat(simulateur, carriere)
+    chef = _points_au_compte(simulateur, resultat) / 16.0
+    agricole = resultat.exploitant_agricole.eligible.duree / 4.0
+    assert chef < 17.5 <= 22.5 <= agricole < 37.5
+    for annee, retenue in ((2009, 0.0), (2010, 0.0), (2011, chef), (2021, chef)):
+        vivante = faire_vivre(simulateur, carriere, resultat, annee)
+        assert _base(vivante).aujourd_hui == pytest.approx(
+            _pmr_sur_la_duree_reconstituee(simulateur, annee, retenue, agricole),
+            rel=1e-12), annee
+    vivante = faire_vivre(simulateur, carriere, resultat, 2022)
+    assert _base(vivante).aujourd_hui == pytest.approx(
+        vivante.exploitant.pmr_entiere * agricole / 37.5, rel=1e-12)
+
+
+def test_la_duree_reconstituee_perd_quinze_points_par_annee_secondaire(simulateur):
+    """Salarié, chef à titre secondaire de 1982 à 1986, sans le forfait
+    (L. 732-28), puis chef à titre principal, parti en 1996 : la durée de chef
+    se reconstitue des points au compte moins quinze par année secondaire sans
+    forfait, divisés par seize (D. 732-110, III) — sans la minoration, elle
+    dépasserait la durée agricole et y serait ramenée. Servie depuis février
+    2014, quand la PMR ne demande plus de durée minimale (D. 732-109)."""
+    from retraite_notionnelle.droit import releve
+
+    metiers = [Metier("salarie_prive_non_cadre", 20.0, niveau_salaire=0.3),
+               Metier("exploitant_agricole", 51.0, niveau_salaire=0.1, cumul=True,
+                      age_fin=56.0),
+               Metier("exploitant_agricole", 56.0, niveau_salaire=0.1)]
+    carriere = _chef(simulateur, 1931, 65, metiers=metiers)
+    assert carriere.annee_liquidation == 1996
+    par_annee = releve.construire(simulateur.scenario_actuel, carriere).durees.par_annee[
+        "assurance"]["msa_non_salaries"]
+    secondaires = [a for a in par_annee if carriere.qualite_agricole(a) == "chef_secondaire"]
+    assert secondaires == list(range(1982, 1987)) and min(par_annee) == 1982
+    resultat, _, _ = _resultat(simulateur, carriere)
+    points = _points_au_compte(simulateur, resultat,
+                               sum(min(par_annee[a], 4) for a in secondaires))
+    chef = (points - 15.0 * len(secondaires)) / 16.0
+    agricole = resultat.exploitant_agricole.eligible.duree / 4.0
+    assert 0.0 < chef < agricole < points / 16.0
+    for annee in (2015, 2021):
+        vivante = faire_vivre(simulateur, carriere, resultat, annee)
+        assert vivante.exploitant.pmr > 0
+        assert _base(vivante).aujourd_hui == pytest.approx(
+            _pmr_sur_la_duree_reconstituee(simulateur, annee, chef, agricole),
+            rel=1e-12), annee
 
 
 def test_la_pmr_d_une_pension_d_avant_2002_ne_veut_pas_le_taux_plein(simulateur):
@@ -1089,6 +1199,8 @@ process.stdout.write(JSON.stringify(cas.map(([options, annee]) => {
 _COLLABORATRICE = {"sexe": "F", "age_liquidation": 64, "jour_naissance": 15,
                    "metiers": [{"affiliation": "collaborateur_agricole", "age_debut": 20,
                                 "niveau_salaire": 0.3}]}
+_CHEF_D_AVANT_1997 = {"annee_naissance": 1930, "sexe": "H", "age_liquidation": 65,
+                      "jour_naissance": 15}
 _REVISIONS = [
     ({**_COLLABORATRICE, "annee_naissance": 1952,
       "reversion_agricole": {"debut": "2018-06", "mensuel": 150.0}}, 2018),
@@ -1110,6 +1222,19 @@ _REVISIONS = [
       "reversion_agricole": {"debut": "2023-03", "mensuel": 150.0}}, 2026),
     ({**_COLLABORATRICE, "annee_naissance": 1960, "age_liquidation": 62,
       "reversion_agricole": {"debut": "2023-03", "mensuel": 150.0}}, 2030),
+    # La PMR de 2009 des pensions prises avant 1997, sur la durée de chef que
+    # leurs points reconstituent (D. 732-110, III) : trente ans sur quarante-
+    # quatre ; moins de dix-sept ans et demi, à PMR2 en 2010 ; le chef à titre
+    # secondaire de 1982 à 1986, quinze points de moins par année.
+    ({**_CHEF_D_AVANT_1997, "metiers": [
+        {"affiliation": "exploitant_agricole", "age_debut": 20, "niveau_salaire": 0.3}]}, 2009),
+    ({**_CHEF_D_AVANT_1997, "metiers": [
+        {"affiliation": "exploitant_agricole", "age_debut": 20, "niveau_salaire": 0.1}]}, 2010),
+    ({**_CHEF_D_AVANT_1997, "annee_naissance": 1931, "metiers": [
+        {"affiliation": "salarie_prive_non_cadre", "age_debut": 20, "niveau_salaire": 0.3},
+        {"affiliation": "exploitant_agricole", "age_debut": 51, "niveau_salaire": 0.1,
+         "cumul": True, "age_fin": 56},
+        {"affiliation": "exploitant_agricole", "age_debut": 56, "niveau_salaire": 0.1}]}, 2015),
 ]
 
 
@@ -1117,8 +1242,10 @@ def test_les_deux_moteurs_revisent_la_meme_majoration(simulateur):
     """La révision de D. 732-114, à l'échéance : la réversion qui commence
     après le départ, la pension étrangère le mois qui suit, le régime général
     demandé plus tard, la pension prise depuis 2022, jusqu'au-delà du dernier
-    barème, où sa PMR et son plafond suivent les prix ; la revalorisation de
-    chaque régime et la révision de l'exploitant, en Python et en JavaScript."""
+    barème, où sa PMR et son plafond suivent les prix ; la PMR de 2009 des
+    pensions prises avant 1997, sur leur durée de chef reconstituée ; la
+    revalorisation de chaque régime et la révision de l'exploitant, en Python
+    et en JavaScript."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     from dataclasses import asdict
@@ -1134,7 +1261,8 @@ def test_les_deux_moteurs_revisent_la_meme_majoration(simulateur):
     revisees = 0
     for rang, ((options, annee), obtenu) in enumerate(zip(_REVISIONS,
                                                           json.loads(execution.stdout))):
-        metiers = [Metier(m["affiliation"], m["age_debut"], niveau_salaire=m["niveau_salaire"])
+        metiers = [Metier(m["affiliation"], m["age_debut"], niveau_salaire=m["niveau_salaire"],
+                          cumul=m.get("cumul", False), age_fin=m.get("age_fin"))
                    for m in options["metiers"]]
         carriere = Carriere.depuis_parcours(
             **{cle: valeur for cle, valeur in options.items() if cle != "metiers"},
@@ -1146,7 +1274,7 @@ def test_les_deux_moteurs_revisent_la_meme_majoration(simulateur):
             "exploitant": None if vivante.exploitant is None else asdict(vivante.exploitant)}))
         revisees += attendu["exploitant"] is not None
         _ecarts(obtenu, attendu, f"révision {rang}", ecarts)
-    assert revisees == 7
+    assert revisees == 10
     assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])
 
 
@@ -1451,6 +1579,13 @@ CAS = [
     # trente-cinq ans et demi de conjointe, partie en juillet 1998.
     {"naissance": "1936", "naissance_mois": "6", "liquidation": "62", "sexe": "F",
      "statut": "collaborateur_agricole", "debut": "27"},
+    # Le forfait que les plans retranchent, sans les années de chef à titre
+    # secondaire (L. 732-28) : chef à côté du salariat de 1982 à 1985, puis à
+    # titre principal, parti en 2005.
+    {"naissance": "1940", "liquidation": "65", "statut": "salarie_prive_non_cadre",
+     "metier2_debut": "42", "metier2_statut": "exploitant_agricole", "metier2_salaire": "0.3",
+     "metier2_cumul": "oui", "metier2_fin": "46", "metier3_debut": "46",
+     "metier3_statut": "exploitant_agricole", "metier3_salaire": "0.5"},
 ]
 
 

@@ -1122,25 +1122,38 @@ export const ANNEE_DU_CONJOINT_COLLABORATEUR = COLLABORATEUR_REGULARISE[0];
 export const ANNEE_DU_TITRE_ACCESSOIRE = 1981;
 
 /**
+ * Les années du régime des non-salariés agricoles que la retraite forfaitaire
+ * ne compte pas, et leurs trimestres (une `Map`) : celles de chef à titre
+ * secondaire, pour les pensions d'avant 2026, sauf à qui l'était déjà avant
+ * 1981. Voir `annees_hors_forfait` dans le Python.
+ */
+export function anneesHorsForfait(carriere, durees, code, anneeLiquidation) {
+  const hors = new Map();
+  if (code !== coordonner.REGIME_DES_NON_SALARIES_AGRICOLES
+      || anneeLiquidation >= ANNEE_DU_TITRE_SECONDAIRE) {
+    return hors;
+  }
+  const parAnnee = durees.parAnnee.assurance.get(code) ?? new Map();
+  for (const [annee, nombre] of parAnnee) {
+    if (annee < ANNEE_DU_TITRE_ACCESSOIRE && nombre > 0) {
+      return new Map();
+    }
+    if (nombre > 0 && carriere.qualiteAgricole(annee) === "chef_secondaire") {
+      hors.set(annee, Math.min(nombre, carriere.plafondTrimestres(annee)));
+    }
+  }
+  return hors;
+}
+
+/**
  * Les trimestres du régime des non-salariés agricoles que la retraite
- * forfaitaire ne compte pas : ceux des années de chef à titre secondaire,
- * pour les pensions d'avant 2026, sauf à qui l'était déjà avant 1981. Voir
+ * forfaitaire ne compte pas (`anneesHorsForfait`). Voir
  * `trimestres_hors_forfait` dans le Python.
  */
 export function trimestresHorsForfait(carriere, durees, code, anneeLiquidation) {
-  if (code !== coordonner.REGIME_DES_NON_SALARIES_AGRICOLES
-      || anneeLiquidation >= ANNEE_DU_TITRE_SECONDAIRE) {
-    return 0;
-  }
-  const parAnnee = durees.parAnnee.assurance.get(code) ?? new Map();
   let hors = 0;
-  for (const [annee, nombre] of parAnnee) {
-    if (annee < ANNEE_DU_TITRE_ACCESSOIRE && nombre > 0) {
-      return 0;
-    }
-    if (carriere.qualiteAgricole(annee) === "chef_secondaire") {
-      hors += Math.min(nombre, carriere.plafondTrimestres(annee));
-    }
+  for (const nombre of anneesHorsForfait(carriere, durees, code, anneeLiquidation).values()) {
+    hors += nombre;
   }
   return hors;
 }
@@ -1153,8 +1166,10 @@ export function trimestresHorsForfait(carriere, durees, code, anneeLiquidation) 
  * référence DR de la retraite forfaitaire, 150 trimestres au moins, et la
  * surcote, que la PMR retire avant de comparer. La durée ne compte les années
  * de chef à titre secondaire que depuis 2026 ; `chef` ne garde que les années
- * de chef. `coefficient` est celui de la décote ou de la surcote du régime.
- * Voir `eligible_agricole` du Python.
+ * de chef ; `horsForfait` et `anneesHorsForfait`, les trimestres et les années
+ * de chef à titre secondaire que le forfait ne compte pas. `coefficient` est
+ * celui de la décote ou de la surcote du régime. Voir `eligible_agricole` du
+ * Python.
  */
 /**
  * Les trimestres du régime, quand chaque annuité se liquide au taux de l'année
@@ -1196,6 +1211,11 @@ export function eligibleAgricole(moteur, periode, carriere, releve, membres, tri
     (annee) => annee < ANNEE_DU_CONJOINT_COLLABORATEUR && qualite(annee) === "collaborateur");
   const annees = durees.cumulPlafonne("assurance", membres, () => true);
   const toutes = durees.cumulPlafonne("assurance", membres);
+  const horsForfait = anneesHorsForfait(carriere, durees, code, carriere.anneeLiquidation);
+  let trimestresSansForfait = 0;
+  for (const nombre of horsForfait.values()) {
+    trimestresSansForfait += nombre;
+  }
   return {
     indice,
     tauxPlein: trimestres >= requis
@@ -1210,6 +1230,8 @@ export function eligibleAgricole(moteur, periode, carriere, releve, membres, tri
     reference: Math.max(150, proratisation),
     collaborateurRegularise: regularise,
     conjointAvant1999: avant1999,
+    horsForfait: trimestresSansForfait,
+    anneesHorsForfait: horsForfait.size,
   };
 }
 

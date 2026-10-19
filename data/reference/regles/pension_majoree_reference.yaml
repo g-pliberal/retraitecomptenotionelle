@@ -136,8 +136,30 @@ versions:
       situation au regard des dispositions du deuxième alinéa du II de l'article
       L. 732-54-2 » ; au 4°, celles du collaborateur autres que celles du 3°, du
       conjoint participant aux travaux, de l'aide familial, et du chef qui n'a pas ces
-      dix-sept ans et demi
-    lu_le: 2026-10-16
+      dix-sept ans et demi ; « III. ― Pour les personnes dont la pension de retraite
+      servie à titre personnel a pris effet avant le 1er janvier 1997, la durée
+      d'assurance en qualité de chef d'exploitation ou d'entreprise agricole à titre
+      exclusif ou principal est obtenue en divisant par 16 le nombre de points de
+      retraite figurant au compte de l'intéressé avant application des dispositions des
+      articles D. 732-110, D. 732-111, D. 732-114 à D. 732-117, D. 732-132 à D. 732-138,
+      D. 732-139 et D. 732-140, dans leur rédaction antérieure au 1er janvier 2009 » ;
+      « une minoration forfaitaire de quinze points est appliquée pour chaque année qui
+      n'a pas donné lieu à versement des cotisations ouvrant droit à la pension de
+      retraite forfaitaire » ; « Lorsque, au terme de cette reconstitution, l'intéressé
+      totalise un nombre d'annuités de chef d'exploitation [...] supérieur à sa durée
+      d'assurance non salariée agricole [...], ce nombre est ramené à cette durée
+      d'assurance non salariée agricole dans la limite prévue au troisième alinéa du I »
+    lu_le: 2026-10-19
+  - id: LEGIARTI000021803615
+    article: D. 732-110 code rural
+    en_vigueur: 2010-02-11
+    citation: >-
+      le 3° y range aussi les périodes de conjoint participant aux travaux « antérieures
+      au 1er janvier 1999 et rachetées avant le 1er janvier 2009 » ; le III, mot pour mot
+      celui de 2009 : la durée de chef d'une pension prise avant le 1er janvier 1997 « est
+      obtenue en divisant par 16 le nombre de points de retraite figurant au compte de
+      l'intéressé »
+    lu_le: 2026-10-19
   - id: LEGIARTI000020254705
     article: D. 732-111 code rural
     en_vigueur: 2009-02-16
@@ -145,14 +167,15 @@ versions:
       « PMR = [PMR1 × (DM1 / DR)] + [PMR2 × (DM2) / DR] où ― PMR1 est égal à 7 596 euros
       au 1er janvier 2009 ; ― PMR2 est égal à 6 036 euros au 1er janvier 2009 » ; « DM1
       représente la durée d'assurance de l'assuré composée des périodes définies aux 1°
-      et 2°, ou au 3°, du II de l'article D. 732-110 » ; « Les périodes mentionnées aux
-      1° et 3° du II de l'article D. 732-110 sont retenues en priorité » ; « DR
+      et 2°, ou au 3°, du II de l'article D. 732-110 retenues dans les conditions et
+      limites prévues aux I et III de ce même article » ; « Les périodes mentionnées
+      aux 1° et 3° du II de l'article D. 732-110 sont retenues en priorité » ; « DR
       [...] ne peut être inférieure à 37, 5 années » ; « Les montants minimums annuels
       PMR1 et PMR2 sont revalorisés aux mêmes dates et dans les mêmes conditions que
       celles prévues pour les pensions de vieillesse de base par l'article L. 161-23-1 »
       ; « La majoration prévue à l'article L. 732-25-1 est calculée sur la base du
       montant de pension avant qu'il ne soit porté au montant minimum annuel »
-    lu_le: 2026-10-07
+    lu_le: 2026-10-19
   - id: LEGIARTI000020254696
     article: D. 732-112 code rural
     en_vigueur: 2009-02-16
@@ -234,8 +257,10 @@ versions:
       de collaborateur d'exploitation ou d'entreprise agricole [...] ou en qualité de
       conjoint participant aux travaux [...], et pour tout ou partie des périodes
       d'assurance validées en qualité d'aide familial » : la condition de dix-sept ans
-      et demi de chef, que la rédaction de 2009 mettait au 1°, est tombée
-    lu_le: 2026-10-14
+      et demi de chef, que la rédaction de 2009 mettait au 1°, est tombée ; le III,
+      inchangé, reconstitue toujours la durée de chef d'une pension prise avant 1997 des
+      points au compte divisés par seize
+    lu_le: 2026-10-19
   bornes:
     liquidation.date_effet: [2011-01-01, 2014-02-01]
   contenu:
@@ -304,6 +329,17 @@ versions:
       pensions dues à compter de cette date, y compris aux pensions de retraite ayant
       pris effet avant cette date »
     lu_le: 2026-10-16
+  - id: LEGIARTI000044944285
+    article: D. 732-110 code rural
+    en_vigueur: 2022-01-01
+    citation: >-
+      « Pour apprécier cette durée d'assurance sont prises en considération les périodes
+      qui ont donné lieu à versement des cotisations ouvrant droit à la retraite
+      forfaitaire » ; le II, l'ancien III (« Le II est abrogé ; b) Le III devient le
+      II », décret n° 2021-1919, article 1er, 1°) : la durée de chef d'une pension prise
+      avant le 1er janvier 1997 « est obtenue en divisant par 16 le nombre de points de
+      retraite figurant au compte de l'intéressé », que PMRmax × DNSA / DR ne lit plus
+    lu_le: 2026-10-19
   - id: LEGIARTI000044944271
     article: D. 732-111 code rural
     en_vigueur: 2022-01-01
@@ -544,11 +580,22 @@ approximations:
     ne nomment que les pensions prises depuis —, comparée à la pension de base surcote
     comprise et plans de 1997 à 2008 révisés compris (D. 732-112), écrêtée sur toutes
     les pensions de l'échéance ; le taux plein n'est demandé qu'aux pensions prises
-    depuis 2002. La durée de chef d'une pension d'avant 1997, que D. 732-110, III,
-    reconstitue des points d'avant 1994 divisés par seize, est celle de la carrière ; le
-    complément différentiel du relèvement de septembre 2023 ne compte pas cette PMR
-    dans les pensions agricoles qu'il plafonne
-  effet: non mesuré, faible
+    depuis 2002. La durée de chef d'une pension d'avant 1997 est, depuis le 19 octobre
+    2026, celle que D. 732-110, III, reconstitue : les points au compte avant les plans,
+    la pension de la liquidation hors son forfait à la valeur du point de la
+    liquidation — ceux d'avant 1990, ce que vaut leur rendement, faute du barème des
+    classes —, moins quinze par année de chef à titre secondaire sans forfait, divisés
+    par seize, sans arrondi, que le texte ne dit pas, et ramenés à la durée agricole
+    quand ils la dépassent ; le reste de la durée agricole va à PMR2, comme les
+    périodes qui ne sont pas de chef, ce que le texte ne tranche pas et qu'aucune
+    publication de la MSA ne dit. Le complément différentiel du relèvement de septembre
+    2023 ne compte pas cette PMR dans les pensions agricoles qu'il plafonne
+  effet: >-
+    le chef parti en 1995 après quarante-quatre ans à 30 % du salaire moyen : trente ans
+    de chef reconstitués, 7 366,46 € de pension en 2009 au lieu des 7 671,96 € de PMR1
+    entière, l'écart tenu jusqu'en 2021 ; à 10 %, moins de treize ans reconstitués, PMR2
+    sur toute la durée en 2009 et 2010, 4 673,88 € au lieu de 5 881,84 € ; depuis 2022,
+    la PMR unique ne lit plus la durée de chef ; le complément différentiel, non mesuré
 - ecart: >-
     la majoration d'une pension liquidée de 2009 à 2021 se calcule au départ et suit
     le coefficient de la pension jusqu'en 2021 ; depuis le 1er janvier 2022, elle se
@@ -612,6 +659,11 @@ sources:
   - >-
     Relire les montants à chaque revalorisation de janvier, et porter jusqu'à elle les
     FINS de scripts/fetch/dila_legi_pension_majoree.py.
+  - >-
+    Demander à la MSA à quel montant elle servait, de 2009 à 2021, la durée agricole
+    d'une pension prise avant 1997 qui dépasse la durée de chef reconstituée
+    (D. 732-110, III) : PMR2, comme le modèle, ou rien, DM2 ne comptant que les
+    périodes du 4° du II.
   lectures:
   - type: jorf
     reference: >-
@@ -729,12 +781,14 @@ textes_a_rattacher:
 code:
   python: >-
     scenarios/actuel.py : PensionMajoreeReference (regle, montant) ; droit/completer.py :
-    pension_majoree, reversion_agricole_servie, completer ; droit/liquider.py :
-    EligibleAgricole ; revalorisation.py : reviser_les_exploitants ; carriere.py :
-    Carriere.reversion_agricole ; chronologie.py : reversion_agricole
+    pension_majoree, reversion_agricole_servie, duree_de_chef_reconstituee, completer ;
+    droit/liquider.py : EligibleAgricole, annees_hors_forfait ; revalorisation.py :
+    reviser_les_exploitants ; carriere.py : Carriere.reversion_agricole ;
+    chronologie.py : reversion_agricole
   javascript: >-
     moteur/js/regimes.js : PensionMajoreeReference ; moteur/js/droit/completer.js :
-    pensionMajoree, reversionAgricoleServie, completer ; moteur/js/droit/liquider.js ;
+    pensionMajoree, reversionAgricoleServie, dureeDeChefReconstituee, completer ;
+    moteur/js/droit/liquider.js : eligibleAgricole, anneesHorsForfait ;
     moteur/js/revalorisation.js : reviserLesExploitants ; moteur/js/carriere.js :
     reversionAgricole ; moteur/js/chronologie.js : reversionAgricole
   parametres: >-
@@ -769,6 +823,11 @@ historique:
   2023 portés jusqu'au barème de 2026, comme les pensions de base (D. 732-111 ;
   D. 732-113, I, lu aux décrets qui l'écrivent), et au-delà sur les prix ; le plafond du
   II jusqu'en 2026, sur le SMIC, dans les deux moteurs.
+- >-
+  2026-10-19 — étape 138.8 : la durée de chef d'une pension prise avant 1997, que
+  D. 732-110, III, reconstitue des points au compte divisés par seize, minorés de quinze
+  par année de chef à titre secondaire sans forfait, dans la PMR de 2009 à 2021, dans les
+  deux moteurs.
 exemples: []
 effet: >-
   Les petites pensions de base des chefs d'exploitation liquidées au taux plein depuis
