@@ -19,7 +19,7 @@ les mots qu'un test y relit quand l'index est là
 donnée. Une série naît à sa première marche : ce qui la précède n'est pas lu, et
 le dépôt n'y prélève rien.
 
-TROIS CONVENTIONS, qui sont celles de toute l'histoire des pensions. Un taux par
+QUATRE CONVENTIONS, qui sont celles de toute l'histoire des pensions. Un taux par
 tranches, ou borné par un plafond, est celui d'une pension sous le premier
 plafond — la SNCF prélevait 3,60 % puis 2,25 % au-delà de 109 040 F et de
 163 560 F par an en 1996 —, sauf celui de la SNCF depuis le 14 novembre 2010,
@@ -28,7 +28,10 @@ plafond — la SNCF prélevait 3,60 % puis 2,25 % au-delà de 109 040 F et de
 taux réduit d'un exploitant soigné par un autre régime ne jouent pas : le dépôt
 prélève au taux plein. Un taux s'applique aux pensions dues à sa date, même
 quand la caisse les paie par trimestre et d'avance, sauf quand le texte dit
-autrement : les IEG et la SNCF au 1er octobre 1996.
+autrement : les IEG et la SNCF au 1er octobre 1996. Un âge se compte au premier
+jour du mois : la série qu'il borne, celle des chemins de fer secondaires
+« jusqu'à [leur] soixantième anniversaire », prélève les mois au premier jour
+desquels le pensionné ne l'a pas (:data:`AVANT_L_AGE`).
 
 CE QUI N'EST PAS LU. Les décrets annuels de l'assurance maladie des exploitants
 de 1980 à 1989 et celui de 1993 (n° 93-1153), que l'index n'a qu'en notice ; les
@@ -36,10 +39,11 @@ taux que les conseils de la SNCF, de la RATP et de la Banque de France fixaient
 avant le 1er juillet 1991 ; celui des mines avant le 1er juillet 1988, que
 l'arrêté du 27 octobre 1972 fixait et que l'arrêté du 30 juin 1987 relève, à
 3 % selon LEGI, à 3,4 % selon la notice du JORF ; la cotisation des pensionnés
-des chemins de fer secondaires avant 60 ans (2,5 %, puis 2,9 % en 1987, décret
-n° 50-1448, article 6), que le dépôt ne distingue pas de celle d'après ; les
-pensions de la SEITA, du port autonome de Strasbourg, des marins, des cultes,
-des assemblées et du Conseil économique, social et environnemental. La
+des chemins de fer secondaires de 1952 à 1954, « égale à celle imposée aux
+retraités de l'Etat » (décret n° 50-1448, article 6, dans la rédaction du
+décret n° 51-1411) ; les pensions de la SEITA, du port autonome de Strasbourg,
+des marins, des cultes, des assemblées et du Conseil économique, social et
+environnemental. La
 cotisation de la SNCF et celle des mines, qui courent encore, sont aussi sur la
 fiche de paie du site depuis le 16 octobre 2026 (``maladie_regimes_speciaux`` de
 ``prelevements_remuneration.yaml``).
@@ -144,11 +148,12 @@ PENSIONS_LUES_AUX_TEXTES["maladie_exploitants"] = [
 #: LES RÉGIMES SPÉCIAUX PLACÉS SOUS LE RÉGIME GÉNÉRAL pour la maladie (L. 711-2,
 #: R. 711-8 puis D. 711-3) : l'Opéra de Paris, la Comédie-Française et, passé
 #: 60 ans, les chemins de fer secondaires, que la notice du décret n° 96-680
-#: énumère avec les IEG. Le relèvement de 1987, temporaire, est reconduit en
-#: 1988 (n° 88-789) et repris par D. 711-3 en 1991 (n° 91-613, art. 2) ; celui
-#: de 3,80 % que le décret n° 96-680 prévoyait au 1er juillet 1997 devient 2,80 %
-#: (n° 96-1151). Depuis 1998, D. 711-3 ne prélève plus que 1 % des
-#: complémentaires, déjà dans leur série.
+#: énumère avec les IEG ; avant, ces derniers paient la leur
+#: (``maladie_chemins_fer_secondaires_avant_60_ans``). Le relèvement de 1987,
+#: temporaire, est reconduit en 1988 (n° 88-789) et repris par D. 711-3 en
+#: 1991 (n° 91-613, art. 2) ; celui de 3,80 % que le décret n° 96-680
+#: prévoyait au 1er juillet 1997 devient 2,80 % (n° 96-1151). Depuis 1998,
+#: D. 711-3 ne prélève plus que 1 % des complémentaires, déjà dans leur série.
 PENSIONS_LUES_AUX_TEXTES["maladie_regimes_speciaux"] = [
     {"depuis": "1980-07-31", "taux": 0.015,
      "texte": "Décret 80-598 du 30/07/1980, art. 1",
@@ -174,6 +179,58 @@ PENSIONS_LUES_AUX_TEXTES["maladie_regimes_speciaux"] = [
               "complémentaires",
      "lu": (("JORFARTI000002001439", "Les avantages de retraite complémentaire servis aux "
                                      "pensionnés des régimes spéciaux"),
+            ("JORFARTI000001032378", "pensions et allocations versés à compter du 1er janvier "
+                                     "1998"))},
+]
+
+#: LES CHEMINS DE FER SECONDAIRES AVANT 60 ANS : la cotisation que les agents
+#: retraités sur une pension d'ancienneté de la caisse autonome mutuelle, et
+#: leurs veuves, supportent « jusqu'à leur soixantième anniversaire », sur
+#: leur pension dans la limite du plafond (décret n° 50-1448, art. 6, § 3, depuis
+#: le décret n° 54-102). Le décret n° 80-598 ne leur impose pas, avant cet âge,
+#: celle des régimes spéciaux placés sous le régime général : « les pensionnés
+#: des régimes spéciaux déjà assujettis à une cotisation pour la couverture des
+#: risques précités continuent d'être régis par les dispositions qui les
+#: concernent » (art. 1er, puis R. 711-8). Le relèvement de 1987, temporaire,
+#: est tenu en 1988 (n° 88-787) ; celui de 3,80 % que le décret n° 96-471
+#: prévoyait en 1997 devient 2,80 % (n° 96-1151) ; le paragraphe est abrogé en
+#: 1998 (n° 97-1249). La série ne prend sa part qu'avant 60 ans (:data:`AVANT_L_AGE`).
+PENSIONS_LUES_AUX_TEXTES["maladie_chemins_fer_secondaires_avant_60_ans"] = [
+    {"depuis": "1954-01-28", "taux": 0.025,
+     "texte": "Décret 54-102 du 23/01/1954 : décret 50-1448 du 22/11/1950, art. 6, § 3",
+     "lu": (("LEGIARTI000006772950", "supportent, jusqu'à leur soixantième anniversaire, une "
+                                     "cotisation de 2,5 p. 100 assise sur le montant de leur "
+                                     "pension"),
+            ("JORFTEXT000000502209", "MODIFICATION DU DECRET NO 501448 DU 22-11-1950 ET "
+                                     "NOTAMMENT L'ART. 6 PAR. 3"))},
+    {"depuis": "1987-07-01", "taux": 0.029,
+     "texte": "Décret 87-463 du 30/06/1987, art. 1 : à titre exceptionnel, jusqu'au 30 juin 1988",
+     "lu": (("LEGIARTI000006770382", "est porté de 2,5 p. 100 à 2,9 p. 100 pour la période du "
+                                     "1er juillet 1987 au 30 juin 1988"),)},
+    {"depuis": "1988-07-01", "taux": 0.029,
+     "texte": "Décret 88-787 du 22/06/1988 : décret 50-1448, art. 6, § 3",
+     "lu": (("LEGIARTI000006772952", "A compter du 1er juillet 1988, les agents retraités et les "
+                                     "veuves visés au paragraphe 1 du présent article supportent, "
+                                     "jusqu'à leur soixantième anniversaire, une cotisation de "
+                                     "2,9 p. 100"),
+            ("JORFTEXT000000309675", "A COMPTER DU 01-07-1988,LES AGENTS RETRAITES ET LES VEUVES "
+                                     "SUPPORTENT JUSQU'A LEUR 60EME ANNIVERSAIRE,UNE COTISATION "
+                                     "DE 2,9%"))},
+    {"depuis": "1996-06-01", "taux": 0.0305,
+     "texte": "Décret 96-471 du 31/05/1996, art. 5 : décret 50-1448, art. 6, § 3",
+     "lu": (("JORFARTI000001406454", "sont remplacés par les mots : << 3,05 p. 100 >> pour les "
+                                     "pensions dues à compter du 1er juin 1996"),)},
+    {"depuis": "1997-01-01", "taux": 0.028,
+     "texte": "Décret 96-1151 du 26/12/1996, art. 16 : décret 50-1448, art. 6, § 3",
+     "lu": (("JORFARTI000001406454", "<< 3,80 p. 100 >> pour les pensions dues à compter du "
+                                     "1er janvier 1997"),
+            ("JORFARTI000002386940", "les termes : << 3,80 p. 100 >> sont remplacés par les "
+                                     "termes : << 2,80 p. 100 >>"),
+            ("JORFTEXT000000381201", "PENSIONS,ALLOCATIONS,VERSES A COMPTER DU 01-01-1997"))},
+    {"depuis": "1998-01-01", "taux": 0.0,
+     "texte": "Décret 97-1249 du 29/12/1997, art. 16 et 17 : décret 50-1448, art. 6, § 3, abrogé",
+     "lu": (("JORFARTI000001032377", "3o Le paragraphe 3 de l'article 6 du décret du 22 novembre "
+                                     "1950 susvisé"),
             ("JORFARTI000001032378", "pensions et allocations versés à compter du 1er janvier "
                                      "1998"))},
 ]
@@ -392,6 +449,7 @@ REGIMES_DES_PENSIONS = {
                              "organic_avant_1973", "cnavpl", "cnbf"),
     "maladie_exploitants": ("msa_non_salaries",),
     "maladie_regimes_speciaux": ("opera_de_paris", "comedie_francaise", "chemins_fer_secondaires"),
+    "maladie_chemins_fer_secondaires_avant_60_ans": ("chemins_fer_secondaires",),
     "maladie_ieg": ("ieg",),
     "maladie_sncf": ("sncf",),
     "maladie_sncf_sous_plafond": ("sncf",),
@@ -400,6 +458,11 @@ REGIMES_DES_PENSIONS = {
     "maladie_crpcen": ("crpcen",),
     "maladie_mines": ("mines",),
 }
+
+#: Les séries qu'un âge borne : avant le premier mois au premier jour duquel le
+#: pensionné a cet âge, chacune prélève la part de ses régimes, que les autres
+#: séries ne prélèvent pas ; à cet âge, elle ne prélève plus rien.
+AVANT_L_AGE = {"maladie_chemins_fer_secondaires_avant_60_ans": 60}
 
 
 def a_ecrire(marche: dict) -> dict:

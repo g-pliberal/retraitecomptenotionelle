@@ -5826,7 +5826,12 @@ institutions:
           du régime général (décret n° 80-481 et ses modificatifs). Celle des
           exploitants agricoles retraités et celle des régimes spéciaux sont
           lues aux textes depuis le 13 octobre 2026
-          (`scripts/fetch/maladie_des_pensions.py`). LES DÉCRETS QU'AUCUNE
+          (`scripts/fetch/maladie_des_pensions.py`) ; depuis le 19 octobre,
+          celle des chemins de fer secondaires « jusqu'à [leur] soixantième
+          anniversaire », à la place de celle des régimes spéciaux (décret
+          n° 50-1448, art. 6, § 3) : 2,5 % en 1954 (n° 54-102), 2,9 % en
+          juillet 1987 (n° 87-463, puis 88-787), 3,05 % en juin 1996, 2,80 %
+          en 1997, rien en 1998 (`avant_l_age`). LES DÉCRETS QU'AUCUNE
           MARCHE NE REJOINT, cherchés le 19 octobre 2026 (étape 9) dans
           l'index JORF par `scripts/fetch/decrets_des_prelevements.py`, comme
           ipp_taux_cotisation pour la vieillesse : trois marches des salaires

@@ -131,7 +131,7 @@ CALIBRATIONS = DONNEES / "derive" / "calibrations_mortalite.json"
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas : le site
 #: attend la sienne (``VERSION_PAQUET``, ``moteur/js/contexte.js``), et redemande
 #: au serveur un paquet qui n'a pas celle-là, depuis le 11 octobre 2026.
-VERSION = 28
+VERSION = 29
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -1406,6 +1406,7 @@ def _prelevements_historiques() -> dict:
         "independants": series(historique.independants),
         "regimes_des_pensions": {serie: sorted(regimes) for serie, regimes
                                  in sorted(historique.regimes_des_pensions.items())},
+        "avant_l_age": dict(sorted(historique.avant_l_age.items())),
     }
 
 

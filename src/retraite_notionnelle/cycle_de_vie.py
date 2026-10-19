@@ -196,6 +196,7 @@ lisant les régimes un à un et le coût, que le portage n'a pas ;
 
 from __future__ import annotations
 
+import datetime as dt
 import math
 from dataclasses import dataclass, field, replace
 from functools import lru_cache
@@ -1075,8 +1076,8 @@ def convention_cor(simulateur, comparaison) -> Convention:
     )
 
 
-def _parts_assujetties(simulateur, resultat,
-                       annee_liquidation: int | None = None) -> dict[str, float]:
+def _parts_assujetties(simulateur, resultat, annee_liquidation: int | None = None,
+                       avant_l_age: float | None = None) -> dict[str, float]:
     """Les parts de la pension du scénario 1 au départ qui ont payé une
     cotisation maladie, par cotisation : celle des complémentaires
     (``regimes_maladie``), toujours ; jusqu'en 1997, celle du régime général et
@@ -1087,14 +1088,26 @@ def _parts_assujetties(simulateur, resultat,
     pension sous son plafond (``maladie_regimes_speciaux``) : la pension du
     départ en ``annee_liquidation``, menée par les prix en euros de l'année du
     plafond, que les deux suivent ensuite au même pas. Sans l'année, toute la
-    pension, comme sous la convention de la première tranche."""
+    pension, comme sous la convention de la première tranche.
+
+    Une cotisation qu'un âge borne (``avant_l_age`` de l'histoire) ne prélève
+    qu'un pensionné plus jeune : sous ``avant_l_age``, un âge que le pensionné
+    n'a pas, chacune de celles qu'un âge plus haut ou égal borne prend la part
+    de ses régimes aux autres ; sans lui, aucune."""
     racine = simulateur.parametres.racine_donnees
     prelevements = charger_prelevements(racine).pensions
     total = _au_depart(simulateur, resultat)
     if total <= 0.0:
         return {"maladie_complementaires": 1.0}
-    groupes = {**charger_prelevements_historiques(racine).regimes_des_pensions,
+    historique = charger_prelevements_historiques(racine)
+    groupes = {**historique.regimes_des_pensions,
                "maladie_complementaires": prelevements.regimes_maladie}
+    bornees = {serie for serie, age in historique.avant_l_age.items()
+               if avant_l_age is not None and avant_l_age <= age}
+    prises = frozenset().union(*(groupes[serie] for serie in bornees))
+    groupes = {serie: regimes if serie in bornees else regimes - prises
+               for serie, regimes in groupes.items()
+               if serie in bornees or serie not in historique.avant_l_age}
     parts = {serie: somme_ordonnee(p.montant for p in resultat.pensions_par_regime
                                    if p.regime in regimes) / total
              for serie, regimes in groupes.items()}
@@ -1105,6 +1118,22 @@ def _parts_assujetties(simulateur, resultat,
                 annee_liquidation, special.annee)
             parts[special.serie] *= min(1.0, special.plafond_annuel / montant)
     return parts
+
+
+def _parts_selon_l_age(simulateur, comparaison) -> tuple[dict[str, float], tuple]:
+    """Les parts assujetties de la pension de ``comparaison``
+    (:func:`_parts_assujetties`), et, pour chaque âge qui borne une
+    cotisation, du plus jeune au plus vieux, le premier jour du premier mois au
+    premier jour duquel l'assuré l'a, et les parts des mois qui le précèdent :
+    ce que ``taux_pension_annuel`` de l'histoire prend en ``avant``."""
+    carriere, resultat = comparaison.carriere, comparaison.actuel
+    historique = charger_prelevements_historiques(simulateur.parametres.racine_donnees)
+    avant = []
+    for age in sorted(set(historique.avant_l_age.values())):
+        mois = carriere.date_de_l_age(age)
+        avant.append((dt.date(mois.annee, mois.mois, 1),
+                      _parts_assujetties(simulateur, resultat, carriere.annee_liquidation, age)))
+    return _parts_assujetties(simulateur, resultat, carriere.annee_liquidation), tuple(avant)
 
 
 def prelevements_par_annee(simulateur, comparaison) -> dict[int, float]:
@@ -1119,12 +1148,13 @@ def prelevements_par_annee(simulateur, comparaison) -> dict[int, float]:
     celle des retraités indépendants, de 1970 à 1997, celle des exploitants,
     de 1990 à 1997, et celle des régimes spéciaux, de 1980, 1988 ou 1991 à 1997
     — à la SNCF et aux mines, jusqu'aujourd'hui —, sur la leur
-    (:func:`_parts_assujetties`). Les autres systèmes gardent les parts du
-    scénario 1, comme ils gardent son taux de l'année courante."""
+    (:func:`_parts_assujetties`) ; celle des chemins de fer secondaires, de
+    1954 à 1997, jusqu'aux 60 ans du pensionné, à la place de celle des
+    régimes spéciaux (:func:`_parts_selon_l_age`). Les autres systèmes gardent
+    les parts du scénario 1, comme ils gardent son taux de l'année courante."""
     historique = charger_prelevements_historiques(simulateur.parametres.racine_donnees)
-    parts = _parts_assujetties(simulateur, comparaison.actuel,
-                               comparaison.carriere.annee_liquidation)
-    return {annee: historique.taux_pension_annuel(annee, parts)
+    parts, avant = _parts_selon_l_age(simulateur, comparaison)
+    return {annee: historique.taux_pension_annuel(annee, parts, avant)
             for annee in _annees_des_pensions(comparaison)}
 
 
@@ -1134,15 +1164,14 @@ def parts_imposables_par_annee(simulateur, comparaison) -> dict[int, float]:
     :func:`prelevements_par_annee` : la pension moins la CSG déductible de
     l'année — rien avant 1997, 1 point en 1997, 3,8 points de 1998 à 2004,
     4,2 de 2005 à 2017, 5,9 depuis 2018 (CGI, art. 154 quinquies) — et ses
-    cotisations maladie de l'année, sur leurs parts (:func:`_parts_assujetties`),
+    cotisations maladie de l'année, sur leurs parts (:func:`_parts_selon_l_age`),
     des cotisations de sécurité sociale (CGI, art. 83). La CRDS, la CASA et le
     reste de la CSG restent imposables. Appliquée à la pension brute, c'est la
     pension imposable qu'attend :mod:`~retraite_notionnelle.impot_revenu`,
     avant l'abattement de 10 %."""
     historique = charger_prelevements_historiques(simulateur.parametres.racine_donnees)
-    parts = _parts_assujetties(simulateur, comparaison.actuel,
-                               comparaison.carriere.annee_liquidation)
-    return {annee: 1.0 - historique.taux_deductible_pension_annuel(annee, parts)
+    parts, avant = _parts_selon_l_age(simulateur, comparaison)
+    return {annee: 1.0 - historique.taux_deductible_pension_annuel(annee, parts, avant)
             for annee in _annees_des_pensions(comparaison)}
 
 

@@ -45,7 +45,8 @@ RACINE = Path(__file__).resolve().parents[1]
 #: jusqu'aux revenus de 2012 ; un agent de la SNCF entré en 1996, qui garde son
 #: régime, et sa fiche de paie, après la fermeture de 2020 ; un commerçant et un
 #: artisan qui paient la taxe complémentaire de 1959 à 1969, et déduisent celle
-#: de l'année précédente.
+#: de l'année précédente ; un agent des chemins de fer secondaires parti à 55
+#: ans, dont la pension paie une autre cotisation maladie avant ses 60 ans.
 CARRIERES = (
     ("salarie_prive_non_cadre", 1948, "H", 62.0, 3),
     ("salarie_prive_cadre", 1958, "F", 62.0, 0),
@@ -57,6 +58,7 @@ CARRIERES = (
     ("agent_sncf", 1975, "H", 57.0, 0),
     ("commercant", 1936, "H", 65.0, 0),
     ("artisan", 1936, "F", 64.0, 0),
+    ("agent_chemins_fer_secondaires", 1930, "H", 55.0, 0),
 )
 
 #: Les conventions que le portage sait servir ; ``construite`` nomme celles
@@ -454,11 +456,15 @@ def test_les_ages_d_equilibre_se_retrouvent_en_javascript(les_deux):
 
 def test_les_revenus_nets_ont_un_objet(les_deux):
     """Le contrôle des nets a un objet : chaque carrière a une fiche de paie,
-    et l'histoire déplace le net — la CSG n'existait pas en 1970."""
+    et l'histoire déplace le net — la CSG n'existait pas en 1970. L'agent des
+    chemins de fer secondaires, qui a 60 ans au 1er février 1990, paie sur sa
+    part du régime 2,9 % en 1989, et 1,9 % dès février 1990."""
     obtenu, _ = les_deux
     for cas in obtenu["cas"]:
         assert cas["revenus_nets"] and len(cas["prelevements"]) > 20
         assert cas["indicateurs"]["cor"]["actuel"]["taux_annuite"] is not None
+    secondaires = obtenu["cas"][10]["prelevements"]
+    assert secondaires["1989"] > secondaires["1990"]
 
 
 def test_l_impot_a_un_objet(les_deux):

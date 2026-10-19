@@ -35,7 +35,8 @@
 #     complémentaires (les régimes de `maladie_complementaire`), celle des
 #     retraités indépendants sur leur pension de base, pour une pension sous le
 #     plafond, et celle des autres régimes de base ; `regimes_des_pensions` dit
-#     les régimes dont chacune prélève la part.
+#     les régimes dont chacune prélève la part, et `avant_l_age` l'âge avant
+#     lequel une série la prend aux autres, qu'elle leur rend à cet âge.
 #   salaires : la CSG et la CRDS d'activité, sur le brut abattu de
 #     `abattement` (sans limite) ou de `abattement_jusqu_a_quatre_plafonds`
 #     (jusqu'à quatre plafonds, depuis 2011) — l'IPP n'en donne pas avant 1998,
@@ -102,8 +103,9 @@
 # 1er juillet 1987 (décret n° 87-470) ; les exploitants agricoles depuis
 # 1990, sur leur pension de base ; les régimes spéciaux placés sous le régime
 # général pour la maladie (Opéra, Comédie-Française, chemins de fer
-# secondaires), les IEG et les clercs de notaires depuis 1980 ; la SNCF, la
-# RATP et la Banque de France depuis 1991 ; les mines depuis 1988. Rien depuis
+# secondaires passé 60 ans), les IEG et les clercs de notaires depuis 1980 ; les
+# chemins de fer secondaires avant 60 ans depuis 1954 ; la SNCF, la RATP et la
+# Banque de France depuis 1991 ; les mines depuis 1988. Rien depuis
 # 1998, sauf à la SNCF (0,70 %) et aux mines (0,50 %), qui prélèvent encore,
 # et que la fiche de paie du site n'a pas. Un taux par tranches ou sous un
 # plafond est celui d'une pension sous le premier plafond ; les exonérations des
@@ -128,6 +130,7 @@ regimes_des_pensions:
   maladie_independants: [cancava, cancava_avant_1973, organic, organic_avant_1973, cnavpl, cnbf]
   maladie_exploitants: [msa_non_salaries]
   maladie_regimes_speciaux: [opera_de_paris, comedie_francaise, chemins_fer_secondaires]
+  maladie_chemins_fer_secondaires_avant_60_ans: [chemins_fer_secondaires]
   maladie_ieg: [ieg]
   maladie_sncf: [sncf]
   maladie_sncf_sous_plafond: [sncf]
@@ -135,6 +138,9 @@ regimes_des_pensions:
   maladie_banque_de_france: [banque_de_france]
   maladie_crpcen: [crpcen]
   maladie_mines: [mines]
+
+avant_l_age:
+  maladie_chemins_fer_secondaires_avant_60_ans: 60
 
 pensions:
   csg_taux_plein:
@@ -197,6 +203,13 @@ pensions:
     - {depuis: "1997-01-01", taux: 0.0185, texte: "Décret 96-1151 du 26/12/1996, art. 3 : CSS, D. 711-3", jorf: "JORFTEXT000000381201"}
     - {depuis: "1997-07-01", taux: 0.028, texte: "Décret 96-1151 du 26/12/1996, art. 3 : CSS, D. 711-3", jorf: "JORFTEXT000000381201"}
     - {depuis: "1998-01-01", taux: 0, texte: "Décret 97-1249 du 29/12/1997, art. 2 et 17 : CSS, D. 711-3, les seules complémentaires", jorf: "JORFTEXT000000753405"}
+  maladie_chemins_fer_secondaires_avant_60_ans:
+    - {depuis: "1954-01-28", taux: 0.025, texte: "Décret 54-102 du 23/01/1954 : décret 50-1448 du 22/11/1950, art. 6, § 3", jorf: "JORFTEXT000000502209"}
+    - {depuis: "1987-07-01", taux: 0.029, texte: "Décret 87-463 du 30/06/1987, art. 1 : à titre exceptionnel, jusqu'au 30 juin 1988", jorf: "JORFTEXT000000881105"}
+    - {depuis: "1988-07-01", taux: 0.029, texte: "Décret 88-787 du 22/06/1988 : décret 50-1448, art. 6, § 3", jorf: "JORFTEXT000000309675"}
+    - {depuis: "1996-06-01", taux: 0.0305, texte: "Décret 96-471 du 31/05/1996, art. 5 : décret 50-1448, art. 6, § 3", jorf: "JORFTEXT000000559950"}
+    - {depuis: "1997-01-01", taux: 0.028, texte: "Décret 96-1151 du 26/12/1996, art. 16 : décret 50-1448, art. 6, § 3", jorf: "JORFTEXT000000381201"}
+    - {depuis: "1998-01-01", taux: 0, texte: "Décret 97-1249 du 29/12/1997, art. 16 et 17 : décret 50-1448, art. 6, § 3, abrogé", jorf: "JORFTEXT000000753405"}
   maladie_ieg:
     - {depuis: "1980-11-22", taux: 0.015, texte: "Décret 80-916 du 20/11/1980, art. 1", jorf: "JORFTEXT000000503483"}
     - {depuis: "1987-07-01", taux: 0.019, texte: "Décret 87-466 du 30/06/1987, art. 2, puis décret 88-789 du 22/06/1988 : décret 80-916, art. 1", jorf: "JORFTEXT000000881106"}

@@ -188,6 +188,16 @@ def _mois(annee: int) -> tuple[dt.date, ...]:
     return tuple(dt.date(annee, rang, 1) for rang in range(1, 13))
 
 
+def _parts_du_mois(jour: dt.date, parts: dict[str, float], avant) -> dict[str, float]:
+    """Les parts du mois de ``jour`` : celles de la première date de ``avant``
+    — des couples (date, parts), dans l'ordre des dates — qu'il précède,
+    sinon ``parts``."""
+    for jusqu_au, parts_avant in avant:
+        if jour < jusqu_au:
+            return parts_avant
+    return parts
+
+
 @dataclass(frozen=True)
 class PrelevementsHistoriques:
     """Les prélèvements des pensions et des salaires, date par date."""
@@ -199,6 +209,11 @@ class PrelevementsHistoriques:
     #: Les régimes dont chaque cotisation maladie des pensions prélève la part,
     #: hors des complémentaires, que ``prelevements_remuneration.yaml`` nomme.
     regimes_des_pensions: dict[str, frozenset[str]] = field(default_factory=dict)
+    #: Les cotisations qu'un âge borne : avant le premier mois au premier jour
+    #: duquel le pensionné l'a, chacune prélève la part de ses régimes, que les
+    #: autres ne prélèvent pas ; à cet âge, plus rien — les chemins de fer
+    #: secondaires « jusqu'à [leur] soixantième anniversaire ».
+    avant_l_age: dict[str, float] = field(default_factory=dict)
 
     # -- les pensions ------------------------------------------------------
 
@@ -215,9 +230,12 @@ class PrelevementsHistoriques:
                 + somme_ordonnee(p[serie].valeur(jour) * part
                                  for serie, part in sorted(parts.items())))
 
-    def taux_pension_annuel(self, annee: int, parts: dict[str, float]) -> float:
-        """La moyenne des douze mois de l'année."""
-        return somme_ordonnee(self.taux_pension(jour, parts) for jour in _mois(annee)) / 12.0
+    def taux_pension_annuel(self, annee: int, parts: dict[str, float], avant=()) -> float:
+        """La moyenne des douze mois de l'année ; un mois d'avant une date de
+        ``avant`` prend ses parts, celles d'un âge qui borne une cotisation
+        (:attr:`avant_l_age`)."""
+        return somme_ordonnee(self.taux_pension(jour, _parts_du_mois(jour, parts, avant))
+                              for jour in _mois(annee)) / 12.0
 
     def taux_csg_pension(self, jour: dt.date, taux: str) -> float:
         """La CSG d'une pension, au taux ``plein``, ``median`` ou ``reduit`` ;
@@ -241,10 +259,13 @@ class PrelevementsHistoriques:
                 + somme_ordonnee(p[serie].valeur(jour) * part
                                  for serie, part in sorted(parts.items())))
 
-    def taux_deductible_pension_annuel(self, annee: int, parts: dict[str, float]) -> float:
-        """La moyenne des douze mois de l'année."""
-        return somme_ordonnee(self.taux_deductible_pension(jour, parts)
-                              for jour in _mois(annee)) / 12.0
+    def taux_deductible_pension_annuel(self, annee: int, parts: dict[str, float],
+                                       avant=()) -> float:
+        """La moyenne des douze mois de l'année, les parts de chaque mois comme
+        :meth:`taux_pension_annuel` les prend."""
+        return somme_ordonnee(
+            self.taux_deductible_pension(jour, _parts_du_mois(jour, parts, avant))
+            for jour in _mois(annee)) / 12.0
 
     # -- les salaires ------------------------------------------------------
 
@@ -401,6 +422,8 @@ def _charger(chemin: str, signature: tuple) -> PrelevementsHistoriques:
                       for nom, marches in (contenu.get("independants") or {}).items()},
         regimes_des_pensions={serie: frozenset(regimes) for serie, regimes
                               in (contenu.get("regimes_des_pensions") or {}).items()},
+        avant_l_age={serie: float(age) for serie, age
+                     in (contenu.get("avant_l_age") or {}).items()},
     )
 
 

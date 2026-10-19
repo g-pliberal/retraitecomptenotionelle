@@ -141,6 +141,15 @@ function moyenneAnnuelle(annee, f) {
   return total / 12.0;
 }
 
+/**
+ * Les parts du mois de `jour` : celles de la première date de `avant` — des
+ * couples [date, parts], dans l'ordre des dates — qu'il précède, sinon `parts`.
+ */
+function partsDuMois(jour, parts, avant) {
+  for (const [jusquAu, partsAvant] of avant) if (jour < jusquAu) return partsAvant;
+  return parts;
+}
+
 /** Ce que les parts retirent : chaque série sur sa part, dans l'ordre des noms. */
 function surLesParts(series, jour, parts) {
   let total = 0.0;
@@ -152,12 +161,16 @@ function surLesParts(series, jour, parts) {
 
 /** Les prélèvements des pensions et des salaires, date par date. */
 export class PrelevementsHistoriques {
-  constructor({ pensions, salaires, lu_le = "", independants = {}, regimes_des_pensions = new Map() }) {
+  constructor({ pensions, salaires, lu_le = "", independants = {}, regimes_des_pensions = new Map(),
+    avant_l_age = new Map() }) {
     this.pensions = pensions;
     this.salaires = salaires;
     this.lu_le = lu_le;
     this.independants = independants;
     this.regimes_des_pensions = regimes_des_pensions;
+    // Les cotisations qu'un âge borne : avant lui, chacune prend la part de ses
+    // régimes aux autres ; à cet âge, plus rien.
+    this.avant_l_age = avant_l_age;
   }
 
   // -- les pensions ----------------------------------------------------------
@@ -173,8 +186,10 @@ export class PrelevementsHistoriques {
       + surLesParts(p, jour, parts);
   }
 
-  tauxPensionAnnuel(annee, parts) {
-    return moyenneAnnuelle(annee, (jour) => this.tauxPension(jour, parts));
+  /** La moyenne des douze mois ; un mois d'avant une date de `avant` prend ses parts. */
+  tauxPensionAnnuel(annee, parts, avant = []) {
+    return moyenneAnnuelle(annee,
+      (jour) => this.tauxPension(jour, partsDuMois(jour, parts, avant)));
   }
 
   tauxCsgPension(jour, taux) {
@@ -190,8 +205,9 @@ export class PrelevementsHistoriques {
     return this.csgDeductiblePension(jour) + surLesParts(this.pensions, jour, parts);
   }
 
-  tauxDeductiblePensionAnnuel(annee, parts) {
-    return moyenneAnnuelle(annee, (jour) => this.tauxDeductiblePension(jour, parts));
+  tauxDeductiblePensionAnnuel(annee, parts, avant = []) {
+    return moyenneAnnuelle(annee,
+      (jour) => this.tauxDeductiblePension(jour, partsDuMois(jour, parts, avant)));
   }
 
   // -- les salaires ----------------------------------------------------------
@@ -336,6 +352,7 @@ export function chargerPrelevementsHistoriques(paquet) {
     independants: lireSeries(brut.independants),
     regimes_des_pensions: new Map(Object.entries(brut.regimes_des_pensions ?? {})
       .map(([serie, regimes]) => [serie, new Set(regimes)])),
+    avant_l_age: new Map(Object.entries(brut.avant_l_age ?? {})),
   });
   lues.set(paquet, historique);
   return historique;

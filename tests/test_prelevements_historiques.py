@@ -187,13 +187,15 @@ def test_la_maladie_des_pensions_des_autres_regimes_de_base(historique, courants
     assert {"cancava", "cancava_avant_1973", "organic", "organic_avant_1973", "cnavpl",
             "cnbf"} == regimes["maladie_independants"]
     # Une pension n'est comptée que dans une cotisation, à une même date : la
-    # SNCF passe le 14 novembre 2010 d'une série à l'autre.
+    # SNCF passe le 14 novembre 2010 d'une série à l'autre ; une série qu'un
+    # âge borne prend sa part aux autres avant lui (``avant_l_age``).
     relais = dt.date(2010, 11, 14)
     assert pensions["maladie_sncf"].valeur(relais) == 0.0
     assert pensions["maladie_sncf"].valeur(relais - dt.timedelta(days=1)) == 0.007
     assert pensions["maladie_sncf_sous_plafond"].valeur(relais - dt.timedelta(days=1)) == 0.0
     assert pensions["maladie_sncf_sous_plafond"].valeur(APRES) == 0.007
-    groupes = [*(r for serie, r in regimes.items() if serie != "maladie_sncf_sous_plafond"),
+    groupes = [*(r for serie, r in regimes.items()
+                 if serie != "maladie_sncf_sous_plafond" and serie not in historique.avant_l_age),
                courants.pensions.regimes_maladie]
     assert sum(len(g) for g in groupes) == len(frozenset().union(*groupes))
 
@@ -267,6 +269,32 @@ def test_la_maladie_des_pensions_des_exploitants_et_des_regimes_speciaux(histori
         assert regimes[f"maladie_{regime}"] == {regime}
 
 
+def test_la_maladie_des_chemins_de_fer_secondaires_avant_60_ans(historique):
+    """Le pensionné des chemins de fer secondaires supporte, « jusqu'à [son]
+    soixantième anniversaire », 2,5 % de sa pension depuis le décret n° 54-102,
+    publié le 28 janvier 1954 ; 2,9 % au 1er juillet 1987 (n° 87-463, puis
+    88-787), 3,05 % au 1er juin 1996 (n° 96-471), 2,80 % en 1997 et non les
+    3,80 % prévus (n° 96-1151) ; rien depuis 1998 (n° 97-1249). La série ne
+    prélève sa part qu'avant ses 60 ans : passé, celle des régimes spéciaux
+    placés sous le régime général (décret n° 50-1448, art. 6, § 3)."""
+    serie = historique.pensions["maladie_chemins_fer_secondaires_avant_60_ans"]
+
+    def taux(annee, mois=6, jour=1):
+        return serie.valeur(dt.date(annee, mois, jour))
+
+    assert taux(1954, 1, 27) == 0.0
+    assert taux(1954, 1, 28) == pytest.approx(0.025)
+    assert taux(1987, 6) == pytest.approx(0.025)
+    assert taux(1987, 7) == pytest.approx(0.029)
+    assert taux(1996, 5) == pytest.approx(0.029)
+    assert taux(1996, 6) == pytest.approx(0.0305)
+    assert taux(1997, 1) == pytest.approx(0.028)
+    assert taux(1998, 1) == 0.0 and serie.valeur(APRES) == 0.0
+    assert historique.regimes_des_pensions["maladie_chemins_fer_secondaires_avant_60_ans"] == {
+        "chemins_fer_secondaires"}
+    assert historique.avant_l_age == {"maladie_chemins_fer_secondaires_avant_60_ans": 60}
+
+
 def test_la_pension_d_un_agent_sncf_paie_encore_sa_maladie(simulateur):
     """Un agent de la SNCF parti à 55 ans en 1990 : 4,50 % de sa pension en
     1992, en plus de la CSG ; 0,70 % de 1998 au 13 novembre 2010 ; depuis, 0,70 %
@@ -284,6 +312,60 @@ def test_la_pension_d_un_agent_sncf_paie_encore_sa_maladie(simulateur):
     courant = cycle_de_vie.taux_de_prelevement(simulateur, comparaison.actuel, 1990)
     assert courant == pytest.approx(0.091 + 0.007 * parts["maladie_sncf_sous_plafond"])
     assert taux[2030] == pytest.approx(courant)
+
+
+def test_la_pension_des_chemins_de_fer_secondaires_paie_jusqu_a_60_ans(simulateur):
+    """Un agent des chemins de fer secondaires né en janvier 1910, le 15
+    présumé, parti à 55 ans en 1965 : la part de sa pension que sert le régime
+    paie 2,5 % jusqu'à ses 60 ans, janvier 1970 compris, au premier jour
+    duquel il ne les a pas ; puis rien jusqu'au 31 juillet 1980, quand naît la
+    cotisation des régimes spéciaux placés sous le régime général. Rien
+    d'autre ne prélève sa pension avant 1980."""
+    comparaison = simulateur.simuler(simulateur.carriere_simple(
+        annee_naissance=1910, sexe="H", affiliation="agent_chemins_fer_secondaires",
+        age_debut=20, age_liquidation=55, niveau_salaire=1.0))
+    taux = cycle_de_vie.prelevements_par_annee(simulateur, comparaison)
+    part = cycle_de_vie._parts_assujetties(simulateur, comparaison.actuel)[
+        "maladie_regimes_speciaux"]
+    assert 0.5 < part < 1.0
+    assert taux[1965] == pytest.approx(0.025 * part)
+    assert taux[1969] == pytest.approx(0.025 * part)
+    assert taux[1970] == pytest.approx(0.025 * part / 12)
+    assert taux[1971] == 0.0 and taux[1979] == 0.0
+
+
+def test_a_60_ans_la_pension_des_chemins_de_fer_secondaires_change_de_cotisation(simulateur):
+    """Un agent des chemins de fer secondaires né en janvier 1930, parti à 55
+    ans en 1985 : la part de sa pension que sert le régime paie 2,7 % en 1987,
+    la moyenne des 2,5 % et des 2,9 % du décret n° 87-463, et 2,9 % en 1989 ;
+    au 1er février 1990, il a 60 ans, et elle paie la cotisation des régimes
+    spéciaux placés sous le régime général, 1,9 %, dont le décret n° 80-598
+    laissait jusque-là « régis par les dispositions qui les concernent » ceux
+    qui en payaient une. Sa pension n'est comptée qu'une fois, avant comme
+    après, et son revenu imposable déduit l'une et l'autre."""
+    comparaison = simulateur.simuler(simulateur.carriere_simple(
+        annee_naissance=1930, sexe="H", affiliation="agent_chemins_fer_secondaires",
+        age_debut=20, age_liquidation=55, niveau_salaire=1.0))
+    taux = cycle_de_vie.prelevements_par_annee(simulateur, comparaison)
+    imposables = cycle_de_vie.parts_imposables_par_annee(simulateur, comparaison)
+    apres = cycle_de_vie._parts_assujetties(simulateur, comparaison.actuel, 1985)
+    avant = cycle_de_vie._parts_assujetties(simulateur, comparaison.actuel, 1985,
+                                            avant_l_age=60)
+    general, complementaires = apres["maladie_regime_general"], apres["maladie_complementaires"]
+    secondaires = apres["maladie_regimes_speciaux"]
+    assert 0.1 < secondaires < 0.5
+    assert avant["maladie_chemins_fer_secondaires_avant_60_ans"] == pytest.approx(secondaires)
+    assert avant["maladie_regimes_speciaux"] == 0.0
+    assert "maladie_chemins_fer_secondaires_avant_60_ans" not in apres
+    assert sum(apres.values()) == pytest.approx(1.0) and sum(avant.values()) == pytest.approx(1.0)
+    assert taux[1987] == pytest.approx(
+        0.012 * general + 0.027 * secondaires + 0.022 * complementaires)
+    assert taux[1989] == pytest.approx(
+        0.014 * general + 0.029 * secondaires + 0.024 * complementaires)
+    assert taux[1990] == pytest.approx(
+        0.014 * general + (0.029 + 11 * 0.019) / 12 * secondaires + 0.024 * complementaires)
+    assert imposables[1989] == pytest.approx(1.0 - taux[1989])
+    assert imposables[1990] == pytest.approx(1.0 - taux[1990])
 
 
 def test_le_plafond_de_la_sncf_est_celui_du_texte_revalorise(courants):
@@ -359,7 +441,8 @@ def _lectures():
 
 def test_la_maladie_lue_aux_textes_est_la_donnee():
     """Chaque série que le récupérateur lit aux textes est dans la donnée,
-    marche pour marche, et ses régimes aussi : la donnée a été refaite."""
+    marche pour marche, et ses régimes aussi, et l'âge qui en borne une : la
+    donnée a été refaite."""
     lectures = _lectures()
     contenu = charger_yaml(RACINE_DONNEES / CHEMIN)
     for nom, marches in lectures.PENSIONS_LUES_AUX_TEXTES.items():
@@ -368,6 +451,7 @@ def test_la_maladie_lue_aux_textes_est_la_donnee():
             (m["depuis"], m["taux"]) for m in marches], nom
     assert {nom: tuple(regimes) for nom, regimes in contenu["regimes_des_pensions"].items()} == (
         lectures.REGIMES_DES_PENSIONS)
+    assert contenu["avant_l_age"] == lectures.AVANT_L_AGE
 
 
 def test_la_maladie_lue_aux_textes_se_relit_dans_l_index():

@@ -37320,6 +37320,7 @@ null
 "niveaux_de_vie":{"1":497.0,"10":1738.0,"11":1837.0,"12":1941.0,"13":2053.0,"14":2176.0,"15":2319.0,"16":2492.0,"17":2717.0,"18":3040.0,"19":3609.0,"2":847.0,"20":6427.0,"3":1003.0,"4":1129.0,"5":1243.0,"6":1350.0,"7":1451.0,"8":1548.0,"9":1642.0}
 },
 "prelevements_historiques":{
+"avant_l_age":{"maladie_chemins_fer_secondaires_avant_60_ans":60.0},
 "independants":{
 "assiette_csg":{"marches":[["1991-02-01",{"cotisations_ajoutees":1.0}],["2025-01-01",{"cotisations_ajoutees":0.0}]],"tenue_avant":false},
 "famille":{
@@ -37412,6 +37413,7 @@ null
 },
 "csg_taux_reduit":{"marches":[["1997-01-01",{"deductible":0.01,"taux":0.01}],["1998-01-01",{"deductible":0.038,"taux":0.038}]],"tenue_avant":false},
 "maladie_banque_de_france":{"marches":[["1991-07-01",{"taux":0.0265}],["1996-08-01",{"taux":0.0305}],["1997-01-01",{"taux":0.0205}],["1997-07-01",{"taux":0.028}],["1998-01-01",{"taux":0.0}]],"tenue_avant":false},
+"maladie_chemins_fer_secondaires_avant_60_ans":{"marches":[["1954-01-28",{"taux":0.025}],["1987-07-01",{"taux":0.029}],["1988-07-01",{"taux":0.029}],["1996-06-01",{"taux":0.0305}],["1997-01-01",{"taux":0.028}],["1998-01-01",{"taux":0.0}]],"tenue_avant":false},
 "maladie_complementaires":{"marches":[["1980-07-01",{"taux":0.02}],["1987-07-01",{"taux":0.024}],["1996-01-01",{"taux":0.036}],["1997-01-01",{"taux":0.038}],["1998-01-01",{"taux":0.01}]],"tenue_avant":false},
 "maladie_crpcen":{"marches":[["1980-07-31",{"taux":0.015}],["1986-01-01",{"taux":0.0225}],["1987-07-01",{"taux":0.0265}],["1996-06-01",{"taux":0.0305}],["1997-01-01",{"taux":0.028}],["1998-01-01",{"taux":0.0}]],"tenue_avant":false},
 "maladie_exploitants":{"marches":[["1990-01-01",{"taux":0.038}],["1997-01-01",{"taux":0.028}],["1998-01-01",{"taux":0.0}]],"tenue_avant":false},
@@ -37444,6 +37446,7 @@ null
 },
 "regimes_des_pensions":{
 "maladie_banque_de_france":["banque_de_france"],
+"maladie_chemins_fer_secondaires_avant_60_ans":["chemins_fer_secondaires"],
 "maladie_crpcen":["crpcen"],
 "maladie_exploitants":["msa_non_salaries"],
 "maladie_fonction_publique":["cnracl","fonction_publique_etat","fspoeie"],
@@ -223290,7 +223293,7 @@ null
 "services":{"2018":1.0004732394366196,"2019":1.0004732394366196,"2020":1.0004732394366196,"2021":1.0004732394366196,"2022":0.9999774647887324,"2023":0.9984901408450706,"2024":0.9984901408450706,"2025":0.9917851147174036,"2026":1.030934527140459},
 "vente":{"2018":1.0023661971830988,"2019":1.0023661971830988,"2020":1.0023661971830988,"2021":1.0023661971830988,"2022":1.0014783875667799,"2023":0.998814958717824,"2024":0.998814958717824,"2025":0.9921077513845199,"2026":1.0312698994654879}
 },
-"version":28,
+"version":29,
 "versions_des_fiches":{
 "enfants_crpcen":{
 "dates_qui_decident":["enfant.naissance","liquidation.date_effet"],

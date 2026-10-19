@@ -773,19 +773,29 @@ export function conventionNette(simulateur, comparaison, cor = false) {
 
 /**
  * Les parts de la pension du scénario 1 au départ qui ont payé une cotisation
- * maladie, par cotisation : une `Map` de la série à sa part. Jumeau de
- * `_parts_assujetties`.
+ * maladie, par cotisation : une `Map` de la série à sa part. Sous `avantLAge`,
+ * un âge que le pensionné n'a pas, chaque cotisation qu'un âge plus haut ou
+ * égal borne prend la part de ses régimes aux autres ; sans lui, aucune.
+ * Jumeau de `_parts_assujetties`.
  */
-export function partsAssujetties(simulateur, resultat, anneeLiquidation = null) {
+export function partsAssujetties(simulateur, resultat, anneeLiquidation = null, avantLAge = null) {
   const total = auDepart(simulateur, resultat);
   if (total <= 0.0) return new Map([["maladie_complementaires", 1.0]]);
   const prelevements = simulateur.baremePrelevements.pensions;
-  const groupes = new Map(historiqueDe(simulateur).regimes_des_pensions);
+  const historique = historiqueDe(simulateur);
+  const groupes = new Map(historique.regimes_des_pensions);
   groupes.set("maladie_complementaires", prelevements.regimes_maladie);
+  const bornees = new Set([...historique.avant_l_age]
+    .filter(([, age]) => avantLAge !== null && avantLAge <= age).map(([serie]) => serie));
+  const prises = new Set([...bornees].flatMap((serie) => [...groupes.get(serie)]));
   const parts = new Map();
   for (const [serie, regimes] of groupes) {
+    const bornee = bornees.has(serie);
+    if (!bornee && historique.avant_l_age.has(serie)) continue;
     let montant = 0.0;
-    for (const p of resultat.pensions_par_regime) if (regimes.has(p.regime)) montant += p.montant;
+    for (const p of resultat.pensions_par_regime) {
+      if (regimes.has(p.regime) && (bornee || !prises.has(p.regime))) montant += p.montant;
+    }
     parts.set(serie, montant / total);
   }
   // La SNCF depuis 2010 : sa part sous son plafond, la pension du départ menée
@@ -810,16 +820,33 @@ function anneesDesPensions(comparaison) {
 }
 
 /**
+ * Les parts assujetties de la pension de `comparaison`, et, pour chaque âge
+ * qui borne une cotisation, du plus jeune au plus vieux, le premier jour du
+ * premier mois au premier jour duquel l'assuré l'a, et les parts des mois qui
+ * le précèdent : ce que `tauxPensionAnnuel` prend en `avant`. Jumeau de
+ * `_parts_selon_l_age`.
+ */
+function partsSelonLAge(simulateur, comparaison) {
+  const { carriere, actuel } = comparaison;
+  const ages = [...new Set(historiqueDe(simulateur).avant_l_age.values())].sort((a, b) => a - b);
+  const avant = ages.map((age) => {
+    const mois = carriere.dateDeLAge(age);
+    const jour = `${String(mois.annee).padStart(4, "0")}-${String(mois.mois).padStart(2, "0")}-01`;
+    return [jour, partsAssujetties(simulateur, actuel, carriere.anneeLiquidation, age)];
+  });
+  return { parts: partsAssujetties(simulateur, actuel, carriere.anneeLiquidation), avant };
+}
+
+/**
  * Ce que les prélèvements de chaque année retirent aux pensions de
  * `comparaison`, au taux plein de CSG, du premier départ à la dernière année
  * qu'une pension peut atteindre. Jumeau de `prelevements_par_annee`.
  */
 export function prelevementsParAnnee(simulateur, comparaison) {
   const historique = historiqueDe(simulateur);
-  const parts = partsAssujetties(simulateur, comparaison.actuel,
-    comparaison.carriere.anneeLiquidation);
+  const { parts, avant } = partsSelonLAge(simulateur, comparaison);
   return new Map(anneesDesPensions(comparaison)
-    .map((annee) => [annee, historique.tauxPensionAnnuel(annee, parts)]));
+    .map((annee) => [annee, historique.tauxPensionAnnuel(annee, parts, avant)]));
 }
 
 /**
@@ -828,10 +855,9 @@ export function prelevementsParAnnee(simulateur, comparaison) {
  */
 export function partsImposablesParAnnee(simulateur, comparaison) {
   const historique = historiqueDe(simulateur);
-  const parts = partsAssujetties(simulateur, comparaison.actuel,
-    comparaison.carriere.anneeLiquidation);
+  const { parts, avant } = partsSelonLAge(simulateur, comparaison);
   return new Map(anneesDesPensions(comparaison)
-    .map((annee) => [annee, 1.0 - historique.tauxDeductiblePensionAnnuel(annee, parts)]));
+    .map((annee) => [annee, 1.0 - historique.tauxDeductiblePensionAnnuel(annee, parts, avant)]));
 }
 
 /**

@@ -263,9 +263,6 @@ DECRETS_EN_SUSPENS: dict[str, str] = {
               "des gains les plus faibles. À lire au fac-similé",
     "70-717": _MILITAIRES + " ; sans jumeau pour les fonctionnaires civils, que l'IPP ne change "
               "pas en 1970, ni notice qui le chiffre. À lire au fac-similé",
-    "87-463": "la cotisation des pensionnés des chemins de fer secondaires avant 60 ans, 2,5 % "
-              "portés à 2,9 % du 1er juillet 1987 au 30 juin 1988, que ``maladie_regimes_"
-              "speciaux`` ne distingue pas de celle d'après 60 ans",
     "2020-1689": "la cotisation d'équilibre des pensionnés des IEG au régime complémentaire de la "
                  "CAMIEG, 2,01 % en 2021 et 2022, 2,25 % depuis 2023, que ni l'histoire ni la "
                  "fiche de paie ne prélèvent ; avant 2021, les décrets n° 2008-416, 2014-363 et "

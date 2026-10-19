@@ -103,6 +103,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from decrets_des_prelevements import decrets_ignores  # noqa: E402
 from dila_index import chemin_index, meta, recuperer  # noqa: E402
 from maladie_des_pensions import (  # noqa: E402
+    AVANT_L_AGE,
     PENSIONS_LUES_AUX_TEXTES,
     REGIMES_DES_PENSIONS,
     a_ecrire,
@@ -795,7 +796,8 @@ ENTETE = """\
 #     complémentaires (les régimes de `maladie_complementaire`), celle des
 #     retraités indépendants sur leur pension de base, pour une pension sous le
 #     plafond, et celle des autres régimes de base ; `regimes_des_pensions` dit
-#     les régimes dont chacune prélève la part.
+#     les régimes dont chacune prélève la part, et `avant_l_age` l'âge avant
+#     lequel une série la prend aux autres, qu'elle leur rend à cet âge.
 #   salaires : la CSG et la CRDS d'activité, sur le brut abattu de
 #     `abattement` (sans limite) ou de `abattement_jusqu_a_quatre_plafonds`
 #     (jusqu'à quatre plafonds, depuis 2011) — l'IPP n'en donne pas avant 1998,
@@ -862,8 +864,9 @@ ENTETE = """\
 # 1er juillet 1987 (décret n° 87-470) ; les exploitants agricoles depuis
 # 1990, sur leur pension de base ; les régimes spéciaux placés sous le régime
 # général pour la maladie (Opéra, Comédie-Française, chemins de fer
-# secondaires), les IEG et les clercs de notaires depuis 1980 ; la SNCF, la
-# RATP et la Banque de France depuis 1991 ; les mines depuis 1988. Rien depuis
+# secondaires passé 60 ans), les IEG et les clercs de notaires depuis 1980 ; les
+# chemins de fer secondaires avant 60 ans depuis 1954 ; la SNCF, la RATP et la
+# Banque de France depuis 1991 ; les mines depuis 1988. Rien depuis
 # 1998, sauf à la SNCF (0,70 %) et aux mines (0,50 %), qui prélèvent encore,
 # et que la fiche de paie du site n'a pas. Un taux par tranches ou sous un
 # plafond est celui d'une pension sous le premier plafond ; les exonérations des
@@ -888,6 +891,8 @@ def ecrire(series: dict[tuple[str, str], list[dict]], lu_le: str, ancrage: dict)
     lignes += ["", "regimes_des_pensions:"]
     lignes += [f"  {serie}: [{', '.join(regimes)}]"
                for serie, regimes in REGIMES_DES_PENSIONS.items()]
+    lignes += ["", "avant_l_age:"]
+    lignes += [f"  {serie}: {age}" for serie, age in AVANT_L_AGE.items()]
     for partie in ("pensions", "salaires", "independants"):
         lignes += ["", f"{partie}:"]
         for (bloc, nom), marches_lues in series.items():
