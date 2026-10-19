@@ -208,7 +208,9 @@ referents:
       - constat: >-
           E2. Le minimum contributif de 636,56 € est daté du 1er
           octobre 2019 (montant_mico.yaml:105), alors que l'IPP cite
-          lui-même la circulaire Cnav 2019/4 du 9 janvier 2019.
+          lui-même la circulaire Cnav 2019/4 du 9 janvier 2019. Le
+          minimum majoré du même fichier l'est aussi : 8 347,09 € par
+          an, au 1er octobre 2019 (recoupé le 19 octobre 2026).
         tranche: >-
           La bonne date est le 1er janvier 2019, comme dans la série
           de revalorisation de l'IPP lui-même (1,003 au 2019-01-01).
@@ -332,6 +334,91 @@ referents:
         preuve: >-
           notice JORFTEXT000000693828 : « ABROGATION DE L'ART. L343
           … ENTREE EN VIGUEUR : 01-01-1973 »
+      - constat: >-
+          E11. Ses coefficients de revalorisation des salaires
+          portés au compte omettent deux marches, 1,04 au 1er juillet
+          1983 et 1,013 au 1er janvier 1989 (reval_s.yaml), que sa
+          propre série des pensions porte (revalorisation_pension.yaml)
+          : leur produit depuis 1983 reste de 5,35 % en deçà des
+          colonnes de la Cnav.
+        tranche: >-
+          L'arrêté du 29 décembre 1982 fixe à 4 % le taux de
+          majoration ou de revalorisation « PRENANT EFFET AU
+          01-07-1983 » comme celui du 1er janvier (notice
+          JORFTEXT000000313902) ; la loi n° 89-18, article 10,
+          revalorise « les salaires servant de base » au calcul des
+          pensions « de 1,3% au 1er janvier 1989 »
+          (LEGIARTI000006756496). Le dépôt a raison : les colonnes de
+          la Cnav portent les deux (revalorisation_salaires_anciennes.csv).
+        preuve: >-
+          controle_recoupement_ipp, dans scripts/verifier_donnees.py :
+          recoupement du 19 octobre 2026, au commit fe2cdff
+      - constat: >-
+          E12. Le salaire qui valide un trimestre à La Réunion en
+          1948 y vaut 900, dans une série en anciens francs
+          (salval/salaire_validant_trimestre/reunion.yaml), la moitié
+          de celui des Antilles et de la Guyane.
+        tranche: >-
+          R. 753-21 écrit « 900 F. C. F. A. dans le département de la
+          Réunion », soit 1 800 anciens francs, le franc CFA en valant
+          deux depuis le 17 octobre 1948 : autant qu'aux Antilles. Le
+          dépôt a raison (2,744 €).
+        preuve: >-
+          salaire_validant_trimestre_outre_mer.csv (en-tête, R.
+          753-21, LEGIARTI000006752616)
+      - constat: >-
+          E13. Sa durée de services de la fonction publique baisse au
+          1er janvier 2014 pour les générations 1944 à 1948, à 151,
+          152, 153, 154 et 155 trimestres (pension_civile/trimtp.yaml
+          et prorat.yaml), en citant la loi n° 2014-40, article 2.
+        tranche: >-
+          L. 13 du code des pensions civiles et militaires, dans la
+          rédaction de cette loi (LEGIARTI000028498258), renvoie la
+          durée à l'article 5 de la loi du 21 août 2003 et, pour les
+          assurés nés à compter du 1er janvier 1958, à L. 161-17-3 :
+          rien n'y abaisse celle des générations 1944 à 1948, qui
+          gardent la durée de l'année où elles ont soixante ans, de
+          152 trimestres en 2004 à 160 en 2008, comme au dépôt. L'IPP
+          a tort.
+        preuve: >-
+          duree_requise_fonction_publique.csv ; LEGIARTI000028498258,
+          lu dans l'index LEGI du dépôt le 19 octobre 2026
+      - constat: >-
+          E14. Sa valeur du point d'avant 1973 des indépendants
+          s'écarte des fiches de la Cnav. Chez les artisans
+          (pt_cancava), la marche du 1er janvier 2004, 7,8627 €, est
+          datée du 1er juillet 2003. Chez les commerçants
+          (pt_organic), le 1er avril 2009 porte la valeur de 2010
+          (11,90139 € pour 11,79524 €), le 1er avril 2011 celle des
+          artisans (8,8124 € pour 12,15131 €), le 1er avril 2012 perd
+          un chiffre (12,4048 € pour 12,40648 €), et 2010 manque. La
+          marche de 2013 est nulle chez les deux.
+        tranche: >-
+          Les fiches « Valeur du point de retraite RVB » du RSI, que
+          le barème de la Cnav cite de 1988 à 2019, suivent la
+          revalorisation des pensions : 1,017 au 1er janvier 2004 ;
+          1,01, 1,009, 1,021, 1,021 et 1,013 au 1er avril, de 2009 à
+          2013. Le dépôt les suit (valeurs_service_datees.csv) ; l'IPP
+          a tort.
+        preuve: >-
+          controle_recoupement_ipp, dans scripts/verifier_donnees.py ;
+          scripts/fetch/cnav_points_avant_1973.py
+      - constat: >-
+          E15. Il date du 1er avril 1996 la valeur de service de
+          l'UNIRS de cette année-là, 2,4916 F (unirs/point), et son
+          salaire de référence « en euros » de 1949 à 1957 ne
+          convertit pas sa propre colonne nominale : 0,45 pour 0,415
+          F en 1949, 1,07 pour 1,065 F en 1957
+          (unirs/salaire_de_reference).
+        tranche: >-
+          La compilation de la fédération Agirc-Arrco sert 2,4916 F
+          dès le 1er janvier 1996 (valeurs_service_datees.csv,
+          certifiée) ; ses salaires de référence, que le dépôt porte,
+          sont les nominaux de l'IPP convertis (0,0633 € en 1949).
+          L'IPP a tort ; le dépôt n'en est pas touché.
+        preuve: >-
+          controle_recoupement_ipp, dans scripts/verifier_donnees.py ;
+          valeurs_point.csv
       - constat: >-
           IR1. Ses barèmes de l'impôt sur le revenu
           (impot_revenu.*) datent de 1995 la part entière du
@@ -1032,11 +1119,13 @@ referents:
       l'AVPF, le revenu moyen des artisans et commerçants, la série du
       minimum contributif et l'IGRANTE de 1948. Ailleurs il est
       identique au dépôt, en retard (fonction publique, plusieurs séries
-      de 2021 à 2025) ou faux (dix écarts). Le barème de la Cnav,
+      de 2021 à 2025) ou faux (quinze écarts). Le barème de la Cnav,
       accessible par API, tranche presque tous les cas mieux que lui.
+      Recoupé table par table le 19 octobre 2026, il a tort chaque fois
+      que les deux lectures divergent (E11 à E15).
     manifeste: [ipp_taux_cotisation, ipp_points_independants, ipp_retraite_complementaire_liberaux]
     sas: [ipp_baremes_yaml]
-    lu_le: 2026-10-04
+    lu_le: 2026-10-19
     lu_dans:
       - https://gitlab.com/ipp/partage-public-ipp/baremes-ipp/baremes-ipp-yaml
       - docs/decisions/0001-architecture.md
@@ -1048,7 +1137,11 @@ referents:
       pourtant lui que calcul_pension télécharge. Un dépôt voisin,
       `baremes-ipp-sources`, archive les sources hors Légifrance.
       Comparé au dépôt le 1er octobre 2026 au commit `fe2cdff`, du 21
-      septembre.
+      septembre. Recoupé table par table le 19 octobre 2026, au même
+      commit, toujours le dernier : `scripts/fetch/ipp_baremes_retraites.py`
+      le lit, `controle_recoupement_ipp` (scripts/verifier_donnees.py) y
+      confronte seize séries qu'aucun autre contrôle ne recoupe, 1 526 de
+      ses 3 808 marches citant leur texte (action 89).
 
   - id: openfisca_france
     nom: OpenFisca-France

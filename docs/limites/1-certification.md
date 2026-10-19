@@ -86,7 +86,7 @@ résumé :
 | Plafond Sécurité sociale | 2002-2025 | **certifiée** | INSEE BDM, idbank 000822494 |
 | Plafond Sécurité sociale | 1963, 1965-1981, 1984, 1987, 1988, 1990-1993, 1996-2001 | **certifiée** | DILA, base JORF, décrets portant fixation du plafond |
 | Plafond Sécurité sociale | le reste de 1931-2001 | haute | OpenFisca-France, daté décret par décret — la notice ancienne du JORF n'a pas d'écriture stable |
-| Revalorisation des salaires portés au compte | <!--chiffre:distinctes(data/reference/legislation/revalorisation_salaires.csv:date_effet)-->10<!--/--> colonnes, effets 2017-2026, perceptions depuis 1930 | haute | Cnav, circulaires de revalorisation, recoupées deux à deux |
+| Revalorisation des salaires portés au compte | <!--chiffre:distinctes(data/reference/legislation/revalorisation_salaires.csv:date_effet)-->10<!--/--> colonnes, effets 2017-2026, perceptions depuis 1930 | haute | Cnav, circulaires de revalorisation, recoupées deux à deux et aux coefficients de l'IPP |
 | Taux de cotisation, régime général | <!--chiffre:minimum(data/reference/regimes/taux_cotisation_annuels.csv:annee?regime=regime_general&fiabilite=certifiee)-->1982<!--/-->-<!--chiffre:maximum(data/reference/regimes/taux_cotisation_annuels.csv:annee?regime=regime_general&fiabilite=certifiee)-->2026<!--/--> | **certifiée** | DILA, base LEGI, code de la sécurité sociale `D. 242-4` et décret n° 81-1013 du 13 novembre 1981, article 2 ; la hausse temporaire de 1987-1988, qui n'a pas réécrit l'article, est lue dans la base JORF |
 | Taux de cotisation, régime général | 1967-1979 | haute | OpenFisca-France, transcrit des barèmes IPP — l'article 3 du décret n° 67-803 n'a qu'une version dans LEGI, datée de 1967 et portant l'état de 1979. Chaque marche est **ancrée** à son décret, retrouvé au JORF au numéro et à la date que l'IPP annonce (35 sur 36 ; le n° 70-680 manque à l'index) |
 | Taux de cotisation, régime général | 1980 et 1981 | haute, **comme leurs voisines** | le décret n° 79-650 du 30 juillet 1979 a relevé des taux « à titre exceptionnel » du 1er août 1979 au 31 janvier 1981 : c'est le point du plan Barrot, porté par la seule cotisation MALADIE du salarié, et la vieillesse n'y est pas — voir plus bas |
@@ -158,10 +158,19 @@ python scripts/fetch/sre_minimum_garanti.py     # référence du minimum garanti
 python scripts/fetch/ined_vallin_mesle.py      # quotients de mortalité d'avant 1986
 python scripts/fetch/insee_projections_mortalite.py  # quotients et espérances de vie projetés, jusqu'en 2125
 python scripts/fetch/eurostat_hicp.py          # contrôle croisé de l'inflation
+python scripts/fetch/ipp_baremes_retraites.py  # barèmes de l'IPP : seconde lecture, qui ne certifie rien
 
 python scripts/verifier_donnees.py             # confronte, sans rien écrire
 python scripts/verifier_donnees.py --appliquer # aligne sur la source et certifie
 ```
+
+**Une seconde lecture, qui ne certifie rien.** `controle_recoupement_ipp`
+confronte aux barèmes de l'Institut des politiques publiques, date par date,
+les tables qu'aucun autre contrôle ne recoupe : revalorisations des pensions
+et des salaires, durées d'avant les réformes, catégorie active, surcote,
+assiette de l'AVPF, valeurs de service datées. L'IPP transcrit, il ne produit
+pas : un écart s'y tranche au texte, et chacun de ceux que ce recoupement a
+trouvés le donnait en tort (registre des modèles, `baremes_ipp`).
 
 `data/brut/` n'est pas versionné : c'est `data/derive/certification.json` qui
 garde la trace du dernier recontrôle — quelle source, quel jour, combien de

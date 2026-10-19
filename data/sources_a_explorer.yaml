@@ -5725,17 +5725,30 @@ sources:
   - id: ipp_baremes_yaml
     url: https://gitlab.com/ipp/partage-public-ipp/baremes-ipp/baremes-ipp-yaml
     nature: bareme
-    acces: navigateur
+    acces: git
     regimes: []
     a_en_tirer: >-
       Les 155 fichiers de `retraites/`, à jour de la loi du 30 décembre 2025 :
       un recoupement de chaque table du dépôt qui n'en a pas, et la référence
       de chaque marche quand ils la portent (un tiers des dates).
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-19
     note: >-
       Mesuré le 1er octobre 2026 par `scripts/fetch/sonder_sources.py` : la
       page est une coquille que le JavaScript remplit. Le code, lui, se
-      clone (`git clone`, le même jour).
+      clone (`git clone`, le même jour). Recoupé table par table le 19
+      octobre 2026, au commit `fe2cdff`, le dernier :
+      `scripts/fetch/ipp_baremes_retraites.py` le lit, et
+      `controle_recoupement_ipp` (scripts/verifier_donnees.py) confronte
+      seize séries qu'aucun autre contrôle ne recoupe ; toutes concordent,
+      hors huit marches où l'IPP a tort (E11, E14 et E15 du registre,
+      data/reference/referents.yaml, et l'AVPF de 2014 qu'il arrondit). Les
+      tables certifiées par ailleurs, relues une à une le même jour,
+      concordent aussi, hors les écarts connus (E2, E3) et deux neufs (E12,
+      E13). Les
+      références restent dans le fichier brut : les mêmes textes que la
+      colonne du dépôt avant 2008, l'instruction ministérielle ensuite où le
+      dépôt cite la circulaire de la Cnav qui la transmet ; rien à reprendre.
 
   - id: leximpact_reformes
     url: https://git.leximpact.dev/leximpact/simulateur-socio-fiscal/openfisca/openfisca-france-reforms

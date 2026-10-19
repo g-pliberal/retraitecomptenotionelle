@@ -1224,12 +1224,12 @@ borne basse et l'écart une borne haute.
 l'Ircantec, l'ENIM, la fonction publique, la CNRACL, la Caisse des dépôts, le
 RAFP, l'Agirc-Arrco, les régimes spéciaux, la Cnav, service-public, le CLEISS,
 les modèles publics français, mon-entreprise, les API publiques, l'abattement
-du RCI, les comptes notionnels étrangers et les deux séances du COR. Attendent
-le propriétaire : le lot de `scripts/simulateurs.py` (la calculette du RAFP, le
-guide de l'Ircantec, le simulateur des artistes-auteurs), un compte PISTE,
-Gallica, les règlements du RCO (1978) et du NRIC (2004). Restent `a_explorer`
-dix-neuf lignes, dont le simulateur du COR, fermé : commencer par les barèmes
-de l'IPP (le scénario 1, sur Opus). Détail : `89/2026-10-19-cor.md`.
+du RCI, les comptes notionnels étrangers, le COR et les barèmes de l'IPP.
+Attendent le propriétaire : le lot de `scripts/simulateurs.py` (la calculette
+du RAFP, le guide de l'Ircantec, le simulateur des artistes-auteurs), un compte
+PISTE, Gallica, les règlements du RCO (1978) et du NRIC (2004). Restent
+`a_explorer` dix-huit lignes, dont le simulateur du COR, fermé : commencer par
+les deux parcours d'Union Retraite. Détail : `89/2026-10-19-baremes-ipp.md`.
 
 **Demande.** Huit lots d'adresses, remis le même jour : « explorer chaque lien
 assez profondément et en tirer le maximum possible pour notre site. Il ne faut
