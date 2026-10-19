@@ -1,0 +1,43 @@
+date: "2026-10-19"
+session: "action 138, étape 5, seizième partie : l'exonération de l'article 5, 2°, au minimum garanti"
+consulte: >-
+  `python scripts/veille_droit.py` : aucune fiche de la carte touchée, la
+  session n'écrivant aucune règle de la pension. Les index JORF et LEGI de la
+  DILA, récupérés puis mis à jour au 19 octobre 2026 (aucun incrément depuis le
+  18) ; `textes.py --inscrire` n'a rien inscrit. Dans LEGI, les douze
+  rédactions de l'article 5 du code, de LEGIARTI000006307017 (1er juillet 1979)
+  à LEGIARTI000029042469 (close le 1er janvier 2015), et l'article L. 141-8 du
+  code du travail (LEGIARTI000006646471). Dans le JORF, les décrets et arrêtés
+  du SMIC qui fixent le minimum garanti, de 1987 à 2009 ; la loi de finances
+  pour 2015, dont l'index n'a pas l'article 2. Aux archives du BOFiP, la
+  documentation de base 5 B 131 du 1er septembre 1999, et les douze
+  instructions annuelles des B.O.I. n° 11 du 17 janvier 2000 à n° 26 du
+  28 mars 2011. Au Sénat, la loi n° 59-1472 au texte de sa première lecture
+  (art. 13), les rapports n° 24 (1959-1960), n° 53 (1961-1962) à n° 27
+  (1971-1972), et le rapport général n° 66 (1972-1973), tome II. Chez l'IPP,
+  les barèmes, que le script relit.
+trouve: >-
+  L'article 5, 2°, exonère, de 1979 à 2014, qui vit principalement de
+  salaires, de pensions et de rentes viagères et dont le revenu global
+  n'excède pas le minimum garanti, quelle que soit sa situation de famille,
+  le revenu compté avant les 20 % et l'abattement des personnes âgées (DB 5 B
+  131, n° 1 à 5), la plus avantageuse de cette exonération et de celle du
+  2° bis s'appliquant (n° 6). Le minimum garanti annuel : 7 440 F pour 1971
+  (rapport n° 66, p. 11), 35 400 F à 38 080 F de 1993 à 1998 (DB 5 B 131,
+  n° 2), 38 320 F pour 1999, 38 650 F pour 2000 et 5 994,55 € pour 2001 (aussi
+  aux notes du code), 6 094 € à 6 885 € de 2002 à 2010, chaque instruction
+  disant que le 2° ne s'applique pas, sous la limite du 2° bis. Aucun texte
+  lu n'écrit sa règle de calcul, que les montants suivent à deux écarts près
+  (1994, 1996) : la moyenne des valeurs horaires des mois de l'année, par
+  173,33 heures et douze mois. Avant, la loi n° 59-1472 (art. 13) n'exonère
+  que les salariés dont l'unique revenu n'excède pas le salaire minimum
+  interprofessionnel garanti, que le minimum garanti remplace dès la loi
+  n° 70-7. Écrits dans la donnée, le script de l'IPP, `impot_revenu.py` et
+  son jumeau ; au registre, IR13.
+reste: >-
+  Le salaire minimum annuel des revenus de 1960 à 1970 et le minimum garanti
+  de 1972 à 1992 et de 2011 à 2013, à lire dans la doctrine d'avant 1999 ou
+  les rapports du Sénat sur les lois de finances pour 1974 à 1993, et aux
+  versions de 2012 à 2014 du BOFiP ; le texte qui étend l'exemption de 1959
+  aux pensions, au 2° de l'article 5 ; l'article 2 de la loi de finances pour
+  2015, qui finit le 2° et le 2° bis.
