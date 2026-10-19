@@ -3,13 +3,13 @@
 **Reprise, au 19 octobre 2026.** Fait : les reportés en emploi (7 octobre) ;
 l'Ageing Report (13) ; les leviers du COR, la CSG effective (14) ; Ancetre,
 l'EACR, la CNRACL, les civils de l'État (16) ; la part stable de l'AWG (17) ;
-la date de chaque cohorte, dans `cout.py` (18), puis dans `avantages.py` (19) ;
-le 19 aussi, sur la page Coût, la fourchette récrite et les trois leviers.
-Reste, une session par point : les 0,19 point ; l'Ircantec (une décision, avec
-l'action 147) ; `mortalite_population.py`, même erreur (étape 7) ; le taux
-effectif, au modèle d'abord, puis aux pages. Au propriétaire, la table des
-poids (`pages.js`). Détail : notes « la date de chaque cohorte », « le coût
-des avantages », « la fourchette et les leviers sur la page Coût ».
+la date de chaque cohorte, dans `cout.py` (18), `avantages.py` et
+`mortalite_population.py` (19) ; le 19 aussi, sur la page Coût, la fourchette
+récrite et les trois leviers. Reste, une session par point : les 0,19 point ;
+l'Ircantec (une décision, avec l'action 147) ; le taux effectif, au modèle
+d'abord, puis aux pages ; à l'étape 7, la prémisse du déficit. Au propriétaire,
+la table des poids (`pages.js`). Détail : « Ce qui reste » des notes du 18 et
+du 19 octobre.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.3 ». L'étape est
 vaste — sept chantiers, vingt-neuf points du registre — ; cette session en
