@@ -44,11 +44,21 @@ ETAPES: dict[str, tuple[str, ...]] = {
               "README.md", "CLAUDE.md"),
 }
 
+#: Ce que ``construire_donnees.py`` lit de ``pages.js`` : les systèmes que le
+#: site montre et ceux du bilan, le classement comparé, l'écart de taux de la
+#: dette, les années des variantes d'espérance de vie, et la saisie des
+#: carrières d'exemple du bilan figé, avec les constantes qu'elle nomme.
+_LU_DE_PAGES = ("SCENARIOS_MONTRES", "SYSTEMES_BILAN", "CLASSEMENT_COMPARE",
+                "ECART_TAUX_DETTE", "ANNEES_ESPERANCE_VIE", "NIVEAUX_RISQUE",
+                "NAISSANCE_RISQUE", "STATUT_RISQUE", "DEBUT_RISQUE", "LIQUIDATION_RISQUE")
+
 #: Ce qu'une étape lit d'un fichier sans le lire tout entier : le paquet ne
-#: prend de ``pages.js`` que la liste des systèmes que le site montre
-#: (``construire_donnees.py``). Sans motif retrouvé, tout le fichier compte.
+#: prend de ``pages.js`` que ce que la fabrique y lit, une déclaration à la
+#: fois. Sans motif retrouvé, tout le fichier compte.
 EXTRAITS: dict[str, tuple[tuple[str, str], ...]] = {
-    "paquet": (("moteur/js/pages.js", r"export const SCENARIOS_MONTRES = \[.*?\];"),),
+    "paquet": tuple(("moteur/js/pages.js", rf"export const {nom} = .*?;\n")
+                    for nom in _LU_DE_PAGES)
+              + (("moteur/js/pages.js", r"export function saisieRisque\(.*?\n\}\n"),),
 }
 
 _VERROU = threading.Lock()
