@@ -3,13 +3,13 @@
 **Reprise, au 19 octobre 2026.** Fait : la page Coût montre, dans la section
 « Naissances et migrations » (`cout-demographie`), le coût des quatre
 systèmes sous les variantes de fécondité et de migrations de l'INSEE. Faits
-depuis : l'indexation sous la variante (16 octobre), la mortalité
-différentielle des cas types (17), la queue observée (18), les inaptes de la
-Cnav (19) ; le 19 aussi, la phrase des poids de la page Coût, qui dit l'une et
-les autres. Rien ne reste aux pages tant que la grille ne change pas. Au
-propriétaire : la table des poids, ses lignes et sa phrase du partage, que
-l'inapte dément ; le rapport de dépendance (point 3 ici) ; les départs qui
-suivent l'espérance de vie. Détail : note « la phrase des poids ».
+depuis : l'indexation sous la variante, la mortalité différentielle, la queue
+observée, les inaptes de la Cnav et la phrase des poids ; le 19, l'ex-invalide
+dans la grille, à la mortalité de son vingtile. Reste aux pages : avec sa
+mortalité, sa phrase ; le coefficient de 2070 tout juste au-dessus de un
+(note « ex-invalides de la Cnav »). Au propriétaire : la table des poids et sa
+phrase du partage, que l'inapte et l'ex-invalide démentent ; le rapport de
+dépendance (point 3 ici) ; les départs qui suivent l'espérance de vie.
 
 **La demande.** Vague quater du 16 octobre 2026, session 1 : le point 1 de
 « Ce qui reste » de la sixième partie (note « fécondité et migrations ») —

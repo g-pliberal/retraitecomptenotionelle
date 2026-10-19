@@ -6326,8 +6326,12 @@ referents:
           son inapte (`castypes.INAPTE_CNAV`), à la part des départs
           pour inaptitude de 2020 à 2024, 8,4 % de la Cnav, qui vit au
           rythme des inaptes de la Cnav (Cadr'@ge n° 40, facteur calé
-          sur l'espérance à 65 ans de 2017) ; reste l'ex-invalide, que
-          les quatre carrières du privé portent encore.
+          sur l'espérance à 65 ans de 2017). Le même jour, son
+          ex-invalide (`castypes.EX_INVALIDE_CNAV`), à la part des
+          départs d'ex-invalides, 8,8 % de la Cnav, sa carrière finissant
+          en invalidité ; il vit encore au rythme du vingtile de son
+          salaire : reste sa mortalité (`cnav_ex_invalide`), avec la
+          phrase de la page Coût qui la nommera.
         etat: a_reprendre
         chantier: "138.7"
       - quoi: >-
