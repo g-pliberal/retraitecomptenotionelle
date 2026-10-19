@@ -2108,11 +2108,11 @@ exemples:
       trimestres » : « Salaire annuel moyen (10 meilleures années) X Taux de
       la retraite (70,48%) X Coefficient de minoration ou décote de 12,5 %
       (1,25x10) », 70,48 % valant 75 % x 156/166. Seul ce calcul se rejoue,
-      sans l'Espagne ; le témoin le fait naître en mars, les 166 trimestres
-      étant ceux du premier semestre 1959, et partir à 61 ans, l'âge légal
-      que la brochure donne à Yves, le mois même, la CRPCEN servant sa
-      pension dès l'âge atteint.
-    carriere: {naissance: "1959-03", sexe: H, affiliation: clerc_de_notaire, liquidation: "2020-03", trimestres_valides: 156}
+      sans l'Espagne ; le témoin le fait naître le 15 mars, les 166
+      trimestres étant ceux du premier semestre 1959, et partir à 61 ans,
+      l'âge légal que la brochure donne à Yves, le mois même, la CRPCEN
+      servant sa pension dès l'âge atteint.
+    carriere: {naissance: "1959-03-15", sexe: H, affiliation: clerc_de_notaire, liquidation: "2020-03", trimestres_valides: 156}
     attendu: {trimestres_requis: 166, taux_liquidation: 0.65625}
 
   - id: ur_expatries_crpcen_yves_nationale
@@ -2124,11 +2124,12 @@ exemples:
       « Dès 61 ans (âge légal de sa retraite CRPCEN) », sa retraite
       nationale : « Yves a une décote car il lui manque 16 trimestres » :
       « Taux de retraite (67,77%) X Coefficient de minoration ou décote de
-      20 % (1,25x16) », 67,77 % valant 75 % x 150/166. Le témoin le fait
-      naître en mars 1959 et partir le mois même de ses 61 ans : un mois plus
-      tard, l'âge d'annulation de 2020, 65 ans, ne laisse plus que quinze
-      trimestres à décompter.
-    carriere: {naissance: "1959-03", sexe: H, affiliation: clerc_de_notaire, liquidation: "2020-03", trimestres_valides: 150}
+      20 % (1,25x16) », 67,77 % valant 75 % x 150/166. La brochure ne dit
+      que l'année : le témoin le fait naître le 15 mars 1959 et partir le
+      mois même de ses 61 ans. Né un 1er, ou parti un mois plus tard, il
+      n'aurait que quinze trimestres à décompter jusqu'à l'âge d'annulation
+      de 2020, 65 ans.
+    carriere: {naissance: "1959-03-15", sexe: H, affiliation: clerc_de_notaire, liquidation: "2020-03", trimestres_valides: 150}
     attendu: {trimestres_requis: 166, date_age_legal: "2020-03", taux_liquidation: 0.6}
 
   # ---- Union Retraite : deux simulateurs d'info-retraite, saisis à la main ----

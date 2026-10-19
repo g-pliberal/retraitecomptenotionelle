@@ -64,6 +64,9 @@ c'est contre lui que les parcours ont été lus.
     moins 1,25 % par trimestre manquant, dix et seize. Yves part « dès
     61 ans » : un mois plus tard, l'âge d'annulation de 2020, 65 ans, ne laisse
     que quinze trimestres de décote, et le témoin le fait partir le mois même.
+    Né un 1er, il n'en aurait que quinze aussi : la garde des présomptions de
+    GitHub l'a montré le jour même, et les deux clercs naissent désormais le
+    15 mars 1959, date entière, la brochure ne disant que l'année.
     Ne se rejouent pas : le prorata des salariés, la note des brochures
     réduisant les vingt-cinq années quand le régime étranger est équivalent,
     ce que l'Espagne est ; Yves salarié avec le Québec, ses 37,5 ans en France
