@@ -73,10 +73,10 @@ JavaScript, dans `tests/temoins/` (par `scripts/construire_temoins.py`).
 La copie elle-même, seul trait en pointillé, se fait à la main, règle par
 règle et Python d'abord, sous les mêmes noms d'étapes des deux côtés. Les
 témoins la tiennent :
-<!--chiffre:entrees(tests/temoins/simulations.json:)-->886<!--/--> simulations
-complètes et <!--chiffre:entrees(tests/temoins/pages.json:)-->78<!--/--> pages
+<!--chiffre:entrees(tests/temoins/simulations.json:)-->887<!--/--> simulations
+complètes et <!--chiffre:entrees(tests/temoins/pages.json:)-->79<!--/--> pages
 figées, que `node --test` rejoue ;
-<!--chiffre:portage(valeurs)-->164 858<!--/--> nombres comparés, dont
+<!--chiffre:portage(valeurs)-->165 048<!--/--> nombres comparés, dont
 <!--chiffre:portage(identiques)-->100,0<!--/--> % identiques au bit près.
 
 Une exception, voulue : le coût pour toute la population ne se calcule qu'en
