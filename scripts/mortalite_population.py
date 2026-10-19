@@ -160,6 +160,71 @@ def _euros(montant: float) -> str:
     return f"{montant:,.0f}".replace(",", "\u202f")
 
 
+def _cohortes(pensionne, mortalite, vingtile: str):
+    """Les cinq cohortes d'un couple de la page Coût, du ``-_DEMI_TRANCHE`` au
+    ``+_DEMI_TRANCHE`` : le rapport des diviseurs (ce que la pension devient
+    sous le diviseur du vingtile) et les deux courbes de survie, chacune prise
+    à l'âge et à l'année où la cohorte part, ceux que le droit de SA génération
+    lui donne (``Pensionne.liquidation``), comme la page date sa survie
+    (``cout._survies``).
+
+    LES CINQ PARTAIENT AVEC LA GRILLE. Jusqu'au 19 octobre 2026, le script
+    les faisait partir à l'âge de la génération que la grille simule, l'année
+    décalée d'autant — l'erreur que la page a quittée le 18 octobre —, et
+    prenait le rapport et les courbes une fois par couple, à cet âge et à
+    cette année (action 138, étape 3)."""
+    from retraite_notionnelle.cout import _DEMI_TRANCHE
+
+    cohortes = []
+    for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
+        depart = pensionne.liquidation(decalage)
+        age = depart - pensionne.generation - decalage
+        commune = mortalite.courbe(age, float(depart), None, True)
+        propre = mortalite.courbe(age, float(depart), None, True, vingtile)
+        e_commune = somme_ordonnee(0.5 * (commune[k] + commune[k + 1])
+                                   for k in range(len(commune) - 1))
+        e_propre = somme_ordonnee(0.5 * (propre[k] + propre[k + 1])
+                                  for k in range(len(propre) - 1))
+        cohortes.append((e_commune / e_propre, commune, propre))
+    return tuple(cohortes)
+
+
+def _masses(couples, poids: dict[str, float], population, annee: int, cles: list[str],
+            depuis: int | None = None) -> dict[str, dict[str, float]]:
+    """Masses par scénario : page (survie générale) et vraies (survie du
+    vingtile), sous le diviseur commun et sous le diviseur propre. ``couples``
+    sont les couples de la page et leurs cohortes (:func:`_cohortes`) : chacune
+    compte depuis l'année où elle part, et ``depuis`` choisit le flux sur son
+    départ à elle."""
+    from retraite_notionnelle.cout import _DEMI_TRANCHE
+
+    total = {s: {"page_commun": 0.0, "page_propre": 0.0,
+                 "vrai_commun": 0.0, "vrai_propre": 0.0} for s in cles}
+    for pensionne, cohortes in couples:
+        part = poids.get(pensionne.code, 0.0)
+        if part <= 0.0:
+            continue
+        for decalage, (rapport, commune, propre) in zip(
+                range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1), cohortes):
+            liquidation = pensionne.liquidation(decalage)
+            if annee < liquidation:
+                continue
+            effectif = population.effectif(annee - pensionne.generation - decalage, annee)
+            duree = annee - liquidation
+            survie = (propre[duree] / commune[duree]
+                      if duree < min(len(commune), len(propre)) and commune[duree] > 0
+                      else 0.0)
+            applique = rapport if depuis is None or liquidation >= depuis else 1.0
+            for s in cles:
+                pension = pensionne.pensions.get(s, 0.0)
+                base = part * effectif * pension
+                total[s]["page_commun"] += base
+                total[s]["page_propre"] += base * applique
+                total[s]["vrai_commun"] += base * survie
+                total[s]["vrai_propre"] += base * survie * applique
+    return total
+
+
 def _deficit(mortalite, depuis: int | None = None) -> int:
     """Ce que le diviseur commun coûte au régime, sur la trajectoire de la page Coût.
 
@@ -188,46 +253,13 @@ def _deficit(mortalite, depuis: int | None = None) -> int:
         for pensionne in pensionnes}
     scenarios = [cle for cle, _, _ in SCENARIOS_NOTIONNELS]
 
-    # Pour chaque couple : le rapport des diviseurs (ce que la pension devient
-    # sous le diviseur du vingtile) et les deux courbes de survie.
-    couples = []
-    for pensionne in pensionnes:
-        age = pensionne.annee_liquidation - pensionne.generation
-        commune = mortalite.courbe(age, float(pensionne.annee_liquidation), None, True)
-        propre = mortalite.courbe(age, float(pensionne.annee_liquidation), None, True,
-                                  vingtiles[pensionne.code, pensionne.generation])
-        e_commune = somme_ordonnee(0.5 * (commune[k] + commune[k + 1]) for k in range(len(commune) - 1))
-        e_propre = somme_ordonnee(0.5 * (propre[k] + propre[k + 1]) for k in range(len(propre) - 1))
-        couples.append((pensionne, e_commune / e_propre, commune, propre))
+    couples = [(pensionne, _cohortes(pensionne, mortalite,
+                                     vingtiles[pensionne.code, pensionne.generation]))
+               for pensionne in pensionnes]
 
     def masses(annee: int, avec_actuel: bool = False) -> dict[str, dict[str, float]]:
-        """Masses par scénario : page (survie générale) et vraies (survie du
-        vingtile), sous le diviseur commun et sous le diviseur propre."""
         cles = ["actuel", *scenarios] if avec_actuel else scenarios
-        total = {s: {"page_commun": 0.0, "page_propre": 0.0,
-                     "vrai_commun": 0.0, "vrai_propre": 0.0} for s in cles}
-        for pensionne, rapport, commune, propre in couples:
-            part = cout.poids.get(pensionne.code, 0.0)
-            if part <= 0.0:
-                continue
-            for decalage in range(-2, 3):
-                liquidation = pensionne.annee_liquidation + decalage
-                if annee < liquidation:
-                    continue
-                effectif = population.effectif(annee - pensionne.generation - decalage, annee)
-                duree = annee - liquidation
-                survie = (propre[duree] / commune[duree]
-                          if duree < min(len(commune), len(propre)) and commune[duree] > 0
-                          else 0.0)
-                applique = rapport if depuis is None or liquidation >= depuis else 1.0
-                for s in cles:
-                    pension = pensionne.pensions.get(s, 0.0)
-                    base = part * effectif * pension
-                    total[s]["page_commun"] += base
-                    total[s]["page_propre"] += base * applique
-                    total[s]["vrai_commun"] += base * survie
-                    total[s]["vrai_propre"] += base * survie * applique
-        return total
+        return _masses(couples, cout.poids, population, annee, cles, depuis)
 
     print("Chaque cas type au vingtile où son salaire le place ; les têtes, les poids et les "
           "pensions sont ceux de la trajectoire de la page Coût.")
