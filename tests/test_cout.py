@@ -4309,28 +4309,30 @@ def test_le_bilan_fige_dit_ce_que_le_modele_calcule(solde):
 
 def test_les_exemples_figes_sont_ce_que_le_modele_simule():
     """Les carrières d'exemple de « Pourquoi changer », simulées une fois par
-    ``scripts/construire_donnees.py`` : la page les lit sans simuler, et elles
-    doivent donc dire exactement ce que le modèle calcule pour leur saisie,
-    gardée avec chacune. Que la page en demande une autre, elle ne trouve rien
-    et simule ; le test du paquet, dans ``tests/test_web.py``, dit alors que
-    le paquet est à refaire."""
+    ``scripts/construire_donnees.py``, par le portage (action 161, étape 5) :
+    la page les lit sans simuler, et elles doivent donc dire, au bit près, ce
+    que le moteur Python calcule pour leur saisie, gardée avec chacune. Que la
+    page en demande une autre, elle ne trouve rien et simule ; le test du
+    paquet, dans ``tests/test_web.py``, dit alors que le paquet est à refaire."""
     from retraite_notionnelle.contexte import Contexte
-    from retraite_notionnelle.donnees.bilan import exemple_de
+    from retraite_notionnelle.donnees.bilan import FicheFigee
     from retraite_notionnelle.saisie import Saisie
 
     bilan = charger_bilan(RACINE_DONNEES)
     assert len(bilan.exemples) == 3
     contexte = Contexte()
     for figee in bilan.exemples:
-        attendu = exemple_de(figee.saisie, contexte.simuler(Saisie(**figee.saisie)))
+        comparaison = contexte.simuler(Saisie(**figee.saisie))
+        fiche = comparaison.remuneration.reference.droit_en_vigueur
         assert bilan.exemple(dict(figee.saisie)) is figee
-        assert figee.fiche.annee == attendu.fiche.annee
-        for champ in ("brut", "net", "retraite_totale", "retraite_employeur"):
-            assert getattr(figee.fiche, champ) == pytest.approx(
-                getattr(attendu.fiche, champ), rel=1e-9), champ
-        for champ in ("coefficient_euros_constants", "pension_actuel", "pension_financee"):
-            assert getattr(figee, champ) == pytest.approx(
-                getattr(attendu, champ), rel=1e-9), champ
+        assert figee.fiche == FicheFigee(
+            annee=fiche.annee, brut=fiche.brut, net=fiche.net,
+            retraite_totale=fiche.retraite_totale,
+            retraite_employeur=fiche.retraite_employeur), figee.saisie
+        assert (figee.coefficient_euros_constants, figee.pension_actuel,
+                figee.pension_financee) == (
+            comparaison.coefficient_euros_constants, comparaison.actuel.pension_annuelle,
+            comparaison.notionnel_retroactif_employeur.pension_annuelle), figee.saisie
     assert bilan.exemple({**bilan.exemples[0].saisie, "naissance": 1991}) is None
 
 

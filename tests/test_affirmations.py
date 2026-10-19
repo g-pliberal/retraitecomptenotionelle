@@ -577,7 +577,8 @@ def _(m: Modele):
     ``ecarts_medians`` : la carrière à venir sans rien ajouter, la même les
     cinq points volontaires placés, et la pension d'AUJOURD'HUI d'un retraité,
     garantie vieillesse comprise. L'accueil ne les calcule pas, il les lit dans
-    le bilan figé : ce contrôle exige que la table porte celles du modèle, que
+    le bilan figé, dont le portage simule la grille (action 161, étape 5) : ce
+    contrôle exige que la table porte celles du moteur Python, au bit près, que
     ce soient des baisses, et que les points volontaires la réduisent. Le jour
     où l'une d'elles change de signe, la réponse est à réécrire.
     """
@@ -606,7 +607,7 @@ def _(m: Modele):
     for nom, attendu in (("a_venir", mediane(a_venir)),
                          ("a_venir_volontaire", mediane(volontaire)),
                          ("deja_liquidees", mediane(deja))):
-        assert _proche(getattr(fige, nom), attendu, 1e-12), (nom, getattr(fige, nom), attendu)
+        assert getattr(fige, nom) == attendu, (nom, getattr(fige, nom), attendu)
     assert fige.a_venir < fige.a_venir_volontaire < 0.0
     assert fige.deja_liquidees < 0.0
     # L'ordre de grandeur annoncé en tête ne suppose pas l'épargne volontaire :

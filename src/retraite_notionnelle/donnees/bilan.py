@@ -179,19 +179,25 @@ class ExempleFige:
     pension_financee: float
 
 
-def exemple_de(saisie: dict, comparaison) -> ExempleFige:
-    """Ce que « Pourquoi changer » lit d'une simulation, et rien d'autre."""
-    fiche = comparaison.remuneration.reference.droit_en_vigueur
+#: Le scénario dont un exemple garde la pension (``pension_financee``).
+SCENARIO_FINANCE = "notionnel_retroactif_employeur"
+
+
+def exemple_de(saisie: dict, lu: dict) -> ExempleFige:
+    """Ce que « Pourquoi changer » lit d'une simulation, et rien d'autre : de
+    la saisie que le portage a simulée (``pont.saisies``, action 161, étape 5)
+    sous :data:`SCENARIO_FINANCE`."""
+    fiche = lu["fiche"]
     return ExempleFige(
         saisie=dict(saisie),
         fiche=FicheFigee(
-            annee=fiche.annee, brut=fiche.brut, net=fiche.net,
-            retraite_totale=fiche.retraite_totale,
-            retraite_employeur=fiche.retraite_employeur,
+            annee=fiche["annee"], brut=fiche["brut"], net=fiche["net"],
+            retraite_totale=fiche["retraite_totale"],
+            retraite_employeur=fiche["retraite_employeur"],
         ),
-        coefficient_euros_constants=comparaison.coefficient_euros_constants,
-        pension_actuel=comparaison.actuel.pension_annuelle,
-        pension_financee=comparaison.notionnel_retroactif_employeur.pension_annuelle,
+        coefficient_euros_constants=lu["coefficient_euros_constants"],
+        pension_actuel=lu["pension_annuelle"],
+        pension_financee=lu["pensions"][SCENARIO_FINANCE],
     )
 
 

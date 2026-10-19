@@ -13,6 +13,7 @@ interrompue — parce que ce sont eux que la réforme simulée déplace le plus.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass, field, replace
 
 from typing import TYPE_CHECKING
@@ -855,9 +856,11 @@ def _mediane_basse(valeurs: list[float]) -> float:
     return rangees[len(rangees) // 2]
 
 
-def ecarts_medians(resultat: ResultatCasTypes,
+def ecarts_medians(cases: Iterable[dict],
                    scenario: str = "notionnel_liberal") -> EcartsMedians:
-    """Les trois écarts médians de ``scenario`` au système actuel.
+    """Les trois écarts médians de ``scenario`` au système actuel, sur les
+    cases de la grille que le portage a simulées (``pont.carrieres``, action
+    161, étape 5), sous ce scénario.
 
     Une carrière est déjà à la retraite si le simulateur lui a calculé une
     pension d'aujourd'hui, c'est-à-dire si elle a liquidé avant l'année
@@ -867,22 +870,22 @@ def ecarts_medians(resultat: ResultatCasTypes,
     a_venir: list[float] = []
     a_venir_volontaire: list[float] = []
     deja_liquidees: list[float] = []
-    for comparaison in resultat.resultats.values():
-        aujourd_hui = comparaison.aujourd_hui
+    for lu in cases:
+        aujourd_hui = lu["aujourd_hui"]
         if aujourd_hui is None:
-            reference = comparaison.actuel.pension_annuelle
+            reference = lu["pension_annuelle"]
             if reference <= 0.0:
                 continue
-            totale = comparaison.pension_totale(scenario)
-            volontaire = comparaison.rente_capitalisee_volontaire(scenario)
+            totale = lu["pensions_totales"][scenario]
+            volontaire = lu["rentes_volontaires"][scenario]
             a_venir.append((totale - volontaire) / reference - 1.0)
             a_venir_volontaire.append(totale / reference - 1.0)
         else:
-            reference = aujourd_hui.pension("actuel")
+            reference = aujourd_hui["pension_annuelle"]
             if reference <= 0.0:
                 continue
-            servie = (aujourd_hui.pension_totale(scenario)
-                      - (aujourd_hui.rente_capitalisee_volontaire
+            servie = (aujourd_hui["pensions_totales"][scenario]
+                      - (aujourd_hui["rente_capitalisee_volontaire"]
                          if scenario == "notionnel_liberal" else 0.0))
             deja_liquidees.append(servie / reference - 1.0)
     if not a_venir or not deja_liquidees:

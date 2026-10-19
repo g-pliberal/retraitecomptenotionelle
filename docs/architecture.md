@@ -1114,7 +1114,11 @@ deux langages la lisent par les mêmes accesseurs, `donnees/agregats.py` et
 `moteur/js/agregats.js`, qui ne calculent rien qu'une règle décide. Une page
 qui veut un chiffre de plus le fait fabriquer ; la version du paquet monte
 alors des deux côtés, et le site qui reçoit un paquet d'une autre version
-le redemande une fois, puis dit au lecteur de recharger la page.
+le redemande une fois, puis dit au lecteur de recharger la page. Le bilan
+figé, `data/derive/equilibre.json`, se fabrique de même : la fabrique tire de
+la grille des carrières types, que le portage simule, les écarts médians que
+l'accueil cite, et le portage simule, comme le site une saisie, les carrières
+d'exemple de « Pourquoi changer ».
 
 Les étapes portent un nom, pas un numéro : en insérer une ne renumérote rien.
 Elles s'échangent des **données** au format JSON, les mêmes dans les deux

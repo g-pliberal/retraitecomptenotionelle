@@ -2218,7 +2218,7 @@ def _frontiere() -> dict:
     return charger_frontiere(DONNEES).dictionnaire()
 
 
-def _bilan(contexte=None) -> dict:
+def _bilan(contexte=None, paquet: bytes | None = None) -> dict:
     """Le bilan des quatre systèmes comparés, année par année, en part de PIB.
 
     C'est la seule entrée du paquet qui coûte un calcul complet — dix-huit
@@ -2235,8 +2235,12 @@ def _bilan(contexte=None) -> dict:
     d'exemple de « Pourquoi changer ».
 
     Elle est calculée sous les réglages de RÉFÉRENCE, et ``donnees/bilan.py``
-    dit ce que ce figeage coûte et ce qu'il ne coûte pas.
+    dit ce que ce figeage coûte et ce qu'il ne coûte pas. La grille des cas
+    types et les trois carrières d'exemple se simulent par le portage, sur
+    ``paquet`` — les octets d'un paquet de données ; sans lui, sur
+    ``moteur/donnees.json``.
     """
+    from retraite_notionnelle import pont
     from retraite_notionnelle.contexte import Contexte
     from retraite_notionnelle.web.site import module
 
@@ -2268,28 +2272,38 @@ def _bilan(contexte=None) -> dict:
         contexte.simulateur(), contexte.depenses(), contexte.population(),
         annee_engagement, scenarios)
     # LES ÉCARTS MÉDIANS DE LA GRILLE, que l'accueil écrit en réponse à « ma
-    # retraite va-t-elle baisser ? ». Cinq secondes de plus, et pour la même
-    # raison : l'accueil ne simule rien, et il se rend toujours sous les
-    # réglages de référence, ceux de cette table.
+    # retraite va-t-elle baisser ? ». Pour la même raison : l'accueil ne
+    # simule rien, et il se rend toujours sous les réglages de référence, ceux
+    # de cette table. Le portage simule la grille, comme celle des agrégats
+    # (action 161, étape 5) : le Python fixe l'âge de chaque départ et écarte
+    # ce que le droit écarte, node simule, au bit près du moteur Python.
     from dataclasses import asdict
 
-    from retraite_notionnelle.castypes import calculer_cas_types, ecarts_medians
+    from retraite_notionnelle.castypes import cases_de_la_grille, ecarts_medians
 
-    ecarts = ecarts_medians(calculer_cas_types(contexte.simulateur()))
+    scenario = "notionnel_liberal"
+    options, _ = cases_de_la_grille(contexte.simulateur())
+    grille, _ = pont.carrieres([{"cle": f"{code}|{generation}", "options": carriere}
+                                for (code, generation), carriere in options.items()],
+                               [scenario], paquet)
+    ecarts = ecarts_medians(grille.values(), scenario)
     # LES TROIS CARRIÈRES D'EXEMPLE DE « POURQUOI CHANGER », pour la même
     # raison encore : la page ne prend aucun réglage, et ses trois simulations
     # coûtaient une seconde au lecteur. La saisie vient du site
     # (``saisieRisque`` de ``moteur/js/pages.js``), et la table la garde avec
     # chaque exemple : une page qui en demande une autre n'y trouve rien, et
-    # simule.
-    from retraite_notionnelle.donnees.bilan import exemple_de
-    from retraite_notionnelle.saisie import Saisie
+    # simule. Le portage les simule comme le site simule une saisie.
+    from retraite_notionnelle.donnees.bilan import SCENARIO_FINANCE, exemple_de
 
     pages = module("pages")
-    exemples = []
-    for _, niveau in pages.NIVEAUX_RISQUE:
-        saisie = dict(pages.saisie_risque(niveau))
-        exemples.append(asdict(exemple_de(saisie, contexte.simuler(Saisie(**saisie)))))
+    saisies = [dict(pages.saisie_risque(niveau)) for _, niveau in pages.NIVEAUX_RISQUE]
+    lus, refus = pont.saisies([{"cle": str(rang), "saisie": saisie}
+                               for rang, saisie in enumerate(saisies)],
+                              [SCENARIO_FINANCE], paquet)
+    if refus:
+        raise ValueError(f"le portage refuse des carrières d'exemple : {refus}")
+    exemples = [asdict(exemple_de(saisie, lus[str(rang)]))
+                for rang, saisie in enumerate(saisies)]
     return {
         "ecarts_medians": asdict(ecarts),
         "exemples_risque": exemples,
@@ -2452,13 +2466,14 @@ def construire_agregats(contexte=None, paquet: bytes | None = None) -> bytes:
     return (json_en_lignes(table) + "\n").encode("utf-8")
 
 
-def construire_bilan(contexte=None) -> bytes:
-    """La table figée, écrite dans ``data/derive/`` et relue par le modèle.
+def construire_bilan(contexte=None, paquet: bytes | None = None) -> bytes:
+    """La table figée, écrite dans ``data/derive/`` et relue par le modèle ;
+    le portage en simule une part sur ``paquet`` (:func:`_bilan`).
 
     Chaque année sur sa ligne (``json_en_lignes``) : le diff d'un changement
     montre les années qu'il déplace.
     """
-    return (json_en_lignes(_bilan(contexte)) + "\n").encode("utf-8")
+    return (json_en_lignes(_bilan(contexte, paquet)) + "\n").encode("utf-8")
 
 def construire(bilan: bytes, agregats: bytes) -> bytes:
     """Paquet complet, à contenu identique pour des données identiques.
@@ -2607,10 +2622,12 @@ def sorties(contexte=None) -> dict[Path, bytes]:
     octets plutôt que de les recalculer : les tables de ``data/`` et celles du
     navigateur ne peuvent alors pas diverger d'un chiffre.
     """
-    bilan = construire_bilan(contexte)
-    # Le portage calcule une part des agrégats sur les données du jour, dont
-    # le paquet n'est pas encore écrit : ce paquet-là, sans ses agrégats.
-    agregats = construire_agregats(contexte, construire(bilan, b"{}"))
+    # Le portage calcule une part du bilan et des agrégats sur les données du
+    # jour, dont le paquet n'est pas encore écrit : ce paquet-là, sans eux,
+    # que la simulation d'une carrière ne lit pas.
+    provisoire = construire(b"{}", b"{}")
+    bilan = construire_bilan(contexte, provisoire)
+    agregats = construire_agregats(contexte, provisoire)
     return {EQUILIBRE: bilan, AGREGATS: agregats, PAQUET: construire(bilan, agregats),
             CALIBRATIONS: serialiser_calibrations(_table_calibrations()).encode("utf-8")}
 
