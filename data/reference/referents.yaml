@@ -9375,7 +9375,7 @@ referents:
           le contrôle ainsi. Dans le dépôt, le relevé « fait foi »
           (`carriere.py:418-442`) : rien ne signale une année sous-validée.
         preuve: la feuille Carriere du classeur, au commit `5344b10`
-        etat: a_reprendre
+        etat: repris
         chantier: "138.10"
     bilan: >-
       Ses deux avantages déjà au registre tiennent toujours, et le JO
