@@ -1,0 +1,33 @@
+date: "2026-10-19"
+session: >-
+  l'action 131 : l'année du décès du chef d'exploitation agricole, que
+  L. 731-10-1 fait cotiser au prorata
+consulte: >-
+  python scripts/veille_droit.py ; les index LEGI et JORF du dépôt, récupérés
+  puis mis à jour jusqu'à l'incrément du 18 octobre 2026, celui sur lequel une
+  autre session a lu le même jour python scripts/textes.py --inscrire
+  (data/reference/textes/inscription.yaml), qui n'est pas relancé ; au code
+  rural, L. 731-10-1 (LEGIARTI000019950453) et R. 732-48 (2026) ; l'article 18
+  de la loi n° 2008-1330 (JORFARTI000019943089) ; l'article 1er du décret
+  n° 2009-1236 (JORFARTI000021158799), qui crée D. 731-57-1, absent de l'index
+  LEGI sous ce numéro. Sur le web : la réponse à la question écrite n° 10883
+  (JO du 3 février 2026, page 928) ; la page « taxation provisoire » de la MSA
+  de Corse ; deux recherches sur l'option du conjoint survivant, qui ne rendent
+  que des réponses à des questions écrites.
+trouve: >-
+  Depuis le 19 décembre 2008, les cotisations de l'année du décès du chef
+  d'exploitation sont « calculées au prorata de la fraction de l'année
+  considérée comprise entre le 1er janvier et la date du décès », le conjoint
+  survivant pouvant opter, dans les douze mois, pour l'année entière des
+  cotisations d'assurance vieillesse (L. 731-10-1, D. 731-57-1) ; la réponse
+  de 2026 le redit, « au prorata de la durée effective d'activité ». Porté
+  dans les deux moteurs (Carriere._statuts_au_1er_janvier) : dans la carrière
+  arrêtée au décès, l'année de la date d'effet dont le statut du 1er janvier
+  est celui du chef garde ses mois, comme celle de R. 731-83, depuis les
+  cotisations de 2009 ; le collaborateur et le défunt d'avant 2009 gardent
+  l'année entière.
+reste: >-
+  L'option du conjoint survivant, non modélisée. Les trimestres et les points
+  d'une année au prorata (R. 731-83), que ni les textes ni les pages lues ne
+  disent, à demander à la MSA. L'année du décès qui porte deux statuts, dont
+  les lignes gardent leurs mois.
