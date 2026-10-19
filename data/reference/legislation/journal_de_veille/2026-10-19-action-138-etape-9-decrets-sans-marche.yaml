@@ -1,0 +1,41 @@
+date: "2026-10-19"
+session: "action 138, étape 9, suite de la huitième partie : les décrets qu'aucune marche ne rejoint"
+consulte: >-
+  python scripts/veille_droit.py ; les index JORF et LEGI, récupérés puis mis
+  à jour de leurs incréments jusqu'au 18 octobre 2026, et python
+  scripts/textes.py --inscrire ; dans l'index JORF, les 166 fiches que ramène
+  la requête de la garde (décrets publiés depuis 1967 dont le titre annonce
+  des taux de cotisation de la maladie, du veuvage, des allocations
+  familiales, des assurances sociales, des régimes spéciaux, des assurés
+  partiellement rattachés, des retraités ou des pensionnés), notice et
+  articles ; dans l'index LEGI, les versions des articles 1er à 5 du décret
+  n° 67-803, des articles 1er à 6 du décret n° 81-1013, des articles 1er à 3
+  du décret n° 67-851, des articles 1er et 2 du décret n° 67-850, des
+  articles 1er à 11 du décret n° 87-470, de l'article 13 du décret
+  n° 91-613, de D. 241-2-4, D. 242-3, D. 242-8, D. 242-12, D. 612-4, R. 711-5,
+  R. 711-11 et D. 711-3 du code de la sécurité sociale, le 19 octobre 2026.
+trouve: >-
+  Quatre marches manquaient à l'histoire des prélèvements, et une date y était
+  fausse. La maladie du salarié du privé revient à 4,5 % au 1er février 1981,
+  quand prend fin la majoration exceptionnelle du décret n° 79-650 (article 2
+  du décret n° 67-803), et le décret n° 81-1013 la refixe à 5,5 % des gains
+  versés dès sa publication, le 14 novembre 1981 : l'IPP tenait 5,5 % de 1980
+  à 1987. Le décret n° 87-470 relève à titre exceptionnel, du 1er juillet 1987
+  au 30 juin 1988, la maladie des agents de l'État, des militaires, des
+  ouvriers de l'État et des collectivités à 5,15 %, et celle de leurs pensions
+  à 2,65 %, un an avant le décret n° 88-795, que l'IPP et la série lue aux
+  textes citaient seul. Le décret n° 91-615 s'applique aux traitements versés
+  à compter du 1er juillet 1991 (article 5), et non au 1er janvier, où l'IPP
+  met celle des collectivités. Les pensions militaires paient 2,25 % depuis le
+  décret n° 76-897, comme les civiles. Des 163 décrets de la requête, 41
+  rejoignent une marche, 117 ne touchent aucune série, 5 restent en suspens.
+  Les pensionnés des IEG paient une cotisation d'équilibre au régime
+  complémentaire d'assurance maladie de la CAMIEG, 2,25 % depuis 2023 (décret
+  n° 2020-1689), que le dépôt ne prélève pas.
+reste: >-
+  La cotisation des pensionnés des IEG à la CAMIEG, au propriétaire ; celle
+  des pensionnés des chemins de fer secondaires avant 60 ans (décret
+  n° 87-463), que la série ne distingue pas ; au fac-similé, la réduction de
+  l'article 5 du décret n° 67-803 de 1968 à 1977 (décrets n° 68-579 et
+  77-677) et les taux des militaires en activité de 1970 (n° 70-717) ; la date
+  d'effet de chaque marche de l'IPP, que l'ancrage ne vérifie pas.
