@@ -269,6 +269,61 @@ def test_deux_couches_qui_touchent_la_meme_fiche_sans_ordre_sont_refusees(tmp_pa
     assert any(e.startswith("univers double : compte_notionnel : ajoutée") for e in erreurs), erreurs
 
 
+def test_une_couche_excepte_de_son_selecteur_ce_qu_elle_decide_par_son_nom(tmp_path):
+    """Une couche qui neutralise une étape et garde par son nom une fiche de
+    cette étape l'excepte de son sélecteur (``sauf``) : la fiche n'est décidée
+    qu'une fois, par son nom, là où sans l'exception la pile la refuse. Une
+    exception ne vaut que pour un sélecteur qui se résout en fiches, hors
+    d'une couche d'un seul calcul, et nomme une fiche de la carte que le
+    sélecteur atteint et que la couche décide par son nom."""
+    dossier, couches = _copie(tmp_path)
+    etape = {"operation": "neutraliser", "vise": {"etape": "liquider_chaque_regime"}}
+    garde = {"operation": "garder", "vise": "decote_regime_general"}
+    _ecrire(couches, {"schema_version": 1, "id": "excepte", "nom": "Excepte la décote",
+                      "operations": [{**etape, "sauf": ["decote_regime_general"]}, garde]})
+    _ecrire(couches, {"schema_version": 1, "id": "sans_exception", "nom": "Sans exception",
+                      "operations": [etape, garde]})
+    _ecrire(couches, {"schema_version": 1, "id": "fautive", "nom": "Exceptions fautives",
+                      "operations": [
+                          {**etape, "sauf": ["chimere", "avpf", "surcote_regime_general"]},
+                          {"operation": "garder", "vise": "avpf"},
+                          {**garde, "sauf": ["reversion"]}]})
+    _ecrire(couches, {"schema_version": 1, "id": "d_un_calcul", "nom": "D'un calcul",
+                      "portee": "calcul",
+                      "operations": [{"operation": "neutraliser",
+                                      "vise": {"domaine": "decote_surcote"},
+                                      "sauf": ["decote_regime_general"]}]})
+    for nom in ("excepte", "sans_exception", "fautive"):
+        _ecrire(dossier, {"schema_version": 1, "id": nom, "nom": nom,
+                          "couches": ["droit_reel", nom]})
+    erreurs = univers.controler(dossier, couches)
+    assert not [e for e in erreurs if e.startswith("univers excepte")
+                or e.startswith("couche excepte")], erreurs
+    assert "univers sans_exception : decote_regime_general : « neutraliser » par " \
+           "sans_exception, « garder » par sans_exception" in erreurs, erreurs
+    texte = "\n".join(erreurs)
+    for fragment in ("couche fautive : sauf chimere : aucune fiche de la carte ne s'appelle ainsi",
+                     "couche fautive : sauf surcote_regime_general : la couche ne la décide "
+                     "pas par son nom",
+                     "couche fautive : garder decote_regime_general : seul un sélecteur qui se "
+                     "résout en fiches en excepte",
+                     "couche fautive : sauf avpf : le sélecteur {etape: liquider_chaque_regime} "
+                     "ne l'atteint pas",
+                     "couche d_un_calcul : neutraliser {domaine: decote_surcote} : une couche "
+                     "d'un seul calcul n'excepte rien"):
+        assert fragment in texte, fragment
+    for faute in ("fautive", "d_un_calcul"):
+        (couches / f"{faute}.yaml").unlink()
+    (dossier / "fautive.yaml").unlink()
+    excepte = univers.charger(dossier, couches)["excepte"]
+    fiches = carte.fiches()
+    assert "decote_regime_general" not in univers.sans_decision(excepte, fiches)
+    decisions = {o.operation: o.visees(fiches) for _, o in excepte.decisions}
+    assert decisions["garder"] == {"decote_regime_general"}
+    assert "decote_regime_general" not in decisions["neutraliser"]
+    assert "surcote_regime_general" in decisions["neutraliser"]
+
+
 def test_la_pile_a_ses_regles(tmp_path):
     """Le droit réel en bas et seulement là ; une couche qui existe ; une
     couche d'un seul calcul sous une transition ; une fiche de la proposition

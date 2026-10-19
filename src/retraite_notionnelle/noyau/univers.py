@@ -9,9 +9,12 @@ complète des fiches de la proposition (``regles/proposition/``).
 
 Une couche fait six choses (liste ``operations_de_couche`` du vocabulaire), et
 chacune vise une fiche nommée ou un sélecteur (liste ``selecteurs``) :
-``{etape: liquider_chaque_regime}``. Elle agit depuis une date (``depuis``),
-sur l'univers entier ou sur le seul calcul que nomme la transition posée
-au-dessus d'elle (``portee``).
+``{etape: liquider_chaque_regime}``. Un sélecteur peut excepter des fiches
+(``sauf``), que la couche décide par leur nom : les comptes notionnels
+neutralisent l'étape de la liquidation de chaque régime, et gardent le RAFP,
+qui en est. Elle agit depuis une date (``depuis``), sur l'univers entier ou
+sur le seul calcul que nomme la transition posée au-dessus d'elle
+(``portee``).
 
 Ce module lit couches et univers, les confronte au contrat C.4, à la carte et
 au vocabulaire, et dit de chaque univers ce qu'il ajoute, ce qu'il change, ce
@@ -76,14 +79,19 @@ class Operation:
     parametre: str | None = None
     valeur: object = None
     motif: str | None = None
+    #: Les fiches que son sélecteur n'atteint pas : la couche les décide par
+    #: leur nom.
+    sauf: tuple[str, ...] = ()
 
     @classmethod
     def lue(cls, donnee: dict) -> Operation:
         vise = donnee.get("vise")
         if isinstance(vise, dict) and len(vise) == 1:
             vise = next(iter(vise.items()))
+        sauf = donnee.get("sauf") or ()
         return cls(donnee.get("operation"), vise, donnee.get("parametre"),
-                   donnee.get("valeur"), donnee.get("motif"))
+                   donnee.get("valeur"), donnee.get("motif"),
+                   (sauf,) if isinstance(sauf, str) else tuple(sauf))
 
     @property
     def fiche(self) -> str | None:
@@ -93,6 +101,11 @@ class Operation:
     @property
     def selecteur(self) -> tuple[str, str] | None:
         return self.vise if isinstance(self.vise, tuple) else None
+
+    def visees(self, fiches: dict[str, dict]) -> set[str]:
+        """Les fiches de ``fiches`` qu'elle atteint (:func:`fiches_visees`),
+        hors celles que son sélecteur excepte."""
+        return fiches_visees(self.vise, fiches) - set(self.sauf)
 
     def __str__(self) -> str:
         if self.selecteur:
@@ -262,7 +275,7 @@ def sans_decision(univers: Univers, fiches: dict[str, dict] | None = None) -> li
         return []
     decidees: set[str] = set()
     for _, operation in univers.decisions:
-        decidees |= fiches_visees(operation.vise, fiches)
+        decidees |= operation.visees(fiches)
     return sorted(set(fiches) - decidees)
 
 
@@ -353,10 +366,33 @@ def _erreurs_de_couche(couche: Couche, droit_reel: dict, proposition: dict) -> l
                            "paramètre et une valeur")
         if couche.d_un_calcul and operation.operation != "neutraliser":
             erreurs.append(f"{operation} : une couche d'un seul calcul ne fait que neutraliser")
+        if operation.sauf:
+            erreurs += _erreurs_d_exception(couche, operation, droit_reel, proposition)
     if somme_ordonnee(o.operation == "ajouter_une_transition" for o in couche.operations) > 1:
         erreurs.append("une couche porte une transition au plus")
     if couche.transition and couche.d_un_calcul:
         erreurs.append("une transition vaut pour l'univers, pas pour un calcul")
+    return erreurs
+
+
+def _erreurs_d_exception(couche: Couche, operation: Operation, droit_reel: dict,
+                         proposition: dict) -> list[str]:
+    """Une exception vaut pour un sélecteur qui se résout en fiches, hors d'une
+    couche d'un seul calcul, dont le moteur neutralise le domaine entier ;
+    elle nomme une fiche de la carte, que la couche décide par son nom. Que le
+    sélecteur l'atteigne, :func:`controler` le dit, qui lit la carte."""
+    if couche.d_un_calcul:
+        return [f"{operation} : une couche d'un seul calcul n'excepte rien, le moteur "
+                "neutralise ce que son sélecteur désigne en entier"]
+    if not operation.selecteur or operation.selecteur[0] not in SELECTEURS_DE_FICHES:
+        return [f"{operation} : seul un sélecteur qui se résout en fiches en excepte"]
+    nommees = {o.fiche for o in couche.operations if o.operation in DECISIONS and o.fiche}
+    erreurs = []
+    for fiche in operation.sauf:
+        if fiche not in droit_reel and fiche not in proposition:
+            erreurs.append(f"sauf {fiche} : aucune fiche de la carte ne s'appelle ainsi")
+        elif fiche not in nommees:
+            erreurs.append(f"sauf {fiche} : la couche ne la décide pas par son nom")
     return erreurs
 
 
@@ -457,7 +493,7 @@ def _erreurs_de_decisions(pile: tuple[Couche, ...], fiches: dict[str, dict]) -> 
                 continue                        # signalé avec la couche
             if not isinstance(operation.vise, (str, tuple)):
                 continue
-            for fiche in sorted(fiches_visees(operation.vise, fiches)):
+            for fiche in sorted(operation.visees(fiches)):
                 avant = decidees.get(fiche)
                 if avant and avant[0] != operation.operation:
                     erreurs.append(f"{fiche} : « {avant[0]} » par {avant[1]}, "
@@ -488,7 +524,8 @@ def controler(dossier: Path = UNIVERS, dossier_couches: Path = COUCHES,
     """Ce qui ne va pas dans les univers : rien, s'ils tiennent.
 
     Ce qu':func:`erreurs_de_structure` exige ; deux couches d'un univers qui
-    ne décident pas autrement la même fiche ; et chaque passage cité entre
+    ne décident pas autrement la même fiche ; une fiche qu'un sélecteur
+    excepte, et qu'il atteint ; et chaque passage cité entre
     guillemets par un motif de couche, ou par une fiche de la proposition qui
     cite le README, retrouvé mot pour mot dans le texte de la proposition
     (§ 3.1, § 3.2) : une déduction n'est pas une lecture.
@@ -501,6 +538,15 @@ def controler(dossier: Path = UNIVERS, dossier_couches: Path = COUCHES,
         if all(c in brutes for c in pile):
             erreurs += [f"univers {nom} : {e}" for e in _erreurs_de_decisions(
                 tuple(Couche.lue(brutes[c]) for c in pile), fiches)]
+    for nom, donnee in brutes.items():
+        for operation in Couche.lue(donnee).operations:
+            sorte, valeur = operation.selecteur or (None, None)
+            if not operation.sauf or sorte not in SELECTEURS_DE_FICHES:
+                continue                        # signalé avec la couche
+            atteintes = fiches_visees(operation.vise, fiches)
+            erreurs += [f"couche {nom} : sauf {fiche} : le sélecteur {{{sorte}: {valeur}}} "
+                        "ne l'atteint pas"
+                        for fiche in operation.sauf if fiche in fiches and fiche not in atteintes]
     texte = texte_de_la_proposition(proposition)
     for nom, donnee in couches(dossier_couches).items():
         for operation in donnee.get("operations") or ():

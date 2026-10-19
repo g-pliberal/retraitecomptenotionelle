@@ -6,7 +6,8 @@
 # Ce qu'elle neutralise, elle le neutralise par l'étape que la fiche dit
 # appliquer, ou par son nom quand le texte de la proposition la nomme. Une
 # fiche du droit réel qui ne dit pas encore son étape n'est atteinte que par
-# son nom : la carte la montre alors sans décision.
+# son nom : la carte la montre alors sans décision. Ce qu'elle garde par son
+# nom dans une étape qu'elle neutralise, son sélecteur l'excepte (`sauf`).
 schema_version: 1
 id: comptes_notionnels
 nom: Les comptes notionnels, depuis l'origine de la répartition
@@ -31,6 +32,7 @@ operations:
   motif: le compte se liquide à l'âge du départ, sans condition d'âge ni de durée
 - operation: neutraliser
   vise: {etape: liquider_chaque_regime}
+  sauf: [rafp_majoration_capital]
   motif: >-
     « pension = capital notionnel ÷ espérance de vie restante à l'âge de
     départ » : ni salaire de référence, ni taux, ni décote, ni surcote

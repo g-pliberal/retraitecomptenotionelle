@@ -8,11 +8,11 @@ intitule: >-
   une fois, ou en deux près du seuil depuis mai 2019.
 domaine: points
 regimes: [rafp]
-# L'étape qui l'applique est liquider_chaque_regime, mais la fiche ne la dit
-# pas encore : la couche comptes_notionnels neutralise cette étape par son
-# sélecteur et garde le RAFP par son nom, « servis à l'identique », et une pile
-# refuse deux décisions sur la même fiche (noyau/univers.py). La dire attend
-# qu'une couche sache excepter une fiche de son sélecteur.
+# La couche comptes_notionnels neutralise cette étape par son sélecteur, et
+# garde le RAFP par son nom, « servis à l'identique » : le sélecteur l'excepte
+# (`sauf`, noyau/univers.py), une pile refusant deux décisions sur la même
+# fiche.
+etape: liquider_chaque_regime
 face: droit
 etat: approchee
 lit:
@@ -404,6 +404,9 @@ code:
   javascript: >-
     moteur/js/droit/liquider.js : majorationRafp, conversionCapitalRafp,
     fractionnementRafp, prestationRafp, moisApresLeDepart, surcotePoints
+  parametres: >-
+    contenu.parametres de chaque version : majoration, conversion, fractionnement,
+    seuil_capital_points, au_mois
   tests: >-
     tests/test_rafp.py ; les exemples erafp_… (grandeur prestation_rafp de
     tests/test_oracle.py), dix du simulateur et treize des publications de l'ERAFP ;
@@ -426,6 +429,10 @@ historique:
   du rapport annuel 2012, à 62 et 67 ans en 2013, concordent, sauf le capital de Jean,
   imprimé 4 030,38 € pour un produit de 4 030,88 € (écart connu, coquille du rapport) ;
   et le capital unique de la page « Calcul et paiement », 6 965,93 € à 64 ans en 2026.
+- >-
+  2026-10-19 — action 130 : la fiche dit son étape, la liquidation de chaque régime ; la
+  couche des comptes notionnels, qui neutralise cette étape, l'excepte de son sélecteur
+  et la garde par son nom. Aucun chiffre ne change.
 effet: >-
   Tout fonctionnaire qui touche son RAFP hors d'un âge entier, ou avant mars 2015 :
   jusqu'à 5,4 % de plus qu'au barème par âge entier, à 74 ans et 11 mois (1,8017 pour

@@ -25,6 +25,7 @@ objets:
       parametre: {porte: "pour un changement de paramètre, le paramètre que la fiche visée lit", type: identifiant, defaut: null, additif: "la phase 7 change des paramètres, et le moteur doit savoir lequel"}
       valeur: {porte: "la valeur que prend ce paramètre, ou le paramètre dont elle se lit", type: libre, defaut: null, additif: "la phase 7 change des paramètres, et le moteur doit savoir leur valeur"}
       motif: {porte: "ce qui fonde la décision, cité du texte de la proposition", type: texte, defaut: null, additif: "une décision de la proposition dit d'où elle vient (§ 3.1)"}
+      sauf: {porte: "pour un sélecteur, les fiches qu'il n'atteint pas, que la couche décide par leur nom", type: liste, de: identifiant, defaut: [], additif: "les comptes notionnels neutralisent la liquidation de chaque régime, et gardent le RAFP, qui en est"}
 
   univers:
     champs:
