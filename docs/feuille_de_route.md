@@ -6407,16 +6407,16 @@ d'un commit qui change le code sans test), ou l'alléger.
 
 ### 163. Ce que la revue de code d'Anthropic apprend au dépôt : le site en ligne au vert, les rouges classés, puis un relecteur — `en cours`
 
-**Reprise, au 18 octobre 2026.** Faites, les étapes 1, 2, 4 et 6, et les
+**Reprise, au 19 octobre 2026.** Faites, les étapes 1, 2, 4 et 6, et les
 quatre gardes que la deuxième proposait : le site ne part en ligne que d'une
 suite verte ; les rouges sont classés et comptés ; les chiffres cités du
 README et de l'accueil sont produits ; ceux du parcours, hors des saisies,
-ancrés, en lettres comme en chiffres, années de données comprises, et ses
-étiquettes de repères tenues par le filet du site ; dix tests d'une seconde
-sont de la suite rapide ; `pousser.sh` joue les tests de la feuille de route,
-et refuse une garde changée sans `Garde-modifiée:`. Restent les étapes 3 et
-5, que le propriétaire tranche, et, sans lui, les noms d'onglets d'avant que
-garde le parcours. Détail : `163/2026-10-18-les-chiffres-en-lettres-du-parcours.md`.
+ancrés, en lettres comme en chiffres, années de données comprises ; ses
+étiquettes de repères et ses noms d'onglets, tenus par le filet du site ; dix
+tests d'une seconde sont de la suite rapide ; `pousser.sh` joue les tests de
+la feuille de route, et refuse une garde changée sans `Garde-modifiée:`.
+Restent les étapes 3 et 5, que le propriétaire tranche. Détail :
+`163/2026-10-19-les-onglets-du-parcours.md`.
 
 **D'où elle vient.** Le 17 octobre 2026, le propriétaire soumet à une
 session l'article « How the Claude Code team does code review » (blog
