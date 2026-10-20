@@ -751,8 +751,8 @@ button.second, a.bouton.second {
   font-weight: 700; text-transform: none; letter-spacing: 0;
 }
 button.second:hover, a.bouton.second:hover { border-color: var(--or); opacity: 1; }
-/* Le bas du formulaire : « Calculer », et « Effacer ma saisie » quand le
-   navigateur en garde une. Côte à côte, et l'un sous l'autre sur un
+/* Le bas du formulaire : « Calculer », et « Réinitialiser » dès qu'il y a
+   quelque chose à réinitialiser. Côte à côte, et l'un sous l'autre sur un
    téléphone, sans que le second colle au premier. */
 .envoi { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
 /* Ce que le simulateur a retenu : une phrase à la place de la consigne,

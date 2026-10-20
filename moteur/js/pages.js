@@ -912,6 +912,19 @@ function consigneDuFormulaire(saisie) {
     : "L'exemple est déjà rempli. Calculez-le tel quel, ou saisissez la vôtre.";
 }
 
+/**
+ * « Réinitialiser » : la saisie oubliée, le formulaire rendu à l'exemple
+ * (`index.html`). Il se voit dès qu'il y a quelque chose à réinitialiser — une
+ * carrière saisie, celle d'une adresse partagée —, et non plus seulement quand
+ * le navigateur a retenu une saisie : celui qui ne retient rien laissait
+ * changer les données sans dire comment repartir de zéro. Devant l'exemple, il
+ * attend la première frappe.
+ */
+function boutonReinitialiser(saisie) {
+  return `<button type="button" class="second oublier"${saisie.demandee ? "" : " hidden"}>`
+    + "Réinitialiser</button>";
+}
+
 export function formulaire(saisie, contexte, comparaison = null) {
   const affiliations = contexte.simulateur().affiliations;
   const echelle = contexte.echelle(saisie);
@@ -1076,7 +1089,7 @@ export function formulaire(saisie, contexte, comparaison = null) {
     <div class="grille">${avance}</div>
   </details>
   <p class="envoi" style="margin-top:1.4rem"><button type="submit">Calculer les quatre systèmes</button>
-  <button type="button" class="second oublier" hidden>Effacer ma saisie</button></p>
+  ${boutonReinitialiser(saisie)}</p>
 </form>
 `;
 }

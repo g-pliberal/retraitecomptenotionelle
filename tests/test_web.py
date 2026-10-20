@@ -2464,8 +2464,8 @@ def test_les_metiers_forment_des_groupes_de_champs_nommes(page):
 #: tout le reste attend qu'on le demande.
 def _mots_visibles(corps: str) -> int:
     texte = re.sub(r'<span class="bulle"[^>]*hidden>.*?</span>', " ", corps, flags=re.S)
-    # Un bouton caché ne se lit pas davantage : « Effacer ma saisie » ne paraît
-    # que lorsque le navigateur a retenu une saisie, et c'est alors un contrôle.
+    # Un bouton caché ne se lit pas davantage : « Réinitialiser » ne paraît,
+    # devant l'exemple, qu'à la première frappe, et c'est alors un contrôle.
     texte = re.sub(r"<button\b[^>]*\bhidden>.*?</button>", " ", texte, flags=re.S)
     texte = re.sub(r"<option\b.*?</option>", " ", texte, flags=re.S)
     texte = _sans_blocs(texte, "div", r'<div class="panneau"[^>]*\bhidden>')

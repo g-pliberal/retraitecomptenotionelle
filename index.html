@@ -915,10 +915,11 @@ function reprendre(contenu, { action, surPlace, repere }) {
 //
 // ELLE NE SORT PAS DU NAVIGATEUR, comme le reste : `localStorage` reste sur
 // cette machine, dans ce navigateur, et rien ne l'envoie nulle part. Un bouton
-// « Effacer ma saisie », sous le formulaire, l'en retire — c'est ce qu'il faut
-// sur un ordinateur partagé —, et le chapeau du simulateur le dit. Un
-// navigateur qui refuse le stockage — un réglage de confidentialité, un cadre
-// d'une autre origine — ne retient rien, et le simulateur marche comme avant.
+// « Réinitialiser », sous le formulaire, l'en retire et rend l'exemple — c'est
+// ce qu'il faut sur un ordinateur partagé —, et le chapeau du simulateur le
+// dit. Un navigateur qui refuse le stockage — un réglage de confidentialité, un
+// cadre d'une autre origine — ne retient rien, et le simulateur marche comme
+// avant.
 //
 // Deux choses sont gardées, sous une seule clé :
 //
@@ -1133,10 +1134,15 @@ function estUnRefus(contenu, formulaire) {
 // Ce que la page dit de la mémoire : le bouton qui l'efface, et, quand une
 // saisie vient d'être reprise ou effacée, une phrase sous la consigne du
 // formulaire — qui prend alors sa place, « l'exemple est déjà rempli » n'étant
-// plus vrai.
+// plus vrai. Le bouton, que le rendu montre devant une carrière saisie, paraît
+// aussi dès qu'une saisie est retenue, ou que le formulaire diffère de ce que
+// le rendu a écrit : un navigateur qui ne retient rien le cachait à jamais.
 function montrerLaMemoire(formulaire, phrase = "") {
   const bouton = formulaire.querySelector("button.oublier");
-  if (bouton) { bouton.hidden = !memoireOccupee(); }
+  if (bouton) {
+    bouton.hidden = bouton.hidden && !memoireOccupee()
+      && requeteDuFormulaire(formulaire) === formulaire._rendue;
+  }
   if (!phrase) { return; }
   let note = formulaire.querySelector(".memoire");
   if (!note) {
@@ -1223,7 +1229,7 @@ for (const type of ["input", "change"]) {
   });
 }
 
-// « Effacer ma saisie » : la mémoire est vidée, et le formulaire revient à
+// « Réinitialiser » : la mémoire est vidée, et le formulaire revient à
 // l'exemple, sous les règles en vigueur.
 document.addEventListener("click", (evenement) => {
   const bouton = evenement.target.closest?.("button.oublier");

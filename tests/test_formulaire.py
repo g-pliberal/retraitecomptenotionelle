@@ -303,9 +303,31 @@ def test_la_saisie_n_est_gardee_que_par_le_navigateur():
     _, corps = rendre("/simuler", {})
     assert "Tout se calcule et se garde dans votre navigateur : rien n'en sort." \
         in corps
-    assert '<button type="button" class="second oublier" hidden>Effacer ma saisie</button>' \
+    assert '<button type="button" class="second oublier" hidden>Réinitialiser</button>' \
         in corps
     assert 'closest?.("button.oublier")' in script and "oublierMemoire();" in script
+
+
+def test_le_formulaire_se_reinitialise_d_un_bouton_qui_se_voit():
+    """« Réinitialiser » ramène le formulaire à l'exemple, et se voit dès qu'il y
+    a quelque chose à réinitialiser. Il s'appelait « Effacer ma saisie », et ne
+    paraissait que lorsque le navigateur avait retenu une saisie : devant une
+    adresse partagée, ou dans un navigateur qui ne retient rien — une
+    navigation privée, un cadre d'une autre origine —, le formulaire ne
+    laissait que changer les données, et rien ne disait comment repartir de
+    zéro (le propriétaire, le 20 octobre 2026)."""
+    bouton = re.compile(
+        r'<button type="button" class="second oublier"( hidden)?>Réinitialiser</button>')
+    vierge = bouton.search(_formulaire({}))
+    assert vierge and vierge.group(1), "devant l'exemple, il n'y a rien à réinitialiser"
+    saisie = bouton.search(_formulaire(BASE))
+    assert saisie and not saisie.group(1), \
+        "devant une carrière saisie, le bouton reste caché"
+    # Le script de la page ne le cache plus faute de mémoire : il le montre
+    # aussi dès que le formulaire diffère de ce que le rendu a écrit, que le
+    # navigateur retienne la frappe ou non.
+    corps = _fonction(_script(), "montrerLaMemoire")
+    assert "bouton.hidden &&" in corps and "formulaire._rendue" in corps
 
 
 def test_le_champ_des_dispenses_nomme_chaque_motif_et_ses_annees():
