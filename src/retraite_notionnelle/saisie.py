@@ -704,7 +704,7 @@ CLES_MODELISATION = (
 class Saisie:
     """Paramètres d'une simulation, tels que l'utilisateur les a saisis."""
 
-    naissance: int = 1975
+    naissance: int = 2000
     naissance_mois: int = 1
     #: Jour de naissance. Il décide du mois d'où les âges se comptent
     #: (:func:`~retraite_notionnelle.calendrier.origine_des_ages`), et donc de

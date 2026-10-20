@@ -546,7 +546,7 @@ export const CLES_MODELISATION = Object.freeze([
 ]);
 
 export const DEFAUTS = Object.freeze({
-  naissance: 1975,
+  naissance: 2000,
   naissance_mois: 1,
   //: Jour de naissance. Il décide du mois d'où les âges se comptent, et donc
   //: de l'âge que vaut une date de carrière ; la génération, elle, se coupe au

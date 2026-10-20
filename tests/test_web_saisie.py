@@ -1403,7 +1403,7 @@ def test_la_page_recapitule_une_periode_sans_emploi(page):
 
 def test_requete_reconstruit_les_metiers():
     requete = Saisie.depuis_requete({
-        "metier2_debut": "40", "metier2_statut": "artisan",
+        "naissance": "1975-01-01", "metier2_debut": "40", "metier2_statut": "artisan",
         "metier2_salaire": "1.5",
     }).requete()
     # Quarante ans, pour qui est né en janvier 1975, c'est janvier 2015 :

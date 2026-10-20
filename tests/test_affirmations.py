@@ -223,13 +223,17 @@ class Modele:
     def artisan(self):
         return self.simuler(statut="artisan")
 
+    # Né en 1975, l'exemple du site jusqu'au 20 octobre 2026 : la garantie
+    # complète sa pension, et c'est ce que ses contrôles éprouvent. L'exemple
+    # du site, né en 2000, ne la reçoit pas au même revenu.
     @cached_property
     def smic(self):
-        return self.simuler(salaire=0.35, unite_revenu="moyen", debut=20, liquidation=67)
+        return self.simuler(salaire=0.35, unite_revenu="moyen", naissance=1975, debut=20,
+                            liquidation=67)
 
     @cached_property
     def smic_en_couple(self):
-        return self.simuler(salaire=0.35, unite_revenu="moyen", debut=20,
+        return self.simuler(salaire=0.35, unite_revenu="moyen", naissance=1975, debut=20,
                             liquidation=67, foyer="couple")
 
     @cached_property

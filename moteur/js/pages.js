@@ -1863,7 +1863,7 @@ qu'il faut déposer.</p>
  * arrêterait quelqu'un sur un réglage qui ne change aucun résultat.
  *
  * Le cas se produit au premier clic : l'exemple par défaut est celui d'un
- * actif né en 1975, et le déclarer retraité laisse son départ en 2039. Dire ce
+ * actif né en 2000, et le déclarer retraité laisse son départ en 2064. Dire ce
  * qui cloche vaut mieux que réécrire deux dates sous ses doigts.
  */
 function desaccordDeSituation(saisie, contexte) {

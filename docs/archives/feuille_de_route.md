@@ -19322,3 +19322,30 @@ les plus anciennes ont liquidé avant 1990 : le balayage des témoins va de 1925
 à 1975 pour chaque statut, mais aucun test ne vérifie encore qu'une fiche
 réponde, pour toute génération de 1920 à aujourd'hui, par une règle datée qui
 vaut pour elle. C'est le test à écrire à la fin de ce chantier.
+
+### 164. Le simulateur à l'usage : réinitialiser, retirer une période, le relevé d'abord, un exemple jeune — `fait`
+
+**Demande**, le 20 octobre 2026 : « Il faudrait qu'on puisse réinitialiser
+les données d'entrée du simulateur. Actuellement, on ne peut que changer les
+données. Je cherche un peu un RAZ. De plus, on peut ajouter un métier mais
+pas en enlever. Il faudrait aussi mettre plus en avant la possibilité de
+poser son relevé info retraite, ce serait bien que ce soit le premier mode de
+remplissage. Il faudrait aussi mettre un cas par défaut jeune dans le
+simulateur pour que cela reflète plus notre électorat. »
+
+**Fait, le 20 octobre 2026, en quatre étapes, une par demande.** Le bouton
+« Effacer ma saisie », caché tant que le navigateur ne retenait rien, devient
+« Réinitialiser », visible dès qu'il y a quelque chose à réinitialiser ;
+chaque période après la première porte « Retirer cette période », et les
+suivantes remontent d'un rang ; le dépôt du relevé ouvre le formulaire, hors
+de tout dépliant ; l'exemple que le simulateur ouvre déjà rempli naît en
+2000, et non plus en 1975.
+
+**Ce que ça a déplacé.** Aucun témoin de simulation. Les rendus du
+simulateur : le bouton, les périodes, le relevé en tête, l'exemple ; le
+formulaire vierge passe de 186 à 191 mots visibles. L'exemple, en net :
+3 119 € au système actuel, 2 442 € à la proposition (−21,7 %), et 223 € de
+plus par mois sur la fiche de paie ; le parcours de présentation le décrit.
+L'année de l'exemple, et ce qui n'a pas bougé avec elle — le revenu, le
+statut, le sexe —, restent au propriétaire. La note est sous
+`docs/archives/feuille_de_route/164/`.

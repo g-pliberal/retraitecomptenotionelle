@@ -302,6 +302,21 @@ def test_la_consigne_ne_parle_de_l_exemple_que_devant_l_exemple():
         assert 'class="consigne"' in html
 
 
+def test_l_exemple_est_un_jeune_actif():
+    """L'exemple que le simulateur ouvre déjà rempli est un jeune actif, né en
+    2000, que la réforme prendrait au début de sa carrière : c'est à lui que le
+    site s'adresse d'abord (le propriétaire, le 20 octobre 2026). Il était né
+    en 1975. Les deux saisies le portent, et le formulaire vierge le montre :
+    premier emploi à 21 ans, en janvier 2021, départ à 64 ans, en janvier
+    2064."""
+    assert Saisie().naissance == 2000
+    assert module("saisie").DEFAUTS["naissance"] == 2000
+    vierge = _formulaire({})
+    for nom, valeur in (("naissance", "2000-01-01"), ("debut", "2021-01-01"),
+                        ("liquidation", "2064-01-01")):
+        assert re.search(rf'id="{nom}" name="{nom}" value="{valeur}"', vierge), nom
+
+
 def test_le_simulateur_court_deplace_ses_bornes_avec_la_naissance():
     """Ses dates portent leurs âges limites, comme celles du formulaire entier :
     sans eux, le script de la page ne déplaçait pas les bornes du calendrier, et
