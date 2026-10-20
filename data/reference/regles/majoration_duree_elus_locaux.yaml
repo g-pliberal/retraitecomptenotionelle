@@ -1,0 +1,216 @@
+schema_version: 1
+id: majoration_duree_elus_locaux
+intitule: >-
+  Pour les pensions de base prenant effet à compter du 1er janvier 2027, l'assuré qui a
+  exercé pendant un mandat complet une fonction exécutive locale — maire, adjoint,
+  président ou vice-président d'un département, d'une région, d'une intercommunalité à
+  fiscalité propre, conseiller titulaire d'une délégation de fonction — reçoit une
+  majoration de durée d'assurance d'un trimestre par mandat, trois au plus.
+domaine: duree
+regimes: [regime_general, msa_salaries, msa_non_salaries, fonction_publique_etat, cnracl,
+  fspoeie, marins, cps_saint_pierre_et_miquelon]
+etape: compter_les_durees
+face: droit
+etat: pas_encore_modelisee
+lit:
+- >-
+  les fonctions locales de l'assuré que nomment les 1° à 11° de L. 161-21-2, et pour
+  chaque mandat la date de l'élection de l'exécutif et celle de la proclamation des
+  résultats du renouvellement général suivant
+- >-
+  pour une délégation de fonction (11°), l'exercice simultané d'un mandat parlementaire
+- les régimes de base dont l'assuré a relevé, pour désigner celui qui attribue la majoration (R. 173-15)
+- la date d'effet de la pension
+ecrit:
+- >-
+  une majoration de durée d'assurance d'un trimestre par mandat complet, trois au plus
+  sur toute la carrière, attribuée par un seul régime
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: avant_2027
+  statut: supposee
+  hypothese: >-
+    L. 161-21-2 est en vigueur depuis le 24 décembre 2025, au lendemain de la publication
+    de la loi n° 2025-1249 ; mais il renvoie à un décret en Conseil d'État la désignation
+    du régime compétent, et ce décret, le n° 2026-948 du 12 octobre 2026, ne s'applique
+    qu'aux pensions prenant effet à compter du 1er janvier 2027 (son article 8) : aucune
+    caisse n'attribue la majoration avant
+  fiabilite: >-
+    haute, le décret borne lui-même les pensions qu'il vise ; la date est contestée par
+    les associations d'élus, pour qui la loi valait dès le 24 décembre 2025 (Maire-info,
+    13 octobre 2026)
+  bornes:
+    liquidation.date_effet: [null, 2027-01-01]
+  contenu:
+    droit: aucune majoration de durée d'assurance au titre d'un mandat local
+  exemples: aucun trouvé
+- id: un_trimestre_par_mandat
+  statut: lue
+  textes:
+  - id: LEGIARTI000053146362
+    reference: >-
+      CSS, article L. 161-21-2, créé par l'article 5 de la loi n° 2025-1249 du
+      22 décembre 2025 portant création d'un statut de l'élu local
+    citation: >-
+      « Une majoration de durée d'assurance d'un trimestre est attribuée pour l'exercice,
+      pendant un mandat complet, des fonctions suivantes : 1° Maire, président de
+      délégation spéciale, adjoint au maire ou membre de délégation spéciale faisant
+      fonction d'adjoint au maire ; 2° Président ou vice-président de conseil
+      départemental ou de conseil régional ; 3° Président ou vice-président
+      d'établissement public de coopération intercommunale à fiscalité propre ; [...]
+      11° Conseiller des collectivités territoriales mentionnées aux 1° à 10° qui
+      bénéficie d'une délégation de fonction. Nul ne peut bénéficier, au titre du présent
+      article, de plus de trois trimestres de majoration. Les fonctions mentionnées au 11°
+      n'ouvrent pas droit à la majoration de durée d'assurance lorsque l'élu est par
+      ailleurs titulaire d'un mandat parlementaire. »
+    en_vigueur: 2025-12-24
+    lu_le: 2026-10-19
+  - id: LEGIARTI000054978078
+    reference: CSS, article R. 161-17-1, créé par l'article 4 du décret n° 2026-948 du 12 octobre 2026
+    citation: >-
+      « satisfait la condition d'avoir effectué un mandat complet l'assuré qui a exercé,
+      sans interruption, une ou plusieurs des fonctions mentionnées au même article dans
+      l'une des conditions suivantes : 1° Du premier jour qui suit l'élection de
+      l'exécutif, après le renouvellement de l'organe délibérant à l'occasion d'un
+      renouvellement général, jusqu'à la date de proclamation des résultats de l'élection
+      de ce même organe à l'occasion du renouvellement général suivant [...] » ; le
+      régime compétent « est déterminé dans les conditions prévues à l'article R. 173-15 »
+    en_vigueur: 2026-10-14
+    publie_le: 2026-10-13
+    lu_le: 2026-10-19
+  - id: JORFTEXT000054977578
+    reference: >-
+      décret n° 2026-948 du 12 octobre 2026 définissant les modalités d'application de la
+      majoration de durée d'assurance pour l'exercice d'un mandat local, article 8
+    citation: >-
+      « Les dispositions du présent décret s'appliquent aux pensions prenant effet à
+      compter du 1er janvier 2027. »
+    publie_le: 2026-10-13
+    lu_le: 2026-10-19
+  - id: JORFTEXT000054983330
+    reference: >-
+      arrêté du 13 octobre 2026 relatif à la liste des pièces justificatives attestant des
+      fonctions et de l'exercice d'un mandat complet, article 1er : procès-verbal
+      d'élection, fiche d'indemnité de fonctions, tableau de composition de l'organe
+      délibérant, arrêté ou délibération de délégation, ou formulaire homologué rempli par
+      la collectivité
+    publie_le: 2026-10-15
+    lu_le: 2026-10-19
+  - id: LEGIARTI000054978144
+    reference: >-
+      CPCMR, article R. 26 bis, rédaction du décret n° 2026-948 : la majoration de
+      L. 161-21-2 échappe, comme celle de L. 173-1-5, à la limite de quatre trimestres
+      par année civile
+    en_vigueur: 2026-10-14
+    lu_le: 2026-10-19
+  - id: LEGIARTI000054978195
+    reference: >-
+      décret n° 2003-1306 (CNRACL), article 15, I, 10° : « La majoration accordée aux
+      élus locaux en application de l'article L. 161-21-2 du code de la sécurité sociale »
+    en_vigueur: 2026-10-14
+    lu_le: 2026-10-19
+  - id: LEGIARTI000054978200
+    reference: >-
+      décret n° 2004-1056 (ouvriers de l'État), article 12, I, 9°, la même majoration
+    en_vigueur: 2026-10-14
+    lu_le: 2026-10-19
+  - id: LEGIARTI000054978160
+    reference: >-
+      code des pensions de retraite des marins, article R. 8-1, rédaction du décret
+      n° 2026-948 : chaque trimestre de l'une ou l'autre majoration vaut quatre-vingt-dix
+      jours de services
+    en_vigueur: 2026-10-14
+    lu_le: 2026-10-19
+  - id: LEGIARTI000054978170
+    reference: code rural et de la pêche maritime, article R. 732-61, rédaction du décret n° 2026-948
+    en_vigueur: 2026-10-14
+    lu_le: 2026-10-19
+  - id: LEGIARTI000054978205
+    reference: >-
+      décret n° 2017-1000 (Saint-Pierre-et-Miquelon), article 3, rédaction du décret
+      n° 2026-948 : R. 161-17-1 applicable, le régime compétent désigné par R. 173-15
+      « dans sa version applicable à Saint-Pierre-et-Miquelon »
+    en_vigueur: 2026-10-14
+    lu_le: 2026-10-19
+  nee_de: LEGIARTI000054978078
+  bornes:
+    liquidation.date_effet: [2027-01-01, null]
+  contenu:
+    beneficiaire: >-
+      l'assuré qui a exercé une des fonctions des 1° à 11° de L. 161-21-2 pendant un mandat
+      complet, quelle que soit la date du mandat : le décret ne borne pas les mandats
+      qu'il compte, seulement les pensions qu'il vise
+    droit: >-
+      un trimestre de majoration de durée d'assurance par mandat complet, trois au plus ;
+      hors de la limite de quatre trimestres par an dans la fonction publique (R. 26 bis),
+      à quatre-vingt-dix jours de services chacun chez les marins (R. 8-1)
+    conditions: >-
+      le mandat est complet s'il court sans interruption du premier jour qui suit
+      l'élection de l'exécutif, après le renouvellement général, jusqu'à la proclamation
+      des résultats du renouvellement général suivant, ou depuis l'élection qui suit une
+      annulation définitive ou une élection partielle intégrale (R. 161-17-1, I, 1° à
+      4°) ; la délégation de fonction (11°) ne compte pas quand l'élu exerce en même temps
+      un mandat parlementaire, si brève que soit la concomitance, au-delà du délai de
+      LO 151 du code électoral (II) ; les pièces justificatives de l'arrêté du 13 octobre
+      2026 ; un seul régime attribue la majoration, celui que désigne R. 173-15
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-19
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Le modèle ne connaît pas les mandats locaux : le modéliser demande un fait daté de plus
+    (les fonctions exercées et leurs dates), puis la majoration à l'étape qui compte les
+    durées.
+  - >-
+    La circulaire Cnav qui l'appliquera, attendue avant le 1er janvier 2027 : si la
+    majoration compte pour la durée cotisée de la carrière longue et pour la surcote. Le
+    texte dit « majoration de durée d'assurance », sans la dire cotisée ; une question
+    écrite au Sénat publiée en juillet 2026 (qSEQ260709572) interroge sa prise en compte
+    dans la surcote.
+  - >-
+    Mayotte : le décret n° 2026-948 n'adapte pas l'ordonnance n° 2002-411, quand
+    l'ordonnance n° 2026-647 l'a fait pour la majoration des sapeurs-pompiers
+    volontaires ; et les régimes spéciaux, que le décret ne nomme pas.
+  - >-
+    Les élus partis à la retraite entre le 24 décembre 2025 et le 31 décembre 2026, que
+    le décret prive de la majoration quand la loi était déjà en vigueur : la question
+    reste ouverte (Maire-info, 13 octobre 2026), sans décision publiée au 19 octobre
+    2026.
+  lectures:
+  - type: legifrance
+    reference: >-
+      Index LEGI du dépôt, à jour de l'incrément du 19 octobre 2026 : L. 161-21-2
+      (LEGIARTI000053146362), R. 161-17-1 (LEGIARTI000054978078), R. 173-15, R. 26 bis CPCMR
+      (LEGIARTI000054978144), décret n° 2003-1306 article 15 (LEGIARTI000054978195), décret
+      n° 2004-1056 article 12 (LEGIARTI000054978200), R. 8-1 des marins
+      (LEGIARTI000054978160), R. 732-61 du code rural (LEGIARTI000054978170), décret
+      n° 2017-1000 article 3 (LEGIARTI000054978205)
+    date: 2026-10-19
+  - type: jorf
+    reference: >-
+      Index JORF du dépôt : loi n° 2025-1249 du 22 décembre 2025, article 5 ; décret
+      n° 2026-948 du 12 octobre 2026 (JORFTEXT000054977578), articles 1 à 8 ; arrêté du
+      13 octobre 2026 (JORFTEXT000054983330)
+    date: 2026-10-19
+  - type: autre
+    reference: >-
+      Maire-info, 13 octobre 2026, « Octroi de trimestres supplémentaires de retraite pour
+      certains élus : le décret enfin paru mais l'entrée en vigueur décalée » : la date du
+      1er janvier 2027 contestée, les mandats anciens comptés
+    url: https://www.maire-info.com/2026/statut-elu/octroi-trimestres-supplementaires-retraite-pour-certains-elus-decret-enfin-paru-mais-entree-en-vigueur-decalee-art26-31174
+    date: 2026-10-13
+historique:
+- >-
+  2026-10-19 — née de la veille du 19 octobre 2026 : L. 161-21-2, créé par la loi sur le
+  statut de l'élu local, et son décret du 12 octobre 2026 n'étaient cités par aucune
+  fiche ; la liste des textes portait la rédaction de L. 161-21-2 sans statut et celle de
+  R. 161-17-1 à examiner.
+effet: >-
+  Les anciens et actuels élus exécutifs locaux — maires, adjoints, présidents et
+  vice-présidents de départements, de régions et d'intercommunalités, conseillers
+  délégués — qui liquident à compter du 1er janvier 2027 : un à trois trimestres de
+  durée d'assurance, qui épargnent chacun 1,25 % de décote au régime général à qui n'a
+  pas la durée requise, sans abaisser l'âge légal. Le modèle ne connaît pas les mandats
+  locaux et ne la sert pas.

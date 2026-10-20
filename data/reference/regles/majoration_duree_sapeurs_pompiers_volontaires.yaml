@@ -1,0 +1,230 @@
+schema_version: 1
+id: majoration_duree_sapeurs_pompiers_volontaires
+intitule: >-
+  Pour les pensions prenant effet à compter du 1er juillet 2026, l'assuré qui a été
+  engagé comme sapeur-pompier volontaire au moins dix années, continues ou non, reçoit
+  une majoration de durée d'assurance d'un trimestre, de deux pour vingt années, de
+  trois pour vingt-cinq, comptée pour le taux et la durée d'assurance mais ni cotisée
+  ni réputée cotisée.
+domaine: duree
+regimes: [regime_general, msa_salaries, msa_non_salaries, cavimac, fonction_publique_etat,
+  cnracl, fspoeie, marins, sncf, ratp, ieg, opera_de_paris, comedie_francaise,
+  banque_de_france, port_strasbourg, cps_saint_pierre_et_miquelon, cssm_mayotte]
+etape: compter_les_durees
+face: droit
+etat: pas_encore_modelisee
+lit:
+- >-
+  les périodes d'engagement de l'assuré comme sapeur-pompier volontaire (R. 723-9 du code
+  de la sécurité intérieure), avec leurs dates, telles que l'état des services du dernier
+  service d'incendie et de secours les atteste
+- les régimes de base dont l'assuré a relevé, pour désigner celui qui attribue la majoration (R. 173-15)
+- la date d'effet de la pension
+ecrit:
+- >-
+  une majoration de durée d'assurance d'un, deux ou trois trimestres, attribuée par un
+  seul régime, affectée à aucune année civile, comptée pour le taux de calcul de la
+  pension et pour la durée d'assurance du régime, hors de la durée cotisée ou réputée
+  cotisée
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: avant_le_decret_de_2026
+  statut: supposee
+  hypothese: >-
+    L. 173-1-5, créé par l'article 24 de la loi n° 2023-270 du 14 avril 2023, renvoie
+    ses conditions et ses limites à un décret en Conseil d'État ; ce décret, le
+    n° 2026-18 du 20 janvier 2026, ne s'applique qu'aux pensions prenant effet à
+    compter du 1er juillet 2026 (son article 9) : aucune caisse n'attribue la
+    majoration avant, et la circulaire Cnav n° 2026-22 l'écrit sans rétroactivité
+  fiabilite: haute, le décret borne lui-même les pensions qu'il vise
+  bornes:
+    liquidation.date_effet: [null, 2026-07-01]
+  contenu:
+    droit: aucune majoration de durée d'assurance au titre de l'engagement de sapeur-pompier volontaire
+  exemples: aucun trouvé
+- id: un_a_trois_trimestres
+  statut: lue
+  textes:
+  - id: LEGIARTI000047451322
+    reference: CSS, article L. 173-1-5, créé par l'article 24 de la loi n° 2023-270 du 14 avril 2023
+    citation: >-
+      « Les assurés ayant accompli au moins dix années de service, continues ou non, en
+      qualité de sapeur-pompier volontaire ont droit à des trimestres supplémentaires pris
+      en compte pour la détermination du taux de calcul de la pension et la durée
+      d'assurance dans le régime, dans des conditions et des limites prévues par décret en
+      Conseil d'Etat. »
+    en_vigueur: 2023-04-16
+    lu_le: 2026-10-19
+  - id: LEGIARTI000053389663
+    reference: CSS, article R. 173-4-6, créé par l'article 4 du décret n° 2026-18 du 20 janvier 2026
+    citation: >-
+      « 1° Un trimestre pour une période d'engagement d'au moins dix années ; 2° Deux
+      trimestres pour une période d'engagement d'au moins vingt années ; 3° Trois
+      trimestres pour une période d'engagement d'au moins vingt-cinq années. La période
+      d'engagement correspond à la durée totale, calculée de date à date, continue ou non,
+      de services pendant laquelle l'assuré a été engagé comme sapeur-pompier volontaire
+      [...] » ; le régime compétent « est déterminé dans les conditions prévues à
+      l'article R. 173-15 » ; l'assuré produit « un état des services établi par le
+      dernier service d'incendie et de secours dans lequel il a été engagé »
+    en_vigueur: 2026-01-22
+    publie_le: 2026-01-21
+    lu_le: 2026-10-19
+  - id: JORFTEXT000053388196
+    reference: >-
+      décret n° 2026-18 du 20 janvier 2026 portant diverses mesures relatives aux
+      sapeurs-pompiers volontaires et aux sapeurs-pompiers professionnels, article 9
+    citation: >-
+      « Les dispositions du présent décret, à l'exception de celles prévues à l'article 7,
+      s'appliquent aux pensions prenant effet à compter du 1er juillet 2026. »
+    publie_le: 2026-01-21
+    lu_le: 2026-10-19
+  - id: LEGIARTI000053389999
+    reference: >-
+      CSS, article R. 351-3, 2°, rédaction du décret n° 2026-18 : la durée tous régimes
+      compte « les majorations de durée d'assurance accordées par l'un de ces régimes, en
+      application d'un texte législatif ou réglementaire, à l'exception des majorations
+      mentionnées à l'article R. 351-7, et mises en œuvre conformément aux règles de
+      coordination »
+    en_vigueur: 2026-01-22
+    lu_le: 2026-10-19
+  - id: LEGIARTI000053389965
+    reference: >-
+      CPCMR, article R. 26 bis, rédaction du décret n° 2026-18 : la majoration de
+      L. 173-1-5 échappe à la limite de quatre trimestres par année civile
+    en_vigueur: 2026-01-22
+    lu_le: 2026-10-19
+  - id: LEGIARTI000053390011
+    reference: >-
+      décret n° 2003-1306 (CNRACL), article 15, I, 9° : « La majoration accordée aux
+      sapeurs-pompiers volontaires en application de l'article L. 173-1-5 du code de la
+      sécurité sociale »
+    en_vigueur: 2026-01-22
+    lu_le: 2026-10-19
+  - id: LEGIARTI000053390016
+    reference: >-
+      décret n° 2004-1056 (ouvriers de l'État), article 12, I, 8° : la même majoration
+    en_vigueur: 2026-01-22
+    lu_le: 2026-10-19
+  - id: LEGIARTI000053389648
+    reference: >-
+      code des pensions de retraite des marins, article R. 8-1 : la majoration attribuée
+      par l'ENIM, « chaque trimestre est pris en compte au titre de la durée de service à
+      hauteur de quatre-vingt-dix jours »
+    en_vigueur: 2026-01-22
+    lu_le: 2026-10-19
+  - id: LEGIARTI000053389983
+    reference: code rural et de la pêche maritime, article R. 732-61, rédaction du décret n° 2026-18
+    en_vigueur: 2026-01-22
+    lu_le: 2026-10-19
+  - id: LEGIARTI000053390025
+    reference: >-
+      décret n° 2017-1000 (Saint-Pierre-et-Miquelon), article 3, IV : R. 173-4-6 applicable,
+      le régime compétent désigné par « R. 173-15, dans sa version applicable à
+      Saint-Pierre-et-Miquelon »
+    en_vigueur: 2026-01-22
+    lu_le: 2026-10-19
+  nee_de: LEGIARTI000053389663
+  bornes:
+    liquidation.date_effet: [2026-07-01, null]
+  contenu:
+    beneficiaire: >-
+      l'assuré engagé comme sapeur-pompier volontaire au moins dix années en tout, de date à
+      date, continues ou non ; à Mayotte, pour les pensions prenant effet à compter du
+      1er janvier 2027 seulement (ordonnance n° 2026-647 du 22 juillet 2026, article 3, qui
+      crée l'article 9-1-1 de l'ordonnance n° 2002-411)
+    droit: >-
+      un trimestre de majoration pour dix années d'engagement, deux pour vingt, trois pour
+      vingt-cinq ; affectés à aucune année civile, ils comptent pour le taux et pour la
+      durée d'assurance du régime (proratisation), hors de la limite de quatre trimestres
+      par an dans la fonction publique (R. 26 bis), à quatre-vingt-dix jours de services
+      chacun chez les marins (R. 8-1)
+    conditions: >-
+      un état des services du dernier service d'incendie et de secours, qui mentionne la
+      durée et la période de l'engagement ; un seul régime attribue la majoration, celui
+      que désigne R. 173-15 : le régime général face à tout autre régime de base hors
+      régime spécial, le dernier régime d'affiliation entre salariés agricoles,
+      non-salariés agricoles et cultes, le régime spécial s'il prévoit la majoration et
+      sert une pension (circulaire Cnav n° 2026-22, point 4)
+    decompte: >-
+      les années civiles complètes d'engagement, auxquelles s'ajoutent les jours des années
+      incomplètes, totalisés, divisés par 365 et arrondis à l'entier inférieur (circulaire
+      Cnav n° 2026-22, point 2.1)
+    portee: >-
+      ni cotisée ni réputée cotisée : elle n'ouvre ni la carrière longue (ni début
+      d'activité, ni durée cotisée), ni le départ anticipé des assurés handicapés, ni la
+      majoration du minimum contributif, ni les trimestres de surcote ; elle compte pour
+      la durée qui ouvre la surcote et pour le minimum contributif de base ; elle n'entre
+      pas dans la pension du cumul emploi-retraite (circulaire Cnav n° 2026-22, point 5 et
+      annexe 1)
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-19
+  prochaine_relecture: 2027-04-30
+  a_relire:
+  - >-
+    Le modèle ne connaît pas l'engagement de sapeur-pompier volontaire : ni la saisie ni la
+    chronologie n'ont de quoi le porter. Le modéliser demande un fait daté de plus (les
+    périodes d'engagement), puis la majoration à l'étape qui compte les durées, hors de la
+    durée cotisée.
+  - >-
+    La circulaire Cnav n° 2026-22 (point 2.1) publie deux exemples du décompte de
+    l'engagement : du 21 janvier 2001 au 26 mai 2007 puis du 13 mars 2010 au 6 octobre
+    2025, 5 + 14 années civiles et 1 063 jours d'années incomplètes, soit 21 années, deux
+    trimestres ; du 1er janvier 1992 au 1er décembre 2007, 15 années et 334 jours, soit
+    15 années, un trimestre. À transcrire dans `exemples_officiels.yaml` le jour où le
+    modèle saura l'engagement.
+  - >-
+    Ni le décret ni la circulaire ne nomment la CNAVPL ni la CNBF parmi les régimes qui
+    attribuent la majoration, quand L. 173-1-5 vise tous les régimes de base : à
+    confirmer auprès de ces caisses.
+  - >-
+    Le recours pour excès de pouvoir que le Syndicat des sapeurs-pompiers volontaires de
+    France dit avoir porté devant le Conseil d'État contre le décret n° 2026-18 — un seul
+    trimestre à dix ans quand la loi dit « des trimestres », rien au-delà de vingt-cinq
+    ans (Moneyvox, 28 juillet 2026) : aucune décision publiée au 19 octobre 2026.
+  lectures:
+  - type: legifrance
+    reference: >-
+      Index LEGI du dépôt, à jour de l'incrément du 19 octobre 2026 : L. 173-1-5
+      (LEGIARTI000047451322), R. 173-4-6 (LEGIARTI000053389663), R. 351-3
+      (LEGIARTI000053389999), R. 26 bis CPCMR (LEGIARTI000053389965, puis
+      LEGIARTI000054978144 du 14 octobre 2026, qui ajoute la majoration des élus locaux),
+      décret n° 2003-1306 article 15, décret n° 2004-1056 article 12, R. 8-1 du code des
+      pensions des marins, R. 732-61 du code rural, décret n° 2017-1000 article 3
+    date: 2026-10-19
+  - type: jorf
+    reference: >-
+      Index JORF du dépôt : décret n° 2026-18 du 20 janvier 2026 (JORFTEXT000053388196),
+      ses articles 1 à 9, et ordonnance n° 2026-647 du 22 juillet 2026, article 3
+      (JORFARTI000054456513) : la majoration à Mayotte pour les pensions prenant effet à
+      compter du 1er janvier 2027
+    date: 2026-10-19
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2026-22 du 23 juillet 2026, « Majoration de durée d'assurance au
+      titre des périodes d'engagement en tant que sapeur-pompier volontaire » : le
+      décompte, deux exemples, le régime compétent, la portée (annexe 1) ; annulée et
+      remplacée à compter du 1er janvier 2027 par la circulaire n° 2026-31 du 30 septembre
+      2026, identique sauf Mayotte
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2026_22_23072026.pdf
+    date: 2026-07-23
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2026-31 du 30 septembre 2026, qui étend le champ à la caisse de
+      sécurité sociale de Mayotte à compter du 1er janvier 2027
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2026_31_30092026.pdf
+    date: 2026-09-30
+historique:
+- >-
+  2026-10-19 — née de la veille du 19 octobre 2026 : L. 173-1-5 existait depuis la loi de
+  2023 sans fiche, et le décret n° 2026-18, appliqué aux pensions de juillet 2026, n'était
+  cité par aucune ; la seule trace du dépôt était la prestation de fidélisation des
+  volontaires, rangée hors champ (`regimes/sapeurs_pompiers_volontaires.yaml`).
+effet: >-
+  Tout assuré qui a été sapeur-pompier volontaire au moins dix ans et liquide depuis le
+  1er juillet 2026 : un à trois trimestres de durée d'assurance. Pour qui n'a pas la
+  durée requise, chacun épargne au régime général 1,25 % de décote et ajoute un
+  cent-soixante-douzième, 0,58 %, au prorata d'une durée requise de cent soixante-douze
+  trimestres ; sans effet sur l'âge, faute d'être cotisé. Le modèle ne connaît pas
+  l'engagement et ne la sert pas.
