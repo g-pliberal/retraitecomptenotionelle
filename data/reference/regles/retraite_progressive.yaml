@@ -214,6 +214,23 @@ versions:
   - {id: LEGIARTI000053355891, article: "D. 161-2-24-3 CSS", en_vigueur: 2026-01-01}
   - {id: LEGIARTI000048834938, article: "L. 89 bis CPCMR", en_vigueur: 2023-12-31}
   - {id: LEGIARTI000051944347, article: "D. 37-1 CPCMR", en_vigueur: 2025-07-24}
+  - id: LEGIARTI000051944733
+    article: >-
+      décret n° 2003-1306, article 49 bis (CNRACL), rédaction du décret n° 2025-680 du 15
+      juillet 2025, articles 1 et 3
+    citation: >-
+      « 1° Il a atteint l'âge mentionné au 1° de l'article L. 89 bis du code des pensions
+      civiles et militaires de retraite » ; pour les pensions prenant effet à compter du
+      1er septembre 2025
+    en_vigueur: 2025-07-24
+    lu_le: 2026-10-20
+  - id: LEGIARTI000051944741
+    article: >-
+      décret n° 2004-1056, article 34 bis (FSPOEIE), même décret, articles 2 et 3 : le
+      même renvoi à l'âge de L. 89 bis, au lieu de l'âge d'ouverture « diminué de deux
+      années »
+    en_vigueur: 2025-07-24
+    lu_le: 2026-10-20
   nee_de: LEGIARTI000051944356
   bornes:
     liquidation.date_effet: [2025-09-01, null]

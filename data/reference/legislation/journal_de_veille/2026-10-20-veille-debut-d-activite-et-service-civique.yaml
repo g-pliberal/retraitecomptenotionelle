@@ -1,0 +1,73 @@
+date: "2026-10-20"
+session: >-
+  veille hors action, à la demande du propriétaire : recherche exhaustive du droit des
+  retraites — textes, circulaires des caisses, jurisprudence, interfaces de données —
+  confrontée à tout le dépôt, et correction de ce qu'elle a trouvé
+consulte: >-
+  Les index LEGI et JORF du dépôt, à jour de leurs incréments du 20 octobre 2026 au soir
+  (20261020-214622), qui n'apportent aucune rédaction nouvelle au périmètre des textes ni
+  aucun texte des retraites au Journal officiel : toutes les lois, ordonnances et tous les
+  décrets dont le titre touche aux retraites depuis le 1er janvier 2023, confrontés un à
+  un aux citations du dépôt (identifiants et numéros) ; les rédactions en vigueur du code
+  de la sécurité sociale que la liste de contrôle des textes laisse sans statut
+  (L. 161-17 à L. 382-29, D. et R. 351, 353 à 358, 634, 643, 815) ; D. 351-1-3 dans ses
+  cinq rédactions, D. 351-1-2, L. 351-3 (9°), L. 161-17-2, L. 161-17-3, R. 351-12 (6°),
+  R. 351-29 ; le code du service national, L. 120-25, L. 120-26, L. 120-28 et L. 122-15
+  dans toutes leurs rédactions, et D. 372-4 du code de la sécurité sociale ; les décrets
+  n° 2024-755, 2024-1282, 2025-155, 2025-680, 2025-939, 2025-1323, 2025-1351 et
+  l'ordonnance n° 2026-648. Par l'API de recherche de la base de législation de la Cnav
+  (/api/v1/search/custom et /api/v1/reference/referencesByFileLeafRef/) : les
+  circulaires Cnav n° 2003-46 (points 11231 et 113), 2012-60 (point 211), 2013-41,
+  2014-47, 2017-01 (fiches 3.22 et 3.23), 2017-30, 2023-14 et 2026-29 (copie datée,
+  sha256:9fd38e870dd0178b5c81d206f5e75c42220347a5c01ed2855653d7020be3498b, page 23 lue en
+  image). Le communiqué de la fédération Agirc-Arrco du 14 octobre 2026 et l'actualité
+  A17790 de service-public.fr ; la presse du projet de loi de financement pour 2027
+  (articles 34 et 35, vote solennel prévu le 27 octobre 2026). L'âge de quarante ans
+  des artistes du ballet de l'Opéra que dit la page « Saviez-vous », relu au décret
+  n° 68-382, article 6, dans toutes ses rédactions.
+trouve: >-
+  La condition de DÉBUT D'ACTIVITÉ de la carrière longue, que le dépôt laissait « à
+  trancher par la circulaire » : D. 351-1-3 la pose, depuis 2003, sur une « durée
+  d'assurance » de cinq trimestres, et la Cnav y compte « les périodes de cotisations à
+  l'assurance vieillesse obligatoire ou volontaire […] ainsi que les périodes assimilées »
+  (circulaire n° 2003-46, point 113 ; même phrase au point 1.1.4 des circulaires
+  n° 2023-14 et n° 2026-29 ; la circulaire n° 2013-41 le redit des trimestres de service
+  civique). Le modèle n'y comptait que les trimestres cotisés : l'assuré né en février 1965,
+  entré en septembre 1984 et sous les drapeaux en 1985, était déclaré sans porte quand le
+  droit l'ouvre. Corrigé dans les deux moteurs (CarriereLongue._entree_precoce,
+  entreePrecoce), le test d'abord vu rouge ; aucun des 889 témoins de simulation ni des
+  79 rendus de page ne bouge. Reste approchée la règle d'avant le 1er novembre 2012 :
+  quatre trimestres dans l'année même de l'anniversaire pour qui est né au dernier
+  trimestre (D. 351-1-3, 2°, rédactions de 2003 et de 2011). Deux dispositifs dont le dépôt
+  ne disait rien, désormais en fiches `pas_encore_modelisee` : le service civique (L. 120-25
+  à L. 120-28 du code du service national, D. 372-4 du code de la sécurité sociale ;
+  trimestres de la durée du contrat de 2010 à 2013, de l'indemnité depuis 2014 ; jamais
+  cotisés, jamais de point Agirc-Arrco ; exclu de la durée cotisée de la carrière longue
+  par l'annexe 1 de la circulaire n° 2026-29) et le volontariat civil puis international
+  (L. 122-15 ; un trimestre assimilé par quatre-vingt-dix jours, d'au moins six mois, ni
+  cotisé ni réputé cotisé selon la fiche 3.23, quand le parcours que cite le journal du
+  19 octobre en compte quatre à la carrière longue : lecture divergente consignée). Les
+  objecteurs de conscience : la circulaire n° 2026-29 (point 1.2.3.1) répute cotisées les
+  périodes assimilées du service national (6° de R. 351-12) dans la limite de quatre
+  trimestres sur la carrière, comptées de date à date « quelle que soit leur nature »,
+  sans reprendre les arrêts de 2017 et de 2018. Deux décrets jamais cités, rattachés : le
+  n° 2025-680 (retraite progressive à soixante ans à la CNRACL et au FSPOEIE, articles
+  49 bis et 34 bis) et le n° 2024-1282 (rachat d'études des fonctionnaires au tarif réduit
+  jusqu'à quarante ans). Rien d'erroné dans ce que le dépôt portait déjà des autres textes
+  relus : âges et durées de la suspension (L. 161-17-2 et L. 161-17-3 au mot près),
+  minimum contributif majoré des trimestres équivalents à l'AVPF (D. 351-2-2, III), âges
+  des anciens combattants de 2024, taux réduit du RAAP prolongé à 2026, ASPA et Saint-Pierre-
+  et-Miquelon de l'ordonnance n° 2026-648, valeur d'achat Agirc-Arrco de 2027 non fixée,
+  âge du ballet de l'Opéra (article 6 du décret n° 68-382, rédaction du 26 juin 2014).
+reste: >-
+  La règle d'avant le 1er novembre 2012 pour les nés au dernier trimestre, à porter dans
+  les deux moteurs. Modéliser le service civique et le volontariat international, qui
+  demandent chacun un motif de période à part ; lire le volontariat associatif de 2006
+  (circulaire Cnav n° 2010-55, lettre D7258-2007) et le décompte du service national de
+  date à date, arrondi au trimestre supérieur (circulaire n° 2026-29, point 1.2.3.1), que
+  le modèle compte à l'année. Demander à la Cnav si le volontariat international est
+  réputé cotisé à la carrière longue, la fiche 3.23 et le parcours se contredisant.
+  Suivre le projet de loi de financement pour 2027 jusqu'à sa promulgation.
+prochaine_veille: >-
+  après le vote solennel du projet de loi de financement pour 2027 à l'Assemblée
+  nationale, prévu le 27 octobre 2026, puis à sa promulgation

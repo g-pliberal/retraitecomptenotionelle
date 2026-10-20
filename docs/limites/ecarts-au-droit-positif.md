@@ -475,6 +475,24 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   né au dernier trimestre devait réunir ses quatre trimestres dans l'année même
   de son anniversaire, et le modèle les compte jusqu'à la fin de cette année
   (fiche `carriere_longue`).
+- **Le service civique et les volontariats.** Le modèle ne connaît ni
+  l'engagement de service civique, ni le volontariat associatif, ni le
+  volontariat international : la saisie n'en a pas de motif. Le volontariat
+  international en entreprise ou en administration, comme le volontariat civil
+  qui l'a précédé depuis 2000, est une période assimilée d'au moins six mois,
+  un trimestre par quatre-vingt-dix jours, que valide le premier régime de base
+  qui le suit (L. 122-15 du code du service national). Le service civique
+  accompli en France affilie au régime général, l'indemnité y cotisant tout
+  entière pour le volontaire : jusqu'en 2013, autant de trimestres que le
+  contrat durait, l'État complétant ce qu'elle ne validait pas (D. 372-4) ;
+  depuis, les trimestres qu'elle valide par la règle commune, son montant
+  entrant au salaire annuel moyen (L. 120-26, circulaire Cnav n° 2017-30). Ni
+  l'un ni l'autre n'est cotisé à la charge de l'assuré, ni n'ouvre de point
+  Agirc-Arrco. Qui en a fait un le saisit comme une année sans activité, et le
+  modèle lui retire de la durée d'assurance ; ou comme un emploi salarié, et il
+  lui sert des points complémentaires et des trimestres cotisés que le droit ne
+  lui donne pas (fiches `service_civique` et
+  `volontariat_civil_et_international`).
 - **Les majorations de durée des sapeurs-pompiers volontaires et des élus
   locaux.** Deux majorations de durée d'assurance ne sont pas servies. Celle du
   sapeur-pompier volontaire — un trimestre pour dix années d'engagement, deux
