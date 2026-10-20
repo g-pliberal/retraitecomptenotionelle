@@ -542,7 +542,7 @@ affirmations:
 
   - id: simuler.depot_du_releve
     page: /simuler
-    extrait: "Déposez le PDF de votre relevé"
+    extrait: "Déposez votre relevé de carrière"
     porte: le relevé déposé est lu et devient la carrière que le simulateur calcule
     etat: verifiee
     controle: le_releve_depose_devient_la_carriere

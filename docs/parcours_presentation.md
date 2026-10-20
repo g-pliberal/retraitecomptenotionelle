@@ -223,11 +223,13 @@ des trois exemples. Rappeler que le système 1 de cette génération est celui
 que le Conseil d'orientation des retraites projette en déficit de <!--chiffre:mesure(coefficient?scenario=1&en=manque)-->16<!--/--> % de la
 facture en <!--chiffre:mesure(coefficient?scenario=1&quoi=annee)-->2070<!--/--> : la colonne de référence n'est pas un point fixe.
 
-Si quelqu'un veut sa propre carrière : les trois champs du haut, le statut
-dans la liste (<!--chiffre:entrees(moteur/donnees.json:affiliations)-->soixante-treize<!--/-->, du salarié du privé au député), le revenu net
-mensuel. « Ajouter une période » permet un deuxième métier ou une
-interruption ; « Coller un relevé de carrière » accepte un relevé
-année par année. Ne pas ouvrir « Options de modélisation » en salle.
+Si quelqu'un veut sa propre carrière : le plus exact est son relevé de
+carrière, le PDF d'info-retraite.fr, à déposer en tête du formulaire — le
+simulateur l'écrit année par année. Sans relevé : la naissance et le départ,
+le statut dans la liste (<!--chiffre:entrees(moteur/donnees.json:affiliations)-->soixante-treize<!--/-->, du salarié du privé au député), le
+revenu net mensuel. « Ajouter une période » permet un deuxième métier ou une
+interruption, « Retirer cette période » l'enlève, et « Réinitialiser » ramène
+l'exemple. Ne pas ouvrir « Options de modélisation » en salle.
 
 ### 3. Carrières types — trois minutes
 

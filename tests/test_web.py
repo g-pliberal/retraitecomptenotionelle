@@ -2519,8 +2519,13 @@ def test_le_simulateur_tient_en_peu_de_mots():
     # combattant et du travail manuel (L. 351-8, 3° à 5°), repliés avec eux.
     # Le 16 octobre 2026, de quatre pour un contrôle : le dépliant
     # « Apprentissage et périodes assimilées » (le sixième domaine), replié.
+    # Le 20 octobre 2026, de cinq pour un contrôle : le dépôt du relevé sort
+    # de son dépliant et ouvre le formulaire, premier mode de remplissage à la
+    # demande du propriétaire — son libellé, d'où le relevé se télécharge, et
+    # la saisie à la main, repliée ; son explication passe sous un point
+    # d'interrogation.
     vierge = rendre("/simuler", {})[1]
-    assert _mots_visibles(vierge) <= 186, "le formulaire reprend de la prose"
+    assert _mots_visibles(vierge) <= 191, "le formulaire reprend de la prose"
 
     resultats = rendre("/simuler", {
         "naissance": "1962-03-15", "debut": "1984-09", "liquidation": "2026-07",

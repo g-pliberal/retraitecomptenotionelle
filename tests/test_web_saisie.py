@@ -1139,6 +1139,23 @@ def test_la_page_dit_que_la_carriere_a_ete_lue(page):
     assert '<details class="releve" open>' in texte
 
 
+def test_le_releve_est_le_premier_mode_de_remplissage(page):
+    """Le dépôt du relevé ouvre le formulaire, avant la naissance et les
+    périodes, et hors de tout dépliant : il était replié sous les métiers, où
+    il passait pour une option, et la carrière qu'il écrit est la plus exacte
+    (le propriétaire, le 20 octobre 2026). La saisie à la main du même relevé
+    reste repliée, sous lui ; le champ du revenu y renvoie plus haut."""
+    texte = page("/simuler")
+    assert texte.index('id="releve-fichier"') < texte.index('id="naissance"') \
+        < texte.index('class="metiers"')
+    hors_depliants = re.sub(r"<details\b.*?</details>", "", texte, flags=re.S)
+    assert 'id="releve-fichier"' in hors_depliants
+    assert "<strong>Déposez votre relevé de carrière</strong>" in hors_depliants
+    assert '<a href="https://www.info-retraite.fr/">' in hors_depliants
+    assert 'name="releve"' not in hors_depliants, "la saisie à la main reste repliée"
+    assert "Ou déposez votre relevé, plus haut" in texte
+
+
 def test_la_page_dit_ce_qu_elle_ajoute_au_releve_jusqu_au_depart(page):
     """Le relevé se prolonge jusqu'au départ (``Contexte.releve_prolonge``) : la
     page le dit, avec la ligne qui l'en dispense à qui ne travaille plus ; une

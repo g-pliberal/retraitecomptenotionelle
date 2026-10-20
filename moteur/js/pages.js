@@ -1067,6 +1067,7 @@ export function formulaire(saisie, contexte, comparaison = null) {
   ${reglagesSansChamp(saisie)}
   <h2 class="serif" style="margin-top:0">Votre carrière${bulleDuTitre(saisie)}</h2>
   <p class="consigne" style="margin-top:0.3rem">${consigneDuFormulaire(saisie)}</p>
+  ${releveFormulaire(saisie)}
   ${basculeSituation(saisie)}
   ${desaccordDeSituation(saisie, contexte)}
   <div class="grille">${identite}</div>
@@ -1077,7 +1078,6 @@ export function formulaire(saisie, contexte, comparaison = null) {
   ${saisie.parPension ? "" : basculeUnite(saisie, echelle)}
   ${basculeMontants(saisie, echelle, tauxPension)}
   ${mentionConversion(saisie, echelle)}
-  ${releveFormulaire(saisie)}
   ${conjointFormulaire(saisie, contexte)}
   ${apresLeDepartFormulaire(saisie, contexte, affiliations, echelle)}
   ${invaliditeFormulaire(saisie)}
@@ -1598,21 +1598,24 @@ export const EXEMPLE_RELEVE = "1998:salarie_prive_non_cadre:14200:4\n"
 /**
  * Le relevé de carrière : la saisie exacte, celle qui ne suppose rien.
  *
- * Elle est repliée sous un dépliant, et non offerte d'emblée : la carrière
- * paramétrique reste la porte d'entrée — on la remplit en trente secondes, sans
- * rien avoir sous les yeux. Le relevé, lui, demande d'avoir téléchargé son
- * document, et il s'adresse à qui veut confronter le simulateur à SON relevé
- * plutôt qu'à une carrière type. Le dépliant s'ouvre de lui-même quand un
- * relevé est saisi : sinon, l'adresse porterait une carrière que la page ne
- * montrerait pas.
+ * LE PREMIER MODE DE REMPLISSAGE (le propriétaire, le 20 octobre 2026). Le
+ * dépôt ouvre le formulaire, avant la naissance et les périodes, et hors de
+ * tout dépliant : replié sous les métiers, il passait pour une option, quand la
+ * carrière qu'il écrit est la plus exacte. Ce qu'il en coûte au formulaire
+ * vierge tient en un libellé et une ligne — d'où le relevé se télécharge — ;
+ * le reste s'ouvre sous un point d'interrogation. La carrière paramétrique
+ * suit, pour qui n'a pas son relevé sous la main : on la remplit en trente
+ * secondes, sans rien avoir sous les yeux.
  *
- * LE DÉPÔT DU PDF VIENT EN PREMIER, et la saisie à la main derrière. Recopier
+ * LE DÉPÔT DU PDF VIENT AVANT la saisie à la main, qui reste repliée. Recopier
  * quarante-cinq lignes de chiffres est ce qui fermait ce chemin à presque tout
  * le monde : le document est déjà écrit, et le navigateur sait le lire. Le
- * champ de fichier n'a pas de `name` — un formulaire en GET porterait sinon le
- * nom du fichier dans l'adresse, et une adresse partagée dirait à tous d'où
- * vient la carrière. Ce qui le branche est dans `index.html`, avec le reste de
- * ce qui vit entre deux rendus.
+ * dépliant de la saisie à la main s'ouvre de lui-même quand un relevé est
+ * saisi : sinon, l'adresse porterait une carrière que la page ne montrerait
+ * pas. Le champ de fichier n'a pas de `name` — un formulaire en GET porterait
+ * sinon le nom du fichier dans l'adresse, et une adresse partagée dirait à tous
+ * d'où vient la carrière. Ce qui le branche est dans `index.html`, avec le
+ * reste de ce qui vit entre deux rendus.
  */
 function releveFormulaire(saisie) {
   const bulle = g.bulle(
@@ -1620,36 +1623,40 @@ function releveFormulaire(saisie) {
     "Sans les trimestres, le modèle les déduit du montant. Le revenu est celui "
     + "de l'année entière, en euros de cette année-là ; un relevé antérieur à "
     + "2002 est en francs, à diviser par 6,55957 — le dépôt le fait tout seul. "
-    + "Les codes de régime sont ceux du menu ci-dessus. Rempli, ce champ "
-    + "<strong>remplace</strong> les métiers, le profil et le niveau de "
+    + "Les codes de régime sont ceux du menu des statuts, plus bas. Rempli, ce "
+    + "champ <strong>remplace</strong> les métiers, le profil et le niveau de "
     + "revenu : rien n'est plus reconstitué, sinon les années qui le séparent "
     + "du départ, où sa dernière année se poursuit. Naissance, date de départ, "
     + "enfants, primes et interruptions continuent de valoir.",
   );
+  const depot = g.bulle(
+    "Votre relevé de carrière : en savoir plus",
+    "Le simulateur le lit et écrit la carrière à votre place, année par année. "
+    + 'Il se télécharge sur <a href="https://www.info-retraite.fr/">info-retraite.fr</a> '
+    + "(« Mon compte retraite », puis « Ma carrière ») : tous régimes, et à tout "
+    + 'âge. Ou sur <a href="https://www.lassuranceretraite.fr/">lassuranceretraite.fr</a>, '
+    + "pour le seul régime général. Le fichier est lu <strong>dans votre "
+    + "navigateur</strong> : il n'est envoyé nulle part, ni conservé. Seule la "
+    + "carrière qu'il écrit est gardée, par votre navigateur, avec le reste de la "
+    + "saisie.",
+  );
   return `
+<div class="depot">
+  <p class="depot-bouton"><label for="releve-fichier">
+  <strong>Déposez votre relevé de carrière</strong>${depot}</label>
+  <input type="file" id="releve-fichier" class="releve-fichier"
+  accept="application/pdf,text/plain,.pdf,.txt"></p>
+  <p class="discret">À télécharger sur
+  <a href="https://www.info-retraite.fr/">info-retraite.fr</a></p>
+  <p class="rapport-releve" role="status"></p>
+</div>
 <details class="releve"${saisie.releveActif ? " open" : ""}>
-  ${g.sommaire("Déposer votre relevé de carrière — la saisie exacte")}
-  <div class="depot">
-    <p class="depot-appel"><strong>Déposez le PDF de votre relevé</strong> : le
-    simulateur le lit et écrit la carrière à votre place, année par année.</p>
-    <p class="depot-bouton"><label for="releve-fichier">Le fichier de votre relevé</label>
-    <input type="file" id="releve-fichier" class="releve-fichier"
-    accept="application/pdf,text/plain,.pdf,.txt"></p>
-    <p class="discret">Il se télécharge sur
-    <a href="https://www.info-retraite.fr/">info-retraite.fr</a> (« Mon compte
-    retraite », puis « Ma carrière ») : tous régimes, et à tout âge. Ou sur
-    <a href="https://www.lassuranceretraite.fr/">lassuranceretraite.fr</a>, pour
-    le seul régime général. Le fichier est lu <strong>dans votre navigateur</strong> :
-    il n'est envoyé nulle part, ni conservé. Seule la carrière qu'il écrit
-    ci-dessous est gardée, par votre navigateur, avec le reste de la saisie.</p>
-    <p class="rapport-releve" role="status"></p>
-  </div>
-  <p class="discret">Ou, à la main, une ligne par année :
-  <strong>année:régime:revenu</strong>, et <strong>:trimestres</strong> si le
-  relevé les porte.${bulle}</p>
+  ${g.sommaire("Ou recopiez-le à la main")}
+  <p class="discret">Une ligne par année : <strong>année:régime:revenu</strong>,
+  et <strong>:trimestres</strong> si le relevé les porte.${bulle}</p>
   ${g.zone("releve", "Relevé de carrière", saisie.releve,
     `au plus ${RELEVE_MAXIMUM} lignes ; vide, la carrière est celle des `
-    + "métiers ci-dessus", 10,
+    + "périodes, plus bas", 10,
     { placeholder: EXEMPLE_RELEVE, spellcheck: "false" })}
 </details>
 `;
@@ -1664,7 +1671,7 @@ const APPEL_REVENU_RETRAITE = " Jamais une pension : la pension est ce que le "
   + "montant rendu serait alors celui de quelqu'un qui aurait gagné, toute sa "
   + "vie, ce que vous touchez une fois à la retraite. Déjà à la retraite ? "
   + "Écrivez ce que vous gagniez en travaillant, au milieu de votre carrière. "
-  + "Ou déposez votre relevé, plus bas : il écrit la carrière année par année, "
+  + "Ou déposez votre relevé, plus haut : il écrit la carrière année par année, "
   + "et dispense de l'estimer.";
 
 /**
