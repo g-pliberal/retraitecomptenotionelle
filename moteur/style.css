@@ -819,7 +819,6 @@ details > .grille { margin-top: 1rem; }
 .depot.survol { border-style: solid; border-color: var(--or); }
 .depot > :first-child { margin-top: 0; }
 .depot > :last-child { margin-bottom: 0; }
-.depot-appel { font-size: 0.98rem; }
 .depot-bouton {
   display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem;
 }
