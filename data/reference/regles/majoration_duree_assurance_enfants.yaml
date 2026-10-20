@@ -227,6 +227,28 @@ sources:
     une convention du dépôt : le modèle présume qu'aucun accord des parents n'a été
     exprimé, et sert tout à la mère.
   lectures:
+  - type: autre
+    reference: >-
+      Cour de cassation, deuxième chambre civile, 19 février 2009, n° 07-20.668, publié au
+      bulletin : L. 351-4, en réservant aux femmes la majoration pour avoir élevé des
+      enfants, est incompatible avec l'article 14 de la Convention européenne des droits
+      de l'homme et l'article 1er de son premier protocole additionnel, faute de
+      justification objective et raisonnable ; le père y a droit sans avoir à prouver
+      qu'il a élevé seul ses enfants (la deuxième chambre l'admettait déjà, le
+      21 décembre 2006, n° 04-30.586, pour un père qui les avait élevés seul). C'est
+      cet arrêt que la loi n° 2009-1646, article 65, tire en coupant la majoration en
+      quatre trimestres de maternité, réservés à la mère, et quatre d'éducation,
+      partageables, pour les pensions prenant effet depuis le 1er avril 2010
+    url: https://www.legifrance.gouv.fr/juri/id/JURITEXT000020290942/
+    date: 2009-02-19
+  - type: autre
+    reference: >-
+      Conseil constitutionnel, décision n° 2023-849 DC du 14 avril 2023, considérants 95
+      et 96 : le report de l'âge légal et l'accélération de la durée requise n'ont « ni
+      pour objet ni pour effet » de supprimer la majoration de quatre trimestres
+      attribuée aux femmes au titre de la maternité
+    url: https://www.conseil-constitutionnel.fr/decision/2023/2023849DC.htm
+    date: 2023-04-14
   - type: legifrance
     reference: L. 351-4 CSS
     date: 2023-09-01

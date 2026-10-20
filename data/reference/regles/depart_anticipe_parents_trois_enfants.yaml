@@ -307,8 +307,26 @@ sources:
     Les régimes spéciaux qui ont eu leur départ des parents de trois enfants, éteint
     par leurs décrets de 2008 à 2011 avec leurs propres transitions (clercs de notaires,
     décret n° 2011-1112 ; Comédie-Française, décret n° 2011-1134 ; SNCF, RATP, IEG,
-    Banque de France, Opéra), restent à lire.
+    Banque de France, Opéra), restent à lire. Pour la SNCF, la Cour de cassation a
+    écarté la condition d'interruption ou de réduction d'activité (19 décembre 2019,
+    n° 18-16.974) : quand le régime sera lu, dire si la caisse l'applique désormais à
+    tout parent de trois enfants qui a ses quinze ans de services avant 2017.
   lectures:
+  - type: autre
+    reference: >-
+      Cour de justice de l'Union européenne, 17 juillet 2014, Leone, C-173/13 : le départ
+      anticipé des parents de trois enfants subordonné à une interruption d'activité est
+      une discrimination indirecte au détriment des pères, sauf justification objective ;
+      Conseil d'État, assemblée, 27 mars 2015, Quintanel, n° 372426 : le dispositif, mis
+      en extinction par la loi de 2010 et pris pour compenser les retards de carrière des
+      mères, est objectivement justifié. La Cour de cassation juge l'inverse pour le
+      régime de la SNCF (deuxième chambre civile, 19 décembre 2019, n° 18-16.974, publié
+      au bulletin, rejet) : la condition d'interruption ou de réduction d'activité y est
+      une discrimination indirecte contraire à l'article 157 du traité, et le père de
+      trois enfants qui a quinze ans de services avant 2017 part par anticipation sans
+      avoir à la justifier
+    url: https://www.conseil-etat.fr/actualites/droit-a-pension
+    date: 2015-03-27
   - type: legifrance
     reference: >-
       L. 24 du code des pensions, ses sept rédactions de 1982 à 2012 (LEGIARTI000006362725
