@@ -218,7 +218,23 @@ sources:
     dépêche AEF du 19 décembre 2025 lui prête une surindexation du salaire de référence à
     partir de 2028 ; d'ici là, le modèle ne la prend pas en compte, ni ne la chiffre. La
     clause de revoyure de 2027 peut aussi changer la règle.
+  - >-
+    De ce plan, les taux de cotisation sont officiels depuis le décret n° 2026-926 du
+    5 octobre 2026 : les taux théoriques montent en 2028 et en 2029, et la fiche du régime
+    porte leurs taux appelés à 127 % depuis le 19 octobre 2026 (7,30 puis 7,50 % sous le
+    plafond, 20,25 puis 20,70 % au-dessus). Le pourcentage d'appel de 2028 et de 2029
+    reste celui de 2026 dans `valeurs_point.csv` : quand l'Ircantec publiera ces barèmes,
+    y porter le rapport des taux appelés aux taux théoriques, 7,30 / 5,75 puis
+    7,50 / 5,90, comme pour 2026.
   lectures:
+  - type: jorf
+    reference: >-
+      décret n° 2026-926 du 5 octobre 2026 modifiant le décret n° 70-1277
+      (JORFTEXT000054953271), articles 1 et 2, dans l'index JORF du dépôt : les taux
+      théoriques de 2028 et de 2029, applicables aux cotisations dues à compter du
+      1er janvier 2027 ; le plan quadriennal adopté par le conseil d'administration le
+      11 décembre 2025
+    date: 2026-10-06
   - type: legifrance
     reference: >-
       arrêté du 30 décembre 1970, articles 9 bis (rédactions de 2018 et de 2026) et 10 ;
@@ -308,6 +324,21 @@ historique:
   fois trop, quand ses valeurs de 1947 et de 1949 étaient justes : lu dans l'annexe de
   l'arrêté du 17 février 1960 (LEGIARTI000006381707), « 37 » anciens francs, soit
   0,056406 €, que les points acquis en 1948 prennent désormais pour prix.
+- >-
+  Le 19 octobre 2026, la veille trouve le décret n° 2026-926, qu'aucune fiche ne citait :
+  les périodes de 2026 de la fiche du régime, ouvertes « de 2026 à aujourd'hui », sont
+  closes à 2027, et deux périodes portent les taux appelés de 2028 et de 2029 ;
+  `tests/test_ircantec_taux_de_cotisation.py` les tient.
+textes_a_rattacher:
+- id: LEGIARTI000054954387
+  article: décret n° 70-1277, article 7
+  en_vigueur: 2026-10-07
+  change: >-
+    les taux théoriques du IV, agent et employeur : 2,24 % et 3,36 % sous le plafond
+    jusqu'au 31 décembre 2027, 2,30 % et 3,45 % en 2028, 2,36 % et 3,54 % à compter de
+    2029 ; 5,56 % et 10,04 %, 5,86 % et 10,09 %, 6,16 % et 10,14 % au-dessus. Portés dans
+    les périodes de `regimes/ircantec.yaml` au taux d'appel de 127 %, ils ne sont pas
+    encore coupés en versions de cette fiche, qui ne dit que le prix du point
 effet: >-
   Toute pension Ircantec qui compte des cotisations postérieures au dernier barème : elles
   donnent, au rendement de 7,63 %, ce qu'achèterait un salaire de référence revalorisé
