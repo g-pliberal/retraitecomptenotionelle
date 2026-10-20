@@ -2257,9 +2257,18 @@ class CarriereLongue:
                         etrangers: dict[int, int] | None = None) -> bool:
         """La condition d'entrée précoce est-elle remplie pour cette porte ?
 
-        Elle se lit sur les trimestres COTISÉS validés avant la fin de l'année
-        civile des seize, dix-huit, vingt ou vingt et un ans. L'article
-        D. 351-1-1 en demande cinq, **ou quatre à qui est né au cours du
+        Elle se lit sur la DURÉE D'ASSURANCE validée avant la fin de l'année
+        civile des seize, dix-huit, vingt ou vingt et un ans : « une durée
+        d'assurance d'au moins cinq trimestres » (D. 351-1-3, toutes ses
+        rédactions depuis 2003), et non la durée cotisée que D. 351-1-1 exige
+        ensuite. La Cnav y compte « les périodes de cotisations à l'assurance
+        vieillesse obligatoire ou volontaire […] ainsi que les périodes
+        assimilées à des périodes d'assurance » (circulaires n° 2003-46,
+        point 113, et n° 2026-29, point 1.1.4) : le service national, le
+        chômage, la maladie comptent ici, réputés cotisés ou non. Le modèle
+        n'y comptait que les trimestres cotisés jusqu'au 20 octobre 2026, et
+        fermait la porte à qui avait fait son service à dix-neuf ans.
+        L'article en demande cinq, **ou quatre à qui est né au cours du
         dernier trimestre de l'année civile** : né en novembre, on n'a pu
         travailler que deux mois de l'année de ses seize ans, et le texte en
         tient compte. Le modèle retenait cinq pour tout le monde tant qu'il ne
@@ -2273,7 +2282,9 @@ class CarriereLongue:
             trimestres_debut -= 1
         par_annee: dict[int, int] = {}
         for ligne in carriere.lignes:
-            if (ligne.cotise
+            # Cotisée ou assimilée, toute ligne qui valide des trimestres :
+            # l'année sans activité n'en valide aucun.
+            if (ligne.trimestres_valides > 0
                     and ligne.annee <= carriere.annee_naissance + age_max
                     and ligne.annee < annee_liquidation):
                 par_annee[ligne.annee] = (par_annee.get(ligne.annee, 0)
@@ -2370,11 +2381,12 @@ class CarriereLongue:
                       ) -> tuple[float, Fiabilite] | None:
         """Âge le plus précoce ouvert par le dispositif, ou ``None``.
 
-        La condition d'entrée précoce se lit sur les trimestres COTISÉS validés
+        La condition d'entrée précoce se lit sur la durée d'assurance validée
         avant la fin de l'année civile des seize, dix-huit, vingt ou vingt et un
-        ans. La condition de durée porte, elle aussi, sur les seuls trimestres
-        cotisés — c'est ce qui distingue ce dispositif de la durée d'assurance
-        qui commande la décote. ``trimestres_cotises`` est la durée que
+        ans, périodes assimilées comprises (:meth:`_entree_precoce`). La
+        condition de durée, elle, porte sur les seuls trimestres cotisés et
+        réputés tels — c'est ce qui distingue ce dispositif de la durée
+        d'assurance qui commande la décote. ``trimestres_cotises`` est la durée que
         :meth:`cotises_reputes` a déjà complétée, ``etrangers`` les trimestres
         cotisés hors de France, année par année (:meth:`_entree_precoce`).
         """

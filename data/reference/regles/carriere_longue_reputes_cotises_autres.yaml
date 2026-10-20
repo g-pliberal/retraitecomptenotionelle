@@ -213,7 +213,7 @@ effet: >-
   connu trois années de chômage indemnisé, partait à cinquante-neuf ans en février
   2009 ; il attend l'âge légal.
 sources:
-  lu_le: 2026-10-19
+  lu_le: 2026-10-20
   prochaine_relecture: 2027-04-19
   a_relire:
   - >-
@@ -225,11 +225,13 @@ sources:
     D. 634-1 pose depuis le décret n° 2012-847 (« Les 2° et 3° du I de l'article
     D. 351-1-2 sont remplacés […] »), qu'aucune session n'a lue en entier.
   - >-
-    RESTE À TRANCHER, ET C'EST UNE LECTURE QUI MANQUE : l'article D. 351-1-3, version
-    LEGIARTI000053356007, pose la condition de DÉBUT D'ACTIVITÉ sur une « durée
-    d'assurance d'au moins cinq trimestres », là où le modèle ne compte que les
-    trimestres COTISÉS de ces années-là. La condition reste telle quelle, plus dure que
-    la lettre du décret, en attendant la circulaire.
+    TRANCHÉ LE 20 OCTOBRE 2026 : l'article D. 351-1-3 pose la condition de DÉBUT
+    D'ACTIVITÉ sur une « durée d'assurance d'au moins cinq trimestres », et la Cnav y
+    compte « les périodes de cotisations à l'assurance vieillesse obligatoire ou volontaire
+    […] ainsi que les périodes assimilées » (circulaire n° 2003-46, point 113 ; n° 2023-14
+    et n° 2026-29, point 1.1.4). Le modèle, qui n'y comptait que les trimestres cotisés,
+    les compte désormais tous (fiche carriere_longue) ; cette fiche-ci, qui ne dit que la
+    durée cotisée, n'en change pas.
   - >-
     LES EXEMPLES ne se rejouent pas : ceux de la circulaire 2012-60 (point 32, deux
     assurées mères de trois et de cinq enfants) et les trois du point 1.2 de la
@@ -243,9 +245,14 @@ sources:
     protocole pour l'objecteur de conscience, dont le service civil durait deux fois le
     service militaire : trois trimestres de plus réputés cotisés pour un service civil du
     1er décembre 1975 au 31 décembre 1977 (deuxième chambre civile, 20 septembre 2018,
-    n° 17-21.576, publié au bulletin ; déjà le 9 novembre 2017, n° 16-23.784). Dire si la
-    Cnav l'applique désormais aux objecteurs, ce qu'aucune circulaire lue ne dit, avant
-    de toucher au modèle, qui ne connaît pas le service civil.
+    n° 17-21.576, publié au bulletin ; déjà le 9 novembre 2017, n° 16-23.784). La
+    circulaire Cnav n° 2026-29 du 4 septembre 2026 ne fait aucune exception : les périodes
+    assimilées du service national (6° de R. 351-12) sont réputées cotisées « dans limite
+    de quatre trimestres sur l'ensemble de la carrière » — la coquille est dans le texte —,
+    et se comptent de date à date « quelle que soit leur nature » (point 1.2.3.1, comme au
+    point 11231 de la circulaire n° 2003-46). La doctrine publiée de la caisse n'a donc pas
+    repris les deux arrêts ; le modèle, qui ne connaît pas le service civil, s'en tient à
+    la circulaire.
   lectures:
   - type: legifrance
     reference: >-
@@ -275,6 +282,15 @@ sources:
       points 1.2.4 et 1.2.5 ; 2026-29 du 4 septembre 2026, points 1.2.3.1 à 1.2.3.7 ; lues
       sur legislation.lassuranceretraite.fr
     date: 2026-10-19
+  - type: circulaire_cnav
+    reference: >-
+      2003-46 du 18 novembre 2003, point 113, et 2026-29 du 4 septembre 2026, points
+      1.1.4 et 1.2.3.1, relus le 20 octobre 2026 : le début d'activité compte les
+      périodes assimilées ; celles du service national, comptées de date à date « quelle
+      que soit leur nature », sont réputées cotisées dans la limite de quatre trimestres,
+      sans exception pour l'objecteur
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2026_29_04092026.pdf
+    date: 2026-09-04
 textes_a_rattacher:
 - reference: D. 351-1-1 CSS
 - reference: D. 351-1-2-1 CSS

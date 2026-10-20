@@ -7738,6 +7738,75 @@ def test_carriere_longue_quatre_trimestres_pour_qui_est_ne_au_dernier_trimestre(
     assert ouvrir.age_ouverture_droit(actuel, novembre) == pytest.approx(60.25)
 
 
+def _motifs_d_ouverture_en_deux_moteurs(simulateur, construites: list[dict]) -> list[str]:
+    """Le motif d'ouverture du départ de chacune des carrières ``construites``,
+    des chronologies complétées, dans les deux moteurs : le JavaScript rend le
+    même, ou le test échoue ; sans node, le Python seul."""
+    import json
+    import shutil
+    import subprocess
+
+    motifs = [simulateur.scenario_actuel.calculer(
+        Carriere.depuis_chronologie(construite, simulateur.macro)).motif_ouverture
+        for construite in construites]
+    if shutil.which("node") is None:
+        return motifs
+    script = """
+import { readFileSync } from "node:fs";
+import { Carriere } from "./moteur/js/carriere.js";
+import { Contexte } from "./moteur/js/contexte.js";
+const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
+const simulateur = contexte.simulateur();
+process.stdout.write(JSON.stringify(JSON.parse(process.argv[1]).map((construite) =>
+  simulateur.scenarioActuel.calculer(Carriere.depuisChronologie(construite, simulateur.macro))
+    .motif_ouverture)));
+"""
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", script, json.dumps(construites)],
+        cwd=RACINE_TEMOINS.parent.parent, capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    assert json.loads(execution.stdout) == motifs
+    return motifs
+
+
+def test_le_debut_d_activite_compte_les_periodes_assimilees(simulateur):
+    """D. 351-1-3 pose la condition de début d'activité sur « une durée
+    d'assurance d'au moins cinq trimestres », et non sur la durée cotisée que
+    D. 351-1-1 exige ensuite ; la Cnav y compte « les périodes de cotisations
+    à l'assurance vieillesse obligatoire ou volontaire […] ainsi que les
+    périodes assimilées à des périodes d'assurance », de sa première
+    circulaire (n° 2003-46 du 18 novembre 2003, point 113) à la dernière
+    (n° 2026-29 du 4 septembre 2026, point 1.1.4). Le modèle n'y comptait que
+    les trimestres cotisés. L'assuré né en février 1965, entré en septembre
+    1984 et sous les drapeaux toute l'année 1985, celle de ses vingt ans : un
+    trimestre cotisé à la fin de 1985, cinq avec les quatre du service
+    national, et la porte des vingt ans s'ouvre ; à soixante-deux ans et demi,
+    il a 167 trimestres cotisés, 171 avec le service national réputé cotisé,
+    pour 170 requis. Sans le service, l'année d'inactivité ne valide rien, et
+    la porte reste fermée. Dans les deux moteurs."""
+    from retraite_notionnelle import chronologie
+
+    def construite(motif_1985):
+        return chronologie.completer(chronologie.du_parcours(
+            annee_naissance=1965, sexe="H", mois_naissance=2, age_liquidation=62.5,
+            metiers=[Metier("salarie_prive_non_cadre", 19 + 7 / 12, 1.0)],
+            interruptions={1985: motif_1985}))
+
+    service = Carriere.depuis_chronologie(construite("service_militaire"), simulateur.macro)
+    assert [(l.type_periode, l.cotise, l.trimestres_valides)
+            for l in service.lignes if l.annee in (1984, 1985)] == [
+        ("emploi", True, 1), ("service_militaire", False, 4)]
+    cotises = sum(service.trimestres_retenus(l) for l in service.lignes if l.cotise)
+    assert cotises == 167
+    assert simulateur.scenario_actuel.carriere_longue.cotises_reputes(
+        service, cotises, 0) == 171
+
+    assert _motifs_d_ouverture_en_deux_moteurs(simulateur, [
+        construite("service_militaire"), construite("inactivite"),
+    ]) == ["carriere_longue", "non_ouverte"]
+
+
 # --- Les périodes que le droit RÉPUTE cotisées (D. 351-1-2) ----------------
 
 def _carriere_hachee(simulateur, interruptions: dict[int, str],

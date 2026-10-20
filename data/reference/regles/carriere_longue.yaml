@@ -1,9 +1,10 @@
 schema_version: 1
 id: carriere_longue
 intitule: >-
-  Quatre bornes d'entrée (16, 18, 20, 21 ans), cinq trimestres avant la fin de l'année
-  civile — quatre pour les nés au dernier trimestre —, durée requise cotisée ; la
-  borne des vingt ans par génération ; portes lues à la date d'effet.
+  Quatre bornes d'entrée (16, 18, 20, 21 ans), cinq trimestres de durée d'assurance —
+  cotisés ou assimilés — avant la fin de l'année civile, quatre pour les nés au dernier
+  trimestre ; durée requise cotisée ; la borne des vingt ans par génération ; portes lues
+  à la date d'effet.
 etat: conforme
 etape: ouvrir_le_droit
 effet: >-
@@ -11,11 +12,59 @@ effet: >-
   et certifiées (action 27) : celles de 2011 et de 2012 génération par génération
   dans les versions abrogées (LEGIARTI000023397567, LEGIARTI000026139949), celles
   de 2004 dans LEGIARTI000006736521. Le moteur retient désormais une porte par couple
-  (borne d'entrée, supplément) et non plus par borne seule.
+  (borne d'entrée, supplément) et non plus par borne seule. Depuis le 20 octobre 2026,
+  le début d'activité compte les périodes assimilées — service national, chômage,
+  maladie — comme la Cnav depuis 2004 : l'assuré entré tard dans l'année de ses
+  dix-neuf ans, puis sous les drapeaux, n'est plus déclaré sans porte.
 sources:
-  lu_le: 2026-09-17
+  lu_le: 2026-10-20
   prochaine_relecture: 2026-12-31
+  a_relire:
+  - >-
+    Avant le 1er novembre 2012, l'assuré né au dernier trimestre qui n'avait pas cinq
+    trimestres à la fin de l'année devait en justifier quatre « au titre de l'année au
+    cours de laquelle est survenu » son anniversaire (D. 351-1-3, 2°, rédactions
+    LEGIARTI000006736523 et LEGIARTI000023397562 ; circulaire Cnav n° 2012-60, point
+    211) ; le décret n° 2012-847 les compte « à la fin de l'année ». Le moteur lit la
+    seconde règle à toute date : il ouvre trop tôt, avant novembre 2012, la porte de qui
+    est né à l'automne et a réparti ses quatre trimestres sur deux années. Non mesuré.
   lectures:
+  - type: legifrance
+    reference: >-
+      D. 351-1-3 CSS, ses cinq rédactions dans l'index LEGI du dépôt
+      (LEGIARTI000006736523 du 31 octobre 2003, LEGIARTI000023397562 du 1er janvier 2011,
+      LEGIARTI000026139940 du 1er novembre 2012, LEGIARTI000047634559 du 1er septembre
+      2023, LEGIARTI000053356007 du 1er janvier 2026) : toutes posent la condition de début
+      d'activité sur « une durée d'assurance d'au moins cinq trimestres », non sur la durée
+      cotisée de D. 351-1-1
+    date: 2026-10-20
+  - type: circulaire_cnav
+    reference: >-
+      2003-46 du 18 novembre 2003, point 113 : « La durée d'assurance désigne les périodes
+      de cotisations à l'assurance vieillesse obligatoire ou volontaire, les rachats ainsi
+      que les périodes assimilées à des périodes d'assurance retenus dans un ou plusieurs
+      régimes de base » ; lue par l'API de la base de législation de la Cnav
+    url: https://legislation.lassuranceretraite.fr/references-reglementaires?file_leaf_ref=CR_CN_2003046_18112003.aspx
+    date: 2003-11-18
+  - type: circulaire_cnav
+    reference: >-
+      2012-60 du 4 septembre 2012, point 211 : la condition reste une « durée d'assurance
+      d'au moins 5 trimestres » ; le dernier trimestre de naissance passe de quatre
+      trimestres « dans l'année civile » de l'anniversaire à quatre « avant la fin de
+      l'année civile »
+    url: https://legislation.lassuranceretraite.fr/references-reglementaires?file_leaf_ref=circulaire_cnav_2012_60_04092012.aspx
+    date: 2012-09-04
+  - type: circulaire_cnav
+    reference: >-
+      2026-29 du 4 septembre 2026, point 1.1.4 : « Sont prises en compte, pour apprécier la
+      condition relative au début d'activité, les périodes de cotisations à l'assurance
+      vieillesse obligatoire ou volontaire (les rachats et versements pour la retraite en
+      fonction de leur nature et de la date de la demande) ainsi que les périodes assimilées
+      à des périodes d'assurance validés dans le ou les régimes de base » — même phrase au
+      point 1.1.4 de la circulaire 2023-14 du 10 juillet 2023 ; copie datée,
+      sha256:9fd38e870dd0178b5c81d206f5e75c42220347a5c01ed2855653d7020be3498b
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2026_29_04092026.pdf
+    date: 2026-09-04
   - type: circulaire_cnav
     reference: >-
       2026-29 du 4 septembre 2026, point 1.1.1 et annexe 3, relue ligne à ligne
