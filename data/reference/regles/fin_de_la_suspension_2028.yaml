@@ -13,7 +13,7 @@ effet: >-
   reste `a_verifier` parce que c'est un calendrier politique, non une lacune du
   dépôt.
 sources:
-  lu_le: 2026-10-13
+  lu_le: 2026-10-19
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-
@@ -22,7 +22,26 @@ sources:
     au 31 décembre 2025 (`dila_cherche.py legi --num L161-17-2`). Quand le serveur de la
     DILA refuse les incréments, comme depuis la fin de septembre 2026, lire les deux
     pages de Légifrance dans un navigateur : l'outil en ligne de commande y est refusé.
+  - >-
+    Le projet de loi de financement pour 2027 (n° 3211, déposé le 1er octobre 2026), tel
+    que déposé, ne touche ni à L. 161-17-2 ni à L. 161-17-3 : ses articles retraite sont
+    le 34 (majoration pour enfants forfaitaire) et le 35 (revalorisation de 2027). Relire
+    le texte adopté, et la décision du Conseil constitutionnel, avant de lever la ligne.
   lectures:
+  - type: legifrance
+    reference: >-
+      Index LEGI du dépôt, à jour de l'incrément du 19 octobre 2026 : ni L. 161-17-2 ni
+      L. 161-17-3 n'ont de version postérieure au 31 décembre 2025 (LEGIARTI000053280889,
+      LEGIARTI000053280903), toujours sans date de fin
+    date: 2026-10-19
+  - type: autre
+    reference: >-
+      Conseil constitutionnel, décision n° 2025-899 DC du 30 décembre 2025, sur la loi de
+      financement pour 2026 : de l'article 105, seul le paragraphe VII, un rapport au
+      Parlement sur les pensions de Mayotte, est censuré comme cavalier social ; le reste
+      de l'article, la suspension, n'était pas déféré et n'a pas été examiné
+    url: https://www.conseil-constitutionnel.fr/decision/2025/2025899DC.htm
+    date: 2025-12-30
   - type: legifrance
     reference: >-
       L. 161-17-2 et L. 161-17-3, pages de Légifrance (LEGIARTI000053280889,

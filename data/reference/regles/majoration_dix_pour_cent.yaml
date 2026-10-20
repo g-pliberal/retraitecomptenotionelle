@@ -16,7 +16,37 @@ sources:
     Relire le plafond Agirc-Arrco chaque novembre — c'est la seule pièce du dispositif
     qui ne soit tenue par aucun des trois témoins, ceux-ci mesurant le TAUX et son
     assiette, pas l'écrêtement en euros de la complémentaire.
+  - >-
+    DROIT EN PROJET, À SUIVRE JUSQU'À LA PROMULGATION : l'article 34 du projet de loi de
+    financement pour 2027 (n° 3211, déposé le 1er octobre 2026) remplacerait, pour les
+    pensions prenant effet à compter du 1er juillet 2027, la majoration proportionnelle
+    de L. 351-12 par une majoration forfaitaire de tous les régimes de base (L. 173-1-6
+    nouveau), fixée par décret et revalorisée comme les pensions ; dans la fonction
+    publique, L. 18 réécrit, une majoration forfaitaire complémentaire selon le nombre
+    d'enfants (L. 18 bis) et un plafond au traitement de L. 15 (L. 18 ter) ; la
+    réversion majorée d'un forfait (L. 353-1). Le montant serait fixé « de manière à
+    garantir un coût global du même ordre » que le dispositif actuel, selon l'exposé
+    des motifs. La commission des affaires sociales a examiné puis rejeté le projet du
+    12 au 16 octobre 2026 ; la séance publique s'ouvre le 20 octobre. Rien n'entre au
+    scénario 1 avant la loi promulguée, la décision du Conseil constitutionnel et le
+    décret qui fixera les montants.
   lectures:
+  - type: autre
+    reference: >-
+      Assemblée nationale, projet de loi de financement de la sécurité sociale pour 2027,
+      n° 3211, article 34 « Forfaitiser et harmoniser la majoration de pension pour
+      enfants » et son exposé des motifs, texte déposé le 1er octobre 2026
+    url: https://www.assemblee-nationale.fr/dyn/17/dossiers/PLFSS_2027
+    date: 2026-10-01
+  - type: autre
+    reference: >-
+      Cour de justice de l'Union européenne, 12 décembre 2019, WA c. INSS, C-450/18 : un
+      complément de pension réservé aux mères est une discrimination directe fondée sur
+      le sexe (directive 79/7/CEE) ; la majoration de L. 351-12, ouverte à « tout assuré
+      de l'un ou de l'autre sexe », n'est pas en cause, et l'article 34 du projet garde un
+      forfait identique pour les hommes et les femmes
+    url: https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=celex%3A62018CJ0450
+    date: 2019-12-12
   - type: autre
     reference: Agirc-Arrco, plafond de la majoration familiale (novembre 2025)
     date: 2025-11-01

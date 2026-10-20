@@ -8,11 +8,66 @@ intitule: >-
 etat: pas_encore_modelisee
 effet: Assurés concernés déclarés non ouverts ou décotés à tort.
 sources:
-  lu_le: 2026-09-17
+  lu_le: 2026-10-19
   prochaine_relecture: 2027-09-30
+  a_relire:
+  - >-
+    Le départ pour incapacité permanente (L. 351-1-4) se lit, pour les pensions prenant
+    effet à compter du 1er novembre 2026, sur le seul taux d'incapacité permanente
+    PROFESSIONNELLE de la rente AT-MP réformée (L. 434-1 A, barèmes de l'arrêté du 7 mai
+    2026), aux mêmes seuils de 20 % et de 10 % ; la rente d'une victime consolidée avant
+    le 1er novembre 2026 garde son taux global. Quand la fiche sera modélisée, lire la
+    circulaire Cnav qui dira quel taux retenir pour une rente consolidée avant cette date
+    et une pension prise après.
+  lectures:
+  - type: legifrance
+    reference: >-
+      Index LEGI du dépôt, à jour de l'incrément du 19 octobre 2026 : L. 351-1-4, ses
+      rédactions du 16 avril 2023 (LEGIARTI000047452214) et du 31 décembre 2025
+      (LEGIARTI000053281659), D. 351-1-9 et D. 351-1-10 dans leurs rédactions du
+      1er novembre 2026 (décret n° 2026-355 du 7 mai 2026), L. 434-1 A
+      (LEGIARTI000051288442), loi n° 2025-1403, article 96
+    date: 2026-10-19
+  - type: autre
+    reference: >-
+      Cour de cassation, assemblée plénière, 20 janvier 2023, n° 21-23.947 et n° 20-23.673,
+      publiés au bulletin : la rente AT-MP ne répare pas le déficit fonctionnel permanent ;
+      l'accord national interprofessionnel du 15 mai 2023 en a tiré les conséquences
+      (titre II, 1), que la loi n° 2025-199, article 90, transpose en séparant
+      l'incapacité permanente professionnelle et l'incapacité permanente fonctionnelle
+    url: https://www.legifrance.gouv.fr/juri/id/JURITEXT000047023645
+    date: 2023-01-20
 textes_a_rattacher:
 - reference: L. 351-1-4 CSS
 - reference: L. 4163-1 code du travail
+- id: LEGIARTI000053281659
+  article: L. 351-1-4 CSS
+  en_vigueur: 2025-12-31
+  change: >-
+    pour les pensions prenant effet à compter du 1er novembre 2026 (loi n° 2025-1403,
+    article 96, III, et loi n° 2025-199, article 90, V), le taux qui ouvre le départ à
+    soixante ans (I) ou deux ans avant l'âge légal (III) est celui de l'incapacité
+    permanente « professionnelle au sens du deuxième alinéa de l'article L. 434-1 A », et
+    non plus celui de l'incapacité permanente « au sens de l'article L. 434-2 »
+- id: LEGIARTI000054060374
+  article: D. 351-1-9 CSS
+  en_vigueur: 2026-11-01
+  change: >-
+    le seuil du I reste 20 %, désormais d'incapacité permanente professionnelle, dont 10 %
+    au moins au titre d'une même maladie ou d'un même accident
+- id: LEGIARTI000054060371
+  article: D. 351-1-10 CSS
+  en_vigueur: 2026-11-01
+  change: >-
+    le seuil du III reste 10 % d'incapacité permanente professionnelle, et la durée
+    d'exposition dix-sept ans
+- id: LEGIARTI000051288442
+  article: L. 434-1 A CSS
+  en_vigueur: 2026-11-01
+  change: >-
+    l'indemnisation de l'incapacité permanente comprend désormais une part
+    professionnelle et une part fonctionnelle, chacune à son taux et à son barème, pour
+    les victimes dont l'état est consolidé à compter du 1er novembre 2026
 historique:
 - >-
   2026-09-30 — l'inaptitude et l'invalidité la quittent pour trois fiches, nées avec le

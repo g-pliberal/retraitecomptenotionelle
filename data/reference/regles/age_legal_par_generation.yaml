@@ -16,6 +16,17 @@ sources:
   lu_le: 2026-10-19
   prochaine_relecture: 2026-12-31
   lectures:
+  - type: autre
+    reference: >-
+      Conseil constitutionnel, décision n° 2023-849 DC du 14 avril 2023 : le report de
+      l'âge légal de soixante-deux à soixante-quatre ans (article 10 de la loi
+      n° 2023-270) est conforme à la Constitution ; six séries de « cavaliers sociaux »
+      sont censurées, dont l'index et le contrat de travail des seniors ; décision
+      n° 2025-899 DC du 30 décembre 2025 : de l'article 105 de la loi de financement pour
+      2026, qui suspend le relèvement, seul le VII (un rapport sur les pensions de
+      Mayotte) est censuré, le reste n'ayant pas été déféré
+    url: https://www.conseil-constitutionnel.fr/decision/2023/2023849DC.htm
+    date: 2023-04-14
   - type: legifrance
     reference: >-
       L. 161-17-2 CSS, LEGIARTI000053280889, version du 31 décembre 2025, lue par

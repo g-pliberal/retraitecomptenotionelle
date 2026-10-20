@@ -40,7 +40,29 @@ sources:
     départ est servie depuis 2009 comme les décrets de 2004 à 2007 la servaient,
     et comment la tranche de 2020 a été appliquée aux pensions prenant effet le
     1er janvier 2020 dans la fonction publique.
+  - >-
+    DROIT EN PROJET, À SUIVRE JUSQU'À LA PROMULGATION : l'article 35 du projet de loi de
+    financement pour 2027 (n° 3211) déroge, pour la seule année 2027, à L. 161-23-1. Le
+    seuil se lit sur le montant mensuel total, au 31 décembre 2026, des pensions de
+    droit direct et dérivé, base et complémentaires : jusqu'à 1 260 €, le coefficient
+    légal ; au-delà, des coefficients fixés par décret, jamais inférieurs à un, par
+    paliers de 1 265, 1 270, 1 275 et 1 281 €, puis de 2 000 à 2 034 €, chacun au plus
+    égal à celui du palier inférieur ; sans décret publié au plus tard le 31 octobre
+    2027, le coefficient vaut un au-delà de 1 260 € (hors lissage du b du II) ; les
+    régimes en points reçoivent la règle par décret (IV). La commission des affaires
+    sociales a examiné puis rejeté le projet du 12 au 16 octobre 2026 ; la séance
+    publique s'ouvre le 20 octobre. Une revalorisation par seuils entrerait dans
+    `revalorisation_pensions.csv` comme les tranches de 2020.
   lectures:
+  - type: autre
+    reference: >-
+      Assemblée nationale, projet de loi de financement de la sécurité sociale pour 2027,
+      n° 3211, article 35 « Dérogation exceptionnelle aux modalités de revalorisation des
+      pensions de retraite pour 2027 » et son exposé des motifs (revalorisations
+      moyennes de 5,3 % en 2024, 2,2 % en 2025, 0,9 % en 2026), texte déposé le
+      1er octobre 2026
+    url: https://www.assemblee-nationale.fr/dyn/17/dossiers/PLFSS_2027
+    date: 2026-10-01
   - type: circulaire_cnav
     reference: >-
       2025/29 du 22 décembre 2025, « Revalorisation à compter du 1er janvier 2026
