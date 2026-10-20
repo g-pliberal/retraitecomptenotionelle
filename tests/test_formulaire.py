@@ -230,6 +230,51 @@ def test_une_ligne_incomplete_laisse_les_autres_en_place():
     assert 'name="metier3_debut"' in corps and 'name="metier4_debut"' not in corps
 
 
+def test_une_periode_se_retire_et_les_suivantes_remontent():
+    """On pouvait ajouter une période, pas en retirer : il fallait vider ses
+    champs un à un (le propriétaire, le 20 octobre 2026). Chaque période après
+    la première porte donc « Retirer cette période » ; le formulaire revient
+    sans elle, et celles qui la suivaient remontent d'un rang. La première,
+    qui porte la carrière, ne se retire pas, et la ligne vide n'est pas encore
+    une période."""
+    trois = SAISIES["trois périodes, dont une sans emploi"]
+    html = _formulaire(trois)
+    bouton = r'<button type="button" class="second retirer" data-rang="(\d+)">' \
+        r"Retirer cette période</button>"
+    assert re.findall(bouton, html) == ["2", "3"]
+
+    soumise = _soumettre(html)
+
+    def metiers(requete):
+        return {cle: valeur for cle, valeur in requete.items() if cle.startswith("metier")}
+
+    def reste(requete):
+        return {cle: valeur for cle, valeur in requete.items()
+                if not cle.startswith("metier")}
+
+    sans_la_deuxieme = pages.requete_sans_periode(soumise, 2)
+    assert metiers(sans_la_deuxieme) == {
+        "metier2_debut": trois["metier3_debut"], "metier2_statut": trois["metier3_statut"],
+        "metier2_salaire": trois["metier3_salaire"]}
+    assert reste(sans_la_deuxieme) == reste(soumise)
+    sans_la_troisieme = pages.requete_sans_periode(soumise, 3)
+    assert sans_la_troisieme == {cle: valeur for cle, valeur in soumise.items()
+                                 if not cle.startswith("metier3_")}
+    assert pages.requete_sans_periode(soumise, 1) == soumise
+
+    # Rendue, la carrière n'a plus que deux périodes, et la ligne vide suit.
+    apres = _formulaire(sans_la_deuxieme)
+    assert re.findall(bouton, apres) == ["2"]
+    assert 'name="metier3_debut"' in apres and 'name="metier4_debut"' not in apres
+    assert [metier.statut for metier in Saisie.depuis_requete(sans_la_deuxieme).metiers] \
+        == [trois["metier3_statut"]]
+
+    # Le script de la page la branche : au clic, les champs du formulaire,
+    # moins la période.
+    script = _script()
+    assert 'closest?.("button.retirer")' in script and "requeteSansPeriode(" in script
+
+
 def test_une_adresse_forgee_retombe_sur_l_exemple_sans_perdre_sa_forme():
     """Ce qui ne se lit pas du tout repart de l'exemple, mais garde ce qui décide
     de la forme du formulaire : un retraité y retrouve le champ de sa pension,

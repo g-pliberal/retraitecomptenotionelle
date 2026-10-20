@@ -771,6 +771,10 @@ form .memoire {
   margin: 0; min-width: 0;
 }
 .metier.facultatif, .ligne-etrangere.facultatif { border-style: dashed; }
+/* « Retirer cette période », sous ses champs : creux et plus petit que
+   « Calculer », dont il n'a pas le poids, mais à une cible tactile entière. */
+.metier .retrait { margin: 0.75rem 0 0; }
+button.retirer { padding: 0.45rem 0.9rem; min-height: 2.75rem; font-size: 0.9rem; }
 /* Le rang du métier est la LÉGENDE du groupe : « Revenu brut mensuel » est le
    même libellé dans les deux blocs, et seule cette légende dit lequel on
    remplit — à l'œil comme à l'oreille (WCAG 3.3.2). */

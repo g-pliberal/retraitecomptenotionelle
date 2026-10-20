@@ -154,7 +154,7 @@ import {
 } from "./moteur/js/saisie.js";
 import { Contexte, VERSION_PAQUET } from "./moteur/js/contexte.js";
 import {
-  ANCIENNES_ROUTES, DESCRIPTIONS, TITRES, rendre, requeteBasculee,
+  ANCIENNES_ROUTES, DESCRIPTIONS, TITRES, rendre, requeteBasculee, requeteSansPeriode,
 } from "./moteur/js/pages.js";
 import * as gabarit from "./moteur/js/gabarit.js";
 import { NOMS_DE_MOIS } from "./moteur/js/calendrier.js";
@@ -882,6 +882,19 @@ function reprendre(contenu, { action, surPlace, repere }) {
     }
   }
 
+  // Une période retirée : ce qui prend sa place — la période suivante, ou la
+  // demande d'en ajouter une — vient là où elle était, et reçoit le focus.
+  if (action && action.retrait) {
+    const ligne = contenu.querySelectorAll("form .metiers > .metier")[action.retrait - 1];
+    if (ligne) {
+      const foyer = ligne.querySelector(":scope > summary") || ligne;
+      if (foyer === ligne) { ligne.setAttribute("tabindex", "-1"); }
+      amener(ligne, action.haut);
+      foyer.focus({ preventScroll: true });
+      return;
+    }
+  }
+
   if (surPlace && !(action && action.nature === "navigation")) {
     const ancre = repere ? semblables(contenu, repere)[repere.rang] : null;
     if (ancre) {
@@ -1238,6 +1251,23 @@ document.addEventListener("click", (evenement) => {
   const regles = gabarit.options();
   noterDeclencheur(bouton, "sur-place", { effacement: true });
   naviguer(`#/simuler${regles ? `?${regles}` : ""}`);
+});
+
+// « Retirer cette période » : le formulaire repart sans elle, les périodes qui
+// la suivaient remontées d'un rang (`requeteSansPeriode`). Rien ne se vérifie
+// avant — c'est souvent la ligne fautive qu'on retire. La page ne bouge pas,
+// et le focus va à ce qui prend sa place : voir `reprendre`.
+document.addEventListener("click", (evenement) => {
+  const bouton = evenement.target.closest?.("button.retirer");
+  const contenu = document.getElementById("contenu");
+  const formulaire = bouton ? formulaireDuSimulateur(contenu) : null;
+  if (!formulaire || !formulaire.contains(bouton)) { return; }
+  const periode = bouton.closest(".metier");
+  const rang = Number(bouton.dataset.rang);
+  const requete = new URLSearchParams(
+    requeteSansPeriode(enObjet(requeteDuFormulaire(formulaire)), rang)).toString();
+  noterDeclencheur(periode, "sur-place", { retrait: rang, haut: hautVisible(periode) });
+  naviguer(`#/simuler?${requete}`);
 });
 
 // Le simulateur court de l'accueil — « Et vous, ça donne combien ? » — est

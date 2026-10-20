@@ -2333,6 +2333,10 @@ function champsMetier(rang, debut, calcul, statut, salaire, statuts, saisie, ech
  * les champs ne paraissent que si on la suit. Un `<details>` plutôt qu'un
  * `<fieldset>` : c'est le résumé qui nomme le groupe, et le nommer deux fois
  * ferait lire deux titres pour une ligne qui n'existe pas encore.
+ *
+ * Ce qui s'ajoute se retire : chaque période après la première porte
+ * « Retirer cette période », que le script de la page suit par
+ * `requeteSansPeriode`. La première porte la carrière, et ne se retire pas.
  */
 function ligneMetier(rang, champs, vide = false, sansEmploi = false, cumul = false) {
   const rangs = majuscule(RANGS_METIER[rang - 1]);
@@ -2343,8 +2347,38 @@ function ligneMetier(rang, champs, vide = false, sansEmploi = false, cumul = fal
   }
   const titre = sansEmploi ? `${rangs} période, sans emploi`
     : cumul ? `${rangs} métier, en plus` : `${rangs} métier`;
+  const retrait = rang > 1
+    ? `<p class="retrait"><button type="button" class="second retirer" data-rang="${rang}">`
+      + "Retirer cette période</button></p>"
+    : "";
   return `<fieldset class="metier"><legend class="rang">${echapper(titre)}</legend>`
-    + `<div class="grille">${champs}</div></fieldset>`;
+    + `<div class="grille">${champs}</div>${retrait}</fieldset>`;
+}
+
+/**
+ * Le formulaire sans l'une de ses périodes : ses champs ôtés, et ceux des
+ * périodes qui la suivaient remontés d'un rang — la troisième devient la
+ * deuxième. Le script de la page l'appelle au clic sur « Retirer cette
+ * période », avec les champs du formulaire, et suit l'adresse rendue.
+ *
+ * `formulaire` est une requête décodée, `{ clé: valeur }`, et rien ne s'y lit :
+ * c'est souvent la ligne fautive qu'on retire, et le refus de ce qui reste se
+ * dira au rendu. La première période, qui porte la carrière, n'a pas de
+ * `metier1_…` : la retirer ne retire rien.
+ */
+export function requeteSansPeriode(formulaire, rang) {
+  if (rang < 2) {
+    return { ...formulaire };
+  }
+  const reste = {};
+  for (const [cle, valeur] of Object.entries(formulaire)) {
+    const champ = /^metier(\d+)_(.+)$/.exec(cle);
+    const sien = champ ? Number(champ[1]) : 0;
+    if (sien !== rang) {
+      reste[sien > rang ? `metier${sien - 1}_${champ[2]}` : cle] = valeur;
+    }
+  }
+  return reste;
 }
 
 function majuscule(texte) {
