@@ -1,0 +1,71 @@
+date: "2026-10-19"
+session: >-
+  veille hors action, à la demande du propriétaire : recherche du droit des retraites
+  paru jusqu'au 19 octobre 2026, textes, circulaires, jurisprudence et projet de loi
+  de financement pour 2027, confrontée à tout le dépôt
+consulte: >-
+  Les index LEGI et JORF du dépôt, à jour de l'incrément du 19 octobre 2026 : tous
+  les lois, décrets et ordonnances retraite parus depuis juin 2025, et toutes les
+  rédactions du CSS et du CPCMR parues depuis, sans statut ou à examiner ; les
+  décrets n° 2026-18, n° 2026-926, n° 2026-931 et n° 2026-948, l'arrêté du
+  13 octobre 2026 (pièces des élus), l'ordonnance n° 2026-647 (article 3), la loi
+  n° 2025-1249 (article 5), la loi n° 2025-1403 (articles 96, 102, 104 et 105) ;
+  L. 161-17-2, L. 161-17-3, D. 351-1-1, L. 351-3, L. 351-1-4, D. 351-1-9,
+  D. 351-1-10, L. 434-1 A, L. 161-22-1-5, D. 351-2-2 dans leurs dernières
+  rédactions. Les circulaires Cnav n° 2026-22 du 23 juillet 2026 et n° 2026-31 du
+  30 septembre 2026 (sapeurs-pompiers volontaires). Le projet de loi de financement
+  pour 2027, n° 3211, articles 6, 34, 35, 44 et 46 (données ouvertes de l'Assemblée
+  nationale). Les décisions du Conseil constitutionnel n° 2023-849 DC et
+  n° 2025-899 DC ; CJCE Griesmar (C-366/99) ; CJUE Leone (C-173/13) et WA
+  (C-450/18) ; CE, assemblée, Quintanel (n° 372426) ; Cass. 2e civ., 19 février 2009
+  (n° 07-20.668), 20 septembre 2018 (n° 17-21.576), 19 décembre 2019 (n° 18-16.974) ;
+  Cass., assemblée plénière, 20 janvier 2023 (n° 21-23.947 et n° 20-23.673). Les
+  taux Ircantec publiés par le centre de gestion du Doubs le 14 octobre 2026.
+trouve: >-
+  Deux majorations de durée d'assurance en vigueur, qu'aucune fiche ne portait :
+  celle des sapeurs-pompiers volontaires (L. 173-1-5, R. 173-4-6 ; un, deux ou trois
+  trimestres pour dix, vingt ou vingt-cinq années d'engagement, pensions prenant
+  effet depuis le 1er juillet 2026, ni cotisés ni réputés cotisés selon la
+  circulaire 2026-22, Mayotte en 2027) et celle des élus locaux (L. 161-21-2,
+  R. 161-17-1 ; un trimestre par mandat exécutif complet, trois au plus, pensions
+  prenant effet à compter du 1er janvier 2027) : deux fiches, à l'état
+  `pas_encore_modelisee`. La valeur de service de la RCO agricole pour 2026,
+  0,3954 € (D. 732-166, décret n° 2026-931, en vigueur le 9 octobre 2026), absente
+  de `valeurs_point.csv` : lue par `dila_legi_msa.py` et certifiée par
+  `verifier_donnees.py --appliquer`, seule série à bouger. Les taux Ircantec de
+  2028 et de 2029 (décret n° 2026-926) : les périodes « de 2026 à aujourd'hui »
+  de la fiche du régime sont closes à 2027, et deux périodes portent les taux
+  appelés à 127 % (7,30 puis 7,50 % sous le plafond, 20,25 puis 20,70 %
+  au-dessus) ; le test d'abord les tient. L. 351-1-4 se lit, pour les pensions
+  du 1er novembre 2026, sur la seule incapacité permanente professionnelle de la
+  rente réformée (loi n° 2025-1403, article 96) : rattaché, avec les arrêts
+  d'assemblée plénière dont la réforme procède. Le projet de loi de financement
+  pour 2027 forfaitiserait la majoration pour enfants des pensions prenant effet
+  à compter du 1er juillet 2027 (article 34) et modulerait la revalorisation de
+  2027 par seuils de pension (article 35) ; la commission des affaires sociales a
+  rejeté le projet du 12 au 16 octobre : signalé aux fiches, rien au scénario 1.
+  La jurisprudence qui a fait les règles des enfants, de l'âge et des trimestres
+  réputés cotisés, citée dans huit fiches. Le cliquet des textes descend de 9 615 à 9 602. Rien d'erroné trouvé
+  dans ce que le dépôt portait déjà : âges et durées de la suspension, carrière
+  longue de septembre 2026, cumul de 2027, salaire annuel moyen des parents,
+  congé de naissance, valeur Agirc-Arrco du 1er novembre 2026, SMIC de juin 2026,
+  retraite progressive à soixante ans, rachat de L. 9 bis, règlement du RCI de
+  2027, AVPF du minimum contributif majoré.
+reste: >-
+  Modéliser les deux majorations, qui demandent chacune un fait daté de plus
+  (l'engagement de sapeur-pompier volontaire, les mandats locaux), hors de la
+  durée cotisée, et les nommer d'ici là parmi les écarts au droit positif
+  (`docs/limites/ecarts-au-droit-positif.md`).
+  Lire la circulaire Cnav des élus locaux, attendue avant le
+  1er janvier 2027 (durée cotisée, surcote), et dire ce qu'il en est de Mayotte et
+  des régimes spéciaux pour les élus, de la CNAVPL et de la CNBF pour les
+  sapeurs-pompiers. Porter le pourcentage d'appel Ircantec de 2028 et de 2029 dans
+  `valeurs_point.csv` quand la caisse publiera ces barèmes. Suivre le projet de
+  loi de financement pour 2027 jusqu'à sa promulgation, avec le plafond de
+  l'abattement de 10 % du projet de loi de finances. Confronter à la pratique de
+  la Cnav l'arrêt du 20 septembre 2018 sur le service civil des objecteurs, et à
+  celle de la CPRP SNCF l'arrêt du 19 décembre 2019 sur le départ anticipé des
+  parents de trois enfants.
+prochaine_veille: >-
+  après le vote solennel du projet de loi de financement pour 2027 à l'Assemblée
+  nationale, prévu le 27 octobre 2026, puis à sa promulgation
