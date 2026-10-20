@@ -1,0 +1,204 @@
+schema_version: 1
+id: volontariat_civil_et_international
+intitule: >-
+  Le temps de volontariat civil, puis de volontariat international en entreprise ou en
+  administration, d'au moins six mois, est assimilé à une période d'assurance : un
+  trimestre par quatre-vingt-dix jours de date à date, validé par le premier régime de
+  base d'affiliation obligatoire qui suit le volontariat, ou par le régime spécial
+  auquel l'assuré est ensuite affilié, pour le taux et la durée d'assurance, jamais pour
+  la durée cotisée.
+domaine: periodes_assimilees
+regimes: [regime_general, msa_salaries, msa_non_salaries, cnavpl, cnbf, cavimac,
+  fonction_publique_etat, cnracl, fspoeie, sncf, ratp, ieg, banque_de_france, crpcen,
+  marins]
+etape: compter_les_durees
+face: droit
+etat: pas_encore_modelisee
+lit:
+- >-
+  les périodes de volontariat civil ou international de l'assuré, avec leurs dates,
+  telles que le certificat d'accomplissement du volontariat les atteste
+- >-
+  les régimes de base dont l'assuré relève après le volontariat, pour désigner celui qui
+  valide la période
+- la date d'effet de la pension
+ecrit:
+- >-
+  des trimestres assimilés, un par quatre-vingt-dix jours de date à date, validés dans
+  l'année civile où expire chaque période de quatre-vingt-dix jours, sans salaire porté
+  au compte, par le seul régime compétent ; hors de la durée cotisée et des trimestres
+  réputés cotisés de la carrière longue
+dates_qui_decident:
+- periode.debut
+versions:
+- id: avant_le_volontariat_civil
+  statut: supposee
+  hypothese: >-
+    Le volontariat civil naît de la loi n° 2000-242 du 14 mars 2000 relative aux
+    volontariats civils, et l'article L. 122-15 dans sa première rédaction est en vigueur
+    le 15 mars 2000 ; avant, les formes civiles du service national — coopération, aide
+    technique — étaient du service national, que d'autres fiches portent
+  fiabilite: haute, la loi crée le dispositif
+  bornes:
+    periode.debut: [null, 2000-03-15]
+  contenu:
+    droit: aucun volontariat civil
+  exemples: aucun trouvé
+- id: volontariat_civil_2000
+  statut: lue
+  nee_de: LEGIARTI000006555990
+  textes:
+  - id: LEGIARTI000006555990
+    reference: >-
+      code du service national, article L. 122-15, rédaction de la loi n° 2000-242 du 14
+      mars 2000 relative aux volontariats civils
+    citation: >-
+      « Le temps du service accompli au titre du volontariat civil, d'une durée au moins
+      égale à six mois, est assimilé à une période d'assurance pour l'ouverture et le
+      calcul des droits à retraite dans le premier régime d'assurance vieillesse de base
+      auquel le volontaire est affilié à titre obligatoire postérieurement à son
+      volontariat. Par dérogation aux dispositions de l'alinéa ci-dessus, le temps du
+      service, d'une durée au moins égale à six mois, accompli au titre du volontariat est
+      pris en compte par le régime spécial de retraite auquel l'assuré est ultérieurement
+      affilié. »
+    en_vigueur: 2000-03-15
+    lu_le: 2026-10-20
+  bornes:
+    periode.debut: [2000-03-15, 2010-07-01]
+  contenu:
+    beneficiaire: >-
+      le volontaire civil de plus de dix-huit et de moins de vingt-huit ans, pour six à
+      vingt-quatre mois : en France, volontariat de prévention, de sécurité et de défense
+      civile, ou de cohésion sociale et de solidarité, pour les contrats conclus avant le
+      14 mai 2010, que le service civique remplace ; à l'étranger, volontariat
+      international (circulaire Cnav n° 2017-01, fiche 3.22, point 1)
+    droit: >-
+      un trimestre assimilé par quatre-vingt-dix jours de volontariat, décomptés de date à
+      date (R. 161-17), par le premier régime de base d'affiliation obligatoire qui suit, et
+      prioritairement par le régime spécial auquel l'assuré est affilié ensuite, même s'il
+      n'est pas le premier (fiche 3.22, points 2 et 3) ; les sommes représentatives à la
+      charge du Fonds de solidarité vieillesse
+    portee: >-
+      pour la durée requise du taux plein et la durée d'assurance du calcul, la durée
+      requise qui ouvre la surcote, la durée validée et le début d'activité des départs
+      anticipés, la durée au régime général de la majoration du départ des assurés
+      handicapés, la durée requise du minimum contributif : oui ; pour la durée cotisée qui
+      ouvre la surcote, la durée cotisée et réputée cotisée de la carrière longue, la durée
+      cotisée du départ des assurés handicapés et de sa majoration, la durée cotisée du
+      minimum contributif : non (fiche 3.22, point 5)
+  exemples: aucun trouvé
+- id: volontariat_international_2010
+  statut: lue
+  nee_de: LEGIARTI000021960477
+  textes:
+  - id: LEGIARTI000021960477
+    reference: >-
+      code du service national, article L. 122-15, rédaction de la loi n° 2010-241 du 10
+      mars 2010 relative au service civique
+    citation: >-
+      « Le temps du service accompli au titre du volontariat international, d'une durée au
+      moins égale à six mois, est assimilé à une période d'assurance pour l'ouverture et le
+      calcul des droits à retraite dans le premier régime d'assurance vieillesse de base
+      auquel le volontaire est affilié à titre obligatoire postérieurement à son
+      volontariat. »
+    en_vigueur: 2010-07-01
+    lu_le: 2026-10-20
+  - id: LEGIARTI000051289102
+    reference: >-
+      même article, rédaction de la loi n° 2025-199 du 28 février 2025, article 24, en
+      vigueur le 1er janvier 2026 : les sommes représentatives de la prise en compte passent
+      du Fonds de solidarité vieillesse à la branche vieillesse (L. 200-2, 3°, et L. 222-2-1
+      du code de la sécurité sociale), sans rien changer aux droits
+    en_vigueur: 2026-01-01
+    lu_le: 2026-10-20
+  bornes:
+    periode.debut: [2010-07-01, null]
+  contenu:
+    beneficiaire: >-
+      le volontaire international en entreprise ou en administration, français ou
+      ressortissant de l'Espace économique européen, de plus de dix-huit et de moins de
+      vingt-huit ans, pour six à vingt-quatre mois (circulaire Cnav n° 2014-47, point 1.1 ;
+      n° 2017-01, fiche 3.23, point 1)
+    droit: >-
+      autant de trimestres assimilés que la période comporte de fois quatre-vingt-dix
+      jours, de date à date, validés dans l'année civile où chaque période de
+      quatre-vingt-dix jours expire (R. 161-17) ; par le premier régime de base
+      d'affiliation obligatoire qui suit, exclusivement par le régime spécial auquel
+      l'assuré est affilié ensuite, et par le régime général si aucun régime de base
+      français ne suit (circulaire n° 2014-47, point 1.4 ; fiche 3.23, points 2 et 3)
+    portee: >-
+      pour la durée requise du taux plein et la durée d'assurance du calcul (L. 351-1,
+      deuxième et troisième alinéas), la durée requise qui ouvre la surcote, la durée
+      validée et le début d'activité des départs anticipés, la durée au régime général de la
+      majoration du départ des assurés handicapés, la durée requise du minimum contributif :
+      oui ; pour la durée cotisée et réputée cotisée de la carrière longue, la durée cotisée
+      du départ des assurés handicapés et de sa majoration, la durée cotisée du minimum
+      contributif : non (fiche 3.23, point 5)
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-20
+  prochaine_relecture: 2027-04-30
+  lectures_divergentes:
+  - >-
+    Le journal de veille du 19 octobre 2026 (action 89, parcours de l'Union retraite)
+    rapporte que le parcours compte au volontariat international « quatre trimestres au
+    plus à la carrière longue » ; la fiche 3.23 de la circulaire Cnav n° 2017-01 le dit ni
+    cotisé ni réputé cotisé, et la circulaire n° 2026-29 ne répute cotisées, au titre du
+    service national, que les périodes « visées au 6° de l'article R. 351-12 » (point
+    1.2.3.1), quand le volontariat international est assimilé par L. 122-15 du code du
+    service national. La caisse fait foi tant qu'aucun texte ne la contredit.
+  a_relire:
+  - >-
+    Le modèle ne connaît pas le volontariat : la saisie n'en a pas de motif. Qui a fait un
+    volontariat international le déclare comme une année sans activité, et le modèle lui
+    retire de la durée d'assurance ; ou comme un service militaire, et il lui répute
+    cotisés jusqu'à quatre trimestres que la caisse ne répute pas. Le modéliser demande un
+    motif à part, avec la condition des six mois et le décompte de date à date.
+  - >-
+    Le volontariat de solidarité internationale (loi n° 2005-159 du 23 février 2005), dont
+    le volontaire est affilié par l'association à l'assurance volontaire vieillesse de
+    L. 742-1 (circulaire Cnav n° 2014-47, point 2.3), et le service volontaire européen, qui
+    n'ouvre aucune assurance vieillesse (même circulaire, point 4.3) : hors de cette fiche,
+    à rattacher à celle des versements volontaires s'il le faut.
+  lectures:
+  - type: legifrance
+    reference: >-
+      Index LEGI du dépôt, à jour de l'incrément du 19 octobre 2026 : code du service
+      national, L. 122-15, ses trois rédactions (LEGIARTI000006555990 du 15 mars 2000,
+      LEGIARTI000021960477 du 1er juillet 2010, LEGIARTI000051289102 du 1er janvier 2026)
+    date: 2026-10-20
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2014-47 du 9 octobre 2014, « Les différentes formes de volontariat
+      international et service civique à l'étranger » : volontariat international (points
+      1.1 à 1.6), volontariat de solidarité internationale (point 2), volontaires européens
+      pour le développement (point 3), service volontaire européen (point 4), service
+      civique à l'étranger (point 5) (copie datée,
+      sha256:c93c3d154948ca4495389bd482ac27df952058c1b169ab78a6645fd2dc3299e9)
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2014_47_09102014.pdf
+    date: 2014-10-09
+  - type: circulaire_cnav
+    reference: >-
+      circulaire carrière Cnav n° 2017-01 du 13 janvier 2017, fiche 3.22, « Périodes
+      assimilées : les périodes de volontariat civil », points 1 à 6
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2017_01_13012017_fiche_3_22.pdf
+    date: 2017-01-13
+  - type: circulaire_cnav
+    reference: >-
+      circulaire carrière Cnav n° 2017-01 du 13 janvier 2017, fiche 3.23, « Périodes
+      assimilées : les périodes de volontariat international en entreprise ou en
+      administration », points 1 à 6, dont le tableau de la prise en compte (point 5)
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2017_01_13012017_fiche_3_23.pdf
+    date: 2017-01-13
+historique:
+- >-
+  2026-10-20 — née de la veille du 20 octobre 2026 : le journal du 19 octobre 2026 (action
+  89) disait du volontariat international que « le dépôt ne dit rien » et le laissait à la
+  session de D. 351-1-2 ; la fiche porte la règle, que le modèle ne sert pas encore.
+effet: >-
+  Tout assuré qui a accompli un volontariat civil, depuis le 15 mars 2000, ou un
+  volontariat international en entreprise ou en administration, d'au moins six mois : un
+  trimestre de durée d'assurance par quatre-vingt-dix jours, soit quatre pour un an et huit
+  pour deux ans, qui relèvent le taux et la proratisation de qui n'a pas la durée requise ;
+  aucun pour la carrière longue, la surcote ou le minimum contributif majoré. Le modèle ne
+  le connaît pas.

@@ -1,0 +1,236 @@
+schema_version: 1
+id: service_civique
+intitule: >-
+  L'engagement de service civique et le volontariat associatif accomplis en France
+  affilient le volontaire au régime général, son indemnité cotisant tout entière à la
+  charge de l'organisme : de 2010 à 2013, autant de trimestres que le contrat durait,
+  l'État complétant ce que l'indemnité ne validait pas ; depuis 2014, les trimestres que
+  l'indemnité valide par la règle commune ; jamais de point complémentaire, ni de
+  trimestre cotisé à la charge de l'assuré.
+domaine: periodes_assimilees
+regimes: [regime_general]
+etape: compter_les_durees
+face: droit
+etat: pas_encore_modelisee
+lit:
+- >-
+  les contrats de service civique de l'assuré — engagement de service civique,
+  volontariat de service civique puis volontariat associatif —, avec leurs dates et
+  l'indemnité soumise à cotisations
+- la date d'effet de la pension
+ecrit:
+- >-
+  au régime général, l'indemnité portée au compte, qui entre au salaire annuel moyen, et
+  les trimestres qu'elle valide ; de 2010 à 2013, les trimestres « État » qui en portent
+  le nombre à la durée du contrat ; tous comptent pour le taux et la durée d'assurance,
+  aucun pour la durée cotisée
+- aucun point Agirc-Arrco
+dates_qui_decident:
+- periode.debut
+versions:
+- id: avant_le_service_civique
+  statut: supposee
+  hypothese: >-
+    Le service civique naît de la loi n° 2010-241 du 10 mars 2010 et s'applique depuis le
+    14 mai 2010, entrée en vigueur du décret n° 2010-485 du 12 mai 2010 (circulaire Cnav
+    n° 2013-41, point 8) ; les volontariats qu'il regroupe — volontariat civil de cohésion
+    sociale et de solidarité, volontariat associatif de la loi n° 2006-586 du 23 mai 2006 —
+    gardent leurs règles pour les contrats en cours au 12 mai 2010, jusqu'à leur terme
+  fiabilite: haute, la date est celle du décret qui applique la loi
+  bornes:
+    periode.debut: [null, 2010-05-14]
+  contenu:
+    droit: >-
+      aucun contrat de service civique ; le volontariat civil relève de la fiche
+      volontariat_civil_et_international, le volontariat associatif de 2006 reste à lire
+  exemples: aucun trouvé
+- id: duree_du_contrat_2010
+  statut: lue
+  nee_de: LEGIARTI000022208928
+  textes:
+  - id: LEGIARTI000021960349
+    reference: >-
+      code du service national, article L. 120-28, rédaction de la loi n° 2010-241 du 10
+      mars 2010
+    citation: >-
+      « La couverture du risque vieillesse est assurée dans les conditions prévues à
+      l'article L. 241-3 du code de la sécurité sociale. Les personnes volontaires ne sont
+      pas soumises, au titre de leur contrat de service civique, à l'obligation
+      d'affiliation mentionnée à l'article L. 921-1 du même code. [...] L'Etat prend à sa
+      charge, dans des conditions fixées par décret, le versement des cotisations
+      complémentaires nécessaires pour valider auprès du régime général un nombre de
+      trimestres correspondant à la durée du service civique. »
+    en_vigueur: 2010-07-01
+    lu_le: 2026-10-20
+  - id: LEGIARTI000022208928
+    reference: >-
+      code de la sécurité sociale, article D. 372-4, créé par le décret n° 2010-485 du 12
+      mai 2010, en vigueur jusqu'au 1er janvier 2014
+    citation: >-
+      « Il est retenu un mois au titre de chaque mois civil entier d'exécution du contrat
+      » ; les jours des mois civils incomplets sont totalisés et « il est retenu un mois
+      lorsque ce total est au moins égal à trente et un jours » ; « Le nombre de trimestres
+      correspondant à la durée du contrat est égal à la valeur entière du tiers du nombre
+      total de mois » ; « Chaque trimestre civil entier d'exécution du contrat est affecté
+      à l'année de son exécution », le reliquat « à l'année civile au cours de laquelle le
+      contrat a pris fin » ; l'État prend en charge les « trimestres restant à valider »,
+      la valeur forfaitaire du trimestre étant le produit des taux de L. 241-3 par 50 % de
+      la valeur trimestrielle du plafond
+    en_vigueur: 2010-05-14
+    lu_le: 2026-10-20
+  - id: LEGIARTI000021960358
+    reference: >-
+      code du service national, article L. 120-25 : en métropole ou dans un département
+      d'outre-mer, le volontaire « est affiliée obligatoirement aux assurances sociales du
+      régime général en application du 28° de l'article L. 311-3 du code de la sécurité
+      sociale »
+    en_vigueur: 2010-07-01
+    lu_le: 2026-10-20
+  bornes:
+    periode.debut: [2010-05-14, 2014-01-01]
+  contenu:
+    beneficiaire: >-
+      l'engagé de service civique, de seize à vingt-cinq ans, pour six à douze mois, et le
+      volontaire de service civique, de plus de vingt-cinq ans, pour six à vingt-quatre
+      mois, en métropole ou dans un département d'outre-mer (circulaire Cnav n° 2013-41,
+      points 21 et 22)
+    droit: >-
+      l'indemnité, soumise aux taux de droit commun (L. 241-3, D. 242-4) et à la charge
+      entière de l'Agence de services et de paiement ou de l'organisme agréé, est portée au
+      compte ; elle valide un trimestre par tranche de la moitié du plafond trimestriel —
+      4 629 euros en 2013 —, et l'État prend en charge, pour un contrat d'au moins trois
+      mois, les trimestres qui manquent pour atteindre sa durée (circulaire Cnav n° 2013-41,
+      points 52 à 534)
+    portee: >-
+      pour le taux et la durée d'assurance du régime général, la durée requise qui ouvre la
+      surcote, la durée validée et le début d'activité des départs anticipés, la durée au
+      régime général de la majoration du départ des assurés handicapés, la proratisation du
+      minimum contributif : oui ; pour la durée cotisée de la surcote, de la carrière longue,
+      du départ des assurés handicapés et du minimum contributif majoré : non ; l'assiette
+      portée au compte entre au salaire annuel moyen (circulaire Cnav n° 2013-41, point 7)
+    complementaire: aucune affiliation à l'Agirc-Arrco (L. 120-28, premier alinéa)
+  exemples: aucun trouvé
+- id: indemnite_cotisee_2014
+  statut: lue
+  nee_de: LEGIARTI000028393410
+  textes:
+  - id: LEGIARTI000028393410
+    reference: >-
+      code du service national, article L. 120-26, rédaction de la loi n° 2013-1203 du 23
+      décembre 2013 de financement de la sécurité sociale pour 2014, article 20
+    citation: >-
+      « l'assiette des cotisations au titre des assurances sociales [...] est constituée
+      des indemnités prévues à la section 4 du présent chapitre » ; « Leur versement, y
+      compris celui des cotisations et contributions à la charge de la personne volontaire,
+      est assuré par la personne morale agréée [...] ou par l'organisme versant l'indemnité
+      pour le compte de l'Agence du service civique. »
+    en_vigueur: 2013-12-25
+    lu_le: 2026-10-20
+  - id: LEGIARTI000028393398
+    reference: >-
+      code du service national, article L. 120-28, même loi : le complément de l'État
+      disparaît, l'article ne garde que la couverture de L. 241-3 et l'exclusion de L. 921-1
+    en_vigueur: 2013-12-25
+    lu_le: 2026-10-20
+  - id: LEGIARTI000029321713
+    reference: >-
+      code du service national, article L. 120-28, rédaction de la loi n° 2014-856 du 31
+      juillet 2014, qui substitue le volontariat associatif au volontariat de service
+      civique
+    citation: >-
+      « La couverture du risque vieillesse est assurée dans les conditions prévues à
+      l'article L. 241-3 du code de la sécurité sociale. Les personnes volontaires ne sont
+      pas soumises, au titre de leur contrat mentionné à l'article L. 120-3, à l'obligation
+      d'affiliation mentionnée à l'article L. 921-1 du même code. »
+    en_vigueur: 2014-08-02
+    lu_le: 2026-10-20
+  bornes:
+    periode.debut: [2014-01-01, null]
+  contenu:
+    beneficiaire: >-
+      l'engagé de service civique et le volontaire associatif — volontaire de service
+      civique jusqu'au 2 août 2014 —, en métropole ou dans un département d'outre-mer ; le
+      service civique des sapeurs-pompiers (loi n° 2017-86 du 27 janvier 2017) suit
+      l'engagement (circulaire Cnav n° 2017-30, points 1.2.1 à 1.2.3)
+    droit: >-
+      l'indemnité soumise à cotisations est portée au compte et valide, « selon les règles
+      de droit commun », autant de trimestres qu'elle représente de fois cent cinquante
+      heures de SMIC au 1er janvier (R. 351-9) ; plus aucun trimestre de l'État ; périodes
+      accomplies à compter du 1er janvier 2014 (circulaire Cnav n° 2017-30, points 3.2, 3.3
+      et 4)
+    portee: >-
+      pour le taux et la durée d'assurance du régime général : oui ; pour les dispositifs
+      qui demandent une durée cotisée à la charge de l'assuré — la circulaire nomme la
+      surcote et le minimum contributif — : non, faute de précompte (point 3.3) ; pour la
+      durée cotisée de la carrière longue : non (circulaire Cnav n° 2026-29, annexe 1) ;
+      l'indemnité portée au compte entre au salaire annuel moyen (point 3.4)
+    complementaire: aucune affiliation à l'Agirc-Arrco (L. 120-28)
+  exemples: aucun trouvé
+sources:
+  lu_le: 2026-10-20
+  prochaine_relecture: 2027-04-30
+  a_relire:
+  - >-
+    Le modèle ne connaît pas le service civique : la saisie n'en a pas de motif. Qui en a
+    fait un le déclare comme une année sans activité, et le modèle lui retire des
+    trimestres que le droit valide ; ou comme un emploi salarié, et il lui sert des points
+    Agirc-Arrco et des trimestres cotisés — carrière longue, surcote, minimum contributif
+    majoré — que le droit ne lui donne pas. Le modéliser demande un motif à part, qui porte
+    l'indemnité au compte sans cotisation de l'assuré, et, de 2010 à 2013, le décompte de
+    D. 372-4.
+  - >-
+    Le volontariat associatif de la loi n° 2006-586 du 23 mai 2006, de 2006 au 12 mai 2010 :
+    la circulaire Cnav n° 2013-41 (point 7) en reprend l'assiette au salaire annuel moyen
+    « par analogie », sur la lettre D7258-2007 du 5 décembre 2007, et la circulaire
+    n° 2026-29 l'exclut de la durée cotisée de la carrière longue (circulaire n° 2010-55) ;
+    ses trimestres restent à lire.
+  - >-
+    Le service civique accompli à l'étranger, dont la couverture vieillesse suit L. 241-3,
+    les cotisations assises sur l'indemnité au taux de D. 242-4 (circulaire Cnav n° 2014-47,
+    point 5), et dans les collectivités d'outre-mer, où la réglementation locale s'applique
+    (L. 120-34) : à rattacher.
+  lectures:
+  - type: legifrance
+    reference: >-
+      Index LEGI du dépôt, à jour de l'incrément du 19 octobre 2026 : code du service
+      national, L. 120-25 (LEGIARTI000021960358), L. 120-26 (LEGIARTI000021960354 de 2010,
+      LEGIARTI000028393410 de 2013), L. 120-28 (LEGIARTI000021960349 de 2010,
+      LEGIARTI000028393398 de 2013, LEGIARTI000029321713 de 2014) ; code de la sécurité
+      sociale, D. 372-4 (LEGIARTI000022208928, du 14 mai 2010 au 1er janvier 2014)
+    date: 2026-10-20
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2013-41 du 30 août 2013, « Servique civique » — la coquille est
+      dans l'objet — : protection sociale (point 5), trimestres de l'indemnité et de l'État
+      (points 52 à 534), prise en compte et tableau des dispositifs (point 7), date d'effet
+      (point 8) ; lue par l'API de la base de législation de la Cnav
+      (/api/v1/reference/referencesByFileLeafRef/)
+    url: https://legislation.lassuranceretraite.fr/references-reglementaires?file_leaf_ref=circulaire_cnav_2013_41_30082013.aspx
+    date: 2013-08-30
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2017-30 du 21 août 2017, « Service civique à compter du 1er janvier
+      2014 » : cotisations (point 3.2), décompte des trimestres (point 3.3), salaire annuel
+      moyen (point 3.4), date d'effet (point 4)
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2017_30_21082017.pdf
+    date: 2017-08-21
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2026-29 du 4 septembre 2026, annexe 1 (page 23) : « Volontariat
+      associatif » et « Service civique (L.120-1 du code du service national) Circulaire
+      Cnav n° 2017/30 du 21/08/2017 » partagent la case « Non » de la durée cotisée (copie
+      datée, sha256:9fd38e870dd0178b5c81d206f5e75c42220347a5c01ed2855653d7020be3498b)
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2026_29_04092026.pdf
+    date: 2026-09-04
+historique:
+- >-
+  2026-10-20 — née de la veille du 20 octobre 2026 : aucun fichier du dépôt ne nommait le
+  service civique ; la seule trace voisine était le financement par le Fonds de
+  solidarité vieillesse des périodes de volontariat du service national
+  (`legislation/frontiere_contributive.yaml`, code `service_national_volontariat_au_fsv`).
+effet: >-
+  Tout assuré qui a accompli un service civique en France depuis le 14 mai 2010 : un
+  contrat de six à douze mois valide aujourd'hui autant de trimestres que son indemnité
+  cotisée représente de fois cent cinquante heures de SMIC, jusqu'à quatre par an, et en
+  validait, de 2010 à 2013, autant que le contrat durait ; ni trimestre cotisé, ni point
+  Agirc-Arrco. Le modèle ne le connaît pas.
