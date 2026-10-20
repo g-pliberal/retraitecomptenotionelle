@@ -469,6 +469,21 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   d'activité sur une « durée d'assurance » de cinq trimestres, quand le modèle
   n'y compte que les trimestres cotisés — plus dur que la lettre du décret, en
   attendant la circulaire qui l'applique.
+- **Les majorations de durée des sapeurs-pompiers volontaires et des élus
+  locaux.** Deux majorations de durée d'assurance ne sont pas servies. Celle du
+  sapeur-pompier volontaire — un trimestre pour dix années d'engagement, deux
+  pour vingt, trois pour vingt-cinq — vaut pour les pensions prenant effet
+  depuis le 1er juillet 2026 (L. 173-1-5 et R. 173-4-6 du code de la sécurité
+  sociale, décret n° 2026-18 du 20 janvier 2026, article 9) ; elle compte pour
+  le taux et la durée d'assurance, ni cotisée ni réputée cotisée (circulaire
+  Cnav n° 2026-22). Celle de l'élu exécutif local — un trimestre par mandat
+  complet, trois au plus — vaut pour les pensions prenant effet à compter du
+  1er janvier 2027 (L. 161-21-2 et R. 161-17-1, décret n° 2026-948 du
+  12 octobre 2026, article 8) ; la circulaire qui dira si elle compte pour la
+  carrière longue n'est pas parue. La saisie ne demande ni l'engagement ni les
+  mandats : le modèle sous-estime la durée d'assurance, donc le taux et le
+  prorata, de qui en a (fiches `majoration_duree_sapeurs_pompiers_volontaires`
+  et `majoration_duree_elus_locaux`).
 - **Le minimum garanti ne compte pas les périodes de parent au foyer ou
   d'aidant du fonctionnaire.** Depuis le 1er septembre 2023, le dernier alinéa
   de L. 17 du code des pensions les tient pour services effectifs, dans la
