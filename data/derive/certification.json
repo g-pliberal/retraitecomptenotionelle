@@ -747,7 +747,7 @@
    "niveau": "haute",
    "source": "dérivée des quotients INED de Vallin et Meslé",
    "valeurs": 28,
-   "verifiee_le": "2026-10-18"
+   "verifiee_le": "2026-10-19"
   },
   "esperances_projetees": {
    "ajoutees": 0,
@@ -1627,7 +1627,7 @@
    "niveau": "haute",
    "source": "la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre",
    "valeurs": 512,
-   "verifiee_le": "2026-10-18"
+   "verifiee_le": "2026-10-19"
   },
   "taux_cotisation_annuels": {
    "ajoutees": 0,
@@ -1803,7 +1803,7 @@
    "niveau": "haute",
    "source": "OpenFisca-France, barème IPP de la cotisation forfaitaire annuelle de la garantie minimale de points (gmp_cot_f_a), transcrit le 2 octobre 2026",
    "valeurs": 29,
-   "verifiee_le": "2026-10-18"
+   "verifiee_le": "2026-10-19"
   },
   "valeurs_point_independants": {
    "ajoutees": 0,
@@ -1836,18 +1836,18 @@
    "niveau": "haute",
    "source": "Ircantec, page « Valeur du point » et paramètres annuels, 2022-2026, lus le 23 septembre 2026",
    "valeurs": 23,
-   "verifiee_le": "2026-10-18"
+   "verifiee_le": "2026-10-19"
   },
   "valeurs_point_msa": {
-   "ajoutees": 0,
+   "ajoutees": 1,
    "colonne": "valeur",
    "corrigees": 0,
-   "empreinte": "6b9c64c70e7af64e",
+   "empreinte": "ab3ae48f5cff7e39",
    "identiques": 21,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, code rural D. 732-166",
-   "valeurs": 21,
-   "verifiee_le": "2026-09-17"
+   "valeurs": 22,
+   "verifiee_le": "2026-10-19"
   },
   "valeurs_point_rafp": {
    "ajoutees": 0,
@@ -1922,7 +1922,7 @@
    "empreinte": "e2b772fd0367a6b0",
    "identiques": 21,
    "niveau": "certifiee",
-   "source": "INSEE, Emploi, chômage, revenus du travail 2026, fiche Revenu salarial",
+   "source": "INSEE, Emploi et revenus des indépendants 2026, fiche Revenu salarial",
    "valeurs": 21,
    "verifiee_le": "2026-10-11"
   }
