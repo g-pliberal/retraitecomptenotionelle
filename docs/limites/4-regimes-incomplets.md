@@ -760,8 +760,8 @@ actuel : sans emploi, le report n'épargne guère que des années de pension, et
 sert ensuite des pensions plus fortes. Aucun impôt ne couvre ce qui reste —
 la TVA à taux unique qui le faisait du 23 au 24 septembre 2026 est retirée —,
 et le déficit s'accumule : la dette de la proposition en 2070 est de <!--chiffre:mesure(dette?scenario=6)-->70<!--/--> % du
-PIB quand la moitié des reportés travaillent, de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=1)-->62<!--/--> % quand tous le font,
-de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=0)-->79<!--/--> % quand aucun, contre <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le système actuel et <!--chiffre:mesure(dette?scenario=6&age_legal=aucun)-->92<!--/--> % pour
+PIB quand la moitié des reportés travaillent, de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=1)-->61<!--/--> % quand tous le font,
+de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=0)-->78<!--/--> % quand aucun, contre <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le système actuel et <!--chiffre:mesure(dette?scenario=6&age_legal=aucun)-->91<!--/--> % pour
 la proposition sans âge légal. L'ampleur de son avantage sur le système actuel
 tient donc à ce que les reportés travaillent. Elle serait bien moindre si le
 compte d'un fonctionnaire d'État recevait le taux de l'État entier, et non sa

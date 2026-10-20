@@ -90,7 +90,7 @@ un modèle de population complet et une méthode qui n'a rien de commun avec
 celle-ci : il trouve <!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2024&poste=depenses)-->13,9<!--/--> % du PIB en 2024 et **<!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2070&poste=depenses)-->15,3<!--/--> % en 2070** (rapport annuel
 de juin 2026, champ « ensemble des régimes légalement obligatoires, y compris
 FSV, hors RAFP »). Le modèle, laissé à lui-même — sa masse de pensions mise à
-l'échelle de la dernière année publiée —, trouve <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % et **<!--chiffre:mesure(trajectoire_propre?annee=2070)-->15,66<!--/--> %**. Trois dixièmes de point
+l'échelle de la dernière année publiée —, trouve <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % et **<!--chiffre:mesure(trajectoire_propre?annee=2070)-->15,68<!--/--> %**. Trois dixièmes de point
 d'écart au départ — l'affaire du périmètre, la répartition obligatoire des
 Comptes de la protection sociale n'étant pas exactement celle du COR — et
 **trois dixièmes au-dessus à l'arrivée** : depuis l'étape 19 de l'action 147,
@@ -179,7 +179,7 @@ retraités de plus, le modèle
 les têtes que la trajectoire s'écarte. La pension moyenne relative, elle, recule
 de <!--chiffre:mesure(decomposition?facteur=pension_relative&de=2025&a=2070&source=cor)-->−17,2<!--/--> %
 chez le COR et de
-<!--chiffre:mesure(decomposition?facteur=pension_relative&de=2025&a=2070)-->−12,6<!--/--> % seulement
+<!--chiffre:mesure(decomposition?facteur=pension_relative&de=2025&a=2070)-->−12,5<!--/--> % seulement
 dans le modèle ; et sur le passé, de 2005 à 2025, elle a crû de
 <!--chiffre:mesure(decomposition?facteur=pension_relative&de=2005&a=2025&source=cor)-->8,9<!--/--> %
 quand le modèle la fait croître de
