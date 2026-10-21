@@ -1,0 +1,38 @@
+date: "2026-10-21"
+session: >-
+  veille hors action, à la demande du propriétaire : vérification à leurs sources des
+  trois correctifs de la veille du 20 octobre 2026, qu'une autre session lui avait livrés
+  en patchs sur 142c1c55, avant de les publier
+consulte: >-
+  L'index LEGI du dépôt, récupéré de la release puis mis à jour jusqu'à l'incrément
+  20261020-214622, celui des correctifs : les cinq rédactions de D. 351-1-3, dont le 2°
+  d'avant et d'après le 1er novembre 2012 ; D. 16-3 du code des pensions civiles et
+  militaires ; L. 120-25, L. 120-26, L. 120-28 et L. 122-15 du code du service national et
+  D. 372-4 du code de la sécurité sociale, dans les rédactions que citent les fiches ;
+  l'article 49 bis du décret n° 2003-1306 et l'article 34 bis du décret n° 2004-1056, avant
+  et depuis le décret n° 2025-680 ; l'article 4 du décret n° 2024-1282 et l'article 2 bis du
+  décret n° 2003-1310. Sur legislation.lassuranceretraite.fr, téléchargées à nouveau : les
+  circulaires Cnav n° 2026-29 (points 1.1.4 et 1.2.3.1, annexe 1 lue en image à sa page
+  23 ; même empreinte que dans les correctifs), n° 2023-14 (point 1.1.4), n° 2017-30
+  (points 3.2 à 3.4), n° 2014-47 (même empreinte), les fiches 3.22 et 3.23 de la circulaire
+  n° 2017-01 ; le point 113 de la circulaire n° 2003-46, par l'API de la base.
+trouve: >-
+  Tout ce que les correctifs citent se lit où ils le disent, au mot près. D. 351-1-3 pose
+  la condition de début d'activité sur « une durée d'assurance » dans ses cinq rédactions,
+  et D. 16-3 de même pour les fonctionnaires de l'État ; la Cnav y compte les périodes
+  assimilées, de sa circulaire n° 2003-46 (point 113) à la n° 2026-29 (point 1.1.4), et
+  les fiches 3.22 et 3.23 en donnent un cas : le volontariat, ni cotisé ni réputé cotisé,
+  y compte pour la « durée de début d'activité ». Le test du correctif, rejoué sur l'ancien code
+  des deux moteurs, échoue comme il le doit (« non_ouverte » pour « carriere_longue ») ;
+  la suite rapide et les tests de la zone passent sur le nouveau, hors le tableau de bord,
+  que GitHub refait. L'inscription des textes, rejouée sur le même index, n'ajoute ni ne
+  redate rien : le redactions.csv des correctifs est celui de l'index. Les fichiers
+  fabriqués restent à jour, paquet, accueil et témoins compris (regenerer.py --verifier),
+  sauf le même tableau de bord : la correction ne déplace aucun cas des témoins. Le
+  commentaire du portage renvoyait encore les quatre trimestres des nés au dernier
+  trimestre à D. 351-1-1 : c'est le 2° de D. 351-1-3, corrigé. Seul l'identifiant
+  JORFTEXT000050935436 du décret n° 2024-1282 reste sans recoupement : Légifrance refuse le
+  conteneur, et les incréments du JORF ne remontent pas avant juillet 2025.
+reste: >-
+  Ce que laisse le journal du 20 octobre 2026, inchangé. Recouper l'identifiant JORF du
+  décret n° 2024-1282 à la prochaine lecture de l'index JORF.

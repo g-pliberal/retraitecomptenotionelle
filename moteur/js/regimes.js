@@ -2035,7 +2035,7 @@ export class CarriereLongue {
    * `ageMax` ans (D. 351-1-3), cotisés ou assimilés : la Cnav y compte les
    * périodes de cotisations et les périodes assimilées (circulaires
    * n° 2003-46, point 113, et n° 2026-29, point 1.1.4). Quatre à qui est né
-   * au cours du dernier trimestre de l'année civile (D. 351-1-1) : le modèle
+   * au cours du dernier trimestre de l'année civile (D. 351-1-3, 2°) : le modèle
    * lit le mois de naissance. `etrangers`, une `Map` de l'année aux trimestres
    * qu'un accord fait compter hors de France, comptent ici comme en France.
    */
