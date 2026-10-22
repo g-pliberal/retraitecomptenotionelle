@@ -164,6 +164,26 @@ def test_scenario_de_projection_inconnu_est_rejete():
         DonneesMacro(RACINE_DONNEES, scenario_projection="inexistant").productivite(2050)
 
 
+# Le jeu d'hypothèses de l'OCDE, que la convention de l'OCDE des indicateurs de
+# cycle de vie projette (``moteur/js/cycle-de-vie.js``) : ses deux tests
+# viennent de ``tests/test_cycle_de_vie.py``, au retrait de son module Python
+# (action 161).
+
+
+def test_le_jeu_de_l_ocde_se_nomme_comme_un_scenario_de_projection():
+    """Prix +2 %, salaires réels +1,25 % : 3,275 % de salaire nominal, le
+    produit que l'OCDE écrit, et non la somme des scénarios du COR."""
+    macro = DonneesMacro(RACINE_DONNEES, scenario_projection="ocde_2025")
+    assert macro.inflation(2050) == pytest.approx(0.02)
+    assert macro.salaire_moyen(2050) == pytest.approx(0.03275)
+    assert macro.inflation(2020) == DonneesMacro(RACINE_DONNEES).inflation(2020)
+
+
+def test_un_scenario_inconnu_reste_refuse():
+    with pytest.raises(KeyError, match="ocde_2025"):
+        DonneesMacro(RACINE_DONNEES, scenario_projection="inexistant").inflation(2050)
+
+
 def test_coefficient_prix_est_reversible(macro):
     aller = macro.coefficient_prix(1975, 2020)
     retour = macro.coefficient_prix(2020, 1975)
