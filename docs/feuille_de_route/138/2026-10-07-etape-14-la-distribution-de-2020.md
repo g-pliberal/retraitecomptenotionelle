@@ -1,15 +1,14 @@
 # Étape 14, première partie : les pensions de 2020, simulées contre publiées
 
-**Reprise, au 19 octobre 2026.** Fait : chaque grille contre l'EIR en 2020
-(7 octobre) ; la population de l'action 136, reprise du 16 au 19 octobre de
-la décote aux périodes assimilées selon le rang ; D. 351-1-2 daté ; puis la
-remesure : 6,3 % des hommes de 1950 en carrière longue, 13,1 avant (EIR
-18,3), leur chômage n'étant pas réputé cotisé en 2009. Reste, une session par
-point : la nature des périodes assimilées, service et maladie ; les femmes de
-30 à 40 années, entrées à 21 ans ; les invalides et les inaptes ; la surcote
-des statutaires ; la décote selon la génération ; les indépendants, les
-agricoles ; l'ASPA ; les limites. Au propriétaire : 152, 157, le CASD,
-l'incitation. Détail : `…-population-remesuree.md`.
+**Reprise, au 22 octobre 2026.** Fait : chaque grille contre l'EIR en 2020
+(7 octobre) ; la population de l'action 136, reprise du 16 au 22 octobre, de
+la décote au service et à la maladie des hommes, lus dans l'EIC ; D. 351-1-2
+daté : 9,0 % des hommes de 1950 en carrière longue (EIR 18,3). Reste, une
+session par point : la part du chômage, les natures des femmes ; les femmes
+de 30 à 40 années, entrées à 21 ans ; les invalides et les inaptes ; la
+surcote des statutaires ; la décote selon la génération ; les indépendants,
+les agricoles ; l'ASPA ; les limites. Au propriétaire : 152, 157, le CASD,
+l'incitation. Détail : `…-nature-des-periodes-assimilees.md`.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.14 ». L'étape :
 « Ce qui demande une population ou des microdonnées, avec l'action 136 (étape
