@@ -196,14 +196,18 @@ sources:
     date: 2026-10-16
 code:
   python: >-
-    donnees/regimes.py : PointsInvalidite, PeriodeRegime.points_invalidite ;
-    droit/acquerir.py : points_d_invalidite, arrondi_au_centieme
+    donnees/regimes.py : PointsInvalidite, PeriodeRegime ; droit/acquerir.py :
+    points_d_invalidite, arrondi_au_centieme
   javascript: >-
     moteur/js/droit/acquerir.js : pointsDInvalidite, arrondiAuCentieme
   parametres: >-
-    regimes/rci.yaml, regimes/rco_artisans.yaml, regimes/nric.yaml,
-    `points_invalidite` ; regimes/conversions_points.csv
+    contenu.parametres de chaque version : artisan, commercant, par, proportionnels,
+    forfait ; regimes/rci.yaml, regimes/rco_artisans.yaml, regimes/nric.yaml :
+    points_invalidite ; regimes/conversions_points.csv
   tests: tests/test_independants.py
+  moteur: >-
+    Chaque période de régime porte ses points d'invalidité
+    (PeriodeRegime.points_invalidite).
 referents:
   modele_ti: >-
     accorde les 400 points de la CNAVPL à l'année d'incapacité du libéral, rien à

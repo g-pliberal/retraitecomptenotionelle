@@ -780,22 +780,28 @@ textes_a_rattacher:
 - reference: D. 732-109 à D. 732-115 code rural
 code:
   python: >-
-    scenarios/actuel.py : PensionMajoreeReference (regle, montant) ; droit/completer.py :
-    pension_majoree, reversion_agricole_servie, duree_de_chef_reconstituee, completer ;
-    droit/liquider.py : EligibleAgricole, annees_hors_forfait ; revalorisation.py :
-    reviser_les_exploitants ; carriere.py : Carriere.reversion_agricole ;
-    chronologie.py : reversion_agricole
+    scenarios/actuel.py : PensionMajoreeReference, PensionMajoreeReference.regle,
+    PensionMajoreeReference.montant ; droit/completer.py : pension_majoree,
+    reversion_agricole_servie, duree_de_chef_reconstituee, completer ; droit/liquider.py
+    : EligibleAgricole, annees_hors_forfait ; revalorisation.py :
+    reviser_les_exploitants ; carriere.py : Carriere.reversion_agricole ; chronologie.py
+    : reversion_agricole
   javascript: >-
-    moteur/js/regimes.js : PensionMajoreeReference ; moteur/js/droit/completer.js :
-    pensionMajoree, reversionAgricoleServie, dureeDeChefReconstituee, completer ;
+    moteur/js/regimes.js : PensionMajoreeReference, PensionMajoreeReference.regle,
+    PensionMajoreeReference.montant ; moteur/js/droit/completer.js : pensionMajoree,
+    reversionAgricoleServie, dureeDeChefReconstituee, completer ;
     moteur/js/droit/liquider.js : eligibleAgricole, anneesHorsForfait ;
     moteur/js/revalorisation.js : reviserLesExploitants ; moteur/js/carriere.js :
     reversionAgricole ; moteur/js/chronologie.js : reversionAgricole
   parametres: >-
-    contenu.parametres de chaque version ; data/reference/legislation/pension_majoree_reference.csv,
-    écrit par scripts/fetch/dila_legi_pension_majoree.py
+    contenu.parametres de chaque version : existe, duree_minimale, montant,
+    montant_reduit, seuil_chef, plafond, majorations_de_duree ;
+    legislation/pension_majoree_reference.csv
   tests: >-
     tests/test_minima_agricoles.py, dans les deux moteurs
+  moteur: >-
+    La série legislation/pension_majoree_reference.csv s'écrit par
+    scripts/fetch/dila_legi_pension_majoree.py.
 historique:
 - >-
   2026-10-07 — servie, à l'étape 138.8 : déclarée depuis le 19 septembre 2026 dans six

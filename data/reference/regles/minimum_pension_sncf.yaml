@@ -255,16 +255,21 @@ sources:
     url: https://cor-retraites.fr/sites/default/files/2024-07/Fiche_CPRPF%20%28SNCF%29.pdf
 code:
   python: >-
-    scenarios/actuel.py : FichesDatees, qui lit les versions de cette fiche, et
-    Reversions.minimum_pension_sncf, la série ; droit/liquider.py :
-    minimum_de_pension_ouvert, EligibleMinimumDePension ; droit/completer.py :
-    minimum_de_pension_sncf, completer
+    scenarios/actuel.py : FichesDatees, Reversions.minimum_pension_sncf ;
+    droit/liquider.py : minimum_de_pension_ouvert, EligibleMinimumDePension ;
+    droit/completer.py : minimum_de_pension_sncf, completer
   javascript: >-
     moteur/js/regimes.js : FichesDatees, Reversions ; moteur/js/droit/liquider.js :
     minimumDePensionOuvert ; moteur/js/droit/completer.js : minimumDePensionSncf,
     completer
-  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  parametres: >-
+    contenu.parametres de chaque version : existe, fiabilite, services_requis_mois,
+    taux_plein, seuil_des_services_abaisses_mois, services_abaisses_mois,
+    age_du_droit_ancien, droit_ancien_avant ; legislation/minimum_pension_sncf.csv
   tests: [tests/test_minimum_pension_sncf.py]
+  moteur: >-
+    FichesDatees lit les versions de cette fiche, Reversions.minimum_pension_sncf la
+    série. Le paquet du site porte ses versions.
 historique:
 - >-
   2026-10-19 — la fiche naît (action 138, étape 9) : le modèle ne portait pas le

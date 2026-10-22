@@ -878,22 +878,18 @@ sources:
     url: https://www.agirc-arrco.fr/wp-content/uploads/2021/10/2019-1-DRJ_Reglementation__applicable_aux_entreprises.pdf
 code:
   python: >-
-    scenarios/actuel.py : ValeursPoint.garantie, le forfait de la ligne ;
-    donnees/regimes.py : PeriodeRegime.points_garantis ; droit/acquerir.py : acquerir, le
-    plancher de points du scénario 1 ; moteur/compte.py : ConstructeurCompte._assiette_garantie
-    et _cotisation_ligne, la cotisation forfaitaire portée au compte
+    scenarios/actuel.py : ValeursPoint.garantie ; donnees/regimes.py :
+    PeriodeRegime.points_garantis ; droit/acquerir.py : acquerir ; moteur/compte.py :
+    ConstructeurCompte._assiette_garantie, ConstructeurCompte._cotisation_ligne
   javascript: >-
     moteur/js/regimes.js : ValeursPoint.garantie, pointsGarantis ;
     moteur/js/droit/acquerir.js : acquerir ;
     moteur/js/compte.js : _assietteGarantie, _cotisationLigne
   parametres: >-
-    le forfait annuel de la garantie, de 1989 à 2018, puis le salaire de référence et le
-    taux d'appel de l'Agirc (regimes/valeurs_point.csv : cotisation_garantie,
-    salaire_reference, taux_appel) ; le taux contractuel de la tranche B de la période,
-    rapporté au taux de 16 % de la garantie (ValeursPoint.TAUX_DE_LA_GARANTIE) ;
-    points_minimum_annuels des fiches agirc et agirc_entreprises_nouvelles, 144 jusqu'en
-    1996 et 120 ensuite pour un taux de 16 %, qui ne servent plus qu'à dire où vaut la
-    garantie et à tenir lieu d'un forfait non publié
+    contenu.parametres de chaque version : points_minimum_annuels, taux_de_la_garantie,
+    cotisation_garantie, prix_du_point ; regimes/valeurs_point.csv : agirc,
+    cotisation_garantie, salaire_reference, taux_appel ; regimes/agirc.yaml,
+    regimes/agirc_entreprises_nouvelles.yaml : points_minimum_annuels
   tests: >-
     tests/test_simulateur.py : test_la_garantie_minimale_de_points_agirc_est_servie, les
     tests de sa cotisation, de son prorata (l'exemple de temps partiel de LégiSocial
@@ -902,6 +898,15 @@ code:
     2018, des circulaires de l'Agirc de 2002 à 2006 comprises ; les exemples
     agirc_gmp_2004 à agirc_gmp_2008, agirc_arrco_gmp_2017, audiens_gmp_2018 et
     agirc_arrco_gmp_2018 (tests/test_oracle.py)
+  moteur: >-
+    ValeursPoint.garantie lit le forfait de la ligne : le forfait annuel de la garantie,
+    de 1989 à 2018, puis le salaire de référence et le taux d'appel de l'Agirc ; le taux
+    contractuel de la tranche B de la période s'y rapporte au taux de 16 % de la
+    garantie (ValeursPoint.TAUX_DE_LA_GARANTIE). acquerir en tire le plancher de points
+    du scénario 1, ConstructeurCompte la cotisation forfaitaire portée au compte. Les
+    points_minimum_annuels des fiches agirc et agirc_entreprises_nouvelles, 144 jusqu'en
+    1996 et 120 ensuite pour un taux de 16 %, ne servent plus qu'à dire où vaut la
+    garantie et à tenir lieu d'un forfait non publié.
 reformes: [gmp_agirc_1989, gmp_agirc_1997]
 historique:
 - >-

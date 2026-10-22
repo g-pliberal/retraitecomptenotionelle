@@ -147,14 +147,18 @@ sources:
     date: 2025-08-06
 code:
   python: >-
-    scenarios/actuel.py : Reversions, qui lit les versions de cette fiche ;
-    droit/reversion.py : reversion, _mariage_ieg, _part_du_survivant, _admis_ailleurs,
-    _jusqu_au_remariage
+    scenarios/actuel.py : Reversions ; droit/reversion.py : reversion, _mariage_ieg,
+    _part_du_survivant, _admis_ailleurs, _jusqu_au_remariage
   javascript: >-
     moteur/js/regimes.js : Reversions ; moteur/js/droit/reversion.js : reversion,
     mariageIeg, partDuSurvivant, admisAilleurs, jusquAuRemariage
-  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  parametres: >-
+    contenu.parametres de chaque version : taux, ex_conjoints, beneficiaire,
+    mariage_minimum_annees, majoration_reversible, age_minimum, fiabilite,
+    perte_au_remariage
   tests: [tests/test_reversion.py]
+  moteur: >-
+    Reversions lit les versions de cette fiche. Le paquet du site porte ses versions.
 historique:
 - >-
   2026-10-05 — la fiche naît (action 89) : les IEG n'avaient pas de réversion, et leur

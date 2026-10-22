@@ -351,12 +351,17 @@ textes_sans_effet:
 - {id: LEGIARTI000045136636, en_vigueur: 2022-02-09, motif: renvoi d'alinéa}
 code:
   python: >-
-    scenarios/actuel.py : MajorationsPourEnfants, qui lit les versions de cette fiche
-    ; droit/compter.py : majoration_pour_enfants
+    scenarios/actuel.py : MajorationsPourEnfants ; droit/compter.py :
+    majoration_pour_enfants
   javascript: >-
     moteur/js/regimes.js : MajorationsPourEnfants ; moteur/js/droit/compter.js : majorationPourEnfants
-  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  parametres: >-
+    contenu.parametres de chaque version : trimestres_par_enfant, services_par_enfant,
+    beneficiaire, fiabilite, enfants_minimum, age_minimum, par_annee_d_education
   tests: [tests/test_priorite_enfants.py, tests/test_scenarios_meres.py]
+  moteur: >-
+    MajorationsPourEnfants lit les versions de cette fiche. Le paquet du site porte ses
+    versions.
 referents:
   openfisca_france_pension:
     equivalent: variable nombre_enfants (un nombre, sans dates)

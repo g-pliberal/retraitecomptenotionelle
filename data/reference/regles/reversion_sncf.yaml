@@ -307,15 +307,20 @@ sources:
     url: https://www.cprpf.fr/retraites/veuvage-et-reversion/la-pension-de-reversion-regime-special/
 code:
   python: >-
-    scenarios/actuel.py : Reversions, qui lit les versions de cette fiche ;
-    droit/reversion.py : reversion, _mariage_sncf, _sans_jouissance_au_deces,
-    _part_du_survivant, _admis_ailleurs, _minimum_de_pension
+    scenarios/actuel.py : Reversions ; droit/reversion.py : reversion, _mariage_sncf,
+    _sans_jouissance_au_deces, _part_du_survivant, _admis_ailleurs, _minimum_de_pension
   javascript: >-
     moteur/js/regimes.js : Reversions ; moteur/js/droit/reversion.js : reversion,
     mariageSncf, sansJouissanceAuDeces, partDuSurvivant, admisAilleurs,
     minimumDePension
-  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  parametres: >-
+    contenu.parametres de chaque version : taux, ex_conjoints, beneficiaire,
+    mariage_cessation_minimum_annees, mariage_minimum_annees,
+    mariage_minimum_annees_avec_enfant, majoration_reversible, sans_jouissance_au_deces,
+    age_minimum, part_du_minimum_de_pension, fiabilite
   tests: [tests/test_reversion.py, tests/test_web.py, tests/test_minimum_pension_sncf.py]
+  moteur: >-
+    Reversions lit les versions de cette fiche. Le paquet du site porte ses versions.
 historique:
 - >-
   2026-10-18 — la fiche naît (action 138, étape 9) : la SNCF n'avait pas de

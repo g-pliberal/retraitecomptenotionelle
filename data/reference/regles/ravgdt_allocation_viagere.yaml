@@ -297,15 +297,19 @@ sources:
 reformes: [ravgdt_1963, ravgdt_1990]
 code:
   python: >-
-    données : regimes/gerants_debits_tabac.yaml, deux périodes en points (1963-1989,
-    1990 et après), 2 % du revenu saisi, déplafonné, statut gerant_debit_tabac ;
-    droit/acquerir.py : acquerir, qui convertit la cotisation par le rendement, faute de
-    barème du point dans valeurs_point.csv ; droit/liquider.py : liquider_chaque_regime
+    droit/acquerir.py : acquerir ; droit/liquider.py : liquider_chaque_regime
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir ; moteur/js/droit/liquider.js :
     liquiderChaqueRegime
-  parametres: regimes/rendements_points.csv (gerants_debits_tabac, 1963-2100, 0,49)
+  parametres: >-
+    regimes/gerants_debits_tabac.yaml : assiette, taux_cotisation_retraite, type_calcul
+    ; regimes/rendements_points.csv : gerants_debits_tabac
   tests: tests/temoins/simulations.json, les carrières du statut gerant_debit_tabac
+  moteur: >-
+    Ses données : regimes/gerants_debits_tabac.yaml, deux périodes en points (1963-1989,
+    1990 et après), 2 % du revenu saisi, déplafonné, statut gerant_debit_tabac ;
+    acquerir convertit la cotisation par le rendement (regimes/rendements_points.csv, de
+    1963 à 2100, 0,49), faute de barème du point dans valeurs_point.csv.
 historique:
 - >-
   2026-10-13 — écrite à l'étape 2 de l'action 145 : le régime n'avait que la fiche

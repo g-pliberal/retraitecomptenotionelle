@@ -1517,20 +1517,16 @@ textes_a_rattacher:
 code:
   python: >-
     droit/reversion.py : reversion, _a_l_age, _mariage_dure, _groupes_du_minimum,
-    _part_du_minimum,
-    _ressources_du_plafond, _majorer_les_petites_retraites, mois_de_mariage,
-    _part_du_survivant, _remarie_avant, _admis_au_regime_general, _admis_ailleurs,
-    _fin_au_remariage, _jusqu_au_remariage, _premiere_date_d_effet,
+    _part_du_minimum, _ressources_du_plafond, _majorer_les_petites_retraites,
+    mois_de_mariage, _part_du_survivant, _remarie_avant, _admis_au_regime_general,
+    _admis_ailleurs, _fin_au_remariage, _jusqu_au_remariage, _premiere_date_d_effet,
     _date_d_effet_du_regime_general, _cumuler, _retraites_au, _cumul_a_la_retraite,
-    _majorations_ulterieures ;
-    scenarios/actuel.py : Reversions ;
-    echeancier.py : Echeancier._reverser, Echeancier._pensions_au_deces,
+    _majorations_ulterieures ; scenarios/actuel.py : Reversions ; echeancier.py :
+    Echeancier._reverser, Echeancier._pensions_au_deces,
     Echeancier._pensions_eues_au_deces ; carriere.py : Carriere.arretee_au_deces,
     Carriere.ex_conjoints ; chronologie.py : ex_conjoints, debut_du_menage ;
-    droit/completer.py : completer, la part du minimum contributif de chaque pension ;
-    droit/liquider.py : maximum_des_pensions, et ce que la pension ramenée au maximum
-    porte pour la réversion (PensionRegime.ecretement_du_maximum, surcote,
-    coefficient_du_maximum)
+    droit/completer.py : completer ; droit/liquider.py : maximum_des_pensions ;
+    droit/commun.py : PensionRegime
   javascript: >-
     moteur/js/droit/reversion.js : reversion, aLAge, mariageDure, groupesDuMinimum,
     partDuMinimum,
@@ -1546,21 +1542,26 @@ code:
     maximumDesPensions
   parametres: >-
     contenu.parametres de chaque version : taux, age_minimum, mariage_minimum_annees,
-    ressources, plafond_smic_heures, facteur_menage, abattement_activite,
+    ex_conjoints, ressources, plafond_smic_heures, facteur_menage, abattement_activite,
     abattement_activite_age, minimum_trimestres, minimum_proratise,
-    minimum_tous_regimes, majoration_enfants_taux, majoration_enfants_minimum,
-    majoration_taux, age_inaptitude, cumul, cumul_taux, majorations_forfaitaires,
-    droits_d_avant_1973, minimum_avec_les_droits_d_avant_1973 ; le
-    SMIC horaire du 1er janvier, dans les séries macro ; le minimum, le plafond de la
-    majoration et la limite forfaitaire de cumul, dans
-    legislation/minimum_reversion.csv, legislation/plafond_majoration_reversion.csv et
-    legislation/limite_cumul_reversion.csv ; l'âge du taux plein du survivant,
-    dans legislation/age_annulation_decote.csv ; le maximum des pensions, dans les
-    versions de la fiche pension_maximale_regime_general et le plafond de la Sécurité
-    sociale
+    minimum_tous_regimes, majoration_taux, majoration_enfants_taux,
+    majoration_enfants_minimum, age_inaptitude, cumul, cumul_taux, droits_d_avant_1973,
+    minimum_avec_les_droits_d_avant_1973, majorations_forfaitaires, fiabilite ;
+    macro/smic_horaire.csv ; legislation/minimum_reversion.csv,
+    legislation/plafond_majoration_reversion.csv, legislation/limite_cumul_reversion.csv
+    ; legislation/age_annulation_decote.csv ; macro/plafond_securite_sociale.csv
   tests: >-
     tests/test_reversion.py ; les témoins reversion_* des simulations, dans les deux
     moteurs
+  moteur: >-
+    completer y prend la part du minimum contributif de chaque pension ; la pension
+    ramenée au maximum (maximum_des_pensions) porte pour la réversion son écrêtement, sa
+    surcote et son coefficient (PensionRegime.ecretement_du_maximum, surcote,
+    coefficient_du_maximum). Le plafond de ressources compte le SMIC horaire du 1er
+    janvier ; le minimum, le plafond de la majoration et la limite forfaitaire de cumul
+    ont chacun sa série ; l'âge du taux plein du survivant est celui de l'annulation de
+    la décote ; le maximum des pensions se lit dans les versions de la fiche
+    pension_maximale_regime_general et le plafond de la Sécurité sociale.
 referents:
   destinie_2: >-
     confrontée le 5 octobre 2026, Destinie exécuté à part (tests/test_destinie.py) : le

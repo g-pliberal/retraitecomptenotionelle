@@ -186,15 +186,19 @@ sources:
 reformes: [conjoints_commercants_1973, conjoints_commercants_1998, conjoints_commercants_1999]
 code:
   python: >-
-    données : regimes/organic_conjoints_batiment.yaml, des périodes de 1973 à 2003 sur
-    deux assiettes (plafonnee_033_pass, tranche_033_1_pass), routées par les statuts
-    commercant, gerant_debit_tabac et micro_entrepreneur ; droit/acquerir.py :
-    acquerir, qui convertit la cotisation au rendement nul
+    droit/acquerir.py : acquerir
   javascript: "moteur/js/droit/acquerir.js : acquerir"
   parametres: >-
-    regimes/rendements_points.csv (organic_conjoints_batiment, 1973-2100, 0) ;
-    legislation/affiliations.yaml
+    regimes/organic_conjoints_batiment.yaml : assiette, taux_cotisation_retraite,
+    type_calcul ; regimes/rendements_points.csv : organic_conjoints_batiment ;
+    legislation/affiliations.yaml : affiliations.commercant,
+    affiliations.gerant_debit_tabac, affiliations.micro_entrepreneur
   tests: tests/temoins/simulations.json, les carrières du statut commercant
+  moteur: >-
+    Ses données : regimes/organic_conjoints_batiment.yaml, des périodes de 1973 à 2003
+    sur deux assiettes (plafonnee_033_pass, tranche_033_1_pass), routées par les statuts
+    commercant, gerant_debit_tabac et micro_entrepreneur ; acquerir convertit la
+    cotisation au rendement nul (regimes/rendements_points.csv, de 1973 à 2100, 0).
 historique:
 - >-
   2026-10-13 — écrite à l'étape 2 de l'action 145 : le régime n'avait que la fiche

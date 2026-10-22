@@ -310,18 +310,21 @@ textes_sans_effet:
    motif: "le contrôle trimestriel des droits des invalides, sans effet sur la pension substituée"}
 code:
   python: >-
-    droit/invalidite.py : substitution ; droit/departs.py : departs_et_demandes, la
-    date de l'unité du régime général ; scenarios/actuel.py : Invalidites
+    droit/invalidite.py : substitution ; droit/departs.py : departs_et_demandes ;
+    scenarios/actuel.py : Invalidites
   javascript: >-
     moteur/js/droit/invalidite.js : substitution ; moteur/js/droit/departs.js :
     departsEtDemandes ; moteur/js/regimes.js : Invalidites
   parametres: >-
-    contenu.parametres de chaque version : age, invalide_qui_travaille,
-    maintien_au_plus_tard, maintien_du_demandeur_d_emploi_mois ; plancher et
-    plancher_invalidite_avant, non lus (voir les approximations)
+    contenu.parametres de chaque version : age, plancher, invalide_qui_travaille,
+    plancher_invalidite_avant, maintien_au_plus_tard,
+    maintien_du_demandeur_d_emploi_mois
   tests: >-
     tests/test_invalidite.py ; les témoins invalidite_* des simulations, et la page
     simuler_invalidite_substituee, dans les deux moteurs
+  moteur: >-
+    departs_et_demandes donne la date de l'unité du régime général. plancher et
+    plancher_invalidite_avant ne sont pas lus (voir les approximations).
 historique:
 - >-
   2026-09-30 — née avec le quatrième domaine, l'invalidité et l'inaptitude, ouvert à la

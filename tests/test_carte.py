@@ -160,7 +160,7 @@ def test_le_code_d_une_fiche_se_confronte_au_depot():
                                     "legislation/micro_social.yaml : abattements.vente ; "
                                     "legislation/age_annulation_decote.csv : generation ; "
                                     "legislation/minimum_contributif.csv : plafond_ecretement ; "
-                                    "regimes/valeurs_point.csv : agirc",
+                                    "regimes/valeurs_point.csv : agirc, salaire_reference",
                       "tests": ["tests/test_reversion.py"]}}
     assert ecarts(fiche) == []
     fiche["code"]["parametres"] = ("regimes/agirc_arrco.yaml : abattement_points ; "
@@ -203,25 +203,19 @@ EN_PROSE = frozenset("""
     decote_regimes_speciaux depart_anticipe_parents_trois_enfants
     deputes_pension_des_anciens_deputes duree_requise_par_generation enfants_crpcen
     fin_indemnisation_chomage financement_chomage_complementaire
-    garantie_minimale_points_agirc indemnite_de_feu_sapeurs_pompiers
-    indemnite_sujetions_speciales_police ircantec_majoration_enfants
-    ircantec_valeurs_point liquidation_regime_par_regime
+    indemnite_de_feu_sapeurs_pompiers indemnite_sujetions_speciales_police
+    ircantec_majoration_enfants ircantec_valeurs_point liquidation_regime_par_regime
     majoration_conjoint_a_charge majoration_duree_apres_65_ans
-    majoration_duree_assurance_enfants majoration_duree_hospitaliers_actifs
-    majoration_enfants_a_charge_agirc_arrco
+    majoration_duree_hospitaliers_actifs majoration_enfants_a_charge_agirc_arrco
     majoration_enfants_plafond_fonction_publique majorations_forfaitaires_1972_1982
     mayotte_pension_de_base micro_social_abattement minimum_contributif
-    minimum_contributif_international minimum_pension_sncf minoration_ircec
-    minoration_racl_2014_2024 organic_conjoints_de_commercants
-    pension_d_invalidite_substituee pension_majoree_reference
+    minimum_contributif_international minoration_ircec minoration_racl_2014_2024
     pension_non_salaries_agricoles_2026 pension_proratisee
     points_au_prorata_des_cotisations points_avant_1973_independants
-    points_invalidite_independants prime_speciale_sujetion_aides_soignants
-    raap_classe_speciale rafp_age_d_ouverture ravgdt_allocation_viagere
-    rci_seuil_premiere_tranche relevement_des_exploitants_2023
+    prime_speciale_sujetion_aides_soignants raap_classe_speciale
+    rafp_age_d_ouverture rci_seuil_premiere_tranche relevement_des_exploitants_2023
     retraite_pour_invalidite_fonction_publique retraite_progressive
-    retraite_proportionnelle_msa revenu_annuel_moyen_independants reversion
-    reversion_crpcen reversion_ieg reversion_rafp reversion_sncf
+    retraite_proportionnelle_msa revenu_annuel_moyen_independants reversion_rafp
     saint_pierre_et_miquelon_pension_de_base salaire_annuel_moyen seconde_pension
     services_passes_outre_mer surcote_fonction_publique surcote_ircantec
     surcote_par_age_seul surcote_regime_general surcote_regimes_speciaux
