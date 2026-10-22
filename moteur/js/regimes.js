@@ -2040,8 +2040,6 @@ export class CarriereLongue {
    * qu'un accord fait compter hors de France, comptent ici comme en France.
    */
   entreePrecoce(carriere, anneeLiquidation, ageMax, trimestresDebut, etrangers = null) {
-    const requis = carriere.mois_naissance >= CarriereLongue.MOIS_DERNIER_TRIMESTRE
-      ? trimestresDebut - 1 : trimestresDebut;
     // Quatre trimestres au plus par année civile, activités cumulées comprises.
     // Cotisée ou assimilée, toute ligne qui valide des trimestres compte.
     const parAnnee = new Map();
@@ -2061,12 +2059,24 @@ export class CarriereLongue {
     for (const trimestres of parAnnee.values()) {
       acquis += Math.min(4, trimestres);
     }
-    return acquis >= requis;
+    if (acquis >= trimestresDebut) return true;
+    if (carriere.mois_naissance < CarriereLongue.MOIS_DERNIER_TRIMESTRE) return false;
+    if (carriere.dateLiquidation.rang < CarriereLongue.QUATRE_TRIMESTRES_A_LA_FIN_DE_L_ANNEE_DEPUIS) {
+      // Avant novembre 2012, dans l'année de l'anniversaire seule.
+      acquis = Math.min(4, parAnnee.get(carriere.annee_naissance + ageMax) ?? 0);
+    }
+    return acquis >= trimestresDebut - 1;
   }
 }
 
 /** Premier mois du dernier trimestre civil : un trimestre de moins est dû. */
 CarriereLongue.MOIS_DERNIER_TRIMESTRE = 10;
+/**
+ * Rang de novembre 2012 : dès les pensions de ce mois, ces quatre trimestres se
+ * comptent à la fin de l'année de l'anniversaire ; avant, dans cette année
+ * seule (D. 351-1-3, 2° ; décret n° 2012-847, article 14).
+ */
+CarriereLongue.QUATRE_TRIMESTRES_A_LA_FIN_DE_L_ANNEE_DEPUIS = new DateMois(2012, 11).rang;
 /** Rang du mois de septembre 2026 : premières pensions où les enfants comptent. */
 CarriereLongue.ENFANTS_REPUTES_COTISES_DEPUIS = 2026 * 12 + 8;
 CarriereLongue.ENFANTS_REPUTES_COTISES_MAXIMUM = 2;

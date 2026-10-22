@@ -2098,6 +2098,16 @@ class CarriereLongue:
     #: doit un trimestre de moins à la condition d'entrée précoce.
     MOIS_DERNIER_TRIMESTRE = 10
 
+    #: Ces quatre trimestres se comptent « à la fin de l'année » de
+    #: l'anniversaire pour les pensions prenant effet à compter du 1er novembre
+    #: 2012 (décret n° 2012-847, article 14 ; circulaire Cnav n° 2012-60,
+    #: points 211 et 5). Avant, ils devaient l'être « au titre de l'année au
+    #: cours de laquelle est survenu » cet anniversaire, dans cette seule année
+    #: (D. 351-1-3, 2°, LEGIARTI000006736523 et LEGIARTI000023397562 ; D. 16-3
+    #: du code des pensions, LEGIARTI000023383594 ; circulaire Cnav n° 2003-46,
+    #: point 113).
+    QUATRE_TRIMESTRES_A_LA_FIN_DE_L_ANNEE_DEPUIS = DateMois(2012, 11)
+
     #: Génération de la règle générale, celle qui vaut à défaut d'une ligne
     #: plus précise.
     GENERATION_GENERALE = 1900.0
@@ -2272,14 +2282,16 @@ class CarriereLongue:
         dernier trimestre de l'année civile** : né en novembre, on n'a pu
         travailler que deux mois de l'année de ses seize ans, et le texte en
         tient compte. Le modèle retenait cinq pour tout le monde tant qu'il ne
-        connaissait que l'année de naissance ; il lit le mois depuis.
+        connaissait que l'année de naissance ; il lit le mois depuis. Ces
+        quatre-là, le décret n° 2012-847 les compte à la fin de l'année de
+        l'anniversaire ; avant novembre 2012, ils devaient tenir dans cette
+        année même (:attr:`QUATRE_TRIMESTRES_A_LA_FIN_DE_L_ANNEE_DEPUIS`), et
+        le modèle ouvrait la porte à qui les avait répartis sur deux années.
 
         ``etrangers`` sont les trimestres qu'un accord fait compter hors de
         France, année par année : ils comptent ici comme en France (fiche
         ``totalisation_des_periodes_etrangeres``).
         """
-        if carriere.mois_naissance >= self.MOIS_DERNIER_TRIMESTRE:
-            trimestres_debut -= 1
         par_annee: dict[int, int] = {}
         for ligne in carriere.lignes:
             # Cotisée ou assimilée, toute ligne qui valide des trimestres :
@@ -2293,7 +2305,15 @@ class CarriereLongue:
             if annee <= carriere.annee_naissance + age_max and annee < annee_liquidation:
                 par_annee[annee] = par_annee.get(annee, 0) + trimestres
         acquis = somme_ordonnee(min(4, trimestres) for trimestres in par_annee.values())
-        return acquis >= trimestres_debut
+        if acquis >= trimestres_debut:
+            return True
+        if carriere.mois_naissance < self.MOIS_DERNIER_TRIMESTRE:
+            return False
+        if (carriere.date_liquidation.rang
+                < self.QUATRE_TRIMESTRES_A_LA_FIN_DE_L_ANNEE_DEPUIS.rang):
+            # Avant novembre 2012, dans l'année de l'anniversaire seule.
+            acquis = min(4, par_annee.get(carriere.annee_naissance + age_max, 0))
+        return acquis >= trimestres_debut - 1
 
     def cotises_reputes(self, carriere: Carriere, trimestres_cotises: int,
                         trimestres_enfants: int) -> int:

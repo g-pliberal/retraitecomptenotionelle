@@ -1,0 +1,37 @@
+date: "2026-10-22"
+session: >-
+  veille hors action, à la demande du propriétaire : les deux points que la vérification
+  du 21 octobre 2026 laissait ouverts, l'identifiant JORF du décret n° 2024-1282 et l'état
+  de la fiche carriere_longue, conforme quand elle déclarait approchée la règle d'avant
+  novembre 2012
+consulte: >-
+  L'index JORF du dépôt, récupéré de la release et mis à jour jusqu'à l'incrément
+  20261022-010121 : le décret n° 2024-1282 et sa notice. L'index LEGI : le 2° de
+  D. 351-1-3 dans ses rédactions de 2003, de 2011 et de 2012 ; D. 16-3 du code des
+  pensions, rédaction du 1er janvier 2011 ; l'article 3 bis du décret n° 73-937, rédaction
+  du 1er juillet 2011 ; et les autres textes qui portaient la règle ancienne (« quatre
+  trimestres au titre de l'année ») : article 57 de la loi n° 2004-1370, règlements de la
+  RATP, des industries électriques et gazières, de l'Opéra, de la Comédie-Française, de
+  la Banque de France et de la CRPCEN, décret n° 89-110 pour Saint-Pierre-et-Miquelon. La
+  circulaire Cnav n° 2012-60 (points 211 et 5), par l'API de la base ; la n° 2003-46, sans
+  exemple chiffré. Le vocabulaire des états de fiche (data/reference/vocabulaire/valeurs.yaml).
+trouve: >-
+  JORFTEXT000050935436 est bien le décret n° 2024-1282 du 31 décembre 2024, publié le
+  1er janvier 2025, et sa notice dit ce que cite la fiche rachats_et_versements. Une fiche
+  conforme est « lue dans son texte et dans son application », une fiche approchée
+  « appliquée avec une approximation déclarée » : carriere_longue aurait dû être approchée
+  tant qu'elle déclarait la règle d'avant novembre 2012. Cette règle — les quatre
+  trimestres du né au dernier trimestre dans l'année même de son anniversaire, et non
+  avant sa fin — vaut jusqu'aux pensions prenant effet le 31 octobre 2012 au régime
+  général, chez les artisans et les commerçants et dans la fonction publique, les seuls
+  régimes auxquels le modèle ouvre la carrière longue ; les régimes spéciaux qui la
+  gardaient jusqu'en 2014 ou en 2017 n'y entrent pas. Elle est portée dans les deux
+  moteurs (CarriereLongue._entree_precoce, entreePrecoce), le test d'abord vu rouge, et la
+  fiche reste conforme à bon droit. Aucun témoin ne bouge, ni le paquet, ni l'accueil, ni
+  le chiffrage (regenerer.py --verifier). Deux autres fiches conformes déclarent une
+  approximation : majoration_enfants_agirc_arrco et minimum_garanti.
+reste: >-
+  Lire comment le RSI appliquait le 2° de l'article 3 bis du décret n° 73-937, qui ne
+  nomme pas le dix-huitième anniversaire, de juillet 2011 à octobre 2012 (fiche
+  carriere_longue). Revoir l'état de majoration_enfants_agirc_arrco et de minimum_garanti
+  sous la définition des états de fiche.

@@ -471,9 +471,9 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   Cnav depuis sa première circulaire (n° 2003-46, point 113 ; n° 2026-29,
   point 1.1.4) : il n'y comptait que les trimestres cotisés, et fermait la porte
   à qui avait fait son service national avant la fin de l'année de ses vingt
-  ans. Seule la règle d'avant le 1er novembre 2012 reste approchée : qui était
-  né au dernier trimestre devait réunir ses quatre trimestres dans l'année même
-  de son anniversaire, et le modèle les compte jusqu'à la fin de cette année
+  ans. Depuis le 22 octobre 2026, il lit aussi la règle d'avant le 1er novembre
+  2012 : qui était né au dernier trimestre devait réunir ses quatre trimestres
+  dans l'année même de son anniversaire, et non avant la fin de cette année
   (fiche `carriere_longue`).
 - **Le service civique et les volontariats.** Le modèle ne connaît ni
   l'engagement de service civique, ni le volontariat associatif, ni le

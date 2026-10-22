@@ -7807,6 +7807,44 @@ def test_le_debut_d_activite_compte_les_periodes_assimilees(simulateur):
     ]) == ["carriere_longue", "non_ouverte"]
 
 
+def test_avant_novembre_2012_le_ne_au_dernier_trimestre_reunit_ses_quatre_trimestres_dans_l_annee(
+        simulateur):
+    """Jusqu'aux pensions prenant effet le 1er novembre 2012, l'assuré né au
+    dernier trimestre qui n'avait pas cinq trimestres à la fin de l'année de
+    ses seize ans devait en justifier quatre « au titre de l'année au cours de
+    laquelle est survenu » cet anniversaire (D. 351-1-3, 2°, rédactions de 2003
+    et de 2011) : « 4 trimestres dans l'année civile du 16ème anniversaire »
+    (circulaire Cnav n° 2003-46, point 113). Le décret n° 2012-847 les compte
+    « à la fin de l'année » pour les pensions prenant effet à compter du
+    1er novembre 2012 (circulaire n° 2012-60, points 211 et 5) ; le modèle
+    lisait cette règle-là à toute date. Deux assurés nés en novembre 1949
+    partent à cinquante-huit ans, en 2007, par la porte des seize ans : l'un a
+    travaillé toute l'année 1964 et rien en 1965, l'année de ses seize ans ;
+    l'autre est entré en janvier 1965. Chacun a quatre trimestres à la fin de
+    1965, mais le second seul les a dans l'année : la porte ne s'ouvre qu'à
+    lui. Le premier n'a que celle des dix-sept ans, à cinquante-neuf ans. Dans
+    les deux moteurs."""
+    from retraite_notionnelle import chronologie
+    from retraite_notionnelle.calendrier import DateMois
+
+    def construite(age_debut, interruptions):
+        return chronologie.completer(chronologie.du_parcours(
+            annee_naissance=1949, sexe="H", mois_naissance=11, age_liquidation=58.0,
+            metiers=[Metier("salarie_prive_non_cadre", age_debut, 1.0)],
+            interruptions=interruptions))
+
+    des_1964 = construite(14 + 2 / 12, {1965: "inactivite"})
+    en_1965 = construite(15 + 2 / 12, {})
+    for parcours, attendus in ((des_1964, {1964: 4, 1965: 0}), (en_1965, {1964: 0, 1965: 4})):
+        carriere = Carriere.depuis_chronologie(parcours, simulateur.macro)
+        assert carriere.date_liquidation.rang < DateMois(2012, 11).rang
+        assert {annee: sum(l.trimestres_valides for l in carriere.lignes if l.annee == annee)
+                for annee in attendus} == attendus
+
+    assert _motifs_d_ouverture_en_deux_moteurs(simulateur, [des_1964, en_1965]) == [
+        "non_ouverte", "carriere_longue"]
+
+
 # --- Les périodes que le droit RÉPUTE cotisées (D. 351-1-2) ----------------
 
 def _carriere_hachee(simulateur, interruptions: dict[int, str],
