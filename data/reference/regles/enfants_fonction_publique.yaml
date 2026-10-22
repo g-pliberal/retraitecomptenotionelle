@@ -316,13 +316,18 @@ textes_sans_effet:
 - {id: LEGIARTI000047452833, article: L. 12, en_vigueur: 2023-09-01, motif: b inchangé}
 code:
   python: >-
-    scenarios/actuel.py : MajorationsPourEnfants, qui lit les versions de cette fiche
-    ; droit/compter.py : majoration_pour_enfants, bonification_ouverte
+    scenarios/actuel.py : MajorationsPourEnfants ; droit/compter.py :
+    majoration_pour_enfants, bonification_ouverte
   javascript: >-
     moteur/js/regimes.js : MajorationsPourEnfants ; moteur/js/droit/compter.js : majorationPourEnfants,
     bonificationOuverte
-  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  parametres: >-
+    contenu.parametres de chaque version : trimestres_par_enfant, services_par_enfant,
+    beneficiaire, condition, fiabilite
   tests: [tests/test_priorite_enfants.py, tests/test_scenarios_meres.py]
+  moteur: >-
+    MajorationsPourEnfants lit les versions de cette fiche. Le paquet du site porte ses
+    versions.
 referents:
   openfisca_france_pension:
     equivalent: >-

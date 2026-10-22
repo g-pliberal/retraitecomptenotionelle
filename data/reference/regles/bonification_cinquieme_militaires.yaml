@@ -449,16 +449,24 @@ textes_a_rattacher:
 code:
   python: >-
     scenarios/actuel.py : FichesDatees ; droit/compter.py : trimestres_des_emplois,
-    trimestres_d_un_emploi, condition_d_un_emploi, services_au_dela ;
-    carriere.py : Carriere.duree_de_service_avant ; droit/liquider.py :
-    liquider_chaque_regime, qui l'ajoute aux services au-delà du maximum ;
-    avantages.py : la neutralisation bonification_cinquieme_militaires
+    trimestres_d_un_emploi, condition_d_un_emploi, services_au_dela ; carriere.py :
+    Carriere.duree_de_service_avant ; droit/liquider.py : liquider_chaque_regime ;
+    avantages.py : NEUTRALISATIONS, FICHES_RETIREES
   javascript: >-
     moteur/js/regimes.js : FichesDatees ; moteur/js/droit/compter.js :
     trimestresDesEmplois, trimestresDUnEmploi, conditionDUnEmploi, servicesAuDela ;
-    moteur/js/carriere.js : dureeDeServiceAvant
-  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+    moteur/js/carriere.js : dureeDeServiceAvant ; moteur/js/droit/liquider.js :
+    liquiderChaqueRegime
+  parametres: >-
+    contenu.parametres de chaque version : existe, nature, statuts, regime,
+    services_comptes, fraction, plafond_trimestres, condition, annees_dans_l_emploi,
+    en_fonction, age_de_reduction, reduction_par_annee_entiere, age_de_suppression,
+    au_dela_du_maximum, cumul_maximum_trimestres, fiabilite
   tests: [tests/test_bonifications_emplois.py, tests/test_oracle.py]
+  moteur: >-
+    liquider_chaque_regime ajoute la bonification aux services au-delà du maximum ; le
+    coût la neutralise (NEUTRALISATIONS, FICHES_RETIREES), sans jumeau. Le paquet du
+    site porte ses versions.
 referents:
   trajectoire:
     equivalent: >-

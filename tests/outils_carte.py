@@ -14,10 +14,10 @@ lit, et qu'il confronte à ce que le dépôt porte :
   versions portent et rien d'autre, clause qu'exige toute fiche dont les
   versions en portent ; « regimes/x.yaml, regimes/y.yaml : », des champs que
   portent les périodes de ces fiches de régime, qu'elle concerne ; un ou
-  plusieurs fichiers des données de référence, « legislation/x.yaml » ou
-  « macro/y.csv », et, s'il le faut, des clés, pointées, des colonnes ou
-  des mesures de première colonne qu'ils portent —, ou « aucun : » et la
-  raison, seule ;
+  plusieurs fichiers des données de référence, « legislation/x.yaml »,
+  « macro/y.csv » ou « regimes/z.csv », hors des fiches, et, s'il le faut,
+  des clés, pointées, des colonnes ou des mesures de première colonne qu'ils
+  portent —, ou « aucun : » et la raison, seule ;
 - ``tests`` : les fichiers qui la tiennent, en liste, ou nommés dans une
   phrase.
 
@@ -152,7 +152,8 @@ def _ecarts_des_donnees(nom: str, chemins: list[str], nommes: set[str]) -> list[
     sortie, portes = [], set()
     for relatif in chemins:
         chemin = RACINE_DONNEES / "reference" / relatif
-        if relatif.startswith(("regimes/", "regles/")) or not chemin.is_file():
+        fiche = relatif.startswith("regles/") or re.fullmatch(r"regimes/\w+\.yaml", relatif)
+        if fiche or not chemin.is_file():
             sortie.append(f"{nom}, parametres : {relatif} n'existe pas, ou n'est pas une donnée")
             continue
         texte = chemin.read_text(encoding="utf-8")

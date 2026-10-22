@@ -253,21 +253,24 @@ sources:
     date: 2026-10-13
 code:
   python: >-
-    données : regimes/igrante.yaml, une période de 1960 à 1970 sur la tranche 1, au taux
-    effectif de 2,1 %, routée par le statut contractuel_public ; droit/acquerir.py :
-    acquerir ; droit/liquider.py : valeur_du_point, qui sert les points IGRANTE à la
-    valeur de l'Ircantec jusqu'en 2026, puis les convertit un pour un ;
+    droit/acquerir.py : acquerir ; droit/liquider.py : valeur_du_point ;
     scenarios/actuel.py : ConversionsPoints
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir ; moteur/js/droit/liquider.js :
     valeurDuPoint ; moteur/js/regimes.js : ConversionsPoints
   parametres: >-
-    regimes/valeurs_point.csv (igrante : salaires de référence de 1947 à 1970, taux
-    d'appel estimé, valeur de service jusqu'en 2026) ; regimes/conversions_points.csv
-    (igrante -> ircantec, 1971, coefficient 1)
+    regimes/igrante.yaml : assiette, taux_cotisation_retraite ;
+    regimes/valeurs_point.csv : igrante ; regimes/conversions_points.csv : igrante
   tests: >-
     tests/test_donnees.py : test_les_precurseurs_de_l_ircantec_ne_se_recouvrent_pas ;
     tests/test_simulateur.py : test_un_regime_ferme_ne_vaut_jamais_plus_que_son_successeur
+  moteur: >-
+    Ses données : regimes/igrante.yaml, une période de 1960 à 1970 sur la tranche 1, au
+    taux effectif de 2,1 %, routée par le statut contractuel_public. valeur_du_point
+    sert les points IGRANTE à la valeur de l'Ircantec jusqu'en 2026, puis les convertit
+    un pour un (regimes/conversions_points.csv, 1971, coefficient 1) ;
+    regimes/valeurs_point.csv porte ses salaires de référence de 1947 à 1970, le taux
+    d'appel estimé et la valeur de service jusqu'en 2026.
 historique:
 - >-
   2026-10-13 — écrite à l'étape 2 de l'action 145 : l'IGRANTE n'avait que la fiche

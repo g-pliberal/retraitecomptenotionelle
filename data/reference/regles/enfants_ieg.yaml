@@ -224,14 +224,19 @@ sources:
     url: https://www.cor-retraites.fr/sites/default/files/2023-10/Doc_02_Droits_familiaux_0.pdf
 code:
   python: >-
-    scenarios/actuel.py : MajorationsPourEnfants, qui lit les versions de cette fiche,
-    le rang de l'enfant et la taille de la fratrie ; droit/compter.py :
+    scenarios/actuel.py : MajorationsPourEnfants ; droit/compter.py :
     majoration_pour_enfants, bonification_ouverte
   javascript: >-
     moteur/js/regimes.js : MajorationsPourEnfants ; moteur/js/droit/compter.js : majorationPourEnfants,
     bonificationOuverte
-  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  parametres: >-
+    contenu.parametres de chaque version : trimestres_par_enfant, services_par_enfant,
+    trimestres_second_de_deux, services_second_de_deux, beneficiaire, condition,
+    fiabilite, trimestres_premier_enfant
   tests: [tests/test_priorite_enfants.py]
+  moteur: >-
+    MajorationsPourEnfants lit les versions de cette fiche, le rang de l'enfant et la
+    taille de la fratrie. Le paquet du site porte ses versions.
 historique:
 - >-
   2026-10-05 — la fiche naît (action 89) : les IEG recevaient les conditions de la

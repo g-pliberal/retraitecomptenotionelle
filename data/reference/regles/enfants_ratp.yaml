@@ -173,14 +173,18 @@ sources:
     relire avec la caisse.
 code:
   python: >-
-    scenarios/actuel.py : MajorationsPourEnfants, qui lit les versions de cette fiche
-    et le rang de l'enfant ; droit/compter.py : majoration_pour_enfants,
-    bonification_ouverte
+    scenarios/actuel.py : MajorationsPourEnfants ; droit/compter.py :
+    majoration_pour_enfants, bonification_ouverte
   javascript: >-
     moteur/js/regimes.js : MajorationsPourEnfants ; moteur/js/droit/compter.js : majorationPourEnfants,
     bonificationOuverte
-  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  parametres: >-
+    contenu.parametres de chaque version : trimestres_par_enfant, services_par_enfant,
+    beneficiaire, condition, fiabilite, trimestres_premier_enfant
   tests: [tests/test_priorite_enfants.py]
+  moteur: >-
+    MajorationsPourEnfants lit les versions de cette fiche et le rang de l'enfant. Le
+    paquet du site porte ses versions.
 historique:
 - >-
   2026-10-05 — la fiche naît (action 89) : la RATP recevait les conditions de la

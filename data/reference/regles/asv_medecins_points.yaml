@@ -233,19 +233,25 @@ sources:
 reformes: [asv_1972, asv_trois_enfants_1981, asv_part_caisses_1993, asv_2012, asv_2017, carmf_temps_choisi_2017, asv_2026]
 code:
   python: >-
-    données : regimes/asv_conventionnes.yaml, vingt-deux périodes en points, statut
-    medecin_liberal, `points_par_trimestre_valide`, `points_ajustement_par_forfait`,
-    `points_ajustement_maximum`, `valeur_point_euros`, `part_assurance_maladie_forfait`
-    et `part_assurance_maladie_taux` ; droit/acquerir.py : acquerir ; moteur/compte.py :
-    la part des caisses au compte ;
-    droit/liquider.py : liquider_chaque_regime, valeur_point_fiche
+    droit/acquerir.py : acquerir ; moteur/compte.py :
+    ConstructeurCompte._cotisation_ligne ; donnees/regimes.py :
+    PeriodeRegime.prise_en_charge ; droit/liquider.py : liquider_chaque_regime,
+    valeur_point_fiche
   javascript: >-
-    moteur/js/droit/acquerir.js : acquerir ; moteur/js/droit/liquider.js :
-    liquiderChaqueRegime
+    moteur/js/droit/acquerir.js : acquerir ; moteur/js/compte.js :
+    ConstructeurCompte._cotisationLigne ; moteur/js/regimes.js :
+    PeriodeRegime.priseEnCharge ; moteur/js/droit/liquider.js : liquiderChaqueRegime,
+    valeurPointFiche
   parametres: >-
-    regimes/asv_conventionnes.yaml (cotisation_forfaitaire_euros,
-    points_par_trimestre_valide, taux_cotisation_retraite, valeur_point_euros)
+    regimes/asv_conventionnes.yaml : cotisation_forfaitaire_euros,
+    points_par_trimestre_valide, points_ajustement_par_forfait,
+    points_ajustement_maximum, taux_cotisation_retraite, valeur_point_euros,
+    part_assurance_maladie_forfait, part_assurance_maladie_taux
   tests: tests/temoins/simulations.json, les carrières du statut medecin_liberal
+  moteur: >-
+    Ses données : regimes/asv_conventionnes.yaml, vingt-deux périodes en points, statut
+    medecin_liberal ; la part des caisses va au compte par
+    ConstructeurCompte._cotisation_ligne.
 historique:
 - >-
   2026-10-13 — écrite à l'étape 2 de l'action 145 : l'ASV n'avait que la fiche générique

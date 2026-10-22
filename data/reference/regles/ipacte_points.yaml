@@ -313,22 +313,26 @@ textes_a_relire:
     (limite de l'assiette) : lequel ?
 code:
   python: >-
-    données : regimes/ipacte.yaml, une période de 1951 à 1970 sur la tranche B, au taux
-    effectif de 7,5 %, routée par le statut contractuel_public ; droit/acquerir.py :
-    acquerir, les points d'une année égaux à la cotisation divisée par le taux d'appel
-    et le salaire de référence ; droit/liquider.py : valeur_du_point, qui sert les
-    points IPACTE à la valeur de l'Ircantec, recopiée dans la série ipacte jusqu'en
-    2026, puis les convertit un pour un ; scenarios/actuel.py : ConversionsPoints
+    droit/acquerir.py : acquerir ; droit/liquider.py : valeur_du_point ;
+    scenarios/actuel.py : ConversionsPoints
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir ; moteur/js/droit/liquider.js :
     valeurDuPoint ; moteur/js/regimes.js : ConversionsPoints
   parametres: >-
-    regimes/valeurs_point.csv (ipacte : salaires de référence de 1947 à 1970, taux
-    d'appel estimé, valeur de service jusqu'en 2026) ; regimes/conversions_points.csv
-    (ipacte -> ircantec, 1971, coefficient 1)
+    regimes/ipacte.yaml : assiette, taux_cotisation_retraite ; regimes/valeurs_point.csv
+    : ipacte ; regimes/conversions_points.csv : ipacte
   tests: >-
     tests/test_donnees.py : test_les_precurseurs_de_l_ircantec_ne_se_recouvrent_pas ;
     tests/test_simulateur.py : test_un_regime_ferme_ne_vaut_jamais_plus_que_son_successeur
+  moteur: >-
+    Ses données : regimes/ipacte.yaml, une période de 1951 à 1970 sur la tranche B, au
+    taux effectif de 7,5 %, routée par le statut contractuel_public. acquerir compte les
+    points d'une année : la cotisation divisée par le taux d'appel et le salaire de
+    référence. valeur_du_point sert les points IPACTE à la valeur de l'Ircantec,
+    recopiée dans la série ipacte jusqu'en 2026, puis les convertit un pour un
+    (regimes/conversions_points.csv, 1971, coefficient 1) ; regimes/valeurs_point.csv
+    porte ses salaires de référence de 1947 à 1970, le taux d'appel estimé et la valeur
+    de service jusqu'en 2026.
 historique:
 - >-
   2026-10-13 — écrite à l'étape 2 de l'action 145 : l'IPACTE n'avait que la fiche

@@ -386,15 +386,21 @@ textes_a_rattacher:
 - reference: D. 732-166-1 à D. 732-166-6 code rural
 code:
   python: >-
-    scenarios/actuel.py : ComplementDifferentielRco (regle, smic_net) ;
-    droit/completer.py : complement_differentiel, completer
+    scenarios/actuel.py : ComplementDifferentielRco, ComplementDifferentielRco.regle,
+    ComplementDifferentielRco.table ; droit/completer.py : complement_differentiel,
+    completer
   javascript: >-
-    moteur/js/regimes.js : ComplementDifferentielRco ; moteur/js/droit/completer.js :
-    complementDifferentiel, completer
+    moteur/js/regimes.js : ComplementDifferentielRco, ComplementDifferentielRco.regle ;
+    moteur/js/droit/completer.js : complementDifferentiel, completer
   parametres: >-
-    contenu.parametres de chaque version ; data/reference/legislation/complement_differentiel_rco.csv
+    contenu.parametres de chaque version : existe, pourcentage, formule, condition,
+    seuil_chef, plafond_tous_regimes, pmr_au_mois, majorations_de_duree ;
+    legislation/complement_differentiel_rco.csv : smic_net_horaire
   tests: >-
     tests/test_minima_agricoles.py, dans les deux moteurs
+  moteur: >-
+    ComplementDifferentielRco lit la version de la date d'effet (regle) et le SMIC net
+    agricole horaire de chaque année (table).
 historique:
 - >-
   2026-10-16 — étape 138.8 : N, les seuls points de RCO acquis au titre des années de
