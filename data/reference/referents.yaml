@@ -3496,7 +3496,7 @@ referents:
           `src/CotisationsTRI.h`, au commit `4c1d34b`
         verification: >-
           Repris le 7 octobre 2026 (action 138, étape 9) :
-          `cycle_de_vie.py` calcule le rendement interne des six
+          `cycle-de-vie.js` calcule le rendement interne des six
           systèmes, réel et relatif au salaire moyen ; sous ses
           conventions, le COR en retrouve le cas type n° 2 à 0,3
           point près (tests/test_cycle_de_vie_references.py).
@@ -4674,7 +4674,7 @@ referents:
           Repris le 7 octobre 2026 (action 138, étape 9) : les taux
           de récupération, d'annuité et de remplacement sur le cycle
           de vie, la durée de retraite rapportée à la carrière et le
-          rendement interne (`cycle_de_vie.py`), sous ses conventions
+          rendement interne (`cycle-de-vie.js`), sous ses conventions
           — un âge de décès par génération — ou sous la survie de
           génération du dépôt. Sa durée relative se retrouve
           exactement sur ses cas types du COR ; son taux d'annuité, à
@@ -6384,7 +6384,7 @@ referents:
           Méthode ; c'est l'un des indicateurs du COR, et l'action
           143 en a besoin. Repris le 7 octobre 2026 (action 138, étape
           9) pour les cas types : la durée de retraite et sa part dans
-          la vie, génération par génération (`cycle_de_vie.py`) ; la
+          la vie, génération par génération (`cycle-de-vie.js`) ; la
           moyenne d'une population attend l'étape 14.
         etat: repris
         chantier: "138.9"
@@ -8555,7 +8555,7 @@ referents:
           CSG déductible de 3,8, 4,2 ou 5,9 points, et de
           chaque année depuis 1997, lue dans l'article 154
           quinquies, fait le net imposable des pensions et
-          des salaires (`cycle_de_vie.py`). Reste le net du
+          des salaires (`cycle-de-vie.js`). Reste le net du
           site.
           Le 13 octobre 2026 (138.5, troisième partie), les
           indicateurs de cycle de vie se calculent après
@@ -11597,7 +11597,7 @@ referents:
           vie, chiffrables sur les cas types du dépôt. Repris le 7
           octobre 2026 (action 138, étape 9) : le rendement interne
           réel, la valeur actuelle nette et le taux de remplacement au
-          décès des six systèmes (`cycle_de_vie.py`) ; le taux initial
+          décès des six systèmes (`cycle-de-vie.js`) ; le taux initial
           sur le salaire moyen se lit de la pension de départ et du
           salaire moyen de l'année.
         etat: repris
@@ -11649,7 +11649,7 @@ referents:
         preuve: Pensions at a Glance 2025, p. 160-161
         verification: >-
           Repris le 7 octobre 2026 (action 138, étape 9) :
-          `cycle_de_vie.py` le calcule sous ses conventions, sur la
+          `cycle-de-vie.js` le calcule sous ses conventions, sur la
           survie de génération du dépôt. Sous ses hypothèses (jeu
           `ocde_2025`), la valeur d'un euro de rente est la sienne à 3 %
           près pour un homme ; pour une femme, 3 à 8 % sous la sienne,
