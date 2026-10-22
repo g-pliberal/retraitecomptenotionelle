@@ -213,7 +213,13 @@ de 62 ans et demi. La vingt-deuxième (le même jour) donne à chaque classe de
 centiles la part de périodes assimilées des quintiles de la pension que ses
 rangs couvrent (:data:`ASSIMILEES_SELON_LE_RANG`) : huit années de la carrière
 pleine d'une femme de la classe p10, une de celle des classes p95 et p99, au
-lieu de cinq pour toutes ; aucune femme ne partait en carrière longue.
+lieu de cinq pour toutes ; aucune femme ne partait en carrière longue. La
+vingt-troisième (le 22 octobre 2026) donne leur nature aux périodes assimilées
+des carrières pleines des hommes, le service national et la maladie, aux parts
+que l'échantillon interrégimes de cotisants publie génération par génération
+(:data:`NATURES_SELON_LA_GENERATION`) : toutes étaient du chômage, que la
+carrière longue ne répute pas cotisé avant novembre 2012, quand elle répute le
+service et la maladie dans toutes ses rédactions.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -555,6 +561,34 @@ SERVICE_AVANT_LE_PREMIER_TRIMESTRE = True
 #: l'année, elle se lit à une année près.
 ASSIMILEES_SELON_LE_RANG = True
 
+#: La vingt-troisième version (action 138, étape 14, le 22 octobre 2026) : la
+#: nature des périodes assimilées des hommes. Toutes étaient du chômage
+#: indemnisé, que la carrière longue ne répute pas cotisé avant novembre 2012,
+#: puis dans la limite de deux trimestres, de quatre depuis avril 2014
+#: (D. 351-1-2, daté) ; or l'échantillon interrégimes de cotisants en trouve
+#: d'autres aux hommes affiliés avant 23 ans (``natures_assimilees.csv``) :
+#: nés en 1950, 35,1 % ont validé un trimestre de service national, quatre
+#: chacun, et 12,6 % un de maladie, dix-sept chacun, que toutes les rédactions
+#: réputent cotisés dans la limite de quatre trimestres. Sous cette
+#: constante, chaque cinquième d'une carrière pleine d'homme
+#: (:data:`ENTREE_AU_PREMIER_TRIMESTRE`) se décline en
+#: :data:`CLASSES_DE_NATURE` classes de poids égal (:func:`classes_de_nature`) :
+#: une classe sert — sa première année assimilée est son service national —
+#: quand le milieu de son rang passe sous la part du service qui reste aux
+#: cinquièmes qui ne servent pas avant d'entrer
+#: (:data:`SERVICE_AVANT_LE_PREMIER_TRIMESTRE`) ; une classe est malade —
+#: autant de ses années assimilées que chacun de ceux qui le sont en compte —
+#: quand le milieu de son rang passe au-dessus de la part des autres. En 1950,
+#: la première classe sert et la dernière est malade : 36 % des hommes ont une
+#: année de service, 20 % quatre de maladie. Les années gardent leur place, au
+#: milieu de la carrière ; les autres carrières des hommes, et celles des
+#: femmes, gardent leur chômage.
+NATURES_SELON_LA_GENERATION = True
+
+#: Les classes de nature : des cinquièmes, chacun au milieu de son rang ;
+#: ceux qui ont les mêmes natures à chaque génération n'en font qu'un.
+CLASSES_DE_NATURE = 5
+
 #: La durée des carrières des femmes selon la génération : les carrières
 #: incomplètes des femmes, hors des régimes statutaires, gagnent ou perdent,
 #: génération par génération, les mêmes années validées
@@ -855,7 +889,10 @@ class CasTypeLarge(CasType):
     fait commencer la carrière de chaque génération à son âge, les années
     d'interruption comptées de lui ; ``services`` — paires ``(génération,
     années)`` triées — la fait précéder d'autant d'années de service national
-    (:data:`SERVICE_AVANT_LE_PREMIER_TRIMESTRE`).
+    (:data:`SERVICE_AVANT_LE_PREMIER_TRIMESTRE`) ; ``natures`` — paires
+    ``(génération, (service, maladie))`` triées — fait de ses premières années
+    de chômage indemnisé autant d'années de service national, puis de maladie
+    (:data:`NATURES_SELON_LA_GENERATION`).
     """
 
     avant: tuple[tuple[str, float], ...] = ()
@@ -867,6 +904,7 @@ class CasTypeLarge(CasType):
     volumes: tuple[tuple[int, float], ...] = ()
     entrees: tuple[tuple[int, float], ...] = ()
     services: tuple[tuple[int, float], ...] = ()
+    natures: tuple[tuple[int, tuple[int, int]], ...] = ()
     tranche_de_base: tuple = ()
     cibles: tuple[tuple[int, float], ...] = ()
     #: Les années qu'un départ avec surcote attend après l'âge légal de sa
@@ -915,6 +953,12 @@ class CasTypeLarge(CasType):
         entrée (:data:`SERVICE_AVANT_LE_PREMIER_TRIMESTRE`) ; zéro sans elles."""
         return int(round(_par_generation(self.services, generation, 0.0)))
 
+    def natures_de(self, generation: int) -> tuple[int, int]:
+        """Les années de service national et de maladie que cette génération
+        compte parmi ses années assimilées (:data:`NATURES_SELON_LA_GENERATION`) ;
+        aucune sans elles."""
+        return _par_generation(self.natures, generation, (0, 0))
+
     def au_smic(self, simulateur: Simulateur, generation: int) -> bool:
         """Vrai si la carrière se paie au Smic : persistante, ou, sous
         plancher, si son rang tombe sous lui l'année où sa génération a
@@ -955,13 +999,20 @@ class CasTypeLarge(CasType):
 
     def _carriere(self, simulateur: Simulateur, generation: int, age_liquidation: float):
         if not (self.avant or self.niveaux or self.ages_partiel or self.volumes
-                or self.entrees or self.services or self.cibles):
+                or self.entrees or self.services or self.natures or self.cibles):
             return super()._carriere(simulateur, generation, age_liquidation)
         entree = self.debut_de(generation)
         interruptions = {
             int(generation + entree + decalage): motif
             for decalage, motif in self.decalages_de(generation)
         }
+        en_service, en_maladie = self.natures_de(generation)
+        chomage = sorted(annee for annee, motif in interruptions.items()
+                         if motif == "chomage_indemnise")
+        for annee in chomage[:en_service]:
+            interruptions[annee] = "service_militaire"
+        for annee in chomage[en_service:en_service + en_maladie]:
+            interruptions[annee] = "maladie"
         service = self.service_de(generation)
         for annee in range(int(generation + entree) - service, int(generation + entree)):
             interruptions[annee] = "service_militaire"
@@ -1741,16 +1792,109 @@ def classes_d_entree(regle: tuple[tuple[int, float], ...], parts: dict[int, dict
             for (entrees, services), (premier, poids) in classes.items()]
 
 
+def natures_assimilees(racine: Path, sexe: str) -> dict[str, dict[int, tuple[float, float]]]:
+    """La part des affiliés d'avant 23 ans de ce sexe qui ont validé un
+    trimestre de chaque nature, en pour cent, et le cumul de ces trimestres par
+    affilié, génération par génération de l'échantillon interrégimes de
+    cotisants : ``{nature: {génération: (part, cumul)}}``
+    (``natures_assimilees.csv``, :data:`NATURES_SELON_LA_GENERATION`). Le
+    service national, fait au dernier âge où l'échantillon voit chaque
+    génération, se lit à cet âge ; la maladie, qui croît avec l'âge, à 60 ans
+    seulement."""
+    lues: dict[str, dict[int, dict[str, float]]] = {}
+    for ligne in _lire_macro(racine, "natures_assimilees.csv"):
+        if ligne["sexe"] != sexe or (ligne["nature"] == "maladie" and ligne["age"] != "60"):
+            continue
+        lues.setdefault(ligne["nature"], {}).setdefault(int(ligne["generation"]), {})[
+            ligne["indicateur"]] = float(ligne["valeur"])
+    return {nature: {generation: (valeurs["part"], valeurs["cumul"])
+                     for generation, valeurs in par_generation.items()}
+            for nature, par_generation in lues.items()}
+
+
+def _interpolee(valeurs: dict[int, float], generation: int) -> float:
+    """La valeur de ``generation`` parmi celles des générations de
+    l'échantillon : interpolée entre deux d'entre elles ; avant la première et
+    après la dernière, la leur."""
+    lues = sorted(valeurs)
+    if generation <= lues[0] or generation >= lues[-1]:
+        return valeurs[lues[0] if generation <= lues[0] else lues[-1]]
+    bas = max(g for g in lues if g <= generation)
+    haut = min(g for g in lues if g >= generation)
+    poids = (generation - bas) / (haut - bas) if haut > bas else 0.0
+    return (1.0 - poids) * valeurs[bas] + poids * valeurs[haut]
+
+
+def part_et_annees(lues: dict[int, tuple[float, float]], generation: int
+                   ) -> tuple[float, int]:
+    """La part des affiliés de ``generation`` qui ont validé un trimestre d'une
+    nature (:func:`natures_assimilees`), en fraction, et les années qu'en
+    compte chacun d'eux : le cumul par affilié sur la part, en années de quatre
+    trimestres, arrondi. La part et le cumul s'interpolent entre deux
+    générations de l'échantillon ; avant la première et après la dernière, ce
+    sont les leurs."""
+    part = _interpolee({g: p for g, (p, _) in lues.items()}, generation) / 100.0
+    cumul = _interpolee({g: c for g, (_, c) in lues.items()}, generation)
+    return part, (int(round(cumul / part / 4.0)) if part > 0.0 else 0)
+
+
+def classes_de_nature(classes: list[tuple[int, tuple[tuple[int, float], ...],
+                                          tuple[tuple[int, float], ...], float]],
+                      parts: dict[str, dict[int, tuple[float, float]]]
+                      ) -> list[tuple[int, tuple, tuple, int, tuple, float]]:
+    """Les cinquièmes d'une carrière pleine (:func:`classes_d_entree`), chacun
+    décliné en :data:`CLASSES_DE_NATURE` classes de poids égal, ``(rang,
+    entrées, services, nature, natures, poids)`` : ``natures``, paires
+    ``(génération, (service, maladie))`` triées, dit les années de service
+    national et de maladie que la classe compte parmi ses années assimilées,
+    génération par génération (:data:`NATURES_SELON_LA_GENERATION`). Une classe
+    sert quand le milieu de son rang passe sous la part des affiliés de sa
+    génération qui ont servi (:func:`part_et_annees`), moins celle des
+    cinquièmes qui servent avant d'entrer, rapportée aux autres, et dans ceux-ci
+    seulement ; elle est malade quand il passe au-dessus de la part des autres.
+    Les classes qui ont les mêmes natures à chaque génération n'en font qu'une,
+    sous le rang de la première ; celle qui n'en a aucune, ``natures`` vide."""
+    generations = [generation for generation, _ in classes[0][1]]
+    servent = {generation: somme_ordonnee(poids for _, _, services, poids in classes
+                                          if _par_generation(services, generation, 0.0))
+               for generation in generations}
+    service = {g: part_et_annees(parts["service_national"], g) for g in generations}
+    maladie = {g: part_et_annees(parts["maladie"], g) for g in generations}
+    sortie = []
+    for rang, entrees, services, poids in classes:
+        natures: dict[tuple, list] = {}
+        for nature in range(CLASSES_DE_NATURE):
+            milieu = (2 * nature + 1) / (2 * CLASSES_DE_NATURE)
+            annees = []
+            for generation in generations:
+                (servis, en_service), (malades, en_maladie) = service[generation], maladie[generation]
+                reste = ((servis - servent[generation]) / (1.0 - servent[generation])
+                         if servent[generation] < 1.0 else 0.0)
+                sert = milieu < reste and not _par_generation(services, generation, 0.0)
+                annees.append((generation, (en_service if sert else 0,
+                                            en_maladie if milieu > 1.0 - malades else 0)))
+            cle = tuple(annees) if any(any(paire) for _, paire in annees) else ()
+            natures.setdefault(cle, [nature + 1, 0.0])[1] += poids / CLASSES_DE_NATURE
+        sortie.extend((rang, entrees, services, premier, cle, part)
+                      for cle, (premier, part) in natures.items())
+    return sortie
+
+
 def entrees_au_premier_trimestre(variantes: list[Variante], racine: Path) -> list[Variante]:
     """Chaque carrière pleine qui entre selon sa génération, hors des départs
     avec surcote, en ses cinquièmes (:func:`classes_d_entree`), ceux des hommes
     précédés de leur service national sous
-    :data:`SERVICE_AVANT_LE_PREMIER_TRIMESTRE` : le premier garde son code,
-    les autres prennent leur rang, « ~entree3 » ; les autres variantes telles
-    quelles."""
+    :data:`SERVICE_AVANT_LE_PREMIER_TRIMESTRE`, et déclinés en leurs classes de
+    nature sous :data:`NATURES_SELON_LA_GENERATION` (:func:`classes_de_nature`) :
+    le premier cinquième garde son code, les autres prennent leur rang,
+    « ~entree3 » ; la classe de nature qui n'a ni service ni maladie garde
+    celui de son cinquième, les autres prennent leur rang, « ~nature1 » ; les
+    autres variantes telles quelles."""
     parts = premiers_trimestres(racine)
     valides = ({"H": premiers_trimestres(racine, "valide")["H"]}
                if SERVICE_AVANT_LE_PREMIER_TRIMESTRE else {})
+    parts_des_natures = ({"H": natures_assimilees(racine, "H")}
+                         if NATURES_SELON_LA_GENERATION else {})
     classes: dict[tuple, list] = {}
     sortie = []
     for v in variantes:
@@ -1759,12 +1903,18 @@ def entrees_au_premier_trimestre(variantes: list[Variante], racine: Path) -> lis
             continue
         cle = (v.cas.sexe, v.cas.entrees)
         if cle not in classes:
-            classes[cle] = classes_d_entree(v.cas.entrees, parts[v.cas.sexe],
-                                            valides.get(v.cas.sexe))
-        for rang, entrees, services, poids in classes[cle]:
+            cinquiemes = classes_d_entree(v.cas.entrees, parts[v.cas.sexe],
+                                          valides.get(v.cas.sexe))
+            classes[cle] = (classes_de_nature(cinquiemes, parts_des_natures[v.cas.sexe])
+                            if v.cas.sexe in parts_des_natures
+                            else [(rang, entrees, services, 0, (), poids)
+                                  for rang, entrees, services, poids in cinquiemes])
+        for rang, entrees, services, nature, natures, poids in classes[cle]:
             code = v.cas.code if rang == 1 else f"{v.cas.code}~entree{rang}"
+            if natures:
+                code = f"{code}~nature{nature}"
             sortie.append(v.fois(poids, cas=replace(v.cas, code=code, entrees=entrees,
-                                                    services=services)))
+                                                    services=services, natures=natures)))
     return sortie
 
 
