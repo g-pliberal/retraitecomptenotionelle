@@ -1,24 +1,16 @@
-"""Le portage JavaScript des indicateurs de cycle de vie, rejoué contre le Python.
+"""Les jumeaux que lit le cycle de vie du portage, rejoués contre le Python.
 
-``moteur/js/cycle-de-vie.js`` et ``moteur/js/contributions-equilibre.js`` sont
-les jumeaux de ``cycle_de_vie.py`` et de ``contributions_equilibre.py`` (action
-138, étape 9) : les flux bruts des six systèmes, les indicateurs sous la
-convention de l'OCDE et sous un âge de décès fixe, l'âge d'équilibre du
-diviseur et l'âge de part de vie constante ; depuis le 14 octobre, les
-revenus nets de chaque année (``moteur/js/prelevements-historiques.js``, le
-jumeau de ``donnees/prelevements_historiques.py``), donc la convention nette
-et celle du COR ; depuis le 16 octobre, l'impôt sur le revenu
-(``moteur/js/impot-revenu.js``, le jumeau de ``impot_revenu.py`` et de
-``donnees/impot_revenu.py``), donc les deux conventions après impôt, l'impôt
-de chaque année et le taux de remplacement après impôt au départ ; depuis
-le 16 octobre aussi, les âges de départ d'une carrière et ce que chacun
-donne (``ages_balayes``, ``balayage_d_une_carriere``) ; depuis le 18 octobre,
-la pension du départ par étage et le revenu autour du départ
-(``pension_par_etage``, ``revenus_autour_du_depart``). Des carrières de statuts et de générations variés — un départ passé, que le droit
-a fait vivre, un départ de l'année, un départ à venir — se calculent des deux
-côtés, sous le simulateur du site, et chaque chiffre doit s'y retrouver ; le
-module de l'impôt se rejoue seul sur une grille de foyers, d'années et de
-revenus.
+Le cycle de vie n'a plus qu'un exemplaire, ``moteur/js/cycle-de-vie.js``
+(action 161) : ses définitions se tiennent dans ``tests/js/cycle-de-vie.test.js``,
+et sa concordance avec ``cycle_de_vie.py`` est partie avec lui. Restent ici
+trois paires qu'il lit, et dont le Python garde son jumeau pour le coût et la
+fabrique : ``contributions_equilibre.py`` et
+``moteur/js/contributions-equilibre.js``, sur des carrières de statuts et de
+générations variés ; ``impot_revenu.py`` et ``moteur/js/impot-revenu.js``,
+étape par étape, sur une grille de foyers, d'années et de revenus ;
+``donnees/prelevements_historiques.py`` et
+``moteur/js/prelevements-historiques.js``, famille par famille, sur une
+grille d'années et de revenus. Chaque chiffre doit s'y retrouver.
 """
 
 from __future__ import annotations
@@ -32,7 +24,6 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle import cycle_de_vie
 from retraite_notionnelle.contexte import Contexte
 from retraite_notionnelle.contributions_equilibre import contributions_d_une_carriere
 
@@ -40,13 +31,10 @@ from outils_portage import moitie_python
 
 RACINE = Path(__file__).resolve().parents[1]
 
-#: Les carrières : un statut, une génération, un âge de départ, des enfants —
-#: trois au parent parti en 2010, dont l'impôt exonère la majoration
-#: jusqu'aux revenus de 2012 ; un agent de la SNCF entré en 1996, qui garde son
-#: régime, et sa fiche de paie, après la fermeture de 2020 ; un commerçant et un
-#: artisan qui paient la taxe complémentaire de 1959 à 1969, et déduisent celle
-#: de l'année précédente ; un agent des chemins de fer secondaires parti à 55
-#: ans, dont la pension paie une autre cotisation maladie avant ses 60 ans.
+#: Les carrières : un statut, une génération, un âge de départ, des enfants.
+#: Les salariés du privé versent des contributions d'équilibre depuis 1984 ;
+#: le fonctionnaire, l'artisan, le commerçant et les agents des régimes
+#: spéciaux n'en versent pas.
 CARRIERES = (
     ("salarie_prive_non_cadre", 1948, "H", 62.0, 3),
     ("salarie_prive_cadre", 1958, "F", 62.0, 0),
@@ -59,39 +47,6 @@ CARRIERES = (
     ("commercant", 1936, "H", 65.0, 0),
     ("artisan", 1936, "F", 64.0, 0),
     ("agent_chemins_fer_secondaires", 1930, "H", 55.0, 0),
-)
-
-#: Les conventions que le portage sait servir ; ``construite`` nomme celles
-#: que le modèle bâtit carrière par carrière (``convention_cor``,
-#: ``convention_nette``).
-CONVENTIONS = {
-    "ocde": {},
-    "deces_fixe": {"age_deces": "cor", "unisexe": True, "taux_actualisation": 0.0},
-    "nette": {"construite": "nette"},
-    "cor": {"construite": "cor"},
-    "apres_impot": {"construite": "nette", "impot": "prix"},
-    "cor_apres_impot": {"construite": "cor", "impot": "salaire_moyen"},
-}
-
-#: Les systèmes dont le taux de remplacement après impôt au départ se compare.
-SCENARIOS_REMPLACEMENT = ("actuel", "notionnel_retroactif", "notionnel_liberal")
-
-#: Les systèmes dont le revenu autour du départ se compare : le scénario 1, et
-#: le 6, que son âge légal fait partir plus tard et qui sert son pilier.
-SCENARIOS_AUTOUR = ("actuel", "notionnel_liberal")
-
-EQUILIBRES = ((1950, None), (1975, "F"), (1995, "H"))
-
-#: Les balayages des âges de départ : une carrière sans son âge, l'âge que la
-#: saisie demande, la convention du COR ou non, le pas, l'impôt. Une carrière
-#: longue après impôt, un départ passé sous le COR, un indépendant.
-BALAYAGES = (
-    ({"annee_naissance": 1966, "sexe": "H", "affiliation": "salarie_prive_non_cadre",
-      "age_debut": 18, "niveau_salaire": 1.0}, 64.0, False, 0.25, "prix"),
-    ({"annee_naissance": 1944, "sexe": "F", "affiliation": "fonctionnaire_etat",
-      "age_debut": 22, "niveau_salaire": 1.3}, 62.0, True, 0.5, None),
-    ({"annee_naissance": 1975, "sexe": "H", "affiliation": "artisan",
-      "age_debut": 21, "niveau_salaire": 1.3}, 64.0, False, 0.5, None),
 )
 
 #: La grille du module de l'impôt seul : des années de chaque règle — chaque
@@ -191,107 +146,11 @@ def _options(affiliation, generation, sexe, age, enfants):
             "nombre_enfants": enfants}
 
 
-def _par_annee(valeurs):
-    return None if valeurs is None else {str(annee): v for annee, v in valeurs.items()}
-
-
-def _python(carrieres, conventions, equilibres):
+def _contributions_python(carrieres) -> list[dict[str, float]]:
     simulateur = Contexte().simulateur()
-    cas = []
-    for carriere_ in carrieres:
-        carriere = simulateur.carriere_simple(**_options(*carriere_))
-        comparaison = simulateur.simuler(carriere)
-        indicateurs = {}
-        for nom, champs in conventions:
-            reglages = dict(champs)
-            construite = reglages.pop("construite", None)
-            impot = reglages.pop("impot", None)
-            if reglages.get("age_deces") == "cor":
-                reglages["age_deces"] = cycle_de_vie.age_de_deces_cor(
-                    simulateur.mortalite, carriere.annee_naissance)
-            if impot:
-                convention = cycle_de_vie.convention_apres_impot(
-                    simulateur, comparaison, cor=construite == "cor", indexation=impot)
-            elif construite:
-                convention = cycle_de_vie.convention_nette(simulateur, comparaison,
-                                                           cor=construite == "cor")
-            else:
-                convention = cycle_de_vie.Convention(**reglages)
-            systemes = cycle_de_vie.indicateurs_des_systemes(simulateur, comparaison,
-                                                             convention)
-            indicateurs[nom] = {scenario: valeurs.dictionnaire()
-                                for scenario, valeurs in systemes.items()}
-        sous_l_impot = cycle_de_vie.flux_des_systemes(simulateur, comparaison, impot="prix")
-        actuel = sous_l_impot["actuel"]
-        cas.append({
-            "etages": {scenario: cycle_de_vie.pension_par_etage(
-                simulateur, comparaison, scenario, systemes=sous_l_impot).dictionnaire()
-                for scenario in cycle_de_vie.SCENARIOS},
-            "autour": {scenario: [ligne.dictionnaire() for ligne in
-                                  cycle_de_vie.revenus_autour_du_depart(
-                                      simulateur, comparaison, scenario, systemes=sous_l_impot)]
-                       for scenario in SCENARIOS_AUTOUR},
-            "impots": {str(annee): [i.salaire, i.benefice, i.pension, i.impot, i.sur_la_pension]
-                       for annee, i in actuel.impots.items()},
-            "revenus_apres_impot": _par_annee(actuel.revenus_apres_impot),
-            "dernier_revenu_apres_impot": actuel.dernier_revenu_apres_impot,
-            "remplacements_apres_impot": {
-                scenario: cycle_de_vie.remplacement_apres_impot(
-                    simulateur, comparaison, scenario, systemes=sous_l_impot)
-                for scenario in SCENARIOS_REMPLACEMENT},
-            "contributions": {str(annee): montant for annee, montant in
-                              contributions_d_une_carriere(simulateur, carriere).items()},
-            "taux_de_prelevement": cycle_de_vie.taux_de_prelevement(simulateur,
-                                                                    comparaison.actuel),
-            "revenus_nets": _par_annee(cycle_de_vie.revenus_nets(simulateur, carriere)),
-            "revenus_nets_proposition": _par_annee(
-                cycle_de_vie.revenus_nets(simulateur, carriere, proposition=True)),
-            "revenus_imposables": _par_annee(
-                cycle_de_vie.revenus_imposables(simulateur, carriere)),
-            "prelevements": _par_annee(
-                cycle_de_vie.prelevements_par_annee(simulateur, comparaison)),
-            "indicateurs": indicateurs,
-        })
-    ages = []
-    for generation, sexe in equilibres:
-        age = cycle_de_vie.age_d_equilibre(simulateur, generation, sexe)
-        ages.append({
-            "age": age.age, "au_mois": age.au_mois, "coefficient": age.coefficient,
-            "part_de_vie": cycle_de_vie.age_de_part_de_vie_constante(
-                simulateur, generation, sexe),
-            "part_de_vie_cor": cycle_de_vie.age_de_part_de_vie_constante(
-                simulateur, generation, sexe, cor=True),
-        })
-    return {"cas": cas, "equilibres": ages}
-
-
-def _depart_en_dictionnaire(depart: cycle_de_vie.Depart) -> dict:
-    import dataclasses
-
-    return {
-        "age": depart.age, "annee": depart.annee,
-        "indicateurs": {scenario: valeurs.dictionnaire()
-                        for scenario, valeurs in depart.indicateurs.items()},
-        "pensions_nettes": depart.pensions_nettes, "pensions_aspa": depart.pensions_aspa,
-        "remplacements": {scenario: None if r is None else dataclasses.asdict(r)
-                          for scenario, r in depart.remplacements.items()},
-        "remplacements_apres_impot": depart.remplacements_apres_impot,
-        "pensions_apres_impot": depart.pensions_apres_impot,
-    }
-
-
-def _balayages_python(balayages: tuple) -> list[dict]:
-    simulateur = Contexte().simulateur()
-    resultats = []
-    for options, age, cor, pas, impot in map(json.loads, balayages):
-        def batir(a, options=options):
-            return simulateur.carriere_simple(**options, age_liquidation=a)
-        resultats.append({
-            "ages": list(cycle_de_vie.ages_balayes(simulateur, batir, age, pas)),
-            "departs": [_depart_en_dictionnaire(d) for d in cycle_de_vie.balayage_d_une_carriere(
-                simulateur, batir, age, cor, pas, impot)],
-        })
-    return resultats
+    return [{str(annee): montant for annee, montant in contributions_d_une_carriere(
+        simulateur, simulateur.carriere_simple(**_options(*carriere))).items()}
+        for carriere in carrieres]
 
 
 def _node(demande: dict) -> dict:
@@ -333,74 +192,31 @@ def _ecarts(obtenu, attendu, chemin="") -> list[str]:
 def les_deux():
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    conventions = tuple(sorted((nom, tuple(sorted(champs.items())))
-                               for nom, champs in CONVENTIONS.items()))
-    attendu = moitie_python(_python, CARRIERES, conventions, EQUILIBRES)
     demandes = _demandes_d_impot()
-    attendu["impots"] = moitie_python(
-        _impots_python, tuple(json.dumps(d, sort_keys=True) for d in demandes))
-    attendu["balayages"] = moitie_python(
-        _balayages_python, tuple(json.dumps(b, sort_keys=True) for b in BALAYAGES))
-    obtenu = _node({
-        "cas": [{"carriere": _options(*c), "conventions": CONVENTIONS} for c in CARRIERES],
-        "equilibres": [{"generation": g, "sexe": s} for g, s in EQUILIBRES],
-        "remplacements": SCENARIOS_REMPLACEMENT,
-        "autour": SCENARIOS_AUTOUR,
-        "impots": demandes,
-        "balayages": [{"carriere": o, "age": a, "cor": c, "pas": p, "impot": i}
-                      for o, a, c, p, i in BALAYAGES],
-    })
+    attendu = {
+        "contributions": moitie_python(_contributions_python, CARRIERES),
+        "impots": moitie_python(
+            _impots_python, tuple(json.dumps(d, sort_keys=True) for d in demandes)),
+    }
+    obtenu = _node({"carrieres": [_options(*c) for c in CARRIERES], "impots": demandes})
     return obtenu, attendu
 
 
 @pytest.mark.parametrize("rang", range(len(CARRIERES)),
                          ids=[f"{a}-{g}" for a, g, *_ in CARRIERES])
-def test_les_indicateurs_de_chaque_systeme_se_retrouvent_en_javascript(les_deux, rang):
+def test_les_contributions_d_equilibre_de_chaque_carriere_se_retrouvent_en_javascript(
+        les_deux, rang):
     obtenu, attendu = les_deux
-    cas = obtenu["cas"][rang]
-    assert "erreur" not in cas, cas.get("erreur")
-    ecarts = _ecarts(cas, attendu["cas"][rang])
+    contributions = obtenu["contributions"][rang]
+    assert "erreur" not in contributions, contributions.get("erreur")
+    ecarts = _ecarts(contributions, attendu["contributions"][rang])
     assert not ecarts, "; ".join(sorted(ecarts)[:8])
-
-
-@pytest.mark.parametrize("rang", range(len(BALAYAGES)),
-                         ids=[o["affiliation"] for o, *_ in BALAYAGES])
-def test_chaque_age_de_depart_se_retrouve_en_javascript(les_deux, rang):
-    """Les âges balayés, et à chacun, sous les six systèmes, les indicateurs
-    nets ou après impôt, la pension nette, rapportée au minimum vieillesse, le
-    taux de remplacement net en trois unités et après impôt, la pension après
-    impôt."""
-    obtenu, attendu = les_deux
-    balayage = obtenu["balayages"][rang]
-    assert "erreur" not in balayage, balayage.get("erreur")
-    ecarts = _ecarts(balayage, attendu["balayages"][rang])
-    assert not ecarts, "; ".join(sorted(ecarts)[:8])
-
-
-def test_le_balayage_a_un_objet(les_deux):
-    """Le contrôle a un objet : la carrière longue part avant l'âge légal, le
-    balayage finit à l'âge d'annulation de la décote, que le pas n'atteint
-    pas toujours, chaque âge a son taux de remplacement net, l'impôt y joue,
-    et le minimum vieillesse à deux étages d'un départ d'avant 2007 aussi."""
-    _, attendu = les_deux
-    longue, fonctionnaire, artisan = attendu["balayages"]
-    assert longue["ages"][0] < 62.0 and longue["ages"][-1] == 67.0
-    assert len(longue["departs"]) == len(longue["ages"]) > 20
-    assert all(d["remplacements"]["actuel"] for d in longue["departs"])
-    assert all(d["remplacements_apres_impot"]["actuel"] for d in longue["departs"])
-    assert all(d["pensions_apres_impot"]["actuel"] < d["pensions_nettes"]["actuel"]
-               for d in longue["departs"])
-    assert fonctionnaire["departs"][0]["pensions_apres_impot"] is None
-    assert fonctionnaire["departs"][0]["annee"] < 2007
-    assert all(d["pensions_aspa"]["actuel"] for b in attendu["balayages"]
-               for d in b["departs"])
-    assert artisan["departs"] and fonctionnaire["departs"]
 
 
 def test_le_salarie_du_prive_verse_des_contributions_d_equilibre_des_deux_cotes(les_deux):
     """Le contrôle a un objet : un salarié du privé en verse depuis 1984."""
     obtenu, _ = les_deux
-    assert len(obtenu["cas"][2]["contributions"]) > 30
+    assert len(obtenu["contributions"][2]) > 30
 
 
 def test_l_impot_de_chaque_foyer_se_retrouve_en_javascript(les_deux):
@@ -448,76 +264,6 @@ def test_la_grille_de_l_impot_a_un_objet(les_deux):
               if i["prime_pour_l_emploi"]}
     assert {("artisan_adherent", 2005), ("pluriactif", 2005), ("pluriactif_deficit", 2000),
             ("pluriactif_deficit", 2001)} <= primes
-
-
-def test_les_ages_d_equilibre_se_retrouvent_en_javascript(les_deux):
-    obtenu, attendu = les_deux
-    ecarts = _ecarts(obtenu["equilibres"], attendu["equilibres"])
-    assert not ecarts, "; ".join(ecarts[:8])
-
-
-def test_les_revenus_nets_ont_un_objet(les_deux):
-    """Le contrôle des nets a un objet : chaque carrière a une fiche de paie,
-    et l'histoire déplace le net — la CSG n'existait pas en 1970. L'agent des
-    chemins de fer secondaires, qui a 60 ans au 1er février 1990, paie sur sa
-    part du régime 2,9 % en 1989, et 1,9 % dès février 1990."""
-    obtenu, _ = les_deux
-    for cas in obtenu["cas"]:
-        assert cas["revenus_nets"] and len(cas["prelevements"]) > 20
-        assert cas["indicateurs"]["cor"]["actuel"]["taux_annuite"] is not None
-    secondaires = obtenu["cas"][10]["prelevements"]
-    assert secondaires["1989"] > secondaires["1990"]
-
-
-def test_l_impot_a_un_objet(les_deux):
-    """Le contrôle de l'impôt a un objet : le salarié paie l'impôt de son
-    salaire, puis de sa pension, et l'impôt déplace les indicateurs ;
-    l'artisan déclare son bénéfice, et a ses revenus après impôt ; le parent
-    de trois enfants déclare sa majoration dès les revenus de 2013, et sa
-    pension déclarée y fait un saut que la revalorisation ne fait pas."""
-    obtenu, _ = les_deux
-    parent = obtenu["cas"][0]
-    assert parent["impots"]["2013"][2] > 1.05 * parent["impots"]["2012"][2]
-    cadre = obtenu["cas"][3]
-    assert sum(1 for *_, impot, _ in cadre["impots"].values() if impot > 0) > 40
-    assert sum(1 for *_, sur_la_pension in cadre["impots"].values() if sur_la_pension > 0) > 10
-    for scenario in ("actuel", "notionnel_prospectif"):
-        assert (cadre["indicateurs"]["apres_impot"][scenario]["rendement_reel"]
-                < cadre["indicateurs"]["nette"][scenario]["rendement_reel"])
-    assert all(cadre["remplacements_apres_impot"].values())
-    artisan = obtenu["cas"][5]
-    assert sum(1 for _, benefice, *_ in artisan["impots"].values() if benefice > 0) > 30
-    assert artisan["revenus_apres_impot"] is not None
-    assert artisan["indicateurs"]["apres_impot"]["actuel"]["taux_annuite"] is not None
-
-
-def test_une_convention_apres_impot_veut_ses_flux():
-    """Une convention après impôt sans prélèvements est refusée, et des flux
-    sans l'impôt de son indexation aussi, plutôt que de rendre un chiffre
-    faux."""
-    if shutil.which("node") is None:
-        pytest.skip("node absent")
-    script = (
-        "import { Contexte } from './moteur/js/contexte.js';"
-        "import { Convention, conventionApresImpot, fluxDesSystemes, indicateurs }"
-        " from './moteur/js/cycle-de-vie.js';"
-        "import { readFileSync } from 'node:fs';"
-        "const s = new Contexte(JSON.parse(readFileSync('moteur/donnees.json','utf8'))).simulateur();"
-        "const c = s.simuler(s.carriereSimple({annee_naissance: 1962, sexe: 'H',"
-        " affiliation: 'salarie_prive_non_cadre', age_debut: 21, age_liquidation: 64,"
-        " niveau_salaire: 1}));"
-        "const convention = conventionApresImpot(s, c);"
-        "const refus = [];"
-        "for (const f of [() => new Convention({impot: 'prix'}),"
-        " () => new Convention({prelevement: 0.1, impot: 'loyers'}),"
-        " () => indicateurs(fluxDesSystemes(s, c, {nets: true}).actuel, s, convention),"
-        " () => indicateurs(fluxDesSystemes(s, c, {impot: 'salaire_moyen'}).actuel, s, convention)]) {"
-        " try { f(); refus.push(false); } catch (e) { refus.push(true); } }"
-        "process.stdout.write(JSON.stringify(refus));")
-    execution = subprocess.run(["node", "--input-type=module", "-e", script], cwd=RACINE,
-                               capture_output=True, text=True, encoding="utf-8", check=False)
-    assert execution.returncode == 0, execution.stderr
-    assert json.loads(execution.stdout) == [True, True, True, True]
 
 
 #: La grille du module seul : chaque famille, des années de chaque époque, des
