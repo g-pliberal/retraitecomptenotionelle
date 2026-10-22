@@ -247,10 +247,17 @@ code:
     PensionServie.date_effet ; droit/liquidation.py : liquider ; scenarios/actuel.py :
     FichesDatees
   javascript: >-
-    moteur/js/droit/completer.js : verserEnCapital, completer ; moteur/js/droit/departs.js
-    ; moteur/js/droit/liquidation.js ; moteur/js/regimes.js : FichesDatees
-  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+    moteur/js/droit/completer.js : verserEnCapital, completer ;
+    moteur/js/droit/liquidation.js : liquider ; moteur/js/regimes.js : FichesDatees ;
+    moteur/js/droit/departs.js : liquiderLesDeparts
+  parametres: >-
+    contenu.parametres de chaque version : existe, regimes, multiple, seuils, fiabilite,
+    premiere_retraite_avant
   tests: [tests/test_versements_uniques.py]
+  moteur: >-
+    Le paquet du site porte ses versions. Le portage n'a pas de classe PensionServie :
+    la pension servie y est l'objet que liquiderLesDeparts bâtit, sa date d'effet
+    comprise.
 referents:
   destinie_2:
     equivalent: >-

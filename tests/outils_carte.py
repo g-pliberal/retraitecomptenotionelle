@@ -15,8 +15,9 @@ lit, et qu'il confronte à ce que le dépôt porte :
   versions en portent ; « regimes/x.yaml, regimes/y.yaml : », des champs que
   portent les périodes de ces fiches de régime, qu'elle concerne ; un ou
   plusieurs fichiers des données de référence, « legislation/x.yaml » ou
-  « macro/y.csv », et, s'il le faut, des clés, pointées, ou des colonnes
-  qu'ils portent —, ou « aucun : » et la raison, seule ;
+  « macro/y.csv », et, s'il le faut, des clés, pointées, des colonnes ou
+  des mesures de première colonne qu'ils portent —, ou « aucun : » et la
+  raison, seule ;
 - ``tests`` : les fichiers qui la tiennent, en liste, ou nommés dans une
   phrase.
 
@@ -146,7 +147,8 @@ def _ecarts_des_regimes(fiche: dict, regimes: list[str], nommes: set[str]) -> li
 
 def _ecarts_des_donnees(nom: str, chemins: list[str], nommes: set[str]) -> list[str]:
     """Les fichiers des données de référence existent ; les noms sont des clés,
-    pointées, de l'un des YAML, ou des colonnes de l'un des CSV."""
+    pointées, de l'un des YAML, ou des colonnes de l'un des CSV, ou des valeurs
+    de sa première colonne, la mesure qu'une ligne porte."""
     sortie, portes = [], set()
     for relatif in chemins:
         chemin = RACINE_DONNEES / "reference" / relatif
@@ -155,8 +157,10 @@ def _ecarts_des_donnees(nom: str, chemins: list[str], nommes: set[str]) -> list[
             continue
         texte = chemin.read_text(encoding="utf-8")
         if relatif.endswith(".csv"):
-            entete = next(ligne for ligne in texte.splitlines() if not ligne.startswith("#"))
+            entete, *lignes = [ligne for ligne in texte.splitlines()
+                               if ligne.strip() and not ligne.startswith("#")]
             portes |= {colonne.strip() for colonne in entete.split(",")}
+            portes |= {ligne.split(",")[0].strip() for ligne in lignes}
         else:
             portes |= set(_cles(yaml.safe_load(texte)))
     sortie += [f"{nom}, parametres : {', '.join(chemins)} ne porte pas {cle}"

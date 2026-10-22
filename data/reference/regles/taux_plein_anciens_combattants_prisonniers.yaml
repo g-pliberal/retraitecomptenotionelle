@@ -280,9 +280,14 @@ code:
     Carriere.mois_de_guerre
   javascript: >-
     moteur/js/droit/categories.js : tauxPleinParCategorie, ageDesAnciensCombattants ;
-    moteur/js/droit/liquider.js ; moteur/js/carriere.js
-  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+    moteur/js/droit/liquider.js : liquiderChaqueRegime, abattementPoints ;
+    moteur/js/carriere.js : Carriere.moisDeGuerre
+  parametres: >-
+    contenu.parametres de chaque version : existe, regimes, paliers, age_minimum,
+    decalage_age_legal
   tests: [tests/test_taux_plein_par_categorie.py]
+  moteur: >-
+    Le paquet du site porte ses versions.
 referents:
   openfisca_france_pension:
     equivalent: >-

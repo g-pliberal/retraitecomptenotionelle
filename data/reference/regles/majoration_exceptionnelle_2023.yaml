@@ -170,13 +170,17 @@ code:
     faire_vivre ; echeancier.py : Echeancier._echeance
   javascript: >-
     moteur/js/droit/completer.js : completer ; moteur/js/revalorisation.js :
-    majorerLesPetitesPensions, faireVivre ; moteur/js/echeancier.js
+    majorerLesPetitesPensions, faireVivre ; moteur/js/echeancier.js :
+    Echeancier._echeance
   parametres: >-
-    contenu.parametres de chaque version ; data/reference/legislation/minimum_contributif.csv
-    pour le plafond de L. 173-2
+    contenu.parametres de chaque version : existe, due_le, montant, trimestres_cotises,
+    plafond ; legislation/minimum_contributif.csv : plafond_ecretement
   tests: >-
     tests/test_majoration_exceptionnelle.py, dans les deux moteurs ; l'exemple de la
     circulaire dans tests/test_oracle.py
+  moteur: >-
+    Le plafond tous régimes de L. 173-2 est la mesure plafond_ecretement du minimum
+    contributif.
 historique:
 - >-
   2026-10-08 — servie, à l'étape 138.17 : la règle que TRAJECTOiRE portait et que le

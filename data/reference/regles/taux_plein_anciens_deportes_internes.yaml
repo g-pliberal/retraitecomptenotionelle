@@ -173,9 +173,13 @@ code:
     liquider_chaque_regime, abattement_points ; carriere.py : Carriere.deporte_ou_interne
   javascript: >-
     moteur/js/droit/categories.js : tauxPleinParCategorie, remplit ;
-    moteur/js/droit/liquider.js ; moteur/js/carriere.js
-  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+    moteur/js/droit/liquider.js : liquiderChaqueRegime, abattementPoints ;
+    moteur/js/carriere.js : Carriere.deporteOuInterne
+  parametres: >-
+    contenu.parametres de chaque version : existe, regimes, age
   tests: [tests/test_taux_plein_par_categorie.py]
+  moteur: >-
+    Le paquet du site porte ses versions.
 referents:
   openfisca_france_pension:
     equivalent: >-

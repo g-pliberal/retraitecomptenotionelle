@@ -205,17 +205,23 @@ approximations:
   effet: non mesuré
 code:
   python: >-
-    droit/seconde.py : droits, _motif, liquider_les_regimes_nouveaux ; droit/cumul.py :
+    droit/seconde.py : droits, _motif, liquider_les_regimes_nouveaux, PREMIERE_2015,
+    DROITS_2023, LIQUIDATION_2023, PREMIERE_2027 ; droit/cumul.py :
     fonction_publique_quittee ; echeancier.py : Echeancier._constituer,
     Echeancier._liquider_les_regimes_nouveaux
   javascript: >-
-    moteur/js/droit/seconde.js ; moteur/js/echeancier.js :
-    Echeancier._liquiderLesRegimesNouveaux ; moteur/js/pages.js : sansNouveauxDroits,
-    droitsDuCumul
-  parametres: "constantes de droit/seconde.py : les dates de 2015, 2023 et 2027"
+    moteur/js/droit/seconde.js : droits, motif, liquiderLesRegimesNouveaux,
+    PREMIERE_2015, DROITS_2023, LIQUIDATION_2023, PREMIERE_2027 ;
+    moteur/js/echeancier.js : Echeancier._liquiderLesRegimesNouveaux ;
+    moteur/js/pages.js : sansNouveauxDroits, droitsDuCumul
+  parametres: >-
+    contenu.parametres de chaque version : droits_nouveaux, exceptions
   tests: >-
     tests/test_emploi_retraite.py ; les témoins seconde_pension_* et droits_* des
     simulations
+  moteur: >-
+    Les dates qui découpent la règle, de 2015, 2023 et 2027, sont des constantes des
+    deux moteurs.
 textes_a_relire:
 - {id: LEGIARTI000047960984, article: "R. 161-19-4 CSS", en_vigueur: 2023-09-01,
    question: "les droits supplémentaires des marins, du ballet et des mineurs, qui s'arrêtent après la seconde pension"}

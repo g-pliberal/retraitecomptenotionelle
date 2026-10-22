@@ -160,20 +160,27 @@ sources:
     date: 2026-10-01
 code:
   python: >-
-    droit/foyer.py : foyer_et_net, condition_de_residence ; ses appels :
-    scenarios/actuel.py (resultat_des_departs, ScenarioActuel.simuler), echeancier.py,
-    revalorisation.py (foyer_a_l_echeance, pension_aujourd_hui),
-    scenarios/notionnel.py (la garantie de la proposition) ; carriere.py :
+    droit/foyer.py : foyer_et_net, condition_de_residence ; scenarios/actuel.py :
+    resultat_des_departs, ScenarioActuel.calculer ; echeancier.py : Echeancier._traiter,
+    Echeancier._partir ; revalorisation.py : foyer_a_l_echeance, pension_aujourd_hui ;
+    scenarios/notionnel.py : ScenarioNotionnel._garantie_vieillesse ; carriere.py :
     Carriere.residence, Carriere.mois_en_france
   javascript: >-
-    moteur/js/droit/foyer.js : foyerEtNet, conditionDeResidence ; ses appels :
-    moteur/js/scenario-actuel.js, echeancier.js, revalorisation.js,
-    scenario-notionnel.js ; carriere.js : residence, moisEnFrance
+    moteur/js/droit/foyer.js : foyerEtNet, conditionDeResidence ;
+    moteur/js/scenario-actuel.js : resultatDesDeparts, ScenarioActuel._sousLeDroit ;
+    moteur/js/echeancier.js : Echeancier._traiter, Echeancier._partir ;
+    moteur/js/revalorisation.js : foyerALEcheance, pensionAujourdhui ;
+    moteur/js/scenario-notionnel.js : ScenarioNotionnel._garantieVieillesse ;
+    moteur/js/carriere.js : Carriere.residence, Carriere.moisEnFrance
   parametres: >-
     contenu.parametres de chaque version : residence_requise,
     mois_de_residence_plus_de
   tests: >-
     tests/test_etranger.py, dans les deux moteurs
+  moteur: >-
+    La condition de résidence se lit partout où le foyer se calcule : au départ, à
+    chaque échéance, pour la pension d'aujourd'hui, et dans la garantie de la
+    proposition.
 historique:
 - >-
   2026-10-01 — née avec le cinquième domaine, les carrières hors de France, ouvert à la

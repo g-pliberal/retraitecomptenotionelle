@@ -316,14 +316,18 @@ code:
     trimestres_en_situation_de_handicap, exigences_du_handicap, age_du_handicap,
     age_propose_du_handicap, sans_decote_du_fonctionnaire, coefficient_de_majoration,
     annee_en_situation_de_handicap ; droit/ouvrir.py : ouvrir, age_ouverture_droit,
-    age_taux_plein_droit, age_handicap_propose ; droit/departs.py ; droit/liquider.py :
-    la décote, la majoration, le minimum contributif, abattement_points,
-    abattement_regime_de_base ; scenarios/actuel.py : Invalidites ; avantages.py :
-    la neutralisation qui retire la fiche
+    age_taux_plein_droit, age_handicap_propose ; droit/departs.py : _handicap_acquis ;
+    droit/liquider.py : liquider_chaque_regime, abattement_points,
+    abattement_regime_de_base ; scenarios/actuel.py : Invalidites, Invalidites.sans ;
+    avantages.py : NEUTRALISATIONS, scenarios_neutralises
   javascript: >-
-    moteur/js/droit/invalidite.js ; moteur/js/droit/ouvrir.js ;
-    moteur/js/droit/departs.js ; moteur/js/droit/liquider.js ; moteur/js/regimes.js :
-    Invalidites
+    moteur/js/droit/invalidite.js : incapaciteReconnue, versionDuHandicap,
+    trimestresEnSituationDeHandicap, exigencesDuHandicap, ageDuHandicap,
+    ageProposeDuHandicap, sansDecoteDuFonctionnaire, coefficientDeMajoration,
+    anneeEnSituationDeHandicap ; moteur/js/droit/ouvrir.js : ouvrir, ageOuvertureDroit,
+    ageTauxPleinDroit, ageHandicapPropose ; moteur/js/droit/departs.js : handicapAcquis
+    ; moteur/js/droit/liquider.js : liquiderChaqueRegime, abattementPoints,
+    abattementRegimeDeBase ; moteur/js/regimes.js : Invalidites
   parametres: >-
     contenu.parametres de chaque version : existe, taux_incapacite, ages,
     cotisees_retranchees, validees_retranchees, retranches_en_plus,
@@ -332,6 +336,10 @@ code:
     tests/test_invalidite.py ; les exemples ur_handicap_* et cnav_2026_18_majoration*
     de tests/temoins/exemples_officiels.yaml ; les témoins handicap_* des simulations,
     dans les deux moteurs
+  moteur: >-
+    La décote, la majoration et le minimum contributif du handicap se jouent dans
+    liquider_chaque_regime ; le coût retire la fiche (scenarios_neutralises), sans
+    jumeau, le coût n'en ayant pas.
 sources:
   lu_le: 2026-10-05
   prochaine_relecture: 2027-09-30

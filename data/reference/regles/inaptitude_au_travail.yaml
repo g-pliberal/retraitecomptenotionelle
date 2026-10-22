@@ -218,21 +218,29 @@ approximations:
 code:
   python: >-
     droit/invalidite.py : reconnu_inapte, age_d_inaptitude, taux_plein_de_l_inapte,
-    age_de_l_aspa ;
-    scenarios/actuel.py, echeancier.py et revalorisation.py, où l'ASPA s'ouvre ;
-    droit/ouvrir.py :
-    age_ouverture, ouvrir, age_taux_plein_droit ; droit/liquider.py : la décote, le
-    minimum contributif, abattement_points, abattement_regime_de_base ;
-    scenarios/actuel.py : Invalidites
+    age_de_l_aspa ; scenarios/actuel.py : resultat_des_departs, ScenarioActuel.calculer
+    ; echeancier.py : Echeancier._traiter, Echeancier._partir ; revalorisation.py :
+    foyer_a_l_echeance ; droit/ouvrir.py : age_ouverture, ouvrir, age_taux_plein_droit ;
+    droit/liquider.py : liquider_chaque_regime, exonere_par_motif, eligible_agricole,
+    abattement_points, abattement_regime_de_base ; scenarios/actuel.py : Invalidites
   javascript: >-
-    moteur/js/droit/invalidite.js : ageDInaptitude, tauxPleinDeLInapte ;
-    moteur/js/droit/ouvrir.js ; moteur/js/droit/liquider.js ; moteur/js/regimes.js :
+    moteur/js/droit/invalidite.js : reconnuInapte, ageDInaptitude, tauxPleinDeLInapte,
+    ageDeLAspa ; moteur/js/scenario-actuel.js : resultatDesDeparts,
+    ScenarioActuel._sousLeDroit ; moteur/js/echeancier.js : Echeancier._traiter,
+    Echeancier._partir ; moteur/js/revalorisation.js : foyerALEcheance ;
+    moteur/js/droit/ouvrir.js : ageOuverture, ouvrir, ageTauxPleinDroit ;
+    moteur/js/droit/liquider.js : liquiderChaqueRegime, exonereParMotif,
+    eligibleAgricole, abattementPoints, abattementRegimeDeBase ; moteur/js/regimes.js :
     Invalidites
   parametres: >-
     contenu.parametres de chaque version : age, taux, age_aspa, incapacite_permanente
   tests: >-
     tests/test_invalidite.py ; les témoins inaptitude_* et invalidite_* des
     simulations, dans les deux moteurs
+  moteur: >-
+    L'ASPA de l'inapte s'ouvre à l'âge que dit age_de_l_aspa, partout où le foyer se
+    calcule : au départ, à chaque échéance, pour la pension d'aujourd'hui. La décote et
+    le minimum contributif de l'inapte se jouent dans liquider_chaque_regime.
 sources:
   lu_le: 2026-10-05
   prochaine_relecture: 2027-03-31

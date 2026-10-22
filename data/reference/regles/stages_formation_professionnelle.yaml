@@ -197,11 +197,12 @@ approximations:
     aucun quand le relevé est à jour
 code:
   python: >-
-    droit/compter.py : trimestres_assimiles, trimestres_des_periodes, jours_par_annee, version_ouverte ;
-    compter (Durees.assimilees, Durees.plafonds_assimilees) ; scenarios/actuel.py :
+    droit/compter.py : trimestres_assimiles, trimestres_des_periodes, jours_par_annee,
+    version_ouverte, compter, Durees ; scenarios/actuel.py :
     FichesDatees.version_aux_dates
   javascript: >-
-    moteur/js/droit/compter.js, les jumeaux de chacune ; moteur/js/regimes.js :
+    moteur/js/droit/compter.js : trimestresAssimiles, trimestresDesPeriodes,
+    joursParAnnee, versionOuverte, compter, Durees ; moteur/js/regimes.js :
     FichesDatees.versionAuxDates
   parametres: >-
     contenu.parametres de chaque version : existe, decompte, regimes, jours_par_trimestre, motifs, fiabilite
@@ -209,6 +210,8 @@ code:
     tests/test_periodes_assimilees.py, dans les deux moteurs ; les quatre exemples de
     la circulaire Cnav 2024-18, rejoués dans les deux moteurs :
     tests/test_periodes_assimilees_exemples_officiels.py
+  moteur: >-
+    compter range ces trimestres dans Durees.assimilees et Durees.plafonds_assimilees.
 historique:
 - >-
   2026-10-16 — née avec l'étape 1 du sixième domaine (action 130) : les 8° et 9° de
