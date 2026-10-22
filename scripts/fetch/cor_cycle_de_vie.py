@@ -9,7 +9,7 @@
 POURQUOI CE TÉMOIN. Le dépôt calcule, depuis l'action 138 (étape 9), les
 indicateurs de cycle de vie de ses carrières : la durée de retraite, le
 rendement interne, le taux de récupération, le patrimoine retraite
-(``src/retraite_notionnelle/cycle_de_vie.py``). Le Conseil d'orientation des
+(``moteur/js/cycle-de-vie.js``). Le Conseil d'orientation des
 retraites en publie deux, chaque année, calculés par d'autres et avec leurs
 conventions écrites : la durée de retraite par génération, avec l'espérance de
 vie à 60 ans de chaque génération par sexe, et le rendement interne net du

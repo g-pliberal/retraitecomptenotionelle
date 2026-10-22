@@ -17,7 +17,8 @@
 Ce qu'il imprime : pour chaque indicateur et chaque système, un tableau des
 treize cas types sur les sept générations de la grille
 (``castypes.carriere_de_la_grille``). Les définitions, les deux conventions et
-ce qu'elles laissent de côté sont dans ``retraite_notionnelle/cycle_de_vie.py`` ;
+ce qu'elles laissent de côté sont dans ``moteur/js/cycle-de-vie.js``, le seul
+exemplaire du cycle de vie depuis l'action 161 ;
 la confrontation au COR, à TRAJECTOiRE et à l'OCDE, dans
 ``tests/test_cycle_de_vie_references.py``.
 

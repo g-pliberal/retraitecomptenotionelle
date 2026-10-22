@@ -5,7 +5,7 @@
     python scripts/fetch/ipp_prelevements_sociaux.py --lister  # imprime, sans écrire
 
 À quoi il sert. Les indicateurs de cycle de vie nets (action 138, étape 9 ;
-``retraite_notionnelle/cycle_de_vie.py``) rapportaient une pension nette des
+``moteur/js/cycle-de-vie.js``) rapportaient une pension nette des
 prélèvements de 2026 à un salaire net des prélèvements de 2026, quelle que soit
 l'année. Ce script lit chez l'IPP l'histoire de ces prélèvements — la CSG, la
 CRDS, la CASA et la cotisation maladie des pensions ; la CSG, la CRDS, la
@@ -842,8 +842,8 @@ ENTETE = """\
 # une version d'article de LEGI — que nomme `scripts/fetch/dates_des_marches.py`,
 # avec les mots qui la disent ; les autres y disent pourquoi elle ne se lit pas.
 #
-# QUI LE LIT. Les indicateurs de cycle de vie nets
-# (`retraite_notionnelle/cycle_de_vie.py`, action 138, étape 9) : la pension
+# QUI LE LIT. Les indicateurs de cycle de vie nets du portage
+# (`moteur/js/cycle-de-vie.js`, action 138, étape 9) : la pension
 # nette de chaque année aux taux de son année, le salaire net de chaque année
 # aux siens, et leur net imposable (étape 5). La fiche de paie du site et la
 # pension nette qu'il affiche restent aux taux de l'année courante

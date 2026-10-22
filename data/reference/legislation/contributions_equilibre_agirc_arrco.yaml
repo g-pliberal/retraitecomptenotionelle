@@ -23,7 +23,7 @@
 #   de points ». Le même accord « acte le terme » de l'AGFF au 31 décembre 2018
 #   et « met fin » à l'ASF (article 2).
 #
-# CE QUI LES LIT. Les indicateurs de cycle de vie (`cycle_de_vie.py`, action
+# CE QUI LES LIT. Les indicateurs de cycle de vie (`cycle-de-vie.js`, action
 # 138, étape 9), qui comptent dans ce qu'une carrière verse tout ce que la paie
 # supporte pour la retraite : la cotisation salariale et la patronale, la
 # majoration du taux d'appel, et ces contributions. Le compte notionnel ne les

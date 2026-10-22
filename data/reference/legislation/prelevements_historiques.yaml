@@ -23,8 +23,8 @@
 # une version d'article de LEGI — que nomme `scripts/fetch/dates_des_marches.py`,
 # avec les mots qui la disent ; les autres y disent pourquoi elle ne se lit pas.
 #
-# QUI LE LIT. Les indicateurs de cycle de vie nets
-# (`retraite_notionnelle/cycle_de_vie.py`, action 138, étape 9) : la pension
+# QUI LE LIT. Les indicateurs de cycle de vie nets du portage
+# (`moteur/js/cycle-de-vie.js`, action 138, étape 9) : la pension
 # nette de chaque année aux taux de son année, le salaire net de chaque année
 # aux siens, et leur net imposable (étape 5). La fiche de paie du site et la
 # pension nette qu'il affiche restent aux taux de l'année courante

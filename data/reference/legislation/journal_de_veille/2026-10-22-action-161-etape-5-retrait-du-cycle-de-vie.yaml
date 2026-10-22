@@ -1,0 +1,13 @@
+date: "2026-10-22"
+session: "action 161, étape 5, septième partie : le retrait de cycle_de_vie.py"
+consulte: >-
+  Aucun texte : la session ne touche pas au droit. Le code seul : cycle_de_vie.py et son
+  portage, les sept fichiers de tests qui lisaient le Python, le pont du site (web/site.py),
+  pont.carrieres, le registre des autres modèles et les en-têtes de deux données.
+trouve: >-
+  Les tests lisent le portage : par le pont du site, ou en essais pour node
+  (tests/js/cycle-de-vie.test.js), aux mêmes valeurs attendues ; le script des cas types se
+  confronte à la simulation du Python. Le module Python est parti, ses explications passées dans
+  le JavaScript.
+reste: >-
+  Rien pour la veille. L'étape 6 de l'action 161, les paires du moteur, une à une.

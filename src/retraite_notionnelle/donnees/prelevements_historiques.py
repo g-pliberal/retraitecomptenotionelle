@@ -2,7 +2,8 @@
 
 La fiche de paie du site et la pension nette qu'il affiche sont aux taux de
 l'année courante (``prelevements_remuneration.yaml``). Les indicateurs de cycle
-de vie nets (:mod:`~retraite_notionnelle.cycle_de_vie`) suivent une carrière et
+de vie nets (``moteur/js/cycle-de-vie.js``, par le jumeau de ce module,
+``moteur/js/prelevements-historiques.js``) suivent une carrière et
 une retraite sur des décennies : la CSG n'existait pas avant 1991, la
 cotisation maladie des pensions a valu jusqu'à 3,8 % sur les complémentaires,
 le salarié du privé payait 6,8 % de maladie en 1992. Ce module lit ces taux,

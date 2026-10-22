@@ -6,16 +6,16 @@ prélèvements sociaux, la page Coût n'a pas d'effet retour par l'impôt (actio
 138, étape 5). Ce module calcule l'impôt d'un FOYER pour les revenus d'une
 année, de 1960 à la dernière loi de finances lue, et au-delà sur un barème
 projeté (:mod:`~retraite_notionnelle.donnees.impot_revenu`). Les indicateurs
-de cycle de vie le prennent, après impôt
-(:func:`~retraite_notionnelle.cycle_de_vie.convention_apres_impot`) ; le site
-et la page Coût le prendront plus tard.
+de cycle de vie, que seul le portage calcule depuis l'action 161
+(``conventionApresImpot``, ``moteur/js/cycle-de-vie.js``), en prennent le
+jumeau, ``moteur/js/impot-revenu.js`` ; le site et la page Coût le prendront
+plus tard.
 
 LE FOYER. Une personne seule — célibataire, divorcée ou veuve — ou un couple
 marié ou pacsé, imposé en commun ; des enfants à charge ou non ; des salaires,
 des bénéfices d'indépendant et des pensions imposables, c'est-à-dire déjà nets de la CSG déductible de
-leur année (:func:`~retraite_notionnelle.cycle_de_vie.revenus_imposables`,
-:func:`~retraite_notionnelle.cycle_de_vie.parts_imposables_par_annee`) : ce
-module part du net imposable. Chaque déclarant dit son âge au 31 décembre de
+leur année (``revenusImposables``, ``partsImposablesParAnnee``, dans
+``moteur/js/cycle-de-vie.js``) : ce module part du net imposable. Chaque déclarant dit son âge au 31 décembre de
 l'année des revenus, pour l'abattement des personnes âgées, et s'il est
 invalide.
 

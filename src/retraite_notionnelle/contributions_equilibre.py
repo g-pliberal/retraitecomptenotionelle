@@ -9,7 +9,8 @@ la contribution d'équilibre technique. Leurs barèmes, leurs textes et ce que l
 dépôt en sait sont dans ``legislation/contributions_equilibre_agirc_arrco.yaml``.
 
 CE QUI LES LIT, ET CE QUI NE LES LIT PAS. Les indicateurs de cycle de vie
-(:mod:`~retraite_notionnelle.cycle_de_vie`) comptent ce que la paie supporte
+(``moteur/js/cycle-de-vie.js``, par le jumeau de ce module,
+``moteur/js/contributions-equilibre.js``) comptent ce que la paie supporte
 pour la retraite : ils les ajoutent à ce qu'une carrière verse. Le compte
 notionnel ne les porte pas, par la décision du 2 octobre 2026 — ce sont des
 contributions, et non des cotisations —, ni le scénario 1, qu'elles

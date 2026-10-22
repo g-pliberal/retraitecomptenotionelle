@@ -3,7 +3,7 @@
 et ce que les tests de concordance en exécutent.
 
     python scripts/jumeaux.py                # la carte, de la paire la plus facile à retirer à la plus difficile
-    python scripts/jumeaux.py cycle_de_vie   # une paire : chaque dépendant, à sa ligne
+    python scripts/jumeaux.py saisie         # une paire : chaque dépendant, à sa ligne
     python scripts/jumeaux.py --couverture   # mesure ce que les tests de concordance exécutent (quelques minutes)
     python scripts/jumeaux.py --json carte.json
 

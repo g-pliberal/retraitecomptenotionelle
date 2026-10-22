@@ -6309,15 +6309,14 @@ de `contribution_etat`.
 
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
-**Reprise, au 19 octobre 2026.** Faites, les étapes 1 à 4, et six parties
-de l'étape 5 : les cas types du COR par le portage ; la libm du portage et la
-grille des agrégats par le pont (`retraite_notionnelle/pont.py`) ; la grille
-et les exemples du bilan figé ; la grille du coût, ses carrières en données ;
-`memoire.py` indexée sur le portage ; le test des références, qui lit le
-portage sur le paquet du jour (`tests/js/cycle-de-vie-references.mjs`). Reste,
-à commencer par lui : le retrait de `cycle_de_vie.py`, que sept fichiers de
-tests lisent encore (`python scripts/jumeaux.py cycle_de_vie`). Détail :
-`2026-10-19-etape-5-sixieme-partie-le-test-des-references.md`.
+**Reprise, au 22 octobre 2026.** Faites, les étapes 1 à 5 : le pont fait
+tourner le portage pour la fabrique et le coût (`retraite_notionnelle/pont.py`),
+et, le 22 octobre, `cycle_de_vie.py` est parti — ses tests passés au portage
+(`tests/js/cycle-de-vie.test.js`), ses explications dans `cycle-de-vie.js`.
+Reste l'étape 6 : les paires du moteur, une à une, dans l'ordre de la carte
+(`python scripts/jumeaux.py`, 68 paires), relecture d'abord ; d'une paire de
+données, le propriétaire tranche le jumeau qui reste (note 0003). Détail :
+`2026-10-22-etape-5-septieme-partie-le-retrait-du-cycle-de-vie.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
