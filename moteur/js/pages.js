@@ -16187,6 +16187,15 @@ n'est récupérée qu'au-delà d'un seuil d'actif net. Quatre règles l'encadren
 <p>Elle se demande, comme l'ASPA, et se refuse : personne ne se voit imposer
 une dette. Le programme retient qu'un ayant droit sur deux la réclame, ce que
 la DREES observe sur l'ASPA, et chiffre son coût ainsi.</p>
+<p>Le 11 juin 2026, l'Assemblée nationale a voté, sans une voix contre, <a
+href="https://www.assemblee-nationale.fr/dyn/17/textes/l17t0308_texte-adopte-seance">la
+fin de la récupération de l'ASPA sur succession</a>, remplacée par une baisse
+forfaitaire de l'allocation pour qui est propriétaire de son logement ou logé
+gratuitement : la crainte de cette récupération détourne de l'ASPA une partie
+de ceux qui y ont droit. Nous faisons l'inverse, parce que la garantie est
+payée par l'impôt de tous, y compris de ceux qui n'auront rien à transmettre :
+<strong>la collectivité doit à chacun un minimum de son vivant, et rien à ses
+héritiers.</strong></p>
 <h3>Le minimum vieillesse est d'abord une affaire de femmes</h3>
 <p>L'échantillon interrégimes de retraités de la DREES le mesure. Rapportées
 au plancher que nous proposons, les pensions de droit direct de ${millesime} se répartissent ainsi

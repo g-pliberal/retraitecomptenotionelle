@@ -250,6 +250,15 @@ affirmations:
     etat: verifiee
     controle: garantie_est_une_avance_reprise
 
+  - id: accueil.rien_a_ses_heritiers
+    page: /
+    extrait: "la collectivité doit à chacun un minimum de son vivant, et rien à ses héritiers."
+    porte: >-
+      la garantie est servie du vivant, puis reprise sans seuil sur la succession :
+      l'impôt ne paie que ce que l'actif ne couvre pas
+    etat: verifiee
+    controle: garantie_est_une_avance_reprise
+
   - id: accueil.cinq_points_volontaires
     page: /
     extrait: "que personne ne vous impose."

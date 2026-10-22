@@ -780,16 +780,16 @@ types :
 
 ### 47. La garantie vieillesse est une avance : la reprise sur succession, sa règle et son chiffrage — `en cours`
 
-**Reprise, au 12 octobre 2026.** La garantie, avance reprise sur la succession
+**Reprise, au 22 octobre 2026.** La garantie, avance reprise sur la succession
 dès le premier euro, est au programme et chiffrée sur la page Coût en brut,
 reprises et net, d'après le patrimoine des ménages (INSEE, COR), que le
 patrimoine des défunts de 2018 recoupe (`macro/patrimoine_defunts.csv`) : une
 succession y couvre une avance de trois à neuf points de moins qu'un ménage.
-Le fichier individuel de l'enquête Histoire de vie et Patrimoine est hors de
-portée (Progedo-ADISP), et le document de la DG Trésor, lu, ne ventile ce
-patrimoine ni par âge ni par niveau de vie. Restent une phrase du programme
-et, au propriétaire, le choix de reprendre sur le patrimoine des défunts.
-Détail : les notes des 11 et 12 octobre 2026.
+Aucune source publique ne donne la couverture par tranche de pension (fichier
+de l'enquête hors de portée, DG Trésor lue). Le programme dit pourquoi il
+reprend là où l'Assemblée a voté, le 11 juin 2026, la fin de la récupération
+de l'ASPA. Reste au propriétaire le choix de reprendre sur le patrimoine des
+défunts. Détail : les notes des 11, 12 et 22 octobre 2026.
 
 **Demande.** « Dans notre cas, la reprise sur succession est dès le premier
 euro + on prend des intérêts pour ne pas y perdre au niveau des finances

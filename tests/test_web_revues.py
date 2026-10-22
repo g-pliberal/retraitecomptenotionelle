@@ -2197,3 +2197,40 @@ def test_la_forme_longue_donne_au_minimum_vieillesse_sa_seule_part(page):
     assert int(trouve.group(2)) == premiere["annee"]
     assert int(trouve.group(1)) == round(
         100 * premiere["modele"]["minimum_vieillesse"] / premiere["observee"])
+
+
+# -- action 47 : la phrase du programme ----------------------------------------
+
+
+#: Le texte que l'Assemblée nationale a adopté le 11 juin 2026, et que la page
+#: cite : la proposition de loi visant à renforcer la solidarité envers les
+#: retraités pauvres, T.A. n° 308.
+TEXTE_ADOPTE_ASPA = "https://www.assemblee-nationale.fr/dyn/17/textes/l17t0308_texte-adopte-seance"
+
+
+def test_le_programme_dit_pourquoi_il_reprend_la_ou_l_assemblee_renonce():
+    """Le 11 juin 2026, l'Assemblée nationale a voté sans une voix contre
+    (165 pour, 3 abstentions) la fin de la récupération de l'ASPA sur
+    succession, remplacée par une baisse forfaitaire de l'allocation pour qui
+    est propriétaire de son logement ou logé gratuitement, contre le
+    non-recours ; le texte est au Sénat. La garantie est reprise dès le premier
+    euro : le dépliant du plancher le dit, cite le texte voté, et dit en une
+    phrase pourquoi le programme reprend là où l'Assemblée renonce. Il n'y
+    chiffre aucune couverture : reprendre sur le patrimoine des défunts plutôt
+    que sur celui des ménages est un choix réservé au propriétaire."""
+    corps = rendre("/", {})[1]
+    debut = corps.index('<details class="section" id="le-plancher">')
+    plancher = corps[debut:corps.index('<details class="section"', debut + 1)]
+    texte = _prose(plancher)
+    vote = texte.find("Le 11 juin 2026, l'Assemblée nationale a voté, sans une voix contre,")
+    assert vote > texte.index("reprise sur la succession dès le premier euro"), (
+        "le vote de l'Assemblée manque, ou précède la règle de la reprise")
+    femmes = texte.index("Le minimum vieillesse est d'abord une affaire de femmes")
+    assert vote < femmes
+    paragraphe = texte[vote:femmes]
+    assert "la fin de la récupération de l'ASPA sur succession" in paragraphe
+    assert "propriétaire de son logement ou logé gratuitement" in paragraphe
+    assert ("la collectivité doit à chacun un minimum de son vivant, et rien à ses "
+            "héritiers.") in paragraphe
+    assert f'href="{TEXTE_ADOPTE_ASPA}"' in plancher
+    assert "%" not in paragraphe and "patrimoine" not in paragraphe
