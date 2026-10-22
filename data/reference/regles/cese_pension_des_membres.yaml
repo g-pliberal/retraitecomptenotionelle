@@ -353,19 +353,21 @@ code:
     de leur période (`annuites_au_taux_de_leur_annee`, dans droit/liquider.py et
     droit/liquider.js) : une annuité de 2000 liquidée en 2030 vaut 165/142 trimestres,
     soit 2,11 % de l'assiette au lieu de 1,82 %, et le maximum de trois quarts borne la
-    somme.
+    somme. Ses données : des périodes en annuités par année civile, au taux plein de 75
+    % atteint en 142 à 165 trimestres, la retenue de 3,42 fois L. 61 divisée par 2,06 ;
+    liquider_chaque_regime prend la période de l'année de liquidation,
+    annuites_au_taux_de_leur_annee compte chaque année au taux de la sienne ; le statut
+    membre_cese route les membres entrés depuis le 1er septembre 2023 au régime général
+    et à l'Ircantec.
   python: >-
-    données : regimes/cese_membres.yaml, des périodes en annuités par année civile, au
-    taux plein de 75 % atteint en 142 à 165 trimestres, la retenue de 3,42 fois L. 61
-    divisée par 2,06 ; droit/liquider.py : liquider_chaque_regime, qui prend la période
-    de l'année de liquidation, et annuites_au_taux_de_leur_annee, qui compte chaque
-    année au taux de la sienne ; legislation/affiliations.yaml, statut membre_cese, qui
-    route les membres entrés depuis le 1er septembre 2023 au régime général et à
-    l'Ircantec
+    donnees/regimes.py : CatalogueRegimes ; droit/liquider.py : liquider_chaque_regime,
+    annuites_au_taux_de_leur_annee
   javascript: >-
-    moteur/js/droit/liquider.js : liquiderChaqueRegime et annuitesAuTauxDeLeurAnnee ; moteur/js/regimes.js : le
-    catalogue et ses périodes
-  parametres: regimes/cese_membres.yaml (taux_plein, duree_requise_trimestres, taux_cotisation_retraite)
+    moteur/js/regimes.js : CatalogueRegimes ; moteur/js/droit/liquider.js :
+    liquiderChaqueRegime, annuitesAuTauxDeLeurAnnee
+  parametres: >-
+    regimes/cese_membres.yaml : taux_plein, duree_requise_trimestres,
+    taux_cotisation_retraite ; legislation/affiliations.yaml : affiliations.membre_cese
   tests: >-
     tests/temoins/simulations.json, les carrières du statut membre_cese, que le portage
     rejoue

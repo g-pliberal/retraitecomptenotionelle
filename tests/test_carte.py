@@ -173,6 +173,9 @@ def test_le_code_d_une_fiche_se_confronte_au_depot():
     fiche["versions"] = []
     fiche["code"]["parametres"] = "aucun : rien à lire ; legislation/age_annulation_decote.csv"
     assert any("« aucun »" in e for e in ecarts(fiche)), ecarts(fiche)
+    fiche["versions"] = [{"id": "v", "contenu": {"parametres": "regimes/valeurs_point.csv, lignes agirc"}}]
+    fiche["code"]["parametres"] = "regimes/valeurs_point.csv : agirc"
+    assert ecarts(fiche) == []
 
 
 #: Les fiches dont le code s'écrit encore en prose, qu'``outils_carte`` ne lit
@@ -182,47 +185,41 @@ def test_le_code_d_une_fiche_se_confronte_au_depot():
 EN_PROSE = frozenset("""
     abattement_rci age_annulation_decote age_legal_par_generation
     age_ouverture_ieg_actifs age_reference_decote_ieg age_surcote_sncf_ratp
-    agirc_arrco_valeur_achat agirc_arrco_valeur_service assiette_minimale_agricole
-    assiette_sociale_independants bareme_minoration_regimes_en_points
-    bonification_cinquieme_police_penitentiaire cafat_pension_de_base
+    assiette_minimale_agricole assiette_sociale_independants
+    bareme_minoration_regimes_en_points bonification_cinquieme_police_penitentiaire
     carcdsf_minoration_age_seul carmf_asv_minoration_enfants
     carpv_minoration_age_seul carriere_longue_reputes_cotises_autres
     cavamac_minoration_age_seul cavec_minoration_age_seul cavom_ages_minoration
-    cavp_minoration_deux_pentes cese_pension_des_membres
-    chomage_retraite_complementaire
-    clr_nouvelle_caledonie_pension_des_fonctionnaires cnbf_surcote
+    cavp_minoration_deux_pentes chomage_retraite_complementaire cnbf_surcote
     coefficient_anticipation_ircantec coefficients_anticipation_agirc_arrco
     cotisation_maladie_pensions_complementaires cotisation_par_classes_liberales
     cotisation_vieillesse_independants cprn_ages_decote_enfants
-    cps_polynesie_pension_des_salaries crpn_pension_des_navigants
     csg_des_pensions_selon_le_revenu cultes_fractions_de_pension
     cultes_retraite_complementaire cultes_salaire_annuel_moyen
     cumul_emploi_retraite_et_retraite_progressive date_effet_mois_suivant
     decompte_des_services_fonction_publique decote_avant_1983 decote_crpn
     decote_fonction_publique decote_opera_de_paris decote_regime_general
     decote_regimes_speciaux depart_anticipe_parents_trois_enfants
-    deputes_pension_des_anciens_deputes duree_requise_par_generation enfants_crpcen
-    fin_indemnisation_chomage financement_chomage_complementaire
-    indemnite_de_feu_sapeurs_pompiers indemnite_sujetions_speciales_police
-    ircantec_majoration_enfants ircantec_valeurs_point liquidation_regime_par_regime
-    majoration_conjoint_a_charge majoration_duree_apres_65_ans
-    majoration_duree_hospitaliers_actifs majoration_enfants_a_charge_agirc_arrco
+    duree_requise_par_generation enfants_crpcen fin_indemnisation_chomage
+    financement_chomage_complementaire indemnite_de_feu_sapeurs_pompiers
+    indemnite_sujetions_speciales_police ircantec_majoration_enfants
+    liquidation_regime_par_regime majoration_conjoint_a_charge
+    majoration_duree_apres_65_ans majoration_duree_hospitaliers_actifs
+    majoration_enfants_a_charge_agirc_arrco
     majoration_enfants_plafond_fonction_publique majorations_forfaitaires_1972_1982
-    mayotte_pension_de_base micro_social_abattement minimum_contributif
-    minimum_contributif_international minoration_ircec minoration_racl_2014_2024
-    pension_non_salaries_agricoles_2026 pension_proratisee
-    points_au_prorata_des_cotisations points_avant_1973_independants
-    prime_speciale_sujetion_aides_soignants raap_classe_speciale
-    rafp_age_d_ouverture rci_seuil_premiere_tranche relevement_des_exploitants_2023
-    retraite_pour_invalidite_fonction_publique retraite_progressive
-    retraite_proportionnelle_msa revenu_annuel_moyen_independants reversion_rafp
-    saint_pierre_et_miquelon_pension_de_base salaire_annuel_moyen seconde_pension
-    services_passes_outre_mer surcote_fonction_publique surcote_ircantec
-    surcote_par_age_seul surcote_regime_general surcote_regimes_speciaux
-    taux_plein_et_proratisation temps_partiel_fonction_publique
-    totalisation_des_periodes_etrangeres trimestres_avant_1972
-    trimestres_retenus_1972_1974 versement_unique_ircantec
-    wallis_et_futuna_pension_des_salaries
+    micro_social_abattement minimum_contributif minimum_contributif_international
+    minoration_ircec minoration_racl_2014_2024 pension_non_salaries_agricoles_2026
+    pension_proratisee points_au_prorata_des_cotisations
+    points_avant_1973_independants prime_speciale_sujetion_aides_soignants
+    raap_classe_speciale rafp_age_d_ouverture rci_seuil_premiere_tranche
+    relevement_des_exploitants_2023 retraite_pour_invalidite_fonction_publique
+    retraite_progressive retraite_proportionnelle_msa
+    revenu_annuel_moyen_independants reversion_rafp salaire_annuel_moyen
+    seconde_pension services_passes_outre_mer surcote_fonction_publique
+    surcote_ircantec surcote_par_age_seul surcote_regime_general
+    surcote_regimes_speciaux taux_plein_et_proratisation
+    temps_partiel_fonction_publique totalisation_des_periodes_etrangeres
+    trimestres_avant_1972 trimestres_retenus_1972_1974 versement_unique_ircantec
 """.split())
 
 

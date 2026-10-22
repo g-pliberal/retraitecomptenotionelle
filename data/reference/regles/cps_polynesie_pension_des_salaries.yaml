@@ -141,10 +141,14 @@ code:
     montée de 2020 à 2023 ; la tranche B en points, au rendement de
     rendements_points.csv
   python: >-
-    données : regimes/cps_polynesie.yaml, regimes/cps_polynesie_tranche_b.yaml,
-    regimes/rendements_points.csv ; droit/liquider.py : liquider_chaque_regime
-  javascript: moteur/js/droit/liquider.js et moteur/js/regimes.js, le même catalogue
-  parametres: regimes/cps_polynesie.yaml (taux_plein, duree_requise_trimestres, salaire_reference, taux_cotisation_retraite) et rendements_points.csv
+    donnees/regimes.py : CatalogueRegimes ; droit/liquider.py : liquider_chaque_regime
+  javascript: >-
+    moteur/js/regimes.js : CatalogueRegimes ; moteur/js/droit/liquider.js :
+    liquiderChaqueRegime
+  parametres: >-
+    regimes/cps_polynesie.yaml, regimes/cps_polynesie_tranche_b.yaml : taux_plein,
+    duree_requise_trimestres, salaire_reference, taux_cotisation_retraite ;
+    regimes/rendements_points.csv : cps_polynesie_tranche_b
   tests: >-
     tests/temoins/simulations.json, les carrières du statut salarie_polynesie, que le
     portage rejoue

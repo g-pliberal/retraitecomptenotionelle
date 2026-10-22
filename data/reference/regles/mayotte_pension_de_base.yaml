@@ -254,11 +254,14 @@ code:
     minoration lus à la génération par les tables `mayotte_2018`, `mayotte_2026_01` et
     `mayotte_2026_09`
   python: >-
-    données : regimes/cssm_mayotte.yaml, legislation/ages_regimes.csv,
-    legislation/duree_requise_regimes_speciaux.csv ; droit/liquider.py :
-    liquider_chaque_regime
-  javascript: moteur/js/droit/liquider.js et moteur/js/regimes.js, le même catalogue
-  parametres: regimes/cssm_mayotte.yaml (taux_plein, duree_requise_trimestres, salaire_reference, decote_par_trimestre)
+    donnees/regimes.py : CatalogueRegimes ; droit/liquider.py : liquider_chaque_regime
+  javascript: >-
+    moteur/js/regimes.js : CatalogueRegimes ; moteur/js/droit/liquider.js :
+    liquiderChaqueRegime
+  parametres: >-
+    regimes/cssm_mayotte.yaml : taux_plein, duree_requise_trimestres, salaire_reference,
+    decote_par_trimestre ; legislation/ages_regimes.csv,
+    legislation/duree_requise_regimes_speciaux.csv
   tests: >-
     tests/temoins/simulations.json, les carrières du statut salarie_mayotte, que le
     portage rejoue

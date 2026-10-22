@@ -220,19 +220,18 @@ sources:
     url: https://www.cor-retraites.fr/sites/default/files/2019-06/doc-3337.pdf
 code:
   python: >-
-    scenarios/actuel.py : ValeursPoint.service_au et ValeursPoint.millesime ;
-    droit/liquider.py : valeur_du_point, qui reçoit la date d'effet ; revalorisation.py :
-    PensionServie.coefficient, la valeur du jour aux deux bouts ; droit/completer.py :
-    plafond_majoration ; droit/seconde.py : la seconde retraite
+    scenarios/actuel.py : ValeursPoint.service_au, ValeursPoint.millesime ;
+    droit/liquider.py : valeur_du_point ; revalorisation.py : PensionServie.coefficient
+    ; droit/completer.py : plafond_majoration ; droit/seconde.py :
+    _seconde_retraite_complementaire, _seconde_retraite_rci
   javascript: >-
-    moteur/js/regimes.js : ValeursPoint.serviceAu et ValeursPoint.millesime ;
+    moteur/js/regimes.js : ValeursPoint.serviceAu, ValeursPoint.millesime ;
     moteur/js/droit/liquider.js : valeurDuPoint ; moteur/js/revalorisation.js :
     PensionServie.coefficient ; moteur/js/droit/completer.js : plafondMajoration ;
-    moteur/js/droit/seconde.js ; le paquet porte valeurs_service_datees
-    (scripts/construire_donnees.py)
+    moteur/js/droit/seconde.js : secondeRetraiteComplementaire, secondeRetraiteRci
   parametres: >-
-    regimes/valeurs_service_datees.csv : 269 valeurs datées, Agirc 1947-2018, UNIRS et
-    Arrco 1961-2018, Agirc-Arrco 2019-2026 ; regimes/valeurs_point.csv au-delà
+    regimes/valeurs_service_datees.csv : agirc, arrco, unirs, agirc_arrco ;
+    regimes/valeurs_point.csv : agirc_arrco
   tests: >-
     tests/test_revalorisation.py : test_la_liquidation_sert_la_valeur_du_point_du_jour,
     test_la_pension_menee_recoit_le_relevement_de_novembre,
@@ -244,6 +243,11 @@ code:
     l'exemple agirc_arrco_drj_2020_02_valeur_du_1er_janvier_2019, et OpenFisca au
     1er janvier ; tests/test_trajectoire.py et tests/test_destinie.py ; les témoins de
     simulation, que le portage rejoue
+  moteur: >-
+    valeur_du_point reçoit la date d'effet ; PensionServie.coefficient lit la valeur du
+    jour aux deux bouts. regimes/valeurs_service_datees.csv porte 269 valeurs datées,
+    Agirc 1947-2018, UNIRS et Arrco 1961-2018, Agirc-Arrco 2019-2026, que le paquet du
+    site porte (scripts/construire_donnees.py) ; regimes/valeurs_point.csv, au-delà.
 referents:
   trajectoire:
     equivalent: table valeur_service datée au mois (parametres_trajectoire.valeur_service)

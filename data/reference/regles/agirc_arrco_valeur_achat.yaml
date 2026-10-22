@@ -403,30 +403,40 @@ sources:
 code:
   python: >-
     donnees/macro.py : DonneesMacro.coefficient_salaire_moyen ; scenarios/actuel.py :
-    ValeursPoint.achat_prolonge, qui lit regimes/prolongement_points.csv ;
-    droit/acquerir.py : acquerir, les points de chaque année ; droit/seconde.py :
-    _prix_du_point, ceux de la seconde pension, qui suivaient le plafond de la sécurité
-    sociale ; droit/liquider.py : valeur_du_point, la valeur de service prolongée par
-    ValeursPoint.indice_convenu ; revalorisation.py :
-    RevalorisationServie.coefficient_points et cout.py : coefficient_actuel, les pensions
-    servies
+    ValeursPoint.achat_prolonge, ValeursPoint.indice_convenu ; droit/acquerir.py :
+    acquerir ; droit/seconde.py : _prix_du_point ; droit/liquider.py : valeur_du_point ;
+    revalorisation.py : RevalorisationServie.coefficient_points ; cout.py :
+    coefficient_actuel
   javascript: >-
     moteur/js/macro.js : coefficientSalaireMoyen ; moteur/js/regimes.js :
-    ValeursPoint.achatProlonge et indiceConvenu ; moteur/js/droit/acquerir.js : acquerir ;
-    moteur/js/droit/seconde.js : prixDuPoint ; le paquet porte prolongement_points
-    (scripts/construire_donnees.py)
+    ValeursPoint.achatProlonge, ValeursPoint.indiceConvenu ; moteur/js/droit/acquerir.js
+    : acquerir ; moteur/js/droit/seconde.js : prixDuPoint ; moteur/js/droit/liquider.js
+    : valeurDuPoint ; moteur/js/revalorisation.js :
+    RevalorisationServie.coefficientPoints
   parametres: >-
-    regimes/prolongement_points.csv : agirc_arrco, salaire_moyen, décalage d'un an,
-    fiabilité moyenne ; les salaires de référence et le taux d'appel publiés de
-    regimes/valeurs_point.csv ; la croissance du salaire moyen de macro/salaire_moyen.csv
-    et de macro/hypotheses_projection.yaml. La ligne agirc_arrco 2027-2100 de
-    regimes/rendements_points.csv ne sert plus que de filet
+    contenu.parametres de chaque version : prix_du_point,
+    soutenabilite_valeur_service_projetee, indice, decalage, fichier ;
+    regimes/prolongement_points.csv : agirc_arrco, suit, decalage ;
+    regimes/valeurs_point.csv : agirc_arrco, salaire_reference, taux_appel ;
+    macro/salaire_moyen.csv ; macro/hypotheses_projection.yaml ;
+    regimes/rendements_points.csv : agirc_arrco
   tests: >-
     tests/test_simulateur.py :
     test_le_prix_d_achat_agirc_arrco_suit_le_salaire_moyen_au_dela_du_bareme,
     test_les_annees_apres_le_dernier_bareme_agirc_arrco_ont_des_points,
     test_le_prix_du_point_n_est_pas_prolonge_au_dela_du_publie ; les témoins de simulation,
     que le portage rejoue
+  moteur: >-
+    ValeursPoint.achat_prolonge lit regimes/prolongement_points.csv, ligne agirc_arrco :
+    le salaire moyen, décalé d'un an, de fiabilité moyenne, que le paquet du site porte
+    (scripts/construire_donnees.py) ; il prolonge les salaires de référence et le taux
+    d'appel publiés de regimes/valeurs_point.csv par la croissance du salaire moyen.
+    acquerir en compte les points de chaque année ; _prix_du_point, ceux de la seconde
+    pension, qui suivaient le plafond de la sécurité sociale ; valeur_du_point, la
+    valeur de service prolongée par ValeursPoint.indice_convenu ;
+    RevalorisationServie.coefficient_points et coefficient_actuel (cout.py, sans
+    jumeau), les pensions servies. La ligne agirc_arrco 2027-2100 de
+    regimes/rendements_points.csv ne sert plus que de filet.
 historique:
 - >-
   2026-10-05 — la convention du COR (action 147, étape 4) : la valeur de service suivait

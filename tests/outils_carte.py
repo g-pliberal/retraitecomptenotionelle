@@ -95,8 +95,8 @@ def ecarts(fiche: dict) -> list[str]:
 
 def _ecarts_des_parametres(fiche: dict, texte: str) -> list[str]:
     nom = fiche["id"]
-    portes = {cle for version in fiche.get("versions") or []
-              for cle in (version.get("contenu") or {}).get("parametres") or {}}
+    tables = [(version.get("contenu") or {}).get("parametres") for version in fiche.get("versions") or []]
+    portes = {cle for table in tables if isinstance(table, dict) for cle in table}
     clauses = [clause.strip() for clause in texte.split(";") if clause.strip()] or [""]
     sortie, sources = [], []
     for clause in clauses:

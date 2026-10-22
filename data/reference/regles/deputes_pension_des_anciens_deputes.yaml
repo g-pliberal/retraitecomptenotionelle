@@ -198,11 +198,14 @@ code:
     assemblee_nationale`) et la durée au mois de l'âge d'ouverture
     (`duree_requise_calendrier: assemblee_nationale`)
   python: >-
-    données : regimes/assemblees_parlementaires.yaml, legislation/ages_regimes.csv,
-    legislation/duree_requise_calendriers.csv ; droit/liquider.py :
-    liquider_chaque_regime
-  javascript: moteur/js/droit/liquider.js et moteur/js/regimes.js, le même catalogue
-  parametres: regimes/assemblees_parlementaires.yaml (taux_plein, duree_requise_trimestres, taux_cotisation_retraite, part_salariale)
+    donnees/regimes.py : CatalogueRegimes ; droit/liquider.py : liquider_chaque_regime
+  javascript: >-
+    moteur/js/regimes.js : CatalogueRegimes ; moteur/js/droit/liquider.js :
+    liquiderChaqueRegime
+  parametres: >-
+    regimes/assemblees_parlementaires.yaml : taux_plein, duree_requise_trimestres,
+    taux_cotisation_retraite, part_salariale ; legislation/ages_regimes.csv,
+    legislation/duree_requise_calendriers.csv
   tests: >-
     tests/temoins/simulations.json, les carrières du statut parlementaire, que le
     portage rejoue

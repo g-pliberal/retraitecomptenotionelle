@@ -145,9 +145,13 @@ code:
     une fiche de régime en annuités, une période par année de la montée du taux de
     cotisation de 2009 à 2020
   python: >-
-    données : regimes/wallis_et_futuna.yaml ; droit/liquider.py : liquider_chaque_regime
-  javascript: moteur/js/droit/liquider.js et moteur/js/regimes.js, le même catalogue
-  parametres: regimes/wallis_et_futuna.yaml (taux_plein, duree_requise_trimestres, salaire_reference, taux_cotisation_retraite, part_salariale)
+    donnees/regimes.py : CatalogueRegimes ; droit/liquider.py : liquider_chaque_regime
+  javascript: >-
+    moteur/js/regimes.js : CatalogueRegimes ; moteur/js/droit/liquider.js :
+    liquiderChaqueRegime
+  parametres: >-
+    regimes/wallis_et_futuna.yaml : taux_plein, duree_requise_trimestres,
+    salaire_reference, taux_cotisation_retraite, part_salariale
   tests: >-
     tests/temoins/simulations.json, les carrières du statut salarie_wallis_et_futuna, que
     le portage rejoue

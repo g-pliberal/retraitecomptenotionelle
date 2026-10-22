@@ -202,10 +202,14 @@ code:
     une fiche de régime en points, une période par année de la montée de 2023 à 2026,
     au rendement estimé de rendements_points.csv
   python: >-
-    données : regimes/cafat_nouvelle_caledonie.yaml, regimes/rendements_points.csv ;
-    droit/liquider.py : liquider_chaque_regime
-  javascript: moteur/js/droit/liquider.js et moteur/js/regimes.js, le même catalogue
-  parametres: regimes/cafat_nouvelle_caledonie.yaml (age_ouverture, duree_requise_trimestres, decote_par_trimestre, taux_cotisation_retraite) et rendements_points.csv
+    donnees/regimes.py : CatalogueRegimes ; droit/liquider.py : liquider_chaque_regime
+  javascript: >-
+    moteur/js/regimes.js : CatalogueRegimes ; moteur/js/droit/liquider.js :
+    liquiderChaqueRegime
+  parametres: >-
+    regimes/cafat_nouvelle_caledonie.yaml : age_ouverture, duree_requise_trimestres,
+    decote_par_trimestre, taux_cotisation_retraite ; regimes/rendements_points.csv :
+    cafat_nouvelle_caledonie
   tests: >-
     tests/temoins/simulations.json, les carrières du statut salarie_nouvelle_caledonie,
     que le portage rejoue

@@ -270,11 +270,14 @@ code:
     une fiche de régime en annuités, une période par réforme, l'âge et la durée lus à la
     génération par les tables `spm_2015`, `spm_2023` et `spm_2026`
   python: >-
-    données : regimes/cps_saint_pierre_et_miquelon.yaml, legislation/ages_regimes.csv,
-    legislation/duree_requise_regimes_speciaux.csv ; droit/liquider.py :
-    liquider_chaque_regime
-  javascript: moteur/js/droit/liquider.js et moteur/js/regimes.js, le même catalogue
-  parametres: regimes/cps_saint_pierre_et_miquelon.yaml (taux_plein, duree_requise_trimestres, salaire_reference, decote_par_trimestre, taux_cotisation_retraite)
+    donnees/regimes.py : CatalogueRegimes ; droit/liquider.py : liquider_chaque_regime
+  javascript: >-
+    moteur/js/regimes.js : CatalogueRegimes ; moteur/js/droit/liquider.js :
+    liquiderChaqueRegime
+  parametres: >-
+    regimes/cps_saint_pierre_et_miquelon.yaml : taux_plein, duree_requise_trimestres,
+    salaire_reference, decote_par_trimestre, taux_cotisation_retraite ;
+    legislation/ages_regimes.csv, legislation/duree_requise_regimes_speciaux.csv
   tests: >-
     tests/temoins/simulations.json, les carrières du statut
     salarie_saint_pierre_et_miquelon, que le portage rejoue

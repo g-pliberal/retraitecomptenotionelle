@@ -354,13 +354,19 @@ code:
   moteur: >-
     les deux tranches sont deux fiches de régime, parce que la liquidation ne retient
     qu'une période active par régime ; `decote_par_la_duree_seule` (decote_crpn) et la
-    table `crpn_2022` portent la version trente_annuites_duree_seule
+    table `crpn_2022` portent la version trente_annuites_duree_seule Ses données : des
+    périodes en annuités, 1963, 1995, 2012, 2016, 2022 et 2026 ; trimestres_de_decote
+    compte la décote à la durée seule.
   python: >-
-    données : regimes/crpnpac.yaml et regimes/crpnpac_tranche_2.yaml, des périodes en
-    annuités, 1963, 1995, 2012, 2016, 2022 et 2026 ; droit/liquider.py :
-    liquider_chaque_regime et la décote à la durée seule ; donnees/regimes.py
-  javascript: moteur/js/droit/liquider.js et moteur/js/regimes.js, le même catalogue
-  parametres: regimes/crpnpac.yaml et regimes/crpnpac_tranche_2.yaml (taux_plein, duree_requise_trimestres, taux_cotisation_retraite, decote_par_trimestre)
+    donnees/regimes.py : CatalogueRegimes ; droit/liquider.py : liquider_chaque_regime,
+    trimestres_de_decote
+  javascript: >-
+    moteur/js/regimes.js : CatalogueRegimes ; moteur/js/droit/liquider.js :
+    liquiderChaqueRegime, trimestresDeDecote
+  parametres: >-
+    regimes/crpnpac.yaml, regimes/crpnpac_tranche_2.yaml : taux_plein,
+    duree_requise_trimestres, taux_cotisation_retraite, decote_par_trimestre,
+    decote_par_la_duree_seule
   tests: >-
     tests/temoins/simulations.json, les carrières du statut personnel_navigant, que le
     portage rejoue

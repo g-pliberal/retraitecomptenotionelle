@@ -287,20 +287,25 @@ sources:
     date: 2025-12-19
 code:
   python: >-
-    scenarios/actuel.py : ValeursPoint.achat, et achat_prolonge, qui ne prolonge pas
-    l'Ircantec ; Rendements.rendement ; droit/acquerir.py : acquerir, les cotisations des
-    années sans barème revalorisées par les prix ; droit/liquider.py : leur conversion au
-    rendement
+    scenarios/actuel.py : ValeursPoint.achat, ValeursPoint.achat_prolonge,
+    Rendements.rendement ; droit/acquerir.py : acquerir ; droit/liquider.py :
+    liquider_chaque_regime
   javascript: >-
-    moteur/js/regimes.js : ValeursPoint.achatProlonge et rendement ;
-    moteur/js/droit/acquerir.js : acquerir ; moteur/js/droit/liquider.js : la conversion
-    au rendement
+    moteur/js/regimes.js : ValeursPoint.achat, ValeursPoint.achatProlonge,
+    Rendements.rendement ; moteur/js/droit/acquerir.js : acquerir ;
+    moteur/js/droit/liquider.js : liquiderChaqueRegime
   parametres: >-
-    regimes/valeurs_point.csv (ircantec) ; regimes/rendements_points.csv, ligne ircantec
-    2027-2100 ; regimes/prolongement_points.csv, qui ne nomme pas l'Ircantec
+    contenu.parametres de chaque version : prix_du_point, rendement ;
+    regimes/valeurs_point.csv : ircantec ; regimes/rendements_points.csv : ircantec ;
+    regimes/prolongement_points.csv
   tests: >-
     tests/test_simulateur.py : test_l_ircantec_prolonge_le_rendement_de_son_dernier_bareme ;
     les témoins de simulation, que le portage rejoue
+  moteur: >-
+    achat_prolonge ne prolonge pas l'Ircantec, que regimes/prolongement_points.csv ne
+    nomme pas ; acquerir revalorise par les prix les cotisations des années sans barème,
+    et liquider_chaque_regime les convertit au rendement (Rendements.rendement, la ligne
+    ircantec 2027-2100 de regimes/rendements_points.csv).
 historique:
 - >-
   Jusqu'au 23 septembre 2026, la table s'arrêtait à la valeur de janvier 2022, 0,49241 €,
