@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-10-19",
+ "dernier_passage_le": "2026-10-22",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -1012,6 +1012,17 @@
    "source": "Cnav, barèmes « Montant de l'allocation de solidarité aux personnes âgées » et « Plafond de ressources pour l'allocation de solidarité aux personnes âgées »",
    "valeurs": 15,
    "verifiee_le": "2026-10-05"
+  },
+  "natures_assimilees": {
+   "ajoutees": 192,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "ec7c84f427f68e04",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DREES, échantillon interrégimes de cotisants (EIC) 2017, données détaillées",
+   "valeurs": 192,
+   "verifiee_le": "2026-10-22"
   },
   "pap_regimes_subventionnes": {
    "ajoutees": 0,

@@ -1,0 +1,236 @@
+# La part des affiliés d'avant 23 ans qui ont validé un trimestre de
+# service national, ou de maladie, et le cumul de ces trimestres par
+# affilié, à 60 ans ou au dernier âge vu, par génération et par sexe
+# source_id: drees_eic_natures_assimilees
+# unite: pour cent des affiliés d'avant 23 ans (part) ; trimestres par
+#        affilié d'avant 23 ans (cumul)
+# fiabilite:
+#   certifiee : indicateurs « Part_aff » et « Cum_trim », types « SN » et
+#             « Maladie », champ « Aff_avant_23ans », du fichier
+#             « eic2017_data_drees_er » du jeu « Les droits validés au
+#             cours de la carrière », diffusé par la DREES et recontrôlé
+#             par scripts/verifier_donnees.py.
+#
+# Chaque génération que l'échantillon interrégimes de cotisants de
+# 2017 suit — 1942, 1946, 1950, puis une sur deux de 1954 à 1994 —,
+# parmi ses affiliés d'avant 23 ans, à la fin de l'année de ses 60 ans,
+# ou de l'âge qu'elle avait en 2017 si elle n'en avait pas 60.
+#
+# LES COLONNES
+# ------------
+# nature : service_national, un trimestre validé au titre du service
+#   national ; maladie, au titre de la maladie, de la maternité, de
+#   l'invalidité et des accidents du travail. Des trimestres « utiles »,
+#   ceux qui portent l'année vers ses quatre trimestres validés.
+# indicateur : part, la part des affiliés qui en ont validé au moins un,
+#   à cet âge ou avant ; cumul, le nombre de ces trimestres par affilié,
+#   qu'il en ait ou non. Le cumul sur la part dit combien en a chacun de
+#   ceux qui en ont : quatre trimestres de service, dix-sept de maladie
+#   pour les hommes nés en 1950.
+# age : 60 ans, ou l'âge de la génération en 2017.
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# À donner leur nature aux périodes assimilées des carrières pleines
+# des hommes de la population de scripts/grille_large.py (action 138,
+# étape 14) : la carrière longue répute cotisés le service national et
+# la maladie, quatre trimestres chacun, dans toutes ses rédactions, et
+# le chômage depuis novembre 2012 seulement (D. 351-1-2). 35,1 % des
+# hommes nés en 1950 avaient validé un trimestre de service national à
+# 60 ans, 12,6 % un de maladie. Aucun calcul du site ne la lit.
+#
+# Ne pas modifier les valeurs certifiées à la main : elles seraient
+# écrasées au prochain scripts/verifier_donnees.py --appliquer.
+generation,sexe,nature,indicateur,age,valeur,fiabilite
+1942,F,maladie,cumul,60,2.0,certifiee
+1942,F,maladie,part,60,12.3,certifiee
+1942,F,service_national,cumul,60,0.0,certifiee
+1942,F,service_national,part,60,0.1,certifiee
+1942,H,maladie,cumul,60,1.9,certifiee
+1942,H,maladie,part,60,10.5,certifiee
+1942,H,service_national,cumul,60,2.4,certifiee
+1942,H,service_national,part,60,49.7,certifiee
+1946,F,maladie,cumul,60,2.3,certifiee
+1946,F,maladie,part,60,15.1,certifiee
+1946,F,service_national,cumul,60,0.0,certifiee
+1946,F,service_national,part,60,0.1,certifiee
+1946,H,maladie,cumul,60,1.9,certifiee
+1946,H,maladie,part,60,10.6,certifiee
+1946,H,service_national,cumul,60,2.2,certifiee
+1946,H,service_national,part,60,47.3,certifiee
+1950,F,maladie,cumul,60,2.2,certifiee
+1950,F,maladie,part,60,19.4,certifiee
+1950,F,service_national,cumul,60,0.0,certifiee
+1950,F,service_national,part,60,0.1,certifiee
+1950,H,maladie,cumul,60,2.2,certifiee
+1950,H,maladie,part,60,12.6,certifiee
+1950,H,service_national,cumul,60,1.4,certifiee
+1950,H,service_national,part,60,35.1,certifiee
+1954,F,maladie,cumul,60,2.9,certifiee
+1954,F,maladie,part,60,22.9,certifiee
+1954,F,service_national,cumul,60,0.0,certifiee
+1954,F,service_national,part,60,0.1,certifiee
+1954,H,maladie,cumul,60,2.4,certifiee
+1954,H,maladie,part,60,14.4,certifiee
+1954,H,service_national,cumul,60,1.7,certifiee
+1954,H,service_national,part,60,45.9,certifiee
+1956,F,maladie,cumul,60,2.8,certifiee
+1956,F,maladie,part,60,24.9,certifiee
+1956,F,service_national,cumul,60,0.0,certifiee
+1956,F,service_national,part,60,0.1,certifiee
+1956,H,maladie,cumul,60,2.4,certifiee
+1956,H,maladie,part,60,14.6,certifiee
+1956,H,service_national,cumul,60,1.9,certifiee
+1956,H,service_national,part,60,50.6,certifiee
+1958,F,maladie,cumul,59,2.4,certifiee
+1958,F,maladie,part,59,24.5,certifiee
+1958,F,service_national,cumul,59,0.0,certifiee
+1958,F,service_national,part,59,0.1,certifiee
+1958,H,maladie,cumul,59,2.0,certifiee
+1958,H,maladie,part,59,13.4,certifiee
+1958,H,service_national,cumul,59,2.0,certifiee
+1958,H,service_national,part,59,52.8,certifiee
+1960,F,maladie,cumul,57,2.0,certifiee
+1960,F,maladie,part,57,23.8,certifiee
+1960,F,service_national,cumul,57,0.0,certifiee
+1960,F,service_national,part,57,0.1,certifiee
+1960,H,maladie,cumul,57,1.7,certifiee
+1960,H,maladie,part,57,12.4,certifiee
+1960,H,service_national,cumul,57,2.1,certifiee
+1960,H,service_national,part,57,56.1,certifiee
+1962,F,maladie,cumul,55,1.7,certifiee
+1962,F,maladie,part,55,23.4,certifiee
+1962,F,service_national,cumul,55,0.0,certifiee
+1962,F,service_national,part,55,0.0,certifiee
+1962,H,maladie,cumul,55,1.4,certifiee
+1962,H,maladie,part,55,11.4,certifiee
+1962,H,service_national,cumul,55,2.3,certifiee
+1962,H,service_national,part,55,57.7,certifiee
+1964,F,maladie,cumul,53,1.5,certifiee
+1964,F,maladie,part,53,21.6,certifiee
+1964,F,service_national,cumul,53,0.0,certifiee
+1964,F,service_national,part,53,0.1,certifiee
+1964,H,maladie,cumul,53,1.3,certifiee
+1964,H,maladie,part,53,11.0,certifiee
+1964,H,service_national,cumul,53,2.5,certifiee
+1964,H,service_national,part,53,61.3,certifiee
+1966,F,maladie,cumul,51,1.2,certifiee
+1966,F,maladie,part,51,20.6,certifiee
+1966,F,service_national,cumul,51,0.0,certifiee
+1966,F,service_national,part,51,0.1,certifiee
+1966,H,maladie,cumul,51,0.9,certifiee
+1966,H,maladie,part,51,9.1,certifiee
+1966,H,service_national,cumul,51,2.6,certifiee
+1966,H,service_national,part,51,62.6,certifiee
+1968,F,maladie,cumul,49,0.9,certifiee
+1968,F,maladie,part,49,19.8,certifiee
+1968,F,service_national,cumul,49,0.0,certifiee
+1968,F,service_national,part,49,0.1,certifiee
+1968,H,maladie,cumul,49,0.9,certifiee
+1968,H,maladie,part,49,9.5,certifiee
+1968,H,service_national,cumul,49,2.4,certifiee
+1968,H,service_national,part,49,61.0,certifiee
+1970,F,maladie,cumul,47,0.9,certifiee
+1970,F,maladie,part,47,19.0,certifiee
+1970,F,service_national,cumul,47,0.0,certifiee
+1970,F,service_national,part,47,0.0,certifiee
+1970,H,maladie,cumul,47,0.6,certifiee
+1970,H,maladie,part,47,8.4,certifiee
+1970,H,service_national,cumul,47,2.1,certifiee
+1970,H,service_national,part,47,61.0,certifiee
+1972,F,maladie,cumul,45,0.7,certifiee
+1972,F,maladie,part,45,17.5,certifiee
+1972,F,service_national,cumul,45,0.0,certifiee
+1972,F,service_national,part,45,0.1,certifiee
+1972,H,maladie,cumul,45,0.6,certifiee
+1972,H,maladie,part,45,8.1,certifiee
+1972,H,service_national,cumul,45,2.2,certifiee
+1972,H,service_national,part,45,63.5,certifiee
+1974,F,maladie,cumul,43,0.5,certifiee
+1974,F,maladie,part,43,16.8,certifiee
+1974,F,service_national,cumul,43,0.0,certifiee
+1974,F,service_national,part,43,0.0,certifiee
+1974,H,maladie,cumul,43,0.4,certifiee
+1974,H,maladie,part,43,7.0,certifiee
+1974,H,service_national,cumul,43,2.2,certifiee
+1974,H,service_national,part,43,63.0,certifiee
+1976,F,maladie,cumul,41,0.5,certifiee
+1976,F,maladie,part,41,15.5,certifiee
+1976,F,service_national,cumul,41,0.0,certifiee
+1976,F,service_national,part,41,0.0,certifiee
+1976,H,maladie,cumul,41,0.4,certifiee
+1976,H,maladie,part,41,6.4,certifiee
+1976,H,service_national,cumul,41,1.4,certifiee
+1976,H,service_national,part,41,42.3,certifiee
+1978,F,maladie,cumul,39,0.4,certifiee
+1978,F,maladie,part,39,14.8,certifiee
+1978,F,service_national,cumul,39,0.0,certifiee
+1978,F,service_national,part,39,0.1,certifiee
+1978,H,maladie,cumul,39,0.3,certifiee
+1978,H,maladie,part,39,6.1,certifiee
+1978,H,service_national,cumul,39,0.7,certifiee
+1978,H,service_national,part,39,22.0,certifiee
+1980,F,maladie,cumul,37,0.3,certifiee
+1980,F,maladie,part,37,13.5,certifiee
+1980,F,service_national,cumul,37,0.0,certifiee
+1980,F,service_national,part,37,0.0,certifiee
+1980,H,maladie,cumul,37,0.3,certifiee
+1980,H,maladie,part,37,5.7,certifiee
+1980,H,service_national,cumul,37,0.0,certifiee
+1980,H,service_national,part,37,0.2,certifiee
+1982,F,maladie,cumul,35,0.3,certifiee
+1982,F,maladie,part,35,12.6,certifiee
+1982,F,service_national,cumul,35,0.0,certifiee
+1982,F,service_national,part,35,0.0,certifiee
+1982,H,maladie,cumul,35,0.2,certifiee
+1982,H,maladie,part,35,5.1,certifiee
+1982,H,service_national,cumul,35,0.0,certifiee
+1982,H,service_national,part,35,0.1,certifiee
+1984,F,maladie,cumul,33,0.3,certifiee
+1984,F,maladie,part,33,11.8,certifiee
+1984,F,service_national,cumul,33,0.0,certifiee
+1984,F,service_national,part,33,0.0,certifiee
+1984,H,maladie,cumul,33,0.2,certifiee
+1984,H,maladie,part,33,5.3,certifiee
+1984,H,service_national,cumul,33,0.0,certifiee
+1984,H,service_national,part,33,0.1,certifiee
+1986,F,maladie,cumul,31,0.2,certifiee
+1986,F,maladie,part,31,10.0,certifiee
+1986,F,service_national,cumul,31,0.0,certifiee
+1986,F,service_national,part,31,0.0,certifiee
+1986,H,maladie,cumul,31,0.1,certifiee
+1986,H,maladie,part,31,4.4,certifiee
+1986,H,service_national,cumul,31,0.0,certifiee
+1986,H,service_national,part,31,0.0,certifiee
+1988,F,maladie,cumul,29,0.1,certifiee
+1988,F,maladie,part,29,7.6,certifiee
+1988,F,service_national,cumul,29,0.0,certifiee
+1988,F,service_national,part,29,0.0,certifiee
+1988,H,maladie,cumul,29,0.1,certifiee
+1988,H,maladie,part,29,3.7,certifiee
+1988,H,service_national,cumul,29,0.0,certifiee
+1988,H,service_national,part,29,0.0,certifiee
+1990,F,maladie,cumul,27,0.1,certifiee
+1990,F,maladie,part,27,5.5,certifiee
+1990,F,service_national,cumul,27,0.0,certifiee
+1990,F,service_national,part,27,0.0,certifiee
+1990,H,maladie,cumul,27,0.1,certifiee
+1990,H,maladie,part,27,3.0,certifiee
+1990,H,service_national,cumul,27,0.0,certifiee
+1990,H,service_national,part,27,0.0,certifiee
+1992,F,maladie,cumul,25,0.1,certifiee
+1992,F,maladie,part,25,3.4,certifiee
+1992,F,service_national,cumul,25,0.0,certifiee
+1992,F,service_national,part,25,0.0,certifiee
+1992,H,maladie,cumul,25,0.1,certifiee
+1992,H,maladie,part,25,2.7,certifiee
+1992,H,service_national,cumul,25,0.0,certifiee
+1992,H,service_national,part,25,0.0,certifiee
+1994,F,maladie,cumul,23,0.0,certifiee
+1994,F,maladie,part,23,1.8,certifiee
+1994,F,service_national,cumul,23,0.0,certifiee
+1994,F,service_national,part,23,0.0,certifiee
+1994,H,maladie,cumul,23,0.0,certifiee
+1994,H,maladie,part,23,1.7,certifiee
+1994,H,service_national,cumul,23,0.0,certifiee
+1994,H,service_national,part,23,0.0,certifiee

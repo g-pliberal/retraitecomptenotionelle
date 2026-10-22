@@ -2730,6 +2730,28 @@ def source_premier_trimestre() -> dict[tuple, float]:
     }
 
 
+def source_natures_assimilees() -> dict[tuple, float]:
+    """La part des affiliés d'avant 23 ans qui ont validé un trimestre de
+    service national, ou de maladie, et le cumul de ces trimestres par
+    affilié, à 60 ans ou au dernier âge que l'échantillon voit, génération
+    par génération, sexe par sexe.
+
+    Les données détaillées de l'EIC 2017 que
+    ``scripts/fetch/drees_natures_assimilees.py`` lit et vérifie : la
+    population de la page en tire la nature des périodes assimilées de ses
+    hommes (action 138, étape 14).
+
+    Clé (generation, sexe, nature, indicateur, age).
+    """
+    charge = _lire_json("drees_natures_assimilees.json",
+                        "scripts/fetch/drees_natures_assimilees.py")
+    return {
+        (str(ligne["generation"]), ligne["sexe"], ligne["nature"], ligne["indicateur"],
+         str(ligne["age"])): ligne["valeur"]
+        for ligne in charge["valeurs"]
+    }
+
+
 def source_age_conjoncturel() -> dict[tuple, float]:
     """L'âge conjoncturel de départ à la retraite, par sexe, depuis 2004.
 
@@ -7828,6 +7850,61 @@ CERTIFICATIONS = (
             "# (D. 351-1-1). 38,2 % des hommes nés en 1950 avaient cotisé un",
             "# trimestre à la fin de l'année de leurs 16 ans, 77,7 % de ceux nés en",
             "# 1954 à celle de leurs 19 ans. Aucun calcul du site ne la lit.",
+            "#",
+            "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
+            "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="natures_assimilees",
+        chemin=REFERENCE / "macro" / "natures_assimilees.csv",
+        cles=("generation", "sexe", "nature", "indicateur", "age"),
+        colonne="valeur",
+        source=source_natures_assimilees,
+        origine="DREES, échantillon interrégimes de cotisants (EIC) 2017, données détaillées",
+        decimales=1,
+        tolerance=0.05,
+        entete=(
+            "# La part des affiliés d'avant 23 ans qui ont validé un trimestre de",
+            "# service national, ou de maladie, et le cumul de ces trimestres par",
+            "# affilié, à 60 ans ou au dernier âge vu, par génération et par sexe",
+            "# source_id: drees_eic_natures_assimilees",
+            "# unite: pour cent des affiliés d'avant 23 ans (part) ; trimestres par",
+            "#        affilié d'avant 23 ans (cumul)",
+            "# fiabilite:",
+            "#   certifiee : indicateurs « Part_aff » et « Cum_trim », types « SN » et",
+            "#             « Maladie », champ « Aff_avant_23ans », du fichier",
+            "#             « eic2017_data_drees_er » du jeu « Les droits validés au",
+            "#             cours de la carrière », diffusé par la DREES et recontrôlé",
+            "#             par scripts/verifier_donnees.py.",
+            "#",
+            "# Chaque génération que l'échantillon interrégimes de cotisants de",
+            "# 2017 suit — 1942, 1946, 1950, puis une sur deux de 1954 à 1994 —,",
+            "# parmi ses affiliés d'avant 23 ans, à la fin de l'année de ses 60 ans,",
+            "# ou de l'âge qu'elle avait en 2017 si elle n'en avait pas 60.",
+            "#",
+            "# LES COLONNES",
+            "# ------------",
+            "# nature : service_national, un trimestre validé au titre du service",
+            "#   national ; maladie, au titre de la maladie, de la maternité, de",
+            "#   l'invalidité et des accidents du travail. Des trimestres « utiles »,",
+            "#   ceux qui portent l'année vers ses quatre trimestres validés.",
+            "# indicateur : part, la part des affiliés qui en ont validé au moins un,",
+            "#   à cet âge ou avant ; cumul, le nombre de ces trimestres par affilié,",
+            "#   qu'il en ait ou non. Le cumul sur la part dit combien en a chacun de",
+            "#   ceux qui en ont : quatre trimestres de service, dix-sept de maladie",
+            "#   pour les hommes nés en 1950.",
+            "# age : 60 ans, ou l'âge de la génération en 2017.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À donner leur nature aux périodes assimilées des carrières pleines",
+            "# des hommes de la population de scripts/grille_large.py (action 138,",
+            "# étape 14) : la carrière longue répute cotisés le service national et",
+            "# la maladie, quatre trimestres chacun, dans toutes ses rédactions, et",
+            "# le chômage depuis novembre 2012 seulement (D. 351-1-2). 35,1 % des",
+            "# hommes nés en 1950 avaient validé un trimestre de service national à",
+            "# 60 ans, 12,6 % un de maladie. Aucun calcul du site ne la lit.",
             "#",
             "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
             "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",

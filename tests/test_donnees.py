@@ -754,6 +754,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # où la population fait entrer ses carrières pleines (action 138,
         # étape 14).
         "premier_trimestre": "macro/premier_trimestre.csv",
+        # Et la nature des périodes assimilées, le service national et la
+        # maladie, que la carrière longue répute cotisés (action 138, étape
+        # 14).
+        "natures_assimilees": "macro/natures_assimilees.csv",
         # Le seul qui vienne d'Eurostat : aucune source française ne ventile le
         # salaire par âge pour les régimes spéciaux.
         "profil_salaire_secteur": "macro/profil_salaire_secteur.csv",
