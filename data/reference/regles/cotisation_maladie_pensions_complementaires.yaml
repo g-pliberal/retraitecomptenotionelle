@@ -127,15 +127,20 @@ textes_a_rattacher:
 - reference: D. 242-9 du code de la sécurité sociale, l'exonération
 code:
   python: >-
-    remuneration.py : PrelevementsPension (maladie_complementaire, regimes_maladie)
-    et assiette_maladie ; contexte.py : Montants (taux_pension, pension_d_assiette,
-    pension_du_regime, pension_servie) et l'inversion d'une pension saisie nette
+    remuneration.py : PrelevementsPension, assiette_maladie ; contexte.py : Montants,
+    Montants.pension_d_assiette, Montants.pension_du_regime, Montants.pension_servie
   javascript: >-
-    moteur/js/remuneration.js : PrelevementsPension et assietteMaladie ;
+    moteur/js/remuneration.js : PrelevementsPension, assietteMaladie ;
     moteur/js/contexte.js : Montants ; moteur/js/pages.js : etagesActuels,
     compositionActuelle, reversionDuConjoint, noteDuMode
-  parametres: legislation/prelevements_remuneration.yaml, pensions.maladie_complementaire
+  parametres: >-
+    contenu.parametres de chaque version : taux_regime_general, taux_autres_avantages,
+    taux ; legislation/prelevements_remuneration.yaml : pensions.maladie_complementaire
   tests: tests/test_net_pensions.py
+  moteur: >-
+    PrelevementsPension en porte les taux (maladie_complementaire, regimes_maladie),
+    Montants le taux de chaque pension (taux_pension) ; Montants inverse aussi une
+    pension saisie nette.
 referents:
   ines: >-
     prélève le 1 % sur les complémentaires du privé, par catégorie et quantile, mais

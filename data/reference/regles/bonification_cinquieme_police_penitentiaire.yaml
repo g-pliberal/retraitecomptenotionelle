@@ -254,15 +254,22 @@ textes_a_rattacher:
 - reference: loi n° 2003-1312 du 30 décembre 2003, article 93 (douaniers de la branche surveillance)
 code:
   python: >-
-    scenarios/actuel.py : FichesDatees, qui lit les versions de cette fiche ;
-    droit/compter.py : trimestres_des_emplois, trimestres_d_un_emploi, condition_d_un_emploi ;
-    droit/liquider.py : liquider_chaque_regime, qui ajoute la bonification aux
-    services et à la durée de la décote
+    scenarios/actuel.py : FichesDatees ; droit/compter.py : trimestres_des_emplois,
+    trimestres_d_un_emploi, condition_d_un_emploi ; droit/liquider.py :
+    liquider_chaque_regime
   javascript: >-
     moteur/js/regimes.js : FichesDatees ; moteur/js/droit/compter.js :
-    trimestresDesEmplois, trimestresDUnEmploi, conditionDUnEmploi ; moteur/js/droit/liquider.js
-  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+    trimestresDesEmplois, trimestresDUnEmploi, conditionDUnEmploi ;
+    moteur/js/droit/liquider.js : liquiderChaqueRegime
+  parametres: >-
+    contenu.parametres de chaque version : existe, nature, statuts, regime, classement,
+    fraction, plafond_trimestres, condition, age_de_reduction, au_dela_du_maximum,
+    cumul_maximum_trimestres, fiabilite
   tests: [tests/test_bonifications_emplois.py, tests/test_trajectoire.py]
+  moteur: >-
+    FichesDatees lit les versions de cette fiche ; liquider_chaque_regime ajoute la
+    bonification aux services et à la durée de la décote. Le paquet du site porte ses
+    versions.
 referents:
   trajectoire:
     equivalent: >-

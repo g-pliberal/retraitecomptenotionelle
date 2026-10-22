@@ -184,15 +184,22 @@ textes_a_rattacher:
 - reference: CGI, article 194, le quotient familial
 code:
   python: >-
-    remuneration.py : PrelevementsPension (seuil, tranche, taux_de_la_tranche,
-    maladie_de_la_tranche, revenu_fiscal_presume) ; contexte.py : Montants.du_foyer,
-    net_d_un_depart, revenu_fiscal_du_foyer, parts_du_foyer, minimum_vieillesse_servi
+    remuneration.py : PrelevementsPension, PrelevementsPension.seuil,
+    PrelevementsPension.tranche, PrelevementsPension.taux_de_la_tranche,
+    PrelevementsPension.maladie_de_la_tranche, PrelevementsPension.revenu_fiscal_presume
+    ; contexte.py : Montants.du_foyer, net_d_un_depart, revenu_fiscal_du_foyer,
+    parts_du_foyer, minimum_vieillesse_servi
   javascript: >-
     moteur/js/remuneration.js : PrelevementsPension ; moteur/js/contexte.js :
-    Montants.duFoyer, netDUnDepart ; moteur/js/pages.js : noteDuMode,
-    estimationOfficielle, le champ revenu_fiscal
-  parametres: legislation/prelevements_remuneration.yaml, pensions.bareme_csg et abattement_pensions
+    Montants.duFoyer, netDUnDepart, revenuFiscalDuFoyer, partsDuFoyer,
+    minimumVieillesseServi ; moteur/js/pages.js : noteDuMode, estimationOfficielle
+  parametres: >-
+    contenu.parametres de chaque version : seuils_2026_premiere_part,
+    majorations_2026_demi_part, taux ; legislation/prelevements_remuneration.yaml :
+    pensions.bareme_csg, pensions.abattement_pensions
   tests: tests/test_net_pensions.py ; tests/test_estimation_du_site.py
+  moteur: >-
+    Le site en lit le revenu fiscal par son champ revenu_fiscal.
 referents:
   openfisca_france: la CSG, la CRDS et la CASA des pensions selon le revenu fiscal de N−2 et les parts
   ines: >-

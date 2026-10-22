@@ -188,15 +188,21 @@ sources:
     date: 2026-09-23
 code:
   python: >-
-    donnees/regimes.py : PeriodeRegime.bornes_assiette_en_euros et bornes_de_l_annee ;
-    droit/acquerir.py (les points du scénario 1), moteur/compte.py
-    (Compte._bornes_proratisees), remuneration.py (bloc_droit_en_vigueur, Segment)
+    donnees/regimes.py : PeriodeRegime.bornes_assiette_en_euros,
+    PeriodeRegime.bornes_de_l_annee ; droit/acquerir.py : acquerir ; moteur/compte.py :
+    ConstructeurCompte._bornes_proratisees ; remuneration.py : bloc_droit_en_vigueur,
+    Segment
   javascript: >-
-    moteur/js/regimes.js : PeriodeRegime.bornesAssietteEnEuros et bornesDeLAnnee ;
-    moteur/js/droit/acquerir.js, moteur/js/compte.js, moteur/js/remuneration.js
-    (blocDroitEnVigueur, montant)
-  parametres: regimes/rci.yaml, borne_haute_par_annee et borne_basse_par_annee
+    moteur/js/regimes.js : PeriodeRegime.bornesAssietteEnEuros,
+    PeriodeRegime.bornesDeLAnnee ; moteur/js/droit/acquerir.js : acquerir ;
+    moteur/js/compte.js : ConstructeurCompte._bornesProratisees ;
+    moteur/js/remuneration.js : blocDroitEnVigueur, montant
+  parametres: >-
+    contenu.parametres de chaque version : plafond_propre ; regimes/rci.yaml :
+    borne_haute_par_annee, borne_basse_par_annee
   tests: tests/test_independants.py
+  moteur: >-
+    acquerir en tire les points du scénario 1 ; le portage n'a pas de classe Segment.
 referents:
   modele_social: porte le plafond de 2021 à 2025, dont 43 891 € pour 2025
   devcrafting_retraites: arrête la première tranche à 37 846 €, mais part du plafond de la sécurité sociale pour la seconde

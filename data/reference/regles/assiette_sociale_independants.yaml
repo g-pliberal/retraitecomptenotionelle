@@ -150,12 +150,15 @@ sources:
     date: 2026-10-13
 code:
   python: >-
-    remuneration.py : AssietteAbattue, ProfilRemuneration.assiette_abattue et
-    revenu_avant_abattement
+    remuneration.py : AssietteAbattue, ProfilRemuneration.assiette_abattue,
+    ProfilRemuneration.revenu_avant_abattement
   javascript: >-
-    moteur/js/remuneration.js : ProfilRemuneration.assietteAbattue et
-    revenuAvantAbattement
-  parametres: legislation/prelevements_remuneration.yaml, profils.independant.assiette_abattue
+    moteur/js/remuneration.js : ProfilRemuneration.assietteAbattue,
+    ProfilRemuneration.revenuAvantAbattement
+  parametres: >-
+    contenu.parametres de chaque version : taux, plancher_en_plafonds,
+    plafond_en_plafonds ; legislation/prelevements_remuneration.yaml :
+    profils.independant.assiette_abattue
   tests: tests/test_independants.py
 referents:
   modele_ti: calcule l'assiette sociale depuis le revenu brut, ses bornes et les revenus de remplacement compris

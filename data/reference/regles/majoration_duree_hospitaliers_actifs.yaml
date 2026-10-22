@@ -232,14 +232,19 @@ code:
   python: >-
     scenarios/actuel.py : FichesDatees ; droit/compter.py : trimestres_des_emplois,
     trimestres_d_un_emploi, condition_d_un_emploi ; droit/liquider.py :
-    liquider_chaque_regime, qui ajoute la majoration à la durée de la décote de la
-    CNRACL
+    liquider_chaque_regime
   javascript: >-
     moteur/js/regimes.js : FichesDatees ; moteur/js/droit/compter.js :
     trimestresDesEmplois, trimestresDUnEmploi, conditionDUnEmploi ;
-    moteur/js/droit/liquider.js
-  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+    moteur/js/droit/liquider.js : liquiderChaqueRegime
+  parametres: >-
+    contenu.parametres de chaque version : existe, nature, statuts, regime, classement,
+    services_comptes, fraction, plafond_trimestres, condition, age_de_reduction,
+    au_dela_du_maximum, cumul_maximum_trimestres, fiabilite
   tests: [tests/test_bonifications_emplois.py, tests/test_trajectoire.py]
+  moteur: >-
+    liquider_chaque_regime ajoute la majoration à la durée de la décote de la CNRACL. Le
+    paquet du site porte ses versions.
 referents:
   trajectoire:
     equivalent: >-

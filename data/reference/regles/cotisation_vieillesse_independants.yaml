@@ -139,19 +139,22 @@ sources:
     date: 2026-10-13
 code:
   python: >-
-    donnees/regimes.py : PeriodeRegime.taux_du_cotisant, et les mesures
-    _non_salarie de charger_taux_annuels ; moteur/compte.py
-    (ConstructeurCompte.taux_effectif, la cotisation déplafonnée) ;
-    remuneration.py (bloc_droit_en_vigueur)
+    donnees/regimes.py : PeriodeRegime.taux_du_cotisant, charger_taux_annuels ;
+    moteur/compte.py : ConstructeurCompte.taux_effectif ; remuneration.py :
+    bloc_droit_en_vigueur
   javascript: >-
-    moteur/js/regimes.js : PeriodeRegime.tauxDuCotisant ; moteur/js/compte.js
-    (tauxEffectif) ; moteur/js/remuneration.js (blocDroitEnVigueur)
+    moteur/js/regimes.js : PeriodeRegime.tauxDuCotisant ; moteur/js/compte.js :
+    ConstructeurCompte.tauxEffectif ; moteur/js/remuneration.js : blocDroitEnVigueur
   parametres: >-
-    regimes/taux_cotisation_annuels.csv (lignes du RSI, et mesures
-    taux_plafonne_non_salarie et taux_deplafonne_non_salarie du régime général,
-    certifiées sur D. 633-3 par scripts/fetch/dila_legi_taux_independants.py et
-    scripts/verifier_donnees.py)
+    regimes/taux_cotisation_annuels.csv : rsi, taux_plafonne_non_salarie,
+    taux_deplafonne_non_salarie
   tests: tests/test_independants.py
+  moteur: >-
+    charger_taux_annuels lit les mesures _non_salarie ; ConstructeurCompte.taux_effectif
+    compte la cotisation déplafonnée. regimes/taux_cotisation_annuels.csv porte les
+    lignes du RSI et les mesures taux_plafonne_non_salarie et
+    taux_deplafonne_non_salarie du régime général, certifiées sur D. 633-3 par
+    scripts/fetch/dila_legi_taux_independants.py et scripts/verifier_donnees.py.
 referents:
   devcrafting_retraites: prélève sur l'artisan 0,60 % au-dessus du plafond, son taux propre
 historique:

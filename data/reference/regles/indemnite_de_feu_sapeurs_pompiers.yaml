@@ -208,15 +208,21 @@ sources:
 code:
   python: >-
     donnees/primes.py : PrimesSoumises ; droit/primes.py : prime_de_la_pension,
-    proratiser ; droit/liquider.py : liquider_chaque_regime ; moteur/compte.py ;
-    remuneration.py : bloc_droit_en_vigueur
+    proratiser ; droit/liquider.py : liquider_chaque_regime ; moteur/compte.py :
+    ConstructeurCompte._cotisation_ligne ; remuneration.py : bloc_droit_en_vigueur
   javascript: >-
-    moteur/js/primes.js ; moteur/js/droit/primes.js ; moteur/js/droit/liquider.js ;
-    moteur/js/compte.js ; moteur/js/remuneration.js
+    moteur/js/primes.js : PrimesSoumises ; moteur/js/droit/primes.js : primeDeLaPension,
+    proratiser ; moteur/js/droit/liquider.js : liquiderChaqueRegime ;
+    moteur/js/compte.js : ConstructeurCompte._cotisationLigne ;
+    moteur/js/remuneration.js : blocDroitEnVigueur
   parametres: >-
-    legislation/primes_soumises_a_retenue.yaml, et les versions de cette fiche
-    (contenu.parametres), que le paquet du site porte
+    contenu.parametres de chaque version : existe, statuts, regime, nature, plafond,
+    prorata, condition, classement, services_comptes, annees_dans_l_emploi,
+    annees_de_services, age_anticipe, fiabilite ;
+    legislation/primes_soumises_a_retenue.yaml
   tests: [tests/test_primes_soumises_a_retenue.py]
+  moteur: >-
+    Le paquet du site porte ses versions.
 referents:
   trajectoire:
     equivalent: aucun ; ses cas types n'ont pas de sapeur-pompier
