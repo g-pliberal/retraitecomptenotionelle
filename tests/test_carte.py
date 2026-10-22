@@ -140,6 +140,117 @@ def test_les_fiches_presque_mures_le_sont(fiches):
     assert [e for nom in PRESQUE_MURES for e in ecarts(fiches[nom])] == []
 
 
+def test_le_code_d_une_fiche_se_confronte_au_depot():
+    """Ce qu'``outils_carte`` lit du code d'une fiche : les fonctions, les
+    classes et leurs méthodes, les accesseurs et les constantes de module que
+    chaque moteur définit ; les paramètres, en clauses que sépare « ; » —
+    tous ceux de ses versions, des champs des périodes de ses régimes, des
+    clés ou des colonnes des données de référence — ; des tests qui existent.
+    Ce que le dépôt dément s'y lit, nom par nom."""
+    from outils_carte import ecarts
+
+    fiche = {"id": "essai", "regimes": ["agirc_arrco"],
+             "versions": [{"id": "v", "contenu": {"parametres": {"taux": 0.5}}}],
+             "code": {"python": "carriere.py : CONJOINTS_COLLABORATEURS ; "
+                                "droit/reversion.py : reversion",
+                      "javascript": "moteur/js/carriere.js : CONJOINTS_COLLABORATEURS, "
+                                    "Carriere.exConjoints",
+                      "parametres": "contenu.parametres de chaque version : taux ; "
+                                    "regimes/agirc_arrco.yaml : abattement_points ; "
+                                    "legislation/micro_social.yaml : abattements.vente ; "
+                                    "legislation/age_annulation_decote.csv : generation",
+                      "tests": ["tests/test_reversion.py"]}}
+    assert ecarts(fiche) == []
+    fiche["code"]["parametres"] = ("regimes/agirc_arrco.yaml : abattement_points ; "
+                                   "legislation/micro_social.yaml : abattements.licorne ; "
+                                   "legislation/chimere.csv ; le SMIC, dans les séries macro")
+    dits = "\n".join(ecarts(fiche))
+    for attendu in ("tous ceux de ses versions", "abattements.licorne",
+                    "legislation/chimere.csv n'existe pas", "« le SMIC, dans les séries macro »"):
+        assert attendu in dits, dits
+    fiche["versions"] = []
+    fiche["code"]["parametres"] = "aucun : rien à lire ; legislation/age_annulation_decote.csv"
+    assert any("« aucun »" in e for e in ecarts(fiche)), ecarts(fiche)
+
+
+#: Les fiches dont le code s'écrit encore en prose, qu'``outils_carte`` ne lit
+#: pas : 148 le 22 octobre 2026 (action 130). La liste ne fait que maigrir —
+#: une fiche qui tient en sort — ; une fiche qui gagne un code l'écrit
+#: d'emblée sous la forme que l'outil lit.
+EN_PROSE = frozenset("""
+    abattement_rci age_annulation_decote age_legal_par_generation
+    age_ouverture_ieg_actifs age_reference_decote_ieg age_surcote_sncf_ratp
+    agirc_arrco_valeur_achat agirc_arrco_valeur_service apprentissage
+    assiette_minimale_agricole assiette_sociale_independants asv_medecins_points
+    bareme_minoration_regimes_en_points bonification_cinquieme_militaires
+    bonification_cinquieme_police_penitentiaire
+    bonification_cinquieme_sapeurs_pompiers cafat_pension_de_base
+    carcdsf_minoration_age_seul carmf_asv_minoration_enfants
+    carpv_minoration_age_seul carriere_longue_reputes_cotises_autres
+    cavamac_minoration_age_seul cavec_minoration_age_seul cavom_ages_minoration
+    cavp_minoration_deux_pentes cese_pension_des_membres
+    chomage_retraite_complementaire
+    clr_nouvelle_caledonie_pension_des_fonctionnaires cnbf_surcote
+    coefficient_anticipation_ircantec coefficients_anticipation_agirc_arrco
+    complement_differentiel_rco conge_supplementaire_naissance
+    cotisation_maladie_des_non_residents cotisation_maladie_pensions_complementaires
+    cotisation_par_classes_liberales cotisation_vieillesse_independants
+    cprn_ages_decote_enfants cps_polynesie_pension_des_salaries
+    crpn_pension_des_navigants csg_des_pensions_selon_le_revenu
+    cultes_fractions_de_pension cultes_retraite_complementaire
+    cultes_salaire_annuel_moyen cumul_emploi_retraite_et_retraite_progressive
+    cumul_emploi_retraite_fonction_publique date_effet_mois_suivant
+    decompte_des_services_fonction_publique decote_avant_1983 decote_crpn
+    decote_fonction_publique decote_opera_de_paris decote_regime_general
+    decote_regimes_speciaux depart_anticipe_parents_trois_enfants
+    deputes_pension_des_anciens_deputes droits_apres_la_premiere_pension
+    duree_requise_par_generation enfants_crpcen enfants_fonction_publique
+    enfants_ieg enfants_ratp enfants_sncf fin_indemnisation_chomage
+    financement_chomage_complementaire garantie_minimale_points_agirc igrante_points
+    inaptitude_au_travail indemnite_de_feu_sapeurs_pompiers
+    indemnite_sujetions_speciales_police ipacte_points ircantec_majoration_enfants
+    ircantec_valeurs_point liquidation_regime_par_regime
+    majoration_conjoint_a_charge majoration_duree_apres_65_ans
+    majoration_duree_assurance_enfants majoration_duree_hospitaliers_actifs
+    majoration_enfants_a_charge_agirc_arrco
+    majoration_enfants_plafond_fonction_publique majoration_exceptionnelle_2023
+    majorations_forfaitaires_1972_1982 mayotte_pension_de_base
+    micro_social_abattement minimum_contributif minimum_contributif_international
+    minimum_pension_sncf minoration_ircec minoration_racl_2014_2024
+    organic_conjoints_de_commercants pension_d_invalidite_substituee
+    pension_majoree_reference pension_non_salaries_agricoles_2026 pension_proratisee
+    points_au_prorata_des_cotisations points_avant_1973_independants
+    points_invalidite_independants prime_speciale_sujetion_aides_soignants
+    raap_classe_speciale rafp_age_d_ouverture ravgdt_allocation_viagere
+    rci_seuil_premiere_tranche relevement_des_exploitants_2023
+    residence_et_minimum_vieillesse retraite_anticipee_handicap
+    retraite_pour_invalidite_fonction_publique retraite_progressive
+    retraite_proportionnelle_msa revenu_annuel_moyen_independants reversion
+    reversion_crpcen reversion_ieg reversion_rafp reversion_sncf
+    saint_pierre_et_miquelon_pension_de_base salaire_annuel_moyen seconde_pension
+    services_passes_outre_mer sportifs_haut_niveau stages_formation_professionnelle
+    surcote_fonction_publique surcote_ircantec surcote_par_age_seul
+    surcote_regime_general surcote_regimes_speciaux
+    taux_plein_anciens_combattants_prisonniers taux_plein_anciens_deportes_internes
+    taux_plein_et_proratisation taux_plein_meres_de_famille_ouvrieres
+    taux_plein_travailleurs_manuels temps_partiel_fonction_publique
+    totalisation_des_periodes_etrangeres trimestres_avant_1972
+    trimestres_retenus_1972_1974 versement_forfaitaire_unique
+    versement_unique_ircantec wallis_et_futuna_pension_des_salaries
+""".split())
+
+
+def test_le_code_de_chaque_fiche_tient(fiches):
+    """Le code de chaque fiche nomme ce que le dépôt porte et ce que ses
+    versions portent (``outils_carte``), hors des fiches qui l'écrivent encore
+    en prose ; une fiche de cette liste qui tient en sort."""
+    from outils_carte import ecarts
+
+    tenus = {nom: ecarts(fiche) for nom, fiche in fiches.items() if fiche.get("code")}
+    assert [e for nom, dits in sorted(tenus.items()) if nom not in EN_PROSE for e in dits] == []
+    assert sorted(nom for nom in EN_PROSE if not tenus.get(nom)) == []
+
+
 def test_une_fiche_complete_est_mure(tmp_path):
     """La fiche A.1 de l'architecture, posée seule dans une carte : ni erreur,
     ni manque."""

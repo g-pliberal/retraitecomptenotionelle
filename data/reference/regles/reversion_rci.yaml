@@ -223,8 +223,9 @@ code:
     moteur/js/regimes.js : Reversions ; moteur/js/echeancier.js :
     Echeancier._pensionsEuesAuDeces
   parametres: >-
-    contenu.parametres de chaque version : portee, taux, age_minimum, plafond_pass,
-    facteur_menage, abattement_activite, abattement_activite_age, ex_conjoints
+    contenu.parametres de chaque version : portee, fiabilite, taux, ex_conjoints,
+    age_minimum, ressources, plafond_pass, facteur_menage, abattement_activite,
+    abattement_activite_age
   tests: tests/test_reversion.py
 historique:
 - >-

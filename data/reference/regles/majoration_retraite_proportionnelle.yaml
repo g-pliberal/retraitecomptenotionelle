@@ -1430,7 +1430,10 @@ code:
   javascript: >-
     moteur/js/droit/completer.js : majorationRetraiteProportionnelle, completer ;
     moteur/js/revalorisation.js : reviserLesExploitants
-  parametres: contenu.parametres de chaque version
+  parametres: >-
+    contenu.parametres de chaque version : existe, minimum_points, minimum,
+    minimum_reduit, minimum_reduit_depuis, part_servie, minorations, conjoints,
+    pensions_prises_avant_1997, reversion_d_avant_1995
   tests: tests/test_minima_agricoles.py, dans les deux moteurs
 historique:
 - >-

@@ -274,8 +274,9 @@ code:
     moteur/js/droit/reversion.js : reversion, mariageSuffit, partDuSurvivant,
     admisAilleurs, finAuRemariage, jusquAuRemariage ; moteur/js/regimes.js : Reversions
   parametres: >-
-    contenu.parametres de chaque version : taux, mariage_minimum_annees,
-    mariage_services_minimum_annees, ex_conjoints, perte_au_remariage
+    contenu.parametres de chaque version : taux, ex_conjoints, beneficiaire,
+    mariage_services_minimum_annees, mariage_minimum_annees, age_minimum,
+    perte_au_remariage, fiabilite
   tests: >-
     tests/test_reversion.py ; les témoins reversion_fonctionnaire,
     reversion_fonctionnaire_mort_en_activite et

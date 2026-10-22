@@ -202,13 +202,14 @@ code:
     1,25 au plus, ce qu'elle écrit ligne pour ligne.
   python: >-
     droit/liquider.py : coefficient_convention_1947, coefficient_pour_age,
-    abattement_points, surcote_points
+    abattement_points, surcote_points, _COEFFICIENTS_CONVENTION_1947
   javascript: >-
     moteur/js/droit/liquider.js : coefficientConvention1947, coefficientPourAge,
-    abattementPoints, surcotePoints
+    abattementPoints, surcotePoints, COEFFICIENTS_CONVENTION_1947
   parametres: >-
-    _COEFFICIENTS_CONVENTION_1947 (liquider.py) et COEFFICIENTS_CONVENTION_1947
-    (liquider.js) ; les champs de surcote des trois périodes de 1947 à 1954 (agirc.yaml)
+    contenu.parametres de chaque version : existe, age_minimum, age_normal,
+    anticipation, ajournement, fiabilite ; regimes/agirc.yaml : surcote_par_trimestre,
+    surcote_pas_trimestres, surcote_age_maximum, surcote_points
   tests: [tests/test_coefficients_agirc_1947.py]
 referents:
   baremes_ipp:

@@ -344,19 +344,21 @@ code:
   python: >-
     droit/reversion.py : reversion, _age_agirc_arrco, _a_l_age, _part_du_survivant,
     _admis_ailleurs, _entiere_au_conjoint, _jusqu_au_remariage ; scenarios/actuel.py :
-    Reversions
+    Reversions ; echeancier.py : Echeancier._pensions_au_deces
   javascript: >-
     moteur/js/droit/reversion.js : reversion, ageAgircArrco, aLAge, partDuSurvivant,
     admisAilleurs, entiereAuConjoint, jusquAuRemariage ; moteur/js/regimes.js :
-    Reversions
+    Reversions ; moteur/js/echeancier.js : Echeancier._pensionsAuDeces
   parametres: >-
-    contenu.parametres de chaque version : taux, age_minimum, age_minimum_arrco,
-    age_minimum_agirc, age_minimum_veuve, age_minimum_veuf, invalidite_sans_age,
-    deux_enfants_a_charge_moins_de_ans, majoration_reversible, rien_apres_un_capital,
-    ex_conjoints, entiere_au_conjoint, perte_au_remariage ;
-    la majoration de chaque
-    régime du défunt, que l'échéancier lui passe (echeancier.py : _pensions_au_deces)
+    contenu.parametres de chaque version : taux, ex_conjoints, entiere_au_conjoint,
+    age_minimum_veuve, age_minimum_veuf, age_minimum_minore, perte_au_remariage,
+    invalidite_sans_age, deux_enfants_a_charge_moins_de_ans, fiabilite,
+    age_minimum_arrco, age_minimum_agirc, age_minimum, majoration_reversible,
+    rien_apres_un_capital
   tests: tests/test_reversion.py ; les témoins reversion_* des simulations
+  moteur: >-
+    La majoration de chaque régime du défunt, que la réversion lit, lui vient de
+    l'échéancier (Echeancier._pensions_au_deces).
 historique:
 - >-
   2026-09-28 — née avec le domaine de la réversion.

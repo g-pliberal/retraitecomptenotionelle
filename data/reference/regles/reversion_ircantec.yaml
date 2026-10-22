@@ -343,10 +343,11 @@ code:
     enfantsDeMoinsDe, partDuSurvivant, admisAilleurs, jusquAuRemariage ;
     moteur/js/regimes.js : Reversions
   parametres: >-
-    contenu.parametres de chaque version : taux, age_minimum, age_minimum_veuve,
-    age_minimum_veuf, mariage_minimum_annees, mariage_avant_annees, mariage_avant_age,
-    mariage_leve_par_enfant, deux_enfants_sans_age, deux_enfants_moins_de_ans,
-    rien_apres_un_capital, ex_conjoints, perte_au_remariage
+    contenu.parametres de chaque version : taux, ex_conjoints, beneficiaire,
+    age_minimum, age_minimum_veuve, age_minimum_veuf, mariage_minimum_annees,
+    mariage_avant_annees, mariage_avant_age, mariage_leve_par_enfant,
+    deux_enfants_sans_age, deux_enfants_moins_de_ans, rien_apres_un_capital,
+    perte_au_remariage, fiabilite, seuil_versement_unique_points
   tests: tests/test_reversion.py
 historique:
 - >-

@@ -320,9 +320,10 @@ code:
     moteur/js/droit/compter.js : majorationPourEnfants, droitRegimeSpecial, bonificationOuverte,
     dernieresAnnees, choisir
   parametres: >-
-    legislation/services_ouvrant_pension.csv, la durée de services qui ouvre une pension
-    dans chaque régime spécial ; la priorité elle-même n'a pas de paramètre
+    legislation/services_ouvrant_pension.csv
   tests: [tests/test_priorite_enfants.py]
+  moteur: >-
+    La priorité elle-même n'a pas de paramètre.
 historique:
 - >-
   2026-09-24 — le régime spécial accorde en priorité, et non le régime qui accorde le

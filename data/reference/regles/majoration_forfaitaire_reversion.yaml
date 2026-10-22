@@ -261,9 +261,9 @@ code:
     finDeLaCharge ;
     moteur/js/regimes.js : Reversions.majorationEnfant
   parametres: >-
-    contenu.parametres : servie, age_maximum, age_du_taux_plein, enfant_moins_de_ans,
-    refusee_en_couple ; le montant annuel par enfant, dans
-    legislation/majoration_forfaitaire_enfant_reversion.csv
+    contenu.parametres de chaque version : servie, age_maximum, age_du_taux_plein,
+    enfant_moins_de_ans, refusee_en_couple, fiabilite ;
+    legislation/majoration_forfaitaire_enfant_reversion.csv : valeur
   tests: >-
     tests/test_reversion.py ; les témoins reversion_enfants_a_charge et
     reversion_enfants_jusqu_a_sa_retraite des simulations

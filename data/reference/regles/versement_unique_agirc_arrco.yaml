@@ -363,8 +363,12 @@ code:
   javascript: >-
     moteur/js/droit/completer.js : verserEnCapital, completer ; moteur/js/regimes.js :
     FichesDatees
-  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  parametres: >-
+    contenu.parametres de chaque version : existe, allocations, mesure,
+    coefficients_depuis, coefficients, fiabilite
   tests: [tests/test_versements_uniques.py]
+  moteur: >-
+    Le paquet du site porte ses versions.
 referents:
   destinie_2:
     equivalent: >-

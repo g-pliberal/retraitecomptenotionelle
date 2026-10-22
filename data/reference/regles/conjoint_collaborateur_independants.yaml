@@ -206,8 +206,9 @@ code:
     Saisie.assietteDuCollaborateur, Saisie.niveauxDeLaPension ; moteur/js/pages.js :
     collaborateurFormulaire, champRevenuDuChef
   parametres: >-
-    legislation/affiliations.yaml, statuts `conjoint_collaborateur_artisan` et
-    `conjoint_collaborateur_commercant`
+    contenu.parametres de chaque version : forfait_en_plafonds ;
+    legislation/affiliations.yaml : affiliations.conjoint_collaborateur_artisan,
+    affiliations.conjoint_collaborateur_commercant
   tests: tests/test_independants.py, tests/test_saisie_du_collaborateur.py
 referents:
   modele_ti: >-
