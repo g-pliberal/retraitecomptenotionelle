@@ -22,6 +22,7 @@ import {
 } from "./regimes.js";
 import { Fiabilite } from "./serie.js";
 import { primesSoumises } from "./primes.js";
+import { assietteDuCollaborateur } from "./droit/acquerir.js";
 
 /** Le seul régime dont la contribution employeur est un taux d'équilibre. */
 const REGIME_ETAT = "fonction_publique_etat";
@@ -671,6 +672,14 @@ export class ConstructeurCompte {
           // comme dans le scénario 1, dont le RSA dispense (L. 613-11).
           assiette = Math.max(assiette, periode.assietteMinimale(
             this.macro.plafond_securite_sociale.valeur(annee)) * part);
+        }
+        // Le collaborateur et l'aide familial agricoles cotisent sur un
+        // forfait, quel que soit leur revenu, et non au plancher du chef
+        // (D. 731-123 ; D. 732-155, II) : `assietteDuCollaborateur`, comme le
+        // scénario 1. Voir compte.py.
+        const forfaitCollaborateur = assietteDuCollaborateur(code, ligne);
+        if (forfaitCollaborateur !== null) {
+          assiette = forfaitCollaborateur * this.macro.smic_horaire.valeur(annee) * part;
         }
         // LA GARANTIE MINIMALE DE POINTS DE L'AGIRC. De 1989 à 2018, le cadre
         // dont la tranche B n'achetait pas 120 points par an payait une

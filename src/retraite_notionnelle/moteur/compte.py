@@ -31,6 +31,7 @@ from ..donnees.macro import DonneesMacro
 from ..donnees.regimes import (CatalogueRegimes, ClassesCotisation,
                               ContributionsEmployeurPubliques, CotisationsDesCultes,
                               PartRetraiteSeuleEtat, SalairesForfaitaires)
+from ..droit.acquerir import assiette_du_collaborateur
 from .fusion import RegimeFusionne
 from .indexation import Indexation
 from ..somme import somme_ordonnee
@@ -824,6 +825,17 @@ class ConstructeurCompte:
                     # dispense (L. 613-11).
                     assiette = max(assiette, periode.assiette_minimale(
                         self.macro.plafond_securite_sociale(annee)) * part)
+                # Le collaborateur et l'aide familial agricoles cotisent sur un
+                # forfait, quel que soit leur revenu, et non au plancher du
+                # chef : 400 SMIC horaires à la base depuis 2004, 600 depuis
+                # 2026 (D. 731-123), 1 200 à la RCO depuis 2011 (D. 732-155,
+                # II), comme le scénario 1 en tire leurs points
+                # (`acquerir.assiette_du_collaborateur`). Le compte prenait
+                # jusqu'au 22 octobre 2026 leur revenu, et le plancher du chef.
+                forfait_collaborateur = assiette_du_collaborateur(code, ligne)
+                if forfait_collaborateur is not None:
+                    assiette = (forfait_collaborateur
+                                * self.macro.smic_horaire(annee) * part)
                 # LA GARANTIE MINIMALE DE POINTS DE L'AGIRC. De 1989 à 2018, le
                 # cadre dont la tranche B n'achetait pas 120 points par an
                 # payait une cotisation forfaitaire qui les achetait : 72,71 €

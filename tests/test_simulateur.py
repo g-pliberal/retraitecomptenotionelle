@@ -5974,6 +5974,34 @@ def test_le_compte_porte_ce_que_l_exploitant_verse_pour_l_annee(simulateur):
     assert not {"msa_non_salaries", "msa_rco"} & set(installe)
 
 
+def test_le_compte_porte_la_cotisation_du_collaborateur_sur_son_forfait(simulateur):
+    """Le collaborateur et l'aide familial ne cotisent pas sur un revenu, mais
+    sur un forfait : à la base, depuis 2004, « l'assiette minimale prévue à
+    l'article D. 731-120 » (D. 731-123), 400 SMIC horaires (D. 731-120, 3°),
+    600 depuis 2026 (D. 731-123 dans sa rédaction de 2026) ; à la RCO, qui
+    les affilie depuis 2011, 1 200 SMIC (D. 732-155, II). La MSA l'applique :
+    l'AVA « Assise sur 400 SMIC soit 4 228€ pour les collaborateurs et les
+    aides familiaux », la RCO sur une « Assiette forfaitaire de 1200 SMIC »
+    (barème des non-salariés agricoles de 2022). Les droits lisent ce forfait
+    depuis le 16 octobre 2026 ; le compte, qui porte ce que le régime
+    prélève, prenait le revenu de la ligne, et le plancher du chef.
+    Collaboratrice à 12 000 € par an depuis 1990 : son compte reçoit pour
+    2023 les 17,37 % de 400 SMIC horaires à 11,27 €, 783,04 €, et les 4 % de
+    1 200 SMIC, 540,96 €, et non 2 084,40 € et les 4 % des 1 820 SMIC du
+    chef, 820,46 € ; pour 2026, 600 SMIC à 12,02 €, 1 252,72 € et 576,96 € ;
+    pour 2003, avant le forfait, les 17,37 % de son revenu. Dans les deux
+    moteurs."""
+    naissance = dict(annee_naissance=1964, sexe="F", jour_naissance=15, age_liquidation=64.0)
+    lignes = [dict(annee=annee, revenu=12000.0, affiliation="collaborateur_agricole")
+              for annee in range(1990, 2027)]
+    assert _compte_de_l_annee_en_deux_moteurs(simulateur, naissance, lignes, 2023) == {
+        "msa_non_salaries": 783.04, "msa_rco": 540.96}
+    assert _compte_de_l_annee_en_deux_moteurs(simulateur, naissance, lignes, 2026) == {
+        "msa_non_salaries": 1252.72, "msa_rco": 576.96}
+    assert _compte_de_l_annee_en_deux_moteurs(simulateur, naissance, lignes, 2003) == {
+        "msa_non_salaries": 2084.40}
+
+
 def test_la_repartition_des_annees_suit_r_173_3_2():
     """« Arrondis à chaque étape à l'entier non nul le plus proche, la fraction
     d'année égale à 0,5 étant comptée pour une année » ; les années
