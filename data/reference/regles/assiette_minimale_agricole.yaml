@@ -48,9 +48,12 @@ effet: >-
   prorata, comme celle de R. 731-83, dans la carrière arrêtée au décès : la
   complémentaire en garde au chef les points d'une année, 133 pour le chef mort le
   15 août 2024, et le compte qui lit cette carrière n'en reçoit que les cotisations de
-  ses mois.
+  ses mois. Depuis le 22 octobre 2026, ce compte porte la cotisation du collaborateur et
+  de l'aide familial sur leur forfait, comme le régime la prélève, et non sur leur revenu
+  relevé au plancher du chef : la collaboratrice à 12 000 € par an y verse pour 2023
+  783,04 € à la base et 540,96 € à la RCO, et non 2 084,40 € et 820,46 €.
 sources:
-  lu_le: 2026-10-19
+  lu_le: 2026-10-22
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -63,6 +66,16 @@ sources:
     collaborateur ceux de ses mois ; la pratique de la MSA n'est pas lue (relu le 18
     octobre 2026). De même l'année du décès du chef, que L. 731-10-1 fait cotiser au
     prorata depuis 2009 (relu le 19 octobre 2026).
+  - >-
+    L'AVI du collaborateur et de l'aide familial : jusqu'en 2025, L. 731-42, 1°, la doit «
+    pour chaque personne non salariée âgée d'au moins seize ans », « en pourcentage des
+    revenus professionnels du chef d'exploitation », 800 SMIC au moins (D. 731-120, 1°),
+    à 3,2 % puis 3,32 % (D. 731-121). Le modèle, qui ne connaît pas les revenus du chef
+    et ne sépare pas l'AVI de l'AVA, porte au compte tout le taux du régime sur le
+    forfait de l'AVA : 783,04 € en 2023, quand l'AVI au minimum, 299,33 €, et l'AVA,
+    520,67 €, en font 820,00 €, et davantage à mesure que le chef gagne (relu le 22
+    octobre 2026). Depuis 2026, la cotisation du collaborateur est une seule, sur le
+    forfait (L. 731-42, 2°).
   - >-
     Dire la première année de cotisation assise sur 600 SMIC : le décret n° 2004-783,
     publié au Journal officiel du 1er août 2004, ne la nomme pas dans ce qui en a été lu,
@@ -181,6 +194,39 @@ sources:
       « la totalité des revenus professionnels », ceux de l'année que L. 731-10-1 fait
       cotiser entière l'année de la cessation. Lu dans l'index LEGI du dépôt
     date: 2026-10-17
+  - type: legifrance
+    reference: >-
+      code rural et de la pêche maritime, L. 731-42, rédaction du 11 novembre 2010
+      (LEGIARTI000023034860) : « 1° Une cotisation due pour chaque personne non salariée
+      âgée d'au moins seize ans [...] calculée, dans la limite du plafond [...], en
+      pourcentage des revenus professionnels du chef d'exploitation ou d'entreprise ou de
+      l'assiette forfaitaire » ; « b) Une cotisation due pour chaque aide familial [...]
+      ainsi qu'une cotisation due pour le collaborateur d'exploitation ou d'entreprise [...]
+      ; l'assiette de ces cotisations est déterminée forfaitairement » ; le 3°, la part
+      déplafonnée, « à la charge de chaque chef d'exploitation ». Rédaction du 28 février
+      2025 (LEGIARTI000051284150), pour les cotisations depuis 2026 : pour l'aide familial
+      et le collaborateur, « une cotisation calculée sur une assiette forfaitaire fixée par
+      décret. Le taux de cette cotisation est égal à la somme des taux de la cotisation
+      mentionnée au 1° ». D. 731-120 (LEGIARTI000028393446) : 800 SMIC « pour la cotisation
+      mentionnée au 1° », 400 « pour les cotisations mentionnées au 2° b) » ; D. 731-121
+      (LEGIARTI000019506734, LEGIARTI000026140087) : l'AVI à « 3, 2 % des revenus
+      professionnels du chef d'exploitation », puis de 3,21 % en 2012 à 3,32 % depuis 2016
+      ; D. 731-123 (LEGIARTI000026140073) : les cotisations du collaborateur et de l'aide
+      familial « sont assises sur l'assiette minimale prévue à l'article D. 731-120 à
+      laquelle est appliqué un taux égal au taux fixé à l'article D. 731-122 ». Lu dans
+      l'index LEGI du dépôt
+    date: 2026-10-22
+  - type: autre
+    reference: >-
+      MSA Auvergne, « Barème des cotisations et contributions sociales des non salariés
+      agricoles 2022 » : l'AVI du « Chef d'exploitation ou d'entreprise, collaborateur
+      [...], à titre exclusif ou principal » et de l'« Aide familial », 3,32 %, « 8456 €
+      (800 SMIC) » au minimum ; l'AVA plafonnée, 11,55 %, « Assise sur 400 SMIC soit 4 228€
+      pour les collaborateurs et les aides familiaux » ; l'AVA déplafonnée, 2,24 %, au seul
+      chef ; la RCO du « Collaborateur (conjoint, concubin, pacsé) et Aide familial », 4 %,
+      « Assiette forfaitaire de 1200 SMIC soit 12 684€ »
+    url: https://auvergne.msa.fr/lfp/documents/98805/78442465/Bar%C3%A8me+des+cotisations+et+contributions+sociales+des+non+salari%C3%A9s+agricoles+2022.pdf
+    date: 2026-10-22
 textes_a_rattacher:
 - reference: >-
     base, de 1990 à 2005 : décret n° 90-498 du 21 juin 1990, article 9, II
@@ -211,6 +257,11 @@ textes_a_rattacher:
     complémentaire : code rural et de la pêche maritime, D. 732-155 (LEGIARTI000006597591,
     LEGIARTI000006597592, LEGIARTI000006597593, LEGIARTI000023395107,
     LEGIARTI000034578860, LEGIARTI000049904715), et décret n° 2017-716 du 2 mai 2017
+- reference: >-
+    collaborateur et aide familial : code rural et de la pêche maritime, L. 731-42
+    (LEGIARTI000023034860, LEGIARTI000051284150), D. 731-121 (LEGIARTI000019506734,
+    LEGIARTI000026140087, LEGIARTI000053296666) et D. 731-123 (LEGIARTI000006597345,
+    LEGIARTI000026140073, LEGIARTI000053296672)
 textes_sans_effet:
 - id: LEGIARTI000033824916
   motif: >-

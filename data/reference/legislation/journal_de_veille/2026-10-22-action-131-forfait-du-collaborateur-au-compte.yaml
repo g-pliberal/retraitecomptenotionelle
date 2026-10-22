@@ -1,0 +1,40 @@
+date: "2026-10-22"
+session: >-
+  l'action 131 : la cotisation du collaborateur et de l'aide familial agricoles
+  que le compte du droit en vigueur porte, sur leur forfait et non sur leur
+  revenu ; vague du 22 octobre 2026, une session par action qui n'a pas besoin du
+  propriétaire
+consulte: >-
+  python scripts/veille_droit.py ; les index LEGI et JORF du dépôt, récupérés
+  puis mis à jour jusqu'aux incréments du 22 octobre 2026 ; python
+  scripts/textes.py --inscrire, aucune rédaction nouvelle ; au code rural,
+  L. 731-42 (rédactions du 11 novembre 2010 et du 28 février 2025), D. 731-120
+  (2014), D. 731-121 (2008, 2012, 2026), D. 731-122, D. 731-123 (2004, 2012,
+  2026), D. 731-124 et D. 731-126 ; au code de la sécurité sociale, D. 633-3
+  (2024) et D. 633-2, par la table des assiettes minimales des indépendants. Sur
+  le web : le barème des cotisations et contributions sociales des non-salariés
+  agricoles de 2022 de la MSA d'Auvergne ; une page de la MSA Grand Sud du
+  1er janvier 2026, qui ne porte que les cotisations des salariés.
+trouve: >-
+  Jusqu'en 2025, le collaborateur et l'aide familial doivent deux cotisations de
+  base : l'AVI, « pour chaque personne non salariée âgée d'au moins seize ans »,
+  sur les revenus du chef, sous le plafond, 800 SMIC au moins, à 3,2 % puis
+  3,32 % ; l'AVA du b du 2° de L. 731-42, sur l'assiette minimale de D. 731-120,
+  400 SMIC, au taux de D. 731-122 (11,55 % en 2022) ; la part déplafonnée n'est
+  due que du chef. La MSA l'applique ainsi (barème de 2022), et la RCO du
+  collaborateur sur une « assiette forfaitaire de 1200 SMIC », à 4 %. Depuis
+  2026, une seule cotisation, sur un forfait de 600 SMIC, au taux du chef, que
+  L. 731-42 aligne sur celui des indépendants (D. 633-3 : 17,15 % sous le
+  plafond, 0,72 % au-delà), avec une transition jusqu'en 2028. Le compte prenait
+  le revenu du collaborateur, relevé au plancher du chef : il porte désormais,
+  dans les deux moteurs, le taux du régime sur le forfait que les droits lisent
+  depuis le 16 octobre (acquerir.assiette_du_collaborateur), 783,04 € et
+  540,96 € pour 2023 à 12 000 € de revenu, au lieu de 2 084,40 € et 820,46 €.
+reste: >-
+  L'AVI du collaborateur, assise jusqu'en 2025 sur les revenus du chef, que le
+  modèle ne connaît pas : le compte prend tout le taux du régime sur le forfait
+  (fiche assiette_minimale_agricole). Le taux de base des exploitants depuis
+  2026, aligné sur D. 633-3, et celui du collaborateur de 2026 à 2028 (décret
+  n° 2025-1417, article 5, II, non lu) : le modèle garde 17,37 %. Trouvée en
+  chemin, l'assiette minimale des indépendants (D. 633-2, D. 642-4), que les
+  droits lisent et que le compte ne porte pas.

@@ -382,12 +382,15 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   familial (fiche `majoration_retraite_proportionnelle`), ceux du rachat et
   de l'option tardive — le modèle donne seize points à chaque année de
   conjoint d'avant 1999, que la loi ne dote d'aucun, plus que n'en servent
-  les pensions dues de 1998 et de 1999 — ; l'assiette
-  forfaitaire du conjoint collaborateur et de l'aide familial, statut que la
-  saisie propose depuis le 14 octobre 2026 et dont le modèle sert le montant
-  réduit de la pension majorée de 2009 à 2021, sans points gratuits ni
-  complément, mais dont il prend les cotisations du revenu saisi ; la réversion,
-  que le plafond ne compte pas. Le SMIC net
+  les pensions dues de 1998 et de 1999 — ; le conjoint
+  collaborateur et l'aide familial, statut que la saisie propose depuis le
+  14 octobre 2026 et dont le modèle sert le montant réduit de la pension majorée
+  de 2009 à 2021, sans points gratuits ni complément : leurs droits et leurs
+  cotisations suivent leur forfait depuis 2004, mais ce que la loi assied sur
+  les revenus du chef, que le modèle ne connaît pas — leur cotisation d'avant
+  2004, leur AVI jusqu'en 2025 —, il le prend du revenu saisi, puis du forfait
+  (fiche `assiette_minimale_agricole`) ; la réversion, que le plafond ne compte
+  pas. Le SMIC net
   agricole qui fixe le complément n'est publié par la MSA que pour 2021, 2023
   et depuis 2024 : les autres années sont estimées. Le relèvement de septembre
   2023 est servi : le taux plein ouvre les points gratuits et le complément aux
