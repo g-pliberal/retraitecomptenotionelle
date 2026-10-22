@@ -33,13 +33,13 @@ import pytest
 from retraite_notionnelle import Parametres
 from retraite_notionnelle.carriere import AnneeCarriere, Carriere
 from retraite_notionnelle.config import PartCotisation
-from retraite_notionnelle.cycle_de_vie import POSTES_REFAITS_INDEPENDANT
 from retraite_notionnelle.donnees.prelevements_historiques import (
     charger_prelevements_historiques, famille_de_la_fiche)
 from retraite_notionnelle.moteur.compte import ConstructeurCompte
 from retraite_notionnelle.remuneration import (
     charger_prelevements, fiche_depuis_brut, profil_de_la_fiche, salaire_brut_depuis_net)
 from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.web.site import module
 
 PARAMETRES = Parametres()
 RACINE = Path(__file__).resolve().parents[1]
@@ -187,11 +187,15 @@ def test_la_fiche_de_l_annee_courante_preleve_ce_que_l_histoire_refait(
         simulateur, statut):
     """Les indicateurs de cycle de vie ôtent du net de la fiche ce que
     l'histoire prélève l'année courante, et y mettent ce qu'elle prélève
-    l'année de la ligne (``cycle_de_vie._net_annualise``) : ils ne sont justes
-    que si la fiche de l'année courante prélève, sur les postes que l'histoire
-    refait, ce que l'histoire y prélève. Elle prêtait à tous l'indemnité des
-    artisans : 0,2 point de trop au libéral sous trois plafonds, 0,5 point à
-    l'avocat, chaque année de sa carrière."""
+    l'année de la ligne (``netAnnualise``, ``moteur/js/cycle-de-vie.js``) :
+    ils ne sont justes que si la fiche de l'année courante prélève, sur les
+    postes que l'histoire refait (``POSTES_REFAITS_INDEPENDANT``, que le
+    portage seul tient depuis l'action 161), ce que l'histoire y prélève. Elle
+    prêtait à tous l'indemnité des artisans : 0,2 point de trop au libéral
+    sous trois plafonds, 0,5 point à l'avocat, chaque année de sa carrière."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le cycle de vie ne se lit pas ici")
+    refaits_par_l_histoire = module("cycle-de-vie").POSTES_REFAITS_INDEPENDANT
     racine = PARAMETRES.racine_donnees
     courante = charger_prelevements(racine).annee
     historique = charger_prelevements_historiques(racine)
@@ -202,9 +206,9 @@ def test_la_fiche_de_l_annee_courante_preleve_ce_que_l_histoire_refait(
     for revenu in (20_000.0, 60_000.0, 200_000.0):
         fiche = _fiche(simulateur, statut, courante, revenu)
         refaits = sum(ligne.salarie for ligne in fiche.lignes
-                      if ligne.code in POSTES_REFAITS_INDEPENDANT)
+                      if ligne.code in refaits_par_l_histoire)
         retraite = sum(ligne.salarie for ligne in fiche.lignes
-                       if ligne.code not in POSTES_REFAITS_INDEPENDANT)
+                       if ligne.code not in refaits_par_l_histoire)
         assert refaits == pytest.approx(historique.hors_retraite_annuel(
             famille, courante, revenu, plafond, retraite), abs=0.05), (famille, revenu)
 

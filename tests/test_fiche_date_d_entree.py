@@ -35,12 +35,12 @@ from retraite_notionnelle import Parametres
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.carriere import AnneeCarriere, Carriere
 from retraite_notionnelle.config import PartCotisation
-from retraite_notionnelle.cycle_de_vie import revenus_nets
 from retraite_notionnelle.moteur.compte import ConstructeurCompte
 from retraite_notionnelle.remuneration import (
     famille_du_statut, fiche_depuis_brut, profil_de_la_fiche, salaire_brut_depuis_net,
     salaire_net_depuis_brut)
 from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.web.site import module, site
 
 PARAMETRES = Parametres()
 RACINE = Path(__file__).resolve().parents[1]
@@ -171,15 +171,23 @@ def test_le_net_de_l_agent_de_la_sncf_entre_avant_2020(simulateur):
         REVENU, abs=0.01)
 
 
-def test_les_nets_du_cycle_de_vie_gardent_le_regime(simulateur):
+def test_les_nets_du_cycle_de_vie_gardent_le_regime():
     """L'agent de la SNCF entré en 1996 : de 2020 à 2025, sa paie lui laisse
     ce qu'elle lui laissait en 2019, aux mêmes taux — sa retenue, la CSG et la
-    CRDS —, et non la paie d'un salarié du privé."""
-    carriere = Carriere(
-        annee_naissance=1975, sexe="H", age_liquidation=57,
-        lignes=[AnneeCarriere(annee=an, affiliation="agent_sncf", trimestres_valides=4,
-                              revenu=REVENU) for an in range(1996, 2032)])
-    nets = revenus_nets(simulateur, carriere)
+    CRDS —, et non la paie d'un salarié du privé. Le cycle de vie n'a plus
+    qu'un exemplaire, le portage (``revenusNets``, action 161) : la carrière
+    s'y bâtit des mêmes lignes, par le pont du site. Le jour de naissance s'y
+    déclare, celui que le vocabulaire présume : une carrière bâtie ligne à
+    ligne n'y lit pas la table des présomptions du paquet."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le cycle de vie ne se calcule pas ici")
+    portage = module("carriere")
+    carriere = portage.Carriere({
+        "annee_naissance": 1975, "sexe": "H", "age_liquidation": 57, "jour_naissance": 15,
+        "lignes": [portage.AnneeCarriere({"annee": an, "affiliation": "agent_sncf",
+                                          "trimestres_valides": 4, "revenu": REVENU})
+                   for an in range(1996, 2032)]})
+    nets = module("cycle-de-vie").revenus_nets(site().contexte.simulateur(), carriere)
     for an in range(2019, 2026):
         assert nets[an] == pytest.approx(NET_SNCF, abs=0.01), an
 

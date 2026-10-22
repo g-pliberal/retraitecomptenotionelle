@@ -27,6 +27,7 @@ from retraite_notionnelle.contexte import Montants
 from retraite_notionnelle.droit import ouvrir
 from retraite_notionnelle.pilote import DEPARTS_DE_L_ESTIMATION
 from retraite_notionnelle.saisie import CHAMPS_ESTIMATION, ErreurSaisie, Saisie
+from retraite_notionnelle.web.site import module, site
 from outils_web import contexte, page  # noqa: F401 — les fixtures partagées
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -333,10 +334,14 @@ def test_plusieurs_ages_de_depart_cote_a_cote(contexte, page):
     """Le dépliant « Partir plus tôt ou plus tard » (action 138, étape 10) :
     la carrière de la saisie liquidée chaque année, de l'âge d'ouverture au
     taux plein automatique, et ses pensions nettes sous les quatre systèmes,
-    puis après impôt (étape 5), celles que le Python tire de
-    ``balayage_d_une_carriere`` après impôt, sous l'impôt d'une personne
-    seule que la bulle dit ; rien pour qui n'a pas de départ à chiffrer."""
-    from retraite_notionnelle.cycle_de_vie import balayage_d_une_carriere
+    puis après impôt (étape 5), celles que le portage tire de
+    ``balayageDeLEstimation`` (``contexte.js``), sous l'impôt d'une personne
+    seule que la bulle dit ; rien pour qui n'a pas de départ à chiffrer. Le
+    cycle de vie n'a qu'un exemplaire, le portage (action 161) : le premier
+    et le dernier âge se confrontent au pilote du Python
+    (``ages_de_l_estimation``). La requête date la naissance au jour :
+    aucune présomption n'y entre, et la saisie du portage se lit sans leur
+    table."""
     from retraite_notionnelle.pilote import ages_de_l_estimation
 
     saisie = Saisie.depuis_requete(REQUETES["trois_ages"])
@@ -347,8 +352,9 @@ def test_plusieurs_ages_de_depart_cote_a_cote(contexte, page):
         autre.verifier()
         return contexte.carriere(autre)
 
-    departs = balayage_d_une_carriere(simulateur, batir, saisie.liquidation, pas=1.0,
-                                      impot="prix")
+    balayage = site().contexte.balayage_de_l_estimation(
+        module("saisie").Saisie.depuis_requete(REQUETES["trois_ages"], False, None))
+    departs = [un.depart for un in balayage]
     ages = ages_de_l_estimation(simulateur.scenario_actuel, batir, saisie.liquidation)
     assert departs[0].age == ages["legal"] and departs[-1].age == ages["automatique"]
     bloc = _ages_de_depart(page("/simuler", **REQUETES["trois_ages"]))
@@ -361,14 +367,14 @@ def test_plusieurs_ages_de_depart_cote_a_cote(contexte, page):
     rangees_apres = re.findall(r'<tr><th[^>]*scope="row">(.*?)</th>(.*?)</tr>',
                                apres[:apres.index("</table>")])
     assert len(rangees_apres) == len(departs)
-    for (tete, cellules), (tete_apres, cellules_apres), depart in zip(
-            rangees, rangees_apres, departs):
+    for (tete, cellules), (tete_apres, cellules_apres), un in zip(
+            rangees, rangees_apres, balayage):
+        depart = un.depart
         assert f"en {depart.annee}" in tete and f"en {depart.annee}" in tete_apres
-        comparaison = simulateur.simuler(batir(depart.age))
         for lues, pensions in ((cellules, depart.pensions_nettes),
                                (cellules_apres, depart.pensions_apres_impot)):
             valeurs = [_nombres(v) for v in re.findall(r"<td[^>]*>(.*?)</td>", lues)]
-            attendus = [round(comparaison.en_euros_constants(
+            attendus = [round(un.comparaison.en_euros_constants(
                 pensions[scenario], scenario) / 12) for scenario in systemes]
             assert valeurs == attendus
     assert any(depart.pensions_apres_impot["actuel"] < depart.pensions_nettes["actuel"]

@@ -19,12 +19,12 @@ aux pensions de chaque année.
 from __future__ import annotations
 
 import datetime as dt
+import shutil
 import sqlite3
 import sys
 
 import pytest
 
-from retraite_notionnelle import cycle_de_vie
 from retraite_notionnelle.config import RACINE_DONNEES, RACINE_PROJET, Parametres
 from retraite_notionnelle.donnees.chargement import charger_yaml
 from retraite_notionnelle.donnees.prelevements_historiques import (
@@ -33,6 +33,7 @@ from retraite_notionnelle.donnees.prelevements_historiques import (
 )
 from retraite_notionnelle.remuneration import charger_prelevements, fiche_depuis_brut
 from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.web.site import module, site
 
 APRES = dt.date(2026, 6, 1)
 
@@ -50,6 +51,27 @@ def courants():
 @pytest.fixture(scope="module")
 def simulateur() -> Simulateur:
     return Simulateur(Parametres())
+
+
+@pytest.fixture(scope="module")
+def portage():
+    """Le cycle de vie, qui n'a plus qu'un exemplaire, le portage
+    (``moteur/js/cycle-de-vie.js``, action 161) : le pont du site le fait
+    tourner par node (``web/site.py``), et ses carrières s'y bâtissent
+    (:func:`_au_portage`), aux options de ``carriere_simple``."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le cycle de vie ne se calcule pas ici")
+    return module("cycle-de-vie")
+
+
+@pytest.fixture(scope="module")
+def simulateur_du_portage(portage):
+    return site().contexte.simulateur()
+
+
+def _au_portage(simulateur_du_portage, **options):
+    """La carrière de ``carriere_simple`` aux ``options``, bâtie par le portage."""
+    return simulateur_du_portage.carriere_simple(options)
 
 
 def test_la_derniere_marche_des_pensions_est_le_bareme_du_site(historique, courants):
@@ -200,15 +222,17 @@ def test_la_maladie_des_pensions_des_autres_regimes_de_base(historique, courants
     assert sum(len(g) for g in groupes) == len(frozenset().union(*groupes))
 
 
-def test_la_pension_d_un_fonctionnaire_parti_avant_1998_paie_sa_maladie(simulateur):
+def test_la_pension_d_un_fonctionnaire_parti_avant_1998_paie_sa_maladie(
+        portage, simulateur_du_portage):
     """Une fonctionnaire de la catégorie active, partie à 55 ans en 1995 : sa
     pension civile paie 2,65 % de maladie en 1995 et 2,80 % en 1997, en plus de
     la CSG, puis rien en 1998, quand la CSG monte de 2,8 points."""
-    comparaison = simulateur.simuler(simulateur.carriere_simple(
-        annee_naissance=1940, sexe="F", affiliation="fonctionnaire_etat_actif", age_debut=22,
-        age_liquidation=55, niveau_salaire=1.0))
-    taux = cycle_de_vie.prelevements_par_annee(simulateur, comparaison)
-    part = cycle_de_vie._parts_assujetties(simulateur, comparaison.actuel)[
+    comparaison = simulateur_du_portage.simuler(_au_portage(
+        simulateur_du_portage, annee_naissance=1940, sexe="F",
+        affiliation="fonctionnaire_etat_actif", age_debut=22, age_liquidation=55,
+        niveau_salaire=1.0))
+    taux = portage.prelevements_par_annee(simulateur_du_portage, comparaison)
+    part = portage.parts_assujetties(simulateur_du_portage, comparaison.actuel)[
         "maladie_fonction_publique"]
     assert part == pytest.approx(1.0)
     assert taux[1995] == pytest.approx(0.024 + 0.0265)
@@ -295,26 +319,27 @@ def test_la_maladie_des_chemins_de_fer_secondaires_avant_60_ans(historique):
     assert historique.avant_l_age == {"maladie_chemins_fer_secondaires_avant_60_ans": 60}
 
 
-def test_la_pension_d_un_agent_sncf_paie_encore_sa_maladie(simulateur):
+def test_la_pension_d_un_agent_sncf_paie_encore_sa_maladie(portage, simulateur_du_portage):
     """Un agent de la SNCF parti à 55 ans en 1990 : 4,50 % de sa pension en
     1992, en plus de la CSG ; 0,70 % de 1998 au 13 novembre 2010 ; depuis, 0,70 %
     de sa seule part sous le plafond, que la fiche de paie du site prélève
     aussi : l'année courante est la dernière marche de l'histoire."""
-    comparaison = simulateur.simuler(simulateur.carriere_simple(
-        annee_naissance=1935, sexe="H", affiliation="agent_sncf", age_debut=20,
-        age_liquidation=55, niveau_salaire=1.0))
-    taux = cycle_de_vie.prelevements_par_annee(simulateur, comparaison)
-    parts = cycle_de_vie._parts_assujetties(simulateur, comparaison.actuel, 1990)
+    comparaison = simulateur_du_portage.simuler(_au_portage(
+        simulateur_du_portage, annee_naissance=1935, sexe="H", affiliation="agent_sncf",
+        age_debut=20, age_liquidation=55, niveau_salaire=1.0))
+    taux = portage.prelevements_par_annee(simulateur_du_portage, comparaison)
+    parts = portage.parts_assujetties(simulateur_du_portage, comparaison.actuel, 1990)
     assert parts["maladie_sncf"] == pytest.approx(1.0)
     assert 0.9 < parts["maladie_sncf_sous_plafond"] < 1.0
     assert taux[1992] == pytest.approx(0.011 + 0.045)
     assert taux[1998] == pytest.approx(0.062 + 0.005 + 0.007)
-    courant = cycle_de_vie.taux_de_prelevement(simulateur, comparaison.actuel, 1990)
+    courant = portage.taux_de_prelevement(simulateur_du_portage, comparaison.actuel, 1990)
     assert courant == pytest.approx(0.091 + 0.007 * parts["maladie_sncf_sous_plafond"])
     assert taux[2030] == pytest.approx(courant)
 
 
-def test_la_pension_des_chemins_de_fer_secondaires_paie_jusqu_a_60_ans(simulateur):
+def test_la_pension_des_chemins_de_fer_secondaires_paie_jusqu_a_60_ans(
+        portage, simulateur_du_portage):
     """Un agent des chemins de fer secondaires né le 15 janvier 1910, parti à
     55 ans en 1965 : la part de sa pension que sert le régime paie 2,5 %
     jusqu'à ses 60 ans, janvier 1970 compris, au premier jour duquel il ne les
@@ -322,12 +347,12 @@ def test_la_pension_des_chemins_de_fer_secondaires_paie_jusqu_a_60_ans(simulateu
     régimes spéciaux placés sous le régime général. Rien d'autre ne prélève sa
     pension avant 1980. Le jour se déclare, puisque la coupure se compte
     depuis lui (feuille de route, action 135, levier 2)."""
-    comparaison = simulateur.simuler(simulateur.carriere_simple(
-        annee_naissance=1910, sexe="H", affiliation="agent_chemins_fer_secondaires",
-        mois_naissance=1, jour_naissance=15, age_debut=20, age_liquidation=55,
-        niveau_salaire=1.0))
-    taux = cycle_de_vie.prelevements_par_annee(simulateur, comparaison)
-    part = cycle_de_vie._parts_assujetties(simulateur, comparaison.actuel)[
+    comparaison = simulateur_du_portage.simuler(_au_portage(
+        simulateur_du_portage, annee_naissance=1910, sexe="H",
+        affiliation="agent_chemins_fer_secondaires", mois_naissance=1, jour_naissance=15,
+        age_debut=20, age_liquidation=55, niveau_salaire=1.0))
+    taux = portage.prelevements_par_annee(simulateur_du_portage, comparaison)
+    part = portage.parts_assujetties(simulateur_du_portage, comparaison.actuel)[
         "maladie_regimes_speciaux"]
     assert 0.5 < part < 1.0
     assert taux[1965] == pytest.approx(0.025 * part)
@@ -336,7 +361,8 @@ def test_la_pension_des_chemins_de_fer_secondaires_paie_jusqu_a_60_ans(simulateu
     assert taux[1971] == 0.0 and taux[1979] == 0.0
 
 
-def test_a_60_ans_la_pension_des_chemins_de_fer_secondaires_change_de_cotisation(simulateur):
+def test_a_60_ans_la_pension_des_chemins_de_fer_secondaires_change_de_cotisation(
+        portage, simulateur_du_portage):
     """Un agent des chemins de fer secondaires né le 15 janvier 1930, parti à
     55 ans en 1985 : la part de sa pension que sert le régime paie 2,7 % en
     1987, la moyenne des 2,5 % et des 2,9 % du décret n° 87-463, et 2,9 % en
@@ -346,15 +372,15 @@ def test_a_60_ans_la_pension_des_chemins_de_fer_secondaires_change_de_cotisation
     concernent » ceux qui en payaient une. Sa pension n'est comptée qu'une
     fois, avant comme après, et son revenu imposable déduit l'une et l'autre.
     Le jour se déclare, comme celui du test qui précède."""
-    comparaison = simulateur.simuler(simulateur.carriere_simple(
-        annee_naissance=1930, sexe="H", affiliation="agent_chemins_fer_secondaires",
-        mois_naissance=1, jour_naissance=15, age_debut=20, age_liquidation=55,
-        niveau_salaire=1.0))
-    taux = cycle_de_vie.prelevements_par_annee(simulateur, comparaison)
-    imposables = cycle_de_vie.parts_imposables_par_annee(simulateur, comparaison)
-    apres = cycle_de_vie._parts_assujetties(simulateur, comparaison.actuel, 1985)
-    avant = cycle_de_vie._parts_assujetties(simulateur, comparaison.actuel, 1985,
-                                            avant_l_age=60)
+    comparaison = simulateur_du_portage.simuler(_au_portage(
+        simulateur_du_portage, annee_naissance=1930, sexe="H",
+        affiliation="agent_chemins_fer_secondaires", mois_naissance=1, jour_naissance=15,
+        age_debut=20, age_liquidation=55, niveau_salaire=1.0))
+    taux = portage.prelevements_par_annee(simulateur_du_portage, comparaison)
+    imposables = portage.parts_imposables_par_annee(simulateur_du_portage, comparaison)
+    apres = portage.parts_assujetties(simulateur_du_portage, comparaison.actuel, 1985)
+    avant = portage.parts_assujetties(simulateur_du_portage, comparaison.actuel, 1985,
+                                      avant_l_age=60)
     general, complementaires = apres["maladie_regime_general"], apres["maladie_complementaires"]
     secondaires = apres["maladie_regimes_speciaux"]
     assert 0.1 < secondaires < 0.5
@@ -500,14 +526,16 @@ def test_le_prive_de_1995_paie_maladie_veuvage_chomage_et_csg(historique, simula
         brut * (0.024 + 0.068 + 0.001 + 0.0242))
 
 
-def test_le_salaire_net_de_l_annee_courante_est_celui_de_la_fiche(simulateur):
+def test_le_salaire_net_de_l_annee_courante_est_celui_de_la_fiche(
+        simulateur, portage, simulateur_du_portage):
     """L'année courante, l'histoire et la fiche de paie disent la même chose ;
     une année ancienne retire ce que ses taux retiraient de plus."""
-    carriere = simulateur.carriere_simple(
-        annee_naissance=1970, sexe="H", affiliation="salarie_prive_non_cadre", age_debut=21,
-        age_liquidation=67, niveau_salaire=1.0)
-    nets = cycle_de_vie.revenus_nets(simulateur, carriere)
-    bruts = cycle_de_vie.revenus_d_activite(carriere)
+    carriere = _au_portage(
+        simulateur_du_portage, annee_naissance=1970, sexe="H",
+        affiliation="salarie_prive_non_cadre", age_debut=21, age_liquidation=67,
+        niveau_salaire=1.0)
+    nets = portage.revenus_nets(simulateur_du_portage, carriere)
+    bruts = portage.revenus_d_activite(carriere)
     courante = simulateur.parametres.annee_courante
     fiche = fiche_depuis_brut(simulateur.parametres.racine_donnees, simulateur.macro,
                               simulateur.catalogue, simulateur.affiliations,
@@ -601,24 +629,27 @@ def test_la_csg_d_un_independant_porte_sur_ses_cotisations_jusqu_en_2024(histori
             pytest.approx(cotisations + taux * assiette)), annee
 
 
-def test_le_net_d_un_independant_suit_les_prelevements_de_son_annee(simulateur):
+def test_le_net_d_un_independant_suit_les_prelevements_de_son_annee(
+        simulateur, portage, simulateur_du_portage):
     """L'année courante, le net d'un commerçant est celui de sa fiche de paie ;
     en 1985, il perd 11,55 % de maladie et 9 % d'allocations familiales sous le
-    plafond, et pas de CSG."""
-    carriere = simulateur.carriere_simple(
-        annee_naissance=1950, sexe="H", affiliation="commercant", age_debut=21,
-        age_liquidation=64, niveau_salaire=1.0)
-    nets = cycle_de_vie.revenus_nets(simulateur, carriere)
-    bruts = cycle_de_vie.revenus_d_activite(carriere)
+    plafond, et pas de CSG. La carrière se bâtit des deux côtés, des mêmes
+    options : le portage en calcule les nets, le Python ce que la fiche de
+    l'année en attend."""
+    options = dict(annee_naissance=1950, sexe="H", affiliation="commercant", age_debut=21,
+                   age_liquidation=64, niveau_salaire=1.0)
+    carriere = simulateur.carriere_simple(**options)
+    nets = portage.revenus_nets(simulateur_du_portage,
+                                _au_portage(simulateur_du_portage, **options))
     courante = simulateur.parametres.annee_courante
-    jeune = simulateur.carriere_simple(
-        annee_naissance=1975, sexe="H", affiliation="commercant", age_debut=25,
-        age_liquidation=64, niveau_salaire=1.0)
-    revenu = cycle_de_vie.revenus_d_activite(jeune)[courante]
+    jeune = _au_portage(
+        simulateur_du_portage, annee_naissance=1975, sexe="H", affiliation="commercant",
+        age_debut=25, age_liquidation=64, niveau_salaire=1.0)
+    revenu = portage.revenus_d_activite(jeune)[courante]
     fiche = fiche_depuis_brut(simulateur.parametres.racine_donnees, simulateur.macro,
                               simulateur.catalogue, simulateur.affiliations, "commercant",
                               courante, revenu)
-    assert cycle_de_vie.revenus_nets(simulateur, jeune)[courante] == pytest.approx(
+    assert portage.revenus_nets(simulateur_du_portage, jeune)[courante] == pytest.approx(
         fiche.net, rel=1e-12)
     ligne = next(l for l in carriere.lignes if l.annee == 1985)
     fiche_1985 = fiche_depuis_brut(simulateur.parametres.racine_donnees, simulateur.macro,
@@ -687,19 +718,21 @@ def test_chaque_decret_des_taux_rejoint_une_marche_ou_dit_pourquoi():
     assert not (sans_effet | en_suspens) & cites
 
 
-def test_une_pension_nette_suit_les_prelevements_de_chaque_annee(simulateur):
+def test_une_pension_nette_suit_les_prelevements_de_chaque_annee(
+        portage, simulateur_du_portage):
     """Partie en 2014 : sa pension perd 7,4 % et la maladie des
     complémentaires en 2015, 9,1 % et la même maladie depuis 2018, dernière
     marche tenue au-delà."""
-    comparaison = simulateur.simuler(simulateur.carriere_simple(
-        annee_naissance=1950, sexe="H", affiliation="salarie_prive_non_cadre", age_debut=21,
-        age_liquidation=64, niveau_salaire=1.0))
-    taux = cycle_de_vie.prelevements_par_annee(simulateur, comparaison)
-    courant = cycle_de_vie.taux_de_prelevement(simulateur, comparaison.actuel)
+    comparaison = simulateur_du_portage.simuler(_au_portage(
+        simulateur_du_portage, annee_naissance=1950, sexe="H",
+        affiliation="salarie_prive_non_cadre", age_debut=21, age_liquidation=64,
+        niveau_salaire=1.0))
+    taux = portage.prelevements_par_annee(simulateur_du_portage, comparaison)
+    courant = portage.taux_de_prelevement(simulateur_du_portage, comparaison.actuel)
     maladie = courant - 0.091
     assert taux[2015] == pytest.approx(0.066 + 0.005 + 0.003 + maladie)
     assert taux[2040] == pytest.approx(courant)
-    convention = cycle_de_vie.convention_nette(simulateur, comparaison)
+    convention = portage.convention_nette(simulateur_du_portage, comparaison)
     assert convention.nette
     assert convention.retenu(2015) == pytest.approx(1.0 - taux[2015])
 
@@ -852,14 +885,16 @@ def test_les_parts_deductibles_se_lisent_dans_legi():
         connexion.close()
 
 
-def test_le_salaire_imposable_de_l_annee_courante_est_celui_de_la_fiche(simulateur, courants):
+def test_le_salaire_imposable_de_l_annee_courante_est_celui_de_la_fiche(
+        simulateur, courants, portage, simulateur_du_portage):
     """L'année courante, le salaire imposable est le brut de la fiche de paie
     moins ses cotisations et sa CSG déductible, sur le brut abattu de 1,75 %."""
-    carriere = simulateur.carriere_simple(
-        annee_naissance=1970, sexe="H", affiliation="salarie_prive_non_cadre", age_debut=21,
-        age_liquidation=67, niveau_salaire=1.0)
-    imposables = cycle_de_vie.revenus_imposables(simulateur, carriere)
-    bruts = cycle_de_vie.revenus_d_activite(carriere)
+    carriere = _au_portage(
+        simulateur_du_portage, annee_naissance=1970, sexe="H",
+        affiliation="salarie_prive_non_cadre", age_debut=21, age_liquidation=67,
+        niveau_salaire=1.0)
+    imposables = portage.revenus_imposables(simulateur_du_portage, carriere)
+    bruts = portage.revenus_d_activite(carriere)
     courante = simulateur.parametres.annee_courante
     fiche = fiche_depuis_brut(simulateur.parametres.racine_donnees, simulateur.macro,
                               simulateur.catalogue, simulateur.affiliations,
@@ -869,7 +904,7 @@ def test_le_salaire_imposable_de_l_annee_courante_est_celui_de_la_fiche(simulate
     assiette = fiche.brut * (1.0 - profil.abattement_frais[0].taux)
     assert imposables[courante] == pytest.approx(
         fiche.brut - cotisations - profil.csg_deductible * assiette, rel=1e-9)
-    assert set(imposables) == set(cycle_de_vie.revenus_nets(simulateur, carriere))
+    assert set(imposables) == set(portage.revenus_nets(simulateur_du_portage, carriere))
 
 
 def test_ce_qu_un_salaire_paie_sans_le_deduire_suit_les_textes(historique, simulateur):
@@ -892,42 +927,48 @@ def test_ce_qu_un_salaire_paie_sans_le_deduire_suit_les_textes(historique, simul
         pytest.approx(0.029 * (revenu + autres + cotisations)))
 
 
-def test_la_pension_imposable_suit_la_csg_deductible_de_chaque_annee(simulateur):
+def test_la_pension_imposable_suit_la_csg_deductible_de_chaque_annee(
+        portage, simulateur_du_portage):
     """Partie en 2014, la pension d'un salarié du privé est imposable moins
     4,2 % de CSG et la maladie de sa part complémentaire jusqu'en 2017, moins
     5,9 % depuis : la CRDS, la CASA et 2,4 points de CSG restent imposables.
     Celle d'une fonctionnaire partie en 1995 ne déduit que sa maladie jusqu'en
     1996, un point de CSG de plus en 1997, 3,8 points seuls depuis 1998."""
-    comparaison = simulateur.simuler(simulateur.carriere_simple(
-        annee_naissance=1950, sexe="H", affiliation="salarie_prive_non_cadre", age_debut=21,
-        age_liquidation=64, niveau_salaire=1.0))
-    parts = cycle_de_vie.parts_imposables_par_annee(simulateur, comparaison)
-    prelevements = cycle_de_vie.prelevements_par_annee(simulateur, comparaison)
+    comparaison = simulateur_du_portage.simuler(_au_portage(
+        simulateur_du_portage, annee_naissance=1950, sexe="H",
+        affiliation="salarie_prive_non_cadre", age_debut=21, age_liquidation=64,
+        niveau_salaire=1.0))
+    parts = portage.parts_imposables_par_annee(simulateur_du_portage, comparaison)
+    prelevements = portage.prelevements_par_annee(simulateur_du_portage, comparaison)
     assert set(parts) == set(prelevements)
     maladie = prelevements[2015] - (0.066 + 0.005 + 0.003)
     assert maladie > 0.0
     assert parts[2015] == pytest.approx(1.0 - 0.042 - maladie)
     assert parts[2020] == pytest.approx(1.0 - 0.059 - maladie)
     assert prelevements[2020] - (1.0 - parts[2020]) == pytest.approx(0.024 + 0.005 + 0.003)
-    fonctionnaire = simulateur.simuler(simulateur.carriere_simple(
-        annee_naissance=1940, sexe="F", affiliation="fonctionnaire_etat_actif", age_debut=22,
-        age_liquidation=55, niveau_salaire=1.0))
-    parts = cycle_de_vie.parts_imposables_par_annee(simulateur, fonctionnaire)
+    fonctionnaire = simulateur_du_portage.simuler(_au_portage(
+        simulateur_du_portage, annee_naissance=1940, sexe="F",
+        affiliation="fonctionnaire_etat_actif", age_debut=22, age_liquidation=55,
+        niveau_salaire=1.0))
+    parts = portage.parts_imposables_par_annee(simulateur_du_portage, fonctionnaire)
     assert parts[1995] == pytest.approx(1.0 - 0.0265)
     assert parts[1997] == pytest.approx(1.0 - 0.01 - 0.028)
     assert parts[1998] == pytest.approx(1.0 - 0.038)
 
 
-def test_la_csg_que_rend_la_proposition_baisse_la_part_deductible(simulateur):
+def test_la_csg_que_rend_la_proposition_baisse_la_part_deductible(
+        portage, simulateur_du_portage):
     """Après la bascule, le scénario 6 laisse un net plus fort du même brut ;
     son net imposable garde la part non déductible du droit en vigueur."""
-    carriere = simulateur.carriere_simple(
-        annee_naissance=1985, sexe="H", affiliation="salarie_prive_cadre", age_debut=22,
-        age_liquidation=64, niveau_salaire=1.0)
-    nets = cycle_de_vie.revenus_nets(simulateur, carriere)
-    imposables = cycle_de_vie.revenus_imposables(simulateur, carriere)
-    nets_6 = cycle_de_vie.revenus_nets(simulateur, carriere, proposition=True)
-    imposables_6 = cycle_de_vie.revenus_imposables(simulateur, carriere, proposition=True)
+    carriere = _au_portage(
+        simulateur_du_portage, annee_naissance=1985, sexe="H",
+        affiliation="salarie_prive_cadre", age_debut=22, age_liquidation=64,
+        niveau_salaire=1.0)
+    nets = portage.revenus_nets(simulateur_du_portage, carriere)
+    imposables = portage.revenus_imposables(simulateur_du_portage, carriere)
+    nets_6 = portage.revenus_nets(simulateur_du_portage, carriere, proposition=True)
+    imposables_6 = portage.revenus_imposables(simulateur_du_portage, carriere,
+                                              proposition=True)
     apres = [annee for annee in nets if nets_6[annee] > nets[annee] + 1.0]
     assert apres
     for annee in apres:
