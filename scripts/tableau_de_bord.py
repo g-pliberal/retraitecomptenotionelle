@@ -334,6 +334,7 @@ def page() -> str:
                 if r["publication"] == "ouvert" and not r.get("depend_de")
                 and r not in tires and "scenario_1" in r["confronte"]]
     n_ecarts = somme_ordonnee(len(r.get("ecarts", [])) for r in referents)
+    n_ecarts_tires = somme_ordonnee(len(r.get("ecarts", [])) for r in tires)
     # Ce que les autres modèles font mieux (action 138) : le propriétaire veut
     # le dépôt « meilleur en tous points », et ces points sont ce qui reste.
     mieux = [p for r in referents for p in r.get("fait_mieux", [])]
@@ -598,8 +599,9 @@ def page() -> str:
       f"{publications['sur_demande']} sur demande, {publications['documente']} "
       f"documenté(s) sans leur code, {publications['non_public']} non public(s). "
       f"{len(tires)} ont déjà été confrontés au dépôt ou lui donnent des valeurs ("
-      + ", ".join(r["nom"] for r in tires) + f"), et {n_ecarts} écarts y ont été "
-      f"trouvés. {len(premiers)} sont à confronter au scénario 1 en premier, parce que "
+      + ", ".join(r["nom"] for r in tires) + f") ; le registre compte {n_ecarts} "
+      f"écarts, dont {n_ecarts_tires} chez eux. {len(premiers)} sont à confronter au "
+      "scénario 1 en premier, parce que "
       "leur code est ouvert, qu'ils ne l'ont jamais été et qu'ils ne dépendent d'aucune "
       "autre source du registre ; dans l'ordre du registre, qui range les "
       "administrations d'abord : " + ", ".join(f"`{r['id']}`" for r in premiers[:6])

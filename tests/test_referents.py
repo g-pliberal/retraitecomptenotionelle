@@ -13,6 +13,7 @@ registre des sources, y a sa ligne : la liste se veut exhaustive.
 
 from __future__ import annotations
 
+import csv
 import datetime
 import re
 from pathlib import Path
@@ -261,3 +262,177 @@ def test_tout_modele_qu_une_fiche_nomme_est_au_registre(par_id):
         assert not inconnus, (
             f"{chemin.relative_to(RACINE)} : {inconnus} absents de "
             "data/reference/referents.yaml")
+
+
+# ---- Ce que les modèles confrontés par leurs paramètres ont donné ----------
+#
+# Lu chez eux, à la version que leur ligne nomme (`version`), et rapporté à la
+# donnée du dépôt qui dit la même règle, la même année ou pour la même
+# génération. Le registre les dit d'accord avec le dépôt, sauf les écarts
+# qu'il déclare : ces tests le tiennent. Une donnée du dépôt qui change remet
+# leur accord en question, et leur ligne se relit (action 137, la remise à plat
+# du 22 octobre 2026).
+
+LEGISLATION = RACINE / "data" / "reference" / "legislation"
+
+
+def _csv(chemin: Path) -> list[dict]:
+    lignes = [ligne for ligne in chemin.read_text(encoding="utf-8").splitlines()
+              if ligne and not ligne.startswith("#")]
+    return list(csv.DictReader(lignes))
+
+
+def _par_generation(fichier: str, colonne: str):
+    """La valeur d'une génération, celle de la dernière borne qui la précède :
+    1961.667 dit les nés à compter du 1er septembre 1961."""
+    bornes = sorted((float(ligne["generation"]), float(ligne[colonne]))
+                    for ligne in _csv(LEGISLATION / fichier))
+    return lambda generation: [v for b, v in bornes if b <= generation][-1]
+
+
+def _de_l_annee(serie: list[dict], annee: int) -> dict:
+    """La marche d'une série de l'impôt en vigueur pour les revenus d'une année."""
+    return [m for m in serie if m["annee"] <= annee][-1]
+
+
+@pytest.fixture(scope="module")
+def depot() -> dict:
+    """Ce que le dépôt porte, sous les noms que les constats ci-dessous lisent."""
+    impot = yaml.safe_load((LEGISLATION / "impot_revenu.yaml").read_text(
+        encoding="utf-8"))["series"]
+    bareme = yaml.safe_load((LEGISLATION / "prelevements_remuneration.yaml").read_text(
+        encoding="utf-8"))["pensions"]["bareme_csg"][:3]
+    seuils = {int(ligne["annee"]): ligne for ligne in _csv(LEGISLATION / "csg_pensions_seuils.csv")}
+
+    def lu(serie: str, annee: int, *champs: str) -> tuple:
+        return tuple(_de_l_annee(impot[serie], annee)[c] for c in champs)
+
+    return {
+        "seuils_csg_2017": tuple(int(seuils[2017][c]) for c in ("exoneration", "reduit")),
+        "seuils_csg_2026": tuple(t["revenu_fiscal_maximum"] for t in bareme),
+        "seuils_csg_2026_deux_parts": tuple(
+            t["revenu_fiscal_maximum"] + 2 * t["majoration_demi_part"] for t in bareme),
+        "majorations_csg_2026": tuple(t["majoration_demi_part"] for t in bareme),
+        **{f"abattement_pensions_{a}": lu("deductions", a, "pensions_minimum", "pensions_maximum")
+           for a in (2015, 2022, 2025)},
+        "abattement_ages_2025": lu("abattement_age_invalidite", 2025, "abattement_plein",
+                                   "seuil_plein", "abattement_reduit", "seuil_reduit"),
+        "decote_2025": lu("decote", 2025, "seuil_celibataire", "seuil_couple"),
+    }
+
+
+#: Ce que les modèles du net et de l'impôt portent pour une année, lu chez
+#: eux : (modèle, ce que la donnée du dépôt dit sous ce nom, leurs valeurs).
+#: Saphir : `7a-Legislation_sociale.sas:118-129` et `7b-Legislation_IR.sas:
+#: 346-358` (l'impôt de 2016, sur les revenus de 2015). ir-catala :
+#: `archives_cgi.catala_fr:340-370`, « sous condition année_revenus = 2022 ».
+#: EUROMOD : FR.xml, système FR_2026. Retraites 2027 : `params.js:52-64`, ses
+#: valeurs de 2026 citées en commentaire. Aurain : `parametres_fiscaux_2026.yaml`.
+CONSTATS = [
+    ("saphir", "seuils_csg_2017", (10996, 14375)),
+    ("saphir", "abattement_pensions_2015", (379, 3711)),
+    ("ir_catala", "abattement_pensions_2022", (422, 4123)),
+    ("euromod", "seuils_csg_2026", (13048, 17057, 26472)),
+    ("euromod", "majorations_csg_2026", (3484, 4555, 7066)),
+    ("retraites_2027", "seuils_csg_2026", (13048, 17057, 26472)),
+    ("retraites_2027", "seuils_csg_2026_deux_parts", (20016, 26167, 40604)),
+    ("retraites_2027", "abattement_ages_2025", (2822, 17670, 1411, 28430)),
+    ("retraites_2027", "decote_2025", (897, 1483)),
+    ("simulateur_aurain", "majorations_csg_2026", (3484, 4555, 7066)),
+    ("simulateur_aurain", "abattement_pensions_2025", (454, 4439)),
+]
+
+#: Les taux de vieillesse du régime général d'EDIFIS, en % : salarié
+#: déplafonné et plafonné, employeur déplafonné et plafonné (feuille
+#: « Barème » de chaque année, lignes « Assurance vieillesse », au commit
+#: `95ef983`).
+TAUX_EDIFIS = {
+    2015: (0.30, 6.85, 1.80, 8.50), 2016: (0.35, 6.90, 1.85, 8.55),
+    **{annee: (0.40, 6.90, 1.90, 8.55) for annee in range(2017, 2024)},
+    2024: (0.40, 6.90, 2.02, 8.55), 2025: (0.40, 6.90, 2.02, 8.55),
+}
+
+#: L'âge d'ouverture, en mois, et la durée requise, en trimestres, du droit en
+#: vigueur, par génération du dépôt — 1961.667 pour les nés à compter du 1er
+#: septembre 1961, 1965.25 à compter du 1er avril 1965. Chez Aurain, les
+#: bornes de naissance du texte (`baselines_retraites.yaml`, B1, au commit
+#: `59b7985`). Chez « Quand pourrai-je partir » (`outil.js:57-102`, au commit
+#: `94616bc`), l'année de naissance de 1961 à 2010, son curseur : il dit
+#: retenir, pour 1961 et 1965, la règle de la majorité des mois, celle des nés
+#: d'avril à décembre pour 1965, mais sert pour 1961 celle des nés de septembre
+#: à décembre, l'écart que sa ligne déclare.
+AGES_AURAIN = {
+    1961.0: (744, 168), 1961.667: (747, 169), 1962: (750, 169), 1963: (753, 170),
+    1964: (753, 170), 1965.0: (753, 170), 1965.25: (756, 171), 1966: (759, 172),
+    1967: (762, 172), 1968: (765, 172), 1969: (768, 172),
+}
+AGES_QUAND_PARTIR = {
+    1961.667: (747, 169), 1962: (750, 169), 1963: (753, 170), 1964: (753, 170),
+    1965.25: (756, 171), 1966: (759, 172), 1967: (762, 172), 1968: (765, 172),
+    **{annee: (768, 172) for annee in range(1969, 2011)},
+}
+
+#: Les modèles dont ces constats tiennent l'accord : leur ligne nomme la version
+#: confrontée, sans quoi le tableau de bord les compterait jamais confrontés.
+CONFRONTES_PAR_LEURS_PARAMETRES = (
+    {m for m, _, _ in CONSTATS} | {"edifis", "simulateur_aurain", "outil_quand_partir"})
+
+
+@pytest.mark.parametrize("modele, donnee, valeurs", CONSTATS,
+                         ids=[f"{m}-{d}" for m, d, _ in CONSTATS])
+def test_les_valeurs_d_un_modele_confronte_sont_celles_du_depot(depot, modele, donnee, valeurs):
+    assert depot[donnee] == valeurs, (
+        f"{modele} : {donnee} vaut {valeurs} chez lui, {depot[donnee]} au dépôt ; "
+        "sa ligne du registre se relit")
+
+
+def test_les_taux_de_vieillesse_d_edifis_sont_ceux_du_depot():
+    taux = {(int(ligne["annee"]), ligne["mesure"]): float(ligne["valeur"])
+            for ligne in _csv(RACINE / "data" / "reference" / "regimes" / "taux_cotisation_annuels.csv")
+            if ligne["regime"] == "regime_general"}
+    for annee, attendu in TAUX_EDIFIS.items():
+        plafonne, deplafonne = taux[annee, "taux_plafonne"], taux[annee, "taux_deplafonne"]
+        salarie = taux[annee, "part_salariale"]
+        salarie_deplafonne = taux[annee, "part_salariale_deplafonnee"]
+        au_depot = tuple(round(100 * t, 2) for t in (
+            deplafonne * salarie_deplafonne, plafonne * salarie,
+            deplafonne * (1 - salarie_deplafonne), plafonne * (1 - salarie)))
+        assert au_depot == attendu, f"{annee} : {au_depot} au dépôt, {attendu} chez EDIFIS"
+
+
+@pytest.mark.parametrize("modele, table", [
+    ("simulateur_aurain", AGES_AURAIN), ("outil_quand_partir", AGES_QUAND_PARTIR)])
+def test_les_ages_et_les_durees_d_un_calculateur_sont_ceux_du_depot(modele, table):
+    age = _par_generation("age_ouverture_requis.csv", "age")
+    duree = _par_generation("duree_assurance_requise.csv", "trimestres")
+    for generation, (mois, trimestres) in table.items():
+        au_depot = (round(12 * age(generation)), int(duree(generation)))
+        assert au_depot == (mois, trimestres), (
+            f"{modele}, {generation} : {(mois, trimestres)} chez lui, {au_depot} au dépôt")
+
+
+def test_quand_pourrai_je_partir_sert_a_toute_la_generation_1961_la_regle_de_sa_minorite():
+    """L'écart que sa ligne déclare : les nés de janvier à août 1961, huit mois
+    sur douze, gardent 62 ans et 168 trimestres au dépôt."""
+    age = _par_generation("age_ouverture_requis.csv", "age")
+    duree = _par_generation("duree_assurance_requise.csv", "trimestres")
+    assert (round(12 * age(1961)), int(duree(1961))) == (744, 168) != AGES_QUAND_PARTIR[1961.667]
+
+
+def test_un_modele_dont_les_valeurs_sont_tenues_ici_nomme_sa_version(par_id):
+    for modele in sorted(CONFRONTES_PAR_LEURS_PARAMETRES):
+        assert par_id[modele].get("version"), (
+            f"{modele} : ses paramètres sont confrontés ici, et sa ligne ne nomme "
+            "pas la version confrontée")
+
+
+def test_le_tableau_de_bord_dit_combien_d_ecarts_sont_chez_les_modeles_confrontes(referents):
+    """L'état (§ 3.4) compte les modèles confrontés, puis les écarts : ceux du
+    registre ne viennent pas tous d'eux, beaucoup d'une lecture d'un modèle
+    jamais confronté, et le compte le dit (`scripts/tableau_de_bord.py`)."""
+    etat = (RACINE / "docs" / "etat.md").read_text(encoding="utf-8")
+    ligne = next(l for l in etat.splitlines() if l.startswith("- **Les autres modèles**"))
+    confrontes = [r for r in referents if r.get("manifeste") or r.get("version")]
+    total = sum(len(r.get("ecarts", [])) for r in referents)
+    chez_eux = sum(len(r.get("ecarts", [])) for r in confrontes)
+    assert f"; le registre compte {total} écarts, dont {chez_eux} chez eux." in ligne

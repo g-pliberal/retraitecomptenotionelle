@@ -5644,9 +5644,16 @@ referents:
       barèmes 2015 à 2025, dont les cotisations vieillesse salariales et
       patronales, plafonnée et déplafonnée, et l'Agirc-Arrco des tranches 1
       et 2 et de la CET.
+    version: "commit 95ef983 (11 février 2026)"
     confrontation: >-
-      Des paramètres à comparer : les taux de cotisation vieillesse, d'une
-      source indépendante des barèmes de l'IPP.
+      Des paramètres comparés, d'une source indépendante des barèmes de
+      l'IPP : ses taux de vieillesse du régime général de 2015 à 2025,
+      salarié et employeur, plafonnés et déplafonnés, lus dans la feuille
+      « Barème » de chaque année, sont ceux du dépôt, année par année
+      (`regimes/taux_cotisation_annuels.csv`, certifiés sur D. 242-4) ; par
+      le texte que tous deux suivent, le 5 octobre 2026, puis un à un le 22
+      (`tests/test_referents.py`). Reste : ses taux de l'Agirc-Arrco, des
+      tranches 1 et 2 et de la CET, jamais comparés.
     ecarts:
       - constat: >-
           Le supplément par quart de part du seuil du taux réduit de
@@ -5730,9 +5737,10 @@ referents:
           un ménage (`docs/limites.md:2012-2018`) ; à décider avec
           138.5.
     bilan: >-
-      Rien sur les pensions. Il apporte un barème de cotisations année
-      par année, qui montre que le dépôt applique au régime général des
-      moyennes par période, et un coût du travail complet, déjà au
+      Rien sur les pensions. Son barème de cotisations année par année
+      confirme les taux de vieillesse du régime général que le dépôt porte
+      depuis le 14 septembre 2026 (le relevé du 4 octobre l'avait cru aux
+      moyennes de période de sa fiche) ; son coût du travail complet est au
       registre.
     sas: [drees_edifis]
     lu_le: 2026-10-04
@@ -7343,9 +7351,18 @@ referents:
       Le droit socio-fiscal de 2017 sur l'ERFS : la CSG, la CRDS et la CASA
       des pensions, le minimum vieillesse ; les pensions y sont des
       entrées. En SAS.
+    version: "commit 7bc72c9 (5 septembre 2018)"
     confrontation: >-
-      Des paramètres de 2017 à comparer, pour le foyer et le net ; il ne vaut
-      que pour cette année-là.
+      Des paramètres de 2017 comparés, pour le foyer et le net ; il ne vaut
+      que pour cette année-là. Ses seuils de CSG de 2017 pour une part,
+      10 996 € et 14 375 €, sont ceux du dépôt
+      (`legislation/csg_pensions_seuils.csv`), vus le 19 octobre 2026
+      (action 89) ; l'abattement des pensions de son impôt de 2016, 379 € et
+      3 711 €, est celui du dépôt pour les revenus de 2015
+      (`legislation/impot_revenu.yaml`), vu le 22 (`tests/test_referents.py`).
+      Reste : l'abattement relevé de 2017, celui des personnes âgées, et
+      l'ASPA de 2017 ; ses majorations par demi-part (2 936 et 3 838 €) ne se
+      comparent pas, le dépôt n'ayant avant 2026 que les seuils d'une part.
     ecarts:
       - constat: >-
           Il retranche une seule fois 0,9 SMIC mensuel (1,5 pour un
@@ -8115,7 +8132,10 @@ referents:
       points Agirc-Arrco, cotisations vieillesse.
     confrontation: >-
       Un calcul à rejouer, sur des revenus de dirigeant, pour les trimestres
-      et les points.
+      et les points. Jamais fait : lu le 4 octobre 2026, au paquet 0.1.0,
+      rien n'a été exécuté. Il est de la famille de l'Urssaf, dont
+      modele-social et modele-ti sont confrontés : son accord ne compterait
+      qu'une fois avec le leur.
     fait_mieux:
       - quoi: >-
           Ses règles portent leurs `références`, comme celles de modele-social
@@ -8184,7 +8204,13 @@ referents:
       D. 815-1 et D. 815-2, montants jusqu'au 1er janvier 2020).
     confrontation: >-
       Des règles à comparer, article par article, avec leur texte recopié à
-      côté.
+      côté. Jamais fait : lues le 1er et le 4 octobre 2026, ses règles de
+      retraite n'ont été mises qu'en regard du droit en vigueur, qu'elles
+      précèdent (écarts ci-dessous). Reste à les comparer au droit de leur
+      date, que le scénario 1 applique aux pensions de cette date : ses âges
+      de 2023, pour les générations parties sous la loi de 2023 (jusqu'à
+      1963), l'âge du taux plein, l'inaptitude, l'ASPA jusqu'au 1er janvier
+      2020.
     ecarts:
       - constat: >-
           Pour la génération 1967, le code dit 62 ans et 9 mois, quand le
@@ -8281,16 +8307,25 @@ referents:
       L'impôt sur le revenu en Catala, dont l'abattement des pensions
       (article 158, 5 a, du code général des impôts) ; une « preuve de
       concept ».
+    version: "commit 7f5fe83 (2 octobre 2024)"
     confrontation: >-
-      Une règle à comparer, le jour où le dépôt calculera l'impôt du
-      retraité.
+      Une règle comparée, le 22 octobre 2026, le dépôt calculant l'impôt du
+      retraité depuis le 10 (138.5) : son abattement des pensions, qu'il
+      n'écrit que pour les revenus de 2022 — 4 123 € au plus par foyer, 422 €
+      au moins par pensionné —, est celui du dépôt pour ces revenus
+      (`legislation/impot_revenu.yaml`, `tests/test_referents.py`). Reste :
+      le quotient familial des retraités (CGI, art. 195).
     ecarts:
       - constat: >-
-          Abattement des pensions à 4 123 € et 422 €
+          Son abattement des pensions s'arrête aux revenus de 2022 : 4 123 €
+          et 422 €, « sous condition année_revenus = 2022 »
           (archives_cgi.catala_fr:341-370).
         tranche: >-
-          CGI 158, 5 a, en vigueur : 4 439 € et 454 €
-        preuve: LEGIARTI000054373673
+          Ce sont les montants des revenus de 2022, ceux du dépôt
+          (`legislation/impot_revenu.yaml`, qui cite le décret n° 2023-422) :
+          un retard, non une erreur. CGI 158, 5 a, en vigueur pour les revenus
+          de 2025 : 4 439 € et 454 €.
+        preuve: LEGIARTI000054373673 ; legislation/impot_revenu.yaml, série deductions, 2022
     fait_mieux:
       - quoi: >-
           Il calcule l'abattement de 10 % des pensions (CGI, art.
@@ -8335,7 +8370,7 @@ referents:
       quotient familial des retraités, transcrits du CGI. Montants de
       2022, preuve de concept arrêtée depuis octobre 2024.
     sas: [dgfip_ir_catala]
-    lu_le: 2026-10-04
+    lu_le: 2026-10-22
     lu_dans:
       - https://gitlab.adullact.net/dgfip/impots-nationaux-revenu-patrimoine-particuliers/ir-catala
     note: >-
@@ -8366,9 +8401,16 @@ referents:
       Pour la France, la CSG, la CRDS et la CASA des pensions, l'ASPA en
       partie ; les pensions contributives ne sont pas simulées, faute
       d'historique de carrière.
+    version: "J2.54+ (règles), logiciel 3.8.9"
     confrontation: >-
-      Des règles du foyer et du net à comparer ; ses règles, sous CC BY 4.0,
-      se recopient en citant.
+      Des règles du foyer et du net comparées, le 4 octobre 2026, sur son
+      système FR_2026 : ses seuils de CSG des pensions et leurs majorations
+      par demi-part sont ceux du dépôt (la fiche
+      `csg_des_pensions_selon_le_revenu`, `tests/test_referents.py`) ; son
+      ASPA, sa CRDS et son abattement des pensions s'écartent de la loi
+      (écarts ci-dessous). Reste : ses systèmes FR_2015 à FR_2025, contre
+      `legislation/csg_pensions_seuils.csv`. Ses règles, sous CC BY 4.0, se
+      recopient en citant.
     ecarts:
       - constat: >-
           Son rapport pays décrit pour 2022 à 2025 le critère d'un «
@@ -8750,11 +8792,16 @@ referents:
       La pension nette de la CSG, de la CRDS, de la CASA, de la cotisation
       maladie et de l'impôt, sur trois cas types, et le chiffrage de trois
       leviers budgétaires.
+    version: "commit 431dd9f (20 septembre 2026)"
     confrontation: >-
-      Des prélèvements à comparer : ses seuils de CSG citent l'instruction de
-      la DSS du 11 décembre 2025, et rejoignent ceux d'OpenFisca-France. Lue
-      le 19 octobre 2026, l'instruction donne en annexe 2 ceux du dépôt, à une
-      et à deux parts, et leurs bornes.
+      Des prélèvements comparés. Il calcule l'année 2027, sur les paramètres
+      de 2026 indexés (`params.js:52-64`), qu'aucun texte ne fixe encore : ce
+      qui se compare, ce sont ceux de 2026 qu'il cite. Ses seuils de CSG à
+      une et à deux parts, tirés de l'instruction de la DSS du 11 décembre
+      2025, sont ceux du dépôt (son annexe 2, lue le 19 octobre 2026) ; la
+      décote et l'abattement des personnes âgées des revenus de 2025 aussi,
+      vus le 22 (`tests/test_referents.py`). Seule la deuxième borne de son
+      barème d'impôt s'en écarte (écart ci-dessous).
     ecarts:
       - constat: >-
           Il dit 29 % des retraités au taux plein de CSG, d'après la CFDT
@@ -8798,7 +8845,7 @@ referents:
       de CSG de 2026 du dépôt et arrondit à l'euro la majoration d'un quart de part
       (la fiche `csg_des_pensions_selon_le_revenu`).
     sas: [tilloy_retraites_2027]
-    lu_le: 2026-10-19
+    lu_le: 2026-10-22
     lu_dans:
       - https://github.com/AntoineTilloy/retraites-2027
       - https://legislation.lassuranceretraite.fr/Pdf/instruction_ministerielle_11122025.pdf
@@ -8823,10 +8870,16 @@ referents:
       L'âge d'ouverture et la durée requise par génération sous trois états
       du droit — 2023, la suspension de 2025, après 2028 — ; la CSG, l'impôt
       et l'ASPA ; les distributions de l'EIR et de l'EACR.
+    version: "commit 59b7985 (16 septembre 2026)"
     confrontation: >-
-      Des paramètres à comparer : il dit avoir vérifié ses durées « contre le
-      texte consolidé sur Legifrance » le 9 septembre 2026, et elles
-      rejoignent celles du dépôt (170, puis 171 à partir d'avril 1965, 172).
+      Des paramètres comparés. Ses âges et ses durées du droit en vigueur,
+      aux bornes de naissance du texte, qu'il dit vérifiés « contre le texte
+      consolidé sur Legifrance » le 9 septembre 2026, sont ceux du dépôt,
+      génération par génération (le 4 octobre 2026, puis le 22 :
+      `tests/test_referents.py`), comme ses majorations de CSG par demi-part
+      et son abattement des pensions des revenus de 2025. Reste : ses bornes
+      de carrière longue (D. 351-1-1), qu'il porte aussi. Sa tête a avancé
+      depuis : `8b7dd75`, le 22 octobre.
     ecarts:
       - constat: >-
           Il écrit que la loi pour 2026 « fixe le terme de la
@@ -8973,7 +9026,7 @@ referents:
       près. Sa lecture d'une sortie de suspension en 2028 n'est pas dans
       la loi.
     sas: [aurain_retraites_simulateur]
-    lu_le: 2026-10-04
+    lu_le: 2026-10-22
     lu_dans:
       - https://github.com/ManZanau/retraites-simulateur
     note: >-
@@ -8993,8 +9046,16 @@ referents:
       L'âge d'ouverture et la durée requise selon trois états du droit, la
       loi du 30 décembre 2025 comprise
       (`src/lib/boite-a-outils/retraite/outil.js`).
+    version: "commit 94616bc (29 septembre 2026)"
     confrontation: >-
-      Des paramètres à comparer, génération par génération.
+      Des paramètres comparés, génération par génération, le 1er octobre
+      2026, puis le 22 sur tout son curseur, de 1961 à 2010 (`outil.js:57-102`,
+      inchangé à la tête du 22 octobre, `946b108` ; `tests/test_referents.py`) :
+      ses âges et ses durées du droit en vigueur sont ceux du dépôt, sauf pour
+      1961 (écart ci-dessous) ; pour 1965, il retient ceux des nés d'avril à
+      décembre, la majorité. Ses deux autres états du droit ne disent rien,
+      pour ces générations, que le droit en vigueur ne dise déjà, ou ne se
+      sont appliqués à personne.
     ecarts:
       - constat: >-
           Il ouvre les droits de toute la génération 1961 à 62 ans et 3 mois,
@@ -9037,7 +9098,7 @@ referents:
       comparaison avec l'espérance de vie sans incapacité est un
       contresens.
     sas: [lfi_outil_retraite]
-    lu_le: 2026-10-04
+    lu_le: 2026-10-22
     lu_dans:
       - https://github.com/ataieb3342/lfi-site
     note: >-
@@ -9059,6 +9120,10 @@ referents:
       universel du rapport Delevoye.
     confrontation: >-
       Un calcul à rejouer au droit de 2020, que le scénario 1 sait appliquer.
+      Jamais fait : lu le 1er et le 4 octobre 2026 (écarts ci-dessous), sans
+      rien exécuter. Ses erreurs laissent à rejouer des carrières de
+      titulaire au taux plein, sans minimum garanti ; ses durées et son point,
+      périmés aujourd'hui, sont ceux de 2020.
     ecarts:
       - constat: >-
           Sa pension de fonctionnaire multiplie 75 % du dernier
@@ -9159,8 +9224,15 @@ referents:
     couvre: >-
       Le régime général, les indépendants et la Cipav au droit de 2020,
       comparés au système universel ; en F#.
+    version: "commit 2312ebd (21 janvier 2020)"
     confrontation: >-
-      Un calcul à relire au droit de 2020.
+      Un calcul relu au droit de 2020, le 1er et le 4 octobre 2026, contre les
+      règles du dépôt : il avait raison sur la première tranche du RCI, le
+      taux des artisans au-dessus du plafond et le 1 % maladie de la
+      complémentaire, que le dépôt a repris (138.18, 138.2 ; leurs fiches le
+      citent) ; tort sur le prorata, la décote et la surcote, les
+      coefficients de l'Agirc-Arrco et le salaire moyen ; sa durée, celle de
+      la loi de 2014, est périmée (écarts ci-dessous).
     ecarts:
       - constat: >-
           Son prorata, trimestres validés sur requis, n'est pas
@@ -9327,8 +9399,13 @@ referents:
     couvre: >-
       Un tableur de calcul des pensions de l'Assurance retraite et de la MSA
       (« uniquement »).
+    version: "commit 5344b10 (28 février 2026)"
     confrontation: >-
-      Un calcul à relire, pour le régime général.
+      Un calcul relu, pour le régime général, le 1er et le 4 octobre 2026,
+      contre les règles du dépôt : il avait raison sur le seuil de validation
+      d'avant 1972, que le dépôt a repris (138.6) ; tort sur l'arrondi des
+      trimestres jusqu'à l'âge du taux plein, la majoration de 10 % et les
+      années du salaire moyen, qu'il réserve aux mères (écarts ci-dessous).
     ecarts:
       - constat: >-
           Il réserve aux mères la majoration de pension de 10 %.
@@ -9405,7 +9482,10 @@ referents:
       surcote par génération, au projet de réforme annoncé le 10 janvier
       2023, pas à la loi votée.
     confrontation: >-
-      Peu : son droit est un projet ; il garde la lecture d'un moment.
+      Peu : son droit est un projet ; il garde la lecture d'un moment. Jamais
+      confronté : lu le 1er et le 4 octobre 2026 (écarts ci-dessous). Seul son
+      droit d'avant 2023 se compare au scénario 1, pour les pensions parties
+      avant le 1er septembre 2023.
     ecarts:
       - constat: >-
           Son droit « mac » met toute la génération 1961 à 62 ans et
