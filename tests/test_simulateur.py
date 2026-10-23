@@ -3601,12 +3601,36 @@ def test_le_minimum_garanti_se_compare_a_la_pension_qui_porte_les_deux_surcotes(
     assert servis["surcote_parentale"] == pytest.approx(normale - liquidee)
 
 
+def test_la_surcote_parentale_du_liberal_entre_dans_le_coefficient_de_sa_surcote(simulateur):
+    """Au régime des libéraux, la durée cotisée de l'année qui précède l'âge
+    légal « ouvre droit à une majoration de pension dans les mêmes conditions
+    que celles prévues à la première phrase du quatrième alinéa » de L. 643-3,
+    I, la surcote, que R. 643-8 fixe à 1,25 % « par trimestre accompli » depuis
+    le 1er septembre 2023 : un seul coefficient, sur la pension d'avant la
+    surcote, comme au régime général. Le moteur majorait la pension surcotée.
+
+    La libérale née le 1er janvier 1969, partie à 66 ans : huit trimestres de
+    surcote de 64 à 66 ans, et les quatre de l'année d'avant.
+    """
+    resultat = simulateur.scenario_actuel.calculer(simulateur.carriere_simple(
+        annee_naissance=1969, mois_naissance=1, jour_naissance=1, sexe="F",
+        affiliation="profession_liberale", age_debut=21, age_liquidation=66,
+        nombre_enfants=2))
+    pension = next(p for p in resultat.pensions_par_regime if p.regime == "cnavpl")
+    parentale = next(a for a in resultat.avantages_appliques
+                     if a.code == "surcote_parentale")
+    assert "coefficient de majoration 1.1000" in pension.detail
+    assert "4 trimestres" in parentale.detail
+    avant_surcote = (pension.montant - parentale.montant) / (1 + 8 * 0.0125)
+    assert pension.montant == pytest.approx(avant_surcote * (1 + 12 * 0.0125))
+
+
 def test_les_deux_moteurs_servent_la_meme_surcote_parentale():
     """Le jumeau JavaScript de l'étape qui complète calcule la surcote
     parentale sur la même pension que le Python, celle d'avant la surcote :
     à la fonctionnaire de l'État et de la CNRACL, à la salariée, portée ou non
-    au minimum contributif ; et il compare comme lui au minimum garanti la
-    pension qui porte les deux surcotes."""
+    au minimum contributif, à la libérale ; et il compare comme lui au minimum
+    garanti la pension qui porte les deux surcotes."""
     import json
     import shutil
     import subprocess
@@ -3629,6 +3653,7 @@ def test_les_deux_moteurs_servent_la_meme_surcote_parentale():
          "liquidation": "64.5", "salaire": "0.3"},
         {**mere, "statut": "fonctionnaire_territorial_hospitalier", "debut": "21",
          "liquidation": "64.5", "salaire": "0.41"},
+        {**mere, "statut": "profession_liberale", "debut": "21", "liquidation": "66"},
     ]
     with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
                                      delete=False) as fichier:

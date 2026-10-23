@@ -610,6 +610,10 @@ class Pensions:
     #: droits « sans tenir compte des coefficients d'anticipation » (fiche
     #: ``majoration_enfants_a_charge_agirc_arrco``).
     anticipations: tuple[tuple[str, float], ...] = ()
+    #: Le coefficient de surcote de chaque régime en points qu'il majore : la
+    #: surcote parentale des libéraux entre dans le même, « dans les mêmes
+    #: conditions » (L. 643-3, I ; R. 643-8), sur la pension d'avant lui.
+    surcotes_des_points: tuple[tuple[str, float], ...] = ()
     #: Les suppléments de pension des primes soumises à retenue.
     supplements: tuple[EligibleSupplement, ...] = ()
     #: Les pensions de la SNCF que le minimum de pension peut relever.
@@ -725,6 +729,8 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
     eligibles_supplement: list[EligibleSupplement] = []
     #: Le coefficient d'anticipation des régimes en points qu'il réduit.
     anticipations: list[tuple[str, float]] = []
+    #: Le coefficient de surcote des régimes en points qu'il majore.
+    surcotes_des_points: list[tuple[str, float]] = []
     #: La pension des non-salariés agricoles, que la pension majorée de
     #: référence relève.
     agricole: EligibleAgricole | None = None
@@ -1005,6 +1011,8 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
             ))
             if 0.0 < abattement < 1.0:
                 anticipations.append((code, abattement))
+            elif abattement > 1.0:
+                surcotes_des_points.append((code, abattement))
             continue
 
         # Régimes en annuités — et régimes FORFAITAIRES, dont la pension ne
@@ -1664,6 +1672,7 @@ def liquider_chaque_regime(moteur: ScenarioActuel, releve: Releve, ouverture: Ou
         plafonds=tuple(eligibles_plafond),
         supplements=tuple(eligibles_supplement),
         anticipations=tuple(anticipations),
+        surcotes_des_points=tuple(surcotes_des_points),
         minima_de_pension=tuple(eligibles_minimum_de_pension),
     )
 

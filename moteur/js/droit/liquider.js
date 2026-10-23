@@ -80,8 +80,8 @@ export const ANNEE_DES_REVENUS_AGRICOLES = 2016;
 /** Ce que l'étape « liquider chaque régime » écrit. */
 export class Pensions {
   constructor({ personne, regimes, minimum, garanti, requis, taux, fiabilite,
-    agricole = null, plafonds = [], anticipations = [], supplements = [],
-    minimaDePension = [] }) {
+    agricole = null, plafonds = [], anticipations = [], surcotesDesPoints = [],
+    supplements = [], minimaDePension = [] }) {
     this.personne = personne;
     this.regimes = regimes;
     this.minimum = minimum;
@@ -105,6 +105,12 @@ export class Pensions {
      * charge se calcule sans lui (fiche `majoration_enfants_a_charge_agirc_arrco`).
      */
     this.anticipations = anticipations;
+    /**
+     * Le coefficient de surcote de chaque régime en points qu'il majore,
+     * `[régime, coefficient]` : la surcote parentale des libéraux entre dans
+     * le même (L. 643-3, I ; R. 643-8), sur la pension d'avant lui.
+     */
+    this.surcotesDesPoints = surcotesDesPoints;
     /**
      * Les suppléments de pension des primes soumises à retenue, que l'étape
      * qui complète ajoute : `{indice, montant, detail, fiche}`.
@@ -226,6 +232,8 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
   const eligiblesSupplement = [];
   // Le coefficient d'anticipation des régimes en points qu'il réduit.
   const anticipations = [];
+  // Le coefficient de surcote des régimes en points qu'il majore.
+  const surcotesDesPoints = [];
   // La pension des non-salariés agricoles, que la pension majorée de
   // référence relève.
   let agricole = null;
@@ -474,6 +482,8 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
       });
       if (abattement > 0.0 && abattement < 1.0) {
         anticipations.push([code, abattement]);
+      } else if (abattement > 1.0) {
+        surcotesDesPoints.push([code, abattement]);
       }
       continue;
     }
@@ -1047,6 +1057,7 @@ export function liquiderChaqueRegime(moteur, releve, ouverture, contexte = null,
     agricole,
     plafonds: eligiblesPlafond,
     anticipations,
+    surcotesDesPoints,
     supplements: eligiblesSupplement,
     minimaDePension: eligiblesMinimumDePension,
   });

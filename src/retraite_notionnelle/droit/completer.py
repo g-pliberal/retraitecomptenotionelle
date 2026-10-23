@@ -1955,6 +1955,8 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
     #: Les pensions que le minimum contributif regarde, par leur indice : le
     #: coefficient de leur surcote, et ce que le minimum n'en relève pas.
     regardees_du_minimum = {eligible.indice: eligible for eligible in eligibles_minimum}
+    #: Le coefficient de surcote des régimes en points, par leur code.
+    surcotes_des_points = dict(liquidees.surcotes_des_points)
     if parentaux:
         gain_parental = 0.0
         trimestres_parentaux = 0
@@ -1964,7 +1966,8 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
             # ordinaire : la pension civile, que le minimum garanti n'a pas
             # relevée, moins ce que la surcote de L. 14, III, y ajoute ; celle
             # d'un régime que le minimum contributif regarde, d'avant sa
-            # surcote et d'avant le minimum. Le module majorait la pension
+            # surcote et d'avant le minimum ; celle des libéraux, d'avant la
+            # surcote de leurs points. Le module majorait la pension
             # surcotée : 1,025 × 1,05
             # pour deux trimestres de droit commun et quatre d'enfants, là où
             # la caisse sert 1,075.
@@ -1974,6 +1977,8 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                 eligible = regardees_du_minimum[indice]
                 avant_surcote = ((pension.montant - ajouts_du_minimum.get(indice, 0.0)
                                   - eligible.hors_minimum) / eligible.surcote)
+            elif pension.regime in surcotes_des_points:
+                avant_surcote = pension.montant / surcotes_des_points[pension.regime]
             else:
                 avant_surcote = pension.montant
             supplement = avant_surcote * taux_parental * acquis_parentaux

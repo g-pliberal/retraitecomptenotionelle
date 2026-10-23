@@ -1711,6 +1711,8 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
   // Les pensions que le minimum contributif regarde, par leur indice.
   const regardeesDuMinimum = new Map(
     eligiblesMinimum.map((eligible) => [eligible.indice, eligible]));
+  // Le coefficient de surcote des régimes en points, par leur code.
+  const surcotesDesPoints = new Map(liquidees.surcotesDesPoints ?? []);
   if (parentaux.size > 0) {
     let gainParental = 0.0;
     let trimestresParentaux = 0;
@@ -1719,7 +1721,8 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
       // La pension que le coefficient majore, celle d'avant la surcote
       // ordinaire : la pension civile moins ce que la surcote de L. 14, III, y
       // ajoute ; celle d'un régime que le minimum contributif regarde, d'avant
-      // sa surcote et d'avant le minimum.
+      // sa surcote et d'avant le minimum ; celle des libéraux, d'avant la
+      // surcote de leurs points.
       let avantSurcote = pension.montant;
       if (surcotesL18.has(indice)) {
         avantSurcote = pension.montant - surcotesL18.get(indice);
@@ -1727,6 +1730,8 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
         const eligible = regardeesDuMinimum.get(indice);
         avantSurcote = (pension.montant - (ajoutsDuMinimum.get(indice) ?? 0.0)
           - (eligible.horsMinimum ?? 0.0)) / eligible.surcote;
+      } else if (surcotesDesPoints.has(pension.regime)) {
+        avantSurcote = pension.montant / surcotesDesPoints.get(pension.regime);
       }
       const supplement = avantSurcote * tauxParental * trimestres;
       pensions[indice] = {
