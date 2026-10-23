@@ -230,6 +230,78 @@ def test_une_carriere_passe_en_donnees_champ_par_champ():
                 if ligne["affiliation"] == "fonctionnaire_etat"}) > 1
 
 
+def test_le_portage_batit_la_carriere_d_une_saisie_que_le_python_relit_a_l_identique():
+    """Dans l'autre sens : la saisie n'a qu'un exemplaire, celui du portage
+    (étape 6, la paire du contexte). Il lit la requête de chaque témoin, en
+    bâtit la carrière et les paramètres, et le Python les relit pour les
+    simuler de son moteur, qui garde son jumeau. Tout revient tel que la saisie
+    Python l'aurait bâti : chaque champ, chaque ligne, la chronologie, et
+    chaque nombre sous son type, sans quoi un témoin écrirait « 2 » où il
+    écrivait « 2.0 »."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    temoins = json.loads((RACINE_PROJET / "tests" / "temoins" / "simulations.json")
+                         .read_text(encoding="utf-8"))
+    lus, echecs = pont.carrieres_des_saisies(
+        [{"cle": nom, "requete": temoin["requete"]} for nom, temoin in temoins.items()])
+    assert not echecs
+    assert list(lus) == list(temoins)
+    contexte = Contexte()
+    for nom, temoin in temoins.items():
+        saisie = Saisie.depuis_requete(temoin["requete"])
+        parametres, carriere = lus[nom]
+        assert parametres == saisie.parametres(contexte.base), nom
+        assert (json.dumps(pont.parametres_en_donnees(parametres))
+                == json.dumps(pont.parametres_en_donnees(saisie.parametres(contexte.base)))), nom
+        assert (json.dumps(pont.carriere_en_donnees(carriere))
+                == json.dumps(pont.carriere_en_donnees(contexte.carriere(saisie)))), nom
+
+
+def _comme_node(valeur):
+    """Une valeur telle que node l'écrit en JSON : un flottant entier sans sa
+    décimale, « 2 » pour 2.0."""
+    if isinstance(valeur, float) and valeur.is_integer():
+        return int(valeur)
+    if isinstance(valeur, dict):
+        return {cle: _comme_node(element) for cle, element in valeur.items()}
+    if isinstance(valeur, (list, tuple)):
+        return [_comme_node(element) for element in valeur]
+    return valeur
+
+
+def test_le_python_relit_une_carriere_ecrite_par_node_sous_ses_types():
+    """Ce que node écrit, le Python le relit sous ses types : un flottant entier
+    redevient flottant, dans les champs comme dans les nombres libres de la
+    chronologie qu'il écrit en flottants, quand les trimestres d'un relevé
+    gardent le type que JSON leur rend. Un champ qu'il ne connaît pas, ou un
+    entier qui n'en est pas un, arrête la relecture au lieu de se perdre."""
+    simulateur = Simulateur(Parametres())
+    carriere = simulateur.carriere_simple(annee_naissance=1970, sexe="F",
+                                          affiliation="salarie_prive_non_cadre",
+                                          age_debut=22.0, age_liquidation=64.0)
+    ecrite = pont.carriere_en_donnees(carriere)
+    relue = pont.carriere_des_donnees(_comme_node(ecrite))
+    assert json.dumps(pont.carriere_en_donnees(relue)) == json.dumps(ecrite)
+    with pytest.raises(ValueError, match="champs"):
+        pont.carriere_des_donnees({**_comme_node(ecrite), "nouveau": 1})
+    premiere, *suivantes = _comme_node(ecrite)["lignes"]
+    with pytest.raises(ValueError, match="AnneeCarriere"):
+        pont.carriere_des_donnees({**_comme_node(ecrite),
+                                   "lignes": [{**premiere, "nouveau": 1}, *suivantes]})
+    with pytest.raises(TypeError, match="entier"):
+        pont.carriere_des_donnees({**_comme_node(ecrite), "annee_naissance": 1970.5})
+    parametres = pont.parametres_des_donnees(_comme_node(pont.parametres_en_donnees(Parametres())))
+    assert (json.dumps(pont.parametres_en_donnees(parametres))
+            == json.dumps(pont.parametres_en_donnees(Parametres())))
+    chronologie = pont.carriere_des_donnees({**_comme_node(ecrite), "chronologie": {
+        "schema_version": 1, "liens": [], "faits": [
+            {"attributs": {"age": 64, "trimestres": 4, "taux": 50}, "montant": {"mensuel": 100}},
+            {"attributs": {"trimestres": 2.5, "revenu": 1500}}]}}).chronologie
+    assert [json.dumps(fait) for fait in chronologie["faits"]] == [
+        '{"attributs": {"age": 64.0, "trimestres": 4, "taux": 50}, "montant": {"mensuel": 100.0}}',
+        '{"attributs": {"trimestres": 2.5, "revenu": 1500.0}}']
+
+
 def test_les_parametres_passent_en_donnees_sous_les_noms_du_portage():
     """Tous les paramètres du Python, sauf la racine des données, dont le
     paquet tient lieu ; ceux de référence sont, valeur pour valeur, ceux du

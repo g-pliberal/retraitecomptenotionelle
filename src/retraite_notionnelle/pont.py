@@ -26,18 +26,27 @@ traitement porte (``castypes.primes_projetees``) —, et le portage, qui n'en
 garde pas de copie, la reçoit en données (:func:`carriere_en_donnees`), sous
 les paramètres du simulateur (:func:`parametres_en_donnees`), sur le paquet
 des données du jour (:func:`paquet_des_donnees`).
+
+Dans l'autre sens, la saisie, dont le portage gardera le seul exemplaire
+(étape 6, la paire du contexte) : il bâtit la carrière d'une requête du
+simulateur et ses paramètres, et le Python les relit sous ses propres types
+(:func:`carrieres_des_saisies`) pour les simuler de son moteur, qui garde son
+jumeau.
 """
 
 from __future__ import annotations
 
 import dataclasses
 import enum
+import functools
 import json
 import math
 import os
 import shutil
 import subprocess
 import sys
+import types
+import typing
 from pathlib import Path
 
 from .config import RACINE_PROJET
@@ -166,6 +175,135 @@ def carriere_en_donnees(carriere) -> dict:
             valeur = {statut: [date.annee, date.mois] for statut, date in valeur.items()}
         donnees[champ.name] = _en_donnees(valeur)
     return donnees
+
+
+@functools.cache
+def _indices(type_) -> dict:
+    """Les types des champs d'un dataclass, lus une fois :
+    ``typing.get_type_hints`` évalue les annotations à chaque appel."""
+    return typing.get_type_hints(type_)
+
+
+def _depuis_donnees(type_, valeur):
+    """Une valeur que le portage a écrite, rendue sous le type que le Python
+    lui donne : JSON n'écrit pas « 2.0 », et un flottant entier reviendrait
+    entier ; un membre d'énumération revient de sa valeur, un dataclass de ses
+    champs, tous et rien d'autre, une suite en tuple ou en liste."""
+    if typing.get_origin(type_) in (typing.Union, types.UnionType):
+        if valeur is None:
+            return None
+        (autre,) = (membre for membre in typing.get_args(type_) if membre is not type(None))
+        return _depuis_donnees(autre, valeur)
+    if type_ is float:
+        return _flottant(valeur)
+    if type_ is int:
+        if type(valeur) is not int:
+            raise TypeError(f"entier attendu, le portage a écrit {valeur!r}")
+        return valeur
+    if isinstance(type_, type) and issubclass(type_, enum.Enum):
+        return type_(valeur)
+    if dataclasses.is_dataclass(type_):
+        champs = dataclasses.fields(type_)
+        if set(valeur) != {champ.name for champ in champs}:
+            raise ValueError(f"{type_.__name__} : le portage écrit les champs {sorted(valeur)}")
+        indices = _indices(type_)
+        return type_(**{champ.name: _depuis_donnees(indices[champ.name], valeur[champ.name])
+                        for champ in champs})
+    if typing.get_origin(type_) in (tuple, list):
+        arguments = typing.get_args(type_)
+        if len(arguments) == 2 and arguments[1] is Ellipsis:
+            arguments = (arguments[0],) * len(valeur)
+        elif typing.get_origin(type_) is list:
+            arguments = arguments * len(valeur)
+        return typing.get_origin(type_)(_depuis_donnees(sous_type, element)
+                                        for sous_type, element in zip(arguments, valeur,
+                                                                      strict=True))
+    return valeur
+
+
+def parametres_des_donnees(donnees: dict):
+    """Les paramètres que le portage a écrits, sous les types du Python : le
+    chemin inverse de :func:`parametres_en_donnees`. La racine des données est
+    celle du Python, dont le paquet tenait lieu."""
+    from .config import Parametres
+
+    champs = {champ.name for champ in dataclasses.fields(Parametres)} - {"racine_donnees"}
+    if set(donnees) != champs:
+        raise ValueError(f"Parametres : le portage écrit les champs {sorted(donnees)}")
+    indices = _indices(Parametres)
+    return Parametres(**{nom: _depuis_donnees(indices[nom], valeur)
+                         for nom, valeur in donnees.items()})
+
+
+#: Les nombres libres de la chronologie — les attributs et le montant d'un
+#: fait, que le contrat C.1 ne type pas — que le Python écrit toujours en
+#: flottants : JSON n'écrit pas « 64.0 », et ils reviendraient entiers. Les
+#: autres gardent le type que JSON leur rend, qui est le leur : un entier, ou
+#: les trimestres d'un relevé, entiers quand ils le sont
+#: (``Saisie.releve_analyse``).
+FLOTTANTS_DE_LA_CHRONOLOGIE = frozenset({
+    "age", "annuel", "mensuel", "niveau_salaire", "part_primes", "quotite", "revenu"})
+
+
+def _chronologie_des_donnees(chronologie: dict | None) -> dict | None:
+    """La chronologie que le portage a écrite, ses nombres libres sous le type
+    que le Python leur donne (:data:`FLOTTANTS_DE_LA_CHRONOLOGIE`)."""
+    if chronologie is None:
+        return None
+
+    def flottants(libres):
+        if not isinstance(libres, dict):
+            return libres
+        return {nom: float(valeur) if nom in FLOTTANTS_DE_LA_CHRONOLOGIE
+                and type(valeur) is int else valeur
+                for nom, valeur in libres.items()}
+
+    faits = []
+    for fait in chronologie["faits"]:
+        fait = dict(fait)
+        for libre in ("attributs", "montant"):
+            if libre in fait:
+                fait[libre] = flottants(fait[libre])
+        faits.append(fait)
+    return {**chronologie, "faits": faits}
+
+
+def carriere_des_donnees(donnees: dict):
+    """La carrière que le portage a bâtie, sous les types du Python : le chemin
+    inverse de :func:`carriere_en_donnees`. Chacun de ses champs, chacune de
+    ses lignes, et la chronologie dont elle est la vue, telle quelle."""
+    from .calendrier import DateMois
+    from .carriere import AnneeCarriere, Carriere
+
+    champs = {champ.name for champ in dataclasses.fields(Carriere)}
+    if set(donnees) != champs:
+        raise ValueError(f"Carriere : le portage écrit les champs {sorted(donnees)}")
+    indices = _indices(Carriere)
+    speciaux = {
+        "dates_entree": {statut: DateMois(annee, mois)
+                         for statut, (annee, mois) in donnees["dates_entree"].items()},
+        "lignes_apres_depart": tuple(_depuis_donnees(AnneeCarriere, ligne)
+                                     for ligne in donnees["lignes_apres_depart"]),
+        "chronologie": _chronologie_des_donnees(donnees["chronologie"]),
+    }
+    return Carriere(**{nom: speciaux[nom] if nom in speciaux
+                       else _depuis_donnees(indices[nom], valeur)
+                       for nom, valeur in donnees.items()})
+
+
+def carrieres_des_saisies(cas: list[dict], paquet: bytes | None = None,
+                          ) -> tuple[dict[str, tuple], dict[str, str]]:
+    """Chaque requête du simulateur, ``{"cle", "requete"}``, lue par la saisie
+    du portage, qui restera la seule (action 161, étape 6) : sous sa clé, les
+    paramètres de la saisie et la carrière que le site simulerait, relus sous
+    les types du Python (:func:`parametres_des_donnees`,
+    :func:`carriere_des_donnees`), que son moteur simule à son tour. Puis,
+    sous leur clé, les motifs des requêtes que le portage refuse."""
+    reponse = _demander({"carrieres_des_saisies": {"cas": cas}}, paquet)
+    resultats = {cle: (parametres_des_donnees(lu["parametres"]),
+                       carriere_des_donnees(lu["carriere"]))
+                 for cle, lu in reponse["resultats"].items()}
+    return resultats, reponse["echecs"]
 
 
 #: Le programme qui bâtit le paquet des données du jour, dans un processus à lui.

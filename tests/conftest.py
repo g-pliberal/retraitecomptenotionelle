@@ -226,6 +226,11 @@ EXCEPTIONS = {
      "test_le_portage_javascript_concorde_sur_des_cumuls_tires_au_hasard"): "complet",
     # Les étapes de l'acquisition, sur une requête sur cinq des témoins.
     ("test_droit.py", "test_les_deux_moteurs_ecrivent_les_memes_etapes"): "complet",
+    # La carrière que la saisie du portage bâtit, sur toutes les requêtes des
+    # témoins, relue en Python : celle de la saisie Python (action 161).
+    ("test_pont.py",
+     "test_le_portage_batit_la_carriere_d_une_saisie_que_le_python_relit_a_l_identique"):
+        "complet",
     # Les étapes de la liquidation et le journal, sur la même requête sur cinq.
     ("test_liquidation.py",
      "test_les_deux_moteurs_liquident_et_journalisent_a_l_identique"): "complet",

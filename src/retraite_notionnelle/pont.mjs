@@ -26,6 +26,10 @@
  *   données (`carriere_en_donnees` de `pont.py`), simulée sous les paramètres
  *   de la projection : ce que le coût lit de la comparaison, et la proposition
  *   seule sur chacune des carrières nommées de `propositions`.
+ * - `carrieres_des_saisies` : `{cas: [{cle, requete}]}` — chaque requête du
+ *   simulateur, lue par la saisie du portage : ses paramètres, et la carrière
+ *   que le site simulerait, en données, pour que le Python la simule de son
+ *   moteur (`carriere_des_donnees` de `pont.py`).
  *
  * Il écrit `{resultats, echecs}` : une carrière que le portage refuse en est
  * absente, et son motif est dans `echecs`. Un nombre non fini s'écrit `null`,
@@ -97,6 +101,40 @@ function carrieres({ cas, scenarios }) {
         pensions_totales: parScenario(scenarios, (scenario) => aujourdHui.pensionTotale(scenario)),
         rente_capitalisee_volontaire: aujourdHui.rente_capitalisee_volontaire,
       },
+    };
+  });
+}
+
+/**
+ * La carrière telle que `pont.py` la relit (`carriere_des_donnees`), le chemin
+ * inverse de `carriereDesDonnees` : chacun de ses champs, chacune de ses
+ * lignes entière, et la chronologie dont elle est la vue. Les mémoires du
+ * portage, ses champs privés, ne passent pas.
+ */
+function carriereEnDonnees(carriere) {
+  const publics = (objet) => Object.fromEntries(Object.entries(objet)
+    .filter(([nom]) => !nom.startsWith("_")));
+  return {
+    ...publics(carriere),
+    lignes: carriere.lignes.map(publics),
+    lignes_apres_depart: carriere.lignes_apres_depart.map(publics),
+    dates_entree: Object.fromEntries(Object.entries(carriere.dates_entree)
+      .map(([statut, date]) => [statut, [date.annee, date.mois]])),
+  };
+}
+
+/**
+ * Chaque requête du simulateur, lue par la saisie du portage, qui restera la
+ * seule, comme `tests/js/moteur.test.js` lit celle d'un témoin : les paramètres de la
+ * saisie, et la carrière que le site simulerait (`Contexte.carriere`), que
+ * `pont.py` relit sous les types du Python pour les simuler de son moteur.
+ */
+function carrieresDesSaisies({ cas }) {
+  return parCas(cas, ({ requete }) => {
+    const saisie = Saisie.depuisRequete(requete, false, contexte.paquet.presomptions);
+    return {
+      parametres: saisie.parametres(contexte.base),
+      carriere: carriereEnDonnees(contexte.carriere(saisie)),
     };
   });
 }
@@ -225,7 +263,9 @@ function grilleDuCout({ cas, scenarios, parametres }) {
   return { resultats, echecs };
 }
 
-const LECTURES = { carrieres, saisies, grille_du_cout: grilleDuCout };
+const LECTURES = {
+  carrieres, saisies, grille_du_cout: grilleDuCout, carrieres_des_saisies: carrieresDesSaisies,
+};
 const [lecture] = Object.keys(demande);
 if (Object.keys(demande).length !== 1 || !(lecture in LECTURES)) {
   throw new Error(`demande attendue : une seule de ${Object.keys(LECTURES).join(", ")}`);
