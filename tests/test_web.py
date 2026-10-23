@@ -111,7 +111,7 @@ def test_simulation_affiche_les_quatre_systemes(page):
 
 
 def test_le_depliant_de_chaque_systeme_dit_de_quel_systeme_il_parle():
-    """Ce que mesure chaque système se déplie sous sa carte (action 165) :
+    """Ce que mesure chaque système se déplie sous sa carte (action 173) :
     quatre dépliants « Ce qu'il mesure » à la suite, qu'une synthèse vocale
     parcourt sans voir les cartes. Chacun lui dit de quel système il parle,
     dans un texte caché à l'œil, qui a déjà la carte sous les yeux."""

@@ -7035,7 +7035,7 @@ lance les deux premières : « vas-y ».
 une à une, les étapes 3 et 5. Les quatre gardes de l'étape 2 sont faites le
 17 octobre 2026.
 
-### 165. Le site sur tous les écrans : rien ne déborde, ce qui va ensemble se voit ensemble, moins de vide, moins de mots — `en cours`
+### 173. Le site sur tous les écrans : rien ne déborde, ce qui va ensemble se voit ensemble, moins de vide, moins de mots — `en cours`
 
 **Reprise, au 23 octobre 2026.** Faites, les étapes 1 et 2 : de 320 à 1 440
 points, rien ne déborde ni ne défile en largeur ; les graphiques se dessinent à
@@ -7045,7 +7045,7 @@ navigateur le joue, `tests/test_ecrans.py`. Restent les étapes 3 à 10, une
 page par session : moins de mots, sans perdre une idée. Par quoi commencer :
 l'étape 3, l'accueil — serrer son budget de lecture (`BUDGETS_DE_LECTURE`,
 `tests/test_web.py`), le voir rouge, puis récrire. Détail :
-`165/2026-10-23-etapes-1-et-2-ecrans-et-vides.md`.
+`173/2026-10-23-etapes-1-et-2-ecrans-et-vides.md`.
 
 **D'où elle vient.** Le 23 octobre 2026, le propriétaire : « Le site web de
 notre projet est plutôt adapté aux écrans d'ordinateurs (et encore...) mais
