@@ -110,17 +110,24 @@ def _sonder() -> dict[str, list[str]]:
         return _ChampsNotes(contenu, champs[relatif])
 
     chargement.SUIVI = suivre
+    from retraite_notionnelle import pont
     from retraite_notionnelle.config import Parametres
-    from retraite_notionnelle.contexte import Contexte
-    from retraite_notionnelle.saisie import Saisie
+    from retraite_notionnelle.simulateur import Simulateur
 
-    contexte = Contexte()
-    for statut in contexte.simulateur().affiliations.codes:
-        for naissance in ("1950", "1975"):
-            try:
-                contexte.simuler(Saisie.depuis_requete({"statut": statut, "naissance": naissance}))
-            except Exception:  # noqa: BLE001 — un refus ne lit pas moins
-                pass
+    # Les carrières, le portage les bâtit de leurs requêtes (action 161,
+    # étape 6) ; le moteur Python les simule, et c'est ce qu'il lit qui compte.
+    simulateurs: dict = {}
+    requetes = [{"cle": f"{statut}_{naissance}",
+                 "requete": {"statut": statut, "naissance": naissance}}
+                for statut in Simulateur(Parametres()).affiliations.codes
+                for naissance in ("1950", "1975")]
+    for parametres, carriere in pont.carrieres_des_saisies(requetes)[0].values():
+        if parametres not in simulateurs:
+            simulateurs[parametres] = Simulateur(parametres)
+        try:
+            simulateurs[parametres].simuler(carriere)
+        except Exception:  # noqa: BLE001 — un refus ne lit pas moins
+            pass
     memoire.cout(Parametres())
     memoire.avantages(Parametres())
     src = (racine / "src").resolve()

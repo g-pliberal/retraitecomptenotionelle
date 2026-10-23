@@ -26,29 +26,22 @@ sys.path.insert(0, str(RACINE / "scripts"))
 
 
 def carrieres() -> list:
-    """Les (simulateur, carrière) que les témoins simulent."""
-    from construire_temoins import _cas
+    """Les (simulateur, carrière) que les témoins simulent : la carrière de
+    chaque requête, que le portage bâtit (``pont.carrieres_des_saisies``),
+    sous un simulateur par jeu de paramètres. Une requête que le portage
+    refuse ne se mesure pas."""
+    import construire_temoins
+    from retraite_notionnelle import pont
     from retraite_notionnelle.simulateur import Simulateur
-    from retraite_notionnelle.saisie import Saisie
-    from retraite_notionnelle.contexte import Contexte
 
+    lues, _ = pont.carrieres_des_saisies([{"cle": cas["nom"], "requete": cas["requete"]}
+                                          for cas in construire_temoins._cas()])
+    simulateurs: dict = {}
     saisies: list = []
-    original = Simulateur.simuler
-
-    def capter(self, carriere, *args, **kwargs):
-        saisies.append((self, carriere))
-        return original(self, carriere, *args, **kwargs)
-
-    Simulateur.simuler = capter
-    try:
-        contexte = Contexte()
-        for cas in _cas():
-            try:
-                contexte.simuler(Saisie.depuis_requete(cas["requete"]))
-            except Exception:  # noqa: BLE001 — une saisie refusée ne simule rien
-                pass
-    finally:
-        Simulateur.simuler = original
+    for parametres, carriere in lues.values():
+        if parametres not in simulateurs:
+            simulateurs[parametres] = Simulateur(parametres)
+        saisies.append((simulateurs[parametres], carriere))
     return saisies
 
 

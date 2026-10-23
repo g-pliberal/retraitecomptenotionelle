@@ -700,6 +700,40 @@ def test_aucun_calcul_garde_ne_lit_ce_que_l_empreinte_ignore():
         f"champs documentaires lus par un calcul gardé, que l'empreinte ignore : {documentaires}")
 
 
+def test_le_releve_des_lectures_se_passe_de_la_saisie_python():
+    """La saisie n'aura qu'un exemplaire, celui du portage (action 161,
+    étape 6) : le relevé simule au moteur Python les carrières que le portage
+    bâtit, et ne charge ni le contexte ni la saisie Python."""
+    import lectures_du_modele
+
+    releve = memoire.memoriser(("lectures_du_modele",), lectures_du_modele.relever)
+    assert not {"src/retraite_notionnelle/contexte.py",
+                "src/retraite_notionnelle/saisie.py"} & set(releve["modules"])
+
+
+def test_le_budget_de_calcul_mesure_les_carrieres_que_le_portage_batit(monkeypatch):
+    """Le budget de calcul (``docs/architecture.md``, § 7.8) se mesure sur les
+    carrières des témoins : le portage les bâtit de leurs requêtes (action 161,
+    étape 6), sans le contexte Python, une par requête, sous un simulateur par
+    jeu de paramètres."""
+    import budget_calcul
+    import construire_temoins
+    from retraite_notionnelle.carriere import Carriere
+    from retraite_notionnelle.contexte import Contexte
+
+    def interdit(*_args, **_kwargs):
+        raise AssertionError("la saisie Python ne bâtit plus les carrières du budget")
+
+    monkeypatch.setattr(Contexte, "simuler", interdit)
+    monkeypatch.setattr(construire_temoins, "_cas", lambda: [
+        {"nom": nom, "requete": {"statut": statut, "naissance": "1970"}}
+        for nom, statut in (("a", "salarie_prive_non_cadre"), ("b", "artisan"))])
+    saisies = budget_calcul.carrieres()
+    assert len(saisies) == 2
+    assert saisies[0][0] is saisies[1][0]
+    assert [type(carriere) for _, carriere in saisies] == [Carriere, Carriere]
+
+
 def test_le_portage_que_le_pont_fait_tourner_est_dans_l_empreinte():
     """La grille du coût se simule par le portage (action 161, étape 5) :
     l'empreinte lit chaque module que le pont importe — le moteur du portage,
