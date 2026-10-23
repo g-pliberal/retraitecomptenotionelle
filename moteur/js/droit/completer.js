@@ -1298,7 +1298,8 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
   const eligiblesMinimum = liquidees.minimum;
   const eligiblesGaranti = liquidees.garanti;
   // Ce que la surcote ajoute à chaque pension que le plafond de L. 18 borne : le
-  // minimum garanti l'efface, la surcote parentale s'y ajoute.
+  // minimum garanti l'efface, la surcote parentale s'y ajoute, quand il ne
+  // l'efface pas aussi.
   const surcotesL18 = new Map(
     (liquidees.plafonds ?? []).map((eligible) => [eligible.indice, eligible.surcote]));
   let total = pensions.reduce((somme, p) => somme + p.montant, 0.0);
@@ -1541,6 +1542,31 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
     }));
   }
 
+  // LES TRIMESTRES DE SURCOTE PARENTALE de chaque pension, qui ne dépendent que
+  // de la carrière : le minimum garanti se compare à la pension qui les porte,
+  // et le bloc de la surcote parentale, plus bas, les sert.
+  const parametresParentale = (avantagesNonContributifs
+    && majorationEnfants !== null && !ignorerPenaliteAge)
+    ? moteur.surcoteParentale.parametres(anneeLiquidation)
+    : null;
+  // Les trimestres de surcote parentale, par indice de la pension.
+  const parentaux = new Map();
+  let tauxParental = 0.0;
+  let fiabiliteParentale = Fiabilite.CERTIFIEE;
+  if (parametresParentale !== null) {
+    let ageLegalMinimal;
+    let maximum;
+    [ageLegalMinimal, tauxParental, maximum, fiabiliteParentale] = parametresParentale;
+    for (let indice = 0; indice < pensions.length; indice += 1) {
+      const acquis = trimestresDeSurcoteParentale(
+        moteur, carriere, pensions[indice].regime, majorationEnfants.trimestres,
+        ageLegalMinimal, maximum);
+      if (acquis > 0) {
+        parentaux.set(indice, acquis);
+      }
+    }
+  }
+
   if (avantagesNonContributifs && eligiblesGaranti.length > 0) {
     // Le minimum garanti n'est pas un minimum proratisé mais un BARÈME sur la
     // durée de services : quinze ans en ouvrent 57,5 % de la référence,
@@ -1559,7 +1585,16 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
         continue;
       }
       const pension = pensions[eligible.indice];
-      if (pension.montant > 0 && pension.montant < plancher[0]) {
+      // LE MONTANT NORMAL, que le minimum relève, porte les deux surcotes :
+      // voir le Python, qui cite le service des retraites de l'État et L. 14,
+      // IV. Le module servait la surcote parentale en sus du minimum.
+      let parentale = 0.0;
+      if (surcotesL18.has(eligible.indice) && parentaux.has(eligible.indice)) {
+        parentale = (pension.montant - surcotesL18.get(eligible.indice))
+          * tauxParental * parentaux.get(eligible.indice);
+      }
+      const normale = pension.montant + parentale;
+      if (normale > 0 && normale < plancher[0]) {
         // Le complément était calculé en ligne et jamais nommé, alors que la
         // phrase juste dessous le cite : `complement` n'existait pas dans
         // cette portée — seulement dans la boucle du minimum contributif, au
@@ -1577,12 +1612,17 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
           // sans lui, refaire la formule donnait la pension d'avant le
           // plancher, et l'écart restait sans explication.
           detail: `${pension.detail} = `
-            + `${formatFixe(pension.montant, 2, true)} €, porté au minimum `
-            + `garanti par + ${formatFixe(complement, 2, true)} €`,
+            + `${formatFixe(pension.montant, 2, true)} €, `
+            + (parentale
+              ? `${formatFixe(normale, 2, true)} € avec la surcote parentale, `
+              : "")
+            + `porté au minimum garanti par + ${formatFixe(complement, 2, true)} €`,
         };
         if (surcotesL18.has(eligible.indice)) {
           surcotesL18.set(eligible.indice, 0.0);
         }
+        // Il efface la surcote parentale comme celle de L. 14, III.
+        parentaux.delete(eligible.indice);
       }
     }
     if (releveGaranti > 0) {
@@ -1661,7 +1701,9 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
   }
 
   // Surcote parentale (L. 351-1-2-1, L. 14, IV) : après les minima, avant la
-  // majoration pour enfants qui se calcule sur la pension surcotée. Elle ne
+  // majoration pour enfants qui se calcule sur la pension surcotée ; au code
+  // des pensions, le minimum garanti se compare à la pension qui la porte, et
+  // l'efface quand il l'emporte (voir plus haut). Elle ne
   // compte pas les mêmes trimestres que la surcote ordinaire — celle-ci
   // au-delà de l'âge légal, celle-là dans l'année qui le précède — et les deux
   // se cumulent, en UN coefficient sur la pension d'avant la surcote : voir le
@@ -1669,51 +1711,11 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
   // Les pensions que le minimum contributif regarde, par leur indice.
   const regardeesDuMinimum = new Map(
     eligiblesMinimum.map((eligible) => [eligible.indice, eligible]));
-  const parametresParentale = (avantagesNonContributifs
-    && majorationEnfants !== null && !ignorerPenaliteAge)
-    ? moteur.surcoteParentale.parametres(anneeLiquidation)
-    : null;
-  if (parametresParentale !== null) {
-    const [ageLegalMinimal, tauxParental, maximum, fiabiliteParentale] = parametresParentale;
+  if (parentaux.size > 0) {
     let gainParental = 0.0;
     let trimestresParentaux = 0;
-    for (let indice = 0; indice < pensions.length; indice += 1) {
+    for (const [indice, trimestres] of parentaux) {
       const pension = pensions[indice];
-      const regime = moteur.catalogue.obtenir(pension.regime);
-      const periode = periodeDeLiquidation(regime, carriere.dateLiquidation);
-      if (periode === null
-          || !periode.avantages_non_contributifs.includes("surcote_parentale")) {
-        continue;
-      }
-      const ageLegal = ouvrir.ageOuverture(moteur, periode, carriere);
-      const requis = ouvrir.dureeRequise(moteur, periode, carriere)[0];
-      // LA FENÊTRE EST L'ANNÉE QUI PRÉCÈDE L'ÂGE LÉGAL, dès que cet âge
-      // atteint 63 ans (L. 351-1-2-1) : voir le Python, qui cite le texte.
-      if (ageLegal < ageLegalMinimal) {
-        continue;
-      }
-      // Au MOIS près : l'âge légal tombe en cours d'année depuis 2026.
-      const dateLegale = carriere.dateDeLAge(ageLegal);
-      const debutFenetre = dateLegale.plusMois(-12);
-      // Seuls comptent les trimestres cotisés de la fenêtre accomplis « au
-      // delà de la limite » de durée, trimestres pour enfants compris.
-      if (requis <= 0) {
-        continue;
-      }
-      const avant = majorationEnfants.trimestres + trimestresEntreDates(
-        carriere, new DateMois(carriere.annee_naissance, 1), debutFenetre, false,
-      );
-      const validesFenetre = trimestresEntreDates(
-        carriere, debutFenetre, dateLegale, false,
-      );
-      const trimestres = Math.min(
-        maximum,
-        trimestresEntreDates(carriere, debutFenetre, dateLegale, true),
-        Math.max(0, avant + validesFenetre - requis),
-      );
-      if (trimestres <= 0) {
-        continue;
-      }
       // La pension que le coefficient majore, celle d'avant la surcote
       // ordinaire : la pension civile moins ce que la surcote de L. 14, III, y
       // ajoute ; celle d'un régime que le minimum contributif regarde, d'avant
@@ -2329,6 +2331,43 @@ export function surcoteHorsMinimum(montant, eligible, ajout, dateEffet) {
   }
   const nue = (montant - ajout - (eligible.horsMinimum ?? 0.0)) / eligible.surcote;
   return Math.max(0.0, nue * (eligible.surcote - 1.0));
+}
+
+/**
+ * Les trimestres de surcote parentale (L. 351-1-2-1, L. 14, IV) que la pension
+ * de `regime` porte : zéro quand sa période ne la sert pas, quand l'âge légal
+ * reste sous `ageLegalMinimal` ou quand la durée requise n'est pas dépassée
+ * dans la fenêtre. Voir `trimestres_de_surcote_parentale` du Python, qui cite
+ * les textes.
+ */
+export function trimestresDeSurcoteParentale(moteur, carriere, regime, trimestresDEnfants,
+  ageLegalMinimal, maximum) {
+  const periode = periodeDeLiquidation(moteur.catalogue.obtenir(regime),
+    carriere.dateLiquidation);
+  if (periode === null
+      || !periode.avantages_non_contributifs.includes("surcote_parentale")) {
+    return 0;
+  }
+  const ageLegal = ouvrir.ageOuverture(moteur, periode, carriere);
+  const requis = ouvrir.dureeRequise(moteur, periode, carriere)[0];
+  // LA FENÊTRE EST L'ANNÉE QUI PRÉCÈDE L'ÂGE LÉGAL, dès que cet âge atteint
+  // 63 ans, au MOIS près : l'âge légal tombe en cours d'année depuis 2026.
+  if (ageLegal < ageLegalMinimal || requis <= 0) {
+    return 0;
+  }
+  const dateLegale = carriere.dateDeLAge(ageLegal);
+  const debutFenetre = dateLegale.plusMois(-12);
+  // Seuls comptent les trimestres cotisés de la fenêtre accomplis « au delà
+  // de la limite » de durée, trimestres pour enfants compris.
+  const avant = trimestresDEnfants + trimestresEntreDates(
+    carriere, new DateMois(carriere.annee_naissance, 1), debutFenetre, false,
+  );
+  const validesFenetre = trimestresEntreDates(carriere, debutFenetre, dateLegale, false);
+  return Math.min(
+    maximum,
+    trimestresEntreDates(carriere, debutFenetre, dateLegale, true),
+    Math.max(0, avant + validesFenetre - requis),
+  );
 }
 
 /**

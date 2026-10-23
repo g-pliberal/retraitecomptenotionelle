@@ -1354,6 +1354,54 @@ def surcote_hors_minimum(montant: float, eligible, ajout: float,
     return max(0.0, nue * (eligible.surcote - 1.0))
 
 
+def trimestres_de_surcote_parentale(moteur: ScenarioActuel, carriere: Carriere,
+                                    regime: str, trimestres_d_enfants: int,
+                                    age_legal_minimal: float, maximum: int) -> int:
+    """Les trimestres de surcote parentale (L. 351-1-2-1, L. 14, IV) que la
+    pension de ``regime`` porte : zéro quand sa période ne la sert pas, quand
+    l'âge légal reste sous ``age_legal_minimal`` ou quand la durée requise
+    n'est pas dépassée dans la fenêtre. Ils ne dépendent que de la carrière :
+    l'étape qui complète les compte avant les minima, le minimum garanti se
+    comparant à la pension qui les porte."""
+    periode = periode_de_liquidation(moteur.catalogue[regime], carriere.date_liquidation)
+    if periode is None or "surcote_parentale" not in periode.avantages_non_contributifs:
+        return 0
+    age_legal = ouvrir.age_ouverture(moteur, periode, carriere)
+    requis = ouvrir.duree_requise(moteur, periode, carriere)[0]
+    # LA FENÊTRE EST L'ANNÉE QUI PRÉCÈDE L'ÂGE LÉGAL, dès que cet âge atteint
+    # 63 ans : « accomplie l'année précédant l'âge mentionné à l'article
+    # L. 161-17-2, lorsque celui-ci est égal ou supérieur à soixante-trois
+    # ans » (L. 351-1-2-1, 2023) ; l'âge de la surcote « est abaissé d'un an »
+    # (version de 2025). Le module la faisait courir de 63 ans à l'âge légal :
+    # la génération 1966, âge légal 63 ans et trois mois, n'y trouvait qu'un
+    # trimestre là où le texte en ouvre quatre, et la génération 1965 d'avril,
+    # âge légal 63 ans, aucun.
+    if age_legal < age_legal_minimal or requis <= 0:
+        return 0
+    # Au MOIS près : l'âge légal tombe en cours d'année depuis la suspension de
+    # 2026, et une fenêtre lue à l'année entière n'y trouvait qu'un trimestre
+    # pour la génération 1966.
+    date_legale = carriere.date_de_l_age(age_legal)
+    debut_fenetre = date_legale.plus_mois(-12)
+    # Ne comptent que les trimestres cotisés de la fenêtre accomplis « au delà
+    # de la limite » de durée (L. 351-1-2-1) : tous, si la durée requise est
+    # atteinte à l'ouverture de la fenêtre, trimestres pour enfants compris ;
+    # ceux d'après la limite, si elle l'est en cours de fenêtre ; aucun sinon.
+    avant = trimestres_d_enfants + _trimestres_entre_dates(
+        carriere, DateMois(carriere.annee_naissance, 1), debut_fenetre,
+        cotises_seulement=False,
+    )
+    valides_fenetre = _trimestres_entre_dates(
+        carriere, debut_fenetre, date_legale, cotises_seulement=False,
+    )
+    return min(
+        maximum,
+        _trimestres_entre_dates(carriere, debut_fenetre, date_legale,
+                                cotises_seulement=True),
+        max(0, avant + valides_fenetre - requis),
+    )
+
+
 @dataclass(frozen=True)
 class ChefDExploitation:
     """Ce que le relèvement de septembre 2023 relit d'un chef d'exploitation
@@ -1500,7 +1548,7 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
     eligibles_garanti = liquidees.garanti
     #: Ce que la surcote ajoute à chaque pension que le plafond de L. 18 borne :
     #: le minimum garanti, qui se substitue à la pension, l'efface ; la surcote
-    #: parentale s'y ajoute.
+    #: parentale s'y ajoute, quand il ne l'efface pas aussi.
     surcotes_l18 = {eligible.indice: eligible.surcote for eligible in liquidees.plafonds}
     total = somme_ordonnee(p.montant for p in pensions)
     avantages: list[AvantageApplique] = []
@@ -1750,6 +1798,29 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                     ajouts_du_minimum.get(eligible.indice, 0.0), mois_d_effet))
             for eligible in eligibles_minimum)
 
+    # LES TRIMESTRES DE SURCOTE PARENTALE de chaque pension, qui ne dépendent
+    # que de la carrière : le minimum garanti se compare à la pension qui les
+    # porte, et le bloc de la surcote parentale, plus bas, les sert.
+    parametres_parentale = (
+        moteur.surcote_parentale.parametres(annee_liquidation)
+        if (avantages_non_contributifs and majoration_enfants is not None
+            and not ignorer_penalite_age)
+        else None
+    )
+    #: Les trimestres de surcote parentale, par indice de la pension.
+    parentaux: dict[int, int] = {}
+    taux_parental = 0.0
+    if parametres_parentale is not None:
+        age_legal_minimal, taux_parental, maximum, fiabilite_parentale = (
+            parametres_parentale
+        )
+        for indice, pension in enumerate(pensions):
+            acquis = trimestres_de_surcote_parentale(
+                moteur, carriere, pension.regime, majoration_enfants.trimestres,
+                age_legal_minimal, maximum)
+            if acquis > 0:
+                parentaux[indice] = acquis
+
     if avantages_non_contributifs and eligibles_garanti:
         # Le minimum garanti n'est pas un minimum proratisé mais un BARÈME
         # sur la durée de services : quinze ans en ouvrent 57,5 % de la
@@ -1767,7 +1838,20 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
             if plancher is None:
                 continue
             pension = pensions[eligible.indice]
-            if 0 < pension.montant < plancher[0]:
+            # LE MONTANT NORMAL, que le minimum relève, porte les deux
+            # surcotes : « Le montant normal de votre pension est donc comparé
+            # à celui du minimum garanti. Dans tous les cas, c'est le montant
+            # le plus favorable qui vous est payé » (service des retraites de
+            # l'État, « Le minimum garanti »), et la surcote parentale majore
+            # la pension « dans les mêmes conditions que celles prévues au
+            # III » (L. 14, IV). Le module servait la surcote parentale en sus
+            # du minimum, et calculée sur lui.
+            parentale = 0.0
+            if eligible.indice in surcotes_l18 and eligible.indice in parentaux:
+                parentale = ((pension.montant - surcotes_l18[eligible.indice])
+                             * taux_parental * parentaux[eligible.indice])
+            normale = pension.montant + parentale
+            if 0 < normale < plancher[0]:
                 complement = plancher[0] - pension.montant
                 releve_garanti += complement
                 fiabilite_globale = min(fiabilite_globale, plancher[1])
@@ -1778,10 +1862,14 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                     pension,
                     montant=plancher[0],
                     detail=(f"{pension.detail} = {pension.montant:,.2f} €, "
-                            f"porté au minimum garanti par + {complement:,.2f} €"),
+                            + (f"{normale:,.2f} € avec la surcote parentale, "
+                               if parentale else "")
+                            + f"porté au minimum garanti par + {complement:,.2f} €"),
                 )
                 if eligible.indice in surcotes_l18:
                     surcotes_l18[eligible.indice] = 0.0
+                # Il efface la surcote parentale comme celle de L. 14, III.
+                parentaux.pop(eligible.indice, None)
         if releve_garanti > 0:
             total += releve_garanti
             avantages.append(AvantageApplique(
@@ -1852,7 +1940,9 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
 
     # Surcote parentale (L. 351-1-2-1, L. 14, IV) : elle vient APRÈS les
     # minima, comme la surcote ordinaire, et AVANT la majoration pour
-    # enfants, qui se calcule sur la pension surcotée. Elle ne récompense pas
+    # enfants, qui se calcule sur la pension surcotée ; au code des pensions,
+    # le minimum garanti se compare à la pension qui la porte, et l'efface
+    # quand il l'emporte (voir plus haut). Elle ne récompense pas
     # les mêmes trimestres que la surcote ordinaire — celle-ci ne compte
     # qu'au-delà de l'âge légal, celle-là dans l'année qui le précède — et
     # les deux se cumulent donc sans se recouvrir : le V de L. 14, qui défend
@@ -1865,71 +1955,17 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
     #: Les pensions que le minimum contributif regarde, par leur indice : le
     #: coefficient de leur surcote, et ce que le minimum n'en relève pas.
     regardees_du_minimum = {eligible.indice: eligible for eligible in eligibles_minimum}
-    parametres_parentale = (
-        moteur.surcote_parentale.parametres(annee_liquidation)
-        if (avantages_non_contributifs and majoration_enfants is not None
-            and not ignorer_penalite_age)
-        else None
-    )
-    if parametres_parentale is not None:
-        age_legal_minimal, taux_parental, maximum, fiabilite_parentale = (
-            parametres_parentale
-        )
+    if parentaux:
         gain_parental = 0.0
         trimestres_parentaux = 0
-        for indice, pension in enumerate(pensions):
-            regime = moteur.catalogue[pension.regime]
-            periode = periode_de_liquidation(regime, carriere.date_liquidation)
-            if (periode is None or "surcote_parentale"
-                    not in periode.avantages_non_contributifs):
-                continue
-            age_legal = ouvrir.age_ouverture(moteur, periode, carriere)
-            requis = ouvrir.duree_requise(moteur, periode, carriere)[0]
-            # LA FENÊTRE EST L'ANNÉE QUI PRÉCÈDE L'ÂGE LÉGAL, dès que cet
-            # âge atteint 63 ans : « accomplie l'année précédant l'âge
-            # mentionné à l'article L. 161-17-2, lorsque celui-ci est égal
-            # ou supérieur à soixante-trois ans » (L. 351-1-2-1, 2023) ;
-            # l'âge de la surcote « est abaissé d'un an » (version de 2025).
-            # Le module la faisait courir de 63 ans à l'âge légal : la
-            # génération 1966, âge légal 63 ans et trois mois, n'y trouvait
-            # qu'un trimestre là où le texte en ouvre quatre, et la
-            # génération 1965 d'avril, âge légal 63 ans, aucun.
-            if age_legal < age_legal_minimal:
-                continue
-            # Au MOIS près : l'âge légal tombe en cours d'année depuis la
-            # suspension de 2026, et une fenêtre lue à l'année entière n'y
-            # trouvait qu'un trimestre pour la génération 1966.
-            date_legale = carriere.date_de_l_age(age_legal)
-            debut_fenetre = date_legale.plus_mois(-12)
-            # Ne comptent que les trimestres cotisés de la fenêtre
-            # accomplis « au delà de la limite » de durée (L. 351-1-2-1) :
-            # tous, si la durée requise est atteinte à l'ouverture de la
-            # fenêtre, trimestres pour enfants compris ; ceux d'après la
-            # limite, si elle l'est en cours de fenêtre ; aucun sinon.
-            if requis <= 0:
-                continue
-            avant = majoration_enfants.trimestres + _trimestres_entre_dates(
-                carriere, DateMois(carriere.annee_naissance, 1), debut_fenetre,
-                cotises_seulement=False,
-            )
-            valides_fenetre = _trimestres_entre_dates(
-                carriere, debut_fenetre, date_legale, cotises_seulement=False,
-            )
-            # Surtout pas `trimestres` : c'est la durée d'assurance tous
-            # régimes, et l'écraser ici la faisait tomber à quatre.
-            acquis_parentaux = min(
-                maximum,
-                _trimestres_entre_dates(carriere, debut_fenetre, date_legale,
-                                        cotises_seulement=True),
-                max(0, avant + valides_fenetre - requis),
-            )
-            if acquis_parentaux <= 0:
-                continue
+        for indice, acquis_parentaux in parentaux.items():
+            pension = pensions[indice]
             # LA PENSION QUE LE COEFFICIENT MAJORE, celle d'avant la surcote
-            # ordinaire : la pension civile moins ce que la surcote de L. 14,
-            # III, y ajoute, que le minimum garanti efface ; celle d'un régime
-            # que le minimum contributif regarde, d'avant sa surcote et d'avant
-            # le minimum. Le module majorait la pension surcotée : 1,025 × 1,05
+            # ordinaire : la pension civile, que le minimum garanti n'a pas
+            # relevée, moins ce que la surcote de L. 14, III, y ajoute ; celle
+            # d'un régime que le minimum contributif regarde, d'avant sa
+            # surcote et d'avant le minimum. Le module majorait la pension
+            # surcotée : 1,025 × 1,05
             # pour deux trimestres de droit commun et quatre d'enfants, là où
             # la caisse sert 1,075.
             if indice in surcotes_l18:

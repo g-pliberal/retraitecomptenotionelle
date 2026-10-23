@@ -3546,11 +3546,67 @@ def test_la_surcote_parentale_du_regime_general_est_la_surcote_ouverte_un_an_plu
         0.05 * (pension.montant - parentale.montant - minimum.montant))
 
 
+def test_le_minimum_garanti_se_compare_a_la_pension_qui_porte_les_deux_surcotes(
+        simulateur):
+    """« Le montant normal de votre pension est donc comparé à celui du minimum
+    garanti. Dans tous les cas, c'est le montant le plus favorable qui vous est
+    payé » (service des retraites de l'État, « Le minimum garanti ») : L. 17 ne
+    dit que « le montant de la pension ne peut être inférieur », et la surcote
+    parentale majore la pension « dans les mêmes conditions que celles prévues
+    au III » (L. 14, IV). La pension normale porte les deux surcotes ; le
+    minimum, quand il l'emporte, les efface l'une et l'autre. Le moteur servait
+    la surcote parentale en sus du minimum garanti, et calculée sur lui.
+
+    La fonctionnaire de la CNRACL née le 1er janvier 1969, quatre trimestres
+    d'enfants et deux de droit commun, quarante-trois ans de services : le
+    minimum entier.
+    """
+    from retraite_notionnelle.droit import liquidation
+
+    garanti = simulateur.scenario_actuel.minimum_garanti
+
+    def liquider_la_mere(niveau_salaire):
+        carriere = simulateur.carriere_simple(
+            annee_naissance=1969, mois_naissance=1, jour_naissance=1, sexe="F",
+            affiliation="fonctionnaire_territorial_hospitalier", age_debut=21,
+            age_liquidation=64.5, nombre_enfants=2, niveau_salaire=niveau_salaire)
+        liquidee = liquidation.liquider(
+            liquidation.demande_de_depart(carriere), liquidation.Etat(carriere),
+            liquidation.Contexte(simulateur.scenario_actuel, frozenset()))
+        indice, avant = next((i, p) for i, p in enumerate(liquidee.pensions.regimes)
+                             if p.regime == "cnracl")
+        surcote = next(e.surcote for e in liquidee.pensions.plafonds if e.indice == indice)
+        # La pension de L. 13, et la même au coefficient des deux surcotes.
+        normale = (avant.montant - surcote) * (1 + 6 * 0.0125)
+        assert avant.montant == pytest.approx((avant.montant - surcote) * (1 + 2 * 0.0125))
+        minimum = garanti.montant(carriere.annee_liquidation, 40 * 4, None,
+                                  carriere.mois_liquidation)[0]
+        servis = {a.code: a.montant for a in liquidee.complements.avantages}
+        return (liquidee.complements.regimes[indice].montant, avant.montant, normale,
+                minimum, servis)
+
+    # Trop petite, même avec ses deux surcotes : le minimum, et lui seul.
+    servie, liquidee, normale, minimum, servis = liquider_la_mere(0.3)
+    assert normale < minimum
+    assert servie == pytest.approx(minimum)
+    assert servis["minimum_garanti"] == pytest.approx(minimum - liquidee)
+    assert "surcote_parentale" not in servis
+
+    # Sous le minimum avec la seule surcote de L. 14, III, au-dessus avec les
+    # deux : la pension normale, que le minimum ne relève pas.
+    servie, liquidee, normale, minimum, servis = liquider_la_mere(0.4)
+    assert liquidee < minimum < normale
+    assert servie == pytest.approx(normale)
+    assert "minimum_garanti" not in servis
+    assert servis["surcote_parentale"] == pytest.approx(normale - liquidee)
+
+
 def test_les_deux_moteurs_servent_la_meme_surcote_parentale():
     """Le jumeau JavaScript de l'étape qui complète calcule la surcote
     parentale sur la même pension que le Python, celle d'avant la surcote :
     à la fonctionnaire de l'État et de la CNRACL, à la salariée, portée ou non
-    au minimum contributif."""
+    au minimum contributif ; et il compare comme lui au minimum garanti la
+    pension qui porte les deux surcotes."""
     import json
     import shutil
     import subprocess
@@ -3569,6 +3625,10 @@ def test_les_deux_moteurs_servent_la_meme_surcote_parentale():
         {**mere, "statut": "salarie_prive_non_cadre", "debut": "18", "liquidation": "67"},
         {**mere, "statut": "salarie_prive_non_cadre", "debut": "21", "liquidation": "64",
          "salaire": "0.3"},
+        {**mere, "statut": "fonctionnaire_territorial_hospitalier", "debut": "21",
+         "liquidation": "64.5", "salaire": "0.3"},
+        {**mere, "statut": "fonctionnaire_territorial_hospitalier", "debut": "21",
+         "liquidation": "64.5", "salaire": "0.41"},
     ]
     with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
                                      delete=False) as fichier:
@@ -3584,7 +3644,10 @@ def test_les_deux_moteurs_servent_la_meme_surcote_parentale():
         Path(chemin).unlink()
     assert execution.returncode == 0, execution.stderr[-2000:]
     obtenus, attendus = json.loads(execution.stdout), _python(requetes)
-    assert all("surcote_parentale" in json.dumps(attendu) for attendu in attendus), attendus
+    # Le minimum garanti efface la surcote parentale de la plus petite pension.
+    assert all("surcote_parentale" in json.dumps(attendu)
+               for rang, attendu in enumerate(attendus) if rang != 4), attendus
+    assert "avec la surcote parentale" in json.dumps(attendus[4]), attendus[4]
     ecarts: list[str] = []
     for rang, (obtenu, attendu) in enumerate(zip(obtenus, attendus)):
         _ecarts(obtenu, attendu, f"requête {rang}", ecarts)

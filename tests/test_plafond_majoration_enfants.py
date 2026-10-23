@@ -161,10 +161,10 @@ def test_avant_2021_le_modele_rejoue_destinie_2(simulateur, naissance, depart, e
     assert majoration == pytest.approx(taux * pension)
 
 
-def test_le_minimum_garanti_efface_la_surcote_et_la_surcote_parentale_s_y_ajoute():
-    """La pension que le minimum garanti remplace n'a plus de surcote ; la
-    fonction se lit sur la part de la surcote que l'étape lui passe : nulle, la
-    pension entière se compare au traitement."""
+def test_le_minimum_garanti_efface_la_surcote():
+    """La pension que le minimum garanti remplace n'a plus de surcote, ni
+    ordinaire ni parentale ; la fonction se lit sur la part de la surcote que
+    l'étape lui passe : nulle, la pension entière se compare au traitement."""
     assert completer.majoration_sous_le_traitement(
         95.0, 9.5, 100.0, 0.0, hors_du_plafond=True) == pytest.approx(5.0)
     assert completer.majoration_sous_le_traitement(
