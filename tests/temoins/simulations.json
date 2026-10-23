@@ -22405,6 +22405,7 @@
       "pensions": [
        {
         "brute": 1139.3631294295976,
+        "capital": null,
         "date_effet": "2025-02-01",
         "montant": 1139.3631294295976,
         "plafond": 2355.0,
@@ -22416,6 +22417,7 @@
        },
        {
         "brute": 374.7206780657438,
+        "capital": null,
         "date_effet": "2025-02-01",
         "montant": 374.7206780657438,
         "plafond": null,
@@ -150024,6 +150026,7 @@
       "pensions": [
        {
         "brute": 506.7283955802977,
+        "capital": null,
         "date_effet": "2025-02-01",
         "montant": 506.7283955802977,
         "plafond": 2355.0,
@@ -150035,6 +150038,7 @@
        },
        {
         "brute": 187.3603390328719,
+        "capital": null,
         "date_effet": "2025-02-01",
         "montant": 187.3603390328719,
         "plafond": null,
@@ -150594,6 +150598,7 @@
       "pensions": [
        {
         "brute": 96.9981871257485,
+        "capital": null,
         "date_effet": "2026-01-01",
         "montant": 96.9981871257485,
         "plafond": 2403.0,
@@ -150605,6 +150610,7 @@
        },
        {
         "brute": 21.090140330337636,
+        "capital": 340.16658412540124,
         "date_effet": "2026-01-01",
         "montant": 21.090140330337636,
         "plafond": null,
@@ -151416,6 +151422,7 @@
       "pensions": [
        {
         "brute": 784.5592425091825,
+        "capital": null,
         "date_effet": "2036-02-01",
         "montant": 784.5592425091825,
         "plafond": null,
@@ -151427,6 +151434,7 @@
        },
        {
         "brute": 223.30774192373238,
+        "capital": null,
         "date_effet": "2036-02-01",
         "montant": 223.30774192373238,
         "plafond": null,
@@ -152048,6 +152056,7 @@
       "pensions": [
        {
         "brute": 630.9970169720367,
+        "capital": null,
         "date_effet": "2025-08-01",
         "montant": 630.9970169720367,
         "plafond": 2355.0,
@@ -152059,6 +152068,7 @@
        },
        {
         "brute": 60.96491010486428,
+        "capital": null,
         "date_effet": "2025-08-01",
         "montant": 60.96491010486428,
         "plafond": null,
@@ -152740,6 +152750,7 @@
       "pensions": [
        {
         "brute": 2911.9931633982037,
+        "capital": null,
         "date_effet": "2027-02-01",
         "montant": 2461.8735,
         "plafond": 2461.8735,
@@ -152751,6 +152762,7 @@
        },
        {
         "brute": 852.1904670931777,
+        "capital": null,
         "date_effet": "2027-02-01",
         "montant": 852.1904670931777,
         "plafond": null,

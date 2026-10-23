@@ -28,8 +28,8 @@ from retraite_notionnelle.droit.commun import PensionRegime
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.droit.completer import (
     FICHE_DU_VERSEMENT_AGIRC_ARRCO, FICHE_DU_VERSEMENT_FORFAITAIRE,
-    FICHE_DU_VERSEMENT_IRCANTEC, _seuil_a_la_date, coefficient_du_versement,
-    verser_en_capital)
+    FICHE_DU_VERSEMENT_IRCANTEC, FICHE_DU_VERSEMENT_RCI, _seuil_a_la_date,
+    coefficient_du_versement, verser_en_capital)
 from retraite_notionnelle.saisie import Saisie
 from retraite_notionnelle.simulateur import Simulateur
 
@@ -107,6 +107,20 @@ def test_le_seuil_de_l_ircantec_a_change_deux_fois(simulateur):
             for date in ("1975-06-01", "1990-06-01", "2008-10-01")] == [500, 100, 300]
 
 
+def test_le_rci_verse_en_une_fois_la_pension_de_moins_de_quarante_points(simulateur):
+    """Règlement du RCI, article 39, depuis 2013 : la pension « composé[e], au
+    total, de moins de 40 points de retraite » — ceux du RCI et des régimes
+    qu'il a repris — n'est pas servie ; article 40 : la pension versée en une
+    fois quand la base l'a été. Les règles du RCO et du NRCO d'avant 2013 ne
+    sont pas lues."""
+    for date in ("2013-01-01", "2024-06-25", "2024-06-26", "2027-01-01"):
+        regle = _regle(simulateur, FICHE_DU_VERSEMENT_RCI, date)
+        assert regle["existe"] and regle["seuil_points"] == 40
+        assert sorted(regle["regimes"]) == ["nric", "rci", "rco_artisans"]
+        assert sorted(regle["bases"]) == ["cancava", "organic", "rsi"]
+    assert not _regle(simulateur, FICHE_DU_VERSEMENT_RCI, "2012-12-01")["existe"]
+
+
 # -- les carrières --------------------------------------------------------------
 
 def test_la_petite_pension_du_regime_general_est_versee_en_une_fois(simulateur):
@@ -166,6 +180,57 @@ def test_l_ircantec_verse_les_points_au_salaire_de_reference_d_avant(simulateur)
     assert "salaire de référence de 2021" in ircantec.detail
 
 
+def test_le_rci_de_moins_de_quarante_points_est_verse_en_une_fois(simulateur):
+    """L'artisane de 2020 qui a déclaré 4 000 € : 7 % de son revenu au revenu de
+    référence de 2020, 17,691 €, 15,83 points (D. 635-7) ; partie à 67 ans en
+    février 2022, au taux plein, sans abattement : moins de quarante points, sa
+    pension « est remplacée par un versement forfaitaire unique », ses points
+    par le revenu de référence de la date d'effet, 17,956 € (article 39)."""
+    points = 4000 * 0.07 / 17.691
+    rci = _pensions(simulateur, 1955, 67, [(2020, "artisan", 4000.0)])["rci"]
+    assert rci.montant == pytest.approx(points * 1.221, rel=1e-12)
+    assert rci.capital == pytest.approx(points * 17.956, rel=1e-12)
+    assert "revenu de référence de 2022" in rci.detail
+
+
+def test_le_rci_de_quarante_points_et_plus_est_servi(simulateur):
+    """La même, à 12 000 € : 47,48 points ; sa pension est servie."""
+    rci = _pensions(simulateur, 1955, 67, [(2020, "artisan", 12000.0)])["rci"]
+    assert rci.montant == pytest.approx(12000 * 0.07 / 17.691 * 1.221, rel=1e-12)
+    assert rci.capital is None
+
+
+def test_quand_la_base_est_versee_en_une_fois_le_rci_l_est_aussi(simulateur):
+    """Article 40 : « lorsque les droits acquis par l'assuré dans le régime
+    d'assurance vieillesse de base ont fait l'objet d'un versement forfaitaire
+    unique, le paiement de la pension complémentaire [...] est automatiquement
+    effectué sous forme de versement forfaitaire unique [...], quel que soit le
+    montant des points acquis ». Mille points de RCI en 2022, et la pension des
+    régimes alignés que le régime général liquide, depuis 2017, versée en une
+    fois : le RCI aussi, mille points par 17,956 € ; sans elle, il est servi."""
+    carriere = simulateur.carriere_releve(
+        annee_naissance=1958, sexe="F", age_liquidation=64, jour_naissance=15,
+        releve=[LigneRelevee(annee=2020, affiliation="artisan", revenu=4000.0)])
+    moteur = simulateur.scenario_actuel
+    for capital_de_la_base, attendu in ((None, None), (1500.0, 1000 * 17.956)):
+        pensions = [PensionRegime("regime_general", 100.0, "annuites", "", Fiabilite.HAUTE,
+                                  capital=capital_de_la_base),
+                    PensionRegime("rci", 1000 * 1.221, "points", "", Fiabilite.HAUTE)]
+        verser_en_capital(moteur, carriere, pensions, [], {"rci": 1000.0})
+        assert pensions[1].capital == (None if attendu is None else pytest.approx(attendu))
+    # Avant la liquidation unique, la pension du régime général n'est pas celle
+    # de l'artisan : son versement ne fait pas celui du RCI.
+    ancienne = simulateur.carriere_releve(
+        annee_naissance=1952, sexe="F", age_liquidation=64, jour_naissance=15,
+        releve=[LigneRelevee(annee=2010, affiliation="artisan", revenu=4000.0)])
+    pensions = [PensionRegime("regime_general", 100.0, "annuites", "", Fiabilite.HAUTE,
+                              capital=1500.0),
+                PensionRegime("rsi", 100.0, "annuites", "", Fiabilite.HAUTE),
+                PensionRegime("rci", 1000 * 1.178, "points", "", Fiabilite.HAUTE)]
+    verser_en_capital(moteur, ancienne, pensions, [], {"rci": 1000.0})
+    assert pensions[2].capital is None
+
+
 def test_la_retraite_progressive_n_est_jamais_versee_en_capital(simulateur):
     """L'allocation de l'Agirc-Arrco est servie « dans tous les cas » à la
     retraite progressive (circulaire n° 2020-02-DRJ) ; le modèle ne remplace
@@ -184,11 +249,14 @@ def test_la_retraite_progressive_n_est_jamais_versee_en_capital(simulateur):
 
 @pytest.mark.parametrize("ligne, regime", [
     ("1978:salarie_prive_non_cadre:2000", "arrco"),
-    ("1978:contractuel_public:3000", "ircantec")])
+    ("1978:contractuel_public:3000", "ircantec"),
+    ("2020:artisan:4000", "rci")])
 def test_le_capital_verse_a_l_assure_ne_laisse_pas_de_reversion(ligne, regime):
     """« Le versement unique au profit des bénéficiaires de droits directs supprime
     tous droits à réversion » (accord du 17 novembre 2017, article 107) ; à
-    l'Ircantec, il « supprime tout droit pour le conjoint » (article 25)."""
+    l'Ircantec, il « supprime tout droit pour le conjoint » (article 25) ; au RCI,
+    il « fait obstacle à l'attribution d'une pension de réversion » (règlement,
+    article 41, II)."""
     sortie = Contexte().simuler(Saisie.depuis_requete({
         **REQUETE, "naissance": "1958", "liquidation": "64", "releve": ligne,
         "conjoint": "1960", "deces": "2023-05"})).dictionnaire()
@@ -211,7 +279,7 @@ REQUETE = {
 }
 #: Le versement forfaitaire de 2015, avec ou sans enfants ; la pension de 2018,
 #: servie ; celle de 2017 d'une fonctionnaire partie en 2012 ; l'Agirc-Arrco et
-#: l'Ircantec de 2022.
+#: l'Ircantec de 2022 ; le RCI de moins de quarante points, et sa réversion.
 CAS = [
     {"naissance": "1950", "liquidation": "65", "releve": "1970:salarie_prive_non_cadre:150"},
     {"naissance": "1950", "liquidation": "65", "enfants": "3",
@@ -222,6 +290,9 @@ CAS = [
         + [f"{1976 + i}:fonctionnaire_etat_actif:20000" for i in range(36)])},
     {"naissance": "1958", "liquidation": "64", "releve": "1978:salarie_prive_non_cadre:2000"},
     {"naissance": "1958", "liquidation": "64", "releve": "1978:contractuel_public:3000",
+     "conjoint": "1960", "deces": "2023-05"},
+    {"naissance": "1955", "liquidation": "67", "releve": "2020:artisan:4000"},
+    {"naissance": "1958", "liquidation": "64", "releve": "2020:artisan:4000",
      "conjoint": "1960", "deces": "2023-05"},
 ]
 
@@ -247,7 +318,8 @@ def test_les_deux_moteurs_versent_les_memes_capitaux():
     assert execution.returncode == 0, execution.stderr[-2000:]
     obtenus, attendus = json.loads(execution.stdout), _python(requetes)
     formules = json.dumps(attendus, ensure_ascii=False)
-    for marque in ("versement forfaitaire unique", "versée en capital", "salaire de référence"):
+    for marque in ("versement forfaitaire unique", "versée en capital", "salaire de référence",
+                   "revenu de référence"):
         assert marque in formules, marque
     ecarts: list[str] = []
     for rang, (obtenu, attendu) in enumerate(zip(obtenus, attendus)):

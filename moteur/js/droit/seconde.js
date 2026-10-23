@@ -20,6 +20,7 @@ import * as lesDeparts from "./departs.js";
 import * as liquidation from "./liquidation.js";
 import { valeurDuPoint } from "./liquider.js";
 import { dateDEffet } from "./commun.js";
+import { FICHE_DU_VERSEMENT_RCI, salaireDeReferencePoints } from "./completer.js";
 import { FONCTION_PUBLIQUE, fonctionPubliqueQuittee, jour } from "./cumul.js";
 
 /** Ce que le droit fait d'un mois d'activité après le départ. */
@@ -76,7 +77,7 @@ export class PeriodeDeDroits {
 /** La nouvelle pension d'un régime, ou la seconde retraite complémentaire. */
 export class NouvellePension {
   constructor({ regime, dateEffet, trimestres, salaireMensuel, points, brute, plafond,
-    montant, revenuAnnuelMoyen = 0.0 }) {
+    montant, revenuAnnuelMoyen = 0.0, capital = null }) {
     this.regime = regime;
     this.date_effet = dateEffet;
     this.trimestres = trimestres;
@@ -86,6 +87,8 @@ export class NouvellePension {
     this.plafond = plafond;
     this.montant = montant;
     this.revenu_annuel_moyen = revenuAnnuelMoyen;
+    /** Le versement forfaitaire unique qui la remplace, ou `null` (fiche `versement_unique_rci`). */
+    this.capital = capital;
   }
 
   donnees() {
@@ -93,7 +96,7 @@ export class NouvellePension {
       trimestres: this.trimestres, salaire_mensuel: this.salaire_mensuel,
       revenu_annuel_moyen: this.revenu_annuel_moyen,
       points: this.points, brute: this.brute, plafond: this.plafond,
-      montant: this.montant };
+      montant: this.montant, capital: this.capital };
   }
 }
 
@@ -346,7 +349,8 @@ function secondeRetraiteComplementaire(moteur, salaires, periode, dateEffet) {
  * cumul intégral achètent depuis le 1er janvier 2025, servis sans coefficient,
  * à la date de la nouvelle pension de base (règlement du RCI, article 27) ;
  * ceux de la première pension, sur le revenu déclaré, ou la part
- * complémentaire du forfait du micro-entrepreneur. Voir seconde.py.
+ * complémentaire du forfait du micro-entrepreneur ; sous quarante points, un
+ * versement forfaitaire unique la remplace (article 39). Voir seconde.py.
  */
 function secondeRetraiteRci(moteur, lignes, activite, periode, dateEffet) {
   const macro = moteur.macro;
@@ -381,8 +385,14 @@ function secondeRetraiteRci(moteur, lignes, activite, periode, dateEffet) {
   const valeur = valeurDuPoint(moteur, RCI, dateEffet);
   if (points <= 0 || valeur === null) return null;
   const montant = points * valeur[0];
+  let capital = null;
+  const regle = moteur.fichesDatees.regle(FICHE_DU_VERSEMENT_RCI, jour(dateEffet));
+  if (regle !== null && regle.existe && points < Number(regle.seuil_points)) {
+    const reference = salaireDeReferencePoints(moteur, regle.point, dateEffet.annee);
+    if (reference !== null) capital = points * reference[0];
+  }
   return new NouvellePension({ regime: RCI, dateEffet, trimestres: 0,
-    salaireMensuel: 0.0, points, brute: montant, plafond: null, montant });
+    salaireMensuel: 0.0, points, brute: montant, plafond: null, montant, capital });
 }
 
 /** Ce qui ouvre des droits dans les régimes qui ne servent pas de pension. */

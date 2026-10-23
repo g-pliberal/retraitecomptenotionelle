@@ -1431,6 +1431,11 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
         if fiche is None or fiche["id"] != "reversion_rci":
             continue
         version = table.version(fiche, lendemain, deces)
+        if version["parametres"].get("rien_apres_un_capital") and regime in en_capital:
+            # Le versement forfaitaire unique de l'assuré « fait obstacle à
+            # l'attribution d'une pension de réversion » (règlement, article
+            # 41, II) : la ligne ne s'écrit pas.
+            continue
         if not version["parametres"].get("portee", True):
             lignes[regime] = ReversionRegime(regime, base, 0.0, "non_portee")
             continue

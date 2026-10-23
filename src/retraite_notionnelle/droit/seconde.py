@@ -60,6 +60,7 @@ from . import acquerir as _acquerir
 from . import departs as _departs
 from . import liquider as _liquider
 from .commun import date_d_effet
+from .completer import FICHE_DU_VERSEMENT_RCI, salaire_de_reference_points
 from .cumul import FONCTION_PUBLIQUE, Cumul, fonction_publique_quittee, jour
 from ..somme import somme_ordonnee
 
@@ -153,13 +154,18 @@ class NouvellePension:
     plafond: float | None
     montant: float
     revenu_annuel_moyen: float = 0.0
+    #: Le versement forfaitaire unique qui la remplace, en euros de sa date
+    #: d'effet, ou ``None`` : la seconde pension du RCI de moins de quarante
+    #: points (fiche ``versement_unique_rci``) ; ``montant`` reste la pension
+    #: qu'il remplace.
+    capital: float | None = None
 
     def donnees(self) -> dict:
         return {"regime": self.regime, "date_effet": jour(self.date_effet),
                 "trimestres": self.trimestres, "salaire_mensuel": self.salaire_mensuel,
                 "revenu_annuel_moyen": self.revenu_annuel_moyen,
                 "points": self.points, "brute": self.brute, "plafond": self.plafond,
-                "montant": self.montant}
+                "montant": self.montant, "capital": self.capital}
 
 
 @dataclass(frozen=True)
@@ -445,7 +451,9 @@ def _seconde_retraite_rci(moteur: ScenarioActuel, lignes, activite: dict[int, in
     revenu déclaré, sans l'assiette minimale, que le RCI n'a pas, au taux de
     chaque tranche sur ses bornes réduites aux mois de la période (D. 635-7) ;
     pour le micro-entrepreneur, la part complémentaire de son forfait
-    (D. 613-6) ; au prix d'achat de l'année."""
+    (D. 613-6) ; au prix d'achat de l'année. Sous quarante points, un versement
+    forfaitaire unique la remplace, ses points par le revenu de référence de sa
+    date d'effet (article 39 ; fiche ``versement_unique_rci``)."""
     macro = moteur.macro
     table = charger_cotisation_micro(macro.racine)
     points = 0.0
@@ -479,9 +487,15 @@ def _seconde_retraite_rci(moteur: ScenarioActuel, lignes, activite: dict[int, in
     if points <= 0 or valeur is None:
         return None
     montant = points * valeur[0]
+    capital = None
+    regle = moteur.fiches_datees.regle(FICHE_DU_VERSEMENT_RCI, jour(date_effet))
+    if regle and regle["existe"] and points < float(regle["seuil_points"]):
+        reference = salaire_de_reference_points(moteur, regle["point"], date_effet.annee)
+        if reference is not None:
+            capital = points * reference[0]
     return NouvellePension(regime=RCI, date_effet=date_effet, trimestres=0,
                            salaire_mensuel=0.0, points=points, brute=montant,
-                           plafond=None, montant=montant)
+                           plafond=None, montant=montant, capital=capital)
 
 
 #: Ce qui ouvre des droits dans les régimes qui ne servent pas de pension.

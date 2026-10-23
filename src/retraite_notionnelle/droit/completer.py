@@ -115,10 +115,11 @@ SURCOTES_DE_L18 = ("dans_le_plafond", "hors_du_plafond")
 #: Les fiches des versements uniques, que :class:`FichesDatees
 #: <retraite_notionnelle.scenarios.actuel.FichesDatees>` lit à la date d'effet
 #: (:func:`verser_en_capital`) : le régime général, l'Agirc-Arrco et ses deux
-#: devancières, l'Ircantec.
+#: devancières, l'Ircantec, le RCI.
 FICHE_DU_VERSEMENT_FORFAITAIRE = "versement_forfaitaire_unique"
 FICHE_DU_VERSEMENT_AGIRC_ARRCO = "versement_unique_agirc_arrco"
 FICHE_DU_VERSEMENT_IRCANTEC = "versement_unique_ircantec"
+FICHE_DU_VERSEMENT_RCI = "versement_unique_rci"
 
 #: La majoration de l'Agirc-Arrco pour enfants à charge, que :class:`FichesDatees
 #: <retraite_notionnelle.scenarios.actuel.FichesDatees>` lit à la date d'effet
@@ -2410,7 +2411,12 @@ def verser_en_capital(moteur, carriere: Carriere, pensions: list[PensionRegime],
       sous cinq cents, chacune sur ses propres régimes ;
     * CELUI DE L'IRCANTEC, sous 300 points : les points par le salaire de
       référence de l'année qui précède la liquidation (arrêté du 30 décembre
-      1970, article 25).
+      1970, article 25) ;
+    * CELUI DU RCI, sous quarante points — les siens, et ceux du RCO et du
+      NRCO qu'il sert —, ou quand la base de l'artisan et du commerçant l'a
+      été : les points, la pension divisée par leur valeur de service, par le
+      revenu de référence de la date d'effet (règlement du RCI, articles 39
+      et 40).
 
     La retraite progressive, provisoire, n'est jamais remplacée : l'allocation
     de l'Agirc-Arrco y est servie « dans tous les cas », et le versement du
@@ -2455,6 +2461,44 @@ def verser_en_capital(moteur, carriere: Carriere, pensions: list[PensionRegime],
                 f"forfaitaire unique de {multiple * montant:,.2f} €, {multiple} fois "
                 "la pension annuelle"))
             fiabilites.append(Fiabilite.depuis_texte(regle["fiabilite"]))
+
+    # LE RCI : une seule pension de ses points et de ceux du RCO et du NRCO,
+    # versée en une fois sous quarante points, ou quand la base l'a été.
+    regle = moteur.fiches_datees.regle(FICHE_DU_VERSEMENT_RCI, date_effet)
+    if regle and regle["existe"]:
+        points: dict[int, float] = {}
+        for indice, pension in enumerate(pensions):
+            if (pension.regime not in regle["regimes"] or pension.montant <= 0.0
+                    or pension.capital is not None):
+                continue
+            periode = periode_de_liquidation(moteur.catalogue[pension.regime],
+                                             carriere.date_liquidation)
+            valeur = liquider.valeur_du_point(
+                moteur, (periode.points_de if periode is not None else None) or pension.regime,
+                carriere.date_liquidation)
+            if valeur is not None and valeur[0] > 0:
+                points[indice] = pension.montant / valeur[0]
+        # La base de l'artisan et du commerçant, ou le régime général qui la
+        # liquide quand elle ne sert rien.
+        bases = [pension for pension in pensions
+                 if pension.regime in regle["bases"] and pension.montant > 0.0]
+        if not bases:
+            bases = [pension for pension in pensions if pension.regime == regle["base_alignee"]]
+        base_versee = any(pension.capital is not None for pension in bases)
+        total = somme_ordonnee(points.values())
+        seuil_points = float(regle["seuil_points"])
+        annee = carriere.annee_liquidation
+        reference = (salaire_de_reference_points(moteur, regle["point"], annee)
+                     if points else None)
+        if reference is not None and (base_versee or total < seuil_points):
+            raison = ("sa pension de base versée en une fois" if base_versee
+                      else f"{total:,.2f} points en tout, moins de {seuil_points:,.0f}")
+            for indice, nombre in points.items():
+                remplacer(indice, nombre * reference[0], (
+                    f" ; {raison} : versée en capital, un versement forfaitaire unique de "
+                    f"{nombre * reference[0]:,.2f} € ({nombre:,.2f} points × revenu de "
+                    f"référence de {annee}, {reference[0]:.3f} €)"))
+            fiabilites.extend((reference[1], Fiabilite.depuis_texte(regle["fiabilite"])))
 
     # L'AGIRC-ARRCO, ou l'Arrco et l'Agirc : chaque allocation, un groupe de
     # régimes, sa valeur viagère au coefficient de l'âge révolu.

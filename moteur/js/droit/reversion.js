@@ -1368,6 +1368,11 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
       continue;
     }
     const version = table.version(fiche, lendemain, deces);
+    // Le versement forfaitaire unique de l'assuré « fait obstacle à
+    // l'attribution d'une pension de réversion » (article 41, II).
+    if (version.parametres.rien_apres_un_capital && enCapital.has(regime)) {
+      continue;
+    }
     if ((version.parametres.portee ?? true) === false) {
       lignes.set(regime, new ReversionRegime({
         regime, base, montant: 0.0, motif: "non_portee",

@@ -61,6 +61,7 @@ versions:
   - {id: LEGIARTI000025397326, article: "arrêté du 9 février 2012, règlement, articles 16 à 35", en_vigueur: 2013-01-01}
   - {id: LEGIARTI000054891949, article: "arrêté du 9 février 2012, règlement, article 17", en_vigueur: 2013-01-01}
   - {id: LEGIARTI000054892008, article: "arrêté du 9 février 2012, règlement, article 22", en_vigueur: 2013-01-01}
+  - {id: LEGIARTI000054892280, article: "arrêté du 9 février 2012, règlement, article 41, II : rien après un versement unique", en_vigueur: 2013-01-01}
   nee_de: LEGIARTI000025397326
   bornes:
     conjoint.deces: [2013-01-01, 2021-01-01]
@@ -70,7 +71,9 @@ versions:
       points qu'il avait acquis au dernier jour du trimestre qui précède son décès ;
       réduite à due concurrence quand, avec les ressources du survivant, elle dépasse le
       plafond, une réversion d'artisan et une de commerçant d'avant 2013 au prorata de
-      leurs montants
+      leurs montants ; rien quand la pension de l'assuré a été versée en une fois : « Le
+      versement forfaitaire unique visé aux articles 39 et 40 [...] fait obstacle à
+      l'attribution d'une pension de réversion » (article 41, II)
     beneficiaire: le conjoint marié ou divorcé ; entre plusieurs, un partage au prorata
     conditions: >-
       l'âge de L. 353-1, cinquante-cinq ans ; des ressources, personnelles ou du ménage,
@@ -87,6 +90,7 @@ versions:
       facteur_menage: 1
       abattement_activite: 0.30
       abattement_activite_age: 55
+      rien_apres_un_capital: true
       fiabilite: moyenne
   exemples: aucun trouvé
 - id: plafond_2021
@@ -97,6 +101,7 @@ versions:
   - {reference: "circulaire Cnav n° 2026-01 du 5 janvier 2026, § 9", en_vigueur: 2026-01-01}
   - {id: LEGIARTI000049779679, article: "arrêté du 9 février 2012, règlement, articles 16 à 35", en_vigueur: 2024-06-26}
   - {id: LEGIARTI000054896509, article: "arrêté du 9 février 2012, règlement, article 17", en_vigueur: 2024-06-26}
+  - {id: LEGIARTI000054907403, article: "arrêté du 9 février 2012, règlement, article 41", en_vigueur: 2024-06-26}
   - {id: LEGIARTI000054892008, article: "arrêté du 9 février 2012, règlement, article 22", en_vigueur: 2013-01-01}
   - {id: LEGIARTI000049782878, article: "arrêté du 9 février 2012, règlement, articles 16 à 35", en_vigueur: 2025-01-01}
   - {id: LEGIARTI000052379026, article: "arrêté du 9 février 2012, règlement, articles 16 à 35", en_vigueur: 2027-01-01}
@@ -118,6 +123,7 @@ versions:
       facteur_menage: 1
       abattement_activite: 0.30
       abattement_activite_age: 55
+      rien_apres_un_capital: true
       fiabilite: haute
   exemples: [ur_reversion_independant_rci]
 approximations:
@@ -225,8 +231,8 @@ code:
   parametres: >-
     contenu.parametres de chaque version : portee, fiabilite, taux, ex_conjoints,
     age_minimum, ressources, plafond_pass, facteur_menage, abattement_activite,
-    abattement_activite_age
-  tests: tests/test_reversion.py
+    abattement_activite_age, rien_apres_un_capital
+  tests: tests/test_reversion.py, tests/test_versements_uniques.py
 historique:
 - >-
   2026-10-04 — née et lue par le moteur à l'étape de l'action 142 qui sert la

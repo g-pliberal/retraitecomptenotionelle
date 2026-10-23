@@ -76,11 +76,12 @@ export const SURCOTES_DE_L18 = ["dans_le_plafond", "hors_du_plafond"];
 /**
  * Les fiches des versements uniques, que `FichesDatees` lit à la date d'effet
  * (`verserEnCapital`) : le régime général, l'Agirc-Arrco et ses deux
- * devancières, l'Ircantec.
+ * devancières, l'Ircantec, le RCI.
  */
 export const FICHE_DU_VERSEMENT_FORFAITAIRE = "versement_forfaitaire_unique";
 export const FICHE_DU_VERSEMENT_AGIRC_ARRCO = "versement_unique_agirc_arrco";
 export const FICHE_DU_VERSEMENT_IRCANTEC = "versement_unique_ircantec";
+export const FICHE_DU_VERSEMENT_RCI = "versement_unique_rci";
 
 /**
  * La majoration pour conjoint à charge, que `FichesDatees` lit à la date d'effet
@@ -2227,6 +2228,51 @@ export function verserEnCapital(moteur, carriere, pensions, avantages, pointsAcq
         + "la pension annuelle");
       fiabilites.push(fiabiliteDepuisTexte(regle.fiabilite));
     });
+  }
+
+  // LE RCI : une seule pension de ses points et de ceux du RCO et du NRCO,
+  // versée en une fois sous quarante points, ou quand la base l'a été.
+  regle = moteur.fichesDatees.regle(FICHE_DU_VERSEMENT_RCI, dateEffet);
+  if (regle !== null && regle.existe) {
+    const points = new Map();
+    pensions.forEach((pension, indice) => {
+      if (!regle.regimes.includes(pension.regime) || pension.montant <= 0.0
+          || !sansCapital(pension)) {
+        return;
+      }
+      const periode = periodeDeLiquidation(moteur.catalogue.obtenir(pension.regime),
+        carriere.dateLiquidation);
+      const valeur = liquider.valeurDuPoint(moteur, periode?.points_de ?? pension.regime,
+        carriere.dateLiquidation);
+      if (valeur !== null && valeur[0] > 0) {
+        points.set(indice, pension.montant / valeur[0]);
+      }
+    });
+    // La base de l'artisan et du commerçant, ou le régime général qui la
+    // liquide quand elle ne sert rien.
+    let bases = pensions.filter((pension) => regle.bases.includes(pension.regime)
+      && pension.montant > 0.0);
+    if (bases.length === 0) {
+      bases = pensions.filter((pension) => pension.regime === regle.base_alignee);
+    }
+    const baseVersee = bases.some((pension) => !sansCapital(pension));
+    const total = [...points.values()].reduce((somme, nombre) => somme + nombre, 0);
+    const seuilPoints = Number(regle.seuil_points);
+    const annee = carriere.anneeLiquidation;
+    const reference = points.size > 0
+      ? salaireDeReferencePoints(moteur, regle.point, annee) : null;
+    if (reference !== null && (baseVersee || total < seuilPoints)) {
+      const raison = baseVersee ? "sa pension de base versée en une fois"
+        : `${formatFixe(total, 2, true)} points en tout, moins de `
+          + `${formatFixe(seuilPoints, 0, true)}`;
+      for (const [indice, nombre] of points) {
+        remplacer(indice, nombre * reference[0],
+          ` ; ${raison} : versée en capital, un versement forfaitaire unique de `
+          + `${formatFixe(nombre * reference[0], 2, true)} € (${formatFixe(nombre, 2, true)} `
+          + `points × revenu de référence de ${annee}, ${formatFixe(reference[0], 3)} €)`);
+      }
+      fiabilites.push(reference[1], fiabiliteDepuisTexte(regle.fiabilite));
+    }
   }
 
   // L'AGIRC-ARRCO, ou l'Arrco et l'Agirc : chaque allocation, un groupe de

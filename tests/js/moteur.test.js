@@ -904,6 +904,47 @@ test("l'indépendant en cumul : l'assiette minimale, et la seconde retraite du R
 });
 
 /**
+ * Le versement forfaitaire unique du RCI (règlement, articles 39 et 40) : la
+ * pension de moins de quarante points, ses points par le revenu de référence
+ * de la date d'effet ; la seconde pension du cumul intégral de même (article
+ * 27). Rejoue `test_le_rci_de_moins_de_quarante_points_est_verse_en_une_fois`,
+ * `test_le_rci_de_quarante_points_et_plus_est_servi` (test_versements_uniques.py)
+ * et `test_la_seconde_retraite_du_rci_de_moins_de_quarante_points_est_versee_en_une_fois`
+ * (test_emploi_retraite.py).
+ */
+test("le RCI de moins de quarante points est versé en une fois", () => {
+  const simulateur = new Contexte(paquet).simulateur();
+  const proche = (obtenu, attendu) => assert.ok(Math.abs(obtenu / attendu - 1) < 1e-12,
+    `${obtenu} contre ${attendu}`);
+  const rci = (revenu) => simulateur.scenarioActuel.calculer(simulateur.carriereReleve({
+    annee_naissance: 1955, sexe: "F", jour_naissance: 15, age_liquidation: 67,
+    releve: [{ annee: 2020, affiliation: "artisan", revenu }],
+  })).pensions_par_regime.find((p) => p.regime === "rci");
+  const petite = rci(4000);
+  const points = 4000 * 0.07 / 17.691;
+  proche(petite.montant, points * 1.221);
+  proche(petite.capital, points * 17.956);
+  assert.match(petite.detail, /revenu de référence de 2022/);
+  const grande = rci(12000);
+  proche(grande.montant, 12000 * 0.07 / 17.691 * 1.221);
+  assert.ok(grande.capital === null || grande.capital === undefined);
+  // La seconde pension de l'artisane qui déclare 5 % du salaire moyen.
+  const carriere = simulateur.carriereParcours({
+    annee_naissance: 1960, sexe: "F", jour_naissance: 15, age_liquidation: 62.25,
+    metiers: [{ affiliation: "salarie_prive_non_cadre", age_debut: 20, niveau_salaire: 1 }],
+    emploi_retraite: { employeur: "autre", age: 63 + 11 / 12, fin: 65 + 11 / 12,
+      affiliation: "artisan", niveau_salaire: 0.05 },
+  });
+  const seconde = simulateur.echeancier(carriere).auDepart.droits_apres_depart.pensions
+    .find((p) => p.regime === "rci");
+  const revenu = carriere.lignes_apres_depart.find((ligne) => ligne.annee === 2025).revenu;
+  proche(seconde.points, revenu * 0.081 / 21.532);
+  assert.ok(seconde.points < 40);
+  proche(seconde.capital, seconde.points * 21.726);
+  assert.equal(seconde.donnees().capital, seconde.capital);
+});
+
+/**
  * La complémentaire de l'artisan et du commerçant en cumul plafonné : le RCI,
  * et les points du RCO et du NRCO qu'il sert, suspendus avec la base depuis
  * 2009 (règlements de 2009 ; du RCI, article 27), réduits du dépassement entier

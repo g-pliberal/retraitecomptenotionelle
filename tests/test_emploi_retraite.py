@@ -674,6 +674,8 @@ def test_le_rci_ouvre_une_seconde_retraite_sur_les_periodes_de_2025(simulateur):
     assert rci.points == pytest.approx(revenu * 0.081 / 21.532, rel=1e-12)
     assert rci.montant == pytest.approx(rci.points * 1.335, rel=1e-12)
     assert (rci.trimestres, rci.plafond, rci.revenu_annuel_moyen) == (0, None, 0.0)
+    # Quarante points et plus : elle est servie (règlement, article 39).
+    assert rci.points >= 40 and rci.capital is None
 
 
 def test_avant_2025_le_rci_n_ouvre_rien_au_retraite(simulateur):
@@ -703,6 +705,30 @@ def test_le_micro_entrepreneur_achete_ses_points_de_rci_avec_son_forfait(simulat
     ventes = abattu / 0.29
     assert rci.points == pytest.approx(ventes * 0.123 * 0.165 / 21.532, rel=1e-12)
     assert rci.montant == pytest.approx(rci.points * 1.335, rel=1e-12)
+
+
+def test_la_seconde_retraite_du_rci_de_moins_de_quarante_points_est_versee_en_une_fois(
+        simulateur):
+    """L'artisane qui déclare 5 % du salaire moyen en cumul intégral de janvier
+    2024 à décembre 2025 : ses mois de 2025 lui achètent des points au RCI, 8,1 %
+    de son revenu au prix de 2025, 21,532 €, moins de quarante. Sa seconde
+    pension, « calculée, liquidée et servie dans les conditions applicables à la
+    pension de vieillesse du présent régime » (article 27), est remplacée par un
+    versement forfaitaire unique : ses points par le revenu de référence de sa
+    date d'effet, janvier 2026, 21,726 € (article 39)."""
+    emploi = _emploi(63 + 11 / 12, 65 + 11 / 12, affiliation="artisan", niveau=0.05)
+    carriere = Carriere.depuis_parcours(
+        annee_naissance=1960, sexe="F", metiers=[Metier("salarie_prive_non_cadre", 20.0)],
+        age_liquidation=62.25, macro=simulateur.macro, jour_naissance=15,
+        emploi_retraite=emploi)
+    droits = simulateur.echeancier(carriere).au_depart.droits_apres_depart
+    [rci] = [p for p in droits.pensions if p.regime == "rci"]
+    [revenu] = [ligne.revenu for ligne in carriere.lignes_apres_depart if ligne.annee == 2025]
+    assert rci.date_effet == DateMois(2026, 1)
+    assert rci.points == pytest.approx(revenu * 0.081 / 21.532, rel=1e-12)
+    assert rci.points < 40
+    assert rci.capital == pytest.approx(rci.points * 21.726, rel=1e-12)
+    assert rci.donnees()["capital"] == rci.capital
 
 
 @pytest.mark.parametrize("naissance, debut, regles", [

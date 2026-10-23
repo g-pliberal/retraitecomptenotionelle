@@ -1,0 +1,199 @@
+schema_version: 1
+id: versement_unique_rci
+intitule: >-
+  Le RCI ne sert pas la pension composée de moins de quarante points — les siens, et ceux
+  du RCO des artisans et du NRCO des commerçants qu'il sert depuis 2013 — : un versement
+  forfaitaire unique la remplace, ses points par le revenu de référence, le prix d'achat du
+  point, de sa date d'effet (règlement du RCI, article 39) ; de même, quel que soit leur
+  nombre, quand la pension de base de l'indépendant l'a été (article 40). Versé à l'assuré,
+  il fait obstacle à la réversion (article 41, II). La seconde pension du cumul intégral,
+  liquidée dans les mêmes conditions (article 27), le suit depuis 2025.
+domaine: points
+regimes: [rci, rco_artisans, nric]
+etape: completer_tous_regimes
+face: droit
+etat: approchee
+lit:
+- les pensions du RCI, du RCO et du NRCO à l'étape qui complète, et les points qui les
+  composent, à la valeur de service de chacun
+- le revenu de référence de l'année de la date d'effet (regimes/valeurs_point.csv)
+- la pension de base de l'artisan et du commerçant, et son versement forfaitaire unique
+- la nature de la demande
+- les points et la date d'effet de la seconde pension du RCI
+- liquidation.date_effet
+ecrit:
+- >-
+  le versement forfaitaire unique qui remplace la pension (PensionRegime.capital,
+  NouvellePension.capital), et la formule qui le dit ; le montant annuel reste celui de la
+  pension remplacée
+dates_qui_decident:
+- liquidation.date_effet
+# Les versions forment un partage de la date d'effet de la pension (§ 4.1). Le
+# moteur (droit/completer.py, `verser_en_capital`, droit/seconde.py,
+# `_seconde_retraite_rci`, et leurs jumeaux) lit : `existe` ; `regimes`, dont les
+# points font ensemble la pension ; `seuil_points`, sous lequel elle n'est pas
+# servie ; `bases`, les régimes de base des artisans et des commerçants, et
+# `base_alignee`, celui qui les liquide quand ils n'en servent pas ; `point`, le
+# régime dont le revenu de référence achète le point ; `fiabilite`.
+versions:
+- id: avant_le_rci
+  statut: supposee
+  hypothese: >-
+    les règles des petites pensions du RCO des artisans et du NRCO des commerçants, d'avant
+    2013, ne sont pas lues : le modèle n'en verse aucune en une fois
+  fiabilite: faible
+  bornes:
+    liquidation.date_effet: [null, 2013-01-01]
+  contenu:
+    droit: aucun versement forfaitaire unique lu
+    parametres:
+      existe: false
+  exemples: aucun trouvé
+- id: reglement_de_2013
+  statut: lue
+  textes:
+  - {id: LEGIARTI000054892235, article: "règlement du RCI, article 39", en_vigueur: 2013-01-01}
+  - {id: LEGIARTI000054892270, article: "règlement du RCI, article 40", en_vigueur: 2013-01-01}
+  - {id: LEGIARTI000054892280, article: "règlement du RCI, article 41", en_vigueur: 2013-01-01}
+  nee_de: LEGIARTI000054892235
+  bornes:
+    liquidation.date_effet: [2013-01-01, 2024-06-26]
+  contenu:
+    droit: >-
+      « Lorsque le montant de la pension d'un assuré est composé, au total, de moins de 40
+      points de retraite, le service de la pension est remplacé par un versement forfaitaire
+      unique, dont le montant est égal au produit du nombre de points de retraite en cause
+      par la dernière valeur connue du revenu de référence » (article 39) ; « lorsque les
+      droits acquis par l'assuré dans le régime d'assurance vieillesse de base ont fait
+      l'objet d'un versement forfaitaire unique, le paiement de la pension complémentaire à
+      titre personnel est automatiquement effectué sous forme de versement forfaitaire
+      unique, selon la formule définie à l'article 39, quel que soit le montant des points
+      acquis » (article 40) ; « Le versement forfaitaire unique visé aux articles 39 et 40
+      [...] fait obstacle à l'attribution d'une pension de réversion » (article 41, II)
+    caisse: >-
+      « lorsque le nombre total des points complémentaires, y compris les points de
+      majoration de conjoint coexistant de l'ancien régime des conjoints de commerçants [...],
+      est inférieur à 40 points » ; « A contrario, si seul un des droits personnels du RVB
+      est servi sous forme de VFU, le droit personnel unique du RCI sera payé
+      mensuellement » ; « Son montant est égal au produit du nombre de points de retraite en
+      cause par la dernière valeur connue du revenu de référence » (circulaire RSI
+      n° 2013-004, § 4.1.2)
+    parametres:
+      existe: true
+      regimes: [rci, rco_artisans, nric]
+      seuil_points: 40
+      bases: [cancava, organic, rsi]
+      base_alignee: regime_general
+      point: rci
+      fiabilite: haute
+  exemples: aucun trouvé
+- id: reglement_de_2024
+  statut: lue
+  textes:
+  - {id: LEGIARTI000054907326, article: "règlement du RCI, article 39", en_vigueur: 2024-06-26,
+     publie_le: 2024-06-25}
+  - {id: LEGIARTI000054907340, article: "règlement du RCI, article 40", en_vigueur: 2024-06-26,
+     publie_le: 2024-06-25}
+  - {id: LEGIARTI000054907403, article: "règlement du RCI, article 41", en_vigueur: 2024-06-26,
+     publie_le: 2024-06-25}
+  - {id: LEGIARTI000054906651, article: "règlement du RCI, article 27 : la seconde pension du cumul intégral",
+     en_vigueur: 2025-01-01}
+  - {id: LEGIARTI000054908885, article: "règlement du RCI, article 39, au revenu de référence de D. 635-9",
+     en_vigueur: 2027-01-01, publie_le: 2026-09-24}
+  - {id: LEGIARTI000054908882, article: "règlement du RCI, article 41", en_vigueur: 2027-01-01,
+     publie_le: 2026-09-24}
+  nee_de: LEGIARTI000054907326
+  bornes:
+    liquidation.date_effet: [2024-06-26, null]
+  contenu:
+    droit: >-
+      la version reglement_de_2013, au revenu de référence dont « La valeur [...] à prendre
+      en compte est celle en vigueur au jour de la date d'effet de la pension de l'assuré »
+      (article 39) ; depuis 2025, « La seconde pension de vieillesse est calculée, liquidée
+      et servie dans les conditions applicables à la pension de vieillesse du présent
+      régime » (article 27) : sous quarante points, elle est versée en une fois ; la
+      rédaction de 2027 ne vise plus que le revenu de référence de D. 635-9, le même
+    parametres:
+      existe: true
+      regimes: [rci, rco_artisans, nric]
+      seuil_points: 40
+      bases: [cancava, organic, rsi]
+      base_alignee: regime_general
+      point: rci
+      fiabilite: haute
+  exemples: aucun trouvé
+approximations:
+- version: [reglement_de_2013, reglement_de_2024]
+  ecart: >-
+    les points qui composent la pension sont ceux que le modèle sert : chaque pension
+    divisée par la valeur de service de ses points, coefficient d'abattement compris ; les
+    points de majoration du conjoint coexistant de l'ancien régime des conjoints de
+    commerçants, que la caisse compte, ne sont pas modélisés. Le revenu de référence est
+    celui de l'année de la date d'effet, la « dernière valeur connue » à la liquidation
+    jusqu'en juin 2024 ; au-delà du dernier barème publié, le dernier, mené comme la valeur
+    de service.
+  effet: non mesuré
+- version: [reglement_de_2013, reglement_de_2024]
+  ecart: >-
+    la pension de base versée en une fois (article 40) est celle des artisans et des
+    commerçants, ou, quand ils n'en servent pas, celle du régime général qui les liquide —
+    la liquidation unique, depuis juillet 2017 ; leur base, depuis 2020 — ; le modèle ne
+    verse en une fois que celle du régime général, à l'assuré dont la première retraite
+    date d'avant 2016 (fiche versement_forfaitaire_unique) : l'article 40 ne joue que par
+    elle. La seconde pension ne suit que l'article 39, la nouvelle pension de base n'étant
+    jamais versée en une fois. Le montant annuel reste celui de la pension remplacée, que
+    les comparaisons lisent et que « faire vivre » mène encore, comme pour les autres
+    capitaux ; la réversion de moins de quarante points (article 41, I) n'est pas versée en
+    une fois.
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-23
+  prochaine_relecture: 2027-04-30
+  a_relire:
+  - >-
+    Ouverte le 23 octobre 2026 (action 138, étape 12). Lire les règlements du RCO (1978) et
+    du NRCO (2003) pour leurs petites pensions d'avant 2013 ; la version avant_le_rci est
+    supposée. Le 6 du IV de l'article 7, dont les points comptent dans le versement, est à
+    lire, et la réversion de moins de quarante points (article 41, I) à porter.
+  lectures:
+  - type: legifrance
+    reference: >-
+      règlement du RCI (arrêté du 9 février 2012), article 39 (LEGIARTI000054892235,
+      LEGIARTI000054907326, LEGIARTI000054908885), article 40 (LEGIARTI000054892270,
+      LEGIARTI000054907340), article 41 (LEGIARTI000054892280, LEGIARTI000054907403,
+      LEGIARTI000054908882), article 27 (LEGIARTI000054906651) ; D. 635-9
+      (LEGIARTI000025263565, LEGIARTI000041966492), le revenu de référence « servant à la
+      détermination du nombre de points inscrits au compte », dans l'index LEGI à jour au 22
+      octobre 2026
+    date: 2027-01-01
+  - type: circulaire_cnav
+    reference: >-
+      circulaire RSI n° 2013-004 du 17 janvier 2013 (§ 4.1.1 et 4.1.2 : le paiement en
+      arrérages, les situations et le montant du versement forfaitaire unique), lue par l'API
+      de la base de législation de l'Assurance retraite le 23 octobre 2026
+    url: https://legislation.lassuranceretraite.fr/
+    date: 2013-01-17
+code:
+  python: >-
+    droit/completer.py : verser_en_capital, salaire_de_reference_points,
+    FICHE_DU_VERSEMENT_RCI ; droit/seconde.py : _seconde_retraite_rci, NouvellePension ;
+    scenarios/actuel.py : FichesDatees
+  javascript: >-
+    moteur/js/droit/completer.js : verserEnCapital, salaireDeReferencePoints,
+    FICHE_DU_VERSEMENT_RCI ; moteur/js/droit/seconde.js : secondeRetraiteRci,
+    NouvellePension ; moteur/js/regimes.js : FichesDatees
+  parametres: >-
+    contenu.parametres de chaque version : existe, regimes, seuil_points, bases,
+    base_alignee, point, fiabilite ; regimes/valeurs_point.csv : rci, salaire_reference,
+    valeur_service
+  tests: >-
+    tests/test_versements_uniques.py, tests/test_emploi_retraite.py ; le cas du RCI de
+    test_les_deux_moteurs_versent_les_memes_capitaux ; le témoin
+    seconde_pension_artisane_au_minimum_2026
+historique:
+- >-
+  2026-10-23 — ouverte et calculée dans les deux moteurs, à la première pension et à la
+  seconde, avec l'obstacle à la réversion (action 138, étape 12).
+effet: >-
+  L'artisane de 2020 qui a déclaré 4 000 € : 15,83 points, servis 19,33 € par an ; partie
+  en 2022, elle reçoit à la place 284,19 € en une fois, et sa réversion n'en sert rien.
