@@ -305,14 +305,18 @@ code:
     salaire_reference_par_generation: true
     regles_du_salaire_annuel_moyen: salaire_annuel_moyen
   python: >-
-    scenarios/actuel.py : FicheDatee (salaire_annuel_moyen) ; droit/liquider.py :
-    salaire_de_reference, moyenne_selon_la_regle, nombre_d_annees_retenues ;
-    donnees/macro.py : colonne_de_revalorisation_en_vigueur
+    scenarios/actuel.py : FichesDatees ; droit/liquider.py : salaire_de_reference,
+    moyenne_selon_la_regle, nombre_d_annees_retenues, annees_des_regimes_alignes,
+    annees_au_prorata ; donnees/macro.py : colonne_de_revalorisation_en_vigueur
   javascript: >-
-    moteur/js/regimes.js : FicheDatee ; moteur/js/droit/liquider.js : salaireDeReference,
-    moyenneSelonLaRegle, nombreDAnneesRetenues ; moteur/js/macro.js :
+    moteur/js/regimes.js : FichesDatees ; moteur/js/droit/liquider.js :
+    salaireDeReference, moyenneSelonLaRegle, nombreDAnneesRetenues,
+    anneesDesRegimesAlignes, anneesAuProrata ; moteur/js/macro.js :
     colonneDeRevalorisationEnVigueur
-  parametres: contenu.parametres de chaque version
+  parametres: >-
+    contenu.parametres de chaque version : selection, avant_la_liquidation, calcul,
+    trimestres_comptes, annees_assimilees_exclues, annees_sans_trimestre ;
+    legislation/annees_salaire_reference.csv
   tests: >-
     tests/test_simulateur.py et tests/js/moteur.test.js : chaque version rejouée sur une
     carrière à la main, dans les deux moteurs

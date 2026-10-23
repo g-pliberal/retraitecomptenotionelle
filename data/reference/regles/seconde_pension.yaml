@@ -413,18 +413,26 @@ sources:
 code:
   python: >-
     droit/seconde.py : droits, _revenus, _nouvelle_pension,
-    _seconde_retraite_complementaire, _prix_du_point, _seconde_retraite_rci ;
-    echeancier.py : Echeancier._constituer ; scenarios/actuel.py :
-    ResultatActuel.droits_apres_depart
+    _seconde_retraite_complementaire, _prix_du_point, _seconde_retraite_rci, TAUX_PLEIN,
+    PLAFOND_EN_PASS, HEURES_PAR_TRIMESTRE, DROITS_2023, LIQUIDATION_2023, DROITS_RCI,
+    PREMIERE_2027 ; echeancier.py : Echeancier._constituer ; scenarios/actuel.py :
+    ResultatActuel
   javascript: >-
-    moteur/js/droit/seconde.js ; moteur/js/echeancier.js : Echeancier._constituer ;
+    moteur/js/droit/seconde.js : droits, revenus, nouvellePension,
+    secondeRetraiteComplementaire, prixDuPoint, secondeRetraiteRci, TAUX_PLEIN,
+    PLAFOND_EN_PASS, HEURES_PAR_TRIMESTRE, DROITS_2023, LIQUIDATION_2023, DROITS_RCI,
+    PREMIERE_2027 ; moteur/js/echeancier.js : Echeancier._constituer ;
     moteur/js/pages.js : droitsDuCumul
   parametres: >-
-    constantes de droit/seconde.py : TAUX_PLEIN, PLAFOND_EN_PASS, HEURES_PAR_TRIMESTRE,
-    les dates de 2023, de 2025 (DROITS_RCI) et de 2027
+    contenu.parametres de chaque version : taux_plein, plafond_en_pass
   tests: >-
     tests/test_emploi_retraite.py ; les témoins seconde_pension_* des simulations et
     simuler_seconde_pension des pages ; l'exemple sp_f13243_nouvelle_pension_plafond
+  moteur: >-
+    Le taux plein, le plafond en part du plafond annuel de la sécurité sociale, les
+    heures de SMIC d'un trimestre et les dates de 2023, de 2025 et de 2027 sont des
+    constantes de droit/seconde.py et de son jumeau. ResultatActuel porte les droits
+    ouverts après le départ (droits_apres_depart).
 historique:
 - >-
   2026-09-29 — née avec le domaine des départs multiples, de la fiche

@@ -304,18 +304,27 @@ code:
   python: >-
     droit/invalidite.py : radiation_du_regime, retraite_pour_invalidite,
     pension_du_fonctionnaire_invalide, rente_viagere_d_invalidite ; droit/departs.py :
-    le départ à la radiation ; droit/ouvrir.py : age_ouverture ; droit/liquider.py : la
-    décote, le minimum garanti ; droit/coordonner.py : droit_a_pension ;
+    departs_et_demandes, MOTIF_RADIATION ; droit/ouvrir.py : age_ouverture ;
+    droit/liquider.py : liquider_chaque_regime ; droit/coordonner.py : droit_a_pension ;
     scenarios/actuel.py : MinimumGaranti.valeur_d_un_indice
   javascript: >-
-    moteur/js/droit/invalidite.js, et les jumeaux de chacun de ces modules
+    moteur/js/droit/invalidite.js : radiationDuRegime, retraitePourInvalidite,
+    pensionDuFonctionnaireInvalide, renteViagereDInvalidite ;
+    moteur/js/droit/departs.js : departsEtDemandes, MOTIF_RADIATION ;
+    moteur/js/droit/ouvrir.js : ageOuverture ; moteur/js/droit/liquider.js :
+    liquiderChaqueRegime ; moteur/js/droit/coordonner.js : droitAPension ;
+    moteur/js/regimes.js : MinimumGaranti.valeurDUnIndice
   parametres: >-
-    contenu.parametres de chaque version : decote, minimum_garanti,
-    plancher_taux_invalidite, plancher_part_du_traitement, plafond_total ;
-    revalorisation, pas encore lu
+    contenu.parametres de chaque version : jouissance, duree_de_services_minimale,
+    decote, minimum_garanti, minimum_garanti_sous_quinze_ans, plancher_taux_invalidite,
+    plancher_part_du_traitement, plafond_total, revalorisation
   tests: >-
     tests/test_invalidite.py ; les témoins invalidite_radiation_* des simulations, et la
     page simuler_radiation_invalidite, dans les deux moteurs
+  moteur: >-
+    departs_et_demandes liquide la pension à la radiation (MOTIF_RADIATION), à tout
+    âge ; liquider_chaque_regime la sert sans décote, au minimum garanti. La
+    revalorisation (revalorisation) n'est pas encore lue.
 historique:
 - >-
   2026-09-30 — née avec le quatrième domaine, l'invalidité et l'inaptitude, ouvert à la

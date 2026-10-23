@@ -173,15 +173,15 @@ code:
     salaire_reference_par_generation: independants
     regles_du_salaire_annuel_moyen: revenu_annuel_moyen_independants
   python: >-
-    scenarios/actuel.py : FicheDatee (revenu_annuel_moyen_independants),
-    AnneesRevenuAnnuelMoyenIndependants ; droit/liquider.py : salaire_de_reference,
-    nombre_d_annees_retenues
+    scenarios/actuel.py : FichesDatees, AnneesRevenuAnnuelMoyenIndependants ;
+    droit/liquider.py : salaire_de_reference, nombre_d_annees_retenues
   javascript: >-
-    moteur/js/regimes.js : FicheDatee, AnneesRevenuAnnuelMoyenIndependants ;
+    moteur/js/regimes.js : FichesDatees, AnneesRevenuAnnuelMoyenIndependants ;
     moteur/js/droit/liquider.js : salaireDeReference, nombreDAnneesRetenues
   parametres: >-
-    contenu.parametres de chaque version ;
-    data/reference/legislation/annees_revenu_annuel_moyen_independants.csv
+    contenu.parametres de chaque version : table, selection, avant_la_liquidation,
+    calcul, trimestres_comptes, annees_assimilees_exclues, annees_sans_trimestre ;
+    legislation/annees_revenu_annuel_moyen_independants.csv
   tests: tests/test_simulateur.py et tests/js/moteur.test.js
   moteur: >-
     `salaire_reference_par_generation` vaut `independants` : le nombre d'années se lit

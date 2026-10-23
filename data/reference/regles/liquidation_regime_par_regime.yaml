@@ -179,25 +179,31 @@ sources:
     date: 2026-10-13
 code:
   python: >-
-    droit/departs.py : departs, departs_et_demandes, DemandeExaminee, liquider_les_departs ;
-    carriere.py : Carriere.demandes_de_pension ; saisie.py : PREFIXE_DEMANDE ;
-    droit/liquidation.py : Demande.regimes,
-    Etat.servies ; droit/ouvrir.py : ouvrir ; droit/liquider.py : liquider_chaque_regime ;
-    droit/completer.py : completer (servies) ; scenarios/actuel.py : resultat_des_departs ;
-    echeancier.py : Echeancier._partir ; revalorisation.py : mener_au_mois, faire_vivre
+    droit/departs.py : departs, departs_et_demandes, DemandeExaminee,
+    liquider_les_departs ; carriere.py : Carriere.demandes_de_pension ; saisie.py :
+    PREFIXE_DEMANDE ; droit/liquidation.py : Demande, Etat ; droit/ouvrir.py : ouvrir ;
+    droit/liquider.py : liquider_chaque_regime ; droit/completer.py : completer ;
+    scenarios/actuel.py : resultat_des_departs ; echeancier.py : Echeancier._partir ;
+    revalorisation.py : mener_au_mois, faire_vivre
   javascript: >-
     moteur/js/droit/departs.js : departs, departsEtDemandes, DemandeExaminee,
     liquiderLesDeparts ; moteur/js/carriere.js : Carriere.demandesDePension ;
-    moteur/js/saisie.js : PREFIXE_DEMANDE ; moteur/js/droit/liquidation.js
-    : Demande.regimes, Etat.servies ; moteur/js/scenario-actuel.js : resultatDesDeparts ;
-    moteur/js/echeancier.js : Echeancier._partir ; moteur/js/revalorisation.js :
-    menerAuMois, faireVivre ; moteur/js/pages.js : departsEchelonnes, demandesNonSuivies,
-    datesDesPensions
-  parametres: "contenu.parametres de la version : depart_tous_regimes"
+    moteur/js/saisie.js : PREFIXE_DEMANDE ; moteur/js/droit/liquidation.js : Demande,
+    Etat ; moteur/js/droit/ouvrir.js : ouvrir ; moteur/js/droit/liquider.js :
+    liquiderChaqueRegime ; moteur/js/droit/completer.js : completer ;
+    moteur/js/scenario-actuel.js : resultatDesDeparts ; moteur/js/echeancier.js :
+    Echeancier._partir ; moteur/js/revalorisation.js : menerAuMois, faireVivre ;
+    moteur/js/pages.js : departsEchelonnes, demandesNonSuivies, datesDesPensions
+  parametres: >-
+    contenu.parametres de chaque version : depart_tous_regimes
   tests: >-
     tests/test_departs.py ; les témoins departs_*, demande_* et metiers_militaire_* des
     simulations, et simuler_demande_de_pension des pages ;
     tests/test_liquidation.py, qui compare les journaux des deux moteurs
+  moteur: >-
+    Une demande nomme les régimes qu'elle liquide (Demande.regimes) ; l'état porte les
+    pensions que des départs précédents servent déjà (Etat.servies), que completer
+    compte à l'écrêtement du minimum contributif (servies).
 historique:
 - >-
   2026-09-29 — née avec le troisième domaine, les départs multiples et la vie après le

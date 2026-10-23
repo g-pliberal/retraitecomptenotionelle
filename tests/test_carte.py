@@ -195,18 +195,15 @@ EN_PROSE = frozenset("""
     cumul_emploi_retraite_et_retraite_progressive date_effet_mois_suivant
     decote_avant_1983 decote_crpn decote_fonction_publique decote_opera_de_paris
     decote_regime_general decote_regimes_speciaux duree_requise_par_generation
-    liquidation_regime_par_regime majoration_duree_apres_65_ans
-    micro_social_abattement minimum_contributif minimum_contributif_international
-    minoration_ircec minoration_racl_2014_2024 pension_non_salaries_agricoles_2026
-    pension_proratisee points_au_prorata_des_cotisations
-    points_avant_1973_independants raap_classe_speciale rafp_age_d_ouverture
-    relevement_des_exploitants_2023 retraite_pour_invalidite_fonction_publique
-    retraite_progressive retraite_proportionnelle_msa
-    revenu_annuel_moyen_independants salaire_annuel_moyen seconde_pension
-    surcote_fonction_publique surcote_ircantec surcote_par_age_seul
-    surcote_regime_general surcote_regimes_speciaux taux_plein_et_proratisation
-    temps_partiel_fonction_publique totalisation_des_periodes_etrangeres
-    trimestres_avant_1972 trimestres_retenus_1972_1974
+    majoration_duree_apres_65_ans micro_social_abattement minimum_contributif
+    minimum_contributif_international minoration_ircec minoration_racl_2014_2024
+    pension_non_salaries_agricoles_2026 pension_proratisee
+    points_au_prorata_des_cotisations raap_classe_speciale retraite_progressive
+    retraite_proportionnelle_msa surcote_fonction_publique surcote_ircantec
+    surcote_par_age_seul surcote_regime_general surcote_regimes_speciaux
+    taux_plein_et_proratisation temps_partiel_fonction_publique
+    totalisation_des_periodes_etrangeres trimestres_avant_1972
+    trimestres_retenus_1972_1974
 """.split())
 
 

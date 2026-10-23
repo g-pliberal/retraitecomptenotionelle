@@ -243,16 +243,23 @@ sources:
     date: 2026-10-14
 code:
   python: >-
-    droit/acquerir.py (les points d'un barème en points, `points_maximum` rapporté à
-    l'assiette plafonnée) ; droit/liquider.py (valeur du point à la date d'effet,
-    abattement_regime_de_base)
+    droit/acquerir.py : acquerir ; droit/liquider.py : valeur_du_point,
+    abattement_regime_de_base
   javascript: >-
-    moteur/js/droit/acquerir.js et moteur/js/droit/liquider.js, mêmes chemins
+    moteur/js/droit/acquerir.js : acquerir ; moteur/js/droit/liquider.js :
+    valeurDuPoint, abattementRegimeDeBase
   parametres: >-
-    regimes/cancava_avant_1973.yaml, regimes/organic_avant_1973.yaml,
-    legislation/affiliations.yaml, regimes/valeurs_point.csv,
-    regimes/valeurs_service_datees.csv
+    contenu.parametres de chaque version : points_par_pourcentage_du_plafond ;
+    regimes/cancava_avant_1973.yaml, regimes/organic_avant_1973.yaml : points_maximum,
+    assiette ; legislation/affiliations.yaml ; regimes/valeurs_point.csv :
+    cancava_avant_1973, organic_avant_1973 ; regimes/valeurs_service_datees.csv :
+    cancava_avant_1973, organic_avant_1973
   tests: tests/test_independants.py
+  moteur: >-
+    acquerir compte les points d'un barème en points : le maximum de la période
+    (points_maximum) rapporté à l'assiette plafonnée. Ils se servent à la valeur du
+    point de la date d'effet (valeur_du_point), décotés comme au régime de base
+    (abattement_regime_de_base).
 referents:
   baremes_ipp: porte la valeur du point des commerçants depuis 1951 et des artisans depuis 1974
   openfisca_france: porte la valeur du point, sans le barème d'acquisition

@@ -79,15 +79,19 @@ sources:
     date: 2026-09-29
 code:
   python: >-
-    droit/departs.py : departs (RAFP, age_legal), qui date le départ du RAFP au plus
-    tôt à l'âge légal de la génération et jamais avant celui des régimes dont il suit
-    les années
-  javascript: "moteur/js/droit/departs.js : departs (RAFP, ageLegal)"
+    droit/departs.py : departs, age_legal, RAFP
+  javascript: >-
+    moteur/js/droit/departs.js : departs, ageLegal, RAFP
   parametres: >-
-    l'âge de L. 161-17-2 par génération (legislation/age_ouverture_requis.csv) : il vaut
-    soixante ans pour toute génération qui atteint soixante ans avant le 3 juin 2011,
-    si bien que les deux versions se lisent dans la même table
+    contenu.parametres de chaque version : age_ouverture, admis_a_la_retraite ;
+    legislation/age_ouverture_requis.csv
   tests: tests/test_departs.py ; le témoin departs_super_actif_rafp_a_l_age_legal
+  moteur: >-
+    departs date le départ du RAFP au plus tôt à l'âge légal de la génération
+    (age_legal), et jamais avant celui des régimes dont il suit les années. L'âge de L.
+    161-17-2 par génération vaut soixante ans pour toute génération qui atteint soixante
+    ans avant le 3 juin 2011, si bien que les deux versions se lisent dans la même
+    table.
 historique:
 - >-
   2026-09-29 — née avec le domaine des départs multiples.
