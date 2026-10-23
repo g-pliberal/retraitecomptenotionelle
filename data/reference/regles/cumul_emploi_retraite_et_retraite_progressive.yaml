@@ -392,24 +392,41 @@ textes_a_rattacher:
    change: "le contrôle a posteriori"}
 code:
   python: >-
-    droit/cumul.py : cumuler, groupe_de_l_activite, groupe_de_la_pension,
-    assiette_csg, et la classe _Calcul (version, integral, plafond_salarie,
-    plafond_agirc_arrco, _salarie, _agirc_arrco, _non_salarie, _regle_2027) ;
-    echeancier.py : Echeancier._cumuler ; scenarios/actuel.py : ResultatActuel.cumul ;
-    carriere.py : lignes_apres_depart, emploi_retraite ; saisie.py :
-    emploi_retraite_declare
+    droit/cumul.py : cumuler, groupe_de_l_activite, groupe_de_la_pension, assiette_csg,
+    _Calcul.version, _Calcul.integral, _Calcul.plafond_salarie,
+    _Calcul.plafond_agirc_arrco, _Calcul._salarie, _Calcul._agirc_arrco,
+    _Calcul._non_salarie, _Calcul._regle_2027, LOI_1983, ARTISANS_1984, LOI_2004,
+    LOI_2009, REVALORISATION_2010, ORDRE_DES_AGES, PREMIERE_2015, REDUCTION_SALARIES,
+    REDUCTION_NON_SALARIES, PREMIERE_2027, SIX_MOIS, HEURES_SMIC, PART_SMIC_2004,
+    PART_SMIC_2009, ASSIETTES_CSG, SEUILS_NON_SALARIES ; echeancier.py :
+    Echeancier._cumuler ; scenarios/actuel.py : ResultatActuel ; carriere.py :
+    _lignes_apres_depart, Carriere.emploi_retraite ; saisie.py :
+    Saisie.emploi_retraite_declare
   javascript: >-
-    moteur/js/droit/cumul.js ; moteur/js/echeancier.js : Echeancier._cumuler ;
-    moteur/js/carriere.js : lignesApresDepart, emploiRetraite ; moteur/js/saisie.js ;
-    moteur/js/pages.js : cumulEmploiRetraite
+    moteur/js/droit/cumul.js : cumuler, groupeDeLActivite, groupeDeLaPension,
+    assietteCsg, Calcul.version, Calcul.integral, Calcul.plafondSalarie,
+    Calcul.plafondAgircArrco, Calcul.salarie, Calcul.agircArrco, Calcul.nonSalarie,
+    Calcul.regle2027, LOI_1983, ARTISANS_1984, LOI_2004, LOI_2009, REVALORISATION_2010,
+    ORDRE_DES_AGES, PREMIERE_2015, REDUCTION_SALARIES, REDUCTION_NON_SALARIES,
+    PREMIERE_2027, SIX_MOIS, HEURES_SMIC, PART_SMIC_2004, PART_SMIC_2009, ASSIETTES_CSG,
+    SEUILS_NON_SALARIES ; moteur/js/echeancier.js : Echeancier._cumuler ;
+    moteur/js/carriere.js : lignesApresDepart, Carriere.emploiRetraite ;
+    moteur/js/saisie.js : Saisie.emploiRetraiteDeclare ; moteur/js/pages.js :
+    cumulEmploiRetraite
   parametres: >-
-    constantes de droit/cumul.py : les dates de 1983, 1984, 2004, 2009, 2010, 2014,
-    2015, 2017 et 2027, le délai de six mois, le SMIC sur 1 820 heures et sa part,
-    l'assiette de la CSG, les seuils des non-salariés
+    contenu.parametres de chaque version : cumul, plafond, part_du_smic, depassement,
+    seuil_independants_en_pass, seuil_liberaux_en_pass, cumul_integral,
+    avant_l_age_legal, seuil
   tests: >-
     tests/test_emploi_retraite.py ; les témoins cumul_* des simulations et
     simuler_cumul_* des pages ; les exemples sp_f13243_* du registre ;
     tests/test_liquidation.py, qui compare les journaux des deux moteurs
+  moteur: >-
+    Les dates qui découpent la règle, de 1983 à 2027, le délai de six mois, le SMIC sur
+    1 820 heures et sa part, l'assiette de la CSG et les seuils des non-salariés sont
+    des constantes de droit/cumul.py et de son jumeau. ResultatActuel porte le cumul
+    (cumul), et la carrière les lignes d'après le départ (Carriere.lignes_apres_depart),
+    que _lignes_apres_depart bâtit.
 historique:
 - >-
   2026-09-29 — scindée avec l'ouverture du domaine des départs multiples : la

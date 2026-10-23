@@ -406,22 +406,32 @@ textes_sans_effet:
     indépendants » de la Cnav)
 code:
   python: >-
-    saisie.py : ACTIVITES_MICRO, ABATTEMENTS_MICRO, Saisie.en_chiffre_d_affaires et
-    Saisie.abattu, appelée par parcours et emploi_retraite_declare ;
-    carriere.py : Metier.micro, AnneeCarriere.micro, revenu_cotise ;
-    donnees/chargement.py : charger_validation_micro, charger_cotisation_micro,
-    forfait_micro, charger_compensation_micro, validant_compense,
-    charger_seuils_micro, trimestres_aux_seuils_micro ;
-    moteur/compte.py : ConstructeurCompte._cotisation_ligne ;
-    droit/liquider.py : assiette_de_reference, le revenu annuel moyen ;
-    droit/acquerir.py : acquerir, les points sur les parts du forfait
-  javascript: moteur/js/saisie.js (enChiffreDAffaires, abattu) ; moteur/js/pages.js
-    (microFormulaire, champChiffreDAffaires) ; moteur/js/carriere.js
-    (revenuCotise, validantCompense, forfaitMicro, trimestresAuxSeuilsMicro,
-    paquets validation_micro, cotisation_micro, compensation_micro et
-    seuils_micro) ; moteur/js/compte.js (_cotisationLigne) ;
-    moteur/js/droit/liquider.js (assietteDeReference) ; moteur/js/droit/acquerir.js
-    (acquerir)
+    saisie.py : ACTIVITES_MICRO, ABATTEMENTS_MICRO, Saisie.en_chiffre_d_affaires,
+    Saisie.abattu, Saisie.parcours, Saisie.emploi_retraite_declare ; carriere.py :
+    Metier, AnneeCarriere, revenu_cotise ; donnees/chargement.py :
+    charger_validation_micro, charger_cotisation_micro, forfait_micro,
+    charger_compensation_micro, validant_compense, charger_seuils_micro,
+    trimestres_aux_seuils_micro ; moteur/compte.py :
+    ConstructeurCompte._cotisation_ligne ; droit/liquider.py : assiette_de_reference ;
+    droit/acquerir.py : acquerir
+  javascript: >-
+    moteur/js/saisie.js : ACTIVITES_MICRO, ABATTEMENTS_MICRO, Saisie.enChiffreDAffaires,
+    Saisie.abattu, Saisie.parcours, Saisie.emploiRetraiteDeclare ; moteur/js/pages.js :
+    microFormulaire, champChiffreDAffaires ; moteur/js/carriere.js : revenuCotise,
+    validantCompense, forfaitMicro, trimestresAuxSeuilsMicro ; moteur/js/compte.js :
+    ConstructeurCompte._cotisationLigne ; moteur/js/droit/liquider.js :
+    assietteDeReference ; moteur/js/droit/acquerir.js : acquerir
   tests: >-
     tests/test_web_saisie.py ; tests/test_micro_social.py ; tests/js/moteur.test.js ;
     témoins micro_entrepreneur_* et simuler_micro_entrepreneur*
+  parametres: >-
+    legislation/micro_social.yaml : abattements, versions, regimes_du_forfait,
+    compensation, seuils
+  moteur: >-
+    Saisie.en_chiffre_d_affaires dit si le revenu d'une ligne est un chiffre d'affaires,
+    et Saisie.abattu l'abat, au seuil du modèle ; Saisie.parcours et
+    Saisie.emploi_retraite_declare l'appellent. Le métier et chaque ligne de la carrière
+    portent l'activité (Metier.micro, AnneeCarriere.micro). assiette_de_reference porte
+    au revenu annuel moyen le revenu cotisé (revenu_cotise), et acquerir achète les
+    points sur les parts du forfait. Le portage lit les tables du paquet :
+    validation_micro, cotisation_micro, compensation_micro et seuils_micro.

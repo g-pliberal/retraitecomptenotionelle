@@ -192,12 +192,11 @@ EN_PROSE = frozenset("""
     coefficient_anticipation_ircantec coefficients_anticipation_agirc_arrco
     cotisation_par_classes_liberales cprn_ages_decote_enfants
     cultes_retraite_complementaire cultes_salaire_annuel_moyen
-    cumul_emploi_retraite_et_retraite_progressive date_effet_mois_suivant
-    decote_avant_1983 decote_crpn decote_fonction_publique decote_opera_de_paris
-    decote_regime_general decote_regimes_speciaux duree_requise_par_generation
-    majoration_duree_apres_65_ans micro_social_abattement minoration_ircec
+    date_effet_mois_suivant decote_avant_1983 decote_crpn decote_fonction_publique
+    decote_opera_de_paris decote_regime_general decote_regimes_speciaux
+    duree_requise_par_generation majoration_duree_apres_65_ans minoration_ircec
     minoration_racl_2014_2024 pension_non_salaries_agricoles_2026
-    points_au_prorata_des_cotisations raap_classe_speciale retraite_progressive
+    points_au_prorata_des_cotisations raap_classe_speciale
     retraite_proportionnelle_msa surcote_fonction_publique surcote_ircantec
     surcote_par_age_seul surcote_regime_general surcote_regimes_speciaux
     taux_plein_et_proratisation temps_partiel_fonction_publique

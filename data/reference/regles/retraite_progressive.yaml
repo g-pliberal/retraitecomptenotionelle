@@ -400,21 +400,31 @@ code:
     droit/progressive.py : examiner, fraction, age_minimum, duree_requise,
     regimes_ouverts, regimes_liquides, liquider, avec_la_duree, recalculee, initiales ;
     droit/departs.py : regimes_actifs, regimes_de_la_carriere, liquider_les_departs ;
-    droit/completer.py : completer (initiales, recalcul) ; droit/compter.py :
-    services_a_temps_partiel ; droit/liquider.py : le traitement de référence à temps
-    plein ; carriere.py : les lignes à temps partiel ; scenarios/actuel.py :
-    ProgressiveServie ; echeancier.py : Echeancier._progresser
+    droit/completer.py : completer ; droit/compter.py : services_a_temps_partiel ;
+    droit/liquider.py : salaire_de_reference ; carriere.py : AnneeCarriere ;
+    scenarios/actuel.py : ProgressiveServie ; echeancier.py : Echeancier._progresser
   javascript: >-
-    moteur/js/droit/progressive.js ; moteur/js/droit/departs.js : regimesActifs ;
-    moteur/js/droit/completer.js ; moteur/js/droit/compter.js : servicesATempsPartiel ;
-    moteur/js/carriere.js ; moteur/js/scenario-actuel.js : progressiveServie ;
-    moteur/js/echeancier.js : Echeancier._progresser ; moteur/js/pages.js :
-    retraiteProgressive
-  parametres: "contenu.parametres des versions : duree_requise, quotite_minimum, quotite_maximum, age"
+    moteur/js/droit/progressive.js : examiner, fraction, ageMinimum, dureeRequise,
+    regimesOuverts, regimesLiquides, liquider, avecLaDuree, recalculee, initiales ;
+    moteur/js/droit/departs.js : regimesActifs, regimesDeLaCarriere,
+    liquiderLesDeparts ; moteur/js/droit/completer.js : completer ;
+    moteur/js/droit/compter.js : servicesATempsPartiel ; moteur/js/droit/liquider.js :
+    salaireDeReference ; moteur/js/carriere.js : AnneeCarriere ;
+    moteur/js/scenario-actuel.js : progressiveServie ; moteur/js/echeancier.js :
+    Echeancier._progresser ; moteur/js/pages.js : retraiteProgressive
+  parametres: >-
+    contenu.parametres de chaque version : duree_requise, quotite_minimum,
+    quotite_maximum, decote_maximum, age
   tests: >-
     tests/test_retraite_progressive.py ; les témoins progressive_* des simulations et
     simuler_retraite_progressive* des pages ; tests/test_liquidation.py, qui compare les
     journaux des deux moteurs
+  moteur: >-
+    completer reçoit les pensions provisoires de la retraite progressive, sous
+    lesquelles la pension complète ne descend pas, et qu'elle vaut sans recalcul
+    (initiales, recalcul). Les lignes à temps partiel portent leur quotité
+    (AnneeCarriere.quotite) ; le traitement de référence se lit à temps plein
+    (salaire_de_reference).
 historique:
 - >-
   2026-09-29 — née avec le domaine des départs multiples, de la fiche
