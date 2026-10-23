@@ -15418,11 +15418,11 @@ function programme(contexte) {
           `${age(base.age_legal_liberal)} pour tous, dès ${base.annee_bascule}`]]
         : []),
       ["Partir un an plus tôt",
-        `une ${g.terme("décote")}, au barème revu à chaque réforme`,
+        `une ${g.terme("décote")}, que chaque réforme revoit`,
         "moins de cotisations, plus d'années de pension"],
       ["Changer de métier",
-        "changer de régime, et de règle de calcul",
-        "rien : le compte est le même"],
+        "changer de régime et de calcul",
+        "rien : le même compte"],
       ["Savoir où vous en êtes",
         "un relevé en trimestres et en points",
         "un solde, en euros"],
@@ -15433,9 +15433,9 @@ function programme(contexte) {
       // pas la même NATURE de droit : une pension s'éteint, un capital se
       // lègue. Le dire ici, et non dans un dépliant, parce que c'est ce que la
       // part capitalisée ajoute et qu'aucune autre ligne du tableau ne porte.
-      ["Si vous mourez avant la retraite",
+      ["Décès avant la retraite",
         "vos cotisations restent au système",
-        "le capital de la part capitalisée revient à vos héritiers"],
+        "votre capital revient à vos héritiers"],
     ],
     ["", "texte", "texte"],
     "Le système actuel et notre programme, terme à terme",
@@ -15457,14 +15457,14 @@ function programme(contexte) {
     `<li><span class="rang">${index + 1}</span><span>${texte}</span></li>`
   )).join("");
 
+  // Le chapeau disait aussi comment le compte devient une pension : les trois
+  // gestes le disent un écran plus bas, en clair (action 173, étape 3).
   const tete = g.affiche(
     "Notre programme pour les retraites",
     'La seule retraite qui vous rend <span class="cle-texte">vraiment</span> '
     + "ce que vous avez cotisé.",
     '<strong class="cle-texte">Un compte à votre nom, en euros.</strong> '
-    + "Chaque cotisation y est inscrite ; à la retraite, il devient votre "
-    + 'pension. <strong class="cle-texte">Pas de trimestres, pas de barèmes, '
-    + "pas de surprise.</strong>",
+    + "Pas de trimestres, pas de barèmes, pas de surprise.",
   );
 
   // UNE SEULE LISTE REPLIÉE, ET CHAQUE SUJET À UN SEUL ENDROIT. La page en
@@ -15494,23 +15494,21 @@ ${engagements(contexte)}
     <p class="surtitre">Le calcul</p>
     <h2 style="margin-top:0">Comment ça marche, en trois gestes</h2>
     <ol class="gestes">${gestes}</ol>
-    <p class="discret">Rien n'est placé : les cotisations de l'année paient
+    <p class="discret">Rien n'y est placé : les cotisations de l'année paient
     les pensions de l'année. C'est toujours la ${g.terme("répartition")}.</p>
   </div>
   <div class="encadre">
     <h2 class="serif" style="margin-top:0">Le plancher regarde chacun, pas le
     couple</h2>
-    <p>Aujourd'hui, le minimum vieillesse (l'ASPA) regarde les ressources du
-    couple : à 300 € et 1 500 € de pension, il ne reçoit rien. Notre garantie
-    regarde chacun :</p>
+    <p>Aujourd'hui, le minimum vieillesse (l'ASPA) regarde le couple :</p>
     ${tableauGarantie(contexte)}
   </div>
 </div>
 
 <h2>Ce que cela change</h2>
 ${differences}
-<p class="discret">C'est le système de la Suède, de l'Italie, de la Pologne et
-de la Lettonie.</p>
+<p class="discret">Ce compte existe déjà en Suède, en Italie, en Pologne et en
+Lettonie.</p>
 
 ${programmeQuestions(contexte)}
 
@@ -15982,7 +15980,7 @@ function engagements(contexte) {
       + `<strong class="cle-texte">${couple}</strong> pour un couple.`,
       `<strong class="cle-texte">${g.euros(garantie)} par personne</strong>, `
       + `plus <strong class="cle-texte">${g.euros(isolement)} d'allocation `
-      + "d'isolement</strong> pour qui vit seul. Payés par l'impôt, dès "
+      + "d'isolement</strong>. Payés par l'impôt, dès "
       + `${AGE_OUVERTURE_GARANTIE} ans.`],
     [`${taux} + ${capitalise}`,
       "de cotisation : la répartition, "
@@ -15996,18 +15994,19 @@ function engagements(contexte) {
       // le 23 septembre 2026 : deux pourcentages de plus dans la carte qui en
       // comptait déjà quatre, pour une précision que la fiche de paie du
       // simulateur donne ligne à ligne.
+      //
+      // Ce que deviennent les 18 % et les 5 % ne se redit plus : le chiffre et
+      // la promesse de la carte le portent (action 173, étape 3).
       `Aujourd'hui, ${g.pourcentage(TAUX_ACTUEL_TOTAL, false, 0)} du `
       + "salaire brut d'un salarié du privé, employeur compris. Demain, "
-      + '<strong class="cle-texte">le même taux pour tout le monde</strong> : '
-      + `${taux} pour la retraite de tous, ${capitalise} placés sans risque à `
-      + 'votre nom, <strong class="cle-texte">qui vous appartiennent</strong> '
-      + `et se transmettent, et ${volontaire} rendus sur votre salaire, que `
-      + "vous pouvez épargner aussi, "
-      + '<strong class="cle-texte">à effort inchangé</strong>.'],
+      + '<strong class="cle-texte">le même taux pour tout le monde</strong>. '
+      + "Le capital, placé sans risque, vous appartient et se transmet. "
+      + `Les ${volontaire} d'écart vous reviennent en salaire : vous pouvez `
+      + 'les épargner aussi, <strong class="cle-texte">à effort '
+      + "inchangé</strong>."],
     ["1 compte",
       '<strong class="cle-texte">en euros</strong>, lisible par tous.',
-      "Un compte personnel de retraite : vous voyez "
-      + '<strong class="cle-texte">votre solde comme sur un relevé '
+      'Vous voyez <strong class="cle-texte">votre solde comme sur un relevé '
       + "bancaire</strong>."],
     ["100 %",
       "de ce que vous avez cotisé "

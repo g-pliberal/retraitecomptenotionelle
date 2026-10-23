@@ -64,7 +64,9 @@ def navigateur() -> str | None:
         return os.environ["NAVIGATEUR"]
     for dossier in (os.environ.get("PLAYWRIGHT_BROWSERS_PATH"), "/opt/pw-browsers"):
         if dossier and Path(dossier).is_dir():
-            trouves = sorted(Path(dossier).glob("chromium-*/chrome-linux/chrome"))
+            # `chrome-linux`, ou `chrome-linux64` pour les Chromium récents de
+            # Playwright : sans ce dernier, le test passait sans rien jouer.
+            trouves = sorted(Path(dossier).glob("chromium-*/chrome-linux*/chrome"))
             if trouves:
                 return str(trouves[-1])
     for nom in ("chromium", "chromium-browser", "google-chrome", "google-chrome-stable",

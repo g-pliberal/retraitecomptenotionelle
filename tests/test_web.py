@@ -3570,7 +3570,13 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # (`ordreDeGrandeur`), « d'un quart » quand les deux écarts médians
     # tombent sur la même, « d'un cinquième à un quart » sinon — trois mots de
     # plus, qu'un écart de 22,6 % passé à 22,5 % a suffi à écrire.
-    "/": (470, 0, 2, 245),
+    # Serrées le 23 octobre 2026 (action 173, étape 3), de 470 à 390 mots de
+    # prose et de 245 à 230 dans les tableaux : « on peut dire la même chose en
+    # moins de mots ». Ce qui partait n'était que redite — l'exemple du
+    # plancher que son tableau donne à la ligne suivante, le mécanisme que les
+    # trois gestes détaillent, la répartition des 18 % que le chiffre de la
+    # carte porte déjà.
+    "/": (390, 0, 2, 230),
     "/simuler": (1500, 0, 0, 0),
     # Partager ne porte que des cartes : leur texte est court par
     # construction — il doit tenir dans une image de 1200 × 675.

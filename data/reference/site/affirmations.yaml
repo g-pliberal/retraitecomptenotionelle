@@ -78,7 +78,7 @@ affirmations:
 
   - id: accueil.garantie_montants
     page: /
-    extrait: "d'allocation d'isolement pour qui vit seul. Payés par l'impôt, dès 65 ans."
+    extrait: "d'allocation d'isolement. Payés par l'impôt, dès 65 ans."
     porte: le plancher est par personne, majoré pour qui vit seul, servi à 65 ans
     etat: verifiee
     controle: garantie_individualisee
@@ -99,7 +99,7 @@ affirmations:
 
   - id: accueil.qui_vous_appartiennent
     page: /
-    extrait: "qui vous appartiennent et se transmettent"
+    extrait: "vous appartient et se transmet"
     porte: le capital du pilier se transmet avant la liquidation
     etat: verifiee
     controle: capital_capitalise_transmissible
