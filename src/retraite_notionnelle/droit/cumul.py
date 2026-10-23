@@ -1,6 +1,7 @@
 """Le cumul emploi-retraite (docs/architecture.md, § 7.4 ; fiches
-``cumul_emploi_retraite_et_retraite_progressive`` et
-``cumul_emploi_retraite_fonction_publique``).
+``cumul_emploi_retraite_et_retraite_progressive``,
+``cumul_emploi_retraite_fonction_publique`` et
+``cumul_emploi_retraite_complementaire_des_independants``).
 
 Le retraité qui travaille garde sa pension, entière ou non, selon le droit du
 MOIS où il travaille, la date de sa pension et celle de sa première pension de
@@ -56,12 +57,20 @@ L'Agirc-Arrco suspend sa retraite complémentaire au-delà de son propre
 plafond, le plus haut de 160 % du SMIC, du dernier salaire revalorisé et du
 salaire moyen revalorisé des dix dernières années.
 
+La complémentaire de l'artisan et du commerçant — le RCI, et les points du RCO
+et du NRCO qu'il sert depuis 2013 — suit leur pension de base, que leurs
+règlements lui imposent : suspendue avec elle depuis 2009, servie entière en
+cumul intégral et quand la base n'est que réduite ; réduite du dépassement
+comme elle depuis le 26 juin 2024 ; pour la première pension de 2027, réduite
+de ce que la base n'absorbe pas (fiche
+``cumul_emploi_retraite_complementaire_des_independants``).
+
 CHAQUE RÉGIME NE RÉDUIT QUE SES PENSIONS, pour l'activité qui relève de lui :
 le salarié qui se fait artisan ne perd rien de sa pension du régime général ;
 l'artisan qui se fait salarié ne perd rien de celle des artisans. Les
 régimes dont le modèle n'a pas lu la règle — avocats, exploitants agricoles,
-outre-mer, élus, complémentaires autres que l'Agirc-Arrco — servent leur
-pension entière, et le résultat le dit.
+outre-mer, élus, complémentaires autres que l'Agirc-Arrco et celle des
+indépendants — servent leur pension entière, et le résultat le dit.
 
 Le jumeau de ce module est ``moteur/js/droit/cumul.js``.
 """
@@ -108,6 +117,10 @@ FP_2004 = "tiers_de_la_pension_2004"
 FP_2009 = "cumul_integral_2009"
 FP_2015 = "tout_employeur_2015"
 FP_2027 = "regles_communes_2027"
+RCI_AVANT_2009 = "servie_entiere_avant_2009"
+RCI_2009 = "suspendue_avec_la_base_2009"
+RCI_2024 = "reduite_comme_la_base_2024"
+RCI_2027 = "imputee_apres_les_bases_2027"
 
 #: Les dates qui découpent la règle.
 LOI_1983 = DateMois(1983, 4)
@@ -126,6 +139,13 @@ PREMIERE_2015 = DateMois(2015, 1)
 REDUCTION_SALARIES = DateMois(2017, 4)
 REDUCTION_NON_SALARIES = DateMois(2017, 1)
 PREMIERE_2027 = DateMois(2027, 1)
+#: Les règlements du RCO et du NRCO approuvés le 7 juillet 2009 suspendent la
+#: complémentaire avec la base (articles 23, II, et 10) ; la caisse les
+#: applique depuis le 1er janvier 2009 (circulaire RSI n° 2009-044, § 2.4).
+COMPLEMENTAIRES_2009 = DateMois(2009, 1)
+#: L'arrêté du 19 juin 2024 applique la section 3 du code au service de la
+#: pension du RCI, du 26 juin : le premier mois entier de sa rédaction.
+SECTION_3_RCI = DateMois(2024, 7)
 
 #: D. 161-2-15 : la reprise chez le dernier employeur, dans les six mois.
 SIX_MOIS = 6
@@ -164,6 +184,9 @@ AGIRC_ARRCO = frozenset({"agirc", "agirc_arrco", "agirc_entreprises_nouvelles", 
 #: Les statuts des artisans et des commerçants (L. 634-6).
 INDEPENDANTS = frozenset({"artisan", "commercant", "micro_entrepreneur",
                           "liberal_non_reglemente", "gerant_debit_tabac"})
+#: Le RCI et les complémentaires qu'il a reprises en 2013, dont il sert les
+#: points : la pension complémentaire de l'artisan et du commerçant.
+COMPLEMENTAIRES_DES_INDEPENDANTS = frozenset({"rci", "rco_artisans", "nric"})
 #: Le régime qui liquide la pension des régimes alignés (liquidation unique,
 #: depuis 2017) et sert celle des artisans et des commerçants depuis 2020 :
 #: celle d'un ancien indépendant suit aussi la règle de L. 634-6.
@@ -217,6 +240,8 @@ def groupe_de_la_pension(moteur: ScenarioActuel, regime: str) -> str:
         return "outre_mer"
     if regime in AGIRC_ARRCO:
         return "agirc_arrco"
+    if regime in COMPLEMENTAIRES_DES_INDEPENDANTS:
+        return "rci"
     fiche = moteur.catalogue[regime]
     if fiche.etage not in _departs.ETAGES_DES_UNITES:
         return "complementaires"
@@ -577,6 +602,9 @@ class _Calcul:
         # revenus s'y répartit au prorata.
         base_2027 = somme_ordonnee(montants[regime] for regime, _, groupe in servies
                         if groupe in GROUPES_DE_BASE)
+        # Les points du RCI, du RCO et du NRCO font une seule pension.
+        complementaire = somme_ordonnee(montants[regime] for regime, _, groupe in servies
+                                        if groupe == "rci")
         for regime, date_effet, groupe in servies:
             montant = montants[regime]
             if self.premiere >= PREMIERE_2027 and groupe in GROUPES_DE_BASE:
@@ -588,6 +616,10 @@ class _Calcul:
             elif groupe == "agirc_arrco":
                 decision = self._agirc_arrco(mois, date_effet, montant, annee, total,
                                              integral)
+            elif groupe == "rci":
+                decision = self._complementaire_des_independants(
+                    mois, date_effet, montant, montant / complementaire, annee, integral,
+                    servies, montants, base_2027)
             elif groupe in ("complementaires", "autres"):
                 decision = (LIBRE, "", "non_lue", 0.0, None)
             elif not self._concerne(regime, groupe):
@@ -692,6 +724,63 @@ class _Calcul:
         du_groupe = somme_ordonnee(montants[code] for code, _, g in servies if self._concerne(code, g))
         part = montant / du_groupe if du_groupe > 0 else 0.0
         return REDUITE, regle, "depassement", depassement * part, seuil
+
+    def _complementaire_des_independants(self, mois: DateMois, date_effet: DateMois,
+                                         montant: float, part: float, annee: _Annee,
+                                         integral: bool, servies, montants: dict,
+                                         base_2027: float) -> tuple:
+        """La complémentaire de l'artisan et du commerçant, que leurs
+        règlements soumettent aux règles de cumul de la pension de base ;
+        ``part`` est celle de ses points du RCI, du RCO ou du NRCO dans la
+        pension qu'ils font ensemble.
+
+        * Avant 2009, la règle n'est pas lue : le modèle la sert entière.
+        * Depuis 2009, « Lorsque l'assuré est soumis à une suspension dans le
+          régime de base en application des alinéas 2 et 3 de l'article
+          L. 634-6 [...], le service de la pension de vieillesse complémentaire
+          est suspendu pour la même durée », et l'assuré a droit à son « service
+          intégral » en cumul intégral (règlements du RCO et du NRCO de 2009,
+          articles 23, II, et 10 ; du RCI, article 27, jusqu'au 25 juin 2024) :
+          la base que le dépassement ne fait que réduire, depuis 2017, ne la
+          touche pas.
+        * Depuis, « Les dispositions de la section 3 du chapitre 4 du titre III
+          du livre VI du code de la sécurité sociale sont applicables au service
+          de la pension » (article 27, arrêté du 19 juin 2024) : réduite du
+          dépassement entier, comme la base, ou suspendue avec elle.
+        * Pour la première pension de 2027, L. 161-22, que l'article 27 lui
+          applique depuis le 1er janvier 2027 : avant l'âge légal, la réduction
+          de tout le revenu « est appliquée, par priorité, sur les pensions
+          versées par les régimes de retraite de base » ; la complémentaire perd
+          ce que la base n'absorbe pas.
+
+        Hors de la première pension de 2027, seule l'activité de l'artisan ou
+        du commerçant la touche : l'article 27 vise « les activités relevant
+        des régimes des professions artisanales, industrielles et
+        commerciales », L. 634-6 l'activité indépendante.
+        """
+        if self.premiere >= PREMIERE_2027:
+            statut, _, motif, reduction, plafond = self._regle_2027(
+                mois, date_effet, "independants", montant, annee, base_2027)
+            if statut != REDUITE:
+                return statut, RCI_2027, motif, reduction, plafond
+            reste = annee.revenu * assiette_csg(mois.annee) - base_2027
+            if reste <= 0:
+                return PLAFONNEE, RCI_2027, "imputee_sur_la_base", 0.0, None
+            return REDUITE, RCI_2027, motif, reste * part, None
+        if mois < COMPLEMENTAIRES_2009:
+            return LIBRE, RCI_AVANT_2009, "non_lue", 0.0, None
+        if self.groupe != "independants":
+            return LIBRE, "", "autre_regime", 0.0, None
+        statut, _, motif, _, seuil = self._non_salarie(
+            mois, date_effet, "independants", montant, annee, integral, servies, montants)
+        regle = RCI_2009 if mois < SECTION_3_RCI else RCI_2024
+        if statut == SUSPENDUE:
+            return SUSPENDUE, regle, motif, montant, seuil
+        if statut != REDUITE:
+            return statut, regle, motif, 0.0, seuil
+        if regle == RCI_2009:
+            return PLAFONNEE, regle, "base_reduite", 0.0, seuil
+        return REDUITE, regle, motif, (annee.revenu - seuil) * part, seuil
 
     def _fonctionnaire(self, mois: DateMois, regime: str, date_effet: DateMois,
                        montant: float, annee: _Annee, integral: bool) -> tuple:

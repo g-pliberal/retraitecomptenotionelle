@@ -858,6 +858,26 @@ def _cas() -> list[dict]:
         "naissance": "1968", "debut": "17", "liquidation": "60",
         "emploi_retraite": "2029-02", "emploi_retraite_fin": "2032-02",
     }))
+    # La complémentaire de l'artisan et du commerçant, qui suit leur base
+    # (fiche cumul_emploi_retraite_complementaire_des_independants ; action
+    # 138, étape 12) : suspendue avec elle pour une première pension de 2013 ;
+    # servie entière quand la base n'est que réduite, puis, depuis juillet
+    # 2024, réduite du dépassement comme elle ; pour la première pension de
+    # 2028, réduite de ce que la base n'absorbe pas.
+    cas.append(("cumul_commercant_suspendu_2013", {
+        "naissance": "1952", "statut": "commercant", "debut": "26", "liquidation": "61",
+        "emploi_retraite": "2013-08", "emploi_retraite_fin": "2015-02",
+    }))
+    cas.append(("cumul_artisan_2024", {
+        "naissance": "1960", "statut": "artisan", "debut": "26", "liquidation": "62.25",
+        "emploi_retraite": "2022-08", "emploi_retraite_fin": "2025-02",
+        "emploi_retraite_salaire": "0.6",
+    }))
+    cas.append(("cumul_artisan_carriere_longue_2028", {
+        "naissance": "1968", "statut": "artisan", "debut": "17", "liquidation": "60",
+        "emploi_retraite": "2029-02", "emploi_retraite_fin": "2032-02",
+        "emploi_retraite_salaire": "0.6",
+    }))
     # LES DROITS DE L'ACTIVITÉ APRÈS LE DÉPART (droit/seconde.py) : la nouvelle
     # pension et la seconde retraite de l'Agirc-Arrco en cumul intégral depuis
     # 2023, écrêtée à 5 % du plafond au-delà ; celle d'une première pension de

@@ -27,6 +27,8 @@ import { appels } from "../../moteur/js/droit/liquidation.js";
 import { moyenneSelonLaRegle, salaireDeReference } from "../../moteur/js/droit/liquider.js";
 import * as ouvrir from "../../moteur/js/droit/ouvrir.js";
 import * as limiteAge from "../../moteur/js/droit/limite_age.js";
+import * as leCumul from "../../moteur/js/droit/cumul.js";
+import { DateMois } from "../../moteur/js/calendrier.js";
 import { acquerir } from "../../moteur/js/droit/acquerir.js";
 import { compter } from "../../moteur/js/droit/compter.js";
 import { coordonner } from "../../moteur/js/droit/coordonner.js";
@@ -899,6 +901,89 @@ test("l'indépendant en cumul : l'assiette minimale, et la seconde retraite du R
   const sienne = micro.pensions.get("rci");
   proche(sienne.points, micro.revenus.get(2025) / 0.29 * 0.123 * 0.165 / 21.532);
   proche(sienne.montant, sienne.points * 1.335);
+});
+
+/**
+ * La complémentaire de l'artisan et du commerçant en cumul plafonné : le RCI,
+ * et les points du RCO et du NRCO qu'il sert, suspendus avec la base depuis
+ * 2009 (règlements de 2009 ; du RCI, article 27), réduits du dépassement entier
+ * comme elle depuis juillet 2024 (la section 3 du code), et, pour la première
+ * pension de 2027, de ce que la base n'absorbe pas (L. 161-22). Rejoue les
+ * tests de la complémentaire de l'indépendant (test_emploi_retraite.py).
+ */
+test("la complémentaire de l'indépendant suit le cumul de sa base", () => {
+  const simulateur = new Contexte(paquet).simulateur();
+  const macro = simulateur.macro;
+  const COMPLEMENTAIRES = new Set(["rci", "rco_artisans", "nric"]);
+  const enCumul = (naissance, depart, metier, emploi) => simulateur.echeancier(
+    simulateur.carriereParcours({
+      annee_naissance: naissance, sexe: "F", jour_naissance: 15, age_liquidation: depart,
+      metiers: [{ affiliation: metier, age_debut: emploi.debutDeCarriere ?? 26,
+        niveau_salaire: 1 }],
+      emploi_retraite: { employeur: "autre", affiliation: metier, niveau_salaire: 1,
+        ...emploi.activite },
+    })).auDepart.cumul;
+  const complementaires = (tranche) => tranche.par_regime.filter(
+    (p) => COMPLEMENTAIRES.has(p.regime));
+  const base = (tranche, regime) => tranche.par_regime.find((p) => p.regime === regime);
+  const proche = (obtenu, attendu) => assert.ok(Math.abs(obtenu - attendu) < 1e-9,
+    `${obtenu} contre ${attendu}`);
+  const juillet2024 = new DateMois(2024, 7).rang;
+  // Avant 2009 : servie entière, la règle n'étant pas lue.
+  for (const tranche of enCumul(1942, 60.5, "artisan", { activite: { age: 61, fin: 62.5 } })
+    .tranches) {
+    assert.deepEqual(complementaires(tranche).map((p) => [p.regime, p.statut, p.regle, p.motif]),
+      [["rco_artisans", leCumul.LIBRE, leCumul.RCI_AVANT_2009, "non_lue"]]);
+  }
+  // La première pension de 2013 : suspendue avec la base, RCI et NRCO.
+  for (const tranche of enCumul(1952, 61, "commercant",
+    { activite: { age: 61.5, fin: 63 } }).tranches) {
+    assert.equal(base(tranche, "rsi").statut, leCumul.SUSPENDUE);
+    const servies = complementaires(tranche);
+    assert.deepEqual(servies.map((p) => p.regime).sort(), ["nric", "rci"]);
+    for (const pension of servies) {
+      assert.deepEqual([pension.statut, pension.regle], [leCumul.SUSPENDUE, leCumul.RCI_2009]);
+      proche(pension.reduction, pension.montant);
+    }
+  }
+  // La première pension de 2022, à 60 % du salaire moyen : servie entière
+  // jusqu'en juin 2024, puis réduite du dépassement entier.
+  const plafonne = enCumul(1960, 62.25, "artisan",
+    { activite: { age: 62.5, fin: 65, niveau_salaire: 0.6 } });
+  assert.ok(plafonne.tranches.some((t) => t.debut.rang === juillet2024));
+  for (const tranche of plafonne.tranches) {
+    const servies = complementaires(tranche);
+    const total = servies.reduce((somme, p) => somme + p.montant, 0.0);
+    const depassement = tranche.revenu
+      - macro.plafond_securite_sociale.valeur(tranche.debut.annee) / 2 / 12;
+    assert.ok(depassement > 0 && depassement < total);
+    for (const pension of servies) {
+      if (tranche.debut.rang < juillet2024) {
+        assert.deepEqual([pension.statut, pension.regle, pension.motif, pension.reduction],
+          [leCumul.PLAFONNEE, leCumul.RCI_2009, "base_reduite", 0.0]);
+      } else {
+        assert.deepEqual([pension.statut, pension.regle], [leCumul.REDUITE, leCumul.RCI_2024]);
+        proche(pension.reduction, depassement * pension.montant / total);
+      }
+    }
+  }
+  // La carrière longue de 2028 : ce que la base n'absorbe pas.
+  const longue = enCumul(1968, 60, "artisan",
+    { debutDeCarriere: 17, activite: { age: 61, fin: 64, niveau_salaire: 0.6 } });
+  const reduites = longue.tranches.filter(
+    (t) => base(t, "regime_general").statut === leCumul.REDUITE);
+  assert.ok(reduites.length > 0);
+  for (const tranche of reduites) {
+    const servies = complementaires(tranche);
+    const total = servies.reduce((somme, p) => somme + p.montant, 0.0);
+    const reste = tranche.revenu * leCumul.assietteCsg(tranche.debut.annee)
+      - base(tranche, "regime_general").montant;
+    assert.ok(reste > 0 && reste < total);
+    for (const pension of servies) {
+      assert.deepEqual([pension.statut, pension.regle], [leCumul.REDUITE, leCumul.RCI_2027]);
+      proche(pension.reduction, reste * pension.montant / total);
+    }
+  }
 });
 
 /**

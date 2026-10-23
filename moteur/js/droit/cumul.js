@@ -1,7 +1,8 @@
 /**
  * Le cumul emploi-retraite (docs/architecture.md, § 7.4 ; fiches
- * `cumul_emploi_retraite_et_retraite_progressive` et
- * `cumul_emploi_retraite_fonction_publique`).
+ * `cumul_emploi_retraite_et_retraite_progressive`,
+ * `cumul_emploi_retraite_fonction_publique` et
+ * `cumul_emploi_retraite_complementaire_des_independants`).
  *
  * Jumeau de `src/retraite_notionnelle/droit/cumul.py`, fonction pour
  * fonction. Le retraité qui travaille garde sa pension, entière ou non, selon
@@ -10,10 +11,10 @@
  * dernier employeur de 1983, le plafond du dernier salaire de 2004, le cumul
  * intégral de 2009, la réduction du dépassement des premières pensions de
  * 2015 pour les activités de 2017, les trois régimes selon l'âge de 2027),
- * l'artisan et le commerçant (L. 634-6), le libéral (L. 643-6), le
- * fonctionnaire (L. 84 à L. 86 du code des pensions), l'Agirc-Arrco. Chaque
- * régime ne réduit que ses pensions, pour l'activité qui relève de lui : voir
- * le Python, qui dit les textes.
+ * l'artisan et le commerçant (L. 634-6), et leur complémentaire, qui suit
+ * leur base, le libéral (L. 643-6), le fonctionnaire (L. 84 à L. 86 du code
+ * des pensions), l'Agirc-Arrco. Chaque régime ne réduit que ses pensions,
+ * pour l'activité qui relève de lui : voir le Python, qui dit les textes.
  */
 
 import { DateMois } from "../calendrier.js";
@@ -46,6 +47,10 @@ export const FP_2004 = "tiers_de_la_pension_2004";
 export const FP_2009 = "cumul_integral_2009";
 export const FP_2015 = "tout_employeur_2015";
 export const FP_2027 = "regles_communes_2027";
+export const RCI_AVANT_2009 = "servie_entiere_avant_2009";
+export const RCI_2009 = "suspendue_avec_la_base_2009";
+export const RCI_2024 = "reduite_comme_la_base_2024";
+export const RCI_2027 = "imputee_apres_les_bases_2027";
 
 /** Les dates qui découpent la règle, en rang de mois. */
 const rang = (annee, mois) => new DateMois(annee, mois).rang;
@@ -59,6 +64,10 @@ export const PREMIERE_2015 = rang(2015, 1);
 export const REDUCTION_SALARIES = rang(2017, 4);
 export const REDUCTION_NON_SALARIES = rang(2017, 1);
 export const PREMIERE_2027 = rang(2027, 1);
+/** Les règlements du RCO et du NRCO de 2009, que la caisse applique depuis janvier. */
+export const COMPLEMENTAIRES_2009 = rang(2009, 1);
+/** L'arrêté du 19 juin 2024, en vigueur le 26 : le premier mois entier. */
+export const SECTION_3_RCI = rang(2024, 7);
 
 export const SIX_MOIS = 6;
 export const HEURES_SMIC = 1820;
@@ -80,6 +89,8 @@ export const AGIRC_ARRCO = new Set(["agirc", "agirc_arrco", "agirc_entreprises_n
   "igrante", "ipacte", "regimes_professionnels_integres", "unirs"]);
 export const INDEPENDANTS = new Set(["artisan", "commercant", "micro_entrepreneur",
   "liberal_non_reglemente", "gerant_debit_tabac"]);
+/** Le RCI et les complémentaires qu'il a reprises en 2013, dont il sert les points. */
+export const COMPLEMENTAIRES_DES_INDEPENDANTS = new Set(["rci", "rco_artisans", "nric"]);
 export const ALIGNES = new Set(["regime_general"]);
 /** La limite d'âge de l'emploi quitté, avant 2004, selon son classement. */
 export const LIMITES_D_AGE_1970 = { aucune: 65.0, active: 60.0, super_active: 55.0 };
@@ -120,6 +131,7 @@ export function groupeDeLaPension(moteur, regime) {
   if (FONCTION_PUBLIQUE.has(regime)) return "fonction_publique";
   if (OUTRE_MER.has(regime)) return "outre_mer";
   if (AGIRC_ARRCO.has(regime)) return "agirc_arrco";
+  if (COMPLEMENTAIRES_DES_INDEPENDANTS.has(regime)) return "rci";
   const fiche = moteur.catalogue.obtenir(regime);
   if (!lesDeparts.ETAGES_DES_UNITES.has(fiche.etage)) return "complementaires";
   if (regime === "cnavpl") return "liberaux";
@@ -444,6 +456,9 @@ class Calcul {
     const resultats = [];
     const base2027 = servies.filter(([, , groupe]) => GROUPES_DE_BASE.has(groupe))
       .reduce((somme, [regime]) => somme + montants[regime], 0.0);
+    // Les points du RCI, du RCO et du NRCO font une seule pension.
+    const complementaire = servies.filter(([, , groupe]) => groupe === "rci")
+      .reduce((somme, [regime]) => somme + montants[regime], 0.0);
     for (const [regime, dateEffet, groupe] of servies) {
       const montant = montants[regime];
       let decision;
@@ -453,6 +468,9 @@ class Calcul {
         decision = this.fonctionnaire(mois, regime, dateEffet, montant, annee, integral);
       } else if (groupe === "agirc_arrco") {
         decision = this.agircArrco(mois, dateEffet, montant, annee, total, integral);
+      } else if (groupe === "rci") {
+        decision = this.complementaireDesIndependants(mois, dateEffet, montant,
+          montant / complementaire, annee, integral, servies, montants, base2027);
       } else if (groupe === "complementaires" || groupe === "autres") {
         decision = [LIBRE, "", "non_lue", 0.0, null];
       } else if (!this.concerne(regime, groupe)) {
@@ -541,6 +559,34 @@ class Calcul {
       .reduce((somme, [code]) => somme + montants[code], 0.0);
     const part = duGroupe > 0 ? montant / duGroupe : 0.0;
     return [REDUITE, regle, "depassement", depassement * part, seuil];
+  }
+
+  /**
+   * La complémentaire de l'artisan et du commerçant, qui suit leur base :
+   * suspendue avec elle depuis 2009, réduite comme elle du dépassement entier
+   * depuis juillet 2024, et, pour la première pension de 2027, de ce que la
+   * base n'absorbe pas ; `part` est celle de ses points dans la pension que le
+   * RCI, le RCO et le NRCO font ensemble.
+   */
+  complementaireDesIndependants(mois, dateEffet, montant, part, annee, integral, servies,
+    montants, base2027) {
+    if (this.premiere >= PREMIERE_2027) {
+      const [statut, , motif, reduction, plafond] = this.regle2027(mois, dateEffet,
+        "independants", montant, annee, base2027);
+      if (statut !== REDUITE) return [statut, RCI_2027, motif, reduction, plafond];
+      const reste = annee.revenu * assietteCsg(mois.annee) - base2027;
+      if (reste <= 0) return [PLAFONNEE, RCI_2027, "imputee_sur_la_base", 0.0, null];
+      return [REDUITE, RCI_2027, motif, reste * part, null];
+    }
+    if (mois.rang < COMPLEMENTAIRES_2009) return [LIBRE, RCI_AVANT_2009, "non_lue", 0.0, null];
+    if (this.groupe !== "independants") return [LIBRE, "", "autre_regime", 0.0, null];
+    const [statut, , motif, , seuil] = this.nonSalarie(mois, dateEffet, "independants",
+      montant, annee, integral, servies, montants);
+    const regle = mois.rang < SECTION_3_RCI ? RCI_2009 : RCI_2024;
+    if (statut === SUSPENDUE) return [SUSPENDUE, regle, motif, montant, seuil];
+    if (statut !== REDUITE) return [statut, regle, motif, 0.0, seuil];
+    if (regle === RCI_2009) return [PLAFONNEE, regle, "base_reduite", 0.0, seuil];
+    return [REDUITE, regle, motif, (annee.revenu - seuil) * part, seuil];
   }
 
   fonctionnaire(mois, regime, dateEffet, montant, annee, integral) {

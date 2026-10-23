@@ -1,0 +1,266 @@
+schema_version: 1
+id: cumul_emploi_retraite_complementaire_des_independants
+intitule: >-
+  Cumul emploi-retraite de la complémentaire de l'artisan et du commerçant — le RCI, et
+  les points du RCO des artisans et du NRCO des industriels et commerçants qu'il sert
+  depuis 2013 : son règlement la soumet aux règles de cumul de la pension de base. Depuis
+  2009, elle est suspendue pour la même durée que la base, et servie entière en cumul
+  intégral ; depuis le 26 juin 2024, la section du code qui réduit la base du dépassement
+  s'applique à son service ; pour la première pension de 2027, L. 161-22 la réduit de ce
+  que les pensions de base n'absorbent pas.
+domaine: cumul
+regimes: [rci, rco_artisans, nric]
+etape: echeancier
+face: droit
+etat: approchee
+lit:
+- l'activité exercée après le départ, ses dates, son statut et son revenu
+- ce que la règle de L. 634-6 fait de la pension de base de l'indépendant, le même mois
+- la date de la première pension de base, le taux plein et la liquidation de toutes les
+  pensions
+ecrit:
+- >-
+  la pension complémentaire servie pendant l'activité : entière, réduite du dépassement, ou
+  suspendue
+dates_qui_decident:
+- liquidation.premiere_pension_de_base
+- periode.debut
+versions:
+- id: servie_entiere_avant_2009
+  statut: supposee
+  hypothese: >-
+    avant les règlements de 2009, la règle de service de la complémentaire n'est pas lue :
+    le modèle la sert entière pendant l'activité. La caisse ne la suspendait pas « à la
+    suite des contrôles portant sur les années antérieures à 2009 », et la cessation
+    d'activité que ses règlements exigeaient conditionnait l'ouverture du droit, « La
+    condition de cessation d'activité disparaît des conditions d'ouverture du droit à une
+    retraite complémentaire » en 2009 (circulaire RSI n° 2009-044, § 2.1.1 et 2.5), que le
+    modèle liquide avec la base
+  fiabilite: moyenne
+  bornes:
+    liquidation.premiere_pension_de_base: [null, 2027-01-01]
+    periode.debut: [null, 2009-01-01]
+  contenu:
+    droit: la pension complémentaire liquidée, servie entière pendant l'activité
+    parametres:
+      suit_la_base: false
+  exemples: aucun trouvé
+- id: suspendue_avec_la_base_2009
+  statut: lue
+  textes:
+  - {id: JORFARTI000021059798, article: "règlement du RCO des artisans, article 23, II, approuvé le 7 juillet 2009",
+     publie_le: 2009-09-22}
+  - {id: JORFARTI000021059824, article: "règlement du NRCO des industriels et commerçants, article 10, approuvé le 7 juillet 2009",
+     publie_le: 2009-09-22}
+  - {id: LEGIARTI000054892085, article: "règlement du RCI, article 27", en_vigueur: 2013-01-01}
+  - {id: LEGIARTI000019959660, article: "L. 634-6 CSS : ses alinéas 2 et 3, le seuil et la suspension",
+     en_vigueur: 2008-12-19}
+  - {id: LEGIARTI000028498591, article: "L. 634-6 CSS : la réduction, pour la première pension de 2015",
+     en_vigueur: 2014-01-22}
+  - {id: LEGIARTI000036391441, article: "L. 634-6 CSS", en_vigueur: 2018-01-01}
+  - {id: LEGIARTI000041966556, article: "D. 634-11-2 CSS : le seuil, la moitié du plafond", en_vigueur: 2020-05-25}
+  - {id: LEGIARTI000034306134, article: "D. 634-11-5 CSS : la réduction, pour les activités de 2017",
+     en_vigueur: 2017-04-01}
+  nee_de: JORFARTI000021059798
+  bornes:
+    liquidation.premiere_pension_de_base: [null, 2027-01-01]
+    periode.debut: [2009-01-01, 2024-07-01]
+  contenu:
+    droit: >-
+      « Le service de la pension de vieillesse liquidée au titre du présent régime
+      complémentaire est subordonné à la cessation des activités relevant des régimes des
+      professions artisanales, industrielles et commerciales. Les dispositions de l'alinéa
+      précédent ne font pas obstacle à la poursuite ou à la reprise d'une activité par
+      l'assuré. [...] Lorsque l'assuré est soumis à une suspension dans le régime de base en
+      application des alinéas 2 et 3 de l'article L. 634-6 du code de la sécurité sociale,
+      le service de la pension de vieillesse complémentaire est suspendu pour la même durée.
+      L'assuré peut bénéficier du service intégral de sa pension de vieillesse
+      complémentaire lorsque les conditions visées aux alinéas 4 à 6 de l'article L. 634-6
+      du code de la sécurité sociale sont remplies » (règlement du RCI, article 27, de
+      2013 ; les règlements du RCO et du NRCO, de 2009, le disent mot pour mot). Les
+      alinéas 2 et 3 de L. 634-6 sont ceux de sa rédaction de 2008 : le seuil, et la
+      suspension au-delà. La base que le dépassement réduit sans la suspendre — la première
+      pension de 2015, pour les activités de 2017 — ne la touche pas
+    caisse: >-
+      « Désormais, le travailleur indépendant qui remplit les conditions pour bénéficier
+      de la libéralisation dans le régime de base, bénéficie de facto de la libéralisation
+      dans le régime de retraite complémentaire » ; « il n'est pas nécessaire de calculer le
+      délai de suspension : la durée de suspension retenue dans le régime de base s'applique
+      au RCO ou au NRCO » ; applicables le 23 septembre 2009, ces règles entrent en vigueur
+      « rétroactivement au 1er janvier 2009 », « en accord avec la tutelle » (circulaire
+      RSI n° 2009-044, § 2.1.2, 2.2 et 2.4) ; le RCI les reprend en 2013, « comme dans le
+      régime de base » (circulaire RSI n° 2013-004, § 3.1.3.2)
+    parametres:
+      suit_la_base: suspension
+      cumul_integral: true
+  exemples: aucun trouvé
+- id: reduite_comme_la_base_2024
+  statut: lue
+  textes:
+  - {id: LEGIARTI000054906642, article: "règlement du RCI, article 27, premier alinéa", en_vigueur: 2024-06-26,
+     publie_le: 2024-06-25}
+  - {id: LEGIARTI000054906651, article: "règlement du RCI, article 27", en_vigueur: 2025-01-01}
+  - {id: LEGIARTI000047453664, article: "L. 634-6 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047961809, article: "D. 634-11-2 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000041966552, article: "D. 634-11-5 CSS", en_vigueur: 2020-05-25}
+  nee_de: LEGIARTI000054906642
+  bornes:
+    liquidation.premiere_pension_de_base: [null, 2027-01-01]
+    periode.debut: [2024-07-01, null]
+  contenu:
+    droit: >-
+      « Les dispositions de la section 3 du chapitre 4 du titre III du livre VI du code de
+      la sécurité sociale sont applicables au service de la pension de vieillesse liquidée
+      au titre du présent régime » (article 27, arrêté du 19 juin 2024, en vigueur le
+      26 juin ; les alinéas que l'arrêté ajoute pour 2025 n'ouvrent que les droits
+      nouveaux) : L. 634-6 — « la pension servie par ce régime est réduite à due
+      concurrence du dépassement » — et D. 634-11-5 — « Le montant mensuel net de la
+      pension est réduit du montant moyen mensuel du dépassement », « Lorsque le montant de
+      la réduction est supérieur au montant de la pension, cette dernière n'est pas
+      servie » — valent pour la complémentaire comme pour la base : chacune perd le
+      dépassement entier ; suspendue avec la base que sa rédaction suspend encore, entière
+      en cumul intégral
+    parametres:
+      suit_la_base: suspension_et_reduction
+      reduction: depassement_entier
+      cumul_integral: true
+  exemples: aucun trouvé
+- id: imputee_apres_les_bases_2027
+  statut: lue
+  textes:
+  - {id: LEGIARTI000054908896, article: "règlement du RCI, article 27", en_vigueur: 2027-01-01,
+     publie_le: 2026-09-24}
+  - {id: LEGIARTI000053279730, article: "L. 161-22 CSS", en_vigueur: 2025-12-31}
+  nee_de: LEGIARTI000054908896
+  bornes:
+    liquidation.premiere_pension_de_base: [2027-01-01, null]
+  contenu:
+    droit: >-
+      « Les dispositions des articles L. 161-22 et L. 634-6-1 du code de la sécurité sociale
+      sont applicables au service de la pension de vieillesse liquidée au titre du présent
+      régime » (article 27, arrêté du 21 septembre 2026, en vigueur le 1er janvier 2027) ;
+      L. 161-22 vaut pour la première pension de base prise depuis cette date : « Une
+      pension de vieillesse personnelle servie au titre d'un régime légal ou rendu
+      légalement obligatoire, de base ou complémentaire » est réduite de tout le revenu
+      avant l'âge légal, de la moitié de ce qui dépasse un seuil jusqu'à l'âge du taux plein
+      automatique, entière ensuite ; la réduction « est appliquée, par priorité, sur les
+      pensions versées par les régimes de retraite de base. La somme des réductions imputée
+      sur chaque pension ne peut excéder la réduction » ; la complémentaire perd ce que les
+      pensions de base n'absorbent pas
+    parametres:
+      suit_la_base: l_161_22
+      reduction: apres_les_pensions_de_base
+  exemples: aucun trouvé
+approximations:
+- version: [suspendue_avec_la_base_2009, reduite_comme_la_base_2024, imputee_apres_les_bases_2027]
+  ecart: >-
+    les points du RCI, du RCO et du NRCO, que le modèle sert en trois pensions, font pour la
+    caisse une seule pension : la réduction se répartit entre eux au prorata de leurs
+    montants, et ils sont suspendus ensemble ; le RCO et le NRCO d'avant 2013 suivent leurs
+    règlements de 2009, que le RCI reprend, le modèle ne lisant pas les dispositions qui
+    reprennent leurs pensions
+  effet: non mesuré
+- version: [reduite_comme_la_base_2024]
+  ecart: >-
+    la rédaction de 2024 vaut du 26 juin : le modèle, qui compte par mois, l'applique
+    depuis juillet. Chaque pension perd le dépassement entier, la base et la
+    complémentaire, comme L. 634-6 et D. 634-11-5 le disent de « la pension servie par ce
+    régime » ; aucune instruction ni aucun exemple de la caisse ne dit si elle l'impute
+    plutôt une fois, réparti ou d'abord sur la base. Depuis 2027, l'article 27 renvoie à
+    L. 161-22, que sa rédaction de 2027 réserve aux premières pensions de cette date : le
+    modèle garde, pour les premières pensions d'avant, la règle de 2024
+  effet: non mesuré
+- version: [imputee_apres_les_bases_2027]
+  ecart: >-
+    le décret qui impute la réduction « à chaque pension en fonction des montants des
+    pensions versées par chaque régime » n'a pas paru : la base absorbe la réduction au
+    prorata de ses pensions, la complémentaire ce qui reste ; de l'âge légal à l'âge du
+    taux plein automatique, le seuil n'étant pas publié, elle est servie entière, comme la
+    base, et la page le dit
+  effet: non mesuré
+- version: [suspendue_avec_la_base_2009, reduite_comme_la_base_2024]
+  ecart: >-
+    la transmission d'entreprise, dans laquelle le cédant cumule six mois sa pension et
+    une activité rémunérée (L. 634-6-1, que la section 3 comprend), n'est pas modélisée,
+    pas plus que pour la base
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-23
+  prochaine_relecture: 2027-04-30
+  a_relire:
+  - >-
+    Ouverte le 23 octobre 2026 (action 138, étape 12). La caisse n'a publié, à la base de
+    législation de l'Assurance retraite, ni instruction ni exemple du cumul plafonné du
+    RCI depuis l'arrêté du 19 juin 2024 : en chercher un — circulaire de la Cnav, ou
+    page de la Sécurité sociale des indépendants, que le réseau de la session refuse —
+    qui dise si la complémentaire perd le dépassement entier, ou une part.
+  - >-
+    Avant 2009 : lire les règlements du RCO (1978) et du NRCO (2003) et la circulaire RSI
+    n° 2007-109, pour dire si la complémentaire liquidée était suspendue pendant une
+    activité reprise ; la version servie_entiere_avant_2009 est supposée.
+  - >-
+    Lire la disposition du règlement du RCI qui reprend en 2013 les pensions du RCO et du
+    NRCO, pour dater la règle qu'elles suivent depuis.
+  lectures:
+  - type: legifrance
+    reference: >-
+      règlement du RCI (arrêté du 9 février 2012), article 27 : LEGIARTI000054892085 (2013
+      au 25 juin 2024), LEGIARTI000054906642 (26 juin au 31 décembre 2024),
+      LEGIARTI000054906651 (2025 et 2026), LEGIARTI000054908896 (depuis 2027) ; L. 634-6
+      (LEGIARTI000019959660, LEGIARTI000028498591, LEGIARTI000036391441,
+      LEGIARTI000047453664) ; D. 634-11-2 (LEGIARTI000041966556, LEGIARTI000047961809) ;
+      D. 634-11-5 (LEGIARTI000034306134, LEGIARTI000041966552) ; L. 161-22
+      (LEGIARTI000053279730), dans l'index LEGI à jour au 22 octobre 2026
+    date: 2027-01-01
+  - type: jorf
+    reference: >-
+      arrêtés du 7 juillet 2009 portant approbation des modifications des règlements du
+      régime complémentaire obligatoire des professions artisanales (JORFARTI000021059798,
+      article 23, II) et des professions industrielles et commerciales
+      (JORFARTI000021059824, article 10), au Journal officiel du 22 septembre 2009 ; ceux
+      du 19 juin 2024 (JORFTEXT000049776019, publié le 25 juin) et du 21 septembre 2026
+      (JORFTEXT000054888294, publié le 24 septembre)
+    date: 2026-09-24
+  - type: circulaire_cnav
+    reference: >-
+      circulaires RSI n° 2009-044 du 15 octobre 2009 (§ 2, les règles de cumul des
+      régimes complémentaires obligatoires, et leur entrée en vigueur) et n° 2013-004 du
+      17 janvier 2013 (§ 3.1.3, les conditions de service de la pension du RCI) ; exposé
+      « Retraite personnelle complémentaire » (« Les règles du cumul emploi-retraite du
+      régime de base des travailleurs indépendants s'appliquent au régime
+      complémentaire »), lus par l'API de la base de législation de l'Assurance retraite
+      le 23 octobre 2026
+    url: https://legislation.lassuranceretraite.fr/
+    date: 2026-03-06
+code:
+  python: >-
+    droit/cumul.py : _Calcul._complementaire_des_independants, _Calcul._non_salarie,
+    _Calcul._regle_2027, groupe_de_la_pension, COMPLEMENTAIRES_DES_INDEPENDANTS,
+    COMPLEMENTAIRES_2009, SECTION_3_RCI, RCI_AVANT_2009, RCI_2009, RCI_2024, RCI_2027 ;
+    echeancier.py : Echeancier._cumuler
+  javascript: >-
+    moteur/js/droit/cumul.js : complementaireDesIndependants, nonSalarie, regle2027,
+    groupeDeLaPension, COMPLEMENTAIRES_DES_INDEPENDANTS, COMPLEMENTAIRES_2009,
+    SECTION_3_RCI, RCI_AVANT_2009, RCI_2009, RCI_2024, RCI_2027 ; moteur/js/echeancier.js :
+    Echeancier._cumuler
+  parametres: >-
+    contenu.parametres de chaque version : suit_la_base, cumul_integral, reduction
+  tests: >-
+    tests/test_emploi_retraite.py, tests/js/moteur.test.js ; les témoins cumul_artisan,
+    cumul_artisan_2024, cumul_commercant_suspendu_2013 et cumul_artisan_carriere_longue_2028
+  moteur: >-
+    La complémentaire lit la décision de L. 634-6 sur sa propre pension, que la règle de
+    la base rend, et n'en garde que le statut ; les constantes des deux moteurs redisent
+    les versions.
+historique:
+- >-
+  2026-10-23 — née de la fiche cumul_emploi_retraite_et_retraite_progressive, qui servait
+  la complémentaire des indépendants entière faute d'en avoir lu la règle, et calculée
+  dans les deux moteurs (action 138, étape 12).
+effet: >-
+  L'artisan ou le commerçant qui travaille avant le taux plein : sa complémentaire, que le
+  modèle servait entière, est suspendue avec sa base quand sa première pension date d'avant
+  2015 ; depuis juillet 2024, elle perd elle aussi le dépassement de la moitié du plafond.
+  L'artisane partie en 2022 qui déclare 60 % du salaire moyen d'août 2022 à janvier 2025
+  perd, depuis juillet 2024, le dépassement sur sa complémentaire aussi : 112,85 € par mois
+  en 2024, sur 428,12 €, en plus des 112,85 € de sa base (témoin cumul_artisan_2024).

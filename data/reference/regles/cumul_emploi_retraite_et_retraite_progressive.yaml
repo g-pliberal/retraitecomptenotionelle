@@ -6,7 +6,8 @@ intitule: >-
   plafonné ; depuis les pensions de 2027, trois régimes selon l'âge. La retraite
   progressive, qui n'y est pas soumise, et la seconde pension ont leurs fiches
   (retraite_progressive, seconde_pension) ; le fonctionnaire, la sienne
-  (cumul_emploi_retraite_fonction_publique).
+  (cumul_emploi_retraite_fonction_publique), comme la complémentaire de l'artisan et du
+  commerçant (cumul_emploi_retraite_complementaire_des_independants).
 domaine: cumul
 regimes: [regime_general, msa_salaries, msa_non_salaries, cancava, organic, rsi, cnavpl,
   crpcen, ieg, mines, marins, opera_de_paris, comedie_francaise, banque_de_france, ratp,
@@ -273,8 +274,9 @@ approximations:
     l'Agirc-Arrco suit sa règle d'aujourd'hui depuis 2009, et celle du régime de base
     avant, qu'aucun accord lu ne confirme ; sa règle des pensions de 2027, que son site
     annonce, n'est pas publiée, et le modèle lui prête le cumul entier du régime de
-    base, à l'âge du taux plein automatique. Les autres complémentaires — Ircantec, RCI, MSA,
-    sections libérales — et les régimes dont la règle n'est pas lue — avocats
+    base, à l'âge du taux plein automatique. Celle des indépendants a sa fiche
+    (cumul_emploi_retraite_complementaire_des_independants). Les autres complémentaires —
+    Ircantec, MSA, sections libérales — et les régimes dont la règle n'est pas lue — avocats
     (L. 723-11-1), exploitants agricoles (L. 732-39), outre-mer, élus — servent leur
     pension entière, et le résultat le dit
   effet: non mesuré
@@ -293,9 +295,9 @@ sources:
     ses décrets (D. 161-2-5 à D. 161-2-18, dans leurs rédactions de 2004, 2010, 2015
     et 2017) et les règles des indépendants et des libéraux depuis 1985. Restent à
     lire : les rédactions de L. 161-22 de 1988 à 1993, les règles des avocats
-    (L. 723-11-1) et des exploitants agricoles (L. 732-39), celles de l'Ircantec, de
-    la RCI et des sections libérales, les accords de l'Agirc-Arrco d'avant 2019, et le
-    décret qui fixera le seuil de 2027.
+    (L. 723-11-1) et des exploitants agricoles (L. 732-39), celles de l'Ircantec et
+    des sections libérales — celle du RCI, lue le 23 octobre 2026, a sa fiche —, les
+    accords de l'Agirc-Arrco d'avant 2019, et le décret qui fixera le seuil de 2027.
   - >-
     Avant 2004, la rupture ne vise que « l'employeur » : la reprise chez un autre
     employeur est-elle libre de tout plafond ? Aucune circulaire lue ne le dit ; le

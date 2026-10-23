@@ -267,6 +267,163 @@ def test_chaque_regime_ne_reduit_que_ses_pensions(simulateur):
         assert base.reduction == pytest.approx(min(base.montant, tranche.revenu - seuil))
 
 
+#: La pension complémentaire de l'artisan et du commerçant : le RCI, et les
+#: points du RCO des artisans et du NRCO des commerçants, qu'il sert depuis
+#: 2013 (fiche ``cumul_emploi_retraite_complementaire_des_independants``).
+COMPLEMENTAIRES_DES_INDEPENDANTS = ("rci", "rco_artisans", "nric")
+
+
+def _complementaires(tranche):
+    return [p for p in tranche.par_regime if p.regime in COMPLEMENTAIRES_DES_INDEPENDANTS]
+
+
+@pytest.mark.parametrize("naissance, depart, metier, base, complementaires", [
+    (1949, 60.5, "artisan", "rsi", {"rco_artisans"}),
+    (1952, 61.0, "artisan", "rsi", {"rci", "rco_artisans"}),
+    (1952, 61.0, "commercant", "rsi", {"rci", "nric"}),
+])
+def test_la_complementaire_de_l_independant_est_suspendue_avec_sa_base(
+        simulateur, naissance, depart, metier, base, complementaires):
+    """Première pension d'avant 2015 : au-delà de la moitié du plafond de la
+    sécurité sociale, la pension de base est suspendue (L. 634-6 de 2008), et
+    « le service de la pension de vieillesse complémentaire est suspendu pour
+    la même durée » — règlements du RCO et du NRCO de 2009, articles 23, II,
+    et 10, que la caisse applique depuis le 1er janvier 2009, puis du RCI,
+    article 27, de 2013 : rien n'est servi, ni du RCI, ni des points qu'il a
+    repris."""
+    resultat, _ = _cumul(simulateur, naissance, depart,
+                         _emploi(depart + 0.5, depart + 2, affiliation=metier),
+                         [Metier(metier, 26.0)])
+    assert resultat.tranches
+    for tranche in resultat.tranches:
+        assert _pension(tranche, base).statut == cumul.SUSPENDUE
+        servies = _complementaires(tranche)
+        assert {p.regime for p in servies} == complementaires
+        for pension in servies:
+            assert (pension.statut, pension.regle, pension.motif) == (
+                cumul.SUSPENDUE, cumul.RCI_2009, "depassement")
+            assert pension.reduction == pytest.approx(pension.montant)
+            assert pension.plafond == pytest.approx(_pension(tranche, base).plafond)
+
+
+def test_avant_2009_la_complementaire_de_l_independant_est_servie_entiere(simulateur):
+    """Avant les règlements de 2009, la règle de service de la complémentaire
+    n'est pas lue : le modèle la sert entière, et le dit par sa version
+    supposée."""
+    resultat, _ = _cumul(simulateur, 1942, 60.5, _emploi(61, 62.5, affiliation="artisan"),
+                         [Metier("artisan", 26.0)])
+    assert {t.debut.annee for t in resultat.tranches} <= set(range(2003, 2009))
+    assert {(p.regime, p.statut, p.regle, p.motif, p.reduction)
+            for t in resultat.tranches for p in _complementaires(t)} == {
+        ("rco_artisans", cumul.LIBRE, cumul.RCI_AVANT_2009, "non_lue", 0.0)}
+
+
+def test_la_complementaire_n_est_reduite_comme_sa_base_que_depuis_juillet_2024(simulateur):
+    """Première pension de 2022, artisane à 60 % du salaire moyen d'août 2022 à
+    janvier 2025 : sa pension de base perd le dépassement de la moitié du
+    plafond (D. 634-11-2, D. 634-11-5). Jusqu'en juin 2024, l'article 27 ne
+    suspend la complémentaire qu'avec la base, que rien ne suspend plus : elle
+    est servie entière. L'arrêté du 19 juin 2024 rend « applicables au service
+    de la pension » du RCI « les dispositions de la section 3 » du code, en
+    vigueur le 26 juin : depuis juillet, elle perd elle aussi le dépassement
+    entier, réparti entre ses points du RCI et du RCO."""
+    resultat, _ = _cumul(simulateur, 1960, 62.25,
+                         _emploi(62.5, 65, affiliation="artisan", niveau=0.6),
+                         [Metier("artisan", 26.0)])
+    juillet = DateMois(2024, 7)
+    assert {t.debut < juillet for t in resultat.tranches} == {True, False}
+    assert juillet in {t.debut for t in resultat.tranches}
+    for tranche in resultat.tranches:
+        seuil = simulateur.macro.plafond_securite_sociale(tranche.debut.annee) / 2 / 12
+        depassement = tranche.revenu - seuil
+        assert _pension(tranche, "regime_general").statut == cumul.REDUITE
+        servies = _complementaires(tranche)
+        assert {p.regime for p in servies} == {"rci", "rco_artisans"}
+        total = sum(p.montant for p in servies)
+        assert 0 < depassement < total
+        if tranche.debut < juillet:
+            assert {(p.statut, p.regle, p.motif, p.reduction) for p in servies} == {
+                (cumul.PLAFONNEE, cumul.RCI_2009, "base_reduite", 0.0)}
+            continue
+        for pension in servies:
+            assert (pension.statut, pension.regle, pension.motif) == (
+                cumul.REDUITE, cumul.RCI_2024, "depassement")
+            assert pension.plafond == pytest.approx(seuil)
+            assert pension.reduction == pytest.approx(depassement * pension.montant / total)
+
+
+def test_en_cumul_integral_la_complementaire_de_l_independant_est_entiere(simulateur):
+    """L'artisane partie en 2022 avec la durée requise, toutes ses pensions
+    liquidées : « L'assuré peut bénéficier du service intégral de sa pension
+    de vieillesse complémentaire lorsque les conditions [du cumul intégral]
+    sont remplies » (article 27)."""
+    resultat, _ = _cumul(simulateur, 1960, 62.25, _emploi(62.5, 64, affiliation="artisan"),
+                         [Metier("artisan", 20.0)])
+    assert {(p.statut, p.regle) for t in resultat.tranches for p in _complementaires(t)} == {
+        (cumul.INTEGRAL, cumul.RCI_2009)}
+
+
+def test_l_activite_salariee_laisse_la_complementaire_de_l_independant_entiere(simulateur):
+    """L'ancienne artisane salariée après son départ : l'article 27 ne vise que
+    « les activités relevant des régimes des professions artisanales,
+    industrielles et commerciales », la section 3 que l'activité indépendante
+    (L. 634-6) ; sa complémentaire est servie entière, avant comme après juin
+    2024."""
+    resultat, _ = _cumul(simulateur, 1960, 62.25, _emploi(62.5, 65),
+                         [Metier("artisan", 26.0)])
+    assert {(p.statut, p.motif) for t in resultat.tranches for p in _complementaires(t)} == {
+        (cumul.LIBRE, "autre_regime")}
+    assert any(t.debut >= DateMois(2024, 7) for t in resultat.tranches)
+
+
+def test_la_premiere_pension_de_2027_reduit_la_complementaire_apres_la_base(simulateur):
+    """Carrière longue d'artisane, partie en 2028, à 60 % du salaire moyen :
+    avant l'âge légal, la réduction de tout le revenu « est appliquée, par
+    priorité, sur les pensions versées par les régimes de retraite de base »
+    (L. 161-22, III, A, de 2027), auquel le règlement du RCI soumet sa pension
+    depuis le 1er janvier 2027 : la complémentaire ne perd que ce que la base
+    n'absorbe pas, au prorata de ses points ; passé l'âge légal, le seuil
+    n'étant pas publié, elle est servie entière, comme la base."""
+    resultat, _ = _cumul(simulateur, 1968, 60.0,
+                         _emploi(61, 64, affiliation="artisan", niveau=0.6),
+                         [Metier("artisan", 17.0)])
+    avant = [t for t in resultat.tranches
+             if _pension(t, "regime_general").statut == cumul.REDUITE]
+    assert avant and len(avant) < len(resultat.tranches)
+    for tranche in resultat.tranches:
+        servies = _complementaires(tranche)
+        assert {p.regle for p in servies} == {cumul.RCI_2027}
+        if tranche not in avant:
+            assert {p.statut for p in servies} == {cumul.SEUIL_NON_PUBLIE}
+            continue
+        base = _pension(tranche, "regime_general")
+        revenu = tranche.revenu * cumul.assiette_csg(tranche.debut.annee)
+        total = sum(p.montant for p in servies)
+        reste = revenu - base.montant
+        assert base.reduction == pytest.approx(base.montant)
+        assert 0 < reste < total
+        for pension in servies:
+            assert (pension.statut, pension.motif) == (cumul.REDUITE, "avant_l_age_legal")
+            assert pension.reduction == pytest.approx(reste * pension.montant / total)
+
+
+def test_la_premiere_pension_de_2027_reduit_d_abord_la_base(simulateur):
+    """La même, à 40 % du salaire moyen : son revenu n'épuise pas sa pension de
+    base, qui absorbe toute la réduction ; la complémentaire est servie
+    entière."""
+    resultat, _ = _cumul(simulateur, 1968, 60.0,
+                         _emploi(61, 64, affiliation="artisan", niveau=0.4),
+                         [Metier("artisan", 17.0)])
+    avant = [t for t in resultat.tranches
+             if _pension(t, "regime_general").statut == cumul.REDUITE]
+    assert avant
+    for tranche in avant:
+        assert _pension(tranche, "regime_general").reduction < _pension(
+            tranche, "regime_general").montant
+        assert {(p.statut, p.regle, p.motif, p.reduction) for p in _complementaires(tranche)} == {
+            (cumul.PLAFONNEE, cumul.RCI_2027, "imputee_sur_la_base", 0.0)}
+
+
 def test_la_premiere_pension_de_2027_est_reduite_de_tout_le_revenu_avant_l_age_legal(
         simulateur):
     """Carrière longue partie en 2028 : avant l'âge légal, la pension est réduite de
@@ -300,20 +457,22 @@ def test_le_journal_sert_la_pension_reduite_pendant_l_activite(simulateur):
 
 
 def test_les_regles_du_cumul_sont_des_versions_des_fiches(simulateur):
-    """Chaque règle que le cumul cite est une version d'une des deux fiches."""
+    """Chaque règle que le cumul cite est une version d'une des trois fiches."""
     from retraite_notionnelle.noyau import carte
 
     toutes = carte.fiches()
     versions = set()
     for fiche in ("cumul_emploi_retraite_et_retraite_progressive",
-                  "cumul_emploi_retraite_fonction_publique"):
+                  "cumul_emploi_retraite_fonction_publique",
+                  "cumul_emploi_retraite_complementaire_des_independants"):
         versions |= {v["id"] for v in toutes[fiche]["versions"]}
     citees = {valeur for nom, valeur in vars(cumul).items()
               if nom.isupper() and isinstance(valeur, str) and "_" in valeur
               and nom in ("AVANT_1983", "RUPTURE_1983", "PLAFOND_2004", "LIBERALISE_2009",
                           "PREMIERES_2015", "REDUCTION_2015", "AGES_2027", "FP_1970",
-                          "FP_2004", "FP_2009", "FP_2015", "FP_2027")}
-    assert len(citees) == 12
+                          "FP_2004", "FP_2009", "FP_2015", "FP_2027", "RCI_AVANT_2009",
+                          "RCI_2009", "RCI_2024", "RCI_2027")}
+    assert len(citees) == 16
     assert citees <= versions, citees - versions
 
 
