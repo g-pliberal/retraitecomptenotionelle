@@ -733,22 +733,25 @@ textes_sans_effet:
     l'article L. 634-2 » ; la réversion, et non le minimum
 code:
   python: >-
-    scenarios/actuel.py : MinimumContributif (valeurs, pension_minimum, regle) ;
-    droit/completer.py : completer, plancher_national, plancher_d_avant_1983,
-    complement_des_alignes, borne_avec_les_droits_d_avant_1973,
-    avpf_retenue, limiter_le_cumul, complement_minimum ;
-    droit/liquider.py : EligibleMinimum (duree_tous_regimes, cotisee_tous_regimes,
-    porte_avpf, bornee_avec, bornee_au_minimum_entier), regimes_qui_bornent_le_minimum
+    scenarios/actuel.py : MinimumContributif.valeurs,
+    MinimumContributif.pension_minimum, MinimumContributif.regle ; droit/completer.py :
+    completer, plancher_national, plancher_d_avant_1983, complement_des_alignes,
+    borne_avec_les_droits_d_avant_1973, avpf_retenue, limiter_le_cumul,
+    complement_minimum ; droit/liquider.py : EligibleMinimum,
+    regimes_qui_bornent_le_minimum
   javascript: >-
-    moteur/js/regimes.js : MinimumContributif ; moteur/js/droit/completer.js :
-    completer, plancherNational, plancherDAvant1983, complementDesAlignes,
-    borneAvecLesDroitsDAvant1973, avpfRetenue, limiterLeCumul ;
-    moteur/js/droit/liquider.js : regimesQuiBornentLeMinimum
+    moteur/js/regimes.js : MinimumContributif.valeurs,
+    MinimumContributif.pensionMinimum, MinimumContributif.regle ;
+    moteur/js/droit/completer.js : completer, plancherDAvant1983, complementDesAlignes,
+    borneAvecLesDroitsDAvant1973, avpfRetenue, limiterLeCumul, complementMinimum ;
+    moteur/js/droit/liquider.js : liquiderChaqueRegime, regimesQuiBornentLeMinimum
   parametres: >-
-    contenu.parametres de chaque version ; data/reference/legislation/minimum_contributif.csv,
-    data/reference/legislation/pension_minimum_avant_1983.csv ; les champs de période
-    pension_bornee_au_minimum_avec (depuis 1990) et pension_bornee_au_minimum_entier_avec
-    (de 1983 à 1989) de la CANCAVA, de l'ORGANIC et du RSI
+    contenu.parametres de chaque version : existe, majoration, seuil_trimestres_cotises,
+    plafond_avpf, ecretement, cumul_des_minima, duree_tous_regimes, pension_minimum,
+    fiabilite ; legislation/minimum_contributif.csv ;
+    legislation/pension_minimum_avant_1983.csv ; regimes/cancava.yaml,
+    regimes/organic.yaml, regimes/rsi.yaml : pension_bornee_au_minimum_avec,
+    pension_bornee_au_minimum_entier_avec
   tests: >-
     tests/test_simulateur.py et tests/js/moteur.test.js : les exemples des circulaires
     2005/30 et 2009/17 rejoués dans les deux moteurs ; tests/test_pension_minimum_avant_1983.py :
@@ -757,6 +760,17 @@ code:
     test_les_annees_d_avant_1973_bornent_le_minimum_des_independants : la borne de D. 634-6
     et du décret n° 73-937, de 1987 à 2022, dans les deux moteurs, et
     test_sans_annees_d_avant_1973_la_borne_ne_joue_pas : sans elles, aucune
+  moteur: >-
+    MinimumContributif lit les montants (valeurs, pension_minimum) et la règle de la
+    date d'effet (regle). EligibleMinimum porte ce que le minimum lit de chaque
+    pension : la durée tous régimes, ses trimestres cotisés, l'AVPF, les régimes avec
+    lesquels il se borne, la borne au minimum entier (duree_tous_regimes,
+    cotisee_tous_regimes, porte_avpf, bornee_avec, bornee_au_minimum_entier) ; le
+    portage, sans la classe, en bâtit l'objet dans liquiderChaqueRegime. Le plancher
+    national est une fonction locale de completer (plancherNational, au portage). Les
+    périodes de la CANCAVA, de l'ORGANIC et du RSI portent
+    pension_bornee_au_minimum_avec (depuis 1990), celles de la CANCAVA et de l'ORGANIC
+    pension_bornee_au_minimum_entier_avec (de 1983 à 1989).
 historique:
 - >-
   2026-09-23 — la surcote ajoutée au minimum depuis avril 2009, et non le minimum

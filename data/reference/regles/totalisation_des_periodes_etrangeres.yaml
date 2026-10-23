@@ -389,24 +389,35 @@ sources:
     date: 2026-10-19
 code:
   python: >-
-    droit/etranger.py : coordonner_les_periodes, compter_les_periodes, famille_du_regime,
-    famille_des_regimes, trimestres_etrangers ; droit/coordonner.py : coordonner
-    (Coordination.etranger) ; droit/compter.py : compter (Durees.etranger,
-    Durees.pour_le_taux) ; droit/liquider.py : liquider_chaque_regime ; droit/ouvrir.py :
-    ouvrir, age_carriere_longue ; droit/departs.py : _carriere_longue_acquise ;
-    scenarios/actuel.py : CarrieresHorsDeFrance, CarriereLongue, ResultatActuel
+    droit/etranger.py : coordonner_les_periodes, compter_les_periodes,
+    famille_du_regime, famille_des_regimes, trimestres_etrangers ; droit/coordonner.py :
+    coordonner, Coordination ; droit/compter.py : compter, Durees.pour_le_taux ;
+    droit/liquider.py : liquider_chaque_regime ; droit/ouvrir.py : ouvrir,
+    age_carriere_longue ; droit/departs.py : _carriere_longue_acquise ;
+    scenarios/actuel.py : CarrieresHorsDeFrance, CarriereLongue, ResultatActuel,
+    resultat_actuel, resultat_des_departs
   javascript: >-
-    moteur/js/droit/etranger.js, et les jumeaux de chacune : moteur/js/droit/coordonner.js,
-    compter.js, liquider.js, ouvrir.js, departs.js ; moteur/js/regimes.js :
-    CarrieresHorsDeFrance, CarriereLongue ; moteur/js/scenario-actuel.js
+    moteur/js/droit/etranger.js : coordonnerLesPeriodes, compterLesPeriodes,
+    familleDuRegime, familleDesRegimes, trimestresEtrangers ;
+    moteur/js/droit/coordonner.js : coordonner, Coordination ;
+    moteur/js/droit/compter.js : compter, Durees.pourLeTaux ;
+    moteur/js/droit/liquider.js : liquiderChaqueRegime ; moteur/js/droit/ouvrir.js :
+    ouvrir, ageCarriereLongue ; moteur/js/droit/departs.js : carriereLongueAcquise ;
+    moteur/js/regimes.js : CarrieresHorsDeFrance, CarriereLongue ;
+    moteur/js/scenario-actuel.js : resultatActuel, resultatDesDeparts
   parametres: >-
     contenu.parametres de chaque version : compte_pour_le_taux,
     trimestres_par_annee_au_plus, mois_par_trimestre, equivalentes_avant,
     equivalentes_trimestres_francais_au_moins, fonctionnaires_depuis,
     organisations_internationales, jours_par_trimestre_organisations_internationales ;
-    data/reference/legislation/accords_internationaux.yaml
+    legislation/accords_internationaux.yaml
   tests: >-
     tests/test_etranger.py, dans les deux moteurs
+  moteur: >-
+    La coordination porte les périodes à l'étranger (Coordination.etranger), les durées
+    leurs trimestres (Durees.etranger), et le résultat ceux qui ne comptent que pour le
+    taux (ResultatActuel.trimestres_etrangers), que le portage, sans la classe, écrit
+    dans resultatActuel et resultatDesDeparts.
 textes_a_rattacher:
 - {id: LEGIARTI000006744128, article: "L. 742-2 CSS", en_vigueur: 2000-01-01,
    change: "la rédaction d'avant 2011, sans condition d'affiliation à l'assurance maladie"}

@@ -354,21 +354,32 @@ sources:
     date: 2026-10-01
 code:
   python: >-
-    droit/etranger.py : coordonner_les_periodes (PeriodeCoordonnee.comparee,
-    salaire_moyen_depuis), compter_les_periodes (TrimestresEtrangers.nationaux,
-    au_salaire_moyen, compare) ; droit/compter.py : Durees.pour_le_taux ;
-    droit/liquider.py : liquider_chaque_regime (nationale),
+    droit/etranger.py : coordonner_les_periodes, PeriodeCoordonnee,
+    compter_les_periodes, TrimestresEtrangers.compare ; droit/compter.py :
+    Durees.pour_le_taux ; droit/liquider.py : liquider_chaque_regime,
     trimestres_etrangers_au_salaire_moyen, annees_des_regimes_alignes ;
     droit/liquidation.py : liquider ; droit/completer.py : completer
   javascript: >-
-    les jumeaux de chacune : moteur/js/droit/etranger.js, compter.js, liquider.js,
-    liquidation.js, completer.js
+    moteur/js/droit/etranger.js : coordonnerLesPeriodes, compterLesPeriodes,
+    TrimestresEtrangers.compare ; moteur/js/droit/compter.js : Durees.pourLeTaux ;
+    moteur/js/droit/liquider.js : liquiderChaqueRegime,
+    trimestresEtrangersAuSalaireMoyen, anneesDesRegimesAlignes ;
+    moteur/js/droit/liquidation.js : liquider ; moteur/js/droit/completer.js : completer
   parametres: >-
     contenu.parametres de chaque version : reglements_europeens,
-    annees_du_salaire_annuel_moyen ; data/reference/legislation/accords_internationaux.yaml
-    (calcul, salaire_moyen)
+    annees_du_salaire_annuel_moyen, prorata_reglements_europeens, fonctionnaires_depuis,
+    regimes_en_points ; legislation/accords_internationaux.yaml
   tests: >-
     tests/test_etranger.py, dans les deux moteurs
+  moteur: >-
+    coordonner_les_periodes dit de chaque période si l'accord compare les pensions et
+    depuis quand le salaire moyen la compte (PeriodeCoordonnee.comparee,
+    salaire_moyen_depuis), d'après le calcul de chaque accord et le salaire moyen de
+    chaque État (calcul, salaire_moyen) ; compter_les_periodes en tire les trimestres
+    nationaux et ceux du salaire moyen (TrimestresEtrangers.nationaux,
+    au_salaire_moyen). liquider_chaque_regime liquide aussi la pension nationale
+    (nationale), dont la durée du taux ne compte pas les trimestres que l'accord
+    compare.
 historique:
 - >-
   2026-10-01 — née avec le cinquième domaine, les carrières hors de France, ouvert à la

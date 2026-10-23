@@ -213,19 +213,25 @@ sources:
 code:
   python: >-
     droit/completer.py : completer, plancher_international, _minimum_international,
-    MinimumEcrete ; droit/liquider.py : EligibleMinimum (duree_regime, cotisee_regime,
-    proratisation, requis) ; droit/etranger.py : pensions_a_l_ecretement ;
-    revalorisation.py : reviser_le_minimum, que faire_vivre applique
+    MinimumEcrete ; droit/liquider.py : EligibleMinimum ; droit/etranger.py :
+    pensions_a_l_ecretement ; revalorisation.py : reviser_le_minimum, faire_vivre
   javascript: >-
     moteur/js/droit/completer.js : completer, plancherInternational,
-    minimumInternational ; moteur/js/droit/liquider.js ; moteur/js/droit/etranger.js :
-    pensionsALEcretement ; moteur/js/revalorisation.js : reviserLeMinimum
+    minimumInternational ; moteur/js/droit/liquider.js : liquiderChaqueRegime ;
+    moteur/js/droit/etranger.js : pensionsALEcretement ; moteur/js/revalorisation.js :
+    reviserLeMinimum, faireVivre
   parametres: >-
     contenu.parametres de chaque version : prorata_du_minimum,
-    ecretement_pensions_etrangeres, pensions_hors_ecretement ;
-    data/reference/legislation/accords_internationaux.yaml
+    majoration_pour_periodes_cotisees, ecretement_pensions_etrangeres,
+    periodes_etrangeres_cotisees, pensions_hors_ecretement ;
+    legislation/accords_internationaux.yaml
   tests: >-
     tests/test_etranger.py, dans les deux moteurs
+  moteur: >-
+    EligibleMinimum porte la durée et les trimestres cotisés du régime, sa proratisation
+    et la durée requise (duree_regime, cotisee_regime, proratisation, requis) ; le
+    portage, sans la classe, en bâtit l'objet dans liquiderChaqueRegime. faire_vivre
+    applique reviser_le_minimum.
 historique:
 - >-
   2026-10-01 — née avec le cinquième domaine, les carrières hors de France, ouvert à la
