@@ -3668,7 +3668,7 @@ sources:
       Le régime de retraite du micro-entrepreneur : ce que le taux global
       ouvre comme droits, et le chiffre d'affaires minimal pour valider un
       trimestre.
-    statut: a_explorer
+    statut: en_cours
 
   - id: sp_f23369_entrepreneur_individuel
     url: https://entreprendre.service-public.gouv.fr/vosdroits/F23369
