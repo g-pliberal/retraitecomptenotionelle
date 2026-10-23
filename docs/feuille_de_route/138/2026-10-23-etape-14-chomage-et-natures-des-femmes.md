@@ -172,8 +172,8 @@ reste » de la note de la onzième partie
   - La masse de l'EIR passe les natures de l'échantillon d'une année et demie
     environ par carrière pleine, d'homme comme de femme ; la répartir toute
     sur ceux qui ont une nature contredisait l'échantillon et faisait perdre
-    6,2 points de carrière longue aux hommes de 1955. Le
-    plafond la laisse cotisée : ce qu'elle compte d'après 60 ans, ou des
+    6,2 points de carrière longue aux hommes de 1955. Sous le plafond, ce
+    qu'elle a de plus est cotisé : ce qu'elle compte d'après 60 ans, ou des
     autres natures, reste à lire.
   - La distribution de 2020 n'en dit presque rien : douze euros aux hommes.
   - La version reste : elle donne aux deux sexes les natures et les années
