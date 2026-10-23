@@ -7038,14 +7038,14 @@ une à une, les étapes 3 et 5. Les quatre gardes de l'étape 2 sont faites le
 
 ### 173. Le site sur tous les écrans : rien ne déborde, ce qui va ensemble se voit ensemble, moins de vide, moins de mots — `en cours`
 
-**Reprise, au 23 octobre 2026.** Faites, les étapes 1 à 3 : de 320 à 1 440
+**Reprise, au 23 octobre 2026.** Faites, les étapes 1 à 4 : de 320 à 1 440
 points, rien ne déborde, ce qui va ensemble se voit ensemble, les grands vides
-sont tenus (`tests/test_ecrans.py`) ; l'accueil dit la même chose en moins de
-mots, ouvert comme déplié. Restent les étapes 4 à 10, une page par session.
-Par quoi commencer : l'étape 4, Simuler — serrer son budget de lecture
-(`BUDGETS_DE_LECTURE`, `tests/test_web.py`), lui donner sa ligne dans
-`BUDGETS_DEPLIES` et dans `COTE_A_COTE` (`tests/test_ecrans.py`), les voir
-rouges, puis récrire. Détail : `173/2026-10-23-etape-3-accueil.md`.
+sont tenus (`tests/test_ecrans.py`) ; l'accueil et Simuler disent la même
+chose en moins de mots, ouverts comme dépliés. Restent les étapes 5 à 10, une
+page par session. Par quoi commencer : l'étape 5, Coût — serrer son budget de
+lecture (`BUDGETS_DE_LECTURE`, `tests/test_web.py`), lui donner sa ligne dans
+`BUDGETS_DEPLIES`, à son adresse, et dans `COTE_A_COTE` (`tests/test_ecrans.py`),
+les voir rouges, puis récrire. Détail : `173/2026-10-23-etape-4-simuler.md`.
 
 **D'où elle vient.** Le 23 octobre 2026, le propriétaire : « Le site web de
 notre projet est plutôt adapté aux écrans d'ordinateurs (et encore...) mais
@@ -7075,7 +7075,9 @@ un graphique et sa légende. »
    le pied de page de cinq rem, retirés.
 3. **Moins de mots : le Programme**, l'accueil, faite le 23 octobre 2026 :
    387 mots ouverts au lieu de 439, 4 489 dépliés au lieu de 4 920.
-4. **Moins de mots : Simuler**, le formulaire et les résultats.
+4. **Moins de mots : Simuler**, le formulaire et les résultats, faite le
+   23 octobre 2026 : 1 015 mots ouverts au lieu de 1 091, 6 832 dépliés au lieu
+   de 7 092 ; deux valeurs d'un tableau en fiche côte à côte à 320 points.
 5. **Moins de mots : Coût.**
 6. **Moins de mots : Pourquoi changer.**
 7. **Moins de mots : Partager et Le saviez-vous ?**
