@@ -193,6 +193,31 @@ def test_un_trace_et_sa_legende_se_voient_ensemble():
     assert not fautes, f"{len(fautes)} tracés loin de leur légende :\n" + "\n".join(fautes[:60])
 
 
+#: Les pages dont les rangées repliées gardent côte à côte leurs deux valeurs
+#: courtes. Chaque page des étapes 4 à 10 de l'action 173 s'y ajoute quand on
+#: la reprend : le 23 octobre 2026, à 320 points, Droits non cotisés et les
+#: résultats du simulateur empilaient encore, en fiche, deux valeurs courtes
+#: que la colonne minimale de 8,5 rem ne laisse pas tenir ensemble.
+COTE_A_COTE = ["/"]
+
+
+def test_deux_valeurs_courtes_d_une_rangee_repliee_se_lisent_cote_a_cote():
+    """Un tableau replié garde côte à côte les deux valeurs courtes d'une
+    rangée, qu'on lit ensemble : aujourd'hui, avec notre programme.
+
+    Le pli comptait dans leur longueur le texte des bulles du glossaire, qu'on
+    ne voit pas tant qu'on ne les ouvre pas : sur l'accueil, à 390 points, une
+    case qui portait « trimestres » ou « décote » passait pour une phrase,
+    prenait la ligne entière et rejetait sa voisine dessous — trois rangées sur
+    dix, quand les sept autres restaient côte à côte (action 173, étape 3).
+    """
+    fautes = [f"{_ou(visite, 'fermés' if etat == 'replie' else 'ouverts')} : {rangee}"
+              for visite in mesures() if visite["route"] in COTE_A_COTE
+              for etat in ("replie", "deplie")
+              for rangee in visite[etat]["empilees"]]
+    assert not fautes, f"{len(fautes)} rangées empilées :\n" + "\n".join(fautes[:60])
+
+
 def test_les_quatre_systemes_se_comparent_d_un_seul_regard():
     """Les quatre pensions que la carrière vaudrait, dans un seul écran : du
     titre du premier système au montant du dernier, rien à faire défiler."""

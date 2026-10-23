@@ -1727,6 +1727,16 @@ document.addEventListener("keydown", (evenement) => {
 const LONGUEUR_D_UNE_PHRASE = 60;
 let surveillantDesTableaux = null;
 
+// Ce qu'une case MONTRE : son texte, sans celui des bulles du glossaire,
+// cachées tant qu'on ne les ouvre pas. Compté avec elles, un mot du glossaire
+// faisait d'une valeur courte une phrase, qui prenait la ligne entière et
+// rejetait sa voisine dessous (action 173, étape 3).
+function texteMontre(cellule) {
+  const copie = cellule.cloneNode(true);
+  for (const bulle of copie.querySelectorAll(".bulle")) { bulle.remove(); }
+  return copie.textContent.replace(/\s+/g, " ").trim();
+}
+
 function ajusterLePli(table, cadre) {
   const largeur = cadre.clientWidth;
   if (!largeur) { return; }
@@ -1766,8 +1776,7 @@ function plierLesTableaux(racine) {
         [...ligne.cells].forEach((cellule, rang) => {
           if (rang === 0) { return; }
           if (noms[rang]) { cellule.dataset.titre = noms[rang]; }
-          const longueur = cellule.textContent.replace(/\s+/g, " ").trim().length;
-          if (longueur > LONGUEUR_D_UNE_PHRASE) {
+          if (texteMontre(cellule).length > LONGUEUR_D_UNE_PHRASE) {
             phrases = true;
             cellule.classList.add("pleine");
           }
