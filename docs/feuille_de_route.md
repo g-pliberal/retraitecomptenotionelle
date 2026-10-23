@@ -774,6 +774,584 @@ types :
 
 **Ce que le propriétaire tranche** : s'il bascule la page, et quand.
 
+### 165. Ce que le compte crédite : des cotisations que personne n'a versées, d'autres comptées deux fois ou perdues — `à faire`
+
+**D'où elle vient.** L'audit des scénarios 2 à 6 que le propriétaire a demandé
+le 23 octobre 2026 : « On s'est beaucoup concentré sur le scénario 1. »
+Six zones relues, chaque défaut prouvé par une simulation ou par la lecture du
+code, puis revérifié ; cette action prend ceux de l'alimentation du compte.
+Aucun ne vient du portage : 456 cas confrontés entre le Python et le
+JavaScript, aucun écart. C'est la règle qui est fausse, des deux côtés.
+
+**Ce qui est à faire**, chaque point par le test qui le reproduit, vu rouge :
+
+1. **« Sans activité professionnelle » cotise au compte dès la bascule.** Née
+   en 1990, statut `sans_activite`, salaire au niveau 1 : 0 € au scénario 1,
+   22 225 € par an aux scénarios 2 à 5, 16 928 € et un pilier au 6 ; le compte
+   reçoit 11 014 € en 2026, rien avant. `compte.py:607-608` fait passer au
+   régime unifié toute ligne qui cotise, même sans régime, et `a_un_employeur`
+   la traite en indépendant ; `affiliations.yaml:1296-1300` dit « Aucune
+   cotisation, donc aucun droit ». Le site offre ce statut en premier métier et
+   exige un salaire (0,1 fois le salaire moyen au moins) ; le test
+   `test_simulateur.py:698` (« sans cotisation, aucun droit notionnel ») ne
+   simule aucune carrière sans cotisation.
+2. **La RAFP comptée deux fois après la bascule.** Le régime unifié prend la
+   rémunération entière, primes comprises, sans rien hors répartition
+   (`compte.py:641-658`) ; les six scénarios servent pourtant la rente RAFP du
+   scénario 1, qui accumule jusqu'au départ (`simulateur.py:390-399`). La fiche
+   `compte_notionnel` (« le RAFP n'y entre pas ») et `fusion.py:73` (« La
+   capitalisation reste à part ») disent l'inverse. Fonctionnaire d'État née en
+   1975, 20 % de primes : assiette du compte 33 297 € et 666 € à la RAFP en
+   2025 ; 46 975 € et 0 en 2030 ; rente RAFP de 1 233 € servie dans les six.
+   Pour la fonctionnaire du README, 49 % des versements à la RAFP sont
+   postérieurs à 2025.
+3. **Les cotisations de 1941 à 1944 perdues.** Le salarié du privé y relève
+   des assurances sociales, marquées `hors_repartition`
+   (`assurances_sociales.yaml:18`), alors que l'origine de 1941 se justifie
+   par elles (`avts.yaml:40-42`, `methodologie.md:42-46`) ; le scénario 1 ne
+   leur sert aucune rente à part : elles ne vont ni au compte, ni au
+   compartiment servi. Le scénario 4 y perd 10 % (né en 1915) et 15 % (né en
+   1905). Les retenues d'avant 1941 des pensions civiles, de la SNCF et des
+   mines sont écartées (`compte.py:1152-1155`), quand `methodologie.md:54-55`
+   les dit « incluses ».
+4. **La part patronale du repli, nulle.** Quand le taux du privé de l'année
+   ne dépasse pas la retenue de l'agent, le repli rend une part patronale nulle
+   (`compte.py:376-379`), et le scénario 4 égale le 2 : SNCF, RATP, mines,
+   Banque de France, SEITA de 1941 à 1956 ; marins, CRPCEN, Opéra,
+   Comédie-Française, port de Strasbourg jusqu'en 1965 ; État, militaires,
+   policiers, FSPOEIE de 1941 à 1946. `limites/4-regimes-incomplets.md:502-506`
+   la promet « jamais laissée à zéro », et le site écrit « effort du privé de la
+   même année » (`pages.js:6172`). Les années que le modèle prolonge au bout
+   d'une série (SNCF 2019-2025, IEG 2021-2025) sortent comptées « trouvées ».
+5. **L'option `totale_alignee` sous la retenue de l'agent** : SNCF né en 1925,
+   4,86 % en 1946 et 6,48 % en 1950 au compte, quand la seule retenue faisait
+   7,90 % (`compte.py:388-392`) ; un seul test, une carrière de 1975
+   (`test_simulateur.py:824-845`).
+6. **Une bascule réglée avant 2019** : le taux du régime unique additionne en
+   dur le régime général et l'Agirc-Arrco (`fusion.py:72`), dont la fiche naît
+   en 2019, et ignore le statut pivot que la fiche `fusion_des_regimes` nomme
+   (`simulateur.py:1173-1174`). Bascule en 2000 : 16,35 % au lieu de 23,85 %,
+   −29 % aux scénarios 2 et 4 ; en 1945, 4,86 % figés jusqu'au départ ; de 1941
+   à 1944, « aucun régime pivot exploitable », alors que le formulaire accepte
+   1941 (`saisie.js:423`) et que le test tiré au sort borne à 1945
+   (`test_web.py:694`). La fusion n'est testée qu'en 2026
+   (`test_moteur.py:1023-1084`).
+7. **Le pilier, sur une activité cumulée** : il ne prélève rien l'année où la
+   ligne principale ne cotise pas (`notionnel.py:462-465` lit `carriere.ligne`,
+   la principale), quand l'assiette somme toutes les lignes
+   (`compte.py:559-572`) : un artisan cumulé pendant un chômage ne verse rien.
+8. **`fusion_au_plus_defavorable=False`**, réglage du Python : le scénario 6
+   garde 25,07 % après la bascule au lieu de 18 %, et son pilier prélève sur la
+   somme des assiettes des régimes (1,56 fois le revenu ; rente +56 %).
+
+**Ce que le propriétaire tranche** : si la RAFP continue après la bascule — ses
+cotisations restent à part, et les primes sortent de l'assiette du régime
+unique — ou s'arrête à ses droits de 2025 ; si les assurances sociales de 1941
+à 1944 sont de la répartition ; ce que vaut le taux du régime unique après une
+bascule ancienne, ou si la saisie s'arrête à 2019.
+
+### 166. La bascule des scénarios 3 et 5 : des droits acquis qui ne sont pas « au contributif seul », des pensions déjà servies re-figées, une date qui flotte — `à faire`
+
+**D'où elle vient.** Le même audit, du 23 octobre 2026. Le site ne montre plus
+les scénarios 3 et 5 (`pages.js:149-162`), mais le README, la méthodologie, la
+page Coût, `scripts/proposition_prospective.py` et le JSON les portent. Le
+Python et le JavaScript y concordent au bit ; aucun test ne tient ce qui suit.
+
+**Ce qui est à faire** :
+
+1. **La liquidation fictive garde ce qui n'a pas été cotisé.** La couche
+   `contributif_seul` ne neutralise que les avantages non contributifs, les
+   points gratuits — que le vocabulaire réduit à ceux de la complémentaire
+   agricole (`vocabulaire/valeurs.yaml:220-222`) — et la décote. Les lignes
+   d'interruption portent leurs trimestres assimilés (`carriere.py:704-711`),
+   que `droit/compter.py:638-645` crédite sans condition : le drapeau ne coupe
+   que les périodes déclarées à part (`compter.py:657-661`). Restent donc
+   la maladie, le chômage, le service national, les points de l'Agirc-Arrco
+   donnés « sans contrepartie de cotisations » (`carriere.py:748-753`), et
+   l'AVPF, que le moteur sait neutraliser (`scenarios/univers.py:53`) et que la
+   couche ne demande pas, quand `comptes_notionnels` la retire du compte. Née en
+   1975, non-cadre, quatre ans de maladie de 2005 à 2008 plutôt que sans
+   activité : pension figée de 18 365 € au lieu de 15 846 € (+15,9 %),
+   scénario 3 de 27 585 € au lieu de 24 287 € (+13,6 %), scénario 2 inchangé.
+   Huit ans d'AVPF : +25,5 % de pension figée ; le cas type « carrière
+   heurtée » de 1975 : +25 %. Le README (lignes 17, 28, 412), `methodologie.md`
+   (lignes 564-568, 621-623) et `notionnel.py:663-667` disent l'inverse ;
+   `avantages.py:401-418` range ces dispositifs parmi les avantages non
+   contributifs, et sait les retirer. `test_univers.py:37-40` fige la
+   neutralisation incomplète.
+2. **Une pension servie avant la bascule est re-figée quand le dernier départ
+   vient après.** La carrière tronquée à la bascule (`notionnel.py:686`)
+   reliquide tous ses régimes, et la liquidation fictive ignore les départs
+   (`actuel.py:3507-3513`). Militaire de 20 à 40 ans, né en 1975, puis salarié
+   jusqu'à 64 ans : sa pension militaire, servie depuis le 1er janvier 2015 au
+   scénario 1 (15 624 €), entre dans la pension figée de 2026, se convertit,
+   et n'est plus servie qu'en 2039 : treize années de pension disparaissent
+   (scénario 1, 38 476 € ; scénario 3, 31 070 €). La fiche dit qu'« une pension
+   qui a pris effet avant ne bouge pas ». L'inverse est faux aussi : un régime
+   demandé après la bascule, quand le premier départ la précède, reste au droit
+   réel (cadre né en 1962, parti en 2025, Agirc-Arrco demandée en 2029).
+3. **La date de la bascule.** Les scénarios 3 et 5 gardent le droit réel à qui
+   liquide l'année même de la bascule (`notionnel.py:598`, son jumeau, et
+   `cout.py:3009` : `<=`) ; le scénario 6 la fait régir par la réforme
+   (`simulateur.py:1280` : `<`), `config.py:457-460` fait basculer le compte au
+   1er janvier, la revalorisation traite l'année comme nouvelle
+   (`revalorisation.py:1847`), et la fiche `valorisation_des_droits_acquis`
+   dit « avant » (ligne 13) puis « l'année de la bascule ou avant »
+   (lignes 51-52). Agent SNCF né en 1974 : 19 259 € pour un départ en août
+   2026, 16 439 € en janvier 2027 (−14,6 %). La décision n'est consignée que
+   dans `docs/archives/limites.md`.
+4. **Qui a tout acquis avant la bascule touche plus qu'au droit réel**, et
+   rien ne le dit : le capital figé suit l'indice du compte, la masse salariale,
+   le droit réel les prix, et la décote est neutralisée
+   (`notionnel.py:726-729`). Activité arrêtée en 2020 : né en 1966, parti à
+   62 ans, 17 982 € contre 15 086 € (+19 %) ; né en 1970, à 64 ans, +19 %.
+   `methodologie.md:1138-1140` dit que la bascule ne peut que retirer.
+5. **Le diviseur de conversion.** La conversion se fait à 65 ans au diviseur de
+   2026, celui de la génération 1961, et la pension se sert au diviseur de
+   l'année du départ (`notionnel.py:715-724`) : un départ à 65 ans perd sur sa
+   part figée 2,1 % (60 ans en 2026), 5,8 % (50), 9,0 % (40), 11,7 % (30),
+   quand le README (ligne 395) promet qu'il « ne perd plus rien ».
+   `methodologie.md:1157-1161` écrit « G(64, 2026), 23,56 », qui est
+   G(65, 2026) (G(64, 2026) vaut 24,48), et « environ 17 % est retiré » pour
+   16,5 % de diviseur, 14,2 % de part retirée. Le choix du diviseur est suivi à
+   l'action 138 (étape 13) ; la phrase du README, non. Qui a plus de 65 ans à
+   la bascule est converti à 65 ans quand même (`notionnel.py:715-716`) : né en
+   1940, parti à 88 ans, 117 094 € au scénario 3 contre 56 167 € au 1.
+6. **Le salaire de référence d'une carrière courte** : la liquidation fictive
+   prend la moyenne de toutes les années d'une carrière de moins de vingt-cinq
+   ans. Né en 1996, payé 0,3 fois le salaire moyen de 18 à 24 ans puis au
+   salaire moyen : 23 847 € au scénario 3, contre 29 354 € s'il avait eu le
+   salaire moyen dès 18 ans (−19 %, contre −2,3 % au scénario 1).
+7. **La date fictive du 1er janvier** perd le mois de naissance
+   (`notionnel.py:690-702`, et son jumeau) : né en novembre 1961, 168
+   trimestres requis au lieu de 169 ; né en 1965, la table d'avant la
+   suspension (`duree_requise_avant_suspension.csv`), 172 au lieu de 170.
+8. **Ce que l'architecture promet** (`docs/architecture.md:624-633`) : une
+   liquidation fictive qui lit la retraite progressive, la réversion attendue
+   et l'invalidité en cours, et un relevé « ligne par ligne » ; le code exclut
+   la retraite progressive (`actuel.py:3495-3498`), et la carrière tronquée
+   reconstruit sa chronologie et perd les faits déclarés
+   (`carriere.py:948-952`). La docstring de `DroitsAcquis`
+   (`notionnel.py:224-226`) parle d'une cascade que la page n'affiche plus.
+9. **Les variantes** : sous `rattachement_niveau_de_vie='pension'`, la part
+   figée, partielle, prend la mortalité des petites pensions
+   (`notionnel.py:719-723`, diviseur 20,36 au lieu de 24,58) ; le capital
+   d'ouverture n'est revalorisé qu'à partir de 2027 (`notionnel.py:727`), à
+   vérifier contre la date que la pension figée représente.
+
+**Ce que le propriétaire tranche** : ce que « au contributif seul » retire —
+les périodes assimilées, l'AVPF et les points de chômage, que la CNAF et
+l'Unédic paient, et que le compte des scénarios 2, 4 et 6 devrait alors
+porter aussi ; si une pension servie avant la bascule la traverse telle
+quelle ; si une pension qui prend effet en 2026 relève de la réforme ;
+l'indice du capital figé ; le salaire de référence d'une carrière courte ;
+l'âge de conversion de qui a passé 65 ans.
+
+### 167. Le scénario 6 : la rente du pilier, la garantie vieillesse et l'âge légal, là où ils servent faux — `à faire`
+
+**D'où elle vient.** Le même audit, du 23 octobre 2026. Le Python et le
+JavaScript y concordent au centime, sur onze carrières aux bords ; les défauts
+sont dans les règles, et dans ce que le site en dit.
+
+**Ce qui est à faire** :
+
+1. **La rente du pilier, à taux technique nul et jamais revalorisée.** Elle
+   divise le capital par le diviseur du compte (`capitalisation.py:672`), qui
+   vaut l'espérance de vie sans actualisation, puis reste « NOMINALE et
+   constante » (`revalorisation.py:1814-1823`). Le dépôt dit lui-même, de la
+   pension notionnelle, que ce diviseur « ne la vaut QUE si la rente est
+   ensuite revalorisée » (`revalorisation.py:1486-1491`) ; le capital du pilier,
+   placé en titres sans risque, rapporte, et la rente n'en reçoit rien : la
+   participation aux bénéfices des contrats de rente n'est nulle part. Rapportée
+   à la courbe des taux du modèle, la rente vaut environ 0,63 fois le capital
+   qui la constitue, pour les générations 1970 à 2004. `capitalisation.py:80-84`,
+   `config.py:1235-1241` et `methodologie.md:1825-1830` présentent pourtant les
+   deux compartiments comme « comparables au centime ». Pour la génération
+   2004, dont la rente fait le tiers du total du scénario 6, une rente
+   revalorisée sur les prix relèverait ce total d'environ 10 %.
+2. **Sous le plancher, le site promet un gain qui n'existe pas.** La garantie
+   reprend la rente volontaire euro pour euro, et le total ne bouge pas
+   (`test_sous_le_plancher_les_cinq_points_volontaires_ne_rapportent_rien`,
+   qui dit : « Le site doit le dire ») ; le site écrit pourtant « elle serait de
+   945 € … et jusqu'à 1 050 € si vous épargnez aussi », et « 945 € par mois
+   sans rien ajouter — et 105 € de plus si vous placez les cinq points »
+   (née en 1995, 0,25 fois le salaire moyen) : il retranche la rente volontaire
+   du total (`pages.js:4534`, `pages.js:5128`, et `castypes.py:1020`) au lieu de
+   recompter la garantie sans elle. Attendu : 1 050 € sans rien placer, rien de
+   plus en plaçant.
+3. **L'écart d'un départ avant 65 ans, sans l'ASPA du scénario 1.** Le
+   scénario 1 ne sert l'ASPA qu'à un départ à 65 ans ou plus
+   (`scenarios/actuel.py:398`) ; le scénario 6, reporté à 65 ans, sert sa
+   garantie dès son départ. Née en 1995, 0,25 fois le salaire moyen : partie à
+   64 ans, l'écart est de +99 % (6 330 € contre 12 600 €) ; à 65 ans, +0,6 %.
+   La page ne dit pas que le système actuel servirait 1 044 € par mois dès
+   65 ans.
+4. **Le fonctionnaire radié pour invalidité, prolongé en emploi.**
+   `Carriere.prolongee` (`carriere.py:1953-2022`) poursuit la dernière ligne
+   telle qu'elle est, un emploi à plein traitement, quand le README (lignes
+   157-162) et la fiche `age_legal_de_la_proposition` disent que l'assurance
+   invalidité couvre jusqu'à 65 ans, « l'invalidité, qui ne cotise pas ».
+   Fonctionnaire d'État né en mai 1980, radié à 50 ans : 2 392 € par mois au
+   scénario 6, contre 1 921 € au 1 ; déclaré en invalidité jusque-là, sa
+   pension baisserait de 17 % et sa rente de 78 %. Le site ne refuse que la
+   radiation de janvier (`contexte.js:905-912`) ; aucun test du scénario 6 sur
+   l'invalidité.
+5. **L'allocation d'isolement, sans le conjoint déclaré.** Elle ne lit que le
+   champ « foyer », « seul » par défaut (`notionnel.py:516-519`,
+   `saisie.js:726`, `saisie.js:1427`), quand l'ASPA du scénario 1 passe au
+   barème du couple dès qu'un conjoint est déclaré (`config.py:718-726`).
+   `config.py:1040-1042` dit pourtant « de sorte que les deux planchers se
+   comparent ». Avec un conjoint, le scénario 1 passe au couple, et le 6 garde
+   ses 250 € par mois d'isolement ; la page écrit « Garantie calculée ici pour
+   une personne seule ».
+6. **Un décès déclaré avant le départ, ignoré.** Né en 1980, mort le 15 juin
+   2035 : le scénario 6 sert 27 293 € de pension et 5 249 € de rente en 2045,
+   et les 54 247 € que le pilier transmettrait (`capitalisation.py:86-87`) ne
+   sont rendus nulle part. Le décès ne sert qu'à la réversion du scénario 1.
+7. **Le chômage indemnisé de fin de carrière, prolongé jusqu'à 65 ans** au-delà
+   de toute durée d'indemnisation : la prolongation copie la ligne après le
+   bornage (`simulateur.py:1296-1303`) ; né en 1975, au chômage de 2033 à 2037,
+   l'Unédic cotise encore de 2038 à 2040.
+   `limites/4-regimes-incomplets.md:711-712` ne dit que « la finit au
+   chômage ».
+8. **La « pension d'aujourd'hui » du scénario 6 sous une bascule passée** se
+   revalorise depuis l'année de départ du scénario 1, non de la carrière
+   reportée (`revalorisation.py:1382-1386`, `1429-1430`, et
+   `revalorisation.js:909-957`) ; le cycle de vie prend la bonne
+   (`cycle-de-vie.js:947`). Bascule 2020, née en 1960, partie à 62 ans en
+   2022 : +10,65 % ; née en 1963, partie en 2025, une pension « d'aujourd'hui »
+   à qui, sous la proposition, travaille encore.
+9. **La garantie à rebours**, avant la bascule, déflatée par les seuls prix
+   (`notionnel.py:512-520`) : 1,57 fois le salaire moyen en 1945, 1,43 en 1950,
+   0,90 en 1960, contre 0,30 en 2026. La convention est déclarée
+   (`limites/4-regimes-incomplets.md:659-663`), pas son ordre de grandeur.
+10. **Les sorties et les textes** : la clé `rente_capitalisation_obligatoire`
+    du JSON porte les deux rentes (`notionnel.py:276-285`,
+    `simulateur.py:689-690`), quand le tableau retranche la volontaire ; la
+    garantie dite regarder « 5 % capitalisés » (`notionnel.py:150`, `154`,
+    `487-488`, `scenario-notionnel.js:177-178`,
+    `limites/4-regimes-incomplets.md:637`) quand elle regarde les dix points ;
+    trois, quatre ou cinq différences avec le scénario 4 (`config.py:745`,
+    `notionnel.py:69`, `methodologie.md:1442`, README ligne 85) ;
+    `garantie.py:7-10`, d'avant l'âge légal ; douze ou treize cas types
+    (`garantie.js:7`, `garantie.py:7`).
+
+**Ce que le propriétaire tranche** : la rente que promet le pilier — indexée,
+revalorisée par la participation aux bénéfices, ou nominale à un taux
+technique positif ; la date à laquelle les deux scénarios se comparent quand
+l'âge légal reporte le départ ; ce que la proposition sert à qui meurt avant
+son départ, et ce qu'elle prolonge après un chômage indemnisé ou une
+radiation pour invalidité.
+
+### 168. La revalorisation et la conversion des comptes : l'écart de tête, les années aux bords, et ce que le diviseur suppose — `à faire`
+
+**D'où elle vient.** Le même audit, du 23 octobre 2026. Le Python et le
+JavaScript concordent au bit sur vingt et une carrières et saisies aux bords ;
+ce qui suit tient aux conventions, et à ce qu'on en dit.
+
+**Ce qui est à faire** :
+
+1. **L'écart de tête compare les premières pensions** (`simulateur.py:260-276`),
+   quand la pension notionnelle servie suit ensuite la masse salariale, de 2,45
+   à 3 % par an (`revalorisation.py:1536-1546`), et celle du scénario 1 les prix
+   (1,75 %) ; la page dit « première pension » sans dire que les deux systèmes
+   la revalorisent autrement (`pages.js:2634-2656`). Génération 1970 : −20,8 %
+   au départ au scénario 4, −14,0 % en moyenne sur la retraite ; génération
+   1990 : −29,0 % et −25,4 %. Seuls les indicateurs du cycle de vie en tiennent
+   compte, dans un dépliant.
+2. **Le taux d'indexation saute d'un demi-point en 2071** : l'emploi projeté
+   s'arrête en 2070 à −0,50 % par an, et sa croissance est nulle ensuite
+   (`donnees/macro.py:136-145`, `176-183`) ; l'indexation passe de 1,94 % en 2070
+   à 2,45 % de 2071 à 2150. Rien ne le dit, ni aux limites ni dans
+   `hypotheses_projection.yaml`. Capital d'un départ de 2077 : +3,6 % sur ce qui
+   précède 2071 ; pensions servies après 2070 : +16 % en trente ans.
+3. **Le diviseur d'une liquidation passée lit la mortalité observée après
+   coup** : la table de génération y dépasse, à 65 ans, la table du moment de
+   l'année de 5,4 % (1950) à 11,9 % (1980). `methodologie.md:450-460` ne la
+   justifie que pour l'avenir ; un compte de 1970 ne pouvait connaître la
+   mortalité de 1990.
+4. **La pension notionnelle servie baisse de 4 % en 2020** (masse salariale
+   −4,02 %), en euros courants : aucun plancher, et rien ne le dit.
+5. **Le stock « prix » contre la fiche** : par défaut, une pension rétroactive
+   d'avant la bascule est servie aux prix après elle (`config.py:296-306`),
+   quand la fiche `indexation_du_compte` dit que « toute pension des scénarios
+   2 à 6 » suit la règle du compte ; liquidée en 2010, elle vaut en 2050 1,18
+   fois sa valeur réelle de départ, contre 1,43.
+6. **Le net des scénarios 2 à 6 à la tranche de CSG du scénario 1**
+   (`contexte.py:1019-1025`, `1075-1076`), déclaré
+   (`limites/5-ante-ter-net-et-brut.md:26-28`) mais contraire au barème que la
+   ligne 19 du même document dit garder : génération 1975, au salaire moyen, le
+   scénario 2 brut de 729 € par mois s'affiche à 661 € net, quand son propre
+   revenu l'exonère. Les fiches `csg_des_pensions_selon_le_revenu` et
+   `cotisation_maladie_pensions_complementaires` sont sans décision.
+7. **La fiche du diviseur muette sur la table par niveau de vie**, qui est le
+   défaut depuis le 21 septembre 2026 (`config.py:649`, `conversion.py:198-211`) :
+   génération 1975, départ à 64 ans, diviseur de 21,99 à 0,5 fois le salaire
+   moyen, 25,56 à 1 fois, 27,55 à 2,5 fois, contre 24,91 pour la table commune.
+8. **La variante à préfinancement ν** : la garantie différée revalorise la
+   pension sans la diviser par 1 + ν (`notionnel.py:545-548`,
+   `scenario-notionnel.js:219-224`), quand la règle de service le fait
+   (`revalorisation.py:1537-1546`) ; à ν = 1,6 %, 306 € de complément au lieu
+   d'environ 931 €. Aucun test.
+9. **Le mode « explicite » de l'âge de référence**, promis par la fiche
+   `age_de_reference`, `methodologie.md:418-419` et `age_reference.py:34-38`,
+   n'est lu par aucun code ni aucun réglage.
+10. **Les textes périmés** : README, lignes 391 (« ne revalorise pas les
+    pensions servies »), 469, 534 et 563 (une septième puis une neuvième règle,
+    sans huitième) ; `config.py:547-553` et `pages.js:2616-2617` ; le triple lock
+    « par défaut » de `notionnel.py:6` et `conversion.py:16` ;
+    `indexation.js:181-184`, que son jumeau Python a corrigé ;
+    `limites/2-indexation.md:7` ; « G(64, 2026) » à `methodologie.md:1158` et
+    `1192` ; « ×1,15 au bout de vingt ans » à `revalorisation.py:1496`.
+
+**Ce que le propriétaire tranche** : quel écart sert de chiffre de tête — la
+première pension, ou la pension sur la vie ; la convention d'après 2070 ; la
+mortalité que l'on prête à un compte rétroactif ; un plancher nominal des
+pensions servies ; la tranche de CSG de chaque scénario.
+
+### 169. Le régime unique de la bascule, statut par statut : ce qu'il prélève, qui y est employeur, et ce que le texte en dit — `à faire`
+
+**D'où elle vient.** Le même audit, du 23 octobre 2026. À compter de la
+bascule, les scénarios 2 à 6 portent tous les statuts au régime unique
+(`fusion_des_regimes`, que la couche `comptes_notionnels` ajoute), et le code
+décide en silence de ce qu'il fait des statuts qui ne sont ni salariés du privé
+ni indépendants. Rien n'en est écrit ; plusieurs phrases du texte de la
+proposition le contredisent.
+
+**Ce qui est à faire** :
+
+1. **Le scénario 4 après la bascule.** Le README le dit aux taux réels de chaque
+   régime — « celle réellement versée — jusqu'à 82,28 % du traitement en
+   2026 » (ligne 29), « le scénario 4 porte les taux réellement en vigueur »
+   (lignes 86-91), « 18 % au lieu des 46,4 % que le 4 porte au compte »
+   (lignes 684-688) — ; le code lui donne le régime unique dès 2026 : la
+   fonctionnaire d'État née en 1975 a 55,2 % au compte en 2025, 25,83 % en 2026
+   et 2030, et le 6, 18 %. Le README est le texte de la proposition : l'un des
+   deux est à corriger.
+2. **Qui y a un employeur** : `a_un_employeur` (`compte.py:394-419`) le déduit
+   de la part salariale et du routage d'un entrant d'aujourd'hui. Le
+   parlementaire passe de 10,85 % à 25,83 % des deux côtés, comme un
+   indépendant ; l'agent général d'assurance gagne 15,4 points « employeur » ;
+   le membre du CESE, dont « le Conseil ne verse pas de part employeur », en
+   gagne un ; le médecin conventionné perd la part de l'assurance maladie (ASV)
+   dès 2026, et l'auxiliaire médical de même. « Pour un non-salarié […] les
+   quatre se réduisent à deux » (README, lignes 40-43 ; `part_patronale.yaml` ;
+   `notionnel.py:51-52`) est faux pour eux : médecin de secteur 1, 20 378 € au
+   scénario 2 et 25 118 € au 4 ; la page écrit à la fois « L'employeur verse ici
+   15,1 % du total » et « vous n'avez pas d'employeur » (`pages.js:6769`). Le
+   test (`test_simulateur.py:856-874`) ne vise que trois statuts.
+3. **Les assiettes minimales et les forfaits disparaissent** : à 0,1 fois le
+   salaire moyen, l'exploitant agricole passe de 50,5 % de son revenu au compte
+   en 2025 à 25,8 % en 2026, le ministre du culte de 54,3 % à 10,4 % ;
+   `methodologie.md:744-750` n'annonce qu'une hausse pour les indépendants.
+4. **Les régimes d'outre-mer de compétence locale** — la CAFAT, la CPS de
+   Polynésie, Wallis-et-Futuna — passent au régime unique (salarié calédonien :
+   7,35 % au scénario 2 en 2025, 10,45 % en 2026), quand
+   `limites/4-regimes-incomplets.md:81-82` rappelle que la loi organique les
+   confie aux assemblées locales.
+5. **Le revenu conventionnel** des collaborateurs, des aides familiaux et des
+   congréganistes, auquel le taux unique s'applique après 2026 comme à un
+   revenu réel.
+6. **L'activité après la première pension** : le scénario 1 en tire une
+   seconde pension (1 788 € par an pour quatre ans au salaire moyen) ; les
+   comptes des scénarios 2 à 6 n'en reçoivent rien, et rien ne le dit.
+   `droits_apres_la_premiere_pension`, le cumul et la retraite progressive sont
+   sans décision.
+7. **Les fiches du droit réel qui alimentent le compte sans décision** :
+   `assiette_minimale_independants`, `assiette_sociale_independants`,
+   `cotisation_vieillesse_independants`, `conjoint_collaborateur_independants`,
+   `chomage_retraite_complementaire`, `financement_chomage_complementaire`,
+   `micro_social_abattement`, `rci_seuil_premiere_tranche`, les `asv_*`,
+   `organic_conjoints_de_commercants`, `points_au_prorata_des_cotisations`,
+   `agirc_arrco_valeur_achat` (docs/etat.md, « Les domaines sans décision »).
+   La fiche `compte_notionnel` ne nomme que l'Unédic pour tiers payeur, quand
+   le code porte aussi l'État pour l'ASS et le FNE, et 3 % de l'allocataire
+   (`compte.py:1085-1135`).
+
+**Ce que le propriétaire tranche** : le taux du scénario 4 après la bascule ;
+un « tiers payeur » statut par statut — l'assemblée, l'assurance maladie, le
+mandant — et ce qu'il verse au régime unique ; un plancher d'assiette ;
+l'outre-mer ; ce que vaut l'activité après la première pension.
+
+### 170. La page Coût des scénarios 2 à 6 : la dette, la recette et la réversion qu'elle compte autrement que le modèle — `à faire`
+
+**D'où elle vient.** Le même audit, du 23 octobre 2026 ; le coût refait sous
+les réglages de référence redonne au bit `data/derive/agregats.json`. Ni
+l'action 157 (la population) ni l'action 47 (la reprise de la garantie) ne
+couvrent ce qui suit.
+
+**Ce qui est à faire** :
+
+1. **La moitié « qui éteint de la dette » n'éteint rien.** Le README (lignes
+   1072-1077, 1095-1098) et la page Coût (`pages.js:11537-11538`, et
+   `pages.js:16450` au programme) disent que la moitié des trois postes que la
+   proposition n'encaisse plus éteint de la dette, « à commencer par celle que
+   le système de retraite porte » ; la même note dit « Rien de tout cela ne
+   change le solde ci-dessus » (`pages.js:11550-11553`), et `calculer_dette` ne
+   cumule que les soldes (`cout.py:2060-2066`) : `Restitution.eteint_de_dette`
+   (`restitution.py:185`) n'est lu par aucun calcul. La seule moitié des
+   impôts affectés, portée à la dette de la retraite, ferait passer le solde de
+   2026 du scénario 6 de −0,70 à +0,37 point de PIB et sa dette de 2070 de 70 %
+   à environ 2 % du PIB, ce qui renverse « 70 % contre 66 % pour le système
+   actuel » (README, lignes 972-975).
+2. **La recette des scénarios 2 à 5 ne suit pas le régime unique.** Leurs
+   comptes reçoivent dès la bascule le taux du régime unique — la
+   fonctionnaire d'État passe de 55,2 % à 25,8 %, l'artisan de 13,0 % à
+   25,8 % —, et leur recette reste celle du droit en vigueur
+   (`CLES_RECETTES`, `cout.py:229-239` ; `cout.py:1444-1448`). Le README écrit
+   « leur recette ne bouge pas » (ligne 1064) et `test_cout.py:3548-3573` le
+   tient ; `scripts/solde_fusion.py` dit « La page ne le compte pas ». Solde
+   moyen 2026-2070, de la page au régime unique : scénario 2, +7,97 à +7,14 ;
+   3, +1,55 à +0,66 ; 4, +2,09 à +1,26 ; 5, −0,04 à −0,93. L'accueil dit que
+   les 18 % coûtent 2,3 points de PIB par an (`pages.js:16484`,
+   `scripts/mesures_accueil.py:76`), la page Coût et le README 3,1. Mesuré le
+   20 septembre 2026, puis archivé sans suite.
+3. **Les engagements du bilan « à la suédoise » comptent la réversion des
+   notionnels**, qui n'en servent pas : la masse de chaque système y est
+   multipliée par le facteur de réversion (`cout.py:4686-4688`, `4782-4788`),
+   quand `masse_du_scenario` ne leur sert que les droits directs
+   (`cout.py:761-770`). Engagement de 2025, en points de PIB : scénario 2,
+   163,4 au lieu de 149,5 ; 4, 393,6 au lieu de 360,0 ; 6, 361,1 au lieu de
+   330,1 ; le ratio d'équilibre du 6 passerait de 0,91 à 1,00. Aucun test.
+4. **La réversion déjà servie à la bascule, retirée aux scénarios 3 et 5.**
+   Ils ne la servent plus, « aux veuves d'avant comme à celles d'après »
+   (`limites/5-bis-cout-agrege.md:145-152`, `cout.py:740-751`), quand la fiche
+   `valorisation_des_droits_acquis` dit qu'« une pension qui a pris effet avant
+   ne bouge pas » et le README (ligne 28) que qui a liquidé garde sa pension.
+   C'est, mesuré par l'audit, toute l'économie du scénario 3 en 2026 :
+   environ 1,5 point de PIB.
+5. **Les cohortes que la bascule sépare de leur génération de grille**, aux
+   scénarios 3 et 5, prennent la pension de celle-ci (`cout.py:3006`) ; le
+   même défaut n'a été corrigé que pour le 6 (`cout.py:2673-2676`). Le rapport
+   du 3 vaut 0,99797 en 2025 au lieu de 1 ; le cumul 2025-2070 est sous-estimé
+   de 41 milliards au 3 et de 40 au 5. `test_cout.py:446-463` tolère 0,5 % et
+   ne vise que le 3.
+6. **L'ASPA et les majorations que les comptes suppriment restent dans leur
+   dépense projetée** : le rapport multiplie la dépense du COR, FSV compris
+   (`cout.py:4337`, `cout.py:1330-1332`), environ 0,04 point de PIB au
+   scénario 2, 0,10 au 4 et 0,09 au 6, en plus de sa garantie ; aucun cas type
+   n'a trois enfants (`castypes.py:352`), et les majorations pour enfants passent
+   aux notionnels au prorata, environ 0,14 point aux 4 et 6. L'effet retour,
+   lui, sert l'ASPA aux scénarios 2 à 5 (`effet_retour.py:12-15`, `105-107`,
+   tenu par `test_effet_retour.py:143-158`), que la couche `comptes_notionnels`
+   neutralise.
+7. **La garantie, chiffrée sur une population incomplète et une épargne
+   universelle** : son effectif est celui des droits directs
+   (`cout.py:3345-3349`), quand le 6 supprime la réversion et que
+   199 925 résidents de 65 ans et plus ne touchent qu'une réversion
+   (`tests/temoins/pensionnes_de_2022.json`), environ 1,3 milliard par an ; et
+   elle compte chez tous la rente des cinq points volontaires
+   (`cout.py:2652`, `2979-2984`), que le README dit « une convention de
+   comparaison » et non un comportement : sans elle, la garantie de 2070 passe
+   de 14,0 à 16,5 milliards (+18 %).
+8. **Les soldes du 6 et du 1 se comparent sur deux périmètres** : « −1,03 %
+   contre −1,13 % » (README, lignes 1057-1060), quand le 1 garde l'ASPA dans son
+   solde et que le 6 sort sa garantie (`cout.py:2405-2410`) ; garantie
+   comprise, le 6 est à −1,27 %.
+9. **Les textes** : la docstring de `cout.py` (lignes 17-28, 88-92, 97-102,
+   776-780) ; le README, lignes 391, 789 et 1009-1010 ; la numérotation des
+   systèmes, de 1 à 6 au README et de 1 à 4 sur la page (`pages.js:200-204`) ;
+   l'âge du 6 que les leviers lisent sur les retraités du droit en vigueur
+   (`leviers.py:64-66`), dit ni sur la page ni aux limites.
+
+**Ce que le propriétaire tranche** : de quelle dette parle « la moitié éteint
+de la dette » ; si la recette des scénarios 2 à 5 suit leur régime unique, ou
+si le régime unique les quitte ; si les scénarios 3 et 5 servent la réversion
+déjà liquidée ; si la garantie sert qui n'a aucune retraite obligatoire, et sur
+quelle part de verseurs volontaires elle se chiffre.
+
+### 171. Les couches de la proposition gouvernent-elles le calcul ? Ce qu'elles gardent ou neutralisent n'y agit pas, et le moteur ne le refuse pas — `à faire`
+
+**D'où elle vient.** Le même audit, du 23 octobre 2026. `data/CLAUDE.md` dit
+qu'« une variante s'écrit en couche, jamais dans le code, et le moteur refuse
+ce qu'il ne sait pas calculer » ; `scenarios/univers.py:10-15`, qu'il « refuse
+ce qu'il ne sait pas faire… c'est ce qui rend l'ajout d'un univers sans
+risque » ; `docs/architecture.md`, § 4.8, qu'« une fiche neutralisée n'accorde
+rien ».
+
+**Ce qui est à faire** :
+
+1. **Les opérations `garder`, `neutraliser` et `remplacer_une_version` d'une
+   couche d'univers ne sont ni appliquées ni refusées.** `calcul_notionnel`
+   (`scenarios/univers.py:92-159`) ne lit que les ajouts, les changements de
+   paramètre et les couches d'un seul calcul ; ce que le compte ne sert pas —
+   le minimum, l'ASPA, l'AVPF, la réversion —, il ne le sert pas parce que son
+   code ne les connaît pas. Une copie des couches où `comptes_notionnels` garde
+   l'ASPA et l'AVPF et ne neutralise plus le minimum ni la réversion se charge
+   sans erreur, passe `calcul_notionnel` pour les cinq univers, et rend des
+   résultats identiques au centime ; seul le décompte « sans décision » bouge,
+   de 129 à 145. Une opération `remplacer_une_version` est acceptée, puis
+   ignorée ; `neutraliser {domaine: minima}` est refusée dans une couche d'un
+   seul calcul, acceptée et sans effet dans une couche d'univers.
+   `tests/test_univers.py` (19 tests) ne vérifie jamais l'effet d'une décision.
+2. **Le report de l'âge légal, rattaché en dur au scénario 6** dans la
+   comparaison (`simulateur.py:205-206`, `simulateur.js:156-157` :
+   `scenario == "notionnel_liberal"`) : posé sur le scénario 4, son compte
+   liquiderait en 2040 et la comparaison lui garderait la carrière de 2037.
+   L'action 130 (phase 7) note déjà que le pilote et les pages lisent les
+   univers par leur identifiant.
+3. **Les décisions que le code prend sans la carte** : la garantie applique la
+   condition de résidence de l'ASPA (`notionnel.py:529-532`) que la carte dit
+   `residence_et_minimum_vieillesse` sans décision ; le compte crédite les
+   cotisations que l'Unédic verse, sans décision non plus.
+
+**Ce que le propriétaire tranche** : si les décisions des couches restent
+déclaratives — un test refuse alors toute opération que le moteur n'exécute
+pas, et confronte chaque neutralisation à ce que le compte sert —, ou si le
+moteur les exécute.
+
+### 172. Ce que le README, le site et les sorties disent des scénarios 2 à 6, et ce que les tests n'en tiennent pas — `à faire`
+
+**D'où elle vient.** Le même audit, du 23 octobre 2026 : ce qui suit ne change
+aucun calcul, mais ce qu'on lit des scénarios 2 à 6, ou ce qui les garde.
+
+**Ce qui est à faire** :
+
+1. **Les témoins ne figent pas l'indexation par défaut** : 881 des 889 cas de
+   `tests/temoins/simulations.json` tournent sous `triple_lock_inverse`, la base
+   de `scripts/construire_temoins.py:53-61`, et la boucle des règles
+   (`construire_temoins.py:526-530`) omet la masse salariale, qui est le défaut.
+   Aucun témoin ne fait varier `part_cotisation`, `foyer`, `reprise`, `frais` ni
+   `taux` ; le test tiré au sort ne fait varier ni ceux-là, ni
+   `contribution_etat`, `stock`, `esperance_vie`, `emploi`, et tire la bascule
+   entre 1945 et 2065 (`test_web.py:694`). Aucun test ne simule une carrière
+   sans cotisation ; `test_univers.py:185-209` ne contrôle que trois des règles
+   de cotisation que le compte applique.
+2. **Le réglage « Part de la cotisation portée au compte »** ne change que le
+   système 2, qui garde son libellé : sous `totale`, « 2. Ce que vous avez
+   cotisé, part salariale seule » affiche le montant du système 3, sa
+   description « 11,3 % du brut » (`pages.js:5199`) et l'info-bulle
+   (`pages.js:7053`) inchangées ; libellés en dur à `pages.js:184-189`.
+3. **Le tableau du Python** attribue aux « scénarios 2 et 3 » et « 4 et 5 » les
+   cotisations des comptes rétroactifs (`simulateur.py:448-457`, et l'exemple du
+   README, lignes 677-679), quand le compte du 3 n'en a reçu qu'une part ; sa
+   ligne de la garantie cite les ressources au départ et non à l'ouverture
+   (`simulateur.py:488-493`) : « 427 € portent la pension de 7 619 € au plancher
+   de 8 999 € » ne tombe pas juste. Le JSON des deux moteurs
+   (`simulateur.py:691-707`, `simulateur.js:524-537`) n'a pas de quoi recalculer
+   le complément ; il porte `cotisations_employeur` nul après la bascule au 6
+   (`compte.py:440-442`), et range l'année du départ dans le compte des
+   scénarios 3 et 5 qui ont déjà liquidé (`notionnel.py:641-645`).
+4. **Le README** : « à 50 ans la garantie vieillesse n'est pas ouverte »
+   (lignes 79-81), quand le modèle sert 427 € par an à l'agent SNCF dès 65 ans,
+   ligne que `scripts/construire_tableaux_md.py:209-217` coupe du bloc ; la
+   retenue des fonctionnaires « alignée sur l'effort contributif total du
+   privé » (ligne 396), qui ne l'est que sous `totale_alignee` ; « le compte
+   rétroactif à 18 % pour tous » (ligne 392), que la ligne 31 contredit.
+5. **Le site** : « systèmes 2 à 6 seulement » (`pages.js:833`, `841`) sur un
+   site qui numérote de 1 à 4 ; « retiré des six totaux … dans les quatre
+   systèmes » (`pages.js:5248`) ; la description du système 3, fixe quel que
+   soit le statut (`pages.js:5205`, « les 28 % prélevés aujourd'hui ») : pour un
+   artisan, les systèmes 2 et 3 affichent le même montant, sans rien qui dise
+   pourquoi ; sous une bascule passée, la ligne « salaire » des quatre systèmes
+   montre celui de la première année.
+6. **Les textes du code** : `regimes.py:1078-1085` et `notionnel.py:46-48`
+   (« trois régimes », la SNCF « de 2007 à 2018 », quand
+   `contribution_employeur_public.csv` en porte neuf et la SNCF depuis 1992).
+
+**Ce que le propriétaire tranche** : si le réglage « Part de la cotisation
+portée au compte » reste sur le site, et sous quel libellé.
+
 ---
 
 ## Les actions en cours
