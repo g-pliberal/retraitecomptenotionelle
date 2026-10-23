@@ -4741,7 +4741,7 @@ R. 111-2 ; la condition de L. 816-1 ; le tableau de 2008 des régimes
 
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
-**Reprise, au 22 octobre 2026.** Faits, des coupures au mois au forfait du collaborateur
+**Reprise, au 23 octobre 2026.** Faits, des coupures au mois au forfait du collaborateur
 au compte. Restent : des classes, l'acte vétérinaire (au propriétaire), des décrets non
 lus ; de `coefficients_anticipation_agirc_arrco`, l'ASF réservée de 1983 à 2003 aux
 salariés et aux chômeurs (au propriétaire) ; de `decote_avant_1983`, l'ajournement des
@@ -4749,8 +4749,8 @@ artisans et commerçants et les « soixante et un ans » agricoles, aux décrets
 1968 (au propriétaire) ; la durée du minimum de D. 634-14 (la Cnav, au propriétaire) ;
 `pension_non_salaries_agricoles_2026` ; les années au prorata de l'exploitant, celle du
 décès comprise (au propriétaire : la pratique de la MSA, l'option du conjoint survivant) ;
-trouvées le 22 octobre, l'assiette minimale des indépendants (D. 633-2), que le compte ne
-porte pas, et l'AVI du collaborateur, sur les revenus du chef. Détail : les notes.
+l'assiette minimale des indépendants au compte (D. 633-2 ; au propriétaire : la carte la
+laisse sans décision) ; l'AVI du collaborateur, sur les revenus du chef. Détail : les notes.
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre
 session, à la demande du propriétaire, après avoir vérifié qu'elle ne lui
