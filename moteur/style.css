@@ -1022,6 +1022,12 @@ table[data-pli="fiche"][data-plie] tbody tr:not([hidden]) {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 8.5rem), 1fr));
   gap: 0.4rem 1rem; padding: 0.65rem 0; border-bottom: 1px solid var(--trait);
 }
+/* Deux valeurs, deux colonnes : la grille de 8,5 rem n'en laissait tenir
+   qu'une à 320 points, et deux valeurs courtes qu'on lit ensemble, une étape
+   et son montant, s'empilaient. Une phrase prend toujours la ligne entière. */
+table[data-pli="fiche"][data-plie]:not(:has(tr > :nth-child(4))) tbody tr:not([hidden]) {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
 table[data-pli="fiche"][data-plie] tbody tr:last-child { border-bottom: 0; }
 table[data-pli="fiche"][data-plie] tbody :is(th, td) {
   padding: 0; border: 0; text-align: left; min-width: 0; white-space: normal;

@@ -22,7 +22,7 @@ import math
 import re
 import sys
 from pathlib import Path
-from urllib.parse import parse_qsl
+from urllib.parse import parse_qsl, urlencode
 
 import pytest
 
@@ -2542,11 +2542,13 @@ def test_le_simulateur_tient_en_peu_de_mots():
     vierge = rendre("/simuler", {})[1]
     assert _mots_visibles(vierge) <= 191, "le formulaire reprend de la prose"
 
+    # Les résultats, de 1 700 à 1 300 le 23 octobre 2026 (action 173, étape
+    # 4) : ils en montraient 1 365, et 1 286 une fois leurs redites ôtées.
     resultats = rendre("/simuler", {
         "naissance": "1962-03-15", "debut": "1984-09", "liquidation": "2026-07",
         "unite_revenu": "euros_mois", "salaire": "2600",
     })[1]
-    assert _mots_visibles(resultats) <= 1700, "les résultats reprennent de la prose"
+    assert _mots_visibles(resultats) <= 1300, "les résultats reprennent de la prose"
 
 
 def test_le_sexe_ne_change_rien_par_defaut(contexte):
@@ -3557,9 +3559,10 @@ def test_le_script_du_site_sait_ouvrir_les_mots_du_glossaire():
 #: seule page où une donnée commande un budget, et c'est la seule dont le
 #: contenu soit une liste que le dépôt allonge.
 #:
-#: Une page échappe à la règle des mots : « /simuler » EST un formulaire : ce
-#: qu'on y compte est fait de libellés de champs et de deux cents options de
-#: menus, que personne ne lit à la suite.
+#: La borne de « /simuler » vaut pour le formulaire et pour la page de
+#: résultats (`test_la_page_de_resultats_replie_son_detail`) : ce sont les
+#: résultats qui l'atteignent, le formulaire n'en montrant que cent cinquante
+#: depuis que les options de ses menus ne comptent plus.
 BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # Deux tableaux sur l'accueil : celui qui oppose les deux systèmes terme à
     # terme, et celui du plancher — l'argument le plus parlant du site, remonté
@@ -3577,7 +3580,11 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # trois gestes détaillent, la répartition des 18 % que le chiffre de la
     # carte porte déjà.
     "/": (390, 0, 2, 230),
-    "/simuler": (1500, 0, 0, 0),
+    # Serrée le 23 octobre 2026 (action 173, étape 4), de 1 500 mots à 1 020 :
+    # les résultats de la simulation témoin en montraient 1 091, dont ce que la
+    # page redisait — le report de l'âge légal compté deux fois, la rente
+    # volontaire qu'on ne place pas, le détail annoncé sous son titre.
+    "/simuler": (1020, 0, 0, 0),
     # Partager ne porte que des cartes : leur texte est court par
     # construction — il doit tenir dans une image de 1200 × 675.
     "/partager": (400, 0, 0, 0),
@@ -3740,24 +3747,31 @@ def test_aucune_page_ne_depasse_son_budget_de_lecture(contexte, chemin):
 #: 23 octobre 2026, dont 1 121 sous la seule question des petites retraites, qui
 #: redisait trois fois ses montants, et 4 489 le soir (action 173, étape 3). Les
 #: menus déroulants et les bulles du glossaire n'y comptent pas : personne ne
-#: les lit à la suite. Une page dont on resserre les mots y prend sa ligne.
+#: les lit à la suite ; le JSON des résultats non plus, qu'on copie. Une page
+#: dont on resserre les mots y prend sa ligne, à son adresse.
 BUDGETS_DEPLIES: dict[str, int] = {
     "/": 4500,
+    # Simuler tout déplié : le formulaire et les résultats de la simulation
+    # témoin, 7 092 mots le 23 octobre 2026 (action 173, étape 4). Ils disaient
+    # cinq fois que les cinq points volontaires se placent ou se gardent.
+    "/simuler?" + urlencode(SIMULATION_TEMOIN): 6850,
 }
 
 
-@pytest.mark.parametrize("chemin", list(BUDGETS_DEPLIES))
-def test_une_page_depliee_tient_son_budget(chemin):
+@pytest.mark.parametrize("adresse", list(BUDGETS_DEPLIES))
+def test_une_page_depliee_tient_son_budget(adresse):
     """Moins de mots, sans perdre une idée : une idée se dit une fois par page,
     et chaque réponse repliée ne redit pas ce que sa voisine ou le haut de la
     page a dit."""
-    corps = rendre(chemin, {})[1]
+    chemin, _, requete = adresse.partition("?")
+    corps = rendre(chemin, dict(parse_qsl(requete)))[1]
     sans_bulles = re.sub(r'<span class="bulle"[^>]*hidden>.*?</span>', " ", corps,
                          flags=re.S)
     lu = re.sub(r"<select\b[^>]*>.*?</select>", " ", sans_bulles, flags=re.S)
+    lu = re.sub(r"<pre\b[^>]*>.*?</pre>", " ", lu, flags=re.S)
     mots = _mots(lu)
-    assert mots <= BUDGETS_DEPLIES[chemin], (
-        f"{chemin} : {mots} mots tout déplié, {BUDGETS_DEPLIES[chemin]} au plus"
+    assert mots <= BUDGETS_DEPLIES[adresse], (
+        f"{chemin} : {mots} mots tout déplié, {BUDGETS_DEPLIES[adresse]} au plus"
     )
 
 

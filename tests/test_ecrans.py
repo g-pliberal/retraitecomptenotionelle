@@ -197,8 +197,9 @@ def test_un_trace_et_sa_legende_se_voient_ensemble():
 #: courtes. Chaque page des étapes 4 à 10 de l'action 173 s'y ajoute quand on
 #: la reprend : le 23 octobre 2026, à 320 points, Droits non cotisés et les
 #: résultats du simulateur empilaient encore, en fiche, deux valeurs courtes
-#: que la colonne minimale de 8,5 rem ne laisse pas tenir ensemble.
-COTE_A_COTE = ["/"]
+#: que la colonne minimale de 8,5 rem ne laisse pas tenir ensemble. Simuler,
+#: le formulaire et ses résultats, à l'étape 4.
+COTE_A_COTE = ["/", "/simuler", RESULTATS]
 
 
 def test_deux_valeurs_courtes_d_une_rangee_repliee_se_lisent_cote_a_cote():

@@ -3549,7 +3549,7 @@ function financement(contexte, comparaison, finances, montants) {
 <ul class="leviers">
   <li><strong>Les retraités paient</strong> — toutes les pensions sont rognées
     de ${g.pourcentage(1 - reference.coefficientDepart, false, 0)}, la vôtre
-    comme les autres. C'est le levier que le troisième chiffre applique.</li>
+    comme les autres.</li>
   <li><strong>Les actifs paient</strong> — les cotisations montent de
     ${g.nombre(points, 1)} ${unitePoints} de revenu d'activité, soit
     ${g.euros(cotisationMensuelle)} de plus prélevés chaque mois sur un salaire
@@ -3588,10 +3588,9 @@ function financement(contexte, comparaison, finances, montants) {
   }
 
   const detail = g.depliant("Le détail : le calcul, et les quatre systèmes", `
-<p>Ce que les recettes d'une année paient des pensions de cette année-là, pour
-chacun des quatre systèmes. Au-dessus de 100 %, le système encaisse plus qu'il
-ne verse : c'est une marge, et le site ne la convertit jamais en pension plus
-élevée, parce que servir une marge est une décision que personne n'a prise.</p>
+<p>Au-dessus de 100 %, un système encaisse plus qu'il ne verse : c'est une
+marge, et le site ne la convertit jamais en pension plus élevée, parce que
+servir une marge est une décision que personne n'a prise.</p>
 
 ${g.tableau(
     ["Système", `En ${depart}`, "Sur toute votre retraite",
@@ -3627,9 +3626,8 @@ est là.</p>
 
 <p>En ${departDit}, il ${retraite ? "manque" : "manquera"}
 ${g.pourcentage(1 - reference.coefficientDepart, false, 0)} de ce que le
-système doit verser. Cette différence, quelqu'un la paiera, et il
-n'y a que trois façons de la payer. Aucune n'est décidée ; les voici toutes les
-trois, pour la même année :</p>
+système doit verser. Quelqu'un paiera cette différence, de l'une de trois
+façons, dont aucune n'est décidée ; les voici, pour la même année :</p>
 
 ${leviers}
 
@@ -5002,18 +5000,16 @@ function estimationOfficielle(contexte, saisie, montants) {
   return `
 <h2 id="estimation-officielle">Comme votre estimation officielle</h2>
 <p class="chapeau">Le système 1 au format de « Mon estimation retraite », que
-chacun consulte sur <a href="https://www.info-retraite.fr/">info-retraite.fr</a> :
-le brut de chaque mois, base et complémentaire, aux âges qu'elle chiffre.
-Recopiez le total brut de la vôtre dans la colonne « Votre estimation » :
-l'écart s'affiche à côté.</p>
+chacun consulte sur <a href="https://www.info-retraite.fr/">info-retraite.fr</a>,
+aux âges qu'elle chiffre. Recopiez le total brut de la vôtre dans la colonne
+« Votre estimation » : l'écart s'affiche à côté.</p>
 <div class="carte estimation-officielle">
   ${tableau}
   <p class="comparer"><button type="submit" form="simulateur" id="comparer-estimation">Comparer</button></p>
   <p class="discret">${leNet} Vos revenus à venir suivent le salaire moyen ;
   l'estimation officielle leur prête « une évolution régulière », un peu plus
   rapide.${minimum}
-  Ce que vous recopiez reste dans votre navigateur, avec le reste de la
-  saisie.</p>
+  Ce que vous recopiez reste dans votre navigateur.</p>
 </div>`;
 }
 
@@ -5354,9 +5350,8 @@ ${estimationOfficielle(contexte, saisie, montants)}
 ${salaireNet(comparaison, saisie, contexte.paquet)}
 ${reversionDuConjoint(contexte, comparaison, saisie, montants)}
 <h2>Pour aller plus loin</h2>
-<p class="chapeau">Les quatre montants ci-dessus sont le résultat ; tout ce qui
-suit est le détail du calcul, rangé par question. Ouvrez ce que vous voulez
-voir.</p>
+<p class="chapeau">Le détail du calcul, rangé par question : ouvrez ce que vous
+voulez voir.</p>
 ${releveControle(controle)}${pensionDAujourdhui(contexte, comparaison, saisie)}
 ${financement(contexte, comparaison, finances, montants)}
 ${trajectoire(contexte, comparaison, saisie)}
@@ -5665,9 +5660,6 @@ les trois scénarios macroéconomiques, parce qu'aucun d'eux ne s'y applique.</p
   const reference = comparaison.enEurosConstants(
     comparaison.notionnel_retroactif.pension_annuelle,
   ) / 12;
-  const ecart2 = basse.notionnel_retroactif > 0
-    ? haute.notionnel_retroactif / basse.notionnel_retroactif - 1
-    : NaN;
 
   // L'emploi projeté, rejoué sous l'autre trajectoire : il ne déplace que les
   // systèmes 2 à 6, par l'indexation, et le lecteur doit le voir.
@@ -5690,11 +5682,7 @@ revalorise sur les prix et ne lit pas l'emploi.</p>`;
   }
 
   return g.depliant("Ce que l'hypothèse pèse", `
-<p>La même carrière, rejouée sous les trois hypothèses du COR. Le système 2
-passe de ${g.eurosCentimes(basse.notionnel_retroactif / 12)} à
-${g.eurosCentimes(haute.notionnel_retroactif / 12)} par mois, soit
-<strong>${g.pourcentage(ecart2)} d'amplitude</strong> autour des
-${g.eurosCentimes(reference)} affichés plus haut.${g.bulle(
+<p>La même carrière, rejouée sous les trois hypothèses du COR.${g.bulle(
     "Ce que la fourchette fait varier, et ce qu'elle laisse fixe",
     `Le compte est revalorisé chaque année de ${debut} à ${liquidation}, soit `
     + `${total} années — dont <strong>${projetees} après ${derniereObservee}`
@@ -6163,18 +6151,16 @@ function reportProposition(comparaison) {
   if (!comparaison.departReporte) return "";
   const initiale = comparaison.carriere;
   const reportee = comparaison.carriere_liberal;
-  const ecart = reportee.age_liquidation - (initiale.age_liquidation || 0.0);
   return "<p class=\"note\"><strong>La proposition fixe l'âge légal de départ à "
     + `${age(comparaison.parametres.age_legal_liberal)}.</strong> Sous elle, `
     + `vous ne partiriez pas à ${age(initiale.age_liquidation || 0.0)} mais à `
     + `${age(reportee.age_liquidation)}, en ${echapper(String(reportee.dateLiquidation))} : `
-    + "le montant du système 4 est celui de ce départ-là, servi "
-    + `${age(ecart)} plus tard que les trois autres. Jusque-là, vous restez `
+    + "le montant du système 4 est celui de ce départ-là. Jusque-là, vous restez "
     + "dans la situation de votre dernière année — le même statut, le même "
     + "salaire relatif —, et vous cotisez. Des cotisations en plus et une "
-    + "retraite plus courte font une pension mensuelle plus forte ; ce que "
-    + "le report retire, ce sont les mois de pension d'avant cet âge, et le "
-    + "graphique « Ce que chaque système finit par verser » les montre.</p>";
+    + "retraite plus courte font une pension mensuelle plus forte ; le report "
+    + "retire les mois de pension d'avant cet âge, que montre le graphique "
+    + "« Ce que chaque système finit par verser ».</p>";
 }
 
 export const NATURES_PART_EMPLOYEUR = {
@@ -6488,8 +6474,7 @@ function salaireNet(comparaison, saisie, paquet) {
       - tauxCapitalisationVolontaireApplique(parametres);
     const resteApres = reference.netApresVolontaire / 12;
     const ecartApres = remuneration.gainNetMensuelApresVolontaire;
-    const [le, plein] = feminin(remuneration.libelleNet) ? ["la", "pleine"]
-      : ["le", "plein"];
+    const plein = feminin(remuneration.libelleNet) ? "pleine" : "plein";
     volontaire = ` C'est votre ${net} ${plein} : le système 4 prélève
   ${g.pourcentage(impose, false, 0)} pour la retraite, et rien d'autre. La
   rente qu'il affiche plus haut suppose en plus que vous placez les
@@ -6499,16 +6484,14 @@ function salaireNet(comparaison, saisie, paquet) {
   de votre ${net} sur un compte à votre nom, pas une retenue —, pour cotiser
   ${g.pourcentage(tauxRetraitePropose(parametres), false, 0)} en tout, comme
   aujourd'hui. Il vous reste alors ${g.euros(resteApres)} par mois,
-  soit ${eurosSigne(ecartApres, false)} par rapport à aujourd'hui. Si vous ne les
-  placez pas, vous gardez ${le} ${net} ${plein}, et la rente du système 4 baisse de la
-  part nommée « des cinq points volontaires ».`;
+  soit ${eurosSigne(ecartApres, false)} par rapport à aujourd'hui.`;
   }
 
   return `
 <h2 id="salaire-net">Et pendant que vous cotisez</h2>
-<p class="chapeau">Une réforme des retraites ne change pas que votre pension :
-elle change ce qui est prélevé sur votre travail, donc ce que vous touchez
-chaque mois. Les systèmes 1, 2 et 3 prélèvent la même chose — ils ne changent
+<p class="chapeau">Une réforme des retraites change aussi ce qui est prélevé sur
+votre travail, donc ce que vous touchez chaque mois. Les systèmes 1, 2 et 3
+prélèvent la même chose — ils ne changent
 que ce qui est porté au compte. Le système 4, lui, y touche.</p>
 <div class="carte">
   <div class="fiches">${ouverture}</div>
@@ -6656,13 +6639,12 @@ function salaireNetDetail(comparaison, remuneration, saisie, paquet) {
     + g.eurosCentimes(Math.abs(ecart) / 12);
   let lecture;
   if (avecCout) {
-    lecture = "<p>Le coût du travail ne bouge pas : c'est l'hypothèse. Le "
-      + `prélèvement retraite, lui, passe de ${mois(retraiteAvant)} à `
-      + `${mois(retraiteApres)} par mois, soit `
-      + `<strong>${eurosSigne((retraiteApres - retraiteAvant) / 12)}`
-      + "</strong> ; le salaire brut monte de "
-      + `${eurosSigne((apres.brut - avant.brut) / 12)}, et le net de `
-      + `${eurosSigne((apres.net - avant.net) / 12)}.</p>`;
+    // Les deux montants du prélèvement sont sur la ligne du tableau : la
+    // phrase n'en dit que l'écart, et le sens de chaque écart dans son verbe.
+    // Que le coût du travail ne bouge pas, la méthode le dit juste dessous.
+    lecture = `<p>Le prélèvement retraite ${deplace(retraiteApres - retraiteAvant)} `
+      + `par mois ; le salaire brut ${deplace(apres.brut - avant.brut)}, et le `
+      + `net ${deplace(apres.net - avant.net)}.</p>`;
   } else if (remuneration.incidence === Incidence.PARTAGEE
       && remuneration.contributionEquilibre > 0) {
     lecture = `<p>${la} ${assiette.toLowerCase()} ${deplace(apres.brut - avant.brut)} : `
@@ -6711,18 +6693,16 @@ function salaireNetEpargne(epargne, remuneration, parametres, saisie) {
     tauxCapitalisationVolontaireApplique(parametres), false, 0,
   );
   const repartition = g.pourcentage(parametres.taux_cotisation_liberal, false, 0);
-  const total = g.pourcentage(tauxRetraitePropose(parametres), false, 0);
+  // Ce que sont les points rendus, et ce qu'ils font à la rente et au net, le
+  // haut de la section l'a dit : ne reste ici que ce qu'ils ajoutent au compte.
+  // Ils viennent après ce que font les cinq points imposés, à qui « sans eux »
+  // renvoie.
   const ajout = remuneration.verseLeVolontaire
-    ? ` Les ${volontaire} <strong>volontaires</strong> n'y sont pas : la `
-      + "fiche de paie ne les retient pas, personne ne les impose. Ce sont "
-      + "les points que la proposition vous rend, et que le site suppose "
-      + "placés sur le même compte, pris sur votre net — soit "
+    ? ` Les ${volontaire} <strong>volontaires</strong> ne sont pas prélevés ; `
+      + "placés sur le même compte, ils y ajoutent "
       + `${g.eurosCentimes(remuneration.epargneVolontaireMensuelle)} `
       + `par mois et ${g.euros(remuneration.epargneVolontaireCumulee)} `
-      + `d'ici votre départ. Vous cotisez alors ${total} en tout, `
-      + "c'est-à-dire ce que vous versez déjà aujourd'hui — c'est à ce "
-      + "prix-là que la rente du système 4 est calculée, et la part qui "
-      + "en vient est nommée à côté d'elle."
+      + "d'ici votre départ."
     : "";
   return `<p class="note resume"><strong>${g.eurosCentimes(epargne)} par mois `
     + "de ce prélèvement est de l'épargne à votre nom.</strong> Le système 4 "
@@ -6730,14 +6710,14 @@ function salaireNetEpargne(epargne, remuneration, parametres, saisie) {
     + "cinq points ne partent pas : ils alimentent un compte qui reste le "
     + "vôtre, transmissible à vos héritiers tant qu'il n'est pas liquidé — "
     + `${g.euros(remuneration.epargneCumulee)} d'ici votre départ, en euros `
-    + `de ${saisie.euros}.${ajout} `
+    + `de ${saisie.euros}. `
     + (remuneration.afficheCoutDuTravail
       ? "Sans eux, le salaire net monterait à tous les niveaux de salaire ; "
         + "avec eux, il baisse au voisinage du SMIC."
       : "Sans eux, le chiffre du haut remonterait de la part que vous en "
         + "supportez : ce que vous perdez en net, vous le retrouvez sur ce "
         + "compte.")
-    + "</p>";
+    + `${ajout}</p>`;
 }
 
 /**
@@ -7246,17 +7226,15 @@ ${g.euros(pilier.frais_preleves)} de frais sur versement le grèvent.</p>`;
   // Ce que servent les cinq points volontaires, nommé à part : le pilier est
   // exactement proportionnel à son taux, si bien que la moitié volontaire rend
   // la moitié de la rente. Le lecteur doit pouvoir retrancher cette ligne, qui
-  // est la seule de la page que personne ne lui impose.
+  // est la seule de la page que personne ne lui impose ; la carte du système 4
+  // et la fiche de paie disent déjà ce qu'il garde s'il ne la verse pas.
   const partageVolontaire = avecVolontaire ? `
 <p><strong>Sur cette rente, ${g.eurosCentimes(pilier.rente_volontaire)} par an
 viennent des ${tauxVolontaire} que vous versez librement</strong>, et
 ${g.eurosCentimes(pilier.rente_obligatoire)} des ${tauxImpose} que la
 proposition impose. Le compte ne les distingue nulle part ailleurs : même
 assiette, même placement, mêmes frais, même table — la rente se partage donc
-dans le rapport exact des deux taux. Si vous ne versez pas ces
-${tauxVolontaire}, retranchez cette part du total du système 4, et gardez-la
-sur votre fiche de paie : c'est le même argent, et c'est vous qui
-choisissez.</p>` : "";
+dans le rapport exact des deux taux.</p>` : "";
 
   return g.depliant(titre, `
 <p>À compter de ${parametres.annee_bascule}, ${taux} de la
@@ -7488,7 +7466,7 @@ function garantieVieillesse(comparaison, saisie) {
   return g.depliant(
     "Le système 4 : un taux pour tous, et une garantie payée par l'impôt",
     `
-<p>La garantie vieillesse, étape par étape, en euros de ${annee} — l'année du
+<p>En euros de ${annee}, l'année du
 départ${comparaison.departReporte ? " sous la proposition" : ""}.${g.bulle(
     "Ce que le système 4 change au système 3",
     ceQuiChange,
@@ -7501,8 +7479,8 @@ ${g.tableau(
     true,
   )}
 ${lecture}
-<p>Ce que la garantie sert à un foyer, en euros de
-${parametres.annee_euros_garantie_vieillesse} et par mois.${g.bulle(
+<p>À un foyer, en euros de ${parametres.annee_euros_garantie_vieillesse} et
+par mois.${g.bulle(
     "Ce qui la sépare de l'ASPA",
     "Un mot : elle est <strong>individualisée</strong>. L'ASPA regarde les "
     + "ressources du foyer, et son plafond de couple n'est pas le double de "
