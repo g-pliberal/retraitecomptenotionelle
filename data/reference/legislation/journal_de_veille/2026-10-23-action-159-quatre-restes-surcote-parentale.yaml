@@ -1,0 +1,33 @@
+date: "2026-10-23"
+session: "action 159 : les quatre restes de la surcote parentale, le minimum garanti et les libéraux corrigés, la circulaire Cnav et le trimestre daté déclarés"
+consulte: >-
+  L'index LEGI du dépôt, mis à jour au 22 octobre 2026 (sept rédactions de D. 731-121 du
+  code rural inscrites à examiner, hors de cette étape) : L. 17 du code des pensions
+  (LEGIARTI000048697797), L. 14 (LEGIARTI000048844775), L. 643-3 CSS (LEGIARTI000047453031,
+  LEGIARTI000053280388) et R. 643-8 (LEGIARTI000047985850). Le service des retraites de
+  l'État, pages « Le minimum garanti » et « La surcote » ; juris-cnracl, « Calcul de la
+  surcote », les pages du minimum garanti et « Détermination du montant de la pension » ;
+  la base documentaire de la Cnav, par sa recherche (`api/v1/search/custom`), son exposé
+  « Surcote » et les circulaires 2023/19, 2024/25 et 2026/7 ; l'Assurance retraite, page
+  « Être parent » et fiche pédagogique « Enfants » de novembre 2023 ; service-public,
+  F19643.
+trouve: >-
+  Le service des retraites de l'État compare au minimum garanti « le montant normal de
+  votre pension » et paie « le montant le plus favorable » ; L. 17 ne dit que « le montant
+  de la pension ne peut être inférieur », et L. 14, IV, majore « dans les mêmes conditions »
+  que le III : la pension normale porte les deux surcotes. Le moteur servait la surcote
+  parentale en sus du minimum, et calculée sur lui : 1,05 fois le minimum. L. 643-3, I,
+  sert la surcote parentale des libéraux « dans les mêmes conditions » que leur surcote,
+  1,25 % par trimestre depuis septembre 2023 (R. 643-8) : le moteur majorait leur pension
+  surcotée, 1,10 × 1,05 au lieu de 1,15. Les deux corrigés dans les deux moteurs ; aucun
+  des 889 témoins ne bouge. La Cnav n'a publié ni circulaire ni exemple de la surcote
+  parentale : sa recherche ne la trouve dans aucune référence, son exposé « Surcote »
+  (6 janvier 2026) et les circulaires de la réforme n'en parlent pas, la page « Être
+  parent » ne la chiffre pas. La CNRACL ne la compte que « sous réserve que l'assuré
+  justifie à partir de cette date » d'un trimestre d'enfant ; le modèle n'a aucun trimestre
+  d'enfant acquis tard, ni majoration pour enfant handicapé ni adoption.
+reste: >-
+  La circulaire Cnav de L. 351-1-2-1 et un exemple du régime général. Le trimestre d'enfant
+  daté, quand le modèle portera la majoration pour enfant handicapé ou l'adoption. La
+  pension que le plancher de la retraite progressive relève, sur laquelle la surcote
+  parentale se calcule encore (fiche surcote_parentale).

@@ -1069,7 +1069,11 @@ précédent, et le modèle en prenait deux à l'envers.
    qui avait déjà sa durée ne rapportait rien, la surcote ordinaire ne comptant
    qu'au-delà de l'âge légal. Les deux se cumulent donc sans se recouvrir, en un
    seul coefficient, sur la pension d'avant la surcote et, au régime général,
-   d'avant le minimum contributif (D. 351-2-1) : le V de L. 14, qui défend de
+   d'avant le minimum contributif (D. 351-2-1) ; au code des pensions, le
+   minimum garanti se compare à la pension qui les porte toutes deux, et les
+   efface quand il l'emporte (service des retraites de l'État, « Le minimum
+   garanti ») ; chez les libéraux, elles composent le coefficient de la
+   surcote de leurs points (L. 643-3, R. 643-8). Le V de L. 14, qui défend de
    cumuler les deux majorations du fonctionnaire, vise une même période, comme
    la CNRACL l'applique. Elle
    s'ouvre avec cet âge minimal : rien jusqu'à la génération 1964 ni pour les
