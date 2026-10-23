@@ -221,10 +221,11 @@ que l'échantillon interrégimes de cotisants publie génération par générati
 carrière longue ne répute pas cotisé avant novembre 2012, quand elle répute le
 service et la maladie dans toutes ses rédactions. La vingt-quatrième (le
 23 octobre 2026) donne aux carrières pleines des deux sexes leurs natures à
-leur part, le chômage et l'AVPF compris (:data:`NATURES_A_LEUR_PART`) : la
-population mettait du chômage à tous les hommes qui n'étaient pas malades, et
-à toutes les femmes ; les années assimilées de chaque classe de centiles vont
-aux classes qui ont une nature, et celle qui n'en a aucune n'en compte plus.
+leur part et à leurs années, le chômage et l'AVPF compris
+(:data:`NATURES_A_LEUR_PART`) : la population mettait du chômage à tous les
+hommes qui n'étaient pas malades, et à toutes les femmes ; chaque classe a
+désormais les années de ses natures que l'échantillon donne, sous celles de sa
+classe de centiles, et celle qui n'en a aucune n'en compte plus.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -595,7 +596,7 @@ NATURES_SELON_LA_GENERATION = True
 CLASSES_DE_NATURE = 5
 
 #: La vingt-quatrième version (action 138, étape 14, le 23 octobre 2026) : les
-#: natures à leur part, la masse gardée. Sous la vingt-troisième, les années
+#: natures à leur part et à leurs années. Sous la vingt-troisième, les années
 #: assimilées qui n'étaient ni service ni maladie restaient du chômage, à tous
 #: les hommes, et toutes celles des femmes : la carrière longue en réputait
 #: quatre trimestres à chacun depuis avril 2014 (D. 351-1-2, daté), quand
@@ -607,15 +608,20 @@ CLASSES_DE_NATURE = 5
 #: en :data:`CLASSES_DE_NATURE` classes, chacune avec les natures que sa
 #: génération donne à son rang, à la part des affiliés qui en ont : le
 #: service et l'AVPF du bas des rangs, le chômage et la maladie du haut
-#: (:func:`classes_de_nature`). Les années assimilées du cinquième restent
-#: celles que sa classe de centiles tient de l'EIR — cinq fois les siennes,
-#: :data:`ASSIMILEES_SELON_LE_RANG` —, mais elles vont aux seules classes qui
-#: ont une nature : le service garde son année, et les autres natures se
-#: partagent le reste à proportion des années qu'a chacun de ceux qui en ont,
-#: une au moins. La classe qui n'en a aucune n'en compte aucune : ses années
-#: sont cotisées. Chaque classe refait le bloc de ses années assimilées au
-#: milieu de sa carrière (:func:`refaire_le_bloc`) ; l'AVPF d'avant 1972, qui
-#: n'existait pas, y reste du chômage.
+#: (:func:`classes_de_nature`), chacune aux années qu'en a chacun de ceux qui
+#: en ont, arrondies, une au moins. La classe qui n'en a aucune n'en compte
+#: aucune : ses années sont cotisées. Les années assimilées que la classe de
+#: centiles tient de l'EIR (:data:`ASSIMILEES_SELON_LE_RANG`), cinq fois les
+#: siennes pour un cinquième, en sont le plafond : quand ses classes en
+#: demandent plus, ce que le service leur laisse se partage à proportion. Les
+#: répartir toutes entre les seules classes qui ont une nature, quand elles
+#: passent celles de l'échantillon, multipliait celles-ci par 1,3 à 2,9 : dix
+#: années de chômage et de maladie à l'homme de la classe p50 né en 1950 qui
+#: est l'un et l'autre, quand l'échantillon en donne sept, et la carrière
+#: longue des hommes de 1955 tombait de 25,8 à 19,6 % (EIR 28,6). Chaque
+#: classe refait le bloc de ses années assimilées au milieu de sa carrière
+#: (:func:`refaire_le_bloc`) ; l'AVPF d'avant 1972, qui n'existait pas, y reste
+#: du chômage.
 NATURES_A_LEUR_PART = True
 
 #: Les natures qui croissent avec l'âge, que :func:`natures_assimilees` ne lit
@@ -1960,12 +1966,13 @@ def natures_a_leur_part(classes: list[tuple[int, tuple[tuple[int, float], ...],
     Le service se donne comme sous :func:`classes_de_nature`, une classe
     servant son année ; une classe a de l'AVPF quand le milieu de son rang passe
     sous la part des affiliés de sa génération qui en ont, du chômage ou de la
-    maladie quand il passe au-dessus de la part des autres. Le cinquième garde
-    ``assimilees`` années par classe : ce que le service en laisse se partage
-    entre les autres natures de ses classes à proportion des années qu'a
-    chacun de ceux qui en ont (:func:`part_et_duree`), arrondies, une au
-    moins. Une classe sans nature n'en compte aucune. Les classes qui ont les
-    mêmes natures à chaque génération n'en font qu'une ; celle qui porte le
+    maladie quand il passe au-dessus de la part des autres. Chacune de ces
+    natures y compte les années qu'a chacun de ceux qui en ont
+    (:func:`part_et_duree`), arrondies, une au moins ; ``assimilees`` années
+    par classe en sont le plafond : quand les classes du cinquième en
+    demandent plus, ce que le service leur laisse se partage entre elles à
+    proportion. Une classe sans nature n'en compte aucune. Les classes qui ont
+    les mêmes natures à chaque génération n'en font qu'une ; celle qui porte le
     milieu du rang du cinquième a le rang zéro, et garde le code de son
     cinquième."""
     generations = list(servent)
@@ -1992,7 +1999,7 @@ def natures_a_leur_part(classes: list[tuple[int, tuple[tuple[int, float], ...],
             masse = CLASSES_DE_NATURE * assimilees - somme_ordonnee(sert for sert, _ in demandes)
             total = somme_ordonnee(duree for _, siennes in demandes
                                    for duree in siennes.values())
-            echelle = max(0.0, masse) / total if total > 0.0 else 0.0
+            echelle = min(1.0, max(0.0, masse) / total) if total > 0.0 else 0.0
             for nature, (sert, siennes) in enumerate(demandes):
                 annees = {nom: max(1, int(round(echelle * duree)))
                           for nom, duree in siennes.items()}
