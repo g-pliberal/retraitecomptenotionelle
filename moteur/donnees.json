@@ -16587,7 +16587,7 @@ false,
 }
 },
 "certification":{
-"dernier_passage_le":"2026-10-22",
+"dernier_passage_le":"2026-10-23",
 "series":{
 "age_annulation_decote_openfisca":{"ajoutees":0,"colonne":"age","corrigees":0,"empreinte":"f44dd24f01ee5d98","identiques":8,"niveau":"haute","source":"OpenFisca-France-Pension, aad.yaml du régime général","valeurs":8,"verifiee_le":"2026-09-14"},
 "age_conjoncturel_depart":{"ajoutees":0,"colonne":"age","corrigees":0,"empreinte":"1a04519c9e9e0628","identiques":57,"niveau":"certifiee","source":"DREES, panorama « Les retraités et les retraites »","valeurs":57,"verifiee_le":"2026-09-21"},
@@ -16771,7 +16771,7 @@ false,
 "valeurs":15,
 "verifiee_le":"2026-10-05"
 },
-"natures_assimilees":{"ajoutees":192,"colonne":"valeur","corrigees":0,"empreinte":"ec7c84f427f68e04","identiques":0,"niveau":"certifiee","source":"DREES, échantillon interrégimes de cotisants (EIC) 2017, données détaillées","valeurs":192,"verifiee_le":"2026-10-22"},
+"natures_assimilees":{"ajoutees":192,"colonne":"valeur","corrigees":0,"empreinte":"f9fad62da7d52b5b","identiques":192,"niveau":"certifiee","source":"DREES, échantillon interrégimes de cotisants (EIC) 2017, données détaillées","valeurs":384,"verifiee_le":"2026-10-23"},
 "pap_regimes_subventionnes":{
 "ajoutees":0,
 "colonne":"valeur",
@@ -26767,6 +26767,27 @@ null
 {"bornes":{"liquidation.date_effet":["1976-01-03","2008-09-25"]},"exception_de":null,"id":"arrete_de_1976","parametres":{"existe":true,"fiabilite":"haute","regimes":["ircantec"],"seuil_points":100},"texte":"LEGIARTI000006381639"},
 {"bornes":{"liquidation.date_effet":["2008-09-25",null]},"exception_de":null,"id":"arrete_de_2008","parametres":{"existe":true,"fiabilite":"haute","regimes":["ircantec"],"seuil_points":300},"texte":"LEGIARTI000019511940"}
 ]
+},
+"versement_unique_rci":{
+"dates_qui_decident":["liquidation.date_effet"],
+"id":"versement_unique_rci",
+"versions":[
+{"bornes":{"liquidation.date_effet":[null,"2013-01-01"]},"exception_de":null,"id":"avant_le_rci","parametres":{"existe":false},"texte":null},
+{
+"bornes":{"liquidation.date_effet":["2013-01-01","2024-06-26"]},
+"exception_de":null,
+"id":"reglement_de_2013",
+"parametres":{"base_alignee":"regime_general","bases":["cancava","organic","rsi"],"existe":true,"fiabilite":"haute","point":"rci","regimes":["rci","rco_artisans","nric"],"seuil_points":40},
+"texte":"LEGIARTI000054892235"
+},
+{
+"bornes":{"liquidation.date_effet":["2024-06-26",null]},
+"exception_de":null,
+"id":"reglement_de_2024",
+"parametres":{"base_alignee":"regime_general","bases":["cancava","organic","rsi"],"existe":true,"fiabilite":"haute","point":"rci","regimes":["rci","rco_artisans","nric"],"seuil_points":40},
+"texte":"LEGIARTI000054907326"
+}
+]
 }
 },
 "frais_epargne_retraite":{
@@ -29337,7 +29358,7 @@ null
 "famille":"non_salarie",
 "fermeture":null,
 "integre_dans":null,
-"manque":"Le statut `micro_entrepreneur` route les régimes du commerçant sur le revenu reconstitué (chiffre d'affaires après abattement). Depuis 2023, les trimestres se valident sur le revenu que la cotisation achète, taux global, part de base et taux de base, et le compte notionnel porte la part de base et la part complémentaire du forfait (`legislation/micro_social.yaml`, D. 613-4, D. 613-6, circulaire Cnav n° 2024-23) ; le barème sur le revenu abattu s'en écartait de +39 % pour le libéral de 2023, de +13 à +15 % pour la Cipav de 2023 à 2025. Ce revenu cotisé est aussi celui du revenu annuel moyen (R. 351-29, I, B, et D. 634-3 ; R. 634-1 jusqu'en 2025), et ses parts achètent ses points de RCI, de CNAVPL et de Cipav (règlement du RCI, articles 3 et 47 ; D. 643-1). La saisie prend le chiffre d'affaires et l'activité (champ « micro »), l'abat de 71, 50 ou 34 % (L. 613-7, II) et route la Cipav vers les régimes du libéral. Depuis 2018, la table porte les clefs de la Cnav (circulaire n° 2025-20), depuis 2019 la répartition de la Cipav (D. 131-5-3), de 2017 à 2019 les seuils que la caisse publie, le forfait allant d'abord à la CSG, à la CRDS et à la maladie (L. 613-9, D. 133-4), et de 2009 à 2015 la compensation de l'État (L. 133-6-8-2, D. 131-6-4). Non portés : en 2016, ni seuil ni clef, où le revenu abattu valide ; en 2016 et 2017, les clefs, où le barème approche le forfait ; de 2017 à 2019, la part de base de cet ordre dans le revenu annuel moyen et le compte ; la règle de la CNAVPL pour la Cipav avant 2023 ; l'arrondi des points du RCI à l'entier.",
+"manque":"Le statut `micro_entrepreneur` route les régimes du commerçant sur le revenu reconstitué (chiffre d'affaires après abattement). Depuis 2023, les trimestres se valident sur le revenu que la cotisation achète, taux global, part de base et taux de base, et le compte notionnel porte la part de base et la part complémentaire du forfait (`legislation/micro_social.yaml`, D. 613-4, D. 613-6, circulaire Cnav n° 2024-23) ; le barème sur le revenu abattu s'en écartait de +39 % pour le libéral de 2023, de +13 à +15 % pour la Cipav de 2023 à 2025. Ce revenu cotisé est aussi celui du revenu annuel moyen (R. 351-29, I, B, et D. 634-3 ; R. 634-1 jusqu'en 2025), et ses parts achètent ses points de RCI, de CNAVPL et de Cipav (règlement du RCI, articles 3 et 47 ; D. 643-1). La saisie prend le chiffre d'affaires et l'activité (champ « micro »), l'abat de 71, 50 ou 34 % (L. 613-7, II) et route la Cipav vers les régimes du libéral. Depuis 2018, la table porte les clefs de la Cnav (circulaire n° 2025-20), depuis 2019 la répartition de la Cipav (D. 131-5-3), de 2017 à 2019 les seuils que la caisse publie, le forfait allant d'abord à la CSG, à la CRDS et à la maladie (L. 613-9, D. 133-4), et de 2009 à 2015 la compensation de l'État (L. 133-6-8-2, D. 131-6-4). Non portés : en 2016, ni seuil ni clef, où le revenu abattu valide ; en 2016 et 2017, les clefs, où le barème approche le forfait ; de 2017 à 2019, la part de base de cet ordre dans le revenu annuel moyen et le compte ; la règle de la CNAVPL pour la Cipav avant 2023 ; l'arrondi des points du RCI à l'entier ; la location de meublés de tourisme (D. 613-4, c : 6 % des recettes ; D. 613-6 : 50,20 % à la base et 18,60 % au RCI en 2026), que la saisie n'offre pas.",
 "nom":"Régime micro-social des micro-entrepreneurs",
 "population":"Micro-entrepreneurs (artisans, commerçants, libéraux non réglementés)",
 "raison_hors_champ":"",
@@ -37438,7 +37459,7 @@ null
 "tenue_avant":false
 }
 },
-"lu_le":"2026-10-19",
+"lu_le":"2026-10-23",
 "pensions":{
 "casa":{"marches":[["2013-04-01",{"taux":0.003}]],"tenue_avant":false},
 "crds":{"marches":[["1996-02-01",{"taux":0.005}]],"tenue_avant":false},
@@ -37617,7 +37638,10 @@ null
 ["1987-08-24",{"seuil_mensuel":856.99,"taux":0.01}],
 ["1988-03-01",{"seuil_mensuel":865.57,"taux":0.01}],
 ["1988-09-01",{"seuil_mensuel":874.14,"taux":0.01}],
-["1989-09-01",{"seuil_mensuel":907.68,"taux":0.01}],
+["1988-10-01",{"seuil_mensuel":881.13,"taux":0.01}],
+["1989-02-01",{"seuil_mensuel":884.62,"taux":0.01}],
+["1989-03-01",{"seuil_mensuel":893.47,"taux":0.01}],
+["1989-09-01",{"seuil_mensuel":904.1,"taux":0.01}],
 ["1990-01-01",{"seuil_mensuel":912.23,"taux":0.01}],
 ["1990-04-01",{"seuil_mensuel":923.1,"taux":0.01}],
 ["1990-12-01",{"seuil_mensuel":934.91,"taux":0.01}],
@@ -224902,14 +224926,14 @@ null
 "bornes":{"conjoint.deces":["2013-01-01","2021-01-01"]},
 "exception_de":null,
 "id":"reglement_2013",
-"parametres":{"abattement_activite":0.3,"abattement_activite_age":55,"age_minimum":55,"ex_conjoints":"tous","facteur_menage":1,"fiabilite":"moyenne","plafond_pass":2,"ressources":"ecretement","taux":0.6},
+"parametres":{"abattement_activite":0.3,"abattement_activite_age":55,"age_minimum":55,"ex_conjoints":"tous","facteur_menage":1,"fiabilite":"moyenne","plafond_pass":2,"ressources":"ecretement","rien_apres_un_capital":true,"taux":0.6},
 "texte":"LEGIARTI000025397326"
 },
 {
 "bornes":{"conjoint.deces":["2021-01-01",null]},
 "exception_de":null,
 "id":"plafond_2021",
-"parametres":{"abattement_activite":0.3,"abattement_activite_age":55,"age_minimum":55,"ex_conjoints":"tous","facteur_menage":1,"fiabilite":"haute","plafond_pass":2,"ressources":"ecretement","taux":0.6},
+"parametres":{"abattement_activite":0.3,"abattement_activite_age":55,"age_minimum":55,"ex_conjoints":"tous","facteur_menage":1,"fiabilite":"haute","plafond_pass":2,"ressources":"ecretement","rien_apres_un_capital":true,"taux":0.6},
 "texte":"circulaire Cnav n° 2021-4 du 25 janvier 2021, § 9"
 }
 ]
