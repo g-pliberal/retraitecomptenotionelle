@@ -587,6 +587,44 @@ def part_avec_decote(cible: float, poids: Mapping[tuple[str, int, int], float],
     return min(1.0, cible * toutes / eligibles) if eligibles else 0.0
 
 
+#: La caisse et l'année de la table H de l'EACR dont le flux de liquidants dit
+#: la part décotée des générations que l'EIR ne suit pas
+#: (:func:`part_decotee_du_flux`) : la Cnav, en 2024, l'année la plus récente.
+CAISSE_DU_FLUX = "0015"
+ANNEE_DU_FLUX = 2024
+#: La génération qu'on prête à ce flux : celle des liquidants de la Cnav de
+#: :data:`ANNEE_DU_FLUX` à leur âge moyen de liquidation, 63,6 ans (table B).
+GENERATION_DU_FLUX = 1960
+
+
+def part_decotee_du_flux(temoin: Mapping) -> float:
+    """La part des liquidants de la Cnav de :data:`ANNEE_DU_FLUX` partis avec
+    une décote, parmi ceux qui sont partis au taux plein, avec une décote ou
+    avec une surcote (``tests/temoins/drees_eacr_tables_2026.json``, table H,
+    ``controle_eacr.conditions_publiees``) : tous partent à l'âge légal ou
+    après lui, les départs anticipés de la Cnav, carrières longues et
+    inaptes, se prenant au taux plein."""
+    from .controle_eacr import conditions_publiees
+
+    return next(conditions.decote for conditions in conditions_publiees(temoin, ANNEE_DU_FLUX)
+                if conditions.caisse == CAISSE_DU_FLUX and conditions.champ == "flux")
+
+
+def part_decotee_de_la_generation(generation: int, de_1953: float, du_flux: float) -> float:
+    """La part de ``generation`` partie avec une décote dès l'âge légal :
+    ``de_1953``, celle de la génération :data:`GENERATION_DES_DECOTES`, jusqu'à
+    elle (:func:`part_decotee_des_l_age_legal`) ; ``du_flux``, celle des
+    liquidants de la Cnav de :data:`ANNEE_DU_FLUX` (:func:`part_decotee_du_flux`),
+    depuis la génération :data:`GENERATION_DU_FLUX` ; en droite ligne entre
+    les deux."""
+    if generation <= GENERATION_DES_DECOTES:
+        return de_1953
+    if generation >= GENERATION_DU_FLUX:
+        return du_flux
+    return de_1953 + ((du_flux - de_1953) * (generation - GENERATION_DES_DECOTES)
+                      / (GENERATION_DU_FLUX - GENERATION_DES_DECOTES))
+
+
 @dans_un_instantane
 def dates_des_departs(parametres, entree_depuis: int | None = None,
                       cas_types: tuple | None = None,
@@ -677,7 +715,8 @@ def retraites_par_age(parametres, annees: Sequence[int],
                       age: int = AGE_VIEILLESSE,
                       nes_toute_l_annee: bool = False,
                       entree_depuis: int | None = None,
-                      avec_decote: bool = False) -> dict[int, tuple[float, float]]:
+                      avec_decote: bool = False,
+                      decote_du_flux: float | None = None) -> dict[int, tuple[float, float]]:
     """Chaque année, les retraités du modèle de tous âges, puis ceux d'``age``
     ans et plus, en personnes.
 
@@ -696,6 +735,10 @@ def retraites_par_age(parametres, annees: Sequence[int],
     :data:`GENERATION_DES_DECOTES` partie ainsi
     (:func:`part_decotee_des_l_age_legal`), rapportée au poids de ses cohortes
     qui le peuvent, en :data:`ANNEE_DES_DECOTES` (:func:`part_avec_decote`).
+    ``decote_du_flux``, la part décotée des liquidants de la Cnav de
+    :data:`ANNEE_DU_FLUX` (:func:`part_decotee_du_flux`), y fait suivre à
+    chaque génération la sienne (:func:`part_decotee_de_la_generation`),
+    rapportée de même.
     """
     from . import cout as module
     from . import memoire
@@ -745,8 +788,13 @@ def retraites_par_age(parametres, annees: Sequence[int],
             for pensionne in pensionnes
             for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1)
             if pensionne.generation + decalage == GENERATION_DES_DECOTES}
-        part = part_avec_decote(part_decotee_des_l_age_legal(racine), generation, legales)
-        decotes = {cle: (part, date.annee, date.mois) for cle, date in legales.items()}
+        de_1953 = part_decotee_des_l_age_legal(racine)
+        du_flux = de_1953 if decote_du_flux is None else decote_du_flux
+        parts = {nee: part_avec_decote(part_decotee_de_la_generation(nee, de_1953, du_flux),
+                                       generation, legales)
+                 for nee in {code_nee + decalage for _code, code_nee, decalage in legales}}
+        decotes = {(code, code_nee, decalage): (parts[code_nee + decalage], date.annee, date.mois)
+                   for (code, code_nee, decalage), date in legales.items()}
     resultat: dict[int, tuple[float, float]] = {}
     for annee in annees:
         poids_annee = poids(annee)

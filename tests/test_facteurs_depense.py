@@ -473,6 +473,35 @@ def test_la_part_decotee_se_rapporte_aux_cohortes_qui_peuvent_decoter():
     assert part_avec_decote(0.9, poids, {("c", 1955, -2)}) == 1.0
 
 
+def test_la_cnav_a_decote_13_4_pour_cent_de_ses_liquidants_de_2024():
+    """L'EIR ne suit pas les générations d'après 1953. L'EACR compte, année par
+    année, les liquidants de chaque caisse selon leurs conditions de départ
+    (table H, ``tests/temoins/drees_eacr_tables_2026.json``) : en 2024, la Cnav
+    en a 439 202 au taux plein, 86 776 avec une décote, 122 368 avec une
+    surcote — 13,4 % de décotés, quand la génération 1953 l'a été à 10,6 %."""
+    from retraite_notionnelle.facteurs_depense import part_decotee_du_flux
+
+    temoin = json.loads((RACINE / "tests" / "temoins" / "drees_eacr_tables_2026.json")
+                        .read_text(encoding="utf-8"))
+    assert part_decotee_du_flux(temoin) == pytest.approx(86776 / (439202 + 86776 + 122368))
+
+
+def test_la_part_decotee_suit_la_generation_de_1953_au_flux_de_2024():
+    """La part d'une génération partie avec une décote dès l'âge légal : 9,4 %
+    jusqu'à la génération 1953, que l'EIR voit partie ; 13,4 % depuis la
+    génération 1960, celle des liquidants de la Cnav de 2024 à leur âge moyen
+    de liquidation, 63,6 ans (table B de l'EACR) ; entre les deux, en droite
+    ligne : 11,7 % pour la génération 1957, aux quatre septièmes du chemin."""
+    from retraite_notionnelle.facteurs_depense import part_decotee_de_la_generation
+
+    assert part_decotee_de_la_generation(1950, 0.094, 0.134) == 0.094
+    assert part_decotee_de_la_generation(1953, 0.094, 0.134) == 0.094
+    assert part_decotee_de_la_generation(1957, 0.094, 0.134) == pytest.approx(
+        0.094 + 0.040 * 4 / 7)
+    assert part_decotee_de_la_generation(1960, 0.094, 0.134) == 0.134
+    assert part_decotee_de_la_generation(1990, 0.094, 0.134) == 0.134
+
+
 def test_a_l_age_legal_peut_partir_celui_dont_le_taux_plein_vient_apres():
     """Entré à 22 ans, comme sa génération après celle de 1960, le salarié au
     salaire moyen né en janvier 1966 n'a le taux plein qu'à 65 ans, en 2031
@@ -578,6 +607,35 @@ def test_le_departage_compte_les_departs_hors_du_taux_plein_apres_l_entree():
     assert ecarts["ce qui reste"]["vieillesse"] == pytest.approx(-0.03)
     assert ecarts["ce qui reste"]["precoce"] == pytest.approx(-0.02)
     assert ecarts["l'écart"] == sans_decote["l'écart"]
+
+
+def test_le_departage_compte_la_decote_selon_la_generation_apres_celle_de_1953():
+    """``--decote-generation`` fait suivre à la part décotée sa génération, de
+    celle de 1953 au flux de la Cnav de 2024 : le départage la place après les
+    départs hors du taux plein, et ce qui reste se compte depuis elle ;
+    l'écart ne change pas."""
+    script = _script()
+
+    def part(agees: float, jeunes: float) -> dict:
+        return {"2022-2030": {"vieillesse": agees, "precoce": jeunes,
+                              "couverture": agees + jeunes}}
+
+    stables = "et 48 % stables, mesurés"
+    parts = {"Ageing Report 2024": part(-0.22, -1.16), "modèle": part(-0.08, -0.92),
+             stables: part(-0.07, -1.02), script.SANS_SUSPENSION: part(-0.14, -1.02),
+             script.NES_TOUTE_L_ANNEE: part(-0.17, -0.99),
+             script.ENTREE_SELON_LA_GENERATION: part(-0.28, -1.15),
+             script.AVEC_DECOTE: part(-0.25, -1.18)}
+    sans_generation = script.departage(parts, stables)
+    parts[script.DECOTE_SELON_LA_GENERATION] = part(-0.24, -1.18)
+    ecarts = script.departage(parts, stables)
+    assert list(ecarts) == ["le périmètre", "la suspension", "les naissances de l'année",
+                            "l'entrée dans l'emploi", "les départs hors du taux plein",
+                            "la décote selon la génération", "ce qui reste", "l'écart"]
+    assert ecarts["la décote selon la génération"]["vieillesse"] == pytest.approx(-0.01)
+    assert ecarts["la décote selon la génération"]["precoce"] == pytest.approx(0.0)
+    assert ecarts["ce qui reste"]["vieillesse"] == pytest.approx(-0.02)
+    assert ecarts["l'écart"] == sans_generation["l'écart"]
 
 
 def test_la_couverture_de_2022_2030_tient_au_perimetre_de_l_awg(awg):
@@ -814,3 +872,64 @@ def test_partis_a_l_age_legal_avec_une_decote_les_65_ans_et_plus_reculent_moins(
                    - entre(entres["precoce"], debut, fin)) < 0.03, (debut, fin)
     assert (entre(decotes["vieillesse"], 2030, 2070)
             < entre(publie["vieillesse"], 2030, 2070) - 0.1)
+
+
+def test_selon_sa_generation_la_decote_rend_peu_aux_65_ans_et_plus_apres_2030(awg):
+    """La génération 1953 est partie avec une décote dès l'âge légal à 9,4 %
+    (EIR) ; la Cnav a décoté 13,4 % de ses liquidants de 2024 (EACR). Prise à
+    la part de sa génération, de l'une à l'autre (``decote_du_flux``), la
+    décote fait partir à l'âge légal 1,4 fois plus des cohortes d'après 1960
+    qui n'ont le taux plein qu'après lui. Le compte est linéaire en cette part :
+    les 0,03 point de PIB que celle de 1953 rendait aux 65 ans et plus de 2030
+    à 2070 en deviennent 0,04. Chaque année compte au moins autant de
+    retraités ; de 2030 à 2070, les 65 ans et plus, portés au périmètre de
+    l'AWG, reculent de 0,005 point de moins au moins, et de 0,03 au plus, mais
+    toujours de plus de 0,07 point de plus que ceux de l'AWG (note du 23
+    octobre 2026, « la décote selon la génération »)."""
+    from retraite_notionnelle import Parametres
+    from retraite_notionnelle.facteurs_depense import (
+        JEUNES,
+        STABLES,
+        part_decotee_du_flux,
+        pensionnes_de_2022,
+    )
+
+    parametres = Parametres(scenario_projection="cor_reference")
+    annees, _decomposition_ = _decomposition("cor_reference", "actuel")
+    population_65 = {annee: annees[annee].population_65 for annee in GRILLE_AWG}
+    part_pib, pensionnes, pensionnes_agees, population_65_awg = _couverture_de_l_awg(awg)
+    population_20_64 = {annee: awg["series"]["population_20_64"][annee] for annee in GRILLE_AWG}
+    mesures = pensionnes_de_2022(json.loads(
+        (RACINE / "tests" / "temoins" / "pensionnes_de_2022.json").read_text(encoding="utf-8")))
+    premiere = GRILLE_AWG[0]
+    stable = (sum(mesures[categorie][tranche] for categorie in STABLES for tranche in JEUNES)
+              / ((pensionnes[premiere] - pensionnes_agees[premiere]) * 1000))
+    vieux = pensionnes_agees[premiere] / population_65_awg[premiere]
+    plus_jeunes = pensionnes[premiere] / population_65_awg[premiere] - vieux
+    du_flux = part_decotee_du_flux(json.loads(
+        (RACINE / "tests" / "temoins" / "drees_eacr_tables_2026.json").read_text(encoding="utf-8")))
+    comptes = {flux: retraites_par_age(parametres, GRILLE_AWG, nes_toute_l_annee=True,
+                                       entree_depuis=1960, avec_decote=True,
+                                       decote_du_flux=flux)
+               for flux in (None, du_flux)}
+    for annee in GRILLE_AWG:
+        assert all(selon >= de_1953 - 1e-6 for selon, de_1953 in zip(comptes[du_flux][annee],
+                                                                     comptes[None][annee])), annee
+
+    def portee(par_age: dict) -> dict:
+        return partager_couverture(part_pib, *au_perimetre(
+            population_65_awg, vieux, plus_jeunes,
+            {annee: par_age[annee][0] for annee in GRILLE_AWG},
+            {annee: par_age[annee][1] for annee in GRILLE_AWG}, population_65,
+            stable=stable, population_stable=population_20_64),
+            population_65_awg)
+
+    def entre(serie: dict, debut: int, fin: int) -> float:
+        return serie[fin] - (serie[debut] if debut > premiere else 0.0)
+
+    de_1953, selon = portee(comptes[None]), portee(comptes[du_flux])
+    publie = partager_couverture(part_pib, pensionnes, pensionnes_agees, population_65_awg)
+    gain = entre(selon["vieillesse"], 2030, 2070) - entre(de_1953["vieillesse"], 2030, 2070)
+    assert 0.005 < gain < 0.03
+    assert (entre(selon["vieillesse"], 2030, 2070)
+            < entre(publie["vieillesse"], 2030, 2070) - 0.07)

@@ -7,6 +7,7 @@
     python scripts/facteurs_depense.py --naissances  # et ses cohortes nées toute l'année
     python scripts/facteurs_depense.py --entree      # et l'entrée selon la génération
     python scripts/facteurs_depense.py --decote      # et les départs avec décote
+    python scripts/facteurs_depense.py --decote-generation  # et la décote selon la génération
     python scripts/facteurs_depense.py --json f.json
 
 Ce que l'Ageing Report de 2024 publie pour la France — la dépense de pensions
@@ -44,10 +45,14 @@ référence que l'âge médian du premier trimestre cotisé de son sexe recule
 partir à l'âge légal, avec une décote, une part de chaque cohorte qui n'a le
 taux plein qu'après lui, quand la grille fait partir chacun au taux plein : la
 part de la génération 1953 partie avec une décote dès l'âge légal, que l'EIR
-mesure, rapportée à ses cohortes qui le peuvent (``part_avec_decote``). Le
-dernier tableau départage l'écart de couverture de 2022-2030 entre le
-périmètre, la suspension, les naissances, l'entrée dans l'emploi, les départs
-hors du taux plein et ce qui reste.
+mesure, rapportée à ses cohortes qui le peuvent (``part_avec_decote``).
+``--decote-generation``, qui implique ``--decote``, fait suivre à cette part
+sa génération : celle de 1953 jusqu'à elle, celle des liquidants de la Cnav de
+2024 (table H de l'EACR) depuis la génération 1960, en droite ligne entre les
+deux (``part_decotee_de_la_generation``). Le dernier tableau départage l'écart
+de couverture de 2022-2030 entre le périmètre, la suspension, les naissances,
+l'entrée dans l'emploi, les départs hors du taux plein, la décote selon la
+génération et ce qui reste.
 """
 
 from __future__ import annotations
@@ -64,8 +69,10 @@ RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 
 from retraite_notionnelle.facteurs_depense import (  # noqa: E402
+    ANNEE_DU_FLUX,
     FACTEURS,
     GENERATION_DES_DECOTES,
+    GENERATION_DU_FLUX,
     GRILLE_AWG,
     JEUNES,
     PERIODES_AWG,
@@ -74,6 +81,7 @@ from retraite_notionnelle.facteurs_depense import (  # noqa: E402
     au_perimetre,
     decomposer,
     part_decotee_des_l_age_legal,
+    part_decotee_du_flux,
     partager_couverture,
     pensionnes_de_2022,
     retraites_par_age,
@@ -105,6 +113,11 @@ ENTREE_SELON_LA_GENERATION = "et l'entrée selon la génération"
 #: La même enfin, une part de chaque cohorte partie à l'âge légal, avec une
 #: décote, avant son taux plein (``--decote``).
 AVEC_DECOTE = "et les départs avec décote"
+#: Cette part suivant sa génération, de celle de 1953 au flux de la Cnav de
+#: 2024 (``--decote-generation``).
+DECOTE_SELON_LA_GENERATION = "et la décote selon la génération"
+#: Le témoin des tables de l'EACR, dont la table H dit ce flux.
+TEMOIN_EACR = RACINE / "tests" / "temoins" / "drees_eacr_tables_2026.json"
 #: La génération dont la grille garde l'âge d'entrée, sous ``--entree`` : celle
 #: du milieu des retraités de moins de 65 ans de 2022, de 60 à 64 ans.
 ENTREE_DE_REFERENCE = 1960
@@ -230,8 +243,9 @@ def departage(parts: dict, stables: str, periode: str = "2022-2030") -> dict[str
     PIB, par âge et en tout, et ce qu'en font, colonne après colonne, le
     périmètre (la part stable mesurée comprise), puis la suspension, si la
     colonne sans elle est là, puis les naissances de toute l'année, l'entrée
-    dans l'emploi selon la génération et les départs avec décote, si les leurs
-    y sont ; ce qui reste. Positif quand le modèle recule moins."""
+    dans l'emploi selon la génération, les départs avec décote et la décote
+    selon la génération, si les leurs y sont ; ce qui reste. Positif quand le
+    modèle recule moins."""
     etapes = [("le périmètre", "modèle", stables)]
     if SANS_SUSPENSION in parts:
         etapes.append(("la suspension", stables, SANS_SUSPENSION))
@@ -243,6 +257,9 @@ def departage(parts: dict, stables: str, periode: str = "2022-2030") -> dict[str
                 if AVEC_DECOTE in parts:
                     etapes.append(("les départs hors du taux plein",
                                    ENTREE_SELON_LA_GENERATION, AVEC_DECOTE))
+                    if DECOTE_SELON_LA_GENERATION in parts:
+                        etapes.append(("la décote selon la génération", AVEC_DECOTE,
+                                       DECOTE_SELON_LA_GENERATION))
     etapes += [("ce qui reste", etapes[-1][2], "Ageing Report 2024"),
                ("l'écart", "modèle", "Ageing Report 2024")]
     return {nom: {part: parts[de][periode][part] - parts[vers][periode][part]
@@ -271,18 +288,20 @@ def reforme_entiere(racine: Path, destination: Path) -> Path:
 
 
 def recomptee(couverture: dict, projection: str, racine: Path,
-              entree_depuis: int | None = None, avec_decote: bool = False) -> dict:
+              entree_depuis: int | None = None, avec_decote: bool = False,
+              decote_du_flux: float | None = None) -> dict:
     """Les séries de couverture d'une trajectoire (``modele``), ses retraités
     recomptés aux cohortes nées toute l'année, et, avec ``entree_depuis``, à
     chaque génération entrée dans l'emploi à son âge, puis, avec
     ``avec_decote``, à une part de chaque cohorte partie à l'âge légal, avec
-    une décote, avant son taux plein (``retraites_par_age``) : sa dépense et sa
-    population ne changent pas."""
+    une décote, avant son taux plein, celle de sa génération avec
+    ``decote_du_flux`` (``retraites_par_age``) : sa dépense et sa population
+    ne changent pas."""
     from retraite_notionnelle import Parametres
 
     par_age = retraites_par_age(Parametres(scenario_projection=projection, racine_donnees=racine),
                                 GRILLE_AWG, nes_toute_l_annee=True, entree_depuis=entree_depuis,
-                                avec_decote=avec_decote)
+                                avec_decote=avec_decote, decote_du_flux=decote_du_flux)
     return {**couverture,
             "retraites": {annee: par_age[annee][0] for annee in GRILLE_AWG},
             "retraites_agees": {annee: par_age[annee][1] for annee in GRILLE_AWG}}
@@ -359,8 +378,12 @@ def main(argv: list[str] | None = None) -> int:
     analyseur.add_argument("--decote", action="store_true",
                            help="et y fait partir à l'âge légal, avec une décote, une part des "
                                 "cohortes qui n'ont le taux plein qu'après lui")
+    analyseur.add_argument("--decote-generation", action="store_true",
+                           help="et y fait suivre à cette part sa génération, de celle de 1953 "
+                                "au flux de la Cnav de 2024")
     analyseur.add_argument("--json", type=Path, help="écrit les résultats dans ce fichier")
     arguments = analyseur.parse_args(argv)
+    arguments.decote |= arguments.decote_generation
     if arguments.decote and arguments.entree is None:
         arguments.entree = ENTREE_DE_REFERENCE
     arguments.naissances |= arguments.entree is not None
@@ -410,7 +433,7 @@ def main(argv: list[str] | None = None) -> int:
 
     stables = f"et {_nombre(mesuree * 100, 0)} % stables, mesurés"
     colonnes_couverture[stables] = porte(reference["couverture"])
-    nes = entree = decote = None
+    nes = entree = decote = selon = None
     if arguments.sans_suspension:
         from retraite_notionnelle.config import RACINE_DONNEES
 
@@ -425,6 +448,12 @@ def main(argv: list[str] | None = None) -> int:
             if arguments.decote:
                 decote = recomptee(sans["couverture"], PROJECTIONS[0][0], racine,
                                    arguments.entree, avec_decote=True)
+            if arguments.decote_generation:
+                resultats["part_decotee_du_flux"] = part_decotee_du_flux(
+                    json.loads(TEMOIN_EACR.read_text(encoding="utf-8")))
+                selon = recomptee(sans["couverture"], PROJECTIONS[0][0], racine,
+                                  arguments.entree, avec_decote=True,
+                                  decote_du_flux=resultats["part_decotee_du_flux"])
         resultats["sans_suspension"] = sans
         colonnes_couverture["modèle sans la suspension"] = sans["couverture"]
         colonnes_couverture[SANS_SUSPENSION] = porte(sans["couverture"])
@@ -438,6 +467,9 @@ def main(argv: list[str] | None = None) -> int:
             resultats["avec_decote"] = decote
             resultats["part_decotee"] = part_decotee_des_l_age_legal(RACINE_DONNEES)
             colonnes_couverture[AVEC_DECOTE] = porte(decote)
+        if selon is not None:
+            resultats["decote_selon_la_generation"] = selon
+            colonnes_couverture[DECOTE_SELON_LA_GENERATION] = porte(selon)
         print()
         print("Sans la suspension, la référence du COR (dépense de 2022 → 2070 : "
               f"{_nombre(sans['part_pib'][2022])} → {_nombre(sans['part_pib'][2070])})")
@@ -473,14 +505,20 @@ def main(argv: list[str] | None = None) -> int:
               f"{_nombre(resultats['part_decotee'] * 100, 1)} % de la génération "
               f"{GENERATION_DES_DECOTES} (EIR), autant de la grille, pris aux cohortes qui n'ont "
               "le taux plein qu'après lui")
+    if selon is not None:
+        print(f"Selon la génération : {_nombre(resultats['part_decotee_du_flux'] * 100, 1)} % "
+              f"des liquidants de la Cnav de {ANNEE_DU_FLUX} (EACR), prêtés à la génération "
+              f"{GENERATION_DU_FLUX}, en droite ligne depuis celle de {GENERATION_DES_DECOTES}")
     if nes is not None:
         recomptes = ([sans["couverture"], nes] + ([entree] if entree is not None else [])
-                     + ([decote] if decote is not None else []))
+                     + ([decote] if decote is not None else [])
+                     + ([selon] if selon is not None else []))
         print("Retraités de moins de 65 ans du modèle sous la réforme entière, en millions, "
               "nés en janvier, puis toute l'année"
               + (f", puis entrés selon la génération depuis {arguments.entree}"
                  if entree is not None else "")
               + (", puis partis pour une part avec une décote" if decote is not None else "")
+              + (", puis selon la génération" if selon is not None else "")
               + " : " + " ; ".join(
                   f"{annee} " + " → ".join(_nombre(jeunes_de(series, annee) / 1e6)
                                            for series in recomptes)
