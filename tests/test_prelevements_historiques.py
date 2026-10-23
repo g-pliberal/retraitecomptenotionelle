@@ -834,6 +834,54 @@ def test_l_ancrage_prend_le_texte_cite_et_non_celui_qui_le_vise():
     assert solidarite["2018-01-01"]["jorf"] == "JORFTEXT000036339197"
 
 
+def test_le_seuil_de_solidarite_suit_l_indice_brut_259_de_1988_a_1990(historique):
+    """Le seuil est le traitement « afférent à l'indice brut 259 » (loi
+    n° 82-939, article 4, de 1987 à 1997, LEGI). L'indice majoré qui lui répond
+    gagne deux points le 1er octobre 1988 (décret n° 88-1067) et un le
+    1er février 1989 (décret n° 89-64), comme ceux des indices bruts 100, 175,
+    209 et 308 que nomment les articles 7 à 9 du décret n° 85-1148 ; le point
+    passe à 27 798 F le 1er mars 1989. Posé à la main, le traitement annuel,
+    arrondi au franc : 27 523 F × 2,52 = 69 358 F ; × 2,53 = 69 633 F ;
+    27 798 F × 2,53 = 70 329 F ; 28 129 F × 2,53 = 71 166 F, et non l'indice 254
+    que l'IPP prend dès septembre 1989, qui ne vient qu'avec le point du
+    1er janvier 1990 (décret n° 90-321) : 28 270 F × 2,54 = 71 806 F."""
+    seuil = historique.salaires["solidarite_public"]
+    for jour, annuel in ((dt.date(1988, 9, 30), 68_808), (dt.date(1988, 10, 1), 69_358),
+                         (dt.date(1989, 1, 31), 69_358), (dt.date(1989, 2, 1), 69_633),
+                         (dt.date(1989, 2, 28), 69_633), (dt.date(1989, 3, 1), 70_329),
+                         (dt.date(1989, 8, 31), 70_329), (dt.date(1989, 9, 1), 71_166),
+                         (dt.date(1989, 12, 31), 71_166), (dt.date(1990, 1, 1), 71_806)):
+        assert seuil.valeur(jour, "seuil_mensuel") == pytest.approx(
+            annuel / 12 / 6.55957, abs=0.006), jour
+
+
+def test_un_arrete_s_ancre_a_son_jour_et_a_ce_qu_il_agree():
+    """Un arrêté n'a pas de numéro, et son jour en nomme d'autres : la
+    convention d'assurance chômage de 1993 n'est pas agréée par l'arrêté du
+    même jour sur les pharmaciens inspecteurs, ni celle de 2006 par celui qui
+    agrée l'accord des apprentis du secteur public. Le titre d'un arrêté dit
+    aussi le risque de sa série et la convention qu'il agrée : celui de 1993
+    est l'article que l'index publie le 5 janvier, comme l'IPP le dit."""
+    contenu = charger_yaml(RACINE_DONNEES / CHEMIN)
+    chomage = {m["depuis"]: m for m in contenu["salaires"]["chomage_prive"]}
+    assert chomage["1993-08-01"]["jorf"] == "JORFARTI000001192740"
+    assert chomage["2006-01-01"]["jorf"] != "JORFTEXT000000454533"
+    assert chomage["1985-07-01"]["jorf"] == "JORFTEXT000000497155"
+    assert chomage["1997-01-01"]["jorf"] == "JORFARTI000001797659"
+    chemin = RACINE_DONNEES / "brut" / "dila" / "jorf.sqlite"
+    if not chemin.exists():
+        pytest.skip("l'index JORF n'est pas là")
+    base = sqlite3.connect(f"file:{chemin}?mode=ro", uri=True)
+    try:
+        titre = base.execute("select titre from doc where id = ?",
+                             (chomage["2006-01-01"]["jorf"],)).fetchone()[0]
+    finally:
+        base.close()
+    assert titre.startswith("Arrêté du 23 février 2006 portant agrément de la convention du "
+                            "18 janvier 2006 relative à l'aide au retour à l'emploi et à "
+                            "l'indemnisation du chômage")
+
+
 # -- La CSG déductible et le net imposable (action 138, étape 5) ----------------
 
 def _script():

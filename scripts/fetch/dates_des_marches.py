@@ -22,7 +22,9 @@ juste, sauf deux fois : le seuil de la contribution de solidarité de mars et de
 septembre 1988, que l'IPP, qui le tient du Fonds de solidarité, date du 21 et
 du 23 du mois, quand la valeur du point qui le fait change le 1er
 (``CORRECTIONS`` du récupérateur). Ses autres marches d'avant 1989 ont un jour
-qui n'est pas une date : un compteur. Le document qui date une marche n'est
+qui n'est pas une date : un compteur. Le même seuil, lu à sa règle, a trois
+marches de plus, d'octobre 1988 à mars 1989, et celle de septembre 1989 change
+de valeur : le récupérateur les écrit, et elles sortent de cette garde. Le document qui date une marche n'est
 pas toujours celui qu'elle cite : la suppression du veuvage est datée par la
 loi n° 2003-775, et non par le décret n° 2004-858 ; les seuils que l'IPP cite
 d'un décret absent de l'index ou mal numéroté, par l'article 3 du décret
@@ -175,8 +177,6 @@ DATES_LUES: tuple[tuple[str, tuple[str, ...], str, str], ...] = (
     ("1989-04-01", _INDEPENDANTS, "JORFTEXT000000881840",
      "PRENANT EFFET POUR LE CALCUL DE LA COTISATION DUE AU TITRE DE L'ECHEANCE SEMESTRIELLE "
      "DU 01-04-1989. ENTREE EN VIGUEUR: 01-04-1989"),
-    ("1989-09-01", ("solidarite_public",), "LEGIARTI000006454430",
-     "est fixée à 28 129 F à compter du 1er septembre 1989"),
     ("1990-01-01", ("famille",), "JORFARTI000001928720",
      "les taux de cotisations d'allocations familiales dues au titre de l'année 1990 par les "
      "employeurs et travailleurs indépendants"),

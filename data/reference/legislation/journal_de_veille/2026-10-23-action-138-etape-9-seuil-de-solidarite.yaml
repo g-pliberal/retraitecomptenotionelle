@@ -1,0 +1,40 @@
+date: "2026-10-23"
+session: "action 138, étape 9, suite de la huitième partie : le seuil de la contribution de solidarité de 1987 à 1989, et deux arrêtés de l'assurance chômage"
+consulte: >-
+  python scripts/veille_droit.py ; les index JORF et LEGI, récupérés puis mis
+  à jour de leurs incréments jusqu'au 23 octobre 2026 (LEGI au 22 octobre),
+  et python scripts/textes.py --inscrire (sept rédactions de D. 731-121 du
+  code rural, qu'une autre session cite) ; les barèmes de l'IPP, en CSV, et
+  leurs notes (la contribution de solidarité, avec le point, l'indice majoré
+  de référence et le traitement annuel de chaque marche ; l'assurance
+  chômage) ; dans l'index LEGI, les versions des articles 1er, 2 et 4 de la
+  loi n° 82-939, des articles 3 et 5 à 10 du décret n° 85-1148 de 1985 à
+  1998, les notices des décrets n° 82-1105 et 86-166 ; dans l'index JORF, les
+  décrets n° 88-1067, 89-64 et 90-321 et ses articles, les décrets du
+  « rapport constant » des pensions militaires d'invalidité de 1986 à 1989,
+  les textes de 1987 sur la rémunération des fonctionnaires, les arrêtés du
+  4 janvier 1993, du 23 février 2006, du 12 août 1985, du 18 février 1997,
+  du 4 décembre 2000 et du 14 mai 1990, le 23 octobre 2026.
+trouve: >-
+  De 1987 à 1997, le seuil de la contribution de solidarité est le
+  « traitement annuel net afférent à l'indice brut 259 » (loi n° 82-939,
+  art. 4, LEGIARTI000006656113). L'indice majoré de l'indice brut 259 gagne
+  deux points le 1er octobre 1988 (décret n° 88-1067), un le 1er février 1989
+  (n° 89-64), un le 1er janvier 1990 (n° 90-321), comme les indices bruts
+  100, 175, 209 et 308 des articles 7 à 9 du décret n° 85-1148 : 250, 252,
+  253, 254. L'IPP n'a pas les marches d'octobre 1988, de février et de mars
+  1989 (le point à 27 798 F), et prend l'indice 254 dès septembre 1989 :
+  corrigé, quatre marches. Ses valeurs de mai et d'août 1987, tenues de
+  documents du Fonds de solidarité, passent de 55 F par mois le traitement
+  de l'indice 250 : laissées, sans texte qui les explique. Les arrêtés de
+  l'assurance chômage s'ancraient à leur seul jour : celui de 1993 à un
+  arrêté sur les pharmaciens inspecteurs, celui de 2006 à l'agrément de
+  l'accord des apprentis du secteur public ; le titre d'un arrêté doit
+  désormais dire aussi le risque de sa série et la convention qu'il agrée.
+reste: >-
+  Le seuil de février 1991, que l'IPP passe sans référence de l'indice 254 à
+  259 ; au fac-similé, le barème A du décret n° 82-1105 de 1988 à 1990 et les
+  décrets de 1987 qui fixent le point, avec les décrets que l'index n'a qu'en
+  notice. Inchangés, de l'étape : le plafond de 2027, la date d'entrée dans
+  la saisie en net, la limite 5 ante ter (2) ; au propriétaire, la CAMIEG,
+  l'écrêtement du minimum de la SNCF, l'ASPA de l'article 23.

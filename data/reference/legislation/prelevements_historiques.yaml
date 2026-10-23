@@ -3,14 +3,15 @@
 # source_id: ipp_prelevements_sociaux
 #
 # ÉCRIT PAR `scripts/fetch/ipp_prelevements_sociaux.py`, jamais à la main : les
-# barèmes de l'Institut des politiques publiques, lus le 2026-10-19, chacun avec la
+# barèmes de l'Institut des politiques publiques, lus le 2026-10-23, chacun avec la
 # référence que l'IPP cite pour sa marche. Une transcription, non une source
 # productrice : `haute` au plus (data/sources.yaml, `ipp`).
 #
 # L'ANCRAGE. Chaque marche de l'IPP porte, en `jorf`, le texte qu'il cite tel
-# que l'index JORF de la DILA le trouve, au numéro — au jour pour un arrêté —
-# et à la date de publication qu'il annonce : 158 des 220 marches de
-# l'IPP le sont (index à jour au 20261018-205213). Les autres disent, en `ancrage`, ce
+# que l'index JORF de la DILA le trouve, au numéro — pour un arrêté, au jour,
+# au risque de sa série et à la convention qu'il agrée — et à la date de
+# publication qu'il annonce : 158 des 219 marches de
+# l'IPP le sont (index à jour au 20261023-014741). Les autres disent, en `ancrage`, ce
 # qui manque : une date au Journal officiel, un texte numéroté — un article de
 # code, une convention, une circulaire —, ou la date que l'index donne quand
 # il dément celle de l'IPP. Une marche lue aux textes porte le texte du Journal
@@ -18,7 +19,7 @@
 # CHRONOLOGIE d'une série, non sa valeur : il ne la certifie pas.
 #
 # LA DATE D'EFFET. L'ancrage relie un texte à sa publication, non à l'article
-# qui dit sa date : 147 des 220 marches de l'IPP ont la leur dans un
+# qui dit sa date : 146 des 219 marches de l'IPP ont la leur dans un
 # document de l'index — un article, la notice ou le titre d'un texte du JORF,
 # une version d'article de LEGI — que nomme `scripts/fetch/dates_des_marches.py`,
 # avec les mots qui la disent ; les autres y disent pourquoi elle ne se lit pas.
@@ -128,7 +129,7 @@
 # art. 3). Ce sont les valeurs de l'IPP, que le script confronte aux versions
 # de l'article (`DEDUCTIBLE_AUX_TEXTES`). Le reste de la CSG, la CRDS et la
 # CASA ne se déduisent pas ; les cotisations, si (CGI, art. 83).
-lu_le: "2026-10-19"
+lu_le: "2026-10-23"
 fiabilite: haute
 tenues_avant_leur_premiere_marche: [maladie_prive, maladie_etat, maladie_collectivites, famille]
 
@@ -303,21 +304,21 @@ salaires:
     - {depuis: "1979-04-01", tout_salaire: 0, sous_plafond: 0.0084, de_un_a_quatre_plafonds: 0.0084, texte: "Circulaire Unedic 79-14 du 02/04/1979", ancrage: "sans texte numéroté du Journal officiel"}
     - {depuis: "1982-11-06", tout_salaire: 0, sous_plafond: 0.0132, de_un_a_quatre_plafonds: 0.0132, texte: "Décret 82-940 du 04/11/1982", jorf: "JORFTEXT000000331503"}
     - {depuis: "1983-07-01", tout_salaire: 0, sous_plafond: 0.0172, de_un_a_quatre_plafonds: 0.0172, texte: "Décret 83-553 du 30/06/1983.", ancrage: "absente de l'index"}
-    - {depuis: "1984-04-01", tout_salaire: 0, sous_plafond: 0.0112, de_un_a_quatre_plafonds: 0.0162, texte: "Ordonnance 84-198 du 21/03/1984. Convention et Règlement Unedic du 24/02/1984 agréés par arrêté du 28/03/1984", ancrage: "absente de l'index à cette date"}
+    - {depuis: "1984-04-01", tout_salaire: 0, sous_plafond: 0.0112, de_un_a_quatre_plafonds: 0.0162, texte: "Ordonnance 84-198 du 21/03/1984. Convention et Règlement Unedic du 24/02/1984 agréés par arrêté du 28/03/1984", ancrage: "absente de l'index"}
     - {depuis: "1985-07-01", tout_salaire: 0, sous_plafond: 0.0212, de_un_a_quatre_plafonds: 0.0262, texte: "Arrêté du 12/08/1985 | Protocole d'accord du 18/07/1985 (agréé)", jorf: "JORFTEXT000000497155"}
     - {depuis: "1985-11-01", tout_salaire: 0, sous_plafond: 0.0151, de_un_a_quatre_plafonds: 0.0201, texte: "Protocole du 18/07/1985 (agréé) | avenant du 29/10/1985", ancrage: "sans texte numéroté du Journal officiel"}
     - {depuis: "1988-01-01", tout_salaire: 0, sous_plafond: 0.0167, de_un_a_quatre_plafonds: 0.0217, texte: "Convention et Règlement UNEDIC du 19/11/1985. Accord et Convention UNEDIC du 30/12/1987", ancrage: "sans texte numéroté du Journal officiel"}
     - {depuis: "1990-10-01", tout_salaire: 0, sous_plafond: 0.0159, de_un_a_quatre_plafonds: 0.0217, texte: "Compromis du 25/06/1990 (Dupeyroux 1993, p791)", ancrage: "sans texte numéroté du Journal officiel"}
-    - {depuis: "1991-01-01", tout_salaire: 0, sous_plafond: 0.0153, de_un_a_quatre_plafonds: 0.0211, texte: "Convention et règlement Unedic du 01/01/1990 agréés par arrêté du 14/05/1990 . Protocole d'accord du 22/12/1989 - Circ. 90-08 du 06/06/1990", ancrage: "absente de l'index à cette date"}
+    - {depuis: "1991-01-01", tout_salaire: 0, sous_plafond: 0.0153, de_un_a_quatre_plafonds: 0.0211, texte: "Convention et règlement Unedic du 01/01/1990 agréés par arrêté du 14/05/1990 . Protocole d'accord du 22/12/1989 - Circ. 90-08 du 06/06/1990", ancrage: "absente de l'index"}
     - {depuis: "1992-01-01", tout_salaire: 0, sous_plafond: 0.0167, de_un_a_quatre_plafonds: 0.0217, texte: "Protocole d'accord du 05/12/1991 (avenants n° 1 et 8 du 13/12/91, agréés)", ancrage: "sans texte numéroté du Journal officiel"}
     - {depuis: "1992-08-01", tout_salaire: 0, sous_plafond: 0.0207, de_un_a_quatre_plafonds: 0.0257, texte: "Protocole d'accord du 18/07/1992 (avenants du 24/07/92, agréés) | accord du 30/12/1992", ancrage: "sans texte numéroté du Journal officiel"}
-    - {depuis: "1993-08-01", tout_salaire: 0, sous_plafond: 0.0242, de_un_a_quatre_plafonds: 0.0297, texte: "Convention et règlement Unedic du 01/01/93 agréés par l'arrêté du 04/01/93. Avenant n°1 du 30/12/92", jorf: "JORFTEXT000000359380"}
+    - {depuis: "1993-08-01", tout_salaire: 0, sous_plafond: 0.0242, de_un_a_quatre_plafonds: 0.0297, texte: "Convention et règlement Unedic du 01/01/93 agréés par l'arrêté du 04/01/93. Avenant n°1 du 30/12/92", jorf: "JORFARTI000001192740"}
     - {depuis: "1997-01-01", tout_salaire: 0, sous_plafond: 0.0221, de_un_a_quatre_plafonds: 0.0271, texte: "Convention et règlement Unedic du 01/01/1997 agréés par l'arrêté du 18/02/1997", jorf: "JORFARTI000001797659"}
     - {depuis: "2001-01-01", tout_salaire: 0, sous_plafond: 0.021, de_un_a_quatre_plafonds: 0.026, texte: "Convention du 01/01/2001 agréé par l'arrêté du 04/12/2000", jorf: "JORFARTI000001906411"}
     - {depuis: "2002-01-01", tout_salaire: 0, sous_plafond: 0.02, de_un_a_quatre_plafonds: 0.02, texte: "Convention du 01/01/2001 agréé par l'arrêté du 04/12/2000", jorf: "JORFARTI000001906411"}
     - {depuis: "2002-07-01", tout_salaire: 0, sous_plafond: 0.021, de_un_a_quatre_plafonds: 0.021, texte: "Convention du 01/01/2001, avenant du 19/06/2002", ancrage: "sans texte numéroté du Journal officiel"}
     - {depuis: "2003-01-01", tout_salaire: 0, sous_plafond: 0.024, de_un_a_quatre_plafonds: 0.024, texte: "Convention du 01/01/2001, avenant du 27/12/2002", ancrage: "sans texte numéroté du Journal officiel"}
-    - {depuis: "2006-01-01", tout_salaire: 0, sous_plafond: 0.0244, de_un_a_quatre_plafonds: 0.0244, texte: "Circulaire Unedic 2006-08 du 27/03/2006. Convention du 18/01/2006, agréé par l'arrêté du 23/02/2006", jorf: "JORFTEXT000000454533"}
+    - {depuis: "2006-01-01", tout_salaire: 0, sous_plafond: 0.0244, de_un_a_quatre_plafonds: 0.0244, texte: "Circulaire Unedic 2006-08 du 27/03/2006. Convention du 18/01/2006, agréé par l'arrêté du 23/02/2006", jorf: "JORFARTI000001522303"}
     - {depuis: "2007-01-01", tout_salaire: 0, sous_plafond: 0.024, de_un_a_quatre_plafonds: 0.024, texte: "Circulaire Unedic 2007-02 du 18/01/2007. Convention du 18/01/2006", ancrage: "sans texte numéroté du Journal officiel"}
     - {depuis: "2018-01-01", tout_salaire: 0, sous_plafond: 0.0095, de_un_a_quatre_plafonds: 0.0095, texte: "Loi 2017-1836 du 30/12/2017, art. 8 VI. (LFSS pour 2018)", jorf: "JORFTEXT000036339090"}
     - {depuis: "2018-10-01", tout_salaire: 0, sous_plafond: 0, de_un_a_quatre_plafonds: 0, texte: "Loi 2017-1836 du 30/12/2017, art. 8 VI. (LFSS pour 2018)", jorf: "JORFTEXT000036339090"}
@@ -364,7 +365,10 @@ salaires:
     - {depuis: "1987-08-24", taux: 0.01, seuil_mensuel: 856.99, texte: "IPP, sans référence", ancrage: "sans référence"}
     - {depuis: "1988-03-01", taux: 0.01, seuil_mensuel: 865.57, texte: "Valeur du point de la fonction publique, 27 253 F à compter du 1er mars 1988 (LEGIARTI000006454427)", ancrage: "lue dans LEGI (LEGIARTI000006454427)"}
     - {depuis: "1988-09-01", taux: 0.01, seuil_mensuel: 874.14, texte: "Valeur du point de la fonction publique, 27 523 F à compter du 1er septembre 1988 (LEGIARTI000006454428)", ancrage: "lue dans LEGI (LEGIARTI000006454428)"}
-    - {depuis: "1989-09-01", taux: 0.01, seuil_mensuel: 907.68, texte: "Décret 89-598 du 30/08/1989", ancrage: "absente de l'index"}
+    - {depuis: "1988-10-01", taux: 0.01, seuil_mensuel: 881.13, texte: "Décret 88-1067 du 23/11/1988 : deux points d'indice majoré à compter du 1er octobre 1988, l'indice brut 259 à l'indice majoré 252 (JORFTEXT000000504298)", jorf: "JORFTEXT000000504298"}
+    - {depuis: "1989-02-01", taux: 0.01, seuil_mensuel: 884.62, texte: "Décret 89-64 du 04/02/1989 : un point d'indice majoré à compter du 1er février 1989, l'indice brut 259 à l'indice majoré 253 (JORFTEXT000000882942)", jorf: "JORFTEXT000000882942"}
+    - {depuis: "1989-03-01", taux: 0.01, seuil_mensuel: 893.47, texte: "Valeur du point de la fonction publique, 27 798 F à compter du 1er mars 1989, à l'indice majoré 253 (LEGIARTI000006454429)", ancrage: "lue dans LEGI (LEGIARTI000006454429)"}
+    - {depuis: "1989-09-01", taux: 0.01, seuil_mensuel: 904.1, texte: "Valeur du point de la fonction publique, 28 129 F à compter du 1er septembre 1989, à l'indice majoré 253 et non 254 (LEGIARTI000006454430)", ancrage: "lue dans LEGI (LEGIARTI000006454430)"}
     - {depuis: "1990-01-01", taux: 0.01, seuil_mensuel: 912.23, texte: "Décret 90-321 du 05/04/1990", jorf: "JORFTEXT000000166950"}
     - {depuis: "1990-04-01", taux: 0.01, seuil_mensuel: 923.1, texte: "Décret 90-332 du 05/04/1990", ancrage: "absente de l'index"}
     - {depuis: "1990-12-01", taux: 0.01, seuil_mensuel: 934.91, texte: "Décret 90-1058 du 22/11/1990", jorf: "JORFTEXT000000352399"}

@@ -1,15 +1,15 @@
 # Étape 9, huitième partie : la maladie des pensions des exploitants et des régimes spéciaux, lue aux textes
 
-**Reprise, au 19 octobre 2026.** Fait : la maladie des pensions de tous les
+**Reprise, au 23 octobre 2026.** Fait : la maladie des pensions de tous les
 régimes de base calculés, sauf la SEITA, le port de Strasbourg, les marins,
 les cultes et les assemblées ; la SNCF et les mines au site ; la réversion et
-le minimum de la SNCF ; la date d'entrée dans la fiche ; le 19, les décrets
-sans marche, les chemins de fer secondaires, la date d'effet des marches de
-l'IPP (deux corrigées). Reste, une session par point : le plafond de 2027 ; la
-date d'entrée dans la saisie en net (pages) ; le seuil de solidarité de 1987 à
-1989 ; deux ancrages d'arrêtés ; la limite 5 ante ter (2), en fin d'étape. Au
+le minimum de la SNCF ; la date d'entrée dans la fiche ; les décrets sans
+marche, les chemins de fer secondaires, la date d'effet des marches ; le 23, le
+seuil de solidarité de 1987 à 1989, deux arrêtés. Reste, une session par
+point : le plafond de 2027 ; la date d'entrée dans la saisie en net (pages) ;
+le seuil de février 1991 ; la limite 5 ante ter (2), en fin d'étape. Au
 propriétaire : la CAMIEG, l'écrêtement du minimum de la SNCF, l'ASPA de
-l'article 23, des décrets au fac-similé. Détail : note « date d'effet ».
+l'article 23, des textes au fac-similé. Détail : note « seuil de solidarité ».
 
 **La demande.** Le propriétaire, le 13 octobre 2026 : « Action 138, étape 9,
 histoire des prélèvements : la maladie des pensions des exploitants d'avant

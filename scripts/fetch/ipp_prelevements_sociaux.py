@@ -70,8 +70,12 @@ l'IPP nomme un texte et sa date au *Journal officiel* ; le récupérateur cherch
 ce texte dans l'index JORF de la DILA (``dila_index.py``, récupéré s'il est
 absent), à son numéro et à cette date, et écrit dans la marche ce qu'il trouve
 (``jorf``) ou ce qui manque (``ancrage``), avec la date où l'index le trouve
-quand ce n'est pas celle de l'IPP. Une marche lue aux textes est liée au texte
-qu'elle cite.
+quand ce n'est pas celle de l'IPP. Un arrêté, qui n'a pas de numéro, s'y
+cherche à son jour, que d'autres partagent : son titre doit aussi dire le
+risque de sa série et la convention qu'il agrée, quand la référence la date —
+l'arrêté du même jour sur les pharmaciens inspecteurs ancrait l'assurance
+chômage de 1993, celui des apprentis du secteur public celle de 2006. Une
+marche lue aux textes est liée au texte qu'elle cite.
 
 LES DÉCRETS QU'AUCUNE MARCHE NE REJOINT, comme ``ipp_taux_cotisation.py`` pour
 la vieillesse : ``decrets_des_prelevements.py`` les cherche dans l'index JORF,
@@ -85,8 +89,9 @@ LA DATE D'EFFET DE CHAQUE MARCHE DE L'IPP, que l'ancrage ne vérifie pas :
 ``dates_des_marches.py`` nomme le document de l'index qui la dit et ses mots,
 ou pourquoi elle ne se lit pas, et le script imprime les marches qu'il ne
 nomme pas. Il a vu deux dates fausses, dans le seuil de la contribution de
-solidarité : mars et septembre 1988, que l'IPP date du 21 et du 23 du mois
-(``CORRECTIONS``).
+solidarité : mars et septembre 1988, que l'IPP date du 21 et du 23 du mois ;
+la règle de ce seuil, lue ensuite, lui ajoute trois marches, d'octobre 1988 à
+mars 1989, et corrige celle de septembre 1989 (``CORRECTIONS``).
 
 Ce qu'il ne fait pas. L'IPP est une transcription, non une source productrice :
 la donnée plafonne à ``haute``, et l'ancrage n'y change rien : il vérifie la
@@ -102,6 +107,7 @@ import io
 import re
 import sqlite3
 import sys
+import unicodedata
 import urllib.request
 from pathlib import Path
 
@@ -391,13 +397,32 @@ CORRECTIONS["maladie_collectivites"] = [
               "traitements versés à compter du 1er juillet 1991 (JORFARTI000001566429)"},
 ]
 
-#: LE SEUIL DE LA CONTRIBUTION DE SOLIDARITÉ, deux dates
-#: (``dates_des_marches.py``). Avant 1989, l'IPP le tient du Fonds de solidarité,
-#: sans texte, à des jours qui ne sont pas des dates : le 21 mars et le
-#: 23 septembre 1988. Ses valeurs de 1988 sont, au franc près, le douzième du
-#: traitement de l'indice majoré 250 (68 133 F et 68 808 F par an) à la valeur
-#: du point que l'article 3 du décret n° 85-1148 fixe « à compter du 1er mars
-#: 1988 », puis « du 1er septembre 1988 » (LEGI) : le seuil change avec elle.
+#: LE SEUIL DE LA CONTRIBUTION DE SOLIDARITÉ. De 1987 à 1997, le « traitement
+#: annuel net afférent à l'indice brut 259 » (loi n° 82-939, article 4,
+#: LEGIARTI000006656113) : il suit la valeur du point (décret n° 85-1148,
+#: article 3) et l'indice majoré qui répond à l'indice brut 259 (barème A du
+#: décret n° 82-1105). Jusqu'en 1988, l'IPP le tient de documents du Fonds de
+#: solidarité, à des jours qui ne sont pas des dates : ses valeurs de 1988, le
+#: douzième du traitement de l'indice majoré 250 arrondi au franc (68 133 F et
+#: 68 808 F par an), changent avec le point le 1er mars et le 1er septembre, non
+#: le 21 et le 23 (``dates_des_marches.py``). Il lui manque les marches d'après :
+#: l'indice majoré gagne deux points le 1er octobre 1988 (décret n° 88-1067) et
+#: un le 1er février 1989 (décret n° 89-64), comme ceux des indices bruts 100,
+#: 175, 209 et 308 que nomment les articles 7 à 9 du décret n° 85-1148 (LEGI) ;
+#: le point change le 1er mars 1989. Et l'IPP, qui calcule lui-même le seuil de
+#: septembre 1989, y prend l'indice 254, qui ne vient qu'avec le point du
+#: 1er janvier 1990 (décret n° 90-321), où il le garde. Ses valeurs de mai et
+#: d'août 1987, 5 594 F et 5 621,50 F, passent de 55 F par mois le traitement
+#: de l'indice 250 aux points que LEGI donne (66 468 F et 66 798 F par an) :
+#: celles des documents du Fonds, qu'aucun texte de l'index n'explique, elles
+#: restent.
+def _seuil_de_solidarite(point: int, indice: int) -> float:
+    """Le seuil mensuel en euros : le douzième du traitement annuel de
+    l'``indice`` majoré au ``point`` (la valeur annuelle de l'indice 100),
+    arrondi au franc comme les valeurs du Fonds et de l'IPP."""
+    return round(int(point * indice / 100 + 0.5) / 12 / FRANC, 2)
+
+
 CORRECTIONS["solidarite_public"] = [
     {"ipp": "1988-03-21", "lue": {"depuis": "1988-03-01"},
      "texte": "Valeur du point de la fonction publique, 27 253 F à compter du 1er mars 1988 "
@@ -405,6 +430,22 @@ CORRECTIONS["solidarite_public"] = [
     {"ipp": "1988-09-23", "lue": {"depuis": "1988-09-01"},
      "texte": "Valeur du point de la fonction publique, 27 523 F à compter du 1er septembre "
               "1988 (LEGIARTI000006454428)"},
+    {"ipp": None, "lue": {"depuis": "1988-10-01",
+                          "seuil_mensuel": _seuil_de_solidarite(27_523, 252)},
+     "texte": "Décret 88-1067 du 23/11/1988 : deux points d'indice majoré à compter du "
+              "1er octobre 1988, l'indice brut 259 à l'indice majoré 252 (JORFTEXT000000504298)"},
+    {"ipp": None, "lue": {"depuis": "1989-02-01",
+                          "seuil_mensuel": _seuil_de_solidarite(27_523, 253)},
+     "texte": "Décret 89-64 du 04/02/1989 : un point d'indice majoré à compter du 1er février "
+              "1989, l'indice brut 259 à l'indice majoré 253 (JORFTEXT000000882942)"},
+    {"ipp": None, "lue": {"depuis": "1989-03-01",
+                          "seuil_mensuel": _seuil_de_solidarite(27_798, 253)},
+     "texte": "Valeur du point de la fonction publique, 27 798 F à compter du 1er mars 1989, "
+              "à l'indice majoré 253 (LEGIARTI000006454429)"},
+    {"ipp": "1989-09-01", "lue": {"depuis": "1989-09-01",
+                                  "seuil_mensuel": _seuil_de_solidarite(28_129, 253)},
+     "texte": "Valeur du point de la fonction publique, 28 129 F à compter du 1er septembre "
+              "1989, à l'indice majoré 253 et non 254 (LEGIARTI000006454430)"},
 ]
 
 #: LA CSG DÉDUCTIBLE (action 138, étape 5, deuxième partie) : la part de la CSG
@@ -651,12 +692,29 @@ def verifier_deductible(series: dict[tuple[str, str], list[dict]]) -> None:
 NUMERO = re.compile(r"(?:D[ée]cret|Loi|Ordonnance)\s+n?[°o]?\s*(\d{2,4}-\d{1,5})", re.I)
 #: Un arrêté, qui n'a pas de numéro : « Arrêté du 26/03/1971 ».
 ARRETE = re.compile(r"Arr[êe]t[ée]\s+du\s+(\d{1,2})/(\d{1,2})/(\d{2,4})", re.I)
+#: La convention qu'un arrêté agrée, quand la référence la date : « Convention et
+#: règlement Unedic du 01/01/93 agréés par l'arrêté du 04/01/93 ».
+CONVENTION_AGREEE = re.compile(r"Convention\b[^.|]*?\bdu\s+(\d{1,2})/(\d{1,2})/(\d{2,4})"
+                               r"[^|]*?agr[ée]", re.I)
 #: Comment le JORF écrit un numéro dans un titre, selon l'époque.
 TITRE_NUMERO = ("%n°{num} %", "%n° {num} %", "%no {num} %", "%n°{num},%")
 IDENTIFIANT_JORF = re.compile(r"JORF(?:TEXT|ARTI)\d{12}")
 IDENTIFIANT_LEGI = re.compile(r"LEGIARTI\d{12}")
 MOIS = ("janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août",
         "septembre", "octobre", "novembre", "décembre")
+
+
+def _en_lettres(groupes: tuple[str, ...]) -> str:
+    """« 04/01/93 » en lettres : « 4 janvier 1993 », « 1er janvier 1993 »."""
+    jour, mois, annee = (int(x) for x in groupes)
+    annee += 1900 if annee < 100 else 0
+    return f"{'1er' if jour == 1 else jour} {MOIS[mois - 1]} {annee}"
+
+
+def _plat(texte: str) -> str:
+    """Sans capitales ni accents : « AGREMENT » se lit « agrément »."""
+    return "".join(c for c in unicodedata.normalize("NFD", texte.lower())
+                   if not unicodedata.combining(c))
 
 
 def _motifs(titre: str) -> tuple[str, ...]:
@@ -667,22 +725,36 @@ def _motifs(titre: str) -> tuple[str, ...]:
         return tuple(gabarit.format(num=numero.group(1)) for gabarit in TITRE_NUMERO)
     arrete = ARRETE.search(titre)
     if arrete:
-        jour, mois, annee = (int(x) for x in arrete.groups())
-        annee += 1900 if annee < 100 else 0
-        date = f"{'1er' if jour == 1 else jour} {MOIS[mois - 1]} {annee}"
+        date = _en_lettres(arrete.groups())
         return (f"Arrêté du {date}%", f"Arrete du {date}%", f"ARRETE DU {date.upper()}%")
     return ()
 
 
-def _chercher(db, motifs: tuple[str, ...], publie: str | None) -> tuple[str, str] | None:
+def _exiges(titre: str, risque: str) -> tuple[str, ...]:
+    """Ce que le titre d'un arrêté doit dire, outre son jour, que d'autres
+    partagent : le ``risque`` de sa série (« chomage »), et la convention qu'il
+    agrée quand la référence la date — « agrément de la convention du
+    1er janvier 1993 », et non l'accord des contrats emploi-solidarité, agréé
+    le même jour. Rien pour un texte numéroté."""
+    if NUMERO.search(titre) or not ARRETE.search(titre):
+        return ()
+    exiges = (_plat(risque),) if risque else ()
+    convention = CONVENTION_AGREEE.search(titre)
+    if convention:
+        exiges += (_plat(f"agrément de la convention du {_en_lettres(convention.groups())}"),)
+    return exiges
+
+
+def _chercher(db, motifs: tuple[str, ...], publie: str | None,
+              exiges: tuple[str, ...] = ()) -> tuple[str, str] | None:
     """Le premier texte du JORF dont le titre répond à un motif, publié ce
-    jour-là quand ``publie`` le dit : le texte plutôt que l'un de ses articles,
-    et celui qui porte le numéro en tête de son titre, non un texte qui le vise
-    — le décret n° 2017-1889, « pris en application de l'article 113 de la loi
-    n° 2017-1837 », publié avec elle."""
+    jour-là quand ``publie`` le dit, et dit ce que ``exiges`` demande : le
+    texte plutôt que l'un de ses articles, et celui qui porte le numéro en tête
+    de son titre, non un texte qui le vise — le décret n° 2017-1889, « pris en
+    application de l'article 113 de la loi n° 2017-1837 », publié avec elle."""
     if not motifs:
         return None
-    requete = ("SELECT id, date FROM doc WHERE num = '' AND ("
+    requete = ("SELECT id, date, titre FROM doc WHERE num = '' AND ("
                + " OR ".join("titre LIKE ?" for _ in motifs) + ")")
     valeurs = list(motifs)
     numero = re.search(r"\d{2,4}-\d{1,5}", motifs[0])
@@ -692,13 +764,15 @@ def _chercher(db, motifs: tuple[str, ...], publie: str | None) -> tuple[str, str
     if publie is not None:
         requete += " AND date = ?"
         valeurs.append(publie)
-    return db.execute(requete + " ORDER BY id LIKE 'JORFARTI%', date LIMIT 1",
-                      valeurs).fetchone()
+    rangees = db.execute(requete + " ORDER BY id LIKE 'JORFARTI%', date", valeurs)
+    return next(((identifiant, date) for identifiant, date, titre in rangees
+                 if all(mot in _plat(titre) for mot in exiges)), None)
 
 
-def ancrer(db, reference: str, journal_officiel: str) -> dict:
+def ancrer(db, reference: str, journal_officiel: str, risque: str = "") -> dict:
     """Le texte que l'IPP cite est-il au Journal officiel, à la date de
-    publication qu'il annonce, sous ce numéro (sous ce jour pour un arrêté) ?
+    publication qu'il annonce, sous ce numéro (sous ce jour pour un arrêté, au
+    ``risque`` de sa série et à la convention qu'il agrée) ?
     ``{"jorf": identifiant}`` s'il y est ; sinon ``{"ancrage": ce qui manque}``,
     et la date où l'index le trouve quand ce n'est pas celle de l'IPP."""
     titres = [partie.split(";")[0].strip() for partie in reference.split("|") if partie.strip()]
@@ -716,19 +790,22 @@ def ancrer(db, reference: str, journal_officiel: str) -> dict:
         if not candidates:
             raisons.append("sans date au Journal officiel")
             continue
+        exiges = _exiges(titre, risque)
         for publie in candidates:
-            trouve = _chercher(db, motifs, publie)
+            trouve = _chercher(db, motifs, publie, exiges)
             if trouve:
                 return {"jorf": trouve[0]}
         # Un arrêté n'a que son jour, que d'autres partagent : il ne se cherche
-        # qu'à la date annoncée.
-        ailleurs = None if ARRETE.search(titre) and not NUMERO.search(titre) else (
-            _chercher(db, motifs, None))
+        # qu'à la date annoncée, sauf quand son titre nomme la convention qu'il
+        # agrée.
+        a_cette_date = (bool(ARRETE.search(titre)) and not NUMERO.search(titre)
+                        and not CONVENTION_AGREEE.search(titre))
+        ailleurs = None if a_cette_date else _chercher(db, motifs, None, exiges)
         if ailleurs:
             raisons.append(f"l'index le date du {ailleurs[1]} ({ailleurs[0]}), "
                            f"non du {candidates[0]}")
         else:
-            raisons.append("absente de l'index à cette date" if ARRETE.search(titre)
+            raisons.append("absente de l'index à cette date" if a_cette_date
                            else "absente de l'index")
     return {"ancrage": raisons[0]}
 
@@ -749,12 +826,15 @@ def ancrer_lue(db, texte: str) -> dict:
 
 def ancrer_series(db, series: dict[tuple[str, str], list[dict]]) -> dict[str, int]:
     """Chaque marche reçoit son ancrage, et perd ce que l'IPP en disait ; rend
-    le compte des marches de l'IPP, et de celles qui sont ancrées."""
+    le compte des marches de l'IPP, et de celles qui sont ancrées. Le risque
+    d'une série, que le titre d'un arrêté doit dire, est le premier mot de son
+    nom : « chomage » pour ``chomage_prive``."""
     compte = {"ipp": 0, "ancrees": 0}
-    for marches_lues in series.values():
+    for (_, nom), marches_lues in series.items():
         for marche in marches_lues:
             if "_reference" in marche:
-                lien = ancrer(db, marche["_reference"], marche["_journal_officiel"])
+                lien = ancrer(db, marche["_reference"], marche["_journal_officiel"],
+                              nom.split("_")[0])
                 compte["ipp"] += 1
                 compte["ancrees"] += "jorf" in lien
             else:
@@ -827,8 +907,9 @@ ENTETE = """\
 # productrice : `haute` au plus (data/sources.yaml, `ipp`).
 #
 # L'ANCRAGE. Chaque marche de l'IPP porte, en `jorf`, le texte qu'il cite tel
-# que l'index JORF de la DILA le trouve, au numéro — au jour pour un arrêté —
-# et à la date de publication qu'il annonce : {ancrees} des {ipp} marches de
+# que l'index JORF de la DILA le trouve, au numéro — pour un arrêté, au jour,
+# au risque de sa série et à la convention qu'il agrée — et à la date de
+# publication qu'il annonce : {ancrees} des {ipp} marches de
 # l'IPP le sont (index à jour au {index}). Les autres disent, en `ancrage`, ce
 # qui manque : une date au Journal officiel, un texte numéroté — un article de
 # code, une convention, une circulaire —, ou la date que l'index donne quand

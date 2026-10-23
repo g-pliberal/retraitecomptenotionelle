@@ -5825,8 +5825,11 @@ institutions:
           chômage salarié en octobre 2018). La référence que l'IPP cite est
           gardée pour chacune, et, depuis le 10 octobre 2026, ANCRÉE au
           Journal officiel par l'index JORF de la DILA, au numéro et à la
-          date de publication que l'IPP annonce, comme ipp_taux_cotisation :
-          158 des 220 marches de l'IPP le sont ; les autres citent un
+          date de publication que l'IPP annonce, comme ipp_taux_cotisation —
+          un arrêté, qui n'a pas de numéro, à son jour, au risque de sa série
+          et à la convention qu'il agrée, depuis le 23 octobre : l'assurance
+          chômage de 1993 et de 2006 s'ancrait à un autre arrêté du même
+          jour — : 158 des 219 marches de l'IPP le sont ; les autres citent un
           accord, une circulaire, un article de code, rien, ou un texte que
           l'index n'a pas — sauf six, dont l'index dément la date : les
           décrets n° 93-93, 98-945, 2002-1295, 2009-1158, 2012-853 et
@@ -5875,14 +5878,24 @@ institutions:
           1er juillet 1991 et non au 1er janvier (n° 91-615, art. 5). LA DATE
           D'EFFET DE CHAQUE MARCHE DE L'IPP, que l'ancrage ne vérifie pas, lue
           le 19 octobre 2026 dans les index JORF et LEGI
-          (`scripts/fetch/dates_des_marches.py`) : 147 des 220 marches ont
+          (`scripts/fetch/dates_des_marches.py`) : 146 des 219 marches ont
           leur date dans un article, une notice, un titre ou une version
           d'article ; les autres disent pourquoi elle ne se lit pas — un
           accord de l'Unédic, un texte que l'index n'a pas, ou qu'en notice
           sans date. Deux dates sont fausses : le seuil de la contribution de
           solidarité de mars et de septembre 1988, que l'IPP, qui le tient du
           Fonds de solidarité, date du 21 et du 23 ; il suit la valeur du
-          point, fixée au 1er du mois (décret n° 85-1148, art. 3). LA CSG
+          point, fixée au 1er du mois (décret n° 85-1148, art. 3). Lu à sa
+          règle le 23 octobre 2026 — le traitement « afférent à l'indice
+          brut 259 » (loi n° 82-939, art. 4, de 1987 à 1997) —, ce seuil
+          gagne trois marches que l'IPP n'a pas : l'indice majoré 252 au
+          1er octobre 1988 (décret n° 88-1067), 253 au 1er février 1989
+          (n° 89-64), le point du 1er mars 1989 ; et sa marche de septembre
+          1989 reprend l'indice 253, quand l'IPP prend déjà le 254 du
+          1er janvier 1990 (n° 90-321). Ses valeurs de mai et d'août 1987,
+          celles des documents du Fonds, passent de 55 F par mois le
+          traitement de l'indice 250 : elles restent, sans texte qui les
+          explique. LA CSG
           DÉDUCTIBLE, relue le 11 octobre 2026 (étape 5,
           deuxième partie) : la colonne `deductible` des barèmes de CSG
           d'activité et des pensions, à chaque taux, que le script confronte
