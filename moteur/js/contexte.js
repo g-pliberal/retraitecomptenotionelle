@@ -804,20 +804,6 @@ function demandesDePension(simulateur, saisie) {
   return demandes;
 }
 
-/**
- * Un statut ne se déclare qu'aux dates où son régime recrutait.
- *
- * Un jeune d'aujourd'hui ne peut pas se déclarer mineur : le régime des mines
- * est fermé aux recrutés depuis septembre 2010. Le routage le savait déjà —
- * il envoyait ce mineur-là au régime général, en silence, et la page
- * affichait « Mineur » au-dessus d'une pension de salarié du privé. Le refus
- * dit la date, et le statut de droit commun qui porte le même calcul.
- *
- * La date opposée est celle de l'ENTRÉE dans le statut, au mois près, telle
- * que le parcours l'a datée : un agent entré à la RATP en octobre 2022 n'y a
- * sa première ligne qu'en 2023, et n'est pas recruté après la fermeture pour
- * autant.
- */
 /** La carrière des métiers, à leurs niveaux de revenu, contrôlée. */
 function carriereParcourue(simulateur, parcours, batir) {
   const carriere = batir(parcours.map((metier) => metier.niveau_salaire));
@@ -942,6 +928,20 @@ function auRevenu(affiliations, affiliation, annee) {
       && (periode.regimes ?? []).some((code) => REGIMES_AU_REVENU.has(code)));
 }
 
+/**
+ * Un statut ne se déclare qu'aux dates où son régime recrutait.
+ *
+ * Un jeune d'aujourd'hui ne peut pas se déclarer mineur : le régime des mines
+ * est fermé aux recrutés depuis septembre 2010. Le routage le savait déjà —
+ * il envoyait ce mineur-là au régime général, en silence, et la page
+ * affichait « Mineur » au-dessus d'une pension de salarié du privé. Le refus
+ * dit la date, et le statut de droit commun qui porte le même calcul.
+ *
+ * La date opposée est celle de l'ENTRÉE dans le statut, au mois près, telle
+ * que le parcours l'a datée : un agent entré à la RATP en octobre 2022 n'y a
+ * sa première ligne qu'en 2023, et n'est pas recruté après la fermeture pour
+ * autant.
+ */
 function verifierStatutsOuverts(affiliations, carriere, parcours) {
   parcours.forEach((metier, index) => {
     const ferme = statutFerme(affiliations, carriere, metier.affiliation);
