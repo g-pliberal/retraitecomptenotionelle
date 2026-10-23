@@ -2947,11 +2947,28 @@ def _simuler_morceau(parametres: Parametres, morceau: tuple[CasType, ...]):
         lambda: C._pensionnes(Simulateur(parametres), morceau, "droit"))
 
 
+#: Le plus de cas types qu'un morceau de :func:`simuler` envoie au portage :
+#: le pont lui passe sa demande d'un seul bloc, que node ne lit pas au-delà de
+#: 512 Mo, et chaque cas type y porte ses carrières de toutes les générations,
+#: 1,4 à 1,7 Mo avec le paquet des données. Les morceaux de 468 cas types de
+#: la population de la vingt-quatrième version, sur quatre cœurs, ne passaient
+#: pas ; ceux de 383, de la vingt-troisième, passaient de peu.
+CAS_TYPES_PAR_MORCEAU = 200
+
+
+def morceaux_de(cas_types: tuple[CasType, ...], processus: int) -> list[tuple[CasType, ...]]:
+    """La grille en morceaux bout à bout, deux par cœur, de
+    :data:`CAS_TYPES_PAR_MORCEAU` cas types au plus."""
+    taille = max(1, min(CAS_TYPES_PAR_MORCEAU,
+                        math.ceil(len(cas_types) / max(1, 2 * processus))))
+    return [cas_types[i:i + taille] for i in range(0, len(cas_types), taille)]
+
+
 def simuler(parametres: Parametres, cas_types: tuple[CasType, ...], processus: int):
-    """Ce que ``cout._pensionnes`` rend pour la grille, par morceaux, chacun
-    gardé, et sur ``processus`` cœurs quand il y en a plusieurs."""
-    taille = max(1, math.ceil(len(cas_types) / max(1, 2 * processus)))
-    morceaux = [cas_types[i:i + taille] for i in range(0, len(cas_types), taille)]
+    """Ce que ``cout._pensionnes`` rend pour la grille, par morceaux
+    (:func:`morceaux_de`), chacun gardé, et sur ``processus`` cœurs quand il y
+    en a plusieurs."""
+    morceaux = morceaux_de(cas_types, processus)
     if processus <= 1 or len(morceaux) == 1:
         resultats = [_simuler_morceau(parametres, morceau) for morceau in morceaux]
     else:

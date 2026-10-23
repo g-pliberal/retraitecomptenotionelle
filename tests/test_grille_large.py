@@ -977,6 +977,23 @@ def test_le_chomage_a_sa_part_rend_la_carriere_longue_aux_hommes_qui_n_en_ont_pa
         pytest.approx(59.5), "carriere_longue")
 
 
+def test_les_morceaux_de_la_grille_tiennent_dans_le_pont():
+    """Le pont passe au portage la demande d'un morceau d'un seul bloc, que node
+    ne lit pas au-delà de 512 Mo, et chaque cas type y porte ses carrières de
+    toutes les générations, 1,4 à 1,7 Mo avec le paquet des données : les
+    3 742 cas types de la population de la vingt-quatrième version, sur quatre
+    cœurs, faisaient huit morceaux de 468, qui ne passaient pas. Ils en font
+    dix-neuf, de 200 au plus, bout à bout dans leur ordre ; une petite grille
+    garde ses deux morceaux par cœur, cent cas types en huit, de treize et du
+    reste."""
+    grille = tuple(range(3742))
+    morceaux = G.morceaux_de(grille, 4)
+    assert G.CAS_TYPES_PAR_MORCEAU == 200
+    assert len(morceaux) == 19 and max(len(morceau) for morceau in morceaux) == 200
+    assert tuple(cas for morceau in morceaux for cas in morceau) == grille
+    assert [len(morceau) for morceau in G.morceaux_de(tuple(range(100)), 4)] == [13] * 7 + [9]
+
+
 def test_les_carrieres_courtes_de_la_population_sont_celles_de_tous(simulateur, source):
     """Les régimes statutaires n'ayant pas de carrières courtes, les autres en
     portent d'autant plus : sur tous les retraités de chaque sexe, le militaire
