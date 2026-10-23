@@ -70,7 +70,7 @@ export const HORS_CHAMP = Object.freeze([
   "temps partiel et activité sur une partie de l'année, pour la prime pour l'emploi",
   "seuil de restitution de l'article 1965 L (50 F, puis 8 €)",
   "exonération de l'article 5, 2°, sous le minimum garanti, les années dont le montant n'est "
-    + "pas lu : 1960 à 1970, 1972 à 1992, 2011 à 2013",
+    + "pas lu : 1961 à 1970, 1972 à 1992, 2011 à 2013",
   "abattement de 2 000 F des contribuables à une part de 1978, et celui de l'article 157 ter",
   "taxe complémentaire : la part des bénéfices non commerciaux que des tiers déclarent, qui "
     + "en est exonérée, et les réductions des commerçants engagés à stabiliser leurs prix en 1963 "
@@ -94,6 +94,12 @@ export const AGE_ABATTEMENT = 65;
 
 /** La doctrine chiffre le minimum garanti de l'article 5, 2°, depuis les revenus de 1993. */
 export const PREMIERE_ANNEE_DU_MINIMUM_GARANTI_DE_LA_DOCTRINE = 1993;
+
+/** Avant la doctrine, ce qui chiffre le seuil : voir `SEUILS_DU_MINIMUM_GARANTI_CITES`. */
+export const SEUILS_DU_MINIMUM_GARANTI_CITES = Object.freeze({
+  1960: "qu'une question écrite cite d'une note de l'administration",
+  1971: "qu'un rapport du Sénat chiffre",
+});
 
 /** Le mineur invalide a sa demi-part depuis les revenus de 1979. */
 export const PREMIERE_ANNEE_ENFANT_INVALIDE = 1979;
@@ -937,8 +943,9 @@ function remarquesDe(foyer, parametres, laDecote, laMinoration, laMajoration, pp
       + "des tiers déclarent, qui en est exonérée");
   }
   if (minimumGaranti && annee < PREMIERE_ANNEE_DU_MINIMUM_GARANTI_DE_LA_DOCTRINE) {
-    remarques.push("exonération de l'article 5, 2° : le seuil qu'un rapport du Sénat "
-      + "chiffre, sur le revenu que décrit la documentation de base de 1999");
+    const cite = SEUILS_DU_MINIMUM_GARANTI_CITES[annee] ?? "qu'un texte lu chiffre";
+    remarques.push(`exonération de l'article 5, 2° : le seuil ${cite}, sur le revenu `
+      + "que décrit la documentation de base de 1999");
   }
   return remarques;
 }

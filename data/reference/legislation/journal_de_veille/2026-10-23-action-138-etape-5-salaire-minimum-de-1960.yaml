@@ -1,0 +1,38 @@
+date: "2026-10-23"
+session: "action 138, étape 5, dix-septième partie : le salaire minimum de 1960, et les montants du minimum garanti cherchés aux débats du Parlement"
+consulte: >-
+  `python scripts/veille_droit.py` : aucune fiche de la carte touchée, la
+  session n'écrivant aucune règle de la pension. Les index JORF et LEGI de la
+  DILA, récupérés puis mis à jour au 23 octobre 2026 ; `textes.py --inscrire`
+  inscrit cinq rédactions de l'article D. 731-121 du code rural, hors de
+  l'impôt, laissées à la session des données. Aux archives de l'Assemblée
+  nationale, le Journal officiel des débats : les 1 245 numéros des questions
+  écrites et des réponses de 1959 à 1994, les 2 573 comptes rendus des
+  séances de 1958 à 1975, les tables analytiques de 1958 à 1992. Au Sénat, le
+  projet de loi de 1959 en deuxième lecture (ta1959_1960_0016.pdf), les
+  rapports généraux sur les lois de finances pour 1974 à 1990 et pour 1993,
+  tome II, les tables des questions écrites de 1960 à 1986 et les comptes
+  rendus de 1967, la base des questions de data.senat.fr. Aux archives du
+  BOFiP, la recherche du minimum garanti. Légifrance et Gallica, refusés au
+  réseau de la session.
+trouve: >-
+  L'exonération de la loi n° 59-1472 vaut dès 1960 pour les pensions et les
+  rentes viagères, sur le revenu global : l'amendement n° 28 l'écrit au
+  troisième alinéa de l'article 13 du projet, en deuxième lecture à
+  l'Assemblée nationale (JO, débats, séance du 9 décembre 1959, p. 3243), le
+  Sénat le vote conforme le 17 décembre, et il est l'article 17 de la loi. Le
+  salaire minimum annuel des revenus de 1960 vaut 3 360 NF (3 250 NF pour
+  1959), que chiffre la note de la direction générale des impôts du 1er mars
+  1961, telle que la cite la question écrite n° 10046 (JO, 28 avril 1961,
+  p. 554), sur le revenu avant l'abattement de 20 %, que la réponse du
+  ministre confirme (16 juin 1961, p. 1131). Un sénateur écrit 4 110 F pour
+  1965 (question n° 6549, 5 février 1967), que la réponse ne reprend pas : la
+  donnée ne le prend pas. Écrits dans la donnée, le script de l'IPP,
+  `impot_revenu.py` et son jumeau ; au registre, IR13.
+reste: >-
+  Le salaire minimum annuel des revenus de 1961 à 1970, et le minimum
+  garanti de 1972 à 1992 et de 2011 à 2013 : la doctrine de chaque année
+  (dont la note du 1er mars 1961 est le modèle), qu'aucune archive en ligne
+  lue ne garde, et que le Journal officiel ne porte pas ; Gallica, depuis un
+  poste ; les versions de 2012 à 2014 du BOFiP ; l'article 2 de la loi de
+  finances pour 2015, qui finit le 2° et le 2° bis.

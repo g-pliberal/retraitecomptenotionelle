@@ -1343,22 +1343,26 @@ def test_la_taxe_des_revenus_de_1959_se_calcule_seule(baremes):
 
 #: Le montant annuel du minimum garanti, sous lequel qui vit principalement de
 #: salaires, de pensions et de rentes viagères est exonéré (CGI, art. 5, 2°) :
-#: 7 440 F pour 1971 (rapport général du Sénat n° 66, 1972-1973, tome II,
-#: p. 11) ; de 1993 à 1998, la documentation de base 5 B 131 du 1er septembre
-#: 1999, n° 2 ; de 1999 à 2010, l'instruction qui commente chaque année les
-#: limites d'exonération (de la B.O.I. n° 11 du 17 janvier 2000 à la n° 26 du
-#: 28 mars 2011) ; 2000 et 2001, aussi les notes du code (LEGIARTI000006307020
-#: et LEGIARTI000006307021).
-MINIMUM_GARANTI = {1971: 7440, 1993: 35400, 1994: 35990, 1995: 36520, 1996: 37520,
-                   1997: 37770, 1998: 38080, 1999: 38320, 2000: 38650, 2001: 5994.55,
-                   2002: 6094, 2003: 6187.88, 2004: 6302.28, 2005: 6416.68, 2006: 6531,
-                   2007: 6635, 2008: 6805, 2009: 6885, 2010: 6885}
+#: 3 360 NF pour 1960, le salaire minimum interprofessionnel garanti que la
+#: note de la direction générale des impôts du 1er mars 1961 chiffre, telle que
+#: la cite la question écrite n° 10046 (JO, débats de l'Assemblée nationale,
+#: 28 avril 1961, p. 554), dont le ministre ne modifie pas le sens (16 juin
+#: 1961, p. 1131) ; 7 440 F pour 1971 (rapport général du Sénat n° 66,
+#: 1972-1973, tome II, p. 11) ; de 1993 à 1998, la documentation de base
+#: 5 B 131 du 1er septembre 1999, n° 2 ; de 1999 à 2010, l'instruction qui
+#: commente chaque année les limites d'exonération (de la B.O.I. n° 11 du
+#: 17 janvier 2000 à la n° 26 du 28 mars 2011) ; 2000 et 2001, aussi les notes
+#: du code (LEGIARTI000006307020 et LEGIARTI000006307021).
+MINIMUM_GARANTI = {1960: 3360, 1971: 7440, 1993: 35400, 1994: 35990, 1995: 36520,
+                   1996: 37520, 1997: 37770, 1998: 38080, 1999: 38320, 2000: 38650,
+                   2001: 5994.55, 2002: 6094, 2003: 6187.88, 2004: 6302.28, 2005: 6416.68,
+                   2006: 6531, 2007: 6635, 2008: 6805, 2009: 6885, 2010: 6885}
 
 
 def test_le_minimum_garanti_de_chaque_annee_lue(baremes):
     """Chaque année dont un texte lu chiffre le minimum garanti le porte, et
-    elle seule : son montant n'est pas lu de 1960 à 1970, sous le salaire
-    minimum interprofessionnel garanti (loi n° 59-1472, art. 13), de 1972 à
+    elle seule : son montant n'est pas lu de 1961 à 1970, sous le salaire
+    minimum interprofessionnel garanti (loi n° 59-1472, art. 17), de 1972 à
     1992 et de 2011 à 2013 ; et le 2° n'est plus après les revenus de 2013."""
     for annee in range(baremes.premiere_annee, baremes.derniere_annee + 1):
         assert (baremes.lus(annee)["minimum_garanti"].get("montant")
@@ -1412,6 +1416,46 @@ def test_l_exoneration_au_minimum_garanti(baremes):
     # 1970 et 1972 : le montant n'est pas lu.
     assert not foyer(1970, {"pensions": 5000, "age": 70}).exonere
     assert not foyer(1972, {"pensions": 7000, "age": 70}).exonere
+
+
+def test_l_exoneration_au_salaire_minimum_de_1960(baremes):
+    """« Les contribuables qui bénéficient principalement de traitements,
+    salaires, pensions et rentes viagères, et dont le revenu global n'est pas
+    supérieur au salaire minimum interprofessionnel garanti, ne sont pas
+    assujettis à l'impôt sur le revenu des personnes physiques » : l'alinéa
+    que l'amendement n° 28 substitue au troisième de l'article 13 du projet,
+    en deuxième lecture (JO, débats de l'Assemblée nationale, 9 décembre 1959,
+    p. 3243), que le Sénat vote conforme, l'article 17 de la loi n° 59-1472.
+    Les « revenus exonérés de [...] 3.360 NF en 1960 », que chiffre la note du
+    1er mars 1961, sur le revenu global « avant application de la réfaction
+    forfaitaire » de 20 % (question écrite n° 10046, 28 avril 1961, p. 554) :
+    l'abattement « ne saurait [...] être considéré comme intervenant dans
+    l'appréciation de ce revenu pour le comparer au S. M. I. G. » (réponse du
+    ministre, 16 juin 1961, p. 1131)."""
+    def foyer(annee, *declarants):
+        return impot_du_foyer(Foyer(tuple(Declarant(**d) for d in declarants)), annee,
+                              baremes, unite="monnaie")
+    # 2 000 NF de salaire, 1 800 NF après 10 % de frais, et 1 560 NF de
+    # bénéfice : 3 360 NF, rien à payer ; 1 570 NF, 3 370 NF, l'impôt.
+    mele = foyer(1960, {"salaires": 2000, "benefices": 1560, "age": 40})
+    assert mele.exonere and mele.impot == 0
+    assert foyer(1960, {"salaires": 2000, "benefices": 1570, "age": 40}).impot > 0
+    # Le salaire se compare avant les 20 % : 3 330 NF nets, exonéré ; 3 420 NF,
+    # non, que les 20 % ramènent pourtant à 2 736 NF.
+    assert foyer(1960, {"salaires": 3700, "age": 40}).exonere
+    assert not foyer(1960, {"salaires": 3800, "age": 40}).exonere
+    # La pension et la rente viagère, dès la loi.
+    assert foyer(1960, {"pensions": 3360, "age": 70}).exonere
+    assert not foyer(1960, {"pensions": 3370, "age": 70}).exonere
+    # Le seuil est celui qu'une question écrite cite d'une note de
+    # l'administration : le calcul le remarque.
+    assert any("question écrite" in remarque for remarque in mele.remarques)
+    # La marche cite le texte définitif.
+    assert "amendement n° 28" in baremes.lus(1960).sources["minimum_garanti"]
+    # 1961 : le montant n'est pas lu.
+    sans_montant = foyer(1961, {"salaires": 2000, "benefices": 1300, "age": 40})
+    assert not sans_montant.exonere and sans_montant.impot > 0
+    assert not foyer(1961, {"pensions": 3000, "age": 70}).exonere
 
 
 def test_le_minimum_garanti_reste_sous_la_limite_du_2_bis_de_1993_a_2010(baremes):

@@ -26868,7 +26868,7 @@ null
 "trajectoires_emploi":{"constant":{"libelle":"Emploi constant après la dernière observation"},"cor_2026":{"fichier":"emploi_projete.csv","libelle":"Emploi du scénario de référence du COR — juin 2026"}}
 },
 "impot_revenu":{
-"lu_le":"2026-10-19",
+"lu_le":"2026-10-23",
 "premiere_annee":1960,
 "series":{
 "abattement_age_invalidite":[
@@ -27185,7 +27185,8 @@ null
 {"annee":1985}
 ],
 "minimum_garanti":[
-{"annee":1960},
+{"annee":1960,"monnaie":"FRF","montant":3360},
+{"annee":1961},
 {"annee":1971,"monnaie":"FRF","montant":7440},
 {"annee":1972},
 {"annee":1993,"monnaie":"FRF","montant":35400},

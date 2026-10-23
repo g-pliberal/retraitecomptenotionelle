@@ -129,12 +129,13 @@ avec sa source (``origine`` de la marche) :
 - l'exonération de l'article 5, 2°, que l'IPP ne porte pas
   (``MINIMUM_GARANTI``) : le montant annuel du minimum garanti, sous lequel
   qui vit principalement de salaires, de pensions et de rentes viagères n'est
-  pas imposé, que chiffrent, pour 1971, le rapport général du Sénat sur la loi
-  de finances pour 1973, de 1993 à 1998 la documentation de base 5 B 131, de
-  1999 à 2010 l'instruction qui commente chaque année les limites
-  d'exonération, et les notes du code pour 2000 et 2001 — ``origine:
-  rapport``, ``doctrine`` ou ``legi`` ; les autres années de 1960 à 2013, une
-  marche sans montant.
+  pas imposé, que chiffrent, pour 1960, la note de l'administration que cite
+  une question écrite à l'Assemblée nationale, pour 1971, le rapport général
+  du Sénat sur la loi de finances pour 1973, de 1993 à 1998 la documentation
+  de base 5 B 131, de 1999 à 2010 l'instruction qui commente chaque année les
+  limites d'exonération, et les notes du code pour 2000 et 2001 —
+  ``origine: question``, ``rapport``, ``doctrine`` ou ``legi`` ; les autres
+  années de 1961 à 2013, une marche sans montant.
 
 Ce qu'il écarte (``ECARTEES``) : la ligne de la décote datée de 1959 (7 000 F
 et 14 000 F), en anciens francs que l'IPP écrit en francs — la loi n° 59-1472
@@ -1266,6 +1267,22 @@ def _minimum_de_la_documentation(annee: int) -> dict:
                      f"global du contribuable s'élève à : [...] {ecrit} F pour les revenus "
                      f"imposables au titre de {annee} »"}
 
+#: L'exonération au salaire minimum de la loi n° 59-1472 : l'alinéa que
+#: l'amendement n° 28 substitue, en deuxième lecture à l'Assemblée nationale,
+#: au troisième de l'article 13 du projet — « Les contribuables salariés dont
+#: l'unique revenu n'est pas supérieur au salaire minimum », au texte que le
+#: Sénat a adopté en première lecture —, et que le Sénat vote conforme ;
+#: l'article 17 de la loi promulguée, dit la réponse du ministre de 1961.
+LOI_DE_1959_SALAIRE_MINIMUM = (
+    "Loi n° 59-1472 du 28 décembre 1959, art. 17, dernier alinéa : l'alinéa que "
+    "l'amendement n° 28 de M. Marc Jacquet substitue au troisième de l'article 13 du projet, "
+    "adopté en deuxième lecture (JO, débats de l'Assemblée nationale, séance du 9 décembre "
+    "1959, p. 3243), que le Sénat vote conforme en deuxième lecture le 17 décembre 1959 "
+    "(senat.fr/leg/1959-1960/ta1959_1960_0016.pdf, p. 5) : « Les contribuables qui "
+    "bénéficient principalement de traitements, salaires, pensions et rentes viagères, et "
+    "dont le revenu global n'est pas supérieur au salaire minimum interprofessionnel "
+    "garanti, ne sont pas assujettis à l'impôt sur le revenu des personnes physiques »")
+
 #: L'exonération de l'article 5, 2°, du code, que l'IPP ne porte pas : qui vit
 #: principalement de salaires, de pensions et de rentes viagères n'est pas
 #: imposé si son revenu global n'excède pas le montant annuel du minimum
@@ -1273,13 +1290,19 @@ def _minimum_de_la_documentation(annee: int) -> dict:
 #: marche sans montant est une année où l'exonération vaut sans que son montant
 #: soit lu.
 MINIMUM_GARANTI = [
-    {"annee": 1960, "origine": "loi",
-     "texte": _texte("59-1472", "art. 13 du texte du Sénat, dernier alinéa", "« Les "
-                     "contribuables salariés dont l'unique revenu n'est pas supérieur au salaire "
-                     "minimum interprofessionnel garanti ne sont pas assujettis à l'impôt sur le "
-                     "revenu des personnes physiques » ; ni le montant annuel de ce salaire, ni "
-                     "le texte qui étend l'exonération aux pensions et aux rentes viagères, au "
-                     "2° de l'article 5 du code, ne sont lus")},
+    {"annee": 1960, "monnaie": "FRF", "montant": 3360, "origine": "question",
+     "texte": LOI_DE_1959_SALAIRE_MINIMUM + " ; le montant, la note de la direction générale "
+              "des impôts du 1er mars 1961 que cite la question écrite n° 10046 (JO, débats de "
+              "l'Assemblée nationale, 28 avril 1961, p. 554) : « le revenu global à comparer "
+              "au montant annuel du S. M. I. G. doit s'entendre avant application de la "
+              "réfaction forfaitaire [...] les revenus exonérés de 3.250 NF en 1959 et "
+              "3.360 NF en 1960, indiqués par la note susvisée » ; l'abattement « ne saurait "
+              "[...] être considéré comme intervenant dans l'appréciation de ce revenu pour le "
+              "comparer au S. M. I. G. », et « il n'est pas envisagé de modifier le sens des "
+              "instructions susvisées » (réponse du ministre, 16 juin 1961, p. 1131)"},
+    {"annee": 1961, "origine": "loi",
+     "texte": LOI_DE_1959_SALAIRE_MINIMUM + " ; le montant des revenus de 1961 à 1970 n'est "
+              "pas lu"},
     {"annee": 1971, "monnaie": "FRF", "montant": 7440, "origine": "rapport",
      "texte": RAPPORTS[1972] + ", p. 11 : « conformément aux dispositions de l'article 5-2° du "
               "Code général des Impôts, les contribuables dont le revenu, constitué "
@@ -1756,7 +1779,7 @@ ENTETE = """\
 #     sous lequel le revenu global de qui vit principalement de salaires, de
 #     pensions et de rentes viagères n'est pas imposé (`montant`) ; une marche
 #     sans montant, une année où l'exonération vaut sans que son montant soit
-#     lu : de 1960 à 1970, sous le salaire minimum de la loi n° 59-1472, de
+#     lu : de 1961 à 1970, sous le salaire minimum de la loi n° 59-1472, de
 #     1972 à 1992, de 2011 à 2013.
 #   deductions : les 10 % des salaires et des pensions, les 20 % d'avant 2006.
 #   abattement_age_invalidite : celui de l'article 157 bis, plein sous le

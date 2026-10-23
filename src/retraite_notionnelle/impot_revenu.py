@@ -129,7 +129,7 @@ HORS_CHAMP = (
     "temps partiel et activité sur une partie de l'année, pour la prime pour l'emploi",
     "seuil de restitution de l'article 1965 L (50 F, puis 8 €)",
     "exonération de l'article 5, 2°, sous le minimum garanti, les années dont le montant n'est "
-    "pas lu : 1960 à 1970, 1972 à 1992, 2011 à 2013",
+    "pas lu : 1961 à 1970, 1972 à 1992, 2011 à 2013",
     "abattement de 2 000 F des contribuables à une part de 1978, et celui de l'article 157 ter",
     "taxe complémentaire : la part des bénéfices non commerciaux que des tiers déclarent, qui "
     "en est exonérée, et les réductions des commerçants engagés à stabiliser leurs prix en 1963 "
@@ -163,9 +163,18 @@ ARRONDI_A_LA_CENTAINE = range(1968, 1980)
 AGE_ABATTEMENT = 65
 
 #: La première année dont la doctrine chiffre le minimum garanti de l'article
-#: 5, 2° (DB 5 B 131 du 1er septembre 1999, n° 2) : avant, le seuil d'un
-#: rapport du Sénat (1971), sur le revenu que décrit cette documentation.
+#: 5, 2° (DB 5 B 131 du 1er septembre 1999, n° 2) : avant, le seuil que cite
+#: ce qui le chiffre (:data:`SEUILS_DU_MINIMUM_GARANTI_CITES`), sur le revenu
+#: que décrit cette documentation.
 PREMIERE_ANNEE_DU_MINIMUM_GARANTI_DE_LA_DOCTRINE = 1993
+
+#: Avant la doctrine, ce qui chiffre le seuil de l'article 5, 2° : pour 1960,
+#: la note de l'administration du 1er mars 1961, telle que la cite une
+#: question écrite à l'Assemblée nationale ; pour 1971, un rapport du Sénat.
+SEUILS_DU_MINIMUM_GARANTI_CITES = {
+    1960: "qu'une question écrite cite d'une note de l'administration",
+    1971: "qu'un rapport du Sénat chiffre",
+}
 
 #: « Jusqu'à l'imposition des revenus 1978, cette part supplémentaire n'est
 #: appliquée qu'aux enfants majeurs invalides à charge » (IPP, note de la
@@ -1134,8 +1143,9 @@ def _remarques(foyer: Foyer, parametres: ParametresImpot, la_decote: float,
         remarques.append("taxe complémentaire : tout le bénéfice non commercial, sans la part que "
                          "des tiers déclarent, qui en est exonérée")
     if minimum_garanti and annee < PREMIERE_ANNEE_DU_MINIMUM_GARANTI_DE_LA_DOCTRINE:
-        remarques.append("exonération de l'article 5, 2° : le seuil qu'un rapport du Sénat "
-                         "chiffre, sur le revenu que décrit la documentation de base de 1999")
+        cite = SEUILS_DU_MINIMUM_GARANTI_CITES.get(annee, "qu'un texte lu chiffre")
+        remarques.append(f"exonération de l'article 5, 2° : le seuil {cite}, sur le revenu "
+                         "que décrit la documentation de base de 1999")
     return tuple(remarques)
 
 

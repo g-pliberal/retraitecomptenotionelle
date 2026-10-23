@@ -3,7 +3,7 @@
 # source_id: ipp_impot_revenu
 #
 # ÉCRIT PAR `scripts/fetch/ipp_impot_revenu.py`, jamais à la main : les barèmes
-# de l'Institut des politiques publiques, lus le 2026-10-19, chacun avec la
+# de l'Institut des politiques publiques, lus le 2026-10-23, chacun avec la
 # référence que l'IPP cite pour sa marche, et ce que le script y ajoute, chaque
 # fois avec sa source (`origine`) : `legi` pour une valeur lue dans une
 # rédaction du code général des impôts que l'index LEGI de la DILA conserve,
@@ -67,7 +67,7 @@
 #     sous lequel le revenu global de qui vit principalement de salaires, de
 #     pensions et de rentes viagères n'est pas imposé (`montant`) ; une marche
 #     sans montant, une année où l'exonération vaut sans que son montant soit
-#     lu : de 1960 à 1970, sous le salaire minimum de la loi n° 59-1472, de
+#     lu : de 1961 à 1970, sous le salaire minimum de la loi n° 59-1472, de
 #     1972 à 1992, de 2011 à 2013.
 #   deductions : les 10 % des salaires et des pensions, les 20 % d'avant 2006.
 #   abattement_age_invalidite : celui de l'article 157 bis, plein sous le
@@ -98,7 +98,7 @@
 #     (`abattement_bnc_et_artisans`), et ce que les deux exonèrent au plus pour
 #     un même contribuable (`abattement_maximum`) ; la marche de 1959, en
 #     francs de 1960, sert la taxe payée en 1960, que le revenu de 1960 déduit.
-lu_le: "2026-10-19"
+lu_le: "2026-10-23"
 fiabilite: haute
 premiere_annee: 1960
 
@@ -350,7 +350,8 @@ series:
     - {annee: 2013, monnaie: "EUR", limite: 8680, limite_plus_de_65_ans: 9490, texte: "Cf note (1)"}
     - {annee: 2014, texte: "Loi 2014-1654 du 29/12/2014 (LF pour 2015), art. 2"}
   minimum_garanti:
-    - {annee: 1960, origine: "loi", texte: "Loi n° 59-1472 du 28 décembre 1959 portant réforme du contentieux fiscal et divers aménagements fiscaux, art. 13 du texte du Sénat, dernier alinéa, texte adopté par le Sénat en première lecture le 24 novembre 1959, qu'il dit conforme en deuxième lecture le 17 décembre (ta1959_1960_0016.pdf) (senat.fr/leg/1959-1960/ta1959_1960_0002.pdf) : « Les contribuables salariés dont l'unique revenu n'est pas supérieur au salaire minimum interprofessionnel garanti ne sont pas assujettis à l'impôt sur le revenu des personnes physiques » ; ni le montant annuel de ce salaire, ni le texte qui étend l'exonération aux pensions et aux rentes viagères, au 2° de l'article 5 du code, ne sont lus"}
+    - {annee: 1960, monnaie: "FRF", montant: 3360, origine: "question", texte: "Loi n° 59-1472 du 28 décembre 1959, art. 17, dernier alinéa : l'alinéa que l'amendement n° 28 de M. Marc Jacquet substitue au troisième de l'article 13 du projet, adopté en deuxième lecture (JO, débats de l'Assemblée nationale, séance du 9 décembre 1959, p. 3243), que le Sénat vote conforme en deuxième lecture le 17 décembre 1959 (senat.fr/leg/1959-1960/ta1959_1960_0016.pdf, p. 5) : « Les contribuables qui bénéficient principalement de traitements, salaires, pensions et rentes viagères, et dont le revenu global n'est pas supérieur au salaire minimum interprofessionnel garanti, ne sont pas assujettis à l'impôt sur le revenu des personnes physiques » ; le montant, la note de la direction générale des impôts du 1er mars 1961 que cite la question écrite n° 10046 (JO, débats de l'Assemblée nationale, 28 avril 1961, p. 554) : « le revenu global à comparer au montant annuel du S. M. I. G. doit s'entendre avant application de la réfaction forfaitaire [...] les revenus exonérés de 3.250 NF en 1959 et 3.360 NF en 1960, indiqués par la note susvisée » ; l'abattement « ne saurait [...] être considéré comme intervenant dans l'appréciation de ce revenu pour le comparer au S. M. I. G. », et « il n'est pas envisagé de modifier le sens des instructions susvisées » (réponse du ministre, 16 juin 1961, p. 1131)"}
+    - {annee: 1961, origine: "loi", texte: "Loi n° 59-1472 du 28 décembre 1959, art. 17, dernier alinéa : l'alinéa que l'amendement n° 28 de M. Marc Jacquet substitue au troisième de l'article 13 du projet, adopté en deuxième lecture (JO, débats de l'Assemblée nationale, séance du 9 décembre 1959, p. 3243), que le Sénat vote conforme en deuxième lecture le 17 décembre 1959 (senat.fr/leg/1959-1960/ta1959_1960_0016.pdf, p. 5) : « Les contribuables qui bénéficient principalement de traitements, salaires, pensions et rentes viagères, et dont le revenu global n'est pas supérieur au salaire minimum interprofessionnel garanti, ne sont pas assujettis à l'impôt sur le revenu des personnes physiques » ; le montant des revenus de 1961 à 1970 n'est pas lu"}
     - {annee: 1971, monnaie: "FRF", montant: 7440, origine: "rapport", texte: "rapport général du Sénat n° 66 (1972-1973), tome II (senat.fr/rap/1972-1973/i1972_1973_0066_02.pdf), p. 11 : « conformément aux dispositions de l'article 5-2° du Code général des Impôts, les contribuables dont le revenu, constitué principalement par des salaires, pensions ou rentes viagères, n'est pas supérieur au S. M. I. C., sont exonérés d'impôt sur le revenu. C'est ainsi que pour l'année 1971 le seuil d'imposition a été, par application de cette disposition, fixé à 7.440 F »"}
     - {annee: 1972, origine: "legi", texte: "CGI, art. 5, 2°, dans ses rédactions de 1979 à 2002, LEGIARTI000006307017 à LEGIARTI000006307020 : « Les personnes physiques qui bénéficient principalement de traitements, salaires, pensions et rentes viagères et dont le revenu global n'est pas supérieur au montant du minimum garanti prévu à l'article L 141-8 du code du travail » — qui remplace le SMIG dans toutes les dispositions qui s'y réfèrent depuis la loi n° 70-7 du 2 janvier 1970 (LEGIARTI000006646471) ; le montant des revenus de 1972 à 1992 n'est pas lu"}
     - {annee: 1993, monnaie: "FRF", montant: 35400, origine: "doctrine", texte: "DB 5 B 131 du 1er septembre 1999, n° 2 (bofip-archives, document 27837) : « le montant annuel du “minimum garanti” auquel doit être comparé le revenu global du contribuable s'élève à : [...] 35 400 F pour les revenus imposables au titre de 1993 »"}

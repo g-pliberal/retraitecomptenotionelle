@@ -622,18 +622,26 @@ referents:
           salaires, de pensions et de rentes viagères et dont
           le revenu global n'excède pas le minimum garanti.
         tranche: >-
-          Le code l'écrit de sa rédaction de 1979 à celle
-          close le 1er janvier 2015 ; son montant annuel est
-          de 7 440 F pour 1971 (rapport général du Sénat
-          n° 66, 1972-1973), de 35 400 F à 38 080 F de 1993 à
-          1998 (DB 5 B 131), de 38 320 F à 6 885 € de 1999 à
-          2010 (l'instruction de chaque année, qui dit que le
-          2° ne s'applique pas, sous la limite du 2° bis). Le
-          dépôt l'ajoute (scripts/fetch/ipp_impot_revenu.py,
-          MINIMUM_GARANTI).
+          La loi n° 59-1472 l'écrit dès les revenus de 1960
+          (art. 17, dernier alinéa, que l'amendement n° 28
+          étend aux pensions et aux rentes viagères), le code
+          de sa rédaction de 1979 à celle close le 1er janvier
+          2015 ; son montant annuel est de 3 360 NF pour 1960
+          (la note de l'administration du 1er mars 1961, que
+          cite la question écrite n° 10046), de 7 440 F pour
+          1971 (rapport général du Sénat n° 66, 1972-1973), de
+          35 400 F à 38 080 F de 1993 à 1998 (DB 5 B 131), de
+          38 320 F à 6 885 € de 1999 à 2010 (l'instruction de
+          chaque année, qui dit que le 2° ne s'applique pas,
+          sous la limite du 2° bis). Le dépôt l'ajoute
+          (scripts/fetch/ipp_impot_revenu.py, MINIMUM_GARANTI).
         preuve: >-
           index LEGI du dépôt, lu le 19 octobre 2026
           (LEGIARTI000006307017 à LEGIARTI000029042469) ;
+          JO, débats de l'Assemblée nationale, 10 décembre
+          1959, p. 3243, 28 avril 1961, p. 554, et 16 juin
+          1961, p. 1131 (archives.assemblee-nationale.fr) ;
+          senat.fr/leg/1959-1960/ta1959_1960_0016.pdf, p. 5 ;
           senat.fr/rap/1972-1973/i1972_1973_0066_02.pdf,
           p. 11 ; DB 5 B 131 du 1er septembre 1999 et les
           B.O.I. n° 11 du 17 janvier 2000 à n° 26 du 28 mars
