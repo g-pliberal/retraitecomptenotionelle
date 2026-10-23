@@ -1,14 +1,15 @@
-"""La nature des périodes assimilées, génération par génération : le service national et la maladie, lus dans les données détaillées de l'EIC 2017, certifiés dans un CSV.
+"""La nature des périodes assimilées, génération par génération : le service national, la maladie, le chômage et l'AVPF, lus dans les données détaillées de l'EIC 2017, certifiés dans un CSV.
 
 `natures_assimilees.csv` est écrit par `scripts/verifier_donnees.py` depuis ce
 que `scripts/fetch/drees_natures_assimilees.py` lit dans le fichier
 « eic2017_data_drees_er » du jeu « Les droits validés au cours de la
 carrière » de la DREES, celui de `premier_trimestre.csv` : parmi les affiliés
 d'avant 23 ans, la part de ceux qui ont validé un trimestre de service
-national, ou de maladie, et le cumul de ces trimestres par affilié, à 60 ans,
-ou au dernier âge que l'échantillon voit, sexe par sexe, pour les générations
-1942 à 1994. Le fichier reste dans `data/brut/` : le lecteur se teste sur des
-lignes écrites comme les siennes, et le fichier certifié sur ce qu'il publie.
+national, de maladie, de chômage ou d'assurance vieillesse des parents au
+foyer, et le cumul de ces trimestres par affilié, à 60 ans, ou au dernier âge
+que l'échantillon voit, sexe par sexe, pour les générations 1942 à 1994. Le
+fichier reste dans `data/brut/` : le lecteur se teste sur des lignes écrites
+comme les siennes, et le fichier certifié sur ce qu'il publie.
 """
 
 from __future__ import annotations
@@ -59,35 +60,50 @@ def _generation(generation: str, sexe: str, cotises: dict[str, str],
 PUBLIE = {
     **_generation("1950", "Hommes", {"59": "135,2", "60": "136,7", "67": "140,2", "68": "0"}, {
         "59": {("Part_aff", "SN"): "35,1", ("Cum_trim", "SN"): "1,4",
-               ("Part_aff", "Maladie"): "11,7", ("Cum_trim", "Maladie"): "2,1"},
+               ("Part_aff", "Maladie"): "11,7", ("Cum_trim", "Maladie"): "2,1",
+               ("Part_aff", "Chômage"): "31,1", ("Cum_trim", "Chômage"): "4",
+               ("Part_aff", "AVPF"): "2,4", ("Cum_trim", "AVPF"): "0,2"},
         "60": {("Part_aff", "SN"): "35,1", ("Cum_trim", "SN"): "1,4",
-               ("Part_aff", "Maladie"): "12,6", ("Cum_trim", "Maladie"): "2,2"},
+               ("Part_aff", "Maladie"): "12,6", ("Cum_trim", "Maladie"): "2,2",
+               ("Part_aff", "Chômage"): "32,5", ("Cum_trim", "Chômage"): "4,3",
+               ("Part_aff", "AVPF"): "2,5", ("Cum_trim", "AVPF"): "0,2"},
         "67": {("Part_aff", "SN"): "35,1", ("Cum_trim", "SN"): "1,4",
-               ("Part_aff", "Maladie"): "13,3", ("Cum_trim", "Maladie"): "2,3"},
+               ("Part_aff", "Maladie"): "13,3", ("Cum_trim", "Maladie"): "2,3",
+               ("Part_aff", "Chômage"): "33,1", ("Cum_trim", "Chômage"): "4,6",
+               ("Part_aff", "AVPF"): "2,6", ("Cum_trim", "AVPF"): "0,2"},
     }),
     **_generation("1950", "Femmes", {"60": "110,7", "67": "113,9", "68": "0"}, {
         "60": {("Part_aff", "SN"): "0,1", ("Cum_trim", "SN"): "0",
-               ("Part_aff", "Maladie"): "19,4", ("Cum_trim", "Maladie"): "2,2"},
+               ("Part_aff", "Maladie"): "19,4", ("Cum_trim", "Maladie"): "2,2",
+               ("Part_aff", "Chômage"): "37,6", ("Cum_trim", "Chômage"): "5,4",
+               ("Part_aff", "AVPF"): "39,8", ("Cum_trim", "AVPF"): "10,5"},
     }),
     **_generation("1976", "Hommes", {"40": "64,3", "41": "67,5", "42": "0"}, {
         "41": {("Part_aff", "SN"): "42,3", ("Cum_trim", "SN"): "1,4",
-               ("Part_aff", "Maladie"): "6,4", ("Cum_trim", "Maladie"): "0,4"},
+               ("Part_aff", "Maladie"): "6,4", ("Cum_trim", "Maladie"): "0,4",
+               ("Part_aff", "Chômage"): "42,3", ("Cum_trim", "Chômage"): "3,2",
+               ("Part_aff", "AVPF"): "4,8", ("Cum_trim", "AVPF"): "0,3"},
         "42": {("Part_aff", "SN"): "42,3", ("Cum_trim", "SN"): "0",
-               ("Part_aff", "Maladie"): "6,4", ("Cum_trim", "Maladie"): "0"},
+               ("Part_aff", "Maladie"): "6,4", ("Cum_trim", "Maladie"): "0",
+               ("Part_aff", "Chômage"): "42,3", ("Cum_trim", "Chômage"): "0",
+               ("Part_aff", "AVPF"): "4,8", ("Cum_trim", "AVPF"): "0"},
     }),
     **_generation("1976", "Femmes", {"41": "59,5", "42": "0"}, {
         "41": {("Part_aff", "SN"): "0", ("Cum_trim", "SN"): "0",
-               ("Part_aff", "Maladie"): "15,5", ("Cum_trim", "Maladie"): "0,5"},
+               ("Part_aff", "Maladie"): "15,5", ("Cum_trim", "Maladie"): "0,5",
+               ("Part_aff", "Chômage"): "45,1", ("Cum_trim", "Chômage"): "3,1",
+               ("Part_aff", "AVPF"): "39,6", ("Cum_trim", "AVPF"): "8"},
     }),
 }
 
 #: Des lignes du même fichier que le lecteur ne garde pas : un autre
-#: indicateur, une autre nature, un autre champ, les deux sexes réunis.
+#: indicateur, un autre type de trimestre, un autre champ, les deux sexes
+#: réunis.
 AUTRES = (
     "1950;60;Hommes;Nb_trim;SN;Aff_avant_23ans;0",
     "1950;60;Hommes;Part_trim;Maladie;Aff_avant_23ans;1,5",
-    "1950;60;Hommes;Part_aff;Chômage;Aff_avant_23ans;32,5",
-    "1950;60;Hommes;Cum_trim;AVPF;Aff_avant_23ans;0,2",
+    "1950;60;Hommes;Part_aff;Validé;Aff_avant_23ans;99,7",
+    "1950;60;Hommes;Cum_trim;Validé;Aff_avant_23ans;146,4",
     "1950;60;Hommes;Part_aff;SN;Aff_avant_2017;34,6",
     "1950;60;Ensemble;Part_aff;SN;Aff_avant_23ans;17,6",
 )
@@ -95,22 +111,29 @@ AUTRES = (
 
 def test_le_lecteur_garde_les_natures_a_60_ans_ou_au_dernier_age_vu():
     """Le lecteur garde, sexe par sexe, la part des affiliés d'avant 23 ans qui
-    ont validé un trimestre de service national, ou de maladie, et le cumul de
-    ces trimestres par affilié, à 60 ans : 35,1 % des hommes nés en 1950,
-    1,4 trimestre par homme ; 12,6 % pour la maladie, 2,2 trimestres. Une
-    génération que l'échantillon ne voit pas jusqu'à 60 ans se lit au dernier
-    âge où il la voit, celui où le cumul de ses trimestres cotisés est encore
-    publié : 41 ans pour les nés en 1976, 42,3 % des hommes avec un trimestre
-    de service. Le reste du fichier ne se lit pas."""
+    ont validé un trimestre de service national, de maladie, de chômage ou
+    d'AVPF, et le cumul de ces trimestres par affilié, à 60 ans : 35,1 % des
+    hommes nés en 1950, 1,4 trimestre par homme ; 12,6 % pour la maladie,
+    2,2 trimestres ; 32,5 % pour le chômage, 4,3 trimestres ; 39,8 % des
+    femmes pour l'AVPF, 10,5 trimestres. Une génération que l'échantillon ne
+    voit pas jusqu'à 60 ans se lit au dernier âge où il la voit, celui où le
+    cumul de ses trimestres cotisés est encore publié : 41 ans pour les nés en
+    1976, 42,3 % des hommes avec un trimestre de service. Le reste du fichier
+    ne se lit pas."""
     lu = recuperateur.lire(_lignes(PUBLIE, AUTRES))
     assert lu[(1950, "H", "service_national", "part", 60)] == 35.1
     assert lu[(1950, "H", "service_national", "cumul", 60)] == 1.4
     assert lu[(1950, "H", "maladie", "part", 60)] == 12.6
     assert lu[(1950, "H", "maladie", "cumul", 60)] == 2.2
+    assert lu[(1950, "H", "chomage", "part", 60)] == 32.5
+    assert lu[(1950, "H", "chomage", "cumul", 60)] == 4.3
     assert lu[(1950, "F", "maladie", "part", 60)] == 19.4
+    assert lu[(1950, "F", "avpf", "part", 60)] == 39.8
+    assert lu[(1950, "F", "avpf", "cumul", 60)] == 10.5
     assert lu[(1976, "H", "service_national", "part", 41)] == 42.3
     assert lu[(1976, "H", "maladie", "cumul", 41)] == 0.4
-    assert len(lu) == 2 * 2 * 2 * 2
+    assert lu[(1976, "F", "chomage", "cumul", 41)] == 3.1
+    assert len(lu) == 2 * 2 * 4 * 2
 
 
 def test_le_lecteur_refuse_ce_qui_ne_se_tient_pas():
@@ -121,6 +144,10 @@ def test_le_lecteur_refuse_ce_qui_ne_se_tient_pas():
     l'échantillon la voit."""
     casse = dict(PUBLIE)
     del casse[("1950", "60", "Hommes", "Cum_trim", "Maladie")]
+    with pytest.raises(RuntimeError, match="manque"):
+        recuperateur.lire(_lignes(casse))
+    casse = dict(PUBLIE)
+    del casse[("1950", "60", "Femmes", "Part_aff", "AVPF")]
     with pytest.raises(RuntimeError, match="manque"):
         recuperateur.lire(_lignes(casse))
     casse = dict(PUBLIE)
@@ -155,8 +182,14 @@ def test_le_fichier_certifie_redonne_ce_que_la_drees_publie():
     par homme — quatre chacun, une année ; 45,9 % de ceux nés en 1954,
     1,7 trimestre ; 12,6 % un trimestre de maladie, 2,2 trimestres par homme
     — dix-sept chacun —, 14,4 % de ceux nés en 1954, 2,4 trimestres ; 19,4 %
-    des femmes nées en 1950. Nés en 1976, vus jusqu'à 41 ans : 42,3 % des
-    hommes avec un trimestre de service ; nés en 1980, 0,2 %."""
+    des femmes nées en 1950. Un trimestre de chômage : 32,5 % des hommes nés
+    en 1950, 4,3 trimestres par homme — treize chacun —, 41,0 % de ceux nés
+    en 1956, 5,0 trimestres ; 37,6 % des femmes nées en 1950, 5,4 trimestres.
+    Un trimestre d'assurance vieillesse des parents au foyer : 39,8 % des
+    femmes nées en 1950, 10,5 trimestres par femme — vingt-six chacune —,
+    45,5 % de celles nées en 1956, 12,3 trimestres ; 2,5 % des hommes nés en
+    1950. Nés en 1976, vus jusqu'à 41 ans : 42,3 % des hommes avec un
+    trimestre de service ; nés en 1980, 0,2 %."""
     lu = _certifie()
     assert lu[("1950", "H", "service_national", "part", "60")] == 35.1
     assert lu[("1950", "H", "service_national", "cumul", "60")] == 1.4
@@ -167,24 +200,35 @@ def test_le_fichier_certifie_redonne_ce_que_la_drees_publie():
     assert lu[("1954", "H", "maladie", "part", "60")] == 14.4
     assert lu[("1954", "H", "maladie", "cumul", "60")] == 2.4
     assert lu[("1950", "F", "maladie", "part", "60")] == 19.4
+    assert lu[("1950", "H", "chomage", "part", "60")] == 32.5
+    assert lu[("1950", "H", "chomage", "cumul", "60")] == 4.3
+    assert lu[("1956", "H", "chomage", "part", "60")] == 41.0
+    assert lu[("1956", "H", "chomage", "cumul", "60")] == 5.0
+    assert lu[("1950", "F", "chomage", "part", "60")] == 37.6
+    assert lu[("1950", "F", "chomage", "cumul", "60")] == 5.4
+    assert lu[("1950", "F", "avpf", "part", "60")] == 39.8
+    assert lu[("1950", "F", "avpf", "cumul", "60")] == 10.5
+    assert lu[("1956", "F", "avpf", "part", "60")] == 45.5
+    assert lu[("1956", "F", "avpf", "cumul", "60")] == 12.3
+    assert lu[("1950", "H", "avpf", "part", "60")] == 2.5
     assert lu[("1976", "H", "service_national", "part", "41")] == 42.3
     assert lu[("1980", "H", "service_national", "part", "37")] == 0.2
 
 
 def test_le_fichier_certifie_couvre_chaque_generation_de_l_echantillon():
     """Les vingt-quatre générations de l'échantillon — 1942, 1946, 1950, puis
-    une sur deux de 1954 à 1994 —, les deux sexes, les deux natures, la part
-    et le cumul, chacune à 60 ans ou au dernier âge que l'échantillon de 2017
-    voit, 2017 moins la génération ; chaque part sous cent, chaque cumul sous
-    ce que ceux qui en ont peuvent valider."""
+    une sur deux de 1954 à 1994 —, les deux sexes, les quatre natures, la
+    part et le cumul, chacune à 60 ans ou au dernier âge que l'échantillon de
+    2017 voit, 2017 moins la génération ; chaque part sous cent, chaque cumul
+    sous ce que ceux qui en ont peuvent valider."""
     lu = _certifie()
     generations = sorted({int(g) for g, _, _, _, _ in lu})
     assert generations == [1942, 1946, 1950, *range(1954, 1995, 2)]
-    assert len(lu) == len(generations) * 2 * 2 * 2
+    assert len(lu) == len(generations) * 2 * 4 * 2
     for generation in generations:
         age = str(min(60, 2017 - generation))
         for sexe in ("F", "H"):
-            for nature in ("service_national", "maladie"):
+            for nature in ("service_national", "maladie", "chomage", "avpf"):
                 part = lu[(str(generation), sexe, nature, "part", age)]
                 cumul = lu[(str(generation), sexe, nature, "cumul", age)]
                 assert 0.0 <= part <= 100.0, (generation, sexe, nature)

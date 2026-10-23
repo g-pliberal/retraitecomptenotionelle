@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""La nature des périodes assimilées : la part des affiliés qui ont validé un trimestre de service national, ou de maladie, et leur cumul, génération par génération (EIC 2017).
+"""La nature des périodes assimilées : la part des affiliés qui ont validé un trimestre de service national, de maladie, de chômage ou d'AVPF, et leur cumul, génération par génération (EIC 2017).
 
     python scripts/fetch/drees_natures_assimilees.py
 
@@ -19,16 +19,25 @@ au cours de la carrière » de la DREES, celui de
 1942, 1946, 1950, puis une sur deux de 1954 à 1994 —, sexe par sexe, âge par
 âge de 16 à 71 ans.
 
+Le chômage et l'assurance vieillesse des parents au foyer s'y sont ajoutés le
+23 octobre 2026 (la vingt-quatrième version de la population) : la population
+mettait du chômage à tous les hommes qui ne sont ni au service ni malades,
+quand l'échantillon n'en trouve qu'à un tiers des hommes nés en 1950, et à
+toutes les femmes, dont l'AVPF fait plus de la moitié des trimestres validés
+sans être cotisés ; or la carrière longue ne répute cotisé le chômage que
+depuis novembre 2012, et l'AVPF que depuis septembre 2023.
+
 CE QU'ON EN GARDE : deux indicateurs, « Part_aff », la part des affiliés ayant
 validé, à cet âge ou avant, des trimestres du type considéré, et
-« Cum_trim », le cumul de ces trimestres par affilié ; pour deux types, le
-service national (« SN ») et la maladie (« Maladie », qui compte aussi la
-maternité, l'invalidité et les accidents du travail), chacun en trimestres
-« utiles », ceux qui portent l'année vers ses quatre trimestres validés ; dans
-le champ des affiliés d'avant 23 ans (« Aff_avant_23ans »), celui de
-``premier_trimestre.csv`` ; les femmes et les hommes ; à 60 ans, ou au
-dernier âge que l'échantillon voit quand la génération n'avait pas 60 ans en
-2017. Ce dernier âge est celui où le cumul des trimestres cotisés est encore
+« Cum_trim », le cumul de ces trimestres par affilié ; pour quatre types, le
+service national (« SN »), la maladie (« Maladie », qui compte aussi la
+maternité, l'invalidité et les accidents du travail), le chômage
+(« Chômage ») et l'assurance vieillesse des parents au foyer (« AVPF »),
+chacun en trimestres « utiles », ceux qui portent l'année vers ses quatre
+trimestres validés ; dans le champ des affiliés d'avant 23 ans
+(« Aff_avant_23ans »), celui de ``premier_trimestre.csv`` ; les femmes et les
+hommes ; à 60 ans, ou au dernier âge que l'échantillon voit quand la
+génération n'avait pas 60 ans en 2017. Ce dernier âge est celui où le cumul des trimestres cotisés est encore
 publié : le fichier le met à zéro au-delà, et y reporte la part de l'âge
 précédent. Le reste du fichier n'est pas lu.
 
@@ -58,7 +67,8 @@ ENTETES = {"User-Agent": "retraite-notionnelle/0.1 (recherche publique)"}
 SORTIE = Path("data/brut/drees_natures_assimilees.json")
 
 #: Les natures gardées, sous les noms du dépôt.
-NATURES = {"SN": "service_national", "Maladie": "maladie"}
+NATURES = {"SN": "service_national", "Maladie": "maladie", "Chômage": "chomage",
+           "AVPF": "avpf"}
 
 #: Les indicateurs gardés, sous les noms du dépôt.
 INDICATEURS = {"Part_aff": "part", "Cum_trim": "cumul"}

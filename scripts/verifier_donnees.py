@@ -2732,14 +2732,14 @@ def source_premier_trimestre() -> dict[tuple, float]:
 
 def source_natures_assimilees() -> dict[tuple, float]:
     """La part des affiliés d'avant 23 ans qui ont validé un trimestre de
-    service national, ou de maladie, et le cumul de ces trimestres par
-    affilié, à 60 ans ou au dernier âge que l'échantillon voit, génération
-    par génération, sexe par sexe.
+    service national, de maladie, de chômage ou d'AVPF, et le cumul de ces
+    trimestres par affilié, à 60 ans ou au dernier âge que l'échantillon voit,
+    génération par génération, sexe par sexe.
 
     Les données détaillées de l'EIC 2017 que
     ``scripts/fetch/drees_natures_assimilees.py`` lit et vérifie : la
     population de la page en tire la nature des périodes assimilées de ses
-    hommes (action 138, étape 14).
+    carrières pleines (action 138, étape 14).
 
     Clé (generation, sexe, nature, indicateur, age).
     """
@@ -7866,14 +7866,16 @@ CERTIFICATIONS = (
         tolerance=0.05,
         entete=(
             "# La part des affiliés d'avant 23 ans qui ont validé un trimestre de",
-            "# service national, ou de maladie, et le cumul de ces trimestres par",
-            "# affilié, à 60 ans ou au dernier âge vu, par génération et par sexe",
+            "# service national, de maladie, de chômage ou d'AVPF, et le cumul de",
+            "# ces trimestres par affilié, à 60 ans ou au dernier âge vu, par",
+            "# génération et par sexe",
             "# source_id: drees_eic_natures_assimilees",
             "# unite: pour cent des affiliés d'avant 23 ans (part) ; trimestres par",
             "#        affilié d'avant 23 ans (cumul)",
             "# fiabilite:",
-            "#   certifiee : indicateurs « Part_aff » et « Cum_trim », types « SN » et",
-            "#             « Maladie », champ « Aff_avant_23ans », du fichier",
+            "#   certifiee : indicateurs « Part_aff » et « Cum_trim », types « SN »,",
+            "#             « Maladie », « Chômage » et « AVPF », champ",
+            "#             « Aff_avant_23ans », du fichier",
             "#             « eic2017_data_drees_er » du jeu « Les droits validés au",
             "#             cours de la carrière », diffusé par la DREES et recontrôlé",
             "#             par scripts/verifier_donnees.py.",
@@ -7887,24 +7889,29 @@ CERTIFICATIONS = (
             "# ------------",
             "# nature : service_national, un trimestre validé au titre du service",
             "#   national ; maladie, au titre de la maladie, de la maternité, de",
-            "#   l'invalidité et des accidents du travail. Des trimestres « utiles »,",
-            "#   ceux qui portent l'année vers ses quatre trimestres validés.",
+            "#   l'invalidité et des accidents du travail ; chomage, au titre du",
+            "#   chômage ; avpf, au titre de l'assurance vieillesse des parents au",
+            "#   foyer. Des trimestres « utiles », ceux qui portent l'année vers ses",
+            "#   quatre trimestres validés.",
             "# indicateur : part, la part des affiliés qui en ont validé au moins un,",
             "#   à cet âge ou avant ; cumul, le nombre de ces trimestres par affilié,",
             "#   qu'il en ait ou non. Le cumul sur la part dit combien en a chacun de",
-            "#   ceux qui en ont : quatre trimestres de service, dix-sept de maladie",
-            "#   pour les hommes nés en 1950.",
+            "#   ceux qui en ont : quatre trimestres de service, dix-sept de maladie,",
+            "#   treize de chômage pour les hommes nés en 1950 ; vingt-six d'AVPF",
+            "#   pour les femmes.",
             "# age : 60 ans, ou l'âge de la génération en 2017.",
             "#",
             "# À QUOI CETTE SÉRIE SERT",
             "# ------------------------",
             "# À donner leur nature aux périodes assimilées des carrières pleines",
-            "# des hommes de la population de scripts/grille_large.py (action 138,",
-            "# étape 14) : la carrière longue répute cotisés le service national et",
-            "# la maladie, quatre trimestres chacun, dans toutes ses rédactions, et",
-            "# le chômage depuis novembre 2012 seulement (D. 351-1-2). 35,1 % des",
-            "# hommes nés en 1950 avaient validé un trimestre de service national à",
-            "# 60 ans, 12,6 % un de maladie. Aucun calcul du site ne la lit.",
+            "# de la population de scripts/grille_large.py (action 138, étape 14) :",
+            "# la carrière longue répute cotisés le service national et la maladie,",
+            "# quatre trimestres chacun, dans toutes ses rédactions, le chômage",
+            "# depuis novembre 2012 seulement, l'AVPF depuis septembre 2023",
+            "# (D. 351-1-2). 35,1 % des hommes nés en 1950 avaient validé un",
+            "# trimestre de service national à 60 ans, 12,6 % un de maladie, 32,5 %",
+            "# un de chômage ; 39,8 % des femmes un d'AVPF. Aucun calcul du site ne",
+            "# la lit.",
             "#",
             "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
             "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",

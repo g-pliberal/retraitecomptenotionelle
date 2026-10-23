@@ -1337,7 +1337,7 @@ institutions:
         titre: >-
           Les droits validés au cours de la carrière (EIC 2017) : la part des
           affiliés d'avant 23 ans qui ont validé un trimestre de service
-          national, ou de maladie, et leur cumul, à 60 ans
+          national, de maladie, de chômage ou d'AVPF, et leur cumul, à 60 ans
         url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/2596_les-droits-valides-au-cours-de-la-carriere/
         acces: api
         statut_integration: certifie
@@ -1346,15 +1346,18 @@ institutions:
         note: >-
           Le même fichier que drees_eic_droits_valides, d'autres colonnes : la
           part des affiliés d'avant 23 ans qui avaient validé un trimestre de
-          service national, ou de maladie — maternité, invalidité et accidents
-          du travail compris —, et le cumul de ces trimestres par affilié, à
+          service national, de maladie — maternité, invalidité et accidents
+          du travail compris —, de chômage ou d'assurance vieillesse des
+          parents au foyer, et le cumul de ces trimestres par affilié, à
           60 ans, ou à l'âge qu'avait en 2017 une génération qui n'en avait pas
           60. 35,1 % des hommes nés en 1950 avaient validé un trimestre de
           service national, 1,4 trimestre par homme ; 12,6 % un de maladie,
-          2,2 trimestres. La population de la page Coût (action 138, étape 14)
-          en tire la nature des périodes assimilées de ses hommes, que la
-          carrière longue répute cotisées selon leur nature (D. 351-1-2) ;
-          aucun calcul du site ne la lit.
+          2,2 trimestres ; 32,5 % un de chômage, 4,3 trimestres ; 39,8 % des
+          femmes un d'AVPF, 10,5 trimestres. Le chômage et l'AVPF s'y sont
+          ajoutés le 23 octobre 2026. La population de la page Coût (action
+          138, étape 14) en tire la nature des périodes assimilées de ses
+          carrières pleines, que la carrière longue répute cotisées selon leur
+          nature (D. 351-1-2) ; aucun calcul du site ne la lit.
 
       - id: drees_age_conjoncturel
         titre: Âge conjoncturel moyen de départ à la retraite, selon le sexe
