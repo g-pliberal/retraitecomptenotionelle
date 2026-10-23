@@ -7038,15 +7038,14 @@ une à une, les étapes 3 et 5. Les quatre gardes de l'étape 2 sont faites le
 
 ### 173. Le site sur tous les écrans : rien ne déborde, ce qui va ensemble se voit ensemble, moins de vide, moins de mots — `en cours`
 
-**Reprise, au 23 octobre 2026.** Faites, les étapes 1 et 2 : de 320 à 1 440
-points, rien ne déborde ni ne défile en largeur ; les graphiques se dessinent à
-la largeur de la colonne, leur légende contre eux ; les quatre systèmes du
-simulateur tiennent dans un écran ; les grands vides sont tenus. Un vrai
-navigateur le joue, `tests/test_ecrans.py`. Restent les étapes 3 à 10, une
-page par session : moins de mots, sans perdre une idée. Par quoi commencer :
-l'étape 3, l'accueil — serrer son budget de lecture (`BUDGETS_DE_LECTURE`,
-`tests/test_web.py`), le voir rouge, puis récrire. Détail :
-`173/2026-10-23-etapes-1-et-2-ecrans-et-vides.md`.
+**Reprise, au 23 octobre 2026.** Faites, les étapes 1 à 3 : de 320 à 1 440
+points, rien ne déborde, ce qui va ensemble se voit ensemble, les grands vides
+sont tenus (`tests/test_ecrans.py`) ; l'accueil dit la même chose en moins de
+mots, ouvert comme déplié. Restent les étapes 4 à 10, une page par session.
+Par quoi commencer : l'étape 4, Simuler — serrer son budget de lecture
+(`BUDGETS_DE_LECTURE`, `tests/test_web.py`), lui donner sa ligne dans
+`BUDGETS_DEPLIES` et dans `COTE_A_COTE` (`tests/test_ecrans.py`), les voir
+rouges, puis récrire. Détail : `173/2026-10-23-etape-3-accueil.md`.
 
 **D'où elle vient.** Le 23 octobre 2026, le propriétaire : « Le site web de
 notre projet est plutôt adapté aux écrans d'ordinateurs (et encore...) mais
@@ -7074,7 +7073,8 @@ un graphique et sa légende. »
    blocs voisins tenu à quarante points sur un téléphone, cinquante-six au
    large ; la ligne réservée sous chaque graphique à une aide invisible, et
    le pied de page de cinq rem, retirés.
-3. **Moins de mots : le Programme**, l'accueil.
+3. **Moins de mots : le Programme**, l'accueil, faite le 23 octobre 2026 :
+   387 mots ouverts au lieu de 439, 4 489 dépliés au lieu de 4 920.
 4. **Moins de mots : Simuler**, le formulaire et les résultats.
 5. **Moins de mots : Coût.**
 6. **Moins de mots : Pourquoi changer.**
