@@ -377,13 +377,20 @@ code:
   python: >-
     scenarios/actuel.py : FichesDatees ; droit/ouvrir.py : depart_parent_trois_enfants,
     age_ouverture, annee_ouverture_des_droits, duree_requise, duree_de_l_annee ;
-    droit/liquider.py : le minimum garanti d'avant la loi
+    droit/liquider.py : liquider_chaque_regime
   javascript: >-
     moteur/js/regimes.js : FichesDatees ; moteur/js/droit/ouvrir.js :
     departParentTroisEnfants, ageOuverture, anneeOuvertureDesDroits, dureeRequise,
-    dureeDeLAnnee ; moteur/js/droit/liquider.js
-  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+    dureeDeLAnnee ; moteur/js/droit/liquider.js : liquiderChaqueRegime
+  parametres: >-
+    contenu.parametres de chaque version : existe, regimes, beneficiaire, enfants,
+    services_requis_annees, conditions_reunies_avant, calcul, fiabilite,
+    ancien_calcul_jusqu_a, ancien_calcul_a_moins_de, ancien_calcul_au,
+    ages_avant_la_loi, ages_de_l_annee_retenue
   tests: [tests/test_parents_trois_enfants.py, tests/test_oracle_familles.py]
+  moteur: >-
+    liquider_chaque_regime sert le minimum garanti d'avant la loi. Le paquet du site
+    porte ses versions.
 referents:
   destinie_2:
     equivalent: >-

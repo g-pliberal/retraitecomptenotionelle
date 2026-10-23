@@ -237,15 +237,21 @@ textes_a_rattacher:
   change: la date à laquelle la CNRACL compte ses annuités au semestre
 code:
   python: >-
-    droit/compter.py : compter, jours_de_la_ligne, arrondir_les_services, Durees
-    (jours, decompte, ecart_au_jour, services_liquidables, services_effectifs) ;
+    droit/compter.py : compter, jours_de_la_ligne, arrondir_les_services, Durees ;
     droit/liquider.py : liquider_chaque_regime, trimestres_de_decote ; carriere.py :
-    AnneeCarriere.jours_de_services ; saisie.py : releve_analyse
+    AnneeCarriere ; saisie.py : releve_analyse
   javascript: >-
-    moteur/js/droit/compter.js ; moteur/js/droit/liquider.js ; moteur/js/carriere.js ;
-    moteur/js/saisie.js
-  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+    moteur/js/droit/compter.js : compter, joursDeLaLigne, arrondirLesServices, Durees ;
+    moteur/js/droit/liquider.js : liquiderChaqueRegime, trimestresDeDecote ;
+    moteur/js/carriere.js : AnneeCarriere ; moteur/js/saisie.js : releveAnalyse
+  parametres: >-
+    contenu.parametres de chaque version : existe, regimes, unite_jours, seuil_jours,
+    duree_au_jour, minimum_garanti, fiabilite
   tests: [tests/test_decompte_des_services.py, tests/test_trajectoire.py]
+  moteur: >-
+    Durees en porte le décompte (jours, decompte, ecart_au_jour, services_liquidables,
+    services_effectifs), AnneeCarriere les jours de services de chaque année
+    (jours_de_services). Le paquet du site porte ses versions.
 referents:
   trajectoire:
     equivalent: >-

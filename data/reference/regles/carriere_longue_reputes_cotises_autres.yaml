@@ -297,16 +297,19 @@ textes_a_rattacher:
 - reference: D. 634-1 CSS, VI
 code:
   python: >-
-    scenarios/actuel.py : CarriereLongue (cotises_reputes, _reputes_assimiles,
-    FICHE_DES_REPUTES, fiches) ; carriere.py et donnees/chargement.py, le champ
-    reputes_cotises_nature
+    scenarios/actuel.py : CarriereLongue, CarriereLongue.cotises_reputes,
+    CarriereLongue._reputes_assimiles, CarriereLongue.fiches
   javascript: >-
-    moteur/js/regimes.js : CarriereLongue (cotisesReputes, reputesAssimiles) ;
-    moteur/js/carriere.js, le champ reputes_cotises_nature
+    moteur/js/regimes.js : CarriereLongue, CarriereLongue.cotisesReputes,
+    CarriereLongue.reputesAssimiles
   parametres: >-
-    les limites de chaque version (contenu.parametres), que le paquet du site porte
-    sous versions_des_fiches
+    contenu.parametres de chaque version : limites, fiabilite
   tests: [tests/test_simulateur.py]
+  moteur: >-
+    CarriereLongue lit cette fiche (FICHE_DES_REPUTES) ; le champ reputes_cotises_nature
+    de la carrière (carriere.py, donnees/chargement.py, moteur/js/carriere.js) dit la
+    nature des périodes réputées cotisées. Le paquet du site porte ses versions
+    (versions_des_fiches).
 historique:
 - >-
   2026-09-22 — portée : les six enveloppes de la rédaction de 2026 en table, motif par

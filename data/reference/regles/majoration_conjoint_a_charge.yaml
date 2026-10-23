@@ -268,15 +268,20 @@ sources:
     date: 2026-10-08
 code:
   python: >-
-    droit/completer.py : majoration_pour_conjoint_a_charge, completer ; droit/commun.py :
-    PensionRegime.conjoint, majoration_du_conjoint ; revalorisation.py : faire_vivre,
-    RegimeServi ; echeancier.py : la réversion, sans elle
+    droit/completer.py : majoration_pour_conjoint_a_charge, completer ; droit/commun.py
+    : PensionRegime, majoration_du_conjoint ; revalorisation.py : faire_vivre,
+    RegimeServi ; echeancier.py : Echeancier._pensions_eues_au_deces
   javascript: >-
-    moteur/js/droit/completer.js : majorationPourConjointACharge ; moteur/js/droit/commun.js
-    : majorationDuConjoint ; moteur/js/revalorisation.js : faireVivre ;
-    moteur/js/echeancier.js
-  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+    moteur/js/droit/completer.js : majorationPourConjointACharge, completer ;
+    moteur/js/droit/commun.js : majorationDuConjoint ; moteur/js/revalorisation.js :
+    faireVivre ; moteur/js/echeancier.js : Echeancier._pensionsEuesAuDeces
+  parametres: >-
+    contenu.parametres de chaque version : existe, regimes, age, prorata,
+    droits_ouverts_avant, montants
   tests: [tests/test_majoration_conjoint_a_charge.py]
+  moteur: >-
+    PensionRegime porte la majoration (conjoint) ; la réversion se compte sans elle
+    (Echeancier._pensions_eues_au_deces). Le paquet du site porte ses versions.
 referents:
   baremes_ipp:
     equivalent: >-

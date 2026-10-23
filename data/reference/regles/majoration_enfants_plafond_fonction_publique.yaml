@@ -293,13 +293,16 @@ sources:
     date: 2022-11-29
 code:
   python: >-
-    droit/liquider.py : EligiblePlafondEnfants, Pensions.plafonds ; droit/completer.py
-    : majoration_sous_le_traitement, completer ; scenarios/actuel.py : FichesDatees
+    droit/liquider.py : EligiblePlafondEnfants, Pensions ; droit/completer.py :
+    majoration_sous_le_traitement, completer ; scenarios/actuel.py : FichesDatees
   javascript: >-
-    moteur/js/droit/liquider.js : Pensions.plafonds ; moteur/js/droit/completer.js :
+    moteur/js/droit/liquider.js : Pensions ; moteur/js/droit/completer.js :
     majorationSousLeTraitement, completer ; moteur/js/regimes.js : FichesDatees
-  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  parametres: >-
+    contenu.parametres de chaque version : existe, regimes, plafond, surcote, fiabilite
   tests: [tests/test_plafond_majoration_enfants.py]
+  moteur: >-
+    Pensions en garde les plafonds (plafonds). Le paquet du site porte ses versions.
 referents:
   destinie_2:
     equivalent: >-

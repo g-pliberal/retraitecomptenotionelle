@@ -255,16 +255,19 @@ textes_a_rattacher: []
 code:
   python: >-
     revalorisation.py : majorations_forfaitaires, PensionServie.coefficient ;
-    droit/liquider.py : PensionRegime.sur_la_duree_maximum ; echeancier.py :
-    Echeancier._pensions_au_deces ; droit/reversion.py : reversion,
-    _majorations_ulterieures
+    droit/commun.py : PensionRegime ; echeancier.py : Echeancier._pensions_au_deces ;
+    droit/reversion.py : reversion, _majorations_ulterieures
   javascript: >-
     moteur/js/revalorisation.js : majorationsForfaitaires, PensionServie.coefficient ;
-    moteur/js/droit/liquider.js ; moteur/js/echeancier.js ; moteur/js/droit/reversion.js
-  parametres: contenu.parametres de chaque version
+    moteur/js/echeancier.js : Echeancier._pensionsAuDeces ; moteur/js/droit/reversion.js
+    : reversion, majorationsUlterieures
+  parametres: >-
+    contenu.parametres de chaque version : majorations, fiabilite
   tests: >-
     tests/test_reversion.py ; les témoins retraite_majoree_en_1982 et
     reversion_majorations_avant_1983 des simulations
+  moteur: >-
+    PensionRegime dit si la pension est sur la durée maximum (sur_la_duree_maximum).
 historique:
 - >-
   2026-10-09 — née et lue par le moteur, à l'étape 4 de l'action 138 : la note du 9
