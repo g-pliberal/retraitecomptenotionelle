@@ -297,8 +297,10 @@ def carrieres_des_saisies(cas: list[dict], paquet: bytes | None = None,
     du portage, qui restera la seule (action 161, étape 6) : sous sa clé, les
     paramètres de la saisie et la carrière que le site simulerait, relus sous
     les types du Python (:func:`parametres_des_donnees`,
-    :func:`carriere_des_donnees`), que son moteur simule à son tour. Puis,
-    sous leur clé, les motifs des requêtes que le portage refuse."""
+    :func:`carriere_des_donnees`), que son moteur simule à son tour ; un
+    relevé avec ``"prolonger": False`` s'en tient à ses années, pour qui l'a
+    déjà prolongé à sa façon. Puis, sous leur clé, les motifs des requêtes
+    que le portage refuse."""
     reponse = _demander({"carrieres_des_saisies": {"cas": cas}}, paquet)
     resultats = {cle: (parametres_des_donnees(lu["parametres"]),
                        carriere_des_donnees(lu["carriere"]))

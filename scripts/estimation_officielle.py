@@ -13,7 +13,8 @@ peut en lire la page, et n'y change une hypothèse qu'avec son accord.
 `--releve` lit le relevé de carrière que l'assuré a téléchargé : le PDF par
 `scripts/fetch/lecture_pdf.py`, ou ses lignes de texte, puis le lecteur du
 site, `moteur/js/releve-lu.js`, que node fait tourner, qui en rend la saisie
-du simulateur.
+du simulateur ; le portage en bâtit la carrière (`pont.carrieres_des_saisies`),
+que le moteur Python liquide.
 `--estimation` lit ce que la caisse affiche, recopié âge par âge dans le
 gabarit que `--modele` imprime, avec la convention de la page mot pour mot.
 Pour chaque âge, le scénario 1 est liquidé à la même date, ramené à la même
@@ -66,13 +67,11 @@ sys.path.insert(0, str(RACINE / "src"))
 sys.path.insert(0, str(RACINE / "scripts" / "fetch"))
 
 from retraite_notionnelle.somme import somme_ordonnee
+from retraite_notionnelle import pont  # noqa: E402
 from retraite_notionnelle.calendrier import MOIS_PAR_AN  # noqa: E402
 from retraite_notionnelle.carriere import salaire_moyen_annuel  # noqa: E402
-from retraite_notionnelle.contexte import Contexte  # noqa: E402
-from retraite_notionnelle.donnees.chargement import (  # noqa: E402
-    charger_periodes_non_travaillees,
-)
-from retraite_notionnelle.saisie import ErreurSaisie, Saisie  # noqa: E402
+from retraite_notionnelle.config import Parametres  # noqa: E402
+from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
 from retraite_notionnelle.web.site import module  # noqa: E402
 
 #: Les étages d'une pension du système 1, dans l'ordre où le site les écrit
@@ -506,23 +505,20 @@ class Confrontation:
     """Le relevé lu, l'estimation recopiée, et le modèle qui les relie."""
 
     def __init__(self, lecture: Lecture, estimation: Estimation,
-                 revenus_futurs: str = "salaire_moyen", contexte: Contexte | None = None,
-                 croissance: float = 0.0):
+                 revenus_futurs: str = "salaire_moyen", croissance: float = 0.0):
         if revenus_futurs not in REVENUS_FUTURS:
             raise Refus(f"--revenus-futurs : {', '.join(REVENUS_FUTURS)}.")
         if croissance and revenus_futurs != "prix":
             raise Refus("--croissance ne s'ajoute qu'aux prix (--revenus-futurs prix).")
         self.lecture, self.estimation = lecture, estimation
         self.revenus_futurs, self.croissance = revenus_futurs, croissance
-        self.contexte = contexte or Contexte()
         self.naissance = self._naissance()
         self.derniere_annee = max(ligne.annee for ligne in lecture.lignes)
-        # Les réglages ne dépendent pas du départ : celui du premier suffit.
-        self.simulateur = self.contexte.simulateur(
-            self._saisie(estimation.departs[0].date).parametres(self.contexte.base))
+        # Les réglages ne dépendent pas du départ : ceux du premier suffisent.
+        parametres, _ = self._lue(estimation.departs[0].date)
+        self.simulateur = Simulateur(parametres)
         self.catalogue = self.simulateur.catalogue
         self.macro = self.simulateur.macro
-        self.motifs = charger_periodes_non_travaillees(self.macro.racine)
         self.releve = self._releve_corrige()
 
     def _naissance(self) -> str:
@@ -558,7 +554,11 @@ class Confrontation:
             lignes[rangs[0]] = ":".join(champs)
         return "\n".join(lignes)
 
-    def _saisie(self, depart: dt.date, releve: str | None = None) -> Saisie:
+    def _lue(self, depart: dt.date, releve: str | None = None) -> tuple:
+        """Les paramètres et la carrière que le portage bâtit du relevé, au
+        départ ``depart`` : la saisie n'a qu'un exemplaire, le sien
+        (``pont.carrieres_des_saisies``, action 161), et le relevé s'en tient
+        à ses années, que ce script a déjà prolongées à sa convention."""
         parametres = self.lecture.parametres()
         requete = {
             "naissance": self.naissance, "sexe": self.estimation.sexe,
@@ -570,10 +570,11 @@ class Confrontation:
         }
         if self.estimation.naissances:
             requete["naissances"] = ",".join(self.estimation.naissances)
-        try:
-            return Saisie.depuis_requete(requete)
-        except ErreurSaisie as erreur:
-            raise Refus(f"départ du {depart.isoformat()} : {erreur}") from erreur
+        lues, refusees = pont.carrieres_des_saisies(
+            [{"cle": "depart", "requete": requete, "prolonger": False}])
+        if refusees:
+            raise Refus(f"départ du {depart.isoformat()} : {refusees['depart']}")
+        return lues["depart"]
 
     def revenus_a_venir(self) -> tuple[list[tuple[str, float]], int]:
         """Ce qui se poursuit après le relevé : les emplois, chacun avec son
@@ -617,12 +618,11 @@ class Confrontation:
         if depart.year <= self.derniere_annee:
             raise Refus(f"départ du {depart.isoformat()} : le relevé porte encore "
                         f"{self.derniere_annee}, qui le suivrait.")
-        saisie = self._saisie(depart, self.releve_prolonge(depart))
         # Le relevé est déjà prolongé, à la convention que --revenus-futurs
         # choisit ; « aucun » l'arrête à sa dernière année, et le site, qui
         # prolonge le sien, ne doit pas y revenir.
-        return self.contexte._carriere_relevee(self.simulateur, saisie, self.motifs,
-                                               prolonger=False)
+        _, carriere = self._lue(depart, self.releve_prolonge(depart))
+        return carriere
 
     def servi(self, depart: Depart) -> Servi:
         return servi(self.simulateur.simuler(self.carriere(depart.date)))
@@ -768,12 +768,11 @@ def main(arguments: list[str] | None = None) -> int:
     try:
         releve = hors_du_depot(options.releve)
         chemin = hors_du_depot(options.estimation)
-        contexte = Contexte()
         estimation = lire_estimation(
             yaml.safe_load(chemin.read_text(encoding="utf-8")),
-            contexte.simulateur().catalogue)
+            Simulateur(Parametres()).catalogue)
         print(rapport(Confrontation(lire(releve), estimation, options.revenus_futurs,
-                                    contexte, options.croissance)))
+                                    options.croissance)))
         return 0
     except Refus as refus:
         print(f"refusé : {refus}", file=sys.stderr)

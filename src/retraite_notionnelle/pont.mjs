@@ -26,10 +26,11 @@
  *   données (`carriere_en_donnees` de `pont.py`), simulée sous les paramètres
  *   de la projection : ce que le coût lit de la comparaison, et la proposition
  *   seule sur chacune des carrières nommées de `propositions`.
- * - `carrieres_des_saisies` : `{cas: [{cle, requete}]}` — chaque requête du
- *   simulateur, lue par la saisie du portage : ses paramètres, et la carrière
- *   que le site simulerait, en données, pour que le Python la simule de son
- *   moteur (`carriere_des_donnees` de `pont.py`).
+ * - `carrieres_des_saisies` : `{cas: [{cle, requete, prolonger}]}` — chaque
+ *   requête du simulateur, lue par la saisie du portage : ses paramètres, et
+ *   la carrière que le site simulerait, en données, pour que le Python la
+ *   simule de son moteur (`carriere_des_donnees` de `pont.py`) ; un relevé
+ *   avec `prolonger: false` s'en tient à ses années.
  *
  * Il écrit `{resultats, echecs}` : une carrière que le portage refuse en est
  * absente, et son motif est dans `echecs`. Un nombre non fini s'écrit `null`,
@@ -130,12 +131,15 @@ function carriereEnDonnees(carriere) {
  * `pont.py` relit sous les types du Python pour les simuler de son moteur.
  */
 function carrieresDesSaisies({ cas }) {
-  return parCas(cas, ({ requete }) => {
+  return parCas(cas, ({ requete, prolonger = true }) => {
     const saisie = Saisie.depuisRequete(requete, false, contexte.paquet.presomptions);
-    return {
-      parametres: saisie.parametres(contexte.base),
-      carriere: carriereEnDonnees(contexte.carriere(saisie)),
-    };
+    const parametres = saisie.parametres(contexte.base);
+    // Un relevé que l'appelant a déjà prolongé à sa façon ne se prolonge pas
+    // une seconde fois (`scripts/estimation_officielle.py`).
+    const carriere = prolonger || !saisie.releveActif ? contexte.carriere(saisie)
+      : contexte.carriereRelevee(contexte.simulateur(parametres), saisie,
+        Object.keys(contexte.paquet.periodes_non_travaillees ?? {}), false);
+    return { parametres, carriere: carriereEnDonnees(carriere) };
   });
 }
 

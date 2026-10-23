@@ -87,25 +87,28 @@ def _estimation(**remplacements) -> dict:
 
 
 @pytest.fixture(scope="module")
-def contexte():
-    return estimation_officielle.Contexte()
+def simulateur():
+    from retraite_notionnelle.config import Parametres
+    from retraite_notionnelle.simulateur import Simulateur
+
+    return Simulateur(Parametres())
 
 
 @pytest.fixture(scope="module")
-def catalogue(contexte):
-    return contexte.simulateur().catalogue
+def catalogue(simulateur):
+    return simulateur.catalogue
 
 
 def _lecture(texte: str):
     return estimation_officielle.lire_releve(texte.strip().split("\n"))
 
 
-def _confrontation(contexte, catalogue, revenus_futurs="salaire_moyen", texte=None,
+def _confrontation(catalogue, revenus_futurs="salaire_moyen", texte=None,
                    croissance=0.0, **estimation):
     return estimation_officielle.Confrontation(
         _lecture(texte or _releve()),
         estimation_officielle.lire_estimation(_estimation(**estimation), catalogue),
-        revenus_futurs, contexte, croissance)
+        revenus_futurs, croissance=croissance)
 
 
 def _total(servi) -> float:
@@ -209,24 +212,24 @@ def test_une_recopie_douteuse_est_refusee(catalogue, modification, motif):
         estimation_officielle.lire_estimation(estimation, catalogue)
 
 
-def test_une_naissance_contredite_ou_absente_est_refusee(contexte, catalogue):
+def test_une_naissance_contredite_ou_absente_est_refusee(catalogue):
     with pytest.raises(Refus, match="n'est pas celle"):
-        _confrontation(contexte, catalogue,
+        _confrontation(catalogue,
                        assure={"sexe": "F", "naissance": dt.date(1966, 5, 13)})
     sans_naissance = _releve().replace("DUPONT Marie — Date de naissance : 12/05/1966\n", "")
     with pytest.raises(Refus, match="assure.naissance"):
-        _confrontation(contexte, catalogue, texte=sans_naissance)
+        _confrontation(catalogue, texte=sans_naissance)
     # Le numéro de sécurité sociale — inventé, et impossible : une commune et
     # un rang à zéro — ne donne que le mois : il ne suffit pas, mais il
     # contrôle la date recopiée.
     par_le_numero = _releve().replace("DUPONT Marie — Date de naissance : 12/05/1966",
                                       "Numéro de sécurité sociale 2 66 05 99 000 000")
     with pytest.raises(Refus, match="n'en dit que le mois, 1966-05"):
-        _confrontation(contexte, catalogue, texte=par_le_numero)
+        _confrontation(catalogue, texte=par_le_numero)
     with pytest.raises(Refus, match="une naissance en 1966-05, l'estimation le 1966-06-12"):
-        _confrontation(contexte, catalogue, texte=par_le_numero,
+        _confrontation(catalogue, texte=par_le_numero,
                        assure={"sexe": "F", "naissance": dt.date(1966, 6, 12)})
-    assert _confrontation(contexte, catalogue, texte=par_le_numero,
+    assert _confrontation(catalogue, texte=par_le_numero,
                           assure={"sexe": "F", "naissance": dt.date(1966, 5, 12)}
                           ).naissance == "1966-05-12"
 
@@ -235,11 +238,11 @@ def test_une_naissance_contredite_ou_absente_est_refusee(contexte, catalogue):
 # La carrière à venir, et les années corrigées
 # ---------------------------------------------------------------------------
 
-def test_les_revenus_a_venir_poursuivent_la_derniere_annee(contexte, catalogue):
+def test_les_revenus_a_venir_poursuivent_la_derniere_annee(catalogue):
     """Sans revenu donné par la page, la carrière poursuit la dernière année du
     relevé : au rythme du salaire moyen, ou des prix, plus ce que `--croissance`
     y ajoute, l'année du départ au prorata de ses mois ; `aucun` l'arrête."""
-    moyen = _confrontation(contexte, catalogue)
+    moyen = _confrontation(catalogue)
     macro, arrondi = moyen.macro, estimation_officielle.arrondi
     salaire = estimation_officielle.salaire_moyen_annuel
     assert moyen.releve_prolonge(dt.date(2027, 6, 1)).split("\n")[-2:] == [
@@ -248,13 +251,13 @@ def test_les_revenus_a_venir_poursuivent_la_derniere_annee(contexte, catalogue):
         f"2027:salarie_prive_non_cadre:"
         f"{arrondi(32_100 * salaire(macro, 2027) / salaire(macro, 2025) * 5 / 12)}",
     ]
-    prix = _confrontation(contexte, catalogue, "prix", croissance=1.0)
+    prix = _confrontation(catalogue, "prix", croissance=1.0)
     assert prix.releve_prolonge(dt.date(2027, 1, 1)).split("\n")[-1] == (
         f"2026:salarie_prive_non_cadre:"
         f"{arrondi(32_100 * macro.coefficient_prix(2025, 2026) * 1.01)}")
     depart = moyen.estimation.departs[1]
     totaux = {(hypothese, croissance): _total(
-        _confrontation(contexte, catalogue, hypothese, croissance=croissance).servi(depart))
+        _confrontation(catalogue, hypothese, croissance=croissance).servi(depart))
         for hypothese, croissance in (("aucun", 0.0), ("prix", 0.0), ("prix", 1.0),
                                       ("salaire_moyen", 0.0))}
     assert totaux[("aucun", 0.0)] < totaux[("prix", 0.0)] < totaux[("salaire_moyen", 0.0)]
@@ -262,15 +265,15 @@ def test_les_revenus_a_venir_poursuivent_la_derniere_annee(contexte, catalogue):
     with pytest.raises(Refus, match="le relevé porte encore 2025"):
         moyen.carriere(dt.date(2025, 12, 1))
     with pytest.raises(Refus, match="--croissance"):
-        _confrontation(contexte, catalogue, "salaire_moyen", croissance=1.0)
+        _confrontation(catalogue, "salaire_moyen", croissance=1.0)
 
 
-def test_la_carriere_a_venir_part_du_revenu_que_la_page_retient(contexte, catalogue):
+def test_la_carriere_a_venir_part_du_revenu_que_la_page_retient(catalogue):
     """La page prête à la situation actuelle un revenu annuel, en euros de son
     année : la carrière à venir part de lui, et non de la dernière année du
     relevé, sous le statut de son emploi."""
     convention = dict(_estimation()["convention"], revenu_annuel=30_000.0)
-    confrontation = _confrontation(contexte, catalogue, "prix", convention=convention)
+    confrontation = _confrontation(catalogue, "prix", convention=convention)
     assert confrontation.revenus_a_venir() == ([("salarie_prive_non_cadre", 30_000.0)], 2026)
     assert confrontation.releve_prolonge(dt.date(2027, 1, 1)).split("\n")[-1] == (
         "2026:salarie_prive_non_cadre:30000")
@@ -278,22 +281,22 @@ def test_la_carriere_a_venir_part_du_revenu_que_la_page_retient(contexte, catalo
         estimation_officielle.rapport(confrontation))
 
 
-def test_une_annee_mal_lue_se_corrige_a_la_main(contexte, catalogue):
+def test_une_annee_mal_lue_se_corrige_a_la_main(catalogue):
     """La lecture peut additionner une même paie que deux régimes déclarent à
     part : l'estimation privée porte alors le revenu juste, année par année,
     et le rapport le dit. Une année que la lecture n'a pas est refusée."""
-    corrigee = _confrontation(contexte, catalogue, releve={"corrections": {2010: 20_000}})
+    corrigee = _confrontation(catalogue, releve={"corrections": {2010: 20_000}})
     assert "2010:salarie_prive_non_cadre:20000:4" in corrigee.releve.split("\n")
     assert "corrigées à la main, d'après le relevé : 2010" in (
         estimation_officielle.rapport(corrigee))
     depart = corrigee.estimation.departs[0]
     assert _total(corrigee.servi(depart)) != _total(
-        _confrontation(contexte, catalogue).servi(depart))
+        _confrontation(catalogue).servi(depart))
     with pytest.raises(Refus, match="l'année 1950 est sur 0 lignes"):
-        _confrontation(contexte, catalogue, releve={"corrections": {1950: 1_000}})
+        _confrontation(catalogue, releve={"corrections": {1950: 1_000}})
 
 
-def test_un_assure_jeune_se_confronte_comme_un_autre(contexte, catalogue):
+def test_un_assure_jeune_se_confronte_comme_un_autre(catalogue):
     """Le modèle n'accepte pas un départ avant quarante ans : le script ne lui
     en demande aucun, même pour qui n'a qu'une dizaine d'années de carrière ; et
     un départ qu'il refuse sort en refus, non en trace d'erreur."""
@@ -302,7 +305,7 @@ def test_un_assure_jeune_se_confronte_comme_un_autre(contexte, catalogue):
                 "regimes": [{"libelle": "Assurance retraite", "brut": 1500},
                             {"libelle": "Agirc-Arrco", "brut": 500}]}
     trop_tard = dict(a_64_ans, age="120 ans", date=dt.date(2113, 10, 1))
-    confrontation = _confrontation(contexte, catalogue, texte=jeune,
+    confrontation = _confrontation(catalogue, texte=jeune,
                                    departs=[a_64_ans, trop_tard])
     (premier, second) = confrontation.estimation.departs
     servi = confrontation.servi(premier)
@@ -315,11 +318,11 @@ def test_un_assure_jeune_se_confronte_comme_un_autre(contexte, catalogue):
 # Le scénario 1, dans la convention de la page
 # ---------------------------------------------------------------------------
 
-def test_chaque_regime_porte_sa_part_et_le_tout_fait_la_pension(contexte, catalogue):
+def test_chaque_regime_porte_sa_part_et_le_tout_fait_la_pension(catalogue):
     """Brut mensuel par régime : sa pension, minima compris, et sa part de la
     majoration pour enfants, que le moteur compte à côté. Leur somme est la
     pension du scénario 1, dans les euros de la page."""
-    confrontation = _confrontation(contexte, catalogue)
+    confrontation = _confrontation(catalogue)
     depart = confrontation.estimation.departs[1]
     comparaison = confrontation.simulateur.simuler(confrontation.carriere(depart.date))
     servi = estimation_officielle.servi(comparaison)
@@ -332,13 +335,36 @@ def test_chaque_regime_porte_sa_part_et_le_tout_fait_la_pension(contexte, catalo
     assert comparaison.carriere.date_liquidation.mois == 6
 
 
-def test_le_modele_est_ramene_aux_euros_de_la_page(contexte, catalogue):
+def test_la_confrontation_liquide_la_carriere_que_le_portage_batit(catalogue, monkeypatch):
+    """La saisie n'aura qu'un exemplaire, celui du portage (action 161,
+    étape 6) : il bâtit la carrière du relevé que le script a prolongé, sans
+    le prolonger une seconde fois, et le moteur Python la liquide. Chaque
+    année du relevé prolongé y est, à son revenu, et aucune autre."""
+    from retraite_notionnelle.contexte import Contexte
+    from retraite_notionnelle.saisie import Saisie
+
+    def interdit(*_args, **_kwargs):
+        raise AssertionError("la saisie Python ne bâtit plus la carrière confrontée")
+
+    monkeypatch.setattr(Contexte, "_carriere_relevee", interdit)
+    monkeypatch.setattr(Saisie, "depuis_requete", interdit)
+    confrontation = _confrontation(catalogue)
+    depart = confrontation.estimation.departs[0].date
+    attendues = {(int(annee), float(revenu))
+                 for annee, _, revenu in (ligne.split(":")[:3] for ligne
+                                          in confrontation.releve_prolonge(depart).split("\n"))}
+    carriere = confrontation.carriere(depart)
+    assert {(ligne.annee, ligne.revenu) for ligne in carriere.lignes} == attendues
+    assert max(annee for annee, _ in attendues) == depart.year
+
+
+def test_le_modele_est_ramene_aux_euros_de_la_page(catalogue):
     """Le même départ, lu dans une page en euros de 2026 ou de 2028, la carrière
     à venir constante en euros : le modèle suit, d'un coefficient qui est celui
     des prix."""
     convention = dict(_estimation()["convention"], euros_de=2028)
-    en_2026 = _confrontation(contexte, catalogue, "aucun")
-    en_2028 = _confrontation(contexte, catalogue, "aucun", convention=convention)
+    en_2026 = _confrontation(catalogue, "aucun")
+    en_2028 = _confrontation(catalogue, "aucun", convention=convention)
     lire = estimation_officielle.lire_estimation
     servi_2026 = en_2026.servi(lire(_estimation(), catalogue).departs[1])
     servi_2028 = en_2028.servi(lire(_estimation(convention=convention), catalogue).departs[1])
@@ -346,22 +372,22 @@ def test_le_modele_est_ramene_aux_euros_de_la_page(contexte, catalogue):
         en_2026.macro.coefficient_prix(2026, 2028), rel=1e-9)
 
 
-def test_le_plafond_dit_quel_releve_on_a_lu(contexte, catalogue):
+def test_le_plafond_dit_quel_releve_on_a_lu(simulateur, catalogue):
     """Le relevé du seul régime général ne porte le revenu que sous le plafond :
     une année qui le touche minore la complémentaire du modèle, et le rapport le
     dit. Une année qui le dépasse dit l'inverse : ce relevé-là porte le revenu
     entier, et la complémentaire compte ce qui dépasse."""
-    plafond = contexte.simulateur().macro.plafond_securite_sociale
-    au_plafond = _confrontation(contexte, catalogue, texte=_releve(au_plafond=plafond(2024)))
+    plafond = simulateur.macro.plafond_securite_sociale
+    au_plafond = _confrontation(catalogue, texte=_releve(au_plafond=plafond(2024)))
     serie = au_plafond.macro.plafond_securite_sociale
     assert estimation_officielle.annees_au_plafond(au_plafond.lecture, serie) == [2024]
     assert "1 année(s) au plafond" in estimation_officielle.rapport(au_plafond)
-    au_dessus = _confrontation(contexte, catalogue,
+    au_dessus = _confrontation(catalogue,
                                texte=_releve(au_plafond=1.2 * plafond(2024)))
     assert estimation_officielle.annees_au_dessus_du_plafond(au_dessus.lecture, serie) == [2024]
     texte = estimation_officielle.rapport(au_dessus)
     assert "porte le revenu entier" in texte and "année(s) au plafond" not in texte
-    sans = _confrontation(contexte, catalogue)
+    sans = _confrontation(catalogue)
     assert not estimation_officielle.annees_au_plafond(sans.lecture, serie)
     assert not estimation_officielle.annees_au_dessus_du_plafond(sans.lecture, serie)
 
