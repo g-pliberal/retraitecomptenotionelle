@@ -6887,14 +6887,15 @@ de `contribution_etat`.
 
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
-**Reprise, au 22 octobre 2026.** Faites, les étapes 1 à 5 : le pont fait
-tourner le portage pour la fabrique et le coût (`retraite_notionnelle/pont.py`),
-et, le 22 octobre, `cycle_de_vie.py` est parti — ses tests passés au portage
-(`tests/js/cycle-de-vie.test.js`), ses explications dans `cycle-de-vie.js`.
-Reste l'étape 6 : les paires du moteur, une à une, dans l'ordre de la carte
-(`python scripts/jumeaux.py`, 68 paires), relecture d'abord ; d'une paire de
-données, le propriétaire tranche le jumeau qui reste (note 0003). Détail :
-`2026-10-22-etape-5-septieme-partie-le-retrait-du-cycle-de-vie.md`.
+**Reprise, au 23 octobre 2026.** Étape 6 en cours sur `contexte.py`, la
+première paire du moteur : relu, sans écart de calcul. Le portage bâtit les
+carrières des témoins, du budget, du relevé des lectures et de la
+confrontation officielle (`pont.carrieres_des_saisies`), que le moteur Python
+simule : les témoins restent identiques à l'octet. Reste, en trois lots : la
+trentaine de fichiers de tests qui lisent la saisie Python ; le centre du coût,
+qui reste en Python ; le retrait. Le propriétaire tranche deux paires de
+données, relues : les crédits des ministères, la table des agrégats. Détail :
+`2026-10-23-etape-6-premiere-partie-la-saisie-par-le-pont.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
