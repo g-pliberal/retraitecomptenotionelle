@@ -14,6 +14,15 @@
         ],
         "createdAt": "2026-09-17T19:27:26.530Z",
         "reason": "Jauge d'attente du chargement, pas un défilement de contenu : mouvement voulu, coupé sous prefers-reduced-motion ; déjà documentée comme voulue à l'action 28 de docs/feuille_de_route.md"
+      },
+      {
+        "rule": "border-accent-on-rounded",
+        "value": "*",
+        "files": [
+          "moteur/style.css"
+        ],
+        "createdAt": "2026-10-23T07:40:07.786Z",
+        "reason": "Claude, session de l'action 173 : section.cle, la seule bordure épaisse signalée, déclare border-radius: 0 (moteur/style.css) ; la carte n'est pas arrondie"
       }
     ]
   }
