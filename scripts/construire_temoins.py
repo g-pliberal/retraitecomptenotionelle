@@ -7,7 +7,9 @@ en reproduire les chiffres, pas les réinventer. Ce script fige donc ce que le
 JavaScript doit retrouver :
 
 * ``tests/temoins/simulations.json`` — un jeu de carrières et de réglages, avec
-  la sortie complète de ``Comparaison.dictionnaire()`` pour chacun ;
+  la sortie complète de ``Comparaison.dictionnaire()`` pour chacun : la
+  carrière de chaque requête, la saisie du portage la bâtit, elle qui restera
+  la seule (``pont.carrieres_des_saisies``), et le moteur Python la simule ;
 * ``tests/temoins/pages.json`` — le HTML rendu de chaque page du site, par le
   site lui-même : son texte n'est écrit qu'en JavaScript (docs/architecture.md,
   § 8), et ``web/site.py`` le fait rendre par node, sur le paquet
@@ -36,14 +38,15 @@ from pathlib import Path
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 
+from retraite_notionnelle import pont  # noqa: E402
 from retraite_notionnelle.carriere import Affiliations  # noqa: E402
-from retraite_notionnelle.config import RACINE_DONNEES  # noqa: E402
+from retraite_notionnelle.config import RACINE_DONNEES, Parametres  # noqa: E402
 from retraite_notionnelle.droit import liquidation as _liquidation  # noqa: E402
 from retraite_notionnelle.saisie import (  # noqa: E402
-    AGE_DEBUT_MINIMAL, AGE_LIQUIDATION_MAXIMAL, Saisie,
+    AGE_DEBUT_MINIMAL, AGE_LIQUIDATION_MAXIMAL,
 )
-from retraite_notionnelle.contexte import Contexte  # noqa: E402
 from retraite_notionnelle.lignes import html_en_morceaux  # noqa: E402
+from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
 from retraite_notionnelle.web.site import rendre  # noqa: E402
 
 DOSSIER = RACINE / "tests" / "temoins"
@@ -1962,18 +1965,30 @@ def _fini(valeur):
     return valeur
 
 
-def _simulations(contexte: Contexte) -> dict:
+def _simulations() -> dict:
     """Chaque témoin : sa requête, son résultat, et les appels de ``liquider``
     qu'il a faits, liquidations d'essai comprises (docs/architecture.md,
-    § 7.8). Le portage fait les mêmes (``tests/js/moteur.test.js``), et un test
-    refuse qu'un témoin dépasse le nombre déclaré (``tests/test_liquidation.py``)."""
+    § 7.8). La carrière de chaque requête, le portage la bâtit, de la saisie
+    qui restera la seule (``pont.carrieres_des_saisies``, action 161) ; le
+    moteur Python la simule, un simulateur par jeu de paramètres, comme le
+    contexte du site. Le portage simule la même (``tests/js/moteur.test.js``),
+    aux mêmes appels, et un test refuse qu'un témoin dépasse le nombre déclaré
+    (``tests/test_liquidation.py``)."""
+    cas = _cas()
+    carrieres, refusees = pont.carrieres_des_saisies(
+        [{"cle": un["nom"], "requete": un["requete"]} for un in cas])
+    if refusees:
+        raise ValueError(f"le portage refuse des témoins : {refusees}")
+    simulateurs: dict[Parametres, Simulateur] = {}
     resultats = {}
-    for cas in _cas():
-        saisie = Saisie.depuis_requete(cas["requete"])
+    for un in cas:
+        parametres, carriere = carrieres[un["nom"]]
+        if parametres not in simulateurs:
+            simulateurs[parametres] = Simulateur(parametres)
         avant = _liquidation.appels()
-        resultat = _fini(contexte.simuler(saisie).dictionnaire())
-        resultats[cas["nom"]] = {
-            "requete": cas["requete"],
+        resultat = _fini(simulateurs[parametres].simuler(carriere).dictionnaire())
+        resultats[un["nom"]] = {
+            "requete": un["requete"],
             "resultat": resultat,
             "appels_liquider": _liquidation.appels() - avant,
         }
@@ -2468,9 +2483,8 @@ def _pages() -> dict:
 
 
 def construire() -> dict[Path, bytes]:
-    contexte = Contexte()
     fichiers = {
-        SIMULATIONS: _simulations(contexte),
+        SIMULATIONS: _simulations(),
         PAGES: _pages(),
     }
     return {

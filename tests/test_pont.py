@@ -257,6 +257,42 @@ def test_le_portage_batit_la_carriere_d_une_saisie_que_le_python_relit_a_l_ident
                 == json.dumps(pont.carriere_en_donnees(contexte.carriere(saisie)))), nom
 
 
+def test_les_temoins_simulent_au_moteur_python_la_carriere_que_le_portage_batit(monkeypatch):
+    """Les témoins de simulations confrontent les deux moteurs, et la saisie
+    n'en a plus qu'un : le portage bâtit la carrière de chaque requête
+    (:func:`pont.carrieres_des_saisies`), le moteur Python la simule, et le
+    portage la simule à son tour (``tests/js/moteur.test.js``). Sur des témoins
+    de chaque forme — un relevé, un conjoint, un décès, l'étranger, un emploi
+    après le départ —, sans le contexte Python, ce que porte le fichier, à
+    l'octet."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    import importlib.util
+
+    chemin = RACINE_PROJET / "scripts" / "construire_temoins.py"
+    specification = importlib.util.spec_from_file_location("construire_temoins", chemin)
+    module = importlib.util.module_from_spec(specification)
+    specification.loader.exec_module(module)
+    temoins = json.loads((RACINE_PROJET / "tests" / "temoins" / "simulations.json")
+                         .read_text(encoding="utf-8"))
+    formes = ("releve", "conjoint", "deces", "etranger1_pays", "emploi_retraite")
+    noms = ["base"] + [next(nom for nom, temoin in temoins.items() if forme in temoin["requete"])
+                       for forme in formes]
+    monkeypatch.setattr(module, "_cas", lambda: [{"nom": nom, "requete": temoins[nom]["requete"]}
+                                                  for nom in noms])
+
+    def interdit(*_args, **_kwargs):
+        raise AssertionError("la saisie Python ne bâtit plus les carrières des témoins")
+
+    monkeypatch.setattr(Contexte, "simuler", interdit)
+    monkeypatch.setattr(Contexte, "carriere", interdit)
+    simulations = module._simulations()
+    assert list(simulations) == noms
+    for nom in noms:
+        assert (json.dumps(simulations[nom], ensure_ascii=False, sort_keys=True, indent=1)
+                == json.dumps(temoins[nom], ensure_ascii=False, sort_keys=True, indent=1)), nom
+
+
 def _comme_node(valeur):
     """Une valeur telle que node l'écrit en JSON : un flottant entier sans sa
     décimale, « 2 » pour 2.0."""
