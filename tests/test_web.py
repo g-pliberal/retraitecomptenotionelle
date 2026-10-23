@@ -3733,6 +3733,34 @@ def test_aucune_page_ne_depasse_son_budget_de_lecture(contexte, chemin):
     assert tableaux <= tableaux_max, f"{chemin} : {tableaux} tableaux ouverts"
 
 
+#: Ce qu'une page porte TOUT DÉPLIÉE, tableaux compris : ce que lit celui qui
+#: ouvre tout. Le budget de lecture borne ce qu'une page impose ; celui-ci, ce
+#: qu'elle propose. Sans lui, ce qu'on ôtait du chemin pouvait grossir, replié,
+#: sans que rien ne le dise : l'accueil portait 4 920 mots au matin du
+#: 23 octobre 2026, dont 1 121 sous la seule question des petites retraites, qui
+#: redisait trois fois ses montants, et 4 489 le soir (action 173, étape 3). Les
+#: menus déroulants et les bulles du glossaire n'y comptent pas : personne ne
+#: les lit à la suite. Une page dont on resserre les mots y prend sa ligne.
+BUDGETS_DEPLIES: dict[str, int] = {
+    "/": 4500,
+}
+
+
+@pytest.mark.parametrize("chemin", list(BUDGETS_DEPLIES))
+def test_une_page_depliee_tient_son_budget(chemin):
+    """Moins de mots, sans perdre une idée : une idée se dit une fois par page,
+    et chaque réponse repliée ne redit pas ce que sa voisine ou le haut de la
+    page a dit."""
+    corps = rendre(chemin, {})[1]
+    sans_bulles = re.sub(r'<span class="bulle"[^>]*hidden>.*?</span>', " ", corps,
+                         flags=re.S)
+    lu = re.sub(r"<select\b[^>]*>.*?</select>", " ", sans_bulles, flags=re.S)
+    mots = _mots(lu)
+    assert mots <= BUDGETS_DEPLIES[chemin], (
+        f"{chemin} : {mots} mots tout déplié, {BUDGETS_DEPLIES[chemin]} au plus"
+    )
+
+
 def test_la_page_de_resultats_replie_son_detail():
     """Qui vient de calculer sa pension veut son chiffre, pas une leçon.
 

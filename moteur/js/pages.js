@@ -15572,9 +15572,7 @@ niveau des pensions notionnelles dépend d'un réglage annuel qu'il calcule sans
 l'appliquer. Nous préférons un chiffre discutable à une promesse qu'on ne peut
 pas discuter.</p>
 <p class="discret">Le Parti libéral français, septembre 2026.</p>
-</div>
-<p class="discret">Le modèle, les données et cette page sont publiés sous
-licence libre : <a href="${g.DEPOT}">le dépôt</a>.</p>`;
+</div>`;
 }
 
 /**
@@ -15772,9 +15770,8 @@ d'aujourd'hui baisse ainsi de ${baisseRetraite} en médiane.`;
     ["Ma retraite va-t-elle baisser ?", `
 <p><strong>Le plus souvent, elle sera plus basse que ce que le système actuel
 promet${ordre}.</strong>${combien} Votre retraite vaudra ce que vous aurez
-cotisé, alors que le système actuel promet davantage que ce que les cotisations
-paient, et que ses recettes ne suffisent déjà plus à tenir cette promesse. En
-échange, un salarié du privé cotise ${impose} au lieu de ${aujourdHui}, et son
+cotisé ; le système actuel promet davantage que ce que les cotisations paient,
+et ses recettes n'y suffisent déjà plus. En échange, un salarié du privé cotise ${impose} au lieu de ${aujourdHui}, et son
 salaire net augmente. Pour votre carrière, ${simulateur} met les deux montants
 côte à côte, avec ce que chacun des deux systèmes a vraiment de quoi
 payer.</p>`, ""],
@@ -15832,13 +15829,21 @@ Seule l'épargne à votre nom l'est (${capitalise}, et ce que vous y ajoutez), s
 des titres d'État parmi les mieux notés de la zone euro, gardés jusqu'à leur
 échéance : aucune action, aucun pari.</p>
 ${programmeCapitalisation(contexte)}`, "la-part-capitalisee"],
+    // Ce que l'État cotisera se disait deux fois : ici, et sous la fiche de
+    // paie, à la suite des impôts supprimés. Il ne se dit plus qu'ici, où le
+    // lecteur le cherche (action 173, étape 3).
     ["Et les fonctionnaires, les régimes spéciaux ?", `
 <p>Ils rejoignent le même compte, au même taux que tout le monde :
 <strong>à cotisation égale, pension égale</strong>, quel que soit le statut, et
-les ${regimes} barèmes d'aujourd'hui disparaissent. L'État cotisera ${taux} comme
-tout employeur ; il gardera ce qu'il payait pour des départs anticipés, qui
-disparaissent, et du reste de ce qu'il cesse de verser, la moitié ira au
-traitement de ses agents, l'autre moitié aux pensions déjà promises.</p>`, ""],
+les ${regimes} barèmes d'aujourd'hui disparaissent.
+<strong>Les employeurs publics suivent la même règle.</strong> L'État verse
+aujourd'hui pour ses fonctionnaires un taux qui n'est pas un prix du travail,
+mais le solde qui équilibre leur régime ; il cotisera ${taux} comme tout
+employeur. Il gardera ce qu'il payait pour des départs anticipés, qui
+disparaissent ; du reste de ce qu'il cesse de verser, la moitié ira au
+traitement de ses agents, l'autre moitié aux pensions déjà promises, qui
+restent dues. C'est la seule augmentation de traitement que ce programme
+contienne, et elle n'est pas petite.</p>`, ""],
     ["Comment passe-t-on d'un système à l'autre ?",
       programmeTransition(contexte), "la-transition"],
     ["Combien cela coûte-t-il, et qui paie ?", `
@@ -15886,11 +15891,10 @@ function programmeJustice(contexte) {
 </ul>
 
 <h4>Entre deux générations</h4>
-<p>C'est ce que le système actuel tient le plus mal. Une pension y est promise
-par une règle et payée par la génération suivante ; quand le compte n'y est pas,
-la règle change, toujours au détriment de ceux qui n'ont pas encore
-liquidé. Ce qu'un euro cotisé rapporte dépend ainsi de l'année de naissance,
-sans que personne ne l'ait voté.</p>
+<p>C'est ce que le système actuel tient le plus mal : une pension y est promise
+par une règle et payée par la génération suivante, la règle change quand le
+compte n'y est pas, et ce qu'un euro cotisé rapporte dépend ainsi de l'année de
+naissance, sans que personne ne l'ait voté.</p>
 <ul class="serree">
   <li><strong>Le rendement est le même pour tous</strong> : la croissance de la
   masse des salaires, c'est-à-dire exactement ce que la répartition peut payer à
@@ -16159,43 +16163,35 @@ function programmeGarantie(contexte) {
 <h3>Le plancher, et ce qu'il change pour les petites pensions</h3>
 <p>Le système actuel superpose l'ASPA, le minimum contributif, le minimum
 garanti de la fonction publique, l'assurance vieillesse des parents au foyer,
-les majorations de durée et la majoration pour trois enfants. Chacun a son
-barème, son âge et sa condition. Ensemble, ils rendent toute pension modeste
-impossible à prévoir.</p>
-<p>Nous les remplaçons par <strong>une seule prestation</strong> : différentielle
-comme l'ASPA, servie à partir de 65 ans comme elle, financée par l'impôt. Mais
-<strong>individualisée</strong>. Chacun est comparé à son propre plancher, sans
-que la pension du conjoint entre dans le calcul.</p>
-<ul class="serree">
-  <li>${g.euros(base.garantie_vieillesse_mensuelle)} par mois et par personne ;</li>
-  <li>${g.euros(base.allocation_isolement_mensuelle)} de plus pour qui vit seul,
-  soit ${g.euros(plancherSeul)} ;</li>
-  <li>en euros de ${base.annee_euros_garantie_vieillesse}, revalorisés sur les
-  prix.</li>
-</ul>
+les majorations de durée et la majoration pour trois enfants, chacun avec son
+barème, son âge et sa condition : toute pension modeste en devient impossible
+à prévoir.</p>
+<p>Nous les remplaçons par <strong>une seule prestation</strong>, différentielle
+comme l'ASPA mais <strong>individualisée</strong>, en euros de
+${base.annee_euros_garantie_vieillesse} revalorisés sur les prix.</p>
 <p><strong>Une avance, pas un don.</strong> Ce que la garantie verse est une
-créance de l'État sur celui qui la reçoit. Elle porte intérêt au taux auquel
-l'État emprunte, pour que les finances publiques n'y perdent rien, et elle est
-<strong>reprise sur la succession dès le premier euro</strong>, là où l'ASPA
-n'est récupérée qu'au-delà d'un seuil d'actif net. Quatre règles l'encadrent
-:</p>
+créance de l'État, qui porte intérêt au taux auquel il emprunte, pour que les
+finances publiques n'y perdent rien, et qui est <strong>reprise sur la
+succession dès le premier euro</strong>, là où l'ASPA n'est récupérée
+qu'au-delà d'un seuil d'actif net. Quatre règles l'encadrent :</p>
 <ul class="serree">
   <li>elle ne s'exerce que sur ce que la succession contient : les héritiers
-  ne paient jamais de leur poche, et ce que l'actif ne couvre pas est
-  abandonné — c'est cette part-là, et elle seule, que l'impôt finance ;</li>
+  ne paient jamais de leur poche, et l'impôt ne finance que ce que l'actif ne
+  couvre pas ;</li>
   <li>le logement est repris comme le reste, mais la reprise attend le décès
   du conjoint survivant qui l'occupe, les intérêts courant entre-temps ;</li>
-  <li>les donations faites depuis l'ouverture de la garantie, ou dans les dix
-  ans qui l'ont précédée, sont réintégrées : la créance se poursuit contre le
-  donataire, à hauteur de ce qu'il a reçu et jamais au-delà, comme l'aide
-  sociale départementale le fait déjà ; les primes d'assurance-vie versées
-  dans la même fenêtre de même, contre leur bénéficiaire, pour qu'un placement
-  fait à soixante ans ne mette pas l'épargne hors d'atteinte ;</li>
+  <li>les donations des dix ans qui précèdent la garantie, ou faites depuis,
+  sont réintégrées, comme l'aide sociale départementale le fait déjà : la
+  créance se poursuit contre le donataire, à hauteur de ce qu'il a reçu ; de
+  même les primes d'assurance-vie de cette période, contre leur bénéficiaire,
+  pour qu'un placement fait à soixante ans ne mette pas l'épargne hors
+  d'atteinte ;</li>
   <li>la créance est garantie par une hypothèque légale inscrite dès le
   premier versement, de sorte qu'un bien donné la porte avec lui.</li>
 </ul>
 <p>Elle se demande, comme l'ASPA, et se refuse : personne ne se voit imposer
-une dette. Le programme retient qu'un ayant droit sur deux la réclame, ce que
+une dette, et qui préfère transmettre plutôt que recevoir peut ne pas la
+réclamer. Le programme retient qu'un ayant droit sur deux la réclame, ce que
 la DREES observe sur l'ASPA, et chiffre son coût ainsi.</p>
 <p>Le 11 juin 2026, l'Assemblée nationale a voté, sans une voix contre, <a
 href="https://www.assemblee-nationale.fr/dyn/17/textes/l17t0308_texte-adopte-seance">la
@@ -16207,9 +16203,8 @@ payée par l'impôt de tous, y compris de ceux qui n'auront rien à transmettre 
 <strong>la collectivité doit à chacun un minimum de son vivant, et rien à ses
 héritiers.</strong></p>
 <h3>Le minimum vieillesse est d'abord une affaire de femmes</h3>
-<p>L'échantillon interrégimes de retraités de la DREES le mesure. Rapportées
-au plancher que nous proposons, les pensions de droit direct de ${millesime} se répartissent ainsi
-:</p>
+<p>L'échantillon interrégimes de retraités de la DREES le mesure, sur les
+pensions de droit direct de ${millesime} :</p>
 ${g.tableau(
     ["Retraités", "Pension sous le plancher", "Ce qui leur manque, en moyenne"],
     [["Femmes", g.pourcentage(sousPlancher.F.partBeneficiaires, false, 0),
@@ -16222,50 +16217,42 @@ ${g.tableau(
     true,
   )}
 <p>Deux femmes retraitées sur cinq touchent aujourd'hui moins que ce plancher,
-contre moins d'un homme sur cinq. La raison n'est pas mystérieuse : carrières
-interrompues, temps partiels, salaires plus bas. La dernière colonne dit autre
-chose, et il faut la lire aussi : l'homme qui tombe sous le plancher tombe en
-général plus bas que la femme. Ils sont rares, et ce sont des carrières très
-courtes ; chez les femmes, c'est la règle plutôt que l'accident. Et la même
-inégalité se
-retrouve à la fin de la vie : au recensement de ${couple.annee}, ${g.pourcentage(couple.part(65, "F"), false, 0)}
-des femmes de 65 ans vivent en couple, et il n'en reste que ${g.pourcentage(couple.part(85, "F"), false, 0)} à
-85 ans, quand ${g.pourcentage(couple.part(85, "H"), false, 0)} des hommes du même âge vivent encore avec
-quelqu'un. Les femmes vivent plus longtemps, elles épousent des hommes plus
-âgés, et elles finissent seules : la <strong>veuve pauvre</strong> est la
+contre moins d'un homme sur cinq : carrières interrompues, temps partiels,
+salaires plus bas. La dernière colonne se lit aussi : l'homme qui tombe sous
+le plancher tombe en général plus bas, mais ce sont de rares carrières très
+courtes ; chez les femmes, c'est la règle plutôt que l'accident. La même
+inégalité se retrouve à la fin de la vie : au recensement de ${couple.annee},
+${g.pourcentage(couple.part(65, "F"), false, 0)} des femmes de 65 ans vivent en
+couple, ${g.pourcentage(couple.part(85, "F"), false, 0)} à 85 ans, quand
+${g.pourcentage(couple.part(85, "H"), false, 0)} des hommes du même âge vivent
+encore avec quelqu'un. Les femmes vivent plus longtemps, épousent des hommes
+plus âgés, et finissent seules : la <strong>veuve pauvre</strong> est la
 figure centrale de ce dispositif, hier comme demain.</p>
 
 <h3 id="la-veuve" tabindex="-1">Ce que cela change pour une veuve, et pour ses
 enfants</h3>
-<p>Il faut le dire sans détour, parce que c'est le point où notre proposition
-prend le plus. Aujourd'hui, une veuve touche une <strong>pension de
-réversion</strong> : une part de la pension de son mari, versée jusqu'à sa
-mort, qu'elle ne rembourse jamais, et qui ne touche pas à ce que ses enfants
-hériteront. <strong>Notre système ne sert aucune réversion</strong> : chacun
-reçoit ce qu'il a cotisé, et rien de plus. Pour une femme dont la pension
-propre est petite, ce qui prend la place de la réversion est cette
-garantie-là.</p>
-<p>Et cette garantie est une avance. La veuve la touche pendant les années où
-elle vit seule, la créance s'accumule, et elle est reprise à sa mort sur la
-succession. Celle-ci porte le patrimoine du couple, et souvent aussi l'avance
-de son mari, que la règle a laissée courir jusque-là. <a
+<p>Disons-le sans détour : c'est le point où notre proposition prend le plus.
+Aujourd'hui, une veuve touche une <strong>pension de réversion</strong> : une
+part de la pension de son mari, jusqu'à sa mort, qu'elle ne rembourse jamais
+et qui ne touche pas à ce que ses enfants hériteront. <strong>Notre système ne
+sert aucune réversion</strong> : chacun reçoit ce qu'il a cotisé, et rien de
+plus. Pour une femme dont la pension propre est petite, la garantie en prend
+la place.</p>
+<p>Or cette garantie est une avance : la créance s'accumule tant que la veuve
+vit seule, et se reprend à sa mort sur la succession, qui porte le patrimoine
+du couple, et souvent aussi l'avance de son mari, laissée courir jusque-là. <a
 href="${g.lien("/cout")}">La page Coût</a> chiffre ce que cela donne : les
 bénéficiaires de la garantie sont aux deux tiers des femmes, une succession
 porte en moyenne plus d'une avance, et quand le patrimoine est une maison
 modeste, l'héritage y passe en entier. Les héritiers ne paient jamais de leur
-poche, la règle le garantit ; mais ils héritent souvent de rien.</p>
-<p>C'est un choix, et nous l'assumons pour ce qu'il est : un minimum garanti à
-chacun de son vivant, financé d'abord par ce que ce minimum laisse derrière
-lui, avant de l'être par le contribuable. Il se refuse, comme l'ASPA se
-demande. Ceux qui préfèrent transmettre plutôt que recevoir peuvent ne pas le
-réclamer, et le programme retient qu'un ayant droit sur deux fera ce
-choix.</p>
+poche ; mais ils héritent souvent de rien.</p>
+<p>C'est un choix, et nous l'assumons : un minimum garanti à chacun de son
+vivant, financé d'abord par ce qu'il laisse derrière lui, avant de l'être par
+le contribuable.</p>
 
-<p>Le tableau du haut de page le montre : l'ASPA regarde les ressources du
-foyer, et à 300 € et 1 500 € le couple dépasse son plafond et ne reçoit rien.
-La garantie regarde chacun, et sert 500 € au premier. C'est ce changement
-d'assiette, plus que le montant, qui fait la différence pour les femmes aux
-pensions les plus faibles.
+<p>Le tableau du haut de page le montre : c'est le changement d'assiette, du
+foyer à la personne, plus que le montant, qui fait la différence pour les
+femmes aux pensions les plus faibles.
 <a href="${g.lien("/cout")}">Ce qu'elle coûterait</a> est calculé sur la
 distribution réelle des pensions, non sur des cas types.</p>`;
 }
@@ -16298,12 +16285,9 @@ function programmeCapitalisation(contexte) {
 <h3>La part capitalisée : ${taux} obligatoires${libre}</h3>
 <p>À compter de ${base.annee_bascule}, ${taux} de votre rémunération
 sont prélevés <strong>en plus</strong> des ${repartition_} de la répartition, et
-placés à votre nom sur des titres sans risque. Ce capital ne passe pas par le
-compte notionnel : il vous revient, dans un plan d'épargne retraite, l'enveloppe
-qui existe déjà et que des millions de Français détiennent. Les années d'avant
-ne changent pas :
-elles gardent les taux qui étaient les leurs, et qui a déjà liquidé ne cotise
-rien.</p>
+placés à votre nom dans un plan d'épargne retraite, l'enveloppe que des
+millions de Français détiennent déjà, sans passer par le compte notionnel. Les
+années d'avant gardent leurs taux, et qui a déjà liquidé ne cotise rien.</p>
 <p><strong>À ces ${taux} s'ajoutent ${volontaire} que personne ne vous
 impose.</strong> Le système actuel prélève
 ${g.pourcentage(TAUX_ACTUEL_TOTAL, false, 0)} de la rémunération d'un salarié
@@ -16316,23 +16300,21 @@ libre de ne pas le faire : les montants du simulateur disent aussi ce que vous
 toucheriez sans.</p>
 <ul class="serree">
   <li><strong>Il vous appartient.</strong> Si vous mourez avant d'avoir liquidé,
-  le capital revient à vos héritiers, intégralement. Une pension de répartition,
-  elle, s'éteint avec vous sans rien laisser.</li>
-  <li><strong>Il ne sort qu'à la retraite.</strong> Pas d'achat de résidence
-  principale, pas de sortie anticipée : l'argent n'en sort qu'en rente viagère,
-  ou par l'héritage. C'est vrai des ${taux} obligatoires comme des ${volontaire}
-  que vous ajoutez.</li>
-  <li><strong>Il est placé sans risque.</strong> Des titres d'État portés
-  jusqu'à leur échéance : longue tant que la retraite est loin, courte à
-  l'approche du départ.</li>
+  il revient en entier à vos héritiers.</li>
+  <li><strong>Il ne sort qu'à la retraite.</strong> Ni achat de résidence
+  principale, ni sortie anticipée : l'argent n'en sort qu'en rente viagère, ou
+  par l'héritage, pour les ${taux} obligatoires comme pour les ${volontaire} que
+  vous ajoutez.</li>
+  <li><strong>Il est placé sans risque.</strong> L'échéance des titres est
+  longue tant que la retraite est loin, courte à l'approche du départ.</li>
   <li><strong>Il ne remplace rien.</strong> La retraite par répartition reste ce
   qu'elle est, et le compte notionnel la calcule sans regarder ce capital. Les
   deux montants sont affichés côte à côte, jamais confondus.</li>
 </ul>
-<p>Ce que cela coûte est chiffré : l'enveloppe prélève des frais, et le
-simulateur les montre euro par euro, comme il montre le rendement qui reste. La
-page <a href="${g.lien("/methode")}">Méthode</a> dit à quels
-taux l'argent est placé, d'où ils viennent et ce qu'ils supposent.</p>`;
+<p>L'enveloppe prélève des frais : le simulateur les montre euro par euro, avec
+le rendement qui reste, et la page <a href="${g.lien("/methode")}">Méthode</a>
+dit à quels taux l'argent est placé, d'où ils viennent et ce qu'ils
+supposent.</p>`;
 }
 
 /** Les six étapes, et l'année où chacune produit son effet. */
@@ -16425,42 +16407,31 @@ function programmeRestitution(contexte) {
 salaires</h3>
 <p>La retraite est financée à ${g.pourcentage(poids, false, 0)} par des
 <strong>impôts</strong> (${milliards(part.posteAbandonne * pib, 0)} en
-${annee}) qui n'ouvrent de droit à personne. Un compte notionnel ne sait pas les porter au crédit de qui que ce
-soit : il ne rend que ce qui a été cotisé. <strong>Nous cessons donc de les
-affecter à la retraite.</strong>${tvaALeurPlace}</p>
-<p><strong>Et nous ne les gardons pas.</strong> Ne rien dire de cette recette
-reviendrait à la laisser au budget, c'est-à-dire à la consacrer tout entière au
-déficit. Nous la partageons en deux :
+${annee}) qui n'ouvrent de droit à personne : un compte notionnel, qui ne rend
+que ce qui a été cotisé, ne sait les porter au crédit de personne.
+<strong>Nous cessons donc de les affecter à la retraite.</strong>${tvaALeurPlace}</p>
+<p><strong>Et nous ne les gardons pas.</strong> Laissée au budget, cette
+recette irait tout entière au déficit. Nous la partageons en deux :
 <strong>${milliards(part.rendu * pib, 0)} rendus aux salaires</strong>, autant
 pour <strong>éteindre de la dette</strong>.</p>
 <ul class="serree">
   <li><strong>La taxe sur les salaires est supprimée</strong>, pour la part qui
-  finance la retraite, soit ${g.pourcentage(0.5835, false, 2)} de son produit. La
-  paient les employeurs qui ne sont pas assujettis à la TVA : hôpitaux,
-  cliniques, banques, assurances, associations.</li>
-  <li><strong>Le forfait social est supprimé</strong> : il est assis sur
-  l'intéressement, la participation et l'épargne salariale, et son produit va
-  en entier à l'assurance vieillesse. Avec la taxe sur les salaires, cela fait
+  finance la retraite, ${g.pourcentage(0.5835, false, 2)} de son produit ; la
+  paient les employeurs non assujettis à la TVA : hôpitaux, cliniques, banques,
+  assurances, associations.</li>
+  <li><strong>Le forfait social est supprimé</strong> : assis sur
+  l'intéressement, la participation et l'épargne salariale, il va en entier à
+  l'assurance vieillesse. Avec la taxe sur les salaires, cela fait
   ${milliards(part.supprimeSurLaRemuneration * pib, 0)}.</li>
   <li><strong>La CSG sur les revenus d'activité baisse de
   ${g.nombre(part.pointsCsg * 100, 2)} point</strong> : c'est le solde de ce que
   nous rendons, et l'assiette la plus large qui porte sur le travail.</li>
 </ul>
-<p>Un mot d'honnêteté sur ce dernier point, parce que l'intuition dit le
-contraire : <strong>la CSG sur les revenus d'activité ne finance aujourd'hui
-aucune retraite.</strong> Ses ${g.pourcentage(0.092)} vont à la branche famille,
-à l'assurance maladie, à la dette sociale, à l'assurance chômage et à
-l'autonomie. Nous ne vous rendons donc pas une cotisation : nous supprimons un
-impôt, avec de l'argent que la retraite n'encaisse plus.</p>
-<p><strong>Les employeurs publics suivent la même règle.</strong> L'État verse
-aujourd'hui, pour la retraite de ses fonctionnaires, un taux qui n'est pas un
-prix du travail mais le solde qui équilibre le régime. Il cotisera
-${g.pourcentage(base.taux_cotisation_liberal, false, 0)} comme tout
-employeur. Il gardera ce qu'il payait pour des départs anticipés, puisque nous
-les supprimons ; du reste de ce qu'il cesse de verser, la moitié ira au
-traitement des agents, l'autre moitié paiera les pensions déjà promises, qui
-restent dues. C'est la seule augmentation de traitement que ce programme
-contienne, et elle n'est pas petite.</p>`;
+<p>L'intuition dit le contraire, mais <strong>la CSG sur les revenus d'activité
+ne finance aujourd'hui aucune retraite.</strong> Ses ${g.pourcentage(0.092)} vont
+à la branche famille, à l'assurance maladie, à la dette sociale, à l'assurance
+chômage et à l'autonomie : nous ne vous rendons pas une cotisation, nous
+supprimons un impôt, avec de l'argent que la retraite n'encaisse plus.</p>`;
 }
 
 
@@ -16677,9 +16648,10 @@ function programmeBlocages(contexte) {
     "Cinq points de blocage, regardés avant de choisir",
     true,
   );
+  // Une phrase d'entrée redisait le titre et la légende du tableau : partie
+  // le 23 octobre 2026 (action 173, étape 3).
   return `
 <h3>Ce qui pouvait nous arrêter, et ce que nous en avons fait</h3>
-<p>Nous avons cherché ce qui arrêterait cette proposition avant de la défendre. Voici les cinq points, ce que nous avons mesuré, et ce que nous en faisons.</p>
 ${points}
-<p class="discret">Mesures de trois scripts du dépôt — le solde sous quatre régimes uniques, le stock à l'âge légal, la proposition prospective — et du coût par défaut. Cette page ne les recalcule pas : elle les cite, et des tests les recalculent à chaque modification du modèle. Leur détail, décision par décision, est dans la feuille de route du <a href="${g.DEPOT}/blob/main/docs/feuille_de_route.md">dépôt</a>.</p>`;
+<p class="discret">Mesures de trois scripts du dépôt — le solde sous quatre régimes uniques, le stock à l'âge légal, la proposition prospective — et du coût par défaut. Cette page les cite sans les recalculer ; des tests le font à chaque modification du modèle, et la feuille de route du <a href="${g.DEPOT}/blob/main/docs/feuille_de_route.md">dépôt</a> les détaille, décision par décision.</p>`;
 }
