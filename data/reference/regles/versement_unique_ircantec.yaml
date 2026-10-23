@@ -154,13 +154,17 @@ sources:
     date: 2026-10-13
 code:
   python: >-
-    droit/completer.py : verser_en_capital, salaire_de_reference_ircantec, completer ;
+    droit/completer.py : verser_en_capital, salaire_de_reference_points, completer ;
     scenarios/actuel.py : FichesDatees
   javascript: >-
-    moteur/js/droit/completer.js : verserEnCapital, salaireDeReferenceIrcantec, completer ;
-    moteur/js/regimes.js : FichesDatees
-  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+    moteur/js/droit/completer.js : verserEnCapital, salaireDeReferencePoints,
+    completer ; moteur/js/regimes.js : FichesDatees
+  parametres: >-
+    contenu.parametres de chaque version : existe, regimes, seuil_points, fiabilite
   tests: [tests/test_versements_uniques.py]
+  moteur: >-
+    verser_en_capital prend le salaire de référence de l'année, prix d'achat du point
+    (salaire_de_reference_points). Le paquet du site porte ses versions.
 referents:
   trajectoire:
     equivalent: >-

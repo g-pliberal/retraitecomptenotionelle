@@ -324,17 +324,21 @@ sources:
     Lire l'avenant n° 2 du 24 juillet 1992 à la convention du 1er janvier 1990, qui
     pourrait dater le précompte de 1,2 %.
 code:
-  python:
-  - moteur/compte.py, ConstructeurCompte._cotisation_ligne et _versement_chomage
-  javascript:
-  - compte.js, _cotisationLigne et _versementChomage
-  parametres:
-  - legislation/chomage_complementaires.yaml (assurance, solidarite,
-    participation_allocataire)
+  python: >-
+    moteur/compte.py : ConstructeurCompte._cotisation_ligne,
+    ConstructeurCompte._versement_chomage
+  javascript: >-
+    moteur/js/compte.js : ConstructeurCompte._cotisationLigne,
+    ConstructeurCompte._versementChomage
+  parametres: >-
+    legislation/chomage_complementaires.yaml : assurance, solidarite,
+    participation_allocataire
   tests:
   - tests/test_chomage_complementaires.py
-  - tests/test_simulateur.py, test_la_garantie_minimale_vaut_pour_une_annee_de_chomage
-  - témoins preretraite_fne_cadre, preretraite_fne_garantie
+  - >-
+    tests/test_simulateur.py : test_la_garantie_minimale_vaut_pour_une_annee_de_chomage
+  - >-
+    tests/temoins/simulations.json : preretraite_fne_cadre, preretraite_fne_garantie
 effet: >-
   Le compte d'une année chômée descend, aux scénarios 2, 4 et 6, de la cotisation entière à
   ce que l'Unédic ou l'État versait : treize témoins sur 694 baissent, de 0,84 % en médiane

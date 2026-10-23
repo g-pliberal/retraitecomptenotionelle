@@ -229,21 +229,25 @@ sources:
     1983, agréé par un avis du 31 décembre 1987 (JORFTEXT000000888235), dont l'index ne
     porte que le titre.
 code:
-  python:
-  - carriere.py, Affiliations.services_passes
-  - droit/acquerir.py, acquerir (pension prise avant la généralisation, fiabilité estimée)
-  - moteur/compte.py, ConstructeurCompte._cotisation_ligne
-  javascript:
-  - regimes.js, Affiliations.servicesPasses
-  - droit/acquerir.js
-  - compte.js, cotisationLigne
-  parametres:
-  - legislation/affiliations.yaml (salarie_nouvelle_caledonie,
-    salarie_saint_pierre_et_miquelon)
+  python: >-
+    carriere.py : Affiliations.services_passes ; droit/acquerir.py : acquerir ;
+    moteur/compte.py : ConstructeurCompte._cotisation_ligne
+  javascript: >-
+    moteur/js/regimes.js : Affiliations.servicesPasses ; moteur/js/droit/acquerir.js :
+    acquerir ; moteur/js/compte.js : ConstructeurCompte._cotisationLigne
+  parametres: >-
+    legislation/affiliations.yaml : affiliations.salarie_nouvelle_caledonie,
+    affiliations.salarie_saint_pierre_et_miquelon
   tests:
   - tests/test_services_passes.py
-  - témoins chomage_et_services_passes_caledoniens, chomage_saint_pierre_et_miquelon, et
-    le balayage des deux statuts
+  - >-
+    tests/temoins/simulations.json : chomage_et_services_passes_caledoniens,
+    chomage_saint_pierre_et_miquelon, et le balayage des deux statuts,
+    statut_salarie_nouvelle_caledonie et statut_salarie_saint_pierre_et_miquelon par
+    génération
+  moteur: >-
+    acquerir ne compte les services passés qu'à une pension prise depuis la
+    généralisation, et leurs points sont estimés.
 effet: >-
   Les salariés de Nouvelle-Calédonie, et d'un an ceux de Saint-Pierre-et-Miquelon. Le
   compte notionnel du salarié calédonien ne porte plus d'Arrco avant 1995, quand il en

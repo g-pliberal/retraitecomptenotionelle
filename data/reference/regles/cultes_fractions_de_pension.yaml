@@ -324,32 +324,36 @@ code:
     des trimestres d'avant 1998 — cent cinquante jusqu'au 31 octobre 2006, la durée de
     R. 351-6 ensuite —, décotée comme l'autre quand le taux n'est pas plein, surcotée et
     majorée jusqu'au minimum contributif quand il l'est.
-  python:
-  - droit/cultes.py
-  - droit/liquider.py, liquider_chaque_regime
-  - droit/completer.py, completer (la fraction d'avant 1998 hors du minimum contributif)
-  - scenarios/actuel.py, MaximumDesCultes
-  - carriere.py, Affiliations.validee_sans_cotisation
-  - droit/compter.py, compter ; droit/ouvrir.py, ouvrir
-  javascript:
-  - droit/cultes.js
-  - droit/liquider.js
-  - droit/completer.js
-  - scenario-actuel.js, MaximumDesCultes
-  - regimes.js, Affiliations.valideeSansCotisation
-  - droit/compter.js ; droit/ouvrir.js
-  parametres:
-  - legislation/cultes_maximum_pension.csv
-  - >-
-    legislation/cultes_cotisations_forfaitaires.csv, les deux cotisations de 1979 à 1997,
-    que les comptes notionnels portent (`moteur/compte.py`, `CotisationsDesCultes`) au
-    lieu du forfait du SMIC aux taux du régime général
-  - regimes/cavimac.yaml (`fractions_des_cultes`, l'âge de soixante-cinq ans jusqu'en
-    2006)
-  - legislation/affiliations.yaml (ministre_du_culte, membre_congregation)
+    completer laisse la fraction d'avant 1998 hors du minimum contributif. Les comptes
+    notionnels portent les deux cotisations forfaitaires de 1979 à 1997
+    (CotisationsDesCultes, que ConstructeurCompte lit) au lieu du forfait du SMIC aux
+    taux du régime général. La fiche du régime porte l'âge de soixante-cinq ans jusqu'en
+    2006 (age_ouverture, age_taux_plein).
+  python: >-
+    droit/cultes.py : durees, part_de_l_ecart, fraction_d_avant_1998 ;
+    droit/liquider.py : liquider_chaque_regime ; droit/completer.py : completer ;
+    scenarios/actuel.py : MaximumDesCultes ; donnees/regimes.py : CotisationsDesCultes ;
+    carriere.py : Affiliations.validee_sans_cotisation ; droit/compter.py : compter ;
+    droit/ouvrir.py : ouvrir
+  javascript: >-
+    moteur/js/droit/cultes.js : durees, partDeLEcart, fractionDAvant1998 ;
+    moteur/js/droit/liquider.js : liquiderChaqueRegime ; moteur/js/droit/completer.js :
+    completer ; moteur/js/regimes.js : MaximumDesCultes, CotisationsDesCultes,
+    Affiliations.valideeSansCotisation ; moteur/js/droit/compter.js : compter ;
+    moteur/js/droit/ouvrir.js : ouvrir
+  parametres: >-
+    legislation/cultes_maximum_pension.csv ;
+    legislation/cultes_cotisations_forfaitaires.csv ; regimes/cavimac.yaml :
+    fractions_des_cultes, age_ouverture, age_taux_plein ;
+    legislation/affiliations.yaml : affiliations.ministre_du_culte,
+    affiliations.membre_congregation
   tests:
   - tests/test_cultes.py
-  - le balayage des deux statuts et les témoins `cultes_*`
+  - >-
+    tests/temoins/simulations.json : cultes_avant_1998,
+    cultes_deux_fractions_avant_2006, cultes_taux_minore, cultes_taux_plein_depuis_2010,
+    et le balayage des deux statuts, statut_ministre_du_culte et
+    statut_membre_congregation par génération
 effet: >-
   Les ministres des cultes et les membres des congrégations, au scénario 1, partis à
   soixante-quatre ans : + 98 % nés en 1925, + 30 % en 1945, + 5 % en 1955, moins de 1 % en

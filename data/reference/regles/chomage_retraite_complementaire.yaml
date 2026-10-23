@@ -388,26 +388,29 @@ sources:
     Lire les « règles antérieures » au calcul sur le salaire journalier de référence, pour
     les périodes indemnisées avant 1997, que le guide de 2018 ne détaille pas.
 code:
-  python:
-  - donnees/chargement.py, ChomageComplementaires
-  - carriere.py, _revenu_reference
-  - droit/acquerir.py, acquerir (premier jour validé, durée minimale, taux de la
-    solidarité, garantie de la préretraite)
-  - scenarios/actuel.py, ValeursPoint.garantie (taux_contractuel)
-  javascript:
-  - carriere.js, ChomageComplementaires, revenuReference
-  - droit/acquerir.js
-  - regimes.js, garantie (tauxContractuel)
-  parametres:
-  - legislation/chomage_complementaires.yaml
-  - legislation/periodes_non_travaillees.csv (chomage_indemnise, chomage_solidarite,
-    preretraite_fne)
+  python: >-
+    donnees/chargement.py : ChomageComplementaires ; carriere.py : _revenu_reference ;
+    droit/acquerir.py : acquerir ; scenarios/actuel.py : ValeursPoint.garantie
+  javascript: >-
+    moteur/js/carriere.js : ChomageComplementaires, revenuReference ;
+    moteur/js/droit/acquerir.js : acquerir ; moteur/js/regimes.js :
+    ValeursPoint.garantie
+  parametres: >-
+    legislation/chomage_complementaires.yaml ;
+    legislation/periodes_non_travaillees.csv : chomage_indemnise, chomage_solidarite,
+    preretraite_fne
   tests:
   - tests/test_chomage_complementaires.py
-  - témoins chomage_puis_solidarite_cadre, solidarite_entreprise_recente,
-    solidarite_regime_unifie, chomage_au_dela_de_quatre_plafonds, chomage_avant_1967,
-    preretraite_fne_cadre, preretraite_fne_garantie, chomage_salarie_agricole,
+  - >-
+    tests/temoins/simulations.json : chomage_puis_solidarite_cadre,
+    solidarite_entreprise_recente, solidarite_regime_unifie,
+    chomage_au_dela_de_quatre_plafonds, chomage_avant_1967, preretraite_fne_cadre,
+    preretraite_fne_garantie, chomage_salarie_agricole,
     chomage_et_services_passes_caledoniens, chomage_saint_pierre_et_miquelon
+  moteur: >-
+    acquerir valide le chômage aux complémentaires : son premier jour validé, sa durée
+    minimale, le taux de la solidarité et la garantie de la préretraite, dont
+    ValeursPoint.garantie compte la cotisation au taux contractuel (taux_contractuel).
 effet: >-
   Une année de solidarité vaut, depuis 2019, un tiers de points de moins sur la tranche 1
   et les trois quarts de moins sur la tranche 2 qu'une année d'assurance ; à l'Agirc avant

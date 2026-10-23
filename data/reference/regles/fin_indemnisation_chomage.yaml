@@ -227,21 +227,23 @@ sources:
     l'index du champ social ne porte pas, pour la limite d'âge des allocations d'assurance
     de 1967 à 1983.
 code:
-  python:
-  - droit/ouvrir.py, fin_indemnisation et indemnisation_bornee
-  - droit/releve.py, construire
-  - simulateur.py, Simulateur.simuler
-  javascript:
-  - droit/ouvrir.js, finIndemnisation et indemnisationBornee
-  - droit/releve.js, construire
-  - simulateur.js, simuler
-  parametres:
-  - legislation/chomage_complementaires.yaml (`fin_indemnisation`)
+  python: >-
+    droit/ouvrir.py : fin_indemnisation, indemnisation_bornee ; droit/releve.py :
+    construire ; simulateur.py : Simulateur.simuler
+  javascript: >-
+    moteur/js/droit/ouvrir.js : finIndemnisation, indemnisationBornee ;
+    moteur/js/droit/releve.js : construire ; moteur/js/simulateur.js :
+    Simulateur.simuler
+  parametres: >-
+    legislation/chomage_complementaires.yaml : fin_indemnisation
   tests:
-  - tests/test_chomage_complementaires.py, test_l_indemnisation_cesse_au_taux_plein,
+  - >-
+    tests/test_chomage_complementaires.py : test_l_indemnisation_cesse_au_taux_plein,
     test_la_coupure_d_avant_1984, test_la_coupure_respecte_le_releve
-  - témoins chomage_au_dela_du_taux_plein, chomage_jusqu_a_l_annulation,
-    chomage_apres_65_ans_avant_1983, chomage_coupe_en_avril_1983
+  - >-
+    tests/temoins/simulations.json : chomage_au_dela_du_taux_plein,
+    chomage_jusqu_a_l_annulation, chomage_apres_65_ans_avant_1983,
+    chomage_coupe_en_avril_1983
 effet: >-
   Les carrières qui finissent au chômage après le taux plein : jusqu'au 3 octobre 2026, le
   modèle servait l'allocation jusqu'au départ, si tard qu'il vînt, et avec elle des points

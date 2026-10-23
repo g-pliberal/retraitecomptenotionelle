@@ -205,20 +205,26 @@ sources:
 code:
   python: >-
     droit/reversion.py : reversion, _part_du_survivant, _admis_ailleurs,
-    _jusqu_au_remariage ; droit/liquider.py et droit/commun.py : PensionRegime.capital ;
-    echeancier.py : _pensions_au_deces, _pensions_eues_au_deces ; scenarios/actuel.py :
-    Reversions
+    _jusqu_au_remariage ; droit/liquider.py : prestation_rafp ; droit/commun.py :
+    PensionRegime ; echeancier.py : Echeancier._pensions_au_deces,
+    Echeancier._pensions_eues_au_deces ; scenarios/actuel.py : Reversions
   javascript: >-
     moteur/js/droit/reversion.js : reversion, partDuSurvivant, admisAilleurs,
-    jusquAuRemariage ; moteur/js/droit/liquider.js ; moteur/js/echeancier.js :
-    _pensionsAuDeces, _pensionsEuesAuDeces ; moteur/js/regimes.js : Reversions
+    jusquAuRemariage ; moteur/js/droit/liquider.js : prestationRafp ;
+    moteur/js/echeancier.js : Echeancier._pensionsAuDeces,
+    Echeancier._pensionsEuesAuDeces ; moteur/js/regimes.js : Reversions
   parametres: >-
-    contenu.parametres : taux, rien_apres_un_capital, compte_aux_ressources,
-    ex_conjoints, perte_au_remariage
+    contenu.parametres de chaque version : taux, ex_conjoints, age_minimum,
+    seuil_capital_points, rien_apres_un_capital, compte_aux_ressources,
+    perte_au_remariage, fiabilite
   tests: >-
     tests/test_reversion.py ; les témoins reversion_fonctionnaire,
     reversion_fonctionnaire_mort_en_activite et
     reversion_fonctionnaire_partage_concubinage des simulations
+  moteur: >-
+    PensionRegime porte le capital du RAFP, que prestation_rafp fixe sous le seuil de
+    points (capital) ; un droit versé en capital ne laisse rien à reverser quand la
+    version le dit (rien_apres_un_capital). Le paquet du site porte ses versions.
 historique:
 - >-
   2026-10-04 — née et lue par le moteur à l'étape de l'action 142 qui sert la

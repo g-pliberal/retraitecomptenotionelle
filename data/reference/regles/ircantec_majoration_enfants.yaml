@@ -97,15 +97,18 @@ sources:
     les siens ; une pension prise avant 1971 suit les règlements de ces deux institutions,
     non lus, et le modèle ne la majore pas.
 code:
-  python:
-  - droit/completer.py, _taux_majoration_enfants (le barème propre d'une période)
-  javascript:
-  - droit/completer.js, tauxMajorationEnfants
-  parametres:
-  - regimes/ircantec.yaml (`taux_majoration_enfants`)
+  python: >-
+    droit/completer.py : _taux_majoration_enfants
+  javascript: >-
+    moteur/js/droit/completer.js : tauxMajorationEnfants
+  parametres: >-
+    regimes/ircantec.yaml : taux_majoration_enfants
   tests:
-  - tests/temoins/exemples_officiels.yaml, ircantec_majoration_sept_enfants
-  - les témoins `ircantec_quatre_enfants` et `ircantec_sept_enfants`
+  - >-
+    tests/temoins/exemples_officiels.yaml : ircantec_majoration_sept_enfants
+  - >-
+    tests/temoins/simulations.json : ircantec_quatre_enfants, ircantec_sept_enfants
+  moteur: _taux_majoration_enfants lit le barème propre d'une période.
 effet: >-
   Les affiliés de l'Ircantec qui ont eu quatre enfants ou plus : leur pension de
   l'Ircantec était majorée de 10 % au lieu de 15 à 30 %. La contractuelle des témoins,
