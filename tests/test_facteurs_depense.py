@@ -32,7 +32,10 @@ Ce module tient trois choses :
   l'AWG ; partie pour une part à l'âge légal avec une décote, comme la
   génération 1953, la grille les en rapproche sous la réforme de 2023 entière
   avant 2030, non après (note du 19 octobre 2026, « les départs hors du taux
-  plein »).
+  plein »). Après 2030, ni la décote selon la génération, qui n'en rend qu'un
+  centième, ni l'entrée lue sur la durée validée, qui les fait reculer plus
+  encore, ne les expliquent (note du 23 octobre 2026, « les 65 ans et plus
+  d'après 2030 »).
 """
 
 from __future__ import annotations
@@ -59,6 +62,7 @@ from retraite_notionnelle.facteurs_depense import (
 
 RACINE = Path(__file__).resolve().parents[1]
 TEMOIN = RACINE / "tests" / "temoins" / "ageing_report_france.json"
+TEMOIN_EIC = RACINE / "tests" / "temoins" / "drees_duree_validee_2017.json"
 
 
 @pytest.fixture(scope="module")
@@ -440,6 +444,75 @@ def test_entre_plus_tard_le_salarie_part_plus_tard_et_le_militaire_a_son_heure()
                for decalage in range(-2, 3))
 
 
+def test_le_temoin_de_l_eic_dit_sa_source_et_redonne_ses_cumuls():
+    """Le cumul des trimestres validés par affilié d'avant 23 ans, à la fin de
+    l'année de chaque âge, que la DREES tire de l'échantillon interrégimes de
+    cotisants de 2017 (``tests/temoins/drees_duree_validee_2017.json``,
+    ``scripts/fetch/drees_duree_validee.py``) : les hommes nés en 1960 en
+    avaient validé 102,9 à 47 ans, ceux nés en 1970 96,3 ; les femmes nées en
+    1966, 106,3 à 51 ans. Chaque génération y est suivie de 16 ans à son âge de
+    2017, 71 ans au plus ; un cumul ne baisse pas d'un âge au suivant, et n'y
+    gagne pas plus des quatre trimestres d'une année."""
+    from retraite_notionnelle.facteurs_depense import durees_validees
+
+    temoin = json.loads(TEMOIN_EIC.read_text(encoding="utf-8"))
+    assert "2596_les-droits-valides-au-cours-de-la-carriere" in temoin["source"]
+    assert temoin["champ"] == "Aff_avant_23ans" and temoin["annee_de_l_echantillon"] == 2017
+    durees = durees_validees(temoin)
+    assert durees[("H", 1960)][47] == 102.9
+    assert durees[("H", 1970)][47] == 96.3
+    assert durees[("F", 1966)][51] == 106.3
+    assert {generation for _sexe, generation in durees} == {1942, 1946, 1950,
+                                                           *range(1954, 1995, 2)}
+    for (sexe, generation), cumuls in durees.items():
+        assert sorted(cumuls) == list(range(16, min(71, 2017 - generation) + 1)), (sexe, generation)
+        for age in sorted(cumuls)[1:]:
+            assert 0.0 <= cumuls[age] - cumuls[age - 1] <= 4.0, (sexe, generation, age)
+
+
+def test_lue_sur_la_duree_validee_l_entree_recule_plus_chez_les_hommes():
+    """Au dernier âge que l'EIC voit chez l'une et l'autre, la génération 1970
+    a validé 6,6 trimestres de moins que celle de 1960 chez les hommes, à 47
+    ans (96,3 et 102,9) : un an et trois quarts, au trimestre près, quand son
+    premier trimestre cotisé ne recule que d'un an et quart (test du recul de
+    l'entrée) ; chez les femmes, 3,0 (92,5 et 95,5) : trois quarts d'an, pour
+    un an et demi. Née en 1954, la génération en avait validé 4,2 de plus à 57
+    ans (140,7 et 136,5) : un an plus tôt. La génération 1967 lit ses deux
+    voisines, 1,3 et 1,5 an ; celle de 2000, la dernière que l'EIC suive,
+    1994, qui avait validé 8,8 trimestres de moins à 23 ans (10,2 et 19,0)."""
+    from retraite_notionnelle.facteurs_depense import decalage_par_la_duree, durees_validees
+
+    durees = durees_validees(json.loads(TEMOIN_EIC.read_text(encoding="utf-8")))
+    assert decalage_par_la_duree(durees, "H", 1960, 1960) == 0.0
+    assert decalage_par_la_duree(durees, "H", 1970, 1960) == 1.75
+    assert decalage_par_la_duree(durees, "F", 1970, 1960) == 0.75
+    assert decalage_par_la_duree(durees, "H", 1954, 1960) == -1.0
+    assert decalage_par_la_duree(durees, "H", 1967, 1960) == 1.5
+    assert decalage_par_la_duree(durees, "H", 2000, 1960) == 2.25
+
+
+def test_entre_selon_sa_duree_validee_le_salarie_de_1966_part_trois_mois_plus_tard():
+    """Né en 1966, un homme avait validé à 51 ans 5,2 trimestres de moins que
+    celui de 1960 (111,5 et 116,7) : entré un an et quart plus tard, et non un
+    an comme son premier trimestre cotisé le dit, le salarié au salaire moyen
+    part quinze mois après la date de la grille, et non douze, la grille
+    comptant ses trimestres depuis le mois de son entrée (172 trimestres,
+    L. 161-17-3). Le militaire, qui part après ses services, garde sa date."""
+    from retraite_notionnelle import Parametres
+    from retraite_notionnelle.castypes import GRILLE_DU_COUT
+    from retraite_notionnelle.facteurs_depense import dates_des_departs, durees_validees
+
+    cas = tuple(c for c in GRILLE_DU_COUT if c.code in ("salaire_moyen", "militaire"))
+    parametres = Parametres(scenario_projection="cor_reference")
+    durees = durees_validees(json.loads(TEMOIN_EIC.read_text(encoding="utf-8")))
+    grille = dates_des_departs(parametres, cas_types=cas, generations=(1965,))
+    duree = dates_des_departs(parametres, entree_depuis=1960, cas_types=cas,
+                              generations=(1965,), durees=durees)
+    assert duree[("salaire_moyen", 1965, 1)].rang - grille[("salaire_moyen", 1965, 1)].rang == 15
+    assert all(duree[("militaire", 1965, decalage)] == grille[("militaire", 1965, decalage)]
+               for decalage in range(-2, 3))
+
+
 def test_la_generation_1953_est_partie_decotee_des_l_age_legal_a_9_4_pour_cent():
     """L'EIR de 2020 range les retraités nés en 1953 par la place de leur
     départ (``macro/departs_generations.csv``, certifiée) : 31,2 % à l'âge
@@ -489,9 +562,10 @@ def test_la_cnav_a_decote_13_4_pour_cent_de_ses_liquidants_de_2024():
 def test_la_part_decotee_suit_la_generation_de_1953_au_flux_de_2024():
     """La part d'une génération partie avec une décote dès l'âge légal : 9,4 %
     jusqu'à la génération 1953, que l'EIR voit partie ; 13,4 % depuis la
-    génération 1960, celle des liquidants de la Cnav de 2024 à leur âge moyen
-    de liquidation, 63,6 ans (table B de l'EACR) ; entre les deux, en droite
-    ligne : 11,7 % pour la génération 1957, aux quatre septièmes du chemin."""
+    génération 1960, celle des liquidants de la Cnav de 2024 à l'âge moyen des
+    nouveaux retraités de l'année, 63,6 ans tous régimes (table C de l'EACR) ;
+    entre les deux, en droite ligne : 11,7 % pour la génération 1957, aux
+    quatre septièmes du chemin."""
     from retraite_notionnelle.facteurs_depense import part_decotee_de_la_generation
 
     assert part_decotee_de_la_generation(1950, 0.094, 0.134) == 0.094
@@ -636,6 +710,37 @@ def test_le_departage_compte_la_decote_selon_la_generation_apres_celle_de_1953()
     assert ecarts["la décote selon la génération"]["precoce"] == pytest.approx(0.0)
     assert ecarts["ce qui reste"]["vieillesse"] == pytest.approx(-0.02)
     assert ecarts["l'écart"] == sans_generation["l'écart"]
+
+
+def test_le_departage_compte_l_entree_selon_la_duree_validee_apres_la_decote():
+    """``--duree`` lit en outre l'entrée de chaque génération sur sa durée
+    validée et non sur son premier trimestre cotisé : le départage la place
+    après la décote selon la génération, et ce qui reste se compte depuis
+    elle ; l'écart ne change pas."""
+    script = _script()
+
+    def part(agees: float, jeunes: float) -> dict:
+        return {"2022-2030": {"vieillesse": agees, "precoce": jeunes,
+                              "couverture": agees + jeunes}}
+
+    stables = "et 48 % stables, mesurés"
+    parts = {"Ageing Report 2024": part(-0.22, -1.16), "modèle": part(-0.08, -0.92),
+             stables: part(-0.07, -1.02), script.SANS_SUSPENSION: part(-0.14, -1.02),
+             script.NES_TOUTE_L_ANNEE: part(-0.17, -0.99),
+             script.ENTREE_SELON_LA_GENERATION: part(-0.28, -1.15),
+             script.AVEC_DECOTE: part(-0.25, -1.18),
+             script.DECOTE_SELON_LA_GENERATION: part(-0.24, -1.18)}
+    sans_duree = script.departage(parts, stables)
+    parts[script.ENTREE_PAR_LA_DUREE] = part(-0.27, -1.20)
+    ecarts = script.departage(parts, stables)
+    assert list(ecarts) == ["le périmètre", "la suspension", "les naissances de l'année",
+                            "l'entrée dans l'emploi", "les départs hors du taux plein",
+                            "la décote selon la génération", "l'entrée selon la durée validée",
+                            "ce qui reste", "l'écart"]
+    assert ecarts["l'entrée selon la durée validée"]["vieillesse"] == pytest.approx(0.03)
+    assert ecarts["l'entrée selon la durée validée"]["precoce"] == pytest.approx(0.02)
+    assert ecarts["ce qui reste"]["vieillesse"] == pytest.approx(-0.05)
+    assert ecarts["l'écart"] == sans_duree["l'écart"]
 
 
 def test_la_couverture_de_2022_2030_tient_au_perimetre_de_l_awg(awg):
@@ -933,3 +1038,72 @@ def test_selon_sa_generation_la_decote_rend_peu_aux_65_ans_et_plus_apres_2030(aw
     assert 0.005 < gain < 0.03
     assert (entre(selon["vieillesse"], 2030, 2070)
             < entre(publie["vieillesse"], 2030, 2070) - 0.07)
+
+
+def test_entree_selon_sa_duree_validee_les_65_ans_et_plus_reculent_plus_tot(awg):
+    """Lue sur la durée validée au dernier âge que l'EIC voit, l'entrée des
+    hommes recule plus que leur premier trimestre cotisé à chaque génération de
+    1964 à 1992 ; la génération 1954, qui avait validé plus que celle de 1960,
+    entre un an plus tôt, et non six mois ; au-delà de 1994, la dernière que
+    l'EIC suive, les deux lectures donnent son retard, deux ans et quart (test
+    de l'entrée lue sur la durée validée). Les cas types de la grille sont des
+    hommes, sauf la carrière interrompue, au taux plein dès l'ouverture.
+    Parties pour la part de leur génération à l'âge légal avec une décote
+    (``decote_du_flux``), les cohortes de la grille comptent dès 2030 chaque
+    année au plus autant de retraités, et en 2070 autant : nés de 2003 à 2005,
+    ses 65 à 67 ans ont le même retard sous les deux lectures, et les plus
+    vieux sont tous partis. Ceux de 2030, nés de 1963 à 1965, entrent plus
+    tard sous la durée validée ; ceux de 2022, nés de 1955 à 1957, plus tôt :
+    portés au périmètre de l'AWG, les 65 ans et plus reculent de plus de 0,02
+    point de PIB de plus de 2022 à 2030, et de plus de 0,02 point de moins de
+    2030 à 2070. La durée validée avance leur recul (note du 23 octobre 2026,
+    « les 65 ans et plus d'après 2030 »)."""
+    from retraite_notionnelle import Parametres
+    from retraite_notionnelle.facteurs_depense import (
+        JEUNES,
+        STABLES,
+        durees_validees,
+        part_decotee_du_flux,
+        pensionnes_de_2022,
+    )
+
+    parametres = Parametres(scenario_projection="cor_reference")
+    annees, _decomposition_ = _decomposition("cor_reference", "actuel")
+    population_65 = {annee: annees[annee].population_65 for annee in GRILLE_AWG}
+    part_pib, pensionnes, pensionnes_agees, population_65_awg = _couverture_de_l_awg(awg)
+    population_20_64 = {annee: awg["series"]["population_20_64"][annee] for annee in GRILLE_AWG}
+    mesures = pensionnes_de_2022(json.loads(
+        (RACINE / "tests" / "temoins" / "pensionnes_de_2022.json").read_text(encoding="utf-8")))
+    premiere = GRILLE_AWG[0]
+    stable = (sum(mesures[categorie][tranche] for categorie in STABLES for tranche in JEUNES)
+              / ((pensionnes[premiere] - pensionnes_agees[premiere]) * 1000))
+    vieux = pensionnes_agees[premiere] / population_65_awg[premiere]
+    plus_jeunes = pensionnes[premiere] / population_65_awg[premiere] - vieux
+    du_flux = part_decotee_du_flux(json.loads(
+        (RACINE / "tests" / "temoins" / "drees_eacr_tables_2026.json").read_text(encoding="utf-8")))
+    durees = durees_validees(json.loads(TEMOIN_EIC.read_text(encoding="utf-8")))
+    comptes = {lue: retraites_par_age(parametres, GRILLE_AWG, nes_toute_l_annee=True,
+                                      entree_depuis=1960, avec_decote=True,
+                                      decote_du_flux=du_flux, durees=durees if lue else None)
+               for lue in (False, True)}
+    for annee in (annee for annee in GRILLE_AWG if annee >= 2030):
+        assert all(duree <= trimestre + 1e-6 for duree, trimestre in zip(
+            comptes[True][annee], comptes[False][annee])), annee
+    assert comptes[True][2070] == pytest.approx(comptes[False][2070], rel=1e-9)
+
+    def portee(par_age: dict) -> dict:
+        return partager_couverture(part_pib, *au_perimetre(
+            population_65_awg, vieux, plus_jeunes,
+            {annee: par_age[annee][0] for annee in GRILLE_AWG},
+            {annee: par_age[annee][1] for annee in GRILLE_AWG}, population_65,
+            stable=stable, population_stable=population_20_64),
+            population_65_awg)
+
+    def entre(serie: dict, debut: int, fin: int) -> float:
+        return serie[fin] - (serie[debut] if debut > premiere else 0.0)
+
+    trimestre, duree = portee(comptes[False]), portee(comptes[True])
+    assert (entre(duree["vieillesse"], 2022, 2030)
+            < entre(trimestre["vieillesse"], 2022, 2030) - 0.02)
+    assert (entre(duree["vieillesse"], 2030, 2070)
+            > entre(trimestre["vieillesse"], 2030, 2070) + 0.02)

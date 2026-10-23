@@ -11914,7 +11914,13 @@ referents:
           partis pour une part à l'âge légal avec une décote, comme la
           génération 1953 dans l'EIR (`--decote`), ceux-ci reculent comme ceux
           de l'AWG jusqu'en 2030, à un centième, mais de 0,13 point de 2030 à
-          2070, pour 0,03 ;
+          2070, pour 0,03 ; la part décotée suivant sa génération, celle des
+          liquidants de la Cnav de 2024 depuis la génération 1960
+          (`--decote-generation`), n'en rend qu'un centième ; l'entrée lue sur
+          la durée validée de l'EIC (`--duree`) avance leur recul, 0,27 point
+          avant 2030 et 0,07 après, pour 0,22 et 0,03, et la couverture entière
+          recule alors comme celle de l'AWG, à deux centièmes près, sur chaque
+          période (23 octobre) ;
           prestation −3,0 contre −3,4 ; marché du travail
           −0,7 contre −1,0. Sous la variante haute du COR, une productivité de
           1,0 % proche des 1,03 % de l'AWG, la prestation fait −3,7 : la

@@ -1,0 +1,21 @@
+date: "2026-10-23"
+session: "action 138, étape 3 : les 65 ans et plus d'après 2030, la décote selon la génération et l'entrée lue sur la durée validée"
+consulte: >-
+  Aucun texte de droit nouveau : la mesure ne touche à aucune règle du
+  scénario 1. L'EIR de 2020 (`departs_generations.csv`, certifiée), la table H
+  de l'EACR du 26 mai 2026 (`drees_eacr_tables_2026.json`), le cumul des
+  trimestres validés à chaque âge de l'EIC 2017, lu le 23 octobre
+  (`drees_duree_validee_2017.json`), et la figure 4.5 du rapport du COR de
+  juin 2026, l'âge moyen de départ par génération.
+trouve: >-
+  La Cnav a décoté 13,4 % de ses liquidants de 2024, quand la génération 1953
+  est partie avec une décote dès l'âge légal à 9,4 % : prise à la part de sa
+  génération, la décote ne rend qu'un centième de point de PIB aux 65 ans et
+  plus d'après 2030. Lue sur la durée validée, l'entrée des hommes recule plus
+  que leur premier trimestre cotisé, deux ans et quart de la génération 1960 à
+  celle de 1980 : elle avance le recul des 65 ans et plus, et la couverture
+  entière recule comme celle de l'AWG, à deux centièmes près, sur chaque
+  période.
+reste: >-
+  Rien au droit. L'âge de départ de chaque génération de la grille, contre les
+  64,5 ans que TRAJECTOiRE projette des générations 1975 à 2000.

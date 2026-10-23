@@ -8,6 +8,7 @@
     python scripts/facteurs_depense.py --entree      # et l'entrée selon la génération
     python scripts/facteurs_depense.py --decote      # et les départs avec décote
     python scripts/facteurs_depense.py --decote-generation  # et la décote selon la génération
+    python scripts/facteurs_depense.py --duree       # et l'entrée selon la durée validée
     python scripts/facteurs_depense.py --json f.json
 
 Ce que l'Ageing Report de 2024 publie pour la France — la dépense de pensions
@@ -49,10 +50,14 @@ mesure, rapportée à ses cohortes qui le peuvent (``part_avec_decote``).
 ``--decote-generation``, qui implique ``--decote``, fait suivre à cette part
 sa génération : celle de 1953 jusqu'à elle, celle des liquidants de la Cnav de
 2024 (table H de l'EACR) depuis la génération 1960, en droite ligne entre les
-deux (``part_decotee_de_la_generation``). Le dernier tableau départage l'écart
-de couverture de 2022-2030 entre le périmètre, la suspension, les naissances,
-l'entrée dans l'emploi, les départs hors du taux plein, la décote selon la
-génération et ce qui reste.
+deux (``part_decotee_de_la_generation``). ``--duree``, qui implique
+``--decote-generation``, y lit enfin l'entrée de chaque génération sur le cumul
+de ses trimestres validés au dernier âge où l'EIC la voit, et non sur son
+premier trimestre cotisé (``decalage_par_la_duree``,
+``tests/temoins/drees_duree_validee_2017.json``). Le dernier tableau départage
+l'écart de couverture de 2022-2030 entre le périmètre, la suspension, les
+naissances, l'entrée dans l'emploi, les départs hors du taux plein, la décote
+selon la génération, l'entrée selon la durée validée et ce qui reste.
 """
 
 from __future__ import annotations
@@ -79,7 +84,11 @@ from retraite_notionnelle.facteurs_depense import (  # noqa: E402
     STABLES,
     annees_du_modele,
     au_perimetre,
+    ages_medians_du_premier_trimestre,
+    decalage_d_entree,
+    decalage_par_la_duree,
     decomposer,
+    durees_validees,
     part_decotee_des_l_age_legal,
     part_decotee_du_flux,
     partager_couverture,
@@ -118,6 +127,12 @@ AVEC_DECOTE = "et les départs avec décote"
 DECOTE_SELON_LA_GENERATION = "et la décote selon la génération"
 #: Le témoin des tables de l'EACR, dont la table H dit ce flux.
 TEMOIN_EACR = RACINE / "tests" / "temoins" / "drees_eacr_tables_2026.json"
+#: La même encore, l'entrée lue sur la durée validée (``--duree``).
+ENTREE_PAR_LA_DUREE = "et l'entrée selon la durée validée"
+#: Le témoin de l'EIC, le cumul des trimestres validés à chaque âge.
+TEMOIN_EIC = RACINE / "tests" / "temoins" / "drees_duree_validee_2017.json"
+#: Les générations dont le script imprime les deux retards d'entrée.
+GENERATIONS_D_ENTREE = (1966, 1970, 1975, 1980, 1990, 2000)
 #: La génération dont la grille garde l'âge d'entrée, sous ``--entree`` : celle
 #: du milieu des retraités de moins de 65 ans de 2022, de 60 à 64 ans.
 ENTREE_DE_REFERENCE = 1960
@@ -243,9 +258,9 @@ def departage(parts: dict, stables: str, periode: str = "2022-2030") -> dict[str
     PIB, par âge et en tout, et ce qu'en font, colonne après colonne, le
     périmètre (la part stable mesurée comprise), puis la suspension, si la
     colonne sans elle est là, puis les naissances de toute l'année, l'entrée
-    dans l'emploi selon la génération, les départs avec décote et la décote
-    selon la génération, si les leurs y sont ; ce qui reste. Positif quand le
-    modèle recule moins."""
+    dans l'emploi selon la génération, les départs avec décote, la décote
+    selon la génération et l'entrée selon la durée validée, si les leurs y
+    sont ; ce qui reste. Positif quand le modèle recule moins."""
     etapes = [("le périmètre", "modèle", stables)]
     if SANS_SUSPENSION in parts:
         etapes.append(("la suspension", stables, SANS_SUSPENSION))
@@ -260,6 +275,9 @@ def departage(parts: dict, stables: str, periode: str = "2022-2030") -> dict[str
                     if DECOTE_SELON_LA_GENERATION in parts:
                         etapes.append(("la décote selon la génération", AVEC_DECOTE,
                                        DECOTE_SELON_LA_GENERATION))
+                        if ENTREE_PAR_LA_DUREE in parts:
+                            etapes.append(("l'entrée selon la durée validée",
+                                           DECOTE_SELON_LA_GENERATION, ENTREE_PAR_LA_DUREE))
     etapes += [("ce qui reste", etapes[-1][2], "Ageing Report 2024"),
                ("l'écart", "modèle", "Ageing Report 2024")]
     return {nom: {part: parts[de][periode][part] - parts[vers][periode][part]
@@ -289,19 +307,20 @@ def reforme_entiere(racine: Path, destination: Path) -> Path:
 
 def recomptee(couverture: dict, projection: str, racine: Path,
               entree_depuis: int | None = None, avec_decote: bool = False,
-              decote_du_flux: float | None = None) -> dict:
+              decote_du_flux: float | None = None, durees: dict | None = None) -> dict:
     """Les séries de couverture d'une trajectoire (``modele``), ses retraités
     recomptés aux cohortes nées toute l'année, et, avec ``entree_depuis``, à
     chaque génération entrée dans l'emploi à son âge, puis, avec
     ``avec_decote``, à une part de chaque cohorte partie à l'âge légal, avec
     une décote, avant son taux plein, celle de sa génération avec
-    ``decote_du_flux`` (``retraites_par_age``) : sa dépense et sa population
-    ne changent pas."""
+    ``decote_du_flux``, l'entrée lue sur la durée validée avec ``durees``
+    (``retraites_par_age``) : sa dépense et sa population ne changent pas."""
     from retraite_notionnelle import Parametres
 
     par_age = retraites_par_age(Parametres(scenario_projection=projection, racine_donnees=racine),
                                 GRILLE_AWG, nes_toute_l_annee=True, entree_depuis=entree_depuis,
-                                avec_decote=avec_decote, decote_du_flux=decote_du_flux)
+                                avec_decote=avec_decote, decote_du_flux=decote_du_flux,
+                                durees=durees)
     return {**couverture,
             "retraites": {annee: par_age[annee][0] for annee in GRILLE_AWG},
             "retraites_agees": {annee: par_age[annee][1] for annee in GRILLE_AWG}}
@@ -381,8 +400,12 @@ def main(argv: list[str] | None = None) -> int:
     analyseur.add_argument("--decote-generation", action="store_true",
                            help="et y fait suivre à cette part sa génération, de celle de 1953 "
                                 "au flux de la Cnav de 2024")
+    analyseur.add_argument("--duree", action="store_true",
+                           help="et y lit l'entrée de chaque génération sur sa durée validée, "
+                                "non sur son premier trimestre cotisé")
     analyseur.add_argument("--json", type=Path, help="écrit les résultats dans ce fichier")
     arguments = analyseur.parse_args(argv)
+    arguments.decote_generation |= arguments.duree
     arguments.decote |= arguments.decote_generation
     if arguments.decote and arguments.entree is None:
         arguments.entree = ENTREE_DE_REFERENCE
@@ -433,7 +456,7 @@ def main(argv: list[str] | None = None) -> int:
 
     stables = f"et {_nombre(mesuree * 100, 0)} % stables, mesurés"
     colonnes_couverture[stables] = porte(reference["couverture"])
-    nes = entree = decote = selon = None
+    nes = entree = decote = selon = par_la_duree = None
     if arguments.sans_suspension:
         from retraite_notionnelle.config import RACINE_DONNEES
 
@@ -454,6 +477,19 @@ def main(argv: list[str] | None = None) -> int:
                 selon = recomptee(sans["couverture"], PROJECTIONS[0][0], racine,
                                   arguments.entree, avec_decote=True,
                                   decote_du_flux=resultats["part_decotee_du_flux"])
+            if arguments.duree:
+                durees = durees_validees(json.loads(TEMOIN_EIC.read_text(encoding="utf-8")))
+                medianes = ages_medians_du_premier_trimestre(racine)
+                resultats["retards_d_entree"] = {
+                    generation: {"premier_trimestre": decalage_d_entree(
+                                     medianes, "H", generation, arguments.entree),
+                                 "duree_validee": decalage_par_la_duree(
+                                     durees, "H", generation, arguments.entree)}
+                    for generation in GENERATIONS_D_ENTREE}
+                par_la_duree = recomptee(sans["couverture"], PROJECTIONS[0][0], racine,
+                                         arguments.entree, avec_decote=True,
+                                         decote_du_flux=resultats["part_decotee_du_flux"],
+                                         durees=durees)
         resultats["sans_suspension"] = sans
         colonnes_couverture["modèle sans la suspension"] = sans["couverture"]
         colonnes_couverture[SANS_SUSPENSION] = porte(sans["couverture"])
@@ -470,6 +506,9 @@ def main(argv: list[str] | None = None) -> int:
         if selon is not None:
             resultats["decote_selon_la_generation"] = selon
             colonnes_couverture[DECOTE_SELON_LA_GENERATION] = porte(selon)
+        if par_la_duree is not None:
+            resultats["entree_par_la_duree"] = par_la_duree
+            colonnes_couverture[ENTREE_PAR_LA_DUREE] = porte(par_la_duree)
         print()
         print("Sans la suspension, la référence du COR (dépense de 2022 → 2070 : "
               f"{_nombre(sans['part_pib'][2022])} → {_nombre(sans['part_pib'][2070])})")
@@ -509,16 +548,24 @@ def main(argv: list[str] | None = None) -> int:
         print(f"Selon la génération : {_nombre(resultats['part_decotee_du_flux'] * 100, 1)} % "
               f"des liquidants de la Cnav de {ANNEE_DU_FLUX} (EACR), prêtés à la génération "
               f"{GENERATION_DU_FLUX}, en droite ligne depuis celle de {GENERATION_DES_DECOTES}")
+    if par_la_duree is not None:
+        print(f"Retard d'entrée des hommes sur la génération {arguments.entree}, en années, lu "
+              "sur le premier trimestre cotisé, puis sur la durée validée : " + " ; ".join(
+                  f"{generation} {_nombre(retards['premier_trimestre'])} → "
+                  f"{_nombre(retards['duree_validee'])}"
+                  for generation, retards in resultats["retards_d_entree"].items()))
     if nes is not None:
         recomptes = ([sans["couverture"], nes] + ([entree] if entree is not None else [])
                      + ([decote] if decote is not None else [])
-                     + ([selon] if selon is not None else []))
+                     + ([selon] if selon is not None else [])
+                     + ([par_la_duree] if par_la_duree is not None else []))
         print("Retraités de moins de 65 ans du modèle sous la réforme entière, en millions, "
               "nés en janvier, puis toute l'année"
               + (f", puis entrés selon la génération depuis {arguments.entree}"
                  if entree is not None else "")
               + (", puis partis pour une part avec une décote" if decote is not None else "")
               + (", puis selon la génération" if selon is not None else "")
+              + (", puis entrés selon leur durée validée" if par_la_duree is not None else "")
               + " : " + " ; ".join(
                   f"{annee} " + " → ".join(_nombre(jeunes_de(series, annee) / 1e6)
                                            for series in recomptes)

@@ -542,6 +542,44 @@ def decalage_d_entree(medianes: Mapping[tuple[str, int], float], sexe: str,
     return round((mediane(generation) - mediane(reference)) * 4) / 4
 
 
+def durees_validees(temoin: Mapping) -> dict[tuple[str, int], dict[int, float]]:
+    """Le cumul des trimestres validés par affilié d'avant 23 ans de chaque
+    génération de l'échantillon interrégimes de cotisants de 2017, sexe par
+    sexe, à la fin de l'année de chaque âge, de 16 ans au dernier que
+    l'échantillon voit (``tests/temoins/drees_duree_validee_2017.json``,
+    ``scripts/fetch/drees_duree_validee.py``), par ``(sexe, génération)``."""
+    return {(sexe, int(generation)): {int(age): float(cumul) for age, cumul in cumuls.items()}
+            for sexe, generations in temoin["cumuls"].items()
+            for generation, cumuls in generations.items()}
+
+
+def decalage_par_la_duree(durees: Mapping[tuple[str, int], Mapping[int, float]], sexe: str,
+                          generation: int, reference: int) -> float:
+    """De combien la génération ``generation`` a validé moins de trimestres que
+    ``reference``, en années de quatre trimestres, au trimestre près : l'écart
+    de leurs cumuls au dernier âge que l'échantillon voit chez l'une et l'autre
+    (:func:`durees_validees`), quand :func:`decalage_d_entree` lit celui de leur
+    premier trimestre cotisé ; entre les deux générations voisines, en droite
+    ligne, quand l'EIC ne suit pas la sienne, à la première ou à la dernière
+    au-delà."""
+    if (sexe, reference) not in durees:
+        raise ValueError(f"l'EIC ne suit pas la génération {reference}")
+    suivies = sorted(g for s, g in durees if s == sexe)
+
+    def ecart(annee: int) -> float:
+        propres, autres = durees[(sexe, annee)], durees[(sexe, reference)]
+        age = min(max(propres), max(autres))
+        return (autres[age] - propres[age]) / 4
+
+    annee = min(max(generation, suivies[0]), suivies[-1])
+    apres = next(g for g in suivies if g >= annee)
+    if apres == annee:
+        return round(ecart(annee) * 4) / 4
+    avant = max(g for g in suivies if g < annee)
+    return round((ecart(avant) + (ecart(apres) - ecart(avant)) * (annee - avant)
+                  / (apres - avant)) * 4) / 4
+
+
 #: La génération de l'EIR dont les départs avec décote donnent leur part à la
 #: grille (:func:`part_decotee_des_l_age_legal`) : les nés en 1953, les plus
 #: récents que l'enquête de 2020 voie presque tous partis, comme pour la
@@ -592,8 +630,9 @@ def part_avec_decote(cible: float, poids: Mapping[tuple[str, int, int], float],
 #: (:func:`part_decotee_du_flux`) : la Cnav, en 2024, l'année la plus récente.
 CAISSE_DU_FLUX = "0015"
 ANNEE_DU_FLUX = 2024
-#: La génération qu'on prête à ce flux : celle des liquidants de la Cnav de
-#: :data:`ANNEE_DU_FLUX` à leur âge moyen de liquidation, 63,6 ans (table B).
+#: La génération qu'on prête à ce flux : celle des liquidants de
+#: :data:`ANNEE_DU_FLUX` à l'âge moyen des nouveaux retraités de l'année,
+#: 63,6 ans tous régimes (table C, tirée d'Ancetre).
 GENERATION_DU_FLUX = 1960
 
 
@@ -630,6 +669,7 @@ def dates_des_departs(parametres, entree_depuis: int | None = None,
                       cas_types: tuple | None = None,
                       generations: tuple[int, ...] | None = None,
                       a_l_ouverture: bool = False,
+                      durees: Mapping[tuple[str, int], Mapping[int, float]] | None = None,
                       ) -> dict[tuple[str, int, int], DateMois]:
     """Le mois où part, née en janvier comme la grille, chacune des cinq
     cohortes de chaque couple de la grille du coût, par ``(code, generation,
@@ -644,6 +684,9 @@ def dates_des_departs(parametres, entree_depuis: int | None = None,
     d'autant que celles de son sexe dans l'EIC (:func:`decalage_d_entree`), quand
     la grille les fait toutes entrer au même âge (limite n° 2 de ``cout.py``) ;
     ceux qui partent à un âge ou après leurs services gardent leur date.
+    ``durees``, le cumul des trimestres validés à chaque âge
+    (:func:`durees_validees`), y lit le retard sur la durée validée
+    (:func:`decalage_par_la_duree`) et non sur le premier trimestre cotisé.
     ``a_l_ouverture`` fait partir chaque cohorte d'un cas type qui part au
     taux plein dès l'ouverture de son droit, avec une décote si le taux plein
     vient après (``regle_liquidation="ouverture"``)."""
@@ -664,8 +707,10 @@ def dates_des_departs(parametres, entree_depuis: int | None = None,
         for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
             propre = cas
             if medianes is not None and cas.regle_liquidation == "taux_plein":
-                entree = decalage_d_entree(medianes, cas.sexe, generation + decalage,
-                                           entree_depuis)
+                entree = (decalage_d_entree(medianes, cas.sexe, generation + decalage,
+                                            entree_depuis) if durees is None
+                          else decalage_par_la_duree(durees, cas.sexe, generation + decalage,
+                                                     entree_depuis))
                 if entree:
                     propre = replace(cas, age_debut=cas.age_debut + entree)
             if a_l_ouverture and cas.regle_liquidation == "taux_plein":
@@ -685,11 +730,12 @@ def dates_des_departs(parametres, entree_depuis: int | None = None,
 def dates_a_l_age_legal(parametres, entree_depuis: int | None = None,
                         cas_types: tuple | None = None,
                         generations: tuple[int, ...] | None = None,
+                        durees: Mapping[tuple[str, int], Mapping[int, float]] | None = None,
                         ) -> dict[tuple[str, int, int], DateMois]:
     """Le mois où partirait avec une décote, à l'âge légal de sa génération
     (L. 161-17-2), chaque cohorte de la grille du coût qui n'a le taux plein
     qu'après lui, par ``(code, generation, decalage)``
-    (:func:`dates_des_departs`, dont ``entree_depuis``) : celle d'un cas type
+    (:func:`dates_des_departs`, dont ``entree_depuis`` et ``durees``) : celle d'un cas type
     qui part au taux plein, dont le droit s'ouvre à cet âge et non avant. Les
     catégories actives, que leur classement ouvre plus tôt, gardent leur
     départ, comme ceux qui ont le taux plein dès l'ouverture, carrières
@@ -698,9 +744,10 @@ def dates_a_l_age_legal(parametres, entree_depuis: int | None = None,
     from .simulateur import Simulateur
 
     ages_legaux = Simulateur(parametres).scenario_actuel.ages_ouverture
-    taux_plein = dates_des_departs(parametres, entree_depuis, cas_types, generations)
+    taux_plein = dates_des_departs(parametres, entree_depuis, cas_types, generations,
+                                   durees=durees)
     ouvertures = dates_des_departs(parametres, entree_depuis, cas_types, generations,
-                                   a_l_ouverture=True)
+                                   a_l_ouverture=True, durees=durees)
     legales = {}
     for (code, generation, decalage), date in ouvertures.items():
         legal = ages_legaux.age(generation + decalage)
@@ -716,7 +763,9 @@ def retraites_par_age(parametres, annees: Sequence[int],
                       nes_toute_l_annee: bool = False,
                       entree_depuis: int | None = None,
                       avec_decote: bool = False,
-                      decote_du_flux: float | None = None) -> dict[int, tuple[float, float]]:
+                      decote_du_flux: float | None = None,
+                      durees: Mapping[tuple[str, int], Mapping[int, float]] | None = None,
+                      ) -> dict[int, tuple[float, float]]:
     """Chaque année, les retraités du modèle de tous âges, puis ceux d'``age``
     ans et plus, en personnes.
 
@@ -738,7 +787,10 @@ def retraites_par_age(parametres, annees: Sequence[int],
     ``decote_du_flux``, la part décotée des liquidants de la Cnav de
     :data:`ANNEE_DU_FLUX` (:func:`part_decotee_du_flux`), y fait suivre à
     chaque génération la sienne (:func:`part_decotee_de_la_generation`),
-    rapportée de même.
+    rapportée de même. ``durees``, le cumul des trimestres validés à chaque
+    âge (:func:`durees_validees`), lit l'entrée de chaque génération sur sa
+    durée validée et non sur son premier trimestre cotisé
+    (:func:`decalage_par_la_duree`).
     """
     from . import cout as module
     from . import memoire
@@ -769,7 +821,7 @@ def retraites_par_age(parametres, annees: Sequence[int],
         revalorisation, ComptesRetraite(racine, variante=variante).decomposition)
     depart, mois = depart_de_la_grille, None
     if nes_toute_l_annee or entree_depuis is not None:
-        dates = dates_des_departs(parametres, entree_depuis)
+        dates = dates_des_departs(parametres, entree_depuis, durees=durees)
         if entree_depuis is not None:
             def depart(pensionne, decalage: int) -> int:
                 date = dates.get((pensionne.code, pensionne.generation, decalage))
@@ -778,7 +830,7 @@ def retraites_par_age(parametres, annees: Sequence[int],
             mois = {cle: date.mois for cle, date in dates.items()}
     decotes = None
     if avec_decote:
-        legales = dates_a_l_age_legal(parametres, entree_depuis)
+        legales = dates_a_l_age_legal(parametres, entree_depuis, durees=durees)
         poids_enquete = poids(ANNEE_DES_DECOTES)
         survies_enquete = module._survies_alignees(pensionnes, poids_enquete, ANNEE_DES_DECOTES)
         generation = {

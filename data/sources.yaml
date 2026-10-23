@@ -1359,6 +1359,25 @@ institutions:
           carrières pleines, que la carrière longue répute cotisées selon leur
           nature (D. 351-1-2) ; aucun calcul du site ne la lit.
 
+      - id: drees_eic_duree_validee
+        titre: >-
+          Les droits validés au cours de la carrière (EIC 2017) : le cumul des
+          trimestres validés par affilié d'avant 23 ans, à chaque âge
+        url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/2596_les-droits-valides-au-cours-de-la-carriere/
+        acces: api
+        statut_integration: controle
+        cible: tests/temoins/drees_duree_validee_2017.json
+        recuperation: scripts/fetch/drees_duree_validee.py
+        note: >-
+          Le même fichier que drees_eic_droits_valides, une autre colonne : le
+          cumul par affilié d'avant 23 ans des trimestres validés, de toute
+          nature, à la fin de l'année de chaque âge, de 16 ans à l'âge de la
+          génération en 2017. Les hommes nés en 1960 en avaient validé 102,9 à
+          47 ans, ceux nés en 1970 96,3. Il n'alimente aucune valeur :
+          `scripts/facteurs_depense.py --duree` y lit l'entrée dans l'emploi
+          de chaque génération de la grille du coût sur sa durée validée, et
+          non sur son premier trimestre cotisé (action 138, étape 3).
+
       - id: drees_age_conjoncturel
         titre: Âge conjoncturel moyen de départ à la retraite, selon le sexe
         url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/retraite_graphique-1-age-conjoncturel-moyen-de-depart-a-la-retraite-selon-le-se0/
