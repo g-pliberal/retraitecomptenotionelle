@@ -73,17 +73,21 @@ comptait jusqu'au 17 octobre : les gros capitaux, que le diviseur baisse, y
 sont servis moins longtemps, et la baisse, stock compris, en paraît plus
 petite. Le solde « avec le diviseur par vingtile » ajoute cette baisse au
 solde de la table commune ; celui du site compte aussi la survie. Aux
-scénarios 3 et 5, le rapport des diviseurs grossit la baisse : il s'applique
-à toute la pension, quand ils gardent au stock d'avant la bascule le droit
-en vigueur, et que les droits acquis à la bascule passent par le diviseur à
-l'entrée comme à la sortie. Le scénario 1 n'a pas de diviseur : rien ne
-bouge.
+scénarios 3 et 5, le rapport des diviseurs ne touche que la part de chaque
+pension que porte le compte ouvert à la bascule (``_parts_ouvertes``) : ils
+gardent au stock d'avant la bascule le droit en vigueur, et les droits
+acquis à la bascule passent par le diviseur de leur vingtile à l'entrée
+comme à la sortie. Le scénario 1 n'a pas de diviseur : rien ne bouge.
 
 Jusqu'au 19 octobre 2026, le script disait la page à la mortalité générale,
 et ses colonnes « page » l'y mesuraient ; il faisait vivre chaque cas type au
 rythme de son vingtile rapporté à la population générale, sans aligner, ne
 relisait que les cas types de la page Cas types, sans leurs cinq variantes,
 et rangeait chacun au vingtile de son niveau écrit (action 138, étape 7).
+Jusqu'au 23 octobre, il appliquait aussi le rapport, aux scénarios 3 et 5, au
+stock d'avant la bascule et aux droits acquis : il leur ajoutait 0,33 et 0,39
+point de solde moyen de 2026 à 2070, la page 0,02 et 0,09 (même étape, note
+« la part ouverte à la bascule »).
 
 LE GARDE-FOU
 ------------
@@ -261,8 +265,48 @@ def _vingtiles(simulateur, cas_types, liquidation: str) -> dict[tuple[str, int],
             for cle, carriere in carrieres.items()}
 
 
+def _parts_ouvertes(simulateur, cas_types, liquidation: str,
+                    ) -> dict[tuple[str, int], dict[str, float]]:
+    """La part de la pension de chaque couple de la grille que porte, sous
+    chaque scénario notionnel, le compte ouvert à la bascule : la seule que le
+    diviseur de son vingtile touche (:func:`_masses`). Elle se lit sur la
+    simulation de la carrière que la page construit, sous les conventions de
+    sa projection : un, moins la part de son capital que portent les droits
+    acquis à la bascule (``capital_droits_acquis``, ``capital_notionnel``).
+
+    Aux scénarios 3 et 5, zéro pour qui part au plus tard l'année de la
+    bascule, à qui ils gardent la pension du droit en vigueur
+    (``ScenarioNotionnel._deja_liquide``) ; ensuite, les droits acquis à la
+    bascule entrent au compte par le diviseur de leur vingtile et en sortent
+    par lui (``_droits_acquis``), et seul le compte ouvert à la bascule le
+    sent, pour l'essentiel. Un aux scénarios 2, 4 et 6, qui n'ont pas de
+    droits acquis. La grille de la page ne garde pas ces capitaux : le moteur
+    Python resimule ses carrières, sans les couples qu'il refuse, que la page
+    ne pèse pas."""
+    from retraite_notionnelle.castypes import carrieres_de_la_grille
+    from retraite_notionnelle.cout import generations
+
+    projection = simulateur.pour_la_projection()
+    carrieres, _ = carrieres_de_la_grille(projection, cas_types, generations(), liquidation)
+    parts = {}
+    for cle, carriere in carrieres.items():
+        try:
+            comparaison = projection.simuler(carriere)
+        except (ValueError, KeyError):
+            continue
+        parts[cle] = {}
+        for scenario, _, _ in SCENARIOS_NOTIONNELS:
+            resultat = getattr(comparaison, scenario)
+            parts[cle][scenario] = (
+                1.0 - resultat.capital_droits_acquis / resultat.capital_notionnel
+                if resultat.capital_notionnel > 0.0 else 1.0)
+    return parts
+
+
 def _masses(couples, poids: dict[str, float], population, annee: int, cles: list[str],
-            depuis: int | None = None) -> dict[str, dict[str, float]]:
+            depuis: int | None = None,
+            ouvertes: dict[tuple[str, int], dict[str, float]] | None = None,
+            ) -> dict[str, dict[str, float]]:
     """Masses par scénario, sous le diviseur commun et sous le diviseur
     propre, à deux survies : celle de la page (``vrai_``), et la mortalité
     générale (``generale_``), que la page comptait jusqu'au 17 octobre 2026 et
@@ -271,7 +315,15 @@ def _masses(couples, poids: dict[str, float], population, annee: int, cles: list
     chaque cohorte compte depuis l'année où elle part, et garde les survivants
     de la pyramide, que la survie de leur population répartit entre ses cas
     types, pesés par ``poids`` (``cout._survies_alignees``) ; ``depuis``
-    choisit le flux sur son départ à elle.
+    choisit le flux sur son départ à elle. Le rapport ne touche que la part de
+    chaque pension que ``ouvertes`` donne au compte ouvert à la bascule, par
+    couple et par scénario (:func:`_parts_ouvertes`) ; un scénario qu'il ne
+    nomme pas le sent sur toute la pension.
+
+    LE RAPPORT TOUCHAIT TOUTE LA PENSION. Jusqu'au 23 octobre 2026, il
+    s'appliquait aussi, aux scénarios 3 et 5, au stock d'avant la bascule et
+    aux droits acquis à la bascule, et grossissait leur baisse (action 138,
+    étape 7, note « la part ouverte à la bascule »).
 
     LA SURVIE N'ÉTAIT PAS ALIGNÉE. Jusqu'au 19 octobre 2026, la survie vraie
     était celle du vingtile rapportée à la population générale, et la grille,
@@ -287,14 +339,17 @@ def _masses(couples, poids: dict[str, float], population, annee: int, cles: list
         part = poids.get(pensionne.code, 0.0)
         if part <= 0.0:
             continue
+        compte = (ouvertes or {}).get((pensionne.code, pensionne.generation), {})
         for decalage, rapport in zip(range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1), rapports):
             liquidation = pensionne.liquidation(decalage)
             if annee < liquidation:
                 continue
             effectif = population.effectif(annee - pensionne.generation - decalage, annee)
             survie = alignees.get((pensionne.code, pensionne.generation, decalage), 1.0)
-            applique = rapport if depuis is None or liquidation >= depuis else 1.0
+            flux = depuis is None or liquidation >= depuis
             for s in cles:
+                ouverte = compte.get(s, 1.0)
+                applique = ouverte * rapport + (1.0 - ouverte) if flux else 1.0
                 base = part * effectif * pensionne.pensions.get(s, 0.0)
                 total[s]["generale_commun"] += base
                 total[s]["generale_propre"] += base * applique
@@ -326,6 +381,7 @@ def _deficit(depuis: int | None = None) -> int:
                          assiette=AssietteActivite(racine))
     pensionnes, _ = _pensionnes(simulateur, GRILLE, cout.liquidation)
     vingtiles = _vingtiles(simulateur, GRILLE, cout.liquidation)
+    ouvertes = _parts_ouvertes(simulateur, GRILLE, cout.liquidation)
     propres = {cas.code: cas.mortalite for cas in GRILLE}
     # La survie se prend sous les conventions de la page, comme sa grille.
     projection = simulateur.pour_la_projection()
@@ -336,7 +392,7 @@ def _deficit(depuis: int | None = None) -> int:
 
     def masses(annee: int, avec_actuel: bool = False) -> dict[str, dict[str, float]]:
         cles = ["actuel", *scenarios] if avec_actuel else scenarios
-        return _masses(couples, cout.poids, population, annee, cles, depuis)
+        return _masses(couples, cout.poids, population, annee, cles, depuis, ouvertes)
 
     print("Chaque cas type au vingtile où le salaire de sa carrière le place, et à la survie "
           "que la page Coût lui donne ; les têtes, les poids et les pensions sont ceux de sa "

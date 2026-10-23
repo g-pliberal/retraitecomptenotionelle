@@ -234,6 +234,76 @@ def test_la_grille_est_celle_que_la_page_pese():
     assert M.GRILLE is inspect.signature(calculer_cout).parameters["cas_types"].default
 
 
+def test_aux_scenarios_3_et_5_le_diviseur_ne_touche_que_le_compte_ouvert_a_la_bascule():
+    """Les scénarios 3 et 5 gardent au stock d'avant la bascule le droit en
+    vigueur (`ScenarioNotionnel._deja_liquide`), et les droits acquis à la
+    bascule entrent au compte par le diviseur de leur vingtile et en sortent
+    par lui (`_droits_acquis`) : seule la part de la pension que porte le
+    compte ouvert à la bascule sent le diviseur du vingtile. Un couple dont le
+    rapport des diviseurs vaut un demi, et dont ce compte porte le quart de la
+    pension au scénario 3, les trois quarts au scénario 5 : sous le diviseur
+    de son vingtile, sa pension en garde 0,25 × 0,5 + 0,75 = 0,875 au
+    scénario 3, 0,75 × 0,5 + 0,25 = 0,625 au scénario 5, la moitié au
+    scénario 2, qui n'a pas de droits acquis ; partie avant la bascule, toute.
+    Le flux de 2030 n'en touche que la cohorte de 1966. Jusqu'au 23 octobre
+    2026, le script appliquait le rapport à toute la pension (action 138,
+    étape 7, note « la part ouverte à la bascule »)."""
+    cles = ["notionnel_retroactif", "notionnel_prospectif", "notionnel_prospectif_employeur"]
+    datee = Pensionne(code="x", generation=1965, annee_liquidation=2028,
+                      pensions=dict(zip(cles, (2.0, 4.0, 8.0))),
+                      propre=_REPORTE, bascule=2026, departs=_DEPARTS)
+    rapports = (0.5,) * 5
+    ouvertes = {("x", 1965): dict(zip(cles, (1.0, 0.25, 0.75)))}
+    masses = M._masses([(datee, rapports)], {"x": 1.0}, _Population(), 2030, cles,
+                       ouvertes=ouvertes)
+    # Nées en 1963, 1964, 1965 et 1966 : 67, 66, 65 et 64 ans en 2030.
+    tetes = 67 + 66 + 65 + 64
+    for cle, pension, garde in zip(cles, (2.0, 4.0, 8.0), (0.5, 0.875, 0.625)):
+        for survie in ("generale", "vrai"):
+            assert masses[cle][f"{survie}_commun"] == pytest.approx(pension * tetes, rel=1e-12)
+            assert masses[cle][f"{survie}_propre"] == pytest.approx(
+                garde * pension * tetes, rel=1e-12)
+
+    flux = M._masses([(datee, rapports)], {"x": 1.0}, _Population(), 2030, cles, depuis=2030,
+                     ouvertes=ouvertes)
+    assert flux["notionnel_prospectif"]["generale_propre"] == pytest.approx(
+        4.0 * (67 + 66 + 65) + 4.0 * 64 * 0.875, rel=1e-12)
+
+    partie = {("x", 1965): dict(zip(cles, (1.0, 0.0, 0.0)))}
+    avant = M._masses([(datee, rapports)], {"x": 1.0}, _Population(), 2030, cles,
+                      ouvertes=partie)
+    for cle in cles[1:]:
+        assert avant[cle]["generale_propre"] == pytest.approx(
+            avant[cle]["generale_commun"], rel=1e-12)
+
+
+def test_la_part_ouverte_a_la_bascule_se_lit_sur_le_compte_de_la_simulation():
+    """La part de la pension que porte le compte ouvert à la bascule se lit
+    sur la simulation de la carrière que la page construit : un, moins la part
+    de son capital que portent les droits acquis à la bascule
+    (`capital_droits_acquis`, `capital_notionnel`). Le salarié au salaire
+    moyen né en 1955 part en 2017, avant la bascule de 2026 : les scénarios 3
+    et 5 lui gardent le droit en vigueur, rien n'y sent le diviseur. Né en
+    2005, il entre au travail l'année de la bascule, sans rien d'acquis avant
+    elle : tout le sent. Né en 1965, parti en 2028, il est entre les deux, et
+    plus près de un au scénario 5, dont le compte reçoit aussi la part
+    patronale, sur les mêmes droits acquis. Les scénarios 2, 4 et 6 n'ont pas
+    de droits acquis : tout le sent."""
+    cas = tuple(un for un in GRILLE_DU_COUT if un.code == "salaire_moyen")
+    parts = M._parts_ouvertes(M._simulateur(None), cas, "droit")
+    prospectifs = ("notionnel_prospectif", "notionnel_prospectif_employeur")
+    retroactifs = ("notionnel_retroactif", "notionnel_retroactif_employeur",
+                   "notionnel_liberal")
+    for cle in prospectifs:
+        assert parts["salaire_moyen", 1955][cle] == 0.0
+        assert parts["salaire_moyen", 2005][cle] == 1.0
+    assert 0.0 < parts["salaire_moyen", 1965]["notionnel_prospectif"] < (
+        parts["salaire_moyen", 1965]["notionnel_prospectif_employeur"]) < 1.0
+    for generation in (1955, 1965, 2005):
+        for cle in retroactifs:
+            assert parts["salaire_moyen", generation][cle] == 1.0
+
+
 def test_un_point_de_pib_en_vaut_le_centieme():
     """Le PIB des lignes du solde est en millions d'euros courants : 2 991
     milliards en 2025 font un point de 29,9 milliards, 30 à l'euro près du
