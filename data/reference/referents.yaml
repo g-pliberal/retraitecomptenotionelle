@@ -8114,7 +8114,12 @@ referents:
       points. Au 4 octobre 2026 (commit `05cb5be`), ses salariés et ses
       micro-entrepreneurs sont à jour de 2026, mais sa branche
       `dirigeant . indépendant` est d'avant 2025 : modele-ti, dans le
-      même dépôt, fait foi pour les indépendants.
+      même dépôt, fait foi pour les indépendants. Le 23 octobre 2026,
+      rejoué pour le salarié sur les cas de modele-as : mêmes trimestres et
+      mêmes points que lui, et ses deux erreurs, que la ligne `modele_as`
+      déclare (le revenu mensuel cotisé arrondi à l'euro avant le seuil
+      d'un trimestre, les points de la tranche 1 comptés sur la cotisation
+      divisée par 1,27).
 
   - id: modele_as
     nom: modele-as
@@ -8130,12 +8135,66 @@ referents:
     couvre: >-
       Les dirigeants assimilés salariés : trimestres à 150 heures de SMIC,
       points Agirc-Arrco, cotisations vieillesse.
+    version: "0.1.0"
     confrontation: >-
-      Un calcul à rejouer, sur des revenus de dirigeant, pour les trimestres
-      et les points. Jamais fait : lu le 4 octobre 2026, au paquet 0.1.0,
-      rien n'a été exécuté. Il est de la famille de l'Urssaf, dont
-      modele-social et modele-ti sont confrontés : son accord ne compterait
-      qu'une fois avec le leur.
+      Un calcul rejoué, le 23 octobre 2026 : le paquet 0.1.0, exécuté à part
+      sous publicodes 1.10.4, sur 171 rémunérations de dirigeant de 2024 à
+      2026, serrées autour des seuils, rend les trimestres et les points
+      Agirc-Arrco du dépôt, qui saisit ce dirigeant en salarié du privé, sauf
+      deux erreurs, les siennes. Ses paramètres sont ceux du dépôt : le SMIC
+      du 1er janvier, le plafond, les valeurs d'achat et de service du point,
+      les taux de vieillesse et d'Agirc-Arrco. Il est de la famille de
+      l'Urssaf : modele-social, rejoué sur les mêmes cas pour le salarié, a
+      les mêmes règles et les mêmes erreurs, et leur accord ne compte qu'une
+      fois. Les cas que tests/test_referents.py tient : les seuils, les deux
+      exemples du livret de l'Agirc-Arrco, le plafond, huit plafonds.
+    ecarts:
+      - constat: >-
+          Il arrondit à l'euro le revenu MENSUEL cotisé avant de le
+          comparer au seuil d'un trimestre (`base . cotisée`,
+          `arrondi: oui`) : à moins de 6 € d'un seuil, il valide un
+          trimestre de trop ou de moins. Trois en 2024 pour 6 990 €,
+          600 heures du SMIC de 11,65 € ; aucun en 2026 pour 1 803 et
+          1 804 €, au-dessus des 150 heures du SMIC de 12,02 € ; deux en
+          2025 pour 3 558 €, sous les 3 564 € de 300 heures. Sur la
+          grille, 27 rémunérations sur 171, toutes à moins de 6 € d'un
+          seuil.
+        tranche: >-
+          R. 351-9 en vigueur (LEGIARTI000053335598), lu dans l'index
+          LEGI : « autant de trimestres que le salaire annuel
+          correspondant aux retenues subies par l'assuré sur sa
+          rémunération représente de fois le montant du salaire minimum
+          de croissance en vigueur au 1er janvier de l'année considérée
+          calculé sur la base de 150 heures » — le salaire de l'année,
+          non un mensuel arrondi. L'erreur est la sienne ; le dépôt
+          compte le revenu annuel (`macro.py`, `trimestres_valides`).
+        preuve: >-
+          paquet 0.1.0, règles `protection sociale . retraite .
+          trimestres` et `protection sociale . retraite . base .
+          cotisée` ; au commit `01861d0` du 16 octobre 2026, renommées
+          le 2 septembre, protection-sociale/retraite-base.publicodes:41-72 ;
+          tests/test_referents.py
+      - constat: >-
+          Il compte les points de la tranche 1 sur la cotisation de
+          7,87 % divisée par 1,27, soit 6,197 % de l'assiette, au lieu
+          du taux de calcul de 6,20 % : 97,53 points pour les 29 538 €
+          de 2023, 345,52 pour les 69 368 € de 2024, et 0,05 % de moins
+          sur toute la tranche 1, 0,07 point au plafond. Ceux de la
+          tranche 2, à 21,59 % / 1,27 = 17 %, sont exacts.
+        tranche: >-
+          livret n° 3 de l'Agirc-Arrco, « Cotisations et points » (mai
+          2024), pages 16 à 19 : « 29 538 6,20 % 1 831,36 € », « 97,58
+          points Agirc-Arrco », et 345,59 points pour 69 368 € ; sa
+          propre description écrit « Assiette des cotisations × Taux de
+          calcul des points ». L'erreur est la sienne, celle que le dépôt
+          a corrigée chez lui le 5 octobre 2026
+          (tests/temoins/exemples_officiels.yaml, `aa_livret3_points_2023`
+          et `aa_livret3_points_2024_deux_tranches`).
+        preuve: >-
+          paquet 0.1.0, règle `protection sociale . retraite .
+          complémentaire . AGIRC ARRCO . points acquis` ; au commit
+          `01861d0`, protection-sociale/retraite-complémentaire.publicodes:31-32 ;
+          tests/test_referents.py
     fait_mieux:
       - quoi: >-
           Ses règles portent leurs `références`, comme celles de modele-social
@@ -8174,17 +8233,22 @@ referents:
           octobre). Le dirigeant assimilé salarié, qui se saisit en salarié du privé.
         fiche: un_statut_par_annee
     bilan: >-
-      Rien de mieux sur les droits, ceux d'un salarié, que le dépôt
-      calcule bien mieux (sa pension de base vaut 50 % du revenu de
-      l'année). Seule sa fiche de paie, sans chômage ni réduction
-      générale, manque au dépôt.
+      Rien de mieux sur les droits, ceux d'un salarié : rejoués, ses
+      trimestres et ses points sont ceux du dépôt, à ses deux erreurs
+      près, et sa pension de base vaut 50 % du revenu de l'année. Seule sa
+      fiche de paie, sans chômage ni réduction générale, manque au dépôt.
     sas: [mon_entreprise_depot]
-    lu_le: 2026-10-04
+    lu_le: 2026-10-23
     lu_dans:
+      - https://registry.npmjs.org/modele-as
       - https://github.com/betagouv/mon-entreprise
     note: >-
-      Paquet npm 0.1.0 ; dernier commit sur son répertoire le 10 septembre
-      2026. Avec modele-social et modele-ti, une seule source.
+      Paquet npm 0.1.0 du 16 juillet 2026. Au commit `01861d0` de
+      mon-entreprise (16 octobre), la tête du 23 octobre, ses deux règles
+      fautives n'ont changé que de nom (le 2 septembre), et rien de ses
+      règles de retraite n'a bougé depuis `05cb5be`, le commit lu le 4
+      octobre : seul `entreprise.publicodes` (`b6da3fb`). Avec
+      modele-social et modele-ti, une seule source.
 
   # ---- Les transcriptions du droit en code ---------------------------------
 

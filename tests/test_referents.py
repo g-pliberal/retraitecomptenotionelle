@@ -21,6 +21,9 @@ from pathlib import Path
 import pytest
 import yaml
 
+from retraite_notionnelle.droit.releve import points_de_l_annee
+from retraite_notionnelle.simulateur import Simulateur
+
 RACINE = Path(__file__).resolve().parents[1]
 REGISTRE = RACINE / "data" / "reference" / "referents.yaml"
 
@@ -375,7 +378,8 @@ AGES_QUAND_PARTIR = {
 #: Les modèles dont ces constats tiennent l'accord : leur ligne nomme la version
 #: confrontée, sans quoi le tableau de bord les compterait jamais confrontés.
 CONFRONTES_PAR_LEURS_PARAMETRES = (
-    {m for m, _, _ in CONSTATS} | {"edifis", "simulateur_aurain", "outil_quand_partir"})
+    {m for m, _, _ in CONSTATS}
+    | {"edifis", "simulateur_aurain", "outil_quand_partir", "modele_as"})
 
 
 @pytest.mark.parametrize("modele, donnee, valeurs", CONSTATS,
@@ -424,6 +428,75 @@ def test_un_modele_dont_les_valeurs_sont_tenues_ici_nomme_sa_version(par_id):
         assert par_id[modele].get("version"), (
             f"{modele} : ses paramètres sont confrontés ici, et sa ligne ne nomme "
             "pas la version confrontée")
+
+
+# ---- modele-as, rejoué -------------------------------------------------------
+# Le paquet npm modele-as 0.1.0 de l'Urssaf (MIT), exécuté à part le 23 octobre
+# 2026 sous publicodes 1.10.4 (action 137) : la rémunération brute annuelle d'un
+# dirigeant assimilé salarié, au 1er juillet de l'année. Le dépôt, qui saisit ce
+# dirigeant en salarié du privé (fiche `un_statut_par_annee`), en valide les
+# trimestres et en compte les points Agirc-Arrco, sauf deux erreurs, les siennes,
+# que sa ligne du registre déclare. Il arrondit à l'euro le revenu MENSUEL cotisé
+# avant de le comparer au seuil : à moins de 6 € d'un seuil, il compte un
+# trimestre de trop ou de moins. Et il compte les points de la tranche 1 sur la
+# cotisation divisée par 1,27 : 6,197 % de l'assiette, au lieu des 6,20 % du
+# taux de calcul.
+
+#: (année, rémunération) : (trimestres, points Agirc-Arrco), chez lui.
+MODELE_AS = {
+    (2023, 29_538): (4, 97.5348),      # le livret n° 3 de la fédération : 97,58 points
+    (2024, 6_990): (3, 22.0639),       # 600 heures du SMIC de 11,65 €, pile
+    (2024, 6_990.5): (4, 22.0654),
+    (2024, 20_000): (4, 63.1298),
+    (2024, 69_368): (4, 345.5237),     # le livret n° 3 : 345,59 points
+    (2025, 3_558): (2, 10.9217),       # 6 € sous 300 heures du SMIC de 11,88 €
+    (2025, 47_100): (4, 144.5790),     # le plafond de la Sécurité sociale
+    (2026, 1_803): (0, 5.5345),        # 150 heures du SMIC de 12,02 €, pile
+    (2026, 1_804): (0, 5.5376),
+    (2026, 100_000): (4, 584.9109),
+    (2026, 500_000): (4, 2_980.5082),  # au-delà de huit plafonds
+}
+
+#: Les trimestres de R. 351-9 là où il arrondit : autant que la rémunération
+#: annuelle « représente de fois » 150 heures du SMIC du 1er janvier, quatre au
+#: plus (LEGIARTI000053335598).
+TRIMESTRES_DE_R_351_9 = {(2024, 6_990): 4, (2025, 3_558): 1, (2026, 1_803): 1,
+                         (2026, 1_804): 1}
+
+#: Ses paramètres de l'année, qui sont ceux du dépôt : le plafond annuel de la
+#: Sécurité sociale et la valeur d'achat du point Agirc-Arrco.
+PLAFOND_ET_VALEUR_D_ACHAT = {2023: (43_992, 18.7669), 2024: (46_368, 19.6321),
+                             2025: (47_100, 20.1877), 2026: (48_060, 20.1877)}
+
+
+@pytest.fixture(scope="module")
+def moteur():
+    return Simulateur().scenario_actuel
+
+
+@pytest.mark.parametrize("annee, remuneration", sorted(MODELE_AS))
+def test_modele_as_valide_les_trimestres_du_depot_sauf_pres_d_un_seuil(moteur, annee,
+                                                                       remuneration):
+    chez_lui = MODELE_AS[annee, remuneration][0]
+    attendu = TRIMESTRES_DE_R_351_9.get((annee, remuneration), chez_lui)
+    assert moteur.macro.trimestres_valides(remuneration, annee) == attendu, (
+        f"modele_as, {annee}, {remuneration} € : {chez_lui} trimestres chez lui, "
+        f"{attendu} attendus au dépôt ; sa ligne du registre se relit")
+
+
+@pytest.mark.parametrize("annee, remuneration", sorted(MODELE_AS))
+def test_modele_as_compte_les_points_du_depot_sauf_sur_la_tranche_1(moteur, annee,
+                                                                    remuneration):
+    """Ses points de la tranche 2 sont ceux du dépôt, à 17 % de l'assiette ;
+    ceux de la tranche 1, à 7,87 % / 1,27 au lieu de 6,20 %."""
+    plafond, achat = PLAFOND_ET_VALEUR_D_ACHAT[annee]
+    chez_lui = MODELE_AS[annee, remuneration][1]
+    attendu = chez_lui + min(remuneration, plafond) * (0.062 - 0.0787 / 1.27) / achat
+    au_depot = points_de_l_annee(moteur, "salarie_prive_cadre", annee, "complementaire",
+                                 remuneration)
+    assert au_depot == pytest.approx(attendu, abs=1e-4), (
+        f"modele_as, {annee}, {remuneration} € : {chez_lui} points chez lui, "
+        f"{au_depot} au dépôt ; sa ligne du registre se relit")
 
 
 def test_le_tableau_de_bord_dit_combien_d_ecarts_sont_chez_les_modeles_confrontes(referents):

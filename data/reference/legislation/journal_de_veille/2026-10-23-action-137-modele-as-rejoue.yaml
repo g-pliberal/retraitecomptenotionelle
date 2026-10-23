@@ -1,0 +1,23 @@
+date: "2026-10-23"
+session: "action 137 : modele-as, rejoué sur des revenus de dirigeant"
+consulte: >-
+  Le paquet npm modele-as 0.1.0 de l'Urssaf (MIT), exécuté à part sous publicodes
+  1.10.4 sur 171 rémunérations de dirigeant assimilé salarié de 2024 à 2026, et
+  modele-social 11.1.0 sur sept d'entre elles ; le dépôt de mon-entreprise à sa tête
+  (commit 01861d0, 16 octobre 2026), comparé au commit 05cb5be que le registre avait
+  lu. R. 351-9 en vigueur (LEGIARTI000053335598), lu dans l'index LEGI du dépôt ; le
+  livret n° 3 de l'Agirc-Arrco, déjà rejoué par tests/temoins/exemples_officiels.yaml.
+  Le scénario 1 n'est pas touché : ni fiche, ni règle.
+trouve: >-
+  Rien qui contredise le dépôt. Les paramètres de modele-as (SMIC du 1er janvier,
+  plafond, valeurs d'achat et de service du point Agirc-Arrco, taux) sont ceux du
+  dépôt, et ses trimestres et ses points aussi, sauf deux erreurs, les siennes, que
+  modele-social partage : il arrondit à l'euro le revenu mensuel cotisé avant de le
+  comparer au seuil d'un trimestre, quand R. 351-9 compte « le salaire annuel » (trois
+  trimestres pour 6 990 € en 2024, 600 heures de SMIC) ; il compte les points de la
+  tranche 1 sur la cotisation divisée par 1,27, 6,197 % au lieu de 6,20 % (97,53
+  points pour l'exemple du livret qui en écrit 97,58). Les deux sont au registre.
+reste: >-
+  Catala, le simulateur de SUD éducation et Nos Retraites restent à confronter.
+  modele-ti arrondit aussi son revenu cotisé, dans une unité non vérifiée : à
+  rejouer quand sa ligne se relira.
