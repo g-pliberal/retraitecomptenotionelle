@@ -124,6 +124,20 @@ def test_l_exemple_de_la_circulaire_en_2023(macro):
                   2023).trimestres_valides == 1
 
 
+@pytest.mark.parametrize("seuil,trimestres", [
+    (2_792.0, 1), (5_584.0, 2), (8_376.0, 3), (11_168.0, 4)])
+def test_les_seuils_de_la_cipav_en_2026(macro, seuil, trimestres):
+    """« Pour valider des trimestres de retraite, votre chiffre d'affaires
+    annuel doit atteindre, en 2026, au moins 11 168 € » : 2 792, 5 584, 8 376
+    et 11 168 € de recettes valident un, deux, trois et quatre trimestres
+    (service-public, F23369, vérifiée le 14 octobre 2026). La fiche arrondit
+    ses seuils à l'euro — 1 803 € de revenu cotisé en demandent 2 792,002 — :
+    un euro de plus passe le seuil, un euro de moins le manque."""
+    for recettes, valides in ((seuil + 1.0, trimestres), (seuil - 1.0, trimestres - 1)):
+        assert _ligne(macro, "profession_liberale", "cipav", "cipav", recettes,
+                      2026).trimestres_valides == valides
+
+
 #: Les trimestres d'un auto-entrepreneur à jour de son forfait, de 2009 à
 #: 2015, quand l'État compensait ce que le forfait ne versait pas
 #: (L. 133-6-8-2, D. 131-6-4) : les tableaux des circulaires du RSI.
@@ -409,6 +423,31 @@ def test_le_revenu_annuel_moyen_porte_le_revenu_cotise(simulateur):
     assert revenu_annuel_moyen == pytest.approx(
         1_802.82 * macro.coefficient_revalorisation_portee_au_compte(
             2023, carriere.annee_liquidation, carriere.mois_liquidation), rel=1e-3)
+
+
+@pytest.mark.parametrize("activite,trimestres,revenu_cotise", [
+    # « (224,63 € + 106,88 € + 122,96 € + 192,48 €) / 17,87 % = 3 620,31 » :
+    # la fiche arrondit chaque forfait trimestriel à l'euro, le modèle prend
+    # l'année, 3 618,73 €.
+    ("vente", 2, 3_620.31),
+    ("services", 3, 6_237.05),
+    # « (499 € + 238 € + 273 € + 428 €) / 17,87 % = 8 043,01 € » : la somme
+    # écrite en donne 8 047 ; le résultat est celui de l'année sans arrondi,
+    # 12 100 € × 25,6 % × 46,40 % / 17,87 %.
+    ("liberal", 4, 8_043.01),
+])
+def test_les_revenus_cotises_de_service_public_en_2026(simulateur, activite, trimestres,
+                                                       revenu_cotise):
+    """12 100 € de chiffre d'affaires en 2026 portent au revenu annuel moyen le
+    revenu cotisé que service-public calcule pour la vente, les services et
+    le libéral de l'Assurance retraite (F23369, vérifiée le 14 octobre 2026)."""
+    macro = simulateur.macro
+    carriere, revenu_annuel_moyen = _revenu_annuel_moyen(
+        simulateur, "regime_general", 1962, 65,
+        [(2026, activite, 12_100.0 * (1.0 - ABATTEMENTS_MICRO[activite]), 1.0, trimestres)])
+    assert revenu_annuel_moyen == pytest.approx(
+        revenu_cotise * macro.coefficient_revalorisation_portee_au_compte(
+            2026, carriere.annee_liquidation, carriere.mois_liquidation), rel=1e-3)
 
 
 def test_le_plancher_de_2009_entre_au_revenu_annuel_moyen(simulateur):

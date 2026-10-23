@@ -1,0 +1,29 @@
+date: "2026-10-23"
+session: "action 89 : F33841 et F23369, deux fiches de service-public aux identifiants croisés"
+consulte: >-
+  Service-public, en page et en XML (`lecomarquage.service-public.fr/vdd/3.4/pro/xml/`) :
+  F33841, « Régime de retraite de l'entrepreneur individuel (EI) », vérifiée le 13 mai
+  2026, et F23369, « Régime de retraite du micro-entrepreneur », vérifiée le 14 octobre
+  2026. Dans l'index LEGI du dépôt, à jour du 18 octobre 2026 : D. 613-4 en ses
+  rédactions de 2020 (LEGIARTI000041918199) et de 2026 (LEGIARTI000052218738), D. 613-6
+  en celle de 2026 (LEGIARTI000052218747). Le scénario 1 n'est pas touché : aucune règle
+  écrite ni changée.
+trouve: >-
+  Les identifiants du sas sont croisés : F33841 est la fiche de l'entrepreneur
+  individuel, F23369 celle du micro-entrepreneur. La première concorde avec le dépôt
+  (CNAVPL, base des artisans et des commerçants, cotisations minimales de 450 SMIC
+  horaires, âges et durées), sauf le plafond spécifique du RCI, 44 286 € en 2026, qu'elle
+  reprend des circulaires de la Cnav et que D. 635-7 a supprimé depuis 2025 : un témoin de
+  plus aux lectures divergentes de `rci_seuil_premiere_tranche`. La seconde concorde avec
+  D. 613-4 et D. 613-6 : ses quatre seuils de la Cipav et ses revenus cotisés de 2026
+  entrent aux tests, à un euro près. La location de meublés de tourisme, catégorie c de
+  D. 613-4 depuis 2020 au moins, à 6 % des recettes, 50,20 % de base et 18,60 % de RCI en
+  2026, n'est pas une activité de la saisie. La fiche se trompe trois fois : son meublé
+  de tourisme divise par 17,75 % et compte ses points sur d'autres montants que ses
+  forfaits ; son libéral de l'Assurance retraite cotise à la CNAVPL, quand D. 613-6, e,
+  affecte 21 % de son forfait au RCI.
+reste: >-
+  La location de meublés de tourisme dans la saisie et ses pages, puis au modèle, le test
+  d'abord, par une session de la saisie et une des pages. Le plafond spécifique du RCI
+  reste une question de la fiche (`a_relire`) : à quoi sert celui que la Cnav et
+  service-public publient encore.

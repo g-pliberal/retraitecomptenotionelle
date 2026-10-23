@@ -3663,23 +3663,44 @@ sources:
     url: https://entreprendre.service-public.gouv.fr/vosdroits/F33841
     nature: regle
     acces: session
-    regimes: [micro_entrepreneurs]
+    regimes: [rsi, rci, cnavpl]
     a_en_tirer: >-
       Le régime de retraite du micro-entrepreneur : ce que le taux global
       ouvre comme droits, et le chiffre d'affaires minimal pour valider un
       trimestre.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-10-23
+    note: >-
+      Lue le 23 octobre 2026 (vérifiée le 13 mai 2026), en page et en XML
+      (`lecomarquage.service-public.fr/vdd/3.4/pro/xml/F33841.xml`) :
+      l'identifiant ment, F33841 est « Régime de retraite de
+      l'entrepreneur individuel (EI) », et la fiche du micro-entrepreneur
+      est F23369, dont la ligne porte l'identifiant de celle-ci
+      (`sp_f23369_entrepreneur_individuel`). Les identifiants restent ;
+      les régimes sont ceux de chaque page. Rien de neuf : les tranches de
+      la CNAVPL en 2026, 8,73 % et 1,87 %, ses 557 et 25 points, son point
+      à 0,6599 € ; la base des artisans et des commerçants, 17,87 % et
+      0,72 % ; les cotisations minimales, 573 € et 967 €, soit 450 SMIC
+      horaires et trois trimestres ; les âges, les durées, la décote et la
+      surcote ; un seul exemple, 12 500 points × 0,6599 €, qui n'est qu'un
+      produit. La cotisation provisionnelle de début d'activité du libéral,
+      sur 19 % du plafond, ne fait aucun droit. Un désaccord, déjà connu :
+      le « plafond spécifique » du RCI, 44 286 € en 2026, que la fiche
+      reprend des circulaires de la Cnav et que le dépôt ne suit pas,
+      D. 635-7 arrêtant la première tranche au plafond de la sécurité
+      sociale depuis 2025 (lectures divergentes de
+      data/reference/regles/rci_seuil_premiere_tranche.yaml).
 
   - id: sp_f23369_entrepreneur_individuel
     url: https://entreprendre.service-public.gouv.fr/vosdroits/F23369
     nature: regle
     acces: session
-    regimes: [rsi, rci]
+    regimes: [micro_entrepreneurs, rci, cnavpl, cipav_complementaire]
     a_en_tirer: >-
       Le régime de retraite de l'entrepreneur individuel, base et
       complémentaire.
-    statut: explore
-    explore_le: 2026-10-14
+    statut: epuise
+    explore_le: 2026-10-23
     note: >-
       Lue le 14 octobre 2026 (vérifiée le 1er avril 2026) : un exemple
       chiffré du micro-entrepreneur — 12 100 € de chiffre d'affaires
@@ -3688,6 +3709,24 @@ sources:
       —, et le même en prestations de services, à 21,2 %. Il revient à
       la session du micro-entrepreneur (action 138.12), qui seule touche
       à la saisie : rien n'en est pris ici.
+      Relue le 23 octobre 2026 (vérifiée le 14 octobre 2026) : c'est la
+      fiche du micro-entrepreneur, son identifiant et celui de F33841
+      croisés. Elle a changé depuis : le revenu cotisé de la vente se
+      divise par 17,87 % et vaut 3 620,31 €, au lieu de 3 644,78 €,
+      divisés par 17,75 %. L'étape 12 de l'action 138 en a tiré les
+      trimestres de la vente, des services, du libéral et du premier seuil
+      de la Cipav, et les points du RCI ; le reste est entré le 23
+      octobre, les quatre seuils de la Cipav, à un euro près, et le revenu
+      cotisé des trois activités (tests/test_micro_social.py). Ses taux et
+      ses parts sont ceux de D. 613-4 et de D. 613-6, relus dans l'index
+      LEGI. Ce que le dépôt ne porte pas : la location de meublés de
+      tourisme, à 6 % des recettes (D. 613-4, c), que la saisie n'offre
+      pas (data/reference/regimes/micro_entrepreneurs.yaml). Trois erreurs
+      de la fiche : son meublé de tourisme divise par 17,75 % (4 242,19 €,
+      pour 4 213,71 € à 17,87 %, deux trimestres l'un et l'autre) et
+      compte ses points sur d'autres montants que ses forfaits (8, pour
+      12) ; son libéral de l'Assurance retraite cotise à la complémentaire
+      de la CNAVPL, quand D. 613-6, e, affecte 21 % de son forfait au RCI.
 
   # ---- CLEISS : le versant international ----------------------------------
   # `docs/limites.md` déclare les carrières internationales hors modèle. Ce

@@ -1798,16 +1798,16 @@ borne basse et l'écart une borne haute.
 
 ### 89. Dépouiller les 260 sources officielles remises le 22 septembre 2026 — `en cours`
 
-**Reprise, au 19 octobre 2026.** Sont faits l'IRCEC, les libérales, la CRPN,
+**Reprise, au 23 octobre 2026.** Sont faits l'IRCEC, les libérales, la CRPN,
 l'Ircantec, l'ENIM, la fonction publique, la CNRACL, la Caisse des dépôts, le
 RAFP, l'Agirc-Arrco, les régimes spéciaux, la Cnav, service-public, le CLEISS,
 les modèles publics, mon-entreprise, les API publiques, l'abattement du RCI,
-les comptes notionnels étrangers, le COR, l'IPP, les parcours d'Union Retraite
-et les neuf modèles du registre. Attendent le propriétaire : le lot de
-`scripts/simulateurs.py` (RAFP, Ircantec, artistes-auteurs), un compte PISTE,
-Gallica, les règlements du RCO (1978) et du NRIC (2004). Restent `a_explorer`
-sept lignes : F33841, après la session de 138.12, le simulateur du COR, fermé,
-et cinq qui l'attendent. Détail : `89/2026-10-19-modeles-du-registre.md`.
+les comptes notionnels étrangers, le COR, l'IPP, les parcours d'Union Retraite,
+les neuf modèles du registre et F33841, avec F23369. Attendent le propriétaire :
+le lot de `scripts/simulateurs.py` (RAFP, Ircantec, artistes-auteurs), un compte
+PISTE, Gallica, les règlements du RCO (1978) et du NRIC (2004). Restent
+`a_explorer` six lignes : le simulateur du COR, fermé, et cinq qui attendent le
+propriétaire. Détail : `89/2026-10-23-f33841-et-f23369.md`.
 
 **Demande.** Huit lots d'adresses, remis le même jour : « explorer chaque lien
 assez profondément et en tirer le maximum possible pour notre site. Il ne faut

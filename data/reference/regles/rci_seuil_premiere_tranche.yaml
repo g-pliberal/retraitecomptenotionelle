@@ -153,6 +153,11 @@ sources:
     pour 2026, en citant la rédaction de D. 635-7 qu'a remplacée celle du 7 juillet
     2024, que l'Urssaf n'applique plus (8,1 % jusqu'au plafond de 48 060 € en 2026,
     selon les barèmes publiés de Weblex et de Generali). La fiche suit le texte.
+  - >-
+    Service-public, fiche F33841 « Régime de retraite de l'entrepreneur individuel
+    (EI) », vérifiée le 13 mai 2026, publie les mêmes tranches pour 2026 : 8,1 % «
+    dans la limite de 44 286 € (plafond spécifique du régime complémentaire) », 9,1 %
+    « entre 44 286 € et 192 240 € ».
   a_relire:
   - >-
     Lire les publications du RSI de 2014, 2015, 2018 et 2019, dont les montants ne
@@ -186,6 +191,12 @@ sources:
       « jusqu'à un plafond spécifique (42 946 euros) » en 2024
     url: https://www.cor-retraites.fr/sites/default/files/2024-07/Fiche_RCI_0.pdf
     date: 2026-09-23
+  - type: service_public
+    reference: >-
+      fiche F33841, « Régime de retraite de l'entrepreneur individuel (EI) »,
+      vérifiée le 13 mai 2026 : le plafond spécifique de 44 286 € en 2026
+    url: https://entreprendre.service-public.gouv.fr/vosdroits/F33841
+    date: 2026-10-23
 code:
   python: >-
     donnees/regimes.py : PeriodeRegime.bornes_assiette_en_euros,
