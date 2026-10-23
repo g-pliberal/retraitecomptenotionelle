@@ -67,6 +67,9 @@ COMPLETS = {
     "test_parcours.py",
     # Le pont par lequel le Python lit le site : il lance node.
     "test_site.py",
+    # Le site dans un vrai navigateur, à cinq largeurs d'écran : vingt-cinq
+    # secondes de Chromium.
+    "test_ecrans.py",
     # Le système 1 au format de « Mon estimation retraite » : les deux
     # moteurs, et la page qui le montre.
     "test_estimation_du_site.py",
@@ -261,6 +264,13 @@ SITE = {
     ("test_affirmations.py", "test_rien_n_echappe_au_catalogue"),
     ("test_parcours.py", "test_les_reperes_du_parcours_portent_l_etiquette_de_leur_page"),
     ("test_parcours.py", "test_le_parcours_nomme_les_onglets_comme_la_barre"),
+    # Ce qu'un écran montre : rien ne déborde, et ce qui va ensemble se voit
+    # ensemble. Une retouche de la feuille de style ou d'une page le déplace.
+    ("test_ecrans.py", "test_aucune_page_ne_deborde_en_largeur"),
+    ("test_ecrans.py", "test_aucune_page_ne_laisse_de_grand_vide"),
+    ("test_ecrans.py", "test_aucune_page_ne_leve_d_erreur_a_aucune_largeur"),
+    ("test_ecrans.py", "test_un_trace_et_sa_legende_se_voient_ensemble"),
+    ("test_ecrans.py", "test_les_quatre_systemes_se_comparent_d_un_seul_regard"),
 }
 
 

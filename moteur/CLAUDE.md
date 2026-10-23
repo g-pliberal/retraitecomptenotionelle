@@ -27,6 +27,14 @@ types et Droits non cotisés lisent ce que le Python en a fabriqué
   s'écrivent pas à la main : `scripts/mesures_accueil.py` les refait comme
   leurs tests, et GitHub les récrit à chaque fabrique (action 163). Une mesure
   de plus s'y déclare, avec sa précision et son calcul.
+- **Ce qu'un écran montre se vérifie dans un vrai navigateur** :
+  `tests/test_ecrans.py` pilote Chromium à plusieurs largeurs, du plus petit
+  téléphone au bureau — rien ne déborde ni ne défile en largeur, une légende
+  touche son tracé, les quatre systèmes du simulateur tiennent dans un écran,
+  aucun grand vide (action 165). Un graphique se dessine à la largeur de la
+  colonne, que `rendre` reçoit et pose au gabarit (`g.poserEcran`) ; les
+  témoins sont rendus au large. Un tableau trop large ne défile pas : il se
+  replie (`plierLesTableaux`, dans `index.html`).
 - **L'outillage d'audit d'interface** (Impeccable, Web Interface Guidelines,
   Playwright CLI) : `.claude/skills/`, mis en place par
   `scripts/setup_ui_tools.sh` ; voir `docs/outillage_interface.md`.
@@ -39,7 +47,11 @@ types et Droits non cotisés lisent ce que le Python en a fabriqué
   (`test_le_simulateur_tient_en_peu_de_mots`) ; toute phrase en gras d'une
   page figée au catalogue `data/reference/site/affirmations.yaml`, avec son
   contrôle ; `python scripts/construire_temoins.py`, puis
-  `python scripts/resumer_temoins.py` ; `python -m pytest -m site`.
+  `python scripts/resumer_temoins.py` ; `python -m pytest -m site`, qui joue
+  aussi le site dans le navigateur.
+- **Une retouche de `moteur/style.css` ou d'un dessin du gabarit** : d'abord
+  la mesure qui dit ce qui doit changer, vue rouge, dans
+  `tests/test_ecrans.py` ; puis `python -m pytest tests/test_ecrans.py`.
 - **Un champ de saisie de plus** : d'abord le test qui le lit et le vérifie,
   vu rouge ; les deux saisies, `saisie.py` et `saisie.js` — la lecture, la
   vérification, la réécriture de l'adresse — ; toute borne `min` ou `max` du

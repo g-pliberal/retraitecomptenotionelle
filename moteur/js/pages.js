@@ -327,9 +327,11 @@ export const ANCIENNES_ROUTES = {
  * C'est ici, et nulle part ailleurs, que les réglages sont posés pour les liens
  * de la page à venir : `rendre` est le point d'entrée unique du rendu, et les y
  * poser à chaque appel — fût-ce à vide — garantit qu'aucune page n'hérite des
- * réglages de la précédente.
+ * réglages de la précédente. La largeur de la colonne aussi, que les
+ * graphiques épousent (`g.poserEcran`) : `null`, la page se rend au large.
  */
-export function rendre(contexte, cheminDemande, parametres = null) {
+export function rendre(contexte, cheminDemande, parametres = null, largeur = null) {
+  g.poserEcran(largeur);
   const chemin = (ANCIENNES_ROUTES[cheminDemande] || [cheminDemande])[0];
   const requete = parametres || {};
   let regles;
@@ -3303,7 +3305,7 @@ function saviezVous() {
     // deux par ligne, et trois cartes laissaient une case vide sous chaque
     // thème ; le titre la comble, à côté de la première carte, et la grille se
     // lit en deux lignes pleines. Sur un téléphone, il reste au-dessus.
-    return `<section class="theme"><div class="cartes lisibles" data-partage-ici>`
+    return `<section class="theme"><div class="cartes" data-partage-ici>`
       + `<div class="intro"><h2>${theme.titre}</h2>`
       + `<p class="chapeau">${theme.chapeau}</p></div>${cartes}</div></section>`;
   }).join("\n");
@@ -5166,6 +5168,12 @@ function resultats(contexte, saisie, comparaison = contexte.simuler(saisie)) {
         <span class="ecart">il manque ${g.euros(manqueMensuel)} par mois</span>
       </span>`;
     }
+    // La carte d'un système : son nom, ses chiffres et sa barre, que les
+    // quatre cartes alignent côte à côte. Ce qu'il mesure, de quoi son
+    // montant est fait et ce qu'il vaut au regard du système actuel se
+    // déplient dessous : écrits sous chaque montant, ils étageaient les
+    // quatre systèmes sur deux écrans de téléphone, et l'on ne pouvait plus
+    // les comparer.
     return `
 <div class="scenario">
   <div class="entete">
@@ -5178,11 +5186,14 @@ function resultats(contexte, saisie, comparaison = contexte.simuler(saisie)) {
         <span class="unite">${montants.unitePension}</span>${appel}
       </span>${chiffreFinance}
     </span>
-  </div>${partage}
+  </div>
   <div class="barre ${cle}">${barre}</div>
+  <details class="mesure">${g.sommaire("Ce qu'il mesure"
+    + `<span class="hors-ecran"> : ${echapper(titre)}</span>`)}${partage}
   <div class="glose">${glose} · ${g.terme("taux de remplacement")}
     ${g.pourcentage(montants.tauxRemplacement(tauxRemplacement, cle === "liberal"))} ·
     écart au système actuel : ${variationHtml}${gloseFinancement(finance)}</div>
+  </details>
 </div>`;
   };
 
@@ -5327,7 +5338,7 @@ ${lecture}
 ${revenuDeduit(contexte, comparaison, saisie, montants)}
 <div class="carte">
   ${basculeMontants(saisie, contexte.echelle(saisie), montants.tauxPension)}
-  ${scenarios}
+  <div class="scenarios">${scenarios}</div>
   ${aSavoir}
   ${fiabilite}
   ${capitalisation}
@@ -12463,8 +12474,8 @@ function coutDetailFrise(contexte) {
   )).join("");
   return g.depliant(
     "La frise des flux : chaque année, ce qui rentre, ce qui sort, ce qui reste", `
-<p>La courbe de la section précédente se lit ici colonne par colonne, une par
-année, comme un registre. À gauche <strong>ce qui rentre</strong> dans la
+<p>La courbe de la section précédente se lit ici colonne par colonne, une tous
+les cinq ans, comme un registre. À gauche <strong>ce qui rentre</strong> dans la
 caisse, à droite <strong>ce qui sort</strong>, au milieu la caisse elle-même,
 aussi haute que le plus grand des deux : son pied est rouge quand il manque de
 l'argent, et cet argent est emprunté ; vert quand il en reste, et cet argent
@@ -12479,8 +12490,8 @@ points, le 1er janvier reste un peu en deçà du 31 décembre de la veille : la
 même dette, ou la même réserve, pèse moins dans un PIB qui a grandi. Le stock
 n'est pas dessiné à l'échelle des flux, dont il vaut jusqu'à cinquante
 fois la hauteur : il est écrit. Un stock négatif est une réserve, et ses intérêts lui
-rapportent au lieu de lui coûter. La frise défile de ${depart + 1} à ${fin} ;
-ses chiffres sont redits, ligne par ligne, dans le tableau replié dessous.</p>
+rapportent au lieu de lui coûter. La frise va de ${depart + 1} à ${fin} ;
+chaque année y est redite, ligne par ligne, dans le tableau replié dessous.</p>
 <fieldset class="onglets"><legend>Système affiché</legend>${onglets}</fieldset>
 <div class="panneaux">${panneaux}</div>
 `,

@@ -7034,3 +7034,57 @@ lance les deux premières : « vas-y ».
 **Ce que le propriétaire tranche** : les chiffres à unité du parcours, puis,
 une à une, les étapes 3 et 5. Les quatre gardes de l'étape 2 sont faites le
 17 octobre 2026.
+
+### 165. Le site sur tous les écrans : rien ne déborde, ce qui va ensemble se voit ensemble, moins de vide, moins de mots — `en cours`
+
+**Reprise, au 23 octobre 2026.** Faites, les étapes 1 et 2 : de 320 à 1 440
+points, rien ne déborde ni ne défile en largeur ; les graphiques se dessinent à
+la largeur de la colonne, leur légende contre eux ; les quatre systèmes du
+simulateur tiennent dans un écran ; les grands vides sont tenus. Un vrai
+navigateur le joue, `tests/test_ecrans.py`. Restent les étapes 3 à 10, une
+page par session : moins de mots, sans perdre une idée. Par quoi commencer :
+l'étape 3, l'accueil — serrer son budget de lecture (`BUDGETS_DE_LECTURE`,
+`tests/test_web.py`), le voir rouge, puis récrire. Détail :
+`165/2026-10-23-etapes-1-et-2-ecrans-et-vides.md`.
+
+**D'où elle vient.** Le 23 octobre 2026, le propriétaire : « Le site web de
+notre projet est plutôt adapté aux écrans d'ordinateurs (et encore...) mais
+pas pour les autres types d'écrans. Il faudrait que le site soit adapté à
+toutes les tailles d'écrans. Je suis convaincu qu'il y a trop de texte même
+sur ordinateur. On peut dire la même chose en moins de mots sans pour autant
+perdre le sens des idées. J'ai aussi remarqué qu'il y avait beaucoup
+d'espaces sans forcément de justifications. Il y a aussi des contenus qui
+débordent ou demandent de faire glisser de gauche à droite sur mobile comme
+les graphiques. [...] Il faut aussi que certaines informations apparaissent
+en même temps à l'écran sans quoi il est frustrant de comprendre
+l'information. Par exemple, les différents scénarios du simulateur ou encore,
+un graphique et sa légende. »
+
+**Les étapes.**
+
+1. **Rien ne déborde, et ce qui va ensemble se voit ensemble**, faite le
+   23 octobre 2026 : un test qui pilote Chromium à cinq largeurs, sans
+   dépendance ; les tableaux repliés sous la largeur où ils cessent de tenir ;
+   les courbes, les schémas de Sankey, la cascade et la frise dessinés à la
+   largeur de la colonne ; les cartes à publier lisibles sur un téléphone ;
+   les quatre systèmes du simulateur en cartes, deux par deux ou quatre de
+   front ; chaque légende à côté de son tracé, ou au-dessus.
+2. **Les vides**, faite le 23 octobre 2026 : le plus grand écart entre deux
+   blocs voisins tenu à quarante points sur un téléphone, cinquante-six au
+   large ; la ligne réservée sous chaque graphique à une aide invisible, et
+   le pied de page de cinq rem, retirés.
+3. **Moins de mots : le Programme**, l'accueil.
+4. **Moins de mots : Simuler**, le formulaire et les résultats.
+5. **Moins de mots : Coût.**
+6. **Moins de mots : Pourquoi changer.**
+7. **Moins de mots : Partager et Le saviez-vous ?**
+8. **Moins de mots : Carrières types.**
+9. **Moins de mots : Droits non cotisés.**
+10. **Moins de mots : Méthode et sources.**
+
+Pour chaque page des étapes 3 à 10 : serrer d'abord son budget de lecture, le
+voir rouge, puis récrire, chaque idée gardée et chaque chiffre à sa place ;
+une phrase en gras qui change passe au catalogue des affirmations ; chercher
+en chemin, dans la page, ce qui se lit ensemble et ne se voit pas ensemble —
+le propriétaire n'a donné que deux exemples ; `construire_temoins.py`,
+`python -m pytest -m site`, qui joue aussi le navigateur.

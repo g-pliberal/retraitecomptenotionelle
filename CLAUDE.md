@@ -177,7 +177,8 @@ qu'elle dure. D'où six règles.
   force la série. `tests/conftest.py` range chaque fichier dans son niveau :
   un fichier lent qui naît s'y range. Les tests du site tiennent en trois
   fichiers, `test_web.py`, `test_web_saisie.py` et `test_web_revues.py`, qui
-  se partagent `tests/outils_web.py`.
+  se partagent `tests/outils_web.py` ; ce qu'un écran en montre se vérifie
+  dans un vrai navigateur, par `test_ecrans.py`.
 - **La prose** : chaque document a son régime, déclaré dans
   `data/reference/prose/zones.yaml` — `etat` (tout chiffre y est ancré sur
   une sonde), `recit` (vrai à sa date, gelé), `produit` ou `tenu` (par le

@@ -116,6 +116,36 @@ export function options() {
 }
 
 /**
+ * La largeur, en points, de la colonne où la page va s'afficher — ou `null`,
+ * au large et partout où la page n'est pas sous les yeux de quelqu'un : les
+ * témoins, le Python qui la lit.
+ *
+ * C'est un état de module pour la même raison que `OPTIONS`, et il est posé
+ * au même endroit, à chaque rendu. Les graphiques en dépendent : réduit d'un
+ * tiers sur un téléphone, un tracé de 720 unités y avait des textes de huit
+ * pixels ; élargi à 30 rem pour qu'on les lise, il défilait dans sa boîte, et
+ * la moitié de la courbe était hors de l'écran. Il se dessine désormais à la
+ * largeur de la colonne qui le montre : son repère a autant d'unités qu'elle
+ * a de points, et ses textes la taille que la feuille de style leur donne.
+ * Au-delà de 720 points, il garde le tracé de toujours.
+ */
+let ECRAN = null;
+
+/** La largeur en deçà de laquelle un tracé ne se dessine plus : 260 points. */
+export const ECRAN_MINIMAL = 260;
+
+/** Fixe la largeur de la colonne. Voir `ECRAN`. */
+export function poserEcran(largeur) {
+  ECRAN = largeur && largeur < LARGEUR_TRACE
+    ? Math.max(ECRAN_MINIMAL, Math.floor(largeur)) : null;
+}
+
+/** La largeur de la colonne, `null` au large. */
+export function ecran() {
+  return ECRAN;
+}
+
+/**
  * Adresse d'une page interne, réglages de modélisation compris.
  *
  * Le site tient dans une seule page : la navigation passe par l'ancre de
@@ -1095,6 +1125,51 @@ const PAS_GRADUATIONS_X = [10, 20, 25, 50, 100];
  */
 const GRADUATIONS_X_MAXIMUM = 8;
 
+/**
+ * Le cadre d'un graphique : ses dimensions et ses marges, en unités du
+ * `viewBox`, le nombre de graduations d'années qu'il peut porter, et s'il a la
+ * place d'écrire le nom de chaque courbe à son bout.
+ *
+ * Au large, c'est le cadre de toujours, 720 × 300, que les témoins figent.
+ * Dans une colonne plus étroite (`ECRAN`), il prend sa largeur, et ses marges
+ * en points : les textes y gardent leur taille, treize unités qui font treize
+ * pixels. Il est aussi plus haut, en proportion — les deux tiers de sa
+ * largeur, et non les cinq douzièmes du large : une courbe écrasée à 120
+ * pixels de haut ne montre plus sa pente.
+ * Les noms au bout des courbes demandent cent unités à droite : un téléphone
+ * ne les a pas, et la légende, posée juste au-dessus du tracé, les donne.
+ */
+const CADRE_LARGE = Object.freeze({
+  largeur: LARGEUR_TRACE, hauteur: HAUTEUR_TRACE,
+  gauche: MARGE_GAUCHE, droite: MARGE_DROITE, haut: MARGE_HAUT, bas: MARGE_BAS,
+  graduationsX: GRADUATIONS_X_MAXIMUM, part: PART_MINIMALE_GRADUATIONS,
+  annees: 27, etiquettes: true,
+});
+// La place d'une graduation d'année : quatre chiffres de treize unités, et le
+// blanc qui les sépare de la suivante.
+const PLACE_D_UNE_ANNEE = 54;
+// La largeur moyenne d'un signe de treize unités, pour placer une étiquette
+// sans la mesurer : le tracé s'écrit hors du navigateur, qui seul sait mesurer.
+const LARGEUR_D_UN_SIGNE = 7;
+
+function cadreDuTrace() {
+  if (ECRAN === null) return CADRE_LARGE;
+  const gauche = 46;
+  // La moitié de « 2070 » en chiffres de treize unités, et deux de marge.
+  const droite = 18;
+  const trace = ECRAN - gauche - droite;
+  return {
+    largeur: ECRAN, hauteur: Math.round(Math.min(280, Math.max(200, ECRAN * 0.68))),
+    gauche, droite, haut: 30, bas: 30, annees: 22,
+    graduationsX: Math.max(2, Math.floor(trace / PLACE_D_UNE_ANNEE)),
+    part: PLACE_D_UNE_ANNEE / trace,
+    etiquettes: false,
+  };
+}
+
+/** Le cadre du graphique en cours de tracé : posé par `graphique`. */
+let CADRE = CADRE_LARGE;
+
 /** Une courbe ou une bande d'un graphique. */
 export class Serie {
   constructor(libelle, valeurs, couleur, tirets = false, glose = "") {
@@ -1130,15 +1205,15 @@ export function pasGraduation(maximum, divisions = DIVISIONS_Y) {
 }
 
 function abscisse(annee, premiere, derniere) {
-  const largeur = LARGEUR_TRACE - MARGE_GAUCHE - MARGE_DROITE;
+  const largeur = CADRE.largeur - CADRE.gauche - CADRE.droite;
   if (derniere === premiere) {
-    return MARGE_GAUCHE + largeur / 2;
+    return CADRE.gauche + largeur / 2;
   }
   // Multiplier, puis diviser : c'est l'ordre du rendu Python, auquel ce tracé a
   // été comparé caractère par caractère jusqu'à la phase 8, et un autre ordre
   // tombait parfois de l'autre côté d'un arrondi au dixième. En changer
   // déplacerait des abscisses dans les témoins de pages.
-  return MARGE_GAUCHE + largeur * (annee - premiere) / (derniere - premiere);
+  return CADRE.gauche + largeur * (annee - premiere) / (derniere - premiere);
 }
 
 /**
@@ -1147,11 +1222,11 @@ function abscisse(annee, premiere, derniere) {
  * l'abaisse, et l'axe des abscisses monte alors dans le cadre.
  */
 function ordonnee(valeur, sommet, plancher = 0.0) {
-  const hauteur = HAUTEUR_TRACE - MARGE_HAUT - MARGE_BAS;
+  const hauteur = CADRE.hauteur - CADRE.haut - CADRE.bas;
   if (sommet <= plancher) {
-    return HAUTEUR_TRACE - MARGE_BAS;
+    return CADRE.hauteur - CADRE.bas;
   }
-  return HAUTEUR_TRACE - MARGE_BAS - hauteur * ((valeur - plancher) / (sommet - plancher));
+  return CADRE.hauteur - CADRE.bas - hauteur * ((valeur - plancher) / (sommet - plancher));
 }
 
 /** Décennies comprises dans la plage, plus les deux bornes. */
@@ -1164,7 +1239,7 @@ export function graduationsX(premiere, derniere) {
     for (let a = premiere; a <= derniere; a += 1) { if (a % candidat === 0) total += 1; }
     return total;
   };
-  const pas = PAS_GRADUATIONS_X.find((candidat) => compte(candidat) <= GRADUATIONS_X_MAXIMUM)
+  const pas = PAS_GRADUATIONS_X.find((candidat) => compte(candidat) <= CADRE.graduationsX)
     ?? PAS_GRADUATIONS_X[PAS_GRADUATIONS_X.length - 1];
   const annees = [];
   for (let a = premiere; a <= derniere; a += 1) {
@@ -1176,7 +1251,7 @@ export function graduationsX(premiere, derniere) {
   // voisine plutôt que la borne, qui porte l'information. L'écart se mesure en
   // part de l'amplitude, jamais en années : c'est une largeur de texte qu'on
   // évite.
-  const ecartMinimal = (derniere - premiere) * PART_MINIMALE_GRADUATIONS;
+  const ecartMinimal = (derniere - premiere) * CADRE.part;
   return annees.filter(
     (a) => a === premiere || a === derniere
       || (a - premiere >= ecartMinimal && derniere - a >= ecartMinimal),
@@ -1423,7 +1498,7 @@ function etiquettesDeFin(series, sommet, etiquettes, plancher = 0.0) {
   // dernière étiquette sorte du cadre.
   const base = ordonnee(plancher, sommet, plancher);
   const debord = Math.max(0.0, precedent - base);
-  const x = nombreBrut(LARGEUR_TRACE - MARGE_DROITE + 4);
+  const x = nombreBrut(CADRE.largeur - CADRE.droite + 4);
   return ecartees.map(({ y, texte }) => `<text class="graduation" x="${x}" `
     + `y="${nombreBrut(y - debord)}" dy="0.32em" text-anchor="start">`
     + `${echapper(texte)}</text>`).join("");
@@ -1438,6 +1513,7 @@ export function graphique(titre, annees, series, unite = "", empile = false,
   if (!annees.length || !series.length) {
     return "";
   }
+  CADRE = cadreDuTrace();
   const { sommet, pas, plancher } = sommetEchelle(series, empile, sommetMinimal);
   const derniereAnnee = annees[annees.length - 1];
   const gauche = nombreBrut(abscisse(annees[0], annees[0], derniereAnnee));
@@ -1451,7 +1527,7 @@ export function graphique(titre, annees, series, unite = "", empile = false,
     const valeur = plancher + pas * division;
     const y = nombreBrut(ordonnee(valeur, sommet, plancher));
     lignes.push(`<line class="grille" x1="${gauche}" y1="${y}" x2="${droite}" y2="${y}"/>`
-      + `<text class="graduation" x="${nombreBrut(MARGE_GAUCHE - 6)}" y="${y}" `
+      + `<text class="graduation" x="${nombreBrut(CADRE.gauche - 6)}" y="${y}" `
       + `dy="0.32em" text-anchor="end">${nombre(valeur, decimales)}</text>`);
   }
   // L'axe des abscisses passe par zéro, et le bas du cadre par le plancher :
@@ -1461,7 +1537,7 @@ export function graphique(titre, annees, series, unite = "", empile = false,
   for (const annee of graduationsX(annees[0], derniereAnnee)) {
     const x = nombreBrut(abscisse(annee, annees[0], derniereAnnee));
     lignes.push(`<text class="graduation" x="${x}" `
-      + `y="${nombreBrut(HAUTEUR_TRACE - MARGE_BAS + 27)}" `
+      + `y="${nombreBrut(CADRE.hauteur - CADRE.bas + CADRE.annees)}" `
       + `text-anchor="middle">${annee}</text>`);
   }
 
@@ -1497,7 +1573,7 @@ export function graphique(titre, annees, series, unite = "", empile = false,
   // unités hors du cadre, et se trouvait coupée sur un téléphone.
   const uniteHtml = unite
     ? `<text class="graduation" x="0" `
-      + `y="${nombreBrut(MARGE_HAUT - 16)}" text-anchor="start">${echapper(unite)}</text>`
+      + `y="${nombreBrut(CADRE.haut - 16)}" text-anchor="start">${echapper(unite)}</text>`
     : "";
   // Le repère dit où l'observation s'arrête et où la projection commence — une
   // frontière qu'un graphique doit montrer, faute de quoi il donne à une
@@ -1509,13 +1585,25 @@ export function graphique(titre, annees, series, unite = "", empile = false,
     // L'étiquette se pose du côté où il reste de la place : à droite du trait
     // dans la première moitié du tracé, à gauche dans la seconde, faute de
     // quoi « espérance de vie : 89,7 ans » sortait du cadre.
-    const aGauche = repere > (annees[0] + derniereAnnee) / 2;
+    let aGauche = repere > (annees[0] + derniereAnnee) / 2;
+    // Dans un cadre étroit, le côté choisi peut manquer de place à son tour :
+    // l'étiquette passe de l'autre côté du trait, ou, si aucun ne suffit, se
+    // cale contre le bord du tracé plutôt que d'en sortir.
+    let ancre = position + (aGauche ? -5 : 5);
+    if (ECRAN !== null && libelleRepere) {
+      const longueur = libelleRepere.length * LARGEUR_D_UN_SIGNE;
+      if (aGauche && ancre - longueur < CADRE.gauche) aGauche = false;
+      else if (!aGauche && ancre + longueur > CADRE.largeur - CADRE.droite) aGauche = true;
+      ancre = position + (aGauche ? -5 : 5);
+      ancre = aGauche ? Math.max(ancre, CADRE.gauche + longueur)
+        : Math.min(ancre, CADRE.largeur - CADRE.droite - longueur);
+    }
     const etiquette = libelleRepere
-      ? `<text class="graduation" x="${nombreBrut(position + (aGauche ? -5 : 5))}" `
-        + `y="${nombreBrut(MARGE_HAUT + 8)}" text-anchor="${aGauche ? "end" : "start"}">`
+      ? `<text class="graduation" x="${nombreBrut(ancre)}" `
+        + `y="${nombreBrut(CADRE.haut + 8)}" text-anchor="${aGauche ? "end" : "start"}">`
         + `${echapper(libelleRepere)}</text>`
       : "";
-    repereHtml = `<line class="repere" x1="${x}" y1="${nombreBrut(MARGE_HAUT)}" `
+    repereHtml = `<line class="repere" x1="${x}" y1="${nombreBrut(CADRE.haut)}" `
       + `x2="${x}" y2="${bas}"/>${etiquette}`;
   }
   // Ce dont la lecture au survol a besoin, et rien de plus.
@@ -1528,15 +1616,16 @@ export function graphique(titre, annees, series, unite = "", empile = false,
   //
   // La figure est focusable et porte un `role="group"` : les flèches y
   // parcourent les années, ce qu'une image ne saurait pas faire.
-  return '<figure class="graphique" tabindex="0" role="group" '
+  return `<figure class="graphique${ECRAN === null ? "" : " etroit"}" tabindex="0" role="group" `
     + `aria-label="${echapper(titre)}" `
     + `data-gauche="${gauche}" data-droite="${droite}">`
-    + `<svg viewBox="0 0 ${LARGEUR_TRACE} ${HAUTEUR_TRACE}" role="img" `
+    + `<svg viewBox="0 0 ${CADRE.largeur} ${CADRE.hauteur}" role="img" `
     + `aria-label="${echapper(titre)}">`
     + lignes.join("") + traces.join("")
     + `<line class="axe" x1="${gauche}" y1="${base}" x2="${droite}" y2="${base}"/>`
     + repereHtml + uniteHtml
-    + (etiquettes.length ? etiquettesDeFin(series, sommet, etiquettes, plancher) : "")
+    + (etiquettes.length && CADRE.etiquettes
+      ? etiquettesDeFin(series, sommet, etiquettes, plancher) : "")
     + '<g class="survol"></g></svg>'
     + '<div class="lecture" role="status" aria-live="polite" hidden></div>'
     + `${legendeVisible ? legende(series, libelleEcart) : ""}`
@@ -1617,7 +1706,6 @@ export function donneesDuGraphique(titre, annees, series, unite = "",
  * unités de plus en hauteur.
  */
 const COLONNE_FRISE = 260;
-const MARGE_FRISE = 16;
 const HAUTEUR_FRISE = 346;
 const HAUT_FRISE = 40;
 const ECHELLE_FRISE = 7.0;
@@ -1658,15 +1746,18 @@ export class AnneeFrise {
  * chaque flux, et en face de chaque ligne du stock, alignés à droite. Une valeur
  * négative du stock est une réserve.
  *
- * Le dessin est rendu dans une boîte qui défile, à largeur fixe : c'est le
- * lecteur qui avance dans les années, comme il tournerait les pages d'un
- * registre. Ses chiffres sont redits dans un tableau replié dessous, ligne par
- * ligne, parce qu'un dessin est une image et qu'une image ne se lit pas au
- * clavier.
+ * UNE COLONNE TOUS LES CINQ ANS, la première et la dernière année en plus, et
+ * les colonnes passent à la ligne : quatre ou cinq de front au large, une sur
+ * un téléphone. La frise mettait les quarante-cinq années bout à bout, dans
+ * une boîte de onze mille points qui défilait en largeur : on n'en voyait
+ * jamais que deux ou trois, et le lecteur devait glisser de gauche à droite
+ * pour avancer dans les années. Chaque colonne est désormais un dessin à
+ * part, et toutes se voient en descendant la page ; chaque année, montrée ou
+ * non, est redite dans le tableau replié dessous, ligne par ligne, parce
+ * qu'un dessin est une image et qu'une image ne se lit pas au clavier.
  */
 export function friseFlux(titre, annees) {
   if (!annees.length) return "";
-  const largeur = MARGE_FRISE * 2 + COLONNE_FRISE * annees.length;
   const demi = LARGEUR_NOEUD_FRISE / 2;
   const xRentre = 20;
   const xCaisse = 113;
@@ -1676,10 +1767,12 @@ export function friseFlux(titre, annees) {
   const largeurNoeud = nombreBrut(LARGEUR_NOEUD_FRISE);
 
   const dessins = [];
+  const derniere = annees.length - 1;
   annees.forEach((ligne, rang) => {
+    if (rang !== 0 && rang !== derniere && ligne.annee % 5 !== 0) return;
     // Des points de PIB de l'année, en milliards.
     const md = (points) => milliards(points * ligne.pib / 100.0);
-    const x = MARGE_FRISE + COLONNE_FRISE * rang;
+    const x = 0;
     const hRentre = ECHELLE_FRISE * ligne.rentre;
     const hSort = ECHELLE_FRISE * ligne.sort;
     const hCaisse = Math.max(hRentre, hSort);
@@ -1692,8 +1785,10 @@ export function friseFlux(titre, annees) {
     const droite = nombreBrut(x + xSort);
     const haut = nombreBrut(HAUT_FRISE);
     dessins.push(
-      `<line class="grille" x1="${nombreBrut(x)}" y1="${nombreBrut(30)}" `
-      + `x2="${nombreBrut(x)}" y2="${nombreBrut(HAUTEUR_FRISE - 10)}"/>`
+      // L'origine recule de seize unités : le chiffre centré sous la première
+      // barre déborde à sa gauche.
+      `<svg viewBox="-16 0 ${COLONNE_FRISE + 16} ${HAUTEUR_FRISE}" role="img" `
+      + `aria-label="${ligne.annee}">`
       + `<text class="titre" x="${nombreBrut(x + COLONNE_FRISE / 2)}" y="22" `
       + `text-anchor="middle">${ligne.annee}</text>`
       // Les rubans d'abord : ils sont un fond.
@@ -1740,7 +1835,8 @@ export function friseFlux(titre, annees) {
         + `y="${nombreBrut(basBarres + ecart)}">${nom} : ${pts(valeur)}</text>`
         + `<text class="graduation${teinteMd}" `
         + `x="${nombreBrut(x + DROITE_MILLIARDS_FRISE)}" `
-        + `y="${nombreBrut(basBarres + ecart)}" text-anchor="end">${md(valeur)}</text>`).join(""),
+        + `y="${nombreBrut(basBarres + ecart)}" text-anchor="end">${md(valeur)}</text>`).join("")
+      + "</svg>",
     );
   });
 
@@ -1763,50 +1859,25 @@ export function friseFlux(titre, annees) {
     `${titre}, en points de PIB et en milliards d'euros`, true,
   );
   return `<figure class="frise" role="group" aria-label="${echapper(titre)}">`
-    + `<div class="defilant" tabindex="0" role="region" aria-label="${echapper(titre)}">`
-    + `<svg width="${largeur}" height="${HAUTEUR_FRISE}" `
-    + `viewBox="0 0 ${largeur} ${HAUTEUR_FRISE}" role="img" aria-label="${echapper(titre)}">`
-    + `${dessins.join("")}</svg></div>${legende}</figure>`
+    + `<div class="annees">${dessins.join("")}</div>${legende}</figure>`
     + '<details class="donnees-frise">'
     + sommaire(`Les chiffres de cette frise, année par année (${annees.length} lignes)`)
     + `${grille}</details>`;
 }
 
 /**
- * Géométrie de la cascade, en unités du `viewBox` — un repère, pas des pixels.
- * Le cadre est plus haut que celui des courbes parce que les libellés sont
- * posés en biais SOUS l'axe : une marche s'appelle « La part patronale portée
- * au compte », et sept intitulés de cette longueur ne tiennent pas côte à côte
- * à l'horizontale, fût-ce sur trois lignes.
+ * La cascade se dessine COUCHÉE : chaque marche est une ligne, son libellé à
+ * gauche et son montant à droite, sur une même ligne, puis sa barre dessous,
+ * qui part où la précédente s'est arrêtée ; l'axe des montants court de
+ * gauche à droite, au pied. Debout, elle demandait huit colonnes et huit
+ * libellés en biais : à 35 degrés, le plus long — « Cotisation unique de
+ * 18 %, départ à 65 ans » — sortait du cadre et s'y trouvait coupé, et sur un
+ * téléphone ses textes faisaient six pixels. Couchée, tout se lit à
+ * l'horizontale, à la taille du texte, sur la largeur de la colonne
+ * (`ECRAN`), 720 unités au large.
  */
-const LARGEUR_CASCADE = 760;
-const HAUTEUR_CASCADE = 430;
-const MARGE_GAUCHE_CASCADE = 58;
-const MARGE_DROITE_CASCADE = 16;
-const MARGE_HAUT_CASCADE = 40;
-// Ce qui reste sous l'axe pour les libellés inclinés : de quoi loger trente
-// caractères à trente-cinq degrés, la plus longue étiquette de la page Coût.
-const MARGE_BAS_CASCADE = 150;
-// Inclinaison des libellés, en degrés. Trente-cinq est la pente où l'œil suit
-// encore la ligne sans tourner la tête, et où huit étiquettes cessent de se
-// chevaucher. La valeur passe telle quelle dans le SVG : aucune trigonométrie
-// n'est calculée ici — du temps où les rendus Python et JavaScript étaient
-// comparés, c'est ce qui les empêchait de diverger sur un dernier bit.
-const PENTE_CASCADE = -35;
-// Part de la colonne qu'occupe la barre. Le reste est le blanc qui sépare deux
-// marches, et par lequel passe le trait de liaison.
-const PART_BARRE_CASCADE = 0.62;
-// Ce que les étiquettes inclinées débordent du cadre : à gauche, sous la
-// première colonne, dont l'étiquette part vers l'extérieur ; en bas, sous la
-// dernière ligne de texte. Le viewBox s'ouvre d'autant, plutôt que le dessin se
-// rétrécisse pour faire de la place à du texte.
-//
-// Les deux nombres sont MESURÉS, au navigateur, à la taille de texte du
-// TÉLÉPHONE — la plus grande des deux, où l'étiquette de la première colonne
-// sortait de vingt-deux unités et la dernière ligne frôlait le bord à deux
-// unités près. Les changer sans remesurer recoupe le texte.
-const DEBORD_GAUCHE_CASCADE = 34;
-const DEBORD_BAS_CASCADE = 14;
+const HAUTEUR_BARRE_CASCADE = 14;
+const LIGNE_CASCADE = 16;
 
 /** Une marche de la cascade : un libellé, un montant, et son rôle. */
 export class Marche {
@@ -1817,21 +1888,6 @@ export class Marche {
     this.couleur = couleur;
     this.glose = glose;
   }
-}
-
-/** Le centre de la colonne de rang `rang`, sur `marches` colonnes. */
-function abscisseCascade(rang, marches) {
-  const largeur = LARGEUR_CASCADE - MARGE_GAUCHE_CASCADE - MARGE_DROITE_CASCADE;
-  return MARGE_GAUCHE_CASCADE + largeur * (rang + 0.5) / marches;
-}
-
-function ordonneeCascade(valeur, sommet, plancher) {
-  const hauteur = HAUTEUR_CASCADE - MARGE_HAUT_CASCADE - MARGE_BAS_CASCADE;
-  if (sommet <= plancher) {
-    return HAUTEUR_CASCADE - MARGE_BAS_CASCADE;
-  }
-  return HAUTEUR_CASCADE - MARGE_BAS_CASCADE
-    - hauteur * ((valeur - plancher) / (sommet - plancher));
 }
 
 /**
@@ -1885,9 +1941,8 @@ function sensCascade(valeur, decimales) {
  * ruban d'écart du graphique de bilan — `--manque` et `--reste` —, pour qu'une
  * couleur désigne partout la même chose : ce qui coûte, et ce qui rend.
  *
- * Les libellés sont posés en biais. À l'horizontale, chacun demanderait
- * quatre-vingts unités de large, qu'une cascade de huit colonnes n'a pas ; à la
- * verticale, ils se liraient la tête penchée.
+ * ELLE SE DESSINE COUCHÉE, chaque marche sur sa ligne, son libellé à
+ * l'horizontale : voir `HAUTEUR_BARRE_CASCADE`.
  */
 export function cascade(titre, marches, unite = "", decimales = 1,
                         decimalesAxe = 0, libelleMarche = "Étape") {
@@ -1928,86 +1983,69 @@ export function cascade(titre, marches, unite = "", decimales = 1,
     sommet = Math.max(0.0, Math.ceil(maximum / pas)) * pas;
   }
 
-  const gauche = nombreBrut(MARGE_GAUCHE_CASCADE);
-  const droite = nombreBrut(LARGEUR_CASCADE - MARGE_DROITE_CASCADE);
-  const grille = [];
-  const divisions = Math.round((sommet - plancher) / pas) + 1;
-  for (let division = 0; division < divisions; division += 1) {
-    const valeur = plancher + pas * division;
-    const y = nombreBrut(ordonneeCascade(valeur, sommet, plancher));
-    grille.push(`<line class="grille" x1="${gauche}" y1="${y}" x2="${droite}" y2="${y}"/>`
-      + `<text class="graduation" x="${nombreBrut(MARGE_GAUCHE_CASCADE - 6)}" `
-      + `y="${y}" dy="0.32em" text-anchor="end">`
-      + `${nombre(valeur, decimalesAxe)}</text>`);
-  }
-
-  const colonne = (LARGEUR_CASCADE - MARGE_GAUCHE_CASCADE - MARGE_DROITE_CASCADE)
-    / marches.length;
-  const largeurBarre = colonne * PART_BARRE_CASCADE;
-  const basAxe = nombreBrut(ordonneeCascade(plancher, sommet, plancher));
-  const yLibelles = HAUTEUR_CASCADE - MARGE_BAS_CASCADE + 24;
-
+  const largeur = ECRAN === null ? LARGEUR_TRACE : ECRAN;
+  const gauche = 4;
+  const droite = largeur - 20;
+  const abscisse_ = (valeur) => gauche
+    + (droite - gauche) * ((valeur - plancher) / (sommet - plancher));
   const barres = [];
-  const liaisons = [];
   const textes = [];
+  let y = 6;
   marches.forEach((marche, rang) => {
     const [debut, fin] = niveaux[rang];
-    const centre = abscisseCascade(rang, marches.length);
-    const x = centre - largeurBarre / 2;
-    const haut = ordonneeCascade(Math.max(debut, fin), sommet, plancher);
-    const pied = ordonneeCascade(Math.min(debut, fin), sommet, plancher);
-    // Une marche nulle ne dessinerait rien, et une colonne vide se lit comme
-    // une colonne oubliée. Un filet d'une unité dit « mesuré, et nul », ce qui
-    // n'est pas la même chose que « pas mesuré » — et c'est justement ce que la
-    // cotisation unique vaut l'année d'avant sa bascule.
-    const hauteur = Math.max(pied - haut, 1.0);
     const sens = sensCascade(marche.valeur, decimales);
-    let classe;
-    let teinte;
-    if (marche.total) {
-      classe = "total";
-      teinte = marche.couleur ? ` fill="${marche.couleur}"` : "";
-    } else {
-      classe = sens;
-      teinte = "";
-    }
-    barres.push(`<rect class="marche ${classe}"${teinte} data-rang="${rang}" `
-      + `x="${nombreBrut(x)}" y="${nombreBrut(haut)}" `
-      + `width="${nombreBrut(largeurBarre)}" `
-      + `height="${nombreBrut(hauteur)}"/>`);
-    // Le trait de liaison part du sommet de la marche et rejoint la suivante :
-    // sans lui, huit barres flottantes ne se lisent pas comme une suite. Il
-    // s'arrête devant un total, qui repart de zéro et ne continue donc rien.
-    if (rang + 1 < marches.length && !marches[rang + 1].total) {
-      const y = nombreBrut(ordonneeCascade(fin, sommet, plancher));
-      const suivante = abscisseCascade(rang + 1, marches.length) - largeurBarre / 2;
-      liaisons.push(`<line class="liaison" x1="${nombreBrut(x + largeurBarre)}" `
-        + `y1="${y}" x2="${nombreBrut(suivante)}" y2="${y}"/>`);
-    }
     const montant = marche.total
       ? nombre(marche.valeur, decimales)
       : signeCascade(marche.valeur, decimales);
-    // Le chiffre est posé DEHORS : au-dessus de ce qui monte, au-dessous de ce
-    // qui descend. Dedans, il tombait dans le vide dès qu'une marche valait
-    // moins d'un dixième de l'échelle.
+    // Le montant au bout de la ligne, à droite ; le libellé à gauche, coupé au
+    // mot s'il devait le rencontrer.
     const classeTexte = marche.total ? "valeur" : `valeur ${sens}`;
-    const yValeur = (sens === "descend" && !marche.total) ? pied + 20 : haut - 9;
-    textes.push(`<text class="${classeTexte}" x="${nombreBrut(centre)}" `
-      + `y="${nombreBrut(yValeur)}" text-anchor="middle">${montant}</text>`);
-    // Le libellé, en biais, ancré par sa FIN sous le centre de la colonne :
-    // c'est ce qui le fait finir sous sa propre barre plutôt que sous la voisine.
-    const pivotX = nombreBrut(centre);
-    const pivotY = nombreBrut(yLibelles);
-    textes.push(`<text class="etiquette${marche.total ? " total" : ""}" `
-      + `x="${pivotX}" y="${pivotY}" text-anchor="end" `
-      + `transform="rotate(${PENTE_CASCADE} ${pivotX} ${pivotY})">`
-      + `${echapper(marche.libelle)}</text>`);
+    textes.push(`<text class="${classeTexte}" x="${nombreBrut(largeur)}" `
+      + `y="${nombreBrut(y + 13)}" text-anchor="end">${montant}</text>`);
+    const place = Math.floor(largeur / LARGEUR_D_UN_SIGNE) - montant.length - 2;
+    const lignes = [""];
+    for (const mot of marche.libelle.split(" ")) {
+      const courante = lignes[lignes.length - 1];
+      if (courante && `${courante} ${mot}`.length > place) lignes.push(mot);
+      else lignes[lignes.length - 1] = courante ? `${courante} ${mot}` : mot;
+    }
+    lignes.forEach((ligne, numero) => {
+      textes.push(`<text class="etiquette${marche.total ? " total" : ""}" x="0" `
+        + `y="${nombreBrut(y + 13 + numero * LIGNE_CASCADE)}">${echapper(ligne)}</text>`);
+    });
+    y += 19 + (lignes.length - 1) * LIGNE_CASCADE;
+    // Une marche nulle ne dessinerait rien, et une ligne vide se lit comme une
+    // ligne oubliée. Un filet d'une unité dit « mesuré, et nul », ce qui n'est
+    // pas la même chose que « pas mesuré » — et c'est justement ce que la
+    // cotisation unique vaut l'année d'avant sa bascule.
+    const debutX = abscisse_(Math.min(debut, fin));
+    const finX = abscisse_(Math.max(debut, fin));
+    const classe = marche.total ? "total" : sens;
+    const teinte = marche.total && marche.couleur ? ` fill="${marche.couleur}"` : "";
+    barres.push(`<rect class="marche ${classe}"${teinte} data-rang="${rang}" `
+      + `x="${nombreBrut(debutX)}" y="${nombreBrut(y)}" `
+      + `width="${nombreBrut(Math.max(finX - debutX, 1.0))}" `
+      + `height="${nombreBrut(HAUTEUR_BARRE_CASCADE)}"/>`);
+    y += HAUTEUR_BARRE_CASCADE + 12;
   });
-
+  // La grille et l'axe, au pied : des montants ronds, de gauche à droite.
+  const pied = y;
+  const grille = [];
+  const divisions = Math.round((sommet - plancher) / pas);
+  for (let division = 0; division <= divisions; division += 1) {
+    const valeur = plancher + pas * division;
+    const x = nombreBrut(abscisse_(valeur));
+    const ancre = division === 0 ? "start" : (division === divisions ? "end" : "middle");
+    grille.push(`<line class="grille" x1="${x}" y1="0" x2="${x}" y2="${nombreBrut(pied)}"/>`
+      + `<text class="graduation" x="${x}" y="${nombreBrut(pied + 16)}" `
+      + `text-anchor="${ancre}">${nombre(valeur, decimalesAxe)}</text>`);
+  }
   const uniteHtml = unite
-    ? `<text class="graduation" x="0" y="${nombreBrut(MARGE_HAUT_CASCADE - 18)}" `
+    ? `<text class="graduation" x="0" y="${nombreBrut(pied + 34)}" `
       + `text-anchor="start">${echapper(unite)}</text>`
     : "";
+  const hauteur = Math.ceil(pied + (unite ? 40 : 22));
+
   const legendeHtml = '<figcaption><ul class="legende">'
     + '<li><span class="pastille ecart-moins"></span>'
     + "<span>Ce qui ajoute à la dépense</span></li>"
@@ -2020,7 +2058,7 @@ export function cascade(titre, marches, unite = "", decimales = 1,
   // marches ET le cumul qu'elles laissent — c'est le cumul qui dit que le compte
   // tombe juste, et c'est lui qu'on ne peut pas lire sur le tracé.
   const enTete = unite ? ` (${echapper(unite)})` : "";
-  const lignes = marches.map((marche, rang) => [
+  const lignesTableau = marches.map((marche, rang) => [
     echapper(marche.libelle)
       + (marche.glose ? ` <span class="discret">${echapper(marche.glose)}</span>` : ""),
     marche.total ? nombre(marche.valeur, decimales)
@@ -2029,19 +2067,14 @@ export function cascade(titre, marches, unite = "", decimales = 1,
   ]);
   const grilleHtml = tableau(
     [libelleMarche, `Effet${enTete}`, `Cumul${enTete}`],
-    lignes, ["", "nombre", "nombre"], titre, true);
-  return `<figure class="cascade" role="group" aria-label="${echapper(titre)}">`
-    + `<div class="defilant" tabindex="0" role="region" aria-label="${echapper(titre)}">`
-    + `<svg viewBox="${-DEBORD_GAUCHE_CASCADE} 0 `
-    + `${LARGEUR_CASCADE + DEBORD_GAUCHE_CASCADE} `
-    + `${HAUTEUR_CASCADE + DEBORD_BAS_CASCADE}" role="img" `
-    + `aria-label="${echapper(titre)}">`
-    + `${grille.join("")}${liaisons.join("")}${barres.join("")}`
-    + `<line class="axe" x1="${gauche}" y1="${basAxe}" x2="${droite}" y2="${basAxe}"/>`
-    + `${uniteHtml}${textes.join("")}`
-    + '<g class="survol"></g></svg></div>'
+    lignesTableau, ["", "nombre", "nombre"], titre, true);
+  // La figure est focusable : les flèches y parcourent les marches.
+  return `<figure class="cascade" tabindex="0" role="group" aria-label="${echapper(titre)}">`
+    + `<svg viewBox="0 0 ${largeur} ${hauteur}" role="img" aria-label="${echapper(titre)}">`
+    + `${grille.join("")}${barres.join("")}${textes.join("")}${uniteHtml}`
+    + '<g class="survol"></g></svg>'
     + '<div class="lecture" role="status" aria-live="polite" hidden></div>'
-    + '<p class="aide-clavier">Flèches gauche et droite : parcourir les '
+    + '<p class="aide-clavier">Flèches haut et bas : parcourir les '
     + "mesures. Échap : quitter.</p>"
     + `${legendeHtml}</figure>`
     + '<details class="donnees-cascade">'
@@ -2172,10 +2205,16 @@ function rubanSankey(x1, haut1, x2, haut2, epaisseur) {
     + `${gauche} ${nombreBrut(haut1 + epaisseur)} Z`;
 }
 
-/** Le libellé et son montant, sur deux lignes centrées sur `milieu`. */
+/**
+ * Le libellé et son montant, centrés sur `milieu` : deux lignes au large, trois
+ * au plus sur un écran étroit, où le libellé se coupe en deux.
+ */
 function etiquetteSankey(x, milieu, ancre, libelle, montant) {
-  return `<text class="nom" x="${nombreBrut(x)}" y="${nombreBrut(milieu - 4)}" `
-    + `text-anchor="${ancre}">${echapper(libelle)}</text>`
+  const lignes = coupeSankey(libelle);
+  const premiere = milieu - 4 - (lignes.length - 1) * INTERLIGNE_SANKEY;
+  return lignes.map((ligne, rang) => `<text class="nom" x="${nombreBrut(x)}" `
+    + `y="${nombreBrut(premiere + rang * INTERLIGNE_SANKEY)}" `
+    + `text-anchor="${ancre}">${echapper(ligne)}</text>`).join("")
     + `<text class="montant" x="${nombreBrut(x)}" `
     + `y="${nombreBrut(milieu + 12)}" text-anchor="${ancre}">`
     + `${echapper(montant)}</text>`;
@@ -2188,9 +2227,64 @@ function colonneSankey(noeuds, haut, echelle) {
   for (const noeud of noeuds) {
     const epaisseur = noeud.valeur * echelle;
     places.push([noeud, y, epaisseur]);
-    y = y + epaisseur + ECART_NOEUDS_SANKEY;
+    y = y + epaisseur + GEOMETRIE_SANKEY.ecartNoeuds;
   }
   return places;
+}
+
+/**
+ * LE SCHÉMA SUR UN ÉCRAN ÉTROIT. Au large, ses deux colonnes d'étiquettes
+ * tiennent dans 152 et 170 unités, et le schéma dans 720 ; réduit à la
+ * largeur d'un téléphone, ses textes y faisaient six pixels, et le schéma
+ * défilait. Dans une colonne étroite (`ECRAN`), il en prend la largeur, et
+ * ses textes leur taille. Un libellé se coupe alors en deux lignes au plus,
+ * au mot, et chaque colonne d'étiquettes ne prend que la place de la plus
+ * longue de ses lignes ; l'écart entre deux nœuds loge trois lignes au lieu
+ * de deux, et les titres des colonnes passent sur leur propre ligne, au-dessus
+ * de la première caisse.
+ */
+const INTERLIGNE_SANKEY = 14;
+const SIGNES_PAR_LIGNE_SANKEY = 12;
+const GEOMETRIE_SANKEY_LARGE = Object.freeze({
+  largeur: LARGEUR_SANKEY, xSources: X_SOURCES_SANKEY, xUsages: X_USAGES_SANKEY,
+  xCaisse: X_CAISSE_SANKEY, haut: MARGE_HAUT_SANKEY, yTitres: MARGE_HAUT_SANKEY - 22,
+  ecartNoeuds: ECART_NOEUDS_SANKEY, couper: false,
+});
+let GEOMETRIE_SANKEY = GEOMETRIE_SANKEY_LARGE;
+
+/** Un libellé en lignes : entier au large, en deux au plus sur un écran étroit. */
+function coupeSankey(libelle) {
+  if (!GEOMETRIE_SANKEY.couper || libelle.length <= SIGNES_PAR_LIGNE_SANKEY) {
+    return [libelle];
+  }
+  const mots = libelle.split(" ");
+  let meilleure = [libelle];
+  let pire = Infinity;
+  for (let rang = 1; rang < mots.length; rang += 1) {
+    const lignes = [mots.slice(0, rang).join(" "), mots.slice(rang).join(" ")];
+    const longueur = Math.max(...lignes.map((ligne) => ligne.length));
+    if (longueur < pire) { pire = longueur; meilleure = lignes; }
+  }
+  return meilleure;
+}
+
+/** La géométrie du schéma, pour ces caisses : celle du large, ou la resserrée. */
+function geometrieSankey(caisses) {
+  if (ECRAN === null) return GEOMETRIE_SANKEY_LARGE;
+  GEOMETRIE_SANKEY = { ...GEOMETRIE_SANKEY_LARGE, couper: true };
+  const place = (noeuds) => Math.max(0, ...noeuds.flatMap((noeud) =>
+    coupeSankey(noeud.libelle).concat([noeud.montant]))
+    .map((ligne) => ligne.length * LARGEUR_D_UN_SIGNE));
+  const gauche = place(caisses.flatMap((caisse) => caisse.sources));
+  const droite = place(caisses.flatMap((caisse) => caisse.usages));
+  const xSources = Math.ceil(gauche + RETRAIT_SANKEY);
+  const xUsages = Math.floor(ECRAN - droite - RETRAIT_SANKEY - LARGEUR_NOEUD_SANKEY);
+  return {
+    largeur: ECRAN, xSources, xUsages,
+    xCaisse: Math.floor((xSources + xUsages) / 2),
+    haut: 60, yTitres: 14, ecartNoeuds: ECART_NOEUDS_SANKEY + INTERLIGNE_SANKEY,
+    couper: true,
+  };
 }
 
 /**
@@ -2214,11 +2308,13 @@ export function sankey(titre, nom, caisses, echelle, colonnes = ["", ""]) {
   if (!caisses.length) {
     return "";
   }
-  const sortieSources = X_SOURCES_SANKEY + LARGEUR_NOEUD_SANKEY;
-  const sortieCaisse = X_CAISSE_SANKEY + LARGEUR_NOEUD_SANKEY;
-  const centreCaisse = X_CAISSE_SANKEY + LARGEUR_NOEUD_SANKEY / 2;
-  const xSources = X_SOURCES_SANKEY - RETRAIT_SANKEY;
-  const xUsages = X_USAGES_SANKEY + LARGEUR_NOEUD_SANKEY + RETRAIT_SANKEY;
+  GEOMETRIE_SANKEY = geometrieSankey(caisses);
+  const geo = GEOMETRIE_SANKEY;
+  const sortieSources = geo.xSources + LARGEUR_NOEUD_SANKEY;
+  const sortieCaisse = geo.xCaisse + LARGEUR_NOEUD_SANKEY;
+  const centreCaisse = geo.xCaisse + LARGEUR_NOEUD_SANKEY / 2;
+  const xSources = geo.xSources - RETRAIT_SANKEY;
+  const xUsages = geo.xUsages + LARGEUR_NOEUD_SANKEY + RETRAIT_SANKEY;
 
   const rubans = [];
   const noeuds = [];
@@ -2226,17 +2322,19 @@ export function sankey(titre, nom, caisses, echelle, colonnes = ["", ""]) {
   const lignes = [];
 
   const [gauche, droite] = colonnes;
-  const yTitres = nombreBrut(MARGE_HAUT_SANKEY - 22);
+  const yTitres = nombreBrut(geo.yTitres);
+  // Au large, chaque titre s'aligne sur sa colonne de nœuds ; sur un écran
+  // étroit, sur le bord du schéma, de part et d'autre de sa propre ligne.
   if (gauche) {
-    textes.push(`<text class="colonne" x="${nombreBrut(sortieSources)}" `
-      + `y="${yTitres}" text-anchor="end">${echapper(gauche)}</text>`);
+    textes.push(`<text class="colonne" x="${nombreBrut(geo.couper ? 0 : sortieSources)}" `
+      + `y="${yTitres}" text-anchor="${geo.couper ? "start" : "end"}">${echapper(gauche)}</text>`);
   }
   if (droite) {
-    textes.push(`<text class="colonne" x="${nombreBrut(X_USAGES_SANKEY)}" `
-      + `y="${yTitres}" text-anchor="start">${echapper(droite)}</text>`);
+    textes.push(`<text class="colonne" x="${nombreBrut(geo.couper ? geo.largeur : geo.xUsages)}" `
+      + `y="${yTitres}" text-anchor="${geo.couper ? "end" : "start"}">${echapper(droite)}</text>`);
   }
 
-  let haut = MARGE_HAUT_SANKEY;
+  let haut = geo.haut;
   let bas = haut;
   caisses.forEach((caisse, rang) => {
     if (rang > 0) {
@@ -2252,19 +2350,19 @@ export function sankey(titre, nom, caisses, echelle, colonnes = ["", ""]) {
     let entree = haut;
     for (const [noeud, y, epaisseur] of sources) {
       rubans.push(`<path class="ruban" fill="${noeud.couleur}" `
-        + `d="${rubanSankey(sortieSources, y, X_CAISSE_SANKEY, entree, epaisseur)}"/>`);
+        + `d="${rubanSankey(sortieSources, y, geo.xCaisse, entree, epaisseur)}"/>`);
       entree = entree + epaisseur;
     }
     let sortie = haut;
     for (const [noeud, y, epaisseur] of usages) {
       rubans.push(`<path class="ruban" fill="${noeud.couleur}" `
-        + `d="${rubanSankey(sortieCaisse, sortie, X_USAGES_SANKEY, y, epaisseur)}"/>`);
+        + `d="${rubanSankey(sortieCaisse, sortie, geo.xUsages, y, epaisseur)}"/>`);
       sortie = sortie + epaisseur;
     }
 
     // Un nœud minuscule reste un filet d'une unité : invisible, son étiquette
     // flotterait à côté de rien.
-    for (const [x, places] of [[X_SOURCES_SANKEY, sources], [X_USAGES_SANKEY, usages]]) {
+    for (const [x, places] of [[geo.xSources, sources], [geo.xUsages, usages]]) {
       for (const [noeud, y, epaisseur] of places) {
         noeuds.push(`<rect class="noeud" fill="${noeud.couleur}" `
           + `x="${nombreBrut(x)}" y="${nombreBrut(y)}" `
@@ -2272,7 +2370,7 @@ export function sankey(titre, nom, caisses, echelle, colonnes = ["", ""]) {
           + `height="${nombreBrut(Math.max(epaisseur, 1.0))}"/>`);
       }
     }
-    noeuds.push(`<rect class="noeud caisse" x="${nombreBrut(X_CAISSE_SANKEY)}" `
+    noeuds.push(`<rect class="noeud caisse" x="${nombreBrut(geo.xCaisse)}" `
       + `y="${nombreBrut(haut)}" `
       + `width="${nombreBrut(LARGEUR_NOEUD_SANKEY)}" `
       + `height="${nombreBrut(Math.max(epaisseurCaisse, 1.0))}"/>`);
@@ -2310,7 +2408,7 @@ export function sankey(titre, nom, caisses, echelle, colonnes = ["", ""]) {
   return `<figure class="sankey" role="group" aria-label="${echapper(titre)}">`
     + `<figcaption>${echapper(nom)}</figcaption>`
     + `<div class="defilant" tabindex="0" role="region" aria-label="${echapper(titre)}">`
-    + `<svg viewBox="0 0 ${LARGEUR_SANKEY} ${hauteur}" role="img" `
+    + `<svg viewBox="0 0 ${geo.largeur} ${hauteur}" role="img" `
     + `aria-label="${echapper(titre)}">`
     + `${rubans.join("")}${noeuds.join("")}${textes.join("")}</svg></div>`
     + "</figure>"

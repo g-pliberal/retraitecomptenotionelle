@@ -188,10 +188,13 @@ class Site:
 
     # -- ce que les pages demandent -------------------------------------------
 
-    def rendre(self, chemin: str, requete: dict | None = None) -> tuple[str, str]:
-        """Le titre et le corps d'une page, comme ``rendre`` du portage."""
+    def rendre(self, chemin: str, requete: dict | None = None,
+               largeur: int | None = None) -> tuple[str, str]:
+        """Le titre et le corps d'une page, comme ``rendre`` du portage ;
+        ``largeur``, celle de la colonne d'un écran étroit, en points."""
         titre, corps = self._demander({"op": "rendre", "chemin": chemin,
-                                       "requete": _chaines(requete)})
+                                       "requete": _chaines(requete),
+                                       "largeur": largeur})
         return titre, corps
 
     def page(self, chemin: str, requete: dict | None = None) -> str:
@@ -294,9 +297,10 @@ def site() -> Site:
     return ouvert
 
 
-def rendre(chemin: str, requete: dict | None = None) -> tuple[str, str]:
+def rendre(chemin: str, requete: dict | None = None,
+           largeur: int | None = None) -> tuple[str, str]:
     """Le titre et le corps d'une page du site : ``site().rendre``."""
-    return site().rendre(chemin, requete)
+    return site().rendre(chemin, requete, largeur)
 
 
 def module(nom: str) -> Module:

@@ -352,6 +352,36 @@ let numeroDeRendu = 0;
 // règles est un choix du lecteur, ou une absence d'avis.
 let reglesVues = false;
 
+// La largeur de la colonne, que les graphiques épousent : le gabarit les
+// dessine à cette largeur sous 720 points, au large au-delà (`poserEcran`).
+// Elle se mesure sur <main>, moins ses marges. `ecranRendu` est celle sous
+// laquelle la page affichée a été dessinée — `null` au large —, et une
+// colonne qui change de largeur — un téléphone qu'on tourne, une fenêtre
+// qu'on étire — fait redessiner la page sur place quand ses tracés ne
+// tombent plus juste. Les tableaux, eux, se replient sans redessin.
+let ecranRendu = null;
+
+function largeurDeLaColonne() {
+  const contenu = document.getElementById("contenu");
+  if (!contenu) { return null; }
+  const style = getComputedStyle(contenu);
+  return contenu.clientWidth - parseFloat(style.paddingLeft || "0")
+    - parseFloat(style.paddingRight || "0");
+}
+
+let attenteDeRedessin = null;
+window.addEventListener("resize", () => {
+  clearTimeout(attenteDeRedessin);
+  attenteDeRedessin = setTimeout(() => {
+    const largeur = largeurDeLaColonne();
+    const attendue = largeur && largeur < gabarit.LARGEUR_TRACE
+      ? Math.max(gabarit.ECRAN_MINIMAL, Math.floor(largeur)) : null;
+    const traces = document.querySelector(
+      "#contenu :is(figure.graphique, figure.sankey, figure.cascade)");
+    if (traces && routeAffichee && attendue !== ecranRendu) { afficher(); }
+  }, 250);
+});
+
 async function afficher() {
   const numero = ++numeroDeRendu;
   // Ce que le lecteur vient de faire, s'il vient de faire quelque chose : un
@@ -404,7 +434,8 @@ async function afficher() {
   let corps;
   try {
     [titre, corps] = rendre(contexte, cible.chemin in TITRES ? cible.chemin : "/",
-      cible.parametres);
+      cible.parametres, largeurDeLaColonne());
+    ecranRendu = gabarit.ecran();
   } catch (erreur) {
     document.body.classList.remove("calcul-en-cours");
     contenu.removeAttribute("aria-busy");
@@ -433,6 +464,7 @@ async function afficher() {
   const nouveauDetails = contenu.querySelector("form details.options");
   if (nouveauDetails && optionsDepliees) { nouveauDetails.open = true; }
   rouvrir(contenu, ouverts);
+  plierLesTableaux(contenu);
   daterStatuts(contenu);
   suivreLesDates(contenu);
   brancherLeDepot(contenu);
@@ -1665,6 +1697,108 @@ document.addEventListener("keydown", (evenement) => {
   ouvert.focus();
 });
 
+// -- les tableaux, à la largeur de l'écran ------------------------------------
+//
+// Un tableau plus large que son cadre y défilait en largeur : sur un
+// téléphone, presque tous ceux de plus de trois colonnes, et ce qu'il fallait
+// lire était à droite, hors de l'écran. Il se replie désormais quand son cadre
+// devient trop étroit : chaque rangée devient un bloc, son intitulé dessus, et
+// ses cases se rangent dessous, chacune sous le nom de sa colonne. La feuille
+// de style dessine le pli ; le script décide, parce qu'il faut mesurer.
+//
+// DEUX FAÇONS. En RANGÉE, pour deux ou trois colonnes de valeurs courtes :
+// l'en-tête du tableau reste une ligne, et chaque rangée garde ses valeurs
+// côte à côte, sous leur colonne — c'est encore un tableau, dont l'intitulé
+// de rangée passe au-dessus. En FICHE, au-delà, ou dès qu'une case porte une
+// phrase : chaque valeur sous le nom de sa colonne, deux par ligne, une phrase
+// sur toute la largeur. Un tableau de nombres sur trois colonnes tient dans
+// un téléphone, et ne se replie pas.
+//
+// QUAND. Tout tableau qui déborderait de son cadre se replie. Ceux de texte
+// se replient plus tôt, avant d'avoir mis un mot par ligne : sous trente rem
+// en rangée, quarante en fiche — ou sous la largeur minimale que la feuille
+// de style leur donne, quand elle en donne une plus grande. La mesure se
+// refait quand le cadre change de largeur : un téléphone qu'on tourne, un
+// dépliant qu'on ouvre.
+//
+// Les rôles ARIA redisent ce que les balises disent déjà : une cellule
+// affichée en bloc perd son rôle de cellule chez certaines synthèses vocales,
+// et le tableau replié doit s'annoncer comme le tableau qu'il est.
+const LONGUEUR_D_UNE_PHRASE = 60;
+let surveillantDesTableaux = null;
+
+function ajusterLePli(table, cadre) {
+  const largeur = cadre.clientWidth;
+  if (!largeur) { return; }
+  const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+  delete table.dataset.plie;
+  table.dataset.pli = table._pli;
+  const minimum = Math.max(table._plierEnDeca * rem,
+    parseFloat(getComputedStyle(table).minWidth) || 0);
+  if (largeur < minimum || table.scrollWidth > largeur + 1) {
+    table.dataset.plie = "";
+    // Des valeurs trop longues pour tenir côte à côte, même en rangée : elles
+    // passent en fiche, l'une sous l'autre.
+    if (table._pli === "rangee" && table.scrollWidth > largeur + 1) {
+      table.dataset.pli = "fiche";
+    }
+  }
+}
+
+function plierLesTableaux(racine) {
+  surveillantDesTableaux?.disconnect();
+  surveillantDesTableaux = new ResizeObserver((entrees) => {
+    for (const { target: cadre } of entrees) {
+      if (cadre.clientWidth === cadre._largeurVue) { continue; }
+      cadre._largeurVue = cadre.clientWidth;
+      for (const table of cadre._tables || []) { ajusterLePli(table, cadre); }
+    }
+  });
+  for (const table of racine.querySelectorAll("table")) {
+    const tete = table.tHead?.rows[table.tHead.rows.length - 1];
+    const noms = [...(tete?.cells || [])]
+      .map((cellule) => cellule.textContent.replace(/\s+/g, " ").trim());
+    if (noms.length < 2) { continue; }
+    let phrases = false;
+    let texte = false;
+    for (const corps of table.tBodies) {
+      for (const ligne of corps.rows) {
+        [...ligne.cells].forEach((cellule, rang) => {
+          if (rang === 0) { return; }
+          if (noms[rang]) { cellule.dataset.titre = noms[rang]; }
+          const longueur = cellule.textContent.replace(/\s+/g, " ").trim().length;
+          if (longueur > LONGUEUR_D_UNE_PHRASE) {
+            phrases = true;
+            cellule.classList.add("pleine");
+          }
+          if (!cellule.classList.contains("nombre")) { texte = true; }
+        });
+      }
+    }
+    const fiche = phrases || noms.length > 4;
+    table._pli = fiche ? "fiche" : "rangee";
+    table.dataset.pli = table._pli;
+    // Le seuil, en rem : zéro pour des nombres sur trois colonnes au plus,
+    // qui ne se replient que s'ils débordent.
+    table._plierEnDeca = fiche ? 40 : (noms.length === 4 || (noms.length === 3 && texte) ? 30 : 0);
+    table.style.setProperty("--colonnes", String(noms.length - 1));
+    table.setAttribute("role", "table");
+    for (const groupe of table.querySelectorAll(":scope > :is(thead, tbody, tfoot)")) {
+      groupe.setAttribute("role", "rowgroup");
+    }
+    for (const ligne of table.rows) {
+      ligne.setAttribute("role", "row");
+      for (const cellule of ligne.cells) {
+        cellule.setAttribute("role", cellule.closest("thead") ? "columnheader"
+          : (cellule.tagName === "TH" ? "rowheader" : "cell"));
+      }
+    }
+    const cadre = table.closest(".defilant") || table.parentElement;
+    (cadre._tables ||= []).push(table);
+    surveillantDesTableaux.observe(cadre);
+  }
+}
+
 // -- lire un graphique à la souris, au doigt et au clavier --------------------
 //
 // Un tracé dit une forme ; il ne dit pas un chiffre. Jusqu'ici, qui voulait la
@@ -1680,9 +1814,21 @@ document.addEventListener("keydown", (evenement) => {
 //
 // La figure porte `data-gauche` et `data-droite` : les abscisses du premier et
 // du dernier point, en unités du repère du SVG. C'est tout ce qu'il faut pour
-// passer d'une position de pointeur au rang d'une année.
+// passer d'une position de pointeur au rang d'une année, avec la largeur du
+// repère, que dit son `viewBox` : 720 au large, celle de la colonne sur un
+// écran étroit.
 
-const LARGEUR_REPERE = 720;
+/** La largeur du repère d'un graphique, en unités du `viewBox`. */
+function largeurDuRepere(figure) {
+  return figure.querySelector("svg")?.viewBox.baseVal.width || 720;
+}
+
+/** Le haut et le bas du tracé : la première et la dernière ligne de grille. */
+function hautEtBasDuTrace(svg) {
+  const lignes = [...svg.querySelectorAll("line.grille")]
+    .map((ligne) => Number(ligne.getAttribute("y1")));
+  return lignes.length ? [Math.min(...lignes), Math.max(...lignes)] : [34, 266];
+}
 
 /** Le tableau de points d'un graphique, lu une fois puis gardé. */
 function pointsDuGraphique(figure) {
@@ -1714,8 +1860,8 @@ function pointsDuGraphique(figure) {
 
 /** Le rang de l'année la plus proche d'une position, en fraction de largeur. */
 function rangVise(figure, part, total) {
-  const gauche = Number(figure.dataset.gauche) / LARGEUR_REPERE;
-  const droite = Number(figure.dataset.droite) / LARGEUR_REPERE;
+  const gauche = Number(figure.dataset.gauche) / largeurDuRepere(figure);
+  const droite = Number(figure.dataset.droite) / largeurDuRepere(figure);
   if (!(droite > gauche) || total < 2) { return 0; }
   const position = (part - gauche) / (droite - gauche);
   return Math.max(0, Math.min(total - 1, Math.round(position * (total - 1))));
@@ -1728,6 +1874,9 @@ function rangVise(figure, part, total) {
 // estimée débordait d'un pixel sur un téléphone. On mesure les valeurs les
 // plus longues dans la case elle-même, avant de la vider.
 function dimensionnerLecture(figure) {
+  // Sur un écran étroit, la case a sa propre ligne, sous le libellé : elle
+  // n'a pas de largeur à réserver.
+  if (figure.classList.contains("etroit")) { return; }
   const points = pointsDuGraphique(figure);
   if (!points) { return; }
   for (const entree of figure.querySelectorAll("figcaption li[data-serie]")) {
@@ -1776,8 +1925,10 @@ function montrerLecture(figure, rang) {
   // année-là. Les ordonnées sont relues dans le tracé lui-même : les chemins
   // portent déjà les coordonnées, et les recalculer supposerait de connaître
   // l'échelle, que le SVG ne dit pas.
-  // Du haut du cadre à l'axe : 300 − MARGE_BAS, les mêmes marges que le gabarit.
-  const dessins = [`<line class="guide" x1="${x}" y1="22" x2="${x}" y2="266"/>`];
+  // Du haut du cadre à son bas, que les lignes de grille bornent : le même
+  // trait sur le tracé du large et sur celui d'un téléphone.
+  const [haut, bas] = hautEtBasDuTrace(svg);
+  const dessins = [`<line class="guide" x1="${x}" y1="${haut - 12}" x2="${x}" y2="${bas}"/>`];
   const courbes = [...svg.querySelectorAll("path.courbe")];
   ligne.valeurs.forEach((valeur, colonne) => {
     const courbe = courbes[colonne];
@@ -1795,7 +1946,7 @@ function montrerLecture(figure, rang) {
   const uniteAxe = svg.querySelector('text.graduation[x="0"]');
   const bord = uniteAxe ? uniteAxe.getBBox().width + 10 : 0;
   const xAnnee = aGauche ? x - 6 : Math.max(x + 6, bord);
-  dessins.push(`<text class="annee-lue" x="${xAnnee}" y="18" `
+  dessins.push(`<text class="annee-lue" x="${xAnnee}" y="${haut - 16}" `
     + `text-anchor="${aGauche ? "end" : "start"}">${neutraliser(ligne.abscisse)}</text>`);
   survol.innerHTML = dessins.join("");
 
@@ -1896,11 +2047,11 @@ document.addEventListener("focusout", (evenement) => {
 //
 // MÊME CONTRAT QUE LES COURBES : les chiffres viennent du tableau posé sous la
 // figure, et de nulle part ailleurs. Ce qui change est la géométrie — une
-// cascade n'a pas d'abscisse continue, elle a des colonnes — et la façon de
-// viser : on cherche la barre dont le centre est le plus proche du pointeur,
-// en coordonnées d'écran, plutôt que de rejouer l'échelle du viewBox. C'est ce
-// qui rend la lecture juste quelle que soit la largeur, et dans une boîte qui
-// défile, où la position du tracé ne se déduit pas de celle de la figure.
+// cascade n'a pas d'abscisse continue, elle a des marches, une par ligne — et
+// la façon de viser : on cherche la barre dont le milieu est le plus proche du
+// pointeur, en hauteur et en coordonnées d'écran, plutôt que de rejouer
+// l'échelle du viewBox. C'est ce qui rend la lecture juste quelle que soit la
+// largeur.
 
 /** Les marches d'une cascade : leur rect, leur ligne de tableau, lues une fois. */
 function marchesDeLaCascade(figure) {
@@ -1968,12 +2119,12 @@ function montrerCascade(figure, rang) {
 }
 
 /** Le rang de la marche dont le centre est le plus proche du pointeur. */
-function marcheVisee(marches, clientX) {
+function marcheVisee(marches, clientY) {
   let meilleur = 0;
   let distance = Infinity;
   marches.rects.forEach((rect, rang) => {
     const cadre = rect.getBoundingClientRect();
-    const ecart = Math.abs(clientX - (cadre.left + cadre.width / 2));
+    const ecart = Math.abs(clientY - (cadre.top + cadre.height / 2));
     if (ecart < distance) { distance = ecart; meilleur = rang; }
   });
   return meilleur;
@@ -1984,7 +2135,7 @@ document.addEventListener("pointermove", (evenement) => {
   if (!figure) { return; }
   const marches = marchesDeLaCascade(figure);
   if (!marches || !marches.rects.length) { return; }
-  montrerCascade(figure, marcheVisee(marches, evenement.clientX));
+  montrerCascade(figure, marcheVisee(marches, evenement.clientY));
 });
 
 document.addEventListener("pointerleave", (evenement) => {
@@ -1996,8 +2147,7 @@ document.addEventListener("pointerleave", (evenement) => {
 }, true);
 
 // Le clavier : les flèches parcourent les marches, Échap referme. Le focus est
-// sur la boîte qui défile — c'est elle qui est atteignable au clavier, et qui
-// doit l'être pour qu'on puisse faire défiler un tracé plus large que l'écran.
+// sur la figure, qui porte `tabindex`.
 document.addEventListener("keydown", (evenement) => {
   const figure = document.activeElement?.closest?.("figure.cascade");
   if (!figure) { return; }
@@ -2005,7 +2155,8 @@ document.addEventListener("keydown", (evenement) => {
   if (!marches || !marches.rects.length) { return; }
   const total = marches.rects.length;
   if (evenement.key === "Escape") { effacerCascade(figure); return; }
-  const pas = { ArrowLeft: -1, ArrowRight: 1, Home: -total, End: total };
+  const pas = { ArrowUp: -1, ArrowDown: 1, ArrowLeft: -1, ArrowRight: 1,
+    Home: -total, End: total };
   if (!(evenement.key in pas)) { return; }
   evenement.preventDefault();
   const courant = figure._rang === null || figure._rang === undefined
@@ -2426,9 +2577,8 @@ function poserBloc(dessin, bloc, x, y) {
  * rognage. Elle se compose maintenant ici, aux mêmes dimensions, à partir de ce
  * que la feuille de style dit de son aperçu.
  *
- * Sur un téléphone, les cartes de « Le saviez-vous ? » se LISENT dans un autre
- * format que celui de l'image : à la largeur de l'écran, en tailles de
- * lecture. Le temps de la composer, la carte reprend celui de l'image — la
+ * Sur un téléphone, les cartes se LISENT dans un autre format que celui de
+ * l'image : à la largeur de l'écran, en tailles de lecture. Le temps de la composer, la carte reprend celui de l'image — la
  * classe `en-image` lui rend ses 36 rem et son 16/9 —, et le quitte avant que
  * l'écran ne se redessine.
  */

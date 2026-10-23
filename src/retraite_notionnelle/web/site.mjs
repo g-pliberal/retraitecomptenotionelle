@@ -221,9 +221,9 @@ function placer(fonction, args, kwargs) {
 // -- les demandes --------------------------------------------------------------
 
 const operations = {
-  async rendre({ chemin, requete }) {
+  async rendre({ chemin, requete, largeur }) {
     const { rendre } = await module("pages");
-    return rendre(await leContexte(), chemin, requete ?? {});
+    return rendre(await leContexte(), chemin, requete ?? {}, largeur ?? null);
   },
 
   async page({ chemin, requete }) {

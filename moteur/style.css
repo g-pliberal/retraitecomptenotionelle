@@ -550,7 +550,7 @@ a:hover { opacity: 0.85; }
    dès 40 rem, quand le filet, lui, n'était retiré qu'à 34 rem — entre les
    deux, une carte sur deux restait en retrait de 24 points. */
 .engagements {
-  margin: 4rem 0 0; background: var(--fond-carte);
+  margin: 2.5rem 0 0; background: var(--fond-carte);
   border-top: 4px solid var(--or);
 }
 .engagements .grille {
@@ -627,6 +627,10 @@ ol.gestes > li strong { color: var(--texte); font-weight: 700; }
 }
 .encadre > :first-child { margin-top: 0; }
 .encadre > :last-child { margin-bottom: 0; }
+/* Dans une paire, c'est l'écart de la grille qui sépare l'encadré de sa
+   voisine : sa marge s'y ajoutait, et faisait sur un téléphone, où les deux
+   colonnes s'empilent, cinquante-six points de vide entre elles. */
+.paire > .encadre { margin: 0; }
 /* Deux colonnes de même poids, qui se mettent l'une sous l'autre quand la
    place manque. C'est la mise en page de l'accueil sous les engagements, et
    celle de la Trajectoire sous son graphique. */
@@ -943,8 +947,8 @@ td.long, th.long { min-width: 18rem; }
 /* Les deux grands tableaux de la page Données : 91 séries sur cinq colonnes,
    89 régimes sur sept. Sans largeur minimale, la colonne des statuts d'un
    régime mettait un code par ligne et une rangée faisait cinq cents points. */
-table#series { min-width: 40rem; }
-table#inventaire { min-width: 64rem; }
+table#series:not([data-plie]) { min-width: 40rem; }
+table#inventaire:not([data-plie]) { min-width: 64rem; }
 /* Une colonne de PHRASES, et non de nombres : elle se lit alignée à gauche,
    comme tout texte. */
 td.texte, th.texte { text-align: left; }
@@ -973,6 +977,63 @@ th[aria-sort="descending"] > .tri::after { content: " \2193"; }
 }
 .filtres + .compte { margin: 0.2rem 0 0.8rem; }
 tbody tr[hidden] { display: none; }
+
+/* LE TABLEAU REPLIÉ. Trop large pour son cadre, il y défilait : sur un
+   téléphone, ce qu'on venait lire était à droite, hors de l'écran. Il se
+   replie désormais quand son cadre devient plus étroit que ce qu'il lui faut
+   — le script d'`index.html` (`plierLesTableaux`) le mesure, à chaque
+   changement de largeur, et pose `data-plie` ; il dit aussi comment replier,
+   dans `data-pli`, le nombre de colonnes de valeurs dans `--colonnes`, et
+   sous chaque case le nom de sa colonne dans `data-titre`. Rien ne disparaît :
+   chaque case reste lue sous son nom.
+
+   EN RANGÉE, deux ou trois colonnes de valeurs courtes : l'intitulé de la
+   rangée passe au-dessus, sur toute la largeur, et les valeurs restent côte
+   à côte, sous l'en-tête du tableau qui garde sa ligne. */
+table[data-plie], table[data-plie] > :is(thead, tbody) { display: block; min-width: 0; }
+table[data-pli="rangee"][data-plie] tr:not([hidden]) {
+  display: grid; grid-template-columns: repeat(var(--colonnes), minmax(0, 1fr));
+  column-gap: 0.75rem; padding: 0.45rem 0; border-bottom: 1px solid var(--trait);
+}
+table[data-pli="rangee"][data-plie] thead tr { border-bottom: 2px solid var(--or); }
+table[data-pli="rangee"][data-plie] tbody tr:last-child { border-bottom: 0; }
+table[data-pli="rangee"][data-plie] :is(th, td) {
+  padding: 0.1rem 0; border: 0; min-width: 0; overflow-wrap: anywhere;
+}
+table[data-pli="rangee"][data-plie] tr > :first-child { grid-column: 1 / -1; }
+table[data-pli="rangee"][data-plie] thead tr > :first-child:empty { display: none; }
+table[data-pli="rangee"][data-plie] thead th { letter-spacing: 0.04em; font-size: 0.75rem; }
+/* EN FICHE, au-delà de trois colonnes, ou dès qu'une case porte une phrase :
+   chaque valeur sous le nom de sa colonne, deux par ligne, et une phrase sur
+   toute la largeur. L'en-tête du tableau, redit sous chaque case, n'est plus
+   affiché — sauf s'il porte les boutons du tri, qu'il faut garder sous la
+   main : il se range alors en une ligne de boutons. Le nom écrit sous la
+   case est un ornement pour la synthèse vocale, qui a déjà celui de
+   l'en-tête : son texte de remplacement est vide. */
+table[data-pli="fiche"][data-plie] thead:not(:has(.tri)) {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap;
+}
+table[data-pli="fiche"][data-plie] thead tr {
+  display: flex; flex-wrap: wrap; gap: 0 1rem; border-bottom: 2px solid var(--or);
+}
+table[data-pli="fiche"][data-plie] thead th { border: 0; padding: 0.3rem 0; min-width: 0; }
+table[data-pli="fiche"][data-plie] tbody tr:not([hidden]) {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 8.5rem), 1fr));
+  gap: 0.4rem 1rem; padding: 0.65rem 0; border-bottom: 1px solid var(--trait);
+}
+table[data-pli="fiche"][data-plie] tbody tr:last-child { border-bottom: 0; }
+table[data-pli="fiche"][data-plie] tbody :is(th, td) {
+  padding: 0; border: 0; text-align: left; min-width: 0; white-space: normal;
+  overflow-wrap: anywhere;
+}
+table[data-pli="fiche"][data-plie] tbody tr > :first-child,
+table[data-pli="fiche"][data-plie] tbody .pleine { grid-column: 1 / -1; }
+table[data-pli="fiche"][data-plie] tbody td[data-titre]::before {
+  content: attr(data-titre) / ""; display: block;
+  font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--texte-doux);
+}
 /* Le plan d'une page longue : ce qu'elle contient, en une liste de liens qui
    se parcourt du regard avant de lire. */
 .plan {
@@ -1038,8 +1099,9 @@ tbody tr[hidden] { display: none; }
 .bascule {
   display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.4rem;
   /* Une marge à droite : deux bascules côte à côte — unité, montants — se
-     touchaient, la seconde légende collée au dernier bouton de la première. */
-  margin: 0.9rem 1.25rem 0 0;
+     touchaient, la seconde légende collée au dernier bouton de la première.
+     Sa largeur la retranche : posée au bord de l'écran, elle le débordait. */
+  margin: 0.9rem 1.25rem 0 0; max-width: calc(100% - 1.25rem);
 }
 .bascule > .legende {
   font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.12em;
@@ -1047,8 +1109,12 @@ tbody tr[hidden] { display: none; }
 }
 /* Les deux branches tiennent dans une enveloppe qui NE SE COUPE PAS : quand la
    largeur manque, c'est la légende qui passe seule à la ligne. Un contrôle
-   scindé en deux lignes cesse d'être un contrôle. */
-.bascule > .choix { display: inline-flex; flex-wrap: nowrap; gap: 0.4rem; }
+   scindé en deux lignes cesse d'être un contrôle. Une bascule de six années,
+   en revanche — les schémas de la page Coût —, ne tient pas sur un
+   téléphone : la rangée insécable sortait de l'écran de deux boutons. Au-delà
+   de deux branches, elles passent à la ligne, comme une rangée de boutons. */
+.bascule > .choix { display: inline-flex; flex-wrap: nowrap; gap: 0.4rem; max-width: 100%; }
+.bascule > .choix:has(> :nth-child(3)) { flex-wrap: wrap; }
 /* Les branches partagent tout sauf leur état : une seule règle pour les deux,
    de sorte qu'elles ne puissent pas se décaler d'un pixel. */
 .bascule .choix > a, .bascule .choix > .actif {
@@ -1185,6 +1251,65 @@ tbody tr[hidden] { display: none; }
                        border-bottom: 1px solid var(--trait); flex: 1 0 100%; }
   .scenario .salaire .unite { text-align: left; }
 }
+/* LES QUATRE SYSTÈMES SE COMPARENT D'UN SEUL REGARD. Empilés, chacun avec
+   ses deux paragraphes, ils s'étageaient sur 1 400 pixels à 390 points de
+   large : on ne voyait jamais deux montants à la fois. Ce sont désormais
+   quatre cartes, deux par deux sur un téléphone, quatre de front au-delà de
+   48 rem, réduites à ce qui se compare — le nom, le salaire, la retraite, ce
+   que les recettes en paient, la barre ; ce que chaque système mesure se
+   déplie sous sa carte.
+
+   Les rangées des cartes voisines s'alignent (`subgrid`) : les titres n'ont
+   pas tous le même nombre de lignes, et sans cela les montants de deux
+   systèmes côte à côte ne tombaient pas à la même hauteur. L'entête et ses
+   montants s'effacent (`display: contents`) pour que le titre, le salaire, la
+   retraite et ce qui en est vraiment payé soient chacun une rangée de la
+   grille — vide dans la carte d'un système qui n'a pas de troisième chiffre.
+   L'unité suit le nombre sur sa ligne. */
+.scenarios {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 1rem; margin: 0.75rem 0 0.5rem;
+}
+@media (min-width: 48rem) {
+  .scenarios { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+.scenarios > .scenario {
+  display: grid; grid-row: span 6; grid-template-rows: subgrid; row-gap: 0.4rem;
+  align-content: start; padding: 0.7rem 0 0.8rem; border-top: 1px solid var(--trait);
+  border-bottom: 0; min-width: 0;
+}
+.scenarios > .scenario > .entete, .scenarios .scenario .montant { display: contents; }
+.scenarios .scenario .titre {
+  grid-row: 1; font-size: 0.9375rem; line-height: 1.3; max-width: none;
+}
+.scenarios .scenario .salaire { grid-row: 2; }
+.scenarios .scenario .principal { grid-row: 3; }
+.scenarios .scenario .finance { grid-row: 4; }
+.scenarios .scenario .barre { grid-row: 5; margin-top: 0.15rem; align-self: end; }
+.scenarios .scenario details.mesure { grid-row: 6; }
+.scenarios .scenario .chiffre {
+  display: block; white-space: normal; min-width: 0; padding: 0; box-shadow: none;
+  border: 0; line-height: 1.25;
+}
+.scenarios .scenario .chiffre .categorie {
+  display: block; font-size: 0.6875rem; letter-spacing: 0.1em;
+}
+.scenarios .scenario .chiffre .unite { margin-left: 0.25em; white-space: nowrap; }
+.scenarios .scenario :is(.salaire, .principal) .somme { font-size: 1.5rem; }
+.scenarios .scenario .finance .somme { font-size: 1.125rem; }
+.scenarios .scenario .ecart {
+  display: block; white-space: normal; font-size: 0.8125rem; line-height: 1.3;
+}
+/* Le dépliant de la carte, bas de deux rem : trente-deux points tiennent la
+   cible tactile (WCAG 2.5.8), et les quarante-quatre d'un dépliant de page
+   écartaient d'autant les deux rangées de cartes. */
+.scenarios .scenario details.mesure > summary {
+  font-size: 0.875rem; color: var(--texte-doux); padding: 0; gap: 0.35rem;
+  min-height: 2rem;
+}
+.scenarios .scenario details.mesure[open] > summary { color: var(--texte); }
+.scenarios .scenario .composition { display: block; text-align: left; margin-top: 0.35rem; }
+.scenarios .scenario .glose { font-size: 0.875rem; }
 /* La glose sous un scénario : en sans-serif 16 px, et non en serif fin 15 px.
    C'était le texte le plus fatigant du site — à cette taille, un serif fin est
    un obstacle de plus. */
@@ -1417,6 +1542,46 @@ section.cle > .donnees-graphique { margin-bottom: 0.6rem; }
 .graphique { margin: 1.5rem 0 1.75rem; position: relative; }
 .graphique svg { display: block; width: 100%; height: auto; overflow: visible;
                  touch-action: pan-y; }
+/* LE TRACÉ ET SA LÉGENDE SE LISENT ENSEMBLE. La lecture au survol écrit ses
+   valeurs dans la légende : posée sous la courbe, elle tombait hors de
+   l'écran dès que le tracé l'occupait, et l'on touchait une courbe sans voir
+   ce qu'elle valait. La légende se pose donc À CÔTÉ du tracé quand la place
+   le permet, et AU-DESSUS quand elle manque — jamais dessous. Au large, le
+   tracé garde sa taille naturelle, 720 unités sur 46 rem, au lieu de s'étirer
+   sur toute la page avec des textes de vingt pixels.
+
+   Sans requête média : une rangée qui se replie À REBOURS (`wrap-reverse`).
+   Le tracé puis la légende tiennent sur une ligne, l'un à côté de l'autre ;
+   faute de place, la légende passe à la ligne, et la ligne suivante d'une
+   rangée à rebours se pose AU-DESSUS. L'aide au clavier, première dans
+   l'ordre, fait la ligne du bas. L'ordre du HTML ne change pas : la synthèse
+   vocale lit le tracé, puis ce qu'il porte. Une rangée à rebours aligne ses
+   éléments à l'envers : `flex-end` les cale en haut. */
+.graphique:has(> figcaption) {
+  display: flex; flex-flow: row wrap-reverse; align-items: flex-end;
+  gap: 0.6rem 1.75rem;
+}
+.graphique:has(> figcaption) > svg { flex: 1 1 32rem; max-width: 46rem; }
+.graphique > figcaption { flex: 1 1 14rem; min-width: 0; }
+.graphique > figcaption ul.legende { margin: 0; }
+/* Sur un téléphone, la légende passe au-dessus du tracé, et chaque ligne de
+   plus l'en éloigne : un corps et un interligne plus serrés gardent la
+   légende et la courbe dans le même écran. */
+.graphique.etroit > figcaption ul.legende {
+  font-size: 0.875rem; line-height: 1.35; gap: 0.3rem 1rem;
+}
+/* La case où s'écrit la valeur lue passe SOUS le libellé, qui reprend toute
+   la largeur : à sa droite, elle lui prenait la moitié d'un écran de
+   téléphone, et chaque libellé s'étageait sur quatre lignes. Elle garde sa
+   ligne au repos, pour que rien ne bouge quand le doigt se pose. */
+.graphique.etroit > figcaption ul.legende li:has(> .lu) {
+  display: grid; grid-template-columns: 0.75rem minmax(0, 1fr); column-gap: 0.45rem;
+  align-items: baseline;
+}
+.graphique.etroit > figcaption ul.legende li > .lu {
+  grid-column: 2; text-align: left; min-height: 1.35em;
+}
+.graphique:has(> figcaption) > .aide-clavier { order: -1; flex: 1 1 100%; }
 /* La figure se parcourt au clavier : les flèches y déplacent l'année lue. */
 .graphique:focus-visible { outline: 3px solid var(--or); outline-offset: 4px; }
 /* La signature, en haut à gauche du cadre. N'importe quelle capture d'écran
@@ -1463,12 +1628,14 @@ ul.legende .lu {
   stroke-linejoin: round;
 }
 /* L'aide qui dit que les flèches marchent. Elle n'apparaît qu'au focus clavier :
-   à la souris, elle n'apprendrait rien et prendrait une ligne. */
+   à la souris, elle n'apprendrait rien et prendrait une ligne. Cachée, elle ne
+   la garde pas non plus : sa ligne réservée laissait un blanc sous chaque
+   graphique, pour une phrase que personne ne voyait. */
 .graphique .aide-clavier {
   font-size: 0.85rem; color: var(--texte-tres-doux); margin: 0.4rem 0 0;
-  visibility: hidden;
+  display: none;
 }
-.graphique:focus-visible .aide-clavier { visibility: visible; }
+.graphique:focus-visible .aide-clavier { display: block; }
 .graphique .grille { stroke: var(--trait); stroke-width: 1; }
 .graphique .axe { stroke: var(--trait-champ); stroke-width: 1; }
 .graphique .repere {
@@ -1532,9 +1699,17 @@ ul.legende .lu {
    boîte qui défile. Le SVG garde sa largeur en pixels — c'est la boîte qui
    défile, pas le dessin qui rétrécit —, sans quoi quarante-cinq années
    tiendraient dans quarante-cinq millimètres. */
-.frise { margin: 1.5rem 0 1.75rem; }
-.frise .defilant { padding-bottom: 0.5rem; }
-.frise svg { display: block; height: auto; max-width: none; }
+/* La frise des flux : une colonne tous les cinq ans, et les colonnes passent
+   à la ligne, au lieu de défiler de onze mille points dans une boîte. Sa
+   légende vient au-dessus, avec les couleurs qu'elle explique. */
+.frise { margin: 1.5rem 0 1.75rem; display: flex; flex-direction: column; gap: 0.75rem; }
+.frise > figcaption { order: -1; }
+.frise > figcaption ul.legende { margin: 0; }
+.frise .annees {
+  display: grid; gap: 0.5rem 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+}
+.frise svg { display: block; width: 100%; max-width: 18rem; height: auto; }
 .frise .titre {
   fill: var(--texte); font-family: inherit; font-size: 14px; font-weight: 700;
   font-variant-numeric: tabular-nums;
@@ -1550,20 +1725,28 @@ ul.legende .lu {
 .frise .ruban { opacity: 0.45; }
 .frise .manque { fill: var(--manque); }
 .frise .reste { fill: var(--reste); }
-/* La cascade : le pont d'un total à un autre, marche par marche. Comme la
-   frise, elle DÉFILE dans sa boîte au lieu de rétrécir — huit colonnes et
-   leurs étiquettes en biais ne se lisent pas dans la largeur d'un téléphone —,
-   et sa légende reste dessous, hors de la boîte qui défile. */
+/* La cascade : le pont d'un total à un autre, marche par marche, couchée,
+   chaque marche sur sa ligne (voir `cascade`, dans le gabarit). */
 .cascade { margin: 1.5rem 0 1.75rem; }
-.cascade .defilant { padding-bottom: 0.5rem; }
 .cascade svg { display: block; width: 100%; height: auto; }
+/* La légende de la cascade se pose comme celle d'une courbe — à côté du
+   dessin, ou au-dessus faute de place, jamais dessous : sous les libellés en
+   biais de la cascade debout, elle tombait à cinquante points du dessin, et
+   l'on lisait les couleurs sans leur sens. Ce qu'on lit au doigt vient juste
+   sous le dessin, l'aide au clavier en dernier. Une rangée à rebours aligne
+   ses éléments à l'envers : `flex-end` les cale en haut. */
+.cascade:has(> figcaption) {
+  display: flex; flex-flow: row wrap-reverse; align-items: flex-end;
+  gap: 0.6rem 1.75rem;
+}
+.cascade > svg { flex: 1 1 32rem; max-width: 46rem; min-width: 0; }
+.cascade > figcaption { flex: 1 1 14rem; min-width: 0; }
+.cascade > figcaption ul.legende { margin: 0; }
+.cascade:has(> figcaption) > .lecture { order: -1; flex: 1 1 100%; }
+.cascade:has(> figcaption) > .aide-clavier { order: -2; flex: 1 1 100%; }
+.cascade:focus-visible { outline: 3px solid var(--or); outline-offset: 4px; }
 .cascade .grille { stroke: var(--trait); stroke-width: 1; }
 .cascade .axe { stroke: var(--trait-champ); stroke-width: 1; }
-/* Le trait de liaison n'est pas une donnée : il relie le sommet d'une marche
-   au pied de la suivante, et le pointillé dit qu'il ne mesure rien. */
-.cascade .liaison {
-  stroke: var(--texte-tres-doux); stroke-width: 1; stroke-dasharray: 3 3;
-}
 .cascade .marche.monte { fill: var(--manque); }
 .cascade .marche.descend { fill: var(--reste); }
 /* Une marche nulle n'est ni l'un ni l'autre : elle est mesurée, et sans effet.
@@ -1574,14 +1757,16 @@ ul.legende .lu {
   fill: var(--texte-tres-doux); font-family: inherit; font-size: 12px;
   font-weight: 600; font-variant-numeric: tabular-nums;
 }
-/* Le chiffre de la marche est posé hors de la barre, sur la grille : il porte
-   donc un liseré de la couleur du fond, faute de quoi une graduation lui
-   passait au travers. */
+/* Le chiffre de la marche et son libellé sont posés sur la grille : ils
+   portent donc un liseré de la couleur de ce qui porte la cascade, faute de
+   quoi une graduation leur passait au travers. */
+.cascade :is(.valeur, .etiquette) {
+  paint-order: stroke; stroke: var(--fond-defilant); stroke-width: 4px;
+  stroke-linejoin: round;
+}
 .cascade .valeur {
   fill: var(--texte); font-family: inherit; font-size: 14px; font-weight: 700;
   font-variant-numeric: tabular-nums;
-  paint-order: stroke; stroke: var(--fond); stroke-width: 4px;
-  stroke-linejoin: round;
 }
 .cascade .valeur.monte { fill: var(--manque); }
 .cascade .valeur.descend { fill: var(--reste); }
@@ -1607,9 +1792,9 @@ ul.legende .lu {
 .cascade .lecture .part { color: var(--texte-doux); font-weight: 400; }
 .cascade .aide-clavier {
   margin: 0.35rem 0 0; font-size: 0.8125rem; color: var(--texte-tres-doux);
-  visibility: hidden;
+  display: none;
 }
-.cascade:focus-within .aide-clavier { visibility: visible; }
+.cascade:focus-within .aide-clavier { display: block; }
 .cascade .defilant:focus-visible { outline: 3px solid var(--or); outline-offset: 4px; }
 /* Le schéma de Sankey : ce qui paie à gauche, la caisse au milieu, ce qu'elle
    verse à droite, chaque ruban de l'épaisseur de son montant. Comme la
@@ -1767,7 +1952,7 @@ ul.serree li { margin: 0.3rem 0; }
    « 54, 60 ou 50 % » — prend la taille de celui du déficit. Sous la barre de
    partage, hors de l'image et replié, ce que dit le texte et le lien qui y
    mène : c'est lui qui répond à « d'où sortez-vous ça ? ». */
-.theme { margin-top: 3.5rem; }
+.theme { margin-top: 3rem; }
 .theme > .cartes { margin-top: 0; }
 /* Le titre du thème occupe la première case de la grille, à côté de la
    première carte : sans lui, trois cartes deux par deux laissaient un trou. */
@@ -1784,7 +1969,7 @@ ul.serree li { margin: 0.3rem 0; }
 
 footer {
   width: calc(100% - 2 * var(--marge)); max-width: calc(var(--largeur) - 2 * var(--marge));
-  margin: 4rem auto 0; padding: 1.5rem 0 5rem;
+  margin: 3rem auto 0; padding: 1.5rem 0 2rem;
   border-top: 1px solid var(--trait);
   font-size: 0.9rem; color: var(--texte-tres-doux);
 }
@@ -1793,9 +1978,12 @@ footer a { color: var(--or); }
   border-left: 3px solid var(--manque); background: var(--fond-carte);
   padding: 0.85rem 1.1rem; margin: 1.5rem 0;
 }
+/* Le résultat en JSON. Ses lignes longues passent à la ligne au lieu de
+   défiler : une clé et sa valeur se lisent sur l'écran, fût-ce en deux fois. */
 pre.json {
   background: var(--fond-carte); border: 1px solid var(--trait); border-radius: 0;
-  padding: 0.9rem 1.1rem; overflow-x: auto; max-height: 26rem; overflow-y: auto;
+  padding: 0.9rem 1.1rem; max-height: 26rem; overflow-y: auto;
+  white-space: pre-wrap; overflow-wrap: anywhere;
   font-size: 0.85rem; line-height: 1.45;
   font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
@@ -1856,6 +2044,16 @@ body.calcul-en-cours::after {
      quatre. */
   header.bandeau nav a { padding: 0 0.35rem; font-size: 0.75rem; letter-spacing: 0.04em; }
   nav .deplier { padding: 0 0.35rem; letter-spacing: 0.06em; gap: 0.2rem; }
+  /* Une carte rend au texte la largeur de ses marges : à 320 points, ses
+     vingt-deux points de chaque côté ne laissaient aux quatre systèmes du
+     simulateur que 114 points par colonne. */
+  .carte { padding: 1rem 0.85rem; }
+  .scenarios { column-gap: 0.75rem; }
+  .scenarios > .scenario { row-gap: 0.3rem; padding: 0.6rem 0 0.6rem; }
+  .scenarios .scenario :is(.salaire, .principal) .somme { font-size: 1.375rem; }
+  /* Les deux branches d'une bascule, plus serrées : à 320 points, « € par
+     mois » et « × salaire moyen » dépassaient de quatre points. */
+  .bascule .choix > a, .bascule .choix > .actif { padding: 0 0.7rem; }
   .plan a { padding: 0 0.5rem; font-size: 0.8125rem; }
   .affiche { padding: 2rem 0 1.5rem; }
   .scenario .entete { flex-direction: column; gap: 0.15rem; }
@@ -1893,7 +2091,11 @@ body.calcul-en-cours::after {
   ol.gestes { font-size: 1.25rem; }
   ol.gestes > li { grid-template-columns: 3rem 1fr; gap: 0.875rem; }
   ol.gestes > li > .rang { font-size: 2.5rem; }
-  .paire { gap: 2rem; margin: 2.5rem 0; }
+  .paire { gap: 1.75rem; margin: 2.25rem 0; }
+  /* Quarante-huit points au-dessus de chaque titre de section, sur un écran
+     qui en montre six cents : trente-six suffisent à marquer la rupture. */
+  h2 { margin-top: 2.25rem; }
+  .theme { margin-top: 2.25rem; }
   section.cle { padding: 1.25rem 1rem 1rem; }
   /* Chaque bouton de partage prend sa ligne : deux de front sur 358 points se
      serraient sous la cible tactile de 44 px. */
@@ -1912,74 +2114,37 @@ body.calcul-en-cours::after {
     font-size: 1rem; padding: 0.9rem 1rem;
   }
   form .grille { gap: 0.9rem; }
-  /* Le SVG se réduisait avec la page, et ses textes, exprimés en unités du
-     viewBox, avec lui : grossis à 24 unités sans que les marges du repère ne
-     suivent, ils se chevauchaient — « k€ » sur « 1 500 », les décennies
-     collées. Le tracé ne descend donc plus sous 30 rem et DÉFILE dans sa
-     figure : à 360 points il est réduit d'un tiers, non de moitié, et dix-huit
-     unités y font douze pixels sans rien recouvrir. */
-  .graphique { overflow-x: auto; -webkit-overflow-scrolling: touch; container-type: inline-size; }
-  .graphique > svg { min-width: 30rem; }
-  /* La légende et l'aide restent sous l'œil quand le tracé défile : posées
-     dans la figure qui défile, elles partaient avec lui, et l'on ne voyait
-     plus que les valeurs, sans les noms. */
-  .graphique > figcaption, .graphique > .aide-clavier {
-    position: sticky; left: 0; width: 100cqw; box-sizing: border-box;
-  }
-  /* Les tableaux des dispositifs — trois colonnes dont deux de phrases — ne
-     tiennent pas dans 300 points : chacun décidait seul, selon son contenu,
-     de se comprimer à un mot par ligne ou de déborder. Ils défilent tous, à
-     la même largeur. */
-  .dispositifs table { min-width: 30rem; }
-  /* Même règle pour tout tableau d'au moins quatre colonnes : comprimé à
-     300 points, il mettait un mot par ligne et une rangée sur douze. */
-  .defilant table:has(thead th:nth-child(4)) { min-width: 34rem; }
   /* L'aperçu d'une carte à publier, réduit à la largeur d'un téléphone,
-     tombait à cinq pixels de texte. Il garde 36 rem et défile dans sa
-     figure : on lit ce qu'on va publier. */
-  .cartes > figure { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  .cadre-carte { min-width: 36rem; }
-  /* Sauf sur « Le saviez-vous ? », où l'on lit d'abord la règle : la carte y
-     prend la largeur de l'écran, en tailles de lecture, et ne reprend le
-     format de l'image (36 rem, 16/9, tailles en `cqw`) que le temps de la
-     composer, sous la classe `en-image` que pose `index.html`. */
-  .cartes.lisibles > figure { overflow-x: visible; }
-  .cartes.lisibles .cadre-carte:not(.en-image) { min-width: 0; }
-  .cartes.lisibles .cadre-carte:not(.en-image) > .carte-partage {
+     tombait à cinq pixels de texte ; gardé à 36 rem, il défilait dans sa
+     figure, et la moitié de la carte était hors de l'écran. La carte prend
+     donc la largeur de l'écran, en tailles de lecture — comme l'a d'abord
+     fait « Le saviez-vous ? », où l'on lit la règle avant de la partager —,
+     et ne reprend le format de l'image (36 rem, 16/9, tailles en `cqw`) que
+     le temps de la composer, sous la classe `en-image` que pose
+     `index.html`. Ce qu'on lit est ce qu'on publie ; seule la mise en page
+     change. */
+  .cadre-carte.en-image { min-width: 36rem; }
+  .cartes .cadre-carte:not(.en-image) { min-width: 0; }
+  .cartes .cadre-carte:not(.en-image) > .carte-partage {
     aspect-ratio: auto; padding: 1.25rem; gap: 1.5rem;
   }
-  .cartes.lisibles .cadre-carte:not(.en-image) .surtitre { font-size: 0.75rem; }
-  .cartes.lisibles .cadre-carte:not(.en-image) .chiffre { font-size: 3rem; }
-  .cartes.lisibles .cadre-carte:not(.en-image) .long .chiffre { font-size: 2.25rem; }
-  .cartes.lisibles .cadre-carte:not(.en-image) .phrase {
+  .cartes .cadre-carte:not(.en-image) .surtitre { font-size: 0.75rem; }
+  .cartes .cadre-carte:not(.en-image) .chiffre { font-size: 3rem; }
+  .cartes .cadre-carte:not(.en-image) .long .chiffre { font-size: 2.25rem; }
+  .cartes .cadre-carte:not(.en-image) .phrase {
     margin-top: 0.75rem; font-size: 1.3rem;
   }
-  .cartes.lisibles .cadre-carte:not(.en-image) .detail {
+  .cartes .cadre-carte:not(.en-image) .detail {
     margin-top: 0.6rem; max-width: none; font-size: 0.8125rem;
   }
-  .cartes.lisibles .cadre-carte:not(.en-image) .pied {
+  .cartes .cadre-carte:not(.en-image) .pied {
     padding-top: 0.75rem; font-size: 0.875rem;
   }
-  .cartes.lisibles .cadre-carte:not(.en-image) .pied .adresse { font-size: 0.75rem; }
-  .graphique .graduation { font-size: 18px; }
-  .graphique .etiquette-serie { font-size: 20px; stroke-width: 7px; }
-  .graphique .annee-lue { font-size: 18px; }
-  .graphique .signature { font-size: 26px; }
-  /* La cascade suit la même règle, et pour la même raison : réduite à la
-     largeur d'un téléphone, treize unités de viewBox y feraient six pixels.
-     Elle défile donc à 40 rem — plus large que les 30 du graphique, parce
-     qu'elle porte huit colonnes ET huit étiquettes en biais —, et ses textes
-     ne sont grossis que du peu qui manque. MARGE_BAS_CASCADE est taillée pour
-     les loger à cette taille-là. */
-  .cascade svg { min-width: 40rem; }
-  .cascade .graduation { font-size: 16px; }
-  .cascade .valeur { font-size: 18px; stroke-width: 5px; }
-  .cascade .etiquette { font-size: 16px; }
-  /* Le schéma de Sankey aussi, et sans grossir ses textes : ses étiquettes
-     sont taillées au plus juste de part et d'autre des nœuds, et un corps
-     plus grand les ferait sortir du cadre. Il défile donc un peu plus large
-     que la cascade, où ses treize unités font encore douze pixels. */
-  .sankey svg { min-width: 42rem; }
+  /* L'adresse est un seul mot de trente-six signes : à 320 points, elle
+     sortait de l'écran. Elle se coupe où il faut. */
+  .cartes .cadre-carte:not(.en-image) .pied .adresse {
+    font-size: 0.75rem; overflow-wrap: anywhere;
+  }
 }
 
 /* Mouvement réduit : la jauge d'attente glisse sans fin, et une animation qui

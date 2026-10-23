@@ -110,6 +110,20 @@ def test_simulation_affiche_les_quatre_systemes(page):
         assert attendu in texte
 
 
+def test_le_depliant_de_chaque_systeme_dit_de_quel_systeme_il_parle():
+    """Ce que mesure chaque système se déplie sous sa carte (action 165) :
+    quatre dépliants « Ce qu'il mesure » à la suite, qu'une synthèse vocale
+    parcourt sans voir les cartes. Chacun lui dit de quel système il parle,
+    dans un texte caché à l'œil, qui a déjà la carte sous les yeux."""
+    corps = rendre("/simuler", {"naissance": "1975"})[1]
+    sommaires = re.findall(r'<details class="mesure"><summary>(.*?)</summary>', corps, re.S)
+    assert len(sommaires) == 4
+    for sommaire, numero in zip(sommaires, "1234"):
+        assert "Ce qu'il mesure" in sommaire
+        assert re.search(rf'<span class="hors-ecran"> : {numero}\. [^<]+</span>', sommaire), \
+            sommaire
+
+
 def test_la_saisie_est_reinjectee_dans_le_formulaire(page):
     """L'adresse porte les paramètres : la page doit être rechargeable telle quelle.
 
@@ -815,9 +829,10 @@ def test_le_tableau_du_detail_s_additionne_a_l_ecran(nom, champs):
 
 
 def _systeme_actuel(champs: dict[str, str]) -> tuple[int, str]:
-    """Le montant du système 1, tel qu'il s'affiche, et la ligne qui le compose."""
+    """Le montant du système 1, tel qu'il s'affiche, et la ligne qui le compose
+    — dans le dépliant de sa carte, avant ce qu'il mesure."""
     corps = rendre("/simuler", champs)[1]
-    bloc = _bloc(corps, '<div class="scenario">', '<div class="barre actuel">')
+    bloc = _bloc(corps, '<div class="scenario">', '<div class="glose">')
     montant = re.search(r'<span class="chiffre principal">.*?'
                         r'<span class="somme">([^<]+)</span>', bloc, re.S).group(1)
     composition = bloc.partition('<span class="composition">')[2]
@@ -1011,7 +1026,7 @@ def test_la_ligne_de_la_proposition_fait_ses_montants(nom, champs):
     de page."""
     corps = rendre("/simuler", champs)[1]
     bloc = _bloc(corps, '<span class="titre">4. La proposition',
-                 '<div class="barre liberal">')
+                 '<div class="glose">')
     montant = int(re.sub(r"\D", "", re.search(
         r'<span class="chiffre principal">.*?<span class="somme">([^<]+)</span>',
         bloc, re.S).group(1)))
