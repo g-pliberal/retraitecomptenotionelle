@@ -239,7 +239,7 @@ code:
   python: >-
     droit/compter.py : compter, jours_de_la_ligne, arrondir_les_services, Durees ;
     droit/liquider.py : liquider_chaque_regime, trimestres_de_decote ; carriere.py :
-    AnneeCarriere ; saisie.py : releve_analyse
+    AnneeCarriere
   javascript: >-
     moteur/js/droit/compter.js : compter, joursDeLaLigne, arrondirLesServices, Durees ;
     moteur/js/droit/liquider.js : liquiderChaqueRegime, trimestresDeDecote ;

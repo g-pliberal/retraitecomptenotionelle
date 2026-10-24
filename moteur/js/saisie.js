@@ -1,10 +1,22 @@
 /**
  * La saisie d'une simulation : ce que l'adresse dit, lu en carrière et en règles.
  *
- * Portage de ``src/retraite_notionnelle/saisie.py``, qui dit ce que chaque
- * champ borne, et pourquoi. La lecture de la saisie est du calcul : les deux
- * moteurs la font, et les témoins la rejouent des deux côtés. Le texte du site,
- * lui, n'est écrit qu'une fois : dans ``pages.js`` et ``gabarit.js``.
+ * Une simulation du site s'écrit tout entière dans son adresse — la naissance,
+ * le statut, les dates, les revenus, les réglages — et ces paramètres sont
+ * l'entrée de la surface publique (docs/architecture.md, annexe C.9). Ce module
+ * les lit : il borne chaque champ, et dit pourquoi, refuse ce qui ne décrit
+ * aucune carrière (`ErreurSaisie`, dont le message s'affiche tel quel), et tire
+ * de la saisie la carrière et le jeu de paramètres que le moteur calcule. Le
+ * texte du site, lui, s'écrit dans `pages.js` et `gabarit.js`.
+ *
+ * LE SEUL EXEMPLAIRE DE LA SAISIE (action 161). La saisie formait la première
+ * moitié de `web/pages.py`, dont la phase 8 a retiré le texte du site ; son
+ * calcul est resté en Python, dans `saisie.py`, que ce module portait, et les
+ * témoins rejouaient la lecture des deux côtés. Depuis l'action 161, étape 6,
+ * la fabrique bâtit ses carrières par ce module, au travers du pont
+ * (`pont.carrieres_des_saisies`), et le moteur Python les simule : le Python,
+ * que plus rien ne lisait, est parti, relu contre ce module, ses explications
+ * passées ici, les témoins identiques à l'octet.
  */
 
 import {
@@ -24,6 +36,12 @@ import { formatG } from "./format.js";
 import * as g from "./gabarit.js";
 import { AGE_TERMINAL } from "./mortalite.js";
 
+// Le profil de carrière se DÉDUIT du statut par défaut : on ne demande pas sa
+// progression de carrière à quelqu'un qui a déjà dit qu'il était fonctionnaire
+// de l'État ou cadre du privé, et le modèle lit chez l'INSEE le profil du
+// groupe correspondant. Les trois autres restent, parce qu'une carrière au SMIC
+// ne progresse pas comme la moyenne de son groupe et que la mesure d'une
+// variante doit rester possible.
 export const PROFILS = [
   ["auto", "Déduit du statut (défaut)"],
   ["plat", "Plat — le salaire suit le salaire moyen"],
@@ -45,11 +63,14 @@ export const INDEXATIONS = [
   ["salaires", "Salaire moyen"],
 ];
 
-// Fenêtre de lissage maximale acceptée par le formulaire, en années. La fenêtre
-// se saisit librement — 1 pour aucun lissage, 5 pour la règle italienne. La
-// borne est un garde-fou de sens, pas une limite du moteur : au-delà d'une
-// trentaine d'années la moyenne couvre presque toute une carrière, et ce n'est
-// plus un lissage mais un taux fixe reconstitué.
+// Fenêtre de lissage maximale acceptée par le formulaire, en années. Le lissage
+// s'applique au taux que la règle produit, quelle que soit la règle : ce qu'il
+// vise est la loterie de cohorte. La fenêtre se saisit librement — 1 pour aucun
+// lissage, 5 pour la règle italienne, ce qu'on veut entre les deux et au-delà.
+// La borne est un garde-fou de sens, pas une limite du moteur : au-delà d'une
+// trentaine d'années la moyenne couvre presque toute une carrière, tous les
+// millésimes reçoivent à peu près le même taux, et ce n'est plus un lissage
+// mais un taux fixe reconstitué.
 export const LISSAGE_MAXIMUM = 30;
 
 export const AGES_REFERENCE = [
@@ -153,6 +174,9 @@ export const REGIMES_FRAIS = [
 
 // Les taux futurs auxquels le pilier du système 4 place ses versements. Les
 // codes sont ceux de `sousRegimeTaux` (config.js), l'ordre est celui du menu.
+// Le défaut prend les taux à terme de la courbe du jour ; les deux autres en
+// retirent une prime de terme, au milieu puis au haut de la fourchette de la
+// littérature.
 export const REGIMES_TAUX = [
   ["forwards", "Taux à terme de la courbe (défaut)"],
   ["prime", "Prime de terme retirée : 0,50 point à 30 ans"],
@@ -206,6 +230,15 @@ export const SAISIE_DE_LA_SITUATION = { actif: "revenu", retraite: "pension" };
  * n'est plus un choix offert au lecteur mais la conséquence de sa situation :
  * les libellés ont disparu avec la bascule qui les portait, et il ne reste que
  * les deux codes, qui bornent ce qu'une adresse a le droit de dire.
+ *
+ * Le simulateur va du revenu à la pension, et c'est le sens du droit : on
+ * cotise, puis on liquide. Mais celui qui est déjà à la retraite connaît sa
+ * pension au centime et ne se souvient pas de ce qu'il gagnait il y a trente
+ * ans — lui demander un revenu, c'est lui demander d'estimer ce que le
+ * simulateur sait calculer. Le second mode prend donc la pension et cherche le
+ * revenu dont le SCÉNARIO 1 la tire : le droit en vigueur est le seul des
+ * quatre systèmes qu'il ait un sens d'inverser, puisque c'est le seul que
+ * l'assuré a réellement subi.
  */
 export const SAISIES = [["revenu", ""], ["pension", ""]];
 
@@ -222,8 +255,7 @@ const PENSION_DEFAUT = 1500.0;
  * mensuel de sa synthèse —, recopié pour être comparé à celui du simulateur :
  * un champ par départ de `DEPARTS_DE_L_ESTIMATION` (pilote.js), au plus tôt,
  * au taux plein, au taux plein automatique. Ils n'entrent dans aucun calcul,
- * et restent dans le navigateur avec le reste de la saisie. Voir
- * `CHAMPS_ESTIMATION` (saisie.py).
+ * et restent dans le navigateur avec le reste de la saisie.
  */
 export const CHAMPS_ESTIMATION = Object.freeze(
   ["estimation_legal", "estimation_taux_plein", "estimation_automatique"]);
@@ -240,9 +272,12 @@ export const NIVEAU_MAXIMAL = 10.0;
 // ce qu'on affiche. Un seul réglage pour les deux : lire un salaire net et une
 // pension brute sur la même page compare deux grandeurs différentes, et c'est
 // exactement ce que le site faisait avant cette bascule. Le défaut est le BRUT,
-// depuis le 4 octobre 2026 : c'est la langue de l'estimation officielle, celle
-// des chiffres que chacun connaît déjà ; le net avant impôt reste à un clic.
-// Les capitaux et les assiettes sont bruts par nature. Voir saisie.py.
+// depuis le 4 octobre 2026 : c'est la langue de l'estimation officielle (« Mon
+// estimation retraite », sur info-retraite.fr), celle des chiffres que chacun
+// connaît déjà, et le propriétaire l'a voulu « en tête » pour qu'on puisse les
+// comparer. Le net avant impôt reste à un clic. Les capitaux, les assiettes et
+// les tableaux de détail sont bruts par nature et ne bougent pas : on ne
+// « nette » pas un capital notionnel.
 export const MODES_MONTANT = [
   ["brut", "brut — avant CSG et cotisations"],
   ["net", "net avant impôt — après CSG"],
@@ -250,7 +285,8 @@ export const MODES_MONTANT = [
 
 // Durée mensuelle de référence du SMIC : 35 heures par semaine pendant 52
 // semaines, ramenées au mois. Le barème l'écrit « 151,67 heures » et calcule sur
-// 151,666… Elle ne sert qu'à écrire un repère à l'échelle d'un salaire mensuel.
+// 151,666… : 11,88 € de l'heure font 1 801,80 € par mois, non 1 801,84. Elle ne
+// sert qu'à écrire un repère à l'échelle d'un salaire mensuel.
 export const HEURES_SMIC_PAR_MOIS = (35 * 52) / 12;
 
 /**
@@ -284,9 +320,12 @@ export const EMPLOYEURS_APRES_DEPART = [
 
 /**
  * Le travail manuel exercé cinq ans au moins au cours des quinze années qui
- * précèdent le départ : ouvrier (R. 351-23), ou en continu, en semi-continu, à
- * la chaîne, au four ou aux intempéries (décret n° 45-0179, articles 70-2 et
- * 70-3), qui est aussi un travail ouvrier. Voir `TRAVAUX_MANUELS` du Python.
+ * précèdent le départ : ouvrier, ce que la mère de famille ouvrière doit avoir
+ * exercé (R. 351-23) ; en continu, en semi-continu, à la chaîne, au four ou aux
+ * intempéries, ce que le travailleur manuel devait avoir exercé de 1976 à 1983
+ * (décret n° 45-0179, articles 70-2 et 70-3), et qui est aussi un travail
+ * ouvrier (fiches `taux_plein_meres_de_famille_ouvrieres` et
+ * `taux_plein_travailleurs_manuels`). Le vide dit qu'il n'y en a pas.
  */
 export const TRAVAUX_MANUELS = [
   ["", "non"],
@@ -295,9 +334,17 @@ export const TRAVAUX_MANUELS = [
 ];
 
 /**
- * L'activité du micro-entrepreneur, qui fait lire son revenu comme un chiffre
- * d'affaires abattu de 71, 50 ou 34 % (L. 613-7, II), la Cipav routant la
- * ligne vers les régimes du libéral. Voir `ACTIVITES_MICRO` du Python.
+ * L'activité du micro-entrepreneur, qui fait lire son revenu comme un CHIFFRE
+ * D'AFFAIRES (action 138, étape 12 ; fiche `micro_social_abattement`). Ses
+ * droits « sont calculés sur la base de leur chiffre d'affaires ou de leurs
+ * recettes après application d'un taux d'abattement de 71 % » pour la vente,
+ * « de 50 % » pour les services commerciaux ou artisanaux, « de 34 % » pour les
+ * recettes libérales (L. 613-7, II ; L. 133-6-8 jusqu'en 2017), les abattements
+ * du micro-fiscal (CGI, 50-0 et 102 ter), les mêmes depuis 2007. Le vide garde
+ * le sens d'avant : le revenu saisi est déjà abattu. La Cipav route la ligne
+ * vers les régimes du libéral (CNAVPL et Cipav) : ses micro-entrepreneurs sont
+ * ceux des professions qu'elle garde, et ceux qui y étaient affiliés avant 2019
+ * (D. 613-4, b).
  */
 export const ACTIVITES_MICRO = [
   ["", "revenu déjà abattu"],
@@ -307,7 +354,10 @@ export const ACTIVITES_MICRO = [
   ["cipav", "activité libérale à la Cipav : recettes"],
 ];
 
-/** L'abattement de chaque activité. Voir `ABATTEMENTS_MICRO` du Python. */
+/**
+ * L'abattement de chaque activité, la part du chiffre d'affaires qui ne compte
+ * pas dans les droits.
+ */
 export const ABATTEMENTS_MICRO = { vente: 0.71, services: 0.50, liberal: 0.34, cipav: 0.34 };
 
 /** Le statut lu en chiffre d'affaires, et celui vers qui la Cipav le route. */
@@ -315,9 +365,12 @@ export const STATUT_MICRO = "micro_entrepreneur";
 export const STATUT_MICRO_CIPAV = "profession_liberale";
 
 /**
- * Le barème de la Lodeom que l'employeur d'outre-mer applique à la place de la
- * réduction générale (L. 752-3-2, III), le vide pour « non ». Voir
- * `BAREMES_LODEOM` du Python.
+ * Le barème de la Lodeom que l'employeur applique, en Guadeloupe, en Guyane, en
+ * Martinique ou à La Réunion, à la place de la réduction générale (L. 752-3-2,
+ * III ; action 138, étape 18) : ceux du bloc `lodeom` de
+ * `legislation/prelevements_remuneration.yaml`, sous leur libellé, qu'un test y
+ * tient. Le vide, « non », est la réduction générale. Chaque emploi le porte, et
+ * seule la fiche de paie du salarié du privé le lit.
  */
 export const BAREMES_LODEOM = [
   ["", "non"],
@@ -327,18 +380,32 @@ export const BAREMES_LODEOM = [
 ];
 
 /**
- * L'option du conjoint collaborateur (D. 633-19-2), le forfait d'abord, qui
- * est le défaut (R. 662-1), et la part du revenu du chef que chacune cotise.
- * Voir `ASSIETTES_COLLABORATEUR` et `PARTS_COLLABORATEUR` du Python.
+ * L'option du conjoint collaborateur d'un artisan ou d'un commerçant (fiche
+ * `conjoint_collaborateur_independants` ; action 138, étape 18) : il cotise « à
+ * sa demande » sur un forfait égal au tiers du plafond, ou sur 33,33 % ou 50 %
+ * du revenu d'activité du chef d'entreprise (D. 633-19-2, 1° à 3°), la même
+ * fraction pouvant se partager avec le chef ; le forfait « si aucun autre choix
+ * n'est effectué » (R. 662-1), qui est le défaut. Le revenu de ses périodes est
+ * alors celui du chef, dont la ligne ne cotise que la part de l'option
+ * (`PARTS_COLLABORATEUR`) ; un relevé, qui porte l'assiette, n'en dépend pas.
  */
 export const ASSIETTES_COLLABORATEUR = [
   ["", "le forfait, le tiers du plafond"],
   ["tiers", "33,33 % du revenu du chef d'entreprise"],
   ["moitie", "50 % du revenu du chef d'entreprise"],
 ];
+/**
+ * La part du revenu du chef que chaque option cotise. Le forfait n'en cotise
+ * rien : la ligne sans revenu prend le tiers du plafond depuis l'affiliation
+ * obligatoire de 2007, et n'a pas souscrit l'assurance volontaire avant
+ * (`assietteDuConjointCollaborateur`, dans `carriere.js`).
+ */
 export const PARTS_COLLABORATEUR = { "": 0.0, tiers: 0.3333, moitie: 0.5 };
 
-/** La durée de captivité et de services de guerre que la saisie admet, en mois. */
+/**
+ * La durée de captivité et de services militaires en temps de guerre que la
+ * saisie admet, en mois : de un à vingt ans.
+ */
 export const MOIS_DE_GUERRE_MAXIMUM = 240;
 
 /**
@@ -361,7 +428,7 @@ export const ETRANGER_MAXIMUM = 4;
 /**
  * Les précédents conjoints de l'assuré, divorcés, que l'adresse peut porter :
  * « ex1 » à « ex2_… ». La réversion se partage entre eux et le conjoint
- * survivant au prorata de la durée de chaque mariage. Voir le Python.
+ * survivant au prorata de la durée de chaque mariage (L. 353-3, R. 353-4).
  */
 export const EX_CONJOINTS_MAXIMUM = 2;
 
@@ -386,14 +453,16 @@ export const ACTIVITES_A_L_ETRANGER = [
 
 /**
  * Combien de périodes assimilées l'adresse peut porter : « assimilee1_motif » à
- * « assimilee4_… » (action 130, sixième domaine, étape 5). Voir le Python.
+ * « assimilee4_… » (action 130, sixième domaine, étape 5). La borne est celle du
+ * formulaire, pas du moteur.
  */
 export const ASSIMILEES_MAXIMUM = 4;
 
 /**
- * Les motifs d'une période assimilée que la saisie déclare, et ce que le
- * formulaire en dit. Ce que chacun valide, ce sont les fiches qui le disent.
- * Voir `MOTIFS_D_ASSIMILATION` du Python.
+ * Les motifs d'une période assimilée que la saisie déclare, dans l'ordre de
+ * `MOTIFS_D_ASSIMILATION` de la chronologie (`chronologie.js`), et ce que le
+ * formulaire en dit. Ce que chacun valide, et depuis quand, ce sont les fiches
+ * qui le disent : la saisie ne fait que déclarer la période.
  */
 export const MOTIFS_D_ASSIMILATION = [
   ["stage_de_formation_professionnelle", "stage de formation professionnelle"],
@@ -527,7 +596,7 @@ export class ErreurSaisie extends Error {}
 /**
  * Les clés de requête qui décrivent les RÈGLES, et non la carrière.
  *
- * Ce sont exactement les dix que `Saisie.parametres` lit pour fabriquer un jeu
+ * Ce sont exactement les dix-neuf que `Saisie.parametres` lit pour fabriquer un jeu
  * de paramètres : tout le reste — naissance, statut, revenu, enfants, profil,
  * interruptions — décrit un individu, et un individu n'a pas sa place dans un
  * agrégat. C'est cette liste qui permet aux trois pages agrégées de lire une
@@ -548,10 +617,12 @@ export const CLES_MODELISATION = Object.freeze([
 export const DEFAUTS = Object.freeze({
   naissance: 2000,
   naissance_mois: 1,
-  //: Jour de naissance. Il décide du mois d'où les âges se comptent, et donc
-  //: de l'âge que vaut une date de carrière ; la génération, elle, se coupe au
-  //: mois. Une adresse qui porte la naissance sans lui le laisse à la
-  //: présomption `jour_de_naissance`, et le dit ci-dessous. Voir `saisie.py`.
+  //: Jour de naissance. Il décide du mois d'où les âges se comptent
+  //: (`origineDesAges`), et donc de l'âge que vaut une date de carrière ; la
+  //: génération, elle, se coupe au mois. Le calendrier du formulaire le demande
+  //: toujours ; une adresse qui ne le porte pas — « naissance=1975 »,
+  //: « naissance=1975-03 » — le laisse à la présomption `jour_de_naissance`
+  //: (§ 5.6), et le dit ci-dessous.
   naissance_jour: 1,
   //: Vrai quand l'adresse portait la naissance sans son jour, que la
   //: présomption a posé : la carrière le présume alors à son tour.
@@ -602,7 +673,9 @@ export const DEFAUTS = Object.freeze({
   primes: 0.0,
   enfants: 0,
   //: Les naissances des premiers enfants, dans l'ordre : « 1995, 1998-06 ».
-  //: Celles qui ne sont pas dites sont présumées. Voir `naissancesEnfants`.
+  //: Celles qui ne sont pas dites sont présumées (docs/architecture.md,
+  //: § 5.6) ; celles qui le sont choisissent, enfant par enfant, la version des
+  //: règles qui lui accordent des trimestres. Voir `naissancesEnfants`.
   naissances: "",
   //: Le conjoint, pour la réversion (docs/architecture.md, § 5.1) : sa
   //: naissance (AAAA ou AAAA-MM), son sexe — l'autre que celui de l'assuré
@@ -626,27 +699,32 @@ export const DEFAUTS = Object.freeze({
   //: Celui où elle se défait, s'il le dit : il revit seul.
   nouvelle_union_fin: "",
   conjoint_invalidite: "",
-  //: Le mois où la propre retraite du conjoint prend effet, s'il le dit. Voir
-  //: le Python.
+  //: Le mois où la propre retraite du conjoint prend effet (AAAA ou AAAA-MM),
+  //: s'il le dit : la limite de cumul de sa réversion d'avant juillet 2004
+  //: s'applique alors, et sa majoration pour enfant à charge s'arrête.
   conjoint_retraite: "",
-  //: Les précédents conjoints de l'assuré, divorcés : naissance, mariage,
-  //: divorce et remariage. Voir `ExConjointSaisi` du Python.
+  //: Les précédents conjoints de l'assuré, divorcés, entre qui et le conjoint
+  //: la réversion se partage : la naissance de chacun, le mariage, le divorce
+  //: (AAAA ou AAAA-MM), et son remariage s'il le dit — que la réversion de la
+  //: fonction publique et des complémentaires ne lui laisse pas, quand il
+  //: précède le décès de l'assuré.
   ex_conjoints: Object.freeze([]),
   //: Le décès de l'assuré (AAAA ou AAAA-MM), qui ouvre la réversion de son
   //: conjoint : au départ ou après lui.
   deces: "",
-  //: La retraite progressive : l'âge où elle prend effet, que l'adresse porte
-  //: en date comme le départ, et la quotité du temps partiel gardé jusqu'au
-  //: départ, en pour cent. Nul sans retraite progressive, et la quotité nulle
-  //: quand l'adresse ne la porte pas : une quotité de zéro se refuse, elle ne
-  //: vaut pas absence.
+  //: La retraite progressive (fiche `retraite_progressive`) : l'âge où elle
+  //: prend effet, que l'adresse porte en date comme le départ, et la quotité du
+  //: temps partiel gardé jusqu'au départ, en pour cent. Nul sans retraite
+  //: progressive, et la quotité nulle quand l'adresse ne la porte pas : une
+  //: quotité de zéro se refuse, elle ne vaut pas absence.
   progressive: null,
   quotite_progressive: null,
-  //: L'activité exercée après le départ, le cumul emploi-retraite : l'âge où
-  //: elle commence et celui où elle finit, que l'adresse porte en dates comme
-  //: le départ ; son statut et son revenu, dans l'unité de la saisie — ceux du
-  //: dernier métier quand ils ne sont pas dits — ; et l'employeur, le dernier
-  //: ou un autre. Nul sans activité après le départ.
+  //: L'activité exercée après le départ, le cumul emploi-retraite (fiche
+  //: `cumul_emploi_retraite_et_retraite_progressive`) : l'âge où elle commence
+  //: et celui où elle finit, que l'adresse porte en dates comme le départ ; son
+  //: statut et son revenu, dans l'unité de la saisie — ceux du dernier métier
+  //: quand ils ne sont pas dits — ; et l'employeur, le dernier ou un autre. Nul
+  //: sans activité après le départ.
   emploi_retraite: null,
   emploi_retraite_fin: null,
   emploi_retraite_statut: "",
@@ -655,43 +733,57 @@ export const DEFAUTS = Object.freeze({
   //: Les pensions dont l'assuré dit la date de demande : pour chaque régime,
   //: `[code, âge]`, l'âge où il la demande, que l'adresse porte en date comme
   //: le départ (`PREFIXE_DEMANDE`). Vide, la présomption
-  //: `depart_de_chaque_regime` date chaque pension.
+  //: `depart_de_chaque_regime` date chaque pension (fiche
+  //: `liquidation_regime_par_regime`).
   demandes: [],
-  //: L'invalidité et l'inaptitude : l'âge où la pension d'invalidité de la
-  //: Sécurité sociale a commencé, que l'adresse porte en date comme un début
-  //: d'activité, nul sans elle ; l'inaptitude au travail, reconnue ou que la
-  //: loi présume ; l'âge de la radiation des cadres pour invalidité d'un
-  //: fonctionnaire, en date lui aussi, son imputabilité au service et le taux
-  //: d'invalidité reconnu, en pour cent ; l'âge depuis lequel l'incapacité
-  //: permanente atteint 50 %, en date lui aussi. Voir `invaliditeDeclaree`.
+  //: L'invalidité et l'inaptitude (fiches `pension_d_invalidite_substituee`,
+  //: `inaptitude_au_travail` et `retraite_pour_invalidite_fonction_publique`) :
+  //: l'âge où la pension d'invalidité de la Sécurité sociale a commencé, que
+  //: l'adresse porte en date comme un début d'activité, nul sans elle ;
+  //: l'inaptitude au travail, reconnue ou que la loi présume ; l'âge de la
+  //: radiation des cadres pour invalidité d'un fonctionnaire, en date lui
+  //: aussi, son imputabilité au service et le taux d'invalidité reconnu, en
+  //: pour cent ; l'âge depuis lequel l'incapacité permanente atteint 50 %
+  //: (fiche `retraite_anticipee_handicap`), en date lui aussi. Voir
+  //: `invaliditeDeclaree`.
   invalidite: null,
   inaptitude: false,
   radiation_invalidite: null,
   invalidite_imputable: false,
   taux_invalidite: null,
   handicap: null,
-  //: Les autres titres au taux plein de L. 351-8 : la carte de déporté ou
-  //: interné, les mois de captivité et de services de guerre, nuls sans eux, le
-  //: travail manuel des quinze années d'avant le départ, vide sans lui.
+  //: Les autres titres au taux plein de L. 351-8 (fiches `taux_plein_*` ;
+  //: `droit/categories.js`) : la carte de déporté ou interné (3°), les mois de
+  //: captivité et de services militaires en temps de guerre de l'ancien
+  //: prisonnier ou combattant (5°), nuls sans eux, et le travail manuel des
+  //: quinze années qui précèdent le départ (4°, et l'article 70-2 du décret de
+  //: 1945 avant 1983), vide sans lui.
   deporte: false,
   mois_de_guerre: null,
   travail_manuel: "",
-  //: L'activité du micro-entrepreneur (`ACTIVITES_MICRO`), vide quand son
-  //: revenu est déjà abattu.
+  //: L'activité du micro-entrepreneur, qui fait lire le revenu de ses lignes
+  //: comme un chiffre d'affaires (`ACTIVITES_MICRO`) ; vide, comme un revenu
+  //: déjà abattu.
   micro: "",
   //: Le barème de la Lodeom de l'employeur d'outre-mer (`BAREMES_LODEOM`), que
-  //: portent tous les emplois ; vide, la réduction générale.
+  //: portent tous les emplois, métiers et lignes du relevé ; vide, la réduction
+  //: générale.
   lodeom: "",
   //: L'option du conjoint collaborateur (`ASSIETTES_COLLABORATEUR`) ; vide, le
-  //: forfait.
+  //: forfait. Voir `assietteDuCollaborateur`.
   collaborateur: "",
-  //: La réversion que le régime des non-salariés agricoles sert à l'assuré : le
-  //: mois où elle commence (AAAA ou AAAA-MM) et son montant mensuel brut de ce
-  //: mois, nul quand les ressources l'absorbent ; vide, la présomption
+  //: La réversion que le régime des non-salariés agricoles sert à l'assuré,
+  //: veuf d'un de ses assurés (fiche `pension_majoree_reference` ; action 138,
+  //: étape 8) : le mois où elle commence (AAAA ou AAAA-MM) et son montant
+  //: mensuel brut de ce mois, en euros, nul quand les ressources l'absorbent ;
+  //: vide, la présomption
   //: `pas_de_reversion_agricole`. Voir `reversionAgricoleDeclaree`.
   reversion_agricole: "",
   reversion_agricole_mensuel: null,
-  //: Les carrières hors de France : les périodes passées hors de France
+  //: Les carrières hors de France (fiches
+  //: `totalisation_des_periodes_etrangeres`, `pension_proratisee`,
+  //: `minimum_contributif_international` et `residence_et_minimum_vieillesse`) :
+  //: les périodes passées hors de France
   //: — `{pays, debut, fin, activite}`, les âges comptés comme un début
   //: d'activité —, les pensions étrangères — `{pays, montant, debut}` —,
   //: l'État où la personne réside après son départ, vide quand c'est la
@@ -701,21 +793,31 @@ export const DEFAUTS = Object.freeze({
   pensions_etrangeres: Object.freeze([]),
   residence: "",
   mois_en_france: null,
-  //: Les périodes assimilées que la personne déclare — `{motif, debut, fin,
-  //: dispositif, jours}`, les dates telles qu'elles sont dites —, et le rang
-  //: de la ligne de carrière qui est un contrat d'apprentissage, `null` sans
-  //: lui. Voir `periodesAssimileesDeclarees`.
+  //: Les périodes assimilées que la personne déclare (fiches
+  //: `stages_formation_professionnelle`, `tuc_stages_insertion`,
+  //: `sportifs_haut_niveau` et `conge_supplementaire_naissance`) — `{motif,
+  //: debut, fin, dispositif, jours}`, les dates telles qu'elles sont dites —, et
+  //: le rang de la ligne de carrière qui est un contrat d'apprentissage (fiche
+  //: `apprentissage`), `null` sans lui. Voir `periodesAssimileesDeclarees`.
   assimilees: Object.freeze([]),
   apprentissage: null,
-  // Le revenu fiscal de référence du foyer, s'il le dit. Voir `revenu_fiscal`
-  // dans `saisie.py`.
+  // Le revenu fiscal de référence du foyer, en euros, s'il le dit : il fixe le
+  // taux de CSG de sa pension (action 138, étape 2). `null` : la présomption
+  // `aucun_autre_revenu_que_ses_pensions`.
   revenu_fiscal: null,
   interruptions: "",
-  // Les années à temps partiel et leur quotité, en pour cent : « 2005:2014:80 ».
-  // Voir `temps_partiel` dans `saisie.py`.
+  // Les années travaillées à temps partiel et leur quotité, en pour cent :
+  // « 2005:2014:80 » (fiche `temps_partiel_fonction_publique`). Les revenus
+  // saisis sont ceux d'un temps plein, que ces années touchent à leur quotité ;
+  // la fonction publique les compte à leur quotité dans ses services, en entier
+  // dans la durée d'assurance. Voir `tempsPartielAnalyse`.
   temps_partiel: "",
   // Les années où l'indépendant est dispensé de l'assiette minimale, et le
-  // motif de la dispense : « 2016:2019:rsa ». Voir `dispenses` dans `saisie.py`.
+  // motif de la dispense : « 2016:2019:rsa » (fiche
+  // `assiette_minimale_independants` ; les motifs sont ceux de
+  // `legislation/dispenses_assiette_minimale.yaml`). Toute activité de ces
+  // années le porte, d'un relevé ou des métiers, et la règle ne le retient que
+  // là où le texte dispense le statut. Voir `dispensesAnalysees`.
   dispenses: "",
   indexation: "masse_salariale",
   lissage: 1,
@@ -727,12 +829,15 @@ export const DEFAUTS = Object.freeze({
   part_cotisation: "salariale",
   contribution_etat: "retraite_seule",
   // Seul ou en couple : la situation de foyer de la garantie vieillesse du
-  // système 4. Le défaut est la personne seule, comme pour l'ASPA.
+  // système 4. Le défaut est la personne seule, comme pour l'ASPA du système 1,
+  // de sorte que les deux planchers se comparent.
   foyer: "seul",
   projection: "cor_reference",
   //: L'hypothèse d'espérance de vie de l'INSEE, que le diviseur lit.
   esperance_vie: "centrale",
+  //: L'emploi projeté : la trajectoire du COR par défaut, ou constant.
   emploi: "cor_2026",
+  //: Les pensions déjà servies à la bascule : sur les prix, ou réindexées.
   stock: "prix",
   // Part de l'avance de la garantie que la succession couvre, en pour cent ;
   // null, elle est calculée sur le patrimoine des ménages retraités.
@@ -740,6 +845,9 @@ export const DEFAUTS = Object.freeze({
   // Les frais du pilier capitalisé : marché 2025 et baisse par paliers, ou
   // l'une des variantes qui disent ce que chaque hypothèse déplace.
   frais: "paliers",
+  //: Les taux futurs du pilier : les taux à terme de la courbe, ou l'une des
+  //: deux variantes qui en retirent une prime de terme. C'est le seul réglage
+  //: sous lequel l'allocation des maturités change quelque chose.
   taux: "forwards",
   bascule: 2026,
   euros: 2026,
@@ -757,7 +865,10 @@ export class Saisie {
    * `tolerante` ne sert qu'à REMONTRER une saisie refusée : rien n'y est
    * vérifié, et une ligne de métier incomplète arrête la lecture des métiers
    * au lieu de la refuser. Une saisie lue ainsi ne se calcule jamais — voir
-   * `saisieRefusee`.
+   * `saisieRefusee`. `presomptions` est la table du paquet où lire ce que la
+   * saisie présume — le jour de naissance, l'âge du mariage — ; la page et le
+   * pont la passent toujours. Sans elle, une naissance sans jour ne se lit pas,
+   * et le décès ne se confronte pas au mariage présumé.
    */
   static depuisRequete(parametres, tolerante = false, presomptions = null) {
     // Le premier métier se lit d'abord : les suivants héritent de son niveau de
@@ -1040,7 +1151,9 @@ export class Saisie {
     this._verifierPension();
     this._verifierEstimation();
     // Les métiers se suivent sans se recouvrir : chacun commence après le
-    // précédent et avant le départ à la retraite.
+    // précédent et avant le départ à la retraite. C'est la seule chose que le
+    // moteur exige, et elle se dit ici plutôt que par une exception remontée du
+    // modèle.
     let precedent = this.debut;
     this.metiers.forEach((metier, index) => {
       const rang = index + 2;
@@ -1134,8 +1247,8 @@ export class Saisie {
 
   /**
    * L'estimation officielle recopiée : des montants mensuels, que le
-   * formulaire borne à un euro au moins. Voir `_verifier_estimation` du
-   * Python.
+   * formulaire borne à un euro au moins. Rien d'autre : c'est la page
+   * officielle qui les a calculés, et la comparaison dira l'écart.
    */
   _verifierEstimation() {
     for (const nom of CHAMPS_ESTIMATION) {
@@ -1187,12 +1300,6 @@ export class Saisie {
   }
 
   /**
-   * Le revenu de chaque métier, ramené à l'unité du modèle. C'est ici, et nulle
-   * part ailleurs, que l'euro entre dans le modèle. Le moteur ne connaît que le
-   * multiple du salaire moyen : il garde son sens sur quatre-vingts ans, quand
-   * un montant n'en a que rapporté à son année.
-   */
-  /**
    * Toutes les lignes du formulaire, la première comprise.
    *
    * Le premier métier vit dans des champs à part — `statut`, `debut`,
@@ -1210,6 +1317,12 @@ export class Saisie {
     ];
   }
 
+  /**
+   * Le revenu de chaque métier, ramené à l'unité du modèle. C'est ici, et nulle
+   * part ailleurs, que l'euro entre dans le modèle. Le moteur ne connaît que le
+   * multiple du salaire moyen : il garde son sens sur quatre-vingts ans, quand
+   * un montant n'en a que rapporté à son année.
+   */
   niveaux(echelle) {
     const lignes = this.lignesCarriere;
     let saisis = lignes.map((ligne) => ligne.salaire);
@@ -1229,17 +1342,22 @@ export class Saisie {
   }
 
   /**
-   * Le revenu d'une ligne de ce statut est-il un chiffre d'affaires ? Voir
-   * `en_chiffre_d_affaires` du Python.
+   * Le revenu d'une ligne de ce statut est-il un chiffre d'affaires ? Celui du
+   * micro-entrepreneur qui dit son activité. Une activité dite sans ligne de
+   * micro-entrepreneur ne change rien : le formulaire la garde d'une saisie à
+   * l'autre, et elle ne se refuse pas.
    */
   enChiffreDAffaires(statut) {
     return Boolean(this.micro) && statut === STATUT_MICRO;
   }
 
   /**
-   * Ce que cotise une ligne de ce statut au niveau du revenu saisi : celle du
-   * conjoint collaborateur, la part du revenu du chef que son option retient,
-   * rien au forfait. Voir `assiette_du_collaborateur` du Python.
+   * Ce que cotise une ligne de ce statut au niveau du revenu saisi. Celle du
+   * conjoint collaborateur porte le revenu du chef d'entreprise, dont elle ne
+   * cotise que la part de son option (`PARTS_COLLABORATEUR`) : rien au forfait,
+   * que le modèle donne alors au tiers du plafond. Le contrôle des bornes se
+   * fait avant, sur le revenu saisi : c'est le nombre que le champ porte. Les
+   * autres lignes gardent leur niveau.
    */
   assietteDuCollaborateur(niveau, statut) {
     if (!CONJOINTS_COLLABORATEURS.has(statut)) {
@@ -1249,17 +1367,21 @@ export class Saisie {
   }
 
   /**
-   * Le niveau qu'essaie l'inversion par la pension, sur chaque métier. Voir
-   * `niveaux_de_la_pension` du Python.
+   * Le niveau qu'essaie l'inversion par la pension, sur chaque métier : le même
+   * revenu partout, que la ligne du conjoint collaborateur cotise comme un
+   * revenu saisi (`assietteDuCollaborateur`) — au forfait, le niveau n'y change
+   * rien.
    */
   niveauxDeLaPension(niveau, parcours) {
     return parcours.map((metier) => this.assietteDuCollaborateur(niveau, metier.affiliation));
   }
 
   /**
-   * Ce qu'une ligne donne au modèle, `[niveau, statut]` : le chiffre
-   * d'affaires abattu, la Cipav routée vers le libéral. Voir `abattu` du
-   * Python.
+   * Ce qu'une ligne donne au modèle, `[niveau, statut]` : son revenu et son
+   * statut. LE CHIFFRE D'AFFAIRES S'ABAT ICI, au seuil du modèle, et nulle part
+   * avant : `niveaux` garde le nombre saisi, ramené à l'unité du modèle, pour
+   * que la bascule d'unité le traduise sans le toucher. Le micro-entrepreneur de
+   * la Cipav prend le statut du libéral, dont il a les régimes.
    */
   abattu(niveau, statut) {
     if (!this.enChiffreDAffaires(statut)) {
@@ -1311,6 +1433,12 @@ export class Saisie {
    * plus de mois, exactement comme l'année d'un changement de métier revient au
    * métier qui en occupe le plus ; à égalité, elle reste travaillée.
    *
+   * Une période passée hors de France en est une aussi, de motif
+   * `sans_activite` : la carrière française n'y voit aucune activité, et ce que
+   * la période vaut ailleurs, c'est son fait daté qui le porte, avec son État
+   * (`etrangerDeclare`). Elle prend le pas sur une période sans emploi de la
+   * même année, qu'elle précise.
+   *
    * Le champ « Interruptions » garde le dernier mot : il désigne des années une
    * à une, et c'est l'outil le plus fin des deux.
    */
@@ -1340,8 +1468,7 @@ export class Saisie {
    * départ : celle d'un relevé, dont la dernière année se prolonge
    * (`prolongerReleve`). Ce sont celles d'une carrière de métiers, moins les
    * métiers, qu'un relevé remplace : une période passée hors de France, puis
-   * le champ « Interruptions », qui garde le dernier mot. Voir
-   * `interruptions_apres` du Python.
+   * le champ « Interruptions », qui garde le dernier mot.
    */
   interruptionsApres(depuis, motifsConnus = null) {
     const fin = this.dateLiquidation;
@@ -1356,7 +1483,7 @@ export class Saisie {
    * Les périodes passées hors de France, en creux `sans_activite` de la
    * carrière qui court de `debut` à `fin`. Une période ne compte que pour les
    * mois de la carrière qu'elle couvre : celle qui précède le premier emploi
-   * en France n'en interrompt aucun. Voir `_creux_a_l_etranger` du Python.
+   * en France n'en interrompt aucun.
    */
   creuxALEtranger(debut, fin) {
     const creux = [];
@@ -1383,6 +1510,8 @@ export class Saisie {
       return;
     }
     if (this.enChiffreDAffaires(statut)) {
+      // Les bornes valent pour le revenu abattu : le refus les redit en chiffre
+      // d'affaires, le nombre que le champ porte.
       const part = 1.0 - ABATTEMENTS_MICRO[this.micro];
       if (!this.revenu_en_euros) {
         throw refus(
@@ -1523,8 +1652,7 @@ export class Saisie {
       const motif = parties[2].trim();
       // L'année est citée TELLE QU'ELLE A ÉTÉ ÉCRITE, et non relue du nombre :
       // « 999999999999999999999 » s'écrit « 1e+21 » une fois passé par
-      // `Number`, et reste un entier côté Python, si bien que les deux moteurs
-      // refusaient la même saisie par deux phrases différentes.
+      // `Number`, et le refus nommerait une année que personne n'a écrite.
       for (const [texte, annee] of [[parties[0], debut], [parties[1], fin]]) {
         if (!(annee >= ANNEE_CARRIERE_MINIMALE && annee <= ANNEE_CARRIERE_MAXIMALE)) {
           throw new ErreurSaisie(
@@ -1556,8 +1684,12 @@ export class Saisie {
   /**
    * « 2005:2014:80, 2016:2016:50 » → `Map` année → quotité, entre zéro et un.
    * La forme est celle des interruptions, la quotité en pour cent à la place
-   * du motif : un entier de 1 à 99. Les refus sont les leurs, et deux quotités
-   * pour une même année. Voir `temps_partiel_analyse` du Python.
+   * du motif : un entier de 1 à 99, cent étant le temps plein, que rien ne
+   * déclare. Les refus sont les leurs — une ligne mal formée, une année hors de
+   * toute carrière possible, une plage à l'envers —, et un de plus : deux
+   * quotités pour une même année, que rien ne départage. Une année
+   * d'interruption n'a pas de quotité : l'interruption la prend tout entière
+   * (fiche `temps_partiel_fonction_publique`).
    */
   tempsPartielAnalyse() {
     const quotites = new Map();
@@ -1612,9 +1744,13 @@ export class Saisie {
 
   /**
    * « 2016:2019:rsa, 2020:2020:activite_saisonniere » → `Map` année → motif.
-   * La forme est celle des interruptions, et leurs refus — le motif n'est
-   * contrôlé que si `motifsConnus`, lus dans le paquet, sont donnés —, et deux
-   * motifs pour une même année. Voir `dispenses_analysees` du Python.
+   * La forme est celle des interruptions, et leurs refus — une ligne mal formée
+   * ou sans motif, une année hors de toute carrière possible, une plage à
+   * l'envers, un motif inconnu de `motifsConnus`, que l'appelant lit dans le
+   * paquet et sans lesquels le motif n'est pas contrôlé —, et un de plus : deux
+   * motifs pour une même année. Un motif dit hors des années où le texte
+   * dispense ne se refuse pas : il est sans effet (`dispenseAssietteMinimale`,
+   * `carriere.js`).
    */
   dispensesAnalysees(motifsConnus = null) {
     const connus = motifsConnus === null ? null : [...motifsConnus].sort();
@@ -1749,8 +1885,8 @@ export class Saisie {
       const annee = Number(parties[0]);
       // L'année est citée TELLE QU'ELLE A ÉTÉ ÉCRITE, comme pour les
       // interruptions : « 999999999999999999999 » s'écrit « 1e+21 » une fois
-      // passé par `Number`, et reste un entier côté Python, si bien que les deux
-      // moteurs refuseraient la même saisie par deux phrases différentes.
+      // passé par `Number`, et le refus nommerait une année que personne n'a
+      // écrite.
       if (!(annee >= ANNEE_CARRIERE_MINIMALE && annee <= ANNEE_CARRIERE_MAXIMALE)) {
         throw new ErreurSaisie(
           `Relevé « ${morceau} » : ${parties[0]} ne tombe dans aucune carrière `
@@ -1828,8 +1964,9 @@ export class Saisie {
   /**
    * Le mois où la carrière atteint cet âge : celui d'un début d'activité,
    * compté du mois de naissance, ou, avec `depart`, celui du départ, compté du
-   * mois où l'âge est révolu ({@link origineDesAges}). Un âge de départ et un
-   * âge de début ne se comparent donc qu'en dates. Voir `saisie.py`.
+   * mois où l'âge est révolu ({@link origineDesAges}) : né le 15 mars 1962, on
+   * part à soixante-quatre ans au 1er avril 2026 (R. 351-37). Un âge de départ
+   * et un âge de début ne se comparent donc qu'en dates.
    */
   dateDe(age_, depart = false) {
     const origine = depart
@@ -1914,8 +2051,8 @@ export class Saisie {
 
   /**
    * Pas plus de naissances que d'enfants ; chacune une année ou un mois, après
-   * la naissance de l'assuré et avant son départ. Voir `_verifier_naissances`
-   * du Python.
+   * la naissance de l'assuré et avant son départ, où elle ne compterait plus
+   * pour rien.
    */
   verifierNaissances() {
     const naissances = this.naissancesEnfants();
@@ -1951,8 +2088,8 @@ export class Saisie {
   }
 
   /**
-   * Le conjoint que la saisie déclare, tel que la chronologie le reçoit ;
-   * `null` sans conjoint. Voir `conjoint_declare` du Python.
+   * Le conjoint que la saisie déclare, tel que la chronologie le reçoit
+   * (`personne`, dans `chronologie.js`) ; `null` sans conjoint.
    */
   conjointDeclare() {
     if (!this.conjoint) {
@@ -1985,8 +2122,9 @@ export class Saisie {
 
   /**
    * La réversion du régime des non-salariés agricoles que la saisie déclare,
-   * telle que la chronologie la reçoit : `{debut, mensuel}` ; `null` sans
-   * elle. Voir `reversion_agricole_declaree` du Python.
+   * telle que la chronologie la reçoit (`reversionAgricoleDeclaree`, dans
+   * `chronologie.js`) : son `debut` et son montant `mensuel` en euros de ce
+   * mois ; `null` sans elle.
    */
   reversionAgricoleDeclaree() {
     if (!this.reversion_agricole) {
@@ -2008,8 +2146,8 @@ export class Saisie {
 
   /**
    * La retraite progressive : une quotité de temps partiel, et une date entre
-   * le début de la carrière et le départ. Que le droit l'ouvre, c'est au
-   * calcul de le dire. Voir `_verifier_progressive` du Python.
+   * le début de la carrière et le départ. Que le droit l'ouvre — son âge, sa
+   * durée, sa quotité —, c'est au calcul de le dire.
    */
   verifierProgressive() {
     if (this.progressive === null) {
@@ -2090,7 +2228,8 @@ export class Saisie {
   /**
    * L'activité exercée après le départ : une date qui ne précède pas le départ,
    * une fin qui la suit, un statut qui n'est pas une période sans emploi, un
-   * revenu. Voir `_verifier_emploi_retraite` du Python.
+   * revenu. Ce que le droit en fait — la pension servie pendant qu'elle dure,
+   * les droits qu'elle ouvre —, c'est au calcul de le dire.
    */
   verifierEmploiRetraite() {
     const precisions = [
@@ -2192,7 +2331,10 @@ export class Saisie {
    * La pension d'invalidité commence dans la carrière, avant le départ ; la
    * radiation pour invalidité d'un fonctionnaire tombe dans la carrière, au
    * plus tard au départ ; son imputabilité et son taux ne servent qu'à elle.
-   * Voir `_verifier_invalidite` du Python.
+   * Que la radiation tombe dans un emploi de fonctionnaire, c'est au contexte
+   * de le dire, qui a les affiliations ; ce que le droit fait de tout cela —
+   * l'âge de la substitution, le taux plein, la pension du fonctionnaire —, au
+   * calcul.
    */
   verifierInvalidite() {
     const precisions = [
@@ -2248,7 +2390,8 @@ export class Saisie {
       }
     }
     if (this.handicap !== null) {
-      // L'incapacité peut précéder la carrière, mais ni la naissance ni le départ.
+      // L'incapacité peut précéder la carrière — un handicap de naissance ou de
+      // l'enfance —, mais ni la naissance ni le départ.
       const date = this.dateDe(this.handicap);
       const naissance = this.dateDe(0.0);
       if (date.rang <= naissance.rang) {
@@ -2273,8 +2416,8 @@ export class Saisie {
    * d'aujourd'hui —, l'État de `residence` après le départ, `null` en France,
    * et les `mois_en_france` de chaque année, `null` quand ils ne sont pas dits.
    * Le contexte ramène chaque montant à la date de sa pension avant que la
-   * chronologie le reçoive. `null` quand rien n'est dit. Voir
-   * `etranger_declare` du Python.
+   * chronologie le reçoive (`personne`, dans `chronologie.js`). `null` quand
+   * rien n'est dit.
    */
   etrangerDeclare() {
     if (this.etranger.length === 0 && this.pensions_etrangeres.length === 0
@@ -2294,8 +2437,8 @@ export class Saisie {
 
   /**
    * Les périodes assimilées que la saisie déclare, telles que
-   * `avecPeriodesAssimilees` les reçoit : vide quand rien n'est dit. Voir
-   * `periodes_assimilees_declarees` du Python.
+   * `avecPeriodesAssimilees` les reçoit : vide quand rien n'est dit, et la
+   * présomption `pas_de_periode_assimilee` tient.
    */
   periodesAssimileesDeclarees() {
     return this.assimilees.map((periode) => ({
@@ -2307,10 +2450,12 @@ export class Saisie {
 
   /**
    * Une période assimilée : un motif connu, le dispositif d'un stage
-   * d'insertion et de lui seul, deux dates lisibles, la fin après le début, un
-   * début après la naissance et avant le départ, des jours entre un et ceux de
-   * ses dates. Le contrat d'apprentissage : une ligne de carrière qui est un
-   * emploi, hors d'un relevé. Voir `_verifier_assimilees` du Python.
+   * d'insertion et de lui seul, deux dates que la chronologie sait lire, la fin
+   * après le début, un début après la naissance et avant le départ, et des
+   * jours, s'ils sont dits, entre un et ceux de ses dates. Le contrat
+   * d'apprentissage : une ligne de carrière qui est un emploi, et une carrière
+   * qui n'est pas lue sur un relevé, dont les lignes n'ont pas d'attribut pour
+   * lui.
    */
   verifierAssimilees() {
     const motifs = MOTIFS_D_ASSIMILATION.map(([code]) => code);
@@ -2389,9 +2534,14 @@ export class Saisie {
   /**
    * Une période hors de France : un État qui n'est pas la France, un début
    * après quatorze ans, une fin qui le suit sans dépasser le départ, et aucune
-   * autre période hors de France qui la chevauche. Une pension étrangère : un
-   * État, un montant, un début entre quatorze et soixante-quinze ans. La
-   * résidence : un État étranger. Voir `_verifier_etranger` du Python.
+   * autre période hors de France qui la chevauche — elle ne se compte qu'une
+   * fois. Elle peut précéder le premier emploi en France. Une pension
+   * étrangère : un État, un montant, et un début entre quatorze ans et l'âge de
+   * départ le plus tardif que le modèle accepte (`AGE_LIQUIDATION_MAXIMAL`),
+   * avant ou après le départ en France. La résidence : un
+   * État étranger ; les mois en France, de zéro à douze. Que le tableau des
+   * accords connaisse l'État, c'est au contexte de le dire, qui a les données ;
+   * ce que chaque accord fait des périodes, au calcul.
    */
   verifierEtranger() {
     const depart = this.dateDe(this.liquidation, true);
@@ -2469,8 +2619,7 @@ export class Saisie {
    * La date où l'assuré demande une pension : après le début de la carrière,
    * et pas au-delà de l'âge de départ le plus tardif que le modèle accepte. Que
    * le régime existe, que la carrière y ouvre une pension, et que la date la
-   * retarde ou non, c'est au calcul de le dire. Voir `_verifier_demandes` du
-   * Python.
+   * retarde ou non, c'est au calcul de le dire.
    */
   verifierDemandes() {
     for (const [code, age_] of this.demandes) {
@@ -2493,12 +2642,15 @@ export class Saisie {
   /**
    * Le conjoint et le décès : des dates lisibles, dans l'ordre de la vie — les
    * naissances, le mariage, le décès, l'invalidité du conjoint après sa
-   * naissance —, et un décès qui ne précède pas le départ : la réversion d'une
-   * pension que l'assuré n'a pas encore liquidée n'est pas calculée. Ses
-   * ressources, positives : ses revenus d'activité en sont une part, et celles
-   * d'un nouveau conjoint supposent l'union où il vit ; la fin de son activité
-   * suppose ses revenus, et celle de son union l'union, chacune après ce
-   * qu'elle finit. Voir `_verifier_conjoint` du Python.
+   * naissance. Un décès avant le départ ouvre la réversion de la pension que
+   * l'assuré eût obtenue (R. 353-6), pourvu qu'il suive le début de sa
+   * carrière. Ses ressources, positives : ses revenus d'activité en sont une
+   * part, et celles d'un nouveau conjoint supposent l'union où il vit, qui suit
+   * le décès ; la fin de son activité suppose ses revenus, et celle de son union
+   * l'union, chacune après ce qu'elle finit. Les précédents conjoints, chacun
+   * marié après les deux naissances, divorcé avant le mariage suivant — celui
+   * du conjoint, qu'il faut alors dater —, remarié après son divorce
+   * (`verifierExConjoints`).
    */
   verifierConjoint() {
     if (!this.conjoint) {
@@ -2595,7 +2747,7 @@ export class Saisie {
       );
     }
     // Ce que chaque fin finit commence au décès, ou à la naissance du conjoint
-    // sans lui ; l'union, au mois qu'il dit, s'il le dit. Voir le Python.
+    // sans lui ; l'union, au mois qu'il dit, s'il le dit.
     let [debut, quoi] = "deces" in dates
       ? [dates.deces, "votre décès"] : [dates.conjoint, "sa naissance"];
     if ("activite_conjoint_fin" in dates && dates.activite_conjoint_fin <= debut) {
@@ -2655,8 +2807,9 @@ export class Saisie {
 
   /**
    * La réversion des non-salariés agricoles se dit entière : le mois où elle
-   * commence, après la naissance, et son montant, positif ou nul. Voir
-   * `_verifier_reversion_agricole` du Python.
+   * commence, après la naissance, comme la chronologie l'exige, et son
+   * montant, positif ou nul. Qu'une période agricole la lise, c'est au calcul
+   * de le dire : sans elle, la réversion ne change rien.
    */
   verifierReversionAgricole() {
     if (!this.reversion_agricole) {
@@ -2695,8 +2848,8 @@ export class Saisie {
   /**
    * Les précédents conjoints : des dates lisibles, un mariage après les deux
    * naissances, un divorce après lui et avant le mariage suivant, un remariage
-   * après le divorce ; le mariage du conjoint, qu'il faut dater, les suit.
-   * Voir `_verifier_ex_conjoints` du Python.
+   * après le divorce ; leur mariage avec l'assuré précède celui du conjoint,
+   * qu'il faut dater, et donc le décès.
    */
   verifierExConjoints(dates) {
     if (this.ex_conjoints.length === 0) {
@@ -2927,7 +3080,6 @@ export class Saisie {
  * Le motif de chaque année qu'un creux occupe plus qu'à moitié, rapporté aux
  * mois que la carrière, de `debut` à `fin`, y travaille ; à égalité, l'année
  * reste travaillée. Un creux suivant l'emporte sur le précédent la même année.
- * Voir `_annees_creuses` du Python.
  */
 function anneesCreuses(creux, debut, fin) {
   const annees = new Map();
@@ -3032,9 +3184,10 @@ function metiersSaisis(parametres, salairePrecedent, moisDeNaissance, tolerante 
 }
 
 /**
- * Les précédents conjoints, lus dans « ex1… » et « ex2… » : la naissance, le
- * mariage, le divorce et le remariage. Une ligne commencée se refuse sans l'un
- * des trois premiers. Voir `_ex_conjoints_saisis` du Python.
+ * Les précédents conjoints, lus dans « ex1… » et « ex2… » : la naissance
+ * (« ex1 »), le mariage (« _mariage »), le divorce (« _divorce ») et le
+ * remariage (« _remariage »). Une ligne commencée se refuse sans l'un des trois
+ * premiers.
  */
 function exConjointsSaisis(parametres, tolerante = false) {
   const exConjoints = [];
@@ -3061,9 +3214,12 @@ function exConjointsSaisis(parametres, tolerante = false) {
 /**
  * Les périodes passées hors de France, lues dans « etranger1_… » à
  * « etranger4_… » : l'État, le mois où elle commence, celui où elle finit, et
- * l'activité. Une ligne vide ne dit rien ; une ligne commencée sans son État ou
- * ses deux dates se refuse, et une activité inconnue aussi. Voir
- * `_periodes_etrangeres_saisies` du Python.
+ * l'activité. Les âges se comptent comme ceux d'un métier, du mois de
+ * naissance ; la fin est exclue, comme celle d'une activité ajoutée : la période
+ * court du mois où elle commence au mois qui précède celui où elle finit. Une
+ * ligne vide ne dit rien ; une ligne commencée sans son État ou
+ * ses deux dates se refuse, comme une ligne de métier, et une activité que la
+ * saisie ne connaît pas aussi, au lieu de valoir salariée en silence.
  */
 function periodesEtrangeresSaisies(parametres, moisDeNaissance, tolerante = false) {
   const activites = ACTIVITES_A_L_ETRANGER.map(([code]) => code);
@@ -3111,9 +3267,11 @@ function periodesEtrangeresSaisies(parametres, moisDeNaissance, tolerante = fals
 
 /**
  * Les périodes assimilées, lues dans « assimilee1_… » à « assimilee4_… » : le
- * motif, le début, la fin, le dispositif d'un stage d'insertion et les jours.
+ * motif, ses deux dates, en AAAA, AAAA-MM ou AAAA-MM-JJ, la fin exclue, le
+ * dispositif d'un stage d'insertion, et les jours qu'elle compte quand ce ne
+ * sont pas tous ceux de ses dates.
  * Une ligne vide ne dit rien ; une ligne commencée sans son motif ou ses deux
- * dates se refuse. Voir `_periodes_assimilees_saisies` du Python.
+ * dates se refuse, comme une ligne de métier.
  */
 function periodesAssimileesSaisies(parametres, tolerante = false) {
   const periodes = [];
@@ -3148,7 +3306,11 @@ function periodesAssimileesSaisies(parametres, tolerante = false) {
  * Les pensions étrangères, lues dans « pension_etrangere1… » à
  * « pension_etrangere4… » : l'État qui la sert (« _pays »), son montant brut
  * mensuel, et le mois où elle commence (« _debut »). Une ligne commencée se
- * refuse sans l'un des trois. Voir `_pensions_etrangeres_saisies` du Python.
+ * refuse sans l'un des trois. Une pension que le régime d'un autre État sert,
+ * ou celui d'une organisation internationale, est une liquidation observée
+ * (docs/architecture.md, § 5.4 et 5.5) ; son montant est en euros
+ * d'aujourd'hui — de l'année courante du modèle, comme les revenus saisis —, et
+ * le contexte le ramène à sa date.
  */
 function pensionsEtrangeresSaisies(parametres, moisDeNaissance, tolerante = false) {
   const pensions = [];
@@ -3189,7 +3351,7 @@ function pensionsEtrangeresSaisies(parametres, moisDeNaissance, tolerante = fals
 
 /**
  * Un État étranger, tel que la saisie l'écrit : son code à deux majuscules, ou
- * `AUTRE_ETAT` ; jamais la France. Voir `_verifier_etat` du Python.
+ * `AUTRE_ETAT` ; jamais la France.
  */
 function verifierEtat(code, quoi) {
   if (code === "FR") {
@@ -3211,6 +3373,12 @@ function cleEnum(enumeration, valeur) {
   return cle;
 }
 
+/**
+ * Ce qu'un nombre saisi a le droit de s'écrire — et rien d'autre : des chiffres
+ * décimaux, une virgule à l'anglaise et un exposant. `Number` lirait aussi
+ * « 0x10 », « 0b1 » ou « Infinity », qu'une adresse forgée porterait et que
+ * personne ne tire au hasard.
+ */
 const NOMBRE = /^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/;
 
 /**
@@ -3243,13 +3411,17 @@ function versFlottant(texte) {
   return Number.isFinite(valeur) ? valeur : null;
 }
 
+/**
+ * Un entier saisi, bornes d'une plage d'interruption comprises : « 1995 » oui,
+ * « 1995,0 » non.
+ */
 export function estEntier(texte) {
   return /^\s*[+-]?\d+\s*$/.test(String(texte ?? ""));
 }
 
 /**
  * Une case cochée : « oui », ou rien. Toute autre réponse se refuse, au lieu de
- * valoir non en silence. Voir `_oui` du Python.
+ * valoir non en silence.
  */
 export function oui(parametres, nom) {
   const valeur = parametres[nom];
@@ -3297,6 +3469,7 @@ export function nombreBrut(valeur) {
   return formatG(valeur);
 }
 
+/** Le premier du mois est un ORDINAL en français : « 1er », et non « 1 ». */
 export function jourEnClair(jour) {
   return jour === 1 ? "1er" : String(jour);
 }
@@ -3339,7 +3512,7 @@ function dateSaisie(parametres, nom) {
 /**
  * Les pensions dont l'adresse dit la date de demande, une par régime, dans
  * l'ordre de leurs codes : « demande_<régime> », en date comme le départ. Un
- * champ vide ne dit rien. Voir `_demandes_saisies` du Python.
+ * champ vide ne dit rien.
  */
 function demandesSaisies(parametres, origine) {
   const demandes = [];
@@ -3442,8 +3615,11 @@ export class Echelle {
 
   /**
    * Un multiple en euros bruts mensuels ENTIERS, sans sortir des bornes :
-   * l'euro le plus proche, poussé d'un euro vers l'intérieur quand l'arrondi
-   * tombe du mauvais côté. Voir le Python.
+   * l'euro le plus proche, sauf aux bords. 0,1 fois le salaire moyen ne fait
+   * pas un nombre rond d'euros, et l'arrondi peut tomber du mauvais côté —
+   * 355 € pour 355,34, que le modèle refuse ensuite : il est alors poussé d'un
+   * euro vers l'intérieur. C'est ce que la bascule d'unité écrit et ce que le
+   * refus nomme : un montant qu'on montre est un montant accepté.
    */
   eurosDansLesBornes(niveau) {
     let euros = Math.round(this.mensuel(niveau));
@@ -3456,7 +3632,12 @@ export class Echelle {
     return euros;
   }
 
-  /** Le brut mensuel d'un montant saisi, quel que soit le mode. */
+  /**
+   * Le brut mensuel d'un montant saisi, quel que soit le mode. En mode brut,
+   * c'est le montant lui-même ; en mode net, ce que la fiche de paie du statut
+   * laisse. Les statuts que le modèle ne sait pas décrire rendent le montant
+   * inchangé : voir `convertit`.
+   */
   brutMensuel(montant, statut) {
     if (this.versBrut === null || montant <= 0) {
       return montant;
@@ -3464,7 +3645,12 @@ export class Echelle {
     return this.versBrut(montant, statut);
   }
 
-  /** Le net vers le brut, quel que soit le mode courant — pour la bascule. */
+  /**
+   * Le net vers le brut, quel que soit le mode courant. `brutMensuel` ne
+   * convertit qu'en mode net — c'est ce qui le rend sûr au milieu du calcul. La
+   * bascule, elle, doit convertir depuis le mode où l'on est vers celui où l'on
+   * va, donc sans condition.
+   */
   brutMensuelDirect(net, statut) {
     if (this.versBrutDirect === null || net <= 0) {
       return net;
@@ -3472,7 +3658,11 @@ export class Echelle {
     return this.versBrutDirect(net, statut);
   }
 
-  /** Le sens direct : ce qu'un brut mensuel laisse — pour la bascule. */
+  /**
+   * Le sens direct : ce qu'un brut mensuel laisse, statut par statut. Sert à la
+   * BASCULE, et non au calcul : passer du brut au net doit traduire le nombre
+   * saisi, pour que la page revienne en décrivant la même carrière.
+   */
   netMensuel(brut, statut) {
     if (this.versNet === null || brut <= 0) {
       return brut;

@@ -750,10 +750,11 @@ def constante(**reglages: str) -> float:
 
     Pour les bornes que le code fixe et que la prose annonce — la fenêtre de
     lissage la plus longue, l'âge d'entrée de la carrière de référence. Le
-    module se nomme depuis ``src/`` (``retraite_notionnelle.saisie``), depuis
+    module se nomme depuis ``src/`` (``retraite_notionnelle.config``), depuis
     ``scripts/`` (``construire_tableaux_md``), ou dans le portage
-    (``moteur/js/pages.js``) pour une constante du texte du site, qui ne
-    s'écrit qu'en JavaScript et se lit par node.
+    (``moteur/js/saisie.js``, ``moteur/js/pages.js``) pour une constante qui
+    ne s'écrit qu'en JavaScript, celles de la saisie et du texte du site, et
+    se lit par node.
     """
     import importlib
 

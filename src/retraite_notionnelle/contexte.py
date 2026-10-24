@@ -8,12 +8,12 @@ dans le paquet du site. Le contexte charge une fois les données coûteuses,
 garde un simulateur par jeu de paramètres et les agrégats déjà calculés, et
 répond à chaque demande sous le jeu de règles qu'on lui a donné.
 
-Il vient de ``web/pages.py``, comme la saisie (``saisie.py``), quand la
-phase 8 en a retiré le texte du site. Le contexte du site,
-``moteur/js/contexte.js``, en porte ce qui lit les données ; la saisie — d'une
-requête, la carrière — n'y a plus que cet exemplaire depuis l'action 161,
-étape 6, et la fabrique la fait tourner par le pont
-(:func:`~retraite_notionnelle.pont.carrieres_des_saisies`).
+Il vient de ``web/pages.py``, comme la saisie, quand la phase 8 en a retiré
+le texte du site. Le contexte du site, ``moteur/js/contexte.js``, en porte ce
+qui lit les données ; la saisie — d'une requête, la carrière — n'a plus,
+depuis l'action 161, étape 6, que l'exemplaire du portage
+(``moteur/js/saisie.js`` et ``contexte.js``), que la fabrique fait tourner
+par le pont (:func:`~retraite_notionnelle.pont.carrieres_des_saisies`).
 """
 
 from __future__ import annotations

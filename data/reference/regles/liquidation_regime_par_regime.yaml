@@ -180,8 +180,8 @@ sources:
 code:
   python: >-
     droit/departs.py : departs, departs_et_demandes, DemandeExaminee,
-    liquider_les_departs ; carriere.py : Carriere.demandes_de_pension ; saisie.py :
-    PREFIXE_DEMANDE ; droit/liquidation.py : Demande, Etat ; droit/ouvrir.py : ouvrir ;
+    liquider_les_departs ; carriere.py : Carriere.demandes_de_pension ;
+    droit/liquidation.py : Demande, Etat ; droit/ouvrir.py : ouvrir ;
     droit/liquider.py : liquider_chaque_regime ; droit/completer.py : completer ;
     scenarios/actuel.py : resultat_des_departs ; echeancier.py : Echeancier._partir ;
     revalorisation.py : mener_au_mois, faire_vivre

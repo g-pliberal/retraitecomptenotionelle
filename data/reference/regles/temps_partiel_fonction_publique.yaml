@@ -125,8 +125,8 @@ sources:
     date: 2026-09-01
 code:
   moteur: >-
-    Le champ « Temps partiel » (`temps_partiel`, `Saisie.temps_partiel_analyse`,
-    `saisie.py` et `saisie.js`) donne à une année la quotité de l'activité
+    Le champ « Temps partiel » (`temps_partiel`, `Saisie.tempsPartielAnalyse`,
+    `saisie.js`) donne à une année la quotité de l'activité
     principale ; la chronologie la porte sur les périodes d'activité, coupées au
     1er janvier où elle change (`chronologie.du_parcours`, `du_releve`) ; la
     carrière en fait la quotité de la ligne (`_quotite_de_l_annee`, avec la

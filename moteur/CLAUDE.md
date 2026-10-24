@@ -53,8 +53,8 @@ types et Droits non cotisés lisent ce que le Python en a fabriqué
   la mesure qui dit ce qui doit changer, vue rouge, dans
   `tests/test_ecrans.py` ; puis `python -m pytest tests/test_ecrans.py`.
 - **Un champ de saisie de plus** : d'abord le test qui le lit et le vérifie,
-  vu rouge ; les deux saisies, `saisie.py` et `saisie.js` — la lecture, la
-  vérification, la réécriture de l'adresse — ; toute borne `min` ou `max` du
+  vu rouge ; la saisie, `saisie.js`, seule depuis l'action 161 — la lecture,
+  la vérification, la réécriture de l'adresse — ; toute borne `min` ou `max` du
   formulaire opposée aussi par la saisie ; le contexte du portage
   (`contexte.js`), seul à bâtir la carrière depuis l'action 161 ; la
   chronologie s'il porte un fait ; un témoin de simulation, et de page si la

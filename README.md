@@ -188,8 +188,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->1770<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->9 030<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->1775<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->9 042<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Neuf pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -567,7 +567,7 @@ valeur ajoutée se déplace vers les revenus non salariaux.
 ### 1 quater. Le lissage pluriannuel, qui n'est pas une règle
 
 Le lissage applique une moyenne glissante de N années au taux que la règle
-produit — **n'importe laquelle des neuf**, et N est libre, de 1 à <!--chiffre:mesure(constante?de=retraite_notionnelle.saisie&nom=LISSAGE_MAXIMUM)-->30<!--/--> ans. Ce
+produit — **n'importe laquelle des neuf**, et N est libre, de 1 à <!--chiffre:mesure(constante?de=moteur/js/saisie.js&nom=LISSAGE_MAXIMUM)-->30<!--/--> ans. Ce
 n'est donc pas une dixième règle
 mais un réglage orthogonal, et il répond à une question que le choix de la règle
 ne pose pas : la **loterie de cohorte**.
@@ -1364,8 +1364,6 @@ src/retraite_notionnelle/
   castypes.py                   cas général
   cout.py                       ce que chaque système a coûté, coûterait,
                                 et le solde qu'il laisserait
-  saisie.py                     la saisie d'une simulation : ce que l'adresse
-                                dit, lu en carrière et en règles
   contexte.py                   le centre du coût : les données de la fabrique,
                                 et le jeu de règles sous lequel elle calcule
   web/

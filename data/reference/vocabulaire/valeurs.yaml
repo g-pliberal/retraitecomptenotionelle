@@ -507,7 +507,7 @@ listes:
       conjoint_de_l_autre_sexe:
         dit: le conjoint déclaré est de l'autre sexe que l'assuré
         valeur: l'autre sexe
-        appliquee_par: la saisie, qui donne au conjoint l'autre sexe quand elle ne le dit pas (saisie.py, saisie.js)
+        appliquee_par: la saisie, qui donne au conjoint l'autre sexe quand elle ne le dit pas (moteur/js/saisie.js, Saisie.conjointDeclare)
         entrera_a: preparer_la_chronologie
         raison: >-
           le sexe du survivant ne décide que des règles d'avant 2004 dans la

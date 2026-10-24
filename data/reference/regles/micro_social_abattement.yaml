@@ -406,9 +406,7 @@ textes_sans_effet:
     indépendants » de la Cnav)
 code:
   python: >-
-    saisie.py : ACTIVITES_MICRO, ABATTEMENTS_MICRO, Saisie.en_chiffre_d_affaires,
-    Saisie.abattu, Saisie.parcours, Saisie.emploi_retraite_declare ; carriere.py :
-    Metier, AnneeCarriere, revenu_cotise ; donnees/chargement.py :
+    carriere.py : Metier, AnneeCarriere, revenu_cotise ; donnees/chargement.py :
     charger_validation_micro, charger_cotisation_micro, forfait_micro,
     charger_compensation_micro, validant_compense, charger_seuils_micro,
     trimestres_aux_seuils_micro ; moteur/compte.py :

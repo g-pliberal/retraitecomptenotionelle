@@ -198,8 +198,7 @@ textes_a_rattacher:
 code:
   python: >-
     carriere.py : CONJOINTS_COLLABORATEURS, assiette_du_conjoint_collaborateur,
-    _ligne_annuelle ; saisie.py : ASSIETTES_COLLABORATEUR, PARTS_COLLABORATEUR,
-    Saisie.assiette_du_collaborateur, Saisie.niveaux_de_la_pension
+    _ligne_annuelle
   javascript: >-
     moteur/js/carriere.js : CONJOINTS_COLLABORATEURS, assietteDuConjointCollaborateur,
     ligneAnnuelle ; moteur/js/saisie.js : ASSIETTES_COLLABORATEUR, PARTS_COLLABORATEUR,

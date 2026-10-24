@@ -503,8 +503,7 @@ code:
     REDUCTION_NON_SALARIES, LIBERAUX_2011, PREMIERE_2027, SIX_MOIS, HEURES_SMIC,
     PART_SMIC_2004, PART_SMIC_2009, ASSIETTES_CSG, SEUILS_NON_SALARIES,
     HORS_DES_MOIS_SUSPENDUS ; echeancier.py : Echeancier._cumuler ; scenarios/actuel.py :
-    ResultatActuel ; carriere.py : _lignes_apres_depart, Carriere.emploi_retraite ;
-    saisie.py : Saisie.emploi_retraite_declare
+    ResultatActuel ; carriere.py : _lignes_apres_depart, Carriere.emploi_retraite
   javascript: >-
     moteur/js/droit/cumul.js : cumuler, groupeDeLActivite, groupeDeLaPension,
     assietteCsg, dureeDuTauxPlein, Calcul.version, Calcul.integral, Calcul.plafondSalarie,

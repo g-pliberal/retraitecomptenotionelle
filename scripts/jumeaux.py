@@ -26,7 +26,7 @@ sortes de dépendants :
   règle dans les deux moteurs (``tests/test_univers.py`` vérifie celles de la
   proposition) ;
 - les **chiffres ancrés** de la prose, dont la sonde charge le module que
-  l'ancre nomme (``de=retraite_notionnelle.saisie``) ;
+  l'ancre nomme (``de=retraite_notionnelle.config``) ;
 - les **mentions** : tout fichier texte qui cite le fichier ou le module,
   rangé en récit, qui garde ce qu'il disait à sa date, ou en texte à tenir,
   d'après son dossier (``RECITS``). Un nom seul, ``primes.py``, qui peut
@@ -215,7 +215,7 @@ class Python:
         self.modules = modules_python(fichiers)
         self.suffixes = suffixes
         #: Les noms pointés, pour les ancres et les mentions : ceux du paquet
-        #: (``retraite_notionnelle.saisie``) et ceux des scripts (``fetch.ines``).
+        #: (``retraite_notionnelle.config``) et ceux des scripts (``fetch.ines``).
         self.index: dict[str, dict[str, str]] = {sorte: {} for sorte in CHEMINS_D_IMPORT}
         for module in self.modules.values():
             self.index[module.sorte].setdefault(module.nom, module.chemin)

@@ -703,13 +703,11 @@ def test_aucun_calcul_garde_ne_lit_ce_que_l_empreinte_ignore():
 def test_le_releve_des_lectures_se_passe_de_la_saisie_python():
     """La saisie n'a qu'un exemplaire, celui du portage (action 161,
     étape 6) : le relevé simule au moteur Python les carrières que le portage
-    bâtit, et ne charge ni le contexte, réduit au centre du coût, ni la saisie
-    Python."""
+    bâtit, et ne charge pas le contexte, réduit au centre du coût."""
     import lectures_du_modele
 
     releve = memoire.memoriser(("lectures_du_modele",), lectures_du_modele.relever)
-    assert not {"src/retraite_notionnelle/contexte.py",
-                "src/retraite_notionnelle/saisie.py"} & set(releve["modules"])
+    assert "src/retraite_notionnelle/contexte.py" not in releve["modules"]
 
 
 def test_le_budget_de_calcul_mesure_les_carrieres_que_le_portage_batit(monkeypatch):
