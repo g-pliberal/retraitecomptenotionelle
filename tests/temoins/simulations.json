@@ -54490,7 +54490,7 @@
    },
    "scenarios": {
     "actuel": {
-     "age_ouverture_opposable": 59.67,
+     "age_ouverture_opposable": 60.0,
      "avantages_appliques": [],
      "liquidation_ouverte": true,
      "minimum_applique": false,
