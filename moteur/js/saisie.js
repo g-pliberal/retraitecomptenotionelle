@@ -608,6 +608,22 @@ export const CODES_SANS_EMPLOI = new Set(SANS_EMPLOI.map(([code]) => code));
 /** Saisie inexploitable, à afficher telle quelle à l'utilisateur. */
 export class ErreurSaisie extends Error {}
 
+/** Le refus d'un mois de naissance hors de l'année. */
+function refusDuMoisDeNaissance() {
+  return new ErreurSaisie("Mois de naissance attendu entre 1 et 12.");
+}
+
+/**
+ * Le refus d'une année de naissance hors du champ du modèle, citée telle
+ * qu'elle a été reçue.
+ */
+function refusDeLAnneeDeNaissance(annee) {
+  return new ErreurSaisie(
+    `Année de naissance hors du champ du modèle : ${annee}. `
+    + `Attendu entre ${NAISSANCE_MINIMALE} et ${NAISSANCE_MAXIMALE}.`,
+  );
+}
+
 /**
  * Les clés de requête qui décrivent les RÈGLES, et non la carrière.
  *
@@ -916,6 +932,24 @@ export class Saisie {
       ? naissance.annee : entier(parametres, "naissance", DEFAUTS.naissance);
     const moisNaissance = naissance
       ? naissance.mois : entier(parametres, "naissance_mois", DEFAUTS.naissance_mois);
+    // La naissance se vérifie avant que le calendrier n'en date rien. Un mois
+    // hors de l'année, une année dont le rang des mois — l'année fois douze —
+    // passe le plus grand nombre (« naissance=1e308 ») faisaient lever au
+    // calendrier sa propre erreur, « mois attendu entre 1 et 12, reçu NaN », et
+    // la page disait « Le calcul a échoué » au lieu du refus : ils ne se lisent
+    // pas, même sans rien vérifier. Une année hors du champ que le calendrier
+    // sait dater ne se refuse que vérifiée : la saisie refusée la remontre.
+    // L'année se cite telle que l'adresse la porte : « 1e21 », que JavaScript
+    // écrirait « 1e+21 », et que ses chiffres trahiraient au-delà de 2⁵³.
+    if (!(moisNaissance >= 1 && moisNaissance <= 12)) {
+      throw refusDuMoisDeNaissance();
+    }
+    const horsDuChamp = !(anneeNaissance >= NAISSANCE_MINIMALE
+      && anneeNaissance <= NAISSANCE_MAXIMALE);
+    if ((horsDuChamp && !tolerante) || !Number.isFinite(anneeNaissance * MOIS_PAR_AN)) {
+      throw refusDeLAnneeDeNaissance(
+        naissance ? anneeNaissance : String(parametres.naissance).trim());
+    }
     // Le jour, s'il est dit ; présumé si l'adresse porte la naissance sans lui
     // (`presomptions`, la table du paquet) ; celui du formulaire vierge si elle
     // ne la porte pas du tout.
@@ -1080,16 +1114,13 @@ export class Saisie {
 
   verifier() {
     if (!(this.naissance_mois >= 1 && this.naissance_mois <= 12)) {
-      throw new ErreurSaisie("Mois de naissance attendu entre 1 et 12.");
+      throw refusDuMoisDeNaissance();
     }
     if (!(this.naissance_jour >= 1 && this.naissance_jour <= 31)) {
       throw new ErreurSaisie("Jour de naissance attendu entre 1 et 31.");
     }
     if (!(this.naissance >= NAISSANCE_MINIMALE && this.naissance <= NAISSANCE_MAXIMALE)) {
-      throw new ErreurSaisie(
-        `Année de naissance hors du champ du modèle : ${this.naissance}. `
-        + `Attendu entre ${NAISSANCE_MINIMALE} et ${NAISSANCE_MAXIMALE}.`,
-      );
+      throw refusDeLAnneeDeNaissance(this.naissance);
     }
     // Le jour compte désormais : un 31 février, qu'aucun calendrier ne propose
     // mais qu'une adresse peut porter, se refuse ici.
@@ -3675,6 +3706,12 @@ function ageSaisi(parametres, nom, defaut, origine) {
     return (new DateMois(date.annee, date.mois).rang - origine.rang) / MOIS_PAR_AN;
   }
   const annees = reel(parametres, nom, defaut);
+  // Un âge dont les mois passent le plus grand nombre ne tombe sur aucun mois :
+  // le calendrier, qui le datait avant que ses bornes ne soient vérifiées,
+  // levait sa propre erreur au lieu d'un refus. Il se refuse où il entre.
+  if (!Number.isFinite(annees * MOIS_PAR_AN)) {
+    throw new ErreurSaisie(`« ${nom} » : âge hors du calendrier (reçu : ${parametres[nom]}).`);
+  }
   const cle = `${nom}_mois`;
   const brut = parametres[cle];
   if (brut === undefined || brut === null || brut === "") {
