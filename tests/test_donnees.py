@@ -720,6 +720,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # Le même classeur, une autre feuille : la résidence des retraités,
         # que la garantie vieillesse lit pour ne servir que ceux de France.
         "pensions_residence": "macro/pensions_residence.csv",
+        # La pension moyenne brute et la nette de tous les retraités, dont le
+        # rapport est le taux que les prélèvements sociaux prennent à la masse
+        # des pensions : la dépense nette de la page Coût (action 138, étape 3).
+        "pensions_brutes_nettes": "macro/pensions_brutes_nettes.csv",
         "age_conjoncturel_depart": "macro/age_conjoncturel_depart.csv",
         "age_depart_csp": "macro/age_depart_csp.csv",
         "structure_financement_regimes": "regimes/structure_financement.csv",

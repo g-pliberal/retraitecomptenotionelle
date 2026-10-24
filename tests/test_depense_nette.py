@@ -14,13 +14,20 @@ action 138, étape 3). Ce module tient :
   hausse de la CSG de 2018, le taux médian de 2019 ;
 * LA PART DE L'AWG, constante, plus large que le taux effectif de l'impôt sur
   le revenu des pensions ;
-* LA DÉPENSE NETTE, au taux tenu après la dernière année publiée.
+* LA DÉPENSE NETTE, au taux tenu après la dernière année publiée ;
+* LE TAUX DANS LE MODÈLE (138.3, le 24 octobre 2026) : les montants du
+  tableau 2.1-a, certifiés dans ``data/reference/macro/pensions_brutes_nettes.csv``
+  sur ce que le récupérateur dépose dans ``data/brut/`` ; ``DepensesRetraite``
+  les lit, et le bilan de la page Coût en tire la dépense nette de chaque
+  système.
 """
 
 from __future__ import annotations
 
+import csv
 import datetime as dt
 import json
+import sys
 from pathlib import Path
 
 import pytest
@@ -40,6 +47,39 @@ from retraite_notionnelle.donnees.prelevements_historiques import (
 RACINE = Path(__file__).resolve().parents[1]
 TEMOIN = RACINE / "tests" / "temoins" / "drees_pension_nette.json"
 AWG = RACINE / "tests" / "temoins" / "ageing_report_france.json"
+FICHIER = RACINE / "data" / "reference" / "macro" / "pensions_brutes_nettes.csv"
+
+sys.path.insert(0, str(RACINE / "scripts" / "fetch"))
+import drees_pension_nette as recuperateur  # noqa: E402
+
+
+def _grille(lignes: list[list]) -> dict[tuple[int, int], float | str]:
+    """Une feuille comme ``lecture_xlsx.feuilles`` la rend : les cellules vides
+    absentes."""
+    return {(r, c): v for r, ligne in enumerate(lignes) for c, v in enumerate(ligne)
+            if v is not None}
+
+
+#: Le tableau 2.1-a tel qu'il se lit : les intitulés aux lignes 4 et 5, puis
+#: une ligne par année, la pension moyenne brute et la nette de droit direct
+#: aux colonnes 7 et 10, toutes pensions comprises aux colonnes 13 et 16.
+MONTANTS = [[None] * 17 for _ in range(6)] + [
+    ["2021", *[None] * 6, 1482.0, None, None, 1380.0, None, None, 1629.0, None, None, 1519.0],
+    ["2022", *[None] * 6, 1565.0, None, None, 1457.0, None, None, 1719.0, None, None, 1602.0],
+]
+for _colonne, _intitule in ((7, "brute"), (10, "nette"), (13, "brute"), (16, "nette")):
+    MONTANTS[4][_colonne] = _intitule
+MONTANTS[5][7] = MONTANTS[5][16] = "Ensemble"
+
+#: La feuille ``A-Prelev_sociaux`` de l'EACR : une ligne tous régimes par
+#: droit, et une d'une caisse, que le lecteur écarte.
+CSG = [
+    ["CC", "PSoc", "Année", "Droit", "exonération", "txRéduit", "txMédian", "txPlein",
+     "txInconnu", "ensemble", "Source"],
+    ["0000", "CSG", 2022, "Direct", 3000.0, 2000.0, 3000.0, 6000.0, 0.0, 14000.0, "Ancetre"],
+    ["0000", "CSG", 2022, "Dérivé", 1500.0, 500.0, 500.0, 1000.0, 0.0, 3500.0, "Ancetre"],
+    ["5000", "CSG", 2022, "Direct", 1.0, 1.0, 1.0, 1.0, 0.0, 4.0, "EACR"],
+]
 
 
 @pytest.fixture(scope="module")
@@ -135,3 +175,65 @@ def test_la_depense_nette_tient_le_dernier_taux_observe(drees):
     assert nette[2070] == pytest.approx(13.0 * (1.0 - effectifs[2022]))
     with pytest.raises(ValueError):
         taux_projetes({}, [2022])
+
+
+# -- le taux dans le modèle : la source, le fichier certifié -------------------
+
+
+def test_le_recuperateur_depose_les_montants_que_la_certification_relit(
+        tmp_path, monkeypatch):
+    """Le récupérateur écrit le témoin, et dépose dans ``data/brut/``, que git
+    ignore, les montants du tableau 2.1-a tels qu'il les lit : la source que
+    ``scripts/verifier_donnees.py`` confronte à ``pensions_brutes_nettes.csv``.
+    Il lit des classeurs déjà téléchargés, le portail de la DREES coupant
+    souvent ses connexions."""
+    grilles = {recuperateur.FEUILLE_MONTANTS: _grille(MONTANTS),
+               recuperateur.FEUILLE_CSG: _grille(CSG)}
+    monkeypatch.setattr(recuperateur, "feuilles",
+                        lambda contenu, noms: {nom: grilles[nom] for nom in noms})
+    monkeypatch.setattr(recuperateur, "SORTIE", tmp_path / "temoin.json")
+    depot = tmp_path / "brut" / "drees_pension_nette.json"
+    monkeypatch.setattr(recuperateur, "BRUT", depot)
+    for nom in ("montants.xlsx", "eacr.xlsx"):
+        (tmp_path / nom).write_bytes(b"")
+    assert recuperateur.main(["--montants", str(tmp_path / "montants.xlsx"),
+                              "--eacr", str(tmp_path / "eacr.xlsx")]) == 0
+    brut = json.loads(depot.read_text(encoding="utf-8"))
+    assert brut["montants"] == {
+        "2021": {"brute_directe": 1482.0, "nette_directe": 1380.0,
+                 "brute_totale": 1629.0, "nette_totale": 1519.0},
+        "2022": {"brute_directe": 1565.0, "nette_directe": 1457.0,
+                 "brute_totale": 1719.0, "nette_totale": 1602.0},
+    }
+    assert brut["source"]["url"] == recuperateur.URL_MONTANTS
+    assert brut["source"]["lu_le"] == dt.date.today().isoformat()
+    temoin = json.loads((tmp_path / "temoin.json").read_text(encoding="utf-8"))
+    assert temoin["montants"] == brut["montants"]
+    assert temoin["csg"]["2022"]["direct"]["plein"] == 6000.0
+
+
+def _certifie() -> dict[tuple[int, str], tuple[float, str]]:
+    with FICHIER.open(encoding="utf-8") as flux:
+        lignes = [ligne for ligne in flux if not ligne.startswith("#")]
+    return {(int(l["annee"]), l["indicateur"]): (float(l["valeur"]), l["fiabilite"])
+            for l in csv.DictReader(lignes)}
+
+
+def test_le_fichier_certifie_redonne_le_tableau_de_la_drees(drees):
+    """Les quatre montants de chaque année de 2008 à 2022, ceux que le
+    récupérateur a lus dans le tableau 2.1-a le 14 octobre 2026 et que le
+    témoin garde, certifiés le 24 sur le classeur relu : en 2022, 1 719 €
+    bruts et 1 602 € nets par mois, toutes pensions comprises, 1 565 € et
+    1 457 € de droit direct ; en 2008, 1 343 € et 1 260 €."""
+    lu = _certifie()
+    assert {fiabilite for _valeur, fiabilite in lu.values()} == {"certifiee"}
+    attendu = {(annee, indicateur): valeur
+               for annee, valeurs in drees["montants"].items()
+               for indicateur, valeur in valeurs.items()}
+    assert {cle: valeur for cle, (valeur, _fiabilite) in lu.items()} == attendu
+    assert lu[(2022, "brute_totale")][0] == 1719.0
+    assert lu[(2022, "nette_totale")][0] == 1602.0
+    assert lu[(2022, "brute_directe")][0] == 1565.0
+    assert lu[(2022, "nette_directe")][0] == 1457.0
+    assert lu[(2008, "brute_totale")][0] == 1343.0
+    assert lu[(2008, "nette_totale")][0] == 1260.0

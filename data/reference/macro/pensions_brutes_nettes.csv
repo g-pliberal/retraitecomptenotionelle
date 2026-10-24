@@ -1,0 +1,89 @@
+# La pension moyenne brute et la nette de tous les retraités
+# source_id: drees_pension_nette
+# unite: euros courants par mois, montant moyen au 31 décembre
+# fiabilite:
+#   certifiee : tableau 2.1-a du classeur « Les effectifs de
+#             retraités, montants des pensions et âges de départ à la
+#             retraite », fin 2022, diffusé par la DREES et
+#             recontrôlé par scripts/verifier_donnees.py.
+#
+# `indicateur` : brute_directe et nette_directe, la pension de droit
+# direct, majoration pour trois enfants comprise ; brute_totale et
+# nette_totale, droit dérivé compris. La nette déduit la CSG, la
+# CRDS, la Casa et la cotisation maladie des complémentaires ; ni
+# l'ASPA ni les versements forfaitaires uniques n'y sont. Les
+# retraités résident en France ou à l'étranger.
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# À dire ce que les prélèvements sociaux prennent VRAIMENT à la masse
+# des pensions, un moins la nette sur la brute : 6,8 % en 2022, et
+# non les 9,1 % du taux plein, parce que les petites pensions sont
+# exonérées ou au taux réduit et que les retraités de l'étranger ne
+# paient rien (src/retraite_notionnelle/depense_nette.py). La page
+# Coût en tire la dépense nette de chaque système, au taux de son
+# année, puis au dernier publié (DepensesRetraite.taux_effectif).
+#
+# Ne pas modifier les valeurs certifiées à la main : elles seraient
+# écrasées au prochain scripts/verifier_donnees.py --appliquer.
+annee,indicateur,valeur,fiabilite
+2008,brute_directe,1214,certifiee
+2008,brute_totale,1343,certifiee
+2008,nette_directe,1137,certifiee
+2008,nette_totale,1260,certifiee
+2009,brute_directe,1234,certifiee
+2009,brute_totale,1366,certifiee
+2009,nette_directe,1157,certifiee
+2009,nette_totale,1282,certifiee
+2010,brute_directe,1257,certifiee
+2010,brute_totale,1392,certifiee
+2010,nette_directe,1178,certifiee
+2010,nette_totale,1306,certifiee
+2011,brute_directe,1299,certifiee
+2011,brute_totale,1432,certifiee
+2011,nette_directe,1217,certifiee
+2011,nette_totale,1344,certifiee
+2012,brute_directe,1323,certifiee
+2012,brute_totale,1462,certifiee
+2012,nette_directe,1240,certifiee
+2012,nette_totale,1372,certifiee
+2013,brute_directe,1348,certifiee
+2013,brute_totale,1492,certifiee
+2013,nette_directe,1259,certifiee
+2013,nette_totale,1396,certifiee
+2014,brute_directe,1364,certifiee
+2014,brute_totale,1508,certifiee
+2014,nette_directe,1274,certifiee
+2014,nette_totale,1410,certifiee
+2015,brute_directe,1376,certifiee
+2015,brute_totale,1520,certifiee
+2015,nette_directe,1284,certifiee
+2015,nette_totale,1421,certifiee
+2016,brute_directe,1386,certifiee
+2016,brute_totale,1529,certifiee
+2016,nette_directe,1295,certifiee
+2016,nette_totale,1430,certifiee
+2017,brute_directe,1413,certifiee
+2017,brute_totale,1557,certifiee
+2017,nette_directe,1323,certifiee
+2017,nette_totale,1458,certifiee
+2018,brute_directe,1420,certifiee
+2018,brute_totale,1563,certifiee
+2018,nette_directe,1312,certifiee
+2018,nette_totale,1445,certifiee
+2019,brute_directe,1434,certifiee
+2019,brute_totale,1576,certifiee
+2019,nette_directe,1330,certifiee
+2019,nette_totale,1463,certifiee
+2020,brute_directe,1468,certifiee
+2020,brute_totale,1614,certifiee
+2020,nette_directe,1367,certifiee
+2020,nette_totale,1505,certifiee
+2021,brute_directe,1482,certifiee
+2021,brute_totale,1629,certifiee
+2021,nette_directe,1380,certifiee
+2021,nette_totale,1519,certifiee
+2022,brute_directe,1565,certifiee
+2022,brute_totale,1719,certifiee
+2022,nette_directe,1457,certifiee
+2022,nette_totale,1602,certifiee

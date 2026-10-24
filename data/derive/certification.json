@@ -1068,6 +1068,17 @@
    "valeurs": 47,
    "verifiee_le": "2026-10-16"
   },
+  "pensions_brutes_nettes": {
+   "ajoutees": 60,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "0a314790daa766cd",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DREES, tableau 2.1-a (EIR, modèle Ancetre)",
+   "valeurs": 60,
+   "verifiee_le": "2026-10-24"
+  },
   "pensions_droits": {
    "ajoutees": 0,
    "colonne": "montant_meur",

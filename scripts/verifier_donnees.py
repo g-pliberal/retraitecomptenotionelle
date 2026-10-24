@@ -2628,6 +2628,29 @@ def source_pensions_residence() -> dict[tuple, float]:
     }
 
 
+def source_pensions_brutes_nettes() -> dict[tuple, float]:
+    """La pension moyenne brute et la nette de tous les retraités, de 2008 à
+    2022.
+
+    Le tableau 2.1-a des « Effectifs de retraités, montants des pensions et
+    âges de départ à la retraite », fin 2022, que
+    ``scripts/fetch/drees_pension_nette.py`` lit et dépose : les montants
+    mensuels moyens au 31 décembre, de droit direct et toutes pensions
+    comprises, bruts et nets de la CSG, de la CRDS, de la Casa et de la
+    cotisation maladie des complémentaires. Leur rapport est le taux que les
+    prélèvements sociaux prennent à la masse des pensions, d'où la page Coût
+    tire sa dépense nette (action 138, étape 3).
+
+    Clé (annee, indicateur).
+    """
+    charge = _lire_json("drees_pension_nette.json", "scripts/fetch/drees_pension_nette.py")
+    return {
+        (annee, indicateur): valeur
+        for annee, valeurs in charge["montants"].items()
+        for indicateur, valeur in valeurs.items()
+    }
+
+
 def source_quintiles_eqcc() -> dict[tuple, float]:
     """Les retraités selon le quintile de leur pension en équivalent carrière
     complète.
@@ -7653,6 +7676,47 @@ CERTIFICATIONS = (
             "# pension française moyenne est de 437 € brut par mois, parce que leur",
             "# carrière française a été courte. Les compter gonflait le coût de la",
             "# garantie d'un sixième environ.",
+            "#",
+            "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
+            "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="pensions_brutes_nettes",
+        chemin=REFERENCE / "macro" / "pensions_brutes_nettes.csv",
+        cles=("annee", "indicateur"),
+        colonne="valeur",
+        source=source_pensions_brutes_nettes,
+        origine="DREES, tableau 2.1-a (EIR, modèle Ancetre)",
+        decimales=0,
+        tolerance=0.5,
+        unite=" €",
+        entete=(
+            "# La pension moyenne brute et la nette de tous les retraités",
+            "# source_id: drees_pension_nette",
+            "# unite: euros courants par mois, montant moyen au 31 décembre",
+            "# fiabilite:",
+            "#   certifiee : tableau 2.1-a du classeur « Les effectifs de",
+            "#             retraités, montants des pensions et âges de départ à la",
+            "#             retraite », fin 2022, diffusé par la DREES et",
+            "#             recontrôlé par scripts/verifier_donnees.py.",
+            "#",
+            "# `indicateur` : brute_directe et nette_directe, la pension de droit",
+            "# direct, majoration pour trois enfants comprise ; brute_totale et",
+            "# nette_totale, droit dérivé compris. La nette déduit la CSG, la",
+            "# CRDS, la Casa et la cotisation maladie des complémentaires ; ni",
+            "# l'ASPA ni les versements forfaitaires uniques n'y sont. Les",
+            "# retraités résident en France ou à l'étranger.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À dire ce que les prélèvements sociaux prennent VRAIMENT à la masse",
+            "# des pensions, un moins la nette sur la brute : 6,8 % en 2022, et",
+            "# non les 9,1 % du taux plein, parce que les petites pensions sont",
+            "# exonérées ou au taux réduit et que les retraités de l'étranger ne",
+            "# paient rien (src/retraite_notionnelle/depense_nette.py). La page",
+            "# Coût en tire la dépense nette de chaque système, au taux de son",
+            "# année, puis au dernier publié (DepensesRetraite.taux_effectif).",
             "#",
             "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
             "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",

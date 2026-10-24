@@ -1486,9 +1486,9 @@ institutions:
           A-Prelev_sociaux)
         url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/1393_les-effectifs-et-montants-de-pension-des-retraites/
         acces: api
-        statut_integration: controle
+        statut_integration: certifie
         recuperation: scripts/fetch/drees_pension_nette.py
-        cible: tests/temoins/drees_pension_nette.json
+        cible: data/reference/macro/pensions_brutes_nettes.csv
         millesime: "2022 (montants), 2024 (taux de CSG)"
         note: >-
           Deux moyennes sur les mêmes retraités, la pension brute et la nette de
@@ -1496,8 +1496,11 @@ institutions:
           complémentaires, de 2008 à 2022 : leur rapport est le taux que les
           prélèvements sociaux prennent à la MASSE des pensions, 6,8 % en 2022
           contre 9,1 % au taux plein. Les têtes par taux de CSG, de 2012 à 2024,
-          en donnent une borne basse. Il n'alimente aucune valeur :
-          `tests/test_depense_nette.py` s'y confronte, avec la part que
+          en donnent une borne basse. Les montants sont certifiés dans
+          data/reference/macro/pensions_brutes_nettes.csv depuis le 24 octobre
+          2026, d'où le modèle tire la dépense nette de la page Coût ; le
+          témoin, tests/temoins/drees_pension_nette.json, garde aussi les têtes,
+          que `tests/test_depense_nette.py` confronte, avec la part que
           l'Ageing Report reprend de la dépense brute (action 138, étape 3).
       - id: insee_patrimoine_menages
         titre: >-

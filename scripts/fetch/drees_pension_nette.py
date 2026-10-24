@@ -30,12 +30,19 @@ LES DEUX SOURCES.
   2019), plein. Des têtes, non des masses : elles bornent le taux effectif
   par en dessous, les pensions exonérées étant les plus petites.
 
-Le témoin est versionné : les tests le relisent sans réseau.
+Le témoin est versionné : les tests le relisent sans réseau. Les montants
+du tableau 2.1-a sont aussi déposés dans ``data/brut/drees_pension_nette.json``,
+que git ignore : ``scripts/verifier_donnees.py`` les confronte à
+``data/reference/macro/pensions_brutes_nettes.csv``, qu'il certifie, et que le
+modèle lit (action 138, étape 3, le 24 octobre 2026). Le portail de la DREES
+coupe souvent ses connexions : ``--montants`` et ``--eacr`` lisent des
+classeurs déjà téléchargés.
 """
 
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import json
 import re
 import sys
@@ -47,6 +54,8 @@ from lecture_xlsx import feuilles  # noqa: E402
 
 RACINE = Path(__file__).resolve().parents[2]
 SORTIE = RACINE / "tests" / "temoins" / "drees_pension_nette.json"
+#: Ce que la certification relit, dans ``data/brut/`` : les montants seuls.
+BRUT = RACINE / "data" / "brut" / "drees_pension_nette.json"
 ENTETES = {"User-Agent": "retraite-notionnelle/0.1 (recherche publique)"}
 API = "https://data.drees.solidarites-sante.gouv.fr/api/explore/v2.1/catalog/datasets"
 URL_MONTANTS = (f"{API}/1393_les-effectifs-et-montants-de-pension-des-retraites/attachments/"
@@ -144,18 +153,37 @@ def temoin(montants: bytes, eacr: bytes) -> dict:
     }
 
 
-def main() -> int:
+def pour_la_certification(montants: bytes) -> dict:
+    """Les montants du tableau 2.1-a, tels que ``scripts/verifier_donnees.py``
+    les confronte à ``pensions_brutes_nettes.csv`` : chaque année publiée, les
+    quatre moyennes mensuelles, en euros courants."""
+    return {
+        "source": {
+            "editeur": "DREES",
+            "titre": ("Les effectifs de retraités, montants des pensions et âges de départ "
+                      "à la retraite, fin 2022, tableau 2.1-a (DREES, EIR, modèle Ancetre)"),
+            "url": URL_MONTANTS,
+            "lu_le": dt.date.today().isoformat(),
+        },
+        "montants": {str(a): v for a, v in sorted(lire_montants(montants).items())},
+    }
+
+
+def main(argv: list[str] | None = None) -> int:
     analyse = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     analyse.add_argument("--montants", type=Path, help="le classeur des montants, déjà téléchargé")
     analyse.add_argument("--eacr", type=Path, help="la première partie de l'EACR, déjà téléchargée")
-    arguments = analyse.parse_args()
+    arguments = analyse.parse_args(argv)
     montants = (arguments.montants.read_bytes() if arguments.montants
                 else _telecharger(URL_MONTANTS))
     eacr = arguments.eacr.read_bytes() if arguments.eacr else _telecharger(URL_EACR)
     contenu = temoin(montants, eacr)
     SORTIE.write_text(json.dumps(contenu, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
-    print(f"{SORTIE.relative_to(RACINE)} : {len(contenu['montants'])} années de montants, "
-          f"{len(contenu['csg'])} de taux de CSG")
+    BRUT.parent.mkdir(parents=True, exist_ok=True)
+    BRUT.write_text(json.dumps(pour_la_certification(montants), ensure_ascii=False, indent=1),
+                    encoding="utf-8")
+    print(f"{SORTIE} : {len(contenu['montants'])} années de montants, "
+          f"{len(contenu['csg'])} de taux de CSG ; les montants déposés dans {BRUT}")
     return 0
 
 

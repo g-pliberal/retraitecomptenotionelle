@@ -195,6 +195,32 @@ def test_transcription_tierce_ne_peut_pas_etre_certifiee(verificateur):
         assert par_nom[nom].niveau == "certifiee", nom
 
 
+def test_les_pensions_brutes_et_nettes_se_relisent_dans_le_depot_du_recuperateur(
+        verificateur, monkeypatch):
+    """La source de ``pensions_brutes_nettes.csv`` est ce que
+    ``scripts/fetch/drees_pension_nette.py`` dépose dans ``data/brut/`` : les
+    quatre montants de chaque année du tableau 2.1-a de la DREES, une clé
+    (année, indicateur) chacun, au niveau certifié (action 138, étape 3)."""
+    depot = {"montants": {"2022": {"brute_directe": 1565.0, "nette_directe": 1457.0,
+                                   "brute_totale": 1719.0, "nette_totale": 1602.0}}}
+
+    def lire(nom, script):
+        assert (nom, script) == ("drees_pension_nette.json",
+                                 "scripts/fetch/drees_pension_nette.py")
+        return depot
+
+    monkeypatch.setattr(verificateur, "_lire_json", lire)
+    assert verificateur.source_pensions_brutes_nettes() == {
+        ("2022", "brute_directe"): 1565.0, ("2022", "nette_directe"): 1457.0,
+        ("2022", "brute_totale"): 1719.0, ("2022", "nette_totale"): 1602.0,
+    }
+    par_nom = {c.nom: c for c in verificateur.CERTIFICATIONS}
+    certification = par_nom["pensions_brutes_nettes"]
+    assert certification.niveau == "certifiee"
+    assert certification.cles == ("annee", "indicateur")
+    assert certification.chemin.name == "pensions_brutes_nettes.csv"
+
+
 def test_plafond_ancien_s_efface_devant_l_insee_et_le_journal_officiel(
         verificateur, monkeypatch):
     """Trois sources sur un même fichier ne doivent pas se marcher dessus.
