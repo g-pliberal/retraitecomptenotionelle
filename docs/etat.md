@@ -27,24 +27,24 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | manquantes | 1 |
 | à vérifier | 2 |
 
-- Confrontées à au moins un exemple officiel : **61 sur 255** (215 exemples : 203 reproduits, 12 en écart connu, section 2).
+- Confrontées à au moins un exemple officiel : **61 sur 255** (217 exemples : 205 reproduits, 12 en écart connu, section 2).
 - Citées dans le code par leur identifiant : **118 sur 255**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
 - Désignées par les interrupteurs des périodes de régime : **48 sur 255**, par 2 462 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
 - Mûres, sans rien qui manque à leur contrat : **149 sur 255**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
-- Découpées en versions : **150 sur 255**, soit 584 versions, dont 102 supposées ; le partage des versions se contrôle sur chacune.
+- Découpées en versions : **150 sur 255**, soit 585 versions, dont 102 supposées ; le partage des versions se contrôle sur chacune.
 - Réformes du calendrier : 126, dont 10 déclarées non appliquées.
 
-**La loi, rédaction par rédaction** (`data/reference/textes/`, § 6.6) : 15 792 rédactions d'articles, de 208 textes, lues le 2026-10-24 (index LEGI du dépôt : Freemium_legi_global_20250713-140000.tar.gz, incréments appliqués jusqu'au 20261023-215041). C'est le dénominateur de l'avancement : ce que les fiches ont lu, contre ce que la loi a écrit.
+**La loi, rédaction par rédaction** (`data/reference/textes/`, § 6.6) : 15 797 rédactions d'articles, de 209 textes, lues le 2026-10-24 (index LEGI du dépôt : Freemium_legi_global_20250713-140000.tar.gz, incréments appliqués jusqu'au 20261024-214209). C'est le dénominateur de l'avancement : ce que les fiches ont lu, contre ce que la loi a écrit.
 
 | Statut | Rédactions |
 |---|---|
-| rattachées à une version | 1 427 |
-| sans effet | 61 |
-| à rattacher | 556 |
-| à examiner | 4 216 |
-| sans statut | 9 532 |
+| rattachées à une version | 1 432 |
+| sans effet | 72 |
+| à rattacher | 558 |
+| à examiner | 4 215 |
+| sans statut | 9 520 |
 
-**La personne** (§ 5) : une chronologie de faits datés, dans un réseau de personnes — aujourd'hui l'assuré, ses enfants et son conjoint —, que le relevé et le parcours déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : 30 présomptions au vocabulaire, dont 3 posent leur fait dans la chronologie ; les autres s'appliquent dans le code, jusqu'à l'étape qui posera le leur.
+**La personne** (§ 5) : une chronologie de faits datés, dans un réseau de personnes — aujourd'hui l'assuré, ses enfants et son conjoint —, que le relevé et le parcours déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : 31 présomptions au vocabulaire, dont 3 posent leur fait dans la chronologie ; les autres s'appliquent dans le code, jusqu'à l'étape qui posera le leur.
 
 | Présomption | Valeur | Fiches qui la lisent | Où elle s'applique |
 |---|---|---|---|
@@ -73,6 +73,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | `depart_de_chaque_regime` | au départ déclaré, à l'ouverture du régime, ou à la sortie de l'armée | `liquidation_regime_par_regime` | departs (droit/departs.py), que l'échéancier et le scénario 1 lisent ; son jumeau JavaScript ; son fait entrera à l'étape `echeancier` |
 | `exceptions_a_la_limite_d_age` | demandées et accordées autant que le départ saisi le demande | `limite_age_banque_de_france`, `limite_age_contractuels`, `limite_age_fonction_publique`, `limite_age_ieg`, `limite_age_militaires`, `limite_age_mines`, `limite_age_opera`, `limite_age_ouvriers_etat`, `limite_age_seita`, `limite_age_sncf_ratp`, `maintien_en_fonctions_jusqu_a_70_ans`, `prolongation_activite_carriere_incomplete`, `prolongation_activite_categorie_active` | radiation (droit/limite_age.py), que les départs, l'échéancier et le scénario 1 lisent ; son jumeau JavaScript ; son fait entrera à l'étape `echeancier` |
 | `pension_d_invalidite_de_la_periode` | depuis le 1er janvier de la première année de la période d'invalidité finale | `pension_d_invalidite_substituee` | Carriere.pension_d_invalidite (carriere.py), et son jumeau JavaScript ; son fait entrera à l'étape `ouvrir_le_droit` |
+| `categorie_de_la_pension_d_invalidite` | la première à qui travaille à l'âge de la substitution, la deuxième sinon | `pension_d_invalidite_substituee` | categorie_de_la_pension (droit/invalidite.py), que le plancher de la pension substituée lit (droit/completer.py) ; leurs jumeaux JavaScript ; son fait entrera à l'étape `completer_tous_regimes` |
 | `opposition_a_la_substitution` | opposée, la pension demandée au départ déclaré | `pension_d_invalidite_substituee` | substitution (droit/invalidite.py), et son jumeau JavaScript ; son fait entrera à l'étape `echeancier` |
 | `pas_de_pension_etrangere` | aucune | `minimum_contributif_international` | pensions_a_l_ecretement (droit/etranger.py), que l'écrêtement du minimum contributif lit (droit/completer.py) ; leurs jumeaux JavaScript ; son fait entrera à l'étape `preparer_la_chronologie` |
 | `pas_de_reversion_agricole` | aucune | `majoration_retraite_proportionnelle`, `pension_majoree_reference` | reversion_agricole_servie (droit/completer.py), que la pension majorée de référence lit, et les plans de revalorisation de 1997 à 2008 (majoration_retraite_proportionnelle, _points_des_conjoints, _minimum_du_veuf) ; leurs jumeaux JavaScript ; son fait entrera à l'étape `preparer_la_chronologie` |
@@ -376,7 +377,7 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   | `code` | 57 |
   | `approximations` | 28 |
 
-- **Les textes** : 556 rédactions à rattacher à une version de la fiche qui les cite, 4 216 à examiner, et 9 532 sans statut, que le cliquet tient à 9 532 au plus. Les textes qui en ont le plus : `css` 4 941, `decret_46_2769` 938, `rural` 855, `cpcmr` 570, `decret_90_1215` 325 (`python scripts/textes.py`).
+- **Les textes** : 558 rédactions à rattacher à une version de la fiche qui les cite, 4 215 à examiner, et 9 520 sans statut, que le cliquet tient à 9 520 au plus. Les textes qui en ont le plus : `css` 4 929, `decret_46_2769` 938, `rural` 855, `cpcmr` 570, `decret_90_1215` 325 (`python scripts/textes.py`).
 - **Les relectures prévues les plus proches** : 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`agirc_arrco_valeur_achat`) ; 2026-12-31 (`carriere_longue`) ; 2026-12-31 (`certification_legi_perimee`).
 - **Les régimes hors champ** : 23, chacun avec sa raison dans l'inventaire.
 

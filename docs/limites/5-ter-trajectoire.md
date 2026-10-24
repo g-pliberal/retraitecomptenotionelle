@@ -114,8 +114,8 @@ demeure dans le rapport, et les deux contrôles qui suivent le mesurent.
 publiée, le coût du système actuel est la masse de pensions des cas types, mise
 à l'échelle par l'ancrage qui la rend égale à la dépense de cette année-là. La
 même formule, appliquée aux années publiées, devrait retrouver ce qui a été
-dépensé (`Avenir.reconstitution`) ; elle s'en écarte de <!--chiffre:mesure(reconstitution?annee=2000)-->−5,1<!--/--> % en 2000, de
-<!--chiffre:mesure(reconstitution?annee=2009)-->−11,0<!--/--> % en 2009 et de <!--chiffre:mesure(reconstitution?annee=2020)-->−1,1<!--/--> % en 2020, et de <!--chiffre:mesure(reconstitution?annee=1990)-->−9,8<!--/--> % en 1990. La masse du
+dépensé (`Avenir.reconstitution`) ; elle s'en écarte de <!--chiffre:mesure(reconstitution?annee=2000)-->−5,0<!--/--> % en 2000, de
+<!--chiffre:mesure(reconstitution?annee=2009)-->−11,0<!--/--> % en 2009 et de <!--chiffre:mesure(reconstitution?annee=2020)-->−1,1<!--/--> % en 2020, et de <!--chiffre:mesure(reconstitution?annee=1990)-->−9,6<!--/--> % en 1990. La masse du
 modèle croît donc plus vite que la dépense réelle, et l'ancrage reporte cette
 dérive sur l'avenir : c'est le symptôme le plus direct de l'écart au COR.
 L'ancrage suppose, sans le vérifier, que l'écart des cas types au réel est le

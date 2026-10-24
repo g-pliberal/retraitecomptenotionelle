@@ -188,8 +188,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->1780<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->9 061<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->1786<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->9 092<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Neuf pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -253,7 +253,7 @@ Il est traité de front : **le Python de `src/` reste la référence**, et
 <!--chiffre:entrees(tests/temoins/simulations.json:)-->907<!--/--> simulations complètes, et depuis le site
 <!--chiffre:entrees(tests/temoins/pages.json:)-->79<!--/--> rendus de page, dans `tests/temoins/`.
 `node --test` rejoue les simulations côté JavaScript et les compare valeur par valeur —
-<!--chiffre:portage(valeurs)-->170 275<!--/--> nombres,
+<!--chiffre:portage(valeurs)-->170 276<!--/--> nombres,
 dont <!--chiffre:portage(identiques)-->100,0<!--/--> % identiques
 au bit près, l'écart relatif maximal étant de <!--chiffre:portage(pire)-->0,0<!--/--> · 10⁻¹⁵ (un *ulp*, la précision d'un flottant, vaut 2 · 10⁻¹⁶). Les
 deux moteurs ne diffèrent plus d'un *ulp* : le JavaScript calcule
@@ -773,11 +773,11 @@ de chaque cas type :
 | Système | Cumul 1959-2024, euros de 2026 | Écart |
 |---|---|---|
 | 1. Système actuel | <!--chiffre:mesure(cumul_passe?scenario=1)-->13 767<!--/--> Md € | réf. |
-| 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(cumul_passe?scenario=2)-->2 770<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=2)-->−79,9<!--/--> % |
+| 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(cumul_passe?scenario=2)-->2 766<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=2)-->−79,9<!--/--> % |
 | 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(cumul_passe?scenario=3)-->13 767<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=3)-->+0,0<!--/--> % |
-| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=4)-->6 391<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=4)-->−53,6<!--/--> % |
+| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=4)-->6 383<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=4)-->−53,6<!--/--> % |
 | 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=5)-->13 767<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=5)-->+0,0<!--/--> % |
-| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(cumul_passe?scenario=6)-->6 391<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=6)-->−53,6<!--/--> % |
+| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(cumul_passe?scenario=6)-->6 383<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=6)-->−53,6<!--/--> % |
 | *s'ajoute au 6 : sa garantie vieillesse, payée par l'impôt, lue sur la distribution des pensions* | *<!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 377<!--/--> Md €* | |
 
 **Les scénarios 3 et 5 coûtent exactement ce que coûte le système actuel**, et
@@ -804,7 +804,7 @@ puis calé pour que chaque groupe de régimes pèse la part que le COR donne à 
 dépense (`docs/limites.md` § 5 ter) : l'agent de
 conduite pèse <!--chiffre:mesure(poids?cas=agent_sncf_conduite)-->1,2<!--/--> % et non <!--chiffre:mesure(poids?cas=agent_sncf_conduite&ponderation=egale)-->5,6<!--/--> %, les quatre carrières du privé <!--chiffre:mesure(poids?cas=smic_carriere_complete|salaire_moyen|cadre|carriere_interrompue)-->43<!--/--> % à elles
 quatre. Ce que la convention égalitaire valait est désormais mesuré plutôt
-qu'argumenté — elle donne <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−80,1<!--/--> % au scénario 2 contre <!--chiffre:mesure(ecart_passe?scenario=2)-->−79,9<!--/--> %, et <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−57,9<!--/--> % au
+qu'argumenté — elle donne <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−80,1<!--/--> % au scénario 2 contre <!--chiffre:mesure(ecart_passe?scenario=2)-->−79,9<!--/--> %, et <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−58,0<!--/--> % au
 scénario 4 contre <!--chiffre:mesure(ecart_passe?scenario=4)-->−53,6<!--/--> %. Le biais allait dans le sens qu'on annonçait : la
 surreprésentation des départs très précoces faisait des deux scénarios un
 plancher, de peu pour le scénario 2, où les carrières du privé, que le compte

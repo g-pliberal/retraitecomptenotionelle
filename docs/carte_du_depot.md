@@ -76,7 +76,7 @@ témoins la tiennent :
 <!--chiffre:entrees(tests/temoins/simulations.json:)-->907<!--/--> simulations
 complètes et <!--chiffre:entrees(tests/temoins/pages.json:)-->79<!--/--> pages
 figées, que `node --test` rejoue ;
-<!--chiffre:portage(valeurs)-->170 275<!--/--> nombres comparés, dont
+<!--chiffre:portage(valeurs)-->170 276<!--/--> nombres comparés, dont
 <!--chiffre:portage(identiques)-->100,0<!--/--> % identiques au bit près.
 
 Une exception, voulue : le coût pour toute la population ne se calcule qu'en
