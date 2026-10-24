@@ -91,7 +91,7 @@ def test_une_erreur_du_portage_remonte_avec_son_message():
 def test_un_objet_du_modele_ne_part_pas_dans_le_portage():
     """Le portage a ses propres objets : un objet Python recopié au hasard de ses
     champs s'y lirait de travers, et le pont le refuse."""
-    from retraite_notionnelle.saisie import Saisie
+    from retraite_notionnelle.config import Parametres
 
     with pytest.raises(TypeError):
-        module("pages").champs_modelisation(Saisie())
+        module("pages").champs_modelisation(Parametres())

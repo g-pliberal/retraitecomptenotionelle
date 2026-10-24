@@ -41,7 +41,6 @@ from urllib.parse import parse_qsl
 
 import pytest
 
-from retraite_notionnelle.saisie import Saisie
 from retraite_notionnelle.web.site import disponible, module, rendre
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -214,7 +213,7 @@ def _saisie_par_defaut() -> dict[str, str]:
     en viennent. La requête est celle que le site écrit lui-même pour sa
     saisie par défaut, jamais une liste de paramètres recopiée ici.
     """
-    return dict(parse_qsl(html.unescape(Saisie().requete().lstrip("?"))))
+    return dict(parse_qsl(html.unescape(module("saisie").Saisie().requete().lstrip("?"))))
 
 
 def _rendue(chemin: str) -> str:
