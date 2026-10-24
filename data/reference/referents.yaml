@@ -2700,8 +2700,11 @@ referents:
           Le 14 octobre 2026 (138.3, quatrième partie), le dépôt tire de
           la DREES le taux que les prélèvements sociaux prennent vraiment
           à la masse des pensions, un moins la nette sur la brute
-          (`depense_nette.taux_effectifs`) : 6,8 % de 2020 à 2022. La page
-          Coût ne le lit pas encore.
+          (`depense_nette.taux_effectifs`) : 6,8 % de 2020 à 2022. Le 24,
+          le modèle le lit dans les montants certifiés
+          (`DepensesRetraite.taux_effectif`), et le bilan figé porte la
+          dépense nette de chaque système ; la page Coût ne la montre pas
+          encore.
         etat: a_reprendre
         chantier: "138.3"
       - quoi: >-
