@@ -3,13 +3,13 @@
 **Reprise, au 24 octobre 2026.** Fait : chaque grille contre l'EIR en 2020
 (7 octobre) ; la population de l'action 136, reprise du 16 au 23 octobre, de
 la décote aux natures assimilées des deux sexes, lues dans l'EIC ; le 24, la
-masse qui les plafonne, lue, et la maladie tirée à part du chômage : 13,5 %
-des hommes de 1950 en carrière longue (EIR 18,3). Reste, une session par
-point : des classes de nature plus fines ; les natures selon le rang ; les
-femmes de 30 à 40 années, entrées à 21 ans ; les invalides et les inaptes ;
-la surcote des statutaires ; la décote selon la génération ; les
-indépendants, les agricoles ; l'ASPA ; les limites. Au propriétaire : 152,
-157, le CASD, l'incitation. Détail : `…-chomage-des-malades.md`.
+masse qui les plafonne, la maladie tirée à part du chômage, puis quinze
+classes de nature par rang au lieu de cinq : 14,1 % des hommes de 1950 en
+carrière longue (EIR 18,3). Reste, une session par point : les natures selon
+le rang ; les femmes de 30 à 40 années, entrées à 21 ans ; les invalides et
+les inaptes ; la surcote des statutaires ; la décote selon la génération ;
+les indépendants, les agricoles ; l'ASPA ; les limites. Au propriétaire :
+152, 157, le CASD, l'incitation. Détail : `…-classes-de-nature-plus-fines.md`.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.14 ». L'étape :
 « Ce qui demande une population ou des microdonnées, avec l'action 136 (étape
