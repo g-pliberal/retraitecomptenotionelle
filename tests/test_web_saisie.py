@@ -23,7 +23,7 @@ from retraite_notionnelle.donnees.chargement import charger_periodes_non_travail
 from retraite_notionnelle.web.site import ErreurSite, disponible, module, rendre, site
 from outils_pont import refus_de_la_saisie, saisie_du_portage
 from outils_web import (
-    _echelle, _prose, contexte, page, pages, saisies,
+    _echelle, _prose, contexte, montants_du_portage, page, pages, saisies,
 )
 
 
@@ -883,10 +883,7 @@ def test_la_bascule_net_brut_traduit_la_pension_saisie():
     # CSG, présumée sur ses seules pensions, et la cotisation maladie de sa
     # part complémentaire (action 138, étape 2) : les montants du portage, que
     # la bascule applique.
-    saisie, portage = saisie_du_portage(base), site().contexte
-    taux = module("contexte").Montants.depuis(
-        saisie, portage.simulateur(saisie.parametres(portage.base)),
-        portage.simuler(saisie)).taux_pension
+    taux = montants_du_portage(base).taux_pension
     assert float(vers_brut["pension"]) == pytest.approx(1800 / (1 - taux), abs=1.0), (
         f"la pension n'a pas été traduite : {vers_brut['pension']}"
     )
