@@ -1,0 +1,16 @@
+date: "2026-10-24"
+session: "action 161, étape 6, troisième partie : le centre du coût, ce que ses tests lisaient de la saisie Python passé au pont"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1.
+  Les cinq fichiers de tests du centre du coût, le pont (pont.py, pont.mjs),
+  la saisie et le contexte du portage, et l'interpolation du profil de salaire
+  des deux moteurs (carriere.py, carriere.js).
+trouve: >-
+  Aucune règle n'a changé. Les exemples figés et les affirmations ne lisent
+  plus la saisie Python ; les témoins restent identiques à l'octet.
+  L'interpolation du profil de salaire diffère au dernier bit entre les deux
+  moteurs, par l'ordre de ses opérations : aucun témoin n'y passe.
+reste: >-
+  Rien pour la veille. Le reste du premier lot de l'étape 6, les tests du site,
+  puis le retrait ; l'écart de l'interpolation, à la relecture de la paire de
+  la carrière (action 161, note du 24 octobre 2026, troisième partie).

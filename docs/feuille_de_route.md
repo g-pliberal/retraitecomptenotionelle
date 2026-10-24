@@ -6888,14 +6888,15 @@ de `contribution_etat`.
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
 **Reprise, au 24 octobre 2026.** Étape 6 en cours sur `contexte.py`. Le
-premier lot avance : trente-neuf fichiers de tests ne lisent plus la saisie
+premier lot avance : quarante et un fichiers de tests ne lisent plus la saisie
 Python — leurs règles sur la carrière que le pont bâtit (`tests/outils_pont.py`),
-la saisie et `Montants` dans le portage, par `site()` —, le pont reste ouvert,
-les témoins identiques à l'octet. Reste du lot : six fichiers du site
+la saisie dans le portage, par `site()` —, les témoins identiques à l'octet ;
+le centre du coût reste au contexte Python. Reste du lot : six fichiers du site
 (`test_web*.py`, `outils_web.py`, `test_formulaire.py`,
-`test_estimation_du_site.py`), avec la session du site. Puis le centre du coût
-(`test_cout.py`, `test_agregats.py`…), le retrait. Le propriétaire tranche deux
-paires de données. Détail : `2026-10-24-etape-6-deuxieme-partie-les-tests-par-le-pont.md`.
+`test_estimation_du_site.py`), après la session de l'action 173. Puis le
+retrait. L'interpolation du profil diffère au dernier bit entre les moteurs, à
+trancher avec la paire de la carrière. Le propriétaire tranche deux paires de
+données. Détail : `2026-10-24-etape-6-troisieme-partie-le-centre-du-cout.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
