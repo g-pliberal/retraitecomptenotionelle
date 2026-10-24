@@ -23,10 +23,15 @@ import pytest
 
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.droit import liquider
-from retraite_notionnelle.saisie import Saisie
-from outils_web import contexte  # noqa: F401 — la fixture partagée
+
+from outils_pont import Saisies
 
 RACINE = Path(__file__).resolve().parents[1]
+
+
+@pytest.fixture(scope="module")
+def saisies() -> Saisies:
+    return Saisies()
 
 
 def test_le_bareme_de_2015_ne_vaut_que_depuis_le_1er_mars_2015():
@@ -96,38 +101,37 @@ def test_le_capital_se_verse_en_une_fois_ou_en_deux_selon_la_date_et_les_points(
     assert forme(4599, DateMois(2020, 1)).forme == "capital"
 
 
-def _rafp(contexte, **requete):
+def _rafp(saisies, **requete):
     """La pension du RAFP qu'une saisie fictive liquide au scénario 1."""
-    resultat = contexte.simuler(Saisie.depuis_requete(requete)).actuel
+    resultat = saisies.simuler(requete).actuel
     return next(p for p in resultat.pensions_par_regime if p.regime == "rafp")
 
 
-def test_un_fonctionnaire_parti_a_64_ans_et_6_mois_touche_le_coefficient_du_mois(contexte):
+def test_un_fonctionnaire_parti_a_64_ans_et_6_mois_touche_le_coefficient_du_mois(saisies):
     """Né le 15 juin 1966, parti en janvier 2031 : 64 ans et 6 mois révolus,
     1,10 — la majoration d'un âge entier, 1,08, lui retirait 1,8 %."""
-    pension = _rafp(contexte, naissance="1966-06-15", statut="fonctionnaire_etat",
+    pension = _rafp(saisies, naissance="1966-06-15", statut="fonctionnaire_etat",
                     debut="1990-09", liquidation="64.5", primes="0.2")
     assert "coefficient de majoration 1.1000" in pension.detail
 
 
-def test_un_fonctionnaire_parti_en_2012_garde_le_bareme_de_2005(contexte):
+def test_un_fonctionnaire_parti_en_2012_garde_le_bareme_de_2005(saisies):
     """Né le 15 juin 1950, parti à 62 ans en juillet 2012 : le barème au pivot
     de soixante ans lui sert 1,08, et ses sept années de primes, sous le seuil,
     un capital au coefficient de conversion de 2005, 24,62."""
-    pension = _rafp(contexte, naissance="1950-06-15", statut="fonctionnaire_etat",
+    pension = _rafp(saisies, naissance="1950-06-15", statut="fonctionnaire_etat",
                     debut="1975-09", liquidation="62", primes="0.15")
     assert "coefficient de majoration 1.0800" in pension.detail
     assert "en une fois" in pension.detail
     assert pension.capital == pytest.approx(pension.montant * 24.62)
 
 
-def test_le_rafp_qui_attend_l_age_legal_compte_ses_mois_depuis_le_depart(contexte):
+def test_le_rafp_qui_attend_l_age_legal_compte_ses_mois_depuis_le_depart(saisies):
     """Le RAFP d'un fonctionnaire parti avant l'âge légal prend effet à cet
     âge : les mois qui le séparent du départ déclaré, ceux que le
     fractionnement oppose à la retraite de base."""
-    saisie = Saisie.depuis_requete({"naissance": "1970-06-15", "statut": "fonctionnaire_etat",
-                                    "debut": "1992-09", "liquidation": "60"})
-    carriere = contexte.carriere(saisie)
+    carriere = saisies.carriere({"naissance": "1970-06-15", "statut": "fonctionnaire_etat",
+                                 "debut": "1992-09", "liquidation": "60"})
     assert liquider.mois_apres_le_depart(carriere, 64.0) == 48
     assert liquider.mois_apres_le_depart(carriere, 60.0) == 0
     assert liquider.mois_apres_le_depart(carriere.liquidee_au(carriere.date_de_l_age(64.0)),

@@ -222,12 +222,11 @@ def test_la_reversion_d_une_pension_portee_au_minimum_en_garde_54_pour_cent():
     mai 2023 : sa réversion est 54 % du minimum de 2023, quand même sa pension,
     revalorisée comme les pensions depuis 2010, reste 0,3 % sous le minimum que
     le décret de 2015 écrit au 1er octobre 2014."""
-    from retraite_notionnelle.contexte import Contexte
-    from retraite_notionnelle.saisie import Saisie
+    from outils_pont import Saisies
 
-    sortie = Contexte().simuler(Saisie.depuis_requete({
+    sortie = Saisies().simuler({
         **REQUETE, "conjoint": "1957", "mariage": "1980-06", "deces": "2023-05",
-    })).dictionnaire()["reversion"]
+    }).dictionnaire()["reversion"]
     ligne, = [ligne for ligne in sortie["regimes"] if ligne["regime"] == "sncf"]
     assert ligne["base"] < MINIMUM_FEVRIER_2023
     assert (ligne["motif"], ligne["montant"]) == (

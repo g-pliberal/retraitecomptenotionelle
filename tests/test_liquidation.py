@@ -17,7 +17,6 @@ from __future__ import annotations
 import json
 import shutil
 import subprocess
-import sys
 import tempfile
 from pathlib import Path
 
@@ -503,47 +502,30 @@ def _requetes() -> list[dict]:
 
 def _python(requetes: list[dict]) -> list[dict]:
     """Ce que la liquidation et l'échéancier écrivent, en Python, pour chaque
-    requête : la liquidation et ses étapes, le journal, et les appels."""
-    sys.path.insert(0, str(RACINE / "src"))
-    from retraite_notionnelle.saisie import Saisie
-    from retraite_notionnelle.contexte import Contexte
+    requête, sur la carrière que le portage en bâtit (``outils_pont``) : la
+    liquidation et ses étapes, le journal, et les appels."""
+    from outils_pont import Saisies
 
-    contexte = Contexte()
-    saisies: list = []
-    original = Simulateur.simuler
-
-    def capter(self, carriere, *args, **kwargs):
-        comparaison = original(self, carriere, *args, **kwargs)
-        if not saisies:
-            saisies.append(comparaison)
-        return comparaison
-
+    saisies = Saisies()
     sortie = []
-    Simulateur.simuler = capter
-    try:
-        for requete in requetes:
-            saisies.clear()
+    for requete in requetes:
+        try:
+            parametres, carriere = saisies.lire(requete)
+            simulateur = saisies.simulateur(parametres)
             avant = liquidation.appels()
-            try:
-                contexte.simuler(Saisie.depuis_requete(requete))
-            except Exception as erreur:  # noqa: BLE001 — le refus est comparé
-                sortie.append({"erreur": str(erreur)})
-                continue
-            if not saisies:
-                sortie.append({"erreur": "aucune carrière simulée"})
-                continue
-            journal = saisies[0].journal
-            # Une liquidation par départ : une seule, sauf quand les régimes
-            # liquident à des dates différentes.
-            sortie.append({"liquidations": [
-                {"ouverture": liquidee.ouverture.donnees(),
-                 "pensions": liquidee.pensions.donnees(),
-                 "complements": liquidee.complements.donnees()}
-                for liquidee in (e.contenu for e in journal if e.sorte == "liquidation")],
-                           "journal": journal.donnees(),
-                           "appels": liquidation.appels() - avant})
-    finally:
-        Simulateur.simuler = original
+            journal = simulateur.simuler(carriere).journal
+        except Exception as erreur:  # noqa: BLE001 — le refus est comparé
+            sortie.append({"erreur": str(erreur)})
+            continue
+        # Une liquidation par départ : une seule, sauf quand les régimes
+        # liquident à des dates différentes.
+        sortie.append({"liquidations": [
+            {"ouverture": liquidee.ouverture.donnees(),
+             "pensions": liquidee.pensions.donnees(),
+             "complements": liquidee.complements.donnees()}
+            for liquidee in (e.contenu for e in journal if e.sorte == "liquidation")],
+                       "journal": journal.donnees(),
+                       "appels": liquidation.appels() - avant})
     return json.loads(json.dumps(sortie))
 
 

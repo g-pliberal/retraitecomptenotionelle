@@ -25,9 +25,9 @@ import pytest
 
 from retraite_notionnelle.carriere import Carriere, Metier
 from retraite_notionnelle.config import PartCotisation
-from retraite_notionnelle.contexte import Contexte
-from retraite_notionnelle.saisie import Saisie
 from retraite_notionnelle.simulateur import Simulateur
+
+from outils_pont import Saisies
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -202,12 +202,11 @@ def test_les_deux_moteurs_servent_les_memes_pcv():
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     sys.path.insert(0, str(RACINE / "scripts"))
     from construire_temoins import _fini
-    contexte = Contexte()
+    saisies = Saisies()
     attendus = []
     for cas in CAS:
-        saisie = Saisie.depuis_requete(cas)
         attendus.append({"requete": cas,
-                         "resultat": _fini(contexte.simuler(saisie).dictionnaire())})
+                         "resultat": _fini(saisies.simuler(cas).dictionnaire())})
     texte = json.dumps(attendus, ensure_ascii=False)
     assert "asv_auxiliaires_medicaux" in texte and "asv_chirurgiens_dentistes" in texte
     assert "asv_sages_femmes" in texte and "asv_directeurs_laboratoire" in texte

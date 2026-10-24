@@ -19,13 +19,13 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.contexte import Contexte
 from retraite_notionnelle.droit import completer
 from retraite_notionnelle.droit.commun import (AvantageApplique, fusionner_les_charges,
                                                parts_de_la_majoration)
 from retraite_notionnelle.revalorisation import faire_vivre
-from retraite_notionnelle.saisie import Saisie
 from retraite_notionnelle.simulateur import Simulateur
+
+from outils_pont import Saisies
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -34,13 +34,13 @@ CADRE = {"statut": "salarie_prive_cadre", "debut": "22"}
 
 
 @pytest.fixture(scope="module")
-def contexte() -> Contexte:
-    return Contexte()
+def saisies() -> Saisies:
+    return Saisies()
 
 
-def _simuler(contexte, **requete):
-    saisie = Saisie.depuis_requete({**CADRE, **requete})
-    return saisie, contexte.simuler(saisie)
+def _simuler(saisies, **requete):
+    requete = {**CADRE, **requete}
+    return requete, saisies.simuler(requete)
 
 
 def _majoration(comparaison) -> AvantageApplique | None:
@@ -54,7 +54,7 @@ def _pensions(comparaison) -> dict[str, float]:
 
 # -- la fiche --------------------------------------------------------------------
 
-def test_la_fiche_date_l_arrco_l_agirc_et_le_regime_unifie(contexte):
+def test_la_fiche_date_l_arrco_l_agirc_et_le_regime_unifie(saisies):
     """Rien avant 1999 ; l'Arrco seule, sur l'allocation, jusqu'en 2011 ;
     l'Arrco et l'Agirc chacune sur ses droits bruts de 2012 à 2018 ; une seule
     allocation depuis 2019."""
@@ -71,11 +71,11 @@ def test_la_fiche_date_l_arrco_l_agirc_et_le_regime_unifie(contexte):
 
 # -- la date d'effet --------------------------------------------------------------
 
-def test_l_arrco_sert_5_pour_cent_par_enfant_a_charge_depuis_1999(contexte):
+def test_l_arrco_sert_5_pour_cent_par_enfant_a_charge_depuis_1999(saisies):
     """Parti en avril 2005 avec deux enfants de moins de dix-huit ans : l'Arrco
     majorée de 10 %, l'Agirc rien ; puis de 5 % au premier anniversaire, et
     plus rien au second."""
-    _, comparaison = _simuler(contexte, naissance="1943-03-15", liquidation="2005-04",
+    _, comparaison = _simuler(saisies, naissance="1943-03-15", liquidation="2005-04",
                               enfants="2", naissances="1990,1995-05")
     majoration = _majoration(comparaison)
     arrco = _pensions(comparaison)["arrco"]
@@ -88,19 +88,19 @@ def test_l_arrco_sert_5_pour_cent_par_enfant_a_charge_depuis_1999(contexte):
     assert "jusqu'en mai 2013" in majoration.detail
 
 
-def test_l_agirc_la_sert_depuis_2012_chacune_sur_son_allocation(contexte):
-    _, comparaison = _simuler(contexte, naissance="1950-03-15", liquidation="2015-04",
+def test_l_agirc_la_sert_depuis_2012_chacune_sur_son_allocation(saisies):
+    _, comparaison = _simuler(saisies, naissance="1950-03-15", liquidation="2015-04",
                               enfants="2", naissances="1995,2002-05")
     pensions = _pensions(comparaison)
     assert dict(_majoration(comparaison).par_regime) == pytest.approx(
         {"arrco": 0.05 * pensions["arrco"], "agirc": 0.05 * pensions["agirc"]})
 
 
-def test_la_majoration_se_calcule_sans_le_coefficient_d_anticipation(contexte):
+def test_la_majoration_se_calcule_sans_le_coefficient_d_anticipation(saisies):
     """Parti en 2039 avec un enfant de quatorze ans et une décote : 5 % des
     droits que le coefficient d'anticipation n'a pas réduits, le même pour
     tous les régimes de la complémentaire, et rien au régime général."""
-    _, comparaison = _simuler(contexte, naissance="1975-03-15", liquidation="2039-04",
+    _, comparaison = _simuler(saisies, naissance="1975-03-15", liquidation="2039-04",
                               enfants="1", naissances="2025-06")
     parts = dict(_majoration(comparaison).par_regime)
     pensions = _pensions(comparaison)
@@ -111,14 +111,14 @@ def test_la_majoration_se_calcule_sans_le_coefficient_d_anticipation(contexte):
     assert max(rapports) == pytest.approx(min(rapports))
 
 
-def test_la_plus_forte_des_deux_majorations_est_servie(contexte):
+def test_la_plus_forte_des_deux_majorations_est_servie(saisies):
     """Trois enfants, dont un de moins de dix-huit ans : les 10 % des enfants
     nés ou élevés passent les 5 % du seul enfant à charge, et sont seuls
     servis ; avec trois enfants à charge, les 15 % l'emportent."""
-    _, un = _simuler(contexte, naissance="1975-03-15", liquidation="2039-04",
+    _, un = _simuler(saisies, naissance="1975-03-15", liquidation="2039-04",
                      enfants="3", naissances="2005,2010,2025-06")
     assert _majoration(un).a_charge == ()
-    _, trois = _simuler(contexte, naissance="1975-03-15", liquidation="2039-04",
+    _, trois = _simuler(saisies, naissance="1975-03-15", liquidation="2039-04",
                         enfants="3", naissances="2022,2024,2025-06")
     majoration = _majoration(trois)
     assert majoration.a_charge
@@ -138,21 +138,21 @@ def test_seul_compte_l_enfant_a_charge_a_la_date_d_effet():
         "2008-06-01", "2010-11-01"]
 
 
-def test_avant_1999_rien(contexte):
-    _, comparaison = _simuler(contexte, naissance="1935-03-15", liquidation="1997-04",
+def test_avant_1999_rien(saisies):
+    _, comparaison = _simuler(saisies, naissance="1935-03-15", liquidation="1997-04",
                               enfants="1", naissances="1985")
     assert _majoration(comparaison) is None
 
 
 # -- les échéances ----------------------------------------------------------------
 
-def test_la_majoration_cesse_avec_la_charge(contexte):
+def test_la_majoration_cesse_avec_la_charge(saisies):
     """La revalorisation retire, à chaque échéance, la part des enfants qui ne
     sont plus à charge : toute en 2007, la moitié de 2008 à 2012, rien
     ensuite."""
-    saisie, comparaison = _simuler(contexte, naissance="1943-03-15", liquidation="2005-04",
-                                   enfants="2", naissances="1990,1995-05")
-    simulateur = contexte.simulateur(saisie.parametres(contexte.base))
+    requete, comparaison = _simuler(saisies, naissance="1943-03-15", liquidation="2005-04",
+                                    enfants="2", naissances="1990,1995-05")
+    simulateur = saisies.simulateur(requete)
     servies = {}
     for annee in (2007, 2008, 2012, 2013, 2020):
         vivante = faire_vivre(simulateur, comparaison.carriere, comparaison.actuel, annee)
@@ -204,7 +204,7 @@ CAS = [
 ]
 
 
-def test_les_deux_moteurs_servent_la_meme_majoration(contexte):
+def test_les_deux_moteurs_servent_la_meme_majoration(saisies):
     """Le résultat entier, aujourd'hui compris — où la majoration a perdu
     l'enfant qui n'est plus à charge —, est le même en Python et en
     JavaScript."""
@@ -215,9 +215,8 @@ def test_les_deux_moteurs_servent_la_meme_majoration(contexte):
 
     attendus = []
     for cas in CAS:
-        saisie = Saisie.depuis_requete({**CADRE, **cas})
         attendus.append({"requete": {**CADRE, **cas},
-                         "resultat": _fini(contexte.simuler(saisie).dictionnaire())})
+                         "resultat": _fini(saisies.simuler({**CADRE, **cas}).dictionnaire())})
     texte = json.dumps(attendus, ensure_ascii=False)
     assert "enfant à charge" in texte and "enfants à charge" in texte
     with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",

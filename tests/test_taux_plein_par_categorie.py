@@ -19,8 +19,10 @@ from pathlib import Path
 import pytest
 
 from retraite_notionnelle.droit import categories
-from retraite_notionnelle.saisie import ErreurSaisie, Saisie
 from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.web.site import ErreurSite
+
+from outils_pont import saisie_du_portage
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -166,20 +168,20 @@ def test_le_travailleur_manuel_de_1978(simulateur):
 # -- la saisie ------------------------------------------------------------------
 
 def test_la_saisie_porte_les_trois_titres_et_les_reecrit():
-    saisie = Saisie.depuis_requete({"naissance": "1940", "liquidation": "62",
-                                    "deporte": "oui", "guerre": "30",
-                                    "travail_manuel": "ouvrier"})
+    saisie = saisie_du_portage({"naissance": "1940", "liquidation": "62",
+                                "deporte": "oui", "guerre": "30",
+                                "travail_manuel": "ouvrier"})
     assert (saisie.deporte, saisie.mois_de_guerre, saisie.travail_manuel) == (
         True, 30, "ouvrier")
     requete = saisie.requete()
     for champ in ("deporte=oui", "guerre=30", "travail_manuel=ouvrier"):
         assert champ in requete.split("&"), champ
-    relue = Saisie.depuis_requete(dict(c.split("=", 1) for c in requete.split("&")))
+    relue = saisie_du_portage(dict(c.split("=", 1) for c in requete.split("&")))
     assert (relue.deporte, relue.mois_de_guerre, relue.travail_manuel) == (
         True, 30, "ouvrier")
     assert saisie.invalidite_declaree()["mois_de_guerre"] == 30
-    with pytest.raises(ErreurSaisie):
-        Saisie.depuis_requete({"naissance": "1940", "liquidation": "62", "guerre": "0"})
+    with pytest.raises(ErreurSite, match="ErreurSaisie"):
+        saisie_du_portage({"naissance": "1940", "liquidation": "62", "guerre": "0"})
 
 
 # -- les deux moteurs -----------------------------------------------------------

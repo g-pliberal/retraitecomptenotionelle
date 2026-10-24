@@ -23,15 +23,15 @@ from pathlib import Path
 import pytest
 
 from retraite_notionnelle.carriere import LigneRelevee
-from retraite_notionnelle.contexte import Contexte
 from retraite_notionnelle.droit.commun import PensionRegime
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.droit.completer import (
     FICHE_DU_VERSEMENT_AGIRC_ARRCO, FICHE_DU_VERSEMENT_FORFAITAIRE,
     FICHE_DU_VERSEMENT_IRCANTEC, FICHE_DU_VERSEMENT_RCI, _seuil_a_la_date,
     coefficient_du_versement, verser_en_capital)
-from retraite_notionnelle.saisie import Saisie
 from retraite_notionnelle.simulateur import Simulateur
+
+from outils_pont import Saisies
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -257,9 +257,9 @@ def test_le_capital_verse_a_l_assure_ne_laisse_pas_de_reversion(ligne, regime):
     l'Ircantec, il « supprime tout droit pour le conjoint » (article 25) ; au RCI,
     il « fait obstacle à l'attribution d'une pension de réversion » (règlement,
     article 41, II)."""
-    sortie = Contexte().simuler(Saisie.depuis_requete({
+    sortie = Saisies().simuler({
         **REQUETE, "naissance": "1958", "liquidation": "64", "releve": ligne,
-        "conjoint": "1960", "deces": "2023-05"})).dictionnaire()
+        "conjoint": "1960", "deces": "2023-05"}).dictionnaire()
     directe, = [p for p in sortie["scenarios"]["actuel"]["par_regime"]
                 if p["regime"] == regime]
     assert "versée en capital" in directe["detail"]

@@ -14,7 +14,6 @@ from __future__ import annotations
 import json
 import shutil
 import subprocess
-import sys
 import tempfile
 from pathlib import Path
 
@@ -286,41 +285,25 @@ def _requetes() -> list[dict]:
 
 
 def _python(requetes: list[dict]) -> list[dict]:
-    """Ce que chaque étape écrit, en Python, pour chaque requête."""
-    sys.path.insert(0, str(RACINE / "src"))
-    from retraite_notionnelle.saisie import Saisie
-    from retraite_notionnelle.contexte import Contexte
+    """Ce que chaque étape écrit, en Python, pour chaque requête, sur la
+    carrière que le portage en bâtit (``outils_pont``)."""
+    from outils_pont import Saisies
 
-    contexte = Contexte()
-    saisies: list = []
-    original = Simulateur.simuler
-
-    def capter(self, carriere, *args, **kwargs):
-        if not saisies:
-            saisies.append((self, carriere))
-        return original(self, carriere, *args, **kwargs)
-
+    saisies = Saisies()
     sortie = []
-    Simulateur.simuler = capter
-    try:
-        for requete in requetes:
-            saisies.clear()
-            try:
-                contexte.simuler(Saisie.depuis_requete(requete))
-            except Exception as erreur:  # noqa: BLE001 — le refus est comparé
-                sortie.append({"erreur": str(erreur)})
-                continue
-            if not saisies:
-                sortie.append({"erreur": "aucune carrière simulée"})
-                continue
-            simulateur, carriere = saisies[0]
-            releve_ = releve.construire(simulateur.scenario_actuel, carriere)
-            sortie.append({"coordination": releve_.coordination.donnees(),
-                           "durees": releve_.durees.donnees(),
-                           "droits": releve_.droits.donnees(),
-                           "releve": releve_.donnees()})
-    finally:
-        Simulateur.simuler = original
+    for requete in requetes:
+        try:
+            parametres, carriere = saisies.lire(requete)
+            simulateur = saisies.simulateur(parametres)
+            simulateur.simuler(carriere)
+        except Exception as erreur:  # noqa: BLE001 — le refus est comparé
+            sortie.append({"erreur": str(erreur)})
+            continue
+        releve_ = releve.construire(simulateur.scenario_actuel, carriere)
+        sortie.append({"coordination": releve_.coordination.donnees(),
+                       "durees": releve_.durees.donnees(),
+                       "droits": releve_.droits.donnees(),
+                       "releve": releve_.donnees()})
     return json.loads(json.dumps(sortie))
 
 
