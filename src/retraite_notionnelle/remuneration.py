@@ -820,7 +820,8 @@ class PrelevementsPension:
     #: salariés (L. 131-2, 1° ; D. 242-8) : 1 %, sur ce que servent les régimes
     #: de :attr:`regimes_maladie`, majoration pour enfants exclue. Le scénario 1
     #: la prélève sur sa part complémentaire ; les cinq autres gardent le taux
-    #: qui en résulte pour la même personne (:class:`~.contexte.Montants`).
+    #: qui en résulte pour la même personne (``Montants``, dans
+    #: ``moteur/js/contexte.js``).
     maladie_complementaire: float = 0.0
     regimes_maladie: frozenset[str] = frozenset()
     #: L'abattement de 10 % des pensions (CGI, art. 158, 5 a) : son taux, son

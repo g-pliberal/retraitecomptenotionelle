@@ -480,8 +480,8 @@ listes:
         dit: qui réside hors de France après son départ n'y a pas son domicile fiscal
         valeur: le pays de résidence que la saisie dit
         appliquee_par: >-
-          le net (contexte.py, Montants.du_foyer, et son jumeau JavaScript), qui
-          ne prélève alors ni CSG, ni CRDS, ni CASA (L. 136-1)
+          le net (moteur/js/contexte.js, Montants.duFoyer), qui ne prélève
+          alors ni CSG, ni CRDS, ni CASA (L. 136-1)
         entrera_a: foyer_et_net
         raison: >-
           la CSG ne frappe que les personnes domiciliées en France pour l'impôt
@@ -494,8 +494,8 @@ listes:
           la pension du système 1, et les ressources du conjoint déclaré,
           abattues de 10 %
         appliquee_par: >-
-          le net (contexte.py, Montants.du_foyer, et son jumeau JavaScript),
-          quand la saisie ne dit pas le revenu fiscal
+          le net (moteur/js/contexte.js, Montants.duFoyer), quand la saisie ne
+          dit pas le revenu fiscal
         entrera_a: foyer_et_net
         raison: >-
           le taux de CSG d'une pension, et la CASA et la cotisation maladie qui

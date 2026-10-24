@@ -1,7 +1,12 @@
 /**
  * Le contexte du site : ses données, et le jeu de règles sous lequel il calcule.
  *
- * Portage de ``src/retraite_notionnelle/contexte.py``.
+ * Portage d'une partie de ``src/retraite_notionnelle/contexte.py`` : ce qui lit
+ * les données sous un jeu de règles, dont le Python garde le centre du coût,
+ * que le site lit dans son paquet. La saisie — d'une requête, la carrière,
+ * l'échelle des salaires, les montants nets — n'a que cet exemplaire depuis
+ * l'action 161, étape 6 : la fabrique la fait tourner par le pont
+ * (`src/retraite_notionnelle/pont.mjs`).
  */
 
 import { DateMois, MOIS_PAR_AN } from "./calendrier.js";
@@ -339,14 +344,16 @@ export class Contexte {
   /**
    * Les départs que « Mon estimation retraite » chiffre — au plus tôt, au taux
    * plein, au taux plein automatique —, tels que le scénario 1 les sert à la
-   * carrière de cette saisie : le brut de chaque étage, annuel, en euros
-   * constants de l'année de référence. Deux âges confondus font un départ.
+   * carrière de cette saisie (`agesDeLEstimation`, pilote.js). Chaque départ
+   * refait la carrière à sa date, comme la saisie la ferait si on y écrivait
+   * cette date, et la liquide : le brut de chaque étage, annuel, en euros
+   * constants de l'année de référence, la convention de l'estimation
+   * indicative globale. Deux âges confondus font un départ.
    * Vide pour une saisie par la pension, pour qui est déjà parti, pour une
    * carrière dont la saisie date elle-même des pensions — demandées régime par
    * régime, ouvertes par l'invalidité ou par la radiation —, quand le droit
    * n'oppose aucun âge, ou quand la saisie ou le modèle refusent la carrière à
-   * l'un des âges ; un départ d'une année déjà passée est omis. Voir
-   * `departs_de_l_estimation` (contexte.py).
+   * l'un des âges ; un départ d'une année déjà passée est omis.
    */
   departsDeLEstimation(saisie) {
     const estimation = this._estimation(saisie);
@@ -390,9 +397,8 @@ export class Contexte {
    * `balayageDUneCarriere` sous la convention de l'OCDE, ou du COR avec
    * `cor`, et `comparaison`, qui en passe les montants aux euros de la page
    * (`enEurosConstants`). Vide dans les cas où `departsDeLEstimation` l'est ;
-   * un départ d'une année déjà passée est omis. Le site seul le montre : il
-   * n'a pas de jumeau dans le contexte Python ; les cas types du COR passent
-   * par `scripts/cycle_de_vie.mjs`.
+   * un départ d'une année déjà passée est omis. Le site seul le montre ; les
+   * cas types du COR passent par `scripts/cycle_de_vie.mjs`.
    */
   balayageDeLEstimation(saisie, pas = 1.0, cor = false) {
     const estimation = this._estimation(saisie);
@@ -511,12 +517,19 @@ export class Contexte {
    * l'est. Le coefficient des euros constants ne
    * dépend que de l'année de liquidation, jamais du niveau de revenu : il se
    * calcule une fois, avant la dichotomie, et non à chaque tour.
+   *
+   * POUR UN RETRAITÉ, LA CIBLE EST LA PENSION D'AUJOURD'HUI. Il saisit ce qu'il
+   * touche, pas ce qu'il touchait le premier mois : la dichotomie compare donc
+   * au montant saisi la pension du départ revalorisée comme le droit l'a fait
+   * depuis — l'échéance de l'année courante de `Simulateur.echeancier` —, en
+   * euros de l'année courante. Cette revalorisation-là dépend du niveau, par la
+   * tranche de 2020 et par le poids de la complémentaire : elle se refait à
+   * chaque tour, et c'est le prix de l'exactitude.
    */
   _simulerParPension(simulateur, saisie, batir, parcours) {
     const montants = Montants.depuis(saisie, simulateur);
     // Pour un retraité, la cible est la pension d'AUJOURD'HUI : il saisit ce
-    // qu'il touche, pas ce qu'il touchait le premier mois. Voir
-    // `_simuler_par_pension` dans `contexte.py`.
+    // qu'il touche, pas ce qu'il touchait le premier mois.
     const parametres = simulateur.parametres;
     const retraite = saisie.dateDe(saisie.liquidation).annee < parametres.annee_courante;
     const constants = simulateur.macro.coefficientPrix(
@@ -525,7 +538,8 @@ export class Contexte {
     );
     // La cible reste dans la langue de la saisie, nette peut-être : le taux
     // qui sépare une pension de sa nette dépend de sa part complémentaire,
-    // donc du niveau cherché. Voir `_simuler_par_pension` dans `contexte.py`.
+    // donc du niveau cherché. C'est la pension de chaque niveau qu'on nette, et
+    // non la cible qu'on remonte au brut.
     const cible = saisie.pension * MOIS_PAR_AN / constants;
     const pensionDeNiveau = (niveau) => {
       const carriere = batir(saisie.niveauxDeLaPension(niveau, parcours));
@@ -552,7 +566,7 @@ export class Contexte {
   /**
    * Le relevé que `simuler` calcule : celui de la saisie, puis les années qui
    * le séparent du départ (`releveJusquAuDepart`). La page dit celles qu'elle
-   * a ajoutées. Voir `releve_prolonge` du Python.
+   * a ajoutées.
    */
   releveProlonge(saisie) {
     const simulateur = this.simulateur(saisie.parametres(this.base));
@@ -570,8 +584,7 @@ export class Contexte {
    * dont celle de l'année du départ — et le `seuil` d'un trimestre de l'année
    * (`seuilDUnTrimestre`, R. 351-9). Le calcul, lui, garde les trimestres du
    * relevé. Vide quand la saisie n'est pas un relevé, qu'aucune année ne se
-   * contrôle, ou que la saisie refuse la carrière. Le site seul le montre : il
-   * n'a pas de jumeau dans le contexte Python.
+   * contrôle, ou que la saisie refuse la carrière. Le site seul le montre.
    */
   controleDuReleve(saisie) {
     if (!saisie.releveActif) {
@@ -633,6 +646,8 @@ export class Contexte {
    * ce qui fait de ce chemin le plus exact — et le seul où l'euro n'est pas
    * converti. Seules les années qui suivent le relevé, jusqu'au départ, se
    * projettent (`releveJusquAuDepart`) ; `prolonger = false` s'en tient au
+   * relevé, pour qui l'a déjà prolongé à sa façon
+   * (`scripts/estimation_officielle.py`, par le pont), et pour le contrôle du
    * relevé.
    */
   carriereRelevee(simulateur, saisie, motifs, prolonger = true) {
@@ -701,10 +716,11 @@ export class Contexte {
 
 /**
  * La carrière hors de France que la saisie déclare, telle que la chronologie la
- * reçoit. Chaque État s'y contrôle sur le tableau des accords, la saisie
- * n'ayant pas les données ; le montant de chaque pension étrangère, saisi en
- * euros d'aujourd'hui, y devient son montant `mensuel` en euros de l'année où
- * elle commence, sur les prix. Voir `_etranger` du Python.
+ * reçoit. Chaque État s'y contrôle sur le tableau des accords : c'est ici qu'un
+ * code inconnu se refuse, la saisie n'ayant pas les données. Le montant de
+ * chaque pension étrangère, saisi en euros d'aujourd'hui, y devient son montant
+ * `mensuel` en euros de l'année où elle commence : il suit les prix, faute de
+ * connaître la revalorisation de l'autre État.
  */
 function etrangerDeclare(simulateur, saisie) {
   const etranger = saisie.etrangerDeclare();
@@ -748,13 +764,21 @@ function etrangerDeclare(simulateur, saisie) {
 /**
  * Le relevé, sa dernière année poursuivie jusqu'au départ (`prolongerReleve`) :
  * comme le dernier métier d'un parcours court jusqu'à lui, et comme « Mon
- * estimation retraite » prolonge les revenus. Les années ajoutées prennent leur
- * motif comme celles d'une carrière de métiers (`interruptionsApres`) ; le
- * champ « Temps partiel » et la retraite progressive les mettent à temps
- * partiel, et celui des dispenses leur donne son motif ; la radiation pour invalidité
- * les arrête à sa date quand elle ne tombe pas avant la dernière année du
- * relevé. Rien ne s'ajoute à qui est parti une année déjà passée. Voir
- * `_releve_jusqu_au_depart` du Python.
+ * estimation retraite » prolonge les revenus jusqu'au départ qu'elle chiffre.
+ * Sans cela, qui dépose son relevé à quarante ans recevait la pension de qui
+ * cesserait de travailler le jour même.
+ *
+ * Les années ajoutées prennent leur motif comme celles d'une carrière de
+ * métiers (`interruptionsApres`) : une période à l'étranger, puis le champ
+ * « Interruptions », qui garde le dernier mot — `sans_activite` pour qui ne
+ * travaille plus. Le champ « Temps partiel » et la retraite progressive les
+ * mettent à temps partiel ; celui des dispenses de l'assiette minimale leur
+ * donne son motif. La radiation pour invalidité, qui clôt l'emploi de
+ * fonctionnaire, les arrête à sa date quand elle ne tombe pas avant la
+ * dernière année du relevé : ce qui la suit, le relevé ne le dit pas.
+ *
+ * Rien ne s'ajoute à qui est parti une année déjà passée : son relevé dit
+ * toute sa carrière, et ce qui y manque n'a pas été travaillé.
  */
 function releveJusquAuDepart(simulateur, saisie, releve, motifs) {
   const depart = saisie.dateLiquidation;
@@ -779,8 +803,8 @@ function releveJusquAuDepart(simulateur, saisie, releve, motifs) {
 
 /**
  * Les motifs de dispense de l'assiette minimale que le paquet connaît : la
- * saisie refuse les autres sur la table même qui calcule. Voir
- * `_dispenses_connues` du Python.
+ * saisie refuse les autres sur la table même qui calcule, comme les motifs
+ * d'interruption (`legislation/dispenses_assiette_minimale.yaml`).
  */
 function dispensesConnues(paquet) {
   return Object.keys(paquet.dispenses_assiette_minimale ?? {}).sort();
@@ -789,7 +813,7 @@ function dispensesConnues(paquet) {
 /**
  * Les dates de demande que la saisie dit, chacune pour un régime que le
  * catalogue connaît : c'est ici qu'un code inconnu se refuse, la saisie n'ayant
- * pas le catalogue. Voir `_demandes_de_pension` du Python.
+ * pas le catalogue.
  */
 function demandesDePension(simulateur, saisie) {
   const demandes = saisie.demandesDePensionDeclarees();
@@ -869,8 +893,10 @@ function departEstime(simulateur, parametres, carriere, quoi) {
 /**
  * La radiation pour invalidité clôt un emploi de fonctionnaire civil — de
  * l'État, territorial, hospitalier, ouvrier de l'État —, et la carrière ne
- * reste pas dans la fonction publique après elle. Voir
- * `_verifier_radiation_pour_invalidite` du Python.
+ * reste pas dans la fonction publique après elle : c'est ici qu'elle se
+ * contrôle, la saisie n'ayant pas les affiliations. Le militaire radié par
+ * suite d'infirmités relève d'autres règles, que le modèle ne sert pas (fiche
+ * `retraite_pour_invalidite_fonction_publique`).
  */
 function verifierRadiationPourInvalidite(affiliations, carriere) {
   const radiation = carriere.radiationPourInvalidite;
@@ -903,7 +929,8 @@ function verifierRadiationPourInvalidite(affiliations, carriere) {
 
 /**
  * Ce statut verse-t-il, cette année-là, à un régime du code des pensions, qui
- * compte ses services au jour (R. 26) ? Voir `_au_jour` du Python.
+ * compte ses services au jour (R. 26) ? Seule sa ligne de relevé peut alors
+ * porter une fraction de trimestre.
  */
 function auJour(affiliations, affiliation, annee) {
   return affiliations.periodes(affiliation).some((periode) => periode.debut <= annee
@@ -1011,7 +1038,10 @@ function partsDuFoyer(saisie) {
   return saisie.conjoint ? 2 : 1;
 }
 
-/** Les pensions du foyer, une par pensionné, et celles du conjoint déclaré. */
+/**
+ * Les pensions du foyer, une par pensionné : la sienne, et les ressources que
+ * la saisie prête au conjoint déclaré.
+ */
 function foyer(saisie, pension) {
   const pensions = [pension];
   if (saisie.conjoint && saisie.ressources_conjoint) pensions.push(saisie.ressources_conjoint);
@@ -1019,8 +1049,12 @@ function foyer(saisie, pension) {
 }
 
 /**
- * La pension saisie, annuelle et brute. Voir `_pension_saisie_brute` dans
- * `contexte.py`.
+ * La pension que la personne saisit, annuelle et brute, en euros de l'année de
+ * référence. Nette, elle remonte au brut par la tranche où ce brut tombe : la
+ * première dont le revenu présumé est bien le sien — la nette baisse d'un cran
+ * à chaque seuil, si bien qu'une nette peut avoir deux bruts, et c'est le plus
+ * petit. La cotisation maladie, qui dépend de la part complémentaire, n'y
+ * entre pas.
  */
 function pensionSaisieBrute(saisie, pensions) {
   const annuelle = saisie.pension * MOIS_PAR_AN;
@@ -1036,8 +1070,14 @@ function pensionSaisieBrute(saisie, pensions) {
 }
 
 /**
- * Le revenu fiscal de référence du foyer, et s'il est présumé. Voir
- * `revenu_fiscal_du_foyer` dans `contexte.py`.
+ * Le revenu fiscal de référence du foyer, et s'il est présumé.
+ *
+ * Le revenu que la saisie dit l'emporte. Sinon, la présomption
+ * `aucun_autre_revenu_que_ses_pensions` : la pension du système 1 — celle que
+ * la personne saisit quand elle saisit sa pension, sinon `pension`, celle que
+ * la simulation lui sert, annuelle, en euros de l'année de référence —, et les
+ * ressources du conjoint, abattues de 10 %. `null` quand il n'y a encore ni
+ * l'une ni l'autre.
  */
 function revenuFiscalDuFoyer(saisie, pensions, pension) {
   if (saisie.revenu_fiscal !== null && saisie.revenu_fiscal !== undefined) {
@@ -1049,7 +1089,10 @@ function revenuFiscalDuFoyer(saisie, pensions, pension) {
   return [pensions.revenuFiscalPresume(foyer(saisie, annuelle)), true];
 }
 
-/** L'instrument des accords qui coordonne aussi l'assurance maladie. */
+/**
+ * L'instrument des accords qui coordonne aussi l'assurance maladie : les
+ * règlements européens (le tableau des accords).
+ */
 const REGLEMENTS_EUROPEENS_SANTE = "reglements_europeens";
 
 /** Les règlements européens s'appliquent-ils à cet État à cette date ? */
@@ -1065,8 +1108,12 @@ function reglementsEuropeens(accords, pays, date) {
 
 /**
  * Si la France prend en charge les frais de santé de qui réside hors de
- * France (L. 160-3), et pourquoi. Voir `couverture_francaise` dans
- * `contexte.py`.
+ * France (L. 160-3), et pourquoi. Sous les règlements européens, l'État de
+ * résidence est compétent s'il sert lui-même une pension (règlement (CE)
+ * n° 883/2004, art. 23), la France sinon (art. 24). Ailleurs, la pension
+ * française doit rémunérer quinze années d'assurance (L. 160-3, b) — les
+ * conventions bilatérales, qui peuvent rendre la France seule compétente (a),
+ * ne sont pas lues. Sans carrière calculée, la prise en charge est présumée.
  */
 function couvertureFrancaise(saisie, actuel, europeen, dureeMinimale) {
   if (europeen) {
@@ -1081,7 +1128,10 @@ function couvertureFrancaise(saisie, actuel, europeen, dureeMinimale) {
     trimestres >= dureeMinimale ? "quinze_ans" : "moins_de_quinze_ans"];
 }
 
-/** Le minimum vieillesse que le scénario 1 sert, à l'échéance ou au départ. */
+/**
+ * Le minimum vieillesse que le scénario 1 sert : l'ASPA de l'échéance pour qui
+ * est déjà parti, celle du départ sinon.
+ */
 function minimumVieillesseServi(actuel, aujourdhui = null) {
   if (aujourdhui !== null) return aujourdhui.minimum_vieillesse;
   let total = 0;
@@ -1093,11 +1143,14 @@ function minimumVieillesseServi(actuel, aujourdhui = null) {
 
 /**
  * La cotisation maladie de la SNCF et des mines en part de la pension du
- * scénario 1, au taux plein ou aux taux du `nonResident`, chaque pension de
- * leurs régimes menée par `coefficient` en euros de l'année des plafonds,
- * majoration pour enfants exclue, que l'article 91 du décret n° 46-2769
- * excepte lui-même aux mines (art. 139). Voir `part_des_regimes_speciaux` dans
- * `contexte.py`.
+ * scénario 1, au taux plein, ou aux taux du `nonResident` : chaque pension de
+ * leurs régimes, menée par `coefficient` en euros de l'année de référence,
+ * celle des plafonds, majoration pour enfants exclue (`assietteMaladie`, dans
+ * remuneration.js) : aux mines, l'article 91 du décret n° 46-2769 l'excepte
+ * lui-même des avantages accessoires qu'il prélève (art. 139, comme
+ * l'allocation pour enfant à charge de l'art. 141), et ceux qu'il prend, le
+ * dixième du fond (art. 138) et le conjoint à charge (art. 140), le modèle ne
+ * les sert pas.
  */
 export function partDesRegimesSpeciaux(pensions, actuel, aujourdhui = null, coefficient = 1,
   nonResident = false) {
@@ -1126,10 +1179,11 @@ export class Montants {
   constructor(net, tauxPension, rapportNetBrutSalaire = 0, rapportNetBrutProposition = 0,
     maladie = null) {
     this.net = net;
-    // Le taux de CETTE PERSONNE : 9,1 %, et la cotisation maladie de 1 % sur la
+    // Ce qui sépare une pension brute de sa nette, POUR CETTE PERSONNE : CSG
+    // 8,30 %, CRDS 0,50 %, CASA 0,30 %, et la cotisation maladie de 1 % sur la
     // part de sa pension du scénario 1 que des complémentaires servent. Les
     // cinq autres scénarios le gardent : la réforme ne change pas ses
-    // prélèvements, par hypothèse. Voir `Montants` dans `contexte.py`.
+    // prélèvements, par hypothèse. Voir `PrelevementsPension` (remuneration.js).
     this.tauxPension = tauxPension;
     // Le taux d'une pension de base, la cotisation maladie, la part de la
     // pension du scénario 1 qui la paie, et les régimes qui la prélèvent.
@@ -1138,7 +1192,9 @@ export class Montants {
     this.partMaladie = maladie?.partMaladie ?? 0;
     this.regimesMaladie = maladie?.regimesMaladie ?? new Set();
     // La cotisation maladie de la SNCF et des mines, en part de la pension du
-    // scénario 1 : au taux plein, et telle que la tranche du foyer la prélève.
+    // scénario 1 : au taux plein, et telle que la tranche du foyer la prélève ;
+    // au non-résident que la France couvre, à ses taux de L. 131-9. Un autre
+    // départ garde la part du sien (`netDUnDepart`).
     this.partRegimesSpeciaux = maladie?.partRegimesSpeciaux ?? 0;
     this.tauxRegimesSpeciaux = maladie?.tauxRegimesSpeciaux ?? 0;
     // La tranche de CSG du foyer, son taux, le revenu fiscal qui la fixe et
@@ -1152,8 +1208,9 @@ export class Montants {
     this.parts = maladie?.parts ?? 1;
     this.bareme = maladie?.bareme ?? null;
     this.saisie = maladie?.saisie ?? null;
-    // Qui réside hors de France : la cotisation maladie sur la base du régime
-    // général, sa part, et si la France prend en charge ses soins.
+    // Qui réside hors de France : la cotisation maladie sur la pension de base
+    // du régime général, et la part de celle-ci dans la pension ; si la France
+    // prend en charge ses soins, et pourquoi (`couvertureFrancaise`).
     this.tauxRegimeGeneral = maladie?.tauxRegimeGeneral ?? 0;
     this.partRegimeGeneral = maladie?.partRegimeGeneral ?? 0;
     this.regimesGeneraux = maladie?.regimesGeneraux ?? new Set();
@@ -1161,8 +1218,9 @@ export class Montants {
     this.couvert = maladie?.couvert ?? false;
     this.motifCouverture = maladie?.motifCouverture ?? "";
     // Ce qu'un euro de salaire brut laisse en net, au DERNIER revenu
-    // d'activité. Zéro quand le statut n'a pas de fiche de paie : le taux
-    // reste alors brut, faute de pouvoir le netter honnêtement.
+    // d'activité — le dénominateur du taux de remplacement. Zéro quand le
+    // statut n'a pas de fiche de paie : le taux reste alors brut, faute de
+    // pouvoir le netter honnêtement.
     this.rapportNetBrutSalaire = rapportNetBrutSalaire;
     // Le même, sur la fiche de paie de la PROPOSITION.
     this.rapportNetBrutProposition = rapportNetBrutProposition;
@@ -1173,7 +1231,8 @@ export class Montants {
     // la carrière, celle de l'année du départ : c'est l'année dont le revenu
     // sert de dénominateur au taux de remplacement.
     // La proposition a SA fiche de paie : elle prélève moins sur le même
-    // brut, et le dernier salaire net auquel sa pension se compare est le sien.
+    // brut, et le dernier salaire net auquel sa pension se compare est le sien
+    // — celui que la ligne affiche à côté de sa pension.
     let rapport = 0;
     let rapportProposition = 0;
     const remuneration = comparaison ? comparaison.remuneration : null;
@@ -1186,9 +1245,9 @@ export class Montants {
         rapportProposition = derniere.proposition.net / derniere.proposition.brut;
       }
     }
-    // LE TAUX DE LA PERSONNE, lu sur sa pension du scénario 1 telle que la page
-    // l'affiche, en euros de l'année de référence. Voir `Montants.depuis` dans
-    // `contexte.py`.
+    // LE TAUX DE LA PERSONNE, lu sur SA pension du scénario 1 telle que la page
+    // l'affiche — au départ, ou aujourd'hui pour qui est déjà parti —, en euros
+    // de l'année de référence.
     const pensions = simulateur.baremePrelevements.pensions;
     const actuel = comparaison ? (comparaison.actuel ?? null) : null;
     let servie = null;
@@ -1209,10 +1268,26 @@ export class Montants {
   }
 
   /**
-   * Le mode, et le taux du foyer : la CSG, la CRDS et la CASA de sa tranche,
-   * et la cotisation maladie de la part complémentaire de sa pension du
-   * scénario 1 ; l'allocataire de l'ASPA exonéré de tout. Voir
-   * `Montants.du_foyer` dans `contexte.py`.
+   * Le mode, et le taux du foyer (action 138, étape 2) : la CSG, la CRDS et la
+   * CASA de SA tranche de L. 136-8, et la cotisation maladie de la part
+   * complémentaire de sa pension du scénario 1 — `actuel` au départ,
+   * `aujourdhui` pour qui est déjà parti, que `coefficient` mène en euros de
+   * l'année de référence. Un allocataire de l'ASPA est exonéré de tout
+   * (L. 136-1-2, II 1° ; D. 242-9, 2°). Sans pension, ni saisie qui en dise
+   * une, ni revenu fiscal dit : le taux plein, comme avant toute simulation.
+   * Les cinq autres scénarios gardent ce taux : la réforme, par hypothèse, ne
+   * change pas les prélèvements de la personne.
+   *
+   * QUI RÉSIDE HORS DE FRANCE ne doit ni CSG, ni CRDS, ni CASA (L. 136-1) ; si
+   * la France prend en charge ses soins (`couvertureFrancaise`), une
+   * cotisation maladie à ses taux particuliers, sur la pension de base du
+   * régime général et sur les complémentaires (L. 131-9 ; D. 242-8), et sur
+   * celles de la SNCF et des mines, aux leurs.
+   *
+   * LA SNCF ET LES MINES prélèvent encore leur propre cotisation maladie sur
+   * leurs pensions (`maladie_regimes_speciaux`), 0,70 % sous un plafond et
+   * 0,50 %, aux mêmes tranches que celle des complémentaires :
+   * `partRegimesSpeciaux` est ce qu'elle prend à la pension, au taux plein.
    */
   static duFoyer(saisie, pensions, actuel = null, aujourdhui = null, coefficient = 1,
     rapport = 0, rapportProposition = 0, europeen = false) {
@@ -1288,7 +1363,9 @@ export class Montants {
    */
   tauxRemplacement(tauxBrut, proposition = false) {
     // `proposition` prend le rapport de SA fiche de paie : le même brut y
-    // laisse un net plus élevé. Voir `Montants.taux_remplacement`.
+    // laisse un net plus élevé, et le taux de la proposition se comparait
+    // jusqu'au 22 septembre 2026 au net du droit en vigueur, qu'elle ne
+    // prélève pas.
     const rapport = proposition ? this.rapportNetBrutProposition : this.rapportNetBrutSalaire;
     if (!this.net || rapport <= 0) {
       return tauxBrut;
@@ -1306,9 +1383,10 @@ export class Montants {
   }
 
   /**
-   * Une part de pension dont `assiette` paie aussi la cotisation maladie : un
-   * étage ou une ligne du scénario 1, et non plus un total ; `lignes` (une
-   * `Map`), la pension de chaque régime qu'elle contient.
+   * Une part de pension dont `assiette` paie aussi la cotisation maladie des
+   * complémentaires, et `assietteGenerale` celle d'un non-résident sur la base
+   * du régime général : un étage ou une ligne du scénario 1, et non plus un
+   * total ; `lignes` (une `Map`), la pension de chaque régime qu'elle contient.
    */
   pensionDAssiette(brut, assiette, assietteGenerale = 0, lignes = null) {
     return this.net ? this.netDAssiette(brut, assiette, assietteGenerale, lignes) : brut;
@@ -1316,11 +1394,12 @@ export class Montants {
 
   /**
    * La même, nette quel que soit le mode : la colonne du net d'un tableau qui
-   * montre les deux. Voir `Montants.net_d_assiette` dans `contexte.py`.
+   * montre les deux. La cotisation de la SNCF et des mines s'y prend sur les
+   * `lignes` de leurs régimes, majoration pour enfants exclue, sous le
+   * plafond : celle d'un étage, la sienne ; sans `lignes`, au prorata de
+   * `brut`, exacte sur un total.
    */
   netDAssiette(brut, assiette, assietteGenerale = 0, lignes = null) {
-    // La cotisation de la SNCF et des mines sur les `lignes` de leurs régimes,
-    // sous le plafond ; sans elles, au prorata de `brut`, exacte sur un total.
     const prorata = lignes === null ? this.tauxRegimesSpeciaux : 0;
     const speciale = lignes === null ? 0 : this._maladieDesRegimesSpeciaux(lignes);
     return brut * (1 - this.tauxSansMaladie - prorata) - speciale
@@ -1331,9 +1410,9 @@ export class Montants {
   /**
    * La pension d'un seul régime : chaque cotisation maladie y est toute ou
    * rien ; celle de la SNCF, sous son plafond, de moitié pour une `reversion`.
-   * La `majoration` pour enfants que `brut` contient ne paie aucune cotisation
-   * maladie (L. 131-2, 1°). Voir `Montants.pension_du_regime` dans
-   * `contexte.py`.
+   * La `majoration` pour enfants que `brut` contient paie la CSG, la CRDS et la
+   * CASA, mais aucune cotisation maladie (L. 131-2, 1°), comme celle d'un
+   * étage.
    */
   pensionDuRegime(brut, regime, reversion = false, majoration = 0) {
     if (!this.net) return brut;
@@ -1346,8 +1425,9 @@ export class Montants {
 
   /**
    * La cotisation de la SNCF et des mines sur `lignes`, due quand la tranche
-   * du foyer prélève la maladie des complémentaires ; au non-résident que la
-   * France couvre, à ses taux de L. 131-9.
+   * du foyer prélève la maladie des complémentaires, même si sa propre pension
+   * n'en sert pas : la réversion d'un autre ; au non-résident que la France
+   * couvre, à ses taux de L. 131-9.
    */
   _maladieDesRegimesSpeciaux(lignes, reversion = false) {
     if (this.tauxMaladie <= 0 || this.bareme === null) return 0;
@@ -1355,8 +1435,10 @@ export class Montants {
   }
 
   /**
-   * La nette d'un autre départ du scénario 1, quel que soit le mode, à SA
-   * tranche. Voir `Montants.net_d_un_depart` dans `contexte.py`.
+   * La nette d'un autre départ du scénario 1 — un âge de l'estimation
+   * officielle —, quel que soit le mode, à SA tranche : sous la présomption,
+   * son revenu fiscal est fait de sa propre pension. `total`, `assiette` et
+   * `minimum` sont annuels, en euros de l'année de référence.
    */
   netDUnDepart(total, assiette, minimum = 0, generale = 0) {
     const bareme = this.bareme;

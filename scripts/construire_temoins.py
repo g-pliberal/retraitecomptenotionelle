@@ -8,8 +8,8 @@ JavaScript doit retrouver :
 
 * ``tests/temoins/simulations.json`` — un jeu de carrières et de réglages, avec
   la sortie complète de ``Comparaison.dictionnaire()`` pour chacun : la
-  carrière de chaque requête, la saisie du portage la bâtit, elle qui restera
-  la seule (``pont.carrieres_des_saisies``), et le moteur Python la simule ;
+  carrière de chaque requête, la saisie du portage la bâtit, la seule
+  (``pont.carrieres_des_saisies``), et le moteur Python la simule ;
 * ``tests/temoins/pages.json`` — le HTML rendu de chaque page du site, par le
   site lui-même : son texte n'est écrit qu'en JavaScript (docs/architecture.md,
   § 8), et ``web/site.py`` le fait rendre par node, sur le paquet
@@ -2052,8 +2052,8 @@ def _fini(valeur):
 def _simulations() -> dict:
     """Chaque témoin : sa requête, son résultat, et les appels de ``liquider``
     qu'il a faits, liquidations d'essai comprises (docs/architecture.md,
-    § 7.8). La carrière de chaque requête, le portage la bâtit, de la saisie
-    qui restera la seule (``pont.carrieres_des_saisies``, action 161) ; le
+    § 7.8). La carrière de chaque requête, le portage la bâtit, de sa saisie,
+    la seule (``pont.carrieres_des_saisies``, action 161) ; le
     moteur Python la simule, un simulateur par jeu de paramètres, comme le
     contexte du site. Le portage simule la même (``tests/js/moteur.test.js``),
     aux mêmes appels, et un test refuse qu'un témoin dépasse le nombre déclaré

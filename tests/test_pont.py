@@ -31,8 +31,6 @@ from retraite_notionnelle.carriere import AnneeCarriere, Carriere
 from retraite_notionnelle.castypes import (
     CAS_TYPES, GRILLE_DU_COUT, carriere_de_la_grille, cases_de_la_grille)
 from retraite_notionnelle.config import RACINE_PROJET
-from retraite_notionnelle.contexte import Contexte
-from retraite_notionnelle.saisie import Saisie
 from retraite_notionnelle.simulateur import Simulateur
 
 SCENARIOS = ("notionnel_retroactif", "notionnel_retroactif_employeur", "notionnel_liberal")
@@ -71,7 +69,7 @@ def _aujourd_hui(aujourd_hui) -> dict | None:
 def test_le_pont_rend_au_bit_pres_ce_que_le_moteur_python_simule():
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
-    simulateur = Contexte().simulateur()
+    simulateur = Simulateur(Parametres())
     demandes, attendus = [], {}
     for code, generation in CASES:
         cas = next(cas for cas in CAS_TYPES if cas.code == code)
@@ -154,7 +152,7 @@ def test_chaque_case_passe_au_portage_partant_a_l_age_que_le_pilote_fixe():
     """Le Python fixe l'âge de chaque départ et écarte ce que le droit écarte
     (``carriere_de_la_grille``) ; le portage simule. Sous les conventions du
     COR, la carrière d'un cas type se déforme en Python : rien ne passe."""
-    simulateur = Contexte().simulateur()
+    simulateur = Simulateur(Parametres())
     types = tuple(cas for cas in CAS_TYPES if cas.code in ("cadre", "carriere_interrompue"))
     options, echecs = cases_de_la_grille(simulateur, types, (1940, 2000))
     assert set(options) | set(echecs) == {(cas.code, generation)
@@ -231,8 +229,9 @@ def test_sans_paquet_le_pont_reste_ouvert_d_une_demande_a_l_autre(monkeypatch):
 
 def test_une_saisie_par_la_pension_passe_le_pont_par_la_carriere_que_l_inversion_trouve():
     """Sa carrière vient de la pension, que le contexte inverse en la
-    simulant (``Contexte.simuler``) : le pont rend celle que l'inversion
-    trouve, que le site simule, et non une carrière au revenu de la saisie."""
+    simulant (``Contexte.simuler``, ``contexte.js``) : le pont rend celle que
+    l'inversion trouve, que le site simule, et non une carrière au revenu de
+    la saisie."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
     from retraite_notionnelle.web.site import module, site
@@ -327,8 +326,7 @@ def test_les_temoins_simulent_au_moteur_python_la_carriere_que_le_portage_batit(
     (:func:`pont.carrieres_des_saisies`), le moteur Python la simule, et le
     portage la simule à son tour (``tests/js/moteur.test.js``). Sur des témoins
     de chaque forme — un relevé, un conjoint, un décès, l'étranger, un emploi
-    après le départ —, sans le contexte Python, ce que porte le fichier, à
-    l'octet."""
+    après le départ —, ce que porte le fichier, à l'octet."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
     import importlib.util
@@ -344,12 +342,6 @@ def test_les_temoins_simulent_au_moteur_python_la_carriere_que_le_portage_batit(
                        for forme in formes]
     monkeypatch.setattr(module, "_cas", lambda: [{"nom": nom, "requete": temoins[nom]["requete"]}
                                                   for nom in noms])
-
-    def interdit(*_args, **_kwargs):
-        raise AssertionError("la saisie Python ne bâtit plus les carrières des témoins")
-
-    monkeypatch.setattr(Contexte, "simuler", interdit)
-    monkeypatch.setattr(Contexte, "carriere", interdit)
     simulations = module._simulations()
     assert list(simulations) == noms
     for nom in noms:

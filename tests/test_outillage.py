@@ -701,9 +701,10 @@ def test_aucun_calcul_garde_ne_lit_ce_que_l_empreinte_ignore():
 
 
 def test_le_releve_des_lectures_se_passe_de_la_saisie_python():
-    """La saisie n'aura qu'un exemplaire, celui du portage (action 161,
+    """La saisie n'a qu'un exemplaire, celui du portage (action 161,
     étape 6) : le relevé simule au moteur Python les carrières que le portage
-    bâtit, et ne charge ni le contexte ni la saisie Python."""
+    bâtit, et ne charge ni le contexte, réduit au centre du coût, ni la saisie
+    Python."""
     import lectures_du_modele
 
     releve = memoire.memoriser(("lectures_du_modele",), lectures_du_modele.relever)
@@ -714,17 +715,12 @@ def test_le_releve_des_lectures_se_passe_de_la_saisie_python():
 def test_le_budget_de_calcul_mesure_les_carrieres_que_le_portage_batit(monkeypatch):
     """Le budget de calcul (``docs/architecture.md``, § 7.8) se mesure sur les
     carrières des témoins : le portage les bâtit de leurs requêtes (action 161,
-    étape 6), sans le contexte Python, une par requête, sous un simulateur par
-    jeu de paramètres."""
+    étape 6), la saisie n'ayant que son exemplaire, une par requête, sous un
+    simulateur par jeu de paramètres."""
     import budget_calcul
     import construire_temoins
     from retraite_notionnelle.carriere import Carriere
-    from retraite_notionnelle.contexte import Contexte
 
-    def interdit(*_args, **_kwargs):
-        raise AssertionError("la saisie Python ne bâtit plus les carrières du budget")
-
-    monkeypatch.setattr(Contexte, "simuler", interdit)
     monkeypatch.setattr(construire_temoins, "_cas", lambda: [
         {"nom": nom, "requete": {"statut": statut, "naissance": "1970"}}
         for nom, statut in (("a", "salarie_prive_non_cadre"), ("b", "artisan"))])

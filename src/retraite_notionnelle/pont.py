@@ -27,7 +27,7 @@ garde pas de copie, la reçoit en données (:func:`carriere_en_donnees`), sous
 les paramètres du simulateur (:func:`parametres_en_donnees`), sur le paquet
 des données du jour (:func:`paquet_des_donnees`).
 
-Dans l'autre sens, la saisie, dont le portage gardera le seul exemplaire
+Dans l'autre sens, la saisie, dont le portage garde le seul exemplaire
 (étape 6, la paire du contexte) : il bâtit la carrière d'une requête du
 simulateur et ses paramètres, et le Python les relit sous ses propres types
 (:func:`carrieres_des_saisies`) pour les simuler de son moteur, qui garde son

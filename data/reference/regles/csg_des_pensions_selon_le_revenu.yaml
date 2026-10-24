@@ -187,8 +187,6 @@ code:
     remuneration.py : PrelevementsPension, PrelevementsPension.seuil,
     PrelevementsPension.tranche, PrelevementsPension.taux_de_la_tranche,
     PrelevementsPension.maladie_de_la_tranche, PrelevementsPension.revenu_fiscal_presume
-    ; contexte.py : Montants.du_foyer, net_d_un_depart, revenu_fiscal_du_foyer,
-    parts_du_foyer, minimum_vieillesse_servi
   javascript: >-
     moteur/js/remuneration.js : PrelevementsPension ; moteur/js/contexte.js :
     Montants.duFoyer, netDUnDepart, revenuFiscalDuFoyer, partsDuFoyer,

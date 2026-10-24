@@ -127,8 +127,7 @@ textes_a_rattacher:
 - reference: D. 242-9 du code de la sécurité sociale, l'exonération
 code:
   python: >-
-    remuneration.py : PrelevementsPension, assiette_maladie ; contexte.py : Montants,
-    Montants.pension_d_assiette, Montants.pension_du_regime, Montants.pension_servie
+    remuneration.py : PrelevementsPension, assiette_maladie
   javascript: >-
     moteur/js/remuneration.js : PrelevementsPension, assietteMaladie ;
     moteur/js/contexte.js : Montants ; moteur/js/pages.js : etagesActuels,

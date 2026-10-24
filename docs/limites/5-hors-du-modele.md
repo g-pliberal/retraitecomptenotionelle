@@ -355,7 +355,7 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   légal de la proposition ») : la dernière année se prolonge, son statut et la
   nature de sa période, son revenu avancé au rythme du salaire moyen, l'année
   du départ au prorata de ses mois, les trimestres déduits du revenu
-  (`prolonger_releve`, `Contexte.releve_prolonge`). Les années ajoutées
+  (`prolonger_releve`, `Contexte.releveProlonge`). Les années ajoutées
   prennent le motif que la saisie leur donne, comme celles d'une carrière de
   métiers : une période à l'étranger les vide, le champ « Interruptions »
   garde le dernier mot, et qui ne travaille plus les y déclare

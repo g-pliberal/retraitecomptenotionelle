@@ -54,7 +54,7 @@ def _euros(francs: float) -> float:
 
 def _releve(simulateur, departement: str) -> list[LigneRelevee]:
     """Deux années déclarées sans leurs trimestres, puis la dernière prolongée
-    jusqu'au départ, comme la saisie le fait d'un relevé (``contexte.py``)."""
+    jusqu'au départ, comme la saisie le fait d'un relevé (``contexte.js``)."""
     declare = [LigneRelevee(1981, STATUT, _euros(30_000.0), outre_mer=departement),
                LigneRelevee(1982, STATUT, _euros(2_900.0), outre_mer=departement)]
     return prolonger_releve(declare, DateMois(1986, 1), simulateur.macro)

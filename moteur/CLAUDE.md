@@ -55,7 +55,8 @@ types et Droits non cotisés lisent ce que le Python en a fabriqué
 - **Un champ de saisie de plus** : d'abord le test qui le lit et le vérifie,
   vu rouge ; les deux saisies, `saisie.py` et `saisie.js` — la lecture, la
   vérification, la réécriture de l'adresse — ; toute borne `min` ou `max` du
-  formulaire opposée aussi par la saisie ; les deux contextes ; la
+  formulaire opposée aussi par la saisie ; le contexte du portage
+  (`contexte.js`), seul à bâtir la carrière depuis l'action 161 ; la
   chronologie s'il porte un fait ; un témoin de simulation, et de page si la
   page change ; `python -m pytest -m site`.
 - **Un chiffre de plus sur une page qui agrège** : d'abord son test, vu

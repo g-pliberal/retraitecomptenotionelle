@@ -200,7 +200,7 @@ def test_un_bareme_inconnu_est_refuse(pieces):
 
 def _releve(simulateur, lodeom: str = "") -> list[LigneRelevee]:
     """Deux années déclarées, puis la dernière prolongée jusqu'au départ, comme
-    la saisie le fait d'un relevé (``contexte.py``)."""
+    la saisie le fait d'un relevé (``contexte.js``)."""
     declare = [LigneRelevee(2025, STATUT, 33_000.0, lodeom=lodeom),
                LigneRelevee(2026, STATUT, 34_000.0, lodeom=lodeom)]
     return prolonger_releve(declare, DateMois(2039, 1), simulateur.macro)

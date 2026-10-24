@@ -335,19 +335,11 @@ def test_chaque_regime_porte_sa_part_et_le_tout_fait_la_pension(catalogue):
     assert comparaison.carriere.date_liquidation.mois == 6
 
 
-def test_la_confrontation_liquide_la_carriere_que_le_portage_batit(catalogue, monkeypatch):
-    """La saisie n'aura qu'un exemplaire, celui du portage (action 161,
+def test_la_confrontation_liquide_la_carriere_que_le_portage_batit(catalogue):
+    """La saisie n'a qu'un exemplaire, celui du portage (action 161,
     étape 6) : il bâtit la carrière du relevé que le script a prolongé, sans
     le prolonger une seconde fois, et le moteur Python la liquide. Chaque
     année du relevé prolongé y est, à son revenu, et aucune autre."""
-    from retraite_notionnelle.contexte import Contexte
-    from retraite_notionnelle.saisie import Saisie
-
-    def interdit(*_args, **_kwargs):
-        raise AssertionError("la saisie Python ne bâtit plus la carrière confrontée")
-
-    monkeypatch.setattr(Contexte, "_carriere_relevee", interdit)
-    monkeypatch.setattr(Saisie, "depuis_requete", interdit)
     confrontation = _confrontation(catalogue)
     depart = confrontation.estimation.departs[0].date
     attendues = {(int(annee), float(revenu))

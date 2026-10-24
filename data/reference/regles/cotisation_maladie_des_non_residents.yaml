@@ -152,8 +152,7 @@ textes_a_rattacher:
 - reference: CGI, article 4 B, le domicile fiscal
 code:
   python: >-
-    contexte.py : couverture_francaise, reglements_europeens, Montants.du_foyer,
-    pension_du_regime ; remuneration.py : PrelevementsPension, MaladieRegimeSpecial,
+    remuneration.py : PrelevementsPension, MaladieRegimeSpecial,
     MaladieRegimeSpecial.cotisation
   javascript: >-
     moteur/js/contexte.js : couvertureFrancaise, reglementsEuropeens, Montants.duFoyer,
@@ -167,7 +166,8 @@ code:
     pensions.maladie_regimes_speciaux
   tests: tests/test_net_pensions.py
   moteur: >-
-    Montants.du_foyer dit qui réside hors de France ; PrelevementsPension porte ses taux
+    Montants.duFoyer (moteur/js/contexte.js, la saisie n'ayant que cet exemplaire)
+    dit qui réside hors de France ; PrelevementsPension porte ses taux
     (non_residents_regime_general, non_residents_complementaires, regimes_generaux),
     MaladieRegimeSpecial ceux des régimes spéciaux (taux_non_resident,
     taux_non_resident_au_dela), que le portage lit dans

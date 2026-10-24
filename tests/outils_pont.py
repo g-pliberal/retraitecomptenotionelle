@@ -1,4 +1,4 @@
-"""Les saisies des tests, lues par le portage : la saisie n'aura qu'un
+"""Les saisies des tests, lues par le portage : la saisie n'a qu'un
 exemplaire, le JavaScript (action 161, étape 6).
 
 Un test qui éprouve une règle du moteur par une saisie en demande la carrière
