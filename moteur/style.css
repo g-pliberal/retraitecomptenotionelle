@@ -1018,8 +1018,13 @@ table[data-pli="fiche"][data-plie] thead tr {
   display: flex; flex-wrap: wrap; gap: 0 1rem; border-bottom: 2px solid var(--or);
 }
 table[data-pli="fiche"][data-plie] thead th { border: 0; padding: 0.3rem 0; min-width: 0; }
+/* Deux par ligne au moins : la colonne de 8,5 rem n'en laissait tenir qu'une à
+   320 points, et une fiche de trois valeurs et plus les mettait l'une sous
+   l'autre (action 173, étape 8). La colonne ne demande jamais plus de la
+   moitié de la rangée. */
 table[data-pli="fiche"][data-plie] tbody tr:not([hidden]) {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 8.5rem), 1fr));
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(calc(50% - 0.5rem), 8.5rem), 1fr));
   gap: 0.4rem 1rem; padding: 0.65rem 0; border-bottom: 1px solid var(--trait);
 }
 /* Deux valeurs, deux colonnes : la grille de 8,5 rem n'en laissait tenir
@@ -1028,6 +1033,15 @@ table[data-pli="fiche"][data-plie] tbody tr:not([hidden]) {
 table[data-pli="fiche"][data-plie]:not(:has(tr > :nth-child(4))) tbody tr:not([hidden]) {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
+/* UNE GRILLE (`data-grille`) : des nombres courts sous des en-têtes courts,
+   une génération par colonne. En rangée, ses valeurs se serrent pour tenir
+   sous la ligne de leurs en-têtes ; en fiche, quand elles n'y tiennent pas,
+   elles ne prennent que la place qu'elles demandent : quatre par ligne à
+   320 points, et non deux. */
+table[data-grille][data-pli="rangee"][data-plie] tr:not([hidden]) { column-gap: 0.3rem; }
+table[data-grille][data-pli="fiche"][data-plie] tbody tr:not([hidden]) {
+  grid-template-columns: repeat(auto-fill, minmax(3.5rem, 1fr));
+}
 table[data-pli="fiche"][data-plie] tbody tr:last-child { border-bottom: 0; }
 table[data-pli="fiche"][data-plie] tbody :is(th, td) {
   padding: 0; border: 0; text-align: left; min-width: 0; white-space: normal;
@@ -1035,10 +1049,14 @@ table[data-pli="fiche"][data-plie] tbody :is(th, td) {
 }
 table[data-pli="fiche"][data-plie] tbody tr > :first-child,
 table[data-pli="fiche"][data-plie] tbody .pleine { grid-column: 1 / -1; }
+/* Deux par ligne, un nom de colonne d'un seul long mot ne tient plus sur la
+   sienne à 320 points : il se coupe à sa césure, « COMPLÉMEN-TAIRE », et non
+   n'importe où, « COMPLÉMENTAIR-E ». Seuls les mots de douze signes et plus. */
 table[data-pli="fiche"][data-plie] tbody td[data-titre]::before {
   content: attr(data-titre) / ""; display: block;
   font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em;
   text-transform: uppercase; color: var(--texte-doux);
+  hyphens: auto; hyphenate-limit-chars: 12 5 5;
 }
 /* Le plan d'une page longue : ce qu'elle contient, en une liste de liens qui
    se parcourt du regard avant de lire. */

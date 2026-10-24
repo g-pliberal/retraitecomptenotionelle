@@ -209,32 +209,56 @@ def test_un_trace_et_sa_legende_se_voient_ensemble():
     assert not fautes, f"{len(fautes)} tracés loin de leur légende :\n" + "\n".join(fautes[:60])
 
 
-#: Les pages dont les rangées repliées gardent côte à côte leurs deux valeurs
+#: Les pages dont les rangées repliées gardent côte à côte leurs valeurs
 #: courtes. Chaque page des étapes 4 à 10 de l'action 173 s'y ajoute quand on
 #: la reprend : le 23 octobre 2026, à 320 points, Droits non cotisés et les
 #: résultats du simulateur empilaient encore, en fiche, deux valeurs courtes
 #: que la colonne minimale de 8,5 rem ne laisse pas tenir ensemble. Simuler,
 #: le formulaire et ses résultats, à l'étape 4 ; Coût, à l'étape 5 ;
-#: Pourquoi changer, à l'étape 6 ; Partager et Le saviez-vous ?, à l'étape 7.
+#: Pourquoi changer, à l'étape 6 ; Partager et Le saviez-vous ?, à l'étape 7 ;
+#: Carrières types, à l'étape 8, où une rangée en porte sept.
 COTE_A_COTE = ["/", "/simuler", RESULTATS, "/cout", "/risque", "/partager",
-               "/saviez-vous"]
+               "/saviez-vous", "/cas-types"]
 
 
 def test_deux_valeurs_courtes_d_une_rangee_repliee_se_lisent_cote_a_cote():
-    """Un tableau replié garde côte à côte les deux valeurs courtes d'une
-    rangée, qu'on lit ensemble : aujourd'hui, avec notre programme.
+    """Un tableau replié garde côte à côte les valeurs courtes d'une rangée,
+    qu'on lit ensemble — aujourd'hui, avec notre programme ; les sept
+    générations d'une carrière type — : deux par ligne au moins, jamais une.
 
     Le pli comptait dans leur longueur le texte des bulles du glossaire, qu'on
     ne voit pas tant qu'on ne les ouvre pas : sur l'accueil, à 390 points, une
     case qui portait « trimestres » ou « décote » passait pour une phrase,
     prenait la ligne entière et rejetait sa voisine dessous — trois rangées sur
     dix, quand les sept autres restaient côte à côte (action 173, étape 3).
+    La règle ne comptait que les rangées de deux valeurs ; à 320 points, une
+    fiche de trois et plus les mettait une par ligne, la colonne de 8,5 rem
+    n'en laissant pas tenir deux : chaque carrière de Carrières types sur sept
+    lignes, la grille sur 5 199 pixels (action 173, étape 8).
     """
     fautes = [f"{_ou(visite, 'fermés' if etat == 'replie' else 'ouverts')} : {rangee}"
               for visite in mesures() if visite["route"] in COTE_A_COTE
               for etat in ("replie", "deplie")
               for rangee in visite[etat]["empilees"]]
     assert not fautes, f"{len(fautes)} rangées empilées :\n" + "\n".join(fautes[:60])
+
+
+def test_une_grille_repliee_garde_ses_colonnes():
+    """Une grille se lit en colonnes : la génération 1940 d'une carrière type
+    sous celle de la carrière d'avant, sous l'en-tête qui la nomme.
+
+    Une grille, c'est plus de trois colonnes de nombres courts sous des
+    en-têtes courts : les écarts de Carrières types, une génération par
+    colonne. Repliée, elle met sur une ligne autant de valeurs d'une rangée que
+    la largeur en tient. À 390 points, elle passait en fiche, deux valeurs par
+    ligne : sept générations sur quatre lignes, chaque carrière sur 247 pixels
+    et la grille sur 3 210, quand ses sept valeurs tiennent sur une ligne de
+    351 (action 173, étape 8).
+    """
+    fautes = [f"{_ou(visite, 'fermés' if etat == 'replie' else 'ouverts')} : {rangee}"
+              for visite in mesures() for etat in ("replie", "deplie")
+              for rangee in visite[etat]["grilles"]]
+    assert not fautes, f"{len(fautes)} rangées de grille éparpillées :\n" + "\n".join(fautes[:60])
 
 
 def test_les_quatre_systemes_se_comparent_d_un_seul_regard():

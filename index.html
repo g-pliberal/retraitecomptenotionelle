@@ -1714,6 +1714,12 @@ document.addEventListener("keydown", (evenement) => {
 // sur toute la largeur. Un tableau de nombres sur trois colonnes tient dans
 // un téléphone, et ne se replie pas.
 //
+// UNE GRILLE, plus de trois colonnes de nombres courts sous des en-têtes
+// courts — les écarts de Carrières types, une génération par colonne —, se lit
+// en colonnes, d'une rangée à l'autre : elle se replie en rangée, ses valeurs
+// sous la ligne de ses en-têtes, et ne passe en fiche que si elles n'y
+// tiennent pas (`data-grille`, action 173, étape 8).
+//
 // QUAND. Tout tableau qui déborderait de son cadre se replie. Ceux de texte
 // se replient plus tôt, avant d'avoir mis un mot par ligne : sous trente rem
 // en rangée, quarante en fiche — ou sous la largeur minimale que la feuille
@@ -1725,6 +1731,7 @@ document.addEventListener("keydown", (evenement) => {
 // affichée en bloc perd son rôle de cellule chez certaines synthèses vocales,
 // et le tableau replié doit s'annoncer comme le tableau qu'il est.
 const LONGUEUR_D_UNE_PHRASE = 60;
+const LONGUEUR_D_UNE_CASE_DE_GRILLE = 8;
 let surveillantDesTableaux = null;
 
 // Ce qu'une case MONTRE : son texte, sans celui des bulles du glossaire,
@@ -1776,24 +1783,29 @@ function plierLesTableaux(racine) {
     if (noms.length < 2) { continue; }
     let phrases = false;
     let texte = false;
+    let grille = noms.length > 4
+      && noms.slice(1).every((nom) => nom.length <= LONGUEUR_D_UNE_CASE_DE_GRILLE);
     for (const corps of table.tBodies) {
       for (const ligne of corps.rows) {
         [...ligne.cells].forEach((cellule, rang) => {
           if (rang === 0) { return; }
           if (noms[rang]) { cellule.dataset.titre = noms[rang]; }
-          if (texteMontre(cellule).length > LONGUEUR_D_UNE_PHRASE) {
+          const montre = texteMontre(cellule);
+          if (montre.length > LONGUEUR_D_UNE_PHRASE) {
             phrases = true;
             cellule.classList.add("pleine");
           }
           if (!cellule.classList.contains("nombre")) { texte = true; }
+          if (texte || montre.length > LONGUEUR_D_UNE_CASE_DE_GRILLE) { grille = false; }
         });
       }
     }
-    const fiche = phrases || noms.length > 4;
+    const fiche = phrases || (noms.length > 4 && !grille);
     table._pli = fiche ? "fiche" : "rangee";
     table.dataset.pli = table._pli;
-    // Le seuil, en rem : zéro pour des nombres sur trois colonnes au plus,
-    // qui ne se replient que s'ils débordent.
+    if (grille) { table.dataset.grille = ""; }
+    // Le seuil, en rem : zéro pour des nombres sur trois colonnes au plus, et
+    // pour une grille, qui ne se replient que s'ils débordent.
     table._plierEnDeca = fiche ? 40 : (noms.length === 4 || (noms.length === 3 && texte) ? 30 : 0);
     table.style.setProperty("--colonnes", String(noms.length - 1));
     table.setAttribute("role", "table");

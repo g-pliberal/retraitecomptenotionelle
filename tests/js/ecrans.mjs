@@ -255,19 +255,58 @@ const MESURER = (ecran) => `(() => {
     place: Math.round(hauteur - sousLeBandeau),
   } : null;
 
-  // Les deux valeurs courtes d'une rangée repliée — « aujourd'hui », « avec
-  // notre programme » — se lisent ensemble : elles se tiennent côte à côte.
-  // Courte : ce que la case MONTRE tient en soixante signes, la longueur que
-  // le pli d'index.html tient pour une phrase.
+  // Les valeurs courtes d'une rangée repliée — « aujourd'hui », « avec notre
+  // programme » ; les sept générations d'une carrière type — se lisent
+  // ensemble : deux par ligne au moins, jamais une par ligne. Courte : ce que
+  // la case MONTRE tient en soixante signes, la longueur que le pli
+  // d'index.html tient pour une phrase.
+  const texteDe = (case_) => case_.innerText.replace(/\\s+/g, " ").trim();
+  const lignesDe = (cases) => {
+    const hauts = cases.map((case_) => case_.getBoundingClientRect().top).sort((a, b) => a - b);
+    return hauts.filter((haut, rang) => rang === 0 || haut - hauts[rang - 1] > 1).length;
+  };
   const empilees = [];
   for (const table of document.querySelectorAll("#contenu table[data-plie]")) {
     if (!montre(table)) continue;
     for (const ligne of [...table.tBodies].flatMap((corps) => [...corps.rows])) {
       const valeurs = [...ligne.cells].slice(1).filter(montre);
-      if (valeurs.length !== 2) continue;
-      if (valeurs.some((case_) => case_.innerText.replace(/\\s+/g, " ").trim().length > 60)) continue;
-      const [a, b] = valeurs.map((case_) => case_.getBoundingClientRect());
-      if (Math.abs(a.top - b.top) > 1) empilees.push(nommer(ligne).slice(0, 140));
+      if (valeurs.length < 2) continue;
+      if (valeurs.some((case_) => texteDe(case_).length > 60)) continue;
+      if (lignesDe(valeurs) > Math.ceil(valeurs.length / 2)) {
+        empilees.push(nommer(ligne).slice(0, 140));
+      }
+    }
+  }
+
+  // Une grille — plus de trois colonnes de nombres courts sous des en-têtes
+  // courts : les écarts de Carrières types, une génération par colonne — se
+  // lit en colonnes. Repliée, une rangée met sur une ligne autant de valeurs
+  // que la largeur en tient : chacune large comme la plus large, un demi-rem
+  // entre deux.
+  const grilles = [];
+  const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+  for (const table of document.querySelectorAll("#contenu table[data-plie]")) {
+    if (!montre(table)) continue;
+    const tete = table.tHead?.rows[table.tHead.rows.length - 1];
+    const noms = [...(tete?.cells || [])].slice(1)
+      .map((nom) => nom.textContent.replace(/\\s+/g, " ").trim());
+    if (noms.length < 4 || noms.some((nom) => nom.length > 8)) continue;
+    const rangees = [...table.tBodies].flatMap((corps) => [...corps.rows]).filter(montre);
+    const valeursDe = (ligne) => [...ligne.cells].slice(1).filter(montre);
+    if (rangees.some((ligne) => valeursDe(ligne).some((case_) =>
+      !case_.classList.contains("nombre") || texteDe(case_).length > 8))) continue;
+    for (const ligne of rangees) {
+      const valeurs = valeursDe(ligne);
+      const plusLarge = Math.max(...valeurs.map((case_) => {
+        const etendue = document.createRange();
+        etendue.selectNodeContents(case_);
+        return etendue.getBoundingClientRect().width;
+      }));
+      const parLigne = Math.max(1, Math.floor(
+        (ligne.getBoundingClientRect().width + rem / 2) / (plusLarge + rem / 2)));
+      if (lignesDe(valeurs) > Math.ceil(valeurs.length / parLigne)) {
+        grilles.push(nommer(ligne).slice(0, 140));
+      }
     }
   }
 
@@ -331,7 +370,7 @@ const MESURER = (ecran) => `(() => {
     deborde: document_.scrollWidth > largeur + 1 ? document_.scrollWidth : 0,
     defilants: defilants.slice(0, 40), nombreDefilants: defilants.length,
     sortants: sortants.slice(0, 40), nombreSortants: sortants.length,
-    traces, montants, empilees: empilees.slice(0, 40),
+    traces, montants, empilees: empilees.slice(0, 40), grilles: grilles.slice(0, 40),
     chevauchees: chevauchees.slice(0, 40), cartes,
   };
 })()`;
