@@ -99,9 +99,9 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.contexte import Contexte
-from retraite_notionnelle.saisie import Saisie
 from retraite_notionnelle.simulateur import Simulateur
+
+from outils_pont import Saisies
 
 RACINE = Path(__file__).resolve().parents[1]
 TEMOIN = RACINE / "tests" / "temoins" / "trajectoire.json"
@@ -153,12 +153,12 @@ def _famille(regime: str) -> str:
     return regime
 
 
-def mesures_du_depot(contexte: Contexte, requete: dict) -> dict:
+def mesures_du_depot(saisies: Saisies, requete: dict) -> dict:
     """Ce que le scénario 1 sert à la requête du témoin : brut annuel, en euros
     de la liquidation, minimum compris et majoration pour enfants à part ; les
     points et leur valeur, lus dans le détail de chaque pension ; les salaires
     de référence."""
-    actuel = contexte.simuler(Saisie.depuis_requete(requete)).actuel
+    actuel = saisies.simuler(requete).actuel
     mesures: dict = {
         "trimestres": float(actuel.trimestres_valides),
         "trimestres_requis": float(actuel.trimestres_requis),
@@ -629,13 +629,13 @@ def temoin() -> dict:
 
 
 @pytest.fixture(scope="module")
-def contexte() -> Contexte:
-    return Contexte()
+def saisies() -> Saisies:
+    return Saisies()
 
 
 @pytest.fixture(scope="module")
-def mesures(temoin, contexte) -> dict[str, tuple[dict, dict]]:
-    return {code: (mesures_du_depot(contexte, cas["requete"]), mesures_de_trajectoire(cas))
+def mesures(temoin, saisies) -> dict[str, tuple[dict, dict]]:
+    return {code: (mesures_du_depot(saisies, cas["requete"]), mesures_de_trajectoire(cas))
             for code, cas in temoin["cas"].items()}
 
 

@@ -69,8 +69,7 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.contexte import Contexte
-from retraite_notionnelle.saisie import Saisie
+from outils_pont import Saisies
 
 RACINE = Path(__file__).resolve().parents[1]
 TEMOIN = RACINE / "tests" / "temoins" / "destinie_2.json"
@@ -235,11 +234,11 @@ def _points(detail: str) -> float:
     return float(trouve.group(1).replace(",", "")) if trouve else 0.0
 
 
-def mesures_du_depot(contexte: Contexte, requete: dict) -> dict[str, float]:
+def mesures_du_depot(saisies: Saisies, requete: dict) -> dict[str, float]:
     """Ce que le scénario 1 sert à la requête du témoin : brut annuel, en euros de
     la liquidation ; la réversion, en euros de l'année du décès, quand sa date
     d'effet tombe cette année-là."""
-    comparaison = contexte.simuler(Saisie.depuis_requete(requete))
+    comparaison = saisies.simuler(requete)
     actuel = comparaison.actuel
     par_regime: dict[str, float] = {}
     points: dict[str, float] = {}
@@ -362,8 +361,8 @@ def temoin() -> dict:
 
 @pytest.fixture(scope="module")
 def ecarts(temoin) -> dict[str, dict[str, float]]:
-    contexte = Contexte()
-    return {code: ecarts_du_cas(mesures_du_depot(contexte, cas["requete"]),
+    saisies = Saisies()
+    return {code: ecarts_du_cas(mesures_du_depot(saisies, cas["requete"]),
                                 mesures_de_destinie(cas))
             for code, cas in temoin["cas"].items()}
 
