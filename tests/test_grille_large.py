@@ -1187,6 +1187,76 @@ def test_les_classes_de_nature_plus_fines_tiennent_chaque_part_a_un_trentieme_pr
                     sexe, nom, generation)
 
 
+def test_les_natures_des_femmes_suivent_la_masse_de_leur_rang(parametres, simulateur, source):
+    """Sous ``NATURES_SELON_LE_RANG``, la part des femmes d'une carrière pleine
+    qui ont de la maladie, de l'AVPF ou du chômage suit, d'une classe de
+    centiles à l'autre, la masse assimilée que l'EIR mesure à ses rangs
+    (``ASSIMILEES_SELON_LE_RANG``) : la part de l'échantillon, multipliée par
+    le rapport de la masse de la classe à celle de toutes les carrières
+    pleines des femmes, 10,82 % de leur durée validée hors majorations, leurs
+    classes pesées par leurs têtes. La classe p99, qui tient du cinquième
+    quintile un trente-neuvième : 0,237 fois la part de toutes ; la classe
+    p10, 19,46 % : 1,80 fois. Nées en 1950, 39,8 % des femmes ont de l'AVPF,
+    37,6 % du chômage, 19,4 % de la maladie : à la classe p99, 9,4, 8,9 et
+    4,6 %, une classe de quinze chacune, qui garde les années de
+    l'échantillon, sept, quatre et trois, sous un plafond qui ne tient plus ;
+    à la classe p10, 71,6, 67,6 et 34,9 %, onze, dix et cinq classes. Aux
+    générations de l'échantillon, de 1942 à 1956, chaque nature tient à
+    chaque classe sa part, et sur toutes, celle de l'échantillon, à un
+    trentième près. Les hommes gardent la même part à chaque rang."""
+    assert G.NATURES_SELON_LE_RANG == ("F",)
+    racine = parametres.racine_donnees
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    poids = _poids(variantes, simulateur.effectifs, source.millesime)
+    noms = {nom for nom, _ in G.CENTILES}
+    masses = G.parts_assimilees_des_classes(G.quintiles_eqcc(racine, residents=True),
+                                            "F", "40_plus")
+    assert masses["p99"] == pytest.approx(1 / 39)
+
+    def par_classe(sexe: str) -> dict[str, list]:
+        """Les carrières pleines du sexe, par classe de centiles : les années
+        de chaque nature de chacune, génération par génération, et ses têtes."""
+        sortie: dict[str, list] = {}
+        for v in variantes:
+            if v.cas.sexe == sexe and v.cas.annees_par_nature:
+                classe = next(m for m in v.cas.code.split("~") if m in noms)
+                sortie.setdefault(classe, []).append((v.cas.annees_par_nature,
+                                                      poids[v.cas.code]))
+        return sortie
+
+    def part(lot: list, generation: int, rang: int) -> float:
+        return (sum(p for natures, p in lot if G._par_generation(natures, generation, None)[rang])
+                / sum(p for _, p in lot))
+
+    femmes = par_classe("F")
+    tetes = {classe: sum(p for _, p in lot) for classe, lot in femmes.items()}
+    moyenne = sum(tetes[c] * masses[c] for c in tetes) / sum(tetes.values())
+    assert moyenne == pytest.approx(0.1082, abs=5e-5)
+    assert masses["p99"] / moyenne == pytest.approx(0.237, abs=5e-4)
+    assert masses["p10"] / moyenne == pytest.approx(1.80, abs=5e-3)
+    for classe, attendues in (("p99", (1, 1, 1)), ("p10", (5, 11, 10))):
+        assert tuple(round(15 * part(femmes[classe], 1950, rang)) for rang in (1, 2, 3)) == (
+            attendues), classe
+    siennes = [G._par_generation(natures, 1950, None) for natures, _ in femmes["p99"]]
+    assert {annees[2] for annees in siennes} == {0, 7}
+    assert {annees[3] for annees in siennes} == {0, 4}
+    assert {annees[1] for annees in siennes} == {0, 3}
+    hommes = par_classe("H")
+    for rang, nom in ((1, "maladie"), (2, "avpf"), (3, "chomage")):
+        lues = G.natures_assimilees(racine, "F")[nom]
+        for generation in sorted(lues):
+            publiee = lues[generation][0] / 100.0
+            for classe, lot in femmes.items():
+                attendue = min(1.0, publiee * masses[classe] / moyenne)
+                assert abs(part(lot, generation, rang) - attendue) <= 1 / 30 + 1e-9, (
+                    nom, generation, classe)
+            ensemble = sum(tetes[c] * part(lot, generation, rang) for c, lot in femmes.items())
+            assert abs(ensemble / sum(tetes.values()) - publiee) <= 1 / 30 + 1e-9, (
+                nom, generation)
+            parts_des_hommes = [part(lot, generation, rang) for lot in hommes.values()]
+            assert max(parts_des_hommes) - min(parts_des_hommes) < 1e-9, (nom, generation)
+
+
 def test_les_morceaux_de_la_grille_tiennent_dans_le_pont():
     """Le pont passe au portage la demande d'un morceau d'un seul bloc, que node
     ne lit pas au-delà de 512 Mo, et chaque cas type y porte ses carrières de

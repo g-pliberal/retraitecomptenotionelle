@@ -234,7 +234,15 @@ désormais les autres natures à la part de tous. La vingt-sixième (le même
 jour) compte quinze classes de nature par rang, et non plus cinq
 (:data:`CLASSES_DE_NATURE`) : cinq arrondissaient chaque part au cinquième,
 40 % de chômeurs pour 30,2 à 41,0 % des hommes, 20 % de malades pour 10,5 à
-14,6 % ; quinze l'arrondissent à un trentième près.
+14,6 % ; quinze l'arrondissent à un trentième près. La vingt-septième (le
+même jour) donne aux femmes leurs natures selon leur rang
+(:data:`NATURES_SELON_LE_RANG`) : chaque classe de centiles les avait à la
+même part, quand la masse assimilée de l'EIR qui les plafonne va au bas des
+rangs ; la part de chaque nature y suit désormais la masse de sa classe,
+1,80 fois celle de l'échantillon aux classes p10 et p25, 0,24 fois aux classes
+p95 et p99, et les femmes nées en 1950 comptent 4,60 années de maladie,
+d'AVPF et de chômage, et non plus 3,42, pour 4,53 que l'échantillon leur
+trouve.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -664,6 +672,27 @@ NATURES_A_LEUR_PART = True
 #: malades, et les malades ont le service, l'AVPF et le chômage à la part de
 #: tous.
 MALADIE_INDEPENDANTE = True
+
+#: La vingt-septième version (action 138, étape 14, le 24 octobre 2026) : les
+#: natures des femmes selon leur rang. Sous la vingt-quatrième, chaque classe
+#: de centiles donnait ses natures à la même part, quand la masse assimilée
+#: de l'EIR qui les plafonne (:data:`NATURES_A_LEUR_PART`) va au bas des
+#: rangs : l'EIR ne cotise pas 26,1 % de la durée validée hors majorations
+#: des résidentes du premier quintile, 2,6 % de celle du cinquième
+#: (``quintiles_eqcc_residents.csv``). Le haut était plafonné, le bas gardait
+#: des années cotisées. Sous cette constante, la part des femmes d'une classe
+#: qui ont de la maladie, de l'AVPF ou du chômage est celle de l'échantillon
+#: interrégimes de cotisants, multipliée par le rapport de la masse de sa
+#: classe (:data:`ASSIMILEES_SELON_LE_RANG`) à celle de toutes les carrières
+#: pleines des femmes, leurs classes pesées par leur poids
+#: (:func:`masses_moyennes`) : 0,24 fois aux classes p95 et p99, 1,80 fois aux
+#: classes p10 et p25 ; chacune de celles qui en ont garde les années de
+#: l'échantillon (:func:`natures_au_rang`). Les hommes gardent la même part à
+#: chaque rang : la masse du stock de 2020 remonte au haut des leurs, 4,9 % au
+#: troisième quintile, 9,8 % au cinquième, que ses générations anciennes
+#: portent et que les classeurs des nés en 1950 et en 1953, non certifiés, ne
+#: trouvent pas (note de la treizième partie).
+NATURES_SELON_LE_RANG = ("F",)
 
 #: Les natures qui croissent avec l'âge, que :func:`natures_assimilees` ne lit
 #: qu'à 60 ans : les générations que l'échantillon ne voit pas jusque-là
@@ -2081,6 +2110,34 @@ def natures_a_leur_part(classes: list[tuple[int, tuple[tuple[int, float], ...],
     return sortie
 
 
+def masses_moyennes(variantes: list[Variante]) -> dict[str, float]:
+    """La part assimilée moyenne des carrières pleines qui entrent selon leur
+    génération, hors des départs avec surcote, de chaque sexe de
+    :data:`NATURES_SELON_LE_RANG` : celle de chaque carrière, que sa classe de
+    centiles tient de l'EIR (:data:`ASSIMILEES_SELON_LE_RANG`), pesée par sa
+    part de la Cnav, comme sous :func:`parts_des_tranches`."""
+    masses: dict[str, list[float]] = {}
+    for v in variantes:
+        if v.cas.sexe in NATURES_SELON_LE_RANG and v.cas.entrees and not v.surcote:
+            somme = masses.setdefault(v.cas.sexe, [0.0, 0.0])
+            somme[0] += v.retraites[0][1] * v.cas.tranche_de_base[2]
+            somme[1] += v.retraites[0][1]
+    return {sexe: masse / poids for sexe, (masse, poids) in masses.items()}
+
+
+def natures_au_rang(parts: dict[str, dict[int, tuple[float, float]]], facteur: float
+                    ) -> dict[str, dict[int, tuple[float, float]]]:
+    """Les natures de l'échantillon (:func:`natures_assimilees`) à une classe
+    de centiles dont la masse fait ``facteur`` fois la moyenne
+    (:data:`NATURES_SELON_LE_RANG`) : la part et le cumul de la maladie, de
+    l'AVPF et du chômage multipliés par lui, les années de chacun de ceux qui
+    en ont restant les mêmes ; le service tel quel."""
+    return {nature: ({generation: (part * facteur, cumul * facteur)
+                      for generation, (part, cumul) in lues.items()}
+                     if nature in NATURES_LUES_A_60_ANS else lues)
+            for nature, lues in parts.items()}
+
+
 def refaire_le_bloc(interruptions: dict[int, str], annees: tuple[int, int, int, int]) -> None:
     """Refait le bloc des années assimilées d'une carrière pleine
     (:data:`NATURES_A_LEUR_PART`) : ses années de chômage indemnisé, contiguës
@@ -2111,16 +2168,18 @@ def entrees_au_premier_trimestre(variantes: list[Variante], racine: Path) -> lis
     :data:`SERVICE_AVANT_LE_PREMIER_TRIMESTRE`, et déclinés en leurs classes de
     nature sous :data:`NATURES_SELON_LA_GENERATION` (:func:`classes_de_nature`),
     ceux des deux sexes, à leurs années assimilées, sous
-    :data:`NATURES_A_LEUR_PART` : le premier cinquième garde son code, les
-    autres prennent leur rang, « ~entree3 » ; la classe de nature de rang zéro
-    garde celui de son cinquième, les autres prennent leur rang, « ~nature1 » ;
-    les autres variantes telles quelles."""
+    :data:`NATURES_A_LEUR_PART`, et ceux des femmes à la part de leur rang sous
+    :data:`NATURES_SELON_LE_RANG` (:func:`natures_au_rang`) : le premier
+    cinquième garde son code, les autres prennent leur rang, « ~entree3 » ; la
+    classe de nature de rang zéro garde celui de son cinquième, les autres
+    prennent leur rang, « ~nature1 » ; les autres variantes telles quelles."""
     parts = premiers_trimestres(racine)
     valides = ({"H": premiers_trimestres(racine, "valide")["H"]}
                if SERVICE_AVANT_LE_PREMIER_TRIMESTRE else {})
     a_leur_part = NATURES_SELON_LA_GENERATION and NATURES_A_LEUR_PART
     sexes = ("F", "H") if a_leur_part else ("H",) if NATURES_SELON_LA_GENERATION else ()
     parts_des_natures = {sexe: natures_assimilees(racine, sexe) for sexe in sexes}
+    moyennes = masses_moyennes(variantes) if a_leur_part else {}
     classes: dict[tuple, list] = {}
     sortie = []
     for v in variantes:
@@ -2128,11 +2187,15 @@ def entrees_au_premier_trimestre(variantes: list[Variante], racine: Path) -> lis
             sortie.append(v)
             continue
         assimilees = v.assimilees if a_leur_part else None
-        cle = (v.cas.sexe, v.cas.entrees, assimilees)
+        facteur = (v.cas.tranche_de_base[2] / moyennes[v.cas.sexe]
+                   if v.cas.sexe in moyennes else 1.0)
+        cle = (v.cas.sexe, v.cas.entrees, assimilees, facteur)
         if cle not in classes:
             cinquiemes = classes_d_entree(v.cas.entrees, parts[v.cas.sexe],
                                           valides.get(v.cas.sexe))
-            classes[cle] = (classes_de_nature(cinquiemes, parts_des_natures[v.cas.sexe],
+            classes[cle] = (classes_de_nature(cinquiemes,
+                                              natures_au_rang(parts_des_natures[v.cas.sexe],
+                                                              facteur),
                                               assimilees)
                             if v.cas.sexe in parts_des_natures
                             else [(rang, entrees, services, 0, (), poids)
