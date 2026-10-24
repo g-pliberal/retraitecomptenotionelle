@@ -281,6 +281,20 @@ const MESURER = (ecran) => `(() => {
       + " pour " + case_.clientWidth);
   }
 
+  // Les cartes à publier : combien chaque grille en range de front, et la plus
+  // petite taille de ce qu'on y lit, la phrase et le détail.
+  const cartes = [...document.querySelectorAll("#contenu .cartes")].filter(montre)
+    .map((grille) => {
+      const figures = [...grille.children].filter((el) => el.tagName === "FIGURE" && montre(el));
+      const tailles = [...grille.querySelectorAll(".carte-partage :is(.phrase, .detail)")]
+        .filter(montre).map((el) => parseFloat(getComputedStyle(el).fontSize));
+      return {
+        colonnes: new Set(figures.map((el) => Math.round(el.getBoundingClientRect().left))).size,
+        plusPetite: Math.round(Math.min(...tailles) * 10) / 10,
+        largeur: Math.round(figures[0]?.getBoundingClientRect().width || 0),
+      };
+    });
+
   // Les vides : l'écart vertical entre deux blocs voisins de la page, ceux
   // qui se suivent dans une même colonne. Seuls comptent les parents dont
   // tous les enfants sont des boîtes : entre deux blocs séparés par du texte
@@ -318,7 +332,7 @@ const MESURER = (ecran) => `(() => {
     defilants: defilants.slice(0, 40), nombreDefilants: defilants.length,
     sortants: sortants.slice(0, 40), nombreSortants: sortants.length,
     traces, montants, empilees: empilees.slice(0, 40),
-    chevauchees: chevauchees.slice(0, 40),
+    chevauchees: chevauchees.slice(0, 40), cartes,
   };
 })()`;
 

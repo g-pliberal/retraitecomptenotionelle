@@ -1939,10 +1939,12 @@ ul.serree li { margin: 0.3rem 0; }
 .carte-partage.claire .pied .adresse { color: var(--sur-creme-doux); }
 /* Les figures de la page Partager. Deux par ligne dès qu'il y a la place : les
    cartes se comparent, et une seule colonne en faisait une page à dérouler.
-   `min(100%, …)` borne la piste sur les écrans étroits, où une largeur
-   minimale plus large que la page déborderait. */
+   La place commence à 28 rem par carte, deux de front dès la tablette en
+   largeur ; à 32 rem, elles allaient une par une à 1 024 points, sur toute la
+   largeur. `min(100%, …)` borne la piste sur les écrans étroits, où une
+   largeur minimale plus large que la page déborderait. */
 .cartes { display: grid; gap: 2.25rem; margin-top: 1.75rem;
-          grid-template-columns: repeat(auto-fit, minmax(min(100%, 32rem), 1fr)); }
+          grid-template-columns: repeat(auto-fit, minmax(min(100%, 28rem), 1fr)); }
 .cartes > figure { margin: 0; min-width: 0; }
 /* La légende NOMME la carte, et se lit avant elle : c'est ce qui permet de
    choisir laquelle publier sans les regarder toutes. */
@@ -2120,17 +2122,21 @@ body.calcul-en-cours::after {
     font-size: 1rem; padding: 0.9rem 1rem;
   }
   form .grille { gap: 0.9rem; }
-  /* L'aperçu d'une carte à publier, réduit à la largeur d'un téléphone,
-     tombait à cinq pixels de texte ; gardé à 36 rem, il défilait dans sa
-     figure, et la moitié de la carte était hors de l'écran. La carte prend
-     donc la largeur de l'écran, en tailles de lecture — comme l'a d'abord
-     fait « Le saviez-vous ? », où l'on lit la règle avant de la partager —,
-     et ne reprend le format de l'image (36 rem, 16/9, tailles en `cqw`) que
-     le temps de la composer, sous la classe `en-image` que pose
-     `index.html`. Ce qu'on lit est ce qu'on publie ; seule la mise en page
-     change. */
-  .cadre-carte.en-image { min-width: 36rem; }
-  .cartes .cadre-carte:not(.en-image) { min-width: 0; }
+}
+
+/* L'aperçu d'une carte à publier, réduit à la largeur d'un téléphone,
+   tombait à cinq pixels de texte ; gardé à 36 rem, il défilait dans sa
+   figure, et la moitié de la carte était hors de l'écran. Une carte de 32 rem
+   ou moins, où le détail de l'image réduite tomberait sous douze pixels, prend
+   donc des tailles de lecture — comme l'a d'abord fait « Le saviez-vous ? », où
+   l'on lit la règle avant de la partager —, et ne reprend le format de l'image
+   (36 rem, 16/9, tailles en `cqw`) que le temps de la composer, sous la classe
+   `en-image` que pose `index.html`. Ce qu'on lit est ce qu'on publie ; seule
+   la mise en page change. La requête mesure le cadre de la carte, et non
+   l'écran : à 1 024 points, les deux cartes qui vont de front portaient leur
+   détail à neuf pixels (action 173, étape 7). */
+.cadre-carte.en-image { min-width: 36rem; }
+@container (max-width: 32rem) {
   .cartes .cadre-carte:not(.en-image) > .carte-partage {
     aspect-ratio: auto; padding: 1.25rem; gap: 1.5rem;
   }

@@ -2591,10 +2591,11 @@ function poserBloc(dessin, bloc, x, y) {
  * rognage. Elle se compose maintenant ici, aux mêmes dimensions, à partir de ce
  * que la feuille de style dit de son aperçu.
  *
- * Sur un téléphone, les cartes se LISENT dans un autre format que celui de
- * l'image : à la largeur de l'écran, en tailles de lecture. Le temps de la composer, la carte reprend celui de l'image — la
- * classe `en-image` lui rend ses 36 rem et son 16/9 —, et le quitte avant que
- * l'écran ne se redessine.
+ * Une carte étroite, celle d'un téléphone ou l'une des deux qui vont de front
+ * sur une tablette, se LIT dans un autre format que celui de l'image : à la
+ * largeur de sa colonne, en tailles de lecture. Le temps de la composer, la
+ * carte reprend celui de l'image — la classe `en-image` lui rend ses 36 rem et
+ * son 16/9 —, et le quitte avant que l'écran ne se redessine.
  */
 async function imageDeCarteAPublier(affiche) {
   await polices();

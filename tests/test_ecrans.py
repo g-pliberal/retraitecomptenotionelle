@@ -250,3 +250,37 @@ def test_les_quatre_systemes_se_comparent_d_un_seul_regard():
             fautes.append(f"{_ou(visite, 'fermés')} : les quatre montants s'étagent sur "
                           f"{montants['etendue']} points, pour {montants['place']} à l'écran")
     assert not fautes, "\n".join(fautes)
+
+
+#: Dès cette largeur, les cartes à publier vont deux par ligne. À 1 024 points,
+#: la tablette en largeur, la grille les rangeait une par une, sur 944 points :
+#: un chiffre de 110 pixels, une carte par écran, et Le saviez-vous ? sur près
+#: de onze mille pixels, deux fois plus qu'au bureau (action 173, étape 7).
+DEUX_CARTES_DE_FRONT = 1024
+
+#: La plus petite taille, en pixels, de ce qu'on lit sur une carte : sa phrase
+#: et son détail. L'aperçu réduit l'image ; il ne la réduit pas sous ce qui se
+#: lit.
+TAILLE_LUE_MINIMALE = 12
+
+
+def test_les_cartes_a_publier_vont_deux_par_ligne_et_se_lisent():
+    """Les cartes se comparent, deux par ligne dès qu'il y a la place, et chacune
+    se lit : sa phrase et son détail ne tombent jamais sous douze pixels.
+
+    Deux de front à 1 024 points, dans l'image réduite, porteraient leur détail
+    à neuf pixels et demi : les cartes y prennent les tailles de lecture du
+    téléphone, et ne reprennent le format de l'image que le temps de la
+    composer.
+    """
+    fautes = []
+    for visite in mesures():
+        lieu = _ou(visite, "fermés")
+        if visite["route"] in ("/partager", "/saviez-vous"):
+            assert visite["replie"]["cartes"], f"{lieu} : aucune grille de cartes"
+        for grille in visite["replie"]["cartes"]:
+            if visite["largeur"] >= DEUX_CARTES_DE_FRONT and grille["colonnes"] < 2:
+                fautes.append(f"{lieu} : une carte par ligne, sur {grille['largeur']} points")
+            if grille["plusPetite"] < TAILLE_LUE_MINIMALE:
+                fautes.append(f"{lieu} : une carte se lit à {grille['plusPetite']} pixels")
+    assert not fautes, f"{len(fautes)} grilles de cartes :\n" + "\n".join(fautes)
