@@ -2006,6 +2006,23 @@ def _cas() -> list[dict]:
         "conjoint_sexe": "H", "deces": "2015-03", "ressources_conjoint": "18000",
         "conjoint_retraite": "2020-07", "nouvelle_union": "mariage",
         "nouvelle_union_depuis": "2018-05", "ressources_nouveau_conjoint": "12000"}))
+    # Le même jour, la réversion révisée avant la retraite du survivant, ou sans
+    # elle (R. 353-1-1) : le veuf de 2015 qui travaille et se remarie en 2018,
+    # révisée le mois qui suit, toujours révisable ; la veuve de 2010, sans
+    # ressources, remariée avant son âge légal, où sa réversion se fige ; la
+    # veuve de 2006 dont les cinquante-cinq ans abattent le salaire.
+    cas.append(("reversion_revisee_au_menage", {
+        "naissance": "1955", "liquidation": "60", "sexe": "F", "conjoint": "1958-06",
+        "conjoint_sexe": "H", "deces": "2015-03", "ressources_conjoint": "15000",
+        "activite_conjoint": "15000", "nouvelle_union": "mariage",
+        "nouvelle_union_depuis": "2018-05", "ressources_nouveau_conjoint": "20000"}))
+    cas.append(("reversion_figee_a_son_age_legal", {
+        "naissance": "1945", "liquidation": "60", "conjoint": "1953-08", "deces": "2010-03",
+        "nouvelle_union": "mariage", "nouvelle_union_depuis": "2014-09",
+        "ressources_nouveau_conjoint": "28000"}))
+    cas.append(("reversion_revisee_a_cinquante_cinq_ans", {
+        "naissance": "1945", "liquidation": "60", "conjoint": "1953-09", "deces": "2006-10",
+        "ressources_conjoint": "14000", "activite_conjoint": "14000"}))
 
     # Les carrières LUES sur un relevé, plutôt que reconstituées.
     cas.extend(_cas_releve())

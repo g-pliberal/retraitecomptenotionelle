@@ -1,0 +1,52 @@
+date: "2026-10-24"
+session: "action 138, étape 4, dixième partie : la révision de la réversion du régime général quand le ménage ou les ressources du survivant changent avant sa retraite, ou sans elle, et la dernière révision à son âge légal (R. 353-1-1)"
+consulte: >-
+  veille_droit.py, lancé à l'ouverture de la session (dernière veille consignée :
+  2026-10-24) ; l'index LEGI, récupéré de la release index-dila et mis à jour par ses
+  huit incréments jusqu'au 23 octobre 2026, puis textes.py --inscrire, qui n'a rien
+  inscrit. Dans l'index LEGI : R. 353-1-1, sa rédaction de 2026 (LEGIARTI000053335692),
+  relue en entier, dont le b) : « A la date à laquelle il atteint l'âge prévu par
+  l'article L. 161-17-2, lorsqu'il ne peut pas prétendre à de tels avantages ». Par
+  l'API de la base de législation de la Cnav (legislation.lassuranceretraite.fr, sans
+  www, qui répond ; avec www, le proxy de la session refuse la connexion) :
+  l'exposé « Condition de ressources » (expose/exposeByFileLeafRef), ses parties
+  « Modification des ressources », « Date de la dernière révision », « Contrôle des
+  ressources » et « Anciennes dispositions » ; par search/custom en phrase exacte
+  (« dernière révision », « contrôle des pensions de réversion »), les circulaires
+  Cnav n° 2005/17 (§ 143, 1442, 146, 31, 32, 321, 322), n° 2007/35 (§ 21, 221, 222,
+  223), n° 2009/39, n° 2010/58 (§ 21 à 24, par reference/referencesByFileLeafRef),
+  n° 2011/69 (§ 1 à 4) et n° 2012/25 (§ 1 à 4 et ses trois annexes).
+trouve: >-
+  La réversion attribuée depuis le 1er juillet 2004 « est révisée à partir du 1er jour
+  du mois qui suit la date de modification des ressources », examinées « sur les 3
+  mois qui précèdent cette date de révision » (exposé « Condition de ressources ») :
+  « la révision doit prendre effet à compter du premier jour du mois suivant la date
+  de variation des ressources », l'activité cessée le 15 février 2008 révisant la
+  réversion au 1er mars (circulaire n° 2010/58, § 21), avant le 30 juin 2010 le mois
+  qui suit le constat (n° 2005/17, § 321) ; « le remariage du bénéficiaire entraîne la
+  révision de la retraite de réversion pour tenir compte des ressources du nouveau
+  ménage ». La réversion attribuée avant ne l'est, « dans tous les autres cas » que
+  sa retraite, jamais. À cinquante-cinq ans, la caisse interroge le survivant « pour
+  appliquer cette mesure aux pensions de réversion en cours de service », l'abattement
+  de 30 % de ses revenus d'activité (n° 2007/35, § 221). La dernière révision : trois
+  mois après l'entrée en jouissance de toutes ses retraites, sa date d'effet quand il
+  en jouit depuis plus de trois mois (n° 2010/58, § 24) ; sans droit à retraite, « à
+  compter du 1er jour du mois qui suit l'âge légal », soixante ans avant la génération
+  de juillet 1951, soixante-deux dès 1955 (n° 2012/25, annexe 1) ; à cet âge, qui a
+  travaillé sans liquider tous ses droits garde sa réversion « révisable jusqu'à ce que
+  ces droits soient liquidés », qui « indique n'avoir exercé aucune activité
+  professionnelle » la voit figée (n° 2007/35, § 222). Le troisième cas du § 322 de la
+  circulaire n° 2005/17, la survivante de 1953 qui n'a jamais cotisé figée à soixante
+  ans, au 1er septembre 2013, entre au témoin en écart connu : depuis le 3 juin 2011,
+  R. 353-1-1, b, renvoie à l'âge de L. 161-17-2, soixante et un ans et deux mois pour
+  sa génération, et la circulaire n° 2012/25 modifie le § 322 en ce sens. Aucun exemple
+  publié ne chiffre une réversion révisée.
+reste: >-
+  La révision quand le ménage du survivant se défait, ou que ses ressources varient
+  autrement qu'à sa retraite et à ses cinquante-cinq ans — la cessation d'activité de
+  l'exemple de la circulaire n° 2010/58, § 21 —, que la chronologie et la saisie ne
+  datent pas encore ; le droit personnel liquidé après la dernière révision d'abord
+  fixée, qui la révise encore (n° 2010/58, § 24, second exemple) ; la révision de la
+  majoration de 11,1 % (R. 353-13) et celle de la complémentaire des indépendants ; la
+  retraite d'inaptitude substituée à la pension d'invalidité du survivant ; au site,
+  la phrase qui dirait les révisions et la dernière.

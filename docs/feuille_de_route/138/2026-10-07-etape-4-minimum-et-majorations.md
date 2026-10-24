@@ -3,13 +3,13 @@
 **Reprise, au 24 octobre 2026.** Fait : le minimum et les majorations (7
 octobre) ; le maximum, le plafond du ménage, l'assuré mort avant son départ,
 le partage, le cumul d'avant 2004, la majoration pour enfant (9 octobre) ; ses
-parts après la date d'effet, le régime qui la sert ; la retraite du survivant,
-qui recalcule aux règles de 2004 la réversion d'avant et révise celle d'après,
-pour la dernière fois (R. 353-1-1) (24 octobre). Reste, une session par point :
-la révision du ménage ou des ressources avant sa retraite, ou sans elle ; les
-majorations de 1976 et 1977 aux salariés agricoles, l'Alsace-Moselle, l'ancien
-invalide. Au site : le champ des études, l'enfant né après le départ, la
-phrase de la révision. Détail : `…-revision-a-sa-retraite.md`.
+parts après la date d'effet, le régime qui la sert ; la révision de la réversion
+à la retraite du survivant, au ménage qu'il forme, à ses cinquante-cinq ans,
+jusqu'à la dernière, à son âge légal sans retraite (24 octobre). Reste, une
+session par point : le ménage qui se défait, les ressources qui varient, à dater
+d'abord dans la chronologie ; les majorations de 1976 et 1977 aux salariés
+agricoles, l'Alsace-Moselle, l'ancien invalide. Au site : les études, l'enfant
+né après le départ, les révisions. Détail : `…-revision-avant-sa-retraite.md`.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « Quels sont les écarts
 encore présents avec trajectoire et destinie 2 ? J'aimerais combler les manques

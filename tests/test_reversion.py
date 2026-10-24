@@ -1882,10 +1882,10 @@ def test_une_revision_a_venir_se_mesure_au_dernier_smic_publie(simulateur):
 
 
 @pytest.mark.parametrize("retraite, derniere", [
-    # Sans retraite datée, ses retraites sont servies dès la date d'effet
-    # (présomption ``retraites_du_survivant_servies``), depuis un jour que la
-    # ligne ne connaît pas.
-    (None, None),
+    # Sans retraite datée, ses retraites sont servies dès la date d'effet,
+    # depuis plus de trois mois (présomption ``retraites_du_survivant_servies``) :
+    # la réversion n'est plus révisable dès elle.
+    (None, "2015-04-01"),
     # Servies depuis plus de trois mois à la date d'effet, la réversion
     # « n'est plus révisable dès son point de départ » (circulaire Cnav
     # n° 2010/58, § 24).
@@ -1904,6 +1904,236 @@ def test_sa_retraite_avant_la_date_d_effet_ne_la_revise_pas(simulateur, retraite
         round(_plafond(simulateur, 2015) - 18000.0, 2), "ecretee")
     assert (ligne.revision_effet, ligne.reduction_de_la_revision, ligne.derniere_revision) == (
         None, 0.0, derniere)
+
+
+# -- la réversion révisée avant la retraite du survivant, ou sans elle (R. 353-1-1) ----
+
+def test_le_menage_qu_il_forme_avant_sa_retraite_la_revise_le_mois_qui_suit(simulateur):
+    """« En cas de modification des ressources, la retraite de réversion
+    attribuée à partir du 01/07/2004 est révisée à partir du 1er jour du mois
+    qui suit la date de modification des ressources », et « le remariage du
+    bénéficiaire entraîne la révision de la retraite de réversion pour tenir
+    compte des ressources du nouveau ménage » (exposé de la Cnav, « Condition
+    de ressources » ; circulaire Cnav n° 2010/58, § 21). Le veuf de 2015, né
+    en 1958, travaille : ses 15 000 € de salaire, abattus de 30 %, laissent sa
+    réversion entière sous le plafond de 2015. Il se remarie en mai 2018 : en
+    juin, le plafond du ménage de 2018, 1,6 fois 2 080 fois 9,88 €, ramené
+    aux euros de 2015, compte aussi les 20 000 € de sa nouvelle épouse. Ayant
+    travaillé sans avoir liquidé ses retraites, il garde une réversion
+    « révisable jusqu'à ce que ces droits soient liquidés » (circulaire Cnav
+    n° 2007-35, § 222) : pas de dernière révision."""
+    carriere = _carriere(simulateur, 1955, 60.0, "1958-06-10", "2015-03-10",
+                         ressources=15000.0, activite=15000.0, nouvelle_union="mariage",
+                         union_depuis="2018-05", apport=20000.0)
+    ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                     2015)["regime_general"]
+    assert (round(ligne.montant, 2), ligne.motif, ligne.ressources_retenues) == (
+        5400.0, "servie", pytest.approx(0.7 * 15000.0))
+    revue = 1.6 * 2080 * 9.88 / _coefficient(simulateur, 2015, 2018) - (0.7 * 15000.0 + 20000.0)
+    assert 0.0 < revue < 5400.0
+    assert [jour for jour, _ in ligne.revisions] == ["2018-06-01"]
+    assert ligne.revisions[0][1] == pytest.approx(5400.0 - revue)
+    assert (ligne.revision_effet, ligne.derniere_revision) == ("2018-06-01", None)
+    assert ligne.reduction_de_la_revision == pytest.approx(5400.0 - revue)
+
+
+@pytest.mark.parametrize("depuis, revision", [
+    # Formé avant son âge légal, le ménage révise la réversion le mois qui suit.
+    ("2014-09", "2014-10-01"),
+    # Formé le mois où elle l'atteint, au jour de sa dernière révision.
+    ("2014-10", "2014-11-01"),
+    # Formé le jour de sa dernière révision, il ne change plus rien.
+    ("2014-11", None),
+])
+def test_sans_retraite_ni_activite_la_derniere_revision_tombe_a_son_age_legal(
+        simulateur, depuis, revision):
+    """« La date de la dernière révision ne peut être postérieure [...]
+    lorsque le conjoint survivant ne peut prétendre à de tels avantages, à la
+    date à laquelle il atteint l'âge » de L. 161-17-2 (R. 353-1-1, b, depuis
+    le 3 juin 2011) : la réversion « n'est plus révisable [...] à compter du
+    1er jour du mois qui suit l'âge légal de la retraite du demandeur, s'il
+    n'a pas droit à des retraites personnelles », et, depuis, « aucun
+    changement de ressources ou de situation familiale n'est pris en compte »
+    (exposé « Condition de ressources »). La veuve de 2010, née le 17 août
+    1953, sans ressources, est tenue pour n'avoir jamais travaillé
+    (présomption ``survivant_sans_droit_propre``) : soixante et un ans et deux
+    mois pour sa génération (circulaire Cnav n° 2012/25, annexe 1), le 17
+    octobre 2014, sa réversion figée au 1er novembre. Remariée en septembre,
+    elle voit sa réversion révisée en octobre sous le plafond du ménage de
+    2014, 1,6 fois 2 080 fois 9,53 €, ramené aux euros de 2010, ses 28 000 €
+    comptés ; remariée en octobre, au 1er novembre, « date d'effet de la
+    dernière révision » (circulaire Cnav n° 2005/17, § 322) ; remariée en
+    novembre, non."""
+    carriere = _carriere(simulateur, 1945, 60.0, "1953-08-17", "2010-03-10",
+                         nouvelle_union="mariage", union_depuis=depuis, apport=28000.0)
+    ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                     2010)["regime_general"]
+    assert (round(ligne.montant, 2), ligne.motif, ligne.derniere_revision) == (
+        5400.0, "servie", "2014-11-01")
+    if revision is None:
+        assert (ligne.revisions, ligne.revision_effet, ligne.reduction_de_la_revision) == (
+            (), None, 0.0)
+        return
+    revue = 1.6 * 2080 * 9.53 / _coefficient(simulateur, 2010, 2014) - 28000.0
+    assert 0.0 < revue < 5400.0
+    assert [jour for jour, _ in ligne.revisions] == [revision]
+    assert ligne.reduction_de_la_revision == pytest.approx(5400.0 - revue)
+
+
+@pytest.mark.parametrize("naissance, derniere", [
+    # « Assurés nés avant le 1er juillet 1951 : 60 ans » ; puis soixante ans
+    # et quatre mois, neuf mois, soixante et un ans et deux mois, et sept
+    # mois ; soixante-deux ans dès 1955 (circulaire Cnav n° 2012/25,
+    # annexe 1).
+    ("1950-03-10", "2010-04-01"),
+    ("1951-09-10", "2012-02-01"),
+    ("1952-05-10", "2013-03-01"),
+    ("1953-08-17", "2014-11-01"),
+    ("1954-02-10", "2015-10-01"),
+    ("1955-06-10", "2017-07-01"),
+    # Né le premier d'un mois, il atteint l'âge ce jour-là : la réversion est
+    # figée au premier jour du mois qui suit.
+    ("1955-07-01", "2017-08-01"),
+])
+def test_l_age_de_la_derniere_revision_suit_sa_generation(simulateur, naissance, derniere):
+    """La cristallisation de la réversion du survivant qui ne peut prétendre à
+    aucune retraite « doit, dans un tel cas, être fixée entre 60 ans et 62
+    ans, selon la date de naissance de l'assuré, conformément au tableau
+    figurant en annexe 1 » (circulaire Cnav n° 2012/25, § 1), au premier jour
+    du mois qui suit. Le défunt meurt en mars 2008 ; la réversion court dès
+    avril, chacun ayant cinquante et un ans."""
+    carriere = _carriere(simulateur, 1945, 60.0, naissance, "2008-03-10")
+    ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                     2008)["regime_general"]
+    assert (ligne.date_effet, ligne.derniere_revision, ligne.revisions) == (
+        "2008-04-01", derniere, ())
+
+
+def test_le_menage_qu_il_forme_dans_les_trois_mois_de_sa_retraite_la_revise_encore(
+        simulateur):
+    """Sa retraite révise la réversion le mois qui suit, et la dernière
+    révision vient trois mois après elle (R. 353-1-1 ; circulaire Cnav
+    n° 2010/58, § 22 et 24) : le veuf de 2015, retraité en juillet 2020, voit
+    sa réversion révisée en août sous le plafond de 2020, ses 18 000 € de
+    retraites comptés. Remarié le 20 août, avant le 1er octobre, il la voit
+    révisée encore en septembre, sous le plafond du ménage, 1,6 fois plus
+    haut, les 12 000 € de sa nouvelle épouse comptés : elle remonte. La ligne
+    dit chaque révision ; ``revision_effet`` et ``reduction_de_la_revision``,
+    la dernière."""
+    carriere = _carriere(simulateur, 1955, 60.0, "1958-06-10", "2015-03-10",
+                         ressources=18000.0, retraite="2020-07", nouvelle_union="mariage",
+                         union_depuis="2020-08-20", apport=12000.0)
+    ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                     2015)["regime_general"]
+    plafond = 2080 * 10.15 / _coefficient(simulateur, 2015, 2020)
+    seul, menage = plafond - 18000.0, min(5400.0, 1.6 * plafond - 30000.0)
+    assert 0.0 < seul < menage < 5400.0
+    assert [jour for jour, _ in ligne.revisions] == ["2020-08-01", "2020-09-01"]
+    assert [reduction for _, reduction in ligne.revisions] == [
+        pytest.approx(5400.0 - seul), pytest.approx(5400.0 - menage)]
+    assert (ligne.revision_effet, ligne.derniere_revision) == ("2020-09-01", "2020-10-01")
+    assert ligne.reduction_de_la_revision == pytest.approx(5400.0 - menage)
+
+
+def test_ses_cinquante_cinq_ans_revisent_la_reversion_par_l_abattement(simulateur):
+    """Les revenus d'activité du survivant « font l'objet d'un abattement de
+    30 % s'il est âgé de 55 ans ou plus » (R. 353-1), quel que soit l'âge où
+    il les a perçus (circulaire Cnav n° 2006-37, § 7) ; « pour appliquer cette
+    mesure aux pensions de réversion en cours de service », la caisse
+    interroge le survivant à cinquante-cinq ans (circulaire Cnav n° 2007-35,
+    § 221), et la révise au premier jour du mois qui suit (circulaire Cnav
+    n° 2010/58, § 21). La veuve de 2006, née le 15 septembre 1953, a
+    cinquante-trois ans à sa date d'effet : ses 14 000 € de salaire, entiers,
+    réduisent sa réversion sous le plafond de 2006, 2 080 fois 8,03 €. Le 15
+    septembre 2008, l'abattement les ramène à 9 800 € : en octobre, sous le
+    plafond de 2008, sa réversion redevient entière."""
+    carriere = _carriere(simulateur, 1945, 60.0, "1953-09-15", "2006-10-10",
+                         ressources=14000.0, activite=14000.0)
+    ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                     2006)["regime_general"]
+    reduite = 2080 * 8.03 - 14000.0
+    assert (ligne.date_effet, round(ligne.montant, 2), ligne.motif) == (
+        "2006-11-01", round(reduite, 2), "ecretee")
+    assert 2080 * 8.44 / _coefficient(simulateur, 2006, 2008) - 0.7 * 14000.0 > 5400.0
+    assert [jour for jour, _ in ligne.revisions] == ["2008-10-01"]
+    assert ligne.reduction_de_la_revision == pytest.approx(reduite - 5400.0)
+    assert ligne.derniere_revision is None
+
+
+def test_avant_juillet_2004_le_menage_qu_il_forme_ne_la_revise_pas(simulateur):
+    """La réversion attribuée avant le 1er juillet 2004 n'est révisée aux
+    règles de ressources que par une retraite personnelle prise depuis ;
+    « dans tous les autres cas », elle « continue d'être servie selon les
+    règles applicables avant cette date » (exposé « Condition de
+    ressources » ; lettre ministérielle du 22 mars 2005, § 1) : la veuve de
+    1999 qui se remarie en 2006 la garde telle quelle."""
+    def ligne(**union):
+        carriere = _carriere(simulateur, 1930, 60.0, "1940-06-10", "1999-03-10",
+                             ressources=6000.0, **union)
+        return _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                        1999)["regime_general"]
+    remariee, seule = ligne(nouvelle_union="mariage", union_depuis="2006-05",
+                            apport=30000.0), ligne()
+    assert (remariee.montant, remariee.motif) == (seule.montant, seule.motif)
+    assert (remariee.revisions, remariee.revision_effet, remariee.derniere_revision) == (
+        (), None, None)
+
+
+#: Des saisies où la réversion du régime général se révise avant la retraite
+#: du survivant, ou sans elle : le veuf de 2015 qui travaille et se remarie en
+#: 2018 ; la veuve de 2010, sans ressources, remariée avant son âge légal ; le
+#: veuf retraité en juillet 2020, remarié en août ; la veuve de 2006 à qui ses
+#: cinquante-cinq ans valent l'abattement ; la veuve de 2023, sans ressources ni
+#: ménage, dont la réversion se fige à son âge légal. Chacune avec les jours de
+#: ses révisions, et celui où elle n'est plus révisable.
+CAS_DES_REVISIONS = [
+    ({"naissance": "1955", "liquidation": "60", "sexe": "F", "conjoint": "1958-06",
+      "conjoint_sexe": "H", "deces": "2015-03", "ressources_conjoint": "15000",
+      "activite_conjoint": "15000", "nouvelle_union": "mariage",
+      "nouvelle_union_depuis": "2018-05", "ressources_nouveau_conjoint": "20000"},
+     ["2018-06-01"], None),
+    ({"naissance": "1945", "liquidation": "60", "conjoint": "1953-08", "deces": "2010-03",
+      "nouvelle_union": "mariage", "nouvelle_union_depuis": "2014-09",
+      "ressources_nouveau_conjoint": "28000"}, ["2014-10-01"], "2014-11-01"),
+    ({"naissance": "1955", "liquidation": "60", "sexe": "F", "conjoint": "1958-06",
+      "conjoint_sexe": "H", "deces": "2015-03", "ressources_conjoint": "18000",
+      "conjoint_retraite": "2020-07", "nouvelle_union": "mariage",
+      "nouvelle_union_depuis": "2020-08", "ressources_nouveau_conjoint": "12000"},
+     ["2020-08-01", "2020-09-01"], "2020-10-01"),
+    ({"naissance": "1945", "liquidation": "60", "conjoint": "1953-09", "deces": "2006-10",
+      "ressources_conjoint": "14000", "activite_conjoint": "14000"}, ["2008-10-01"], None),
+    ({"naissance": "1960", "liquidation": "62", "conjoint": "1962", "deces": "2023-05"},
+     [], "2024-08-01"),
+]
+
+
+def test_les_deux_moteurs_revisent_la_reversion_avant_sa_retraite(saisies):
+    """Le résultat entier, des six scénarios, est le même en Python et en
+    JavaScript ; chaque cas révise la réversion du régime général aux jours
+    qu'il dit, et la fige au jour qu'il dit."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    racine = Path(__file__).resolve().parents[1]
+    sys.path.insert(0, str(racine / "scripts"))
+    from construire_temoins import _fini
+    attendus = [{"requete": cas, "resultat": _fini(saisies.simuler(cas).dictionnaire())}
+                for cas, _, _ in CAS_DES_REVISIONS]
+    for attendu, (_, revisions, derniere) in zip(attendus, CAS_DES_REVISIONS):
+        ligne, = (r for r in attendu["resultat"]["reversion"]["regimes"]
+                  if r["regime"] == "regime_general")
+        assert ([r["date"] for r in ligne["revisions"]], ligne["derniere_revision"]) == (
+            revisions, derniere), ligne
+    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
+                                     delete=False) as fichier:
+        fichier.write(json.dumps(attendus, ensure_ascii=False))
+        chemin = fichier.name
+    try:
+        execution = subprocess.run(
+            ["node", str(racine / "tests" / "js" / "comparer.mjs"), chemin],
+            cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False)
+    finally:
+        Path(chemin).unlink()
+    assert execution.returncode == 0, (execution.stdout + execution.stderr)[-2000:]
 
 
 #: Des saisies où la retraite du survivant suit la date d'effet de sa

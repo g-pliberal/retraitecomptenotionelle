@@ -392,9 +392,9 @@ listes:
         dit: >-
           les ressources du survivant hors de ses revenus d'activité, que le
           modèle tient pour ses retraites personnelles, lui sont servies dès la
-          date d'effet de sa réversion
+          date d'effet de sa réversion, et depuis plus de trois mois
         valeur: dès la date d'effet
-        appliquee_par: reversion (droit/reversion.py), qui y applique la limite de cumul d'avant juillet 2004, compte ces retraites aux ressources depuis, et refuse la majoration pour enfant à charge ; son jumeau JavaScript
+        appliquee_par: reversion (droit/reversion.py), qui y applique la limite de cumul d'avant juillet 2004, compte ces retraites aux ressources depuis, refuse la majoration pour enfant à charge, et tient la réversion attribuée depuis pour non révisable dès sa date d'effet (_derniere_revision) ; son jumeau JavaScript
         entrera_a: liquider_chaque_regime
         raison: >-
           avant juillet 2004, la réversion du régime général se cumule avec les
@@ -402,9 +402,33 @@ listes:
           d'attribution du 2e avantage » (exposé de la Cnav, « Retraite de
           réversion cumulable ») ; la majoration pour enfant à charge n'est
           servie qu'à qui n'a pas de retraite personnelle, et cesse quand elle
-          lui est attribuée (L. 353-5 ; circulaire Cnav n° 76/88, fiche n° 9).
-          Le formulaire ne demande la date de sa retraite qu'à qui veut la
-          dire. Une date déclarée prend la place de la présomption
+          lui est attribuée (L. 353-5 ; circulaire Cnav n° 76/88, fiche n° 9) ;
+          depuis, la réversion « n'est plus révisable dès son point de départ »
+          quand le survivant « est en possession de tous ses droits personnels
+          depuis plus de trois mois » (circulaire Cnav n° 2010/58, § 24), ce
+          qui est le cas de qui avait déjà sa retraite au décès. Le formulaire
+          ne demande la date de sa retraite qu'à qui veut la dire. Une date
+          déclarée prend la place de la présomption
+      survivant_sans_droit_propre:
+        dit: >-
+          le conjoint survivant qui n'a ni retraites, ni revenus d'activité, ni
+          retraite datée n'a jamais travaillé : il ne peut prétendre à aucune
+          retraite personnelle
+        valeur: aucune retraite personnelle
+        appliquee_par: _derniere_revision (droit/reversion.py), qui ne révise plus sa réversion du régime général à partir du premier jour du mois qui suit son âge légal (R. 353-1-1, b) ; son jumeau JavaScript
+        entrera_a: liquider_chaque_regime
+        raison: >-
+          la réversion attribuée depuis juillet 2004 n'est plus révisable trois
+          mois après que le survivant est entré en jouissance de toutes ses
+          retraites personnelles, ou, « lorsque le conjoint survivant ne peut
+          prétendre à de tels avantages », à son âge légal (R. 353-1-1) ; la
+          caisse l'interroge à cet âge : qui « indique n'avoir exercé aucune
+          activité professionnelle » voit sa réversion figée au premier jour du
+          mois qui suit, qui a travaillé sans avoir liquidé tous ses droits la
+          garde « révisable jusqu'à ce que ces droits soient liquidés »
+          (circulaire Cnav n° 2007-35, § 222). Le formulaire ne demande pas s'il
+          a travaillé ; des retraites ou des revenus d'activité déclarés, ou la
+          date de sa retraite, prennent la place de la présomption
       charge_jusqu_a_l_age_limite:
         dit: >-
           l'enfant du défunt que la chronologie ne dit ni étudiant, ni apprenti,

@@ -1904,6 +1904,29 @@ exemples:
       décembre 2018.
     carriere: {naissance: "1945-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2005-01", age_debut: 20, conjoint: "1953-08-17", ressources_conjoint: 12000, conjoint_retraite: "2018-09", deces: "2005-12"}
     attendu: {dates_de_derniere_revision_de_la_reversion: {regime_general: "2018-12-01"}}
+  - id: cnav_2005_17_derniere_revision_sans_droit_propre
+    source: {editeur: "Cnav", reference: "circulaire n° 2005/17 du 11 avril 2005, § 322, La dernière révision, exemple, 3ème cas", verifie_le: "2026-10-24"}
+    enonce: >-
+      Le même assuré, né le 17 août 1953, titulaire d'une pension de réversion
+      depuis le 1er janvier 2006 : « à 60 ans aucun droit à pension n'est
+      ouvert, l'assuré n'ayant jamais cotisé » ; la date d'effet de la
+      dernière révision de sa pension de réversion est le 1er septembre 2013.
+      Sans ressources déclarées, la survivante est tenue pour n'avoir jamais
+      travaillé (présomption survivant_sans_droit_propre).
+    carriere: {naissance: "1945-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2005-01", age_debut: 20, conjoint: "1953-08-17", deces: "2005-12"}
+    attendu: {dates_de_derniere_revision_de_la_reversion: {regime_general: "2013-09-01"}}
+    ecart_connu:
+      modele: {dates_de_derniere_revision_de_la_reversion: {regime_general: "2014-11-01"}}
+      explication: >-
+        L'exemple date de 2005, quand R. 353-1-1, b, figeait la réversion à
+        soixante ans. Depuis le 3 juin 2011, il renvoie à l'âge de
+        L. 161-17-2, soixante et un ans et deux mois pour la génération 1953,
+        et la circulaire Cnav n° 2012/25 (§ 1 et annexe 1) modifie le § 322
+        en ce sens : la survivante atteint cet âge le 17 octobre 2014, et le
+        modèle, qui applique la rédaction en vigueur quand elle a soixante
+        ans, en août 2013, fige sa réversion au 1er novembre 2014.
+      fiche: reversion
+      depuis: "2026-10-24"
   - id: cnav_2006_37_revision_au_constat
     source: {editeur: "Cnav", reference: "circulaire n° 2006/37 du 8 juin 2006, § 6, La mise en œuvre de la dernière révision, exemples, 2ème cas", verifie_le: "2026-10-24"}
     enonce: >-

@@ -806,10 +806,15 @@ Le relevé des droits et le résultat le signalent.
   - survivant qui vit seul après le décès, quand la saisie ne dit pas son
     ménage : le plafond de sa réversion est celui d'une personne seule
     (action 138, étape 4) ;
-  - retraites du survivant servies dès la date d'effet de sa réversion, quand
-    la saisie ne dit pas quand la sienne commence : la limite de cumul d'avant
-    juillet 2004 s'y applique, et la majoration pour enfant à charge n'est pas
-    due (action 138, étape 4) ;
+  - retraites du survivant servies dès la date d'effet de sa réversion, et
+    depuis plus de trois mois, quand la saisie ne dit pas quand la sienne
+    commence : la limite de cumul d'avant juillet 2004 s'y applique, la
+    majoration pour enfant à charge n'est pas due, et la réversion attribuée
+    depuis n'est plus révisable dès sa date d'effet (action 138, étape 4) ;
+  - survivant qui n'a jamais travaillé, quand la saisie ne lui dit ni
+    retraites, ni revenus d'activité, ni retraite datée : sa réversion n'est
+    plus révisable à partir du premier jour du mois qui suit son âge légal
+    (action 138, étape 4) ;
   - réversion demandée dans l'année du décès ;
   - décès supposé juste après le départ, ou cette année pour qui est déjà
     parti, quand un conjoint est déclaré sans décès : la page montre ce que

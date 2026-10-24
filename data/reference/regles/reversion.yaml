@@ -35,12 +35,13 @@ lit:
   cinquante-cinq ans ; le reste, que le modèle tient pour ses retraites personnelles,
   que le cumul d'avant juillet 2004 retient hors de ses ressources (D. 355-1) ; le
   mois où elles commencent, quand il le dit, qui revoit la réversion qu'elles suivent
-  (D. 355-1, L. 353-1, R. 353-1-1)
+  (D. 355-1, L. 353-1, R. 353-1-1) et date sa dernière révision ; son âge légal,
+  quand il n'a ni retraites ni activité (R. 353-1-1, b)
 - l'invalidité qu'il déclare, qui le tient pour inapte avant 1973
 - l'union où il vit après le décès — mariage, PACS ou concubinage —, le mois où elle
   commence, et les ressources de son nouveau conjoint, que le plafond du ménage
-  compte avec les siennes quand elle est formée à la date d'effet, ou à la révision
-  qu'ouvre sa retraite
+  compte avec les siennes quand elle est formée à la date d'effet, ou aux révisions
+  qui la suivent, dont celle qu'elle ouvre le mois qui suit (R. 353-1-1)
 - la pension principale du défunt, servie ou dont il eût bénéficié à son décès — mort
   avant son départ, celle qu'il eût obtenue au premier jour du trimestre civil de son
   décès, sur la carrière de ce jour-là, sans décote
@@ -464,7 +465,8 @@ versions:
              cnav_2006_37_abattement_au_1er_septembre,
              cnav_2006_37_abattement_au_1er_octobre,
              cnav_2005_17_derniere_revision_a_58_ans,
-             cnav_2005_17_derniere_revision_a_65_ans]
+             cnav_2005_17_derniere_revision_a_65_ans,
+             cnav_2005_17_derniere_revision_sans_droit_propre]
 - id: age_51
   statut: lue
   textes:
@@ -890,11 +892,12 @@ approximations:
     au SMIC du 1er janvier de son année, la dernière que le barème publie pour une
     année à venir, ramené aux euros de l'année des montants par les coefficients des
     pensions, en 2020 ceux des pensions de 2 000 euros par mois au plus. Sans retraite
-    datée, ou quand elle précède la date d'effet, rien ne revoit la réversion ; le
-    survivant qui ne peut prétendre à aucune retraite n'a pas de dernière révision à
-    l'âge légal (R. 353-1-1, b) ; depuis 2026, la retraite d'un cumul emploi-retraite
-    ne la révise plus (R. 353-1-1, rédaction du décret n° 2025-1409), et le modèle
-    n'en sert pas au survivant
+    datée, ou quand elle précède la date d'effet, sa retraite ne revoit pas la
+    réversion ; depuis 2026, la retraite d'un cumul emploi-retraite ne la révise plus
+    (R. 353-1-1, rédaction du décret n° 2025-1409), et le modèle n'en sert pas au
+    survivant ; les droits personnels qu'il liquiderait après la dernière révision
+    d'abord fixée, qui la révisent encore (circulaire Cnav n° 2010/58, § 24), ne sont
+    pas portés : le modèle lui sert tous ses droits au jour qu'il date
   effet: >-
     la réversion d'un survivant qui prend sa retraite après elle, réduite de ce que
     ses retraites passent le plafond ; pendant les deux mois où la caisse ne compte
@@ -963,9 +966,13 @@ approximations:
   effet: non mesuré
 - ecart: >-
     le ménage du survivant est celui qu'il déclare, depuis le jour qu'il dit ou dès
-    le décès : le plafond du ménage s'applique dès la date d'effet quand il est formé,
-    et la réversion n'est révisée qu'à la retraite du survivant qui la suit, ni quand
-    il se défait, ni quand les autres ressources varient (R. 353-1-1) ; elles se
+    le décès : le plafond du ménage s'applique dès la date d'effet quand il est formé
+    ce jour-là ou avant, quand la caisse ne compte que les trois mois qui la
+    précèdent ; formé après, il révise la réversion le mois qui suit (R. 353-1-1) ;
+    elle n'est pas révisée quand il se défait, ni quand les ressources varient
+    autrement qu'à sa retraite et à ses cinquante-cinq ans, que la saisie ne date pas
+    (la cessation d'activité de l'exemple de la circulaire Cnav n° 2010/58, § 21,
+    révisée le mois qui suit) ; elles se
     comparent sur l'année, et non sur les trois mois qui précèdent la date d'effet,
     les douze à défaut (R. 353-1), ce qui ne change rien à des ressources égales
     chaque mois ; les ressources du survivant et de son nouveau conjoint sont celles
@@ -1018,11 +1025,25 @@ approximations:
     non mesuré ; une date de mariage dite par l'année déplace jusqu'à onze mois la
     durée qui fait les parts
 - ecart: >-
-    l'union que le survivant forme après la date d'effet ne révise la réversion du
-    régime général, qui compte alors les ressources du ménage (R. 353-1-1), qu'à la
-    révision qu'ouvre sa retraite, quand elle la précède, et non le mois qui suit sa
-    formation ; formée après, ou sans retraite datée, elle ne la révise pas ; elle
-    ne révise jamais celle de la complémentaire des indépendants
+    l'union que le survivant forme après la date d'effet révise la réversion du
+    régime général le mois qui suit sa formation (R. 353-1-1 ; exposé de la Cnav,
+    « Condition de ressources »), comme le font ses cinquante-cinq ans, qui abattent
+    ses revenus d'activité (circulaire Cnav n° 2007-35, § 221), et sa retraite,
+    jusqu'à la dernière révision : trois mois après sa retraite ; sa date d'effet
+    quand il a ses retraites sans la dater, servies depuis plus de trois mois
+    (présomption retraites_du_survivant_servies) ; le premier jour du mois qui suit
+    son âge légal quand il n'a ni retraites ni activité (présomption
+    survivant_sans_droit_propre, R. 353-1-1, b) ; aucune quand il travaille sans
+    retraite datée, sa réversion restant « révisable jusqu'à ce que ces droits soient
+    liquidés » (circulaire Cnav n° 2007-35, § 222). Un changement du jour même d'une
+    révision ne compte qu'à celle du mois qui suit. Une réversion attribuée de juillet
+    à décembre 2004, sous la rédaction de R. 353-1-1 qui renvoyait à l'allocation
+    supplémentaire, est tenue pour figée comme sous celle du 30 décembre 2004 ; les
+    cinquante-cinq ans d'un survivant de 2004 n'abattent pas ses revenus avant 2005,
+    ni ne révisent sa réversion, que la caisse revoyait alors en interrogeant les
+    bénéficiaires. L'union ne révise jamais la réversion de la complémentaire des
+    indépendants, ni sa retraite celle des autres régimes ; la majoration pour enfant
+    à charge garde la réduction de la date d'effet
   effet: non mesuré
 - ecart: >-
     la réversion des points d'avant 1973 des artisans et des commerçants suit les
@@ -1073,7 +1094,12 @@ presomptions:
   retraites_du_survivant_servies: >-
     la limite de cumul d'avant juillet 2004 appliquée à la date d'effet, et ses
     retraites comptées à ses ressources depuis, quand la saisie ne dit pas quand sa
-    propre retraite commence
+    propre retraite commence ; la réversion attribuée depuis, qu'elles servent depuis
+    plus de trois mois, n'est plus révisable dès sa date d'effet
+  survivant_sans_droit_propre: >-
+    la dernière révision de la réversion, au premier jour du mois qui suit l'âge
+    légal du survivant qui n'a ni retraites, ni revenus d'activité, ni retraite datée
+    (R. 353-1-1, b)
   reversion_demandee_dans_l_annee: >-
     la date d'effet, au premier jour du mois qui suit le décès, ou qui suit l'âge
     requis
@@ -1119,15 +1145,17 @@ sources:
     décédé après son départ.
   - >-
     Ce que les versions ne portent pas encore : la réversion d'un assuré disparu
-    (L. 353-2), la révision de la pension quand les ressources, le ménage ou les
-    ayants droit changent avant la retraite du survivant, ou sans elle (R. 353-1-1,
-    R. 353-4), et la pension de vieillesse de veuve ou de veuf. Les limites de cumul
-    d'avant juillet 2004 (D. 355-1), l'âge d'avant 1973 et les majorations
-    forfaitaires de 1982 et de 1995 sont portés depuis le 9 octobre 2026, la
-    majoration forfaitaire pour enfant à charge (L. 353-5) dans sa propre fiche,
+    (L. 353-2), la révision de la pension quand le ménage du survivant se défait, que
+    ses ressources varient sans que la saisie le date, ou que les ayants droit
+    changent (R. 353-1-1, R. 353-4), et la pension de vieillesse de veuve ou de veuf.
+    Les limites de cumul d'avant juillet 2004 (D. 355-1), l'âge d'avant 1973 et les
+    majorations forfaitaires de 1982 et de 1995 sont portés depuis le 9 octobre 2026,
+    la majoration forfaitaire pour enfant à charge (L. 353-5) dans sa propre fiche,
     majoration_forfaitaire_reversion ; la révision qu'ouvre la retraite du survivant,
     et le recalcul aux règles de 2004 de la réversion qui la précède, depuis le 24
-    octobre 2026.
+    octobre 2026, comme, le même jour, la révision qu'ouvrent le ménage qu'il forme
+    et ses cinquante-cinq ans, avant sa retraite ou sans elle, et la dernière révision
+    sans retraite, à son âge légal.
   - >-
     Avant le 1er juillet 1974, la réversion « ne se cumulait pas avec un avantage
     personnel » : l'exposé de la Cnav dit « avant le 01/01/1974 », quand la loi
@@ -1606,6 +1634,31 @@ sources:
       retraite de soixante à soixante-deux ans selon la génération
     date: 2026-10-24
     url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_2010058_30062010.aspx
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2007-35 du 30 avril 2007, § 221 : à cinquante-cinq ans, « pour
+      appliquer cette mesure aux pensions de réversion en cours de service », la caisse
+      interroge le survivant sur ses revenus d'activité, qu'elle abat de 30 % ; § 222 :
+      à soixante ans, l'âge légal depuis, qui a travaillé et liquidé tous ses droits
+      voit sa réversion figée trois mois après eux, qui « indique avoir exercé une
+      activité professionnelle mais ne pas avoir obtenu la totalité de ses droits » la
+      garde « révisable jusqu'à ce que ces droits soient liquidés », qui « indique
+      n'avoir exercé aucune activité professionnelle » la voit figée « au premier jour
+      du mois suivant le soixantième anniversaire ». Circulaire Cnav n° 2010/58, § 21 :
+      « la révision doit prendre effet à compter du premier jour du mois suivant la
+      date de variation des ressources », l'activité cessée le 15 février 2008 révisée
+      au 1er mars. Circulaire Cnav n° 2012/25, § 1 et annexe 1 : la cristallisation
+      sans retraite à soixante ans avant la génération de juillet 1951, puis soixante
+      ans et quatre mois, neuf mois, soixante et un ans et deux mois, et sept mois,
+      soixante-deux ans dès 1955, l'âge de L. 161-17-2. Circulaire Cnav n° 2005/17,
+      § 322, troisième cas : « à 60 ans aucun droit à pension n'est ouvert, l'assuré
+      n'ayant jamais cotisé », dernière révision au 1er septembre 2013 pour la
+      survivante née le 17 août 1953, que la circulaire n° 2012/25 reporte à soixante
+      et un ans et deux mois. Exposé « Condition de ressources » (16 avril 2026),
+      « Modification des ressources » et « Contrôle des ressources » : à cinquante-cinq
+      ans, à l'âge légal et à l'âge du taux plein augmenté de trois mois
+    date: 2026-10-24
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_2007035_30042007.aspx
 textes_a_rattacher: []
 code:
   python: >-
@@ -1614,7 +1667,8 @@ code:
     mois_de_mariage, _part_du_survivant, _remarie_avant, _admis_au_regime_general,
     _admis_ailleurs, _fin_au_remariage, _jusqu_au_remariage, _premiere_date_d_effet,
     _date_d_effet_du_regime_general, _cumuler, _retraites_au, _cumul_a_la_retraite,
-    _annee_du_plafond, _revision_a_la_retraite, _trois_mois_apres, _derniere_revision,
+    _annee_du_plafond, _servie_au, _revisions, _trois_mois_apres, _generation,
+    _derniere_revision,
     _majorations_ulterieures ; scenarios/actuel.py : Reversions ; echeancier.py :
     Echeancier._reverser, Echeancier._pensions_au_deces,
     Echeancier._pensions_eues_au_deces ; carriere.py : Carriere.arretee_au_deces,
@@ -1627,8 +1681,8 @@ code:
     ressourcesDuPlafond, majorerLesPetitesRetraites, moisDeMariage, partDuSurvivant,
     remarieAvant, admisAuRegimeGeneral, admisAilleurs, finAuRemariage,
     jusquAuRemariage, premiereDateDEffet, dateDEffetDuRegimeGeneral, cumuler,
-    retraitesAu, cumulALaRetraite, anneeDuPlafond, revisionALaRetraite, troisMoisApres,
-    derniereRevision, majorationsUlterieures ; moteur/js/regimes.js :
+    retraitesAu, cumulALaRetraite, anneeDuPlafond, servieAu, revisionsDeLaReversion,
+    troisMoisApres, generationDe, derniereRevision, majorationsUlterieures ; moteur/js/regimes.js :
     Reversions ;
     moteur/js/echeancier.js : Echeancier._reverser, Echeancier._pensionsAuDeces,
     Echeancier._pensionsEuesAuDeces ; moteur/js/carriere.js : Carriere.arreteeAuDeces,
