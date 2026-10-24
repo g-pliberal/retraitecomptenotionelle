@@ -78,7 +78,7 @@ from retraite_notionnelle.avantages import (  # noqa: E402
 )
 from retraite_notionnelle.castypes import CAS_TYPES  # noqa: E402
 from retraite_notionnelle.config import RACINE_DONNEES  # noqa: E402
-from retraite_notionnelle.cout import _ponderation  # noqa: E402
+from retraite_notionnelle.cout import _ponderation, _tetes_par_poids  # noqa: E402
 from retraite_notionnelle.donnees.depenses import DepensesRetraite  # noqa: E402
 from retraite_notionnelle.donnees.population import Population  # noqa: E402
 from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
@@ -279,8 +279,9 @@ def main() -> int:
 
     depenses = DepensesRetraite(parametres.racine_donnees)
     population = Population(parametres.racine_donnees)
-    poids = _ponderation(simulateur, options.ponderation, CAS_TYPES)
     pensionnes, refus = decomposer(simulateur, options.liquidation)
+    poids = _ponderation(simulateur, options.ponderation, CAS_TYPES,
+                         tetes=_tetes_par_poids(pensionnes, population))
     noms = libelles()
 
     if options.duree:

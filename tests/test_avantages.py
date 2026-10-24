@@ -768,15 +768,16 @@ def test_les_retraites_de_moins_de_soixante_ans_confrontes_au_jaune_pensions_202
     """
     from retraite_notionnelle import Parametres
     from retraite_notionnelle.castypes import CAS_TYPES
-    from retraite_notionnelle.cout import _ponderation
+    from retraite_notionnelle.cout import _ponderation, _tetes_par_poids
     from retraite_notionnelle.donnees.population import Population
     from retraite_notionnelle.simulateur import Simulateur
 
     annee = 2025
     simulateur = Simulateur(Parametres())
     population = Population(RACINE_DONNEES)
-    poids = _ponderation(simulateur, "effectifs", CAS_TYPES)(annee)
     pensionnes, _ = script_cout.decomposer(simulateur, "droit")
+    poids = _ponderation(simulateur, "effectifs", CAS_TYPES,
+                         tetes=_tetes_par_poids(pensionnes, population))(annee)
     # Les têtes comme ``masses_anticipees`` pèse les masses : la part de la
     # caisse, l'effectif de l'âge, chaque cohorte de la tranche une fois partie.
     tetes: dict[str, list[float]] = {}

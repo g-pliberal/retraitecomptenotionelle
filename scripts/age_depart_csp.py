@@ -171,8 +171,10 @@ def confronter(simulateur: Simulateur) -> tuple[list[Confrontation], dict[str, s
         ))
 
     # Le poids de chaque cas type, moyenné sur la fenêtre et renormalisé sur
-    # les seuls comparables. C'est la pondération de la page « Coût », et c'est
-    # elle qui dit si les écarts se compensent ou s'additionnent.
+    # les seuls comparables : la part de ses caisses dans le stock, que la page
+    # « Coût » divise par les têtes de ses cas types depuis le 24 octobre 2026
+    # (action 138, étape 3), ce que ce script, sans la grille, ne fait pas.
+    # C'est elle qui dit si les écarts se compensent ou s'additionnent.
     bruts = {ligne.code: _moyenne([poids_effectifs(simulateur.effectifs, annee)
                                    .get(ligne.code, 0.0) for annee in annees])
              for ligne in confrontations}

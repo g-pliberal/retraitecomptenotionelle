@@ -54,7 +54,8 @@ from pathlib import Path
 
 from .calendrier import DateMois
 from .castypes import CAS_TYPES, CasType
-from .cout import _DEMI_TRANCHE, _carrieres_voisines, _ponderation, generations
+from .cout import (_DEMI_TRANCHE, _carrieres_voisines, _ponderation, _tetes_par_poids,
+                   generations)
 from .donnees.chargement import charger_yaml
 from .donnees.depenses import DepensesRetraite
 from .donnees.population import Population
@@ -1047,7 +1048,8 @@ def calculer_avantages(simulateur: Simulateur, depenses: DepensesRetraite,
     """
     population.verifier_hypothese(simulateur.parametres.hypothese_esperance_vie)
     pensionnes, refus = decomposer(simulateur, liquidation)
-    poids = _ponderation(simulateur, ponderation, CAS_TYPES)
+    poids = _ponderation(simulateur, ponderation, CAS_TYPES,
+                         tetes=_tetes_par_poids(pensionnes, population))
     annees: list[AnneeAvantages] = []
     for annee in depenses.annees():
         poids_annee = poids(annee)

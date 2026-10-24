@@ -381,6 +381,7 @@ def calculer_bilans(contexte, annee: int, scenarios: Sequence[str],
         COTE_COTISANTS,
         _pensionnes,
         _ponderation,
+        _tetes_par_poids,
         calculer_engagements,
     )
 
@@ -401,7 +402,8 @@ def calculer_bilans(contexte, annee: int, scenarios: Sequence[str],
         min((p.annee_liquidation for p in pensionnes), default=annee) - _DEMI_TRANCHE,
         annee,
     )
-    poids_retraites = _ponderation(simulateur, "effectifs", cas_types)(annee)
+    poids_retraites = _ponderation(simulateur, "effectifs", cas_types,
+                                   tetes=_tetes_par_poids(pensionnes, population))(annee)
     poids_cotisants = _ponderation(simulateur, "effectifs", cas_types,
                                    COTE_COTISANTS)(annee)
     profils = profils_par_age(pensionnes, population, annee, scenarios,

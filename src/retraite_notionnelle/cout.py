@@ -3605,9 +3605,48 @@ def _facteur_assiette(masses: dict[str, float], annee: int, bascule: int) -> flo
     return masses.get(ASSIETTE_LIBERALE, 0.0) / reference
 
 
+def _tetes_par_poids(pensionnes, population: Population) -> Callable[[int], dict[str, float]]:
+    """Fonction qui rend les têtes que la pyramide donne à chaque cas type pour
+    un poids d'un, une année donnée : l'effectif de chacune de ses cohortes
+    déjà parties, comme :func:`_masses` les compte. L'alignement des survies,
+    qui dépend des poids, n'y entre pas : il ne fait que répartir entre les cas
+    types d'une cohorte les survivants de la pyramide.
+
+    C'est ce qui divise sa caisse (:func:`~retraite_notionnelle.castypes.poids_effectifs`) :
+    le militaire, radié à 48 ans, compte quatorze cohortes de plus que les
+    civils, et la part de sa caisse dans le stock lui faisait compter d'autant
+    plus de retraités qu'elle n'en a (action 138, étape 3). Les cas types du
+    coût des avantages se comptent de même : il suffit que chaque couple dise
+    son code, sa génération et l'année où part chaque cohorte.
+
+    Au-delà de la dernière année que la pyramide projette, celles de cette
+    année-là : l'engagement acquis et les facteurs de la dépense demandent
+    leurs poids jusqu'à l'horizon, et les effectifs des caisses, que le COR ne
+    projette pas plus loin, y sont reconduits."""
+    memoire: dict[int, dict[str, float]] = {}
+
+    def tetes(annee: int) -> dict[str, float]:
+        annee = min(annee, population.derniere_annee)
+        if annee not in memoire:
+            termes: dict[str, list[float]] = {}
+            for pensionne in pensionnes:
+                cohortes = termes.setdefault(pensionne.code, [])
+                for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
+                    if annee >= pensionne.liquidation(decalage):
+                        cohortes.append(population.effectif(
+                            annee - pensionne.generation - decalage, annee))
+            memoire[annee] = {code: somme_ordonnee(cohortes)
+                              for code, cohortes in termes.items()}
+        return memoire[annee]
+
+    return tetes
+
+
 def _ponderation(simulateur: Simulateur, mode: str,
                  cas_types: tuple[CasType, ...],
-                 cote: str = COTE_RETRAITES) -> Callable[[int], dict[str, float]]:
+                 cote: str = COTE_RETRAITES,
+                 tetes: Callable[[int], dict[str, float]] | None = None
+                 ) -> Callable[[int], dict[str, float]]:
     """Fonction qui rend le poids de chaque cas type une année donnée.
 
     ``cote`` dit quel effectif pèse : les RETRAITÉS de la caisse, pour une
@@ -3615,6 +3654,13 @@ def _ponderation(simulateur: Simulateur, mode: str,
     deux ne disent pas la même chose, et l'écart est le plus grand là où le
     rapport de recettes mord : la SNCF a 108 000 cotisants et 158 000 retraités
     en 2024, et n'a plus aucun cotisant en 2070.
+
+    Les retraités se pèsent avec ``tetes``, les têtes de chaque cas type pour
+    un poids d'un (:func:`_tetes_par_poids`), qui divisent leurs caisses : sans
+    elles, un cas type qui part tôt compterait plus de retraités que sa caisse
+    n'en a (action 138, étape 3). Les cotisants s'en passent, et le biais de
+    ceux de moins de cinquante ans, que la pyramide ne compte pas, reste au
+    propriétaire (``AGE_MINIMAL_DES_COTISANTS``).
 
     Les poids d'effectifs varient d'une année à l'autre — la France de 1960
     comptait plus d'exploitants agricoles que de fonctionnaires —, et chaque
@@ -3629,12 +3675,16 @@ def _ponderation(simulateur: Simulateur, mode: str,
     if mode == "egale":
         fixes = poids_egaux(cas_types)
         return lambda annee: fixes
+    if (tetes is None) != (cote == COTE_COTISANTS):
+        raise ValueError("les retraités se pèsent avec les têtes de leurs cas types, "
+                         "les cotisants sans elles")
     effectifs = simulateur.cotisants if cote == COTE_COTISANTS else simulateur.effectifs
     memoire: dict[int, dict[str, float]] = {}
 
     def poids(annee: int) -> dict[str, float]:
         if annee not in memoire:
-            memoire[annee] = poids_effectifs(effectifs, annee, cas_types)
+            memoire[annee] = poids_effectifs(effectifs, annee, cas_types,
+                                             None if tetes is None else tetes(annee))
         return memoire[annee]
 
     return poids
@@ -4676,7 +4726,8 @@ def calculer_engagements(simulateur: Simulateur, depenses: DepensesRetraite,
     son engagement de 2021 en était grossi d'un dixième.
     """
     pensionnes, _ = _pensionnes(simulateur, cas_types, liquidation)
-    poids = _ponderation(simulateur, ponderation, cas_types)
+    poids = _ponderation(simulateur, ponderation, cas_types,
+                         tetes=_tetes_par_poids(pensionnes, population))
     macro = simulateur.macro
     annee_euros = simulateur.parametres.annee_euros_constants
     horizon = HORIZON_ENGAGEMENTS
@@ -4948,6 +4999,8 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
                   convention_recette: str = CONVENTION_ASSIETTE,
                   convention_reversion: str = CONVENTION_REVERSION_SUPPRIMEE,
                   grille_simulee: tuple[list[Pensionne], dict[str, int]] | None = None,
+                  tetes_par_poids: Callable[[list[Pensionne], Population],
+                                            Callable[[int], dict[str, float]]] = _tetes_par_poids,
                   ) -> Cout:
     """Le coût observé, les cinq contrefactuels, et la trajectoire jusqu'en 2070.
 
@@ -4984,6 +5037,11 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
     facultatif : sans lui, tout ce qui précède est calculé à l'identique et le
     solde reste vide, ce qui est exactement l'état du dépôt avant que ces
     ressources n'existent.
+
+    ``tetes_par_poids`` : ce qui donne, de la grille simulée et de la pyramide,
+    les têtes qui divisent les caisses des retraités (:func:`_tetes_par_poids`).
+    La grille large, dont chaque variante a sa pseudo-caisse, y substitue
+    celles de ses caisses réelles (``scripts/grille_large.py``).
     """
     if convention_recette not in CONVENTIONS_RECETTE:
         raise ValueError(
@@ -5004,7 +5062,8 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
                           else _pensionnes(simulateur, cas_types, liquidation))
     pensionnes_centraux = pensionnes
     pensionnes = _sous_la_demographie(simulateur, pensionnes, population)
-    poids = _ponderation(simulateur, ponderation, cas_types)
+    poids = _ponderation(simulateur, ponderation, cas_types,
+                         tetes=tetes_par_poids(pensionnes, population))
     poids_cotisants = _ponderation(simulateur, ponderation, cas_types, COTE_COTISANTS)
     macro = simulateur.macro
     annee_euros = simulateur.parametres.annee_euros_constants

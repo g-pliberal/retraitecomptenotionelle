@@ -777,8 +777,11 @@ RECONSTITUTION_DEPUIS = 2000
 #: l'ancrage rend égale à la dépense ne compte plus les cohortes que la grille
 #: faisait partir trop tôt, et le passé se refait d'autant mieux ; -11,0 % le
 #: 19 octobre, l'étape 138.7 donnant aux inaptes de la Cnav leur part de la
-#: caisse, et -10,7 % le même jour, aux ex-invalides la leur.
-RECONSTITUTION_CLIQUET = 0.11
+#: caisse, et -10,7 % le même jour, aux ex-invalides la leur ; -11,0 % le
+#: 24 octobre (-10,6 % la veille), l'étape 138.3 divisant chaque caisse par
+#: les têtes de ses cas types — un défaut qui en compensait un autre (voir le
+#: test).
+RECONSTITUTION_CLIQUET = 0.115
 #: Ce que vise le cliquet : quelques pour cent, chaque année.
 RECONSTITUTION_CIBLE = 0.05
 
@@ -837,6 +840,16 @@ def test_la_projection_refait_le_passe(avenir, depenses):
     observée ne compte pas, aux non-salariés des premières générations. Il
     grossissait la masse des plus vieilles cohortes, et masquait d'autant la
     dérive que ce test mesure.
+
+    *Le 24 octobre 2026*, l'étape 138.3 le relève de -10,6 % à -11,0 % en
+    2009, et c'est encore le second cas : chaque caisse se divise par les
+    têtes de ses cas types. Pesés de la part de leur caisse dans le stock,
+    appliquée à chaque génération, le militaire, l'agent de conduite, celui
+    des IEG comptaient d'autant plus d'années de retraite qu'ils partent tôt
+    — le militaire 3,4 % des retraités de la grille en 2010 et 2,9 % en 2024,
+    pour 1,9 et 1,6 % à sa caisse —, et une part qui reculait de 2009 à 2024
+    freinait d'autant la croissance des têtes du modèle : en 2009, leur écart
+    passe de -5,0 à -5,5 %, celui de la pension par tête reste à -5,8 %.
     """
     reconstitution = avenir.reconstitution()
     # L'année d'ancrage est refaite par construction : sinon, la formule de
@@ -1072,12 +1085,22 @@ def test_la_pension_moyenne_relative_s_ecarte_de_celle_du_cor(avenir, comptes):
 #: les non-salariés pèsent 2,4 % de plus en 2070. Le 20 octobre, la valeur de
 #: service de l'Agirc-Arrco relevée de 1,4 % au 1er novembre 2026 (décision du
 #: 14 octobre), que le dépôt reconduisait gelée : complémentaires de +5,2 à
-#: +6,3 % (tolérance relevée à 7 %).
+#: +6,3 % (tolérance relevée à 7 %). Le 24 octobre, chaque caisse divisée par
+#: les têtes de ses cas types (action 138, étape 3) : complémentaires de +6,4 à
+#: +7,9 %, non-salariés de +7,5 à +10,8 % (tolérances relevées à 8 et 11 %),
+#: LURA de +2,4 à +3,1 %, pension relative de la Cnav de -0,2 à +0,8 %. Les
+#: caisses que le dépôt reconduit gardent désormais dans la grille la part de
+#: leurs retraités, et non plus celle-ci fois les années que leurs cas types
+#: passent en retraite : partis après les autres, l'artisan, le libéral et le
+#: contractuel de l'Ircantec pèsent plus en 2025 — 5,2, 2,0 et 9,1 % des têtes
+#: au lieu de 4,6, 1,6 et 8,1 —, et la reconduction de leur part davantage dans
+#: leurs groupes : les non-salariés, dont le COR fait reculer la dépense avec
+#: celle des exploitants, et les complémentaires.
 DECOMPOSITION_GROUPES_SUIVIS = {
     ("pension_relative", "cnav"): 0.04,
     ("depense_part_pib", "lura"): 0.05,
-    ("depense_part_pib", "complementaires"): 0.07,
-    ("depense_part_pib", "non_salaries_base"): 0.09,
+    ("depense_part_pib", "complementaires"): 0.08,
+    ("depense_part_pib", "non_salaries_base"): 0.11,
 }
 #: Et ce qu'elle ne suit pas encore : des CLIQUETS, qui ne doivent que
 #: descendre, comme celui de la pension moyenne relative de l'ensemble. Mesurés
@@ -1186,13 +1209,24 @@ DECOMPOSITION_GROUPES_SUIVIS = {
 #: qu'un défaut en masquait un autre : l'année du calage, 2025, comptait le
 #: militaire à partir de 50 ans, l'horizon sans ses cinq cohortes les plus
 #: jeunes. La grille le pèse, jusqu'en 2070, de la part de sa caisse en 2024.
+#: Le même jour, chaque caisse se divise par les têtes de ses cas types
+#: (action 138, étape 3) : pesé de la part de sa caisse dans le stock,
+#: appliquée à chaque génération, un cas type qui part tôt comptait d'autant
+#: plus de retraités qu'il passe plus d'années en retraite. Le militaire
+#: faisait 30,3 % des retraités de l'État de la grille en 2030, 44,5 % en
+#: 2070, pour 19,5 et 32,8 % que le COR donne à sa caisse ; l'agent de
+#: conduite 1,03 % des têtes en 2025 et 0,16 % en 2070, quand le COR fait
+#: reculer sa caisse de 0,65 à 0,16 %. La dépense de la FPE passe de +26,5 à
+#: +17,6 %, sa pension relative de +6,1 à +4,9 %, la dépense de la CNRACL de
+#: +10,3 à +8,4 %, celle des régimes spéciaux de -32,5 à -4,5 %, et leurs
+#: cliquets descendent.
 DECOMPOSITION_GROUPES_CLIQUETS = {
-    ("pension_relative", "fpe"): 0.07,
+    ("pension_relative", "fpe"): 0.05,
     ("pension_relative", "cnracl"): 0.04,
     ("pension_relative", "agirc_arrco"): 0.25,
-    ("depense_part_pib", "fpe"): 0.27,
-    ("depense_part_pib", "cnracl"): 0.11,
-    ("depense_part_pib", "regimes_speciaux"): 0.33,
+    ("depense_part_pib", "fpe"): 0.18,
+    ("depense_part_pib", "cnracl"): 0.09,
+    ("depense_part_pib", "regimes_speciaux"): 0.05,
 }
 
 
@@ -1840,18 +1874,24 @@ def test_la_derive_mesure_l_ecart_de_la_masse_du_modele_au_cor(avenir, comptes):
     # cohorte de la grille partant l'année que le droit de sa génération lui
     # donne (action 138, étape 3) : en 2025, d'où la dérive se compte, la
     # grille comptait 0,25 million de retraités partis un an trop tôt, et la
-    # masse d'où elle part en était grossie. Un écart à un de plus de six
-    # points dirait qu'un défaut est revenu.
-    assert 0.99 < horizon.derive < 1.06, horizon.derive
+    # masse d'où elle part en était grossie. Puis 1,057 le 24 octobre, et
+    # 1,060 le même jour, chaque caisse se divisant par les têtes de ses cas
+    # types (action 138, étape 3) : les régimes spéciaux suivent les retraités
+    # que le COR leur projette, leur dépense passant de -32,5 à -4,5 % de la
+    # sienne, et les non-salariés et les complémentaires, dont des caisses sont
+    # reconduites, s'en écartent un peu plus (``DECOMPOSITION_GROUPES_SUIVIS``) :
+    # le premier défaut compensait les seconds. Un écart à un de plus de six
+    # points et demi dirait qu'un défaut est revenu.
+    assert 0.99 < horizon.derive < 1.065, horizon.derive
     # Les arrivées tardives et les carrières incomplètes des natifs pèsent dès
     # 2035 : la dérive passe sous un, au plus bas à 0,975 en 2054 (0,977 avant
     # l'étape 13, quand les régimes qui se ferment privaient le privé de leur
     # part, et 0,985 en 2034 avant l'étape 14). Depuis l'étape 19, elle reste
     # au-dessus de 0,99 et monte à 1,033 à l'horizon, 1,050 depuis le 18
-    # octobre 2026. Une dérive qui s'en écarterait de plus de 6 % dirait un
-    # défaut, non un écart d'hypothèses.
+    # octobre 2026, 1,060 depuis le 24. Une dérive qui s'en écarterait de plus
+    # de 6,5 % dirait un défaut, non un écart d'hypothèses.
     for ligne in avenir.projetees():
-        assert 0.97 < ligne.derive < 1.06, (ligne.annee, ligne.derive)
+        assert 0.97 < ligne.derive < 1.065, (ligne.annee, ligne.derive)
 
 
 def test_la_borne_haute_ne_touche_que_les_systemes_notionnels(cout):
@@ -2098,6 +2138,76 @@ def test_un_partage_a_demi_declare_leve():
         parts_des_caisses((actif, muet))
 
 
+def test_chaque_caisse_se_divise_par_les_tetes_de_ses_cas_types():
+    """Le poids s'applique à chaque génération entière, et un cas type qui
+    part tôt y compte plus d'années de retraite : pesé de la part de sa caisse
+    dans le stock, le militaire de la grille, radié à 48 ans, faisait 29,5 %
+    des retraités de l'État en 2024, pour 18,7 % (action 138, étape 3). Les
+    têtes que la pyramide donne à chaque cas type pour un poids d'un, l'année
+    même, divisent sa caisse ; une caisse partagée, par celles de ses cas
+    types pesées de leurs parts, qui restent celles de leurs départs.
+
+    Posé à la main : la caisse A, 300 retraités, au seul X, qui compte 1 000
+    têtes ; la caisse B, 100 retraités, partagée aux trois quarts pour Y, qui
+    part tôt et en compte 2 000, au quart pour Z, qui en compte 1 000. B se
+    divise par 0,75 × 2 000 + 0,25 × 1 000 = 1 750 : X 0,3, Y 0,75 / 17,5,
+    Z 0,25 / 17,5, soit 0,84, 0,12 et 0,04 une fois sommés à un ; la grille
+    compte 840 têtes à A, 240 + 40 = 280 à B, trois fois moins, comme leurs
+    retraités. Sans les têtes, la part du stock : 0,75, 0,1875, 0,0625."""
+    modele = next(cas for cas in CAS_TYPES if cas.code == "salaire_moyen")
+    cas_types = (replace(modele, code="X", caisses=("A",), parts_caisses=()),
+                 replace(modele, code="Y", caisses=("B",), parts_caisses=(("B", 0.75),)),
+                 replace(modele, code="Z", caisses=("B",), parts_caisses=(("B", 0.25),)))
+
+    class Effectifs:
+        def effectif(self, caisse: str, annee: int) -> float:
+            return {"A": 300.0, "B": 100.0}[caisse]
+
+    poids = poids_effectifs(Effectifs(), 2024, cas_types,
+                            tetes={"X": 1_000.0, "Y": 2_000.0, "Z": 1_000.0})
+    assert poids == pytest.approx({"X": 0.84, "Y": 0.12, "Z": 0.04})
+    assert poids_effectifs(Effectifs(), 2024, cas_types) == pytest.approx(
+        {"X": 0.75, "Y": 0.1875, "Z": 0.0625})
+    # Une caisse dont aucun cas type n'a encore de retraité cette année-là ne
+    # se divise pas par zéro : elle ne pèse rien.
+    assert poids_effectifs(Effectifs(), 2024, cas_types,
+                           tetes={"X": 1_000.0, "Y": 0.0, "Z": 0.0}) == pytest.approx(
+        {"X": 1.0, "Y": 0.0, "Z": 0.0})
+
+
+def test_les_tetes_d_un_cas_type_sont_ses_cohortes_deja_parties():
+    """Ce qui divise sa caisse (``cout._tetes_par_poids``) : l'effectif que
+    la pyramide donne, l'année même, à chacune de ses cohortes déjà partie,
+    comme ``cout._masses`` les compte pour un poids d'un. Posé à la main, une
+    pyramide de dix personnes par année d'âge : X, génération 1960, part à
+    60 ans, ses cinq cohortes de 2018 à 2022 — 66 + 65 + 64 + 63 + 62 ans en
+    2024, 3 200 têtes — ; sa génération 1965, à partir de 2025, aucune ; Y,
+    génération 1960, part de 2021 à 2025, ses quatre premières cohortes en
+    2024 — 66 + 65 + 64 + 63 ans, 2 580 têtes. Au-delà de la dernière année
+    que la pyramide projette, celles de cette année-là : l'engagement acquis
+    et les facteurs de la dépense demandent leurs poids jusqu'à l'horizon, et
+    les effectifs des caisses y sont reconduits."""
+    from types import SimpleNamespace
+
+    from retraite_notionnelle.cout import _tetes_par_poids
+
+    def pensionne(code: str, generation: int, premier_depart: int) -> SimpleNamespace:
+        return SimpleNamespace(code=code, generation=generation,
+                               liquidation=lambda decalage: premier_depart + 2 + decalage)
+
+    class Pyramide:
+        derniere_annee = 2024
+
+        def effectif(self, age: int, annee: int) -> float:
+            assert annee <= self.derniere_annee
+            return 10.0 * age
+
+    tetes = _tetes_par_poids([pensionne("X", 1960, 2018), pensionne("X", 1965, 2025),
+                              pensionne("Y", 1960, 2021)], Pyramide())
+    assert tetes(2024) == pytest.approx({"X": 3_200.0, "Y": 2_580.0})
+    assert tetes(2071) == tetes(2024)
+
+
 def test_les_poids_cotisants_somment_a_un_et_ne_sont_pas_ceux_des_retraites():
     """Le côté recette pèse les cotisants, et ce n'est pas le même poids.
 
@@ -2159,11 +2269,12 @@ def test_la_recette_pese_les_cotisants_et_la_depense_les_retraites(cout: Cout):
     ancien = memoire.memoriser_pour(
         Parametres(), ("cout_retraites_des_deux_cotes", Parametres(), CONVENTION_RAPPORT),
         ancienne_convention)
-    # Les cotisants y pèsent ce que pèsent les retraités avant leur calage sur
-    # la dépense de chaque groupe du COR, qui ne touche que les pensions.
-    assert ancien.poids_cotisants == _ponderation(
-        Simulateur(Parametres()), "effectifs", GRILLE_DU_COUT)(
-            DepensesRetraite(RACINE_DONNEES).derniere_annee)
+    # Les cotisants y pèsent la part de chaque caisse dans le stock des
+    # retraités, sans les têtes qui divisent les caisses des pensions ni leur
+    # calage sur la dépense de chaque groupe du COR (action 138, étape 3).
+    assert ancien.poids_cotisants == poids_effectifs(
+        EffectifsRetraites(RACINE_DONNEES), DepensesRetraite(RACINE_DONNEES).derniere_annee,
+        GRILLE_DU_COUT)
     for annee in (2030, 2050, 2070):
         ligne = cout.avenir.annee(annee)
         nouveau = ligne.rapports_recettes["notionnel_liberal"]
@@ -2199,11 +2310,17 @@ def test_la_ponderation_egale_reproduit_l_ancienne_convention():
                for poids in egale.poids.values())
     assert egale.poids_cotisants == egale.poids
     # Les deux pondérations ne donnent pas le même rapport — sans quoi l'action
-    # n'aurait rien déplacé — et elles l'écartent dans des sens opposés selon
-    # que la part patronale entre au compte ou non.
+    # n'aurait rien déplacé. L'égale, qui surreprésente les départs très
+    # précoces, que le compte notionnel ampute le plus, en fait un plancher, que
+    # la part patronale entre au compte ou non : de peu au scénario 2, 0,199
+    # pour 0,201, les carrières du privé, que le compte salarial seul pénalise
+    # davantage encore, pesant plus aux effectifs. Elle en faisait un plafond,
+    # 0,199 pour 0,195, jusqu'au 24 octobre 2026, quand la part de chaque caisse
+    # dans le stock, appliquée à chaque génération, donnait encore aux départs
+    # précoces les années de retraite qu'ils ont de plus (action 138, étape 3).
     reference = memoire.cout(Parametres(), comptes=False, assiette=False)
     assert (reference.cumul("notionnel_retroactif") / reference.cumul("actuel")
-            < egale.cumul("notionnel_retroactif") / egale.cumul("actuel"))
+            > egale.cumul("notionnel_retroactif") / egale.cumul("actuel"))
     assert (reference.cumul("notionnel_retroactif_employeur")
             / reference.cumul("actuel")
             > egale.cumul("notionnel_retroactif_employeur") / egale.cumul("actuel"))
@@ -2801,12 +2918,20 @@ def test_la_garantie_de_la_trajectoire_est_lue_sur_la_distribution(cout, distrib
 
 def test_la_garantie_decroit_quand_les_pensions_montent_face_au_plancher(cout, avenir):
     """Le facteur monte avec les salaires, le plancher suit les prix : la
-    garantie décroît, en bénéficiaires comme en part du PIB, sans jamais
-    s'annuler — une queue basse ne disparaît pas."""
+    garantie décroît, en part des retraités qui l'attendent comme en part du
+    PIB, sans jamais s'annuler — une queue basse ne disparaît pas. Le nombre
+    de ses bénéficiaires, lui, tient à peu près : les têtes de 65 ans et plus
+    croissent d'un tiers de 2025 à 2070. Il reculait de 0,6 % jusqu'au
+    24 octobre 2026, et croît de 0,2 % depuis que chaque caisse se divise par
+    les têtes de ses cas types (action 138, étape 3) : en 2025, les départs
+    précoces, dont le compte notionnel ampute le plus la pension, pèsent
+    moins, et le facteur passe de 0,7440 à 0,7495 ; en 2070, il ne bouge
+    pas."""
     projetees = avenir.projetees()
     premiere, derniere = projetees[0], projetees[-1]
     assert derniere.garantie.facteur > premiere.garantie.facteur
-    assert derniere.garantie.beneficiaires < premiere.garantie.beneficiaires
+    assert (derniere.garantie.beneficiaires / derniere.garantie.effectif
+            < premiere.garantie.beneficiaires / premiere.garantie.effectif)
     assert derniere.part_pib(COMPOSANTE_GARANTIE) < premiere.part_pib(COMPOSANTE_GARANTIE)
     assert derniere.part_pib(COMPOSANTE_GARANTIE) > 0.002
     # Et l'ordre de grandeur est celui du barème appliqué à la distribution,

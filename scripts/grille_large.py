@@ -3012,6 +3012,53 @@ def pseudo(variantes: list[Variante]) -> tuple[tuple[CasType, ...], dict, dict]:
     return tuple(cas_types), retraites, cotisants
 
 
+def tetes_des_caisses_reelles(variantes: list[Variante], base):
+    """Ce qui rend aux têtes propres de chaque variante (``cout._tetes_par_poids``)
+    celles de ses caisses réelles, dont ``poids_effectifs`` divise sa
+    pseudo-caisse.
+
+    La page divise chaque caisse par les têtes de ses cas types, pesées de
+    leurs parts (action 138, étape 3) : un cas type qui part tôt compterait
+    sinon plus de retraités que sa caisse n'en a. Chaque variante réclame ici
+    sa pseudo-caisse, et ses seules têtes la diviseraient : celles d'une caisse
+    réelle sont la moyenne des têtes des variantes qui la réclament, pesées de
+    leurs parts positives — celles que ``personnes`` retire, des contractuels
+    de la Cnav, se divisent comme la caisse qu'elles retirent. La variante
+    divise ses retraités comme la page diviserait les siens, et la grille du
+    dépôt redonne la page. Sans retraités, ses propres têtes."""
+    def diviser(propres: Callable[[int], dict[str, float]]) -> Callable[[int], dict[str, float]]:
+        memoire: dict[int, dict[str, float]] = {}
+
+        def tetes(annee: int) -> dict[str, float]:
+            if annee not in memoire:
+                siennes = propres(annee)
+                pesees: dict[str, list[float]] = {}
+                parts: dict[str, list[float]] = {}
+                for v in variantes:
+                    for reelle, part in v.retraites:
+                        if part > 0.0:
+                            pesees.setdefault(reelle, []).append(
+                                part * siennes.get(v.cas.code, 0.0))
+                            parts.setdefault(reelle, []).append(part)
+                moyennes = {reelle: somme_ordonnee(pesees[reelle]) / somme_ordonnee(parts[reelle])
+                            for reelle in pesees}
+                sortie = {}
+                for v in variantes:
+                    retraites = somme_ordonnee(base.effectif(reelle, annee) * part
+                                               for reelle, part in v.retraites)
+                    divises = somme_ordonnee(base.effectif(reelle, annee) * part / moyennes[reelle]
+                                             for reelle, part in v.retraites
+                                             if moyennes.get(reelle, 0.0) > 0.0)
+                    sortie[v.cas.code] = (retraites / divises if retraites > 0.0 and divises > 0.0
+                                          else siennes.get(v.cas.code, 0.0))
+                memoire[annee] = sortie
+            return memoire[annee]
+
+        return tetes
+
+    return diviser
+
+
 def _simuler_morceau(parametres: Parametres, morceau: tuple[CasType, ...]):
     """La grille simulée d'un morceau, gardée comme celle de la page."""
     return memoire.memoriser_pour(
@@ -3082,6 +3129,7 @@ def calculer(parametres: Parametres, variantes: list[Variante], processus: int =
     cas_types, retraites, cotisants = pseudo(variantes)
     simulee = simuler(parametres, cas_types, processus)
     simulateur = Simulateur(parametres)
+    diviser = tetes_des_caisses_reelles(variantes, simulateur.effectifs)
     simulateur.effectifs = EffectifsRepartis(simulateur.effectifs, retraites)
     simulateur.cotisants = EffectifsRepartis(simulateur.cotisants, cotisants)
     variante = variante_du_scenario(parametres.scenario_projection,
@@ -3089,7 +3137,9 @@ def calculer(parametres: Parametres, variantes: list[Variante], processus: int =
     return C.calculer_cout(
         simulateur, DepensesRetraite(racine), Population(racine),
         ComptesRetraite(racine, variante=variante), cas_types=cas_types,
-        assiette=AssietteActivite(racine), grille_simulee=simulee)
+        assiette=AssietteActivite(racine), grille_simulee=simulee,
+        tetes_par_poids=lambda pensionnes, population: diviser(
+            C._tetes_par_poids(pensionnes, population)))
 
 
 def indicateurs(cout) -> dict:
@@ -3378,8 +3428,11 @@ def en_tetes(parametres: Parametres, variantes: list[Variante],
     revalorisation = RevalorisationServie(
         simulateur.pour_la_projection(),
         min(p.annee_liquidation for p in pensionnes) - C._DEMI_TRANCHE, C.HORIZON)
+    tetes = tetes_des_caisses_reelles(variantes, simulateur.effectifs.base)(
+        C._tetes_par_poids(pensionnes, population))
     poids = C._poids_par_groupe(
-        C._ponderation(simulateur, "effectifs", cas_types), pensionnes, population,
+        C._ponderation(simulateur, "effectifs", cas_types, tetes=tetes),
+        pensionnes, population,
         revalorisation, DecompositionDepense(racine / "reference" / "macro"))
     return GrilleEnTetes(pensionnes, cas_types, poids, population, revalorisation,
                          simulateur.macro, parametres.annee_euros_constants, echecs)

@@ -13,7 +13,7 @@ interrompue — parce que ce sont eux que la réforme simulée déplace le plus.
 
 from __future__ import annotations
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass, field, replace
 
 from typing import TYPE_CHECKING
@@ -717,7 +717,8 @@ GENERATIONS = (1940, 1950, 1960, 1970, 1980, 1990, 2000)
 
 
 def poids_effectifs(effectifs: "EffectifsRetraites", annee: int,
-                    cas_types: tuple[CasType, ...] = CAS_TYPES) -> dict[str, float]:
+                    cas_types: tuple[CasType, ...] = CAS_TYPES,
+                    tetes: Mapping[str, float] | None = None) -> dict[str, float]:
     """Poids de chaque cas type une année donnée, tirés des effectifs de caisse.
 
     La grille des cas types n'est pas un échantillon : elle couvre les
@@ -739,22 +740,51 @@ def poids_effectifs(effectifs: "EffectifsRetraites", annee: int,
     importe — la masse de pensions est de toute façon divisée par celle du
     scénario actuel — et la normalisation rend le résultat lisible.
 
+    **Les têtes de chaque cas type divisent sa caisse**, quand ``tetes`` les
+    donne : l'effectif que la pyramide lui compte l'année même pour un poids
+    d'un (``cout._tetes_par_poids``). Le poids s'applique à chaque génération
+    entière, et un cas type qui part tôt y compte plus d'années de retraite
+    que les autres : pesé de la part de sa caisse dans le stock, le militaire,
+    radié à 48 ans, faisait 29,5 % des retraités de l'État de la grille en
+    2024, pour 18,7 % (action 138, étape 3). Chaque caisse se divise par les
+    têtes de ses cas types, pesées de leurs parts : elle compte dans la grille
+    la part des retraités qu'elle a, et ses cas types se la partagent toujours
+    selon leurs départs. Une caisse dont aucun cas type n'a encore de retraité
+    ne pèse rien cette année-là. Sans ``tetes``, la part du stock : le côté
+    des cotisants la garde.
+
     Un cas type sans caisse reçoit un poids nul et disparaît de l'agrégat ; ce
     serait une erreur silencieuse, et le contrôle qui l'interdit est dans les
     tests.
     """
     parts = parts_des_caisses(cas_types)
+    diviseurs = ({} if tetes is None else
+                 _tetes_des_caisses(cas_types, parts, tetes))
     bruts = {
         cas.code: somme_ordonnee(
             effectifs.effectif(caisse, annee) * parts[(cas.code, caisse)]
-            for caisse in cas.caisses
+            / diviseurs.get(caisse, 1.0)
+            for caisse in cas.caisses if diviseurs.get(caisse, 1.0) > 0.0
         )
         for cas in cas_types
     }
     total = somme_ordonnee(bruts.values())
+    if total <= 0 and tetes is not None:
+        return {code: 0.0 for code in bruts}
     if total <= 0:
         raise ValueError(f"aucun effectif connu en {annee} pour pondérer les cas types")
     return {code: poids / total for code, poids in bruts.items()}
+
+
+def _tetes_des_caisses(cas_types: tuple[CasType, ...],
+                       parts: Mapping[tuple[str, str], float],
+                       tetes: Mapping[str, float]) -> dict[str, float]:
+    """Les têtes de chaque caisse pour un poids d'un : celles des cas types
+    qui la réclament, pesées de la part que chacun en porte."""
+    caisses = dict.fromkeys(caisse for cas in cas_types for caisse in cas.caisses)
+    return {caisse: somme_ordonnee(parts[(cas.code, caisse)] * tetes.get(cas.code, 0.0)
+                                   for cas in cas_types if caisse in cas.caisses)
+            for caisse in caisses}
 
 
 def parts_des_caisses(cas_types: tuple[CasType, ...] = CAS_TYPES

@@ -1,0 +1,17 @@
+date: "2026-10-24"
+session: "action 138, étape 3 : le poids du militaire, et de chaque caisse, divisé par les têtes de ses cas types"
+consulte: >-
+  Aucun texte de droit : la correction ne touche aucune règle du scénario 1,
+  mais la pondération de la page Coût. La table H de l'EACR du 26 mai 2026
+  (`tests/temoins/drees_eacr_tables_2026.json`), pensionnés et départs des
+  civils et des militaires de l'État de 2015 à 2024, au cube du SRE ; les
+  effectifs de retraités de la DREES par caisse (`effectifs_retraites.csv`) et
+  les retraités que le COR projette aux caisses de la fonction publique et à
+  celles qui se ferment (`retraites_projetes.csv`).
+trouve: >-
+  Les militaires font 18,7 % des pensionnés de l'État en 2024, 376 810 pour
+  1 641 380 civils, et 14,9 à 17,7 % de ses départs de 2015 à 2024. Le
+  rapport des pensionnés aux départs vaut de 32,9 à 39,2 chez les militaires,
+  de 27,3 à 36,4 chez les civils.
+reste: >-
+  Rien au droit.

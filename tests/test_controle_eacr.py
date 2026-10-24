@@ -23,6 +23,7 @@ from types import SimpleNamespace
 import pytest
 
 from retraite_notionnelle import controle_eacr as M
+from retraite_notionnelle.castypes import GRILLE_DU_COUT
 
 RACINE = Path(__file__).resolve().parents[1]
 TEMOIN = RACINE / "tests" / "temoins" / "drees_eacr_tables_2026.json"
@@ -131,13 +132,34 @@ def test_la_grille_compte_ses_retraites_aux_ages_de_l_eacr(grille, eacr):
     assert profil["85_89"][1] / moyenne < 0.92 and profil["plus_95"][1] / moyenne < 0.80
 
 
+def test_la_grille_compte_ses_militaires_a_la_part_de_leur_caisse(grille, eacr):
+    """Les militaires parmi les retraités de l'État, dans le stock de 2024 :
+    18,7 % à la table H, 376 810 pensionnés pour 1 641 380 civils, à un point
+    près. Radié à 48 ans et demi, le militaire de la grille compte quatorze
+    années de retraite de plus que les civils : pesé de la part de sa caisse
+    dans le stock, appliquée à chaque génération, il en faisait 29,5 %. Chaque
+    caisse se divise désormais par les têtes que la pyramide donne à ses cas
+    types (action 138, étape 3)."""
+    series = eacr["conditions_liquidation"]["series"]
+    militaires, civils = (series[code]["stock"]["ensemble"][str(M.ANNEE_EACR)]["ensemble"]
+                          for code in ("0013", "0012"))
+    etat = {cas.code for cas in GRILLE_DU_COUT
+            if set(cas.caisses) <= {"fonction_publique_etat_civile",
+                                    "fonction_publique_etat_militaire"}}
+    tetes = {code: sum(c.tetes for c in grille if c.code == code) for code in etat}
+    assert len(etat) == 4
+    assert tetes["militaire"] / sum(tetes.values()) == pytest.approx(
+        militaires / (militaires + civils), abs=0.01)
+
+
 def test_la_grille_part_trop_tot_et_trop_groupee(grille, eacr):
     """Les nouveaux retraités de la grille en 2024 : un âge moyen de
-    liquidation plus jeune que celui de l'EACR, d'un an à deux (61,9 contre
-    63,6 depuis le 24 octobre 2026, où la pyramide compte le militaire, radié à
-    48 ans, l'année même de son départ : il fait 2,8 % des nouveaux retraités
-    de la grille, au poids que sa caisse a dans le stock ; 62,3 jusque-là, 62,7
-    le 16 octobre), plus du tiers à 62 ans pour
+    liquidation plus jeune que celui de l'EACR, d'un an à deux (62,2 contre
+    63,6 depuis que chaque caisse se divise par les têtes de ses cas types, le
+    militaire faisant 1,8 % des nouveaux retraités de la grille ; 61,9 le 24
+    octobre 2026, où la pyramide le compte, radié à 48 ans, l'année même de
+    son départ : il en faisait 2,8 %, au poids que sa caisse a dans le stock ;
+    62,3 jusque-là, 62,7 le 16 octobre), plus du tiers à 62 ans pour
     un quart — trois sur dix le 18 octobre, avant que l'inapte et l'ex-invalide
     de la Cnav n'y partent (action 138, étape 7), presque la moitié avant que
     l'agent sédentaire de la CNRACL ne porte quatre cinquièmes de sa caisse —,

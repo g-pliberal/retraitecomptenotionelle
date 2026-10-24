@@ -1224,20 +1224,30 @@ def _ages_du_cor() -> dict[int, float]:
             for generation, age in temoin["age_moyen_de_depart"][serie].items()}
 
 
-def test_pesee_a_ses_poids_la_grille_part_avant_le_cor_et_entree_selon_sa_generation_avec_lui():
+def test_pesee_a_ses_poids_la_grille_part_avant_le_cor_et_entree_selon_sa_generation_apres_lui():
     """L'âge moyen de départ de chaque génération de la grille, pesée à ses
     poids, contre celui du COR (figure 4.5 du rapport de juin 2026), sous le
     droit en vigueur, la suspension comprise (note du 24 octobre 2026, « l'âge
     de départ de chaque génération »). Telle que ``cout.py`` la fait partir,
     chaque génération entrée au même âge, la grille fait partir celles de 1975
-    à 2000 à 63,8 ans en moyenne, sept dixièmes d'an avant le COR, et chacune
-    avant lui : ses militaires, ses agents de conduite et des IEG, ses actifs,
-    ses inaptes, ses ex-invalides et son salarié au SMIC, en carrière longue,
-    près d'un tiers de ses poids, partent avant 63 ans. Entrées dans l'emploi
-    selon leur génération, elles partent avec lui, à 64,5 ans ; selon leur
-    durée validée, partie pour une part avec une décote, à deux dixièmes près.
-    Le cadre, l'artisan, le contractuel et le libéral, qui partent alors à 67
-    ans, ne font pas partir la grille plus tard que la France."""
+    à 2000 à 64,0 ans en moyenne, un demi-an avant le COR, et chacune avant
+    lui : ses militaires, ses agents de conduite et des IEG, ses actifs, ses
+    inaptes, ses ex-invalides et son salarié au SMIC, en carrière longue, près
+    d'un tiers de ses poids, partent avant 63 ans. Entrées dans l'emploi selon
+    leur génération, elles partent deux dixièmes d'an après lui, à 64,7 ans ;
+    selon leur durée validée, partie pour une part avec une décote, avec lui,
+    à deux centièmes près. Le cadre, l'artisan, le contractuel et le libéral,
+    qui partent alors à 67 ans, ne font pas partir la grille plus tard que la
+    France.
+
+    Jusqu'au 24 octobre 2026, elle les faisait partir à 63,8 ans, sept
+    dixièmes d'an avant le COR, avec lui l'entrée selon la génération, à deux
+    dixièmes l'entrée selon la durée validée : chaque cas type recevait la
+    part de sa caisse dans le stock des retraités, que les départs précoces
+    grossissent de leurs années de retraite de plus. Le poids d'une génération
+    est une part de ses départs, que chaque caisse divisée par les têtes de ses
+    cas types lui donne (action 138, étape 3) : le militaire y pèse 1,5 % en
+    2045, et non plus 2,3 %."""
     from retraite_notionnelle.facteurs_depense import ages_moyens_de_depart
 
     script = _script()
@@ -1249,11 +1259,11 @@ def test_pesee_a_ses_poids_la_grille_part_avant_le_cor_et_entree_selon_sa_genera
         return sum(ages[nom][generation] - publie[generation]
                    for generation in projetees) / len(projetees)
 
-    assert -1.0 < ecart(script.GRILLE_DE_COUT) < -0.5
+    assert -0.7 < ecart(script.GRILLE_DE_COUT) < -0.35
     assert all(ages[script.GRILLE_DE_COUT][generation] < publie[generation]
                for generation in projetees)
-    assert abs(ecart(script.ENTREE_SELON_LA_GENERATION)) < 0.1
-    assert abs(ecart(script.ENTREE_PAR_LA_DUREE)) < 0.3
+    assert 0.1 < ecart(script.ENTREE_SELON_LA_GENERATION) < 0.3
+    assert abs(ecart(script.ENTREE_PAR_LA_DUREE)) < 0.1
 
 
 def test_la_grille_fait_partir_moins_que_la_france_avant_l_age_legal_et_tous_a_67_ans():
@@ -1261,11 +1271,15 @@ def test_la_grille_fait_partir_moins_que_la_france_avant_l_age_legal_et_tous_a_6
     ``cout.py`` la fait partir, a moins de départs que la France avant l'âge
     légal, et n'en a presque plus après 66 ans. À 61 ans, les générations 1955
     à 1960 sont parties à 26 à 34 % en France (figure 4.7), où les carrières
-    longues partent dès 60 ans, à 17 à 22 % dans la grille, qui n'en a qu'une,
+    longues partent dès 60 ans, à 16 à 20 % dans la grille, qui n'en a qu'une,
     le salarié au SMIC entré à 18 ans. Au 31 décembre 2024, la France a 48 % de
-    retraités à 62 ans, 71 % à 63 (figure 4.6), la grille 36 et 57 % ; à 66 et
+    retraités à 62 ans, 71 % à 63 (figure 4.6), la grille 34 et 54 % ; à 66 et
     67 ans, la France 87 et 94 %, la grille 98 et 100 % : ses cas types partent
-    tous au taux plein, aucun au-delà, ni surcote ni départ tardif."""
+    tous au taux plein, aucun au-delà, ni surcote ni départ tardif. La grille
+    en avait 17 à 22 % à 61 ans, 36 et 57 % à 62 et 63 ans, jusqu'à ce que
+    chaque caisse se divise par les têtes de ses cas types, le 24 octobre 2026
+    (action 138, étape 3) : ses départs précoces y pesaient la part de leurs
+    caisses dans le stock des retraités, plus que dans leurs départs."""
     from retraite_notionnelle.facteurs_depense import parts_parties
 
     temoin = json.loads(TEMOIN_COR_AGES.read_text(encoding="utf-8"))

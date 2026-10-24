@@ -26,8 +26,8 @@ qui n'a pas de pyramide non plus.
 
 De l'autre, l'âge de départ de la grille : pour chaque année, chaque cas type
 apporte l'âge auquel il part cette année-là, et les treize sont pesés par les
-effectifs de caisse de la DREES — la pondération même de la page « Coût »
-(``castypes.poids_effectifs``).
+effectifs de caisse de la DREES (``castypes.poids_effectifs``), que la page
+« Coût » divise par les têtes de ses cas types depuis le 24 octobre 2026.
 
 Un cas type ne part pas chaque année : la grille avance de cinq ans en cinq
 ans (``cout.PAS_GENERATIONS``), et un cas type y a donc un point de départ

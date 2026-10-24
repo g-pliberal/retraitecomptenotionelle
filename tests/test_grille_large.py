@@ -1530,9 +1530,42 @@ def test_la_duree_validee_se_lit_generation_par_generation(parametres):
     assert durees["H"][0]["annees"] == 41.0
 
 
+def test_chaque_caisse_reelle_se_divise_par_les_tetes_de_ses_variantes():
+    """La page divise chaque caisse par les têtes de ses cas types, pesées de
+    leurs parts (action 138, étape 3) ; la grille donne à chaque variante sa
+    pseudo-caisse, que ``poids_effectifs`` diviserait par ses seules têtes.
+    Ses têtes sont donc celles de ses caisses RÉELLES, de quoi la diviser
+    comme la page : la moyenne des têtes des variantes qui réclament chacune,
+    pesées de leurs parts positives. Posé à la main, la caisse A de 300
+    retraités, pour six dixièmes à X, 2 000 têtes, trois à Y, 1 000, un à W,
+    500 : 1 550 têtes, comme à la page ; la caisse B de 100 retraités, à Z
+    seul, 1 500 têtes, dont W retire un dixième, comme ``personnes`` retire de
+    la Cnav ses contractuels : W divise 30 − 10 = 20 retraités en
+    30 / 1 550 − 10 / 1 500. Sans retraités, ses propres têtes."""
+    from types import SimpleNamespace
+
+    def variante(code: str, *parts) -> SimpleNamespace:
+        return SimpleNamespace(cas=SimpleNamespace(code=code), retraites=parts)
+
+    class Effectifs:
+        def effectif(self, caisse: str, annee: int) -> float:
+            return {"A": 300.0, "B": 100.0, "C": 0.0}[caisse]
+
+    variantes = [variante("X", ("A", 0.6)), variante("Y", ("A", 0.3)),
+                 variante("Z", ("B", 1.0)), variante("W", ("A", 0.1), ("B", -0.1)),
+                 variante("V", ("C", 1.0))]
+    propres = {"X": 2_000.0, "Y": 1_000.0, "Z": 1_500.0, "W": 500.0, "V": 800.0}
+    tetes = G.tetes_des_caisses_reelles(variantes, Effectifs())(lambda annee: propres)
+    assert tetes(2024) == pytest.approx({"X": 1_550.0, "Y": 1_550.0, "Z": 1_500.0,
+                                         "W": 20 / (30 / 1_550 - 10 / 1_500), "V": 800.0})
+
+
 def test_la_grille_du_depot_reecrite_redonne_la_page(parametres):
     """Les pseudo-caisses et la grille simulée à part donnent la page au
-    millième : la mesure ne mesure rien d'autre que la grille."""
+    millième : la mesure ne mesure rien d'autre que la grille. Depuis que la
+    page divise chaque caisse par les têtes de ses cas types (action 138,
+    étape 3), la grille divise les siennes par celles de ses caisses réelles
+    (``tetes_des_caisses_reelles``)."""
     page = G.indicateurs(memoire.cout(parametres))
     en_parts = G.indicateurs(G.calculer(parametres, G.reference()))
     assert G.ecart_maximal(en_parts, page) < 1e-6

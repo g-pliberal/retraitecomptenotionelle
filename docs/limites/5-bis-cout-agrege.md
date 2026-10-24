@@ -52,18 +52,20 @@ le 19 septembre 2026 :
    fixerait » la pondération. C'était faux : l'enquête annuelle auprès des
    caisses de retraite dénombre les retraités caisse par caisse et année par
    année depuis 2004. Chaque cas type porte désormais l'effectif de sa caisse ;
-   l'agent de conduite pèse <!--chiffre:mesure(poids?cas=agent_sncf_conduite)-->1,4<!--/--> % et non <!--chiffre:mesure(poids?cas=agent_sncf_conduite&ponderation=egale)-->5,6<!--/--> %, et les quatre carrières du
-   privé <!--chiffre:mesure(poids?cas=smic_carriere_complete|salaire_moyen|cadre|carriere_interrompue)-->45<!--/--> % à elles quatre.
+   l'agent de conduite pèse <!--chiffre:mesure(poids?cas=agent_sncf_conduite)-->1,2<!--/--> % et non <!--chiffre:mesure(poids?cas=agent_sncf_conduite&ponderation=egale)-->5,6<!--/--> %, et les quatre carrières du
+   privé <!--chiffre:mesure(poids?cas=smic_carriere_complete|salaire_moyen|cadre|carriere_interrompue)-->43<!--/--> % à elles quatre.
 
-   Ce que l'ancienne convention valait est donc mesuré plutôt qu'argumenté, et
-   **le sens du biais annoncé n'était juste qu'à moitié**. On disait le rapport
+   Cet effectif se divise par les têtes que la pyramide donne aux cas types
+   de la caisse : le poids vaut pour chaque génération, et un cas type qui part
+   tôt, qui passe plus d'années en retraite, compterait sinon plus de retraités
+   que sa caisse n'en a. Ce que l'ancienne convention valait est donc mesuré
+   plutôt qu'argumenté, et **le sens du biais annoncé était le bon**. On disait le rapport
    affiché « plutôt un plancher », les départs très précoces que le notionnel
    pénalise le plus étant surreprésentés. C'est vrai des scénarios qui portent
-   la part patronale — le scénario 4 passe de <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−57,9<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=4)-->−54,2<!--/--> % — et faux du
-   scénario 2, qui passe de <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−80,1<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=2)-->−80,5<!--/--> % : la pondération donne aux
+   la part patronale — le scénario 4 passe de <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−57,9<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=4)-->−53,6<!--/--> % — et, de peu,
+   du scénario 2, qui passe de <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−80,1<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=2)-->−79,9<!--/--> % : la pondération donne aux
    carrières du privé, que le compte salarial seul pénalise davantage encore,
-   les deux tiers du poids. C'était un plancher pour les uns, un plafond pour
-   l'autre.
+   les deux tiers du poids.
 
    Trois réserves subsistent, et elles sont de nature différente de la
    précédente. **Un effectif de caisse n'est pas un effectif de personnes** :

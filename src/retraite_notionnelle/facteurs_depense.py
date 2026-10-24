@@ -799,7 +799,9 @@ def grille_ponderee(parametres) -> tuple[list, object, Callable[[int], dict[str,
     variante = variante_du_scenario(parametres.scenario_projection,
                                     racine / "reference" / "macro")
     poids = module._poids_par_groupe(
-        module._ponderation(simulateur, "effectifs", grille), pensionnes, population,
+        module._ponderation(simulateur, "effectifs", grille,
+                            tetes=module._tetes_par_poids(pensionnes, population)),
+        pensionnes, population,
         revalorisation, ComptesRetraite(racine, variante=variante).decomposition)
     return pensionnes, population, poids
 
