@@ -77,6 +77,18 @@ export const FICHE_DE_LA_PENSION_MAXIMALE = "pension_maximale_regime_general";
  */
 export const ANNEE_DES_REVENUS_AGRICOLES = 2016;
 
+/**
+ * LES COTISATIONS D'ASSURANCE VIEILLESSE DE BASE DU CHEF D'EXPLOITATION de
+ * 2016 à 2025 (L. 731-42, 1° à 3°, rédaction antérieure à la loi
+ * n° 2025-199) : [assiette minimale en SMIC horaires du 1er janvier
+ * (D. 731-120), taux de 2016, taux de 2017 à 2025], l'AVI (D. 731-121), l'AVA
+ * plafonnée (D. 731-122) et l'AVA déplafonnée (D. 731-124). L'AVI, la
+ * première, n'est due que du chef à titre exclusif ou principal. Voir le
+ * Python.
+ */
+export const COTISATIONS_DE_BASE_DU_CHEF = [[800, 0.0332, 0.0332], [600, 0.1155, 0.1155],
+  [600, 0.0214, 0.0224]];
+
 /** Ce que l'étape « liquider chaque régime » écrit. */
 export class Pensions {
   constructor({ personne, regimes, minimum, garanti, requis, taux, fiabilite,
@@ -1569,7 +1581,7 @@ export function pensionDesNonSalariesAgricoles(moteur, periode, carriere, releve
   const revenuMoyen = retenue1 > 0 && anneesApres > 0
     ? salaireDeReference(
       moteur, code, carriere, periode, anneeLiquidation, true,
-      carriere.annee_naissance, false, [code], 0, coupure, anneesApres, true)
+      carriere.annee_naissance, false, [code], 0, coupure, anneesApres, true, dureeB > 0)
     : 0.0;
   const part1 = proratisation > 0 ? revenuMoyen * taux * retenue1 / proratisation : 0.0;
 
@@ -1803,6 +1815,30 @@ export function assietteDeReference(moteur, periode, ligne) {
 }
 
 /**
+ * Le revenu qu'une année de 2016 à 2025 du chef d'exploitation porte au revenu
+ * annuel moyen du 1° de L. 732-24 : le sien, sauf quand son AVI a été portée à
+ * sa valeur minimale, sous 800 SMIC ; il est alors le rapport de ses
+ * cotisations de base aux taux de l'année (L. 732-24, I, 1°, second alinéa).
+ * Voir le Python.
+ */
+export function revenuDesCotisationsMinimales(annee, revenu, smic, fraction = 1.0) {
+  if (annee < ANNEE_DES_REVENUS_AGRICOLES || annee > 2025) {
+    return revenu;
+  }
+  if (revenu >= COTISATIONS_DE_BASE_DU_CHEF[0][0] * smic * fraction) {
+    return revenu;
+  }
+  let cotisations = 0;
+  let taux = 0;
+  for (const cotisation of COTISATIONS_DE_BASE_DU_CHEF) {
+    const t = cotisation[annee === ANNEE_DES_REVENUS_AGRICOLES ? 1 : 2];
+    cotisations += t * Math.max(revenu, cotisation[0] * smic * fraction);
+    taux += t;
+  }
+  return cotisations / taux;
+}
+
+/**
  * Salaire de référence, en euros de l'année de liquidation. Il porte sur les
  * seules années passées dans ce régime — ou dans l'un des `membres` de sa
  * chaîne de succession, quand `code` liquide pour un régime qu'il a
@@ -1812,7 +1848,7 @@ export function assietteDeReference(moteur, periode, ligne) {
  */
 export function salaireDeReference(moteur, code, carriere, periode, anneeLiquidation, plafonner,
   generation = null, avpf = true, membres = null, enfantsMajores = 0,
-  depuis = null, anneesRetenues = null, plancher = false) {
+  depuis = null, anneesRetenues = null, plancher = false, affilieAvant2016 = false) {
   const codesAdmis = new Set(membres && membres.length > 0 ? membres : [code]);
   const avpfOuvert = avpf
     && periode.avantages_non_contributifs.includes("avpf");
@@ -1916,6 +1952,13 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
       if (entiere && ligne.fraction_annee > 0) {
         // Le revenu de ses mois, porté à sa part des douze, comme à `acquerir`.
         revenu *= fractionLigne / ligne.fraction_annee;
+      }
+      if (affilieAvant2016 && ligne.affiliation === "exploitant_agricole"
+          && carriere.qualiteAgricole(ligne.annee) === "chef") {
+        // L'AVI au minimum, de 2016 à 2025 : le revenu de ses cotisations
+        // (L. 732-24, I, 1°, second alinéa).
+        revenu = revenuDesCotisationsMinimales(ligne.annee, revenu,
+          moteur.macro.smic_horaire.valeur(ligne.annee), fractionLigne);
       }
       if (plancher && periode.assiette_repere_smic !== null
           && periode.assiette_repere_smic !== undefined) {

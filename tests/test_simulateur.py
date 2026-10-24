@@ -5921,6 +5921,105 @@ process.stdout.write(JSON.stringify(obtenus));
         [moyenne(d) for d in details], abs=0.01)
 
 
+#: Le SMIC horaire brut au 1er janvier, de 2016 à 2025 (décrets annuels de
+#: revalorisation), sur lequel D. 731-120 assied les cotisations minimales.
+_SMIC_AU_1ER_JANVIER = {2016: 9.67, 2017: 9.76, 2018: 9.88, 2019: 10.03, 2020: 10.15,
+                        2021: 10.25, 2022: 10.57, 2023: 11.27, 2024: 11.65, 2025: 11.88}
+
+
+def _chef_de_1990_a_2025(revenus: dict[int, float]) -> list[dict]:
+    """Chef d'exploitation à titre principal de 1990 à 2025, à 12 000 € par an
+    jusqu'en 2015, puis aux ``revenus`` de chaque année ; salarié en 2026 et en
+    2027, à 20 000 € par an."""
+    return ([dict(annee=annee, revenu=12000.0, affiliation="exploitant_agricole")
+             for annee in range(1990, 2016)]
+            + [dict(annee=annee, revenu=revenus[annee], affiliation="exploitant_agricole")
+               for annee in range(2016, 2026)]
+            + [dict(annee=annee, revenu=20000.0, affiliation="salarie_prive_non_cadre")
+               for annee in (2026, 2027)])
+
+
+def test_le_revenu_des_annees_cotisees_au_minimum_se_tire_des_cotisations(simulateur):
+    """De 2016 à 2025, le chef d'exploitation dont l'AVI, la cotisation du 1° de
+    L. 731-42, a été « portée à [sa] valeur minimale », 3,32 % de 800 SMIC
+    horaires (D. 731-120, 1° ; D. 731-121), entre dans le revenu annuel moyen du
+    1° de L. 732-24 pour « le rapport entre les montants totaux des cotisations
+    qu'[il a] acquittées au titre de l'assurance vieillesse de base et les taux
+    des cotisations en vigueur pour l'année considérée », et non pour son
+    revenu relevé à 600 SMIC : l'AVA plafonnée, 11,55 % (D. 731-122), et
+    l'AVA déplafonnée, 2,14 % en 2016 et 2,24 % depuis (D. 731-124), ont
+    600 SMIC pour assiette minimale (D. 731-120, 2°). Au minimum,
+    (3,32 % × 800 + 13,79 % × 600) / 17,11 % = 638,81 SMIC ; à 700 SMIC,
+    (3,32 % × 800 + 13,79 % × 700) / 17,11 % = 719,40. En 2016, à 3 000 €
+    et 9,67 € de SMIC, (3,32 % × 800 + 13,69 % × 600) / 17,01 % × 9,67 =
+    6 179,48 € ; en 2020, à 10,15 €, 7 000 € valent 7 217,32 € et 9 000 €,
+    au-dessus de 800 SMIC, restent 9 000 €. Le chef de 1990 à 2025, parti
+    le 1er janvier 2028 après deux ans de salariat, retient sept années
+    depuis 2016 (R. 173-3-2), les mêmes à 2 000 € par an, à 700 et à
+    1 000 SMIC de chaque année : sa moyenne vaut 0,638 81 et 0,719 40 fois
+    celle du chef à 1 000 SMIC, et non 0,6 et 0,7. Dans les deux moteurs."""
+    import json
+    import re
+    import shutil
+    import subprocess
+
+    def moyenne(detail: str) -> float:
+        trouve = re.search(r"revenu annuel moyen ([\d,]+\.\d+) €", detail)
+        assert trouve is not None, detail
+        return float(trouve.group(1).replace(",", ""))
+
+    annuels = [(liquider.revenu_des_cotisations_minimales(2016, 3000.0, 9.67)),
+               liquider.revenu_des_cotisations_minimales(2020, 7000.0, 10.15),
+               liquider.revenu_des_cotisations_minimales(2020, 9000.0, 10.15)]
+    attendus = [6179.48, 7217.32, 9000.0]
+    assert annuels == pytest.approx(attendus, abs=0.005)
+    lignes = [_chef_de_1990_a_2025({annee: revenu for annee in _SMIC_AU_1ER_JANVIER})
+              for revenu in (2000.0,)]
+    lignes += [_chef_de_1990_a_2025({annee: multiple * smic
+                                     for annee, smic in _SMIC_AU_1ER_JANVIER.items()})
+               for multiple in (700, 1000)]
+    carrieres = [Carriere(annee_naissance=1963, mois_naissance=12, jour_naissance=15,
+                          sexe="H", age_liquidation=64.0,
+                          lignes=[AnneeCarriere(**ligne) for ligne in liste])
+                 for liste in lignes]
+    assert [str(c.date_liquidation) for c in carrieres] == ["janvier 2028"] * 3
+    details = [next(p.detail for p in simulateur.scenario_actuel.calculer(c).pensions_par_regime
+                    if p.regime == "msa_non_salaries") for c in carrieres]
+    assert all("× 40/" in d and "7 meilleures années depuis 2016" in d for d in details)
+    moyennes = [moyenne(d) for d in details]
+    rapports = [moyennes[0] / moyennes[2], moyennes[1] / moyennes[2]]
+    assert rapports == pytest.approx([0.6388077, 0.7194039], abs=5e-6)
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    script = """
+import { readFileSync } from "node:fs";
+import { AnneeCarriere, Carriere } from "./moteur/js/carriere.js";
+import { Contexte } from "./moteur/js/contexte.js";
+import { revenuDesCotisationsMinimales } from "./moteur/js/droit/liquider.js";
+const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
+const simulateur = contexte.simulateur();
+const details = JSON.parse(process.argv[1]).map((lignes) => {
+  const carriere = new Carriere({
+    annee_naissance: 1963, mois_naissance: 12, jour_naissance: 15, sexe: "H",
+    age_liquidation: 64.0, lignes: lignes.map((ligne) => new AnneeCarriere(ligne)) });
+  return simulateur.scenarioActuel.calculer(carriere).pensions_par_regime
+    .find((p) => p.regime === "msa_non_salaries").detail;
+});
+const annuels = [revenuDesCotisationsMinimales(2016, 3000.0, 9.67),
+  revenuDesCotisationsMinimales(2020, 7000.0, 10.15),
+  revenuDesCotisationsMinimales(2020, 9000.0, 10.15)];
+process.stdout.write(JSON.stringify({ details, annuels }));
+"""
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", script, json.dumps(lignes)],
+        cwd=RACINE_TEMOINS.parent.parent, capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    obtenus = json.loads(execution.stdout)
+    assert obtenus["annuels"] == pytest.approx(attendus, abs=0.005)
+    assert [moyenne(d) for d in obtenus["details"]] == pytest.approx(moyennes, abs=0.01)
+
+
 def test_l_annee_ou_l_exploitant_cesse_avant_son_depart_compte_entiere(simulateur):
     """L. 731-10-1 du code rural ne vise pas la seule année du départ : qui
     cesse en cours d'année, laquelle que ce soit, doit les cotisations « au

@@ -128,6 +128,18 @@ _SURCOTE_IRCANTEC_DUREE = 0.00625
 #: 2016 », écrit la MSA.
 ANNEE_DES_REVENUS_AGRICOLES = 2016
 
+#: LES COTISATIONS D'ASSURANCE VIEILLESSE DE BASE DU CHEF D'EXPLOITATION de
+#: 2016 à 2025 (L. 731-42, 1° à 3°, rédaction antérieure à la loi
+#: n° 2025-199), chacune par son assiette minimale en SMIC horaires du
+#: 1er janvier (D. 731-120), son taux de 2016 et son taux de 2017 à 2025 :
+#: l'AVI du 1°, sur 800 SMIC, 3,32 % (D. 731-121, e) ; l'AVA plafonnée du
+#: 2° a), sur 600, 11,55 % (D. 731-122, e) ; l'AVA déplafonnée du 3°, sur 600,
+#: 2,14 % en 2016 et 2,24 % depuis (D. 731-124, b et c). L'AVI, la première,
+#: n'est due que du chef à titre exclusif ou principal (L. 731-42, 1°, « à
+#: l'exception des personnes mentionnées à l'article L. 732-28 »).
+COTISATIONS_DE_BASE_DU_CHEF = ((800, 0.0332, 0.0332), (600, 0.1155, 0.1155),
+                               (600, 0.0214, 0.0224))
+
 
 def _sans_zeros_inutiles(valeur: float, decimales: int) -> str:
     """Un nombre à ``decimales`` chiffres au plus, sans les zéros de fin.
@@ -2240,6 +2252,7 @@ def pension_des_non_salaries_agricoles(
             moteur, code, carriere, periode, annee_liquidation, True,
             carriere.annee_naissance, avpf=False, membres=(code,),
             depuis=coupure, annees=annees_apres, plancher=True,
+            affilie_avant_2016=duree_b > 0,
         )
         if retenue_1 > 0 and annees_apres > 0 else 0.0
     )
@@ -2496,6 +2509,33 @@ def assiette_de_reference(moteur, periode: PeriodeRegime, ligne) -> float:
     return _assiette_de_reference(moteur, periode, ligne)
 
 
+def revenu_des_cotisations_minimales(annee: int, revenu: float, smic: float,
+                                     fraction: float = 1.0) -> float:
+    """Le revenu qu'une année de 2016 à 2025 du chef d'exploitation porte au
+    revenu annuel moyen du 1° de L. 732-24, pour ``fraction`` d'année cotisée
+    et au SMIC horaire ``smic`` du 1er janvier.
+
+    Le sien, sauf quand son AVI a été « portée à [sa] valeur minimale », sous
+    800 SMIC : les revenus « sont égaux au rapport entre les montants totaux
+    des cotisations qu'ils ont acquittées au titre de l'assurance vieillesse de
+    base et les taux des cotisations en vigueur pour l'année considérée »
+    (L. 732-24, I, 1°, second alinéa) — l'AVI sur 800 SMIC, les deux AVA sur
+    600 ou sur le revenu au-dessus (:data:`COTISATIONS_DE_BASE_DU_CHEF`),
+    divisées par la somme des trois taux : 638,81 SMIC au minimum, 639,04
+    en 2016, et non les 600 du minimum des AVA.
+    """
+    if not ANNEE_DES_REVENUS_AGRICOLES <= annee <= 2025:
+        return revenu
+    if revenu >= COTISATIONS_DE_BASE_DU_CHEF[0][0] * smic * fraction:
+        return revenu
+    taux = [cotisation[1 if annee == ANNEE_DES_REVENUS_AGRICOLES else 2]
+            for cotisation in COTISATIONS_DE_BASE_DU_CHEF]
+    cotisations = somme_ordonnee(
+        t * max(revenu, cotisation[0] * smic * fraction)
+        for t, cotisation in zip(taux, COTISATIONS_DE_BASE_DU_CHEF))
+    return cotisations / somme_ordonnee(taux)
+
+
 def salaire_de_reference(moteur, code: str, carriere: Carriere,
                          periode: PeriodeRegime,
                          annee_liquidation: int, plafonner: bool,
@@ -2505,14 +2545,18 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
                          enfants_majores: int = 0,
                          depuis: int | None = None,
                          annees: int | None = None,
-                         plancher: bool = False) -> float:
+                         plancher: bool = False,
+                         affilie_avant_2016: bool = False) -> float:
     """Salaire de référence, exprimé en euros de l'année de liquidation.
 
     ``depuis``, ``annees`` et ``plancher`` servent au revenu annuel moyen des
     non-salariés agricoles depuis 2016 (L. 732-24, I, 1°) : les seules années
     à partir de ``depuis``, les ``annees`` meilleures d'entre elles, et chaque
     revenu relevé au repère d'assiette de la période — le minimum sur lequel
-    la cotisation a été appelée.
+    la cotisation a été appelée. Pour qui a été affilié au régime avant 2016
+    (``affilie_avant_2016``), le revenu des années de 2016 à 2025 où le chef
+    a cotisé l'AVI au minimum se tire de ses cotisations
+    (:func:`revenu_des_cotisations_minimales`).
 
     **Il porte sur les seules années passées DANS CE régime** — ou dans
     l'un des ``membres`` de sa chaîne de succession, quand ``code`` liquide
@@ -2675,6 +2719,13 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
                 # Le revenu de ses mois, porté à sa part des douze, comme à
                 # `acquerir`.
                 revenu *= fraction_ligne / ligne.fraction_annee
+            if (affilie_avant_2016 and ligne.affiliation == "exploitant_agricole"
+                    and carriere.qualite_agricole(ligne.annee) == "chef"):
+                # L'AVI au minimum, de 2016 à 2025 : le revenu de ses
+                # cotisations (L. 732-24, I, 1°, second alinéa).
+                revenu = revenu_des_cotisations_minimales(
+                    ligne.annee, revenu, moteur.macro.smic_horaire(ligne.annee),
+                    fraction_ligne)
             if plancher and periode.assiette_repere_smic is not None:
                 revenu = max(revenu, periode.assiette_repere_smic
                              * moteur.macro.smic_horaire(ligne.annee)

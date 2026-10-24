@@ -26,14 +26,14 @@ effet: >-
   « 31 pts x 22 ans = 682 pts » ; le salarié agricole n'a plus que ses six meilleures
   années sur dix, depuis le 28 septembre 2026 aussi. Restent approchés : les années d'avant 1990, dont le
   barème de points n'est pas lu, qui entrent dans la moyenne par les points que vaut
-  leur rendement ; le revenu des années cotisées au minimum, que L. 732-24 déduit des
-  cotisations et que le moteur porte au plancher de six cents SMIC horaires ; les durées,
-  que R. 173-3-2 arrête au 31 décembre de l'année d'effet et que le moteur compte à la
-  date d'effet ; les majorations de points de 1952 à 1972 (R. 732-67) et les rachats,
-  qu'il ne connaît pas ; le revenu du collaborateur et de l'aide familial depuis 2016,
-  que le moteur prend, depuis le 16 octobre 2026, de leur assiette forfaitaire (400 SMIC
-  jusqu'en 2025, 600 depuis), quand L. 732-24 le déduirait peut-être des cotisations ;
-  et les années de chef à titre secondaire d'avant 2016, que le moteur garde dans la
+  leur rendement ; les durées, que R. 173-3-2 arrête au 31 décembre de l'année d'effet
+  et que le moteur compte à la date d'effet ; les majorations de points de 1952 à 1972
+  (R. 732-67) et les rachats, qu'il ne connaît pas ; le revenu du collaborateur et de
+  l'aide familial depuis 2016, que le moteur prend, depuis le 16 octobre 2026, de leur
+  assiette forfaitaire (400 SMIC jusqu'en 2025, 600 depuis), quand L. 732-24 le tirerait
+  de leurs cotisations jusqu'en 2025 si leur AVI, assise sur les revenus du chef que la
+  saisie ne connaît pas, était au minimum ; et les années de chef à titre secondaire
+  d'avant 2016, que le moteur garde dans la
   part forfaitaire, L. 732-28 étant abrogé pour ces pensions. Depuis le 17 octobre 2026
   (action 131), le revenu de l'année où l'exploitant cesse, cotisée entière (L.
   731-10-1), entre dans le revenu annuel moyen, au revenu de ses mois porté à douze, sous
@@ -44,9 +44,18 @@ effet: >-
   cotise pas (R. 731-57), n'y entre pas (voir la fiche taux_plein_et_proratisation) ;
   toute année où il cesse y entre, et non la seule de son départ, au revenu de ses mois
   porté à douze, dans le statut du 1er janvier, et le revenu du statut pris en cours
-  d'année n'y entre pas.
+  d'année n'y entre pas. Depuis le 24 octobre 2026, le revenu des années de 2016 à 2025
+  où le chef à titre exclusif ou principal, affilié avant 2016, a cotisé l'AVI au
+  minimum, sous 800 SMIC horaires, est « le rapport entre les montants totaux des
+  cotisations [...] acquittées au titre de l'assurance vieillesse de base et les taux
+  des cotisations en vigueur pour l'année considérée » (L. 732-24, I, 1°) : l'AVI sur
+  800 SMIC, les deux AVA sur 600 ou sur le revenu au-dessus, divisées par la somme des
+  trois taux, 17,11 % depuis 2017 : 638,81 SMIC au minimum, et non les 600 du plancher
+  que le moteur leur donnait ; 719,40 à 700 SMIC. Le chef à titre secondaire, qui ne
+  doit pas l'AVI (L. 731-42, 1°), et l'assuré affilié depuis 2016, que la phrase ne vise
+  pas, gardent le plancher de 600 SMIC.
 sources:
-  lu_le: 2026-10-17
+  lu_le: 2026-10-24
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -193,6 +202,50 @@ sources:
       du premier jour du mois suivant celui au cours duquel ont été encaissées les
       cotisations dues ». Lu dans l'index LEGI du dépôt
     date: 2026-10-17
+  - type: legifrance
+    reference: >-
+      L. 732-24, I, 1°, second alinéa (LEGIARTI000053280317) : « Pour les assurés dont
+      les cotisations mentionnées au 1° de l'article L. 731-42, dans sa rédaction
+      antérieure à la loi n° 2025-199 [...], dont ils ont été redevables au titre des
+      années comprises entre 2016 et 2025 ont été portées à leur valeur minimale, les
+      revenus pris en compte pour l'application du premier alinéa du présent 1° sont
+      égaux au rapport entre les montants totaux des cotisations qu'ils ont acquittées au
+      titre de l'assurance vieillesse de base et les taux des cotisations en vigueur pour
+      l'année considérée ». Aucun décret n'en dit davantage dans l'index LEGI du dépôt
+    date: 2026-10-24
+  - type: legifrance
+    reference: >-
+      L. 731-42, rédactions du 11 novembre 2010 (LEGIARTI000023034860) et du 28 décembre
+      2023 (LEGIARTI000048683785) : « 1° Une cotisation due pour chaque personne non
+      salariée âgée d'au moins seize ans, à l'exception des personnes mentionnées à
+      l'article L. 732-28 », dans la limite du plafond, l'AVI ; « 2° a) Une cotisation
+      due pour chaque chef d'exploitation ou d'entreprise, calculée dans les conditions
+      définies au 1° », l'AVA plafonnée ; « 3° Une cotisation à la charge de chaque chef
+      d'exploitation ou d'entreprise, calculée sur la totalité » de ses revenus, l'AVA
+      déplafonnée. Lu dans l'index LEGI du dépôt
+    date: 2026-10-24
+  - type: legifrance
+    reference: >-
+      D. 731-120 (LEGIARTI000028393446, du 1er janvier 2014 au 7 juillet 2024 ;
+      LEGIARTI000049904749, jusqu'au 1er janvier 2026) : le montant des cotisations « ne
+      peut être inférieur à celui des cotisations qui seraient calculées sur un revenu
+      égal à : 1° 800 fois le montant du salaire minimum de croissance en vigueur au 1er
+      janvier de l'année considérée pour la cotisation mentionnée au 1° ; 2° 600 fois
+      [...] pour les cotisations mentionnées aux 2° a) et 3° ». D. 731-121
+      (LEGIARTI000026140087) : « e) 3,32 % à compter de l'année 2016 » ; D. 731-122
+      (LEGIARTI000028393435) : « e) 11,55 % à compter de l'année 2016 » ; D. 731-124
+      (LEGIARTI000029924569, du 1er janvier 2015 au 7 juillet 2024) : « b) 2,14 % pour
+      l'année 2016 ; c) 2,24 % à compter de l'année 2017 ». Lu dans l'index LEGI du dépôt
+    date: 2026-10-24
+  - type: autre
+    reference: >-
+      MSA Île-de-France, « Le calcul de vos cotisations non salariées agricoles 2025 »,
+      octobre 2025 : l'AVI du chef « à titre exclusif ou principal », 3,32 %, sur 9 504 €
+      (800 SMIC) au moins ; l'AVA plafonnée, 11,55 %, sur 7 128 € (600 SMIC) au moins ;
+      l'AVA déplafonnée, 2,24 %, sur 7 128 € (600 SMIC) au moins, au SMIC du 1er janvier
+      2025, 11,88 €
+    url: https://iledefrance.msa.fr/lfp/documents/98865/1903181/75+Le+Calcul+de+vos+cotisations+NSA+2025.pdf
+    date: 2026-10-24
 textes_a_rattacher:
 - id: LEGIARTI000053280317
   reference: >-
@@ -230,6 +283,22 @@ textes_a_rattacher:
     loi n° 2025-199 du 28 février 2025, article 87, VIII, B (JORFARTI000051269910) ;
     décret n° 2025-1409 du 30 décembre 2025, article 6 ; décret n° 2025-1410 du 30
     décembre 2025, article 13 : le calcul provisoire de 2026 et 2027, et son recalcul
+- reference: >-
+    code rural et de la pêche maritime, L. 731-42 (LEGIARTI000023034860,
+    LEGIARTI000048683785), D. 731-120 (LEGIARTI000028393446, LEGIARTI000049904749),
+    D. 731-121 (LEGIARTI000026140087), D. 731-122 (LEGIARTI000028393435) et D. 731-124
+    (LEGIARTI000029924569) : les cotisations de base du chef de 2016 à 2025, dont L.
+    732-24, I, 1°, tire le revenu des années où l'AVI était au minimum
+textes_sans_effet:
+- id: LEGIARTI000049904742
+  motif: >-
+    D. 731-124 dans sa rédaction du 7 juillet 2024 : le taux de la cotisation du 3°, «
+    appliqué à la totalité de l'assiette déterminée en application des articles L.
+    731-15, L. 731-16 et L. 731-22, est fixé à 2,36 % » (décret n° 2024-688 du 5 juillet
+    2024, article 5, JORFARTI000049888585), qui « s'appliquent au calcul des cotisations
+    [...] au titre des périodes courant à compter du 1er janvier 2026 » (article 6,
+    JORFARTI000049888606) ; la MSA applique encore 2,24 % en 2025 : sans effet sur les
+    années de 2016 à 2025
 reformes:
 - agricole_2025
 code:
@@ -255,4 +324,8 @@ code:
     `anneesDesRegimesAlignes`), là où vaut la réforme ; pour qui est né avant 1953, la
     seconde répartition la partage entre eux (II, a). Le test
     `test_la_reforme_agricole_rend_l_exemple_de_la_msa` rejoue l'exemple de la caisse,
-    des deux côtés.
+    des deux côtés. Le revenu des années de 2016 à 2025 où le chef affilié avant 2016 a
+    cotisé l'AVI au minimum se tire de ses cotisations
+    (`liquider.revenu_des_cotisations_minimales`, `revenuDesCotisationsMinimales`),
+    que `test_le_revenu_des_annees_cotisees_au_minimum_se_tire_des_cotisations` rejoue,
+    posé à la main, dans les deux moteurs.
