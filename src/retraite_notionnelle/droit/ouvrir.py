@@ -13,9 +13,11 @@ départ anticipé des assurés handicapés peut encore l'ouvrir, et quand il
 précède tous les autres, la carrière longue.
 
 :func:`ouvrir` écrit ce que l'étape dit d'une demande — son schéma est
-``data/reference/etapes/ouvrir_le_droit.yaml`` ; :func:`age_ouverture_droit`,
-:func:`age_taux_plein_droit` et :func:`age_annulation_droit` sont ce que le
-pilote en lit quand il ne lui faut qu'un âge, sans rien liquider (§ 7.7).
+``data/reference/etapes/ouvrir_le_droit.yaml`` ; :func:`age_ouverture_droit`
+et :func:`age_taux_plein_droit` sont ce que le pilote en lit quand il ne lui
+faut qu'un âge, sans rien liquider (§ 7.7), et :func:`age_annulation_droit`,
+avec eux, ce qu'en lit celui de « Mon estimation retraite », qui n'a que
+l'exemplaire du portage (``agesDeLEstimation``, ``moteur/js/pilote.js``).
 
 Les tables sont celles que le moteur du scénario 1 tient (``moteur``, un
 :class:`~retraite_notionnelle.scenarios.actuel.ScenarioActuel`), jusqu'aux
@@ -1326,7 +1328,7 @@ def age_annulation_droit(moteur, carriere: Carriere) -> float | None:
 
     C'est le troisième terme de :func:`age_taux_plein_droit`, posé seul :
     l'âge du « taux plein automatique », le dernier que « Mon estimation
-    retraite » chiffre (:func:`~retraite_notionnelle.pilote.ages_de_l_estimation`).
+    retraite » chiffre (``agesDeLEstimation``, ``moteur/js/pilote.js``).
 
     ``None`` dans le même cas que :func:`age_ouverture_droit`.
     """

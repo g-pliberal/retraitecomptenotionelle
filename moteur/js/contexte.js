@@ -837,12 +837,19 @@ function carriereParcourue(simulateur, parcours, batir) {
 }
 
 /**
- * Un départ de « Mon estimation retraite », tel que le scénario 1 le sert :
- * le brut de chaque étage, annuel, en euros constants de l'année de référence
- * — la pension de chaque régime, minima compris, et la part qu'il sert de la
- * majoration pour enfants —, le minimum vieillesse à part. Voir `DepartEstime`
- * et `depart_estime` (pilote.py), son jumeau, qui ne sert plus qu'à confronter
- * les deux moteurs, la saisie n'ayant que cet exemplaire (action 161, étape 6).
+ * Le départ `quoi` de « Mon estimation retraite », tel que le scénario 1 le
+ * sert : la carrière liquidée à l'âge que `agesDeLEstimation` (pilote.js) a
+ * trouvé, chiffrée étage par étage. Les montants sont bruts, annuels, en euros
+ * constants de l'année de référence : la page les divise par douze. `etages`
+ * additionne, étage par étage (base, complémentaire, intégré, additionnel), la
+ * pension de chaque régime, minima compris, et la part qu'il sert de la
+ * majoration pour enfants ; le minimum vieillesse, qu'aucun régime ne sert et
+ * que l'estimation ignore, reste à part. Le `quoi` rendu porte les âges de
+ * `DEPARTS_DE_L_ESTIMATION` (pilote.js) que le départ réunit : le sien, puis
+ * ceux que `departsDeLEstimation` y ajoute, qui se confondent avec lui ;
+ * `date`, son mois, « AAAA-MM ».
+ * Le seul exemplaire depuis l'action 161, étape 6 : son jumeau Python, qui ne
+ * servait plus qu'à confronter les deux moteurs, est retiré.
  */
 function departEstime(simulateur, parametres, carriere, quoi) {
   const resultat = simulateur.echeancier(carriere).auDepart;
@@ -880,9 +887,12 @@ function departEstime(simulateur, parametres, carriere, quoi) {
     trimestres: resultat.trimestres_valides,
     trimestres_requis: resultat.trimestres_requis,
     motif_ouverture: resultat.motif_ouverture,
-    // Ce que la cotisation maladie de 1 % frappe dans `etages`. Voir
-    // `DepartEstime.assiette_maladie` (pilote.py).
+    // Ce que la cotisation maladie de 1 % frappe dans `etages` : les lignes des
+    // complémentaires qui la prélèvent, sans leur majoration pour enfants
+    // (`assietteMaladie`, remuneration.js).
     assiette_maladie: assiette,
+    // La pension de base du régime général, qu'un non-résident paie à son
+    // propre taux (L. 131-9 ; D. 242-8).
     assiette_regime_general: generale,
     get total() {
       return Object.values(this.etages).reduce((somme, montant) => somme + montant, 0.0);

@@ -13,6 +13,10 @@
  * Le départ des cas types (`age_de_depart` du Python) n'est plus porté depuis
  * le 11 octobre 2026 : il ne servait qu'au portage du coût, parti avec lui
  * (action 150), et la table figée porte l'âge de chaque case de la grille.
+ * Seul `pointFixe` garde donc son jumeau, `point_fixe`, dont le Python date les
+ * cas types. Les départs de l'estimation, eux, n'ont que cet exemplaire depuis
+ * l'action 161, étape 6 : seul le site les chiffre, et leur moitié Python, qui
+ * ne servait plus qu'à confronter les deux moteurs, est retirée.
  */
 
 import * as ouvrir from "./droit/ouvrir.js";
@@ -70,13 +74,20 @@ export const DEPARTS_DE_L_ESTIMATION = Object.freeze(["legal", "taux_plein", "au
 
 /**
  * Les trois âges de « Mon estimation retraite », pour la carrière que
- * `batir(age)` rend liquidée à `age` : chacun un point fixe, le premier parti
- * de `depart`, chacun des suivants du précédent, qu'il ne précède jamais.
- * `null` quand le droit n'oppose aucun âge à cette carrière. Voir
- * `ages_de_l_estimation` (pilote.py).
+ * `batir(age)` rend liquidée à `age` : au plus tôt (`ageOuvertureDroit`), au
+ * taux plein (`ageTauxPleinDroit`), au taux plein automatique
+ * (`ageAnnulationDroit`).
+ *
+ * Chacun est un point fixe, comme le départ d'un cas type : la carrière dépend
+ * de l'âge, et ce que le droit lui oppose dépend de la carrière. Le premier
+ * part de `depart`, l'âge que la saisie demande ; chacun des suivants part du
+ * précédent, et ne le précède jamais. Deux âges peuvent se confondre : la page
+ * les réunit (`departsDeLEstimation`, contexte.js). `null` quand le droit
+ * n'oppose aucun âge à cette carrière.
  */
 export function agesDeLEstimation(actuel, batir, depart) {
   // Les trois règles répondent `null` dans le même cas : aucun régime retenu.
+  // Une question suffit donc à le savoir.
   if (ouvrir.ageOuvertureDroit(actuel, batir(depart)) === null) {
     return null;
   }

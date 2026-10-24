@@ -10,10 +10,10 @@ un pilote fixe le reste.
   (:func:`~retraite_notionnelle.droit.ouvrir.age_ouverture_droit`,
   :func:`~retraite_notionnelle.droit.ouvrir.age_taux_plein_droit`), sans rien
   liquider. La date qu'il trouve devient celle du départ de la carrière, que
-  l'échéancier traite (:mod:`~retraite_notionnelle.echeancier`). Les mêmes
-  points fixes datent les trois départs que « Mon estimation retraite »
-  chiffre, pour la carrière d'une saisie (:func:`ages_de_l_estimation`), que
-  :func:`depart_estime` liquide étage par étage.
+  l'échéancier traite (:mod:`~retraite_notionnelle.echeancier`). Le même
+  point fixe, dans le portage, date les trois départs que « Mon estimation
+  retraite » chiffre pour la carrière d'une saisie (``agesDeLEstimation``,
+  ``moteur/js/pilote.js``) : seul le site les chiffre.
 * LES POPULATIONS : aujourd'hui les cas types pondérés, que
   :mod:`~retraite_notionnelle.castypes` décrit ; des tirages, des couples et
   des décès simulés demain, sans changer le moteur.
@@ -22,21 +22,20 @@ un pilote fixe le reste.
   l'appliquer — restent dans leurs modules
   (:mod:`~retraite_notionnelle.avantages`, :mod:`~retraite_notionnelle.cout`).
 
-Son jumeau est ``moteur/js/pilote.js``.
+Son jumeau, ``moteur/js/pilote.js``, ne porte que :func:`point_fixe` : le
+départ des cas types, que seul le coût demande, ne tourne qu'ici. Les départs
+de l'estimation n'ont que l'exemplaire du portage depuis l'action 161,
+étape 6 : leur moitié Python ne servait plus qu'à confronter les deux moteurs.
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 from typing import TYPE_CHECKING, Callable
 
 from .droit import ouvrir
-from .remuneration import charger_prelevements
 
 if TYPE_CHECKING:
-    from .carriere import Carriere
     from .castypes import CasType
-    from .config import Parametres
     from .simulateur import Simulateur
 
 
@@ -101,7 +100,8 @@ def age_de_depart(simulateur: Simulateur, cas: CasType, generation: int,
 
 def point_fixe(age: float, proposer: Callable[[float], float | None]) -> float:
     """L'âge que ``proposer`` confirme, en partant de ``age`` : la boucle
-    de :func:`age_de_depart`, que :func:`ages_de_l_estimation` emprunte.
+    de :func:`age_de_depart`, que son jumeau, ``pointFixe``, prête dans le
+    portage aux départs de « Mon estimation retraite ».
 
     ``proposer(age)`` dit ce que le droit oppose à la carrière liquidée à
     ``age``, ou ``None`` s'il n'oppose rien. Une montée se suit ; une
@@ -131,129 +131,6 @@ def point_fixe(age: float, proposer: Callable[[float], float | None]) -> float:
             break
         age = propose
     return age
-
-
-#: Les départs que « Mon estimation retraite » chiffre, dans l'ordre de sa
-#: synthèse : au plus tôt — l'âge légal, ou la carrière longue qui le
-#: devance —, au taux plein, au taux plein automatique.
-DEPARTS_DE_L_ESTIMATION: tuple[str, ...] = ("legal", "taux_plein", "automatique")
-
-
-def ages_de_l_estimation(actuel, batir: Callable[[float], "Carriere"],
-                         depart: float) -> dict[str, float] | None:
-    """Les trois âges de « Mon estimation retraite », pour la carrière que
-    ``batir(age)`` rend liquidée à ``age`` : au plus tôt
-    (:func:`~retraite_notionnelle.droit.ouvrir.age_ouverture_droit`), au
-    taux plein (:func:`~retraite_notionnelle.droit.ouvrir.age_taux_plein_droit`),
-    au taux plein automatique
-    (:func:`~retraite_notionnelle.droit.ouvrir.age_annulation_droit`).
-
-    Chacun est un point fixe, comme le départ d'un cas type : la carrière
-    dépend de l'âge, et ce que le droit lui oppose dépend de la carrière. Le
-    premier part de ``depart``, l'âge que la saisie demande ; chacun des
-    suivants part du précédent, et ne le précède jamais. Deux âges peuvent
-    se confondre : la page les réunit. ``None`` quand le droit n'oppose
-    aucun âge à cette carrière.
-    """
-    # Les trois règles répondent `None` dans le même cas : aucun régime
-    # retenu. Une question suffit donc à le savoir.
-    if ouvrir.age_ouverture_droit(actuel, batir(depart)) is None:
-        return None
-    regles = (ouvrir.age_ouverture_droit, ouvrir.age_taux_plein_droit,
-              ouvrir.age_annulation_droit)
-    ages: dict[str, float] = {}
-    age = depart
-    for quoi, regle in zip(DEPARTS_DE_L_ESTIMATION, regles):
-        trouve = point_fixe(age, lambda a, regle=regle: regle(actuel, batir(a)))
-        age = max(age, trouve) if ages else trouve
-        ages[quoi] = age
-    return ages
-
-
-@dataclass(frozen=True)
-class DepartEstime:
-    """Un départ de « Mon estimation retraite », tel que le scénario 1 le sert.
-
-    Les montants sont bruts, annuels, en euros constants de l'année de
-    référence : la page les divise par douze. ``etages`` additionne, étage
-    par étage (base, complémentaire, intégré, additionnel), la pension de
-    chaque régime, minima compris, et la part qu'il sert de la majoration
-    pour enfants. Le minimum vieillesse, qu'aucun régime ne sert et que
-    l'estimation ignore, reste à part.
-    """
-
-    #: Les âges de :data:`DEPARTS_DE_L_ESTIMATION` que ce départ réunit.
-    quoi: tuple[str, ...]
-    age: float
-    #: Le mois du départ, « AAAA-MM ».
-    date: str
-    etages: dict[str, float]
-    minimum_vieillesse: float
-    trimestres: int
-    trimestres_requis: int
-    motif_ouverture: str
-    #: Ce que la cotisation maladie de 1 % frappe dans :attr:`etages` : les
-    #: lignes des complémentaires qui la prélèvent, sans leur majoration pour
-    #: enfants (``remuneration.assiette_maladie``).
-    assiette_maladie: float = 0.0
-    #: La pension de base du régime général, qu'un non-résident paie à son
-    #: propre taux (L. 131-9 ; D. 242-8).
-    assiette_regime_general: float = 0.0
-
-    @property
-    def total(self) -> float:
-        # De gauche à droite, comme le jumeau : la somme de Python 3.12 est
-        # compensée, et différerait au dernier chiffre.
-        total = 0.0
-        for montant in self.etages.values():
-            total += montant
-        return total
-
-
-def depart_estime(simulateur: Simulateur, parametres: Parametres, carriere: Carriere,
-                  quoi: str) -> DepartEstime:
-    """Le départ ``quoi`` de « Mon estimation retraite » : la carrière liquidée
-    à l'âge que :func:`ages_de_l_estimation` a trouvé, chiffrée étage par étage
-    en euros constants de l'année de référence. Le site chiffre ainsi chaque
-    départ (``departEstime``, ``moteur/js/contexte.js``) ; ici, sans la saisie,
-    que le portage seul garde (action 161, étape 6), il ne sert qu'à confronter
-    les deux moteurs (``tests/test_estimation_du_site.py``)."""
-    resultat = simulateur.echeancier(carriere).au_depart
-    passage = simulateur.macro.coefficient_prix(
-        carriere.annee_liquidation, parametres.annee_euros_constants)
-    etages: dict[str, float] = {}
-    prelevements = charger_prelevements(parametres.racine_donnees).pensions
-    regimes = prelevements.regimes_maladie
-    assiette = generale = 0.0
-
-    def porter(code: str, montant: float) -> None:
-        etage = simulateur.catalogue[code].etage
-        etages[etage] = etages.get(etage, 0.0) + montant * passage
-
-    for pension in resultat.pensions_par_regime:
-        porter(pension.regime, pension.montant)
-        if pension.regime in regimes:
-            assiette += pension.montant * passage
-        if pension.regime in prelevements.regimes_generaux:
-            generale += pension.montant * passage
-    minimum = 0.0
-    for avantage in resultat.avantages_appliques:
-        if avantage.code == "majoration_enfants":
-            for code, part in avantage.par_regime:
-                porter(code, part)
-        elif avantage.code == "minimum_vieillesse":
-            minimum += avantage.montant
-    date = carriere.date_liquidation
-    return DepartEstime(
-        quoi=(quoi,), age=carriere.age_liquidation,
-        date=f"{date.annee:04d}-{date.mois:02d}", etages=etages,
-        minimum_vieillesse=minimum * passage,
-        trimestres=resultat.trimestres_valides,
-        trimestres_requis=resultat.trimestres_requis,
-        motif_ouverture=resultat.motif_ouverture,
-        assiette_maladie=assiette,
-        assiette_regime_general=generale,
-    )
 
 
 def age_propose(simulateur: Simulateur, cas: CasType, generation: int,
