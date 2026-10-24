@@ -622,6 +622,17 @@ def test_la_carriere_longue_se_lit_par_generation_dans_le_ii():
         1971: 62.0,        # la règle générale reprend
     }
     assert all(p["age_debut_maximum"] == 20 for p in portes if p["generation"] != 1900)
+    # Chaque adaptation vaut jusqu'à la suivante ; la règle générale, et celle
+    # qui reprend après la dernière adaptation, sans fin ; et plus de durée
+    # d'assurance majorée depuis 2012.
+    assert {p["generation"]: p["generation_fin"]
+            for p in portes if p["generation"] != 1900} == {
+        1961.667: 1963.667, 1963.667: 1964, 1964: 1965, 1965: 1965.917,
+        1965.917: 1966, 1966: 1967, 1967: 1968, 1968: 1969, 1969: 1970,
+        1970: 1971, 1971: 2100,
+    }
+    assert all(p["generation_fin"] == 2100 for p in portes if p["generation"] == 1900)
+    assert all(p["trimestres_assurance_supplementaires"] is None for p in portes)
 
     # Une version qui ne change aucune porte n'ouvre pas de date d'effet.
     portes = module.carriere_longue(
@@ -686,6 +697,98 @@ def test_les_portes_de_2011_se_lisent_generation_par_generation():
     lues = module.carriere_longue([("2003-10-31", chapeau + portes.format(mois=""))])
     assert {p["entree_en_vigueur"] for p in lues} == {"2004-01-01"}
     assert len(lues) == 3 and all(p["generation"] == 1900 for p in lues)
+
+
+def test_chaque_porte_dit_les_generations_qu_elle_couvre_et_la_duree_d_assurance():
+    """Les rédactions de 2010 et de 2012 de D. 351-1-1 nomment les générations
+    de chaque bloc de portes : « Pour les assurés nés en 1953 : » ne vaut que
+    pour 1953, et la porte des débuts avant dix-sept ans, à cinquante-neuf ans
+    et huit mois, que le décret du 2 juillet 2012 (LEGIARTI000026139949) donne
+    aux nés de 1953, ne s'ouvre pas à ceux de 1954. Le récupérateur ne lisait
+    que la première génération du bloc, et le moteur étendait la porte à
+    toutes les suivantes : il lit aussi la première qu'il ne couvre plus,
+    2100 quand le bloc vaut « à compter du 1er janvier 1960 » ou qu'il est la
+    règle générale. Et les rédactions de 2003 et de 2010 n'ouvrent la carrière
+    longue qu'à qui justifie, tous régimes, « d'une durée minimale d'assurance
+    ou de périodes reconnues équivalentes au moins égale à la limite [...]
+    majorée de huit trimestres » (LEGIARTI000006736521, LEGIARTI000023397567) :
+    le chapeau le dit, chaque porte le porte ; la rédaction de 2012 ne le dit
+    plus, ni aucune depuis."""
+    module = _charger_script("dila_legi_parametres_retraite", "scripts", "fetch",
+                             "dila_legi_parametres_retraite.py")
+    chapeau = (
+        "L'âge prévu au premier alinéa de l'article L. 351-1 est abaissé, en "
+        "application de l'article L. 351-1-1, pour les assurés qui justifient, "
+        "dans le régime général et, le cas échéant, dans un ou plusieurs autres "
+        "régimes obligatoires, d'une durée minimale d'assurance ou de périodes "
+        "reconnues équivalentes au moins égale à la limite fixée en application "
+        "du deuxième alinéa de l'article L. 351-1 majorée de huit trimestres : ")
+
+    def porte(age, minoree, debut):
+        return (f"A {age} pour les assurés justifiant d'une durée d'assurance ayant "
+                "donné lieu à cotisations à leur charge au moins égale à la durée "
+                f"minimale mentionnée au premier alinéa du présent article{minoree} et "
+                f"ayant débuté leur activité avant l'âge de {debut} ans")
+
+    texte_2011 = (
+        "Décret n° 2010-1734 du 30 décembre 2010 art. 11 : Ces dispositions sont "
+        "applicables aux pensions prenant effet à compter du 1er juillet 2011. "
+        + chapeau
+        + "I. ― Pour les assurés nés avant le 1er juillet 1951 : 1° "
+        + porte("cinquante-six ans", "", "seize") + " ; 2° "
+        + porte("cinquante-huit ans", ", minorée de quatre trimestres,", "seize")
+        + " ; V. ― Pour les assurés nés en 1954 : 1° "
+        + porte("cinquante-six ans", "", "seize") + " ; 2° "
+        + porte("cinquante-huit ans et huit mois", ", minorée de quatre trimestres,",
+                "seize")
+        + " ; XI. ― Pour les assurés nés à compter du 1er janvier 1960 : 1° "
+        + porte("cinquante-huit ans", "", "seize") + ".")
+    lues = module.carriere_longue([("2011-07-01", texte_2011)])
+    assert {(p["generation"], p["generation_fin"], p["age_depart"]) for p in lues} == {
+        (1900, 1951.5, 56.0), (1900, 1951.5, 58.0),
+        (1954, 1955, 56.0), (1954, 1955, 58.67),
+        (1960, 2100, 58.0),
+    }
+    assert all(p["trimestres_assurance_supplementaires"] == 8 for p in lues)
+
+    texte_2012 = (
+        "I.-L'âge prévu au premier alinéa de l'article L. 351-1 est abaissé, en "
+        "application de l'article L. 351-1-1, à soixante ans, pour les assurés qui "
+        "justifient d'une durée d'assurance cotisée, entendue comme la durée "
+        "d'assurance accomplie dans le régime général et, le cas échéant, dans un "
+        "ou plusieurs autres régimes obligatoires et ayant donné lieu à "
+        "cotisations à leur charge, au moins égale à celle prévue au deuxième "
+        "alinéa de l'article L. 351-1 et qui ont débuté leur activité avant l'âge "
+        "de vingt ans. II.-L'âge prévu au premier alinéa de l'article L. 351-1 est "
+        "abaissé, en application de l'article L. 351-1-1, pour les assurés qui "
+        "justifient d'une durée d'assurance cotisée [...] au moins égale aux seuils "
+        "définis ci-après : A.-Pour les assurés nés en 1952 : A cinquante-neuf ans "
+        "et quatre mois pour les assurés justifiant d'une durée d'assurance cotisée "
+        "au moins égale à celle prévue au deuxième alinéa de l'article L. 351-1 et "
+        "ayant débuté leur activité avant l'âge de dix-sept ans ; B.-Pour les "
+        "assurés nés en 1953 : 3° A cinquante-neuf ans et huit mois pour les "
+        "assurés justifiant d'une durée d'assurance cotisée au moins égale à celle "
+        "prévue au deuxième alinéa de l'article L. 351-1 et ayant débuté leur "
+        "activité avant l'âge de dix-sept ans ; I.-Pour les assurés nés à compter "
+        "du 1er janvier 1960 : A cinquante-huit ans pour les assurés justifiant "
+        "d'une durée d'assurance cotisée au moins égale à celle prévue au deuxième "
+        "alinéa de l'article L. 351-1 majorée de huit trimestres et ayant débuté "
+        "leur activité avant l'âge de seize ans.")
+    lues = module.carriere_longue([("2012-11-01", texte_2012)])
+    assert {(p["generation"], p["generation_fin"], p["age_debut_maximum"],
+             p["age_depart"], p["trimestres_supplementaires"]) for p in lues} == {
+        (1900, 2100, 20, 60.0, 0),
+        (1952, 1953, 17, 59.33, 0),
+        (1953, 1954, 17, 59.67, 0),
+        (1960, 2100, 16, 58.0, 8),
+    }
+    assert all(p["trimestres_assurance_supplementaires"] is None for p in lues)
+
+    # 2003 : la règle générale seule, sans fin, sous la durée majorée.
+    lues = module.carriere_longue([("2003-10-31", chapeau + "1° " + porte(
+        "cinquante-six ans", "", "seize") + ".")])
+    assert [(p["generation"], p["generation_fin"], p["trimestres_assurance_supplementaires"])
+            for p in lues] == [(1900, 2100, 8)]
 
 
 def test_lecture_d_un_classeur_excel_97():

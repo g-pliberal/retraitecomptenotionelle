@@ -1791,9 +1791,10 @@ export class MajorationsEnfantsPoints {
  */
 export class CarriereLongue {
   constructor(paquet) {
-    // { date d'effet (année décimale) : [[génération, âge de début maximum,
-    //   trimestres de début, âge de départ, trimestres supplémentaires,
-    //   fiabilité], …] }
+    // { date d'effet (année décimale) : [[génération, première génération
+    //   qu'elle ne vise plus, âge de début maximum, trimestres de début, âge de
+    //   départ, trimestres supplémentaires, trimestres d'assurance au-delà de
+    //   la durée requise (null depuis 2012), fiabilité], …] }
     this._table = paquet.carriere_longue ?? {};
     this._dates = Object.keys(this._table).map(Number).sort((a, b) => a - b);
     // Les rédactions de D. 351-1-2, que le paquet porte parmi les versions
@@ -1821,8 +1822,11 @@ export class CarriereLongue {
   /**
    * Les portes opposables à cette carrière : celles du texte en vigueur à sa
    * date d'effet, et pour chaque porte — borne d'entrée ET supplément de
-   * trimestres — la ligne de la plus haute génération qui ne dépasse pas la
-   * sienne (D. 351-1-1, II). Une borne d'entrée peut ouvrir deux portes :
+   * trimestres —, parmi les lignes qui couvrent sa génération, celle de la
+   * plus haute génération (D. 351-1-1, II). Une ligne ne couvre que les
+   * générations que le texte lui nomme, jusqu'à sa fin exclue : la porte des
+   * débuts avant dix-sept ans du décret du 2 juillet 2012 ne s'ouvre qu'aux
+   * nés de 1952 et de 1953. Une borne d'entrée peut ouvrir deux portes :
    * avant 2023, débuter avant seize ans ouvrait cinquante-six ans avec huit
    * trimestres de plus, ou cinquante-huit avec quatre.
    */
@@ -1847,15 +1851,16 @@ export class CarriereLongue {
     const cle = Object.keys(this._table).find((k) => Number(k) === applicable);
     const generation = carriere.generation;
     const retenues = new Map();
-    for (const [gen, ageMax, trimestresDebut, ageDepart, supplement, fiabilite]
+    for (const [gen, fin, ageMax, trimestresDebut, ageDepart, supplement, assurance, fiabilite]
       of this._table[cle]) {
-      if (gen > generation + 1e-9) {
+      if (gen > generation + 1e-9 || generation > fin - 1e-9) {
         continue;
       }
       const clePorte = `${ageMax}|${supplement}`;
       const actuelle = retenues.get(clePorte);
       if (actuelle === undefined || gen > actuelle[0]) {
-        retenues.set(clePorte, [gen, [ageMax, trimestresDebut, ageDepart, supplement, fiabilite]]);
+        retenues.set(clePorte,
+          [gen, [ageMax, trimestresDebut, ageDepart, supplement, fiabilite, assurance]]);
       }
     }
     const portes = [...retenues.values()].sort((a, b) => a[1][0] - b[1][0])
@@ -1970,10 +1975,16 @@ export class CarriereLongue {
   /**
    * Âge le plus précoce ouvert par le dispositif, ou ``null``.
    *
+   * Jusqu'en octobre 2012, la porte exige aussi une durée d'assurance, tous
+   * régimes, de huit trimestres au-delà de la durée requise (chapeau de
+   * D. 351-1-1, rédactions de 2003 et de 2010) : `trimestresAssurance` est
+   * celle que le taux lit ; sans elle, la condition n'est pas lue. Voir le
+   * Python.
+   *
    * @returns {[number, number]|null} âge de départ et fiabilité.
    */
   ageDeDepart(carriere, anneeLiquidation, trimestresCotises, requis, etrangers = null,
-    fonctionPublique = false) {
+    fonctionPublique = false, trimestresAssurance = null) {
     const portes = this.portes(carriere, fonctionPublique);
     if (portes === null) {
       return null;
@@ -1981,9 +1992,14 @@ export class CarriereLongue {
     requis = this.requisDe(carriere, requis, fonctionPublique);
 
     let meilleur = null;
-    for (const [ageMax, trimestresDebut, ageDepart, supplement, fiabilite] of portes) {
+    for (const [ageMax, trimestresDebut, ageDepart, supplement, fiabilite, assurance]
+      of portes) {
       if (!this.entreePrecoce(carriere, anneeLiquidation, ageMax, trimestresDebut, etrangers)
           || trimestresCotises < requis + supplement) {
+        continue;
+      }
+      if (assurance !== null && trimestresAssurance !== null
+          && trimestresAssurance < requis + assurance) {
         continue;
       }
       // Départage identique à celui de Python, qui compare des couples
@@ -2004,22 +2020,27 @@ export class CarriereLongue {
    * qui date un cas type. La condition d'entrée précoce se lit telle quelle ;
    * la condition de durée se projette : il manque `requis + supplément −
    * cotisés` trimestres, et une année de cotisation en rend quatre, la
-   * soustraction étant signée. Chaque porte ouvre au plus tardif de son âge et
-   * de l'âge où la durée cotisée est réunie, et la plus précoce l'emporte.
+   * soustraction étant signée ; la durée d'assurance d'avant novembre 2012 se
+   * projette de même. Chaque porte ouvre au plus tardif de son âge et des âges
+   * où ses durées sont réunies, et la plus précoce l'emporte.
    */
   agePropose(carriere, anneeLiquidation, trimestresCotises, requis, ageLiquidation,
-    etrangers = null, fonctionPublique = false) {
+    etrangers = null, fonctionPublique = false, trimestresAssurance = null) {
     const portes = this.portes(carriere, fonctionPublique);
     if (portes === null) {
       return null;
     }
     requis = this.requisDe(carriere, requis, fonctionPublique);
     let meilleur = null;
-    for (const [ageMax, trimestresDebut, ageDepart, supplement] of portes) {
+    for (const [ageMax, trimestresDebut, ageDepart, supplement, , assurance] of portes) {
       if (!this.entreePrecoce(carriere, anneeLiquidation, ageMax, trimestresDebut, etrangers)) {
         continue;
       }
-      const atteint = ageLiquidation + (requis + supplement - trimestresCotises) / 4.0;
+      let atteint = ageLiquidation + (requis + supplement - trimestresCotises) / 4.0;
+      if (assurance !== null && trimestresAssurance !== null) {
+        atteint = Math.max(atteint,
+          ageLiquidation + (requis + assurance - trimestresAssurance) / 4.0);
+      }
       const candidat = Math.max(ageDepart, atteint);
       if (meilleur === null || candidat < meilleur) {
         meilleur = candidat;

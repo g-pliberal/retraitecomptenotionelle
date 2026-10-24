@@ -1,0 +1,45 @@
+date: "2026-10-24"
+session: "action 138, étape 21 : la carrière longue d'avant 2023, au texte de chaque décret"
+consulte: >-
+  `scripts/veille_droit.py` : trois fiches à relire, aucune de cette étape. L'index LEGI du
+  dépôt, récupéré et mis à jour ce jour (incréments jusqu'au 23 octobre 2026), puis
+  `textes.py --inscrire` : aucune rédaction nouvelle. D. 351-1-1 dans ses six rédactions,
+  dont celles du 31 octobre 2003 (LEGIARTI000006736521), du 1er juillet 2011
+  (LEGIARTI000023397567) et du 1er novembre 2012 (LEGIARTI000026139949), lues en entier ;
+  pour les autres régimes auxquels le modèle ouvre la même table, l'article 3 bis du
+  décret n° 73-937 (LEGIARTI000006765840, LEGIARTI000023397572), l'article 28 ter du
+  décret n° 55-753 (LEGIARTI000006763597), D. 732-40 du code rural (LEGIARTI000006597425,
+  LEGIARTI000023397791, LEGIARTI000026139992), L. 25 bis du code des pensions
+  (LEGIARTI000006362733, LEGIARTI000019959540) et D. 16-1 (LEGIARTI000023383582,
+  LEGIARTI000026140012, LEGIARTI000028751947). Dans l'index JORF, récupéré ce jour : le
+  décret n° 2010-1748 (JORFTEXT000023334982), qui insère D. 16-1, et l'article 16 du
+  décret n° 2010-1740. Chez la caisse, par l'API de sa base de législation : les
+  circulaires n° 2003-46, point 111, et n° 2012-60, points 2 et 211.
+trouve: >-
+  Les deux erreurs que la confrontation de Nos Retraites avait montrées, confirmées au
+  texte. Les rédactions de 2010 et de 2012 nomment les générations de chaque bloc de
+  portes — « Pour les assurés nés en 1953 : » —, et le moteur étendait la dernière ligne
+  de chaque porte à toutes les générations suivantes : sous le décret du 2 juillet 2012,
+  le né de 1955 à 1962 entré à seize ans partait à 59 ans et 8 mois par la porte des nés
+  de 1953, quand le texte ne lui ouvre que 60 ans ; la porte de 59 ans et 4 mois des
+  débuts avant seize ans, avec quatre trimestres de plus, réservée aux nés de 1956,
+  s'ouvrait aux suivants, et celle de 59 ans et 8 mois des nés de 1957 de même. Et le
+  chapeau des rédactions de 2003 et de 2010 exige de tous « une durée minimale
+  d'assurance ou de périodes reconnues équivalentes au moins égale à la limite fixée en
+  application du deuxième alinéa de l'article L. 351-1 majorée de huit trimestres », où
+  la Cnav compte « tous les trimestres retenus pour déterminer le taux de la pension »
+  (circulaire n° 2003-46, point 111), et que le décret de 2012 « supprime » (circulaire
+  n° 2012-60, point 2) : le moteur ne la vérifiait pas. Les autres régimes ont les mêmes
+  portes et la même durée majorée, la fonction publique 168 trimestres d'assurance avant
+  le 19 décembre 2008. Corrigé : la table porte la première génération que chaque ligne
+  ne vise plus et la durée d'assurance majorée, certifiées au texte (80 portes
+  identiques) ; les deux moteurs les appliquent. Aucun exemple chiffré publié de l'une ou
+  l'autre règle : les tests posent leurs cas à la main, depuis le texte.
+reste: >-
+  La date des portes par génération de l'État : D. 16-1, inséré par le décret
+  n° 2010-1748 sans date d'application, vaut au 1er janvier 2011 dans la base, quand la
+  table, celle du régime général et de la CNRACL (décret n° 2010-1740, article 16, III),
+  ne l'applique qu'au 1er juillet 2011 ; de janvier à juin 2011, le fonctionnaire de
+  l'État né en 1952 entré avant dix-sept ans part à 59 ans au modèle, à 59 ans et 4 mois
+  au texte. Lire comment le SRE l'appliquait avant de la dater (fiche
+  `duree_requise_carriere_longue_fonction_publique`, à relire).

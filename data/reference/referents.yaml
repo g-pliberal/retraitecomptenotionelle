@@ -10083,12 +10083,18 @@ referents:
           générations 1955 à 2010, à qui son résumé dit 60 ans et le moteur
           59 ans et 8 mois ; né en 1955, 1958, 1960 ou 1962, l'assuré y part
           aussi au droit en vigueur. Pour 1954, les deux ont tort : 59 ans et
-          7 mois chez lui, 60 ans au texte.
-        etat: a_reprendre
+          7 mois chez lui, 60 ans au texte. Repris le même jour (action 138,
+          étape 21) : chaque ligne de `carriere_longue.csv` dit la première
+          génération qu'elle ne vise plus, certifiée au texte, et les deux
+          moteurs n'ouvrent une porte qu'aux générations que sa rédaction
+          nomme ; le né de 1955 entré à seize ans part à 60 ans.
+        etat: repris
         chantier: "138.21"
+        fiche: carriere_longue
     bilan: >-
-      La lecture âge par âge reste son apport, et un point : la carrière
-      longue des débuts à seize ans, à 60 ans dès 1955, où le moteur a tort.
+      La lecture âge par âge reste son apport, et un point, repris le 24
+      octobre 2026 : la carrière longue des débuts à seize ans, à 60 ans dès
+      1955, où le moteur avait tort.
       Rejoué au droit de sa date, son état « now » redonne le dépôt sur
       41 627 des 43 644 départs que les deux ouvrent ; ailleurs, il sert à
       toute la génération 1951 l'âge de son second semestre, 1,25 % de

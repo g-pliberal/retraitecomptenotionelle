@@ -4,7 +4,9 @@ intitule: >-
   Quatre bornes d'entrée (16, 18, 20, 21 ans), cinq trimestres de durée d'assurance —
   cotisés ou assimilés — avant la fin de l'année civile, quatre pour les nés au dernier
   trimestre, dans cette seule année pour les pensions d'avant novembre 2012 ; durée
-  requise cotisée ; la borne des vingt ans par génération ; portes lues à la date d'effet.
+  requise cotisée ; la borne des vingt ans par génération ; portes lues à la date d'effet,
+  chacune aux seules générations que sa rédaction nomme ; jusqu'en octobre 2012, une durée
+  d'assurance tous régimes de huit trimestres au-delà de la durée requise.
 etat: conforme
 etape: ouvrir_le_droit
 effet: >-
@@ -19,9 +21,19 @@ effet: >-
   octobre 2026, le né au dernier trimestre dont la pension prend effet avant novembre
   2012 doit ses quatre trimestres à l'année même de son anniversaire, « au titre de »
   laquelle le texte de l'époque les demandait : répartis sur deux années, ils ne lui
-  ouvrent plus la porte, que le moteur lui ouvrait sous la règle de 2012.
+  ouvrent plus la porte, que le moteur lui ouvrait sous la règle de 2012. Depuis le 24
+  octobre 2026, chaque porte ne vaut que pour les générations que sa rédaction nomme
+  (colonne `generation_fin`, certifiée) : le moteur étendait la dernière ligne d'une porte
+  à toutes les générations suivantes, et le né de 1955 à 1962 entré à seize ans partait
+  à 59 ans et 8 mois par la porte que le décret du 2 juillet 2012 ne donne qu'aux nés de
+  1953 — au droit en vigueur de novembre 2012 à août 2023, au droit du 31 août 2023 à
+  toute date —, quand le texte ne lui ouvre que 60 ans. Et les rédactions de 2003 et de
+  2010 n'ouvrent la carrière longue qu'avec une durée d'assurance tous régimes de huit
+  trimestres au-delà de la durée requise, que le moteur ne vérifiait pas : le né de 1950
+  entré à seize ans, deux ans sans rien valider, partait à 59 ans en 2009 avec 164
+  trimestres quand il lui en fallait 170 (action 138, étape 21 ; tests/test_simulateur.py).
 sources:
-  lu_le: 2026-10-22
+  lu_le: 2026-10-24
   prochaine_relecture: 2026-12-31
   a_relire:
   - >-
@@ -32,6 +44,41 @@ sources:
     trimestres, que le modèle lui laisse comme au régime général. Lire comment le RSI
     l'appliquait avant de l'en priver.
   lectures:
+  - type: legifrance
+    reference: >-
+      D. 351-1-1 CSS, rédactions du 31 octobre 2003 (LEGIARTI000006736521), du 1er
+      juillet 2011 (LEGIARTI000023397567) et du 1er novembre 2012 (LEGIARTI000026139949),
+      relues dans l'index LEGI : chaque bloc de portes « Pour les assurés nés en 1953 : »
+      ne vaut que pour les générations qu'il nomme, « à compter du 1er janvier 1960 »
+      sans fin ; le chapeau de 2003 et de 2010 exige de tous « une durée minimale
+      d'assurance ou de périodes reconnues équivalentes au moins égale à la limite fixée
+      en application du deuxième alinéa de l'article L. 351-1 majorée de huit
+      trimestres », celui de 2012 la seule durée cotisée
+    date: 2026-10-24
+  - type: legifrance
+    reference: >-
+      Les mêmes portes et la même durée majorée aux autres régimes auxquels le modèle
+      ouvre la table : l'article 3 bis du décret n° 73-937 pour les artisans et les
+      commerçants (LEGIARTI000006765840, LEGIARTI000023397572, portes identiques) ;
+      l'article 28 ter du décret n° 55-753 (LEGIARTI000006763597) puis D. 732-40 du code
+      rural pour les non-salariés agricoles (LEGIARTI000006597425 ; LEGIARTI000023397791 et
+      LEGIARTI000026139992, « dans les conditions prévues » à D. 351-1-1) ; L. 25 bis du
+      code des pensions (LEGIARTI000006362733, « au moins égale à 168 trimestres » ;
+      LEGIARTI000019959540) et D. 16-1 (LEGIARTI000023383582, LEGIARTI000026140012,
+      LEGIARTI000028751947), dont les blocs des nés de 1952 à 1960 sont ceux du régime
+      général ; celui de 2012 garde en outre ceux des générations d'avant 1952, sans
+      effet sur une pension prise depuis novembre 2012, après soixante ans
+    date: 2026-10-24
+  - type: circulaire_cnav
+    reference: >-
+      2003-46 du 18 novembre 2003, point 111 : « Les assurés doivent justifier, dans le
+      régime général et dans un ou plusieurs autres régimes de base obligatoires, d'une
+      durée minimale d'assurance et de périodes reconnues équivalentes au moins égale à
+      168 trimestres. Cette durée minimale prend en compte tous les trimestres retenus
+      pour déterminer le taux de la pension » ; relue le 24 octobre 2026 par l'API de la
+      base de législation de la Cnav
+    url: https://legislation.lassuranceretraite.fr/references-reglementaires?file_leaf_ref=CR_CN_2003046_18112003.aspx
+    date: 2003-11-18
   - type: legifrance
     reference: >-
       Le 2° de D. 351-1-3 CSS dans ses rédactions du 31 octobre 2003
@@ -68,7 +115,11 @@ sources:
       trimestres « dans l'année civile » de l'anniversaire à quatre « avant la fin de
       l'année civile » ; point 5 : « applicables aux pensions prenant effet à compter du
       1er novembre 2012 » (article 14 du décret n° 2012-847). Ni elle ni la circulaire
-      n° 2003-46 ne donnent d'exemple chiffré de la règle ancienne
+      n° 2003-46 ne donnent d'exemple chiffré de la règle ancienne. Relue le 24 octobre
+      2026, points 2 et 211 : le décret « supprime par ailleurs la condition de durée
+      d'assurance totale pour tous les âges de départ » ; « L'assuré doit avoir débuté son
+      activité avant 16 ans ou 17 ans selon son année de naissance et l'âge de départ fixé
+      sa génération (annexe 2) », que l'API ne sert pas
     url: https://legislation.lassuranceretraite.fr/references-reglementaires?file_leaf_ref=circulaire_cnav_2012_60_04092012.aspx
     date: 2012-09-04
   - type: circulaire_cnav

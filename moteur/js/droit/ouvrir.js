@@ -208,8 +208,9 @@ export function ouvrir(moteur, releve, regimes = null) {
   // Les trimestres hors de France cotisés, puis validés, que le départ des
   // assurés handicapés compte avec les autres.
   let etrangersDuHandicap = null;
+  let famille = null;
   if (durees.etranger !== null) {
-    const famille = etranger.familleDesRegimes(moteur, codes);
+    famille = etranger.familleDesRegimes(moteur, codes);
     etrangers = durees.etranger.cotises[famille];
     etrangersDuHandicap = [etrangers, durees.etranger.pourLeTaux[famille]];
     trimestresCotises += durees.etranger.trimestresCotises(famille);
@@ -246,6 +247,9 @@ export function ouvrir(moteur, releve, regimes = null) {
       ),
       requisReference, etrangers,
       moteur.carriereLongue.deLaFonctionPublique(opposants),
+      // La durée d'assurance que le taux lit, tous régimes : celle que les
+      // rédactions d'avant novembre 2012 opposent aussi.
+      durees.pourLeTaux(famille),
     );
     // Au mois près : la table écrit soixante ans et huit mois 60,67, que
     // l'âge exact, 60,666…, n'atteindrait jamais.
@@ -1020,7 +1024,21 @@ export function ageCarriereLongue(moteur, carriere, annuites) {
     carriere, anneeLiquidation, cotises, requis, carriere.age_liquidation,
     etrangers.cotises[famille],
     moteur.carriereLongue.deLaFonctionPublique(annuites.map(([code]) => code)),
+    dureeDAssurance(carriere, majoration, etrangers.trimestres(famille)),
   );
+}
+
+/**
+ * La durée d'assurance tous régimes qu'un départ que l'on date lit, sans
+ * relevé : les trimestres de la carrière jusqu'à l'année de la liquidation,
+ * ceux des enfants et les `etrangers` que la famille retient. La carrière
+ * longue l'oppose jusqu'en octobre 2012. Voir `duree_d_assurance` du Python.
+ */
+export function dureeDAssurance(carriere, majoration, etrangers) {
+  const anneeLiquidation = carriere.anneeLiquidation;
+  return carriere.trimestresCumules(carriere.lignes.filter(
+    (ligne) => ligne.annee <= anneeLiquidation))
+    + (majoration !== null ? majoration.trimestres : 0) + etrangers;
 }
 
 /**

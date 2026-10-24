@@ -2156,7 +2156,8 @@ class CarriereLongue:
     def __init__(self, racine: Path) -> None:
         fiche = racine / "reference" / "regles" / f"{self.FICHE_DES_REPUTES}.yaml"
         self._reputes = versions.preparer(charger_yaml(fiche)) if fiche.exists() else None
-        self._table: dict[float, list[tuple[float, int, int, float, int, Fiabilite]]] = {}
+        self._table: dict[float, list[tuple[float, float, int, int, float, int, int | None,
+                                            Fiabilite]]] = {}
         chemin = racine / "reference" / "legislation" / "carriere_longue.csv"
         if not chemin.exists():
             self._dates: list[float] = []
@@ -2164,12 +2165,15 @@ class CarriereLongue:
         with chemin.open(encoding="utf-8") as flux:
             lignes = (l for l in flux if not l.lstrip().startswith("#"))
             for ligne in csv.DictReader(lignes):
+                assurance = ligne["trimestres_assurance_supplementaires"].strip()
                 self._table.setdefault(float(ligne["date_effet"]), []).append((
                     float(ligne["generation"]),
+                    float(ligne["generation_fin"]),
                     int(ligne["age_debut_maximum"]),
                     int(ligne["trimestres_debut"]),
                     float(ligne["age_depart"]),
                     int(ligne["trimestres_supplementaires"]),
+                    int(assurance) if assurance else None,
                     Fiabilite.depuis_texte(ligne["fiabilite"]),
                 ))
         self._dates = sorted(self._table)
@@ -2206,11 +2210,21 @@ class CarriereLongue:
         return round(date.annee + (date.mois - 1) / 12.0, 3)
 
     def _portes(self, carriere: Carriere, fonction_publique: bool = False
-                ) -> list[tuple[int, int, float, int, Fiabilite]] | None:
+                ) -> list[tuple[int, int, float, int, Fiabilite, int | None]] | None:
         """Les portes opposables à cette carrière : celles du texte en vigueur
         à sa date d'effet, et pour chaque porte — borne d'entrée ET supplément
-        de trimestres — la ligne de la plus haute génération qui ne dépasse
-        pas la sienne.
+        de trimestres —, parmi les lignes qui couvrent sa génération, celle de
+        la plus haute génération : l'adaptation du II l'emporte sur la règle
+        générale du I.
+
+        Une ligne ne couvre que les générations que le texte lui nomme, de
+        ``generation`` à ``generation_fin`` exclue. Le moteur retenait la
+        ligne de la plus haute génération qui ne dépassait pas celle de
+        l'assuré, et l'étendait ainsi à toutes les suivantes : sous le décret
+        du 2 juillet 2012, la porte des débuts avant dix-sept ans, à
+        cinquante-neuf ans et huit mois, que le texte ne donne qu'aux nés de
+        1953, s'ouvrait aux nés de 1955, de 1960 ou de 1962, qui n'avaient
+        que soixante ans (action 138, étape 21).
 
         Une borne d'entrée peut ouvrir DEUX portes : avant 2023, qui avait
         débuté avant seize ans partait à cinquante-six ans avec huit
@@ -2231,15 +2245,16 @@ class CarriereLongue:
             applicable = candidate
         generation = carriere.generation
         retenues: dict[tuple[int, int],
-                       tuple[float, tuple[int, int, float, int, Fiabilite]]] = {}
-        for gen, age_max, trimestres_debut, age_depart, supplement, fiabilite in \
-                self._table[applicable]:
-            if gen > generation + 1e-9:
+                       tuple[float, tuple[int, int, float, int, Fiabilite, int | None]]] = {}
+        for (gen, fin, age_max, trimestres_debut, age_depart, supplement, assurance,
+             fiabilite) in self._table[applicable]:
+            if gen > generation + 1e-9 or generation > fin - 1e-9:
                 continue
             actuelle = retenues.get((age_max, supplement))
             if actuelle is None or gen > actuelle[0]:
                 retenues[(age_max, supplement)] = (
-                    gen, (age_max, trimestres_debut, age_depart, supplement, fiabilite)
+                    gen, (age_max, trimestres_debut, age_depart, supplement, fiabilite,
+                          assurance)
                 )
         portes = [porte for _, porte in sorted(retenues.values())]
         if fonction_publique:
@@ -2399,7 +2414,8 @@ class CarriereLongue:
     def age_de_depart(self, carriere: Carriere, annee_liquidation: int,
                       trimestres_cotises: int, requis: int,
                       etrangers: dict[int, int] | None = None,
-                      fonction_publique: bool = False
+                      fonction_publique: bool = False,
+                      trimestres_assurance: int | None = None
                       ) -> tuple[float, Fiabilite] | None:
         """Âge le plus précoce ouvert par le dispositif, ou ``None``.
 
@@ -2411,17 +2427,36 @@ class CarriereLongue:
         d'assurance qui commande la décote. ``trimestres_cotises`` est la durée que
         :meth:`cotises_reputes` a déjà complétée, ``etrangers`` les trimestres
         cotisés hors de France, année par année (:meth:`_entree_precoce`).
+
+        **Et jusqu'en octobre 2012, la durée d'assurance aussi** : les
+        rédactions de 2003 et de 2010 n'ouvrent le dispositif qu'aux assurés
+        « qui justifient, dans le régime général et, le cas échéant, dans un
+        ou plusieurs autres régimes obligatoires, d'une durée minimale
+        d'assurance ou de périodes reconnues équivalentes au moins égale à la
+        limite [...] majorée de huit trimestres » (LEGIARTI000006736521,
+        LEGIARTI000023397567 ; L. 25 bis du code des pensions et D. 16-1 de
+        même) ; la Cnav y compte « tous les trimestres retenus pour déterminer
+        le taux de la pension » (circulaire n° 2003-46, point 111). Chaque
+        ligne de la table en dit les huit trimestres. ``trimestres_assurance``
+        est cette durée, tous régimes, enfants et périodes étrangères
+        comprises ; sans elle, la condition n'est pas lue. Le moteur ne lisait
+        que la durée cotisée, et ouvrait à cinquante-neuf ans, en 2009, la
+        porte du né en 1950 qui n'avait pas ses 170 trimestres d'assurance
+        (action 138, étape 21).
         """
         portes = self._portes(carriere, fonction_publique)
         if portes is None:
             return None
         requis = self._requis(carriere, requis, fonction_publique)
         ouvertures = []
-        for age_max, trimestres_debut, age_depart, supplement, fiabilite in portes:
+        for age_max, trimestres_debut, age_depart, supplement, fiabilite, assurance in portes:
             if not self._entree_precoce(
                     carriere, annee_liquidation, age_max, trimestres_debut, etrangers):
                 continue
             if trimestres_cotises < requis + supplement:
+                continue
+            if (assurance is not None and trimestres_assurance is not None
+                    and trimestres_assurance < requis + assurance):
                 continue
             ouvertures.append((age_depart, fiabilite))
         return min(ouvertures) if ouvertures else None
@@ -2430,7 +2465,8 @@ class CarriereLongue:
                     trimestres_cotises: int, requis: int,
                     age_liquidation: float,
                     etrangers: dict[int, int] | None = None,
-                    fonction_publique: bool = False) -> float | None:
+                    fonction_publique: bool = False,
+                    trimestres_assurance: int | None = None) -> float | None:
         """Âge le plus précoce que le dispositif ouvrirait à qui continue de
         cotiser jusqu'à son départ, ou ``None``.
 
@@ -2441,19 +2477,24 @@ class CarriereLongue:
         ne dépend que du début de la carrière. La condition de durée, elle, se
         projette : il manque ``requis + supplément − cotisés`` trimestres, et
         une année de cotisation en rend quatre, la soustraction étant signée.
-        Chaque porte ouvre donc au plus tardif de son âge et de l'âge où la
-        durée cotisée est réunie, et la plus précoce l'emporte.
+        La durée d'assurance que les rédactions d'avant novembre 2012 exigent
+        aussi se projette de même (:meth:`age_de_depart`). Chaque porte ouvre
+        donc au plus tardif de son âge et des âges où ses durées sont réunies,
+        et la plus précoce l'emporte.
         """
         portes = self._portes(carriere, fonction_publique)
         if portes is None:
             return None
         requis = self._requis(carriere, requis, fonction_publique)
         candidats = []
-        for age_max, trimestres_debut, age_depart, supplement, _ in portes:
+        for age_max, trimestres_debut, age_depart, supplement, _, assurance in portes:
             if not self._entree_precoce(
                     carriere, annee_liquidation, age_max, trimestres_debut, etrangers):
                 continue
             atteint = age_liquidation + (requis + supplement - trimestres_cotises) / 4.0
+            if assurance is not None and trimestres_assurance is not None:
+                atteint = max(atteint, age_liquidation
+                              + (requis + assurance - trimestres_assurance) / 4.0)
             candidats.append(max(age_depart, atteint))
         return min(candidats) if candidats else None
 

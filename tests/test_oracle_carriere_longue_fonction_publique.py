@@ -85,11 +85,17 @@ def simulateur() -> Simulateur:
     return Simulateur(Parametres())
 
 
-def _carriere(profil: dict, absentes: tuple[int, ...] = ()) -> Carriere:
-    """La carrière que le profil décrit, sans les années ``absentes``."""
+def _carriere(profil: dict, absentes: tuple[int, ...] = (),
+              sans_cotisation: tuple[int, ...] = ()) -> Carriere:
+    """La carrière que le profil décrit, sans les années ``absentes`` ; les
+    années ``sans_cotisation`` validées pour l'éducation d'un enfant, sans
+    traitement ni cotisation."""
     lignes = [AnneeCarriere(annee=annee, revenu=profil["traitement"],
                             affiliation=AFFILIATIONS[profil["regime"]],
                             trimestres_valides=4)
+              if annee not in sans_cotisation else
+              AnneeCarriere(annee=annee, revenu=0.0, affiliation=AFFILIATIONS[profil["regime"]],
+                            trimestres_valides=4, type_periode="education_enfant")
               for annee in range(profil["debut"], profil["liquidation"])
               if annee not in absentes]
     return Carriere(annee_naissance=profil["naissance"], sexe="H", lignes=lignes,
@@ -98,11 +104,11 @@ def _carriere(profil: dict, absentes: tuple[int, ...] = ()) -> Carriere:
 
 
 def _le_droit(simulateur: Simulateur, profil: dict,
-              absentes: tuple[int, ...] = ()) -> dict:
+              absentes: tuple[int, ...] = (), sans_cotisation: tuple[int, ...] = ()) -> dict:
     """Ce que le scénario 1 rend : l'ouverture, son motif, l'âge où la
     carrière longue s'ouvre, la pension."""
     scenario = simulateur.scenario_actuel
-    carriere = _carriere(profil, absentes)
+    carriere = _carriere(profil, absentes, sans_cotisation)
     resultat = scenario.calculer(carriere)
     periode = simulateur.catalogue[profil["regime"]].periode(profil["liquidation"])
     pension = next(p for p in resultat.pensions_par_regime if p.regime == profil["regime"])
@@ -211,23 +217,35 @@ def test_les_portes_de_la_fonction_publique_s_ouvrent_chacune_a_sa_date(
 def test_la_duree_est_fixe_avant_2009(simulateur):
     """« au moins égale à 160 trimestres » à cinquante-neuf ans, en 2005 : le
     dépôt opposait la durée de l'année d'ouverture des fonctionnaires, 154
-    trimestres en 2005, et ouvrait la porte à 156 trimestres cotisés.
-    Quatre années manquent ici à une carrière entrée à seize ans ; trois,
-    et la porte s'ouvre."""
+    trimestres en 2005, et ouvrait la porte à 156 trimestres cotisés. Le
+    même article exige de tous, au premier alinéa de son I, « une durée
+    d'assurance, ou de périodes reconnues équivalentes, au moins égale à 168
+    trimestres », dont « les périodes d'interruption ou de réduction
+    d'activité mentionnées au 1 de l'article L. 9 » : le dépôt ne la lisait
+    pas (action 138, étape 21). Trois années validées pour l'éducation d'un
+    enfant, sans cotisation, dans une carrière entrée à seize ans : 160
+    trimestres cotisés et 172 d'assurance, la porte s'ouvre ; une année de
+    plus absente, 156 cotisés et 168 d'assurance, elle reste fermée. Trois
+    années absentes, 160 cotisés mais 160 d'assurance seulement : fermée."""
     profil = {"code": "etat_1946_lacunes_en_2005", "regime": "fonction_publique_etat",
               "naissance": 1946, "debut": 1962, "liquidation": 2005,
               "traitement": 30000.0}
     carriere_longue = simulateur.scenario_actuel.carriere_longue
     assert carriere_longue.DUREE_FIXE_FONCTION_PUBLIQUE == DUREE_FIXE
-    trois, quatre = (1980, 1981, 1982), (1980, 1981, 1982, 1983)
-    ouverte = _le_droit(simulateur, profil, trois)
-    refusee = _le_droit(simulateur, profil, quatre)
+    trois, une = (1980, 1981, 1982), (1983,)
+    ouverte = _le_droit(simulateur, profil, sans_cotisation=trois)
+    refusee = _le_droit(simulateur, profil, une, trois)
+    sans_assurance = _le_droit(simulateur, profil, trois)
     assert ouverte["ouverte"] and ouverte["motif"] == "carriere_longue"
     assert not refusee["ouverte"] and refusee["motif"] == "non_ouverte"
+    assert not sans_assurance["ouverte"] and sans_assurance["motif"] == "non_ouverte"
     periode = simulateur.catalogue[profil["regime"]].periode(profil["liquidation"])
     requis, _ = ouvrir.duree_requise(simulateur.scenario_actuel, periode,
-                                     _carriere(profil, quatre))
-    assert requis < 4 * (profil["liquidation"] - profil["debut"] - len(quatre)) < DUREE_FIXE
+                                     _carriere(profil, une, trois))
+    cotises = 4 * (profil["liquidation"] - profil["debut"] - len(une) - len(trois))
+    assert requis < cotises < DUREE_FIXE
+    assert simulateur.scenario_actuel.calculer(
+        _carriere(profil, une, trois)).trimestres_valides == DUREE_FIXE + 8
 
 
 # -- l'entrée avant vingt ans ----------------------------------------------------

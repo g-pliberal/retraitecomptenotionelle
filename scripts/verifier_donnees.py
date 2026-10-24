@@ -3915,13 +3915,18 @@ def source_carriere_longue() -> dict[tuple, float]:
 
     Clé : date d'effet de la version en année décimale (`2023.667` pour le
     1er septembre 2023), génération (`1900` pour la règle générale du I,
-    `1963.667` pour une adaptation du II ouverte au 1er septembre 1963), âge de
-    début d'activité. Le récupérateur lit les versions depuis celle du
-    1er septembre 2023 — le I et le II, celui-ci résolu contre la table d'âge
-    en vigueur à la date d'effet — et n'ouvre pas de date d'effet à une
-    version qui ne change aucune porte. Depuis l'action 27 bis, il lit aussi
-    les rédactions de 2003, de 2011 et de 2012, dont les portes sont groupées
-    par génération sous des en-têtes « Pour les assurés nés en 1953 : ».
+    `1963.667` pour une adaptation du II ouverte au 1er septembre 1963), la
+    première génération que la porte ne vise plus (`1954` pour « nés en
+    1953 », `2100` sans fin), âge de début d'activité, trimestres cotisés
+    au-delà de la durée requise, et trimestres d'assurance au-delà d'elle
+    (`8` sous les rédactions de 2003 et de 2010, rien depuis). Le récupérateur
+    lit les versions depuis celle du 1er septembre 2023 — le I et le II,
+    celui-ci résolu contre la table d'âge en vigueur à la date d'effet — et
+    n'ouvre pas de date d'effet à une version qui ne change aucune porte.
+    Depuis l'action 27 bis, il lit aussi les rédactions de 2003, de 2011 et de
+    2012, dont les portes sont groupées par génération sous des en-têtes
+    « Pour les assurés nés en 1953 : » ; depuis l'action 138, étape 21, la fin
+    de chaque bloc et la durée d'assurance de leur chapeau.
     """
     brut = _lire_json("dila_legi_parametres_retraite.json",
                       "scripts/fetch/dila_legi_parametres_retraite.py")
@@ -3929,16 +3934,19 @@ def source_carriere_longue() -> dict[tuple, float]:
     def decimale(annee: int, mois: int) -> str:
         return f"{annee + (mois - 1) / 12.0:.3f}".rstrip("0").rstrip(".")
 
+    def cle_generation(generation: float) -> str:
+        return decimale(int(generation), int(round((generation - int(generation)) * 12)) + 1)
+
     portes = {}
     for porte in brut.get("carriere_longue", []):
         texte = str(porte["entree_en_vigueur"])
         annee, mois = int(texte[:4]), int(texte[5:7]) if len(texte) >= 7 else 1
-        generation = float(porte.get("generation", 1900))
-        cle_generation = decimale(int(generation),
-                                  int(round((generation - int(generation)) * 12)) + 1)
-        portes[(decimale(annee, mois), cle_generation,
+        assurance = porte["trimestres_assurance_supplementaires"]
+        portes[(decimale(annee, mois), cle_generation(float(porte["generation"])),
+                cle_generation(float(porte["generation_fin"])),
                 str(int(porte["age_debut_maximum"])),
-                str(int(porte["trimestres_supplementaires"])))] = float(porte["age_depart"])
+                str(int(porte["trimestres_supplementaires"])),
+                "" if assurance is None else str(int(assurance)))] = float(porte["age_depart"])
     return portes
 
 
@@ -8850,9 +8858,11 @@ CERTIFICATIONS = (
         chemin=REFERENCE / "legislation" / "carriere_longue.csv",
         # Deux portes de 2004 partagent date, génération et âge de début —
         # 56 ans avec huit trimestres de plus, 58 ans avec quatre : le
-        # supplément fait partie de la clé.
-        cles=("date_effet", "generation", "age_debut_maximum",
-              "trimestres_supplementaires"),
+        # supplément fait partie de la clé. La fin de la porte et la durée
+        # d'assurance qu'elle exige en sont aussi : une porte étendue au-delà
+        # des générations que le texte nomme n'est plus la sienne.
+        cles=("date_effet", "generation", "generation_fin", "age_debut_maximum",
+              "trimestres_supplementaires", "trimestres_assurance_supplementaires"),
         colonne="age_depart",
         source=source_carriere_longue,
         origine="DILA, base LEGI, code de la sécurité sociale L. 351-1-1 "

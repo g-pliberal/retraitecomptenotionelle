@@ -8150,6 +8150,97 @@ def test_avant_novembre_2012_le_ne_au_dernier_trimestre_reunit_ses_quatre_trimes
         "non_ouverte", "carriere_longue"]
 
 
+def _entre_tot(annee_naissance: int, mois_naissance: int, age_debut: float, age: float,
+               inactif: tuple[int, ...] = (), motif: str = "inactivite") -> dict:
+    """Un ouvrier entré tôt, au salaire moyen, qui part à ``age`` : la
+    chronologie complétée, les années ``inactif`` sous ``motif``."""
+    from retraite_notionnelle import chronologie
+
+    return chronologie.completer(chronologie.du_parcours(
+        annee_naissance=annee_naissance, sexe="H", mois_naissance=mois_naissance,
+        age_liquidation=age, metiers=[Metier("salarie_prive_non_cadre", age_debut, 1.0)],
+        interruptions={annee: motif for annee in inactif}))
+
+
+def test_les_portes_de_2012_ne_valent_que_pour_les_generations_que_le_texte_nomme(simulateur):
+    """Le décret du 2 juillet 2012 (D. 351-1-1, LEGIARTI000026139949, pensions
+    prenant effet du 1er novembre 2012 au 31 août 2023) ouvre la carrière
+    longue à soixante ans à qui a débuté avant vingt ans (I), et ne donne ses
+    portes plus précoces qu'aux générations qu'il nomme (II) : celle des
+    débuts avant dix-sept ans, à cinquante-neuf ans et huit mois, aux nés de
+    1953 (B, 3°) ; celle des débuts avant seize ans à cinquante-neuf ans et
+    quatre mois, quatre trimestres au-delà de la durée requise, aux nés de
+    1956 (E, 2°) ; à cinquante-neuf ans et huit mois, sans trimestre de plus,
+    aux nés de 1957 (F, 2°) ; ensuite, la seule porte des huit trimestres de
+    plus, à cinquante-sept ans et quatre mois pour les nés de 1958 (G). Le
+    moteur retenait pour chaque porte la ligne de la plus haute génération
+    qui ne dépassait pas celle de l'assuré, et l'étendait ainsi à toutes les
+    suivantes. Le né en janvier 1955 entré à seize ans, en janvier 1971, n'a
+    que quatre trimestres à la fin de l'année de ses seize ans : il part à
+    soixante ans, et non à cinquante-neuf ans et huit mois ; le né en juin
+    1953 entré au même âge, à cinquante-neuf ans et huit mois. Le né de 1957
+    entré avant seize ans, sept trimestres au-delà de ses 166 requis à
+    cinquante-neuf ans et quatre mois, n'y part pas ; à cinquante-neuf ans et
+    huit mois, cinq trimestres au-delà, si. Celui de 1958, à 167 trimestres
+    cotisés pour 167 requis, attend soixante ans. Dans les deux moteurs."""
+    cas = [
+        (_entre_tot(1955, 1, 16.0, 59 + 8 / 12), "non_ouverte"),
+        (_entre_tot(1955, 1, 16.0, 60.0), "carriere_longue"),
+        (_entre_tot(1953, 6, 16.0, 59 + 8 / 12), "carriere_longue"),
+        (_entre_tot(1957, 1, 15.0, 59 + 4 / 12, (1990,)), "non_ouverte"),
+        (_entre_tot(1957, 1, 15.0, 59 + 8 / 12, (1990, 1991)), "carriere_longue"),
+        (_entre_tot(1958, 1, 15.0, 59 + 8 / 12, (1990, 1991, 1992)), "non_ouverte"),
+    ]
+    actuel = simulateur.scenario_actuel
+    cotises = []
+    for construite, _ in cas:
+        carriere = Carriere.depuis_chronologie(construite, simulateur.macro)
+        cotises.append((sum(carriere.trimestres_retenus(l) for l in carriere.lignes if l.cotise),
+                        actuel.calculer(carriere).trimestres_requis))
+    assert cotises == [(175, 166), (176, 166), (174, 165), (173, 166), (171, 166), (167, 167)]
+    assert _motifs_d_ouverture_en_deux_moteurs(simulateur, [c for c, _ in cas]) == [
+        motif for _, motif in cas]
+    # L'âge que le droit propose : soixante ans, l'âge de la porte du I.
+    for rang in (0, 5):
+        carriere = Carriere.depuis_chronologie(cas[rang][0], simulateur.macro)
+        assert ouvrir.age_ouverture_droit(actuel, carriere) == pytest.approx(60.0)
+
+
+def test_avant_novembre_2012_la_duree_d_assurance_passait_de_huit_trimestres_la_duree_requise(
+        simulateur):
+    """Les rédactions de 2003 et de 2010 de D. 351-1-1 (LEGIARTI000006736521,
+    LEGIARTI000023397567) n'ouvrent la carrière longue qu'aux assurés « qui
+    justifient, dans le régime général et, le cas échéant, dans un ou
+    plusieurs autres régimes obligatoires, d'une durée minimale d'assurance ou
+    de périodes reconnues équivalentes au moins égale à la limite fixée en
+    application du deuxième alinéa de l'article L. 351-1 majorée de huit
+    trimestres », avant la durée cotisée que chaque porte demande ; la Cnav y
+    compte « tous les trimestres retenus pour déterminer le taux de la
+    pension » (circulaire n° 2003-46, point 111). Le moteur ne lisait que la
+    durée cotisée. Le né en mars 1950 entré à seize ans, deux années sans
+    rien valider, a 164 trimestres cotisés à cinquante-neuf ans, en avril
+    2009 : assez pour la porte des débuts avant dix-sept ans, qui ne demande
+    que les 162 requis ; mais il n'a que 164 trimestres d'assurance quand il
+    lui en faut 170, et il attend soixante ans. Les deux années au chômage
+    indemnisé, que la rédaction de 2003 ne répute pas cotisées, lui donnent
+    172 trimestres d'assurance : la porte s'ouvre. Dans les deux moteurs."""
+    sans_rien = _entre_tot(1950, 3, 16.0, 59.0, (1980, 1981))
+    au_chomage = _entre_tot(1950, 3, 16.0, 59.0, (1980, 1981), "chomage_indemnise")
+    actuel = simulateur.scenario_actuel
+    durees = []
+    for construite in (sans_rien, au_chomage):
+        carriere = Carriere.depuis_chronologie(construite, simulateur.macro)
+        assert str(carriere.date_liquidation) == "avril 2009"
+        durees.append((sum(carriere.trimestres_retenus(l) for l in carriere.lignes if l.cotise),
+                       actuel.calculer(carriere).trimestres_requis,
+                       actuel.calculer(carriere).trimestres_valides))
+    assert durees == [(164, 162, 164), (164, 162, 172)]
+    assert _motifs_d_ouverture_en_deux_moteurs(simulateur, [sans_rien, au_chomage]) == [
+        "non_ouverte", "carriere_longue"]
+    carriere = Carriere.depuis_chronologie(sans_rien, simulateur.macro)
+    assert ouvrir.age_ouverture_droit(actuel, carriere) == pytest.approx(60.0)
+
+
 # --- Les périodes que le droit RÉPUTE cotisées (D. 351-1-2) ----------------
 
 def _carriere_hachee(simulateur, interruptions: dict[int, str],

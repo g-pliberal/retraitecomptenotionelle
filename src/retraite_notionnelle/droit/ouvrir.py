@@ -292,6 +292,7 @@ def ouvrir(moteur: ScenarioActuel, releve: Releve,
     #: Les trimestres hors de France cotisés, puis validés, que le départ des
     #: assurés handicapés compte avec les autres.
     etrangers_du_handicap = None
+    famille = None
     if durees.etranger is not None:
         famille = etranger.famille_des_regimes(moteur, codes)
         etrangers = durees.etranger.cotises[famille]
@@ -337,6 +338,9 @@ def ouvrir(moteur: ScenarioActuel, releve: Releve,
             ),
             requis_reference, etrangers,
             moteur.carriere_longue.de_la_fonction_publique(opposants),
+            # La durée d'assurance que le taux lit, tous régimes : celle que
+            # les rédactions d'avant novembre 2012 opposent aussi.
+            durees.pour_le_taux(famille),
         )
         # Au mois près : la table écrit soixante ans et huit mois 60,67, que
         # l'âge exact, 60,666…, n'atteindrait jamais.
@@ -1195,7 +1199,22 @@ def age_carriere_longue(moteur, carriere: Carriere,
         carriere, annee_liquidation, cotises, requis, carriere.age_liquidation,
         etrangers.cotises[famille],
         moteur.carriere_longue.de_la_fonction_publique(code for code, _ in periodes),
+        duree_d_assurance(carriere, majoration, etrangers.trimestres(famille)),
     )
+
+
+def duree_d_assurance(carriere: Carriere, majoration, etrangers: int) -> int:
+    """La durée d'assurance tous régimes qu'un départ que l'on date lit, sans
+    relevé : les trimestres de la carrière jusqu'à l'année de la
+    liquidation, ceux des enfants (``majoration``, celle de
+    :func:`compter.majoration_pour_enfants`) et les ``etrangers`` que la
+    famille retient — la lecture de :func:`age_taux_plein_droit`. La
+    carrière longue l'oppose jusqu'en octobre 2012
+    (:meth:`~retraite_notionnelle.scenarios.actuel.CarriereLongue.age_de_depart`)."""
+    annee_liquidation = carriere.annee_liquidation
+    return (carriere.trimestres_cumules(
+        ligne for ligne in carriere.lignes if ligne.annee <= annee_liquidation)
+        + (majoration.trimestres if majoration is not None else 0) + etrangers)
 
 
 def age_handicap_propose(moteur, carriere: Carriere,

@@ -14,14 +14,25 @@
 # seule qui se déduise de la carrière elle-même — la pénibilité, l'invalidité
 # et l'inaptitude demandent des informations que le modèle n'a pas.
 #
-# DEUX CONDITIONS, ET ELLES SE LISENT À LA DATE D'EFFET DE LA PENSION —
-# `date_effet` est l'année décimale du premier mois d'application, `2012.833`
-# pour le 1er novembre 2012, `2023.667` pour le 1er septembre 2023 :
+# DEUX CONDITIONS, TROIS AVANT NOVEMBRE 2012, ET ELLES SE LISENT À LA DATE
+# D'EFFET DE LA PENSION — `date_effet` est l'année décimale du premier mois
+# d'application, `2012.833` pour le 1er novembre 2012, `2023.667` pour le
+# 1er septembre 2023 :
 #
 #   * avoir validé `trimestres_debut` trimestres avant la fin de l'année civile
 #     des `age_debut_maximum` ans ;
 #   * justifier d'une durée d'assurance COTISÉE au moins égale à la durée
-#     requise de sa génération, augmentée de `trimestres_supplementaires`.
+#     requise de sa génération, augmentée de `trimestres_supplementaires` ;
+#   * sous les rédactions de 2003 et de 2010 seulement, justifier, tous
+#     régimes, d'une durée d'ASSURANCE au moins égale à cette durée requise
+#     augmentée de `trimestres_assurance_supplementaires` : « une durée
+#     minimale d'assurance ou de périodes reconnues équivalentes au moins égale
+#     à la limite fixée en application du deuxième alinéa de l'article
+#     L. 351-1 majorée de huit trimestres » (chapeau de D. 351-1-1,
+#     LEGIARTI000006736521 et LEGIARTI000023397567), où la Cnav compte « tous
+#     les trimestres retenus pour déterminer le taux de la pension »
+#     (circulaire n° 2003-46, point 111). Vide depuis 2012 : la rédaction du
+#     2 juillet 2012 n'exige plus que la durée cotisée.
 #
 # Le texte demande cinq trimestres avant la fin de l'année civile, ou quatre
 # pour les personnes nées entre le 1er octobre et le 31 décembre. La table
@@ -51,9 +62,18 @@
 #         Circulaire Cnav 2026-17 du 12 juin 2026, point 1.1 et annexe 3.
 #
 # LA COLONNE `generation` porte la première génération (année décimale, mois
-# compris) à laquelle la ligne s'applique ; `1900` est la règle générale. Pour
-# une porte donnée, la ligne retenue est celle de la plus haute génération qui
-# ne dépasse pas celle de l'assuré.
+# compris) à laquelle la ligne s'applique ; `1900` est la règle générale. LA
+# COLONNE `generation_fin`, la première à laquelle elle ne s'applique plus :
+# `1954` pour « nés en 1953 », `1951.5` pour « nés avant le 1er juillet
+# 1951 », `2100` quand le texte ne la borne pas — la règle générale, « nés à
+# compter du 1er janvier 1960 ». Pour une porte donnée, la ligne retenue est,
+# parmi celles qui couvrent la génération de l'assuré, celle de la plus haute
+# génération : une adaptation du II l'emporte sur la règle générale du I. La
+# table ne disait que la première génération de chaque ligne, et le moteur
+# étendait la dernière ligne d'une porte à toutes les générations suivantes :
+# la porte des débuts avant dix-sept ans du décret du 2 juillet 2012, à 59 ans
+# et 8 mois, que le texte ne donne qu'aux nés de 1953, s'ouvrait aux nés de
+# 1955, de 1960 ou de 1962 (action 138, étape 21).
 #
 # D'OÙ VIENNENT CES VALEURS. Les quatre bornes de 2023 (règle générale) sont
 # LUES dans les articles L. 351-1-1 et D. 351-1-1 du code de la sécurité
@@ -92,90 +112,87 @@
 # par borne d'entrée et en perdait une ; il retient une ligne par couple
 # (borne, supplément).
 #
-# Ce qui n'est PAS modélisé : la distinction entre trimestres cotisés et
-# trimestres « réputés cotisés » que la loi du 20 janvier 2014 a élargie
-# (chômage, maladie, maternité, dans des limites propres à chacun). Le modèle
-# ne retient ici que les trimestres réellement cotisés, ce qui rend la condition
-# plus dure qu'elle ne l'est : quelques carrières hachées sont donc déclarées
-# non ouvertes alors que le droit les ouvrirait.
-date_effet,generation,age_debut_maximum,trimestres_debut,age_depart,trimestres_supplementaires,fiabilite
-2004,1900,16,5,58.00,4,certifiee
-2004,1900,16,5,56.00,8,certifiee
-2004,1900,17,5,59.00,0,certifiee
-2011.5,1900,16,5,58.00,4,certifiee
-2011.5,1900,16,5,56.00,8,certifiee
-2011.5,1900,17,5,59.00,0,certifiee
-2011.5,1951.5,16,5,58.00,4,certifiee
-2011.5,1951.5,16,5,56.00,8,certifiee
-2011.5,1951.5,17,5,59.00,0,certifiee
-2011.5,1951.5,18,5,60.00,0,certifiee
-2011.5,1952,16,5,58.00,4,certifiee
-2011.5,1952,16,5,56.00,8,certifiee
-2011.5,1952,17,5,59.33,0,certifiee
-2011.5,1952,18,5,60.00,0,certifiee
-2011.5,1953,16,5,58.33,4,certifiee
-2011.5,1953,16,5,56.00,8,certifiee
-2011.5,1953,17,5,59.67,0,certifiee
-2011.5,1953,18,5,60.00,0,certifiee
-2011.5,1954,16,5,58.67,4,certifiee
-2011.5,1954,16,5,56.00,8,certifiee
-2011.5,1954,18,5,60.00,0,certifiee
-2011.5,1955,16,5,59.00,4,certifiee
-2011.5,1955,16,5,56.33,8,certifiee
-2011.5,1955,18,5,60.00,0,certifiee
-2011.5,1956,16,5,59.33,4,certifiee
-2011.5,1956,16,5,56.67,8,certifiee
-2011.5,1956,18,5,60.00,0,certifiee
-2011.5,1957,16,5,59.67,4,certifiee
-2011.5,1957,16,5,57.00,8,certifiee
-2011.5,1957,18,5,60.00,0,certifiee
-2011.5,1958,16,5,57.33,8,certifiee
-2011.5,1958,18,5,60.00,0,certifiee
-2011.5,1959,16,5,57.67,8,certifiee
-2011.5,1959,18,5,60.00,0,certifiee
-2011.5,1960,16,5,58.00,8,certifiee
-2011.5,1960,18,5,60.00,0,certifiee
-2012.833,1900,20,5,60.00,0,certifiee
-2012.833,1952,17,5,59.33,0,certifiee
-2012.833,1953,16,5,58.33,4,certifiee
-2012.833,1953,16,5,56.00,8,certifiee
-2012.833,1953,17,5,59.67,0,certifiee
-2012.833,1954,16,5,58.67,4,certifiee
-2012.833,1954,16,5,56.00,8,certifiee
-2012.833,1955,16,5,59.00,4,certifiee
-2012.833,1955,16,5,56.33,8,certifiee
-2012.833,1956,16,5,59.33,4,certifiee
-2012.833,1956,16,5,56.67,8,certifiee
-2012.833,1957,16,5,59.67,0,certifiee
-2012.833,1957,16,5,57.00,8,certifiee
-2012.833,1958,16,5,57.33,8,certifiee
-2012.833,1959,16,5,57.67,8,certifiee
-2012.833,1960,16,5,58.00,8,certifiee
-2023.667,1900,16,5,58.00,0,certifiee
-2023.667,1900,18,5,60.00,0,certifiee
-2023.667,1900,20,5,62.00,0,certifiee
-2023.667,1900,21,5,63.00,0,certifiee
-2023.667,1961.667,20,5,60.00,0,certifiee
-2023.667,1963.667,20,5,60.25,0,certifiee
-2023.667,1964,20,5,60.50,0,certifiee
-2023.667,1965,20,5,60.75,0,certifiee
-2023.667,1966,20,5,61.00,0,certifiee
-2023.667,1967,20,5,61.25,0,certifiee
-2023.667,1968,20,5,61.50,0,certifiee
-2023.667,1969,20,5,61.75,0,certifiee
-2023.667,1970,20,5,62.00,0,certifiee
-2026.667,1900,16,5,58.00,0,certifiee
-2026.667,1900,18,5,60.00,0,certifiee
-2026.667,1900,20,5,62.00,0,certifiee
-2026.667,1900,21,5,63.00,0,certifiee
-2026.667,1961.667,20,5,60.00,0,certifiee
-2026.667,1963.667,20,5,60.25,0,certifiee
-2026.667,1964,20,5,60.50,0,certifiee
-2026.667,1965,20,5,60.75,0,certifiee
-2026.667,1965.917,20,5,60.67,0,certifiee
-2026.667,1966,20,5,60.75,0,certifiee
-2026.667,1967,20,5,61.00,0,certifiee
-2026.667,1968,20,5,61.25,0,certifiee
-2026.667,1969,20,5,61.50,0,certifiee
-2026.667,1970,20,5,61.75,0,certifiee
-2026.667,1971,20,5,62.00,0,certifiee
+# Ce que la table ne porte pas : les périodes que D. 351-1-2 répute cotisées
+# (service national, maladie, chômage...), rédaction par rédaction, dans la
+# fiche `carriere_longue_reputes_cotises_autres` que le moteur lit.
+date_effet,generation,generation_fin,age_debut_maximum,trimestres_debut,age_depart,trimestres_supplementaires,trimestres_assurance_supplementaires,fiabilite
+2004,1900,2100,16,5,58.00,4,8,certifiee
+2004,1900,2100,16,5,56.00,8,8,certifiee
+2004,1900,2100,17,5,59.00,0,8,certifiee
+2011.5,1900,1951.5,16,5,58.00,4,8,certifiee
+2011.5,1900,1951.5,16,5,56.00,8,8,certifiee
+2011.5,1900,1951.5,17,5,59.00,0,8,certifiee
+2011.5,1951.5,1952,16,5,58.00,4,8,certifiee
+2011.5,1951.5,1952,16,5,56.00,8,8,certifiee
+2011.5,1951.5,1952,17,5,59.00,0,8,certifiee
+2011.5,1951.5,1952,18,5,60.00,0,8,certifiee
+2011.5,1952,1953,16,5,58.00,4,8,certifiee
+2011.5,1952,1953,16,5,56.00,8,8,certifiee
+2011.5,1952,1953,17,5,59.33,0,8,certifiee
+2011.5,1952,1953,18,5,60.00,0,8,certifiee
+2011.5,1953,1954,16,5,58.33,4,8,certifiee
+2011.5,1953,1954,16,5,56.00,8,8,certifiee
+2011.5,1953,1954,17,5,59.67,0,8,certifiee
+2011.5,1953,1954,18,5,60.00,0,8,certifiee
+2011.5,1954,1955,16,5,58.67,4,8,certifiee
+2011.5,1954,1955,16,5,56.00,8,8,certifiee
+2011.5,1954,1955,18,5,60.00,0,8,certifiee
+2011.5,1955,1956,16,5,59.00,4,8,certifiee
+2011.5,1955,1956,16,5,56.33,8,8,certifiee
+2011.5,1955,1956,18,5,60.00,0,8,certifiee
+2011.5,1956,1957,16,5,59.33,4,8,certifiee
+2011.5,1956,1957,16,5,56.67,8,8,certifiee
+2011.5,1956,1957,18,5,60.00,0,8,certifiee
+2011.5,1957,1958,16,5,59.67,4,8,certifiee
+2011.5,1957,1958,16,5,57.00,8,8,certifiee
+2011.5,1957,1958,18,5,60.00,0,8,certifiee
+2011.5,1958,1959,16,5,57.33,8,8,certifiee
+2011.5,1958,1959,18,5,60.00,0,8,certifiee
+2011.5,1959,1960,16,5,57.67,8,8,certifiee
+2011.5,1959,1960,18,5,60.00,0,8,certifiee
+2011.5,1960,2100,16,5,58.00,8,8,certifiee
+2011.5,1960,2100,18,5,60.00,0,8,certifiee
+2012.833,1900,2100,20,5,60.00,0,,certifiee
+2012.833,1952,1953,17,5,59.33,0,,certifiee
+2012.833,1953,1954,16,5,58.33,4,,certifiee
+2012.833,1953,1954,16,5,56.00,8,,certifiee
+2012.833,1953,1954,17,5,59.67,0,,certifiee
+2012.833,1954,1955,16,5,58.67,4,,certifiee
+2012.833,1954,1955,16,5,56.00,8,,certifiee
+2012.833,1955,1956,16,5,59.00,4,,certifiee
+2012.833,1955,1956,16,5,56.33,8,,certifiee
+2012.833,1956,1957,16,5,59.33,4,,certifiee
+2012.833,1956,1957,16,5,56.67,8,,certifiee
+2012.833,1957,1958,16,5,59.67,0,,certifiee
+2012.833,1957,1958,16,5,57.00,8,,certifiee
+2012.833,1958,1959,16,5,57.33,8,,certifiee
+2012.833,1959,1960,16,5,57.67,8,,certifiee
+2012.833,1960,2100,16,5,58.00,8,,certifiee
+2023.667,1900,2100,16,5,58.00,0,,certifiee
+2023.667,1900,2100,18,5,60.00,0,,certifiee
+2023.667,1900,2100,20,5,62.00,0,,certifiee
+2023.667,1900,2100,21,5,63.00,0,,certifiee
+2023.667,1961.667,1963.667,20,5,60.00,0,,certifiee
+2023.667,1963.667,1964,20,5,60.25,0,,certifiee
+2023.667,1964,1965,20,5,60.50,0,,certifiee
+2023.667,1965,1966,20,5,60.75,0,,certifiee
+2023.667,1966,1967,20,5,61.00,0,,certifiee
+2023.667,1967,1968,20,5,61.25,0,,certifiee
+2023.667,1968,1969,20,5,61.50,0,,certifiee
+2023.667,1969,1970,20,5,61.75,0,,certifiee
+2023.667,1970,2100,20,5,62.00,0,,certifiee
+2026.667,1900,2100,16,5,58.00,0,,certifiee
+2026.667,1900,2100,18,5,60.00,0,,certifiee
+2026.667,1900,2100,20,5,62.00,0,,certifiee
+2026.667,1900,2100,21,5,63.00,0,,certifiee
+2026.667,1961.667,1963.667,20,5,60.00,0,,certifiee
+2026.667,1963.667,1964,20,5,60.25,0,,certifiee
+2026.667,1964,1965,20,5,60.50,0,,certifiee
+2026.667,1965,1965.917,20,5,60.75,0,,certifiee
+2026.667,1965.917,1966,20,5,60.67,0,,certifiee
+2026.667,1966,1967,20,5,60.75,0,,certifiee
+2026.667,1967,1968,20,5,61.00,0,,certifiee
+2026.667,1968,1969,20,5,61.25,0,,certifiee
+2026.667,1969,1970,20,5,61.50,0,,certifiee
+2026.667,1970,1971,20,5,61.75,0,,certifiee
+2026.667,1971,2100,20,5,62.00,0,,certifiee

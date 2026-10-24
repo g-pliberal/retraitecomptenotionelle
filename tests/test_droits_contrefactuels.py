@@ -101,6 +101,25 @@ def test_les_ages_de_la_carriere_longue_suivent_l_etat_du_droit(saisies):
         assert porte is not None and porte[0] == pytest.approx(age), droit
 
 
+def test_au_31_aout_2023_la_porte_des_dix_sept_ans_reste_aux_nes_de_1952_et_1953(saisies):
+    """Le décret du 2 juillet 2012, que le droit au 31 août 2023 applique à
+    toute date, ne donne sa porte des débuts avant dix-sept ans qu'aux nés de
+    1952, à cinquante-neuf ans et quatre mois, et de 1953, à cinquante-neuf
+    ans et huit mois (D. 351-1-1, II, A et B, 3°, LEGIARTI000026139949). Un né
+    en février 1966 entré à seize ans, en mars 1982, n'a que quatre
+    trimestres à la fin de l'année de ses seize ans : sous ce décret, il part
+    à soixante ans, par la porte des vingt ans (I), et non à cinquante-neuf
+    ans et huit mois, que le moteur lui ouvrait en étendant la porte de 1953
+    aux générations suivantes. Sous les décrets de 2023 et de 2026, la porte
+    des dix-huit ans lui donne aussi soixante ans."""
+    parametres, carriere = saisies.lire({"naissance": "1966-02-01", "debut": "1982-03",
+                                         "liquidation": "2026-02"})
+    for droit in (None, SANS_SUSPENSION, AU_31_AOUT_2023):
+        porte = _moteur(saisies, parametres, droit).carriere_longue.age_de_depart(
+            carriere, carriere.annee_liquidation, trimestres_cotises=180, requis=172)
+        assert porte is not None and porte[0] == pytest.approx(60.0), droit
+
+
 def test_un_depart_d_avant_septembre_2026_a_la_duree_de_l_etat_du_droit(saisies):
     """Un né en juin 1964 qui part en juillet 2026, par la carrière longue :
     le droit en vigueur lui oppose 171 trimestres, la durée de la loi de 2023

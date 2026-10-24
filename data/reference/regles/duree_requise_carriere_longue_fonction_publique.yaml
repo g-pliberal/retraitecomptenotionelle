@@ -22,15 +22,31 @@ effet: >-
   le modèle ouvrait aussi aux fonctionnaires les trois portes du régime général dès
   2004, sur la durée de l'année d'ouverture, de 152 à 158 trimestres : le
   fonctionnaire de l'État né en 1946, entré à quinze ans, partait à 58 ans en 2004
-  (action 153, tests/test_oracle_carriere_longue_fonction_publique.py).
+  (action 153, tests/test_oracle_carriere_longue_fonction_publique.py). Jusqu'au 24
+  octobre 2026, il ne lisait pas non plus la durée d'assurance que L. 25 bis, puis D. 16-1
+  jusqu'en octobre 2012, exigent de tous, 168 trimestres avant le 19 décembre 2008, puis
+  la durée de l'année des soixante ans majorée de huit trimestres : le même fonctionnaire,
+  à 160 trimestres cotisés et 160 d'assurance, partait à 59 ans en 2005 (action 138,
+  étape 21).
 sources:
-  lu_le: 2026-10-16
+  lu_le: 2026-10-24
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
     Les autres départs avant soixante ans que la CNRACL range sous la même règle
     — invalidité, handicap, parents de trois enfants, conjoint ou enfant invalide
     — ne sont pas modélisés.
+  - >-
+    La date des portes par génération de l'État. Le décret n° 2010-1748 du 30
+    décembre 2010 (JORFTEXT000023334982), qui insère D. 16-1 au code des pensions, ne
+    porte pas de date d'application, et la base date sa rédaction du 1er janvier 2011
+    (LEGIARTI000023383582) ; la table, qui sert les rédactions du régime général, ne
+    l'applique qu'au 1er juillet 2011, la date du régime général (décret n° 2010-1734,
+    article 11) et de la CNRACL (décret n° 2010-1740, article 16, III : ses articles 10
+    et 11 « sont applicables aux pensions liquidées à compter du 1er juillet 2011 »). De
+    janvier à juin 2011, le fonctionnaire de l'État né en 1952 entré avant dix-sept ans
+    part à 59 ans au modèle, à 59 ans et 4 mois au texte. Lire comment le SRE
+    l'appliquait, puis dater la rédaction pour l'État seul (action 138, étape 21).
   lectures:
   - type: legifrance
     reference: >-
@@ -62,6 +78,19 @@ sources:
     date: 2026-10-16
     url: >-
       https://www.juris-cnracl.retraites.fr/pension-normale/calcul-de-la-pension/duree-dassurance-requise-pour-beneficier-du-taux-maximal-de/duree-dassurance-requise-fonctionnaire-beneficiant-dun-depart-anticipe-avant-60-ans-pour-un-autre
+  - type: legifrance
+    reference: >-
+      L. 25 bis CPCMR, rédactions du 1er janvier 2005 (LEGIARTI000006362733) et du 19
+      décembre 2008 (LEGIARTI000019959540), et D. 16-1, rédactions du 1er janvier 2011
+      (LEGIARTI000023383582), du 1er novembre 2012 (LEGIARTI000026140012) et du 1er
+      avril 2014 (LEGIARTI000028751947), relus dans l'index LEGI : « une durée
+      d'assurance, ou de périodes reconnues équivalentes, au moins égale à 168
+      trimestres », puis à la durée « applicable l'année où l'assuré atteint l'âge
+      précité, majorée de huit trimestres », bonification pour enfant, majorations et
+      périodes du 1 de l'article L. 9 comprises, jusqu'à la rédaction du 1er novembre
+      2012, qui ne demande plus que la durée cotisée ; le décret n° 2010-1748, qui
+      insère D. 16-1, et l'article 16 du décret n° 2010-1740, lus dans l'index JORF
+    date: 2026-10-24
 textes_a_rattacher:
 - reference: >-
     loi n° 2023-270 du 14 avril 2023, article 10, XXIV, C (LEGIARTI000053280920)

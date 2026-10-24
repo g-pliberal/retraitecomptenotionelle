@@ -200,6 +200,10 @@ PRISE_D_EFFET = re.compile(
 #: Bornes de génération que le modèle couvre. Au-delà, la table est constante.
 PREMIERE_GENERATION, DERNIERE_GENERATION = 1900, 1975
 
+#: La fin d'une porte que le texte ne borne pas — la règle générale, « nés à
+#: compter du 1er janvier 1960 » : 2100, comme partout ailleurs dans data/.
+GENERATION_SANS_FIN = 2100
+
 
 def nombre_en_lettres(texte: str | None) -> int | None:
     if texte is None:
@@ -319,6 +323,19 @@ def _mois_couverts(alinea: str) -> dict[int, set[int]]:
 def generation_decimale(annee: int, mois: int) -> float:
     """Génération et mois -> clé de table. Janvier donne l'année toute nue."""
     return annee if mois == 1 else round(annee + (mois - 1) / 12.0, 3)
+
+
+def _fin_de_couverture(couverture: dict[int, set[int]]) -> float:
+    """La première génération qu'un alinéa ne vise plus : le mois qui suit le
+    dernier qu'il couvre, « nés en 1953 » -> 1954, « nés avant le 1er juillet
+    1951 » -> 1951,5 ; :data:`GENERATION_SANS_FIN` quand il court jusqu'à la
+    dernière génération que le modèle couvre, « à compter du 1er janvier
+    1960 »."""
+    annee = max(couverture)
+    mois = max(couverture[annee])
+    if (annee, mois) == (DERNIERE_GENERATION, 12):
+        return GENERATION_SANS_FIN
+    return generation_decimale(annee + 1, 1) if mois == 12 else generation_decimale(annee, mois + 1)
 
 
 def _annee_mois(cle: float) -> tuple[int, int]:
@@ -677,7 +694,7 @@ def _supplement(item: str, chapeau: int) -> int:
 
 
 def _portes(texte: str, effet: str) -> list[dict]:
-    """Les portes qu'une version écrit en toutes lettres, avec leur génération.
+    """Les portes qu'une version écrit en toutes lettres, avec leurs générations.
 
     Le texte est coupé en blocs par génération là où il en a — « Pour les
     assurés nés en 1953 : » — et ce qui précède le premier bloc, ou le II,
@@ -685,17 +702,30 @@ def _portes(texte: str, effet: str) -> list[dict]:
     point-virgule sépare une porte : un âge de départ, un âge de début
     d'activité, un supplément de trimestres. Les blocs qui n'écrivent pas de
     porte — les substitutions de 2023 — ne rendent rien ici.
+
+    Chaque porte dit aussi la première génération que son bloc ne vise plus
+    (``generation_fin``) : « nés en 1953 » ne vaut pas pour 1954, et le
+    moteur, qui n'en lisait que la première, étendait la porte à toutes les
+    générations suivantes. Et la durée d'ASSURANCE que le chapeau des
+    rédactions de 2003 et de 2010 exige de tous, « une durée minimale
+    d'assurance ou de périodes reconnues équivalentes au moins égale à la
+    limite [...] majorée de huit trimestres », en trimestres au-delà de la
+    durée requise (``trimestres_assurance_supplementaires``) ; ``None`` quand
+    le chapeau n'exige que la durée cotisée, depuis 2012.
     """
     general = re.split(r"\sII\s*\.?\s*[-―]", texte, maxsplit=1)[0]
     chapeau = re.split(r"\s1°\s", general, maxsplit=1)[0]
     chapeau = EN_TETE.split(chapeau, maxsplit=1)[0]
     trouve = re.search(r"major[ée]e?\s+de\s+(\w+)\s+trimestres", chapeau, re.I)
     supplement_chapeau = (nombre_en_lettres(trouve.group(1)) or 0) if trouve else 0
+    assurance = (supplement_chapeau if trouve and re.search(
+        r"durée\s+minimale\s+d['’]\s*assurance", chapeau, re.I) else None)
 
-    blocs: list[tuple[float, str]] = []
+    blocs: list[tuple[float, float, str]] = []
     en_tetes = list(EN_TETE.finditer(texte))
     premier = en_tetes[0].start() if en_tetes else len(texte)
-    blocs.append((PREMIERE_GENERATION, general[:min(len(general), premier)]))
+    blocs.append((PREMIERE_GENERATION, GENERATION_SANS_FIN,
+                  general[:min(len(general), premier)]))
     for rang, en_tete in enumerate(en_tetes):
         fin = en_tetes[rang + 1].start() if rang + 1 < len(en_tetes) else len(texte)
         couverture = _mois_couverts(en_tete.group(0))
@@ -703,10 +733,10 @@ def _portes(texte: str, effet: str) -> list[dict]:
             continue
         annee = min(couverture)
         blocs.append((generation_decimale(annee, min(couverture[annee])),
-                      texte[en_tete.end():fin]))
+                      _fin_de_couverture(couverture), texte[en_tete.end():fin]))
 
     portes: list[dict] = []
-    for generation, bloc in blocs:
+    for generation, generation_fin, bloc in blocs:
         # Un point-virgule sépare les portes — sauf dans le décret de 2010,
         # dont le 3° finit sur un point avant le 4°.
         for item in re.split(r";|\.\s+(?=\d°\s)", bloc):
@@ -721,9 +751,11 @@ def _portes(texte: str, effet: str) -> list[dict]:
             portes.append({
                 "entree_en_vigueur": effet,
                 "generation": generation,
+                "generation_fin": generation_fin,
                 "age_debut_maximum": age_debut,
                 "age_depart": round(annees + mois / 12.0, 2),
                 "trimestres_supplementaires": _supplement(item, supplement_chapeau),
+                "trimestres_assurance_supplementaires": assurance,
             })
     return portes
 
@@ -766,15 +798,22 @@ def carriere_longue(versions: list[tuple[str, str]],
                 porte = generales[rang]
                 ages = _mois_des_segments(age_ouverture(
                     [v for v in versions_age if date_effet(v[0], v[1]) <= effet]))
-                for generation, age in _adaptations(
-                        morceaux[1], porte["age_depart"],
-                        porte["age_debut_maximum"], ages).items():
+                adaptees = sorted(_adaptations(
+                    morceaux[1], porte["age_depart"],
+                    porte["age_debut_maximum"], ages).items())
+                # Chaque adaptation vaut jusqu'à la suivante ; la règle
+                # générale, qui reprend après la dernière, sans fin.
+                fins = [generation for generation, _ in adaptees[1:]] + [GENERATION_SANS_FIN]
+                for (generation, age), generation_fin in zip(adaptees, fins):
                     lignes.append({
                         "entree_en_vigueur": effet,
                         "generation": generation,
+                        "generation_fin": generation_fin,
                         "age_debut_maximum": porte["age_debut_maximum"],
                         "age_depart": age,
                         "trimestres_supplementaires": porte["trimestres_supplementaires"],
+                        "trimestres_assurance_supplementaires":
+                            porte["trimestres_assurance_supplementaires"],
                     })
         empreinte = [tuple(sorted((k, v) for k, v in l.items()
                                   if k != "entree_en_vigueur")) for l in lignes]
@@ -1190,8 +1229,11 @@ def main(arguments: list[str] | None = None) -> int:
                     "le mois de la coupure, 1951.5 pour le 1er juillet 1951 — "
                     "et deux alinéas qui se recouvrent sont départagés par la "
                     "valeur la plus exigeante ; les portes de carrière longue "
-                    "portent la génération (1900 : règle générale) et la date "
-                    "d'effet de la version qui les fixe",
+                    "portent la génération (1900 : règle générale), la première "
+                    "qu'elles ne visent plus (2100 : sans fin), la durée "
+                    "d'assurance que le chapeau exige au-delà de la durée "
+                    "requise (null depuis 2012) et la date d'effet de la "
+                    "version qui les fixe",
             "serie": {
                 f"{nom}|{cle}": valeur
                 for nom in ("age_ouverture", "duree_requise",

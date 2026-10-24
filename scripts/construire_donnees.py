@@ -135,7 +135,7 @@ CALIBRATIONS = DONNEES / "derive" / "calibrations_mortalite.json"
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas : le site
 #: attend la sienne (``VERSION_PAQUET``, ``moteur/js/contexte.js``), et redemande
 #: au serveur un paquet qui n'a pas celle-là, depuis le 11 octobre 2026.
-VERSION = 31
+VERSION = 32
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -1953,13 +1953,16 @@ def _carriere_longue() -> dict:
 
     La clé est l'année décimale du premier mois d'application ; chaque porte
     porte la génération à partir de laquelle elle vaut, ``1900`` pour la
-    règle générale.
+    règle générale, la première qu'elle ne vise plus, ``2100`` sans fin, et
+    les trimestres d'assurance qu'elle exige au-delà de la durée requise,
+    ``null`` depuis 2012.
     """
     return {
         _sans_zeros(date_effet): [
-            [generation, age_max, trimestres, age_depart, supplement, int(fiabilite)]
-            for generation, age_max, trimestres, age_depart, supplement, fiabilite
-            in portes
+            [generation, fin, age_max, trimestres, age_depart, supplement, assurance,
+             int(fiabilite)]
+            for generation, fin, age_max, trimestres, age_depart, supplement, assurance,
+            fiabilite in portes
         ]
         for date_effet, portes in sorted(CarriereLongue(DONNEES)._table.items())
     }

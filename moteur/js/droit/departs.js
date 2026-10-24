@@ -256,7 +256,8 @@ function carriereLongueAcquise(moteur, carriere, periodes) {
     majoration !== null ? majoration.trimestres : 0);
   const anticipe = moteur.carriereLongue.ageDeDepart(
     carriere, anneeLiquidation, cotises, requis, etrangers.cotises[famille],
-    moteur.carriereLongue.deLaFonctionPublique(periodes.map(([code]) => code)));
+    moteur.carriereLongue.deLaFonctionPublique(periodes.map(([code]) => code)),
+    ouvrirLeDroit.dureeDAssurance(carriere, majoration, etrangers.trimestres(famille)));
   return anticipe === null ? null : anticipe[0];
 }
 
