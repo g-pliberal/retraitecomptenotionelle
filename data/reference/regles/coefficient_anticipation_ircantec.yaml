@@ -4,6 +4,7 @@ intitule: >-
   Coefficient d'anticipation de l'Ircantec : escalier à trois marches ancré sur
   l'âge du taux plein, plancher 0,43 à dix ans d'anticipation, et seconde table
   par la durée.
+regimes: [igrante, ipacte, ircantec]
 etat: conforme
 effet: >-
   Toute liquidation Ircantec anticipée. Les quarante et une lignes de la table publiée
@@ -66,3 +67,19 @@ code:
     `abattement_points: ircantec` applique le barème de l'article 16 de l'arrêté du 30
     décembre 1970, qui est le MÊME escalier que celui de l'Agirc-Arrco, aux mêmes marches,
     et se lit de la même façon.
+  python: >-
+    droit/liquider.py : liquider_chaque_regime, abattement_points, coefficient_pour_age,
+    _coefficient_anticipation, _PALIERS_ANTICIPATION,
+    _COEFFICIENT_ANTICIPATION_PLANCHER ; droit/ouvrir.py : age_taux_plein ;
+    droit/invalidite.py : taux_plein_de_l_inapte
+  javascript: >-
+    moteur/js/droit/liquider.js : liquiderChaqueRegime, abattementPoints,
+    coefficientPourAge, coefficientAnticipation, PALIERS_ANTICIPATION,
+    COEFFICIENT_ANTICIPATION_PLANCHER ; moteur/js/droit/ouvrir.js : ageTauxPlein ;
+    moteur/js/droit/invalidite.js : tauxPleinDeLInapte
+  parametres: >-
+    regimes/igrante.yaml, regimes/ipacte.yaml, regimes/ircantec.yaml : age_taux_plein,
+    duree_requise_trimestres
+  tests: [tests/test_ircantec_minoration.py, tests/test_simulateur.py,
+    tests/test_oracle.py, tests/test_invalidite.py, tests/js/moteur.test.js,
+    tests/temoins/simulations.json]

@@ -6,6 +6,7 @@ intitule: >-
   à vingt trimestres (annexe 2 du règlement du RCI), sur le plus petit des deux
   décomptes, durée et âge, et sur toutes les catégories de points, celles du RCO des
   artisans et du NRIC des commerçants comprises.
+regimes: [nric, rci, rco_artisans]
 etat: approchee
 effet: >-
   Toute retraite du RCI liquidée avant le taux plein du régime de base. Jusqu'au 16
@@ -75,3 +76,15 @@ code:
     avantageux retenu, ce qui revient à compter le plus petit des deux décomptes ; la
     table des âges ne descend pas sous 0,78, vingt trimestres séparant au plus l'âge
     légal de l'âge d'annulation de la décote.
+  python: >-
+    droit/liquider.py : liquider_chaque_regime, abattement_points, coefficient_pour_age,
+    _coefficient_anticipation, _PALIERS_ANTICIPATION ; droit/ouvrir.py : age_taux_plein
+  javascript: >-
+    moteur/js/droit/liquider.js : liquiderChaqueRegime, abattementPoints,
+    coefficientPourAge, coefficientAnticipation, PALIERS_ANTICIPATION ;
+    moteur/js/droit/ouvrir.js : ageTauxPlein
+  parametres: >-
+    regimes/nric.yaml, regimes/rci.yaml, regimes/rco_artisans.yaml : age_taux_plein,
+    duree_requise_trimestres
+  tests: [tests/test_oracle.py, tests/test_simulateur.py, tests/js/moteur.test.js,
+    tests/temoins/simulations.json]

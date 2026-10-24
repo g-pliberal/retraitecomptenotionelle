@@ -5,6 +5,7 @@ intitule: >-
   : le plus petit des deux décomptes — trimestres jusqu'à l'âge d'annulation, trimestres
   manquants pour la durée requise —, arrondi au chiffre supérieur, à 1,25 % par
   trimestre, dans la limite de vingt trimestres.
+regimes: [cnavpl, msa_non_salaries]
 etat: conforme
 effet: >-
   Le barème de la fiche `cnavpl` — 1,25 % par trimestre — est confirmé par le texte,
@@ -71,3 +72,17 @@ code:
     général, `legislation/coefficient_minoration.csv`, à l'ANNÉE DE NAISSANCE, comme la
     fiche `decote_regime_general` le décrit ; R. 732-61 en donne les onze mêmes valeurs
     aux non-salariés agricoles.
+  python: >-
+    droit/liquider.py : liquider_chaque_regime, abattement_points,
+    abattement_regime_de_base, decote_opposable, trimestres_de_decote ;
+    droit/ouvrir.py : age_taux_plein ; scenarios/actuel.py : CoefficientsMinoration
+  javascript: >-
+    moteur/js/droit/liquider.js : liquiderChaqueRegime, abattementPoints,
+    abattementRegimeDeBase, decoteOpposable, trimestresDeDecote ;
+    moteur/js/droit/ouvrir.js : ageTauxPlein ; moteur/js/regimes.js :
+    CoefficientsMinoration
+  parametres: >-
+    regimes/cnavpl.yaml, regimes/msa_non_salaries.yaml : decote_par_trimestre,
+    age_taux_plein ; legislation/coefficient_minoration.csv : generation, coefficient
+  tests: [tests/test_simulateur.py, tests/test_sections_liberales.py,
+    tests/js/moteur.test.js, tests/temoins/simulations.json]

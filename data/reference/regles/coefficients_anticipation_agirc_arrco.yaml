@@ -7,6 +7,8 @@ intitule: >-
   trimestre d'anticipation, de 0,99 à 0,43 dix ans avant ; s'il manque vingt trimestres
   au plus, celui des trimestres manquants, de 0,99 à 0,78, s'applique quand il est plus
   avantageux.
+regimes: [agirc, agirc_arrco, agirc_entreprises_nouvelles, arrco, arrco_cultes,
+  arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles, unirs]
 etat: approchee
 etape: liquider_chaque_regime
 effet: >-
@@ -695,3 +697,24 @@ code:
     exonère (`liquider.exonerations_agirc_arrco`, `liquider.exonere_par_motif`, et leurs
     jumeaux `exonerationsAgircArrco`, `exonereParMotif`) : avant le 1er avril 1983, l'âge
     seul, quelle que soit la période ; tests/test_exonerations_agirc_arrco.py.
+  python: >-
+    droit/liquider.py : liquider_chaque_regime, abattement_points, coefficient_pour_age,
+    _coefficient_anticipation, _PALIERS_ANTICIPATION,
+    _COEFFICIENT_ANTICIPATION_PLANCHER, exonerations_agirc_arrco, exonere_par_motif,
+    FICHE_DES_COEFFICIENTS_AGIRC_ARRCO ; droit/acquerir.py : acquerir, Droits ;
+    droit/ouvrir.py : age_taux_plein
+  javascript: >-
+    moteur/js/droit/liquider.js : liquiderChaqueRegime, abattementPoints,
+    coefficientPourAge, coefficientAnticipation, PALIERS_ANTICIPATION,
+    COEFFICIENT_ANTICIPATION_PLANCHER, exonerationsAgircArrco, exonereParMotif,
+    FICHE_DES_COEFFICIENTS_AGIRC_ARRCO ; moteur/js/droit/acquerir.js : acquerir,
+    Droits ; moteur/js/droit/ouvrir.js : ageTauxPlein
+  parametres: >-
+    contenu.parametres de chaque version : exoneration_au_taux_plein, exonerations ;
+    regimes/agirc.yaml, regimes/agirc_arrco.yaml,
+    regimes/agirc_entreprises_nouvelles.yaml, regimes/arrco.yaml,
+    regimes/arrco_cultes.yaml, regimes/arrco_tranche_2.yaml,
+    regimes/arrco_tranche_2_entreprises_nouvelles.yaml, regimes/unirs.yaml :
+    age_taux_plein, duree_requise_trimestres
+  tests: [tests/test_simulateur.py, tests/test_exonerations_agirc_arrco.py,
+    tests/test_oracle.py, tests/js/moteur.test.js, tests/temoins/simulations.json]

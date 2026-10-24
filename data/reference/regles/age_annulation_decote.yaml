@@ -3,6 +3,16 @@ id: age_annulation_decote
 intitule: >-
   Taux plein sans condition de durée à l'âge légal de droit commun augmenté de trois
   ans : 67 ans depuis la génération 1955, inchangé par la suspension.
+regimes: [agirc, agirc_arrco, agirc_entreprises_nouvelles, arrco, arrco_cultes,
+  arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles, asv_chirurgiens_dentistes,
+  asv_conventionnes, asv_sages_femmes, banque_de_france, cancava, cancava_avant_1973,
+  carcdsf_complementaire, carmf_complementaire, carpimko_complementaire,
+  cavamac_complementaire, cavimac, cavom_complementaire, cavp_complementaire,
+  cese_membres, cipav_complementaire, cnavpl, cnbf, cnbf_complementaire, cnracl,
+  cprn_complementaire, enseignants_prive_additionnel, fonction_publique_etat, fspoeie,
+  ircantec, ircec_raap, ircec_raap_taux_amenage, ircec_racd, ircec_racl,
+  msa_non_salaries, msa_rco, msa_salaries, nric, organic, organic_avant_1973,
+  organic_conjoints_batiment, rci, rco_artisans, regime_general, rsi]
 etat: conforme
 effet: Décote et taux plein d'office.
 sources:
@@ -32,3 +42,12 @@ code:
     de repli. La loi du 9 novembre 2010 fait passer cet âge de 65 à 67 ans pour les seules
     générations 1951-1955 : opposer 67 ans dès 2011, comme le faisait la fiche du régime,
     l'appliquait à des générations que la loi n'a jamais visées.
+  python: >-
+    droit/ouvrir.py : age_taux_plein ; scenarios/actuel.py : AgesAnnulationDecote
+  javascript: >-
+    moteur/js/droit/ouvrir.js : ageTauxPlein ; moteur/js/regimes.js :
+    AgesAnnulationDecote
+  parametres: >-
+    legislation/age_annulation_decote.csv : generation, age
+  tests: [tests/test_simulateur.py, tests/test_donnees.py, tests/test_oracle.py,
+    tests/js/moteur.test.js, tests/temoins/simulations.json]

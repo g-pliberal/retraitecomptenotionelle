@@ -2810,11 +2810,11 @@ sixième, les périodes assimilées manquantes, a ses étapes 1 à 6 faites
 (`130/2026-10-17-sixieme-domaine-etape-6.md`). Au propriétaire, README muet :
 sa septième étape, la décision de la proposition, et la retraite progressive,
 le cumul et la seconde pension. La carte mûrit : le code de toute fiche est
-confronté au dépôt par un test, hors des 23 de `EN_PROSE` (`tests/test_carte.py`),
-qui n'ont que leur phrase `moteur` ; restent les 106 fiches à lire au droit, 769
+confronté au dépôt par un test, hors des 12 de `EN_PROSE` (`tests/test_carte.py`),
+qui n'ont que leur phrase `moteur` ; restent les 106 fiches à lire au droit, 758
 manques, et les points ouverts des phases 2 à 8. Par quoi commencer : écrire,
-par lots, les fonctions, les paramètres et les régimes de ces 23 fiches.
-Détail : `130/2026-10-24-carte-des-fiches-decotes-et-surcotes.md`.
+par lots, le code et les régimes de ces 12 fiches, hors de celle de l'action 131.
+Détail : `130/2026-10-24-carte-des-fiches-ages-durees-et-points.md`.
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de

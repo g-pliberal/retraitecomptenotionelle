@@ -12,6 +12,8 @@ intitule: >-
   d'affiliation, sur les points des trente premières années (Cipav) ; aux notaires qui
   continuent d'exercer, 0,5 % jusqu'à 70 ans, puis 1 % jusqu'à la fin d'activité depuis
   2024 (CPRN).
+regimes: [asv_conventionnes, carmf_complementaire, carpimko_complementaire,
+  cavec_complementaire, cavp_complementaire, cipav_complementaire, cprn_complementaire]
 etat: approchee
 etape: liquider_chaque_regime
 effet: >-
@@ -466,3 +468,22 @@ code:
     ne compte que les trimestres cotisés depuis le début du décompte (la CPRN) ;
     `surcote_depuis_la_duree: true` le fait partir de l'âge légal dès que la durée du
     régime de base est atteinte (`liquider.age_de_la_duree_atteinte`, la CARPIMKO).
+  python: >-
+    droit/liquider.py : liquider_chaque_regime, abattement_points, surcote_points,
+    age_de_la_duree_atteinte, _trimestres_cotises_apres ; droit/ouvrir.py :
+    age_taux_plein ; scenarios/actuel.py : AgesRegimes.age_surcote_maximum
+  javascript: >-
+    moteur/js/droit/liquider.js : liquiderChaqueRegime, abattementPoints, surcotePoints,
+    ageDeLaDureeAtteinte, trimestresCotisesApres ; moteur/js/droit/ouvrir.js :
+    ageTauxPlein ; moteur/js/regimes.js : AgesRegimes.ageSurcoteMaximum
+  parametres: >-
+    regimes/asv_conventionnes.yaml, regimes/carmf_complementaire.yaml,
+    regimes/carpimko_complementaire.yaml, regimes/cavec_complementaire.yaml,
+    regimes/cavp_complementaire.yaml, regimes/cipav_complementaire.yaml,
+    regimes/cprn_complementaire.yaml : surcote_par_trimestre, surcote_age_debut,
+    surcote_age_maximum, surcote_affiliation_minimale_trimestres,
+    surcote_trimestres_maximum, surcote_pas_trimestres, surcote_palier_age,
+    surcote_par_trimestre_apres_palier, age_table, age_taux_plein ;
+    legislation/ages_regimes.csv : age_surcote_maximum
+  tests: [tests/test_simulateur.py, tests/test_sections_sante.py, tests/test_oracle.py,
+    tests/js/moteur.test.js, tests/temoins/simulations.json]

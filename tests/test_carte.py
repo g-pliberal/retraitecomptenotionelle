@@ -183,18 +183,14 @@ def test_le_code_d_une_fiche_se_confronte_au_depot():
 #: une fiche qui tient en sort — ; une fiche qui gagne un code l'écrit
 #: d'emblée sous la forme que l'outil lit.
 EN_PROSE = frozenset("""
-    abattement_rci age_annulation_decote age_legal_par_generation
-    assiette_minimale_agricole bareme_minoration_regimes_en_points
-    coefficient_anticipation_ircantec
-    coefficients_anticipation_agirc_arrco cotisation_par_classes_liberales
+    assiette_minimale_agricole
+    cotisation_par_classes_liberales
     cultes_retraite_complementaire cultes_salaire_annuel_moyen
     date_effet_mois_suivant
-    duree_requise_par_generation majoration_duree_apres_65_ans
     pension_non_salaries_agricoles_2026
     points_au_prorata_des_cotisations raap_classe_speciale
-    retraite_proportionnelle_msa surcote_ircantec
-    surcote_par_age_seul
-    taux_plein_et_proratisation temps_partiel_fonction_publique
+    retraite_proportionnelle_msa
+    temps_partiel_fonction_publique
     trimestres_avant_1972 trimestres_retenus_1972_1974
 """.split())
 

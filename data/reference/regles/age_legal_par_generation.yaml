@@ -3,6 +3,16 @@ id: age_legal_par_generation
 intitule: >-
   Âge d'ouverture du droit par génération, coupures au mois (1er juillet 1951, 1er
   septembre 1961, 1er avril 1965).
+regimes: [agirc, agirc_arrco, agirc_entreprises_nouvelles, arrco, arrco_cultes,
+  arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles, asv_chirurgiens_dentistes,
+  asv_conventionnes, asv_sages_femmes, banque_de_france, cancava, cancava_avant_1973,
+  carcdsf_complementaire, carmf_complementaire, carpimko_complementaire,
+  cavamac_complementaire, cavimac, cavom_complementaire, cavp_complementaire,
+  cese_membres, cipav_complementaire, cnavpl, cnbf, cnbf_complementaire, cnracl,
+  cprn_complementaire, crpcen, enseignants_prive_additionnel, fonction_publique_etat,
+  fspoeie, ircantec, ircec_raap, ircec_raap_taux_amenage, ircec_racd, ircec_racl,
+  msa_non_salaries, msa_rco, msa_salaries, nric, organic, organic_avant_1973,
+  organic_conjoints_batiment, rafp, rci, rco_artisans, regime_general, rsi]
 etat: conforme
 etape: ouvrir_le_droit
 effet: >-
@@ -80,3 +90,19 @@ code:
     gardent le leur. Sous un droit contrefactuel (`Parametres.droit_contrefactuel`),
     `TableRecouverte` pose sur cette table celle du droit qu'il garde, de sa première
     génération à toutes les suivantes (`ScenarioActuel._sous_le_droit`).
+  python: >-
+    droit/ouvrir.py : age_ouverture, age_ouverture_commun ; scenarios/actuel.py :
+    AgesOuverture, AgesOuvertureAvantReforme2023, AgesOuvertureAvantSuspension,
+    TableRecouverte, ScenarioActuel._sous_le_droit
+  javascript: >-
+    moteur/js/droit/ouvrir.js : ageOuverture, ageOuvertureCommun ;
+    moteur/js/regimes.js : AgesOuverture, AgesOuvertureAvantReforme2023,
+    AgesOuvertureAvantSuspension, TableRecouverte ; moteur/js/scenario-actuel.js :
+    ScenarioActuel._sousLeDroit
+  parametres: >-
+    legislation/age_ouverture_requis.csv,
+    legislation/age_ouverture_avant_reforme_2023.csv,
+    legislation/age_ouverture_avant_suspension.csv : generation, age
+  tests: [tests/test_simulateur.py, tests/test_donnees.py,
+    tests/test_droits_contrefactuels.py, tests/test_oracle.py, tests/js/moteur.test.js,
+    tests/temoins/simulations.json]

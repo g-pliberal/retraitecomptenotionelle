@@ -3,6 +3,7 @@ id: taux_plein_et_proratisation
 intitule: >-
   Pension = salaire annuel moyen × taux × durée dans le régime / durée requise ;
   durée de proratisation propre aux générations 1944-1948.
+regimes: [cancava, cavimac, msa_salaries, organic, regime_general, rsi]
 etat: conforme
 etape: liquider_chaque_regime
 effet: Toute pension du régime général et des régimes alignés.
@@ -238,3 +239,23 @@ code:
     défunt d'avant 2009 ne sont touchés. Le conjoint survivant peut opter pour l'année
     entière des cotisations d'assurance vieillesse (D. 731-57-1), ce que le modèle ne lit
     pas ; les trimestres d'une année au prorata restent la question de R. 731-83.
+  python: >-
+    droit/liquider.py : liquider_chaque_regime, duree_proratisation,
+    duree_du_regime_aligne ; droit/compter.py : Durees.plafond, Durees.cumul_plafonne ;
+    carriere.py : Carriere.annee_entiere_agricole, Carriere.annee_de_cessation_agricole,
+    Carriere.trimestres_ecoules, Carriere.part_cotisee_ligne,
+    Carriere.statut_pris_apres_le_1er_janvier, Carriere._statuts_au_1er_janvier,
+    Carriere.qualite_agricole, Carriere.arretee_au_deces,
+    COTISATIONS_AU_PRORATA_DU_DECES_DEPUIS ; scenarios/actuel.py : DureesProratisation
+  javascript: >-
+    moteur/js/droit/liquider.js : liquiderChaqueRegime, dureeProratisation,
+    dureeDuRegimeAligne ; moteur/js/droit/compter.js : Durees.plafond,
+    Durees.cumulPlafonne ; moteur/js/carriere.js : Carriere.anneeEntiereAgricole,
+    Carriere.anneeDeCessationAgricole, Carriere.trimestresEcoules,
+    Carriere.partCotiseeLigne, Carriere.statutPrisApresLe1erJanvier,
+    Carriere.statutsAu1erJanvier, Carriere.qualiteAgricole, Carriere.arreteeAuDeces,
+    COTISATIONS_AU_PRORATA_DU_DECES_DEPUIS ; moteur/js/regimes.js : DureesProratisation
+  parametres: >-
+    legislation/duree_proratisation.csv : generation, trimestres
+  tests: [tests/test_simulateur.py, tests/test_donnees.py, tests/test_oracle.py,
+    tests/js/moteur.test.js, tests/temoins/simulations.json]

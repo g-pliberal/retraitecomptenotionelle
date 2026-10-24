@@ -7,6 +7,15 @@ intitule: >-
   prenant effet avant le 1er septembre 2023, les nés à compter du 1er septembre
   1961 doivent celle de la version de 2014 de L. 161-17-3, 168 trimestres jusqu'en
   1963 et 169 de 1964 à 1966.
+regimes: [agirc, agirc_arrco, agirc_entreprises_nouvelles, arrco, arrco_cultes,
+  arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles, asv_conventionnes,
+  banque_de_france, cancava, cancava_avant_1973, carcdsf_complementaire,
+  carmf_complementaire, carpimko_complementaire, cavimac, cavp_complementaire,
+  cipav_complementaire, cnavpl, cnbf, cnbf_complementaire, cnracl, comedie_francaise,
+  crpcen, enseignants_prive_additionnel, fonction_publique_etat, fspoeie, ieg, igrante,
+  ipacte, ircantec, ircec_raap, ircec_raap_taux_amenage, ircec_racd, ircec_racl,
+  msa_non_salaries, msa_rco, msa_salaries, opera_de_paris, organic, organic_avant_1973,
+  organic_conjoints_batiment, ratp, rci, regime_general, rsi, sncf, unirs]
 etat: conforme
 etape: ouvrir_le_droit
 effet: >-
@@ -100,3 +109,20 @@ code:
     table qu'ils gardent (`TableRecouverte`, `ScenarioActuel._sous_le_droit`) : celle
     d'avant la suspension pour la loi de 2023 sans elle, celle de 2014 au 31 août 2023,
     qui vaut alors aussi pour les pensions d'avant septembre 2026.
+  python: >-
+    droit/ouvrir.py : duree_requise, REFORME_2023_EFFET, GENERATION_REFORME_2023,
+    SUSPENSION_2026_EFFET, GENERATIONS_SUSPENSION ; scenarios/actuel.py :
+    DureesRequises, DureesRequisesAvantReforme2023, DureesRequisesAvantSuspension,
+    TableRecouverte, ScenarioActuel._sous_le_droit
+  javascript: >-
+    moteur/js/droit/ouvrir.js : dureeRequise ; moteur/js/regimes.js : DureesRequises,
+    DureesRequisesAvantReforme2023, DureesRequisesAvantSuspension, TableRecouverte,
+    REFORME_2023_EFFET, GENERATION_REFORME_2023, SUSPENSION_2026_EFFET,
+    GENERATIONS_SUSPENSION ; moteur/js/scenario-actuel.js : ScenarioActuel._sousLeDroit
+  parametres: >-
+    legislation/duree_assurance_requise.csv,
+    legislation/duree_requise_avant_reforme_2023.csv,
+    legislation/duree_requise_avant_suspension.csv : generation, trimestres
+  tests: [tests/test_simulateur.py, tests/test_donnees.py,
+    tests/test_droits_contrefactuels.py, tests/test_oracle.py, tests/js/moteur.test.js,
+    tests/temoins/simulations.json]

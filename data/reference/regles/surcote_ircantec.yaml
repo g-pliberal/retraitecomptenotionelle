@@ -5,6 +5,7 @@ intitule: >-
   entier écoulé entre l'âge du taux plein automatique et l'entrée en jouissance, 0,625 %
   par trimestre cotisé après l'âge légal et au-delà de la durée requise, avant cet âge ;
   les deux s'ajoutent.
+regimes: [ircantec]
 etat: transcrite
 etape: liquider_chaque_regime
 effet: >-
@@ -125,3 +126,15 @@ code:
     du taux plein (son 2°), sans qu'une même période puisse être comptée deux fois. La
     fenêtre du 2° se compte au mois, et celle que l'âge du taux plein ferme garde son
     trimestre entamé (`liquider._fenetre_ircantec`).
+  python: >-
+    droit/liquider.py : liquider_chaque_regime, abattement_points, surcote_points,
+    surcote_ircantec, _fenetre_ircantec, _SURCOTE_IRCANTEC_AGE,
+    _SURCOTE_IRCANTEC_DUREE ; droit/ouvrir.py : age_taux_plein, age_ouverture_commun
+  javascript: >-
+    moteur/js/droit/liquider.js : liquiderChaqueRegime, abattementPoints, surcotePoints,
+    surcoteIrcantec, fenetreIrcantec, SURCOTE_IRCANTEC_AGE, SURCOTE_IRCANTEC_DUREE ;
+    moteur/js/droit/ouvrir.js : ageTauxPlein, ageOuvertureCommun
+  parametres: >-
+    regimes/ircantec.yaml : age_taux_plein, age_ouverture
+  tests: [tests/test_simulateur.py, tests/test_oracle.py, tests/js/moteur.test.js,
+    tests/temoins/simulations.json]

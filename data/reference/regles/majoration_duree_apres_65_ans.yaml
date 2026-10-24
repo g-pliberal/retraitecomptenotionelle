@@ -8,6 +8,7 @@ intitule: >-
   dépasser la durée de proratisation : soixante-cinq ans jusqu'en 2011, l'âge du 1° de
   L. 351-8 ensuite ; la durée du seul régime jusqu'en 2003, celle de tous les régimes
   depuis 2004, la majoration se partageant alors entre régimes alignés.
+regimes: [cancava, msa_salaries, organic, regime_general, rsi]
 etat: approchee
 etape: liquider_chaque_regime
 effet: >-
@@ -294,3 +295,17 @@ code:
     durée majorée ou le taux acquis sur la durée non majorée
     (`liquider.taux_acquis_au_31_mars_1983`). Le contexte qui neutralise la décote et la
     surcote neutralise aussi la majoration.
+  python: >-
+    droit/liquider.py : liquider_chaque_regime, duree_majoree_apres_taux_plein,
+    trimestres_d_ajournement, regimes_qui_bornent_la_duree_majoree,
+    taux_acquis_au_31_mars_1983 ; droit/ouvrir.py : age_taux_plein
+  javascript: >-
+    moteur/js/droit/liquider.js : liquiderChaqueRegime, dureeMajoreeApresTauxPlein,
+    trimestresDAjournement, regimesQuiBornentLaDureeMajoree, tauxAcquisAu31Mars1983 ;
+    moteur/js/droit/ouvrir.js : ageTauxPlein
+  parametres: >-
+    regimes/cancava.yaml, regimes/msa_salaries.yaml, regimes/organic.yaml,
+    regimes/regime_general.yaml, regimes/rsi.yaml : duree_majoree_bornee_avec,
+    age_taux_plein
+  tests: [tests/test_simulateur.py, tests/test_oracle.py, tests/js/moteur.test.js,
+    tests/temoins/simulations.json]
