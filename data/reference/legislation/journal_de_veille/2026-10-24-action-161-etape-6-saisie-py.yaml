@@ -1,0 +1,18 @@
+date: "2026-10-24"
+session: "action 161, étape 6, sixième partie : le retrait de saisie.py"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1.
+  Les deux saisies (saisie.py, moteur/js/saisie.js), relues fonction par
+  fonction avant le retrait et rejouées sur les 904 requêtes des témoins, les
+  modules qu'elles appellent (calendrier, chronologie, format), et les fiches
+  et chiffres ancrés qui nommaient la saisie Python.
+trouve: >-
+  Aucune règle n'a changé. saisie.py est retiré : saisie.js porte seul la
+  saisie, avec les explications et les sources que le Python en donnait, et
+  quatre phrases que le code démentait sont corrigées, dont le décès avant le
+  départ, qui ouvre la réversion (R. 353-6) ; les témoins restent identiques à
+  l'octet.
+reste: >-
+  Rien pour la veille. Trois défauts du portage, deux écarts du calendrier et
+  de la chronologie, la paire du pilote (action 161, note du 24 octobre 2026,
+  sixième partie).
