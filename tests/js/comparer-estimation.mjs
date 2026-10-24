@@ -6,7 +6,8 @@
  * écrit sur la sortie standard, pour chacune, ses départs, ou l'erreur levée ;
  * un second argument nomme le droit contrefactuel sous lequel les dater
  * (`droit_contrefactuel`, action 138, étape 10). `tests/test_estimation_du_site.py`
- * compare le tout au Python.
+ * confronte chaque âge au droit du Python, et chaque départ à ce que le Python
+ * simule de sa carrière.
  *
  *     node tests/js/comparer-estimation.mjs requetes.json [droit]
  */
