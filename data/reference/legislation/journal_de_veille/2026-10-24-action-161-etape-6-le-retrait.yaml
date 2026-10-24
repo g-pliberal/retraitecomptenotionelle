@@ -1,0 +1,16 @@
+date: "2026-10-24"
+session: "action 161, étape 6, cinquième partie : le retrait de la saisie Python"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1.
+  Le contexte des deux moteurs (contexte.py, moteur/js/contexte.js), relu
+  fonction par fonction avant le retrait, le pont (pont.py, pont.mjs), le
+  pilote (pilote.py), construire_temoins.py, et les trois fiches dont le
+  champ code nommait la saisie Python.
+trouve: >-
+  Aucune règle n'a changé. La saisie Python est retirée : contexte.py ne
+  garde que le centre du coût, et contexte.js porte seul la saisie, avec les
+  explications que le Python en donnait ; les départs de l'estimation se
+  chiffrent dans le pilote ; les témoins restent identiques à l'octet.
+reste: >-
+  Rien pour la veille. La paire suivante, saisie.py, et celle du pilote
+  (action 161, note du 24 octobre 2026, cinquième partie).

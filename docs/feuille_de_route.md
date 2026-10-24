@@ -6917,16 +6917,16 @@ de `contribution_etat`.
 
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
-**Reprise, au 24 octobre 2026.** Étape 6 en cours sur `contexte.py`. Le
-premier lot est porté : quarante-sept fichiers de tests ne lisent plus la
-saisie Python — leurs règles sur la carrière que le pont bâtit
-(`tests/outils_pont.py`), la saisie dans le portage, par `site()` —, les
-témoins identiques à l'octet ; le centre du coût reste au contexte Python.
-Reste le retrait : la référence de `test_pont.py` et de `construire_temoins.py`,
-les gardes de la saisie Python, et `_depart_estime`, que les départs de
-l'estimation demandent. L'interpolation du profil diffère au dernier bit, à
-trancher avec la paire de la carrière ; le propriétaire tranche deux paires de
-données. Détail : `2026-10-24-etape-6-quatrieme-partie-les-tests-du-site.md`.
+**Reprise, au 24 octobre 2026.** Étape 6 : la première paire est faite — la
+saisie Python retirée, `contexte.py` réduit au centre du coût, `contexte.js`
+seul à porter la saisie, les témoins identiques à l'octet. Suit `saisie.py`,
+au rang 1 de la carte : rien ne l'importe plus ; cinq fiches le nomment, et
+quatre chiffres ancrés chargent ses constantes. Le pilote garde
+`ages_de_l_estimation` et `depart_estime` pour la seule confrontation des
+départs. `pages.js` dit encore, à sa ligne 7, `contexte.js` portage de
+`contexte.py` : à une session du site. L'interpolation du profil se tranche
+avec la paire de la carrière ; deux paires de données, avec le propriétaire.
+Détail : `2026-10-24-etape-6-cinquieme-partie-le-retrait.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
