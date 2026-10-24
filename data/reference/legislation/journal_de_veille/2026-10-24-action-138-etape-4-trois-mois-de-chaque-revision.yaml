@@ -1,0 +1,77 @@
+date: "2026-10-24"
+session: "action 138, étape 4, treizième partie : les majorations de 1976 et de 1977 aux salariés agricoles, l'Alsace-Moselle et l'ancien invalide, lus ; puis les trois mois que la caisse examine avant chaque révision de la réversion du régime général et des régimes alignés (R. 353-1-1)"
+consulte: >-
+  veille_droit.py, lancé à l'ouverture de la session (dernière veille consignée :
+  2026-10-24) ; l'index LEGI et l'index JORF, récupérés de la release index-dila et mis
+  à jour par leurs incréments jusqu'au 23 octobre 2026 (LEGI) et au 24 octobre (JORF),
+  puis textes.py --inscrire, qui n'a rien inscrit ; L. 161-17-2 et L. 161-17-3, sans
+  rédaction postérieure à celle du 31 décembre 2025 (fiche fin_de_la_suspension_2028).
+  Dans l'index LEGI : le décret n° 76-405 du 10 mai 1976, ses visas et ses articles 1er
+  à 5 (LEGITEXT000006062483, LEGIARTI000006762088 à 092) ; la loi n° 75-1279 du 30
+  décembre 1975, articles 3, 4, 5 et 7 (LEGIARTI000006755694 à 697) ; la loi n° 77-657
+  du 28 juin 1977, son seul article (LEGIARTI000006755703) ; la loi n° 71-1132,
+  article 11, et la loi n° 82-599, article 2 (LEGIARTI000006756030, 136) ; L. 357-1 à
+  L. 357-21 CSS, les pensions du code local d'Alsace-Moselle ; le décret n° 51-727,
+  ses articles, dont l'article 1er bis dans sa rédaction du 26 août 1977
+  (LEGIARTI000006773767), et les articles du décret n° 50-1225 ; R. 815-29 (2007,
+  2015), R. 815-25, R. 815-18. Dans l'index JORF, qui n'en garde que la notice : les
+  décrets n° 76-727 du 28 juillet 1976 (JORFTEXT000000306384), n° 76-1177 du 17
+  décembre 1976 (JORFTEXT000000862032), n° 77-966 du 19 août 1977
+  (JORFTEXT000000875615), n° 76-404 du 10 mai 1976, et, pour l'ex-régime local, de 1972
+  à 1983, n° 78-319 et n° 82-629. Par l'API de la base de législation de la Cnav : les
+  circulaires n° 2/72 du 31 janvier 1972 (IV), n° 15/76 du 22 janvier 1976, n° 64/77 du
+  11 juillet 1977 et n° 79/82 du 24 août 1982 (A, B, C) ; l'exposé « Condition de
+  ressources » (16 avril 2026) ; les circulaires n° 2005/17 (§ 143 à 146, 31, 321,
+  322), n° 2006-6 (§ 12, 121, 122) et n° 2010/58 (§ 1 à 4) ; et, en PDF, la circulaire
+  RSI n° 2007/061 du 24 avril 2007, annexe 3, note d'application (§ 5 à 8).
+trouve: >-
+  Les salariés agricoles : leurs lois ne les nomment pas, mais deux décrets ont étendu
+  au régime des assurances sociales agricoles les majorations de 1976 et de 1977 — le
+  décret n° 76-727, qui porte « majoration des pensions de vieillesse dues au titre des
+  parag. 1, 2 et 2 bis » du décret n° 51-727, et le décret n° 77-966, « rendant
+  applicables, au régime des assurances sociales agricoles, les dispositions de la
+  loi » n° 77-657 — ; l'index n'en garde que la notice, et l'index LEGI aucun article :
+  ni l'article 1er bis du décret n° 51-727 ni le décret n° 50-1225 ne les portent. Leur
+  texte est au fac-similé du Journal officiel. L'Alsace-Moselle : la loi n° 75-1279
+  « est applicable aux assurés ressortissant au code local » (article 7) ; le décret
+  n° 76-405 qui l'adapte règle la retraite anticipée des travailleurs manuels et des
+  mères de famille (articles 1er à 3, 5) et la majoration de l'article 5 de la loi
+  (article 4, les taux de l'article 9 du décret n° 76-404), non celle de son article 3 ;
+  la loi n° 77-657 ne nomme pas ces assurés, et aucun décret de l'index ne la leur
+  étend ; la pension du code local, « une somme de base et [...] des majorations
+  proportionnelles aux cotisations ou au salaire » (L. 357-2), sans durée maximum, est
+  hors du champ du modèle. L'ancien invalide : « La majoration forfaitaire de 5 %
+  s'applique uniquement à la pension de vieillesse résultant des cotisations. En
+  conséquence, pour les ex-invalides, une nouvelle comparaison devrait, en principe,
+  être faite entre cette pension de vieillesse majorée et la pension d'invalidité afin
+  de servir le montant le plus élevé » ; le refus des circulaires aux deuxième et
+  troisième groupes en est la conséquence, leur pension substituée valant 50 % du
+  salaire annuel moyen, plus que la pension majorée (46,30 % au plus avant 1972) ; en
+  1982, les 6 % et les 4 % vont à tous les ex-invalides. Le modèle majore la pension de
+  vieillesse, comme la loi, mais ne la compare pas : il ne sert pas le plancher de la
+  pension substituée. Les trois mois : « Les ressources sont examinées sur les 3 mois
+  qui précèdent cette date de révision » (exposé « Condition de ressources ») ; les
+  revenus d'activité « pour leur montant réellement perçu », les avantages viagers
+  « pour leurs montants théoriques », les ressources d'après un changement de situation
+  familiale « transposées sur 3 mois », « Tous les mois sont considérés comme valant 30
+  jours » (circulaire RSI n° 2007/061, annexe 3, § 6.1, 6.2 et 7), dont l'exemple
+  chiffré entre au témoin des exemples officiels : (1 500 + 1 000 + 600) / 3 =
+  1 033,33 € par mois au RSI, « Et non 2 500 € / 3 + 600 € = 1 433,33 € », la méthode
+  du régime général d'alors, qui comptait le droit propre entier ; la circulaire Cnav
+  n° 2010/58 (§ 22) lui fait compter depuis le 30 juin 2010 « les sommes réellement
+  perçues au titre du nouvel avantage ». Aucun texte ne dit ce que la caisse fait des
+  trois mois après la première révision.
+reste: >-
+  Au propriétaire : lire au fac-similé du Journal officiel les décrets n° 76-727 (JO du
+  4 août 1976) et n° 77-966 (JO du 26 août 1977), leur date d'effet et leurs
+  conditions, pour porter aux salariés agricoles les majorations de 1976 et de 1977. La
+  majoration de l'article 5 de la loi n° 75-1279 (pensions des travailleurs manuels et
+  des mères de famille liquidées avant juillet 1976 à un taux réduit), dont les taux
+  sont au décret n° 76-404, en notice seule, qu'aucune fiche ne porte. Le plancher de la
+  pension substituée à l'invalidité, que la comparaison des circulaires suppose. De la
+  révision : ce que la caisse fait des trois mois après la première révision, que le
+  modèle lit comme une révision de plus le premier mois dont les trois mois ne portent
+  plus que ce qui suit le changement ; les trois ou douze mois de la date d'effet
+  (R. 353-1) ; le droit personnel liquidé après la dernière révision d'abord fixée ; la
+  révision de la majoration de 11,1 % (R. 353-13) et celle de la complémentaire des
+  indépendants.
