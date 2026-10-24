@@ -2,12 +2,15 @@
 
 Les départs que la synthèse officielle chiffre — au plus tôt, au taux plein, au
 taux plein automatique — sont datés par le pilote
-(:func:`~retraite_notionnelle.pilote.ages_de_l_estimation`), liquidés par le
-contexte (:meth:`~retraite_notionnelle.contexte.Contexte.departs_de_l_estimation`),
-et la page les montre en brut mensuel, étage par étage, le net en second, à côté
-du total que le lecteur recopie de son estimation (``estimationOfficielle``,
-``moteur/js/pages.js``). Ces tests tiennent les deux moteurs d'accord, les âges
-au droit, et la page à ce qu'elle promet. Les carrières sont fictives.
+(:func:`~retraite_notionnelle.pilote.ages_de_l_estimation`), liquidés étage par
+étage (``_depart_estime``, dans ``contexte.py``, et ``departEstime``, son
+jumeau), et la page les montre en brut mensuel, étage par étage, le net en
+second, à côté du total que le lecteur recopie de son estimation
+(``estimationOfficielle``, ``moteur/js/pages.js``). Ces tests tiennent les deux
+moteurs d'accord, les âges au droit, et la page à ce qu'elle promet. La saisie
+est celle du portage, la seule (action 161, étape 6) : le Python date et
+liquide les carrières qu'il bâtit, par le pont (:func:`_departs_du_pont`). Les
+carrières sont fictives.
 """
 
 from __future__ import annotations
@@ -19,16 +22,17 @@ import shutil
 import subprocess
 import tempfile
 from dataclasses import replace
+from functools import cache
 from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.contexte import Montants
+from retraite_notionnelle.contexte import _depart_estime
 from retraite_notionnelle.droit import ouvrir
-from retraite_notionnelle.pilote import DEPARTS_DE_L_ESTIMATION
-from retraite_notionnelle.saisie import CHAMPS_ESTIMATION, ErreurSaisie, Saisie
-from retraite_notionnelle.web.site import module, site
-from outils_web import contexte, page  # noqa: F401 — les fixtures partagées
+from retraite_notionnelle.pilote import DEPARTS_DE_L_ESTIMATION, ages_de_l_estimation
+from retraite_notionnelle.web.site import ErreurSite, module, site
+from outils_pont import RefusDuPortage, refus_de_la_saisie, saisie_du_portage
+from outils_web import page, saisies  # noqa: F401 — les fixtures partagées
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -91,8 +95,54 @@ REQUETES = {
 }
 
 
-def _departs(contexte, nom: str):
-    return contexte.departs_de_l_estimation(Saisie.depuis_requete(REQUETES[nom]))
+def _au_depart(requete: dict, age: float) -> dict:
+    """La requête liquidée à ``age`` : la saisie lit un âge nu, comme ceux des
+    adresses d'avant le calendrier, à sa valeur exacte."""
+    return {**requete, "liquidation": repr(age)}
+
+
+def _departs_du_pont(saisies, requete: dict, droit: str | None = None) -> tuple:
+    """Les départs que le Python date et chiffre, sous le droit contrefactuel
+    ``droit`` s'il en nomme un : son pilote (``ages_de_l_estimation``), et sa
+    liquidation de chaque départ (``_depart_estime``), sur la carrière que le
+    portage bâtit de la requête à chaque âge, par le pont — ce que faisait
+    ``Contexte.departs_de_l_estimation`` de la saisie Python. Vide où le bloc
+    se tait, ce que la saisie du portage dit : une saisie par la pension, des
+    pensions qu'elle date elle-même, un départ d'une année passée, une carrière
+    que la saisie ou le modèle refusent à l'un des âges."""
+    saisie = saisie_du_portage(requete)
+    if (saisie.par_pension or saisie.demandes or saisie.invalidite is not None
+            or saisie.radiation_invalidite is not None):
+        return ()
+    parametres = saisies.parametres(requete)
+    if droit is not None:
+        parametres = parametres.avec(droit_contrefactuel=droit)
+    simulateur = saisies.simulateur(parametres)
+    annee = parametres.annee_courante
+    if saisie.date_liquidation.annee < annee:
+        return ()
+
+    @cache
+    def batir(age: float):
+        return saisies.carriere(_au_depart(requete, age))
+
+    departs = []
+    try:
+        ages = ages_de_l_estimation(simulateur.scenario_actuel, batir, saisie.liquidation)
+        for quoi, age in (ages or {}).items():
+            if departs and abs(departs[-1].age - age) < 1e-9:
+                departs[-1] = replace(departs[-1], quoi=departs[-1].quoi + (quoi,))
+                continue
+            carriere = batir(age)
+            if carriere.annee_liquidation >= annee:
+                departs.append(_depart_estime(simulateur, parametres, carriere, quoi))
+    except (RefusDuPortage, ValueError):
+        return ()
+    return tuple(departs)
+
+
+def _departs(saisies, nom: str):
+    return _departs_du_pont(saisies, REQUETES[nom])
 
 
 def _ecarts(obtenu, attendu, chemin: str, ecarts: list[str]) -> None:
@@ -147,9 +197,9 @@ def _en_donnees(departs) -> list[dict]:
             for depart in departs]
 
 
-def test_les_deux_moteurs_datent_et_chiffrent_les_memes_departs(contexte):
+def test_les_deux_moteurs_datent_et_chiffrent_les_memes_departs(saisies):
     obtenus = _departs_du_portage()
-    attendus = [_en_donnees(_departs(contexte, nom)) for nom in REQUETES]
+    attendus = [_en_donnees(_departs(saisies, nom)) for nom in REQUETES]
     ecarts: list[str] = []
     for nom, obtenu, attendu in zip(REQUETES, obtenus, attendus):
         _ecarts(obtenu, attendu, nom, ecarts)
@@ -159,7 +209,7 @@ def test_les_deux_moteurs_datent_et_chiffrent_les_memes_departs(contexte):
 
 @pytest.mark.parametrize("droit", ["loi_2023_sans_suspension", "au_31_aout_2023"])
 def test_les_deux_moteurs_datent_les_memes_departs_sous_chaque_droit_contrefactuel(
-        contexte, droit):
+        saisies, droit):
     """Les droits contrefactuels du scénario 1 (action 138, étape 10) : sous la
     loi de 2023 sans la suspension, et sous le droit au 31 août 2023, les deux
     moteurs datent et chiffrent les mêmes départs. Et ce ne sont pas ceux du
@@ -167,8 +217,7 @@ def test_les_deux_moteurs_datent_les_memes_departs_sous_chaque_droit_contrefactu
     première pension s'ouvre à soixante-quatre ans sous la première, à
     soixante-deux ans sous le second (``tests/test_droits_contrefactuels.py``)."""
     obtenus = _departs_du_portage(droit)
-    sous = contexte.pour(contexte.base.avec(droit_contrefactuel=droit))
-    attendus = [_en_donnees(sous.departs_de_l_estimation(Saisie.depuis_requete(requete)))
+    attendus = [_en_donnees(_departs_du_pont(saisies, requete, droit))
                 for requete in REQUETES.values()]
     ecarts: list[str] = []
     for nom, obtenu, attendu in zip(REQUETES, obtenus, attendus):
@@ -179,9 +228,9 @@ def test_les_deux_moteurs_datent_les_memes_departs_sous_chaque_droit_contrefactu
         {"loi_2023_sans_suspension": 64.0, "au_31_aout_2023": 62.0}[droit])
 
 
-def test_chaque_age_est_atteint_une_fois_dans_l_ordre_de_la_synthese(contexte):
+def test_chaque_age_est_atteint_une_fois_dans_l_ordre_de_la_synthese(saisies):
     for nom in REQUETES:
-        departs = _departs(contexte, nom)
+        departs = _departs(saisies, nom)
         if not departs:
             continue
         reunis = [quoi for depart in departs for quoi in depart.quoi]
@@ -190,18 +239,18 @@ def test_chaque_age_est_atteint_une_fois_dans_l_ordre_de_la_synthese(contexte):
         assert ages == sorted(ages) and len(set(ages)) == len(ages), nom
 
 
-def test_les_ages_sont_ceux_que_le_droit_oppose(contexte):
+def test_les_ages_sont_ceux_que_le_droit_oppose(saisies):
     """Trois âges distincts : l'âge légal avec décote, le taux plein quand la
     durée est atteinte, soixante-sept ans ; chacun est l'âge que l'étape
     « ouvrir le droit » oppose à la carrière liquidée à cet âge."""
-    saisie = Saisie.depuis_requete(REQUETES["trois_ages"])
-    actuel = contexte.simulateur(saisie.parametres(contexte.base)).scenario_actuel
-    legal, plein, automatique = contexte.departs_de_l_estimation(saisie)
+    requete = REQUETES["trois_ages"]
+    actuel = saisies.simulateur(requete).scenario_actuel
+    legal, plein, automatique = _departs(saisies, "trois_ages")
     assert (legal.quoi, plein.quoi, automatique.quoi) == (
         ("legal",), ("taux_plein",), ("automatique",))
 
     def carriere(age):
-        return contexte.carriere(replace(saisie, liquidation=age))
+        return saisies.carriere(_au_depart(requete, age))
 
     assert legal.age == pytest.approx(ouvrir.age_ouverture_droit(actuel, carriere(legal.age)))
     assert plein.age == pytest.approx(ouvrir.age_taux_plein_droit(actuel, carriere(plein.age)))
@@ -210,70 +259,68 @@ def test_les_ages_sont_ceux_que_le_droit_oppose(contexte):
     assert legal.total < plein.total < automatique.total
 
 
-def test_la_carriere_longue_part_au_taux_plein_avant_l_age_legal(contexte):
-    premier, *_ = _departs(contexte, "carriere_longue")
+def test_la_carriere_longue_part_au_taux_plein_avant_l_age_legal(saisies):
+    premier, *_ = _departs(saisies, "carriere_longue")
     assert premier.quoi == ("legal", "taux_plein")
     assert premier.motif_ouverture == "carriere_longue"
-    saisie = Saisie.depuis_requete(REQUETES["carriere_longue"])
-    actuel = contexte.simulateur(saisie.parametres(contexte.base)).scenario_actuel
-    carriere = contexte.carriere(replace(saisie, liquidation=premier.age))
+    requete = REQUETES["carriere_longue"]
+    actuel = saisies.simulateur(requete).scenario_actuel
+    carriere = saisies.carriere(_au_depart(requete, premier.age))
     assert premier.age < min(ouvrir.age_ouverture(actuel, periode, carriere)
                              for _, periode in ouvrir.periodes_parcourues(actuel, carriere)[0])
 
 
-def test_un_depart_anticipe_se_dit_par_ce_qui_l_ouvre(contexte, page):
+def test_un_depart_anticipe_se_dit_par_ce_qui_l_ouvre(saisies, page):
     """La carrière longue et le handicap ouvrent le premier départ avant l'âge
     légal, au taux plein : la rangée le dit, et non « âge légal »."""
     for nom, mot in (("carriere_longue", "carrière longue"), ("handicap", "handicap")):
-        premier, *_ = _departs(contexte, nom)
+        premier, *_ = _departs(saisies, nom)
         assert premier.quoi == ("legal", "taux_plein"), nom
         assert premier.motif_ouverture == nom, nom
         assert f"{mot}, taux plein" in _bloc(page("/simuler", **REQUETES[nom])), nom
 
 
 @pytest.mark.parametrize("nom", ["parti", "par_pension", "radiation", "metier_tardif"])
-def test_sans_depart_a_choisir_le_bloc_se_tait(contexte, page, nom):
+def test_sans_depart_a_choisir_le_bloc_se_tait(saisies, page, nom):
     """Qui est parti, qui saisit sa pension, dont la saisie date elle-même un
     départ, ou dont la carrière ne se bâtit pas à l'un des âges : rien à
     chiffrer, et la page calcule comme avant, sans le bloc ni un refus."""
-    assert _departs(contexte, nom) == ()
+    assert _departs(saisies, nom) == ()
     corps = page("/simuler", **REQUETES[nom])
     assert '<h2 id="estimation-officielle"' not in corps
     assert 'id="resultats"' in corps
 
 
-def test_les_etages_font_la_pension_du_scenario_1_sans_le_minimum_vieillesse(contexte):
+def test_les_etages_font_la_pension_du_scenario_1_sans_le_minimum_vieillesse(saisies):
     """Chaque départ est la liquidation que la saisie ferait à cette date : ses
     étages et le minimum vieillesse font la pension du scénario 1, régimes
     provisionnés compris, en euros constants."""
     for nom in ("trois_ages", "fonctionnaire", "mere", "petit_salaire"):
-        saisie = Saisie.depuis_requete(REQUETES[nom])
-        for depart in contexte.departs_de_l_estimation(saisie):
-            comparaison = contexte.simuler(replace(saisie, liquidation=depart.age))
+        for depart in _departs(saisies, nom):
+            comparaison = saisies.simuler(_au_depart(REQUETES[nom], depart.age))
             actuel = comparaison.actuel
             attendu = ((actuel.pension_annuelle + actuel.pension_hors_repartition)
                        * comparaison.coefficient_euros_constants)
             assert depart.total + depart.minimum_vieillesse == pytest.approx(attendu), nom
-    fonctionnaire = _departs(contexte, "fonctionnaire")
+    fonctionnaire = _departs(saisies, "fonctionnaire")
     assert all(set(d.etages) == {"integre", "additionnel"} for d in fonctionnaire)
     assert all(d.etages["additionnel"] > 0 for d in fonctionnaire)
 
 
-def test_l_estimation_recopiee_voyage_dans_l_adresse_et_n_entre_dans_aucun_calcul(contexte):
+def test_l_estimation_recopiee_voyage_dans_l_adresse_et_n_entre_dans_aucun_calcul(saisies):
     recopie = {**REQUETES["trois_ages"], "estimation_legal": "2500",
                "estimation_automatique": "3300.5"}
-    saisie = Saisie.depuis_requete(recopie)
+    saisie = saisie_du_portage(recopie)
     assert (saisie.estimation_legal, saisie.estimation_taux_plein,
             saisie.estimation_automatique) == (2500.0, None, 3300.5)
     adresse = dict(pair.split("=", 1) for pair in saisie.requete().split("&"))
-    assert {nom: adresse.get(nom) for nom in CHAMPS_ESTIMATION} == {
+    assert {nom: adresse.get(nom) for nom in module("saisie").CHAMPS_ESTIMATION} == {
         "estimation_legal": "2500", "estimation_taux_plein": None,
         "estimation_automatique": "3300.5"}
-    sans = Saisie.depuis_requete(REQUETES["trois_ages"])
-    assert contexte.departs_de_l_estimation(saisie) == contexte.departs_de_l_estimation(sans)
+    assert _departs_du_pont(saisies, recopie) == _departs(saisies, "trois_ages")
     for valeur in ("0", "0.5", "-12"):
-        with pytest.raises(ErreurSaisie, match="estimation officielle"):
-            Saisie.depuis_requete({**REQUETES["trois_ages"], "estimation_taux_plein": valeur})
+        with pytest.raises(ErreurSite, match=refus_de_la_saisie("estimation officielle")):
+            saisie_du_portage({**REQUETES["trois_ages"], "estimation_taux_plein": valeur})
 
 
 def _nombres(cellule: str) -> int:
@@ -287,11 +334,19 @@ def _bloc(corps: str) -> str:
     return corps[debut:corps.index("</table>", debut)]
 
 
-def test_la_page_montre_le_brut_par_etage_le_net_puis_l_ecart(contexte, page):
+def _montants_du_portage(requete: dict):
+    """Les montants que la page applique à une saisie : ceux du portage
+    (``Montants.depuis``, ``moteur/js/contexte.js``)."""
+    saisie, portage = saisie_du_portage(requete), site().contexte
+    return module("contexte").Montants.depuis(
+        saisie, portage.simulateur(saisie.parametres(portage.base)))
+
+
+def test_la_page_montre_le_brut_par_etage_le_net_puis_l_ecart(saisies, page):
     requete = {**REQUETES["trois_ages"], "estimation_legal": "2500",
                "estimation_automatique": "3300"}
     bloc = _bloc(page("/simuler", **requete))
-    departs = contexte.departs_de_l_estimation(Saisie.depuis_requete(requete))
+    departs = _departs_du_pont(saisies, requete)
     entetes = re.findall(r'<th class="[^"]*" scope="col">([^<]*)</th>', bloc)
     assert entetes == ["Départ", "Base", "Complémentaire", "Total brut", "Net avant impôt",
                        "Votre estimation", "Écart"]
@@ -300,7 +355,7 @@ def test_la_page_montre_le_brut_par_etage_le_net_puis_l_ecart(contexte, page):
     # Le net de chaque âge, à SA tranche : sous la présomption, son revenu
     # fiscal est fait de cette pension seule ; et 1 % de sa propre part
     # complémentaire aux deux derniers taux (action 138, étape 2).
-    montants = Montants.depuis(Saisie.depuis_requete(requete), contexte.base)
+    montants = _montants_du_portage(requete)
     for (tete, cellules), depart, recopie in zip(rangees, departs, (2500, None, 3300)):
         valeurs = re.findall(r"<td[^>]*>(.*?)</td>", cellules)
         base, complementaire, total, net = (_nombres(v) for v in valeurs[:4])
@@ -330,7 +385,7 @@ def _ages_de_depart(corps: str) -> str:
     return corps[debut:corps.index("</details>", debut)]
 
 
-def test_plusieurs_ages_de_depart_cote_a_cote(contexte, page):
+def test_plusieurs_ages_de_depart_cote_a_cote(saisies, page):
     """Le dépliant « Partir plus tôt ou plus tard » (action 138, étape 10) :
     la carrière de la saisie liquidée chaque année, de l'âge d'ouverture au
     taux plein automatique, et ses pensions nettes sous les quatre systèmes,
@@ -339,23 +394,16 @@ def test_plusieurs_ages_de_depart_cote_a_cote(contexte, page):
     seule que la bulle dit ; rien pour qui n'a pas de départ à chiffrer. Le
     cycle de vie n'a qu'un exemplaire, le portage (action 161) : le premier
     et le dernier âge se confrontent au pilote du Python
-    (``ages_de_l_estimation``). La requête date la naissance au jour :
-    aucune présomption n'y entre, et la saisie du portage se lit sans leur
-    table."""
-    from retraite_notionnelle.pilote import ages_de_l_estimation
-
-    saisie = Saisie.depuis_requete(REQUETES["trois_ages"])
-    simulateur = contexte.simulateur(saisie.parametres(contexte.base))
-
-    def batir(age):
-        autre = replace(saisie, liquidation=age)
-        autre.verifier()
-        return contexte.carriere(autre)
-
-    balayage = site().contexte.balayage_de_l_estimation(
-        module("saisie").Saisie.depuis_requete(REQUETES["trois_ages"], False, None))
+    (``ages_de_l_estimation``), sur les carrières du pont. La requête date la
+    naissance au jour : aucune présomption n'y entre, et la saisie du portage
+    se lit sans leur table."""
+    requete = REQUETES["trois_ages"]
+    saisie = module("saisie").Saisie.depuis_requete(requete, False, None)
+    balayage = site().contexte.balayage_de_l_estimation(saisie)
     departs = [un.depart for un in balayage]
-    ages = ages_de_l_estimation(simulateur.scenario_actuel, batir, saisie.liquidation)
+    ages = ages_de_l_estimation(saisies.simulateur(requete).scenario_actuel,
+                                lambda age: saisies.carriere(_au_depart(requete, age)),
+                                saisie.liquidation)
     assert departs[0].age == ages["legal"] and departs[-1].age == ages["automatique"]
     bloc = _ages_de_depart(page("/simuler", **REQUETES["trois_ages"]))
     tableau = bloc[:bloc.index("</table>")]
@@ -389,7 +437,7 @@ def _avec_ou_sans(corps: str) -> str:
     return corps[debut:corps.index("</details>", debut)]
 
 
-def test_les_departs_sous_trois_etats_du_droit(contexte, page):
+def test_les_departs_sous_trois_etats_du_droit(saisies, page):
     """Le dépliant « Avec ou sans la réforme de 2023 » (action 138, étape 10) :
     au plus tôt et au taux plein, l'âge, le mois et le net du premier mois de
     la carrière saisie sous le droit qui s'applique, sous la loi de 2023 sans
@@ -406,8 +454,7 @@ def test_les_departs_sous_trois_etats_du_droit(contexte, page):
                        "Net au taux plein", "Durée requise"]
     rangees = re.findall(r'<tr><th[^>]*scope="row">(.*?)</th>(.*?)</tr>', bloc)
     assert len(rangees) == 3
-    saisie = Saisie.depuis_requete(REQUETES["trois_ages"])
-    montants = Montants.depuis(saisie, contexte.base)
+    montants = _montants_du_portage(REQUETES["trois_ages"])
 
     def net(depart) -> int:
         return round(montants.net_d_un_depart(
@@ -415,8 +462,7 @@ def test_les_departs_sous_trois_etats_du_droit(contexte, page):
 
     for (_, cellules), droit in zip(rangees, (None, "loi_2023_sans_suspension",
                                                "au_31_aout_2023")):
-        departs = contexte.pour(contexte.base.avec(droit_contrefactuel=droit)) \
-            .departs_de_l_estimation(saisie)
+        departs = _departs_du_pont(saisies, REQUETES["trois_ages"], droit)
         tot = next(depart for depart in departs if "legal" in depart.quoi)
         plein = next(depart for depart in departs if "taux_plein" in depart.quoi)
         valeurs = re.findall(r"<td[^>]*>(.*?)</td>", cellules)
