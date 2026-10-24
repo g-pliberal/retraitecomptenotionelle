@@ -1,14 +1,15 @@
 # Étape 14, première partie : les pensions de 2020, simulées contre publiées
 
-**Reprise, au 23 octobre 2026.** Fait : chaque grille contre l'EIR en 2020
+**Reprise, au 24 octobre 2026.** Fait : chaque grille contre l'EIR en 2020
 (7 octobre) ; la population de l'action 136, reprise du 16 au 23 octobre, de
-la décote aux natures assimilées des deux sexes, lues dans l'EIC, à leur part
-et à leurs années : 11,7 % des hommes de 1950 en carrière longue (EIR 18,3).
-Reste, une session par point : la masse assimilée des carrières pleines ; les
-femmes de 30 à 40 années, entrées à 21 ans ; les invalides et les inaptes ;
-la surcote des statutaires ; la décote selon la génération ; les
+la décote aux natures assimilées des deux sexes, lues dans l'EIC : 11,7 % des
+hommes de 1950 en carrière longue (EIR 18,3) ; le 24, la masse qui les
+plafonne, lue : son excès est le stock de 2020, non l'après 60 ans. Reste,
+une session par point : le chômage des malades ; les natures selon le rang ;
+les femmes de 30 à 40 années, entrées à 21 ans ; les invalides et les
+inaptes ; la surcote des statutaires ; la décote selon la génération ; les
 indépendants, les agricoles ; l'ASPA ; les limites. Au propriétaire : 152,
-157, le CASD, l'incitation. Détail : `…-chomage-et-natures-des-femmes.md`.
+157, le CASD, l'incitation. Détail : `…-masse-apres-60-ans-et-autres-natures.md`.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.14 ». L'étape :
 « Ce qui demande une population ou des microdonnées, avec l'action 136 (étape
