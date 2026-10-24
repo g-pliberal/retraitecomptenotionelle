@@ -32,10 +32,17 @@ Dans l'autre sens, la saisie, dont le portage gardera le seul exemplaire
 simulateur et ses paramètres, et le Python les relit sous ses propres types
 (:func:`carrieres_des_saisies`) pour les simuler de son moteur, qui garde son
 jumeau.
+
+Une demande sur le paquet du dépôt, sans paquet, ne lance pas node à chaque
+fois : les tests en font une par carrière, et chacune coûtait trois dixièmes
+de seconde, à lancer node et à relire le paquet. Le pont reste ouvert
+(``pont.mjs --servir``), sur le paquet qu'il a lu, jusqu'à ce que ce paquet
+change ou que le processus finisse.
 """
 
 from __future__ import annotations
 
+import atexit
 import dataclasses
 import enum
 import functools
@@ -45,6 +52,7 @@ import os
 import shutil
 import subprocess
 import sys
+import tempfile
 import types
 import typing
 from pathlib import Path
@@ -73,12 +81,15 @@ def version_de_node() -> bytes:
 
 def _demander(demande: dict, paquet: bytes | None) -> dict:
     """La réponse du portage à une demande, calculée sur ``paquet`` — les
-    octets d'un paquet de données —, ou sur ``moteur/donnees.json`` sans lui."""
+    octets d'un paquet de données —, ou sur ``moteur/donnees.json`` sans lui,
+    par le pont gardé ouvert (:class:`_PontOuvert`)."""
     if shutil.which("node") is None:
         raise PontIndisponible(
             "node absent : la fabrique calcule par le portage JavaScript "
             "(retraite_notionnelle/pont.mjs), sans repli sur le moteur Python")
-    entree = (b'{"paquet":' + (b"null" if paquet is None else paquet)
+    if paquet is None:
+        return _ouvert().demander(demande)
+    entree = (b'{"paquet":' + paquet
               + b',"demande":' + json.dumps(demande).encode("utf-8") + b"}")
     execution = subprocess.run(["node", str(PROGRAMME)], input=entree, cwd=RACINE_PROJET,
                                capture_output=True, check=False)
@@ -86,6 +97,73 @@ def _demander(demande: dict, paquet: bytes | None) -> dict:
         raise RuntimeError(f"{PROGRAMME.name} : "
                            + execution.stderr.decode("utf-8", "replace").strip())
     return json.loads(execution.stdout)
+
+
+def _signature_du_paquet() -> tuple[int, int]:
+    """La date et la taille du paquet du dépôt : la fabrique le récrit."""
+    etat = (RACINE_PROJET / "moteur" / "donnees.json").stat()
+    return etat.st_mtime_ns, etat.st_size
+
+
+class _PontOuvert:
+    """``pont.mjs --servir`` : node lancé une fois, sur le paquet du dépôt lu
+    une fois, une demande par ligne et sa réponse."""
+
+    def __init__(self) -> None:
+        self.signature = _signature_du_paquet()
+        self._journal = tempfile.TemporaryFile()
+        self._processus = subprocess.Popen(
+            ["node", str(PROGRAMME), "--servir"], cwd=RACINE_PROJET, stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE, stderr=self._journal, text=True, encoding="utf-8",
+            bufsize=1)
+        atexit.register(self.fermer)
+
+    def demander(self, demande: dict) -> dict:
+        try:
+            self._processus.stdin.write(json.dumps({"demande": demande}) + "\n")
+            self._processus.stdin.flush()
+        except BrokenPipeError:
+            pass  # node s'est arrêté : la lecture le dit, avec son journal
+        ligne = self._processus.stdout.readline()
+        if not ligne:
+            self._journal.seek(0)
+            raise RuntimeError(f"{PROGRAMME.name} : node s'est arrêté : "
+                               + self._journal.read().decode("utf-8", "replace")[-2000:])
+        reponse = json.loads(ligne)
+        if "erreur" in reponse:
+            raise RuntimeError(f"{PROGRAMME.name} : {reponse['erreur']}")
+        return reponse["reponse"]
+
+    def fermer(self) -> None:
+        if self._processus.poll() is None:
+            self._processus.stdin.close()
+            try:
+                self._processus.wait(timeout=10)
+            except subprocess.TimeoutExpired:
+                self._processus.kill()
+
+
+#: Le pont gardé ouvert de ce processus, s'il y en a un.
+_OUVERT: _PontOuvert | None = None
+
+
+def _ouvert() -> _PontOuvert:
+    """Le pont ouvert sur le paquet du dépôt tel qu'il est : relancé quand la
+    fabrique l'a récrit."""
+    global _OUVERT
+    if _OUVERT is None or _OUVERT.signature != _signature_du_paquet():
+        fermer()
+        _OUVERT = _PontOuvert()
+    return _OUVERT
+
+
+def fermer() -> None:
+    """Referme le pont gardé ouvert, s'il y en a un : la demande suivante le
+    relance."""
+    global _OUVERT
+    if _OUVERT is not None:
+        _OUVERT.fermer()
+        _OUVERT = None
 
 
 def _flottant(valeur) -> float:

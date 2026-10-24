@@ -35,10 +35,17 @@
  * Il écrit `{resultats, echecs}` : une carrière que le portage refuse en est
  * absente, et son motif est dans `echecs`. Un nombre non fini s'écrit `null`,
  * que `pont.py` relit en NaN.
+ *
+ * Lancé avec `--servir`, il reste ouvert, sur `moteur/donnees.json`, lu une
+ * fois : une demande par ligne, `{demande}`, et une réponse par ligne,
+ * `{reponse}`, ou `{erreur}` quand le programme a failli. `pont.py` le garde
+ * pour les demandes sans paquet, qu'un test fait une à une (action 161,
+ * étape 6).
  */
 
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
+import { createInterface } from "node:readline";
 import { fileURLToPath } from "node:url";
 
 import { DateMois } from "../../moteur/js/calendrier.js";
@@ -48,9 +55,13 @@ import { Contexte } from "../../moteur/js/contexte.js";
 import { Saisie } from "../../moteur/js/saisie.js";
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-const { paquet, demande } = JSON.parse(readFileSync(0, "utf8"));
-const contexte = new Contexte(
-  paquet ?? JSON.parse(readFileSync(join(RACINE, "moteur/donnees.json"), "utf8")));
+/** Le contexte sur le paquet de la demande, ou sur celui du dépôt. */
+let contexte;
+
+/** Le paquet du dépôt, `moteur/donnees.json`. */
+function paquetDuDepot() {
+  return JSON.parse(readFileSync(join(RACINE, "moteur/donnees.json"), "utf8"));
+}
 
 /** Une erreur du programme, que le pont ne range pas parmi les refus. */
 function erreurDuProgramme(erreur) {
@@ -270,8 +281,29 @@ function grilleDuCout({ cas, scenarios, parametres }) {
 const LECTURES = {
   carrieres, saisies, grille_du_cout: grilleDuCout, carrieres_des_saisies: carrieresDesSaisies,
 };
-const [lecture] = Object.keys(demande);
-if (Object.keys(demande).length !== 1 || !(lecture in LECTURES)) {
-  throw new Error(`demande attendue : une seule de ${Object.keys(LECTURES).join(", ")}`);
+
+/** La réponse à une demande, qui porte une seule des `LECTURES`. */
+function repondre(demande) {
+  const [lecture] = Object.keys(demande);
+  if (Object.keys(demande).length !== 1 || !(lecture in LECTURES)) {
+    throw new Error(`demande attendue : une seule de ${Object.keys(LECTURES).join(", ")}`);
+  }
+  return LECTURES[lecture](demande[lecture]);
 }
-process.stdout.write(JSON.stringify(LECTURES[lecture](demande[lecture])));
+
+if (process.argv.includes("--servir")) {
+  contexte = new Contexte(paquetDuDepot());
+  for await (const ligne of createInterface({ input: process.stdin, crlfDelay: Infinity })) {
+    let sortie;
+    try {
+      sortie = { reponse: repondre(JSON.parse(ligne).demande) };
+    } catch (erreur) {
+      sortie = { erreur: String(erreur?.stack ?? erreur) };
+    }
+    process.stdout.write(`${JSON.stringify(sortie)}\n`);
+  }
+} else {
+  const { paquet, demande } = JSON.parse(readFileSync(0, "utf8"));
+  contexte = new Contexte(paquet ?? paquetDuDepot());
+  process.stdout.write(JSON.stringify(repondre(demande)));
+}

@@ -175,6 +175,72 @@ def test_sans_node_le_pont_s_arrete_sans_repli(monkeypatch):
         pont.grille_du_cout([], SCENARIOS, Parametres())
 
 
+# -- sans paquet, le pont reste ouvert --------------------------------------------
+
+#: Une requête du simulateur : un salarié du privé né en 1965.
+REQUETE = {"naissance": "1965-03-15", "statut": "salarie_prive_non_cadre",
+           "debut": "1987-09", "liquidation": "2029-04", "salaire": "2500",
+           "unite_revenu": "euros_mois"}
+
+
+def _lancements(monkeypatch) -> list:
+    """Les node que le pont lance désormais, sur un pont refermé : chacun se
+    compte, et le pont d'une seule demande est interdit."""
+    pont.fermer()
+    lances, reel = [], subprocess.Popen
+
+    def lancer(commande, *arguments, **options):
+        lances.append(commande)
+        return reel(commande, *arguments, **options)
+
+    def interdit(*_arguments, **_options):
+        raise AssertionError("sans paquet, le pont ne se lance pas pour une seule demande")
+
+    monkeypatch.setattr(subprocess, "Popen", lancer)
+    monkeypatch.setattr(subprocess, "run", interdit)
+    return lances
+
+
+def test_sans_paquet_le_pont_reste_ouvert_d_une_demande_a_l_autre(monkeypatch):
+    """Les tests demandent au pont une carrière à la fois (action 161,
+    étape 6) : sur le paquet du dépôt, node ne se lance qu'une fois, et ne lit
+    le paquet qu'une fois, au lieu de trois dixièmes de seconde par demande ;
+    ce qu'il rend est ce que rend le pont lancé pour une seule demande."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    paquet = (RACINE_PROJET / "moteur" / "donnees.json").read_bytes()
+    seul, _ = pont.carrieres_des_saisies([{"cle": "a", "requete": REQUETE}], paquet)
+    lances = _lancements(monkeypatch)
+    premier, _ = pont.carrieres_des_saisies([{"cle": "a", "requete": REQUETE}])
+    autre, refus = pont.carrieres_des_saisies(
+        [{"cle": "b", "requete": {**REQUETE, "salaire": "3000"}},
+         {"cle": "c", "requete": {**REQUETE, "statut": "inconnu"}}])
+    try:
+        assert len(lances) == 1 and lances[0][-1] == "--servir"
+        assert premier["a"][0] == seul["a"][0]
+        assert (json.dumps(pont.carriere_en_donnees(premier["a"][1]))
+                == json.dumps(pont.carriere_en_donnees(seul["a"][1])))
+        assert list(autre) == ["b"] and "inconnu" in refus["c"]
+    finally:
+        pont.fermer()
+
+
+def test_le_pont_ouvert_se_relance_quand_le_paquet_du_depot_change(monkeypatch):
+    """Le paquet du dépôt se récrit à chaque fabrique : le pont ouvert sur
+    l'ancien se referme, et le suivant lit le nouveau."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    lances = _lancements(monkeypatch)
+    pont.carrieres_des_saisies([{"cle": "a", "requete": REQUETE}])
+    signature = pont._signature_du_paquet()
+    monkeypatch.setattr(pont, "_signature_du_paquet", lambda: (*signature, "récrit"))
+    try:
+        pont.carrieres_des_saisies([{"cle": "a", "requete": REQUETE}])
+        assert len(lances) == 2
+    finally:
+        pont.fermer()
+
+
 # -- la grille du coût : ses carrières passent en données ------------------------
 
 #: Des cases de la grille du coût où passe ce que les conventions de projection
