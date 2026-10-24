@@ -42,12 +42,9 @@ from retraite_notionnelle import pont  # noqa: E402
 from retraite_notionnelle.carriere import Affiliations  # noqa: E402
 from retraite_notionnelle.config import RACINE_DONNEES, Parametres  # noqa: E402
 from retraite_notionnelle.droit import liquidation as _liquidation  # noqa: E402
-from retraite_notionnelle.saisie import (  # noqa: E402
-    AGE_DEBUT_MINIMAL, AGE_LIQUIDATION_MAXIMAL,
-)
 from retraite_notionnelle.lignes import html_en_morceaux  # noqa: E402
 from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
-from retraite_notionnelle.web.site import rendre  # noqa: E402
+from retraite_notionnelle.web.site import module, rendre  # noqa: E402
 
 DOSSIER = RACINE / "tests" / "temoins"
 SIMULATIONS = DOSSIER / "simulations.json"
@@ -123,7 +120,7 @@ def debut_admissible(statut: str, naissance: int,
     if fermeture is None:
         return debut
     dernier = fermeture.annee - 1 - naissance
-    if dernier < AGE_DEBUT_MINIMAL:
+    if dernier < module("saisie").AGE_DEBUT_MINIMAL:
         return None
     return min(debut, dernier)
 
@@ -213,7 +210,7 @@ def _cas_releve() -> list[tuple[str, dict]]:
         }),
         # Après sa dernière année, en revanche, le relevé se prolonge jusqu'au
         # départ : la dernière année poursuivie, son revenu au rythme du
-        # salaire moyen (Contexte.releve_prolonge).
+        # salaire moyen (`releveProlonge`, moteur/js/contexte.js).
         ("releve_prolonge_jusqu_au_depart", {"releve": jusqu_en_2024}),
         # Les années ajoutées prennent le motif que la saisie leur donne :
         # chômage, puis plus d'activité du tout.
@@ -303,7 +300,7 @@ def _cas() -> list[dict]:
     # (action 151) : jusqu'au dernier âge que les tables de mortalité
     # convertissent en rente. Aucun témoin ne partait après soixante-dix ans, et
     # le diviseur n'était jamais pris si près de la fin des tables.
-    for age in ("90", str(AGE_LIQUIDATION_MAXIMAL)):
+    for age in ("90", str(module("saisie").AGE_LIQUIDATION_MAXIMAL)):
         cas.append((f"liquidation_{age}", {"liquidation": age}))
     # LA LIMITE D'ÂGE DES FONCTIONNAIRES (action 151, étape 3) : le départ
     # saisi la passe, et la radiation des cadres arrête les services et date

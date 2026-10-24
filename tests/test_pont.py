@@ -114,18 +114,22 @@ def test_le_pont_rend_au_bit_pres_ce_que_le_moteur_python_simule():
 
 def test_le_pont_simule_une_saisie_comme_le_site_au_bit_pres_du_moteur_python():
     """Les carrières d'exemple du bilan figé sont des saisies, que le portage
-    simule comme le site (``Contexte.simuler``) : de chacune, la fiche de paie
-    de l'année de référence sous le droit en vigueur, le passage aux euros
-    constants, et la pension de chaque système demandé."""
+    simule comme le site (``Contexte.simuler``, ``contexte.js``) : de chacune,
+    la fiche de paie de l'année de référence sous le droit en vigueur, le
+    passage aux euros constants, et la pension de chaque système demandé, au
+    bit près de ce que le moteur Python simule de la carrière que le portage
+    bâtit de la même saisie — la saisie n'a que son exemplaire (action 161,
+    étape 6)."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pont ne se vérifie pas ici")
-    contexte = Contexte()
-    demandes, attendus = [], {}
-    for rang, saisie in enumerate(SAISIES):
-        comparaison = contexte.simuler(Saisie(**saisie))
+    demandes = [{"cle": str(rang), "saisie": saisie} for rang, saisie in enumerate(SAISIES)]
+    carrieres, refus = pont.carrieres_des_saisies(demandes)
+    assert not refus
+    attendus = {}
+    for cle, (parametres, carriere) in carrieres.items():
+        comparaison = Simulateur(parametres).simuler(carriere)
         fiche = comparaison.remuneration.reference.droit_en_vigueur
-        demandes.append({"cle": str(rang), "saisie": saisie})
-        attendus[str(rang)] = {
+        attendus[cle] = {
             "fiche": {"annee": fiche.annee, "brut": fiche.brut, "net": fiche.net,
                       "retraite_totale": fiche.retraite_totale,
                       "retraite_employeur": fiche.retraite_employeur},
@@ -315,33 +319,6 @@ def test_une_carriere_passe_en_donnees_champ_par_champ():
         carriere.dates_entree["fonctionnaire_etat"].mois]
     assert len({ligne["part_primes"] for ligne in donnees["lignes"]
                 if ligne["affiliation"] == "fonctionnaire_etat"}) > 1
-
-
-def test_le_portage_batit_la_carriere_d_une_saisie_que_le_python_relit_a_l_identique():
-    """Dans l'autre sens : la saisie n'a qu'un exemplaire, celui du portage
-    (étape 6, la paire du contexte). Il lit la requête de chaque témoin, en
-    bâtit la carrière et les paramètres, et le Python les relit pour les
-    simuler de son moteur, qui garde son jumeau. Tout revient tel que la saisie
-    Python l'aurait bâti : chaque champ, chaque ligne, la chronologie, et
-    chaque nombre sous son type, sans quoi un témoin écrirait « 2 » où il
-    écrivait « 2.0 »."""
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le pont ne se vérifie pas ici")
-    temoins = json.loads((RACINE_PROJET / "tests" / "temoins" / "simulations.json")
-                         .read_text(encoding="utf-8"))
-    lus, echecs = pont.carrieres_des_saisies(
-        [{"cle": nom, "requete": temoin["requete"]} for nom, temoin in temoins.items()])
-    assert not echecs
-    assert list(lus) == list(temoins)
-    contexte = Contexte()
-    for nom, temoin in temoins.items():
-        saisie = Saisie.depuis_requete(temoin["requete"])
-        parametres, carriere = lus[nom]
-        assert parametres == saisie.parametres(contexte.base), nom
-        assert (json.dumps(pont.parametres_en_donnees(parametres))
-                == json.dumps(pont.parametres_en_donnees(saisie.parametres(contexte.base)))), nom
-        assert (json.dumps(pont.carriere_en_donnees(carriere))
-                == json.dumps(pont.carriere_en_donnees(contexte.carriere(saisie)))), nom
 
 
 def test_les_temoins_simulent_au_moteur_python_la_carriere_que_le_portage_batit(monkeypatch):

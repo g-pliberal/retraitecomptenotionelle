@@ -372,9 +372,10 @@ def carriere_des_donnees(donnees: dict):
 def carrieres_des_saisies(cas: list[dict], paquet: bytes | None = None,
                           ) -> tuple[dict[str, tuple], dict[str, str]]:
     """Chaque requête du simulateur, ``{"cle", "requete"}``, lue par la saisie
-    du portage, qui restera la seule (action 161, étape 6) : sous sa clé, les
-    paramètres de la saisie et la carrière que le site simulerait, relus sous
-    les types du Python (:func:`parametres_des_donnees`,
+    du portage, la seule (action 161, étape 6), ou chaque saisie aux champs de
+    ``Saisie``, ``{"cle", "saisie"}``, comme :func:`saisies` les lit : sous sa
+    clé, les paramètres de la saisie et la carrière que le site simulerait,
+    relus sous les types du Python (:func:`parametres_des_donnees`,
     :func:`carriere_des_donnees`), que son moteur simule à son tour — celle
     d'une saisie par la pension, que le portage trouve en l'inversant ; un
     relevé avec ``"prolonger": False`` s'en tient à ses années, pour qui l'a

@@ -137,14 +137,17 @@ function carriereEnDonnees(carriere) {
 }
 
 /**
- * Chaque requête du simulateur, lue par la saisie du portage, qui restera la
- * seule, comme `tests/js/moteur.test.js` lit celle d'un témoin : les paramètres de la
- * saisie, et la carrière que le site simulerait (`Contexte.carriere`), que
- * `pont.py` relit sous les types du Python pour les simuler de son moteur.
+ * Chaque requête du simulateur, lue par la saisie du portage, la seule, comme
+ * `tests/js/moteur.test.js` lit celle d'un témoin — ou chaque saisie aux champs
+ * de `Saisie`, comme `saisies` les lit : les paramètres de la saisie, et la
+ * carrière que le site simulerait (`Contexte.carriere`), que `pont.py` relit
+ * sous les types du Python pour les simuler de son moteur.
  */
 function carrieresDesSaisies({ cas }) {
-  return parCas(cas, ({ requete, prolonger = true }) => {
-    const saisie = Saisie.depuisRequete(requete, false, contexte.paquet.presomptions);
+  return parCas(cas, ({ requete, saisie: champs, prolonger = true }) => {
+    const saisie = champs === undefined
+      ? Saisie.depuisRequete(requete, false, contexte.paquet.presomptions)
+      : new Saisie(champs);
     const parametres = saisie.parametres(contexte.base);
     let carriere;
     if (saisie.releveActif && !prolonger) {
