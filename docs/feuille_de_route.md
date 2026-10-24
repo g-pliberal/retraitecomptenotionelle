@@ -6887,15 +6887,15 @@ de `contribution_etat`.
 
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
-**Reprise, au 23 octobre 2026.** Étape 6 en cours sur `contexte.py`, la
-première paire du moteur : relu, sans écart de calcul. Le portage bâtit les
-carrières des témoins, du budget, du relevé des lectures et de la
-confrontation officielle (`pont.carrieres_des_saisies`), que le moteur Python
-simule : les témoins restent identiques à l'octet. Reste, en trois lots : la
-trentaine de fichiers de tests qui lisent la saisie Python ; le centre du coût,
-qui reste en Python ; le retrait. Le propriétaire tranche deux paires de
-données, relues : les crédits des ministères, la table des agrégats. Détail :
-`2026-10-23-etape-6-premiere-partie-la-saisie-par-le-pont.md`.
+**Reprise, au 24 octobre 2026.** Étape 6 en cours sur `contexte.py`. Le
+premier lot avance : trente-neuf fichiers de tests ne lisent plus la saisie
+Python — leurs règles sur la carrière que le pont bâtit (`tests/outils_pont.py`),
+la saisie et `Montants` dans le portage, par `site()` —, le pont reste ouvert,
+les témoins identiques à l'octet. Reste du lot : six fichiers du site
+(`test_web*.py`, `outils_web.py`, `test_formulaire.py`,
+`test_estimation_du_site.py`), avec la session du site. Puis le centre du coût
+(`test_cout.py`, `test_agregats.py`…), le retrait. Le propriétaire tranche deux
+paires de données. Détail : `2026-10-24-etape-6-deuxieme-partie-les-tests-par-le-pont.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
