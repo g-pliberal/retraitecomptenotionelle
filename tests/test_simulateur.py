@@ -8152,13 +8152,16 @@ def test_avant_novembre_2012_le_ne_au_dernier_trimestre_reunit_ses_quatre_trimes
 
 def _entre_tot(annee_naissance: int, mois_naissance: int, age_debut: float, age: float,
                inactif: tuple[int, ...] = (), motif: str = "inactivite") -> dict:
-    """Un ouvrier entré tôt, au salaire moyen, qui part à ``age`` : la
-    chronologie complétée, les années ``inactif`` sous ``motif``."""
+    """Un ouvrier entré tôt, au salaire moyen, né le 15 de son mois, qui part
+    à ``age`` : la chronologie complétée, les années ``inactif`` sous
+    ``motif``. Le jour est dit : né le 1er, sa pension prendrait effet un mois
+    plus tôt (R. 351-37), et ses durées ne seraient plus celles du test."""
     from retraite_notionnelle import chronologie
 
     return chronologie.completer(chronologie.du_parcours(
         annee_naissance=annee_naissance, sexe="H", mois_naissance=mois_naissance,
-        age_liquidation=age, metiers=[Metier("salarie_prive_non_cadre", age_debut, 1.0)],
+        jour_naissance=15, age_liquidation=age,
+        metiers=[Metier("salarie_prive_non_cadre", age_debut, 1.0)],
         interruptions={annee: motif for annee in inactif}))
 
 

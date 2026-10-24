@@ -97,7 +97,9 @@ vérifiée. Le test d'abord, chaque décret lu à sa rédaction.
   porte ouverte à 160 trimestres cotisés et 160 d'assurance, contre les 168
   de L. 25 bis : son fonctionnaire a désormais trois années validées sans
   cotisation, pour l'éducation d'un enfant, et le cas de 160 d'assurance est
-  refusé.
+  refusé. Les cas du moteur disent le jour de naissance, le 15 : la garde
+  des présomptions de GitHub, qui les rejouait nés le 1er, une pension prise
+  un mois plus tôt, les avait fait tomber après l'envoi.
 - *Les fiches* `carriere_longue` et `duree_requise_carriere_longue_fonction_publique`
   (lectures, effet, une question à relire), les limites (`parametres.md`,
   `1-certification.md`), le registre (`nosretraites_cas_types`, 138.21 :
