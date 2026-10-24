@@ -7041,15 +7041,16 @@ une à une, les étapes 3 et 5. Les quatre gardes de l'étape 2 sont faites le
 
 ### 173. Le site sur tous les écrans : rien ne déborde, ce qui va ensemble se voit ensemble, moins de vide, moins de mots — `en cours`
 
-**Reprise, au 24 octobre 2026.** Faites, les étapes 1 à 5 : rien ne déborde,
-ce qui va ensemble se voit ensemble, les grands vides sont tenus ; l'accueil,
-Simuler et Coût disent la même chose en moins de mots, ouverts comme dépliés.
-Restent les étapes 6 à 10, une page par session, et, sur Coût, les deux
-schémas de la carte des flux, qu'on compare et qui s'empilent au large. Par
-quoi commencer : l'étape 6, Pourquoi changer (`/risque`) — serrer son budget de
-lecture (`BUDGETS_DE_LECTURE`, `tests/test_web.py`), lui donner sa ligne dans
+**Reprise, au 24 octobre 2026.** Faites, les étapes 1 à 6 : rien ne déborde,
+pas même une case sur sa voisine, ce qui va ensemble se voit ensemble, les
+grands vides sont tenus ; l'accueil, Simuler, Coût et Pourquoi changer disent
+la même chose en moins de mots, ouverts comme dépliés. Restent les étapes 7 à
+10, une page par session, et, sur Coût, les deux schémas de la carte des flux,
+qu'on compare et qui s'empilent au large. Par quoi commencer : l'étape 7,
+Partager et Le saviez-vous ? — serrer leurs budgets de lecture
+(`BUDGETS_DE_LECTURE`, `tests/test_web.py`), leur donner leur ligne dans
 `BUDGETS_DEPLIES` et `COTE_A_COTE` (`tests/test_ecrans.py`), les voir rouges,
-puis récrire. Détail : `173/2026-10-24-etape-5-cout.md`.
+puis récrire. Détail : `173/2026-10-24-etape-6-risque.md`.
 
 **D'où elle vient.** Le 23 octobre 2026, le propriétaire : « Le site web de
 notre projet est plutôt adapté aux écrans d'ordinateurs (et encore...) mais
@@ -7084,7 +7085,10 @@ un graphique et sa légende. »
    de 7 092 ; deux valeurs d'un tableau en fiche côte à côte à 320 points.
 5. **Moins de mots : Coût**, faite le 24 octobre 2026 : 935 mots ouverts au
    lieu de 977, 33 184 dépliés au lieu de 33 549.
-6. **Moins de mots : Pourquoi changer.**
+6. **Moins de mots : Pourquoi changer**, faite le 24 octobre 2026 : 558 mots
+   ouverts au lieu de 636, 4 935 dépliés au lieu de 5 128 ; une case de
+   tableau qui passait sur sa voisine, à 320 et 390 points, mesurée et
+   repliée en fiche.
 7. **Moins de mots : Partager et Le saviez-vous ?**
 8. **Moins de mots : Carrières types.**
 9. **Moins de mots : Droits non cotisés.**

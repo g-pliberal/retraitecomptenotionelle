@@ -1,0 +1,13 @@
+date: "2026-10-24"
+session: "action 173, étape 6 : Pourquoi changer, la même chose en moins de mots"
+consulte: >-
+  Aucun texte : la session ne touche pas au droit. La page Pourquoi changer seule, comptée comme
+  les tests la comptent, ouverte et toute dépliée, et vue dans Chromium de 320 à 1 440 points de
+  large.
+trouve: >-
+  La page montre 558 mots ouverts au lieu de 636, et 4 935 tout dépliés au lieu de 5 128 ; ce qui
+  est parti redisait, le plus souvent, un chiffre ou une phrase en gras du même dépliant. À 320 et
+  390 points, une valeur du tableau du solde passait sur sa voisine : le pli des tableaux mesure
+  désormais chaque case. Aucune simulation ne bouge.
+reste: >-
+  Rien pour la veille. Les étapes 7 à 10 de l'action 173, et les deux schémas de Coût côte à côte.
