@@ -8971,16 +8971,6 @@ function avantages(contexte, regards = null) {
     (avantage) => c.derniere
       && c.derniere.lignes[avantage.ligne_cascade || avantage.code],
   ).length;
-  // Combien de périodes du catalogue déclarent la réversion : le chiffre est
-  // COMPTÉ et non écrit, pour qu'une fiche ajoutée le déplace.
-  let declarations = 0;
-  for (const regime of contexte.simulateur().catalogue) {
-    for (const periode of regime.periodes) {
-      if ((periode.avantages_non_contributifs || []).includes("reversion")) {
-        declarations += 1;
-      }
-    }
-  }
 
   // -- premier graphique : combien existent, et depuis quand ---------------
   //
@@ -9155,11 +9145,16 @@ function avantages(contexte, regards = null) {
     "Année", null, "", 1,
   );
 
+  // Ceux qui se sont éteints sont COMPTÉS. La phrase disait la courbe « ne
+  // redescend que trois fois » : elle baisse deux fois, l'un des trois
+  // dispositifs éteints l'ayant été l'année où un autre naissait.
+  const eteints = dispositifs.filter((a) => a.fin !== null).length;
   const carteFrise = g.cle(
-    "Combien le système compte-t-il d'avantages qui ne sont pas cotisés ?",
+    "Combien d'avantages ne sont pas cotisés ?",
     `<strong>${enVigueur} aujourd'hui, contre un seul en
-${premiereFrise}.</strong> Presque aucun n'a jamais été supprimé : la courbe
-monte pendant deux siècles et ne redescend que trois fois.`,
+${premiereFrise}.</strong> Presque aucun n'a jamais été supprimé :
+${["un seul", "deux", "trois", "quatre", "cinq"][eteints - 1] ?? eteints} en deux
+siècles.`,
     frise,
     `Source : inventaire du dépôt, base légale lue article par article
 dans la base LEGI. Ce graphique ne calcule rien : il compte des lignes.`,
@@ -9173,35 +9168,31 @@ ${g.pourcentage(derniere.gratuit / derniere.observee, false, 1)} de la
 dépense</strong>, dont ${milliards(reversion, 1)} pour la seule
 <strong>réversion</strong>. Le COR chiffre les droits de solidarité à « de
 l'ordre d'un cinquième » des retraites : on y est. ${chiffres} des ${total}
-dispositifs portent un chiffre ; le tableau ci-dessous nomme les autres et dit
-ce qui manque à chacun.`,
+dispositifs portent un chiffre ; le tableau ci-dessous dit ce qui manque aux
+autres.`,
     courbeCout
-    + "<h3>Et sur soixante-six ans ?</h3>"
+    + `<h3>Et depuis ${anneesModele[0]} ?</h3>`
     + `<p class="chapeau">Le tracé ci-dessus est juste mais court : les
 comptes ne détaillent leurs postes que depuis ${anneesPubliees[0]}. Celui-ci est
-long mais étroit. Il porte les ${ordreModele.length} familles que le modèle
-reconstitue seul, de ${anneesModele[0]} à ${finModele}, calculées de la
-même façon d'un bout à l'autre.</p>
+long mais étroit : ${ordreModele.length} familles, calculées de la même façon
+d'un bout à l'autre.</p>
 <p><strong>Les deux ne s'additionnent pas et ne se comparent pas :</strong>
 ${g.pourcentage(partFinModele, false, 1)} de la dépense ici,
 ${g.pourcentage(derniere.gratuit / derniere.observee, false, 1)} au-dessus.
-C'est le champ de la mesure qui change, et ce tracé donne une forme.</p>`
+C'est le champ de la mesure qui change.</p>`
     + courbeLongue
     + "<h3>Tous les dispositifs, un par un</h3>"
-    + `<p class="chapeau">Ce que chacun coûte en ${derniere.annee}, et,
-quand la case est vide, pourquoi elle l'est. La dernière famille ne s'additionne
-pas aux autres : elle n'est pas faite de dispositifs.</p>`
+    + `<p class="chapeau">La dernière famille ne s'additionne pas aux autres :
+elle n'est pas faite de dispositifs.</p>`
     + avantagesTableComplete(contexte)
     + g.depliant(
       "Pourquoi ce chiffre est un plancher, et de combien",
-      `<p>Trois choses à savoir avant de citer ce chiffre.</p>
-<p><strong>Les plus grosses lignes sont lues, pas calculées.</strong> La
+      `<p><strong>Les plus grosses lignes sont lues, pas calculées.</strong> La
 réversion, le minimum vieillesse, la majoration pour enfants, les pensions
 d'orphelin, celles servies pour inaptitude ou invalidité : leur montant vient
 des comptes de la protection sociale et de l'enquête annuelle de la DREES
 auprès des caisses, poste par poste. Ce sont des comptes de personnes réelles,
-et ce sont les chiffres les plus sûrs de la page. Le tableau ci-dessus le dit
-case par case.</p>
+et ce sont les chiffres les plus sûrs de la page.</p>
 <p><strong>Là où les deux existaient, le poste publié a remplacé la ligne
 calculée</strong>, et l'écart entre les deux était énorme. Un seul des treize
 cas types de la grille a des enfants (deux, quand le seuil de la majoration
@@ -9211,11 +9202,10 @@ sur une même carrière, où les erreurs de niveau s'annulent au dénominateur ;
 coût d'un avantage est un compte de <em>population</em>, et il se lit chez celui
 qui compte.</p>
 <p><strong>La fenêtre est courte parce que les postes publiés le sont.</strong>
-Les lignes calculées remontent à 1959 et la réversion à 2004, mais les
-sous-postes des comptes ne sont publiés que depuis 2020 : le tracé s'arrête là
-où <em>chaque</em> terme est observé. Les empiler plus tôt dessinerait une
-falaise de quarante milliards, qui ne serait qu'un début de publication. Le
-premier graphique de la page, lui, remonte à 1800.</p>
+Les lignes calculées remontent à ${c.annees[0].annee} et la réversion à 2004,
+mais le tracé s'arrête là où <em>chaque</em> terme est observé. Les empiler plus
+tôt dessinerait une falaise de quarante milliards, qui ne serait qu'un début de
+publication.</p>
 <p><strong>Et la forme longue parle.</strong> Le minimum vieillesse faisait
 ${g.pourcentage(partDebutModele, false, 0)} de la dépense en
 ${c.annees[0].annee}, quand il y avait peu de pensions et beaucoup de
@@ -9227,8 +9217,7 @@ où l'on secourait des carrières absentes.</p>
 des militaires et des corps actifs, la majoration de durée au titre du congé
 parental ne sont ni calculées par le modèle ni isolées par les comptes ; les
 départs anticipés pour handicap, que le modèle sert à qui déclare son
-incapacité, aucun cas type ne les porte. Le tableau ci-dessus les nomme et dit,
-pour chacun, ce qui manque.</p></p>`,
+incapacité, aucun cas type ne les porte.</p>`,
     ),
     `Sources : pour les lignes lues, les comptes de la protection
 sociale de la DREES, sous-postes du risque vieillesse-survie, et son enquête
@@ -9259,8 +9248,7 @@ par année.`,
   const carteAge = g.cle(
     "Et partir plus tôt, combien cela coûte-t-il ?",
     `<strong>${milliards(derniere.anticipee, 1)} de pensions servies avant
-l'âge légal en ${derniere.annee}</strong>${rapportAge}. Une annuité versée avant
-l'âge légal n'est rattrapée par aucune décote.`,
+l'âge légal en ${derniere.annee}</strong>${rapportAge}.`,
     courbeAge + g.depliant(
       "Pourquoi le montant ne suffit pas à le dire",
       `<p>La décote est <strong>plafonnée à vingt trimestres</strong>.
@@ -9310,13 +9298,10 @@ ${tete}
 
 <div class="note resume"><strong>En clair.</strong> Le système actuel compte
 ${enVigueur} dispositifs qui ajoutent à une pension sans qu'aucune cotisation
-les ait payés, contre un seul en ${premiereFrise}. Le modèle sait en chiffrer
-${chiffres} : ${milliards(derniere.gratuit, 1)} en ${derniere.annee}, dont
-${milliards(derniere.lignes.reversion || 0, 1)} de réversion, qui est lue
-et non calculée. Il mesure à
-part ${milliards(derniere.anticipee, 1)} de pensions servies avant l'âge légal,
-que nulle décote ne rattrape. Les deux chiffres sont des planchers, et cette
-page dit de combien.</div>
+les ait payés, contre un seul en ${premiereFrise}. Le modèle en chiffre
+${chiffres}, dont la réversion, lue et non calculée. Il mesure à part les
+pensions servies avant l'âge légal, que nulle décote ne rattrape. Les deux sont
+des planchers, et cette page dit de combien.</div>
 
 <div class="fiches reperes">${reperes}</div>
 
@@ -9340,12 +9325,11 @@ formule que nul ne lit.</div>
 <h2>Et pour vous ?</h2>
 <p>Ce que ces règles donnent sur votre carrière se calcule en quelques secondes,
 dans votre navigateur : la simulation affiche votre part cotisée, puis chaque
-avantage, ligne à ligne.</p>
+avantage.</p>
 <p class="actions"><a class="bouton" href="${g.lien("/simuler")}">Calculer ma
 retraite</a><a href="${g.lien("/cout")}">Voir ce que tout cela coûte</a></p>
 
 <h2>Pour aller plus loin</h2>
-<p class="chapeau">Les mêmes dispositifs, avec leurs textes et leurs dates.</p>
 
 ${detail}
 `;
@@ -9418,7 +9402,7 @@ cotisation vieillesse <em>déplafonnée</em> : elle porte sur la totalité du
 salaire et n'ouvre aucun droit, le salaire retenu pour la pension étant borné
 au plafond.`,
     courbe
-    + `<h3>À la complémentaire, c'est une proportion, et elle est forte</h3>
+    + `<h3>À la complémentaire, c'est une proportion</h3>
 <table class="donnees"><caption>Ce qu'un salarié verse à la complémentaire, et
 ce qu'il en acquiert</caption><thead><tr><th scope="col">Tranche</th>
 <th scope="col">Acquisitif</th><th scope="col">Versé</th>
@@ -9437,8 +9421,7 @@ sans rien recevoir. Elles ne tombent pas dans la même poche : un cadre supporte
 les secondes sans toucher les premières.</p>
 <p><strong>L'assiette est la totalité du salaire, pas la part au-dessus du
 plafond.</strong> C'est l'erreur qu'on fait spontanément, et elle vaut un
-facteur dix. La cotisation déplafonnée est prélevée dès le premier euro ; ce
-qui est plafonné, c'est le salaire <em>retenu pour la pension</em>.</p>
+facteur dix : la cotisation déplafonnée est prélevée dès le premier euro.</p>
 <p><strong>C'est un plancher.</strong> Il ne porte que le régime général. La
 complémentaire n'y entre qu'en proportion, faute d'une assiette publiée par
 tranche. Quant à la fonction publique, elle n'y est pas du tout : le taux de la
@@ -9517,8 +9500,7 @@ function avantagesTableComplete(contexte) {
       '<div class="dispositifs">'
       + `<h4>${echapper(famille.libelle)}</h4>`
       + g.tableau(
-        ["Dispositif", `Coût en ${derniere.annee}`,
-          "D'où vient le chiffre, ou pourquoi il manque"],
+        ["Dispositif", `Coût en ${derniere.annee}`, "Origine, ou pourquoi il manque"],
         lignes, ["", "nombre", "texte"],
         `${famille.libelle} : ${lignes.length} dispositifs et leur coût`, true,
       )
@@ -9549,7 +9531,7 @@ function avantagesDetailListe(contexte) {
     );
   }
   return g.depliant(
-    `Les ${inventaire.avantages.length} dispositifs, avec leur base légale et leurs dates`,
+    `Les ${inventaire.avantages.length} dispositifs, leur base légale et leurs dates`,
     blocs.join(""),
     "avantages-liste",
   );
@@ -9570,6 +9552,17 @@ function avantagesDetailEtats(contexte) {
       + "dans les comptes de la protection sociale : "
       + integreesLues.map((a) => echapper(a.libelle.charAt(0).toLowerCase()
         + a.libelle.slice(1))).join(", ") + ". ";
+  // Combien de périodes du catalogue déclarent la réversion : le chiffre est
+  // COMPTÉ et non écrit, pour qu'une fiche ajoutée le déplace. La page le
+  // comptait, et écrivait 756 à la main quand le catalogue en portait 945.
+  let declarations = 0;
+  for (const regime of contexte.simulateur().catalogue) {
+    for (const periode of regime.periodes) {
+      if ((periode.avantages_non_contributifs || []).includes("reversion")) {
+        declarations += 1;
+      }
+    }
+  }
   const lignes = [
     ["chiffré", String(inventaire.compte("chiffre")),
       "La cascade du scénario 1 en isole le montant en euros. La somme de "
@@ -9582,7 +9575,7 @@ function avantagesDetailEtats(contexte) {
       + "derniers ne sont pas des dispositifs, et se lisent ailleurs."],
     ["déclaré, non servi", String(inventaire.compte("declare")),
       "Une fiche de régime les déclare, et le scénario 1 ne les sert pas à "
-      + "l'assuré. La réversion est de ceux-là : 756 périodes du catalogue "
+      + `l'assuré. La réversion est de ceux-là : ${declarations} périodes du catalogue `
       + "l'annoncent, et le modèle ne la liquide que pour le conjoint qu'on lui "
       + "déclare, pas pour tous les ménages. Son coût est donc LU dans "
       + "l'enquête de la DREES auprès des caisses, et c'est le chiffre le plus "
@@ -9637,18 +9630,17 @@ bonifications des corps actifs renvoyaient encore, il y a peu, à des « statuts
 particuliers » que personne n'avait ouverts. Lire n'est pas appliquer.`;
   return g.depliant(
     "Trois choses que ces chiffres ne disent pas",
-    `<p><strong>Elle ne dit pas ce que le système économiserait.</strong>
+    `<p><strong>Ils ne disent pas ce que le système économiserait.</strong>
 Supprimer un avantage ne rend pas son coût : il faudrait décider ce que
 l'assuré aurait fait sans lui — travailler plus longtemps, partir avec moins, ne
 pas partir. Le dépôt ne tranche pas à sa place, et ces chiffres disent ce qui
 est <em>versé</em>, non ce qui serait <em>épargné</em>.</p>
-<p><strong>Elle ne compte pas deux fois la même chose.</strong> Les trois
+<p><strong>Ils ne comptent pas deux fois la même chose.</strong> Les trois
 « écarts structurels » de l'inventaire (une décote qui n'est pas actuarielle,
 un rendement supérieur à ce que l'assiette porte, un financement par l'impôt)
-ne sont pas des dispositifs et ne figurent donc pas dans le comptage. Ils
-portent sur la même pension, vue sous un autre angle, et les additionner serait
-un double compte.</p>
-<p><strong>Elle ne remplace pas la loi.</strong> Chaque base légale a été lue
+ne figurent pas dans le comptage : ils portent sur la même pension, vue sous un
+autre angle, et les additionner serait un double compte.</p>
+<p><strong>Ils ne remplacent pas la loi.</strong> Chaque base légale a été lue
 dans la base LEGI, version par version. ${reserveLegale}</p>`,
     "avantages-limites",
   );

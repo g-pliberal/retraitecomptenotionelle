@@ -1897,20 +1897,20 @@ affirmations:
 
   - id: avantages.ne_dit_pas_economie
     page: /avantages
-    extrait: "Elle ne dit pas ce que le système économiserait."
+    extrait: "Ils ne disent pas ce que le système économiserait."
     porte: dit ce que le chiffre ne prétend pas, rien à contrôler
     etat: sans_portee
 
   - id: avantages.pas_deux_fois
     page: /avantages
-    extrait: "Elle ne compte pas deux fois la même chose."
+    extrait: "Ils ne comptent pas deux fois la même chose."
     porte: les écarts structurels sont hors du comptage des dispositifs
     etat: verifiee
     controle: ecarts_structurels_hors_comptage
 
   - id: avantages.ne_remplace_pas_la_loi
     page: /avantages
-    extrait: "Elle ne remplace pas la loi."
+    extrait: "Ils ne remplacent pas la loi."
     porte: une mise en garde
     etat: sans_portee
 

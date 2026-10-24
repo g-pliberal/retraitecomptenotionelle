@@ -3654,7 +3654,11 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # a diminué. Et ajouter un dispositif ne coûte plus une phrase à personne.
     #
     # Le budget des tableaux vaut ``None`` : il se calcule sur l'inventaire.
-    "/avantages": (1300, 5, 8, None),
+    # Serrée le 24 octobre 2026 (action 173, étape 9), de 1 300 mots de prose
+    # à 1 070, pour 1 163 lus : le résumé redisait les deux montants que les
+    # repères posent dessous, le chapeau de l'inventaire ses colonnes, le
+    # tracé long son titre, et « Pour aller plus loin » s'annonçait.
+    "/avantages": (1070, 5, 8, None),
     # Méthode et Sources font une page depuis le 23 septembre 2026. Leurs
     # bornes s'additionnaient à 700 mots de prose, pour 631 lus ; la page
     # fusionnée en montre 557 — un seul « En clair », plus de plan —, et sa
@@ -3774,6 +3778,11 @@ BUDGETS_DEPLIES: dict[str, int] = {
     # la page, la promesse contre laquelle se lit chaque case, l'âge légal de
     # la proposition, et définissaient deux mots que le glossaire définit.
     "/cas-types": 2750,
+    # Droits non cotisés tout déplié : 7 617 mots le 24 octobre 2026 (action
+    # 173, étape 9), dont 4 948 dans ses vingt et un tableaux, que l'étape
+    # laisse : c'est l'inventaire. Ses dépliants annonçaient « trois choses »
+    # qui étaient cinq, et renvoyaient au tableau que la carte venait de nommer.
+    "/avantages": 7470,
 }
 
 

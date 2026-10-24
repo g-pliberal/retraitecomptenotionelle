@@ -2181,6 +2181,32 @@ def test_la_forme_longue_donne_au_minimum_vieillesse_sa_seule_part(page):
         100 * premiere["modele"]["minimum_vieillesse"] / premiere["observee"])
 
 
+#: Les petits nombres que la page écrit en lettres.
+EN_LETTRES = {"un": 1, "deux": 2, "trois": 3, "quatre": 4, "cinq": 5, "six": 6,
+              "sept": 7, "huit": 8, "neuf": 9}
+
+
+def test_droits_non_cotises_comptent_ce_que_leurs_phrases_disent(page, contexte):
+    """Deux nombres de la page s'écrivaient à la main, et avaient vieilli. La
+    réversion, que « 756 périodes du catalogue » annonçaient, l'est par 945,
+    que la page comptait sans écrire son compte. La courbe des dispositifs « ne
+    redescend que trois fois », quand elle baisse deux fois : trois dispositifs
+    se sont éteints, l'un l'année où un autre naissait (action 173, étape 9)."""
+    texte = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", page("/avantages"))))
+    periodes = sum(
+        1 for regime in contexte.simulateur().catalogue for periode in regime.periodes
+        if "reversion" in (periode.avantages_non_contributifs or ()))
+    assert f"La réversion est de ceux-là : {periodes} périodes du catalogue" in texte
+
+    eteints = [avantage for avantage in contexte.inventaire_avantages().avantages
+               if avantage.famille != "ecarts_structurels" and avantage.fin is not None]
+    trouve = re.search(r"Presque aucun n'a jamais été supprimé : (\w+)", texte)
+    assert trouve, "la frise ne dit plus combien de dispositifs se sont éteints"
+    compte = trouve.group(1)
+    assert (int(compte) if compte.isdigit() else EN_LETTRES.get(compte)) == len(eteints)
+    assert "redescend" not in texte
+
+
 # -- action 47 : la phrase du programme ----------------------------------------
 
 
