@@ -448,6 +448,27 @@ def test_entre_plus_tard_le_salarie_part_plus_tard_et_le_militaire_a_son_heure()
                for decalage in range(-2, 3))
 
 
+def test_la_pyramide_compte_chaque_cohorte_de_la_grille_des_son_depart():
+    """Chacune des cinq cohortes de chaque couple de la grille du coût part,
+    sous le droit de sa génération, l'année d'un âge que la pyramide compte :
+    son plancher ne retire à aucune ses premières années de pension. Le plus
+    précoce, le militaire radié à 48 ans et demi (action 152), part l'année de
+    ses 48 ans, à chaque génération ; l'agent de conduite de la SNCF, à 50 ans
+    au plus tôt, sous le droit des générations d'avant 1950 (action 138, étape
+    3)."""
+    from retraite_notionnelle import Parametres
+    from retraite_notionnelle.donnees.population import AGE_MINIMAL
+    from retraite_notionnelle.facteurs_depense import dates_des_departs
+
+    dates = dates_des_departs(Parametres(scenario_projection="cor_reference"))
+    ages = {}
+    for (code, generation, decalage), date in dates.items():
+        ages.setdefault(code, set()).add(date.annee - generation - decalage)
+    assert min(min(par_cas) for par_cas in ages.values()) >= AGE_MINIMAL
+    assert ages["militaire"] == {48}
+    assert min(ages["agent_sncf_conduite"]) == 50
+
+
 def test_le_temoin_de_l_eic_dit_sa_source_et_redonne_ses_cumuls():
     """Le cumul des trimestres validés par affilié d'avant 23 ans, à la fin de
     l'année de chaque âge, que la DREES tire de l'échantillon interrégimes de
@@ -870,9 +891,11 @@ def test_la_part_stable_mesuree_garde_sa_prevalence_parmi_les_20_64_ans(awg):
     seule. Si elle gardait son rapport aux 65 ans et plus, comme la note du 16
     octobre le supposait, la dynamique du modèle, portée au périmètre de l'AWG,
     manquerait de plus d'un demi-point l'effet de ses moins de 65 ans de 2022
-    à 2070 ; gardant sa prévalence parmi les 20-64 ans, elle le refait à 0,2
-    point près — 0,12 le 18 octobre, 0,16 depuis que l'ex-invalide de la Cnav
-    part à soixante-deux ans dans la grille (action 138, étape 7). Reste
+    à 2070 ; gardant sa prévalence parmi les 20-64 ans, elle le refait à un
+    quart de point près — 0,12 le 18 octobre, 0,16 depuis que l'ex-invalide de
+    la Cnav part à soixante-deux ans dans la grille (action 138, étape 7), 0,22
+    depuis que le militaire y compte dès l'année de ses 48 ans, et à l'horizon
+    ceux de la génération 2020 (étape 3, 24 octobre). Reste
     2022-2030 : les retraités du modèle reculent plus tard, et en laissaient
     plus de 0,2 point (note du 17 octobre 2026), dont la grille faisait 0,18
     (note du 18 octobre, « la grille ») ; datés chacun à sa génération, ils en
@@ -905,7 +928,7 @@ def test_la_part_stable_mesuree_garde_sa_prevalence_parmi_les_20_64_ans(awg):
                                  population_65_awg)["precoce"]
     aux_65_ans, aux_20_64_ans = precoce(), precoce(population_20_64)
     assert aux_65_ans[2070] - publie[2070] > 0.5
-    assert abs(aux_20_64_ans[2070] - publie[2070]) < 0.2
+    assert abs(aux_20_64_ans[2070] - publie[2070]) < 0.25
     assert aux_20_64_ans[2030] - publie[2030] > 0.05
 
 

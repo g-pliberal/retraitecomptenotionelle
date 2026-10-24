@@ -941,10 +941,10 @@ def ages_moyens_de_depart(departs: Mapping[tuple[str, int, int], DateMois],
     mois où elle part, pesée du poids de son cas type l'année où sa génération
     atteint :data:`AGE_VIEILLESSE` ans (``poids``, ceux de ``cout.py``). Le COR
     compte chaque liquidant (figure 4.5 du rapport de juin 2026) ; l'effectif
-    de la pyramide ne pèse pas, qui ne commence qu'à 50 ans quand le militaire
-    part à 48. ``decotes``, par la même clé, fait partir une part de la cohorte
-    avant son taux plein, avec une décote, le mois dit
-    (:func:`parts_decotees`)."""
+    de la pyramide ne pèse pas, qui commençait à 50 ans quand la mesure a été
+    écrite, le militaire partant à 48. ``decotes``, par la même clé, fait
+    partir une part de la cohorte avant son taux plein, avec une décote, le
+    mois dit (:func:`parts_decotees`)."""
     termes: dict[int, list[tuple[float, float]]] = {}
     for nee, part, sorties in _cohortes_pesees(departs, poids, decotes):
         age = somme_ordonnee(fraction * _age_au_depart(date, nee) for fraction, date in sorties)

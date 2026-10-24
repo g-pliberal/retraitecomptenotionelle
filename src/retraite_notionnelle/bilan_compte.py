@@ -125,13 +125,14 @@ def age_moyen(masses: dict[int, float]) -> float:
 
 
 def effectif_cotisant(population: Population, age: int, annee: int) -> float:
-    """L'effectif d'une classe d'âge, y compris sous 50 ans.
+    """L'effectif d'une classe d'âge, y compris sous la pyramide.
 
-    La pyramide du dépôt commence à 50 ans : elle ne compte que des retraités
-    (``population.py``). Un cotisant plus jeune est compté par l'effectif de
-    sa génération l'année de ses 50 ans, que l'INSEE projette jusqu'en 2070 :
-    la mortalité d'ici là le surestime de 2 à 3 %, le solde migratoire le
-    sous-estime d'autant, et la durée de rotation n'en lit que la forme.
+    La pyramide du dépôt commence à 48 ans, où part le militaire : elle ne
+    compte que des retraités (``population.py``). Un cotisant plus jeune est
+    compté par l'effectif de sa génération l'année de ses 48 ans, que l'INSEE
+    projette jusqu'en 2070 : la mortalité d'ici là le surestime de 2 à 3 %, le
+    solde migratoire le sous-estime d'autant, et la durée de rotation n'en lit
+    que la forme.
     """
     if age >= AGE_MINIMAL:
         return population.effectif(age, annee)
@@ -155,7 +156,7 @@ def profils_par_age(pensionnes: Sequence[Pensionne], population: Population,
     de sa classe d'âge et par le poids de sa caisse — ses retraités du côté
     des pensions, ses cotisants du côté des cotisations. La cohorte née
     ``decalage`` ans après la grille verse, l'année ``t``, ce que la grille
-    versait en ``t − decalage`` — sous 50 ans, la pyramide s'arrêtant là,
+    versait en ``t − decalage`` — sous 48 ans, la pyramide s'arrêtant là,
     l'effectif est celui de :func:`effectif_cotisant` —, et touche, une fois partie, la pension de la
     grille revalorisée selon la règle du système, comme dans l'engagement.
 

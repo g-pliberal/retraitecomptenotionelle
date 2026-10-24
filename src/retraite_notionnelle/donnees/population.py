@@ -15,7 +15,7 @@ résultat affiché.
 
 Deux séries en sont tirées, qui ne servent pas à la même chose :
 
-* ``effectif(age, annee)`` compte des **retraités** — d'où le plancher à 50 ans,
+* ``effectif(age, annee)`` compte des **retraités** — d'où le plancher à 48 ans,
   en deçà duquel aucune pension de droit direct n'est servie ;
 * ``actifs(annee)`` compte les **20-64 ans**, et ne sert qu'à projeter le
   dénominateur d'une part de PIB.
@@ -33,8 +33,8 @@ sous la mortalité que lisent ses diviseurs et ses survies de cohortes.
 Sous une variante de fécondité ou de migrations (``demographie``, même étape),
 que seule la page Coût lit — elles ne touchent pas le diviseur —, les 20-64 ans
 sont ceux du scénario de l'INSEE ; sous les migrations, la pyramide aussi, et
-les arrivées tardives (:class:`ArriveesTardives`). La pyramide des 50 ans et
-plus de la fécondité est celle du central : ses naissances n'ont pas 50 ans en
+les arrivées tardives (:class:`ArriveesTardives`). La pyramide des 48 ans et
+plus de la fécondité est celle du central : ses naissances n'ont pas 48 ans en
 2070. L'INSEE ne publie pas de scénario qui croise deux composantes : une
 variante démographique sous une hypothèse d'espérance de vie autre que la
 centrale est refusée.
@@ -50,8 +50,11 @@ from .chargement import (Fiabilite, SerieAnnuelle, charger_serie_annuelle,
 from ..somme import somme_ordonnee
 
 #: Âge plancher de la série, et donc âge en deçà duquel ``effectif`` rend zéro.
-#: Le cas type qui liquide le plus tôt part à 52 ans.
-AGE_MINIMAL = 50
+#: Le cas type qui liquide le plus tôt, le militaire radié à 48 ans et demi
+#: (action 152), part l'année de ses 48 ans. À 50 ans, jusqu'au 24 octobre
+#: 2026, le plancher lui retirait ses deux premières années de pension
+#: (action 138, étape 3).
+AGE_MINIMAL = 48
 
 #: Les hypothèses d'espérance de vie dont la pyramide est publiée, celles de
 #: ``Parametres.hypothese_esperance_vie``.

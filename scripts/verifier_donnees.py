@@ -1331,7 +1331,7 @@ def source_population_par_age_variantes() -> dict[tuple, float]:
     la page Coût y compte ses retraités quand le diviseur lit la même
     hypothèse (``Parametres.hypothese_esperance_vie``) ; et celle des
     scénarios de migrations, sous ``Population(demographie=...)``. Ceux de
-    la fécondité n'en ont pas : leur pyramide des 50 ans et plus est celle
+    la fécondité n'en ont pas : leur pyramide des 48 ans et plus est celle
     du central."""
     return {
         (hypothese, *cle.split("|")): effectif
@@ -5954,7 +5954,7 @@ CERTIFICATIONS = (
         decimales=0,
         tolerance=0.51,
         entete=(
-            "# Population au 1er janvier par âge, France, 50 ans et plus",
+            "# Population au 1er janvier par âge, France, 48 ans et plus",
             "# source_id: insee_projections_population",
             "# unite: personnes",
             "# fiabilite:",
@@ -5968,13 +5968,15 @@ CERTIFICATIONS = (
             "#             frontière est datée par l'INSEE lui-même en pied de",
             "#             tableau.",
             "#",
-            "# POURQUOI 50 ANS ET PLUS, ET PAS TOUS LES ÂGES",
+            "# POURQUOI 48 ANS ET PLUS, ET PAS TOUS LES ÂGES",
             "# ----------------------------------------------",
             "# Cette série ne sert qu'à compter des RETRAITÉS. Aucune pension de",
-            "# droit direct n'est servie avant 50 ans — le cas type qui part le plus",
-            "# tôt, l'agent de conduite de la SNCF, liquide à 52 ans. Reprendre les",
-            "# cinquante premiers âges quadruplerait le poids du paquet que charge",
-            "# le site sans déplacer un seul chiffre.",
+            "# droit direct n'est servie avant 48 ans — le cas type qui part le plus",
+            "# tôt, le militaire radié à 48 ans et demi, part l'année de ses 48 ans.",
+            "# Jusqu'au 24 octobre 2026, la série commençait à 50 ans, et lui",
+            "# retirait ses deux premières années de pension (action 138, étape 3).",
+            "# Reprendre les premiers âges quadruplerait le poids du paquet que",
+            "# charge le site sans déplacer un seul chiffre.",
             "#",
             "# Au-delà de 104 ans, le classeur regroupe sous « 105 ans ou plus » :",
             "# 1 570 personnes en 2024, deux millionièmes de la population. Ce",
@@ -6126,7 +6128,7 @@ CERTIFICATIONS = (
         tolerance=0.51,
         niveau="projetee",
         entete=(
-            "# Population au 1er janvier par âge, France, 50 ans et plus, sous les",
+            "# Population au 1er janvier par âge, France, 48 ans et plus, sous les",
             "# hypothèses d'espérance de vie et de migrations basses et hautes",
             "# source_id: insee_projections_population",
             "# unite: personnes",
@@ -6153,7 +6155,7 @@ CERTIFICATIONS = (
             "# que la page Coût seule lit : ils ne touchent pas le diviseur. Ils",
             "# s'écartent du central dès 2024 ; comme les autres, ils ne s'écrivent",
             "# qu'à partir de 2026. Ceux de la fécondité n'ont pas de ligne ici : leurs",
-            "# naissances n'ont pas 50 ans en 2070, et leur pyramide est celle du",
+            "# naissances n'ont pas 48 ans en 2070, et leur pyramide est celle du",
             "# central, au résident près.",
             "#",
             "# fiabilite: projetee — une projection du producteur, qui vaut estimee",

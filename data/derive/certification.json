@@ -120,18 +120,18 @@
    "niveau": "estimee",
    "source": "INSEE, projections de population 2026, scénario central : population au 1er janvier et décès par âge, 1962-2070",
    "valeurs": 130,
-   "verifiee_le": "2026-10-16"
+   "verifiee_le": "2026-10-24"
   },
   "arrivees_tardives_variantes": {
-   "ajoutees": 260,
+   "ajoutees": 0,
    "colonne": "valeur",
    "corrigees": 0,
    "empreinte": "5146f166c98d974d",
-   "identiques": 0,
+   "identiques": 260,
    "niveau": "estimee",
    "source": "INSEE, projections de population 2026, scénarios de solde migratoire bas et haut : population au 1er janvier et décès par âge, 1962-2070",
    "valeurs": 260,
-   "verifiee_le": "2026-10-16"
+   "verifiee_le": "2026-10-24"
   },
   "assiette_revenu_mixte": {
    "ajoutees": 0,
@@ -747,7 +747,7 @@
    "niveau": "haute",
    "source": "dérivée des quotients INED de Vallin et Meslé",
    "valeurs": 28,
-   "verifiee_le": "2026-10-19"
+   "verifiee_le": "2026-10-24"
   },
   "esperances_projetees": {
    "ajoutees": 0,
@@ -1253,7 +1253,7 @@
    "niveau": "certifiee",
    "source": "INSEE, estimations de population, scénario central des projections 2026",
    "valeurs": 62,
-   "verifiee_le": "2026-10-16"
+   "verifiee_le": "2026-10-24"
   },
   "population_active_projetee": {
    "ajoutees": 0,
@@ -1264,51 +1264,51 @@
    "niveau": "projetee",
    "source": "INSEE, projections de population 2026, scénario central",
    "valeurs": 47,
-   "verifiee_le": "2026-10-16"
+   "verifiee_le": "2026-10-24"
   },
   "population_active_variantes": {
-   "ajoutees": 180,
+   "ajoutees": 0,
    "colonne": "effectif",
    "corrigees": 0,
    "empreinte": "06cdbb01146c7256",
-   "identiques": 90,
+   "identiques": 270,
    "niveau": "projetee",
    "source": "INSEE, projections de population 2026, scénarios d'espérance de vie, de fécondité et de migrations bas et hauts",
    "valeurs": 270,
-   "verifiee_le": "2026-10-16"
+   "verifiee_le": "2026-10-24"
   },
   "population_par_age": {
-   "ajoutees": 0,
+   "ajoutees": 124,
    "colonne": "effectif",
    "corrigees": 0,
-   "empreinte": "86f910a2a8348641",
+   "empreinte": "af859193a8127343",
    "identiques": 3410,
    "niveau": "certifiee",
    "source": "INSEE, estimations de population, scénario central des projections 2026",
-   "valeurs": 3410,
-   "verifiee_le": "2026-10-16"
+   "valeurs": 3534,
+   "verifiee_le": "2026-10-24"
   },
   "population_par_age_projetee": {
-   "ajoutees": 0,
+   "ajoutees": 94,
    "colonne": "effectif",
    "corrigees": 0,
-   "empreinte": "e11ac05261b4c4b0",
+   "empreinte": "44b3d8d8def2f1d1",
    "identiques": 2585,
    "niveau": "projetee",
    "source": "INSEE, projections de population 2026, scénario central",
-   "valeurs": 2585,
-   "verifiee_le": "2026-10-16"
+   "valeurs": 2679,
+   "verifiee_le": "2026-10-24"
   },
   "population_par_age_variantes": {
-   "ajoutees": 4950,
+   "ajoutees": 360,
    "colonne": "effectif",
    "corrigees": 0,
-   "empreinte": "0f15268a1ba4aea8",
-   "identiques": 4950,
+   "empreinte": "bc767631fb076a82",
+   "identiques": 9900,
    "niveau": "projetee",
    "source": "INSEE, projections de population 2026, scénarios d'espérance de vie et de migrations bas et hauts",
-   "valeurs": 9900,
-   "verifiee_le": "2026-10-16"
+   "valeurs": 10260,
+   "verifiee_le": "2026-10-24"
   },
   "premier_trimestre": {
    "ajoutees": 768,
@@ -1638,7 +1638,7 @@
    "niveau": "haute",
    "source": "la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre",
    "valeurs": 512,
-   "verifiee_le": "2026-10-19"
+   "verifiee_le": "2026-10-24"
   },
   "taux_cotisation_annuels": {
    "ajoutees": 0,
@@ -1814,7 +1814,7 @@
    "niveau": "haute",
    "source": "OpenFisca-France, barème IPP de la cotisation forfaitaire annuelle de la garantie minimale de points (gmp_cot_f_a), transcrit le 2 octobre 2026",
    "valeurs": 29,
-   "verifiee_le": "2026-10-19"
+   "verifiee_le": "2026-10-24"
   },
   "valeurs_point_independants": {
    "ajoutees": 0,
@@ -1847,7 +1847,7 @@
    "niveau": "haute",
    "source": "Ircantec, page « Valeur du point » et paramètres annuels, 2022-2026, lus le 23 septembre 2026",
    "valeurs": 23,
-   "verifiee_le": "2026-10-19"
+   "verifiee_le": "2026-10-24"
   },
   "valeurs_point_msa": {
    "ajoutees": 1,

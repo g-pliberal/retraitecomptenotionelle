@@ -133,8 +133,11 @@ def test_la_grille_compte_ses_retraites_aux_ages_de_l_eacr(grille, eacr):
 
 def test_la_grille_part_trop_tot_et_trop_groupee(grille, eacr):
     """Les nouveaux retraités de la grille en 2024 : un âge moyen de
-    liquidation plus jeune que celui de l'EACR, d'un demi à un an et demi
-    (62,3 contre 63,6 ; 62,7 le 16 octobre 2026), plus du tiers à 62 ans pour
+    liquidation plus jeune que celui de l'EACR, d'un an à deux (61,9 contre
+    63,6 depuis le 24 octobre 2026, où la pyramide compte le militaire, radié à
+    48 ans, l'année même de son départ : il fait 2,8 % des nouveaux retraités
+    de la grille, au poids que sa caisse a dans le stock ; 62,3 jusque-là, 62,7
+    le 16 octobre), plus du tiers à 62 ans pour
     un quart — trois sur dix le 18 octobre, avant que l'inapte et l'ex-invalide
     de la Cnav n'y partent (action 138, étape 7), presque la moitié avant que
     l'agent sédentaire de la CNRACL ne porte quatre cinquièmes de sa caisse —,
@@ -150,7 +153,7 @@ def test_la_grille_part_trop_tot_et_trop_groupee(grille, eacr):
     remplacé la grille, ou qu'un âge a bougé."""
     serie = eacr["droits_directs_par_age"]["series"]["nl_ddir"]["ensemble"]
     ecart = M.age_moyen_publie(serie) - M.age_moyen(grille)
-    assert 0.5 < ecart < 1.5
+    assert 1.0 < ecart < 2.0
     flux, publie = M.parts(M.grille_par_age(grille)), M.parts(M.publie_par_depart(serie))
     assert flux["62"] > 1.1 * publie["62"]
     assert flux["60"] > 2.5 * publie["60"]

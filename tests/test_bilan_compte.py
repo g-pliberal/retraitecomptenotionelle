@@ -14,7 +14,7 @@ from retraite_notionnelle.bilan_compte import (
 )
 from retraite_notionnelle.castypes import CAS_TYPES
 from retraite_notionnelle.config import RACINE_DONNEES
-from retraite_notionnelle.donnees.population import AGE_MINIMAL, Population
+from retraite_notionnelle.donnees.population import Population
 
 
 def test_la_duree_de_rotation_d_un_systeme_stationnaire():
@@ -90,12 +90,14 @@ def test_les_reserves_du_bilan_sont_celles_de_la_derniere_annee_publiee():
     assert reserves.derniere_annee() == 2025
 
 
-def test_un_cotisant_de_moins_de_50_ans_est_compte_a_ses_50_ans():
+def test_un_cotisant_plus_jeune_que_la_pyramide_est_compte_a_son_plancher():
+    """La pyramide commence à 48 ans, où part le militaire : un cotisant de 30
+    ans en 2025 est compté par l'effectif de sa génération à 48 ans, en 2043."""
     population = Population(RACINE_DONNEES)
     assert effectif_cotisant(population, 60, 2025) == population.effectif(60, 2025)
+    assert effectif_cotisant(population, 49, 2025) == population.effectif(49, 2025) > 0.0
     assert population.effectif(30, 2025) == 0.0
-    assert effectif_cotisant(population, 30, 2025) == population.effectif(
-        AGE_MINIMAL, 2045)
+    assert effectif_cotisant(population, 30, 2025) == population.effectif(48, 2043)
     assert effectif_cotisant(population, -1, 2025) == 0.0
 
 

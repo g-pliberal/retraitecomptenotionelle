@@ -210,13 +210,19 @@ def test_la_depense_est_certifiee(depenses: DepensesRetraite):
 
 
 def test_les_generations_couvrent_la_fenetre():
+    """Assez de générations pour que la moyenne pondérée ait un sens, et
+    toutes celles dont une cohorte part avant l'horizon : le militaire, le
+    départ le plus précoce, part l'année de ses 48 ans. La génération 2020,
+    dont les militaires nés de 2018 à 2022 partent de 2066 à 2070, en est ; la
+    suivante, dont le premier partirait en 2071, non. La grille s'arrêtait à
+    2015, pour un départ au plus tôt à 52 ans (action 138, étape 3)."""
     liste = generations()
     assert liste[0] == PREMIERE_GENERATION
     assert liste[-1] <= DERNIERE_GENERATION
-    # Assez de générations pour que la moyenne pondérée ait un sens, et assez
-    # récentes pour qu'une pension soit encore servie à l'horizon.
     assert len(liste) >= 15
-    assert liste[-1] + 52 <= HORIZON
+    plus_tot = 48
+    assert liste[-1] - PAS_GENERATIONS // 2 + plus_tot <= HORIZON
+    assert liste[-1] + PAS_GENERATIONS - PAS_GENERATIONS // 2 + plus_tot > HORIZON
 
 
 def test_le_cout_du_systeme_actuel_est_la_depense_observee(cout):
@@ -373,8 +379,67 @@ def test_la_pyramide_dit_le_vieillissement(population: Population):
 
 
 def test_les_effectifs_hors_plage_sont_nuls(population: Population):
-    assert population.effectif(49, 2024) == 0.0
+    assert population.effectif(47, 2024) == 0.0
     assert population.effectif(200, 2024) == 0.0
+
+
+def test_le_militaire_sert_sa_pension_des_l_annee_de_ses_48_ans(population: Population):
+    """Radié à 48 ans et demi (action 152), le militaire de la grille part
+    l'année de ses 48 ans, à chaque génération. Ses têtes comptent dès cette
+    année-là et la suivante, au système actuel comme dans son régime : les
+    personnes de 48 et de 49 ans au 1er janvier, que l'INSEE publie, 830 132 et
+    871 081 en 2024. La pyramide commençait à 50 ans, et les lui retirait
+    (action 138, étape 3)."""
+    from retraite_notionnelle.cout import (
+        CLES_CAS_TYPES, TETES_TOUTES, Pensionne, VoletLiberal, _masses, _masses_regimes)
+
+    simulateur = Simulateur(Parametres()).pour_la_projection()
+    revalorisation = RevalorisationServie(simulateur, 2000, 2030)
+    volet = VoletLiberal(annee_liquidation=2040, annee_ouverture_garantie=2040,
+                         pension=1.0, ressources_garantie=1.0)
+    # La génération 1974 de la grille : ses cinq cohortes, nées de 1972 à 1976,
+    # partent de 2020 à 2024, et ont de 52 à 48 ans en 2024.
+    militaire = Pensionne(code="militaire", generation=1974, annee_liquidation=2022,
+                          pensions={cle: 1.0 for cle in CLES_CAS_TYPES}, propre=volet,
+                          parts_regimes={"fonction_publique_etat": 1.0})
+    attendu = 830132 + 871081 + population.effectif_tranche(50, 52, 2024)
+    _, _, tetes = _masses([militaire], population, 2024, {"militaire": 1.0}, revalorisation)
+    assert tetes[TETES_TOUTES] == pytest.approx(attendu, rel=1e-12)
+    _, par_regime = _masses_regimes([militaire], population, 2024, {"militaire": 1.0},
+                                    revalorisation)
+    assert par_regime["fonction_publique_etat"] == pytest.approx(attendu, rel=1e-12)
+
+
+def test_la_recette_ne_compte_ses_cotisants_qu_a_partir_de_50_ans(population: Population):
+    """La recette pèse ses cotisants par la même pyramide, qui commence à 48 ans
+    pour le militaire : elle ne compte toujours aucun cotisant de moins de 50
+    ans, ni à son compte ni à son pilier. Ce biais, qui fausse le facteur
+    d'assiette du scénario 6, est au propriétaire (action 138, étape 19,
+    « Trouvé en chemin » de la note du 14 octobre) : le militaire ne le déplace
+    pas."""
+    from retraite_notionnelle.cout import (
+        ASSIETTE_ACTUELLE, CLES_ASSIETTES, CLES_CAS_TYPES, CLES_RECETTES, TAUX_REELS,
+        Pensionne, VoletLiberal, _masses_cotisations, _masses_pilier)
+
+    annees = range(2015, 2031)
+    volet = VoletLiberal(annee_liquidation=2040, annee_ouverture_garantie=2040,
+                         pension=1.0, ressources_garantie=1.0,
+                         cotisations={annee: 1.0 for annee in annees},
+                         assiette={annee: 1.0 for annee in annees},
+                         pilier={annee: (1.0, 0.0, 0.0, 1.0) for annee in annees})
+    # La génération 1976 de la grille : en 2024, ses cinq cohortes ont de 50 à
+    # 46 ans, et cotisent toutes.
+    cotisant = Pensionne(code="x", generation=1976, annee_liquidation=2040,
+                         pensions={cle: 1.0 for cle in CLES_CAS_TYPES}, propre=volet,
+                         cotisations={cle: {annee: 1.0 for annee in annees}
+                                      for cle in (TAUX_REELS, ASSIETTE_ACTUELLE)})
+    cinquante_ans = population.effectif(50, 2024)
+    masses = _masses_cotisations([cotisant], population, 2024, {"x": 1.0})
+    for cle in CLES_RECETTES + CLES_ASSIETTES:
+        assert masses[cle] == pytest.approx(cinquante_ans, rel=1e-12), cle
+    pilier = _masses_pilier([cotisant], population, 2024, {"x": 1.0}, {"x": 1.0})
+    assert pilier["versements"] == pytest.approx(cinquante_ans, rel=1e-12)
+    assert pilier["encours"] == pytest.approx(cinquante_ans, rel=1e-12)
 
 
 def test_la_pyramide_emprunte_avant_1962_et_refuse_apres_l_horizon(
@@ -1112,12 +1177,20 @@ DECOMPOSITION_GROUPES_SUIVIS = {
 #: CNRACL de +11,2 à +10,9 %. Le 20 octobre, la valeur de service de
 #: l'Agirc-Arrco relevée de 1,4 % au 1er novembre 2026, que le dépôt
 #: reconduisait gelée : sa pension relative passe de +23,1 à +24,8 %, et son
-#: cliquet remonte : la règle est le droit.
+#: cliquet remonte : la règle est le droit. L'étape 3, le 24 octobre, compte
+#: le militaire dès l'année de ses 48 ans, quand la pyramide, qui commençait à
+#: 50 ans, lui retirait ses deux premières années de pension, et fait entrer
+#: dans la grille la génération 2020, dont les militaires partent de 2066 à
+#: 2070 : la dépense de la FPE passe de +21,4 à +26,5 %, sa pension relative de
+#: +5,6 à +6,1 %, et leurs cliquets remontent, comme le 18 octobre, parce
+#: qu'un défaut en masquait un autre : l'année du calage, 2025, comptait le
+#: militaire à partir de 50 ans, l'horizon sans ses cinq cohortes les plus
+#: jeunes. La grille le pèse, jusqu'en 2070, de la part de sa caisse en 2024.
 DECOMPOSITION_GROUPES_CLIQUETS = {
-    ("pension_relative", "fpe"): 0.06,
+    ("pension_relative", "fpe"): 0.07,
     ("pension_relative", "cnracl"): 0.04,
     ("pension_relative", "agirc_arrco"): 0.25,
-    ("depense_part_pib", "fpe"): 0.22,
+    ("depense_part_pib", "fpe"): 0.27,
     ("depense_part_pib", "cnracl"): 0.11,
     ("depense_part_pib", "regimes_speciaux"): 0.33,
 }

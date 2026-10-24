@@ -21,8 +21,8 @@ from retraite_notionnelle.donnees.chargement import (
 from retraite_notionnelle.donnees.depenses import DepensesRetraite
 from retraite_notionnelle.donnees.effectifs import EffectifsRetraites
 from retraite_notionnelle.donnees.equilibre import ComptesRetraite
-from retraite_notionnelle.donnees.population import (ArriveesTardives, Population,
-                                                    VARIANTES_DEMOGRAPHIQUES)
+from retraite_notionnelle.donnees.population import (AGE_MINIMAL, ArriveesTardives,
+                                                    Population, VARIANTES_DEMOGRAPHIQUES)
 from retraite_notionnelle.donnees.macro import DonneesMacro
 from retraite_notionnelle.donnees.mortalite import DonneesMortalite
 from retraite_notionnelle.donnees.regimes import (
@@ -2146,6 +2146,30 @@ def test_la_pyramide_suit_la_fecondite_et_les_migrations():
         Population(RACINE_DONNEES, "haute", "migrations_haute")
     with pytest.raises(ValueError, match="inconnue"):
         Population(RACINE_DONNEES, demographie="guerre")
+
+
+def test_la_pyramide_commence_a_48_ans_l_age_ou_part_le_militaire():
+    """Le militaire de la grille du coût, radié à 48 ans et demi (action 152),
+    part l'année de ses 48 ans : la pyramide, qui compte les retraités,
+    commence à cet âge, et non plus à 50 ans (action 138, étape 3). Ses
+    effectifs sont ceux de l'onglet ``population`` des classeurs de l'INSEE :
+    au 1er janvier 2024, 830 132 personnes de 48 ans et 871 081 de 49 ans au
+    scénario central ; 870 848 et 912 473 au 1er janvier 2023, observées ; à 48
+    ans en 2070, 844 389 sous l'espérance de vie basse, 851 238 sous la haute,
+    781 506 sous les migrations basses, 915 255 sous les hautes, et 848 380
+    sous la fécondité, comme au central."""
+    centrale = Population(RACINE_DONNEES)
+    assert AGE_MINIMAL == 48
+    assert (centrale.effectif(48, 2024), centrale.effectif(49, 2024)) == (830132, 871081)
+    assert (centrale.effectif(48, 2023), centrale.effectif(49, 2023)) == (870848, 912473)
+    assert centrale.effectif(47, 2024) == 0.0
+    assert centrale.effectif(48, 2070) == 848380
+    for hypothese, attendu in (("basse", 844389), ("haute", 851238)):
+        assert Population(RACINE_DONNEES, hypothese).effectif(48, 2070) == attendu
+    for demographie, attendu in (("migrations_basse", 781506), ("migrations_haute", 915255),
+                                 ("fecondite_basse", 848380), ("fecondite_haute", 848380)):
+        assert Population(RACINE_DONNEES, demographie=demographie).effectif(
+            48, 2070) == attendu, demographie
 
 
 def test_une_pyramide_de_variante_absente_est_refusee(tmp_path):

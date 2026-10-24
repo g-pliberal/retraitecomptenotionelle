@@ -343,10 +343,12 @@ POSTES_DEPENSES: tuple[str, ...] = (
 #: modèle refuse — à juste titre — de calculer quoi que ce soit.
 PREMIERE_GENERATION = 1880
 
-#: Dernière génération retenue. Née en 2015, elle liquide au plus tôt à 52 ans,
-#: soit en 2067 : les suivantes ne serviraient aucune pension avant l'horizon de
-#: la projection, et la simulation serait payée pour rien.
-DERNIERE_GENERATION = 2015
+#: Dernière génération retenue. Née en 2020, elle porte les cohortes nées de
+#: 2018 à 2022, dont le militaire, radié à 48 ans et demi, part de 2066 à 2070 :
+#: les suivantes ne serviraient aucune pension avant l'horizon de la
+#: projection, et la simulation serait payée pour rien. La grille s'arrêtait à
+#: 2015, pour un départ au plus tôt à 52 ans (action 138, étape 3).
+DERNIERE_GENERATION = 2020
 
 #: Pas de la grille de générations. Cinq ans suffisent : le rapport varie de
 #: moins d'un point d'une génération à la suivante, et le pas commande
@@ -3404,6 +3406,24 @@ def _masses_regimes(pensionnes: list[Pensionne], population: Population, annee: 
     return masses, tetes
 
 
+#: L'âge en deçà duquel la recette ne compte aucun cotisant : 50 ans, l'ancien
+#: plancher de la pyramide, qu'elle garde depuis que la pyramide commence à 48
+#: ans, où part le militaire (action 138, étape 3). Ce biais des cotisants de
+#: moins de 50 ans, qui fausse le facteur d'assiette du scénario 6, est au
+#: propriétaire (action 138, étape 19, « Trouvé en chemin » de la note du 14
+#: octobre) : le corriger, c'est peser les cotisants par
+#: ``bilan_compte.effectif_cotisant``.
+AGE_MINIMAL_DES_COTISANTS = 50
+
+
+def _effectif_cotisant(population: Population, age: int, annee: int) -> float:
+    """L'effectif d'une classe d'âge qui cotise, nul sous
+    :data:`AGE_MINIMAL_DES_COTISANTS`."""
+    if age < AGE_MINIMAL_DES_COTISANTS:
+        return 0.0
+    return population.effectif(age, annee)
+
+
 def _masses_cotisations(pensionnes: list[Pensionne], population: Population,
                         annee: int, poids_cas: dict[str, float]) -> dict[str, float]:
     """Ce que les COTISANTS versent une année donnée, sous les deux barèmes.
@@ -3436,7 +3456,8 @@ def _masses_cotisations(pensionnes: list[Pensionne], population: Population,
         if part <= 0.0:
             continue
         for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
-            poids = (population.effectif(annee - pensionne.generation - decalage, annee)
+            poids = (_effectif_cotisant(population, annee - pensionne.generation - decalage,
+                                        annee)
                      * alignees.get((pensionne.code, pensionne.generation, decalage), 1.0))
             if poids <= 0.0:
                 continue
@@ -3488,7 +3509,8 @@ def _masses_pilier(pensionnes: list[Pensionne], population: Population,
         part_cotisants = poids_cotisants.get(pensionne.code, 0.0)
         part_retraites = poids_retraites.get(pensionne.code, 0.0)
         for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
-            poids = population.effectif(annee - pensionne.generation - decalage, annee)
+            age = annee - pensionne.generation - decalage
+            poids = population.effectif(age, annee)
             if poids <= 0.0:
                 continue
             # Le pilier est celui de la proposition, et celui du volet de la
@@ -3503,7 +3525,8 @@ def _masses_pilier(pensionnes: list[Pensionne], population: Population,
             if (flux is not None and part_cotisants > 0.0
                     and annee <= depart):
                 versement, frais_v, frais_g, encours = flux
-                vivants = part_cotisants * poids * cotisants.get(cle, 1.0)
+                vivants = (part_cotisants * _effectif_cotisant(population, age, annee)
+                           * cotisants.get(cle, 1.0))
                 masses["versements"] += vivants * versement
                 masses["frais_versement"] += vivants * frais_v
                 masses["frais_gestion"] += vivants * frais_g

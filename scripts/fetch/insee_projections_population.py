@@ -21,10 +21,13 @@ telle quelle, et n'appelle `certifiee` que ce qui est observé.
 
 DEUX SÉRIES, ET UN SEUL FICHIER SOURCE
 ---------------------------------------
-* les effectifs par âge, retenus **à partir de 50 ans** — aucune pension de
-  droit direct n'est servie avant, le cas type qui part le plus tôt liquidant à
-  52 ans. Descendre plus bas quadruplerait le poids du paquet que charge le
-  site sans changer un seul chiffre ;
+* les effectifs par âge, retenus **à partir de 48 ans** — aucune pension de
+  droit direct n'est servie avant, le cas type qui part le plus tôt, le
+  militaire radié à 48 ans et demi (action 152), partant l'année de ses 48
+  ans. Jusqu'au 24 octobre 2026, la série commençait à 50 ans, et retirait au
+  militaire ses deux premières années de pension (action 138, étape 3).
+  Descendre plus bas quadruplerait le poids du paquet que charge le site sans
+  changer un seul chiffre ;
 * l'effectif des **20-64 ans**, que le classeur agrège lui-même. Il ne sert pas
   à compter des retraités mais à projeter le PIB : rapporter une dépense à la
   richesse produite suppose de savoir combien de personnes la produisent, et
@@ -69,8 +72,8 @@ diffèrent du central que par la fécondité (`11_fec_haute.xlsx`,
 `12_fec_basse.xlsx` : 1,70 ou 1,20 enfant par femme) ou par le solde
 migratoire (`15_smi_haut.xlsx`, `16_smi_bas.xlsx` : + 230 000 ou + 70 000
 par an). Ils ne touchent pas le diviseur, mais la page Coût : la fécondité,
-les seuls 20-64 ans, donc le PIB — ses naissances n'ont pas 50 ans en 2070,
-et le contrôle vérifie que la pyramide des 50 ans et plus est celle du
+les seuls 20-64 ans, donc le PIB — ses naissances n'ont pas 48 ans en 2070,
+et le contrôle vérifie que la pyramide des 48 ans et plus est celle du
 central, qui n'est donc pas réécrite ; les migrations, la pyramide, les
 20-64 ans et les arrivées tardives, que :func:`arrivees_tardives` refait sur
 leur classeur. Ils sont écrits avec ceux de l'espérance de vie
@@ -120,10 +123,12 @@ DERNIERE_ANNEE_COMMUNE = 2025
 #: Onglet du classeur qui porte la pyramide des âges.
 FEUILLE = "population"
 
-#: Âge à partir duquel les effectifs sont repris. Le cas type qui liquide le
-#: plus tôt — l'agent de conduite de la SNCF — part à 52 ans ; on descend deux
-#: ans plus bas pour que la borne ne soit pas rasante.
-AGE_MINIMAL = 50
+#: Âge à partir duquel les effectifs sont repris : celui où part le cas type
+#: qui liquide le plus tôt, le militaire, radié à 48 ans et demi à chaque
+#: génération. La borne est rasante, et un test la tient
+#: (``tests/test_facteurs_depense.py``, chaque cohorte de la grille part à un
+#: âge que la pyramide compte).
+AGE_MINIMAL = 48
 
 #: Dernier âge publié par année d'âge. Au-delà, le classeur regroupe sous
 #: « 105+ » : 1 570 personnes en 2024, soit deux millionièmes de la population.
@@ -317,21 +322,22 @@ def extraire(grille: dict[tuple[int, int], float | str]) -> dict:
 def controler(charge: dict) -> None:
     """La population de 2070 doit être celle que l'INSEE publie.
 
-    Le contrôle ne porte pas sur ce qu'on reprend — les 50 ans et plus — mais
+    Le contrôle ne porte pas sur ce qu'on reprend — les 48 ans et plus — mais
     sur ce qui le borne : si le classeur changeait de scénario, de champ ou de
     disposition, ce total bougerait. Il est reconstitué en additionnant les
-    50 ans et plus aux 20-64 ans, dont la tranche 50-64 est commune, puis en
+    48 ans et plus aux 20-64 ans, dont la tranche 48-64 est commune, puis en
     complétant par les moins de 20 ans que le classeur agrège aussi.
     """
     par_age = charge["par_age"]
-    total_50 = sum(
+    total = sum(
         effectif for cle, effectif in par_age.items() if cle.startswith("2070|")
     )
-    # Ordre de grandeur seulement : les 50 ans et plus sont un peu moins de la
-    # moitié de la population projetée en 2070.
-    if not 25e6 < total_50 < 40e6:
+    # Ordre de grandeur seulement : les 48 ans et plus sont la moitié de la
+    # population projetée en 2070.
+    if not 25e6 < total < 40e6:
         raise ValueError(
-            f"population des 50 ans et plus en 2070 invraisemblable : {total_50:,.0f}"
+            f"population des {AGE_MINIMAL} ans et plus en 2070 invraisemblable : "
+            f"{total:,.0f}"
         )
 
 
@@ -360,7 +366,7 @@ def controler_variantes(variantes: dict[str, dict]) -> None:
 
 def controler_composantes(central: dict, variantes: dict[str, dict]) -> None:
     """Les scénarios de fécondité et de migrations : la fécondité ne touche
-    pas les 50 ans et plus avant 2070, et la basse compte moins de 20-64 ans
+    pas les 48 ans et plus avant 2070, et la basse compte moins de 20-64 ans
     que la haute dès que ses naissances y entrent ; les migrations comptent,
     sous la basse, moins de 20-64 ans et moins de 65 ans ou plus que sous la
     haute, chaque année projetée. Un classeur échangé le trahirait."""

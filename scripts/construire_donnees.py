@@ -80,7 +80,8 @@ from retraite_notionnelle.noyau import vocabulaire  # noqa: E402
 from retraite_notionnelle.lignes import json_en_lignes  # noqa: E402
 from retraite_notionnelle.remuneration import charger_prelevements  # noqa: E402
 from retraite_notionnelle.restitution import POSTES_REMUNERATION  # noqa: E402
-from retraite_notionnelle.donnees.population import CarrieresIncompletes, Population  # noqa: E402
+from retraite_notionnelle.donnees.population import (  # noqa: E402
+    AGE_MINIMAL, CarrieresIncompletes, Population)
 from retraite_notionnelle.donnees.taux import CourbeTauxSansRisque  # noqa: E402
 from retraite_notionnelle.donnees.regimes import (  # noqa: E402
     CatalogueRegimes,
@@ -566,7 +567,7 @@ def _population() -> dict:
     """
     population = Population(DONNEES)
     annees = population.annees()
-    ages = list(range(50, population.age_maximal + 1))
+    ages = list(range(AGE_MINIMAL, population.age_maximal + 1))
     carrieres = CarrieresIncompletes(DONNEES)
     generations = range(carrieres.premiere_generation, carrieres.derniere_generation + 1)
     return {
