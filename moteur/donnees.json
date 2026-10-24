@@ -38526,6 +38526,7 @@ null
 "presomptions":{
 "agent_en_activite":{"dit":"l'agent public est en position d'activité pendant chacune de ses années d'emploi","valeur":"en activité, avec services effectifs"},
 "aucun_autre_revenu_que_ses_pensions":{"dit":"le revenu fiscal de référence du foyer est fait de ses seules pensions","valeur":"la pension du système 1, et les ressources du conjoint déclaré, abattues de 10 %"},
+"categorie_de_la_pension_d_invalidite":{"dit":"la pension d'invalidité dont l'assuré ne dit pas la catégorie est de la première catégorie quand il travaille à l'âge de la substitution, de la deuxième sinon","valeur":"la première à qui travaille à l'âge de la substitution, la deuxième sinon"},
 "charge_jusqu_a_l_age_limite":{"dit":"l'enfant du défunt que la chronologie ne dit ni étudiant, ni apprenti, ni infirme, n'est à la charge du survivant que jusqu'à l'âge limite, seize ans, puis sa majorité depuis 2016","valeur":"l'âge limite"},
 "conjoint_de_l_autre_sexe":{"dit":"le conjoint déclaré est de l'autre sexe que l'assuré","valeur":"l'autre sexe"},
 "deces_apres_le_depart":{"dit":"sans décès déclaré, l'assuré qui déclare un conjoint est supposé décéder juste après son départ, ou au 1er janvier de l'année courante s'il est déjà parti","valeur":"au départ"},
@@ -224361,34 +224362,56 @@ null
 "id":"pension_d_invalidite_substituee",
 "regimes":["regime_general","msa_salaries","cancava","organic","rsi"],
 "versions":[
-{"bornes":{"liquidation.date_effet":[null,"1983-06-01"]},"exception_de":null,"id":"ordonnance_1945","parametres":{"age":60,"invalide_qui_travaille":"aucune_derogation","plancher":"pension_d_invalidite"},"texte":"JORFTEXT000000333985"},
-{"bornes":{"liquidation.date_effet":["1983-06-01","2010-03-01"]},"exception_de":null,"id":"plancher_avts_1983","parametres":{"age":60,"invalide_qui_travaille":"opposition","plancher":"avts","plancher_invalidite_avant":"1983-05-31"},"texte":"JORFTEXT000000504456"},
+{"bornes":{"liquidation.date_effet":[null,"1961-03-30"]},"exception_de":null,"id":"ordonnance_1945","parametres":{"age":60,"annees_du_salaire_moyen":10,"invalide_qui_travaille":"aucune_derogation","plancher":"pension_d_invalidite","taux_des_categories":[0.3,0.4,0.4]},"texte":"JORFTEXT000000333985"},
+{
+"bornes":{"liquidation.date_effet":["1961-03-30","1983-06-01"]},
+"exception_de":null,
+"id":"majoration_de_1961",
+"parametres":{"age":60,"annees_du_salaire_moyen":10,"invalide_qui_travaille":"aucune_derogation","plancher":"pension_d_invalidite","taux_des_categories":[0.3,0.5,0.5]},
+"texte":"LEGIARTI000006761875"
+},
+{
+"bornes":{"liquidation.date_effet":["1983-06-01","2010-03-01"]},
+"exception_de":null,
+"id":"plancher_avts_1983",
+"parametres":{"age":60,"annees_du_salaire_moyen":10,"invalide_qui_travaille":"opposition","plancher":"avts","plancher_invalidite_avant":"1983-05-31","taux_des_categories":[0.3,0.5,0.5]},
+"texte":"JORFTEXT000000504456"
+},
 {
 "bornes":{"liquidation.date_effet":["2010-03-01","2011-07-01"]},
 "exception_de":null,
 "id":"invalide_qui_travaille_2010",
-"parametres":{"age":60,"invalide_qui_travaille":"maintien_jusqu_a_la_demande","maintien_au_plus_tard":"age_annulation_decote","plancher":"avts","plancher_invalidite_avant":"1983-05-31"},
+"parametres":{"age":60,"annees_du_salaire_moyen":10,"invalide_qui_travaille":"maintien_jusqu_a_la_demande","maintien_au_plus_tard":"age_annulation_decote","plancher":"avts","plancher_invalidite_avant":"1983-05-31","taux_des_categories":[0.3,0.5,0.5]},
 "texte":"LEGIARTI000021537943"
 },
 {
 "bornes":{"liquidation.date_effet":["2011-07-01","2017-09-01"]},
 "exception_de":null,
 "id":"age_legal_2011",
-"parametres":{"age":"age_legal_par_generation","invalide_qui_travaille":"maintien_jusqu_a_la_demande","maintien_au_plus_tard":"age_annulation_decote","plancher":"avts","plancher_invalidite_avant":"1983-05-31"},
+"parametres":{"age":"age_legal_par_generation","annees_du_salaire_moyen":10,"invalide_qui_travaille":"maintien_jusqu_a_la_demande","maintien_au_plus_tard":"age_annulation_decote","plancher":"avts","plancher_invalidite_avant":"1983-05-31","taux_des_categories":[0.3,0.5,0.5]},
 "texte":"LEGIARTI000024112993"
 },
 {
 "bornes":{"liquidation.date_effet":["2017-09-01","2023-09-01"]},
 "exception_de":null,
 "id":"demandeurs_d_emploi_2017",
-"parametres":{"age":"age_legal_par_generation","invalide_qui_travaille":"maintien_jusqu_a_la_demande","maintien_au_plus_tard":"age_annulation_decote","maintien_du_demandeur_d_emploi_mois":6,"plancher":"avts","plancher_invalidite_avant":"1983-05-31"},
+"parametres":{
+"age":"age_legal_par_generation",
+"annees_du_salaire_moyen":10,
+"invalide_qui_travaille":"maintien_jusqu_a_la_demande",
+"maintien_au_plus_tard":"age_annulation_decote",
+"maintien_du_demandeur_d_emploi_mois":6,
+"plancher":"avts",
+"plancher_invalidite_avant":"1983-05-31",
+"taux_des_categories":[0.3,0.5,0.5]
+},
 "texte":"LEGIARTI000034736797"
 },
 {
 "bornes":{"liquidation.date_effet":["2023-09-01",null]},
 "exception_de":null,
 "id":"soixante_deux_ans_2023",
-"parametres":{"age":62,"invalide_qui_travaille":"maintien_jusqu_a_la_demande","maintien_au_plus_tard":"age_annulation_decote","maintien_du_demandeur_d_emploi_mois":6,"plancher":"avts","plancher_invalidite_avant":"1983-05-31"},
+"parametres":{"age":62,"annees_du_salaire_moyen":10,"invalide_qui_travaille":"maintien_jusqu_a_la_demande","maintien_au_plus_tard":"age_annulation_decote","maintien_du_demandeur_d_emploi_mois":6,"plancher":"avts","plancher_invalidite_avant":"1983-05-31","taux_des_categories":[0.3,0.5,0.5]},
 "texte":"LEGIARTI000047453137"
 }
 ]
