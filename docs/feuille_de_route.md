@@ -7071,16 +7071,16 @@ une à une, les étapes 3 et 5. Les quatre gardes de l'étape 2 sont faites le
 
 ### 173. Le site sur tous les écrans : rien ne déborde, ce qui va ensemble se voit ensemble, moins de vide, moins de mots — `en cours`
 
-**Reprise, au 24 octobre 2026.** Faites, les étapes 1 à 8 : rien ne déborde,
+**Reprise, au 24 octobre 2026.** Faites, les étapes 1 à 9 : rien ne déborde,
 ce qui va ensemble se voit ensemble — les cartes à publier deux par ligne dès
 1 024 points, une fiche deux valeurs par ligne à 320, la grille de Carrières
 types en colonnes — ; l'accueil, Simuler, Coût, Pourquoi changer, Partager, Le
-saviez-vous ? et Carrières types disent la même chose en moins de mots. Restent
-les étapes 9 et 10, une page par session, et, sur Coût, les deux schémas de la
-carte des flux, qui s'empilent au large. Par quoi commencer : l'étape 9, Droits
-non cotisés — serrer son budget de lecture, lui donner sa ligne dans
+saviez-vous ?, Carrières types et Droits non cotisés disent la même chose en
+moins de mots. Restent l'étape 10, Méthode et sources, et, sur Coût, les deux
+schémas de la carte des flux, qui s'empilent au large. Par quoi commencer :
+l'étape 10 — serrer son budget de lecture, lui donner sa ligne dans
 `BUDGETS_DEPLIES` et `COTE_A_COTE`, les voir rouges, puis récrire. Détail :
-`173/2026-10-24-etape-8-cas-types.md`.
+`173/2026-10-24-etape-9-avantages.md`.
 
 **D'où elle vient.** Le 23 octobre 2026, le propriétaire : « Le site web de
 notre projet est plutôt adapté aux écrans d'ordinateurs (et encore...) mais
@@ -7127,7 +7127,10 @@ un graphique et sa légende. »
    ouverts au lieu de 497, 2 701 dépliés au lieu de 2 844 ; la grille repliée
    en colonnes, sept générations sur une ligne dès 390 points, et toute fiche
    deux valeurs par ligne au moins à 320.
-9. **Moins de mots : Droits non cotisés.**
+9. **Moins de mots : Droits non cotisés**, faite le 24 octobre 2026 : 1 066
+   mots ouverts au lieu de 1 163, 7 430 dépliés au lieu de 7 617 ; deux nombres
+   écrits à la main, et périmés, comptés : les périodes qui déclarent la
+   réversion, les dispositifs éteints.
 10. **Moins de mots : Méthode et sources.**
 
 Pour chaque page des étapes 3 à 10 : serrer d'abord son budget de lecture, le
