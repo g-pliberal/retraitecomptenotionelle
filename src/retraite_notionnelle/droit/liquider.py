@@ -1980,7 +1980,8 @@ def duree_du_regime_aligne(carriere: Carriere, durees,
     2121 et 2122) : sous le même plafond que la durée qui proratise
     (:meth:`compter.Durees.plafond`), l'année de la date d'effet ne compte que
     ses trimestres civils écoulés, même ceux qu'une période assimilée y valide
-    sans ligne de carrière."""
+    sans ligne de carrière, même l'année où l'exploitant agricole cesse
+    (R. 173-3-2, II)."""
     sommes: dict[int, int] = {}
     for membre in membres:
         for annee, n in durees.par_annee["assurance"].get(membre, {}).items():
@@ -1988,7 +1989,7 @@ def duree_du_regime_aligne(carriere: Carriere, durees,
                     and annee < coordonner.ALIGNEMENT_DES_ARTISANS_ET_COMMERCANTS):
                 continue
             sommes[annee] = sommes.get(annee, 0) + n
-    return (somme_ordonnee(min(somme, durees.plafond("assurance", annee))
+    return (somme_ordonnee(min(somme, durees.plafond("assurance", annee, membres))
                 for annee, somme in sommes.items())
             + somme_ordonnee(durees.hors_annee["assurance"].get(membre, 0) for membre in membres))
 

@@ -26,8 +26,7 @@ effet: >-
   « 31 pts x 22 ans = 682 pts » ; le salarié agricole n'a plus que ses six meilleures
   années sur dix, depuis le 28 septembre 2026 aussi. Restent approchés : les années d'avant 1990, dont le
   barème de points n'est pas lu, qui entrent dans la moyenne par les points que vaut
-  leur rendement ; les durées, que R. 173-3-2 arrête au 31 décembre de l'année d'effet
-  et que le moteur compte à la date d'effet ; les majorations de points de 1952 à 1972
+  leur rendement ; les majorations de points de 1952 à 1972
   (R. 732-67) et les rachats, qu'il ne connaît pas ; le revenu du collaborateur et de
   l'aide familial depuis 2016, que le moteur prend, depuis le 16 octobre 2026, de leur
   assiette forfaitaire (400 SMIC jusqu'en 2025, 600 depuis), quand L. 732-24 le tirerait
@@ -53,7 +52,21 @@ effet: >-
   trois taux, 17,11 % depuis 2017 : 638,81 SMIC au minimum, et non les 600 du plancher
   que le moteur leur donnait ; 719,40 à 700 SMIC. Le chef à titre secondaire, qui ne
   doit pas l'AVI (L. 731-42, 1°), et l'assuré affilié depuis 2016, que la phrase ne vise
-  pas, gardent le plancher de 600 SMIC.
+  pas, gardent le plancher de 600 SMIC. Les durées que R. 173-3-2, II, répartit, arrêtées
+  pour ce régime « au 31 décembre de l'année civile de l'entrée en jouissance » et pour
+  les régimes alignés « au dernier jour du trimestre civil précédant l'entrée en
+  jouissance », sont celles du moteur, qui les compte à la date d'effet : l'année où
+  l'exploitant cesse y compte ses quatre trimestres (L. 731-10-1), et rien d'autre ne
+  donne à ce régime de trimestres après la date d'effet — ses autres lignes, l'année
+  cotisée au prorata (R. 731-83) comprise, n'ont que leurs mois, qui la précèdent,
+  aucune période assimilée de la chronologie n'y va, et l'année de l'installation ne
+  cotise pas (R. 731-57). Depuis le 24 octobre
+  2026 (action 131), ces quatre trimestres ne valent plus pour les régimes alignés :
+  cette année-là, une période assimilée sans ligne de carrière n'y compte que les
+  trimestres civils qui précèdent l'effet (`compter.plafond_de_l_annee`). L'exploitant
+  en stage de janvier à mai 2030, parti le 1er juin, compte 29 trimestres au régime
+  général, et non 31 ; des vingt-cinq années, 4 aux régimes alignés et 21 à ce régime,
+  et non 5 et 20.
 sources:
   lu_le: 2026-10-24
   prochaine_relecture: 2027-03-31
@@ -245,6 +258,22 @@ sources:
       l'AVA déplafonnée, 2,24 %, sur 7 128 € (600 SMIC) au moins, au SMIC du 1er janvier
       2025, 11,88 €
     url: https://iledefrance.msa.fr/lfp/documents/98865/1903181/75+Le+Calcul+de+vos+cotisations+NSA+2025.pdf
+    date: 2026-10-24
+  - type: legifrance
+    reference: >-
+      code de la sécurité sociale, R. 173-3-2, II, dans ses trois rédactions de 2026
+      (LEGIARTI000053327958, LEGIARTI000054059837, LEGIARTI000054589934) : « Les durées
+      d'assurance mentionnées au premier alinéa du présent II sont arrêtées, pour les
+      régimes mentionnés à l'article L. 173-1-2, au dernier jour du trimestre civil
+      précédant l'entrée en jouissance de la pension et, pour le régime des personnes non
+      salariées des professions agricoles, au 31 décembre de l'année civile de l'entrée en
+      jouissance de la pension. » Code rural, R. 731-83 (LEGIARTI000006597265) : les
+      cotisations de qui, « après avoir exercé simultanément une activité agricole non
+      salariée et une autre activité professionnelle, viennent à cesser la première de ces
+      activités », ou prennent une autre activité, « sont calculées au prorata de la
+      fraction de l'année considérée comprise entre le 1er janvier et le premier jour du
+      mois civil suivant la date de cessation de l'activité agricole non salariée ». Lus
+      dans l'index LEGI du dépôt
     date: 2026-10-24
 textes_a_rattacher:
 - id: LEGIARTI000053280317

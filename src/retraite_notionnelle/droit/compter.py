@@ -455,7 +455,7 @@ class Durees:
         return 0 if self.etranger is None else self.etranger.trimestres(
             self.etranger.famille)
 
-    def plafond(self, table: str, annee: int) -> int:
+    def plafond(self, table: str, annee: int, membres: tuple[str, ...] = ()) -> int:
         """Les trimestres qu'un compte retient au plus d'une année : les
         trimestres civils de l'activité qui en couvre le plus, quatre pour
         l'année pleine d'une période assimilée même quand la carrière n'en
@@ -464,11 +464,13 @@ class Durees:
         carrière : le compte est « arrêté au dernier jour du trimestre civil
         précédant la date prévue pour l'entrée en jouissance de la pension »
         (R. 351-1), périodes assimilées comprises (circulaire Cnav n° 2004/29,
-        point 2121)."""
+        point 2121). Celui des ``membres`` : l'année où l'exploitant agricole
+        cesse, quatre, sauf pour les régimes alignés
+        (:func:`plafond_de_l_annee`)."""
         plafond = self.carriere.plafond_trimestres(annee)
         if table == "assurance":
             plafond = max(plafond, self.plafonds_assimilees.get(annee, 0))
-        return min(plafond, plafond_de_l_annee(self.carriere, annee))
+        return min(plafond, plafond_de_l_annee(self.carriere, annee, membres))
 
     def cumul_plafonne(self, table: str, membres: tuple[str, ...],
                        annees: Callable[[int], bool] | None = None) -> int:
@@ -482,7 +484,7 @@ class Durees:
             for annee, trimestres in self.par_annee[table].get(membre, {}).items():
                 if annees is None or annees(annee):
                     sommes[annee] = sommes.get(annee, 0) + trimestres
-        return (somme_ordonnee(min(somme, self.plafond(table, annee))
+        return (somme_ordonnee(min(somme, self.plafond(table, annee, membres))
                     for annee, somme in sommes.items())
                 + (0 if annees is not None else
                    somme_ordonnee(self.hors_annee[table].get(membre, 0) for membre in membres)))
@@ -741,12 +743,20 @@ def date_d_effet(carriere: Carriere) -> str:
     return f"{carriere.annee_liquidation:04d}-{mois:02d}-01"
 
 
-def plafond_de_l_annee(carriere: Carriere, annee: int) -> int:
+def plafond_de_l_annee(carriere: Carriere, annee: int,
+                       membres: tuple[str, ...] = ()) -> int:
     """Les trimestres civils d'une année que la durée d'assurance peut
     compter : quatre, et ceux qui précèdent la date d'effet l'année où la
     pension prend effet, sauf l'année où l'exploitant agricole cesse, qui en
-    compte quatre (:attr:`~retraite_notionnelle.carriere.Carriere.annee_de_cessation_agricole`)."""
-    if annee < carriere.annee_liquidation or annee == carriere.annee_de_cessation_agricole:
+    compte quatre (:attr:`~retraite_notionnelle.carriere.Carriere.annee_de_cessation_agricole`)
+    — mais non dans les régimes alignés, quand ``membres`` en nomme un : leurs
+    durées restent arrêtées « au dernier jour du trimestre civil précédant
+    l'entrée en jouissance de la pension », celle des non-salariés agricoles
+    l'étant « au 31 décembre de l'année civile de l'entrée en jouissance »
+    (R. 173-3-2, II ; R. 351-1)."""
+    if annee < carriere.annee_liquidation or (
+            annee == carriere.annee_de_cessation_agricole
+            and coordonner.REGIMES_ALIGNES.isdisjoint(membres)):
         return 4
     mois = carriere.date_liquidation.mois if carriere.age_liquidation is not None else 1
     return trimestres_civils(mois - 1)

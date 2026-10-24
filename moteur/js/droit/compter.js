@@ -406,14 +406,16 @@ export class Durees {
    * l'activité qui en couvre le plus, quatre pour l'année pleine d'une période
    * assimilée (R. 351-12), et, l'année de la date d'effet, ceux qui précèdent
    * le trimestre civil de l'effet, même sans ligne de carrière (R. 351-1 ;
-   * circulaire Cnav n° 2004/29, point 2121). Voir `Durees.plafond` du Python.
+   * circulaire Cnav n° 2004/29, point 2121). Celui des `membres` : l'année où
+   * l'exploitant agricole cesse, quatre, sauf pour les régimes alignés
+   * (`plafondDeLAnnee`). Voir `Durees.plafond` du Python.
    */
-  plafond(table, annee) {
+  plafond(table, annee, membres = []) {
     let plafond = this.carriere.plafondTrimestres(annee);
     if (table === "assurance") {
       plafond = Math.max(plafond, this.plafondsAssimilees.get(annee) ?? 0);
     }
-    return Math.min(plafond, plafondDeLAnnee(this.carriere, annee));
+    return Math.min(plafond, plafondDeLAnnee(this.carriere, annee, membres));
   }
 
   /**
@@ -436,7 +438,7 @@ export class Durees {
       }
     }
     for (const [annee, somme] of sommes) {
-      total += Math.min(somme, this.plafond(table, annee));
+      total += Math.min(somme, this.plafond(table, annee, membres));
     }
     return total;
   }
@@ -706,11 +708,14 @@ export function dateDEffet(carriere) {
 }
 
 /**
- * Les trimestres civils d'une année que la durée d'assurance peut compter.
- * Voir `plafond_de_l_annee` du Python.
+ * Les trimestres civils d'une année que la durée d'assurance peut compter ;
+ * l'année où l'exploitant agricole cesse, quatre, sauf dans les régimes
+ * alignés que `membres` nomme (R. 173-3-2, II). Voir `plafond_de_l_annee` du
+ * Python.
  */
-export function plafondDeLAnnee(carriere, annee) {
-  if (annee < carriere.anneeLiquidation || annee === carriere.anneeDeCessationAgricole) {
+export function plafondDeLAnnee(carriere, annee, membres = []) {
+  if (annee < carriere.anneeLiquidation || (annee === carriere.anneeDeCessationAgricole
+      && !membres.some((membre) => coordonner.REGIMES_ALIGNES.has(membre)))) {
     return 4;
   }
   const mois = carriere.age_liquidation !== null ? carriere.dateLiquidation.mois : 1;

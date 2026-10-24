@@ -5496,6 +5496,96 @@ process.stdout.write(JSON.stringify(obtenus));
     assert json.loads(execution.stdout) == attendu
 
 
+def _exploitant_en_stage_l_annee_ou_il_cesse() -> dict:
+    """Né en 1966, salarié de 1989 à 1995, exploitant agricole de 1996 à son
+    départ du 1er juin 2030, en stage de formation de janvier à mai 2030 : le
+    stage, sans ligne de carrière au régime général, y valide trois
+    trimestres en 2030 de ses cent cinquante jours, dont le seul premier
+    précède le trimestre civil de l'effet."""
+    from retraite_notionnelle import chronologie
+
+    return chronologie.completer(chronologie.avec_periodes_assimilees(
+        chronologie.du_releve(
+            annee_naissance=1966, sexe="H", age_liquidation=64.35, releve=[
+                LigneRelevee(annee=annee, affiliation="salarie_prive_non_cadre"
+                             if annee < 1996 else "exploitant_agricole", revenu=20000.0)
+                for annee in range(1989, 2031)]),
+        [{"motif": "stage_de_formation_professionnelle", "debut": "2030-01-01",
+          "fin": "2030-05-31"}]))
+
+
+def test_r_173_3_2_arrete_les_regimes_alignes_au_trimestre_civil_l_annee_ou_l_exploitant_cesse(
+        simulateur):
+    """R. 173-3-2, II, arrête les durées qu'il répartit « pour les régimes
+    mentionnés à l'article L. 173-1-2, au dernier jour du trimestre civil
+    précédant l'entrée en jouissance de la pension et, pour le régime des
+    personnes non salariées des professions agricoles, au 31 décembre de
+    l'année civile de l'entrée en jouissance de la pension » ; R. 351-1
+    arrête de même au trimestre civil la durée qui proratise la pension du
+    régime général. L'année où l'exploitant cesse, cotisée entière
+    (L. 731-10-1 du code rural), vaut ses quatre trimestres à son régime et à
+    la durée tous régimes, non aux régimes alignés. L'exploitant en stage de
+    janvier à mai 2030 (:func:`_exploitant_en_stage_l_annee_ou_il_cesse`)
+    compte 29 trimestres au régime général, les 28 de son salariat et le
+    premier de 2030, et non 31 ; 140 au sien, 168 en tout. Des vingt-cinq
+    années, 4 vont aux régimes alignés et 21 au sien (25 × 29/169 = 4,29 ;
+    25 × 140/169 = 20,71), et non 5 et 20 (25 × 31/171 = 4,53 ;
+    25 × 140/171 = 20,47) ; les 21 se partagent en 12 d'avant 2016 et 9
+    depuis (21 × 80/140 ; 21 × 60/140). Dans les deux moteurs."""
+    import json
+    import shutil
+    import subprocess
+
+    from retraite_notionnelle.droit import releve
+
+    construite = _exploitant_en_stage_l_annee_ou_il_cesse()
+    carriere = Carriere.depuis_chronologie(construite, simulateur.macro)
+    assert str(carriere.date_liquidation) == "juin 2030"
+    assert carriere.annee_de_cessation_agricole == 2030
+    durees = releve.construire(simulateur.scenario_actuel, carriere).durees
+    assert durees.par_annee["assurance"]["regime_general"][2030] == 3
+    attendu = [durees.trimestres_par_regime["regime_general"],
+               durees.trimestres_par_regime["msa_non_salaries"], durees.trimestres,
+               liquider.duree_du_regime_aligne(carriere, durees, ("regime_general",))]
+    assert attendu == [29, 140, 168, 29]
+    assert durees.plafond("assurance", 2030) == 4
+    details = {p.regime: p.detail
+               for p in simulateur.scenario_actuel.calculer(carriere).pensions_par_regime}
+    assert "× 29/" in details["regime_general"]
+    assert "4 années au plus au salaire annuel moyen (R. 173-3-2)" in details["regime_general"]
+    assert ("moyenne arrondie des 12 meilleures années d'avant 2016, sur 80 trimestres"
+            in details["msa_non_salaries"])
+    assert "revenu des 9 meilleures années depuis 2016" in details["msa_non_salaries"]
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    script = """
+import { readFileSync } from "node:fs";
+import { Carriere } from "./moteur/js/carriere.js";
+import { Contexte } from "./moteur/js/contexte.js";
+import { construire } from "./moteur/js/droit/releve.js";
+import { dureeDuRegimeAligne } from "./moteur/js/droit/liquider.js";
+const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
+const simulateur = contexte.simulateur();
+const carriere = Carriere.depuisChronologie(JSON.parse(process.argv[1]), simulateur.macro);
+const durees = construire(simulateur.scenarioActuel, carriere).durees;
+const details = Object.fromEntries(simulateur.scenarioActuel.calculer(carriere)
+  .pensions_par_regime.map((p) => [p.regime, p.detail]));
+process.stdout.write(JSON.stringify({
+  durees: [durees.trimestresParRegime.get("regime_general"),
+    durees.trimestresParRegime.get("msa_non_salaries"), durees.trimestres,
+    dureeDuRegimeAligne(carriere, durees, ["regime_general"])],
+  details: [details.regime_general, details.msa_non_salaries] }));
+"""
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", script, json.dumps(construite)],
+        cwd=RACINE_TEMOINS.parent.parent, capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    obtenus = json.loads(execution.stdout)
+    assert obtenus["durees"] == attendu
+    assert obtenus["details"] == [details["regime_general"], details["msa_non_salaries"]]
+
+
 def _points_agricoles_de_l_annee(points, annee: int) -> dict[str, float]:
     """Les points que les deux régimes des non-salariés agricoles portent au
     compte d'une année, depuis les crédits ``(régime, année, points, …)``."""
