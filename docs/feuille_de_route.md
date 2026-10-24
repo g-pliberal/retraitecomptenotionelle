@@ -7071,16 +7071,16 @@ une à une, les étapes 3 et 5. Les quatre gardes de l'étape 2 sont faites le
 
 ### 173. Le site sur tous les écrans : rien ne déborde, ce qui va ensemble se voit ensemble, moins de vide, moins de mots — `en cours`
 
-**Reprise, au 24 octobre 2026.** Faites, les étapes 1 à 7 : rien ne déborde,
-ce qui va ensemble se voit ensemble, les cartes à publier deux par ligne dès
-1 024 points ; l'accueil, Simuler, Coût, Pourquoi changer, Partager et Le
-saviez-vous ? disent la même chose en moins de mots, ouverts comme dépliés.
-Restent les étapes 8 à 10, une page par session, et, sur Coût, les deux
-schémas de la carte des flux, qui s'empilent au large. Par quoi commencer :
-l'étape 8, Carrières types — serrer son budget de lecture et lui donner sa
-ligne dans `BUDGETS_DEPLIES` (`tests/test_web.py`) et dans `COTE_A_COTE`
-(`tests/test_ecrans.py`), les voir rouges, puis récrire. Détail :
-`173/2026-10-24-etape-7-partager.md`.
+**Reprise, au 24 octobre 2026.** Faites, les étapes 1 à 8 : rien ne déborde,
+ce qui va ensemble se voit ensemble — les cartes à publier deux par ligne dès
+1 024 points, une fiche deux valeurs par ligne à 320, la grille de Carrières
+types en colonnes — ; l'accueil, Simuler, Coût, Pourquoi changer, Partager, Le
+saviez-vous ? et Carrières types disent la même chose en moins de mots. Restent
+les étapes 9 et 10, une page par session, et, sur Coût, les deux schémas de la
+carte des flux, qui s'empilent au large. Par quoi commencer : l'étape 9, Droits
+non cotisés — serrer son budget de lecture, lui donner sa ligne dans
+`BUDGETS_DEPLIES` et `COTE_A_COTE`, les voir rouges, puis récrire. Détail :
+`173/2026-10-24-etape-8-cas-types.md`.
 
 **D'où elle vient.** Le 23 octobre 2026, le propriétaire : « Le site web de
 notre projet est plutôt adapté aux écrans d'ordinateurs (et encore...) mais
@@ -7123,7 +7123,10 @@ un graphique et sa légende. »
    2026 : 331 mots au lieu de 372 sur Partager ; 636 ouverts au lieu de 673,
    1 182 dépliés au lieu de 1 229, sur Le saviez-vous ? ; les cartes à publier
    deux par ligne dès 1 024 points, en tailles de lecture.
-8. **Moins de mots : Carrières types.**
+8. **Moins de mots : Carrières types**, faite le 24 octobre 2026 : 448 mots
+   ouverts au lieu de 497, 2 701 dépliés au lieu de 2 844 ; la grille repliée
+   en colonnes, sept générations sur une ligne dès 390 points, et toute fiche
+   deux valeurs par ligne au moins à 320.
 9. **Moins de mots : Droits non cotisés.**
 10. **Moins de mots : Méthode et sources.**
 
