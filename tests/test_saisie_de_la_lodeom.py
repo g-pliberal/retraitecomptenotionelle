@@ -115,8 +115,7 @@ def test_chaque_metier_porte_la_lodeom(saisies):
     """Chaque métier, principal ou ajouté, porte le barème dans la
     chronologie, et chacune de ses années cotisées dans la carrière ; sans lui,
     aucun."""
-    carriere = saisies.carriere(
-        {**PARCOURS, "lodeom": "competitivite_renforcee"})
+    carriere = saisies.carriere({**PARCOURS, "lodeom": "competitivite_renforcee"})
     faits = [(f["id"], f["attributs"].get("lodeom"))
              for f in chrono.faits_de(carriere.chronologie, chrono.ASSURE, chrono.EMPLOI)]
     assert faits == [("emploi_1", "competitivite_renforcee"),

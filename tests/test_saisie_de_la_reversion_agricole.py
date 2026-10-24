@@ -24,8 +24,9 @@ import pytest
 
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.carriere import ReversionAgricole
-from retraite_notionnelle.contexte import Contexte
-from retraite_notionnelle.saisie import ErreurSaisie, Saisie
+from retraite_notionnelle.web.site import ErreurSite
+
+from outils_pont import Saisies, saisie_du_portage
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -56,8 +57,8 @@ PAR_PENSION = {
 
 
 @pytest.fixture(scope="module")
-def contexte() -> Contexte:
-    return Contexte()
+def saisies() -> Saisies:
+    return Saisies()
 
 
 def _pmr(comparaison):
@@ -71,17 +72,17 @@ def _pmr(comparaison):
 def test_la_saisie_lit_la_reversion_et_l_adresse_la_garde():
     """Le mois et le montant, lus tels quels ; l'adresse les réécrit, un montant
     nul compris, et ne porte rien sans eux."""
-    saisie = Saisie.depuis_requete({**VEUVE, **REVERSION})
+    saisie = saisie_du_portage({**VEUVE, **REVERSION})
     assert saisie.reversion_agricole_declaree() == {"debut": "2010-03", "mensuel": 150.0}
     lu = parse_qs(saisie.requete())
     assert lu["reversion_agricole"] == ["2010-03"]
     assert lu["reversion_agricole_mensuel"] == ["150"]
-    relue = Saisie.depuis_requete({cle: valeur[0] for cle, valeur in lu.items()})
+    relue = saisie_du_portage({cle: valeur[0] for cle, valeur in lu.items()})
     assert relue.reversion_agricole_declaree() == saisie.reversion_agricole_declaree()
-    nulle = Saisie.depuis_requete({**VEUVE, **REVERSION, "reversion_agricole_mensuel": "0"})
+    nulle = saisie_du_portage({**VEUVE, **REVERSION, "reversion_agricole_mensuel": "0"})
     assert nulle.reversion_agricole_declaree() == {"debut": "2010-03", "mensuel": 0.0}
     assert parse_qs(nulle.requete())["reversion_agricole_mensuel"] == ["0"]
-    sans = Saisie.depuis_requete(VEUVE)
+    sans = saisie_du_portage(VEUVE)
     assert sans.reversion_agricole_declaree() is None
     assert not {"reversion_agricole", "reversion_agricole_mensuel"} & set(
         parse_qs(sans.requete()))
@@ -100,8 +101,8 @@ def test_la_saisie_lit_la_reversion_et_l_adresse_la_garde():
      "positif ou nul"),
 ])
 def test_une_reversion_incomplete_ou_impossible_est_refusee(champs, motif):
-    with pytest.raises(ErreurSaisie, match=motif):
-        Saisie.depuis_requete({**VEUVE, **champs})
+    with pytest.raises(ErreurSite, match=motif):
+        saisie_du_portage({**VEUVE, **champs})
 
 
 def test_ses_voisines_sont_acceptees():
@@ -109,36 +110,34 @@ def test_ses_voisines_sont_acceptees():
     ressources absorbent ouvre encore le 2° de D. 732-110, II."""
     for champs in ({"reversion_agricole": "1952-01-16", "reversion_agricole_mensuel": "150"},
                    {"reversion_agricole": "2010", "reversion_agricole_mensuel": "0"}):
-        assert Saisie.depuis_requete({**VEUVE, **champs}).reversion_agricole_declaree()
+        assert saisie_du_portage({**VEUVE, **champs}).reversion_agricole_declaree()
 
 
 # -- la carrière --------------------------------------------------------------------
 
-def test_les_trois_chemins_de_la_carriere_portent_la_reversion(contexte):
+def test_les_trois_chemins_de_la_carriere_portent_la_reversion(saisies):
     """Les métiers, le relevé et la pension saisie : chaque carrière que la
     saisie bâtit porte la réversion déclarée ; sans elle, aucune
     (présomption ``pas_de_reversion_agricole``)."""
     attendue = ReversionAgricole(debut=DateMois(2010, 3), mensuel=150.0)
-    assert contexte.carriere(Saisie.depuis_requete(
-        {**VEUVE, **REVERSION})).reversion_agricole == attendue
+    assert saisies.carriere({**VEUVE, **REVERSION}).reversion_agricole == attendue
     releve = {**VEUVE, **REVERSION, "releve": "2014:collaborateur_agricole:3000\n"
                                               "2015:collaborateur_agricole:3000"}
-    assert contexte.carriere(Saisie.depuis_requete(releve)).reversion_agricole == attendue
-    inverse = contexte.simuler(Saisie.depuis_requete({**PAR_PENSION, **REVERSION}))
+    assert saisies.carriere(releve).reversion_agricole == attendue
+    inverse = saisies.simuler({**PAR_PENSION, **REVERSION})
     assert inverse.carriere.reversion_agricole == attendue
-    assert contexte.carriere(Saisie.depuis_requete(VEUVE)).reversion_agricole is None
+    assert saisies.carriere(VEUVE).reversion_agricole is None
 
 
-def test_la_veuve_saisie_recoit_la_pmr_que_sa_reversion_ouvre_et_reduit(contexte):
+def test_la_veuve_saisie_recoit_la_pmr_que_sa_reversion_ouvre_et_reduit(saisies):
     """Sa réversion, même nulle, porte toutes ses périodes au montant du chef
     (D. 732-110, II, 2°) ; la PMR en retranche ce qu'elle sert au départ,
     revalorisée (D. 732-112). Sans elle, le montant du chef ne va qu'à ses
     années de 1999 à 2008, au montant réduit pour les autres, et rien ne se
     retranche."""
-    sans = _pmr(contexte.simuler(Saisie.depuis_requete(VEUVE)))
-    nulle = _pmr(contexte.simuler(Saisie.depuis_requete(
-        {**VEUVE, **REVERSION, "reversion_agricole_mensuel": "0"})))
-    servie = _pmr(contexte.simuler(Saisie.depuis_requete({**VEUVE, **REVERSION})))
+    sans = _pmr(saisies.simuler(VEUVE))
+    nulle = _pmr(saisies.simuler({**VEUVE, **REVERSION, "reversion_agricole_mensuel": "0"}))
+    servie = _pmr(saisies.simuler({**VEUVE, **REVERSION}))
     assert " + " in sans.detail.split(", au taux")[0]
     assert " + " not in nulle.detail.split(", au taux")[0]
     assert nulle.montant > sans.montant
@@ -173,25 +172,24 @@ process.stdout.write(JSON.stringify(sortie));
 """
 
 
-def _lu_par_python(contexte: Contexte, requete: dict) -> dict:
-    saisie = Saisie.depuis_requete(requete)
-    comparaison = contexte.simuler(saisie)
+def _lu_par_python(saisies: Saisies, requete: dict) -> dict:
+    """Ce que le moteur Python lit de la carrière que le portage bâtit, et
+    sert."""
+    comparaison = saisies.simuler(requete)
     reversion = comparaison.carriere.reversion_agricole
     pmr = next((avantage for avantage in comparaison.actuel.avantages_appliques
                 if avantage.code == "pension_majoree_reference"), None)
     return {
-        "requete": saisie.requete(),
-        "declaree": saisie.reversion_agricole_declaree(),
         "carriere": None if reversion is None else [
             reversion.debut.annee, reversion.debut.mois, reversion.mensuel],
         "pmr": None if pmr is None else [round(pmr.montant * 100), pmr.detail],
     }
 
 
-def test_le_portage_lit_la_meme_reversion(contexte):
-    """Les deux saisies lisent la même réversion et réécrivent la même adresse ;
-    les deux contextes la donnent à la même carrière, que la même PMR sert,
-    par les métiers, par le relevé et par la pension."""
+def test_le_portage_lit_la_meme_reversion(saisies):
+    """La saisie du portage lit la réversion, et la donne à la carrière ; sur
+    elle, les deux moteurs servent la même PMR, par les métiers, par le relevé
+    et par la pension."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     requetes = [
@@ -207,9 +205,10 @@ def test_le_portage_lit_la_meme_reversion(contexte):
         input=json.dumps(requetes), capture_output=True, text=True, encoding="utf-8",
         check=False)
     assert execution.returncode == 0, execution.stderr[-2000:]
-    attendus = [_lu_par_python(contexte, requete) for requete in requetes]
-    assert json.loads(execution.stdout) == attendus
-    assert [attendu["declaree"] for attendu in attendus] == [
+    lus = json.loads(execution.stdout)
+    attendus = [_lu_par_python(saisies, requete) for requete in requetes]
+    assert [{cle: lu[cle] for cle in attendu} for lu, attendu in zip(lus, attendus)] == attendus
+    assert [lu["declaree"] for lu in lus] == [
         None, {"debut": "2010-03", "mensuel": 150.0}, {"debut": "2010-03", "mensuel": 0.0},
         {"debut": "2018-06", "mensuel": 150.5}, {"debut": "2010-03", "mensuel": 150.0},
         {"debut": "2010-03", "mensuel": 150.0}]

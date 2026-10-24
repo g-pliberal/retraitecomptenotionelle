@@ -26,8 +26,9 @@ from urllib.parse import parse_qs
 
 import pytest
 
-from retraite_notionnelle.contexte import Contexte
-from retraite_notionnelle.saisie import ASSIETTES_COLLABORATEUR, PARTS_COLLABORATEUR, Saisie
+from retraite_notionnelle.web.site import ErreurSite, module, site
+
+from outils_pont import Saisies, saisie_du_portage
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -59,8 +60,8 @@ PAR_PENSION = {
 
 
 @pytest.fixture(scope="module")
-def contexte() -> Contexte:
-    return Contexte()
+def saisies() -> Saisies:
+    return Saisies()
 
 
 def _revenus(carriere) -> dict[int, float]:
@@ -72,43 +73,43 @@ def _revenus(carriere) -> dict[int, float]:
 def test_le_menu_offre_le_forfait_puis_les_deux_parts_du_revenu_du_chef():
     """Le forfait d'abord, qui est le défaut (R. 662-1) ; puis 33,33 % et 50 %
     du revenu du chef (D. 633-19-2, 2° et 3°). Le forfait n'en cotise rien."""
-    assert [code for code, _ in ASSIETTES_COLLABORATEUR] == ["", "tiers", "moitie"]
-    assert PARTS_COLLABORATEUR == {"": 0.0, "tiers": 0.3333, "moitie": 0.5}
+    saisie = module("saisie")
+    assert [code for code, _ in saisie.ASSIETTES_COLLABORATEUR] == ["", "tiers", "moitie"]
+    assert saisie.PARTS_COLLABORATEUR == {"": 0.0, "tiers": 0.3333, "moitie": 0.5}
 
 
 def test_la_saisie_lit_l_option_et_l_adresse_la_garde():
-    assert Saisie.depuis_requete({"collaborateur": "moitie"}).collaborateur == "moitie"
-    assert Saisie.depuis_requete({"collaborateur": "quart"}).collaborateur == ""
-    lu = parse_qs(Saisie.depuis_requete({"collaborateur": "tiers"}).requete())
+    assert saisie_du_portage({"collaborateur": "moitie"}).collaborateur == "moitie"
+    assert saisie_du_portage({"collaborateur": "quart"}).collaborateur == ""
+    lu = parse_qs(saisie_du_portage({"collaborateur": "tiers"}).requete())
     assert lu["collaborateur"] == ["tiers"]
-    assert Saisie.depuis_requete({k: v[0] for k, v in lu.items()}).collaborateur == "tiers"
-    assert "collaborateur" not in parse_qs(Saisie.depuis_requete({}).requete())
+    assert saisie_du_portage({k: v[0] for k, v in lu.items()}).collaborateur == "tiers"
+    assert "collaborateur" not in parse_qs(saisie_du_portage({}).requete())
 
 
 # -- les métiers --------------------------------------------------------------------
 
-def test_au_forfait_le_conjoint_cotise_le_tiers_du_plafond_depuis_2007(contexte):
+def test_au_forfait_le_conjoint_cotise_le_tiers_du_plafond_depuis_2007(saisies):
     """Sans option, le forfait : le tiers du plafond chaque année depuis
     l'affiliation obligatoire, proratisé sur les trois mois de 2026, et rien
     avant 2007, l'assurance volontaire non souscrite. Le revenu du chef n'y
     compte pas."""
-    revenus = _revenus(contexte.carriere(Saisie.depuis_requete(COLLABORATRICE)))
+    revenus = _revenus(saisies.carriere(COLLABORATRICE))
     assert revenus[2010] == pytest.approx(PLAFONDS[2010] / 3)
     assert revenus[2020] == pytest.approx(PLAFONDS[2020] / 3)
     assert revenus[2026] == pytest.approx(PLAFONDS[2026] / 3 * 3 / 12)
     assert {annee: revenu for annee, revenu in revenus.items() if annee < 2007} == {
         annee: 0.0 for annee in range(1995, 2007)}
-    autre = contexte.carriere(Saisie.depuis_requete({**COLLABORATRICE, "salaire": "0.5"}))
+    autre = saisies.carriere({**COLLABORATRICE, "salaire": "0.5"})
     assert _revenus(autre) == pytest.approx(revenus)
 
 
 @pytest.mark.parametrize("option", ["tiers", "moitie"])
-def test_a_l_option_le_conjoint_cotise_sa_part_du_revenu_du_chef(contexte, option):
+def test_a_l_option_le_conjoint_cotise_sa_part_du_revenu_du_chef(saisies, option):
     """À l'option, chaque année cotise sa part du revenu du chef, l'assurance
     volontaire d'avant 2007 comprise (D. 742-26) ; le statut reste le sien."""
-    chef = _revenus(contexte.carriere(Saisie.depuis_requete(CHEF)))
-    carriere = contexte.carriere(Saisie.depuis_requete(
-        {**COLLABORATRICE, "collaborateur": option}))
+    chef = _revenus(saisies.carriere(CHEF))
+    carriere = saisies.carriere({**COLLABORATRICE, "collaborateur": option})
     part = {"tiers": 0.3333, "moitie": 0.5}[option]
     assert _revenus(carriere) == pytest.approx(
         {annee: part * revenu for annee, revenu in chef.items()})
@@ -116,35 +117,33 @@ def test_a_l_option_le_conjoint_cotise_sa_part_du_revenu_du_chef(contexte, optio
         "conjoint_collaborateur_artisan"}
 
 
-def test_l_option_ne_touche_pas_aux_autres_statuts(contexte):
+def test_l_option_ne_touche_pas_aux_autres_statuts(saisies):
     """Le chef lui-même, ou tout autre statut, garde son revenu, quelle que soit
     l'option dite."""
-    chef = _revenus(contexte.carriere(Saisie.depuis_requete(CHEF)))
-    assert _revenus(contexte.carriere(Saisie.depuis_requete(
-        {**CHEF, "collaborateur": "moitie"}))) == pytest.approx(chef)
+    chef = _revenus(saisies.carriere(CHEF))
+    assert _revenus(saisies.carriere({**CHEF, "collaborateur": "moitie"})) == pytest.approx(chef)
 
 
 def test_un_revenu_du_chef_hors_des_bornes_est_refuse_meme_au_forfait():
     """Le champ porte les bornes d'un revenu ; la saisie les oppose aussi au
     revenu du chef, même au forfait, où il ne compte pas."""
-    from retraite_notionnelle.saisie import ErreurSaisie
-    with pytest.raises(ErreurSaisie, match="entre 0,1 et 10 fois le salaire moyen"):
-        Contexte().carriere(Saisie.depuis_requete({**COLLABORATRICE, "salaire": "12"}))
+    with pytest.raises(ErreurSite, match="entre 0,1 et 10 fois le salaire moyen"):
+        saisie_du_portage({**COLLABORATRICE, "salaire": "12"})
 
 
 # -- la pension saisie et le relevé -------------------------------------------------
 
 @pytest.mark.parametrize("option", ["", "moitie"])
-def test_l_inversion_par_la_pension_garde_l_option(contexte, option):
+def test_l_inversion_par_la_pension_garde_l_option(option):
     """Saisie par sa pension, la carrière prend un seul niveau de revenu pour
     toutes ses périodes : celui de la salariée, et celui du chef, dont la
     collaboratrice ne cotise que la part de son option. C'est la carrière que
     la page reprend en écrivant ce niveau dans chaque période ; au forfait, le
     niveau trouvé n'y change rien."""
     requete = {**PAR_PENSION, "collaborateur": option}
-    comparaison = contexte.simuler(Saisie.depuis_requete(requete))
+    comparaison = site().contexte.simuler(saisie_du_portage(requete))
     niveau = repr(comparaison.niveau_inverse.niveau)
-    reprise = contexte.carriere(Saisie.depuis_requete({
+    reprise = site().contexte.carriere(saisie_du_portage({
         **{cle: valeur for cle, valeur in requete.items() if cle != "pension"},
         "saisie_par": "revenu", "unite_revenu": "moyen",
         "salaire": niveau, "metier2_salaire": niveau}))
@@ -154,15 +153,14 @@ def test_l_inversion_par_la_pension_garde_l_option(contexte, option):
         assert revenus[2010] == pytest.approx(PLAFONDS[2010] / 3) and revenus[2001] == 0.0
 
 
-def test_le_releve_porte_l_assiette_quelle_que_soit_l_option(contexte):
+def test_le_releve_porte_l_assiette_quelle_que_soit_l_option(saisies):
     """Un relevé dit l'assiette de chaque année : l'option n'y change rien, et
     une année sans revenu y vaut le forfait depuis 2007."""
     releve = {"naissance": "1962-03-15", "liquidation": "2026-04-01",
               "releve": "2009:conjoint_collaborateur_artisan:9000\n"
                         "2010:conjoint_collaborateur_artisan:0"}
-    sans = _revenus(contexte.carriere(Saisie.depuis_requete(releve)))
-    avec = _revenus(contexte.carriere(Saisie.depuis_requete(
-        {**releve, "collaborateur": "moitie"})))
+    sans = _revenus(saisies.carriere(releve))
+    avec = _revenus(saisies.carriere({**releve, "collaborateur": "moitie"}))
     assert avec == pytest.approx(sans)
     assert sans[2009] == 9000.0 and sans[2010] == pytest.approx(PLAFONDS[2010] / 3)
 
@@ -190,23 +188,11 @@ process.stdout.write(JSON.stringify(sortie));
 """
 
 
-def _lu_par_python(contexte: Contexte, requete: dict) -> dict:
-    saisie = Saisie.depuis_requete(requete)
-    comparaison = contexte.simuler(saisie)
-    inverse = comparaison.niveau_inverse
-    return {
-        "requete": saisie.requete(),
-        "collaborateur": saisie.collaborateur,
-        "niveau": None if inverse is None else round(inverse.niveau * 1e6),
-        "lignes": [[ligne.annee, ligne.affiliation, round(ligne.revenu, 2)]
-                   for ligne in comparaison.carriere.lignes],
-    }
-
-
-def test_le_portage_lit_la_meme_option(contexte):
-    """Les deux saisies lisent la même option et réécrivent la même adresse ;
-    les deux carrières cotisent les mêmes revenus, au forfait et à l'option,
-    par le revenu et par la pension."""
+def test_le_portage_lit_l_option():
+    """La saisie du portage lit l'option, au forfait et à l'option, par le
+    revenu et par la pension, qu'elle inverse. Sa jumelle Python, à qui elle
+    se confrontait ici, ne l'est plus que par les témoins
+    (``tests/test_pont.py``), jusqu'à son retrait (action 161, étape 6)."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     requetes = [
@@ -223,7 +209,7 @@ def test_le_portage_lit_la_meme_option(contexte):
         input=json.dumps(requetes), capture_output=True, text=True, encoding="utf-8",
         check=False)
     assert execution.returncode == 0, execution.stderr
-    attendus = [_lu_par_python(contexte, requete) for requete in requetes]
-    assert json.loads(execution.stdout) == attendus
-    assert [attendu["collaborateur"] for attendu in attendus] == [
+    lus = json.loads(execution.stdout)
+    assert [lu["collaborateur"] for lu in lus] == [
         "", "tiers", "moitie", "moitie", "", "tiers"]
+    assert [lu["niveau"] is None for lu in lus] == [True] * 4 + [False] * 2
