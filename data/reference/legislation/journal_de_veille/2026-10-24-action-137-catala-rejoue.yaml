@@ -1,0 +1,33 @@
+date: "2026-10-24"
+session: "action 137 : Catala, rejoué au droit de sa date"
+consulte: >-
+  Les règles de retraite de catala-examples (Apache 2.0) au commit 2694b17, encore sa
+  tête, interprétées à part par Catala 1.3.0, installé par opam dans le bloc-notes de
+  la session : l'âge d'ouverture de vingt-huit naissances au 31 août 2023, au 1er
+  septembre 2023, au 1er janvier 2024 et au 1er octobre 2026 ; l'âge du taux plein et
+  celui de l'inapte, par l'ascendant que son aide au logement compte à charge
+  (R. 823-4, 2°), en juin 2021 et en mars 2024 ; le plafond de l'ASPA, par les
+  ressources qui l'y font compter, de 2021 à 2026. Dans l'index LEGI du dépôt, mis à
+  jour des incréments jusqu'au 23 octobre 2026 : L. 351-8 (LEGIARTI000047452736,
+  051289852), L. 161-17-2 (047452768, 051289659, 053280889), D. 351-1-14 (047634688,
+  053355951), R. 823-4 du code de la construction (038878933, 047985801). Le barème de
+  l'ASPA de la Cnav (aspa_montant_bar), par son API. Le scénario 1 n'est pas touché :
+  ni fiche, ni règle, et `textes.py --inscrire` n'a pas tourné.
+trouve: >-
+  Rien qui contredise le dépôt. Les âges de Catala, sous la loi de 2010 et sous celle
+  de 2023, sont ceux des droits contrefactuels du dépôt, sauf 1967, son erreur
+  connue ; son taux plein d'avant septembre 2023 (l'âge légal plus cinq ans), son
+  inapte à 62 ans et son ASPA de D. 815-1 de 2018 à 2020 sont ceux du dépôt. De 2021 à
+  2023, il porte l'annuel des circulaires de la Cnav, que le barème de la caisse
+  redonne au centime ; le dépôt, douze fois le mensuel tronqué, l'approximation que
+  la fiche minimum_vieillesse déclare. Quatre erreurs nouvelles, les siennes : le taux
+  plein d'après septembre 2023 à l'âge légal plus trois ans (65 ans pour la génération
+  1960), quand L. 351-8, 1°, ajoute trois ans aux 64 du premier alinéa de
+  L. 161-17-2, soit 67 ans pour tous, ce que la fiche F21552 rejoue ; ces âges lus à
+  la naissance du demandeur, non de l'ascendant ; aucun âge, le 1er septembre 2023,
+  pour les nés avant 1968 ; l'ASPA sans la revalorisation du 1er juillet 2022, puis
+  figée à son montant de 2023. D. 351-1-14 du 1er janvier 2026 garde 62 ans.
+reste: >-
+  Le simulateur de SUD éducation et Nos Retraites restent à confronter. La série de
+  l'ASPA d'une personne seule du dépôt garde ses approximations déclarées, coupées le
+  14 octobre 2026.

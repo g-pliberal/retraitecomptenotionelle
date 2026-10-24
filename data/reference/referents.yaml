@@ -8273,21 +8273,35 @@ referents:
       La transcription littérale des articles, pour les aides au logement :
       l'âge d'ouverture (L. 161-17-2, D. 161-2-1-9), l'âge du taux plein
       (L. 351-8), l'inaptitude (L. 351-1-5, D. 351-1-14), l'ASPA (L. 815-9,
-      D. 815-1 et D. 815-2, montants jusqu'au 1er janvier 2020).
+      D. 815-1 et D. 815-2, montants jusqu'au 1er janvier 2020, puis ceux
+      des circulaires de la Cnav jusqu'au 1er janvier 2023).
+    version: "2694b17"
     confrontation: >-
-      Des règles à comparer, article par article, avec leur texte recopié à
-      côté. Jamais fait : lues le 1er et le 4 octobre 2026, ses règles de
-      retraite n'ont été mises qu'en regard du droit en vigueur, qu'elles
-      précèdent (écarts ci-dessous). Reste à les comparer au droit de leur
-      date, que le scénario 1 applique aux pensions de cette date : ses âges
-      de 2023, pour les générations parties sous la loi de 2023 (jusqu'à
-      1963), l'âge du taux plein, l'inaptitude, l'ASPA jusqu'au 1er janvier
-      2020.
+      Un calcul rejoué, le 24 octobre 2026 : ses règles de retraite, au
+      commit `2694b17`, interprétées à part par Catala 1.3.0 au droit de
+      leur date — l'âge d'ouverture de chaque génération, calculé le 31 août
+      2023 et le 1er janvier 2024 ; l'âge du taux plein et celui de l'inapte,
+      par l'ascendant que son aide au logement compte à charge (R. 823-4,
+      2°), en juin 2021 et en mars 2024 ; le plafond de l'ASPA, par les
+      ressources qui l'y font compter. Concordent avec le dépôt : les âges de
+      la loi de 2010 et de celle de 2023, que ses droits contrefactuels
+      gardent (`au_31_aout_2023`, `loi_2023_sans_suspension`), sauf 1967 ;
+      le taux plein d'avant septembre 2023, l'âge légal plus cinq ans ;
+      l'inapte à 62 ans ; l'ASPA de D. 815-1 de 2018 à 2020, d'une personne
+      seule et d'un couple. De 2021 à 2023, il porte l'annuel des circulaires
+      de la Cnav, que la caisse redonne au centime, et le dépôt douze fois le
+      mensuel tronqué, 3 à 8 centimes de moins par an : l'approximation que
+      sa fiche `minimum_vieillesse` déclare. Ses erreurs sont aux écarts
+      ci-dessous. Les cas que tests/test_referents.py tient : les âges de
+      vingt-huit naissances, le taux plein de dix-huit, l'inapte, l'ASPA de
+      six années.
     ecarts:
       - constat: >-
           Pour la génération 1967, le code dit 62 ans et 9 mois, quand le
           texte qu'il recopie juste au-dessus dit 63 ans et 9 mois ; et ce
           texte n'est plus le droit, sans la loi du 30 décembre 2025.
+          Rejoué le 24 octobre 2026 : 62 ans et 9 mois, en janvier 2024
+          comme en octobre 2026.
         tranche: >-
           L. 161-17-2 dans sa rédaction de 2025 : 63 ans et 6 mois, que le
           modèle applique ; l'écart est le sien, toujours présent le
@@ -8298,7 +8312,8 @@ referents:
           161-17-2 recopié en version LEGIARTI000051289659 (64 ans
           dès 1968), D. 161-2-1-9 de 2023 : 63 ans pour 1964, 63 ans
           et 3 mois pour 1965, 64 ans pour 1968
-          (code_sécurité_sociale.catala_fr:108-125, 313-474).
+          (code_sécurité_sociale.catala_fr:108-125, 313-474). Rejoué
+          le 24 octobre 2026, au 1er octobre 2026 : les mêmes âges.
         tranche: >-
           L. 161-17-2 en vigueur (pensions dès le 1er septembre
           2026) : 62 ans 9 mois du 1er janvier 1963 au 31 mars 1965,
@@ -8316,6 +8331,93 @@ referents:
         preuve: >-
           JORFARTI000050392696 ; JORFARTI000053042543 ;
           JORFARTI000054126607
+      - constat: >-
+          Après le 1er septembre 2023, il compte l'âge du taux plein à
+          l'âge légal plus trois ans (`âge_l351_8_1_sécu`) : 65 ans pour
+          les nés de 1955 à août 1961, 66 ans pour 1964, 66 ans et 6 mois
+          pour 1966, 65 ans et 9 mois pour 1967 ; 67 ans seulement à
+          partir de 1968. Rejoué le 24 octobre 2026 : en mars 2024, un
+          ascendant de 65 ans est à charge d'un demandeur né en 1960, et
+          non d'un demandeur né en 1975.
+        tranche: >-
+          L. 351-8, 1°, en vigueur depuis le 1er septembre 2023
+          (LEGIARTI000047452736, puis 051289852), qu'il recopie : « l'âge
+          prévu au premier alinéa de l'article L. 161-17-2 augmenté de
+          trois années » ; ce premier alinéa dit « soixante-quatre ans »
+          (LEGIARTI000047452768, 051289659, 053280889) : 67 ans pour
+          toutes les générations. La fiche F21552 de service-public le
+          rejoue (`sp_f21552_65_ans_158` : né en 1964, parti à 65 ans,
+          « 8 jusqu'à 67 ans ») ; et D. 861-10 du code de la construction,
+          qu'il recopie aussi, remplace cet âge par « soixante-sept ans »
+          à Mayotte, ce qui, commente-t-il, « ne change pas le calcul ».
+          L'erreur est la sienne ; le dépôt garde 67 ans
+          (`age_annulation_decote.csv`).
+        preuve: >-
+          rejeu du 24 octobre 2026, Catala 1.3.0 ;
+          code_sécurité_sociale.catala_fr:210-223 et
+          code_construction_reglementaire.catala_fr:5946-5960, au commit
+          `2694b17`
+      - constat: >-
+          Il lit cet âge, et l'âge légal, à la naissance du demandeur, non
+          à celle de l'ascendant qu'il compte à charge
+          (`ouverture_droits_retraite.date_naissance_assuré` égal à
+          `demandeur.date_naissance`). Avant septembre 2023, quand l'âge
+          du taux plein montait de 65 à 67 ans avec la génération, un
+          ascendant né en septembre 1954, à 66 ans et 8 mois en juin 2021,
+          passé les 66 ans et 7 mois de sa génération, n'est pas à charge
+          d'un demandeur né en 1980 (rejoué) ; un ascendant né en janvier
+          1955, à 66 ans et 5 mois, l'est d'un demandeur né en 1953.
+        tranche: >-
+          R. 823-4, 2°, a, du code de la construction et de l'habitation
+          (LEGIARTI000038878933, puis 047985801), qu'il recopie : les
+          ascendants « ayant au moins l'âge prévu par le 1° de l'article
+          L. 351-8 », celui de leur génération (L. 351-8, 1°,
+          LEGIARTI000028498855 : « l'âge prévu à l'article L. 161-17-2
+          augmenté de cinq années »). L'erreur est la sienne ; le dépôt ne
+          calcule pas l'aide au logement, et lit chaque âge à la
+          génération de l'assuré.
+        preuve: >-
+          rejeu du 24 octobre 2026 ; code_sécurité_sociale.catala_fr:128-133
+          et archives.catala_fr:65-105, 7495-7500, au commit `2694b17`
+      - constat: >-
+          Le 1er septembre 2023, premier jour de la loi de 2023, il n'a
+          d'âge d'ouverture que pour les nés à compter de 1968 : sa
+          D. 161-2-1-9 de 2023 vaut « date_courante > |2023-09-01| », celle
+          de 2011 « date_courante < |2023-09-01| ». Rejoué le 24 octobre
+          2026 : pour un assuré né en juin 1960, « no applicable rule to
+          define this variable in this situation » ; 64 ans pour un assuré
+          né en 1968.
+        tranche: >-
+          D. 161-2-1-9 de 2023 (LEGIARTI000047634502) s'applique « aux
+          pensions prenant effet à compter du 1er septembre 2023 »
+          (décret n° 2023-436, art. 9), ce jour compris, comme L. 161-17-2,
+          qu'il code « date_courante >= |2023-09-01| ». L'erreur est la
+          sienne ; le dépôt lit l'âge à la génération, à toute date
+          d'effet.
+        preuve: >-
+          rejeu du 24 octobre 2026 ; code_sécurité_sociale.catala_fr:116-126,
+          323-470 et archives.catala_fr:7583-7637, au commit `2694b17`
+      - constat: >-
+          Son plafond de l'ASPA d'une personne seule, que L. 815-9 et
+          D. 815-2 égalent à son montant, garde 11 001,44 € tout 2022 et
+          11 533,02 € depuis le 1er janvier 2023. Rejoué le 24 octobre
+          2026 : l'ascendant aux ressources de 13 751,80 € est à charge en
+          septembre 2022, plus à 13 751,81 € (1,25 fois 11 001,44 €) ; à
+          14 416,28 €, il l'est en juin 2023 comme en mars 2026.
+        tranche: >-
+          Le barème de la Cnav (`aspa_montant_bar`, lu le 24 octobre
+          2026), qui redonne au centime les montants de D. 815-1 :
+          11 441,49 € au 1er juillet 2022 (circulaire n° 2022/19 du 18 août
+          2022), 12 144,27 € en 2024 (n° 2023/34), 12 411,44 € en 2025
+          (n° 2024/39), 12 523,14 € en 2026 (n° 2025/29). L'erreur est la
+          sienne : la revalorisation de juillet 2022 omise, puis un retard
+          depuis 2024 ; le dépôt revalorise chaque année
+          (`minimum_vieillesse.csv`), mais garde lui aussi, pour une
+          personne seule, le montant de janvier en 2022, l'approximation
+          que sa fiche déclare.
+        preuve: >-
+          rejeu du 24 octobre 2026 ; autres_sources.catala_fr:31-129, au
+          commit `2694b17`
     fait_mieux:
       - quoi: >-
           Chaque règle y est écrite sous l'alinéa qu'elle transcrit, recopié à
@@ -8353,18 +8455,29 @@ referents:
           l'impôt
     bilan: >-
       Sa seule avance reste la traçabilité, chaque règle sous l'alinéa
-      qu'elle transcrit. Ses règles de retraite, d'avant la LFSS pour
-      2026 et fautives pour 1967, ne valent rien comme référence ; seul
-      son SMIC de Mayotte sert au dépôt.
+      qu'elle transcrit. Rejouées au droit de leur date, ses règles de
+      retraite redonnent celles du dépôt pour les âges de 2010 et de 2023,
+      sauf 1967, pour le taux plein d'avant septembre 2023, l'inapte et
+      l'ASPA de 2018 à 2023, hors du second semestre de 2022 ; elles sont
+      fausses pour le taux plein d'après, pour le 1er septembre 2023 et
+      pour l'ASPA depuis 2024, lues à la naissance du demandeur, et d'avant
+      la LFSS pour 2026. Elles ne valent rien comme référence ; seul son
+      SMIC de Mayotte sert au dépôt.
     sas: [catala_examples]
-    lu_le: 2026-10-04
+    lu_le: 2026-10-24
     lu_dans:
       - https://github.com/CatalaLang/catala-examples
+      - https://legislation.lassuranceretraite.fr/api/v1/baremes/baremesByFileLeafRef/aspa_montant_bar.aspx
     note: >-
       Dernier commit le 18 septembre 2026. `CatalaLang/french-law` (Apache
       2.0) en tire des bibliothèques. Le répertoire `impot_revenu` du même
       dépôt est sous une autre licence : voir ir_catala.
-      Comparé au dépôt le 1er octobre 2026 au commit `2694b17`.
+      Comparé au dépôt le 1er octobre 2026 au commit `2694b17`, et rejoué
+      le 24 octobre 2026 au même commit, encore sa tête : Catala 1.3.0,
+      installé par opam dans le bloc-notes de la session, ses six modules
+      de l'aide au logement compilés à part (`clerk build`), interrogés par
+      un fichier de rejeu resté hors du dépôt, qui n'a pas Catala pour
+      dépendance.
 
   - id: ir_catala
     nom: ir-catala

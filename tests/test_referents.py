@@ -22,6 +22,8 @@ import pytest
 import yaml
 
 from retraite_notionnelle.droit.releve import points_de_l_annee
+from retraite_notionnelle.scenarios.actuel import (
+    AgesOuvertureAvantReforme2023, AgesOuvertureAvantSuspension, TableRecouverte)
 from retraite_notionnelle.simulateur import Simulateur
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -379,7 +381,7 @@ AGES_QUAND_PARTIR = {
 #: confrontée, sans quoi le tableau de bord les compterait jamais confrontés.
 CONFRONTES_PAR_LEURS_PARAMETRES = (
     {m for m, _, _ in CONSTATS}
-    | {"edifis", "simulateur_aurain", "outil_quand_partir", "modele_as"})
+    | {"edifis", "simulateur_aurain", "outil_quand_partir", "modele_as", "catala"})
 
 
 @pytest.mark.parametrize("modele, donnee, valeurs", CONSTATS,
@@ -497,6 +499,140 @@ def test_modele_as_compte_les_points_du_depot_sauf_sur_la_tranche_1(moteur, anne
     assert au_depot == pytest.approx(attendu, abs=1e-4), (
         f"modele_as, {annee}, {remuneration} € : {chez_lui} points chez lui, "
         f"{au_depot} au dépôt ; sa ligne du registre se relit")
+
+
+# ---- Catala, rejoué ----------------------------------------------------------
+# Les règles de retraite de catala-examples (Apache 2.0), au commit `2694b17`,
+# interprétées à part le 24 octobre 2026 par Catala 1.3.0 (action 137), au droit
+# de leur date : l'âge d'ouverture que rend `OuvertureDroitsRetraite` à la date
+# du calcul ; l'âge du taux plein et celui de l'inaptitude, par l'ascendant que
+# son aide au logement compte à charge (R. 823-4, 2°) ; le plafond de l'ASPA,
+# par les ressources qui l'y font compter, 1,25 fois ce plafond au plus. Ses
+# âges, son taux plein d'avant septembre 2023, son inaptitude et son ASPA de
+# D. 815-1 sont ceux du dépôt ; ses erreurs, sa ligne du registre les déclare.
+
+
+def _generation(naissance: str) -> float:
+    """La génération d'une date de naissance, comme `Carriere.generation` :
+    l'année et ses mois écoulés, à trois décimales."""
+    annee, mois = int(naissance[:4]), int(naissance[5:7])
+    return round(annee + (mois - 1) / 12, 3)
+
+
+#: L'âge d'ouverture, en mois, chez lui, des nés au jour dit : calculé le
+#: 31 août 2023, sous la loi de 2010, et le 1er janvier 2024, sous celle de
+#: 2023 ; le droit contrefactuel du dépôt qui garde chacune.
+AGES_CATALA = {
+    "au_31_aout_2023": {
+        "1951-06-30": 720, "1951-07-01": 724, "1952-06-15": 729, "1953-06-15": 734,
+        "1954-06-15": 739, "1955-01-01": 744, "1961-08-31": 744, "1961-09-01": 744,
+        "1963-06-15": 744, "1967-06-15": 744, "1975-06-15": 744},
+    "loi_2023_sans_suspension": {
+        "1951-06-30": 720, "1951-07-01": 724, "1952-06-15": 729, "1953-06-15": 734,
+        "1954-06-15": 739, "1955-01-01": 744, "1961-08-31": 744, "1961-09-01": 747,
+        "1961-12-31": 747, "1962-06-15": 750, "1963-06-15": 753, "1964-06-15": 756,
+        "1965-06-15": 759, "1966-06-15": 762, "1967-06-15": 753, "1968-01-01": 768,
+        "1975-06-15": 768},
+}
+
+#: La génération 1967 sous la loi de 2023 : « 13° Soixante-trois ans et neuf
+#: mois pour les assurés nés en 1967 » (D. 161-2-1-9, LEGIARTI000047634502),
+#: qu'il recopie, et qu'il code 62 ans et 9 mois.
+AGE_DE_1967_SOUS_LA_LOI_DE_2023 = 765
+
+#: L'âge du taux plein (L. 351-8, 1°), en mois, chez lui, selon la naissance du
+#: demandeur : l'âge de l'ascendant qu'il compte à charge, le 1er juin 2021 et
+#: le 1er mars 2024. L'âge légal du demandeur, plus cinq ans avant septembre
+#: 2023, plus trois ans après.
+TAUX_PLEIN_CATALA = {
+    "2021-06-01": {"1951-06-15": 780, "1951-09-15": 784, "1952-06-15": 789,
+                   "1953-06-15": 794, "1954-06-15": 799, "1955-01-01": 804,
+                   "1980-01-01": 804},
+    "2024-03-01": {"1955-01-01": 780, "1960-01-01": 780, "1961-10-15": 783,
+                   "1962-06-15": 786, "1963-06-15": 789, "1964-06-15": 792,
+                   "1965-06-15": 795, "1966-06-15": 798, "1967-06-15": 789,
+                   "1968-01-01": 804, "1985-01-01": 804},
+}
+
+#: « l'âge prévu au premier alinéa de l'article L. 161-17-2 augmenté de trois
+#: années » (L. 351-8, 1°, LEGIARTI000047452736 et 051289852) : ce premier
+#: alinéa dit soixante-quatre ans, et le taux plein vient à 67 ans, en mois.
+TAUX_PLEIN_DEPUIS_SEPTEMBRE_2023 = 804
+
+#: L'âge de l'inapte (L. 351-1-5, D. 351-1-14), en mois, chez lui : celui de
+#: l'ascendant pensionné qu'il compte à charge le 1er mars 2024.
+INAPTITUDE_CATALA = 744
+
+#: Le plafond de l'ASPA d'une personne seule chez lui, à partir du 1er janvier
+#: de l'année (du 1er avril en 2018) : D. 815-1, a, qu'il recopie, jusqu'en
+#: 2020 ; ensuite l'annuel des circulaires de la Cnav
+#: (`autres_sources.catala_fr:31-129`), le seul de 2023 servi encore en 2026.
+#: Rejoué en 2021, 2022 et 2023, lu avant.
+ASPA_CATALA = {2018: 9_998.40, 2019: 10_418.40, 2020: 10_838.40, 2021: 10_881.75,
+               2022: 11_001.44, 2023: 11_533.02}
+
+#: Celui d'un couple d'allocataires, que D. 815-1, b, recopié, fixe et qu'il ne
+#: code pas.
+ASPA_COUPLE_CATALA = {2018: 15_522.54, 2019: 16_174.59, 2020: 16_826.64}
+
+
+@pytest.mark.parametrize("droit, dessus", [
+    ("au_31_aout_2023", AgesOuvertureAvantReforme2023),
+    ("loi_2023_sans_suspension", AgesOuvertureAvantSuspension)])
+def test_catala_ouvre_le_droit_a_l_age_du_depot_sauf_en_1967(moteur, droit, dessus):
+    """Ses âges sont ceux que le droit contrefactuel du dépôt pose sur l'âge en
+    vigueur, comme `ScenarioActuel._sous_le_droit` : la loi de 2010 au 31 août
+    2023, celle de 2023 sans la suspension. Sauf 1967, son erreur."""
+    ages = TableRecouverte(dessus(moteur.parametres.racine_donnees), moteur.ages_ouverture)
+    for naissance, chez_lui in AGES_CATALA[droit].items():
+        attendu = (AGE_DE_1967_SOUS_LA_LOI_DE_2023
+                   if droit == "loi_2023_sans_suspension" and naissance.startswith("1967")
+                   else chez_lui)
+        au_depot = round(12 * ages.age(_generation(naissance))[0])
+        assert au_depot == attendu, (
+            f"catala, {droit}, né le {naissance} : {chez_lui} mois chez lui, {au_depot} "
+            f"au dépôt, {attendu} attendus ; sa ligne du registre se relit")
+
+
+def test_catala_compte_le_taux_plein_du_depot_avant_septembre_2023_et_non_apres(moteur):
+    """Avant septembre 2023, l'âge du taux plein de chaque génération est celui
+    du dépôt, l'âge légal plus cinq ans. Après, Catala l'abaisse à l'âge légal
+    plus trois ans jusqu'à la génération 1967 ; le dépôt le garde à 67 ans."""
+    for date, seuils in TAUX_PLEIN_CATALA.items():
+        for naissance, chez_lui in seuils.items():
+            au_depot = round(12 * moteur.ages_annulation_decote.age(_generation(naissance))[0])
+            if date < "2023-09-01" or naissance >= "1968":
+                assert au_depot == chez_lui, (
+                    f"catala, {date}, demandeur né le {naissance} : {chez_lui} mois chez "
+                    f"lui, {au_depot} au dépôt ; sa ligne du registre se relit")
+            else:
+                assert au_depot == TAUX_PLEIN_DEPUIS_SEPTEMBRE_2023 > chez_lui, (
+                    f"catala, {date}, demandeur né le {naissance} : {chez_lui} mois chez "
+                    f"lui, {au_depot} au dépôt ; sa ligne du registre se relit")
+
+
+def test_catala_ouvre_le_droit_de_l_inapte_a_l_age_du_depot(moteur):
+    version = moteur.invalidites.version("inaptitude", "2024-03-01")
+    assert 12 * version["parametres"]["age"] == INAPTITUDE_CATALA
+
+
+def test_l_aspa_de_catala_est_celle_du_depot_au_mensuel_arrondi_pres():
+    """D. 815-1 jusqu'en 2020, au centime. Ensuite, le dépôt porte douze fois le
+    mensuel de la Cnav, l'annuel divisé par douze et tronqué au centime :
+    l'approximation que sa fiche déclare (`minimum_vieillesse`), quand Catala,
+    comme la Cnav, porte l'annuel."""
+    seule = {int(l["annee"]): float(l["valeur"])
+             for l in _csv(LEGISLATION / "minimum_vieillesse.csv")}
+    couple = {int(l["annee"]): float(l["valeur"])
+              for l in _csv(LEGISLATION / "minimum_vieillesse_couple.csv")}
+    for annee, chez_lui in ASPA_CATALA.items():
+        attendu = chez_lui if annee <= 2020 else 12 * (round(100 * chez_lui) // 12) / 100
+        assert seule[annee] == pytest.approx(attendu, abs=0.005), (
+            f"catala, ASPA de {annee} : {chez_lui} € chez lui, {seule[annee]} € au dépôt")
+    for annee, chez_lui in ASPA_COUPLE_CATALA.items():
+        assert couple[annee] == pytest.approx(chez_lui, abs=0.005), (
+            f"catala, ASPA d'un couple en {annee} : {chez_lui} € chez lui, "
+            f"{couple[annee]} € au dépôt")
 
 
 def test_le_tableau_de_bord_dit_combien_d_ecarts_sont_chez_les_modeles_confrontes(referents):
