@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-10-23",
+ "dernier_passage_le": "2026-10-24",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -1014,15 +1014,15 @@
    "verifiee_le": "2026-10-05"
   },
   "natures_assimilees": {
-   "ajoutees": 192,
+   "ajoutees": 196,
    "colonne": "valeur",
    "corrigees": 0,
-   "empreinte": "f9fad62da7d52b5b",
-   "identiques": 192,
+   "empreinte": "3eca1a6f109cb8a1",
+   "identiques": 384,
    "niveau": "certifiee",
    "source": "DREES, échantillon interrégimes de cotisants (EIC) 2017, données détaillées",
-   "valeurs": 384,
-   "verifiee_le": "2026-10-23"
+   "valeurs": 580,
+   "verifiee_le": "2026-10-24"
   },
   "pap_regimes_subventionnes": {
    "ajoutees": 0,

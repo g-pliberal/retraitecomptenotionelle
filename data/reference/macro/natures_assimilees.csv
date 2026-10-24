@@ -1,428 +1,645 @@
 # La part des affiliés d'avant 23 ans qui ont validé un trimestre de
-# service national, ou de maladie, et le cumul de ces trimestres par
-# affilié, à 60 ans ou au dernier âge vu, par génération et par sexe
+# service national, de maladie, de chômage ou d'AVPF, et le cumul de
+# ces trimestres par affilié, à 60 ans ou au dernier âge vu, par
+# génération et par sexe ; au dernier âge vu aussi, quand il passe
+# 60 ans ; et, aux mêmes âges, le cumul des trimestres validés et celui
+# des trimestres cotisés
 # source_id: drees_eic_natures_assimilees
 # unite: pour cent des affiliés d'avant 23 ans (part) ; trimestres par
 #        affilié d'avant 23 ans (cumul)
 # fiabilite:
-#   certifiee : indicateurs « Part_aff » et « Cum_trim », types « SN » et
-#             « Maladie », champ « Aff_avant_23ans », du fichier
-#             « eic2017_data_drees_er » du jeu « Les droits validés au
-#             cours de la carrière », diffusé par la DREES et recontrôlé
-#             par scripts/verifier_donnees.py.
+#   certifiee : indicateurs « Part_aff » et « Cum_trim », types « SN »,
+#             « Maladie », « Chômage » et « AVPF », et « Cum_trim » seul,
+#             types « Validé » et « Cotisé », champ « Aff_avant_23ans »,
+#             du fichier « eic2017_data_drees_er » du jeu « Les droits
+#             validés au cours de la carrière », diffusé par la DREES et
+#             recontrôlé par scripts/verifier_donnees.py.
 #
 # Chaque génération que l'échantillon interrégimes de cotisants de
 # 2017 suit — 1942, 1946, 1950, puis une sur deux de 1954 à 1994 —,
 # parmi ses affiliés d'avant 23 ans, à la fin de l'année de ses 60 ans,
-# ou de l'âge qu'elle avait en 2017 si elle n'en avait pas 60.
+# ou de l'âge qu'elle avait en 2017 si elle n'en avait pas 60 ; et,
+# pour celles qu'il voit au-delà, à la fin de l'année de cet âge-là :
+# 71 ans, le dernier que le fichier publie, pour 1942 et 1946, 67 pour
+# 1950, 63 pour 1954, 61 pour 1956.
 #
 # LES COLONNES
 # ------------
 # nature : service_national, un trimestre validé au titre du service
 #   national ; maladie, au titre de la maladie, de la maternité, de
-#   l'invalidité et des accidents du travail. Des trimestres « utiles »,
-#   ceux qui portent l'année vers ses quatre trimestres validés.
+#   l'invalidité et des accidents du travail ; chomage, au titre du
+#   chômage, de la préretraite, de la reconversion et de la formation ;
+#   avpf, au titre de l'assurance vieillesse des parents au foyer. Des
+#   trimestres « utiles », ceux qui portent l'année vers ses quatre
+#   trimestres validés. Et deux totaux : valide, les trimestres validés
+#   de quelque nature qu'ils soient, quatre par an au plus, majorations
+#   ôtées ; cotise, ceux de l'activité professionnelle. Leur écart, les
+#   quatre natures ôtées, est ce qu'aucune d'elles ne dit.
 # indicateur : part, la part des affiliés qui en ont validé au moins un,
 #   à cet âge ou avant ; cumul, le nombre de ces trimestres par affilié,
 #   qu'il en ait ou non. Le cumul sur la part dit combien en a chacun de
-#   ceux qui en ont : quatre trimestres de service, dix-sept de maladie
-#   pour les hommes nés en 1950.
-# age : 60 ans, ou l'âge de la génération en 2017.
+#   ceux qui en ont : quatre trimestres de service, dix-sept de maladie,
+#   treize de chômage pour les hommes nés en 1950 ; vingt-six d'AVPF
+#   pour les femmes. Les deux totaux n'ont que leur cumul.
+# age : 60 ans, ou l'âge de la génération en 2017 ; et ce dernier âge
+#   quand il passe 60 ans.
 #
 # À QUOI CETTE SÉRIE SERT
 # ------------------------
 # À donner leur nature aux périodes assimilées des carrières pleines
-# des hommes de la population de scripts/grille_large.py (action 138,
-# étape 14) : la carrière longue répute cotisés le service national et
-# la maladie, quatre trimestres chacun, dans toutes ses rédactions, et
-# le chômage depuis novembre 2012 seulement (D. 351-1-2). 35,1 % des
-# hommes nés en 1950 avaient validé un trimestre de service national à
-# 60 ans, 12,6 % un de maladie. Aucun calcul du site ne la lit.
+# de la population de scripts/grille_large.py (action 138, étape 14) :
+# la carrière longue répute cotisés le service national et la maladie,
+# quatre trimestres chacun, dans toutes ses rédactions, le chômage
+# depuis novembre 2012 seulement, l'AVPF depuis septembre 2023
+# (D. 351-1-2). 35,1 % des hommes nés en 1950 avaient validé un
+# trimestre de service national à 60 ans, 12,6 % un de maladie, 32,5 %
+# un de chômage ; 39,8 % des femmes un d'AVPF. La population ne lit
+# que les natures, à 60 ans au plus. Le reste dit ce que compte au-delà
+# la masse assimilée de l'EIR, qui plafonne ces natures : les hommes
+# nés en 1950 avaient validé à 60 ans 9,7 trimestres sans les cotiser,
+# dont 8,1 des quatre natures, et 0,6 de plus à 67 ans. Aucun calcul du
+# site ne la lit.
 #
 # Ne pas modifier les valeurs certifiées à la main : elles seraient
 # écrasées au prochain scripts/verifier_donnees.py --appliquer.
 generation,sexe,nature,indicateur,age,valeur,fiabilite
 1942,F,avpf,cumul,60,5.7,certifiee
+1942,F,avpf,cumul,71,5.7,certifiee
 1942,F,avpf,part,60,24.3,certifiee
+1942,F,avpf,part,71,24.3,certifiee
 1942,F,chomage,cumul,60,4.6,certifiee
+1942,F,chomage,cumul,71,5.4,certifiee
 1942,F,chomage,part,60,30.0,certifiee
+1942,F,chomage,part,71,31.0,certifiee
+1942,F,cotise,cumul,60,101.0,certifiee
+1942,F,cotise,cumul,71,103.3,certifiee
 1942,F,maladie,cumul,60,2.0,certifiee
+1942,F,maladie,cumul,71,2.1,certifiee
 1942,F,maladie,part,60,12.3,certifiee
+1942,F,maladie,part,71,13.0,certifiee
 1942,F,service_national,cumul,60,0.0,certifiee
+1942,F,service_national,cumul,71,0.0,certifiee
 1942,F,service_national,part,60,0.1,certifiee
+1942,F,service_national,part,71,0.1,certifiee
+1942,F,valide,cumul,60,115.7,certifiee
+1942,F,valide,cumul,71,118.9,certifiee
 1942,H,avpf,cumul,60,0.1,certifiee
+1942,H,avpf,cumul,71,0.1,certifiee
 1942,H,avpf,part,60,1.1,certifiee
+1942,H,avpf,part,71,1.4,certifiee
 1942,H,chomage,cumul,60,4.5,certifiee
+1942,H,chomage,cumul,71,4.9,certifiee
 1942,H,chomage,part,60,30.2,certifiee
+1942,H,chomage,part,71,30.9,certifiee
+1942,H,cotise,cumul,60,133.9,certifiee
+1942,H,cotise,cumul,71,136.6,certifiee
 1942,H,maladie,cumul,60,1.9,certifiee
+1942,H,maladie,cumul,71,2.1,certifiee
 1942,H,maladie,part,60,10.5,certifiee
+1942,H,maladie,part,71,11.1,certifiee
 1942,H,service_national,cumul,60,2.4,certifiee
+1942,H,service_national,cumul,71,2.4,certifiee
 1942,H,service_national,part,60,49.7,certifiee
+1942,H,service_national,part,71,49.7,certifiee
+1942,H,valide,cumul,60,144.6,certifiee
+1942,H,valide,cumul,71,147.9,certifiee
 1946,F,avpf,cumul,60,7.6,certifiee
+1946,F,avpf,cumul,71,7.7,certifiee
 1946,F,avpf,part,60,31.0,certifiee
+1946,F,avpf,part,71,31.0,certifiee
 1946,F,chomage,cumul,60,5.2,certifiee
+1946,F,chomage,cumul,71,5.7,certifiee
 1946,F,chomage,part,60,34.1,certifiee
+1946,F,chomage,part,71,34.7,certifiee
+1946,F,cotise,cumul,60,106.5,certifiee
+1946,F,cotise,cumul,71,109.1,certifiee
 1946,F,maladie,cumul,60,2.3,certifiee
+1946,F,maladie,cumul,71,2.3,certifiee
 1946,F,maladie,part,60,15.1,certifiee
+1946,F,maladie,part,71,15.7,certifiee
 1946,F,service_national,cumul,60,0.0,certifiee
+1946,F,service_national,cumul,71,0.0,certifiee
 1946,F,service_national,part,60,0.1,certifiee
+1946,F,service_national,part,71,0.1,certifiee
+1946,F,valide,cumul,60,124.0,certifiee
+1946,F,valide,cumul,71,127.2,certifiee
 1946,H,avpf,cumul,60,0.1,certifiee
+1946,H,avpf,cumul,71,0.2,certifiee
 1946,H,avpf,part,60,1.6,certifiee
+1946,H,avpf,part,71,1.7,certifiee
 1946,H,chomage,cumul,60,4.5,certifiee
+1946,H,chomage,cumul,71,4.8,certifiee
 1946,H,chomage,part,60,32.9,certifiee
+1946,H,chomage,part,71,33.4,certifiee
+1946,H,cotise,cumul,60,136.2,certifiee
+1946,H,cotise,cumul,71,139.6,certifiee
 1946,H,maladie,cumul,60,1.9,certifiee
+1946,H,maladie,cumul,71,2.0,certifiee
 1946,H,maladie,part,60,10.6,certifiee
+1946,H,maladie,part,71,11.3,certifiee
 1946,H,service_national,cumul,60,2.2,certifiee
+1946,H,service_national,cumul,71,2.2,certifiee
 1946,H,service_national,part,60,47.3,certifiee
+1946,H,service_national,part,71,47.3,certifiee
+1946,H,valide,cumul,60,147.2,certifiee
+1946,H,valide,cumul,71,151.1,certifiee
 1950,F,avpf,cumul,60,10.5,certifiee
+1950,F,avpf,cumul,67,10.5,certifiee
 1950,F,avpf,part,60,39.8,certifiee
+1950,F,avpf,part,67,39.8,certifiee
 1950,F,chomage,cumul,60,5.4,certifiee
+1950,F,chomage,cumul,67,5.8,certifiee
 1950,F,chomage,part,60,37.6,certifiee
+1950,F,chomage,part,67,38.3,certifiee
+1950,F,cotise,cumul,60,110.7,certifiee
+1950,F,cotise,cumul,67,113.9,certifiee
 1950,F,maladie,cumul,60,2.2,certifiee
+1950,F,maladie,cumul,67,2.3,certifiee
 1950,F,maladie,part,60,19.4,certifiee
+1950,F,maladie,part,67,20.2,certifiee
 1950,F,service_national,cumul,60,0.0,certifiee
+1950,F,service_national,cumul,67,0.0,certifiee
 1950,F,service_national,part,60,0.1,certifiee
+1950,F,service_national,part,67,0.1,certifiee
+1950,F,valide,cumul,60,130.5,certifiee
+1950,F,valide,cumul,67,134.1,certifiee
 1950,H,avpf,cumul,60,0.2,certifiee
+1950,H,avpf,cumul,67,0.2,certifiee
 1950,H,avpf,part,60,2.5,certifiee
+1950,H,avpf,part,67,2.6,certifiee
 1950,H,chomage,cumul,60,4.3,certifiee
+1950,H,chomage,cumul,67,4.6,certifiee
 1950,H,chomage,part,60,32.5,certifiee
+1950,H,chomage,part,67,33.1,certifiee
+1950,H,cotise,cumul,60,136.7,certifiee
+1950,H,cotise,cumul,67,140.2,certifiee
 1950,H,maladie,cumul,60,2.2,certifiee
+1950,H,maladie,cumul,67,2.3,certifiee
 1950,H,maladie,part,60,12.6,certifiee
+1950,H,maladie,part,67,13.3,certifiee
 1950,H,service_national,cumul,60,1.4,certifiee
+1950,H,service_national,cumul,67,1.4,certifiee
 1950,H,service_national,part,60,35.1,certifiee
+1950,H,service_national,part,67,35.1,certifiee
+1950,H,valide,cumul,60,146.4,certifiee
+1950,H,valide,cumul,67,150.5,certifiee
 1954,F,avpf,cumul,60,11.7,certifiee
+1954,F,avpf,cumul,63,11.7,certifiee
 1954,F,avpf,part,60,43.9,certifiee
+1954,F,avpf,part,63,43.9,certifiee
 1954,F,chomage,cumul,60,5.5,certifiee
+1954,F,chomage,cumul,63,6.0,certifiee
 1954,F,chomage,part,60,43.1,certifiee
+1954,F,chomage,part,63,44.2,certifiee
+1954,F,cotise,cumul,60,113.5,certifiee
+1954,F,cotise,cumul,63,116.9,certifiee
 1954,F,maladie,cumul,60,2.9,certifiee
+1954,F,maladie,cumul,63,3.2,certifiee
 1954,F,maladie,part,60,22.9,certifiee
+1954,F,maladie,part,63,24.1,certifiee
 1954,F,service_national,cumul,60,0.0,certifiee
+1954,F,service_national,cumul,63,0.0,certifiee
 1954,F,service_national,part,60,0.1,certifiee
+1954,F,service_national,part,63,0.1,certifiee
+1954,F,valide,cumul,60,135.3,certifiee
+1954,F,valide,cumul,63,139.4,certifiee
 1954,H,avpf,cumul,60,0.3,certifiee
+1954,H,avpf,cumul,63,0.3,certifiee
 1954,H,avpf,part,60,3.7,certifiee
+1954,H,avpf,part,63,3.8,certifiee
 1954,H,chomage,cumul,60,4.5,certifiee
+1954,H,chomage,cumul,63,4.9,certifiee
 1954,H,chomage,part,60,36.9,certifiee
+1954,H,chomage,part,63,37.9,certifiee
+1954,H,cotise,cumul,60,139.3,certifiee
+1954,H,cotise,cumul,63,142.4,certifiee
 1954,H,maladie,cumul,60,2.4,certifiee
+1954,H,maladie,cumul,63,2.7,certifiee
 1954,H,maladie,part,60,14.4,certifiee
+1954,H,maladie,part,63,15.6,certifiee
 1954,H,service_national,cumul,60,1.7,certifiee
+1954,H,service_national,cumul,63,1.7,certifiee
 1954,H,service_national,part,60,45.9,certifiee
+1954,H,service_national,part,63,45.9,certifiee
+1954,H,valide,cumul,60,149.5,certifiee
+1954,H,valide,cumul,63,153.3,certifiee
 1956,F,avpf,cumul,60,12.3,certifiee
+1956,F,avpf,cumul,61,12.3,certifiee
 1956,F,avpf,part,60,45.5,certifiee
+1956,F,avpf,part,61,45.5,certifiee
 1956,F,chomage,cumul,60,5.7,certifiee
+1956,F,chomage,cumul,61,6.0,certifiee
 1956,F,chomage,part,60,48.2,certifiee
+1956,F,chomage,part,61,48.8,certifiee
+1956,F,cotise,cumul,60,113.8,certifiee
+1956,F,cotise,cumul,61,115.5,certifiee
 1956,F,maladie,cumul,60,2.8,certifiee
+1956,F,maladie,cumul,61,3.1,certifiee
 1956,F,maladie,part,60,24.9,certifiee
+1956,F,maladie,part,61,25.4,certifiee
 1956,F,service_national,cumul,60,0.0,certifiee
+1956,F,service_national,cumul,61,0.0,certifiee
 1956,F,service_national,part,60,0.1,certifiee
+1956,F,service_national,part,61,0.1,certifiee
+1956,F,valide,cumul,60,136.2,certifiee
+1956,F,valide,cumul,61,138.4,certifiee
 1956,H,avpf,cumul,60,0.4,certifiee
+1956,H,avpf,cumul,61,0.4,certifiee
 1956,H,avpf,part,60,4.4,certifiee
+1956,H,avpf,part,61,4.4,certifiee
 1956,H,chomage,cumul,60,5.0,certifiee
+1956,H,chomage,cumul,61,5.3,certifiee
 1956,H,chomage,part,60,41.0,certifiee
+1956,H,chomage,part,61,41.6,certifiee
+1956,H,cotise,cumul,60,138.8,certifiee
+1956,H,cotise,cumul,61,140.3,certifiee
 1956,H,maladie,cumul,60,2.4,certifiee
+1956,H,maladie,cumul,61,2.6,certifiee
 1956,H,maladie,part,60,14.6,certifiee
+1956,H,maladie,part,61,15.2,certifiee
 1956,H,service_national,cumul,60,1.9,certifiee
+1956,H,service_national,cumul,61,1.9,certifiee
 1956,H,service_national,part,60,50.6,certifiee
+1956,H,service_national,part,61,50.6,certifiee
+1956,H,valide,cumul,60,149.5,certifiee
+1956,H,valide,cumul,61,151.5,certifiee
 1958,F,avpf,cumul,59,12.1,certifiee
 1958,F,avpf,part,59,45.6,certifiee
 1958,F,chomage,cumul,59,5.7,certifiee
 1958,F,chomage,part,59,51.4,certifiee
+1958,F,cotise,cumul,59,111.6,certifiee
 1958,F,maladie,cumul,59,2.4,certifiee
 1958,F,maladie,part,59,24.5,certifiee
 1958,F,service_national,cumul,59,0.0,certifiee
 1958,F,service_national,part,59,0.1,certifiee
+1958,F,valide,cumul,59,133.4,certifiee
 1958,H,avpf,cumul,59,0.4,certifiee
 1958,H,avpf,part,59,5.2,certifiee
 1958,H,chomage,cumul,59,4.9,certifiee
 1958,H,chomage,part,59,42.5,certifiee
+1958,H,cotise,cumul,59,135.7,certifiee
 1958,H,maladie,cumul,59,2.0,certifiee
 1958,H,maladie,part,59,13.4,certifiee
 1958,H,service_national,cumul,59,2.0,certifiee
 1958,H,service_national,part,59,52.8,certifiee
+1958,H,valide,cumul,59,145.7,certifiee
 1960,F,avpf,cumul,57,11.9,certifiee
 1960,F,avpf,part,57,46.1,certifiee
 1960,F,chomage,cumul,57,5.8,certifiee
 1960,F,chomage,part,57,54.0,certifiee
+1960,F,cotise,cumul,57,106.2,certifiee
 1960,F,maladie,cumul,57,2.0,certifiee
 1960,F,maladie,part,57,23.8,certifiee
 1960,F,service_national,cumul,57,0.0,certifiee
 1960,F,service_national,part,57,0.1,certifiee
+1960,F,valide,cumul,57,127.2,certifiee
 1960,H,avpf,cumul,57,0.4,certifiee
 1960,H,avpf,part,57,5.2,certifiee
 1960,H,chomage,cumul,57,5.0,certifiee
 1960,H,chomage,part,57,45.6,certifiee
+1960,H,cotise,cumul,57,126.9,certifiee
 1960,H,maladie,cumul,57,1.7,certifiee
 1960,H,maladie,part,57,12.4,certifiee
 1960,H,service_national,cumul,57,2.1,certifiee
 1960,H,service_national,part,57,56.1,certifiee
+1960,H,valide,cumul,57,136.5,certifiee
 1962,F,avpf,cumul,55,12.7,certifiee
 1962,F,avpf,part,55,47.6,certifiee
 1962,F,chomage,cumul,55,5.8,certifiee
 1962,F,chomage,part,55,54.5,certifiee
+1962,F,cotise,cumul,55,99.6,certifiee
 1962,F,maladie,cumul,55,1.7,certifiee
 1962,F,maladie,part,55,23.4,certifiee
 1962,F,service_national,cumul,55,0.0,certifiee
 1962,F,service_national,part,55,0.0,certifiee
+1962,F,valide,cumul,55,120.9,certifiee
 1962,H,avpf,cumul,55,0.4,certifiee
 1962,H,avpf,part,55,5.7,certifiee
 1962,H,chomage,cumul,55,5.2,certifiee
 1962,H,chomage,part,55,48.2,certifiee
+1962,H,cotise,cumul,55,119.6,certifiee
 1962,H,maladie,cumul,55,1.4,certifiee
 1962,H,maladie,part,55,11.4,certifiee
 1962,H,service_national,cumul,55,2.3,certifiee
 1962,H,service_national,part,55,57.7,certifiee
+1962,H,valide,cumul,55,129.2,certifiee
 1964,F,avpf,cumul,53,11.5,certifiee
 1964,F,avpf,part,53,47.1,certifiee
 1964,F,chomage,cumul,53,5.5,certifiee
 1964,F,chomage,part,53,55.6,certifiee
+1964,F,cotise,cumul,53,94.8,certifiee
 1964,F,maladie,cumul,53,1.5,certifiee
 1964,F,maladie,part,53,21.6,certifiee
 1964,F,service_national,cumul,53,0.0,certifiee
 1964,F,service_national,part,53,0.1,certifiee
+1964,F,valide,cumul,53,114.4,certifiee
 1964,H,avpf,cumul,53,0.4,certifiee
 1964,H,avpf,part,53,5.8,certifiee
 1964,H,chomage,cumul,53,5.1,certifiee
 1964,H,chomage,part,53,50.8,certifiee
+1964,H,cotise,cumul,53,110.8,certifiee
 1964,H,maladie,cumul,53,1.3,certifiee
 1964,H,maladie,part,53,11.0,certifiee
 1964,H,service_national,cumul,53,2.5,certifiee
 1964,H,service_national,part,53,61.3,certifiee
+1964,H,valide,cumul,53,120.4,certifiee
 1966,F,avpf,cumul,51,11.2,certifiee
 1966,F,avpf,part,51,47.9,certifiee
 1966,F,chomage,cumul,51,5.5,certifiee
 1966,F,chomage,part,51,57.0,certifiee
+1966,F,cotise,cumul,51,87.4,certifiee
 1966,F,maladie,cumul,51,1.2,certifiee
 1966,F,maladie,part,51,20.6,certifiee
 1966,F,service_national,cumul,51,0.0,certifiee
 1966,F,service_national,part,51,0.1,certifiee
+1966,F,valide,cumul,51,106.3,certifiee
 1966,H,avpf,cumul,51,0.5,certifiee
 1966,H,avpf,part,51,5.9,certifiee
 1966,H,chomage,cumul,51,4.9,certifiee
 1966,H,chomage,part,51,50.3,certifiee
+1966,H,cotise,cumul,51,102.2,certifiee
 1966,H,maladie,cumul,51,0.9,certifiee
 1966,H,maladie,part,51,9.1,certifiee
 1966,H,service_national,cumul,51,2.6,certifiee
 1966,H,service_national,part,51,62.6,certifiee
+1966,H,valide,cumul,51,111.5,certifiee
 1968,F,avpf,cumul,49,11.1,certifiee
 1968,F,avpf,part,49,48.5,certifiee
 1968,F,chomage,cumul,49,5.1,certifiee
 1968,F,chomage,part,49,55.1,certifiee
+1968,F,cotise,cumul,49,81.6,certifiee
 1968,F,maladie,cumul,49,0.9,certifiee
 1968,F,maladie,part,49,19.8,certifiee
 1968,F,service_national,cumul,49,0.0,certifiee
 1968,F,service_national,part,49,0.1,certifiee
+1968,F,valide,cumul,49,99.6,certifiee
 1968,H,avpf,cumul,49,0.4,certifiee
 1968,H,avpf,part,49,5.3,certifiee
 1968,H,chomage,cumul,49,4.7,certifiee
 1968,H,chomage,part,49,49.6,certifiee
+1968,H,cotise,cumul,49,95.0,certifiee
 1968,H,maladie,cumul,49,0.9,certifiee
 1968,H,maladie,part,49,9.5,certifiee
 1968,H,service_national,cumul,49,2.4,certifiee
 1968,H,service_national,part,49,61.0,certifiee
+1968,H,valide,cumul,49,103.8,certifiee
 1970,F,avpf,cumul,47,10.6,certifiee
 1970,F,avpf,part,47,46.9,certifiee
 1970,F,chomage,cumul,47,4.8,certifiee
 1970,F,chomage,part,47,54.1,certifiee
+1970,F,cotise,cumul,47,75.5,certifiee
 1970,F,maladie,cumul,47,0.9,certifiee
 1970,F,maladie,part,47,19.0,certifiee
 1970,F,service_national,cumul,47,0.0,certifiee
 1970,F,service_national,part,47,0.0,certifiee
+1970,F,valide,cumul,47,92.5,certifiee
 1970,H,avpf,cumul,47,0.4,certifiee
 1970,H,avpf,part,47,5.9,certifiee
 1970,H,chomage,cumul,47,4.4,certifiee
 1970,H,chomage,part,47,48.6,certifiee
+1970,H,cotise,cumul,47,88.4,certifiee
 1970,H,maladie,cumul,47,0.6,certifiee
 1970,H,maladie,part,47,8.4,certifiee
 1970,H,service_national,cumul,47,2.1,certifiee
 1970,H,service_national,part,47,61.0,certifiee
+1970,H,valide,cumul,47,96.3,certifiee
 1972,F,avpf,cumul,45,9.7,certifiee
 1972,F,avpf,part,45,44.8,certifiee
 1972,F,chomage,cumul,45,4.3,certifiee
 1972,F,chomage,part,45,51.3,certifiee
+1972,F,cotise,cumul,45,70.0,certifiee
 1972,F,maladie,cumul,45,0.7,certifiee
 1972,F,maladie,part,45,17.5,certifiee
 1972,F,service_national,cumul,45,0.0,certifiee
 1972,F,service_national,part,45,0.1,certifiee
+1972,F,valide,cumul,45,85.3,certifiee
 1972,H,avpf,cumul,45,0.4,certifiee
 1972,H,avpf,part,45,5.5,certifiee
 1972,H,chomage,cumul,45,4.0,certifiee
 1972,H,chomage,part,45,46.0,certifiee
+1972,H,cotise,cumul,45,80.6,certifiee
 1972,H,maladie,cumul,45,0.6,certifiee
 1972,H,maladie,part,45,8.1,certifiee
 1972,H,service_national,cumul,45,2.2,certifiee
 1972,H,service_national,part,45,63.5,certifiee
+1972,H,valide,cumul,45,87.9,certifiee
 1974,F,avpf,cumul,43,9.0,certifiee
 1974,F,avpf,part,43,42.9,certifiee
 1974,F,chomage,cumul,43,3.6,certifiee
 1974,F,chomage,part,43,47.6,certifiee
+1974,F,cotise,cumul,43,64.2,certifiee
 1974,F,maladie,cumul,43,0.5,certifiee
 1974,F,maladie,part,43,16.8,certifiee
 1974,F,service_national,cumul,43,0.0,certifiee
 1974,F,service_national,part,43,0.0,certifiee
+1974,F,valide,cumul,43,77.9,certifiee
 1974,H,avpf,cumul,43,0.3,certifiee
 1974,H,avpf,part,43,5.4,certifiee
 1974,H,chomage,cumul,43,3.6,certifiee
 1974,H,chomage,part,43,43.5,certifiee
+1974,H,cotise,cumul,43,73.1,certifiee
 1974,H,maladie,cumul,43,0.4,certifiee
 1974,H,maladie,part,43,7.0,certifiee
 1974,H,service_national,cumul,43,2.2,certifiee
 1974,H,service_national,part,43,63.0,certifiee
+1974,H,valide,cumul,43,79.8,certifiee
 1976,F,avpf,cumul,41,8.0,certifiee
 1976,F,avpf,part,41,39.6,certifiee
 1976,F,chomage,cumul,41,3.1,certifiee
 1976,F,chomage,part,41,45.1,certifiee
+1976,F,cotise,cumul,41,59.5,certifiee
 1976,F,maladie,cumul,41,0.5,certifiee
 1976,F,maladie,part,41,15.5,certifiee
 1976,F,service_national,cumul,41,0.0,certifiee
 1976,F,service_national,part,41,0.0,certifiee
+1976,F,valide,cumul,41,71.6,certifiee
 1976,H,avpf,cumul,41,0.3,certifiee
 1976,H,avpf,part,41,4.8,certifiee
 1976,H,chomage,cumul,41,3.2,certifiee
 1976,H,chomage,part,41,42.3,certifiee
+1976,H,cotise,cumul,41,67.5,certifiee
 1976,H,maladie,cumul,41,0.4,certifiee
 1976,H,maladie,part,41,6.4,certifiee
 1976,H,service_national,cumul,41,1.4,certifiee
 1976,H,service_national,part,41,42.3,certifiee
+1976,H,valide,cumul,41,73.0,certifiee
 1978,F,avpf,cumul,39,7.2,certifiee
 1978,F,avpf,part,39,38.8,certifiee
 1978,F,chomage,cumul,39,2.9,certifiee
 1978,F,chomage,part,39,44.1,certifiee
+1978,F,cotise,cumul,39,54.4,certifiee
 1978,F,maladie,cumul,39,0.4,certifiee
 1978,F,maladie,part,39,14.8,certifiee
 1978,F,service_national,cumul,39,0.0,certifiee
 1978,F,service_national,part,39,0.1,certifiee
+1978,F,valide,cumul,39,65.4,certifiee
 1978,H,avpf,cumul,39,0.2,certifiee
 1978,H,avpf,part,39,4.5,certifiee
 1978,H,chomage,cumul,39,3.0,certifiee
 1978,H,chomage,part,39,42.2,certifiee
+1978,H,cotise,cumul,39,61.4,certifiee
 1978,H,maladie,cumul,39,0.3,certifiee
 1978,H,maladie,part,39,6.1,certifiee
 1978,H,service_national,cumul,39,0.7,certifiee
 1978,H,service_national,part,39,22.0,certifiee
+1978,H,valide,cumul,39,65.9,certifiee
 1980,F,avpf,cumul,37,6.4,certifiee
 1980,F,avpf,part,37,36.7,certifiee
 1980,F,chomage,cumul,37,2.6,certifiee
 1980,F,chomage,part,37,42.9,certifiee
+1980,F,cotise,cumul,37,49.2,certifiee
 1980,F,maladie,cumul,37,0.3,certifiee
 1980,F,maladie,part,37,13.5,certifiee
 1980,F,service_national,cumul,37,0.0,certifiee
 1980,F,service_national,part,37,0.0,certifiee
+1980,F,valide,cumul,37,58.9,certifiee
 1980,H,avpf,cumul,37,0.2,certifiee
 1980,H,avpf,part,37,4.4,certifiee
 1980,H,chomage,cumul,37,2.8,certifiee
 1980,H,chomage,part,37,42.5,certifiee
+1980,H,cotise,cumul,37,55.5,certifiee
 1980,H,maladie,cumul,37,0.3,certifiee
 1980,H,maladie,part,37,5.7,certifiee
 1980,H,service_national,cumul,37,0.0,certifiee
 1980,H,service_national,part,37,0.2,certifiee
+1980,H,valide,cumul,37,58.9,certifiee
 1982,F,avpf,cumul,35,5.7,certifiee
 1982,F,avpf,part,35,34.3,certifiee
 1982,F,chomage,cumul,35,2.5,certifiee
 1982,F,chomage,part,35,42.0,certifiee
+1982,F,cotise,cumul,35,43.2,certifiee
 1982,F,maladie,cumul,35,0.3,certifiee
 1982,F,maladie,part,35,12.6,certifiee
 1982,F,service_national,cumul,35,0.0,certifiee
 1982,F,service_national,part,35,0.0,certifiee
+1982,F,valide,cumul,35,51.8,certifiee
 1982,H,avpf,cumul,35,0.2,certifiee
 1982,H,avpf,part,35,3.8,certifiee
 1982,H,chomage,cumul,35,2.5,certifiee
 1982,H,chomage,part,35,41.3,certifiee
+1982,H,cotise,cumul,35,49.1,certifiee
 1982,H,maladie,cumul,35,0.2,certifiee
 1982,H,maladie,part,35,5.1,certifiee
 1982,H,service_national,cumul,35,0.0,certifiee
 1982,H,service_national,part,35,0.1,certifiee
+1982,H,valide,cumul,35,52.1,certifiee
 1984,F,avpf,cumul,33,5.1,certifiee
 1984,F,avpf,part,33,32.3,certifiee
 1984,F,chomage,cumul,33,2.2,certifiee
 1984,F,chomage,part,33,40.4,certifiee
+1984,F,cotise,cumul,33,36.6,certifiee
 1984,F,maladie,cumul,33,0.3,certifiee
 1984,F,maladie,part,33,11.8,certifiee
 1984,F,service_national,cumul,33,0.0,certifiee
 1984,F,service_national,part,33,0.0,certifiee
+1984,F,valide,cumul,33,44.3,certifiee
 1984,H,avpf,cumul,33,0.2,certifiee
 1984,H,avpf,part,33,3.7,certifiee
 1984,H,chomage,cumul,33,2.3,certifiee
 1984,H,chomage,part,33,40.3,certifiee
+1984,H,cotise,cumul,33,41.9,certifiee
 1984,H,maladie,cumul,33,0.2,certifiee
 1984,H,maladie,part,33,5.3,certifiee
 1984,H,service_national,cumul,33,0.0,certifiee
 1984,H,service_national,part,33,0.1,certifiee
+1984,H,valide,cumul,33,44.6,certifiee
 1986,F,avpf,cumul,31,4.0,certifiee
 1986,F,avpf,part,31,27.7,certifiee
 1986,F,chomage,cumul,31,2.0,certifiee
 1986,F,chomage,part,31,39.4,certifiee
+1986,F,cotise,cumul,31,30.8,certifiee
 1986,F,maladie,cumul,31,0.2,certifiee
 1986,F,maladie,part,31,10.0,certifiee
 1986,F,service_national,cumul,31,0.0,certifiee
 1986,F,service_national,part,31,0.0,certifiee
+1986,F,valide,cumul,31,37.1,certifiee
 1986,H,avpf,cumul,31,0.1,certifiee
 1986,H,avpf,part,31,2.6,certifiee
 1986,H,chomage,cumul,31,2.0,certifiee
 1986,H,chomage,part,31,39.7,certifiee
+1986,H,cotise,cumul,31,35.0,certifiee
 1986,H,maladie,cumul,31,0.1,certifiee
 1986,H,maladie,part,31,4.4,certifiee
 1986,H,service_national,cumul,31,0.0,certifiee
 1986,H,service_national,part,31,0.0,certifiee
+1986,H,valide,cumul,31,37.4,certifiee
 1988,F,avpf,cumul,29,3.2,certifiee
 1988,F,avpf,part,29,24.1,certifiee
 1988,F,chomage,cumul,29,1.7,certifiee
 1988,F,chomage,part,29,36.7,certifiee
+1988,F,cotise,cumul,29,24.9,certifiee
 1988,F,maladie,cumul,29,0.1,certifiee
 1988,F,maladie,part,29,7.6,certifiee
 1988,F,service_national,cumul,29,0.0,certifiee
 1988,F,service_national,part,29,0.0,certifiee
+1988,F,valide,cumul,29,30.0,certifiee
 1988,H,avpf,cumul,29,0.1,certifiee
 1988,H,avpf,part,29,2.1,certifiee
 1988,H,chomage,cumul,29,1.8,certifiee
 1988,H,chomage,part,29,37.7,certifiee
+1988,H,cotise,cumul,29,28.2,certifiee
 1988,H,maladie,cumul,29,0.1,certifiee
 1988,H,maladie,part,29,3.7,certifiee
 1988,H,service_national,cumul,29,0.0,certifiee
 1988,H,service_national,part,29,0.0,certifiee
+1988,H,valide,cumul,29,30.2,certifiee
 1990,F,avpf,cumul,27,2.2,certifiee
 1990,F,avpf,part,27,18.8,certifiee
 1990,F,chomage,cumul,27,1.4,certifiee
 1990,F,chomage,part,27,33.5,certifiee
+1990,F,cotise,cumul,27,19.3,certifiee
 1990,F,maladie,cumul,27,0.1,certifiee
 1990,F,maladie,part,27,5.5,certifiee
 1990,F,service_national,cumul,27,0.0,certifiee
 1990,F,service_national,part,27,0.0,certifiee
+1990,F,valide,cumul,27,23.0,certifiee
 1990,H,avpf,cumul,27,0.1,certifiee
 1990,H,avpf,part,27,1.4,certifiee
 1990,H,chomage,cumul,27,1.5,certifiee
 1990,H,chomage,part,27,35.0,certifiee
+1990,H,cotise,cumul,27,21.6,certifiee
 1990,H,maladie,cumul,27,0.1,certifiee
 1990,H,maladie,part,27,3.0,certifiee
 1990,H,service_national,cumul,27,0.0,certifiee
 1990,H,service_national,part,27,0.0,certifiee
+1990,H,valide,cumul,27,23.2,certifiee
 1992,F,avpf,cumul,25,1.6,certifiee
 1992,F,avpf,part,25,13.7,certifiee
 1992,F,chomage,cumul,25,1.0,certifiee
 1992,F,chomage,part,25,26.7,certifiee
+1992,F,cotise,cumul,25,13.8,certifiee
 1992,F,maladie,cumul,25,0.1,certifiee
 1992,F,maladie,part,25,3.4,certifiee
 1992,F,service_national,cumul,25,0.0,certifiee
 1992,F,service_national,part,25,0.0,certifiee
+1992,F,valide,cumul,25,16.4,certifiee
 1992,H,avpf,cumul,25,0.0,certifiee
 1992,H,avpf,part,25,0.7,certifiee
 1992,H,chomage,cumul,25,1.1,certifiee
 1992,H,chomage,part,25,30.0,certifiee
+1992,H,cotise,cumul,25,15.5,certifiee
 1992,H,maladie,cumul,25,0.1,certifiee
 1992,H,maladie,part,25,2.7,certifiee
 1992,H,service_national,cumul,25,0.0,certifiee
 1992,H,service_national,part,25,0.0,certifiee
+1992,H,valide,cumul,25,16.7,certifiee
 1994,F,avpf,cumul,23,0.9,certifiee
 1994,F,avpf,part,23,9.8,certifiee
 1994,F,chomage,cumul,23,0.5,certifiee
 1994,F,chomage,part,23,17.1,certifiee
+1994,F,cotise,cumul,23,8.6,certifiee
 1994,F,maladie,cumul,23,0.0,certifiee
 1994,F,maladie,part,23,1.8,certifiee
 1994,F,service_national,cumul,23,0.0,certifiee
 1994,F,service_national,part,23,0.0,certifiee
+1994,F,valide,cumul,23,10.1,certifiee
 1994,H,avpf,cumul,23,0.0,certifiee
 1994,H,avpf,part,23,0.4,certifiee
 1994,H,chomage,cumul,23,0.6,certifiee
 1994,H,chomage,part,23,19.0,certifiee
+1994,H,cotise,cumul,23,9.5,certifiee
 1994,H,maladie,cumul,23,0.0,certifiee
 1994,H,maladie,part,23,1.7,certifiee
 1994,H,service_national,cumul,23,0.0,certifiee
 1994,H,service_national,part,23,0.0,certifiee
+1994,H,valide,cumul,23,10.2,certifiee

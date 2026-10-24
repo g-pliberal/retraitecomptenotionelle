@@ -2734,12 +2734,15 @@ def source_natures_assimilees() -> dict[tuple, float]:
     """La part des affiliés d'avant 23 ans qui ont validé un trimestre de
     service national, de maladie, de chômage ou d'AVPF, et le cumul de ces
     trimestres par affilié, à 60 ans ou au dernier âge que l'échantillon voit,
-    génération par génération, sexe par sexe.
+    et à ce dernier âge aussi quand il passe 60 ans ; aux mêmes âges, le
+    cumul des trimestres validés et celui des trimestres cotisés ; génération
+    par génération, sexe par sexe.
 
     Les données détaillées de l'EIC 2017 que
     ``scripts/fetch/drees_natures_assimilees.py`` lit et vérifie : la
     population de la page en tire la nature des périodes assimilées de ses
-    carrières pleines (action 138, étape 14).
+    carrières pleines (action 138, étape 14), et ce que compte au-delà la
+    masse assimilée qui les plafonne.
 
     Clé (generation, sexe, nature, indicateur, age).
     """
@@ -7868,38 +7871,48 @@ CERTIFICATIONS = (
             "# La part des affiliés d'avant 23 ans qui ont validé un trimestre de",
             "# service national, de maladie, de chômage ou d'AVPF, et le cumul de",
             "# ces trimestres par affilié, à 60 ans ou au dernier âge vu, par",
-            "# génération et par sexe",
+            "# génération et par sexe ; au dernier âge vu aussi, quand il passe",
+            "# 60 ans ; et, aux mêmes âges, le cumul des trimestres validés et celui",
+            "# des trimestres cotisés",
             "# source_id: drees_eic_natures_assimilees",
             "# unite: pour cent des affiliés d'avant 23 ans (part) ; trimestres par",
             "#        affilié d'avant 23 ans (cumul)",
             "# fiabilite:",
             "#   certifiee : indicateurs « Part_aff » et « Cum_trim », types « SN »,",
-            "#             « Maladie », « Chômage » et « AVPF », champ",
-            "#             « Aff_avant_23ans », du fichier",
-            "#             « eic2017_data_drees_er » du jeu « Les droits validés au",
-            "#             cours de la carrière », diffusé par la DREES et recontrôlé",
-            "#             par scripts/verifier_donnees.py.",
+            "#             « Maladie », « Chômage » et « AVPF », et « Cum_trim » seul,",
+            "#             types « Validé » et « Cotisé », champ « Aff_avant_23ans »,",
+            "#             du fichier « eic2017_data_drees_er » du jeu « Les droits",
+            "#             validés au cours de la carrière », diffusé par la DREES et",
+            "#             recontrôlé par scripts/verifier_donnees.py.",
             "#",
             "# Chaque génération que l'échantillon interrégimes de cotisants de",
             "# 2017 suit — 1942, 1946, 1950, puis une sur deux de 1954 à 1994 —,",
             "# parmi ses affiliés d'avant 23 ans, à la fin de l'année de ses 60 ans,",
-            "# ou de l'âge qu'elle avait en 2017 si elle n'en avait pas 60.",
+            "# ou de l'âge qu'elle avait en 2017 si elle n'en avait pas 60 ; et,",
+            "# pour celles qu'il voit au-delà, à la fin de l'année de cet âge-là :",
+            "# 71 ans, le dernier que le fichier publie, pour 1942 et 1946, 67 pour",
+            "# 1950, 63 pour 1954, 61 pour 1956.",
             "#",
             "# LES COLONNES",
             "# ------------",
             "# nature : service_national, un trimestre validé au titre du service",
             "#   national ; maladie, au titre de la maladie, de la maternité, de",
             "#   l'invalidité et des accidents du travail ; chomage, au titre du",
-            "#   chômage ; avpf, au titre de l'assurance vieillesse des parents au",
-            "#   foyer. Des trimestres « utiles », ceux qui portent l'année vers ses",
-            "#   quatre trimestres validés.",
+            "#   chômage, de la préretraite, de la reconversion et de la formation ;",
+            "#   avpf, au titre de l'assurance vieillesse des parents au foyer. Des",
+            "#   trimestres « utiles », ceux qui portent l'année vers ses quatre",
+            "#   trimestres validés. Et deux totaux : valide, les trimestres validés",
+            "#   de quelque nature qu'ils soient, quatre par an au plus, majorations",
+            "#   ôtées ; cotise, ceux de l'activité professionnelle. Leur écart, les",
+            "#   quatre natures ôtées, est ce qu'aucune d'elles ne dit.",
             "# indicateur : part, la part des affiliés qui en ont validé au moins un,",
             "#   à cet âge ou avant ; cumul, le nombre de ces trimestres par affilié,",
             "#   qu'il en ait ou non. Le cumul sur la part dit combien en a chacun de",
             "#   ceux qui en ont : quatre trimestres de service, dix-sept de maladie,",
             "#   treize de chômage pour les hommes nés en 1950 ; vingt-six d'AVPF",
-            "#   pour les femmes.",
-            "# age : 60 ans, ou l'âge de la génération en 2017.",
+            "#   pour les femmes. Les deux totaux n'ont que leur cumul.",
+            "# age : 60 ans, ou l'âge de la génération en 2017 ; et ce dernier âge",
+            "#   quand il passe 60 ans.",
             "#",
             "# À QUOI CETTE SÉRIE SERT",
             "# ------------------------",
@@ -7910,8 +7923,12 @@ CERTIFICATIONS = (
             "# depuis novembre 2012 seulement, l'AVPF depuis septembre 2023",
             "# (D. 351-1-2). 35,1 % des hommes nés en 1950 avaient validé un",
             "# trimestre de service national à 60 ans, 12,6 % un de maladie, 32,5 %",
-            "# un de chômage ; 39,8 % des femmes un d'AVPF. Aucun calcul du site ne",
-            "# la lit.",
+            "# un de chômage ; 39,8 % des femmes un d'AVPF. La population ne lit",
+            "# que les natures, à 60 ans au plus. Le reste dit ce que compte au-delà",
+            "# la masse assimilée de l'EIR, qui plafonne ces natures : les hommes",
+            "# nés en 1950 avaient validé à 60 ans 9,7 trimestres sans les cotiser,",
+            "# dont 8,1 des quatre natures, et 0,6 de plus à 67 ans. Aucun calcul du",
+            "# site ne la lit.",
             "#",
             "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
             "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",

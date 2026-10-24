@@ -629,6 +629,12 @@ NATURES_A_LEUR_PART = True
 #: prennent celles de la dernière qu'il y voit, 1956.
 NATURES_LUES_A_60_ANS = ("maladie", "chomage", "avpf")
 
+#: Les natures que la population lit, à 60 ans au plus. Le fichier dit aussi
+#: ce que l'échantillon voit après, et le cumul des trimestres validés et
+#: cotisés : ce que compte au-delà la masse assimilée de l'EIR qui les
+#: plafonne (:data:`NATURES_A_LEUR_PART`).
+NATURES_DE_L_ECHANTILLON = ("service_national", *NATURES_LUES_A_60_ANS)
+
 #: Les motifs du bloc des années assimilées que :func:`refaire_le_bloc` refait,
 #: dans leur ordre : le service national, la maladie, l'AVPF, le chômage.
 MOTIFS_DES_NATURES = ("service_militaire", "maladie", "education_enfant", "chomage_indemnise")
@@ -1858,11 +1864,14 @@ def natures_assimilees(racine: Path, sexe: str) -> dict[str, dict[int, tuple[flo
     (``natures_assimilees.csv``, :data:`NATURES_SELON_LA_GENERATION`). Le
     service national, fait au dernier âge où l'échantillon voit chaque
     génération, se lit à cet âge ; la maladie, le chômage et l'AVPF, qui
-    croissent avec l'âge, à 60 ans seulement (:data:`NATURES_LUES_A_60_ANS`)."""
+    croissent avec l'âge, à 60 ans seulement (:data:`NATURES_LUES_A_60_ANS`).
+    Ni ce que l'échantillon voit après 60 ans, ni les totaux des trimestres
+    validés et cotisés ne se lisent (:data:`NATURES_DE_L_ECHANTILLON`)."""
     lues: dict[str, dict[int, dict[str, float]]] = {}
     for ligne in _lire_macro(racine, "natures_assimilees.csv"):
-        if ligne["sexe"] != sexe or (ligne["nature"] in NATURES_LUES_A_60_ANS
-                                     and ligne["age"] != "60"):
+        if (ligne["sexe"] != sexe or ligne["nature"] not in NATURES_DE_L_ECHANTILLON
+                or int(ligne["age"]) > 60
+                or (ligne["nature"] in NATURES_LUES_A_60_ANS and ligne["age"] != "60")):
             continue
         lues.setdefault(ligne["nature"], {}).setdefault(int(ligne["generation"]), {})[
             ligne["indicateur"]] = float(ligne["valeur"])

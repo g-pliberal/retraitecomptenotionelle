@@ -774,6 +774,22 @@ def test_les_natures_assimilees_se_lisent_generation_par_generation(parametres):
     assert G.part_et_annees(natures["service_national"], 1980) == (pytest.approx(0.002), 0)
 
 
+def test_la_population_lit_les_quatre_natures_a_60_ans_au_plus(parametres):
+    """Le fichier des natures dit aussi ce que l'échantillon voit après
+    60 ans — 67 ans pour les nés en 1950 — et le cumul des trimestres validés
+    et cotisés, qui disent ce que compte au-delà la masse assimilée de l'EIR
+    (action 138, étape 14, le 24 octobre 2026) ; la population n'en lit que
+    les quatre natures, à 60 ans ou au dernier âge vu avant : 4,3 trimestres
+    de chômage par homme né en 1950, et non les 4,6 de ses 67 ans."""
+    for sexe in ("F", "H"):
+        natures = G.natures_assimilees(parametres.racine_donnees, sexe)
+        assert set(natures) == {"service_national", "maladie", "chomage", "avpf"}
+    hommes = G.natures_assimilees(parametres.racine_donnees, "H")
+    assert hommes["chomage"][1950] == (32.5, 4.3)
+    assert hommes["service_national"][1950] == (35.1, 1.4)
+    assert hommes["service_national"][1976] == (42.3, 1.4)
+
+
 def test_les_classes_de_nature_rendent_les_parts_de_l_echantillon(parametres):
     """Chaque cinquième d'une carrière pleine d'homme se décline en cinq classes
     de nature de poids égal, chacune au milieu de son rang. Le cinquième qui
