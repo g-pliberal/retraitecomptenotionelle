@@ -158,7 +158,7 @@ from typing import TYPE_CHECKING
 from .. import chronologie as chrono
 from ..donnees.chargement import Fiabilite
 from ..somme import somme_ordonnee
-from .coordonner import (REGIMES_ALIGNES, REGIMES_ALIGNES_TETE, lura_applicable,
+from .coordonner import (REGIMES_ALIGNES, REGIMES_ALIGNES_TETE, lura_applicable, regimes_de,
                          tete_de_succession)
 from .liquider import maximum_des_pensions
 
@@ -733,94 +733,210 @@ def _cumul_a_la_retraite(moteur: ScenarioActuel, fiche: dict, conjoint: Conjoint
     return jour, servie, reste, limite, fiabilite
 
 
-def _fin_de_la_charge(fiche: dict, naissance: str, date_effet: str) -> str:
-    """Le jour où cesse la part de la majoration forfaitaire d'un enfant à
-    charge à ``date_effet`` : le premier jour du mois qui suit celui où il
-    atteint l'âge limite (circulaire Cnav n° 76/88, fiche n° 9 : « 1er jour du
-    mois suivant celui au cours duquel l'une des conditions d'attribution n'est
-    plus satisfaite » ; l'enfant « n'est plus à charge le jour de son »
-    anniversaire). L'âge est celui de la version en vigueur ce jour-là — seize
-    ans, puis la majorité depuis le 1er janvier 2016 (R. 353-9, R. 313-12,
-    R. 161-4) : l'enfant qui a seize ans avant 2016 cesse de compter, celui
-    qui ne les a pas encore compte jusqu'à dix-huit ans."""
-    bornees = sorted(((version["bornes"].get("liquidation.date_effet", [None, None]),
-                       version["parametres"]) for version in fiche["versions"]),
-                     key=lambda element: element[0][0] or "")
-    for (debut, fin), parametres in bornees:
+def _versions_de_la_charge(fiche: dict) -> list[tuple[str | None, str | None, dict]]:
+    """Les versions de la majoration forfaitaire pour enfant, dans l'ordre de
+    leurs dates : ``(début, fin, paramètres)``, la fin exclue."""
+    bornees = [(*version["bornes"].get("liquidation.date_effet", [None, None]),
+                version["parametres"]) for version in fiche["versions"]]
+    return sorted(bornees, key=lambda element: element[0] or "")
+
+
+def _reunir(periodes: list[tuple[str, str]]) -> list[tuple[str, str]]:
+    """Des périodes ``[début, fin)``, réunies quand elles se chevauchent ou se
+    touchent, dans l'ordre."""
+    reunies: list[tuple[str, str]] = []
+    for debut, fin in sorted(periodes):
+        if reunies and debut <= reunies[-1][1]:
+            reunies[-1] = (reunies[-1][0], max(reunies[-1][1], fin))
+        else:
+            reunies.append((debut, fin))
+    return reunies
+
+
+def _jours_a_charge(fiche: dict, naissance: str, depuis: str,
+                    prolongations: list[tuple[str, str | None]]) -> list[tuple[str, str]]:
+    """Les jours, depuis ``depuis``, où l'enfant né le ``naissance`` est à la
+    charge du survivant, en périodes ``[début, fin)`` : sous l'âge de la
+    version en vigueur chaque jour — seize ans, puis la majorité depuis le 1er
+    janvier 2016 (R. 353-9, R. 313-12, R. 161-4) —, l'enfant « n'est plus à
+    charge le jour de son » anniversaire (circulaire Cnav n° 76/88, fiche
+    n° 4) ; pendant ses ``prolongations``, ses études, son apprentissage, son
+    infirmité (:func:`~retraite_notionnelle.chronologie.prolongations_de_la_charge`),
+    sous l'âge où la version les arrête, vingt ans. Rien sous une version qui
+    ne dit pas d'âge, avant que la majoration n'existe. L'enfant de seize ans
+    à la fin de 2015 redevient à charge le 1er janvier 2016, jusqu'à sa
+    majorité."""
+    periodes = []
+    for debut, fin, parametres in _versions_de_la_charge(fiche):
         ans = parametres.get("enfant_moins_de_ans")
-        if ans is None or (fin is not None and fin <= date_effet):
+        if ans is None:
             continue
-        jour = max(debut or date_effet, date_effet, chrono._plus_ans(naissance, int(ans)))
-        if fin is None or jour < fin:
-            return mois_suivant(jour)
-    raise ValueError(f"{fiche['id']} : aucune version ne borne la charge d'un enfant "
-                     f"né le {naissance}")
+        de = max(debut or depuis, depuis, naissance)
+        if fin is not None and de >= fin:
+            continue
+        limites = [(de, chrono._plus_ans(naissance, int(ans)))]
+        prolonge = parametres.get("enfant_prolonge_moins_de_ans")
+        if prolonge is not None:
+            vingt_ans = chrono._plus_ans(naissance, int(prolonge))
+            limites += [(max(de, depuis_le), vingt_ans if jusqu_au is None
+                         else min(vingt_ans, jusqu_au))
+                        for depuis_le, jusqu_au in prolongations]
+        for de_, jusqu_a in limites:
+            if fin is not None:
+                jusqu_a = min(jusqu_a, fin)
+            if de_ < jusqu_a:
+                periodes.append((de_, jusqu_a))
+    return _reunir(periodes)
+
+
+def _parts_de_l_enfant(jours: list[tuple[str, str]], date_effet: str,
+                       creation: str | None) -> list[tuple[str, str]]:
+    """Les périodes ``[début, fin)`` où la part d'un enfant est servie : dès
+    la date d'effet s'il est alors à charge, dès le 1er janvier 1988 quand la
+    majoration naît après elle (« attribuée au plus tôt le 1er janvier 1988 »,
+    circulaire Cnav n° 76/88, § 3), et sinon « à compter du premier jour du
+    mois suivant la date à laquelle ces conditions sont satisfaites »
+    (R. 353-10) — l'enfant né après la date d'effet, l'enfant qui redevient à
+    charge (§ 6) ; jusqu'au « premier jour du mois suivant celui au cours
+    duquel l'assuré cesse d'y avoir droit »."""
+    parts = []
+    for de, jusqu_a in jours:
+        debut = de if de in (date_effet, creation) else mois_suivant(de)
+        fin = mois_suivant(jusqu_a)
+        if debut < fin:
+            parts.append((debut, fin))
+    return parts
 
 
 def _majoration_forfaitaire_enfants(moteur: ScenarioActuel, carriere: Carriere,
-                                    conjoint: Conjoint, retraites: float,
+                                    conjoint: Conjoint, retraites_personnelles: float,
                                     date_effet: str, annee: int
-                                    ) -> tuple[float, Fiabilite, tuple[str, ...]] | None:
-    """La majoration forfaitaire ENTIÈRE pour enfant à charge (L. 353-5), à la
-    date d'effet de la réversion : le montant annuel PAR ENFANT, sa fiabilité,
-    et le jour où cesse la part de chacun des enfants nés que le modèle tient
-    pour à la charge du survivant, sous l'âge de la version, dans l'ordre ;
-    ``None`` quand elle n'est pas due.
+                                    ) -> tuple[float, Fiabilite,
+                                               tuple[tuple[str, str], ...]] | None:
+    """La majoration forfaitaire ENTIÈRE pour enfant à charge (L. 353-5) : le
+    montant annuel PAR ENFANT, aux euros de ``annee``, sa fiabilité, et les
+    périodes ``[début, fin)`` où la part de chacun des enfants nés que le
+    modèle tient pour à la charge du survivant est servie
+    (:func:`_parts_de_l_enfant`), dans l'ordre ; ``None`` quand elle n'est
+    jamais due.
 
-    Le survivant ne doit pas avoir de retraite personnelle d'un régime de base
-    (``retraites``, ses ressources hors de ses revenus d'activité, à la date
-    d'effet), ni l'âge que R. 353-9 fixe à la demande — soixante-cinq ans, puis
-    l'âge du taux plein depuis le 3 juin 2011 —, ni vivre en couple avant
-    juillet 2004.
+    Elle s'attribue le jour où la première part commence : la date d'effet de
+    la réversion, ou plus tard (R. 353-10). Ce jour-là, le survivant ne doit
+    pas avoir de retraite personnelle d'un régime de base (ses
+    ``retraites_personnelles``, ses ressources hors de ses revenus
+    d'activité, quand elles sont servies), ni l'âge que R. 353-9 fixe à la
+    demande — soixante-cinq ans, puis l'âge du taux plein depuis le 3 juin
+    2011 —, ni vivre en couple avant juillet 2004. Une part qui revient
+    ensuite ne revoit pas l'âge : « La condition d'âge est exigée uniquement
+    au moment de l'attribution » (exposé de la Cnav).
 
-    La majoration cesse avec la charge de chaque enfant (:func:`_fin_de_la_charge`),
-    et toute entière le premier jour du mois qui suit celui où le survivant
-    « perçoit [...] une retraite personnelle » (``conjoint.retraite``, quand elle
-    suit la date d'effet), ou, avant juillet 2004, celui où il « se remarie »
-    ou « vit maritalement » (circulaire Cnav n° 76/88, fiche n° 9) ; jamais
-    quand il atteint l'âge de R. 353-9, que la fiche n° 9 excepte."""
+    La majoration cesse avec la charge de chaque enfant, et toute entière le
+    premier jour du mois qui suit celui où le survivant « perçoit [...] une
+    retraite personnelle » (``conjoint.retraite``, quand elle suit
+    l'attribution), ou, avant juillet 2004, celui où il « se remarie » ou
+    « vit maritalement » (circulaire Cnav n° 76/88, fiche n° 9) ; jamais quand
+    il atteint l'âge de R. 353-9, que la fiche n° 9 excepte. Née le 1er janvier
+    1988 (R. 353-11), son montant de cette année-là se ramène aux euros d'une
+    année des montants antérieure par les coefficients des pensions."""
     table = moteur.reversions
     fiche = table.fiche(MAJORATION_FORFAITAIRE)
-    if fiche is None or retraites > 0:
+    if fiche is None:
         return None
     deces = carriere.deces or date_effet
-    version = table.version(fiche, date_effet, deces)
+    creation = min((debut for debut, _, parametres in _versions_de_la_charge(fiche)
+                    if parametres.get("servie") and debut is not None), default=None)
+    parts = [part for enfant, naissance in carriere.naissances_des_enfants
+             for part in _parts_de_l_enfant(_jours_a_charge(
+                 fiche, naissance, date_effet,
+                 chrono.prolongations_de_la_charge(carriere.chronologie, enfant)),
+                 date_effet, creation)]
+    if not parts:
+        return None
+    attribution = min(debut for debut, _ in parts)
+    if _retraites_au(conjoint, retraites_personnelles, attribution) > 0:
+        return None
+    version = table.version(fiche, attribution, deces)
     parametres = version["parametres"] if version else {}
     if not parametres.get("servie"):
         return None
     if parametres.get("age_maximum") is not None:
-        if chrono.annees_revolues(conjoint.naissance, date_effet) >= int(
+        if chrono.annees_revolues(conjoint.naissance, attribution) >= int(
                 parametres["age_maximum"]):
             return None
     if parametres.get("age_du_taux_plein"):
         generation = round(int(conjoint.naissance[:4])
                            + (int(conjoint.naissance[5:7]) - 1) / 12, 3)
         age = moteur.ages_annulation_decote.age(generation)
-        if age is None or _atteint(conjoint.naissance, age[0]) <= date_effet:
+        if age is None or _atteint(conjoint.naissance, age[0]) <= attribution:
             return None
     if (parametres.get("refusee_en_couple") and conjoint.nouvelle_union is not None
-            and (conjoint.nouvelle_union_depuis or date_effet) <= date_effet):
+            and (conjoint.nouvelle_union_depuis or date_effet) <= attribution):
         return None
-    ans = int(parametres["enfant_moins_de_ans"])
-    a_charge = [naissance for _, naissance in carriere.naissances_des_enfants
-                if naissance <= date_effet < chrono._plus_ans(naissance, ans)]
     par_enfant = table.majoration_enfant(annee)
-    if not a_charge or par_enfant is None:
-        return None
+    if par_enfant is None:
+        premiere = table.majoration_enfant(int(attribution[:4]))
+        if premiere is None:
+            return None
+        coefficient, fiabilite_coefficient = moteur.revalorisations_pensions.generale(
+            date(annee, 12, 31), date(int(attribution[:4]), 12, 31), False, None)
+        par_enfant = (premiere[0] / coefficient, min(premiere[1], fiabilite_coefficient))
     # Ce qui l'arrête toute entière : sa propre retraite, puis, avant juillet
-    # 2004, l'union où il entre après la date d'effet.
+    # 2004, l'union où il entre après l'attribution.
     arrets = []
-    if conjoint.retraite is not None and conjoint.retraite > date_effet:
+    if conjoint.retraite is not None and conjoint.retraite > attribution:
         arrets.append(mois_suivant(conjoint.retraite))
     union = conjoint.nouvelle_union_depuis
-    if conjoint.nouvelle_union is not None and union is not None and union > date_effet:
+    if conjoint.nouvelle_union is not None and union is not None and union > attribution:
         alors = table.version(fiche, union, deces)
         if alors is not None and alors["parametres"].get("refusee_en_couple"):
             arrets.append(mois_suivant(union))
-    fins = sorted(min([_fin_de_la_charge(fiche, naissance, date_effet), *arrets])
-                  for naissance in a_charge)
+    arret = min(arrets, default=None)
+    servies = sorted((debut, fin if arret is None else min(fin, arret))
+                     for debut, fin in parts if arret is None or debut < arret)
     return (par_enfant[0], min(par_enfant[1], Fiabilite.depuis_texte(parametres["fiabilite"])),
-            tuple(fins))
+            tuple(servies))
+
+
+def _dernieres_affiliations(moteur: ScenarioActuel, carriere: Carriere,
+                            jusqu_a: int) -> dict[str, int]:
+    """La dernière année cotisée de l'assuré dans chaque régime, jusqu'à
+    l'année ``jusqu_a`` : celle de sa dernière affiliation, que lit le choix
+    du régime qui sert la majoration pour enfant
+    (:func:`_regime_de_la_majoration`)."""
+    plafond = moteur.macro.plafond_securite_sociale
+    dernieres: dict[str, int] = {}
+    for ligne in carriere.lignes:
+        if not ligne.cotise or ligne.annee > jusqu_a:
+            continue
+        for code in regimes_de(moteur, ligne, ligne.annee, carriere.date_entree(ligne.affiliation),
+                               revenu=ligne.revenu, plafond=plafond(ligne.annee)):
+            dernieres[code] = max(dernieres.get(code, 0), ligne.annee)
+    return dernieres
+
+
+def _regime_de_la_majoration(moteur: ScenarioActuel, carriere: Carriere,
+                             candidats: list[str], jusqu_a: int,
+                             durees: dict[str, int] | None,
+                             reduites: dict[str, tuple[float, dict]]) -> str | None:
+    """Le régime qui sert la majoration pour enfant, parmi les ``candidats``,
+    les régimes alignés qui servent une réversion : « par priorité, [...] le
+    régime auquel l'assuré a été affilié en dernier lieu si ce régime sert la
+    majoration » ; quand il relevait de plusieurs à la fois, « le régime qui
+    verse la pension de réversion rémunérant la plus longue durée
+    d'assurance » (D. 173-21-1 jusqu'au 30 juin 2017, D. 173-21-7 jusqu'en
+    2025, R. 173-17-3 depuis) ; « en cas d'égalité de durée d'assurance », la
+    réversion « dont le montant est le plus élevé » (circulaire Cnav n° 76/88,
+    fiche n° 7) ; le régime général enfin. La dernière affiliation se lit à
+    l'année (:func:`_dernieres_affiliations`). La liquidation unique ne laisse
+    qu'une réversion des régimes qu'elle réunit, celle du régime qui la
+    liquide, que la règle désigne aussi (« le régime compétent pour la
+    liquidation unique sert la majoration », exposé de la Cnav)."""
+    if len(candidats) < 2:
+        return candidats[0] if candidats else None
+    dernieres = _dernieres_affiliations(moteur, carriere, jusqu_a)
+    return max(candidats, key=lambda regime: (
+        dernieres.get(regime, 0), (durees or {}).get(regime, 0), reduites[regime][0],
+        regime == "regime_general"))
 
 
 def _majorations_ulterieures(parametres: dict, date_effet: str, calcule: float,
@@ -1468,29 +1584,39 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
                 plafond=plafond_annuel, ressources_retenues=retenues, part=part)
 
     # La majoration forfaitaire pour enfant à charge, servie par un seul
-    # régime : le régime général s'il sert une réversion, sinon le premier
-    # régime aligné qui en sert une ; réduite dans la proportion de la
-    # réversion réduite à l'entière (D. 353-2 ; exposé de la Cnav). Jamais
-    # celle des points d'avant 1973, dont l'article 9 du décret n° 73-937 ne
-    # cite pas L. 353-5.
-    servant = next((regime for regime in sorted(
-        (r for r, (montant, _) in reduites.items() if montant > 0 and r not in d_avant_1973),
-        key=lambda r: r != "regime_general")), None)
+    # régime, celui de la dernière affiliation parmi ceux qui servent une
+    # réversion (:func:`_regime_de_la_majoration`) ; réduite dans la
+    # proportion de la réversion réduite à l'entière (D. 353-2 ; exposé de la
+    # Cnav). Jamais celle des points d'avant 1973, dont l'article 9 du décret
+    # n° 73-937 ne cite pas L. 353-5.
+    servant = _regime_de_la_majoration(
+        moteur, carriere,
+        [r for r, (montant, _) in reduites.items() if montant > 0 and r not in d_avant_1973],
+        min(annee_de_liquidation, int(deces[:4])), durees, reduites)
     if servant is not None:
         ligne_du_regime = lignes[servant]
         entiere = _majoration_forfaitaire_enfants(
-            moteur, carriere, conjoint,
-            _retraites_au(conjoint, retraites_personnelles, ligne_du_regime.date_effet),
+            moteur, carriere, conjoint, retraites_personnelles,
             ligne_du_regime.date_effet, annee)
         if entiere is not None:
-            par_enfant, fiabilite_enfant, fins = entiere
+            par_enfant, fiabilite_enfant, parts = entiere
             reduite = reduites[servant][0]
             facteur = (min(1.0, reduite / entieres[servant])
                        if entieres[servant] > 0 else 0.0)
-            # Chaque enfant compte jusqu'au jour où sa part cesse.
-            etapes = tuple((jour, len([fin for fin in fins if fin > jour]) * par_enfant * facteur)
-                           for jour in dict.fromkeys(fins))
-            majoration = len(fins) * par_enfant * facteur
+
+            def servie_au(jour: str) -> float:
+                # Chaque enfant compte pendant que sa part est servie.
+                servies = len([1 for debut, fin in parts if debut <= jour < fin])
+                return servies * par_enfant * facteur
+
+            majoration = servie_au(ligne_du_regime.date_effet)
+            etapes = []
+            for jour in sorted({jour for part in parts for jour in part
+                                if jour > ligne_du_regime.date_effet}):
+                montant = servie_au(jour)
+                if montant != (etapes[-1][1] if etapes else majoration):
+                    etapes.append((jour, montant))
+            etapes = tuple(etapes)
             lignes[servant] = replace(
                 ligne_du_regime, montant=ligne_du_regime.montant + majoration,
                 majoration_forfaitaire_enfants=majoration,

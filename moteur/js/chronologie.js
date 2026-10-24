@@ -43,6 +43,11 @@ export const INTERRUPTION = "periode_d_interruption";
  * d'insertion (`dispositifs_d_insertion`). Voir le Python.
  */
 export const ASSIMILEE = "periode_assimilee";
+/**
+ * Une période d'études, d'apprentissage ou de formation professionnelle :
+ * celle d'un enfant prolonge sa charge ({@link prolongationsDeLaCharge}).
+ */
+export const ETUDES = "periode_d_etudes";
 export const MOTIFS_D_ASSIMILATION = Object.freeze(["stage_de_formation_professionnelle",
   "stage_d_insertion", "sportif_de_haut_niveau", "conge_supplementaire_de_naissance"]);
 export const DISPOSITIFS_D_INSERTION = Object.freeze(["tuc", "stage_pratique_en_entreprise",
@@ -1198,6 +1203,25 @@ export function retraiteProgressive(chronologie, personne) {
 export function decisionMedicale(chronologie, personne, decision) {
   return faitsDe(chronologie, personne, "decision_medicale")
     .find((f) => f.attributs.decision === decision) ?? null;
+}
+
+/**
+ * Ce qui prolonge jusqu'à vingt ans la charge de l'enfant `personne` : ses
+ * études (`periode_d_etudes`), son apprentissage (un emploi qui porte
+ * `apprentissage`), chacun de son début à sa fin, et son infirmité (la
+ * décision médicale `infirmite`), sans fin. `[début, fin]`, la fin exclue, dans
+ * l'ordre des faits. Voir `prolongations_de_la_charge` du Python.
+ */
+export function prolongationsDeLaCharge(chronologie, personne) {
+  const prolongations = [];
+  for (const f of faitsDe(chronologie, personne)) {
+    if (f.sorte === ETUDES || (f.sorte === EMPLOI && f.attributs.apprentissage)) {
+      prolongations.push([f.debut, f.fin ?? null]);
+    } else if (f.sorte === "decision_medicale" && f.attributs.decision === "infirmite") {
+      prolongations.push([f.debut, null]);
+    }
+  }
+  return prolongations;
 }
 
 /**

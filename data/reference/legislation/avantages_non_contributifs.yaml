@@ -846,15 +846,22 @@ avantages:
     famille: droits_derives
     quoi: >-
       Un montant forfaitaire par enfant à charge, ajouté à la pension de
-      réversion du conjoint survivant qui n'a pas atteint l'âge de la retraite.
-    base_legale: [L. 353-1 CSS]
-    fiches: [reversion]
-    creation: 2010
+      réversion du conjoint survivant qui n'a pas de retraite personnelle et
+      n'a pas atteint l'âge du taux plein, réduit dans la proportion de la
+      réversion réduite, et servi par le régime de la dernière affiliation.
+    base_legale: [L. 353-5 CSS, R. 353-10 CSS, R. 353-11 CSS, D. 353-2 CSS]
+    fiches: [majoration_forfaitaire_reversion]
+    creation: 1988
     fin: null
     regimes: régime général, régimes alignés
-    etat_modele: absent
+    etat_modele: declare
     ligne_cascade: null
-    pourquoi_pas_chiffre: Même raison que la réversion.
+    pourquoi_pas_chiffre: >-
+      Même raison que la réversion : depuis le 9 octobre 2026, le scénario 1 la
+      sert au survivant que la saisie déclare, avec sa réversion
+      (droit/reversion.py), pour chaque enfant du défunt tant qu'il est à sa
+      charge ; il ne la sert qu'à ce ménage-là, et l'état reste « déclaré » tant
+      que la dépense de tous les ménages ne se calcule pas.
     sans_chiffre: >-
       comprise dans le poste « majorations sur pensions de réversion » des
       comptes, qui ne la sépare pas de la majoration principale

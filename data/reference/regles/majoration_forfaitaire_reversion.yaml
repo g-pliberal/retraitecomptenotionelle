@@ -5,8 +5,10 @@ intitule: >-
   sécurité sociale) : au survivant qui n'a pas de retraite personnelle d'un régime de
   base et n'a pas l'âge que R. 353-9 fixe — soixante-cinq ans, puis l'âge du taux
   plein depuis juin 2011 —, un montant forfaitaire par enfant à sa charge, depuis le
-  1er janvier 1988 (R. 353-11), réduit dans la proportion où la réversion l'est pour
-  ressources ou pour cumul (D. 353-2).
+  1er janvier 1988 (R. 353-11), dû de la date d'effet de la réversion ou du mois qui
+  suit le jour où ses conditions sont remplies (R. 353-10), réduit dans la proportion
+  où la réversion l'est pour ressources ou pour cumul (D. 353-2), et servi par le
+  régime de la dernière affiliation de l'assuré (D. 173-21-1, D. 173-21-7, R. 173-17-3).
 domaine: reversion
 regimes:
 - regime_general
@@ -21,25 +23,31 @@ etat: transcrite
 lit:
 - la réversion du régime général ou d'un régime aligné, entière et réduite, et sa date
   d'effet
-- la naissance du survivant, qui dit son âge à la date d'effet, et l'âge du taux plein
-  de sa génération
+- la naissance du survivant, qui dit son âge le jour où la majoration s'attribue, et
+  l'âge du taux plein de sa génération
 - ses ressources hors de ses revenus d'activité, que le modèle tient pour ses retraites
   personnelles
-- les enfants nés au décès, que le modèle tient pour à la charge du survivant jusqu'à
-  l'âge de la version en vigueur quand ils l'atteignent
+- les enfants du défunt, nés avant ou après la date d'effet, que le modèle tient pour à
+  la charge du survivant jusqu'à l'âge de la version en vigueur chaque jour, et jusqu'à
+  vingt ans pendant les études, l'apprentissage ou l'infirmité que la chronologie dit
 - l'union où il vit après le décès, qui l'écarte, ou l'arrête quand elle suit, avant
   juillet 2004
 - le jour où sa propre retraite prend effet, s'il le dit, qui l'arrête
+- la dernière année cotisée du défunt dans chaque régime, et sa durée d'assurance dans
+  chacun, qui disent le régime qui la sert
 ecrit:
 - la majoration forfaitaire pour enfant à charge, comprise dans la réversion du régime
-  qui la sert, et ce qu'elle devient depuis chaque jour où un enfant n'est plus à charge,
-  jusqu'au dernier
+  qui la sert, et ce qu'elle devient depuis chaque jour où la part d'un enfant commence
+  ou cesse
 dates_qui_decident:
 - liquidation.date_effet
-# Les versions forment un partage de la date d'effet de la réversion, qui est
-# aussi celle de la demande où R. 353-9 apprécie l'âge du survivant
-# (« La condition d'âge est exigée uniquement au moment de l'attribution »,
-# exposé de la Cnav). Le montant annuel par enfant, de chaque année, est dans
+# Les versions forment un partage du jour où la majoration s'attribue — la date
+# d'effet de la réversion, ou le jour où la première part commence (R. 353-10) —,
+# où R. 353-9 apprécie l'âge du survivant (« La condition d'âge est exigée
+# uniquement au moment de l'attribution », exposé de la Cnav), et du jour où la
+# charge de chaque enfant se lit : seize ans, puis la majorité depuis 2016, vingt
+# ans pour l'étudiant, l'apprenti et l'enfant infirme. Le montant annuel par
+# enfant, de chaque année, est dans
 # `legislation/majoration_forfaitaire_enfant_reversion.csv`.
 versions:
 - id: avant_1988
@@ -50,7 +58,9 @@ versions:
   bornes:
     liquidation.date_effet: [null, 1988-01-01]
   contenu:
-    droit: aucune majoration forfaitaire ; R. 353-11 la fixe au 1er janvier 1988
+    droit: >-
+      aucune majoration forfaitaire ; R. 353-11 la fixe au 1er janvier 1988, ce jour-là
+      aussi pour la réversion attribuée avant (circulaire Cnav n° 76/88, § 3 et 31)
     beneficiaire: aucun
     conditions: aucune
     parametres:
@@ -58,6 +68,7 @@ versions:
       age_maximum: null
       age_du_taux_plein: false
       enfant_moins_de_ans: null
+      enfant_prolonge_moins_de_ans: null
       refusee_en_couple: false
       fiabilite: haute
   exemples: aucun trouvé
@@ -71,24 +82,29 @@ versions:
   - {id: LEGIARTI000006749416, article: R. 353-10, en_vigueur: 1988-05-08}
   - {id: LEGIARTI000006749417, article: R. 353-11, en_vigueur: 1988-05-08}
   - {id: LEGIARTI000006736553, article: D. 353-2, en_vigueur: 1988-05-08}
+  - {id: LEGIARTI000006735543, article: D. 173-21-1, en_vigueur: 1988-05-08}
   nee_de: LEGIARTI000006742652
   bornes:
     liquidation.date_effet: [1988-01-01, 2004-07-01]
   contenu:
     droit: >-
       un montant forfaitaire par enfant à charge, 400 francs par mois au 1er janvier
-      1988, réduit dans la proportion de la réversion réduite par D. 355-1
+      1988, réduit dans la proportion de la réversion réduite par D. 355-1, servi par le
+      régime de la dernière affiliation, ou, de plusieurs à la fois, celui de la plus
+      longue durée d'assurance (D. 173-21-1)
     beneficiaire: >-
       le survivant sans retraite personnelle d'un régime de base, qui n'est ni remarié
       ni en concubinage
     conditions: >-
       moins de soixante-cinq ans ; un enfant à charge au sens de L. 313-3, de moins de
-      seize ans (R. 313-12) ; supprimée « en cas de remariage ou de vie maritale »
+      seize ans, ou de vingt ans quand il poursuit ses études, est apprenti ou infirme
+      (R. 313-12) ; supprimée « en cas de remariage ou de vie maritale »
     parametres:
       servie: true
       age_maximum: 65
       age_du_taux_plein: false
       enfant_moins_de_ans: 16
+      enfant_prolonge_moins_de_ans: 20
       refusee_en_couple: true
       fiabilite: haute
   exemples: aucun trouvé
@@ -98,20 +114,25 @@ versions:
   - {id: LEGIARTI000006742654, article: L. 353-5, en_vigueur: 2003-08-22}
   - {id: LEGIARTI000006749457, article: R. 353-9, en_vigueur: 1990-11-30}
   - {id: LEGIARTI000006736554, article: D. 353-2, en_vigueur: 2004-08-25}
+  - {id: LEGIARTI000006735543, article: D. 173-21-1, en_vigueur: 1988-05-08}
+  - {id: LEGIARTI000022266577, article: D. 173-21-1, en_vigueur: 2010-05-08}
   nee_de: LEGIARTI000006742654
   bornes:
     liquidation.date_effet: [2004-07-01, 2011-06-03]
   contenu:
     droit: >-
       un montant forfaitaire par enfant à charge, réduit dans la proportion de la
-      réversion réduite pour ressources (D. 353-2)
+      réversion réduite pour ressources (D. 353-2), servi comme en 1988
     beneficiaire: le survivant sans retraite personnelle d'un régime de base
-    conditions: moins de soixante-cinq ans ; un enfant à charge de moins de seize ans
+    conditions: >-
+      moins de soixante-cinq ans ; un enfant à charge de moins de seize ans, ou de vingt
+      ans quand il poursuit ses études, est apprenti ou infirme
     parametres:
       servie: true
       age_maximum: 65
       age_du_taux_plein: false
       enfant_moins_de_ans: 16
+      enfant_prolonge_moins_de_ans: 20
       refusee_en_couple: false
       fiabilite: haute
   exemples: aucun trouvé
@@ -119,6 +140,7 @@ versions:
   statut: lue
   textes:
   - {id: LEGIARTI000024113067, article: R. 353-9, en_vigueur: 2011-06-03}
+  - {id: LEGIARTI000022266577, article: D. 173-21-1, en_vigueur: 2010-05-08}
   nee_de: LEGIARTI000024113067
   bornes:
     liquidation.date_effet: [2011-06-03, 2016-01-01]
@@ -127,12 +149,13 @@ versions:
     beneficiaire: le survivant sans retraite personnelle d'un régime de base
     conditions: >-
       ne pas avoir l'âge du taux plein (L. 351-8, 1°) ; un enfant à charge de moins de
-      seize ans
+      seize ans, ou de vingt ans quand il poursuit ses études, est apprenti ou infirme
     parametres:
       servie: true
       age_maximum: null
       age_du_taux_plein: true
       enfant_moins_de_ans: 16
+      enfant_prolonge_moins_de_ans: 20
       refusee_en_couple: false
       fiabilite: haute
   exemples: aucun trouvé
@@ -142,37 +165,49 @@ versions:
   - {id: LEGIARTI000031828755, article: R. 353-9, en_vigueur: 2016-01-01}
   - {id: LEGIARTI000031688429, article: L. 353-5, en_vigueur: 2015-12-23}
   - {id: LEGIARTI000053335708, article: R. 353-11, en_vigueur: 2026-01-01}
+  - {id: LEGIARTI000022266577, article: D. 173-21-1, en_vigueur: 2010-05-08}
+  - {id: LEGIARTI000034624366, article: D. 173-21-7, en_vigueur: 2017-07-01}
+  - {id: LEGIARTI000053327900, article: R. 173-17-3, en_vigueur: 2026-01-01}
   nee_de: LEGIARTI000031828755
   bornes:
     liquidation.date_effet: [2016-01-01, null]
   contenu:
     droit: >-
       un montant forfaitaire par enfant à charge, 112,58 euros par mois au 1er janvier
-      2025, réduit dans la proportion de la réversion réduite pour ressources
+      2025, réduit dans la proportion de la réversion réduite pour ressources, servi par
+      le régime de la dernière affiliation — sous la liquidation unique, celui qui la
+      liquide — ou, de plusieurs à la fois, celui de la plus longue durée (D. 173-21-7
+      depuis le 1er juillet 2017, R. 173-17-3 depuis 2026)
     beneficiaire: le survivant sans retraite personnelle d'un régime de base
     conditions: >-
-      ne pas avoir l'âge du taux plein ; un enfant à charge au sens de L. 161-1, mineur
-      (R. 161-4)
+      ne pas avoir l'âge du taux plein ; un enfant à charge au sens de L. 161-1, mineur,
+      ou de moins de vingt ans quand il poursuit ses études ou est infirme (R. 161-4),
+      l'apprenti scolarisé tenu pour étudiant ; l'enfant de seize ou dix-sept ans le
+      redevient le 1er janvier 2016 (décret n° 2015-1865, articles 10, 18°, et 12)
     parametres:
       servie: true
       age_maximum: null
       age_du_taux_plein: true
       enfant_moins_de_ans: 18
+      enfant_prolonge_moins_de_ans: 20
       refusee_en_couple: false
       fiabilite: haute
   exemples: aucun trouvé
 approximations:
 - ecart: >-
-    l'enfant est à charge jusqu'à seize ans, puis, depuis 2016, jusqu'à sa majorité, quand
-    l'étudiant, l'apprenti et l'enfant infirme le restent jusqu'à vingt ans (R. 313-12,
-    R. 161-4) ; le modèle compte les enfants du défunt nés à la date d'effet, tenus pour
-    à la charge du survivant, chacun jusqu'au mois qui suit l'âge de la version en
-    vigueur ce jour-là, sans prolonger l'étudiant, ni rouvrir en 2016 la part de l'enfant
-    qui a eu seize ans juste avant, ni la commencer quand un enfant naît ou que la
-    condition se remplit après la date d'effet (R. 353-10)
+    le modèle compte les enfants du défunt, tenus pour à la charge du survivant, nés
+    avant ou après la date d'effet, chacun sous l'âge de la version en vigueur chaque
+    jour ; il ne les tient à charge jusqu'à vingt ans que pendant les études,
+    l'apprentissage ou l'infirmité que la chronologie dit, que le formulaire ne demande
+    pas encore (présomption charge_jusqu_a_l_age_limite) ; il ne distingue ni l'apprenti
+    d'avant le 18 mai 1994, à charge jusqu'à dix-huit ans et sous 55 % du SMIC
+    (circulaire Cnav n° 76/88, fiche n° 4 ; n° 44/94), ni l'enfant dont la maladie a
+    interrompu les études, à charge avant 2016 jusqu'au 30 septembre de l'année de ses
+    vingt et un ans (R. 313-12, R. 313-14), ni l'enfant du survivant qui n'est pas celui
+    du défunt, ni l'enfant recueilli
   effet: >-
-    la majoration de l'étudiant ou de l'apprenti s'arrête deux à quatre ans trop tôt.
-    Non mesuré
+    sans études déclarées, la majoration de l'étudiant ou de l'apprenti s'arrête deux à
+    quatre ans trop tôt. Non mesuré
 - ecart: >-
     le survivant qui n'a pas de retraite personnelle est celui dont les ressources ne
     comptent que des revenus d'activité, ou qui n'en déclare pas ; la pension
@@ -180,13 +215,22 @@ approximations:
     du défunt, qui l'écartent, ne se distinguent pas dans la saisie
   effet: non mesuré
 - ecart: >-
-    la majoration est servie par le régime général quand il sert une réversion, sinon par
-    le premier régime aligné qui en sert une, et non par celui de la dernière affiliation
-    du défunt ou de la plus longue durée (D. 173-21-1, D. 173-21-7) ; elle n'est pas
-    partagée entre les conjoints, chacun ayant « autant de majorations que d'enfants à
-    sa charge » (exposé de la Cnav), et le modèle la sert au seul survivant ; elle est
-    réduite dans la proportion de la réversion réduite pour ressources, pour cumul ou
-    par son maximum
+    la dernière affiliation se lit à l'année, et non au jour : deux régimes quittés la
+    même année se départagent par la durée d'assurance, puis par le montant de leur
+    réversion (circulaire Cnav n° 76/88, fiche n° 7), là où le texte ne les départage
+    ainsi que si l'assuré en relevait « simultanément » ; le modèle choisit parmi les
+    régimes dont la réversion n'est pas nulle, quand la caisse laisse la majoration au
+    régime prioritaire, réduite avec sa réversion (exposé de la Cnav, « Montant ») ;
+    elle n'est pas partagée entre les conjoints, chacun ayant « autant de majorations
+    que d'enfants à sa charge » (exposé de la Cnav), et le modèle la sert au seul
+    survivant ; elle est réduite dans la proportion de la réversion réduite pour
+    ressources, pour cumul ou par son maximum
+  effet: non mesuré
+- ecart: >-
+    la part qui commence après la date d'effet — l'enfant né après elle, celui qui
+    redevient à charge, la majoration de 1988 qui rejoint une réversion déjà servie —
+    s'écrit en étapes, avec la réduction de la date d'effet ; le montant de la ligne
+    reste celui des enfants à charge ce jour-là, et rien ne le revalorise à part
   effet: non mesuré
 presomptions:
   reversion_demandee_dans_l_annee: >-
@@ -195,15 +239,38 @@ presomptions:
   retraites_du_survivant_servies: >-
     le survivant qui déclare des ressources hors de son activité, sans dire quand sa
     propre retraite commence, l'a dès la date d'effet, et n'a pas la majoration
+  charge_jusqu_a_l_age_limite: >-
+    l'enfant que la chronologie ne dit ni étudiant, ni apprenti, ni infirme n'est à
+    charge que jusqu'à l'âge limite, seize ans, puis sa majorité
+  majoration_demandee_des_sa_condition: >-
+    la part qui commence après la date d'effet, ou qui revient, est demandée dès que sa
+    condition est remplie, et servie le premier jour du mois qui suit
 sources:
-  lu_le: 2026-10-09
+  lu_le: 2026-10-24
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
     Ouverte le 9 octobre 2026, à l'étape 4 de l'action 138 : lue dans l'index LEGI
     (L. 353-5, R. 353-9 à R. 353-11, D. 353-2, D. 173-21-1) et dans les exposés de la
-    Cnav ; sa durée, le même jour, dans la circulaire Cnav n° 76/88. Aucun exemple
-    chiffré publié n'a été trouvé : la fiche reste transcrite.
+    Cnav ; sa durée, le même jour, dans la circulaire Cnav n° 76/88. Le 24 octobre 2026,
+    ses parts après la date d'effet, la prolongation à vingt ans et le régime qui la
+    sert. Aucun exemple chiffré publié n'a été trouvé — ni dans les exposés de la Cnav,
+    ni dans ses circulaires n° 76/88 et n° 44/94, ni dans la circulaire RSI n° 2007/061,
+    ni sur service-public — : la fiche reste transcrite, et le cas de 2026 se pose à la
+    main (tests/test_reversion.py).
+  - >-
+    La fiche F13104 de service-public, vérifiée le 1er janvier 2026, tient à charge
+    l'« Enfant de moins de 21 ans qui poursuit ses études » ; R. 161-4 dit vingt ans, et
+    la Cnav « repoussé à 20 ans ». Elle compte aussi la majoration au plafond («
+    Lorsque le montant de votre pension de réversion, de la majoration forfaitaire et de
+    vos ressources dépasse » le plafond, elle est réduite « de façon à ce que ce plafond
+    ne soit pas dépassé »), là où la Cnav la réduit dans la proportion de la réversion
+    réduite à l'entière (exposé « Montant », D. 353-2) : sur les deux points, le modèle
+    suit la caisse.
+  - >-
+    La majoration des exploitants agricoles (L. 732-50 du code rural, jusqu'au 31
+    décembre 2025), que D. 173-21-7 range avec celle-ci, est hors du modèle, qui ne
+    liquide pas leur réversion.
   lectures:
   - type: legifrance
     reference: >-
@@ -220,17 +287,55 @@ sources:
       (réduite « dans les mêmes proportions » que la réversion, par D. 355-1, puis par
       le quatrième alinéa de L. 353-1)
     date: 2026-10-09
+  - type: legifrance
+    reference: >-
+      lus le 24 octobre 2026 dans l'index LEGI : L. 313-3 (LEGIARTI000006742453,
+      LEGIARTI000020123579 : « jusqu'à des âges limites [...] a) les enfants placés en
+      apprentissage [...] ; b) les enfants qui poursuivent leurs études ; c) les enfants
+      qui, par suite d'infirmités ou de maladies chroniques, sont dans l'impossiblité
+      permanente de se livrer à un travail salarié ») ; R. 313-12 (LEGIARTI000006749965,
+      966 : seize ans, dix-huit pour l'apprenti, « vingt ans pour les enfants qui
+      poursuivent leurs études » et l'enfant infirme) ; L. 161-1 (LEGIARTI000031686766 :
+      « Les enfants mineurs à leur charge et, jusqu'à un âge limite [...] a) Les enfants
+      qui poursuivent leurs études ; b) Les enfants qui, par suite d'infirmités ou de
+      maladies chroniques, sont dans l'impossibilité permanente d'exercer un travail
+      salarié ») et R. 161-4 (LEGIARTI000031827756 : « La limite d'âge prévue au 2° de
+      l'article L. 161-1 est fixée à vingt ans ») ; R. 353-10 (LEGIARTI000006749416 : « La
+      majoration est supprimée le premier jour du mois suivant celui au cours duquel
+      l'assuré cesse d'y avoir droit ») ; D. 173-21-1 (LEGIARTI000006735543,
+      LEGIARTI000022266577), D. 173-21-7 (LEGIARTI000034624366) et R. 173-17-3
+      (LEGIARTI000053327900) : « accordée, par priorité, par le régime auquel l'assuré a
+      été affilié en dernier lieu si ce régime sert la majoration. Lorsque l'assuré
+      décédé relevait simultanément à la date de son décès de plusieurs régimes servant
+      la majoration, le service et la charge de cette majoration incombent au régime qui
+      verse la pension de réversion rémunérant la plus longue durée d'assurance » ;
+      L. 732-50 du code rural (LEGIARTI000006585611, 612) ; et dans l'index JORF, le
+      décret n° 2015-1865 du 30 décembre 2015, article 10, 18° (« A l'article R. 353-9,
+      la référence : « R. 313-12 » est remplacée par la référence : « R. 161-4 » »), et
+      article 12 (« Le présent décret entre en vigueur le 1er janvier 2016 »)
+    date: 2026-10-24
   - type: circulaire_cnav
     reference: >-
-      exposés de la base de législation de la Cnav, lus le 9 octobre 2026 par son API :
-      « Majoration forfaitaire pour charge d'enfant - Conditions d'attribution » (21
-      janvier 2026), « - Montant » et « - Point de départ » (24 octobre 2025), « Qualité
-      d'enfant à charge » (22 janvier 2026) ; avant juillet 2004, « n'était pas attribuée
-      au conjoint survivant remarié ou vivant maritalement » ; « MFE réduite = montant de
+      exposés de la base de législation de la Cnav, lus par son API : « Majoration
+      forfaitaire pour charge d'enfant - Conditions d'attribution » (21 janvier 2026), «
+      - Montant » et « - Point de départ » (24 octobre 2025), « Qualité d'enfant à
+      charge » (22 janvier 2026) ; avant juillet 2004, « n'était pas attribuée au
+      conjoint survivant remarié ou vivant maritalement » ; « MFE réduite = montant de
       la majoration × (Retraite de réversion réduite ÷ Retraite de réversion entière) »,
-      non réduite au partage entre conjoints
+      non réduite au partage entre conjoints ; relus le 24 octobre 2026 : « Si
+      plusieurs régimes de base français peuvent attribuer la majoration pour charge
+      d'enfant, le régime de la dernière affiliation de l'assuré est prioritaire [...].
+      Si le dernier régime est un des régimes visés par la liquidation unique (Lura), le
+      régime compétent pour la liquidation unique sert la majoration » ; « Si les
+      conditions ne sont pas remplies à cette date, elle est attribuée le 1er jour du
+      mois qui suit la date à laquelle les conditions sont remplies » ; depuis 2016, «
+      L'âge limite est fixé à la majorité », « repoussé à 20 ans » pour l'étudiant et
+      l'enfant infirme, et « Les apprentis et les stagiaires de la formation
+      professionnelle inscrits dans un établissement scolaire ou universitaire sont
+      considérés poursuivre leurs études » ; avant, « l'âge limite était repoussé à la
+      veille du 20ème anniversaire » pour l'apprenti, l'étudiant et l'enfant infirme
     date: 2026-01-22
-    url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=mfe_condition_attribution_ex.aspx
+    url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=mfe_qualite_enfant_charge_ex.aspx
   - type: circulaire_cnav
     reference: >-
       circulaire Cnav n° 76/88 du 29 juin 1988, lue le 9 octobre 2026 par l'API de la
@@ -240,33 +345,62 @@ sources:
       limite » ; « Date de cessation du versement : 1er jour du mois suivant celui au
       cours duquel l'une des conditions d'attribution n'est plus satisfaite à
       l'exception de la condition d'âge du titulaire du droit de réversion » ; fiche
-      n° 4 : l'enfant « n'est plus à charge le jour de son » anniversaire ; et l'exposé
-      « Qualité d'enfant à charge » (22 janvier 2026) : la majorité depuis le 1er
-      janvier 2016, seize ans avant, vingt ans pour l'étudiant, l'apprenti et l'enfant
-      infirme
+      n° 4 : l'enfant « n'est plus à charge le jour de son » anniversaire — vingt ans
+      l'étudiant et l'enfant infirme, dix-huit l'apprenti, « percevoir un salaire < à
+      55 % du SMIC » ; relue le 24 octobre 2026 : « La majoration est attribuée au plus
+      tôt le 1er janvier 1988 », demandée aux titulaires d'une réversion « âgés de moins
+      de 65 ans dont le point de départ de la prestation se situe au plus tard le 1er
+      janvier 1988 » (§ 3 et 31) ; « dans l'hypothèse où l'enfant redeviendrait à
+      charge après avoir cessé de l'être [...] La majoration est alors payée à compter
+      du premier jour du mois suivant la date à laquelle l'ensemble des conditions sont
+      à nouveau remplies » (§ 6) ; fiche n° 7 : le régime de la dernière affiliation,
+      puis « celui qui valide la plus longue durée d'assurance », et « en cas d'égalité
+      de durée d'assurance », celui de la réversion « dont le montant est le plus élevé »
     date: 1988-06-29
     url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_7688_29061988.aspx
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 44/94 du 18 mai 1994, lue le 24 octobre 2026 par l'API : «
+      quel que soit le niveau de leurs rémunérations, les jeunes apprentis ou en
+      formation professionnelle peuvent être considérés à charge jusqu'à 20 ans (au
+      lieu de 18) pour ouvrir droit à l'allocation de veuvage ou à la majoration des
+      pensions de réversion » ; « Ces dispositions s'appliquent aux dossiers en cours et
+      à venir à la date de publication de la présente circulaire »
+    date: 1994-05-18
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_4494_18051994.aspx
   - type: circulaire_cnav
     reference: >-
       barème « Montant mensuel de la majoration forfaitaire pour charge d'enfant » de la
       Cnav, de 400 F au 1er janvier 1988 à 113,59 € au 1er janvier 2026
     date: 2026-10-09
     url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=mfe_montant_bar.aspx
+  - type: service_public
+    reference: >-
+      fiche F13104, « Pension de réversion de l'Assurance retraite », vérifiée le 1er
+      janvier 2026, lue le 24 octobre 2026 : « Le montant de la majoration est de 113,59
+      par enfant et par mois » ; « Le versement de la majoration forfaitaire pour enfant
+      à charge cesse lorsque vous percevez une pension de retraite ou lorsque l'enfant
+      pour lequel elle vous est accordée n'est plus à votre charge » ; à charge :
+      « Enfant mineur », « Enfant de moins de 21 ans qui poursuit ses études », l'enfant
+      infirme de même
+    date: 2026-01-01
+    url: https://www.service-public.gouv.fr/particuliers/vosdroits/F13104
 code:
   python: >-
-    droit/reversion.py : reversion, _majoration_forfaitaire_enfants, _fin_de_la_charge ;
-    scenarios/actuel.py : Reversions.majoration_enfant
+    droit/reversion.py : reversion, _majoration_forfaitaire_enfants, _jours_a_charge,
+    _parts_de_l_enfant, _regime_de_la_majoration ; chronologie.py :
+    prolongations_de_la_charge ; scenarios/actuel.py : Reversions.majoration_enfant
   javascript: >-
     moteur/js/droit/reversion.js : reversion, majorationForfaitaireEnfants,
-    finDeLaCharge ;
-    moteur/js/regimes.js : Reversions.majorationEnfant
+    joursACharge, partsDeLEnfant, regimeDeLaMajoration ; moteur/js/chronologie.js :
+    prolongationsDeLaCharge ; moteur/js/regimes.js : Reversions.majorationEnfant
   parametres: >-
     contenu.parametres de chaque version : servie, age_maximum, age_du_taux_plein,
-    enfant_moins_de_ans, refusee_en_couple, fiabilite ;
+    enfant_moins_de_ans, enfant_prolonge_moins_de_ans, refusee_en_couple, fiabilite ;
     legislation/majoration_forfaitaire_enfant_reversion.csv : valeur
   tests: >-
-    tests/test_reversion.py ; les témoins reversion_enfants_a_charge et
-    reversion_enfants_jusqu_a_sa_retraite des simulations
+    tests/test_reversion.py ; tests/js/moteur.test.js ; les témoins reversion_enfants_a_charge
+    et reversion_enfants_jusqu_a_sa_retraite des simulations
 historique:
 - >-
   2026-10-09 — née et lue par le moteur, à l'étape 4 de l'action 138 : la fiche
@@ -276,6 +410,13 @@ historique:
   l'âge limite, et toute la majoration cesse le mois qui suit la retraite du survivant,
   qu'il date, ou, avant juillet 2004, son union nouvelle (circulaire Cnav n° 76/88,
   fiche n° 9).
+- >-
+  2026-10-24 — ses parts après la date d'effet (R. 353-10) : l'enfant né après elle,
+  l'enfant de seize ou dix-sept ans que la majorité de 2016 rend de nouveau à charge,
+  la majoration de 1988 qui rejoint la réversion déjà servie ; vingt ans pour
+  l'étudiant, l'apprenti et l'enfant infirme que la chronologie dit ; le régime de la
+  dernière affiliation (D. 173-21-1, D. 173-21-7, R. 173-17-3), à l'étape 4 de l'action
+  138.
 effet: >-
   Le survivant d'un assuré du régime général ou d'un régime aligné qui élève encore ses
   enfants, sans retraite personnelle : 1 363,08 euros par an et par enfant en 2026.

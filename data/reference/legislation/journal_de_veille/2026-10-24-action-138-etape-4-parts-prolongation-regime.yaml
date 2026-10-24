@@ -1,0 +1,58 @@
+date: "2026-10-24"
+session: "action 138, étape 4, huitième partie : les parts de la majoration pour enfant après la date d'effet, l'étudiant, l'apprenti et l'enfant infirme jusqu'à vingt ans, le régime qui la sert"
+consulte: >-
+  veille_droit.py, lancé à l'ouverture de la session (dernière veille consignée :
+  2026-10-24) ; l'index LEGI, récupéré de la release index-dila et mis à jour par ses
+  incréments jusqu'au 23 octobre 2026, puis textes.py --inscrire (aucune rédaction
+  nouvelle) ; l'index JORF, récupéré et mis à jour jusqu'au 24 octobre 2026. Dans
+  l'index LEGI : L. 313-3 (LEGIARTI000006742453, LEGIARTI000020123579), R. 313-12
+  (LEGIARTI000006749965, 966), L. 161-1 (LEGIARTI000031686766), R. 161-4
+  (LEGIARTI000031827756), R. 353-9 (LEGIARTI000024113067, LEGIARTI000031828755),
+  R. 353-10 (LEGIARTI000006749416), D. 353-2 (LEGIARTI000006736554), D. 173-21-1
+  (LEGIARTI000006735543, LEGIARTI000022266577, LEGIARTI000053355913), D. 173-21-7
+  (LEGIARTI000034624366), R. 173-17-3 (LEGIARTI000053327900), L. 732-50 du code rural
+  (LEGIARTI000006585611, 612) ; dans l'index JORF, le décret n° 2015-1865 du 30
+  décembre 2015, articles 10 et 12. Par l'API de la base de législation de la Cnav
+  (expose/exposeByFileLeafRef, reference/referencesByFileLeafRef et search/custom, en
+  phrase exacte et en tous ces mots) : les exposés « Majoration forfaitaire pour charge
+  d'enfant » (conditions d'attribution, point de départ, montant) et « Qualité d'enfant
+  à charge » (mfe_qualite_enfant_charge_ex, 22 janvier 2026) ; les circulaires Cnav
+  n° 76/88 (§ 3, 31, 4, 5, 6, fiches n° 4 et 7), n° 44/94, n° 2016/13 et n° 2016/29, la
+  circulaire RSI n° 2016/009 et n° 2007/061 (§ 5), et les circulaires Cnav n° 2021/7,
+  2022/26, 2023/21, 2024/28, 2025/11 et 2026/18, que la recherche d'un exemple chiffré
+  rendait. La fiche F13104 de service-public.gouv.fr, vérifiée le 1er janvier 2026.
+trouve: >-
+  La majoration « est due à la date d'entrée en jouissance de la pension de réversion
+  si, à cette date, les conditions d'ouverture du droit à cette majoration sont
+  remplies ou à compter du premier jour du mois suivant la date à laquelle ces
+  conditions sont satisfaites » (R. 353-10) ; « dans l'hypothèse où l'enfant
+  redeviendrait à charge après avoir cessé de l'être », elle « est alors payée à
+  compter du premier jour du mois suivant la date à laquelle l'ensemble des conditions
+  sont à nouveau remplies » (circulaire n° 76/88, § 6) ; « attribuée au plus tôt le 1er
+  janvier 1988 », elle a été demandée aux titulaires d'une réversion « âgés de moins de
+  65 ans dont le point de départ de la prestation se situe au plus tard le 1er janvier
+  1988 » (§ 3 et 31). Le 1er janvier 2016, R. 353-9 renvoie à R. 161-4 au lieu de
+  R. 313-12 (décret n° 2015-1865, article 10, 18°, en vigueur ce jour-là, article 12,
+  sans disposition pour les majorations en cours) : l'enfant mineur est à charge, et
+  celui de seize ou dix-sept ans le redevient. La limite est de vingt ans pour
+  l'étudiant et l'enfant infirme (R. 313-12, R. 161-4), et pour l'apprenti depuis le 18
+  mai 1994 (circulaire n° 44/94 : « jusqu'à 20 ans (au lieu de 18) »), tenu pour
+  étudiant depuis 2016 (exposé « Qualité d'enfant à charge ») ; l'enfant « n'est plus à
+  charge le jour de son » anniversaire (fiche n° 4). Le régime qui la sert : « par
+  priorité, [...] le régime auquel l'assuré a été affilié en dernier lieu si ce régime
+  sert la majoration », de plusieurs à la fois « le régime qui verse la pension de
+  réversion rémunérant la plus longue durée d'assurance » (D. 173-21-1 depuis 1988,
+  D. 173-21-7 depuis le 1er juillet 2017, avec la liquidation unique, R. 173-17-3
+  depuis 2026), à égalité celui de la réversion la plus élevée (fiche n° 7). Aucun
+  exemple chiffré publié ; service-public dit « moins de 21 ans » et compte la
+  majoration au plafond, là où la Cnav dit vingt ans et la réduit dans la proportion de
+  la réversion réduite (D. 353-2).
+reste: >-
+  Le champ de la saisie qui dirait l'enfant étudiant, apprenti ou infirme, et jusqu'à
+  quand ; la saisie qui refuse l'enfant né après le départ, que la majoration compte ;
+  la page, qui ne dit pas une majoration qui commence après la date d'effet : trois
+  gestes du site. L'apprenti d'avant le 18 mai 1994, à charge jusqu'à dix-huit ans sous
+  55 % du SMIC, et l'enfant aux études interrompues par la maladie, jusqu'au 30
+  septembre de ses vingt et un ans avant 2016 (R. 313-14). La majoration des
+  exploitants agricoles (L. 732-50 du code rural), hors du modèle. Les points 2 et 3 de
+  la septième partie de l'étape.

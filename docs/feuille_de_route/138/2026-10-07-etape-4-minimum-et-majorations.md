@@ -1,5 +1,15 @@
 # Étape 4, première partie : le minimum et les majorations de la réversion du régime général
 
+**Reprise, au 24 octobre 2026.** Fait : le minimum et les majorations (7
+octobre) ; le maximum, le plafond du ménage, l'assuré mort avant son départ,
+le partage, le cumul d'avant 2004, la majoration pour enfant (9 octobre) ; ses
+parts après la date d'effet, vingt ans pour l'étudiant, l'apprenti et l'enfant
+infirme, le régime de la dernière affiliation (24 octobre). Reste, une session
+par point : la réversion d'avant 2004 que la retraite du survivant recalcule,
+la révision de R. 353-1-1 ; les majorations de 1976 et 1977 aux salariés
+agricoles, l'Alsace-Moselle, l'ancien invalide. Au site : le champ des études,
+l'enfant né après le départ. Détail : `…-parts-prolongation-et-regime.md`.
+
 **Le 7 octobre 2026, la demande.** Le propriétaire : « Quels sont les écarts
 encore présents avec trajectoire et destinie 2 ? J'aimerais combler les manques
 de notre modèle. » Le registre des modèles et les deux confrontations exécutées

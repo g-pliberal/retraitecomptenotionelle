@@ -38,7 +38,7 @@
 import * as chrono from "../chronologie.js";
 import { Fiabilite, fiabiliteDepuisTexte, nomFiabilite } from "../serie.js";
 import {
-  REGIMES_ALIGNES, REGIMES_ALIGNES_TETE, luraApplicable, teteDeSuccession,
+  REGIMES_ALIGNES, REGIMES_ALIGNES_TETE, luraApplicable, regimesDe, teteDeSuccession,
 } from "./coordonner.js";
 import { maximumDesPensions } from "./liquider.js";
 
@@ -666,52 +666,129 @@ function cumulALaRetraite(moteur, fiche, conjoint, deces, annee, dateEffet, serv
 }
 
 /**
- * Le jour où cesse la part de la majoration forfaitaire d'un enfant à charge à
- * `dateEffet` : le premier jour du mois qui suit celui où il atteint l'âge
- * limite de la version en vigueur ce jour-là (circulaire Cnav n° 76/88, fiche
- * n° 9). Voir `_fin_de_la_charge` du Python.
+ * Les versions de la majoration forfaitaire pour enfant, dans l'ordre de leurs
+ * dates : `[début, fin, paramètres]`, la fin exclue. Voir
+ * `_versions_de_la_charge` du Python.
  */
-function finDeLaCharge(fiche, naissance, dateEffet) {
+function versionsDeLaCharge(fiche) {
   const bornees = fiche.versions.map((version) => [
-    version.bornes["liquidation.date_effet"] ?? [null, null], version.parametres]);
-  bornees.sort(([[a]], [[b]]) => ((a ?? "") < (b ?? "") ? -1 : ((a ?? "") > (b ?? "") ? 1 : 0)));
-  for (const [[debut, fin], parametres] of bornees) {
-    const ans = parametres.enfant_moins_de_ans ?? null;
-    if (ans === null || (fin !== null && fin <= dateEffet)) {
-      continue;
-    }
-    const jour = [debut ?? dateEffet, dateEffet, chrono.plusAns(naissance, Math.trunc(Number(ans)))]
-      .reduce((a, b) => (a > b ? a : b));
-    if (fin === null || jour < fin) {
-      return moisSuivant(jour);
-    }
-  }
-  throw new Error(`${fiche.id} : aucune version ne borne la charge d'un enfant né le ${naissance}`);
+    ...(version.bornes["liquidation.date_effet"] ?? [null, null]), version.parametres]);
+  bornees.sort(([a], [b]) => ((a ?? "") < (b ?? "") ? -1 : ((a ?? "") > (b ?? "") ? 1 : 0)));
+  return bornees;
 }
 
 /**
- * La majoration forfaitaire ENTIÈRE pour enfant à charge (L. 353-5), à la date
- * d'effet de la réversion : `[montant annuel par enfant, fiabilité, le jour où
- * cesse la part de chaque enfant, dans l'ordre]` ; `null` quand elle n'est pas
- * due. Toute entière, elle cesse le mois qui suit la retraite du survivant, ou,
- * avant juillet 2004, l'union où il entre. Voir `_majoration_forfaitaire_enfants`
- * du Python.
+ * Des périodes `[début, fin)`, réunies quand elles se chevauchent ou se
+ * touchent, dans l'ordre. Voir `_reunir` du Python.
  */
-function majorationForfaitaireEnfants(moteur, carriere, conjoint, retraites, dateEffet,
-  annee) {
+function reunir(periodes) {
+  const triees = [...periodes].sort(([a, b], [c, d]) => (a < c ? -1 : a > c ? 1
+    : b < d ? -1 : b > d ? 1 : 0));
+  const reunies = [];
+  for (const [debut, fin] of triees) {
+    const derniere = reunies[reunies.length - 1];
+    if (derniere !== undefined && debut <= derniere[1]) {
+      derniere[1] = derniere[1] > fin ? derniere[1] : fin;
+    } else {
+      reunies.push([debut, fin]);
+    }
+  }
+  return reunies;
+}
+
+/**
+ * Les jours, depuis `depuis`, où l'enfant né le `naissance` est à la charge du
+ * survivant, en périodes `[début, fin)` : sous l'âge de la version en vigueur
+ * chaque jour (R. 353-9, R. 313-12, R. 161-4), et pendant ses `prolongations`
+ * sous vingt ans. Voir `_jours_a_charge` du Python.
+ */
+function joursACharge(fiche, naissance, depuis, prolongations) {
+  const periodes = [];
+  for (const [debut, fin, parametres] of versionsDeLaCharge(fiche)) {
+    const ans = parametres.enfant_moins_de_ans ?? null;
+    if (ans === null) {
+      continue;
+    }
+    const de = [debut ?? depuis, depuis, naissance].reduce((a, b) => (a > b ? a : b));
+    if (fin !== null && de >= fin) {
+      continue;
+    }
+    const limites = [[de, chrono.plusAns(naissance, Math.trunc(Number(ans)))]];
+    const prolonge = parametres.enfant_prolonge_moins_de_ans ?? null;
+    if (prolonge !== null) {
+      const vingtAns = chrono.plusAns(naissance, Math.trunc(Number(prolonge)));
+      for (const [depuisLe, jusquAu] of prolongations) {
+        limites.push([de > depuisLe ? de : depuisLe,
+          jusquAu === null || vingtAns < jusquAu ? vingtAns : jusquAu]);
+      }
+    }
+    for (const [de_, limite] of limites) {
+      const jusquA = fin !== null && fin < limite ? fin : limite;
+      if (de_ < jusquA) {
+        periodes.push([de_, jusquA]);
+      }
+    }
+  }
+  return reunir(periodes);
+}
+
+/**
+ * Les périodes `[début, fin)` où la part d'un enfant est servie : dès la date
+ * d'effet, dès le 1er janvier 1988 quand la majoration naît après elle, sinon
+ * le premier jour du mois qui suit (R. 353-10) ; jusqu'au premier jour du mois
+ * qui suit la fin de la charge. Voir `_parts_de_l_enfant` du Python.
+ */
+function partsDeLEnfant(jours, dateEffet, creation) {
+  const parts = [];
+  for (const [de, jusquA] of jours) {
+    const debut = de === dateEffet || de === creation ? de : moisSuivant(de);
+    const fin = moisSuivant(jusquA);
+    if (debut < fin) {
+      parts.push([debut, fin]);
+    }
+  }
+  return parts;
+}
+
+/**
+ * La majoration forfaitaire ENTIÈRE pour enfant à charge (L. 353-5) : `[montant
+ * annuel par enfant aux euros de annee, fiabilité, les périodes [début, fin) où
+ * la part de chaque enfant est servie, dans l'ordre]` ; `null` quand elle n'est
+ * jamais due. Elle s'attribue le jour où la première part commence ; toute
+ * entière, elle cesse le mois qui suit la retraite du survivant, ou, avant
+ * juillet 2004, l'union où il entre. Voir `_majoration_forfaitaire_enfants` du
+ * Python.
+ */
+function majorationForfaitaireEnfants(moteur, carriere, conjoint, retraitesPersonnelles,
+  dateEffet, annee) {
   const table = moteur.reversions;
   const fiche = table.fiche(MAJORATION_FORFAITAIRE);
-  if (fiche === null || retraites > 0) {
+  if (fiche === null) {
     return null;
   }
   const deces = carriere.deces ?? dateEffet;
-  const version = table.version(fiche, dateEffet, deces);
+  const debuts = versionsDeLaCharge(fiche)
+    .filter(([debut, , parametres]) => parametres.servie && debut !== null)
+    .map(([debut]) => debut);
+  const creation = debuts.length === 0 ? null
+    : debuts.reduce((a, b) => (a < b ? a : b));
+  const parts = carriere.naissancesDesEnfants.flatMap(([enfant, naissance]) => partsDeLEnfant(
+    joursACharge(fiche, naissance, dateEffet,
+      chrono.prolongationsDeLaCharge(carriere.chronologie, enfant)), dateEffet, creation));
+  if (parts.length === 0) {
+    return null;
+  }
+  const attribution = parts.map(([debut]) => debut).reduce((a, b) => (a < b ? a : b));
+  if (retraitesAu(conjoint, retraitesPersonnelles, attribution) > 0) {
+    return null;
+  }
+  const version = table.version(fiche, attribution, deces);
   const parametres = version === null ? {} : version.parametres;
   if (!parametres.servie) {
     return null;
   }
   if (parametres.age_maximum !== null && parametres.age_maximum !== undefined
-      && chrono.anneesRevolues(conjoint.naissance, dateEffet)
+      && chrono.anneesRevolues(conjoint.naissance, attribution)
         >= Number(parametres.age_maximum)) {
     return null;
   }
@@ -719,42 +796,93 @@ function majorationForfaitaireEnfants(moteur, carriere, conjoint, retraites, dat
     const generation = Math.round((Number(conjoint.naissance.slice(0, 4))
       + (Number(conjoint.naissance.slice(5, 7)) - 1) / 12) * 1000) / 1000;
     const age = moteur.agesAnnulationDecote.age(generation);
-    if (age === null || atteintA(conjoint.naissance, age[0]) <= dateEffet) {
+    if (age === null || atteintA(conjoint.naissance, age[0]) <= attribution) {
       return null;
     }
   }
   if (parametres.refusee_en_couple && conjoint.nouvelle_union !== null
       && conjoint.nouvelle_union !== undefined
-      && (conjoint.nouvelle_union_depuis ?? dateEffet) <= dateEffet) {
+      && (conjoint.nouvelle_union_depuis ?? dateEffet) <= attribution) {
     return null;
   }
-  const ans = Math.trunc(Number(parametres.enfant_moins_de_ans));
-  const aCharge = carriere.naissancesDesEnfants.map(([, naissance]) => naissance).filter(
-    (naissance) => naissance <= dateEffet && dateEffet < chrono.plusAns(naissance, ans));
-  const parEnfant = table.majorationEnfant(annee);
-  if (aCharge.length === 0 || parEnfant === null) {
-    return null;
+  let parEnfant = table.majorationEnfant(annee);
+  if (parEnfant === null) {
+    const anneeDeLAttribution = Number(attribution.slice(0, 4));
+    const premiere = table.majorationEnfant(anneeDeLAttribution);
+    if (premiere === null) {
+      return null;
+    }
+    const [coefficient, fiabiliteCoefficient] = moteur.revalorisationsPensions.generale(
+      `${String(annee).padStart(4, "0")}-12-31`,
+      `${String(anneeDeLAttribution).padStart(4, "0")}-12-31`, false, null);
+    parEnfant = [premiere[0] / coefficient, Math.min(premiere[1], fiabiliteCoefficient)];
   }
   // Ce qui l'arrête toute entière : sa propre retraite, puis, avant juillet
-  // 2004, l'union où il entre après la date d'effet.
+  // 2004, l'union où il entre après l'attribution.
   const arrets = [];
   if (conjoint.retraite !== null && conjoint.retraite !== undefined
-      && conjoint.retraite > dateEffet) {
+      && conjoint.retraite > attribution) {
     arrets.push(moisSuivant(conjoint.retraite));
   }
   const union = conjoint.nouvelle_union_depuis ?? null;
   if (conjoint.nouvelle_union !== null && conjoint.nouvelle_union !== undefined
-      && union !== null && union > dateEffet) {
+      && union !== null && union > attribution) {
     const alors = table.version(fiche, union, deces);
     if (alors !== null && alors.parametres.refusee_en_couple) {
       arrets.push(moisSuivant(union));
     }
   }
-  const fins = aCharge.map((naissance) => [finDeLaCharge(fiche, naissance, dateEffet), ...arrets]
-    .reduce((a, b) => (a < b ? a : b)));
-  fins.sort();
+  const arret = arrets.length === 0 ? null : arrets.reduce((a, b) => (a < b ? a : b));
+  const servies = parts.filter(([debut]) => arret === null || debut < arret)
+    .map(([debut, fin]) => [debut, arret === null || fin < arret ? fin : arret]);
+  servies.sort(([a, b], [c, d]) => (a < c ? -1 : a > c ? 1 : b < d ? -1 : b > d ? 1 : 0));
   return [parEnfant[0], Math.min(parEnfant[1], fiabiliteDepuisTexte(parametres.fiabilite)),
-    fins];
+    servies];
+}
+
+/**
+ * La dernière année cotisée de l'assuré dans chaque régime, jusqu'à l'année
+ * `jusquA` : celle de sa dernière affiliation. Voir `_dernieres_affiliations`
+ * du Python.
+ */
+function dernieresAffiliations(moteur, carriere, jusquA) {
+  const dernieres = new Map();
+  for (const ligne of carriere.lignes) {
+    if (!ligne.cotise || ligne.annee > jusquA) {
+      continue;
+    }
+    for (const code of regimesDe(moteur, ligne, ligne.annee,
+      carriere.dateEntree(ligne.affiliation), ligne.revenu,
+      moteur.macro.plafond_securite_sociale.valeur(ligne.annee))) {
+      dernieres.set(code, Math.max(dernieres.get(code) ?? 0, ligne.annee));
+    }
+  }
+  return dernieres;
+}
+
+/**
+ * Le régime qui sert la majoration pour enfant, parmi les `candidats` : celui
+ * de la dernière affiliation, puis la plus longue durée d'assurance, puis la
+ * réversion la plus élevée, le régime général enfin (D. 173-21-1, D. 173-21-7,
+ * R. 173-17-3 ; circulaire Cnav n° 76/88, fiche n° 7). Voir
+ * `_regime_de_la_majoration` du Python.
+ */
+function regimeDeLaMajoration(moteur, carriere, candidats, jusquA, durees, reduites) {
+  if (candidats.length < 2) {
+    return candidats[0] ?? null;
+  }
+  const dernieres = dernieresAffiliations(moteur, carriere, jusquA);
+  const cle = (regime) => [dernieres.get(regime) ?? 0, (durees ?? {})[regime] ?? 0,
+    reduites.get(regime)[0], regime === "regime_general" ? 1 : 0];
+  let choisi = candidats[0];
+  for (const regime of candidats.slice(1)) {
+    const [a, b] = [cle(regime), cle(choisi)];
+    const premier = a.findIndex((valeur, i) => valeur !== b[i]);
+    if (premier >= 0 && a[premier] > b[premier]) {
+      choisi = regime;
+    }
+  }
+  return choisi;
 }
 
 /**
@@ -1412,29 +1540,37 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
   }
 
   // La majoration forfaitaire pour enfant à charge, servie par un seul
-  // régime : le régime général s'il sert une réversion, sinon le premier
-  // régime aligné qui en sert une ; réduite dans la proportion de la
+  // régime, celui de la dernière affiliation parmi ceux qui servent une
+  // réversion (`regimeDeLaMajoration`) ; réduite dans la proportion de la
   // réversion réduite à l'entière (D. 353-2). Jamais celle des points d'avant
   // 1973 (décret n° 73-937, article 9).
   const avecReversion = [...reduites]
     .filter(([regime, [montant]]) => montant > 0 && !dAvant1973.has(regime))
     .map(([regime]) => regime);
-  const servant = avecReversion.includes("regime_general") ? "regime_general"
-    : (avecReversion[0] ?? null);
+  const servant = regimeDeLaMajoration(moteur, carriere, avecReversion,
+    Math.min(anneeDeLiquidation, Number(deces.slice(0, 4))), durees, reduites);
   if (servant !== null) {
     const ligneDuRegime = lignes.get(servant);
     const entiere = majorationForfaitaireEnfants(moteur, carriere, conjoint,
-      retraitesAu(conjoint, retraitesPersonnelles, ligneDuRegime.date_effet),
-      ligneDuRegime.date_effet, annee);
+      retraitesPersonnelles, ligneDuRegime.date_effet, annee);
     if (entiere !== null) {
-      const [parEnfant, fiabiliteEnfant, fins] = entiere;
+      const [parEnfant, fiabiliteEnfant, parts] = entiere;
       const reduite = reduites.get(servant)[0];
       const facteur = entieres.get(servant) > 0
         ? Math.min(1.0, reduite / entieres.get(servant)) : 0.0;
-      // Chaque enfant compte jusqu'au jour où sa part cesse.
-      const etapes = [...new Set(fins)].map((jour) => [
-        jour, fins.filter((fin) => fin > jour).length * parEnfant * facteur]);
-      const majoration = fins.length * parEnfant * facteur;
+      // Chaque enfant compte pendant que sa part est servie.
+      const servieAu = (jour) => parts.filter(([debut, fin]) => debut <= jour && jour < fin)
+        .length * parEnfant * facteur;
+      const majoration = servieAu(ligneDuRegime.date_effet);
+      const jours = [...new Set(parts.flat())]
+        .filter((jour) => jour > ligneDuRegime.date_effet).sort();
+      const etapes = [];
+      for (const jour of jours) {
+        const montant = servieAu(jour);
+        if (montant !== (etapes.length > 0 ? etapes[etapes.length - 1][1] : majoration)) {
+          etapes.push([jour, montant]);
+        }
+      }
       lignes.set(servant, ligneDuRegime.avec({
         montant: ligneDuRegime.montant + majoration,
         majoration_forfaitaire_enfants: majoration,

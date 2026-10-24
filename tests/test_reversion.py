@@ -12,11 +12,18 @@ moteurs, eux, sont comparés par les témoins ``reversion_*`` des simulations.
 
 from __future__ import annotations
 
+import json
+import shutil
+import subprocess
+import sys
+import tempfile
 from datetime import date
+from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.carriere import Carriere
+from retraite_notionnelle.carriere import Carriere, Metier
+from retraite_notionnelle.chronologie import fait
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.droit.liquider import maximum_des_pensions
 from retraite_notionnelle.droit.reversion import mois_de_mariage, reversion
@@ -50,7 +57,7 @@ def _carriere(simulateur, naissance: int, depart: float, conjoint: str, deces: s
     réversion. Les pensions, elles, sont données à :func:`reversion` : seule
     la règle est en cause ici."""
     return Carriere.depuis_profil(
-        naissance, sexe, "salarie_prive", 21.0, depart, simulateur.macro,
+        naissance, sexe, "salarie_prive_non_cadre", 21.0, depart, simulateur.macro,
         nombre_enfants=enfants, naissances_enfants=naissances,
         conjoint={"naissance": conjoint, "sexe": sexe_conjoint, "mariage": mariage,
                   "ressources": ressources, "invalidite": invalidite,
@@ -1388,6 +1395,28 @@ def test_la_majoration_pour_enfant_suit_la_reversion_reduite(simulateur):
     assert ligne.majoration_forfaitaire_enfants == pytest.approx(par_enfant * reduite / 5400.0)
 
 
+def test_l_exemple_chiffre_de_2026(simulateur):
+    """Aucune caisse ne publie d'exemple : celui-ci se pose à la main. La veuve
+    de cinquante-six ans d'un assuré mort en mars 2026, qui gagne 30 000 € par
+    an et élève leurs deux enfants de treize et neuf ans, a droit à 54 % des
+    10 000 € de sa pension, 5 400 € ; ses revenus d'activité comptent pour 70 %,
+    21 000 €, sous le plafond de 25 001,60 € (service-public, fiche F13104,
+    vérifiée le 1er janvier 2026) : sa réversion est réduite à 4 001,60 €
+    (L. 353-1). La majoration de 113,59 € par mois et par enfant (barème de la
+    Cnav au 1er janvier 2026) l'est « dans les mêmes proportions » (D. 353-2) :
+    2 × 12 × 113,59 × 4 001,60 / 5 400, soit 2 020,19 € par an."""
+    carriere = _carriere(simulateur, 1960, 64.0, "1970-01-10", "2026-03-10",
+                         ressources=30000.0, activite=30000.0,
+                         naissances=("2012-06-01", "2016-09-01"), enfants=2)
+    ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                     2026)["regime_general"]
+    reduite = 25001.60 - 0.70 * 30000.0
+    assert ligne.montant - ligne.majoration_forfaitaire_enfants == pytest.approx(reduite)
+    assert ligne.majoration_forfaitaire_enfants == pytest.approx(
+        2 * 12 * 113.59 * reduite / 5400.0)
+    assert round(ligne.majoration_forfaitaire_enfants, 2) == 2020.19
+
+
 def test_a_l_age_du_taux_plein_pas_de_majoration_pour_enfant(simulateur):
     """R. 353-9 depuis juin 2011 : le survivant qui a l'âge du taux plein à la
     demande n'a pas la majoration."""
@@ -1399,13 +1428,16 @@ def test_a_l_age_du_taux_plein_pas_de_majoration_pour_enfant(simulateur):
 
 
 @pytest.mark.parametrize("naissances, etapes", [
-    # Seize ans en mai 2014, avant 2016 : sa part cesse le 1er juin ; l'autre,
-    # qui n'a pas seize ans au 1er janvier 2016, compte jusqu'à sa majorité.
-    (("1998-05-17", "2003-02-01"), (("2014-06-01", 1), ("2021-03-01", 0))),
-    # Seize ans en décembre 2015 : sa part cesse au 1er janvier 2016, et la
-    # majorité de R. 161-4 ne la rouvre pas.
-    (("1999-12-20",), (("2016-01-01", 0),)),
-    # Des jumeaux : une seule étape.
+    # Seize ans en mai 2014, avant 2016 : sa part cesse le 1er juin ; mineur
+    # au 1er janvier 2016, il redevient à charge, et sa part revient le 1er
+    # février, jusqu'au mois qui suit ses dix-huit ans. L'autre, qui n'a pas
+    # seize ans au 1er janvier 2016, compte jusqu'à sa majorité.
+    (("1998-05-17", "2003-02-01"),
+     (("2014-06-01", 1), ("2016-02-01", 2), ("2016-06-01", 1), ("2021-03-01", 0))),
+    # Seize ans en décembre 2015 : sa part cesse au 1er janvier 2016, et revient
+    # le 1er février, jusqu'à sa majorité.
+    (("1999-12-20",), (("2016-01-01", 0), ("2016-02-01", 1), ("2018-01-01", 0))),
+    # Des jumeaux : une seule étape ; majeurs en 2016, rien ne revient.
     (("1996-05-17", "1996-05-17"), (("2012-06-01", 0),)),
 ])
 def test_la_majoration_pour_enfant_cesse_avec_la_charge_du_dernier_enfant(
@@ -1414,7 +1446,12 @@ def test_la_majoration_pour_enfant_cesse_avec_la_charge_du_dernier_enfant(
     cours duquel l'une des conditions d'attribution n'est plus satisfaite » ;
     l'enfant « n'est plus à charge le jour de son » anniversaire (circulaire
     Cnav n° 76/88, fiche n° 9) — seize ans avant 2016, la majorité depuis
-    (R. 353-9, R. 313-12, R. 161-4)."""
+    (R. 353-9, R. 313-12, R. 161-4). Le 1er janvier 2016, R. 353-9 renvoie à
+    R. 161-4 (décret n° 2015-1865, article 10, 18°, en vigueur ce jour-là,
+    article 12) : l'enfant de seize ou dix-sept ans redevient à charge, et
+    « La majoration est alors payée à compter du premier jour du mois suivant
+    la date à laquelle l'ensemble des conditions sont à nouveau remplies »
+    (circulaire n° 76/88, § 6 ; R. 353-10)."""
     carriere = _carriere(simulateur, 1950, 60.0, "1955-01-10", "2010-03-10", ressources=0.0,
                          naissances=naissances, enfants=len(naissances))
     ligne = _servies(simulateur, carriere, [("regime_general", 6000.0)],
@@ -1463,6 +1500,196 @@ def test_avant_juillet_2004_l_union_nouvelle_arrete_la_majoration_pour_enfant(
                      1997)["regime_general"]
     assert ligne.majoration_forfaitaire_enfants > 0
     assert ligne.majoration_forfaitaire_enfants_etapes == ((fin, 0.0),)
+
+
+def test_l_enfant_ne_apres_la_date_d_effet_a_sa_part_le_mois_qui_suit(simulateur):
+    """« La majoration est due à la date d'entrée en jouissance de la pension
+    de réversion si, à cette date, les conditions d'ouverture du droit à cette
+    majoration sont remplies ou à compter du premier jour du mois suivant la
+    date à laquelle ces conditions sont satisfaites » (R. 353-10). La veuve de
+    cinquante et un ans d'un assuré mort en juin 2008 a sa réversion le 1er
+    juillet ; l'enfant né le 15 décembre lui ouvre la majoration le 1er janvier
+    2009, jusqu'au mois qui suit sa majorité, en décembre 2026."""
+    carriere = _carriere(simulateur, 1950, 60.0, "1957-01-10", "2008-06-10", ressources=0.0,
+                         naissances=("2008-12-15",), enfants=1)
+    ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                     2008)["regime_general"]
+    par_enfant = simulateur.scenario_actuel.reversions.majoration_enfant(2008)[0]
+    assert ligne.date_effet == "2008-07-01"
+    assert ligne.majoration_forfaitaire_enfants == 0.0
+    assert ligne.montant == pytest.approx(5400.0)
+    assert tuple((jour, round(montant / par_enfant)) for jour, montant
+                 in ligne.majoration_forfaitaire_enfants_etapes) == (
+        ("2009-01-01", 1), ("2027-01-01", 0))
+
+
+@pytest.mark.parametrize("conjoint, etapes", [
+    # Cinquante-sept ans au 1er janvier 1988 : la majoration de l'enfant de
+    # douze ans, jusqu'au mois qui suit ses seize ans.
+    ("1930-01-10", (("1988-01-01", 1), ("1991-03-01", 0))),
+    # Soixante-cinq ans ce jour-là : rien (R. 353-9).
+    ("1922-06-10", ()),
+])
+def test_la_majoration_de_1988_s_ajoute_aux_reversions_deja_servies(
+        simulateur, conjoint, etapes):
+    """« La majoration est attribuée au plus tôt le 1er janvier 1988 », et la
+    caisse l'a demandée aux titulaires d'une réversion « âgés de moins de 65
+    ans dont le point de départ de la prestation se situe au plus tard le 1er
+    janvier 1988 » (circulaire Cnav n° 76/88, § 3 et 31) : la veuve d'un
+    assuré mort en mars 1986, servie depuis avril, la reçoit le 1er janvier
+    1988 pour l'enfant né en 1975 — 400 francs par mois ce jour-là (R. 353-11),
+    ramenés aux euros de 1986 par les coefficients des pensions."""
+    carriere = _carriere(simulateur, 1925, 60.0, conjoint, "1986-03-10", ressources=0.0,
+                         naissances=("1975-02-01",), enfants=1)
+    ligne = _servies(simulateur, carriere, [("regime_general", 6000.0)],
+                     1986)["regime_general"]
+    assert ligne.majoration_forfaitaire_enfants == 0.0
+    table = simulateur.scenario_actuel.reversions
+    coefficient, _ = simulateur.scenario_actuel.revalorisations_pensions.generale(
+        date(1986, 12, 31), date(1988, 12, 31), False, None)
+    par_enfant = table.majoration_enfant(1988)[0] / coefficient
+    assert tuple((jour, round(montant / par_enfant, 9)) for jour, montant
+                 in ligne.majoration_forfaitaire_enfants_etapes) == etapes
+
+
+def _avec_les_faits(simulateur, carriere: Carriere, *faits: dict) -> Carriere:
+    """La même carrière, sa chronologie augmentée de ``faits``."""
+    chronologie = {**carriere.chronologie, "faits": [*carriere.chronologie["faits"], *faits]}
+    return Carriere.depuis_chronologie(chronologie, simulateur.macro)
+
+
+@pytest.mark.parametrize("deces, conjoint, naissance, faits, etapes", [
+    # Avant 2016, le lycéen né en mars 1990 reste à charge après ses seize ans,
+    # jusqu'à la fin de ses études en juin 2009 : sa part cesse le 1er août, et
+    # non le 1er avril 2006.
+    ("2003-03-10", "1945-01-10", "1990-03-15",
+     [("periode_d_etudes", "2005-09-01", "2009-07-01", {})], (("2009-08-01", 0),)),
+    # Depuis 2016, l'étudiant né en mai 2004, sans fin d'études dite, jusqu'à
+    # ses vingt ans : le 1er juin 2024, et non le 1er juin 2022.
+    ("2015-03-10", "1960-01-10", "2004-05-20",
+     [("periode_d_etudes", "2020-09-01", None, {})], (("2024-06-01", 0),)),
+    # L'apprenti, son contrat de dix-sept à dix-neuf ans : jusqu'à sa fin.
+    ("2015-03-10", "1960-01-10", "2004-05-20",
+     [("periode_d_activite", "2021-09-01", "2023-09-01",
+       {"affiliation": "salarie_prive_non_cadre", "apprentissage": True})],
+     (("2023-10-01", 0),)),
+    # L'enfant infirme : jusqu'à ses vingt ans.
+    ("2003-03-10", "1945-01-10", "1990-03-15",
+     [("decision_medicale", "1998-01-01", None, {"decision": "infirmite"})],
+     (("2010-04-01", 0),)),
+])
+def test_l_etudiant_l_apprenti_et_l_enfant_infirme_restent_a_charge_jusqu_a_vingt_ans(
+        simulateur, deces, conjoint, naissance, faits, etapes):
+    """« La limite d'âge est fixée à vingt ans pour les enfants qui poursuivent
+    leurs études et pour ceux qui sont, par suite d'infirmités ou de maladies
+    chroniques, dans l'impossibilité permanente de se livrer à un travail
+    salarié » (R. 313-12, jusqu'en 2015) ; « La limite d'âge prévue au 2° de
+    l'article L. 161-1 est fixée à vingt ans » (R. 161-4, depuis) ; l'apprenti,
+    à charge « jusqu'à 20 ans (au lieu de 18) » depuis la circulaire Cnav
+    n° 44/94, est tenu pour étudiant depuis 2016 (exposé de la Cnav, « Qualité
+    d'enfant à charge »). La charge cesse quand la condition cesse, au plus
+    tard le jour des vingt ans (circulaire n° 76/88, fiche n° 4)."""
+    carriere = _carriere(simulateur, 1940 if deces < "2010" else 1955, 60.0, conjoint, deces,
+                         ressources=0.0, naissances=(naissance,), enfants=1)
+    sans = _servies(simulateur, carriere, [("regime_general", 6000.0)],
+                    int(deces[:4]))["regime_general"]
+    prolongee = _avec_les_faits(simulateur, carriere, *(
+        fait(f"prolongation_{rang}", "enfant_1", sorte, debut, fin, attributs)
+        for rang, (sorte, debut, fin, attributs) in enumerate(faits, 1)))
+    ligne = _servies(simulateur, prolongee, [("regime_general", 6000.0)],
+                     int(deces[:4]))["regime_general"]
+    assert ligne.majoration_forfaitaire_enfants == sans.majoration_forfaitaire_enfants > 0
+    assert sans.majoration_forfaitaire_enfants_etapes != ligne.majoration_forfaitaire_enfants_etapes
+    assert tuple((jour, round(montant / ligne.majoration_forfaitaire_enfants)) for jour, montant
+                 in ligne.majoration_forfaitaire_enfants_etapes) == etapes
+
+
+@pytest.mark.parametrize("metiers, pensions, servant", [
+    # Salarié, puis artisan à quarante-cinq ans : le RSI.
+    (("salarie_prive_non_cadre", "artisan"),
+     [("regime_general", 6000.0), ("rsi", 4000.0)], "rsi"),
+    # Salarié agricole, puis salarié de l'industrie : le régime général, qui
+    # n'est pas le premier de la liquidation.
+    (("salarie_agricole", "salarie_prive_non_cadre"),
+     [("msa_salaries", 6000.0), ("regime_general", 4000.0)], "regime_general"),
+    # Salarié, puis salarié agricole : la MSA, non le régime général.
+    (("salarie_prive_non_cadre", "salarie_agricole"),
+     [("regime_general", 6000.0), ("msa_salaries", 4000.0)], "msa_salaries"),
+])
+def test_la_majoration_pour_enfant_est_servie_par_le_regime_de_la_derniere_affiliation(
+        simulateur, metiers, pensions, servant):
+    """« La majoration de pension de réversion prévue à l'article L. 353-5 [...]
+    est accordée, par priorité, par le régime auquel l'assuré a été affilié en
+    dernier lieu si ce régime sert la majoration » (D. 173-21-1 de 1988 à
+    2017, D. 173-21-7 jusqu'en 2025, R. 173-17-3 depuis) : la veuve d'un
+    assuré qui a changé de métier à quarante-cinq ans la reçoit de la caisse
+    du second, entière, et rien de l'autre."""
+    carriere = Carriere.depuis_parcours(
+        1950, "H", [Metier(metiers[0], 21.0), Metier(metiers[1], 45.0)], 60.0,
+        simulateur.macro, nombre_enfants=1, naissances_enfants=("2000-01-01",),
+        conjoint={"naissance": "1955-01-10", "sexe": "F", "ressources": 0.0},
+        deces="2010-03-10")
+    lignes = _servies(simulateur, carriere, pensions, 2010)
+    par_enfant = simulateur.scenario_actuel.reversions.majoration_enfant(2010)[0]
+    assert {regime: ligne.majoration_forfaitaire_enfants
+            for regime, ligne in lignes.items()} == {
+        regime: (pytest.approx(par_enfant) if regime == servant else 0.0)
+        for regime, _ in pensions}
+
+
+#: Des saisies où la majoration pour enfant change après la date d'effet de la
+#: réversion — l'enfant de seize ans que la majorité de 2016 rend de nouveau à
+#: charge, l'enfant né après le décès de son père, mort avant son départ, la
+#: réversion de 1986 que la majoration de 1988 rejoint —, ou que sert le
+#: régime de la dernière affiliation : le salarié devenu artisan, et celui
+#: devenu salarié agricole, sous la liquidation unique. Chacune avec le
+#: régime qui la sert, et si elle croît après la date d'effet.
+CAS_DE_LA_MAJORATION_POUR_ENFANT = [
+    ({"naissance": "1950", "liquidation": "60", "conjoint": "1955-01", "deces": "2010-03",
+      "enfants": "2", "naissances": "1998-05, 2003-02"}, "regime_general", True),
+    ({"naissance": "1960", "liquidation": "64", "conjoint": "1957-01", "deces": "2008-06",
+      "enfants": "1", "naissances": "2008-12"}, "regime_general", True),
+    ({"naissance": "1925", "liquidation": "60", "conjoint": "1930-01", "deces": "1986-03",
+      "enfants": "1", "naissances": "1975-02"}, "regime_general", True),
+    ({"naissance": "1950", "liquidation": "60", "conjoint": "1955-01", "deces": "2010-03",
+      "enfants": "1", "naissances": "2000-01", "metier2_debut": "1995-01",
+      "metier2_statut": "artisan"}, "rsi", False),
+    ({"naissance": "1955", "liquidation": "62", "conjoint": "1960-01", "deces": "2019-03",
+      "enfants": "1", "naissances": "2008-01", "metier2_debut": "2000-01",
+      "metier2_statut": "salarie_agricole"}, "msa_salaries", False),
+]
+
+
+def test_les_deux_moteurs_servent_la_meme_majoration_pour_enfant(saisies):
+    """Le résultat entier, des six scénarios, est le même en Python et en
+    JavaScript ; chaque cas sert la majoration du régime qu'il dit, et la voit
+    croître après la date d'effet quand il le dit."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    racine = Path(__file__).resolve().parents[1]
+    sys.path.insert(0, str(racine / "scripts"))
+    from construire_temoins import _fini
+    attendus = [{"requete": cas, "resultat": _fini(saisies.simuler(cas).dictionnaire())}
+                for cas, _, _ in CAS_DE_LA_MAJORATION_POUR_ENFANT]
+    for attendu, (_, servant, croit) in zip(attendus, CAS_DE_LA_MAJORATION_POUR_ENFANT):
+        lignes = attendu["resultat"]["reversion"]["regimes"]
+        assert {r["regime"] for r in lignes if r["majoration_forfaitaire_enfants_etapes"]} == {
+            servant}, lignes
+        ligne, = (r for r in lignes if r["regime"] == servant)
+        montants = [ligne["majoration_forfaitaire_enfants"]] + [
+            etape["montant"] for etape in ligne["majoration_forfaitaire_enfants_etapes"]]
+        assert any(apres > avant for avant, apres in zip(montants, montants[1:])) is croit, ligne
+    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
+                                     delete=False) as fichier:
+        fichier.write(json.dumps(attendus, ensure_ascii=False))
+        chemin = fichier.name
+    try:
+        execution = subprocess.run(
+            ["node", str(racine / "tests" / "js" / "comparer.mjs"), chemin],
+            cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False)
+    finally:
+        Path(chemin).unlink()
+    assert execution.returncode == 0, (execution.stdout + execution.stderr)[-2000:]
 
 
 def test_la_limite_de_cumul_s_applique_quand_sa_retraite_suit_la_reversion(simulateur):
@@ -1636,7 +1863,7 @@ def test_avant_2013_la_reversion_de_la_rci_n_est_pas_portee(simulateur):
 
 
 def test_sans_conjoint_pas_de_reversion(simulateur):
-    carriere = Carriere.depuis_profil(1957, "H", "salarie_prive", 21.0, 62.0,
+    carriere = Carriere.depuis_profil(1957, "H", "salarie_prive_non_cadre", 21.0, 62.0,
                                       simulateur.macro)
     assert carriere.conjoint is None and carriere.deces is None
     assert reversion(simulateur.scenario_actuel, [("regime_general", 1.0, HAUTE)],

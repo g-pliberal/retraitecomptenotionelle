@@ -44,8 +44,13 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   et de janvier 1995, à leur date, et celles de la pension du défunt parti avant
   1975, que sa réversion suit ; et, depuis 1988, la majoration forfaitaire pour
   enfant à charge du survivant sans retraite (L. 353-5), jusqu'au mois qui suit
-  l'âge limite du dernier enfant, ou sa propre retraite. Restent dehors
-  l'étudiant et l'apprenti à charge jusqu'à vingt ans, la révision de la
+  l'âge limite du dernier enfant, ou sa propre retraite, servie par le régime
+  de la dernière affiliation (D. 173-21-7) ; depuis le 24 octobre, l'enfant né
+  après la date d'effet et celui que la majorité de 2016 rend de nouveau à
+  charge ont leur part le mois qui suit (R. 353-10), la réversion d'avant 1988
+  la reçoit le 1er janvier 1988, et l'étudiant, l'apprenti et l'enfant infirme
+  restent à charge jusqu'à vingt ans quand la chronologie le dit — le
+  formulaire ne le demande pas encore. Restent dehors la révision de la
   réversion quand le ménage, ses ressources ou ses ayants droit changent, ou que
   sa retraite, attribuée depuis juillet 2004, la recalcule, le
   complément de la fonction publique,

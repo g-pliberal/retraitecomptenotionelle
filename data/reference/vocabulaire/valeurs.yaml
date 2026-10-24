@@ -102,6 +102,7 @@ listes:
     valeurs:
       periode_d_activite: une période d'activité, salariée ou non
       periode_assimilee: une période validée sans cotisation, avec son motif (motifs_d_assimilation) ; l'apprentissage n'en est pas une, c'est un emploi qui le dit
+      periode_d_etudes: une période d'études, d'apprentissage ou de formation professionnelle ; celle d'un enfant prolonge sa charge jusqu'à vingt ans (R. 313-12, R. 161-4)
       periode_d_interruption: une période où l'emploi s'interrompt, avec son motif — chômage indemnisé ou non, maladie, maternité, invalidité, accident du travail, service militaire, éducation d'un enfant, sans activité ; ce qu'elle valide, les règles le disent
       periode_a_l_etranger: une période d'activité hors de France
       residence: une résidence
@@ -404,6 +405,37 @@ listes:
           lui est attribuée (L. 353-5 ; circulaire Cnav n° 76/88, fiche n° 9).
           Le formulaire ne demande la date de sa retraite qu'à qui veut la
           dire. Une date déclarée prend la place de la présomption
+      charge_jusqu_a_l_age_limite:
+        dit: >-
+          l'enfant du défunt que la chronologie ne dit ni étudiant, ni apprenti,
+          ni infirme, n'est à la charge du survivant que jusqu'à l'âge limite,
+          seize ans, puis sa majorité depuis 2016
+        valeur: l'âge limite
+        appliquee_par: _jours_a_charge (droit/reversion.py), qui ne prolonge la charge que des périodes d'études, d'apprentissage et d'infirmité que la chronologie porte ; son jumeau JavaScript
+        entrera_a: liquider_chaque_regime
+        raison: >-
+          la limite d'âge est « repoussée à 20 ans » pour l'enfant qui
+          poursuit ses études, l'apprenti et l'enfant infirme (R. 313-12,
+          R. 161-4 ; exposé de la Cnav, « Qualité d'enfant à charge »), sur
+          justificatif : un certificat de scolarité, le contrat
+          d'apprentissage, un certificat médical (circulaire Cnav n° 76/88,
+          fiche n° 4). Le formulaire ne les demande pas encore
+      majoration_demandee_des_sa_condition:
+        dit: >-
+          la part de la majoration pour enfant qui commence après la date
+          d'effet de la réversion, ou qui revient, est demandée dès que sa
+          condition est remplie
+        valeur: le premier jour du mois qui suit
+        appliquee_par: _parts_de_l_enfant (droit/reversion.py), qui la sert le premier jour du mois qui suit le jour où l'enfant naît ou redevient à charge ; son jumeau JavaScript
+        entrera_a: liquider_chaque_regime
+        raison: >-
+          la majoration est due « à compter du premier jour du mois suivant la
+          date à laquelle ces conditions sont satisfaites » (R. 353-10), mais
+          « peut être demandée plus tard avec le formulaire de demande de
+          majoration forfaitaire pour charge d'enfant » (exposé de la Cnav,
+          « Point de départ »), et elle revient « sur demande du titulaire »
+          (circulaire Cnav n° 76/88, § 6) ; le formulaire ne demande pas la date
+          de la demande
       ressources_du_conjoint:
         dit: le conjoint qui ne déclare pas ses ressources n'en a aucune
         valeur: 0

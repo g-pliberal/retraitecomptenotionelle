@@ -121,6 +121,9 @@ EMPLOI, INTERRUPTION = "periode_d_activite", "periode_d_interruption"
 #: Une période validée sans cotisation, que la carrière d'aujourd'hui ne lit
 #: pas (action 130, sixième domaine) : :func:`periodes` ne la rend pas.
 ASSIMILEE = "periode_assimilee"
+#: Une période d'études, d'apprentissage ou de formation professionnelle :
+#: celle d'un enfant prolonge sa charge (:func:`prolongations_de_la_charge`).
+ETUDES = "periode_d_etudes"
 #: Ses motifs (vocabulaire, ``motifs_d_assimilation``), une sorte de période
 #: par fiche ; et les dispositifs d'un stage d'insertion
 #: (``dispositifs_d_insertion``).
@@ -1201,6 +1204,25 @@ def decision_medicale(chronologie: dict, personne: str, decision: str) -> dict |
         if f["attributs"].get("decision") == decision:
             return f
     return None
+
+
+def prolongations_de_la_charge(chronologie: dict, personne: str
+                               ) -> list[tuple[str, str | None]]:
+    """Ce qui prolonge jusqu'à vingt ans la charge de l'enfant ``personne``
+    (L. 313-3 et R. 313-12, puis L. 161-1 et R. 161-4 depuis 2016) : ses
+    études ou sa formation professionnelle (``periode_d_etudes``), son
+    apprentissage (un emploi qui porte ``apprentissage``), chacun de son début
+    à sa fin, et l'infirmité ou la maladie chronique qui le met « dans
+    l'impossibilité permanente » de travailler (la décision médicale
+    ``infirmite``), sans fin. ``(début, fin)``, la fin exclue, dans l'ordre des
+    faits ; vide quand rien n'est dit."""
+    prolongations: list[tuple[str, str | None]] = []
+    for f in faits_de(chronologie, personne):
+        if f["sorte"] == ETUDES or (f["sorte"] == EMPLOI and f["attributs"].get("apprentissage")):
+            prolongations.append((f["debut"], f.get("fin")))
+        elif f["sorte"] == "decision_medicale" and f["attributs"].get("decision") == "infirmite":
+            prolongations.append((f["debut"], None))
+    return prolongations
 
 
 def titre(chronologie: dict, personne: str, nom: str) -> dict | None:
