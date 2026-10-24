@@ -24,8 +24,8 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.contexte import Contexte
 from retraite_notionnelle.contributions_equilibre import contributions_d_une_carriere
+from retraite_notionnelle.simulateur import Simulateur
 
 from outils_portage import moitie_python
 
@@ -119,7 +119,7 @@ def _impots_python(demandes: tuple) -> list[dict]:
     )
     from retraite_notionnelle.impot_revenu import Declarant, Foyer, impot_du_foyer
 
-    simulateur = Contexte().simulateur()
+    simulateur = Simulateur()
     baremes = charger_baremes_impot_revenu(RACINE / "data")
     resultats = []
     for demande in map(json.loads, demandes):
@@ -147,7 +147,7 @@ def _options(affiliation, generation, sexe, age, enfants):
 
 
 def _contributions_python(carrieres) -> list[dict[str, float]]:
-    simulateur = Contexte().simulateur()
+    simulateur = Simulateur()
     return [{str(annee): montant for annee, montant in contributions_d_une_carriere(
         simulateur, simulateur.carriere_simple(**_options(*carriere))).items()}
         for carriere in carrieres]

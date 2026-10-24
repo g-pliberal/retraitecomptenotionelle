@@ -16,8 +16,8 @@ from __future__ import annotations
 import html
 import re
 
-from retraite_notionnelle.saisie import Saisie
-from outils_web import contexte, page  # noqa: F401 — les fixtures partagées
+from outils_pont import Saisies
+from outils_web import page  # noqa: F401 — la fixture partagée
 
 
 def _annees(debut: int, fin: int) -> list[str]:
@@ -66,7 +66,7 @@ def _texte(fragment: str) -> str:
                   .replace(" ", " ").replace("\xa0", " ")).strip()
 
 
-def test_le_releve_se_controle_annee_par_annee_au_seuil_du_trimestre(contexte, page):
+def test_le_releve_se_controle_annee_par_annee_au_seuil_du_trimestre(page):
     """Les années de salarié dont le relevé retient d'autres trimestres que
     leur revenu n'en valide, au seuil de leur année, et celles-là seulement :
     2009 et 2015, d'un trimestre de moins chacune, et 2016, que le relevé
@@ -88,8 +88,7 @@ def test_le_releve_se_controle_annee_par_annee_au_seuil_du_trimestre(contexte, p
         (2015, ["3 000,00 €", "1 441,50 €", "2 trimestres", "1 trimestre"]),
         (2016, ["0,00 €", "1 450,50 €", "0 trimestre", "4 trimestres"]),
     ]
-    carriere = contexte.carriere(Saisie.depuis_requete(
-        {**RELEVE, "releve": _sans_trimestres(RELEVE["releve"])}))
+    carriere = Saisies().carriere({**RELEVE, "releve": _sans_trimestres(RELEVE["releve"])})
     valides = {ligne.annee: ligne.trimestres_valides for ligne in carriere.lignes}
     assert [valides[annee] for annee, _ in rangees] == [2, 2, 0]
     texte = _texte(bloc)

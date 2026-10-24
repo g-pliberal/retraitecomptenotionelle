@@ -27,7 +27,6 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.contexte import Contexte
 from retraite_notionnelle.droit.releve import points_de_l_annee, revenu_des_points
 from retraite_notionnelle.lignes import json_en_lignes
 from retraite_notionnelle.simulateur import Simulateur
@@ -861,7 +860,7 @@ def test_la_fin_du_releve_est_celle_de_sa_periode_la_plus_tardive():
 def test_tous_les_statuts_cites_existent_au_catalogue():
     """Un statut mal orthographié ferait un refus de saisie à l'import, et
     l'assuré n'aurait aucun moyen de comprendre pourquoi."""
-    codes = set(Contexte().simulateur().affiliations.codes)
+    codes = set(Simulateur().affiliations.codes)
     regimes = module("releve-lu").REGIMES
     inconnus = {regime.statut for regime in regimes if regime.statut not in codes}
     assert not inconnus, f"statuts absents du catalogue : {sorted(inconnus)}"
