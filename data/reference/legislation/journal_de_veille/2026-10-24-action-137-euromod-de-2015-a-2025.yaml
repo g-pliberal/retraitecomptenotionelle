@@ -1,0 +1,36 @@
+date: "2026-10-24"
+session: "action 137 : EUROMOD exécuté à part, ses systèmes FR_2015 à FR_2025 rejoués au droit de leur date"
+consulte: >-
+  EUROMOD, le paquet J2.54+ du JRC (ses règles sous CC BY 4.0, FR.xml, systèmes FR_2006 à
+  FR_2026), téléchargé sans inscription, exécuté à part par le connecteur Python du JRC
+  (`euromod` 0.5.0, PyPI, EUPL), son moteur sous .NET 8, sur 1 770 ménages types de
+  retraités écrits dans ses données d'entraînement ; une copie de ses règles où sa décote
+  se calcule sur l'impôt du barème, pour isoler ses autres écarts. Dans l'index LEGI du
+  dépôt, récupéré ce jour (à jour au 18 octobre 2026) : les rédactions de L. 136-8 du code
+  de la sécurité sociale de 2015 à 2026, dont LEGIARTI000029961387, LEGIARTI000037947799 et
+  LEGIARTI000042683546 ; celles de l'article 157 bis du code général des impôts de 2014 à
+  2026, dont LEGIARTI000032701889, LEGIARTI000043662633, LEGIARTI000045764735,
+  LEGIARTI000047622555 et LEGIARTI000049641837. La base législative de la Cnav, par son
+  API : les barèmes « Seuils de revenus pour assujettissement et taux de la CSG » de 2015 à
+  2026, circulaires 2015/3 à 2025/35. `veille_droit.py` lancé avant d'écrire la règle :
+  rien sur la CSG des pensions. `textes.py --inscrire` n'a pas tourné.
+trouve: >-
+  Une règle du droit réel était fausse au dépôt : au deuxième seuil même de la CSG des
+  pensions, de 2019 à 2025, l'effet retour (`effet_retour.tranche_csg`) mettait le taux
+  médian ; la caisse laisse le réduit (« taux médian si le revenu fiscal de référence
+  dépasse » le deuxième seuil), que L. 136-8, III, écrit « inférieurs ou égaux » depuis
+  le 16 décembre 2020 (LEGIARTI000042683546). En 2019 et en 2020, le texte, « inférieurs
+  à » au III et « excèdent » au III bis, ne rangeait ce seuil sous aucun des deux taux.
+  Corrigé, le test d'abord ; l'effet retour ne lit qu'un revenu continu, et rien ne bouge.
+  Le barème de 2026 bornait déjà ainsi. Ailleurs, le dépôt est la loi et la caisse : ses
+  seuils de CSG de 2015 à 2025 sont ceux des barèmes de la Cnav, dont 23 147 € en 2021,
+  12 230 € en 2024 et 12 817 € en 2025, où EUROMOD a un euro d'écart ; son abattement des
+  personnes âgées est celui de l'article 157 bis, 2 348, 2 448, 2 484, 2 620 et 2 746 €
+  pour les revenus de 2015, 2020, 2021, 2022 et 2023, où EUROMOD se trompe ou retarde
+  d'un an ; sa décote, sa réduction de 2016 à 2019 et son seuil de recouvrement de 61 €,
+  ceux du code, qu'EUROMOD calcule mal ou n'applique plus. Les erreurs d'EUROMOD sont au
+  registre des modèles (`euromod`).
+reste: >-
+  Pour l'action 137 : la campagne 2025 de l'EACR, au printemps 2027 ; les `referents` des
+  fiches, à leur relecture. Les erreurs d'EUROMOD se signalent au JRC, ce qu'une session
+  ne fait pas.
