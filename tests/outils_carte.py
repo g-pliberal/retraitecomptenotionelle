@@ -15,9 +15,11 @@ lit, et qu'il confronte à ce que le dépôt porte :
   versions en portent ; « regimes/x.yaml, regimes/y.yaml : », des champs que
   portent les périodes de ces fiches de régime, qu'elle concerne ; un ou
   plusieurs fichiers des données de référence, « legislation/x.yaml »,
-  « macro/y.csv » ou « regimes/z.csv », hors des fiches, et, s'il le faut,
-  des clés, pointées, des colonnes ou des mesures qu'ils portent —, ou
-  « aucun : » et la raison, seule ;
+  « macro/y.csv » ou « regimes/z.csv », hors des fiches, mais avec les YAML
+  que le catalogue range parmi elles sans en faire des régimes
+  (``FICHIERS_HORS_REGIMES``), et, s'il le faut, des clés, pointées, des
+  colonnes ou des mesures qu'ils portent —, ou « aucun : » et la raison,
+  seule ;
 - ``tests`` : les fichiers qui la tiennent, en liste, ou nommés dans une
   phrase.
 
@@ -36,6 +38,7 @@ from pathlib import Path
 import yaml
 
 from retraite_notionnelle.config import RACINE_DONNEES
+from retraite_notionnelle.donnees.regimes import FICHIERS_HORS_REGIMES
 
 RACINE = Path(__file__).resolve().parents[1]
 #: Ce qui définit un nom dans chaque moteur — une fonction, une classe, une
@@ -114,7 +117,7 @@ def _ecarts_des_parametres(fiche: dict, texte: str) -> list[str]:
             if nommes != portes:
                 sortie.append(f"{nom}, parametres : « {DES_VERSIONS} : » et tous ceux de ses "
                               f"versions, à rien près ({sorted(nommes ^ portes)})")
-        elif nommes and all(re.fullmatch(r"regimes/\w+\.yaml", c) for c in chemins):
+        elif nommes and all(_fiche_de_regime(c) for c in chemins):
             sortie += _ecarts_des_regimes(fiche, [c[len("regimes/"):-len(".yaml")]
                                                   for c in chemins], nommes)
         elif all(re.fullmatch(r"\w+(?:/[\w-]+)+\.(?:yaml|csv)", c) for c in chemins):
@@ -126,6 +129,13 @@ def _ecarts_des_parametres(fiche: dict, texte: str) -> list[str]:
         sortie.append(f"{nom}, parametres : « {DES_VERSIONS} : » et tous ceux de ses versions "
                       f"({sorted(portes)}) y manquent")
     return sortie
+
+
+def _fiche_de_regime(chemin: str) -> bool:
+    """Un YAML de ``regimes/`` est une fiche de régime, hors des données que le
+    catalogue y range sans en faire un régime (``FICHIERS_HORS_REGIMES``)."""
+    return (re.fullmatch(r"regimes/\w+\.yaml", chemin) is not None
+            and chemin.removeprefix("regimes/") not in FICHIERS_HORS_REGIMES)
 
 
 def _ecarts_des_regimes(fiche: dict, regimes: list[str], nommes: set[str]) -> list[str]:
@@ -153,7 +163,7 @@ def _ecarts_des_donnees(nom: str, chemins: list[str], nommes: set[str]) -> list[
     sortie, portes = [], set()
     for relatif in chemins:
         chemin = RACINE_DONNEES / "reference" / relatif
-        fiche = relatif.startswith("regles/") or re.fullmatch(r"regimes/\w+\.yaml", relatif)
+        fiche = relatif.startswith("regles/") or _fiche_de_regime(relatif)
         if fiche or not chemin.is_file():
             sortie.append(f"{nom}, parametres : {relatif} n'existe pas, ou n'est pas une donnée")
             continue

@@ -6,6 +6,7 @@ intitule: >-
   égale à autant de cent cinquantièmes de la pension calculée au taux que l'assuré
   justifie de trimestres, dans la limite de 128 pour une pension qui prend effet en 1972,
   de 136 en 1973, de 144 en 1974 ; les 150 sont tous retenus à compter de 1975.
+regimes: [regime_general, msa_salaries]
 etat: transcrite
 effet: >-
   Les pensions du régime général et des salariés agricoles prenant effet de 1972 à 1974,
@@ -78,3 +79,14 @@ code:
     général et des salariés agricoles, borne les trimestres que la pension retient sans
     toucher au dénominateur de la proratisation, 150 : `liquider` et son portage prennent le
     plus petit des trimestres du régime et de ce plafond.
+  python: >-
+    droit/liquider.py : liquider_chaque_regime
+  javascript: >-
+    moteur/js/droit/liquider.js : liquiderChaqueRegime
+  parametres: >-
+    regimes/msa_salaries.yaml, regimes/regime_general.yaml : trimestres_retenus_maximum,
+    duree_requise_trimestres
+  tests: >-
+    tests/test_simulateur.py,
+    test_la_loi_boulin_ne_retient_que_128_136_puis_144_trimestres ; aucun témoin ne
+    liquide de pension que le plafond borne, et aucun cas n'y confronte le portage

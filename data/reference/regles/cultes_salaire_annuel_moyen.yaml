@@ -7,6 +7,7 @@ intitule: >-
   de R. 382-89 et R. 382-90, « une base SMIC pour tous les assurés cultuels ». Les
   périodes antérieures au 1er janvier 1998 gardent leurs règles (L. 382-27, deuxième
   phrase) ; celles d'avant 1979 sont validées gratuitement.
+regimes: [cavimac]
 etat: conforme
 effet: >-
   Le salaire annuel moyen est désormais fait du forfait de chaque année, dans les
@@ -68,3 +69,16 @@ code:
     R. 382-89 et R. 382-90 l'égalent au SMIC mensuel, que l'assuré perçoive davantage,
     moins, ou rien du tout. Un ministre du culte n'a pas de salaire dont on prélèverait
     une fraction ; la congrégation et lui cotisent sur un forfait.
+  python: >-
+    droit/liquider.py : assiette_de_reference, salaire_de_reference ;
+    donnees/regimes.py : PeriodeRegime.repere_assiette ; moteur/compte.py :
+    ConstructeurCompte._cotisation_ligne
+  javascript: >-
+    moteur/js/droit/liquider.js : assietteDeReference, salaireDeReference ;
+    moteur/js/regimes.js : PeriodeRegime.repereAssiette ; moteur/js/compte.js :
+    ConstructeurCompte._cotisationLigne
+  parametres: >-
+    regimes/cavimac.yaml : assiette_repere_smic, salaire_reference,
+    taux_cotisation_retraite, part_salariale
+  tests: [tests/test_simulateur.py, tests/test_cultes.py, tests/js/moteur.test.js,
+    tests/temoins/simulations.json]

@@ -10,6 +10,7 @@ intitule: >-
   aidant et le temps partiel thérapeutique (L. 11, 1°, a à e) ; et la
   surcotisation, depuis 2004, qui rend le temps plein à quatre trimestres de
   services au plus, huit à l'agent handicapé à 80 % (L. 11 bis).
+regimes: [fonction_publique_etat, cnracl, fspoeie]
 etat: approchee
 effet: >-
   Tout fonctionnaire qui a travaillé à temps partiel. Jusqu'au 11 octobre 2026, le
@@ -133,9 +134,23 @@ code:
     d'un relevé. Les services de la famille fonction_publique la lisent déjà
     (`droit/compter.py`, `compter.js`), et la liquidation le traitement à temps
     plein (`droit/liquider.py`).
+  python: >-
+    saisie.py : Saisie.temps_partiel_analyse ; chronologie.py : du_parcours,
+    du_releve ; carriere.py : _quotite_de_l_annee ; droit/compter.py : compter,
+    services_a_temps_partiel ; droit/liquider.py : salaire_de_reference
+  javascript: >-
+    moteur/js/saisie.js : Saisie.tempsPartielAnalyse ; moteur/js/chronologie.js :
+    duParcours, duReleve ; moteur/js/carriere.js : quotiteDeLAnnee ;
+    moteur/js/droit/compter.js : compter, servicesATempsPartiel ;
+    moteur/js/droit/liquider.js : salaireDeReference
+  parametres: >-
+    aucun : la quotité est un fait de la carrière, que le formulaire déclare par
+    années entières, et la règle ne lit aucune donnée de référence
   tests: >-
     tests/test_temps_partiel.py, et l'exemple `sre_temps_partiel_pierre` ; la
-    confrontation à OpenFisca, tests/test_oracle_familles.py
+    confrontation à OpenFisca, tests/test_oracle_familles.py ; les témoins
+    temps_partiel_fonctionnaire_etat et temps_partiel_releve_territorial
+    (tests/temoins/simulations.json), que le portage rejoue (tests/js/moteur.test.js)
 textes_a_rattacher:
 - reference: >-
     L. 11 CPCMR, 1° : LEGIARTI000006362691 (2 avril 1982), LEGIARTI000006362692,

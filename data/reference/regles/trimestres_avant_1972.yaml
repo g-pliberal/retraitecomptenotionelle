@@ -12,6 +12,7 @@ intitule: >-
   cotisations journalières par trimestre jusqu'en 1935, un trimestre par retenue de
   15 anciens francs de 1936 à 1945 ; et jusqu'en 1946, rien au salarié payé au-delà du
   plafond d'assujettissement, qui ne subissait aucune retenue.
+regimes: [regime_general, assurances_sociales, msa_salaries]
 etat: approchee
 effet: >-
   Les années travaillées de 1946 à 1971 dont le salaire n'atteint pas quatre fois le
@@ -322,6 +323,22 @@ code:
     (`DonneesMacro.statuts_assures_sociaux`, `statutsAssuresSociaux`), que l'année de
     carrière leur passe. Le salaire annuel moyen ne retient pas le salaire d'une année
     non assujettie (`salaire_au_compte`, `salaireAuCompte`).
+  python: >-
+    donnees/macro.py : DonneesMacro.trimestres_valides,
+    DonneesMacro._trimestres_de_la_retenue, DonneesMacro._assujetti,
+    DonneesMacro.salaire_au_compte, DonneesMacro.statuts_assures_sociaux ;
+    carriere.py : _ligne_annuelle ; droit/liquider.py : salaire_de_reference
+  javascript: >-
+    moteur/js/macro.js : DonneesMacro.trimestresValides,
+    DonneesMacro._trimestresDeLaRetenue, DonneesMacro._assujetti,
+    DonneesMacro.salaireAuCompte ; moteur/js/carriere.js : ligneAnnuelle ;
+    moteur/js/droit/liquider.js : salaireDeReference
+  parametres: >-
+    legislation/salaire_validant_trimestre_avant_1972.csv : annee, valeur ;
+    legislation/salaire_validant_trimestre_outre_mer.csv : annee, antilles_guyane,
+    reunion ; legislation/taux_retenue_avant_1946.csv : annee, valeur ;
+    legislation/plafond_assujettissement_avant_1947.csv : annee, valeur ;
+    legislation/affiliations.yaml : affiliations
   tests: >-
     `test_avant_1972_le_trimestre_se_valide_au_trimestre_de_l_avts`,
     `test_avant_1946_le_trimestre_se_lit_sur_la_retenue`,

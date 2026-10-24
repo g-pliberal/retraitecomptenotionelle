@@ -9,6 +9,7 @@ intitule: >-
   % de l'Agirc-Arrco et les 2,15 % de sa contribution d'équilibre générale —, dont
   les trois cinquièmes à la charge de la collectivité ; une institution de l'Arrco
   calcule et sert les points.
+regimes: [arrco_cultes]
 etat: conforme
 effet: >-
   Ministres des cultes rémunérés, depuis 2006 : le modèle ne leur routait que la
@@ -130,3 +131,20 @@ code:
     `assiette_forfaitaire` : la cotisation se prélève sur l'assiette forfaitaire des autres
     cotisations des cultes, le SMIC mensuel, que la fiche `cultes_salaire_annuel_moyen`
     décrit.
+  python: >-
+    carriere.py : Affiliations.regimes ; droit/acquerir.py : acquerir ;
+    donnees/regimes.py : PeriodeRegime.repere_assiette ; moteur/compte.py :
+    ConstructeurCompte._cotisation_ligne ; contributions_equilibre.py :
+    contributions_d_une_carriere, _forfait
+  javascript: >-
+    moteur/js/regimes.js : Affiliations.regimes, PeriodeRegime.repereAssiette ;
+    moteur/js/droit/acquerir.js : acquerir ; moteur/js/compte.js :
+    ConstructeurCompte._cotisationLigne ; moteur/js/contributions-equilibre.js :
+    contributionsDUneCarriere, forfait
+  parametres: >-
+    regimes/arrco_cultes.yaml : assiette_repere_smic, taux_cotisation_retraite,
+    part_salariale, points_de ; regimes/valeurs_point.csv : arrco, agirc_arrco ;
+    legislation/affiliations.yaml : affiliations.ministre_du_culte ;
+    legislation/contributions_equilibre_agirc_arrco.yaml : contributions
+  tests: [tests/test_simulateur.py, tests/test_contributions_equilibre.py,
+    tests/js/moteur.test.js, tests/temoins/simulations.json]

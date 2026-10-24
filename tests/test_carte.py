@@ -145,7 +145,8 @@ def test_le_code_d_une_fiche_se_confronte_au_depot():
     classes et leurs méthodes, les accesseurs et les constantes de module que
     chaque moteur définit ; les paramètres, en clauses que sépare « ; » —
     tous ceux de ses versions, des champs des périodes de ses régimes, des
-    clés ou des colonnes des données de référence — ; des tests qui existent.
+    clés ou des colonnes des données de référence, celles que ``regimes/``
+    range hors des fiches de régime comprises — ; des tests qui existent.
     Ce que le dépôt dément s'y lit, nom par nom."""
     from outils_carte import ecarts
 
@@ -160,7 +161,9 @@ def test_le_code_d_une_fiche_se_confronte_au_depot():
                                     "legislation/micro_social.yaml : abattements.vente ; "
                                     "legislation/age_annulation_decote.csv : generation ; "
                                     "legislation/minimum_contributif.csv : plafond_ecretement ; "
-                                    "regimes/valeurs_point.csv : agirc, salaire_reference",
+                                    "regimes/valeurs_point.csv : agirc, salaire_reference ; "
+                                    "regimes/classes_cotisation_epoques.yaml : "
+                                    "regles.cavec_complementaire",
                       "tests": ["tests/test_reversion.py"]}}
     assert ecarts(fiche) == []
     fiche["code"]["parametres"] = ("regimes/agirc_arrco.yaml : abattement_points ; "
@@ -183,15 +186,7 @@ def test_le_code_d_une_fiche_se_confronte_au_depot():
 #: une fiche qui tient en sort — ; une fiche qui gagne un code l'écrit
 #: d'emblée sous la forme que l'outil lit.
 EN_PROSE = frozenset("""
-    assiette_minimale_agricole
-    cotisation_par_classes_liberales
-    cultes_retraite_complementaire cultes_salaire_annuel_moyen
-    date_effet_mois_suivant
     pension_non_salaries_agricoles_2026
-    points_au_prorata_des_cotisations raap_classe_speciale
-    retraite_proportionnelle_msa
-    temps_partiel_fonction_publique
-    trimestres_avant_1972 trimestres_retenus_1972_1974
 """.split())
 
 

@@ -4,6 +4,7 @@ intitule: >-
   Cotisation par classes de trois complémentaires libérales : un montant par classe de
   revenu, et non un taux, à la CAVEC, à la Cipav de 1979 à 2022 et à la CARPV depuis 1998 ;
   la CARPV appelait auparavant un nombre d'actes médicaux fixé selon l'âge.
+regimes: [carpv_complementaire, cavec_complementaire, cipav_complementaire]
 etat: approchee
 etape: acquerir_les_droits
 effet: >-
@@ -494,3 +495,26 @@ code:
   moteur: >-
     `cotisation_par_classes` : c'est la forme de la Cipav d'avant 2023 : 1 527 € jusqu'à
     26 580 € de revenus, 3 055 € jusqu'à 49 280 €, et ainsi de huit paliers.
+  python: >-
+    droit/acquerir.py : acquerir ; donnees/regimes.py : ClassesCotisation,
+    ClassesCotisation._deplier_epoques, ClassesCotisation.annee_grille,
+    ClassesCotisation.grille, ClassesCotisation.revenu_retenu,
+    ClassesCotisation.cotisation ; moteur/compte.py :
+    ConstructeurCompte._cotisation_par_classes ; remuneration.py :
+    bloc_droit_en_vigueur, _classes_de_l_annee
+  javascript: >-
+    moteur/js/droit/acquerir.js : acquerir ; moteur/js/regimes.js : ClassesCotisation,
+    ClassesCotisation.anneeGrille, ClassesCotisation.grille,
+    ClassesCotisation.revenuRetenu, ClassesCotisation.cotisation ; moteur/js/compte.js :
+    ConstructeurCompte._cotisationParClasses ; moteur/js/remuneration.js :
+    blocDroitEnVigueur, classesDeLAnnee
+  parametres: >-
+    regimes/classes_cotisation.csv : carpv_complementaire, cavec_complementaire,
+    cipav_complementaire, annee, revenu_maximum, cotisation ;
+    regimes/classes_cotisation_epoques.yaml : cipav_complementaire.epoques,
+    cipav_complementaire.montants, cipav_complementaire.bornes,
+    cavec_complementaire.epoques, cavec_complementaire.bornes,
+    carpv_complementaire.epoques, carpv_complementaire.montants,
+    carpv_complementaire.bornes, regles
+  tests: [tests/test_sections_liberales.py, tests/test_fiche_des_liberaux.py,
+    tests/test_univers.py, tests/js/moteur.test.js, tests/temoins/simulations.json]

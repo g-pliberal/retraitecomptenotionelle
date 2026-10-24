@@ -4,6 +4,7 @@ intitule: >-
   De 1981 à 2015, le RAAP prélevait une classe et non un taux : cinq classes de
   6 à 48 points par an, dont le montant est fixé chaque année par décret ; à défaut
   d'option, l'assuré est inscrit d'office en classe spéciale, six points par an.
+regimes: [ircec_raap]
 etat: approchee
 effet: >-
   La fiche prélevait 8 % du revenu avant 2016 — un taux qu'aucun texte ne porte
@@ -64,3 +65,20 @@ code:
     `cotisation_par_classes` : de 1981 à 2015, le RAAP prélève le montant de sa classe
     (`classes_cotisation.csv`), et non un taux ; `assiette_forfaitaire` : l'assiette est
     le repère de la période, quel que soit le revenu.
+  python: >-
+    droit/acquerir.py : acquerir ; donnees/regimes.py : PeriodeRegime.repere_assiette,
+    ClassesCotisation.annee_grille, ClassesCotisation.cotisation ; moteur/compte.py :
+    ConstructeurCompte._cotisation_ligne, ConstructeurCompte._cotisation_par_classes ;
+    remuneration.py : bloc_droit_en_vigueur, _classes_de_l_annee
+  javascript: >-
+    moteur/js/droit/acquerir.js : acquerir ; moteur/js/regimes.js :
+    PeriodeRegime.repereAssiette, ClassesCotisation.anneeGrille,
+    ClassesCotisation.cotisation ; moteur/js/compte.js :
+    ConstructeurCompte._cotisationLigne, ConstructeurCompte._cotisationParClasses ;
+    moteur/js/remuneration.js : blocDroitEnVigueur, classesDeLAnnee
+  parametres: >-
+    regimes/ircec_raap.yaml : points_maximum, assiette_repere_smic,
+    taux_cotisation_retraite ; regimes/classes_cotisation.csv : ircec_raap, annee,
+    cotisation
+  tests: [tests/test_ircec_auteurs.py, tests/js/moteur.test.js,
+    tests/temoins/simulations.json]

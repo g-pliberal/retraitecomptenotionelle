@@ -6,6 +6,7 @@ intitule: >-
   600 depuis le décret n° 2004-783 du 29 juillet 2004 ; celle de la complémentaire
   obligatoire sur 2 028 SMIC en 2003, 1 957 en 2004, 1 888 en 2005 et 1 820 depuis 2006,
   qui ouvrent 100 points par an, 117 en 2017 et 133 depuis 2018.
+regimes: [msa_non_salaries, msa_rco]
 etat: approchee
 etape: acquerir_les_droits
 effet: >-
@@ -279,3 +280,20 @@ code:
     `assiette_plancher` : l'assiette est relevée au repère (`assiette_repere_smic`) quand
     elle lui est inférieure. C'est l'assiette minimale de la complémentaire agricole,
     qui ouvre ses cent points même à un revenu plus faible.
+  python: >-
+    droit/acquerir.py : acquerir, points_msa, assiette_du_collaborateur ;
+    donnees/regimes.py : PeriodeRegime.repere_assiette ; moteur/compte.py :
+    ConstructeurCompte._cotisation_ligne
+  javascript: >-
+    moteur/js/droit/acquerir.js : acquerir, pointsMsa, assietteDuCollaborateur ;
+    moteur/js/regimes.js : PeriodeRegime.repereAssiette ; moteur/js/compte.js :
+    ConstructeurCompte._cotisationLigne
+  parametres: >-
+    regimes/msa_non_salaries.yaml, regimes/msa_rco.yaml : assiette_repere_smic,
+    points_maximum, taux_cotisation_retraite
+  tests: >-
+    tests/test_simulateur.py, dont
+    test_l_annee_ou_l_exploitant_agricole_cesse_lui_vaut_les_points_d_une_annee, qui
+    confronte les deux moteurs aux 133 points du plancher de la RCO et aux forfaits du
+    collaborateur ; tests/test_univers.py, le compte qui garde la règle ; aucun témoin
+    n'atteint le plancher

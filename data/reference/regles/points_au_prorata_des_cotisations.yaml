@@ -6,6 +6,7 @@ intitule: >-
   2025), celle de la seconde tranche 25, et une année d'affiliation incomplète, dont le
   plafond est réduit à ses mois, n'en a que la part de sa cotisation (D. 643-1 depuis
   2004).
+regimes: [cnavpl]
 etat: transcrite
 etape: acquerir_les_droits
 effet: >-
@@ -86,3 +87,12 @@ code:
     rend le taux d'une année : sans l'interrupteur, une ligne de six mois reçoit les
     points d'une année entière. Les quatorze périodes en points de la CNAVPL, de 2004 à
     aujourd'hui, renvoient à cette fiche.
+  python: >-
+    droit/acquerir.py : acquerir ; donnees/regimes.py : PeriodeRegime.repere_assiette
+  javascript: >-
+    moteur/js/droit/acquerir.js : acquerir ; moteur/js/regimes.js :
+    PeriodeRegime.repereAssiette
+  parametres: >-
+    regimes/cnavpl.yaml : points_maximum, assiette
+  tests: [tests/test_sections_liberales.py, tests/js/moteur.test.js,
+    tests/temoins/simulations.json]

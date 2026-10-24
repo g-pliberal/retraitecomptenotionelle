@@ -10,6 +10,7 @@ intitule: >-
   2025 ; le collaborateur et l'aide familial cotisent sur un forfait de 400 SMIC depuis
   2004 ; le chef à titre secondaire n'a, avant 2026, que cette retraite, sans la
   forfaitaire.
+regimes: [msa_non_salaries]
 etat: approchee
 etape: acquerir_les_droits
 effet: >-
@@ -321,3 +322,22 @@ code:
     SMIC, un plateau à trente jusqu'à deux fois le minimum contributif, puis une pente
     jusqu'au maximum de l'année (R. 732-70 et R. 732-71 du code rural). La pension multiplie
     ensuite les points par 37,5 / la durée requise en années.
+  python: >-
+    droit/acquerir.py : acquerir, points_msa, points_msa_retenus, POINTS_MSA_MINIMUM,
+    assiette_du_collaborateur ; droit/liquider.py : liquider_chaque_regime,
+    valeur_point_fiche, annees_hors_forfait ; droit/ouvrir.py : duree_requise ;
+    scenarios/actuel.py : MinimumContributif.avts
+  javascript: >-
+    moteur/js/droit/acquerir.js : acquerir, pointsMsa, pointsMsaRetenus,
+    POINTS_MSA_MINIMUM, assietteDuCollaborateur ; moteur/js/droit/liquider.js :
+    liquiderChaqueRegime, valeurPointFiche, anneesHorsForfait ;
+    moteur/js/droit/ouvrir.js : dureeRequise ; moteur/js/regimes.js :
+    MinimumContributif.avts
+  parametres: >-
+    regimes/msa_non_salaries.yaml : assiette_repere_smic, valeur_point_euros,
+    valeur_point_annee, pension_forfaitaire_annuelle, pension_forfaitaire_annee ;
+    legislation/pension_minimum_avant_1983.csv : date, valeur ;
+    legislation/minimum_contributif.csv : montant_base
+  tests: [tests/test_simulateur.py, tests/test_pension_minimum_avant_1983.py,
+    tests/test_minima_agricoles.py, tests/js/moteur.test.js,
+    tests/temoins/simulations.json]

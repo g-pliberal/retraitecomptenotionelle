@@ -4,6 +4,24 @@ intitule: >-
   La pension prend effet le premier jour du mois suivant celui où l'âge est atteint,
   sauf pour qui est né un premier, qui l'atteint ce jour-là : les âges se comptent,
   en mois révolus, du mois qui suit la naissance, ou du mois même pour qui est né le 1er.
+regimes: [agirc, agirc_arrco, agirc_entreprises_nouvelles, arrco, arrco_cultes,
+  arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles, assemblees_parlementaires,
+  assurances_sociales, asv_auxiliaires_medicaux, asv_chirurgiens_dentistes,
+  asv_conventionnes, asv_directeurs_laboratoire, asv_sages_femmes, avts,
+  banque_de_france, cafat_nouvelle_caledonie, cancava, cancava_avant_1973,
+  carcdsf_complementaire, carmf_complementaire, carpimko_complementaire,
+  carpv_complementaire, cavamac_complementaire, cavec_complementaire, cavimac,
+  cavom_complementaire, cavp_complementaire, cese_membres, chemins_fer_secondaires,
+  cipav_complementaire, cnavpl, cnbf, cnbf_complementaire, cnracl, comedie_francaise,
+  cprn_complementaire, cps_polynesie, cps_polynesie_tranche_b,
+  cps_saint_pierre_et_miquelon, crpcen, crpnpac, crpnpac_tranche_2, cssm_mayotte,
+  enseignants_prive_additionnel, fonction_publique_etat, fonctionnaires_pacifique,
+  fspoeie, gerants_debits_tabac, ieg, igrante, ipacte, ircantec, ircec_raap,
+  ircec_raap_taux_amenage, ircec_racd, ircec_racl, marins, mines, msa_non_salaries,
+  msa_rco, msa_salaries, nric, opera_de_paris, organic, organic_avant_1973,
+  organic_conjoints_batiment, pensions_civiles_1853, port_strasbourg, rafp, ratp, rci,
+  rco_artisans, regime_general, regimes_professionnels_integres, rsi, seita, sncf,
+  unirs, wallis_et_futuna]
 etat: conforme
 effet: >-
   Toute date d'effet, et tout décompte qui court depuis un âge : né le 16 mai 1964,
@@ -84,3 +102,16 @@ code:
     coupure au 1er d'un mois départage et pour le début d'un métier dit par un âge.
     La chronologie pose le jour déclaré (`precision: jour`) ou présumé ; la saisie
     compte le départ du même mois (`Saisie.date_de(age, depart=True)`).
+  python: >-
+    calendrier.py : origine_des_ages ; carriere.py : Carriere.origine_des_ages,
+    Carriere.date_de_l_age, Carriere.age_au, Carriere.mois_de_l_anniversaire ;
+    chronologie.py : completer ; saisie.py : Saisie.date_de
+  javascript: >-
+    moteur/js/calendrier.js : origineDesAges ; moteur/js/carriere.js :
+    Carriere.origineDesAges, Carriere.dateDeLAge, Carriere.ageAu,
+    Carriere.moisDeLAnniversaire ; moteur/js/chronologie.js : completer ;
+    moteur/js/saisie.js : Saisie.dateDe
+  parametres: >-
+    vocabulaire/valeurs.yaml : listes.presomptions.valeurs.jour_de_naissance.valeur
+  tests: [tests/test_moteur.py, tests/test_oracle.py, tests/test_departs.py,
+    tests/js/moteur.test.js, tests/temoins/simulations.json]
