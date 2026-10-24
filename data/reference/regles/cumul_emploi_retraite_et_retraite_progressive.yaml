@@ -274,16 +274,36 @@ approximations:
     l'Agirc-Arrco suit sa règle d'aujourd'hui depuis 2009, et celle du régime de base
     avant, qu'aucun accord lu ne confirme ; sa règle des pensions de 2027, que son site
     annonce, n'est pas publiée, et le modèle lui prête le cumul entier du régime de
-    base, à l'âge du taux plein automatique. Celle des indépendants a sa fiche
-    (cumul_emploi_retraite_complementaire_des_independants). Les autres complémentaires —
-    Ircantec, MSA, sections libérales — et les régimes dont la règle n'est pas lue — avocats
+    base, à l'âge du taux plein automatique. Celles des indépendants, de l'Ircantec, de la
+    RCO agricole et des sections libérales ont leur fiche
+    (cumul_emploi_retraite_complementaire_des_independants, cumul_emploi_retraite_ircantec,
+    cumul_emploi_retraite_rco_agricole, cumul_emploi_retraite_complementaires_des_liberaux).
+    Les autres complémentaires — avocats, navigants, artistes-auteurs, prestations
+    supplémentaires, RAFP — et les régimes dont la règle n'est pas lue — avocats
     (L. 723-11-1), exploitants agricoles (L. 732-39), outre-mer, élus — servent leur
-    pension entière, et le résultat le dit
+    pension entière, et le résultat le dit ; pour la première pension de 2027, que L.
+    161-22, III, A, applique à toute pension « de base ou complémentaire », ces autres
+    complémentaires restent entières
   effet: non mesuré
 - ecart: >-
     avant 2004, la reprise chez un autre employeur que le dernier est lue libre ; les
     activités que L. 161-22 laisse libres (artistiques, juridictionnelles…) ne se
     déclarent pas ; le libéral suit le calendrier de la réduction des artisans
+  effet: non mesuré
+- ecart: >-
+    au-delà du seuil, la pension suspendue de l'artisan, du commerçant et du libéral l'est
+    chaque mois d'activité ; D. 634-11-5, pour les pensions de 2004, et D. 643-10-2, depuis
+    le 17 janvier 2011, ne la suspendent que « pour un nombre de mois égal au rapport entre
+    le montant du dépassement constaté et le montant mensuel net de la pension, arrondi à
+    l'entier inférieur », au moins un mois pour l'artisan et le commerçant, au plus, depuis
+    2010 et 2011, les mois d'activité de l'année : le modèle suspend davantage quand le
+    dépassement est faible, et la complémentaire que ses statuts suspendent « pour la même
+    durée » hérite de l'écart (relevé le 24 octobre 2026, action 138, étape 12)
+  effet: non mesuré
+- ecart: >-
+    la durée requise du cumul intégral est celle que le résultat compte : nulle pour une
+    carrière seulement libérale, que le modèle laisse cumuler entièrement dès l'âge légal,
+    quand L. 643-6 exige la durée de L. 351-1 (relevé le 24 octobre 2026)
   effet: non mesuré
 sources:
   lu_le: 2026-10-14
@@ -295,9 +315,10 @@ sources:
     ses décrets (D. 161-2-5 à D. 161-2-18, dans leurs rédactions de 2004, 2010, 2015
     et 2017) et les règles des indépendants et des libéraux depuis 1985. Restent à
     lire : les rédactions de L. 161-22 de 1988 à 1993, les règles des avocats
-    (L. 723-11-1) et des exploitants agricoles (L. 732-39), celles de l'Ircantec et
-    des sections libérales — celle du RCI, lue le 23 octobre 2026, a sa fiche —, les
-    accords de l'Agirc-Arrco d'avant 2019, et le décret qui fixera le seuil de 2027.
+    (L. 723-11-1) et des exploitants agricoles (L. 732-39) — celles du RCI, de
+    l'Ircantec, de la RCO agricole et des sections libérales, lues les 23 et 24 octobre
+    2026, ont leur fiche —, les accords de l'Agirc-Arrco d'avant 2019, et le décret qui
+    fixera le seuil de 2027.
   - >-
     Avant 2004, la rupture ne vise que « l'employeur » : la reprise chez un autre
     employeur est-elle libre de tout plafond ? Aucune circulaire lue ne le dit ; le

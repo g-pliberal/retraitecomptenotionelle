@@ -1,0 +1,213 @@
+schema_version: 1
+id: cumul_emploi_retraite_ircantec
+intitule: >-
+  Cumul emploi-retraite de l'allocation de l'Ircantec : son règlement soumet le cumul avec
+  une activité qui y cotise aux conditions de L. 161-22. Depuis 2004, la règle de la
+  pension de base du salarié — la rupture, les six mois, le plafond, la suspension, puis la
+  réduction du dépassement ; depuis le 19 décembre 2020, sans le troisième alinéa qui
+  réduit chaque pension : l'allocation reste entière au-delà du plafond. Pour la première
+  pension de 2027, L. 161-22 la réduit de ce que les pensions de base n'absorbent pas.
+domaine: cumul
+regimes: [ircantec]
+etape: echeancier
+face: droit
+etat: approchee
+lit:
+- l'activité exercée après le départ, ses dates, son statut, les régimes où elle cotise, et
+  son revenu
+- ce que L. 161-22 fait de la pension de base du salarié, le même mois
+- la date de la première pension de base, le taux plein et la liquidation de toutes les
+  pensions
+ecrit:
+- >-
+  l'allocation servie pendant l'activité : entière, réduite du dépassement, suspendue, ou
+  non due
+dates_qui_decident:
+- liquidation.premiere_pension_de_base
+- periode.debut
+versions:
+- id: servie_entiere_avant_2004
+  statut: supposee
+  hypothese: >-
+    jusqu'en 2003, l'article 14 ne dit que la condition qui ouvre le droit — « Les agents ne
+    peuvent faire valoir leurs droits à l'allocation de retraite que s'ils [...] ont cessé
+    tout emploi qui devrait normalement entraîner leur assujettissement au présent régime de
+    retraite » — et rien de l'activité reprise après ; l'article 25 parle bien, depuis 1999,
+    d'« arrérages indûment versés à la suite de la suspension des droits à retraite, pour
+    cause de reprise d'activité », sans dire quand elle joue : le modèle sert l'allocation
+    entière pendant l'activité
+  fiabilite: moyenne
+  bornes:
+    liquidation.premiere_pension_de_base: [null, 2027-01-01]
+    periode.debut: [null, 2004-01-01]
+  contenu:
+    droit: l'allocation liquidée, servie entière pendant l'activité
+    parametres:
+      l_161_22: false
+  exemples: aucun trouvé
+- id: l_161_22_2004
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006381602, article: "arrêté du 30 décembre 1970, article 14", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000024266914, article: "arrêté du 30 décembre 1970, article 14", en_vigueur: 2011-06-27}
+  - {id: LEGIARTI000033713940, article: "L. 161-22 CSS : son troisième alinéa, la réduction",
+     en_vigueur: 2017-01-01}
+  nee_de: LEGIARTI000006381602
+  bornes:
+    liquidation.premiere_pension_de_base: [null, 2027-01-01]
+    periode.debut: [2004-01-01, 2021-01-01]
+  contenu:
+    droit: >-
+      « La reprise d'activité est autorisée dans les conditions prévues à l'article L. 161-22
+      du code de la sécurité sociale » (article 14, depuis 2004), puis « Le cumul d'une
+      allocation de retraite avec l'exercice d'une activité professionnelle entraînant un
+      assujettissement à l'IRCANTEC est possible dans les conditions prévues à l'article
+      L. 161-22 » (depuis le 27 juin 2011) : la rupture avec l'employeur, la reprise chez le
+      dernier au plus tôt six mois après, le plafond des revenus et des pensions ; au-delà,
+      la suspension, puis, pour la première pension de 2015 et les activités d'avril 2017, «
+      chacune des pensions servies par ces régimes est réduite à due concurrence du
+      dépassement » (L. 161-22, troisième alinéa) ; le cumul intégral
+    parametres:
+      l_161_22: entier
+      activite: assujettie_a_l_ircantec
+  exemples: aucun trouvé
+- id: sans_le_troisieme_alinea_2020
+  statut: lue
+  textes:
+  - {id: LEGIARTI000042696848, article: "arrêté du 30 décembre 1970, article 14", en_vigueur: 2020-12-19}
+  - {id: LEGIARTI000049864857, article: "arrêté du 30 décembre 1970, article 14", en_vigueur: 2024-09-01}
+  nee_de: LEGIARTI000042696848
+  bornes:
+    liquidation.premiere_pension_de_base: [null, 2027-01-01]
+    periode.debut: [2021-01-01, null]
+  contenu:
+    droit: >-
+      « Le cumul d'une allocation de retraite avec l'exercice d'une activité professionnelle
+      entraînant un assujettissement à l'IRCANTEC est possible dans les conditions prévues à
+      l'article L. 161-22 du code de la sécurité sociale à l'exception de son troisième
+      alinéa » (article 14, arrêté du 16 décembre 2020, en vigueur le 19 ; la rédaction du
+      1er septembre 2024 le redit) : le troisième alinéa est celui qui réduit « chacune des
+      pensions » du dépassement
+    caisse: >-
+      « Le total retraite + salaire doit rester sous 160 % du SMIC » ou la moyenne des trois
+      derniers salaires ; en cas de dépassement, « votre régime de base peut réduire votre
+      pension », et « l'Ircantec continue de vous verser la totalité » ; « Reprise auprès du
+      même employeur : carence de six mois » (Ircantec, « Le dispositif du cumul
+      emploi-retraite », lue le 24 octobre 2026)
+    parametres:
+      l_161_22: sans_le_troisieme_alinea
+      activite: assujettie_a_l_ircantec
+  exemples: aucun trouvé
+- id: imputee_apres_les_bases_2027
+  statut: lue
+  textes:
+  - {id: LEGIARTI000053279730, article: "L. 161-22 CSS", en_vigueur: 2025-12-31}
+  nee_de: LEGIARTI000053279730
+  bornes:
+    liquidation.premiere_pension_de_base: [2027-01-01, null]
+  contenu:
+    droit: >-
+      pour la première pension de base prise depuis le 1er janvier 2027, « Une pension de
+      vieillesse personnelle servie au titre d'un régime légal ou rendu légalement
+      obligatoire, de base ou complémentaire » est réduite de tout le revenu avant l'âge
+      légal, de la moitié de ce qui dépasse un seuil jusqu'à l'âge du taux plein
+      automatique, entière ensuite ; la réduction « est appliquée, par priorité, sur les
+      pensions versées par les régimes de retraite de base. La somme des réductions imputée
+      sur chaque pension ne peut excéder la réduction » (L. 161-22, III, A) : l'allocation
+      perd ce que les pensions de base n'absorbent pas, quelle que soit l'activité
+    parametres:
+      l_161_22: III_A
+      reduction: apres_les_pensions_de_base
+  exemples: aucun trouvé
+approximations:
+- version: [l_161_22_2004]
+  ecart: >-
+    l'allocation suit la règle que le modèle applique à la pension de base du salarié : le
+    plafond compare le revenu à toutes les pensions servies, et, depuis avril 2017, elle perd
+    le dépassement entier, comme chaque pension de base ; aucune instruction ni aucun exemple
+    de l'Ircantec, de 2004 à 2020, ne dit si elle l'imputait plutôt une fois, ou d'abord sur
+    la base
+  effet: non mesuré
+- version: [sans_le_troisieme_alinea_2020]
+  ecart: >-
+    la rédaction vaut du 19 décembre 2020 : le modèle, qui compte par mois, l'applique
+    depuis janvier 2021. Au-delà du plafond, l'allocation est servie entière, que la base
+    soit réduite ou, première pension d'avant 2015, suspendue : la page de l'Ircantec ne
+    distingue pas ; le retour chez le dernier employeur dans les six mois la laisse non due
+  effet: non mesuré
+- version: [imputee_apres_les_bases_2027]
+  ecart: >-
+    le décret qui impute la réduction « à chaque pension en fonction des montants des
+    pensions versées par chaque régime » n'a pas paru : les complémentaires que le modèle
+    réduit — le RCI, l'Ircantec, la RCO agricole, les sections libérales — se partagent au
+    prorata de leurs montants ce que les bases n'absorbent pas ; l'Agirc-Arrco garde sa
+    règle, et les autres complémentaires sont servies entières ; de l'âge légal à l'âge du
+    taux plein automatique, le seuil n'étant pas publié, l'allocation est servie entière
+  effet: non mesuré
+- version: [servie_entiere_avant_2004, l_161_22_2004, sans_le_troisieme_alinea_2020]
+  ecart: >-
+    l'élu local affilié à l'Ircantec par ses indemnités, dont l'allocation était suspendue
+    pendant un nouveau mandat jusqu'au 1er août 2026 (page de l'Ircantec), n'a pas de règle
+    lue : son activité n'en a pas dans le modèle
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-24
+  prochaine_relecture: 2027-04-30
+  a_relire:
+  - >-
+    Ouverte le 24 octobre 2026 (action 138, étape 12). Chercher une instruction ou une
+    circulaire de l'Ircantec de 2004 à 2020 qui dise comment elle suspendait, puis
+    réduisait, l'allocation au-delà du plafond, et si elle sert entière, depuis 2021,
+    l'allocation de la première pension d'avant 2015 dont la base est suspendue.
+  - >-
+    Avant 2004 : lire ce qui faisait jouer la suspension que l'article 25 nomme depuis 1999 ;
+    la version servie_entiere_avant_2004 est supposée.
+  - Le décret d'imputation de la réduction de 2027 (L. 161-22, III, A), dès qu'il paraît.
+  lectures:
+  - type: legifrance
+    reference: >-
+      arrêté du 30 décembre 1970, article 14 : LEGIARTI000006381600 (1971-1990),
+      LEGIARTI000006381601 (1990-2003), LEGIARTI000006381602 (2004 au 26 juin 2011),
+      LEGIARTI000024266914 (27 juin 2011 au 18 décembre 2020), LEGIARTI000042696848 (19
+      décembre 2020 au 31 août 2024), LEGIARTI000049864857 (depuis le 1er septembre 2024) ;
+      article 25 (LEGIARTI000006381641, LEGIARTI000019511940) ; L. 161-22
+      (LEGIARTI000033713940, LEGIARTI000053279730), dans l'index LEGI à jour au 23 octobre
+      2026
+    date: 2024-09-01
+  - type: autre
+    reference: >-
+      Ircantec, « Le dispositif du cumul emploi-retraite » : le cumul intégral, le cumul
+      plafonné, « l'Ircantec continue de vous verser la totalité » ; l'élu local, dont «
+      Cette mesure supprime la suspension de la pension lors de l'exercice d'un nouveau
+      mandat » à compter du 1er août 2026 ; lue le 24 octobre 2026
+    url: https://www.ircantec.retraites.fr/actif/dispositif-cumul-emploi-retraite
+    date: 2026-08-01
+code:
+  python: >-
+    droit/cumul.py : _Calcul._ircantec, _Calcul._salarie, _Calcul._complementaire_2027,
+    groupe_de_la_pension, GROUPES_COMPLEMENTAIRES_2027, IRCANTEC_L_161_22,
+    IRCANTEC_SANS_REDUCTION, IRCANTEC_AVANT_2004, IRCANTEC_2004, IRCANTEC_2020, RCI_2027 ;
+    echeancier.py : Echeancier._cumuler
+  javascript: >-
+    moteur/js/droit/cumul.js : ircantec, salarie, complementaire2027, groupeDeLaPension,
+    GROUPES_COMPLEMENTAIRES_2027, IRCANTEC_L_161_22, IRCANTEC_SANS_REDUCTION,
+    IRCANTEC_AVANT_2004, IRCANTEC_2004, IRCANTEC_2020, RCI_2027 ; moteur/js/echeancier.js :
+    Echeancier._cumuler
+  parametres: >-
+    contenu.parametres de chaque version : l_161_22, activite, reduction
+  tests: >-
+    tests/test_emploi_retraite.py, tests/js/moteur.test.js
+  moteur: >-
+    L'allocation lit la décision de L. 161-22 sur sa propre pension, que la règle de la base
+    du salarié rend ; les constantes des deux moteurs redisent les versions.
+historique:
+- >-
+  2026-10-24 — née de la fiche cumul_emploi_retraite_et_retraite_progressive, qui servait
+  l'Ircantec entière faute d'en avoir lu la règle, et calculée dans les deux moteurs
+  (action 138, étape 12).
+effet: >-
+  L'agent contractuel qui reprend un emploi de contractuel public avant le taux plein : de
+  2004 à 2020, son allocation, que le modèle servait entière, suit la règle de sa base —
+  suspendue au-delà du plafond, réduite du dépassement depuis avril 2017 pour la première
+  pension de 2015 ; depuis 2021, elle est servie entière ; pour la première pension de 2027,
+  elle perd ce que ses pensions de base n'absorbent pas.

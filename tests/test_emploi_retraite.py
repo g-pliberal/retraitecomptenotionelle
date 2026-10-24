@@ -440,6 +440,333 @@ def test_la_premiere_pension_de_2027_est_reduite_de_tout_le_revenu_avant_l_age_l
         cumul.AGES_2027}
 
 
+# -- les autres complémentaires : l'Ircantec, la RCO agricole, les sections libérales --
+
+
+def _servies(resultat, regime):
+    """Ce que chaque tranche fait de la pension de ce régime."""
+    return [(t, _pension(t, regime)) for t in resultat.tranches
+            if any(p.regime == regime for p in t.par_regime)]
+
+
+def _liberale(metier: str) -> list[Metier]:
+    """Une carrière libérale de trente ans, après quatre ans de salariat : la
+    durée qu'elle valide reste sous la durée requise, que le modèle ne compte
+    pas pour une carrière seulement libérale (et dont il accorderait le cumul
+    intégral dès l'âge légal)."""
+    return [Metier("salarie_prive_non_cadre", 26.0), Metier(metier, 30.0)]
+
+
+def test_l_ircantec_suit_l_161_22_pour_l_activite_qui_y_cotise(simulateur):
+    """Arrêté du 30 décembre 1970, article 14, depuis 2004 : « La reprise
+    d'activité est autorisée dans les conditions prévues à l'article L. 161-22 »,
+    puis, depuis 2011, le cumul « avec l'exercice d'une activité professionnelle
+    entraînant un assujettissement à l'IRCANTEC ». L'agente contractuelle partie
+    en 2011, de nouveau contractuelle au-delà du plafond : sa pension du régime
+    général est suspendue, son allocation de l'Ircantec aussi."""
+    resultat, _ = _cumul(simulateur, 1951, 60.5,
+                         _emploi(61, 62, affiliation="contractuel_public"),
+                         [Metier("contractuel_public", 26.0)])
+    servies = _servies(resultat, "ircantec")
+    assert servies
+    for tranche, ircantec in servies:
+        assert _pension(tranche, "regime_general").statut == cumul.SUSPENDUE
+        assert (ircantec.statut, ircantec.regle, ircantec.motif) == (
+            cumul.SUSPENDUE, cumul.IRCANTEC_2004, "depassement")
+        assert ircantec.reduction == pytest.approx(ircantec.montant)
+
+
+def test_l_ircantec_se_reduit_du_depassement_jusqu_en_2020(simulateur):
+    """Première pension de 2020, contractuelle d'août 2020 à décembre 2021 :
+    jusqu'en décembre 2020, l'article 14 applique L. 161-22 entier, dont le
+    troisième alinéa — « chacune des pensions servies par ces régimes est
+    réduite à due concurrence du dépassement » ; depuis l'arrêté du 16 décembre
+    2020, en vigueur le 19, il l'applique « à l'exception de son troisième
+    alinéa », et l'Ircantec « continue de vous verser la totalité » (sa page du
+    cumul emploi-retraite) : servie entière quand la base est réduite."""
+    resultat, _ = _cumul(simulateur, 1958, 62.25,
+                         _emploi(62.5, 64, affiliation="contractuel_public"),
+                         [Metier("contractuel_public", 26.0)])
+    janvier = DateMois(2021, 1)
+    servies = _servies(resultat, "ircantec")
+    assert {t.debut < janvier for t, _ in servies} == {True, False}
+    for tranche, ircantec in servies:
+        base = _pension(tranche, "regime_general")
+        assert (base.statut, base.regle) == (cumul.REDUITE, cumul.REDUCTION_2015)
+        depassement = (tranche.pensions + tranche.revenu * cumul.assiette_csg(tranche.debut.annee)
+                       - base.plafond)
+        if tranche.debut < janvier:
+            assert (ircantec.statut, ircantec.regle, ircantec.motif) == (
+                cumul.REDUITE, cumul.IRCANTEC_2004, "depassement")
+            assert ircantec.reduction == pytest.approx(min(ircantec.montant, depassement))
+        else:
+            assert (ircantec.statut, ircantec.regle, ircantec.motif, ircantec.reduction) == (
+                cumul.PLAFONNEE, cumul.IRCANTEC_2020, "sans_le_troisieme_alinea", 0.0)
+
+
+@pytest.mark.parametrize("naissance, depart, emploi, attendu", [
+    (1951, 60.5, _emploi(61, 62), (cumul.LIBRE, "", "autre_regime")),
+    (1938, 62.0, _emploi(62.5, 64, affiliation="contractuel_public"),
+     (cumul.LIBRE, "servie_entiere_avant_2004", "non_lue")),
+])
+def test_hors_de_son_champ_ou_avant_2004_l_ircantec_est_entiere(simulateur, naissance, depart,
+                                                                  emploi, attendu):
+    """L'ancienne contractuelle salariée du privé : l'article 14 ne vise que
+    l'activité qui cotise à l'Ircantec, son allocation est servie entière. Avant
+    2004, l'article ne dit que la cessation qui ouvre le droit : le modèle la sert
+    entière, par une version supposée."""
+    resultat, _ = _cumul(simulateur, naissance, depart, emploi,
+                         [Metier("contractuel_public", 26.0)])
+    servies = _servies(resultat, "ircantec")
+    assert servies
+    assert {(p.statut, p.regle, p.motif) for _, p in servies} == {attendu}
+
+
+@pytest.mark.parametrize("affiliation, attendu", [
+    ("exploitant_agricole", (cumul.NON_CALCULE, "suit_la_base_2003", "regle_non_lue")),
+    ("salarie_agricole", (cumul.LIBRE, "", "autre_regime")),
+])
+def test_la_rco_agricole_suit_la_regle_de_la_base(simulateur, affiliation, attendu):
+    """« Les dispositions des articles L. 732-39 et L. 732-40 sont applicables à
+    la pension de retraite complémentaire obligatoire » (D. 732-157, depuis 2003) :
+    la complémentaire de l'exploitant suit la règle de sa base, que le modèle
+    n'a pas lue pour l'activité agricole non salariée, et que l'activité salariée
+    ne touche pas."""
+    resultat, _ = _cumul(simulateur, 1955, 62.0, _emploi(62.5, 64, affiliation=affiliation),
+                         [Metier("exploitant_agricole", 20.0)])
+    servies = _servies(resultat, "msa_rco")
+    assert servies
+    assert {(p.statut, p.regle, p.motif) for _, p in servies} == {attendu}
+
+
+def test_la_complementaire_des_dentistes_est_suspendue_avec_leur_base(simulateur):
+    """Statuts de la CARCDSF de 2011, article 47 : « Lorsque l'assuré est soumis
+    à une suspension de sa pension dans le régime de base en application des
+    deuxième et troisième alinéas de l'article L. 643-6 [...], le service de la
+    pension du régime complémentaire de vieillesse est suspendu pour la même
+    durée ». La dentiste partie en 2012, de nouveau en cabinet au-delà du
+    plafond de la sécurité sociale : sa base est suspendue, sa complémentaire
+    aussi ; partie en 2016 et en cabinet depuis 2017, sa base n'est que réduite
+    du dépassement, et sa complémentaire est servie entière."""
+    metiers = _liberale("chirurgien_dentiste_ou_sage_femme")
+    emploi = dict(affiliation="chirurgien_dentiste_ou_sage_femme", niveau=2.0)
+    avant, _ = _cumul(simulateur, 1951, 61.5, _emploi(62, 63.5, **emploi), metiers)
+    servies = _servies(avant, "carcdsf_complementaire")
+    assert servies
+    for tranche, complementaire in servies:
+        assert _pension(tranche, "cnavpl").statut == cumul.SUSPENDUE
+        assert (complementaire.statut, complementaire.regle, complementaire.motif) == (
+            cumul.SUSPENDUE, cumul.SECTIONS_STATUTS, "depassement")
+        assert complementaire.reduction == pytest.approx(complementaire.montant)
+    depuis, _ = _cumul(simulateur, 1954, 62.0, _emploi(63, 64.5, **emploi), metiers)
+    servies = _servies(depuis, "carcdsf_complementaire")
+    assert servies
+    for tranche, complementaire in servies:
+        assert _pension(tranche, "cnavpl").statut == cumul.REDUITE
+        assert (complementaire.statut, complementaire.motif, complementaire.reduction) == (
+            cumul.PLAFONNEE, "base_reduite", 0.0)
+
+
+def test_avant_2011_la_dentiste_qui_reprend_perd_sa_complementaire(simulateur):
+    """Statuts de 2007, article 25 : « Le versement de la retraite complémentaire
+    est suspendu pour tout allocataire qui reprend l'exercice de la profession de
+    chirurgien-dentiste » — sous le seuil de la base aussi."""
+    resultat, _ = _cumul(simulateur, 1946, 62.0,
+                         _emploi(62.5, 64, affiliation="chirurgien_dentiste_ou_sage_femme",
+                                 niveau=0.3),
+                         _liberale("chirurgien_dentiste_ou_sage_femme"))
+    servies = _servies(resultat, "carcdsf_complementaire")
+    assert servies and all(t.debut < DateMois(2011, 2) for t, _ in servies)
+    for tranche, complementaire in servies:
+        assert _pension(tranche, "cnavpl").statut == cumul.PLAFONNEE
+        assert (complementaire.statut, complementaire.motif) == (cumul.SUSPENDUE, "reprise")
+        assert complementaire.reduction == pytest.approx(complementaire.montant)
+
+
+@pytest.mark.parametrize("niveau", [3.0, 1.3])
+def test_la_complementaire_des_medecins_perd_ce_que_la_base_n_absorbe_pas(simulateur, niveau):
+    """Statuts de la CARMF, article 15, 3, depuis 2011 : au-delà du seuil, « le
+    service de la pension est suspendu, conjointement à celui des autres
+    pensions des régimes obligatoires de vieillesse versées par la caisse et à
+    concurrence du montant du dépassement ». La base du médecin parti en 2016
+    perd le dépassement depuis 2017 ; la complémentaire, ce qu'il en reste —
+    à trois fois le salaire moyen, une part ; à 1,3 fois, rien."""
+    resultat, _ = _cumul(simulateur, 1954, 62.0,
+                         _emploi(63, 64.5, affiliation="medecin_liberal", niveau=niveau),
+                         _liberale("medecin_liberal"))
+    servies = _servies(resultat, "carmf_complementaire")
+    assert servies
+    for tranche, complementaire in servies:
+        base = _pension(tranche, "cnavpl")
+        seuil = simulateur.macro.plafond_securite_sociale(tranche.debut.annee) / 12
+        reste = tranche.revenu - seuil - base.montant
+        assert base.statut == cumul.REDUITE
+        assert complementaire.regle == cumul.SECTIONS_STATUTS
+        if niveau == 3.0:
+            assert 0 < reste
+            assert (complementaire.statut, complementaire.motif) == (cumul.REDUITE,
+                                                                     "depassement")
+            assert complementaire.reduction == pytest.approx(min(complementaire.montant, reste))
+        else:
+            assert reste <= 0 < tranche.revenu - seuil
+            assert (complementaire.statut, complementaire.motif, complementaire.reduction) == (
+                cumul.PLAFONNEE, "imputee_sur_la_base", 0.0)
+
+
+def test_le_notaire_liberal_n_a_pas_droit_a_sa_complementaire(simulateur):
+    """Statuts de la CPRN, depuis 2017 : « Le droit aux allocations est
+    compatible avec l'exercice de la profession de notaire salarié [...] Il est
+    incompatible avec l'exercice de la profession de notaire libéral » — sous
+    le seuil de la base aussi."""
+    resultat, _ = _cumul(simulateur, 1960, 62.25,
+                         _emploi(62.5, 64, affiliation="notaire", niveau=0.3),
+                         _liberale("notaire"))
+    servies = _servies(resultat, "cprn_complementaire")
+    assert servies
+    for tranche, complementaire in servies:
+        assert _pension(tranche, "cnavpl").statut == cumul.PLAFONNEE
+        assert (complementaire.statut, complementaire.regle, complementaire.motif) == (
+            cumul.NON_DUE, cumul.SECTIONS_STATUTS, "notaire_liberal")
+        assert complementaire.reduction == pytest.approx(complementaire.montant)
+
+
+def test_la_complementaire_des_officiers_ministeriels_change_de_regle_en_2026(simulateur):
+    """Statuts de la CAVOM de 2020, article 15 : la base est diminuée du
+    dépassement, puis, « Si le revenu dépasse le seuil après cette diminution,
+    le montant du régime complémentaire est diminué à due concurrence du
+    montant du dépassement » ; règlement de 2026, article 2 : « le montant du
+    régime complémentaire est diminué à due concurrence du montant du
+    dépassement », depuis août 2026, le premier mois entier de sa rédaction."""
+    resultat, _ = _cumul(simulateur, 1962, 62.5,
+                         _emploi(63, 65, affiliation="officier_ministeriel", niveau=3.0),
+                         _liberale("officier_ministeriel"))
+    aout = DateMois(2026, 8)
+    servies = _servies(resultat, "cavom_complementaire")
+    assert {t.debut < aout for t, _ in servies} == {True, False}
+    for tranche, complementaire in servies:
+        base = _pension(tranche, "cnavpl")
+        seuil = simulateur.macro.plafond_securite_sociale(tranche.debut.annee) / 12
+        depassement = tranche.revenu - seuil
+        assert (complementaire.statut, complementaire.motif) == (cumul.REDUITE, "depassement")
+        attendu = depassement - base.montant if tranche.debut < aout else depassement
+        assert complementaire.reduction == pytest.approx(min(complementaire.montant, attendu))
+
+
+@pytest.mark.parametrize("naissance, depart, attendu", [
+    (1951, 61.0, (cumul.REDUITE, "depassement")),
+    (1960, 62.25, (cumul.LIBRE, "sans_suspension")),
+])
+def test_la_complementaire_des_veterinaires_jusqu_en_2021(simulateur, naissance, depart,
+                                                          attendu):
+    """Statuts de la CARPV de 2011 : « le service de la pension est suspendu
+    pendant la durée qui aurait procuré au vétérinaire un montant brut
+    d'allocations au titre du régime complémentaire égal au montant du
+    dépassement » — elle perd le dépassement ; les statuts de 2021, en vigueur
+    en 2022, n'y laissent qu'une « cotisation non attributive de points »."""
+    resultat, _ = _cumul(simulateur, naissance, depart,
+                         _emploi(depart + 0.5, depart + 2, affiliation="veterinaire",
+                                 niveau=2.0),
+                         _liberale("veterinaire"))
+    servies = _servies(resultat, "carpv_complementaire")
+    assert servies
+    for tranche, complementaire in servies:
+        assert (complementaire.statut, complementaire.motif) == attendu
+        if attendu[0] == cumul.REDUITE:
+            seuil = simulateur.macro.plafond_securite_sociale(tranche.debut.annee) / 12
+            assert complementaire.reduction == pytest.approx(
+                min(complementaire.montant, tranche.revenu - seuil))
+        else:
+            assert complementaire.reduction == 0.0
+
+
+def test_la_complementaire_des_agents_d_assurance_suit_sa_base_depuis_2026(simulateur):
+    """Règlement de la CAVAMAC de 2026, article 3 : « Un assuré peut poursuivre
+    ou reprendre une activité professionnelle dans les mêmes conditions que pour
+    le régime de base » ; avant, « suspendu pour la même durée » que la base
+    (statuts de 2011, article 14). La base réduite du dépassement : la
+    complémentaire, entière jusqu'en juillet 2026, perd depuis août le
+    dépassement comme elle."""
+    resultat, _ = _cumul(simulateur, 1962, 62.5,
+                         _emploi(63, 65, affiliation="agent_general_assurance", niveau=2.0),
+                         _liberale("agent_general_assurance"))
+    aout = DateMois(2026, 8)
+    servies = _servies(resultat, "cavamac_complementaire")
+    assert {t.debut < aout for t, _ in servies} == {True, False}
+    for tranche, complementaire in servies:
+        assert _pension(tranche, "cnavpl").statut == cumul.REDUITE
+        if tranche.debut < aout:
+            assert (complementaire.statut, complementaire.motif) == (cumul.PLAFONNEE,
+                                                                     "base_reduite")
+            continue
+        seuil = simulateur.macro.plafond_securite_sociale(tranche.debut.annee) / 12
+        assert (complementaire.statut, complementaire.motif) == (cumul.REDUITE, "depassement")
+        assert complementaire.reduction == pytest.approx(
+            min(complementaire.montant, tranche.revenu - seuil))
+
+
+@pytest.mark.parametrize("metier, emploi, regime, attendu", [
+    ("chirurgien_dentiste_ou_sage_femme", _emploi(62.5, 64), "carcdsf_complementaire",
+     (cumul.LIBRE, "autre_regime")),
+    ("pharmacien", _emploi(62.5, 64, affiliation="pharmacien", niveau=2.0),
+     "cavp_complementaire", (cumul.LIBRE, "non_lue")),
+])
+def test_sans_activite_liberale_ou_sans_regle_lue_la_complementaire_est_entiere(
+        simulateur, metier, emploi, regime, attendu):
+    """La dentiste salariée après son départ : L. 643-6 ne vise que l'activité
+    libérale, que ses statuts suivent ; le pharmacien, dont les statuts lus ne
+    suspendent rien."""
+    resultat, _ = _cumul(simulateur, 1960, 62.25, emploi, _liberale(metier))
+    servies = _servies(resultat, regime)
+    assert servies
+    assert {(p.statut, p.motif) for _, p in servies} == {attendu}
+
+
+def test_la_premiere_pension_de_2027_reduit_les_complementaires_apres_les_bases(simulateur):
+    """L. 161-22, III, A, de 2027 : « Une pension de vieillesse personnelle
+    servie au titre d'un régime légal ou rendu légalement obligatoire, de base ou
+    complémentaire » ; la réduction « est appliquée, par priorité, sur les
+    pensions versées par les régimes de retraite de base », et la somme des
+    réductions ne peut excéder la réduction. La contractuelle devenue médecin,
+    carrière longue partie en 2028 : avant l'âge légal, sa base perd tout son
+    revenu, et ses deux complémentaires, l'Ircantec et la CARMF, se partagent ce
+    qui reste au prorata de leurs montants."""
+    resultat, _ = _cumul(simulateur, 1968, 60.0, _emploi(61, 64, niveau=0.45),
+                         [Metier("contractuel_public", 17.0), Metier("medecin_liberal", 35.0)])
+    complementaires = ("ircantec", "carmf_complementaire")
+    avant = [t for t in resultat.tranches
+             if _pension(t, "regime_general").statut == cumul.REDUITE]
+    assert avant and len(avant) < len(resultat.tranches)
+    for tranche in resultat.tranches:
+        servies = [_pension(tranche, regime) for regime in complementaires]
+        assert {p.regle for p in servies} == {cumul.RCI_2027}
+        if tranche not in avant:
+            assert {p.statut for p in servies} == {cumul.SEUIL_NON_PUBLIE}
+            continue
+        bases = [p for p in tranche.par_regime if p.regime in ("regime_general", "cnavpl")]
+        revenu = tranche.revenu * cumul.assiette_csg(tranche.debut.annee)
+        reste = revenu - sum(p.montant for p in bases)
+        total = sum(p.montant for p in servies)
+        assert 0 < reste < total
+        for pension in servies:
+            assert (pension.statut, pension.motif) == (cumul.REDUITE, "avant_l_age_legal")
+            assert pension.reduction == pytest.approx(reste * pension.montant / total)
+
+
+def test_les_regles_des_sections_sont_celles_de_leur_fiche():
+    """La table des sections que les deux moteurs redisent est celle de la fiche
+    ``cumul_emploi_retraite_complementaires_des_liberaux`` : chaque section, la
+    règle de ses statuts et le premier mois où elle vaut."""
+    from retraite_notionnelle.noyau import carte
+
+    fiche = carte.fiches()["cumul_emploi_retraite_complementaires_des_liberaux"]
+    version, = [v for v in fiche["versions"] if v["id"] == cumul.SECTIONS_STATUTS]
+    table = {regime: [(str(debut), regle) for debut, regle in regles]
+             for regime, regles in version["contenu"]["parametres"]["sections"].items()}
+    assert table == {regime: [(f"{mois.annee:04d}-{mois.mois:02d}-01", regle)
+                              for mois, regle in regles]
+                     for regime, regles in cumul.REGLES_DES_SECTIONS.items()}
+
+
 def test_le_journal_sert_la_pension_reduite_pendant_l_activite(simulateur):
     """La pension réduite s'inscrit dans sa lignée pour les mois où elle l'est :
     le journal sert la réduite pendant l'activité, l'entière ensuite."""
@@ -459,23 +786,31 @@ def test_le_journal_sert_la_pension_reduite_pendant_l_activite(simulateur):
 
 
 def test_les_regles_du_cumul_sont_des_versions_des_fiches(simulateur):
-    """Chaque règle que le cumul cite est une version d'une des trois fiches."""
+    """Chaque règle que le cumul cite est une version d'une des six fiches, et
+    la règle de 2027 de chaque complémentaire est une version de la sienne."""
     from retraite_notionnelle.noyau import carte
 
     toutes = carte.fiches()
     versions = set()
     for fiche in ("cumul_emploi_retraite_et_retraite_progressive",
                   "cumul_emploi_retraite_fonction_publique",
-                  "cumul_emploi_retraite_complementaire_des_independants"):
+                  "cumul_emploi_retraite_complementaire_des_independants",
+                  "cumul_emploi_retraite_ircantec", "cumul_emploi_retraite_rco_agricole",
+                  "cumul_emploi_retraite_complementaires_des_liberaux"):
         versions |= {v["id"] for v in toutes[fiche]["versions"]}
     citees = {valeur for nom, valeur in vars(cumul).items()
               if nom.isupper() and isinstance(valeur, str) and "_" in valeur
               and nom in ("AVANT_1983", "RUPTURE_1983", "PLAFOND_2004", "LIBERALISE_2009",
                           "PREMIERES_2015", "REDUCTION_2015", "AGES_2027", "FP_1970",
                           "FP_2004", "FP_2009", "FP_2015", "FP_2027", "RCI_AVANT_2009",
-                          "RCI_2009", "RCI_2024", "RCI_2027")}
-    assert len(citees) == 16
+                          "RCI_2009", "RCI_2024", "RCI_2027", "IRCANTEC_AVANT_2004",
+                          "IRCANTEC_2004", "IRCANTEC_2020", "RCO_AGRICOLE_2003",
+                          "SECTIONS_STATUTS")}
+    assert len(citees) == 21
     assert citees <= versions, citees - versions
+    for fiche in ("cumul_emploi_retraite_ircantec", "cumul_emploi_retraite_rco_agricole",
+                  "cumul_emploi_retraite_complementaires_des_liberaux"):
+        assert cumul.RCI_2027 in {v["id"] for v in toutes[fiche]["versions"]}, fiche
 
 
 # -- les droits de l'activité et la nouvelle pension (droit/seconde.py) -------------

@@ -878,6 +878,28 @@ def _cas() -> list[dict]:
         "emploi_retraite": "2029-02", "emploi_retraite_fin": "2032-02",
         "emploi_retraite_salaire": "0.6",
     }))
+    # Les autres complémentaires (fiches cumul_emploi_retraite_ircantec et
+    # cumul_emploi_retraite_complementaires_des_liberaux ; action 138, étape
+    # 12) : l'Ircantec de la contractuelle partie en 2020, réduite du
+    # dépassement jusqu'en décembre, entière depuis 2021 ; la complémentaire du
+    # médecin parti en 2016, qui perd ce que sa base n'absorbe pas ; celle du
+    # notaire libéral, non due même sous le seuil.
+    cas.append(("cumul_contractuelle_ircantec_2020", {
+        "naissance": "1958", "statut": "contractuel_public", "debut": "26",
+        "liquidation": "62.25", "emploi_retraite": "2020-08", "emploi_retraite_fin": "2022-02",
+        "emploi_retraite_statut": "contractuel_public",
+    }))
+    cas.append(("cumul_medecin_carmf_2017", {
+        "naissance": "1954", "debut": "26", "metier2_debut": "30",
+        "metier2_statut": "medecin_liberal", "liquidation": "62",
+        "emploi_retraite": "2017-02", "emploi_retraite_fin": "2018-08",
+        "emploi_retraite_statut": "medecin_liberal", "emploi_retraite_salaire": "3",
+    }))
+    cas.append(("cumul_notaire_cprn_2022", {
+        "naissance": "1960", "debut": "26", "metier2_debut": "30", "metier2_statut": "notaire",
+        "liquidation": "62.25", "emploi_retraite": "2022-08", "emploi_retraite_fin": "2024-02",
+        "emploi_retraite_statut": "notaire", "emploi_retraite_salaire": "0.3",
+    }))
     # LES DROITS DE L'ACTIVITÉ APRÈS LE DÉPART (droit/seconde.py) : la nouvelle
     # pension et la seconde retraite de l'Agirc-Arrco en cumul intégral depuis
     # 2023, écrêtée à 5 % du plafond au-delà ; celle d'une première pension de

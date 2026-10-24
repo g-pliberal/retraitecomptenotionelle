@@ -1,7 +1,9 @@
 """Le cumul emploi-retraite (docs/architecture.md, § 7.4 ; fiches
 ``cumul_emploi_retraite_et_retraite_progressive``,
-``cumul_emploi_retraite_fonction_publique`` et
-``cumul_emploi_retraite_complementaire_des_independants``).
+``cumul_emploi_retraite_fonction_publique``,
+``cumul_emploi_retraite_complementaire_des_independants``,
+``cumul_emploi_retraite_ircantec``, ``cumul_emploi_retraite_rco_agricole`` et
+``cumul_emploi_retraite_complementaires_des_liberaux``).
 
 Le retraité qui travaille garde sa pension, entière ou non, selon le droit du
 MOIS où il travaille, la date de sa pension et celle de sa première pension de
@@ -65,12 +67,20 @@ comme elle depuis le 26 juin 2024 ; pour la première pension de 2027, réduite
 de ce que la base n'absorbe pas (fiche
 ``cumul_emploi_retraite_complementaire_des_independants``).
 
+L'Ircantec suit L. 161-22 pour l'activité qui y cotise, depuis 2004, sans la
+réduction du dépassement depuis décembre 2020 ; la RCO agricole suit la règle
+de la base de l'exploitant ; la complémentaire d'une section libérale, ce que
+ses statuts écrivent — suspendue avec la base, réduite de ce que la base
+n'absorbe pas ou du dépassement entier, incompatible avec le notariat
+libéral. Pour la première pension de 2027, L. 161-22 réduit toutes ces
+complémentaires de ce que les pensions de base n'absorbent pas, au prorata.
+
 CHAQUE RÉGIME NE RÉDUIT QUE SES PENSIONS, pour l'activité qui relève de lui :
 le salarié qui se fait artisan ne perd rien de sa pension du régime général ;
 l'artisan qui se fait salarié ne perd rien de celle des artisans. Les
 régimes dont le modèle n'a pas lu la règle — avocats, exploitants agricoles,
-outre-mer, élus, complémentaires autres que l'Agirc-Arrco et celle des
-indépendants — servent leur pension entière, et le résultat le dit.
+outre-mer, élus, les autres complémentaires — servent leur pension entière,
+et le résultat le dit.
 
 Le jumeau de ce module est ``moteur/js/droit/cumul.js``.
 """
@@ -120,7 +130,17 @@ FP_2027 = "regles_communes_2027"
 RCI_AVANT_2009 = "servie_entiere_avant_2009"
 RCI_2009 = "suspendue_avec_la_base_2009"
 RCI_2024 = "reduite_comme_la_base_2024"
+#: La version de 2027 de chaque complémentaire que L. 161-22, III, A, réduit
+#: après les bases : celle du RCI, de l'Ircantec, de la RCO agricole et des
+#: sections libérales porte ce même nom dans sa fiche.
 RCI_2027 = "imputee_apres_les_bases_2027"
+#: Les versions des fiches de l'Ircantec, de la RCO agricole et des sections
+#: libérales.
+IRCANTEC_AVANT_2004 = "servie_entiere_avant_2004"
+IRCANTEC_2004 = "l_161_22_2004"
+IRCANTEC_2020 = "sans_le_troisieme_alinea_2020"
+RCO_AGRICOLE_2003 = "suit_la_base_2003"
+SECTIONS_STATUTS = "statuts_des_sections"
 
 #: Les dates qui découpent la règle.
 LOI_1983 = DateMois(1983, 4)
@@ -146,6 +166,47 @@ COMPLEMENTAIRES_2009 = DateMois(2009, 1)
 #: L'arrêté du 19 juin 2024 applique la section 3 du code au service de la
 #: pension du RCI, du 26 juin : le premier mois entier de sa rédaction.
 SECTION_3_RCI = DateMois(2024, 7)
+#: L'article 14 de l'arrêté du 30 décembre 1970 soumet l'allocation de
+#: l'Ircantec à L. 161-22 depuis 2004 ; sans son troisième alinéa depuis
+#: l'arrêté du 16 décembre 2020, en vigueur le 19 : le premier mois entier de
+#: sa rédaction.
+IRCANTEC_L_161_22 = DateMois(2004, 1)
+IRCANTEC_SANS_REDUCTION = DateMois(2021, 1)
+
+#: Les règles des statuts des sections libérales pour leur complémentaire,
+#: pendant l'activité : suspendue dès la reprise de la profession ; suspendue
+#: pour la même durée que la base (L. 643-6) ; suspendue ou réduite comme
+#: elle ; réduite de ce que la base n'absorbe pas du dépassement ; réduite du
+#: dépassement entier ; servie sans suspension ; incompatible avec le notariat
+#: libéral.
+A_LA_REPRISE = "suspendue_a_la_reprise"
+AVEC_LA_BASE = "suspendue_avec_la_base"
+COMME_LA_BASE = "reduite_comme_la_base"
+APRES_LA_BASE = "reduite_apres_la_base"
+DEPASSEMENT_ENTIER = "reduite_du_depassement"
+SANS_SUSPENSION = "sans_suspension"
+NOTAIRE_LIBERAL = "incompatible_avec_le_notariat_liberal"
+#: Chaque section dont les statuts sont lus, la règle de chacune de leurs
+#: rédactions et le premier mois entier où elle vaut (fiche
+#: ``cumul_emploi_retraite_complementaires_des_liberaux``) ; une section ou un
+#: mois qui n'y figure pas sert sa complémentaire entière.
+REGLES_DES_SECTIONS = {
+    "carcdsf_complementaire": ((DateMois(2007, 11), A_LA_REPRISE),
+                               (DateMois(2011, 2), AVEC_LA_BASE)),
+    "carmf_complementaire": ((DateMois(2011, 10), APRES_LA_BASE),),
+    "carpv_complementaire": ((DateMois(2011, 2), DEPASSEMENT_ENTIER),
+                             (DateMois(2022, 1), SANS_SUSPENSION)),
+    "cavamac_complementaire": ((DateMois(2011, 7), AVEC_LA_BASE),
+                               (DateMois(2026, 8), COMME_LA_BASE)),
+    "cavom_complementaire": ((DateMois(2020, 10), APRES_LA_BASE),
+                             (DateMois(2026, 8), DEPASSEMENT_ENTIER)),
+    "cprn_complementaire": ((DateMois(2017, 7), NOTAIRE_LIBERAL),),
+}
+#: Les professions que visent les statuts de 2007 de la CARCDSF — « la
+#: profession de chirurgien-dentiste » — et ceux de la CPRN — « la profession de
+#: notaire libéral » —, par leur statut.
+PROFESSIONS_DES_STATUTS = {A_LA_REPRISE: "chirurgien_dentiste_ou_sage_femme",
+                           NOTAIRE_LIBERAL: "notaire"}
 
 #: D. 161-2-15 : la reprise chez le dernier employeur, dans les six mois.
 SIX_MOIS = 6
@@ -187,6 +248,15 @@ INDEPENDANTS = frozenset({"artisan", "commercant", "micro_entrepreneur",
 #: Le RCI et les complémentaires qu'il a reprises en 2013, dont il sert les
 #: points : la pension complémentaire de l'artisan et du commerçant.
 COMPLEMENTAIRES_DES_INDEPENDANTS = frozenset({"rci", "rco_artisans", "nric"})
+#: Les régimes complémentaires des dix sections professionnelles des libéraux.
+COMPLEMENTAIRES_DES_LIBERAUX = frozenset({
+    "carcdsf_complementaire", "carmf_complementaire", "carpimko_complementaire",
+    "carpv_complementaire", "cavamac_complementaire", "cavec_complementaire",
+    "cavom_complementaire", "cavp_complementaire", "cipav_complementaire",
+    "cprn_complementaire"})
+#: Les groupes de complémentaires que la première pension de 2027 réduit après
+#: les pensions de base (L. 161-22, III, A), au prorata de leurs montants.
+GROUPES_COMPLEMENTAIRES_2027 = frozenset({"rci", "ircantec", "rco_agricole", "liberales"})
 #: Le régime qui liquide la pension des régimes alignés (liquidation unique,
 #: depuis 2017) et sert celle des artisans et des commerçants depuis 2020 :
 #: celle d'un ancien indépendant suit aussi la règle de L. 634-6.
@@ -242,6 +312,12 @@ def groupe_de_la_pension(moteur: ScenarioActuel, regime: str) -> str:
         return "agirc_arrco"
     if regime in COMPLEMENTAIRES_DES_INDEPENDANTS:
         return "rci"
+    if regime == "ircantec":
+        return "ircantec"
+    if regime == "msa_rco":
+        return "rco_agricole"
+    if regime in COMPLEMENTAIRES_DES_LIBERAUX:
+        return "liberales"
     fiche = moteur.catalogue[regime]
     if fiche.etage not in _departs.ETAGES_DES_UNITES:
         return "complementaires"
@@ -605,11 +681,18 @@ class _Calcul:
         # Les points du RCI, du RCO et du NRCO font une seule pension.
         complementaire = somme_ordonnee(montants[regime] for regime, _, groupe in servies
                                         if groupe == "rci")
+        # Les complémentaires que la règle de 2027 réduit après les bases.
+        complementaires_2027 = somme_ordonnee(montants[regime] for regime, _, groupe in servies
+                                              if groupe in GROUPES_COMPLEMENTAIRES_2027)
         for regime, date_effet, groupe in servies:
             montant = montants[regime]
             if self.premiere >= PREMIERE_2027 and groupe in GROUPES_DE_BASE:
                 decision = self._regle_2027(mois, date_effet, groupe, montant, annee,
                                             base_2027)
+            elif self.premiere >= PREMIERE_2027 and groupe in GROUPES_COMPLEMENTAIRES_2027:
+                decision = self._complementaire_2027(mois, date_effet, montant,
+                                                     montant / complementaires_2027, annee,
+                                                     base_2027)
             elif groupe == "fonction_publique":
                 decision = self._fonctionnaire(mois, regime, date_effet, montant, annee,
                                                integral)
@@ -619,7 +702,15 @@ class _Calcul:
             elif groupe == "rci":
                 decision = self._complementaire_des_independants(
                     mois, date_effet, montant, montant / complementaire, annee, integral,
-                    servies, montants, base_2027)
+                    servies, montants)
+            elif groupe == "ircantec":
+                decision = self._ircantec(mois, date_effet, montant, annee, total, integral)
+            elif groupe == "rco_agricole":
+                decision = self._rco_agricole()
+            elif groupe == "liberales":
+                decision = self._complementaire_des_liberaux(mois, regime, date_effet, montant,
+                                                             annee, integral, servies,
+                                                             montants)
             elif groupe in ("complementaires", "autres"):
                 decision = (LIBRE, "", "non_lue", 0.0, None)
             elif not self._concerne(regime, groupe):
@@ -727,8 +818,7 @@ class _Calcul:
 
     def _complementaire_des_independants(self, mois: DateMois, date_effet: DateMois,
                                          montant: float, part: float, annee: _Annee,
-                                         integral: bool, servies, montants: dict,
-                                         base_2027: float) -> tuple:
+                                         integral: bool, servies, montants: dict) -> tuple:
         """La complémentaire de l'artisan et du commerçant, que leurs
         règlements soumettent aux règles de cumul de la pension de base ;
         ``part`` est celle de ses points du RCI, du RCO ou du NRCO dans la
@@ -748,25 +838,13 @@ class _Calcul:
           de la pension » (article 27, arrêté du 19 juin 2024) : réduite du
           dépassement entier, comme la base, ou suspendue avec elle.
         * Pour la première pension de 2027, L. 161-22, que l'article 27 lui
-          applique depuis le 1er janvier 2027 : avant l'âge légal, la réduction
-          de tout le revenu « est appliquée, par priorité, sur les pensions
-          versées par les régimes de retraite de base » ; la complémentaire perd
-          ce que la base n'absorbe pas.
+          applique depuis le 1er janvier 2027 (:meth:`_complementaire_2027`).
 
         Hors de la première pension de 2027, seule l'activité de l'artisan ou
         du commerçant la touche : l'article 27 vise « les activités relevant
         des régimes des professions artisanales, industrielles et
         commerciales », L. 634-6 l'activité indépendante.
         """
-        if self.premiere >= PREMIERE_2027:
-            statut, _, motif, reduction, plafond = self._regle_2027(
-                mois, date_effet, "independants", montant, annee, base_2027)
-            if statut != REDUITE:
-                return statut, RCI_2027, motif, reduction, plafond
-            reste = annee.revenu * assiette_csg(mois.annee) - base_2027
-            if reste <= 0:
-                return PLAFONNEE, RCI_2027, "imputee_sur_la_base", 0.0, None
-            return REDUITE, RCI_2027, motif, reste * part, None
         if mois < COMPLEMENTAIRES_2009:
             return LIBRE, RCI_AVANT_2009, "non_lue", 0.0, None
         if self.groupe != "independants":
@@ -781,6 +859,132 @@ class _Calcul:
         if regle == RCI_2009:
             return PLAFONNEE, regle, "base_reduite", 0.0, seuil
         return REDUITE, regle, motif, (annee.revenu - seuil) * part, seuil
+
+    def _complementaire_2027(self, mois: DateMois, date_effet: DateMois, montant: float,
+                             part: float, annee: _Annee, base_2027: float) -> tuple:
+        """L. 161-22, III, A, de 2027, pour la première pension de base de
+        cette date : « Une pension de vieillesse personnelle servie au titre
+        d'un régime légal ou rendu légalement obligatoire, de base ou
+        complémentaire » est réduite de tout le revenu avant l'âge légal ; la
+        réduction « est appliquée, par priorité, sur les pensions versées par
+        les régimes de retraite de base », et « La somme des réductions imputée
+        sur chaque pension ne peut excéder la réduction ». La complémentaire —
+        le RCI, que son règlement y soumet depuis le 1er janvier 2027,
+        l'Ircantec, la RCO agricole, les sections libérales — perd ce que les
+        pensions de base n'absorbent pas, au prorata (``part``) de celles
+        qu'elle réduit. L'Agirc-Arrco garde sa règle."""
+        statut, _, motif, reduction, plafond = self._regle_2027(
+            mois, date_effet, "complementaires", montant, annee, base_2027)
+        if statut != REDUITE:
+            return statut, RCI_2027, motif, reduction, plafond
+        reste = annee.revenu * assiette_csg(mois.annee) - base_2027
+        if reste <= 0:
+            return PLAFONNEE, RCI_2027, "imputee_sur_la_base", 0.0, None
+        return REDUITE, RCI_2027, motif, reste * part, None
+
+    def _ircantec(self, mois: DateMois, date_effet: DateMois, montant: float, annee: _Annee,
+                  total: float, integral: bool) -> tuple:
+        """L'allocation de l'Ircantec, que l'article 14 de l'arrêté du 30
+        décembre 1970 soumet aux conditions de L. 161-22 pour l'activité qui y
+        cotise (fiche ``cumul_emploi_retraite_ircantec``).
+
+        * Avant 2004, l'article ne dit que la cessation de tout emploi qui
+          ouvre le droit : le modèle la sert entière.
+        * Depuis 2004, « La reprise d'activité est autorisée dans les
+          conditions prévues à l'article L. 161-22 », puis, depuis 2011, « Le
+          cumul d'une allocation de retraite avec l'exercice d'une activité
+          professionnelle entraînant un assujettissement à l'IRCANTEC » : la
+          règle de la pension de base du salarié — la rupture, les six mois, le
+          plafond, la suspension, puis la réduction du dépassement.
+        * Depuis l'arrêté du 16 décembre 2020, en vigueur le 19, « à
+          l'exception de son troisième alinéa », celui qui réduit « chacune
+          des pensions » : au-delà du plafond, l'allocation est servie entière,
+          l'Ircantec « continue de vous verser la totalité » (sa page du cumul
+          emploi-retraite).
+        """
+        if mois < IRCANTEC_L_161_22:
+            return LIBRE, IRCANTEC_AVANT_2004, "non_lue", 0.0, None
+        if "ircantec" not in self.moteur.affiliations.regimes(self.affiliation, mois.annee):
+            return LIBRE, "", "autre_regime", 0.0, None
+        statut, _, motif, reduction, plafond = self._salarie(mois, date_effet, montant, annee,
+                                                             total, integral)
+        if mois < IRCANTEC_SANS_REDUCTION:
+            return statut, IRCANTEC_2004, motif, reduction, plafond
+        if motif == "depassement":
+            return PLAFONNEE, IRCANTEC_2020, "sans_le_troisieme_alinea", 0.0, plafond
+        return statut, IRCANTEC_2020, motif, reduction, plafond
+
+    def _rco_agricole(self) -> tuple:
+        """La retraite complémentaire obligatoire des non-salariés agricoles :
+        « Les dispositions des articles L. 732-39 et L. 732-40 sont applicables
+        à la pension de retraite complémentaire obligatoire » (D. 732-157,
+        depuis 2003). Elle suit la règle de la base de l'exploitant, que le
+        modèle n'a pas lue pour l'activité agricole non salariée, et que
+        l'activité d'un autre régime ne touche pas (fiche
+        ``cumul_emploi_retraite_rco_agricole``)."""
+        if self.groupe != "exploitants":
+            return LIBRE, "", "autre_regime", 0.0, None
+        return NON_CALCULE, RCO_AGRICOLE_2003, "regle_non_lue", 0.0, None
+
+    def _complementaire_des_liberaux(self, mois: DateMois, regime: str, date_effet: DateMois,
+                                     montant: float, annee: _Annee, integral: bool, servies,
+                                     montants: dict) -> tuple:
+        """La complémentaire d'une section libérale, selon la règle que ses
+        statuts écrivent ce mois-là (:data:`REGLES_DES_SECTIONS` ; fiche
+        ``cumul_emploi_retraite_complementaires_des_liberaux``).
+
+        * La CARCDSF de 2007 et la CPRN visent une profession : « Le versement
+          de la retraite complémentaire est suspendu pour tout allocataire qui
+          reprend l'exercice de la profession de chirurgien-dentiste » ; le
+          droit aux allocations « est incompatible avec l'exercice de la
+          profession de notaire libéral ».
+        * Les autres règles suivent le seuil de la base (L. 643-6, D. 643-10),
+          pour l'activité libérale, et cèdent au cumul intégral : la CARCDSF
+          depuis 2011 et la CAVAMAC suspendent la complémentaire « pour la même
+          durée » que la base ; la CAVAMAC depuis 2026, « dans les mêmes
+          conditions que pour le régime de base » ; la CARMF « conjointement à
+          celui des autres pensions [...] versées par la caisse et à concurrence
+          du montant du dépassement », la CAVOM de 2020 quand « le revenu
+          dépasse le seuil après cette diminution » de la base : ce que la base
+          n'absorbe pas ; la CARPV de 2011, « pendant la durée qui aurait procuré
+          [...] un montant brut d'allocations [...] égal au montant du
+          dépassement », la CAVOM de 2026 « à due concurrence du montant du
+          dépassement » : le dépassement entier ; la CARPV depuis 2022, aucune.
+        """
+        regle_des_statuts = None
+        for debut, regle in REGLES_DES_SECTIONS.get(regime, ()):
+            if mois >= debut:
+                regle_des_statuts = regle
+        if regle_des_statuts is None:
+            return LIBRE, SECTIONS_STATUTS, "non_lue", 0.0, None
+        if regle_des_statuts == SANS_SUSPENSION:
+            return LIBRE, SECTIONS_STATUTS, "sans_suspension", 0.0, None
+        if regle_des_statuts in PROFESSIONS_DES_STATUTS:
+            if self.affiliation != PROFESSIONS_DES_STATUTS[regle_des_statuts]:
+                return LIBRE, "", "autre_regime", 0.0, None
+            if regle_des_statuts == A_LA_REPRISE:
+                return SUSPENDUE, SECTIONS_STATUTS, "reprise", montant, None
+            return NON_DUE, SECTIONS_STATUTS, "notaire_liberal", montant, None
+        if self.groupe != "liberaux":
+            return LIBRE, "", "autre_regime", 0.0, None
+        statut, _, motif, _, seuil = self._non_salarie(mois, date_effet, "liberaux", montant,
+                                                       annee, integral, servies, montants)
+        if statut not in (SUSPENDUE, REDUITE):
+            return statut, SECTIONS_STATUTS, motif, 0.0, seuil
+        depassement = annee.revenu - seuil
+        if regle_des_statuts == DEPASSEMENT_ENTIER:
+            return REDUITE, SECTIONS_STATUTS, motif, depassement, seuil
+        if regle_des_statuts == APRES_LA_BASE:
+            base = somme_ordonnee(montants[code] for code, _, groupe in servies
+                                  if groupe == "liberaux")
+            if depassement <= base:
+                return PLAFONNEE, SECTIONS_STATUTS, "imputee_sur_la_base", 0.0, seuil
+            return REDUITE, SECTIONS_STATUTS, motif, depassement - base, seuil
+        if statut == SUSPENDUE:
+            return SUSPENDUE, SECTIONS_STATUTS, motif, montant, seuil
+        if regle_des_statuts == AVEC_LA_BASE:
+            return PLAFONNEE, SECTIONS_STATUTS, "base_reduite", 0.0, seuil
+        return REDUITE, SECTIONS_STATUTS, motif, depassement, seuil
 
     def _fonctionnaire(self, mois: DateMois, regime: str, date_effet: DateMois,
                        montant: float, annee: _Annee, integral: bool) -> tuple:

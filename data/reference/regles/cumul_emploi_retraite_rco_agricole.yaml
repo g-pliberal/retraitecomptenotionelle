@@ -1,0 +1,125 @@
+schema_version: 1
+id: cumul_emploi_retraite_rco_agricole
+intitule: >-
+  Cumul emploi-retraite de la retraite complémentaire obligatoire des non-salariés
+  agricoles : depuis sa naissance, en 2003, les articles L. 732-39 et L. 732-40 du code
+  rural, qui règlent le service de la pension de base de l'exploitant pendant une
+  activité, lui sont applicables. Pour la première pension de 2027, L. 161-22 la réduit de
+  ce que les pensions de base n'absorbent pas.
+domaine: cumul
+regimes: [msa_rco]
+etape: echeancier
+face: droit
+etat: approchee
+lit:
+- l'activité exercée après le départ, ses dates, son statut et son revenu
+- la date de la première pension de base, et l'âge
+ecrit:
+- >-
+  la pension complémentaire servie pendant l'activité, ou le constat que la règle de la
+  base n'est pas lue
+dates_qui_decident:
+- liquidation.premiere_pension_de_base
+versions:
+- id: suit_la_base_2003
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006780986, article: "décret n° 2003-146 du 20 février 2003, article 7",
+     en_vigueur: 2003-02-22}
+  - {id: LEGIARTI000006597596, article: "D. 732-157 du code rural", en_vigueur: 2005-04-22}
+  - {id: LEGIARTI000023395113, article: "D. 732-157 du code rural", en_vigueur: 2011-01-01}
+  - {id: LEGIARTI000028958295, article: "D. 732-157 du code rural", en_vigueur: 2014-02-01}
+  - {id: LEGIARTI000053365777, article: "D. 732-157 du code rural", en_vigueur: 2026-01-01}
+  nee_de: LEGIARTI000006780986
+  bornes:
+    liquidation.premiere_pension_de_base: [null, 2027-01-01]
+  contenu:
+    droit: >-
+      « Les dispositions des articles L. 732-39 et L. 732-40 sont applicables à la pension
+      de retraite complémentaire obligatoire » (D. 732-157, et avant lui l'article 7 du
+      décret n° 2003-146, depuis le 22 février 2003) : la pension complémentaire suit la
+      règle de service de la pension de base de l'exploitant, qui touche l'activité non
+      salariée agricole
+    parametres:
+      suit_la_base: L_732_39
+  exemples: aucun trouvé
+- id: imputee_apres_les_bases_2027
+  statut: lue
+  textes:
+  - {id: LEGIARTI000053279730, article: "L. 161-22 CSS", en_vigueur: 2025-12-31}
+  nee_de: LEGIARTI000053279730
+  bornes:
+    liquidation.premiere_pension_de_base: [2027-01-01, null]
+  contenu:
+    droit: >-
+      pour la première pension de base prise depuis le 1er janvier 2027, « Une pension de
+      vieillesse personnelle servie au titre d'un régime légal ou rendu légalement
+      obligatoire, de base ou complémentaire » est réduite de tout le revenu avant l'âge
+      légal ; la réduction « est appliquée, par priorité, sur les pensions versées par les
+      régimes de retraite de base » (L. 161-22, III, A), dont le I, A, 2°, garde pour
+      l'exploitant la cessation de L. 732-39 et L. 732-40 : la complémentaire perd ce que les
+      pensions de base n'absorbent pas
+    parametres:
+      suit_la_base: L_161_22
+      reduction: apres_les_pensions_de_base
+  exemples: aucun trouvé
+approximations:
+- version: [suit_la_base_2003]
+  ecart: >-
+    la règle de la base, L. 732-39 et L. 732-40, n'est pas lue par le modèle (fiche
+    cumul_emploi_retraite_et_retraite_progressive) : pour l'activité agricole non salariée,
+    la base et la complémentaire sont servies entières, et le résultat le dit (« règle non
+    lue ») ; l'activité d'un autre régime ne les touche pas
+  effet: non mesuré
+- version: [imputee_apres_les_bases_2027]
+  ecart: >-
+    le décret qui impute la réduction n'a pas paru : les complémentaires que le modèle réduit
+    se partagent au prorata de leurs montants ce que les bases n'absorbent pas ; la base de
+    l'exploitant qui reprend une activité agricole, que le II, 1°, suspend, suit la règle
+    des âges du modèle ; de l'âge légal à l'âge du taux plein automatique, le seuil n'étant
+    pas publié, la complémentaire est servie entière
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-24
+  prochaine_relecture: 2027-04-30
+  a_relire:
+  - >-
+    Ouverte le 24 octobre 2026 (action 138, étape 12). Lire L. 732-39 et L. 732-40 dans
+    leurs rédactions depuis 1986 — la cessation de l'activité agricole, la parcelle de
+    subsistance, le cumul libéralisé de 2009 —, pour la base de l'exploitant, que la
+    complémentaire suit.
+  - Le décret d'imputation de la réduction de 2027 (L. 161-22, III, A), dès qu'il paraît.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 2003-146, article 7 (LEGIARTI000006780986, LEGIARTI000006780987) ; décret
+      n° 2003-1277, article 8 (LEGIARTI000006781199) ; D. 732-157 du code rural
+      (LEGIARTI000006597596, LEGIARTI000023395113, LEGIARTI000028958295,
+      LEGIARTI000053365777) ; D. 762-92 et D. 781-93, qui le redisent pour l'outre-mer ;
+      L. 161-22 (LEGIARTI000053279730), dans l'index LEGI à jour au 23 octobre 2026
+    date: 2026-01-01
+code:
+  python: >-
+    droit/cumul.py : _Calcul._rco_agricole, _Calcul._complementaire_2027,
+    groupe_de_la_pension, GROUPES_COMPLEMENTAIRES_2027, RCO_AGRICOLE_2003, RCI_2027 ;
+    echeancier.py : Echeancier._cumuler
+  javascript: >-
+    moteur/js/droit/cumul.js : rcoAgricole, complementaire2027, groupeDeLaPension,
+    GROUPES_COMPLEMENTAIRES_2027, RCO_AGRICOLE_2003, RCI_2027 ; moteur/js/echeancier.js :
+    Echeancier._cumuler
+  parametres: >-
+    contenu.parametres de chaque version : suit_la_base, reduction
+  tests: >-
+    tests/test_emploi_retraite.py, tests/js/moteur.test.js
+  moteur: >-
+    La complémentaire prend le statut que le modèle donne à la base de l'exploitant pour la
+    même activité ; les constantes des deux moteurs redisent les versions.
+historique:
+- >-
+  2026-10-24 — née de la fiche cumul_emploi_retraite_et_retraite_progressive, qui servait
+  la RCO entière comme une complémentaire dont la règle n'était pas lue ; elle suit
+  désormais la base, dans les deux moteurs (action 138, étape 12).
+effet: >-
+  L'exploitant qui reprend une activité agricole non salariée : sa complémentaire, comme sa
+  base, est servie entière, le résultat disant que leur règle n'est pas lue ; pour la
+  première pension de 2027, elle perd ce que ses pensions de base n'absorbent pas.

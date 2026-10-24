@@ -1,0 +1,255 @@
+schema_version: 1
+id: cumul_emploi_retraite_complementaires_des_liberaux
+intitule: >-
+  Cumul emploi-retraite de la complémentaire des sections professionnelles des libéraux :
+  chaque section l'écrit dans ses statuts. La CARCDSF de 2007 la suspend dès la reprise de
+  la profession ; depuis 2011, elle et la CAVAMAC la suspendent pour la même durée que la
+  base (L. 643-6), et la CAVAMAC la règle depuis 2026 comme la base ; la CARMF et la CAVOM
+  de 2020 ne lui font perdre que ce que la base n'absorbe pas du dépassement, la CARPV de
+  2011 et la CAVOM de 2026 le dépassement entier ; la CPRN la refuse au notaire libéral.
+  Pour la première pension de 2027, L. 161-22 la réduit de ce que les pensions de base
+  n'absorbent pas.
+domaine: cumul
+regimes: [carcdsf_complementaire, carmf_complementaire, carpimko_complementaire,
+  carpv_complementaire, cavamac_complementaire, cavec_complementaire, cavom_complementaire,
+  cavp_complementaire, cipav_complementaire, cprn_complementaire]
+etape: echeancier
+face: droit
+etat: approchee
+lit:
+- l'activité exercée après le départ, ses dates, son statut et son revenu
+- ce que L. 643-6 fait de la pension de base du libéral, le même mois, et son montant
+- la date de la première pension de base, le taux plein et la liquidation de toutes les
+  pensions
+ecrit:
+- >-
+  la pension complémentaire servie pendant l'activité : entière, réduite, suspendue, ou non
+  due
+dates_qui_decident:
+- liquidation.premiere_pension_de_base
+- periode.debut
+# La version des statuts porte, pour chaque section dont les statuts sont lus,
+# la règle de chacune de leurs rédactions et le premier mois entier où elle
+# vaut (`sections`), que les deux moteurs redisent (REGLES_DES_SECTIONS) :
+# `suspendue_a_la_reprise`, dès la reprise de la profession ;
+# `suspendue_avec_la_base`, pour la même durée que la base ;
+# `reduite_comme_la_base`, suspendue ou réduite du dépassement comme elle ;
+# `reduite_apres_la_base`, de ce que la base n'absorbe pas du dépassement ;
+# `reduite_du_depassement`, du dépassement entier ; `sans_suspension` ;
+# `incompatible_avec_le_notariat_liberal`. Une section, ou un mois, qui n'y
+# figure pas sert sa complémentaire entière.
+versions:
+- id: statuts_des_sections
+  statut: lue
+  textes:
+  - {id: JORFARTI000001859980, article: "statuts de la CARCDSF, article 25, arrêté du 1er octobre 2007",
+     publie_le: 2007-10-10}
+  - {id: JORFARTI000023336805, article: "statuts de la CARCDSF, article 57, arrêté du 28 décembre 2010",
+     publie_le: 2011-01-01}
+  - {id: JORFARTI000023909792, article: "statuts de la CARCDSF, article 47, arrêté du 13 avril 2011",
+     publie_le: 2011-04-27}
+  - {id: JORFARTI000023448554, article: "statuts de la CARPV, arrêté du 11 janvier 2011",
+     publie_le: 2011-01-19}
+  - {id: JORFARTI000024270173, article: "statuts de la CAVAMAC, article 14, arrêté du 23 juin 2011",
+     publie_le: 2011-06-29}
+  - {id: JORFARTI000024612007, article: "statuts de la CARMF, article 15, 3, arrêté du 28 septembre 2011",
+     publie_le: 2011-09-30}
+  - {id: JORFARTI000034975971, article: "statuts de la CPRN, article 22, arrêté du 31 mai 2017",
+     publie_le: 2017-06-21}
+  - {id: JORFARTI000042311285, article: "statuts de la CAVOM, article 15, arrêté du 28 août 2020",
+     publie_le: 2020-09-06}
+  - {id: JORFARTI000044220745, article: "statuts de la CARPV, article 47, arrêté du 18 octobre 2021",
+     publie_le: 2021-10-19}
+  - {id: JORFARTI000054436046, article: "règlement de la CAVAMAC, article 3, arrêté du 10 juillet 2026",
+     publie_le: 2026-07-17}
+  - {id: JORFARTI000054435969, article: "règlement de la CAVOM, article 2, arrêté du 10 juillet 2026",
+     publie_le: 2026-07-17}
+  - {id: LEGIARTI000019959656, article: "L. 643-6 CSS : le seuil, la suspension", en_vigueur: 2008-12-19}
+  - {id: LEGIARTI000023441985, article: "D. 643-10 CSS : le seuil, le plafond de la sécurité sociale",
+     en_vigueur: 2011-01-17}
+  nee_de: JORFARTI000001859980
+  bornes:
+    liquidation.premiere_pension_de_base: [null, 2027-01-01]
+  contenu:
+    droit: >-
+      CARCDSF : « Le versement de la retraite complémentaire est suspendu pour tout
+      allocataire qui reprend l'exercice de la profession de chirurgien-dentiste » (statuts
+      de 2007, article 25) ; « Lorsque l'assuré est soumis à une suspension de sa pension
+      dans le régime de base en application des deuxième et troisième alinéas de l'article
+      L. 643-6 [...], le service de la pension du régime complémentaire de vieillesse est
+      suspendu pour la même durée » (article 57 ajouté en 2010, article 47 des statuts de
+      2011) ; CAVAMAC : le même mot à mot (statuts de 2011, article 14), puis « Un assuré
+      peut poursuivre ou reprendre une activité professionnelle dans les mêmes conditions
+      que pour le régime de base » (règlement de 2026, article 3) ; CARMF : « le service de
+      la pension est suspendu, conjointement à celui des autres pensions des régimes
+      obligatoires de vieillesse versées par la caisse et à concurrence du montant du
+      dépassement, sans que cette suspension puisse excéder une année » (article 15, 3,
+      depuis 2011 ; la caisse : « le versement de la retraite est suspendu à concurrence du
+      dépassement ») ; CARPV : « le service de la pension est suspendu pendant la durée qui
+      aurait procuré au vétérinaire un montant brut d'allocations au titre du régime
+      complémentaire égal au montant du dépassement excédant ce seuil » (2011), puis
+      seulement une « cotisation non attributive de points » (article 47 de 2021, en
+      vigueur le 1er janvier 2022) ; CAVOM : « le montant de la pension du régime de base
+      est diminué à due concurrence du montant du dépassement. Si le revenu dépasse le seuil
+      après cette diminution, le montant du régime complémentaire est diminué à due
+      concurrence du montant du dépassement » (article 15, 2020), puis « le montant du
+      régime complémentaire est diminué à due concurrence du montant du dépassement »
+      (règlement de 2026, article 2) ; CPRN : « Le droit aux allocations est compatible
+      avec l'exercice de la profession de notaire salarié, de notaire suppléant ou de
+      notaire administrateur d'office. Il est incompatible avec l'exercice de la profession
+      de notaire libéral » (article 22, 2017 ; article 8 du règlement de 2026). Toutes,
+      hors la CPRN, la laissent entière en cumul intégral
+    parametres:
+      sections:
+        carcdsf_complementaire: [[2007-11-01, suspendue_a_la_reprise],
+          [2011-02-01, suspendue_avec_la_base]]
+        carmf_complementaire: [[2011-10-01, reduite_apres_la_base]]
+        carpv_complementaire: [[2011-02-01, reduite_du_depassement],
+          [2022-01-01, sans_suspension]]
+        cavamac_complementaire: [[2011-07-01, suspendue_avec_la_base],
+          [2026-08-01, reduite_comme_la_base]]
+        cavom_complementaire: [[2020-10-01, reduite_apres_la_base],
+          [2026-08-01, reduite_du_depassement]]
+        cprn_complementaire: [[2017-07-01, incompatible_avec_le_notariat_liberal]]
+  exemples: aucun trouvé
+- id: imputee_apres_les_bases_2027
+  statut: lue
+  textes:
+  - {id: LEGIARTI000053279730, article: "L. 161-22 CSS", en_vigueur: 2025-12-31}
+  - {id: JORFARTI000054435749, article: "règlements de la CARCDSF, article 20, II, arrêté du 10 juillet 2026",
+     publie_le: 2026-07-17}
+  - {id: JORFARTI000054435859, article: "règlements de la CARMF, article 7, arrêté du 10 juillet 2026",
+     publie_le: 2026-07-17}
+  nee_de: LEGIARTI000053279730
+  bornes:
+    liquidation.premiere_pension_de_base: [2027-01-01, null]
+  contenu:
+    droit: >-
+      pour la première pension de base prise depuis le 1er janvier 2027, « Une pension de
+      vieillesse personnelle servie au titre d'un régime légal ou rendu légalement
+      obligatoire, de base ou complémentaire » est réduite de tout le revenu avant l'âge
+      légal ; la réduction « est appliquée, par priorité, sur les pensions versées par les
+      régimes de retraite de base » (L. 161-22, III, A) ; la CARCDSF et la CARMF l'écrivent :
+      « Pour les affiliés dont la première pension de vieillesse de base prend effet à
+      compter du 1er janvier 2027, le cumul de la pension de vieillesse du présent régime
+      avec les revenus professionnels ou de remplacement est régi par les dispositions de
+      l'article L. 161-22 » (règlements de 2026) : la complémentaire perd ce que les
+      pensions de base n'absorbent pas
+    parametres:
+      reduction: apres_les_pensions_de_base
+  exemples: aucun trouvé
+approximations:
+- version: [statuts_des_sections]
+  ecart: >-
+    chaque règle vaut du premier mois entier de sa rédaction : l'arrêté qui la porte vaut,
+    sans date d'effet écrite, du lendemain de sa publication (CARCDSF de 2007 et de 2010,
+    CARPV de 2011, CARMF, CPRN, CAVOM de 2020, CAVAMAC et CAVOM de 2026), ou de la date qu'il
+    écrit (le 1er juillet 2011 de la CARCDSF et de la CAVAMAC, le 1er janvier 2022 de la
+    CARPV) ; de février à juin 2011, l'article 57 de la CARCDSF l'emporte sur l'article 25,
+    que l'arrêté de 2010 n'abroge pas
+  effet: non mesuré
+- version: [statuts_des_sections]
+  ecart: >-
+    la suspension « à concurrence du montant du dépassement » — de la CARPV, ou de la CARMF
+    avec ses autres pensions — dure, chez la caisse, le nombre de mois qui épuise le
+    dépassement, au plus un an : le modèle, qui compte par mois, réduit chaque mois la
+    complémentaire du dépassement du mois ; la CARMF, qui suspend ses pensions ensemble,
+    impute ici le dépassement d'abord sur la base, comme la CAVOM de 2020, et les
+    prestations supplémentaires (ASV) restent entières
+  effet: non mesuré
+- version: [statuts_des_sections]
+  ecart: >-
+    les complémentaires de la CARPIMKO, de la CAVEC, de la CAVP et de la CIPAV, dont les
+    statuts lus ne suspendent rien — la CAVEC de 2008 retenait la cotisation du retraité
+    actif « par quart sur les arrérages » —, et toute section avant ses statuts lus, sont
+    servies entières ; la base, que la complémentaire suit, a ses propres approximations :
+    suspendue chaque mois au-delà du seuil, quand D. 643-10-2 ne la suspend, depuis 2011,
+    que « pour un nombre de mois égal au rapport entre le montant du dépassement constaté
+    et le montant mensuel net de la pension »
+  effet: non mesuré
+- version: [imputee_apres_les_bases_2027]
+  ecart: >-
+    le décret qui impute la réduction n'a pas paru : les complémentaires que le modèle
+    réduit — le RCI, l'Ircantec, la RCO agricole, les sections libérales — se partagent au
+    prorata de leurs montants ce que les bases n'absorbent pas ; l'Agirc-Arrco garde sa
+    règle, et les prestations supplémentaires sont servies entières ; de l'âge légal à
+    l'âge du taux plein automatique, le seuil n'étant pas publié, la complémentaire est
+    servie entière
+  effet: non mesuré
+sources:
+  lu_le: 2026-10-24
+  prochaine_relecture: 2027-04-30
+  a_relire:
+  - >-
+    Ouverte le 24 octobre 2026 (action 138, étape 12). Lire les statuts des sections que
+    l'index JORF ne garde pas, ou pas en entier : la CARPIMKO, la CAVEC après 2012, la CAVP,
+    la CIPAV, et chaque section avant les rédactions lues ici ; la date d'effet des
+    règlements du 10 juillet 2026.
+  - >-
+    La CARMF : dire comment elle répartit la suspension « conjointement » entre sa base, sa
+    complémentaire et ses prestations supplémentaires (guide du cumul de la caisse, que le
+    réseau de la session n'a pas lu en entier).
+  - >-
+    La base, que les règles de la CARCDSF et de la CAVAMAC suivent : D. 643-10-2, qui borne
+    la suspension au nombre de mois que le dépassement épuise, depuis 2011.
+  lectures:
+  - type: jorf
+    reference: >-
+      arrêtés approuvant les statuts et les règlements des sections, au Journal officiel :
+      CARCDSF (1er octobre 2007, JORFARTI000001859980 ; 28 décembre 2010,
+      JORFARTI000023336805 ; 13 avril 2011, JORFARTI000023909792 et JORFARTI000023909788 ;
+      10 juillet 2026, JORFARTI000054435749), CAVAMAC (23 juin 2011, JORFARTI000024270173 et
+      JORFARTI000024270156 ; 10 juillet 2026, JORFARTI000054436046), CARMF (28 septembre
+      2011, JORFARTI000024612007 ; 30 novembre 2016, JORFARTI000033521562 ; 10 juillet 2026,
+      JORFARTI000054435859), CARPV (11 janvier 2011, JORFARTI000023448554 ; 18 octobre 2021,
+      JORFARTI000044220745 et JORFARTI000044220741), CAVOM (28 août 2020,
+      JORFARTI000042311285 ; 10 juillet 2026, JORFARTI000054435969), CPRN (31 mai 2017,
+      JORFARTI000034975971 ; 10 juillet 2026, JORFARTI000054435995), CAVEC (22 février 2008,
+      JORFARTI000018197778), lus dans l'index JORF à jour au 18 octobre 2026
+    date: 2026-07-17
+  - type: legifrance
+    reference: >-
+      L. 643-6 CSS (LEGIARTI000019959656) ; D. 643-10 (LEGIARTI000023441985,
+      LEGIARTI000030060076) ; D. 643-10-2 (LEGIARTI000023431324, LEGIARTI000034306123), dans
+      l'index LEGI à jour au 23 octobre 2026
+    date: 2017-04-01
+  - type: autre
+    reference: >-
+      CARMF, « Continuer à travailler » (rubrique Cumul) : « Si vos revenus, lorsqu'ils sont
+      connus, dépassent le plafond autorisé, le versement de la retraite est suspendu à
+      concurrence du dépassement selon des conditions déterminées par un décret » ; lue le
+      24 octobre 2026
+    url: https://www.carmf.fr/page.php?page=cdrom/retr/retr-continuer.htm
+    date: 2026-01-01
+code:
+  python: >-
+    droit/cumul.py : _Calcul._complementaire_des_liberaux, _Calcul._non_salarie,
+    _Calcul._complementaire_2027, groupe_de_la_pension, COMPLEMENTAIRES_DES_LIBERAUX,
+    GROUPES_COMPLEMENTAIRES_2027, REGLES_DES_SECTIONS, PROFESSIONS_DES_STATUTS,
+    A_LA_REPRISE, AVEC_LA_BASE, COMME_LA_BASE, APRES_LA_BASE, DEPASSEMENT_ENTIER,
+    SANS_SUSPENSION, NOTAIRE_LIBERAL, SECTIONS_STATUTS, RCI_2027 ; echeancier.py :
+    Echeancier._cumuler
+  javascript: >-
+    moteur/js/droit/cumul.js : complementaireDesLiberaux, nonSalarie, complementaire2027,
+    groupeDeLaPension, COMPLEMENTAIRES_DES_LIBERAUX, GROUPES_COMPLEMENTAIRES_2027,
+    REGLES_DES_SECTIONS, PROFESSIONS_DES_STATUTS, A_LA_REPRISE, AVEC_LA_BASE, COMME_LA_BASE,
+    APRES_LA_BASE, DEPASSEMENT_ENTIER, SANS_SUSPENSION, NOTAIRE_LIBERAL, SECTIONS_STATUTS,
+    RCI_2027 ; moteur/js/echeancier.js : Echeancier._cumuler
+  parametres: >-
+    contenu.parametres de chaque version : sections, reduction
+  tests: >-
+    tests/test_emploi_retraite.py, tests/js/moteur.test.js
+  moteur: >-
+    La complémentaire lit la décision de L. 643-6 sur sa propre pension, que la règle de la
+    base rend, et le montant de la base ; les deux moteurs redisent la table des sections,
+    que tests/test_emploi_retraite.py confronte à la fiche.
+historique:
+- >-
+  2026-10-24 — née de la fiche cumul_emploi_retraite_et_retraite_progressive, qui servait
+  les complémentaires des sections entières faute d'en avoir lu les statuts, et calculée
+  dans les deux moteurs (action 138, étape 12).
+effet: >-
+  Le libéral qui reprend une activité libérale avant le taux plein, au-delà du plafond de la
+  sécurité sociale : la dentiste partie avant 2015 perd sa complémentaire avec sa base ; le
+  médecin, l'officier ministériel, le vétérinaire perdent sur elle tout ou partie du
+  dépassement ; le notaire libéral n'y a pas droit, même sous le seuil.

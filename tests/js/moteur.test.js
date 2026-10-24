@@ -1030,6 +1030,106 @@ test("la complémentaire de l'indépendant suit le cumul de sa base", () => {
 });
 
 /**
+ * Les autres complémentaires en cumul : l'Ircantec, qui suit L. 161-22 pour
+ * l'activité qui y cotise, sans la réduction depuis 2021 (arrêté du 30 décembre
+ * 1970, article 14) ; la RCO agricole, qui suit la base de l'exploitant
+ * (D. 732-157) ; les sections libérales, selon leurs statuts ; pour la première
+ * pension de 2027, toutes après les bases (L. 161-22, III, A). Rejoue les tests
+ * des autres complémentaires (test_emploi_retraite.py).
+ */
+test("les autres complémentaires suivent leurs règles en cumul", () => {
+  const simulateur = new Contexte(paquet).simulateur();
+  const macro = simulateur.macro;
+  const enCumul = (naissance, depart, metiers, activite) => simulateur.echeancier(
+    simulateur.carriereParcours({
+      annee_naissance: naissance, sexe: "F", jour_naissance: 15, age_liquidation: depart,
+      metiers: metiers.map(([affiliation, age]) => ({ affiliation, age_debut: age,
+        niveau_salaire: 1 })),
+      emploi_retraite: { employeur: "autre", niveau_salaire: 1, ...activite },
+    })).auDepart.cumul;
+  const liberale = (metier) => [["salarie_prive_non_cadre", 26], [metier, 30]];
+  const pension = (tranche, regime) => tranche.par_regime.find((p) => p.regime === regime);
+  const servies = (cumul, regime) => cumul.tranches.filter((t) => pension(t, regime))
+    .map((t) => [t, pension(t, regime)]);
+  const proche = (obtenu, attendu) => assert.ok(Math.abs(obtenu - attendu) < 1e-9,
+    `${obtenu} contre ${attendu}`);
+  const seuil = (tranche) => macro.plafond_securite_sociale.valeur(tranche.debut.annee) / 12;
+  // L'Ircantec : réduite du dépassement jusqu'en 2020, entière depuis 2021.
+  const janvier2021 = new DateMois(2021, 1).rang;
+  const contractuelle = servies(enCumul(1958, 62.25, [["contractuel_public", 26]],
+    { age: 62.5, fin: 64, affiliation: "contractuel_public" }), "ircantec");
+  assert.ok(contractuelle.some(([t]) => t.debut.rang < janvier2021));
+  assert.ok(contractuelle.some(([t]) => t.debut.rang >= janvier2021));
+  for (const [tranche, ircantec] of contractuelle) {
+    const base = pension(tranche, "regime_general");
+    const depassement = tranche.pensions
+      + tranche.revenu * leCumul.assietteCsg(tranche.debut.annee) - base.plafond;
+    if (tranche.debut.rang < janvier2021) {
+      assert.deepEqual([ircantec.statut, ircantec.regle, ircantec.motif],
+        [leCumul.REDUITE, leCumul.IRCANTEC_2004, "depassement"]);
+      proche(ircantec.reduction, Math.min(ircantec.montant, depassement));
+    } else {
+      assert.deepEqual([ircantec.statut, ircantec.regle, ircantec.motif, ircantec.reduction],
+        [leCumul.PLAFONNEE, leCumul.IRCANTEC_2020, "sans_le_troisieme_alinea", 0.0]);
+    }
+  }
+  // La RCO agricole : la règle de la base, non lue.
+  for (const [, rco] of servies(enCumul(1955, 62, [["exploitant_agricole", 20]],
+    { age: 62.5, fin: 64, affiliation: "exploitant_agricole" }), "msa_rco")) {
+    assert.deepEqual([rco.statut, rco.regle, rco.motif],
+      [leCumul.NON_CALCULE, leCumul.RCO_AGRICOLE_2003, "regle_non_lue"]);
+  }
+  // La dentiste partie en 2012 : suspendue avec sa base.
+  const dentiste = servies(enCumul(1951, 61.5, liberale("chirurgien_dentiste_ou_sage_femme"),
+    { age: 62, fin: 63.5, affiliation: "chirurgien_dentiste_ou_sage_femme", niveau_salaire: 2 }),
+  "carcdsf_complementaire");
+  assert.ok(dentiste.length > 0);
+  for (const [tranche, complementaire] of dentiste) {
+    assert.equal(pension(tranche, "cnavpl").statut, leCumul.SUSPENDUE);
+    assert.deepEqual([complementaire.statut, complementaire.regle, complementaire.motif],
+      [leCumul.SUSPENDUE, leCumul.SECTIONS_STATUTS, "depassement"]);
+    proche(complementaire.reduction, complementaire.montant);
+  }
+  // Le médecin parti en 2016 : ce que la base n'absorbe pas.
+  const medecin = servies(enCumul(1954, 62, liberale("medecin_liberal"),
+    { age: 63, fin: 64.5, affiliation: "medecin_liberal", niveau_salaire: 3 }),
+  "carmf_complementaire");
+  assert.ok(medecin.length > 0);
+  for (const [tranche, complementaire] of medecin) {
+    const reste = tranche.revenu - seuil(tranche) - pension(tranche, "cnavpl").montant;
+    assert.ok(reste > 0);
+    assert.deepEqual([complementaire.statut, complementaire.motif],
+      [leCumul.REDUITE, "depassement"]);
+    proche(complementaire.reduction, Math.min(complementaire.montant, reste));
+  }
+  // Le notaire libéral : pas de complémentaire, même sous le seuil.
+  for (const [, complementaire] of servies(enCumul(1960, 62.25, liberale("notaire"),
+    { age: 62.5, fin: 64, affiliation: "notaire", niveau_salaire: 0.3 }), "cprn_complementaire")) {
+    assert.deepEqual([complementaire.statut, complementaire.motif],
+      [leCumul.NON_DUE, "notaire_liberal"]);
+    proche(complementaire.reduction, complementaire.montant);
+  }
+  // La première pension de 2028 : les complémentaires se partagent ce qui reste.
+  const longue = enCumul(1968, 60, [["contractuel_public", 17], ["medecin_liberal", 35]],
+    { age: 61, fin: 64, affiliation: "salarie_prive_non_cadre", niveau_salaire: 0.45 });
+  const reduites = longue.tranches.filter(
+    (t) => pension(t, "regime_general").statut === leCumul.REDUITE);
+  assert.ok(reduites.length > 0);
+  for (const tranche of reduites) {
+    const complementaires = ["ircantec", "carmf_complementaire"].map((r) => pension(tranche, r));
+    const total = complementaires.reduce((somme, p) => somme + p.montant, 0.0);
+    const reste = tranche.revenu * leCumul.assietteCsg(tranche.debut.annee)
+      - pension(tranche, "regime_general").montant - pension(tranche, "cnavpl").montant;
+    assert.ok(reste > 0 && reste < total);
+    for (const complementaire of complementaires) {
+      assert.deepEqual([complementaire.statut, complementaire.regle],
+        [leCumul.REDUITE, leCumul.RCI_2027]);
+      proche(complementaire.reduction, reste * complementaire.montant / total);
+    }
+  }
+});
+
+/**
  * Le plafond des primes du RAFP : « dans la limite de 20 % du traitement
  * indiciaire brut total » (décret n° 2004-569, art. 2). Deux agentes au même
  * traitement, primes au plafond pour l'une, au-delà pour l'autre : même

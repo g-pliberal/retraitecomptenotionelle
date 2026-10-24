@@ -1,8 +1,10 @@
 /**
  * Le cumul emploi-retraite (docs/architecture.md, § 7.4 ; fiches
  * `cumul_emploi_retraite_et_retraite_progressive`,
- * `cumul_emploi_retraite_fonction_publique` et
- * `cumul_emploi_retraite_complementaire_des_independants`).
+ * `cumul_emploi_retraite_fonction_publique`,
+ * `cumul_emploi_retraite_complementaire_des_independants`,
+ * `cumul_emploi_retraite_ircantec`, `cumul_emploi_retraite_rco_agricole` et
+ * `cumul_emploi_retraite_complementaires_des_liberaux`).
  *
  * Jumeau de `src/retraite_notionnelle/droit/cumul.py`, fonction pour
  * fonction. Le retraité qui travaille garde sa pension, entière ou non, selon
@@ -12,8 +14,9 @@
  * intégral de 2009, la réduction du dépassement des premières pensions de
  * 2015 pour les activités de 2017, les trois régimes selon l'âge de 2027),
  * l'artisan et le commerçant (L. 634-6), et leur complémentaire, qui suit
- * leur base, le libéral (L. 643-6), le fonctionnaire (L. 84 à L. 86 du code
- * des pensions), l'Agirc-Arrco. Chaque régime ne réduit que ses pensions,
+ * leur base, le libéral (L. 643-6), et la complémentaire de sa section, que
+ * ses statuts règlent, le fonctionnaire (L. 84 à L. 86 du code des pensions),
+ * l'Agirc-Arrco, l'Ircantec, la RCO agricole. Chaque régime ne réduit que ses pensions,
  * pour l'activité qui relève de lui : voir le Python, qui dit les textes.
  */
 
@@ -50,7 +53,18 @@ export const FP_2027 = "regles_communes_2027";
 export const RCI_AVANT_2009 = "servie_entiere_avant_2009";
 export const RCI_2009 = "suspendue_avec_la_base_2009";
 export const RCI_2024 = "reduite_comme_la_base_2024";
+/**
+ * La version de 2027 de chaque complémentaire que L. 161-22, III, A, réduit
+ * après les bases : celle du RCI, de l'Ircantec, de la RCO agricole et des
+ * sections libérales porte ce même nom dans sa fiche.
+ */
 export const RCI_2027 = "imputee_apres_les_bases_2027";
+/** Les versions des fiches de l'Ircantec, de la RCO agricole et des sections. */
+export const IRCANTEC_AVANT_2004 = "servie_entiere_avant_2004";
+export const IRCANTEC_2004 = "l_161_22_2004";
+export const IRCANTEC_2020 = "sans_le_troisieme_alinea_2020";
+export const RCO_AGRICOLE_2003 = "suit_la_base_2003";
+export const SECTIONS_STATUTS = "statuts_des_sections";
 
 /** Les dates qui découpent la règle, en rang de mois. */
 const rang = (annee, mois) => new DateMois(annee, mois).rang;
@@ -68,6 +82,39 @@ export const PREMIERE_2027 = rang(2027, 1);
 export const COMPLEMENTAIRES_2009 = rang(2009, 1);
 /** L'arrêté du 19 juin 2024, en vigueur le 26 : le premier mois entier. */
 export const SECTION_3_RCI = rang(2024, 7);
+/**
+ * L'article 14 de l'arrêté du 30 décembre 1970 soumet l'allocation de
+ * l'Ircantec à L. 161-22 depuis 2004 ; sans son troisième alinéa depuis
+ * l'arrêté du 16 décembre 2020, en vigueur le 19 : le premier mois entier.
+ */
+export const IRCANTEC_L_161_22 = rang(2004, 1);
+export const IRCANTEC_SANS_REDUCTION = rang(2021, 1);
+
+/** Les règles des statuts des sections libérales pour leur complémentaire. */
+export const A_LA_REPRISE = "suspendue_a_la_reprise";
+export const AVEC_LA_BASE = "suspendue_avec_la_base";
+export const COMME_LA_BASE = "reduite_comme_la_base";
+export const APRES_LA_BASE = "reduite_apres_la_base";
+export const DEPASSEMENT_ENTIER = "reduite_du_depassement";
+export const SANS_SUSPENSION = "sans_suspension";
+export const NOTAIRE_LIBERAL = "incompatible_avec_le_notariat_liberal";
+/**
+ * Chaque section dont les statuts sont lus, la règle de chacune de leurs
+ * rédactions et le premier mois entier où elle vaut (fiche
+ * `cumul_emploi_retraite_complementaires_des_liberaux`).
+ */
+export const REGLES_DES_SECTIONS = {
+  carcdsf_complementaire: [[rang(2007, 11), A_LA_REPRISE], [rang(2011, 2), AVEC_LA_BASE]],
+  carmf_complementaire: [[rang(2011, 10), APRES_LA_BASE]],
+  carpv_complementaire: [[rang(2011, 2), DEPASSEMENT_ENTIER], [rang(2022, 1), SANS_SUSPENSION]],
+  cavamac_complementaire: [[rang(2011, 7), AVEC_LA_BASE], [rang(2026, 8), COMME_LA_BASE]],
+  cavom_complementaire: [[rang(2020, 10), APRES_LA_BASE], [rang(2026, 8), DEPASSEMENT_ENTIER]],
+  cprn_complementaire: [[rang(2017, 7), NOTAIRE_LIBERAL]],
+};
+/** Les professions que visent les statuts de 2007 de la CARCDSF et ceux de la CPRN. */
+export const PROFESSIONS_DES_STATUTS = {
+  [A_LA_REPRISE]: "chirurgien_dentiste_ou_sage_femme", [NOTAIRE_LIBERAL]: "notaire",
+};
 
 export const SIX_MOIS = 6;
 export const HEURES_SMIC = 1820;
@@ -91,6 +138,12 @@ export const INDEPENDANTS = new Set(["artisan", "commercant", "micro_entrepreneu
   "liberal_non_reglemente", "gerant_debit_tabac"]);
 /** Le RCI et les complémentaires qu'il a reprises en 2013, dont il sert les points. */
 export const COMPLEMENTAIRES_DES_INDEPENDANTS = new Set(["rci", "rco_artisans", "nric"]);
+export const COMPLEMENTAIRES_DES_LIBERAUX = new Set(["carcdsf_complementaire",
+  "carmf_complementaire", "carpimko_complementaire", "carpv_complementaire",
+  "cavamac_complementaire", "cavec_complementaire", "cavom_complementaire",
+  "cavp_complementaire", "cipav_complementaire", "cprn_complementaire"]);
+export const GROUPES_COMPLEMENTAIRES_2027 = new Set(["rci", "ircantec", "rco_agricole",
+  "liberales"]);
 export const ALIGNES = new Set(["regime_general"]);
 /** La limite d'âge de l'emploi quitté, avant 2004, selon son classement. */
 export const LIMITES_D_AGE_1970 = { aucune: 65.0, active: 60.0, super_active: 55.0 };
@@ -132,6 +185,9 @@ export function groupeDeLaPension(moteur, regime) {
   if (OUTRE_MER.has(regime)) return "outre_mer";
   if (AGIRC_ARRCO.has(regime)) return "agirc_arrco";
   if (COMPLEMENTAIRES_DES_INDEPENDANTS.has(regime)) return "rci";
+  if (regime === "ircantec") return "ircantec";
+  if (regime === "msa_rco") return "rco_agricole";
+  if (COMPLEMENTAIRES_DES_LIBERAUX.has(regime)) return "liberales";
   const fiche = moteur.catalogue.obtenir(regime);
   if (!lesDeparts.ETAGES_DES_UNITES.has(fiche.etage)) return "complementaires";
   if (regime === "cnavpl") return "liberaux";
@@ -459,18 +515,32 @@ class Calcul {
     // Les points du RCI, du RCO et du NRCO font une seule pension.
     const complementaire = servies.filter(([, , groupe]) => groupe === "rci")
       .reduce((somme, [regime]) => somme + montants[regime], 0.0);
+    // Les complémentaires que la règle de 2027 réduit après les bases.
+    const complementaires2027 = servies
+      .filter(([, , groupe]) => GROUPES_COMPLEMENTAIRES_2027.has(groupe))
+      .reduce((somme, [regime]) => somme + montants[regime], 0.0);
     for (const [regime, dateEffet, groupe] of servies) {
       const montant = montants[regime];
       let decision;
       if (this.premiere >= PREMIERE_2027 && GROUPES_DE_BASE.has(groupe)) {
         decision = this.regle2027(mois, dateEffet, groupe, montant, annee, base2027);
+      } else if (this.premiere >= PREMIERE_2027 && GROUPES_COMPLEMENTAIRES_2027.has(groupe)) {
+        decision = this.complementaire2027(mois, dateEffet, montant,
+          montant / complementaires2027, annee, base2027);
       } else if (groupe === "fonction_publique") {
         decision = this.fonctionnaire(mois, regime, dateEffet, montant, annee, integral);
       } else if (groupe === "agirc_arrco") {
         decision = this.agircArrco(mois, dateEffet, montant, annee, total, integral);
       } else if (groupe === "rci") {
         decision = this.complementaireDesIndependants(mois, dateEffet, montant,
-          montant / complementaire, annee, integral, servies, montants, base2027);
+          montant / complementaire, annee, integral, servies, montants);
+      } else if (groupe === "ircantec") {
+        decision = this.ircantec(mois, dateEffet, montant, annee, total, integral);
+      } else if (groupe === "rco_agricole") {
+        decision = this.rcoAgricole();
+      } else if (groupe === "liberales") {
+        decision = this.complementaireDesLiberaux(mois, regime, dateEffet, montant, annee,
+          integral, servies, montants);
       } else if (groupe === "complementaires" || groupe === "autres") {
         decision = [LIBRE, "", "non_lue", 0.0, null];
       } else if (!this.concerne(regime, groupe)) {
@@ -569,15 +639,7 @@ class Calcul {
    * RCI, le RCO et le NRCO font ensemble.
    */
   complementaireDesIndependants(mois, dateEffet, montant, part, annee, integral, servies,
-    montants, base2027) {
-    if (this.premiere >= PREMIERE_2027) {
-      const [statut, , motif, reduction, plafond] = this.regle2027(mois, dateEffet,
-        "independants", montant, annee, base2027);
-      if (statut !== REDUITE) return [statut, RCI_2027, motif, reduction, plafond];
-      const reste = annee.revenu * assietteCsg(mois.annee) - base2027;
-      if (reste <= 0) return [PLAFONNEE, RCI_2027, "imputee_sur_la_base", 0.0, null];
-      return [REDUITE, RCI_2027, motif, reste * part, null];
-    }
+    montants) {
     if (mois.rang < COMPLEMENTAIRES_2009) return [LIBRE, RCI_AVANT_2009, "non_lue", 0.0, null];
     if (this.groupe !== "independants") return [LIBRE, "", "autre_regime", 0.0, null];
     const [statut, , motif, , seuil] = this.nonSalarie(mois, dateEffet, "independants",
@@ -587,6 +649,99 @@ class Calcul {
     if (statut !== REDUITE) return [statut, regle, motif, 0.0, seuil];
     if (regle === RCI_2009) return [PLAFONNEE, regle, "base_reduite", 0.0, seuil];
     return [REDUITE, regle, motif, (annee.revenu - seuil) * part, seuil];
+  }
+
+  /**
+   * L. 161-22, III, A, de 2027, qui vise toute pension « de base ou
+   * complémentaire » : la complémentaire — le RCI, l'Ircantec, la RCO
+   * agricole, les sections libérales — perd ce que les pensions de base
+   * n'absorbent pas, au prorata (`part`) de celles que la règle réduit.
+   */
+  complementaire2027(mois, dateEffet, montant, part, annee, base2027) {
+    const [statut, , motif, reduction, plafond] = this.regle2027(mois, dateEffet,
+      "complementaires", montant, annee, base2027);
+    if (statut !== REDUITE) return [statut, RCI_2027, motif, reduction, plafond];
+    const reste = annee.revenu * assietteCsg(mois.annee) - base2027;
+    if (reste <= 0) return [PLAFONNEE, RCI_2027, "imputee_sur_la_base", 0.0, null];
+    return [REDUITE, RCI_2027, motif, reste * part, null];
+  }
+
+  /**
+   * L'allocation de l'Ircantec : entière avant 2004 ; depuis, la règle de
+   * L. 161-22 pour l'activité qui y cotise, celle de la base du salarié ;
+   * depuis 2021, sans le troisième alinéa qui réduit chaque pension.
+   */
+  ircantec(mois, dateEffet, montant, annee, total, integral) {
+    if (mois.rang < IRCANTEC_L_161_22) return [LIBRE, IRCANTEC_AVANT_2004, "non_lue", 0.0, null];
+    if (!this.moteur.affiliations.regimes(this.affiliation, mois.annee).includes("ircantec")) {
+      return [LIBRE, "", "autre_regime", 0.0, null];
+    }
+    const [statut, , motif, reduction, plafond] = this.salarie(mois, dateEffet, montant, annee,
+      total, integral);
+    if (mois.rang < IRCANTEC_SANS_REDUCTION) {
+      return [statut, IRCANTEC_2004, motif, reduction, plafond];
+    }
+    if (motif === "depassement") {
+      return [PLAFONNEE, IRCANTEC_2020, "sans_le_troisieme_alinea", 0.0, plafond];
+    }
+    return [statut, IRCANTEC_2020, motif, reduction, plafond];
+  }
+
+  /**
+   * La RCO agricole, que D. 732-157 soumet à L. 732-39 et L. 732-40 : la règle
+   * de la base de l'exploitant, que le modèle n'a pas lue.
+   */
+  rcoAgricole() {
+    if (this.groupe !== "exploitants") return [LIBRE, "", "autre_regime", 0.0, null];
+    return [NON_CALCULE, RCO_AGRICOLE_2003, "regle_non_lue", 0.0, null];
+  }
+
+  /**
+   * La complémentaire d'une section libérale, selon la règle que ses statuts
+   * écrivent ce mois-là (`REGLES_DES_SECTIONS`).
+   */
+  complementaireDesLiberaux(mois, regime, dateEffet, montant, annee, integral, servies,
+    montants) {
+    let regleDesStatuts = null;
+    for (const [debut, regle] of REGLES_DES_SECTIONS[regime] ?? []) {
+      if (mois.rang >= debut) regleDesStatuts = regle;
+    }
+    if (regleDesStatuts === null) return [LIBRE, SECTIONS_STATUTS, "non_lue", 0.0, null];
+    if (regleDesStatuts === SANS_SUSPENSION) {
+      return [LIBRE, SECTIONS_STATUTS, "sans_suspension", 0.0, null];
+    }
+    if (Object.hasOwn(PROFESSIONS_DES_STATUTS, regleDesStatuts)) {
+      if (this.affiliation !== PROFESSIONS_DES_STATUTS[regleDesStatuts]) {
+        return [LIBRE, "", "autre_regime", 0.0, null];
+      }
+      if (regleDesStatuts === A_LA_REPRISE) {
+        return [SUSPENDUE, SECTIONS_STATUTS, "reprise", montant, null];
+      }
+      return [NON_DUE, SECTIONS_STATUTS, "notaire_liberal", montant, null];
+    }
+    if (this.groupe !== "liberaux") return [LIBRE, "", "autre_regime", 0.0, null];
+    const [statut, , motif, , seuil] = this.nonSalarie(mois, dateEffet, "liberaux", montant,
+      annee, integral, servies, montants);
+    if (statut !== SUSPENDUE && statut !== REDUITE) {
+      return [statut, SECTIONS_STATUTS, motif, 0.0, seuil];
+    }
+    const depassement = annee.revenu - seuil;
+    if (regleDesStatuts === DEPASSEMENT_ENTIER) {
+      return [REDUITE, SECTIONS_STATUTS, motif, depassement, seuil];
+    }
+    if (regleDesStatuts === APRES_LA_BASE) {
+      const base = servies.filter(([, , groupe]) => groupe === "liberaux")
+        .reduce((somme, [code]) => somme + montants[code], 0.0);
+      if (depassement <= base) {
+        return [PLAFONNEE, SECTIONS_STATUTS, "imputee_sur_la_base", 0.0, seuil];
+      }
+      return [REDUITE, SECTIONS_STATUTS, motif, depassement - base, seuil];
+    }
+    if (statut === SUSPENDUE) return [SUSPENDUE, SECTIONS_STATUTS, motif, montant, seuil];
+    if (regleDesStatuts === AVEC_LA_BASE) {
+      return [PLAFONNEE, SECTIONS_STATUTS, "base_reduite", 0.0, seuil];
+    }
+    return [REDUITE, SECTIONS_STATUTS, motif, depassement, seuil];
   }
 
   fonctionnaire(mois, regime, dateEffet, montant, annee, integral) {
