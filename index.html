@@ -1748,8 +1748,13 @@ function ajusterLePli(table, cadre) {
   if (largeur < minimum || table.scrollWidth > largeur + 1) {
     table.dataset.plie = "";
     // Des valeurs trop longues pour tenir côte à côte, même en rangée : elles
-    // passent en fiche, l'une sous l'autre.
-    if (table._pli === "rangee" && table.scrollWidth > largeur + 1) {
+    // passent en fiche, l'une sous l'autre. Le tableau n'en est pas toujours
+    // plus large : ses colonnes se partagent la largeur, et une valeur qui ne
+    // se coupe pas passe sur la case voisine — « 422 Md €13,9 % » sur la page
+    // Pourquoi changer, à 390 points (action 173, étape 6). Chaque case se mesure.
+    if (table._pli === "rangee" && (table.scrollWidth > largeur + 1
+        || [...table.querySelectorAll("th, td")]
+          .some((case_) => case_.scrollWidth > case_.clientWidth + 1))) {
       table.dataset.pli = "fiche";
     }
   }

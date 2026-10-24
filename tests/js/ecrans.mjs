@@ -271,6 +271,16 @@ const MESURER = (ecran) => `(() => {
     }
   }
 
+  // Une case plus étroite que ce qu'elle porte : une valeur qui ne se coupe
+  // pas passe sur la case voisine, et les deux se lisent l'une dans l'autre —
+  // « 422 Md €13,9 % ». Ni la page ni le tableau n'en sont plus larges.
+  const chevauchees = [];
+  for (const case_ of document.querySelectorAll("#contenu table :is(th, td)")) {
+    if (case_.scrollWidth <= case_.clientWidth + 1 || !montre(case_)) continue;
+    chevauchees.push(nommer(case_).slice(0, 140) + " : " + case_.scrollWidth
+      + " pour " + case_.clientWidth);
+  }
+
   // Les vides : l'écart vertical entre deux blocs voisins de la page, ceux
   // qui se suivent dans une même colonne. Seuls comptent les parents dont
   // tous les enfants sont des boîtes : entre deux blocs séparés par du texte
@@ -308,6 +318,7 @@ const MESURER = (ecran) => `(() => {
     defilants: defilants.slice(0, 40), nombreDefilants: defilants.length,
     sortants: sortants.slice(0, 40), nombreSortants: sortants.length,
     traces, montants, empilees: empilees.slice(0, 40),
+    chevauchees: chevauchees.slice(0, 40),
   };
 })()`;
 

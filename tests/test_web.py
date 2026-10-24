@@ -3682,7 +3682,12 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # Les tableaux sont passés de 250 à 270 mots le 23 septembre 2026 : le
     # compte du COR y dit chaque part du PIB aussi en milliards, dix cases de
     # quatre mots de plus, et rien d'autre n'y est entré.
-    "/risque": (650, 0, 2, 270),
+    # Serrée le 24 octobre 2026 (action 173, étape 6), de 650 mots de prose à
+    # 560, pour 636 lus, et de 270 à 180 dans les tableaux, qui en montrent
+    # 177 : le résumé redisait le premier poste de la fiche de paie que la
+    # première carte chiffre, la proposition s'annonçait en « trois choses »
+    # qu'elle énumère, et « Pour aller plus loin » d'une phrase que le plan dit.
+    "/risque": (560, 0, 2, 180),
 }
 
 
@@ -3764,6 +3769,10 @@ BUDGETS_DEPLIES: dict[str, int] = {
     # l'étape laisse tels quels. Ses dépliants redisaient ce que la légende
     # d'un tracé, la ligne d'un tableau ou le dépliant voisin venaient de dire.
     "/cout": 33250,
+    # Pourquoi changer tout déplié : 5 128 mots le 24 octobre 2026 (action 173,
+    # étape 6). Ses dépliants finissaient souvent sur une phrase qui redisait
+    # ce que leur chiffre ou leur phrase en gras venait d'établir.
+    "/risque": 4950,
 }
 
 

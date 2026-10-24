@@ -1426,6 +1426,12 @@ def test_la_page_risque_range_ses_sections_et_se_relie():
     for chemin in ("/simuler", "/cout", "/"):
         assert f'href="{g.lien(chemin)}"' in corps, chemin
     assert f'href="{g.lien("/risque")}"' in rendre("/", {})[1]
+    # Le dépliant des objections dit dans son titre combien il en range, une
+    # par intertitre (action 173, étape 6) : une objection de plus le change.
+    objections = re.search(r'<details class="section" id="risque-objections">.*?</details>',
+                           corps, re.S).group(0)
+    assert objections.count("<h3>") == 8
+    assert "huit objections, huit réponses" in objections
 
     # La bibliographie est dans le dépôt, à l'adresse annoncée.
     from pathlib import Path

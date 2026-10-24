@@ -144,6 +144,22 @@ def test_aucune_page_ne_deborde_en_largeur():
     assert not fautes, f"{len(fautes)} débordements :\n" + "\n".join(fautes[:80])
 
 
+def test_aucune_case_de_tableau_ne_deborde_sur_sa_voisine():
+    """Une valeur qui ne se coupe pas tient dans sa case, à toute largeur.
+
+    Le 24 octobre 2026, à 390 points, le tableau de la page Pourquoi changer
+    qui dit ce que le système verse et encaisse se repliait en rangée, ses
+    trois valeurs côte à côte : « 14,1 % · 422 Md € » ne tenait pas dans sa
+    colonne et passait sur la suivante, qu'on lisait « 422 Md€13,9 % ». La
+    page n'en était pas plus large, ni le tableau : rien ne le voyait (action
+    173, étape 6).
+    """
+    fautes = [f"{_ou(visite, 'fermés' if etat == 'replie' else 'ouverts')} : {case}"
+              for visite in mesures() for etat in ("replie", "deplie")
+              for case in visite[etat]["chevauchees"]]
+    assert not fautes, f"{len(fautes)} cases débordent :\n" + "\n".join(fautes[:60])
+
+
 #: Le plus grand vide admis entre deux blocs qui se suivent : quarante points
 #: sur un téléphone, où chaque ligne de blanc repousse la suivante hors de
 #: l'écran, cinquante-six au large.
@@ -198,8 +214,9 @@ def test_un_trace_et_sa_legende_se_voient_ensemble():
 #: la reprend : le 23 octobre 2026, à 320 points, Droits non cotisés et les
 #: résultats du simulateur empilaient encore, en fiche, deux valeurs courtes
 #: que la colonne minimale de 8,5 rem ne laisse pas tenir ensemble. Simuler,
-#: le formulaire et ses résultats, à l'étape 4 ; Coût, à l'étape 5.
-COTE_A_COTE = ["/", "/simuler", RESULTATS, "/cout"]
+#: le formulaire et ses résultats, à l'étape 4 ; Coût, à l'étape 5 ;
+#: Pourquoi changer, à l'étape 6.
+COTE_A_COTE = ["/", "/simuler", RESULTATS, "/cout", "/risque"]
 
 
 def test_deux_valeurs_courtes_d_une_rangee_repliee_se_lisent_cote_a_cote():

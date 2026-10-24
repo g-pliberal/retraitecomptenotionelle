@@ -13667,15 +13667,15 @@ function risque(contexte) {
   const cartePrelevement = g.cle(
     "Combien la retraite vous prend-elle chaque mois ?",
     `<strong>${g.euros(verseMensuel)} sur un salaire moyen</strong>, en
-comptant ce que verse l'employeur. C'est le premier poste de votre fiche de
-paie, avant l'impôt sur le revenu, avant la maladie. Sur une carrière entière,
-au salaire moyen, cela fait plus de quatre cent mille euros.`,
+comptant ce que verse l'employeur : le premier poste de votre fiche de paie,
+avant l'impôt sur le revenu, avant la maladie. Sur une carrière entière, plus
+de quatre cent mille euros.`,
     tableauSalaires,
-    `Calcul du modèle sur une carrière de référence : un salarié du
-privé né en ${NAISSANCE_RISQUE}, entré à ${DEBUT_RISQUE} ans. Les taux sont ceux
-de ${ficheMoyen.annee}, allègements généraux compris, ce qui explique le taux
-plus faible au SMIC. <a href="${g.lien("/simuler")}">Le calcul sur votre propre
-salaire</a> est à un clic.`,
+    `Calcul du modèle pour un salarié du privé né en
+${NAISSANCE_RISQUE}, entré à ${DEBUT_RISQUE} ans, aux taux de ${ficheMoyen.annee},
+allègements généraux compris : d'où le taux plus faible au SMIC.
+<a href="${g.lien("/simuler")}">Le calcul sur votre propre salaire</a> est à un
+clic.`,
     "risque-prelevement",
   );
 
@@ -13689,12 +13689,11 @@ ${milliards(manque, 1)} par an.`,
     tableauSoldes,
     `Sources : le modèle du site pour la part financée, les comptes du
 Conseil d'orientation des retraites pour le solde, observés puis projetés dans
-son scénario de référence. Les milliards sont ceux de ${obs}, puis la même part
-du PIB de ${comptes.pib.derniereAnnee} pour les années projetées. Le détail
-année par année est sur la page
-<a href="${g.lien("/cout")}">Coût</a>. Ce que les recettes paient de VOTRE
-pension, à VOTRE date de départ, est sur
-<a href="${g.lien("/simuler")}">le simulateur</a>.`,
+son scénario de référence ; les milliards projetés sont au PIB de
+${comptes.pib.derniereAnnee}. Le détail année par année est sur la page
+<a href="${g.lien("/cout")}">Coût</a> ; ce que les recettes paient de VOTRE
+pension, à VOTRE date de départ, sur <a href="${g.lien("/simuler")}">le
+simulateur</a>.`,
     "risque-promesse",
   );
 
@@ -13723,13 +13722,12 @@ pension, à VOTRE date de départ, est sur
   return `
 ${tete}
 
-<div class="note resume"><strong>En clair.</strong> La retraite est le premier
-prélèvement de votre fiche de paie. Elle ne met rien de côté : elle verse
-aussitôt ce qu'elle encaisse, et votre pension attendra les cotisations de vos
-enfants. Or ils seront moins nombreux, et ce qu'on leur promet dépasse déjà ce
-que vos cotisations financent. Le système ne s'arrêtera pas de payer. Il
-paiera moins, comme il le fait depuis trente ans sans le dire, en revalorisant
-les pensions moins vite que les salaires.</div>
+<div class="note resume"><strong>En clair.</strong> La retraite ne met rien de
+côté : elle verse aussitôt ce qu'elle encaisse, et votre pension attendra les
+cotisations de vos enfants. Or ils seront moins nombreux, et ce qu'on vous
+promet dépasse déjà ce que vos cotisations financent. Le système ne cessera
+pas de payer : il paiera moins, comme depuis trente ans sans le dire, en
+revalorisant les pensions moins vite que les salaires.</div>
 
 <div class="fiches reperes">${reperes}</div>
 
@@ -13751,17 +13749,14 @@ ${cartePrelevement}
 ${cartePromesse}
 
 <div class="note"><strong>Ce que nous proposons d'en faire.</strong> Un
-${g.terme("compte notionnel")} ne crée pas d'argent. Il fait trois choses que
-le système actuel ne fait pas : il inscrit chaque euro versé sur un compte à
-votre nom, il ramène le prélèvement de 28 % à 18 %, et il règle l'écart chaque
-année par un ${g.terme("coefficient d'équilibre")} que tout le monde peut lire,
-au lieu d'attendre une réforme qui tombe sur une génération.
+${g.terme("compte notionnel")} ne crée pas d'argent. Il inscrit chaque euro
+versé sur un compte à votre nom, ramène le prélèvement de 28 % à 18 %, et
+règle l'écart chaque année par un ${g.terme("coefficient d'équilibre")} que
+tout le monde peut lire, au lieu d'une réforme qui tombe sur une génération.
 <a href="${g.lien("/")}">La proposition</a> est chiffrée carrière par
 carrière.</div>
 
 <h2>Pour aller plus loin</h2>
-<p class="chapeau">Ce que la recherche établit, et ce qu'il faut répondre à
-ceux qui assurent qu'il n'y a pas de problème.</p>
 
 ${detail}
 `;
@@ -13785,10 +13780,10 @@ function risqueSalaire(contexte) {
     "Ces cotisations sont votre salaire, y compris celles de l'employeur",
     `
 <p>Sur la fiche de paie, la retraite se partage en deux lignes : celle que le
-salarié voit retirée de son brut, et celle que l'employeur verse par-dessus.
-La seconde passe pour un cadeau. Elle n'en est pas un : au salaire moyen, elle
-vaut ${g.euros(employeur)} par mois, et la recherche montre qu'elle est payée
-par le salarié, sous forme de salaire qu'il ne touche pas.</p>
+salarié voit retirée de son brut, et celle que l'employeur verse par-dessus,
+${g.euros(employeur)} par mois au salaire moyen. La seconde passe pour un
+cadeau ; la recherche montre que le salarié la paie, en salaire qu'il ne
+touche pas.</p>
 
 <p><strong>Le résultat est récent, français, et il est net.</strong> Antoine
 Bozio, Thomas Breda, Julien Grenet et Arthur Guillouzouic
@@ -13814,10 +13809,9 @@ continentale.</p>
 
 <p><strong>La conséquence est celle que personne ne dit.</strong> Augmenter les
 cotisations retraite d'un point ne coûte pas un point aux entreprises : cela
-coûte un point de salaire, avec un délai de quelques années. Et puisque la
-retraite est de toutes les cotisations la plus contributive, c'est elle dont
-le report est le plus complet. Chaque fois qu'on relève le taux pour tenir la
-promesse, le salaire net des générations suivantes en paie le prix.</p>
+coûte un point de salaire, avec un délai de quelques années. Chaque fois
+qu'on relève le taux pour tenir la promesse, le salaire net des générations
+suivantes en paie le prix.</p>
 
 <p class="discret">Réserve de méthode, qu'il faut connaître pour discuter le
 chiffre : cette littérature mesure le report d'une <em>variation</em> de taux,
@@ -13840,7 +13834,7 @@ l'autre est une inférence.</p>`,
  */
 function risqueCroissance(comptes) {
   return g.depliant(
-    "Ce que le financement coûte à la croissance, dit par le COR lui-même",
+    "Ce que le financement coûte à la croissance, selon le COR lui-même",
     `
 <p>Le Conseil d'orientation des retraites a fait chiffrer par trois équipes
 indépendantes, la direction générale du Trésor, l'OFCE et une équipe de
@@ -13883,9 +13877,7 @@ David Wise, dans l'enquête de référence du Bureau national de la recherche
 année de plus. <strong>En France, cette taxation implicite atteignait 80 % de
 l'année travaillée</strong>, l'une des plus élevées des onze pays étudiés, et
 les hommes de 55 à 65 ans y laissaient inemployés <strong>60 % de leur
-capacité productive</strong>, contre 37 % aux États-Unis et 48 % en Allemagne.
-Un système qui prend quatre cinquièmes d'une année de travail supplémentaire
-n'a pas besoin d'autre explication pour faire partir tôt.</p>
+capacité productive</strong>, contre 37 % aux États-Unis et 48 % en Allemagne.</p>
 <p>Les réformes françaises l'ont vérifié dans l'autre sens, et elles montrent
 aussi la limite de l'exercice. Antoine Bozio (INSEE, 2011) mesure que la
 réforme de 1993 a reporté le départ de neuf mois par année de durée exigée
@@ -13910,8 +13902,7 @@ le socle forfaitaire ne l'évince pas.</p>
 <p>Le résultat le plus net est ailleurs. David Bloom et ses coauteurs (2007)
 montrent que l'allongement de la vie pousse partout les ménages à épargner
 davantage, <strong>sauf dans les pays dotés d'une répartition généreuse, où
-cet effet disparaît</strong>. Vivre plus longtemps n'y conduit plus à mettre
-de côté.</p>
+cet effet disparaît</strong>.</p>
 <p class="discret">Deux bornes d'honnêteté. Martin Feldstein chiffrait en 1996
 la perte à un point de PIB par an à perpétuité,
 ${pointsEnMilliards(comptes, 1.0)} par an au PIB de
@@ -13935,7 +13926,7 @@ compte aujourd'hui comme un droit.</p>`,
 /** Qui paie le plus, rapporté à ce qu'il en retire. */
 function risquePauvres() {
   return g.depliant(
-    "Ce sont les plus pauvres qui y perdent le plus",
+    "Les plus pauvres y perdent le plus",
     `
 <p><strong>Ils meurent plus tôt, et touchent donc moins longtemps.</strong>
 L'INSEE mesure, sur la période 2020-2024, un écart d'espérance de vie de
@@ -13951,8 +13942,7 @@ rendement des cotisations : chez les hommes, le rendement passe de 1,53 % pour
 ceux qui ont fini leurs études le plus tôt à 0,98 % pour les plus diplômés. En
 neutralisant la mortalité différentielle, l'écart se creuserait jusqu'à 0,65 %.
 <strong>La mort prématurée des uns rend donc au sommet de la distribution
-environ un tiers de ce que les règles lui reprennent.</strong> Le système
-redistribue encore, mais beaucoup moins qu'il n'en a l'air.</p>
+environ un tiers de ce que les règles lui reprennent.</strong></p>
 
 <p><strong>Ils paient aussi le chômage.</strong> Le coût du travail le plus
 élevé de l'OCDE se paie d'abord sur les emplois les moins qualifiés. En 2024,
@@ -13962,8 +13952,7 @@ conséquence sans jamais le dire ainsi : il consacre <strong>75 milliards
 d'euros par an</strong>, 2,7 points de PIB, à effacer ces cotisations sur les
 bas salaires, et le rapport d'Antoine Bozio et Étienne Wasmer au Premier
 ministre (2024) estime que leur suppression détruirait
-<strong>980 000 emplois</strong>. Le barème est devenu si lourd qu'il faut le
-neutraliser pour que les moins qualifiés aient un emploi.</p>
+<strong>980 000 emplois</strong>.</p>
 
 <p><strong>Et la pauvreté n'est plus là où on la cherche.</strong> En 2023,
 10,5 % des retraités vivent sous le seuil de pauvreté, contre 15,4 % de
@@ -13995,8 +13984,8 @@ rendement de la <strong>génération 2000 serait de 0,8 %</strong> par an, et de
 sans risque fait mieux : sur cent vingt-six ans, les obligations d'État
 américaines ont rendu 1,6 % par an en termes réels, les actions 6,6 %
 (Dimson, Marsh et Staunton, 2026). Les deux grandeurs ne se mesurent pas de la
-même façon, et la comparaison ne vaut que par son ordre de grandeur. Il est
-d'un facteur deux à huit.</p>
+même façon, et la comparaison ne vaut que par son ordre de grandeur : un
+facteur deux à huit.</p>
 
 <p><strong>Ce qu'ils touchent recule aussi.</strong> Le COR projette la pension
 moyenne rapportée au revenu d'activité moyen de <strong>54,6 % en 2025 à
@@ -14130,12 +14119,11 @@ et les cotisations ne couvriront alors que 77 % des pensions dues. La Suède,
 qui règle son régime par une formule automatique, a baissé ses pensions de
 3,0 %, 4,3 % et 2,7 % en 2010, 2011 et 2014.</p>
 
-<p>Le point commun de ces épisodes est le calendrier. Aucun pays n'a ajusté
-tant qu'il pouvait attendre ; tous ont ajusté quand ils ne pouvaient plus, et
-l'ajustement a été d'autant plus brutal qu'il avait été différé. Les pays qui
-ont inscrit la règle d'ajustement dans la loi avant la crise ont baissé de
-quelques pour cent ; ceux qui ont attendu la tutelle de leurs créanciers ont
-baissé de moitié.</p>`,
+<p>Le point commun de ces épisodes est le calendrier : aucun pays n'a ajusté
+tant qu'il pouvait attendre, et l'ajustement a été d'autant plus brutal qu'il
+avait été différé. Les pays qui avaient inscrit la règle d'ajustement dans la
+loi avant la crise ont baissé de quelques pour cent ; ceux qui ont attendu la
+tutelle de leurs créanciers, de moitié.</p>`,
     "risque-ailleurs",
   );
 }
@@ -14165,9 +14153,9 @@ de défaut complet sur des engagements de retraite et n'en a trouvé
 « que peu, même dans des situations extrêmes ». Le défaut partiel, lui, est la
 règle : le Royaume-Uni, le Japon, l'Allemagne, les États-Unis, la France et
 l'Italie ont tous révisé à la baisse ce qu'ils serviront aux générations
-suivantes. La phrase des auteurs mérite d'être retenue : il est peut-être plus
-facile de faire défaut sur une promesse de retraite que sur une obligation,
-« mais ni l'un ni l'autre n'est sans coût ».</p>`,
+suivantes. Les auteurs concluent qu'il est peut-être plus facile de faire
+défaut sur une promesse de retraite que sur une obligation, « mais ni l'un ni
+l'autre n'est sans coût ».</p>`,
     "risque-droit",
   );
 }
@@ -14191,7 +14179,7 @@ function risqueObjections(contexte) {
   const md = (points) => pointsEnMilliards(comptes, points);
   const manqueFin = enMilliards(comptes, -solde.annee(fin).solde("actuel"), fin);
   return g.depliant(
-    "« Il n'y a pas de problème » : ce qu'on vous répondra, et ce qui suit",
+    "« Il n'y a pas de problème » : huit objections, huit réponses",
     `
 <h3>« Le déficit est faible : un demi-point de PIB »</h3>
 <p>Vrai jusqu'en 2030, faux ensuite. Le COR projette −0,2 point de PIB en 2030,
