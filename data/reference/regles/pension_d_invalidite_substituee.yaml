@@ -32,11 +32,11 @@ versions:
 - id: ordonnance_1945
   statut: lue
   textes:
-  - {id: JORFTEXT000000333985, article: "ordonnance n° 45-2454 du 19 octobre 1945, article 62",
-     publie_le: 1945-10-20}
+  - {id: JORFTEXT000000333985, article: "ordonnance n° 45-2454 du 19 octobre 1945, articles 55,
+       56 et 62", publie_le: 1945-10-20}
   nee_de: JORFTEXT000000333985
   bornes:
-    liquidation.date_effet: [null, 1983-06-01]
+    liquidation.date_effet: [null, 1961-03-30]
   contenu:
     droit: >-
       « La pension d'invalidité prend fin à l'âge de 60 ans. Elle est remplacée, à
@@ -45,10 +45,62 @@ versions:
       à la pension d'invalidité dont bénéficie l'invalide à l'âge de soixante ans »
       (article 62) ; la pension de vieillesse de l'inapte, c'est le taux de soixante-cinq
       ans dès soixante ans (fiche inaptitude_au_travail)
-    plancher: la pension d'invalidité servie à soixante ans
+    plancher: >-
+      la pension d'invalidité servie à soixante ans : « 30 p. 100 du salaire annuel
+      moyen correspondant aux cotisations versées au cours des dix dernières années
+      d'assurance précédant [...] l'interruption de travail suivie d'invalidité » pour
+      les invalides du premier groupe, « 40 p 100 » pour ceux du deuxième, ceux du
+      troisième le taux du deuxième « majoré de 40 p. 100 » pour l'aide d'une tierce
+      personne, et jamais moins que « le taux de l'allocation aux vieux travailleurs
+      salariés » (article 56) ; les groupes, « 1° Invalides capables d'exercer une
+      activité rémunérée ; 2° Invalides absolument incapables d'exercer une profession
+      quelconque ; 3° Invalides qui [...] sont, en outre, dans l'obligation d'avoir
+      recours à l'assistance d'une tierce personne » (article 55)
     parametres:
       age: 60
       plancher: pension_d_invalidite
+      taux_des_categories: [0.30, 0.40, 0.40]
+      annees_du_salaire_moyen: 10
+      invalide_qui_travaille: aucune_derogation
+  exemples: aucun trouvé
+- id: majoration_de_1961
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006761873, article: "décret n° 61-272 du 28 mars 1961, article 1er",
+     en_vigueur: 1961-03-30}
+  - {id: LEGIARTI000006761875, article: "décret n° 61-272 du 28 mars 1961, article 3",
+     en_vigueur: 1961-03-30}
+  - {id: LEGIARTI000006761877, article: "décret n° 61-272 du 28 mars 1961, article 4",
+     en_vigueur: 1961-03-30}
+  - {id: LEGIARTI000006761876, article: "décret n° 61-272 du 28 mars 1961, article 3 bis",
+     en_vigueur: 1968-02-20}
+  - {id: LEGIARTI000006760594, article: "décret n° 45-0179 du 29 décembre 1945, article 59",
+     en_vigueur: 1972-12-30}
+  - {id: LEGIARTI000006761874, article: "décret n° 61-272 du 28 mars 1961, article 2",
+     en_vigueur: 1984-02-23}
+  nee_de: LEGIARTI000006761875
+  bornes:
+    liquidation.date_effet: [1961-03-30, 1983-06-01]
+  contenu:
+    droit: la version ordonnance_1945, au taux nouveau du deuxième groupe
+    plancher: >-
+      la pension d'invalidité servie à soixante ans, que le décret n° 61-272
+      majore : « Pour les invalides du deuxième groupe [...], la pension est égale à
+      50 p. 100 du salaire défini à l'article 2 » (article 3), ceux du troisième ce
+      montant « majoré de 40 p. 100 » (article 4) ; depuis le 30 décembre 1972, « Sont
+      retenues les dix années civiles d'assurance accomplies postérieurement au 31
+      décembre 1947 qui ont précédé soit l'interruption de travail suivie
+      d'invalidité, soit la constatation médicale de l'invalidité [...], et dont la
+      prise en considération est la plus avantageuse pour l'assuré », le salaire
+      annuel moyen se formant par « les dispositions du paragraphe 2 de l'article 71,
+      des paragraphes III et VIII (alinéa 1) de l'article 74 » — celles de la pension
+      de vieillesse —, sur « les salaires revalorisés par application des
+      coefficients mentionnés à l'article L. 313 » (décret n° 45-0179, article 59)
+    parametres:
+      age: 60
+      plancher: pension_d_invalidite
+      taux_des_categories: [0.30, 0.50, 0.50]
+      annees_du_salaire_moyen: 10
       invalide_qui_travaille: aucune_derogation
   exemples: aucun trouvé
 - id: plancher_avts_1983
@@ -60,7 +112,11 @@ versions:
   - {id: LEGIARTI000006742612, article: "L. 341-16 CSS", en_vigueur: 1985-12-21}
   - {id: LEGIARTI000006742613, article: "L. 341-16 CSS", en_vigueur: 2003-08-22}
   - {id: LEGIARTI000006749330, article: "R. 341-22 CSS", en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006742597, article: "L. 341-4 CSS", en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006742598, article: "L. 341-5 CSS", en_vigueur: 1985-12-21}
   - {id: JORFTEXT000000504456, article: "loi n° 83-430 du 31 mai 1983", publie_le: 1983-06-01}
+  - {id: JORFTEXT000000320660, article: "loi n° 84-575 du 9 juillet 1984, article 5",
+     publie_le: 1984-07-10}
   nee_de: JORFTEXT000000504456
   bornes:
     liquidation.date_effet: [1983-06-01, 2010-03-01]
@@ -77,7 +133,18 @@ versions:
       l'allocation aux vieux travailleurs salariés ; « les titulaires d'une pension
       d'invalidité liquidée avant le 31 mai 1983 peuvent prétendre à une pension de
       vieillesse qui ne peut être inférieure à la pension d'invalidité dont bénéficiait
-      l'invalide à cet âge »
+      l'invalide à cet âge » (L. 341-15), que la loi n° 84-575 rétablit dès le 1er avril
+      1983, où la loi n° 83-430 l'avait ôtée ; « Le montant minimum de la pension
+      d'invalidité [...] ne peut être inférieur au montant de l'allocation aux vieux
+      travailleurs salariés » (L. 341-5). La caisse compare « la retraite calculée au
+      taux maximum de 50 %, éventuellement augmentée de la majoration du minimum
+      contributif » au « montant entier de l'AVTS, si la date d'effet de la pension
+      d'invalidité se situe à partir du 31 mai 1983 », ou « au montant calculé de la
+      pension d'invalidité précédemment servie » ; « Le montant le plus élevé est servi
+      à l'assuré. Si les conditions sont remplies, peuvent s'ajouter à ce montant, la
+      majoration pour enfants, la majoration pour tierce personne » (circulaire Cnav
+      n° 2018-18, 1.3 ; n° 84/83 et n° 94/84) ; sous la liquidation unique, la retraite
+      qu'elle sert (n° 2018-18, 7.1)
     invalide_qui_travaille: >-
       la pension substituée « n'est concédée que si l'assuré n'y fait pas opposition » ;
       qui s'y oppose voit ses droits « ultérieurement liquidés, lorsqu'il en fait la
@@ -87,6 +154,8 @@ versions:
       age: 60
       plancher: avts
       plancher_invalidite_avant: 1983-05-31
+      taux_des_categories: [0.30, 0.50, 0.50]
+      annees_du_salaire_moyen: 10
       invalide_qui_travaille: opposition
   exemples: aucun trouvé
 - id: invalide_qui_travaille_2010
@@ -113,6 +182,8 @@ versions:
       age: 60
       plancher: avts
       plancher_invalidite_avant: 1983-05-31
+      taux_des_categories: [0.30, 0.50, 0.50]
+      annees_du_salaire_moyen: 10
       invalide_qui_travaille: maintien_jusqu_a_la_demande
       maintien_au_plus_tard: age_annulation_decote
   exemples: aucun trouvé
@@ -134,6 +205,8 @@ versions:
       age: age_legal_par_generation
       plancher: avts
       plancher_invalidite_avant: 1983-05-31
+      taux_des_categories: [0.30, 0.50, 0.50]
+      annees_du_salaire_moyen: 10
       invalide_qui_travaille: maintien_jusqu_a_la_demande
       maintien_au_plus_tard: age_annulation_decote
   exemples: aucun trouvé
@@ -158,6 +231,8 @@ versions:
       age: age_legal_par_generation
       plancher: avts
       plancher_invalidite_avant: 1983-05-31
+      taux_des_categories: [0.30, 0.50, 0.50]
+      annees_du_salaire_moyen: 10
       invalide_qui_travaille: maintien_jusqu_a_la_demande
       maintien_au_plus_tard: age_annulation_decote
       maintien_du_demandeur_d_emploi_mois: 6
@@ -193,21 +268,52 @@ versions:
       age: 62
       plancher: avts
       plancher_invalidite_avant: 1983-05-31
+      taux_des_categories: [0.30, 0.50, 0.50]
+      annees_du_salaire_moyen: 10
       invalide_qui_travaille: maintien_jusqu_a_la_demande
       maintien_au_plus_tard: age_annulation_decote
       maintien_du_demandeur_d_emploi_mois: 6
   exemples: [cnav_2024_25_substitution_d_office, cnav_2024_25_cumul_de_l_ex_invalide]
 approximations:
 - ecart: >-
-    le plancher de la pension substituée n'est pas appliqué : l'allocation aux vieux
-    travailleurs salariés depuis le 31 mai 1983, la pension d'invalidité elle-même
-    avant
+    le plancher se compare à la date d'effet, puis suit la pension ; depuis 1983, la
+    caisse compare la pension à l'AVTS « chaque fois que l'un d'entre eux augmentera »,
+    l'AVTS se fixant par décret à ses propres dates (circulaire Cnav n° 84/83, II)
   effet: >-
-    nul sur le montant du scénario 1 : l'allocation de solidarité aux personnes âgées,
-    que le modèle sert à l'ex-invalide dès l'âge de la substitution (R. 815-1), porte ses
-    ressources plus haut — 12 523 euros par an en 2026 contre 4 059,72 pour
-    l'allocation aux vieux travailleurs (barème de la Cnav) ; seule change la part que
-    l'allocation, récupérable sur la succession, prend à la pension
+    l'ex-invalide porté à l'AVTS : de juillet 1983 à janvier 2004, l'AVTS a crû de 3,8 %
+    de moins que les pensions, et le modèle le sert jusqu'à 3,8 % au-dessus d'elle ; de
+    2004 à 2026, de 1,3 % de plus (barème de la Cnav, revalorisations de L. 161-23-1) ;
+    sans effet sur ses ressources tant que l'allocation de solidarité aux personnes
+    âgées, qui le porte à 12 523 euros par an en 2026, lui est servie
+- ecart: >-
+    la pension d'invalidité d'avant le 31 mai 1983 se calcule au 1er janvier de l'année
+    où elle commence, par les coefficients des salaires de la pension de vieillesse que
+    les mêmes arrêtés fixent, sur les salaires de son régime, puis se revalorise comme
+    les pensions ; son maximum, 30 % ou 50 % du plafond (décret n° 61-272, article 3 bis),
+    ne lui est pas opposé
+  effet: >-
+    nul pour le maximum, le salaire annuel moyen de salaires plafonnés, revalorisés
+    comme les pensions, restant sous le plafond de son année, qui suit les salaires ; le
+    mois de la pension d'invalidité, non mesuré
+- ecart: >-
+    les pensions d'invalidité du régime général et des salariés agricoles, que la
+    liquidation unique compare ensemble à sa retraite (circulaire Cnav n° 2018-18, 7.1),
+    n'en font qu'une : celle du régime de l'affiliation qui la précède
+  effet: non mesuré
+- ecart: >-
+    la pension d'invalidité proratisée des règlements européens, qui n'est pas une
+    pension d'invalidité au sens de L. 341-15 et n'ouvre ni l'AVTS ni la pension
+    d'invalidité d'avant 1983 en plancher (circulaire Cnav n° 73/99), n'est pas
+    distinguée : le modèle sert le plancher à toute pension d'invalidité
+  effet: non mesuré
+- ecart: >-
+    l'indépendant ex-invalide n'a pas son plancher, l'allocation aux vieux travailleurs
+    non salariés, ni « l'allocation différentielle » qui porte ses retraites à sa pension
+    d'invalidité de travailleur indépendant (exposé de la Cnav, « Retraite substituée à
+    pension d'invalidité » ; circulaire Cnav n° 2023-22, 2.4.2)
+  effet: >-
+    l'allocation de solidarité aux personnes âgées le porte plus haut que l'allocation
+    aux vieux travailleurs non salariés ; non mesuré pour l'allocation différentielle
 - ecart: >-
     l'activité et l'indemnisation du chômage se lisent sur la ligne principale de
     l'année où l'âge est atteint, et non au mois ; la condition d'activité des six mois
@@ -222,9 +328,12 @@ approximations:
     nul tant que l'activité poursuivie ne fait pas baisser le salaire annuel moyen ;
     non mesuré sinon
 - ecart: >-
-    le régime qui sert la pension d'invalidité n'est pas lu : la substitution se fait
+    le régime qui sert la pension d'invalidité ne date pas la substitution : elle se fait
     dans le régime général et les régimes alignés de la carrière, quel qu'il soit ; les
-    salariés agricoles la font par renvoi au code de la sécurité sociale, non lu
+    salariés agricoles la font par renvoi au code de la sécurité sociale, non lu. Le
+    plancher, lui, se compare à la pension du régime que les affiliations de l'année où
+    la pension d'invalidité commence désignent, le régime général ou les salariés
+    agricoles
   effet: non mesuré
 presomptions:
   pension_d_invalidite_de_la_periode: >-
@@ -233,9 +342,13 @@ presomptions:
   opposition_a_la_substitution: >-
     avant le 1er mars 2010, l'invalide qui travaille encore à l'âge de la substitution
     s'y oppose, et demande sa pension à son départ
+  categorie_de_la_pension_d_invalidite: >-
+    la pension d'invalidité que l'assuré ne classe pas est de la première catégorie
+    quand il travaille à l'âge de la substitution, de la deuxième sinon : elle fixe
+    le taux de la pension d'invalidité d'avant le 31 mai 1983 qui reste un plancher
 sources:
-  lu_le: 2026-09-30
-  prochaine_relecture: 2027-03-31
+  lu_le: 2026-10-24
+  prochaine_relecture: 2027-04-24
   a_relire:
   - >-
     Ouverte le 30 septembre 2026 avec le domaine de l'invalidité et de l'inaptitude
@@ -246,13 +359,61 @@ sources:
     l'âge légal de la génération ; celui de la circulaire RSI n° 2011/017, d'avant le
     relèvement de 2011 et à diffusion restreinte, ne se rejoue pas.
   - >-
-    À lire : l'article du code de 1956 qui reprend l'article 62 de l'ordonnance de 1945
-    jusqu'à la recodification de 1985, et la loi n° 83-430 du 31 mai 1983 elle-même,
-    dont l'index ne porte que les titres ; les règles des salariés agricoles (code
-    rural), qui suivent le régime général par renvoi ; le règlement d'invalidité des
-    travailleurs indépendants de 2023 (article 29), qui sert un complément différentiel
-    jusqu'à leur pension d'invalidité.
+    Le plancher, servi depuis le 24 octobre 2026 (action 138, étape 4) : l'article 62 de
+    l'ordonnance de 1945 devenu L. 322 du code de 1956, que le décret n° 61-272 récrit en
+    règlement (article 1er) ; les lois n° 83-430 et n° 84-575, dont l'index ne porte que
+    les titres, lues dans les circulaires Cnav n° 84/83 et n° 94/84 qui les citent. Aucun
+    exemple chiffré ne compare la pension au plancher ; la lettre ministérielle n° 6742/S
+    du 5 septembre 1962, qui revalorise comme une pension la pension substituée au taux
+    de l'AVTS, porte aussi la rente des assurances sociales de 1940, hors du modèle, et
+    ne se rejoue pas.
+  - >-
+    À lire : la première rédaction de l'article 2 du décret n° 61-272, que l'index LEGI
+    ne garde que depuis le 23 février 1984 ; les règles des salariés agricoles (décret
+    n° 50-1225, article 54 ; code rural), qui suivent le régime général par renvoi ; le
+    règlement d'invalidité des travailleurs indépendants de 2023 (article 29), qui sert
+    un complément différentiel jusqu'à leur pension d'invalidité. La comparaison des
+    majorations de 1972 à 1982 au plancher reste à faire (fiche
+    majorations_forfaitaires_1972_1982).
   lectures:
+  - type: legifrance
+    reference: >-
+      L. 341-4, L. 341-5 (1985), R. 341-4 (1985, 1993, 2011, 2022), R. 341-5 (1985, 2011)
+      et R. 341-6 (1985, 1986) CSS ; décret n° 61-272 du 28 mars 1961, articles 1er à 4 et
+      3 bis ; décret n° 45-0179 du 29 décembre 1945, article 59 (rédaction du 30 décembre
+      1972), dans l'index LEGI du dépôt mis à jour au 24 octobre 2026
+    date: 2026-10-24
+  - type: autre
+    reference: >-
+      ordonnance n° 45-2454 du 19 octobre 1945, articles 55 et 56 : les trois groupes
+      d'invalides, la pension à 30 % ou 40 % du « salaire annuel moyen correspondant aux
+      cotisations versées au cours des dix dernières années d'assurance », jamais moins
+      que l'AVTS, lus dans la base législative de la Cnav (ORD_452454_19101945)
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=ORD_452454_19101945.aspx
+    date: 2026-10-24
+  - type: autre
+    reference: >-
+      circulaires Cnav n° 84/83 du 19 juillet 1983 et n° 94/84 du 21 août 1984, « Pension
+      vieillesse de substitution » : depuis le 1er avril 1983, le plus élevé de la
+      pension au taux de 50 %, du minimum contributif et de l'AVTS, « qui reste le
+      montant minimum de la pension d'invalidité », comparés « chaque fois que l'un
+      d'entre eux augmentera » ; la loi n° 84-575 rétablit dès le 1er avril 1983 « le
+      montant calculé de la pension d'invalidité » d'avant le 31 mai 1983, « lequel ne
+      peut être inférieur au taux de l'allocation aux vieux travailleurs salariés » ; et
+      circulaire n° 102/83 du 7 septembre 1983, point 5
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_9484_21081984.aspx
+    date: 2026-10-24
+  - type: autre
+    reference: >-
+      exposé de la Cnav « Retraite substituée à pension d'invalidité », Montant de la
+      retraite : la comparaison à l'AVTS si la pension d'invalidité date d'après le 31
+      mai 1983, à « la pension d'invalidité revalorisée » sinon, la somme des pensions
+      d'invalidité du régime général et des salariés agricoles sous la liquidation
+      unique ; l'AVTNS et l'allocation différentielle des indépendants ; et circulaire
+      Cnav n° 73/99 du 3 décembre 1999 : la pension d'invalidité proratisée « n'est pas
+      assimilable à une pension d'invalidité au sens de l'article L.341-15 »
+    url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=retraite_personnelle_retraite_substituee_pension_invalidite_retraite_substituee_pension_invalidite_ex.aspx
+    date: 2026-10-24
   - type: legifrance
     reference: >-
       L. 341-15 (1985, 2003, 2008, 2023), L. 341-16 (1985, 2003, 2010, 2020, 2023),
@@ -308,23 +469,48 @@ sources:
 textes_sans_effet:
 - {id: LEGIARTI000006736513, article: "D. 341-1 CSS", en_vigueur: 1986-01-29,
    motif: "le contrôle trimestriel des droits des invalides, sans effet sur la pension substituée"}
+- {id: LEGIARTI000006749308, article: "R. 341-4 CSS", en_vigueur: 1985-12-21,
+   motif: "la pension d'invalidité liquidée depuis le 21 décembre 1985, après le 31 mai 1983 : elle n'est pas un plancher, l'AVTS l'est (L. 341-15)"}
+- {id: LEGIARTI000006749309, article: "R. 341-4 CSS", en_vigueur: 1993-08-28,
+   motif: "la pension d'invalidité liquidée depuis le 21 décembre 1985, après le 31 mai 1983 : elle n'est pas un plancher, l'AVTS l'est (L. 341-15)"}
+- {id: LEGIARTI000024106812, article: "R. 341-4 CSS", en_vigueur: 2011-06-01,
+   motif: "la pension d'invalidité liquidée depuis le 21 décembre 1985, après le 31 mai 1983 : elle n'est pas un plancher, l'AVTS l'est (L. 341-15)"}
+- {id: LEGIARTI000045250301, article: "R. 341-4 CSS", en_vigueur: 2022-04-01,
+   motif: "la pension d'invalidité liquidée depuis le 21 décembre 1985, après le 31 mai 1983 : elle n'est pas un plancher, l'AVTS l'est (L. 341-15)"}
+- {id: LEGIARTI000006749311, article: "R. 341-5 CSS", en_vigueur: 1985-12-21,
+   motif: "la pension d'invalidité liquidée depuis le 21 décembre 1985, après le 31 mai 1983 : elle n'est pas un plancher, l'AVTS l'est (L. 341-15)"}
+- {id: LEGIARTI000024106823, article: "R. 341-5 CSS", en_vigueur: 2011-06-01,
+   motif: "la pension d'invalidité liquidée depuis le 21 décembre 1985, après le 31 mai 1983 : elle n'est pas un plancher, l'AVTS l'est (L. 341-15)"}
+- {id: LEGIARTI000006750014, article: "R. 341-6 CSS", en_vigueur: 1985-12-21,
+   motif: "la majoration pour tierce personne de la troisième catégorie, qui ne fait pas le plancher : elle s'ajoute à la pension de vieillesse (circulaire Cnav n° 2018-18, 1.3)"}
+- {id: LEGIARTI000006750015, article: "R. 341-6 CSS", en_vigueur: 1986-10-01,
+   motif: "la majoration pour tierce personne de la troisième catégorie, qui ne fait pas le plancher : elle s'ajoute à la pension de vieillesse (circulaire Cnav n° 2018-18, 1.3)"}
 code:
   python: >-
-    droit/invalidite.py : substitution ; droit/departs.py : departs_et_demandes ;
-    scenarios/actuel.py : Invalidites
+    droit/invalidite.py : substitution, plancher_de_la_substitution,
+    categorie_de_la_pension, pension_d_invalidite_servie ; droit/completer.py :
+    completer ; droit/departs.py : departs_et_demandes ; scenarios/actuel.py :
+    Invalidites
   javascript: >-
-    moteur/js/droit/invalidite.js : substitution ; moteur/js/droit/departs.js :
-    departsEtDemandes ; moteur/js/regimes.js : Invalidites
+    moteur/js/droit/invalidite.js : substitution, plancherDeLaSubstitution,
+    categorieDeLaPension, pensionDInvaliditeServie ; moteur/js/droit/completer.js :
+    completer ; moteur/js/droit/departs.js : departsEtDemandes ; moteur/js/regimes.js :
+    Invalidites
   parametres: >-
     contenu.parametres de chaque version : age, plancher, invalide_qui_travaille,
-    plancher_invalidite_avant, maintien_au_plus_tard,
-    maintien_du_demandeur_d_emploi_mois
+    plancher_invalidite_avant, taux_des_categories, annees_du_salaire_moyen,
+    maintien_au_plus_tard, maintien_du_demandeur_d_emploi_mois
   tests: >-
     tests/test_invalidite.py ; les témoins invalidite_* des simulations, et la page
     simuler_invalidite_substituee, dans les deux moteurs
   moteur: >-
-    departs_et_demandes donne la date de l'unité du régime général. plancher et
-    plancher_invalidite_avant ne sont pas lus (voir les approximations).
+    departs_et_demandes donne la date de l'unité du régime général. L'étape
+    « compléter tous régimes » oppose le plancher (plancher, plancher_invalidite_avant)
+    à la pension du régime qui servait la pension d'invalidité, portée au minimum
+    contributif, et sert le plus haut ; la pension d'invalidité d'avant juin 1983 se
+    calcule au taux de sa catégorie (taux_des_categories), sur les meilleures ou les
+    dernières années (annees_du_salaire_moyen) que la règle du salaire annuel moyen de
+    sa date retient.
 historique:
 - >-
   2026-09-30 — née avec le quatrième domaine, l'invalidité et l'inaptitude, ouvert à la
@@ -339,8 +525,18 @@ historique:
 - >-
   2026-10-01 — rejouée par deux exemples de la circulaire Cnav n° 2024/25, à la
   quatrième étape du domaine.
+- >-
+  2026-10-24 — le plancher servi (action 138, étape 4) : la pension du régime qui
+  servait la pension d'invalidité, portée au minimum contributif, puis à l'AVTS, ou à la
+  pension d'invalidité liquidée avant le 31 mai 1983, au taux de sa catégorie, déclarée
+  ou présumée (présomption categorie_de_la_pension_d_invalidite) ; la version
+  ordonnance_1945 coupée au 30 mars 1961, quand le décret n° 61-272 porte le deuxième
+  groupe de 40 % à 50 %.
 effet: >-
   Les titulaires d'une pension d'invalidité à l'âge légal : 0,90 million de retraités
   partis au taux plein à ce titre fin 2016 (DREES, EIR). Le modèle les fait partir à
   l'âge de la substitution, au taux plein, et leurs complémentaires sans coefficient ;
-  l'allocation de solidarité aux personnes âgées au même âge.
+  l'allocation de solidarité aux personnes âgées au même âge. Leur pension ne descend
+  pas sous l'AVTS, ni sous leur pension d'invalidité d'avant juin 1983 : l'ex-invalide de
+  1980 des témoins, au prorata de 141 trimestres sur 150, est porté à sa pension
+  d'invalidité, + 6,1 %.

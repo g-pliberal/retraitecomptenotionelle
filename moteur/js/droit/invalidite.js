@@ -19,7 +19,10 @@
 
 import { DateMois, enMois } from "../calendrier.js";
 import { formatFixe } from "../format.js";
+import { Fiabilite } from "../serie.js";
 import { dateDEffet, ligneCotisee } from "./commun.js";
+import { REGIMES_ALIGNES, luraApplicable } from "./coordonner.js";
+import * as liquider from "./liquider.js";
 
 /** L'âge d'une version qui le lit à la génération : celui de L. 161-17-2. */
 export const AGE_LEGAL_PAR_GENERATION = "age_legal_par_generation";
@@ -271,6 +274,143 @@ export function substitution(moteur, carriere) {
       plusTardif(date, plusPrecoce(declare, date.plusMois(Number(mois)))), retenue.id, CHOMAGE);
   }
   return new Substitution(date, retenue.id);
+}
+
+// LE PLANCHER DE LA PENSION SUBSTITUÉE (fiche `pension_d_invalidite_substituee`)
+
+/** La présomption qui donne sa catégorie à la pension d'invalidité non dite. */
+export const PRESOMPTION_DE_CATEGORIE = "categorie_de_la_pension_d_invalidite";
+
+/** Les catégories qu'elle donne, à qui travaille à l'âge et à l'autre (L. 341-4). */
+export const CATEGORIE_DE_QUI_TRAVAILLE = 1;
+export const CATEGORIE_DE_QUI_NE_TRAVAILLE_PAS = 2;
+
+/** Le plancher d'avant juin 1983 : la pension d'invalidité elle-même. */
+export const PLANCHER_PENSION_D_INVALIDITE = "pension_d_invalidite";
+
+/** Les régimes dont la pension d'invalidité se substitue sous ce plancher. */
+export const REGIMES_DU_PLANCHER = Object.freeze(["msa_salaries", "regime_general"]);
+
+/**
+ * Depuis le 30 décembre 1972, le salaire annuel moyen de la pension
+ * d'invalidité ne compte que les années d'après 1947 (décret n° 45-0179,
+ * article 59, 3). Voir `SALAIRE_MOYEN_DEPUIS` du Python.
+ */
+export const SALAIRE_MOYEN_DEPUIS = Object.freeze([new DateMois(1972, 12), 1948]);
+
+/**
+ * La catégorie de la pension d'invalidité, et la présomption qui la pose quand
+ * l'assuré ne la dit pas : la première quand il travaille à l'âge de la
+ * substitution, la deuxième sinon. Voir `categorie_de_la_pension` du Python.
+ *
+ * @returns {[number, string | null]}
+ */
+export function categorieDeLaPension(moteur, carriere) {
+  const declaree = carriere.pensionDInvalidite.categorie;
+  if (declaree !== null) {
+    return [declaree, null];
+  }
+  const faite = substitution(moteur, carriere);
+  const travaille = faite !== null && faite.maintien === ACTIVITE;
+  return [travaille ? CATEGORIE_DE_QUI_TRAVAILLE : CATEGORIE_DE_QUI_NE_TRAVAILLE_PAS,
+    PRESOMPTION_DE_CATEGORIE];
+}
+
+/**
+ * Le régime qui sert la pension d'invalidité : celui des affiliations de
+ * l'année où elle commence puis de l'année d'avant, parmi
+ * `REGIMES_DU_PLANCHER` ; `null` sinon. Voir le Python.
+ */
+export function regimeDeLaPensionDInvalidite(moteur, carriere) {
+  const pension = carriere.pensionDInvalidite;
+  for (const affiliation of pension.affiliations) {
+    const regimes = moteur.affiliations.regimes(affiliation, pension.debut.annee);
+    for (const code of REGIMES_DU_PLANCHER) {
+      if (regimes.includes(code)) {
+        return code;
+      }
+    }
+  }
+  return null;
+}
+
+/**
+ * La pension d'invalidité que ce régime servait au mois `effet`, en euros par
+ * an, et la fiabilité de sa revalorisation : `taux` du salaire annuel moyen de
+ * ses `annees` années d'avant celle où elle commence, formé au 1er janvier de
+ * cette année par la règle de la pension de vieillesse, puis revalorisé comme
+ * les pensions. Voir `pension_d_invalidite_servie` du Python.
+ *
+ * @returns {[number, number]}
+ */
+export function pensionDInvaliditeServie(moteur, carriere, regime, taux, annees, effet) {
+  const debut = carriere.pensionDInvalidite.debut;
+  const periode = moteur.catalogue.obtenir(regime).periode(debut.annee);
+  if (periode === null || periode === undefined) {
+    return [0.0, Fiabilite.CERTIFIEE];
+  }
+  const [depuisLe, premiere] = SALAIRE_MOYEN_DEPUIS;
+  const salaire = liquider.salaireDeReference(moteur, regime, carriere, periode, debut.annee,
+    true, carriere.annee_naissance, false, null, 0,
+    debut.rang >= depuisLe.rang ? premiere : null, annees);
+  const premier = (annee, mois) => `${String(annee).padStart(4, "0")}-`
+    + `${String(mois).padStart(2, "0")}-01`;
+  const [coefficient, fiabilite] = moteur.revalorisationsPensions.generale(
+    premier(debut.annee, 1), premier(effet.annee, effet.mois), false, Infinity);
+  return [taux * salaire * coefficient, fiabilite];
+}
+
+/**
+ * Le plancher de la pension de vieillesse de l'ex-invalide, pour la pension
+ * qui prend effet à la date de liquidation : `{regime, montant, avts,
+ * pension_d_invalidite, categorie, presomption, version, fiabilite}`, le
+ * montant entier de l'AVTS ou la pension d'invalidité liquidée avant le 31 mai
+ * 1983 quand elle est plus haute (L. 341-15) ; `null` sans substitution, ou
+ * quand aucun des `REGIMES_DU_PLANCHER` ne sert la pension d'invalidité.
+ * `regimes` dit les régimes dont la liquidation sert une pension. Voir
+ * `plancher_de_la_substitution` du Python.
+ */
+export function plancherDeLaSubstitution(moteur, carriere, regimes) {
+  if (substitution(moteur, carriere) === null) {
+    return null;
+  }
+  const serviePar = regimeDeLaPensionDInvalidite(moteur, carriere);
+  if (serviePar === null) {
+    return null;
+  }
+  let regime = regimes.includes(serviePar) ? serviePar : null;
+  if (regime === null && luraApplicable(carriere)) {
+    regime = regimes.find((code) => REGIMES_ALIGNES.has(code)) ?? null;
+  }
+  if (regime === null) {
+    return null;
+  }
+  const jour = dateDEffet(carriere);
+  const version = jour === null ? null : moteur.invalidites.version("substitution", jour);
+  if (version === null) {
+    return null;
+  }
+  const parametres = version.parametres;
+  const effet = carriere.dateLiquidation;
+  const lue = moteur.minimumContributif.avts(effet.annee, effet.mois);
+  const [avts, fiabilite] = lue !== null ? lue : [0.0, Fiabilite.CERTIFIEE];
+  const debut = carriere.pensionDInvalidite.debut;
+  const avant = parametres.plancher_invalidite_avant ?? null;
+  const jourDuDebut = `${String(debut.annee).padStart(4, "0")}-`
+    + `${String(debut.mois).padStart(2, "0")}-01`;
+  if (parametres.plancher !== PLANCHER_PENSION_D_INVALIDITE
+      && (avant === null || jourDuDebut >= String(avant))) {
+    return Object.freeze({
+      regime, montant: avts, avts, pension_d_invalidite: null, categorie: null,
+      presomption: null, version: version.id, fiabilite });
+  }
+  const [categorie, presomption] = categorieDeLaPension(moteur, carriere);
+  const [pension, fiabiliteDeLaPension] = pensionDInvaliditeServie(
+    moteur, carriere, serviePar, Number(parametres.taux_des_categories[categorie - 1]),
+    Number(parametres.annees_du_salaire_moyen), effet);
+  return Object.freeze({
+    regime, montant: Math.max(avts, pension), avts, pension_d_invalidite: pension, categorie,
+    presomption, version: version.id, fiabilite: Math.min(fiabilite, fiabiliteDeLaPension) });
 }
 
 // LE DÉPART ANTICIPÉ DES ASSURÉS HANDICAPÉS (fiche `retraite_anticipee_handicap`)

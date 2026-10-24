@@ -415,6 +415,203 @@ def test_l_age_de_l_aspa_suit_la_version(simulateur):
         assert age_de_l_aspa(moteur, valide) == 65.0
 
 
+# -- le plancher de la pension substituée ----------------------------------------
+
+#: L'allocation aux vieux travailleurs salariés du 1er janvier 2022, 3 566,43 €
+#: par an (circulaire Cnav n° 2022/3, barème de la Cnav).
+AVTS_JANVIER_2022 = 3_566.43
+
+
+def _ex_invalide(simulateur, naissance, debut, salaire, invalidite, liquidation,
+                 declaree=None) -> Carriere:
+    """Un salarié du privé né le 15 mars, que sa carrière finit en invalidité
+    (``invalidite``, les années), ou dont la pension se déclare (``declaree``)."""
+    return Carriere.depuis_parcours(
+        annee_naissance=naissance, mois_naissance=3, jour_naissance=15, sexe="H",
+        metiers=[Metier("salarie_prive_non_cadre", debut, niveau_salaire=salaire)],
+        age_liquidation=liquidation, macro=simulateur.macro,
+        interruptions={annee: "invalidite" for annee in invalidite},
+        invalidite=declaree)
+
+
+def _general(simulateur, carriere):
+    resultat = simulateur.scenario_actuel.calculer(carriere)
+    return resultat, next(p for p in resultat.pensions_par_regime
+                          if p.regime == "regime_general")
+
+
+def _pension_d_invalidite_a_la_main(simulateur, carriere, debut: int, effet, taux: float):
+    """La pension d'invalidité que l'invalide touchait à la date d'effet de sa
+    pension de vieillesse, refaite depuis les textes : « 30 % [ou 50 %] du
+    salaire annuel moyen correspondant aux cotisations versées au cours des
+    dix années civiles d'assurance dont la prise en considération est la plus
+    avantageuse », comprises entre 1947 et l'interruption de travail (R. 341-4,
+    R. 341-5 ; décret n° 45-0179, article 59), chaque salaire « dans la limite
+    du plafond » et revalorisé par les coefficients des salaires (article 59,
+    2) ; puis revalorisée comme les pensions, de son année à la date d'effet
+    (L. 341-6)."""
+    from datetime import date
+
+    macro = simulateur.macro
+    revalorises = sorted(
+        (min(ligne.revenu, macro.plafond_securite_sociale(ligne.annee) * ligne.fraction_annee)
+         * macro.coefficient_revalorisation_portee_au_compte(ligne.annee, debut, 1)
+         for ligne in carriere.lignes
+         if 1948 <= ligne.annee < debut and ligne.type_periode == "emploi"),
+        reverse=True)[:10]
+    coefficient, _ = simulateur.scenario_actuel.revalorisations_pensions.generale(
+        date(debut, 1, 1), date(*effet, 1), False, float("inf"))
+    return taux * sum(revalorises) / len(revalorises) * coefficient
+
+
+def test_l_ex_invalide_est_porte_a_l_avts(simulateur):
+    """« La pension de vieillesse substituée à une pension d'invalidité ne peut
+    être inférieure au montant de l'allocation aux vieux travailleurs
+    salariés » (L. 341-15) : la retraite au taux de 50 %, portée au minimum
+    contributif, « est comparée au montant entier de l'AVTS, si la date
+    d'effet de la pension d'invalidité se situe à partir du 31 mai 1983 [...]
+    Le montant le plus élevé est servi » (circulaire Cnav n° 2018-18, 1.3).
+    Seize mois au demi-salaire, puis invalide de 2009 à ses soixante-deux ans :
+    58 trimestres, une pension et un minimum contributif sous l'AVTS, servie
+    entière le 1er avril 2022."""
+    carriere = _ex_invalide(simulateur, 1960, 47.5, 0.5, range(2009, 2023), 62.0)
+    assert carriere.pension_d_invalidite.debut == DateMois(2009, 1)
+    resultat, general = _general(simulateur, carriere)
+    assert carriere.date_liquidation == DateMois(2022, 4)
+    assert general.montant == pytest.approx(AVTS_JANVIER_2022, abs=0.01)
+    assert "plancher de la pension substituée" in general.detail
+    plancher, = (a for a in resultat.avantages_appliques
+                 if a.libelle == "Plancher de la pension substituée")
+    # Le plancher est un minimum : la réversion se calcule sans lui, comme
+    # sans le minimum contributif (MINIMA_REVERSES).
+    assert plancher.code == "minimum_contributif"
+    assert plancher.par_regime == (("regime_general", pytest.approx(plancher.montant)),)
+    contributif = next(a for a in resultat.avantages_appliques
+                       if a.libelle == "Minimum contributif")
+    assert general.montant - plancher.montant - contributif.montant < AVTS_JANVIER_2022
+
+
+def test_la_pension_d_invalidite_d_avant_juin_1983_reste_un_plancher(simulateur):
+    """« Les titulaires d'une pension d'invalidité liquidée avant le 31 mai 1983
+    peuvent prétendre à une pension de vieillesse qui ne peut être inférieure
+    à la pension d'invalidité dont bénéficiait l'invalide à cet âge »
+    (L. 341-15 ; loi n° 84-575, article 5 ; circulaire Cnav n° 94/84). Né en
+    1942, salarié de vingt à quarante ans, invalide depuis 1982 : sa pension
+    de vieillesse de 2002 porte sur ses dix-neuf meilleures années, sa pension
+    d'invalidité sur ses dix meilleures, à 50 % en deuxième catégorie — qu'il
+    n'a pas dite : il ne travaille plus. Déclarée en première catégorie, à
+    30 %, elle reste sous sa pension de vieillesse."""
+    carriere = _ex_invalide(simulateur, 1942, 20.0, 1.0, range(1982, 2003), 60.0)
+    resultat, general = _general(simulateur, carriere)
+    assert carriere.date_liquidation == DateMois(2002, 4)
+    attendue = _pension_d_invalidite_a_la_main(simulateur, carriere, 1982, (2002, 4), 0.5)
+    assert general.montant == pytest.approx(attendue, abs=0.01)
+    assert "plancher de la pension substituée" in general.detail
+    premiere = _ex_invalide(simulateur, 1942, 20.0, 1.0, range(1982, 2003), 60.0,
+                            declaree={"pension": 39 + 10 / 12, "categorie": 1})
+    assert premiere.pension_d_invalidite.debut == DateMois(1982, 1)
+    assert premiere.pension_d_invalidite.categorie == 1
+    _, servie = _general(simulateur, premiere)
+    assert "plancher" not in servie.detail
+    assert _pension_d_invalidite_a_la_main(
+        simulateur, premiere, 1982, (2002, 4), 0.3) < servie.montant < attendue
+
+
+def test_la_categorie_se_declare_ou_se_presume(simulateur):
+    """La catégorie de la pension d'invalidité fixe son taux : « 1°) invalides
+    capables d'exercer une activité rémunérée ; 2°) invalides absolument
+    incapables d'exercer une profession quelconque ; 3°) [ceux qui ont] recours
+    à l'assistance d'une tierce personne » (L. 341-4). Déclarée, elle vaut ;
+    sinon, la présomption ``categorie_de_la_pension_d_invalidite`` donne la
+    première à qui travaille à l'âge de la substitution, la deuxième à l'autre."""
+    from retraite_notionnelle.droit.invalidite import categorie_de_la_pension
+
+    moteur = simulateur.scenario_actuel
+    presumee = "categorie_de_la_pension_d_invalidite"
+    sans_activite = _ex_invalide(simulateur, 1942, 20.0, 1.0, range(1982, 2003), 60.0)
+    assert categorie_de_la_pension(moteur, sans_activite) == (2, presumee)
+    qui_travaille = _ex_invalide(simulateur, 1942, 20.0, 1.0, (), 62.0,
+                                 declaree={"pension": 39 + 10 / 12})
+    assert categorie_de_la_pension(moteur, qui_travaille) == (1, presumee)
+    declaree = _ex_invalide(simulateur, 1942, 20.0, 1.0, range(1982, 2003), 60.0,
+                            declaree={"pension": 39 + 10 / 12, "categorie": 3})
+    assert categorie_de_la_pension(moteur, declaree) == (3, None)
+    with pytest.raises(ValueError, match="la catégorie de la pension d'invalidité"):
+        _ex_invalide(simulateur, 1942, 20.0, 1.0, range(1982, 2003), 60.0,
+                     declaree={"pension": 39 + 10 / 12, "categorie": 4})
+
+
+def test_la_deuxieme_categorie_passe_de_40_a_50_pour_cent_en_1961(simulateur):
+    """« Pour les invalides du deuxième groupe, la pension est égale à 40 p 100
+    du salaire » (ordonnance de 1945, article 56) ; « à 50 p. 100 » depuis le
+    décret n° 61-272 du 28 mars 1961 (article 3), qui majore les pensions
+    servies. La troisième catégorie a le taux de la deuxième, sa majoration
+    pour tierce personne à part."""
+    moteur = simulateur.scenario_actuel
+    for jour, taux in (("1960-06-01", [0.3, 0.4, 0.4]), ("1962-01-01", [0.3, 0.5, 0.5]),
+                       ("2002-04-01", [0.3, 0.5, 0.5]), ("2027-07-01", [0.3, 0.5, 0.5])):
+        version = moteur.invalidites.version("substitution", jour)
+        assert version["parametres"]["taux_des_categories"] == taux, jour
+
+
+#: Ce que les requêtes du plancher ne disent pas : les réglages des témoins.
+REQUETE_DU_PLANCHER = {
+    "age_reference": "fixe_apres_bascule", "bascule": "2026",
+    "conversion_acquis": "reference", "emploi": "cor_2026", "enfants": "0",
+    "euros": "2026", "indexation": "triple_lock_inverse", "primes": "0",
+    "profil": "ascendant", "projection": "cor_reference", "sexe": "H",
+    "statut": "salarie_prive_non_cadre", "stock": "prix", "table": "unisexe",
+}
+
+
+#: Les requêtes que les deux moteurs liquident : le plancher de l'AVTS, deux
+#: ans d'emploi d'une carrière que la saisie fait commencer à quarante ans, et
+#: la pension d'invalidité de 1982, de deuxième catégorie présumée.
+REQUETES_DU_PLANCHER = [
+    {"naissance": "1960-03-15", "debut": "2000-03", "liquidation": "2022-04",
+     "interruptions": "2000:2006:sans_activite,2009:2022:invalidite", "salaire": "0.5"},
+    {"naissance": "1942-03-15", "debut": "1962-03", "liquidation": "2002-04",
+     "interruptions": "1982:2002:invalidite", "salaire": "1"},
+]
+
+
+def test_les_deux_moteurs_servent_le_meme_plancher():
+    """Chaque étape de la liquidation écrit la même donnée en Python et en
+    JavaScript, et chaque requête est portée au plancher."""
+    import json
+    import shutil
+    import subprocess
+    import tempfile
+    from pathlib import Path
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    from test_liquidation import _ecarts, _python
+
+    racine = Path(__file__).resolve().parents[1]
+    requetes = [{**REQUETE_DU_PLANCHER, **cas} for cas in REQUETES_DU_PLANCHER]
+    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
+                                     delete=False) as fichier:
+        json.dump(requetes, fichier)
+        chemin = fichier.name
+    try:
+        execution = subprocess.run(
+            ["node", str(racine / "tests" / "js" / "comparer-liquidation.mjs"), chemin],
+            cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False)
+    finally:
+        Path(chemin).unlink()
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    obtenus, attendus = json.loads(execution.stdout), _python(requetes)
+    assert not any("erreur" in attendu for attendu in attendus), attendus
+    ecarts: list[str] = []
+    for rang, (obtenu, attendu) in enumerate(zip(obtenus, attendus)):
+        _ecarts(obtenu, attendu, f"requête {rang}", ecarts)
+    assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])
+    for rang, attendu in enumerate(attendus):
+        assert "plancher de la pension substituée" in json.dumps(
+            attendu, ensure_ascii=False), rang
+
+
 # -- la retraite pour invalidité des fonctionnaires ------------------------------
 
 def test_le_fonctionnaire_radie_pour_invalidite_liquide_a_sa_radiation(saisies):

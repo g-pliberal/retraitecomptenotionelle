@@ -836,6 +836,10 @@ Le relevé des droits et le résultat le signalent.
   - l'opposition de l'invalide qui travaille à la substitution, avant mars
     2010 : qui déclare travailler jusqu'à son départ y demande sa pension de
     vieillesse, comme la loi le lui permettait (quatrième domaine, § 11) ;
+  - la catégorie de la pension d'invalidité, quand l'assuré ne la dit pas : la
+    première à qui travaille à l'âge de la substitution, la deuxième à l'autre ;
+    elle fixe le taux de la pension d'invalidité d'avant le 31 mai 1983, qui
+    reste le plancher de sa pension de vieillesse (action 138, étape 4) ;
   - pas de pension étrangère, quand l'assuré n'en déclare pas : le minimum
     contributif n'est écrêté que de ses pensions françaises, et l'ASPA ne
     complète qu'elles (cinquième domaine, § 11) ;

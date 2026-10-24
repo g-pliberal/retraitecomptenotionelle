@@ -646,9 +646,16 @@ def _invalidite(assure: dict, age_liquidation: float | None, invalidite: dict) -
         if debut.rang <= naissance.rang or debut.rang >= depart.rang:
             raise ValueError("une pension d'invalidité commence après la naissance et "
                              "avant le départ")
+        attributs = {"decision": "pension_d_invalidite", "age": age}
+        # La catégorie qui en fixe le taux (L. 341-4), quand elle se déclare.
+        categorie = invalidite.get("categorie")
+        if categorie is not None:
+            if categorie not in CATEGORIES_D_INVALIDITE:
+                raise ValueError("la catégorie de la pension d'invalidité : 1, 2 ou 3, "
+                                 f"reçu {categorie}")
+            attributs["categorie"] = categorie
         faits.append(fait(f"pension_d_invalidite_{ASSURE}", ASSURE, "decision_medicale",
-                          _jour(debut),
-                          attributs={"decision": "pension_d_invalidite", "age": age}))
+                          _jour(debut), attributs=attributs))
     if invalidite.get("inaptitude"):
         faits.append(fait(f"inaptitude_{ASSURE}", ASSURE, "decision_medicale", _jour(depart),
                           attributs={"decision": "inaptitude"}))
@@ -705,6 +712,12 @@ def _invalidite(assure: dict, age_liquidation: float | None, invalidite: dict) -
 #: Le taux d'incapacité permanente que la saisie déclare : « au moins 50 % ».
 #: Ce que le droit exige à d'autres dates, 80 % avant 2015, elle ne l'établit pas.
 TAUX_D_INCAPACITE_DECLARE = 50
+
+#: Les catégories d'invalides : « capables d'exercer une activité rémunérée »,
+#: « absolument incapables d'exercer une profession quelconque », et ceux qui
+#: doivent en outre « avoir recours à l'assistance d'une tierce personne »
+#: (L. 341-4).
+CATEGORIES_D_INVALIDITE = (1, 2, 3)
 
 
 #: La nature d'une activité exercée hors de France : salariée, ou non.

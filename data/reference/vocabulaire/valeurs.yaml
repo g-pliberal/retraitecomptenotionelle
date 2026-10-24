@@ -614,6 +614,26 @@ listes:
           janvier. Une invalidité suivie d'une reprise d'activité est présumée
           avoir pris fin : une pension supprimée pour raison médicale ne se
           substitue pas (circulaire Cnav n° 2023-25, 1.3)
+      categorie_de_la_pension_d_invalidite:
+        dit: >-
+          la pension d'invalidité dont l'assuré ne dit pas la catégorie est de
+          la première catégorie quand il travaille à l'âge de la substitution,
+          de la deuxième sinon
+        valeur: la première à qui travaille à l'âge de la substitution, la deuxième sinon
+        appliquee_par: categorie_de_la_pension (droit/invalidite.py), que le plancher de la pension substituée lit (droit/completer.py) ; leurs jumeaux JavaScript
+        entrera_a: completer_tous_regimes
+        raison: >-
+          la catégorie fixe le taux de la pension d'invalidité, 30 % du salaire
+          annuel moyen en première, 50 % en deuxième et en troisième (R. 341-4
+          à R. 341-6), et la pension d'invalidité liquidée avant le 31 mai 1983
+          reste le plancher de la pension de vieillesse qui la remplace
+          (L. 341-15, fiche pension_d_invalidite_substituee). Le formulaire ne
+          la demande pas ; la loi la définit par l'activité : « 1°) invalides
+          capables d'exercer une activité rémunérée ; 2°) invalides absolument
+          incapables d'exercer une profession quelconque » (L. 341-4). Qui
+          travaille à l'âge de la substitution en était capable ; l'autre, que
+          sa carrière finit en invalidité, est présumé ne pas l'être. La
+          troisième, qui ajoute l'aide d'une tierce personne, ne se présume pas
       opposition_a_la_substitution:
         dit: >-
           avant le 1er mars 2010, l'invalide qui travaille encore à l'âge de la

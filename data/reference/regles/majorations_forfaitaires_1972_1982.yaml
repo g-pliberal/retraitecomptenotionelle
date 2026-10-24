@@ -247,15 +247,15 @@ approximations:
     plus que la pension majorée sur la durée maximum de sa date — 46,30 % au plus avant
     1972, 47,04 % en 1972, 47,82 % en 1973, 48,72 % en 1974 —, n'a pas les majorations de
     1972, 1976 et 1977, ni celles de 5,5 % et de 1,5 % de 1982 ; et elles donnent les 6 % et
-    les 4 % de 1982 à tous les ex-invalides, quel que soit leur groupe. Le modèle majore
-    la pension de vieillesse de l'ex-invalide comme celle de tout autre, ce que dit la
-    loi, sans la comparer : il ne sert pas le plancher de la pension substituée (fiche
-    pension_d_invalidite_substituee) et ne connaît ni le groupe ni le montant de la
-    pension d'invalidité
+    les 4 % de 1982 à tous les ex-invalides, quel que soit leur groupe. Le modèle sert
+    le plancher à la liquidation, au taux du groupe de la pension d'invalidité, déclaré
+    ou présumé (fiche pension_d_invalidite_substituee, depuis le 24 octobre 2026), puis
+    majore la pension servie, plancher compris, sans la comparer de nouveau : il majore
+    le plancher, quand la caisse ne majorait que la pension des cotisations
   effet: >-
     l'ex-invalide des deuxième et troisième groupes parti avant 1975, servi à 50 % de
-    son salaire annuel moyen, que le modèle sert à sa pension majorée, plus basse ; non
-    mesuré
+    son salaire annuel moyen, dont le modèle majore le plancher des majorations de 1972,
+    1976 et 1977 et des 5,5 % et 1,5 % de 1982, qu'il n'avait pas ; non mesuré
 - ecart: >-
     les majorations de 1976 et de 1977 ne relèvent pas les pensions des salariés
     agricoles : leurs lois ne les nomment pas, et les décrets qui les leur ont étendues
@@ -431,6 +431,10 @@ historique:
   4 de l'action 138 : la comparaison au plancher de la pension substituée, que le modèle
   ne fait pas ; le code local hors du champ ; les décrets n° 76-727 et n° 77-966, en
   notice seule, laissés au Journal officiel.
+- >-
+  2026-10-24 — le plancher de la pension substituée servi à la liquidation (fiche
+  pension_d_invalidite_substituee) : reste la comparaison à chaque majoration, que
+  l'écart de l'ex-invalide dit.
 effet: >-
   Les retraités du régime général partis avant 1975 sur la durée maximum de leur date :
   jusqu'à 22,7 % de plus pour une pension d'avant 1972, depuis décembre 1982 ; et la

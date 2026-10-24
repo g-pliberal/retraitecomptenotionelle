@@ -942,9 +942,10 @@ export class Carriere {
 
   /**
    * La pension d'invalidité de la Sécurité sociale que la personne touche, quand
-   * l'âge légal la trouve invalide : `{debut, presomption, affiliations}`, le
-   * mois où elle a commencé, la présomption qui la pose, les affiliations de
-   * son année puis de l'année d'avant. Déclarée, ou présumée depuis le
+   * l'âge légal la trouve invalide : `{debut, presomption, affiliations,
+   * categorie}`, le mois où elle a commencé, la présomption qui la pose, les
+   * affiliations de son année puis de l'année d'avant, et sa catégorie quand
+   * elle se déclare (L. 341-4), `null` sinon. Déclarée, ou présumée depuis le
    * début de l'invalidité par laquelle sa carrière finit (présomption
    * `pension_d_invalidite_de_la_periode`) ; `null` sinon. Voir
    * `pension_d_invalidite` du Python.
@@ -957,7 +958,8 @@ export class Carriere {
       if (fait !== null) {
         const debut = chrono.moisDe(fait.debut);
         this._pensionDInvalidite = Object.freeze({
-          debut, presomption: null, affiliations: this._affiliationsAutour(debut) });
+          debut, presomption: null, affiliations: this._affiliationsAutour(debut),
+          categorie: fait.attributs.categorie ?? null });
       } else {
         const annees = this._lignesPrincipalesFinales("invalidite").map((l) => l.annee);
         const debut = annees.length === 0 ? null : new DateMois(Math.min(...annees), 1);
@@ -965,6 +967,7 @@ export class Carriere {
           debut,
           presomption: "pension_d_invalidite_de_la_periode",
           affiliations: this._affiliationsAutour(debut),
+          categorie: null,
         });
       }
     }

@@ -452,10 +452,13 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   invalidité d'un fonctionnaire se déclarent : l'inapte et l'ex-invalide ont le
   taux plein au régime général et dans les régimes alignés, à l'âge que la loi
   leur ouvre, et l'ASPA au même âge ; la pension de vieillesse remplace d'office
-  la pension d'invalidité ; le fonctionnaire radié liquide à sa radiation, sans
-  décote, à ses planchers et avec sa rente viagère. Restent dehors le plancher
-  de l'allocation aux vieux travailleurs salariés, sans effet sur le montant tant
-  que l'ASPA est servie ; l'inaptitude des régimes que la fiche
+  la pension d'invalidité, et ne descend ni sous l'allocation aux vieux
+  travailleurs salariés, ni sous la pension d'invalidité liquidée avant le
+  31 mai 1983, au taux de sa catégorie, déclarée ou présumée ; le fonctionnaire
+  radié liquide à sa radiation, sans décote, à ses planchers et avec sa rente
+  viagère. Restent dehors ce plancher comparé de nouveau à chaque majoration de
+  1972 à 1982, que le modèle ajoute au plancher, et à chaque changement de
+  l'allocation ; celui des indépendants ; l'inaptitude des régimes que la fiche
   `inaptitude_au_travail` ne nomme pas ; les réputés inaptes qui ne se déclarent
   pas (allocation aux adultes handicapés, carte d'invalidité) ; le militaire
   réformé ; la majoration pour tierce personne. Les autres taux pleins de

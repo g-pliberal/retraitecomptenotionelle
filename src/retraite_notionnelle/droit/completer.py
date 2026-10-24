@@ -272,6 +272,10 @@ def plancher_d_avant_1983(eligible, montant: float, regle: dict, ex_invalide: bo
     return montant * min(1.0, eligible.duree_regime / entier)
 
 
+#: Les catégories de la pension d'invalidité, comme le détail les nomme.
+ORDINAUX_DES_CATEGORIES = {1: "première", 2: "deuxième", 3: "troisième"}
+
+
 #: Le régime qui sert à part les droits d'avant 1973 de chaque régime aligné en
 #: 1973 (L. 634-3 ; action 138, étape 18).
 DROITS_D_AVANT_1973 = {"cancava": "cancava_avant_1973", "organic": "organic_avant_1973"}
@@ -1774,6 +1778,50 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                 par_regime=tuple((pensions[indice].regime, complement)
                                  for indice, complement in complements.items()
                                  if complement > 0),
+            ))
+
+    # LE PLANCHER DE LA PENSION SUBSTITUÉE (L. 341-15) : la retraite de
+    # l'ex-invalide, au taux de 50 % et portée au minimum contributif, « est
+    # comparée au montant entier de l'AVTS », ou à la pension d'invalidité
+    # liquidée avant le 31 mai 1983 ; « Le montant le plus élevé est servi »,
+    # et la majoration pour enfants s'y ajoute (circulaire Cnav n° 2018-18,
+    # 1.3). Ce qu'il ajoute est un minimum : la réversion se calcule sans lui,
+    # sur « le montant calculé de la retraite de l'assuré décédé, avant
+    # comparaison au minimum » (exposé de la Cnav), et ce qui suit le compte
+    # avec le minimum contributif (``ajouts_du_minimum``).
+    plancher_substitue = (invalidite.plancher_de_la_substitution(
+        moteur, carriere, [p.regime for p in pensions])
+        if avantages_non_contributifs else None)
+    indice_substitue = next((indice for indice, pension in enumerate(pensions)
+                             if plancher_substitue is not None
+                             and pension.regime == plancher_substitue.regime), None)
+    if indice_substitue is not None:
+        pension = pensions[indice_substitue]
+        ecart = plancher_substitue.montant - pension.montant
+        if ecart > 0:
+            quoi = ("la pension d'invalidité d'avant le 31 mai 1983, revalorisée"
+                    if plancher_substitue.montant > plancher_substitue.avts
+                    else "l'allocation aux vieux travailleurs salariés")
+            pensions[indice_substitue] = replace(
+                pension, montant=plancher_substitue.montant,
+                detail=(f"{pension.detail} = {pension.montant:,.2f} €, porté au plancher "
+                        f"de la pension substituée, {quoi}, par + {ecart:,.2f} €"))
+            ajouts_du_minimum[indice_substitue] = (
+                ajouts_du_minimum.get(indice_substitue, 0.0) + ecart)
+            total += ecart
+            fiabilite_globale = min(fiabilite_globale, plancher_substitue.fiabilite)
+            categorie = ("" if plancher_substitue.categorie is None else
+                         f", de {ORDINAUX_DES_CATEGORIES[plancher_substitue.categorie]}"
+                         " catégorie" + (" présumée" if plancher_substitue.presomption
+                                         else ""))
+            # Le code du minimum, dont la réversion et la cascade lisent la part.
+            avantages.append(AvantageApplique(
+                code="minimum_contributif",
+                libelle="Plancher de la pension substituée",
+                montant=ecart,
+                detail=(f"la pension de vieillesse de l'ex-invalide portée à {quoi}"
+                        f"{categorie} : elle ne peut lui être inférieure (L. 341-15)"),
+                par_regime=((pension.regime, ecart),),
             ))
 
     # LA MAJORATION EXCEPTIONNELLE DE SEPTEMBRE 2023 relève les pensions que

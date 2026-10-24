@@ -303,6 +303,9 @@ class PensionDInvalidite:
     #: l'activité principale de chacune en tête : le régime qui la sert est
     #: celui dont la personne relevait quand l'invalidité est survenue.
     affiliations: tuple[str, ...] = ()
+    #: Sa catégorie, quand elle se déclare (L. 341-4) ; sinon, le plancher de
+    #: la pension substituée la présume (``droit/invalidite.py``).
+    categorie: int | None = None
 
 
 @dataclass(frozen=True)
@@ -1075,7 +1078,8 @@ class Carriere:
         if fait is not None:
             debut = chrono.mois_de(fait["debut"])
             return PensionDInvalidite(debut=debut,
-                                      affiliations=self._affiliations_autour(debut))
+                                      affiliations=self._affiliations_autour(debut),
+                                      categorie=fait["attributs"].get("categorie"))
         annees = [ligne.annee for ligne in self._lignes_principales_finales("invalidite")]
         if not annees:
             return None

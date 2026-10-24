@@ -571,6 +571,14 @@ function exConjoint(assure, rang, ex) {
 export const TAUX_D_INCAPACITE_DECLARE = 50;
 
 /**
+ * Les catégories d'invalides : « capables d'exercer une activité rémunérée »,
+ * « absolument incapables d'exercer une profession quelconque », et ceux qui
+ * doivent en outre « avoir recours à l'assistance d'une tierce personne »
+ * (L. 341-4). Voir `CATEGORIES_D_INVALIDITE` du Python.
+ */
+export const CATEGORIES_D_INVALIDITE = Object.freeze([1, 2, 3]);
+
+/**
  * Les faits de l'invalidité et de l'inaptitude que la saisie déclare : la
  * pension d'invalidité, l'inaptitude et l'incapacité permanente, trois
  * décisions médicales, la radiation pour invalidité d'un fonctionnaire. Voir
@@ -590,8 +598,18 @@ function invaliditeDeclaree(assure, ageLiquidation, invalidite) {
       throw new Error("une pension d'invalidité commence après la naissance et avant le "
         + "départ");
     }
+    const attributs = { decision: "pension_d_invalidite", age };
+    // La catégorie qui en fixe le taux (L. 341-4), quand elle se déclare.
+    const categorie = invalidite.categorie ?? null;
+    if (categorie !== null) {
+      if (!CATEGORIES_D_INVALIDITE.includes(categorie)) {
+        throw new Error("la catégorie de la pension d'invalidité : 1, 2 ou 3, "
+          + `reçu ${categorie}`);
+      }
+      attributs.categorie = categorie;
+    }
     faits.push(fait(`pension_d_invalidite_${ASSURE}`, ASSURE, "decision_medicale",
-      jour(debut), null, { decision: "pension_d_invalidite", age }));
+      jour(debut), null, attributs));
   }
   if (invalidite.inaptitude) {
     faits.push(fait(`inaptitude_${ASSURE}`, ASSURE, "decision_medicale", jour(depart), null,

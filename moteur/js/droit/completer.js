@@ -25,7 +25,7 @@ import {
 import { pointsGratuits } from "./acquerir.js";
 import { trimestresDeLaLigneEntre } from "./compter.js";
 import * as etranger from "./etranger.js";
-import { substitution } from "./invalidite.js";
+import { plancherDeLaSubstitution, substitution } from "./invalidite.js";
 import * as liquider from "./liquider.js";
 import * as ouvrir from "./ouvrir.js";
 
@@ -1066,6 +1066,10 @@ export function plancherDAvant1983(eligible, montant, regle, exInvalide) {
   return montant * Math.min(1.0, eligible.dureeRegime / regle.trimestres_du_minimum_entier);
 }
 
+/** Les catégories de la pension d'invalidité, comme le détail les nomme. */
+export const ORDINAUX_DES_CATEGORIES = Object.freeze({ 1: "première", 2: "deuxième",
+  3: "troisième" });
+
 /**
  * Ce que la pension minimum d'avant le 1er avril 1983 ajoute à la pension d'un
  * artisan ou d'un commerçant : le minimum proratisé sur les seuls trimestres
@@ -1519,6 +1523,47 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
         // calcule sans elle (`droit/reversion.js`).
         par_regime: [...complements].filter(([, complement]) => complement > 0)
           .map(([indice, complement]) => [pensions[indice].regime, complement]),
+      });
+    }
+  }
+
+  // LE PLANCHER DE LA PENSION SUBSTITUÉE (L. 341-15) : la retraite de
+  // l'ex-invalide, portée au minimum contributif, est comparée au montant entier
+  // de l'AVTS, ou à la pension d'invalidité liquidée avant le 31 mai 1983 ; le
+  // plus élevé est servi, et la majoration pour enfants s'y ajoute. Ce qu'il
+  // ajoute est un minimum, que la réversion ne compte pas. Voir le Python.
+  const plancherSubstitue = avantagesNonContributifs
+    ? plancherDeLaSubstitution(moteur, carriere, pensions.map((p) => p.regime))
+    : null;
+  const indiceSubstitue = plancherSubstitue === null ? -1
+    : pensions.findIndex((p) => p.regime === plancherSubstitue.regime);
+  if (indiceSubstitue >= 0) {
+    const pension = pensions[indiceSubstitue];
+    const ecart = plancherSubstitue.montant - pension.montant;
+    if (ecart > 0) {
+      const quoi = plancherSubstitue.montant > plancherSubstitue.avts
+        ? "la pension d'invalidité d'avant le 31 mai 1983, revalorisée"
+        : "l'allocation aux vieux travailleurs salariés";
+      pensions[indiceSubstitue] = {
+        ...pension,
+        montant: plancherSubstitue.montant,
+        detail: `${pension.detail} = ${formatFixe(pension.montant, 2, true)} €, porté au `
+          + `plancher de la pension substituée, ${quoi}, par + ${formatFixe(ecart, 2, true)} €`,
+      };
+      ajoutsDuMinimum.set(indiceSubstitue, (ajoutsDuMinimum.get(indiceSubstitue) ?? 0.0) + ecart);
+      total += ecart;
+      fiabiliteGlobale = Math.min(fiabiliteGlobale, plancherSubstitue.fiabilite);
+      const categorie = plancherSubstitue.categorie === null ? ""
+        : `, de ${ORDINAUX_DES_CATEGORIES[plancherSubstitue.categorie]} catégorie`
+          + (plancherSubstitue.presomption !== null ? " présumée" : "");
+      // Le code du minimum, dont la réversion et la cascade lisent la part.
+      avantages.push({
+        code: "minimum_contributif",
+        libelle: "Plancher de la pension substituée",
+        montant: ecart,
+        detail: `la pension de vieillesse de l'ex-invalide portée à ${quoi}${categorie} : `
+          + "elle ne peut lui être inférieure (L. 341-15)",
+        par_regime: [[pension.regime, ecart]],
       });
     }
   }

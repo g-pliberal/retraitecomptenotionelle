@@ -26,7 +26,12 @@
   tard à l'âge du taux plein automatique (L. 341-16) ; depuis septembre
   2017, le demandeur d'emploi indemnisé la garde six mois de plus
   (D. 341-1). Avant 2010, l'invalide qui travaillait pouvait s'opposer à la
-  substitution : le modèle présume l'opposition de qui travaille encore.
+  substitution : le modèle présume l'opposition de qui travaille encore. La
+  pension de vieillesse substituée a un plancher (:func:`plancher_de_la_substitution`) :
+  l'allocation aux vieux travailleurs salariés, et la pension d'invalidité
+  elle-même quand elle a été liquidée avant le 31 mai 1983, au taux de sa
+  catégorie (L. 341-4, L. 341-15), que l'étape « compléter » oppose à la
+  pension portée au minimum contributif.
 * ``retraite_anticipee_handicap`` : l'assuré qui a cotisé, alors que son
   incapacité permanente atteignait le taux de la version, la durée requise
   diminuée de 60 à 100 trimestres part dès cinquante-cinq ans (L. 351-1-3,
@@ -50,11 +55,13 @@ Son jumeau est ``moteur/js/droit/invalidite.js``.
 
 from __future__ import annotations
 
+import datetime as dt
 import math
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from ..calendrier import DateMois, en_mois
+from ..donnees.chargement import Fiabilite
 from .commun import date_d_effet, ligne_cotisee
 from ..somme import somme_ordonnee
 
@@ -296,6 +303,167 @@ def substitution(moteur: ScenarioActuel, carriere: Carriere) -> Substitution | N
         return Substitution(max(date, min(declare, date.plus_mois(int(mois)))),
                             version["id"], CHOMAGE)
     return Substitution(date, version["id"])
+
+
+# LE PLANCHER DE LA PENSION SUBSTITUÉE (fiche ``pension_d_invalidite_substituee``)
+
+#: La présomption qui donne sa catégorie à la pension d'invalidité que
+#: l'assuré ne dit pas (vocabulaire, § 5.6).
+PRESOMPTION_DE_CATEGORIE = "categorie_de_la_pension_d_invalidite"
+
+#: Les catégories qu'elle donne : la première à qui travaille à l'âge de la
+#: substitution — « invalides capables d'exercer une activité rémunérée » —,
+#: la deuxième à l'autre — « absolument incapables d'exercer une profession
+#: quelconque » (L. 341-4).
+CATEGORIE_DE_QUI_TRAVAILLE = 1
+CATEGORIE_DE_QUI_NE_TRAVAILLE_PAS = 2
+
+#: Le plancher que la version écrit : la pension d'invalidité servie à
+#: soixante ans (ordonnance de 1945, article 62), avant juin 1983 ;
+#: l'allocation aux vieux travailleurs salariés depuis (L. 341-15).
+PLANCHER_PENSION_D_INVALIDITE = "pension_d_invalidite"
+
+#: Les régimes dont la pension d'invalidité se substitue sous ce plancher :
+#: le régime général, et les salariés agricoles, qui le suivent par renvoi au
+#: code de la sécurité sociale ; l'indépendant a le sien.
+REGIMES_DU_PLANCHER = ("msa_salaries", "regime_general")
+
+#: Depuis le 30 décembre 1972, le salaire annuel moyen de la pension
+#: d'invalidité ne compte que les années « accomplies postérieurement au 31
+#: décembre 1947 » (décret n° 45-0179, article 59, 3) ; l'ordonnance de 1945
+#: comptait « les dix dernières années d'assurance », sans borne.
+SALAIRE_MOYEN_DEPUIS = (DateMois(1972, 12), 1948)
+
+
+def categorie_de_la_pension(moteur: ScenarioActuel, carriere: Carriere
+                            ) -> tuple[int, str | None]:
+    """La catégorie de la pension d'invalidité de l'assuré, qui en fixe le
+    taux (L. 341-4), et la présomption qui la pose quand il ne la dit pas
+    (:data:`PRESOMPTION_DE_CATEGORIE`) : la première quand il travaille à
+    l'âge de la substitution, la deuxième sinon."""
+    declaree = carriere.pension_d_invalidite.categorie
+    if declaree is not None:
+        return declaree, None
+    faite = substitution(moteur, carriere)
+    travaille = faite is not None and faite.maintien == ACTIVITE
+    return (CATEGORIE_DE_QUI_TRAVAILLE if travaille
+            else CATEGORIE_DE_QUI_NE_TRAVAILLE_PAS), PRESOMPTION_DE_CATEGORIE
+
+
+def regime_de_la_pension_d_invalidite(moteur: ScenarioActuel,
+                                      carriere: Carriere) -> str | None:
+    """Le régime qui sert la pension d'invalidité de l'assuré : celui dont il
+    relevait quand l'invalidité est survenue, les affiliations de l'année où
+    elle commence puis de l'année d'avant, parmi :data:`REGIMES_DU_PLANCHER` ;
+    ``None`` quand aucune n'y mène."""
+    pension = carriere.pension_d_invalidite
+    for affiliation in pension.affiliations:
+        regimes = moteur.affiliations.regimes(affiliation, pension.debut.annee)
+        for code in REGIMES_DU_PLANCHER:
+            if code in regimes:
+                return code
+    return None
+
+
+def pension_d_invalidite_servie(moteur: ScenarioActuel, carriere: Carriere, regime: str,
+                                taux: float, annees: int, effet: DateMois
+                                ) -> tuple[float, Fiabilite]:
+    """La pension d'invalidité que ce régime servait à l'assuré au mois
+    ``effet``, en euros par an, et la fiabilité de sa revalorisation : ``taux``
+    — celui de sa catégorie — du salaire annuel moyen de ses ``annees``
+    meilleures années d'avant celle où elle commence, ou de ses dernières
+    avant 1973, que la règle de la pension de vieillesse forme à cette date
+    (décret n° 45-0179, article 59, 2 et 3 ; ordonnance de 1945, article 56) ;
+    puis revalorisée comme les pensions jusqu'au mois ``effet`` (L. 341-6).
+
+    Le modèle la calcule au 1er janvier de son année, comme le salaire annuel
+    moyen d'une pension qui prend effet ce jour-là : la revalorisation qui
+    tombe ce jour est déjà dans ses coefficients. Les mêmes arrêtés fixent
+    « les coefficients de majoration applicables aux salaires servant de base
+    au calcul des pensions » et ceux des pensions liquidées (ordonnance de
+    1945, article 56, § 1er)."""
+    from . import liquider
+
+    debut = carriere.pension_d_invalidite.debut
+    periode = moteur.catalogue[regime].periode(debut.annee)
+    if periode is None:
+        return 0.0, Fiabilite.CERTIFIEE
+    depuis_le, premiere = SALAIRE_MOYEN_DEPUIS
+    salaire = liquider.salaire_de_reference(
+        moteur, regime, carriere, periode, debut.annee, True, carriere.annee_naissance,
+        avpf=False, depuis=premiere if debut.rang >= depuis_le.rang else None,
+        annees=annees)
+    coefficient, fiabilite = moteur.revalorisations_pensions.generale(
+        dt.date(debut.annee, 1, 1), dt.date(effet.annee, effet.mois, 1), False, math.inf)
+    return taux * salaire * coefficient, fiabilite
+
+
+@dataclass(frozen=True)
+class PlancherDeLaSubstitution:
+    """Le plancher de la pension de vieillesse qui remplace la pension
+    d'invalidité, à sa date d'effet, en euros par an : le montant entier de
+    l'allocation aux vieux travailleurs salariés, ou la pension d'invalidité
+    liquidée avant le 31 mai 1983 quand elle est plus haute (L. 341-15)."""
+
+    #: Le régime dont la pension se compare au plancher.
+    regime: str
+    montant: float
+    avts: float
+    #: La pension d'invalidité d'avant juin 1983, revalorisée ; ``None`` quand
+    #: elle n'est pas un plancher.
+    pension_d_invalidite: float | None
+    #: Sa catégorie, et la présomption qui la pose.
+    categorie: int | None
+    presomption: str | None
+    version: str
+    fiabilite: Fiabilite
+
+
+def plancher_de_la_substitution(moteur: ScenarioActuel, carriere: Carriere,
+                                regimes) -> PlancherDeLaSubstitution | None:
+    """Le plancher de la pension de vieillesse de l'ex-invalide, pour la
+    pension de la carrière qui prend effet à sa date de liquidation ; ``None``
+    sans substitution, ou quand la pension d'invalidité n'est servie par aucun
+    des :data:`REGIMES_DU_PLANCHER`.
+
+    ``regimes`` dit les régimes dont la liquidation sert une pension : le
+    plancher se compare à celle du régime qui servait la pension d'invalidité,
+    et, sous la liquidation unique, à celle qu'elle sert, de quelque régime
+    aligné qu'elle soit (circulaire Cnav n° 2018-18, 7.1). La pension
+    d'invalidité, elle, se calcule sur les salaires de son régime."""
+    if substitution(moteur, carriere) is None:
+        return None
+    servie_par = regime_de_la_pension_d_invalidite(moteur, carriere)
+    if servie_par is None:
+        return None
+    regime = servie_par if servie_par in regimes else None
+    if regime is None:
+        from .coordonner import REGIMES_ALIGNES, lura_applicable
+        if lura_applicable(carriere):
+            regime = next((code for code in regimes if code in REGIMES_ALIGNES), None)
+    if regime is None:
+        return None
+    jour = date_d_effet(carriere)
+    version = None if jour is None else moteur.invalidites.version("substitution", jour)
+    if version is None:
+        return None
+    parametres = version["parametres"]
+    effet = carriere.date_liquidation
+    lue = moteur.minimum_contributif.avts(effet.annee, effet.mois)
+    avts, fiabilite = lue if lue is not None else (0.0, Fiabilite.CERTIFIEE)
+    debut = carriere.pension_d_invalidite.debut
+    avant = parametres.get("plancher_invalidite_avant")
+    if (parametres["plancher"] != PLANCHER_PENSION_D_INVALIDITE
+            and (avant is None or f"{debut.annee:04d}-{debut.mois:02d}-01" >= str(avant))):
+        return PlancherDeLaSubstitution(regime, avts, avts, None, None, None,
+                                        version["id"], fiabilite)
+    categorie, presomption = categorie_de_la_pension(moteur, carriere)
+    pension, fiabilite_pension = pension_d_invalidite_servie(
+        moteur, carriere, servie_par, float(parametres["taux_des_categories"][categorie - 1]),
+        int(parametres["annees_du_salaire_moyen"]), effet)
+    return PlancherDeLaSubstitution(regime, max(avts, pension), avts, pension, categorie,
+                                    presomption, version["id"],
+                                    min(fiabilite, fiabilite_pension))
 
 
 # LE DÉPART ANTICIPÉ DES ASSURÉS HANDICAPÉS (fiche ``retraite_anticipee_handicap``)
