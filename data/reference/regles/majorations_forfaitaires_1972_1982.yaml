@@ -56,6 +56,11 @@ versions:
       base de la durée maximum d'assurance susceptible d'être prise en compte à leur
       date d'entrée en jouissance »
     lu_le: 2026-10-09
+  - id: LEGIARTI000006755695
+    article: loi n° 75-1279 du 30 décembre 1975, article 4
+    en_vigueur: 1976-07-01
+    citation: « Les dispositions de la présente loi prendront effet au 1er juillet 1976. »
+    lu_le: 2026-10-24
   - id: LEGIARTI000006755703
     article: loi n° 77-657 du 28 juin 1977, article 1er
     en_vigueur: 1977-06-29
@@ -75,6 +80,14 @@ versions:
       de vieillesse des salariés des assurances sociales agricoles sont majorées
       forfaitairement de : 6 % quand elles ont pris effet avant le 1er janvier 1972 »
     lu_le: 2026-10-09
+  - id: LEGIARTI000006756136
+    article: loi n° 82-599 du 13 juillet 1982, article 2
+    en_vigueur: 1982-12-01
+    citation: >-
+      « Les fractions de pensions de vieillesse qui incombent au régime général et au
+      régime des salariés des assurances sociales agricoles sont majorées
+      forfaitairement de : 6 % quand elles ont pris effet avant le 1er janvier 1972 »
+    lu_le: 2026-10-24
   nee_de: LEGIARTI000006756027
   bornes:
     liquidation.date_effet: [null, 1972-01-01]
@@ -105,6 +118,9 @@ versions:
   - id: LEGIARTI000006755694
     article: loi n° 75-1279 du 30 décembre 1975, article 3
     en_vigueur: 1976-07-01
+  - id: LEGIARTI000006755695
+    article: loi n° 75-1279 du 30 décembre 1975, article 4
+    en_vigueur: 1976-07-01
   - id: LEGIARTI000006755703
     article: loi n° 77-657 du 28 juin 1977, article 1er
     en_vigueur: 1977-06-29
@@ -113,6 +129,9 @@ versions:
     en_vigueur: 1982-12-01
     citation: « 4 % quand elles ont pris effet entre le 1er janvier et le 31 décembre 1972 »
     lu_le: 2026-10-09
+  - id: LEGIARTI000006756136
+    article: loi n° 82-599 du 13 juillet 1982, article 2
+    en_vigueur: 1982-12-01
   nee_de: LEGIARTI000006755694
   bornes:
     liquidation.date_effet: [1972-01-01, 1973-01-01]
@@ -140,6 +159,15 @@ versions:
       « 5,5 % quand elles ont pris effet entre le 1er janvier et le 31 décembre 1973 et
       ont été liquidées sur la base d'une durée d'assurance de trente-quatre années »
     lu_le: 2026-10-09
+  - id: LEGIARTI000006756136
+    article: loi n° 82-599 du 13 juillet 1982, article 2
+    en_vigueur: 1982-12-01
+    citation: >-
+      « 5,5 % quand elles ont pris effet entre le 1er janvier et le 31 décembre 1973 et
+      lorsque la durée totale d'assurance retenue pour leur calcul, en vertu de la
+      réglementation ou d'une convention internationale, est au moins égale à
+      trente-quatre années »
+    lu_le: 2026-10-24
   nee_de: LEGIARTI000006756135
   bornes:
     liquidation.date_effet: [1973-01-01, 1974-01-01]
@@ -162,6 +190,15 @@ versions:
       « 1,5 % quand elles ont pris effet entre le 1er janvier et le 31 décembre 1974 et
       ont été liquidées sur la base d'une durée d'assurance de trente-six années »
     lu_le: 2026-10-09
+  - id: LEGIARTI000006756136
+    article: loi n° 82-599 du 13 juillet 1982, article 2
+    en_vigueur: 1982-12-01
+    citation: >-
+      « 1,5 % quand elles ont pris effet entre le 1er janvier et le 31 décembre 1974 et
+      lorsque la durée totale d'assurance retenue pour leur calcul, en vertu de la
+      réglementation ou d'une convention internationale, est au moins égale à
+      trente-six années »
+    lu_le: 2026-10-24
   nee_de: LEGIARTI000006756135
   bornes:
     liquidation.date_effet: [1974-01-01, 1975-01-01]
@@ -201,18 +238,51 @@ approximations:
     de la durée maximum, l'est sur la durée du seul régime
   effet: non mesuré
 - ecart: >-
-    l'ancien invalide dont la pension de vieillesse a remplacé une pension d'invalidité
-    des deuxième et troisième groupes, à qui les circulaires refusent les majorations de
-    1976, 1977, et celles de 5,5 % et 1,5 % de 1982, est majoré comme les autres
-  effet: non mesuré
+    les majorations ne relèvent que « la pension de vieillesse résultant des
+    cotisations », que la caisse devait « en principe » comparer à la pension
+    d'invalidité de l'ex-invalide « afin de servir le montant le plus élevé » : la
+    pension substituée ne peut être inférieure à la pension d'invalidité (ordonnance de
+    1945, article 62). Les circulaires en tirent que l'ex-invalide des deuxième et
+    troisième groupes, dont la pension substituée vaut 50 % de son salaire annuel moyen,
+    plus que la pension majorée sur la durée maximum de sa date — 46,30 % au plus avant
+    1972, 47,04 % en 1972, 47,82 % en 1973, 48,72 % en 1974 —, n'a pas les majorations de
+    1972, 1976 et 1977, ni celles de 5,5 % et de 1,5 % de 1982 ; et elles donnent les 6 % et
+    les 4 % de 1982 à tous les ex-invalides, quel que soit leur groupe. Le modèle majore
+    la pension de vieillesse de l'ex-invalide comme celle de tout autre, ce que dit la
+    loi, sans la comparer : il ne sert pas le plancher de la pension substituée (fiche
+    pension_d_invalidite_substituee) et ne connaît ni le groupe ni le montant de la
+    pension d'invalidité
+  effet: >-
+    l'ex-invalide des deuxième et troisième groupes parti avant 1975, servi à 50 % de
+    son salaire annuel moyen, que le modèle sert à sa pension majorée, plus basse ; non
+    mesuré
 - ecart: >-
     les majorations de 1976 et de 1977 ne relèvent pas les pensions des salariés
-    agricoles, que leurs lois ne nomment pas, ni celles des assurés d'Alsace-Moselle
-    relevant du code local, que la loi n° 75-1279 vise à son article 7 et que le modèle
-    ne distingue pas
-  effet: non mesuré
+    agricoles : leurs lois ne les nomment pas, et les décrets qui les leur ont étendues
+    ne sont lus que dans leur notice — le décret n° 76-727 du 28 juillet 1976, qui porte
+    « majoration des pensions de vieillesse dues au titre des parag. 1, 2 et 2 bis » de
+    l'article 1er bis du décret n° 51-727, et le décret n° 77-966 du 19 août 1977,
+    « rendant applicables, au régime des assurances sociales agricoles, les dispositions
+    de la loi » n° 77-657 — : leur date d'effet, leurs conditions et les fractions de
+    pension qu'ils majorent restent à lire au Journal officiel
+  effet: >-
+    5 % au 1er juillet 1976, puis 5 % au 1er octobre 1977, de la pension du salarié
+    agricole partie avant 1973 sur la durée maximum de sa date, et de la réversion de son
+    conjoint, si ces décrets les leur donnent comme au régime général ; non mesuré
+- ecart: >-
+    l'assuré du code local d'Alsace-Moselle n'est pas distingué. La loi n° 75-1279 lui
+    est applicable (article 7), et le décret n° 76-405 qui l'adapte ne touche pas à la
+    majoration de son article 3 : ses articles 1er à 3 et 5 règlent la retraite
+    anticipée des travailleurs manuels et des mères de famille, son article 4 la
+    majoration de l'article 5 de la loi. La loi n° 77-657 ne le nomme pas, et l'index du
+    Journal officiel ne porte, de 1977 à 1983, aucun décret qui la lui étende. La
+    pension du code local, « une somme de base et [...] des majorations proportionnelles
+    aux cotisations ou au salaire » (L. 357-1, L. 357-2), sans durée maximum, est hors du
+    champ du modèle (inventaire, regime_local_alsace_moselle) ; sa pension du régime
+    général est majorée comme toute autre
+  effet: nul sur ce que le modèle calcule, qui ne sert pas la pension du code local
 sources:
-  lu_le: 2026-10-09
+  lu_le: 2026-10-24
   prochaine_relecture: 2027-10-31
   a_relire:
   - >-
@@ -223,8 +293,24 @@ sources:
     tests/test_reversion.py rejoue ; aucun exemple chiffré d'une carrière n'a été
     trouvé.
   - >-
-    Lire les textes qui ont appliqué les majorations de 1976 et de 1977 aux salariés
-    agricoles, s'il en est, et le décret n° 76-405 du 10 mai 1976 pour l'Alsace-Moselle.
+    Au propriétaire, que seul son poste ouvre le fac-similé du Journal officiel : lire
+    le décret n° 76-727 du 28 juillet 1976 (Journal officiel du 4 août 1976,
+    JORFTEXT000000306384) et le décret n° 77-966 du 19 août 1977 (Journal officiel du 26
+    août 1977, JORFTEXT000000875615), qui étendent aux salariés agricoles les
+    majorations de 1976 et de 1977 : leur date d'effet, la durée maximum qu'ils
+    exigent, la date d'entrée en jouissance qu'ils visent, les fractions de pension
+    coordonnées. Lus, msa_salaries entre dans les majorations de 1976 et de 1977 des
+    versions avant_1972 et en_1972, et l'écart des salariés agricoles tombe. L'index
+    LEGI n'en porte rien : l'article 1er bis du décret n° 51-727 dans sa rédaction du 26
+    août 1977 (LEGIARTI000006773767) et le décret n° 50-1225 ne contiennent pas ces
+    majorations, qui sont restées des articles autonomes des deux décrets.
+  - >-
+    L'article 5 de la loi n° 75-1279 majore, d'un taux selon l'âge de liquidation que
+    fixe l'article 9 du décret n° 76-404 (l'index n'en garde que la notice), les pensions
+    des travailleurs manuels et des mères de famille liquidées avant le 1er juillet 1976
+    à un taux réduit ; d'après leurs notices, les décrets n° 76-727 et n° 76-1177 du 17
+    décembre 1976 la rendent applicable aux salariés agricoles et en fixent les taux.
+    Aucune fiche ne la porte (fiche voisine : taux_plein_travailleurs_manuels).
   lectures:
   - type: legifrance
     reference: >-
@@ -251,6 +337,74 @@ sources:
       en bénéficier »
     date: 2025-10-24
     url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=retraite_reversion_montant_montant_ex.aspx
+  - type: legifrance
+    reference: >-
+      décret n° 76-405 du 10 mai 1976, visas et articles 1er à 5 (LEGITEXT000006062483,
+      LEGIARTI000006762088 à LEGIARTI000006762092) : la retraite anticipée des
+      travailleurs manuels et des mères de famille de l'ex-régime local (articles 1er à 3,
+      5), et « Les taux de majoration forfaitaire fixés par l'article 9 du décret n° 76-404
+      du 10 mai 1976 sont applicables aux pensions de vieillesse accordées aux assurés
+      remplissant les conditions prévues à l'article 1er ci-dessus, dont l'entrée en
+      jouissance est antérieure au 1er juillet 1976 et qui ont été réduites en
+      application de l'article L. 367 » (article 4) ; loi n° 75-1279, article 4
+      (LEGIARTI000006755695), article 5, et article 7 (LEGIARTI000006755697) ; L. 357-1 et
+      L. 357-2 CSS (LEGIARTI000006742686, LEGIARTI000006742687) ; l'article 1er bis du
+      décret n° 51-727 dans sa rédaction du 26 août 1977 (LEGIARTI000006773767) et les
+      articles du décret n° 50-1225, qui ne portent pas les majorations de 1976 et de
+      1977 ; dans l'index LEGI du dépôt mis à jour au 23 octobre 2026
+    date: 2026-10-24
+  - type: jorf
+    reference: >-
+      dans l'index JORF du dépôt mis à jour au 24 octobre 2026, qui n'en garde que la
+      notice : le décret n° 76-727 du 28 juillet 1976 « relatif aux conditions d'accès à
+      la retraite de certains travailleurs manuels au regard du régime des assurances
+      sociales agricoles » (JORFTEXT000000306384), dont la « majoration des pensions de
+      vieillesse dues au titre des parag. 1, 2 et 2 bis » du décret n° 51-727 ; le décret
+      n° 76-1177 du 17 décembre 1976 (JORFTEXT000000862032), qui « fixe les taux de
+      majoration forfaitaire » des pensions des travailleurs manuels salariés agricoles ;
+      le décret n° 77-966 du 19 août 1977 « rendant applicables, au régime des
+      assurances sociales agricoles, les dispositions de la loi » n° 77-657
+      (JORFTEXT000000875615) ; le décret n° 76-404 (JORFTEXT000000855584) ; pour
+      l'ex-régime local, de 1972 à 1983, les seuls décrets n° 76-405, n° 78-319 (la
+      pension des femmes à soixante ans) et n° 82-629 (les ordonnances de 1982)
+    date: 1977-08-26
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2/72 du 31 janvier 1972, IV, B, et circulaires n° 15/76, n° 64/77
+      et n° 79/82, B, relues le 24 octobre 2026 par l'API de la base de législation de la
+      Cnav : « La majoration forfaitaire de 5 % s'applique uniquement à la pension de
+      vieillesse résultant des cotisations. En conséquence, pour les ex-invalides, une
+      nouvelle comparaison devrait, en principe, être faite entre cette pension de
+      vieillesse majorée et la pension d'invalidité afin de servir le montant le plus
+      élevé » ; « tous les ex-invalides des 2ème et 3ème groupes perçoivent une pension
+      de vieillesse de substitution égale à 50 % de leur salaire annuel moyen et que de
+      ce fait la majoration ne leur est pas due » ; en 1982, pour les pensions d'avant
+      1973, « il a été décidé d'en faire bénéficier tous les ex-invalides (quel que soit
+      leur groupe) » ; « en cas de réclamation, les redressements nécessaires devront
+      être effectués lorsque l'assuré y aura intérêt »
+    date: 1982-08-24
+textes_sans_effet:
+- id: LEGIARTI000006755697
+  article: loi n° 75-1279 du 30 décembre 1975, article 7
+  motif: >-
+    « Les dispositions de la présente loi sont applicables aux assurés ressortissant au
+    code local des assurances sociales du 19 juillet 1911 et à la loi du 20 décembre 1911
+    dans les départements du Haut-Rhin, du Bas-Rhin et de la Moselle » : leur pension du
+    code local est hors du champ du modèle, et leur pension du régime général est majorée
+    par l'article 3 lui-même
+- id: LEGIARTI000006742686
+  article: L. 357-1 CSS
+  motif: >-
+    « Les pensions de vieillesse, d'invalidité, de veufs ou de veuves définies par le code
+    local des assurances sociales [...] peuvent être calculées conformément aux articles
+    L. 357-2, L. 357-5 et L. 357-9 » : la pension du code local, hors du champ du modèle
+- id: LEGIARTI000006742687
+  article: L. 357-2 CSS
+  motif: >-
+    « La pension de vieillesse à laquelle ont droit les assurés à un âge déterminé est
+    constituée par une somme de base et par des majorations proportionnelles aux
+    cotisations ou au salaire » : la pension du code local, sans durée maximum, hors du
+    champ du modèle
 textes_a_rattacher: []
 code:
   python: >-
@@ -272,6 +426,11 @@ historique:
 - >-
   2026-10-09 — née et lue par le moteur, à l'étape 4 de l'action 138 : la note du 9
   octobre (« Ce qui reste », point 4) la déclarait absente.
+- >-
+  2026-10-24 — l'ex-invalide, l'Alsace-Moselle et les salariés agricoles lus, à l'étape
+  4 de l'action 138 : la comparaison au plancher de la pension substituée, que le modèle
+  ne fait pas ; le code local hors du champ ; les décrets n° 76-727 et n° 77-966, en
+  notice seule, laissés au Journal officiel.
 effet: >-
   Les retraités du régime général partis avant 1975 sur la durée maximum de leur date :
   jusqu'à 22,7 % de plus pour une pension d'avant 1972, depuis décembre 1982 ; et la
