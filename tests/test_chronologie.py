@@ -194,6 +194,48 @@ def test_le_menage_du_survivant_est_un_fait_de_ses_ressources():
                               conjoint={**conjoint, "nouvelle_union": "veuvage"})
 
 
+def test_le_menage_qui_se_defait_et_l_activite_qui_cesse_finissent_leurs_faits():
+    """Le ménage du survivant se défait — « décès du conjoint, du concubin, du
+    partenaire pacsé », « divorce », « résiliation d'un Pacs », « fin du
+    concubinage » (lettre de la Cnav du 18 avril 2007) —, et son activité
+    cesse (circulaire Cnav n° 2010/58, § 21) : deux dates qui finissent les
+    faits de ses ressources, [début, fin) comme toute période. Ni l'une ni
+    l'autre ne se présume ; chacune suit le début du fait qu'elle finit."""
+    conjoint = {"naissance": "1962-03", "sexe": "F", "mariage": None,
+                "ressources": 15000.0, "revenus_d_activite": 10000.0,
+                "fin_d_activite": "2033-02-15", "nouvelle_union": "pacs",
+                "ressources_du_nouveau_conjoint": 12000.0,
+                "nouvelle_union_depuis": "2032-06", "nouvelle_union_fin": "2034-11"}
+    complete = chronologie.completer(chronologie.du_resume(
+        1960, "H", 5, 64.0, 0, conjoint=conjoint, deces="2031-10"))
+    assert chronologie.controler(complete) == []
+    survivant = chronologie.CONJOINT
+    assert (chronologie.revenus_d_activite(complete, survivant),
+            chronologie.fin_d_activite(complete, survivant),
+            chronologie.menage(complete, survivant),
+            chronologie.debut_du_menage(complete, survivant),
+            chronologie.fin_du_menage(complete, survivant)) == (
+        10000.0, "2033-02-15", ("pacs", 12000.0), "2032-06-01", "2034-11-01")
+    sans_fin = chronologie.completer(chronologie.du_resume(
+        1960, "H", 5, 64.0, 0, deces="2031-10",
+        conjoint={**conjoint, "fin_d_activite": None, "nouvelle_union_fin": None}))
+    assert (chronologie.fin_d_activite(sans_fin, survivant),
+            chronologie.fin_du_menage(sans_fin, survivant)) == (None, None)
+    with pytest.raises(ValueError, match="une nouvelle union qui finit le 2032-06-01, "
+                                         "avant de commencer"):
+        chronologie.du_resume(1960, "H", 5, 64.0, 0, deces="2031-10",
+                              conjoint={**conjoint, "nouvelle_union_fin": "2032-06"})
+    with pytest.raises(ValueError, match="une nouvelle union qui finit le 2031-10-01, "
+                                         "avant de commencer"):
+        chronologie.du_resume(1960, "H", 5, 64.0, 0, deces="2031-10",
+                              conjoint={**conjoint, "nouvelle_union_depuis": None,
+                                        "nouvelle_union_fin": "2031-10"})
+    with pytest.raises(ValueError, match="une activité du conjoint qui cesse le "
+                                         "2031-10-01, avant le décès"):
+        chronologie.du_resume(1960, "H", 5, 64.0, 0, deces="2031-10",
+                              conjoint={**conjoint, "fin_d_activite": "2031-10"})
+
+
 def test_la_reversion_agricole_est_un_acte_de_la_caisse():
     """La réversion que le régime des non-salariés agricoles sert à l'assuré,
     veuf ou veuve d'un de ses assurés (L. 732-41 à L. 732-46) : un acte de sa
@@ -545,6 +587,26 @@ SAISIES = [
                              "ressources": 12000, "revenus_d_activite": 8000,
                              "nouvelle_union": "pacs",
                              "ressources_du_nouveau_conjoint": 15000},
+                "deces": "2024-02-11",
+                "releve": [{"annee": 1984, "affiliation": "salarie_prive", "revenu": 9000.0,
+                            "trimestres": 4, "type_periode": "emploi"}]}},
+    # Le ménage qui se défait et l'activité qui cesse, datés ; et une union qui
+    # finirait avant de commencer.
+    {"releve": {"annee_naissance": 1958, "sexe": "F", "age_liquidation": 62.0,
+                "conjoint": {"naissance": "1955", "sexe": "H", "mariage": "1984-06-16",
+                             "ressources": 12000, "revenus_d_activite": 8000,
+                             "fin_d_activite": "2025-03-15", "nouvelle_union": "concubinage",
+                             "ressources_du_nouveau_conjoint": 15000,
+                             "nouvelle_union_depuis": "2024-09",
+                             "nouvelle_union_fin": "2026-01"},
+                "deces": "2024-02-11",
+                "releve": [{"annee": 1984, "affiliation": "salarie_prive", "revenu": 9000.0,
+                            "trimestres": 4, "type_periode": "emploi"}]}},
+    {"releve": {"annee_naissance": 1958, "sexe": "F", "age_liquidation": 62.0,
+                "conjoint": {"naissance": "1955", "sexe": "H", "mariage": "1984-06-16",
+                             "ressources": None, "nouvelle_union": "mariage",
+                             "nouvelle_union_depuis": "2024-09",
+                             "nouvelle_union_fin": "2024-08"},
                 "deces": "2024-02-11",
                 "releve": [{"annee": 1984, "affiliation": "salarie_prive", "revenu": 9000.0,
                             "trimestres": 4, "type_periode": "emploi"}]}},

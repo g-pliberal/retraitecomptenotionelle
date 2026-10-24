@@ -1947,6 +1947,52 @@ exemples:
         depuis de la date d'effet de la retraite (§ 22).
       fiche: reversion
       depuis: "2026-10-24"
+  # La réversion révisée quand les ressources varient autrement qu'à la retraite
+  # du survivant : « la révision doit prendre effet à compter du premier jour du
+  # mois suivant la date de variation des ressources » (circulaire n° 2010/58,
+  # § 21). L'exemple ne dit ni le défunt ni le survivant : le témoin les prête
+  # comme au § 24, la veuve gagnant 12 000 € par an jusqu'à ce qu'elle cesse son
+  # activité, sans retraite datée.
+  - id: cnav_2010_58_revision_a_la_fin_de_son_activite
+    source: {editeur: "Cnav", reference: "circulaire n° 2010/58 du 30 juin 2010, § 21, Généralités, exemple", verifie_le: "2026-10-24"}
+    enonce: >-
+      Un assuré titulaire d'une pension de réversion informe la caisse le 20
+      mars 2008 qu'il a cessé son activité professionnelle le 15 février 2008 :
+      la date d'effet de la révision est le 1er mars 2008.
+    carriere: {naissance: "1940-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2000-01", age_debut: 20, conjoint: "1950-01", ressources_conjoint: 12000, activite_conjoint: 12000, activite_conjoint_fin: "2008-02-15", deces: "2005-03"}
+    attendu: {dates_de_revision_de_la_reversion: {regime_general: "2008-03-01"}}
+  # Circulaire n° 2005/17, § 146 : quand, « au cours de la période de
+  # référence, la situation familiale du requérant s'est trouvée modifiée
+  # (décès du conjoint, remariage, divorce, pacs ou concubinage), les
+  # ressources sont calculées en transposant sur trois mois ou sur douze mois
+  # selon le cas, celles afférentes à la période comprise entre la date à
+  # laquelle est survenu le changement de situation et la date d'effet de la
+  # pension de réversion ». Ses deux exemples ne disent ni l'année, ni le
+  # défunt, ni le survivant : la période de référence allant du 1er octobre au
+  # 31 décembre, le témoin fait de chaque 1er janvier la date d'effet d'une
+  # réversion, celle d'une veuve née le 15 décembre 1955 qui a cinquante-cinq
+  # ans le 15 décembre 2010, son mari mort en mai 2009 ; son nouveau conjoint
+  # gagne 1 600 € par mois, et elle n'a pas d'autres ressources.
+  - id: cnav_2005_17_divorce_dans_la_periode_de_reference
+    source: {editeur: "Cnav", reference: "circulaire n° 2005/17 du 11 avril 2005, § 146, exemples, 1er cas", verifie_le: "2026-10-24"}
+    enonce: >-
+      Le conjoint perçoit un salaire mensuel de 1 600 euros ; divorce le 1er
+      décembre : pour la période de référence allant du 1er octobre au 31
+      décembre, le salaire du conjoint doit être ignoré, et le décompte doit
+      s'effectuer en retenant le plafond de ressources personne seule.
+    carriere: {naissance: "1945-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2005-01", age_debut: 20, conjoint: "1955-12-15", nouvelle_union: mariage, nouvelle_union_depuis: "2009-09", nouvelle_union_fin: "2010-12-01", ressources_nouveau_conjoint: 19200, deces: "2009-05-10", pensions_du_defunt_mensuelles: {regime_general: 1000}}
+    attendu: {ressources_retenues_mensuelles: {regime_general: 0}}
+  - id: cnav_2005_17_mariage_dans_la_periode_de_reference
+    source: {editeur: "Cnav", reference: "circulaire n° 2005/17 du 11 avril 2005, § 146, exemples, 2ème cas", verifie_le: "2026-10-24"}
+    enonce: >-
+      Le conjoint perçoit un salaire mensuel de 1 600 euros ; mariage le 1er
+      décembre : pour la période de référence allant du 1er octobre au 31
+      décembre, le salaire du conjoint doit être retenu en considérant qu'il a
+      été perçu au cours des trois mois (1 600 × 3 = 4 800), 1 600 euros par
+      mois ; le décompte doit s'effectuer en retenant le plafond de ressources
+      ménage.
+    carriere: {naissance: "1945-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2005-01", age_debut: 20, conjoint: "1955-12-15", nouvelle_union: mariage, nouvelle_union_depuis: "2010-12-01", ressources_nouveau_conjoint: 19200, deces: "2009-05-10", pensions_du_defunt_mensuelles: {regime_general: 1000}}
+    attendu: {ressources_retenues_mensuelles: {regime_general: 1600}}
 
   # ---- L'invalidité et l'inaptitude ---------------------------------------
   # Le quatrième domaine (docs/architecture.md, § 11). L'ex-invalide de la

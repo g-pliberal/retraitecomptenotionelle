@@ -616,10 +616,15 @@ export const DEFAUTS = Object.freeze({
   mariage: "",
   ressources_conjoint: null,
   activite_conjoint: null,
+  //: Le mois où cesse l'activité du conjoint, s'il le dit : sa réversion se
+  //: révise le mois qui suit.
+  activite_conjoint_fin: "",
   nouvelle_union: "",
   ressources_nouveau_conjoint: null,
   //: Le mois où cette nouvelle union commence, s'il le dit ; sans lui, au décès.
   nouvelle_union_depuis: "",
+  //: Celui où elle se défait, s'il le dit : il revit seul.
+  nouvelle_union_fin: "",
   conjoint_invalidite: "",
   //: Le mois où la propre retraite du conjoint prend effet, s'il le dit. Voir
   //: le Python.
@@ -827,11 +832,13 @@ export class Saisie {
         ? null : reel(parametres, "ressources_conjoint", 0.0),
       activite_conjoint: [undefined, null, ""].includes(parametres.activite_conjoint)
         ? null : reel(parametres, "activite_conjoint", 0.0),
+      activite_conjoint_fin: String(parametres.activite_conjoint_fin ?? "").trim(),
       nouvelle_union: (parametres.nouvelle_union || "").trim(),
       ressources_nouveau_conjoint: [undefined, null, ""].includes(
         parametres.ressources_nouveau_conjoint)
         ? null : reel(parametres, "ressources_nouveau_conjoint", 0.0),
       nouvelle_union_depuis: String(parametres.nouvelle_union_depuis ?? "").trim(),
+      nouvelle_union_fin: String(parametres.nouvelle_union_fin ?? "").trim(),
       ex_conjoints: exConjointsSaisis(parametres, tolerante),
       revenu_fiscal: [undefined, null, ""].includes(parametres.revenu_fiscal)
         ? null : reel(parametres, "revenu_fiscal", 0.0),
@@ -1957,9 +1964,11 @@ export class Saisie {
       mariage: this.mariage || null,
       ressources: this.ressources_conjoint,
       revenus_d_activite: this.activite_conjoint,
+      fin_d_activite: this.activite_conjoint_fin || null,
       nouvelle_union: this.nouvelle_union || null,
       ressources_du_nouveau_conjoint: this.ressources_nouveau_conjoint,
       nouvelle_union_depuis: this.nouvelle_union_depuis || null,
+      nouvelle_union_fin: this.nouvelle_union_fin || null,
       invalidite: this.conjoint_invalidite || null,
       retraite: this.conjoint_retraite || null,
       ex_conjoints: this.ex_conjoints.map((ex) => ({
@@ -2487,8 +2496,9 @@ export class Saisie {
    * naissance —, et un décès qui ne précède pas le départ : la réversion d'une
    * pension que l'assuré n'a pas encore liquidée n'est pas calculée. Ses
    * ressources, positives : ses revenus d'activité en sont une part, et celles
-   * d'un nouveau conjoint supposent l'union où il vit. Voir
-   * `_verifier_conjoint` du Python.
+   * d'un nouveau conjoint supposent l'union où il vit ; la fin de son activité
+   * suppose ses revenus, et celle de son union l'union, chacune après ce
+   * qu'elle finit. Voir `_verifier_conjoint` du Python.
    */
   verifierConjoint() {
     if (!this.conjoint) {
@@ -2496,9 +2506,11 @@ export class Saisie {
         ["conjoint_sexe", this.conjoint_sexe], ["mariage", this.mariage],
         ["ressources_conjoint", this.ressources_conjoint],
         ["activite_conjoint", this.activite_conjoint],
+        ["activite_conjoint_fin", this.activite_conjoint_fin],
         ["nouvelle_union", this.nouvelle_union],
         ["ressources_nouveau_conjoint", this.ressources_nouveau_conjoint],
         ["nouvelle_union_depuis", this.nouvelle_union_depuis],
+        ["nouvelle_union_fin", this.nouvelle_union_fin],
         ["conjoint_invalidite", this.conjoint_invalidite],
         ["conjoint_retraite", this.conjoint_retraite], ["deces", this.deces],
         ["ex1", this.ex_conjoints.length > 0 ? true : null],
@@ -2519,6 +2531,8 @@ export class Saisie {
       ["conjoint_invalidite", this.conjoint_invalidite, "l'invalidité du conjoint"],
       ["conjoint_retraite", this.conjoint_retraite, "la retraite du conjoint"],
       ["nouvelle_union_depuis", this.nouvelle_union_depuis, "le début de sa nouvelle union"],
+      ["nouvelle_union_fin", this.nouvelle_union_fin, "la fin de la nouvelle union du conjoint"],
+      ["activite_conjoint_fin", this.activite_conjoint_fin, "la fin de l'activité du conjoint"],
       ["deces", this.deces, "le décès"],
     ]) {
       if (!valeur) {
@@ -2566,11 +2580,33 @@ export class Saisie {
         );
       }
     }
-    if (this.nouvelle_union_depuis && !this.nouvelle_union) {
+    for (const nom of ["nouvelle_union_depuis", "nouvelle_union_fin"]) {
+      if (this[nom] && !this.nouvelle_union) {
+        throw new ErreurSaisie(
+          `« ${nom} » ne sert qu'au ménage du conjoint : dites aussi l'union `
+          + "où il vit (« nouvelle_union »).",
+        );
+      }
+    }
+    if (this.activite_conjoint_fin && this.activite_conjoint === null) {
       throw new ErreurSaisie(
-        "« nouvelle_union_depuis » ne sert qu'au ménage du conjoint : dites "
-        + "aussi l'union où il vit (« nouvelle_union »).",
+        "« activite_conjoint_fin » ne sert qu'aux revenus d'activité du conjoint : "
+        + "dites aussi ce qu'ils rapportent (« activite_conjoint »).",
       );
+    }
+    // Ce que chaque fin finit commence au décès, ou à la naissance du conjoint
+    // sans lui ; l'union, au mois qu'il dit, s'il le dit. Voir le Python.
+    let [debut, quoi] = "deces" in dates
+      ? [dates.deces, "votre décès"] : [dates.conjoint, "sa naissance"];
+    if ("activite_conjoint_fin" in dates && dates.activite_conjoint_fin <= debut) {
+      throw new ErreurSaisie(`La fin de l'activité du conjoint précède ${quoi} : elle le suit.`);
+    }
+    if ("nouvelle_union_depuis" in dates) {
+      [debut, quoi] = [dates.nouvelle_union_depuis, "son début"];
+    }
+    if ("nouvelle_union_fin" in dates && dates.nouvelle_union_fin <= debut) {
+      throw new ErreurSaisie(
+        `La fin de la nouvelle union du conjoint précède ${quoi} : elle le suit.`);
     }
     if ("mariage" in dates) {
       const aine = dates.conjoint > this.naissanceIso ? dates.conjoint : this.naissanceIso;
@@ -2739,10 +2775,12 @@ export class Saisie {
           ? "" : nombreBrut(this.ressources_conjoint)],
         ["activite_conjoint", this.activite_conjoint === null
           ? "" : nombreBrut(this.activite_conjoint)],
+        ["activite_conjoint_fin", this.activite_conjoint_fin],
         ["nouvelle_union", this.nouvelle_union],
         ["ressources_nouveau_conjoint", this.ressources_nouveau_conjoint === null
           ? "" : nombreBrut(this.ressources_nouveau_conjoint)],
         ["nouvelle_union_depuis", this.nouvelle_union_depuis],
+        ["nouvelle_union_fin", this.nouvelle_union_fin],
         ["conjoint_invalidite", this.conjoint_invalidite],
         ["conjoint_retraite", this.conjoint_retraite],
         ["deces", this.deces],

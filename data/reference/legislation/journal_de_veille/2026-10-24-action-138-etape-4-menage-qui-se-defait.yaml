@@ -1,0 +1,53 @@
+date: "2026-10-24"
+session: "action 138, étape 4, onzième partie : la révision de la réversion du régime général quand le ménage du survivant se défait, ou que son activité cesse (R. 353-1-1)"
+consulte: >-
+  veille_droit.py, lancé à l'ouverture de la session (dernière veille consignée :
+  2026-10-24) ; l'index LEGI, récupéré de la release index-dila et mis à jour par ses
+  huit incréments jusqu'au 23 octobre 2026, puis textes.py --inscrire, qui n'a rien
+  inscrit ; L. 161-17-2 et L. 161-17-3, sans rédaction postérieure à celles du 31
+  décembre 2025 (fiche fin_de_la_suspension_2028). Dans l'index LEGI : R. 353-1-1
+  (LEGIARTI000053335692), sa première phrase,
+  qui renvoie à R. 815-20, R. 815-38, R. 815-39 et R. 815-42 ; R. 353-1
+  (LEGIARTI000038790257), qui renvoie à R. 815-18 à R. 815-20, R. 815-22 à R. 815-25,
+  R. 815-27 et au deuxième alinéa de R. 815-29 ; R. 815-18, R. 815-20, R. 815-23 à
+  R. 815-25, R. 815-27, R. 815-29 (rédactions de 2007 et de 2015), R. 815-38, R. 815-39
+  et R. 815-42, dans leurs rédactions en vigueur, et les rédactions de R. 815-22,
+  cherchées sans y trouver la cessation d'activité. Par l'API de la base de législation de la Cnav
+  (search/custom en phrase exacte, « rupture du pacs », « fin du concubinage »,
+  « dissolution du pacs », « rupture de la vie commune », « modification des
+  ressources », « changement de situation », « cessation d'activité » ;
+  reference/referencesByFileLeafRef) : l'exposé « Condition de ressources », la
+  lettre de la Cnav du 18 avril 2007, les circulaires Cnav n° 2005/17 (§ 143, 145,
+  146, 32), n° 2009/11 (§ 31), n° 2010/58 (§ 21 à 24), n° 2012/17 et n° 2012/80, ces
+  deux dernières hors du sujet.
+trouve: >-
+  La réversion « est révisable en cas de variation dans le montant des ressources »
+  (R. 353-1-1), « à partir du 1er jour du mois qui suit la date de modification des
+  ressources » (exposé « Condition de ressources ») : l'activité cessée le 15 février
+  2008 la révise au 1er mars (circulaire n° 2010/58, § 21, exemple entré au témoin).
+  Le changement de situation familiale compte par ses conséquences « sur le plafond de
+  ressources à retenir (personne seule ou ménage), ainsi que sur le montant des
+  ressources elles-mêmes » : « décès du conjoint, du concubin, du partenaire pacsé »,
+  « remariage », « divorce », « conclusion ou résiliation d'un Pacs », « début ou fin
+  du concubinage » (lettre de la Cnav du 18 avril 2007) ; les époux, concubins ou
+  partenaires « séparés de fait avec résidence distincte » se comptent comme des
+  célibataires (R. 815-27, auquel R. 353-1 renvoie ; circulaire n° 2009/11, § 31). Au
+  divorce du 1er décembre, « le salaire du conjoint doit être ignoré, et le décompte
+  doit s'effectuer en retenant le plafond de ressources personne seule » ; au mariage
+  du 1er décembre, il est retenu « en considérant qu'il a été perçu au cours des trois
+  mois (1600 x 3 = 4 800) » (circulaire n° 2005/17, § 146, deux exemples entrés au
+  témoin, le premier vu rouge sous la règle d'avant). La réversion réduite à rien ne
+  se rétablit que « sur demande expresse de l'assuré » (§ 321), que le modèle présume.
+  Aucun exemple publié ne chiffre une réversion révisée.
+reste: >-
+  La révision quand les ressources varient autrement — une activité reprise, un
+  salaire ou les ressources du nouveau conjoint qui changent —, que ni la chronologie
+  ni la saisie ne datent ; les ressources que la caisse examine « sur les 3 mois qui
+  précèdent cette date de révision », qui peuvent porter encore des revenus de
+  l'activité cessée, quand le modèle n'en compte plus ; le droit personnel liquidé
+  après la dernière révision d'abord fixée (circulaire n° 2010/58, § 24, second
+  exemple) ; la révision de la majoration de 11,1 % (R. 353-13) et celle de la
+  complémentaire des indépendants ; la réversion que la fin de l'union rendrait dans
+  les régimes qui la retirent au remariage, à lire régime par régime ; au formulaire,
+  les deux champs neufs (activite_conjoint_fin, nouvelle_union_fin), pour une session
+  du site.

@@ -47,13 +47,15 @@ def _carriere(simulateur, naissance: int, depart: float, conjoint: str, deces: s
               naissances: tuple[str, ...] = (), activite: float | None = None,
               nouvelle_union: str | None = None, apport: float | None = None,
               ex_conjoints: tuple[dict, ...] = (), retraite: str | None = None,
-              union_depuis: str | None = None) -> Carriere:
+              union_depuis: str | None = None, union_fin: str | None = None,
+              fin_d_activite: str | None = None) -> Carriere:
     """Un salarié né en janvier ``naissance``, parti à ``depart`` ans, ses
     enfants nés aux dates ``naissances`` quand elles sont dites, et son
     conjoint, invalide depuis ``invalidite`` s'il est dit, ses ressources et ce
-    qu'en rapporte son ``activite``, la ``nouvelle_union`` où il vit après le
-    décès, depuis ``union_depuis`` s'il est dit, l'``apport`` de son nouveau
-    conjoint et sa propre ``retraite``, datée ; le décès ouvre la
+    qu'en rapporte son ``activite``, jusqu'à sa ``fin_d_activite`` si elle est
+    dite, la ``nouvelle_union`` où il vit après le décès, depuis
+    ``union_depuis`` et jusqu'à ``union_fin`` s'ils sont dits, l'``apport`` de
+    son nouveau conjoint et sa propre ``retraite``, datée ; le décès ouvre la
     réversion. Les pensions, elles, sont données à :func:`reversion` : seule
     la règle est en cause ici."""
     return Carriere.depuis_profil(
@@ -61,10 +63,11 @@ def _carriere(simulateur, naissance: int, depart: float, conjoint: str, deces: s
         nombre_enfants=enfants, naissances_enfants=naissances,
         conjoint={"naissance": conjoint, "sexe": sexe_conjoint, "mariage": mariage,
                   "ressources": ressources, "invalidite": invalidite,
-                  "revenus_d_activite": activite, "nouvelle_union": nouvelle_union,
+                  "revenus_d_activite": activite, "fin_d_activite": fin_d_activite,
+                  "nouvelle_union": nouvelle_union,
                   "ressources_du_nouveau_conjoint": apport,
-                  "nouvelle_union_depuis": union_depuis, "retraite": retraite,
-                  "ex_conjoints": list(ex_conjoints)},
+                  "nouvelle_union_depuis": union_depuis, "nouvelle_union_fin": union_fin,
+                  "retraite": retraite, "ex_conjoints": list(ex_conjoints)},
         deces=deces)
 
 
@@ -1502,6 +1505,31 @@ def test_avant_juillet_2004_l_union_nouvelle_arrete_la_majoration_pour_enfant(
     assert ligne.majoration_forfaitaire_enfants_etapes == ((fin, 0.0),)
 
 
+@pytest.mark.parametrize("fin, servie", [(None, False), ("1993-09", True)])
+def test_avant_juillet_2004_l_union_defaite_avant_l_attribution_ne_refuse_pas_la_majoration(
+        simulateur, fin, servie):
+    """Le survivant qui « vit maritalement » le jour où la majoration pour
+    enfant s'attribuerait ne l'a pas, avant juillet 2004 (exposé de la Cnav,
+    « Conditions d'attribution ») ; celui dont l'union s'est défaite avant ce
+    jour vit seul (lettre de la Cnav du 18 avril 2007). La veuve, née en
+    janvier 1940, d'un assuré mort en 1990 a sa réversion à cinquante-cinq
+    ans, le 1er février 1995, et son enfant de 1985 est alors à sa charge,
+    jusqu'à ses seize ans : en concubinage depuis 1991, elle n'a pas la
+    majoration ; séparée en septembre 1993, si, jusqu'au mois qui suit les
+    seize ans de l'enfant."""
+    carriere = _carriere(simulateur, 1930, 60.0, "1940-01-10", "1990-03-10", ressources=0.0,
+                         naissances=("1985-02-01",), enfants=1,
+                         nouvelle_union="concubinage", union_depuis="1991-06", union_fin=fin)
+    ligne = _servies(simulateur, carriere, [("regime_general", 6000.0)],
+                     1990)["regime_general"]
+    assert ligne.date_effet == "1995-02-01"
+    if not servie:
+        assert ligne.majoration_forfaitaire_enfants == 0.0
+        return
+    assert ligne.majoration_forfaitaire_enfants > 0
+    assert ligne.majoration_forfaitaire_enfants_etapes == (("2001-03-01", 0.0),)
+
+
 def test_l_enfant_ne_apres_la_date_d_effet_a_sa_part_le_mois_qui_suit(simulateur):
     """« La majoration est due à la date d'entrée en jouissance de la pension
     de réversion si, à cette date, les conditions d'ouverture du droit à cette
@@ -1834,19 +1862,25 @@ def test_sa_retraite_revise_la_reversion_le_mois_qui_suit_pour_la_derniere_fois(
         5400.0 + majorations[0] - revue - majorations[1])
 
 
-@pytest.mark.parametrize("depuis, menage", [("2018-05", True), ("2021-01", False)])
-def test_la_revision_compte_le_menage_forme_avant_elle(simulateur, depuis, menage):
+@pytest.mark.parametrize("depuis, fin, menage", [
+    ("2018-05", None, True), ("2021-01", None, False),
+    # Défait avant sa retraite, le ménage ne compte plus à la révision qu'elle
+    # ouvre : il vit seul.
+    ("2018-05", "2019-11", False),
+])
+def test_la_revision_compte_le_menage_forme_avant_elle(simulateur, depuis, fin, menage):
     """L'union que le survivant forme après la date d'effet ne compte pas à
     celle-ci ; « le remariage du bénéficiaire entraîne la révision de la
     retraite de réversion pour tenir compte des ressources du nouveau
     ménage » (exposé de la Cnav, « Condition de ressources ») : formé avant sa
     retraite, le ménage compte à la révision qu'elle ouvre, sous le plafond
-    du ménage. Formé après la dernière révision, il ne change plus rien : « A
-    partir de cette date de dernière révision, aucun changement de ressources
-    ou de situation familiale n'est pris en compte »."""
+    du ménage, et n'y compte plus s'il s'est défait avant elle (lettre de la
+    Cnav du 18 avril 2007). Formé après la dernière révision, il ne change plus
+    rien : « A partir de cette date de dernière révision, aucun changement de
+    ressources ou de situation familiale n'est pris en compte »."""
     carriere = _carriere(simulateur, 1955, 60.0, "1958-06-10", "2015-03-10",
                          ressources=18000.0, retraite="2020-07", nouvelle_union="mariage",
-                         union_depuis=depuis, apport=12000.0)
+                         union_depuis=depuis, union_fin=fin, apport=12000.0)
     ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
                      2015)["regime_general"]
     plafond = 2080 * 10.15 / _coefficient(simulateur, 2015, 2020)
@@ -2066,17 +2100,99 @@ def test_avant_juillet_2004_le_menage_qu_il_forme_ne_la_revise_pas(simulateur):
     « dans tous les autres cas », elle « continue d'être servie selon les
     règles applicables avant cette date » (exposé « Condition de
     ressources » ; lettre ministérielle du 22 mars 2005, § 1) : la veuve de
-    1999 qui se remarie en 2006 la garde telle quelle."""
+    1999 qui se remarie en 2006 la garde telle quelle, et quand ce ménage se
+    défait, en 2008, aussi."""
     def ligne(**union):
         carriere = _carriere(simulateur, 1930, 60.0, "1940-06-10", "1999-03-10",
                              ressources=6000.0, **union)
         return _servies(simulateur, carriere, [("regime_general", 10000.0)],
                         1999)["regime_general"]
-    remariee, seule = ligne(nouvelle_union="mariage", union_depuis="2006-05",
-                            apport=30000.0), ligne()
-    assert (remariee.montant, remariee.motif) == (seule.montant, seule.motif)
-    assert (remariee.revisions, remariee.revision_effet, remariee.derniere_revision) == (
-        (), None, None)
+    seule = ligne()
+    for remariee in (ligne(nouvelle_union="mariage", union_depuis="2006-05", apport=30000.0),
+                     ligne(nouvelle_union="mariage", union_depuis="2006-05",
+                           union_fin="2008-02", apport=30000.0)):
+        assert (remariee.montant, remariee.motif) == (seule.montant, seule.motif)
+        assert (remariee.revisions, remariee.revision_effet,
+                remariee.derniere_revision) == ((), None, None)
+
+
+# -- la réversion révisée quand le ménage se défait, ou que l'activité cesse ---------
+
+def test_le_menage_qui_se_defait_revise_la_reversion_sous_le_plafond_d_une_personne_seule(
+        simulateur):
+    """« En cas de modification des ressources, la retraite de réversion
+    attribuée à partir du 01/07/2004 est révisée à partir du 1er jour du mois
+    qui suit la date de modification des ressources » (exposé de la Cnav,
+    « Condition de ressources » ; circulaire Cnav n° 2010/58, § 21). Le
+    divorce, la résiliation d'un pacs, la fin du concubinage, le décès du
+    nouveau conjoint changent la situation familiale, et avec elle « le
+    plafond de ressources à retenir (personne seule ou ménage) » et « le
+    montant des ressources elles-mêmes » (lettre de la Cnav du 18 avril
+    2007) : « le salaire du conjoint doit être ignoré, et le décompte doit
+    s'effectuer en retenant le plafond de ressources personne seule »
+    (circulaire Cnav n° 2005/17, § 146). Le veuf de 2015, né en 1958, gagne
+    25 000 €, abattus de 30 % : sa réversion est écrêtée sous le plafond de
+    2015, 2 080 fois 9,61 €. Pacsé en septembre 2015, il la voit révisée en
+    octobre sous le plafond du ménage, 1,6 fois plus haut, les 10 000 € de son
+    partenaire comptés ; le pacs rompu en mars 2021, elle l'est encore en
+    avril, sous le plafond d'une personne seule de 2021, 2 080 fois 10,25 €,
+    ramené aux euros de 2015, ses seuls revenus comptés. Ayant travaillé sans
+    avoir liquidé ses retraites, il la garde révisable."""
+    carriere = _carriere(simulateur, 1955, 60.0, "1958-06-10", "2015-03-10",
+                         ressources=25000.0, activite=25000.0, nouvelle_union="pacs",
+                         union_depuis="2015-09", union_fin="2021-03", apport=10000.0)
+    ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                     2015)["regime_general"]
+    seul = 2080 * 9.61 - 0.7 * 25000.0
+    menage = 1.6 * 2080 * 9.61 - (0.7 * 25000.0 + 10000.0)
+    revue = 2080 * 10.25 / _coefficient(simulateur, 2015, 2021) - 0.7 * 25000.0
+    assert 0.0 < seul < revue < menage < 5400.0
+    assert (round(ligne.montant, 2), ligne.motif) == (round(seul, 2), "ecretee")
+    assert [jour for jour, _ in ligne.revisions] == ["2015-10-01", "2021-04-01"]
+    assert [reduction for _, reduction in ligne.revisions] == [
+        pytest.approx(seul - menage), pytest.approx(seul - revue)]
+    assert (ligne.revision_effet, ligne.derniere_revision) == ("2021-04-01", None)
+
+
+def test_la_fin_de_son_activite_revise_la_reversion_le_mois_qui_suit(simulateur):
+    """« Un assuré titulaire d'une pension de réversion nous informe le 20 mars
+    2008 qu'il a cessé son activité professionnelle le 15 février 2008 : date
+    d'effet de la révision = 1er mars 2008 » (circulaire Cnav n° 2010/58,
+    § 21). La veuve de 2006, née le 15 septembre 1953, gagne 14 000 € : à
+    cinquante-trois ans, entiers, ils réduisent sa réversion sous le plafond de
+    2006, 2 080 fois 8,03 €. Son activité cessée le 15 février 2008, sa
+    réversion est révisée le 1er mars sous le plafond de 2008 : sans
+    ressources, elle redevient entière ; ses cinquante-cinq ans, en septembre,
+    n'ont plus de revenus d'activité à abattre, et ne la révisent pas. Ayant
+    travaillé, elle la garde révisable jusqu'à ce qu'elle liquide ses droits
+    (circulaire Cnav n° 2007-35, § 222)."""
+    carriere = _carriere(simulateur, 1945, 60.0, "1953-09-15", "2006-10-10",
+                         ressources=14000.0, activite=14000.0, fin_d_activite="2008-02-15")
+    ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                     2006)["regime_general"]
+    reduite = 2080 * 8.03 - 14000.0
+    assert (ligne.date_effet, round(ligne.montant, 2), ligne.motif) == (
+        "2006-11-01", round(reduite, 2), "ecretee")
+    assert 2080 * 8.44 / _coefficient(simulateur, 2006, 2008) > 5400.0
+    assert [jour for jour, _ in ligne.revisions] == ["2008-03-01"]
+    assert ligne.reduction_de_la_revision == pytest.approx(reduite - 5400.0)
+    assert ligne.derniere_revision is None
+
+
+def test_le_menage_qui_se_defait_apres_sa_derniere_revision_ne_change_rien(simulateur):
+    """« A partir de cette date de dernière révision, aucun changement de
+    ressources ou de situation familiale n'est pris en compte » (exposé de la
+    Cnav, « Condition de ressources ») : la veuve de 2010, née le 17 août 1953,
+    remariée en septembre 2014, voit sa réversion révisée en octobre sous le
+    plafond du ménage, puis figée au 1er novembre, à son âge légal ; son
+    divorce de 2016 n'y change plus rien."""
+    carriere = _carriere(simulateur, 1945, 60.0, "1953-08-17", "2010-03-10",
+                         nouvelle_union="mariage", union_depuis="2014-09",
+                         union_fin="2016-06", apport=28000.0)
+    ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                     2010)["regime_general"]
+    assert [jour for jour, _ in ligne.revisions] == ["2014-10-01"]
+    assert (ligne.revision_effet, ligne.derniere_revision) == ("2014-10-01", "2014-11-01")
 
 
 #: Des saisies où la réversion du régime général se révise avant la retraite
@@ -2084,8 +2200,10 @@ def test_avant_juillet_2004_le_menage_qu_il_forme_ne_la_revise_pas(simulateur):
 #: 2018 ; la veuve de 2010, sans ressources, remariée avant son âge légal ; le
 #: veuf retraité en juillet 2020, remarié en août ; la veuve de 2006 à qui ses
 #: cinquante-cinq ans valent l'abattement ; la veuve de 2023, sans ressources ni
-#: ménage, dont la réversion se fige à son âge légal. Chacune avec les jours de
-#: ses révisions, et celui où elle n'est plus révisable.
+#: ménage, dont la réversion se fige à son âge légal ; le veuf de 2015 pacsé en
+#: septembre, le pacs rompu en mars 2021 ; la veuve de 2006 qui cesse son
+#: activité en février 2008. Chacune avec les jours de ses révisions, et celui
+#: où elle n'est plus révisable.
 CAS_DES_REVISIONS = [
     ({"naissance": "1955", "liquidation": "60", "sexe": "F", "conjoint": "1958-06",
       "conjoint_sexe": "H", "deces": "2015-03", "ressources_conjoint": "15000",
@@ -2104,6 +2222,14 @@ CAS_DES_REVISIONS = [
       "ressources_conjoint": "14000", "activite_conjoint": "14000"}, ["2008-10-01"], None),
     ({"naissance": "1960", "liquidation": "62", "conjoint": "1962", "deces": "2023-05"},
      [], "2024-08-01"),
+    ({"naissance": "1955", "liquidation": "60", "sexe": "F", "conjoint": "1958-06",
+      "conjoint_sexe": "H", "deces": "2015-03", "ressources_conjoint": "25000",
+      "activite_conjoint": "25000", "nouvelle_union": "pacs",
+      "nouvelle_union_depuis": "2015-09", "nouvelle_union_fin": "2021-03",
+      "ressources_nouveau_conjoint": "10000"}, ["2015-10-01", "2021-04-01"], None),
+    ({"naissance": "1945", "liquidation": "60", "conjoint": "1953-09", "deces": "2006-10",
+      "ressources_conjoint": "14000", "activite_conjoint": "14000",
+      "activite_conjoint_fin": "2008-02"}, ["2008-03-01"], None),
 ]
 
 
@@ -2322,6 +2448,25 @@ def test_sans_conjoint_pas_de_reversion(simulateur):
      "« nouvelle_union_depuis » ne sert qu'au ménage du conjoint"),
     ({"conjoint": "1962", "mariage": "1990", "deces": "2030", "nouvelle_union": "mariage",
       "nouvelle_union_depuis": "2029"}, "La nouvelle union du conjoint précède votre décès"),
+    ({"nouvelle_union_fin": "2031"}, "« nouvelle_union_fin » ne sert qu'à la réversion"),
+    ({"conjoint": "1962", "nouvelle_union_fin": "2031"},
+     "« nouvelle_union_fin » ne sert qu'au ménage du conjoint"),
+    ({"conjoint": "1962", "nouvelle_union": "pacs", "nouvelle_union_fin": "2031-13"},
+     "La fin de la nouvelle union du conjoint « 2031-13 »"),
+    ({"conjoint": "1962", "mariage": "1990", "deces": "2030", "nouvelle_union": "pacs",
+      "nouvelle_union_depuis": "2031-06", "nouvelle_union_fin": "2031-02"},
+     "La fin de la nouvelle union du conjoint précède son début"),
+    ({"conjoint": "1962", "mariage": "1990", "deces": "2030", "nouvelle_union": "pacs",
+      "nouvelle_union_fin": "2029"},
+     "La fin de la nouvelle union du conjoint précède votre décès"),
+    ({"activite_conjoint_fin": "2031"}, "« activite_conjoint_fin » ne sert qu'à la réversion"),
+    ({"conjoint": "1962", "ressources_conjoint": "9000", "activite_conjoint_fin": "2031"},
+     "« activite_conjoint_fin » ne sert qu'aux revenus d'activité du conjoint"),
+    ({"conjoint": "1962", "ressources_conjoint": "9000", "activite_conjoint": "9000",
+      "activite_conjoint_fin": "2031-13"}, "La fin de l'activité du conjoint « 2031-13 »"),
+    ({"conjoint": "1962", "mariage": "1990", "deces": "2030", "ressources_conjoint": "9000",
+      "activite_conjoint": "9000", "activite_conjoint_fin": "2029"},
+     "La fin de l'activité du conjoint précède votre décès"),
     ({"ex1": "1958", "ex1_mariage": "1980", "ex1_divorce": "1985"},
      "« ex1 » ne sert qu'à la réversion"),
     ({"conjoint": "1962", "mariage": "1990", "ex1": "1958"},
@@ -2359,6 +2504,24 @@ def test_l_adresse_garde_le_conjoint_et_le_deces():
         "1962-03", "1985-06", 12000.0, 9000.0, "concubinage", 14000.0, "2028-04",
         "2031-10")
     assert "conjoint" not in saisie_du_portage({"naissance": "1960"}).requete()
+
+
+def test_l_adresse_garde_la_fin_du_menage_et_celle_de_l_activite():
+    """Le mois où le ménage du conjoint se défait, et celui où son activité
+    cesse, que la réversion lit pour se réviser, reviennent de l'adresse."""
+    from urllib.parse import parse_qsl
+
+    saisie = saisie_du_portage({
+        "naissance": "1960", "liquidation": "2024-01", "conjoint": "1962-03",
+        "mariage": "1985-06", "ressources_conjoint": "12000",
+        "activite_conjoint": "9000", "activite_conjoint_fin": "2033-02",
+        "nouvelle_union": "pacs", "nouvelle_union_depuis": "2032-06",
+        "nouvelle_union_fin": "2034-11", "deces": "2031-10"})
+    relue = saisie_du_portage(dict(parse_qsl(saisie.requete())))
+    assert (relue.activite_conjoint_fin, relue.nouvelle_union_depuis,
+            relue.nouvelle_union_fin) == ("2033-02", "2032-06", "2034-11")
+    assert relue.conjointDeclare()["fin_d_activite"] == "2033-02"
+    assert relue.conjointDeclare()["nouvelle_union_fin"] == "2034-11"
 
 
 @pytest.fixture(scope="module")

@@ -326,10 +326,12 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
     ``naissance`` et son ``sexe``, la date du ``mariage`` — que
     :func:`completer` présume sinon (``mariage_des_conjoints``) —, ses
     ``ressources`` annuelles, et ce qui en vient de son activité
-    (``revenus_d_activite``), la ``nouvelle_union`` où il vit après le décès
+    (``revenus_d_activite``), jusqu'au jour où elle cesse s'il le dit
+    (``fin_d_activite``), la ``nouvelle_union`` où il vit après le décès
     — mariage, pacs ou concubinage — et les ressources que son nouveau
     conjoint y apporte (``ressources_du_nouveau_conjoint``), depuis le mois
-    qu'il dit (``nouvelle_union_depuis``) ou le décès, son ``invalidite``,
+    qu'il dit (``nouvelle_union_depuis``) ou le décès, jusqu'à celui où elle
+    se défait s'il le dit (``nouvelle_union_fin``), son ``invalidite``,
     une décision médicale datée, et sa ``retraite``, l'acte de son propre
     départ, daté, s'il les dit ; et les précédents conjoints de
     l'assuré (``ex_conjoints``) : la naissance de chacun, son mariage, que le
@@ -473,10 +475,18 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
                 montant={"annuel": float(conjoint["ressources"]), "monnaie": "EUR"}))
         if conjoint.get("revenus_d_activite") is not None:
             # La part de ces ressources que lui rapporte son activité, que le
-            # plafond de la réversion abat après cinquante-cinq ans (R. 353-1).
+            # plafond de la réversion abat après cinquante-cinq ans (R. 353-1),
+            # jusqu'au jour où elle cesse, s'il le dit : sa réversion se révise
+            # le mois qui suit (circulaire Cnav n° 2010/58, § 21).
+            debut = jour_deces or epoux["debut"]
+            fin = None
+            if conjoint.get("fin_d_activite") is not None:
+                fin = date_declaree(conjoint["fin_d_activite"], "la fin de son activité")[0]
+                if fin <= debut:
+                    raise ValueError(f"une activité du conjoint qui cesse le {fin}, avant "
+                                     f"{'le décès' if jour_deces else 'sa naissance'}")
             faits_naissance.append(fait(
-                f"revenus_d_activite_{CONJOINT}", CONJOINT, "ressources",
-                jour_deces or epoux["debut"],
+                f"revenus_d_activite_{CONJOINT}", CONJOINT, "ressources", debut, fin,
                 attributs={"periode": "annuelle", "nature": "revenus_d_activite"},
                 montant={"annuel": float(conjoint["revenus_d_activite"]), "monnaie": "EUR"}))
         if conjoint.get("nouvelle_union") is not None:
@@ -495,8 +505,17 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
                                       "le début de sa nouvelle union")[0]
                 if jour_deces is not None and debut <= jour_deces:
                     raise ValueError(f"une nouvelle union le {debut}, avant le décès")
+            fin = None
+            if conjoint.get("nouvelle_union_fin") is not None:
+                # Le mois où elle se défait, s'il le dit — divorce, séparation,
+                # rupture du pacs ou fin du concubinage, décès du nouveau
+                # conjoint (lettre de la Cnav du 18 avril 2007) : il revit seul.
+                fin = date_declaree(conjoint["nouvelle_union_fin"],
+                                    "la fin de sa nouvelle union")[0]
+                if fin <= debut:
+                    raise ValueError(f"une nouvelle union qui finit le {fin}, avant de commencer")
             faits_naissance.append(fait(
-                f"menage_{CONJOINT}", CONJOINT, "ressources", debut,
+                f"menage_{CONJOINT}", CONJOINT, "ressources", debut, fin,
                 attributs={"periode": "annuelle", "nature": "menage", "forme": forme},
                 montant=None if apport is None else {"annuel": float(apport), "monnaie": "EUR"}))
         if conjoint.get("invalidite") is not None:
@@ -1149,6 +1168,13 @@ def revenus_d_activite(chronologie: dict, personne: str) -> float | None:
     return None if fait_ is None else float(fait_["montant"]["annuel"])
 
 
+def fin_d_activite(chronologie: dict, personne: str) -> str | None:
+    """Le jour où cesse l'activité dont une personne déclare les revenus, si
+    elle le dit, ou ``None``."""
+    fait_ = _ressources_de_nature(chronologie, personne, "revenus_d_activite")
+    return None if fait_ is None else fait_.get("fin")
+
+
 def menage(chronologie: dict, personne: str) -> tuple[str, float | None] | None:
     """Le ménage où une personne dit vivre : la forme de son union, et les
     ressources annuelles que l'autre y apporte, ou ``None`` quand il ne les dit
@@ -1165,6 +1191,13 @@ def debut_du_menage(chronologie: dict, personne: str) -> str | None:
     nouvelle, ou son remariage —, ou ``None`` pour qui vit seul."""
     fait_ = _ressources_de_nature(chronologie, personne, "menage")
     return None if fait_ is None else fait_["debut"]
+
+
+def fin_du_menage(chronologie: dict, personne: str) -> str | None:
+    """Le jour où se défait le ménage où une personne dit vivre, si elle le
+    dit, ou ``None`` : elle revit seule."""
+    fait_ = _ressources_de_nature(chronologie, personne, "menage")
+    return None if fait_ is None else fait_.get("fin")
 
 
 def naissance(chronologie: dict, personne: str) -> dict | None:

@@ -1643,8 +1643,14 @@ def _carriere_exemple(simulateur: Simulateur, exemple: dict, decalage_mois: int 
             "invalidite": (None if c.get("conjoint_invalidite") is None
                            else str(c["conjoint_invalidite"])),
             "revenus_d_activite": c.get("activite_conjoint"),
+            "fin_d_activite": (None if c.get("activite_conjoint_fin") is None
+                               else str(c["activite_conjoint_fin"])),
             "nouvelle_union": c.get("nouvelle_union"),
             "ressources_du_nouveau_conjoint": c.get("ressources_nouveau_conjoint"),
+            "nouvelle_union_depuis": (None if c.get("nouvelle_union_depuis") is None
+                                      else str(c["nouvelle_union_depuis"])),
+            "nouvelle_union_fin": (None if c.get("nouvelle_union_fin") is None
+                                   else str(c["nouvelle_union_fin"])),
             "retraite": (None if c.get("conjoint_retraite") is None
                          else str(c["conjoint_retraite"])),
         }

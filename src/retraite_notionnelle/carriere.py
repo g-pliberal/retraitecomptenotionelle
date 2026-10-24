@@ -820,6 +820,9 @@ class Conjoint:
     #: La part de ``ressources`` que son activité lui rapporte, s'il la dit :
     #: le plafond de la réversion l'abat après cinquante-cinq ans (R. 353-1).
     revenus_d_activite: float | None = None
+    #: Le jour où cette activité cesse (AAAA-MM-JJ), s'il le dit : ses
+    #: revenus ne comptent plus, et sa réversion se révise le mois qui suit.
+    fin_d_activite: str | None = None
     #: La forme de l'union où il vit après le décès — mariage, pacs ou
     #: concubinage —, et les ressources annuelles que son nouveau conjoint y
     #: apporte, s'il les dit : le plafond de la réversion lit alors le
@@ -829,6 +832,8 @@ class Conjoint:
     #: Le jour où commence ce ménage (AAAA-MM-JJ) : celui qu'il dit, ou le
     #: décès.
     nouvelle_union_depuis: str | None = None
+    #: Le jour où il se défait (AAAA-MM-JJ), s'il le dit : il revit seul.
+    nouvelle_union_fin: str | None = None
     #: Le jour où sa propre retraite prend effet (AAAA-MM-JJ), s'il le dit :
     #: ses ressources hors de ses revenus d'activité, que le modèle tient pour
     #: ses retraites personnelles, ne commencent qu'alors. ``None`` laisse la
@@ -1241,9 +1246,10 @@ class Carriere:
     @cached_property
     def conjoint(self) -> "Conjoint | None":
         """Le conjoint de la personne, que son mariage lui relie : sa naissance,
-        son sexe, la date du mariage, ses ressources, leur part d'activité, le
-        ménage où il vit après le décès, son invalidité et sa propre retraite,
-        telles que la chronologie les porte. ``None`` sans conjoint déclaré."""
+        son sexe, la date du mariage, ses ressources, leur part d'activité
+        jusqu'à ce qu'elle cesse, le ménage où il vit après le décès, jusqu'à
+        ce qu'il se défasse, son invalidité et sa propre retraite, telles que
+        la chronologie les porte. ``None`` sans conjoint déclaré."""
         if not self.chronologie:
             return None
         autre = chrono.conjoint(self.chronologie, self.personne)
@@ -1263,9 +1269,11 @@ class Carriere:
             ressources=chrono.ressources(self.chronologie, autre),
             invalidite=invalidite["debut"] if invalidite is not None else None,
             revenus_d_activite=chrono.revenus_d_activite(self.chronologie, autre),
+            fin_d_activite=chrono.fin_d_activite(self.chronologie, autre),
             nouvelle_union=nouvelle_union,
             ressources_du_nouveau_conjoint=apport,
             nouvelle_union_depuis=chrono.debut_du_menage(self.chronologie, autre),
+            nouvelle_union_fin=chrono.fin_du_menage(self.chronologie, autre),
             retraite=retraite["debut"] if retraite is not None else None,
         )
 

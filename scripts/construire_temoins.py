@@ -2020,6 +2020,20 @@ def _cas() -> list[dict]:
     cas.append(("reversion_revisee_a_cinquante_cinq_ans", {
         "naissance": "1945", "liquidation": "60", "conjoint": "1953-09", "deces": "2006-10",
         "ressources_conjoint": "14000", "activite_conjoint": "14000"}))
+    # Le même jour, le ménage qui se défait et l'activité qui cesse (R. 353-1-1) :
+    # le veuf de 2015 pacsé en septembre, le pacs rompu en mars 2021, révisée
+    # chaque fois le mois qui suit ; la veuve de 2006 qui cesse son activité en
+    # février 2008, révisée en mars, ses cinquante-cinq ans n'abattant plus rien.
+    cas.append(("reversion_revisee_quand_le_menage_se_defait", {
+        "naissance": "1955", "liquidation": "60", "sexe": "F", "conjoint": "1958-06",
+        "conjoint_sexe": "H", "deces": "2015-03", "ressources_conjoint": "25000",
+        "activite_conjoint": "25000", "nouvelle_union": "pacs",
+        "nouvelle_union_depuis": "2015-09", "nouvelle_union_fin": "2021-03",
+        "ressources_nouveau_conjoint": "10000"}))
+    cas.append(("reversion_revisee_a_la_fin_de_son_activite", {
+        "naissance": "1945", "liquidation": "60", "conjoint": "1953-09", "deces": "2006-10",
+        "ressources_conjoint": "14000", "activite_conjoint": "14000",
+        "activite_conjoint_fin": "2008-02"}))
 
     # Les carrières LUES sur un relevé, plutôt que reconstituées.
     cas.extend(_cas_releve())

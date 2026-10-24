@@ -1189,9 +1189,10 @@ export class Carriere {
   /**
    * Le conjoint de la personne, que son mariage lui relie : `{personne,
    * naissance, sexe, mariage, mariage_presume, ressources, invalidite,
-   * revenus_d_activite, nouvelle_union, ressources_du_nouveau_conjoint,
-   * nouvelle_union_depuis}`, tel que la chronologie le porte ; `null` sans
-   * conjoint déclaré. Voir `Conjoint` du Python.
+   * revenus_d_activite, fin_d_activite, nouvelle_union,
+   * ressources_du_nouveau_conjoint, nouvelle_union_depuis, nouvelle_union_fin,
+   * retraite}`, tel que la chronologie le porte ; `null` sans conjoint déclaré.
+   * Voir `Conjoint` du Python.
    */
   get conjoint() {
     if (this._conjoint === undefined) {
@@ -1213,9 +1214,11 @@ export class Carriere {
           invalidite: chrono.decisionMedicale(this.chronologie, autre, "invalidite")?.debut
             ?? null,
           revenus_d_activite: chrono.revenusDActivite(this.chronologie, autre),
+          fin_d_activite: chrono.finDActivite(this.chronologie, autre),
           nouvelle_union: nouvelleUnion,
           ressources_du_nouveau_conjoint: apport,
           nouvelle_union_depuis: chrono.debutDuMenage(this.chronologie, autre),
+          nouvelle_union_fin: chrono.finDuMenage(this.chronologie, autre),
           retraite: chrono.depart(this.chronologie, autre)?.debut ?? null,
         });
       }

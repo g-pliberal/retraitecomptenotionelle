@@ -812,22 +812,35 @@ def _revisions(moteur: ScenarioActuel, fiche: dict, parametres: dict, conjoint: 
     changements que la chronologie date : sa retraite ; le ménage qu'il forme,
     car « le remariage du bénéficiaire entraîne la révision de la retraite de
     réversion pour tenir compte des ressources du nouveau ménage » (exposé
-    « Condition de ressources ») ; ses cinquante-cinq ans, quand ils abattent
-    ses revenus d'activité, la caisse l'interrogeant alors « pour appliquer
-    cette mesure aux pensions de réversion en cours de service » (circulaire
-    Cnav n° 2007-35, § 221). Aucune révision après ``derniere`` : « A partir
-    de cette date de dernière révision, aucun changement de ressources ou de
+    « Condition de ressources »), et celui qui se défait — « décès du
+    conjoint, du concubin, du partenaire pacsé », « divorce », « résiliation
+    d'un Pacs », « fin du concubinage », autant de changements de la
+    situation familiale qui changent « le plafond de ressources à retenir
+    (personne seule ou ménage) » et « le montant des ressources elles-mêmes »
+    (lettre de la Cnav du 18 avril 2007) ; la fin de son activité, comme dans
+    l'exemple de la circulaire n° 2010/58, § 21 (cessée le 15 février 2008,
+    révisée le 1er mars) ; ses cinquante-cinq ans, quand ils abattent les
+    revenus d'une activité qu'il n'a pas cessée, la caisse l'interrogeant
+    alors « pour appliquer cette mesure aux pensions de réversion en cours de
+    service » (circulaire Cnav n° 2007-35, § 221). Le survivant est tenu pour
+    déclarer chacun (R. 815-38), et pour demander le rétablissement de la
+    réversion que ses ressources avaient réduite à rien (circulaire Cnav
+    n° 2005-17, § 321). Aucune révision après ``derniere`` : « A partir de
+    cette date de dernière révision, aucun changement de ressources ou de
     situation familiale n'est pris en compte » (:func:`_derniere_revision`).
 
     Chaque révision lit le plafond de la version de son jour, au SMIC de son
     année (:func:`_annee_du_plafond`), ramené aux euros de ``annee`` par les
     coefficients qui revalorisent les pensions, en 2020 ceux des pensions de
     2 000 € par mois au plus, que ne passent pas les ressources d'un survivant
-    sous le plafond ; à côté de la réversion, ses ``ressources`` de ce jour :
-    ses revenus d'activité, abattus s'il a l'âge de l'abattement, ses
-    ``retraites`` personnelles quand elles ont commencé avant, celles de son
-    nouveau conjoint quand leur ménage s'est formé avant — un changement du
-    jour même ne compte qu'à la révision du mois qui suit —, et
+    sous le plafond ; à côté de la réversion, ses ``ressources`` de ce jour,
+    l'année entière comme elles sont après le changement — la circulaire
+    n° 2005-17, § 146, transpose ainsi sur la période de référence celles
+    d'après un changement de situation — : ses revenus d'activité tant qu'elle
+    n'a pas cessé, abattus s'il a l'âge de l'abattement, ses ``retraites``
+    personnelles quand elles ont commencé avant, celles de son nouveau
+    conjoint quand leur ménage s'est formé avant et ne s'est pas défait — un
+    changement du jour même ne compte qu'à la révision du mois qui suit —, et
     ``bases(jour)``, les réversions des autres régimes de base ce jour-là. Le
     recalcul aux règles de 2004 compte, comme une date d'effet, sa retraite et
     son ménage du jour même. La réversion revue est ``entiere``, d'avant les
@@ -848,15 +861,20 @@ def _revisions(moteur: ScenarioActuel, fiche: dict, parametres: dict, conjoint: 
             jours[mois_suivant(retraite)] = False
     else:
         return ()
-    union = conjoint.nouvelle_union_depuis
-    if conjoint.nouvelle_union is not None and union is not None and union > depuis:
-        jours.setdefault(mois_suivant(union), False)
+    # Le ménage qu'il forme ou qui se défait, la fin de son activité.
+    changements = [conjoint.fin_d_activite] if conjoint.revenus_d_activite else []
+    if conjoint.nouvelle_union is not None:
+        changements += [conjoint.nouvelle_union_depuis, conjoint.nouvelle_union_fin]
+    for change in changements:
+        if change is not None and change > depuis:
+            jours.setdefault(mois_suivant(change), False)
     alors = moteur.reversions.version(fiche, depuis, deces)
     regles = alors["parametres"] if alors is not None else {}
     if conjoint.revenus_d_activite and regles.get("abattement_activite"):
         abattement = chrono._plus_ans(conjoint.naissance,
                                       int(regles["abattement_activite_age"]))
-        if abattement > depuis:
+        fin = conjoint.fin_d_activite
+        if abattement > depuis and (fin is None or fin > abattement):
             jours.setdefault(mois_suivant(abattement), False)
     revisions = []
     for jour in sorted(jours):
@@ -1024,9 +1042,10 @@ def _majoration_forfaitaire_enfants(moteur: ScenarioActuel, carriere: Carriere,
     ``retraites_personnelles``, ses ressources hors de ses revenus
     d'activité, quand elles sont servies), ni l'âge que R. 353-9 fixe à la
     demande — soixante-cinq ans, puis l'âge du taux plein depuis le 3 juin
-    2011 —, ni vivre en couple avant juillet 2004. Une part qui revient
-    ensuite ne revoit pas l'âge : « La condition d'âge est exigée uniquement
-    au moment de l'attribution » (exposé de la Cnav).
+    2011 —, ni vivre en couple avant juillet 2004 : l'union défaite avant ce
+    jour ne compte plus (lettre de la Cnav du 18 avril 2007). Une part qui
+    revient ensuite ne revoit pas l'âge : « La condition d'âge est exigée
+    uniquement au moment de l'attribution » (exposé de la Cnav).
 
     La majoration cesse avec la charge de chaque enfant, et toute entière le
     premier jour du mois qui suit celui où le survivant « perçoit [...] une
@@ -1066,7 +1085,8 @@ def _majoration_forfaitaire_enfants(moteur: ScenarioActuel, carriere: Carriere,
         if age is None or _atteint(conjoint.naissance, age[0]) <= attribution:
             return None
     if (parametres.get("refusee_en_couple") and conjoint.nouvelle_union is not None
-            and (conjoint.nouvelle_union_depuis or date_effet) <= attribution):
+            and (conjoint.nouvelle_union_depuis or date_effet) <= attribution
+            and not _venu(conjoint.nouvelle_union_fin, attribution, True)):
         return None
     par_enfant = table.majoration_enfant(annee)
     if par_enfant is None:
@@ -1278,6 +1298,13 @@ def _enfants_de_moins_de(carriere: Carriere, deces: str, ans: int) -> int:
                if naissance <= deces < chrono._plus_ans(naissance, ans))
 
 
+def _venu(jour: str | None, date_: str, le_jour_meme: bool) -> bool:
+    """Le changement du jour ``jour`` — le ménage formé ou défait, l'activité
+    cessée — compte-t-il le jour ``date_`` ? Venu avant, oui ; ce jour même,
+    seulement quand ``le_jour_meme``."""
+    return jour is not None and (jour < date_ or (le_jour_meme and jour == date_))
+
+
 def _ressources_du_plafond(parametres: dict, conjoint: Conjoint, ressources: float,
                            date_effet: str, le_jour_meme: bool = True) -> tuple[float, float]:
     """Les ressources du survivant que retient le plafond de la version, et le
@@ -1285,24 +1312,33 @@ def _ressources_du_plafond(parametres: dict, conjoint: Conjoint, ressources: flo
 
     Ses revenus d'activité sont abattus de 30 % quand il a cinquante-cinq ans à
     la date d'effet, « quel que soit l'âge atteint au moment où ces revenus ont
-    été perçus » (circulaire Cnav n° 2006-37, § 7). Quand il vit en couple —
-    marié, pacsé ou en concubinage —, les ressources de son nouveau conjoint
-    s'y ajoutent, entières, sous le plafond du ménage (circulaire Cnav
-    n° 2005-17, § 141 et § 145) : 1,6 fois celui d'une personne seule au
-    régime général, le même à la complémentaire des indépendants. La version
-    qui ne dit pas ce facteur, avant juillet 2004, ne compte que ses ressources
-    personnelles. Le ménage compte formé à la date d'effet, ou ce jour même
-    quand ``le_jour_meme`` ; à une révision, il ne compte que formé avant
-    elle, celui du jour même révisant au mois qui suit (:func:`_revisions`)."""
+    été perçus » (circulaire Cnav n° 2006-37, § 7), et ne comptent plus une
+    fois son activité cessée. Quand il vit en couple — marié, pacsé ou en
+    concubinage —, les ressources de son nouveau conjoint s'y ajoutent,
+    entières, sous le plafond du ménage (circulaire Cnav n° 2005-17, § 141 et
+    § 145) : 1,6 fois celui d'une personne seule au régime général, le même à
+    la complémentaire des indépendants. Le ménage défait, « le salaire du
+    conjoint doit être ignoré, et le décompte doit s'effectuer en retenant le
+    plafond de ressources personne seule » (§ 146), comme pour le survivant
+    « séparé de fait avec résidence distincte » (R. 815-27 ; circulaire Cnav
+    n° 2009/11, § 31). La version qui ne dit pas ce facteur, avant juillet
+    2004, ne compte que ses ressources personnelles. Chaque changement compte
+    venu avant la date d'effet, ou ce jour même quand ``le_jour_meme`` ; à une
+    révision, celui du jour même révise au mois qui suit (:func:`_revisions`)."""
+    activite = float(conjoint.revenus_d_activite or 0.0)
+    if activite and _venu(conjoint.fin_d_activite, date_effet, le_jour_meme):
+        ressources -= min(ressources, activite)
+        activite = 0.0
     taux = parametres.get("abattement_activite")
-    if (taux and conjoint.revenus_d_activite
+    if (taux and activite
             and chrono.annees_revolues(conjoint.naissance, date_effet)
             >= int(parametres["abattement_activite_age"])):
-        ressources -= float(taux) * min(ressources, float(conjoint.revenus_d_activite))
+        ressources -= float(taux) * min(ressources, activite)
     facteur = parametres.get("facteur_menage")
     union = conjoint.nouvelle_union_depuis
-    formee = union is None or union < date_effet or (le_jour_meme and union == date_effet)
-    if facteur is None or conjoint.nouvelle_union is None or not formee:
+    formee = union is None or _venu(union, date_effet, le_jour_meme)
+    if (facteur is None or conjoint.nouvelle_union is None or not formee
+            or _venu(conjoint.nouvelle_union_fin, date_effet, le_jour_meme)):
         return ressources, 1.0
     return (ressources + float(conjoint.ressources_du_nouveau_conjoint or 0.0),
             float(facteur))

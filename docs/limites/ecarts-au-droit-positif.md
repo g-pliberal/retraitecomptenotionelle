@@ -52,12 +52,14 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   restent à charge jusqu'à vingt ans quand la chronologie le dit — le
   formulaire ne le demande pas encore. Depuis le 24 octobre, la réversion
   attribuée depuis juillet 2004 se révise sous le plafond de ressources le mois
-  qui suit la retraite du survivant, le ménage qu'il forme et ses cinquante-cinq
-  ans, jusqu'à sa dernière révision — trois mois après sa retraite, ou son âge
-  légal quand il n'a ni retraites ni activité —, et la retraite qu'il prend
-  depuis recalcule celle d'avant aux règles de ressources (R. 353-1-1). Restent
-  dehors la révision quand son ménage se défait, que ses ressources varient
-  autrement ou que ses ayants droit changent, le
+  qui suit la retraite du survivant, le ménage qu'il forme ou qui se défait, la
+  fin de son activité et ses cinquante-cinq ans, jusqu'à sa dernière révision —
+  trois mois après sa retraite, ou son âge légal quand il n'a ni retraites ni
+  activité —, et la retraite qu'il prend depuis recalcule celle d'avant aux
+  règles de ressources (R. 353-1-1) ; le formulaire ne demande pas encore la fin
+  du ménage ni celle de l'activité. Restent dehors la révision quand ses
+  ressources varient autrement — une activité reprise, un salaire qui change —
+  ou que ses ayants droit changent, le
   complément de la fonction publique,
   le droit que recouvre le survivant quand sa nouvelle union cesse, les
   pensions d'orphelin — à

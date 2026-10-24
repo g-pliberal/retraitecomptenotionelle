@@ -32,16 +32,19 @@ lit:
   mariage, leur divorce et leur remariage, que le partage au prorata des mariages lit
 - la naissance du survivant, qui dit son âge à la date d'effet
 - les ressources du survivant, et ce qu'en rapporte son activité, abattu de 30 % à
-  cinquante-cinq ans ; le reste, que le modèle tient pour ses retraites personnelles,
+  cinquante-cinq ans, jusqu'au jour où elle cesse, quand il le dit, qui révise la
+  réversion le mois qui suit (R. 353-1-1 ; circulaire Cnav n° 2010/58, § 21) ; le
+  reste, que le modèle tient pour ses retraites personnelles,
   que le cumul d'avant juillet 2004 retient hors de ses ressources (D. 355-1) ; le
   mois où elles commencent, quand il le dit, qui revoit la réversion qu'elles suivent
   (D. 355-1, L. 353-1, R. 353-1-1) et date sa dernière révision ; son âge légal,
   quand il n'a ni retraites ni activité (R. 353-1-1, b)
 - l'invalidité qu'il déclare, qui le tient pour inapte avant 1973
 - l'union où il vit après le décès — mariage, PACS ou concubinage —, le mois où elle
-  commence, et les ressources de son nouveau conjoint, que le plafond du ménage
-  compte avec les siennes quand elle est formée à la date d'effet, ou aux révisions
-  qui la suivent, dont celle qu'elle ouvre le mois qui suit (R. 353-1-1)
+  commence et celui où elle se défait, et les ressources de son nouveau conjoint, que
+  le plafond du ménage compte avec les siennes quand elle est formée à la date
+  d'effet, et pas encore défaite, ou aux révisions qui la suivent, dont celles
+  qu'elle ouvre le mois qui suit sa formation et sa fin (R. 353-1-1)
 - la pension principale du défunt, servie ou dont il eût bénéficié à son décès — mort
   avant son départ, celle qu'il eût obtenue au premier jour du trimestre civil de son
   décès, sur la carrière de ce jour-là, sans décote
@@ -418,7 +421,8 @@ versions:
       minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       fiabilite: haute
-  exemples: [cnav_2010_58_revision_a_sa_retraite, cnav_2006_37_revision_au_constat]
+  exemples: [cnav_2010_58_revision_a_sa_retraite, cnav_2006_37_revision_au_constat,
+             cnav_2010_58_revision_a_la_fin_de_son_activite]
 - id: age_52
   statut: lue
   textes:
@@ -641,7 +645,9 @@ versions:
       minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       fiabilite: haute
-  exemples: [cnav_2018_4_reversion_surcote_au_maximum]
+  exemples: [cnav_2018_4_reversion_surcote_au_maximum,
+             cnav_2005_17_divorce_dans_la_periode_de_reference,
+             cnav_2005_17_mariage_dans_la_periode_de_reference]
 - id: majoration_2010_age_51
   statut: lue
   textes:
@@ -966,16 +972,21 @@ approximations:
   effet: non mesuré
 - ecart: >-
     le ménage du survivant est celui qu'il déclare, depuis le jour qu'il dit ou dès
-    le décès : le plafond du ménage s'applique dès la date d'effet quand il est formé
-    ce jour-là ou avant, quand la caisse ne compte que les trois mois qui la
-    précèdent ; formé après, il révise la réversion le mois qui suit (R. 353-1-1) ;
-    elle n'est pas révisée quand il se défait, ni quand les ressources varient
-    autrement qu'à sa retraite et à ses cinquante-cinq ans, que la saisie ne date pas
-    (la cessation d'activité de l'exemple de la circulaire Cnav n° 2010/58, § 21,
-    révisée le mois qui suit) ; elles se
-    comparent sur l'année, et non sur les trois mois qui précèdent la date d'effet,
-    les douze à défaut (R. 353-1), ce qui ne change rien à des ressources égales
-    chaque mois ; les ressources du survivant et de son nouveau conjoint sont celles
+    le décès, jusqu'au jour qu'il dit : le plafond du ménage s'applique dès la date
+    d'effet quand il est formé ce jour-là ou avant, et pas encore défait, comme la
+    circulaire Cnav n° 2005-17, § 146, transpose sur la période de référence les
+    ressources d'après un changement de situation ; formé ou défait après, il révise
+    la réversion le mois qui suit (R. 353-1-1). Elle n'est pas révisée quand les
+    ressources varient autrement qu'à sa retraite, à ses cinquante-cinq ans et à la
+    fin de son activité — une activité reprise, un salaire ou des ressources du
+    nouveau conjoint qui changent —, que la saisie ne date pas ; à la révision
+    qu'ouvre la fin de son activité, ses revenus d'activité ne comptent plus, l'année
+    entière, quand la caisse examine « les 3 mois qui précèdent cette date de
+    révision » (exposé « Condition de ressources »), qui peuvent en porter encore. Les
+    ressources se comparent sur l'année, et non sur les trois mois qui précèdent la
+    date d'effet, les douze à défaut (R. 353-1), ce qui ne change rien à des
+    ressources égales chaque mois ; les ressources du survivant et de son nouveau
+    conjoint sont celles
     que la saisie déclare, comptées entières : le modèle n'en ôte ni ce que le droit
     de l'allocation supplémentaire exclut, ni la majoration pour enfants des
     retraites du survivant (lettre ministérielle n° 237 du 22 mars 2005)
@@ -1025,10 +1036,14 @@ approximations:
     non mesuré ; une date de mariage dite par l'année déplace jusqu'à onze mois la
     durée qui fait les parts
 - ecart: >-
-    l'union que le survivant forme après la date d'effet révise la réversion du
-    régime général le mois qui suit sa formation (R. 353-1-1 ; exposé de la Cnav,
-    « Condition de ressources »), comme le font ses cinquante-cinq ans, qui abattent
-    ses revenus d'activité (circulaire Cnav n° 2007-35, § 221), et sa retraite,
+    l'union que le survivant forme après la date d'effet, et celle qui se défait —
+    divorce, rupture du pacs, fin du concubinage, décès du nouveau conjoint, autant de
+    changements de la situation familiale (lettre de la Cnav du 18 avril 2007) —,
+    révisent la réversion du régime général le mois qui suit (R. 353-1-1 ; exposé de
+    la Cnav, « Condition de ressources »), comme le font la fin de son activité
+    (circulaire Cnav n° 2010/58, § 21), ses cinquante-cinq ans, qui abattent les
+    revenus de l'activité qu'il n'a pas cessée (circulaire Cnav n° 2007-35, § 221),
+    et sa retraite,
     jusqu'à la dernière révision : trois mois après sa retraite ; sa date d'effet
     quand il a ses retraites sans la dater, servies depuis plus de trois mois
     (présomption retraites_du_survivant_servies) ; le premier jour du mois qui suit
@@ -1041,9 +1056,16 @@ approximations:
     supplémentaire, est tenue pour figée comme sous celle du 30 décembre 2004 ; les
     cinquante-cinq ans d'un survivant de 2004 n'abattent pas ses revenus avant 2005,
     ni ne révisent sa réversion, que la caisse revoyait alors en interrogeant les
-    bénéficiaires. L'union ne révise jamais la réversion de la complémentaire des
-    indépendants, ni sa retraite celle des autres régimes ; la majoration pour enfant
-    à charge garde la réduction de la date d'effet
+    bénéficiaires. Le survivant est tenu pour déclarer chaque changement (R. 815-38),
+    et pour demander le rétablissement de la réversion que ses ressources avaient
+    réduite à rien (circulaire Cnav n° 2005-17, § 321). Ni l'union, ni sa fin, ni
+    celle de son activité ne révisent jamais la réversion de la complémentaire des
+    indépendants, ni sa retraite celle des autres régimes ; la fin de l'union ne rend
+    pas la réversion des régimes qui la retirent au remariage (perte_au_remariage),
+    ni la majoration pour enfant à charge qu'elle a arrêtée
+    avant juillet 2004 — défaite avant le jour où celle-ci s'attribuerait, elle ne la
+    refuse plus — ; la majoration pour enfant à charge garde la réduction de la date
+    d'effet
   effet: non mesuré
 - ecart: >-
     la réversion des points d'avant 1973 des artisans et des commerçants suit les
@@ -1659,6 +1681,48 @@ sources:
       ans, à l'âge légal et à l'âge du taux plein augmenté de trois mois
     date: 2026-10-24
     url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_2007035_30042007.aspx
+  - type: circulaire_cnav
+    reference: >-
+      lettre de la Cnav du 18 avril 2007, « Notion de changement de situation familiale
+      pour l'appréciation des ressources » : il tient compte de ses conséquences « sur
+      le plafond de ressources à retenir (personne seule ou ménage), ainsi que sur le
+      montant des ressources elles-mêmes » ; en sont « le décès du conjoint, du
+      concubin, du partenaire pacsé », « le remariage », « le divorce », « la
+      conclusion ou résiliation d'un Pacs », « début ou fin du concubinage », non le
+      décès de l'ex-conjoint d'une personne divorcée. Circulaire Cnav n° 2005/17,
+      § 146 : quand la situation familiale change au cours de la période de référence,
+      les ressources se transposent sur trois ou douze mois depuis le changement ;
+      « Divorce le 1er décembre : [...] le salaire du conjoint doit être ignoré, et le
+      décompte doit s'effectuer en retenant le plafond de ressources personne seule » ;
+      « Mariage le 1er décembre : [...] le salaire du conjoint doit être retenu en
+      considérant qu'il a été perçu au cours des trois mois (1600 x 3 = 4 800) » ; § 321 :
+      « Le rétablissement d'une pension de réversion suspendue ne peut intervenir que
+      sur demande expresse de l'assuré ». Circulaire Cnav n° 2009/11, § 31, qui
+      complète le § 145 : « sont assimilés aux célibataires les conjoints, concubins ou
+      partenaires liés par un pacte civil de solidarité, séparés de fait avec résidence
+      distincte, ainsi que les personnes séparées de corps ». Circulaire Cnav
+      n° 2010/58, § 21 : « Un assuré titulaire d'une pension de réversion nous informe
+      le 20 mars 2008 qu'il a cessé son activité professionnelle le 15 février 2008 :
+      date d'effet de la révision = 1er mars 2008 »
+    date: 2026-10-24
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=LE_CN_18042007.aspx
+  - type: legifrance
+    reference: >-
+      R. 353-1 (LEGIARTI000038790257, depuis le 8 juillet 2019) : les ressources
+      « sont appréciées selon les modalités et dans les conditions fixées par les
+      articles R. 815-18 à R. 815-20, R. 815-22 à R. 815-25, R. 815-27 et au deuxième
+      alinéa de l'article R. 815-29 » ; R. 815-27 (LEGIARTI000006753721, depuis le 13
+      janvier 2007) : les ressources des époux, concubins ou partenaires se totalisent,
+      « Toutefois, pour les conjoints, concubins ou partenaires liés par un pacte civil
+      de solidarité, séparés de fait avec résidence distincte et pour les personnes
+      séparées de corps, les ressources sont appréciées comme pour les célibataires » ;
+      R. 815-38 (LEGIARTI000006753804) : le bénéficiaire déclare « tout changement
+      survenu dans leurs ressources, leur situation familiale ou leur résidence » ;
+      R. 815-42 (LEGIARTI000006753836) : la révision prend effet « à compter du premier
+      jour du terme d'arrérages suivant la période de trois mois au cours de laquelle
+      il a été constaté que les ressources sont devenues supérieures ou inférieures au
+      quart des plafonds »
+    date: 2026-10-24
 textes_a_rattacher: []
 code:
   python: >-
@@ -1668,11 +1732,12 @@ code:
     _admis_ailleurs, _fin_au_remariage, _jusqu_au_remariage, _premiere_date_d_effet,
     _date_d_effet_du_regime_general, _cumuler, _retraites_au, _cumul_a_la_retraite,
     _annee_du_plafond, _servie_au, _revisions, _trois_mois_apres, _generation,
-    _derniere_revision,
+    _derniere_revision, _venu,
     _majorations_ulterieures ; scenarios/actuel.py : Reversions ; echeancier.py :
     Echeancier._reverser, Echeancier._pensions_au_deces,
     Echeancier._pensions_eues_au_deces ; carriere.py : Carriere.arretee_au_deces,
-    Carriere.ex_conjoints ; chronologie.py : ex_conjoints, debut_du_menage ;
+    Carriere.ex_conjoints ; chronologie.py : ex_conjoints, debut_du_menage,
+    fin_du_menage, fin_d_activite ;
     droit/completer.py : completer ; droit/liquider.py : maximum_des_pensions ;
     droit/commun.py : PensionRegime
   javascript: >-
@@ -1682,11 +1747,12 @@ code:
     remarieAvant, admisAuRegimeGeneral, admisAilleurs, finAuRemariage,
     jusquAuRemariage, premiereDateDEffet, dateDEffetDuRegimeGeneral, cumuler,
     retraitesAu, cumulALaRetraite, anneeDuPlafond, servieAu, revisionsDeLaReversion,
-    troisMoisApres, generationDe, derniereRevision, majorationsUlterieures ; moteur/js/regimes.js :
-    Reversions ;
+    troisMoisApres, generationDe, derniereRevision, venu, majorationsUlterieures ;
+    moteur/js/regimes.js : Reversions ;
     moteur/js/echeancier.js : Echeancier._reverser, Echeancier._pensionsAuDeces,
     Echeancier._pensionsEuesAuDeces ; moteur/js/carriere.js : Carriere.arreteeAuDeces,
-    Carriere.exConjoints ; moteur/js/chronologie.js : exConjoints, debutDuMenage ;
+    Carriere.exConjoints ; moteur/js/chronologie.js : exConjoints, debutDuMenage,
+    finDuMenage, finDActivite ;
     moteur/js/droit/completer.js : completer ; moteur/js/droit/liquider.js :
     maximumDesPensions
   parametres: >-

@@ -719,10 +719,11 @@ function servieAu(montant, etapes, jour) {
  * leurs jours : `[jour, servie, revue, fiabilité]` chacune. Attribuée avant
  * juillet 2004, seule une retraite prise depuis la recalcule aux règles de
  * ressources, à sa date d'effet ; attribuée depuis, ou ainsi recalculée, elle
- * se révise le mois qui suit sa retraite, le ménage qu'il forme et ses
- * cinquante-cinq ans quand ils abattent ses revenus d'activité, jusqu'à
- * `derniere` (R. 353-1-1). `bases(jour)` : les réversions des autres régimes
- * de base ce jour-là. Voir `_revisions` du Python.
+ * se révise le mois qui suit sa retraite, le ménage qu'il forme ou qui se
+ * défait, la fin de son activité et ses cinquante-cinq ans quand ils abattent
+ * les revenus d'une activité qu'il n'a pas cessée, jusqu'à `derniere`
+ * (R. 353-1-1). `bases(jour)` : les réversions des autres régimes de base ce
+ * jour-là. Voir `_revisions` du Python.
  */
 function revisionsDeLaReversion(moteur, fiche, parametres, conjoint, deces, annee, dateEffet,
   servie, entiere, ulterieures, ressources, retraites, bases, derniere) {
@@ -744,17 +745,25 @@ function revisionsDeLaReversion(moteur, fiche, parametres, conjoint, deces, anne
   } else {
     return [];
   }
-  const union = conjoint.nouvelle_union_depuis ?? null;
-  if ((conjoint.nouvelle_union ?? null) !== null && union !== null && union > depuis
-      && !jours.has(moisSuivant(union))) {
-    jours.set(moisSuivant(union), false);
+  // Le ménage qu'il forme ou qui se défait, la fin de son activité.
+  const changements = conjoint.revenus_d_activite ? [conjoint.fin_d_activite ?? null] : [];
+  if ((conjoint.nouvelle_union ?? null) !== null) {
+    changements.push(conjoint.nouvelle_union_depuis ?? null,
+      conjoint.nouvelle_union_fin ?? null);
+  }
+  for (const change of changements) {
+    if (change !== null && change > depuis && !jours.has(moisSuivant(change))) {
+      jours.set(moisSuivant(change), false);
+    }
   }
   const aDepuis = moteur.reversions.version(fiche, depuis, deces);
   const reglesDepuis = aDepuis === null ? {} : aDepuis.parametres;
   if (conjoint.revenus_d_activite && reglesDepuis.abattement_activite) {
     const abattement = chrono.plusAns(conjoint.naissance,
       Math.trunc(Number(reglesDepuis.abattement_activite_age)));
-    if (abattement > depuis && !jours.has(moisSuivant(abattement))) {
+    const fin = conjoint.fin_d_activite ?? null;
+    if (abattement > depuis && (fin === null || fin > abattement)
+        && !jours.has(moisSuivant(abattement))) {
       jours.set(moisSuivant(abattement), false);
     }
   }
@@ -968,7 +977,8 @@ function majorationForfaitaireEnfants(moteur, carriere, conjoint, retraitesPerso
   }
   if (parametres.refusee_en_couple && conjoint.nouvelle_union !== null
       && conjoint.nouvelle_union !== undefined
-      && (conjoint.nouvelle_union_depuis ?? dateEffet) <= attribution) {
+      && (conjoint.nouvelle_union_depuis ?? dateEffet) <= attribution
+      && !venu(conjoint.nouvelle_union_fin, attribution, true)) {
     return null;
   }
   let parEnfant = table.majorationEnfant(annee);
@@ -1152,28 +1162,43 @@ function partDuMinimum(parametres, regime, durees, groupes) {
 }
 
 /**
+ * Le changement du jour `jour` — le ménage formé ou défait, l'activité cessée —
+ * compte-t-il le jour `date` ? Venu avant, oui ; ce jour même, seulement quand
+ * `leJourMeme`. Voir `_venu` du Python.
+ */
+function venu(jour, date, leJourMeme) {
+  return jour !== null && jour !== undefined && (jour < date || (leJourMeme && jour === date));
+}
+
+/**
  * Les ressources du survivant que retient le plafond de la version, et le
  * facteur qui multiplie ce plafond : `[ressources, facteur]`. Ses revenus
- * d'activité abattus de 30 % quand il a cinquante-cinq ans à la date d'effet ;
- * celles de son nouveau conjoint en plus, sous le plafond du ménage, quand il
- * vit en couple et que la version dit ce facteur ; formé à la date d'effet,
- * ou ce jour même quand `leJourMeme`. Voir `_ressources_du_plafond` du Python.
+ * d'activité abattus de 30 % quand il a cinquante-cinq ans à la date d'effet,
+ * et plus comptés une fois son activité cessée ; celles de son nouveau
+ * conjoint en plus, sous le plafond du ménage, quand il vit en couple et que
+ * la version dit ce facteur, le ménage formé et pas encore défait. Chaque
+ * changement compte venu avant la date d'effet, ou ce jour même quand
+ * `leJourMeme`. Voir `_ressources_du_plafond` du Python.
  */
 function ressourcesDuPlafond(parametres, conjoint, ressources, dateEffet, leJourMeme = true) {
   let retenues = ressources;
+  let activite = Number(conjoint.revenus_d_activite ?? 0.0);
+  if (activite && venu(conjoint.fin_d_activite, dateEffet, leJourMeme)) {
+    retenues -= Math.min(retenues, activite);
+    activite = 0.0;
+  }
   const taux = parametres.abattement_activite;
-  if (taux && conjoint.revenus_d_activite
+  if (taux && activite
       && chrono.anneesRevolues(conjoint.naissance, dateEffet)
         >= Math.trunc(Number(parametres.abattement_activite_age))) {
-    retenues -= Number(taux) * Math.min(retenues, Number(conjoint.revenus_d_activite));
+    retenues -= Number(taux) * Math.min(retenues, activite);
   }
   const facteur = parametres.facteur_menage;
-  // Le ménage compte formé à la date d'effet ; à une révision, formé avant
-  // elle : voir le Python.
   const union = conjoint.nouvelle_union_depuis ?? null;
-  const formee = union === null || union < dateEffet || (leJourMeme && union === dateEffet);
+  const formee = union === null || venu(union, dateEffet, leJourMeme);
   if (facteur === null || facteur === undefined
-      || conjoint.nouvelle_union === null || conjoint.nouvelle_union === undefined || !formee) {
+      || conjoint.nouvelle_union === null || conjoint.nouvelle_union === undefined || !formee
+      || venu(conjoint.nouvelle_union_fin, dateEffet, leJourMeme)) {
     return [retenues, 1.0];
   }
   return [retenues + Number(conjoint.ressources_du_nouveau_conjoint ?? 0.0), Number(facteur)];

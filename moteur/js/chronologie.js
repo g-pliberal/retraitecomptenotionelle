@@ -252,9 +252,11 @@ export function dateDeclaree(valeur, quoi) {
  * âges se comptent. `conjoint` déclare le conjoint (§ 5.1) : sa `naissance`
  * et son `sexe`, la date du `mariage` — que {@link completer} présume sinon —,
  * ses `ressources` annuelles, et ce qui en vient de son activité
- * (`revenus_d_activite`), la `nouvelle_union` où il vit après le décès et ce
+ * (`revenus_d_activite`), jusqu'au jour où elle cesse s'il le dit
+ * (`fin_d_activite`), la `nouvelle_union` où il vit après le décès et ce
  * que son nouveau conjoint y apporte (`ressources_du_nouveau_conjoint`),
- * depuis le mois qu'il dit (`nouvelle_union_depuis`) ou le décès, et son
+ * depuis le mois qu'il dit (`nouvelle_union_depuis`) ou le décès, jusqu'à
+ * celui où elle se défait s'il le dit (`nouvelle_union_fin`), et son
  * `invalidite`, une décision médicale datée, s'il les dit, et les précédents
  * conjoints de l'assuré (`ex_conjoints`) ; `deces` date le décès de l'assuré,
  * qui clôt le mariage ; `demandesDePension` dit, régime par régime,
@@ -391,9 +393,20 @@ function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnf
     }
     if (conjoint.revenus_d_activite !== null && conjoint.revenus_d_activite !== undefined) {
       // La part de ces ressources que lui rapporte son activité, que le plafond
-      // de la réversion abat après cinquante-cinq ans (R. 353-1).
+      // de la réversion abat après cinquante-cinq ans (R. 353-1), jusqu'au jour
+      // où elle cesse, s'il le dit : sa réversion se révise le mois qui suit
+      // (circulaire Cnav n° 2010/58, § 21).
+      const debut = jourDeces ?? epoux.debut;
+      let fin = null;
+      if (conjoint.fin_d_activite !== null && conjoint.fin_d_activite !== undefined) {
+        [fin] = dateDeclaree(conjoint.fin_d_activite, "la fin de son activité");
+        if (fin <= debut) {
+          throw new Error(`une activité du conjoint qui cesse le ${fin}, avant `
+            + (jourDeces ? "le décès" : "sa naissance"));
+        }
+      }
       faitsNaissance.push(fait(`revenus_d_activite_${CONJOINT}`, CONJOINT, "ressources",
-        jourDeces ?? epoux.debut, null,
+        debut, fin,
         { periode: "annuelle", nature: "revenus_d_activite" }, null,
         { annuel: Number(conjoint.revenus_d_activite), monnaie: "EUR" }));
     }
@@ -414,8 +427,18 @@ function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnf
           throw new Error(`une nouvelle union le ${debut}, avant le décès`);
         }
       }
+      let fin = null;
+      if (conjoint.nouvelle_union_fin !== null && conjoint.nouvelle_union_fin !== undefined) {
+        // Le mois où elle se défait, s'il le dit — divorce, séparation, rupture
+        // du pacs ou fin du concubinage, décès du nouveau conjoint (lettre de la
+        // Cnav du 18 avril 2007) : il revit seul.
+        [fin] = dateDeclaree(conjoint.nouvelle_union_fin, "la fin de sa nouvelle union");
+        if (fin <= debut) {
+          throw new Error(`une nouvelle union qui finit le ${fin}, avant de commencer`);
+        }
+      }
       faitsNaissance.push(fait(`menage_${CONJOINT}`, CONJOINT, "ressources",
-        debut, null,
+        debut, fin,
         { periode: "annuelle", nature: "menage", forme }, null,
         apport === null || apport === undefined
           ? null : { annuel: Number(apport), monnaie: "EUR" }));
@@ -1153,6 +1176,15 @@ export function revenusDActivite(chronologie, personne) {
 }
 
 /**
+ * Le jour où cesse l'activité dont une personne déclare les revenus, si elle le
+ * dit, ou `null`.
+ */
+export function finDActivite(chronologie, personne) {
+  const trouve = ressourcesDeNature(chronologie, personne, "revenus_d_activite");
+  return trouve === null ? null : (trouve.fin ?? null);
+}
+
+/**
  * Le ménage où une personne dit vivre : `[forme de son union, ressources
  * annuelles que l'autre y apporte, ou null quand il ne les dit pas]` ; `null`
  * pour qui vit seul. Voir `menage` du Python.
@@ -1172,6 +1204,15 @@ export function menage(chronologie, personne) {
 export function debutDuMenage(chronologie, personne) {
   const trouve = ressourcesDeNature(chronologie, personne, "menage");
   return trouve === null ? null : trouve.debut;
+}
+
+/**
+ * Le jour où se défait le ménage où une personne dit vivre, si elle le dit, ou
+ * `null` : elle revit seule.
+ */
+export function finDuMenage(chronologie, personne) {
+  const trouve = ressourcesDeNature(chronologie, personne, "menage");
+  return trouve === null ? null : (trouve.fin ?? null);
 }
 
 /** Le fait de naissance d'une personne, s'il est connu. */
