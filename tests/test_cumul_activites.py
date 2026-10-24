@@ -23,10 +23,9 @@ import pytest
 
 from retraite_notionnelle.carriere import Carriere, Metier
 from retraite_notionnelle.simulateur import Simulateur
-from retraite_notionnelle.saisie import ErreurSaisie, Saisie
-from retraite_notionnelle.contexte import Contexte
-from retraite_notionnelle.web.site import disponible, rendre
+from retraite_notionnelle.web.site import ErreurSite, disponible, rendre
 
+from outils_pont import Saisies, refus_de_la_saisie, saisie_du_portage
 from outils_portage import moitie_python
 
 
@@ -160,7 +159,7 @@ def _ecarts(obtenu, attendu, chemin="") -> list[str]:
 def _cumuls_tires_au_hasard(graine: int, nombre: int) -> tuple[list, list]:
     """Les parcours tirés — graine fixe —, et ce que le Python en fait : la
     moitié Python du test, que la mémoire des calculs garde."""
-    simulateur = Contexte().simulateur()
+    simulateur = Simulateur()
     alea = random.Random(graine)
     statuts = list(simulateur.affiliations.codes)
     parcours = []
@@ -276,11 +275,11 @@ _SAISIE = {
 
 def test_le_formulaire_ne_cumule_que_ce_qui_est_declare():
     """Sans réponse au menu, la deuxième ligne REMPLACE la première."""
-    remplace = Saisie.depuis_requete({
+    remplace = saisie_du_portage({
         **_SAISIE, "metier2_debut": "40", "metier2_statut": "artisan",
         "metier2_salaire": "0.5"})
     assert not remplace.metiers[0].cumul
-    ajoute = Saisie.depuis_requete({
+    ajoute = saisie_du_portage({
         **_SAISIE, "metier2_debut": "40", "metier2_statut": "artisan",
         "metier2_salaire": "0.5", "metier2_cumul": "oui", "metier2_fin": "50"})
     metier = ajoute.metiers[0]
@@ -288,19 +287,17 @@ def test_le_formulaire_ne_cumule_que_ce_qui_est_declare():
 
 
 def test_le_formulaire_mene_le_cumul_jusqu_au_modele():
-    contexte = Contexte()
     requete = {**_SAISIE, "metier2_debut": "36", "metier2_statut": "medecin_liberal",
                "metier2_salaire": "0.6", "metier2_cumul": "oui", "metier2_fin": "58"}
-    carriere = contexte.simuler(Saisie.depuis_requete(requete)).carriere
+    carriere = Saisies().carriere(requete)
     liberal = [l.annee for l in carriere.lignes if l.affiliation == "medecin_liberal"]
     assert liberal == list(range(2004, 2026))
     # L'activité principale n'a pas été interrompue par celle qui s'ajoute.
     assert all(carriere.ligne(annee).affiliation == "salarie_prive_non_cadre"
                for annee in liberal)
     # L'adresse partageable rejoue la même saisie.
-    relue = Saisie.depuis_requete(dict(parse_qsl(
-        Saisie.depuis_requete(requete).requete())))
-    assert relue.metiers == Saisie.depuis_requete(requete).metiers
+    relue = saisie_du_portage(dict(parse_qsl(saisie_du_portage(requete).requete())))
+    assert relue.metiers == saisie_du_portage(requete).metiers
 
 
 @pytest.mark.parametrize("ajout, motif", [
@@ -315,8 +312,8 @@ def test_le_formulaire_mene_le_cumul_jusqu_au_modele():
 def test_ce_que_le_formulaire_refuse(ajout, motif):
     requete = {**_SAISIE, "metier2_debut": "40", "metier2_statut": "artisan",
                "metier2_salaire": "0.5", **ajout}
-    with pytest.raises(ErreurSaisie, match=motif):
-        Saisie.depuis_requete(requete)
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie(motif)):
+        saisie_du_portage(requete)
 
 
 def test_la_page_dit_l_activite_ajoutee():

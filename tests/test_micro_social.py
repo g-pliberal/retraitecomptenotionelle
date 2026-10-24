@@ -25,10 +25,13 @@ from retraite_notionnelle.donnees.chargement import (
 from retraite_notionnelle.donnees.macro import DonneesMacro
 from retraite_notionnelle.moteur.compte import ConstructeurCompte
 from retraite_notionnelle.simulateur import Simulateur
-from retraite_notionnelle.saisie import ABATTEMENTS_MICRO
+from retraite_notionnelle.web.site import module
 
 RACINE = Path(__file__).resolve().parents[1]
 DONNEES = RACINE / "data"
+#: L'abattement de chaque activité, que la table dit et que la saisie applique.
+ABATTEMENTS_MICRO = charger_yaml(
+    DONNEES / "reference" / "legislation" / "micro_social.yaml")["abattements"]
 
 
 @pytest.fixture(scope="module")
@@ -50,7 +53,7 @@ def _ligne(macro, statut, micro, activite, chiffre_d_affaires, annee):
 
 def test_les_abattements_de_la_table_sont_ceux_de_la_saisie():
     table = charger_yaml(DONNEES / "reference" / "legislation" / "micro_social.yaml")
-    assert table["abattements"] == ABATTEMENTS_MICRO
+    assert table["abattements"] == module("saisie").ABATTEMENTS_MICRO
 
 
 def test_le_rapport_refait_le_calcul_de_service_public():

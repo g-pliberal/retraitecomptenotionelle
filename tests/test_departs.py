@@ -21,10 +21,17 @@ import pytest
 
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.carriere import Carriere, Metier
+from retraite_notionnelle.donnees.mortalite import AGE_TERMINAL
 from retraite_notionnelle.droit import departs, liquidation
 from retraite_notionnelle.revalorisation import faire_vivre
-from retraite_notionnelle.saisie import AGE_LIQUIDATION_MAXIMAL
 from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.web.site import ErreurSite
+
+from outils_pont import RefusDuPortage, Saisies, refus_de_la_saisie, saisie_du_portage
+
+#: L'âge le plus tardif que la saisie date : un an sous l'âge terminal des
+#: tables de mortalité (``AGE_LIQUIDATION_MAXIMAL`` de la saisie).
+AGE_LIQUIDATION_MAXIMAL = int(AGE_TERMINAL) - 1
 
 
 @pytest.fixture(scope="module")
@@ -366,25 +373,22 @@ def test_un_seul_regime_differe_se_liquide_a_la_date_demandee(simulateur):
      f"au-delà de {AGE_LIQUIDATION_MAXIMAL} ans"),
 ])
 def test_la_saisie_refuse_une_date_de_pension_illisible(requete, refus):
-    from retraite_notionnelle.saisie import ErreurSaisie, Saisie
     base = {"naissance": "1960-05-10", "debut": "1985-09", "liquidation": "2022-06"}
-    with pytest.raises(ErreurSaisie, match=refus):
-        Saisie.depuis_requete({**base, **requete})
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie(refus)):
+        saisie_du_portage({**base, **requete})
 
 
 def test_la_date_de_chaque_pension_voyage_dans_l_adresse():
     """Un champ par régime, en date comme le départ, relu tel quel ; le
     contexte refuse un régime que le catalogue ne connaît pas."""
-    from retraite_notionnelle.contexte import Contexte
-    from retraite_notionnelle.saisie import ErreurSaisie, Saisie
     base = {"naissance": "1960-05-10", "debut": "1985-09", "liquidation": "2022-06"}
-    saisie = Saisie.depuis_requete({**base, "demande_regime_general": "2027-06",
-                                    "demande_arrco": ""})
+    saisie = saisie_du_portage({**base, "demande_regime_general": "2027-06",
+                                "demande_arrco": ""})
     assert saisie.demandes_de_pension_declarees() == {"regime_general": 67.0}
-    relue = Saisie.depuis_requete(dict(parse_qsl(saisie.requete())))
+    relue = saisie_du_portage(dict(parse_qsl(saisie.requete())))
     assert relue.demandes == saisie.demandes
-    with pytest.raises(ErreurSaisie, match="aucun régime « inconnu »"):
-        Contexte().simuler(Saisie.depuis_requete({**base, "demande_inconnu": "2027-06"}))
+    with pytest.raises(RefusDuPortage, match="aucun régime « inconnu »"):
+        Saisies().simuler({**base, "demande_inconnu": "2027-06"})
 
 
 def test_la_page_dit_la_pension_differee_et_la_demande_non_suivie():
