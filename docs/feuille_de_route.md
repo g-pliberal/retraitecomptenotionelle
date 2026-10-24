@@ -7071,16 +7071,16 @@ une à une, les étapes 3 et 5. Les quatre gardes de l'étape 2 sont faites le
 
 ### 173. Le site sur tous les écrans : rien ne déborde, ce qui va ensemble se voit ensemble, moins de vide, moins de mots — `en cours`
 
-**Reprise, au 24 octobre 2026.** Faites, les étapes 1 à 9 : rien ne déborde,
+**Reprise, au 24 octobre 2026.** Faites, les étapes 1 à 10 : rien ne déborde,
 ce qui va ensemble se voit ensemble — les cartes à publier deux par ligne dès
 1 024 points, une fiche deux valeurs par ligne à 320, la grille de Carrières
-types en colonnes — ; l'accueil, Simuler, Coût, Pourquoi changer, Partager, Le
-saviez-vous ?, Carrières types et Droits non cotisés disent la même chose en
-moins de mots. Restent l'étape 10, Méthode et sources, et, sur Coût, les deux
-schémas de la carte des flux, qui s'empilent au large. Par quoi commencer :
-l'étape 10 — serrer son budget de lecture, lui donner sa ligne dans
-`BUDGETS_DEPLIES` et `COTE_A_COTE`, les voir rouges, puis récrire. Détail :
-`173/2026-10-24-etape-9-avantages.md`.
+types en colonnes — ; les dix pages, de l'accueil à Méthode et sources, disent
+la même chose en moins de mots. Reste, sur Coût, la carte des flux, dont les
+deux schémas s'empilent au large sur 1 340 pixels, pour un écran de 900. Par
+quoi commencer : la mesure qui les veut côte à côte dès 1 024 points, vue
+rouge dans `tests/test_ecrans.py`, puis le dessin à la demi-colonne, que
+`poserEcran` ne connaît pas au-delà de 720 points. Détail :
+`173/2026-10-24-etape-5-cout.md` ; la dernière note, `173/2026-10-24-etape-10-methode.md`.
 
 **D'où elle vient.** Le 23 octobre 2026, le propriétaire : « Le site web de
 notre projet est plutôt adapté aux écrans d'ordinateurs (et encore...) mais
@@ -7131,7 +7131,10 @@ un graphique et sa légende. »
    mots ouverts au lieu de 1 163, 7 430 dépliés au lieu de 7 617 ; deux nombres
    écrits à la main, et périmés, comptés : les périodes qui déclarent la
    réversion, les dispositifs éteints.
-10. **Moins de mots : Méthode et sources.**
+10. **Moins de mots : Méthode et sources**, faite le 24 octobre 2026 : 469 mots
+    ouverts au lieu de 557, 5 618 dépliés hors ses deux bases au lieu de 5 944 ;
+    la colonne des prix, qui répétait neuf fois le même cumul, retirée ; trois
+    phrases qui ne disaient plus ce que fait le modèle, corrigées.
 
 Pour chaque page des étapes 3 à 10 : serrer d'abord son budget de lecture, le
 voir rouge, puis récrire, chaque idée gardée et chaque chiffre à sa place ;
