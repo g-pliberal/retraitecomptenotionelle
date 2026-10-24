@@ -6073,7 +6073,7 @@ sources:
       La CSG, la CRDS, la CASA et le minimum vieillesse de 2017, codés par la
       DG Trésor : un recoupement daté du foyer et du net.
     statut: epuise
-    explore_le: "2026-10-19"
+    explore_le: "2026-10-24"
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
@@ -6087,7 +6087,13 @@ sources:
       10 996 € et 14 375 €, sont ceux de `csg_pensions_seuils.csv`, lus dans
       L. 136-8, III (LEGIARTI000033712894). Son abattement des revenus
       d'activité dans les ressources de l'ASPA est faux, une fois 0,9 SMIC
-      mensuel au lieu de quatre : l'écart est au registre.
+      mensuel au lieu de quatre : l'écart est au registre. Le 24 octobre
+      2026 (action 137), son ASPA et l'impôt des pensions de 2016 et 2017,
+      rejoués au droit de 2017, son SAS transcrit, sont au registre : la
+      règle et le barème de l'ASPA du dépôt, l'abattement de 10 % du dépôt,
+      et un abattement des personnes âgées faux, indexé et arrondi par lui
+      à l'euro le plus proche, quand l'article 157 bis arrondit à l'euro et
+      à la dizaine supérieurs.
 
   - id: dgtresor_dt_2021_5
     url: https://www.tresor.economie.gouv.fr/Articles/3c47cb70-d0bf-46c7-b159-c5d710f4d3bb/files/01908fa8-153b-4c87-abb1-639a7782a28f

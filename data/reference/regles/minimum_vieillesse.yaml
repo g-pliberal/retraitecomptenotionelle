@@ -189,12 +189,19 @@ referents:
     son barème est la moyenne des douze mois, celui de la caisse au centime de 2022 à 2025
     et 0,20 € sous lui pour le couple de 2021 ; il compte les revenus d'activité abattus
     (R. 815-29), que le modèle ignore, et ajoute la CRDS à la pension brute
+  saphir: >-
+    rejoué le 24 octobre 2026 au droit de 2017 (tests/test_referents.py) : la même règle,
+    d'une personne seule et d'un couple d'un ou de deux allocataires, au centime une fois
+    les barèmes égalés ; son barème est la moyenne des douze mois de 2017, celui de la
+    caisse au centime du mensuel ; il compte les revenus d'activité, mais n'en abat qu'un
+    trimestre sur l'année, au lieu de quatre (R. 815-29)
 approximations:
 - ecart: >-
     La série d'une personne seule ne porte qu'un montant par an : 2008, 2013 et 2015 y
     manquent, 2014 est au montant d'octobre, 2022 à celui de janvier, et l'annuel vaut
-    douze fois le mensuel depuis 2021 (12 523,08 € pour 12 523,14 €) ; Ines tient le
-    barème au mois, revalorisation d'avril au prorata.
+    douze fois le mensuel en 2007, en 2017 et depuis 2021 (9 638,40 € pour 9 638,42 € en
+    2017, 12 523,08 € pour 12 523,14 € en 2026) ; Ines tient le barème au mois, Saphir
+    en sert la moyenne de 2017 : la revalorisation d'avril au prorata.
   effet: >-
     non mesuré ; léger : la coupe du 14 octobre 2026 le déclare sans le faire
     (action 138, classement du 9 octobre)

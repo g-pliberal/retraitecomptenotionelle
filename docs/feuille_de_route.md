@@ -5702,12 +5702,12 @@ mémoire sur le seul code du modèle ; `actions/cache` sur GitHub.
 2, TRAJECTOiRE et Ines exécutés à part ; les pistes du 1er octobre, closes ;
 les treize « jamais confrontés », tous confrontés, les quatre derniers
 rejoués au droit de leur date (notes du 22 au 24 octobre) ; l'Agirc-Arrco
-d'EDIFIS, rejoué sous R (note du 24 octobre). Le dépôt a raison sur leurs
-écarts, sauf la carrière longue des débuts à seize ans (étape 138.21) et le
-partage de l'Agirc-Arrco, 40 % exacts au lieu des parts au centième de la
-caisse, nul, coupé. Restent, à commencer par l'ASPA de Saphir : les années
-2015 à 2025 d'EUROMOD ; la campagne 2025 de l'EACR, au printemps 2027 (note
-du 14 octobre) ; les `referents` des fiches, à leur relecture.
+d'EDIFIS, l'ASPA et l'impôt des pensions de Saphir, rejoués (notes du 24
+octobre). Le dépôt a raison sur leurs écarts, sauf la carrière longue des
+débuts à seize ans (étape 138.21) ; ses écarts nuls sont déclarés. Restent,
+à commencer par les années 2015 à 2025 d'EUROMOD : la campagne 2025 de
+l'EACR, au printemps 2027 (note du 14 octobre) ; les `referents` des
+fiches, à leur relecture.
 
 **Demande**, le 1er octobre 2026 : « Quels sont les autres modèles publics
 autres que openfisca ? », puis : « Ajoute les modèles qui ne sont pas encore

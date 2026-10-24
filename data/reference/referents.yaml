@@ -7501,16 +7501,27 @@ referents:
       entrées. En SAS.
     version: "commit 7bc72c9 (5 septembre 2018)"
     confrontation: >-
-      Des paramètres de 2017 comparés, pour le foyer et le net ; il ne vaut
-      que pour cette année-là. Ses seuils de CSG de 2017 pour une part,
+      Le foyer et le net de 2017, rejoués le 24 octobre 2026 (action 137) au
+      droit de cette année, la seule qu'il représente : ses `%let` évalués
+      comme SAS les évalue, ses étapes transcrites ligne à ligne, SAS n'étant
+      pas dans le conteneur ; ce qui concorde et ses erreurs, tenus par
+      `tests/test_referents.py`. Ses seuils de CSG de 2017 pour une part,
       10 996 € et 14 375 €, sont ceux du dépôt
       (`legislation/csg_pensions_seuils.csv`), vus le 19 octobre 2026
-      (action 89) ; l'abattement des pensions de son impôt de 2016, 379 € et
-      3 711 €, est celui du dépôt pour les revenus de 2015
-      (`legislation/impot_revenu.yaml`), vu le 22 (`tests/test_referents.py`).
-      Reste : l'abattement relevé de 2017, celui des personnes âgées, et
-      l'ASPA de 2017 ; ses majorations par demi-part (2 936 et 3 838 €) ne se
-      comparent pas, le dépôt n'ayant avant 2026 que les seuils d'une part.
+      (action 89). L'abattement de 10 % des pensions de ses impôts de 2016 et
+      de 2017, 379 € par pensionné au moins, 3 711 € puis 3 715 € par foyer
+      au plus, est celui du dépôt pour les revenus de 2015 et de 2016
+      (`legislation/impot_revenu.yaml`), et du code (CGI, art. 158, 5, a,
+      LEGIARTI000032701811 et LEGIARTI000034597100). Sa règle de l'ASPA —
+      une personne seule, deux allocataires qui partagent par moitié ce qui
+      manque au couple, un seul qui reçoit au plus le montant d'une personne
+      seule — est celle du dépôt au barème égal (`droit/foyer.py`) ; son
+      barème, 800,80 € par mois puis 803,20 € au 1er avril 2017, 1 243,24 €
+      puis 1 246,97 € pour un couple, celui de la caisse et du dépôt au
+      centime du mensuel. Faux : son abattement des personnes âgées, et celui
+      des revenus d'activité dans l'ASPA (écarts ci-dessous). Ses majorations
+      par demi-part (2 936 et 3 838 €) ne se comparent pas, le dépôt n'ayant
+      avant 2026 que les seuils d'une part.
     ecarts:
       - constat: >-
           Il retranche une seule fois 0,9 SMIC mensuel (1,5 pour un
@@ -7518,7 +7529,12 @@ referents:
           fois. Pour un couple, il l'applique aux revenus de chaque
           conjoint, et seulement si la personne de référence est
           éligible (12-Prestations_20ans.sas:577-585 ;
-          7a-Legislation_sociale.sas:1510-1511).
+          7a-Legislation_sociale.sas:1510-1511). Rejoué le 24 octobre
+          2026 : une personne seule de 6 000 € d'activité et de 3 000 €
+          de pension reçoit en 2017 1 963 € au lieu de 5 960 € ; quand
+          la personne de référence, active, n'a que 60 ans, il n'abat
+          rien : payée 9 000 €, elle laisse à son conjoint allocataire,
+          5 000 € de pension, 952 € au lieu de 9 631 €.
         tranche: >-
           R. 815-29 fixe l'abattement par trimestre, sur les revenus
           professionnels du foyer pour un couple ; F16871 donne pour
@@ -7528,6 +7544,35 @@ referents:
         preuve: >-
           LEGIARTI000029968931 ; service-public F16871 (2026 : 6
           562,91 € et 10 938,20 € sur douze mois)
+      - constat: >-
+          Son abattement des personnes âgées ou invalides : 2 346 €
+          sous un revenu net global de 14 725 €, 1 173 € jusqu'à
+          23 724 €, pour l'impôt de 2016 ; 2 348 €, 14 740 €, 1 174 €
+          et 23 748 € pour celui de 2017. Il indexe lui-même les
+          montants de l'année précédente et les arrondit à l'euro le
+          plus proche (7b-Legislation_IR.sas:396-399, par 1,001 pour
+          2017 : 9b-Calcul_de_l_impot_sur_le_revenu_2017.sas:33). Et il
+          ne donne le plein que strictement sous le plafond
+          (8b-Calcul_de_l_impot_sur_le_revenu_2016.sas:2019). Rejoué
+          le 24 octobre 2026 : un pensionné de 70 ans au revenu net
+          global de 14 745 € en 2016 reçoit chez lui 1 174 € au lieu
+          de 2 352 € ; à 23 760 €, rien au lieu de 1 176 €.
+        tranche: >-
+          L'article 157 bis du code général des impôts porte, pour
+          les revenus de 2015, 2 348 € jusqu'à 14 730 € et 1 174 €
+          jusqu'à 23 730 € ; pour ceux de 2016, 2 352 €, 14 750 €,
+          1 176 € et 23 760 €, les montants indexés « arrondis [...] à
+          l'euro supérieur en ce qui concerne les abattements et à la
+          dizaine d'euros supérieure en ce qui concerne les plafonds
+          de revenus », le plein à qui « n'excède pas » le plafond. Le
+          dépôt les porte (`legislation/impot_revenu.yaml`) et les
+          applique ainsi (`impot_revenu.py`). Saphir a tort.
+        preuve: >-
+          CGI, art. 157 bis, LEGIARTI000032701889 (du 13 juin 2016 au
+          5 mai 2017, « en conséquence de l'article 2-I-1° de la loi
+          n° 2015-1785 ») et LEGIARTI000034597178 (du 5 mai 2017 au 23
+          juin 2018, article 2-I-2° de la loi n° 2016-1917), lus dans
+          l'index LEGI du dépôt ; commit 7bc72c9
     fait_mieux:
       - quoi: >-
           Il fixe le régime de CSG des pensions — exonération, taux
@@ -7572,7 +7617,9 @@ referents:
           7bc72c9
         verification: >-
           CGI art. 158, 5 a (plafond par foyer, plancher par
-          pensionné). Juste pour 2016 et 2017 seulement.
+          pensionné). Juste pour 2016 et 2017 seulement, sauf
+          l'abattement des personnes âgées, faux (écart ci-dessus,
+          rejoué le 24 octobre 2026).
           Repris le 10 octobre 2026 (138.5, première partie)
           : le dépôt calcule l'impôt des pensions de chaque
           année, 2016 et 2017 compris
@@ -7587,19 +7634,21 @@ referents:
         etat: repris
         chantier: "138.5"
     bilan: >-
-      Saphir ne fait rien qu'Ines ne fasse à jour. Il confirme, pour
-      2017 seulement, le régime de CSG à trois cas selon le RFR et les
-      parts, l'ASPA du couple et l'impôt des pensions. Ses paramètres se
-      recopient, mais ils sont figés en 2017, et son abattement de
-      l'ASPA est faux.
+      Saphir ne fait rien qu'Ines ne fasse à jour. Rejoué au droit de
+      2017, il confirme, pour cette année seulement, le régime de CSG à
+      trois cas selon le RFR et les parts, la règle et le barème de
+      l'ASPA, et l'abattement de 10 % des pensions. Ses paramètres se
+      recopient, mais ils sont figés en 2017, et deux de ses abattements
+      sont faux : celui des revenus d'activité dans l'ASPA, celui des
+      personnes âgées dans l'impôt.
     sas: [dgtresor_saphir]
-    lu_le: 2026-10-04
+    lu_le: 2026-10-24
     lu_dans:
       - https://github.com/DGTresor/Saphir
     note: >-
       Un seul commit, le 5 septembre 2018 ; le README prévient qu'il n'engage
       pas « la position de l'administration ».
-      Ce commit est `7bc72c9`.
+      Ce commit est `7bc72c9`, encore sa tête le 24 octobre 2026.
 
   # ---- L'Urssaf : les règles publicodes ----------------------------------
 

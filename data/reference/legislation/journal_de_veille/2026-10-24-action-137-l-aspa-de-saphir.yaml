@@ -1,0 +1,38 @@
+date: "2026-10-24"
+session: "action 137 : l'ASPA et l'impôt des pensions de Saphir, rejoués au droit de 2017"
+consulte: >-
+  Saphir (DG Trésor, CeCILL 2.1, ses paramètres sous Licence Ouverte), cloné à part au
+  commit 7bc72c9 du 5 septembre 2018, son seul, encore sa tête : ses `%let` évalués comme
+  SAS les évalue (Lancement, 7a-Legislation_sociale, 7b-Legislation_IR, l'indexation de
+  9b-Calcul_de_l_impot_sur_le_revenu_2017), ses étapes de l'ASPA
+  (12-Prestations_20ans.sas:561-605), de l'abattement de 10 % des pensions et de celui
+  des personnes âgées (8b-Calcul_de_l_impot_sur_le_revenu_2016.sas:599-605, 895-960,
+  2017-2022) transcrites ligne à ligne, SAS n'étant pas dans le conteneur. Dans l'index
+  LEGI du dépôt, récupéré ce jour (à jour au 18 octobre 2026) : les rédactions de
+  l'article 157 bis du code général des impôts de 2014 à 2019, dont LEGIARTI000032701889
+  et LEGIARTI000034597178 ; celles de l'article 158, dont LEGIARTI000032701811 et
+  LEGIARTI000034597100 ; R. 815-29 du code de la sécurité sociale (LEGIARTI000029968931).
+  Le barème « Montant de l'allocation de solidarité aux personnes âgées » de la base
+  législative de la Cnav, par son API : circulaires 2016/18 et 2017/13. Le scénario 1
+  n'est pas touché : ni règle ni donnée chiffrée ; la fiche `minimum_vieillesse` reçoit
+  un référent et voit son approximation complétée, et `textes.py --inscrire` n'a pas
+  tourné.
+trouve: >-
+  Rien qui contredise le dépôt sur le droit. L'ASPA de Saphir est la règle du dépôt au
+  barème égal, et son barème celui de la caisse : 800,80 € par mois, 1 243,24 € pour un
+  couple, au 1er avril 2016 (circulaire 2016/18), 803,20 € et 1 246,97 € au 1er avril
+  2017 (circulaire 2017/13), que Saphir n'arrondit pas, 803,2024 €. Son abattement de
+  10 % des pensions de 2015 et de 2016, 379 € et 3 711 € puis 3 715 €, est celui de
+  l'article 158 et du dépôt. Son abattement des personnes âgées est faux : il indexe et
+  arrondit lui-même, à l'euro le plus proche, 2 346 €, 14 725 €, 1 173 € et 23 724 €
+  pour les revenus de 2015, quand l'article 157 bis porte 2 348 €, 14 730 €, 1 174 € et
+  23 730 €, puis 2 352 €, 14 750 €, 1 176 € et 23 760 € pour 2016, « arrondis [...] à
+  l'euro supérieur [...] et à la dizaine d'euros supérieure » ; le dépôt porte ceux du
+  code. Son abattement des revenus d'activité dans l'ASPA, déjà au registre, ne vaut
+  qu'un trimestre sur l'année, au lieu de quatre. Le dépôt porte en 2007 et en 2017
+  l'annuel de l'ASPA d'une personne seule à douze fois le mensuel, 9 638,40 € pour les
+  9 638,42 € de la circulaire 2017/13 et 7 455,24 € pour 7 455,30 € : nul, déclaré dans
+  l'approximation de la fiche `minimum_vieillesse`, qui ne le disait que depuis 2021.
+reste: >-
+  EUROMOD de 2015 à 2025, pour l'action 137. L'annuel de l'ASPA de 2007 et de 2017 au
+  centime reste coupé, déclaré sans être fait.

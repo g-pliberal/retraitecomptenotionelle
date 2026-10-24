@@ -17,6 +17,7 @@ import csv
 import datetime
 import re
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 import yaml
@@ -24,7 +25,11 @@ import yaml
 from retraite_notionnelle.carriere import Carriere, LigneRelevee
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.contributions_equilibre import charger_contributions_equilibre
+from retraite_notionnelle.donnees.chargement import Fiabilite
+from retraite_notionnelle.donnees.impot_revenu import charger_baremes_impot_revenu
+from retraite_notionnelle.droit import foyer
 from retraite_notionnelle.droit.releve import points_de_l_annee
+from retraite_notionnelle.impot_revenu import Declarant, Foyer, impot_aux_parametres
 from retraite_notionnelle.scenarios.actuel import (
     AgesOuvertureAvantReforme2023, AgesOuvertureAvantSuspension, TableRecouverte)
 from retraite_notionnelle.simulateur import Simulateur
@@ -326,9 +331,10 @@ def depot() -> dict:
             t["revenu_fiscal_maximum"] + 2 * t["majoration_demi_part"] for t in bareme),
         "majorations_csg_2026": tuple(t["majoration_demi_part"] for t in bareme),
         **{f"abattement_pensions_{a}": lu("deductions", a, "pensions_minimum", "pensions_maximum")
-           for a in (2015, 2022, 2025)},
-        "abattement_ages_2025": lu("abattement_age_invalidite", 2025, "abattement_plein",
-                                   "seuil_plein", "abattement_reduit", "seuil_reduit"),
+           for a in (2015, 2016, 2022, 2025)},
+        **{f"abattement_ages_{a}": lu("abattement_age_invalidite", a, "abattement_plein",
+                                      "seuil_plein", "abattement_reduit", "seuil_reduit")
+           for a in (2015, 2016, 2025)},
         "decote_2025": lu("decote", 2025, "seuil_celibataire", "seuil_couple"),
         "point_indice_mensuel_2019": (round(point[2019] / 12, 3),),
         "minimum_contributif_majore_mensuel_2019": (
@@ -339,7 +345,9 @@ def depot() -> dict:
 #: Ce que les modèles du net et de l'impôt portent pour une année, lu chez
 #: eux : (modèle, ce que la donnée du dépôt dit sous ce nom, leurs valeurs).
 #: Saphir : `7a-Legislation_sociale.sas:118-129` et `7b-Legislation_IR.sas:
-#: 346-358` (l'impôt de 2016, sur les revenus de 2015). ir-catala :
+#: 346-358` (l'impôt de 2016, sur les revenus de 2015) ; pour l'impôt de 2017, les
+#: mêmes montants multipliés par 1,001 et arrondis à l'euro
+#: (`9b-Calcul_de_l_impot_sur_le_revenu_2017.sas:33`). ir-catala :
 #: `archives_cgi.catala_fr:340-370`, « sous condition année_revenus = 2022 ».
 #: EUROMOD : FR.xml, système FR_2026. Retraites 2027 : `params.js:52-64`, ses
 #: valeurs de 2026 citées en commentaire. Aurain : `parametres_fiscaux_2026.yaml`.
@@ -349,6 +357,7 @@ def depot() -> dict:
 CONSTATS = [
     ("saphir", "seuils_csg_2017", (10996, 14375)),
     ("saphir", "abattement_pensions_2015", (379, 3711)),
+    ("saphir", "abattement_pensions_2016", (379, 3715)),
     ("ir_catala", "abattement_pensions_2022", (422, 4123)),
     ("euromod", "seuils_csg_2026", (13048, 17057, 26472)),
     ("euromod", "majorations_csg_2026", (3484, 4555, 7066)),
@@ -488,8 +497,13 @@ PLAFOND_ET_VALEUR_D_ACHAT = {2023: (43_992, 18.7669), 2024: (46_368, 19.6321),
 
 
 @pytest.fixture(scope="module")
-def moteur():
-    return Simulateur().scenario_actuel
+def simulateur():
+    return Simulateur()
+
+
+@pytest.fixture(scope="module")
+def moteur(simulateur):
+    return simulateur.scenario_actuel
 
 
 @pytest.mark.parametrize("annee, remuneration", sorted(MODELE_AS))
@@ -1078,6 +1092,181 @@ def test_la_ligne_d_edifis_nomme_les_deux_versions_rejouees(par_id):
     la maquette 2026, refondue, qui a ses erreurs à elle : sa ligne nomme les deux."""
     version = par_id["edifis"]["version"]
     assert "95ef983" in version and "2fa5bc0" in version, version
+
+
+# ---- Saphir, rejoué : l'ASPA et l'impôt des pensions de 2017 -------------------
+# Les programmes SAS de Saphir (CeCILL 2.1 ; ses paramètres sous Licence Ouverte),
+# au commit `7bc72c9`, son seul, rejoués à part le 24 octobre 2026 (action 137)
+# au droit de 2017, l'année qu'il représente. SAS n'est pas dans le conteneur :
+# ses `%let` sont évalués comme SAS les évalue, et ses étapes transcrites ligne à
+# ligne, sous leurs noms — l'ASPA (`12-Prestations_20ans.sas:561-605`), sur les
+# paramètres de `7a-Legislation_sociale.sas:56-59, 1500-1511` ; l'abattement de
+# 10 % des pensions et celui des personnes âgées ou invalides
+# (`8b-Calcul_de_l_impot_sur_le_revenu_2016.sas:599-605, 895-960, 2017-2022`), sur
+# ceux de `7b-Legislation_IR.sas:350-351, 396-399`, que l'impôt de 2017 multiplie
+# par 1,001 (`9b-Calcul_de_l_impot_sur_le_revenu_2017.sas:33`). Sa règle de l'ASPA
+# est celle du dépôt, son barème celui de la caisse ; son abattement des pensions
+# de 2017 est celui du dépôt ; ses abattements des revenus d'activité, dans
+# l'ASPA, et des personnes âgées, dans l'impôt, sont faux, ce que sa ligne du
+# registre déclare.
+
+#: Son ASPA mensuelle d'une personne seule et d'un couple d'allocataires, avant
+#: et après la revalorisation du 1er avril 2017 : 800,8 et 1 243,24 €, puis les
+#: mêmes multipliées par `tx_revalo`, 1,003, sans arrondi. Il sert sur l'année la
+#: moyenne des douze mois, trois puis neuf (`minvi_1p`, `minvi_2p`).
+ASPA_MENSUELLE_SAPHIR = {"seule": (800.8, 800.8 * 1.003), "couple": (1_243.24, 1_243.24 * 1.003)}
+ASPA_SAPHIR_2017 = {cle: 3 * avant + 9 * apres
+                    for cle, (avant, apres) in ASPA_MENSUELLE_SAPHIR.items()}
+
+#: L'ASPA de l'année qu'il sert, rejouée, à un allocataire de 70 ans sans autres
+#: ressources que ses pensions : (ses pensions, l'âge et les pensions de son
+#: conjoint, s'il en déclare un ; son allocation). Deux allocataires partagent par
+#: moitié ce qui manque au couple ; un seul reçoit tout ce qui manque, au plus le
+#: montant d'une personne seule.
+ASPA_SAPHIR = [
+    (0, None, 9_631.2216), (6_000, None, 3_631.2216), (9_000, None, 631.2216),
+    (12_000, None, 0.0), (4_000, (70, 3_000), 3_976.2237), (8_000, (70, 6_000), 476.2237),
+    (10_000, (70, 5_000), 0.0), (3_000, (60, 2_000), 9_631.2216),
+    (5_000, (60, 7_000), 2_952.4475), (9_000, (60, 6_000), 0.0),
+]
+
+#: Son abattement des revenus d'activité dans les ressources de l'ASPA :
+#: `abat_celib` et `abat_couple`, 0,9 et 1,5 fois le SMIC horaire de 2017,
+#: 9,76 €, par 1 820 / 12 heures, au centime — une fois, sur les revenus de
+#: l'année. R. 815-29 (LEGIARTI000029968931) le fixe sur trois mois de
+#: ressources, 0,9 fois la rémunération mensuelle minimale d'une personne seule :
+#: quatre fois sur l'année.
+ABATTEMENT_ASPA_SAPHIR = {"seule": 1_332.24, "couple": 2_220.40}
+
+#: Ce qu'il sert, rejoué, à une personne seule de 70 ans : (ses revenus
+#: d'activité, ses pensions ; son allocation).
+ASPA_SAPHIR_AVEC_ACTIVITE = [(3_000, 5_000, 2_963.4616), (6_000, 3_000, 1_963.4616),
+                             (12_000, 0, 0.0)]
+
+#: L'abattement des personnes âgées ou invalides (plein, son plafond, réduit, son
+#: plafond) chez lui, pour les revenus de 2015 et de 2016 : `7b-Legislation_IR.sas:
+#: 396-399`, multipliés par l'indexation de l'année et arrondis à l'euro le plus
+#: proche. Dans le code, les rédactions de l'article 157 bis du code général des
+#: impôts que les lois de finances pour 2016 et pour 2017 ont fait écrire
+#: (LEGIARTI000032701889 et LEGIARTI000034597178, lues dans l'index LEGI), qui
+#: arrondissent « à l'euro supérieur en ce qui concerne les abattements et à la
+#: dizaine d'euros supérieure en ce qui concerne les plafonds de revenus ».
+ABATTEMENT_AGES_SAPHIR = {2015: (2_346, 14_725, 1_173, 23_724),
+                          2016: (2_348, 14_740, 1_174, 23_748)}
+ABATTEMENT_AGES_CODE = {2015: (2_348, 14_730, 1_174, 23_730),
+                        2016: (2_352, 14_750, 1_176, 23_760)}
+
+#: Des pensionnés seuls de 70 ans, rejoués entre ses plafonds et ceux du code :
+#: (revenus de, pensions ; son revenu net global, après 10 %, son abattement des
+#: personnes âgées, celui du code).
+ABATTEMENT_AGES_REJOUE = {
+    (2015, 16_364): (14_728, 1_173, 2_348), (2015, 26_363): (23_727, 0, 1_174),
+    (2016, 16_383): (14_745, 1_174, 2_352), (2016, 26_400): (23_760, 0, 1_176)}
+
+
+class _BaremeDeSaphir:
+    """Son barème de l'ASPA de 2017, où le dépôt lit le sien : la moyenne de
+    l'année, d'une personne seule et d'un couple, sans les deux étages."""
+
+    def plafond(self, annee):
+        return ASPA_SAPHIR_2017["seule"], Fiabilite.HAUTE
+
+    def plafond_couple(self, annee):
+        return ASPA_SAPHIR_2017["couple"], Fiabilite.HAUTE
+
+    def deux_etages(self, annee):
+        return None
+
+
+@pytest.mark.parametrize("pensions, conjoint, chez_lui", ASPA_SAPHIR)
+def test_l_aspa_de_saphir_est_celle_du_depot_a_bareme_egal(simulateur, pensions, conjoint,
+                                                            chez_lui):
+    """L'allocation différentielle sous le plafond d'une personne seule ou du
+    couple, partagée par moitié ou bornée au montant d'une personne seule : la
+    règle du dépôt (`droit/foyer.py`), sur son barème, au dixième de centime."""
+    actuel = simulateur.scenario_actuel
+    moteur = SimpleNamespace(minimum_vieillesse=_BaremeDeSaphir(), parametres=actuel.parametres,
+                             macro=actuel.macro,
+                             carrieres_hors_de_france=actuel.carrieres_hors_de_france)
+    du_conjoint = None if conjoint is None else {
+        "naissance": f"{2017 - conjoint[0]}-07-01", "sexe": "F", "mariage": None,
+        "ressources": conjoint[1], "invalidite": None}
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1947, sexe="H", affiliation="salarie_prive_non_cadre",
+        age_liquidation=66.0, age_debut=20.0, niveau_salaire=0.3, conjoint=du_conjoint)
+    au_depot = foyer.foyer_et_net(moteur, carriere.personne, "2017-12-31", 2017, pensions,
+                                  True, carriere=carriere).minimum_vieillesse
+    assert au_depot == pytest.approx(chez_lui, abs=1e-3), (
+        f"saphir, ASPA de {pensions} € (conjoint {conjoint}) : {chez_lui} € chez lui, "
+        f"{au_depot} € au dépôt ; sa ligne du registre se relit")
+
+
+def test_le_bareme_de_l_aspa_de_saphir_est_celui_du_depot_au_centime_du_mensuel():
+    """Avant et après la revalorisation d'avril 2017, son montant mensuel est celui
+    du dépôt au centime, qu'il n'arrondit pas (803,2024 €). Sur l'année, il sert
+    trois mois au premier, neuf au second, comme la caisse, à trois centimes près ;
+    le dépôt, le montant du 31 décembre, l'approximation que sa fiche déclare
+    (`minimum_vieillesse`) : 7,20 € de plus en 2017 pour une personne seule."""
+    series = {cle: {int(l["annee"]): float(l["valeur"]) for l in _csv(LEGISLATION / fichier)}
+              for cle, fichier in (("seule", "minimum_vieillesse.csv"),
+                                   ("couple", "minimum_vieillesse_couple.csv"))}
+    servi = {}
+    for cle, (avant, apres) in ASPA_MENSUELLE_SAPHIR.items():
+        mensuel = tuple(round(series[cle][a] / 12, 2) for a in (2016, 2017))
+        assert (round(avant, 2), round(apres, 2)) == mensuel, (
+            f"saphir, ASPA {cle} : {(avant, apres)} € par mois chez lui, {mensuel} au dépôt")
+        servi[cle] = 3 * mensuel[0] + 9 * mensuel[1]
+        assert ASPA_SAPHIR_2017[cle] == pytest.approx(servi[cle], abs=0.03)
+    assert series["seule"][2017] - servi["seule"] == pytest.approx(7.20, abs=0.03)
+
+
+@pytest.mark.parametrize("activite, pensions, chez_lui", ASPA_SAPHIR_AVEC_ACTIVITE)
+def test_saphir_n_abat_qu_un_trimestre_des_revenus_d_activite_d_une_annee(activite, pensions,
+                                                                          chez_lui):
+    """Son erreur, que sa ligne déclare : sur les revenus de l'année, l'abattement
+    de trois mois. Le dépôt, qui ne compte pas les revenus d'activité dans les
+    ressources de l'allocation (fiche `minimum_vieillesse`), n'a pas de règle à
+    lui opposer : celle de R. 815-29 est posée à la main."""
+    bareme, abattement = ASPA_SAPHIR_2017["seule"], ABATTEMENT_ASPA_SAPHIR["seule"]
+    assert abattement == round(0.9 * 9.76 * 35 * 52 / 12, 2)
+    une_fois = max(0.0, bareme - max(0.0, activite - abattement) - pensions)
+    quatre_fois = max(0.0, bareme - max(0.0, activite - 4 * abattement) - pensions)
+    assert chez_lui == pytest.approx(une_fois, abs=1e-3)
+    assert activite > abattement and chez_lui < quatre_fois
+
+
+def test_l_abattement_des_personnes_agees_du_depot_est_celui_du_code_et_non_celui_de_saphir(
+        depot):
+    """Saphir indexe lui-même les montants de l'année précédente et les arrondit à
+    l'euro le plus proche ; le code les porte arrondis à l'euro supérieur, les
+    plafonds à la dizaine supérieure, et le dépôt avec lui."""
+    for annee, code in ABATTEMENT_AGES_CODE.items():
+        assert depot[f"abattement_ages_{annee}"] == code != ABATTEMENT_AGES_SAPHIR[annee], (
+            f"{annee} : {depot[f'abattement_ages_{annee}']} au dépôt, {code} au code, "
+            f"{ABATTEMENT_AGES_SAPHIR[annee]} chez Saphir")
+
+
+@pytest.mark.parametrize("cas", sorted(ABATTEMENT_AGES_REJOUE))
+def test_saphir_abat_les_personnes_agees_moins_que_le_code_entre_ses_plafonds(cas):
+    """Entre ses plafonds et ceux du code, il passe à l'abattement réduit, ou à
+    rien, quand le code donne encore le plein, ou le réduit ; le dépôt, celui du
+    code. Son 10 % des pensions est celui du dépôt, au même revenu net global."""
+    annee, pension = cas
+    revenu_net_global, chez_lui, code = ABATTEMENT_AGES_REJOUE[cas]
+    baremes = charger_baremes_impot_revenu(RACINE / "data")
+    impot = impot_aux_parametres(Foyer(declarants=(Declarant(pensions=pension, age=70),)),
+                                 baremes.parametres(annee))
+    assert impot.revenu_net_global == revenu_net_global
+    assert impot.abattement_age_invalidite == code != chez_lui, (
+        f"saphir, revenus de {annee}, {pension} € : {chez_lui} € chez lui, "
+        f"{impot.abattement_age_invalidite} € au dépôt, {code} € au code")
+
+
+def test_la_ligne_de_saphir_dit_l_ecart_de_son_abattement_des_personnes_agees(par_id):
+    """L'écart que le rejeu trouve est au registre, avec les rédactions du code
+    qui le tranchent."""
+    preuves = " ".join(e["preuve"] for e in par_id["saphir"].get("ecarts", []))
+    assert "LEGIARTI000032701889" in preuves and "LEGIARTI000034597178" in preuves
 
 
 def test_le_tableau_de_bord_dit_combien_d_ecarts_sont_chez_les_modeles_confrontes(referents):
