@@ -20,8 +20,9 @@ from urllib.parse import parse_qsl
 import pytest
 
 from retraite_notionnelle import chronologie as chrono
-from retraite_notionnelle.contexte import Contexte
-from retraite_notionnelle.saisie import ErreurSaisie, Saisie
+from retraite_notionnelle.web.site import ErreurSite
+
+from outils_pont import Saisies, saisie_du_portage
 
 RACINE = Path(__file__).resolve().parent.parent
 
@@ -76,16 +77,16 @@ def test_la_saisie_declare_les_periodes_a_la_chronologie():
     """Les lignes lues deviennent les tables que la chronologie reçoit, et
     l'adresse réécrite les relit à l'identique ; sans elles, rien n'est dit
     et la présomption tient."""
-    saisie = Saisie.depuis_requete(CAS[0])
+    saisie = saisie_du_portage(CAS[0])
     assert saisie.periodes_assimilees_declarees() == [
         {"motif": "stage_d_insertion", "debut": "1985-10-01", "fin": "1986-09-30",
          "dispositif": "tuc"}]
-    relue = Saisie.depuis_requete(dict(parse_qsl(saisie.requete(), keep_blank_values=True)))
+    relue = saisie_du_portage(dict(parse_qsl(saisie.requete(), keep_blank_values=True)))
     assert relue.assimilees == saisie.assimilees
-    assert Saisie.depuis_requete(BASE).periodes_assimilees_declarees() == []
-    stagiaire = Saisie.depuis_requete(CAS[2])
+    assert saisie_du_portage(BASE).periodes_assimilees_declarees() == []
+    stagiaire = saisie_du_portage(CAS[2])
     assert stagiaire.periodes_assimilees_declarees()[0]["jours"] == 80
-    carriere = Contexte().carriere(saisie)
+    carriere = Saisies().carriere(CAS[0])
     periodes = chrono.periodes_assimilees(carriere.chronologie, chrono.ASSURE)
     assert [p["attributs"]["dispositif"] for p in periodes] == ["tuc"]
 
@@ -93,8 +94,8 @@ def test_la_saisie_declare_les_periodes_a_la_chronologie():
 def test_l_apprentissage_se_pose_sur_sa_ligne_de_carriere():
     """Le rang désigne la ligne ; le métier, et lui seul, porte l'attribut
     dans la chronologie, et l'adresse le récrit."""
-    saisie = Saisie.depuis_requete(CAS[1])
-    carriere = Contexte().carriere(saisie)
+    saisie = saisie_du_portage(CAS[1])
+    carriere = Saisies().carriere(CAS[1])
     emplois = [p for p in chrono.periodes(carriere.chronologie, chrono.ASSURE)
                if p["sorte"] == chrono.EMPLOI]
     assert [bool(p["attributs"].get("apprentissage")) for p in emplois] == [True, False]
@@ -104,34 +105,29 @@ def test_l_apprentissage_se_pose_sur_sa_ligne_de_carriere():
 def test_les_periodes_comptent():
     """Les TUC de 1985-1986 ajoutent des trimestres à la carrière qui les
     déclare : ce que la fiche valide, la saisie le fait jouer."""
-    contexte = Contexte()
-    sans = contexte.simuler(Saisie.depuis_requete(BASE)).actuel.trimestres_valides
-    avec = contexte.simuler(Saisie.depuis_requete(CAS[0])).actuel.trimestres_valides
+    saisies = Saisies()
+    sans = saisies.simuler(BASE).actuel.trimestres_valides
+    avec = saisies.simuler(CAS[0]).actuel.trimestres_valides
     assert avec > sans
 
 
 @pytest.mark.parametrize(("requete", "message"), REFUS)
 def test_la_saisie_refuse(requete, message):
-    with pytest.raises(ErreurSaisie, match=message):
-        Saisie.depuis_requete(requete)
+    with pytest.raises(ErreurSite, match=message):
+        saisie_du_portage(requete)
 
 
 def test_les_deux_moteurs_lisent_les_memes_periodes():
-    """Le résultat entier, et les refus, sont les mêmes en Python et en
-    JavaScript."""
+    """Le résultat entier est le même en Python et en JavaScript, sur la
+    carrière que la saisie du portage bâtit : ses refus, sans jumelle, ont
+    leur test plus haut."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     sys.path.insert(0, str(RACINE / "scripts"))
     from construire_temoins import _fini
-    contexte = Contexte()
-    attendus = [{"requete": cas,
-                 "resultat": _fini(contexte.simuler(Saisie.depuis_requete(cas)).dictionnaire())}
+    saisies = Saisies()
+    attendus = [{"requete": cas, "resultat": _fini(saisies.simuler(cas).dictionnaire())}
                 for cas in CAS]
-    for requete, _ in REFUS:
-        try:
-            Saisie.depuis_requete(requete)
-        except ErreurSaisie as erreur:
-            attendus.append({"requete": requete, "erreur": str(erreur)})
     with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
                                      delete=False) as fichier:
         fichier.write(json.dumps(attendus, ensure_ascii=False))

@@ -23,9 +23,10 @@ import pytest
 
 from retraite_notionnelle import Parametres
 from retraite_notionnelle import chronologie as chrono
-from retraite_notionnelle.contexte import Contexte
 from retraite_notionnelle.remuneration import charger_prelevements
-from retraite_notionnelle.saisie import BAREMES_LODEOM, Saisie
+from retraite_notionnelle.web.site import module
+
+from outils_pont import Saisies, saisie_du_portage
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -58,8 +59,8 @@ PARCOURS = {
 
 
 @pytest.fixture(scope="module")
-def contexte() -> Contexte:
-    return Contexte()
+def saisies() -> Saisies:
+    return Saisies()
 
 
 # -- la saisie ----------------------------------------------------------------------
@@ -69,52 +70,53 @@ def test_le_menu_offre_les_baremes_des_donnees():
     libellé : un barème de plus, ou renommé, ne s'y perd pas. « Non » d'abord,
     qui est le défaut."""
     profil = charger_prelevements(Parametres().racine_donnees).profil("salarie_prive")
-    assert BAREMES_LODEOM[0] == ("", "non")
-    assert BAREMES_LODEOM[1:] == [(code, bareme.libelle)
-                                  for code, bareme in profil.lodeom.baremes.items()]
+    baremes = [tuple(choix) for choix in module("saisie").BAREMES_LODEOM]
+    assert baremes[0] == ("", "non")
+    assert baremes[1:] == [(code, bareme.libelle)
+                           for code, bareme in profil.lodeom.baremes.items()]
 
 
 def test_la_saisie_lit_le_bareme_de_l_employeur():
     """Un barème du menu se lit tel quel ; un autre mot, comme le vide, ne
     déclare rien, à la façon des autres menus."""
-    assert Saisie.depuis_requete({"lodeom": "competitivite_renforcee"}).lodeom == (
+    assert saisie_du_portage({"lodeom": "competitivite_renforcee"}).lodeom == (
         "competitivite_renforcee")
-    assert Saisie.depuis_requete({"lodeom": "dom"}).lodeom == ""
-    assert Saisie.depuis_requete({}).lodeom == ""
+    assert saisie_du_portage({"lodeom": "dom"}).lodeom == ""
+    assert saisie_du_portage({}).lodeom == ""
 
 
 def test_l_adresse_porte_la_lodeom_qu_on_a_dite():
     """L'adresse réécrite garde le barème, et ne l'écrit pas sans lui."""
-    lu = parse_qs(Saisie.depuis_requete({"lodeom": "innovation_et_croissance"}).requete())
+    lu = parse_qs(saisie_du_portage({"lodeom": "innovation_et_croissance"}).requete())
     assert lu["lodeom"] == ["innovation_et_croissance"]
-    assert Saisie.depuis_requete({k: v[0] for k, v in lu.items()}).lodeom == (
+    assert saisie_du_portage({k: v[0] for k, v in lu.items()}).lodeom == (
         "innovation_et_croissance")
-    assert "lodeom" not in parse_qs(Saisie.depuis_requete({}).requete())
+    assert "lodeom" not in parse_qs(saisie_du_portage({}).requete())
 
 
 # -- le relevé et les métiers -------------------------------------------------------
 
-def test_les_lignes_d_emploi_du_releve_portent_la_lodeom(contexte):
+def test_les_lignes_d_emploi_du_releve_portent_la_lodeom(saisies):
     """Chaque ligne d'emploi du relevé prend le barème, une année au chômage
     non, qui ne cotise pas ; les années qui prolongent le relevé jusqu'au départ
     le gardent."""
-    saisie = Saisie.depuis_requete({
-        **NE_EN_1980, "releve": RELEVE, "interruptions": "2025:2025:chomage_indemnise",
-        "lodeom": "competitivite"})
+    requete = {**NE_EN_1980, "releve": RELEVE, "interruptions": "2025:2025:chomage_indemnise",
+               "lodeom": "competitivite"}
+    saisie = saisie_du_portage(requete)
     assert [(ligne.annee, ligne.lodeom) for ligne in saisie.releve_analyse()] == [
         (2025, ""), (2026, "competitivite")]
-    lignes = contexte.carriere(saisie).lignes
+    lignes = saisies.carriere(requete).lignes
     assert [(ligne.annee, ligne.lodeom) for ligne in lignes][:3] == [
         (2025, ""), (2026, "competitivite"), (2027, "competitivite")]
     assert {ligne.lodeom for ligne in lignes if ligne.annee >= 2026} == {"competitivite"}
 
 
-def test_chaque_metier_porte_la_lodeom(contexte):
+def test_chaque_metier_porte_la_lodeom(saisies):
     """Chaque métier, principal ou ajouté, porte le barème dans la
     chronologie, et chacune de ses années cotisées dans la carrière ; sans lui,
     aucun."""
-    carriere = contexte.carriere(Saisie.depuis_requete(
-        {**PARCOURS, "lodeom": "competitivite_renforcee"}))
+    carriere = saisies.carriere(
+        {**PARCOURS, "lodeom": "competitivite_renforcee"})
     faits = [(f["id"], f["attributs"].get("lodeom"))
              for f in chrono.faits_de(carriere.chronologie, chrono.ASSURE, chrono.EMPLOI)]
     assert faits == [("emploi_1", "competitivite_renforcee"),
@@ -122,21 +124,21 @@ def test_chaque_metier_porte_la_lodeom(contexte):
                      ("cumul_1", "competitivite_renforcee")]
     assert chrono.controler(carriere.chronologie) == []
     assert {ligne.lodeom for ligne in carriere.lignes} == {"competitivite_renforcee"}
-    sans = contexte.carriere(Saisie.depuis_requete(PARCOURS))
+    sans = saisies.carriere(PARCOURS)
     assert {f["attributs"].get("lodeom")
             for f in chrono.faits_de(sans.chronologie, chrono.ASSURE, chrono.EMPLOI)} == {None}
     assert {ligne.lodeom for ligne in sans.lignes} == {""}
 
 
-def test_la_fiche_de_paie_exonere_au_bareme_saisi(contexte):
+def test_la_fiche_de_paie_exonere_au_bareme_saisi(saisies):
     """À 1,5 SMIC, sous les 2 SMIC du barème de compétitivité renforcée,
     l'employeur ne verse plus rien du périmètre : l'exonération vaut T fois le
     brut, au dix-millième près où le modèle refait T des fiches de régime
     (``tests/test_lodeom.py``), et la fiche dit son barème. Sans elle, c'est la
     réduction générale, moindre à ce niveau."""
     def reference(lodeom: str):
-        saisie = Saisie.depuis_requete({**NE_EN_1980, "releve": RELEVE, "lodeom": lodeom})
-        return contexte.simuler(saisie).remuneration.reference.droit_en_vigueur
+        requete = {**NE_EN_1980, "releve": RELEVE, "lodeom": lodeom}
+        return saisies.simuler(requete).remuneration.reference.droit_en_vigueur
     fiche = reference("competitivite_renforcee")
     assert fiche.annee == 2026 and fiche.brut == pytest.approx(BRUT_2026)
     assert fiche.lodeom == "competitivite_renforcee"
@@ -171,13 +173,11 @@ process.stdout.write(JSON.stringify(sortie));
 """
 
 
-def _lu_par_python(contexte: Contexte, requete: dict) -> dict:
-    saisie = Saisie.depuis_requete(requete)
-    carriere = contexte.carriere(saisie)
-    fiche = contexte.simuler(saisie).remuneration.reference.droit_en_vigueur
+def _lu_par_python(saisies: Saisies, requete: dict) -> dict:
+    """Ce que le moteur Python lit de la carrière que le portage bâtit."""
+    carriere = saisies.carriere(requete)
+    fiche = saisies.simuler(requete).remuneration.reference.droit_en_vigueur
     return {
-        "requete": saisie.requete(),
-        "lodeom": saisie.lodeom,
         "faits": [[f["id"], f["attributs"].get("lodeom")]
                   for f in chrono.faits_de(carriere.chronologie, chrono.ASSURE, chrono.EMPLOI)],
         "lignes": [[ligne.annee, ligne.affiliation, ligne.lodeom] for ligne in carriere.lignes],
@@ -185,11 +185,10 @@ def _lu_par_python(contexte: Contexte, requete: dict) -> dict:
     }
 
 
-def test_le_portage_lit_la_meme_lodeom(contexte):
-    """Les deux saisies lisent le même barème et réécrivent la même adresse ;
-    les deux chronologies le posent sur les mêmes métiers, les deux carrières
-    sur les mêmes années, et les deux fiches de paie exonèrent du même
-    montant, parcours et relevé."""
+def test_le_portage_lit_la_meme_lodeom(saisies):
+    """La saisie du portage lit le barème ; sur la carrière qu'elle bâtit, les
+    deux moteurs lisent les mêmes métiers et les mêmes années, et leurs fiches
+    de paie exonèrent du même montant, parcours et relevé."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     requetes = [
@@ -204,7 +203,8 @@ def test_le_portage_lit_la_meme_lodeom(contexte):
         input=json.dumps(requetes), capture_output=True, text=True, encoding="utf-8",
         check=False)
     assert execution.returncode == 0, execution.stderr
-    attendus = [_lu_par_python(contexte, requete) for requete in requetes]
-    assert json.loads(execution.stdout) == attendus
-    assert [attendu["lodeom"] for attendu in attendus] == [
+    lus = json.loads(execution.stdout)
+    attendus = [_lu_par_python(saisies, requete) for requete in requetes]
+    assert [{cle: lu[cle] for cle in attendu} for lu, attendu in zip(lus, attendus)] == attendus
+    assert [lu["lodeom"] for lu in lus] == [
         "competitivite", "", "innovation_et_croissance", "competitivite_renforcee"]

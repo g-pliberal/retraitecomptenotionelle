@@ -21,6 +21,8 @@ Ce module n'est pas un fichier de tests, et pytest ne le collecte pas.
 
 from __future__ import annotations
 
+import functools
+
 from retraite_notionnelle import pont
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.simulateur import Comparaison, Simulateur
@@ -77,10 +79,16 @@ class Saisies:
         return self.simulateur(parametres).simuler(carriere)
 
 
+@functools.cache
+def _presomptions():
+    """Les présomptions du paquet que le site a lu, lues une fois : le paquet
+    entier passe le fil pour qu'on les y prenne."""
+    return site().contexte.paquet.presomptions
+
+
 def saisie_du_portage(requete: dict):
     """La saisie du portage, lue d'une requête comme le site la lit, sur les
     présomptions du paquet : un objet du portage, dont les champs se lisent
     et les méthodes s'appellent depuis le Python (``site.py``) ; un refus
     lève ``ErreurSite``, avec son motif."""
-    return module("saisie").Saisie.depuis_requete(
-        _chaines(requete), False, site().contexte.paquet.presomptions)
+    return module("saisie").Saisie.depuis_requete(_chaines(requete), False, _presomptions())
