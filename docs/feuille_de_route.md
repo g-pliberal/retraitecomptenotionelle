@@ -6956,15 +6956,16 @@ lecteur de PDF.
 
 ### 162. Le test d'abord : le développement piloté par les tests, sur tout le dépôt — `en cours`
 
-**Reprise, au 17 octobre 2026.** Faites, l'étape 1 — la règle du test
-d'abord dans les consignes, et le hook qui refuse une fois par commit la
-première retouche du code sans rouge vu — et, à la demande du propriétaire,
-la garde durcie : `pousser.sh` refuse d'envoyer un commit qui change le code
-sans toucher aux tests, sauf s'il le déclare (`Sans-test: <raison>`). Reste
-l'étape 2, après une semaine de sessions : relever les commits déclarés
-`Sans-test` et leurs raisons, et, dans les transcriptions, les refus, pour
-dire au propriétaire si la garde refuse à tort ou laisse passer. Détail :
-`162/2026-10-17-l-envoi-sans-test-refuse.md`.
+**Reprise, au 24 octobre 2026.** Faites, l'étape 1, la garde durcie, et
+l'étape 2, la mesure : des 370 commits de `main` depuis la garde, aucun de
+session ne change le code sans test ni déclaration ; huit se déclarent
+`Sans-test`, sept à raison, un à trancher (`373b3fe`) ; un seul des 151
+passés avec un test l'a été par un test sans rapport (`18cd970`), sans
+dommage. Les transcriptions se lisent (`list_events`), à treize pages la
+session : une lue, un refus de `tdd.py`, sur un commentaire. Reste au
+propriétaire : la force de la garde, la retouche proposée de ses messages,
+`373b3fe`, et le relevé complet des refus, plus de mille pages. Détail :
+`162/2026-10-24-la-mesure.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 17 octobre 2026 : « Sur
 ce dépôt, je veux utiliser le TDD : Test driven development. »
@@ -6973,7 +6974,8 @@ ce dépôt, je veux utiliser le TDD : Test driven development. »
 
 1. **La règle et sa garde**, faite le 17 octobre 2026 : la règle dans les
    consignes, et le hook qui la rappelle au moment de toucher au code.
-2. **La mesure**, après une semaine de sessions : parmi les commits de la
+2. **La mesure**, après une semaine de sessions, faite le 24 octobre 2026,
+   les transcriptions sur une session : parmi les commits de la
    semaine, ceux qui touchent au code (`src/`, `moteur/`, `scripts/`,
    `.claude/hooks/`) sans toucher aux tests ; dans les transcriptions, les
    rappels du hook, et ce que chaque session en a fait.

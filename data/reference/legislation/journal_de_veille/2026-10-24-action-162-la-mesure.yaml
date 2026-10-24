@@ -1,0 +1,14 @@
+date: "2026-10-24"
+session: "action 162, étape 2 : la garde du test d'abord, après une semaine"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1.
+  L'historique de main depuis que pousser.sh refuse le code sans test
+  (c4bc280, 17 octobre 2026), et une transcription de session, par
+  list_events.
+trouve: >-
+  Aucune règle n'a changé. Des 370 commits de la semaine, aucun commit de
+  session ne change le code sans test ni déclaration ; huit se déclarent
+  Sans-test, sept à raison, un à trancher.
+reste: >-
+  Rien pour la veille. La décision du propriétaire sur la force de la garde
+  (action 162, note du 24 octobre 2026).
