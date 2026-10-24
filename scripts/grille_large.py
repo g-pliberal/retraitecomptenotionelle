@@ -230,7 +230,11 @@ vingt-cinquième (le 24 octobre 2026) donne à la maladie son propre rang
 (:data:`MALADIE_INDEPENDANTE`) : la vingt-quatrième mettait le chômage et la
 maladie au haut d'un même rang, et tous les malades au chômage, quand
 l'échantillon ne publie que la part de chaque nature ; les malades ont
-désormais les autres natures à la part de tous.
+désormais les autres natures à la part de tous. La vingt-sixième (le même
+jour) compte quinze classes de nature par rang, et non plus cinq
+(:data:`CLASSES_DE_NATURE`) : cinq arrondissaient chaque part au cinquième,
+40 % de chômeurs pour 30,2 à 41,0 % des hommes, 20 % de malades pour 10,5 à
+14,6 % ; quinze l'arrondissent à un trentième près.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -596,11 +600,20 @@ ASSIMILEES_SELON_LE_RANG = True
 #: femmes, gardent leur chômage.
 NATURES_SELON_LA_GENERATION = True
 
-#: Les classes de nature : des cinquièmes, chacun au milieu de son rang ;
-#: ceux qui ont les mêmes natures à chaque génération n'en font qu'un. Sous
-#: :data:`MALADIE_INDEPENDANTE`, chacun se décline en autant de cinquièmes du
-#: rang de la maladie (:func:`rangs_de_nature`).
-CLASSES_DE_NATURE = 5
+#: Les classes de nature de chaque rang, de poids égal, chacune au milieu de
+#: son rang ; celles qui ont les mêmes natures à chaque génération n'en font
+#: qu'une. Sous :data:`MALADIE_INDEPENDANTE`, chacune se décline en autant de
+#: classes du rang de la maladie (:func:`rangs_de_nature`). La vingt-sixième
+#: version (action 138, étape 14, le 24 octobre 2026) en compte quinze, et
+#: non plus cinq : une classe a une nature quand le milieu de son rang passe
+#: la part qu'en publie l'échantillon, qui s'arrondit ainsi au nombre de
+#: classes le plus proche ; cinq classes donnaient 40 % de chômeurs pour 30,2
+#: à 41,0 % des hommes des générations 1942 à 1956, 20 % de malades pour 10,5
+#: à 14,6 %, quinze arrondissent chaque part au quinzième, à un trentième
+#: près. Chaque classe de cinq se coupe en trois ; le nombre impair garde une
+#: classe au milieu de chaque rang, qui garde le code de son cinquième. Ce
+#: que les versions précédentes disent de leurs classes vaut sous cinq.
+CLASSES_DE_NATURE = 15
 
 #: La vingt-quatrième version (action 138, étape 14, le 23 octobre 2026) : les
 #: natures à leur part et à leurs années. Sous la vingt-troisième, les années

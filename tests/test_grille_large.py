@@ -790,7 +790,7 @@ def test_la_population_lit_les_quatre_natures_a_60_ans_au_plus(parametres):
     assert hommes["service_national"][1976] == (42.3, 1.4)
 
 
-def test_les_classes_de_nature_rendent_les_parts_de_l_echantillon(parametres):
+def test_les_classes_de_nature_rendent_les_parts_de_l_echantillon(parametres, monkeypatch):
     """Chaque cinquième d'une carrière pleine d'homme se décline en cinq classes
     de nature de poids égal, chacune au milieu de son rang. Le cinquième qui
     sert avant d'entrer (``SERVICE_AVANT_LE_PREMIER_TRIMESTRE``) a son
@@ -802,7 +802,9 @@ def test_les_classes_de_nature_rendent_les_parts_de_l_echantillon(parametres):
     La dernière classe compte de la maladie quand son rang passe au-dessus de
     la part des autres : 12,6 % en 1950, quatre années. En 1950, 36 % des
     hommes ont ainsi une année de service, 20 % de la maladie ; le dernier
-    cinquième ne sert pas deux fois."""
+    cinquième ne sert pas deux fois. Le test dit la version seule : les classes
+    plus fines de la vingt-sixième (``CLASSES_DE_NATURE``) en sont ôtées."""
+    monkeypatch.setattr(G, "CLASSES_DE_NATURE", 5)
     racine = parametres.racine_donnees
     regle = G.entrees_des_carrieres_pleines(racine)["H"]
     entrees = G.classes_d_entree(regle, G.premiers_trimestres(racine)["H"],
@@ -841,9 +843,11 @@ def test_le_service_et_la_maladie_rendent_la_carriere_longue_aux_hommes_de_1950(
     carrière, son chômage entier, qui n'est pas réputé cotisé : 160 trimestres
     à 59 ans, 162 à 59 ans et demi, où elle part, comme toute la carrière sans
     la version. Le test dit la version seule : la vingt-quatrième
-    (``NATURES_A_LEUR_PART``) en est ôtée."""
+    (``NATURES_A_LEUR_PART``) en est ôtée, et les classes plus fines de la
+    vingt-sixième (``CLASSES_DE_NATURE``)."""
     assert G.NATURES_SELON_LA_GENERATION
     monkeypatch.setattr(G, "NATURES_A_LEUR_PART", False)
+    monkeypatch.setattr(G, "CLASSES_DE_NATURE", 5)
     variantes = {v.cas.code: v.cas for v in G.grille("population", simulateur.effectifs,
                                                       source, ())}
     projection = simulateur.pour_la_projection()
@@ -913,9 +917,11 @@ def test_les_natures_vont_a_leur_part_et_a_leurs_annees_sous_la_masse(parametres
     chacune, quatre d'AVPF, deux de chômage, deux de maladie. La classe du
     milieu, sans aucune, garde le code de son cinquième. Le test dit la
     version seule : la vingt-cinquième (``MALADIE_INDEPENDANTE``) en est
-    ôtée."""
+    ôtée, et les classes plus fines de la vingt-sixième
+    (``CLASSES_DE_NATURE``)."""
     racine = parametres.racine_donnees
     monkeypatch.setattr(G, "MALADIE_INDEPENDANTE", False)
+    monkeypatch.setattr(G, "CLASSES_DE_NATURE", 5)
 
     def classes(sexe: str, assimilees: int) -> list:
         regle = G.entrees_des_carrieres_pleines(racine)[sexe]
@@ -975,9 +981,11 @@ def test_le_chomage_a_sa_part_rend_la_carriere_longue_aux_hommes_qui_n_en_ont_pa
     quatre trimestres, puis trois de chômage : 148 trimestres cotisés ou
     réputés à 59 ans ; elle part à 60 ans, l'âge légal, au taux plein. Le test
     dit la version seule : la vingt-cinquième (``MALADIE_INDEPENDANTE``) en
-    est ôtée."""
+    est ôtée, et les classes plus fines de la vingt-sixième
+    (``CLASSES_DE_NATURE``)."""
     assert G.NATURES_A_LEUR_PART
     monkeypatch.setattr(G, "MALADIE_INDEPENDANTE", False)
+    monkeypatch.setattr(G, "CLASSES_DE_NATURE", 5)
     variantes = {v.cas.code: v.cas for v in G.grille("population", simulateur.effectifs,
                                                       source, ())}
     projection = simulateur.pour_la_projection()
@@ -1008,7 +1016,7 @@ def test_le_chomage_a_sa_part_rend_la_carriere_longue_aux_hommes_qui_n_en_ont_pa
         pytest.approx(59.5), "carriere_longue")
 
 
-def test_les_malades_sont_au_chomage_a_la_part_des_autres(parametres):
+def test_les_malades_sont_au_chomage_a_la_part_des_autres(parametres, monkeypatch):
     """Sous ``MALADIE_INDEPENDANTE``, la maladie a son propre rang :
     l'échantillon publie la part des affiliés qui ont chaque nature, non celle
     de ceux qui en ont deux, et la vingt-quatrième version, qui mettait le
@@ -1030,9 +1038,12 @@ def test_les_malades_sont_au_chomage_a_la_part_des_autres(parametres):
     à chaque génération : la deuxième classe du service, qui ne sert pas en
     1950, sert en 1955. La femme née en 1950, huit années : les mêmes
     5,0 années, l'AVPF des deux premières classes, 39,8 %, sept années, à
-    trois de maladie pour un cinquième d'entre elles."""
+    trois de maladie pour un cinquième d'entre elles. Le test dit la version
+    seule : les classes plus fines de la vingt-sixième (``CLASSES_DE_NATURE``)
+    en sont ôtées."""
     racine = parametres.racine_donnees
     assert G.MALADIE_INDEPENDANTE
+    monkeypatch.setattr(G, "CLASSES_DE_NATURE", 5)
 
     def premier_cinquieme_en_1950(sexe: str, assimilees: int
                                   ) -> tuple[dict[tuple, float], dict[tuple, set]]:
@@ -1074,7 +1085,7 @@ def test_les_malades_sont_au_chomage_a_la_part_des_autres(parametres):
     assert masse(femmes) == pytest.approx(5.0)
 
 
-def test_le_malade_sans_chomage_part_en_carriere_longue(simulateur, source):
+def test_le_malade_sans_chomage_part_en_carriere_longue(simulateur, source, monkeypatch):
     """Sous ``MALADIE_INDEPENDANTE``, l'homme né en 1955 d'une carrière pleine
     du salariat privé de la classe p50, du premier cinquième, entré à 17 ans :
     sa classe de centiles compte trois années assimilées, de 37 à 39 ans. Son
@@ -1090,8 +1101,11 @@ def test_le_malade_sans_chomage_part_en_carriere_longue(simulateur, source):
     huit trimestres réputés : 152 à 60 ans ; elle part à 62 ans, l'âge légal,
     au taux plein, comme tous les malades de la vingt-quatrième version. La
     classe au chômage seul, trois années, quatre trimestres réputés : 164 à
-    60 ans, 166 à 60 ans et demi, où elle part en carrière longue."""
+    60 ans, 166 à 60 ans et demi, où elle part en carrière longue. Le test dit
+    la version seule : les classes plus fines de la vingt-sixième
+    (``CLASSES_DE_NATURE``) en sont ôtées."""
     assert G.MALADIE_INDEPENDANTE
+    monkeypatch.setattr(G, "CLASSES_DE_NATURE", 5)
     variantes = {v.cas.code: v.cas for v in G.grille("population", simulateur.effectifs,
                                                       source, ())}
     projection = simulateur.pour_la_projection()
@@ -1114,6 +1128,63 @@ def test_le_malade_sans_chomage_part_en_carriere_longue(simulateur, source):
                          (chomage, (60.5, "carriere_longue"))):
         age, condition = G.condition_au_depart(projection, cas, 1955)
         assert (age, condition) == (pytest.approx(attendu[0]), attendu[1]), cas.code
+
+
+def test_les_classes_de_nature_plus_fines_tiennent_chaque_part_a_un_trentieme_pres(
+        parametres):
+    """Chaque rang de nature compte quinze classes de poids égal, et non plus
+    cinq (``CLASSES_DE_NATURE``) : chaque part s'arrondissait au cinquième le
+    plus proche, 40 % de chômeurs pour 30,2 à 41,0 % des hommes de 1942 à
+    1956, 20 % de malades pour 10,5 à 14,6 % ; elle s'arrondit au quinzième,
+    à un trentième près. L'homme né en 1950, trois années assimilées, du
+    premier cinquième : trois classes du rang servent, sous les
+    (35,1 − 20) / 80 = 18,9 % du service, une année chacune ; cinq sont au
+    chômage, au-dessus des 67,5 % qui n'en ont pas, trois années, et non plus
+    deux sur cinq ; deux classes de la maladie sont malades, au-dessus des
+    87,4 %, quatre années, et non plus une sur cinq. Le tiers des malades est
+    au chômage, la part de tous. Le plafond, 225 × 3 − 45 = 630 années, passe
+    les 75 × 3,31 + 30 × 4,37 = 379 que les classes demandent : 26/15 = 1,73
+    année par homme, et non plus 2,2. La classe du milieu des deux rangs, sans
+    aucune nature, garde le code de son cinquième. Aux générations de
+    l'échantillon, de 1942 à 1956, le chômage, la maladie et l'AVPF des deux
+    sexes tiennent chacun leur part à un trentième près."""
+    racine = parametres.racine_donnees
+
+    def premier_cinquieme(sexe: str, assimilees: int) -> list:
+        regle = G.entrees_des_carrieres_pleines(racine)[sexe]
+        valides = G.premiers_trimestres(racine, "valide")[sexe] if sexe == "H" else None
+        entrees = G.classes_d_entree(regle, G.premiers_trimestres(racine)[sexe], valides)
+        lot = G.classes_de_nature(entrees, G.natures_assimilees(racine, sexe), assimilees)
+        siennes = [(natures, poids, nature) for rang, _, _, nature, natures, poids in lot
+                   if rang == 1]
+        total = sum(poids for _, poids, _ in siennes)
+        return [(natures, poids / total, nature) for natures, poids, nature in siennes]
+
+    hommes = premier_cinquieme("H", 3)
+    parts: dict[tuple, float] = {}
+    codes: dict[tuple, set] = {}
+    for natures, part, nature in hommes:
+        annees = G._par_generation(natures, 1950, None)
+        parts[annees] = parts.get(annees, 0.0) + part
+        codes.setdefault(annees, set()).add(nature)
+    assert parts == pytest.approx(
+        {(1, 0, 0, 0): 39 / 225, (1, 4, 0, 0): 6 / 225, (0, 0, 0, 0): 91 / 225,
+         (0, 4, 0, 0): 14 / 225, (0, 0, 0, 3): 65 / 225, (0, 4, 0, 3): 10 / 225})
+    malades = sum(part for annees, part in parts.items() if annees[1])
+    assert malades == pytest.approx(2 / 15)
+    assert sum(part for annees, part in parts.items()
+               if annees[1] and annees[3]) / malades == pytest.approx(1 / 3)
+    assert sum(sum(annees) * part for annees, part in parts.items()) == pytest.approx(26 / 15)
+    assert 0 in codes[(0, 0, 0, 0)]
+    for sexe, assimilees in (("H", 3), ("F", 8)):
+        lues = G.natures_assimilees(racine, sexe)
+        classes = premier_cinquieme(sexe, assimilees)
+        for rang, nom in ((1, "maladie"), (2, "avpf"), (3, "chomage")):
+            for generation in sorted(lues[nom]):
+                part = sum(poids for natures, poids, _ in classes
+                           if G._par_generation(natures, generation, None)[rang])
+                assert abs(part - lues[nom][generation][0] / 100.0) <= 1 / 30 + 1e-9, (
+                    sexe, nom, generation)
 
 
 def test_les_morceaux_de_la_grille_tiennent_dans_le_pont():
