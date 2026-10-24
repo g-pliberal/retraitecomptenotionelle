@@ -29,8 +29,9 @@
  * - `carrieres_des_saisies` : `{cas: [{cle, requete, prolonger}]}` — chaque
  *   requête du simulateur, lue par la saisie du portage : ses paramètres, et
  *   la carrière que le site simulerait, en données, pour que le Python la
- *   simule de son moteur (`carriere_des_donnees` de `pont.py`) ; un relevé
- *   avec `prolonger: false` s'en tient à ses années.
+ *   simule de son moteur (`carriere_des_donnees` de `pont.py`) — celle d'une
+ *   saisie par la pension, que l'inversion trouve ; un relevé avec
+ *   `prolonger: false` s'en tient à ses années.
  *
  * Il écrit `{resultats, echecs}` : une carrière que le portage refuse en est
  * absente, et son motif est dans `echecs`. Un nombre non fini s'écrit `null`,
@@ -144,18 +145,20 @@ function carriereEnDonnees(carriere) {
 function carrieresDesSaisies({ cas }) {
   return parCas(cas, ({ requete, prolonger = true }) => {
     const saisie = Saisie.depuisRequete(requete, false, contexte.paquet.presomptions);
-    // La carrière d'une saisie par la pension vient de la pension, que le
-    // contexte inverse en la simulant : elle ne se bâtit pas seule.
-    if (saisie.parPension) {
-      throw new Error("Une saisie par la pension ne passe pas le pont : sa carrière "
-        + "vient de la pension, que le contexte inverse en la simulant.");
-    }
     const parametres = saisie.parametres(contexte.base);
-    // Un relevé que l'appelant a déjà prolongé à sa façon ne se prolonge pas
-    // une seconde fois (`scripts/estimation_officielle.py`).
-    const carriere = prolonger || !saisie.releveActif ? contexte.carriere(saisie)
-      : contexte.carriereRelevee(contexte.simulateur(parametres), saisie,
+    let carriere;
+    if (saisie.releveActif && !prolonger) {
+      // Un relevé que l'appelant a déjà prolongé à sa façon ne se prolonge
+      // pas une seconde fois (`scripts/estimation_officielle.py`).
+      carriere = contexte.carriereRelevee(contexte.simulateur(parametres), saisie,
         Object.keys(contexte.paquet.periodes_non_travaillees ?? {}), false);
+    } else if (saisie.parPension && !saisie.releveActif) {
+      // La carrière d'une saisie par la pension est celle que le contexte
+      // trouve en inversant la pension, en la simulant.
+      carriere = contexte.simuler(saisie).carriere;
+    } else {
+      carriere = contexte.carriere(saisie);
+    }
     return { parametres, carriere: carriereEnDonnees(carriere) };
   });
 }

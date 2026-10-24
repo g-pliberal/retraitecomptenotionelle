@@ -74,7 +74,9 @@ class Saisies:
         return self._simulateurs[parametres]
 
     def simuler(self, requete: dict) -> Comparaison:
-        """Les quatre systèmes sur la carrière d'une saisie par le revenu."""
+        """Les quatre systèmes sur la carrière de la saisie : pour une saisie
+        par la pension, celle que le portage trouve en l'inversant, sans le
+        niveau trouvé (``niveau_inverse``)."""
         parametres, carriere = self.lire(requete)
         return self.simulateur(parametres).simuler(carriere)
 
