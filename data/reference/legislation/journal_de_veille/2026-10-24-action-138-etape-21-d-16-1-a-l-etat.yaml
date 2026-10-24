@@ -1,0 +1,44 @@
+date: "2026-10-24"
+session: >-
+  action 138, étape 21 : la date de D. 16-1, la rédaction par génération de la carrière
+  longue des fonctionnaires, pour l'État
+consulte: >-
+  `scripts/veille_droit.py` : trois fiches à relire, aucune de cette étape. Les index LEGI
+  et JORF du dépôt, récupérés et mis à jour ce jour (incréments jusqu'au 23 et au 24
+  octobre 2026), puis `textes.py --inscrire` : aucune rédaction nouvelle. Dans l'index
+  LEGI : D. 16-1, ses cinq rédactions, dont celle du 1er janvier 2011
+  (LEGIARTI000023383582), sans note ; L. 25 bis, ses cinq rédactions, dont celle du 11
+  novembre 2010 (LEGIARTI000023032081) et sa note. Dans l'index JORF : la loi n°
+  2010-1330, articles 43 (JORFARTI000023022149) et 118 (JORFARTI000023022348) ; le décret
+  n° 2010-1748 (JORFTEXT000023334982), ses deux articles ; le décret n° 2010-1740,
+  articles 10, 11 et 16. Au service des retraites de l'État : son bulletin officiel, n°
+  491 à 497 (octobre 2010 à juin 2012), et les rapports d'activité du régime de 2010 à
+  2012 ; sa page de la retraite anticipée, à jour, qui ne dit que le droit de 2023 et de
+  2026. Ailleurs : la page de juris-cnracl sur la carrière longue d'avant septembre 2023,
+  la note du COR du 14 mars 2024 sur la carrière longue de l'État (document n° 11), deux
+  réponses ministérielles de 2011 sur le régime général (questions n° 84781 et 103198).
+trouve: >-
+  D. 16-1 ne valait pas pour l'État au 1er janvier 2011. Le décret n° 2010-1748, « pris
+  pour l'application de l'article L. 25 bis », vise la loi n° 2010-1330, « notamment ses
+  articles 43 et 50 » ; l'article 43 récrit L. 25 bis, l'étend à la CNRACL et abroge
+  l'article 57 de la loi n° 2004-1370 ; et l'article 118, III, dit : « L'article 43 entre
+  en vigueur le 1er juillet 2011 et est applicable aux demandes de pension déposées à
+  compter de cette date », ce que la note de la rédaction de 2010 de L. 25 bis reprend
+  dans la base. Jusqu'au 30 juin 2011, l'État ouvrait donc les portes datées de la
+  rédaction du 19 décembre 2008 de L. 25 bis, et la CNRACL celles de l'article 57 : la
+  table, qui n'applique la rédaction par génération qu'aux pensions de juillet 2011, a
+  raison, et le modèle ne change pas. Un test le tient, dans les deux moteurs : le
+  fonctionnaire de l'État ou de la CNRACL né en mai 1952, entré à quinze ans et neuf
+  mois, part à 59 ans en juin 2011, quand D. 16-1 ne lui ouvrirait que 59 ans et 4 mois.
+  Le commentaire de `CarriereLongue`, qui faisait finir l'ancienne rédaction au 1er
+  janvier 2011, est corrigé. Le SRE, dans ce qu'il publie, ne date pas la règle autrement
+  : son bulletin n° 491 inscrit le décret n° 2010-1748 sans date d'application.
+reste: >-
+  La date de la demande : D. 16-1 ne vaut qu'aux demandes de pension déposées depuis le
+  1er juillet 2011, et la table le lit à la date d'effet de la pension, que la demande
+  précède ; une pension prise à compter de juillet 2011 sur une demande déposée avant
+  garde, à la lettre, l'ancien L. 25 bis (fiche
+  `duree_requise_carriere_longue_fonction_publique`, à relire). Comment le SRE
+  l'appliquait, ses pages de 2011 (pensions.bercy.gouv.fr) le diraient, que seule
+  l'archive du web garde, refusée au réseau de la session : au propriétaire, depuis un
+  poste.

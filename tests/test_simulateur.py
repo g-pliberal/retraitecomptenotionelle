@@ -8151,17 +8151,19 @@ def test_avant_novembre_2012_le_ne_au_dernier_trimestre_reunit_ses_quatre_trimes
 
 
 def _entre_tot(annee_naissance: int, mois_naissance: int, age_debut: float, age: float,
-               inactif: tuple[int, ...] = (), motif: str = "inactivite") -> dict:
+               inactif: tuple[int, ...] = (), motif: str = "inactivite",
+               affiliation: str = "salarie_prive_non_cadre") -> dict:
     """Un ouvrier entré tôt, au salaire moyen, né le 15 de son mois, qui part
     à ``age`` : la chronologie complétée, les années ``inactif`` sous
-    ``motif``. Le jour est dit : né le 1er, sa pension prendrait effet un mois
-    plus tôt (R. 351-37), et ses durées ne seraient plus celles du test."""
+    ``motif`` ; un fonctionnaire, sous son ``affiliation``. Le jour est dit :
+    né le 1er, sa pension prendrait effet un mois plus tôt (R. 351-37), et ses
+    durées ne seraient plus celles du test."""
     from retraite_notionnelle import chronologie
 
     return chronologie.completer(chronologie.du_parcours(
         annee_naissance=annee_naissance, sexe="H", mois_naissance=mois_naissance,
         jour_naissance=15, age_liquidation=age,
-        metiers=[Metier("salarie_prive_non_cadre", age_debut, 1.0)],
+        metiers=[Metier(affiliation, age_debut, 1.0)],
         interruptions={annee: motif for annee in inactif}))
 
 
@@ -8242,6 +8244,40 @@ def test_avant_novembre_2012_la_duree_d_assurance_passait_de_huit_trimestres_la_
         "non_ouverte", "carriere_longue"]
     carriere = Carriere.depuis_chronologie(sans_rien, simulateur.macro)
     assert ouvrir.age_ouverture_droit(actuel, carriere) == pytest.approx(60.0)
+
+
+def test_jusqu_en_juin_2011_les_fonctionnaires_gardaient_les_portes_de_l_ancien_l_25_bis(
+        simulateur):
+    """D. 16-1, la rédaction par génération que le décret n° 2010-1748 insère
+    au code des pensions sans date d'application, vaut dans la base au
+    1er janvier 2011 (LEGIARTI000023383582). Mais il n'est pris qu'« en
+    application de l'article L. 25 bis » que récrit l'article 43 de la loi
+    n° 2010-1330, et cet article « entre en vigueur le 1er juillet 2011 et est
+    applicable aux demandes de pension déposées à compter de cette date »
+    (article 118, III) : jusque-là, l'État ouvrait les portes de la rédaction
+    du 19 décembre 2008 de L. 25 bis (LEGIARTI000019959540), « à cinquante-neuf
+    ans » à qui avait débuté avant dix-sept ans, sur la durée de l'année de ses
+    soixante ans majorée de huit trimestres, et la CNRACL celles de l'article 57
+    de la loi n° 2004-1370, que le même article 43 abroge. Le fonctionnaire né
+    en mai 1952, entré à quinze ans et neuf mois, 172 trimestres cotisés et
+    d'assurance pour les 164 de 2012, part à cinquante-neuf ans en juin 2011 ;
+    D. 16-1, III, 3°, ne lui ouvrirait que cinquante-neuf ans et quatre mois.
+    Dans les deux régimes et les deux moteurs."""
+    actuel = simulateur.scenario_actuel
+    construites = [_entre_tot(1952, 5, 15.75, 59.0, affiliation=affiliation)
+                   for affiliation in ("fonctionnaire_etat",
+                                       "fonctionnaire_territorial_hospitalier")]
+    for construite in construites:
+        carriere = Carriere.depuis_chronologie(construite, simulateur.macro)
+        resultat = actuel.calculer(carriere)
+        assert str(carriere.date_liquidation) == "juin 2011"
+        assert sum(carriere.trimestres_retenus(l) for l in carriere.lignes if l.cotise) == 172
+        assert resultat.trimestres_valides == 172
+        assert sorted(porte[2] for porte in actuel.carriere_longue._portes(carriere, True)) == [
+            56.0, 58.0, 59.0]
+        assert ouvrir.age_ouverture_droit(actuel, carriere) == pytest.approx(59.0)
+    assert _motifs_d_ouverture_en_deux_moteurs(simulateur, construites) == [
+        "carriere_longue", "carriere_longue"]
 
 
 # --- Les périodes que le droit RÉPUTE cotisées (D. 351-1-2) ----------------

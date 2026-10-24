@@ -1,14 +1,14 @@
 # Étape 21 : la carrière longue d'avant 2023, au texte de chaque décret — chaque porte aux générations que sa rédaction nomme, et la durée d'assurance majorée de huit trimestres
 
 **Reprise, au 24 octobre 2026.** Fait : les deux erreurs, corrigées dans la
-table, certifiée au texte (la dernière génération de chaque porte, la durée
-d'assurance majorée), dans les deux moteurs, les fiches et le registre. Reste
-un point, que la lecture des décrets a trouvé : D. 16-1, la rédaction par
-génération de l'État, vaut au 1er janvier 2011 (décret n° 2010-1748, sans
-date d'application), quand la table ne l'applique qu'au 1er juillet 2011 ;
-lire comment le SRE l'appliquait, puis la dater pour l'État seul (fiche
-`duree_requise_carriere_longue_fonction_publique`, à relire). Détail : cette
-note.
+table, certifiée au texte, les deux moteurs, les fiches et le registre ; puis
+la date de D. 16-1 pour l'État : l'article 43 de la loi de 2010, que D. 16-1
+applique, ne vaut qu'aux demandes déposées depuis le 1er juillet 2011 (article
+118, III) ; la table, qui l'applique en juillet, a raison, et un test le
+tient. Reste, au propriétaire : lire, depuis un poste, les pages de 2011 du
+SRE à l'archive du web — gardait-il l'ancien L. 25 bis aux demandes déposées
+avant juillet, pour une pension prise après ? —, puis, s'il le faut, présumer
+la date de la demande. Détail : `…-d-16-1-a-l-etat.md`.
 
 **Le 24 octobre 2026, la demande.** Le propriétaire, dans la quatrième vague
 des sessions du jour : l'étape 21, que la confrontation de Nos Retraites

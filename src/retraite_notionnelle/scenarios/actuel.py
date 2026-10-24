@@ -2131,9 +2131,13 @@ class CarriereLongue:
     #: ans [...] ; 2° A compter du 1er juillet 2006, à cinquante-huit ans [...] ;
     #: 3° A compter du 1er janvier 2005, à cinquante-neuf ans » — L. 25 bis du
     #: code des pensions (LEGIARTI000006362733) pour l'État, article 57 de la
-    #: loi n° 2004-1370 (LEGIARTI000006759076) pour la CNRACL, dans leur
-    #: rédaction en vigueur jusqu'au 1er janvier 2011, où D. 16-1 les reprend
-    #: sans date. Le régime général les ouvrait toutes trois dès 2004 ; le
+    #: loi n° 2004-1370 (LEGIARTI000006759076) pour la CNRACL, jusqu'au 30 juin
+    #: 2011 : l'article 43 de la loi n° 2010-1330, qui récrit l'un et abroge
+    #: l'autre, « entre en vigueur le 1er juillet 2011 et est applicable aux
+    #: demandes de pension déposées à compter de cette date » (article 118,
+    #: III), et D. 16-1, que la base date du 1er janvier 2011, n'en est que
+    #: l'application ; la table le lit à la date d'effet, faute de celle de la
+    #: demande. Le régime général les ouvrait toutes trois dès 2004 ; le
     #: modèle les ouvrait de même aux fonctionnaires (action 153, étape 2).
     REGIMES_FONCTION_PUBLIQUE = frozenset({"fonction_publique_etat", "cnracl"})
     PORTES_FONCTION_PUBLIQUE_DEPUIS = {

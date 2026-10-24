@@ -37,16 +37,24 @@ sources:
     — invalidité, handicap, parents de trois enfants, conjoint ou enfant invalide
     — ne sont pas modélisés.
   - >-
-    La date des portes par génération de l'État. Le décret n° 2010-1748 du 30
-    décembre 2010 (JORFTEXT000023334982), qui insère D. 16-1 au code des pensions, ne
-    porte pas de date d'application, et la base date sa rédaction du 1er janvier 2011
-    (LEGIARTI000023383582) ; la table, qui sert les rédactions du régime général, ne
-    l'applique qu'au 1er juillet 2011, la date du régime général (décret n° 2010-1734,
-    article 11) et de la CNRACL (décret n° 2010-1740, article 16, III : ses articles 10
-    et 11 « sont applicables aux pensions liquidées à compter du 1er juillet 2011 »). De
-    janvier à juin 2011, le fonctionnaire de l'État né en 1952 entré avant dix-sept ans
-    part à 59 ans au modèle, à 59 ans et 4 mois au texte. Lire comment le SRE
-    l'appliquait, puis dater la rédaction pour l'État seul (action 138, étape 21).
+    La date de la demande. D. 16-1, que la base date du 1er janvier 2011
+    (LEGIARTI000023383582), n'est pris qu'en application du L. 25 bis que récrit
+    l'article 43 de la loi n° 2010-1330, et cet article « entre en vigueur le 1er juillet
+    2011 et est applicable aux demandes de pension déposées à compter de cette date »
+    (article 118, III) : jusque-là, l'État et la CNRACL gardaient les portes datées de la
+    rédaction de 2008 de L. 25 bis et de l'article 57 de la loi n° 2004-1370, comme le
+    modèle, et la table a raison de n'appliquer D. 16-1 qu'en juillet 2011
+    (tests/test_simulateur.py, le né de mai 1952 parti à 59 ans en juin 2011). Mais elle
+    le lit à la date d'effet de la pension, que la demande précède : une pension prise à
+    compter de juillet 2011 sur une demande déposée avant garde, à la lettre, l'ancien
+    L. 25 bis. Le fonctionnaire né en juin 1952 entré avant dix-sept ans, qui demande en
+    juin sa pension de juillet 2011, part à 59 ans au texte, à 59 ans et 4 mois au
+    modèle ; à la CNRACL de même, quoique le décret n° 2010-1740 dise « pensions
+    liquidées à compter du 1er juillet 2011 » (article 16, III). Ni les bulletins du SRE
+    de 2010 à 2012 ni ses rapports d'activité ne disent comment il l'appliquait ; ses
+    pages de 2011 (pensions.bercy.gouv.fr), que l'archive du web garde, sont refusées au
+    réseau de la session : au propriétaire, depuis un poste. Puis, si le SRE lisait la
+    demande, la présumer, une présomption nouvelle (action 138, étape 21).
   lectures:
   - type: legifrance
     reference: >-
@@ -91,6 +99,27 @@ sources:
       2012, qui ne demande plus que la durée cotisée ; le décret n° 2010-1748, qui
       insère D. 16-1, et l'article 16 du décret n° 2010-1740, lus dans l'index JORF
     date: 2026-10-24
+  - type: jorf
+    reference: >-
+      loi n° 2010-1330, article 43 (JORFARTI000023022149), qui récrit L. 25 bis, l'étend
+      à la CNRACL et abroge l'article 57 de la loi n° 2004-1370, et article 118, III
+      (JORFARTI000023022348) : « L'article 43 entre en vigueur le 1er juillet 2011 et est
+      applicable aux demandes de pension déposées à compter de cette date », que la note
+      de la rédaction du 11 novembre 2010 de L. 25 bis reprend (LEGIARTI000023032081) ; le
+      décret n° 2010-1748, deux articles et aucune date, pris « Vu la loi n° 2010-1330
+      [...], notamment ses articles 43 et 50 », et l'article 16, III, du décret n°
+      2010-1740 (JORFARTI000023334739), lus dans l'index JORF le 24 octobre 2026
+    date: 2010-11-10
+  - type: autre
+    reference: >-
+      Bulletin officiel du service des retraites de l'État, n° 491 (octobre-décembre
+      2010) : L. 25 bis parmi les articles que modifie la loi n° 2010-1330 (« L 25 bis
+      (43 I) »), le décret n° 2010-1748 inscrit sans date d'application ; n° 492 à 497,
+      de 2011 au premier semestre 2012, et les rapports d'activité du régime de 2010 à
+      2012 : rien sur la date de la carrière longue, ni sur les demandes déposées avant
+      le 1er juillet 2011 ; lus le 24 octobre 2026
+    date: 2010-12-31
+    url: https://retraitesdeletat.gouv.fr/files/files/Publications/Bulletins%20d'information/bo491.pdf
 textes_a_rattacher:
 - reference: >-
     loi n° 2023-270 du 14 avril 2023, article 10, XXIV, C (LEGIARTI000053280920)
@@ -102,6 +131,9 @@ textes_a_rattacher:
 - reference: >-
     L. 25 bis du code des pensions, rédaction du 1er janvier 2005 (LEGIARTI000006362733)
 - reference: loi n° 2004-1370 du 20 décembre 2004, article 57 (LEGIARTI000006759076)
+- reference: >-
+    loi n° 2010-1330 du 9 novembre 2010, article 43, et article 118, III, qui le rend
+    applicable aux demandes de pension déposées à compter du 1er juillet 2011
 exemples:
 - cnracl_carriere_longue_avant_soixante_ans
 reformes:
