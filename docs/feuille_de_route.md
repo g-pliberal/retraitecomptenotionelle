@@ -6887,15 +6887,15 @@ de `contribution_etat`.
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
 **Reprise, au 24 octobre 2026.** Étape 6 en cours sur `contexte.py`. Le
-premier lot avance : quarante et un fichiers de tests ne lisent plus la saisie
-Python — leurs règles sur la carrière que le pont bâtit (`tests/outils_pont.py`),
-la saisie dans le portage, par `site()` —, les témoins identiques à l'octet ;
-le centre du coût reste au contexte Python. Reste du lot : six fichiers du site
-(`test_web*.py`, `outils_web.py`, `test_formulaire.py`,
-`test_estimation_du_site.py`), après la session de l'action 173. Puis le
-retrait. L'interpolation du profil diffère au dernier bit entre les moteurs, à
-trancher avec la paire de la carrière. Le propriétaire tranche deux paires de
-données. Détail : `2026-10-24-etape-6-troisieme-partie-le-centre-du-cout.md`.
+premier lot est porté : quarante-sept fichiers de tests ne lisent plus la
+saisie Python — leurs règles sur la carrière que le pont bâtit
+(`tests/outils_pont.py`), la saisie dans le portage, par `site()` —, les
+témoins identiques à l'octet ; le centre du coût reste au contexte Python.
+Reste le retrait : la référence de `test_pont.py` et de `construire_temoins.py`,
+les gardes de la saisie Python, et `_depart_estime`, que les départs de
+l'estimation demandent. L'interpolation du profil diffère au dernier bit, à
+trancher avec la paire de la carrière ; le propriétaire tranche deux paires de
+données. Détail : `2026-10-24-etape-6-quatrieme-partie-les-tests-du-site.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

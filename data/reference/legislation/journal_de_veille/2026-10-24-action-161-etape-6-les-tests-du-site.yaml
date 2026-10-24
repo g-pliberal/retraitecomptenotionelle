@@ -1,0 +1,17 @@
+date: "2026-10-24"
+session: "action 161, étape 6, quatrième partie : les tests du site passent par le pont"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1.
+  Les six fichiers de tests du site, le pont (pont.py, pont.mjs), la saisie et
+  le contexte du portage (moteur/js/saisie.js, moteur/js/contexte.js), et les
+  départs de l'estimation des deux moteurs (pilote.py, contexte.py,
+  contexte.js).
+trouve: >-
+  Aucune règle n'a changé. Les tests du site ne lisent plus la saisie Python :
+  la saisie, l'échelle et les montants dans le portage, les simulations et les
+  départs de l'estimation sur la carrière que le pont bâtit, au bit près ceux
+  d'avant ; les témoins restent identiques à l'octet.
+reste: >-
+  Rien pour la veille. Le retrait de la saisie Python, dernier point du
+  premier lot de l'étape 6 (action 161, note du 24 octobre 2026, quatrième
+  partie).
