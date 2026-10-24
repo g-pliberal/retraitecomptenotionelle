@@ -29,7 +29,9 @@ from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.donnees.impot_revenu import charger_baremes_impot_revenu
 from retraite_notionnelle.droit import foyer
 from retraite_notionnelle.droit.releve import points_de_l_annee
-from retraite_notionnelle.impot_revenu import Declarant, Foyer, impot_aux_parametres
+from retraite_notionnelle.effet_retour import charger_seuils_csg, tranche_csg
+from retraite_notionnelle.impot_revenu import (
+    Declarant, Foyer, impot_aux_parametres, impot_du_bareme)
 from retraite_notionnelle.scenarios.actuel import (
     AgesOuvertureAvantReforme2023, AgesOuvertureAvantSuspension, TableRecouverte)
 from retraite_notionnelle.simulateur import Simulateur
@@ -325,16 +327,18 @@ def depot() -> dict:
         return tuple(_de_l_annee(impot[serie], annee)[c] for c in champs)
 
     return {
-        "seuils_csg_2017": tuple(int(seuils[2017][c]) for c in ("exoneration", "reduit")),
+        **{f"seuils_csg_{a}": tuple(int(seuils[a][c]) for c in ("exoneration", "reduit", "median")
+                                    if seuils[a][c])
+           for a in range(2015, 2026)},
         "seuils_csg_2026": tuple(t["revenu_fiscal_maximum"] for t in bareme),
         "seuils_csg_2026_deux_parts": tuple(
             t["revenu_fiscal_maximum"] + 2 * t["majoration_demi_part"] for t in bareme),
         "majorations_csg_2026": tuple(t["majoration_demi_part"] for t in bareme),
         **{f"abattement_pensions_{a}": lu("deductions", a, "pensions_minimum", "pensions_maximum")
-           for a in (2015, 2016, 2022, 2025)},
+           for a in range(2014, 2026)},
         **{f"abattement_ages_{a}": lu("abattement_age_invalidite", a, "abattement_plein",
                                       "seuil_plein", "abattement_reduit", "seuil_reduit")
-           for a in (2015, 2016, 2025)},
+           for a in range(2014, 2026)},
         "decote_2025": lu("decote", 2025, "seuil_celibataire", "seuil_couple"),
         "point_indice_mensuel_2019": (round(point[2019] / 12, 3),),
         "minimum_contributif_majore_mensuel_2019": (
@@ -1267,6 +1271,365 @@ def test_la_ligne_de_saphir_dit_l_ecart_de_son_abattement_des_personnes_agees(pa
     qui le tranchent."""
     preuves = " ".join(e["preuve"] for e in par_id["saphir"].get("ecarts", []))
     assert "LEGIARTI000032701889" in preuves and "LEGIARTI000034597178" in preuves
+
+
+# ---- EUROMOD, de FR_2015 à FR_2025, exécuté à part -----------------------------
+# Le paquet J2.54+ (ses règles sous CC BY 4.0, `XMLParam/Countries/FR/FR.xml`),
+# exécuté à part le 24 octobre 2026 (action 137) par le connecteur Python du JRC
+# (`euromod` 0.5.0, EUPL) et le moteur qu'il embarque, sous .NET 8, sur des
+# ménages types de retraités écrits dans ses données d'entraînement, que
+# `uprate_fr` ne revalorise pas. Son système FR_Y porte la CSG de l'année Y et
+# l'impôt des revenus de Y − 1. Ses seuils de CSG, son ASPA et ses abattements
+# des pensions sont ceux du dépôt, sauf les écarts que sa ligne du registre
+# déclare ; son impôt des pensions a les siens. Le dépôt avait tort sur un point,
+# le deuxième seuil de la CSG de 2019 à 2025, corrigé ce jour
+# (`tests/test_effet_retour.py`).
+
+#: Ses seuils de CSG des pensions pour une part — l'exonération, le taux réduit,
+#: le taux médian depuis 2019 —, `$tscxc_thres1`, `3` et `5` de `tinty_fr`, de
+#: FR_2015 (l. 665491) à FR_2025 (l. 1423122).
+SEUILS_CSG_EUROMOD = {
+    2015: (10_633, 13_900), 2016: (10_676, 13_956), 2017: (10_996, 14_375),
+    2018: (11_018, 14_404), 2019: (11_128, 14_548, 22_580), 2020: (11_306, 14_781, 22_941),
+    2021: (11_408, 14_914, 23_146), 2022: (11_431, 14_944, 23_193),
+    2023: (11_614, 15_183, 23_564), 2024: (12_231, 15_988, 24_813),
+    2025: (12_818, 16_755, 26_004)}
+
+#: Là où il s'écarte du dépôt d'un euro, le barème de la Cnav de l'année
+#: (« Seuils de revenus pour assujettissement et taux de la CSG », circulaires
+#: 2020/39, 2023/27 et 2024/35, lus par l'API de sa base de législation).
+SEUILS_CSG_CNAV = {2021: (11_408, 14_914, 23_147), 2024: (12_230, 15_988, 24_813),
+                   2025: (12_817, 16_755, 26_004)}
+
+#: Une personne seule de 64 ans, rejouée dans la fenêtre d'un euro qui sépare ses
+#: seuils de ceux de la caisse : (année, sa pension ; son revenu imposable, sa
+#: tranche chez lui, celle que la caisse donne à ce revenu — le médian sous
+#: 23 147 €, le réduit au-delà de 12 230 et de 12 817 €).
+FENETRES_CSG_EUROMOD = {
+    (2021, 27_522): (23_146.002, "plein", "median"),
+    (2024, 13_588.9): (12_230.01, "exonere", "reduit"),
+    (2025, 14_241.2): (12_817.08, "exonere", "reduit")}
+
+
+def test_les_seuils_de_csg_d_euromod_sont_ceux_du_depot_sauf_trois_d_un_euro(depot):
+    """Ses seuils d'une part sont ceux du dépôt et de la caisse chaque année, sauf
+    trois, d'un euro ; là, le dépôt est la caisse."""
+    for annee, chez_lui in SEUILS_CSG_EUROMOD.items():
+        au_depot = depot[f"seuils_csg_{annee}"]
+        if annee in SEUILS_CSG_CNAV:
+            assert au_depot == SEUILS_CSG_CNAV[annee] != chez_lui, annee
+            assert max(abs(a - b) for a, b in zip(au_depot, chez_lui)) == 1, annee
+        else:
+            assert au_depot == chez_lui, f"{annee} : {chez_lui} chez lui, {au_depot} au dépôt"
+
+
+@pytest.mark.parametrize("cas", sorted(FENETRES_CSG_EUROMOD))
+def test_euromod_rejoue_entre_ses_seuils_et_ceux_de_la_caisse_tranche_autrement(cas):
+    """Dans la fenêtre de son euro d'écart, il exonère ce que la caisse met au
+    taux réduit, ou met au taux plein ce qu'elle laisse au médian ; le dépôt
+    tranche comme la caisse."""
+    revenu, chez_lui, caisse = FENETRES_CSG_EUROMOD[cas]
+    seuils = charger_seuils_csg(RACINE / "data")
+    assert tranche_csg(seuils[cas[0]], revenu, False) == caisse != chez_lui
+
+
+#: Son ASPA mensuelle, d'une personne seule puis d'un couple d'allocataires
+#: (`$bsaoa_amt1` et `2`, `bsaoa_fr`, l. 1442574 en FR_2025) : le montant en
+#: vigueur au 30 juin, celui de janvier en 2022.
+ASPA_EUROMOD = {
+    2016: (801, 1_243), 2017: (803.2, 1_246.97), 2018: (833, 1_293.54),
+    2019: (868.2, 1_347.88), 2020: (903.2, 1_402.22), 2021: (906.81, 1_407.82),
+    2022: (916.78, 1_423.31), 2023: (961.08, 1_492.08), 2024: (1_012.02, 1_571.16),
+    2025: (1_034.28, 1_605.73)}
+
+#: Là où il arrondit à l'euro, ce que la caisse a servi : 800,80 et 1 243,24 €
+#: depuis le 1er avril 2016, 833,20 € depuis le 1er avril 2018 (barème « Montant
+#: de l'allocation de solidarité aux personnes âgées » de la Cnav).
+ASPA_ARRONDIE_EUROMOD = {(2016, "seule"): 800.80, (2016, "couple"): 1_243.24,
+                         (2018, "seule"): 833.20}
+
+#: Son ASPA de l'année, rejouée, à des allocataires sans autres ressources que
+#: 3 000 € de pension chacun : une personne seule de 70 ans ; deux allocataires de
+#: 70 ans ; un de 70 ans et son conjoint de 60. Ses ressources (`il_rniy_bens`,
+#: `tinty_fr`, l. 1424224 en FR_2025) retranchent des pensions la CSG déductible,
+#: nulle ici, et l'abattement fiscal des personnes âgées (`tintadb_s`) ; le couple
+#: d'un seul allocataire reçoit le plafond du couple.
+BAREME_ASPA_EUROMOD = {2015: (800, 1_242), **ASPA_EUROMOD}
+ASPA_REJOUEE_EUROMOD = {(2015, "seule"): 8_944.0, (2025, "seule"): 12_207.36,
+                        (2025, "deux"): 18_860.76, (2025, "un"): 16_064.76}
+
+
+def _impot_du_bareme_sans_arrondi(annee: int, revenu: float) -> float:
+    """L'impôt d'une part au barème des revenus de ``annee``, tranche par
+    tranche, sans l'arrondi à l'euro que le code fait et qu'EUROMOD ne fait pas."""
+    b = _de_l_annee(yaml.safe_load((LEGISLATION / "impot_revenu.yaml").read_text(
+        encoding="utf-8"))["series"]["bareme"], annee)
+    bornes = list(b["seuils"]) + [float("inf")]
+    return sum(t * max(0.0, min(revenu, haut) - bas)
+               for t, bas, haut in zip(b["taux"], bornes, bornes[1:]))
+
+
+class _Bareme:
+    """Un barème de l'ASPA, d'une personne seule et d'un couple, sans les deux
+    étages, où le dépôt lit le sien."""
+
+    def __init__(self, seule, couple):
+        self.seule, self.couple = seule, couple
+
+    def plafond(self, annee):
+        return self.seule, Fiabilite.HAUTE
+
+    def plafond_couple(self, annee):
+        return self.couple, Fiabilite.HAUTE
+
+    def deux_etages(self, annee):
+        return None
+
+
+def test_le_bareme_de_l_aspa_d_euromod_est_celui_du_depot_sauf_ses_arrondis():
+    """Son mensuel est celui du dépôt à un centime près — l'annuel de la caisse
+    divisé par douze —, sauf en 2016 et en 2018, où il arrondit à l'euro, et
+    pour le couple de 2022, où le dépôt porte le montant du 1er juillet."""
+    series = {cle: {int(l["annee"]): float(l["valeur"]) for l in _csv(LEGISLATION / fichier)}
+              for cle, fichier in (("seule", "minimum_vieillesse.csv"),
+                                   ("couple", "minimum_vieillesse_couple.csv"))}
+    for annee, montants in ASPA_EUROMOD.items():
+        for cle, chez_lui in zip(("seule", "couple"), montants):
+            au_depot = series[cle][annee] / 12
+            if (annee, cle) in ASPA_ARRONDIE_EUROMOD:
+                assert au_depot == pytest.approx(ASPA_ARRONDIE_EUROMOD[annee, cle], abs=0.01)
+                assert abs(chez_lui - au_depot) > 0.19, (annee, cle)
+            elif (annee, cle) == (2022, "couple"):
+                assert au_depot == pytest.approx(1_480.25, abs=0.01) != chez_lui
+            else:
+                assert chez_lui == pytest.approx(au_depot, abs=0.01), (
+                    f"euromod, ASPA {cle} de {annee} : {chez_lui} € chez lui, {au_depot} au dépôt")
+
+
+@pytest.mark.parametrize("cas", sorted(ASPA_REJOUEE_EUROMOD))
+def test_l_aspa_d_euromod_retranche_des_pensions_l_abattement_des_personnes_agees(
+        simulateur, depot, cas):
+    """Son allocation est le plafond moins ses ressources, que R. 815-22 fait des
+    pensions, et qu'il abat de l'abattement de l'impôt des personnes âgées — 2 344 €
+    en 2015, 2 796 € en 2025, par allocataire. Le dépôt sert, sous son barème, la
+    règle de la loi : la personne seule et les deux allocataires, le plafond moins
+    les pensions ; l'allocataire seul d'un couple, au plus le montant d'une
+    personne seule."""
+    annee, menage = cas
+    seule, couple = (12 * m for m in BAREME_ASPA_EUROMOD[annee])
+    abattement = depot[f"abattement_ages_{annee - 1}"][0]
+    chez_lui = ASPA_REJOUEE_EUROMOD[cas]
+    plafond = seule if menage == "seule" else couple
+    allocataires = 2 if menage == "deux" else 1
+    pensions = 3_000 * (1 if menage == "seule" else 2)
+    assert chez_lui == pytest.approx(plafond - (pensions - allocataires * abattement), abs=0.01)
+    actuel = simulateur.scenario_actuel
+    moteur = SimpleNamespace(minimum_vieillesse=_Bareme(seule, couple), parametres=actuel.parametres,
+                             macro=actuel.macro,
+                             carrieres_hors_de_france=actuel.carrieres_hors_de_france)
+    conjoint = None if menage == "seule" else {
+        "naissance": f"{annee - (70 if menage == 'deux' else 60)}-07-01", "sexe": "F",
+        "mariage": None, "ressources": 3_000, "invalidite": None}
+    carriere = simulateur.carriere_simple(
+        annee_naissance=annee - 70, sexe="H", affiliation="salarie_prive_non_cadre",
+        age_liquidation=66.0, age_debut=20.0, niveau_salaire=0.3, conjoint=conjoint)
+    au_depot = allocataires * foyer.foyer_et_net(
+        moteur, carriere.personne, f"{annee}-12-31", annee, 3_000, True,
+        carriere=carriere).minimum_vieillesse
+    loi = seule - 3_000 if menage == "seule" else (
+        couple - 6_000 if menage == "deux" else min(seule, couple - 6_000))
+    assert au_depot == pytest.approx(loi, abs=0.01) and au_depot < chez_lui, (
+        f"euromod, ASPA {cas} : {chez_lui} € chez lui, {au_depot} € au dépôt")
+
+
+#: Son abattement de 10 % des pensions (au moins, au plus) et celui des personnes
+#: âgées ou invalides (plein, son plafond, réduit, son plafond), par année de
+#: revenus : `$tinty_dedpens_minamt`, `maxamt` et `$tintadb_*` de `tinty_fr`, au
+#: système de l'année suivante.
+ABATTEMENT_PENSIONS_EUROMOD = {
+    2014: (379, 3_707), 2015: (379, 3_711), 2016: (379, 3_715), 2017: (383, 3_752),
+    2018: (389, 3_812), 2019: (393, 3_850), 2020: (394, 3_858), 2021: (400, 3_912),
+    2022: (422, 4_123), 2023: (442, 4_321), 2024: (450, 4_399)}
+ABATTEMENT_AGES_EUROMOD = {
+    2014: (2_344, 14_710, 1_172, 23_700), 2015: (2_347, 14_730, 1_174, 23_730),
+    2016: (2_352, 14_750, 1_176, 23_760), 2017: (2_376, 14_900, 1_188, 24_000),
+    2018: (2_416, 15_140, 1_208, 24_390), 2019: (2_442, 15_300, 1_221, 24_640),
+    2020: (2_446, 15_340, 1_224, 24_690), 2021: (2_476, 15_514, 1_238, 24_985),
+    2022: (2_484, 15_560, 1_242, 25_040), 2023: (2_620, 16_410, 1_310, 26_400),
+    2024: (2_796, 17_510, 1_398, 28_170)}
+
+#: Là où il s'en écarte, l'article 157 bis du code général des impôts, lu dans
+#: l'index LEGI : LEGIARTI000032701889, 043662633, 045764735, 047622555 et
+#: 049641837. Il retarde d'un an pour les revenus de 2022 et de 2023, n'arrondit
+#: pas ceux de 2021, et se trompe d'un ou deux euros pour ceux de 2015 et de 2020.
+ABATTEMENT_AGES_CODE_EUROMOD = {
+    2015: ABATTEMENT_AGES_CODE[2015],
+    2020: (2_448, 15_340, 1_224, 24_690), 2021: (2_484, 15_560, 1_242, 25_040),
+    2022: (2_620, 16_410, 1_310, 26_400), 2023: (2_746, 17_200, 1_373, 27_670)}
+
+
+def test_les_abattements_des_pensions_d_euromod_sont_ceux_du_depot_sauf_cinq_annees(depot):
+    """Son 10 % des pensions est celui du dépôt pour chaque année de revenus ;
+    son abattement des personnes âgées l'est sauf cinq années, où le dépôt est le
+    code."""
+    for annee, chez_lui in ABATTEMENT_PENSIONS_EUROMOD.items():
+        assert depot[f"abattement_pensions_{annee}"] == chez_lui, annee
+    ecarts = {2015, 2020, 2021, 2022, 2023}
+    for annee, chez_lui in ABATTEMENT_AGES_EUROMOD.items():
+        au_depot = depot[f"abattement_ages_{annee}"]
+        if annee in ecarts:
+            assert au_depot == ABATTEMENT_AGES_CODE_EUROMOD[annee] != chez_lui, annee
+        else:
+            assert au_depot == chez_lui, f"{annee} : {chez_lui} chez lui, {au_depot} au dépôt"
+    assert ABATTEMENT_AGES_EUROMOD[2022] == ABATTEMENT_AGES_CODE_EUROMOD[2021]
+    assert ABATTEMENT_AGES_EUROMOD[2023] == ABATTEMENT_AGES_CODE_EUROMOD[2022]
+
+
+#: Son barème par année de revenus — le haut de la tranche à 0 %, des tranches
+#: suivantes, le taux de la deuxième — et sa décote d'une personne seule et d'un
+#: couple (`$tin_upthres*`, `$tin_rate3`, `$tin_decote_*` de `tin_fr`), au système de
+#: l'année suivante.
+BAREME_EUROMOD = {
+    2014: ((9_690, 26_764, 71_754, 151_956), 0.14, (1_135, 1_870)),
+    2015: ((9_700, 26_791, 71_826, 152_108), 0.14, (1_165, 1_920)),
+    2016: ((9_710, 26_818, 71_898, 152_260), 0.14, (1_165, 1_920)),
+    2017: ((9_807, 27_086, 72_617, 153_783), 0.14, (1_177, 1_939)),
+    2018: ((10_064, 27_794, 74_517, 157_806), 0.14, (1_208, 1_990)),
+    2019: ((10_064, 25_659, 73_369, 157_806), 0.11, (777, 1_286)),
+    2020: ((10_084, 25_710, 73_516, 158_122), 0.11, (779, 1_289)),
+    2021: ((10_225, 26_070, 74_545, 160_336), 0.11, (790, 1_307)),
+    2022: ((10_777, 27_478, 78_570, 168_994), 0.11, (833, 1_378)),
+    2023: ((11_294, 28_797, 82_341, 177_106), 0.11, (873, 1_444)),
+    2024: ((11_496, 29_314, 83_822, 180_293), 0.11, (889, 1_470)),
+    2025: ((11_600, 29_579, 84_577, 181_917), 0.11, (897, 1_483))}
+
+
+def test_le_bareme_d_euromod_est_celui_du_depot_sauf_en_2019_2020_et_2025():
+    """Barème et décote du dépôt, l'année de revenus que ses abattements disent,
+    sauf trois systèmes. FR_2019 porte ceux des revenus de 2019, un an trop tôt ;
+    FR_2020, le barème provisoire des revenus de 2020 que la loi de finances pour
+    2020 écrit, que celle pour 2021 revalorise de 0,2 %, celui du dépôt ; FR_2025,
+    des tranches d'un euro sous celles de l'article 197."""
+    impot = yaml.safe_load((LEGISLATION / "impot_revenu.yaml").read_text(
+        encoding="utf-8"))["series"]
+
+    def au_depot(annee):
+        b, d = _de_l_annee(impot["bareme"], annee), _de_l_annee(impot["decote"], annee)
+        return tuple(b["seuils"][1:]), b["taux"][1], (d["seuil_celibataire"], d["seuil_couple"])
+
+    for annee, chez_lui in BAREME_EUROMOD.items():
+        if annee == 2018:
+            assert chez_lui == au_depot(2019) != au_depot(2018)
+        elif annee == 2019:
+            assert chez_lui != au_depot(2019)
+            seuils, taux, decote = au_depot(2020)
+            assert (seuils, taux, decote) == (
+                tuple(round(s * 1.002) for s in chez_lui[0]), chez_lui[1],
+                tuple(round(s * 1.002) for s in chez_lui[2]))
+        elif annee == 2024:
+            seuils, taux, decote = au_depot(2024)
+            assert tuple(s - 1 for s in seuils) == chez_lui[0]
+            assert (taux, decote) == chez_lui[1:]
+        else:
+            assert chez_lui == au_depot(annee), annee
+
+
+#: Une personne seule de 64 ans, 20 000 € de pension, rejouée : sa CSG déductible
+#: et son revenu net global, en FR_2016, FR_2021 et FR_2024.
+ABATTEMENT_BRUT_EUROMOD = {2016: (840.0, 17_160.0), 2021: (840.0, 17_160.0),
+                           2024: (840.0, 17_160.0)}
+
+
+@pytest.mark.parametrize("annee", sorted(ABATTEMENT_BRUT_EUROMOD))
+def test_euromod_abat_la_pension_brute_et_le_depot_la_pension_imposable(annee):
+    """Il abat 10 % de la pension brute (`tinty_fr`, l. 1421650 en FR_2025) ; le
+    code, de la pension imposable, nette de la CSG déductible (art. 158, 5, a, et
+    154 quinquies), et le dépôt avec lui : 84 € de revenu en moins chez lui."""
+    deductible, chez_lui = ABATTEMENT_BRUT_EUROMOD[annee]
+    assert chez_lui == pytest.approx(20_000 - deductible - 0.1 * 20_000)
+    baremes = charger_baremes_impot_revenu(RACINE / "data")
+    impot = impot_aux_parametres(
+        Foyer(declarants=(Declarant(pensions=20_000 - deductible, age=64),)),
+        baremes.parametres(annee - 1))
+    assert impot.revenu_net_global == pytest.approx(0.9 * (20_000 - deductible))
+    assert impot.revenu_net_global == pytest.approx(chez_lui + 84)
+
+
+#: Une personne seule de 64 ans dans la décote, rejouée : (système, sa pension ;
+#: son revenu imposable, sa décote, son impôt). Sa décote se calcule sur
+#: `i_tingt1` (`tin_fr`, l. 1427822 à 1427874 en FR_2025), l'impôt de l'option
+#: de `tinkt_fr`, déjà décoté (l. 1426522 à 1426660), au lieu de l'impôt du
+#: barème : plus grande que celle de la loi, d'autant.
+DECOTE_EUROMOD = {(2016, 20_000): (17_160.0, 667.975, 376.425),
+                  (2021, 20_000): (17_160.0, 619.9155, 158.4445),
+                  (2024, 22_000): (18_876.0, 719.8676, 114.1524)}
+
+
+@pytest.mark.parametrize("cas", sorted(DECOTE_EUROMOD))
+def test_la_decote_d_euromod_se_calcule_sur_un_impot_deja_decote(cas):
+    """Au même revenu imposable, l'impôt du barème du dépôt est le sien ; la
+    décote de la loi (art. 197, I, 4, a) en retire le seuil moins le taux de cet
+    impôt, la sienne, le seuil moins le taux de l'impôt après la première."""
+    annee, _ = cas
+    revenu, decote, chez_lui = DECOTE_EUROMOD[cas]
+    p = charger_baremes_impot_revenu(RACINE / "data").parametres(annee - 1)
+    d = _de_l_annee(yaml.safe_load((LEGISLATION / "impot_revenu.yaml").read_text(
+        encoding="utf-8"))["series"]["decote"], annee - 1)
+    brut = _impot_du_bareme_sans_arrondi(annee - 1, revenu)
+    assert impot_du_bareme(p, revenu, 1.0) == round(brut)
+    loi = d["seuil_celibataire"] - d["taux"] * brut
+    assert decote == pytest.approx(d["seuil_celibataire"] - d["taux"] * (brut - loi), abs=0.01)
+    assert chez_lui == pytest.approx(brut - decote, abs=0.01)
+    assert chez_lui < brut - loi - 100
+    au_depot = impot_aux_parametres(
+        Foyer(declarants=(Declarant(pensions=revenu / 0.9, age=64),)), p)
+    assert au_depot.revenu_net_global == revenu
+    assert au_depot.decote == pytest.approx(loi, abs=1)
+
+
+def test_euromod_donne_les_deux_decotes_de_2015_a_la_personne_seule():
+    """FR_2015, rejoué (`tin_fr`, l. 670168 à 670243) : la décote du couple tient
+    à `dms!=2`, et la personne seule de 64 ans, 20 000 € de pension, reçoit les
+    deux, 1 135 et 1 870 € moins son impôt, quand la loi ne lui donne que la
+    première."""
+    revenu, decote, chez_lui = 17_160.0, 913.4, 132.4
+    p = charger_baremes_impot_revenu(RACINE / "data").parametres(2014)
+    brut = _impot_du_bareme_sans_arrondi(2014, revenu)
+    assert decote == pytest.approx((1_135 - brut) + (1_870 - brut), abs=0.01)
+    assert chez_lui == pytest.approx(brut - decote, abs=0.01)
+    au_depot = impot_aux_parametres(
+        Foyer(declarants=(Declarant(pensions=revenu / 0.9, age=64),)), p)
+    assert au_depot.decote == pytest.approx(1_135 - brut, abs=1)
+
+
+def test_la_reduction_degressive_d_euromod_est_un_taux_et_non_une_reduction():
+    """FR_2017, rejoué (`tin_fr`, l. 822296 à 822423) : entre 18 500 et 20 500 € de
+    revenu, la réduction des revenus de 2016 (art. 197, I, 4, b) vaut 20 % de
+    l'impôt, fois la part du chemin qui reste ; il n'en garde que le taux, compté
+    en euros par mois. Une personne seule de 64 ans, 22 000 € de pension : 1,95 €
+    de réduction chez lui, 175 € au dépôt, sur la décote du dépôt."""
+    revenu, decote, chez_lui = 18_876.0, 354.4975, 926.7937
+    p = charger_baremes_impot_revenu(RACINE / "data").parametres(2016)
+    brut = _impot_du_bareme_sans_arrondi(2016, revenu)
+    loi = 1_165 - 0.75 * brut
+    reduction = 12 * 0.2 * (20_500 - revenu) / 2_000
+    assert decote == pytest.approx(1_165 - 0.75 * (brut - loi), abs=0.01)
+    assert chez_lui == pytest.approx(brut - decote - reduction, abs=0.01)
+    au_depot = impot_aux_parametres(
+        Foyer(declarants=(Declarant(pensions=revenu / 0.9, age=64),)), p)
+    assert au_depot.reduction_sous_condition_de_revenus == pytest.approx(
+        0.2 * (20_500 - revenu) / 2_000 * (brut - loi), abs=1)
+
+
+def test_la_ligne_d_euromod_dit_ses_ecarts_de_2015_a_2025(par_id):
+    """Les écarts que le rejeu trouve sont au registre, avec ce qui les tranche :
+    les circulaires de la Cnav, les rédactions du code, et ses lignes."""
+    ligne = par_id["euromod"]
+    preuves = " ".join(e["preuve"] for e in ligne.get("ecarts", []))
+    for marque in ("2023/27", "LEGIARTI000042683546", "LEGIARTI000049641837", "1427822",
+                   "822384", "tintcee_fr", "FR_2019", "1421650"):
+        assert marque in preuves, marque
+    assert "FR_2015 à FR_2025" in ligne["confrontation"]
 
 
 def test_le_tableau_de_bord_dit_combien_d_ecarts_sont_chez_les_modeles_confrontes(referents):

@@ -89,6 +89,27 @@ def test_la_tranche_selon_la_regle_de_l_annee():
     assert tranche_csg(SeuilsCsg(2016, "revenu", 10676.0, 13956.0), 20000.0, False) == "plein"
 
 
+def test_au_deuxieme_seuil_la_caisse_garde_le_taux_reduit_depuis_2019():
+    """Au deuxième seuil même : le taux plein jusqu'en 2018, le réduit depuis ;
+    au troisième, le plein. Les barèmes de la Cnav de 2015 à 2025 (« Seuils de
+    revenus pour assujettissement et taux de la CSG », circulaires 2015/3 à
+    2024/35) mettent le taux normal au revenu « au moins égal » au deuxième
+    seuil jusqu'en 2018, au troisième depuis, et le médian au revenu qui
+    « dépasse » le deuxième. L. 136-8, III, l'écrit « inférieurs ou égaux »
+    depuis le 16 décembre 2020 (LEGIARTI000042683546) ; en 2019 et en 2020, son
+    « inférieurs à » et le « excèdent » du III bis ne rangeaient le deuxième
+    seuil sous aucun des deux taux, et la caisse l'a laissé au réduit (action
+    137, EUROMOD rejoué)."""
+    seuils = charger_seuils_csg(Simulateur(Parametres()).parametres.racine_donnees)
+    for annee in range(2015, 2026):
+        s = seuils[annee]
+        if annee < 2019:
+            assert tranche_csg(s, s.reduit, False) == "plein", annee
+        else:
+            assert [tranche_csg(s, r, False) for r in (s.reduit, s.reduit + 1, s.median)] == [
+                "reduit", "median", "plein"], annee
+
+
 def test_le_scenario_6_n_en_a_pas(avenir):
     """Sa garantie vieillesse, qui remplace l'ASPA, est chiffrée à part."""
     ligne = avenir.annee(2050)

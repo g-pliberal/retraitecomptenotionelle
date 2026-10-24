@@ -6186,7 +6186,7 @@ sources:
       sous CC BY 4.0 et donc recopiables en citant : un recoupement du foyer
       et du net.
     statut: epuise
-    explore_le: "2026-10-19"
+    explore_le: "2026-10-24"
     note: >-
       Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté (cloné
       le 1er octobre 2026).
@@ -6201,6 +6201,10 @@ sources:
       des pensions, sauf au net du site, qui n'en affiche aucun : c'est ce qui
       reste au registre (138.5). Ses écarts tiennent, le modèle n'ayant pas
       changé.
+      Exécuté le 24 octobre 2026 (action 137) par le connecteur Python du JRC
+      (`euromod` 0.5.0, PyPI), son moteur sous .NET 8, sur des ménages types de
+      retraités : ses systèmes FR_2015 à FR_2025 rejoués, leurs écarts au
+      registre des modèles.
 
   - id: scherrer_retraites
     url: https://github.com/brunoscherrer/retraites

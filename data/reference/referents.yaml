@@ -8773,18 +8773,29 @@ referents:
     confronte: [scenario_1]
     couvre: >-
       Pour la France, la CSG, la CRDS et la CASA des pensions, l'ASPA en
-      partie ; les pensions contributives ne sont pas simulées, faute
-      d'historique de carrière.
-    version: "J2.54+ (règles), logiciel 3.8.9"
+      partie, l'impôt des pensions ; les pensions contributives ne sont pas
+      simulées, faute d'historique de carrière.
+    version: "J2.54+ (règles), logiciel 3.8.9 ; exécuté par le connecteur euromod 0.5.0"
     confrontation: >-
       Des règles du foyer et du net comparées, le 4 octobre 2026, sur son
       système FR_2026 : ses seuils de CSG des pensions et leurs majorations
       par demi-part sont ceux du dépôt (la fiche
       `csg_des_pensions_selon_le_revenu`, `tests/test_referents.py`) ; son
       ASPA, sa CRDS et son abattement des pensions s'écartent de la loi
-      (écarts ci-dessous). Reste : ses systèmes FR_2015 à FR_2025, contre
-      `legislation/csg_pensions_seuils.csv`. Ses règles, sous CC BY 4.0, se
-      recopient en citant.
+      (écarts ci-dessous). Le 24 octobre 2026 (action 137), ses systèmes
+      FR_2015 à FR_2025 exécutés à part — le moteur du connecteur Python du
+      JRC, sous .NET 8, sur des ménages types de retraités écrits dans ses
+      données d'entraînement, que `uprate_fr` ne revalorise pas — et leurs
+      paramètres lus ; son système FR_Y porte la CSG de l'année Y et l'impôt
+      des revenus de Y − 1. Sa CSG, sa CASA et leurs taux sont ceux du dépôt
+      (`legislation/csg_pensions_seuils.csv`, `prelevements_historiques.yaml`)
+      sur une grille de 50 €, chaque année ; ses majorations par demi-part,
+      celles des barèmes de la Cnav ; son ASPA, son abattement des pensions
+      et son barème, ceux du dépôt, sauf les écarts ci-dessous, dont trois
+      seuils et deux bornes de la CSG et sept erreurs de son impôt des
+      pensions. Le dépôt avait tort au deuxième seuil de la CSG de 2019 à
+      2025, où EUROMOD suit la caisse (ce qu'il fait mieux, ci-dessous). Ses
+      règles, sous CC BY 4.0, se recopient en citant.
     ecarts:
       - constat: >-
           Son rapport pays décrit pour 2022 à 2025 le critère d'un «
@@ -8797,14 +8808,23 @@ referents:
           non de ses règles
         preuve: rapport pays Y16_CR_FR, p. 94
       - constat: >-
-          Il prend les ressources de l'ASPA nettes imposables.
+          Il prend les ressources de l'ASPA nettes imposables : les
+          pensions moins la CSG déductible et l'abattement de l'impôt
+          des personnes âgées (il_rniy_bens), 2 344 € en FR_2015,
+          2 796 € en FR_2025 par allocataire. Rejoué de FR_2015 à
+          FR_2026, une personne seule de 70 ans et 3 000 € de pension
+          reçoit 12 207,36 € en FR_2025, au lieu de 9 411,36 €.
         tranche: >-
           R. 815-22 du code de la sécurité sociale ; l'écart est le sien
-        preuve: rapport pays Y16_CR_FR
+        preuve: >-
+          rapport pays Y16_CR_FR ; FR.xml (J2.54+), FR_2025, tinty_fr,
+          l. 1424224-1424520
       - constat: >-
           Il sert le plafond du couple, 1 620,18 € par mois, quand
           un seul membre a 65 ans (FR.xml:1518454-1518469 ; rapport,
-          tableau 2.35, note 1).
+          tableau 2.35, note 1). Rejoué de FR_2015 à FR_2026 : un
+          allocataire et son conjoint de 60 ans, 3 000 € de pension
+          chacun, reçoivent 16 064,76 € en FR_2025, au lieu de 12 411,36 €.
         tranche: >-
           D. 815-1, a : quand « seul un des conjoints » en
           bénéficie, le montant maximum est celui d'une personne
@@ -8816,6 +8836,8 @@ referents:
           Il refuse l'ASPA à qui a un revenu d'activité
           (ils_earns#1=0, FR.xml:1518417 et 1518456) ; le rapport la
           dit réservée aux retraités « not working » (§ 2.5.11.1).
+          Rejoué : rien en FR_2025 à une personne seule de 70 ans,
+          3 000 € de salaire et 5 000 € de pension.
         tranche: >-
           L. 815-1 ne pose aucune condition de cessation d'activité.
           R. 815-29 compte les revenus professionnels après
@@ -8824,10 +8846,10 @@ referents:
       - constat: >-
           Il prélève la CRDS sur toutes les pensions, même exonérées
           de CSG (tscdf_fr, « Base fully taxed »,
-          FR.xml:1522462-1522487). Il n'exonère pas non plus la
-          pension des allocataires de l'ASPA. Son rapport dit
-          pourtant les petites pensions exonérées « from CSG and
-          CRDS » (p. 94).
+          FR.xml:1522462-1522487), de FR_2015 à FR_2026, rejoué. Il
+          n'exonère pas non plus la pension des allocataires de
+          l'ASPA. Son rapport dit pourtant les petites pensions
+          exonérées « from CSG and CRDS » (p. 94).
         tranche: >-
           Ordonnance n° 96-50, art. 14, I : la CRDS suit les
           conditions des articles L. 136-1-1 à L. 136-4, donc les
@@ -8839,7 +8861,9 @@ referents:
           service-public F2971
       - constat: >-
           Il plafonne l'abattement de 10 % des pensions par personne
-          (TAX_UNIT tu_individual_fr, FR.xml:1497573 et 1497599).
+          (TAX_UNIT tu_individual_fr, FR.xml:1497573 et 1497599), de
+          FR_2015 à FR_2026, rejoué : 8 798 € pour un couple de 120 000 €
+          de pensions en FR_2025, deux fois le plafond.
         tranche: >-
           CGI art. 158, 5 a : « Ce plafond s'applique au montant
           total des pensions et retraites perçues par l'ensemble des
@@ -8857,6 +8881,144 @@ referents:
           ensuite (age_ouverture_requis.csv:138-141, certifiée). Le
           rapport est périmé.
         preuve: data/reference/legislation/age_ouverture_requis.csv:138-141
+      - constat: >-
+          Trois de ses seuils de CSG d'une part s'écartent d'un euro de
+          ceux de la caisse : 23 146 € pour le taux médian de 2021,
+          12 231 et 12 818 € pour l'exonération de 2024 et de 2025.
+          Rejoué, il exonère une personne seule de 64 ans au revenu
+          imposable de 12 230,01 € en 2024, de 12 817,08 € en 2025, et
+          met au taux plein en 2021 celle de 23 146,002 €. Ses autres
+          seuils de 2015 à 2025, et toutes ses majorations par
+          demi-part, sont ceux de la caisse.
+        tranche: >-
+          Les barèmes de la Cnav portent 23 147, 12 230 et 12 817 €, que
+          le dépôt suit (csg_pensions_seuils.csv) ; L. 136-8, III ter,
+          les revalorise chaque année sur les prix. EUROMOD a tort.
+        preuve: >-
+          FR.xml (J2.54+), tinty_fr, $tscxc_thres1 et 5 (l. 1120064,
+          1347357 et 1423122) ; barèmes « Seuils de revenus pour
+          assujettissement et taux de la CSG » de la Cnav, circulaires
+          2020/39, 2023/27 et 2024/35
+      - constat: >-
+          Il borne chaque tranche de CSG au seuil compris (« <= »,
+          tscxc_fr) : au deuxième seuil même, le taux réduit de 2015 à
+          2018 ; au troisième, le médian depuis 2019.
+        tranche: >-
+          L. 136-8, III : le taux réduit pour les revenus « inférieurs
+          à » 13 900 € en 2015 (LEGIARTI000029961387) ; III bis : le
+          médian pour ceux qui « sont inférieurs à » 22 580 €
+          (LEGIARTI000037947799, LEGIARTI000042683546). Les barèmes de la
+          Cnav mettent le taux normal au revenu « au moins égal » au
+          deuxième seuil jusqu'en 2018, au troisième depuis. EUROMOD a
+          tort à ces deux bornes.
+        preuve: >-
+          FR.xml (J2.54+), FR_2025, tscxc_fr, l. 1425014-1425092 ;
+          LEGIARTI000029961387, LEGIARTI000037947799,
+          LEGIARTI000042683546 ; barèmes de la Cnav, circulaires 2015/3 à
+          2024/35
+      - constat: >-
+          Il abat de 10 % la pension brute (il_tscxc_pen), avant la CSG
+          déductible, de FR_2015 à FR_2026 : rejoué, une personne seule
+          de 64 ans et 20 000 € de pension a 17 160 € de revenu net
+          global chez lui, 17 244 € au dépôt, et son abattement atteint
+          plus tôt son plafond.
+        tranche: >-
+          CGI, art. 158, 5, a : l'abattement porte sur les pensions
+          imposables, nettes de la CSG déductible de l'article 154
+          quinquies, ce que le dépôt fait (impot_revenu.py,
+          Declarant.pensions). EUROMOD a tort.
+        preuve: >-
+          FR.xml (J2.54+), FR_2025, tinty_fr, l. 1421650-1421868 ;
+          LEGIARTI000054373673
+      - constat: >-
+          Son abattement des personnes âgées ou invalides : 2 347 € au
+          lieu de 2 348 € pour les revenus de 2015, 2 446 € au lieu de
+          2 448 € pour ceux de 2020 ; pour 2021, 2 476, 15 514, 1 238 et
+          24 985 €, des montants indexés sans l'arrondi du code ; pour
+          2022 et 2023, ceux de l'année précédente. Il donne le plein
+          strictement sous le premier plafond, le réduit strictement
+          sous le second.
+        tranche: >-
+          CGI, art. 157 bis : 2 348, 2 448, 2 484, 2 620 et 2 746 €,
+          « si ce revenu n'excède pas » 14 730, 15 340, 15 560, 16 410 et
+          17 200 €, la moitié « si ce revenu est compris entre » ce
+          plafond et le second ; le dépôt le suit (impot_revenu.yaml).
+          EUROMOD a tort.
+        preuve: >-
+          FR.xml (J2.54+), tinty_fr, $tintadb_amt1, lim1, amt2 et lim2 de
+          FR_2016 à FR_2024 ; FR_2025, l. 1422611-1422686 ;
+          LEGIARTI000032701889, LEGIARTI000043662633,
+          LEGIARTI000045764735, LEGIARTI000047622555,
+          LEGIARTI000049641837
+      - constat: >-
+          Sa décote se calcule sur i_tingt1, l'impôt de l'option de
+          tinkt_fr, déjà décoté, au lieu de l'impôt du barème, de FR_2016
+          à FR_2026 : elle vaut 1,75 fois celle de la loi jusqu'en
+          FR_2019, 1,4525 fois depuis. En FR_2015, la décote du couple
+          tient à « dms!=2 » : la personne seule reçoit les deux. Rejoué,
+          une personne seule de 64 ans et 20 000 € de pension paie
+          376,43 € en FR_2016, quand la loi prend 662,70 € à son revenu
+          imposable ; 22 000 € de pension, 114,15 € en FR_2024 pour
+          338,41 €.
+        tranche: >-
+          CGI, art. 197, I, 4, a : la décote retranche de l'impôt du
+          barème un montant moins une fraction de cet impôt, ce que le
+          dépôt fait (impot_revenu.py, decote). EUROMOD a tort : sa
+          décote corrigée dans une copie de ses règles, sur i_tingt2,
+          l'impôt d'une personne seule est celui du dépôt à l'euro près.
+        preuve: >-
+          FR.xml (J2.54+), FR_2025, tin_fr, l. 1427822-1427874, et
+          tinkt_fr, l. 1426522-1426660 ; FR_2015, tin_fr, l.
+          670168-670243
+      - constat: >-
+          Il met en recouvrement l'impôt de moins de 61 € de FR_2016 à
+          FR_2026 : sa règle (« tax not payable if less than 61 euros »)
+          n'y est plus en service ; elle l'est en FR_2015. Rejoué, 113
+          foyers de retraités y sont imposés de moins de 61 €.
+        tranche: >-
+          CGI, art. 1657, 1 bis : l'impôt n'est pas mis en recouvrement
+          sous 61 €, ce que le dépôt applique (impot_revenu.yaml,
+          recouvrement). EUROMOD a tort.
+        preuve: >-
+          FR.xml (J2.54+), tintcee_fr, fonction 15, « n/a » de FR_2016 à
+          FR_2026 (l. 1430873 en FR_2025)
+      - constat: >-
+          Sa réduction des revenus de 2016 à 2018 (FR_2017 à FR_2019) ne
+          garde, entre ses deux seuils, que son taux dégressif, sans
+          l'appliquer à l'impôt, en euros par mois : 1,95 € par an pour
+          une personne seule de 64 ans et 22 000 € de pension en FR_2017,
+          au lieu de 175 €. Le seuil du couple ajoute une majoration dès
+          deux parts (37 000 € plus 3 700 € fois les parts moins une) ;
+          FR_2018 garde dans ses conditions les plafonds de 2016, 20 500
+          et 41 000 €.
+        tranche: >-
+          CGI, art. 197, I, 4, b : 20 % de l'impôt, fois (20 500 € moins
+          le revenu) sur 2 000 € entre les seuils, majorés de 3 700 € par
+          demi-part au-delà de la première part ou des deux premières ;
+          le dépôt le fait (impot_revenu.py,
+          _reduction_sous_condition). EUROMOD a tort.
+        preuve: >-
+          FR.xml (J2.54+), FR_2017, tin_fr, l. 822296-822423 (formules l.
+          822384 et 822397, seuil du couple l. 822371) ; FR_2018, l.
+          898170 et 898183
+      - constat: >-
+          FR_2019 porte le barème, la décote et la réduction des revenus
+          de 2019, et les abattements de ceux de 2018 ; FR_2020, le
+          barème provisoire des revenus de 2020, à 11 %, et la décote de
+          777 €, que la loi de finances pour 2021 a revalorisés de 0,2 %,
+          avec les abattements des revenus de 2019 ; FR_2025, des
+          tranches d'un euro sous celles de l'article 197 (11 496 € pour
+          11 497 €).
+        tranche: >-
+          Chaque année de revenus a son barème, sa décote et ses
+          abattements (CGI, art. 197 et 158, 5, a, de chaque loi de
+          finances), que le dépôt porte année par année
+          (impot_revenu.yaml). EUROMOD mêle deux années dans FR_2019 et
+          FR_2020 : l'erreur est la sienne.
+        preuve: >-
+          FR.xml (J2.54+), tin_fr et tinty_fr de FR_2019, FR_2020 et
+          FR_2025 ; impot_revenu.yaml, barèmes des revenus de 2018 à 2020
+          et de 2024
     fait_mieux:
       - quoi: >-
           Il fixe le taux de CSG des pensions (0, 3,8, 6,6 ou 8,3 %)
@@ -8937,22 +9099,45 @@ referents:
           Reste le net du site.
         etat: a_reprendre
         chantier: "138.5"
+      - quoi: >-
+          Au deuxième seuil même de la CSG, de 2019 à 2025, il laisse le
+          taux réduit (« <= », tscxc_fr), comme la caisse ; le dépôt
+          mettait le médian (effet_retour.py, tranche_csg, « inférieurs à »).
+        preuve: >-
+          FR.xml (J2.54+), FR_2025, tscxc_fr, l. 1425040
+        verification: >-
+          L. 136-8, III : « inférieurs ou égaux » depuis le 16 décembre
+          2020 (LEGIARTI000042683546) ; barèmes de la Cnav de 2019 à 2025,
+          circulaires 2019/9 à 2024/35 : le médian au revenu qui
+          « dépasse » le deuxième seuil. En 2019 et en 2020, le texte
+          (« inférieurs à », et « excèdent » au III bis) ne rangeait ce
+          seuil sous aucun des deux taux. Repris le 24 octobre 2026
+          (action 137) : la borne du taux réduit comprise depuis 2019
+          (tests/test_effet_retour.py).
+        etat: repris
+        chantier: "138.5"
     bilan: >-
       EUROMOD fait mieux que le dépôt sur le net des pensions : CSG et
       CASA graduées par RFR et parts au barème exact de 2026, recopiable
-      sous CC BY 4.0, et l'ASPA hors des prélèvements. Il fait mieux
-      aussi sur l'impôt des pensions. Il ne simule aucune pension, faute
-      d'historique de carrière ; il sert l'ASPA plus mal que la loi et
-      prélève la CRDS sur toutes les pensions : on lui reprend ses
-      seuils, pas ses assiettes. Son outil de ménages types (HHoT) peut
+      sous CC BY 4.0, et l'ASPA hors des prélèvements ; au deuxième seuil
+      de la CSG de 2019 à 2025, il suivait la caisse, que le dépôt suit
+      depuis le 24 octobre 2026. Il ne simule aucune pension, faute
+      d'historique de carrière. Rejoué de FR_2015 à FR_2025, il sert l'ASPA
+      plus mal que la loi, prélève la CRDS sur toutes les pensions, se
+      trompe d'un euro sur trois seuils de CSG et calcule mal l'impôt des
+      pensions — la décote surtout, plus grande que celle de la loi de
+      moitié ou des trois quarts : on lui reprend ses seuils, pas ses
+      assiettes, ni son impôt. Son outil de ménages types (HHoT) peut
       confronter à part le net d'un couple de retraités une fois 138.2
       fait.
     sas: [jrc_euromod]
-    lu_le: 2026-10-04
+    lu_le: 2026-10-24
     lu_dans:
       - https://github.com/ec-jrc/JRC-EUROMOD-software-source-code
       - https://euromod-web.jrc.ec.europa.eu/sites/default/files/2026-02/Y16_CR_FR.pdf
       - https://euromod-web.jrc.ec.europa.eu/sites/default/files/2026-09/EUROMOD_RELEASES_J2.54%2B.zip
+      - https://pypi.org/project/euromod/
+      - https://legislation.lassuranceretraite.fr/api/v1/baremes/
     note: >-
       Logiciel 3.8.9 ; les données EU-SILC demandent un projet approuvé
       par Eurostat. Les règles pays ne sont pas dans le dépôt du
@@ -8960,7 +9145,10 @@ referents:
       téléchargeable sans inscription, CC BY 4.0),
       `XMLParam/Countries/FR/FR.xml`, systèmes FR_2006 à FR_2026, avec
       l'impôt des pensions ; l'ASPA n'y est servie qu'aux allocataires
-      observés dans EU-SILC.
+      observés dans EU-SILC. Le connecteur Python du JRC (`euromod` 0.5.0,
+      PyPI, EUPL) embarque le moteur, compilé pour .NET Standard 2.0, qui
+      tourne sous .NET 8 sur Linux : exécuté ainsi le 24 octobre 2026, ses
+      fichiers et ceux du rejeu restés hors du dépôt.
 
   - id: retraites_scherrer
     nom: retraites (simulateur du COR réécrit)

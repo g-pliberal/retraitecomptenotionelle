@@ -439,15 +439,19 @@ def charger_seuils_csg(racine) -> dict[int, SeuilsCsg]:
 def tranche_csg(seuils: SeuilsCsg, revenu: float, impot_recouvre: bool) -> str:
     """La tranche de CSG d'une pension : ``exonere``, ``reduit``, ``median``
     ou ``plein``, selon la règle de l'année, le revenu fiscal de référence
-    et l'impôt mis en recouvrement ou non. Une borne d'exonération est
-    comprise (« n'excède pas ») ; les autres, exclues (« inférieurs à »)."""
+    et l'impôt mis en recouvrement ou non. La borne de l'exonération est
+    comprise (« n'excède pas ») ; celle du taux réduit l'est depuis le taux
+    médian, en 2019, comme la caisse l'applique et comme L. 136-8, III, l'écrit
+    depuis le 16 décembre 2020 (« inférieurs ou égaux »), exclue avant ;
+    celle du taux médian, exclue (« inférieurs à »)."""
     if seuils.regle == "impot":
         return "plein" if impot_recouvre else "exonere"
     if seuils.exoneration is not None and revenu <= seuils.exoneration:
         return "exonere"
     if seuils.regle == "impot_et_revenu":
         return "plein" if impot_recouvre else "reduit"
-    if seuils.reduit is not None and revenu < seuils.reduit:
+    if seuils.reduit is not None and (
+            revenu <= seuils.reduit if seuils.median is not None else revenu < seuils.reduit):
         return "reduit"
     if seuils.median is not None and revenu < seuils.median:
         return "median"

@@ -208,7 +208,11 @@ referents:
     qu'il prélève
   trajectoire: la pension prise pour seule ressource, abattement de 10 % compris
   destinie_2: trois cas, sans le taux médian, et le revenu approché par les pensions
-  euromod: les seuils de 2026 et leurs majorations par demi-part, sans le lissage
+  euromod: >-
+    les seuils de 2026 et leurs majorations par demi-part, sans le lissage ; rejoué de
+    FR_2015 à FR_2025 le 24 octobre 2026 (action 137), ceux de chaque année, sauf trois d'un
+    euro, et des bornes toutes comprises, quand la caisse exclut le troisième seuil, et le
+    deuxième jusqu'en 2018
   simulateur_aurain: les seuils à plusieurs parts et le lissage sur deux ans
   retraites_2027: >-
     les seuils de 2026 à une et à deux parts, lus dans l'instruction de la DSS du 11
@@ -226,6 +230,14 @@ historique:
   cite `retraites_2027` : mêmes seuils, et les bornes du dépôt, dont celle du taux plein,
   que la fiche F2971 comprenait au taux médian ; le quart de part y est arrondi à l'euro,
   au taux réduit 2 278 € et non 2 277,50 €, une approximation de plus, d'un euro.
+- >-
+  2026-10-24 — relue à l'action 137 contre EUROMOD, rejoué de FR_2015 à FR_2025, et les
+  barèmes de la Cnav de 2015 à 2025 : mêmes bornes que le dépôt en 2026. En 2019 et en
+  2020, L. 136-8 écrivait « inférieurs à » au III et « excèdent » au III bis, sans ranger
+  le deuxième seuil sous aucun des deux taux ; la caisse l'a laissé au réduit (circulaires
+  2019/9 et 2019/31), ce que la LFSS pour 2021 écrit (« inférieurs ou égaux »,
+  LEGIARTI000042683546). L'effet retour, qui le mettait au médian de 2019 à 2025
+  (`effet_retour.tranche_csg`), le suit depuis.
 effet: >-
   Tout retraité en mode net : un foyer d'une part sous 13 048 € de revenu fiscal n'est plus
   prélevé ; au salaire moyen, la pension passe du taux plein au taux médian.
