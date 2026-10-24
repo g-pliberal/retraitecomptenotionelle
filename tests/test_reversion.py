@@ -23,7 +23,7 @@ from retraite_notionnelle.droit.reversion import mois_de_mariage, reversion
 from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.web.site import ErreurSite
 
-from outils_pont import Saisies, saisie_du_portage
+from outils_pont import Saisies, refus_de_la_saisie, saisie_du_portage
 
 HAUTE = Fiabilite.HAUTE
 
@@ -1692,7 +1692,7 @@ def test_sans_conjoint_pas_de_reversion(simulateur):
      "Précédent conjoint n° 2 : le mariage suit les deux naissances"),
 ])
 def test_la_saisie_refuse_ce_qui_ne_tient_pas(requete, message):
-    with pytest.raises(ErreurSite, match=message):
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie(message)):
         saisie_du_portage({"naissance": "1960", "liquidation": "2024-01", **requete})
 
 

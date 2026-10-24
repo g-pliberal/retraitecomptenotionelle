@@ -28,7 +28,7 @@ import pytest
 
 from retraite_notionnelle.web.site import ErreurSite, module, site
 
-from outils_pont import Saisies, saisie_du_portage
+from outils_pont import Saisies, refus_de_la_saisie, saisie_du_portage
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -127,7 +127,8 @@ def test_l_option_ne_touche_pas_aux_autres_statuts(saisies):
 def test_un_revenu_du_chef_hors_des_bornes_est_refuse_meme_au_forfait():
     """Le champ porte les bornes d'un revenu ; la saisie les oppose aussi au
     revenu du chef, même au forfait, où il ne compte pas."""
-    with pytest.raises(ErreurSite, match="entre 0,1 et 10 fois le salaire moyen"):
+    with pytest.raises(ErreurSite,
+                       match=refus_de_la_saisie("entre 0,1 et 10 fois le salaire moyen")):
         saisie_du_portage({**COLLABORATRICE, "salaire": "12"})
 
 

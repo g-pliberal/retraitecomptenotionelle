@@ -26,7 +26,7 @@ from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.carriere import ReversionAgricole
 from retraite_notionnelle.web.site import ErreurSite
 
-from outils_pont import Saisies, saisie_du_portage
+from outils_pont import Saisies, refus_de_la_saisie, saisie_du_portage
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -101,7 +101,7 @@ def test_la_saisie_lit_la_reversion_et_l_adresse_la_garde():
      "positif ou nul"),
 ])
 def test_une_reversion_incomplete_ou_impossible_est_refusee(champs, motif):
-    with pytest.raises(ErreurSite, match=motif):
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie(motif)):
         saisie_du_portage({**VEUVE, **champs})
 
 

@@ -19,8 +19,10 @@ from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.carriere import Carriere, Metier
 from retraite_notionnelle.droit import liquidation, liquider, progressive
 from retraite_notionnelle.droit.compter import services_a_temps_partiel
-from retraite_notionnelle.saisie import ErreurSaisie, Saisie
 from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.web.site import ErreurSite
+
+from outils_pont import refus_de_la_saisie, saisie_du_portage
 
 
 @pytest.fixture(scope="module")
@@ -348,13 +350,13 @@ def test_l_echeancier_inscrit_la_fraction_puis_la_pension_complete(simulateur):
 
 def test_la_saisie_porte_la_retraite_progressive():
     base = {"naissance": "1965-01-15", "sexe": "F", "debut": "20", "liquidation": "64"}
-    saisie = Saisie.depuis_requete({**base, "progressive": "2025-11", "quotite": "60"})
+    saisie = saisie_du_portage({**base, "progressive": "2025-11", "quotite": "60"})
     assert saisie.retraite_progressive_declaree() == {
         "age": pytest.approx(60.75), "quotite": pytest.approx(0.6)}
     assert "progressive=2025-11&quotite=60" in saisie.requete()
-    with pytest.raises(ErreurSaisie, match="quotite"):
-        Saisie.depuis_requete({**base, "quotite": "60"})
-    with pytest.raises(ErreurSaisie, match="précède le départ"):
-        Saisie.depuis_requete({**base, "progressive": "2030-01", "quotite": "60"})
-    with pytest.raises(ErreurSaisie, match="entre 1 et 99"):
-        Saisie.depuis_requete({**base, "progressive": "2025-11", "quotite": "0"})
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie("quotite")):
+        saisie_du_portage({**base, "quotite": "60"})
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie("précède le départ")):
+        saisie_du_portage({**base, "progressive": "2030-01", "quotite": "60"})
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie("entre 1 et 99")):
+        saisie_du_portage({**base, "progressive": "2025-11", "quotite": "0"})

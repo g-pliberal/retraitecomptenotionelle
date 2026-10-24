@@ -36,7 +36,7 @@ import pytest
 from retraite_notionnelle.droit.compter import arrondir_les_services
 from retraite_notionnelle.web.site import ErreurSite
 
-from outils_pont import RefusDuPortage, Saisies, saisie_du_portage
+from outils_pont import RefusDuPortage, Saisies, refus_de_la_saisie, saisie_du_portage
 
 RACINE = Path(__file__).resolve().parents[1]
 FICHE = RACINE / "data" / "reference" / "regles" / "decompte_des_services_fonction_publique.yaml"
@@ -158,7 +158,7 @@ def test_une_fraction_ne_se_declare_que_des_services_de_la_fonction_publique(sai
 
 
 def test_le_relevé_refuse_plus_de_quatre_trimestres():
-    with pytest.raises(ErreurSite, match="trimestres attendus entre 0 et 4"):
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie("trimestres attendus entre 0 et 4")):
         saisie_du_portage({**CONSEIL_D_ETAT,
                            "releve": "2005:fonctionnaire_etat:20000:4.5"}).releve_analyse()
 

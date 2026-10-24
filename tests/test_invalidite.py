@@ -18,7 +18,7 @@ from retraite_notionnelle.carriere import Carriere, Metier
 from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.web.site import ErreurSite
 
-from outils_pont import RefusDuPortage, Saisies, saisie_du_portage
+from outils_pont import RefusDuPortage, Saisies, refus_de_la_saisie, saisie_du_portage
 
 
 @pytest.fixture(scope="module")
@@ -81,7 +81,7 @@ def test_la_saisie_lit_l_invalidite_et_la_rend_a_l_adresse():
     ({"handicap": "2029-02"}, "Incapacité d'au moins 50 % en février 2029 : elle ne suit pas"),
 ])
 def test_la_saisie_refuse_ce_qui_ne_tient_pas(champs, refus):
-    with pytest.raises(ErreurSite, match=refus):
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie(refus)):
         _saisie(**champs)
 
 

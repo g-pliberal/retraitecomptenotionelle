@@ -12,6 +12,7 @@ parcours, garde celui d'un relevé, et les services la comptent.
 from __future__ import annotations
 
 import json
+import re
 import shutil
 import subprocess
 from pathlib import Path
@@ -25,8 +26,10 @@ from retraite_notionnelle.carriere import (
     Carriere, LigneRelevee, Metier, prolonger_releve, salaire_moyen_annuel,
 )
 from retraite_notionnelle.droit import releve
-from retraite_notionnelle.saisie import ErreurSaisie, Saisie
 from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.web.site import ErreurSite, module
+
+from outils_pont import saisie_du_portage
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -62,10 +65,15 @@ def _pension_de_l_etat(simulateur: Simulateur, carriere: Carriere):
 
 # -- la saisie ----------------------------------------------------------------------
 
+def _saisie(**champs):
+    """La saisie du portage, de ses champs."""
+    return module("saisie").Saisie(champs)
+
+
 def test_la_saisie_lit_les_annees_et_leur_quotite():
-    saisie = Saisie(temps_partiel="2005:2007:80,\n 2010:2010:50")
+    saisie = _saisie(temps_partiel="2005:2007:80,\n 2010:2010:50")
     assert saisie.temps_partiel_analyse() == {2005: 0.8, 2006: 0.8, 2007: 0.8, 2010: 0.5}
-    assert Saisie().temps_partiel_analyse() == {}
+    assert _saisie().temps_partiel_analyse() == {}
 
 
 #: Chaque faute, et la phrase qui la refuse, la même dans les deux moteurs.
@@ -91,18 +99,17 @@ REFUS = {
 def test_un_temps_partiel_mal_dit_est_refuse(texte):
     """Se tromper de touche ne donne pas un autre chiffre, mais un refus — et
     la saisie le prononce avant tout calcul (``verifier``)."""
-    with pytest.raises(ErreurSaisie) as refus:
-        Saisie(temps_partiel=texte).verifier()
-    assert str(refus.value).startswith(REFUS[texte])
+    with pytest.raises(ErreurSite, match="ErreurSaisie : " + re.escape(REFUS[texte])):
+        _saisie(temps_partiel=texte).verifier()
 
 
 def test_l_adresse_porte_le_temps_partiel_qu_on_a_dit():
     """L'adresse réécrite garde le champ, et ne l'écrit pas quand il est vide."""
-    saisie = Saisie.depuis_requete({"temps_partiel": " 2005:2007:80 "})
+    saisie = saisie_du_portage({"temps_partiel": " 2005:2007:80 "})
     lu = parse_qs(saisie.requete())
     assert lu["temps_partiel"] == ["2005:2007:80"]
-    assert Saisie.depuis_requete({k: v[0] for k, v in lu.items()}).temps_partiel == "2005:2007:80"
-    assert "temps_partiel" not in parse_qs(Saisie.depuis_requete({}).requete())
+    assert saisie_du_portage({k: v[0] for k, v in lu.items()}).temps_partiel == "2005:2007:80"
+    assert "temps_partiel" not in parse_qs(saisie_du_portage({}).requete())
 
 
 LECTURE_JS = """
@@ -131,28 +138,12 @@ process.stdout.write(JSON.stringify(sortie));
 """
 
 
-def _lu_par_python(requete: dict) -> dict:
-    from retraite_notionnelle.contexte import Contexte
-
-    try:
-        saisie = Saisie.depuis_requete(requete)
-    except ErreurSaisie as refus:
-        return {"refus": str(refus)}
-    carriere = Contexte().carriere(saisie)
-    return {
-        "requete": saisie.requete(),
-        "quotites": {str(annee): quotite
-                     for annee, quotite in saisie.temps_partiel_analyse().items()},
-        "faits": [[f["id"], f["debut"], f["fin"], f["attributs"].get("quotite")]
-                  for f in chrono.faits_de(carriere.chronologie, chrono.ASSURE, chrono.EMPLOI)],
-        "lignes": [[ligne.annee, ligne.quotite] for ligne in carriere.lignes],
-    }
-
-
-def test_le_portage_lit_le_meme_temps_partiel():
-    """Les deux saisies refusent par la même phrase, et lisent les mêmes
-    quotités ; les deux chronologies coupent les mêmes périodes, et les deux
-    carrières portent les mêmes quotités, parcours et relevé."""
+def test_le_portage_lit_le_temps_partiel():
+    """La saisie du portage refuse par sa phrase, et lit les quotités ; sa
+    chronologie coupe les périodes, et sa carrière porte les quotités,
+    parcours et relevé. Sa jumelle Python, à qui elle se confrontait ici, ne
+    l'est plus que par les témoins (``tests/test_pont.py``), jusqu'à son
+    retrait (action 161, étape 6)."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     base = {"naissance": "1966", "debut": "22", "liquidation": "64",
@@ -170,12 +161,11 @@ def test_le_portage_lit_le_meme_temps_partiel():
         input=json.dumps(requetes), capture_output=True, text=True, encoding="utf-8",
         check=False)
     assert execution.returncode == 0, execution.stderr
-    attendus = [_lu_par_python(requete) for requete in requetes]
-    assert json.loads(execution.stdout) == attendus
-    assert [a["refus"][:40] for a in attendus[:len(REFUS)]] == [r[:40] for r in REFUS.values()]
+    lus = json.loads(execution.stdout)
+    assert [lu["refus"][:40] for lu in lus[:len(REFUS)]] == [r[:40] for r in REFUS.values()]
     # Le second métier commence en juillet 2005, au milieu des années à 80 % :
     # ses deux morceaux et ceux du premier portent la quotité de leurs années.
-    assert attendus[-2]["faits"] == [
+    assert lus[-2]["faits"] == [
         ["emploi_1", "1988-01-01", "2000-01-01", None],
         ["emploi_1_2", "2000-01-01", "2004-01-01", 0.5],
         ["emploi_1_3", "2004-01-01", "2005-07-01", 0.8],

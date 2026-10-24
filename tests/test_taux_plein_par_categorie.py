@@ -22,7 +22,7 @@ from retraite_notionnelle.droit import categories
 from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.web.site import ErreurSite
 
-from outils_pont import saisie_du_portage
+from outils_pont import refus_de_la_saisie, saisie_du_portage
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -180,7 +180,7 @@ def test_la_saisie_porte_les_trois_titres_et_les_reecrit():
     assert (relue.deporte, relue.mois_de_guerre, relue.travail_manuel) == (
         True, 30, "ouvrier")
     assert saisie.invalidite_declaree()["mois_de_guerre"] == 30
-    with pytest.raises(ErreurSite, match="ErreurSaisie"):
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie("")):
         saisie_du_portage({"naissance": "1940", "liquidation": "62", "guerre": "0"})
 
 

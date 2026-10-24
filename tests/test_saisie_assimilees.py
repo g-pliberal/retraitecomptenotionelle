@@ -22,7 +22,7 @@ import pytest
 from retraite_notionnelle import chronologie as chrono
 from retraite_notionnelle.web.site import ErreurSite
 
-from outils_pont import Saisies, saisie_du_portage
+from outils_pont import Saisies, refus_de_la_saisie, saisie_du_portage
 
 RACINE = Path(__file__).resolve().parent.parent
 
@@ -113,7 +113,7 @@ def test_les_periodes_comptent():
 
 @pytest.mark.parametrize(("requete", "message"), REFUS)
 def test_la_saisie_refuse(requete, message):
-    with pytest.raises(ErreurSite, match=message):
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie(message)):
         saisie_du_portage(requete)
 
 

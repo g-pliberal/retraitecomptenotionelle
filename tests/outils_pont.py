@@ -88,6 +88,13 @@ def _presomptions():
     return site().contexte.paquet.presomptions
 
 
+def refus_de_la_saisie(fragment: str) -> str:
+    """Ce que ``pytest.raises(ErreurSite, match=…)`` cherche d'un refus de la
+    saisie du portage : ``fragment``, une expression régulière, dans la ligne
+    de son motif, et non dans la pile qui la suit."""
+    return r"\AErreurSaisie : .*" + fragment
+
+
 def saisie_du_portage(requete: dict):
     """La saisie du portage, lue d'une requête comme le site la lit, sur les
     présomptions du paquet : un objet du portage, dont les champs se lisent

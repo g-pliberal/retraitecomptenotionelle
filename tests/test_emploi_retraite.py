@@ -15,8 +15,10 @@ import pytest
 from retraite_notionnelle import chronologie as chrono
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.carriere import Carriere, Metier
-from retraite_notionnelle.saisie import ErreurSaisie, Saisie
 from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.web.site import ErreurSite
+
+from outils_pont import refus_de_la_saisie, saisie_du_portage
 
 
 @pytest.fixture(scope="module")
@@ -47,10 +49,10 @@ def _carriere(simulateur: Simulateur, emploi: dict | None = EMPLOI) -> Carriere:
 # -- la saisie ----------------------------------------------------------------------
 
 def test_la_saisie_porte_l_activite_apres_le_depart():
-    saisie = Saisie.depuis_requete({**BASE, "emploi_retraite": "2023-03",
-                                    "emploi_retraite_fin": "2025-01",
-                                    "emploi_retraite_salaire": "0.5",
-                                    "emploi_retraite_employeur": "dernier"})
+    saisie = saisie_du_portage({**BASE, "emploi_retraite": "2023-03",
+                                "emploi_retraite_fin": "2025-01",
+                                "emploi_retraite_salaire": "0.5",
+                                "emploi_retraite_employeur": "dernier"})
     assert saisie.emploi_retraite_declare() == {
         "age": pytest.approx(63 + 1 / 12), "fin": pytest.approx(64 + 11 / 12),
         "affiliation": "salarie_prive_non_cadre", "niveau_salaire": 0.5,
@@ -60,8 +62,8 @@ def test_la_saisie_porte_l_activite_apres_le_depart():
                     "emploi_retraite_salaire=0.5", "emploi_retraite_employeur=dernier"):
         assert morceau in requete
     # Sans statut ni revenu, ceux du dernier métier.
-    defaut = Saisie.depuis_requete({**BASE, "emploi_retraite": "2023-03",
-                                    "emploi_retraite_fin": "2025-01"})
+    defaut = saisie_du_portage({**BASE, "emploi_retraite": "2023-03",
+                                "emploi_retraite_fin": "2025-01"})
     assert defaut.emploi_retraite_declare()["niveau_salaire"] == 1.0
     assert "emploi_retraite_employeur" not in defaut.requete()
 
@@ -78,8 +80,8 @@ def test_la_saisie_porte_l_activite_apres_le_depart():
       "emploi_retraite_salaire": "20"}, "entre 0,1 et 10 fois"),
 ])
 def test_la_saisie_refuse_une_activite_qui_ne_se_tient_pas(champs, message):
-    with pytest.raises(ErreurSaisie, match=message):
-        Saisie.depuis_requete({**BASE, **champs})
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie(message)):
+        saisie_du_portage({**BASE, **champs})
 
 
 # -- la chronologie et la carrière ------------------------------------------------

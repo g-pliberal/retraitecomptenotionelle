@@ -27,7 +27,7 @@ from retraite_notionnelle.donnees.mortalite import AGE_TERMINAL
 from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.web.site import ErreurSite
 
-from outils_pont import RefusDuPortage, Saisies, saisie_du_portage
+from outils_pont import RefusDuPortage, Saisies, refus_de_la_saisie, saisie_du_portage
 
 DONNEES = Path(__file__).resolve().parents[1] / "data"
 #: L'âge le plus tardif que la saisie date : un an sous l'âge terminal des
@@ -206,7 +206,7 @@ def test_une_annee_passee_hors_de_france_n_est_pas_travaillee_en_france():
     ({"mois_en_france": "-1"}, "Mois en France chaque année : de 0 à 12"),
 ])
 def test_la_saisie_refuse_ce_qui_ne_tient_pas(champs, refus):
-    with pytest.raises(ErreurSite, match=refus):
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie(refus)):
         _saisie(**champs)
 
 
@@ -597,7 +597,7 @@ APRES_LE_SENEGAL = {**APRES_L_ESPAGNE, "etranger1_pays": "SN"}
 def test_une_carriere_commencee_hors_de_france_peut_venir_tard_en_france():
     """Le premier emploi en France peut venir après l'âge de début le plus
     tardif quand la carrière a commencé à l'étranger."""
-    with pytest.raises(ErreurSite, match="Début d'activité"):
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie("Début d'activité")):
         saisie_du_portage({**PETIT_SALAIRE, "debut": "2003-01"})
     assert saisie_du_portage(APRES_L_ESPAGNE).debut > 42
 
