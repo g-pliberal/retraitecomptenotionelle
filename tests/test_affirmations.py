@@ -74,14 +74,10 @@ from retraite_notionnelle.scenarios.actuel import MinimumVieillesse
 from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.cout import COMPOSANTE_GARANTIE
 from retraite_notionnelle.donnees.equilibre import ORGANISMES, POSTES_TRANSFERTS
-from retraite_notionnelle.saisie import (
-    INDEXATIONS,
-    MODES_MONTANT,
-    ErreurSaisie,
-    Saisie,
-)
 from retraite_notionnelle.contexte import Contexte
-from retraite_notionnelle.web.site import disponible, module, site
+from retraite_notionnelle.web.site import ErreurSite, disponible, module, site
+
+from outils_pont import Saisies, refus_de_la_saisie, saisie_du_portage
 
 #: Le texte du site n'est écrit qu'une fois, en JavaScript : ses constantes et
 #: ses fonctions se lisent dans le portage, par node (``web/site.py``). Sans
@@ -189,64 +185,65 @@ class Modele:
     Tout est paresseux et mémorisé : un contrôle qui ne regarde qu'une
     carrière ne paie pas le coût agrégé, et le coût n'est calculé qu'une fois
     pour tous ceux qui le lisent.
+
+    Une carrière se saisit comme sur le site, par la requête d'une adresse :
+    le portage la lit et en bâtit la carrière, que le moteur Python simule
+    (``tests/outils_pont.py``, action 161, étape 6). Une naissance s'y écrit
+    avec son jour, que la saisie présumerait sinon. Le coût et les données
+    qu'agrègent les pages se lisent dans le contexte, qui reste en Python.
     """
 
     def __init__(self) -> None:
         self.contexte = Contexte()
-        self.sim = self.contexte.simulateur()
+        self.saisies = Saisies()
+        self.sim = self.saisies.simulateur()
         self.base = self.contexte.base
         self._simulations: dict[tuple, object] = {}
 
-    def simuler(self, **parametres):
+    def simuler_requete(self, **parametres):
         cle = tuple(sorted(parametres.items()))
         if cle not in self._simulations:
-            self._simulations[cle] = self.contexte.simuler(Saisie(**parametres))
-        return self._simulations[cle]
-
-    def simuler_requete(self, **parametres):
-        cle = ("requete",) + tuple(sorted(parametres.items()))
-        if cle not in self._simulations:
-            saisie = Saisie.depuis_requete({k: str(v) for k, v in parametres.items()})
-            self._simulations[cle] = self.contexte.simuler(saisie)
+            self._simulations[cle] = self.saisies.simuler(parametres)
         return self._simulations[cle]
 
     # Les carrières que les contrôles se partagent.
     @cached_property
     def defaut(self):
-        return self.simuler()
+        return self.simuler_requete()
 
     @cached_property
     def fonctionnaire(self):
-        return self.simuler(statut="fonctionnaire_etat", primes=0.2)
+        return self.simuler_requete(statut="fonctionnaire_etat", primes="0.2")
 
     @cached_property
     def artisan(self):
-        return self.simuler(statut="artisan")
+        return self.simuler_requete(statut="artisan")
 
     # Né en 1975, l'exemple du site jusqu'au 20 octobre 2026 : la garantie
     # complète sa pension, et c'est ce que ses contrôles éprouvent. L'exemple
     # du site, né en 2000, ne la reçoit pas au même revenu.
     @cached_property
     def smic(self):
-        return self.simuler(salaire=0.35, unite_revenu="moyen", naissance=1975, debut=20,
-                            liquidation=67)
+        return self.simuler_requete(salaire="0.35", unite_revenu="moyen",
+                                    naissance="1975-01-01", debut="20", liquidation="67")
 
     @cached_property
     def smic_en_couple(self):
-        return self.simuler(salaire=0.35, unite_revenu="moyen", naissance=1975, debut=20,
-                            liquidation=67, foyer="couple")
+        return self.simuler_requete(salaire="0.35", unite_revenu="moyen",
+                                    naissance="1975-01-01", debut="20", liquidation="67",
+                                    foyer="couple")
 
     @cached_property
     def deja_liquidee(self):
         """Une carrière liquidée en 2012, bien avant la bascule."""
-        return self.simuler(statut="agent_sncf", naissance=1960, liquidation=52,
-                            debut=20)
+        return self.simuler_requete(statut="agent_sncf", naissance="1960-01-01",
+                                    liquidation="52", debut="20")
 
     @cached_property
     def haut_revenu(self):
         """Dix fois le salaire moyen : le plus haut revenu que le formulaire accepte."""
-        return self.simuler(salaire=10, unite_revenu="moyen", naissance=1990,
-                            debut=22, liquidation=64)
+        return self.simuler_requete(salaire="10", unite_revenu="moyen",
+                                    naissance="1990-01-01", debut="22", liquidation="64")
 
     @cached_property
     def cout(self):
@@ -345,27 +342,25 @@ def _(m: Modele):
     d'évident : une carrière à trois métiers pouvait très bien recevoir trois
     niveaux, puisque l'inversion n'en cherche qu'un et qu'il faut bien décider
     ce qu'on fait des autres. Le contrôle le lit sur la carrière que le modèle
-    a effectivement construite, et non sur le texte.
+    a effectivement construite, et non sur le texte : celle que le contexte du
+    portage trouve en inversant la pension, la saisie n'ayant que lui.
     """
-    comparaison = m.simuler_requete(
-        saisie_par="pension", pension=1500, naissance="1955-06-01",
-        debut="1975-01", liquidation="2017-06", metier2_debut="1995-01",
-        metier2_statut="artisan",
-    )
+    carriere = dict(naissance="1955-06-01", debut="1975-01", liquidation="2017-06",
+                    metier2_debut="1995-01", metier2_statut="artisan")
+    comparaison = site().contexte.simuler(saisie_du_portage(
+        {**carriere, "saisie_par": "pension", "pension": "1500"}))
     trouve = comparaison.niveau_inverse
     assert trouve is not None and trouve.atteinte
     # La carrière ne garde pas ses métiers — elle garde les ANNÉES qu'ils ont
     # produites —, et c'est donc sur elles que la convention se lit : la même
     # carrière décrite en revenus, chaque période portant le niveau trouvé,
     # doit produire exactement les mêmes années.
-    temoin = m.simuler_requete(
-        saisie_par="revenu", unite_revenu="moyen", salaire=trouve.niveau,
-        metier2_salaire=trouve.niveau, naissance="1955-06-01",
-        debut="1975-01", liquidation="2017-06", metier2_debut="1995-01",
-        metier2_statut="artisan",
-    )
+    niveau = repr(trouve.niveau)
+    temoin = site().contexte.carriere(saisie_du_portage(
+        {**carriere, "saisie_par": "revenu", "unite_revenu": "moyen",
+         "salaire": niveau, "metier2_salaire": niveau}))
     obtenues = [ligne.revenu for ligne in comparaison.carriere.lignes]
-    attendues = [ligne.revenu for ligne in temoin.carriere.lignes]
+    attendues = [ligne.revenu for ligne in temoin.lignes]
     assert obtenues == attendues, (
         "les périodes ne portent pas toutes le niveau trouvé"
     )
@@ -434,7 +429,8 @@ def _(m: Modele):
 def _(m: Modele):
     assert m.base.table_generation
     un = m.defaut.notionnel_retroactif.conversion
-    autre = m.simuler(naissance=1960, liquidation=64).notionnel_retroactif.conversion
+    autre = m.simuler_requete(naissance="1960-01-01",
+                              liquidation="64").notionnel_retroactif.conversion
     assert "generation" in un.table
     assert un.age_liquidation == autre.age_liquidation
     assert not _proche(un.diviseur, autre.diviseur)
@@ -476,7 +472,9 @@ def _(m: Modele):
 
 @controle("premiere_ligne_indexation_par_defaut")
 def _(m: Modele):
-    assert INDEXATIONS[0][0] == Saisie.indexation == m.base.mode_indexation.value
+    saisie = module("saisie")
+    assert (saisie.INDEXATIONS[0][0] == saisie.DEFAUTS["indexation"]
+            == m.base.mode_indexation.value)
 
 
 @controle("pension_actuelle_depend_du_statut")
@@ -488,7 +486,7 @@ def _(m: Modele):
 @controle("interruption_ne_coute_que_ses_cotisations")
 def _(m: Modele):
     pleine = {c.annee: c for c in m.defaut.notionnel_retroactif.compte.cotisations}
-    hachee = m.simuler(interruptions="2005:2007:education_enfant").notionnel_retroactif
+    hachee = m.simuler_requete(interruptions="2005:2007:education_enfant").notionnel_retroactif
     trouee = {c.annee: c for c in hachee.compte.cotisations}
     assert set(trouee) == set(pleine)
     for annee, cotisation in trouee.items():
@@ -1159,10 +1157,11 @@ def _(m: Modele):
 def _(m: Modele):
     """Ce que la retraite prélève chaque mois : les deux parts de la fiche."""
     _, niveau = pages.NIVEAUX_RISQUE[1]
-    comparaison = m.simuler(naissance=pages.NAISSANCE_RISQUE,
-                            statut="salarie_prive_non_cadre", debut=pages.DEBUT_RISQUE,
-                            liquidation=pages.LIQUIDATION_RISQUE, salaire=niveau,
-                            unite_revenu="moyen")
+    comparaison = m.simuler_requete(naissance=f"{pages.NAISSANCE_RISQUE}-01-01",
+                                    statut="salarie_prive_non_cadre",
+                                    debut=str(pages.DEBUT_RISQUE),
+                                    liquidation=str(pages.LIQUIDATION_RISQUE),
+                                    salaire=str(niveau), unite_revenu="moyen")
     fiche = comparaison.remuneration.reference.droit_en_vigueur
     prelevement = fiche.retraite_totale / 12.0
     assert prelevement > 0
@@ -1601,7 +1600,7 @@ def _(m: Modele):
 
 @controle("liquidation_non_ouverte_signalee")
 def _(m: Modele):
-    comparaison = m.simuler(liquidation=55, debut=30)
+    comparaison = m.simuler_requete(liquidation="55", debut="30")
     assert not comparaison.actuel.liquidation_ouverte
     assert comparaison.actuel.motif_ouverture == "non_ouverte"
     assert comparaison.actuel.pension_annuelle > 0
@@ -1618,12 +1617,12 @@ def _(m: Modele):
 
 @controle("carriere_lue_sur_releve")
 def _(m: Modele):
-    comparaison = m.simuler(
+    comparaison = m.simuler_requete(
         releve="2000:salarie_prive_non_cadre:24000\n2001:artisan:25000",
-        naissance=1975)
+        naissance="1975-01-01")
     lignes = [(l.annee, l.affiliation, l.revenu) for l in comparaison.carriere.lignes]
     assert lignes[:2] == [(2000, "salarie_prive_non_cadre", 24000.0), (2001, "artisan", 25000.0)]
-    # Puis sa dernière année, poursuivie jusqu'au départ (Contexte.releve_prolonge) :
+    # Puis sa dernière année, poursuivie jusqu'au départ (releveProlonge, contexte.js) :
     # rien n'y vient du métier du formulaire.
     depart = comparaison.carriere.date_liquidation
     derniere = depart.annee if depart.mois > 1 else depart.annee - 1
@@ -1633,10 +1632,10 @@ def _(m: Modele):
 
 @controle("saisie_hors_bornes_refusee")
 def _(m: Modele):
-    with pytest.raises(ErreurSaisie):
-        Saisie.depuis_requete({"naissance": "1975", "liquidation": "12"})
-    with pytest.raises(ErreurSaisie):
-        Saisie.depuis_requete({"naissance": "1975", "enfants": "999"})
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie("Départ à la retraite")):
+        saisie_du_portage({"naissance": "1975", "liquidation": "12"})
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie("Nombre d'enfants")):
+        saisie_du_portage({"naissance": "1975", "enfants": "999"})
 
 
 @controle("annee_civile_un_seul_statut")
@@ -1671,13 +1670,13 @@ def _(m: Modele):
 
 @controle("conversion_en_multiple_du_salaire_moyen", "revenu_saisi_en_euros_d_aujourd_hui")
 def _(m: Modele):
-    echelle = m.contexte.echelle(Saisie(montants="brut"))
+    echelle = site().contexte.echelle(saisie_du_portage({"montants": "brut"}))
     assert echelle.moyen > 0
     assert _proche(echelle.niveau(2500.0), 2500.0 * 12 / echelle.moyen)
     assert _proche(echelle.mensuel(echelle.niveau(2500.0)), 2500.0)
     # « Euros d'aujourd'hui » : l'échelle est celle de l'année courante du
     # modèle, non celle du départ ni celle des euros constants.
-    assert Saisie.unite_revenu == "euros_mois"
+    assert module("saisie").DEFAUTS["unite_revenu"] == "euros_mois"
     assert _proche(echelle.moyen, salaire_moyen_annuel(m.sim.macro, m.base.annee_courante))
 
 
@@ -2843,8 +2842,8 @@ def _(m: Modele):
 def _(m: Modele):
     cumuls = m.cumuls
     assert max(cumuls.values()) / min(cumuls.values()) > 10
-    pratiquee = m.simuler(indexation="revalorisation_portee_au_compte")
-    prix = m.simuler(indexation="prix")
+    pratiquee = m.simuler_requete(indexation="revalorisation_portee_au_compte")
+    prix = m.simuler_requete(indexation="prix")
     assert abs(pratiquee.variation("notionnel_retroactif")
                - prix.variation("notionnel_retroactif")) < 0.10
 
@@ -2894,10 +2893,11 @@ def _(m: Modele):
     depuis le 4 octobre 2026 —, et une conversion qui fasse bien descendre
     un brut vers un net.
     """
-    assert [code for code, _ in MODES_MONTANT] == ["brut", "net"]
-    assert Saisie().montants == "brut"
-    assert Saisie(montants="net").en_net
-    assert not Saisie(montants="brut").en_net
+    saisie = module("saisie")
+    assert [code for code, _ in saisie.MODES_MONTANT] == ["brut", "net"]
+    assert saisie.DEFAUTS["montants"] == "brut"
+    assert saisie.Saisie({"montants": "net"}).en_net
+    assert not saisie.Saisie({"montants": "brut"}).en_net
     pensions = charger_prelevements(m.contexte.base.racine_donnees).pensions
     assert 0.0 < pensions.taux_total < 0.2
     assert pensions.net(1_000.0) < 1_000.0
