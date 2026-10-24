@@ -23,6 +23,7 @@ import yaml
 
 from retraite_notionnelle.carriere import Carriere, LigneRelevee
 from retraite_notionnelle.config import Parametres
+from retraite_notionnelle.contributions_equilibre import charger_contributions_equilibre
 from retraite_notionnelle.droit.releve import points_de_l_annee
 from retraite_notionnelle.scenarios.actuel import (
     AgesOuvertureAvantReforme2023, AgesOuvertureAvantSuspension, TableRecouverte)
@@ -928,6 +929,155 @@ def test_le_droit_au_31_aout_2023_garde_les_trimestres_d_enfant_reputes_cotises(
         _carriere_nos_retraites(moteur_2019, *cas[:4], "aucune", cas[5]))
     assert (mere.liquidation_ouverte, mere.motif_ouverture) == (True, "carriere_longue")
     assert not sans_enfant.liquidation_ouverte
+
+
+# ---- EDIFIS, rejoué : l'Agirc-Arrco ---------------------------------------------
+# Le code R d'EDIFIS (GPL-3.0 : exécuté à part), rejoué sous R 4.3.3 le 24 octobre
+# 2026 (action 137), pour le salarié non cadre de ses ménages types, au droit de
+# chaque année de ses barèmes. Au commit `95ef983`, celui que sa ligne confrontait :
+# `cs_sal` et `cs_emp` (`R/base.R:328-385`) sur la feuille « Barème » de 2015 à
+# 2025, que lisent `read_excel` et `modif_df` (`R/bareme.R`). À sa tête, `2fa5bc0`
+# (19 octobre 2026), la maquette 2026, refondue :
+# `calculVect_PrelevementsSociaux_salaires` (`R/2b calc_PrelevementsSociaux.R`) sur
+# `data/baremes.RData`, de 2019, le bas de son curseur, à 2026. Sa retraite
+# complémentaire est celle du dépôt — l'Arrco et l'AGFF jusqu'en 2018, les tranches
+# 1 et 2, la CEG et la CET depuis —, à deux choses près : il partage les cotisations
+# comme la caisse, au centième, quand le dépôt prend 40 et 60 % exacts (le point
+# coupé de sa ligne du registre) ; et ses erreurs, que sa ligne déclare.
+
+#: Ses taux de retraite complémentaire, en % : le salarié, puis l'employeur, sous
+#: le plafond, au-dessus — jusqu'à trois plafonds avant 2019, huit depuis —, et la
+#: CET. Au commit `95ef983`, la feuille « Barème » de chaque année, lignes
+#: « Retraites complémentaires » : « Arrco + AGFF » jusqu'en 2018, « Retraite
+#: complémentaire + Contribution d'équilibre général » et la CET depuis. À sa tête,
+#: chaque taux à part (`tx_sal_AA2_tr1`, `tx_sal_AA2_ceg_tr1`…), les mêmes à chaque
+#: mois de 2019 à 2026, réunis ici.
+TAUX_AGIRC_ARRCO_EDIFIS = {
+    **{("95ef983", annee): ((3.90, 9.00, 0.0), (5.85, 13.45, 0.0)) for annee in range(2015, 2019)},
+    **{("95ef983", annee): ((4.01, 9.72, 0.14), (6.01, 14.57, 0.21))
+       for annee in range(2019, 2026)},
+    **{("2fa5bc0", annee): ((3.15 + 0.86, 8.64 + 1.02, 0.14), (4.72 + 1.29, 12.95 + 1.62, 0.21))
+       for annee in range(2019, 2027)},
+}
+
+#: Son plafond mensuel de la Sécurité sociale, sur lequel il découpe ses tranches.
+PLAFOND_MENSUEL_EDIFIS = {2015: 3_170, 2018: 3_311, 2019: 3_377, 2021: 3_428, 2025: 3_925,
+                          2026: 4_005}
+
+#: (version, année, salaire en plafonds) : ce qu'il prélève dans l'année pour la
+#: retraite complémentaire, en euros, la part du salarié puis celle de
+#: l'employeur — douze fois le mois de son rejeu.
+EDIFIS_REJOUE = {
+    ("95ef983", 2015, 2): (4_907.16, 7_341.72),
+    ("95ef983", 2018, 3): (8_701.31, 13_012.23),
+    ("95ef983", 2018, 4): (8_701.31, 13_012.23),     # l'Arrco d'un non-cadre s'arrête à trois
+    ("95ef983", 2019, 2): (5_677.41, 8_510.04),
+    ("95ef983", 2021, 2): (5_763.15, 8_724.95),
+    ("95ef983", 2025, 1): (1_888.71, 2_830.71),      # le plafond, pile : sans CET
+    ("95ef983", 2025, 2): (6_664.65, 9_989.91),
+    ("95ef983", 2025, 10): (34_924.65, 52_351.65),
+    ("2fa5bc0", 2019, 0.5): (812.51, 1_217.75),
+    ("2fa5bc0", 2026, 1): (1_994.49, 2_989.33),
+    ("2fa5bc0", 2026, 2): (6_704.37, 10_092.60),
+    ("2fa5bc0", 2026, 10): (35_098.22, 52_914.06),
+}
+
+
+def _agirc_arrco_au_depot(moteur, annee: int, brut: float) -> tuple[float, float]:
+    """Ce que le dépôt prélève pour la retraite complémentaire d'un salarié non
+    cadre payé ``brut`` dans l'année, la part du salarié puis celle de l'employeur :
+    les cotisations de ses fiches de régime, sur leurs tranches, et les
+    contributions d'équilibre (`contributions_equilibre_agirc_arrco.yaml`)."""
+    plafond = moteur.macro.plafond_securite_sociale(annee)
+    codes = frozenset(moteur.affiliations.regimes("salarie_prive_non_cadre", annee,
+                                                  revenu=brut, plafond=plafond))
+    salarie = employeur = 0.0
+    for code in sorted(codes & {"arrco", "arrco_tranche_2", "agirc_arrco"}):
+        for periode in moteur.catalogue[code].periodes_actives(annee):
+            bas, haut = periode.bornes_assiette_en_euros(plafond, annee)
+            assiette = max(0.0, min(brut, haut) - bas)
+            salarie += assiette * periode.taux_cotisation_salarie
+            employeur += assiette * periode.taux_cotisation_retraite * (1 - periode.part_salariale)
+    for contribution in charger_contributions_equilibre(
+            moteur.parametres.racine_donnees).contributions:
+        if contribution.due_pour("salarie_prive_non_cadre", codes):
+            part = contribution.montant(annee, brut, plafond, False, salarie=True)
+            salarie += part
+            employeur += contribution.montant(annee, brut, plafond, False) - part
+    return salarie, employeur
+
+
+def _ce_qui_l_ecarte_du_depot(version: str, annee: int, brut: float,
+                              plafond: float) -> tuple[float, float]:
+    """Son écart au dépôt, posé à la main, salarié puis employeur. Depuis 2019, le
+    partage de la caisse, 3,15 et 8,64 % au salarié, contre 40 % exacts de 7,87 et
+    de 21,59 % (accord du 17 novembre 2017, articles 36 et 38). Au commit
+    `95ef983`, la CET (0,14 et 0,21 %, article 37, 2°) prélevée une seconde fois
+    sur la tranche 2, pour l'employeur depuis 2021, pour le salarié en 2025. À sa
+    tête, la CEG du salarié sur la tranche 2 à 1,02 % au lieu de 1,08 % — 40 % de
+    2,70 % (article 37, 1°) —, et la CET due au plafond pile, qu'elle doit
+    « excéder », et assise au-delà de huit plafonds, hors des tranches 1 et 2."""
+    if annee < 2019:
+        return 0.0, 0.0
+    tranche_1 = min(brut, plafond) / 100
+    tranche_2 = max(0.0, min(brut, 8 * plafond) - plafond) / 100
+    salarie = (3.15 - 0.4 * 7.87) * tranche_1 + (8.64 - 0.4 * 21.59) * tranche_2
+    employeur = -salarie
+    if version == "95ef983" and brut > plafond:
+        employeur += 0.21 * tranche_2 * (annee >= 2021)
+        salarie += 0.14 * tranche_2 * (annee >= 2025)
+    if version == "2fa5bc0":
+        salarie += (1.02 - 1.08) * tranche_2
+        hors_texte = (brut if brut == plafond else 0.0) + max(0.0, brut - 8 * plafond)
+        salarie += 0.14 * hors_texte / 100
+        employeur += 0.21 * hors_texte / 100
+    return salarie, employeur
+
+
+@pytest.mark.parametrize("cas", sorted(TAUX_AGIRC_ARRCO_EDIFIS))
+def test_les_taux_agirc_arrco_d_edifis_sont_ceux_du_depot_au_centieme(moteur, cas):
+    """Ses taux, tranche par tranche, sont ceux que le dépôt prélève, chaque part
+    au centième — le dépôt prend 40 % exacts, 4,008 % sous le plafond, quand la
+    caisse publie 3,15 + 0,86 = 4,01 % —, sauf, à sa tête, la CEG du salarié sur la
+    tranche 2, 1,02 % au lieu de 1,08. Lus au plafond, à deux et à trois plafonds,
+    où la CET, due dès qu'il est dépassé, l'est sur tout le salaire."""
+    version, annee = cas
+    plafond = moteur.macro.plafond_securite_sociale(annee)
+    sous_le_plafond, a_deux, a_trois = (
+        _agirc_arrco_au_depot(moteur, annee, k * plafond) for k in (1, 2, 3))
+    au_depot = []
+    for part in (0, 1):
+        cet = (a_deux[part] - sous_le_plafond[part] - (a_trois[part] - a_deux[part])) / plafond
+        au_dessus = (a_trois[part] - a_deux[part]) / plafond - cet
+        au_depot.append(tuple(round(100 * t, 2)
+                              for t in (sous_le_plafond[part] / plafond, au_dessus, cet)))
+    chez_lui = TAUX_AGIRC_ARRCO_EDIFIS[cas]
+    attendu = ((au_depot[0][0], round(au_depot[0][1] - 0.06, 2), au_depot[0][2]), au_depot[1]) \
+        if version == "2fa5bc0" else tuple(au_depot)
+    assert tuple(tuple(round(t, 2) for t in partie) for partie in chez_lui) == attendu, (
+        f"edifis, {version}, {annee} : {chez_lui} chez lui, {tuple(au_depot)} au dépôt ; "
+        "sa ligne du registre se relit")
+
+
+@pytest.mark.parametrize("cas", sorted(EDIFIS_REJOUE))
+def test_edifis_preleve_l_agirc_arrco_du_depot_sauf_le_partage_et_ses_erreurs(moteur, cas):
+    version, annee, plafonds = cas
+    plafond = moteur.macro.plafond_securite_sociale(annee)
+    assert plafond == 12 * PLAFOND_MENSUEL_EDIFIS[annee]
+    brut = plafonds * plafond
+    au_depot = _agirc_arrco_au_depot(moteur, annee, brut)
+    ecart = _ce_qui_l_ecarte_du_depot(version, annee, brut, plafond)
+    attendu = tuple(d + e for d, e in zip(au_depot, ecart))
+    assert attendu == pytest.approx(EDIFIS_REJOUE[cas], abs=0.006), (
+        f"edifis, {cas} : {EDIFIS_REJOUE[cas]} chez lui, {au_depot} au dépôt, écart "
+        f"déclaré {ecart} ; sa ligne du registre se relit")
+
+
+def test_la_ligne_d_edifis_nomme_les_deux_versions_rejouees(par_id):
+    """Rejoué au commit que sa ligne confrontait et à sa tête du 19 octobre 2026,
+    la maquette 2026, refondue, qui a ses erreurs à elle : sa ligne nomme les deux."""
+    version = par_id["edifis"]["version"]
+    assert "95ef983" in version and "2fa5bc0" in version, version
 
 
 def test_le_tableau_de_bord_dit_combien_d_ecarts_sont_chez_les_modeles_confrontes(referents):

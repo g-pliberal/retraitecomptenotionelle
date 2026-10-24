@@ -1,0 +1,32 @@
+date: "2026-10-24"
+session: "action 137 : l'Agirc-Arrco d'EDIFIS, rejoué au droit de sa date"
+consulte: >-
+  EDIFIS (GPL-3.0), cloné à part, au commit 95ef983 du 11 février 2026, celui que sa
+  ligne du registre confrontait, et à sa tête, 2fa5bc0, du 19 octobre 2026, la
+  maquette 2026, refondue ; son code exécuté sous R 4.3.3, installé dans le conteneur
+  avec readxl : `cs_sal` et `cs_emp` sur la feuille « Barème » de 2015 à 2025, puis
+  `calculVect_PrelevementsSociaux_salaires` sur `data/baremes.RData` de 2019 à 2026,
+  pour un salarié non cadre payé d'un quart de plafond à douze plafonds. L'accord
+  national interprofessionnel du 17 novembre 2017, articles 32 à 38, sur le PDF de
+  la fédération Agirc-Arrco (storage/2024/09/201809dc_ANI_du_17_novembre_2017.pdf).
+  Les règles de retraite complémentaire, de CEG et de CET de modele-social, au commit
+  01861d0 de mon-entreprise. La page de l'Agirc-Arrco sur le calcul des cotisations,
+  que son antibot refuse à la session. Le scénario 1 n'est pas touché : ni fiche, ni
+  règle, et `textes.py --inscrire` n'a pas tourné.
+trouve: >-
+  Rien qui contredise le dépôt sur le droit : sa retraite complémentaire est celle
+  d'EDIFIS au centime de 2015 à 2018, l'Arrco des deux tranches et l'AGFF, et depuis
+  2019 les taux de l'accord, 7,87 et 21,59 % appelés au centième (article 36), la CEG
+  de 2,15 et 2,70 % et la CET de 0,35 % due au-dessus du plafond, jusqu'à huit
+  plafonds (article 37). Le dépôt partage les cotisations à 40 et 60 % exacts
+  (article 38), 3,148 et 4,722 % sur la tranche 1 ; la caisse publie 3,15 et 4,72 %,
+  8,64 et 12,95 % sur la tranche 2, ce que portent EDIFIS, modele-social et la
+  circulaire de la CAVIMAC que cite la fiche `arrco_cultes` : un écart du dépôt, de
+  0,002 et 0,004 point, sans effet sur le total, les points ni la pension, coupé au
+  registre. Quatre erreurs d'EDIFIS : la CET prélevée deux fois sur la tranche 2 au
+  commit 95ef983 (pour l'employeur de 2021 à 2025, pour le salarié en 2025) ; à sa
+  tête, la CEG du salarié sur la tranche 2 à 1,02 % au lieu de 1,08, la CET due au
+  plafond pile, qu'elle doit « excéder », et assise au-delà de huit plafonds.
+reste: >-
+  L'ASPA de Saphir et EUROMOD de 2015 à 2025, pour l'action 137. Le partage au
+  centième de l'Agirc-Arrco reste coupé, déclaré au registre sans être fait.

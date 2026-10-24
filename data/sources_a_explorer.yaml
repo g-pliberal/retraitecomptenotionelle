@@ -6047,7 +6047,7 @@ sources:
       Les taux de cotisation vieillesse et Agirc-Arrco de 2015 à 2025, d'une
       source indépendante des barèmes de l'IPP.
     statut: epuise
-    explore_le: "2026-10-14"
+    explore_le: "2026-10-24"
     note: >-
       Dépouillée le 14 octobre 2026 (action 89, lot des modèles publics) :
       lue en entier pour le registre des modèles,
@@ -6057,7 +6057,12 @@ sources:
       dépôt applique au régime général des moyennes par période (chantier
       138.12), et un coût du travail complet ; son seul écart, le quart de
       part du plafond du taux réduit, est au registre, la source qui le
-      tranche restant à citer.
+      tranche restant à citer. Le 24 octobre 2026 (action 137), sa tête est
+      `2fa5bc0`, du 19 octobre : la maquette 2026, refondue, de 2019 à
+      2026. Sa retraite complémentaire, rejouée sous R aux deux commits, est
+      au registre : celle du dépôt, à son partage près, celui de la caisse,
+      au centième, et à quatre erreurs près, sur la CET et la CEG ; ses
+      taux de l'Agirc-Arrco citent l'IPP depuis 2021.
 
   - id: dgtresor_saphir
     url: https://github.com/DGTresor/Saphir

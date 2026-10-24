@@ -5649,10 +5649,12 @@ referents:
     confronte: [scenario_1]
     couvre: >-
       Le revenu disponible de ménages types d'actifs, sans pension : les
-      barèmes 2015 à 2025, dont les cotisations vieillesse salariales et
-      patronales, plafonnée et déplafonnée, et l'Agirc-Arrco des tranches 1
-      et 2 et de la CET.
-    version: "commit 95ef983 (11 février 2026)"
+      barèmes 2015 à 2025 au commit 95ef983, 2019 à 2026 à sa tête, dont les
+      cotisations vieillesse salariales et patronales, plafonnée et
+      déplafonnée, et la retraite complémentaire d'un salarié non cadre :
+      l'Arrco et l'AGFF jusqu'en 2018, les tranches 1 et 2 de l'Agirc-Arrco,
+      la CEG et la CET depuis.
+    version: "commit 95ef983 (11 février 2026) ; l'Agirc-Arrco aussi à sa tête, commit 2fa5bc0 (19 octobre 2026)"
     confrontation: >-
       Des paramètres comparés, d'une source indépendante des barèmes de
       l'IPP : ses taux de vieillesse du régime général de 2015 à 2025,
@@ -5660,8 +5662,21 @@ referents:
       « Barème » de chaque année, sont ceux du dépôt, année par année
       (`regimes/taux_cotisation_annuels.csv`, certifiés sur D. 242-4) ; par
       le texte que tous deux suivent, le 5 octobre 2026, puis un à un le 22
-      (`tests/test_referents.py`). Reste : ses taux de l'Agirc-Arrco, des
-      tranches 1 et 2 et de la CET, jamais comparés.
+      (`tests/test_referents.py`). Puis un calcul rejoué, le 24 octobre
+      2026 : son code R, exécuté à part sous R 4.3.3, au commit 95ef983 sur
+      ses barèmes de 2015 à 2025 (`cs_sal` et `cs_emp`, `R/base.R`) et à sa
+      tête sur ceux de 2019 à 2026 (`R/2b calc_PrelevementsSociaux.R`), sur
+      dix-neuf salaires d'un quart de plafond à douze plafonds, prélève la
+      retraite complémentaire du dépôt : au centime jusqu'en 2018, l'Arrco
+      jusqu'à trois plafonds et l'AGFF ; depuis 2019, à son partage près,
+      celui de la caisse, et à ses erreurs près, qui expliquent au centime
+      l'écart en chacun des 361 points du rejeu. Ses taux de retraite
+      complémentaire viennent jusqu'en 2020 de barèmes qu'il cite par leur
+      numéro (« BSP 108, p.55 » en 2015, « BLS 128, p.48 » en 2020), de
+      l'IPP depuis 2021 (feuille « Barème » de 2021, ligne 248) : de 2021 à
+      2025, leur accord avec le dépôt est en partie celui de l'IPP. Les cas
+      que tests/test_referents.py tient : ses taux de chaque année, aux deux
+      commits, et douze salaires rejoués.
     ecarts:
       - constat: >-
           Le supplément par quart de part du seuil du taux réduit de
@@ -5676,7 +5691,113 @@ referents:
         preuve: >-
           LEGIARTI000051287395 ;
           https://www.service-public.gouv.fr/particuliers/vosdroits/F2971
+      - constat: >-
+          Au commit 95ef983, il prélève deux fois la contribution
+          d'équilibre technique sur la tranche 2 : ses taux de tranche
+          « Calculé », de un à huit plafonds, portent déjà la ligne de la
+          CET, 0,21 % pour l'employeur de 2021 à 2025 et 0,14 % pour le
+          salarié en 2025, et `cs_emp` et `cs_sal` la prélèvent encore sur
+          toute la rémunération jusqu'à huit plafonds. En 2025, à deux
+          plafonds, 98,91 € de trop par an pour l'employeur et 65,94 € pour
+          le salarié ; à huit plafonds et au-delà, 692,37 et 461,58 €. Ses
+          barèmes de 2019 et de 2020 ne la portent qu'une fois.
+        tranche: >-
+          Accord national interprofessionnel du 17 novembre 2017, article
+          37, 2° : « une contribution d'équilibre technique de 0,35 %
+          applicable sur les tranches 1 et 2 », une fois, partagée à 60 et
+          40 % (article 38). L'erreur est la sienne : le dépôt la prélève
+          une fois (`legislation/contributions_equilibre_agirc_arrco.yaml`,
+          `cet`), comme modele-social de l'Urssaf.
+        preuve: >-
+          feuille « Barème » au commit 95ef983 : en 2021, 0,47776 de un à
+          quatre plafonds pour l'employeur (lignes 275 et 276), quand 2020
+          portait 0,47566 au même chômage, soit les 0,21 point de la CET ;
+          en 2025, 0,1026 pour le salarié (lignes 243 à 245), 0,40 + 9,72 +
+          0,14 % ; `R/base.R:335` et `:374` ; le rejeu du 24 octobre 2026 ;
+          tests/test_referents.py
+      - constat: >-
+          À sa tête, la contribution d'équilibre général du salarié sur la
+          tranche 2 vaut 1,02 % au lieu de 1,08 %, de 2019 à 2026 : 28,84 €
+          de moins par an à deux plafonds en 2026, 201,85 € à huit plafonds
+          et au-delà. Sa version précédente portait 9,72 % = 8,64 + 1,08.
+        tranche: >-
+          Accord du 17 novembre 2017, article 37, 1° : 2,70 % sur la tranche
+          2, dont 40 % pour le salarié (article 38), 1,08 % ; ce que portent
+          le dépôt (`contributions_equilibre_agirc_arrco.yaml`, `ceg`) et
+          modele-social. L'erreur est la sienne, née le 19 octobre 2026.
+        preuve: >-
+          `data/baremes.RData`, table `SalCot`, paramètre
+          `tx_sal_AA2_ceg_tr2` : 0,0102 à chaque mois, de janvier 2019 à
+          juin 2026, au commit 2fa5bc0 ; le rejeu ; tests/test_referents.py
+      - constat: >-
+          À sa tête, la contribution d'équilibre technique est due dès que
+          la rémunération atteint le plafond (`x>=pss`) : au plafond pile,
+          168,21 € de trop par an en 2026, 67,28 € pour le salarié et
+          100,93 € pour l'employeur. Sa version précédente l'exigeait
+          au-dessus (`x>bareme[["plafond_ss"]]`).
+        tranche: >-
+          Accord du 17 novembre 2017, article 37, 2° : « Pour les
+          participants dont la rémunération excède le plafond » ; le dépôt
+          (`due_au_dela_de_plafonds`, au-dessus du plafond seulement) et
+          modele-social (`applicable si: cotisations . assiette > temps de
+          travail . plafond sécurité sociale`) le lisent ainsi. L'erreur
+          est la sienne.
+        preuve: >-
+          `R/2b calc_PrelevementsSociaux.R:195` et `:200`, au commit
+          2fa5bc0 ; le rejeu ; tests/test_referents.py
+      - constat: >-
+          À sa tête, il assied la contribution d'équilibre technique sur
+          toute la rémunération (`x* (x>=pss) # oui oui`), au-delà de huit
+          plafonds compris : à dix plafonds, 336,42 € de trop par an en
+          2026, 134,57 € pour le salarié et 201,85 € pour l'employeur.
+        tranche: >-
+          Accord du 17 novembre 2017, article 37, 2° : la contribution est
+          « applicable sur les tranches 1 et 2 », et la tranche 2 s'arrête
+          à huit fois le plafond (article 32). Le dépôt la borne à huit
+          plafonds, comme sa version précédente (`pmin(x,
+          8*bareme[["plafond_ss"]])`) et modele-social. L'erreur est la
+          sienne.
+        preuve: >-
+          `R/2b calc_PrelevementsSociaux.R:195` et `:200`, au commit
+          2fa5bc0 ; le rejeu ; tests/test_referents.py
     fait_mieux:
+      - quoi: >-
+          Il partage les cotisations de l'Agirc-Arrco comme la caisse les
+          publie, au centième : 3,15 et 4,72 % sur la tranche 1, 8,64 et
+          12,95 % sur la tranche 2. Le dépôt en prend 40 et 60 % exacts
+          (`regimes/agirc_arrco.yaml`, `part_salariale: 0.40`), 3,148 et
+          4,722 %, 8,636 et 12,954 % : le salarié retient 0,002 point de
+          trop peu sur la tranche 1 et 0,004 sur la tranche 2, et
+          l'employeur verse autant de trop, 14,42 € par an à huit plafonds
+          en 2026. Le total, les points et la pension n'en bougent pas.
+        preuve: >-
+          feuille « Barème » au commit 95ef983, de 2019 à 2025 : 4,01 % =
+          3,15 + 0,86 et 9,72 % = 8,64 + 1,08 pour le salarié (2025, lignes
+          239 et 240), 6,01 et 14,57 % pour l'employeur (lignes 254 et 255)
+          ; `data/baremes.RData` au commit 2fa5bc0 : `tx_sal_AA2_tr1`
+          0,0315, `tx_emp_AA2_tr1` 0,0472, `tx_sal_AA2_tr2` 0,0864,
+          `tx_emp_AA2_tr2` 0,1295
+        verification: >-
+          Accord du 17 novembre 2017, article 36 : « Les taux ainsi appelés
+          sont arrondis au centième » ; article 38 : 60 et 40 %. La caisse
+          publie ses parts au centième : la CAVIMAC, qui recouvre pour elle,
+          met 6,01 % à la charge de la collectivité et 4,01 % à celle de
+          l'assuré sur le taux de base de 10,02 % (circulaire n° 2026/03 du
+          27 mai 2026, que cite la fiche `arrco_cultes`), soit 4,72 + 1,29
+          et 3,15 + 0,86 ; l'Urssaf compte 3,15, 4,72, 8,64 et 12,95 %
+          (modele-social, `salarié . cotisations . retraite
+          complémentaire`, au commit `01861d0` de mon-entreprise, sur la
+          page de l'Agirc-Arrco qu'il cite) ; le BOSS compte 4,72 % dans le
+          coefficient T de la Lodeom (tests/test_lodeom.py).
+        etat: coupe
+        chantier: "138.12"
+        raison: >-
+          Léger ou nul, coupé le 24 octobre 2026 par la règle du 14 octobre :
+          le propriétaire fait le lourd et le moyen de l'action 138 et déclare
+          le reste sans le faire (classement du 9 octobre). Hors de la carte :
+          la fiche de paie, dont docs/limites/5-ante-bis-fiche-de-paie.md
+          déclare les exclusions ; le net se compare entre scénarios au même
+          taux. Le partage de l'Agirc-Arrco au centième.
       - quoi: >-
           Son coût du travail compte la formation, l'apprentissage, la
           construction et le versement mobilité, 4,13 % de plus. Le dépôt les
@@ -5748,16 +5869,30 @@ referents:
       Rien sur les pensions. Son barème de cotisations année par année
       confirme les taux de vieillesse du régime général que le dépôt porte
       depuis le 14 septembre 2026 (le relevé du 4 octobre l'avait cru aux
-      moyennes de période de sa fiche) ; son coût du travail complet est au
-      registre.
+      moyennes de période de sa fiche), et, rejouée, sa retraite
+      complémentaire est celle du dépôt, au centime jusqu'en 2018 ; depuis
+      2019, il la partage mieux, au centième comme la caisse, le point
+      coupé, et se trompe sur la CET et la CEG, quatre erreurs. Son coût du
+      travail complet est au registre. Sa tête du 19 octobre 2026 est à jour
+      de 2026, mais ne calcule plus avant 2019.
     sas: [drees_edifis]
-    lu_le: 2026-10-04
+    lu_le: 2026-10-24
     lu_dans:
       - https://git.drees.fr/drees_code_public/outils/edifis
+      - https://www.agirc-arrco.fr/storage/2024/09/201809dc_ANI_du_17_novembre_2017.pdf
+      - https://github.com/betagouv/mon-entreprise
     note: >-
-      Dernier commit le 11 février 2026, en R et Shiny ; une copie plus
+      Le 24 octobre 2026, sa tête est le commit `2fa5bc0` du 19 octobre, la
+      maquette 2026, refondue sur les fonctions d'« abc » (README) : ses
+      barèmes dans `data/baremes.RData`, de mai 2008 à juin 2026, son
+      curseur de 2019 à 2026 (`ui.R:202`), ses classeurs de 2015 à 2025
+      retirés (`3b2337e`) ; avant 2019, son code s'arrête (« to do :
+      cotisations agirc-arrco avant 2019 », `R/2b
+      calc_PrelevementsSociaux.R:185`). En R et Shiny ; une copie plus
       ancienne est sur gitlab.com (`DREES_code/public/outils/edifis`, 2022).
-      Comparé au dépôt le 1er octobre 2026 au commit `95ef983`. Le quart de
+      Comparé au dépôt le 1er octobre 2026 au commit `95ef983`, rejoué le 24
+      octobre aux deux commits ; les fichiers du rejeu sont restés hors du
+      dépôt. Le quart de
       part du plafond du taux réduit (feuille « Barème », ligne 285) y reprend
       celui de l'exonération, au lieu de 2 237 € par an : la source qui le
       tranche reste à citer.
