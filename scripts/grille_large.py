@@ -261,6 +261,7 @@ import multiprocessing
 import os
 import sys
 import time
+from array import array
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass, field, fields, replace
 from pathlib import Path
@@ -3035,18 +3036,37 @@ def morceaux_de(cas_types: tuple[CasType, ...], processus: int) -> list[tuple[Ca
     return [cas_types[i:i + taille] for i in range(0, len(cas_types), taille)]
 
 
-def simuler(parametres: Parametres, cas_types: tuple[CasType, ...], processus: int):
+def alleger(pensionne: C.Pensionne) -> C.Pensionne:
+    """Un couple tel que les têtes le lisent (:func:`en_tetes`) : sans la
+    proposition, son autre côté ni ses cotisations, que seule la page lit, et
+    ses survies en tableaux de flottants, quatre fois plus légers que des
+    n-uplets. Le morceau de deux cents cas types de la population passe de 177
+    à 36 Mo en mémoire."""
+    return replace(pensionne, propre=None, autre=None, cotisations=None,
+                   survies=tuple(array("d", courbe) for courbe in pensionne.survies))
+
+
+def _simuler_morceau_allege(parametres: Parametres, morceau: tuple[CasType, ...]):
+    """:func:`_simuler_morceau`, chaque couple allégé (:func:`alleger`) avant de
+    rejoindre le processus qui mesure ; la mémoire garde le morceau entier."""
+    pensionnes, echecs = _simuler_morceau(parametres, morceau)
+    return [alleger(pensionne) for pensionne in pensionnes], echecs
+
+
+def simuler(parametres: Parametres, cas_types: tuple[CasType, ...], processus: int,
+            alleges: bool = False):
     """Ce que ``cout._pensionnes`` rend pour la grille, par morceaux
     (:func:`morceaux_de`), chacun gardé, et sur ``processus`` cœurs quand il y
-    en a plusieurs."""
+    en a plusieurs ; chaque couple allégé sous ``alleges``
+    (:func:`_simuler_morceau_allege`)."""
+    simuler_un = _simuler_morceau_allege if alleges else _simuler_morceau
     morceaux = morceaux_de(cas_types, processus)
     if processus <= 1 or len(morceaux) == 1:
-        resultats = [_simuler_morceau(parametres, morceau) for morceau in morceaux]
+        resultats = [simuler_un(parametres, morceau) for morceau in morceaux]
     else:
         with ProcessPoolExecutor(max_workers=processus,
                                  mp_context=multiprocessing.get_context("spawn")) as pool:
-            resultats = list(pool.map(_simuler_morceau, [parametres] * len(morceaux),
-                                      morceaux))
+            resultats = list(pool.map(simuler_un, [parametres] * len(morceaux), morceaux))
     pensionnes, motifs = [], {}
     for liste, echecs in resultats:
         pensionnes.extend(liste)
@@ -3342,13 +3362,16 @@ class GrilleEnTetes:
 
 
 def en_tetes(parametres: Parametres, variantes: list[Variante],
-             processus: int = 1) -> GrilleEnTetes:
+             processus: int = 1, alleges: bool = False) -> GrilleEnTetes:
     """La grille de :func:`calculer`, la même simulation gardée, sous les poids
     que la page lui donne : ceux de ses caisses, recalés sur la dépense des
-    groupes du COR (``cout._poids_par_groupe``)."""
+    groupes du COR (``cout._poids_par_groupe``). Sous ``alleges``, ses couples
+    n'ont que ce que les têtes en lisent (:func:`alleger`) : la mesure les
+    demande, sans quoi la population de la vingt-sixième version ne tient pas
+    dans la mémoire du conteneur."""
     racine = parametres.racine_donnees
     cas_types, retraites, _ = pseudo(variantes)
-    pensionnes, echecs = simuler(parametres, cas_types, processus)
+    pensionnes, echecs = simuler(parametres, cas_types, processus, alleges)
     simulateur = Simulateur(parametres)
     simulateur.effectifs = EffectifsRepartis(simulateur.effectifs, retraites)
     population = Population(racine)
@@ -3940,7 +3963,7 @@ def mesurer(noms: tuple[str, ...] = GRILLES, processus: int = 1,
         mesure = {"cas_types": len(variantes)}
         if page:
             mesure.update(indicateurs(calculer(parametres, variantes, processus)))
-        tetes = en_tetes(parametres, variantes, processus)
+        tetes = en_tetes(parametres, variantes, processus, alleges=True)
         mesure["echecs"] = somme_ordonnee(tetes.echecs.values())
         mesure["composition"] = composition(variantes, effectifs, source)
         mesure["distribution"] = confronter(tetes.pensions(source.millesime),

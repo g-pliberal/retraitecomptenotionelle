@@ -80,7 +80,7 @@ def population(processus: int) -> tuple[list[M.Cohorte], dict[str, float]]:
     _, valeurs = G.centiles(racine)
     variantes = G.grille("population", Simulateur(parametres).effectifs, G.eir(racine),
                          G.multiplicateurs(valeurs))
-    tetes = G.en_tetes(parametres, variantes, processus)
+    tetes = G.en_tetes(parametres, variantes, processus, alleges=True)
     lot = M.cohortes(tetes.pensionnes, tetes.poids(M.ANNEE_EACR), tetes.population,
                      tetes.revalorisation,
                      tetes.macro.coefficient_prix(tetes.annee_euros, M.ANNEE_EACR))

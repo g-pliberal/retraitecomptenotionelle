@@ -1597,6 +1597,37 @@ def test_la_distribution_compte_les_tetes_et_les_euros_de_la_page(parametres):
     assert {s for _, _, s in lignes} == {"F", "H"}
 
 
+def test_les_tetes_se_lisent_sur_des_couples_alleges(parametres):
+    """La mesure garde tous les couples simulés de sa grille : la population de
+    la vingt-sixième version, 11 188 cas types de 28 générations, en 56
+    morceaux de 177 Mo chacun en mémoire, passait les 15 Go du conteneur, ses
+    quatre workers et leurs portages en sus. Les têtes ne lisent d'un couple
+    que son code, sa génération, ses départs, sa pension du scénario 1, les
+    parts de ses régimes, sa complétude et sa survie : ``alleges`` les leur
+    donne sans la proposition, son autre côté ni ses cotisations, et leurs
+    survies en tableaux de flottants (``alleger``), 36 Mo le morceau. La
+    grille du dépôt en tire les mêmes poids, les mêmes pensions et les mêmes
+    départs."""
+    from array import array
+
+    entiers = G.en_tetes(parametres, G.reference())
+    alleges = G.en_tetes(parametres, G.reference(), alleges=True)
+    for entier, allege in zip(entiers.pensionnes, alleges.pensionnes, strict=True):
+        assert (allege.propre, allege.autre, allege.cotisations) == (None, None, None)
+        assert all(isinstance(courbe, array) for courbe in allege.survies)
+        assert [list(courbe) for courbe in allege.survies] == [
+            list(courbe) for courbe in entier.survies]
+        assert (allege.code, allege.generation, allege.annee_liquidation, allege.pensions,
+                allege.parts_regimes, allege.completudes, allege.departs) == (
+            entier.code, entier.generation, entier.annee_liquidation, entier.pensions,
+            entier.parts_regimes, entier.completudes, entier.departs)
+    for annee in (2020, 2030):
+        assert alleges.poids(annee) == entiers.poids(annee)
+        assert alleges.pensions(annee) == entiers.pensions(annee)
+    publies = G.departs_publies(parametres.racine_donnees)
+    assert G.departs(parametres, alleges, publies) == G.departs(parametres, entiers, publies)
+
+
 def test_la_mesure_appliquee_a_l_enquete_redonne_l_enquete(parametres):
     """L'enquête, mise en atomes au milieu de ses tranches de cent euros, se
     confronte à elle-même sans écart aux bornes des tranches, et ses quantiles
