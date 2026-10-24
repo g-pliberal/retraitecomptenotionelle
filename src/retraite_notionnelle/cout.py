@@ -1334,6 +1334,13 @@ class SoldeAnnuel:
     #: « majorations » de la CNAF, au prorata de ce que ces pensions pèsent
     #: (``AvenirAnnuel.part_stock``).
     majorations_stock: float = 0.0
+    #: Ce que la CSG, la CRDS, la Casa et la cotisation maladie des
+    #: complémentaires prennent vraiment à la masse des pensions, et l'année
+    #: publiée dont il est le taux (``DepensesRetraite.taux_effectif``) : la
+    #: dépense nette en vient. Le même pour tous les systèmes, la proposition ne
+    #: changeant pas les prélèvements (action 138, étape 3).
+    taux_effectif: float = 0.0
+    annee_taux_effectif: int = 0
 
     def _tva_affectee(self, scenario: str) -> float:
         """Toute la TVA affectée à un système, en part de PIB : au scénario 6 seul.
@@ -1384,6 +1391,14 @@ class SoldeAnnuel:
         return masse_du_scenario(self.depenses, self.part_derives,
                                  self.rapports[scenario], scenario,
                                  self.reversion_servie, self.reforme_en_vigueur)
+
+    def depense_nette(self, scenario: str) -> float:
+        """La même dépense, nette des prélèvements sociaux que ses pensions
+        paient, en part de PIB : ce que l'Ageing Report publie à côté de la
+        brute, sans l'impôt sur le revenu, que le dépôt n'agrège pas. La
+        garantie vieillesse, comme l'ASPA, n'en paie pas : elle n'est pas plus
+        dans la nette que dans ``depense``."""
+        return self.depense(scenario) * (1.0 - self.taux_effectif)
 
     def ressources_de(self, scenario: str) -> float:
         """Ce qu'un système peut compter comme ressources, en part de PIB.
@@ -4701,6 +4716,8 @@ def _solde(avenir: Avenir, comptes: ComptesRetraite,
                               if annee >= annee_bascule else 0.0),
             majorations_stock=(comptes.versement_ligne(annee, "cnaf_majorations")
                                * par_annee[annee].part_stock),
+            taux_effectif=depenses.taux_effectif(annee),
+            annee_taux_effectif=depenses.annee_du_taux_effectif(annee),
         )
         for annee in comptes.annees() if annee in par_annee
     ]

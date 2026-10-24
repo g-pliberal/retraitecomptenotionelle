@@ -3189,6 +3189,23 @@ def test_le_coefficient_dit_exactement_ce_que_dit_le_solde(solde):
                 pytest.approx(ligne.ressources_de(scenario)))
 
 
+def test_le_bilan_porte_le_taux_effectif_et_la_depense_nette(solde, depenses):
+    """Chaque année du bilan porte le taux que les prélèvements sociaux prennent
+    à la masse des pensions, tel que ``DepensesRetraite`` le lit pour elle dans
+    les montants certifiés de la DREES — 6,8 % en 2022 et après, 6,2 % en
+    2008 et avant —, et la dépense nette de chaque système en est sa dépense,
+    diminuée (action 138, étape 3)."""
+    for ligne in solde.annees:
+        assert ligne.taux_effectif == depenses.taux_effectif(ligne.annee), ligne.annee
+        assert ligne.annee_taux_effectif == depenses.annee_du_taux_effectif(ligne.annee)
+        for scenario, _ in SCENARIOS:
+            assert ligne.depense_nette(scenario) == pytest.approx(
+                ligne.depense(scenario) * (1.0 - ligne.taux_effectif)), (ligne.annee, scenario)
+    assert solde.annee(2070).annee_taux_effectif == 2022
+    assert solde.annee(2070).taux_effectif == pytest.approx(0.068, abs=5e-4)
+    assert solde.annee(2008).taux_effectif == pytest.approx(0.062, abs=5e-4)
+
+
 def test_le_systeme_actuel_ne_s_equilibre_jamais_et_le_notionnel_si(solde):
     """Le résultat de fond de cette section, réduit à ce qui en est une PROPRIÉTÉ.
 

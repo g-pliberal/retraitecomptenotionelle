@@ -16,9 +16,13 @@ petites pensions, et pèsent moins dans la masse que dans l'effectif.
 
 Les deux séries sont dans ``tests/temoins/drees_pension_nette.json``
 (``scripts/fetch/drees_pension_nette.py``) ; ce module ne les lit pas, il les
-reçoit : le modèle n'a pas encore d'usage de ce taux, que la page Coût ignore
-— elle chiffre la dépense en brut — et que l'effet retour d'une baisse des
-pensions sur la CSG demandera (action 138, étape 5).
+reçoit. Les montants sont aussi certifiés dans
+``data/reference/macro/pensions_brutes_nettes.csv`` (24 octobre 2026) :
+``DepensesRetraite.taux_effectif`` les lit, et chaque année du bilan de la page
+Coût en tire la dépense nette de chaque système (``SoldeAnnuel.depense_nette``),
+que la page ne montre pas encore. L'effet retour d'une baisse des pensions
+(:mod:`.effet_retour`, action 138, étape 5) n'en a pas l'usage : il chiffre les
+prélèvements sur la distribution des pensions, au barème de chaque année.
 
 LA DÉPENSE NETTE DE L'AWG. L'Ageing Report publie, à côté de la dépense brute
 de pensions, ce que l'État en reprend en impôts (« public pension scheme, tax

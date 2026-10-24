@@ -40,6 +40,8 @@ from retraite_notionnelle.depense_nette import (
     taux_effectifs,
     taux_projetes,
 )
+from retraite_notionnelle.cout import COMPOSANTE_GARANTIE, SoldeAnnuel
+from retraite_notionnelle.donnees.depenses import DepensesRetraite
 from retraite_notionnelle.donnees.prelevements_historiques import (
     charger_prelevements_historiques,
 )
@@ -237,3 +239,45 @@ def test_le_fichier_certifie_redonne_le_tableau_de_la_drees(drees):
     assert lu[(2022, "nette_directe")][0] == 1457.0
     assert lu[(2008, "brute_totale")][0] == 1343.0
     assert lu[(2008, "nette_totale")][0] == 1260.0
+
+
+# -- le taux dans le modèle : la dépense nette du bilan ------------------------
+
+
+def test_le_modele_lit_le_taux_effectif_dans_le_fichier_certifie(drees):
+    """``DepensesRetraite`` lit les montants certifiés : le taux de chaque
+    année publiée est un moins la nette sur la brute, toutes pensions
+    comprises — 1 − 1 602 / 1 719 en 2022, 6,8 % ; 1 − 1 260 / 1 343 en 2008,
+    6,2 %. Hors de 2008-2022, celui de l'année publiée la plus proche : 2022
+    pour la projection, comme l'Ageing Report tient sa part constante, 2008
+    avant."""
+    depenses = DepensesRetraite(RACINE / "data")
+    assert depenses.taux_effectif(2022) == pytest.approx(1.0 - 1602.0 / 1719.0, abs=1e-15)
+    assert depenses.taux_effectif(2008) == pytest.approx(1.0 - 1260.0 / 1343.0, abs=1e-15)
+    effectifs = taux_effectifs(drees["montants"])
+    for annee in range(2008, 2023):
+        assert depenses.taux_effectif(annee) == effectifs[annee], annee
+        assert depenses.annee_du_taux_effectif(annee) == annee
+    assert depenses.taux_effectif(2070) == effectifs[2022]
+    assert depenses.annee_du_taux_effectif(2023) == depenses.annee_du_taux_effectif(2070) == 2022
+    assert depenses.taux_effectif(2002) == effectifs[2008]
+    assert depenses.annee_du_taux_effectif(2002) == 2008
+
+
+def test_la_depense_nette_d_un_systeme_est_sa_depense_au_taux_de_son_annee():
+    """Le bilan d'une année porte le taux effectif de l'année publiée qui vaut
+    pour elle ; la dépense nette de chaque système est sa dépense, réversion
+    comprise quand il la sert, diminuée de ce taux. La garantie vieillesse du
+    scénario 6, comme l'ASPA qu'elle remplace, n'en paie pas : elle n'est ni
+    dans sa dépense, ni dans sa nette."""
+    ligne = SoldeAnnuel(
+        annee=2070, projete=True, ressources=13.0, depenses=14.0,
+        rapports={"actuel": 1.0, "notionnel_retroactif": 0.5,
+                  "notionnel_liberal": 0.8, COMPOSANTE_GARANTIE: 0.1},
+        pib=0.0, part_derives=0.1, taux_effectif=0.068, annee_taux_effectif=2022)
+    assert ligne.depense_nette("actuel") == pytest.approx(14.0 * (1.0 - 0.068))
+    # Les scénarios 2 et 6 ne servent pas la réversion : 14 × 0,9, au rapport.
+    assert ligne.depense_nette("notionnel_retroactif") == pytest.approx(
+        14.0 * 0.9 * 0.5 * (1.0 - 0.068))
+    assert ligne.depense_nette("notionnel_liberal") == pytest.approx(
+        14.0 * 0.9 * 0.8 * (1.0 - 0.068))

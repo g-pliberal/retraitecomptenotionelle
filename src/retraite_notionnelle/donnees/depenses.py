@@ -23,6 +23,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from .chargement import Fiabilite, SerieAnnuelle, charger_serie_annuelle
+from ..depense_nette import taux_effectifs
 from ..somme import somme_ordonnee
 
 
@@ -204,6 +205,17 @@ class DepensesRetraite:
             )
             for categorie in CATEGORIES_DROITS
         }
+        # Ce que les prélèvements sociaux prennent à la masse versée : la
+        # pension moyenne brute et la nette de la DREES, toutes pensions
+        # comprises, de 2008 à 2022 (action 138, étape 3).
+        self.pensions_brutes_nettes: dict[str, SerieAnnuelle] = {
+            indicateur: charger_serie_annuelle(
+                macro / "pensions_brutes_nettes.csv", "valeur",
+                nom=f"pension_{indicateur}", filtre={"indicateur": indicateur},
+                interpolation="ponctuelle",
+            )
+            for indicateur in ("brute_totale", "nette_totale")
+        }
 
     # -- bornes --------------------------------------------------------------
 
@@ -292,6 +304,27 @@ class DepensesRetraite:
         s'écartent de six centièmes de point au plus.
         """
         return self.pensions_droits[categorie](annee)
+
+    def annee_du_taux_effectif(self, annee: int) -> int:
+        """L'année publiée dont le taux effectif vaut pour ``annee`` : elle-même
+        de 2008 à 2022, la plus proche hors de là — la dernière pour la
+        projection, comme l'Ageing Report tient constante la part de la dépense
+        qu'il compte reprise en impôts, la première avant."""
+        brute = self.pensions_brutes_nettes["brute_totale"]
+        return min(max(annee, brute.premiere_annee), brute.derniere_annee)
+
+    def taux_effectif(self, annee: int) -> float:
+        """La part de la masse des pensions que la CSG, la CRDS, la Casa et la
+        cotisation maladie des complémentaires prélèvent VRAIMENT : un moins la
+        pension moyenne nette sur la brute, toutes pensions comprises, celles
+        de :meth:`annee_du_taux_effectif`. 6,8 % en 2022, quand le taux plein en
+        prendrait 9,1 % : les petites pensions sont exonérées ou au taux
+        réduit, et les retraités de l'étranger ne paient rien
+        (:mod:`..depense_nette`)."""
+        reperee = self.annee_du_taux_effectif(annee)
+        montants = {indicateur: serie(reperee)
+                    for indicateur, serie in self.pensions_brutes_nettes.items()}
+        return taux_effectifs({reperee: montants})[reperee]
 
     def repartition(self, annee: int) -> float:
         """Ce que coûte la seule répartition obligatoire, ventilation à l'appui.
