@@ -5848,12 +5848,12 @@ institutions:
           un arrêté, qui n'a pas de numéro, à son jour, au risque de sa série
           et à la convention qu'il agrée, depuis le 23 octobre : l'assurance
           chômage de 1993 et de 2006 s'ancrait à un autre arrêté du même
-          jour — : 158 des 219 marches de l'IPP le sont ; les autres citent un
+          jour — : 149 des 206 marches de l'IPP le sont ; les autres citent un
           accord, une circulaire, un article de code, rien, ou un texte que
-          l'index n'a pas — sauf six, dont l'index dément la date : les
-          décrets n° 93-93, 98-945, 2002-1295, 2009-1158, 2012-853 et
-          2014-1531, que l'IPP date de quelques jours, de deux mois ou d'un
-          an de travers. La maladie d'avant 1967, où ses barèmes commencent, tient
+          l'index n'a pas — sauf cinq, dont l'index dément la date : les
+          décrets n° 98-945, 2002-1295, 2009-1158, 2012-853 et 2014-1531,
+          que l'IPP date de quelques jours, de deux mois ou d'un an de
+          travers. La maladie d'avant 1967, où ses barèmes commencent, tient
           les taux de 1967. La dernière marche de chaque série est le
           barème du site de l'année courante (test_prelevements_historiques).
           LES INDÉPENDANTS, relus le 10 octobre 2026 (étape 9, septième
@@ -5897,7 +5897,7 @@ institutions:
           1er juillet 1991 et non au 1er janvier (n° 91-615, art. 5). LA DATE
           D'EFFET DE CHAQUE MARCHE DE L'IPP, que l'ancrage ne vérifie pas, lue
           le 19 octobre 2026 dans les index JORF et LEGI
-          (`scripts/fetch/dates_des_marches.py`) : 146 des 219 marches ont
+          (`scripts/fetch/dates_des_marches.py`) : 134 des 206 marches ont
           leur date dans un article, une notice, un titre ou une version
           d'article ; les autres disent pourquoi elle ne se lit pas — un
           accord de l'Unédic, un texte que l'index n'a pas, ou qu'en notice
@@ -5911,10 +5911,20 @@ institutions:
           1er octobre 1988 (décret n° 88-1067), 253 au 1er février 1989
           (n° 89-64), le point du 1er mars 1989 ; et sa marche de septembre
           1989 reprend l'indice 253, quand l'IPP prend déjà le 254 du
-          1er janvier 1990 (n° 90-321). Ses valeurs de mai et d'août 1987,
-          celles des documents du Fonds, passent de 55 F par mois le
-          traitement de l'indice 250 : elles restent, sans texte qui les
-          explique. LA CSG
+          1er janvier 1990 (n° 90-321). Le 24 octobre, la suite : un barème
+          A vaut jusqu'au suivant, chaque décret qui en annexe un récrivant
+          la date de l'article 1er du décret n° 82-1105 ; celui du
+          1er janvier 1990 vaut jusqu'au 1er août 1991 (n° 91-1191), celui-ci
+          jusqu'au 1er juillet 1998 (n° 98-462). La marche de février 1991,
+          où l'IPP passe sans référence à l'indice 259, disparaît ; ses
+          douze marches de 1991 à 1997 reprennent l'indice 256, le 254 et
+          les deux points du 1er août 1991, et non le 261, au point du
+          décret qui le fixe — en 1994, celui des indices majorés jusqu'à
+          275 ; l'IPP cite pour août et décembre 1994 les décrets n° 93-1317
+          et 94-599, quand ce sont les n° 94-599 et 94-1004. Ses valeurs de
+          mai et d'août 1987, celles des documents du Fonds, passent de 55 F
+          par mois le traitement de l'indice 250 : elles restent, sans texte
+          qui les explique. LA CSG
           DÉDUCTIBLE, relue le 11 octobre 2026 (étape 5,
           deuxième partie) : la colonne `deductible` des barèmes de CSG
           d'activité et des pensions, à chaque taux, que le script confronte

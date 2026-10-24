@@ -3,15 +3,15 @@
 # source_id: ipp_prelevements_sociaux
 #
 # ÉCRIT PAR `scripts/fetch/ipp_prelevements_sociaux.py`, jamais à la main : les
-# barèmes de l'Institut des politiques publiques, lus le 2026-10-23, chacun avec la
+# barèmes de l'Institut des politiques publiques, lus le 2026-10-24, chacun avec la
 # référence que l'IPP cite pour sa marche. Une transcription, non une source
 # productrice : `haute` au plus (data/sources.yaml, `ipp`).
 #
 # L'ANCRAGE. Chaque marche de l'IPP porte, en `jorf`, le texte qu'il cite tel
 # que l'index JORF de la DILA le trouve, au numéro — pour un arrêté, au jour,
 # au risque de sa série et à la convention qu'il agrée — et à la date de
-# publication qu'il annonce : 158 des 219 marches de
-# l'IPP le sont (index à jour au 20261023-014741). Les autres disent, en `ancrage`, ce
+# publication qu'il annonce : 149 des 206 marches de
+# l'IPP le sont (index à jour au 20261024-014834). Les autres disent, en `ancrage`, ce
 # qui manque : une date au Journal officiel, un texte numéroté — un article de
 # code, une convention, une circulaire —, ou la date que l'index donne quand
 # il dément celle de l'IPP. Une marche lue aux textes porte le texte du Journal
@@ -19,7 +19,7 @@
 # CHRONOLOGIE d'une série, non sa valeur : il ne la certifie pas.
 #
 # LA DATE D'EFFET. L'ancrage relie un texte à sa publication, non à l'article
-# qui dit sa date : 146 des 219 marches de l'IPP ont la leur dans un
+# qui dit sa date : 134 des 206 marches de l'IPP ont la leur dans un
 # document de l'index — un article, la notice ou le titre d'un texte du JORF,
 # une version d'article de LEGI — que nomme `scripts/fetch/dates_des_marches.py`,
 # avec les mots qui la disent ; les autres y disent pourquoi elle ne se lit pas.
@@ -129,7 +129,7 @@
 # art. 3). Ce sont les valeurs de l'IPP, que le script confronte aux versions
 # de l'article (`DEDUCTIBLE_AUX_TEXTES`). Le reste de la CSG, la CRDS et la
 # CASA ne se déduisent pas ; les cotisations, si (CGI, art. 83).
-lu_le: "2026-10-23"
+lu_le: "2026-10-24"
 fiabilite: haute
 tenues_avant_leur_premiere_marche: [maladie_prive, maladie_etat, maladie_collectivites, famille]
 
@@ -372,19 +372,18 @@ salaires:
     - {depuis: "1990-01-01", taux: 0.01, seuil_mensuel: 912.23, texte: "Décret 90-321 du 05/04/1990", jorf: "JORFTEXT000000166950"}
     - {depuis: "1990-04-01", taux: 0.01, seuil_mensuel: 923.1, texte: "Décret 90-332 du 05/04/1990", ancrage: "absente de l'index"}
     - {depuis: "1990-12-01", taux: 0.01, seuil_mensuel: 934.91, texte: "Décret 90-1058 du 22/11/1990", jorf: "JORFTEXT000000352399"}
-    - {depuis: "1991-02-01", taux: 0.01, seuil_mensuel: 953.31, texte: "IPP, sans référence", ancrage: "sans référence"}
-    - {depuis: "1991-08-01", taux: 0.01, seuil_mensuel: 965.48, texte: "Décret 91-1191 du 19/11/1991", jorf: "JORFTEXT000000538342"}
-    - {depuis: "1991-11-01", taux: 0.01, seuil_mensuel: 975.1, texte: "Décret 91-1191 du 19/11/1991", jorf: "JORFTEXT000000538342"}
-    - {depuis: "1992-02-01", taux: 0.01, seuil_mensuel: 987.56, texte: "Décret 92-107 du 30/01/1992", jorf: "JORFTEXT000000710574"}
-    - {depuis: "1992-10-01", taux: 0.01, seuil_mensuel: 1001.03, texte: "Décret 92-993 du 18/09/1992", jorf: "JORFTEXT000000177462"}
-    - {depuis: "1993-02-01", taux: 0.01, seuil_mensuel: 1018.31, texte: "Décret 93-93 du 25/01/1993", ancrage: "l'index le date du 1993-01-25 (JORFTEXT000000725384), non du 1993-01-26"}
-    - {depuis: "1994-01-01", taux: 0.01, seuil_mensuel: 1028.48, texte: "Décret 93-1317 du 20/12/1993", ancrage: "absente de l'index"}
-    - {depuis: "1994-08-01", taux: 0.01, seuil_mensuel: 1033.63, texte: "Décret 93-1317 du 20/12/1993", ancrage: "absente de l'index"}
-    - {depuis: "1994-12-01", taux: 0.01, seuil_mensuel: 1041.87, texte: "Décret 94-599 du 15/07/1994", jorf: "JORFTEXT000000531157"}
-    - {depuis: "1995-03-01", taux: 0.01, seuil_mensuel: 1054.38, texte: "Décret 95-167 du 17/02/1995", jorf: "JORFTEXT000000735678"}
-    - {depuis: "1995-11-01", taux: 0.01, seuil_mensuel: 1069.14, texte: "Décret 95-1099 du 9/10/1995", jorf: "JORFTEXT000000189590"}
-    - {depuis: "1997-03-01", taux: 0.01, seuil_mensuel: 1074.47, texte: "Décret 97-141 du 13/02/1997", jorf: "JORFTEXT000000564762"}
-    - {depuis: "1997-10-01", taux: 0.01, seuil_mensuel: 1079.85, texte: "Décret 97-877 du 25/09/1997", jorf: "JORFTEXT000000202306"}
+    - {depuis: "1991-08-01", taux: 0.01, seuil_mensuel: 946.99, texte: "Décret 91-1191 du 18/11/1991 : deux points d'indice majoré et le point à 29 118 F à compter du 1er août 1991, l'indice brut 259 à l'indice majoré 256 et non 261 (JORFTEXT000000538342)", jorf: "JORFTEXT000000538342"}
+    - {depuis: "1991-11-01", taux: 0.01, seuil_mensuel: 956.41, texte: "Décret 91-1191 du 18/11/1991 : le point à 29 408 F à compter du 1er novembre 1991, à l'indice majoré 256 et non 261 (JORFTEXT000000538342)", jorf: "JORFTEXT000000538342"}
+    - {depuis: "1992-02-01", taux: 0.01, seuil_mensuel: 968.65, texte: "Décret 92-107 du 30/01/1992 : le point à 29 784 F à compter du 1er février 1992, à l'indice majoré 256 et non 261 (JORFTEXT000000710574)", jorf: "JORFTEXT000000710574"}
+    - {depuis: "1992-10-01", taux: 0.01, seuil_mensuel: 981.85, texte: "Décret 92-993 du 18/09/1992 : le point à 30 190 F à compter du 1er octobre 1992, à l'indice majoré 256 et non 261 (JORFTEXT000000177462)", jorf: "JORFTEXT000000177462"}
+    - {depuis: "1993-02-01", taux: 0.01, seuil_mensuel: 998.8, texte: "Décret 93-93 du 25/01/1993 : le point à 30 711 F à compter du 1er février 1993, à l'indice majoré 256 et non 261 (JORFTEXT000000725384)", jorf: "JORFTEXT000000725384"}
+    - {depuis: "1994-01-01", taux: 0.01, seuil_mensuel: 1008.78, texte: "Valeur du point des indices majorés jusqu'à 275, 31 018 F à compter du 1er janvier 1994, à l'indice majoré 256 et non 261 (LEGIARTI000006454438)", ancrage: "lue dans LEGI (LEGIARTI000006454438)"}
+    - {depuis: "1994-08-01", taux: 0.01, seuil_mensuel: 1013.82, texte: "Décret 94-599 du 15/07/1994 : le point des indices majorés jusqu'à 275 à 31 173 F à compter du 1er août 1994, à l'indice majoré 256 et non 261 (JORFTEXT000000531157)", jorf: "JORFTEXT000000531157"}
+    - {depuis: "1994-12-01", taux: 0.01, seuil_mensuel: 1021.92, texte: "Décret 94-1004 du 21/11/1994 : le point à 31 422 F à compter du 1er décembre 1994, à l'indice majoré 256 et non 261 (JORFTEXT000000530887)", jorf: "JORFTEXT000000530887"}
+    - {depuis: "1995-03-01", taux: 0.01, seuil_mensuel: 1034.18, texte: "Décret 95-167 du 17/02/1995 : le point à 31 799 F à compter du 1er mars 1995, à l'indice majoré 256 et non 261 (JORFTEXT000000735678)", jorf: "JORFTEXT000000735678"}
+    - {depuis: "1995-11-01", taux: 0.01, seuil_mensuel: 1048.66, texte: "Décret 95-1099 du 9/10/1995 : le point à 32 244 F à compter du 1er novembre 1995, à l'indice majoré 256 et non 261 (JORFTEXT000000189590)", jorf: "JORFTEXT000000189590"}
+    - {depuis: "1997-03-01", taux: 0.01, seuil_mensuel: 1053.89, texte: "Décret 97-141 du 13/02/1997 : le point à 32 405 F à compter du 1er mars 1997, à l'indice majoré 256 et non 261 (JORFTEXT000000564762)", jorf: "JORFTEXT000000564762"}
+    - {depuis: "1997-10-01", taux: 0.01, seuil_mensuel: 1059.16, texte: "Décret 97-877 du 25/09/1997 : le point à 32 567 F à compter du 1er octobre 1997, à l'indice majoré 256 et non 261 (JORFTEXT000000202306)", jorf: "JORFTEXT000000202306"}
     - {depuis: "1998-01-01", taux: 0.01, seuil_mensuel: 1158.46, texte: "IPP, sans référence", ancrage: "sans référence"}
     - {depuis: "1998-04-01", taux: 0.01, seuil_mensuel: 1167.73, texte: "Décret 98-143 du 04/03/1998", jorf: "JORFTEXT000000556219"}
     - {depuis: "1998-07-01", taux: 0.01, seuil_mensuel: 1176.08, texte: "Décret 98-462 du 10/06/1998", jorf: "JORFTEXT000000740811"}

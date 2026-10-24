@@ -1,0 +1,45 @@
+date: "2026-10-24"
+session: "action 138, étape 9, suite de la huitième partie : le seuil de la contribution de solidarité de février 1991 à 1997, lu à la chaîne des barèmes A"
+consulte: >-
+  python scripts/veille_droit.py ; les index JORF et LEGI, récupérés puis mis
+  à jour de leurs incréments (JORF au 24 octobre 2026, LEGI au 23), et
+  python scripts/textes.py --inscrire (aucune rédaction nouvelle) ; le barème
+  de la contribution de solidarité de l'IPP, en CSV (point, indice majoré de
+  référence et traitement annuel de chaque marche, de 1986 à 2017) ; dans
+  l'index LEGI, les versions de l'article 4 de la loi n° 82-939, des articles
+  3 et 6 à 9 du décret n° 85-1148 de 1988 à 2011, l'article 10 du décret
+  n° 82-1001 ; dans l'index JORF, les décrets n° 90-321, 90-1058, 91-1191,
+  92-107, 92-993, 93-93, 94-599, 94-1004, 95-167, 95-1099, 97-141, 97-877,
+  98-143, 98-462, 2001-370, 2001-559 et 2009-824 et leurs articles, tous les
+  textes de 1983 à 2018 qui citent le décret n° 82-1105 ou substituent un
+  barème A, les textes de 1987 à 1998 sur la contribution exceptionnelle de
+  solidarité et le Fonds de solidarité, le 24 octobre 2026.
+trouve: >-
+  Un barème A vaut jusqu'au suivant : le décret qui en annexe un récrit la
+  date de l'article 1er du décret n° 82-1105. Le décret n° 91-1191 y remplace
+  « à compter du 1er janvier 1990 » par « à compter du 1er août 1991 »
+  (JORFARTI000000991073), le décret n° 98-462 ces mots par « à compter du
+  1er juillet 1998 » (JORFARTI000001168959) : aucun barème A de février 1991,
+  et les articles 7 à 9 du décret n° 85-1148 tiennent les indices bruts 100,
+  175, 214 et 308 aux mêmes indices majorés jusqu'au 1er août 1991, puis
+  jusqu'en 1998. L'indice brut 259 reste à l'indice majoré 254 jusqu'au
+  31 juillet 1991 et passe à 256 avec les deux points du 1er août 1991 ;
+  l'IPP prend, sans référence, le 259 dès février 1991, puis le 261 : sa
+  marche de février 1991 disparaît, et ses douze marches de 1991 à 1997, au
+  même point, reprennent l'indice 256 : le seuil baisse de 1,9 %.
+  En 1994, le point est celui des indices majorés jusqu'à 275 (31 018 F et
+  31 173 F, LEGIARTI000006454438 et 439), que l'IPP prend aussi ; il cite pour
+  août et décembre 1994 les décrets n° 93-1317 et 94-599, quand ce sont les
+  n° 94-599 et 94-1004 qui les fixent. Aucune circulaire du Fonds de
+  solidarité, aucun montant publié du seuil dans l'index de 1991 à 1997. En
+  2001 et en 2009, les indices majorés de l'IPP changent à des dates où LEGI
+  montre aussi bouger ceux des indices bruts 100 et 244 (décrets n° 2001-370
+  et 2009-824) : seule la date de février 1991 est sans texte.
+reste: >-
+  Au fac-similé, depuis un poste : le barème A du 1er janvier 1990 et du
+  1er août 1991 (JO des 11 avril 1990 et 27 novembre 1991), qui dirait
+  l'indice majoré de l'indice brut 259, lu ici de proche en proche, avec ceux
+  de 1988 et 1989 déjà demandés. Inchangés, de l'étape : le plafond de 2027,
+  la date d'entrée dans la saisie en net, la limite 5 ante ter (2) ; au
+  propriétaire, la CAMIEG, l'écrêtement du minimum de la SNCF, l'ASPA de
+  l'article 23.

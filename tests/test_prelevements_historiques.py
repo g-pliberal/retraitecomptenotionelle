@@ -855,6 +855,74 @@ def test_le_seuil_de_solidarite_suit_l_indice_brut_259_de_1988_a_1990(historique
             annuel / 12 / 6.55957, abs=0.006), jour
 
 
+def test_le_seuil_de_solidarite_suit_les_baremes_a_de_1990_et_de_1991(historique):
+    """Un barème A vaut jusqu'au suivant : le décret n° 91-1191 remplace, à
+    l'article 1er du décret n° 82-1105, « à compter du 1er janvier 1990 » par
+    « à compter du 1er août 1991 », et le décret n° 98-462 ces mots par « à
+    compter du 1er juillet 1998 ». L'indice brut 259 reste donc à l'indice
+    majoré 254 en février 1991, où l'IPP prend sans référence le 259, et passe
+    à 256 avec les deux points du 1er août 1991, et non à 261. Posé à la main,
+    au point de chaque date (décret n° 85-1148, article 3 ; en 1994, celui des
+    indices majorés jusqu'à 275), le traitement annuel arrondi au franc :
+    28 973 F × 2,54 = 73 591 F jusqu'au 31 juillet 1991 ; puis, à 2,56,
+    29 118 F, 74 542 F ; 29 408 F, 75 284 F ; 29 784 F, 76 247 F ; 30 190 F,
+    77 286 F ; 30 711 F, 78 620 F ; 31 018 F, 79 406 F ; 31 173 F, 79 803 F ;
+    31 422 F, 80 440 F ; 31 799 F, 81 405 F ; 32 244 F, 82 545 F ; 32 405 F,
+    82 957 F ; 32 567 F, 83 372 F, jusqu'au 31 décembre 1997."""
+    seuil = historique.salaires["solidarite_public"]
+    for jour, annuel in ((dt.date(1991, 1, 31), 73_591), (dt.date(1991, 2, 1), 73_591),
+                         (dt.date(1991, 7, 31), 73_591), (dt.date(1991, 8, 1), 74_542),
+                         (dt.date(1991, 11, 1), 75_284), (dt.date(1992, 2, 1), 76_247),
+                         (dt.date(1992, 10, 1), 77_286), (dt.date(1993, 2, 1), 78_620),
+                         (dt.date(1994, 1, 1), 79_406), (dt.date(1994, 8, 1), 79_803),
+                         (dt.date(1994, 12, 1), 80_440), (dt.date(1995, 3, 1), 81_405),
+                         (dt.date(1995, 11, 1), 82_545), (dt.date(1997, 3, 1), 82_957),
+                         (dt.date(1997, 10, 1), 83_372), (dt.date(1997, 12, 31), 83_372)):
+        assert seuil.valeur(jour, "seuil_mensuel") == pytest.approx(
+            annuel / 12 / 6.55957, abs=0.006), jour
+
+
+def test_les_baremes_a_et_les_points_du_seuil_se_relisent_dans_l_index():
+    """Les mots qui datent chaque barème A, et ceux qui fixent le point de
+    chaque marche du seuil de 1991 à 1997, sont dans le document de l'index
+    qu'ils nomment ; les seconds disent le point et la date de leur marche,
+    quand les index sont là. La marche porte le texte qu'elle cite."""
+    script = _script()
+    contenu = charger_yaml(RACINE_DONNEES / CHEMIN)
+    solidarite = {str(m["depuis"]): m for m in contenu["salaires"]["solidarite_public"]}
+    assert "1991-02-01" not in solidarite
+    assert solidarite["1991-08-01"]["jorf"] == "JORFTEXT000000538342"
+    assert solidarite["1994-01-01"]["ancrage"] == "lue dans LEGI (LEGIARTI000006454438)"
+    assert [depuis for depuis, *_ in script.POINTS_DU_SEUIL] == [
+        "1991-08-01", "1991-11-01", "1992-02-01", "1992-10-01", "1993-02-01", "1994-01-01",
+        "1994-08-01", "1994-12-01", "1995-03-01", "1995-11-01", "1997-03-01", "1997-10-01"]
+    bases = {}
+    for nom in ("legi", "jorf"):
+        chemin = RACINE_DONNEES / "brut" / "dila" / f"{nom}.sqlite"
+        if chemin.exists():
+            bases[nom] = sqlite3.connect(f"file:{chemin}?mode=ro", uri=True)
+    if not bases:
+        pytest.skip("les index LEGI et JORF ne sont pas là")
+    dates = _dates()
+    try:
+        lus = [(identifiant, mots) for _, _, identifiant, mots in script.BAREMES_A]
+        for depuis, point, _, identifiant, mots in script.POINTS_DU_SEUIL:
+            assert depuis in dates.dates_dites(mots), depuis
+            assert f"{point:,}".replace(",", " ") in mots or str(point) in mots, depuis
+            lus.append((identifiant, mots))
+        for identifiant, mots in lus:
+            base = bases.get("legi" if identifiant.startswith("LEGI") else "jorf")
+            if base is None:
+                continue
+            lu = base.execute("select titre, texte from doc where id = ?",
+                              (identifiant,)).fetchone()
+            assert lu, identifiant
+            assert " ".join(mots.split()) in " ".join(f"{lu[0]} {lu[1]}".split()), identifiant
+    finally:
+        for base in bases.values():
+            base.close()
+
+
 def test_un_arrete_s_ancre_a_son_jour_et_a_ce_qu_il_agree():
     """Un arrêté n'a pas de numéro, et son jour en nomme d'autres : la
     convention d'assurance chômage de 1993 n'est pas agréée par l'arrêté du

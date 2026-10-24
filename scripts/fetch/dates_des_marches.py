@@ -23,11 +23,12 @@ septembre 1988, que l'IPP, qui le tient du Fonds de solidarité, date du 21 et
 du 23 du mois, quand la valeur du point qui le fait change le 1er
 (``CORRECTIONS`` du récupérateur). Ses autres marches d'avant 1989 ont un jour
 qui n'est pas une date : un compteur. Le même seuil, lu à sa règle, a trois
-marches de plus, d'octobre 1988 à mars 1989, et celle de septembre 1989 change
-de valeur : le récupérateur les écrit, et elles sortent de cette garde. Le document qui date une marche n'est
+marches de plus, d'octobre 1988 à mars 1989, une de moins, en février 1991, et
+celle de septembre 1989 et les douze de 1991 à 1997 changent de valeur : le
+récupérateur les écrit, et elles sortent de cette garde. Le document qui date une marche n'est
 pas toujours celui qu'elle cite : la suppression du veuvage est datée par la
-loi n° 2003-775, et non par le décret n° 2004-858 ; les seuils que l'IPP cite
-d'un décret absent de l'index ou mal numéroté, par l'article 3 du décret
+loi n° 2003-775, et non par le décret n° 2004-858 ; le seuil d'avril 1990, que
+l'IPP cite d'un décret absent de l'index, par l'article 3 du décret
 n° 85-1148, dont LEGI garde chaque valeur avec sa date.
 
 CE QU'ELLE NE DIT PAS. Une date lue l'est par des mots relus, non par un juge :
@@ -195,32 +196,12 @@ DATES_LUES: tuple[tuple[str, tuple[str, ...], str, str], ...] = (
     ("1991-07-01", ("maladie_etat",), "JORFARTI000001566429",
      "Le présent décret est applicable aux gains, rémunérations, traitements ou soldes versés"
      " à compter du 1er juillet 1991"),
-    ("1991-08-01", ("solidarite_public",), "JORFARTI000001568120",
-     "est fixée à 29118 F à compter du 1er août 1991"),
-    ("1991-11-01", ("solidarite_public",), "JORFARTI000001568120",
-     "puis à 29408 F à compter du 1er novembre 1991"),
-    ("1992-02-01", ("solidarite_public",), "JORFARTI000001546530",
-     "est fixée à 29784F à compter du 1er février 1992"),
     ("1992-04-01", _INDEPENDANTS, "JORFARTI000001372694",
      "pour les cotisations dues à l'échéance du 1er avril 1992"),
-    ("1992-10-01", ("solidarite_public",), "JORFARTI000001769165",
-     "est fixée à 30 190 F à compter du 1er octobre 1992"),
-    ("1993-02-01", ("solidarite_public",), "JORFARTI000001514294",
-     "est fixée à 30 711 F à compter du 1er février 1993"),
     ("1993-07-01", _CSG, "JORFARTI000001772936",
      "est porté à 2,4 p. 100 à compter du 1er juillet 1993"),
-    ("1994-01-01", ("solidarite_public",), "LEGIARTI000006454438",
-     "est fixée à 30 926 F à compter du 1er janvier 1994"),
-    ("1994-08-01", ("solidarite_public",), "JORFARTI000001165190",
-     "est fixée à 31 080 F à compter du 1er août 1994"),
-    ("1994-12-01", ("solidarite_public",), "LEGIARTI000006454440",
-     "est fixée à 31 422 F à compter du 1er décembre 1994"),
-    ("1995-03-01", ("solidarite_public",), "JORFARTI000001589737",
-     "est fixée à 31 799 F à compter du 1er mars 1995"),
     ("1995-07-01", ("maladie_artisans_commercants",), "JORFARTI000001398418",
      "Les dispositions du présent décret sont applicables à compter du 1er juillet 1995"),
-    ("1995-11-01", ("solidarite_public",), "JORFARTI000001593104",
-     "est fixée à 32 244 F à compter du 1er novembre 1995"),
     ("1996-01-01", _RETRAITES, "JORFARTI000001982702",
      "pour les pensions dues à compter du 1er janvier 1996"),
     ("1996-02-01", ("crds",), "JORFARTI000002177845",
@@ -240,10 +221,6 @@ DATES_LUES: tuple[tuple[str, tuple[str, ...], str, str], ...] = (
     ("1997-01-01", _AGENTS, "JORFARTI000001991998",
      "les dispositions du présent décret s'appliquent aux rémunérations, gains, pensions et "
      "allocations versés à compter du 1er janvier 1997"),
-    ("1997-03-01", ("solidarite_public",), "JORFARTI000001412767",
-     "est fixée à 32 405 F à compter du 1er mars 1997"),
-    ("1997-10-01", ("solidarite_public",), "JORFARTI000001414499",
-     "est fixée à 32 567 F à compter du 1er octobre 1997"),
     ("1998-01-01", _CSG_ET_TAUX_REDUIT, "JORFARTI000002306091",
      "En ce qu'elles concernent la contribution mentionnée à l'article L. 136-1 du code de la"
      " sécurité sociale, aux revenus perçus à compter du 1 er janvier 1998"),
@@ -461,9 +438,6 @@ DATES_NON_LUES: tuple[tuple[str, tuple[str, ...], str], ...] = (
                                        "1990, que l'index n'a pas"),
     ("1991-02-01", _CSG, "loi n° 90-1168, articles 127 à 135 : les index n'en ont que les "
                          "articles 128 à 134, dont aucun ne date la contribution"),
-    ("1991-02-01", ("solidarite_public",), "sans référence chez l'IPP : l'indice majoré de "
-                                           "référence passe de 254 à 259, ce qu'aucun texte "
-                                           "de l'index ne date"),
     ("1992-01-01", ("chomage_prive",), "le protocole du 5 décembre 1991 et ses avenants, "
                                        + _UNEDIC),
     ("1992-08-01", ("chomage_prive",), "le protocole du 18 juillet 1992 et ses avenants, "

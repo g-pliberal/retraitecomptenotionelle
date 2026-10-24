@@ -91,7 +91,9 @@ ou pourquoi elle ne se lit pas, et le script imprime les marches qu'il ne
 nomme pas. Il a vu deux dates fausses, dans le seuil de la contribution de
 solidarité : mars et septembre 1988, que l'IPP date du 21 et du 23 du mois ;
 la règle de ce seuil, lue ensuite, lui ajoute trois marches, d'octobre 1988 à
-mars 1989, et corrige celle de septembre 1989 (``CORRECTIONS``).
+mars 1989, lui ôte celle de février 1991, et corrige celle de septembre 1989 et
+les douze de 1991 à 1997, à l'indice majoré 256 et non 261 (``CORRECTIONS``,
+``BAREMES_A``).
 
 Ce qu'il ne fait pas. L'IPP est une transcription, non une source productrice :
 la donnée plafonne à ``haute``, et l'ancrage n'y change rien : il vérifie la
@@ -447,6 +449,102 @@ CORRECTIONS["solidarite_public"] = [
      "texte": "Valeur du point de la fonction publique, 28 129 F à compter du 1er septembre "
               "1989, à l'indice majoré 253 et non 254 (LEGIARTI000006454430)"},
 ]
+
+#: LE SEUIL DE 1990 À 1997. Un barème A vaut jusqu'au suivant : le décret qui en
+#: annexe un récrit la date que dit l'article 1er du décret n° 82-1105, et ses
+#: mots, qu'un test relit dans l'index JORF, enchaînent les barèmes (date,
+#: indice majoré de l'indice brut 259, article, mots). Celui du 1er janvier 1990
+#: vaut jusqu'au 31 juillet 1991, celui du 1er août 1991 jusqu'au 30 juin 1998 :
+#: l'indice brut 259 reste à l'indice majoré 254 en février 1991, où l'IPP prend
+#: sans référence le 259, et gagne deux points le 1er août 1991 (décret
+#: n° 91-1191), comme les indices bruts 100, 175, 214 et 308 que nomment les
+#: articles 7 à 9 du décret n° 85-1148 : 256, quand l'IPP prend le 261, cinq
+#: points de trop jusqu'en 1997. Le dernier barème ne fait que borner le
+#: précédent : dès 1998, la règle prend l'indice brut 296.
+BAREMES_A = (
+    ("1990-01-01", 254, "JORFARTI000002140012",
+     "les mots: <<à compter du 1er février 1989>> sont remplacés par les mots: "
+     "<<à compter du 1er janvier 1990>>"),
+    ("1991-08-01", 256, "JORFARTI000000991073",
+     "les mots: <<à compter du 1er janvier 1990>> sont remplacés par les mots: "
+     "<<à compter du 1er août 1991>>"),
+    ("1998-07-01", None, "JORFARTI000001168959",
+     "les mots : « à compter du 1er août 1991 » sont remplacés par les mots : "
+     "« à compter du 1er juillet 1998 »"),
+)
+
+#: Le point de chaque marche du seuil de 1991 à 1997 (décret n° 85-1148,
+#: article 3) : la date, le point, le texte que la marche cite, le document de
+#: l'index qui fixe le point et ses mots, qu'un test y relit. En 1994, le point
+#: des indices majorés jusqu'à 275, où est le 256 : 31 018 F et 31 173 F, et non
+#: 30 926 F et 31 080 F. L'IPP cite, pour août et décembre 1994, les décrets
+#: n° 93-1317 et 94-599, quand ce sont les décrets n° 94-599 et 94-1004 qui
+#: fixent leur point ; le décret de janvier, que l'index n'a pas, se lit dans
+#: LEGI.
+POINTS_DU_SEUIL = (
+    ("1991-08-01", 29_118,
+     "Décret 91-1191 du 18/11/1991 : deux points d'indice majoré et le point à 29 118 F à "
+     "compter du 1er août 1991, l'indice brut 259 à l'indice majoré 256 et non 261 "
+     "(JORFTEXT000000538342)",
+     "JORFARTI000001568120", "est fixée à 29118 F à compter du 1er août 1991"),
+    ("1991-11-01", 29_408,
+     "Décret 91-1191 du 18/11/1991 : le point à 29 408 F à compter du 1er novembre 1991, à "
+     "l'indice majoré 256 et non 261 (JORFTEXT000000538342)",
+     "JORFARTI000001568120", "puis à 29408 F à compter du 1er novembre 1991"),
+    ("1992-02-01", 29_784,
+     "Décret 92-107 du 30/01/1992 : le point à 29 784 F à compter du 1er février 1992, à "
+     "l'indice majoré 256 et non 261 (JORFTEXT000000710574)",
+     "JORFARTI000001546530", "est fixée à 29784F à compter du 1er février 1992"),
+    ("1992-10-01", 30_190,
+     "Décret 92-993 du 18/09/1992 : le point à 30 190 F à compter du 1er octobre 1992, à "
+     "l'indice majoré 256 et non 261 (JORFTEXT000000177462)",
+     "JORFARTI000001769165", "est fixée à 30 190 F à compter du 1er octobre 1992"),
+    ("1993-02-01", 30_711,
+     "Décret 93-93 du 25/01/1993 : le point à 30 711 F à compter du 1er février 1993, à "
+     "l'indice majoré 256 et non 261 (JORFTEXT000000725384)",
+     "JORFARTI000001514294", "est fixée à 30 711 F à compter du 1er février 1993"),
+    ("1994-01-01", 31_018,
+     "Valeur du point des indices majorés jusqu'à 275, 31 018 F à compter du 1er janvier "
+     "1994, à l'indice majoré 256 et non 261 (LEGIARTI000006454438)",
+     "LEGIARTI000006454438", "pour les agents dont l'indice majoré est inférieur ou égal à "
+                             "275, à 31 018 F à compter du 1er janvier 1994"),
+    ("1994-08-01", 31_173,
+     "Décret 94-599 du 15/07/1994 : le point des indices majorés jusqu'à 275 à 31 173 F à "
+     "compter du 1er août 1994, à l'indice majoré 256 et non 261 (JORFTEXT000000531157)",
+     "JORFARTI000001165190", "pour les agents dont l'indice majoré est inférieur ou égal à "
+                             "275, à 31 173 F à compter du 1er août 1994"),
+    ("1994-12-01", 31_422,
+     "Décret 94-1004 du 21/11/1994 : le point à 31 422 F à compter du 1er décembre 1994, à "
+     "l'indice majoré 256 et non 261 (JORFTEXT000000530887)",
+     "JORFARTI000001744655", "est fixée à 31 422 F à compter du 1er décembre 1994"),
+    ("1995-03-01", 31_799,
+     "Décret 95-167 du 17/02/1995 : le point à 31 799 F à compter du 1er mars 1995, à "
+     "l'indice majoré 256 et non 261 (JORFTEXT000000735678)",
+     "JORFARTI000001589737", "est fixée à 31 799 F à compter du 1er mars 1995"),
+    ("1995-11-01", 32_244,
+     "Décret 95-1099 du 9/10/1995 : le point à 32 244 F à compter du 1er novembre 1995, à "
+     "l'indice majoré 256 et non 261 (JORFTEXT000000189590)",
+     "JORFARTI000001593104", "est fixée à 32 244 F à compter du 1er novembre 1995"),
+    ("1997-03-01", 32_405,
+     "Décret 97-141 du 13/02/1997 : le point à 32 405 F à compter du 1er mars 1997, à "
+     "l'indice majoré 256 et non 261 (JORFTEXT000000564762)",
+     "JORFARTI000001412767", "est fixée à 32 405 F à compter du 1er mars 1997"),
+    ("1997-10-01", 32_567,
+     "Décret 97-877 du 25/09/1997 : le point à 32 567 F à compter du 1er octobre 1997, à "
+     "l'indice majoré 256 et non 261 (JORFTEXT000000202306)",
+     "JORFARTI000001414499", "est fixée à 32 567 F à compter du 1er octobre 1997"),
+)
+
+
+def _indice_du_brut_259(jour: str) -> int:
+    """L'indice majoré de l'indice brut 259 au barème A en vigueur ce ``jour``."""
+    return [indice for depuis, indice, _, _ in BAREMES_A if depuis <= jour][-1]
+
+
+CORRECTIONS["solidarite_public"] += [{"ipp": "1991-02-01", "lue": None}] + [
+    {"ipp": depuis, "lue": {"depuis": depuis, "seuil_mensuel": _seuil_de_solidarite(
+        point, _indice_du_brut_259(depuis))}, "texte": texte}
+    for depuis, point, texte, _, _ in POINTS_DU_SEUIL]
 
 #: LA CSG DÉDUCTIBLE (action 138, étape 5, deuxième partie) : la part de la CSG
 #: que le revenu imposable déduit (CGI, art. 154 quinquies). La colonne
