@@ -213,6 +213,7 @@ const CHAMPS_SOLDE_ANNUEL = [
   "part_subventions", "taux_prelevement", "taux_liberal", "facteur_assiette",
   "annee_bascule", "convention_recette", "part_derives", "reversion_servie",
   "reforme_en_vigueur", "tva_liberal", "garantie_liberal", "majorations_stock",
+  "taux_effectif", "annee_taux_effectif",
 ];
 const CHAMPS_COUT_ANNUEL = [
   "annee", "observee", "coefficient_constants", "part_pib", "rapports", "pensionnes",
@@ -250,6 +251,8 @@ class SoldeAnnuelFige extends LigneFigee {
   coefficient(scenario) { return this._parSysteme("coefficients", scenario); }
 
   depense(scenario) { return this._parSysteme("depenses_par_systeme", scenario); }
+
+  depenseNette(scenario) { return this._parSysteme("depenses_nettes_par_systeme", scenario); }
 
   solde(scenario) { return this._parSysteme("soldes", scenario); }
 

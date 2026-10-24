@@ -228,6 +228,20 @@ def test_le_solde_fige_est_celui_que_le_modele_calcule(cout, montres, bilan):
         cout.solde_derive.solde_moyen("notionnel_liberal", 2026, 2070))
 
 
+def test_la_table_porte_le_taux_effectif_et_la_depense_nette(cout, montres):
+    """Chaque année du bilan figé porte le taux que les prélèvements sociaux
+    prennent à la masse des pensions, l'année publiée qui le donne, et la
+    dépense nette de chaque système montré : ce que la page Coût mettra à côté
+    de la brute (action 138, étape 3)."""
+    for figee, calculee in zip(AGREGATS.cout.solde.annees, cout.solde.annees, strict=True):
+        assert (figee.taux_effectif, figee.annee_taux_effectif) == (
+            calculee.taux_effectif, calculee.annee_taux_effectif), figee.annee
+        for scenario in montres:
+            assert figee.depense_nette(scenario) == calculee.depense_nette(scenario), (
+                figee.annee, scenario)
+    assert AGREGATS.cout.solde.annee(2070).annee_taux_effectif == 2022
+
+
 def test_le_passe_et_l_avenir_figes_sont_ceux_que_le_modele_calcule(cout, montres):
     from retraite_notionnelle.cout import COMPOSANTE_GARANTIE, masse_du_scenario
 
@@ -357,12 +371,15 @@ def test_les_deux_lecteurs_lisent_le_meme_cout(montres, bilan):
         lue, figee = js.solde.annee(annee), fige.solde.annee(annee)
         for scenario in montres:
             assert (lue.coefficient(scenario), lue.depense(scenario), lue.solde(scenario),
-                    lue.ressources_de(scenario)) == (
+                    lue.ressources_de(scenario), lue.depense_nette(scenario)) == (
                 figee.coefficient(scenario), figee.depense(scenario),
-                figee.solde(scenario), figee.ressources_de(scenario))
+                figee.solde(scenario), figee.ressources_de(scenario),
+                figee.depense_nette(scenario))
         for scenario in bilan:
             assert dict(lue.postes_ressources(scenario)) == figee.postes_ressources(scenario)
         assert lue.facteur_assiette == figee.facteur_assiette
+        assert (lue.taux_effectif, lue.annee_taux_effectif) == (
+            figee.taux_effectif, figee.annee_taux_effectif)
     for annee in range(fige.avenir.premiere_annee, fige.avenir.derniere_annee + 1, 10):
         lue, figee = js.avenir.annee(annee), fige.avenir.annee(annee)
         for scenario in montres:

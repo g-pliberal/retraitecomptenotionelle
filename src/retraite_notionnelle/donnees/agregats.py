@@ -350,11 +350,13 @@ CHAMPS_SOLDE_ANNUEL = (
     "part_subventions", "taux_prelevement", "taux_liberal", "facteur_assiette",
     "annee_bascule", "convention_recette", "part_derives", "reversion_servie",
     "reforme_en_vigueur", "tva_liberal", "garantie_liberal", "majorations_stock",
+    "taux_effectif", "annee_taux_effectif",
 )
 #: Ses accesseurs qui prennent un système, la clé où la table les porte, et
 #: s'ils ne servent qu'au bilan poste par poste.
 PAR_SYSTEME_SOLDE_ANNUEL = (
     ("coefficient", "coefficients", False), ("depense", "depenses_par_systeme", False),
+    ("depense_nette", "depenses_nettes_par_systeme", False),
     ("solde", "soldes", False), ("ressources_de", "ressources_par_systeme", False),
     ("solde_meur", "soldes_meur", False), ("depense_meur", "depenses_meur", False),
     ("tva_de", "tva", True), ("tva_garantie", "tva_garantie", True),
@@ -594,6 +596,9 @@ class SoldeAnnuelFige(_Ligne):
 
     def depense(self, scenario: str) -> float:
         return self._par_systeme("depenses_par_systeme", scenario)
+
+    def depense_nette(self, scenario: str) -> float:
+        return self._par_systeme("depenses_nettes_par_systeme", scenario)
 
     def solde(self, scenario: str) -> float:
         return self._par_systeme("soldes", scenario)
