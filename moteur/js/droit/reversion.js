@@ -129,7 +129,7 @@ export class ReversionRegime {
     majoration_forfaitaire_enfants = 0.0, majoration_forfaitaire_enfants_etapes = [],
     majorations_forfaitaires = [], cumul_effet = null, reduction_du_cumul = 0.0,
     revision_effet = null, reduction_de_la_revision = 0.0, revisions = [],
-    derniere_revision = null }) {
+    ressources_des_revisions = [], derniere_revision = null }) {
     this.regime = regime;
     this.base = base;
     this.montant = montant;
@@ -199,6 +199,9 @@ export class ReversionRegime {
     this.revision_effet = revision_effet;
     this.reduction_de_la_revision = reduction_de_la_revision;
     this.revisions = Object.freeze([...revisions]);
+    // Les ressources que chaque révision retient à côté de la réversion, par
+    // an, `[jour, ressources]` dans l'ordre de `revisions` : voir le Python.
+    this.ressources_des_revisions = Object.freeze([...ressources_des_revisions]);
     this.derniere_revision = derniere_revision;
     Object.freeze(this);
   }
@@ -231,7 +234,9 @@ export class ReversionRegime {
       reduction_du_cumul: this.reduction_du_cumul,
       revision_effet: this.revision_effet,
       reduction_de_la_revision: this.reduction_de_la_revision,
-      revisions: this.revisions.map(([date, reduction]) => ({ date, reduction })),
+      revisions: this.revisions.map(([date, reduction]) => ({
+        date, reduction, ressources: new Map(this.ressources_des_revisions).get(date) ?? null,
+      })),
       derniere_revision: this.derniere_revision,
     };
   }
@@ -715,18 +720,22 @@ function servieAu(montant, etapes, jour) {
 }
 
 /**
- * Les révisions de la réversion sous le plafond de ressources, dans l'ordre de
- * leurs jours : `[jour, servie, revue, fiabilité]` chacune. Attribuée avant
- * juillet 2004, seule une retraite prise depuis la recalcule aux règles de
- * ressources, à sa date d'effet ; attribuée depuis, ou ainsi recalculée, elle
- * se révise le mois qui suit sa retraite, le ménage qu'il forme ou qui se
- * défait, la fin de son activité et ses cinquante-cinq ans quand ils abattent
- * les revenus d'une activité qu'il n'a pas cessée, jusqu'à `derniere`
- * (R. 353-1-1). `bases(jour)` : les réversions des autres régimes de base ce
- * jour-là. Voir `_revisions` du Python.
+ * Les révisions de la réversion du régime `regime` sous le plafond de
+ * ressources, dans l'ordre de leurs jours : `[jour, servie, revue, fiabilité,
+ * ressources]` chacune. Attribuée avant juillet 2004, seule une retraite prise
+ * depuis la recalcule aux règles de ressources, à sa date d'effet ; attribuée
+ * depuis, ou ainsi recalculée, elle se révise le mois qui suit sa retraite, le
+ * ménage qu'il forme ou qui se défait, la fin de son activité, ses revenus ou
+ * ceux de son nouveau conjoint qui varient, et ses cinquante-cinq ans quand ils
+ * abattent les revenus d'une activité qu'il n'a pas cessée, sur les ressources
+ * des trois mois qui précèdent ; puis le premier mois dont les trois mois ne
+ * portent plus que ce qui suit chaque changement compté tel que perçu, quand
+ * il y change quelque chose ; jusqu'à `derniere` (R. 353-1-1). `bases(jour)` :
+ * les réversions des autres régimes de base ce jour-là. Voir `_revisions` du
+ * Python.
  */
 function revisionsDeLaReversion(moteur, fiche, parametres, conjoint, deces, annee, dateEffet,
-  servie, entiere, ulterieures, ressources, retraites, bases, derniere) {
+  servie, entiere, ulterieures, ressources, retraites, bases, derniere, regime) {
   const retraite = conjoint.retraite ?? null;
   // Chaque jour de révision, et s'il est celui du recalcul aux règles de 2004.
   const jours = new Map();
@@ -745,16 +754,18 @@ function revisionsDeLaReversion(moteur, fiche, parametres, conjoint, deces, anne
   } else {
     return [];
   }
-  // Le ménage qu'il forme ou qui se défait, et ce qu'y apporte son nouveau
-  // conjoint, qui varie ; la fin de son activité, et ses revenus qui varient.
-  const changements = conjoint.revenus_d_activite ? [conjoint.fin_d_activite ?? null] : [];
-  changements.push(...(conjoint.variations_d_activite ?? []).map(([quand]) => quand));
+  // Les changements de ses ressources, comptés tels que perçus : la fin de son
+  // activité, ses revenus qui varient, ce qu'apporte son nouveau conjoint, qui
+  // varie ; et le ménage qu'il forme ou qui se défait, dont les ressources se
+  // transposent.
+  const percus = conjoint.revenus_d_activite ? [conjoint.fin_d_activite ?? null] : [];
+  percus.push(...(conjoint.variations_d_activite ?? []).map(([quand]) => quand));
+  let familiaux = [];
   if ((conjoint.nouvelle_union ?? null) !== null) {
-    changements.push(conjoint.nouvelle_union_depuis ?? null,
-      conjoint.nouvelle_union_fin ?? null);
-    changements.push(...(conjoint.variations_du_nouveau_conjoint ?? []).map(([quand]) => quand));
+    familiaux = [conjoint.nouvelle_union_depuis ?? null, conjoint.nouvelle_union_fin ?? null];
+    percus.push(...(conjoint.variations_du_nouveau_conjoint ?? []).map(([quand]) => quand));
   }
-  for (const change of changements) {
+  for (const change of [...percus, ...familiaux]) {
     if (change !== null && change > depuis && !jours.has(moisSuivant(change))) {
       jours.set(moisSuivant(change), false);
     }
@@ -767,6 +778,24 @@ function revisionsDeLaReversion(moteur, fiche, parametres, conjoint, deces, anne
     if (abattement > depuis && activiteAu(conjoint, abattement, true)
         && !jours.has(moisSuivant(abattement))) {
       jours.set(moisSuivant(abattement), false);
+    }
+  }
+  // Le premier mois dont les trois mois ne portent plus que ce qui suit chaque
+  // changement compté tel que perçu, sa retraite comprise quand la révision
+  // qu'elle ouvre ne la compte que pour ce qu'elle sert.
+  if ((parametres.cumul ?? null) === null && retraite !== null && retraite > dateEffet
+      && retraites > 0) {
+    const premiere = moteur.reversions.version(fiche, moisSuivant(retraite), deces);
+    if (!retraitesEntieres(premiere === null ? {} : premiere.parametres, regime,
+      moisSuivant(retraite))) {
+      percus.push(retraite);
+    }
+  }
+  const apres = new Set();
+  for (const change of percus) {
+    if (change !== null && change > depuis && !jours.has(apresLesTroisMois(change))) {
+      jours.set(apresLesTroisMois(change), false);
+      apres.add(apresLesTroisMois(change));
     }
   }
   const revisions = [];
@@ -786,25 +815,152 @@ function revisionsDeLaReversion(moteur, fiche, parametres, conjoint, deces, anne
         venues += montant;
       }
     }
-    const commencees = retraite === null || retraite < jour || (recalcul && retraite === jour);
-    const [retenues, facteur] = ressourcesDuPlafond(regles, conjoint,
-      ressources - (commencees ? 0.0 : retraites), jour, recalcul);
+    let retenues;
+    let facteur;
+    if (recalcul) {
+      const commencees = retraite === null || retraite <= jour;
+      [retenues, facteur] = ressourcesDuPlafond(regles, conjoint,
+        ressources - (commencees ? 0.0 : retraites), jour);
+    } else {
+      [retenues, facteur] = ressourcesDesTroisMois(regles, conjoint, retraites, jour,
+        retraitesEntieres(regles, regime, jour));
+    }
     const an = anneeDuPlafond(moteur, annee, jour);
     const [coefficient, fiabiliteCoefficient] = moteur.revalorisationsPensions.generale(
       `${String(annee).padStart(4, "0")}-12-31`, `${String(an).padStart(4, "0")}-12-31`,
       false, 0.0);
     const plafond = facteur * Number(regles.plafond_smic_heures)
       * moteur.macro.smic_horaire.valeur(an) / coefficient;
-    const revue = Math.max(0.0, Math.min(entiere + venues, plafond - retenues - bases(jour)));
+    const autres = bases(jour);
+    const revue = Math.max(0.0, Math.min(entiere + venues, plafond - retenues - autres));
+    if (apres.has(jour)
+        && revue === (revisions.length > 0 ? revisions[revisions.length - 1][2]
+          : servie + venues)) {
+      // Les trois mois d'après le changement n'y changent rien.
+      continue;
+    }
     const fiabilite = Math.min(fiabiliteDepuisTexte(regles.fiabilite), fiabiliteCoefficient);
-    revisions.push([jour, servie + venues, revue, fiabilite]);
+    revisions.push([jour, servie + venues, revue, fiabilite, retenues + autres]);
   }
   return revisions;
+}
+
+/**
+ * La révision du jour `jour` compte-t-elle les retraites du survivant
+ * entières, dès qu'elles ont commencé ? Au régime général avant le 30 juin
+ * 2010, que la version dit (`retraites_entieres_a_la_revision`). Voir
+ * `_retraites_entieres` du Python.
+ */
+function retraitesEntieres(parametres, regime, jour) {
+  const jusquAu = (parametres.retraites_entieres_a_la_revision ?? {})[regime] ?? null;
+  return jusquAu !== null && jour < String(jusquAu);
+}
+
+/**
+ * Le jour `jour` compté en mois, chaque mois de trente jours, le 31 valant le
+ * 30. Voir `_en_mois` du Python.
+ */
+function enMois(jour) {
+  const quantieme = Math.min(Number(jour.slice(8, 10)), 30);
+  return 12 * Number(jour.slice(0, 4)) + Number(jour.slice(5, 7)) - 1 + (quantieme - 1) / 30;
+}
+
+/**
+ * Ce qu'une ressource de `montant` par an rapporte par an, en moyenne de
+ * `debut` à `fin` (en mois), chacun de ses `changements`, `[jour, montant]`,
+ * la portant à son montant à partir de son jour : ce montant même quand aucun
+ * ne tombe dans la période. Voir `_percu` du Python.
+ */
+function percu(montant, changements, debut, fin) {
+  let total = 0.0;
+  let depuis = debut;
+  let courant = montant;
+  const tries = [...changements].sort((a, b) => (a[0] < b[0] ? -1 : 1));
+  for (const [jour, nouveau] of tries) {
+    const quand = enMois(jour);
+    if (quand >= fin) {
+      break;
+    }
+    if (quand > depuis) {
+      total += courant * (quand - depuis);
+      depuis = quand;
+    }
+    courant = Number(nouveau);
+  }
+  if (depuis === debut) {
+    return courant;
+  }
+  return (total + courant * (fin - depuis)) / (fin - debut);
+}
+
+/**
+ * Les ressources du survivant qu'une révision du jour `jour` retient sous le
+ * plafond de la version, par an, et le facteur qui multiplie ce plafond :
+ * `[ressources, facteur]`. Celles des trois mois qui précèdent, ses revenus
+ * d'activité et ceux de son nouveau conjoint tels que perçus, ses `retraites`
+ * pour ce qu'elles servent depuis le jour où elles prennent effet, ou
+ * `entieres` dès qu'elles ont commencé ; transposées sur les trois mois depuis
+ * le ménage formé ou défait dans la période ; ses revenus d'activité abattus
+ * quand il a l'âge de l'abattement ce jour-là. Voir
+ * `_ressources_des_trois_mois` du Python.
+ */
+function ressourcesDesTroisMois(parametres, conjoint, retraites, jour, entieres) {
+  const fin = enMois(jour);
+  let debut = fin - 3;
+  if ((conjoint.nouvelle_union ?? null) !== null) {
+    for (const change of [conjoint.nouvelle_union_depuis ?? null,
+      conjoint.nouvelle_union_fin ?? null]) {
+      if (change !== null && change < jour) {
+        debut = Math.max(debut, enMois(change));
+      }
+    }
+  }
+  const changements = [...(conjoint.variations_d_activite ?? [])];
+  if ((conjoint.fin_d_activite ?? null) !== null) {
+    changements.push([conjoint.fin_d_activite, 0.0]);
+  }
+  let activite = percu(Number(conjoint.revenus_d_activite ?? 0.0), changements, debut, fin);
+  const taux = parametres.abattement_activite;
+  if (taux && activite
+      && chrono.anneesRevolues(conjoint.naissance, jour)
+        >= Math.trunc(Number(parametres.abattement_activite_age))) {
+    activite -= Number(taux) * activite;
+  }
+  const retraite = conjoint.retraite ?? null;
+  let servies;
+  if (retraite === null) {
+    servies = retraites;
+  } else if (entieres) {
+    servies = retraite < jour ? retraites : 0.0;
+  } else {
+    servies = percu(0.0, [[retraite, retraites]], debut, fin);
+  }
+  const retenues = activite + servies;
+  const facteur = parametres.facteur_menage;
+  const union = conjoint.nouvelle_union_depuis ?? null;
+  if (facteur === null || facteur === undefined
+      || conjoint.nouvelle_union === null || conjoint.nouvelle_union === undefined
+      || !(union === null || union < jour)
+      || venu(conjoint.nouvelle_union_fin, jour, false)) {
+    return [retenues, 1.0];
+  }
+  const apport = percu(Number(conjoint.ressources_du_nouveau_conjoint ?? 0.0),
+    conjoint.variations_du_nouveau_conjoint ?? [], debut, fin);
+  return [retenues + apport, Number(facteur)];
 }
 
 /** Le premier jour du troisième mois qui suit celui de `jour`. */
 function troisMoisApres(jour) {
   return moisSuivant(moisSuivant(moisSuivant(jour)));
+}
+
+/**
+ * Le premier jour du premier mois dont les trois mois qui précèdent suivent
+ * tous le jour `jour`. Voir `_apres_les_trois_mois` du Python.
+ */
+function apresLesTroisMois(jour) {
+  const trois = troisMoisApres(jour);
+  return jour.slice(8, 10) === "01" ? trois : moisSuivant(trois);
 }
 
 /**
@@ -1729,13 +1885,15 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
     // de même, à chaque révision.
     const derniere = derniereRevision(moteur, conjoint, dateEffet, retraitesPersonnelles);
     const revisions = [];
-    for (const [jour, servieAlors, revueDuJour, fiabiliteRevisee] of revisionsDeLaReversion(
-      moteur, fiche, parametres, conjoint, deces, annee, dateEffet, montant,
-      entieres.get(regime), ulterieures, ressources, retraitesPersonnelles, basesAu,
-      derniere)) {
+    const ressourcesRevisees = [];
+    for (const [jour, servieAlors, revueDuJour, fiabiliteRevisee, retenuesAlors]
+      of revisionsDeLaReversion(moteur, fiche, parametres, conjoint, deces, annee, dateEffet,
+        montant, entieres.get(regime), ulterieures, ressources, retraitesPersonnelles, basesAu,
+        derniere, regime)) {
       revueA = revueDuJour;
       revisions.push([jour, servieAlors + desTroisEnfants(servieAlors)
         - revueA - desTroisEnfants(revueA)]);
+      ressourcesRevisees.push([jour, retenuesAlors]);
       fiabilite = Math.min(fiabilite, fiabiliteRevisee);
       etapes.push([jour, revueA]);
     }
@@ -1752,6 +1910,7 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
       majorations_forfaitaires: ulterieures, cumul_effet: cumulEffet,
       reduction_du_cumul: reductionDuCumul, revision_effet: revisionEffet,
       reduction_de_la_revision: reductionDeLaRevision, revisions,
+      ressources_des_revisions: ressourcesRevisees,
       derniere_revision: parametres.ressources === "ecretement" || revisions.length > 0
         ? derniere : null,
     }));

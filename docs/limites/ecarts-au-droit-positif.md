@@ -60,9 +60,11 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   activité —, et la retraite qu'il prend depuis recalcule celle d'avant aux
   règles de ressources (R. 353-1-1) ; le formulaire ne demande pas encore la fin
   du ménage ni celle de l'activité, ni ces variations. Chaque révision compte
-  les ressources d'après le changement, l'année entière, quand la caisse
-  examine les trois mois qui la précèdent, tels que perçus. Restent dehors la
-  révision quand ses ayants droit changent, le
+  les ressources des trois mois qui la précèdent, telles que perçues — les
+  retraites du survivant pour ce qu'elles servent, au régime général depuis le
+  30 juin 2010 —, et le modèle la révise encore quand ces trois mois ne portent
+  plus que ce qui suit le changement, ce que les textes ne disent pas. Restent
+  dehors la révision quand ses ayants droit changent, le
   complément de la fonction publique,
   le droit que recouvre le survivant quand sa nouvelle union cesse, les
   pensions d'orphelin — à

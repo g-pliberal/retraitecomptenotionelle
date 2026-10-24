@@ -82,9 +82,9 @@
 #     (AAAA-MM-JJ) de la réversion que le décès de l'assuré ouvre à son
 #     conjoint, telle que l'échéancier la liquide ;
 #   dates_de_revision_de_la_reversion — pour chaque régime nommé, le jour
-#     (AAAA-MM-JJ) où la retraite du conjoint, qui suit la date d'effet de sa
-#     réversion, la revoit sous le plafond de ressources (R. 353-1-1), telle
-#     que l'échéancier la liquide ;
+#     (AAAA-MM-JJ) de la dernière révision de sa réversion sous le plafond de
+#     ressources (R. 353-1-1), telle que l'échéancier la liquide ;
+#     dates_de_premiere_revision_de_la_reversion, celui de la première ;
 #   dates_de_derniere_revision_de_la_reversion — pour chaque régime nommé, le
 #     jour (AAAA-MM-JJ) d'où la réversion n'est plus révisable : trois mois
 #     après l'entrée en jouissance des retraites du conjoint (R. 353-1-1) ;
@@ -117,6 +117,11 @@
 #     L'exemple donne les pensions du défunt, comme le simulateur les demande
 #     (`carriere.pensions_du_defunt_mensuelles`) : le test les prête au
 #     défunt, et le modèle y applique ses taux, ses conditions et son plafond.
+#   ressources_retenues_mensuelles_aux_revisions — pour chaque régime nommé,
+#     et chaque révision que l'exemple date (AAAA-MM-JJ), les ressources que
+#     le plafond retient à côté de la réversion, en euros par mois, à un
+#     centime près. L'exemple donne les pensions du défunt
+#     (`carriere.pensions_du_defunt_mensuelles`) : le test les lui prête ;
 #   reversions_au_maximum_mensuelles — pour chaque régime nommé, la réversion
 #     servie sous son maximum, en euros par mois, à un centime près. L'exemple
 #     donne la pension du défunt, ramenée au maximum des pensions et surcotée
@@ -1960,7 +1965,7 @@ exemples:
       mars 2008 qu'il a cessé son activité professionnelle le 15 février 2008 :
       la date d'effet de la révision est le 1er mars 2008.
     carriere: {naissance: "1940-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2000-01", age_debut: 20, conjoint: "1950-01", ressources_conjoint: 12000, activite_conjoint: 12000, activite_conjoint_fin: "2008-02-15", deces: "2005-03"}
-    attendu: {dates_de_revision_de_la_reversion: {regime_general: "2008-03-01"}}
+    attendu: {dates_de_premiere_revision_de_la_reversion: {regime_general: "2008-03-01"}}
   # « La variation des revenus professionnels du conjoint survivant (ou du
   # ménage) » révise la réversion « à compter du premier jour du mois suivant
   # celui au cours duquel il est constaté que les ressources ont varié »
@@ -2015,6 +2020,41 @@ exemples:
       ménage.
     carriere: {naissance: "1945-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2005-01", age_debut: 20, conjoint: "1955-12-15", nouvelle_union: mariage, nouvelle_union_depuis: "2010-12-01", ressources_nouveau_conjoint: 19200, deces: "2009-05-10", pensions_du_defunt_mensuelles: {regime_general: 1000}}
     attendu: {ressources_retenues_mensuelles: {regime_general: 1600}}
+  # Circulaire RSI n° 2007/061, annexe 3 : « en révision », les ressources
+  # sont « celles afférentes aux 3 mois civils précédant la date d'effet de la
+  # révision » (§ 5.2), les revenus d'activité « pour leur montant réellement
+  # perçu au cours de la période de référence » (§ 6.1), et le droit propre qui
+  # leur succède pour ce qu'il sert dans ces trois mois (§ 6.2) ; « Et non
+  # 2 500 € / 3 + 600 € = 1 433,33 € » : « ce qui revient à prendre en compte
+  # 3 mois de DP alors qu'un seul mois est servi (ce qui correspond à la
+  # méthode retenue par le régime général mais non par le RSI, la MSA et la
+  # CNAVPL) », jusqu'à ce que la circulaire Cnav n° 2010/58 (§ 22) lui fasse
+  # compter, depuis le 30 juin 2010, « les sommes réellement perçues au titre
+  # du nouvel avantage ». L'exemple ne dit ni le défunt, ni la réversion, ni
+  # l'âge du survivant : le témoin prête un assuré mort en août 2005, sa veuve
+  # née en janvier 1953, qui gagne 1 500 € par mois, 1 000 € à partir de mars
+  # 2006, et cesse son activité le 1er avril, quand son droit propre de 600 €
+  # par mois prend effet. Le modèle révise le mois qui suit chaque changement :
+  # la révision de l'exemple est celle du 1er mai, la même pour le régime des
+  # indépendants et, à sa méthode d'alors, pour le régime général.
+  - id: rsi_2007_061_trois_mois_de_la_revision
+    source: {editeur: "RSI", reference: "circulaire n° 2007/061 du 24 avril 2007, annexe 3, Note d'application, § 6.2, exemple", verifie_le: "2026-10-24"}
+    enonce: >-
+      Droit propre au 1er avril 2006, constat le 15 avril, révision au 1er mai ;
+      salaire de février, 1 500 € ; salaire de mars, 1 000 € ; droit propre
+      d'avril, 600 €. Ressources retenues : (1 500 + 1 000 + 600) / 3 =
+      1 033,33 € par mois, sous le plafond mensuel d'un isolé, 1 391,87 €.
+    carriere: {naissance: "1940-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2000-01", age_debut: 20, conjoint: "1953-01", ressources_conjoint: 25200, activite_conjoint: 18000, activite_conjoint_variations: {"2006-03": 12000}, activite_conjoint_fin: "2006-04-01", conjoint_retraite: "2006-04", deces: "2005-08", pensions_du_defunt_mensuelles: {rsi: 1000}}
+    attendu: {ressources_retenues_mensuelles_aux_revisions: {rsi: {"2006-05-01": 1033.33}}}
+  - id: rsi_2007_061_methode_du_regime_general
+    source: {editeur: "RSI", reference: "circulaire n° 2007/061 du 24 avril 2007, annexe 3, Note d'application, § 6.2, exemple", verifie_le: "2026-10-24"}
+    enonce: >-
+      Le même, au régime général d'alors : « Et non 2 500 € / 3 + 600 € =
+      1 433,33 € > au plafond ; ce qui revient à prendre en compte 3 mois de DP
+      alors qu'un seul mois est servi (ce qui correspond à la méthode retenue
+      par le régime général mais non par le RSI, la MSA et la CNAVPL). »
+    carriere: {naissance: "1940-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2000-01", age_debut: 20, conjoint: "1953-01", ressources_conjoint: 25200, activite_conjoint: 18000, activite_conjoint_variations: {"2006-03": 12000}, activite_conjoint_fin: "2006-04-01", conjoint_retraite: "2006-04", deces: "2005-08", pensions_du_defunt_mensuelles: {regime_general: 1000}}
+    attendu: {ressources_retenues_mensuelles_aux_revisions: {regime_general: {"2006-05-01": 1433.33}}}
 
   # ---- L'invalidité et l'inaptitude ---------------------------------------
   # Le quatrième domaine (docs/architecture.md, § 11). L'ex-invalide de la

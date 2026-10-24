@@ -1848,23 +1848,35 @@ def test_sa_retraite_revise_la_reversion_le_mois_qui_suit_pour_la_derniere_fois(
     « est entré en jouissance de l'ensemble des avantages personnels de
     retraite » (R. 353-1-1) : sa retraite la révise « à compter du premier
     jour du mois qui suit la date d'effet de cet avantage », la dernière
-    révision trois mois après elle (circulaire Cnav n° 2010/58, § 22 et 24).
-    Le veuf de 2015, né en 1958, prend sa retraite en juillet 2020 : sa
-    réversion, entière sans elle, est revue en août sous le plafond de 2020,
-    2 080 fois 10,15 €, ramené aux euros de 2015, ses 18 000 € de retraites
-    comptés. La majoration de 10 % des trois enfants suit la réversion revue,
+    révision trois mois après elle (circulaire Cnav n° 2010/58, § 22 et 24 :
+    retraites au 1er janvier 2008, révision au 1er février, « dernière
+    révision (cristallisation) » au 1er avril). Les ressources sont celles des
+    trois mois qui précèdent chaque révision (exposé de la Cnav, « Condition
+    de ressources »), « les sommes réellement perçues au titre du nouvel
+    avantage » (§ 22). Le veuf de 2015, né en 1958, prend sa retraite en
+    juillet 2020 : en août, sous le plafond de 2020, 2 080 fois 10,15 €,
+    ramené aux euros de 2015, un seul des trois mois porte ses 18 000 € de
+    retraites, 6 000 € par an, et sa réversion reste entière ; le 1er
+    octobre, les trois portent ses retraites, et la dernière révision la
+    réduit. La majoration de 10 % des trois enfants suit la réversion revue,
     sans descendre sous le dixième du minimum de 2015 (R. 353-2)."""
     carriere = _carriere(simulateur, 1955, 60.0, "1958-06-10", "2015-03-10",
                          ressources=18000.0, retraite="2020-07", enfants=enfants)
     ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
                      2015)["regime_general"]
-    revue = 2080 * 10.15 / _coefficient(simulateur, 2015, 2020) - 18000.0
+    plafond = 2080 * 10.15 / _coefficient(simulateur, 2015, 2020)
+    assert plafond - 18000.0 / 3 > 5400.0
+    revue = plafond - 18000.0
     minimum = simulateur.scenario_actuel.reversions.minimum(2015)[0]
     majorations = (540.0, max(0.1 * revue, 0.1 * minimum)) if enfants else (0.0, 0.0)
     assert (round(ligne.montant, 2), ligne.motif) == (5400.0 + majorations[0], "servie")
-    assert (ligne.revision_effet, ligne.derniere_revision) == ("2020-08-01", "2020-10-01")
+    assert [jour for jour, _ in ligne.revisions] == ["2020-08-01", "2020-10-01"]
+    assert ligne.revisions[0][1] == pytest.approx(0.0)
+    assert (ligne.revision_effet, ligne.derniere_revision) == ("2020-10-01", "2020-10-01")
     assert ligne.reduction_de_la_revision == pytest.approx(
         5400.0 + majorations[0] - revue - majorations[1])
+    assert [ressources for _, ressources in ligne.ressources_des_revisions] == [
+        pytest.approx(6000.0), pytest.approx(18000.0)]
 
 
 @pytest.mark.parametrize("depuis, fin, menage", [
@@ -1916,7 +1928,8 @@ def test_une_revision_a_venir_se_mesure_au_dernier_smic_publie(simulateur):
                      2024)["regime_general"]
     annee, smic = _dernier_smic_publie()
     plafond = 2080 * smic / _coefficient(simulateur, 2024, annee)
-    assert (ligne.revision_effet, ligne.derniere_revision) == ("2030-02-01", "2030-04-01")
+    assert [jour for jour, _ in ligne.revisions] == ["2030-02-01", "2030-04-01"]
+    assert (ligne.revision_effet, ligne.derniere_revision) == ("2030-04-01", "2030-04-01")
     assert ligne.reduction_de_la_revision == pytest.approx(5400.0 - (plafond - 20000.0))
 
 
@@ -2053,23 +2066,29 @@ def test_le_menage_qu_il_forme_dans_les_trois_mois_de_sa_retraite_la_revise_enco
     """Sa retraite révise la réversion le mois qui suit, et la dernière
     révision vient trois mois après elle (R. 353-1-1 ; circulaire Cnav
     n° 2010/58, § 22 et 24) : le veuf de 2015, retraité en juillet 2020, voit
-    sa réversion révisée en août sous le plafond de 2020, ses 18 000 € de
-    retraites comptés. Remarié le 20 août, avant le 1er octobre, il la voit
-    révisée encore en septembre, sous le plafond du ménage, 1,6 fois plus
-    haut, les 12 000 € de sa nouvelle épouse comptés : elle remonte. La ligne
-    dit chaque révision ; ``revision_effet`` et ``reduction_de_la_revision``,
-    la dernière."""
+    sa réversion révisée en août sous le plafond de 2020, un mois de ses
+    18 000 € de retraites compté, et elle reste entière. Remarié le 20 août,
+    avant le 1er octobre, il la voit révisée en septembre sous le plafond du
+    ménage, 1,6 fois plus haut, les 12 000 € de sa nouvelle épouse comptés :
+    la situation familiale changée dans les trois mois, les ressources
+    d'après le 20 août sont transposées sur les trois (circulaire Cnav
+    n° 2005/17, § 146), ses retraites entières. La dernière révision, le 1er
+    octobre, transpose les mêmes, et ne change rien : elle n'est pas écrite.
+    La ligne dit chaque révision ; ``revision_effet`` et
+    ``reduction_de_la_revision``, la dernière."""
     carriere = _carriere(simulateur, 1955, 60.0, "1958-06-10", "2015-03-10",
                          ressources=18000.0, retraite="2020-07", nouvelle_union="mariage",
                          union_depuis="2020-08-20", apport=12000.0)
     ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
                      2015)["regime_general"]
     plafond = 2080 * 10.15 / _coefficient(simulateur, 2015, 2020)
-    seul, menage = plafond - 18000.0, min(5400.0, 1.6 * plafond - 30000.0)
-    assert 0.0 < seul < menage < 5400.0
+    seul, menage = plafond - 18000.0 / 3, min(5400.0, 1.6 * plafond - 30000.0)
+    assert 0.0 < menage < 5400.0 < seul
     assert [jour for jour, _ in ligne.revisions] == ["2020-08-01", "2020-09-01"]
     assert [reduction for _, reduction in ligne.revisions] == [
-        pytest.approx(5400.0 - seul), pytest.approx(5400.0 - menage)]
+        pytest.approx(0.0), pytest.approx(5400.0 - menage)]
+    assert [ressources for _, ressources in ligne.ressources_des_revisions] == [
+        pytest.approx(6000.0), pytest.approx(30000.0)]
     assert (ligne.revision_effet, ligne.derniere_revision) == ("2020-09-01", "2020-10-01")
     assert ligne.reduction_de_la_revision == pytest.approx(5400.0 - menage)
 
@@ -2166,8 +2185,14 @@ def test_la_fin_de_son_activite_revise_la_reversion_le_mois_qui_suit(simulateur)
     § 21). La veuve de 2006, née le 15 septembre 1953, gagne 14 000 € : à
     cinquante-trois ans, entiers, ils réduisent sa réversion sous le plafond de
     2006, 2 080 fois 8,03 €. Son activité cessée le 15 février 2008, sa
-    réversion est révisée le 1er mars sous le plafond de 2008 : sans
-    ressources, elle redevient entière ; ses cinquante-cinq ans, en septembre,
+    réversion est révisée le 1er mars sous le plafond de 2008 : « les
+    ressources sont examinées sur les 3 mois qui précèdent cette date de
+    révision » (exposé de la Cnav, « Condition de ressources »), ses revenus
+    d'activité « pour leur montant réellement perçu » (circulaire RSI
+    n° 2007/061, annexe 3, § 6.1), décembre, janvier et quatorze jours de
+    février, en mois de trente jours, 11 511,11 € par an : elle redevient
+    entière. Le 1er juin, les trois mois sans revenus ne la changent plus, et
+    la révision n'est pas écrite ; ses cinquante-cinq ans, en septembre,
     n'ont plus de revenus d'activité à abattre, et ne la révisent pas. Ayant
     travaillé, elle la garde révisable jusqu'à ce qu'elle liquide ses droits
     (circulaire Cnav n° 2007-35, § 222)."""
@@ -2178,8 +2203,10 @@ def test_la_fin_de_son_activite_revise_la_reversion_le_mois_qui_suit(simulateur)
     reduite = 2080 * 8.03 - 14000.0
     assert (ligne.date_effet, round(ligne.montant, 2), ligne.motif) == (
         "2006-11-01", round(reduite, 2), "ecretee")
-    assert 2080 * 8.44 / _coefficient(simulateur, 2006, 2008) > 5400.0
+    percus = 14000.0 * (2 + 14 / 30) / 3
+    assert 2080 * 8.44 / _coefficient(simulateur, 2006, 2008) - percus > 5400.0
     assert [jour for jour, _ in ligne.revisions] == ["2008-03-01"]
+    assert ligne.ressources_des_revisions == (("2008-03-01", pytest.approx(percus)),)
     assert ligne.reduction_de_la_revision == pytest.approx(reduite - 5400.0)
     assert ligne.derniere_revision is None
 
@@ -2212,23 +2239,31 @@ def test_l_activite_qu_il_reprend_revise_la_reversion_le_mois_qui_suit(simulateu
     ressources au décès, reçoit sa réversion entière, 5 400 €. Elle commence
     une activité le 15 mars 2007, qui lui rapporte 14 000 € par an : sa
     réversion est révisée le 1er avril sous le plafond de 2007, 2 080 fois
-    8,27 €, ramené aux euros de 2006, ses revenus entiers ; à ses cinquante-cinq
-    ans, abattus de 30 %, ils la laissent entière sous le plafond de 2008,
-    2 080 fois 8,44 €. Ayant travaillé, elle la garde révisable jusqu'à ce
-    qu'elle liquide ses droits (circulaire Cnav n° 2007-35, § 222) : son âge
-    légal ne la fige plus."""
+    8,27 €, ramené aux euros de 2006, sur les trois mois qui précèdent (exposé
+    de la Cnav, « Condition de ressources »), ses revenus tels que perçus, les
+    seize derniers jours de mars en mois de trente jours (circulaire RSI
+    n° 2007/061, annexe 3, § 6.1 et 7) : elle reste entière. Le modèle la
+    révise encore le premier mois dont les trois mois ne portent plus que ses
+    revenus nouveaux, le 1er juillet : ses revenus entiers la réduisent. À ses
+    cinquante-cinq ans, abattus de 30 %, ils la laissent entière sous le
+    plafond de 2008, 2 080 fois 8,44 €. Ayant travaillé, elle la garde
+    révisable jusqu'à ce qu'elle liquide ses droits (circulaire Cnav n° 2007-35,
+    § 222) : son âge légal ne la fige plus."""
     carriere = _carriere(simulateur, 1945, 60.0, "1953-09-15", "2006-10-10",
                          variations=(("2007-03-15", 14000.0),))
     ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
                      2006)["regime_general"]
     assert (ligne.date_effet, round(ligne.montant, 2), ligne.motif) == (
         "2006-11-01", 5400.0, "servie")
-    reduite = 2080 * 8.27 / _coefficient(simulateur, 2006, 2007) - 14000.0
-    assert 0.0 < reduite < 5400.0
+    plafond = 2080 * 8.27 / _coefficient(simulateur, 2006, 2007)
+    percus, reduite = 14000.0 * (16 / 30) / 3, plafond - 14000.0
+    assert 0.0 < reduite < 5400.0 < plafond - percus
     assert 2080 * 8.44 / _coefficient(simulateur, 2006, 2008) - 0.7 * 14000.0 > 5400.0
-    assert [jour for jour, _ in ligne.revisions] == ["2007-04-01", "2008-10-01"]
+    assert [jour for jour, _ in ligne.revisions] == ["2007-04-01", "2007-07-01", "2008-10-01"]
     assert [reduction for _, reduction in ligne.revisions] == [
-        pytest.approx(5400.0 - reduite), pytest.approx(0.0)]
+        pytest.approx(0.0), pytest.approx(5400.0 - reduite), pytest.approx(0.0)]
+    assert [ressources for _, ressources in ligne.ressources_des_revisions] == [
+        pytest.approx(percus), pytest.approx(14000.0), pytest.approx(0.7 * 14000.0)]
     assert ligne.derniere_revision is None
 
 
@@ -2239,9 +2274,12 @@ def test_le_salaire_qui_change_revise_la_reversion_le_mois_qui_suit(simulateur):
     gagne 15 000 €, abattus de 30 % à cinquante-six ans, qui laissent sa
     réversion entière sous le plafond de 2015. Son salaire passe à 25 000 € le
     15 mars 2018 : sa réversion est révisée le 1er avril, sous le plafond de
-    2018, 2 080 fois 9,88 €, ramené aux euros de 2015, ses nouveaux revenus
-    abattus comptés. Ayant travaillé sans avoir liquidé ses retraites, il la
-    garde révisable."""
+    2018, 2 080 fois 9,88 €, ramené aux euros de 2015, sur ses revenus
+    abattus des trois mois qui précèdent, tels que perçus — janvier, février et
+    quatorze jours de mars à l'ancien salaire, seize au nouveau —, qui la
+    laissent entière ; le 1er juillet, sur ses seuls nouveaux revenus, qui la
+    réduisent. Ayant travaillé sans avoir liquidé ses retraites, il la garde
+    révisable."""
     carriere = _carriere(simulateur, 1955, 60.0, "1958-06-10", "2015-03-10",
                          ressources=15000.0, activite=15000.0,
                          variations=(("2018-03-15", 25000.0),))
@@ -2249,11 +2287,16 @@ def test_le_salaire_qui_change_revise_la_reversion_le_mois_qui_suit(simulateur):
                      2015)["regime_general"]
     assert 2080 * 9.61 - 0.7 * 15000.0 > 5400.0
     assert (round(ligne.montant, 2), ligne.motif) == (5400.0, "servie")
-    revue = 2080 * 9.88 / _coefficient(simulateur, 2015, 2018) - 0.7 * 25000.0
-    assert 0.0 < revue < 5400.0
-    assert [jour for jour, _ in ligne.revisions] == ["2018-04-01"]
-    assert ligne.reduction_de_la_revision == pytest.approx(5400.0 - revue)
-    assert (ligne.revision_effet, ligne.derniere_revision) == ("2018-04-01", None)
+    plafond = 2080 * 9.88 / _coefficient(simulateur, 2015, 2018)
+    percus = 0.7 * (15000.0 * (2 + 14 / 30) + 25000.0 * 16 / 30) / 3
+    revue = plafond - 0.7 * 25000.0
+    assert 0.0 < revue < 5400.0 < plafond - percus
+    assert [jour for jour, _ in ligne.revisions] == ["2018-04-01", "2018-07-01"]
+    assert [reduction for _, reduction in ligne.revisions] == [
+        pytest.approx(0.0), pytest.approx(5400.0 - revue)]
+    assert [ressources for _, ressources in ligne.ressources_des_revisions] == [
+        pytest.approx(percus), pytest.approx(0.7 * 25000.0)]
+    assert (ligne.revision_effet, ligne.derniere_revision) == ("2018-07-01", None)
 
 
 def test_les_ressources_du_nouveau_conjoint_qui_changent_revisent_la_reversion(simulateur):
@@ -2261,10 +2304,14 @@ def test_les_ressources_du_nouveau_conjoint_qui_changent_revisent_la_reversion(s
     (circulaire Cnav n° 2006-6, § 12). Le veuf de 2015, né le 10 juin 1958,
     15 000 € de salaire abattus, a sa réversion entière ; remarié en mai 2018 à
     une conjointe qui gagne 20 000 €, il la voit révisée le 1er juin sous le
-    plafond du ménage, 1,6 fois 2 080 fois 9,88 €, ramené aux euros de 2015.
-    Les ressources de sa conjointe tombent à 12 000 € en janvier 2020 : sa
-    réversion est révisée le 1er février, sous le plafond du ménage de 2020,
-    1,6 fois 2 080 fois 10,15 € — entière."""
+    plafond du ménage, 1,6 fois 2 080 fois 9,88 €, ramené aux euros de 2015 :
+    l'union formée en mai, ses ressources d'après elle sont transposées sur les
+    trois mois (circulaire Cnav n° 2005/17, § 146). Les ressources de sa
+    conjointe tombent à 12 000 € en janvier 2020 : sa réversion est révisée le
+    1er février, sous le plafond du ménage de 2020, 1,6 fois 2 080 fois
+    10,15 €, sur les trois mois qui précèdent, tels que perçus — novembre et
+    décembre à 20 000 € par an, janvier à 12 000 € —, encore un peu réduite ;
+    entière le 1er avril, les trois mois à 12 000 €."""
     carriere = _carriere(simulateur, 1955, 60.0, "1958-06-10", "2015-03-10",
                          ressources=15000.0, activite=15000.0, nouvelle_union="mariage",
                          union_depuis="2018-05", apport=20000.0,
@@ -2275,11 +2322,16 @@ def test_les_ressources_du_nouveau_conjoint_qui_changent_revisent_la_reversion(s
     menage = (1.6 * 2080 * 9.88 / _coefficient(simulateur, 2015, 2018)
               - (0.7 * 15000.0 + 20000.0))
     assert 0.0 < menage < 5400.0
-    assert (1.6 * 2080 * 10.15 / _coefficient(simulateur, 2015, 2020)
-            - (0.7 * 15000.0 + 12000.0)) > 5400.0
-    assert [jour for jour, _ in ligne.revisions] == ["2018-06-01", "2020-02-01"]
+    plafond = 1.6 * 2080 * 10.15 / _coefficient(simulateur, 2015, 2020)
+    percus = 0.7 * 15000.0 + (2 * 20000.0 + 12000.0) / 3
+    assert 0.0 < plafond - percus < 5400.0 < plafond - (0.7 * 15000.0 + 12000.0)
+    assert [jour for jour, _ in ligne.revisions] == ["2018-06-01", "2020-02-01", "2020-04-01"]
     assert [reduction for _, reduction in ligne.revisions] == [
-        pytest.approx(5400.0 - menage), pytest.approx(0.0)]
+        pytest.approx(5400.0 - menage), pytest.approx(5400.0 - (plafond - percus)),
+        pytest.approx(0.0)]
+    assert [ressources for _, ressources in ligne.ressources_des_revisions] == [
+        pytest.approx(0.7 * 15000.0 + 20000.0), pytest.approx(percus),
+        pytest.approx(0.7 * 15000.0 + 12000.0)]
     assert ligne.derniere_revision is None
 
 
@@ -2347,19 +2399,22 @@ CAS_DES_REVISIONS = [
     # Les ressources qui varient autrement : la veuve de 2006, sans ressources,
     # qui commence une activité en mars 2007 ; le veuf de 2015 dont le salaire
     # passe à 25 000 € en mars 2018 ; remarié en mai 2018, sa conjointe dont les
-    # ressources tombent à 12 000 € en janvier 2020.
+    # ressources tombent à 12 000 € en janvier 2020. Chacune révisée le mois
+    # qui suit, sur les trois mois qui précèdent, tels que perçus, puis quand
+    # les trois mois ne portent plus que les revenus nouveaux.
     ({"naissance": "1945", "liquidation": "60", "conjoint": "1953-09", "deces": "2006-10",
-      "activite_conjoint_variations": "2007-03:14000"}, ["2007-04-01", "2008-10-01"], None),
+      "activite_conjoint_variations": "2007-03:14000"},
+     ["2007-04-01", "2007-06-01", "2008-10-01"], None),
     ({"naissance": "1955", "liquidation": "60", "sexe": "F", "conjoint": "1958-06",
       "conjoint_sexe": "H", "deces": "2015-03", "ressources_conjoint": "15000",
       "activite_conjoint": "15000", "activite_conjoint_variations": "2018-03:25000"},
-     ["2018-04-01"], None),
+     ["2018-04-01", "2018-06-01"], None),
     ({"naissance": "1955", "liquidation": "60", "sexe": "F", "conjoint": "1958-06",
       "conjoint_sexe": "H", "deces": "2015-03", "ressources_conjoint": "15000",
       "activite_conjoint": "15000", "nouvelle_union": "mariage",
       "nouvelle_union_depuis": "2018-05", "ressources_nouveau_conjoint": "20000",
       "ressources_nouveau_conjoint_variations": "2020-01:12000"},
-     ["2018-06-01", "2020-02-01"], None),
+     ["2018-06-01", "2020-02-01", "2020-04-01"], None),
 ]
 
 
@@ -2396,30 +2451,32 @@ def test_les_deux_moteurs_revisent_la_reversion_avant_sa_retraite(saisies):
 #: réversion : la veuve de 1999 qui la prend en 2008, que les règles de
 #: ressources de 2004 recalculent ; le veuf de 2015 qui la prend en 2020, seul
 #: ou remarié en 2018 ; la veuve de 2024 qui la prendra en 2030. Chacune avec
-#: le jour où sa réversion du régime général est revue, et celui où elle
-#: n'est plus révisable.
+#: le jour de la dernière révision de sa réversion du régime général — sa
+#: retraite, que la révision du mois qui suit ne compte que pour un mois depuis
+#: 2010, la revoit encore trois mois après elle —, et celui où elle n'est plus
+#: révisable.
 CAS_DE_LA_REVISION = [
     ({"naissance": "1930", "liquidation": "60", "conjoint": "1940-06", "deces": "1999-03",
       "ressources_conjoint": "12000", "conjoint_retraite": "2008-03"},
      "2008-03-01", "2008-06-01"),
     ({"naissance": "1955", "liquidation": "60", "sexe": "F", "conjoint": "1958-06",
       "conjoint_sexe": "H", "deces": "2015-03", "ressources_conjoint": "18000",
-      "conjoint_retraite": "2020-07"}, "2020-08-01", "2020-10-01"),
+      "conjoint_retraite": "2020-07"}, "2020-10-01", "2020-10-01"),
     ({"naissance": "1955", "liquidation": "60", "sexe": "F", "conjoint": "1958-06",
       "conjoint_sexe": "H", "deces": "2015-03", "ressources_conjoint": "18000",
       "conjoint_retraite": "2020-07", "nouvelle_union": "mariage",
       "nouvelle_union_depuis": "2018-05", "ressources_nouveau_conjoint": "12000"},
-     "2020-08-01", "2020-10-01"),
+     "2020-10-01", "2020-10-01"),
     ({"naissance": "1960", "liquidation": "62", "conjoint": "1964-03", "deces": "2024-05",
       "ressources_conjoint": "20000", "conjoint_retraite": "2030-01"},
-     "2030-02-01", "2030-04-01"),
+     "2030-04-01", "2030-04-01"),
 ]
 
 
 def test_les_deux_moteurs_revoient_la_reversion_a_sa_retraite(saisies):
     """Le résultat entier, des six scénarios, est le même en Python et en
-    JavaScript ; chaque cas revoit la réversion du régime général au jour
-    qu'il dit, et la fige trois mois après sa retraite."""
+    JavaScript ; chaque cas revoit la réversion du régime général en dernier
+    au jour qu'il dit, et la fige trois mois après sa retraite."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     racine = Path(__file__).resolve().parents[1]
@@ -2435,6 +2492,41 @@ def test_les_deux_moteurs_revoient_la_reversion_a_sa_retraite(saisies):
     with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
                                      delete=False) as fichier:
         fichier.write(json.dumps(attendus, ensure_ascii=False))
+        chemin = fichier.name
+    try:
+        execution = subprocess.run(
+            ["node", str(racine / "tests" / "js" / "comparer.mjs"), chemin],
+            cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False)
+    finally:
+        Path(chemin).unlink()
+    assert execution.returncode == 0, (execution.stdout + execution.stderr)[-2000:]
+
+
+def test_les_deux_moteurs_comptent_ses_retraites_entieres_avant_juillet_2010(saisies):
+    """Au régime général, avant le 30 juin 2010, la révision qui suit la
+    retraite du survivant la compte entière, « 3 mois de DP alors qu'un seul
+    mois est servi » (circulaire RSI n° 2007/061, annexe 3, § 6.2), ce que les
+    versions de la fiche disent (``retraites_entieres_a_la_revision``) et que
+    le portage lit dans son paquet : la veuve de 2006, retraitée en janvier
+    2008, voit sa réversion revue une seule fois, le 1er février, et figée le
+    1er avril, dans les deux moteurs. Le cas est du niveau ``complet`` : le
+    paquet que GitHub refait le porte."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    racine = Path(__file__).resolve().parents[1]
+    sys.path.insert(0, str(racine / "scripts"))
+    from construire_temoins import _fini
+    cas = {"naissance": "1945", "liquidation": "60", "conjoint": "1950-03",
+           "deces": "2006-10", "ressources_conjoint": "14000", "conjoint_retraite": "2008-01"}
+    attendu = {"requete": cas, "resultat": _fini(saisies.simuler(cas).dictionnaire())}
+    ligne, = (r for r in attendu["resultat"]["reversion"]["regimes"]
+              if r["regime"] == "regime_general")
+    assert [revision["date"] for revision in ligne["revisions"]] == ["2008-02-01"]
+    assert [revision["ressources"] for revision in ligne["revisions"]] == [14000.0]
+    assert ligne["derniere_revision"] == "2008-04-01"
+    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
+                                     delete=False) as fichier:
+        fichier.write(json.dumps([attendu], ensure_ascii=False))
         chemin = fichier.name
     try:
         execution = subprocess.run(

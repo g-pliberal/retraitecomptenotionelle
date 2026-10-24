@@ -1991,6 +1991,15 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         servie = reversion(actuel, [(regime, 12 * montant, Fiabilite.HAUTE)
                                     for regime, montant in pensions.items()], carriere, annee)
         return {r.regime: r.ressources_retenues / 12 for r in servie.regimes}
+    if cle == "ressources_retenues_mensuelles_aux_revisions":
+        # Les mêmes, à chacune des révisions de la réversion de chaque régime,
+        # par mois.
+        pensions = exemple["carriere"]["pensions_du_defunt_mensuelles"]
+        annee = int(str(exemple["carriere"]["deces"])[:4])
+        servie = reversion(actuel, [(regime, 12 * montant, Fiabilite.HAUTE)
+                                    for regime, montant in pensions.items()], carriere, annee)
+        return {r.regime: {jour: ressources / 12 for jour, ressources in r.ressources_des_revisions}
+                for r in servie.regimes}
     if cle == "reversions_mensuelles":
         # L'exemple donne les pensions du défunt, comme le simulateur les
         # demande, et la réversion qu'il en tire : le test les prête au défunt,
@@ -2167,6 +2176,7 @@ TOLERANCES = {
     "cotisation_agirc_de_l_annee": {"abs": 0.10},
     "reversions_ecretees_mensuelles": {"abs": 0.01},
     "ressources_retenues_mensuelles": {"abs": 0.01},
+    "ressources_retenues_mensuelles_aux_revisions": {"abs": 0.01},
     "reversions_mensuelles": {"abs": 0.5},
     # La circulaire arrondit chaque part au centime, le modèle le total.
     "reversions_au_maximum_mensuelles": {"abs": 0.01},
@@ -2217,6 +2227,12 @@ def _concorde(cle: str, mesure, valeur) -> bool:
                "ressources_retenues_mensuelles"):
         return all(mesure.get(regime, 0.0) == pytest.approx(montant, abs=0.01)
                    for regime, montant in valeur.items())
+    if cle == "ressources_retenues_mensuelles_aux_revisions":
+        # Seules se comparent les révisions que l'exemple date.
+        return all(jour in mesure.get(regime, {})
+                   and mesure[regime][jour] == pytest.approx(montant, abs=0.01)
+                   for regime, revisions in valeur.items()
+                   for jour, montant in revisions.items())
     if cle == "reversions_mensuelles":
         # Les simulateurs arrondissent à l'euro.
         return all(mesure.get(regime, 0.0) == pytest.approx(montant, abs=0.5)
