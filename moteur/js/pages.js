@@ -2956,10 +2956,9 @@ function partager(contexte) {
     "Quatre cartes, "
     + '<span class="cle-texte">prêtes à publier.</span>',
     "Un bouton par carte : l'image part au format des réseaux sociaux, "
-    + "avec son message déjà rédigé. "
+    + "avec son message rédigé. "
     + `<strong class="cle-texte">${g.SIGNATURE}</strong> y est posé en `
-    + "filigrane, en travers de l'image et non dans un coin : le recadrer "
-    + "revient à recadrer la carte.",
+    + "filigrane, en travers : le recadrer revient à recadrer la carte.",
   );
 
   const cartes = [
@@ -2981,8 +2980,8 @@ function partager(contexte) {
       `${g.pourcentage(TAUX_ACTUEL_TOTAL, false, 0)} aujourd'hui pour `
       + `un salarié du privé (${g.pourcentage(TAUX_ACTUEL_SALARIAL, false, 1)} + `
       + `${g.pourcentage(TAUX_ACTUEL_PATRONAL, false, 1)}). Les ${volontaire} rendus `
-      + `peuvent aller au même compte : ${propose} en tout, comme `
-      + "aujourd'hui, pour une retraite qui vous appartient.",
+      + `peuvent aller au même compte : ${propose} en tout, pour une `
+      + "retraite qui vous appartient.",
     ),
     cartePartage(
       "Le déficit",
@@ -3023,16 +3022,12 @@ ${tete}
     à votre nom et ${volontaire} rendus que vous placez où vous voulez, et un
     compte de retraite en euros que chacun peut lire. Vérifiez sur votre
     carrière : ${g.ADRESSE_SITE} — ${g.SIGNATURE} »</p>
-    <p class="discret">Le bouton de chaque carte met déjà ce message dans le
-    presse-papiers avec l'image.</p>
   </div>
   <div class="encadre">
     <h2 class="serif" style="margin-top:0">Et depuis les pages du site</h2>
     <p>Inutile de repasser par ici pour partager un graphique : sous chacun, la
-    même barre <span class="cle-texte">Partager</span> compose l'image de ce
-    que vous venez de lire et le message qui va avec. Toutes portent le
-    filigrane <span class="cle-texte">${g.SIGNATURE}</span>, en travers du
-    cadre.</p>
+    même barre <span class="cle-texte">Partager</span> compose son image,
+    filigrane compris, et son message.</p>
   </div>
 </div>
 `;
@@ -3091,8 +3086,8 @@ function saviezVous() {
   const themes = [
     {
       titre: "Un seuil, et tout bascule",
-      chapeau: "Une heure, un point ou un mois de plus suffisent à faire "
-        + "basculer un droit.",
+      chapeau: "Une heure, un point ou un mois de plus font basculer un "
+        + "droit.",
       classes: "",
       cartes: [
         {
@@ -3113,8 +3108,8 @@ function saviezVous() {
             + `fonctionnaires. Avec ${g.nombre(5124, 0)}, elle est versée d'un coup.`,
           detail: "Décret n° 2004-569 du 18 juin 2004, art. 9",
           explication: "Le RAFP, la retraite que les fonctionnaires acquièrent "
-            + "sur leurs primes, se verse en rente à partir du seuil ; "
-            + "au-dessous, en un capital calculé sur cette rente.",
+            + "sur leurs primes, se verse sous le seuil en un capital calculé "
+            + "sur sa rente.",
           sources: [["décret n° 2004-569, art. 9", decret("LEGIARTI000037483756")]],
         },
         {
@@ -3133,8 +3128,8 @@ function saviezVous() {
     },
     {
       titre: "Cotiser sans acquérir de droits",
-      chapeau: "Une part de ce que l'on verse pour la retraite n'ouvre aucun "
-        + "droit à celui qui le verse.",
+      chapeau: "Une part de ce qu'on verse pour sa retraite n'y ouvre aucun "
+        + "droit.",
       classes: "claire",
       cartes: [
         {
@@ -3169,8 +3164,8 @@ function saviezVous() {
         {
           nom: "L'équilibre technique",
           chiffre: g.pourcentage(0.0035, false, 2),
-          phrase: "de tout le salaire, dès le premier euro, pour qui gagne plus "
-            + "que le plafond, sans un seul point de retraite en échange.",
+          phrase: "du salaire, dès le premier euro, pour qui gagne plus que le "
+            + "plafond, sans un seul point de retraite en échange.",
           detail: "Agirc-Arrco, accord du 17 novembre 2017",
           explication: "Cette contribution d'équilibre technique, 0,21 % pour "
             + "l'employeur et 0,14 % pour le salarié, est « non génératrice de "
@@ -3181,15 +3176,14 @@ function saviezVous() {
     },
     {
       titre: "Un même deuil, trois règles",
-      chapeau: "La pension de réversion dépend de la caisse du défunt : son "
-        + "taux, l'âge où elle s'ouvre, et ce qui la fait perdre.",
+      chapeau: "La pension de réversion dépend de la caisse du défunt.",
       classes: "",
       cartes: [
         {
           nom: "Trois taux",
           chiffre: "54, 60 ou 50 %",
-          phrase: "de la pension du défunt, selon sa caisse, et sous des "
-            + "conditions d'âge et de ressources qui ne sont pas les mêmes.",
+          phrase: "de la pension du défunt, selon sa caisse, sous des "
+            + "conditions d'âge et de ressources différentes.",
           detail: "Code de la sécurité sociale, art. D. 353-1 ; Agirc-Arrco ; "
             + "code des pensions, art. L. 38",
           explication: "Régime général : 54 %, à partir de 55 ans, sous plafond "
@@ -3240,7 +3234,7 @@ function saviezVous() {
     },
     {
       titre: "Chaque caisse a son histoire",
-      chapeau: "Chaque métier, chaque époque a laissé ses règles, et elles "
+      chapeau: "Chaque métier, chaque époque a laissé des règles qui "
         + "coexistent encore.",
       classes: "claire",
       cartes: [
@@ -3275,8 +3269,7 @@ function saviezVous() {
             + "pour la retraite.",
           detail: "Code de la sécurité sociale, art. L. 351-3 et R. 351-12",
           explication: "Depuis le 1er septembre 2023, ces stages, dont l'État "
-            + "payait les cotisations, valident des trimestres, près de quarante "
-            + "ans après.",
+            + "payait les cotisations, valident des trimestres.",
           sources: [
             ["art. L. 351-3, 9°", code("LEGIARTI000053279221")],
             ["art. R. 351-12", code("LEGIARTI000054167657")],
@@ -3314,8 +3307,8 @@ function saviezVous() {
     "Le saviez-vous ?",
     "Douze règles du système actuel, "
     + '<span class="cle-texte">textes à l\'appui.</span>',
-    "Une carte par règle, avec le texte officiel qui la fonde, lu dans sa "
-    + "version en vigueur le 4 octobre 2026. Chacune se partage d'un bouton.",
+    "Textes lus dans leur version en vigueur le 4 octobre 2026 ; chaque carte "
+    + "se partage d'un bouton.",
   );
 
   return `

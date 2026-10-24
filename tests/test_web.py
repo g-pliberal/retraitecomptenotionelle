@@ -3562,12 +3562,19 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     "/simuler": (1020, 0, 0, 0),
     # Partager ne porte que des cartes : leur texte est court par
     # construction — il doit tenir dans une image de 1200 × 675.
-    "/partager": (400, 0, 0, 0),
+    # Serrée le 24 octobre 2026 (action 173, étape 7), de 400 mots à 340, pour
+    # 372 lus : sous le texte prêt à coller, une note disait que le bouton de
+    # chaque carte copie ce message, quand il copie celui de sa carte, et
+    # l'encadré redisait le filigrane que le chapeau de l'affiche décrit.
+    "/partager": (340, 0, 0, 0),
     # Le saviez-vous ? en porte douze, rangées sous quatre titres : une
     # cinquantaine de mots par carte, barre de partage et pied compris. Ce
     # qui explique chaque règle, et le lien vers son texte, sont repliés sous
     # la carte (673 mots ouverts le 4 octobre 2026).
-    "/saviez-vous": (700, 0, 0, 0),
+    # Serrée le 24 octobre 2026 (action 173, étape 7), de 700 mots à 640 : le
+    # chapeau de l'affiche redisait les « textes à l'appui » de son titre, et
+    # celui de la réversion énumérait ce que ses trois cartes disent.
+    "/saviez-vous": (640, 0, 0, 0),
     # Cas types et Données ont gagné, à la revue de septembre 2026, ce qu'un
     # lecteur doit lire AVANT les chiffres : la clé de lecture des grilles et
     # la trajectoire du système actuel pour l'une, le résumé en langage
@@ -3748,6 +3755,14 @@ BUDGETS_DEPLIES: dict[str, int] = {
     # étape 6). Ses dépliants finissaient souvent sur une phrase qui redisait
     # ce que leur chiffre ou leur phrase en gras venait d'établir.
     "/risque": 4950,
+    # Partager ne replie rien : sa ligne est celle de son budget de lecture, et
+    # elle dira si un dépliant y naît pour porter ce que la page a ôté
+    # (action 173, étape 7).
+    "/partager": 340,
+    # Le saviez-vous ? tout déplié : 1 229 mots le 24 octobre 2026 (action 173,
+    # étape 7). Ce que dit le texte, sous une carte, redisait parfois la carte
+    # elle-même : la rente du RAFP à partir du seuil, les quarante ans des TUC.
+    "/saviez-vous": 1190,
 }
 
 

@@ -215,8 +215,9 @@ def test_un_trace_et_sa_legende_se_voient_ensemble():
 #: résultats du simulateur empilaient encore, en fiche, deux valeurs courtes
 #: que la colonne minimale de 8,5 rem ne laisse pas tenir ensemble. Simuler,
 #: le formulaire et ses résultats, à l'étape 4 ; Coût, à l'étape 5 ;
-#: Pourquoi changer, à l'étape 6.
-COTE_A_COTE = ["/", "/simuler", RESULTATS, "/cout", "/risque"]
+#: Pourquoi changer, à l'étape 6 ; Partager et Le saviez-vous ?, à l'étape 7.
+COTE_A_COTE = ["/", "/simuler", RESULTATS, "/cout", "/risque", "/partager",
+               "/saviez-vous"]
 
 
 def test_deux_valeurs_courtes_d_une_rangee_repliee_se_lisent_cote_a_cote():
