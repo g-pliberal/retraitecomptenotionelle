@@ -3610,7 +3610,11 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # successions, qui rendent une part de la garantie et paient avec l'impôt.
     # Le bilan du compte à la suédoise, le 19 octobre 2026 (action 138, étape
     # 19), est replié : sept mots de plus, ceux de son titre dans le plan.
-    "/cout": (977, 2, 0, 0),
+    # Serrée le 24 octobre 2026 (action 173, étape 5), de 977 mots à 940 : le
+    # résumé redisait le manque que le chiffre voisin porte, la note des
+    # pointillés la légende de leur courbe, et « Pour aller plus loin »
+    # s'annonçait d'une phrase que son titre dit.
+    "/cout": (940, 2, 0, 0),
     # LA SEULE PAGE DU SITE QUI DÉPASSE LE MILLIER DE MOTS, et c'est son objet
     # même. Elle affirme qu'il existe trente-neuf avantages non contributifs :
     # elle doit donc les NOMMER tous, dire ce que chacun coûte, et — pour les
@@ -3755,6 +3759,11 @@ BUDGETS_DEPLIES: dict[str, int] = {
     # témoin, 7 092 mots le 23 octobre 2026 (action 173, étape 4). Ils disaient
     # cinq fois que les cinq points volontaires se placent ou se gardent.
     "/simuler?" + urlencode(SIMULATION_TEMOIN): 6850,
+    # Coût tout déplié : 33 549 mots le 24 octobre 2026 (action 173, étape 5),
+    # dont près de dix-sept mille dans les tableaux des graphiques, que
+    # l'étape laisse tels quels. Ses dépliants redisaient ce que la légende
+    # d'un tracé, la ligne d'un tableau ou le dépliant voisin venaient de dire.
+    "/cout": 33250,
 }
 
 
@@ -3855,7 +3864,7 @@ def test_la_page_cout_ventile_ce_que_d_autres_caisses_versent():
     assert "L'assurance chômage, elle, paie ce que le compte notionnel porte" in texte
     # Le dépliant dit que le coefficient retire les deux autres, et ce qu'on
     # lirait sans ce retrait, sur deux des systèmes comparés.
-    assert "Le coefficient d'équilibre du dépliant suivant retire les deux autres" in texte
+    assert "Le coefficient d'équilibre retire les deux autres" in texte
     assert re.search(r"la proposition afficherait \d,\d\d en 20\d\d au lieu de \d,\d\d", texte)
     assert "et le système 2" in texte
 

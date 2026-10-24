@@ -1181,7 +1181,7 @@ affirmations:
 
   - id: cout.coefficient_retire
     page: /cout
-    extrait: "Le coefficient d'équilibre du dépliant suivant retire les deux autres"
+    extrait: "Le coefficient d'équilibre retire les deux autres"
     porte: les ressources des scénarios notionnels sont celles du système actuel moins le retrait, qui ne compte que la branche famille et le fonds
     etat: verifiee
     controle: retrait_des_transferts

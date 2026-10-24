@@ -8824,9 +8824,8 @@ plus large que les cartes).
 ${tete}
 
 <div class="note resume"><strong>En clair.</strong> En ${obs}, les retraites
-ont coûté un peu plus qu'elles n'ont rapporté : il a manqué
-${milliards(manque, 1)}, soit ${g.pourcentage(partManquante, false, 1)} de la
-facture. L'argent vient des cotisations pour l'essentiel, et de plus en plus
+ont coûté un peu plus qu'elles n'ont rapporté. L'argent vient des cotisations
+pour l'essentiel, et de plus en plus
 de l'impôt. Sans rien changer, il manquerait en ${solde.derniereAnnee}
 ${g.pourcentage(Math.abs(horizon.solde("actuel") / horizon.depense("actuel")), false, 0)}
 de la facture. Un système en comptes notionnels ne dépenserait pas moins : il
@@ -8847,9 +8846,7 @@ ${nonCotise}
 système en ${g.terme("comptes notionnels", "compte notionnel")} ne laisse pas d'argent
 dormir : il remonte les pensions jusqu'à l'équilibre. La courbe en pointillés
 ne dit donc pas « on dépenserait moins ». Elle dit : <em>avec le même argent,
-on servirait autant, mais réparti autrement entre les carrières</em>. La
-courbe jaune pleine dit ce qu'elle encaisserait, et l'écart des deux jaunes
-est son solde, hors garantie vieillesse.</div>
+on servirait autant, mais réparti autrement entre les carrières</em>.</div>
 
 <h2>Et pour vous ?</h2>
 <p>Tout cela est un total national. Ce que chaque règle donne sur votre
@@ -8858,7 +8855,6 @@ carrière se calcule en quelques secondes, dans votre navigateur.</p>
 retraite</a><a href="${g.lien("/cas-types")}">Voir treize carrières types</a></p>
 
 <h2>Pour aller plus loin</h2>
-<p class="chapeau">Tout ce que cette page doit pouvoir justifier est ici.</p>
 
 ${detail}
 `;
@@ -9770,9 +9766,8 @@ function coutDetailDepense(contexte) {
 ${milliards(avantages.gratuit, 1)}, soit ${partGratuite}, servent des droits
 qu'aucune cotisation n'a ouverts : la pension du conjoint survivant, les
 minima, les trimestres accordés pour un enfant ou une période de chômage, les
-départs avant l'âge. La part se lit sur ce total-là, le risque
-vieillesse-survie entier. Les cartes du haut suivent un autre compte, celui du
-COR, en ${c.solde.derniereAnneeObservee} : elle ne s'y rapporte pas.</p>
+départs avant l'âge. Les cartes du haut suivent un autre compte, celui du
+COR, en ${c.solde.derniereAnneeObservee} : cette part ne s'y rapporte pas.</p>
 ${g.tableau(
     ["Famille", `${avantages.annee}`, "Part de la dépense"],
     lignesFamilles,
@@ -9830,11 +9825,10 @@ ${g.graphique(
     `Dépenses du risque vieillesse-survie de ${c.premiereAnnee} à ${derniere}, `
     + "en milliards d'euros",
     annees, [courbeConstants, courbeCourants], "Md €")}
-<p class="discret">Deux lectures de la même série. En euros courants, la
-dépense est multipliée par cent quatre-vingt-treize depuis
-${c.premiereAnnee} . Mais les prix aussi ont été multipliés par treize. En
-euros constants, la multiplication est par quinze : c'est celle-là qui est
-réelle. C'est pour éviter ce genre de piège que les cartes du haut sont en part
+<p class="discret">En euros courants, la dépense est multipliée par cent
+quatre-vingt-treize depuis ${c.premiereAnnee}. Mais les prix aussi ont été
+multipliés par treize. En euros constants, la multiplication est par quinze :
+c'est celle-là qui est réelle. C'est pour éviter ce genre de piège que les cartes du haut sont en part
 du PIB.</p>
 
 <h4>Système par système</h4>
@@ -9859,11 +9853,7 @@ ${g.tableau(
 ${g.gloses(SYSTEMES.map((systeme) => [systeme.libelle, systeme.glose]))}
 <p class="discret">Le cumul est en euros constants de ${euros} : additionner des
 euros de 1990 et de ${derniere} n'aurait aucun sens. La croissance réelle est
-celle de la dépense annuelle, déflatée, de ${premiereVentilee} à ${derniere}.
-Deux chiffres se lisent en connaissant le découpage : le régime général absorbe
-en 2020 les artisans et les commerçants, dont le régime a été adossé à la Cnav,
-et les « régimes spéciaux » de la comptabilité nationale contiennent la CNRACL,
-c'est-à-dire la fonction publique territoriale et hospitalière.</p>
+celle de la dépense annuelle, déflatée, de ${premiereVentilee} à ${derniere}.</p>
 ${nonCotise}`, "cout-depenses");
 }
 
@@ -10013,13 +10003,9 @@ ${g.gloses(POSTES.map((poste) => [poste.libelle, `${poste.glose}${{
     impots_et_taxes: ` ${phraseFsv(comptes)}`,
   }[poste.code] ?? ""}`]))}
 <p class="discret">La colonne « cotisée » dit si le poste est un prélèvement
-assis sur un revenu d'activité — la seule ressource qu'un compte notionnel
-sache porter au crédit de quelqu'un. ${g.pourcentage(partCotisee, false, 0)}
-des ressources de ${derniere} le sont, en comptant la contribution d'équilibre
-que l'État verse au régime de ses propres fonctionnaires : le modèle la porte
-déjà au compte du système 3, et c'est à ce titre qu'elle est comptée
-ici, malgré un taux fixé pour équilibrer plutôt que pour acquérir. La part
-cotisée <em>recule</em> : elle était de
+assis sur un revenu d'activité. ${g.pourcentage(partCotisee, false, 0)}
+des ressources de ${derniere} le sont, contribution d'équilibre de l'État
+comprise. La part cotisée <em>recule</em> : elle était de
 ${g.pourcentage(comptes.partContributive(premiere), false, 0)} en ${premiere}.</p>
 ${tableauCreditsMinisteres(contexte)}`, "cout-ressources");
 }
@@ -10131,7 +10117,7 @@ indemnisé, il crédite les cotisations complémentaires qu'elle verse, les
 ${milliards(comptes.transfertOrganisme("chomage", derniere), 1)} de ${derniere},
 et c'est la seule période non travaillée qu'il crédite, parce que c'est la
 seule que quelqu'un paie. Cette recette-là reste à tous. <strong>Le
-coefficient d'équilibre du dépliant suivant retire les deux autres</strong> : année
+coefficient d'équilibre retire les deux autres</strong> : année
 par année là où on les connaît, à part constante des ressources avant et
 après, jusqu'à l'horizon du COR. Sans ce retrait, la proposition afficherait
 ${g.nombre(sansRetrait(horizon, "notionnel_liberal"), 2)} en
@@ -10207,8 +10193,8 @@ ${g.pourcentage(horizon.derive - 1, false, 1)} en ${fin}.`;
   ];
   return `
 <h4>La fourchette que cet écart impose${bulleHypothesesCout()}</h4>
-<p>Le rapport que la page prend au modèle porte l'écart que le point de
-vigilance décrit, et deux lectures l'encadrent. <strong>Si l'écart est partagé
+<p>Le rapport pris au modèle porte cet écart, et deux lectures
+l'encadrent. <strong>Si l'écart est partagé
 par tous les systèmes</strong>, parce que la grille compte mal qui part, quand
 et avec quelle carrière, elle se trompe de la même façon sous toutes les
 règles : le rapport est juste, et ce sont les chiffres de cette page.
@@ -10651,8 +10637,7 @@ recule de ${pensionCor === null ? "—" : g.pourcentage(1 - pensionCor, false, 0
 chez le COR et de ${g.pourcentage(1 - pensionModele, false, 0)} dans le modèle,
 dont les treize carrières types, commencées au même âge à chaque génération,
 gardent un ${g.terme("taux de remplacement")} que le COR fait reculer
-davantage, bien que la masse de chaque génération porte les carrières
-françaises courtes de ceux qui sont arrivés en France adultes. C'est pourquoi
+davantage. C'est pourquoi
 aucune dépense du système actuel n'est prise au modèle sur cette page ; le
 rapport qu'on lui prend, lui, porte encore cet écart, et
 <a href="${g.DEPOT}/blob/main/docs/limites.md">le § 5 ter des limites</a> dit
@@ -10669,9 +10654,8 @@ ${g.tableau(
     true,
   )}
 <p class="discret">Le cumul porte sur les seules années projetées, en euros
-constants de ${euros}. Comme sur le passé, <strong>la ligne du système 4 ne
-porte que ses pensions contributives</strong> : la garantie vieillesse, payée
-par l'impôt, s'y ajoute, et la dernière ligne donne le total, net de ce que les
+constants de ${euros}. Comme sur le passé, la garantie vieillesse s'ajoute à
+la ligne du système 4, et la dernière ligne donne le total, net de ce que les
 successions rendent. <strong>Les trois systèmes notionnels comparés ici sont
 des contrefactuels</strong> : ils supposent
 recalculées les pensions de gens qui les perçoivent depuis trente ans, ce
@@ -10702,8 +10686,8 @@ système actuel, est l'indexation sur les prix : elle fait décrocher les pensio
 des salaires, génération après génération. Les comptes notionnels font la même
 chose autrement, par le diviseur d'espérance de vie, mais ils le font
 <em>explicitement</em>, et à l'acquisition plutôt qu'au versement.</p>
-<p class="discret">Comme dans les deux tableaux du dessus, la colonne de la
-proposition ne porte que ses <strong>pensions contributives</strong> : sa
+<p class="discret">Ici aussi, la colonne de la proposition ne porte que
+ses <strong>pensions contributives</strong> : sa
 garantie vieillesse y ajoute
 ${g.pourcentage(horizon.partPib(COMPOSANTE_GARANTIE), false, 1)} du PIB en
 ${avenir.derniereAnnee}, ${g.milliards(garantieFin)}, ce qui porte son total à
@@ -10714,8 +10698,8 @@ ${g.pourcentage(horizon.partPib("notionnel_liberal")
                 + horizon.partPib(COMPOSANTE_GARANTIE)
                 - horizon.partPibReprises(), false, 1)},
 ${g.milliards(totalFin - horizon.reprisesConstants())}, net des reprises
-sur succession. Ici comme dans les tableaux du dessus, les milliards sont des
-euros constants de ${euros}, ceux de la trajectoire : la part de PIB du COR,
+sur succession. Les milliards sont, comme au-dessus, des euros constants de
+${euros}, ceux de la trajectoire : la part de PIB du COR,
 multipliée par le PIB que ses hypothèses projettent.</p>
 `, "cout-scenarios");
 }
@@ -11089,10 +11073,9 @@ successions sont dans le même cas.</div>
 <p>Les tableaux du dessus comparent quatre systèmes deux à deux. Ils disent de
 combien ils s'écartent ; ils ne disent pas <em>par quoi</em>. Voici le chemin :
 on part de la dépense du système actuel, on applique les mesures de la
-proposition l'une après l'autre, et l'on arrive à la sienne. Une barre rouge
-ajoute à la dépense, une barre verte l'en retire, et la somme des marches vaut
-exactement l'écart des deux totaux : sans cela, la dernière barre ne retomberait
-pas où elle retombe.</p>
+proposition l'une après l'autre, et l'on arrive à la sienne. La somme des
+marches vaut exactement l'écart des deux totaux : sans cela, la dernière barre
+ne retomberait pas où elle retombe.</p>
 
 ${choix}
 
@@ -11875,7 +11858,6 @@ function coutDetailPostes(contexte) {
   // L'âge légal de la proposition ÉLARGIT l'assiette : qui partait avant
   // 65 ans cotise jusque-là. Le facteur est celui du bilan, lu sur la grille ;
   // la note le dit dès qu'il s'écarte de un.
-  let elargie = "";
   let suitLEmploi = "";
   if (ligne.recetteParAssiette && ligne.facteurAssiette > 1.0 + 1e-9) {
     const ageLegal = age(base.age_legal_liberal || 0.0);
@@ -11884,13 +11866,6 @@ function coutDetailPostes(contexte) {
     // si on la règle à un, et c'est alors un plafond.
     const part = base.part_reportes_en_emploi ?? PARAMETRES_DEFAUT.part_reportes_en_emploi;
     const tous = part >= 1.0;
-    const qui = tous
-      ? "qui serait parti plus tôt travaille et cotise jusque-là"
-      : `${g.pourcentage(part, false, 0)} de ceux qui seraient `
-        + "partis plus tôt travaillent et cotisent jusque-là";
-    elargie = ", sur une assiette élargie de "
-      + `${g.pourcentage(ligne.facteurAssiette - 1.0, false, 1)} en `
-      + `${annee} par l'âge légal de ${ageLegal} : ${qui}`;
     const hypothese = tous
       ? "C'est un plafond : le modèle suppose que tous ceux que le report "
         + "fait attendre sont en emploi jusqu'à cet âge, comme les carrières "
@@ -12017,7 +11992,7 @@ système ne compte pas.</p>
 Les cotisations deviennent
 ${g.pourcentage(base.taux_cotisation_liberal, false, 0)} de l'assiette des
 revenus d'activité, parts salariale et patronale additionnées, pour tous les
-statuts${elargie}. Trois postes disparaissent : la contribution d'équilibre de l'État,
+statuts. Trois postes disparaissent : la contribution d'équilibre de l'État,
 remplacée par ces ${g.pourcentage(base.taux_cotisation_liberal, false, 0)}
 appliqués aux traitements des fonctionnaires ; les subventions d'équilibre,
 dont la fusion des régimes supprime l'objet ; les impôts et taxes affectés, qui
@@ -12033,7 +12008,7 @@ donne quatre lectures sur la distribution de l'enquête. Le pilier
 capitalisé ne passe pas par les caisses et n'est ni une ressource ni une
 dépense du système : il est rappelé pour que rien ne manque.</div>
 
-<div class="note"><strong>La recette réagit sur ${elargie ? "quatre" : "trois"} points, et sur ${elargie ? "quatre" : "trois"}
+<div class="note"><strong>La recette réagit sur ${suitLEmploi ? "quatre" : "trois"} points, et sur ${suitLEmploi ? "quatre" : "trois"}
 seulement.</strong> Elle suit le droit : ce que la branche famille et le fonds
 de solidarité vieillesse versent pour des droits que les systèmes notionnels ne
 servent pas leur est retiré, un peu plus d'un point de PIB :
@@ -12131,9 +12106,8 @@ les intérêts, et une fois le tout rapporté à un PIB qui grandit, la dette
 atteint ${g.pourcentage(dette.horizon("actuel"), false, 0)} du PIB en ${fin},
 ${g.milliards(dette.horizon("actuel") * pibFin)}, et ses seuls intérêts coûtent
 cette année-là ${g.pourcentage(derniere.interet("actuel"), false, 1)}
-du PIB, ${g.milliards(derniere.interet("actuel") * pibFin)}. Elle
-s'ajouterait à celle que le pays porte déjà, que le second graphique pose
-dessous. La proposition, qui fixe le taux à 18 % et ne fixe pas les pensions,
+du PIB, ${g.milliards(derniere.interet("actuel") * pibFin)}. La proposition,
+qui fixe le taux à 18 % et ne fixe pas les pensions,
 en accumule ${g.pourcentage(dette.horizon("notionnel_liberal"), false, 0)} du
 PIB au même horizon,
 ${g.milliards(dette.horizon("notionnel_liberal") * pibFin)}. Si l'écart du
@@ -12351,13 +12325,12 @@ function coutDettePublique(dette, fin, comptes) {
       + `${g.milliards(-ecart * pibFin)} de moins`;
   }
   return `
-<p>Ce stock ne part pas de rien : le pays porte déjà une dette. Le graphique
-suivant la pose dessous. D'abord la dette des administrations publiques au
-sens de Maastricht (État, collectivités, Sécurité sociale), telle que
-l'INSEE la publie de ${premiereObservee} à ${anneeDette} ; puis, à compter de
-${depart}, cette dette tenue à son niveau de ${anneeDette} en part du PIB, à
-laquelle chaque système ajoute son seul stock, tel que le graphique du dessus
-le cumule. C'est l'échelle qui manquait : ce que le système de retraite
+<p>Ce stock ne part pas de rien : le pays porte déjà une dette, que le
+graphique suivant pose dessous — celle des administrations publiques au sens
+de Maastricht (État, collectivités, Sécurité sociale), telle que l'INSEE la
+publie de ${premiereObservee} à ${anneeDette}, puis, à compter de ${depart},
+tenue à son niveau de ${anneeDette} en part du PIB, chaque système y ajoutant
+son stock. C'est l'échelle qui manquait : ce que le système de retraite
 ajoute se lit à côté de ce que le pays doit déjà.</p>
 
 ${trace}
@@ -12452,7 +12425,7 @@ function coutDetailFrise(contexte) {
   )).join("");
   return g.depliant(
     "La frise des flux : chaque année, ce qui rentre, ce qui sort, ce qui reste", `
-<p>La courbe de la section précédente se lit ici colonne par colonne, une tous
+<p>La courbe de la dette se lit ici colonne par colonne, une tous
 les cinq ans, comme un registre. À gauche <strong>ce qui rentre</strong> dans la
 caisse, à droite <strong>ce qui sort</strong>, au milieu la caisse elle-même,
 aussi haute que le plus grand des deux : son pied est rouge quand il manque de
@@ -12468,8 +12441,7 @@ points, le 1er janvier reste un peu en deçà du 31 décembre de la veille : la
 même dette, ou la même réserve, pèse moins dans un PIB qui a grandi. Le stock
 n'est pas dessiné à l'échelle des flux, dont il vaut jusqu'à cinquante
 fois la hauteur : il est écrit. Un stock négatif est une réserve, et ses intérêts lui
-rapportent au lieu de lui coûter. La frise va de ${depart + 1} à ${fin} ;
-chaque année y est redite, ligne par ligne, dans le tableau replié dessous.</p>
+rapportent au lieu de lui coûter. La frise va de ${depart + 1} à ${fin}.</p>
 <fieldset class="onglets"><legend>Système affiché</legend>${onglets}</fieldset>
 <div class="panneaux">${panneaux}</div>
 `,
@@ -12879,10 +12851,9 @@ d'un pour cent de plus, et le minimum vieillesse ne fait rien du tout : il est
 sur une ligne à part de la pension de droit direct, que ce barème déplace.</div>
 
 <p><strong>Ce qu'elle remplace.</strong> <strong>La garantie est le seul
-plancher du système 4</strong>, et c'est tout ce qu'il y a à retenir : elle
-succède à l'ASPA, et le minimum contributif, le minimum garanti de la fonction
-publique et la pension majorée de référence disparaissent avec elle. Quatre
-planchers aujourd'hui, un seul demain. Le minimum garanti n'est gardé dans ce
+plancher du système 4</strong> : elle succède à l'ASPA, et le minimum
+contributif, le minimum garanti de la fonction publique et la pension majorée
+de référence disparaissent avec elle. Le minimum garanti n'est gardé dans ce
 tableau que pour montrer le système actuel : un fonctionnaire le perçoit, la
 proposition le supprime comme les trois autres. Ce que l'impôt paierait
 <em>en plus</em> est la garantie moins ces quatre-là.</p>
@@ -12909,18 +12880,15 @@ page.</strong> L'ASPA est réclamée par <strong>une personne seule éligible
 sur deux</strong> : fin 2016, 321 200 personnes vivaient sous son plafond sans
 la demander, pour 790 millions d'euros non versés, soit 59 % des sommes servies
 (DREES, <em>Les dossiers de la DREES</em> n° 97, mai 2022). Le tableau applique
-le même recours à la garantie, un ayant droit sur deux : ce qu'elle coûte en
-plus est compté ainsi, et le recours complet le doublerait. Dans le même sens,
+ce recours à la garantie : ce qu'elle coûte en plus est compté ainsi, et le
+recours complet le doublerait. Dans le même sens,
 la garantie est une <strong>avance reprise sur la succession</strong>, dès le
 premier euro et avec intérêts, là où l'ASPA n'est récupérée qu'au-delà d'un
 seuil d'actif net : le Fonds de solidarité vieillesse en a retiré 108,7
 millions d'euros en 2024 (143,9 en 2023, avant le relèvement du seuil), deux
 pour cent de ce qu'elle verse. La garantie touche une population bien plus
-large, et souvent propriétaire : la trajectoire suit ces avances et ce que
-les successions en rendent, au taux de couverture du réglage, qui est une
-hypothèse et non une donnée. La ligne « s'ajoute au système 4 » reste
-<strong>brute, avant reprise</strong> ; les lignes « dont reprises » et
-« garantie nette » disent le reste.</div>
+large, et souvent propriétaire. La ligne « s'ajoute au système 4 » reste
+<strong>brute, avant reprise</strong>.</div>
 
 <div class="note"><strong>La garantie n'est pas l'ASPA à un autre
 montant.</strong> L'ASPA regarde <em>toutes les ressources du foyer</em> et ne
@@ -13226,7 +13194,7 @@ convention, de ${solde.premiereAnnee} à ${solde.derniereAnnee}. Champ : régime
 légalement obligatoires, FSV compris, RAFP exclu — ni dépendance, ni
 capitalisation. ${g.pourcentage(comptes.depense(derniere), false, 2)} du PIB
 en ${derniere}, ${enMilliards(comptes, comptes.depense(derniere), derniere)}.
-C'est la source des deux premières cartes et de celle sur la réforme.</p>
+C'est la source des trois cartes.</p>
 <p class="discret">On lui prend les DEUX colonnes, jamais une seule : un solde
 ne se fabrique pas en soustrayant deux périmètres. On aurait voulu les
 ressources du même producteur que la dépense ci-dessous ; elles n'existent
@@ -13331,7 +13299,8 @@ ${g.milliards(depenses.depense(derniere))}, et la <strong>répartition
 obligatoire</strong> seule
 ${g.pourcentage(depenses.repartition(derniere) / depenses.pib.valeur(derniere), false, 2)},
 ${g.milliards(depenses.repartition(derniere))}.
-C'est la source de la carte « est-ce que ça a toujours coûté autant ».</p>
+C'est la source de la première carte jusqu'en ${solde.premiereAnnee - 1}, et
+du détail des dépenses.</p>
 <p class="discret">Moins de trois dixièmes de point, moins de
 ${enMilliards(comptes, 0.003, derniere)}, séparent cette répartition
 obligatoire du périmètre du COR : c'est le meilleur recoupement dont ces deux
