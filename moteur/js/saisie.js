@@ -541,6 +541,21 @@ export const ANNEE_CARRIERE_MAXIMALE = NAISSANCE_MAXIMALE + AGE_LIQUIDATION_MAXI
 export const RELEVE_MAXIMUM = AGE_LIQUIDATION_MAXIMAL - AGE_DEBUT_MINIMAL + 2;
 
 /**
+ * Les variations des ressources du conjoint qu'une liste de la saisie porte au
+ * plus : cinq ans de changements, un chaque mois. Elles sont comptées avant
+ * d'être lues, comme les lignes d'un relevé : chacune révise la réversion, et
+ * une adresse forgée qui en porterait cent mille ne doit coûter que son
+ * découpage.
+ */
+export const VARIATIONS_MAXIMUM = 60;
+
+/** Ce que fait varier chaque liste de variations, dans ses refus. */
+const VARIATIONS_DE = Object.freeze({
+  activite_conjoint_variations: "des revenus d'activité du conjoint",
+  ressources_nouveau_conjoint_variations: "des ressources du nouveau conjoint",
+});
+
+/**
  * Ce qu'une ligne de carrière peut décrire à la place d'un métier.
  *
  * Une carrière n'est pas faite que d'emplois, et le formulaire ne demandait que
@@ -692,12 +707,20 @@ export const DEFAUTS = Object.freeze({
   //: Le mois où cesse l'activité du conjoint, s'il le dit : sa réversion se
   //: révise le mois qui suit.
   activite_conjoint_fin: "",
+  //: Ses revenus d'activité qui varient ensuite, s'il le dit : « date:montant »
+  //: chacun, ses revenus annuels à partir de cette date — un salaire qui
+  //: change, une activité reprise, 0 quand elle cesse —, séparés de virgules :
+  //: sa réversion se révise le mois qui suit chacun. Voir `variationsAnalysees`.
+  activite_conjoint_variations: "",
   nouvelle_union: "",
   ressources_nouveau_conjoint: null,
   //: Le mois où cette nouvelle union commence, s'il le dit ; sans lui, au décès.
   nouvelle_union_depuis: "",
   //: Celui où elle se défait, s'il le dit : il revit seul.
   nouvelle_union_fin: "",
+  //: Les ressources de son nouveau conjoint qui varient pendant leur union, de
+  //: même.
+  ressources_nouveau_conjoint_variations: "",
   conjoint_invalidite: "",
   //: Le mois où la propre retraite du conjoint prend effet (AAAA ou AAAA-MM),
   //: s'il le dit : la limite de cumul de sa réversion d'avant juillet 2004
@@ -944,12 +967,16 @@ export class Saisie {
       activite_conjoint: [undefined, null, ""].includes(parametres.activite_conjoint)
         ? null : reel(parametres, "activite_conjoint", 0.0),
       activite_conjoint_fin: String(parametres.activite_conjoint_fin ?? "").trim(),
+      activite_conjoint_variations: String(parametres.activite_conjoint_variations ?? "")
+        .trim(),
       nouvelle_union: (parametres.nouvelle_union || "").trim(),
       ressources_nouveau_conjoint: [undefined, null, ""].includes(
         parametres.ressources_nouveau_conjoint)
         ? null : reel(parametres, "ressources_nouveau_conjoint", 0.0),
       nouvelle_union_depuis: String(parametres.nouvelle_union_depuis ?? "").trim(),
       nouvelle_union_fin: String(parametres.nouvelle_union_fin ?? "").trim(),
+      ressources_nouveau_conjoint_variations: String(
+        parametres.ressources_nouveau_conjoint_variations ?? "").trim(),
       ex_conjoints: exConjointsSaisis(parametres, tolerante),
       revenu_fiscal: [undefined, null, ""].includes(parametres.revenu_fiscal)
         ? null : reel(parametres, "revenu_fiscal", 0.0),
@@ -2102,10 +2129,13 @@ export class Saisie {
       ressources: this.ressources_conjoint,
       revenus_d_activite: this.activite_conjoint,
       fin_d_activite: this.activite_conjoint_fin || null,
+      variations_d_activite: this.variationsAnalysees("activite_conjoint_variations"),
       nouvelle_union: this.nouvelle_union || null,
       ressources_du_nouveau_conjoint: this.ressources_nouveau_conjoint,
       nouvelle_union_depuis: this.nouvelle_union_depuis || null,
       nouvelle_union_fin: this.nouvelle_union_fin || null,
+      variations_du_nouveau_conjoint: this.variationsAnalysees(
+        "ressources_nouveau_conjoint_variations"),
       invalidite: this.conjoint_invalidite || null,
       retraite: this.conjoint_retraite || null,
       ex_conjoints: this.ex_conjoints.map((ex) => ({
@@ -2113,6 +2143,54 @@ export class Saisie {
         remariage: ex.remariage || null,
       })),
     };
+  }
+
+  /**
+   * « 2032-06:9500, 2035-01:12000 » → `[[date, montant], …]`, dans l'ordre des
+   * dates : les variations que dit le champ `nom` — les revenus d'activité du
+   * conjoint (`activite_conjoint_variations`), ou les ressources de son nouveau
+   * conjoint (`ressources_nouveau_conjoint_variations`) —, chacune une date, en
+   * AAAA ou AAAA-MM, et le montant annuel, positif ou nul, à partir d'elle ;
+   * au plus `VARIATIONS_MAXIMUM`, comptées avant d'être lues.
+   */
+  variationsAnalysees(nom) {
+    const quoi = VARIATIONS_DE[nom];
+    const morceaux = this[nom].replace(/\n/g, ",").split(",")
+      .map((brut) => brut.trim())
+      .filter((brut) => brut.length > 0);
+    if (morceaux.length > VARIATIONS_MAXIMUM) {
+      throw new ErreurSaisie(
+        `Variations ${quoi} : ${morceaux.length}, le modèle en accepte `
+        + `${VARIATIONS_MAXIMUM} au plus.`,
+      );
+    }
+    const lues = [];
+    for (const morceau of morceaux) {
+      const parties = morceau.split(":").map((partie) => partie.trim());
+      if (parties.length !== 2 || !parties[0]) {
+        throw new ErreurSaisie(
+          `Variation ${quoi} mal formée : « ${morceau} ». Attendu `
+          + "« date:montant annuel », par exemple 2031-04:18000.",
+        );
+      }
+      let jour;
+      try {
+        [jour] = dateDeclaree(parties[0], `la variation ${quoi}`);
+      } catch {
+        throw new ErreurSaisie(
+          `La variation ${quoi} « ${parties[0]} » : attendu en AAAA ou AAAA-MM, `
+          + "par exemple 1962 ou 1962-03.",
+        );
+      }
+      const montant = versFlottant(parties[1]);
+      if (montant === null || montant < 0) {
+        throw new ErreurSaisie(
+          `Variation ${quoi} « ${morceau} » : un montant annuel positif ou nul.`);
+      }
+      lues.push([jour, parties[0], montant]);
+    }
+    return lues.sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0))
+      .map(([, date, montant]) => [date, montant]);
   }
 
   /** Le décès de l'assuré que la saisie déclare, ou `null`. */
@@ -2647,7 +2725,10 @@ export class Saisie {
    * carrière. Ses ressources, positives : ses revenus d'activité en sont une
    * part, et celles d'un nouveau conjoint supposent l'union où il vit, qui suit
    * le décès ; la fin de son activité suppose ses revenus, et celle de son union
-   * l'union, chacune après ce qu'elle finit. Les précédents conjoints, chacun
+   * l'union, chacune après ce qu'elle finit ; les variations de ses revenus
+   * d'activité suivent le décès, celles des ressources de son nouveau conjoint
+   * tombent dans l'union, et deux ne tombent pas le même jour
+   * (`variationsAnalysees`). Les précédents conjoints, chacun
    * marié après les deux naissances, divorcé avant le mariage suivant — celui
    * du conjoint, qu'il faut alors dater —, remarié après son divorce
    * (`verifierExConjoints`).
@@ -2659,10 +2740,12 @@ export class Saisie {
         ["ressources_conjoint", this.ressources_conjoint],
         ["activite_conjoint", this.activite_conjoint],
         ["activite_conjoint_fin", this.activite_conjoint_fin],
+        ["activite_conjoint_variations", this.activite_conjoint_variations],
         ["nouvelle_union", this.nouvelle_union],
         ["ressources_nouveau_conjoint", this.ressources_nouveau_conjoint],
         ["nouvelle_union_depuis", this.nouvelle_union_depuis],
         ["nouvelle_union_fin", this.nouvelle_union_fin],
+        ["ressources_nouveau_conjoint_variations", this.ressources_nouveau_conjoint_variations],
         ["conjoint_invalidite", this.conjoint_invalidite],
         ["conjoint_retraite", this.conjoint_retraite], ["deces", this.deces],
         ["ex1", this.ex_conjoints.length > 0 ? true : null],
@@ -2732,7 +2815,8 @@ export class Saisie {
         );
       }
     }
-    for (const nom of ["nouvelle_union_depuis", "nouvelle_union_fin"]) {
+    for (const nom of ["nouvelle_union_depuis", "nouvelle_union_fin",
+      "ressources_nouveau_conjoint_variations"]) {
       if (this[nom] && !this.nouvelle_union) {
         throw new ErreurSaisie(
           `« ${nom} » ne sert qu'au ménage du conjoint : dites aussi l'union `
@@ -2753,12 +2837,48 @@ export class Saisie {
     if ("activite_conjoint_fin" in dates && dates.activite_conjoint_fin <= debut) {
       throw new ErreurSaisie(`La fin de l'activité du conjoint précède ${quoi} : elle le suit.`);
     }
+    // Chaque variation suit ce qu'elle fait varier — ses revenus d'activité,
+    // déclarés au décès ; les ressources de son nouveau conjoint, à leur union,
+    // jusqu'à sa fin —, et deux ne tombent pas le même jour : voir `_variations`
+    // de la chronologie, en Python.
+    const changements = new Map(this.activite_conjoint !== null
+      && "activite_conjoint_fin" in dates
+      ? [[dates.activite_conjoint_fin, this.activite_conjoint_fin]] : []);
+    for (const [date] of this.variationsAnalysees("activite_conjoint_variations")) {
+      const [jour] = dateDeclaree(date, "la variation");
+      if (jour <= debut) {
+        throw new ErreurSaisie(`La variation des revenus d'activité du conjoint du ${date} `
+          + `précède ${quoi} : elle le suit.`);
+      }
+      if (changements.has(jour)) {
+        throw new ErreurSaisie("Deux changements des revenus d'activité du conjoint tombent "
+          + `le même jour : ${changements.get(jour)} et ${date}.`);
+      }
+      changements.set(jour, date);
+    }
     if ("nouvelle_union_depuis" in dates) {
       [debut, quoi] = [dates.nouvelle_union_depuis, "son début"];
     }
     if ("nouvelle_union_fin" in dates && dates.nouvelle_union_fin <= debut) {
       throw new ErreurSaisie(
         `La fin de la nouvelle union du conjoint précède ${quoi} : elle le suit.`);
+    }
+    const apports = new Map();
+    for (const [date] of this.variationsAnalysees("ressources_nouveau_conjoint_variations")) {
+      const [jour] = dateDeclaree(date, "la variation");
+      if (jour <= debut) {
+        throw new ErreurSaisie(`La variation des ressources du nouveau conjoint du ${date} `
+          + "précède le début de leur union : elle le suit.");
+      }
+      if ("nouvelle_union_fin" in dates && jour >= dates.nouvelle_union_fin) {
+        throw new ErreurSaisie(`La variation des ressources du nouveau conjoint du ${date} `
+          + "ne précède pas la fin de leur union : elle la précède.");
+      }
+      if (apports.has(jour)) {
+        throw new ErreurSaisie("Deux changements des ressources du nouveau conjoint tombent "
+          + `le même jour : ${apports.get(jour)} et ${date}.`);
+      }
+      apports.set(jour, date);
     }
     if ("mariage" in dates) {
       const aine = dates.conjoint > this.naissanceIso ? dates.conjoint : this.naissanceIso;
@@ -2929,11 +3049,13 @@ export class Saisie {
         ["activite_conjoint", this.activite_conjoint === null
           ? "" : nombreBrut(this.activite_conjoint)],
         ["activite_conjoint_fin", this.activite_conjoint_fin],
+        ["activite_conjoint_variations", this.activite_conjoint_variations],
         ["nouvelle_union", this.nouvelle_union],
         ["ressources_nouveau_conjoint", this.ressources_nouveau_conjoint === null
           ? "" : nombreBrut(this.ressources_nouveau_conjoint)],
         ["nouvelle_union_depuis", this.nouvelle_union_depuis],
         ["nouvelle_union_fin", this.nouvelle_union_fin],
+        ["ressources_nouveau_conjoint_variations", this.ressources_nouveau_conjoint_variations],
         ["conjoint_invalidite", this.conjoint_invalidite],
         ["conjoint_retraite", this.conjoint_retraite],
         ["deces", this.deces],

@@ -1961,6 +1961,28 @@ exemples:
       la date d'effet de la révision est le 1er mars 2008.
     carriere: {naissance: "1940-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2000-01", age_debut: 20, conjoint: "1950-01", ressources_conjoint: 12000, activite_conjoint: 12000, activite_conjoint_fin: "2008-02-15", deces: "2005-03"}
     attendu: {dates_de_revision_de_la_reversion: {regime_general: "2008-03-01"}}
+  # « La variation des revenus professionnels du conjoint survivant (ou du
+  # ménage) » révise la réversion « à compter du premier jour du mois suivant
+  # celui au cours duquel il est constaté que les ressources ont varié »
+  # (circulaire n° 2006-6, § 12, qui applique R. 815-40) ; depuis le 30 juin
+  # 2010, du mois qui suit la variation elle-même (circulaire n° 2010/58,
+  # § 21). L'exemple ne dit ni le défunt, ni la survivante au-delà de ses
+  # cinquante-deux ans au 1er juillet 2005, ni ses revenus : le témoin prête un
+  # salarié mort en juin 2005, sa veuve née en janvier 1953, sans ressources au
+  # décès, qui perçoit 12 000 € par an à partir d'octobre 2006 ; le modèle tient
+  # la variation pour constatée le mois même. Seule la première révision est
+  # celle de l'exemple : la suite, une retraite d'un régime spécial, puis celle
+  # du régime général et des professions libérales, n'a pas d'équivalent dans
+  # le témoin, dont la veuve voit ses revenus abattus à ses cinquante-cinq ans.
+  - id: cnav_2006_6_revision_aux_revenus_professionnels
+    source: {editeur: "Cnav", reference: "circulaire n° 2006-6 du 13 janvier 2006, § 12, L'analyse comparative des situations visées par les articles R.815-40 et R.353-1-1, exemple", verifie_le: "2026-10-24"}
+    enonce: >-
+      Pension de réversion à compter du 1er juillet 2005, la survivante ayant
+      52 ans. L'assurée informe la caisse en octobre 2006 qu'elle perçoit des
+      revenus professionnels ; date du constat, octobre 2006 : la pension de
+      réversion est révisée au 1er novembre 2006.
+    carriere: {naissance: "1940-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2000-01", age_debut: 20, conjoint: "1953-01", activite_conjoint_variations: {"2006-10": 12000}, deces: "2005-06"}
+    attendu: {dates_de_premiere_revision_de_la_reversion: {regime_general: "2006-11-01"}}
   # Circulaire n° 2005/17, § 146 : quand, « au cours de la période de
   # référence, la situation familiale du requérant s'est trouvée modifiée
   # (décès du conjoint, remariage, divorce, pacs ou concubinage), les

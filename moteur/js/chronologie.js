@@ -253,10 +253,12 @@ export function dateDeclaree(valeur, quoi) {
  * et son `sexe`, la date du `mariage` — que {@link completer} présume sinon —,
  * ses `ressources` annuelles, et ce qui en vient de son activité
  * (`revenus_d_activite`), jusqu'au jour où elle cesse s'il le dit
- * (`fin_d_activite`), la `nouvelle_union` où il vit après le décès et ce
+ * (`fin_d_activite`), et ceux qui varient ensuite (`variations_d_activite`),
+ * la `nouvelle_union` où il vit après le décès et ce
  * que son nouveau conjoint y apporte (`ressources_du_nouveau_conjoint`),
  * depuis le mois qu'il dit (`nouvelle_union_depuis`) ou le décès, jusqu'à
- * celui où elle se défait s'il le dit (`nouvelle_union_fin`), et son
+ * celui où elle se défait s'il le dit (`nouvelle_union_fin`), et qui varie
+ * pendant leur union (`variations_du_nouveau_conjoint`), et son
  * `invalidite`, une décision médicale datée, s'il les dit, et les précédents
  * conjoints de l'assuré (`ex_conjoints`) ; `deces` date le décès de l'assuré,
  * qui clôt le mariage ; `demandesDePension` dit, régime par régime,
@@ -410,6 +412,24 @@ function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnf
         { periode: "annuelle", nature: "revenus_d_activite" }, null,
         { annuel: Number(conjoint.revenus_d_activite), monnaie: "EUR" }));
     }
+    if (conjoint.variations_d_activite && conjoint.variations_d_activite.length) {
+      // Ses revenus d'activité qui varient ensuite, s'il le dit : voir le Python.
+      const deja = conjoint.revenus_d_activite === null
+        || conjoint.revenus_d_activite === undefined
+        || conjoint.fin_d_activite === null || conjoint.fin_d_activite === undefined
+        ? [] : [dateDeclaree(conjoint.fin_d_activite, "la fin de son activité")[0]];
+      faitsNaissance.push(...variations(conjoint.variations_d_activite,
+        `variation_d_activite_${CONJOINT}`, "revenus_d_activite",
+        "une variation de ses revenus d'activité", jourDeces ?? epoux.debut,
+        `avant ${jourDeces ? "le décès" : "sa naissance"}`, null, deja,
+        "deux changements de ses revenus d'activité"));
+    }
+    if ((conjoint.nouvelle_union === null || conjoint.nouvelle_union === undefined)
+        && conjoint.variations_du_nouveau_conjoint
+        && conjoint.variations_du_nouveau_conjoint.length) {
+      throw new Error("une variation des ressources du nouveau conjoint suppose sa "
+        + "nouvelle union");
+    }
     if (conjoint.nouvelle_union !== null && conjoint.nouvelle_union !== undefined) {
       // Le ménage où il vit après le décès : la forme de sa nouvelle union, et ce
       // que son nouveau conjoint y apporte, s'il le dit (L. 353-1).
@@ -442,6 +462,13 @@ function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnf
         { periode: "annuelle", nature: "menage", forme }, null,
         apport === null || apport === undefined
           ? null : { annuel: Number(apport), monnaie: "EUR" }));
+      // Ce que son nouveau conjoint y apporte, qui varie pendant leur union, s'il
+      // le dit : voir le Python.
+      faitsNaissance.push(...variations(conjoint.variations_du_nouveau_conjoint ?? [],
+        `variation_du_menage_${CONJOINT}`, "menage",
+        "une variation des ressources du nouveau conjoint", debut,
+        "avant le début de leur union", fin, [],
+        "deux variations des ressources du nouveau conjoint"));
     }
     if (conjoint.invalidite !== null && conjoint.invalidite !== undefined) {
       const [jourInvalidite, precision] = dateDeclaree(conjoint.invalidite,
@@ -469,6 +496,39 @@ function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnf
     });
   }
   return [faitsNaissance, depart, liens];
+}
+
+/**
+ * Les variations d'une ressource du conjoint, `[date, montant annuel]` chacune :
+ * des événements de ses ressources, datés, sans fin, dans l'ordre de leurs
+ * jours, marqués `variation`. Voir `_variations` du Python.
+ */
+function variations(declarees, prefixe, nature, quoi, debut, avant, fin, deja, double) {
+  const lues = [];
+  for (const [valeur, montant] of declarees) {
+    const [jourVariation] = dateDeclaree(valeur, quoi);
+    if (jourVariation <= debut) {
+      throw new Error(`${quoi} le ${jourVariation}, ${avant}`);
+    }
+    if (fin !== null && jourVariation >= fin) {
+      throw new Error(`${quoi} le ${jourVariation}, après la fin de leur union`);
+    }
+    if (!(Number(montant) >= 0)) {
+      throw new Error(`${quoi} : un montant positif ou nul`);
+    }
+    lues.push([jourVariation, Number(montant)]);
+  }
+  const vus = new Set(deja);
+  for (const [jourVariation] of lues) {
+    if (vus.has(jourVariation)) {
+      throw new Error(`${double} le ${jourVariation}`);
+    }
+    vus.add(jourVariation);
+  }
+  return lues.sort((a, b) => (a[0] < b[0] ? -1 : 1)).map(([jourVariation, montant], i) =>
+    fait(`${prefixe}_${i + 1}`, CONJOINT, "ressources", jourVariation, null,
+      { periode: "annuelle", nature, variation: true }, null,
+      { annuel: montant, monnaie: "EUR" }));
 }
 
 /**
@@ -1153,11 +1213,23 @@ export function deces(chronologie, personne) {
 
 /**
  * Le fait de ressources d'une personne qui a cette nature : toutes ses
- * ressources sans nature dite, une part d'elles, ou celles de son ménage.
+ * ressources sans nature dite, une part d'elles, ou celles de son ménage — tels
+ * qu'elle les déclare, sans leurs variations.
  */
 function ressourcesDeNature(chronologie, personne, nature) {
   return faitsDe(chronologie, personne, "ressources").find(
-    (f) => (f.attributs.nature ?? null) === nature) ?? null;
+    (f) => (f.attributs.nature ?? null) === nature && !f.attributs.variation) ?? null;
+}
+
+/**
+ * Les variations des ressources d'une personne qui ont cette nature : `[jour,
+ * montant annuel]` à partir de chaque jour, dans l'ordre.
+ */
+function variationsDeNature(chronologie, personne, nature) {
+  return faitsDe(chronologie, personne, "ressources")
+    .filter((f) => (f.attributs.nature ?? null) === nature && f.attributs.variation)
+    .map((f) => [f.debut, Number(f.montant.annuel)])
+    .sort((a, b) => (a[0] < b[0] ? -1 : 1));
 }
 
 /** Les ressources annuelles qu'une personne déclare, ou `null`. */
@@ -1182,6 +1254,15 @@ export function revenusDActivite(chronologie, personne) {
 export function finDActivite(chronologie, personne) {
   const trouve = ressourcesDeNature(chronologie, personne, "revenus_d_activite");
   return trouve === null ? null : (trouve.fin ?? null);
+}
+
+/**
+ * Ses revenus annuels d'activité qui varient ensuite, si une personne le dit :
+ * `[jour, montant]` à partir de chaque jour, dans l'ordre. Voir
+ * `variations_d_activite` du Python.
+ */
+export function variationsDActivite(chronologie, personne) {
+  return variationsDeNature(chronologie, personne, "revenus_d_activite");
 }
 
 /**
@@ -1213,6 +1294,15 @@ export function debutDuMenage(chronologie, personne) {
 export function finDuMenage(chronologie, personne) {
   const trouve = ressourcesDeNature(chronologie, personne, "menage");
   return trouve === null ? null : (trouve.fin ?? null);
+}
+
+/**
+ * Les ressources annuelles que l'autre apporte au ménage où vit une personne,
+ * quand elles varient pendant leur union : `[jour, montant]` à partir de chaque
+ * jour, dans l'ordre. Voir `variations_du_menage` du Python.
+ */
+export function variationsDuMenage(chronologie, personne) {
+  return variationsDeNature(chronologie, personne, "menage");
 }
 
 /** Le fait de naissance d'une personne, s'il est connu. */

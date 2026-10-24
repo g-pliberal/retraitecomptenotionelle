@@ -1645,12 +1645,19 @@ def _carriere_exemple(simulateur: Simulateur, exemple: dict, decalage_mois: int 
             "revenus_d_activite": c.get("activite_conjoint"),
             "fin_d_activite": (None if c.get("activite_conjoint_fin") is None
                                else str(c["activite_conjoint_fin"])),
+            # Les variations, comme les interruptions, en table : date → montant.
+            "variations_d_activite": [
+                (str(jour), float(montant))
+                for jour, montant in (c.get("activite_conjoint_variations") or {}).items()],
             "nouvelle_union": c.get("nouvelle_union"),
             "ressources_du_nouveau_conjoint": c.get("ressources_nouveau_conjoint"),
             "nouvelle_union_depuis": (None if c.get("nouvelle_union_depuis") is None
                                       else str(c["nouvelle_union_depuis"])),
             "nouvelle_union_fin": (None if c.get("nouvelle_union_fin") is None
                                    else str(c["nouvelle_union_fin"])),
+            "variations_du_nouveau_conjoint": [
+                (str(jour), float(montant)) for jour, montant
+                in (c.get("ressources_nouveau_conjoint_variations") or {}).items()],
             "retraite": (None if c.get("conjoint_retraite") is None
                          else str(c["conjoint_retraite"])),
         }
@@ -1947,14 +1954,19 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
             return "aucune réversion liquidée"
         return {r.regime: r.date_effet for r in echeancier.reversion.regimes}
     if cle in ("dates_de_revision_de_la_reversion",
+               "dates_de_premiere_revision_de_la_reversion",
                "dates_de_derniere_revision_de_la_reversion"):
         # La même réversion, revue quand la retraite du survivant suit sa date
-        # d'effet : le jour de cette révision, et celui d'où rien ne la revoit
-        # plus (R. 353-1-1).
+        # d'effet, ou que ses ressources varient : le jour de sa dernière
+        # révision, ou de la première, et celui d'où rien ne la revoit plus
+        # (R. 353-1-1).
         echeancier = Echeancier(simulateur)
         echeancier.parcourir(carriere)
         if echeancier.reversion is None:
             return "aucune réversion liquidée"
+        if cle == "dates_de_premiere_revision_de_la_reversion":
+            return {r.regime: r.revisions[0][0] if r.revisions else None
+                    for r in echeancier.reversion.regimes}
         champ = ("revision_effet" if cle == "dates_de_revision_de_la_reversion"
                  else "derniere_revision")
         return {r.regime: getattr(r, champ) for r in echeancier.reversion.regimes}
@@ -2195,6 +2207,7 @@ def _concorde(cle: str, mesure, valeur) -> bool:
     if cle == "departs":
         return mesure == [str(depart) for depart in valeur]
     if cle in ("dates_d_effet_de_la_reversion", "dates_de_revision_de_la_reversion",
+               "dates_de_premiere_revision_de_la_reversion",
                "dates_de_derniere_revision_de_la_reversion"):
         # Un régime nommé que la réversion ne liquide pas n'a pas de date.
         return not isinstance(mesure, str) and all(

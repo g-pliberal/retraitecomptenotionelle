@@ -745,11 +745,14 @@ function revisionsDeLaReversion(moteur, fiche, parametres, conjoint, deces, anne
   } else {
     return [];
   }
-  // Le ménage qu'il forme ou qui se défait, la fin de son activité.
+  // Le ménage qu'il forme ou qui se défait, et ce qu'y apporte son nouveau
+  // conjoint, qui varie ; la fin de son activité, et ses revenus qui varient.
   const changements = conjoint.revenus_d_activite ? [conjoint.fin_d_activite ?? null] : [];
+  changements.push(...(conjoint.variations_d_activite ?? []).map(([quand]) => quand));
   if ((conjoint.nouvelle_union ?? null) !== null) {
     changements.push(conjoint.nouvelle_union_depuis ?? null,
       conjoint.nouvelle_union_fin ?? null);
+    changements.push(...(conjoint.variations_du_nouveau_conjoint ?? []).map(([quand]) => quand));
   }
   for (const change of changements) {
     if (change !== null && change > depuis && !jours.has(moisSuivant(change))) {
@@ -758,11 +761,10 @@ function revisionsDeLaReversion(moteur, fiche, parametres, conjoint, deces, anne
   }
   const aDepuis = moteur.reversions.version(fiche, depuis, deces);
   const reglesDepuis = aDepuis === null ? {} : aDepuis.parametres;
-  if (conjoint.revenus_d_activite && reglesDepuis.abattement_activite) {
+  if (reglesDepuis.abattement_activite) {
     const abattement = chrono.plusAns(conjoint.naissance,
       Math.trunc(Number(reglesDepuis.abattement_activite_age)));
-    const fin = conjoint.fin_d_activite ?? null;
-    if (abattement > depuis && (fin === null || fin > abattement)
+    if (abattement > depuis && activiteAu(conjoint, abattement, true)
         && !jours.has(moisSuivant(abattement))) {
       jours.set(moisSuivant(abattement), false);
     }
@@ -819,8 +821,9 @@ function generationDe(naissance) {
  * révisable (R. 353-1-1) : trois mois après la retraite que le survivant date,
  * ou sa date d'effet quand il en jouit depuis plus longtemps ; sa date d'effet
  * quand il a, sans la dater, des `retraites` ; `null` quand il travaille sans
- * les avoir liquidées ; sinon, le premier jour du mois qui suit l'âge légal de
- * sa génération. Voir `_derniere_revision` du Python.
+ * les avoir liquidées, ou qu'il a commencé une activité avant ; sinon, le
+ * premier jour du mois qui suit l'âge légal de sa génération. Voir
+ * `_derniere_revision` du Python.
  */
 function derniereRevision(moteur, conjoint, dateEffet, retraites) {
   const retraite = conjoint.retraite ?? null;
@@ -839,7 +842,13 @@ function derniereRevision(moteur, conjoint, dateEffet, retraites) {
     return null;
   }
   const legal = moisSuivant(atteintA(conjoint.naissance, age[0]));
-  return legal > dateEffet ? legal : dateEffet;
+  const fige = legal > dateEffet ? legal : dateEffet;
+  if ((conjoint.variations_d_activite ?? []).some(
+    ([quand, montant]) => montant > 0 && quand < fige)) {
+    // Une activité commencée avant : voir le Python.
+    return null;
+  }
+  return fige;
 }
 
 /**
@@ -1162,30 +1171,68 @@ function partDuMinimum(parametres, regime, durees, groupes) {
 }
 
 /**
- * Le changement du jour `jour` — le ménage formé ou défait, l'activité cessée —
- * compte-t-il le jour `date` ? Venu avant, oui ; ce jour même, seulement quand
- * `leJourMeme`. Voir `_venu` du Python.
+ * Le changement du jour `jour` — le ménage formé ou défait, l'activité cessée,
+ * des ressources qui varient — compte-t-il le jour `date` ? Venu avant, oui ;
+ * ce jour même, seulement quand `leJourMeme`. Voir `_venu` du Python.
  */
 function venu(jour, date, leJourMeme) {
   return jour !== null && jour !== undefined && (jour < date || (leJourMeme && jour === date));
 }
 
 /**
+ * Ce que son activité rapporte par an au survivant le jour `date` : les revenus
+ * qu'il déclare au décès, rien une fois qu'elle a cessé, ou ceux de la dernière
+ * de ses variations venue. Voir `_activite_au` du Python.
+ */
+function activiteAu(conjoint, date, leJourMeme) {
+  let activite = Number(conjoint.revenus_d_activite ?? 0.0);
+  const changements = [...(conjoint.variations_d_activite ?? [])];
+  if ((conjoint.fin_d_activite ?? null) !== null) {
+    changements.push([conjoint.fin_d_activite, 0.0]);
+  }
+  changements.sort((a, b) => (a[0] < b[0] ? -1 : 1));
+  for (const [quand, montant] of changements) {
+    if (venu(quand, date, leJourMeme)) {
+      activite = Number(montant);
+    }
+  }
+  return activite;
+}
+
+/**
+ * Ce que son nouveau conjoint apporte par an au ménage du survivant le jour
+ * `date` : ce qu'il déclare à leur union, ou la dernière de ses variations
+ * venue. Voir `_apport_au` du Python.
+ */
+function apportAu(conjoint, date, leJourMeme) {
+  let apport = Number(conjoint.ressources_du_nouveau_conjoint ?? 0.0);
+  for (const [quand, montant] of conjoint.variations_du_nouveau_conjoint ?? []) {
+    if (venu(quand, date, leJourMeme)) {
+      apport = Number(montant);
+    }
+  }
+  return apport;
+}
+
+/**
  * Les ressources du survivant que retient le plafond de la version, et le
  * facteur qui multiplie ce plafond : `[ressources, facteur]`. Ses revenus
- * d'activité abattus de 30 % quand il a cinquante-cinq ans à la date d'effet,
- * et plus comptés une fois son activité cessée ; celles de son nouveau
- * conjoint en plus, sous le plafond du ménage, quand il vit en couple et que
- * la version dit ce facteur, le ménage formé et pas encore défait. Chaque
- * changement compte venu avant la date d'effet, ou ce jour même quand
- * `leJourMeme`. Voir `_ressources_du_plafond` du Python.
+ * d'activité de ce jour — ceux qu'il déclare au décès, rien une fois son
+ * activité cessée, ceux qu'une variation leur substitue —, abattus de 30 %
+ * quand il a cinquante-cinq ans à la date d'effet ; celles de son nouveau
+ * conjoint en plus, de ce jour, sous le plafond du ménage, quand il vit en
+ * couple et que la version dit ce facteur, le ménage formé et pas encore
+ * défait. Chaque changement compte venu avant la date d'effet, ou ce jour même
+ * quand `leJourMeme`. Voir `_ressources_du_plafond` du Python.
  */
 function ressourcesDuPlafond(parametres, conjoint, ressources, dateEffet, leJourMeme = true) {
   let retenues = ressources;
-  let activite = Number(conjoint.revenus_d_activite ?? 0.0);
-  if (activite && venu(conjoint.fin_d_activite, dateEffet, leJourMeme)) {
-    retenues -= Math.min(retenues, activite);
-    activite = 0.0;
+  const declares = Number(conjoint.revenus_d_activite ?? 0.0);
+  const activite = activiteAu(conjoint, dateEffet, leJourMeme);
+  if (activite !== declares) {
+    // Ses revenus d'activité de ce jour remplacent, dans ses ressources, ceux
+    // qu'il déclare au décès.
+    retenues = retenues - Math.min(retenues, declares) + activite;
   }
   const taux = parametres.abattement_activite;
   if (taux && activite
@@ -1201,7 +1248,7 @@ function ressourcesDuPlafond(parametres, conjoint, ressources, dateEffet, leJour
       || venu(conjoint.nouvelle_union_fin, dateEffet, leJourMeme)) {
     return [retenues, 1.0];
   }
-  return [retenues + Number(conjoint.ressources_du_nouveau_conjoint ?? 0.0), Number(facteur)];
+  return [retenues + apportAu(conjoint, dateEffet, leJourMeme), Number(facteur)];
 }
 
 /**

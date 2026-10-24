@@ -1,0 +1,51 @@
+date: "2026-10-24"
+session: "action 138, étape 4, douzième partie : la révision de la réversion du régime général quand les ressources du survivant varient autrement que par la fin de son activité ou de son ménage — un salaire qui change, une activité reprise, les ressources du nouveau conjoint (R. 353-1-1)"
+consulte: >-
+  veille_droit.py, lancé à l'ouverture de la session (dernière veille consignée :
+  2026-10-24) ; l'index LEGI, récupéré de la release index-dila et mis à jour par ses
+  huit incréments jusqu'au 23 octobre 2026, puis textes.py --inscrire, qui n'a rien
+  inscrit ; L. 161-17-2, sans rédaction postérieure à celle du 31 décembre 2025 (fiche
+  fin_de_la_suspension_2028). Dans l'index LEGI : R. 353-1-1 dans ses quatre
+  rédactions (LEGIARTI000006749403 du 30 décembre 2004, LEGIARTI000006749404,
+  LEGIARTI000024113027, LEGIARTI000053335692 du 1er janvier 2026) ; R. 815-40 dans sa
+  rédaction du 1er juillet 2001 (LEGIARTI000006753819) et R. 815-41 dans la même
+  (LEGIARTI000006753827), auxquels R. 353-1-1 renvoyait de 2004 à 2007 ; R. 815-20
+  (LEGIARTI000006753664), R. 815-38 (LEGIARTI000006753804), R. 815-39
+  (LEGIARTI000006753812) et R. 815-42 (LEGIARTI000006753836), dans leurs rédactions
+  du 13 janvier 2007. Par l'API de la base de législation de la Cnav (search/custom en
+  phrase exacte, « variation des ressources », « reprend une activité », « reprise
+  d'une activité », « ressources ont varié », « révision de la pension de
+  réversion », « augmentation des ressources », « diminution des ressources »,
+  « reprise d'activité du conjoint », « ressources du ménage », « nouveau conjoint » ;
+  expose/exposeByFileLeafRef, reference/referencesByFileLeafRef, et les PDF sous
+  /Pdf/) : l'exposé « Condition de ressources » (16 avril 2026), les circulaires Cnav
+  n° 2006-6 (§ 12), n° 2010/58 (§ 21 à 24) et n° 2014-2 (§ 5.2.3.1), la lettre de la
+  Cnav du 21 mai 2014, ces deux dernières sur l'allocation de veuvage, les circulaires
+  RSI n° 2007/061 (annexe 3, § 5 à 8) et n° 2013/004.
+trouve: >-
+  La réversion « est révisable en cas de variation dans le montant des ressources »
+  (R. 353-1-1), qui prend effet, selon R. 815-40 puis R. 815-42, au premier jour du
+  terme d'arrérages qui suit la période de trois mois où les ressources ont varié. La
+  Cnav l'applique « lorsque, notamment, la variation du montant des ressources résulte
+  de la variation des revenus professionnels du conjoint survivant (ou du ménage) »,
+  au mois qui suit le constat (circulaire n° 2006-6, § 12, dont l'exemple — revenus
+  professionnels constatés en octobre 2006, révision au 1er novembre — entre au
+  témoin), puis, depuis le 30 juin 2010, au mois qui suit la variation, pour « la
+  réduction, l'augmentation, la suspension ou le rétablissement de la prestation »
+  (circulaire n° 2010/58, § 21). « Les ressources sont examinées sur les 3 mois qui
+  précèdent cette date de révision » (exposé « Condition de ressources »), les
+  revenus d'activité « pour leur montant réellement perçu au cours de la période de
+  référence » (circulaire RSI n° 2007/061, annexe 3, § 5.2 et 6.1), qui donne la même
+  règle de date aux régimes alignés (§ 8). R. 815-20, R. 815-39 et R. 815-41, auxquels
+  R. 353-1-1 renvoie, ne sont que des contrôles : sans effet sur le montant, déclarés
+  tels dans la fiche reversion. Aucun exemple publié ne chiffre une réversion révisée.
+reste: >-
+  Les ressources des trois mois qui précèdent chaque révision, telles que perçues, qui
+  portent encore des revenus d'avant la variation, quand le modèle compte celles
+  d'après, l'année entière ; le droit personnel liquidé après la dernière révision
+  d'abord fixée (circulaire n° 2010/58, § 24, second exemple) ; la révision de la
+  majoration de 11,1 % (R. 353-13) et celle de la complémentaire des indépendants ; la
+  réversion que la fin de l'union rendrait dans les régimes qui la retirent au
+  remariage ; au formulaire, les quatre champs datés de la révision
+  (activite_conjoint_fin, nouvelle_union_fin, activite_conjoint_variations,
+  ressources_nouveau_conjoint_variations), pour une session du site.

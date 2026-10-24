@@ -33,18 +33,24 @@ lit:
 - la naissance du survivant, qui dit son âge à la date d'effet
 - les ressources du survivant, et ce qu'en rapporte son activité, abattu de 30 % à
   cinquante-cinq ans, jusqu'au jour où elle cesse, quand il le dit, qui révise la
-  réversion le mois qui suit (R. 353-1-1 ; circulaire Cnav n° 2010/58, § 21) ; le
+  réversion le mois qui suit (R. 353-1-1 ; circulaire Cnav n° 2010/58, § 21), et ses
+  revenus d'activité qui varient ensuite, quand il le dit — un salaire qui change,
+  une activité reprise —, chaque variation révisant la réversion le mois qui suit
+  (circulaire Cnav n° 2006-6, § 12) ; le
   reste, que le modèle tient pour ses retraites personnelles,
   que le cumul d'avant juillet 2004 retient hors de ses ressources (D. 355-1) ; le
   mois où elles commencent, quand il le dit, qui revoit la réversion qu'elles suivent
   (D. 355-1, L. 353-1, R. 353-1-1) et date sa dernière révision ; son âge légal,
-  quand il n'a ni retraites ni activité (R. 353-1-1, b)
+  quand il n'a ni retraites ni activité, au décès ou commencée avant cet âge
+  (R. 353-1-1, b)
 - l'invalidité qu'il déclare, qui le tient pour inapte avant 1973
 - l'union où il vit après le décès — mariage, PACS ou concubinage —, le mois où elle
   commence et celui où elle se défait, et les ressources de son nouveau conjoint, que
   le plafond du ménage compte avec les siennes quand elle est formée à la date
   d'effet, et pas encore défaite, ou aux révisions qui la suivent, dont celles
-  qu'elle ouvre le mois qui suit sa formation et sa fin (R. 353-1-1)
+  qu'elle ouvre le mois qui suit sa formation et sa fin (R. 353-1-1), et celles
+  qu'ouvrent les variations de ces ressources pendant l'union, quand il les dit
+  (circulaire Cnav n° 2006-6, § 12)
 - la pension principale du défunt, servie ou dont il eût bénéficié à son décès — mort
   avant son départ, celle qu'il eût obtenue au premier jour du trimestre civil de son
   décès, sur la carrière de ce jour-là, sans décote
@@ -470,7 +476,8 @@ versions:
              cnav_2006_37_abattement_au_1er_octobre,
              cnav_2005_17_derniere_revision_a_58_ans,
              cnav_2005_17_derniere_revision_a_65_ans,
-             cnav_2005_17_derniere_revision_sans_droit_propre]
+             cnav_2005_17_derniere_revision_sans_droit_propre,
+             cnav_2006_6_revision_aux_revenus_professionnels]
 - id: age_51
   statut: lue
   textes:
@@ -976,13 +983,14 @@ approximations:
     d'effet quand il est formé ce jour-là ou avant, et pas encore défait, comme la
     circulaire Cnav n° 2005-17, § 146, transpose sur la période de référence les
     ressources d'après un changement de situation ; formé ou défait après, il révise
-    la réversion le mois qui suit (R. 353-1-1). Elle n'est pas révisée quand les
-    ressources varient autrement qu'à sa retraite, à ses cinquante-cinq ans et à la
-    fin de son activité — une activité reprise, un salaire ou des ressources du
-    nouveau conjoint qui changent —, que la saisie ne date pas ; à la révision
-    qu'ouvre la fin de son activité, ses revenus d'activité ne comptent plus, l'année
-    entière, quand la caisse examine « les 3 mois qui précèdent cette date de
-    révision » (exposé « Condition de ressources »), qui peuvent en porter encore. Les
+    la réversion le mois qui suit (R. 353-1-1). À chaque révision — la fin de son
+    activité, ses revenus ou ceux de son nouveau conjoint qui varient —, ses
+    ressources sont celles d'après le changement, l'année entière, quand la caisse
+    examine « les 3 mois qui précèdent cette date de révision » (exposé « Condition de
+    ressources »), et les revenus d'activité « pour leur montant réellement perçu au
+    cours de la période de référence » (circulaire RSI n° 2007/061, annexe 3, § 6.1),
+    qui peuvent porter encore ceux d'avant le changement ; le modèle ne connaît que
+    les variations que la saisie date, chacune un montant annuel à partir d'un jour. Les
     ressources se comparent sur l'année, et non sur les trois mois qui précèdent la
     date d'effet, les douze à défaut (R. 353-1), ce qui ne change rien à des
     ressources égales chaque mois ; les ressources du survivant et de son nouveau
@@ -1041,16 +1049,19 @@ approximations:
     changements de la situation familiale (lettre de la Cnav du 18 avril 2007) —,
     révisent la réversion du régime général le mois qui suit (R. 353-1-1 ; exposé de
     la Cnav, « Condition de ressources »), comme le font la fin de son activité
-    (circulaire Cnav n° 2010/58, § 21), ses cinquante-cinq ans, qui abattent les
-    revenus de l'activité qu'il n'a pas cessée (circulaire Cnav n° 2007-35, § 221),
+    (circulaire Cnav n° 2010/58, § 21), ses revenus d'activité et les ressources de
+    son nouveau conjoint qui varient — un salaire qui change, une activité reprise —
+    (circulaire Cnav n° 2006-6, § 12), ses cinquante-cinq ans, qui abattent les
+    revenus de l'activité qu'il exerce alors (circulaire Cnav n° 2007-35, § 221),
     et sa retraite,
     jusqu'à la dernière révision : trois mois après sa retraite ; sa date d'effet
     quand il a ses retraites sans la dater, servies depuis plus de trois mois
     (présomption retraites_du_survivant_servies) ; le premier jour du mois qui suit
-    son âge légal quand il n'a ni retraites ni activité (présomption
-    survivant_sans_droit_propre, R. 353-1-1, b) ; aucune quand il travaille sans
-    retraite datée, sa réversion restant « révisable jusqu'à ce que ces droits soient
-    liquidés » (circulaire Cnav n° 2007-35, § 222). Un changement du jour même d'une
+    son âge légal quand il n'a ni retraites ni activité, au décès ou commencée avant
+    cet âge (présomption survivant_sans_droit_propre, R. 353-1-1, b) ; aucune quand
+    il travaille sans retraite datée, sa réversion restant « révisable jusqu'à ce que
+    ces droits soient liquidés » (circulaire Cnav n° 2007-35, § 222) ; l'activité
+    qu'il commence après ce jour ne la rouvre pas. Un changement du jour même d'une
     révision ne compte qu'à celle du mois qui suit. Une réversion attribuée de juillet
     à décembre 2004, sous la rédaction de R. 353-1-1 qui renvoyait à l'allocation
     supplémentaire, est tenue pour figée comme sous celle du 30 décembre 2004 ; les
@@ -1059,8 +1070,9 @@ approximations:
     bénéficiaires. Le survivant est tenu pour déclarer chaque changement (R. 815-38),
     et pour demander le rétablissement de la réversion que ses ressources avaient
     réduite à rien (circulaire Cnav n° 2005-17, § 321). Ni l'union, ni sa fin, ni
-    celle de son activité ne révisent jamais la réversion de la complémentaire des
-    indépendants, ni sa retraite celle des autres régimes ; la fin de l'union ne rend
+    celle de son activité, ni les variations de leurs ressources ne révisent jamais
+    la réversion de la complémentaire des indépendants, qui les lit à sa seule date
+    d'effet, ni sa retraite celle des autres régimes ; la fin de l'union ne rend
     pas la réversion des régimes qui la retirent au remariage (perte_au_remariage),
     ni la majoration pour enfant à charge qu'elle a arrêtée
     avant juillet 2004 — défaite avant le jour où celle-ci s'attribuerait, elle ne la
@@ -1167,17 +1179,19 @@ sources:
     décédé après son départ.
   - >-
     Ce que les versions ne portent pas encore : la réversion d'un assuré disparu
-    (L. 353-2), la révision de la pension quand le ménage du survivant se défait, que
-    ses ressources varient sans que la saisie le date, ou que les ayants droit
-    changent (R. 353-1-1, R. 353-4), et la pension de vieillesse de veuve ou de veuf.
+    (L. 353-2), la révision de la pension quand les ayants droit changent (R. 353-4),
+    les ressources des trois mois qui précèdent chaque révision, telles que perçues,
+    quand le modèle compte celles d'après le changement, et la pension de vieillesse
+    de veuve ou de veuf.
     Les limites de cumul d'avant juillet 2004 (D. 355-1), l'âge d'avant 1973 et les
     majorations forfaitaires de 1982 et de 1995 sont portés depuis le 9 octobre 2026,
     la majoration forfaitaire pour enfant à charge (L. 353-5) dans sa propre fiche,
     majoration_forfaitaire_reversion ; la révision qu'ouvre la retraite du survivant,
     et le recalcul aux règles de 2004 de la réversion qui la précède, depuis le 24
     octobre 2026, comme, le même jour, la révision qu'ouvrent le ménage qu'il forme
-    et ses cinquante-cinq ans, avant sa retraite ou sans elle, et la dernière révision
-    sans retraite, à son âge légal.
+    ou qui se défait, la fin de son activité, ses revenus d'activité et les
+    ressources de son nouveau conjoint qui varient, et ses cinquante-cinq ans, avant
+    sa retraite ou sans elle, et la dernière révision sans retraite, à son âge légal.
   - >-
     Avant le 1er juillet 1974, la réversion « ne se cumulait pas avec un avantage
     personnel » : l'exposé de la Cnav dit « avant le 01/01/1974 », quand la loi
@@ -1723,7 +1737,61 @@ sources:
       il a été constaté que les ressources sont devenues supérieures ou inférieures au
       quart des plafonds »
     date: 2026-10-24
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2006-6 du 13 janvier 2006, § 12 : « La pension de réversion
+      est révisable en cas de variation dans le montant des ressources. En
+      application de l'article R.815-40 du code de la sécurité sociale cette révision
+      prend effet à compter du premier jour du mois suivant celui au cours duquel il
+      est constaté que les ressources ont varié. Ce sont ces dispositions qu'il
+      convient d'appliquer lorsque, notamment, la variation du montant des ressources
+      résulte : de la variation des revenus professionnels du conjoint survivant (ou
+      du ménage), de l'attribution d'un avantage viager » ; l'exemple : « Pension de
+      réversion à compter du 01/07/2005 (52 ans). L'assuré nous informe en octobre
+      2006 percevoir des revenus professionnels. Date du constat = octobre 2006 -->
+      révision de la pension de réversion au 01/11/2006 », entré au témoin pour sa
+      première révision. Circulaire Cnav n° 2010/58, § 21 : « la réduction,
+      l'augmentation, la suspension ou le rétablissement de la prestation » prend effet
+      au premier jour du mois qui suit la variation. Exposé « Condition de ressources »
+      (16 avril 2026), « Modification des ressources » : « Les ressources sont
+      examinées sur les 3 mois qui précèdent cette date de révision ». Circulaire RSI
+      n° 2007/061 du 24 avril 2007, annexe 3 : § 5.2, « en révision », « les ressources
+      à prendre en compte sont celles afférentes aux 3 mois civils précédant la date
+      d'effet de la révision » ; § 6.1, les revenus d'activité « pour leur montant
+      réellement perçu au cours de la période de référence » ; § 8, la même règle de
+      date « lorsque, notamment, la variation du montant des ressources résulte de la
+      variation des revenus professionnels du conjoint survivant (ou du ménage) ».
+      Lues par l'API de la base de législation de la Cnav, avec, dans l'index LEGI,
+      R. 353-1-1 dans sa rédaction du 30 décembre 2004 (LEGIARTI000006749403), qui
+      renvoie à R. 815-24, R. 815-40 et R. 815-41, et R. 815-40 dans celle du 1er
+      juillet 2001 (LEGIARTI000006753819) : la révision « prend effet à compter du
+      premier jour du terme d'arrérages suivant la période de trois mois au cours de
+      laquelle il a été constaté que les ressources sont devenues supérieures ou
+      inférieures au quart des chiffres limite »
+    date: 2026-10-24
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2006_06_13012006.pdf
 textes_a_rattacher: []
+textes_sans_effet:
+- id: LEGIARTI000006753812
+  motif: >-
+    R. 815-39, auquel R. 353-1-1 renvoie depuis le 13 janvier 2007 : les organismes
+    « peuvent procéder, à tout moment, à la vérification des ressources, de la
+    résidence ou de la situation familiale des demandeurs ou au contrôle des
+    ressources, de la résidence ou de la situation familiale des bénéficiaires » — un
+    contrôle, qui ne change ni les ressources ni les dates que le modèle lit
+- id: LEGIARTI000006753664
+  motif: >-
+    R. 815-20, auquel R. 353-1-1 renvoie depuis le 13 janvier 2007 : les organismes
+    « peuvent mettre en demeure [...] toute personne, institution ou organisme de leur
+    faire connaître dans un délai d'un mois le montant des pensions, retraites, rentes
+    viagères ou allocations viagères » qu'il sert au demandeur — le moyen de les
+    connaître, que la saisie déclare
+- id: LEGIARTI000006753827
+  motif: >-
+    R. 815-41, dans sa rédaction du 1er juillet 2001, auquel R. 353-1-1 renvoyait de
+    2004 à 2007 : les organismes « peuvent faire procéder, à toute époque, à toute
+    vérification des ressources des requérants ou à tout contrôle des ressources des
+    bénéficiaires » — un contrôle, de même
 code:
   python: >-
     droit/reversion.py : reversion, _a_l_age, _mariage_dure, _groupes_du_minimum,
@@ -1732,12 +1800,13 @@ code:
     _admis_ailleurs, _fin_au_remariage, _jusqu_au_remariage, _premiere_date_d_effet,
     _date_d_effet_du_regime_general, _cumuler, _retraites_au, _cumul_a_la_retraite,
     _annee_du_plafond, _servie_au, _revisions, _trois_mois_apres, _generation,
-    _derniere_revision, _venu,
+    _derniere_revision, _venu, _activite_au, _apport_au,
     _majorations_ulterieures ; scenarios/actuel.py : Reversions ; echeancier.py :
     Echeancier._reverser, Echeancier._pensions_au_deces,
     Echeancier._pensions_eues_au_deces ; carriere.py : Carriere.arretee_au_deces,
     Carriere.ex_conjoints ; chronologie.py : ex_conjoints, debut_du_menage,
-    fin_du_menage, fin_d_activite ;
+    fin_du_menage, fin_d_activite, variations_d_activite, variations_du_menage,
+    _variations ;
     droit/completer.py : completer ; droit/liquider.py : maximum_des_pensions ;
     droit/commun.py : PensionRegime
   javascript: >-
@@ -1747,12 +1816,14 @@ code:
     remarieAvant, admisAuRegimeGeneral, admisAilleurs, finAuRemariage,
     jusquAuRemariage, premiereDateDEffet, dateDEffetDuRegimeGeneral, cumuler,
     retraitesAu, cumulALaRetraite, anneeDuPlafond, servieAu, revisionsDeLaReversion,
-    troisMoisApres, generationDe, derniereRevision, venu, majorationsUlterieures ;
+    troisMoisApres, generationDe, derniereRevision, venu, activiteAu, apportAu,
+    majorationsUlterieures ;
     moteur/js/regimes.js : Reversions ;
     moteur/js/echeancier.js : Echeancier._reverser, Echeancier._pensionsAuDeces,
     Echeancier._pensionsEuesAuDeces ; moteur/js/carriere.js : Carriere.arreteeAuDeces,
     Carriere.exConjoints ; moteur/js/chronologie.js : exConjoints, debutDuMenage,
-    finDuMenage, finDActivite ;
+    finDuMenage, finDActivite, variationsDActivite, variationsDuMenage, variations ;
+    moteur/js/saisie.js : Saisie.variationsAnalysees ;
     moteur/js/droit/completer.js : completer ; moteur/js/droit/liquider.js :
     maximumDesPensions
   parametres: >-
@@ -1873,6 +1944,15 @@ historique:
   général — leurs durées s'additionnaient en régimes distincts, et la part de la
   CANCAVA d'un artisan liquidé par le RSI se perdait. Deux paramètres de version,
   droits_d_avant_1973 et minimum_avec_les_droits_d_avant_1973.
+- >-
+  2026-10-24 — action 138, étape 4, douzième partie : les ressources du survivant qui
+  varient autrement que par la fin de son activité ou de son ménage — un salaire qui
+  change, une activité reprise, les ressources de son nouveau conjoint qui changent —
+  sont des événements datés de la chronologie, chacun un montant annuel à partir de
+  son jour ; le mois qui suit, chacun révise la réversion d'après juillet 2004
+  (R. 353-1-1 ; circulaire Cnav n° 2006-6, § 12, dont l'exemple est rejoué) ; le
+  survivant sans activité au décès qui en commence une avant son âge légal garde sa
+  réversion révisable jusqu'à sa retraite.
 effet: >-
   Tout conjoint, ou ex-conjoint, d'un assuré du régime général ou d'un régime aligné
   qui décède : 4,41 millions de bénéficiaires d'un droit dérivé tous régimes fin 2024
@@ -1889,4 +1969,7 @@ effet: >-
   de l'artisan de 132 trimestres à la CANCAVA et 19 au RSI. Depuis le 24 octobre 2026,
   la retraite que le survivant prend après sa réversion la revoit sous le plafond de
   ressources, ses retraites comptées : la recalcule aux règles de 2004 quand la
-  réversion les précède, la révise le mois qui suit sinon, pour la dernière fois.
+  réversion les précède, la révise le mois qui suit sinon, pour la dernière fois ; et
+  le ménage qu'il forme ou qui se défait, son activité qui cesse, ses revenus
+  d'activité et ceux de son nouveau conjoint qui varient, quand la saisie les date, la
+  révisent de même, le mois qui suit chacun, jusqu'à sa dernière révision.

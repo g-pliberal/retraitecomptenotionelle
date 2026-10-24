@@ -327,11 +327,14 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
     :func:`completer` présume sinon (``mariage_des_conjoints``) —, ses
     ``ressources`` annuelles, et ce qui en vient de son activité
     (``revenus_d_activite``), jusqu'au jour où elle cesse s'il le dit
-    (``fin_d_activite``), la ``nouvelle_union`` où il vit après le décès
+    (``fin_d_activite``), et ceux qui varient ensuite
+    (``variations_d_activite``, ``(date, montant)`` à partir de chaque date),
+    la ``nouvelle_union`` où il vit après le décès
     — mariage, pacs ou concubinage — et les ressources que son nouveau
     conjoint y apporte (``ressources_du_nouveau_conjoint``), depuis le mois
     qu'il dit (``nouvelle_union_depuis``) ou le décès, jusqu'à celui où elle
-    se défait s'il le dit (``nouvelle_union_fin``), son ``invalidite``,
+    se défait s'il le dit (``nouvelle_union_fin``), et qui varient pendant
+    leur union (``variations_du_nouveau_conjoint``), son ``invalidite``,
     une décision médicale datée, et sa ``retraite``, l'acte de son propre
     départ, daté, s'il les dit ; et les précédents conjoints de
     l'assuré (``ex_conjoints``) : la naissance de chacun, son mariage, que le
@@ -489,6 +492,23 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
                 f"revenus_d_activite_{CONJOINT}", CONJOINT, "ressources", debut, fin,
                 attributs={"periode": "annuelle", "nature": "revenus_d_activite"},
                 montant={"annuel": float(conjoint["revenus_d_activite"]), "monnaie": "EUR"}))
+        if conjoint.get("variations_d_activite"):
+            # Ses revenus d'activité qui varient ensuite, s'il le dit — un
+            # salaire qui change, une activité reprise, rien quand elle cesse :
+            # « la variation des revenus professionnels du conjoint survivant »
+            # révise sa réversion (circulaire Cnav n° 2006-6, § 12).
+            debut = jour_deces or epoux["debut"]
+            deja = ([] if conjoint.get("revenus_d_activite") is None
+                    or conjoint.get("fin_d_activite") is None
+                    else [date_declaree(conjoint["fin_d_activite"], "la fin de son activité")[0]])
+            faits_naissance += _variations(
+                conjoint["variations_d_activite"], f"variation_d_activite_{CONJOINT}",
+                "revenus_d_activite", "une variation de ses revenus d'activité", debut,
+                f"avant {'le décès' if jour_deces else 'sa naissance'}", None, deja,
+                "deux changements de ses revenus d'activité")
+        if conjoint.get("nouvelle_union") is None and conjoint.get("variations_du_nouveau_conjoint"):
+            raise ValueError("une variation des ressources du nouveau conjoint suppose sa "
+                             "nouvelle union")
         if conjoint.get("nouvelle_union") is not None:
             # Le ménage où il vit après le décès : la forme de sa nouvelle union,
             # et ce que son nouveau conjoint y apporte, s'il le dit — « ses
@@ -518,6 +538,15 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
                 f"menage_{CONJOINT}", CONJOINT, "ressources", debut, fin,
                 attributs={"periode": "annuelle", "nature": "menage", "forme": forme},
                 montant=None if apport is None else {"annuel": float(apport), "monnaie": "EUR"}))
+            # Ce que son nouveau conjoint y apporte, qui varie pendant leur union,
+            # s'il le dit : « la variation des revenus professionnels [...] du
+            # ménage » révise aussi sa réversion (circulaire Cnav n° 2006-6, § 12).
+            faits_naissance += _variations(
+                conjoint.get("variations_du_nouveau_conjoint") or (),
+                f"variation_du_menage_{CONJOINT}", "menage",
+                "une variation des ressources du nouveau conjoint", debut,
+                "avant le début de leur union", fin, [],
+                "deux variations des ressources du nouveau conjoint")
         if conjoint.get("invalidite") is not None:
             jour, precision = date_declaree(conjoint["invalidite"], "l'invalidité du conjoint")
             if jour <= epoux["debut"]:
@@ -540,6 +569,36 @@ def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
             faits_naissance.extend(faits)
             liens.append(mariage)
     return faits_naissance, depart, liens
+
+
+def _variations(declarees, prefixe: str, nature: str, quoi: str, debut: str, avant: str,
+                fin: str | None, deja: list[str], double: str) -> list[dict]:
+    """Les variations d'une ressource du conjoint, ``(date, montant annuel)``
+    chacune : des événements de ses ressources, datés, sans fin — à partir de
+    ce jour, cette ressource est de ce montant —, dans l'ordre de leurs jours,
+    marqués ``variation`` et de la ``nature`` de ce qu'ils font varier.
+    Chacune suit ``debut`` (``avant`` dit le refus), précède ``fin`` s'il est
+    dit, ne tombe ni le jour d'une autre ni l'un des jours ``deja`` (``double``
+    le dit), et porte un montant positif ou nul ; ``quoi`` la nomme."""
+    lues = []
+    for valeur, montant in declarees:
+        jour = date_declaree(valeur, quoi)[0]
+        if jour <= debut:
+            raise ValueError(f"{quoi} le {jour}, {avant}")
+        if fin is not None and jour >= fin:
+            raise ValueError(f"{quoi} le {jour}, après la fin de leur union")
+        if not float(montant) >= 0:
+            raise ValueError(f"{quoi} : un montant positif ou nul")
+        lues.append((jour, float(montant)))
+    vus = set(deja)
+    for jour, _ in lues:
+        if jour in vus:
+            raise ValueError(f"{double} le {jour}")
+        vus.add(jour)
+    return [fait(f"{prefixe}_{rang}", CONJOINT, "ressources", jour,
+                 attributs={"periode": "annuelle", "nature": nature, "variation": True},
+                 montant={"annuel": montant, "monnaie": "EUR"})
+            for rang, (jour, montant) in enumerate(sorted(lues), 1)]
 
 
 def _ex_conjoint(assure: dict, rang: int, ex: dict) -> tuple[list[dict], dict]:
@@ -1150,9 +1209,19 @@ def deces(chronologie: dict, personne: str) -> dict | None:
 def _ressources_de_nature(chronologie: dict, personne: str, nature: str | None) -> dict | None:
     """Le fait de ressources d'une personne qui a cette nature : toutes ses
     ressources sans nature dite, ou une part d'elles, ou celles de son
-    ménage."""
+    ménage — tels qu'elle les déclare, sans leurs variations."""
     return next((f for f in faits_de(chronologie, personne, "ressources")
-                 if f["attributs"].get("nature") == nature), None)
+                 if f["attributs"].get("nature") == nature
+                 and not f["attributs"].get("variation")), None)
+
+
+def _variations_de_nature(chronologie: dict, personne: str, nature: str
+                          ) -> list[tuple[str, float]]:
+    """Les variations des ressources d'une personne qui ont cette nature :
+    ``(jour, montant annuel)`` à partir de chaque jour, dans l'ordre."""
+    return sorted((f["debut"], float(f["montant"]["annuel"]))
+                  for f in faits_de(chronologie, personne, "ressources")
+                  if f["attributs"].get("nature") == nature and f["attributs"].get("variation"))
 
 
 def ressources(chronologie: dict, personne: str) -> float | None:
@@ -1173,6 +1242,13 @@ def fin_d_activite(chronologie: dict, personne: str) -> str | None:
     elle le dit, ou ``None``."""
     fait_ = _ressources_de_nature(chronologie, personne, "revenus_d_activite")
     return None if fait_ is None else fait_.get("fin")
+
+
+def variations_d_activite(chronologie: dict, personne: str) -> list[tuple[str, float]]:
+    """Ses revenus annuels d'activité qui varient ensuite, si une personne le
+    dit — un salaire qui change, une activité reprise, rien quand elle cesse :
+    ``(jour, montant)`` à partir de chaque jour, dans l'ordre."""
+    return _variations_de_nature(chronologie, personne, "revenus_d_activite")
 
 
 def menage(chronologie: dict, personne: str) -> tuple[str, float | None] | None:
@@ -1198,6 +1274,13 @@ def fin_du_menage(chronologie: dict, personne: str) -> str | None:
     dit, ou ``None`` : elle revit seule."""
     fait_ = _ressources_de_nature(chronologie, personne, "menage")
     return None if fait_ is None else fait_.get("fin")
+
+
+def variations_du_menage(chronologie: dict, personne: str) -> list[tuple[str, float]]:
+    """Les ressources annuelles que l'autre apporte au ménage où vit une
+    personne, quand elles varient pendant leur union et qu'elle le dit :
+    ``(jour, montant)`` à partir de chaque jour, dans l'ordre."""
+    return _variations_de_nature(chronologie, personne, "menage")
 
 
 def naissance(chronologie: dict, personne: str) -> dict | None:

@@ -236,6 +236,86 @@ def test_le_menage_qui_se_defait_et_l_activite_qui_cesse_finissent_leurs_faits()
                               conjoint={**conjoint, "fin_d_activite": "2031-10"})
 
 
+def test_les_ressources_qui_varient_sont_des_evenements_dates():
+    """Les ressources du survivant qui varient autrement que par la fin de son
+    activité ou de son ménage — « la variation des revenus professionnels du
+    conjoint survivant (ou du ménage) » (circulaire Cnav n° 2006-6, § 12) : un
+    salaire qui change, une activité reprise, les ressources du nouveau
+    conjoint qui changent. Chacune est un événement de ses ressources, daté,
+    sans fin : à partir de ce jour, ses revenus d'activité, ou ce que son
+    nouveau conjoint apporte au ménage, sont du montant qu'il dit. Les faits
+    déclarés au décès et à l'union n'en changent pas. Aucune ne se présume ;
+    chacune suit le début de ce qu'elle fait varier, deux ne tombent pas le
+    même jour, et celles du ménage tombent dans l'union."""
+    conjoint = {"naissance": "1962-03", "sexe": "F", "mariage": None,
+                "ressources": 15000.0, "revenus_d_activite": 10000.0,
+                "fin_d_activite": "2033-02-15",
+                "variations_d_activite": [["2034-01", 8000.0], ["2032-06", 12000.0]],
+                "nouvelle_union": "pacs", "ressources_du_nouveau_conjoint": 12000.0,
+                "nouvelle_union_depuis": "2032-06", "nouvelle_union_fin": "2035-11",
+                "variations_du_nouveau_conjoint": [["2033-09", 15000.0]]}
+    complete = chronologie.completer(chronologie.du_resume(
+        1960, "H", 5, 64.0, 0, conjoint=conjoint, deces="2031-10"))
+    assert chronologie.controler(complete) == []
+    survivant = chronologie.CONJOINT
+    assert (chronologie.revenus_d_activite(complete, survivant),
+            chronologie.fin_d_activite(complete, survivant),
+            chronologie.variations_d_activite(complete, survivant),
+            chronologie.menage(complete, survivant),
+            chronologie.debut_du_menage(complete, survivant),
+            chronologie.fin_du_menage(complete, survivant),
+            chronologie.variations_du_menage(complete, survivant)) == (
+        10000.0, "2033-02-15", [("2032-06-01", 12000.0), ("2034-01-01", 8000.0)],
+        ("pacs", 12000.0), "2032-06-01", "2035-11-01", [("2033-09-01", 15000.0)])
+    evenements = [(f["id"], f["debut"], f.get("fin"), f["attributs"])
+                  for f in complete["faits"] if f["attributs"].get("variation")]
+    assert evenements == [
+        ("variation_d_activite_conjoint_1", "2032-06-01", None,
+         {"periode": "annuelle", "nature": "revenus_d_activite", "variation": True}),
+        ("variation_d_activite_conjoint_2", "2034-01-01", None,
+         {"periode": "annuelle", "nature": "revenus_d_activite", "variation": True}),
+        ("variation_du_menage_conjoint_1", "2033-09-01", None,
+         {"periode": "annuelle", "nature": "menage", "variation": True})]
+    sans = chronologie.completer(chronologie.du_resume(
+        1960, "H", 5, 64.0, 0, deces="2031-10", conjoint={
+            **conjoint, "variations_d_activite": None, "variations_du_nouveau_conjoint": []}))
+    assert (chronologie.variations_d_activite(sans, survivant),
+            chronologie.variations_du_menage(sans, survivant)) == ([], [])
+    # Sans activité au décès, celle qu'il commence ensuite.
+    reprise = chronologie.completer(chronologie.du_resume(
+        1960, "H", 5, 64.0, 0, deces="2031-10", conjoint={
+            "naissance": "1962-03", "sexe": "F", "mariage": None, "ressources": None,
+            "variations_d_activite": [["2033-04", 18000.0]]}))
+    assert (chronologie.revenus_d_activite(reprise, survivant),
+            chronologie.variations_d_activite(reprise, survivant)) == (
+        None, [("2033-04-01", 18000.0)])
+    for modification, message in [
+            ({"variations_d_activite": [["2031-10", 5000.0]]},
+             "une variation de ses revenus d'activité le 2031-10-01, avant le décès"),
+            ({"variations_d_activite": [["2033-02-15", 5000.0]]},
+             "deux changements de ses revenus d'activité le 2033-02-15"),
+            ({"variations_d_activite": [["2034", 5000.0], ["2034-01", 6000.0]]},
+             "deux changements de ses revenus d'activité le 2034-01-01"),
+            ({"variations_d_activite": [["2034", -1.0]]},
+             "une variation de ses revenus d'activité : un montant positif ou nul"),
+            ({"nouvelle_union": None, "nouvelle_union_depuis": None,
+              "nouvelle_union_fin": None, "ressources_du_nouveau_conjoint": None},
+             "une variation des ressources du nouveau conjoint suppose sa nouvelle union"),
+            ({"variations_du_nouveau_conjoint": [["2032-06", 5000.0]]},
+             "une variation des ressources du nouveau conjoint le 2032-06-01, avant le "
+             "début de leur union"),
+            ({"variations_du_nouveau_conjoint": [["2035-11", 5000.0]]},
+             "une variation des ressources du nouveau conjoint le 2035-11-01, après la "
+             "fin de leur union"),
+            ({"variations_du_nouveau_conjoint": [["2033-09", 5000.0], ["2033-09", 6000.0]]},
+             "deux variations des ressources du nouveau conjoint le 2033-09-01"),
+            ({"variations_du_nouveau_conjoint": [["2033-09", -1.0]]},
+             "une variation des ressources du nouveau conjoint : un montant positif ou nul")]:
+        with pytest.raises(ValueError, match=message):
+            chronologie.du_resume(1960, "H", 5, 64.0, 0, deces="2031-10",
+                                  conjoint={**conjoint, **modification})
+
+
 def test_la_reversion_agricole_est_un_acte_de_la_caisse():
     """La réversion que le régime des non-salariés agricoles sert à l'assuré,
     veuf ou veuve d'un de ses assurés (L. 732-41 à L. 732-46) : un acte de sa
@@ -599,6 +679,29 @@ SAISIES = [
                              "ressources_du_nouveau_conjoint": 15000,
                              "nouvelle_union_depuis": "2024-09",
                              "nouvelle_union_fin": "2026-01"},
+                "deces": "2024-02-11",
+                "releve": [{"annee": 1984, "affiliation": "salarie_prive", "revenu": 9000.0,
+                            "trimestres": 4, "type_periode": "emploi"}]}},
+    # Les ressources qui varient, datées : un salaire qui change, une activité
+    # reprise, les ressources du nouveau conjoint qui changent ; et deux
+    # changements le même jour.
+    {"releve": {"annee_naissance": 1958, "sexe": "F", "age_liquidation": 62.0,
+                "conjoint": {"naissance": "1955", "sexe": "H", "mariage": "1984-06-16",
+                             "ressources": 12000, "revenus_d_activite": 8000,
+                             "fin_d_activite": "2025-03-15",
+                             "variations_d_activite": [["2026-05", 9000], ["2024-11", 8500]],
+                             "nouvelle_union": "concubinage",
+                             "ressources_du_nouveau_conjoint": 15000,
+                             "nouvelle_union_depuis": "2024-09",
+                             "variations_du_nouveau_conjoint": [["2025-07-14", 11000]]},
+                "deces": "2024-02-11",
+                "releve": [{"annee": 1984, "affiliation": "salarie_prive", "revenu": 9000.0,
+                            "trimestres": 4, "type_periode": "emploi"}]}},
+    {"releve": {"annee_naissance": 1958, "sexe": "F", "age_liquidation": 62.0,
+                "conjoint": {"naissance": "1955", "sexe": "H", "mariage": "1984-06-16",
+                             "ressources": 12000, "revenus_d_activite": 8000,
+                             "fin_d_activite": "2025-03-15",
+                             "variations_d_activite": [["2025-03-15", 9000]]},
                 "deces": "2024-02-11",
                 "releve": [{"annee": 1984, "affiliation": "salarie_prive", "revenu": 9000.0,
                             "trimestres": 4, "type_periode": "emploi"}]}},

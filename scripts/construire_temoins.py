@@ -2034,6 +2034,23 @@ def _cas() -> list[dict]:
         "naissance": "1945", "liquidation": "60", "conjoint": "1953-09", "deces": "2006-10",
         "ressources_conjoint": "14000", "activite_conjoint": "14000",
         "activite_conjoint_fin": "2008-02"}))
+    # Le même jour, les ressources qui varient autrement (R. 353-1-1 ; circulaire
+    # Cnav n° 2006-6, § 12) : la veuve de 2006, sans ressources, qui commence une
+    # activité en mars 2007 ; le veuf de 2015 dont le salaire passe de 15 000 à
+    # 25 000 € en mars 2018 ; remarié en mai 2018, sa conjointe dont les
+    # ressources tombent de 20 000 à 12 000 € en janvier 2020.
+    cas.append(("reversion_revisee_a_l_activite_reprise", {
+        "naissance": "1945", "liquidation": "60", "conjoint": "1953-09", "deces": "2006-10",
+        "activite_conjoint_variations": "2007-03:14000"}))
+    variations = {"naissance": "1955", "liquidation": "60", "sexe": "F",
+                  "conjoint": "1958-06", "conjoint_sexe": "H", "deces": "2015-03",
+                  "ressources_conjoint": "15000", "activite_conjoint": "15000"}
+    cas.append(("reversion_revisee_quand_son_salaire_change", {
+        **variations, "activite_conjoint_variations": "2018-03:25000"}))
+    cas.append(("reversion_revisee_quand_l_apport_du_menage_change", {
+        **variations, "nouvelle_union": "mariage", "nouvelle_union_depuis": "2018-05",
+        "ressources_nouveau_conjoint": "20000",
+        "ressources_nouveau_conjoint_variations": "2020-01:12000"}))
 
     # Les carrières LUES sur un relevé, plutôt que reconstituées.
     cas.extend(_cas_releve())

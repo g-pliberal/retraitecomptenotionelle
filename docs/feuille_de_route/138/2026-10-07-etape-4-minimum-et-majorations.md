@@ -3,13 +3,13 @@
 **Reprise, au 24 octobre 2026.** Fait : le minimum et les majorations (7
 octobre) ; le maximum, le plafond du ménage, l'assuré mort avant son départ,
 le partage, le cumul d'avant 2004, la majoration pour enfant (9 octobre) ; ses
-parts après la date d'effet, le régime qui la sert ; la révision de la réversion
-à la retraite du survivant, au ménage qu'il forme ou qui se défait, à la fin de
-son activité, à ses cinquante-cinq ans, jusqu'à la dernière (24 octobre). Reste,
-une session par point : les ressources qui varient autrement, à dater d'abord ;
-les majorations de 1976 et 1977 aux salariés agricoles, l'Alsace-Moselle,
-l'ancien invalide. Au site : les études, l'enfant né après le départ, les
-révisions, la fin du ménage et de l'activité. Détail : `…-menage-qui-se-defait.md`.
+parts, le régime qui la sert ; la révision de la réversion à la retraite du
+survivant, au ménage formé ou défait, à ses revenus et à ceux de son nouveau
+conjoint qui cessent ou varient, jusqu'à la dernière (24 octobre). Reste, une
+session par point : les majorations de 1976 et 1977 aux salariés agricoles,
+l'Alsace-Moselle, l'ancien invalide ; les trois mois de chaque révision. Au
+site : les études, l'enfant né après le départ, les révisions et leurs quatre
+champs. Détail : `…-ressources-qui-varient.md`.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « Quels sont les écarts
 encore présents avec trajectoire et destinie 2 ? J'aimerais combler les manques
