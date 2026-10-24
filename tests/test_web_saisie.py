@@ -4,54 +4,26 @@ métier par métier.
 
 Détachés de ``test_web.py`` le 30 septembre 2026, pour qu'une retouche de la
 saisie se vérifie seule ; ce qu'ils partagent avec lui est dans
-``outils_web.py``.
+``outils_web.py``. La saisie est celle du portage, la seule que le site lit
+(action 161, étape 6) : ce qui l'éprouve elle-même la lit par ``site()`` ;
+ce qui éprouve une règle du moteur par une saisie simule au moteur Python la
+carrière que le pont bâtit (``outils_pont``).
 """
 
 from __future__ import annotations
 
-import dataclasses
 import html
-import itertools
 import re
-from pathlib import Path
 from urllib.parse import parse_qsl
 
 import pytest
 
-from retraite_notionnelle.cout import COMPOSANTE_GARANTIE
-from retraite_notionnelle.donnees.bilan import EcartsFiges
-from retraite_notionnelle.donnees.chargement import (
-    DonneeInsuffisante,
-    charger_periodes_non_travaillees,
-)
-from retraite_notionnelle.saisie import (
-    AGE_DEBUT_MINIMAL,
-    AGE_LIQUIDATION_MAXIMAL,
-    AGES_REFERENCE,
-    ANNEE_CARRIERE_MAXIMALE,
-    ANNEE_CARRIERE_MINIMALE,
-    ANNEE_MAXIMALE,
-    ANNEE_MINIMALE,
-    ENFANTS_MAXIMUM,
-    NAISSANCE_MAXIMALE,
-    NAISSANCE_MINIMALE,
-    INDEXATIONS,
-    LISSAGE_MAXIMUM,
-    METIERS_MAXIMUM,
-    PROFILS,
-    PROJECTIONS,
-    RELEVE_MAXIMUM,
-    SANS_EMPLOI,
-    POPULATIONS,
-    RATTACHEMENTS,
-    TABLES,
-    ErreurSaisie,
-    Saisie,
-)
-from retraite_notionnelle.contexte import Contexte, Montants
-from retraite_notionnelle.web.site import disponible, module, rendre, site
+from retraite_notionnelle.config import Parametres
+from retraite_notionnelle.donnees.chargement import charger_periodes_non_travaillees
+from retraite_notionnelle.web.site import ErreurSite, disponible, module, rendre, site
+from outils_pont import refus_de_la_saisie, saisie_du_portage
 from outils_web import (
-    _echelle, _prose, contexte, page, pages,
+    _echelle, _prose, contexte, page, pages, saisies,
 )
 
 
@@ -60,13 +32,17 @@ from outils_web import (
 #: node, rien du site ne se lit, et ses tests sont sautés.
 pytestmark = pytest.mark.skipif(not disponible(),
                                 reason="node absent : le site ne se lit pas sans lui")
+#: La saisie du portage : ses bornes, ses menus, sa classe.
+SAISIE = module("saisie")
+#: Toute saisie qu'un refus du portage arrête, quel que soit son motif.
+REFUSEE = refus_de_la_saisie("")
 
 
 # -- saisie ------------------------------------------------------------------
 
 
 def test_saisie_par_defaut_est_valide():
-    Saisie().verifier()
+    SAISIE.Saisie().verifier()
 
 
 @pytest.mark.parametrize("champs", [
@@ -77,8 +53,8 @@ def test_saisie_par_defaut_est_valide():
     {"salaire": "50"},
 ])
 def test_saisies_refusees(champs):
-    with pytest.raises(ErreurSaisie):
-        Saisie.depuis_requete(champs)
+    with pytest.raises(ErreurSite, match=REFUSEE):
+        saisie_du_portage(champs)
 
 
 @pytest.mark.parametrize("champ", ["bascule", "euros"])
@@ -91,27 +67,27 @@ def test_les_annees_hors_bornes_sont_refusees(champ, valeur):
     faisait afficher des pensions à soixante chiffres, l'année des euros
     servant d'exposant à l'inflation cumulée.
     """
-    with pytest.raises(ErreurSaisie):
-        Saisie.depuis_requete({champ: valeur})
+    with pytest.raises(ErreurSite, match=REFUSEE):
+        saisie_du_portage({champ: valeur})
 
 
 @pytest.mark.parametrize("champ", ["bascule", "euros"])
 def test_les_annees_aux_bornes_sont_acceptees(champ):
-    for valeur in (ANNEE_MINIMALE, ANNEE_MAXIMALE):
+    for valeur in (SAISIE.ANNEE_MINIMALE, SAISIE.ANNEE_MAXIMALE):
         assert getattr(
-            Saisie.depuis_requete({champ: str(valeur)}), champ
+            saisie_du_portage({champ: str(valeur)}), champ
         ) == valeur
 
 
 def test_le_nombre_d_enfants_reste_borne():
     """Les majorations du scénario 1 en dépendent : le champ n'était borné que
     dans le formulaire, et « ?enfants=999 » gonflait la pension de référence."""
-    assert Saisie.depuis_requete(
-        {"enfants": str(ENFANTS_MAXIMUM)}
-    ).enfants == ENFANTS_MAXIMUM
-    for refuse in ("-1", str(ENFANTS_MAXIMUM + 1), "999"):
-        with pytest.raises(ErreurSaisie):
-            Saisie.depuis_requete({"enfants": refuse})
+    assert saisie_du_portage(
+        {"enfants": str(SAISIE.ENFANTS_MAXIMUM)}
+    ).enfants == SAISIE.ENFANTS_MAXIMUM
+    for refuse in ("-1", str(SAISIE.ENFANTS_MAXIMUM + 1), "999"):
+        with pytest.raises(ErreurSite, match=REFUSEE):
+            saisie_du_portage({"enfants": refuse})
 
 
 def test_toute_borne_du_formulaire_est_opposable_hors_du_navigateur():
@@ -134,8 +110,8 @@ def test_toute_borne_du_formulaire_est_opposable_hors_du_navigateur():
                 continue
             dehors = float(borne) + pas
             valeur = str(int(dehors)) if float(borne).is_integer() else str(dehors)
-            with pytest.raises(ErreurSaisie, match=r"."):
-                Saisie.depuis_requete({nom: valeur})
+            with pytest.raises(ErreurSite, match=refus_de_la_saisie(".")):
+                saisie_du_portage({nom: valeur})
 
 
 def test_les_bornes_des_calendriers_sont_opposables_hors_du_navigateur():
@@ -163,8 +139,8 @@ def test_les_bornes_des_calendriers_sont_opposables_hors_du_navigateur():
             requete = {nom: dehors}
             if nom.startswith("metier"):
                 requete[f"{nom.split('_')[0]}_statut"] = "artisan"
-            with pytest.raises(ErreurSaisie, match=r"."):
-                Saisie.depuis_requete(requete)
+            with pytest.raises(ErreurSite, match=refus_de_la_saisie(".")):
+                saisie_du_portage(requete)
 
 
 def test_le_depart_le_plus_tardif_se_convertit_encore_en_rente():
@@ -179,22 +155,24 @@ def test_le_depart_le_plus_tardif_se_convertit_encore_en_rente():
 
     simulateur = Simulateur(Parametres())
     convertisseur = Convertisseur(simulateur.mortalite, simulateur.parametres)
-    for naissance in (NAISSANCE_MINIMALE, NAISSANCE_MAXIMALE):
-        depart = naissance + AGE_LIQUIDATION_MAXIMAL
-        assert convertisseur.coefficient(AGE_LIQUIDATION_MAXIMAL, depart).diviseur > 0
+    maximal = SAISIE.AGE_LIQUIDATION_MAXIMAL
+    for naissance in (SAISIE.NAISSANCE_MINIMALE, SAISIE.NAISSANCE_MAXIMALE):
+        depart = naissance + maximal
+        assert convertisseur.coefficient(maximal, depart).diviseur > 0
         with pytest.raises(ValueError, match="diviseur nul"):
-            convertisseur.coefficient(AGE_LIQUIDATION_MAXIMAL + 1, depart + 1)
+            convertisseur.coefficient(maximal + 1, depart + 1)
 
 
 def test_le_site_simule_le_depart_le_plus_tardif(page):
     """Né en janvier 2020 et parti au dernier âge que la saisie accepte : la
     carrière court jusqu'en 2139, au-delà de toutes les projections, et le
     site la calcule comme une autre (action 151)."""
-    depart = f"{NAISSANCE_MAXIMALE + AGE_LIQUIDATION_MAXIMAL}-02"
-    texte = page("/simuler", naissance=f"{NAISSANCE_MAXIMALE}-01-15",
-                 debut=f"{NAISSANCE_MAXIMALE + 22}-09", liquidation=depart)
+    naissance, maximal = SAISIE.NAISSANCE_MAXIMALE, SAISIE.AGE_LIQUIDATION_MAXIMAL
+    depart = f"{naissance + maximal}-02"
+    texte = page("/simuler", naissance=f"{naissance}-01-15",
+                 debut=f"{naissance + 22}-09", liquidation=depart)
     assert "Saisie refusée" not in texte
-    assert f"à {AGE_LIQUIDATION_MAXIMAL} ans" in texte
+    assert f"à {maximal} ans" in texte
 
 
 def test_la_page_dit_la_limite_d_age_et_ses_exceptions_presumees(page):
@@ -260,12 +238,12 @@ def test_les_adresses_d_avant_le_calendrier_valent_toujours():
     réécrire de la même façon — sans quoi tout lien envoyé mentirait.
     L'ancienne ne disait pas le jour : il est présumé le 15, et le départ à
     64 ans et 7 mois tombe au 1er mai 2040, du mois qui suit l'anniversaire."""
-    ancienne = Saisie.depuis_requete({
+    ancienne = saisie_du_portage({
         "naissance": "1975", "naissance_mois": "9",
         "debut": "22", "debut_mois": "3",
         "liquidation": "64", "liquidation_mois": "7",
     })
-    nouvelle = Saisie.depuis_requete({
+    nouvelle = saisie_du_portage({
         "naissance": "1975-09-15", "debut": "1997-12", "liquidation": "2040-05",
     })
     assert ancienne.requete() == nouvelle.requete()
@@ -273,7 +251,7 @@ def test_les_adresses_d_avant_le_calendrier_valent_toujours():
     assert nouvelle.mois_de(nouvelle.liquidation, depart=True) == "2040-05"
     # Et l'âge décimal d'avant les mois, que personne n'écrit plus mais que
     # certaines adresses portent encore.
-    assert Saisie.depuis_requete({"liquidation": "64.5"}).liquidation == 64.5
+    assert saisie_du_portage({"liquidation": "64.5"}).liquidation == 64.5
 
 
 def test_un_metier_peut_commencer_le_mois_qui_precede_le_depart():
@@ -283,19 +261,19 @@ def test_un_metier_peut_commencer_le_mois_qui_precede_le_depart():
     dates se comparent sur la même origine, celle du départ (R. 351-37)."""
     commun = {"naissance": "1962-03-15", "debut": "1984-09", "liquidation": "2026-07",
               "metier2_statut": "artisan"}
-    saisie = Saisie.depuis_requete({**commun, "metier2_debut": "2026-06"})
+    saisie = saisie_du_portage({**commun, "metier2_debut": "2026-06"})
     assert saisie.mois_de(saisie.liquidation, depart=True) == "2026-07"
-    with pytest.raises(ErreurSaisie):
-        Saisie.depuis_requete({**commun, "metier2_debut": "2026-07"})
+    with pytest.raises(ErreurSite, match=REFUSEE):
+        saisie_du_portage({**commun, "metier2_debut": "2026-07"})
 
 
 def test_valeur_non_numerique_est_refusee_proprement():
-    with pytest.raises(ErreurSaisie):
-        Saisie.depuis_requete({"naissance": "mille-neuf-cent"})
+    with pytest.raises(ErreurSite, match=REFUSEE):
+        saisie_du_portage({"naissance": "mille-neuf-cent"})
 
 
 def test_virgule_decimale_acceptee():
-    assert Saisie.depuis_requete({"salaire": "1,5"}).salaire == 1.5
+    assert saisie_du_portage({"salaire": "1,5"}).salaire == 1.5
 
 
 def test_la_fenetre_de_lissage_se_saisit_librement_mais_reste_bornee():
@@ -304,24 +282,24 @@ def test_la_fenetre_de_lissage_se_saisit_librement_mais_reste_bornee():
     La borne haute est un garde-fou de sens, pas une limite du moteur : au-delà
     d'une trentaine d'années la moyenne couvre presque toute une carrière.
     """
-    for annees in (1, 2, 7, 17, LISSAGE_MAXIMUM):
-        assert Saisie.depuis_requete({"lissage": str(annees)}).lissage == annees
-    assert Saisie.depuis_requete({}).lissage == 1
+    for annees in (1, 2, 7, 17, SAISIE.LISSAGE_MAXIMUM):
+        assert saisie_du_portage({"lissage": str(annees)}).lissage == annees
+    assert saisie_du_portage({}).lissage == 1
 
-    for refusee in ("0", "-3", str(LISSAGE_MAXIMUM + 1)):
-        with pytest.raises(ErreurSaisie):
-            Saisie.depuis_requete({"lissage": refusee})
-    with pytest.raises(ErreurSaisie):
-        Saisie.depuis_requete({"lissage": "au jugé"})
+    for refusee in ("0", "-3", str(SAISIE.LISSAGE_MAXIMUM + 1)):
+        with pytest.raises(ErreurSite, match=REFUSEE):
+            saisie_du_portage({"lissage": refusee})
+    with pytest.raises(ErreurSite, match=REFUSEE):
+        saisie_du_portage({"lissage": "au jugé"})
 
 
 def test_option_inconnue_retombe_sur_le_defaut():
-    saisie = Saisie.depuis_requete({"indexation": "au_doigt_mouille"})
+    saisie = saisie_du_portage({"indexation": "au_doigt_mouille"})
     assert saisie.indexation == "masse_salariale"
 
 
 def test_interruptions_analysees():
-    saisie = Saisie(interruptions="1995:1997:education_enfant, 2001:2001:maladie")
+    saisie = SAISIE.Saisie({"interruptions": "1995:1997:education_enfant, 2001:2001:maladie"})
     plages = saisie.interruptions_analysees()
     assert plages[1995] == "education_enfant"
     assert plages[1997] == "education_enfant"
@@ -330,16 +308,16 @@ def test_interruptions_analysees():
 
 
 def test_interruption_mal_formee_est_refusee():
-    with pytest.raises(ErreurSaisie):
-        Saisie(interruptions="1995-1997").interruptions_analysees()
+    with pytest.raises(ErreurSite, match=REFUSEE):
+        SAISIE.Saisie({"interruptions": "1995-1997"}).interruptions_analysees()
 
 
 @pytest.mark.parametrize("plage", [
     "0:999999999:chomage_indemnise",
     "1:2147483647:maladie",
     "1200:1300:maladie",
-    f"1990:{ANNEE_CARRIERE_MAXIMALE + 1}:maladie",
-    f"{ANNEE_CARRIERE_MINIMALE - 1}:1990:maladie",
+    "1990:{maximale_plus_un}:maladie",
+    "{minimale_moins_un}:1990:maladie",
 ])
 def test_une_plage_d_interruption_hors_de_toute_carriere_est_refusee(plage):
     """La boucle reprenait les deux années telles quelles.
@@ -349,47 +327,56 @@ def test_une_plage_d_interruption_hors_de_toute_carriere_est_refusee(plage):
     l'onglet et le figeait — et le lien partagé figeait celui d'un autre. Aucune
     carrière ne sort de la fenêtre contrôlée ici, et le refus est immédiat.
     """
-    with pytest.raises(ErreurSaisie, match="carrière possible"):
-        Saisie(interruptions=plage).interruptions_analysees()
+    plage = plage.format(maximale_plus_un=SAISIE.ANNEE_CARRIERE_MAXIMALE + 1,
+                         minimale_moins_un=SAISIE.ANNEE_CARRIERE_MINIMALE - 1)
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie("carrière possible")):
+        SAISIE.Saisie({"interruptions": plage}).interruptions_analysees()
 
 
 def test_une_plage_d_interruption_aux_bornes_reste_acceptee():
-    plages = Saisie(
-        interruptions=f"{ANNEE_CARRIERE_MINIMALE}:{ANNEE_CARRIERE_MAXIMALE}:maladie"
+    minimale, maximale = SAISIE.ANNEE_CARRIERE_MINIMALE, SAISIE.ANNEE_CARRIERE_MAXIMALE
+    plages = SAISIE.Saisie(
+        {"interruptions": f"{minimale}:{maximale}:maladie"}
     ).interruptions_analysees()
-    assert plages[ANNEE_CARRIERE_MINIMALE] == "maladie"
-    assert plages[ANNEE_CARRIERE_MAXIMALE] == "maladie"
+    assert plages[minimale] == "maladie"
+    assert plages[maximale] == "maladie"
 
 
 def test_une_plage_d_interruption_a_l_envers_est_refusee():
     """« 2004:2003 » ne décrivait rien : la boucle ne tournait pas."""
-    with pytest.raises(ErreurSaisie, match="avant de commencer"):
-        Saisie(interruptions="2004:2003:maladie").interruptions_analysees()
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie("avant de commencer")):
+        SAISIE.Saisie({"interruptions": "2004:2003:maladie"}).interruptions_analysees()
+
+
+def _motifs() -> list[str]:
+    """Les motifs des périodes non travaillées des données, que la saisie du
+    portage reçoit du paquet."""
+    return list(charger_periodes_non_travaillees(Parametres().racine_donnees))
 
 
 def test_un_motif_d_interruption_inconnu_est_refuse():
     """Une faute de frappe retombait sur « sans_activite », donc sur zéro
     trimestre au lieu de quatre : elle changeait la pension sans un mot."""
-    motifs = charger_periodes_non_travaillees(Contexte().base.racine_donnees)
-    with pytest.raises(ErreurSaisie, match="motif inconnu"):
-        Saisie(interruptions="1998:2002:educaton_enfant").interruptions_analysees(motifs)
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie("motif inconnu")):
+        SAISIE.Saisie({"interruptions": "1998:2002:educaton_enfant"}) \
+            .interruptions_analysees(_motifs())
 
 
 def test_les_motifs_acceptes_sont_ceux_que_le_moteur_sait_traiter():
     """Ni plus — une liste écrite à la main aurait dérivé des données — ni
     moins : chaque motif du paquet doit rester saisissable."""
-    motifs = charger_periodes_non_travaillees(Contexte().base.racine_donnees)
+    motifs = _motifs()
     assert motifs, "le paquet ne porte plus aucune période non travaillée"
     for motif in motifs:
-        plages = Saisie(
-            interruptions=f"1998:1999:{motif}"
+        plages = SAISIE.Saisie(
+            {"interruptions": f"1998:1999:{motif}"}
         ).interruptions_analysees(motifs)
         assert plages[1998] == motif
 
 
 def test_le_motif_n_est_controle_que_si_les_donnees_sont_fournies():
     """Une saisie ne connaît pas les données : sans elles, le motif passe."""
-    assert Saisie(interruptions="1998:1999:peu_importe").interruptions_analysees()
+    assert SAISIE.Saisie({"interruptions": "1998:1999:peu_importe"}).interruptions_analysees()
 
 
 @pytest.mark.parametrize("champ", ["naissance", "salaire", "primes", "euros"])
@@ -403,8 +390,8 @@ def test_un_nombre_non_fini_ou_exotique_est_refuse(champ, valeur):
     jamais échouer — le simulateur affichait « Ce revenu vaut inf fois le
     salaire moyen », et « ?naissance=inf » levait un OverflowError nu.
     """
-    with pytest.raises(ErreurSaisie):
-        Saisie.depuis_requete({"unite_revenu": "euros_mois", champ: valeur})
+    with pytest.raises(ErreurSite, match=REFUSEE):
+        saisie_du_portage({"unite_revenu": "euros_mois", champ: valeur})
 
 
 # -- l'unité des revenus saisis ----------------------------------------------
@@ -412,7 +399,7 @@ def test_un_nombre_non_fini_ou_exotique_est_refuse(champ, valeur):
 
 def test_le_formulaire_vierge_demande_des_euros():
     """C'est la question qui revenait : personne ne connaît son salaire en ratio."""
-    saisie = Saisie.depuis_requete({})
+    saisie = saisie_du_portage({})
     assert saisie.unite_revenu == "euros_mois"
     assert saisie.revenu_en_euros is True
 
@@ -421,8 +408,8 @@ def test_un_salaire_mensuel_devient_un_multiple():
     """2 500 € par mois contre 40 000 € annuels d'ancrage, à l'échelle de 2026."""
     # En brut : ce test mesure la conversion euros → multiple, et le mode
     # net y ajouterait la conversion net → brut, qui a son propre test.
-    saisie = Saisie.depuis_requete({"unite_revenu": "euros_mois",
-                                    "salaire": "2500", "montants": "brut"})
+    saisie = saisie_du_portage({"unite_revenu": "euros_mois",
+                                "salaire": "2500", "montants": "brut"})
     echelle = _echelle()
     assert saisie.niveaux(echelle) == pytest.approx([2500 * 12 / echelle.moyen])
     assert saisie.parcours(echelle)[0].niveau_salaire == pytest.approx(
@@ -431,14 +418,14 @@ def test_un_salaire_mensuel_devient_un_multiple():
 
 
 def test_le_multiple_reste_disponible():
-    saisie = Saisie.depuis_requete({"unite_revenu": "moyen", "salaire": "1.4"})
+    saisie = saisie_du_portage({"unite_revenu": "moyen", "salaire": "1.4"})
     assert saisie.revenu_en_euros is False
     assert saisie.parcours(_echelle())[0].niveau_salaire == 1.4
 
 
 def test_une_adresse_d_avant_les_euros_reste_lue_en_multiples():
     """Un « salaire » nu vaut un multiple : le lire en euros en ferait un euro."""
-    saisie = Saisie.depuis_requete({"naissance": "1975", "salaire": "1.4"})
+    saisie = saisie_du_portage({"naissance": "1975", "salaire": "1.4"})
     assert saisie.unite_revenu == "moyen"
     assert saisie.parcours(_echelle())[0].niveau_salaire == 1.4
 
@@ -446,26 +433,26 @@ def test_une_adresse_d_avant_les_euros_reste_lue_en_multiples():
 def test_l_unite_s_ecrit_toujours_dans_l_adresse():
     """C'est ce qui distingue une adresse neuve d'une adresse d'avant les euros."""
     for unite in ("euros_mois", "moyen"):
-        requete = Saisie.depuis_requete({"unite_revenu": unite, "salaire": "1"}).requete()
+        requete = saisie_du_portage({"unite_revenu": unite, "salaire": "1"}).requete()
         assert f"unite_revenu={unite}" in requete
 
 
 def test_un_salaire_hors_bornes_est_refuse_en_euros():
     """Le refus doit dire quoi corriger, donc redire les bornes en euros."""
-    saisie = Saisie.depuis_requete({"unite_revenu": "euros_mois", "salaire": "200"})
-    with pytest.raises(ErreurSaisie, match="bruts par mois"):
+    saisie = saisie_du_portage({"unite_revenu": "euros_mois", "salaire": "200"})
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie("bruts par mois")):
         saisie.parcours(_echelle())
 
 
 def test_un_salaire_negatif_ou_nul_est_refuse():
     for montant in ("0", "-1500"):
-        with pytest.raises(ErreurSaisie):
-            Saisie.depuis_requete({"unite_revenu": "euros_mois", "salaire": montant})
+        with pytest.raises(ErreurSite, match=REFUSEE):
+            saisie_du_portage({"unite_revenu": "euros_mois", "salaire": montant})
 
 
 def test_l_unite_vaut_pour_tous_les_metiers():
     echelle = _echelle()
-    saisie = Saisie.depuis_requete({
+    saisie = saisie_du_portage({
         "unite_revenu": "euros_mois", "salaire": "2500", "montants": "brut",
         "metier2_debut": "40", "metier2_statut": "artisan",
         "metier2_salaire": "5000",
@@ -487,7 +474,7 @@ def _lien_de_bascule(parametres):
     return dict(parse_qsl(html.unescape(lien.group(1)))), html.unescape(lien.group(2))
 
 
-def test_la_bascule_d_unite_convertit_les_montants(contexte):
+def test_la_bascule_d_unite_convertit_les_montants():
     """Le piège que ce lien existe pour éviter.
 
     Un menu HTML ne convertit rien : basculer l'unité sans retoucher le nombre
@@ -505,7 +492,7 @@ def test_la_bascule_d_unite_convertit_les_montants(contexte):
     assert "Saisie refusée" not in corps
 
 
-def test_la_bascule_revient_au_meme_revenu(contexte):
+def test_la_bascule_revient_au_meme_revenu():
     """Aller et retour : de combien le revenu décrit peut-il bouger ?
 
     Pas de zéro : le multiple s'écrit au millième, et un millième de salaire
@@ -513,15 +500,18 @@ def test_la_bascule_revient_au_meme_revenu(contexte):
     par un demi-pas, plus l'arrondi à l'euro — et cette borne est CALCULÉE
     depuis le pas du champ, pour qu'elle suive si le pas change un jour. Le
     balayage porte sur tout le domaine accepté : sur trois valeurs choisies, un
-    aller-retour semble exact alors qu'il ne l'est pas.
+    aller-retour semble exact alors qu'il ne l'est pas. L'échelle est celle
+    du portage, que la bascule applique ; ses deux conversions se gardent sous
+    la main, chacune une demande à node.
     """
-    echelle = contexte.echelle(Saisie())
-    borne = echelle.mensuel(pages.PAS_MULTIPLE) / 2 + 1
+    echelle = site().contexte.echelle(SAISIE.Saisie())
+    mensuel, niveau = echelle.mensuel, echelle.niveau
+    borne = mensuel(pages.PAS_MULTIPLE) / 2 + 1
 
     def aller_retour(euros: int) -> int:
-        return round(echelle.mensuel(round(echelle.niveau(euros), pages.DECIMALES_MULTIPLE)))
+        return round(mensuel(round(niveau(euros), pages.DECIMALES_MULTIPLE)))
 
-    plancher, plafond = round(echelle.mensuel(0.1)), round(echelle.mensuel(10))
+    plancher, plafond = round(mensuel(0.1)), round(mensuel(10))
     pire = max(abs(aller_retour(euros) - euros)
                for euros in range(plancher, plafond + 1))
     assert pire <= borne, f"{pire} € d'écart, au-delà des {borne:.2f} € admis"
@@ -529,26 +519,28 @@ def test_la_bascule_revient_au_meme_revenu(contexte):
     assert pire == 2
 
 
-def test_la_bascule_ne_fait_jamais_sortir_des_bornes(contexte):
+def test_la_bascule_ne_fait_jamais_sortir_des_bornes():
     """Un revenu accepté doit le rester une fois converti.
 
     Sinon le lien mènerait à une page qui refuse ce qu'elle affichait juste
     avant — l'arrondi peut faire franchir 0,1 ou 10 à un revenu qui les frôle.
+    L'échelle est celle du portage, que la bascule applique.
     """
-    echelle = contexte.echelle(Saisie())
-    for euros in range(echelle.euros_dans_les_bornes(0.1),
-                       echelle.euros_dans_les_bornes(10) + 1):
-        multiple = round(echelle.niveau(euros), pages.DECIMALES_MULTIPLE)
+    echelle = site().contexte.echelle(SAISIE.Saisie())
+    mensuel, niveau, dans_les_bornes = (echelle.mensuel, echelle.niveau,
+                                        echelle.euros_dans_les_bornes)
+    for euros in range(dans_les_bornes(0.1), dans_les_bornes(10) + 1):
+        multiple = round(niveau(euros), pages.DECIMALES_MULTIPLE)
         assert 0.1 <= multiple <= 10, f"{euros} € donne {multiple}"
     # Vers les euros, la bascule prend l'euro le plus proche, sauf aux bords :
     # 0,1 fois le salaire moyen fait 355,34 € en 2026, et 355 € serait refusé.
     for millieme in range(100, 10001):
-        euros = echelle.euros_dans_les_bornes(millieme / 1000)
-        assert abs(euros - echelle.mensuel(millieme / 1000)) < 1
-        assert 0.1 <= echelle.niveau(euros) <= 10, f"{millieme / 1000} donne {euros} €"
+        euros = dans_les_bornes(millieme / 1000)
+        assert abs(euros - mensuel(millieme / 1000)) < 1
+        assert 0.1 <= niveau(euros) <= 10, f"{millieme / 1000} donne {euros} €"
 
 
-def test_les_bornes_annoncees_par_le_refus_sont_acceptees(contexte):
+def test_les_bornes_annoncees_par_le_refus_sont_acceptees():
     """Un message d'erreur ne doit pas nommer un montant qu'il refuserait.
 
     Il dit « de 348 à 34 754 € » : les deux valeurs sont arrondies, et un
@@ -557,16 +549,16 @@ def test_les_bornes_annoncees_par_le_refus_sont_acceptees(contexte):
     # En brut : les bornes que le message nomme sont des bornes de BRUT,
     # puisque c'est l'unité du modèle. En net, le nombre saisi est converti
     # avant d'être borné, et le test porterait sur autre chose.
-    echelle = contexte.echelle(Saisie(montants="brut"))
+    echelle = _echelle()
     for borne in (echelle.euros_dans_les_bornes(0.1), echelle.euros_dans_les_bornes(10)):
-        saisie = Saisie.depuis_requete({
+        saisie = saisie_du_portage({
             "unite_revenu": "euros_mois", "salaire": str(borne),
             "montants": "brut",
         })
         saisie.parcours(echelle)  # ne doit pas lever
 
 
-def test_la_bascule_convertit_tous_les_metiers(contexte):
+def test_la_bascule_convertit_tous_les_metiers():
     suite, _ = _lien_de_bascule({
         "naissance": "1975", "unite_revenu": "euros_mois", "salaire": "2900",
         "montants": "brut",
@@ -578,7 +570,7 @@ def test_la_bascule_convertit_tous_les_metiers(contexte):
     )
 
 
-def test_les_valeurs_du_lien_tombent_sur_le_pas_des_champs(contexte):
+def test_les_valeurs_du_lien_tombent_sur_le_pas_des_champs():
     """Un navigateur refuse de soumettre un nombre qui rate le pas déclaré.
 
     Le lien écrit des valeurs arrondies ; si le champ annonçait un pas plus
@@ -689,9 +681,7 @@ def _pension_affichee(corps: str) -> float:
 @pytest.mark.parametrize("pension,mode", [
     (1500, "net"), (2400, "net"), (1100, "net"), (2000, "brut"),
 ])
-def test_la_pension_saisie_est_celle_que_le_systeme_actuel_sert(
-    contexte, pension, mode,
-):
+def test_la_pension_saisie_est_celle_que_le_systeme_actuel_sert(pension, mode):
     """L'aller-retour, qui est tout l'objet de la fonctionnalité.
 
     On saisit une pension ; la page doit afficher CETTE pension sur la barre du
@@ -719,7 +709,7 @@ def test_le_revenu_deduit_est_annonce_avant_les_quatre_montants():
     )
 
 
-def test_le_lien_de_reprise_decrit_la_meme_carriere(contexte):
+def test_le_lien_de_reprise_decrit_la_meme_carriere():
     """Reprendre en saisissant le revenu doit rendre la même pension.
 
     C'est le seul endroit où la bascule de saisie traduit : elle ne le peut pas
@@ -807,9 +797,9 @@ def test_une_adresse_qui_ne_dit_que_la_situation_ouvre_la_bonne_saisie():
     un retraité qui a choisi de saisir ce qu'il gagnait garde son choix, parce
     que son adresse le dit.
     """
-    assert Saisie.depuis_requete({"situation": "retraite"}).saisie_par == "pension"
-    assert Saisie.depuis_requete({"situation": "actif"}).saisie_par == "revenu"
-    assert Saisie.depuis_requete(
+    assert saisie_du_portage({"situation": "retraite"}).saisie_par == "pension"
+    assert saisie_du_portage({"situation": "actif"}).saisie_par == "revenu"
+    assert saisie_du_portage(
         {"situation": "retraite", "saisie_par": "revenu"}).saisie_par == "revenu"
 
 
@@ -868,7 +858,7 @@ def test_un_retraite_peut_encore_saisir_ce_qu_il_gagnait():
     assert "Ou saisir" not in actif
 
 
-def test_la_bascule_net_brut_traduit_la_pension_saisie(contexte):
+def test_la_bascule_net_brut_traduit_la_pension_saisie():
     """Changer d'affichage ne doit pas changer la carrière qu'on a décrite.
 
     Le nombre du formulaire est un NET en mode net. Le recopier tel quel dans
@@ -891,9 +881,12 @@ def test_la_bascule_net_brut_traduit_la_pension_saisie(contexte):
     assert vers_brut["montants"] == "brut"
     # 1 800 € nets valent le brut que le taux du foyer laisse : sa tranche de
     # CSG, présumée sur ses seules pensions, et la cotisation maladie de sa
-    # part complémentaire (action 138, étape 2).
-    saisie = Saisie.depuis_requete(base)
-    taux = Montants.depuis(saisie, contexte.base, contexte.simuler(saisie)).taux_pension
+    # part complémentaire (action 138, étape 2) : les montants du portage, que
+    # la bascule applique.
+    saisie, portage = saisie_du_portage(base), site().contexte
+    taux = module("contexte").Montants.depuis(
+        saisie, portage.simulateur(saisie.parametres(portage.base)),
+        portage.simuler(saisie)).taux_pension
     assert float(vers_brut["pension"]) == pytest.approx(1800 / (1 - taux), abs=1.0), (
         f"la pension n'a pas été traduite : {vers_brut['pension']}"
     )
@@ -967,7 +960,7 @@ def _releve(premiere: int, derniere: int,
 
 
 def test_le_releve_est_lu_ligne_a_ligne():
-    saisie = Saisie.depuis_requete({
+    saisie = saisie_du_portage({
         "naissance": "1975", "liquidation": "64",
         "releve": "1998:salarie_prive_non_cadre:14200:4\n"
                   "1999:salarie_prive_cadre:19800",
@@ -982,14 +975,13 @@ def test_le_releve_est_lu_ligne_a_ligne():
     ]
 
 
-def test_le_releve_remplace_la_carriere_parametrique(contexte):
+def test_le_releve_remplace_la_carriere_parametrique(saisies):
     """Deux simulations, mêmes bornes : le relevé n'emprunte rien au profil."""
     commun = {"naissance": "1975", "liquidation": "64", "debut": "23",
               "statut": "salarie_prive_non_cadre", "unite_revenu": "moyen",
               "salaire": "1"}
-    lue = contexte.simuler(Saisie.depuis_requete({
-        **commun, "releve": _releve(1998, 2038)}))
-    reconstituee = contexte.simuler(Saisie.depuis_requete(commun))
+    lue = saisies.simuler({**commun, "releve": _releve(1998, 2038)})
+    reconstituee = saisies.simuler(commun)
     assert lue.carriere.annee_liquidation == reconstituee.carriere.annee_liquidation
     # Les années du relevé, puis janvier 2039, que le site lui ajoute avant le
     # départ du 1er février : celles de la carrière reconstituée.
@@ -1002,23 +994,21 @@ def test_le_releve_remplace_la_carriere_parametrique(contexte):
     assert lue.carriere.ligne(1998).revenu != reconstituee.carriere.ligne(1998).revenu
 
 
-def test_les_trimestres_declares_l_emportent_sur_le_montant(contexte):
+def test_les_trimestres_declares_l_emportent_sur_le_montant(saisies):
     """Le relevé fait foi : un temps partiel ne se lit sur aucun salaire."""
-    saisie = Saisie.depuis_requete({
+    carriere = saisies.simuler({
         "naissance": "1975", "liquidation": "64",
         "releve": "2000:salarie_prive_non_cadre:30000:2",
-    })
-    carriere = contexte.simuler(saisie).carriere
+    }).carriere
     assert carriere.ligne(2000).trimestres_valides == 2
 
 
-def test_l_annee_du_depart_est_tronquee_par_la_liquidation(contexte):
+def test_l_annee_du_depart_est_tronquee_par_la_liquidation(saisies):
     """Le relevé donne l'année ; la date de liquidation dit jusqu'où elle compte."""
-    saisie = Saisie.depuis_requete({
+    carriere = saisies.simuler({
         "naissance": "1975", "liquidation": "64", "liquidation_mois": "7",
         "releve": _releve(1998, 2039),
-    })
-    carriere = contexte.simuler(saisie).carriere
+    }).carriere
     assert carriere.ligne(2038).fraction_annee == 1.0
     # Né en janvier 1975, présumé le 15 : départ à 64 ans et 7 mois, donc au
     # 1er septembre 2039 — du mois qui suit l'anniversaire —, huit mois
@@ -1029,14 +1019,13 @@ def test_l_annee_du_depart_est_tronquee_par_la_liquidation(contexte):
     assert carriere.ligne(2039).trimestres_valides == 2
 
 
-def test_les_interruptions_valent_encore_sur_un_releve(contexte):
+def test_les_interruptions_valent_encore_sur_un_releve(saisies):
     """Le relevé ne dit pas la NATURE de l'année ; le champ des motifs, si."""
-    saisie = Saisie.depuis_requete({
+    carriere = saisies.simuler({
         "naissance": "1975", "liquidation": "64",
         "releve": _releve(1998, 2038),
         "interruptions": "2005:2006:chomage_indemnise",
-    })
-    carriere = contexte.simuler(saisie).carriere
+    }).carriere
     chomage = carriere.ligne(2005)
     assert chomage.type_periode == "chomage_indemnise"
     assert not chomage.cotisations_versees
@@ -1048,7 +1037,7 @@ def test_les_interruptions_valent_encore_sur_un_releve(contexte):
 
 
 def test_un_releve_vide_laisse_la_carriere_parametrique():
-    assert not Saisie.depuis_requete({"releve": "   "}).releve_actif
+    assert not saisie_du_portage({"releve": "   "}).releve_actif
 
 
 @pytest.mark.parametrize("ligne", [
@@ -1061,16 +1050,18 @@ def test_un_releve_vide_laisse_la_carriere_parametrique():
     "2005:salarie_prive_non_cadre:24000:5",
     "2005:salarie_prive_non_cadre:24000:-1",
     "2005:salarie_prive_non_cadre:24000:4, 2005:artisan:9000:4",
-    f"{ANNEE_CARRIERE_MINIMALE - 1}:salarie_prive_non_cadre:1:4",
-    f"{ANNEE_CARRIERE_MAXIMALE + 1}:salarie_prive_non_cadre:1:4",
+    "{minimale_moins_un}:salarie_prive_non_cadre:1:4",
+    "{maximale_plus_un}:salarie_prive_non_cadre:1:4",
     "1970:salarie_prive_non_cadre:1:4",      # avant les quatorze ans de l'assuré
     "2040:salarie_prive_non_cadre:1:4",      # après le départ, au 1er février 2039
 ])
 def test_une_ligne_de_releve_fautive_est_refusee(ligne):
-    saisie = Saisie.depuis_requete({
+    ligne = ligne.format(minimale_moins_un=SAISIE.ANNEE_CARRIERE_MINIMALE - 1,
+                         maximale_plus_un=SAISIE.ANNEE_CARRIERE_MAXIMALE + 1)
+    saisie = saisie_du_portage({
         "naissance": "1975", "liquidation": "64", "releve": ligne,
     })
-    with pytest.raises(ErreurSaisie):
+    with pytest.raises(ErreurSite, match=REFUSEE):
         saisie.releve_analyse()
 
 
@@ -1083,12 +1074,12 @@ def test_un_releve_demesure_est_refuse():
     """
     lignes = ",".join(
         f"{annee}:salarie_prive_non_cadre:100:4"
-        for annee in range(1930, 1930 + RELEVE_MAXIMUM + 1)
+        for annee in range(1930, 1930 + SAISIE.RELEVE_MAXIMUM + 1)
     )
-    saisie = Saisie.depuis_requete({
+    saisie = saisie_du_portage({
         "naissance": "1975", "liquidation": "64", "releve": lignes,
     })
-    with pytest.raises(ErreurSaisie, match="au plus"):
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie("au plus")):
         saisie.releve_analyse()
 
 
@@ -1100,34 +1091,34 @@ def test_aucune_carriere_n_atteint_la_borne_du_releve():
     au-dessus de ce compte, faute de quoi elle refuserait une carrière que le
     reste du formulaire accepte.
     """
-    assert RELEVE_MAXIMUM > AGE_LIQUIDATION_MAXIMAL - AGE_DEBUT_MINIMAL
+    assert SAISIE.RELEVE_MAXIMUM > SAISIE.AGE_LIQUIDATION_MAXIMAL - SAISIE.AGE_DEBUT_MINIMAL
 
 
-def test_un_statut_ferme_est_refuse_aussi_sur_un_releve(contexte):
+def test_un_statut_ferme_est_refuse_aussi_sur_un_releve():
     """Le refus parle d'années déclarées, non d'un « métier n° 2 » inexistant."""
-    saisie = Saisie.depuis_requete({
+    saisie = saisie_du_portage({
         "naissance": "1975", "liquidation": "64",
         "releve": "2015:mineur:24000:4",
     })
-    with pytest.raises(ErreurSaisie, match="première année déclarée"):
-        contexte.simuler(saisie)
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie("première année déclarée")):
+        site().contexte.simuler(saisie)
 
 
-def test_un_statut_inconnu_du_releve_est_refuse(contexte):
-    saisie = Saisie.depuis_requete({
+def test_un_statut_inconnu_du_releve_est_refuse():
+    saisie = saisie_du_portage({
         "naissance": "1975", "liquidation": "64",
         "releve": "2005:cosmonaute:24000:4",
     })
-    with pytest.raises(ErreurSaisie, match="cosmonaute"):
-        contexte.simuler(saisie)
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie("cosmonaute")):
+        site().contexte.simuler(saisie)
 
 
 def test_le_releve_voyage_dans_l_adresse():
     """Il est un paramètre comme les autres : un lien décrit la carrière entière."""
-    saisie = Saisie.depuis_requete({"releve": _releve(2000, 2002)})
+    saisie = saisie_du_portage({"releve": _releve(2000, 2002)})
     parametres = dict(parse_qsl(saisie.requete()))
     assert parametres["releve"] == _releve(2000, 2002)
-    assert Saisie.depuis_requete(parametres).releve == saisie.releve
+    assert saisie_du_portage(parametres).releve == saisie.releve
 
 
 def test_la_page_dit_que_la_carriere_a_ete_lue(page):
@@ -1157,7 +1148,7 @@ def test_le_releve_est_le_premier_mode_de_remplissage(page):
 
 
 def test_la_page_dit_ce_qu_elle_ajoute_au_releve_jusqu_au_depart(page):
-    """Le relevé se prolonge jusqu'au départ (``Contexte.releve_prolonge``) : la
+    """Le relevé se prolonge jusqu'au départ (``Contexte.releveProlonge``) : la
     page le dit, avec la ligne qui l'en dispense à qui ne travaille plus ; une
     fois cette ligne écrite, elle dit ce qu'elle en a fait."""
     texte = page("/simuler", naissance=1975, liquidation=64, releve=_releve(1998, 2024))
@@ -1175,7 +1166,7 @@ def test_la_page_dit_ce_qu_elle_ajoute_au_releve_jusqu_au_depart(page):
 
 
 def test_les_metiers_suivants_sont_lus_dans_la_requete():
-    saisie = Saisie.depuis_requete({
+    saisie = saisie_du_portage({
         "statut": "salarie_prive_non_cadre", "salaire": "0.9",
         "metier2_debut": "35", "metier2_statut": "fonctionnaire_etat",
         "metier2_salaire": "1.2",
@@ -1196,17 +1187,17 @@ def test_les_metiers_suivants_sont_lus_dans_la_requete():
 
 def test_une_adresse_sans_metier_decrit_une_carriere_d_un_seul_metier():
     """Toutes les adresses déjà partagées doivent continuer de valoir."""
-    saisie = Saisie.depuis_requete({"naissance": "1960", "statut": "mineur"})
+    saisie = saisie_du_portage({"naissance": "1960", "statut": "mineur"})
     assert saisie.metiers == []
     assert [metier.affiliation for metier in saisie.parcours(_echelle())] == ["mineur"]
 
 
 def test_une_ligne_de_metier_a_moitie_remplie_est_refusee():
     """La ligne vide du formulaire ne décrit rien ; à moitié remplie, elle ment."""
-    with pytest.raises(ErreurSaisie, match="date à laquelle il commence"):
-        Saisie.depuis_requete({"metier2_statut": "artisan"})
-    with pytest.raises(ErreurSaisie, match="statut d'affiliation"):
-        Saisie.depuis_requete({"metier2_debut": "40"})
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie("date à laquelle il commence")):
+        saisie_du_portage({"metier2_statut": "artisan"})
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie("statut d'affiliation")):
+        saisie_du_portage({"metier2_debut": "40"})
 
 
 @pytest.mark.parametrize("champs", [
@@ -1221,24 +1212,24 @@ def test_une_ligne_de_metier_a_moitie_remplie_est_refusee():
     {"metier2_debut": "40", "metier2_statut": "artisan", "metier2_salaire": "40"},
 ])
 def test_metiers_incoherents_sont_refuses(champs):
-    with pytest.raises(ErreurSaisie):
-        Saisie.depuis_requete(champs)
+    with pytest.raises(ErreurSite, match=REFUSEE):
+        saisie_du_portage(champs)
 
 
-def test_un_metier_de_statut_inconnu_est_refuse(contexte):
-    saisie = Saisie.depuis_requete({
+def test_un_metier_de_statut_inconnu_est_refuse():
+    saisie = saisie_du_portage({
         "naissance": "1975", "metier2_debut": "40", "metier2_statut": "astronaute",
     })
-    with pytest.raises(ErreurSaisie, match="astronaute"):
-        contexte.simuler(saisie)
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie("astronaute")):
+        site().contexte.simuler(saisie)
 
 
-def test_changer_de_metier_change_le_resultat(contexte):
+def test_changer_de_metier_change_le_resultat(saisies):
     commun = {"naissance": "1975", "debut": "21", "liquidation": "64"}
-    seul = contexte.simuler(Saisie.depuis_requete(commun)).dictionnaire()
-    reconverti = contexte.simuler(Saisie.depuis_requete({
+    seul = saisies.simuler(commun).dictionnaire()
+    reconverti = saisies.simuler({
         **commun, "metier2_debut": "42", "metier2_statut": "artisan",
-    })).dictionnaire()
+    }).dictionnaire()
 
     assert reconverti["assure"]["affiliations"] == [
         "salarie_prive_non_cadre", "artisan",
@@ -1266,14 +1257,14 @@ def test_le_formulaire_offre_toujours_une_ligne_de_metier_de_plus(page):
 
 
 def test_le_formulaire_s_arrete_au_nombre_maximal_de_metiers(page):
-    champs = {"naissance": 1960, "liquidation": 64}
-    for rang in range(2, METIERS_MAXIMUM + 1):
+    champs, maximum = {"naissance": 1960, "liquidation": 64}, SAISIE.METIERS_MAXIMUM
+    for rang in range(2, maximum + 1):
         champs[f"metier{rang}_debut"] = 30 + rang
         champs[f"metier{rang}_statut"] = "artisan"
     texte = page("/simuler", **champs)
-    assert texte.count('<legend class="rang">') == METIERS_MAXIMUM
+    assert texte.count('<legend class="rang">') == maximum
     assert "<span>Ajouter une période" not in texte
-    assert f'name="metier{METIERS_MAXIMUM + 1}_debut"' not in texte
+    assert f'name="metier{maximum + 1}_debut"' not in texte
 
 
 def test_la_page_recapitule_le_parcours(page):
@@ -1290,35 +1281,35 @@ def test_les_motifs_du_menu_existent_dans_la_table_des_periodes():
     mal orthographié dans le formulaire validerait zéro trimestre au lieu de
     quatre, et changerait la pension sans un mot.
     """
-    table = charger_periodes_non_travaillees(Contexte().base.racine_donnees)
-    for code, _ in SANS_EMPLOI:
+    table = _motifs()
+    for code, _ in SAISIE.SANS_EMPLOI:
         assert code in table, f"motif proposé par le formulaire et absent de la table : {code}"
 
 
-def test_une_periode_sans_emploi_vaut_l_interruption_qu_elle_decrit(contexte):
+def test_une_periode_sans_emploi_vaut_l_interruption_qu_elle_decrit(saisies):
     """Une ligne « sans emploi » et le champ « Interruptions » disent la même
     chose : c'est le même chemin dans le moteur, et les chiffres doivent l'être
     aussi, jusqu'au dernier."""
     base = {"naissance": "1962-03-15", "debut": "1984-09", "liquidation": "2026-07",
             "unite_revenu": "euros_mois", "salaire": "2600"}
-    par_ligne = contexte.simuler(Saisie.depuis_requete({
+    par_ligne = saisies.simuler({
         **base, "metier2_debut": "2020-03", "metier2_statut": "chomage_indemnise",
-    })).dictionnaire()
-    par_champ = contexte.simuler(Saisie.depuis_requete({
+    }).dictionnaire()
+    par_champ = saisies.simuler({
         **base, "interruptions": "2020:2026:chomage_indemnise",
-    })).dictionnaire()
+    }).dictionnaire()
     assert par_ligne == par_champ
 
 
-def test_la_fin_d_activite_retire_les_annees_qu_elle_couvre(contexte):
+def test_la_fin_d_activite_retire_les_annees_qu_elle_couvre(saisies):
     """Le défaut que la ligne comble : sans elle, le calcul suppose qu'on a
     travaillé jusqu'au mois du départ."""
     base = {"naissance": "1962-03-15", "debut": "1984-09", "liquidation": "2026-07",
             "unite_revenu": "euros_mois", "salaire": "2600"}
-    continu = contexte.simuler(Saisie.depuis_requete(base))
-    arrete = contexte.simuler(Saisie.depuis_requete({
+    continu = saisies.simuler(base)
+    arrete = saisies.simuler({
         **base, "metier2_debut": "2020-03", "metier2_statut": "sans_activite",
-    }))
+    })
     assert arrete.actuel.pension_mensuelle < continu.actuel.pension_mensuelle
     assert (arrete.notionnel_retroactif.pension_mensuelle
             < continu.notionnel_retroactif.pension_mensuelle)
@@ -1342,7 +1333,7 @@ def test_l_annee_ou_l_activite_s_arrete_revient_au_plus_grand_nombre_de_mois(
 ):
     """La même convention que pour un changement de métier : le moteur ne
     connaît qu'un statut par année civile, et c'est le plus long qui l'emporte."""
-    saisie = Saisie.depuis_requete({
+    saisie = saisie_du_portage({
         "naissance": "1962-01-01", "debut": "1984-09", "liquidation": "2026-07",
         "metier2_debut": debut, "metier2_statut": "sans_activite",
     })
@@ -1379,7 +1370,7 @@ def test_le_premier_metier_reste_une_affiliation():
     """« sans_activite » est aussi une affiliation — celle de qui n'a jamais
     travaillé —, et les adresses qui la portent en premier métier ne doivent pas
     changer de sens."""
-    saisie = Saisie.depuis_requete({"statut": "sans_activite"})
+    saisie = saisie_du_portage({"statut": "sans_activite"})
     assert [ligne.sans_emploi for ligne in saisie.lignes_carriere] == [False]
     assert saisie.interruptions_de_carriere() == {}
     assert [metier.affiliation for metier in saisie.parcours(_echelle())] == [
@@ -1402,7 +1393,7 @@ def test_la_page_recapitule_une_periode_sans_emploi(page):
 
 
 def test_requete_reconstruit_les_metiers():
-    requete = Saisie.depuis_requete({
+    requete = saisie_du_portage({
         "naissance": "1975-01-01", "metier2_debut": "40", "metier2_statut": "artisan",
         "metier2_salaire": "1.5",
     }).requete()
@@ -1415,21 +1406,22 @@ def test_requete_reconstruit_les_metiers():
 
 
 def test_requete_reconstruit_les_parametres():
-    requete = Saisie(naissance=1960, statut="mineur").requete()
+    requete = SAISIE.Saisie({"naissance": 1960, "statut": "mineur"}).requete()
     assert "naissance=1960" in requete
     assert "statut=mineur" in requete
 
 
-def test_la_situation_de_foyer_traverse_l_adresse_et_le_modele():
+def test_la_situation_de_foyer_traverse_l_adresse_et_le_modele(saisies):
     """« foyer=couple » retire l'allocation d'isolement du scénario 6, et rien
-    d'autre : l'adresse la porte, le formulaire la relit, le modèle la reçoit."""
-    from retraite_notionnelle.config import Parametres, SituationFoyer
+    d'autre : l'adresse la porte, le formulaire la relit, le modèle la reçoit,
+    par le pont."""
+    from retraite_notionnelle.config import SituationFoyer
 
-    saisie = Saisie.depuis_requete({"foyer": "couple"})
+    saisie = saisie_du_portage({"foyer": "couple"})
     assert saisie.foyer == "couple"
     assert "foyer=couple" in saisie.requete()
-    assert saisie.parametres(Parametres()).situation_foyer is SituationFoyer.COUPLE
-    assert Saisie.depuis_requete({"foyer": "n'importe quoi"}).foyer == "seul"
+    assert saisies.parametres({"foyer": "couple"}).situation_foyer is SituationFoyer.COUPLE
+    assert saisie_du_portage({"foyer": "n'importe quoi"}).foyer == "seul"
 
 
 def test_la_page_detaille_la_garantie_vieillesse_du_scenario_6(page):
@@ -1503,8 +1495,9 @@ def test_la_proposition_se_compare_a_taux_egal_cotise(contexte):
 
 # LE MICRO-ENTREPRENEUR SAISI PAR SON CHIFFRE D'AFFAIRES (action 138, étape 12 ;
 # fiche micro_social_abattement) : son activité abat le chiffre d'affaires de
-# 71, 50 ou 34 % (L. 613-7, II), au seuil du modèle, dans les deux moteurs ; la
-# Cipav route la période vers les régimes du libéral.
+# 71, 50 ou 34 % (L. 613-7, II), au seuil du modèle, dans la saisie du
+# portage, la seule (action 161, étape 6) ; la Cipav route la période vers les
+# régimes du libéral.
 _MICRO = {"statut": "micro_entrepreneur", "naissance": "1975", "debut": "2009-01",
           "unite_revenu": "euros_mois", "salaire": "3000"}
 
@@ -1515,26 +1508,19 @@ _MICRO = {"statut": "micro_entrepreneur", "naissance": "1975", "debut": "2009-01
     ("cipav", "profession_liberale", 0.66),
 ])
 def test_le_chiffre_d_affaires_s_abat_selon_l_activite(micro, statut, part):
-    champs = {**_MICRO, "micro": micro}
-    echelle = _echelle()
-    [metier] = Saisie.depuis_requete(champs).parcours(echelle)
+    saisie = saisie_du_portage({**_MICRO, "micro": micro})
+    echelle = site().contexte.echelle(saisie)
+    [metier] = saisie.parcours(echelle)
     assert metier.affiliation == statut
     assert metier.niveau_salaire == pytest.approx(echelle.niveau(3000.0) * part)
-    jumeau = module("saisie").Saisie.depuis_requete(
-        champs, False, site().contexte.paquet.presomptions)
-    [porte] = jumeau.parcours(site().contexte.echelle(jumeau))
-    assert porte["affiliation"] == statut
-    assert porte["niveau_salaire"] == pytest.approx(metier.niveau_salaire, rel=1e-12)
 
 
 def test_l_activite_du_micro_entrepreneur_revient_dans_l_adresse():
     champs = {**_MICRO, "micro": "cipav"}
-    assert "micro=cipav" in Saisie.depuis_requete(champs).requete()
-    assert "micro=cipav" in module("saisie").Saisie.depuis_requete(
-        champs, False, site().contexte.paquet.presomptions).requete()
-    assert "micro" not in dict(parse_qsl(Saisie.depuis_requete(_MICRO).requete()))
+    assert "micro=cipav" in saisie_du_portage(champs).requete()
+    assert "micro" not in dict(parse_qsl(saisie_du_portage(_MICRO).requete()))
     # Une activité inconnue retombe, comme tout menu, sur le défaut.
-    assert Saisie.depuis_requete({**_MICRO, "micro": "agricole"}).micro == ""
+    assert saisie_du_portage({**_MICRO, "micro": "agricole"}).micro == ""
 
 
 def test_le_chiffre_d_affaires_ne_se_convertit_pas_en_net():
@@ -1543,20 +1529,15 @@ def test_le_chiffre_d_affaires_ne_se_convertit_pas_en_net():
     champs = {**_MICRO, "micro": "vente", "montants": "net",
               "metier2_debut": "2020-01", "metier2_statut": "salarie_prive_non_cadre",
               "metier2_salaire": "3000"}
-    saisie = Saisie.depuis_requete(champs)
-    echelle = Contexte().echelle(saisie)
+    saisie = saisie_du_portage(champs)
+    echelle = site().contexte.echelle(saisie)
     micro, salarie = saisie.parcours(echelle)
     assert micro.niveau_salaire == pytest.approx(echelle.niveau(3000.0) * 0.29)
     assert salarie.niveau_salaire > echelle.niveau(3000.0)
 
 
 def test_un_chiffre_d_affaires_trop_petit_se_refuse_en_chiffre_d_affaires():
-    champs = {**_MICRO, "micro": "vente", "salaire": "1000"}
-    saisie = Saisie.depuis_requete(champs)
-    with pytest.raises(ErreurSaisie, match="Ce chiffre d'affaires, abattu à 29 %") as refus:
-        saisie.parcours(_echelle())
-    jumeau = module("saisie").Saisie.depuis_requete(
-        champs, False, site().contexte.paquet.presomptions)
-    with pytest.raises(Exception, match="abattu à 29 %") as refus_porte:
-        jumeau.parcours(site().contexte.echelle(jumeau))
-    assert str(refus.value) in str(refus_porte.value)
+    saisie = saisie_du_portage({**_MICRO, "micro": "vente", "salaire": "1000"})
+    with pytest.raises(ErreurSite,
+                       match=refus_de_la_saisie("Ce chiffre d'affaires, abattu à 29 %")):
+        saisie.parcours(site().contexte.echelle(saisie))

@@ -1,54 +1,23 @@
 """Ce que les tests du site se partagent.
 
 Le site lu par node, ses pages et leurs titres, la feuille de style, le
-contexte du modèle, le rendu d'une page entière, et quelques lectures du
-texte rendu. Les trois fichiers qui testent le site — ``test_web.py``,
+contexte du modèle et les saisies que le pont bâtit, le rendu d'une page
+entière, et quelques lectures du texte rendu. Les trois fichiers qui testent le site — ``test_web.py``,
 ``test_web_saisie.py`` et ``test_web_revues.py`` — les importent d'ici ;
 ce module n'est pas un fichier de tests, et pytest ne le collecte pas.
 """
 
 from __future__ import annotations
 
-import dataclasses
 import html
-import itertools
 import re
 from pathlib import Path
-from urllib.parse import parse_qsl
 
 import pytest
 
-from retraite_notionnelle.cout import COMPOSANTE_GARANTIE
-from retraite_notionnelle.donnees.bilan import EcartsFiges
-from retraite_notionnelle.donnees.chargement import (
-    DonneeInsuffisante,
-    charger_periodes_non_travaillees,
-)
-from retraite_notionnelle.saisie import (
-    AGE_DEBUT_MINIMAL,
-    AGE_LIQUIDATION_MAXIMAL,
-    AGES_REFERENCE,
-    ANNEE_CARRIERE_MAXIMALE,
-    ANNEE_CARRIERE_MINIMALE,
-    ANNEE_MAXIMALE,
-    ANNEE_MINIMALE,
-    ENFANTS_MAXIMUM,
-    INDEXATIONS,
-    LISSAGE_MAXIMUM,
-    METIERS_MAXIMUM,
-    PROFILS,
-    PROJECTIONS,
-    RELEVE_MAXIMUM,
-    SANS_EMPLOI,
-    POPULATIONS,
-    RATTACHEMENTS,
-    TABLES,
-    ErreurSaisie,
-    Saisie,
-)
 from retraite_notionnelle.contexte import Contexte
-from retraite_notionnelle.web.site import disponible, module, rendre, site
-
+from retraite_notionnelle.web.site import disponible, module, site
+from outils_pont import Saisies, saisie_du_portage
 
 g = module("gabarit")
 pages = module("pages")
@@ -70,18 +39,30 @@ _PARTAGES: dict = {}
 
 @pytest.fixture(scope="module")
 def contexte() -> Contexte:
+    """Le contexte Python : le centre du coût, que le portage n'a pas — le
+    coût, les comptes, la dépense, le bilan. La saisie, elle, se lit dans le
+    portage (``outils_pont``, action 161, étape 6)."""
     if "contexte" not in _PARTAGES:
         _PARTAGES["contexte"] = Contexte()
     return _PARTAGES["contexte"]
 
 
+@pytest.fixture(scope="module")
+def saisies() -> Saisies:
+    """Les saisies des tests : la carrière qu'en bâtit le portage, par le pont,
+    et le moteur Python qui la simule, un simulateur par jeu de paramètres."""
+    if "saisies" not in _PARTAGES:
+        _PARTAGES["saisies"] = Saisies()
+    return _PARTAGES["saisies"]
+
+
 def _echelle():
-    """L'échelle des salaires du jeu de paramètres par défaut.
+    """L'échelle des salaires du jeu de paramètres par défaut, celle du portage.
 
     ``Saisie.parcours`` en a besoin depuis que le formulaire accepte des euros :
     convertir « 2 500 € par mois » en multiple suppose le salaire moyen.
     """
-    return Contexte().echelle(Saisie(montants="brut"))
+    return site().contexte.echelle(saisie_du_portage({"montants": "brut"}))
 
 
 @pytest.fixture(scope="module")

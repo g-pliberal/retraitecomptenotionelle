@@ -24,16 +24,11 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.saisie import (
-    AGE_DEBUT_MAXIMAL,
-    AGE_DEBUT_MINIMAL,
-    AGE_LIQUIDATION_MAXIMAL,
-    AGE_LIQUIDATION_MINIMAL,
-    Saisie,
-)
 from retraite_notionnelle.web.site import disponible, module, rendre, site
+from outils_pont import saisie_du_portage
 
-#: Le formulaire est du texte du site : il se lit dans le portage, par node.
+#: Le formulaire est du texte du site : il se lit dans le portage, par node,
+#: comme la saisie qu'il renvoie (action 161, étape 6).
 pytestmark = pytest.mark.skipif(not disponible(),
                                 reason="node absent : le site ne se lit pas sans lui")
 pages = module("pages")
@@ -181,8 +176,8 @@ def test_le_formulaire_renvoie_tout_ce_qu_il_a_recu(nom):
     saisie par la pension, l'âge de référence — se perdait au premier
     « Calculer », et rien ne le disait : la page revenait, calculée sur autre
     chose."""
-    saisie = Saisie.depuis_requete(SAISIES[nom])
-    renvoyee = Saisie.depuis_requete(_soumettre(_formulaire(SAISIES[nom])))
+    saisie = saisie_du_portage(SAISIES[nom])
+    renvoyee = saisie_du_portage(_soumettre(_formulaire(SAISIES[nom])))
     assert renvoyee.requete() == saisie.requete()
 
 
@@ -266,7 +261,7 @@ def test_une_periode_se_retire_et_les_suivantes_remontent():
     apres = _formulaire(sans_la_deuxieme)
     assert re.findall(bouton, apres) == ["2"]
     assert 'name="metier3_debut"' in apres and 'name="metier4_debut"' not in apres
-    assert [metier.statut for metier in Saisie.depuis_requete(sans_la_deuxieme).metiers] \
+    assert [metier.statut for metier in saisie_du_portage(sans_la_deuxieme).metiers] \
         == [trois["metier3_statut"]]
 
     # Le script de la page la branche : au clic, les champs du formulaire,
@@ -306,10 +301,9 @@ def test_l_exemple_est_un_jeune_actif():
     """L'exemple que le simulateur ouvre déjà rempli est un jeune actif, né en
     2000, que la réforme prendrait au début de sa carrière : c'est à lui que le
     site s'adresse d'abord (le propriétaire, le 20 octobre 2026). Il était né
-    en 1975. Les deux saisies le portent, et le formulaire vierge le montre :
+    en 1975. La saisie du portage le porte, et le formulaire vierge le montre :
     premier emploi à 21 ans, en janvier 2021, départ à 64 ans, en janvier
     2064."""
-    assert Saisie().naissance == 2000
     assert module("saisie").DEFAUTS["naissance"] == 2000
     vierge = _formulaire({})
     for nom, valeur in (("naissance", "2000-01-01"), ("debut", "2021-01-01"),
@@ -323,9 +317,10 @@ def test_le_simulateur_court_deplace_ses_bornes_avec_la_naissance():
     elles restaient celles d'un assuré né en 1975 — un départ à 64 ans devenait
     impossible à envoyer pour qui était né en 1990."""
     court = pages.simulateur_court(site().contexte)
+    saisie = module("saisie")
     for nom, (mini, maxi) in {
-        "debut": (AGE_DEBUT_MINIMAL, AGE_DEBUT_MAXIMAL),
-        "liquidation": (AGE_LIQUIDATION_MINIMAL, AGE_LIQUIDATION_MAXIMAL),
+        "debut": (saisie.AGE_DEBUT_MINIMAL, saisie.AGE_DEBUT_MAXIMAL),
+        "liquidation": (saisie.AGE_LIQUIDATION_MINIMAL, saisie.AGE_LIQUIDATION_MAXIMAL),
     }.items():
         champ = re.search(rf'<input type="date" id="{nom}"[^>]*>', court).group(0)
         assert f'data-age-min="{mini}"' in champ and f'data-age-max="{maxi}"' in champ
