@@ -6918,15 +6918,15 @@ de `contribution_etat`.
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
 **Reprise, au 24 octobre 2026.** Étape 6 : trois paires faites — la saisie
-de `contexte.py`, `saisie.py`, puis le pilote : les départs de l'estimation,
-relus contre leur portage, n'ont plus que lui, leurs tests les confrontant au
-droit et à la simulation du Python ; le pilote Python ne date plus que les
-cas types. Restent, sans le propriétaire, trois défauts du portage, chacun
-pour son test, et deux écarts au calendrier et à la chronologie, pour leurs
-paires (note de la sixième partie) ; `pages.js`, ligne 7, à une session du
-site ; le profil interpolé, avec la paire de la carrière. Les paires suivantes
-attendent que le coût passe le pont ; deux de données, le propriétaire.
-Détail : `2026-10-24-etape-6-septieme-partie-le-pilote.md`.
+de `contexte.py`, `saisie.py`, puis le pilote, dont le Python ne date plus que
+les cas types —, et les trois défauts que la relecture de `saisie.py` laissait
+au portage, corrigés chacun par son test : ce que le calendrier ne date pas se
+refuse, au lieu de son erreur ; l'adresse réécrite garde chaque chiffre ; les
+défauts sont tous gelés. Restent, sans le propriétaire, deux écarts au
+calendrier et à la chronologie, pour leurs paires (note de la sixième partie) ;
+`pages.js`, ligne 7, à une session du site ; le profil interpolé, avec la paire
+de la carrière. Les paires suivantes attendent que le coût passe le pont ; deux
+de données, le propriétaire. Détail : `2026-10-24-etape-6-huitieme-partie-les-defauts-du-portage.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur

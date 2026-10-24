@@ -1,0 +1,17 @@
+date: "2026-10-24"
+session: "action 161, étape 6, huitième partie : les trois défauts du portage"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1.
+  La saisie du portage (moteur/js/saisie.js), le calendrier qu'elle appelle,
+  la saisie Python retirée (49a2b4d), que la relecture lui opposait, et la
+  page, qui remontre une saisie refusée.
+trouve: >-
+  Aucune règle n'a changé. Ce que le calendrier ne date pas — une naissance
+  en 1e308, un mois de naissance hors de l'année, un âge de 1e308 ans — se
+  refuse au lieu de faire échouer la page ; l'adresse réécrite garde chaque
+  chiffre de ses nombres ; DEFAUTS.demandes est gelé. Les témoins restent
+  identiques à l'octet.
+reste: >-
+  Rien pour la veille. Les deux écarts du calendrier et de la chronologie, à
+  la relecture de leurs paires (action 161, note du 24 octobre 2026,
+  huitième partie).
