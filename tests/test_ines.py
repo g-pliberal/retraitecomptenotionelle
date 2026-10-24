@@ -61,15 +61,16 @@ from types import SimpleNamespace
 
 import pytest
 
-from retraite_notionnelle.contexte import Montants
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.donnees.prelevements_historiques import (
     charger_prelevements_historiques,
 )
 from retraite_notionnelle.droit import foyer
 from retraite_notionnelle.remuneration import charger_prelevements
-from retraite_notionnelle.saisie import Saisie
 from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.web.site import module, site
+
+from outils_pont import saisie_du_portage
 
 RACINE = Path(__file__).resolve().parents[1]
 TEMOIN = RACINE / "tests" / "temoins" / "ines.json"
@@ -464,29 +465,31 @@ def test_l_aspa_lit_chez_ines_une_brute_qui_porte_la_crds(temoin, simulateur):
     assert vus == {"crds_dans_les_ressources", "allocataire_preleve"}
 
 
-def test_le_depot_n_preleve_pas_l_allocataire_qu_ines_preleve(temoin, bareme_2026):
+def test_le_depot_n_preleve_pas_l_allocataire_qu_ines_preleve(temoin):
     """Le même allocataire, au taux réduit par son revenu fiscal : Ines prélève
     4,3 % de sa pension, le dépôt rien, l'ASPA exonérant de tout (L. 136-1-2,
-    II 1° ; D. 242-9, 2°). Sans l'ASPA, le dépôt le range au taux réduit aussi."""
+    II 1° ; D. 242-9, 2°). Sans l'ASPA, le dépôt le range au taux réduit aussi.
+    Les montants du dépôt sont ceux du portage, que le site applique."""
     cas = temoin["chaine"]["seul_taux_reduit"]
-    saisie = Saisie.depuis_requete({
+    saisie = saisie_du_portage({
         "naissance": "1955-01-01", "debut": "1975-01", "liquidation": "2020-01",
         "unite_revenu": "moyen", "salaire": "0.3", "montants": "net",
         "revenu_fiscal": str(cas["revenu_fiscal"])})
+    bareme = site().contexte.simulateur().bareme_prelevements.pensions
+    du_foyer = module("contexte").Montants.du_foyer
     for annee, sortie in sorted(cas["par_annee"].items()):
         brute = sortie["zpenu"]
-        actuel = SimpleNamespace(
-            pensions_par_regime=[SimpleNamespace(regime="fonction_publique_etat", montant=brute)],
-            pension_annuelle=brute,
-            avantages_appliques=[SimpleNamespace(code="minimum_vieillesse",
-                                                 montant=sortie["aspa_eli"])])
-        allocataire = Montants.du_foyer(saisie, bareme_2026, actuel)
+        lignes = [{"regime": "fonction_publique_etat", "montant": brute}]
+        actuel = {"pensions_par_regime": lignes, "pension_annuelle": brute,
+                  "avantages_appliques": [{"code": "minimum_vieillesse",
+                                           "montant": sortie["aspa_eli"]}]}
+        allocataire = du_foyer(saisie, bareme, actuel)
         assert allocataire.aspa and allocataire.taux_pension == 0.0, annee
         ines = (sortie["csgprd"] + sortie["csgpri"] + sortie["crdspr"]) / brute
         assert ines == pytest.approx(0.043, abs=1e-12), annee
-        sans_aspa = SimpleNamespace(pensions_par_regime=actuel.pensions_par_regime,
-                                    pension_annuelle=brute, avantages_appliques=[])
-        assert Montants.du_foyer(saisie, bareme_2026, sans_aspa).tranche == "taux réduit"
+        sans_aspa = {"pensions_par_regime": lignes, "pension_annuelle": brute,
+                     "avantages_appliques": []}
+        assert du_foyer(saisie, bareme, sans_aspa).tranche == "taux réduit"
 
 
 def test_ines_rejoue_le_temoin(temoin, tmp_path):

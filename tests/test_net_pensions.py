@@ -23,9 +23,11 @@ from pathlib import Path
 import pytest
 import yaml
 
-from retraite_notionnelle.contexte import Contexte, Montants, couverture_francaise
+from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.remuneration import assiette_maladie, charger_prelevements
-from retraite_notionnelle.saisie import Saisie
+from retraite_notionnelle.web.site import module, site
+
+from outils_pont import Saisies, saisie_du_portage
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -35,19 +37,19 @@ PRIVE = {"naissance": "1985-03-01", "sexe": "F", "statut": "salarie_prive_non_ca
 
 
 @pytest.fixture(scope="module")
-def contexte() -> Contexte:
-    return Contexte()
+def pensions():
+    return charger_prelevements(Parametres().racine_donnees).pensions
 
 
-@pytest.fixture(scope="module")
-def pensions(contexte):
-    return charger_prelevements(contexte.base.racine_donnees).pensions
-
-
-def _simuler(contexte, requete):
-    saisie = Saisie.depuis_requete(requete)
+def _simuler(requete):
+    """La comparaison que le site calcule d'une saisie, et ses montants : ceux
+    du portage (``Montants.depuis``, ``moteur/js/contexte.js``), que le site
+    applique, et qui n'ont plus de jumeau Python dans les tests."""
+    saisie = saisie_du_portage(requete)
+    contexte = site().contexte
     comparaison = contexte.simuler(saisie)
-    return comparaison, Montants.depuis(saisie, contexte.base, comparaison)
+    simulateur = contexte.simulateur(saisie.parametres(contexte.base))
+    return comparaison, module("contexte").Montants.depuis(saisie, simulateur, comparaison)
 
 
 def test_le_taux_et_les_regimes_sont_ceux_du_fichier(pensions):
@@ -65,7 +67,7 @@ def test_le_taux_et_les_regimes_sont_ceux_du_fichier(pensions):
         "rafp", "cnbf_complementaire"}
 
 
-def test_le_scenario_1_paie_le_1_pour_cent_sur_sa_complementaire(contexte, pensions):
+def test_le_scenario_1_paie_le_1_pour_cent_sur_sa_complementaire(pensions):
     """La pension nette du scénario 1 est la brute, moins la CSG, la CRDS et la
     CASA de sa tranche sur le tout, moins 1 % de ce que servent les
     complémentaires. Au salaire moyen, présumée seule ressource, la pension
@@ -73,7 +75,7 @@ def test_le_scenario_1_paie_le_1_pour_cent_sur_sa_complementaire(contexte, pensi
     Agirc-Arrco gelé, 87 € au-delà depuis son relèvement du 1er novembre 2026.
     Le test prend donc la tranche du revenu fiscal, quelle qu'elle soit, pourvu
     qu'elle soit de celles qui paient le 1 %."""
-    comparaison, montants = _simuler(contexte, PRIVE)
+    comparaison, montants = _simuler(PRIVE)
     actuel = comparaison.actuel
     assert comparaison.aujourd_hui is None
     complementaire = sum(p.montant for p in actuel.pensions_par_regime
@@ -90,10 +92,10 @@ def test_le_scenario_1_paie_le_1_pour_cent_sur_sa_complementaire(contexte, pensi
     assert montants.part_maladie == pytest.approx(complementaire / total)
 
 
-def test_un_retraite_paie_sur_sa_complementaire_d_aujourd_hui(contexte, pensions):
+def test_un_retraite_paie_sur_sa_complementaire_d_aujourd_hui(pensions):
     """Pour qui est déjà parti, la page affiche la pension de cette année : la
     part complémentaire est celle de l'échéance, régime par régime revalorisé."""
-    comparaison, montants = _simuler(contexte, {
+    comparaison, montants = _simuler({
         "naissance": "1952-06-01", "statut": "salarie_prive_non_cadre",
         "debut": "1972-09", "liquidation": "2014-07",
         "unite_revenu": "moyen", "salaire": "1", "montants": "net"})
@@ -105,18 +107,18 @@ def test_un_retraite_paie_sur_sa_complementaire_d_aujourd_hui(contexte, pensions
         complementaire / servie.pension_annuelle)
 
 
-def test_sans_complementaire_le_taux_est_celui_d_une_pension_de_base(contexte, pensions):
+def test_sans_complementaire_le_taux_est_celui_d_une_pension_de_base(pensions):
     """Un fonctionnaire de l'État n'a pas de complémentaire qui la prélève."""
-    _, montants = _simuler(contexte, {**PRIVE, "statut": "fonctionnaire_etat"})
+    _, montants = _simuler({**PRIVE, "statut": "fonctionnaire_etat"})
     assert montants.part_maladie == 0.0
     assert montants.taux_pension == montants.taux_sans_maladie
 
 
-def test_les_cinq_autres_gardent_le_taux_de_la_personne(contexte):
+def test_les_cinq_autres_gardent_le_taux_de_la_personne():
     """Le net de chaque scénario garde le rapport de son brut à celui du
     scénario 1 : seul le calcul de la pension les sépare, et non une
     cotisation que le compte notionnel aurait perdue."""
-    comparaison, montants = _simuler(contexte, PRIVE)
+    comparaison, montants = _simuler(PRIVE)
     actuel = comparaison.actuel.pension_annuelle
     for resultat in (comparaison.notionnel_retroactif, comparaison.notionnel_prospectif,
                      comparaison.notionnel_retroactif_employeur,
@@ -127,12 +129,11 @@ def test_les_cinq_autres_gardent_le_taux_de_la_personne(contexte):
             brut / actuel, rel=1e-12)
 
 
-def test_la_majoration_pour_enfants_reste_hors_de_l_assiette(contexte, pensions):
+def test_la_majoration_pour_enfants_reste_hors_de_l_assiette(pensions):
     """L. 131-2, 1° exclut de l'assiette « les bonifications ou majorations pour
     enfants » : la majoration de l'Agirc-Arrco ne paie pas le 1 %. Le moteur la
     compte à côté des lignes des régimes, que l'assiette seule additionne."""
-    comparaison, _ = _simuler(contexte, {**PRIVE, "enfants": "3"})
-    actuel = comparaison.actuel
+    actuel = Saisies().simuler({**PRIVE, "enfants": "3"}).actuel
     majorations = [a for a in actuel.avantages_appliques if a.code == "majoration_enfants"]
     assert sum(part for a in majorations for code, part in a.par_regime
                if code in pensions.regimes_maladie) > 0
@@ -143,15 +144,13 @@ def test_la_majoration_pour_enfants_reste_hors_de_l_assiette(contexte, pensions)
         a.montant for a in majorations) == pytest.approx(total)
 
 
-def test_la_majoration_des_mines_reste_hors_de_leur_cotisation(contexte, pensions):
+def test_la_majoration_des_mines_reste_hors_de_leur_cotisation():
     """Les mines prélèvent 0,50 % des pensions « ainsi que leurs avantages
     accessoires, à l'exception de ceux mentionnés aux articles 139 et 141 »
     (décret n° 46-2769, art. 91) : la majoration d'un dixième pour trois
     enfants (art. 139) n'en paie pas, et la part de la cotisation dans la
     pension majorée tombe à 0,50 % divisés par 1,1."""
-    from retraite_notionnelle.contexte import part_des_regimes_speciaux
-
-    comparaison, _ = _simuler(contexte, {
+    comparaison, montants = _simuler({
         "naissance": "1960-03-01", "sexe": "M", "statut": "mineur",
         "debut": "1980-09-01", "liquidation": "2020-03-01", "unite_revenu": "moyen",
         "salaire": "1", "montants": "net", "enfants": "3"})
@@ -161,21 +160,20 @@ def test_la_majoration_des_mines_reste_hors_de_leur_cotisation(contexte, pension
                      if a.code == "majoration_enfants" for code, part in a.par_regime
                      if code == "mines")
     assert majoration == pytest.approx(0.1 * mines)
-    assert part_des_regimes_speciaux(pensions, actuel) == pytest.approx(0.005 / 1.1)
+    assert module("contexte").part_des_regimes_speciaux(
+        montants.bareme, actuel) == pytest.approx(0.005 / 1.1)
 
 
 def test_une_ligne_paie_le_taux_de_son_regime(pensions):
     """Une ligne de réversion, un étage : 10,1 % pour une complémentaire qui
     prélève la cotisation, 9,1 % sinon ; rien en brut."""
-    montants = Montants(net=True, taux_pension=pensions.taux_total + 0.0025,
-                        taux_sans_maladie=pensions.taux_total, taux_maladie=0.01,
-                        part_maladie=0.25, regimes_maladie=pensions.regimes_maladie)
-    assert montants.pension_du_regime(1000.0, "agirc_arrco") == pytest.approx(
-        1000.0 * (1 - pensions.taux_total - 0.01))
-    assert montants.pension_du_regime(1000.0, "regime_general") == pytest.approx(
-        1000.0 * (1 - pensions.taux_total))
-    assert dataclasses.replace(montants, net=False).pension_du_regime(
-        1000.0, "agirc_arrco") == 1000.0
+    champs = dict(taux_pension=pensions.taux_total + 0.0025,
+                  taux_sans_maladie=pensions.taux_total, taux_maladie=0.01, part_maladie=0.25)
+    cas = [(1000.0, "agirc_arrco", False, 0.0), (1000.0, "regime_general", False, 0.0)]
+    nets, bruts = _au_portage(_REGIME_JS, pensions, [(True, champs), (False, champs)], cas)
+    assert nets == pytest.approx([1000.0 * (1 - pensions.taux_total - 0.01),
+                                  1000.0 * (1 - pensions.taux_total)])
+    assert bruts[0] == 1000.0
 
 
 @pytest.mark.parametrize("requete", [
@@ -184,14 +182,14 @@ def test_une_ligne_paie_le_taux_de_son_regime(pensions):
     {"saisie_par": "pension", "pension": "1800", "naissance": "1975-01-01",
      "debut": "1996-01", "liquidation": "2039-01", "montants": "net"},
 ], ids=["retraite", "actif"])
-def test_une_pension_saisie_nette_se_retrouve(contexte, requete):
+def test_une_pension_saisie_nette_se_retrouve(requete):
     """La saisie par pension compare des nets : le taux qui sépare une pension
     de sa nette dépend de sa part complémentaire, donc du niveau cherché, et la
     nette de la carrière trouvée vaut ce qu'on a tapé."""
-    comparaison, montants = _simuler(contexte, requete)
+    comparaison, montants = _simuler(requete)
     if comparaison.aujourd_hui is not None:
         nette = montants.pension_servie(comparaison.actuel, comparaison.aujourd_hui.actuel)
-        mensuelle = comparaison.aujourd_hui_en_euros_constants(nette) / 12
+        mensuelle = comparaison.aujourdhui_en_euros_constants(nette) / 12
     else:
         nette = montants.pension_servie(comparaison.actuel)
         mensuelle = nette * comparaison.coefficient_euros_constants / 12
@@ -267,13 +265,12 @@ process.stdout.write(JSON.stringify(cas.map(([actuel, coefficient]) => [
 
 
 def test_le_portage_javascript_preleve_la_maladie_de_la_sncf_et_des_mines(pensions):
-    """La cotisation de la SNCF, sous son plafond, et celle des mines, dans les
-    deux moteurs : la part qu'elle prend à la pension, et son montant pour une
-    réversion, au plafond de moitié ; les mêmes aux taux du non-résident de
-    L. 131-9."""
-    from types import SimpleNamespace
-
-    from retraite_notionnelle.contexte import part_des_regimes_speciaux
+    """La cotisation de la SNCF, sous son plafond, et celle des mines : la part
+    qu'elle prend à la pension, que le portage seul calcule, et son montant
+    pour une réversion, au plafond de moitié, dans les deux moteurs ; les mêmes
+    aux taux du non-résident de L. 131-9."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
 
     def actuel(*lignes):
         return {"pensions_par_regime": [{"regime": r, "montant": m} for r, m in lignes],
@@ -283,29 +280,6 @@ def test_le_portage_javascript_preleve_la_maladie_de_la_sncf_et_des_mines(pensio
            (actuel(("sncf", 30000.0), ("agirc_arrco", 4000.0)), 1.0),
            (actuel(("mines", 17000.0), ("regime_general", 3000.0)), 1.1),
            (actuel(("regime_general", 15000.0)), 1.0)]
-    attendu = []
-    for brut, coefficient in cas:
-        lu = SimpleNamespace(pension_annuelle=brut["pension_annuelle"], pensions_par_regime=[
-            SimpleNamespace(**ligne) for ligne in brut["pensions_par_regime"]])
-        montants = {p["regime"]: p["montant"] for p in brut["pensions_par_regime"]}
-        attendu.append([part_des_regimes_speciaux(pensions, lu, None, coefficient),
-                        pensions.maladie_des_regimes_speciaux(montants, True),
-                        part_des_regimes_speciaux(pensions, lu, None, coefficient,
-                                                  non_resident=True),
-                        pensions.maladie_des_regimes_speciaux(montants, True, True)])
-    sncf = pensions.regimes_speciaux[0].plafond_annuel
-    assert attendu[0][0] == pytest.approx(0.007)
-    assert attendu[1][0] == pytest.approx(0.007 * sncf / 36000.0)
-    assert attendu[3][0] == pytest.approx(0.005 * 17000.0 / 20000.0)
-    assert attendu[4] == [0.0] * 4
-    # Le non-résident : 3,90 % sous le plafond, 3,20 % au-delà ; 3,70 % aux mines.
-    assert attendu[0][2] == pytest.approx(0.039)
-    assert attendu[1][2] == pytest.approx(
-        (0.039 * sncf + 0.032 * (36000.0 - sncf)) / 36000.0)
-    assert attendu[2][3] == pytest.approx(0.039 * sncf / 2 + 0.032 * (30000.0 - sncf / 2))
-    assert attendu[3][2] == pytest.approx(0.037 * 17000.0 / 20000.0)
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     with open(RACINE / "data/reference/legislation/prelevements_remuneration.yaml",
               encoding="utf-8") as flux:
         fiche = yaml.safe_load(flux)["pensions"]
@@ -314,7 +288,23 @@ def test_le_portage_javascript_preleve_la_maladie_de_la_sncf_et_des_mines(pensio
          json.dumps({"fiche": fiche, "cas": cas}, default=str)],
         cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
     assert execution.returncode == 0, execution.stderr
-    assert sum(json.loads(execution.stdout), []) == pytest.approx(sum(attendu, []))
+    lus = json.loads(execution.stdout)
+    for (brut, _), (_, reversion, _, reversion_non_resident) in zip(cas, lus):
+        montants = {p["regime"]: p["montant"] for p in brut["pensions_par_regime"]}
+        assert reversion == pytest.approx(pensions.maladie_des_regimes_speciaux(montants, True))
+        assert reversion_non_resident == pytest.approx(
+            pensions.maladie_des_regimes_speciaux(montants, True, True))
+    sncf = pensions.regimes_speciaux[0].plafond_annuel
+    assert lus[0][0] == pytest.approx(0.007)
+    assert lus[1][0] == pytest.approx(0.007 * sncf / 36000.0)
+    assert lus[3][0] == pytest.approx(0.005 * 17000.0 / 20000.0)
+    assert lus[4] == [0.0] * 4
+    # Le non-résident : 3,90 % sous le plafond, 3,20 % au-delà ; 3,70 % aux mines.
+    assert lus[0][2] == pytest.approx(0.039)
+    assert lus[1][2] == pytest.approx(
+        (0.039 * sncf + 0.032 * (36000.0 - sncf)) / 36000.0)
+    assert lus[2][3] == pytest.approx(0.039 * sncf / 2 + 0.032 * (30000.0 - sncf / 2))
+    assert lus[3][2] == pytest.approx(0.037 * 17000.0 / 20000.0)
 
 
 _LU_DU_PAQUET_JS = """
@@ -371,14 +361,20 @@ def test_le_portage_lit_dans_le_paquet_tout_ce_que_le_modele_lit_des_pensions(pe
 _ETAGES_JS = """
 import { PrelevementsPension } from "./moteur/js/remuneration.js";
 import { Montants } from "./moteur/js/contexte.js";
-const { fiche, foyers, cas } = JSON.parse(process.argv[1]);
+const { fiche, foyers, cas, total } = JSON.parse(process.argv[1]);
 const bareme = new PrelevementsPension(fiche);
-process.stdout.write(JSON.stringify(foyers.map(([tauxPension, champs]) => {
-  const montants = new Montants(true, tauxPension, 0, 0, { ...champs, bareme,
+const lignesDe = (lignes) => (lignes === null ? null : new Map(Object.entries(lignes)));
+process.stdout.write(JSON.stringify(foyers.map(([net, tauxPension, champs]) => {
+  const montants = new Montants(net, tauxPension, 0, 0, { ...champs, bareme,
     regimesMaladie: new Set(champs.regimesMaladie),
     regimesGeneraux: new Set(champs.regimesGeneraux) });
-  return cas.map(([brut, assiette, generale, lignes]) => montants.netDAssiette(
-    brut, assiette, generale, lignes === null ? null : new Map(Object.entries(lignes))));
+  return {
+    nets: cas.map(([brut, assiette, generale, lignes]) => montants.netDAssiette(
+      brut, assiette, generale, lignesDe(lignes))),
+    pensions: cas.map(([brut, assiette, generale, lignes]) => montants.pensionDAssiette(
+      brut, assiette, generale, lignesDe(lignes))),
+    pension: montants.pension(total),
+  };
 })));
 """
 
@@ -387,6 +383,27 @@ def _camel(nom: str) -> str:
     """Le nom d'un champ de ``Montants`` sous celui du portage."""
     tete, *reste = nom.split("_")
     return tete + "".join(mot.capitalize() for mot in reste)
+
+
+def _au_portage(programme: str, pensions, foyers, cas, **reste):
+    """Ce que les montants du portage, ceux que le site applique, rendent de
+    chaque cas, pour chaque foyer ``(net, champs)`` — ses champs sous les noms
+    du Python —, sur le barème du fichier : ``programme`` les calcule."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : les montants du site ne se calculent pas ici")
+    with open(RACINE / "data/reference/legislation/prelevements_remuneration.yaml",
+              encoding="utf-8") as flux:
+        fiche = yaml.safe_load(flux)["pensions"]
+    portes = [[net, champs["taux_pension"], {
+        **{_camel(nom): valeur for nom, valeur in champs.items() if nom != "taux_pension"},
+        "regimesMaladie": sorted(pensions.regimes_maladie),
+        "regimesGeneraux": sorted(pensions.regimes_generaux)}] for net, champs in foyers]
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", programme,
+         json.dumps({"fiche": fiche, "foyers": portes, "cas": cas, **reste}, default=str)],
+        cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr
+    return json.loads(execution.stdout)
 
 
 def test_un_etage_paie_la_cotisation_de_la_sncf_sur_ses_seules_lignes(pensions):
@@ -438,32 +455,14 @@ def test_un_etage_paie_la_cotisation_de_la_sncf_sur_ses_seules_lignes(pensions):
                          16000.0 - 0.032 * base - 0.037 * 10000.0,
                          complementaire * (1 - 0.042 - sncf_non_resident / total)],
     }
-    rendus = {}
-    for nom, champs in foyers.items():
-        montants = Montants(net=True, regimes_maladie=pensions.regimes_maladie,
-                            regimes_generaux=pensions.regimes_generaux, bareme=pensions,
-                            **champs)
-        rendus[nom] = [montants.net_d_assiette(brut, assiette, generale, lignes)
-                       for brut, assiette, generale, lignes in cas]
-        assert rendus[nom] == pytest.approx(attendu[nom]), nom
-        assert sum(rendus[nom][:3]) == pytest.approx(montants.pension(total)), nom
-    assert dataclasses.replace(montants, net=False).pension_d_assiette(
-        integre, 0.0, 0.0, {"sncf": integre}) == integre
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    with open(RACINE / "data/reference/legislation/prelevements_remuneration.yaml",
-              encoding="utf-8") as flux:
-        fiche = yaml.safe_load(flux)["pensions"]
-    portes = [[champs["taux_pension"], {
-        **{_camel(nom): valeur for nom, valeur in champs.items() if nom != "taux_pension"},
-        "regimesMaladie": sorted(pensions.regimes_maladie),
-        "regimesGeneraux": sorted(pensions.regimes_generaux)}] for champs in foyers.values()]
-    execution = subprocess.run(
-        ["node", "--input-type=module", "-e", _ETAGES_JS,
-         json.dumps({"fiche": fiche, "foyers": portes, "cas": cas}, default=str)],
-        cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
-    assert execution.returncode == 0, execution.stderr
-    assert sum(json.loads(execution.stdout), []) == pytest.approx(sum(rendus.values(), []))
+    rendus = _au_portage(_ETAGES_JS, pensions, [(True, champs) for champs in foyers.values()],
+                         cas, total=total)
+    for nom, rendu in zip(foyers, rendus):
+        assert rendu["nets"] == pytest.approx(attendu[nom]), nom
+        assert sum(rendu["nets"][:3]) == pytest.approx(rendu["pension"]), nom
+    [brut] = _au_portage(_ETAGES_JS, pensions, [(False, foyers["non-résident"])], cas,
+                         total=total)
+    assert brut["pensions"][0] == integre
 
 
 _REGIME_JS = """
@@ -471,8 +470,8 @@ import { PrelevementsPension } from "./moteur/js/remuneration.js";
 import { Montants } from "./moteur/js/contexte.js";
 const { fiche, foyers, cas } = JSON.parse(process.argv[1]);
 const bareme = new PrelevementsPension(fiche);
-process.stdout.write(JSON.stringify(foyers.map(([tauxPension, champs]) => {
-  const montants = new Montants(true, tauxPension, 0, 0, { ...champs, bareme,
+process.stdout.write(JSON.stringify(foyers.map(([net, tauxPension, champs]) => {
+  const montants = new Montants(net, tauxPension, 0, 0, { ...champs, bareme,
     regimesMaladie: new Set(champs.regimesMaladie),
     regimesGeneraux: new Set(champs.regimesGeneraux) });
   return cas.map(([brut, regime, reversion, majoration]) => montants.pensionDuRegime(
@@ -511,29 +510,10 @@ def test_une_reversion_paie_la_sncf_sous_la_moitie_du_plafond_hors_majoration(pe
                          5000.0 - 0.042 * 4500.0,
                          1400.0],
     }
-    rendus = {}
-    for nom, champs in foyers.items():
-        montants = Montants(net=True, regimes_maladie=pensions.regimes_maladie,
-                            regimes_generaux=pensions.regimes_generaux, bareme=pensions,
-                            **champs)
-        rendus[nom] = [montants.pension_du_regime(brut, regime, reversion, majoration)
-                       for brut, regime, reversion, majoration in cas]
-        assert rendus[nom] == pytest.approx(attendu[nom]), nom
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    with open(RACINE / "data/reference/legislation/prelevements_remuneration.yaml",
-              encoding="utf-8") as flux:
-        fiche = yaml.safe_load(flux)["pensions"]
-    portes = [[champs["taux_pension"], {
-        **{_camel(nom): valeur for nom, valeur in champs.items() if nom != "taux_pension"},
-        "regimesMaladie": sorted(pensions.regimes_maladie),
-        "regimesGeneraux": sorted(pensions.regimes_generaux)}] for champs in foyers.values()]
-    execution = subprocess.run(
-        ["node", "--input-type=module", "-e", _REGIME_JS,
-         json.dumps({"fiche": fiche, "foyers": portes, "cas": cas}, default=str)],
-        cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
-    assert execution.returncode == 0, execution.stderr
-    assert sum(json.loads(execution.stdout), []) == pytest.approx(sum(rendus.values(), []))
+    rendus = _au_portage(_REGIME_JS, pensions, [(True, champs) for champs in foyers.values()],
+                         cas)
+    for nom, rendu in zip(foyers, rendus):
+        assert rendu == pytest.approx(attendu[nom]), nom
 
 
 def test_l_abattement_de_10_pour_cent(pensions):
@@ -546,39 +526,39 @@ def test_l_abattement_de_10_pour_cent(pensions):
     assert pensions.revenu_fiscal_presume([300.0]) == pytest.approx(0.0)
 
 
-def test_un_foyer_au_smic_n_est_pas_preleve(contexte):
+def test_un_foyer_au_smic_n_est_pas_preleve():
     """Au SMIC toute sa vie, la pension, seule ressource présumée, reste sous
     le premier seuil : ni CSG, ni CRDS, ni CASA, ni cotisation maladie."""
-    _, montants = _simuler(contexte, {**PRIVE, "salaire": "0.45"})
+    _, montants = _simuler({**PRIVE, "salaire": "0.45"})
     assert montants.revenu_presume
     assert montants.tranche == "exonéré"
     assert montants.taux_pension == 0.0
     assert montants.pension(1000.0) == 1000.0
 
 
-def test_le_revenu_dit_remplace_la_presomption(contexte, pensions):
+def test_le_revenu_dit_remplace_la_presomption(pensions):
     """Le revenu fiscal que la personne dit fixe seul la tranche."""
-    _, montants = _simuler(contexte, {**PRIVE, "revenu_fiscal": "50000"})
+    _, montants = _simuler({**PRIVE, "revenu_fiscal": "50000"})
     assert not montants.revenu_presume and montants.revenu_fiscal == 50000.0
     assert montants.tranche == "taux plein"
     assert montants.taux_sans_maladie == pytest.approx(pensions.taux_total)
 
 
-def test_un_conjoint_donne_deux_parts_et_ses_ressources(contexte, pensions):
+def test_un_conjoint_donne_deux_parts_et_ses_ressources(pensions):
     """Avec un conjoint déclaré, le foyer a deux parts, et ses ressources
     entrent dans le revenu présumé."""
     comparaison, montants = _simuler(
-        contexte, {**PRIVE, "conjoint": "1986", "ressources_conjoint": "15000"})
+        {**PRIVE, "conjoint": "1986", "ressources_conjoint": "15000"})
     assert montants.parts == 2.0
     pension = comparaison.actuel.pension_annuelle * comparaison.coefficient_euros_constants
     assert montants.revenu_fiscal == pytest.approx(
         pensions.revenu_fiscal_presume([pension, 15000.0]))
 
 
-def test_l_allocataire_de_l_aspa_n_est_preleve_de_rien(contexte):
+def test_l_allocataire_de_l_aspa_n_est_preleve_de_rien():
     """L. 136-1-2, II 1° et D. 242-9, 2° : le titulaire d'un minimum vieillesse
     est exonéré, et l'ASPA ne l'est jamais."""
-    comparaison, montants = _simuler(contexte, {
+    comparaison, montants = _simuler({
         "naissance": "1955-01-01", "debut": "1995-01", "liquidation": "2022-01",
         "unite_revenu": "moyen", "salaire": "0.3", "montants": "net"})
     assert comparaison.aujourd_hui.actuel.minimum_vieillesse > 0
@@ -588,25 +568,25 @@ def test_l_allocataire_de_l_aspa_n_est_preleve_de_rien(contexte):
 @pytest.mark.parametrize("pension, tranche", [
     ("1150", "exonéré"), ("1800", "taux médian"), ("3200", "taux plein"),
 ])
-def test_une_pension_saisie_nette_tombe_dans_sa_tranche(contexte, pension, tranche):
+def test_une_pension_saisie_nette_tombe_dans_sa_tranche(pension, tranche):
     """La saisie par pension tire la tranche de la pension saisie : remontée
     au brut, son revenu présumé est bien celui de la tranche, et la nette de la
     carrière trouvée vaut ce qu'on a tapé."""
-    comparaison, montants = _simuler(contexte, {
+    comparaison, montants = _simuler({
         "saisie_par": "pension", "pension": pension, "naissance": "1955-01-01",
         "debut": "1975-01", "liquidation": "2017-01", "montants": "net"})
     assert montants.tranche == tranche
     nette = montants.pension_servie(comparaison.actuel, comparaison.aujourd_hui.actuel)
-    assert comparaison.aujourd_hui_en_euros_constants(nette) / 12 == pytest.approx(
+    assert comparaison.aujourdhui_en_euros_constants(nette) / 12 == pytest.approx(
         float(pension), abs=1.0)
 
 
-def test_un_non_resident_que_la_france_soigne_paie_la_cotisation_maladie(contexte, pensions):
+def test_un_non_resident_que_la_france_soigne_paie_la_cotisation_maladie(pensions):
     """L. 136-1 : hors de France, ni CSG, ni CRDS, ni CASA. L. 131-9 et D. 242-8 :
     qui relève de l'assurance maladie française paie 3,2 % sur la base du
     régime général et 4,2 % sur la complémentaire. En Espagne, sans pension
     espagnole, la France est seule compétente (règlement n° 883/2004, art. 24)."""
-    _, montants = _simuler(contexte, {**PRIVE, "residence": "ES"})
+    _, montants = _simuler({**PRIVE, "residence": "ES"})
     assert montants.non_resident and montants.couvert
     assert montants.motif_couverture == "france_competente"
     assert montants.taux_sans_maladie == 0.0
@@ -623,10 +603,10 @@ def test_un_non_resident_que_la_france_soigne_paie_la_cotisation_maladie(context
     assert montants.taux_regimes_speciaux == 0.0
 
 
-def test_l_etat_de_residence_qui_sert_une_pension_soigne(contexte):
+def test_l_etat_de_residence_qui_sert_une_pension_soigne():
     """Règlement n° 883/2004, art. 23 : l'État de résidence qui sert une
     pension prend en charge les soins ; la France ne prélève rien."""
-    _, montants = _simuler(contexte, {
+    _, montants = _simuler({
         **PRIVE, "residence": "ES", "pension_etrangere1_pays": "ES",
         "pension_etrangere1": "300", "pension_etrangere1_debut": "2049-03"})
     assert montants.non_resident and not montants.couvert
@@ -634,22 +614,24 @@ def test_l_etat_de_residence_qui_sert_une_pension_soigne(contexte):
     assert montants.taux_pension == 0.0
 
 
-def test_hors_de_l_union_quinze_ans_d_assurance_francaise(contexte):
+def test_hors_de_l_union_quinze_ans_d_assurance_francaise():
     """L. 160-3, b : hors des règlements européens, la France soigne le
     pensionné dont la pension rémunère quinze années d'assurance."""
-    _, montants = _simuler(contexte, {**PRIVE, "residence": "MA"})
+    _, montants = _simuler({**PRIVE, "residence": "MA"})
     assert montants.couvert and montants.motif_couverture == "quinze_ans"
 
 
 def test_moins_de_quinze_ans_hors_de_l_union_ne_paie_rien():
     """Sous quinze années d'assurance française, hors de l'Union, la France ne
-    prend pas en charge les soins : rien n'est prélevé."""
-    saisie = Saisie.depuis_requete({**PRIVE, "residence": "MA"})
-
-    class Actuel:
-        trimestres_valides = 70
-        trimestres_etrangers = 20
-
-    assert couverture_francaise(saisie, Actuel(), False, 60) == (False, "moins_de_quinze_ans")
-    Actuel.trimestres_etrangers = 0
-    assert couverture_francaise(saisie, Actuel(), False, 60) == (True, "quinze_ans")
+    prend pas en charge les soins : rien n'est prélevé. Les trimestres de
+    l'étranger n'y comptent pas : trente-quatre ans au Maroc, puis neuf ans et
+    demi en France ; avec les quinze ans, la France soigne
+    (``test_hors_de_l_union_quinze_ans_d_assurance_francaise``)."""
+    comparaison, montants = _simuler({
+        **PRIVE, "debut": "2039-09-01", "residence": "MA", "etranger1_pays": "MA",
+        "etranger1_debut": "2005-09", "etranger1_fin": "2039-09"})
+    actuel = comparaison.actuel
+    assert actuel.trimestres_valides >= 60 > (actuel.trimestres_valides
+                                              - actuel.trimestres_etrangers)
+    assert not montants.couvert and montants.motif_couverture == "moins_de_quinze_ans"
+    assert montants.taux_pension == 0.0
