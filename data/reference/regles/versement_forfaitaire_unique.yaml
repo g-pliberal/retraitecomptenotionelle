@@ -7,9 +7,17 @@ intitule: >-
   égal à quinze fois ce montant, la remplace (L. 351-9, R. 351-26). La loi du 20 janvier
   2014 abroge L. 351-9 pour l'assuré dont toutes les pensions prennent effet depuis le
   1er janvier 2016 : le versement ne reste qu'à qui a pris sa première retraite avant.
+  Depuis le code de 1985, la pension des artisans et des commerçants suit la même règle
+  (L. 634-2), la pension de leurs périodes d'après 1972 et l'avantage de celles d'avant
+  totalisés pour le seuil (D. 634-9).
 domaine: minima
 regimes:
 - regime_general
+- cancava
+- cancava_avant_1973
+- organic
+- organic_avant_1973
+- rsi
 etape: completer_tous_regimes
 face: droit
 etat: approchee
@@ -31,8 +39,10 @@ dates_qui_decident:
 # date du barème de la Cnav — les francs convertis au taux de 6,55957, à quatre
 # décimales —, celui de la date d'effet étant le dernier qui ne la passe pas ;
 # `premiere_retraite_avant`, la date avant laquelle une pension de base doit
-# avoir pris effet pour que le versement vaille encore ; `fiabilite`, que le
-# résultat prend quand le versement remplace la pension.
+# avoir pris effet pour que le versement vaille encore ; `totalises`, pour la
+# pension alignée des artisans et des commerçants, les avantages d'avant 1973
+# que le seuil compte avec elle, chaque autre pension se comparant seule ;
+# `fiabilite`, que le résultat prend quand le versement remplace la pension.
 versions:
 - id: avant_le_1er_juillet_1974
   statut: supposee
@@ -89,6 +99,10 @@ versions:
   - {id: LEGIARTI000006742677, article: L. 351-9, en_vigueur: 1985-12-21}
   - {id: LEGIARTI000006749367, article: R. 351-26, en_vigueur: 1985-12-21}
   - {id: LEGIARTI000025749165, article: R. 351-26, en_vigueur: 2012-04-27}
+  - {id: LEGIARTI000006743943, article: L. 634-2, en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006737974, article: D. 634-9, en_vigueur: 1990-01-01}
+  - {id: LEGIARTI000006765847, article: "décret n° 73-937 du 2 octobre 1973, article 8",
+     en_vigueur: 1990-01-01}
   nee_de: LEGIARTI000006742677
   bornes:
     liquidation.date_effet: [1985-12-21, 2016-01-01]
@@ -100,11 +114,31 @@ versions:
       décret de 1945 : le seuil de 175 F au 1er juillet 1974, revalorisé, quinze fois le
       montant annuel, « effectué à la date à laquelle l'assuré aurait perçu les premiers
       arrérages de sa pension » ; la rédaction du 27 avril 2012 ne change que la qualité
-      de pensionné
-    beneficiaire: l'assuré dont la pension de vieillesse est inférieure au seuil
+      de pensionné. « Sous réserve d'adaptation par décret, les prestations des régimes
+      d'assurance vieillesse des professions artisanales, industrielles et commerciales
+      sont calculées, liquidées et servies dans les conditions définies [...] aux articles
+      [...] L. 351-7 à L. 351-10 » (L. 634-2, depuis 1985) ; « Pour l'application des
+      dispositions de l'article R. 351-26, sont totalisés le montant annuel de la pension
+      de vieillesse à laquelle l'assuré pourrait prétendre au titre des périodes
+      d'assurance postérieures au 31 décembre 1972, le montant de l'avantage de vieillesse
+      auquel il pourrait prétendre au titre des périodes d'assurance et d'activité non
+      salariée antérieures au 1er janvier 1973 et, le cas échéant, le montant de l'avantage
+      de conjoint dû au titre de ces dernières périodes » (D. 634-9) ; « Les dispositions
+      de l'article R. 351-26 susvisé sont applicables aux prestations de vieillesse visées
+      à l'article L. 634-3 », celles d'avant 1973, « compte tenu, le cas échéant, des
+      dispositions de l'article D. 634-9 » (décret n° 73-937, article 8)
+    beneficiaire: >-
+      l'assuré dont la pension de vieillesse du régime général, ou celle des artisans ou
+      des commerçants avec l'avantage de leurs périodes d'avant 1973, est inférieure au
+      seuil
     parametres:
       existe: true
-      regimes: [regime_general]
+      regimes: [regime_general, cancava, cancava_avant_1973, organic, organic_avant_1973,
+        rsi]
+      totalises:
+        cancava: [cancava_avant_1973]
+        organic: [organic_avant_1973]
+        rsi: [cancava_avant_1973, organic_avant_1973]
       multiple: 15
       seuils: [["1985-07-01", 92.0792], ["1986-01-01", 93.2988],
         ["1986-10-01", 93.7561], ["1987-01-01", 95.4438], ["1987-07-01", 96.3981],
@@ -130,6 +164,11 @@ versions:
   - {id: LEGIARTI000047456834, article: L. 161-22-2, en_vigueur: 2023-09-01}
   - {id: LEGIARTI000031986254, article: R. 161-19-1, en_vigueur: 2016-02-08}
   - {id: LEGIARTI000047960988, article: R. 161-19-1, en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000033714121, article: L. 634-2, en_vigueur: 2017-01-01}
+  - {id: LEGIARTI000036391466, article: L. 634-2, en_vigueur: 2018-01-01}
+  - {id: LEGIARTI000006737974, article: D. 634-9, en_vigueur: 1990-01-01}
+  - {id: JORFARTI000041904643, reference: "décret n° 2020-621 du 22 mai 2020, article 1er, qui abroge D. 634-9",
+     en_vigueur: 2020-05-25}
   nee_de: JORFARTI000028493878
   bornes:
     liquidation.date_effet: [2016-01-01, null]
@@ -142,13 +181,21 @@ versions:
       retraite prend effet avant 2016 », et le seuil se revalorise encore (183,01 € au 1er
       janvier 2026). À la place, l'assuré d'un seul régime de base qui a huit trimestres
       au plus reçoit, à sa demande, ses cotisations revalorisées (L. 161-22-2, R.
-      161-19-1)
+      161-19-1). L. 634-2 y soumet toujours les artisans et les commerçants — « dans les
+      conditions définies aux chapitres Ier à V du titre V du livre III » depuis 2018 —,
+      D. 634-9 totalisant leurs deux pensions jusqu'à son abrogation, le 25 mai 2020
     beneficiaire: >-
       l'assuré dont une pension de base a pris effet avant le 1er janvier 2016 et dont la
-      pension de vieillesse est inférieure au seuil
+      pension de vieillesse, ou celle des artisans ou des commerçants avec l'avantage de
+      leurs périodes d'avant 1973, est inférieure au seuil
     parametres:
       existe: true
-      regimes: [regime_general]
+      regimes: [regime_general, cancava, cancava_avant_1973, organic, organic_avant_1973,
+        rsi]
+      totalises:
+        cancava: [cancava_avant_1973]
+        organic: [organic_avant_1973]
+        rsi: [cancava_avant_1973, organic_avant_1973]
       multiple: 15
       premiere_retraite_avant: "2016-01-01"
       seuils: [["2015-10-01", 156.24], ["2017-10-01", 157.48], ["2019-01-01", 157.95],
@@ -185,8 +232,25 @@ approximations:
     ; le remboursement des cotisations de L. 161-22-2, qui se demande, n'est pas servi :
     le modèle sert la pension.
   effet: non mesuré ; les départs échelonnés de part et d'autre du 1er janvier 2016
+- version: [decret_du_24_fevrier_1975]
+  ecart: >-
+    Les artisans et les commerçants ne reçoivent aucun versement avant le code de 1985 :
+    le décret n° 73-937, qui leur adapte l'article 72 du décret de 1945 dès 1973, n'est
+    lisible qu'en notice, et rien ne dit d'ici si la rédaction de 1975 de cet article,
+    le versement, leur valait.
+  effet: non mesuré ; les petites pensions d'artisans et de commerçants de 1975 à 1985
+- version: [code_de_la_securite_sociale, loi_du_20_janvier_2014]
+  ecart: >-
+    La pension des artisans et des commerçants se compare au seuil avec l'avantage de
+    leurs périodes d'avant 1973 (D. 634-9) de 1985 à 1990 aussi, où l'index LEGI ne
+    garde pas la règle, et après le 25 mai 2020, où D. 634-9 est abrogé ; le RSI
+    totalise les avantages d'avant 1973 des deux professions. L'avantage de conjoint
+    des périodes d'avant 1973, que D. 634-9 compte aussi, n'est pas modélisé ; la
+    pension que le régime général liquide pour les régimes alignés, depuis 2017, se
+    compare seule.
+  effet: non mesuré ; quelques trimestres d'artisan ou de commerçant
 sources:
-  lu_le: 2026-10-08
+  lu_le: 2026-10-24
   prochaine_relecture: 2027-04-30
   lectures_divergentes:
   - >-
@@ -203,8 +267,14 @@ sources:
     Lire les versements forfaitaires des régimes alignés et spéciaux que l'index LEGI
     nomme : salariés agricoles (décret n° 50-1225, article 59, puis le code rural),
     mines (décret n° 46-2769, article 179), marins (code des transports, L. 5552-19),
-    Banque de France, Comédie-Française, Saint-Pierre-et-Miquelon, Mayotte, et celui des
-    artisans et des commerçants.
+    Banque de France, Comédie-Française, Saint-Pierre-et-Miquelon, Mayotte. Celui des
+    artisans et des commerçants est lu depuis le 24 octobre 2026 (action 138, étape 12).
+  - >-
+    Les artisans et les commerçants avant le code de 1985 : lire au Journal officiel en
+    images le décret n° 73-937 du 2 octobre 1973, que l'index JORF ne garde qu'en
+    notice, pour dire si l'article 72 du décret de 1945 qu'il leur adapte leur valait le
+    versement de 1975 ; et ce qui, avant 1990, date où l'index LEGI fait commencer
+    D. 634-9, totalisait la pension et l'avantage d'avant 1973.
   lectures:
   - type: legifrance
     reference: >-
@@ -241,6 +311,18 @@ sources:
       le 8 octobre 2026
     url: https://legislation.lassuranceretraite.fr/
     date: 2026-03-06
+  - type: legifrance
+    reference: >-
+      L. 634-2 CSS dans ses rédactions de 1985 à 2023 (LEGIARTI000006743943 à
+      LEGIARTI000048697333), qui toutes renvoient à L. 351-9 — « L. 351-7 à L. 351-10 »
+      jusqu'en 2017, les chapitres Ier à V du titre V du livre III depuis 2018 ; D. 634-9
+      (LEGIARTI000006737974, 1990-01-01 → 2020-05-25) ; le décret n° 73-937, article 8
+      (LEGIARTI000006765847, depuis 1990) ; l'abrogation de D. 634-9 par le décret
+      n° 2020-621, article 1er (JORFARTI000041904643) ; la notice du décret n° 73-937 au
+      Journal officiel du 4 octobre 1973 (JORFTEXT000000875958), qui « ADAPTE LES ART. 70
+      [...] 72 [...] DU DECRET 450179 » à ces régimes, en vigueur le 1er janvier 1973, sans
+      ses articles ; lus dans les index LEGI et JORF le 24 octobre 2026
+    date: 2020-05-25
 code:
   python: >-
     droit/completer.py : verser_en_capital, completer ; droit/departs.py :
@@ -251,8 +333,8 @@ code:
     moteur/js/droit/liquidation.js : liquider ; moteur/js/regimes.js : FichesDatees ;
     moteur/js/droit/departs.js : liquiderLesDeparts
   parametres: >-
-    contenu.parametres de chaque version : existe, regimes, multiple, seuils, fiabilite,
-    premiere_retraite_avant
+    contenu.parametres de chaque version : existe, regimes, totalises, multiple, seuils,
+    fiabilite, premiere_retraite_avant
   tests: [tests/test_versements_uniques.py]
   moteur: >-
     Le paquet du site porte ses versions. Le portage n'a pas de classe PensionServie :
@@ -275,10 +357,18 @@ historique:
 - >-
   2026-10-08 — écrite à l'étape 17 de l'action 138, sur le point de Destinie 2 au
   registre (chantier 138.17) et l'écart de TRAJECTOiRE, que la loi n° 2014-40 tranche.
+- >-
+  2026-10-24 — la base des artisans et des commerçants, que L. 634-2 soumet au versement
+  depuis 1985, avec l'avantage de leurs périodes d'avant 1973 que D. 634-9 totalise,
+  dans les deux moteurs ; l'article 40 du RCI joue désormais par elle (action 138,
+  étape 12).
 reformes:
 - touraine_2014
 effet: >-
   L'assuré du régime général dont la pension annuelle, majoration pour enfants comprise,
   passe sous le seuil — 26,68 € en 1974, 156,24 € en 2015, 183,01 € en 2026 pour la
   suite transitoire — reçoit quinze annuités en une fois : une carrière de quelques
-  trimestres, ou de bas salaires sans le minimum contributif.
+  trimestres, ou de bas salaires sans le minimum contributif. De même l'artisan ou le
+  commerçant de quelques trimestres, depuis 1985, quand sa pension et l'avantage de ses
+  périodes d'avant 1973 restent ensemble sous le seuil : la commerçante d'une année en
+  1980, partie à 65 ans en 2010, avec le RCI quand il existe.

@@ -2388,6 +2388,27 @@ def salaire_de_reference_points(moteur, regime: str,
             min(publie[2], valeur[1], Fiabilite.MOYENNE))
 
 
+def groupes_du_versement(pensions: list[PensionRegime], retenues: list[int],
+                         totalises: dict[str, list[str]]) -> list[list[int]]:
+    """Les pensions de ``retenues`` (des indices de ``pensions``) que le
+    versement forfaitaire compare ensemble au seuil : la pension alignée d'un
+    artisan ou d'un commerçant, que ``totalises`` nomme, avec les avantages de
+    ses périodes d'avant 1973 qu'il lui associe (D. 634-9) ; chaque autre
+    pension seule. Chaque pension est d'un seul groupe."""
+    pris: set[int] = set()
+    groupes: list[list[int]] = []
+    for indice in retenues:
+        compagnons = totalises.get(pensions[indice].regime)
+        if compagnons is None:
+            continue
+        groupe = [indice] + [autre for autre in retenues
+                             if autre not in pris and pensions[autre].regime in compagnons]
+        pris.update(groupe)
+        groupes.append(groupe)
+    groupes.extend([indice] for indice in retenues if indice not in pris)
+    return groupes
+
+
 def verser_en_capital(moteur, carriere: Carriere, pensions: list[PensionRegime],
                       avantages: list[AvantageApplique], points_acquis: dict[str, float],
                       nature: str = "definitive",
@@ -2404,6 +2425,9 @@ def verser_en_capital(moteur, carriere: Carriere, pensions: list[PensionRegime],
       annuelle, avantages complémentaires compris — ici la majoration pour
       enfants —, quand elle est sous le seuil de R. 351-26 ; depuis 2016, à qui
       a pris sa première retraite de base avant (loi n° 2014-40, article 44) ;
+      depuis 1985, celui des artisans et des commerçants (L. 634-2), dont la
+      pension des périodes d'après 1972 et l'avantage de celles d'avant se
+      comparent ensemble au seuil (D. 634-9 ; :func:`groupes_du_versement`) ;
     * LE VERSEMENT UNIQUE DE L'AGIRC-ARRCO, la valeur viagère de l'allocation :
       l'allocation annuelle par le coefficient de l'âge révolu, quand elle
       n'excède pas l'équivalent de cent points depuis 2019 (accord du 17
@@ -2439,7 +2463,10 @@ def verser_en_capital(moteur, carriere: Carriere, pensions: list[PensionRegime],
         pensions[indice] = replace(pensions[indice], capital=capital,
                                    detail=pensions[indice].detail + formule)
 
-    # LE RÉGIME GÉNÉRAL : quinze annuités, sous le seuil de la date d'effet.
+    # LE RÉGIME GÉNÉRAL, et la base des artisans et des commerçants que L. 634-2
+    # lui soumet : quinze annuités, sous le seuil de la date d'effet ; la pension
+    # alignée de ceux-ci se compare au seuil avec l'avantage de leurs périodes
+    # d'avant 1973 (D. 634-9).
     regle = moteur.fiches_datees.regle(FICHE_DU_VERSEMENT_FORFAITAIRE, date_effet)
     avant = None if not regle or not regle["existe"] else regle.get("premiere_retraite_avant")
     if (regle and regle["existe"]
@@ -2447,20 +2474,30 @@ def verser_en_capital(moteur, carriere: Carriere, pensions: list[PensionRegime],
                                    and premiere_retraite < str(avant)))):
         seuil = _seuil_a_la_date(regle["seuils"], date_effet)
         multiple = int(regle["multiple"])
-        for indice, pension in enumerate(pensions):
-            if (seuil is None or pension.regime not in regle["regimes"]
-                    or pension.montant <= 0.0 or pension.capital is not None):
+        totalises = regle.get("totalises") or {}
+        retenues = [indice for indice, pension in enumerate(pensions)
+                    if seuil is not None and pension.regime in regle["regimes"]
+                    and pension.montant > 0.0 and pension.capital is None]
+        for groupe in groupes_du_versement(pensions, retenues, totalises):
+            total = somme_ordonnee(annuelle(pensions[indice]) for indice in groupe)
+            if total >= seuil:
                 continue
-            montant = annuelle(pension)
-            if montant >= seuil:
-                continue
-            remplacer(indice, multiple * montant, (
-                f" ; {montant:,.2f} € par an"
-                + (", majoration pour enfants comprise" if pension.regime in enfants else "")
-                + f", sous le seuil de {seuil:,.2f} € : remplacée par un versement "
-                f"forfaitaire unique de {multiple * montant:,.2f} €, {multiple} fois "
-                "la pension annuelle"))
-            fiabilites.append(Fiabilite.depuis_texte(regle["fiabilite"]))
+            for indice in groupe:
+                pension = pensions[indice]
+                montant = annuelle(pension)
+                ensemble = ""
+                if len(groupe) > 1:
+                    ensemble = (f", {total:,.2f} € avec l'avantage d'avant 1973"
+                                if pension.regime in totalises else
+                                f", {total:,.2f} € avec la pension des périodes d'après 1972")
+                remplacer(indice, multiple * montant, (
+                    f" ; {montant:,.2f} € par an"
+                    + (", majoration pour enfants comprise" if pension.regime in enfants else "")
+                    + ensemble
+                    + f", sous le seuil de {seuil:,.2f} € : remplacée par un versement "
+                    f"forfaitaire unique de {multiple * montant:,.2f} €, {multiple} fois "
+                    "la pension annuelle"))
+                fiabilites.append(Fiabilite.depuis_texte(regle["fiabilite"]))
 
     # LE RCI : une seule pension de ses points et de ceux du RCO et du NRCO,
     # versée en une fois sous quarante points, ou quand la base l'a été.

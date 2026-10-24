@@ -26592,7 +26592,7 @@ null
 "existe":true,
 "fiabilite":"haute",
 "multiple":15,
-"regimes":["regime_general"],
+"regimes":["regime_general","cancava","cancava_avant_1973","organic","organic_avant_1973","rsi"],
 "seuils":[
 ["1985-07-01",92.0792],
 ["1986-01-01",93.2988],
@@ -26633,7 +26633,8 @@ null
 ["2012-04-01",154.09],
 ["2013-04-01",156.09],
 ["2015-10-01",156.24]
-]
+],
+"totalises":{"cancava":["cancava_avant_1973"],"organic":["organic_avant_1973"],"rsi":["cancava_avant_1973","organic_avant_1973"]}
 },
 "texte":"LEGIARTI000006742677"
 },
@@ -26646,8 +26647,9 @@ null
 "fiabilite":"haute",
 "multiple":15,
 "premiere_retraite_avant":"2016-01-01",
-"regimes":["regime_general"],
-"seuils":[["2015-10-01",156.24],["2017-10-01",157.48],["2019-01-01",157.95],["2020-01-01",158.42],["2021-01-01",159.05],["2022-01-01",160.79],["2022-07-01",167.22],["2023-01-01",168.55],["2024-01-01",177.48],["2025-01-01",181.38],["2026-01-01",183.01]]
+"regimes":["regime_general","cancava","cancava_avant_1973","organic","organic_avant_1973","rsi"],
+"seuils":[["2015-10-01",156.24],["2017-10-01",157.48],["2019-01-01",157.95],["2020-01-01",158.42],["2021-01-01",159.05],["2022-01-01",160.79],["2022-07-01",167.22],["2023-01-01",168.55],["2024-01-01",177.48],["2025-01-01",181.38],["2026-01-01",183.01]],
+"totalises":{"cancava":["cancava_avant_1973"],"organic":["organic_avant_1973"],"rsi":["cancava_avant_1973","organic_avant_1973"]}
 },
 "texte":"JORFARTI000028493878"
 }

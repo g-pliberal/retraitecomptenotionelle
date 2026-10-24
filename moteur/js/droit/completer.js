@@ -2181,6 +2181,32 @@ export function salaireDeReferencePoints(moteur, regime, annee) {
  * l'Agirc-Arrco (ou de l'Arrco et de l'Agirc), celui de l'Ircantec ; jamais la
  * retraite progressive. Voir `verser_en_capital` du Python.
  */
+/**
+ * Les pensions de `retenues` (des indices de `pensions`) que le versement
+ * forfaitaire compare ensemble au seuil : la pension alignée d'un artisan ou
+ * d'un commerçant, que `totalises` nomme, avec les avantages de ses périodes
+ * d'avant 1973 qu'il lui associe (D. 634-9) ; chaque autre pension seule.
+ * Chaque pension est d'un seul groupe.
+ */
+export function groupesDuVersement(pensions, retenues, totalises) {
+  const pris = new Set();
+  const groupes = [];
+  for (const indice of retenues) {
+    const compagnons = totalises[pensions[indice].regime];
+    if (compagnons === undefined) {
+      continue;
+    }
+    const groupe = [indice, ...retenues.filter((autre) => !pris.has(autre)
+      && compagnons.includes(pensions[autre].regime))];
+    for (const membre of groupe) pris.add(membre);
+    groupes.push(groupe);
+  }
+  for (const indice of retenues) {
+    if (!pris.has(indice)) groupes.push([indice]);
+  }
+  return groupes;
+}
+
 export function verserEnCapital(moteur, carriere, pensions, avantages, pointsAcquis,
   nature = "definitive", premiereRetraite = null) {
   const dateEffet = dateDEffet(carriere);
@@ -2203,7 +2229,10 @@ export function verserEnCapital(moteur, carriere, pensions, avantages, pointsAcq
       detail: pensions[indice].detail + formule };
   };
 
-  // LE RÉGIME GÉNÉRAL : quinze annuités, sous le seuil de la date d'effet.
+  // LE RÉGIME GÉNÉRAL, et la base des artisans et des commerçants que L. 634-2
+  // lui soumet : quinze annuités, sous le seuil de la date d'effet ; la pension
+  // alignée de ceux-ci se compare au seuil avec l'avantage de leurs périodes
+  // d'avant 1973 (D. 634-9).
   let regle = moteur.fichesDatees.regle(FICHE_DU_VERSEMENT_FORFAITAIRE, dateEffet);
   const avant = (regle === null || !regle.existe) ? null
     : (regle.premiere_retraite_avant ?? null);
@@ -2211,23 +2240,38 @@ export function verserEnCapital(moteur, carriere, pensions, avantages, pointsAcq
       && (avant === null || (premiereRetraite !== null && premiereRetraite < String(avant)))) {
     const seuil = seuilALaDate(regle.seuils, dateEffet);
     const multiple = Math.trunc(regle.multiple);
+    const totalises = regle.totalises ?? {};
+    const retenues = [];
     pensions.forEach((pension, indice) => {
-      if (seuil === null || !regle.regimes.includes(pension.regime)
-          || pension.montant <= 0.0 || !sansCapital(pension)) {
-        return;
+      if (seuil !== null && regle.regimes.includes(pension.regime)
+          && pension.montant > 0.0 && sansCapital(pension)) {
+        retenues.push(indice);
       }
-      const montant = annuelle(pension);
-      if (montant >= seuil) {
-        return;
-      }
-      remplacer(indice, multiple * montant,
-        ` ; ${formatFixe(montant, 2, true)} € par an`
-        + (enfants.has(pension.regime) ? ", majoration pour enfants comprise" : "")
-        + `, sous le seuil de ${formatFixe(seuil, 2, true)} € : remplacée par un versement `
-        + `forfaitaire unique de ${formatFixe(multiple * montant, 2, true)} €, ${multiple} fois `
-        + "la pension annuelle");
-      fiabilites.push(fiabiliteDepuisTexte(regle.fiabilite));
     });
+    for (const groupe of groupesDuVersement(pensions, retenues, totalises)) {
+      const total = groupe.reduce((somme, indice) => somme + annuelle(pensions[indice]), 0.0);
+      if (total >= seuil) {
+        continue;
+      }
+      for (const indice of groupe) {
+        const pension = pensions[indice];
+        const montant = annuelle(pension);
+        let ensemble = "";
+        if (groupe.length > 1) {
+          ensemble = Object.hasOwn(totalises, pension.regime)
+            ? `, ${formatFixe(total, 2, true)} € avec l'avantage d'avant 1973`
+            : `, ${formatFixe(total, 2, true)} € avec la pension des périodes d'après 1972`;
+        }
+        remplacer(indice, multiple * montant,
+          ` ; ${formatFixe(montant, 2, true)} € par an`
+          + (enfants.has(pension.regime) ? ", majoration pour enfants comprise" : "")
+          + ensemble
+          + `, sous le seuil de ${formatFixe(seuil, 2, true)} € : remplacée par un versement `
+          + `forfaitaire unique de ${formatFixe(multiple * montant, 2, true)} €, ${multiple} fois `
+          + "la pension annuelle");
+        fiabilites.push(fiabiliteDepuisTexte(regle.fiabilite));
+      }
+    }
   }
 
   // LE RCI : une seule pension de ses points et de ceux du RCO et du NRCO,

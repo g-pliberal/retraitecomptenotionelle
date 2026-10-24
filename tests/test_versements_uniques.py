@@ -149,6 +149,84 @@ def test_depuis_2016_seule_la_premiere_retraite_d_avant_garde_le_versement(simul
     assert generale.capital == pytest.approx(15 * generale.montant_a_l_effet)
 
 
+#: Les régimes de base des artisans et des commerçants, des périodes d'après
+#: 1972 et d'avant 1973, que le versement forfaitaire unique compte depuis le
+#: code de 1985.
+BASES_DES_INDEPENDANTS = ["cancava", "cancava_avant_1973", "organic", "organic_avant_1973",
+                          "rsi"]
+
+
+def test_la_base_des_artisans_et_des_commercants_suit_le_seuil_du_regime_general(simulateur):
+    """L. 634-2 calcule, liquide et sert leurs pensions « dans les conditions
+    définies [...] aux articles [...] L. 351-7 à L. 351-10 », dont le versement
+    forfaitaire de L. 351-9 ; pour le seuil de R. 351-26, D. 634-9 totalise la
+    pension des périodes d'après 1972 et l'avantage de celles d'avant, auquel le
+    décret n° 73-937, article 8, applique aussi R. 351-26. Avant le code de 1985,
+    la règle de ces régimes n'est pas lue."""
+    for date in ("1985-12-21", "1990-06-01", "2015-09-01", "2026-03-01"):
+        regle = _regle(simulateur, FICHE_DU_VERSEMENT_FORFAITAIRE, date)
+        assert sorted(regle["regimes"]) == sorted(["regime_general", *BASES_DES_INDEPENDANTS])
+        assert regle["totalises"] == {
+            "cancava": ["cancava_avant_1973"], "organic": ["organic_avant_1973"],
+            "rsi": ["cancava_avant_1973", "organic_avant_1973"]}
+    avant = _regle(simulateur, FICHE_DU_VERSEMENT_FORFAITAIRE, "1985-12-01")
+    assert (avant["regimes"], avant.get("totalises", {})) == (["regime_general"], {})
+
+
+def test_la_petite_pension_du_commercant_est_versee_en_une_fois(simulateur):
+    """Une année de commerce en 1980, prise à 65 ans en 1990, 1995 et 2010 : la
+    pension d'ORGANIC, sous le seuil de la date d'effet — 104,92 €, 117,13 € et
+    147,83 € —, est remplacée par quinze annuités en une fois."""
+    for naissance, seuil in ((1925, 104.9154), (1930, 117.1312), (1945, 147.83)):
+        organic = _pensions(simulateur, naissance, 65, [(1980, "commercant", 1500.0)])["organic"]
+        assert organic.montant < seuil
+        assert organic.capital == pytest.approx(15 * organic.montant)
+        assert "versement forfaitaire unique" in organic.detail
+
+
+def test_la_pension_alignee_et_l_avantage_d_avant_1973_se_totalisent(simulateur):
+    """D. 634-9 : « sont totalisés le montant annuel de la pension de vieillesse
+    [...] au titre des périodes d'assurance postérieures au 31 décembre 1972, le
+    montant de l'avantage de vieillesse [...] au titre des périodes d'assurance et
+    d'activité non salariée antérieures au 1er janvier 1973 ». L'artisane de 1971
+    et de 1980, partie en 2010 : sa pension alignée passerait seule sous le seuil
+    de 147,83 €, pas avec ses points d'avant 1973 ; rien n'est versé en une fois.
+    Celle de 1972 et de 1980, à peine cotisées : ensemble sous le seuil, chacune
+    est remplacée par quinze annuités ; l'avantage d'avant 1973 seul, de même."""
+    seuil = 147.83
+    pensions = _pensions(simulateur, 1945, 65,
+                         [(1971, "artisan", 3000.0), (1980, "artisan", 1500.0)])
+    alignee, avant = pensions["cancava"], pensions["cancava_avant_1973"]
+    assert alignee.montant < seuil < alignee.montant + avant.montant
+    assert (alignee.capital, avant.capital) == (None, None)
+    pensions = _pensions(simulateur, 1945, 65,
+                         [(1972, "artisan", 100.0), (1980, "artisan", 800.0)])
+    alignee, avant = pensions["cancava"], pensions["cancava_avant_1973"]
+    assert alignee.montant + avant.montant < seuil
+    assert alignee.capital == pytest.approx(15 * alignee.montant)
+    assert avant.capital == pytest.approx(15 * avant.montant)
+    assert "avec l'avantage d'avant 1973" in alignee.detail
+    seul = _pensions(simulateur, 1945, 65, [(1972, "commercant", 100.0)])["organic_avant_1973"]
+    assert seul.montant < seuil
+    assert seul.capital == pytest.approx(15 * seul.montant)
+
+
+def test_la_base_de_l_artisan_versee_en_une_fois_emporte_le_rci(simulateur):
+    """Article 40 du règlement du RCI, par le versement de la base de l'artisan
+    elle-même : la pension du RSI de 2014, 100 € par an sous le seuil de
+    156,09 €, est remplacée par quinze annuités, et celle du RCI, quel que soit
+    le nombre de ses points, l'est aussi."""
+    carriere = simulateur.carriere_releve(
+        annee_naissance=1950, sexe="F", age_liquidation=64, jour_naissance=15,
+        releve=[LigneRelevee(annee=2010, affiliation="artisan", revenu=4000.0)])
+    pensions = [PensionRegime("rsi", 100.0, "annuites", "", Fiabilite.HAUTE),
+                PensionRegime("rci", 1000 * 1.178, "points", "", Fiabilite.HAUTE)]
+    verser_en_capital(simulateur.scenario_actuel, carriere, pensions, [], {"rci": 1000.0})
+    assert pensions[0].capital == pytest.approx(1500.0)
+    assert pensions[1].capital is not None
+    assert "sa pension de base versée en une fois" in pensions[1].detail
+
+
 def test_l_arrco_d_avant_2019_compte_ses_points_minores_ou_non(simulateur):
     """En 2015, 27,95 points de l'Arrco : un capital, la pension annuelle par 17,0
     à 65 ans ; en 2018, 7,51 points minorés de 5 % : un capital encore."""
@@ -279,8 +357,14 @@ REQUETE = {
 }
 #: Le versement forfaitaire de 2015, avec ou sans enfants ; la pension de 2018,
 #: servie ; celle de 2017 d'une fonctionnaire partie en 2012 ; l'Agirc-Arrco et
-#: l'Ircantec de 2022 ; le RCI de moins de quarante points, et sa réversion.
+#: l'Ircantec de 2022 ; le RCI de moins de quarante points, et sa réversion ; la
+#: commerçante de 2010, et les deux artisanes dont la pension alignée et
+#: l'avantage d'avant 1973 se totalisent, sous le seuil et au-dessus.
 CAS = [
+    {"naissance": "1945", "liquidation": "65", "releve": "1980:commercant:1500"},
+    {"naissance": "1945", "liquidation": "65", "releve": "1972:artisan:100,1980:artisan:800"},
+    {"naissance": "1945", "liquidation": "65",
+     "releve": "1971:artisan:3000,1980:artisan:1500"},
     {"naissance": "1950", "liquidation": "65", "releve": "1970:salarie_prive_non_cadre:150"},
     {"naissance": "1950", "liquidation": "65", "enfants": "3",
      "releve": "1970:salarie_prive_non_cadre:150"},
