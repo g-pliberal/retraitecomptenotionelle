@@ -1,0 +1,18 @@
+date: "2026-10-24"
+session: "action 161, étape 6, septième partie : le pilote et les départs de l'estimation"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1.
+  Le pilote (pilote.py, moteur/js/pilote.js) et le chiffrage des départs de
+  « Mon estimation retraite » (depart_estime, departEstime dans
+  moteur/js/contexte.js), relus fonction par fonction avant le retrait, et
+  l'étape « ouvrir le droit » (ouvrir.py), dont les règles datent les trois
+  âges.
+trouve: >-
+  Aucune règle n'a changé. La moitié Python des départs de l'estimation est
+  retirée : le portage les date et les chiffre seul, et leurs tests les
+  confrontent à l'étape « ouvrir le droit » et à la simulation du Python ;
+  les témoins restent identiques à l'octet.
+reste: >-
+  Rien pour la veille. La paire point_fixe et pointFixe, quand le coût datera
+  ses cas types par le portage (action 161, note du 24 octobre 2026,
+  septième partie).
