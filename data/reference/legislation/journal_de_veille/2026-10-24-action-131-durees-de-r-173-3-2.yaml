@@ -1,0 +1,36 @@
+date: "2026-10-24"
+session: >-
+  l'action 131 : les durées que R. 173-3-2 répartit, arrêtées au 31 décembre de
+  l'année d'effet pour le régime des non-salariés agricoles et au trimestre civil qui
+  la précède pour les régimes alignés, que le moteur compte à la date d'effet ; lot du
+  24 octobre 2026, deuxième vague des sessions qui n'ont pas besoin du propriétaire
+consulte: >-
+  python scripts/veille_droit.py ; l'index LEGI du dépôt, récupéré et mis à jour
+  jusqu'à l'incrément du 23 octobre 2026 ; python scripts/textes.py --inscrire,
+  trente-cinq rédactions, de 1985 à 2024, de L. 161-1, L. 313-3, R. 161-4 et R. 313-12
+  du code de la sécurité sociale et de D. 731-122 et D. 731-124 du code rural, sans
+  rien changer au cliquet ; au code de la sécurité sociale, R. 173-3-2 dans ses trois rédactions de
+  2026 ; au code rural, R. 731-83, R. 732-48, R. 732-60, D. 732-48-1 et L. 732-20
+  (rédaction de 2026).
+trouve: >-
+  R. 173-3-2, II, dès sa rédaction du 1er janvier 2026 : « Les durées d'assurance [...]
+  sont arrêtées, pour les régimes mentionnés à l'article L. 173-1-2, au dernier jour du
+  trimestre civil précédant l'entrée en jouissance de la pension et, pour le régime des
+  personnes non salariées des professions agricoles, au 31 décembre de l'année civile de
+  l'entrée en jouissance de la pension » ; R. 732-60, 1°, arrête de même les droits du
+  régime. Ce que le régime agricole valide après la date d'effet ne vient que des
+  cotisations de l'année : dues pour l'année entière quand le chef cesse (L. 731-10-1),
+  ce que le moteur compte déjà ; au prorata des mois qui précèdent la cessation quand il
+  garde ou prend une autre activité (R. 731-83), que le moteur garde à ses mois ; rien
+  l'année où il s'installe (R. 731-57) ; et aucune période assimilée de la chronologie
+  ne va à ce régime. Pour le régime agricole, rien ne bouge. Mais l'année où l'exploitant
+  cesse, le moteur étendait ses quatre trimestres aux régimes alignés : une période
+  assimilée sans ligne de carrière au régime général y comptait au-delà du trimestre
+  civil qui précède l'effet. Corrigé dans les deux moteurs (compter.plafond_de_l_annee).
+reste: >-
+  L'année de R. 731-83, que le moteur garde à ses mois : la question de savoir si ses
+  cotisations de vieillesse sont dues pour l'année entière, que la réponse à la
+  question écrite n° 10883 laisse entendre, reste au propriétaire (note
+  2026-10-18-statut-au-1er-janvier.md). Les majorations de points de 1952 à 1972
+  (R. 732-67), qui supposent le barème d'avant 1990, et l'AVI du collaborateur, qui
+  demande un champ de saisie.
