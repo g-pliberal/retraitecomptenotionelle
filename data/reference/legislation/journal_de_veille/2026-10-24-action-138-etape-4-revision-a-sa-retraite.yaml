@@ -1,0 +1,54 @@
+date: "2026-10-24"
+session: "action 138, étape 4, neuvième partie : la réversion d'avant juillet 2004 que la retraite du survivant, prise depuis, recalcule aux règles de ressources de 2004, et la révision de R. 353-1-1, dont la dernière, à sa retraite"
+consulte: >-
+  veille_droit.py, lancé à l'ouverture de la session (dernière veille consignée :
+  2026-10-24) ; l'index LEGI, récupéré de la release index-dila et mis à jour par ses
+  huit incréments jusqu'au 23 octobre 2026, puis textes.py --inscrire, qui a fait
+  entrer trente-cinq rédactions que des fiches citent depuis (L. 161-1, L. 313-3,
+  R. 161-4, R. 313-12, D. 731-122 et D. 731-124 du code rural), « à examiner », que
+  main portait déjà, inscrites par une autre session ;
+  l'index JORF, récupéré et mis à jour jusqu'au 24 octobre 2026. Dans l'index LEGI :
+  R. 353-1-1, ses cinq rédactions (LEGIARTI000006749402, 403, 404,
+  LEGIARTI000024113027, LEGIARTI000053335692), R. 815-40 (LEGIARTI000006753819) et
+  R. 815-42 (LEGIARTI000006753836), auxquels il renvoie. Par l'API de la base de
+  législation de la Cnav (search/custom en phrase exacte, expose/exposeByFileLeafRef,
+  reference/referencesByFileLeafRef, et /Pdf/ pour les PDF) : les exposés « Retraite
+  de réversion cumulable » (24 octobre 2025) et « Condition de ressources » (16 avril
+  2026) ; la lettre ministérielle du 22 mars 2005 ; les circulaires Cnav n° 2005/17
+  (§ 31, 32, 321, 322), n° 2006/6 (§ 12, 121, 122, en PDF), n° 2006/37 (§ 6),
+  n° 2010/58 (§ 21 à 24), n° 2011/69 et n° 2012/25 (§ 1).
+trouve: >-
+  La réversion attribuée avant le 1er juillet 2004 n'est revue, depuis, que si son
+  titulaire « liquide un avantage personnel de retraite ou d'invalidité après cette
+  date » : « ses droits à pension de réversion sont révisés pour tenir compte de la
+  nouvelle condition de ressources et de la suppression concomitante des règles de
+  cumul » (lettre ministérielle du 22 mars 2005, § 1), « à compter de la date d'effet
+  de l'avantage personnel » (circulaire n° 2005/17, § 31) ; dans tous les autres cas,
+  elle « continue d'être servie selon les règles applicables avant cette date ». La
+  réversion attribuée depuis « est révisable en cas de variation dans le montant des
+  ressources » (R. 353-1-1, depuis le 30 décembre 2004 ; le 25 août 2004, par renvoi
+  aux articles de l'allocation supplémentaire), sa dernière révision au plus tard
+  « trois mois après la date à laquelle le conjoint survivant est entré en jouissance
+  de l'ensemble des avantages personnels de retraite de base et complémentaire », ou
+  à soixante ans, depuis le 3 juin 2011 à l'âge de L. 161-17-2, quand il ne peut y
+  prétendre ; depuis 2026, sans les droits nouveaux du cumul emploi-retraite. La
+  révision liée à l'attribution d'un avantage viager « intervient donc à compter du
+  premier jour du mois qui suit la date d'effet de cet avantage » (circulaire
+  n° 2010/58, § 22, « applicables aux dossiers en cours et à venir »), avec son
+  exemple : retraites au 1er janvier 2008, révision au 1er février, « dernière
+  révision (cristallisation) » au 1er avril (§ 24) ; avant, au premier jour du mois
+  qui suit le constat de la caisse, à la date de dernière révision au plus tard
+  (circulaire n° 2006/37, § 6, et ses deux exemples), à la date d'effet de la
+  retraite du régime général pour la réversion du régime général (circulaire
+  n° 2006/6, § 121). « A partir de cette date de dernière révision, aucun changement
+  de ressources ou de situation familiale n'est pris en compte » (exposé « Condition
+  de ressources »). Aucun exemple publié ne chiffre une réversion revue ; les quatre
+  exemples datés entrent au témoin, celui du constat en écart connu.
+reste: >-
+  La révision quand le ménage se forme ou se défait, ou que les ressources varient,
+  avant la retraite du survivant ou sans elle, et la dernière révision à l'âge légal
+  du survivant qui ne peut prétendre à aucune retraite (R. 353-1-1, b) ; la
+  révision de la majoration de 11,1 % (R. 353-13) ; celle de la complémentaire des
+  indépendants ; la substitution de la pension d'invalidité du survivant par sa
+  retraite d'inaptitude, qui recalcule aussi la réversion d'avant 2004 (exposé
+  « Condition de ressources ») ; au site, la phrase qui dirait la révision.

@@ -33,11 +33,14 @@ lit:
 - la naissance du survivant, qui dit son âge à la date d'effet
 - les ressources du survivant, et ce qu'en rapporte son activité, abattu de 30 % à
   cinquante-cinq ans ; le reste, que le modèle tient pour ses retraites personnelles,
-  que le cumul d'avant juillet 2004 retient hors de ses ressources (D. 355-1)
+  que le cumul d'avant juillet 2004 retient hors de ses ressources (D. 355-1) ; le
+  mois où elles commencent, quand il le dit, qui revoit la réversion qu'elles suivent
+  (D. 355-1, L. 353-1, R. 353-1-1)
 - l'invalidité qu'il déclare, qui le tient pour inapte avant 1973
 - l'union où il vit après le décès — mariage, PACS ou concubinage —, le mois où elle
   commence, et les ressources de son nouveau conjoint, que le plafond du ménage
-  compte avec les siennes quand elle est formée à la date d'effet
+  compte avec les siennes quand elle est formée à la date d'effet, ou à la révision
+  qu'ouvre sa retraite
 - la pension principale du défunt, servie ou dont il eût bénéficié à son décès — mort
   avant son départ, celle qu'il eût obtenue au premier jour du trimestre civil de son
   décès, sur la carrière de ce jour-là, sans décote
@@ -330,6 +333,8 @@ versions:
   - {id: LEGIARTI000006749411, article: R. 353-4, en_vigueur: 2004-08-25}
   - {id: LEGIARTI000006765836, article: "décret n° 73-937, article 9", en_vigueur: 2004-08-25}
   - {id: LEGIARTI000006738001, article: D. 634-14, en_vigueur: 1990-01-01}
+  - {id: LEGIARTI000006749402, article: R. 353-1-1, en_vigueur: 2004-08-25, change: "la révision de la réversion quand les ressources varient, par renvoi aux articles de l'allocation supplémentaire"}
+  - {id: LEGIARTI000006753819, article: R. 815-40, en_vigueur: 2001-07-01, change: "la révision au terme d'arrérages qui suit la modification d'un avantage viager"}
   nee_de: LEGIARTI000006742649
   bornes:
     liquidation.date_effet: [2004-07-01, 2005-01-01]
@@ -376,6 +381,7 @@ versions:
   - {id: LEGIARTI000006749411, article: R. 353-4, en_vigueur: 2004-08-25}
   - {id: LEGIARTI000006765836, article: "décret n° 73-937, article 9", en_vigueur: 2004-08-25}
   - {id: LEGIARTI000006738001, article: D. 634-14, en_vigueur: 1990-01-01}
+  - {id: LEGIARTI000006749403, article: R. 353-1-1, en_vigueur: 2004-12-30, change: "la date de la dernière révision, trois mois après l'entrée en jouissance de toutes les retraites personnelles, ou à soixante ans"}
   nee_de: LEGIARTI000006749454
   bornes:
     liquidation.date_effet: [2005-01-01, 2005-07-01]
@@ -411,7 +417,7 @@ versions:
       minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       fiabilite: haute
-  exemples: aucun trouvé
+  exemples: [cnav_2010_58_revision_a_sa_retraite, cnav_2006_37_revision_au_constat]
 - id: age_52
   statut: lue
   textes:
@@ -422,6 +428,8 @@ versions:
   - {id: LEGIARTI000006749411, article: R. 353-4, en_vigueur: 2004-08-25}
   - {id: LEGIARTI000006765836, article: "décret n° 73-937, article 9", en_vigueur: 2004-08-25}
   - {id: LEGIARTI000006738001, article: D. 634-14, en_vigueur: 1990-01-01}
+  - {id: LEGIARTI000006749404, article: R. 353-1-1, en_vigueur: 2007-01-13, change: "le renvoi aux articles R. 815-20, R. 815-38, R. 815-39 et R. 815-42"}
+  - {id: LEGIARTI000006753836, article: R. 815-42, en_vigueur: 2007-01-13, change: "R. 815-40 renuméroté, la révision au terme d'arrérages qui suit la modification d'un avantage viager"}
   nee_de: LEGIARTI000006781420
   bornes:
     liquidation.date_effet: [2005-07-01, 2007-07-01]
@@ -454,7 +462,9 @@ versions:
       fiabilite: haute
   exemples: [cnav_2005_17_reversion_ecretee, cnav_2006_37_abattement_au_1er_aout,
              cnav_2006_37_abattement_au_1er_septembre,
-             cnav_2006_37_abattement_au_1er_octobre]
+             cnav_2006_37_abattement_au_1er_octobre,
+             cnav_2005_17_derniere_revision_a_58_ans,
+             cnav_2005_17_derniere_revision_a_65_ans]
 - id: age_51
   statut: lue
   textes:
@@ -596,6 +606,7 @@ versions:
   - {id: LEGIARTI000006749411, article: R. 353-4, en_vigueur: 2004-08-25}
   - {id: LEGIARTI000020090029, article: "décret n° 73-937, article 9", en_vigueur: 2009-01-01}
   - {id: LEGIARTI000006738001, article: D. 634-14, en_vigueur: 1990-01-01}
+  - {id: LEGIARTI000024113027, article: R. 353-1-1, en_vigueur: 2011-06-03, change: "la dernière révision, sans retraite personnelle, à l'âge de L. 161-17-2 au lieu de soixante ans"}
   nee_de: LEGIARTI000019959401
   bornes:
     liquidation.date_effet: [2010-01-01, 2012-07-01]
@@ -640,6 +651,7 @@ versions:
   - {id: LEGIARTI000006749411, article: R. 353-4, en_vigueur: 2004-08-25}
   - {id: LEGIARTI000020090029, article: "décret n° 73-937, article 9", en_vigueur: 2009-01-01}
   - {id: LEGIARTI000006738001, article: D. 634-14, en_vigueur: 1990-01-01}
+  - {id: LEGIARTI000024113027, article: R. 353-1-1, en_vigueur: 2011-06-03, change: "la dernière révision, sans retraite personnelle, à l'âge de L. 161-17-2 au lieu de soixante ans"}
   nee_de: LEGIARTI000019959401
   bornes:
     liquidation.date_effet: [2010-01-01, 2012-07-01]
@@ -850,9 +862,9 @@ approximations:
     d'effet ou dès la date de sa retraite qu'il déclare ; la limite se compare une
     fois, à celle des deux qui vient la seconde, aux montants de l'année du décès, la
     limite forfaitaire de l'année de sa retraite ramenée à ces euros par les
-    coefficients des pensions ; la réversion d'avant juillet 2004 que sa retraite,
-    attribuée depuis, « recalcul[e] compte tenu des règles de ressources » de 2004,
-    n'est pas revue ; ses retraites et la limite forfaitaire se divisent par le
+    coefficients des pensions ; sa retraite prise depuis juillet 2004 recalcule la
+    réversion aux règles de ressources de ce jour, comme l'approximation suivante le
+    dit ; ses retraites et la limite forfaitaire se divisent par le
     nombre de ses réversions de base que le modèle sert, sans celles des régimes qu'il
     ne porte pas ; la majoration pour enfants de ses retraites, que la limite
     comptait avant septembre 2003, n'est pas distinguée ; avant juillet 1974, la
@@ -861,6 +873,33 @@ approximations:
   effet: >-
     la réversion d'avant 2004 d'un survivant qui a sa propre retraite : réduite, ou
     nulle, quand le total passe la limite ; non mesuré sur une population
+- ecart: >-
+    la retraite du survivant qui suit la date d'effet revoit la réversion une fois,
+    toutes ses retraites, de base et complémentaires, servies ensemble au jour qu'il
+    date et comptées entières dès la révision : ce jour même, quand elle recalcule aux
+    règles de ressources de juillet 2004 une réversion attribuée avant (circulaire
+    Cnav n° 2005-17, § 31) ; le mois qui suit, quand elle révise une réversion
+    attribuée depuis (circulaire Cnav n° 2010/58, § 22), quand la caisse ne compte que
+    ce qu'il en perçoit dans les trois mois qui précèdent la révision, un mois de
+    retraite à celle-ci, toutes à la dernière, trois mois après elles (§ 24) ; avant
+    le 30 juin 2010, la révision suivait le constat de la caisse, au plus tard à la
+    dernière révision (circulaire Cnav n° 2006-37, § 6), ou la date d'effet d'une
+    retraite du régime général (circulaire Cnav n° 2006-6, § 121), et le modèle tient
+    la retraite pour constatée le mois même (écart connu,
+    cnav_2006_37_revision_au_constat). Le plafond est celui de la version de ce jour,
+    au SMIC du 1er janvier de son année, la dernière que le barème publie pour une
+    année à venir, ramené aux euros de l'année des montants par les coefficients des
+    pensions, en 2020 ceux des pensions de 2 000 euros par mois au plus. Sans retraite
+    datée, ou quand elle précède la date d'effet, rien ne revoit la réversion ; le
+    survivant qui ne peut prétendre à aucune retraite n'a pas de dernière révision à
+    l'âge légal (R. 353-1-1, b) ; depuis 2026, la retraite d'un cumul emploi-retraite
+    ne la révise plus (R. 353-1-1, rédaction du décret n° 2025-1409), et le modèle
+    n'en sert pas au survivant
+  effet: >-
+    la réversion d'un survivant qui prend sa retraite après elle, réduite de ce que
+    ses retraites passent le plafond ; pendant les deux mois où la caisse ne compte
+    qu'un mois de ses retraites, le modèle la réduit davantage ; non mesuré sur une
+    population
 - ecart: >-
     les majorations forfaitaires de 4 % au 1er décembre 1982 et de 3,846 % au 1er
     janvier 1995 (exposé de la Cnav) s'écrivent à leur date, hors du montant, sur la
@@ -923,9 +962,10 @@ approximations:
     condition de durée, est tout enfant déclaré
   effet: non mesuré
 - ecart: >-
-    le ménage du survivant est celui qu'il déclare, sans date : le plafond du ménage
-    s'applique dès la date d'effet, et la réversion n'est révisée ni quand il se
-    forme ou se défait, ni quand les ressources varient (R. 353-1-1) ; elles se
+    le ménage du survivant est celui qu'il déclare, depuis le jour qu'il dit ou dès
+    le décès : le plafond du ménage s'applique dès la date d'effet quand il est formé,
+    et la réversion n'est révisée qu'à la retraite du survivant qui la suit, ni quand
+    il se défait, ni quand les autres ressources varient (R. 353-1-1) ; elles se
     comparent sur l'année, et non sur les trois mois qui précèdent la date d'effet,
     les douze à défaut (R. 353-1), ce qui ne change rien à des ressources égales
     chaque mois ; les ressources du survivant et de son nouveau conjoint sont celles
@@ -978,9 +1018,11 @@ approximations:
     non mesuré ; une date de mariage dite par l'année déplace jusqu'à onze mois la
     durée qui fait les parts
 - ecart: >-
-    l'union que le survivant forme après la date d'effet ne révise pas la réversion
-    du régime général, qui compterait alors les ressources du ménage (R. 353-1-1),
-    ni celle de la complémentaire des indépendants
+    l'union que le survivant forme après la date d'effet ne révise la réversion du
+    régime général, qui compte alors les ressources du ménage (R. 353-1-1), qu'à la
+    révision qu'ouvre sa retraite, quand elle la précède, et non le mois qui suit sa
+    formation ; formée après, ou sans retraite datée, elle ne la révise pas ; elle
+    ne révise jamais celle de la complémentaire des indépendants
   effet: non mesuré
 - ecart: >-
     la réversion des points d'avant 1973 des artisans et des commerçants suit les
@@ -1039,7 +1081,7 @@ presomptions:
     la réversion que la page montre sans décès déclaré, pour un décès supposé juste
     après le départ, ou cette année pour qui est déjà parti
 sources:
-  lu_le: 2026-10-19
+  lu_le: 2026-10-24
   prochaine_relecture: 2027-03-31
   lectures_divergentes:
   - >-
@@ -1078,11 +1120,14 @@ sources:
   - >-
     Ce que les versions ne portent pas encore : la réversion d'un assuré disparu
     (L. 353-2), la révision de la pension quand les ressources, le ménage ou les
-    ayants droit changent (R. 353-1-1, R. 353-4), et la pension de vieillesse de veuve
-    ou de veuf. Les limites de cumul d'avant juillet 2004 (D. 355-1), l'âge d'avant
-    1973 et les majorations forfaitaires de 1982 et de 1995 sont portés depuis le 9
-    octobre 2026, la majoration forfaitaire pour enfant à charge (L. 353-5) dans sa
-    propre fiche, majoration_forfaitaire_reversion.
+    ayants droit changent avant la retraite du survivant, ou sans elle (R. 353-1-1,
+    R. 353-4), et la pension de vieillesse de veuve ou de veuf. Les limites de cumul
+    d'avant juillet 2004 (D. 355-1), l'âge d'avant 1973 et les majorations
+    forfaitaires de 1982 et de 1995 sont portés depuis le 9 octobre 2026, la
+    majoration forfaitaire pour enfant à charge (L. 353-5) dans sa propre fiche,
+    majoration_forfaitaire_reversion ; la révision qu'ouvre la retraite du survivant,
+    et le recalcul aux règles de 2004 de la réversion qui la précède, depuis le 24
+    octobre 2026.
   - >-
     Avant le 1er juillet 1974, la réversion « ne se cumulait pas avec un avantage
     personnel » : l'exposé de la Cnav dit « avant le 01/01/1974 », quand la loi
@@ -1512,8 +1557,56 @@ sources:
       dit si la durée du minimum de D. 634-14 compte les années d'avant 1973
     url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=circulaire_rsi_2007_061_24042007.pdf
     date: 2026-10-19
-textes_a_rattacher:
-- {id: LEGIARTI000024113027, article: R. 353-1-1, en_vigueur: 2011-06-03, change: "la révision de la réversion quand les ressources varient"}
+  - type: legifrance
+    reference: >-
+      R. 353-1-1, ses cinq rédactions dans l'index LEGI, de LEGIARTI000006749402 (25 août
+      2004 : les articles de l'allocation supplémentaire « applicables aux pensions de
+      réversion ») à LEGIARTI000053335692 (2026) : la pension de réversion « est
+      révisable en cas de variation dans le montant des ressources », et « la date de la
+      dernière révision ne peut être postérieure : a) A un délai de trois mois après la
+      date à laquelle le conjoint survivant est entré en jouissance de l'ensemble des
+      avantages personnels de retraite de base et complémentaire », b) à soixante ans,
+      depuis le 3 juin 2011 à l'âge de L. 161-17-2, quand il ne peut y prétendre ;
+      depuis 2026, « à l'exclusion des nouveaux droits acquis au titre de l'article
+      L. 161-22-1-1 ». R. 815-40 (LEGIARTI000006753819) puis R. 815-42
+      (LEGIARTI000006753836), auxquels il renvoie : « En cas de modification du montant
+      d'un avantage viager, il est fait état du nouveau montant [...] à compter du
+      premier jour du terme d'arrérages suivant la date à laquelle la modification du
+      montant de l'avantage viager aurait dû intervenir »
+    date: 2026-10-24
+  - type: circulaire_cnav
+    reference: >-
+      lettre ministérielle du 22 mars 2005, § 1, que la base de la Cnav publie : la
+      condition de ressources n'est pas opposable aux réversions en cours au 1er juillet
+      2004, « lorsque le bénéficiaire d'une pension de réversion prenant effet avant le
+      1er juillet liquide un avantage personnel de retraite ou d'invalidité après cette
+      date, ses droits à pension de réversion sont révisés pour tenir compte de la
+      nouvelle condition de ressources et de la suppression concomitante des règles de
+      cumul » — « toute pension de retraite ou d'invalidité d'un régime de base » ;
+      circulaire Cnav n° 2005/17, § 31 : « le nouveau dispositif doit être mis en œuvre à
+      compter de la date d'effet de l'avantage personnel », et § 322, ses trois exemples
+      de la dernière révision ; exposé « Condition de ressources » (16 avril 2026) :
+      « Modification des ressources », « Date de la dernière révision », « Anciennes
+      dispositions »
+    date: 2026-10-24
+    url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=retraite_reversion_ressource_condition_ressource_ex.aspx
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2010/58 du 30 juin 2010, § 21 à 24 : la révision liée à
+      l'attribution d'un avantage viager « intervient donc à compter du premier jour du
+      mois qui suit la date d'effet de cet avantage », la période de référence ne
+      comptant que « les sommes réellement perçues » ; l'exemple du § 24 — retraites au
+      1er janvier 2008, révision au 1er février, « dernière révision (cristallisation) »
+      au 1er avril — ; « applicables aux dossiers en cours et à venir ». Circulaire Cnav
+      n° 2006-37, § 6 : avant elle, la révision au premier jour du mois qui suit le
+      constat, à la date de dernière révision au plus tard, et ses deux exemples ;
+      circulaire Cnav n° 2006-6, § 12 : la retraite du régime général révisait la
+      réversion du régime général à sa date d'effet (§ 121), les derniers droits trois
+      mois après (§ 122) ; circulaire Cnav n° 2012/25, § 1 : la cristallisation sans
+      retraite de soixante à soixante-deux ans selon la génération
+    date: 2026-10-24
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_2010058_30062010.aspx
+textes_a_rattacher: []
 code:
   python: >-
     droit/reversion.py : reversion, _a_l_age, _mariage_dure, _groupes_du_minimum,
@@ -1521,6 +1614,7 @@ code:
     mois_de_mariage, _part_du_survivant, _remarie_avant, _admis_au_regime_general,
     _admis_ailleurs, _fin_au_remariage, _jusqu_au_remariage, _premiere_date_d_effet,
     _date_d_effet_du_regime_general, _cumuler, _retraites_au, _cumul_a_la_retraite,
+    _annee_du_plafond, _revision_a_la_retraite, _trois_mois_apres, _derniere_revision,
     _majorations_ulterieures ; scenarios/actuel.py : Reversions ; echeancier.py :
     Echeancier._reverser, Echeancier._pensions_au_deces,
     Echeancier._pensions_eues_au_deces ; carriere.py : Carriere.arretee_au_deces,
@@ -1533,7 +1627,8 @@ code:
     ressourcesDuPlafond, majorerLesPetitesRetraites, moisDeMariage, partDuSurvivant,
     remarieAvant, admisAuRegimeGeneral, admisAilleurs, finAuRemariage,
     jusquAuRemariage, premiereDateDEffet, dateDEffetDuRegimeGeneral, cumuler,
-    retraitesAu, cumulALaRetraite, majorationsUlterieures ; moteur/js/regimes.js :
+    retraitesAu, cumulALaRetraite, anneeDuPlafond, revisionALaRetraite, troisMoisApres,
+    derniereRevision, majorationsUlterieures ; moteur/js/regimes.js :
     Reversions ;
     moteur/js/echeancier.js : Echeancier._reverser, Echeancier._pensionsAuDeces,
     Echeancier._pensionsEuesAuDeces ; moteur/js/carriere.js : Carriere.arreteeAuDeces,
@@ -1671,4 +1766,7 @@ effet: >-
   total au minimum ; celui d'un assuré que le RSI ou le régime général liquide avec ses
   années de la CANCAVA ou de l'ORGANIC a le minimum de toutes ces années, et non de
   celles de la dernière caisse : 3 406,47 euros en 2015, et non 428,63, pour la veuve
-  de l'artisan de 132 trimestres à la CANCAVA et 19 au RSI.
+  de l'artisan de 132 trimestres à la CANCAVA et 19 au RSI. Depuis le 24 octobre 2026,
+  la retraite que le survivant prend après sa réversion la revoit sous le plafond de
+  ressources, ses retraites comptées : la recalcule aux règles de 2004 quand la
+  réversion les précède, la révise le mois qui suit sinon, pour la dernière fois.

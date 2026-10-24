@@ -1645,6 +1645,8 @@ def _carriere_exemple(simulateur: Simulateur, exemple: dict, decalage_mois: int 
             "revenus_d_activite": c.get("activite_conjoint"),
             "nouvelle_union": c.get("nouvelle_union"),
             "ressources_du_nouveau_conjoint": c.get("ressources_nouveau_conjoint"),
+            "retraite": (None if c.get("conjoint_retraite") is None
+                         else str(c["conjoint_retraite"])),
         }
         communs["deces"] = None if c.get("deces") is None else str(c["deces"])
     if "emploi_retraite" in c:
@@ -1938,6 +1940,18 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
         if echeancier.reversion is None:
             return "aucune réversion liquidée"
         return {r.regime: r.date_effet for r in echeancier.reversion.regimes}
+    if cle in ("dates_de_revision_de_la_reversion",
+               "dates_de_derniere_revision_de_la_reversion"):
+        # La même réversion, revue quand la retraite du survivant suit sa date
+        # d'effet : le jour de cette révision, et celui d'où rien ne la revoit
+        # plus (R. 353-1-1).
+        echeancier = Echeancier(simulateur)
+        echeancier.parcourir(carriere)
+        if echeancier.reversion is None:
+            return "aucune réversion liquidée"
+        champ = ("revision_effet" if cle == "dates_de_revision_de_la_reversion"
+                 else "derniere_revision")
+        return {r.regime: getattr(r, champ) for r in echeancier.reversion.regimes}
     if cle == "reversions_ecretees_mensuelles":
         # L'exemple donne la réversion d'avant le plafond, pas la carrière du
         # défunt : le test prête à chaque régime nommé la pension qui la rend,
@@ -2174,7 +2188,8 @@ def _concorde(cle: str, mesure, valeur) -> bool:
                    for regime, v in valeur.items())
     if cle == "departs":
         return mesure == [str(depart) for depart in valeur]
-    if cle == "dates_d_effet_de_la_reversion":
+    if cle in ("dates_d_effet_de_la_reversion", "dates_de_revision_de_la_reversion",
+               "dates_de_derniere_revision_de_la_reversion"):
         # Un régime nommé que la réversion ne liquide pas n'a pas de date.
         return not isinstance(mesure, str) and all(
             mesure.get(regime) == str(date) for regime, date in valeur.items())

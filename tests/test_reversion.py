@@ -1708,6 +1708,7 @@ def test_la_limite_de_cumul_s_applique_quand_sa_retraite_suit_la_reversion(simul
     revue = ligne("2001-03")
     assert (round(revue.montant, 2), revue.motif, revue.cumul_effet) == (
         5400.0, "servie", "2001-03-01")
+    assert (revue.revision_effet, revue.derniere_revision) == (None, None)
     moteur = simulateur.scenario_actuel
     coefficient, _ = moteur.revalorisations_pensions.generale(
         date(1999, 12, 31), date(2001, 12, 31), False, None)
@@ -1719,11 +1720,13 @@ def test_la_limite_de_cumul_s_applique_quand_sa_retraite_suit_la_reversion(simul
     d_emblee = ligne(None)
     assert (d_emblee.motif, d_emblee.cumul_effet, d_emblee.reduction_du_cumul) == (
         "cumul", None, 0.0)
-    # Prise en 2005, sa retraite recalculerait la réversion aux règles de
-    # ressources de 2004, ce que le modèle ne fait pas : rien ne la revoit.
+    # Prise en 2005, sa retraite recalcule la réversion aux règles de
+    # ressources de 2004, sans limite de cumul : sous le plafond de 2005, la
+    # réversion reste entière.
     tardive = ligne("2005-01")
     assert (round(tardive.montant, 2), tardive.cumul_effet, tardive.limite_cumul) == (
         5400.0, None, 0.0)
+    assert (tardive.revision_effet, tardive.reduction_de_la_revision) == ("2005-01-01", 0.0)
 
 
 @pytest.mark.parametrize("retraite, reduction", [
@@ -1767,6 +1770,193 @@ def test_l_exemple_de_la_circulaire_105_90():
     _, limite = _cumuler({"cumul": "limite", "cumul_taux": 0.52}, 0.52 * 62040 * coefficient,
                          50000.0, principale, None, 1)
     assert int(limite) == 60305
+
+
+# -- la réversion revue à la retraite du survivant (L. 353-1, R. 353-1-1) --------------
+
+def _coefficient(simulateur, depuis: int, jusqu_a: int) -> float:
+    """Les coefficients des pensions du 31 décembre de ``depuis`` à celui de
+    ``jusqu_a`` ; en 2020, ceux des pensions de 2 000 € par mois au plus, que
+    passe la seule réversion du survivant de 2019."""
+    return simulateur.scenario_actuel.revalorisations_pensions.generale(
+        date(depuis, 12, 31), date(jusqu_a, 12, 31), False, 0.0)[0]
+
+
+def test_sa_retraite_prise_depuis_juillet_2004_recalcule_la_reversion_aux_ressources(
+        simulateur):
+    """« Si un avantage personnel était attribué à partir du 01/07/2004, la
+    retraite de réversion était recalculée compte tenu des règles de
+    ressources applicables depuis le 01/07/2004 » (exposé de la Cnav,
+    « Retraite de réversion cumulable »), « à compter de la date d'effet de
+    l'avantage personnel » (circulaire Cnav n° 2005-17, § 31), la limite de
+    cumul supprimée avec elles (lettre ministérielle du 22 mars 2005, § 1). La
+    veuve de 1999, née en 1940, prend sa retraite en juillet 2005 : sa
+    réversion de 5 400 €, servie entière depuis 1999, se mesure alors au
+    plafond de 2005, 2 080 fois le SMIC horaire du 1er janvier, 7,61 €, ramené
+    aux euros de 1999 par les coefficients des pensions, ses 12 000 € de
+    retraites comptés, et n'est plus révisable trois mois après (R. 353-1-1)."""
+    carriere = _carriere(simulateur, 1930, 60.0, "1940-06-10", "1999-03-10",
+                         ressources=12000.0, retraite="2005-07")
+    ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                     1999)["regime_general"]
+    plafond = 2080 * 7.61 / _coefficient(simulateur, 1999, 2005)
+    assert (round(ligne.montant, 2), ligne.motif, ligne.cumul_effet) == (
+        5400.0, "servie", None)
+    assert (ligne.revision_effet, ligne.derniere_revision) == ("2005-07-01", "2005-10-01")
+    assert ligne.reduction_de_la_revision == pytest.approx(5400.0 - (plafond - 12000.0))
+
+
+@pytest.mark.parametrize("enfants", [0, 3])
+def test_sa_retraite_revise_la_reversion_le_mois_qui_suit_pour_la_derniere_fois(
+        simulateur, enfants):
+    """La réversion attribuée depuis juillet 2004 « est révisable en cas de
+    variation dans le montant des ressources », et « la date de la dernière
+    révision ne peut être postérieure » de trois mois à celle où le survivant
+    « est entré en jouissance de l'ensemble des avantages personnels de
+    retraite » (R. 353-1-1) : sa retraite la révise « à compter du premier
+    jour du mois qui suit la date d'effet de cet avantage », la dernière
+    révision trois mois après elle (circulaire Cnav n° 2010/58, § 22 et 24).
+    Le veuf de 2015, né en 1958, prend sa retraite en juillet 2020 : sa
+    réversion, entière sans elle, est revue en août sous le plafond de 2020,
+    2 080 fois 10,15 €, ramené aux euros de 2015, ses 18 000 € de retraites
+    comptés. La majoration de 10 % des trois enfants suit la réversion revue,
+    sans descendre sous le dixième du minimum de 2015 (R. 353-2)."""
+    carriere = _carriere(simulateur, 1955, 60.0, "1958-06-10", "2015-03-10",
+                         ressources=18000.0, retraite="2020-07", enfants=enfants)
+    ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                     2015)["regime_general"]
+    revue = 2080 * 10.15 / _coefficient(simulateur, 2015, 2020) - 18000.0
+    minimum = simulateur.scenario_actuel.reversions.minimum(2015)[0]
+    majorations = (540.0, max(0.1 * revue, 0.1 * minimum)) if enfants else (0.0, 0.0)
+    assert (round(ligne.montant, 2), ligne.motif) == (5400.0 + majorations[0], "servie")
+    assert (ligne.revision_effet, ligne.derniere_revision) == ("2020-08-01", "2020-10-01")
+    assert ligne.reduction_de_la_revision == pytest.approx(
+        5400.0 + majorations[0] - revue - majorations[1])
+
+
+@pytest.mark.parametrize("depuis, menage", [("2018-05", True), ("2021-01", False)])
+def test_la_revision_compte_le_menage_forme_avant_elle(simulateur, depuis, menage):
+    """L'union que le survivant forme après la date d'effet ne compte pas à
+    celle-ci ; « le remariage du bénéficiaire entraîne la révision de la
+    retraite de réversion pour tenir compte des ressources du nouveau
+    ménage » (exposé de la Cnav, « Condition de ressources ») : formé avant sa
+    retraite, le ménage compte à la révision qu'elle ouvre, sous le plafond
+    du ménage. Formé après la dernière révision, il ne change plus rien : « A
+    partir de cette date de dernière révision, aucun changement de ressources
+    ou de situation familiale n'est pris en compte »."""
+    carriere = _carriere(simulateur, 1955, 60.0, "1958-06-10", "2015-03-10",
+                         ressources=18000.0, retraite="2020-07", nouvelle_union="mariage",
+                         union_depuis=depuis, apport=12000.0)
+    ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                     2015)["regime_general"]
+    plafond = 2080 * 10.15 / _coefficient(simulateur, 2015, 2020)
+    revue = 1.6 * plafond - 30000.0 if menage else plafond - 18000.0
+    assert (round(ligne.montant, 2), ligne.ressources_retenues) == (5400.0, 0.0)
+    assert ligne.reduction_de_la_revision == pytest.approx(5400.0 - revue)
+
+
+def _dernier_smic_publie() -> tuple[int, float]:
+    """La dernière année du barème du SMIC horaire, et son montant du 1er
+    janvier, tels que le fichier de la source les écrit."""
+    chemin = Path(__file__).resolve().parents[1] / "data" / "reference" / "macro" / (
+        "smic_horaire.csv")
+    lignes = [ligne.split(",") for ligne in chemin.read_text(encoding="utf-8").splitlines()
+              if ligne and ligne[0].isdigit()]
+    return int(lignes[-1][0]), float(lignes[-1][1])
+
+
+def test_une_revision_a_venir_se_mesure_au_dernier_smic_publie(simulateur):
+    """Les montants d'une réversion sont ceux d'une année passée, ou de
+    l'année courante, où s'arrêtent les revalorisations publiées : la
+    révision qu'ouvrira la retraite de 2030 se mesure au plafond de la
+    dernière année dont le barème publie le SMIC, ramené aux euros de l'année
+    des montants, non à un SMIC projeté."""
+    carriere = _carriere(simulateur, 1960, 62.0, "1964-03-10", "2024-05-10",
+                         ressources=20000.0, retraite="2030-01")
+    ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                     2024)["regime_general"]
+    annee, smic = _dernier_smic_publie()
+    plafond = 2080 * smic / _coefficient(simulateur, 2024, annee)
+    assert (ligne.revision_effet, ligne.derniere_revision) == ("2030-02-01", "2030-04-01")
+    assert ligne.reduction_de_la_revision == pytest.approx(5400.0 - (plafond - 20000.0))
+
+
+@pytest.mark.parametrize("retraite, derniere", [
+    # Sans retraite datée, ses retraites sont servies dès la date d'effet
+    # (présomption ``retraites_du_survivant_servies``), depuis un jour que la
+    # ligne ne connaît pas.
+    (None, None),
+    # Servies depuis plus de trois mois à la date d'effet, la réversion
+    # « n'est plus révisable dès son point de départ » (circulaire Cnav
+    # n° 2010/58, § 24).
+    ("2014-01", "2015-04-01"),
+    # Depuis moins, elle l'est jusqu'à trois mois après elles (R. 353-1-1).
+    ("2015-02", "2015-05-01"),
+])
+def test_sa_retraite_avant_la_date_d_effet_ne_la_revise_pas(simulateur, retraite, derniere):
+    """Ses retraites, servies à la date d'effet, comptent à ses ressources dès
+    elle : rien ne revoit plus la réversion, que sa dernière révision fige."""
+    carriere = _carriere(simulateur, 1950, 60.0, "1950-06-10", "2015-03-10",
+                         ressources=18000.0, retraite=retraite)
+    ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                     2015)["regime_general"]
+    assert (round(ligne.montant, 2), ligne.motif) == (
+        round(_plafond(simulateur, 2015) - 18000.0, 2), "ecretee")
+    assert (ligne.revision_effet, ligne.reduction_de_la_revision, ligne.derniere_revision) == (
+        None, 0.0, derniere)
+
+
+#: Des saisies où la retraite du survivant suit la date d'effet de sa
+#: réversion : la veuve de 1999 qui la prend en 2008, que les règles de
+#: ressources de 2004 recalculent ; le veuf de 2015 qui la prend en 2020, seul
+#: ou remarié en 2018 ; la veuve de 2024 qui la prendra en 2030. Chacune avec
+#: le jour où sa réversion du régime général est revue, et celui où elle
+#: n'est plus révisable.
+CAS_DE_LA_REVISION = [
+    ({"naissance": "1930", "liquidation": "60", "conjoint": "1940-06", "deces": "1999-03",
+      "ressources_conjoint": "12000", "conjoint_retraite": "2008-03"},
+     "2008-03-01", "2008-06-01"),
+    ({"naissance": "1955", "liquidation": "60", "sexe": "F", "conjoint": "1958-06",
+      "conjoint_sexe": "H", "deces": "2015-03", "ressources_conjoint": "18000",
+      "conjoint_retraite": "2020-07"}, "2020-08-01", "2020-10-01"),
+    ({"naissance": "1955", "liquidation": "60", "sexe": "F", "conjoint": "1958-06",
+      "conjoint_sexe": "H", "deces": "2015-03", "ressources_conjoint": "18000",
+      "conjoint_retraite": "2020-07", "nouvelle_union": "mariage",
+      "nouvelle_union_depuis": "2018-05", "ressources_nouveau_conjoint": "12000"},
+     "2020-08-01", "2020-10-01"),
+    ({"naissance": "1960", "liquidation": "62", "conjoint": "1964-03", "deces": "2024-05",
+      "ressources_conjoint": "20000", "conjoint_retraite": "2030-01"},
+     "2030-02-01", "2030-04-01"),
+]
+
+
+def test_les_deux_moteurs_revoient_la_reversion_a_sa_retraite(saisies):
+    """Le résultat entier, des six scénarios, est le même en Python et en
+    JavaScript ; chaque cas revoit la réversion du régime général au jour
+    qu'il dit, et la fige trois mois après sa retraite."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    racine = Path(__file__).resolve().parents[1]
+    sys.path.insert(0, str(racine / "scripts"))
+    from construire_temoins import _fini
+    attendus = [{"requete": cas, "resultat": _fini(saisies.simuler(cas).dictionnaire())}
+                for cas, _, _ in CAS_DE_LA_REVISION]
+    for attendu, (_, revision, derniere) in zip(attendus, CAS_DE_LA_REVISION):
+        ligne, = (r for r in attendu["resultat"]["reversion"]["regimes"]
+                  if r["regime"] == "regime_general")
+        assert (ligne["revision_effet"], ligne["derniere_revision"]) == (
+            revision, derniere), ligne
+    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
+                                     delete=False) as fichier:
+        fichier.write(json.dumps(attendus, ensure_ascii=False))
+        chemin = fichier.name
+    try:
+        execution = subprocess.run(
+            ["node", str(racine / "tests" / "js" / "comparer.mjs"), chemin],
+            cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False)
+    finally:
+        Path(chemin).unlink()
+    assert execution.returncode == 0, (execution.stdout + execution.stderr)[-2000:]
 
 
 # -- les majorations forfaitaires des pensions d'avant 1975 ----------------------------

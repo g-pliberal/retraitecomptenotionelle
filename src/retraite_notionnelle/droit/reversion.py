@@ -75,7 +75,11 @@ avant juillet 2004, réduit par le CUMUL avec ces retraites personnelles, dans
 la limite de 52 % — la moitié avant décembre 1982 — de leur total et de la
 pension du défunt, la limite forfaitaire au moins, quand il ne les complète
 pas seulement, avant juillet 1974 (D. 355-1), à sa date d'effet, ou au jour
-où sa propre retraite, qu'il date, la suit, aux règles de ce jour ; puis
+où sa propre retraite, qu'il date, la suit, aux règles de ce jour. Une
+retraite qu'il prend depuis juillet 2004 la RECALCULE aux règles de ressources
+de 2004, à sa date d'effet ; celle qui suit une réversion attribuée depuis la
+RÉVISE le mois qui suit, pour la dernière fois (R. 353-1-1) : sous le plafond
+de ce jour, ses retraites et son ménage d'alors comptés. Puis
 majoré de 10 % pour le survivant de trois enfants, sans
 descendre sous le dixième de son minimum (R. 353-2), hors du plafond, et de la
 majoration forfaitaire par enfant à charge du survivant sans retraite,
@@ -115,8 +119,8 @@ d'effet. La SNCF ne l'éteint pas, elle la fige ; mais le survivant qui vit en
 concubinage au décès n'en jouit pas (``sans_jouissance_au_deces``).
 
 CE QUI N'EST PAS ENCORE PORTÉ, et que les fiches déclarent : la révision de la
-réversion quand le ménage ou ses ressources changent, ou que la retraite du
-survivant commence après juillet 2004, le plafonnement du veuf
+réversion quand le ménage ou ses ressources changent avant la retraite du
+survivant, ou sans elle, le plafonnement du veuf
 de fonctionnaire d'avant 2004,
 la minoration de l'Agirc avant soixante ans, la réversion des précédents
 conjoints eux-mêmes. L'Agirc-Arrco sert 60 % des points sans le coefficient
@@ -311,6 +315,18 @@ class ReversionRegime:
     #: est alors la limite de ce jour.
     cumul_effet: str | None = None
     reduction_du_cumul: float = 0.0
+    #: Le jour où la retraite personnelle du survivant, qui suit la date
+    #: d'effet, revoit la réversion sous le plafond de ressources — la
+    #: recalcule aux règles de 2004 quand elle les précède, la révise sinon
+    #: (R. 353-1-1) —, et ce qu'elle en retire alors, majoration de 10 %
+    #: comprise, négatif quand elle y ajoute, hors du montant : ``None`` et 0
+    #: sans elle.
+    revision_effet: str | None = None
+    reduction_de_la_revision: float = 0.0
+    #: Le jour d'où la réversion soumise aux règles de ressources n'est plus
+    #: révisable, trois mois après la retraite que le survivant date
+    #: (R. 353-1-1) : ``None`` sans elle.
+    derniere_revision: str | None = None
 
     def donnees(self) -> dict:
         return {"regime": self.regime, "base": self.base, "taux": self.taux,
@@ -336,7 +352,10 @@ class ReversionRegime:
                     {"date": jour, "montant": montant}
                     for jour, montant in self.majorations_forfaitaires],
                 "cumul_effet": self.cumul_effet,
-                "reduction_du_cumul": self.reduction_du_cumul}
+                "reduction_du_cumul": self.reduction_du_cumul,
+                "revision_effet": self.revision_effet,
+                "reduction_de_la_revision": self.reduction_de_la_revision,
+                "derniere_revision": self.derniere_revision}
 
 
 @dataclass(frozen=True)
@@ -706,8 +725,7 @@ def _cumul_a_la_retraite(moteur: ScenarioActuel, fiche: dict, conjoint: Conjoint
     limite forfaitaire de l'année de ce jour se ramène aux euros de ``annee``
     par les coefficients qui revalorisent les pensions. Une retraite
     attribuée depuis le 1er juillet 2004 recalcule la réversion « compte tenu
-    des règles de ressources applicables » alors, ce que le modèle ne fait
-    pas : rien ne la revoit."""
+    des règles de ressources applicables » alors : :func:`_revision_a_la_retraite`."""
     jour = conjoint.retraite
     if jour is None or jour <= date_effet or servie <= 0 or retraites <= 0:
         return None
@@ -731,6 +749,101 @@ def _cumul_a_la_retraite(moteur: ScenarioActuel, fiche: dict, conjoint: Conjoint
         fiabilite = min(fiabilite, forfaitaire[1], fiabilite_coefficient)
     reste, limite = _cumuler(parametres, servie, retraites, principale, en_euros, reversions)
     return jour, servie, reste, limite, fiabilite
+
+
+def _annee_du_plafond(moteur: ScenarioActuel, annee: int, jour: str) -> int:
+    """L'année dont le SMIC fait le plafond d'une révision du jour ``jour`` :
+    la sienne, ou, quand le barème ne la publie pas encore, la dernière qu'il
+    publie — les montants d'une réversion s'arrêtent à l'année courante, et un
+    SMIC projeté n'en est pas un —, jamais avant l'année des montants."""
+    alors = int(jour[:4])
+    while alors > annee and moteur.macro.smic_horaire.fiabilite(alors) <= Fiabilite.ESTIMEE:
+        alors -= 1
+    return alors
+
+
+def _revision_a_la_retraite(moteur: ScenarioActuel, fiche: dict, parametres: dict,
+                            conjoint: Conjoint, deces: str, annee: int, date_effet: str,
+                            servie: float, entiere: float,
+                            ulterieures: tuple[tuple[str, float], ...], ressources: float,
+                            retraites: float, bases: float
+                            ) -> tuple[str, float, float, Fiabilite] | None:
+    """La réversion revue sous le plafond de ressources quand la retraite
+    personnelle du survivant, qu'il date, suit sa date d'effet : ``(jour,
+    servie, revue, fiabilité)``, ou ``None`` sans elle.
+
+    Attribuée avant juillet 2004 (``cumul``), la réversion n'est revue que par
+    une retraite prise depuis : elle est alors « recalculée compte tenu des
+    règles de ressources applicables depuis le 01/07/2004 » (exposé de la
+    Cnav, « Retraite de réversion cumulable »), « à compter de la date d'effet
+    de l'avantage personnel » (circulaire Cnav n° 2005-17, § 31), les règles
+    de cumul supprimées avec elles (lettre ministérielle du 22 mars 2005,
+    § 1) ; avant, c'est :func:`_cumul_a_la_retraite` qui la revoit. Attribuée
+    depuis (``ecretement``), elle « est révisable en cas de variation dans le
+    montant des ressources » (R. 353-1-1) : la retraite la révise « à compter
+    du premier jour du mois qui suit la date d'effet de cet avantage »
+    (circulaire Cnav n° 2010/58, § 22), que le modèle tient pour constatée le
+    mois même avant le 30 juin 2010 (circulaire Cnav n° 2006-37, § 6). C'est
+    sa dernière révision : rien ne la revoit plus trois mois après
+    (:func:`_derniere_revision`).
+
+    Le plafond est celui de la version de ce jour, au SMIC de son année
+    (:func:`_annee_du_plafond`), ramené aux euros de ``annee`` par les
+    coefficients qui revalorisent les pensions, en 2020 ceux des pensions de
+    2 000 € par mois au plus, que ne passent pas les ressources d'un survivant
+    sous le plafond ; à côté de la réversion, toutes ses ``ressources``, ses
+    retraites comprises, ses revenus d'activité abattus s'il a l'âge de
+    l'abattement ce jour-là, celles de son nouveau conjoint quand leur ménage
+    est formé, et ``bases``, les réversions des autres régimes de base. La
+    réversion revue est ``entiere``, d'avant les ressources et le cumul, avec
+    les majorations forfaitaires ``ulterieures`` venues, réduite du
+    dépassement ; ``servie``, avec elles, celle qu'elle remplace. ``retraites``
+    sont ses retraites personnelles : sans elles, rien ne change."""
+    jour = conjoint.retraite
+    if jour is None or jour <= date_effet or retraites <= 0:
+        return None
+    if parametres.get("cumul") is not None:
+        if servie <= 0:
+            return None
+        revision = jour
+    elif parametres.get("ressources") == "ecretement":
+        revision = mois_suivant(jour)
+    else:
+        return None
+    alors = moteur.reversions.version(fiche, revision, deces)
+    regles = alors["parametres"] if alors is not None else {}
+    if regles.get("ressources") != "ecretement":
+        return None
+    venues = somme_ordonnee(montant for quand, montant in ulterieures if quand <= revision)
+    retenues, facteur = _ressources_du_plafond(regles, conjoint, ressources, revision)
+    an = _annee_du_plafond(moteur, annee, revision)
+    coefficient, fiabilite_coefficient = moteur.revalorisations_pensions.generale(
+        date(annee, 12, 31), date(an, 12, 31), False, 0.0)
+    plafond = (facteur * float(regles["plafond_smic_heures"]) * moteur.macro.smic_horaire(an)
+               / coefficient)
+    revue = max(0.0, min(entiere + venues, plafond - retenues - bases))
+    fiabilite = min(Fiabilite.depuis_texte(regles["fiabilite"]), fiabilite_coefficient)
+    return revision, servie + venues, revue, fiabilite
+
+
+def _trois_mois_apres(jour: str) -> str:
+    """Le premier jour du troisième mois qui suit celui de ``jour``."""
+    return mois_suivant(mois_suivant(mois_suivant(jour)))
+
+
+def _derniere_revision(parametres: dict, conjoint: Conjoint, date_effet: str,
+                       recalculee: bool) -> str | None:
+    """Le jour d'où la réversion soumise aux règles de ressources n'est plus
+    révisable : « un délai de trois mois après la date à laquelle le conjoint
+    survivant est entré en jouissance de l'ensemble des avantages personnels
+    de retraite » (R. 353-1-1, a), que le modèle lui sert tous au jour qu'il
+    date, ou sa date d'effet quand il en jouit depuis plus longtemps
+    (circulaire Cnav n° 2010/58, § 24). ``None`` sans retraite datée, ou pour
+    la réversion d'avant juillet 2004 qu'aucune retraite n'a ``recalculée``."""
+    if conjoint.retraite is None or (parametres.get("ressources") != "ecretement"
+                                     and not recalculee):
+        return None
+    return max(date_effet, _trois_mois_apres(conjoint.retraite))
 
 
 def _versions_de_la_charge(fiche: dict) -> list[tuple[str | None, str | None, dict]]:
@@ -1105,8 +1218,9 @@ def _ressources_du_plafond(parametres: dict, conjoint: Conjoint, ressources: flo
     if (facteur is None or conjoint.nouvelle_union is None
             or (conjoint.nouvelle_union_depuis or date_effet) > date_effet):
         # Le ménage ne compte que formé à la date d'effet : celui qui se forme
-        # après réviserait la réversion (R. 353-1-1), ce que le modèle ne fait
-        # pas.
+        # après révise la réversion (R. 353-1-1), ce que le modèle ne fait qu'à
+        # la révision qu'ouvre la retraite du survivant
+        # (:func:`_revision_a_la_retraite`).
         return ressources, 1.0
     return (ressources + float(conjoint.ressources_du_nouveau_conjoint or 0.0),
             float(facteur))
@@ -1140,9 +1254,11 @@ def _majorer_les_petites_retraites(moteur: ScenarioActuel,
     if not eligibles or plafond is None or age is None:
         return
     debut = _au_taux_plein(conjoint.naissance, age[0])
-    # Ses réversions, revues par la limite de cumul quand sa retraite les suit.
+    # Ses réversions, revues par la limite de cumul ou sous le plafond de
+    # ressources quand sa retraite les suit.
     retraites = retraites_personnelles + somme_ordonnee(
-        l.montant - l.reduction_du_cumul for l in lignes.values())
+        l.montant - l.reduction_du_cumul - l.reduction_de_la_revision
+        for l in lignes.values())
     theoriques = {regime: float(parametres["majoration_taux"]) * montant
                   for regime, (montant, parametres) in eligibles.items()}
     marge = 4 * plafond[0] - retraites
@@ -1393,6 +1509,9 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
                        if (table.fiche_du_regime(regime) or {}).get("id") == "reversion")
         + somme_ordonnee(1 for regime, ligne_ in lignes.items()
                          if ligne_.montant > 0 and ligne_.fiche in AUTRES_BASES))
+    # Les réversions des autres régimes de base que la révision à sa retraite
+    # retient, celles des régimes alignés revues l'une après l'autre.
+    bases_revues = autres_bases
     for regime, base, fiabilite in pensions:
         fiche = table.fiche_du_regime(regime)
         if fiche is None or fiche["id"] != "reversion":
@@ -1523,6 +1642,19 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
             reduction_du_cumul = (servie_alors + des_trois_enfants(servie_alors)
                                   - revue_a - des_trois_enfants(revue_a))
             fiabilite = min(fiabilite, fiabilite_revue)
+        # Ou revue sous le plafond de ressources, quand sa retraite la suit
+        # depuis juillet 2004 : de même.
+        revision_effet, reduction_de_la_revision = None, 0.0
+        revisee = _revision_a_la_retraite(moteur, fiche, parametres, conjoint, deces, annee,
+                                          date_effet, montant, entieres[regime],
+                                          ulterieures, ressources, retraites_personnelles,
+                                          bases_revues)
+        if revisee is not None:
+            revision_effet, servie_alors, revue_a, fiabilite_revisee = revisee
+            reduction_de_la_revision = (servie_alors + des_trois_enfants(servie_alors)
+                                        - revue_a - des_trois_enfants(revue_a))
+            fiabilite = min(fiabilite, fiabilite_revisee)
+        bases_revues += revue_a
         reduites[regime] = (montant, parametres)
         revues[regime] = (revue_a, parametres)
         lignes[regime] = replace(
@@ -1532,7 +1664,10 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
             minimum_contributif=contributif, ecretement_du_maximum=ecretement,
             maximum=maximum, plafond=plafond_annuel, ressources_retenues=retenues,
             part=part, limite_cumul=limite_cumul, majorations_forfaitaires=ulterieures,
-            cumul_effet=cumul_effet, reduction_du_cumul=reduction_du_cumul)
+            cumul_effet=cumul_effet, reduction_du_cumul=reduction_du_cumul,
+            revision_effet=revision_effet, reduction_de_la_revision=reduction_de_la_revision,
+            derniere_revision=_derniere_revision(parametres, conjoint, date_effet,
+                                                 revisee is not None))
 
     # La complémentaire des indépendants en dernier : ses ressources sont
     # celles de R. 353-1, « personnelles ou du ménage », que les réversions de

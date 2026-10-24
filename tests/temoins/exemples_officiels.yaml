@@ -81,6 +81,13 @@
 #   dates_d_effet_de_la_reversion — pour chaque régime nommé, la date d'effet
 #     (AAAA-MM-JJ) de la réversion que le décès de l'assuré ouvre à son
 #     conjoint, telle que l'échéancier la liquide ;
+#   dates_de_revision_de_la_reversion — pour chaque régime nommé, le jour
+#     (AAAA-MM-JJ) où la retraite du conjoint, qui suit la date d'effet de sa
+#     réversion, la revoit sous le plafond de ressources (R. 353-1-1), telle
+#     que l'échéancier la liquide ;
+#   dates_de_derniere_revision_de_la_reversion — pour chaque régime nommé, le
+#     jour (AAAA-MM-JJ) d'où la réversion n'est plus révisable : trois mois
+#     après l'entrée en jouissance des retraites du conjoint (R. 353-1-1) ;
 #   deductions_annuelles_du_cumul — pour chaque régime nommé, ce que le cumul
 #     emploi-retraite déduit de sa pension dans l'année de `revenus_apres_depart`,
 #     à un centime près ;
@@ -1809,6 +1816,65 @@ exemples:
       il n'arrondit qu'à la fin : 836,7786 euros.
     carriere: {naissance: "1944-07", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2012-01", age_debut: 20, conjoint: "1950-03", deces: "2012-01", pensions_du_defunt_mensuelles: {regime_general: 1549.59}, pensions_avant_maximum_mensuelles: {regime_general: 2000}, surcotes_mensuelles: {regime_general: 34.09}}
     attendu: {reversions_au_maximum_mensuelles: {regime_general: 836.77}}
+
+  # ---- Cnav : la réversion révisée à la retraite du survivant --------------
+  # R. 353-1-1 : la réversion attribuée depuis juillet 2004 « est révisable en
+  # cas de variation dans le montant des ressources », et « la date de la
+  # dernière révision ne peut être postérieure [...] à un délai de trois mois
+  # après la date à laquelle le conjoint survivant est entré en jouissance de
+  # l'ensemble des avantages personnels de retraite de base et
+  # complémentaire ». Les exemples ne disent ni le défunt ni le survivant, que
+  # le témoin prête : un salarié mort en 2005, sa veuve née en 1950, 12 000 €
+  # de retraites par an, que le modèle sert toutes au jour qu'elle date.
+  - id: cnav_2010_58_revision_a_sa_retraite
+    source: {editeur: "Cnav", reference: "circulaire n° 2010/58 du 30 juin 2010, § 24, Mise en œuvre de la dernière révision, exemple", verifie_le: "2026-10-24"}
+    enonce: >-
+      Un assuré titulaire d'une pension de réversion obtient toutes ses
+      retraites personnelles de base et complémentaires, avec effet du 1er
+      janvier 2008 : la pension de réversion est révisée au 1er février 2008,
+      et sa dernière révision, la cristallisation, est au 1er avril 2008.
+    carriere: {naissance: "1940-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2000-01", age_debut: 20, conjoint: "1950-01", ressources_conjoint: 12000, conjoint_retraite: "2008-01", deces: "2005-03"}
+    attendu: {dates_de_revision_de_la_reversion: {regime_general: "2008-02-01"}, dates_de_derniere_revision_de_la_reversion: {regime_general: "2008-04-01"}}
+  - id: cnav_2005_17_derniere_revision_a_58_ans
+    source: {editeur: "Cnav", reference: "circulaire n° 2005/17 du 11 avril 2005, § 322, La dernière révision, exemple, 1er cas", verifie_le: "2026-10-24"}
+    enonce: >-
+      Assuré né le 17 août 1953, titulaire d'une pension de réversion à compter
+      du 1er janvier 2006 ; liquidation de tous ses avantages de base et
+      complémentaires à titre anticipé à 58 ans, avec effet du 1er septembre
+      2011 : la date d'effet de la dernière révision de sa pension de réversion
+      est le 1er décembre 2011.
+    carriere: {naissance: "1945-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2005-01", age_debut: 20, conjoint: "1953-08-17", ressources_conjoint: 12000, conjoint_retraite: "2011-09", deces: "2005-12"}
+    attendu: {dates_de_derniere_revision_de_la_reversion: {regime_general: "2011-12-01"}}
+  - id: cnav_2005_17_derniere_revision_a_65_ans
+    source: {editeur: "Cnav", reference: "circulaire n° 2005/17 du 11 avril 2005, § 322, La dernière révision, exemple, 2ème cas", verifie_le: "2026-10-24"}
+    enonce: >-
+      Le même assuré, né le 17 août 1953, titulaire d'une pension de réversion
+      depuis le 1er janvier 2006, liquide l'ensemble de ses avantages de base
+      et complémentaires à 65 ans seulement, avec effet du 1er septembre 2018 :
+      la dernière révision de sa pension de réversion prend effet le 1er
+      décembre 2018.
+    carriere: {naissance: "1945-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2005-01", age_debut: 20, conjoint: "1953-08-17", ressources_conjoint: 12000, conjoint_retraite: "2018-09", deces: "2005-12"}
+    attendu: {dates_de_derniere_revision_de_la_reversion: {regime_general: "2018-12-01"}}
+  - id: cnav_2006_37_revision_au_constat
+    source: {editeur: "Cnav", reference: "circulaire n° 2006/37 du 8 juin 2006, § 6, La mise en œuvre de la dernière révision, exemples, 2ème cas", verifie_le: "2026-10-24"}
+    enonce: >-
+      Date d'effet de la retraite personnelle, le 1er janvier 2007 ; date du
+      constat, le 14 février 2007 : la révision de la pension de réversion
+      prend effet le 1er mars 2007, et la date de dernière révision est le 1er
+      avril 2007.
+    carriere: {naissance: "1940-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2000-01", age_debut: 20, conjoint: "1950-01", ressources_conjoint: 12000, conjoint_retraite: "2007-01", deces: "2005-03"}
+    attendu: {dates_de_revision_de_la_reversion: {regime_general: "2007-03-01"}, dates_de_derniere_revision_de_la_reversion: {regime_general: "2007-04-01"}}
+    ecart_connu:
+      modele: {dates_de_revision_de_la_reversion: {regime_general: "2007-02-01"}}
+      explication: >-
+        Avant le 30 juin 2010, la révision prenait effet au premier jour du
+        mois qui suit le constat de la retraite par la caisse, au plus tard à
+        la date de dernière révision. Le modèle ne connaît pas ce constat : il
+        la tient pour constatée le mois où elle prend effet, et révise la
+        réversion le mois qui suit, comme la circulaire n° 2010/58 le fait
+        depuis de la date d'effet de la retraite (§ 22).
+      fiche: reversion
+      depuis: "2026-10-24"
 
   # ---- L'invalidité et l'inaptitude ---------------------------------------
   # Le quatrième domaine (docs/architecture.md, § 11). L'ex-invalide de la

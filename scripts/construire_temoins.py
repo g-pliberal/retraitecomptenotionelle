@@ -1978,6 +1978,19 @@ def _cas() -> list[dict]:
     cas.append(("retraite_majoree_en_1982", {"naissance": "1905", "liquidation": "65"}))
     cas.append(("reversion_majorations_avant_1983", {
         "naissance": "1906", "liquidation": "65", "conjoint": "1916", "deces": "1975-03"}))
+    # Le 24 octobre 2026, la retraite du survivant qui suit sa réversion : la
+    # veuve de 1999 qui prend la sienne en 2008 voit sa réversion recalculée aux
+    # règles de ressources de 2004, ce jour-là ; le veuf de 2015, remarié en
+    # 2018, voit la sienne révisée le mois qui suit sa retraite de 2020, son
+    # ménage compté, pour la dernière fois (R. 353-1-1).
+    cas.append(("reversion_recalculee_a_sa_retraite", {
+        "naissance": "1925", "liquidation": "65", "conjoint": "1940", "deces": "1999-05",
+        "ressources_conjoint": "12000", "conjoint_retraite": "2008-03"}))
+    cas.append(("reversion_revisee_a_sa_retraite", {
+        "naissance": "1955", "liquidation": "60", "sexe": "F", "conjoint": "1958-06",
+        "conjoint_sexe": "H", "deces": "2015-03", "ressources_conjoint": "18000",
+        "conjoint_retraite": "2020-07", "nouvelle_union": "mariage",
+        "nouvelle_union_depuis": "2018-05", "ressources_nouveau_conjoint": "12000"}))
 
     # Les carrières LUES sur un relevé, plutôt que reconstituées.
     cas.extend(_cas_releve())

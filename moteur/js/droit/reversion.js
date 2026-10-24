@@ -125,7 +125,8 @@ export class ReversionRegime {
     ecretement_du_maximum = 0.0, maximum = 0.0, plafond = 0.0,
     ressources_retenues = 0.0, part = 1.0, fin = null, limite_cumul = 0.0,
     majoration_forfaitaire_enfants = 0.0, majoration_forfaitaire_enfants_etapes = [],
-    majorations_forfaitaires = [], cumul_effet = null, reduction_du_cumul = 0.0 }) {
+    majorations_forfaitaires = [], cumul_effet = null, reduction_du_cumul = 0.0,
+    revision_effet = null, reduction_de_la_revision = 0.0, derniere_revision = null }) {
     this.regime = regime;
     this.base = base;
     this.montant = montant;
@@ -184,6 +185,15 @@ export class ReversionRegime {
     // sans elle.
     this.cumul_effet = cumul_effet;
     this.reduction_du_cumul = reduction_du_cumul;
+    // Le jour où la retraite personnelle du survivant, qui suit la date
+    // d'effet, revoit la réversion sous le plafond de ressources — la recalcule
+    // aux règles de 2004 quand elle les précède, la révise sinon (R. 353-1-1) —,
+    // et ce qu'elle en retire alors, négatif quand elle y ajoute, hors du
+    // montant ; null et 0 sans elle. Puis le jour d'où elle n'est plus
+    // révisable, trois mois après sa retraite ; null sans elle.
+    this.revision_effet = revision_effet;
+    this.reduction_de_la_revision = reduction_de_la_revision;
+    this.derniere_revision = derniere_revision;
     Object.freeze(this);
   }
 
@@ -213,6 +223,9 @@ export class ReversionRegime {
         ([date, montant]) => ({ date, montant })),
       cumul_effet: this.cumul_effet,
       reduction_du_cumul: this.reduction_du_cumul,
+      revision_effet: this.revision_effet,
+      reduction_de_la_revision: this.reduction_de_la_revision,
+      derniere_revision: this.derniere_revision,
     };
   }
 }
@@ -666,6 +679,89 @@ function cumulALaRetraite(moteur, fiche, conjoint, deces, annee, dateEffet, serv
 }
 
 /**
+ * L'année dont le SMIC fait le plafond d'une révision du jour `jour` : la
+ * sienne, ou, quand le barème ne la publie pas encore, la dernière qu'il
+ * publie, jamais avant l'année des montants. Voir `_annee_du_plafond` du
+ * Python.
+ */
+function anneeDuPlafond(moteur, annee, jour) {
+  let alors = Number(jour.slice(0, 4));
+  while (alors > annee && moteur.macro.smic_horaire.fiabilite(alors) <= Fiabilite.ESTIMEE) {
+    alors -= 1;
+  }
+  return alors;
+}
+
+/**
+ * La réversion revue sous le plafond de ressources quand la retraite
+ * personnelle du survivant, qu'il date, suit sa date d'effet : `[jour, servie,
+ * revue, fiabilité]`, ou `null` sans elle. Attribuée avant juillet 2004, une
+ * retraite prise depuis la recalcule aux règles de ressources, à sa date
+ * d'effet ; attribuée depuis, la retraite la révise le mois qui suit
+ * (R. 353-1-1). Voir `_revision_a_la_retraite` du Python.
+ */
+function revisionALaRetraite(moteur, fiche, parametres, conjoint, deces, annee, dateEffet,
+  servie, entiere, ulterieures, ressources, retraites, bases) {
+  const jour = conjoint.retraite ?? null;
+  if (jour === null || jour <= dateEffet || retraites <= 0) {
+    return null;
+  }
+  let revision;
+  if ((parametres.cumul ?? null) !== null) {
+    if (servie <= 0) {
+      return null;
+    }
+    revision = jour;
+  } else if (parametres.ressources === "ecretement") {
+    revision = moisSuivant(jour);
+  } else {
+    return null;
+  }
+  const alors = moteur.reversions.version(fiche, revision, deces);
+  const regles = alors === null ? {} : alors.parametres;
+  if (regles.ressources !== "ecretement") {
+    return null;
+  }
+  let venues = 0;
+  for (const [quand, montant] of ulterieures) {
+    if (quand <= revision) {
+      venues += montant;
+    }
+  }
+  const [retenues, facteur] = ressourcesDuPlafond(regles, conjoint, ressources, revision);
+  const an = anneeDuPlafond(moteur, annee, revision);
+  const [coefficient, fiabiliteCoefficient] = moteur.revalorisationsPensions.generale(
+    `${String(annee).padStart(4, "0")}-12-31`, `${String(an).padStart(4, "0")}-12-31`,
+    false, 0.0);
+  const plafond = facteur * Number(regles.plafond_smic_heures)
+    * moteur.macro.smic_horaire.valeur(an) / coefficient;
+  const revue = Math.max(0.0, Math.min(entiere + venues, plafond - retenues - bases));
+  const fiabilite = Math.min(fiabiliteDepuisTexte(regles.fiabilite), fiabiliteCoefficient);
+  return [revision, servie + venues, revue, fiabilite];
+}
+
+/** Le premier jour du troisième mois qui suit celui de `jour`. */
+function troisMoisApres(jour) {
+  return moisSuivant(moisSuivant(moisSuivant(jour)));
+}
+
+/**
+ * Le jour d'où la réversion soumise aux règles de ressources n'est plus
+ * révisable : trois mois après la retraite que le survivant date, ou sa date
+ * d'effet quand il en jouit depuis plus longtemps (R. 353-1-1) ; `null` sans
+ * retraite datée, ou pour la réversion d'avant juillet 2004 qu'aucune retraite
+ * n'a recalculée. Voir `_derniere_revision` du Python.
+ */
+function derniereRevision(parametres, conjoint, dateEffet, recalculee) {
+  const retraite = conjoint.retraite ?? null;
+  if (retraite === null || (parametres.ressources !== "ecretement" && !recalculee)) {
+    return null;
+  }
+  const trois = troisMoisApres(retraite);
+  return trois > dateEffet ? trois : dateEffet;
+}
+
+/**
  * Les versions de la majoration forfaitaire pour enfant, dans l'ordre de leurs
  * dates : `[début, fin, paramètres]`, la fin exclue. Voir
  * `_versions_de_la_charge` du Python.
@@ -1002,7 +1098,8 @@ function ressourcesDuPlafond(parametres, conjoint, ressources, dateEffet) {
     retenues -= Number(taux) * Math.min(retenues, Number(conjoint.revenus_d_activite));
   }
   const facteur = parametres.facteur_menage;
-  // Le ménage ne compte que formé à la date d'effet : voir le Python.
+  // Le ménage ne compte que formé à la date d'effet, ou à la révision
+  // qu'ouvre la retraite du survivant : voir le Python.
   if (facteur === null || facteur === undefined
       || conjoint.nouvelle_union === null || conjoint.nouvelle_union === undefined
       || (conjoint.nouvelle_union_depuis ?? dateEffet) > dateEffet) {
@@ -1029,10 +1126,11 @@ function majorerLesPetitesRetraites(moteur, lignes, reduites, conjoint, retraite
     return;
   }
   const debut = auTauxPlein(conjoint.naissance, age[0]);
-  // Ses réversions, revues par la limite de cumul quand sa retraite les suit.
+  // Ses réversions, revues par la limite de cumul ou sous le plafond de
+  // ressources quand sa retraite les suit.
   let servies = 0;
   for (const ligne of lignes.values()) {
-    servies += ligne.montant - ligne.reduction_du_cumul;
+    servies += ligne.montant - ligne.reduction_du_cumul - ligne.reduction_de_la_revision;
   }
   const retraites = retraitesPersonnelles + servies;
   const theoriques = new Map(eligibles.map(([regime, [montant, parametres]]) => [
@@ -1330,6 +1428,9 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
       reversionsDeBase += 1;
     }
   }
+  // Les réversions des autres régimes de base que la révision à sa retraite
+  // retient, celles des régimes alignés revues l'une après l'autre.
+  let basesRevues = autresBases;
   for (const [regime, base, fiabiliteDuRegime] of servies) {
     const fiche = table.ficheDuRegime(regime);
     if (fiche === null || fiche.id !== "reversion") {
@@ -1472,6 +1573,22 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
         - revueA - desTroisEnfants(revueA);
       fiabilite = Math.min(fiabilite, fiabiliteRevue);
     }
+    // Ou revue sous le plafond de ressources, quand sa retraite la suit depuis
+    // juillet 2004 : de même.
+    let revisionEffet = null;
+    let reductionDeLaRevision = 0.0;
+    const revisee = revisionALaRetraite(moteur, fiche, parametres, conjoint, deces, annee,
+      dateEffet, montant, entieres.get(regime), ulterieures, ressources,
+      retraitesPersonnelles, basesRevues);
+    if (revisee !== null) {
+      let servieAlors;
+      let fiabiliteRevisee;
+      [revisionEffet, servieAlors, revueA, fiabiliteRevisee] = revisee;
+      reductionDeLaRevision = servieAlors + desTroisEnfants(servieAlors)
+        - revueA - desTroisEnfants(revueA);
+      fiabilite = Math.min(fiabilite, fiabiliteRevisee);
+    }
+    basesRevues += revueA;
     reduites.set(regime, [montant, parametres]);
     revues.set(regime, [revueA, parametres]);
     lignes.set(regime, ligne(regime, base, montant + troisEnfants, motif, fiche, version,
@@ -1480,7 +1597,9 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
       ecretement_du_maximum: ecretement, maximum, plafond: plafondAnnuel,
       ressources_retenues: retenues, part, limite_cumul: limiteCumul,
       majorations_forfaitaires: ulterieures, cumul_effet: cumulEffet,
-      reduction_du_cumul: reductionDuCumul,
+      reduction_du_cumul: reductionDuCumul, revision_effet: revisionEffet,
+      reduction_de_la_revision: reductionDeLaRevision,
+      derniere_revision: derniereRevision(parametres, conjoint, dateEffet, revisee !== null),
     }));
   }
 
