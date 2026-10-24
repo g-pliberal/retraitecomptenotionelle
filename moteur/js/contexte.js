@@ -817,7 +817,8 @@ function carriereParcourue(simulateur, parcours, batir) {
  * le brut de chaque étage, annuel, en euros constants de l'année de référence
  * — la pension de chaque régime, minima compris, et la part qu'il sert de la
  * majoration pour enfants —, le minimum vieillesse à part. Voir `DepartEstime`
- * et `_depart_estime` (contexte.py).
+ * et `depart_estime` (pilote.py), son jumeau, qui ne sert plus qu'à confronter
+ * les deux moteurs, la saisie n'ayant que cet exemplaire (action 161, étape 6).
  */
 function departEstime(simulateur, parametres, carriere, quoi) {
   const resultat = simulateur.echeancier(carriere).auDepart;
@@ -856,7 +857,7 @@ function departEstime(simulateur, parametres, carriere, quoi) {
     trimestres_requis: resultat.trimestres_requis,
     motif_ouverture: resultat.motif_ouverture,
     // Ce que la cotisation maladie de 1 % frappe dans `etages`. Voir
-    // `DepartEstime.assiette_maladie` (contexte.py).
+    // `DepartEstime.assiette_maladie` (pilote.py).
     assiette_maladie: assiette,
     assiette_regime_general: generale,
     get total() {

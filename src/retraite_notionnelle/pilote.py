@@ -12,7 +12,8 @@ un pilote fixe le reste.
   liquider. La date qu'il trouve devient celle du départ de la carrière, que
   l'échéancier traite (:mod:`~retraite_notionnelle.echeancier`). Les mêmes
   points fixes datent les trois départs que « Mon estimation retraite »
-  chiffre, pour la carrière d'une saisie (:func:`ages_de_l_estimation`).
+  chiffre, pour la carrière d'une saisie (:func:`ages_de_l_estimation`), que
+  :func:`depart_estime` liquide étage par étage.
 * LES POPULATIONS : aujourd'hui les cas types pondérés, que
   :mod:`~retraite_notionnelle.castypes` décrit ; des tirages, des couples et
   des décès simulés demain, sans changer le moteur.
@@ -26,13 +27,16 @@ Son jumeau est ``moteur/js/pilote.js``.
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Callable
 
 from .droit import ouvrir
+from .remuneration import charger_prelevements
 
 if TYPE_CHECKING:
     from .carriere import Carriere
     from .castypes import CasType
+    from .config import Parametres
     from .simulateur import Simulateur
 
 
@@ -164,6 +168,92 @@ def ages_de_l_estimation(actuel, batir: Callable[[float], "Carriere"],
         age = max(age, trouve) if ages else trouve
         ages[quoi] = age
     return ages
+
+
+@dataclass(frozen=True)
+class DepartEstime:
+    """Un départ de « Mon estimation retraite », tel que le scénario 1 le sert.
+
+    Les montants sont bruts, annuels, en euros constants de l'année de
+    référence : la page les divise par douze. ``etages`` additionne, étage
+    par étage (base, complémentaire, intégré, additionnel), la pension de
+    chaque régime, minima compris, et la part qu'il sert de la majoration
+    pour enfants. Le minimum vieillesse, qu'aucun régime ne sert et que
+    l'estimation ignore, reste à part.
+    """
+
+    #: Les âges de :data:`DEPARTS_DE_L_ESTIMATION` que ce départ réunit.
+    quoi: tuple[str, ...]
+    age: float
+    #: Le mois du départ, « AAAA-MM ».
+    date: str
+    etages: dict[str, float]
+    minimum_vieillesse: float
+    trimestres: int
+    trimestres_requis: int
+    motif_ouverture: str
+    #: Ce que la cotisation maladie de 1 % frappe dans :attr:`etages` : les
+    #: lignes des complémentaires qui la prélèvent, sans leur majoration pour
+    #: enfants (``remuneration.assiette_maladie``).
+    assiette_maladie: float = 0.0
+    #: La pension de base du régime général, qu'un non-résident paie à son
+    #: propre taux (L. 131-9 ; D. 242-8).
+    assiette_regime_general: float = 0.0
+
+    @property
+    def total(self) -> float:
+        # De gauche à droite, comme le jumeau : la somme de Python 3.12 est
+        # compensée, et différerait au dernier chiffre.
+        total = 0.0
+        for montant in self.etages.values():
+            total += montant
+        return total
+
+
+def depart_estime(simulateur: Simulateur, parametres: Parametres, carriere: Carriere,
+                  quoi: str) -> DepartEstime:
+    """Le départ ``quoi`` de « Mon estimation retraite » : la carrière liquidée
+    à l'âge que :func:`ages_de_l_estimation` a trouvé, chiffrée étage par étage
+    en euros constants de l'année de référence. Le site chiffre ainsi chaque
+    départ (``departEstime``, ``moteur/js/contexte.js``) ; ici, sans la saisie,
+    que le portage seul garde (action 161, étape 6), il ne sert qu'à confronter
+    les deux moteurs (``tests/test_estimation_du_site.py``)."""
+    resultat = simulateur.echeancier(carriere).au_depart
+    passage = simulateur.macro.coefficient_prix(
+        carriere.annee_liquidation, parametres.annee_euros_constants)
+    etages: dict[str, float] = {}
+    prelevements = charger_prelevements(parametres.racine_donnees).pensions
+    regimes = prelevements.regimes_maladie
+    assiette = generale = 0.0
+
+    def porter(code: str, montant: float) -> None:
+        etage = simulateur.catalogue[code].etage
+        etages[etage] = etages.get(etage, 0.0) + montant * passage
+
+    for pension in resultat.pensions_par_regime:
+        porter(pension.regime, pension.montant)
+        if pension.regime in regimes:
+            assiette += pension.montant * passage
+        if pension.regime in prelevements.regimes_generaux:
+            generale += pension.montant * passage
+    minimum = 0.0
+    for avantage in resultat.avantages_appliques:
+        if avantage.code == "majoration_enfants":
+            for code, part in avantage.par_regime:
+                porter(code, part)
+        elif avantage.code == "minimum_vieillesse":
+            minimum += avantage.montant
+    date = carriere.date_liquidation
+    return DepartEstime(
+        quoi=(quoi,), age=carriere.age_liquidation,
+        date=f"{date.annee:04d}-{date.mois:02d}", etages=etages,
+        minimum_vieillesse=minimum * passage,
+        trimestres=resultat.trimestres_valides,
+        trimestres_requis=resultat.trimestres_requis,
+        motif_ouverture=resultat.motif_ouverture,
+        assiette_maladie=assiette,
+        assiette_regime_general=generale,
+    )
 
 
 def age_propose(simulateur: Simulateur, cas: CasType, generation: int,

@@ -3,8 +3,8 @@
 Les départs que la synthèse officielle chiffre — au plus tôt, au taux plein, au
 taux plein automatique — sont datés par le pilote
 (:func:`~retraite_notionnelle.pilote.ages_de_l_estimation`), liquidés étage par
-étage (``_depart_estime``, dans ``contexte.py``, et ``departEstime``, son
-jumeau), et la page les montre en brut mensuel, étage par étage, le net en
+étage (:func:`~retraite_notionnelle.pilote.depart_estime`, et ``departEstime``,
+son jumeau), et la page les montre en brut mensuel, étage par étage, le net en
 second, à côté du total que le lecteur recopie de son estimation
 (``estimationOfficielle``, ``moteur/js/pages.js``). Ces tests tiennent les deux
 moteurs d'accord, les âges au droit, et la page à ce qu'elle promet. La saisie
@@ -27,9 +27,9 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.contexte import _depart_estime
 from retraite_notionnelle.droit import ouvrir
-from retraite_notionnelle.pilote import DEPARTS_DE_L_ESTIMATION, ages_de_l_estimation
+from retraite_notionnelle.pilote import (
+    DEPARTS_DE_L_ESTIMATION, ages_de_l_estimation, depart_estime)
 from retraite_notionnelle.web.site import ErreurSite, module, site
 from outils_pont import RefusDuPortage, refus_de_la_saisie, saisie_du_portage
 from outils_web import montants_du_portage, page, saisies  # noqa: F401 — les fixtures partagées
@@ -104,9 +104,10 @@ def _au_depart(requete: dict, age: float) -> dict:
 def _departs_du_pont(saisies, requete: dict, droit: str | None = None) -> tuple:
     """Les départs que le Python date et chiffre, sous le droit contrefactuel
     ``droit`` s'il en nomme un : son pilote (``ages_de_l_estimation``), et sa
-    liquidation de chaque départ (``_depart_estime``), sur la carrière que le
-    portage bâtit de la requête à chaque âge, par le pont — ce que faisait
-    ``Contexte.departs_de_l_estimation`` de la saisie Python. Vide où le bloc
+    liquidation de chaque départ (``depart_estime``), sur la carrière que le
+    portage bâtit de la requête à chaque âge, par le pont — ce que le site
+    fait de la sienne (``departsDeLEstimation``, ``moteur/js/contexte.js``),
+    la saisie Python retirée (action 161, étape 6). Vide où le bloc
     se tait, ce que la saisie du portage dit : une saisie par la pension, des
     pensions qu'elle date elle-même, un départ d'une année passée, une carrière
     que la saisie ou le modèle refusent à l'un des âges."""
@@ -135,7 +136,7 @@ def _departs_du_pont(saisies, requete: dict, droit: str | None = None) -> tuple:
                 continue
             carriere = batir(age)
             if carriere.annee_liquidation >= annee:
-                departs.append(_depart_estime(simulateur, parametres, carriere, quoi))
+                departs.append(depart_estime(simulateur, parametres, carriere, quoi))
     except (RefusDuPortage, ValueError):
         return ()
     return tuple(departs)

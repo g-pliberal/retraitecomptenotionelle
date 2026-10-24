@@ -33,7 +33,7 @@ from .donnees.equilibre import ComptesRetraite, variante_du_scenario
 from .donnees.population import Population
 from .droit.coordonner import REGIMES_CODE_DES_PENSIONS
 from .frontiere import charger_frontiere
-from .pilote import ages_de_l_estimation
+from .pilote import DepartEstime, ages_de_l_estimation, depart_estime
 from .remuneration import (
     assiette_maladie,
     charger_prelevements,
@@ -378,7 +378,7 @@ class Contexte:
                     continue
                 carriere = batir(age)
                 if carriere.annee_liquidation >= annee:
-                    departs.append(_depart_estime(simulateur, parametres, carriere, quoi))
+                    departs.append(depart_estime(simulateur, parametres, carriere, quoi))
         except (ErreurSaisie, ValueError):
             # Une carrière que la saisie ou le modèle refusent à l'un des âges :
             # le bloc se tait plutôt que de chiffrer une autre carrière.
@@ -574,87 +574,6 @@ class Contexte:
                 f"Activité après le départ : statut d'affiliation inconnu "
                 f"« {emploi['affiliation']} ».")
         return emploi
-
-
-@dataclass(frozen=True)
-class DepartEstime:
-    """Un départ de « Mon estimation retraite », tel que le scénario 1 le sert.
-
-    Les montants sont bruts, annuels, en euros constants de l'année de
-    référence : la page les divise par douze. ``etages`` additionne, étage
-    par étage (base, complémentaire, intégré, additionnel), la pension de
-    chaque régime, minima compris, et la part qu'il sert de la majoration
-    pour enfants. Le minimum vieillesse, qu'aucun régime ne sert et que
-    l'estimation ignore, reste à part.
-    """
-
-    #: Les âges de :data:`~retraite_notionnelle.pilote.DEPARTS_DE_L_ESTIMATION`
-    #: que ce départ réunit.
-    quoi: tuple[str, ...]
-    age: float
-    #: Le mois du départ, « AAAA-MM ».
-    date: str
-    etages: dict[str, float]
-    minimum_vieillesse: float
-    trimestres: int
-    trimestres_requis: int
-    motif_ouverture: str
-    #: Ce que la cotisation maladie de 1 % frappe dans :attr:`etages` : les
-    #: lignes des complémentaires qui la prélèvent, sans leur majoration pour
-    #: enfants (``remuneration.assiette_maladie``).
-    assiette_maladie: float = 0.0
-    #: La pension de base du régime général, qu'un non-résident paie à son
-    #: propre taux (L. 131-9 ; D. 242-8).
-    assiette_regime_general: float = 0.0
-
-    @property
-    def total(self) -> float:
-        # De gauche à droite, comme le jumeau : la somme de Python 3.12 est
-        # compensée, et différerait au dernier chiffre.
-        total = 0.0
-        for montant in self.etages.values():
-            total += montant
-        return total
-
-
-def _depart_estime(simulateur: Simulateur, parametres: Parametres, carriere,
-                   quoi: str) -> DepartEstime:
-    resultat = simulateur.echeancier(carriere).au_depart
-    passage = simulateur.macro.coefficient_prix(
-        carriere.annee_liquidation, parametres.annee_euros_constants)
-    etages: dict[str, float] = {}
-    prelevements = charger_prelevements(parametres.racine_donnees).pensions
-    regimes = prelevements.regimes_maladie
-    assiette = generale = 0.0
-
-    def porter(code: str, montant: float) -> None:
-        etage = simulateur.catalogue[code].etage
-        etages[etage] = etages.get(etage, 0.0) + montant * passage
-
-    for pension in resultat.pensions_par_regime:
-        porter(pension.regime, pension.montant)
-        if pension.regime in regimes:
-            assiette += pension.montant * passage
-        if pension.regime in prelevements.regimes_generaux:
-            generale += pension.montant * passage
-    minimum = 0.0
-    for avantage in resultat.avantages_appliques:
-        if avantage.code == "majoration_enfants":
-            for code, part in avantage.par_regime:
-                porter(code, part)
-        elif avantage.code == "minimum_vieillesse":
-            minimum += avantage.montant
-    date = carriere.date_liquidation
-    return DepartEstime(
-        quoi=(quoi,), age=carriere.age_liquidation,
-        date=f"{date.annee:04d}-{date.mois:02d}", etages=etages,
-        minimum_vieillesse=minimum * passage,
-        trimestres=resultat.trimestres_valides,
-        trimestres_requis=resultat.trimestres_requis,
-        motif_ouverture=resultat.motif_ouverture,
-        assiette_maladie=assiette,
-        assiette_regime_general=generale,
-    )
 
 
 def _releve_jusqu_au_depart(simulateur: Simulateur, saisie: Saisie,
