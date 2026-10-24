@@ -23,10 +23,16 @@ from retraite_notionnelle.carriere import (
     Carriere, LigneRelevee, Metier, PensionEtrangere, PeriodeALEtranger,
 )
 from retraite_notionnelle.donnees.chargement import charger_accords_internationaux
-from retraite_notionnelle.saisie import AGE_LIQUIDATION_MAXIMAL, ErreurSaisie, Saisie
+from retraite_notionnelle.donnees.mortalite import AGE_TERMINAL
 from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.web.site import ErreurSite
+
+from outils_pont import RefusDuPortage, Saisies, saisie_du_portage
 
 DONNEES = Path(__file__).resolve().parents[1] / "data"
+#: L'âge le plus tardif que la saisie date : un an sous l'âge terminal des
+#: tables de mortalité (``AGE_LIQUIDATION_MAXIMAL`` de la saisie).
+AGE_LIQUIDATION_MAXIMAL = int(AGE_TERMINAL) - 1
 
 
 @pytest.fixture(scope="module")
@@ -34,9 +40,17 @@ def simulateur() -> Simulateur:
     return Simulateur()
 
 
-def _saisie(**champs) -> Saisie:
-    return Saisie.depuis_requete({"naissance": "1965-06-15", "debut": "1986-09",
-                                  "liquidation": "2029-01", **champs})
+def _requete(**champs) -> dict:
+    return {"naissance": "1965-06-15", "debut": "1986-09", "liquidation": "2029-01", **champs}
+
+
+def _saisie(**champs):
+    """La saisie du portage, qui lit la requête comme le site."""
+    return saisie_du_portage(_requete(**champs))
+
+
+def _mois(date) -> tuple[int, int]:
+    return date.annee, date.mois
 
 
 # -- le tableau des accords --------------------------------------------------------
@@ -116,16 +130,16 @@ def test_la_saisie_lit_la_carriere_hors_de_france_et_la_rend_a_l_adresse():
     s'écrit pas."""
     saisie = _saisie(**CHAMPS)
     declare = saisie.etranger_declare()
-    assert [(p["pays"], saisie.date_de(p["debut"]), saisie.date_de(p["fin"]), p["activite"])
-            for p in declare["periodes"]] == [
-        ("MA", DateMois(1980, 1), DateMois(1986, 9), "salariee"),
-        ("DE", DateMois(1998, 1), DateMois(2001, 7), "non_salariee")]
-    assert [(p["pays"], saisie.date_de(p["age"]), p["montant"]) for p in declare["pensions"]] \
-        == [("DE", DateMois(2032, 7), 250.0)]
+    assert [(p["pays"], _mois(saisie.date_de(p["debut"])), _mois(saisie.date_de(p["fin"])),
+             p["activite"]) for p in declare["periodes"]] == [
+        ("MA", (1980, 1), (1986, 9), "salariee"),
+        ("DE", (1998, 1), (2001, 7), "non_salariee")]
+    assert [(p["pays"], _mois(saisie.date_de(p["age"])), p["montant"])
+            for p in declare["pensions"]] == [("DE", (2032, 7), 250.0)]
     assert declare["residence"] == "PT"
     requete = saisie.requete()
     assert "etranger1_activite" not in requete and "etranger2_activite=non_salariee" in requete
-    relue = Saisie.depuis_requete(dict(pair.split("=", 1) for pair in requete.split("&")))
+    relue = saisie_du_portage(dict(pair.split("=", 1) for pair in requete.split("&")))
     assert relue.etranger_declare() == declare
     assert _saisie().etranger_declare() is None
     assert _saisie(residence="autre").etranger_declare() == {
@@ -192,7 +206,7 @@ def test_une_annee_passee_hors_de_france_n_est_pas_travaillee_en_france():
     ({"mois_en_france": "-1"}, "Mois en France chaque année : de 0 à 12"),
 ])
 def test_la_saisie_refuse_ce_qui_ne_tient_pas(champs, refus):
-    with pytest.raises(ErreurSaisie, match=refus):
+    with pytest.raises(ErreurSite, match=refus):
         _saisie(**champs)
 
 
@@ -206,20 +220,17 @@ def test_une_periode_peut_finir_au_depart_et_toucher_la_suivante():
 
 # -- le contexte : les États du tableau ---------------------------------------------
 
-def test_le_contexte_refuse_un_etat_que_le_tableau_ne_connait_pas():
-    from retraite_notionnelle.contexte import Contexte
-
-    contexte = Contexte()
-    with pytest.raises(ErreurSaisie, match="aucun État « ZZ » au tableau des accords"):
-        contexte.simuler(_saisie(etranger1_pays="ZZ", etranger1_debut="1990-01",
+def test_le_contexte_refuse_un_etat_que_le_tableau_ne_connait_pas(saisies):
+    with pytest.raises(RefusDuPortage, match="aucun État « ZZ » au tableau des accords"):
+        saisies.simuler(_requete(etranger1_pays="ZZ", etranger1_debut="1990-01",
                                  etranger1_fin="1992-01"))
-    with pytest.raises(ErreurSaisie, match="Pension étrangère n° 1 : aucun État « NC »"):
-        contexte.simuler(_saisie(pension_etrangere1_pays="NC", pension_etrangere1="100",
+    with pytest.raises(RefusDuPortage, match="Pension étrangère n° 1 : aucun État « NC »"):
+        saisies.simuler(_requete(pension_etrangere1_pays="NC", pension_etrangere1="100",
                                  pension_etrangere1_debut="2030-07"))
-    with pytest.raises(ErreurSaisie, match="on réside dans un État"):
-        contexte.simuler(_saisie(residence="OI"))
+    with pytest.raises(RefusDuPortage, match="on réside dans un État"):
+        saisies.simuler(_requete(residence="OI"))
     # Un État sans accord, une organisation internationale : la carrière tient.
-    contexte.simuler(_saisie(etranger1_pays="autre", etranger1_debut="1980-01",
+    saisies.simuler(_requete(etranger1_pays="autre", etranger1_debut="1980-01",
                              etranger1_fin="1983-01", etranger2_pays="OI",
                              etranger2_debut="2010-01", etranger2_fin="2012-01",
                              residence="autre"))
@@ -346,11 +357,8 @@ Simulateur.prototype.simuler = function (carriere, ...reste) {
 const mois = (date) => `${date.annee}-${String(date.mois).padStart(2, "0")}`;
 const sortie = JSON.parse(readFileSync(0, "utf8")).map((requete) => {
   vue = null;
-  const saisie = Saisie.depuisRequete(requete, false, contexte.paquet.presomptions);
-  contexte.simuler(saisie);
+  contexte.simuler(Saisie.depuisRequete(requete, false, contexte.paquet.presomptions));
   return {
-    requete: saisie.requete(),
-    interruptions: Object.fromEntries(saisie.interruptionsDeCarriere()),
     sans_activite: vue.lignes.filter((l) => l.type_periode === "sans_activite")
       .map((l) => l.annee),
     periodes: vue.periodesALEtranger.map((p) => [p.pays, mois(p.debut), mois(p.fin),
@@ -364,25 +372,13 @@ process.stdout.write(JSON.stringify(sortie));
 """
 
 
-def _lu_par_python(monkeypatch, requete: dict) -> dict:
-    from retraite_notionnelle.contexte import Contexte
-
-    vues = []
-    simuler = Simulateur.simuler
-
-    def espion(self, carriere, *reste, **options):
-        vues.append(carriere)
-        return simuler(self, carriere, *reste, **options)
-
-    monkeypatch.setattr(Simulateur, "simuler", espion)
-    saisie = Saisie.depuis_requete(requete)
-    Contexte().simuler(saisie)
-    vue = vues[0]
+def _lu_par_python(saisies: Saisies, requete: dict) -> dict:
+    """Ce que le moteur Python lit de la carrière que le portage bâtit, et
+    simule."""
+    parametres, vue = saisies.lire(requete)
+    saisies.simulateur(parametres).simuler(vue)
     mois = "{0.annee}-{0.mois:02d}".format
     return {
-        "requete": saisie.requete(),
-        "interruptions": {str(annee): motif
-                          for annee, motif in saisie.interruptions_de_carriere().items()},
         "sans_activite": [ligne.annee for ligne in vue.lignes
                           if ligne.type_periode == "sans_activite"],
         "periodes": [[p.pays, mois(p.debut), mois(p.fin), p.activite]
@@ -393,11 +389,11 @@ def _lu_par_python(monkeypatch, requete: dict) -> dict:
     }
 
 
-def test_le_portage_lit_les_memes_faits(monkeypatch):
-    """La saisie et la carrière des deux moteurs lisent les mêmes faits de la
-    même adresse : l'adresse qu'elles réécrivent, les années que l'étranger
-    interrompt, les périodes, les pensions ramenées à leur date sur les mêmes
-    prix, la résidence et les mois passés en France."""
+def test_le_portage_lit_les_memes_faits(saisies):
+    """La carrière des deux moteurs lit les mêmes faits de la même adresse :
+    les années que l'étranger interrompt, les périodes, les pensions ramenées
+    à leur date sur les mêmes prix, la résidence et les mois passés en
+    France."""
     import json
     import shutil
     import subprocess
@@ -410,7 +406,7 @@ def test_le_portage_lit_les_memes_faits(monkeypatch):
         input=json.dumps(REQUETES), capture_output=True, text=True, encoding="utf-8",
         check=False)
     assert execution.returncode == 0, execution.stderr
-    attendus = [_lu_par_python(monkeypatch, requete) for requete in REQUETES]
+    attendus = [_lu_par_python(saisies, requete) for requete in REQUETES]
     assert json.loads(execution.stdout) == attendus
     # Chaque fait y est au moins une fois : une pension future, saisie en
     # euros d'aujourd'hui, grandit avec les prix d'ici sa date ; une pension
@@ -425,15 +421,13 @@ def test_le_portage_lit_les_memes_faits(monkeypatch):
 # -- le moteur : la totalisation des périodes étrangères ---------------------------
 
 @pytest.fixture(scope="module")
-def contexte():
-    from retraite_notionnelle.contexte import Contexte
-
-    return Contexte()
+def saisies() -> Saisies:
+    return Saisies()
 
 
-def _actuel(contexte, **champs):
+def _actuel(saisies, **champs):
     """Le scénario 1 d'une saisie : ce que la page lit du système actuel."""
-    return contexte.simuler(Saisie.depuis_requete(champs)).actuel
+    return saisies.simuler(champs).actuel
 
 
 def _pension(actuel, regime):
@@ -447,14 +441,14 @@ NE_EN_1962 = {"naissance": "1962-03-15", "debut": "1990-09", "liquidation": "202
 AU_MAROC = {"etranger1_pays": "MA", "etranger1_debut": "1980-01", "etranger1_fin": "1990-09"}
 
 
-def test_les_periodes_d_un_accord_comptent_pour_le_taux_et_non_pour_la_duree(contexte):
+def test_les_periodes_d_un_accord_comptent_pour_le_taux_et_non_pour_la_duree(saisies):
     """La convention franco-marocaine de 2007 fait compter les dix ans et
     demi du Maroc : 43 trimestres, qui portent la durée tous régimes de 142 à
     185, au-delà des 169 requis — le taux plein, la surcote des six trimestres
     travaillés en France après l'âge légal, et l'Agirc-Arrco sans coefficient.
     La pension reste proratisée sur les 142 trimestres français."""
-    francais = _actuel(contexte, **NE_EN_1962)
-    totalisee = _actuel(contexte, **NE_EN_1962, **AU_MAROC)
+    francais = _actuel(saisies, **NE_EN_1962)
+    totalisee = _actuel(saisies, **NE_EN_1962, **AU_MAROC)
     assert (francais.trimestres_valides, francais.trimestres_etrangers) == (142, 0)
     assert (totalisee.trimestres_valides, totalisee.trimestres_etrangers) == (185, 43)
     assert "taux 42.500% × 142/169" in _pension(francais, "regime_general").detail
@@ -463,35 +457,35 @@ def test_les_periodes_d_un_accord_comptent_pour_le_taux_et_non_pour_la_duree(con
     assert "coefficient" not in _pension(totalisee, "agirc_arrco").detail
 
 
-def test_une_convention_qui_ne_vise_que_les_salaries(contexte):
+def test_une_convention_qui_ne_vise_que_les_salaries(saisies):
     """La convention franco-algérienne ne vise que les salariés : l'activité
     non salariée en Algérie n'y compte pas, sauf comme activité à l'étranger
     d'avant le 1er avril 1983, reconnue équivalente pour le taux — treize
     trimestres de 1980 à mars 1983 (R. 351-4, 1°). Un État qu'aucun accord ne
     lie à la France en fait autant."""
     algerie = {"etranger1_pays": "DZ", "etranger1_debut": "1980-01", "etranger1_fin": "1990-09"}
-    salariee = _actuel(contexte, **NE_EN_1962, **algerie)
-    non_salariee = _actuel(contexte, **NE_EN_1962, **algerie, etranger1_activite="non_salariee")
-    autre = _actuel(contexte, **NE_EN_1962, **{**algerie, "etranger1_pays": "autre"})
+    salariee = _actuel(saisies, **NE_EN_1962, **algerie)
+    non_salariee = _actuel(saisies, **NE_EN_1962, **algerie, etranger1_activite="non_salariee")
+    autre = _actuel(saisies, **NE_EN_1962, **{**algerie, "etranger1_pays": "autre"})
     assert salariee.trimestres_etrangers == 43
     assert non_salariee.trimestres_etrangers == autre.trimestres_etrangers == 13
 
 
-def test_les_fonctionnaires_ne_comptent_que_les_reglements_europeens(contexte):
+def test_les_fonctionnaires_ne_comptent_que_les_reglements_europeens(saisies):
     """Les régimes du code des pensions n'entrent dans la coordination
     européenne que le 25 octobre 1998 (règlement 1606/98), et aucune
     convention bilatérale ne les vise : dix ans en Allemagne portent la
     décote de l'agent de l'État au taux plein, dix ans au Maroc ne lui
     apportent rien."""
     etat = {**NE_EN_1962, "statut": "fonctionnaire_etat"}
-    allemagne = _actuel(contexte, **etat, **{**AU_MAROC, "etranger1_pays": "DE"})
-    maroc = _actuel(contexte, **etat, **AU_MAROC)
+    allemagne = _actuel(saisies, **etat, **{**AU_MAROC, "etranger1_pays": "DE"})
+    maroc = _actuel(saisies, **etat, **AU_MAROC)
     assert allemagne.trimestres_etrangers == 43 and maroc.trimestres_etrangers == 0
     assert "taux 80.625%" in _pension(allemagne, "fonction_publique_etat").detail
     assert "taux 63.750%" in _pension(maroc, "fonction_publique_etat").detail
 
 
-def test_l_annee_ne_depasse_pas_quatre_trimestres(contexte, simulateur):
+def test_l_annee_ne_depasse_pas_quatre_trimestres(saisies, simulateur):
     """Les périodes étrangères complètent celles de la carrière française sans
     s'y superposer (R. 351-5) : huit mois au Maroc en 1990, l'année où la
     carrière française commence en septembre, n'en apportent que trois ; le
@@ -512,7 +506,7 @@ def test_l_annee_ne_depasse_pas_quatre_trimestres(contexte, simulateur):
     assert trimestres.trimestres(etranger.FONCTIONNAIRES) == 0
 
 
-def test_une_organisation_internationale_compte_pour_le_taux_seul(contexte, simulateur):
+def test_une_organisation_internationale_compte_pour_le_taux_seul(saisies, simulateur):
     """Depuis 2010, l'affiliation au régime d'une organisation internationale
     compte pour le taux, un trimestre par quatre-vingt-dix jours (R. 161-16-1),
     jamais comme durée cotisée ; avant 2010, rien."""
@@ -536,15 +530,15 @@ def test_une_organisation_internationale_compte_pour_le_taux_seul(contexte, simu
     assert avant.trimestres(etranger.GENERALE) == 0
 
 
-def test_la_carriere_longue_compte_les_periodes_etrangeres(contexte):
+def test_la_carriere_longue_compte_les_periodes_etrangeres(saisies):
     """Un salarié né en 1958, entré au Portugal à quinze ans, en France à
     vingt-six : la convention de 1973, puis les règlements européens
     depuis 1986, font compter ses années portugaises « dans les mêmes
     conditions que les périodes accomplies en France » — l'entrée précoce et
     la durée cotisée de la carrière longue. Il part à soixante ans."""
     champs = {"naissance": "1958-05-15", "debut": "1985-01", "liquidation": "2018-06"}
-    francais = _actuel(contexte, **champs)
-    portugais = _actuel(contexte, **champs, etranger1_pays="PT", etranger1_debut="1974-03",
+    francais = _actuel(saisies, **champs)
+    portugais = _actuel(saisies, **champs, etranger1_pays="PT", etranger1_debut="1974-03",
                         etranger1_fin="1985-01")
     assert francais.motif_ouverture == "non_ouverte"
     assert portugais.motif_ouverture == "carriere_longue"
@@ -603,19 +597,19 @@ APRES_LE_SENEGAL = {**APRES_L_ESPAGNE, "etranger1_pays": "SN"}
 def test_une_carriere_commencee_hors_de_france_peut_venir_tard_en_france():
     """Le premier emploi en France peut venir après l'âge de début le plus
     tardif quand la carrière a commencé à l'étranger."""
-    with pytest.raises(ErreurSaisie, match="Début d'activité"):
-        Saisie.depuis_requete({**PETIT_SALAIRE, "debut": "2003-01"})
-    assert Saisie.depuis_requete(APRES_L_ESPAGNE).debut > 42
+    with pytest.raises(ErreurSite, match="Début d'activité"):
+        saisie_du_portage({**PETIT_SALAIRE, "debut": "2003-01"})
+    assert saisie_du_portage(APRES_L_ESPAGNE).debut > 42
 
 
-def test_la_pension_nationale_est_servie_quand_son_minimum_l_emporte(contexte, simulateur):
+def test_la_pension_nationale_est_servie_quand_son_minimum_l_emporte(saisies, simulateur):
     """Une carrière française complète, et cinq ans en Allemagne : la pension
     proratisée gagne la surcote des vingt trimestres allemands, mais son
     minimum se proratise sur la durée totale non limitée — 167/189 du minimum
     majoré —, quand celui de la pension nationale est entier. La pension
     nationale, plus élevée, est servie (règlement 883/2004, article 52)."""
     _, majore, _, _ = simulateur.scenario_actuel.minimum_contributif.valeurs(2024)
-    actuel = _actuel(contexte, **APRES_L_ALLEMAGNE)
+    actuel = _actuel(saisies, **APRES_L_ALLEMAGNE)
     pension = _pension(actuel, "regime_general")
     assert (actuel.trimestres_valides, actuel.trimestres_etrangers) == (189, 20)
     assert pension.detail.startswith(
@@ -630,13 +624,13 @@ def test_la_pension_nationale_est_servie_quand_son_minimum_l_emporte(contexte, s
     assert majore * 167 / 189 + nue * 0.1 == pytest.approx(10208.36, abs=0.02)
 
 
-def test_la_pension_proratisee_est_portee_au_minimum_international(contexte, simulateur):
+def test_la_pension_proratisee_est_portee_au_minimum_international(saisies, simulateur):
     """Vingt-cinq ans en Espagne : le minimum de la pension proratisée est le
     minimum entier — la durée totale dépasse la durée maximum —, réduit à la
     part française de la durée totale, 85/185 ; la majoration de même. La
     pension nationale, décotée faute de durée française, est plus faible."""
     _, majore, _, _ = simulateur.scenario_actuel.minimum_contributif.valeurs(2024)
-    pension = _pension(_actuel(contexte, **APRES_L_ESPAGNE), "regime_general")
+    pension = _pension(_actuel(saisies, **APRES_L_ESPAGNE), "regime_general")
     assert pension.detail.startswith(
         "pension proratisée, au moins égale à la pension nationale (4,072.48 €) : "
         "SR 18,826.39 € × taux 55.000% × 85/167 = 5,270.26 €, porté au minimum "
@@ -645,13 +639,13 @@ def test_la_pension_proratisee_est_portee_au_minimum_international(contexte, sim
     assert pension.montant == pytest.approx(majore * 85 / 185 + nue * 0.1, abs=0.01)
 
 
-def test_une_convention_a_calcul_separe_garde_le_minimum_de_toute_pension(contexte):
+def test_une_convention_a_calcul_separe_garde_le_minimum_de_toute_pension(saisies):
     """La convention franco-sénégalaise ne compare rien : sa pension, au taux
     que les périodes sénégalaises ouvrent, est portée au minimum de toute
     pension, proratisé sur la durée française — plus haut que le minimum
     international de l'Espagne."""
-    senegal = _pension(_actuel(contexte, **APRES_LE_SENEGAL), "regime_general")
-    espagne = _pension(_actuel(contexte, **APRES_L_ESPAGNE), "regime_general")
+    senegal = _pension(_actuel(saisies, **APRES_LE_SENEGAL), "regime_general")
+    espagne = _pension(_actuel(saisies, **APRES_L_ESPAGNE), "regime_general")
     assert senegal.detail == ("SR 18,826.39 € × taux 55.000% × 85/167 = 5,270.26 €, "
                               "porté au minimum contributif par + 560.09 €")
     assert senegal.montant > espagne.montant
@@ -670,7 +664,7 @@ AU_SENEGAL = {"pension_etrangere1_pays": "SN", "pension_etrangere1": "750",
     ({**AU_SENEGAL, "naissance": "1946-03-15", "liquidation": "2011-04",
       "pension_etrangere1": "3000", "pension_etrangere1_debut": "2008-04"}, False),
 ])
-def test_l_ecretement_du_minimum_compte_les_pensions_etrangeres(contexte, simulateur,
+def test_l_ecretement_du_minimum_compte_les_pensions_etrangeres(saisies, simulateur,
                                                                  ce_qui_change, ecretee):
     """Depuis 2012, le minimum n'est servi que jusqu'au plafond de toutes les
     pensions personnelles, étrangères comprises (L. 173-2) : la pension
@@ -684,7 +678,7 @@ def test_l_ecretement_du_minimum_compte_les_pensions_etrangeres(contexte, simula
     requete = {**APRES_LE_SENEGAL, **ce_qui_change}
     sans = {cle: valeur for cle, valeur in requete.items()
             if not cle.startswith("pension_etrangere")}
-    avec, declaree = _actuel(contexte, **sans), _actuel(contexte, **requete)
+    avec, declaree = _actuel(saisies, **sans), _actuel(saisies, **requete)
     if not ecretee:
         assert minimum(declaree) == minimum(avec) > 0
         return
@@ -698,16 +692,16 @@ def test_l_ecretement_du_minimum_compte_les_pensions_etrangeres(contexte, simula
 
 
 def test_le_minimum_se_revise_quand_une_pension_etrangere_commence_apres_le_depart(
-        contexte):
+        saisies):
     """La majoration du minimum « est révisée lorsque le montant des avantages
     personnels de retraite a varié », le plafond revalorisé comme les pensions
     (R. 173-8) : la pension sénégalaise qui commence en 2025, un an après le
     départ, ne change rien au départ, et rogne aujourd'hui le minimum de ce
     qu'elle passe de la marge sous le plafond. Une pension des règlements
     européens n'y compte pas ; une petite pension tient dans la marge."""
-    sans = contexte.simuler(Saisie.depuis_requete(APRES_LE_SENEGAL))
+    sans = saisies.simuler(APRES_LE_SENEGAL)
     apres = {**AU_SENEGAL, "pension_etrangere1_debut": "2025-01"}
-    avec = contexte.simuler(Saisie.depuis_requete({**APRES_LE_SENEGAL, **apres}))
+    avec = saisies.simuler({**APRES_LE_SENEGAL, **apres})
     assert avec.actuel.pension_annuelle == pytest.approx(sans.actuel.pension_annuelle)
     ecrete = avec.actuel.minimum_ecrete
     assert ecrete is not None and ecrete.marge > ecrete.avant_ecretement > 0
@@ -722,7 +716,7 @@ def test_le_minimum_se_revise_quand_une_pension_etrangere_commence_apres_le_depa
     assert servi.aujourd_hui == pytest.approx(garde.aujourd_hui - attendue)
     for autre in ({**apres, "pension_etrangere1_pays": "ES"},
                   {**apres, "pension_etrangere1": "300"}):
-        tenue = contexte.simuler(Saisie.depuis_requete({**APRES_LE_SENEGAL, **autre}))
+        tenue = saisies.simuler({**APRES_LE_SENEGAL, **autre})
         assert all(r.revision == 0 for r in tenue.aujourd_hui.actuel.regimes)
 
 
@@ -736,7 +730,7 @@ AU_MAROC_AVANT = {"etranger1_pays": "MA", "etranger1_debut": "1990-01",
 
 
 @pytest.mark.parametrize("residence", ["MA", "autre"])
-def test_l_aspa_n_est_servie_qu_a_qui_reside_en_france(contexte, residence):
+def test_l_aspa_n_est_servie_qu_a_qui_reside_en_france(saisies, residence):
     """L'allocation de solidarité aux personnes âgées n'est servie qu'à qui
     réside en France, et supprimée au départ hors de France (L. 815-1) : la
     même petite carrière, qui part vivre au Maroc ou ailleurs, ne touche que
@@ -745,9 +739,9 @@ def test_l_aspa_n_est_servie_qu_a_qui_reside_en_france(contexte, residence):
         return sum(a.montant for a in actuel.avantages_appliques
                    if a.code == "minimum_vieillesse")
 
-    en_france = contexte.simuler(Saisie.depuis_requete(PETITE_CARRIERE))
-    ailleurs = contexte.simuler(Saisie.depuis_requete({**PETITE_CARRIERE,
-                                                       "residence": residence}))
+    en_france = saisies.simuler(PETITE_CARRIERE)
+    ailleurs = saisies.simuler({**PETITE_CARRIERE,
+                                "residence": residence})
     assert aspa(en_france.actuel) > 0 and aspa(ailleurs.actuel) == 0
     assert ailleurs.actuel.pension_annuelle == pytest.approx(
         en_france.actuel.pension_annuelle - aspa(en_france.actuel))
@@ -755,15 +749,15 @@ def test_l_aspa_n_est_servie_qu_a_qui_reside_en_france(contexte, residence):
     assert ailleurs.aujourd_hui.actuel.minimum_vieillesse == 0
 
 
-def test_la_garantie_de_la_proposition_ne_se_sert_qu_en_france(contexte):
+def test_la_garantie_de_la_proposition_ne_se_sert_qu_en_france(saisies):
     """La garantie vieillesse du scénario 6 remplace l'ASPA et en garde la
     condition de résidence, comme le texte de la proposition le dit : la même
     petite carrière, au Maroc, n'en reçoit rien, ni au départ ni aujourd'hui ;
     son compte notionnel, fait de ses seules cotisations françaises, ne bouge
     pas."""
-    en_france = contexte.simuler(Saisie.depuis_requete(PETITE_CARRIERE))
-    au_maroc = contexte.simuler(Saisie.depuis_requete({**PETITE_CARRIERE,
-                                                       "residence": "MA"}))
+    en_france = saisies.simuler(PETITE_CARRIERE)
+    au_maroc = saisies.simuler({**PETITE_CARRIERE,
+                                "residence": "MA"})
     garantie = en_france.notionnel_liberal.garantie_vieillesse
     hors = au_maroc.notionnel_liberal.garantie_vieillesse
     assert garantie.complement > 0 and garantie.residence is None
@@ -783,16 +777,16 @@ def _aspa(actuel) -> float:
     return sum(a.montant for a in actuel.avantages_appliques if a.code == "minimum_vieillesse")
 
 
-def test_l_aspa_compte_les_pensions_etrangeres(contexte, simulateur):
+def test_l_aspa_compte_les_pensions_etrangeres(saisies, simulateur):
     """L'allocation compte « tous les avantages d'invalidité et de vieillesse
     dont bénéficie l'intéressé » (R. 815-22), ceux qu'un autre État sert
     compris : la petite carrière qui touche une pension marocaine reçoit
     d'autant moins d'ASPA, au départ, et sa pension française, ASPA comprise,
     s'arrête au barème moins ce que le Maroc lui sert à part. Une pension qui
     commence après le départ ne compte qu'à partir d'elle : aujourd'hui."""
-    en_france = contexte.simuler(Saisie.depuis_requete(PETITE_CARRIERE))
-    marocaine = contexte.simuler(Saisie.depuis_requete({**PETITE_CARRIERE,
-                                                        **PENSION_MAROCAINE}))
+    en_france = saisies.simuler(PETITE_CARRIERE)
+    marocaine = saisies.simuler({**PETITE_CARRIERE,
+                                 **PENSION_MAROCAINE})
     # Les 150 € d'aujourd'hui, ramenés aux euros de 2020 et suivis sur les prix.
     annuelle = 150 * 12 * simulateur.macro.coefficient_prix(2026, 2020)
     assert _aspa(en_france.actuel) - _aspa(marocaine.actuel) == pytest.approx(annuelle)
@@ -801,8 +795,8 @@ def test_l_aspa_compte_les_pensions_etrangeres(contexte, simulateur):
     # Aujourd'hui, en euros de l'année : 1 800 €.
     assert (en_france.aujourd_hui.actuel.minimum_vieillesse
             - marocaine.aujourd_hui.actuel.minimum_vieillesse) == pytest.approx(1800.0)
-    plus_tard = contexte.simuler(Saisie.depuis_requete({
-        **PETITE_CARRIERE, **PENSION_MAROCAINE, "pension_etrangere1_debut": "2024-01"}))
+    plus_tard = saisies.simuler({
+        **PETITE_CARRIERE, **PENSION_MAROCAINE, "pension_etrangere1_debut": "2024-01"})
     assert _aspa(plus_tard.actuel) == pytest.approx(_aspa(en_france.actuel))
     assert plus_tard.aujourd_hui.actuel.minimum_vieillesse == pytest.approx(
         marocaine.aujourd_hui.actuel.minimum_vieillesse)
@@ -813,14 +807,14 @@ def test_l_aspa_compte_les_pensions_etrangeres(contexte, simulateur):
     # en faut plus de neuf (L. 815-1, R. 111-2, depuis le 1er septembre 2023).
     ("12", True, True), ("10", True, True), ("8", True, False), ("6", False, False),
 ])
-def test_l_aspa_demande_assez_de_mois_en_france(contexte, mois, au_depart, aujourd_hui):
+def test_l_aspa_demande_assez_de_mois_en_france(saisies, mois, au_depart, aujourd_hui):
     """Qui réside en France n'a l'allocation que s'il y séjourne « plus de six
     mois au cours de l'année civile de versement », plus de neuf depuis le
     1er septembre 2023 : la caisse totalise ses séjours de l'année (exposé de
     la Cnav « Condition de résidence - Aspa »). La garantie de la proposition
     garde la condition de l'ASPA qu'elle remplace."""
-    simulation = contexte.simuler(Saisie.depuis_requete({**PETITE_CARRIERE,
-                                                         "mois_en_france": mois}))
+    simulation = saisies.simuler({**PETITE_CARRIERE,
+                                  "mois_en_france": mois})
     assert (_aspa(simulation.actuel) > 0) is au_depart
     assert (simulation.aujourd_hui.actuel.minimum_vieillesse > 0) is aujourd_hui
     garantie = simulation.notionnel_liberal.garantie_vieillesse
@@ -829,14 +823,14 @@ def test_l_aspa_demande_assez_de_mois_en_france(contexte, mois, au_depart, aujou
     assert (simulation.aujourd_hui.garantie_vieillesse > 0) is aujourd_hui
 
 
-def test_la_garantie_compte_les_pensions_etrangeres(contexte, simulateur):
+def test_la_garantie_compte_les_pensions_etrangeres(saisies, simulateur):
     """La garantie de la proposition « remplace l'ASPA » (README) et porte au
     plancher toutes les retraites obligatoires : celle qu'un autre État sert
     en est une, que l'ASPA compte aussi. Le complément baisse d'autant, au
     départ comme aujourd'hui ; le compte notionnel ne bouge pas."""
-    en_france = contexte.simuler(Saisie.depuis_requete(PETITE_CARRIERE))
-    marocaine = contexte.simuler(Saisie.depuis_requete({**PETITE_CARRIERE,
-                                                        **PENSION_MAROCAINE}))
+    en_france = saisies.simuler(PETITE_CARRIERE)
+    marocaine = saisies.simuler({**PETITE_CARRIERE,
+                                 **PENSION_MAROCAINE})
     garantie = en_france.notionnel_liberal.garantie_vieillesse
     avec = marocaine.notionnel_liberal.garantie_vieillesse
     annuelle = 150 * 12 * simulateur.macro.coefficient_prix(2026, 2020)
@@ -888,7 +882,7 @@ process.stdout.write(JSON.stringify(cas.map(([duree, cotisee, ouverte]) =>
     assert json.loads(execution.stdout) == pytest.approx([c[3] for c in cas])
 
 
-def test_la_caisse_ne_totalise_qu_un_accord_a_la_fois(contexte):
+def test_la_caisse_ne_totalise_qu_un_accord_a_la_fois(saisies):
     """Huit ans en Algérie, puis trois à Monaco : les deux conventions ne
     font compter aucun État tiers, et la caisse retient les périodes d'une
     seule, celle qui lui en apporte le plus (CLEISS) — 33 trimestres, les
@@ -899,10 +893,10 @@ def test_la_caisse_ne_totalise_qu_un_accord_a_la_fois(contexte):
     deux = {**NE_EN_1962, "etranger1_pays": "DZ", "etranger1_debut": "1979-09",
             "etranger1_fin": "1987-09", "etranger2_pays": "MC", "etranger2_debut": "1987-09",
             "etranger2_fin": "1990-09"}
-    algerie = _actuel(contexte, **{k: v for k, v in deux.items()
+    algerie = _actuel(saisies, **{k: v for k, v in deux.items()
                                    if not k.startswith("etranger2")})
-    assert _actuel(contexte, **deux).trimestres_etrangers == algerie.trimestres_etrangers == 33
-    espagne_tunisie = _actuel(contexte, **{**deux, "etranger1_pays": "ES",
+    assert _actuel(saisies, **deux).trimestres_etrangers == algerie.trimestres_etrangers == 33
+    espagne_tunisie = _actuel(saisies, **{**deux, "etranger1_pays": "ES",
                                            "etranger2_pays": "TN"})
     assert espagne_tunisie.trimestres_etrangers == 33 + 13 - 1
 
@@ -927,14 +921,14 @@ def _annees_du_salaire_moyen(actuel) -> tuple[int, str] | None:
     return None if lu is None else (int(lu.group(1)), lu.group(2))
 
 
-def test_les_regimes_etrangers_equivalents_reduisent_les_annees_du_salaire_moyen(contexte):
+def test_les_regimes_etrangers_equivalents_reduisent_les_annees_du_salaire_moyen(saisies):
     """De 2004 à juin 2022, la pension proratisée prend son salaire annuel
     moyen sur « 25 meilleures années x 66/160ème = 10 » : la durée du régime
     général rapportée à celle des régimes retenus, les régimes étrangers
     équivalents compris (circulaire ministérielle du 3 juillet 2008, exemple
     2). Le salaire moyen des dix meilleures années française l'emporte sur la
     pension nationale, qui ne compte pas l'étranger."""
-    actuel = _actuel(contexte, **MIGRANT_DE_2009)
+    actuel = _actuel(saisies, **MIGRANT_DE_2009)
     assert (actuel.trimestres_valides, actuel.trimestres_etrangers) == (160, 94)
     assert _annees_du_salaire_moyen(actuel) == (10, "R. 173-4-3, périodes étrangères comprises")
     assert _pension(actuel, "regime_general").detail.startswith(
@@ -957,11 +951,11 @@ def test_les_regimes_etrangers_equivalents_reduisent_les_annees_du_salaire_moyen
     ({"naissance": "1955-02-15", "liquidation": "2023-03", "etranger1_pays": "ES"}, None),
     ({"naissance": "1952-02-15", "liquidation": "2023-03", "etranger1_pays": "ES"}, 13),
 ])
-def test_la_reduction_suit_le_tableau_des_regimes_equivalents(contexte, champs, annees):
+def test_la_reduction_suit_le_tableau_des_regimes_equivalents(saisies, champs, annees):
     """Le régime de l'État est-il équivalent pour l'activité de la période, à
     la date d'effet de la pension, et la fiche réduit-elle encore les années
     (circulaires Cnav n° 2012/26 et 2021/33) ?"""
-    lu = _annees_du_salaire_moyen(_actuel(contexte, **VINGT_ANS_AILLEURS, **champs))
+    lu = _annees_du_salaire_moyen(_actuel(saisies, **VINGT_ANS_AILLEURS, **champs))
     assert lu == (None if annees is None
                   else (annees, "R. 173-4-3, périodes étrangères comprises"))
 
@@ -974,14 +968,14 @@ def test_la_reduction_suit_le_tableau_des_regimes_equivalents(contexte, champs, 
     # Le Luxembourg, dans celle de 2026 seulement.
     ("LU", "2016-04", 60), ("LU", "2027-04", 20 + 40),
 ])
-def test_les_etats_tiers_suivent_la_liste_lue_a_la_date_d_effet(contexte, tiers, liquidation,
+def test_les_etats_tiers_suivent_la_liste_lue_a_la_date_d_effet(saisies, tiers, liquidation,
                                                                 trimestres):
     """Le Maroc fait compter les États tiers de la liste de la circulaire Cnav
     n° 2011/78 jusqu'à celle que le CLEISS donne en 2026 : une pension prend
     la dernière liste lue au plus tard à sa date d'effet."""
     naissance = "1951-03-15" if liquidation < "2020" else "1962-03-15"
     maroc_debut = "1975-01" if liquidation < "2020" else "1985-01"
-    actuel = _actuel(contexte, naissance=naissance, debut="2000-01", liquidation=liquidation,
+    actuel = _actuel(saisies, naissance=naissance, debut="2000-01", liquidation=liquidation,
                      etranger1_pays="MA", etranger1_debut=maroc_debut,
                      etranger1_fin="1990-01", etranger2_pays=tiers,
                      etranger2_debut="1990-01", etranger2_fin="2000-01")
@@ -1081,7 +1075,7 @@ def _arrondi(montant: float) -> float:
     return math.floor(montant * 1e6 + 0.5) / 1e6
 
 
-def test_le_portage_liquide_les_memes_carrieres_hors_de_france(contexte):
+def test_le_portage_liquide_les_memes_carrieres_hors_de_france(saisies):
     """Les deux moteurs comptent les mêmes trimestres étrangers et liquident
     les mêmes pensions, régime par régime, au centime et au mot près."""
     import json
@@ -1098,7 +1092,7 @@ def test_le_portage_liquide_les_memes_carrieres_hors_de_france(contexte):
     assert execution.returncode == 0, execution.stderr
     attendus = []
     for requete in CARRIERES_HORS_DE_FRANCE:
-        simulation = contexte.simuler(Saisie.depuis_requete(requete))
+        simulation = saisies.simuler(requete)
         actuel = simulation.actuel
         attendus.append({
             "trimestres": [actuel.trimestres_valides, actuel.trimestres_etrangers,
