@@ -5,6 +5,7 @@ intitule: >-
   60 et 65 ans, avec application d'un abattement définitif de 1,25 % par trimestre
   manquant », sans condition de durée d'assurance, pour toutes les générations ;
   65 ans depuis 1983 au moins.
+regimes: [cavec_complementaire]
 etat: approchee
 effet: >-
   La note de la fiche disait la règle, mais la période laissait la durée annuler
@@ -60,3 +61,14 @@ code:
   moteur: >-
     `decote_annulee_par_la_duree: false` : la durée d'assurance n'annule pas la minoration,
     que seul l'âge efface.
+  python: >-
+    droit/liquider.py : abattement_points, abattement_regime_de_base, decote_opposable,
+    trimestres_de_decote ; droit/ouvrir.py : age_ouverture, age_taux_plein
+  javascript: >-
+    moteur/js/droit/liquider.js : abattementPoints, abattementRegimeDeBase,
+    decoteOpposable, trimestresDeDecote ; moteur/js/droit/ouvrir.js : ageOuverture,
+    ageTauxPlein
+  parametres: >-
+    regimes/cavec_complementaire.yaml : age_ouverture, age_taux_plein,
+    decote_par_trimestre
+  tests: [tests/test_sections_liberales.py]

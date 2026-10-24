@@ -7,6 +7,7 @@ intitule: >-
   6 mois et 64 ans pour les générations 1965 à 1968 ; avant l'âge du taux plein,
   un coefficient d'anticipation de 5 % par année manquante, « non susceptible de
   fractionnement », que la durée d'assurance n'annule pas ; aucune surcote.
+regimes: [cavom_complementaire]
 etat: approchee
 effet: >-
   La fiche lisait les tables du régime général et la décote du régime de base, que
@@ -64,3 +65,15 @@ code:
     intervient dans les douze mois précédant l'âge requis », 10 % du 13e au 24e mois,
     jusqu'à 25 %). `decote_annulee_par_la_duree: false` : la durée d'assurance n'annule
     pas la minoration.
+  python: >-
+    droit/liquider.py : abattement_points, abattement_ircec, trimestres_de_decote,
+    surcote_points, _ABATTEMENTS_IRCEC, _ABATTEMENTS_PAR_ANNEE_AGE_SEUL ;
+    droit/ouvrir.py : age_ouverture, age_taux_plein ; scenarios/actuel.py : AgesRegimes
+  javascript: >-
+    moteur/js/droit/liquider.js : abattementPoints, abattementIrcec, trimestresDeDecote,
+    surcotePoints ; moteur/js/droit/ouvrir.js : ageOuverture, ageTauxPlein ;
+    moteur/js/regimes.js : AgesRegimes
+  parametres: >-
+    regimes/cavom_complementaire.yaml : age_table, age_ouverture, age_taux_plein ;
+    legislation/ages_regimes.csv : cavom
+  tests: [tests/test_sections_juridiques.py]

@@ -2805,16 +2805,16 @@ fabriqués.
 
 ### 130. L'architecture du dépôt : décidée, les phases 0 à 8 faites, les domaines à ouvrir — `en cours`
 
-**Reprise, au 23 octobre 2026.** Fait : phases 0 à 8, cinq domaines clos ; le
+**Reprise, au 24 octobre 2026.** Fait : phases 0 à 8, cinq domaines clos ; le
 sixième, les périodes assimilées manquantes, a ses étapes 1 à 6 faites
 (`130/2026-10-17-sixieme-domaine-etape-6.md`). Au propriétaire, README muet :
 sa septième étape, la décision de la proposition, et la retraite progressive,
 le cumul et la seconde pension. La carte mûrit : le code de toute fiche est
-confronté au dépôt par un test, hors des 46 de `EN_PROSE` (`tests/test_carte.py`),
-qui n'ont que leur phrase `moteur` ; restent les 106 fiches à lire au droit, 792
+confronté au dépôt par un test, hors des 36 de `EN_PROSE` (`tests/test_carte.py`),
+qui n'ont que leur phrase `moteur` ; restent les 106 fiches à lire au droit, 782
 manques, et les points ouverts des phases 2 à 8. Par quoi commencer : écrire,
-par lots, les fonctions et les paramètres de ces 46 fiches. Détail :
-`130/2026-10-23-carte-des-fiches-prose-recrite.md`.
+par lots, les fonctions, les paramètres et les régimes de ces 36 fiches.
+Détail : `130/2026-10-24-carte-des-fiches-minorations-des-complementaires.md`.
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de

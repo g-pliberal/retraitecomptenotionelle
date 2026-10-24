@@ -186,16 +186,13 @@ EN_PROSE = frozenset("""
     abattement_rci age_annulation_decote age_legal_par_generation
     age_ouverture_ieg_actifs age_reference_decote_ieg age_surcote_sncf_ratp
     assiette_minimale_agricole bareme_minoration_regimes_en_points
-    carcdsf_minoration_age_seul carmf_asv_minoration_enfants
-    carpv_minoration_age_seul cavamac_minoration_age_seul cavec_minoration_age_seul
-    cavom_ages_minoration cavp_minoration_deux_pentes cnbf_surcote
-    coefficient_anticipation_ircantec coefficients_anticipation_agirc_arrco
-    cotisation_par_classes_liberales cprn_ages_decote_enfants
+    cnbf_surcote coefficient_anticipation_ircantec
+    coefficients_anticipation_agirc_arrco cotisation_par_classes_liberales
     cultes_retraite_complementaire cultes_salaire_annuel_moyen
     date_effet_mois_suivant decote_avant_1983 decote_crpn decote_fonction_publique
     decote_opera_de_paris decote_regime_general decote_regimes_speciaux
-    duree_requise_par_generation majoration_duree_apres_65_ans minoration_ircec
-    minoration_racl_2014_2024 pension_non_salaries_agricoles_2026
+    duree_requise_par_generation majoration_duree_apres_65_ans
+    pension_non_salaries_agricoles_2026
     points_au_prorata_des_cotisations raap_classe_speciale
     retraite_proportionnelle_msa surcote_fonction_publique surcote_ircantec
     surcote_par_age_seul surcote_regime_general surcote_regimes_speciaux

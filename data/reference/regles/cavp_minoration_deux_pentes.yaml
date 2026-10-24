@@ -7,6 +7,7 @@ intitule: >-
   nés depuis 1956 (65 ans jusqu'en 1952, 66 ans de 1953 à 1955) et minoration de
   1,25 % par trimestre jusqu'à 65 ans puis de 0,5 % de 65 ans à cet âge, que la
   durée n'annule pas. Bonification d'un dixième pour trois enfants.
+regimes: [cavp_complementaire]
 etat: approchee
 effet: >-
   La fiche lisait la décote du régime de base, que la durée annule : un pharmacien
@@ -66,3 +67,17 @@ code:
   moteur: >-
     `decote_annulee_par_la_duree: false` : la durée d'assurance n'annule pas la minoration,
     que seul l'âge efface.
+  python: >-
+    droit/liquider.py : abattement_points, abattement_regime_de_base, decote_opposable,
+    trimestres_de_decote ; droit/ouvrir.py : age_taux_plein ; scenarios/actuel.py :
+    AgesRegimes ; droit/completer.py : completer, _taux_majoration_enfants
+  javascript: >-
+    moteur/js/droit/liquider.js : abattementPoints, abattementRegimeDeBase,
+    decoteOpposable, trimestresDeDecote ; moteur/js/droit/ouvrir.js : ageTauxPlein ;
+    moteur/js/regimes.js : AgesRegimes ; moteur/js/droit/completer.js : completer,
+    tauxMajorationEnfants
+  parametres: >-
+    regimes/cavp_complementaire.yaml : age_table, age_taux_plein, decote_par_trimestre,
+    decote_palier_age, decote_par_trimestre_apres_palier, avantages_non_contributifs ;
+    legislation/ages_regimes.csv : cavp
+  tests: [tests/test_sections_sante.py, tests/js/moteur.test.js]

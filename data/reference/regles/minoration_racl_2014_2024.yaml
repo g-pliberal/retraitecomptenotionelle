@@ -7,6 +7,7 @@ intitule: >-
   1953 et 1954 ; la durée d'assurance n'ouvre pas le taux plein, que seuls l'âge,
   l'inaptitude et la qualité d'ancien déporté ou interné ouvrent. Le régime rejoint ensuite
   la règle des deux autres régimes de l'IRCEC.
+regimes: [ircec_racl]
 etat: approchee
 etape: liquider_chaque_regime
 effet: >-
@@ -127,3 +128,14 @@ code:
     et seul l'âge ouvre le taux plein ; les générations d'avant 1955 ont l'annexe de
     l'arrêté du 21 novembre 2013, 6 % par année avant soixante-cinq ans jusqu'en 1952 et
     son tableau pour 1953 et 1954 (`liquider._MINORATION_RACL_2014`).
+  python: >-
+    droit/liquider.py : abattement_points, abattement_ircec, _ABATTEMENTS_IRCEC,
+    _ABATTEMENTS_PAR_ANNEE_AGE_SEUL, _MINORATION_RACL_2014 ; droit/ouvrir.py :
+    age_taux_plein ; droit/commun.py : periode_de_liquidation
+  javascript: >-
+    moteur/js/droit/liquider.js : abattementPoints, abattementIrcec,
+    MINORATION_RACL_2014 ; moteur/js/droit/ouvrir.js : ageTauxPlein ;
+    moteur/js/droit/commun.js : periodeDeLiquidation
+  parametres: >-
+    regimes/ircec_racl.yaml : age_taux_plein, date_effet
+  tests: [tests/test_simulateur.py, tests/test_coupures_au_mois.py]

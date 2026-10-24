@@ -10,6 +10,7 @@ intitule: >-
   de 1,25 % par trimestre accompli depuis 2024 dans la limite de 25 %. Les affiliées
   partent sans minoration une année plus tôt par enfant, cinq au plus. Majoration
   de 10 % pour trois enfants.
+regimes: [carcdsf_complementaire]
 etat: approchee
 effet: >-
   La fiche lisait 62 et 67 ans et la décote du régime de base, que la durée annule
@@ -77,3 +78,21 @@ code:
     décrit ; `decote_annulee_par_la_duree: false` : la durée d'assurance n'annule pas
     la minoration ; `surcote_points: par_age_seul`, la majoration par l'âge seul que la
     fiche `surcote_par_age_seul` décrit.
+  python: >-
+    droit/liquider.py : abattement_points, abattement_ircec, abattement_regime_de_base,
+    decote_opposable, trimestres_de_decote, taux_plein_anticipe, surcote_points,
+    _ABATTEMENTS_IRCEC, _ABATTEMENTS_PAR_ANNEE_AGE_SEUL ; droit/ouvrir.py :
+    age_taux_plein ; scenarios/actuel.py : AgesRegimes ; droit/completer.py : completer,
+    _taux_majoration_enfants
+  javascript: >-
+    moteur/js/droit/liquider.js : abattementPoints, abattementIrcec,
+    abattementRegimeDeBase, decoteOpposable, trimestresDeDecote, tauxPleinAnticipe,
+    surcotePoints ; moteur/js/droit/ouvrir.js : ageTauxPlein ; moteur/js/regimes.js :
+    AgesRegimes ; moteur/js/droit/completer.js : completer, tauxMajorationEnfants
+  parametres: >-
+    regimes/carcdsf_complementaire.yaml : age_taux_plein, age_table,
+    decote_par_trimestre, decote_trimestres_maximum, surcote_par_trimestre,
+    surcote_trimestres_maximum, taux_plein_anticipe_par_enfant_annees,
+    taux_plein_anticipe_maximum_annees, avantages_non_contributifs ;
+    legislation/ages_regimes.csv : carcdsf_2011
+  tests: [tests/test_sections_sante.py, tests/js/moteur.test.js]

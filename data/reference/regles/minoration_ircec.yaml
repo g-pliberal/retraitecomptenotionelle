@@ -7,6 +7,7 @@ intitule: >-
   de base s'ils sont plus favorables ; taux plein dès l'âge de L. 161-17-2 si la
   pension du régime de base l'est. Le RACL n'y est venu que le 16 mai 2025, lendemain
   de la publication de l'arrêté du 13 mai : depuis 2014, 5 % par année et l'âge seul.
+regimes: [ircec_raap, ircec_raap_taux_amenage, ircec_racd, ircec_racl]
 etat: approchee
 effet: >-
   Tout départ anticipé d'un artiste-auteur, d'un auteur dramatique ou d'un compositeur
@@ -69,3 +70,17 @@ code:
     année entamée comptant entière, 2,5 % pour chacune des deux premières et 5 % au-delà,
     ou la décote du régime de base si elle est plus favorable ; pas de minoration si la
     durée requise est réunie.
+  python: >-
+    droit/liquider.py : abattement_points, abattement_ircec, abattement_regime_de_base,
+    decote_opposable, trimestres_de_decote, _ABATTEMENTS_IRCEC ; droit/ouvrir.py :
+    age_taux_plein ; droit/commun.py : periode_de_liquidation
+  javascript: >-
+    moteur/js/droit/liquider.js : abattementPoints, abattementIrcec,
+    abattementRegimeDeBase, decoteOpposable, trimestresDeDecote ;
+    moteur/js/droit/ouvrir.js : ageTauxPlein ; moteur/js/droit/commun.js :
+    periodeDeLiquidation
+  parametres: >-
+    regimes/ircec_raap.yaml, regimes/ircec_raap_taux_amenage.yaml,
+    regimes/ircec_racd.yaml, regimes/ircec_racl.yaml : age_taux_plein,
+    duree_requise_trimestres, decote_par_trimestre, date_effet
+  tests: [tests/test_simulateur.py, tests/test_coupures_au_mois.py]

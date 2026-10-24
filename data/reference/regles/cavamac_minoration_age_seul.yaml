@@ -8,6 +8,7 @@ intitule: >-
   le 1er janvier 2024, taux plein à 67 ans, minoration de 1,25 % par trimestre manquant
   pour l'atteindre, et majoration de 5 % par année pleine COTISÉE au-delà, hors
   cumul emploi-retraite.
+regimes: [cavamac_complementaire]
 etat: approchee
 effet: >-
   La fiche opposait la décote du régime de base, que la durée annule : un agent
@@ -81,3 +82,15 @@ code:
     la rédaction de l'arrêté du 4 août 2023, article 16, depuis le 1er janvier 2024 ;
     ils disaient « différée » auparavant). Sans ce renvoi, le temps écoulé suffit, comme
     dans les autres sections.
+  python: >-
+    droit/liquider.py : abattement_points, abattement_ircec, abattement_regime_de_base,
+    decote_opposable, trimestres_de_decote, surcote_points, _ABATTEMENTS_IRCEC,
+    _ABATTEMENTS_PAR_ANNEE_AGE_SEUL ; droit/ouvrir.py : age_taux_plein
+  javascript: >-
+    moteur/js/droit/liquider.js : abattementPoints, abattementIrcec,
+    abattementRegimeDeBase, decoteOpposable, trimestresDeDecote, surcotePoints ;
+    moteur/js/droit/ouvrir.js : ageTauxPlein
+  parametres: >-
+    regimes/cavamac_complementaire.yaml : age_taux_plein, decote_par_trimestre,
+    surcote_par_trimestre, surcote_pas_trimestres, surcote_trimestres_maximum
+  tests: [tests/test_sections_liberales.py]

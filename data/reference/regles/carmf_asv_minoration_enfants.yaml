@@ -6,6 +6,7 @@ intitule: >-
   de durée ; majoration pour trois enfants depuis l'arrêté du 16 janvier 1964, de
   10 % selon le règlement de 2026. ASV des médecins : 10 % pour trois enfants sur
   les prestations liquidées depuis le 1er janvier 1981.
+regimes: [carmf_complementaire, asv_conventionnes]
 etat: approchee
 effet: >-
   De 2000 à 2016, la fiche disait l'âge seul sans que le moteur le lise : un médecin
@@ -54,3 +55,15 @@ code:
   moteur: >-
     `abattement_points: cavom`, le barème par année d'âge manquante que la fiche `cavom_ages_minoration`
     décrit, et dont la CARMF écrivait les coefficients de 2000 à 2016.
+  python: >-
+    droit/liquider.py : abattement_points, abattement_ircec, _ABATTEMENTS_IRCEC,
+    _ABATTEMENTS_PAR_ANNEE_AGE_SEUL ; droit/ouvrir.py : age_taux_plein ;
+    droit/completer.py : completer, _taux_majoration_enfants
+  javascript: >-
+    moteur/js/droit/liquider.js : abattementPoints, abattementIrcec ;
+    moteur/js/droit/ouvrir.js : ageTauxPlein ; moteur/js/droit/completer.js : completer,
+    tauxMajorationEnfants
+  parametres: >-
+    regimes/carmf_complementaire.yaml : age_taux_plein, avantages_non_contributifs ;
+    regimes/asv_conventionnes.yaml : avantages_non_contributifs
+  tests: [tests/test_sections_sante.py, tests/js/moteur.test.js]
