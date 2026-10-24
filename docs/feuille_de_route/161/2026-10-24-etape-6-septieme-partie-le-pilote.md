@@ -24,7 +24,7 @@ gardait plus que pour confronter les deux moteurs.
 
 Rien n'a été corrigé : ce retrait ne change aucun comportement.
 
-**Les tests** (8eb8b0f). `test_estimation_du_site.py` ne lit plus le pilote
+**Les tests** (c1aa79e). `test_estimation_du_site.py` ne lit plus le pilote
 Python. Chaque âge du portage est le point fixe de sa règle : l'âge que
 l'étape « ouvrir le droit » du Python oppose à la carrière que le portage
 bâtit à cet âge est celui du départ, et ceux qu'il réunit y sont atteints.
@@ -43,7 +43,7 @@ maximum avec l'âge précédent : aucune carrière ne l'exerce, le taux plein ne
 précédant jamais l'ouverture, ni ne l'exerçait la confrontation des jumeaux,
 qui le portaient tous deux. 20 tests, contre 17, en 15 s.
 
-**Le retrait** (80f4dc2). `pilote.py` passe de 271 lignes à 148 :
+**Le retrait** (8ecb5b7). `pilote.py` passe de 271 lignes à 148 :
 `DEPARTS_DE_L_ESTIMATION`, `ages_de_l_estimation`, `DepartEstime` et
 `depart_estime` partent. Il garde le départ des cas types (`age_de_depart`,
 `point_fixe`, `age_propose`), que seul le coût demande, à la fabrique. La paire
