@@ -176,6 +176,7 @@ from .garantie import (
 )
 from .noyau import univers as univers_de_droit
 from .revalorisation import RevalorisationServie
+from .scenarios.actuel import MinimumVieillesse
 from .simulateur import Simulateur
 from .somme import somme_ordonnee
 
@@ -386,6 +387,17 @@ COTES: tuple[str, ...] = (COTE_RETRAITES, COTE_COTISANTS)
 #: toutes les générations partaient à l'âge écrit dans la grille.
 LIQUIDATIONS: tuple[str, ...] = VARIANTES_LIQUIDATION
 
+#: Les deux façons de compter l'année où une cohorte part. ``janvier`` est
+#: celle des résultats affichés : la grille fait naître ses cas types en
+#: janvier, et chaque cohorte compte toute l'année de son départ, dans ses
+#: têtes comme dans ses masses. ``toute_l_annee`` la fait naître toute
+#: l'année, et ne compte que ce qui en est parti, au mois (:func:`_partie`,
+#: :func:`_servie`) : elle n'existe que pour mesurer ce que la première
+#: déplace (action 138, étape 3, note « les naissances de l'année »).
+NAISSANCES_EN_JANVIER = "janvier"
+NAISSANCES_TOUTE_L_ANNEE = "toute_l_annee"
+NAISSANCES: tuple[str, ...] = (NAISSANCES_EN_JANVIER, NAISSANCES_TOUTE_L_ANNEE)
+
 
 @dataclass(frozen=True)
 class Pensionne:
@@ -444,6 +456,14 @@ class Pensionne:
     #: génération donne au cas type (:func:`_departs`, action 138, étape 3).
     #: Vide, celle de la grille, décalée d'autant.
     departs: tuple[int, ...] = ()
+    #: Quand ses cohortes naissent toute l'année (:func:`_nees_toute_l_annee`) :
+    #: le mois où part, sous le droit en vigueur, la part de chacune née en
+    #: janvier, comme la grille ; puis le mois où cette part atteint l'âge
+    #: légal de la proposition, et 65 ans, où la garantie s'ouvre. Vide, chaque
+    #: cohorte compte toute l'année de son départ.
+    mois: tuple[int, ...] = ()
+    mois_age_legal: int = 0
+    mois_65_ans: int = 0
 
     def liquidation(self, decalage: int) -> int:
         """L'année où part, sous le droit en vigueur, la cohorte née
@@ -462,6 +482,34 @@ class Pensionne:
         if volet.annee_liquidation > self.annee_liquidation:
             return max(depart, volet.annee_liquidation + decalage)
         return depart
+
+    def mois_de_depart(self, decalage: int) -> int | None:
+        """Le mois où part, sous le droit en vigueur, la part née en janvier
+        de la cohorte née ``decalage`` ans après la grille, quand elle naît
+        toute l'année (:attr:`mois`) ; ``None`` quand elle compte toute l'année
+        de son départ."""
+        if not self.mois:
+            return None
+        return self.mois[decalage + _DEMI_TRANCHE]
+
+    def mois_de_depart_liberal(self, decalage: int) -> int | None:
+        """Le même, sous la proposition : le mois du droit en vigueur quand
+        elle part avec lui, celui de son âge légal quand il la reporte."""
+        if not self.mois:
+            return None
+        if self.depart_liberal(decalage) == self.liquidation(decalage):
+            return self.mois_de_depart(decalage)
+        return self.mois_age_legal
+
+    def mois_d_ouverture_garantie(self, decalage: int) -> int | None:
+        """Le mois où sa garantie s'ouvre : celui de son départ sous la
+        proposition quand elle s'ouvre avec lui, celui de ses 65 ans sinon."""
+        if not self.mois:
+            return None
+        if (self.volet(decalage).annee_ouverture_garantie + decalage
+                == self.depart_liberal(decalage)):
+            return self.mois_de_depart_liberal(decalage)
+        return self.mois_65_ans
 
     def capital(self, decalage: int) -> float:
         """Ce que la variante change au compte de la proposition de la cohorte
@@ -980,6 +1028,10 @@ class Avenir:
     annee_bascule: int = 0
     annee_euros: int = 0
     fiabilite: Fiabilite = Fiabilite.ESTIMEE
+    #: L'ancrage : le prix, en euros constants, d'une unité de la masse du
+    #: modèle — la dépense de la dernière année publiée sur la masse que le
+    #: modèle donne cette année-là au système actuel. Zéro sans trajectoire.
+    ancrage: float = 0.0
 
     @property
     def premiere_annee(self) -> int:
@@ -2121,6 +2173,9 @@ class Cout:
     ponderation: str = "effectifs"
     #: Datation du départ des cas types : ``droit`` ou ``absolu``.
     liquidation: str = "droit"
+    #: L'année du départ de chaque cohorte : comptée toute, ``janvier``, ou au
+    #: mois, ses cas types nés toute l'année, ``toute_l_annee``.
+    naissances: str = NAISSANCES_EN_JANVIER
     #: Convention de recette du scénario 6 : ``assiette`` ou ``rapport``.
     #: ``assiette`` est celle du programme, et celle que la page affiche depuis
     #: le 19 septembre 2026 ; ``rapport`` reste calculable pour dire ce qu'elle
@@ -2498,6 +2553,34 @@ def _carrieres_voisines(simulateur: Simulateur, cas: CasType, generation: int,
         yield decalage, carriere
 
 
+def _nees_toute_l_annee(simulateur: Simulateur, cas_types: tuple[CasType, ...],
+                        pensionnes: list[Pensionne], liquidation: str = "droit"
+                        ) -> list[Pensionne]:
+    """Les mêmes couples, leurs cohortes nées toute l'année
+    (:data:`NAISSANCES_TOUTE_L_ANNEE`, :attr:`Pensionne.mois`) : le mois où
+    part la part née en janvier de chacune, celui de la carrière que le droit
+    de sa génération lui donne (:func:`_carrieres_voisines`), ou celui de la
+    génération de la grille pour une cohorte qu'elle ne sait pas simuler ; et
+    ceux où elle atteint l'âge légal de la proposition et 65 ans. Les
+    carrières se refont sans rien simuler, sous les conventions de la grille
+    (:func:`_pensionnes`) : un couple ne garde que l'année de chaque départ."""
+    simulateur = simulateur.pour_la_projection()
+    cas_de = {cas.code: cas for cas in cas_types}
+    age_legal = simulateur.parametres.age_legal_liberal
+    nees = []
+    for pensionne in pensionnes:
+        cas = cas_de[pensionne.code]
+        carriere = carriere_de_la_grille(simulateur, cas, pensionne.generation, liquidation)
+        nees.append(replace(
+            pensionne,
+            mois=tuple((carriere if voisine is None else voisine).mois_liquidation
+                       for _decalage, voisine in _carrieres_voisines(
+                           simulateur, cas, pensionne.generation, liquidation)),
+            mois_age_legal=0 if age_legal is None else carriere.date_de_l_age(age_legal).mois,
+            mois_65_ans=carriere.date_de_l_age(MinimumVieillesse.AGE_OUVERTURE).mois))
+    return nees
+
+
 def _survies(simulateur: Simulateur, population: str | None, generation: int,
              departs: tuple[int, ...], propre: str = "") -> tuple[tuple[float, ...], ...]:
     """La survie des cinq cohortes d'un couple, rapportée à celle de la
@@ -2812,6 +2895,36 @@ TETES_GARANTIE = "garantie"
 MASSE_STOCK = "stock_avant_bascule"
 
 
+def _partie(annee: int, depart: int, mois: int | None) -> float:
+    """La part d'une cohorte partie au 31 décembre de ``annee`` : rien avant
+    l'année ``depart`` de son départ, tout après. Cette année-là, toute quand
+    elle compte l'année entière (``mois`` à ``None``, la grille) ; née toute
+    l'année (:data:`NAISSANCES_TOUTE_L_ANNEE`), ses nés de janvier à
+    ``13 - mois`` : sa part née en janvier part le mois ``mois``, celle née le
+    mois ``b`` le mois ``mois + b - 1``."""
+    if annee < depart:
+        return 0.0
+    if annee > depart or mois is None:
+        return 1.0
+    return (13 - mois) / 12
+
+
+def _servie(annee: int, depart: int, mois: int | None) -> float:
+    """La part d'une année de sa pension que la même cohorte touche en
+    ``annee`` : toute dès l'année de son départ quand elle la compte entière ;
+    née toute l'année, sa part née le mois ``b`` touche les mois qui suivent
+    son départ — 1/48 d'une année l'année d'un départ en novembre, 99/144 la
+    suivante. Elle part en moyenne ``mois - 1 + 5,5`` mois après le 1er
+    janvier de l'année ``depart``, et c'est ce que ses masses perdent."""
+    if annee < depart:
+        return 0.0
+    if mois is None:
+        return 1.0
+    servis = somme_ordonnee(min(12, max(0, 12 * (annee - depart) + 14 - mois - naissance))
+                            for naissance in range(1, 13))
+    return servis / 144
+
+
 def _survies_alignees(pensionnes: list[Pensionne], poids_cas: dict[str, float],
                       annee: int) -> dict[tuple[str, int, int], float]:
     """Ce par quoi multiplier, en ``annee``, l'effectif que la pyramide donne
@@ -2930,10 +3043,16 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
             # têtes.
             pese = effectif * pensionne.completude(decalage)
             liquidation = pensionne.liquidation(decalage)
-            if annee >= liquidation:
-                poids += effectif
-                poids_masse += pese
-                poids_actuel += pese * coefficient_servi(
+            # Née toute l'année, la cohorte ne compte de têtes que sa part
+            # partie au 31 décembre, et de masses que les mois qu'elle touche
+            # (:func:`_partie`, :func:`_servie`) ; la grille, toute l'année.
+            mois = pensionne.mois_de_depart(decalage)
+            partie = _partie(annee, liquidation, mois)
+            if partie > 0.0:
+                part_servie = _servie(annee, liquidation, mois)
+                poids += effectif * partie
+                poids_masse += pese * part_servie
+                poids_actuel += pese * part_servie * coefficient_servi(
                     pensionne.parts_regimes, revalorisation, liquidation, annee)
                 # Le poids revalorisé porte la revalorisation des pensions
                 # SERVIES, et il faut qu'il soit à part : le coefficient
@@ -2942,12 +3061,12 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
                 # appliquerait à toutes celui de la génération du milieu, soit
                 # deux ans d'indexation en trop d'un côté et en moins de
                 # l'autre.
-                poids_revalorise += pese * revalorisation.coefficient_stock(
+                poids_revalorise += pese * part_servie * revalorisation.coefficient_stock(
                     liquidation, annee, prospectif=False
                 )
                 # Une réforme prospective sert à qui est parti avant elle la
                 # pension du scénario 1, sous son droit jusqu'à la bascule.
-                poids_revalorise_prospectif += pese * revalorisation.coefficient_stock(
+                poids_revalorise_prospectif += pese * part_servie * revalorisation.coefficient_stock(
                     liquidation, annee, prospectif=True
                 ) * coefficient_historique(
                     pensionne.parts_regimes, revalorisation, liquidation,
@@ -2960,7 +3079,8 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
             # parmi les réformes prospectives, il sert à qui est parti avant
             # la bascule le scénario 1, sous son droit jusqu'à elle.
             capital = pensionne.capital(decalage)
-            masse_liberale += pese * capital * (
+            part_liberale = _servie(annee, depart, pensionne.mois_de_depart_liberal(decalage))
+            masse_liberale += pese * part_liberale * capital * (
                 1.0 if regle_liberale == REGLE_PRIX
                 else servie.coefficient_stock(
                     depart, annee, prospectif=regle_liberale == REGLE_PROSPECTIVE)
@@ -2976,9 +3096,11 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
             # les prix aux pensions d'avant la bascule —, et la rente du pilier
             # comme le pilier la sert, nominale et constante. Les deux étaient
             # revalorisées sur la masse salariale jusqu'au 23 septembre 2026.
-            if annee >= volet.annee_ouverture_garantie + decalage:
-                poids_garantie += effectif
-                masse_garantie += pese * (
+            ouverture = volet.annee_ouverture_garantie + decalage
+            if annee >= ouverture:
+                mois_garantie = pensionne.mois_d_ouverture_garantie(decalage)
+                poids_garantie += effectif * _partie(annee, ouverture, mois_garantie)
+                masse_garantie += pese * _servie(annee, ouverture, mois_garantie) * (
                     servie.coefficient_stock(depart, annee, prospectif=False) * capital
                     * (volet.ressources_garantie - volet.rente_garantie)
                     + revalorisation.coefficient_nominal(depart, annee)
@@ -3389,8 +3511,12 @@ def _masses_regimes(pensionnes: list[Pensionne], population: Population, annee: 
                 (regime, part_regime))
         for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
             liquidation = pensionne.liquidation(decalage)
-            if annee < liquidation:
+            # Née toute l'année, comme dans :func:`_masses`.
+            mois = pensionne.mois_de_depart(decalage)
+            partie = _partie(annee, liquidation, mois)
+            if partie <= 0.0:
                 continue
+            part_servie = _servie(annee, liquidation, mois)
             effectif = part * population.effectif(
                 annee - pensionne.generation - decalage, annee
             ) * alignees.get((pensionne.code, pensionne.generation, decalage), 1.0)
@@ -3398,8 +3524,8 @@ def _masses_regimes(pensionnes: list[Pensionne], population: Population, annee: 
             # dans :func:`_masses`.
             pese = effectif * pensionne.completude(decalage)
             for tete, parts in regroupees.items():
-                tetes[tete] = tetes.get(tete, 0.0) + effectif
-                masses[tete] = masses.get(tete, 0.0) + pese * pensionne.pensions["actuel"] * somme_ordonnee(
+                tetes[tete] = tetes.get(tete, 0.0) + effectif * partie
+                masses[tete] = masses.get(tete, 0.0) + pese * part_servie * pensionne.pensions["actuel"] * somme_ordonnee(
                     part_regime * coefficient_servi(
                         {regime: 1.0}, revalorisation, liquidation, annee)
                     for regime, part_regime in parts)
@@ -3631,10 +3757,14 @@ def _tetes_par_poids(pensionnes, population: Population) -> Callable[[int], dict
             termes: dict[str, list[float]] = {}
             for pensionne in pensionnes:
                 cohortes = termes.setdefault(pensionne.code, [])
+                # Ceux du coût des avantages ne disent que l'année de chaque
+                # départ : ils comptent l'année entière, comme la grille.
+                mois = getattr(pensionne, "mois_de_depart", lambda decalage: None)
                 for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
-                    if annee >= pensionne.liquidation(decalage):
+                    partie = _partie(annee, pensionne.liquidation(decalage), mois(decalage))
+                    if partie > 0.0:
                         cohortes.append(population.effectif(
-                            annee - pensionne.generation - decalage, annee))
+                            annee - pensionne.generation - decalage, annee) * partie)
             memoire[annee] = {code: somme_ordonnee(cohortes)
                               for code, cohortes in termes.items()}
         return memoire[annee]
@@ -4469,6 +4599,7 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
         # est projetée, sa macroéconomie est une hypothèse, et son contrefactuel
         # n'a jamais existé.
         fiabilite=Fiabilite.ESTIMEE,
+        ancrage=ancrage,
     )
 
 
@@ -5001,6 +5132,7 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
                   grille_simulee: tuple[list[Pensionne], dict[str, int]] | None = None,
                   tetes_par_poids: Callable[[list[Pensionne], Population],
                                             Callable[[int], dict[str, float]]] = _tetes_par_poids,
+                  naissances: str = NAISSANCES_EN_JANVIER,
                   ) -> Cout:
     """Le coût observé, les cinq contrefactuels, et la trajectoire jusqu'en 2070.
 
@@ -5042,6 +5174,12 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
     les têtes qui divisent les caisses des retraités (:func:`_tetes_par_poids`).
     La grille large, dont chaque variante a sa pseudo-caisse, y substitue
     celles de ses caisses réelles (``scripts/grille_large.py``).
+
+    ``naissances`` dit comment chaque cohorte compte l'année de son départ :
+    ``janvier``, toute l'année, ses cas types nés en janvier comme la grille ;
+    ou ``toute_l_annee``, née toute l'année, ses têtes au 31 décembre et ses
+    masses au mois (:func:`_nees_toute_l_annee`). Le second n'existe que pour
+    mesurer ce que le premier déplace (``scripts/cout_naissances.py``).
     """
     if convention_recette not in CONVENTIONS_RECETTE:
         raise ValueError(
@@ -5056,10 +5194,14 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
     # Avant la grille, et non après : son refus tombait au bout d'une minute.
     if ponderation not in PONDERATIONS:
         raise ValueError(f"pondération inconnue : {ponderation!r} (attendu : {PONDERATIONS})")
+    if naissances not in NAISSANCES:
+        raise ValueError(f"naissances inconnues : {naissances!r} (attendu : {NAISSANCES})")
     population.verifier_hypothese(simulateur.parametres.hypothese_esperance_vie)
     reversion_servie = convention_reversion == CONVENTION_REVERSION_SERVIE
     pensionnes, echecs = (grille_simulee if grille_simulee is not None
                           else _pensionnes(simulateur, cas_types, liquidation))
+    if naissances == NAISSANCES_TOUTE_L_ANNEE:
+        pensionnes = _nees_toute_l_annee(simulateur, cas_types, pensionnes, liquidation)
     pensionnes_centraux = pensionnes
     pensionnes = _sous_la_demographie(simulateur, pensionnes, population)
     poids = _ponderation(simulateur, ponderation, cas_types,
@@ -5165,6 +5307,7 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
         echecs=echecs,
         ponderation=ponderation,
         liquidation=liquidation,
+        naissances=naissances,
         convention_recette=convention_recette,
         poids=poids(depenses.derniere_annee),
         poids_cotisants=poids_cotisants(depenses.derniere_annee),

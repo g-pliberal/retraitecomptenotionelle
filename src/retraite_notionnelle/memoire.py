@@ -563,7 +563,7 @@ def lecture_seule():
 
 #: Les options de ``calculer_cout`` que la clé porte, avec leur défaut.
 OPTIONS_DU_COUT = ("ponderation", "liquidation", "convention_recette",
-                   "convention_reversion")
+                   "convention_reversion", "naissances")
 
 
 def memoriser_pour(parametres: Parametres, cle: tuple, calcul: Callable[[], T]) -> T:

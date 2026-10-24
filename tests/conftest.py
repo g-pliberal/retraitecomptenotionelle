@@ -80,6 +80,7 @@ COMPLETS = {
     "test_solde_fusion.py", "test_stock_age_legal.py",
     "test_proposition_prospective.py", "test_postes_ecartes.py", "test_effet_retour.py",
     "test_chiffrage_plf.py", "test_scenarios_meres.py", "test_grille_large.py",
+    "test_cout_naissances.py",
     # Ce que les pages qui agrègent lisent du modèle, figé sous la référence,
     # confronté au modèle qui le calcule.
     "test_agregats.py",
@@ -230,6 +231,14 @@ EXCEPTIONS = {
      "test_chaque_cohorte_part_l_annee_que_lui_donne_le_droit_de_sa_generation"): "rapide",
     ("test_cout.py",
      "test_la_grille_date_chaque_cohorte_au_droit_de_sa_generation"): "rapide",
+    # Les cohortes nées toute l'année, que la page Coût peut compter en mesure.
+    ("test_cout.py",
+     "test_nee_toute_l_annee_une_cohorte_ne_compte_que_ce_qui_en_est_parti"): "rapide",
+    ("test_cout.py",
+     "test_nee_toute_l_annee_chaque_cohorte_part_le_mois_que_lui_donne_son_droit"): "rapide",
+    ("test_cout.py", "test_une_convention_de_naissance_inconnue_est_refusee"): "rapide",
+    ("test_cout_naissances.py",
+     "test_le_tableau_dit_ce_que_les_cohortes_nees_toute_l_annee_deplacent"): "rapide",
     # De même, la date de chaque cohorte de la grille des avantages.
     ("test_avantages.py",
      "test_chaque_cohorte_part_l_annee_que_lui_donne_le_droit_de_sa_generation"): "rapide",

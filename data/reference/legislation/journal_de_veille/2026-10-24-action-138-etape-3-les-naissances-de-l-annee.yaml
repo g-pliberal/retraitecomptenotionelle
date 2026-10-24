@@ -1,0 +1,17 @@
+date: "2026-10-24"
+session: "action 138, étape 3 : les naissances de l'année dans les têtes et les masses de cout.py, mesurées — l'ancrage de 2024, la dérive comptée de 2025"
+consulte: >-
+  Aucun texte de droit : la mesure ne touche à aucune règle du scénario 1,
+  mais au compte de la page Coût. La règle de la date d'effet que le modèle
+  tient déjà (fiche `date_effet_mois_suivant`, R. 351-37), que le test des
+  mois d'une cohorte lit avec la présomption du jour de naissance
+  (`jour_de_naissance`), et la pyramide de l'INSEE, au 1er janvier.
+trouve: >-
+  Nées en janvier, les cohortes de la grille qui partent de 2022 à 2030 le
+  font en moyenne entre mai et juillet, celles de 2009 et d'après 2040 en
+  février. Nées toute l'année, la masse du système actuel perd 4,9 % en 2024
+  et 2,6 % en 2070 : l'ancrage monte de 5,1 %, la dérive de 2070 passe de
+  1,060 à 1,077, le système 6 gagne 0,23 point de PIB en 2026.
+reste: >-
+  Rien au droit. Au propriétaire : compter les cohortes nées toute l'année
+  dans la page, ou garder la grille.

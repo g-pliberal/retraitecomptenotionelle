@@ -5031,6 +5031,127 @@ def test_la_grille_date_chaque_cohorte_au_droit_de_sa_generation():
     assert _departs(simulateur, salarie, 1965, 2028) == (2026, 2027, 2028, 2030, 2031)
 
 
+def test_nee_toute_l_annee_une_cohorte_ne_compte_que_ce_qui_en_est_parti(population):
+    """La grille fait naître ses cas types en janvier, et chaque cohorte compte
+    toute l'année de son départ, dans ses têtes comme dans ses masses : partie
+    en novembre, elle compte au 31 décembre tous ses retraités, et une année
+    entière de leur pension (note « l'entrée dans l'emploi » du 19 octobre
+    2026, point 3). Née toute l'année (``calculer_cout(naissances=
+    "toute_l_annee")``), sa part née le mois ``b`` part le mois ``m + b - 1``,
+    ``m`` étant celui de sa part née en janvier, et touche chaque année les
+    mois qui suivent son départ.
+
+    Posé à la main. Partie en novembre (m = 11) : au 31 décembre, ses nés de
+    janvier et de février, deux douzièmes ; servis cette année-là, deux mois
+    et un mois, trois mois sur cent quarante-quatre, 1/48 d'une année de
+    pension ; l'année suivante, douze mois à ces deux-là, puis de douze à
+    trois aux nés de mars à décembre, 99/144. Partie en février (m = 2), à un
+    âge rond : onze douzièmes, 66/144, puis l'année entière. Au total, la
+    cohorte part en moyenne m - 1 + 5,5 mois après le 1er janvier, et c'est ce
+    que ses masses perdent.
+
+    Puis un couple : ses cohortes parties en 2026, 2027, 2028, 2030 et 2031,
+    celles de 2027 et de 2028 en novembre ; la proposition reporte à son âge
+    légal, en février, celle de 2026, et sa garantie s'ouvre avec ce départ.
+    En 2028 : les têtes et les masses de chaque système, celles de chaque
+    régime, et les têtes qui divisent sa caisse. Sans mois, la grille."""
+    from retraite_notionnelle.cout import (
+        CLES_CAS_TYPES, TETES_GARANTIE, TETES_TOUTES, Pensionne, VoletLiberal, _masses,
+        _masses_regimes, _partie, _servie, _tetes_par_poids, coefficient_servi)
+
+    assert [_partie(annee, 2028, 11) for annee in (2027, 2028, 2029)] == [
+        0.0, pytest.approx(2 / 12), 1.0]
+    assert [_servie(annee, 2028, 11) for annee in (2027, 2028, 2029, 2030)] == [
+        0.0, pytest.approx(1 / 48), pytest.approx(99 / 144), 1.0]
+    assert _partie(2028, 2028, 2) == pytest.approx(11 / 12)
+    assert [_servie(annee, 2028, 2) for annee in (2028, 2029)] == [
+        pytest.approx(66 / 144), 1.0]
+    for mois in range(1, 13):
+        perdu = sum(1.0 - _servie(annee, 2028, mois) for annee in range(2028, 2032))
+        assert perdu == pytest.approx((mois - 1 + 5.5) / 12), mois
+    assert [_partie(annee, 2028, None) for annee in (2027, 2028)] == [0.0, 1.0]
+    assert [_servie(annee, 2028, None) for annee in (2027, 2028)] == [0.0, 1.0]
+
+    simulateur = Simulateur(Parametres()).pour_la_projection()
+    revalorisation = RevalorisationServie(simulateur, 2000, 2040)
+    reporte = VoletLiberal(annee_liquidation=2030, annee_ouverture_garantie=2030,
+                           pension=1.0, ressources_garantie=1.0)
+    grille = Pensionne(code="x", generation=1965, annee_liquidation=2028,
+                       pensions={cle: 1.0 for cle in CLES_CAS_TYPES}, propre=reporte,
+                       parts_regimes={"regime_general": 1.0}, bascule=2026,
+                       departs=(2026, 2027, 2028, 2030, 2031))
+    nee = replace(grille, mois=(8, 11, 11, 2, 2), mois_age_legal=2, mois_65_ans=2)
+    decalages = range(-2, 3)
+    assert [nee.depart_liberal(d) for d in decalages] == [2028, 2029, 2030, 2031, 2032]
+    effectifs = [population.effectif(2028 - 1965 - d, 2028) for d in decalages]
+    parties = (1.0, 1.0, 2 / 12, 0.0, 0.0)
+    servies = (1.0, 99 / 144, 1 / 48, 0.0, 0.0)
+    departs = (2026, 2027, 2028)
+
+    masses, _, tetes = _masses([grille], population, 2028, {"x": 1.0}, revalorisation)
+    nees, _, tetes_nees = _masses([nee], population, 2028, {"x": 1.0}, revalorisation)
+    assert tetes[TETES_TOUTES] == pytest.approx(sum(effectifs[:3]), rel=1e-12)
+    assert tetes_nees[TETES_TOUTES] == pytest.approx(
+        sum(e * p for e, p in zip(effectifs, parties)), rel=1e-12)
+    servis = [coefficient_servi({"regime_general": 1.0}, revalorisation, depart, 2028)
+              for depart in departs]
+    assert masses["actuel"] == pytest.approx(
+        sum(e * c for e, c in zip(effectifs, servis)), rel=1e-12)
+    assert nees["actuel"] == pytest.approx(
+        sum(e * s * c for e, s, c in zip(effectifs, servies, servis)), rel=1e-12)
+    stock = [revalorisation.coefficient_stock(depart, 2028, prospectif=False)
+             for depart in departs]
+    assert nees["notionnel_retroactif"] == pytest.approx(
+        sum(e * s * c for e, s, c in zip(effectifs, servies, stock)), rel=1e-12)
+    # La proposition ne sert en 2028 que la cohorte de 2026, partie en février.
+    assert nees["notionnel_liberal"] == pytest.approx(
+        masses["notionnel_liberal"] * 66 / 144, rel=1e-12)
+    assert tetes[TETES_GARANTIE] == pytest.approx(effectifs[0], rel=1e-12)
+    assert tetes_nees[TETES_GARANTIE] == pytest.approx(effectifs[0] * 11 / 12, rel=1e-12)
+
+    regimes, tetes_regimes = _masses_regimes([nee], population, 2028, {"x": 1.0},
+                                             revalorisation)
+    assert sum(tetes_regimes.values()) == pytest.approx(tetes_nees[TETES_TOUTES], rel=1e-12)
+    assert sum(regimes.values()) == pytest.approx(nees["actuel"], rel=1e-12)
+    assert _tetes_par_poids([nee], population)(2028) == pytest.approx(
+        {"x": tetes_nees[TETES_TOUTES]}, rel=1e-12)
+    assert _tetes_par_poids([grille], population)(2028) == pytest.approx(
+        {"x": tetes[TETES_TOUTES]}, rel=1e-12)
+
+
+def test_nee_toute_l_annee_chaque_cohorte_part_le_mois_que_lui_donne_son_droit():
+    """Les mois d'une cohorte née toute l'année sont ceux que le droit de sa
+    génération donne à sa part née en janvier, comme la grille
+    (``cout._nees_toute_l_annee``) : le salarié au salaire moyen né de 1963 à
+    1965 part à 63 ans et demi, né en 1966 et 1967 à 64 ans (L. 161-17-3,
+    sous la suspension de 2026, ``test_la_grille_date_chaque_cohorte_au_droit_de_sa_generation``) ;
+    la proposition le reporte à 65 ans, âge où sa garantie s'ouvre. Une
+    pension prend effet le premier jour d'un mois, au plus tôt celui qui suit
+    l'âge atteint, ou le jour même pour l'assuré né le 1er (R. 351-37) : né le
+    jour du mois que le vocabulaire présume, en août et en février, ou, né le
+    1er, en juillet et en janvier. Rien d'autre ne change."""
+    from retraite_notionnelle.cout import Pensionne, VoletLiberal, _nees_toute_l_annee
+    from retraite_notionnelle.noyau import vocabulaire
+
+    salarie = next(cas for cas in GRILLE_DU_COUT if cas.code == "salaire_moyen")
+    volet = VoletLiberal(annee_liquidation=2030, annee_ouverture_garantie=2030,
+                         pension=1.0, ressources_garantie=1.0)
+    grille = Pensionne(code="salaire_moyen", generation=1965, annee_liquidation=2028,
+                       pensions={}, propre=volet, departs=(2026, 2027, 2028, 2030, 2031))
+    [nee] = _nees_toute_l_annee(Simulateur(Parametres()), (salarie,), [grille], "droit")
+    le_premier = vocabulaire.presomptions()["jour_de_naissance"]["valeur"] == 1
+    demi, rond = (7, 1) if le_premier else (8, 2)
+    assert nee.mois == (demi, demi, demi, rond, rond)
+    assert (nee.mois_age_legal, nee.mois_65_ans) == (rond, rond)
+    assert replace(nee, mois=(), mois_age_legal=0, mois_65_ans=0) == grille
+
+
+def test_une_convention_de_naissance_inconnue_est_refusee(depenses, population):
+    with pytest.raises(ValueError, match="naissances inconnues"):
+        calculer_cout(Simulateur(Parametres()), depenses, population,
+                      naissances="en_mars")
+
+
 def test_une_cohorte_partie_avant_la_bascule_recoit_le_scenario_4():
     """La génération de la grille part au 1er février 2026, la cohorte née un
     an plus tôt en février 2025 : sa proposition est le scénario 4 — ni mois
