@@ -3,8 +3,9 @@
 Le site tourne entièrement dans le navigateur, et son texte n'est écrit qu'une
 fois, en JavaScript (``moteur/js/pages.js`` et ``gabarit.js``). Ces tests le
 lisent là où il est, par :mod:`retraite_notionnelle.web.site` ; ce qu'ils
-confrontent aux pages — la saisie, les simulations, les agrégats — vient du
-modèle Python, qui fait foi.
+confrontent aux pages — les simulations, les agrégats — vient du modèle
+Python, qui fait foi, sur la carrière que le portage bâtit de la saisie, par
+le pont : la saisie n'a plus qu'un exemplaire, le sien (action 161, étape 6).
 
 Trois fichiers le testent : celui-ci, les pages, leur rendu et ce que le
 site charge ; ``test_web_saisie.py``, la saisie ; ``test_web_revues.py``,
@@ -33,34 +34,13 @@ from retraite_notionnelle.donnees.chargement import (
     DonneeInsuffisante,
     charger_periodes_non_travaillees,
 )
-from retraite_notionnelle.saisie import (
-    AGE_DEBUT_MINIMAL,
-    AGE_LIQUIDATION_MAXIMAL,
-    AGES_REFERENCE,
-    ANNEE_CARRIERE_MAXIMALE,
-    ANNEE_CARRIERE_MINIMALE,
-    ANNEE_MAXIMALE,
-    ANNEE_MINIMALE,
-    ENFANTS_MAXIMUM,
-    INDEXATIONS,
-    LISSAGE_MAXIMUM,
-    METIERS_MAXIMUM,
-    PROFILS,
-    PROJECTIONS,
-    RELEVE_MAXIMUM,
-    SANS_EMPLOI,
-    POPULATIONS,
-    RATTACHEMENTS,
-    TABLES,
-    ErreurSaisie,
-    Saisie,
-)
-from retraite_notionnelle.contexte import Contexte, Montants
+from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.remuneration import charger_prelevements
 from retraite_notionnelle.web.site import disponible, module, rendre, site
+from outils_pont import RefusDuPortage, Saisies, saisie_du_portage
 from outils_web import (
     FEUILLE_DE_STYLE, SIMULATION_TEMOIN, TITRES, _hors_depliants, _sans_blocs, contexte,
-    g, page, pages,
+    g, montants_du_portage, page, pages, saisies,
 )
 from outils_portage import moitie_python
 
@@ -70,6 +50,8 @@ from outils_portage import moitie_python
 #: node, rien du site ne se lit, et ses tests sont sautés.
 pytestmark = pytest.mark.skipif(not disponible(),
                                 reason="node absent : le site ne se lit pas sans lui")
+#: La saisie du portage : ses bornes, ses menus, sa classe.
+SAISIE = module("saisie")
 
 
 # -- pages -------------------------------------------------------------------
@@ -202,12 +184,11 @@ def test_statuts_proposes():
     assert all(entree["libelle"] for entree in donnees)
 
 
-def test_simulation_en_dictionnaire(contexte):
-    saisie = Saisie.depuis_requete(
+def test_simulation_en_dictionnaire(saisies):
+    donnees = saisies.simuler(
         {"naissance": "1975", "statut": "fonctionnaire_etat",
          "debut": "23", "liquidation": "64", "primes": "0.2"}
-    )
-    donnees = contexte.simuler(saisie).dictionnaire()
+    ).dictionnaire()
     assert donnees["assure"]["annee_naissance"] == 1975
     scenarios = donnees["scenarios"]
     assert scenarios["actuel"]["pension_annuelle"] > 0
@@ -215,20 +196,19 @@ def test_simulation_en_dictionnaire(contexte):
     assert donnees["fiabilite"]
 
 
-def test_un_statut_ferme_est_refuse_a_qui_y_entre_apres_la_fermeture(contexte):
+def test_un_statut_ferme_est_refuse_a_qui_y_entre_apres_la_fermeture(saisies):
     """Un jeune d'aujourd'hui ne peut pas se déclarer mineur.
 
     Le régime des mines est fermé aux recrutés depuis le 1er septembre 2010
     (décret n° 2010-975). Le routage le savait et envoyait ce mineur-là au
     régime général, en silence : la page affichait « Mineur » au-dessus d'une
     pension de salarié du privé. Le refus dit la date d'entrée, la date de
-    fermeture et le statut de droit commun qui porte le même calcul.
+    fermeture et le statut de droit commun qui porte le même calcul. Le refus
+    est celui du portage, qui bâtit la carrière.
     """
-    saisie = Saisie.depuis_requete(
-        {"naissance": "2000", "statut": "mineur", "debut": "20", "liquidation": "64"}
-    )
-    with pytest.raises(ErreurSaisie) as refus:
-        contexte.simuler(saisie)
+    with pytest.raises(RefusDuPortage) as refus:
+        saisies.simuler(
+            {"naissance": "2000", "statut": "mineur", "debut": "20", "liquidation": "64"})
     message = str(refus.value)
     assert "« Mineur »" in message
     assert "depuis septembre 2010" in message
@@ -236,14 +216,13 @@ def test_un_statut_ferme_est_refuse_a_qui_y_entre_apres_la_fermeture(contexte):
     assert "« Salarié du secteur privé, non cadre »" in message
 
     # Le même statut, pour qui y était avant : accepté, et au régime des mines.
-    saisie = Saisie.depuis_requete(
-        {"naissance": "1980", "statut": "mineur", "debut": "20", "liquidation": "64"}
-    )
-    regimes = {p.regime for p in contexte.simuler(saisie).actuel.pensions_par_regime}
+    comparaison = saisies.simuler(
+        {"naissance": "1980", "statut": "mineur", "debut": "20", "liquidation": "64"})
+    regimes = {p.regime for p in comparaison.actuel.pensions_par_regime}
     assert "mines" in regimes
 
 
-def test_la_fermeture_se_lit_au_mois_et_sur_la_date_d_entree(contexte):
+def test_la_fermeture_se_lit_au_mois_et_sur_la_date_d_entree(saisies):
     """La loi ferme la RATP « aux recrutés à compter du 1er septembre 2023 ».
 
     Né en décembre 2001, entré à vingt et un ans : décembre 2022, avant la
@@ -253,13 +232,12 @@ def test_la_fermeture_se_lit_au_mois_et_sur_la_date_d_entree(contexte):
     autant : c'est la date d'entrée qui décide, non la première ligne.
     """
     def regimes(champs):
-        return {p.regime for p in contexte.simuler(
-            Saisie.depuis_requete(champs)).actuel.pensions_par_regime}
+        return {p.regime for p in saisies.simuler(champs).actuel.pensions_par_regime}
 
     avant = {"naissance": "2001", "naissance_mois": "12", "statut": "agent_ratp",
              "debut": "21", "liquidation": "64"}
     assert "ratp" in regimes(avant)
-    with pytest.raises(ErreurSaisie, match="septembre 2023"):
+    with pytest.raises(RefusDuPortage, match="septembre 2023"):
         regimes({**avant, "naissance": "2002", "naissance_mois": "9"})
 
     second_metier = {"naissance": "1975", "naissance_mois": "10",
@@ -267,11 +245,11 @@ def test_la_fermeture_se_lit_au_mois_et_sur_la_date_d_entree(contexte):
                      "liquidation": "64", "metier2_debut": "47",
                      "metier2_statut": "agent_ratp", "metier2_salaire": "1"}
     assert "ratp" in regimes(second_metier)
-    with pytest.raises(ErreurSaisie, match=r"Métier n° 2 : le statut"):
+    with pytest.raises(RefusDuPortage, match=r"Métier n° 2 : le statut"):
         regimes({**second_metier, "metier2_debut": "48"})
 
 
-def test_le_menu_des_statuts_est_date(page, contexte):
+def test_le_menu_des_statuts_est_date(page, saisies):
     """Chaque statut dit entre quelles dates il se déclare, et le menu grise
     ceux que l'entrée saisie ferme — sauf la sélection, qu'un navigateur
     n'enverrait pas si elle était désactivée."""
@@ -294,8 +272,7 @@ def test_le_menu_des_statuts_est_date(page, contexte):
     assert (">Profession libérale non réglementée (consultant, formateur, coach, "
             "développeur…) (depuis 1949)<") in texte
     def regimes(champs):
-        return {p.regime for p in contexte.simuler(
-            Saisie.depuis_requete(champs)).actuel.pensions_par_regime}
+        return {p.regime for p in saisies.simuler(champs).actuel.pensions_par_regime}
     assert regimes({"naissance": "1995", "statut": "liberal_non_reglemente",
                     "debut": "25", "liquidation": "64"}) >= {"regime_general", "rci"}
     assert regimes({"naissance": "1985", "statut": "liberal_non_reglemente",
@@ -308,14 +285,11 @@ def test_le_menu_des_statuts_est_date(page, contexte):
     assert dates["salarie_prive_non_cadre"]["fermeture_entrants"] is None
 
 
-def test_statut_inconnu_est_refuse(contexte):
+def test_statut_inconnu_est_refuse(saisies):
     """La saisie est bien formée : c'est le catalogue des régimes qui tranche."""
-    saisie = Saisie.depuis_requete(
-        {"naissance": "1975", "statut": "astronaute",
-         "debut": "23", "liquidation": "64"}
-    )
-    with pytest.raises(ErreurSaisie):
-        contexte.simuler(saisie)
+    with pytest.raises(RefusDuPortage, match="astronaute"):
+        saisies.simuler({"naissance": "1975", "statut": "astronaute",
+                         "debut": "23", "liquidation": "64"})
 
 
 # -- rendu -------------------------------------------------------------------
@@ -669,12 +643,13 @@ def test_le_portage_javascript_retrouve_les_chiffres_du_modele():
 
 def _carrieres_au_hasard() -> list[dict]:
     """Les carrières du test suivant, et ce que le modèle en calcule, ou le
-    refus qu'il leur oppose."""
+    refus qu'il leur oppose : la carrière que le portage bâtit de chaque
+    requête, par le pont, et que le moteur Python simule."""
     import random
 
-    contexte = Contexte()
+    saisies = Saisies()
     alea = random.Random(20260828)
-    statuts = list(contexte.simulateur().affiliations.codes)
+    statuts = list(saisies.simulateur().affiliations.codes)
     cas = []
     for numero in range(60):
         # Les âges sont tirés EN MOIS, et le mois de naissance avec : c'est là
@@ -693,18 +668,18 @@ def _carrieres_au_hasard() -> list[dict]:
             "liquidation": str(liquidation // 12),
             "liquidation_mois": str(liquidation % 12),
             "salaire": f"{alea.uniform(0.1, 9):.3f}",
-            "profil": alea.choice([code for code, _ in PROFILS]),
+            "profil": alea.choice([code for code, _ in SAISIE.PROFILS]),
             "primes": f"{alea.uniform(0, 0.6):.3f}",
             "enfants": str(alea.randint(0, 6)),
-            "indexation": alea.choice([code for code, _ in INDEXATIONS]),
+            "indexation": alea.choice([code for code, _ in SAISIE.INDEXATIONS]),
             # Fenêtre quelconque, et non plus l'une des trois autrefois
             # proposées : c'est la saisie libre qu'il s'agit de contrôler.
-            "lissage": str(alea.randint(1, LISSAGE_MAXIMUM)),
-            "age_reference": alea.choice([code for code, _ in AGES_REFERENCE]),
-            "table": alea.choice([code for code, _ in TABLES]),
-            "population": alea.choice([code for code, _ in POPULATIONS]),
-            "rattachement": alea.choice([code for code, _ in RATTACHEMENTS]),
-            "projection": alea.choice([code for code, _ in PROJECTIONS]),
+            "lissage": str(alea.randint(1, SAISIE.LISSAGE_MAXIMUM)),
+            "age_reference": alea.choice([code for code, _ in SAISIE.AGES_REFERENCE]),
+            "table": alea.choice([code for code, _ in SAISIE.TABLES]),
+            "population": alea.choice([code for code, _ in SAISIE.POPULATIONS]),
+            "rattachement": alea.choice([code for code, _ in SAISIE.RATTACHEMENTS]),
+            "projection": alea.choice([code for code, _ in SAISIE.PROJECTIONS]),
             "bascule": str(alea.randint(1945, 2065)),
             "euros": str(alea.randint(1945, 2065)),
             "interruptions": alea.choice(["", f"{alea.randint(1985, 2005)}:"
@@ -724,8 +699,8 @@ def _carrieres_au_hasard() -> list[dict]:
             requete[f"metier{rang}_salaire"] = f"{alea.uniform(0.1, 9):.3f}"
         nom = f"aleatoire_{numero}"
         try:
-            resultat = contexte.simuler(Saisie.depuis_requete(requete)).dictionnaire()
-        except (ErreurSaisie, DonneeInsuffisante, KeyError, ValueError) as erreur:
+            resultat = saisies.simuler(requete).dictionnaire()
+        except (RefusDuPortage, DonneeInsuffisante, KeyError, ValueError) as erreur:
             cas.append({"nom": nom, "requete": requete, "erreur": str(erreur)})
             continue
         cas.append({"nom": nom, "requete": requete, "resultat": _sans_nan(resultat)})
@@ -883,7 +858,7 @@ def test_un_regime_integre_se_dit_d_une_seule_pension():
 
 
 @pytest.mark.parametrize("residence", [None, "ES"])
-def test_la_cotisation_de_la_sncf_reste_sur_son_regime_integre(contexte, residence):
+def test_la_cotisation_de_la_sncf_reste_sur_son_regime_integre(saisies, residence):
     """Décret n° 2007-1056, art. 7, IV : l'agent de la SNCF paie 0,70 % de SA
     pension, sous le plafond. Venu au chemin de fer après vingt-trois ans dans
     le privé, il a aussi une retraite de base et une complémentaire : la ligne
@@ -902,17 +877,16 @@ def test_la_cotisation_de_la_sncf_reste_sur_son_regime_integre(contexte, residen
               "metier2_debut": "45", "metier2_statut": "agent_sncf", "montants": "net"}
     if residence is not None:
         champs["residence"] = residence
-    saisie = Saisie.depuis_requete(champs)
-    comparaison = contexte.simuler(saisie)
+    comparaison = saisies.simuler(champs)
     assert comparaison.aujourd_hui is None
-    montants = Montants.depuis(saisie, contexte.base, comparaison)
-    catalogue = contexte.simulateur().catalogue
+    montants = montants_du_portage(champs)
+    catalogue = saisies.simulateur().catalogue
     bruts = {}
     for pension in comparaison.actuel.pensions_par_regime:
         etage = catalogue[pension.regime].etage
         bruts[etage] = (bruts.get(etage, 0.0)
                         + pension.montant * comparaison.coefficient_euros_constants / 12)
-    pensions = charger_prelevements(contexte.base.racine_donnees).pensions
+    pensions = charger_prelevements(Parametres().racine_donnees).pensions
     plafond = pensions.regimes_speciaux[0].plafond_annuel / 12
     if residence is None:
         assert montants.tranche == "taux plein"
@@ -938,7 +912,7 @@ def test_la_cotisation_de_la_sncf_reste_sur_son_regime_integre(contexte, residen
     assert sum(affiches.values()) == montant
 
 
-def test_la_reversion_de_la_sncf_paie_sa_cotisation_sous_la_moitie_du_plafond(contexte):
+def test_la_reversion_de_la_sncf_paie_sa_cotisation_sous_la_moitie_du_plafond(saisies):
     """Décret n° 2007-1056, art. 7, VII : les plafonds de la SNCF sont
     « réduits de moitié concernant les titulaires d'une pension de
     réversion ». Dans la carte de la réversion, la pension de l'agent paie
@@ -950,17 +924,16 @@ def test_la_reversion_de_la_sncf_paie_sa_cotisation_sous_la_moitie_du_plafond(co
     champs = {"naissance": "1960", "statut": "agent_sncf", "liquidation": "57",
               "unite_revenu": "moyen", "salaire": "2", "enfants": "3", "conjoint": "1962",
               "montants": "net"}
-    saisie = Saisie.depuis_requete(champs)
-    comparaison = contexte.simuler(saisie)
-    montants = Montants.depuis(saisie, contexte.base, comparaison)
+    comparaison = saisies.simuler(champs)
+    montants = montants_du_portage(champs)
     assert montants.tranche == "taux plein"
     reversion = comparaison.dictionnaire()["reversion"]
     ligne, = reversion["regimes"]
-    coefficient = contexte.simulateur().macro.coefficient_prix(
-        reversion["annee"], int(saisie.euros))
+    coefficient = saisies.simulateur().macro.coefficient_prix(
+        reversion["annee"], int(saisie_du_portage(champs).euros))
     base, servie, majoration = (ligne[cle] * coefficient / 12
                                 for cle in ("base", "montant", "majoration"))
-    pensions = charger_prelevements(contexte.base.racine_donnees).pensions
+    pensions = charger_prelevements(Parametres().racine_donnees).pensions
     plafond = pensions.regimes_speciaux[0].plafond_annuel / 12
     taux = pensions.taux_total
     assert base > plafond and servie - majoration > plafond / 2 and majoration > 0
@@ -1063,7 +1036,7 @@ def _centimes(cellule: str) -> float | None:
      {"naissance": "1950", "sexe": "F", "debut": "30", "liquidation": "65",
       "unite_revenu": "moyen", "salaire": "0.15"}),
 ])
-def test_le_tableau_par_origine_s_additionne_colonne_par_colonne(nom, champs):
+def test_le_tableau_par_origine_s_additionne_colonne_par_colonne(saisies, nom, champs):
     """Les quatre systèmes, régime par régime : chaque colonne fait son total
     sur les montants AFFICHÉS, à un demi-centime près par ligne, comme le
     tableau du système 1 ; l'étage de plusieurs régimes fait, lui, au centime,
@@ -1106,7 +1079,7 @@ def test_le_tableau_par_origine_s_additionne_colonne_par_colonne(nom, champs):
     chaine = _bloc(corps, "Construction du compte notionnel rétroactif", "</table>")
     assert totaux[1] == _nombres(_bloc(chaine, "Pension annuelle, en euros de",
                                        "</tr>"))[-1], nom
-    resultat = Contexte().simuler(Saisie.depuis_requete(champs)).dictionnaire()
+    resultat = saisies.simuler(champs).dictionnaire()
     liberal = resultat["scenarios"]["notionnel_liberal"]["pension_annuelle"]
     ramene = (liberal * resultat["liquidation_liberal"]["coefficient_euros_constants"]
               / resultat["unite"]["coefficient"])
@@ -1327,7 +1300,7 @@ def test_les_colonnes_derivees_de_la_page_cout_se_refont():
     ("départ très anticipé", {"naissance": "1975", "debut": "30", "liquidation": "55"}),
     ("bas salaire", {"naissance": "1955", "unite_revenu": "moyen", "salaire": "0.4"}),
 ])
-def test_la_formule_affichee_retrouve_la_pension_du_regime(contexte, nom, champs):
+def test_la_formule_affichee_retrouve_la_pension_du_regime(saisies, nom, champs):
     """La colonne « Calcul » doit produire le montant de la ligne.
 
     Elle est écrite pour être refaite : points × valeur de service, cotisations
@@ -1335,7 +1308,7 @@ def test_la_formule_affichee_retrouve_la_pension_du_regime(contexte, nom, champs
     dernier manquait, si bien qu'à dix ans d'anticipation la formule donnait
     2,3 fois le montant affiché.
     """
-    comparaison = contexte.simuler(Saisie.depuis_requete(champs))
+    comparaison = saisies.simuler(champs)
     for pension in comparaison.actuel.pensions_par_regime:
         if "points ×" not in pension.detail:
             continue
@@ -1476,7 +1449,7 @@ def _refaire_la_formule(detail: str) -> float | None:
     return montant
 
 
-def test_toute_formule_affichee_retrouve_le_montant_de_sa_ligne(contexte):
+def test_toute_formule_affichee_retrouve_le_montant_de_sa_ligne(saisies):
     """Balayage de tous les statuts, à l'heure et anticipé.
 
     La colonne « Calcul » est écrite pour être refaite. Trois facteurs y
@@ -1518,8 +1491,8 @@ def test_toute_formule_affichee_retrouve_le_montant_de_sa_ligne(contexte):
                       "liquidation": liquidation, "unite_revenu": "moyen",
                       "salaire": "0.4"}
             try:
-                comparaison = contexte.simuler(Saisie.depuis_requete(champs))
-            except (ErreurSaisie, DonneeInsuffisante, KeyError, ValueError):
+                comparaison = saisies.simuler(champs)
+            except (RefusDuPortage, DonneeInsuffisante, KeyError, ValueError):
                 continue
             for pension in comparaison.actuel.pensions_par_regime:
                 refait = _refaire_la_formule(pension.detail)
@@ -1545,8 +1518,7 @@ def test_toute_formule_affichee_retrouve_le_montant_de_sa_ligne(contexte):
                         f"la ligne affiche {montant:,.2f} €"
                     )
     for nom, champs in particuliers:
-        for pension in contexte.simuler(
-                Saisie.depuis_requete(champs)).actuel.pensions_par_regime:
+        for pension in saisies.simuler(champs).actuel.pensions_par_regime:
             refait = _refaire_la_formule(pension.detail)
             if refait is None or pension.montant == 0:
                 continue
@@ -1684,11 +1656,12 @@ def test_le_portage_javascript_arrondit_comme_python():
     assert execution.returncode == 0, execution.stdout + execution.stderr
 
 
-def _refus_du_modele(contexte, requete: dict) -> str | None:
-    """Ce que le modèle Python refuse de cette saisie, ou ``None`` s'il la calcule."""
+def _refus_du_modele(saisies, requete: dict) -> str | None:
+    """Le refus que le pont rapporte de cette saisie — celui de la saisie du
+    portage, ou de sa carrière —, ou ``None`` si le moteur Python la calcule."""
     try:
-        contexte.simuler(Saisie.depuis_requete(requete))
-    except ErreurSaisie as erreur:
+        saisies.simuler(requete)
+    except RefusDuPortage as erreur:
         return str(erreur)
     return None
 
@@ -1705,7 +1678,7 @@ def _refus_de_la_page(corps: str) -> str | None:
 TROUS = ("NaN", "undefined", "Infinity", "[object Object]")
 
 
-def test_les_pages_au_hasard_calculent_et_refusent_comme_le_modele(contexte):
+def test_les_pages_au_hasard_calculent_et_refusent_comme_le_modele(saisies):
     """Des saisies auxquelles personne n'a pensé, dans les deux unités et
     jusqu'à leurs bords.
 
@@ -1716,15 +1689,18 @@ def test_les_pages_au_hasard_calculent_et_refusent_comme_le_modele(contexte):
     mot ; une saisie qu'il calcule, la page la rend sans trou — ni ``NaN``, ni
     ``undefined``, ni ``Infinity``. La comparaison des seuls résultats
     (``tests/js/comparer.mjs``) ne voit ni les libellés, ni les aides chiffrées,
-    ni le lien de bascule d'unité : c'est là que ces trous se logeraient.
+    ni le lien de bascule d'unité : c'est là que ces trous se logeraient. La
+    saisie n'a plus qu'un exemplaire, le portage (action 161, étape 6) : le
+    refus du modèle est celui que le pont en rapporte, et le moteur Python
+    simule la carrière de toute saisie que la page calcule.
     """
     import random
 
     alea = random.Random(20260910)
-    statuts = list(contexte.simulateur().affiliations.codes)
+    statuts = list(saisies.simulateur().affiliations.codes)
     # Les bords comptent plus que le milieu : ce sont eux que l'arrondi fait
     # basculer d'un côté ou de l'autre des bornes du modèle.
-    echelle = contexte.echelle(Saisie())
+    echelle = site().contexte.echelle(SAISIE.Saisie())
     plancher, plafond = round(echelle.mensuel(0.1)), round(echelle.mensuel(10))
     euros = [str(plancher - 1), str(plancher), str(plafond), str(plafond + 1),
              "0", "3500", "1", f"{alea.uniform(1, 40000):.2f}"]
@@ -1744,7 +1720,7 @@ def test_les_pages_au_hasard_calculent_et_refusent_comme_le_modele(contexte):
             "liquidation": str(alea.randint(max(41, debut + 1), 75)),
             "unite_revenu": unite,
             "salaire": alea.choice(euros if unite == "euros_mois" else multiples),
-            "profil": alea.choice([code for code, _ in PROFILS]),
+            "profil": alea.choice([code for code, _ in SAISIE.PROFILS]),
         }
         for rang, age in enumerate(sorted(alea.sample(
                 range(debut + 1, int(requete["liquidation"])),
@@ -1786,12 +1762,12 @@ def test_les_pages_au_hasard_calculent_et_refusent_comme_le_modele(contexte):
     for requete in requetes:
         corps = re.sub(r'(<pre class="json">).*?(</pre>)', r"\1\2",
                        rendre("/simuler", requete)[1], flags=re.S)
-        assert _refus_de_la_page(corps) == _refus_du_modele(contexte, requete), requete
+        assert _refus_de_la_page(corps) == _refus_du_modele(saisies, requete), requete
         for trou in TROUS:
             assert trou not in corps, (trou, requete)
 
 
-def test_les_refus_de_saisie_disent_le_mot_du_modele(contexte):
+def test_les_refus_de_saisie_disent_le_mot_du_modele(saisies):
     """Un refus est une page comme une autre, et le modèle en dit le mot.
 
     Le tirage au hasard de la page précédente ne produit guère que des
@@ -1799,8 +1775,9 @@ def test_les_refus_de_saisie_disent_le_mot_du_modele(contexte):
     quand il refuse. Ce sont pourtant elles que le lecteur lit le plus
     souvent, et elles citent des bornes — années, motifs, âges — que les deux
     moteurs pourraient écrire autrement sans qu'aucun chiffre ne bouge. La
-    saisie se lit dans les deux langages : le refus de la page doit être
-    celui du modèle, mot pour mot.
+    saisie n'a plus qu'un exemplaire, le portage (action 161, étape 6) : le
+    refus de la page doit être celui que le pont rapporte de la saisie, mot
+    pour mot, et chaque saisie tomber du côté que ce test lui assigne.
     """
     refuses = [
         {"interruptions": "0:999999999:chomage_indemnise"},
@@ -1866,7 +1843,7 @@ def test_les_refus_de_saisie_disent_le_mot_du_modele(contexte):
          "etranger2_pays": "AT", "etranger2_debut": "1998-12", "etranger2_fin": "2001-01"},
         {"pension_etrangere1_pays": "DE", "pension_etrangere1_debut": "2040-01"},
         {"pension_etrangere1_pays": "DE", "pension_etrangere1": "300",
-         "pension_etrangere1_debut": f"{1975 + AGE_LIQUIDATION_MAXIMAL + 1}-01"},
+         "pension_etrangere1_debut": f"{1975 + SAISIE.AGE_LIQUIDATION_MAXIMAL + 1}-01"},
         {"etranger1_pays": "ZZ", "etranger1_debut": "1995-01", "etranger1_fin": "1999-01"},
         {"residence": "OI"},
         # La réversion des non-salariés agricoles (action 138, étape 8) : un
@@ -1882,9 +1859,9 @@ def test_les_refus_de_saisie_disent_le_mot_du_modele(contexte):
     # une borne posée d'un cran trop loin se verrait ici, et nulle part ailleurs.
     acceptees = [
         {"interruptions": "1995:1999:education_enfant"},
-        {"interruptions": f"{ANNEE_CARRIERE_MINIMALE}:1990:sans_activite"},
+        {"interruptions": f"{SAISIE.ANNEE_CARRIERE_MINIMALE}:1990:sans_activite"},
         {"unite_revenu": "euros_mois", "salaire": "1e3"},
-        {"enfants": str(ENFANTS_MAXIMUM)},
+        {"enfants": str(SAISIE.ENFANTS_MAXIMUM)},
         {"inaptitude": "oui"},
         {"invalidite": "2020-03"},
         {"statut": "fonctionnaire_etat", "radiation_invalidite": "2010-01",
@@ -1909,7 +1886,7 @@ def test_les_refus_de_saisie_disent_le_mot_du_modele(contexte):
         for champs in champs_:
             requete = {"naissance": "1975", **champs}
             page = _refus_de_la_page(rendre("/simuler", requete)[1])
-            modele = _refus_du_modele(contexte, requete)
+            modele = _refus_du_modele(saisies, requete)
             # Le test ne vaut que si chaque saisie tombe du côté attendu : une
             # borne relâchée les ferait toutes calculer, et la comparaison
             # passerait sans rien couvrir.
@@ -2551,7 +2528,7 @@ def test_le_simulateur_tient_en_peu_de_mots():
     assert _mots_visibles(resultats) <= 1300, "les résultats reprennent de la prose"
 
 
-def test_le_sexe_ne_change_rien_par_defaut(contexte):
+def test_le_sexe_ne_change_rien_par_defaut(saisies):
     """C'est ce qui justifie sa place dans les options de modélisation.
 
     Il ne compte que de deux façons — table de conversion par sexe, majoration
@@ -2564,9 +2541,7 @@ def test_le_sexe_ne_change_rien_par_defaut(contexte):
 
     def resultat(**champs) -> str:
         import json
-        dictionnaire = contexte.simuler(
-            Saisie.depuis_requete({**base, **champs})
-        ).dictionnaire()
+        dictionnaire = saisies.simuler({**base, **champs}).dictionnaire()
         # Le résultat REDIT le sexe saisi : c'est ce qui a servi à calculer,
         # et le comparer reviendrait à comparer la saisie à elle-même.
         dictionnaire["assure"].pop("sexe")

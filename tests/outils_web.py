@@ -56,6 +56,18 @@ def saisies() -> Saisies:
     return _PARTAGES["saisies"]
 
 
+def montants_du_portage(requete: dict, simuler: bool = True):
+    """Les montants que la page applique à une saisie, ceux du portage
+    (``Montants.depuis``, ``moteur/js/contexte.js``) : sur sa simulation, qui
+    fixe le taux de la personne, ou, ``simuler=False``, sans elle, comme la
+    page prend ceux d'un départ de l'estimation."""
+    saisie, portage = saisie_du_portage(requete), site().contexte
+    simulateur = portage.simulateur(saisie.parametres(portage.base))
+    if not simuler:
+        return module("contexte").Montants.depuis(saisie, simulateur)
+    return module("contexte").Montants.depuis(saisie, simulateur, portage.simuler(saisie))
+
+
 def _echelle():
     """L'échelle des salaires du jeu de paramètres par défaut, celle du portage.
 

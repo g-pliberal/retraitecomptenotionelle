@@ -32,7 +32,7 @@ from retraite_notionnelle.droit import ouvrir
 from retraite_notionnelle.pilote import DEPARTS_DE_L_ESTIMATION, ages_de_l_estimation
 from retraite_notionnelle.web.site import ErreurSite, module, site
 from outils_pont import RefusDuPortage, refus_de_la_saisie, saisie_du_portage
-from outils_web import page, saisies  # noqa: F401 — les fixtures partagées
+from outils_web import montants_du_portage, page, saisies  # noqa: F401 — les fixtures partagées
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -334,14 +334,6 @@ def _bloc(corps: str) -> str:
     return corps[debut:corps.index("</table>", debut)]
 
 
-def _montants_du_portage(requete: dict):
-    """Les montants que la page applique à une saisie : ceux du portage
-    (``Montants.depuis``, ``moteur/js/contexte.js``)."""
-    saisie, portage = saisie_du_portage(requete), site().contexte
-    return module("contexte").Montants.depuis(
-        saisie, portage.simulateur(saisie.parametres(portage.base)))
-
-
 def test_la_page_montre_le_brut_par_etage_le_net_puis_l_ecart(saisies, page):
     requete = {**REQUETES["trois_ages"], "estimation_legal": "2500",
                "estimation_automatique": "3300"}
@@ -355,7 +347,7 @@ def test_la_page_montre_le_brut_par_etage_le_net_puis_l_ecart(saisies, page):
     # Le net de chaque âge, à SA tranche : sous la présomption, son revenu
     # fiscal est fait de cette pension seule ; et 1 % de sa propre part
     # complémentaire aux deux derniers taux (action 138, étape 2).
-    montants = _montants_du_portage(requete)
+    montants = montants_du_portage(requete, simuler=False)
     for (tete, cellules), depart, recopie in zip(rangees, departs, (2500, None, 3300)):
         valeurs = re.findall(r"<td[^>]*>(.*?)</td>", cellules)
         base, complementaire, total, net = (_nombres(v) for v in valeurs[:4])
@@ -454,7 +446,7 @@ def test_les_departs_sous_trois_etats_du_droit(saisies, page):
                        "Net au taux plein", "Durée requise"]
     rangees = re.findall(r'<tr><th[^>]*scope="row">(.*?)</th>(.*?)</tr>', bloc)
     assert len(rangees) == 3
-    montants = _montants_du_portage(REQUETES["trois_ages"])
+    montants = montants_du_portage(REQUETES["trois_ages"], simuler=False)
 
     def net(depart) -> int:
         return round(montants.net_d_un_depart(
