@@ -225,7 +225,12 @@ leur part et à leurs années, le chômage et l'AVPF compris
 (:data:`NATURES_A_LEUR_PART`) : la population mettait du chômage à tous les
 hommes qui n'étaient pas malades, et à toutes les femmes ; chaque classe a
 désormais les années de ses natures que l'échantillon donne, sous celles de sa
-classe de centiles, et celle qui n'en a aucune n'en compte plus.
+classe de centiles, et celle qui n'en a aucune n'en compte plus. La
+vingt-cinquième (le 24 octobre 2026) donne à la maladie son propre rang
+(:data:`MALADIE_INDEPENDANTE`) : la vingt-quatrième mettait le chômage et la
+maladie au haut d'un même rang, et tous les malades au chômage, quand
+l'échantillon ne publie que la part de chaque nature ; les malades ont
+désormais les autres natures à la part de tous.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -592,7 +597,9 @@ ASSIMILEES_SELON_LE_RANG = True
 NATURES_SELON_LA_GENERATION = True
 
 #: Les classes de nature : des cinquièmes, chacun au milieu de son rang ;
-#: ceux qui ont les mêmes natures à chaque génération n'en font qu'un.
+#: ceux qui ont les mêmes natures à chaque génération n'en font qu'un. Sous
+#: :data:`MALADIE_INDEPENDANTE`, chacun se décline en autant de cinquièmes du
+#: rang de la maladie (:func:`rangs_de_nature`).
 CLASSES_DE_NATURE = 5
 
 #: La vingt-quatrième version (action 138, étape 14, le 23 octobre 2026) : les
@@ -623,6 +630,26 @@ CLASSES_DE_NATURE = 5
 #: (:func:`refaire_le_bloc`) ; l'AVPF d'avant 1972, qui n'existait pas, y reste
 #: du chômage.
 NATURES_A_LEUR_PART = True
+
+#: La vingt-cinquième version (action 138, étape 14, le 24 octobre 2026) : la
+#: maladie indépendante des autres natures. L'échantillon interrégimes de
+#: cotisants publie la part des affiliés qui ont validé chaque nature, non
+#: celle de ceux qui en ont deux ; sous la vingt-quatrième, le chômage et la
+#: maladie se donnaient au haut d'un même rang, et tous les malades étaient au
+#: chômage : la classe malade et au chômage de la génération 1955, sept années
+#: assimilées dont huit trimestres réputés cotisés, perdait la carrière
+#: longue. Or la note de la Cnav au COR sur la génération 1944 (séance du
+#: 25 mai 2011, document n° 10, tableau 11) donne, avec la part de ses
+#: retraités qui ont eu chaque période assimilée, celle de ceux qui en ont eu
+#: au moins une : 76,7 % des hommes, pour 49,9 % au chômage, 38,1 % malades,
+#: 8,1 % invalides et 2,9 % à l'AVPF. De 29,7 à 58,5 % de ses malades ont donc
+#: été au chômage, et non tous ; la part de tous, 49,9 %, celle de
+#: l'indépendance, y tombe. Sous cette constante, la maladie a son propre rang
+#: (:func:`rangs_de_nature`) : chaque classe de nature se décline en
+#: :data:`CLASSES_DE_NATURE` classes de la maladie, dont celles du haut sont
+#: malades, et les malades ont le service, l'AVPF et le chômage à la part de
+#: tous.
+MALADIE_INDEPENDANTE = True
 
 #: Les natures qui croissent avec l'âge, que :func:`natures_assimilees` ne lit
 #: qu'à 60 ans : les générations que l'échantillon ne voit pas jusque-là
@@ -1961,6 +1988,18 @@ def classes_de_nature(classes: list[tuple[int, tuple[tuple[int, float], ...],
     return sortie
 
 
+def rangs_de_nature() -> list[tuple[float, float]]:
+    """Le milieu du rang de chaque classe de nature d'un cinquième, ``(rang du
+    service, de l'AVPF et du chômage, rang de la maladie)`` : les
+    :data:`CLASSES_DE_NATURE` classes d'un seul rang, le même ; sous
+    :data:`MALADIE_INDEPENDANTE`, chacune déclinée en autant de classes de la
+    maladie, classe par classe."""
+    milieux = [(2 * nature + 1) / (2 * CLASSES_DE_NATURE) for nature in range(CLASSES_DE_NATURE)]
+    if not MALADIE_INDEPENDANTE:
+        return [(milieu, milieu) for milieu in milieux]
+    return [(milieu, maladie) for milieu in milieux for maladie in milieux]
+
+
 def natures_a_leur_part(classes: list[tuple[int, tuple[tuple[int, float], ...],
                                             tuple[tuple[int, float], ...], float]],
                         parts: dict[str, dict[int, tuple[float, float]]], assimilees: int,
@@ -1975,37 +2014,40 @@ def natures_a_leur_part(classes: list[tuple[int, tuple[tuple[int, float], ...],
     Le service se donne comme sous :func:`classes_de_nature`, une classe
     servant son année ; une classe a de l'AVPF quand le milieu de son rang passe
     sous la part des affiliés de sa génération qui en ont, du chômage ou de la
-    maladie quand il passe au-dessus de la part des autres. Chacune de ces
-    natures y compte les années qu'a chacun de ceux qui en ont
-    (:func:`part_et_duree`), arrondies, une au moins ; ``assimilees`` années
-    par classe en sont le plafond : quand les classes du cinquième en
-    demandent plus, ce que le service leur laisse se partage entre elles à
-    proportion. Une classe sans nature n'en compte aucune. Les classes qui ont
-    les mêmes natures à chaque génération n'en font qu'une ; celle qui porte le
-    milieu du rang du cinquième a le rang zéro, et garde le code de son
-    cinquième."""
+    maladie quand il passe au-dessus de la part des autres — celui de la
+    maladie, son propre rang sous :data:`MALADIE_INDEPENDANTE`
+    (:func:`rangs_de_nature`). Chacune de ces natures y compte les années qu'a
+    chacun de ceux qui en ont (:func:`part_et_duree`), arrondies, une au
+    moins ; ``assimilees`` années par classe en sont le plafond : quand les
+    classes du cinquième en demandent plus, ce que le service leur laisse se
+    partage entre elles à proportion. Une classe sans nature n'en compte
+    aucune. Les classes qui ont les mêmes natures à chaque génération n'en font
+    qu'une, sous le rang de la première ; celle qui porte le milieu du rang du
+    cinquième a le rang zéro, et garde le code de son cinquième."""
     generations = list(servent)
     lues = {generation: {nature: part_et_duree(parts[nature], generation)
                          for nature in ("maladie", "avpf", "chomage") if nature in parts}
             for generation in generations}
-    milieu_du_rang = CLASSES_DE_NATURE // 2
+    rangs = rangs_de_nature()
+    milieu_du_rang = len(rangs) // 2
     sortie = []
     for rang, entrees, services, poids in classes:
-        par_classe: list[list] = [[] for _ in range(CLASSES_DE_NATURE)]
+        par_classe: list[list] = [[] for _ in rangs]
         for generation in generations:
             servis, en_service = service[generation]
             reste = ((servis - servent[generation]) / (1.0 - servent[generation])
                      if servent[generation] < 1.0 else 0.0)
             avant = bool(_par_generation(services, generation, 0.0))
             demandes = []
-            for nature in range(CLASSES_DE_NATURE):
-                milieu = (2 * nature + 1) / (2 * CLASSES_DE_NATURE)
+            for milieu, de_la_maladie in rangs:
                 sert = en_service if milieu < reste and not avant else 0
                 siennes = {nom: duree for nom, (part, duree) in lues[generation].items()
                            if duree > 0.0
-                           and (milieu < part if nom == "avpf" else milieu > 1.0 - part)}
+                           and (milieu < part if nom == "avpf"
+                                else (de_la_maladie if nom == "maladie" else milieu)
+                                > 1.0 - part)}
                 demandes.append((sert, siennes))
-            masse = CLASSES_DE_NATURE * assimilees - somme_ordonnee(sert for sert, _ in demandes)
+            masse = len(rangs) * assimilees - somme_ordonnee(sert for sert, _ in demandes)
             total = somme_ordonnee(duree for _, siennes in demandes
                                    for duree in siennes.values())
             echelle = min(1.0, max(0.0, masse) / total) if total > 0.0 else 0.0
@@ -2018,7 +2060,7 @@ def natures_a_leur_part(classes: list[tuple[int, tuple[tuple[int, float], ...],
         groupes: dict[tuple, list] = {}
         for nature, annees in enumerate(par_classe):
             groupe = groupes.setdefault(tuple(annees), [nature + 1, 0.0, False])
-            groupe[1] += poids / CLASSES_DE_NATURE
+            groupe[1] += poids / len(rangs)
             groupe[2] = groupe[2] or nature == milieu_du_rang
         sortie.extend((rang, entrees, services, 0 if du_milieu else premier, cle, part)
                       for cle, (premier, part, du_milieu) in groupes.items())
