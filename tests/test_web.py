@@ -2892,15 +2892,19 @@ def test_le_tableau_des_regles_d_indexation_sort_bien_du_modele(contexte):
         if cellules
     }
 
+    # Le cumul des prix ne se répète plus sur chaque ligne : c'est la ligne
+    # « Indexation sur les prix », qui conserve 100 % (action 173, étape 10).
+    entete = corps[corps.rindex("<thead>", 0, debut):corps.index("</thead>", debut)]
+    assert [texte(cellule) for cellule in re.findall(r"<th[^>]*>(.*?)</th>", entete)] == [
+        "Règle appliquée 1941-2025", "Comptes", "Pouvoir d&#x27;achat conservé"]
     for libelle, mode, lissage in attendues:
         assert libelle in lignes, f"ligne « {libelle} » absente du tableau"
-        comptes, prix_affiche, conserve = lignes[libelle]
+        comptes, conserve = lignes[libelle]
         valeur = cumul(mode, lissage)
         assert comptes == "×" + g.nombre(valeur, 1), (
             f"{libelle} : la page affiche {comptes}, le modèle donne "
             f"×{g.nombre(valeur, 1)}"
         )
-        assert prix_affiche == "×" + g.nombre(prix, 1)
         attendu = g.pourcentage(valeur / prix, decimales=1)
         assert conserve == attendu, (
             f"{libelle} : la page conserve {conserve}, le modèle donne {attendu}"
@@ -3663,7 +3667,15 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # bornes s'additionnaient à 700 mots de prose, pour 631 lus ; la page
     # fusionnée en montre 557 — un seul « En clair », plus de plan —, et sa
     # borne est serrée d'autant.
-    "/methode": (600, 0, 1, 120),
+    # Serrée le 24 octobre 2026 (action 173, étape 10), de 600 mots de prose à
+    # 470, pour 557 lus, et de 120 à 90 dans le tableau, qui en montrait 100 :
+    # l'« En clair » et la deuxième opération disaient tous deux la règle par
+    # défaut, que la note du tableau redisait ; la troisième conséquence était
+    # la deuxième phrase du résumé ; la note des sources redisait la date de
+    # vérification que porte la fiche voisine ; et la colonne des prix
+    # répétait neuf fois le cumul que la ligne « Indexation sur les prix »
+    # donne.
+    "/methode": (470, 0, 1, 90),
     # Risque répond à la question d'un lecteur qui n'a pas fait d'économie
     # en deux cartes, chacune avec le tableau qui la montre : les cas
     # documentés à l'étranger, et le compte projeté du COR. Ce sont ces deux
@@ -3746,8 +3758,13 @@ def test_aucune_page_ne_depasse_son_budget_de_lecture(contexte, chemin):
 #: 23 octobre 2026, dont 1 121 sous la seule question des petites retraites, qui
 #: redisait trois fois ses montants, et 4 489 le soir (action 173, étape 3). Les
 #: menus déroulants et les bulles du glossaire n'y comptent pas : personne ne
-#: les lit à la suite ; le JSON des résultats non plus, qu'on copie. Une page
-#: dont on resserre les mots y prend sa ligne, à son adresse.
+#: les lit à la suite ; le JSON des résultats non plus, qu'on copie. Les bases
+#: non plus, les tables qu'un champ cherche et que des menus filtrent — les
+#: 176 séries recontrôlées et les 114 régimes de Méthode et sources, douze mille
+#: mots le 24 octobre 2026 — : on y cherche une ligne, et le dépôt les allonge
+#: à chaque série certifiée, à chaque régime recensé, que le budget aurait
+#: fait payer à la prose (action 173, étape 10). Une page dont on resserre les
+#: mots y prend sa ligne, à son adresse.
 BUDGETS_DEPLIES: dict[str, int] = {
     "/": 4500,
     # Simuler tout déplié : le formulaire et les résultats de la simulation
@@ -3783,6 +3800,13 @@ BUDGETS_DEPLIES: dict[str, int] = {
     # laisse : c'est l'inventaire. Ses dépliants annonçaient « trois choses »
     # qui étaient cinq, et renvoyaient au tableau que la carte venait de nommer.
     "/avantages": 7470,
+    # Méthode et sources tout déplié, hors ses deux bases : 5 944 mots le
+    # 24 octobre 2026 (action 173, étape 10). Ses dépliants redisaient trois
+    # fois que le choix des maturités ne change rien sous les taux à terme,
+    # deux fois ce qu'au-delà de trente ans la courbe ne cote plus, et
+    # finissaient sur une garantie qui ignorerait la rente du pilier, quand le
+    # même dépliant venait de dire qu'elle la reprend.
+    "/methode": 5650,
 }
 
 
@@ -3797,6 +3821,8 @@ def test_une_page_depliee_tient_son_budget(adresse):
                          flags=re.S)
     lu = re.sub(r"<select\b[^>]*>.*?</select>", " ", sans_bulles, flags=re.S)
     lu = re.sub(r"<pre\b[^>]*>.*?</pre>", " ", lu, flags=re.S)
+    for base in re.findall(r'data-cible="([^"]+)"', lu):
+        lu = re.sub(rf'<table id="{base}">.*?</table>', " ", lu, flags=re.S)
     mots = _mots(lu)
     assert mots <= BUDGETS_DEPLIES[adresse], (
         f"{chemin} : {mots} mots tout déplié, {BUDGETS_DEPLIES[adresse]} au plus"

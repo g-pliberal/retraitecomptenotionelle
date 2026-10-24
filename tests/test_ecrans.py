@@ -217,9 +217,10 @@ def test_un_trace_et_sa_legende_se_voient_ensemble():
 #: le formulaire et ses résultats, à l'étape 4 ; Coût, à l'étape 5 ;
 #: Pourquoi changer, à l'étape 6 ; Partager et Le saviez-vous ?, à l'étape 7 ;
 #: Carrières types, à l'étape 8, où une rangée en porte sept ; Droits non
-#: cotisés, à l'étape 9.
+#: cotisés, à l'étape 9 ; Méthode et sources, à l'étape 10 : toutes les pages
+#: du site.
 COTE_A_COTE = ["/", "/simuler", RESULTATS, "/cout", "/risque", "/partager",
-               "/saviez-vous", "/cas-types", "/avantages"]
+               "/saviez-vous", "/cas-types", "/avantages", "/methode"]
 
 
 def test_deux_valeurs_courtes_d_une_rangee_repliee_se_lisent_cote_a_cote():

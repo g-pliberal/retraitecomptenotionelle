@@ -14290,7 +14290,9 @@ function methode(contexte) {
       // chiffre qu'on vient lire, et il est mis en valeur.
       conserve = `<strong>${conserve}</strong>`;
     }
-    return [libelle, `×${g.nombre(valeur, 1)}`, `×${g.nombre(prix, 1)}`, conserve];
+    // Le cumul des prix n'a pas sa colonne : il était le même sur les neuf
+    // lignes, et la ligne « Indexation sur les prix » le donne, à 100 %.
+    return [libelle, `×${g.nombre(valeur, 1)}`, conserve];
   });
   const conserveLitteral = g.pourcentage(
     cumuls.get(REGLES_COMPAREES[0][0]) / prix, false, 1);
@@ -14300,37 +14302,35 @@ function methode(contexte) {
 
   const calcul = g.points([
     ["1. On inscrit",
-      "Chaque cotisation retraite réellement versée est portée au compte, "
-      + "au premier euro et sans plafond."],
+      "Chaque cotisation retraite réellement versée, au premier euro et sans "
+      + "plafond."],
     ["2. On revalorise",
-      "Le solde est augmenté chaque année d'un taux fixé par la règle "
-      + "collective : par défaut, le rythme auquel progresse la masse des "
-      + "salaires."],
+      "Chaque année, le solde croît du taux que fixe la règle collective."],
     ["3. On divise",
       "Au départ, <code>pension = solde ÷ espérance de vie restante</code>, "
       + "lue sur la table de votre génération."],
   ]);
 
   const tableauIndexation = g.tableau(
-    ["Règle appliquée 1941-2025", "Comptes", "Prix",
-      "Pouvoir d'achat conservé"],
+    ["Règle appliquée 1941-2025", "Comptes", "Pouvoir d'achat conservé"],
     lignesIndexation,
-    ["", "nombre", "nombre", "nombre"],
+    ["", "nombre", "nombre"],
     "Ce que chaque règle d'indexation aurait conservé du pouvoir "
     + "d'achat, 1941-2025",
     true,
   );
 
+  // L'année de la cotisation est celle du cumul du tableau : une somme versée
+  // en 1940, revalorisée de 1941 à 2025. La phrase disait « 1950 ».
   const carte = g.cle(
     "Qu'est-ce qui décide du résultat ?",
     `La règle de revalorisation, et de très loin. Selon celle qu'on
-retient, une cotisation de 1950 conserve ${conserveLitteral} de sa valeur, ou
+retient, une cotisation de ${ANNEE_VERSEMENT_COMPARE} conserve ${conserveLitteral} de sa valeur, ou
 onze fois plus. <strong>C'est de là que vient l'essentiel de l'écart affiché par
 les scénarios rétroactifs</strong>, bien plus que du passage aux comptes notionnels.`,
     tableauIndexation,
-    `La règle appliquée par défaut est la croissance de la masse des
-salaires : ce qu'un système en répartition peut servir sans toucher à son taux.
-Les huit autres restent à un clic, dans les options du simulateur.`,
+    `Le simulateur applique par défaut la masse salariale, et les huit autres à
+un clic, dans ses options.`,
   );
 
   const tete = g.affiche(
@@ -14348,17 +14348,16 @@ ${tete}
 <div class="note resume"><strong>En clair.</strong> Votre pension serait votre
 compte divisé par le nombre d'années qu'il vous reste à vivre, en moyenne.
 Chaque euro cotisé compte, et rien d'autre : ni trimestres, ni minimum, ni
-majoration. Le compte grossit chaque année au rythme de la masse des
-salaires, c'est-à-dire de ce que la répartition peut promettre sans mentir.
-Le système actuel, lui, est recalculé règle par règle sur la même carrière,
-pour servir de point de comparaison.</div>
+majoration. Le compte grossit chaque année comme la masse des salaires, ce que
+la répartition peut promettre sans mentir. Le système actuel, lui, est
+recalculé règle par règle sur la même carrière, pour servir de point de
+comparaison.</div>
 
 ${calcul}
 
-<p>Trois conséquences. La pension est exactement proportionnelle aux
-cotisations. Partir tôt coûte deux fois : moins de cotisations, et une pension à
-servir plus longtemps. Et aucun droit qu'une cotisation n'a pas financé
-n'existe. C'est la règle que <a href="${g.lien("/")}">le programme</a> propose,
+<p>La pension est donc exactement proportionnelle aux cotisations, et partir tôt
+coûte deux fois : moins de cotisations, et une pension à servir plus longtemps.
+C'est la règle que <a href="${g.lien("/")}">le programme</a> propose,
 et <a href="${g.lien("/cas-types")}">treize carrières types</a> montrent ce
 qu'elle déplace, génération par génération.</p>
 
@@ -14438,7 +14437,7 @@ function methodeCapitalisation(contexte) {
     `
 <p>La proposition ajoute, à compter de ${base.annee_bascule}, une
 cotisation de ${taux} prélevée sur la même assiette que la cotisation de
-répartition, <strong>en plus</strong> d'elle : elle ne s'y substitue pas. Elle
+répartition, <strong>en plus</strong> d'elle. Elle
 n'entre pas au compte notionnel, elle constitue un capital au nom du cotisant,
 dans un plan d'épargne retraite. Les années antérieures gardent les taux qui étaient les
 leurs et ne versent rien.</p>
@@ -14478,8 +14477,7 @@ pension : la garantie les reprend euro pour euro. Il leur reste ce que la
 répartition ne donne à personne, un capital qui se transmet.</p>
 
 <h3>Où l'argent est placé</h3>
-<p>Sur des titres sans risque, portés jusqu'à leur échéance, et choisis pour
-tomber le jour du départ. La courbe retenue
+<p>Sur des titres sans risque, portés jusqu'à leur échéance. La courbe retenue
 est celle des souverains les mieux notés de la zone euro, que la Banque centrale
 européenne publie chaque jour ouvré : c'est la définition opérationnelle du taux
 sans risque en euro. L'OAT française rend davantage : une cinquantaine de points
@@ -14496,13 +14494,9 @@ tient en une phrase : que le taux futur sera, en moyenne, le forward
 d'aujourd'hui. C'est l'hypothèse des anticipations pures, et elle ignore la
 prime de terme, c'est-à-dire le supplément qu'un prêteur exige pour immobiliser
 son argent. Quand la courbe monte, elle flatte donc légèrement le pilier, et
-c'est sous elle que les chiffres de ce site sont publiés. Elle a un second
-effet, moins visible : elle rend le choix des maturités
-<strong>sans conséquence</strong>, puisque c'est l'arbitrage qui détermine le
-forward. Le réglage <strong>« Taux futurs du pilier capitalisé »</strong> la
-retire, au milieu puis au haut de la fourchette de la littérature : la rente
-baisse, et c'est seulement alors que l'allocation se met à peser. Au-delà de trente ans, la courbe ne dit plus rien : le taux est
-prolongé à plat, et tout résultat qui en dépend est déclaré « estimé ».</p>
+c'est sous elle que les chiffres de ce site sont publiés. Le réglage
+<strong>« Taux futurs du pilier capitalisé »</strong> la retire, au milieu puis
+au haut de la fourchette de la littérature : la rente baisse.</p>
 
 <h3>Selon quelle règle les maturités sont choisies</h3>
 <p><strong>Chaque versement achète le titre qui arrive à échéance l'année du
@@ -14511,12 +14505,13 @@ départ</strong>, et rien d'autre. Le compte doit un capital à une
 tombe ce jour-là. Aucune ligne n'arrive à échéance après le départ, car il
 faudrait la vendre avant terme, à un prix qui n'est plus sans risque ; aucune
 non plus avant lui, tant que la courbe va jusque-là. Il n'y a donc rien à
-replacer, et aucun taux futur à deviner. Au-delà de trente ans la courbe ne cote plus rien, et un versement
-fait si tôt se couvre en deux temps : trente ans, puis le reste à
-l'échéance.</p>
+replacer, et aucun taux futur à deviner. Au-delà de trente ans, la courbe ne
+cote plus rien : le taux y est prolongé à plat, tout résultat qui en dépend est
+déclaré « estimé », et un versement fait si tôt se couvre en deux temps, trente
+ans puis le reste à l'échéance.</p>
 ${glissement}
-<p>Le pilier a longtemps fait autrement, et il vaut mieux le dire que de
-l'effacer : une échelle de trois maturités (deux, dix et trente ans) glissant
+<p>Le pilier a longtemps fait autrement : une échelle de trois maturités (deux,
+dix et trente ans) glissant
 du long vers le court à l'approche du départ, comme les fonds à échéance
 l'affichent. Deux choses l'ont fait tomber. La première est qu'elle
 <strong>ne changeait rien</strong> : tant que les taux futurs sont pris pour
@@ -14528,8 +14523,8 @@ vente incertain, et ce compte ne vend rien : il attend une date. Ce dont il
 avait à se protéger était l'inverse, le taux auquel chaque échéance serait
 replacée, et c'est l'échelle elle-même qui le créait.</p>
 <p><strong>Ce que l'adossement rapporte se lit au réglage des taux futurs.</strong>
-Sous le réglage par défaut, rien : les deux règles donnent le même euro, et
-l'adossement ne se justifie que par le risque qu'il supprime. En retirant une
+Sous le réglage par défaut, rien : il ne se justifie que par le risque qu'il
+supprime. En retirant une
 prime de terme de 0,50 point à trente ans, sur une carrière de trente-six ans
 partant en 2060, il rend 1,6 % de capital de plus que l'échelle glissante, soit
 7 € de rente par mois, et 6,2 % de plus qu'un roulement à un an. Le même
@@ -14595,10 +14590,7 @@ supprimer : il ne porte plus que sur les versements à venir et, au-delà de
 trente ans d'horizon, sur le replacement du bout de courbe. Les versements
 déjà faits, eux, sont bloqués jusqu'au départ. Il ne calcule aucune fiscalité :
 tous les montants du site sont bruts, ici comme ailleurs, alors que les
-versements au plan sont déductibles et la rente imposable. Et la garantie
-vieillesse ne regarde pas cette rente : elle est servie sur la seule pension
-contributive de répartition. Savoir si un pilier capitalisé doit réduire une
-allocation différentielle est une question de droit, pas de modèle.</p>`,
+versements au plan sont déductibles et la rente imposable.</p>`,
     "capitalisation",
   );
 }
@@ -14645,8 +14637,7 @@ C'est au système 3 qu'il faut le comparer.</p>
 
 <p><strong>Le PIB nominal</strong> pousse la même idée à l'assiette la plus
 large : il gagne ce que la masse salariale perd quand la valeur ajoutée se
-déplace vers les revenus non salariaux. La dernière ligne y ajoute un
-<strong>lissage sur cinq ans</strong>, comme le fait l'Italie.</p>
+déplace vers les revenus non salariaux.</p>
 
 <p><strong>Le lissage est un réglage à part</strong>, qui s'ajoute à n'importe
 quelle règle : une moyenne glissante du taux qu'elle produit. Il vise moins
@@ -14661,13 +14652,13 @@ tort de liquider cette année-là. Sur 1950-2025, le PIB nominal brut compte deu
 années où liquider plus tard rapporte moins ; lissé sur trois ou cinq ans,
 aucune.</p>
 
-<p class="discret">Deux réserves pour lire le tableau. Sur quatre-vingts ans, une
-moyenne glissante n'est pas neutre : elle mesure la croissance depuis une base
-reculée d'environ la moitié de la fenêtre, ce qui gonfle le cumul d'une
-vingtaine de pour cent à cinq ans, sans qu'aucune série ait changé ; sur une
-carrière, l'écart reste d'un à deux points. Et la règle italienne n'est reprise
-ici que par son taux, non par le reste du système italien. Enfin, le minimum
-n'est pas la seule statistique possible sur ces trois séries : la
+<p class="discret">Sur quatre-vingts ans, une moyenne glissante n'est pas
+neutre : elle mesure la croissance depuis une base reculée d'environ la moitié
+de la fenêtre, ce qui gonfle le cumul d'une vingtaine de pour cent à cinq ans,
+sans qu'aucune série ait changé ; sur une carrière, l'écart reste d'un à deux
+points. La règle italienne n'est reprise ici que par son taux, non par le reste
+du système italien. Et le minimum n'est pas la seule statistique possible sur
+ces trois séries : la
 <strong>médiane</strong> est un taux nominal trois années sur quatre, donc elle
 suit les prix et cesse d'être une règle d'austérité ; la <strong>moyenne</strong>
 est plus sévère que les prix, parce qu'elle incorpore un tiers de productivité
@@ -14677,7 +14668,7 @@ réelle <em>chaque</em> année. Les deux sont dans les options.</p>`);
 /** Ce que l'étalon reproduit du droit en vigueur. */
 function methodeDroitPositif() {
   return g.depliant("Ce que le système 1 applique du droit en vigueur", `
-<p>L'étalon ne vaut que par ce qu'il reproduit. Il applique la
+<p>L'étalon applique la
 ${g.terme("décote")} et la ${g.terme("surcote")}, la proratisation par la
 ${g.terme("durée", "durée d'assurance")}, le ${g.terme("salaire de référence")}
 de chaque régime (sur ses seules années, jamais sur toute la carrière), et cinq
@@ -14752,13 +14743,12 @@ function methodeSuppressions() {
 <p>Le principe « seules les cotisations comptent » est appliqué sans exception :
 ni minimum contributif, ni minimum garanti, ni ASPA, ni majoration pour enfants,
 ni majoration de durée d'assurance, ni AVPF, ni bonifications, ni catégorie
-active, ni périodes assimilées, ni réversion, ni décote ni surcote. Le
-système 1 les conserve tous, puisqu'il décrit le droit en vigueur.</p>
+active, ni périodes assimilées, ni réversion, ni décote ni surcote.</p>
 <p>Une exception : le <strong>système 4</strong>, la
 <a href="${g.lien("/")}">proposition du Parti libéral français</a>, remet un
-plancher, et un seul. C'est le système 3, à deux différences près : un taux
-unique de 18 % pour tous à compter de la bascule, salariale et patronale
-additionnées, les années antérieures restant portées au compte aux taux réels ;
+plancher, et un seul. C'est le système 3, avec un taux unique de 18 % pour tous
+à compter de la bascule, salariale et patronale additionnées, les années
+antérieures restant portées au compte aux taux réels ; le pilier capitalisé ;
 et une garantie vieillesse, différentielle et servie à 65 ans comme l'ASPA, mais
 individualisée — 800 € par personne, plus 250 € pour qui vit seul, en euros de
 2026 — et financée par l'impôt. La page de simulation en détaille chaque étape,
@@ -14843,8 +14833,7 @@ function methodeUnites(contexte) {
 <h4 id="unites">Brut, et pas net</h4>
 <p>Tout ce que le modèle manipule est <strong>brut</strong> : le revenu saisi,
 les cotisations versées, le capital notionnel, les quatre pensions. « Brut » a ici
-le sens des comptes nationaux : <em>salaires et traitements bruts</em> (D11)
-rapportés à l'emploi salarié intérieur. C'est-à-dire <strong>avant</strong>
+le sens des comptes nationaux : <strong>avant</strong>
 cotisations salariales, CSG, CRDS et impôt sur le revenu, et <strong>hors</strong>
 cotisations patronales. C'est l'assiette sur laquelle les régimes appellent leurs
 cotisations, donc la seule grandeur qu'un compte notionnel puisse enregistrer.
@@ -14859,8 +14848,9 @@ et une seule : <code>niveau = revenu mensuel × 12 ÷ salaire moyen annuel</code
 Ce niveau suit ensuite le salaire moyen d'une année à l'autre, déformé par le
 profil de carrière : le revenu saisi est celui du milieu de carrière. Un lien
 sous les métiers bascule entre les deux unités, montants convertis.</p>
-<p>Ce salaire moyen est celui des comptes nationaux de l'INSEE : les salaires et
-traitements bruts rapportés à l'emploi salarié. Le modèle en cumule les
+<p>Ce salaire moyen est celui des comptes nationaux de l'INSEE : les
+<em>salaires et traitements bruts</em> (D11) rapportés à l'emploi salarié
+intérieur. Le modèle en cumule les
 <em>taux de croissance</em> à partir du niveau d'une année, lu à la même
 source — <strong>${g.euros(niveauAncrage)} bruts annuels en ${anneeAncrage}</strong>.
 Ce niveau déplace proportionnellement tous les revenus reconstitués, donc
@@ -15126,8 +15116,9 @@ function methodeSources(contexte) {
     reperes = g.fiche(
       "Valeurs recontrôlées contre leur source",
       g.nombre(valeursCertifiees, 0),
-      `sur ${certifications.length} séries ; la vérification la plus ancienne `
-      + `remonte au ${dateEnClair(datesVerification[0])}`,
+      `sur ${certifications.length} séries, vérifiées entre le `
+      + `${dateEnClair(datesVerification[0])} et le `
+      + `${dateEnClair(datesVerification[datesVerification.length - 1])}`,
     ) + g.fiche(
       "Régimes recensés", String(inventaire),
       `dont ${simulateur.catalogue.taille} calculés`,
@@ -15138,10 +15129,7 @@ function methodeSources(contexte) {
     bandeau = `<div class="note"><strong>Les séries macroéconomiques sont
 certifiées de 1950 à 2025</strong>, les tables de mortalité sont celles
 réellement observées depuis 1986, et le plafond de la Sécurité sociale remonte à
-1931 daté décret par décret. Le tout est recontrôlé contre les sources, série
-par série : la vérification la plus ancienne remonte au
-${dateEnClair(datesVerification[0])}, la plus récente au
-${dateEnClair(datesVerification[datesVerification.length - 1])}. Ce qui précède 1950 et les
+1931 daté décret par décret. Ce qui précède 1950 et les
 paramètres propres à chaque régime restent saisis à la main : les
 <em>niveaux</em> de pension des carrières les plus anciennes gardent une marge,
 les <em>écarts entre scénarios</em>, qui sont l'objet du modèle, sont plus
@@ -15194,15 +15182,13 @@ au-delà de la dernière année observée, la fiabilité retombe à « estimée 
 ${g.tableau(["Niveau", "Nombre", "Régimes"], regimes, ["", "nombre", "texte"],
     "Nombre de régimes par niveau de fiabilité", true)}`, "donnees-fiabilite");
 
+  // Le compte est celui de la fiche du haut. Le dépliant en écrivait un à la
+  // main, « trente », et les nommait, quand le manifeste en citait 42 : la
+  // liste est au manifeste, que le lien ouvre (action 173, étape 10).
   const depliantSources = g.depliant("D'où viennent les chiffres, et comment on arbitre", `
-<p>Trente institutions sont recensées dans
-<a href="${g.DEPOT}/blob/main/data/sources.yaml">data/sources.yaml</a> : INSEE,
-COR, Comité de suivi des retraites, DREES, CNAV, Service des retraites de l'État,
-Caisse des dépôts, Direction de la Sécurité sociale, Cour des comptes,
-Agirc-Arrco, Assemblée nationale, Union Retraite, CCMSA, CNAVPL, CNBF, DGAFP,
-Direction du Budget, ERAFP, Ircantec, caisses des régimes spéciaux, Urssaf,
-Légifrance, INED, Eurostat, OCDE, OpenFisca-France, IPP, CEPII, Banque centrale
-européenne, Observatoire des produits d'épargne financière.</p>
+<p>Les ${institutions} institutions citées sont recensées dans
+<a href="${g.DEPOT}/blob/main/data/sources.yaml">data/sources.yaml</a>, chacune
+avec ce qu'elle produit et les jeux de données qu'on y prend.</p>
 <p><strong>Les deux sources du pilier capitalisé.</strong> Les taux auxquels il
 place sont la courbe zéro-coupon des souverains les mieux notés de la zone euro,
 que la <strong>Banque centrale européenne</strong> publie chaque jour ouvré :
@@ -15213,8 +15199,7 @@ l'enveloppe sont les moyennes 2025 des plans d'épargne retraite individuels,
 mesurées par l'<strong>Observatoire des produits d'épargne financière</strong> —
 le CCSF, à la Banque de France — sur les remises de l'ACPR. Ces trois valeurs
 sont <code>haute</code> et non <code>certifiee</code> : le rapport est un PDF que
-le dépôt ne sait pas récupérer automatiquement, et la règle du manifeste plafonne
-à ce niveau ce qui n'a pas été confronté au document du producteur.</p>
+le dépôt ne sait pas récupérer automatiquement.</p>
 <p>Chaque valeur porte son niveau de fiabilité, <code>certifiee</code>,
 <code>haute</code>, <code>moyenne</code> ou <code>estimee</code>, et la fiabilité
 d'un résultat est celle de son maillon le plus faible.</p>
@@ -15266,7 +15251,7 @@ institutions qui les produisent : l'INSEE pour les prix et les salaires, le
 Conseil d'orientation des retraites pour les comptes, les caisses pour leurs
 barèmes. Un programme les retélécharge et les compare, valeur par valeur, à ce
 que le site utilise ; ce qui n'a pas pu être vérifié ainsi est marqué comme
-tel, et les règles de chaque régime sont lues dans les textes.</p>
+tel.</p>
 
 <div class="fiches reperes">${reperes}</div>
 

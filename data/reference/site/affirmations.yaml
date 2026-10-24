@@ -1927,7 +1927,7 @@ affirmations:
 
   - id: methode.premier_euro_sans_plafond
     page: /methode
-    extrait: "Chaque cotisation retraite réellement versée est portée au compte, au premier euro et sans plafond."
+    extrait: "Chaque cotisation retraite réellement versée, au premier euro et sans plafond."
     porte: après la bascule, l'assiette du compte est le revenu entier, sans borne haute ni basse
     etat: verifiee
     controle: assiette_deplafonnee_apres_la_bascule
@@ -1957,13 +1957,6 @@ affirmations:
     page: /methode
     extrait: "Le PIB nominal pousse la même idée"
     porte: le PIB nominal, brut et lissé, est une règle disponible
-    etat: verifiee
-    controle: lissage_absorbe_la_loterie
-
-  - id: methode.lissage_cinq_ans
-    page: /methode
-    extrait: "lissage sur cinq ans"
-    porte: le lissage à cinq ans absorbe le trou de 2020
     etat: verifiee
     controle: lissage_absorbe_la_loterie
 

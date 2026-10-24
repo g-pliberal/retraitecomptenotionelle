@@ -1607,9 +1607,11 @@ def test_la_page_donnees_ne_promet_que_la_plus_ancienne_verification():
     corps = rendre("/methode", {})[1]
     ancienne = pages._date_en_clair(dates[0])
     recente = pages._date_en_clair(dates[-1])
-    assert f"la vérification la plus ancienne remonte au {ancienne}" in re.sub(
+    # La fiche du haut porte les deux dates ; la note qui la suit les redisait
+    # (action 173, étape 10).
+    assert f"vérifiées entre le {ancienne} et le {recente}" in re.sub(
         r"\s+", " ", corps)
-    assert f"la plus récente au {recente}" in re.sub(r"\s+", " ", corps)
+    assert "la plus récente au" not in re.sub(r"\s+", " ", corps)
     assert journal["dernier_passage_le"] not in corps.split("<table")[0], (
         "la date du dernier passage ne doit plus être présentée comme celle de tout"
     )
@@ -2205,6 +2207,43 @@ def test_droits_non_cotises_comptent_ce_que_leurs_phrases_disent(page, contexte)
     compte = trouve.group(1)
     assert (int(compte) if compte.isdigit() else EN_LETTRES.get(compte)) == len(eteints)
     assert "redescend" not in texte
+
+
+def _depliant(corps: str, titre: str) -> str:
+    """La prose du dépliant dont le titre commence par ``titre``."""
+    debut = corps.index(f"<span>{titre}")
+    return _prose(corps[debut:corps.index("</details>", debut)])
+
+
+def test_la_methode_dit_ce_que_le_modele_compte(page):
+    """Quatre phrases de Méthode et sources ne disaient plus ce que fait le
+    modèle (action 173, étape 10). La carte de l'indexation prêtait son tableau
+    à « une cotisation de 1950 », quand il cumule les taux d'une somme versée en
+    1940. Le dépliant des sources recensait « trente institutions », et en
+    nommait trente, quand le manifeste en cite 42, que la fiche du haut compte.
+    Celui du pilier finissait sur une garantie vieillesse qui « ne regarde pas
+    cette rente », quand il venait de dire, comme le modèle, qu'elle la reprend
+    euro pour euro (`garantie_compte_la_rente_volontaire`). Et la proposition
+    était « le système 3, à deux différences près », le taux et la garantie :
+    le pilier capitalisé, que seule elle construit, en est une troisième."""
+    from retraite_notionnelle.config import RACINE_DONNEES
+    from retraite_notionnelle.donnees.chargement import compter_institutions
+
+    corps = page("/methode")
+    texte = _prose(corps)
+    assert f"une cotisation de {pages.ANNEE_VERSEMENT_COMPARE} conserve" in texte
+
+    sources = _depliant(corps, "D&#x27;où viennent les chiffres, et comment on arbitre")
+    assert re.findall(r"(\w+) institutions (?:sont recensées|citées)", sources) == [
+        str(compter_institutions(RACINE_DONNEES))]
+
+    pilier = _depliant(corps, "Le pilier capitalisé")
+    assert "la garantie les reprend euro pour euro" in pilier
+    assert "ne regarde pas cette rente" not in pilier
+
+    suppressions = _depliant(corps, "Ce que les comptes notionnels suppriment")
+    assert "pilier capitalisé" in suppressions
+    assert "deux différences" not in suppressions
 
 
 # -- action 47 : la phrase du programme ----------------------------------------
