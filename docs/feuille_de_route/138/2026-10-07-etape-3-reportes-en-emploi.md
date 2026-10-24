@@ -1,15 +1,15 @@
 # Étape 3, première partie : la part des reportés en emploi, lue dans les évaluations de 2010
 
-**Reprise, au 23 octobre 2026.** Fait : les reportés en emploi (7 octobre) ;
+**Reprise, au 24 octobre 2026.** Fait : les reportés en emploi (7 octobre) ;
 l'Ageing Report (13) ; les leviers du COR, la CSG effective (14) ; Ancetre,
 l'EACR, la CNRACL, l'État (16) ; la part stable de l'AWG (17) ; la date de
-chaque cohorte (18, 19) ; la page Coût, l'entrée, la décote (19) ; le 23, la
-décote selon la génération et l'entrée lue sur la durée validée. Reste, une
-session par point : l'âge de départ de chaque génération, contre celui du COR ;
-les naissances de l'année dans `cout.py` ; le taux effectif. Au propriétaire :
-l'entrée selon la génération dans la grille ; l'Ircantec (avec l'action 147) ;
-la table des poids (`pages.js`). Détail : « Ce qui reste » des notes « les 65
-ans et plus d'après 2030 » et « l'entrée dans l'emploi ».
+chaque cohorte (18, 19) ; la page Coût, l'entrée, la décote (19, 23) ; le 24,
+l'âge de départ de chaque génération : entrée selon elle, la grille part avec
+le COR. Reste, une session par point : la forme des départs projetés ; le
+militaire, compté à 50 ans ; les naissances de l'année dans `cout.py` ; le
+taux effectif. Au propriétaire : l'entrée selon la génération ; l'Ircantec
+(action 147) ; la table des poids (`pages.js`). Détail : « Ce qui reste » des
+notes « l'âge de départ de chaque génération » et « l'entrée dans l'emploi ».
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.3 ». L'étape est
 vaste — sept chantiers, vingt-neuf points du registre — ; cette session en

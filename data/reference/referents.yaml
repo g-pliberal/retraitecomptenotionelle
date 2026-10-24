@@ -12041,7 +12041,12 @@ referents:
           la durée validée de l'EIC (`--duree`) avance leur recul, 0,27 point
           avant 2030 et 0,07 après, pour 0,22 et 0,03, et la couverture entière
           recule alors comme celle de l'AWG, à deux centièmes près, sur chaque
-          période (23 octobre) ;
+          période (23 octobre) ; pesée à ses poids, la grille fait partir les
+          générations 1975 à 2000 sept dixièmes d'an avant les 64,5 ans du COR
+          (figure 4.5), et avec lui, entrées selon leur génération : le partage
+          qui reste entre les âges ne tient pas à leur âge moyen, mais à la
+          forme de ses départs, moins nombreux que ceux de la France avant
+          l'âge légal, presque aucun après 66 ans (`--ages`, 24 octobre) ;
           prestation −3,0 contre −3,4 ; marché du travail
           −0,7 contre −1,0. Sous la variante haute du COR, une productivité de
           1,0 % proche des 1,03 % de l'AWG, la prestation fait −3,7 : la

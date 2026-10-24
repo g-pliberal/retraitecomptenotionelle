@@ -35,7 +35,10 @@ Ce module tient trois choses :
   plein »). Après 2030, ni la décote selon la génération, qui n'en rend qu'un
   centième, ni l'entrée lue sur la durée validée, qui les fait reculer plus
   encore, ne les expliquent (note du 23 octobre 2026, « les 65 ans et plus
-  d'après 2030 »).
+  d'après 2030 »). Ni l'âge où la grille fait partir chaque génération, pesée
+  à ses poids : entrée selon sa génération, elle part à l'âge moyen que le COR
+  projette ; c'est la forme de ses départs qui diffère de celle de la France
+  (note du 24 octobre 2026, « l'âge de départ de chaque génération »).
 """
 
 from __future__ import annotations
@@ -63,6 +66,7 @@ from retraite_notionnelle.facteurs_depense import (
 RACINE = Path(__file__).resolve().parents[1]
 TEMOIN = RACINE / "tests" / "temoins" / "ageing_report_france.json"
 TEMOIN_EIC = RACINE / "tests" / "temoins" / "drees_duree_validee_2017.json"
+TEMOIN_COR_AGES = RACINE / "tests" / "temoins" / "cor_age_depart_generations_2026.json"
 
 
 @pytest.fixture(scope="module")
@@ -597,6 +601,81 @@ def test_a_l_age_legal_peut_partir_celui_dont_le_taux_plein_vient_apres():
     assert {code for code, _generation, _decalage in legales} == {"salaire_moyen"}
 
 
+def test_le_temoin_du_cor_dit_sa_source_et_redonne_ses_ages_de_depart():
+    """L'âge moyen de départ à la retraite de chaque génération, que le COR
+    publie en juin 2026 (figure 4.5, ``tests/temoins/cor_age_depart_generations_2026.json``,
+    ``scripts/fetch/cor_age_depart_generations.py``) : observé jusqu'à la
+    génération 1954, projeté depuis elle, sous la suspension de 2026 ; 64,2 ans
+    pour la génération 1906, 60,9 pour celle de 1932, comme le rapport l'écrit
+    (p. 215), puis « autour de 64,6 ans à partir des générations nées dans les
+    années 1975 ». La part de chaque génération déjà partie, avant son âge
+    légal, à la fin de l'année de chaque âge (figure 4.7) : 15 % de la
+    génération 1949 à 57 ans, 22 % à 59 ans, son pic ; 30 % de celle de 1953
+    à 60 ans, quand elle n'ouvre qu'à 61 (p. 219-220). La part des résidents
+    de chaque âge déjà partie au 31 décembre 2024 (figure 4.6) : 48,1 % des 62
+    ans (p. 218)."""
+    temoin = json.loads(TEMOIN_COR_AGES.read_text(encoding="utf-8"))
+    assert "Données_RA2026_P4_0.xlsx" in temoin["source"]["reference"]
+    ages = temoin["age_moyen_de_depart"]
+    assert round(ages["observe"]["1906"], 1) == 64.2
+    assert round(ages["observe"]["1932"], 1) == 60.9
+    assert ages["projete"]["1954"] == ages["observe"]["1954"]
+    assert all(abs(ages["projete"][str(generation)] - 64.6) < 0.2
+               for generation in range(1975, 2001))
+    partis = temoin["retraites_avant_l_age_legal"]
+    assert round(partis["57"]["1949"], 2) == 0.15
+    assert round(partis["59"]["1949"], 2) == 0.22
+    assert round(partis["60"]["1953"], 1) == 0.3
+    assert round(temoin["retraites_par_age_en_2024"]["ensemble"]["62"], 3) == 0.481
+
+
+def test_l_age_moyen_de_depart_pese_chaque_cohorte_du_poids_de_son_cas_type_a_65_ans():
+    """L'âge moyen de départ d'une génération de la grille : celui de ses
+    cohortes, nées en janvier, chacune à l'âge du mois où elle part, pesée du
+    poids de son cas type l'année où sa génération atteint 65 ans — comme le
+    COR compte chaque liquidant, sans l'effectif de la pyramide, qui ne
+    commence qu'à 50 ans, quand le militaire part à 48. Nées en 1970, la
+    cohorte du cas a part en mars 2034, à 64 ans et 2 mois, celle du cas b en
+    janvier 2037, à 67 ans ; pesées en 2035, 0,75 et 0,25 : 64,875 ans. Nées
+    en 1971, en mars 2035 et en juillet 2038, pesées en 2036, à moitié :
+    65,833 ans. Que 40 % de la cohorte du cas b de 1970 parte à l'âge légal,
+    en janvier 2034, avec une décote : elle part en moyenne à 65,8 ans, et la
+    génération à 64,575."""
+    from retraite_notionnelle.calendrier import DateMois
+    from retraite_notionnelle.facteurs_depense import ages_moyens_de_depart
+
+    departs = {("a", 1970, 0): DateMois(2034, 3), ("b", 1970, 0): DateMois(2037, 1),
+               ("a", 1970, 1): DateMois(2035, 3), ("b", 1970, 1): DateMois(2038, 7)}
+    poids = {2035: {"a": 0.75, "b": 0.25}, 2036: {"a": 0.5, "b": 0.5}}
+    ages = ages_moyens_de_depart(departs, poids.__getitem__)
+    assert ages == pytest.approx({1970: 64.875, 1971: (64 + 2 / 12 + 67.5) / 2})
+    decotes = {("b", 1970, 0): (0.4, DateMois(2034, 1))}
+    assert ages_moyens_de_depart(departs, poids.__getitem__, decotes)[1970] == pytest.approx(
+        0.75 * (64 + 2 / 12) + 0.25 * (0.6 * 67 + 0.4 * 64))
+
+
+def test_la_part_partie_a_chaque_age_compte_les_natifs_de_toute_l_annee():
+    """La part d'une génération de la grille partie au 31 décembre de l'année
+    de chaque âge, comme le COR compte ses retraités (figures 4.6 et 4.7) : ses
+    cohortes pesées comme pour l'âge moyen, nées toute l'année et non en
+    janvier (:func:`compter_retraites`). Née en 1970, la cohorte du cas a, qui
+    part en mars 2034 née en janvier, n'en a au 31 décembre 2034 que les dix
+    douzièmes de partis : 0,75 × 10/12, 62,5 % de la génération à 64 ans ; 75 %
+    à 66 ans ; celle du cas b, partie en janvier 2037 née en janvier, l'est
+    toute à 67 ans. Que 40 % de la cohorte du cas b parte en janvier 2034,
+    avec une décote : 72,5 % de la génération à 64 ans."""
+    from retraite_notionnelle.calendrier import DateMois
+    from retraite_notionnelle.facteurs_depense import parts_parties
+
+    departs = {("a", 1970, 0): DateMois(2034, 3), ("b", 1970, 0): DateMois(2037, 1)}
+    poids = {2035: {"a": 0.75, "b": 0.25}}
+    assert parts_parties(departs, poids.__getitem__, (64, 66, 67)) == pytest.approx(
+        {(1970, 64): 0.625, (1970, 66): 0.75, (1970, 67): 1.0})
+    decotes = {("b", 1970, 0): (0.4, DateMois(2034, 1))}
+    assert parts_parties(departs, poids.__getitem__, (64,), decotes) == pytest.approx(
+        {(1970, 64): 0.725})
+
+
 def _script():
     spec = importlib.util.spec_from_file_location(
         "script_facteurs_depense", RACINE / "scripts" / "facteurs_depense.py")
@@ -1107,3 +1186,71 @@ def test_entree_selon_sa_duree_validee_les_65_ans_et_plus_reculent_plus_tot(awg)
             < entre(trimestre["vieillesse"], 2022, 2030) - 0.02)
     assert (entre(duree["vieillesse"], 2030, 2070)
             > entre(trimestre["vieillesse"], 2030, 2070) + 0.02)
+
+
+@lru_cache(maxsize=None)
+def _departs_des_mesures() -> dict:
+    """Les départs de la grille sous chaque mesure du départage, cumulées,
+    comme ``scripts/facteurs_depense.py --ages`` les confronte au COR."""
+    return _script().departs_des_mesures(1960)
+
+
+def _ages_du_cor() -> dict[int, float]:
+    temoin = json.loads(TEMOIN_COR_AGES.read_text(encoding="utf-8"))
+    return {int(generation): age for serie in ("observe", "projete")
+            for generation, age in temoin["age_moyen_de_depart"][serie].items()}
+
+
+def test_pesee_a_ses_poids_la_grille_part_avant_le_cor_et_entree_selon_sa_generation_avec_lui():
+    """L'âge moyen de départ de chaque génération de la grille, pesée à ses
+    poids, contre celui du COR (figure 4.5 du rapport de juin 2026), sous le
+    droit en vigueur, la suspension comprise (note du 24 octobre 2026, « l'âge
+    de départ de chaque génération »). Telle que ``cout.py`` la fait partir,
+    chaque génération entrée au même âge, la grille fait partir celles de 1975
+    à 2000 à 63,8 ans en moyenne, sept dixièmes d'an avant le COR, et chacune
+    avant lui : ses militaires, ses agents de conduite et des IEG, ses actifs,
+    ses inaptes, ses ex-invalides et son salarié au SMIC, en carrière longue,
+    près d'un tiers de ses poids, partent avant 63 ans. Entrées dans l'emploi
+    selon leur génération, elles partent avec lui, à 64,5 ans ; selon leur
+    durée validée, partie pour une part avec une décote, à deux dixièmes près.
+    Le cadre, l'artisan, le contractuel et le libéral, qui partent alors à 67
+    ans, ne font pas partir la grille plus tard que la France."""
+    from retraite_notionnelle.facteurs_depense import ages_moyens_de_depart
+
+    script = _script()
+    publie = _ages_du_cor()
+    ages = {nom: ages_moyens_de_depart(*mesure) for nom, mesure in _departs_des_mesures().items()}
+    projetees = range(1975, 2001)
+
+    def ecart(nom: str) -> float:
+        return sum(ages[nom][generation] - publie[generation]
+                   for generation in projetees) / len(projetees)
+
+    assert -1.0 < ecart(script.GRILLE_DE_COUT) < -0.5
+    assert all(ages[script.GRILLE_DE_COUT][generation] < publie[generation]
+               for generation in projetees)
+    assert abs(ecart(script.ENTREE_SELON_LA_GENERATION)) < 0.1
+    assert abs(ecart(script.ENTREE_PAR_LA_DUREE)) < 0.3
+
+
+def test_la_grille_fait_partir_moins_que_la_france_avant_l_age_legal_et_tous_a_67_ans():
+    """La forme des départs, là où le COR la publie : la grille, telle que
+    ``cout.py`` la fait partir, a moins de départs que la France avant l'âge
+    légal, et n'en a presque plus après 66 ans. À 61 ans, les générations 1955
+    à 1960 sont parties à 26 à 34 % en France (figure 4.7), où les carrières
+    longues partent dès 60 ans, à 17 à 22 % dans la grille, qui n'en a qu'une,
+    le salarié au SMIC entré à 18 ans. Au 31 décembre 2024, la France a 48 % de
+    retraités à 62 ans, 71 % à 63 (figure 4.6), la grille 36 et 57 % ; à 66 et
+    67 ans, la France 87 et 94 %, la grille 98 et 100 % : ses cas types partent
+    tous au taux plein, aucun au-delà, ni surcote ni départ tardif."""
+    from retraite_notionnelle.facteurs_depense import parts_parties
+
+    temoin = json.loads(TEMOIN_COR_AGES.read_text(encoding="utf-8"))
+    avant = temoin["retraites_avant_l_age_legal"]["61"]
+    en_2024 = temoin["retraites_par_age_en_2024"]["ensemble"]
+    departs, poids, _decotes = _departs_des_mesures()[_script().GRILLE_DE_COUT]
+    parties = parts_parties(departs, poids, range(55, 71))
+    assert all(avant[str(generation)] - parties[(generation, 61)] > 0.05
+               for generation in range(1955, 1961))
+    assert all(en_2024[str(age)] - parties[(2024 - age, age)] > 0.10 for age in (62, 63))
+    assert all(parties[(2024 - age, age)] - en_2024[str(age)] > 0.05 for age in (66, 67))

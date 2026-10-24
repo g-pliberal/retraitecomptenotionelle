@@ -1042,6 +1042,32 @@ institutions:
           cotisants. Le tableau 2.11 du classeur garde le titre et les notes
           du rapport de 2025 ; ses valeurs sont celles que celui de 2026
           imprime.
+      - id: cor_age_depart_generations
+        titre: >-
+          L'âge moyen de départ à la retraite par génération, de 1906 à 2000
+          (figure 4.5), et la part de chaque génération de 1942 à 1960 déjà
+          partie à chaque âge d'avant son âge légal (figure 4.7) — rapport
+          annuel de juin 2026, partie 4, chapitre 2
+        url: https://www.cor-retraites.fr/sites/default/files/2026-06/Donn%C3%A9es_RA2026_P4_0.xlsx
+        acces: fichier
+        statut_integration: controle
+        cible: tests/temoins/cor_age_depart_generations_2026.json
+        recuperation: scripts/fetch/cor_age_depart_generations.py
+        millesime: juin 2026
+        note: >-
+          L'âge observé jusqu'à la génération 1954 (DREES, EIR et Ancetre),
+          projeté au-delà des évolutions de TRAJECTOiRE, sous la législation
+          de juin 2026, suspension de la réforme de 2023 comprise : 64,2 ans
+          pour la génération 1906, 60,4 pour celle de 1948, puis autour de
+          64,6 depuis les générations des années 1975 (64,5 au sommaire du
+          classeur). La part des résidents de chaque âge retraités au 31
+          décembre 2024 (figure 4.6) s'y est ajoutée. Il n'alimente aucune
+          valeur : `tests/test_facteurs_depense.py` y confronte l'âge moyen de
+          départ de la grille du coût, pesé à ses poids, et la forme de ses
+          départs (`scripts/facteurs_depense.py --ages`, action 138, étape 3) :
+          telle que `cout.py` la fait partir, la grille précède le COR de sept
+          dixièmes d'an pour les générations 1975 à 2000 ; entrées selon leur
+          génération, elle part avec lui.
       - id: cor_pension_regime_principal
         titre: >-
           La pension brute moyenne de droit direct par régime principal, fin

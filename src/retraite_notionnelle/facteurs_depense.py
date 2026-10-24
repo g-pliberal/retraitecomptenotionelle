@@ -114,6 +114,17 @@ part à l'âge légal : ses 65 ans et plus reculent moins, les moins de 65 ans
 presque comme avant (note du 19 octobre 2026, « les départs hors du taux
 plein »).
 
+L'ÂGE DE DÉPART DE CHAQUE GÉNÉRATION (:func:`ages_moyens_de_depart`,
+:func:`parts_parties`), confronté au COR (figures 4.5 à 4.7 du rapport de juin
+2026, ``tests/temoins/cor_age_depart_generations_2026.json``). Chaque cohorte
+pesée du poids de son cas type l'année où sa génération atteint 65 ans, la
+grille de ``cout.py`` fait partir les générations 1975 à 2000 à 63,8 ans, sept
+dixièmes d'an avant les 64,5 ans du COR ; entrées selon leur génération, à son
+âge, à deux dixièmes près sous chacune des mesures. Ce qui la distingue de la
+France est la forme de ses départs : moins avant l'âge légal, où partent les
+carrières longues, presque aucun après 66 ans (note du 24 octobre 2026,
+« l'âge de départ de chaque génération »).
+
 CE QUI MANQUE. Les têtes de la proposition : son âge légal de 65 ans reporte
 des départs que ``AvenirAnnuel`` ne compte pas à part. La couverture de chaque
 système est donc celle du droit en vigueur, et sa prestation porte ce que le
@@ -758,6 +769,73 @@ def dates_a_l_age_legal(parametres, entree_depuis: int | None = None,
     return legales
 
 
+def grille_ponderee(parametres) -> tuple[list, object, Callable[[int], dict[str, float]]]:
+    """La grille du coût sous ces paramètres, comme ``calculer_cout`` la pèse :
+    ses couples, que ``memoire.cout`` garde, sous la démographie centrale ; la
+    pyramide de l'INSEE ; et les poids de chaque année, recalés sur les
+    groupes du COR."""
+    from . import cout as module
+    from . import memoire
+    from .castypes import GRILLE_DU_COUT
+    from .donnees.equilibre import ComptesRetraite, variante_du_scenario
+    from .donnees.population import Population
+    from .revalorisation import RevalorisationServie
+    from .simulateur import Simulateur
+
+    racine = parametres.racine_donnees
+    simulateur = Simulateur(parametres)
+    grille = GRILLE_DU_COUT
+    pensionnes, _ = memoire.memoriser_pour(
+        parametres, ("grille_du_cout", parametres, grille, "droit"),
+        lambda: module._pensionnes(simulateur, grille, "droit"))
+    population = Population(racine, parametres.hypothese_esperance_vie)
+    pensionnes = module._sous_la_demographie(simulateur, pensionnes, population)
+    revalorisation = RevalorisationServie(
+        simulateur.pour_la_projection(),
+        min((p.annee_liquidation for p in pensionnes), default=module.HORIZON)
+        - module._DEMI_TRANCHE,
+        module.HORIZON,
+    )
+    variante = variante_du_scenario(parametres.scenario_projection,
+                                    racine / "reference" / "macro")
+    poids = module._poids_par_groupe(
+        module._ponderation(simulateur, "effectifs", grille), pensionnes, population,
+        revalorisation, ComptesRetraite(racine, variante=variante).decomposition)
+    return pensionnes, population, poids
+
+
+def parts_decotees(parametres, pensionnes, poids: Callable[[int], dict[str, float]],
+                   legales: Mapping[tuple[str, int, int], DateMois],
+                   decote_du_flux: float | None = None,
+                   ) -> dict[tuple[str, int, int], tuple[float, DateMois]]:
+    """La part de chaque cohorte de la grille qui n'a le taux plein qu'après
+    l'âge légal et y part avec une décote, et le mois de ce départ, ``legales``
+    par ``(code, generation, decalage)`` (:func:`dates_a_l_age_legal`) : la part de
+    la génération :data:`GENERATION_DES_DECOTES` partie ainsi
+    (:func:`part_decotee_des_l_age_legal`), ou celle de chaque génération quand
+    ``decote_du_flux`` la dit (:func:`part_decotee_de_la_generation`),
+    rapportée au poids des cohortes de :data:`GENERATION_DES_DECOTES` qui le
+    peuvent, en :data:`ANNEE_DES_DECOTES` (:func:`part_avec_decote`)."""
+    from . import cout as module
+
+    poids_enquete = poids(ANNEE_DES_DECOTES)
+    survies_enquete = module._survies_alignees(pensionnes, poids_enquete, ANNEE_DES_DECOTES)
+    generation = {
+        (pensionne.code, pensionne.generation, decalage):
+            poids_enquete.get(pensionne.code, 0.0)
+            * survies_enquete.get((pensionne.code, pensionne.generation, decalage), 1.0)
+        for pensionne in pensionnes
+        for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1)
+        if pensionne.generation + decalage == GENERATION_DES_DECOTES}
+    de_1953 = part_decotee_des_l_age_legal(parametres.racine_donnees)
+    du_flux = de_1953 if decote_du_flux is None else decote_du_flux
+    parts = {nee: part_avec_decote(part_decotee_de_la_generation(nee, de_1953, du_flux),
+                                   generation, legales)
+             for nee in {code_nee + decalage for _code, code_nee, decalage in legales}}
+    return {(code, code_nee, decalage): (parts[code_nee + decalage], date)
+            for (code, code_nee, decalage), date in legales.items()}
+
+
 def retraites_par_age(parametres, annees: Sequence[int],
                       age: int = AGE_VIEILLESSE,
                       nes_toute_l_annee: bool = False,
@@ -793,32 +871,8 @@ def retraites_par_age(parametres, annees: Sequence[int],
     (:func:`decalage_par_la_duree`).
     """
     from . import cout as module
-    from . import memoire
-    from .castypes import GRILLE_DU_COUT
-    from .donnees.equilibre import ComptesRetraite, variante_du_scenario
-    from .donnees.population import Population
-    from .revalorisation import RevalorisationServie
-    from .simulateur import Simulateur
 
-    racine = parametres.racine_donnees
-    simulateur = Simulateur(parametres)
-    grille = GRILLE_DU_COUT
-    pensionnes, _ = memoire.memoriser_pour(
-        parametres, ("grille_du_cout", parametres, grille, "droit"),
-        lambda: module._pensionnes(simulateur, grille, "droit"))
-    population = Population(racine, parametres.hypothese_esperance_vie)
-    pensionnes = module._sous_la_demographie(simulateur, pensionnes, population)
-    revalorisation = RevalorisationServie(
-        simulateur.pour_la_projection(),
-        min((p.annee_liquidation for p in pensionnes), default=module.HORIZON)
-        - module._DEMI_TRANCHE,
-        module.HORIZON,
-    )
-    variante = variante_du_scenario(parametres.scenario_projection,
-                                    racine / "reference" / "macro")
-    poids = module._poids_par_groupe(
-        module._ponderation(simulateur, "effectifs", grille), pensionnes, population,
-        revalorisation, ComptesRetraite(racine, variante=variante).decomposition)
+    pensionnes, population, poids = grille_ponderee(parametres)
     depart, mois = depart_de_la_grille, None
     if nes_toute_l_annee or entree_depuis is not None:
         dates = dates_des_departs(parametres, entree_depuis, durees=durees)
@@ -831,22 +885,9 @@ def retraites_par_age(parametres, annees: Sequence[int],
     decotes = None
     if avec_decote:
         legales = dates_a_l_age_legal(parametres, entree_depuis, durees=durees)
-        poids_enquete = poids(ANNEE_DES_DECOTES)
-        survies_enquete = module._survies_alignees(pensionnes, poids_enquete, ANNEE_DES_DECOTES)
-        generation = {
-            (pensionne.code, pensionne.generation, decalage):
-                poids_enquete.get(pensionne.code, 0.0)
-                * survies_enquete.get((pensionne.code, pensionne.generation, decalage), 1.0)
-            for pensionne in pensionnes
-            for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1)
-            if pensionne.generation + decalage == GENERATION_DES_DECOTES}
-        de_1953 = part_decotee_des_l_age_legal(racine)
-        du_flux = de_1953 if decote_du_flux is None else decote_du_flux
-        parts = {nee: part_avec_decote(part_decotee_de_la_generation(nee, de_1953, du_flux),
-                                       generation, legales)
-                 for nee in {code_nee + decalage for _code, code_nee, decalage in legales}}
-        decotes = {(code, code_nee, decalage): (parts[code_nee + decalage], date.annee, date.mois)
-                   for (code, code_nee, decalage), date in legales.items()}
+        decotes = {cle: (part, date.annee, date.mois)
+                   for cle, (part, date) in parts_decotees(
+                       parametres, pensionnes, poids, legales, decote_du_flux).items()}
     resultat: dict[int, tuple[float, float]] = {}
     for annee in annees:
         poids_annee = poids(annee)
@@ -856,3 +897,76 @@ def retraites_par_age(parametres, annees: Sequence[int],
                               depart, minimum, survies, mois, decotes)
             for minimum in (0, age))
     return resultat
+
+
+def _age_au_depart(date: DateMois, nee: int) -> float:
+    """L'âge, en années, d'une cohorte née en janvier de ``nee`` qui part le
+    mois ``date`` : ses années, et les mois qui les suivent."""
+    return date.annee - nee + (date.mois - 1) / 12
+
+
+def _cohortes_pesees(departs: Mapping[tuple[str, int, int], DateMois],
+                     poids: Callable[[int], Mapping[str, float]],
+                     decotes: Mapping[tuple[str, int, int], tuple[float, DateMois]] | None,
+                     ):
+    """Chaque cohorte de ``departs`` qui pèse : l'année où elle naît, le poids
+    de son cas type l'année où sa génération atteint :data:`AGE_VIEILLESSE`
+    ans, et ses départs, ``(part, mois)`` — au taux plein, et avec une décote
+    pour la part que ``decotes`` dit, le mois qu'il dit."""
+    decotes = decotes or {}
+    for cle, date in departs.items():
+        code, generation, decalage = cle
+        nee = generation + decalage
+        part = poids(nee + AGE_VIEILLESSE).get(code, 0.0)
+        if part <= 0.0:
+            continue
+        decotee, legale = decotes.get(cle, (0.0, date))
+        yield nee, part, ((1.0 - decotee, date), (decotee, legale))
+
+
+def _moyennes(termes: Mapping[object, list[tuple[float, float]]]) -> dict:
+    """La moyenne de chaque clé, ses ``(poids, valeur)`` pesés."""
+    return {cle: somme_ordonnee(part * valeur for part, valeur in lignes)
+            / somme_ordonnee(part for part, _valeur in lignes)
+            for cle, lignes in sorted(termes.items())}
+
+
+def ages_moyens_de_depart(departs: Mapping[tuple[str, int, int], DateMois],
+                          poids: Callable[[int], Mapping[str, float]],
+                          decotes: Mapping[tuple[str, int, int], tuple[float, DateMois]]
+                          | None = None) -> dict[int, float]:
+    """L'âge moyen de départ de chaque génération de la grille, par année de
+    naissance : celui de ses cohortes, ``departs`` par ``(code, generation,
+    decalage)`` (:func:`dates_des_departs`), chacune née en janvier, à l'âge du
+    mois où elle part, pesée du poids de son cas type l'année où sa génération
+    atteint :data:`AGE_VIEILLESSE` ans (``poids``, ceux de ``cout.py``). Le COR
+    compte chaque liquidant (figure 4.5 du rapport de juin 2026) ; l'effectif
+    de la pyramide ne pèse pas, qui ne commence qu'à 50 ans quand le militaire
+    part à 48. ``decotes``, par la même clé, fait partir une part de la cohorte
+    avant son taux plein, avec une décote, le mois dit
+    (:func:`parts_decotees`)."""
+    termes: dict[int, list[tuple[float, float]]] = {}
+    for nee, part, sorties in _cohortes_pesees(departs, poids, decotes):
+        age = somme_ordonnee(fraction * _age_au_depart(date, nee) for fraction, date in sorties)
+        termes.setdefault(nee, []).append((part, age))
+    return _moyennes(termes)
+
+
+def parts_parties(departs: Mapping[tuple[str, int, int], DateMois],
+                  poids: Callable[[int], Mapping[str, float]],
+                  ages: Sequence[int],
+                  decotes: Mapping[tuple[str, int, int], tuple[float, DateMois]]
+                  | None = None) -> dict[tuple[int, int], float]:
+    """La part de chaque génération de la grille partie au 31 décembre de
+    l'année de chacun des ``ages``, par ``(année de naissance, âge)``, comme le
+    COR compte les retraités de chaque génération et de chaque âge (figures
+    4.6 et 4.7 du rapport de juin 2026) : ses cohortes pesées comme
+    :func:`ages_moyens_de_depart` les pèse, nées toute l'année et non en
+    janvier comme la grille (:func:`_partis`)."""
+    termes: dict[tuple[int, int], list[tuple[float, float]]] = {}
+    for nee, part, sorties in _cohortes_pesees(departs, poids, decotes):
+        for age in ages:
+            partis = somme_ordonnee(fraction * _partis(nee + age, date.annee, date.mois)
+                                    for fraction, date in sorties)
+            termes.setdefault((nee, age), []).append((part, partis))
+    return _moyennes(termes)

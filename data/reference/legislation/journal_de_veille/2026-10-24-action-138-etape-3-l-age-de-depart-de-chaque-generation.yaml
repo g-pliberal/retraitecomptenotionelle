@@ -1,0 +1,19 @@
+date: "2026-10-24"
+session: "action 138, étape 3 : l'âge de départ de chaque génération, pesé aux poids de la grille, contre celui du COR"
+consulte: >-
+  Aucun texte de droit : la mesure ne touche à aucune règle du scénario 1. Le
+  classeur de la partie 4 du rapport annuel du COR de juin 2026
+  (Données_RA2026_P4_0.xlsx), figures 4.5, 4.6 et 4.7, désormais gardé en
+  témoin (`cor_age_depart_generations_2026.json`), et le chapitre 2 de cette
+  partie (RA_Part4_Chap2.pdf), pour les repères qu'il imprime.
+trouve: >-
+  Le chapitre écrit que l'âge moyen de départ « se stabiliserait autour de
+  64,6 ans à partir des générations nées dans les années 1975 », le sommaire du
+  classeur 64,5 ; la suspension de 2026 y touche les générations 1964 à 1968.
+  Pesée à ses poids, la grille de `cout.py` fait partir les générations 1975 à
+  2000 sept dixièmes d'an avant le COR ; entrées selon leur génération, avec
+  lui. Elle a moins de départs que la France avant l'âge légal, où partent les
+  carrières longues, et presque aucun après 66 ans.
+reste: >-
+  Rien au droit. La forme des départs que TRAJECTOiRE projette, génération par
+  génération, à chercher.

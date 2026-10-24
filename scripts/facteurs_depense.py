@@ -9,6 +9,7 @@
     python scripts/facteurs_depense.py --decote      # et les départs avec décote
     python scripts/facteurs_depense.py --decote-generation  # et la décote selon la génération
     python scripts/facteurs_depense.py --duree       # et l'entrée selon la durée validée
+    python scripts/facteurs_depense.py --ages        # l'âge de départ de la grille, contre le COR
     python scripts/facteurs_depense.py --json f.json
 
 Ce que l'Ageing Report de 2024 publie pour la France — la dépense de pensions
@@ -58,6 +59,17 @@ premier trimestre cotisé (``decalage_par_la_duree``,
 l'écart de couverture de 2022-2030 entre le périmètre, la suspension, les
 naissances, l'entrée dans l'emploi, les départs hors du taux plein, la décote
 selon la génération, l'entrée selon la durée validée et ce qui reste.
+
+``--ages`` confronte, seul, l'âge de départ de la grille à celui du COR
+(``tests/temoins/cor_age_depart_generations_2026.json``), sous le droit en
+vigueur et la référence du COR : la grille de ``cout.py``, puis les mêmes
+mesures, cumulées, l'entrée selon la génération, les départs avec décote, la
+décote selon la génération, l'entrée selon la durée validée. L'âge moyen de
+chaque génération, chaque cohorte pesée du poids de son cas type l'année où sa
+génération atteint 65 ans (``ages_moyens_de_depart``), contre la figure 4.5 ;
+la part de chaque génération partie avant l'âge légal, contre la figure 4.7 ;
+celle des résidents de chaque âge retraités au 31 décembre 2024, contre la
+figure 4.6 (``parts_parties``).
 """
 
 from __future__ import annotations
@@ -82,16 +94,22 @@ from retraite_notionnelle.facteurs_depense import (  # noqa: E402
     JEUNES,
     PERIODES_AWG,
     STABLES,
+    ages_medians_du_premier_trimestre,
+    ages_moyens_de_depart,
     annees_du_modele,
     au_perimetre,
-    ages_medians_du_premier_trimestre,
+    dates_a_l_age_legal,
+    dates_des_departs,
     decalage_d_entree,
     decalage_par_la_duree,
     decomposer,
     durees_validees,
+    grille_ponderee,
     part_decotee_des_l_age_legal,
     part_decotee_du_flux,
     partager_couverture,
+    parts_decotees,
+    parts_parties,
     pensionnes_de_2022,
     retraites_par_age,
 )
@@ -136,6 +154,16 @@ GENERATIONS_D_ENTREE = (1966, 1970, 1975, 1980, 1990, 2000)
 #: La génération dont la grille garde l'âge d'entrée, sous ``--entree`` : celle
 #: du milieu des retraités de moins de 65 ans de 2022, de 60 à 64 ans.
 ENTREE_DE_REFERENCE = 1960
+#: Le témoin du COR : l'âge moyen de départ de chaque génération (figure 4.5),
+#: la part de chaque génération partie avant l'âge légal (figure 4.7), celle
+#: des résidents de chaque âge retraités au 31 décembre 2024 (figure 4.6).
+TEMOIN_COR_AGES = RACINE / "tests" / "temoins" / "cor_age_depart_generations_2026.json"
+#: Les générations où ``--ages`` confronte l'âge moyen de départ, puis les
+#: groupes de générations où il en fait la moyenne.
+GENERATIONS_D_AGE = (1950, 1955, 1960, 1965, 1970, 1975, 1980, 1990, 2000)
+GROUPES_D_AGE = ((1950, 1954), (1955, 1964), (1965, 1974), (1975, 2000))
+#: La colonne de la grille telle que ``cout.py`` la fait partir.
+GRILLE_DE_COUT = "grille de cout.py"
 
 #: La réforme de 2023 entière, telle que l'AWG l'a projetée avant la
 #: suspension : l'âge d'ouverture et la durée requise des générations que la
@@ -380,6 +408,87 @@ def tableau(colonnes: dict[str, dict], periode: str = "2022-2070") -> list[str]:
     return lignes
 
 
+def departs_des_mesures(entree: int) -> dict[str, tuple]:
+    """Les départs de la grille du coût sous le droit en vigueur et la
+    référence du COR, mesure par mesure, cumulées : ``(departs, poids,
+    decotes)``, qu'``ages_moyens_de_depart`` et ``parts_parties`` lisent."""
+    from retraite_notionnelle import Parametres
+
+    parametres = Parametres(scenario_projection=PROJECTIONS[0][0])
+    pensionnes, _population, poids = grille_ponderee(parametres)
+    du_flux = part_decotee_du_flux(json.loads(TEMOIN_EACR.read_text(encoding="utf-8")))
+    durees = durees_validees(json.loads(TEMOIN_EIC.read_text(encoding="utf-8")))
+    mesures = {GRILLE_DE_COUT: (dates_des_departs(parametres), poids, None)}
+    departs = dates_des_departs(parametres, entree)
+    legales = dates_a_l_age_legal(parametres, entree)
+    mesures[ENTREE_SELON_LA_GENERATION] = (departs, poids, None)
+    mesures[AVEC_DECOTE] = (departs, poids, parts_decotees(parametres, pensionnes, poids, legales))
+    mesures[DECOTE_SELON_LA_GENERATION] = (
+        departs, poids, parts_decotees(parametres, pensionnes, poids, legales, du_flux))
+    legales = dates_a_l_age_legal(parametres, entree, durees=durees)
+    mesures[ENTREE_PAR_LA_DUREE] = (
+        dates_des_departs(parametres, entree, durees=durees), poids,
+        parts_decotees(parametres, pensionnes, poids, legales, du_flux))
+    return mesures
+
+
+def ages_de_depart(entree: int) -> dict:
+    """L'âge de départ de la grille contre celui du COR, mesure par mesure
+    (``departs_des_mesures``) : imprime les trois tableaux, rend leurs
+    valeurs."""
+    temoin = json.loads(TEMOIN_COR_AGES.read_text(encoding="utf-8"))
+    publie = {int(generation): age for serie in ("observe", "projete")
+              for generation, age in temoin["age_moyen_de_depart"][serie].items()}
+    avant = temoin["retraites_avant_l_age_legal"]
+    en_2024 = temoin["retraites_par_age_en_2024"]["ensemble"]
+    mesures = departs_des_mesures(entree)
+    ages = {nom: ages_moyens_de_depart(departs, poids, decotes)
+            for nom, (departs, poids, decotes) in mesures.items()}
+    derniers = {generation: max(int(age) for age, serie in avant.items()
+                                if str(generation) in serie)
+                for generation in range(1950, 1961)}
+    parties = {nom: parts_parties(departs, poids, range(55, 71), decotes)
+               for nom, (departs, poids, decotes) in mesures.items()}
+
+    def moyenne(serie: dict[int, float], debut: int, fin: int) -> float:
+        return somme_ordonnee(serie[generation] for generation in range(debut, fin + 1)) / (
+            fin - debut + 1)
+
+    print("| Âge moyen de départ | COR | " + " | ".join(mesures) + " |")
+    print("|---|---|" + "---|" * len(mesures))
+    for generation in GENERATIONS_D_AGE:
+        print(f"| {generation} | {_nombre(publie[generation])} | " + " | ".join(
+            f"{_nombre(serie[generation])} ({_signe(serie[generation] - publie[generation])})"
+            for serie in ages.values()) + " |")
+    for debut, fin in GROUPES_D_AGE:
+        cor = moyenne(publie, debut, fin)
+        print(f"| {debut}-{fin} | {_nombre(cor)} | " + " | ".join(
+            f"{_nombre(moyenne(serie, debut, fin))} ({_signe(moyenne(serie, debut, fin) - cor)})"
+            for serie in ages.values()) + " |")
+    print()
+    print("| Partis au 31 décembre de l'année du dernier âge d'avant l'âge légal, en % | âge "
+          "| COR | " + " | ".join(mesures) + " |")
+    print("|---|---|---|" + "---|" * len(mesures))
+    for generation, age in derniers.items():
+        print(f"| {generation} | {age} | {_nombre(avant[str(age)][str(generation)] * 100, 1)} | "
+              + " | ".join(_nombre(serie[(generation, age)] * 100, 1)
+                           for serie in parties.values()) + " |")
+    print()
+    print("| Retraités au 31 décembre 2024, en % des résidents | génération | COR | "
+          + " | ".join(mesures) + " |")
+    print("|---|---|---|" + "---|" * len(mesures))
+    for age in range(60, 70):
+        generation = 2024 - age
+        print(f"| {age} ans | {generation} | {_nombre(en_2024[str(age)] * 100, 1)} | "
+              + " | ".join(_nombre(serie[(generation, age)] * 100, 1)
+                           for serie in parties.values()) + " |")
+    return {"ages_moyens": {nom: {str(g): a for g, a in serie.items() if 1950 <= g <= 2000}
+                            for nom, serie in ages.items()},
+            "parts_parties": {nom: {f"{g}|{a}": part for (g, a), part in serie.items()
+                                    if 1950 <= g <= 2000}
+                              for nom, serie in parties.items()}}
+
+
 def main(argv: list[str] | None = None) -> int:
     analyseur = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     analyseur.add_argument("--systemes", action="store_true",
@@ -403,8 +512,16 @@ def main(argv: list[str] | None = None) -> int:
     analyseur.add_argument("--duree", action="store_true",
                            help="et y lit l'entrée de chaque génération sur sa durée validée, "
                                 "non sur son premier trimestre cotisé")
+    analyseur.add_argument("--ages", action="store_true",
+                           help="confronte, seul, l'âge de départ de la grille à celui du COR")
     analyseur.add_argument("--json", type=Path, help="écrit les résultats dans ce fichier")
     arguments = analyseur.parse_args(argv)
+    if arguments.ages:
+        resultats = ages_de_depart(arguments.entree or ENTREE_DE_REFERENCE)
+        if arguments.json:
+            arguments.json.write_text(json.dumps(resultats, ensure_ascii=False, indent=1)
+                                      + "\n", encoding="utf-8")
+        return 0
     arguments.decote_generation |= arguments.duree
     arguments.decote |= arguments.decote_generation
     if arguments.decote and arguments.entree is None:
