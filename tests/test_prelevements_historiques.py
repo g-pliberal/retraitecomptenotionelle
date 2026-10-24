@@ -430,34 +430,34 @@ def test_le_plafond_de_la_sncf_est_celui_du_texte_revalorise(courants):
     assert mines.plafond_annuel is None and mines.cotisation(30000.0) == pytest.approx(150.0)
 
 
-def test_la_fiche_de_paie_du_site_prelieve_la_maladie_de_la_sncf(simulateur, courants):
+def test_la_fiche_de_paie_du_site_prelieve_la_maladie_de_la_sncf(simulateur_du_portage,
+                                                                  courants):
     """Sur le site, au taux plein : la pension d'un agent de la SNCF paie 9,1 %
     et 0,70 % de sa part sous le plafond ; exonéré de CSG, rien ; un mineur,
-    0,50 % de toute sa pension."""
-    from retraite_notionnelle.contexte import Montants, part_des_regimes_speciaux
-    from retraite_notionnelle.saisie import Saisie
-
-    pensions = courants.pensions
-    comparaison = simulateur.simuler(simulateur.carriere_simple(
-        annee_naissance=1965, sexe="H", affiliation="agent_sncf", age_debut=20,
-        age_liquidation=57, niveau_salaire=3.0))
-    actuel = comparaison.actuel
-    part = part_des_regimes_speciaux(pensions, actuel, None, 1.0)
+    0,50 % de toute sa pension. Les montants du site sont ceux du portage
+    (``Montants``, ``moteur/js/contexte.js``)."""
+    contexte, saisie = module("contexte"), module("saisie").Saisie
+    pensions = simulateur_du_portage.bareme_prelevements.pensions
+    actuel = simulateur_du_portage.simuler(_au_portage(
+        simulateur_du_portage, annee_naissance=1965, sexe="H", affiliation="agent_sncf",
+        age_debut=20, age_liquidation=57, niveau_salaire=3.0)).actuel
+    part = contexte.part_des_regimes_speciaux(pensions, actuel, None, 1.0)
     assert 0.0 < part < 0.007
-    montants = Montants.du_foyer(Saisie(montants="net"), pensions, actuel)
-    assert montants.taux_pension == pytest.approx(pensions.taux_total + part)
+    montants = contexte.Montants.du_foyer(saisie({"montants": "net"}), pensions, actuel)
+    assert montants.taux_pension == pytest.approx(courants.pensions.taux_total + part)
     assert montants.pension_du_regime(1000.0, "sncf") == pytest.approx(1000.0 * (1 - 0.091 - 0.007))
     assert montants.pension_du_regime(1000.0, "regime_general") == pytest.approx(909.0)
-    exonere = Montants.du_foyer(Saisie(montants="net", revenu_fiscal=5000), pensions, actuel)
+    exonere = contexte.Montants.du_foyer(saisie({"montants": "net", "revenu_fiscal": 5000}),
+                                         pensions, actuel)
     assert exonere.taux_pension == 0.0
     assert exonere.pension_du_regime(1000.0, "sncf") == pytest.approx(1000.0)
-    mineur = simulateur.simuler(simulateur.carriere_simple(
-        annee_naissance=1965, sexe="H", affiliation="mineur", age_debut=20,
-        age_liquidation=57, niveau_salaire=1.0)).actuel
+    mineur = simulateur_du_portage.simuler(_au_portage(
+        simulateur_du_portage, annee_naissance=1965, sexe="H", affiliation="mineur",
+        age_debut=20, age_liquidation=57, niveau_salaire=1.0)).actuel
     regimes = {p.regime for p in mineur.pensions_par_regime}
     if "mines" in regimes:
         mines = sum(p.montant for p in mineur.pensions_par_regime if p.regime == "mines")
-        assert part_des_regimes_speciaux(pensions, mineur) == pytest.approx(
+        assert contexte.part_des_regimes_speciaux(pensions, mineur) == pytest.approx(
             0.005 * mines / mineur.pension_annuelle)
 
 
