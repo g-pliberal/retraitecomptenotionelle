@@ -7071,16 +7071,16 @@ une à une, les étapes 3 et 5. Les quatre gardes de l'étape 2 sont faites le
 
 ### 173. Le site sur tous les écrans : rien ne déborde, ce qui va ensemble se voit ensemble, moins de vide, moins de mots — `en cours`
 
-**Reprise, au 24 octobre 2026.** Faites, les étapes 1 à 6 : rien ne déborde,
-pas même une case sur sa voisine, ce qui va ensemble se voit ensemble, les
-grands vides sont tenus ; l'accueil, Simuler, Coût et Pourquoi changer disent
-la même chose en moins de mots, ouverts comme dépliés. Restent les étapes 7 à
-10, une page par session, et, sur Coût, les deux schémas de la carte des flux,
-qu'on compare et qui s'empilent au large. Par quoi commencer : l'étape 7,
-Partager et Le saviez-vous ? — serrer leurs budgets de lecture
-(`BUDGETS_DE_LECTURE`, `tests/test_web.py`), leur donner leur ligne dans
-`BUDGETS_DEPLIES` et `COTE_A_COTE` (`tests/test_ecrans.py`), les voir rouges,
-puis récrire. Détail : `173/2026-10-24-etape-6-risque.md`.
+**Reprise, au 24 octobre 2026.** Faites, les étapes 1 à 7 : rien ne déborde,
+ce qui va ensemble se voit ensemble, les cartes à publier deux par ligne dès
+1 024 points ; l'accueil, Simuler, Coût, Pourquoi changer, Partager et Le
+saviez-vous ? disent la même chose en moins de mots, ouverts comme dépliés.
+Restent les étapes 8 à 10, une page par session, et, sur Coût, les deux
+schémas de la carte des flux, qui s'empilent au large. Par quoi commencer :
+l'étape 8, Carrières types — serrer son budget de lecture et lui donner sa
+ligne dans `BUDGETS_DEPLIES` (`tests/test_web.py`) et dans `COTE_A_COTE`
+(`tests/test_ecrans.py`), les voir rouges, puis récrire. Détail :
+`173/2026-10-24-etape-7-partager.md`.
 
 **D'où elle vient.** Le 23 octobre 2026, le propriétaire : « Le site web de
 notre projet est plutôt adapté aux écrans d'ordinateurs (et encore...) mais
@@ -7119,7 +7119,10 @@ un graphique et sa légende. »
    ouverts au lieu de 636, 4 935 dépliés au lieu de 5 128 ; une case de
    tableau qui passait sur sa voisine, à 320 et 390 points, mesurée et
    repliée en fiche.
-7. **Moins de mots : Partager et Le saviez-vous ?**
+7. **Moins de mots : Partager et Le saviez-vous ?**, faite le 24 octobre
+   2026 : 331 mots au lieu de 372 sur Partager ; 636 ouverts au lieu de 673,
+   1 182 dépliés au lieu de 1 229, sur Le saviez-vous ? ; les cartes à publier
+   deux par ligne dès 1 024 points, en tailles de lecture.
 8. **Moins de mots : Carrières types.**
 9. **Moins de mots : Droits non cotisés.**
 10. **Moins de mots : Méthode et sources.**
