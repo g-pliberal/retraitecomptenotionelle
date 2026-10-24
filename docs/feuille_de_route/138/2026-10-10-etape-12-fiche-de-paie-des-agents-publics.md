@@ -1,15 +1,15 @@
 # Étape 12, première partie : la fiche de paie d'un agent public — la RAFP, l'indemnité compensatrice de la CSG, le taux d'équilibre sur le traitement
 
-**Reprise, au 23 octobre 2026.** Fait : le coût du travail complet d'un agent
-public (10 octobre) ; le micro-entrepreneur, du 14 au 18 ; le 19, la nouvelle
-pension de l'indépendant en cumul, son assiette minimale, sa seconde retraite
-du RCI ; le 23, le RCI en cumul plafonné (article 27) et son versement
-forfaitaire unique (articles 39 à 41), aux deux pensions. Reste, une session
-par point : la veille du projet de loi de financement pour 2027 ; aux pages, la
-phrase du RCI et celle de sa complémentaire réduite ; à lire, le RCO et le NRCO
-d'avant 2009, les sections libérales en cumul. Au propriétaire : la part de
-base de D. 133-4 de 2016 à 2019. Détail :
-`…-cumul-et-versement-unique-du-rci.md`.
+**Reprise, au 24 octobre 2026.** Fait : l'agent public (10 octobre) ; le
+micro-entrepreneur (14 au 18) ; l'indépendant en cumul (19) ; le RCI en cumul
+et son versement unique (23) ; le 24, la classe : l'Ircantec, la RCO agricole,
+les sections libérales en cumul, le versement de la base des indépendants.
+Reste, une session par point : la base des non-salariés, suspendue le nombre de
+mois que le dépassement épuise, et la durée requise des libéraux ; la veille du
+projet de loi de financement pour 2027 ; aux pages, les phrases du RCI, de sa
+complémentaire réduite, du notaire libéral. Au propriétaire : le RCO et le NRCO
+d'avant 2009 (action 89) ; la part de base de D. 133-4 de 2016 à 2019. Détail :
+`…-la-classe-du-cumul.md`.
 
 **Le 10 octobre 2026, la demande.** Le propriétaire : porter sur la fiche de
 paie, en Python puis en JavaScript, la cotisation de la RAFP sur les primes,
