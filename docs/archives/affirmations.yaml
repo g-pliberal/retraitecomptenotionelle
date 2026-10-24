@@ -98,3 +98,19 @@ affirmations:
       au-dessus, la montrait monter. Elle ne dit plus que le refus d'afficher
       un coût du travail, sous `simuler.fonctionnaire_sans_cout_du_travail`
       (action 159, étape 8).
+
+  - id: methode.lissage_cinq_ans
+    page: /methode
+    extrait: "lissage sur cinq ans"
+    porte: le lissage à cinq ans absorbe le trou de 2020
+    etat: verifiee
+    controle: lissage_absorbe_la_loterie
+    retiree_le: 2026-10-24
+    motif: >-
+      la phrase qui la portait, « La dernière ligne y ajoute un lissage sur
+      cinq ans, comme le fait l'Italie », a quitté la page Méthode le
+      24 octobre 2026 (action 173, étape 10) : elle redisait le paragraphe de
+      la masse salariale, où l'Italie s'approche du PIB nominal lissé sur cinq
+      ans, et le libellé de la dernière ligne du tableau. Ce que l'entrée
+      portait reste sous `methode.lissage_reglage_a_part` et
+      `methode.loterie_de_cohorte`, que le même contrôle tient.

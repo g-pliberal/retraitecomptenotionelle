@@ -65,7 +65,11 @@ proposition était « le système 3, à deux différences près », le taux et l
 garantie : le pilier capitalisé, que seule elle construit, en est une
 troisième, nommée. Au catalogue des affirmations, l'extrait de la première
 opération suit sa phrase, et « lissage sur cinq ans », qui n'est plus en gras,
-quitte le catalogue ; deux autres extraits portent le même contrôle.
+passe aux archives du catalogue (`docs/archives/affirmations.yaml`), où son
+identifiant reste gardé ; deux autres extraits portent le même contrôle.
+Retirée d'abord du catalogue sans passer par les archives, l'entrée a fait
+tomber la fabrique de GitHub sur la conservation (course 979, `8921c02`), qui
+n'a rien pu publier : le commit suivant l'archive.
 
 **Ce qui attendait GitHub.** Le témoin des pages date d'avant l'étape 9 : les
 trois réserves de Droits non cotisés y disent encore « Elle », et quatre tests
