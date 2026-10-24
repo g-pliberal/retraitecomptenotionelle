@@ -7946,41 +7946,33 @@ elle peut être citée ou partagée telle quelle.</p>
 `);
 }
 /**
- * Les trois grilles de la page Cas types, dans l'ordre d'affichage : le code du
- * scénario, le titre de sa section, le titre accessible de sa grille, et la
- * phrase qui dit ce qu'on y voit. Le premier est CELUI QUI S'AFFICHE — la seule
- * réforme applicable qui crédite ce qui est réellement prélevé —, les cinq
- * autres sont repliés ensemble.
- */
-/**
- * Les cinq grilles de la page Cas types, dans l'ordre des onglets : le code du
- * scénario, le libellé de son onglet, le titre de sa section, le titre
+ * Les trois grilles de la page Carrières types, dans l'ordre des onglets : le
+ * code du scénario, le libellé de son onglet, le titre de sa section, le titre
  * accessible de sa grille, et la phrase qui dit ce qu'on y voit. Le premier
- * est celui qui s'affiche à l'ouverture — le système 4, la proposition.
+ * est celui qui s'affiche à l'ouverture — le système 4, la proposition. Que
+ * chaque case se lise par rapport à aujourd'hui, l'affiche le dit une fois
+ * pour les trois.
  */
 const GRILLES_CAS_TYPES = [
   [
     "notionnel_liberal",
     "4. La proposition",
-    "La proposition du Parti libéral français, par rapport à aujourd'hui",
-    "La proposition libérale : taux unique de 18 % et garantie vieillesse",
+    "La proposition du Parti libéral français",
+    "La proposition libérale",
     "Le même compte rétroactif que le système 3 jusqu'à la bascule, puis "
-    + "un taux unique de 18 % — salariale et patronale confondues —, une "
-    + "cotisation de 5 % capitalisée par-dessus, et une garantie vieillesse "
-    + "individualisée financée par l'impôt. Les lignes qui cotisaient au-delà "
-    + "de 18 % descendent sous le système 3, celles qui cotisaient en deçà "
-    + "remontent. L'écart affiché comprend la rente du pilier capitalisé : "
-    + "elle ne joue que pour qui cotise après la bascule, et d'autant plus "
-    + "qu'il lui reste d'années à courir — la page Simuler en donne le "
-    + "partage, carrière par carrière. La garantie, elle, ne se voit que sur "
-    + "les cas dont la pension reste sous le plancher, à partir de 65 ans. "
-    + "Nul n'y part avant 65 ans après la bascule.",
+    + "un taux unique de 18 % (parts salariale et patronale confondues), une "
+    + "cotisation de 5 % capitalisée par-dessus et une garantie vieillesse "
+    + "individualisée, financée par l'impôt. Les lignes qui cotisaient "
+    + "au-delà de 18 % descendent sous le système 3, celles qui cotisaient en "
+    + "deçà remontent. L'écart comprend la rente capitalisée, qui ne joue que "
+    + "pour qui cotise après la bascule, d'autant plus qu'il lui reste "
+    + "d'années à courir. La garantie ne se voit que sur les cas dont la "
+    + "pension reste sous le plancher, à partir de 65 ans.",
   ],
   [
     "notionnel_retroactif",
     "2. Part salariale seule",
-    "Le compte notionnel sur la seule part salariale, par rapport à "
-    + "aujourd'hui",
+    "Le compte notionnel sur la seule part salariale",
     "Compte notionnel, part salariale seule, carrière recalculée depuis 1941",
     "Les générations anciennes sont les plus touchées : leurs cotisations, "
     + "versées quand l'inflation dépassait la productivité, ont été "
@@ -7989,7 +7981,7 @@ const GRILLES_CAS_TYPES = [
   [
     "notionnel_retroactif_employeur",
     "3. Les deux parts",
-    "Le compte notionnel sur les deux parts, par rapport à aujourd'hui",
+    "Le compte notionnel sur les deux parts",
     "Compte notionnel, part salariale et patronale, carrière recalculée "
     + "depuis 1941",
     "Toutes les lignes bougent, sauf celles des non-salariés — artisan, "
@@ -8281,16 +8273,12 @@ function casTypes(contexte, regards = null) {
     const haut = ecarts[ecarts.length - 1];
     reperes = g.fiche(
       "La carrière la mieux traitée", echapper(haut[1].split(" (")[0]),
-      `${g.pourcentage(haut[0], true, 0)} par rapport à aujourd'hui, `
-      + `génération ${derniere}, système 4`,
+      `${g.pourcentage(haut[0], true, 0)}, génération ${derniere}, système 4`,
     ) + g.fiche(
       "La moins bien traitée", echapper(bas[1].split(" (")[0]),
-      `${g.pourcentage(bas[0], true, 0)} par rapport à aujourd'hui, `
-      + `génération ${derniere}, système 4`,
+      `${g.pourcentage(bas[0], true, 0)}, génération ${derniere}, système 4`,
     ) + g.fiche(
-      "Ce qui les sépare",
-      `${g.nombre((haut[0] - bas[0]) * 100, 0)} points`,
-      "à carrière identique jusqu'au départ",
+      "Ce qui les sépare", `${g.nombre((haut[0] - bas[0]) * 100, 0)} points`,
     );
   }
 
@@ -8301,11 +8289,19 @@ function casTypes(contexte, regards = null) {
     + (rang === 0 ? " checked" : "")
     + `><label for="grille-${scenario}">${echapper(onglet)}</label>`
   )).join("");
+  // La proposition a son âge légal, que sa grille suit : qui partait plus tôt
+  // y travaille jusque-là. Le tableau des âges, replié, est celui des trois
+  // autres systèmes.
+  const ageLegal = contexte.base.age_legal_liberal ?? null;
+  const departs = ageLegal === null ? {} : {
+    notionnel_liberal: ` Nul n'y part avant ${age(ageLegal)} après la `
+      + "bascule : qui partait plus tôt travaille jusque-là.",
+  };
   const panneaux = GRILLES_CAS_TYPES.map(([scenario, , titre, alt, lecture], rang) => (
     `<div class="panneau" data-onglet="${scenario}"`
     + (rang === 0 ? "" : " hidden") + ">"
     + `<h3>${echapper(titre)} ${badgeScenario(scenario)}</h3>${grille(scenario, alt)}`
-    + `<p class="discret">${echapper(lecture)}</p></div>`
+    + `<p class="discret">${echapper(lecture + (departs[scenario] ?? ""))}</p></div>`
   )).join("");
 
   const ages = g.tableau(
@@ -8348,42 +8344,34 @@ function casTypes(contexte, regards = null) {
 <strong>appliquer aux fonctionnaires de l'État les règles de calcul du régime
 général relèverait leur pension de 1,5 % en moyenne</strong> : 62 % y
 gagneraient, 32 % y perdraient, et 6 % n'y verraient pas de différence notable
-(<em>Les Dossiers de la DREES</em> n° 103, novembre 2022). Et le taux de
-remplacement, la pension rapportée au dernier revenu d'activité, est un peu
-plus haut au régime général que dans la fonction publique de l'État : 74,8 %
-contre 73,8 % (DREES, <em>Les retraités et les retraites</em>, 2025). Selon le
-jaune, l'avantage apparent d'une pension calculée sur les six derniers mois de
-traitement est compensé par une assiette qui laisse de côté les primes, plus
-d'un cinquième de la rémunération brute.</p>
-<p>La grille ne compare pas deux jeux de règles sur un même salaire : chaque
-case rapporte ce qu'un système servirait à ce que le système actuel promet à la
-même carrière. L'écart entre la ligne du fonctionnaire sédentaire et celle du
-salarié mêle donc ce que chacun a cotisé et ce que ses règles lui promettent ;
-il ne dit pas lequel des deux régimes est le plus généreux. La comparaison de
-la DREES se refait sur une carrière, au <a href="${g.lien("/simuler")}">simulateur</a> :
-la même saisie, primes comprises, sous le statut de fonctionnaire de l'État,
-puis sous celui de salarié du privé.</p>`);
-  // Les âges du tableau sont ceux du droit en vigueur ; la proposition en a
-  // un autre, et la grille de son onglet le suit.
-  const ageLegal = contexte.base.age_legal_liberal ?? null;
-  const mentionProposition = ageLegal === null ? "" : (
-    " Ce sont les âges du tableau ci-dessous, ceux des systèmes 1 à 3. La "
-    + `proposition, elle, fixe un âge légal de ${age(ageLegal)} : qui part `
-    + `plus tôt à compter de ${contexte.base.annee_bascule} part à `
-    + "cet âge dans la grille du système 4, et travaille jusque-là."
-  );
+(<em>Les Dossiers de la DREES</em> n° 103, novembre 2022). Et le
+${g.terme("taux de remplacement")} est un peu plus haut au régime général que
+dans la fonction publique de l'État : 74,8 % contre 73,8 % (DREES, <em>Les
+retraités et les retraites</em>, 2025). Selon le jaune, l'avantage apparent
+d'une pension calculée sur les six derniers mois de traitement est compensé par
+une assiette qui laisse de côté les primes, plus d'un cinquième de la
+rémunération brute.</p>
+<p>La grille ne compare pas deux jeux de règles sur un même salaire : l'écart
+entre la ligne du fonctionnaire sédentaire et celle du salarié mêle ce que
+chacun a cotisé et ce que ses règles lui promettent, sans dire lequel des deux
+régimes est le plus généreux. La comparaison de la DREES se refait sur une
+carrière, au <a href="${g.lien("/simuler")}">simulateur</a> : la même saisie,
+primes comprises, sous le statut de fonctionnaire de l'État, puis sous celui de
+salarié du privé.</p>`);
+  // Les âges du tableau sont ceux du droit en vigueur ; ceux de la
+  // proposition, son panneau les dit, sous sa grille.
   const depliantAges = g.depliant(
-    "À quel âge chacun part, et pourquoi ce n'est pas le même",
+    "À quel âge chacun part, et pourquoi",
     '<p class="discret">Un cas type ne porte pas un âge de départ mais une '
     + "RÈGLE, et chaque génération liquide donc au sien. La plupart partent "
-    + "au taux plein, le premier âge auquel la pension est servie entière, "
-    + "qui dépend à la fois de l'âge légal et de la durée requise de la "
-    + "génération. Ceux dont un statut commande le départ (agent de conduite, agent des IEG) partent à l'âge que ce statut leur "
-    + "ouvre. L'agent de catégorie active pourrait partir ainsi, mais il "
-    + "attend, comme les actifs de la CNRACL, le taux plein que son "
-    + "classement avance. Le militaire, lui, part à une DURÉE de services, "
-    + "pas à un âge."
-    + mentionProposition + "</p>" + ages,
+    + `dès le ${g.terme("taux plein")}, qui dépend à la fois de l'âge légal `
+    + "et de la durée requise de leur génération. Ceux dont un statut "
+    + "commande le départ (agent de conduite, agent des IEG) partent à l'âge "
+    + "que ce statut leur ouvre. L'agent de catégorie active pourrait partir "
+    + "ainsi, mais il attend, comme les actifs de la CNRACL, le taux plein "
+    + "que son classement avance. Le militaire, lui, part à une DURÉE de "
+    + "services, pas à un âge. Ce sont les âges des systèmes 1 à 3.</p>"
+    + ages,
   );
 
   const tete = g.affiche(
@@ -8398,11 +8386,11 @@ puis sous celui de salarié du privé.</p>`);
 ${tete}
 
 <div class="note"><strong>Ces pourcentages se lisent contre une
-promesse</strong> : chaque case rapporte ce qu'un système servirait à ce que le
-système actuel promet à la même carrière. Ce que la grille mesure le plus
-sûrement est l'écart entre ses lignes : ce qu'un militaire touche de plus ou de
-moins qu'un artisan, à cotisation égale. Le niveau général, lui, dépend aussi
-d'un ${g.terme("réglage annuel", "coefficient d'équilibre")} que le modèle
+promesse</strong>, celle que le système actuel fait à la même carrière. Ce que
+la grille mesure le plus sûrement est l'écart entre ses lignes : ce qu'un
+militaire touche de plus ou de moins qu'un artisan, à cotisation égale. Le
+niveau général dépend aussi d'un
+${g.terme("réglage annuel", "coefficient d'équilibre")} que le modèle
 calcule mais n'applique jamais — et <strong>chaque système a le sien</strong>.\
 ${g.bulle("Ce qu'un coefficient appliqué déplacerait", `Un facteur commun laisserait ces cases inchangées, une case
 étant déjà un rapport de deux pensions. Mais il y a quatre coefficients, un par
@@ -8417,17 +8405,14 @@ chiffre</a>.</div>
 
 <div class="fiches reperes">${reperes}</div>
 
-<p class="discret">Le <strong>système 4</strong> est
-<a href="${g.lien("/")}">la proposition</a> ; les systèmes 2 et 3 sont des
-contrefactuels, qui mesurent ce que chaque ingrédient déplace : la part
-patronale, puis le taux unique. Le modèle calcule deux variantes de plus —
-celles où les droits acquis sont conservés à la bascule —, que le site ne
-compare pas.</p>
+<p class="discret">Les systèmes 2 et 3 sont des contrefactuels : ils mesurent
+ce que déplace chaque ingrédient de <a href="${g.lien("/")}">la proposition</a>,
+la part patronale, puis le taux unique. Le modèle calcule aussi deux variantes
+qui conservent les droits acquis à la bascule ; le site ne les compare pas.</p>
 <fieldset class="onglets"><legend>Système affiché</legend>${onglets}</fieldset>
 <div class="panneaux">${panneaux}</div>
-<p class="discret">« Aujourd'hui » n'est pas un point fixe. Le système actuel,
-colonne de référence de ces grilles, manque déjà de
-${g.pourcentage(-comptes.solde(obs), false, 2)} du PIB en ${obs},
+<p class="discret">« Aujourd'hui » n'est pas un point fixe : le système actuel
+manque déjà de ${g.pourcentage(-comptes.solde(obs), false, 2)} du PIB en ${obs},
 ${enMilliards(comptes, -comptes.solde(obs), obs)}, et le Conseil d'orientation
 des retraites projette qu'il en manquera
 ${g.pourcentage(-comptes.solde(horizon), false, 2)} en ${horizon},

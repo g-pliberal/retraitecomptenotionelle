@@ -3579,7 +3579,11 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # lecteur doit lire AVANT les chiffres : la clé de lecture des grilles et
     # la trajectoire du système actuel pour l'une, le résumé en langage
     # courant pour l'autre. Les bornes suivent, d'un paragraphe chacune.
-    "/cas-types": (500, 0, 1, 310),
+    # Serrée le 24 octobre 2026 (action 173, étape 8), de 500 mots de prose à
+    # 450, pour 497 lus, et de 310 à 270 dans la grille, qui en montrait 279 :
+    # la clé redisait le chapeau de l'affiche, chaque case rapportée à la même
+    # carrière, et la légende de la grille le titre de son panneau.
+    "/cas-types": (450, 0, 1, 270),
     # Coût tenait à 700 mots, et les atteignait exactement. La carte des flux,
     # le 23 septembre 2026, en ajoute deux cent trente : cent dix de prose — sa
     # question, sa réponse, sa source — et cent vingt d'étiquettes, le nom et
@@ -3763,6 +3767,13 @@ BUDGETS_DEPLIES: dict[str, int] = {
     # étape 7). Ce que dit le texte, sous une carte, redisait parfois la carte
     # elle-même : la rente du RAFP à partir du seuil, les quarante ans des TUC.
     "/saviez-vous": 1190,
+    # Carrières types tout déplié : 2 844 mots le 24 octobre 2026 (action 173,
+    # étape 8), dont 1 170 dans ses quatre tableaux, les trois grilles et les
+    # âges, et 640 dans les gloses des treize carrières, que le modèle écrit
+    # (`castypes.py`) : l'étape les laisse. Ses dépliants redisaient le haut de
+    # la page, la promesse contre laquelle se lit chaque case, l'âge légal de
+    # la proposition, et définissaient deux mots que le glossaire définit.
+    "/cas-types": 2750,
 }
 
 
