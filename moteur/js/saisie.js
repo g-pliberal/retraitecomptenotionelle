@@ -773,7 +773,7 @@ export const DEFAUTS = Object.freeze({
   //: le départ (`PREFIXE_DEMANDE`). Vide, la présomption
   //: `depart_de_chaque_regime` date chaque pension (fiche
   //: `liquidation_regime_par_regime`).
-  demandes: [],
+  demandes: Object.freeze([]),
   //: L'invalidité et l'inaptitude (fiches `pension_d_invalidite_substituee`,
   //: `inaptitude_au_travail` et `retraite_pour_invalidite_fonction_publique`) :
   //: l'âge où la pension d'invalidité de la Sécurité sociale a commencé, que
