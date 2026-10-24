@@ -5702,13 +5702,13 @@ mémoire sur le seul code du modèle ; `actions/cache` sur GitHub.
 **Reprise, au 24 octobre 2026.** Fait : le registre (70 modèles), relu à
 l'action 138 ; Destinie 2, TRAJECTOiRE et Ines exécutés à part ; les pistes
 du 1er octobre, closes ; les treize « jamais confrontés », remis à plat (note
-du 22 octobre) ; modele-as rejoué (note du 23 octobre) ; Catala rejoué au
-droit de sa date (note du 24 octobre) : les âges, l'inapte et l'ASPA du
-dépôt, et quatre erreurs de plus, les siennes. Le premier qui reste à
-confronter, dans l'ordre du registre : le simulateur de SUD éducation, puis
-Nos Retraites. Restent aussi l'Agirc-Arrco d'EDIFIS, l'ASPA de Saphir, les
-années 2015 à 2025 d'EUROMOD ; la campagne 2025 de l'EACR, au printemps 2027
-(note du 14 octobre) ; les `referents` des fiches, à leur relecture.
+du 22 octobre) ; modele-as, Catala et le simulateur de SUD éducation rejoués
+au droit de leur date (notes du 23 et du 24 octobre) : le dépôt a raison
+partout, et eux ont leurs erreurs, au registre. Le dernier qui reste à
+confronter, dans l'ordre du registre : Nos Retraites, au droit d'avant 2023.
+Restent aussi l'Agirc-Arrco d'EDIFIS, l'ASPA de Saphir, les années 2015 à
+2025 d'EUROMOD ; la campagne 2025 de l'EACR, au printemps 2027 (note du 14
+octobre) ; les `referents` des fiches, à leur relecture.
 
 **Demande**, le 1er octobre 2026 : « Quels sont les autres modèles publics
 autres que openfisca ? », puis : « Ajoute les modèles qui ne sont pas encore

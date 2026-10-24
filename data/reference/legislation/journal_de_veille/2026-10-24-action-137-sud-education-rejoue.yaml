@@ -1,0 +1,28 @@
+date: "2026-10-24"
+session: "action 137 : le simulateur de SUD éducation, rejoué au droit de sa date"
+consulte: >-
+  Le simulateur de retraites de SUD éducation (MIT) au commit eec62c9, encore sa tête,
+  cloné à part : son static/js/retraites.js exécuté sous Node sur tout son menu, 17 712
+  carrières, et son historique git, qui date ses constantes du 13 octobre 2019 et son
+  calcul du 24 décembre 2019. Dans l'index LEGI du dépôt, récupéré ce jour (à jour au
+  18 octobre 2026) : L. 161-17-3 du code de la sécurité sociale (LEGIARTI000028494794,
+  047452764, 053280903), L. 13 (LEGIARTI000028498258), L. 14 (LEGIARTI000037200740) et
+  L. 17 (LEGIARTI000023033916) du code des pensions civiles et militaires, dans leurs
+  versions de 2019. Le moteur, sous le droit contrefactuel au 31 août 2023, sur ses
+  11 070 carrières de titulaire. Le scénario 1 n'est pas touché : ni fiche, ni règle,
+  et `textes.py --inscrire` n'a pas tourné.
+trouve: >-
+  Rien qui contredise le dépôt. Sur les 11 070 carrières de titulaire, la durée, les
+  services, la décote, la surcote et le prorata du moteur sont ceux que L. 161-17-3,
+  L. 13 et L. 14, dans leurs versions de 2019, donnent à la main ; le simulateur rend
+  la même pension, au centime qu'il tronque, sur 3 665. Ses erreurs : 172 trimestres
+  demandés aux nés de 1958 et de 1959, quand la version de 2014 de L. 161-17-3 leur en
+  demande 167 ; une décote sans le décompte par l'âge de L. 14, I ; un prorata qui
+  dépasse un et une surcote à tout âge, contre L. 13, I, et L. 14, III ; une moyenne
+  des contractuels qui n'applique pas même sa règle. Son point, 4,686 € par mois, et
+  son minimum contributif, 695,59 €, sont ceux du dépôt pour 2019.
+reste: >-
+  Nos Retraites reste à confronter, au droit d'avant 2023. Une piste pour le modèle,
+  non suivie : le traitement d'un fonctionnaire parti un 1er janvier, porté au point du
+  1er janvier du départ, compterait une fois et demie un relèvement de juillet si la
+  ligne de sa dernière année porte le traitement payé.

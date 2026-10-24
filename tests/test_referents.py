@@ -21,6 +21,8 @@ from pathlib import Path
 import pytest
 import yaml
 
+from retraite_notionnelle.carriere import Carriere, LigneRelevee
+from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.droit.releve import points_de_l_annee
 from retraite_notionnelle.scenarios.actuel import (
     AgesOuvertureAvantReforme2023, AgesOuvertureAvantSuspension, TableRecouverte)
@@ -308,6 +310,10 @@ def depot() -> dict:
     bareme = yaml.safe_load((LEGISLATION / "prelevements_remuneration.yaml").read_text(
         encoding="utf-8"))["pensions"]["bareme_csg"][:3]
     seuils = {int(ligne["annee"]): ligne for ligne in _csv(LEGISLATION / "csg_pensions_seuils.csv")}
+    point = {int(ligne["annee"]): float(ligne["valeur"])
+             for ligne in _csv(LEGISLATION / "point_indice_fonction_publique.csv")}
+    minimum = {(ligne["mesure"], ligne["date"]): float(ligne["valeur"])
+               for ligne in _csv(LEGISLATION / "minimum_contributif.csv")}
 
     def lu(serie: str, annee: int, *champs: str) -> tuple:
         return tuple(_de_l_annee(impot[serie], annee)[c] for c in champs)
@@ -323,6 +329,9 @@ def depot() -> dict:
         "abattement_ages_2025": lu("abattement_age_invalidite", 2025, "abattement_plein",
                                    "seuil_plein", "abattement_reduit", "seuil_reduit"),
         "decote_2025": lu("decote", 2025, "seuil_celibataire", "seuil_couple"),
+        "point_indice_mensuel_2019": (round(point[2019] / 12, 3),),
+        "minimum_contributif_majore_mensuel_2019": (
+            round(minimum["montant_majore", "2019-01-01"] / 12, 2),),
     }
 
 
@@ -333,6 +342,9 @@ def depot() -> dict:
 #: `archives_cgi.catala_fr:340-370`, « sous condition année_revenus = 2022 ».
 #: EUROMOD : FR.xml, système FR_2026. Retraites 2027 : `params.js:52-64`, ses
 #: valeurs de 2026 citées en commentaire. Aurain : `parametres_fiscaux_2026.yaml`.
+#: SUD éducation : `static/js/retraites.js:47, 51`, le minimum contributif et le
+#: point de son « système actuel », écrits en octobre 2019 ; le point mensuel,
+#: 4,686025 €, au millième, comme il l'écrit.
 CONSTATS = [
     ("saphir", "seuils_csg_2017", (10996, 14375)),
     ("saphir", "abattement_pensions_2015", (379, 3711)),
@@ -345,6 +357,8 @@ CONSTATS = [
     ("retraites_2027", "decote_2025", (897, 1483)),
     ("simulateur_aurain", "majorations_csg_2026", (3484, 4555, 7066)),
     ("simulateur_aurain", "abattement_pensions_2025", (454, 4439)),
+    ("simulateur_sud_education", "point_indice_mensuel_2019", (4.686,)),
+    ("simulateur_sud_education", "minimum_contributif_majore_mensuel_2019", (695.59,)),
 ]
 
 #: Les taux de vieillesse du régime général d'EDIFIS, en % : salarié
@@ -633,6 +647,111 @@ def test_l_aspa_de_catala_est_celle_du_depot_au_mensuel_arrondi_pres():
         assert couple[annee] == pytest.approx(chez_lui, abs=0.005), (
             f"catala, ASPA d'un couple en {annee} : {chez_lui} € chez lui, "
             f"{couple[annee]} € au dépôt")
+
+
+# ---- Le simulateur de SUD éducation, rejoué ----------------------------------
+# Le « système actuel » du simulateur de SUD éducation (MIT), au commit `eec62c9`,
+# exécuté à part sous Node le 24 octobre 2026 (action 137), au droit de sa date :
+# ses constantes datent d'octobre 2019, et ses pensions partent de 2020. Pour un
+# titulaire, 75 % du dernier traitement, au prorata des trimestres acquis sur les
+# requis, multipliés par 1 − 1,25 % × (requis − acquis) (`static/js/retraites.js:
+# 150-185`). Le dépôt liquide les mêmes services et le même traitement sous le
+# droit au 31 août 2023, les lois de 2010 et de 2014, qui étaient celles de sa
+# date : le relevé d'années pleines d'un assuré né un 1er janvier, de
+# l'anniversaire du début à celui du départ, et la pension avant le minimum
+# garanti (`total_contributif`). Ses pensions sont celles du dépôt, au centime qu'il
+# tronque, sauf trois erreurs, les siennes, que sa ligne du registre déclare.
+
+#: (corps, naissance, âges de début et de fin de carrière) : (trimestres requis,
+#: acquis, dernier traitement mensuel, pension mensuelle), chez lui. Ses corps :
+#: ADJAENES, certifiés, professeurs des écoles, agrégés, SAENES
+#: (`content/_index.md:24-33`), ses grilles comprises.
+SUD_EDUCATION = {
+    ("professeur_des_ecoles", 1960, 22, 62): (167, 160, 3_739.42, 2_451.89),
+    ("certifie", 1963, 22, 64): (168, 168, 3_739.42, 2_804.56),
+    ("certifie", 1970, 22, 62): (171, 160, 3_739.42, 2_263.33),
+    ("agrege", 1975, 20, 63): (172, 172, 4_554.79, 3_416.09),
+    ("adjaenes", 1985, 22, 64): (172, 168, 2_108.69, 1_467.50),
+    ("saenes", 1998, 24, 67): (172, 172, 2_357.05, 1_767.78),
+    ("certifie", 1958, 22, 62): (172, 160, 3_739.42, 2_217.56),
+    ("agrege", 1959, 22, 62): (172, 160, 4_554.79, 2_701.09),
+    ("adjaenes", 1990, 28, 62): (172, 136, 1_925.94, 628.16),
+    ("certifie", 1985, 28, 67): (172, 156, 3_739.42, 2_034.94),
+    ("professeur_des_ecoles", 1980, 27, 65): (172, 152, 3_739.42, 1_858.83),
+    ("certifie", 1960, 20, 62): (167, 168, 3_739.42, 2_856.62),
+    ("agrege", 1975, 20, 65): (172, 180, 4_554.79, 3_932.47),
+}
+
+#: Là où il se trompe, le droit de sa date posé à la main : (durée requise,
+#: trimestres de décote, trimestres de surcote). L. 161-17-3 (LEGIARTI000028494794,
+#: de 2014 à 2023) : « 1° 167 trimestres, pour les assurés nés entre le 1er janvier
+#: 1958 et le 31 décembre 1960 », que L. 13, III (LEGIARTI000028498258) applique
+#: aux fonctionnaires nés à compter de 1958 ; sa table ne commence qu'à 1960. L. 14,
+#: I (LEGIARTI000037200740, de 2018 à 2023) : la décote compte le plus petit des
+#: trimestres qui manquent à la durée et de ceux qui séparent l'âge de la limite
+#: d'âge, soixante-sept ans, « dans la limite de vingt trimestres » ; il ne compte
+#: que les premiers. L. 14, III : la surcote compte les trimestres « au-delà de
+#: l'âge » de soixante-deux ans et « en sus » de la durée ; il compte tous ceux qui
+#: la dépassent, à un prorata qui dépasse un, quand L. 13, I, borne la pension à
+#: 75 % du traitement.
+LOI_DE_2019_SUD = {
+    ("certifie", 1958, 22, 62): (167, 7, 0),
+    ("agrege", 1959, 22, 62): (167, 7, 0),
+    ("adjaenes", 1990, 28, 62): (172, 20, 0),               # 36 manquent à la durée
+    ("certifie", 1985, 28, 67): (172, 0, 0),                # à la limite d'âge
+    ("professeur_des_ecoles", 1980, 27, 65): (172, 8, 0),   # 20 manquent, 8 à 67 ans
+    ("certifie", 1960, 20, 62): (167, 0, 0),                # aucun après 62 ans
+    ("agrege", 1975, 20, 65): (172, 0, 8),                  # à 180/172 chez lui
+}
+
+#: Sa durée requise par année de naissance (`static/js/retraites.js:150-170`) : sa
+#: table, de 1960 à 1972, et 172 trimestres pour toute autre année de son menu, de
+#: 1958 à 1998.
+DUREES_SUD = {1960: 167, **dict.fromkeys(range(1961, 1964), 168),
+              **dict.fromkeys(range(1964, 1967), 169), **dict.fromkeys(range(1967, 1970), 170),
+              **dict.fromkeys(range(1970, 1973), 171)}
+
+
+@pytest.fixture(scope="module")
+def moteur_2019():
+    """Le droit au 31 août 2023 : pour l'âge légal et la durée, celui de 2019."""
+    return Simulateur(Parametres().avec(droit_contrefactuel="au_31_aout_2023")).scenario_actuel
+
+
+def test_sud_education_demande_la_duree_de_2014_sauf_en_1958_et_1959(moteur_2019):
+    for naissance in range(1958, 1999):
+        chez_lui = DUREES_SUD.get(naissance, 172)
+        attendu = 167 if naissance in (1958, 1959) else chez_lui
+        au_depot = moteur_2019.durees_requises.trimestres(float(naissance))[0]
+        assert au_depot == attendu, (
+            f"simulateur_sud_education, né en {naissance} : {chez_lui} trimestres chez "
+            f"lui, {au_depot} au dépôt ; sa ligne du registre se relit")
+
+
+@pytest.mark.parametrize("cas", sorted(SUD_EDUCATION))
+def test_sud_education_liquide_le_titulaire_du_depot_sauf_trois_erreurs(moteur_2019, cas):
+    corps, naissance, debut, fin = cas
+    requis, acquis, traitement, chez_lui = SUD_EDUCATION[cas]
+    lignes = [LigneRelevee(annee, "fonctionnaire_etat", 12 * traitement, 4)
+              for annee in range(naissance + debut, naissance + fin)]
+    carriere = Carriere.depuis_releve(naissance, "H", lignes, float(fin), moteur_2019.macro,
+                                      mois_naissance=1, jour_naissance=1)
+    resultat = moteur_2019.calculer(carriere)
+    au_depot = resultat.total_contributif / 12
+    assert resultat.trimestres_valides == acquis
+    if cas in LOI_DE_2019_SUD:
+        duree, decote, surcote = LOI_DE_2019_SUD[cas]
+        attendu = (traitement * 0.75 * min(acquis, duree) / duree
+                   * (1 - 0.0125 * decote) * (1 + 0.0125 * surcote))
+        assert resultat.trimestres_requis == duree
+        assert au_depot == pytest.approx(attendu, abs=0.005) and abs(au_depot - chez_lui) > 1, (
+            f"simulateur_sud_education, {cas} : {chez_lui} € chez lui, {au_depot:.2f} € "
+            f"au dépôt, {attendu:.2f} € attendus ; sa ligne du registre se relit")
+    else:
+        assert resultat.trimestres_requis == requis
+        assert 0 <= au_depot - chez_lui < 0.01, (
+            f"simulateur_sud_education, {cas} : {chez_lui} € chez lui, {au_depot:.2f} € "
+            "au dépôt ; sa ligne du registre se relit")
 
 
 def test_le_tableau_de_bord_dit_combien_d_ecarts_sont_chez_les_modeles_confrontes(referents):

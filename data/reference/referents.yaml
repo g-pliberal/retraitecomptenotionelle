@@ -9306,33 +9306,81 @@ referents:
     usage: copier
     confronte: [scenario_1]
     couvre: >-
-      La pension des enseignants au droit de 2020, comparée au système
-      universel du rapport Delevoye.
+      La pension des enseignants au droit de la fin de 2019, comparée au
+      système universel du rapport Delevoye.
+    version: "eec62c9"
     confrontation: >-
-      Un calcul à rejouer au droit de 2020, que le scénario 1 sait appliquer.
-      Jamais fait : lu le 1er et le 4 octobre 2026 (écarts ci-dessous), sans
-      rien exécuter. Ses erreurs laissent à rejouer des carrières de
-      titulaire au taux plein, sans minimum garanti ; ses durées et son point,
-      périmés aujourd'hui, sont ceux de 2020.
+      Un calcul rejoué, le 24 octobre 2026 : son « système actuel », au
+      commit `eec62c9`, exécuté à part sous Node sur tout son menu — huit
+      corps, nés de 1958 à 1998, entrés de 20 à 28 ans, partis de 62 à 67
+      ans, 17 712 carrières —, au droit de sa date. Ses constantes datent
+      d'octobre 2019 : son minimum contributif est le majoré de 2019, son
+      point celui de février 2017, au millième (4,686 € par mois) ; et ses
+      pensions partent de 2020, sous les lois de 2010 et de 2014, que le
+      dépôt garde au droit contrefactuel `au_31_aout_2023`. Posé sur les
+      mêmes services et le même traitement, le dépôt a raison partout : sur
+      les 11 070 carrières de titulaire, ses durées, ses décotes, ses
+      surcotes et ses proratas sont ceux que L. 161-17-3, L. 13 et L. 14 du
+      code des pensions, dans leurs versions de 2019, donnent à la main. Le
+      simulateur lui rend la même pension, au centime qu'il tronque, sur
+      3 665 d'entre elles ; les autres tiennent aux trois premiers écarts
+      ci-dessous. Ses contractuels ne se rejouent pas : leur pension est une
+      hypothèse, que sa moyenne n'applique même pas. Les cas que
+      tests/test_referents.py tient : sa durée de chaque génération, treize
+      carrières de titulaire, son point et son minimum contributif.
     ecarts:
       - constat: >-
-          Sa pension de fonctionnaire multiplie 75 % du dernier
-          traitement par une décote sans borne ni critère d'âge, 1 −
-          1,25 % × (requis − acquis), et par un prorata non plafonné
-          (`static/js/retraites.js:179-185`).
+          Sa décote ne compte que les trimestres qui manquent à la
+          durée, 1,25 % chacun, sans le décompte par l'âge ni la borne
+          de vingt trimestres (`static/js/retraites.js:179-185`).
+          Rejoué, il paie de 1,3 à 26,7 % de moins que le droit à 4 560
+          carrières de titulaire, jusqu'à 620 € par mois ; parti à 67
+          ans, la limite d'âge, sans la durée, un titulaire n'a pourtant
+          aucune décote.
         tranche: >-
-          L. 13 CPCMR (LEGIARTI000053280906) fixe le maximum à 75 %.
-          L. 14 (LEGIARTI000048844775) : 1,25 % par trimestre « dans
-          la limite de vingt trimestres », sur le plus petit des
-          décomptes par l'âge et par la durée. L'écart est le sien.
-        preuve: Index LEGI
+          L. 14, I, du code des pensions (LEGIARTI000037200740, de 2018
+          à 2023) : « le plus petit » des trimestres qui séparent l'âge
+          de la limite d'âge, soixante-sept ans, et de ceux qui manquent
+          à la durée, « dans la limite de vingt trimestres ». Le dépôt
+          l'applique ; l'écart est le sien.
+        preuve: Index LEGI ; tests/test_referents.py
       - constat: >-
-          Il sert aux fonctionnaires le minimum contributif du
-          régime général, 695,59 € au prorata
-          (`static/js/retraites.js:47, 207-225`).
+          Au-delà de la durée, son prorata dépasse un, et sa décote
+          devient une surcote de 1,25 % par trimestre en sus, à tout
+          âge (`static/js/retraites.js:179-185`) : rejoué, il paie de
+          0,6 à 13,7 % de plus que le droit à 2 305 carrières de
+          titulaire, jusqu'à 585 € par mois.
         tranche: >-
-          L. 17 CPCMR (LEGIARTI000048697797) : le fonctionnaire a
-          droit au minimum garanti, sous ses propres conditions.
+          L. 13, I (LEGIARTI000028498258, de 2014 à 2023) : 75 % du
+          traitement au plus, chaque trimestre valant ce pourcentage
+          rapporté à la durée. L. 14, III : la surcote ne compte que
+          les trimestres « au-delà de l'âge » de soixante-deux ans et
+          « en sus » de la durée. Le dépôt l'applique ; l'écart est le
+          sien.
+        preuve: Index LEGI ; tests/test_referents.py
+      - constat: >-
+          Sa table des durées commence en 1960 : il demande 172
+          trimestres aux nés de 1958 et de 1959, que son menu propose
+          (`static/js/retraites.js:150-170`). Rejoué, il se trompe sur
+          leurs 540 carrières de titulaire, de 28,8 % de moins à 4,9 %
+          de plus que le droit.
+        tranche: >-
+          L. 161-17-3 (LEGIARTI000028494794, de 2014 à 2023) : « 1° 167
+          trimestres, pour les assurés nés entre le 1er janvier 1958 et
+          le 31 décembre 1960 », que L. 13, III, applique aux
+          fonctionnaires nés à compter de 1958. Le dépôt les demande ;
+          l'écart est le sien.
+        preuve: Index LEGI ; tests/test_referents.py
+      - constat: >-
+          Son code sert aux fonctionnaires le minimum contributif du
+          régime général, 695,59 € au prorata, le majoré de 2019
+          (`static/js/retraites.js:47, 207-225`). Rejoué, il n'atteint
+          aucun titulaire de son menu : leurs pensions le dépassent
+          toutes.
+        tranche: >-
+          L. 17 du code des pensions (LEGIARTI000023033916, de 2010 à
+          2023) : le fonctionnaire a droit au minimum garanti, sous ses
+          propres conditions.
         preuve: Index LEGI
       - constat: >-
           Il liquide les contractuels à 75 % de la moyenne de leurs
@@ -9346,10 +9394,30 @@ referents:
           pas de source.
         preuve: Index LEGI ; `data/reference/regimes/ircantec.yaml`
       - constat: >-
+          Sa moyenne des contractuels n'est pas même la sienne : chaque
+          année passée au sommet de la grille y compte pour un mois de
+          traitement, et non douze ; quand la carrière s'achève dans un
+          échelon, la boucle part de celui d'avant et l'omet ; elle
+          somme des échelons entiers, jusqu'à vingt-sept ans, qu'elle
+          divise par vingt-cinq (`static/js/retraites.js:186-201`).
+          Rejoué, aucune de ses 4 428 carrières de contractuel
+          enseignant n'a sa moyenne, prise de 0,71 à 1,05 fois ; ses
+          2 214 carrières d'AESH tombent toutes au minimum contributif.
+        tranche: >-
+          Le code lui-même, contre sa règle, « 75 % des 25 meilleures
+          années » (`:46`) : `dureeDernierEchelon` y multiplie un
+          traitement mensuel sans le facteur douze, et `echelon -= 2`
+          saute le dernier échelon quand la carrière n'a pas dépassé la
+          grille.
+        preuve: >-
+          `static/js/retraites.js:186-201`, au commit `eec62c9`,
+          exécuté sous Node
+      - constat: >-
           Saisir des années de direction d'une école de quatre
           classes arrête le calcul : la ligne 125 lit
           `anneesDirection24`, une variable jamais déclarée
-          (`static/js/retraites.js:108, 123-125`).
+          (`static/js/retraites.js:108, 123-125`). Rejoué : «
+          ReferenceError: anneesDirection24 is not defined ».
         tranche: >-
           Le code lui-même : la variable déclarée est
           `anneesDirection4`, donc lire l'autre lève une
@@ -9357,27 +9425,28 @@ referents:
         preuve: >-
           `static/js/retraites.js:108, 125`, au commit `eec62c9`
       - constat: >-
-          Ses durées requises sont celles de la loi de 2014
-          (`:150-164`) et son point est celui de février 2017, 4,686
-          € (`:51`).
+          Ses durées requises et son point sont ceux de sa date, la loi
+          de 2014 (`:150-170`) et le point de février 2017, 4,686 € par
+          mois (`:51`) : justes au droit de 2019, hors de 1958 et 1959,
+          ils ont vieilli depuis.
         tranche: >-
           L. 161-17-3 (LEGIARTI000053280903) : 168 puis 169
           trimestres en 1961, 169 en 1962, 170 de 1963 au 31 mars
-          1965. Valeur du point : 59,0734 € par an. Tout cela est
-          périmé.
+          1965. Valeur du point : 59,0734 € par an depuis juillet 2023.
+          Un retard, que le simulateur, arrêté en 2020, n'a pas suivi.
         preuve: Index LEGI ; `point_indice_fonction_publique.csv`
     fait_mieux:
       - quoi: >-
           Il saisit l'enseignant par son corps et son échelon. Le dépôt n'a
           aucun champ d'indice ; ses grilles et son point (4,686 €) étant de
-          2020, ce qui se reprend est un champ « indice majoré », multiplié
+          2019, ce qui se reprend est un champ « indice majoré », multiplié
           par la valeur du point.
         preuve: >-
           `static/js/retraites.js:12-67`, au commit `eec62c9`
         etat: a_reprendre
         chantier: "138.10"
       - quoi: >-
-          Il compare le droit de 2020 au système universel à points
+          Il compare le droit de 2019 au système universel à points
           du rapport Delevoye, primes comprises.
         preuve: >-
           `static/js/retraites.js:50-57, 229-367`, au commit
@@ -9388,19 +9457,28 @@ referents:
           C'est un choix du programme : le projet de 2019-2020 n'est
           pas du droit.
     bilan: >-
-      La saisie par indice reste son seul apport. Son calcul de 2020
-      cumule cinq erreurs ou retards, que les textes en vigueur
-      tranchent tous en faveur du dépôt.
+      La saisie par indice reste son seul apport. Rejoué au droit de sa
+      date, son calcul de titulaire redonne celui du dépôt quand ni la
+      décote ni la durée ne l'égarent, 3 665 carrières sur 11 070 ;
+      ailleurs, il décote sans l'âge, dépasse 75 % au-delà de la durée et
+      demande 172 trimestres aux nés de 1958 et de 1959. Ses contractuels
+      sont une hypothèse, que sa moyenne n'applique même pas. Les textes de
+      sa date tranchent tout en faveur du dépôt.
     sas: [sud_education_simulateur]
-    lu_le: 2026-10-04
+    lu_le: 2026-10-24
     lu_dans:
       - https://github.com/Brndan/simulateur-retraites
     note: >-
-      Dernier commit le 5 septembre 2020.
+      Dernier commit le 5 septembre 2020 ; son calcul date du 24 décembre
+      2019 (`4ffa115`), ses constantes du 13 octobre 2019 (`7626b4d`).
       Comparé au dépôt le 1er octobre 2026 à ce commit, `eec62c9`. La
       comparaison y trouve, sans citer le texte qui tranche, un prorata non
       plafonné à 1 et une décote sans borne (l. 177-181), et le minimum
-      contributif appliqué aux fonctionnaires (l. 205-214).
+      contributif appliqué aux fonctionnaires (l. 205-214). Rejoué le 24
+      octobre 2026 au même commit, encore sa tête : `retraites.js` exécuté
+      sous Node, le formulaire servi par un faux document, puis le moteur
+      sur les mêmes carrières, par des fichiers de rejeu restés hors du
+      dépôt.
 
   - id: devcrafting_retraites
     nom: devcrafting/retraites
