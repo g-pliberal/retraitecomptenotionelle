@@ -1,0 +1,79 @@
+date: "2026-10-24"
+session: "action 138, étape 4, quatorzième partie : le plancher de la pension de vieillesse substituée à la pension d'invalidité — l'AVTS, ou la pension d'invalidité liquidée avant le 31 mai 1983 au taux de sa catégorie (L. 341-4, L. 341-15)"
+consulte: >-
+  veille_droit.py, lancé à l'ouverture de la session (dernière veille consignée :
+  2026-10-24) ; l'index LEGI et l'index JORF, récupérés de la release index-dila et mis
+  à jour par leurs incréments jusqu'au 24 octobre 2026, puis textes.py --inscrire, qui
+  a inscrit « à examiner » les cinq articles du décret n° 76-405, cité par la fiche
+  majorations_forfaitaires_1972_1982 ; L. 161-17-2 et L. 161-17-3 n'ont pas de
+  rédaction postérieure à celle du 31 décembre 2025 (fiche fin_de_la_suspension_2028).
+  Dans l'index LEGI : L. 341-15 (1985, 2003, 2008, 2023), L. 341-4 et L. 341-5 (1985),
+  R. 341-4 (1985, 1993, 2011, 2022), R. 341-5 (1985, 2011), R. 341-6 (1985, 1986),
+  D. 341-2 ; le décret n° 61-272 du 28 mars 1961, articles 1er à 5 et 3 bis
+  (LEGIARTI000006761873 à 878), dont l'article 2 n'est gardé que dans sa rédaction du
+  23 février 1984 ; le décret n° 61-1260 ; le décret n° 45-0179, articles 57 à 60 et
+  68, dont l'article 59 dans sa rédaction du 30 décembre 1972 (LEGIARTI000006760594) ;
+  l'arrêté du 19 juin 1947 (règlement intérieur modèle des caisses primaires), article
+  53 ; le décret n° 50-1225, article 54, et le décret n° 51-727, article 1er. Dans
+  l'index JORF, qui n'en garde que le titre : la loi n° 83-430 du 31 mai 1983
+  (JORFTEXT000000504456) et la loi n° 84-575 du 9 juillet 1984 (JORFTEXT000000320660).
+  Par l'API de la base de législation de la Cnav : l'ordonnance n° 45-2454, articles 55
+  et 56 ; les circulaires n° 84/83 du 19 juillet 1983, n° 94/84 du 21 août 1984,
+  n° 102/83 du 7 septembre 1983, n° 42/83 du 14 avril 1983, n° 73/99 du 3 décembre
+  1999 et n° 2011/4 du 19 janvier 2011 ; la lettre Cnav n° 6/85 du 3 mai 1985 et la
+  lettre ministérielle n° 6742/S du 5 septembre 1962 ; les exposés « Retraite
+  substituée à pension d'invalidité » et « Retraite de l'assuré décédé » ; en PDF, la
+  circulaire Cnav n° 2018-18 du 1er août 2018 (§ 1.3, 2.1.2.3, 7).
+trouve: >-
+  Le plancher : « La pension de vieillesse substituée à une pension d'invalidité ne
+  peut être inférieure au montant de l'allocation aux vieux travailleurs salariés » ;
+  « les titulaires d'une pension d'invalidité liquidée avant le 31 mai 1983 peuvent
+  prétendre à une pension de vieillesse qui ne peut être inférieure à la pension
+  d'invalidité dont bénéficiait l'invalide à cet âge » (L. 341-15, de 1985 à 2023). La
+  loi n° 83-430 avait ôté, dès le 1er avril 1983, « la référence au montant calculé de
+  la pension d'invalidité », que la loi n° 84-575 rétablit à la même date pour les
+  pensions d'avant le 31 mai 1983 (circulaires n° 84/83 et n° 94/84) ; avant 1983,
+  l'ordonnance de 1945 (article 62), puis L. 322 du code de 1956. La caisse compare « la
+  retraite calculée au taux maximum de 50 %, éventuellement augmentée de la majoration
+  du minimum contributif » au « montant entier de l'AVTS », ou au « montant calculé de
+  la pension d'invalidité précédemment servie », lui-même jamais sous l'AVTS ; « Le
+  montant le plus élevé est servi à l'assuré. Si les conditions sont remplies, peuvent
+  s'ajouter à ce montant, la majoration pour enfants, la majoration pour tierce
+  personne » (n° 2018-18, 1.3), et, sous la liquidation unique, la retraite qu'elle
+  sert, à la somme des pensions d'invalidité du régime général et des salariés agricoles
+  (7.1) ; la comparaison se refait « chaque fois que l'un d'entre eux augmentera »
+  (n° 84/83, II). La pension d'invalidité : trois groupes, « capables d'exercer une
+  activité rémunérée », « absolument incapables d'exercer une profession quelconque »,
+  et ceux qui ont en outre besoin d'une tierce personne (ordonnance de 1945, article 55 ;
+  L. 341-4) ; 30 % du salaire annuel moyen au premier, 40 % au deuxième jusqu'au décret
+  n° 61-272, qui le porte à 50 % le 30 mars 1961 et majore les pensions servies, le
+  troisième au taux du deuxième, sa majoration pour tierce personne à part ; jamais
+  moins que l'AVTS (article 56, § 4 ; L. 341-5). Le salaire annuel moyen : « des dix
+  dernières années d'assurance précédant [...] l'interruption de travail suivie
+  d'invalidité » (article 56), puis, depuis le 30 décembre 1972, des dix années civiles
+  d'après 1947 « dont la prise en considération est la plus avantageuse », que forment
+  les règles de la pension de vieillesse, sur des salaires revalorisés par les
+  coefficients de la caisse (décret n° 45-0179, article 59). Aucun exemple chiffré ne
+  compare la pension au plancher ; la lettre de 1962 revalorise comme une pension la
+  pension substituée au taux de l'AVTS, rente de 1940 comprise, que le modèle ne sert
+  pas. La réversion se calcule sur « le montant calculé de la retraite de l'assuré
+  décédé, avant comparaison au minimum » (exposé « Retraite de l'assuré décédé »). La
+  pension d'invalidité proratisée des règlements européens n'ouvre pas le plancher
+  (n° 73/99) ; l'indépendant a l'AVTNS et une allocation différentielle jusqu'à sa
+  pension d'invalidité (exposé). Le modèle sert désormais le plancher, à la pension du
+  régime qui servait la pension d'invalidité, portée au minimum contributif, avant la
+  majoration pour enfants ; la catégorie se déclare, ou se présume — la première à qui
+  travaille à l'âge de la substitution, la deuxième sinon (présomption
+  categorie_de_la_pension_d_invalidite). Sur les 907 témoins, un seul bouge : l'ex-invalide
+  de 1980, sa pension de 141 trimestres sur 150 portée à sa pension d'invalidité de 1975,
+  + 6,1 % au régime général.
+reste: >-
+  La comparaison des majorations de 1972 à 1982 au plancher, à chaque majoration : le
+  modèle majore la pension servie, plancher compris, quand la caisse ne majorait que la
+  pension des cotisations (fiche majorations_forfaitaires_1972_1982). Le plancher
+  comparé à chaque changement de l'AVTS, que le modèle compare à la date d'effet ; la
+  somme des deux pensions d'invalidité sous la liquidation unique ; la pension
+  d'invalidité proratisée ; l'AVTNS et l'allocation différentielle des indépendants. La
+  première rédaction de l'article 2 du décret n° 61-272, que l'index ne garde pas. Au
+  site : le champ de la catégorie de la pension d'invalidité. Au propriétaire : les
+  décrets n° 76-727 et n° 77-966, au fac-similé, comme la session précédente le disait.
