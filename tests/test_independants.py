@@ -48,15 +48,15 @@ import pytest
 
 from retraite_notionnelle.carriere import AnneeCarriere, Carriere, LigneRelevee, Metier
 from retraite_notionnelle.config import RACINE_DONNEES
-from retraite_notionnelle.contexte import Contexte
 from retraite_notionnelle.donnees import regimes
 from retraite_notionnelle.donnees.regimes import CatalogueRegimes
 from retraite_notionnelle.droit import acquerir, compter, coordonner
 from retraite_notionnelle.moteur.compte import ConstructeurCompte
 from retraite_notionnelle.remuneration import (
     ConstructeurFiche, bloc_droit_en_vigueur, charger_prelevements, smic_annuel)
-from retraite_notionnelle.saisie import Saisie
 from retraite_notionnelle.simulateur import Simulateur
+
+from outils_pont import Saisies
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -497,9 +497,8 @@ def test_les_deux_moteurs_servent_les_memes_points_d_avant_1973():
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     sys.path.insert(0, str(RACINE / "scripts"))
     from construire_temoins import _fini
-    contexte = Contexte()
-    attendus = [{"requete": cas,
-                 "resultat": _fini(contexte.simuler(Saisie.depuis_requete(cas)).dictionnaire())}
+    saisies = Saisies()
+    attendus = [{"requete": cas, "resultat": _fini(saisies.simuler(cas).dictionnaire())}
                 for cas in CAS_AVANT_1973]
     texte = json.dumps(attendus, ensure_ascii=False)
     assert "cancava_avant_1973" in texte and "organic_avant_1973" in texte
@@ -650,9 +649,8 @@ def test_les_deux_moteurs_servent_les_memes_points_d_invalidite():
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     sys.path.insert(0, str(RACINE / "scripts"))
     from construire_temoins import _fini
-    contexte = Contexte()
-    attendus = [{"requete": cas,
-                 "resultat": _fini(contexte.simuler(Saisie.depuis_requete(cas)).dictionnaire())}
+    saisies = Saisies()
+    attendus = [{"requete": cas, "resultat": _fini(saisies.simuler(cas).dictionnaire())}
                 for cas in CAS_INVALIDITE]
     texte = json.dumps(attendus, ensure_ascii=False)
     with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
@@ -756,9 +754,8 @@ def test_les_deux_moteurs_servent_les_memes_droits_au_conjoint():
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
     sys.path.insert(0, str(RACINE / "scripts"))
     from construire_temoins import _fini
-    contexte = Contexte()
-    attendus = [{"requete": cas,
-                 "resultat": _fini(contexte.simuler(Saisie.depuis_requete(cas)).dictionnaire())}
+    saisies = Saisies()
+    attendus = [{"requete": cas, "resultat": _fini(saisies.simuler(cas).dictionnaire())}
                 for cas in CAS_CONJOINT]
     texte = json.dumps(attendus, ensure_ascii=False)
     assert "rco_artisans" in texte and "nric" in texte

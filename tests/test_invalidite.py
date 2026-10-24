@@ -15,8 +15,10 @@ import pytest
 from retraite_notionnelle import chronologie as chrono
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.carriere import Carriere, Metier
-from retraite_notionnelle.saisie import ErreurSaisie, Saisie
 from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.web.site import ErreurSite
+
+from outils_pont import RefusDuPortage, Saisies, saisie_du_portage
 
 
 @pytest.fixture(scope="module")
@@ -24,9 +26,22 @@ def simulateur() -> Simulateur:
     return Simulateur()
 
 
-def _saisie(**champs) -> Saisie:
-    return Saisie.depuis_requete({"naissance": "1965-06-15", "debut": "1986-09",
-                                  "liquidation": "2029-01", **champs})
+@pytest.fixture(scope="module")
+def saisies() -> Saisies:
+    return Saisies()
+
+
+def _requete(**champs) -> dict:
+    return {"naissance": "1965-06-15", "debut": "1986-09", "liquidation": "2029-01", **champs}
+
+
+def _saisie(**champs):
+    """La saisie du portage, qui lit la requête comme le site."""
+    return saisie_du_portage(_requete(**champs))
+
+
+def _mois(date) -> tuple[int, int]:
+    return date.annee, date.mois
 
 
 # -- la saisie -------------------------------------------------------------------
@@ -38,14 +53,14 @@ def test_la_saisie_lit_l_invalidite_et_la_rend_a_l_adresse():
                      invalidite="2019-03", inaptitude="oui",
                      radiation_invalidite="2018-11", invalidite_imputable="oui",
                      taux_invalidite="65")
-    assert saisie.date_de(saisie.invalidite) == DateMois(2019, 3)
+    assert _mois(saisie.date_de(saisie.invalidite)) == (2019, 3)
     assert saisie.inaptitude and saisie.invalidite_imputable
-    assert saisie.date_de(saisie.radiation_invalidite) == DateMois(2018, 11)
+    assert _mois(saisie.date_de(saisie.radiation_invalidite)) == (2018, 11)
     assert saisie.invalidite_declaree() == {
         "pension": saisie.invalidite, "inaptitude": True,
         "radiation": {"age": saisie.radiation_invalidite, "imputable": True, "taux": 65},
         "handicap": None}
-    relue = Saisie.depuis_requete(dict(
+    relue = saisie_du_portage(dict(
         pair.split("=", 1) for pair in saisie.requete().split("&")))
     assert relue.invalidite_declaree() == saisie.invalidite_declaree()
     assert _saisie().invalidite_declaree() is None
@@ -66,14 +81,14 @@ def test_la_saisie_lit_l_invalidite_et_la_rend_a_l_adresse():
     ({"handicap": "2029-02"}, "Incapacité d'au moins 50 % en février 2029 : elle ne suit pas"),
 ])
 def test_la_saisie_refuse_ce_qui_ne_tient_pas(champs, refus):
-    with pytest.raises(ErreurSaisie, match=refus):
+    with pytest.raises(ErreurSite, match=refus):
         _saisie(**champs)
 
 
 def test_la_radiation_peut_tomber_au_depart():
     """Le fonctionnaire dont la radiation est le départ : la même date."""
     saisie = _saisie(statut="fonctionnaire_etat", radiation_invalidite="2029-01")
-    assert saisie.date_de(saisie.radiation_invalidite) == DateMois(2029, 1)
+    assert _mois(saisie.date_de(saisie.radiation_invalidite)) == (2029, 1)
 
 
 # -- la chronologie et la carrière -----------------------------------------------
@@ -146,21 +161,18 @@ def test_une_invalidite_suivie_d_une_reprise_a_pris_fin(simulateur):
 
 # -- ce que le contexte refuse ---------------------------------------------------
 
-def test_la_radiation_clot_un_emploi_de_fonctionnaire_civil():
-    from retraite_notionnelle.contexte import Contexte
-
-    contexte = Contexte()
-    with pytest.raises(ErreurSaisie, match="elle clôt un emploi de fonctionnaire civil"):
-        contexte.simuler(_saisie(radiation_invalidite="2015-06"))
-    with pytest.raises(ErreurSaisie, match="la carrière reste dans la fonction publique en 2016"):
-        contexte.simuler(_saisie(statut="fonctionnaire_etat",
-                                 radiation_invalidite="2015-06"))
+def test_la_radiation_clot_un_emploi_de_fonctionnaire_civil(saisies):
+    with pytest.raises(RefusDuPortage, match="elle clôt un emploi de fonctionnaire civil"):
+        saisies.simuler(_requete(radiation_invalidite="2015-06"))
+    with pytest.raises(RefusDuPortage,
+                       match="la carrière reste dans la fonction publique en 2016"):
+        saisies.simuler(_requete(statut="fonctionnaire_etat", radiation_invalidite="2015-06"))
     # Radiée en janvier, l'emploi clos ne touche pas son année.
-    with pytest.raises(ErreurSaisie, match="la carrière reste dans la fonction publique en 2015"):
-        contexte.simuler(_saisie(statut="fonctionnaire_etat",
-                                 radiation_invalidite="2015-01"))
+    with pytest.raises(RefusDuPortage,
+                       match="la carrière reste dans la fonction publique en 2015"):
+        saisies.simuler(_requete(statut="fonctionnaire_etat", radiation_invalidite="2015-01"))
     # Radiée en juin 2015, sans activité ensuite : la carrière tient.
-    contexte.simuler(_saisie(statut="fonctionnaire_etat", radiation_invalidite="2015-06",
+    saisies.simuler(_requete(statut="fonctionnaire_etat", radiation_invalidite="2015-06",
                              metier2_debut="2015-06", metier2_statut="sans_activite"))
 
 
@@ -218,19 +230,11 @@ process.stdout.write(JSON.stringify(sortie));
 """
 
 
-def _lu_par_python(monkeypatch, requete: dict) -> dict:
-    from retraite_notionnelle.contexte import Contexte
-
-    vues = []
-    simuler = Simulateur.simuler
-
-    def espion(self, carriere, *reste, **options):
-        vues.append(carriere)
-        return simuler(self, carriere, *reste, **options)
-
-    monkeypatch.setattr(Simulateur, "simuler", espion)
-    Contexte().simuler(Saisie.depuis_requete(requete))
-    vue = vues[0]
+def _lu_par_python(saisies: Saisies, requete: dict) -> dict:
+    """Ce que le moteur Python lit de la carrière que le portage bâtit, et
+    simule."""
+    parametres, vue = saisies.lire(requete)
+    saisies.simulateur(parametres).simuler(vue)
     pension, radiation = vue.pension_d_invalidite, vue.radiation_pour_invalidite
     mois = "{0.annee}-{0.mois:02d}".format
     return {
@@ -247,7 +251,7 @@ def _lu_par_python(monkeypatch, requete: dict) -> dict:
     }
 
 
-def test_le_portage_lit_les_memes_faits(monkeypatch):
+def test_le_portage_lit_les_memes_faits(saisies):
     """La carrière des deux moteurs lit les mêmes faits de la même saisie :
     la pension d'invalidité, déclarée ou présumée, l'inaptitude, la
     radiation et les affiliations qui les entourent."""
@@ -264,7 +268,7 @@ def test_le_portage_lit_les_memes_faits(monkeypatch):
         input=json.dumps(REQUETES), capture_output=True, text=True, encoding="utf-8",
         check=False)
     assert execution.returncode == 0, execution.stderr
-    attendus = [_lu_par_python(monkeypatch, requete) for requete in REQUETES]
+    attendus = [_lu_par_python(saisies, requete) for requete in REQUETES]
     assert json.loads(execution.stdout) == attendus
     # Chaque fait y est au moins une fois.
     assert attendus[0]["pension"]["presomption"] is None and attendus[0]["inaptitude"]
@@ -276,65 +280,58 @@ def test_le_portage_lit_les_memes_faits(monkeypatch):
 
 # -- le moteur : le taux plein de l'inapte, la substitution ----------------------
 
-@pytest.fixture(scope="module")
-def contexte():
-    from retraite_notionnelle.contexte import Contexte
-
-    return Contexte()
-
-
-def _actuel(contexte, **champs):
+def _actuel(saisies, **champs):
     """Le scénario 1 d'une saisie : ce que la page lit du système actuel."""
-    return contexte.simuler(Saisie.depuis_requete(champs)).actuel
+    return saisies.simuler(champs).actuel
 
 
 def _pension(actuel, regime):
     return next(p for p in actuel.pensions_par_regime if p.regime == regime)
 
 
-def test_l_inapte_part_a_soixante_deux_ans_au_taux_plein(contexte):
+def test_l_inapte_part_a_soixante_deux_ans_au_taux_plein(saisies):
     """Né en 1965, l'âge légal de sa génération ne lui ouvre pas sa pension
     à soixante-deux ans ; reconnu inapte, il part à cet âge au taux plein,
     huit trimestres manquants et sans coefficient d'anticipation à
     l'Agirc-Arrco (L. 351-1-5, L. 351-8, 2° ; accord de 2017, article 84, 3)."""
     champs = {"naissance": "1965-06-15", "debut": "1986-09", "liquidation": "2027-07"}
-    inapte = _actuel(contexte, **champs, inaptitude="oui")
+    inapte = _actuel(saisies, **champs, inaptitude="oui")
     assert inapte.liquidation_ouverte and inapte.motif_ouverture == "inaptitude"
     assert inapte.age_ouverture_opposable == 62.0
     assert inapte.trimestres_valides < inapte.trimestres_requis
     assert "taux 50.000%" in _pension(inapte, "regime_general").detail
     assert "coefficient" not in _pension(inapte, "arrco").detail
-    autre = _actuel(contexte, **champs)
+    autre = _actuel(saisies, **champs)
     assert not autre.liquidation_ouverte
     assert "taux 45.000%" in _pension(autre, "regime_general").detail
     assert "coefficient d'anticipation" in _pension(autre, "arrco").detail
 
 
-def test_l_ircantec_sert_l_inapte_sans_coefficient(contexte):
+def test_l_ircantec_sert_l_inapte_sans_coefficient(saisies):
     """« Toutefois, ce coefficient de réduction n'est pas applicable : […]
     aux agents atteints d'une inaptitude au travail » (arrêté du 30 décembre
     1970, article 16)."""
     champs = {"naissance": "1964-02-10", "statut": "contractuel_public",
               "debut": "1992-09", "liquidation": "2026-03"}
     assert "coefficient" not in _pension(
-        _actuel(contexte, **champs, inaptitude="oui"), "ircantec").detail
+        _actuel(saisies, **champs, inaptitude="oui"), "ircantec").detail
     assert "coefficient d'anticipation 0.7800" in _pension(
-        _actuel(contexte, **champs), "ircantec").detail
+        _actuel(saisies, **champs), "ircantec").detail
 
 
-def test_l_inapte_de_2010_a_le_taux_plein_a_soixante_ans(contexte):
+def test_l_inapte_de_2010_a_le_taux_plein_a_soixante_ans(saisies):
     champs = {"naissance": "1950-03-15", "debut": "1975-09", "liquidation": "2010-04"}
     assert "taux 50.000%" in _pension(
-        _actuel(contexte, **champs, inaptitude="oui"), "regime_general").detail
-    assert "taux 33.750%" in _pension(_actuel(contexte, **champs), "regime_general").detail
+        _actuel(saisies, **champs, inaptitude="oui"), "regime_general").detail
+    assert "taux 33.750%" in _pension(_actuel(saisies, **champs), "regime_general").detail
 
 
-def test_l_ex_invalide_est_substitue_a_soixante_deux_ans(contexte):
+def test_l_ex_invalide_est_substitue_a_soixante_deux_ans(saisies):
     """La pension de vieillesse remplace d'office la pension d'invalidité au
     premier jour du mois qui suit soixante-deux ans, avant le départ déclaré
     à soixante-quatre : le régime général et ses complémentaires y
     liquident, au taux plein (L. 341-15, R. 341-22)."""
-    actuel = _actuel(contexte, naissance="1965-06-15", debut="1986-09",
+    actuel = _actuel(saisies, naissance="1965-06-15", debut="1986-09",
                      liquidation="2029-07", interruptions="2019:2029:invalidite")
     [depart] = actuel.departs
     assert (depart.date_effet, depart.motif) == ("2027-07-01", "invalidite")
@@ -344,46 +341,46 @@ def test_l_ex_invalide_est_substitue_a_soixante_deux_ans(contexte):
     assert "taux 50.000%" in _pension(actuel, "regime_general").detail
 
 
-def test_l_invalide_qui_travaille_part_a_sa_demande(contexte):
+def test_l_invalide_qui_travaille_part_a_sa_demande(saisies):
     """L'invalide qui travaille à l'âge légal garde sa pension d'invalidité
     jusqu'à sa demande (L. 341-16) : sa pension de vieillesse commence à son
     départ, un seul, au taux plein de l'inapte."""
-    actuel = _actuel(contexte, naissance="1965-06-15", debut="1990-09",
+    actuel = _actuel(saisies, naissance="1965-06-15", debut="1990-09",
                      liquidation="2029-07", invalidite="2015-03")
     assert not actuel.departs
     assert "taux 50.000%" in _pension(actuel, "regime_general").detail
 
 
-def test_le_demandeur_d_emploi_garde_six_mois_sa_pension_d_invalidite(contexte):
+def test_le_demandeur_d_emploi_garde_six_mois_sa_pension_d_invalidite(saisies):
     """Indemnisé à l'âge légal, il la garde six mois de plus (D. 341-1,
     depuis le 1er septembre 2017) : né en mars 1960, soixante-deux ans en
     avril 2022, sa pension de vieillesse commence en octobre."""
-    actuel = _actuel(contexte, naissance="1960-03-15", debut="1980-09",
+    actuel = _actuel(saisies, naissance="1960-03-15", debut="1980-09",
                      liquidation="2024-07", interruptions="2012:2024:chomage_indemnise",
                      invalidite="2014-01")
     [depart] = actuel.departs
     assert (depart.date_effet, depart.motif) == ("2022-10-01", "invalidite")
 
 
-def test_une_invalidite_nee_apres_l_age_ne_se_substitue_pas(contexte):
+def test_une_invalidite_nee_apres_l_age_ne_se_substitue_pas(saisies):
     """Une pension d'invalidité qui commencerait après l'âge de la
     substitution n'en a pas : la pension de vieillesse commence au départ."""
-    actuel = _actuel(contexte, naissance="1965-06-15", debut="1986-09",
+    actuel = _actuel(saisies, naissance="1965-06-15", debut="1986-09",
                      liquidation="2029-07", invalidite="2027-12")
     assert not actuel.departs
 
 
-def test_avant_1983_l_ex_invalide_a_le_taux_de_soixante_cinq_ans(contexte):
+def test_avant_1983_l_ex_invalide_a_le_taux_de_soixante_cinq_ans(saisies):
     """En 1980, la pension de vieillesse qui remplace la pension d'invalidité
     à soixante ans est calculée au taux de soixante-cinq ans : 50 %, et non
     les 25 % de soixante ans (loi Boulin)."""
-    actuel = _actuel(contexte, naissance="1920-03-15", debut="1936-09",
+    actuel = _actuel(saisies, naissance="1920-03-15", debut="1936-09",
                      liquidation="1982-07", interruptions="1975:1982:invalidite")
     assert actuel.departs[0].date_effet == "1980-04-01"
     assert "taux 50.000%" in _pension(actuel, "regime_general").detail
 
 
-def test_l_inapte_a_l_aspa_des_son_age(contexte):
+def test_l_inapte_a_l_aspa_des_son_age(saisies):
     """« L'âge mentionné à l'article L. 815-1 est fixé à soixante-cinq ans. Il
     est abaissé à l'âge prévu à l'article L. 161-17-2 pour les personnes
     mentionnées aux 2° à 5° de l'article L. 351-8 » (R. 815-1, de 2011 à
@@ -391,9 +388,9 @@ def test_l_inapte_a_l_aspa_des_son_age(contexte):
     que l'autre n'aura qu'à soixante-cinq."""
     champs = {"naissance": "1960-03-15", "debut": "1999-09", "liquidation": "2022-04",
               "salaire": "0.5"}
-    inapte = _actuel(contexte, **champs, inaptitude="oui")
+    inapte = _actuel(saisies, **champs, inaptitude="oui")
     assert any(a.code == "minimum_vieillesse" for a in inapte.avantages_appliques)
-    autre = _actuel(contexte, **champs)
+    autre = _actuel(saisies, **champs)
     assert not any(a.code == "minimum_vieillesse" for a in autre.avantages_appliques)
 
 
@@ -420,12 +417,12 @@ def test_l_age_de_l_aspa_suit_la_version(simulateur):
 
 # -- la retraite pour invalidité des fonctionnaires ------------------------------
 
-def test_le_fonctionnaire_radie_pour_invalidite_liquide_a_sa_radiation(contexte):
+def test_le_fonctionnaire_radie_pour_invalidite_liquide_a_sa_radiation(saisies):
     """À trente-quatre ans, sept ans de services, invalide à 80 % : la pension
     de la CNRACL à la radiation, sans condition de durée ni décote, portée à
     la moitié du traitement (L. 4, L. 24, L. 30 ; décret n° 2003-1306,
     articles 7, 30, 34 et 39)."""
-    actuel = _actuel(contexte, naissance="1985", statut="fonctionnaire_territorial_hospitalier",
+    actuel = _actuel(saisies, naissance="1985", statut="fonctionnaire_territorial_hospitalier",
                      debut="2012-09", radiation_invalidite="2019-09", taux_invalidite="80",
                      metier2_debut="2019-09", metier2_statut="sans_activite")
     assert actuel.motif_ouverture == "invalidite"
@@ -436,11 +433,11 @@ def test_le_fonctionnaire_radie_pour_invalidite_liquide_a_sa_radiation(contexte)
     assert "taux 75.000%" in detail and "la moitié du traitement (L. 30)" in detail
 
 
-def test_la_rente_viagere_d_invalidite_et_le_plafond_du_traitement(contexte):
+def test_la_rente_viagere_d_invalidite_et_le_plafond_du_traitement(saisies):
     """Invalide à 70 % du fait du service : la rente viagère s'ajoute à la
     pension portée à la moitié du traitement, et le total, qui le dépasse,
     est ramené au traitement (L. 28, L. 30 ter)."""
-    actuel = _actuel(contexte, naissance="1975", statut="fonctionnaire_etat",
+    actuel = _actuel(saisies, naissance="1975", statut="fonctionnaire_etat",
                      radiation_invalidite="2020-06", invalidite_imputable="oui",
                      taux_invalidite="70", metier2_debut="2020-06",
                      metier2_statut="sans_activite")
@@ -462,7 +459,7 @@ def test_la_rente_compte_pour_le_tiers_au_dela_du_seuil():
         40_000.0 + 360_000.0 / 3.0)
 
 
-def test_le_minimum_garanti_de_l_invalidite_en_quinziemes(contexte):
+def test_le_minimum_garanti_de_l_invalidite_en_quinziemes(saisies):
     """Dix ans de services, radiée pour invalidité : le minimum garanti est
     dû sans condition de taux plein, en quinzièmes (L. 17, c ; article 22 du
     décret de la CNRACL) ; la même, partie sans invalidité, est décotée et ne
@@ -470,18 +467,18 @@ def test_le_minimum_garanti_de_l_invalidite_en_quinziemes(contexte):
     champs = {"naissance": "1980", "statut": "fonctionnaire_territorial_hospitalier",
               "debut": "2005-09", "salaire": "0.5", "metier2_debut": "2015-09",
               "metier2_statut": "sans_activite"}
-    radiee = _pension(_actuel(contexte, **champs, radiation_invalidite="2015-09",
+    radiee = _pension(_actuel(saisies, **champs, radiation_invalidite="2015-09",
                               taux_invalidite="30"), "cnracl")
     assert "porté au minimum garanti" in radiee.detail
-    partie = _pension(_actuel(contexte, **champs), "cnracl")
+    partie = _pension(_actuel(saisies, **champs), "cnracl")
     assert "minimum garanti" not in partie.detail and "taux 63.750%" in partie.detail
 
 
-def test_le_fonctionnaire_radie_puis_salarie_a_deux_departs(contexte):
+def test_le_fonctionnaire_radie_puis_salarie_a_deux_departs(saisies):
     """Sa pension de fonctionnaire dès la radiation ; le régime général et
     l'Agirc-Arrco à son départ, avec le RAFP, qui n'ouvre qu'à l'âge légal
     (décret n° 2004-569, article 6)."""
-    actuel = _actuel(contexte, naissance="1975", statut="fonctionnaire_etat", primes="0.2",
+    actuel = _actuel(saisies, naissance="1975", statut="fonctionnaire_etat", primes="0.2",
                      radiation_invalidite="2020-06", metier2_debut="2020-06",
                      metier2_statut="salarie_prive_non_cadre")
     premier, second = actuel.departs
@@ -496,15 +493,15 @@ def test_la_saisie_lit_l_incapacite_meme_avant_la_carriere():
     """L'incapacité se date comme un début d'activité, et peut précéder la
     carrière — un handicap de l'enfance — ; l'adresse la rend telle quelle."""
     saisie = _saisie(handicap="1980-03")
-    assert saisie.date_de(saisie.handicap) == DateMois(1980, 3)
+    assert _mois(saisie.date_de(saisie.handicap)) == (1980, 3)
     assert saisie.invalidite_declaree() == {
         "pension": None, "inaptitude": False, "radiation": None,
         "handicap": saisie.handicap}
-    relue = Saisie.depuis_requete(dict(
+    relue = saisie_du_portage(dict(
         pair.split("=", 1) for pair in saisie.requete().split("&")))
     assert relue.invalidite_declaree() == saisie.invalidite_declaree()
     au_depart = _saisie(handicap="2029-01")
-    assert au_depart.date_de(au_depart.handicap) == DateMois(2029, 1)
+    assert _mois(au_depart.date_de(au_depart.handicap)) == (2029, 1)
 
 
 #: Un salarié né le 1er juin 1973, handicapé depuis ses vingt et un ans, qui
@@ -515,14 +512,14 @@ NE_EN_1973 = {"naissance": "1973-06-01", "debut": "2000-04", "liquidation": "202
               "handicap": "1995-01"}
 
 
-def test_le_handicap_ouvre_le_depart_des_cinquante_cinq_ans_au_taux_plein(contexte):
+def test_le_handicap_ouvre_le_depart_des_cinquante_cinq_ans_au_taux_plein(saisies):
     """La durée cotisée en situation de handicap ouvre le départ à cinquante-
     cinq ans (L. 351-1-3), au taux plein malgré soixante trimestres manquants
     (L. 351-8, 4° bis), la pension majorée du tiers du rapport de la durée
     cotisée en situation de handicap à la durée d'assurance, 112/112/3 = 0,33
     (D. 351-1-5, II), l'Agirc-Arrco sans coefficient (accord du 17 novembre
     2017, article 84, 3). Un trimestre de moins, et rien ne s'ouvre."""
-    actuel = _actuel(contexte, **NE_EN_1973)
+    actuel = _actuel(saisies, **NE_EN_1973)
     assert actuel.liquidation_ouverte and actuel.motif_ouverture == "handicap"
     assert actuel.age_ouverture_opposable == 55.0
     assert (actuel.trimestres_valides, actuel.trimestres_requis) == (112, 172)
@@ -530,23 +527,23 @@ def test_le_handicap_ouvre_le_depart_des_cinquante_cinq_ans_au_taux_plein(contex
     assert "taux 50.000%" in detail and "majoration des assurés handicapés 0.33" in detail
     assert "écrêtée" not in detail
     assert "coefficient" not in _pension(actuel, "arrco").detail
-    un_de_moins = _actuel(contexte, **{**NE_EN_1973, "debut": "2000-07"})
+    un_de_moins = _actuel(saisies, **{**NE_EN_1973, "debut": "2000-07"})
     assert un_de_moins.trimestres_valides == 111
     assert un_de_moins.motif_ouverture == "non_ouverte"
     assert "majoration des assurés handicapés" not in _pension(
         un_de_moins, "regime_general").detail
-    sans = _actuel(contexte, **{k: v for k, v in NE_EN_1973.items() if k != "handicap"})
+    sans = _actuel(saisies, **{k: v for k, v in NE_EN_1973.items() if k != "handicap"})
     assert sans.motif_ouverture == "non_ouverte"
 
 
-def test_la_majoration_est_ecretee_a_la_pension_entiere(contexte):
+def test_la_majoration_est_ecretee_a_la_pension_entiere(saisies):
     """Cent soixante et un trimestres, tous cotisés en situation de handicap :
     le coefficient vaut 0,33, mais la pension majorée ne dépasse pas celle
     d'une durée entière (D. 351-1-5, II ; circulaire Cnav n° 2026-18, 3.3.1),
     la moitié du salaire annuel moyen."""
     import re
 
-    actuel = _actuel(contexte, naissance="1973-06-01", debut="1992-01",
+    actuel = _actuel(saisies, naissance="1973-06-01", debut="1992-01",
                      liquidation="2032-06", handicap="1992-01")
     assert actuel.motif_ouverture == "handicap" and actuel.trimestres_valides == 161
     pension = _pension(actuel, "regime_general")
@@ -556,47 +553,47 @@ def test_la_majoration_est_ecretee_a_la_pension_entiere(contexte):
     assert pension.montant == pytest.approx(0.5 * sam, abs=0.01)
 
 
-def test_avant_2015_l_incapacite_declaree_n_etablit_pas_les_80_pour_cent(contexte):
+def test_avant_2015_l_incapacite_declaree_n_etablit_pas_les_80_pour_cent(saisies):
     """Jusqu'au 31 décembre 2014, le taux exigé est celui de la carte
     d'invalidité, 80 % (D. 351-1-6) : la saisie, qui dit au moins 50 %, ne
     l'établit pas, et rien ne s'ouvre. Trois ans plus tard, la même carrière
     d'une autre génération part : 167 − 80 = 87 trimestres cotisés et
     167 − 60 = 107 validés suffisent à cinquante-sept ans (version de 2015)."""
-    en_2012 = _actuel(contexte, naissance="1955-06-01", debut="1985-01",
+    en_2012 = _actuel(saisies, naissance="1955-06-01", debut="1985-01",
                       liquidation="2012-06", handicap="1985-01")
     assert en_2012.motif_ouverture == "non_ouverte"
-    en_2015 = _actuel(contexte, naissance="1958-06-01", debut="1988-01",
+    en_2015 = _actuel(saisies, naissance="1958-06-01", debut="1988-01",
                       liquidation="2015-06", handicap="1988-01")
     assert en_2015.trimestres_valides == 109
     assert en_2015.motif_ouverture == "handicap" and en_2015.age_ouverture_opposable == 57.0
 
 
-def test_l_incapacite_donne_le_taux_plein_a_soixante_deux_ans(contexte):
+def test_l_incapacite_donne_le_taux_plein_a_soixante_deux_ans(saisies):
     """Sans la durée du départ anticipé, l'incapacité d'au moins 50 % fait
     partir à soixante-deux ans au taux plein, comme l'inapte (L. 351-1-5,
     L. 351-8, 2°, R. 351-24-3), quand l'âge légal de la génération 1965 ne
     l'ouvre pas encore."""
     champs = {"naissance": "1965-06-15", "debut": "2000-09", "liquidation": "2027-07"}
-    actuel = _actuel(contexte, **champs, handicap="2020-01")
+    actuel = _actuel(saisies, **champs, handicap="2020-01")
     assert actuel.motif_ouverture == "inaptitude" and actuel.age_ouverture_opposable == 62.0
     assert actuel.trimestres_valides < actuel.trimestres_requis
     assert "taux 50.000%" in _pension(actuel, "regime_general").detail
     assert "coefficient" not in _pension(actuel, "arrco").detail
-    assert _actuel(contexte, **champs).motif_ouverture == "non_ouverte"
+    assert _actuel(saisies, **champs).motif_ouverture == "non_ouverte"
 
 
-def test_le_depart_des_handicapes_passe_avant_l_inaptitude(contexte):
+def test_le_depart_des_handicapes_passe_avant_l_inaptitude(saisies):
     """Entre soixante-deux ans et l'âge légal, les deux portes s'ouvrent ; le
     départ des assurés handicapés, « entre cinquante-neuf ans et l'âge prévu à
     l'article L. 161-17-2 » (D. 351-1-5), majore la pension, que l'inaptitude
     ne majore pas : il l'emporte."""
-    actuel = _actuel(contexte, naissance="1966-06-01", debut="1995-01",
+    actuel = _actuel(saisies, naissance="1966-06-01", debut="1995-01",
                      liquidation="2028-06", handicap="1995-01")
     assert actuel.motif_ouverture == "handicap"
     assert "majoration des assurés handicapés" in _pension(actuel, "regime_general").detail
 
 
-def test_le_fonctionnaire_handicape_n_a_pas_de_decote(contexte):
+def test_le_fonctionnaire_handicape_n_a_pas_de_decote(saisies):
     """« Le coefficient de minoration n'est pas applicable aux fonctionnaires
     handicapés dont l'incapacité permanente est au moins égale à un taux fixé
     par décret » (L. 14, I ; D. 14 : 50 %), à tout âge : parti à soixante-
@@ -604,19 +601,19 @@ def test_le_fonctionnaire_handicape_n_a_pas_de_decote(contexte):
     anticipé, il garde 75 % quand l'autre perd douze trimestres de décote."""
     champs = {"naissance": "1966-06-01", "statut": "fonctionnaire_etat",
               "debut": "2000-01", "liquidation": "2030-06"}
-    handicape = _actuel(contexte, **champs, handicap="2020-01")
+    handicape = _actuel(saisies, **champs, handicap="2020-01")
     assert handicape.motif_ouverture == "age_legal"
     assert "taux 75.000%" in _pension(handicape, "fonction_publique_etat").detail
-    autre = _actuel(contexte, **champs)
+    autre = _actuel(saisies, **champs)
     assert "taux 63.750%" in _pension(autre, "fonction_publique_etat").detail
 
 
-def test_l_ircantec_sert_le_handicape_sans_coefficient(contexte):
+def test_l_ircantec_sert_le_handicape_sans_coefficient(saisies):
     """« b) Les agents et anciens agents handicapés admis à faire liquider
     leur retraite au régime général en application de l'article L. 351-1-3 »
     n'ont pas de coefficient de réduction (arrêté du 30 décembre 1970,
     article 16)."""
-    actuel = _actuel(contexte, **NE_EN_1973, statut="contractuel_public")
+    actuel = _actuel(saisies, **NE_EN_1973, statut="contractuel_public")
     assert actuel.motif_ouverture == "handicap"
     assert "coefficient" not in _pension(actuel, "ircantec").detail
 

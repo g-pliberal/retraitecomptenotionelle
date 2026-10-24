@@ -17,12 +17,13 @@ from datetime import date
 import pytest
 
 from retraite_notionnelle.carriere import Carriere
-from retraite_notionnelle.contexte import Contexte
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.droit.liquider import maximum_des_pensions
 from retraite_notionnelle.droit.reversion import mois_de_mariage, reversion
-from retraite_notionnelle.saisie import ErreurSaisie, Saisie
 from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.web.site import ErreurSite
+
+from outils_pont import Saisies, saisie_du_portage
 
 HAUTE = Fiabilite.HAUTE
 
@@ -459,14 +460,14 @@ def test_les_deux_moteurs_reversent_les_droits_d_avant_1973():
                 == pytest.approx(reversions[alignee]["minimum"]))
 
 
-def test_l_echeancier_reverse_la_pension_sans_le_minimum_contributif(contexte):
+def test_l_echeancier_reverse_la_pension_sans_le_minimum_contributif(saisies):
     """Un petit salaire parti au taux plein et porté au minimum contributif :
     la part du minimum dans sa pension, menée au décès comme elle, n'entre pas
     dans la base, et la ligne la dit. La survivante n'a pas l'âge du taux
     plein : la majoration de 11,1 % attend, hors du montant."""
-    sortie = contexte.simuler(Saisie.depuis_requete({
+    sortie = saisies.simuler({
         "naissance": "1955", "liquidation": "67", "conjoint": "1962",
-        "deces": "2024-05", "unite_revenu": "moyen", "salaire": "0.3"})).dictionnaire()
+        "deces": "2024-05", "unite_revenu": "moyen", "salaire": "0.3"}).dictionnaire()
     actuel = sortie["scenarios"]["actuel"]
     minimum, = (a["montant"] for a in actuel["avantages_appliques"]
                 if a["code"] == "minimum_contributif")
@@ -637,16 +638,16 @@ def test_l_ajournement_d_avant_1983_majore_le_maximum_de_la_reversion(simulateur
 
 
 @pytest.mark.parametrize("deces, motif", [("2005-05", "servie"), ("1990-09", "maximum")])
-def test_l_echeancier_reverse_la_pension_d_avant_le_maximum(contexte, simulateur, deces,
+def test_l_echeancier_reverse_la_pension_d_avant_le_maximum(saisies, simulateur, deces,
                                                              motif):
     """Le cadre parti à soixante-cinq ans en 1990, dont le salaire annuel moyen
     passait le plafond : sa pension, ramenée au maximum, laisse à sa veuve le taux
     de la pension calculée, menée jusqu'au décès comme elle ; mort en 2005, sous le
     maximum de l'année ; mort en 1990, ramenée au maximum, 52 % de la moitié du
     plafond de l'année."""
-    sortie = contexte.simuler(Saisie.depuis_requete({
+    sortie = saisies.simuler({
         "naissance": "1925", "liquidation": "65", "conjoint": "1930", "salaire": "5",
-        "statut": "salarie_prive_cadre", "deces": deces})).dictionnaire()
+        "statut": "salarie_prive_cadre", "deces": deces}).dictionnaire()
     ligne, = (l for l in sortie["reversion"]["regimes"] if l["regime"] == "regime_general")
     assert ligne["ecretement_du_maximum"] > 0
     calculee = ligne["taux"] * (ligne["base"] + ligne["ecretement_du_maximum"])
@@ -1051,15 +1052,15 @@ def test_la_majoration_pour_enfants_du_defunt_est_reversee_en_entier(simulateur)
     assert (ligne.montant, ligne.majoration) == (pytest.approx(6000.0), 0.0)
 
 
-def test_l_echeancier_reverse_la_majoration_de_l_agirc_arrco(contexte):
+def test_l_echeancier_reverse_la_majoration_de_l_agirc_arrco(saisies):
     """La même carrière, avec trois enfants et sans : le régime général ne
     reverse pas la majoration du défunt, mais majore de 10 % la réversion du
     survivant de trois enfants (L. 353-1, R. 353-2) ; l'Agirc-Arrco reverse
     la majoration du défunt en entier."""
     def lignes(enfants):
-        sortie = contexte.simuler(Saisie.depuis_requete({
+        sortie = saisies.simuler({
             "naissance": "1958", "liquidation": "62", "conjoint": "1960",
-            "deces": "2023-05", "enfants": enfants})).dictionnaire()["reversion"]
+            "deces": "2023-05", "enfants": enfants}).dictionnaire()["reversion"]
         return {l["regime"]: l for l in sortie["regimes"]}
     sans, avec = lignes("0"), lignes("3")
     assert avec["regime_general"]["majoration"] == 0.0
@@ -1103,14 +1104,14 @@ def test_un_droit_direct_verse_en_capital_ne_laisse_rien_a_reverser(simulateur):
 
 
 @pytest.mark.parametrize("primes, en_capital", [("0.02", True), ("0.2", False)])
-def test_l_echeancier_dit_quel_rafp_a_ete_verse_en_capital(contexte, primes, en_capital):
+def test_l_echeancier_dit_quel_rafp_a_ete_verse_en_capital(saisies, primes, en_capital):
     """Aux primes d'un cinquantième du traitement, le fonctionnaire n'a pas les
     5 125 points du RAFP : il le touche en une fois (décret n° 2004-569,
     article 9), et son conjoint n'en reçoit rien ; aux primes d'un
     cinquième, une rente, dont il reçoit la moitié."""
-    sortie = contexte.simuler(Saisie.depuis_requete({
+    sortie = saisies.simuler({
         "naissance": "1958", "liquidation": "62", "statut": "fonctionnaire_etat",
-        "primes": primes, "conjoint": "1960", "deces": "2023-05"})).dictionnaire()
+        "primes": primes, "conjoint": "1960", "deces": "2023-05"}).dictionnaire()
     rafp, = [p for p in sortie["scenarios"]["actuel"]["par_regime"] if p["regime"] == "rafp"]
     assert ("versé en capital" in rafp["detail"]) is en_capital
     lignes = {r["regime"]: r for r in sortie["reversion"]["regimes"]}
@@ -1601,14 +1602,14 @@ def test_les_taux_que_les_circulaires_donnent_a_la_pension_majoree(simulateur, d
     assert int(majore * 10000 + 1e-6) / 100 == attendu
 
 
-def test_la_reversion_suit_les_majorations_de_la_pension_du_defunt(contexte):
+def test_la_reversion_suit_les_majorations_de_la_pension_du_defunt(saisies):
     """La pension du salarié parti en 1971 sur cent quatre trimestres reçoit
     6 % au 1er décembre 1982 ; sa veuve, à qui la réversion est attribuée au
     1er janvier 1973, les reçoit avec elle, avant les 4 % de la réversion
     même : 10,24 % du montant calculé, puis 3,846 % en 1995 (circulaire Cnav
     n° 79/82, C ; exposé « Montant - retraite de réversion »)."""
-    comparaison = contexte.simuler(Saisie.depuis_requete({
-        "naissance": "1906", "liquidation": "65", "conjoint": "1916", "deces": "1971-03"}))
+    comparaison = saisies.simuler({
+        "naissance": "1906", "liquidation": "65", "conjoint": "1916", "deces": "1971-03"})
     general = next(l for l in comparaison.reversion.regimes if l.regime == "regime_general")
     assert (general.date_effet, general.motif) == ("1973-01-01", "servie")
     calcule = 0.5 * general.base
@@ -1691,47 +1692,47 @@ def test_sans_conjoint_pas_de_reversion(simulateur):
      "Précédent conjoint n° 2 : le mariage suit les deux naissances"),
 ])
 def test_la_saisie_refuse_ce_qui_ne_tient_pas(requete, message):
-    with pytest.raises(ErreurSaisie, match=message):
-        Saisie.depuis_requete({"naissance": "1960", "liquidation": "2024-01", **requete})
+    with pytest.raises(ErreurSite, match=message):
+        saisie_du_portage({"naissance": "1960", "liquidation": "2024-01", **requete})
 
 
 def test_l_adresse_garde_le_conjoint_et_le_deces():
     from urllib.parse import parse_qsl
 
-    saisie = Saisie.depuis_requete({
+    saisie = saisie_du_portage({
         "naissance": "1960", "liquidation": "2024-01", "conjoint": "1962-03",
         "mariage": "1985-06", "ressources_conjoint": "12000",
         "activite_conjoint": "9000", "nouvelle_union": "concubinage",
         "ressources_nouveau_conjoint": "14000",
         "conjoint_invalidite": "2028-04", "deces": "2031-10"})
-    relue = Saisie.depuis_requete(dict(parse_qsl(saisie.requete())))
+    relue = saisie_du_portage(dict(parse_qsl(saisie.requete())))
     assert (relue.conjoint, relue.mariage, relue.ressources_conjoint,
             relue.activite_conjoint, relue.nouvelle_union,
             relue.ressources_nouveau_conjoint, relue.conjoint_invalidite, relue.deces) == (
         "1962-03", "1985-06", 12000.0, 9000.0, "concubinage", 14000.0, "2028-04",
         "2031-10")
-    assert "conjoint" not in Saisie.depuis_requete({"naissance": "1960"}).requete()
+    assert "conjoint" not in saisie_du_portage({"naissance": "1960"}).requete()
 
 
 @pytest.fixture(scope="module")
-def contexte() -> Contexte:
-    return Contexte()
+def saisies() -> Saisies:
+    return Saisies()
 
 
-def test_le_journal_inscrit_le_deces_puis_la_reversion(contexte):
+def test_le_journal_inscrit_le_deces_puis_la_reversion(saisies):
     """Le décès est un événement de l'échéancier, et la réversion la
     liquidation qu'il ouvre au survivant (§ 7.3, § 7.4) ; sans décès déclaré,
     la sortie n'a pas de clé « reversion »."""
-    comparaison = contexte.simuler(Saisie.depuis_requete({
+    comparaison = saisies.simuler({
         "naissance": "1958", "liquidation": "62", "conjoint": "1960",
-        "deces": "2023-05"}))
+        "deces": "2023-05"})
     entrees = {(e.id, e.sorte) for e in comparaison.journal}
     assert {("deces_assure", "evenement"), ("reversion_conjoint", "evenement"),
             ("liquidation_reversion_conjoint", "reversion")} <= entrees
     sortie = comparaison.dictionnaire()["reversion"]
     assert sortie["deces"] == "2023-05-01" and sortie["total"] > 0
-    assert "reversion" not in contexte.simuler(Saisie.depuis_requete({
-        "naissance": "1958", "liquidation": "62"})).dictionnaire()
+    assert "reversion" not in saisies.simuler({
+        "naissance": "1958", "liquidation": "62"}).dictionnaire()
 
 
 # -- l'assuré mort avant son départ (R. 353-6) ----------------------------------------
@@ -1747,7 +1748,7 @@ def _fictive(comparaison):
     return next(e.contenu for e in comparaison.journal if e.id == "liquidation_deces_assure")
 
 
-def test_mort_avant_son_depart_la_reversion_lit_la_pension_qu_il_eut_obtenue(contexte):
+def test_mort_avant_son_depart_la_reversion_lit_la_pension_qu_il_eut_obtenue(saisies):
     """Mort à cinquante-quatre ans, dix ans avant son départ, l'assuré n'a pas
     de pension : la réversion se calcule sur celle qu'il « eût obtenue »
     (L. 353-1), liquidée à son décès, sur sa carrière de ce jour-là, « au titre
@@ -1756,7 +1757,7 @@ def test_mort_avant_son_depart_la_reversion_lit_la_pension_qu_il_eut_obtenue(con
     l'assuré décédé »), quoique le droit ne s'ouvre pas à cet âge. Cette
     liquidation est fictive : elle s'inscrit au journal sous le décès, sans
     composantes."""
-    comparaison = contexte.simuler(Saisie.depuis_requete(MORT_AVANT))
+    comparaison = saisies.simuler(MORT_AVANT)
     sortie = comparaison.dictionnaire()["reversion"]
     assert (sortie["avant_le_depart"], sortie["deces"], sortie["annee"]) == (
         True, "2024-05-01", 2024)
@@ -1779,18 +1780,17 @@ def test_mort_avant_son_depart_la_reversion_lit_la_pension_qu_il_eut_obtenue(con
 
 @pytest.mark.parametrize("deces, effet, trimestres", [
     ("2024-03", "2024-01-01", 132), ("2024-04", "2024-04-01", 133)])
-def test_la_duree_s_arrete_au_trimestre_qui_precede_le_deces(contexte, deces, effet,
+def test_la_duree_s_arrete_au_trimestre_qui_precede_le_deces(saisies, deces, effet,
                                                              trimestres):
     """« La durée d'assurance est arrêtée au dernier jour du trimestre civil qui
     précède le décès » (exposé de la Cnav) : mort en mars, l'assuré ne compte
     aucun trimestre de l'année ; en avril, le premier."""
-    fictive = _fictive(contexte.simuler(Saisie.depuis_requete({**MORT_AVANT,
-                                                               "deces": deces})))
+    fictive = _fictive(saisies.simuler({**MORT_AVANT, "deces": deces}))
     assert fictive.demande.date_effet == effet
     assert fictive.releve.durees.trimestres_par_regime["regime_general"] == trimestres
 
 
-def test_sans_decote_ni_coefficient_d_anticipation(contexte, simulateur):
+def test_sans_decote_ni_coefficient_d_anticipation(saisies, simulateur):
     """La même carrière, liquidée au même jour d'un assuré vivant, serait
     décotée au régime général et abattue à l'Agirc-Arrco : la pension que le
     défunt eût obtenue ne l'est pas — taux plein de l'inaptitude (R. 353-6),
@@ -1799,7 +1799,7 @@ def test_sans_decote_ni_coefficient_d_anticipation(contexte, simulateur):
 
     from retraite_notionnelle.droit import liquidation as _liquidation
 
-    fictive = _fictive(contexte.simuler(Saisie.depuis_requete(MORT_AVANT)))
+    fictive = _fictive(saisies.simuler(MORT_AVANT))
     vivant = _liquidation.liquider(
         fictive.demande, _liquidation.Etat(replace(fictive.carriere, au_deces=False)),
         _liquidation.Contexte(simulateur.scenario_actuel))
@@ -1810,14 +1810,14 @@ def test_sans_decote_ni_coefficient_d_anticipation(contexte, simulateur):
             assert pension.montant > sans[pension.regime], pension.regime
 
 
-def test_le_fonctionnaire_mort_en_activite_sans_coefficient_de_minoration(contexte):
+def test_le_fonctionnaire_mort_en_activite_sans_coefficient_de_minoration(saisies):
     """« Le coefficient de minoration n'est pas applicable aux pensions de
     réversion lorsque la liquidation de la pension dont le fonctionnaire aurait
     pu bénéficier intervient après son décès » (L. 14, I, du code des
     pensions) : la pension civile se liquide au taux de 75 %, sur les services
     accomplis, et sa veuve en reçoit la moitié dès le mois qui suit."""
-    comparaison = contexte.simuler(Saisie.depuis_requete({
-        **MORT_AVANT, "statut": "fonctionnaire_etat"}))
+    comparaison = saisies.simuler({
+        **MORT_AVANT, "statut": "fonctionnaire_etat"})
     assert _fictive(comparaison).pensions.taux == 0.75
     ligne, = comparaison.dictionnaire()["reversion"]["regimes"]
     assert (ligne["regime"], ligne["taux"], ligne["motif"], ligne["date_effet"]) == (
@@ -1826,13 +1826,13 @@ def test_le_fonctionnaire_mort_en_activite_sans_coefficient_de_minoration(contex
 
 @pytest.mark.parametrize("mariage, motif", [("2023-05", "mariage"), ("2022-03", "servie")])
 def test_la_cessation_d_activite_du_fonctionnaire_mort_en_activite_est_son_deces(
-        contexte, mariage, motif):
+        saisies, mariage, motif):
     """La condition de L. 39 lit deux ans de services entre le mariage et la
     cessation d'activité : celle du fonctionnaire mort en activité est son
     décès, non le départ qu'il n'a pas pris. Marié un an avant sa mort, sans
     enfant, il ne laisse rien ; deux ans, la moitié de sa pension."""
-    comparaison = contexte.simuler(Saisie.depuis_requete({
-        **MORT_AVANT, "statut": "fonctionnaire_etat", "mariage": mariage}))
+    comparaison = saisies.simuler({
+        **MORT_AVANT, "statut": "fonctionnaire_etat", "mariage": mariage})
     ligne, = comparaison.dictionnaire()["reversion"]["regimes"]
     assert ligne["motif"] == motif
 
@@ -1856,8 +1856,8 @@ PARTAGE = {"naissance": "1958", "liquidation": "62", "conjoint": "1960",
            "ex1_mariage": "1980-06", "ex1_divorce": "1995-06"}
 
 
-def _sortie(contexte, requete):
-    return contexte.simuler(Saisie.depuis_requete(requete)).dictionnaire()["reversion"]
+def _sortie(saisies, requete):
+    return saisies.simuler(requete).dictionnaire()["reversion"]
 
 
 def test_la_duree_d_un_mariage_se_compte_en_mois_de_date_a_date():
@@ -1868,14 +1868,14 @@ def test_la_duree_d_un_mariage_se_compte_en_mois_de_date_a_date():
     assert mois_de_mariage("2000-06-01", "2023-05-01") == 275
 
 
-def test_la_reversion_se_partage_au_prorata_des_mariages(contexte):
+def test_la_reversion_se_partage_au_prorata_des_mariages(saisies):
     """275 mois de mariage avec le survivant, 180 avec le précédent conjoint :
     le survivant reçoit 275/455 de la réversion de chaque régime (L. 353-3,
     R. 353-4), et du minimum du régime général (circulaire Cnav n° 105/90,
     § 3)."""
-    seul = _sortie(contexte, {cle: valeur for cle, valeur in PARTAGE.items()
+    seul = _sortie(saisies, {cle: valeur for cle, valeur in PARTAGE.items()
                               if not cle.startswith("ex1")})
-    partage = _sortie(contexte, PARTAGE)
+    partage = _sortie(saisies, PARTAGE)
     part = 275 / 455
     assert [l["regime"] for l in partage["regimes"]] == [l["regime"] for l in seul["regimes"]]
     for avant, apres in zip(seul["regimes"], partage["regimes"]):
@@ -1886,18 +1886,18 @@ def test_la_reversion_se_partage_au_prorata_des_mariages(contexte):
     assert general["minimum"] == pytest.approx(avant["minimum"] * part)
 
 
-def test_le_precedent_conjoint_remarie_avant_le_deces(contexte):
+def test_le_precedent_conjoint_remarie_avant_le_deces(saisies):
     """Remarié en 1998, le précédent conjoint ne partage plus la réversion de
     l'Agirc-Arrco, qui la retire au remariage, mais toujours celle du régime
     général, ouverte au conjoint divorcé « remarié ou non » depuis juillet
     2004 (L. 353-3)."""
     parts = {l["regime"]: l["part"]
-             for l in _sortie(contexte, {**PARTAGE, "ex1_remariage": "1998-01"})["regimes"]}
+             for l in _sortie(saisies, {**PARTAGE, "ex1_remariage": "1998-01"})["regimes"]}
     assert parts["regime_general"] == pytest.approx(275 / 455)
     assert parts["arrco"] == parts["agirc_arrco"] == 1.0
 
 
-def test_le_conjoint_marie_avant_1998_garde_l_agirc_arrco_entiere(contexte):
+def test_le_conjoint_marie_avant_1998_garde_l_agirc_arrco_entiere(saisies):
     """« Le conjoint marié avant le 13 janvier 1998 » reçoit la réversion de
     l'Agirc-Arrco entière « à condition que le mariage précédent de la personne
     décédée ait été dissous avant le 1er juillet 1980 » (fédération
@@ -1905,21 +1905,21 @@ def test_le_conjoint_marie_avant_1998_garde_l_agirc_arrco_entiere(contexte):
     requete = {"naissance": "1940", "liquidation": "60", "conjoint": "1945",
                "mariage": "1985-06", "deces": "2010-05", "ex1": "1941",
                "ex1_mariage": "1962-06", "ex1_divorce": "1979-06"}
-    parts = {l["regime"]: l["part"] for l in _sortie(contexte, requete)["regimes"]}
+    parts = {l["regime"]: l["part"] for l in _sortie(saisies, requete)["regimes"]}
     assert parts["regime_general"] == pytest.approx(299 / (299 + 204))
     assert parts["arrco"] == 1.0
     apres = {l["regime"]: l["part"]
-             for l in _sortie(contexte, {**requete, "ex1_divorce": "1980-07"})["regimes"]}
+             for l in _sortie(saisies, {**requete, "ex1_divorce": "1980-07"})["regimes"]}
     assert apres["arrco"] == pytest.approx(299 / (299 + 217))
 
 
 def test_le_precedent_conjoint_remarie_partage_le_rafp_mais_pas_la_pension_civile(
-        contexte):
+        saisies):
     """Le conjoint divorcé remarié « perd son droit à pension » civile (L. 46
     du code des pensions) ; au RAFP, son paiement seul est « suspendu », et la
     prestation se partage toujours avec lui (arrêté du 26 novembre 2004,
     article 4)."""
-    parts = {l["regime"]: l["part"] for l in _sortie(contexte, {
+    parts = {l["regime"]: l["part"] for l in _sortie(saisies, {
         **PARTAGE, "statut": "fonctionnaire_etat", "primes": "0.2",
         "ex1_remariage": "1998-01"})["regimes"]}
     assert parts["fonction_publique_etat"] == 1.0
@@ -1945,7 +1945,7 @@ def test_avant_juillet_2004_le_conjoint_divorce_non_remarie_et_marie_deux_ans(
     assert (general.version, general.part) == ("taux_54", pytest.approx(part))
 
 
-def test_le_remariage_du_survivant_eteint_les_reversions_qui_le_disent(contexte):
+def test_le_remariage_du_survivant_eteint_les_reversions_qui_le_disent(saisies):
     """Remarié en mars 2025, le survivant perd la réversion de l'Agirc-Arrco au
     mois qui suit, et garde celle du régime général, qui ne mesure le ménage
     qu'à sa date d'effet ; remarié dès le décès, il ne reçoit rien de
@@ -1953,31 +1953,31 @@ def test_le_remariage_du_survivant_eteint_les_reversions_qui_le_disent(contexte)
     tout."""
     base = {"naissance": "1958", "liquidation": "62", "conjoint": "1960",
             "deces": "2023-05", "ressources_conjoint": "15000"}
-    seul = {l["regime"]: l for l in _sortie(contexte, base)["regimes"]}
-    plus_tard = {l["regime"]: l for l in _sortie(contexte, {
+    seul = {l["regime"]: l for l in _sortie(saisies, base)["regimes"]}
+    plus_tard = {l["regime"]: l for l in _sortie(saisies, {
         **base, "nouvelle_union": "mariage", "nouvelle_union_depuis": "2025-03"})["regimes"]}
     assert (plus_tard["arrco"]["fin"], plus_tard["arrco"]["montant"]) == (
         "2025-04-01", seul["arrco"]["montant"])
     assert plus_tard["regime_general"]["plafond"] == seul["regime_general"]["plafond"]
     assert plus_tard["regime_general"]["fin"] is None
-    des_le_deces = {l["regime"]: l for l in _sortie(contexte, {
+    des_le_deces = {l["regime"]: l for l in _sortie(saisies, {
         **base, "nouvelle_union": "mariage"})["regimes"]}
     assert (des_le_deces["arrco"]["motif"], des_le_deces["arrco"]["montant"]) == (
         "remariage", 0.0)
     assert des_le_deces["regime_general"]["plafond"] == pytest.approx(
         1.6 * seul["regime_general"]["plafond"])
-    pacse = {l["regime"]: l for l in _sortie(contexte, {
+    pacse = {l["regime"]: l for l in _sortie(saisies, {
         **base, "nouvelle_union": "pacs", "nouvelle_union_depuis": "2024-01"})["regimes"]}
     assert (pacse["arrco"]["fin"], pacse["arrco"]["montant"]) == (
         None, seul["arrco"]["montant"])
 
 
 @pytest.mark.parametrize("union, motif", [("concubinage", "remariage"), ("pacs", "servie")])
-def test_le_concubinage_eteint_la_reversion_de_la_fonction_publique(contexte, union, motif):
+def test_le_concubinage_eteint_la_reversion_de_la_fonction_publique(saisies, union, motif):
     """« Le conjoint survivant ou le conjoint divorcé, qui contracte un nouveau
     mariage ou vit en état de concubinage notoire, perd son droit à pension »
     (L. 46 du code des pensions) ; le pacs, que le texte ne nomme pas, non."""
-    lignes = {l["regime"]: l for l in _sortie(contexte, {
+    lignes = {l["regime"]: l for l in _sortie(saisies, {
         "naissance": "1958", "liquidation": "62", "conjoint": "1960", "deces": "2023-05",
         "statut": "fonctionnaire_etat", "nouvelle_union": union})["regimes"]}
     assert lignes["fonction_publique_etat"]["motif"] == motif
@@ -1986,10 +1986,10 @@ def test_le_concubinage_eteint_la_reversion_de_la_fonction_publique(contexte, un
 def test_l_adresse_garde_les_precedents_conjoints():
     from urllib.parse import parse_qsl
 
-    saisie = Saisie.depuis_requete({**PARTAGE, "ex1_remariage": "1998-01",
-                                    "nouvelle_union": "mariage",
-                                    "nouvelle_union_depuis": "2025-03"})
-    relue = Saisie.depuis_requete(dict(parse_qsl(saisie.requete())))
+    saisie = saisie_du_portage({**PARTAGE, "ex1_remariage": "1998-01",
+                                "nouvelle_union": "mariage",
+                                "nouvelle_union_depuis": "2025-03"})
+    relue = saisie_du_portage(dict(parse_qsl(saisie.requete())))
     assert relue.ex_conjoints == saisie.ex_conjoints
     assert relue.nouvelle_union_depuis == "2025-03"
 
@@ -2044,13 +2044,13 @@ def test_la_page_dit_le_cumul_et_les_majorations_forfaitaires():
     ({"naissance": "1975-01-15", "liquidation": "64", "conjoint": "1977"}, "2039-02-01", 2039),
     ({"naissance": "1955", "liquidation": "62", "conjoint": "1957"}, "2026-01-01", 2026),
 ])
-def test_sans_deces_declare_le_deces_est_suppose_au_depart(contexte, requete, deces, annee):
+def test_sans_deces_declare_le_deces_est_suppose_au_depart(saisies, requete, deces, annee):
     """Personne ne déclare la date de sa mort : sans elle, le conjoint déclaré
     reçoit la réversion d'un décès supposé juste après le départ, ou au 1er
     janvier de l'année courante pour qui est déjà parti (présomption
     ``deces_apres_le_depart``). Elle ne s'inscrit pas au journal, qui ne tient
     que ce qui arrive."""
-    comparaison = contexte.simuler(Saisie.depuis_requete(requete))
+    comparaison = saisies.simuler(requete)
     sortie = comparaison.dictionnaire()["reversion"]
     assert (sortie["deces"], sortie["deces_suppose"], sortie["annee"]) == (deces, True, annee)
     assert sortie["total"] > 0

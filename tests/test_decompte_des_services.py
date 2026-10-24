@@ -33,9 +33,10 @@ from pathlib import Path
 
 import pytest
 
-from retraite_notionnelle.contexte import Contexte
 from retraite_notionnelle.droit.compter import arrondir_les_services
-from retraite_notionnelle.saisie import ErreurSaisie, Saisie
+from retraite_notionnelle.web.site import ErreurSite
+
+from outils_pont import RefusDuPortage, Saisies, saisie_du_portage
 
 RACINE = Path(__file__).resolve().parents[1]
 FICHE = RACINE / "data" / "reference" / "regles" / "decompte_des_services_fonction_publique.yaml"
@@ -92,37 +93,37 @@ CONSEIL_D_ETAT = {"naissance": "1946-08-01", "sexe": "H", "liquidation": "2006-0
 
 
 @pytest.fixture(scope="module")
-def contexte() -> Contexte:
-    return Contexte()
+def saisies() -> Saisies:
+    return Saisies()
 
 
-def _fonction_publique(contexte: Contexte, requete: dict):
-    actuel = contexte.simuler(Saisie.depuis_requete(requete)).actuel
+def _fonction_publique(saisies: Saisies, requete: dict):
+    actuel = saisies.simuler(requete).actuel
     pension = next(p for p in actuel.pensions_par_regime
                    if p.regime == "fonction_publique_etat")
     return actuel, pension
 
 
-def test_l_arrondi_porte_au_pourcentage_maximum_et_efface_la_decote(contexte):
-    actuel, pension = _fonction_publique(contexte, CONSEIL_D_ETAT)
+def test_l_arrondi_porte_au_pourcentage_maximum_et_efface_la_decote(saisies):
+    actuel, pension = _fonction_publique(saisies, CONSEIL_D_ETAT)
     assert actuel.trimestres_requis == 156
     assert "× 156/156" in pension.detail, pension.detail
     assert actuel.taux_liquidation == pytest.approx(0.75)
 
 
-def test_en_trimestres_entiers_annee_par_annee_le_modele_en_perdait_un(contexte):
+def test_en_trimestres_entiers_annee_par_annee_le_modele_en_perdait_un(saisies):
     entiers = {**CONSEIL_D_ETAT, "releve": _releve("1", "2", range(1968, 2006))}
-    actuel, pension = _fonction_publique(contexte, entiers)
+    actuel, pension = _fonction_publique(saisies, entiers)
     assert "× 155/156" in pension.detail, pension.detail
     assert actuel.taux_liquidation < 0.75
 
 
-def test_un_mois_de_trop_peu_fait_une_decote(contexte):
+def test_un_mois_de_trop_peu_fait_une_decote(saisies):
     """Trois mois en 1967 et sept en 2006 : 155 trimestres et un mois, que le
     décompte final néglige ; la durée d'assurance, au jour, manque d'un
     deux-tiers de trimestre, que L. 14 arrondit à l'entier supérieur."""
     court = {**CONSEIL_D_ETAT, "releve": _releve("1", "2.33", range(1968, 2006))}
-    actuel, pension = _fonction_publique(contexte, court)
+    actuel, pension = _fonction_publique(saisies, court)
     assert "× 155/156" in pension.detail, pension.detail
     assert actuel.taux_liquidation < 0.75
 
@@ -149,17 +150,17 @@ def test_les_services_d_avant_1948_entrent_au_decompte_de_l_etat():
         pension.detail
 
 
-def test_une_fraction_ne_se_declare_que_des_services_de_la_fonction_publique(contexte):
+def test_une_fraction_ne_se_declare_que_des_services_de_la_fonction_publique(saisies):
     prive = {**CONSEIL_D_ETAT,
              "releve": _releve("1.33", "2.33", range(1968, 2006), statut="salarie_prive_non_cadre")}
-    with pytest.raises(ErreurSaisie, match="une fraction de trimestre ne se déclare que"):
-        contexte.simuler(Saisie.depuis_requete(prive))
+    with pytest.raises(RefusDuPortage, match="une fraction de trimestre ne se déclare que"):
+        saisies.simuler(prive)
 
 
 def test_le_relevé_refuse_plus_de_quatre_trimestres():
-    with pytest.raises(ErreurSaisie, match="trimestres attendus entre 0 et 4"):
-        Saisie.depuis_requete({**CONSEIL_D_ETAT,
-                               "releve": "2005:fonctionnaire_etat:20000:4.5"}).releve_analyse()
+    with pytest.raises(ErreurSite, match="trimestres attendus entre 0 et 4"):
+        saisie_du_portage({**CONSEIL_D_ETAT,
+                           "releve": "2005:fonctionnaire_etat:20000:4.5"}).releve_analyse()
 
 
 @pytest.mark.parametrize(("annee", "mois", "mensuel"), [
@@ -172,10 +173,9 @@ def test_le_relevé_refuse_plus_de_quatre_trimestres():
     # Février 2015 : la revalorisation d'avril 2013, aucune depuis.
     (2015, 2, 1156.90),
 ])
-def test_la_reference_du_minimum_garanti_suit_les_revalorisations(contexte, annee, mois,
+def test_la_reference_du_minimum_garanti_suit_les_revalorisations(saisies, annee, mois,
                                                                    mensuel):
-    simulateur = contexte.simulateur(Saisie.depuis_requete(CONSEIL_D_ETAT).parametres(
-        contexte.base))
+    simulateur = saisies.simulateur(CONSEIL_D_ETAT)
     reference, _ = simulateur.scenario_actuel.minimum_garanti.reference(annee, mois)
     assert reference / 12 == pytest.approx(mensuel, abs=0.005)
 
@@ -188,8 +188,8 @@ def _cas_type_10_de_1960() -> dict:
     return temoin["cas"]["cor_10_1960"]["requete"]
 
 
-def test_le_minimum_garanti_de_2020_est_celui_de_la_chaine(contexte):
-    actuel = contexte.simuler(Saisie.depuis_requete(_cas_type_10_de_1960())).actuel
+def test_le_minimum_garanti_de_2020_est_celui_de_la_chaine(saisies):
+    actuel = saisies.simuler(_cas_type_10_de_1960()).actuel
     pension = next(p for p in actuel.pensions_par_regime if p.regime == "cnracl")
     assert "porté au minimum garanti" in pension.detail, pension.detail
     assert pension.montant == pytest.approx(0.90 * 1182.53 * 12, abs=0.2)
@@ -231,9 +231,8 @@ def test_les_deux_moteurs_comptent_au_jour_a_l_identique():
     assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])
 
 
-def test_la_fiche_dit_le_semestre_puis_le_trimestre(contexte):
-    simulateur = contexte.simulateur(Saisie.depuis_requete(CONSEIL_D_ETAT).parametres(
-        contexte.base))
+def test_la_fiche_dit_le_semestre_puis_le_trimestre(saisies):
+    simulateur = saisies.simulateur(CONSEIL_D_ETAT)
     fiches = simulateur.scenario_actuel.fiches_datees
     assert fiches.regle("decompte_des_services_fonction_publique", "1960-01-01")["existe"] is False
     ancien = fiches.regle("decompte_des_services_fonction_publique", "1990-06-01")
