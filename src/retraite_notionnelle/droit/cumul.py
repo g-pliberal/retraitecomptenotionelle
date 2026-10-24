@@ -42,10 +42,15 @@ Le salarié — régime général, salariés agricoles, régimes spéciaux (L. 1
 L'artisan et le commerçant (L. 634-6) : la pension prise depuis juillet 1984
 est suspendue quand il reprend dans l'entreprise qu'il exploitait ; depuis
 2004, son revenu ne dépasse pas la moitié du plafond de la sécurité sociale,
-rapportée à la durée de l'activité (D. 634-11-2), ou la pension est suspendue,
-puis, pour la première pension de 2015 et les activités de 2017, réduite du
+rapportée à la durée de l'activité (D. 634-11-2), ou la pension est suspendue
+le nombre de mois que le dépassement de l'année épuise (D. 634-11-5), puis,
+pour la première pension de 2015 et les activités de 2017, réduite du
 dépassement. Le libéral (L. 643-6), de même, sous le plafond entier
-(D. 643-10), depuis 2004.
+(D. 643-10), depuis 2004 : suspendu chaque mois au-delà du plafond de l'année,
+puis, depuis le 17 janvier 2011, sous le plafond rapporté à la durée de son
+activité, le nombre de mois que le dépassement épuise (D. 643-10-2). Tous
+cumulent entièrement avec la durée de L. 351-1, que le régime général compte
+à une carrière tout en points.
 
 Le fonctionnaire (L. 84 à L. 86 du code des pensions) : L. 161-22 ne
 s'applique pas à lui avant 2027. Payé par un employeur public — puis, civil
@@ -87,12 +92,15 @@ Le jumeau de ce module est ``moteur/js/droit/cumul.js``.
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from datetime import date
 from typing import TYPE_CHECKING, Callable
 
 from ..calendrier import DateMois
 from . import departs as _departs
+from . import ouvrir as _ouvrir
+from .commun import periode_de_liquidation
 from ..somme import somme_ordonnee
 
 if TYPE_CHECKING:
@@ -108,6 +116,11 @@ SUSPENDUE = "suspendue"
 REDUITE = "reduite"
 SEUIL_NON_PUBLIE = "seuil_non_publie"
 NON_CALCULE = "non_calcule"
+
+#: Le motif d'un mois de l'année du dépassement où la pension du non-salarié
+#: n'est pas suspendue : le dépassement en épuise moins que l'activité n'en
+#: compte (D. 634-11-5, D. 643-10-2).
+HORS_DES_MOIS_SUSPENDUS = "hors_des_mois_suspendus"
 
 #: L'ordre où se dit le statut d'un mois : celui de la pension la plus
 #: touchée.
@@ -158,6 +171,11 @@ PREMIERE_2015 = DateMois(2015, 1)
 #: pour les non-salariés (D. 634-11-2).
 REDUCTION_SALARIES = DateMois(2017, 4)
 REDUCTION_NON_SALARIES = DateMois(2017, 1)
+#: Décret n° 2011-62, pour les périodes postérieures au 16 janvier 2011 : le
+#: seuil du libéral rapporté à la durée de son activité (D. 643-10) et sa
+#: pension suspendue un nombre de mois (D. 643-10-2), du premier mois entier
+#: de leur rédaction.
+LIBERAUX_2011 = DateMois(2011, 2)
 PREMIERE_2027 = DateMois(2027, 1)
 #: Les règlements du RCO et du NRCO approuvés le 7 juillet 2009 suspendent la
 #: complémentaire avec la base (articles 23, II, et 10) ; la caisse les
@@ -332,6 +350,15 @@ def groupe_de_la_pension(moteur: ScenarioActuel, regime: str) -> str:
     if fiche.famille in ("base_prive", "agricole", "special"):
         return "salaries"
     return "autres"
+
+
+def duree_du_taux_plein(moteur: ScenarioActuel, carriere: Carriere) -> int:
+    """La durée que L. 351-1 exige pour le taux plein, dont L. 161-22, L. 634-6
+    et L. 643-6 font la condition du cumul intégral à l'âge légal : celle du
+    régime général, pour la génération et la date du départ."""
+    periode = periode_de_liquidation(moteur.catalogue["regime_general"],
+                                     carriere.date_liquidation)
+    return _ouvrir.duree_requise(moteur, periode, carriere)[0]
 
 
 def fonction_publique_quittee(moteur: ScenarioActuel, carriere: Carriere) -> tuple[bool, float]:
@@ -509,7 +536,11 @@ class _Calcul:
         self.age_legal = _departs.age_legal(moteur, carriere)
         automatique = moteur.ages_annulation_decote.age(carriere.generation)
         self.age_automatique = automatique[0] if automatique is not None else 65.0
-        self.duree = resultat.trimestres_valides >= resultat.trimestres_requis
+        # La durée du cumul intégral : celle que les régimes en annuités
+        # opposent, ou, à une carrière tout en points, qu'aucun ne compte, celle
+        # de L. 351-1.
+        requis = resultat.trimestres_requis or duree_du_taux_plein(moteur, carriere)
+        self.duree = resultat.trimestres_valides >= requis
         self.militaire, self.limite_d_age = fonction_publique_quittee(moteur, carriere)
         #: L'assuré a-t-il été artisan ou commerçant avant son départ ?
         self.independant = any(ligne.affiliation in INDEPENDANTS
@@ -523,6 +554,7 @@ class _Calcul:
         self._annees: dict[int, _Annee] = {}
         self._revalorisations: dict[DateMois, float] = {}
         self._deductions: dict[tuple[str, int], float] = {}
+        self._suspensions: dict[tuple[str, int], tuple | None] = {}
 
     # -- la carrière d'avant le départ ------------------------------------------------
 
@@ -784,7 +816,10 @@ class _Calcul:
     def _non_salarie(self, mois: DateMois, date_effet: DateMois, groupe: str,
                      montant: float, annee: _Annee, integral: bool, servies,
                      montants: dict) -> tuple:
-        """L. 634-6 et L. 643-6 : l'artisan, le commerçant et le libéral."""
+        """L. 634-6 et L. 643-6 : l'artisan, le commerçant et le libéral. Au-delà
+        du seuil, la pension est suspendue les mois que le dépassement de l'année
+        épuise (:meth:`_suspension`) et servie les autres ; pour la première
+        pension de 2015 et les activités de 2017, réduite du dépassement."""
         if groupe == "independants" and date_effet < LOI_2004:
             if date_effet < ARTISANS_1984:
                 return LIBRE, AVANT_1983, "avant_1984", 0.0, None
@@ -806,15 +841,93 @@ class _Calcul:
             return INTEGRAL, regle, "taux_plein", 0.0, None
         # Le seuil est annuel, rapporté aux mois d'activité : le dépassement de
         # l'année se répartit sur ses mois, et entre les pensions du régime.
-        seuil = SEUILS_NON_SALARIES[groupe] * annee.plafond_securite_sociale / 12.0
+        seuil = self._seuil_non_salarie(mois, groupe, annee)
         depassement = annee.revenu - seuil
         if depassement <= 0:
             return PLAFONNEE, regle, "sous_le_plafond", 0.0, seuil
         if regle != REDUCTION_2015:
+            suspension = self._suspension(mois, groupe)
+            if suspension is not None and mois not in suspension[0]:
+                return PLAFONNEE, regle, HORS_DES_MOIS_SUSPENDUS, 0.0, seuil
             return SUSPENDUE, regle, "depassement", montant, seuil
         du_groupe = somme_ordonnee(montants[code] for code, _, g in servies if self._concerne(code, g))
         part = montant / du_groupe if du_groupe > 0 else 0.0
         return REDUITE, regle, "depassement", depassement * part, seuil
+
+    def _seuil_non_salarie(self, mois: DateMois, groupe: str, annee: _Annee) -> float:
+        """Le seuil de L. 634-6 et de L. 643-6, par mois d'activité : la moitié du
+        plafond de la sécurité sociale, rapportée à la durée de l'activité
+        (D. 634-11-2) ; le plafond pour le libéral, rapporté à la durée de son
+        affiliation depuis le 17 janvier 2011 (D. 643-10), et avant « égal,
+        annuellement, au plafond » : celui de l'année, sur ses seuls mois
+        d'activité."""
+        if groupe == "liberaux" and mois < LIBERAUX_2011:
+            return annee.plafond_securite_sociale / annee.mois
+        return SEUILS_NON_SALARIES[groupe] * annee.plafond_securite_sociale / 12.0
+
+    def _suspension(self, mois: DateMois, groupe: str) -> tuple[frozenset, int] | None:
+        """Les mois de l'année de ``mois`` où le dépassement suspend la pension
+        du groupe, et le nombre de ceux de son activité que le cumul intégral ne
+        couvre pas ; ``None`` quand elle l'est chaque mois au-delà du seuil — le
+        libéral avant le 17 janvier 2011 (L. 643-6), ou faute de pension de base
+        à qui rapporter le dépassement.
+
+        D. 634-11-5 suspend la pension de l'artisan et du commerçant « pour un
+        nombre de mois égal au rapport entre le montant du dépassement constaté
+        et le montant mensuel net de la pension, arrondi à l'entier inférieur,
+        sans que ce nombre puisse être inférieur à un, ni supérieur au nombre de
+        mois durant lesquels, au cours de l'année pour laquelle le dépassement
+        est constaté, l'assuré a poursuivi ou repris une activité » ; D. 643-10-2
+        celle du libéral, de même, sans minimum. La borne date de 2010, et la
+        lettre ministérielle du 8 mars 2010 l'étend aux revenus de 2008 et de
+        2009, que le modèle suit depuis 2004 (circulaire RSI 2010/013). Le
+        dépassement est celui des mois de l'année hors du cumul intégral
+        (D. 634-11-2) ; la pension, celles du groupe, nettes des prélèvements de
+        l'année (:meth:`_part_nette`). La caisse suspend au mois qui suit la
+        notification du dépassement constaté : le modèle place les mois
+        suspendus à la fin de ceux de l'année."""
+        if groupe == "liberaux" and mois < LIBERAUX_2011:
+            return None
+        cle = (groupe, mois.annee)
+        if cle not in self._suspensions:
+            self._suspensions[cle] = self._suspendre(groupe, mois.annee)
+        return self._suspensions[cle]
+
+    def _suspendre(self, groupe: str, annee_civile: int) -> tuple[frozenset, int] | None:
+        annee = self.annee(annee_civile)
+        couverts = [m for m in (DateMois.depuis_rang(rang)
+                                for rang in range(self.debut.rang, self.fin.rang))
+                    if m.annee == annee_civile and not self.integral(m)
+                    and (groupe != "liberaux" or m >= LIBERAUX_2011)]
+        pensions = {regime: annee.pensions.get(regime, 0.0) / 12.0
+                    for regime, date_effet, g in self.pensions
+                    if self._concerne(regime, g) and date_effet <= couverts[-1]
+                    and annee.pensions.get(regime, 0.0) > 0}
+        brute = somme_ordonnee(pensions.values())
+        if brute <= 0:
+            return None
+        seuil = self._seuil_non_salarie(couverts[-1], groupe, annee)
+        depassement = (annee.revenu - seuil) * len(couverts)
+        nombre = math.floor(depassement / (brute * self._part_nette(annee_civile, pensions))
+                            + 1e-9)
+        if groupe == "independants":
+            nombre = max(1, nombre)
+        nombre = min(nombre, len(couverts))
+        return frozenset(couverts[len(couverts) - nombre:]), len(couverts)
+
+    def _part_nette(self, annee_civile: int, pensions: dict[str, float]) -> float:
+        """Ce que les prélèvements de l'année laissent de ces pensions, en part
+        de leur brut : la CSG au taux plein, la CRDS, la CASA, et la cotisation
+        maladie que chacune paie selon son régime."""
+        historiques = self.moteur.prelevements_historiques
+        brute = somme_ordonnee(pensions.values())
+        parts = {}
+        for serie, regimes in sorted(historiques.regimes_des_pensions.items()):
+            part = somme_ordonnee(montant for regime, montant in pensions.items()
+                                  if regime in regimes)
+            if part > 0:
+                parts[serie] = part / brute
+        return 1.0 - historiques.taux_pension_annuel(annee_civile, parts)
 
     def _complementaire_des_independants(self, mois: DateMois, date_effet: DateMois,
                                          montant: float, part: float, annee: _Annee,
@@ -950,6 +1063,11 @@ class _Calcul:
           [...] un montant brut d'allocations [...] égal au montant du
           dépassement », la CAVOM de 2026 « à due concurrence du montant du
           dépassement » : le dépassement entier ; la CARPV depuis 2022, aucune.
+
+        La base que D. 643-10-2 ne suspend que quelques mois de l'année ne
+        retient du dépassement que ces mois-là : la complémentaire « pour la
+        même durée » est suspendue les mêmes mois, celle qui perd ce que la base
+        n'absorbe pas en perd le reste.
         """
         regle_des_statuts = None
         for debut, regle in REGLES_DES_SECTIONS.get(regime, ()):
@@ -969,17 +1087,23 @@ class _Calcul:
             return LIBRE, "", "autre_regime", 0.0, None
         statut, _, motif, _, seuil = self._non_salarie(mois, date_effet, "liberaux", montant,
                                                        annee, integral, servies, montants)
-        if statut not in (SUSPENDUE, REDUITE):
+        hors = motif == HORS_DES_MOIS_SUSPENDUS
+        if statut not in (SUSPENDUE, REDUITE) and not hors:
             return statut, SECTIONS_STATUTS, motif, 0.0, seuil
         depassement = annee.revenu - seuil
         if regle_des_statuts == DEPASSEMENT_ENTIER:
-            return REDUITE, SECTIONS_STATUTS, motif, depassement, seuil
+            return REDUITE, SECTIONS_STATUTS, "depassement", depassement, seuil
         if regle_des_statuts == APRES_LA_BASE:
             base = somme_ordonnee(montants[code] for code, _, groupe in servies
                                   if groupe == "liberaux")
+            suspension = None if statut == REDUITE else self._suspension(mois, "liberaux")
+            if suspension is not None:
+                base *= len(suspension[0]) / suspension[1]
             if depassement <= base:
                 return PLAFONNEE, SECTIONS_STATUTS, "imputee_sur_la_base", 0.0, seuil
-            return REDUITE, SECTIONS_STATUTS, motif, depassement - base, seuil
+            return REDUITE, SECTIONS_STATUTS, "depassement", depassement - base, seuil
+        if hors:
+            return PLAFONNEE, SECTIONS_STATUTS, motif, 0.0, seuil
         if statut == SUSPENDUE:
             return SUSPENDUE, SECTIONS_STATUTS, motif, montant, seuil
         if regle_des_statuts == AVEC_LA_BASE:

@@ -81,8 +81,11 @@ versions:
   - {id: LEGIARTI000006735324, article: "D. 161-2-16 CSS", en_vigueur: 2004-10-22}
   - {id: LEGIARTI000006743959, article: "L. 634-6 CSS", en_vigueur: 2003-08-22}
   - {id: LEGIARTI000006737985, article: "D. 634-11-2 CSS", en_vigueur: 2004-08-03}
+  - {id: LEGIARTI000006737989, article: "D. 634-11-5 CSS", en_vigueur: 2004-08-03}
   - {id: LEGIARTI000006743797, article: "L. 643-6 CSS", en_vigueur: 2004-01-01}
   - {id: LEGIARTI000006738158, article: "D. 643-10 CSS", en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006738159, article: "D. 643-10 CSS", en_vigueur: 2005-08-24}
+  - {id: LEGIARTI000019661799, article: "D. 643-10 CSS", en_vigueur: 2008-10-19}
   bornes:
     liquidation.date_effet: [2004-01-01, null]
     periode.debut: [null, 2009-01-01]
@@ -102,14 +105,24 @@ versions:
     non_salaries: >-
       l'artisan et le commerçant cumulent des revenus qui « ne doivent pas excéder la
       moitié du plafond » de la sécurité sociale, « rapportée à la durée de cet
-      exercice » (D. 634-11-2), le libéral le plafond entier (D. 643-10) ; au-delà, le
-      service de la pension « est suspendu » (L. 634-6, L. 643-6)
+      exercice » (D. 634-11-2), le libéral le plafond entier, « égal, annuellement, au
+      plafond », sans le rapporter à la durée de son activité (D. 643-10) ; au-delà, le
+      service de la pension « est suspendu » (L. 634-6, L. 643-6) : celle de l'artisan et
+      du commerçant « pour un nombre de mois égal au rapport entre le montant du
+      dépassement constaté et le montant mensuel net de la pension, arrondi à l'entier
+      inférieur, sans que ce nombre puisse être inférieur à un » (D. 634-11-5), la
+      pension « prise en compte pour son montant net, c'est-à-dire après déduction des
+      prélèvements sociaux » (circulaire RSI 2007/109, § 4.2) ; aucun texte lu ne borne la
+      suspension du libéral, que le modèle suspend chaque mois de l'activité de l'année
     parametres:
       plafond: dernier_salaire_au_moins_le_smic
       part_du_smic: 1.0
       depassement: suspension
       seuil_independants_en_pass: 0.5
       seuil_liberaux_en_pass: 1.0
+      seuil_liberaux: annuel
+      suspension_independants: nombre_de_mois
+      suspension_liberaux: chaque_mois
   exemples: aucun trouvé
 - id: cumul_liberalise_2009
   statut: lue
@@ -121,7 +134,13 @@ versions:
   - {id: LEGIARTI000021640126, article: "D. 161-2-15 CSS", en_vigueur: 2010-01-01}
   - {id: LEGIARTI000021640118, article: "D. 161-2-16 CSS", en_vigueur: 2010-01-01}
   - {id: LEGIARTI000019959660, article: "L. 634-6 CSS", en_vigueur: 2008-12-19}
+  - {id: LEGIARTI000021640164, article: "D. 634-11-2 CSS", en_vigueur: 2010-01-01}
+  - {id: LEGIARTI000021640157, article: "D. 634-11-5 CSS", en_vigueur: 2010-01-01}
   - {id: LEGIARTI000019959656, article: "L. 643-6 CSS", en_vigueur: 2008-12-19}
+  - {id: LEGIARTI000021640177, article: "D. 643-10 CSS", en_vigueur: 2010-01-01}
+  - {id: LEGIARTI000023441985, article: "D. 643-10 CSS", en_vigueur: 2011-01-17}
+  - {id: LEGIARTI000023431338, article: "D. 643-10-1 CSS", en_vigueur: 2011-01-17}
+  - {id: LEGIARTI000023431324, article: "D. 643-10-2 CSS", en_vigueur: 2011-01-17}
   bornes:
     liquidation.date_effet: [1983-04-01, null]
     liquidation.premiere_pension_de_base: [null, 2015-01-01]
@@ -140,13 +159,25 @@ versions:
       suspension, que les rédactions de 2015 ne visent pas
     non_salaries: >-
       l'artisan, le commerçant et le libéral cumulent entièrement aux mêmes conditions
-      (L. 634-6, L. 643-6 de 2008), et gardent sinon leur seuil et la suspension
+      (L. 634-6, L. 643-6 de 2008), la durée « au moins égale à la limite » de L. 351-1
+      comprise, et gardent sinon leur seuil et la suspension. Depuis 2010, celle de
+      l'artisan et du commerçant vaut le nombre de mois du dépassement, « sans que ce
+      nombre puisse être inférieur à un, ni supérieur au nombre de mois durant lesquels,
+      au cours de l'année pour laquelle le dépassement est constaté, l'assuré a poursuivi
+      ou repris une activité » (D. 634-11-5), borne que la lettre ministérielle du 8 mars
+      2010 étend aux revenus de 2008 et de 2009 (circulaire RSI 2010/013) ; depuis le 17
+      janvier 2011, celle du libéral de même, sans minimum (D. 643-10-2), sous le plafond
+      « rapporté à la durée d'affiliation » de son activité (D. 643-10). La
+      complémentaire suit : « Cette durée de 12 mois de suspension sera appliquée à la
+      retraite complémentaire » (circulaire RSI 2010/013)
     parametres:
       plafond: dernier_salaire_ou_160_smic
       part_du_smic: 1.6
       depassement: suspension
       cumul_integral: true
-  exemples: aucun trouvé
+      suspension_independants: nombre_de_mois
+      suspension_liberaux: nombre_de_mois_depuis_2011
+  exemples: [rsi_2010_013_suspension_d_un_mois, rsi_2010_013_suspension_bornee_aux_mois_d_activite]
 - id: premieres_pensions_de_2015
   statut: lue
   textes:
@@ -157,6 +188,10 @@ versions:
   - {id: LEGIARTI000030060205, article: "D. 161-2-16 CSS", en_vigueur: 2015-01-01}
   - {id: LEGIARTI000028498591, article: "L. 634-6 CSS", en_vigueur: 2014-01-22}
   - {id: LEGIARTI000030060007, article: "D. 634-11-2 CSS", en_vigueur: 2015-01-01}
+  - {id: LEGIARTI000030060063, article: "D. 634-11-5 CSS", en_vigueur: 2015-01-01}
+  - {id: LEGIARTI000028498584, article: "L. 643-6 CSS", en_vigueur: 2014-01-22}
+  - {id: LEGIARTI000030060099, article: "D. 643-10-1 CSS", en_vigueur: 2015-01-01}
+  - {id: LEGIARTI000030060110, article: "D. 643-10-2 CSS", en_vigueur: 2015-01-01}
   nee_de: JORFARTI000028493657
   bornes:
     liquidation.date_effet: [1983-04-01, null]
@@ -172,12 +207,16 @@ versions:
       (D. 161-2-16 de 2015) : elle reste suspendue
     non_salaries: >-
       la réduction des artisans et des commerçants vaut pour les activités « à compter
-      du 1er janvier 2017 » (D. 634-11-2 de 2017) ; le libéral, de même dans le modèle
+      du 1er janvier 2017 » (D. 634-11-2 de 2017), celle du libéral de même
+      (D. 643-10-2 de 2017) ; d'ici là, la pension suspendue l'est le nombre de mois du
+      dépassement, comme en 2010 (D. 634-11-5 et D. 643-10-2 de 2015)
     parametres:
       plafond: dernier_salaire_ou_160_smic
       part_du_smic: 1.6
       depassement: suspension
       cumul_integral: true
+      suspension_independants: nombre_de_mois
+      suspension_liberaux: nombre_de_mois
   exemples: aucun trouvé
 - id: reduction_du_depassement_2015
   statut: lue
@@ -195,7 +234,12 @@ versions:
   - {id: LEGIARTI000034306173, article: "D. 161-2-16 CSS", en_vigueur: 2017-04-01}
   - {id: LEGIARTI000034306141, article: "D. 634-11-2 CSS", en_vigueur: 2017-04-01}
   - {id: LEGIARTI000047961809, article: "D. 634-11-2 CSS", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000034306134, article: "D. 634-11-5 CSS", en_vigueur: 2017-04-01}
+  - {id: LEGIARTI000041966552, article: "D. 634-11-5 CSS", en_vigueur: 2020-05-25}
+  - {id: LEGIARTI000031686248, article: "L. 643-6 CSS", en_vigueur: 2015-12-23}
+  - {id: LEGIARTI000047453657, article: "L. 643-6 CSS", en_vigueur: 2023-09-01}
   - {id: LEGIARTI000030060076, article: "D. 643-10 CSS", en_vigueur: 2015-01-01}
+  - {id: LEGIARTI000034306123, article: "D. 643-10-2 CSS", en_vigueur: 2017-04-01}
   nee_de: JORFARTI000028493684
   bornes:
     liquidation.date_effet: [1983-04-01, null]
@@ -288,27 +332,46 @@ approximations:
 - ecart: >-
     avant 2004, la reprise chez un autre employeur que le dernier est lue libre ; les
     activités que L. 161-22 laisse libres (artistiques, juridictionnelles…) ne se
-    déclarent pas ; le libéral suit le calendrier de la réduction des artisans
+    déclarent pas
   effet: non mesuré
 - ecart: >-
-    au-delà du seuil, la pension suspendue de l'artisan, du commerçant et du libéral l'est
-    chaque mois d'activité ; D. 634-11-5, pour les pensions de 2004, et D. 643-10-2, depuis
-    le 17 janvier 2011, ne la suspendent que « pour un nombre de mois égal au rapport entre
-    le montant du dépassement constaté et le montant mensuel net de la pension, arrondi à
-    l'entier inférieur », au moins un mois pour l'artisan et le commerçant, au plus, depuis
-    2010 et 2011, les mois d'activité de l'année : le modèle suspend davantage quand le
-    dépassement est faible, et la complémentaire que ses statuts suspendent « pour la même
-    durée » hérite de l'écart (relevé le 24 octobre 2026, action 138, étape 12)
+    la caisse suspend la pension de l'artisan, du commerçant et du libéral après avoir
+    constaté le dépassement de l'année, au mois qui suit sa notification, et la rétablit
+    après le dernier mois de suspension (D. 634-11-5, circulaire RSI 2007/109, § 4.2.3) :
+    le modèle, qui ne dit que l'année de l'activité, en suspend les derniers mois ; il
+    réduit de même pendant ses mois la pension que la rédaction de 2017 réduit, du mois
+    qui suit la notification, sur l'année civile entière quand l'activité en compte moins
+    de douze
   effet: non mesuré
 - ecart: >-
-    la durée requise du cumul intégral est celle que le résultat compte : nulle pour une
-    carrière seulement libérale, que le modèle laisse cumuler entièrement dès l'âge légal,
-    quand L. 643-6 exige la durée de L. 351-1 (relevé le 24 octobre 2026)
+    la pension mensuelle nette que le dépassement divise est celle de la base que
+    l'activité touche, brute de l'année moins la CSG au taux plein, la CRDS, la CASA et
+    la cotisation maladie de son régime : le taux réduit ou l'exonération de la CSG, que
+    le revenu fiscal décide, n'est pas suivi, ni la majoration pour enfants, l'allocation
+    supplémentaire ou l'ASPA que la caisse y compte (circulaire RSI 2007/109, § 4.2.1)
+  effet: non mesuré
+- ecart: >-
+    D. 634-11-5 de 2004 ne bornait pas la suspension, qui pouvait passer douze mois et
+    s'additionner d'une année à l'autre ; la lettre ministérielle du 8 mars 2010 l'a
+    bornée aux mois de l'activité de l'année pour les revenus de 2008 et de 2009, et a
+    rétabli au 1er janvier 2010, sans rappel, les pensions suspendues plus longtemps pour
+    les revenus de 2004 à 2007 (circulaire RSI 2010/013) : le modèle la borne aux mois de
+    l'activité de l'année depuis 2004
+  effet: non mesuré
+- ecart: >-
+    l'ancien régime des commerçants rapportait le seuil aux jours de l'activité, celui des
+    artisans à ses mois (circulaire RSI 2010/013) : le modèle le rapporte aux mois pour
+    tous
   effet: non mesuré
 sources:
-  lu_le: 2026-10-14
+  lu_le: 2026-10-24
   prochaine_relecture: 2027-03-31
   a_relire:
+  - >-
+    Ouvert le 24 octobre 2026 (action 138, étape 12) : la suspension du libéral, que
+    D. 643-10-2 compte en mois depuis 2011, n'a ni instruction de la CNAVPL ni exemple
+    d'une section lus ; la date où la caisse suspend, après la notification du
+    dépassement, que le modèle place à la fin de l'année de l'activité.
   - >-
     Le 29 septembre 2026, avec le domaine des départs multiples, L. 161-22 a été lu
     dans ses rédactions de 2025 et de 2027 ; le 30, dans celles de 1985 à 2023, avec
@@ -404,6 +467,24 @@ sources:
       retraite définitive
     url: https://www.ircantec.retraites.fr/actif/dispositif-cumul-emploi-retraite
     date: 2026-10-13
+  - type: legifrance
+    reference: >-
+      D. 634-11-5 CSS dans ses cinq rédactions (2004, 2010, 2015, 2017, 2020), D. 643-10-2
+      (2011, 2015, 2017), D. 643-10 (2004 à 2015), D. 643-10-1 (2011, 2015), D. 634-11-2
+      (2010) et L. 643-6 (2004 à 2023), dans l'index LEGI à jour au 23 octobre 2026 : la
+      suspension pour le nombre de mois que le dépassement épuise, ses bornes, et le seuil
+      du libéral, annuel jusqu'en 2011
+    date: 2026-10-24
+  - type: circulaire_cnav
+    reference: >-
+      circulaires RSI n° 2007/109 du 16 août 2007 (§ 4.2 : la pension « prise en compte
+      pour son montant net », la suspension sans maximum), n° 2009/044 du 15 octobre 2009
+      (la complémentaire suspendue le même nombre de mois que la base) et n° 2010/013 du
+      18 mars 2010 (le nombre de mois borné à l'activité de l'année, la lettre
+      ministérielle du 8 mars 2010, sept exemples), trouvées par l'API de recherche de la
+      base de législation de l'Assurance retraite le 24 octobre 2026
+    url: https://legislation.lassuranceretraite.fr/
+    date: 2010-03-18
 textes_a_rattacher:
 - {id: LEGIARTI000047961599, article: "D. 161-2-5 CSS", en_vigueur: 2023-09-01,
    change: "la pension servie le mois qui suit la rupture"}
@@ -414,40 +495,46 @@ textes_a_rattacher:
 code:
   python: >-
     droit/cumul.py : cumuler, groupe_de_l_activite, groupe_de_la_pension, assiette_csg,
-    _Calcul.version, _Calcul.integral, _Calcul.plafond_salarie,
+    duree_du_taux_plein, _Calcul.version, _Calcul.integral, _Calcul.plafond_salarie,
     _Calcul.plafond_agirc_arrco, _Calcul._salarie, _Calcul._agirc_arrco,
-    _Calcul._non_salarie, _Calcul._regle_2027, LOI_1983, ARTISANS_1984, LOI_2004,
+    _Calcul._non_salarie, _Calcul._seuil_non_salarie, _Calcul._suspension,
+    _Calcul._part_nette, _Calcul._regle_2027, LOI_1983, ARTISANS_1984, LOI_2004,
     LOI_2009, REVALORISATION_2010, ORDRE_DES_AGES, PREMIERE_2015, REDUCTION_SALARIES,
-    REDUCTION_NON_SALARIES, PREMIERE_2027, SIX_MOIS, HEURES_SMIC, PART_SMIC_2004,
-    PART_SMIC_2009, ASSIETTES_CSG, SEUILS_NON_SALARIES ; echeancier.py :
-    Echeancier._cumuler ; scenarios/actuel.py : ResultatActuel ; carriere.py :
-    _lignes_apres_depart, Carriere.emploi_retraite ; saisie.py :
-    Saisie.emploi_retraite_declare
+    REDUCTION_NON_SALARIES, LIBERAUX_2011, PREMIERE_2027, SIX_MOIS, HEURES_SMIC,
+    PART_SMIC_2004, PART_SMIC_2009, ASSIETTES_CSG, SEUILS_NON_SALARIES,
+    HORS_DES_MOIS_SUSPENDUS ; echeancier.py : Echeancier._cumuler ; scenarios/actuel.py :
+    ResultatActuel ; carriere.py : _lignes_apres_depart, Carriere.emploi_retraite ;
+    saisie.py : Saisie.emploi_retraite_declare
   javascript: >-
     moteur/js/droit/cumul.js : cumuler, groupeDeLActivite, groupeDeLaPension,
-    assietteCsg, Calcul.version, Calcul.integral, Calcul.plafondSalarie,
+    assietteCsg, dureeDuTauxPlein, Calcul.version, Calcul.integral, Calcul.plafondSalarie,
     Calcul.plafondAgircArrco, Calcul.salarie, Calcul.agircArrco, Calcul.nonSalarie,
-    Calcul.regle2027, LOI_1983, ARTISANS_1984, LOI_2004, LOI_2009, REVALORISATION_2010,
-    ORDRE_DES_AGES, PREMIERE_2015, REDUCTION_SALARIES, REDUCTION_NON_SALARIES,
+    Calcul.seuilNonSalarie, Calcul.suspension, Calcul.partNette, Calcul.regle2027,
+    LOI_1983, ARTISANS_1984, LOI_2004, LOI_2009, REVALORISATION_2010, ORDRE_DES_AGES,
+    PREMIERE_2015, REDUCTION_SALARIES, REDUCTION_NON_SALARIES, LIBERAUX_2011,
     PREMIERE_2027, SIX_MOIS, HEURES_SMIC, PART_SMIC_2004, PART_SMIC_2009, ASSIETTES_CSG,
-    SEUILS_NON_SALARIES ; moteur/js/echeancier.js : Echeancier._cumuler ;
-    moteur/js/carriere.js : lignesApresDepart, Carriere.emploiRetraite ;
-    moteur/js/saisie.js : Saisie.emploiRetraiteDeclare ; moteur/js/pages.js :
-    cumulEmploiRetraite
+    SEUILS_NON_SALARIES, HORS_DES_MOIS_SUSPENDUS ; moteur/js/echeancier.js :
+    Echeancier._cumuler ; moteur/js/carriere.js : lignesApresDepart,
+    Carriere.emploiRetraite ; moteur/js/saisie.js : Saisie.emploiRetraiteDeclare ;
+    moteur/js/pages.js : cumulEmploiRetraite
   parametres: >-
     contenu.parametres de chaque version : cumul, plafond, part_du_smic, depassement,
-    seuil_independants_en_pass, seuil_liberaux_en_pass, cumul_integral,
-    avant_l_age_legal, seuil
+    seuil_independants_en_pass, seuil_liberaux_en_pass, seuil_liberaux,
+    suspension_independants, suspension_liberaux, cumul_integral, avant_l_age_legal,
+    seuil
   tests: >-
-    tests/test_emploi_retraite.py ; les témoins cumul_* des simulations et
-    simuler_cumul_* des pages ; les exemples sp_f13243_* du registre ;
-    tests/test_liquidation.py, qui compare les journaux des deux moteurs
+    tests/test_emploi_retraite.py, tests/js/moteur.test.js ; les témoins cumul_* des
+    simulations et simuler_cumul_* des pages ; les exemples sp_f13243_* et
+    rsi_2010_013_* du registre ; tests/test_liquidation.py, qui compare les journaux des
+    deux moteurs
   moteur: >-
     Les dates qui découpent la règle, de 1983 à 2027, le délai de six mois, le SMIC sur
     1 820 heures et sa part, l'assiette de la CSG et les seuils des non-salariés sont
     des constantes de droit/cumul.py et de son jumeau. ResultatActuel porte le cumul
     (cumul), et la carrière les lignes d'après le départ (Carriere.lignes_apres_depart),
-    que _lignes_apres_depart bâtit.
+    que _lignes_apres_depart bâtit. Le moteur du scénario 1 porte les prélèvements des
+    pensions de chaque année (prelevements_historiques.yaml), dont la suspension des
+    non-salariés tire la pension nette.
 historique:
 - >-
   2026-09-29 — scindée avec l'ouverture du domaine des départs multiples : la
@@ -466,9 +553,17 @@ historique:
   premieres_pensions_de_2015 : la première pension de 2015 reste suspendue jusqu'au
   décret de la réduction, qui ne vaut que pour les activités exercées depuis le
   1er avril 2017 ; la version reduction_du_depassement_2015 commence donc à cette date.
+- >-
+  2026-10-24 — la pension de l'artisan, du commerçant et du libéral que le dépassement
+  suspend ne l'est que le nombre de mois qu'il épuise (D. 634-11-5, D. 643-10-2), lue
+  avec les circulaires RSI 2007/109 et 2010/013, dont deux exemples entrent au registre ;
+  le seuil du libéral, annuel jusqu'en 2011 ; la durée de L. 351-1, que le cumul intégral
+  exige aussi d'une carrière tout en points (action 138, étape 12).
 effet: >-
   Le retraité qui travaille avant le taux plein : la salariée née en 1960, partie à
   62 ans en 2022 sans la durée requise, qui reprend un emploi au salaire de sa fin de
   carrière d'août 2022 à janvier 2024, perd 29 446 € de pension, sa pension du régime
   général réduite du dépassement du plafond et sa retraite Agirc-Arrco suspendue.
-  Partie avec la durée, elle cumule entièrement et ne perd rien.
+  Partie avec la durée, elle cumule entièrement et ne perd rien. L'artisane partie en
+  2008 dont le revenu de 2010 dépasse de 4 700 € la moitié du plafond voit sa pension de
+  1 000 € par mois suspendue cinq mois, et non les douze de son activité.

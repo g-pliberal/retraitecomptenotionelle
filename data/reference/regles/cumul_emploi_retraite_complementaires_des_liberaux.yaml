@@ -154,18 +154,18 @@ approximations:
     avec ses autres pensions — dure, chez la caisse, le nombre de mois qui épuise le
     dépassement, au plus un an : le modèle, qui compte par mois, réduit chaque mois la
     complémentaire du dépassement du mois ; la CARMF, qui suspend ses pensions ensemble,
-    impute ici le dépassement d'abord sur la base, comme la CAVOM de 2020, et les
-    prestations supplémentaires (ASV) restent entières
+    impute ici le dépassement d'abord sur la base, comme la CAVOM de 2020 — la base que
+    D. 643-10-2 ne suspend que quelques mois de l'année n'en absorbe que ces mois-là —, et
+    les prestations supplémentaires (ASV) restent entières
   effet: non mesuré
 - version: [statuts_des_sections]
   ecart: >-
     les complémentaires de la CARPIMKO, de la CAVEC, de la CAVP et de la CIPAV, dont les
     statuts lus ne suspendent rien — la CAVEC de 2008 retenait la cotisation du retraité
     actif « par quart sur les arrérages » —, et toute section avant ses statuts lus, sont
-    servies entières ; la base, que la complémentaire suit, a ses propres approximations :
-    suspendue chaque mois au-delà du seuil, quand D. 643-10-2 ne la suspend, depuis 2011,
-    que « pour un nombre de mois égal au rapport entre le montant du dépassement constaté
-    et le montant mensuel net de la pension »
+    servies entières ; la complémentaire suspendue « pour la même durée » que la base l'est
+    les mois que D. 643-10-2 suspend la base, et la suit dans ses approximations (fiche
+    cumul_emploi_retraite_et_retraite_progressive)
   effet: non mesuré
 - version: [imputee_apres_les_bases_2027]
   ecart: >-
@@ -189,9 +189,6 @@ sources:
     La CARMF : dire comment elle répartit la suspension « conjointement » entre sa base, sa
     complémentaire et ses prestations supplémentaires (guide du cumul de la caisse, que le
     réseau de la session n'a pas lu en entier).
-  - >-
-    La base, que les règles de la CARCDSF et de la CAVAMAC suivent : D. 643-10-2, qui borne
-    la suspension au nombre de mois que le dépassement épuise, depuis 2011.
   lectures:
   - type: jorf
     reference: >-

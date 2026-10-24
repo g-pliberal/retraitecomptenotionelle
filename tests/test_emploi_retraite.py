@@ -451,9 +451,8 @@ def _servies(resultat, regime):
 
 def _liberale(metier: str) -> list[Metier]:
     """Une carrière libérale de trente ans, après quatre ans de salariat : la
-    durée qu'elle valide reste sous la durée requise, que le modèle ne compte
-    pas pour une carrière seulement libérale (et dont il accorderait le cumul
-    intégral dès l'âge légal)."""
+    durée qu'elle valide reste sous la durée requise, et le cumul n'est pas
+    intégral à l'âge légal."""
     return [Metier("salarie_prive_non_cadre", 26.0), Metier(metier, 30.0)]
 
 
@@ -811,6 +810,159 @@ def test_les_regles_du_cumul_sont_des_versions_des_fiches(simulateur):
     for fiche in ("cumul_emploi_retraite_ircantec", "cumul_emploi_retraite_rco_agricole",
                   "cumul_emploi_retraite_complementaires_des_liberaux"):
         assert cumul.RCI_2027 in {v["id"] for v in toutes[fiche]["versions"]}, fiche
+
+
+# -- la suspension de la base des non-salariés, et la durée requise du libéral -----
+
+def _cumul_prete(simulateur: Simulateur, naissance: int, depart: float, metiers: list[Metier],
+                 emploi: dict, pensions: dict, revenus: dict):
+    """Le cumul de cette carrière, d'une assurée née le 15 janvier, quand chaque
+    régime de ``pensions`` sert cette pension annuelle et que l'activité rapporte,
+    chaque année de ``revenus``, ce revenu brut : ce qu'un exemple de la caisse
+    pose (``_cumul_exemple``, dans ``test_oracle.py``)."""
+    from dataclasses import replace
+
+    carriere = Carriere.depuis_parcours(
+        annee_naissance=naissance, sexe="F", metiers=metiers, age_liquidation=depart,
+        macro=simulateur.macro, jour_naissance=15, emploi_retraite=emploi)
+    carriere = replace(carriere, lignes_apres_depart=tuple(
+        replace(ligne, revenu=revenus.get(ligne.annee, ligne.revenu))
+        for ligne in carriere.lignes_apres_depart))
+    moteur = simulateur.scenario_actuel
+    return cumul.cumuler(moteur, carriere, moteur.calculer(carriere),
+                         lambda annee: (dict(pensions), 0.0),
+                         simulateur.parametres.annee_courante)
+
+
+def _mois_par_mois(resultat, regime) -> dict:
+    """Le sort de la pension de ce régime, mois par mois : son statut, son motif
+    et ce qui n'en est pas servi."""
+    return {tranche.debut.plus_mois(k): (p.statut, p.motif, p.reduction)
+            for tranche in resultat.tranches for p in tranche.par_regime
+            if p.regime == regime for k in range(tranche.mois)}
+
+
+@pytest.mark.parametrize("revenu, suspendus", [(22010.0, 5), (17610.0, 1), (40000.0, 12)])
+def test_la_base_de_l_independant_n_est_suspendue_que_les_mois_du_depassement(
+        simulateur, revenu, suspendus):
+    """D. 634-11-5 de 2010 : la suspension vaut « pour un nombre de mois égal au
+    rapport entre le montant du dépassement constaté et le montant mensuel net de
+    la pension, arrondi à l'entier inférieur, sans que ce nombre puisse être
+    inférieur à un, ni supérieur au nombre de mois » de l'activité de l'année ; la
+    complémentaire « est suspendu[e] pour la même durée » (règlement du RCO de
+    2009, article 23, II), ce que la circulaire RSI 2010/013 redit. L'artisane
+    partie en 2008 reprend toute l'année 2010 ; sa pension de base, 1 000 € par
+    mois, en vaut 929 net, la CSG et la CRDS de 2010 ôtées (7,1 %). Au-delà de la
+    moitié du plafond, 17 310 €, 4 700 € font 5,06 mois : cinq, où la pension
+    brute en ferait quatre ; 300 €, un mois, le minimum ; 22 690 €, 24 mois, que
+    les douze de l'activité bornent. Le modèle place les mois suspendus à la fin
+    de l'année : la caisse suspend après avoir constaté le dépassement."""
+    resultat = _cumul_prete(simulateur, 1948, 60 + 4 / 12, [Metier("artisan", 30.0)],
+                            _emploi(61 + 11 / 12, 62 + 11 / 12, affiliation="artisan"),
+                            {"rsi": 12000.0, "rco_artisans": 3000.0}, {2010: revenu})
+    base, complementaire = (_mois_par_mois(resultat, "rsi"),
+                            _mois_par_mois(resultat, "rco_artisans"))
+    assert sorted(base) == [DateMois(2010, m) for m in range(1, 13)]
+    for mois, sort in base.items():
+        if mois.mois > 12 - suspendus:
+            assert sort == (cumul.SUSPENDUE, "depassement", 1000.0)
+            assert complementaire[mois] == (cumul.SUSPENDUE, "depassement", 250.0)
+        else:
+            assert sort == (cumul.PLAFONNEE, cumul.HORS_DES_MOIS_SUSPENDUS, 0.0)
+            assert complementaire[mois] == (cumul.PLAFONNEE, cumul.HORS_DES_MOIS_SUSPENDUS, 0.0)
+
+
+@pytest.mark.parametrize("depassement, suspendus", [(1400.0, 3), (400.0, 0)])
+def test_la_base_du_liberal_n_est_suspendue_que_les_mois_du_depassement(
+        simulateur, depassement, suspendus):
+    """D. 643-10-2, depuis le 17 janvier 2011 : le même rapport, arrondi à
+    l'entier inférieur, « sans que ce nombre puisse être supérieur » aux mois
+    d'affiliation de l'année — et sans minimum. La dentiste partie en 2012
+    exerce toute l'année 2013 ; sa pension de base de 500 € par mois en vaut
+    463,38 net, la CSG, la CRDS et la CASA d'avril ôtées (7,325 % sur l'année).
+    1 400 € au-delà du plafond la suspendent trois mois, où la pension brute en
+    ferait deux ; 400 €, aucun. Sa complémentaire, que les statuts de la CARCDSF
+    suspendent « pour la même durée » que la base, la suit."""
+    resultat = _cumul_prete(
+        simulateur, 1951, 61.5, _liberale("chirurgien_dentiste_ou_sage_femme"),
+        _emploi(61 + 11 / 12, 62 + 11 / 12, affiliation="chirurgien_dentiste_ou_sage_femme"),
+        {"cnavpl": 6000.0, "carcdsf_complementaire": 12000.0},
+        {2013: simulateur.macro.plafond_securite_sociale(2013) + depassement})
+    base, complementaire = (_mois_par_mois(resultat, "cnavpl"),
+                            _mois_par_mois(resultat, "carcdsf_complementaire"))
+    assert sorted(base) == [DateMois(2013, m) for m in range(1, 13)]
+    for mois, sort in base.items():
+        if mois.mois > 12 - suspendus:
+            assert sort == (cumul.SUSPENDUE, "depassement", 500.0)
+            assert complementaire[mois] == (cumul.SUSPENDUE, "depassement", 1000.0)
+        else:
+            assert sort == (cumul.PLAFONNEE, cumul.HORS_DES_MOIS_SUSPENDUS, 0.0)
+            assert complementaire[mois] == (cumul.PLAFONNEE, cumul.HORS_DES_MOIS_SUSPENDUS, 0.0)
+
+
+def test_la_complementaire_des_medecins_perd_ce_que_les_mois_suspendus_n_absorbent_pas(
+        simulateur):
+    """Statuts de la CARMF, article 15, 3 : la complémentaire est suspendue
+    « conjointement à celui des autres pensions [...] versées par la caisse et à
+    concurrence du montant du dépassement ». Le médecin parti en 2012 exerce
+    toute l'année 2013, 2 270 € au-delà du plafond : sa base de 500 € par mois
+    est suspendue quatre mois (2 270 sur 463,38 € nets, 4,9), de septembre à
+    décembre ; les 2 000 € qu'ils retiennent laissent 270 € du dépassement à la
+    complémentaire, 22,50 € par mois."""
+    resultat = _cumul_prete(
+        simulateur, 1951, 61.5, _liberale("medecin_liberal"),
+        _emploi(61 + 11 / 12, 62 + 11 / 12, affiliation="medecin_liberal"),
+        {"cnavpl": 6000.0, "carmf_complementaire": 12000.0},
+        {2013: simulateur.macro.plafond_securite_sociale(2013) + 2270.0})
+    base, complementaire = (_mois_par_mois(resultat, "cnavpl"),
+                            _mois_par_mois(resultat, "carmf_complementaire"))
+    assert [mois.mois for mois, sort in sorted(base.items())
+            if sort[0] == cumul.SUSPENDUE] == [9, 10, 11, 12]
+    assert {sort[:2] for sort in complementaire.values()} == {(cumul.REDUITE, "depassement")}
+    assert sum(sort[2] for sort in complementaire.values()) == pytest.approx(270.0)
+
+
+@pytest.mark.parametrize("part_du_plafond, statut", [(0.7, cumul.PLAFONNEE),
+                                                     (1.2, cumul.SUSPENDUE)])
+def test_avant_2011_le_seuil_du_liberal_est_le_plafond_de_l_annee(simulateur, part_du_plafond,
+                                                                 statut):
+    """D. 643-10, de 2004 au 16 janvier 2011 : le seuil « est égal, annuellement,
+    au plafond », que seule la rédaction de 2011 rapporte « à la durée
+    d'affiliation » ; au-delà, « le service de sa pension est suspendu »
+    (L. 643-6), sans décret qui en compte les mois. Le médecin parti en 2008
+    exerce de juillet à décembre 2009 : à 70 % du plafond de l'année, il reste
+    sous le seuil ; à 120 %, sa pension est suspendue chacun des six mois."""
+    resultat = _cumul_prete(
+        simulateur, 1946, 62.0, _liberale("medecin_liberal"),
+        _emploi(63 + 5 / 12, 63 + 11 / 12, affiliation="medecin_liberal"),
+        {"cnavpl": 6000.0},
+        {2009: part_du_plafond * simulateur.macro.plafond_securite_sociale(2009)})
+    base = _mois_par_mois(resultat, "cnavpl")
+    assert sorted(base) == [DateMois(2009, m) for m in range(7, 13)]
+    assert {sort[0] for sort in base.values()} == {statut}
+
+
+@pytest.mark.parametrize("debut, depart, integral", [(26.0, 62.0, False), (21.0, 63.0, True)])
+def test_le_liberal_ne_cumule_entierement_qu_avec_la_duree_requise(simulateur, debut, depart,
+                                                                   integral):
+    """L. 643-6 : la pension « peut être entièrement cumulée » à l'âge légal
+    « lorsque l'assuré justifie d'une durée d'assurance [...] au moins égale à la
+    limite » de L. 351-1 — celle du régime général pour sa génération, 165
+    trimestres pour 1954 —, même quand aucun de ses régimes, tous en points, ne
+    la lui oppose. Le médecin seulement libéral, à 144 trimestres, n'y est pas :
+    sa base perd le dépassement ; à 168, il cumule entièrement."""
+    resultat, echeancier = _cumul(
+        simulateur, 1954, depart,
+        _emploi(depart + 1, depart + 2.5, affiliation="medecin_liberal", niveau=3.0),
+        [Metier("medecin_liberal", debut)])
+    assert echeancier.au_depart.trimestres_requis == 0
+    statuts = {_pension(t, "cnavpl").statut for t in resultat.tranches}
+    if integral:
+        assert resultat.integral_depuis == resultat.debut
+        assert statuts == {cumul.INTEGRAL}
+    else:
+        assert resultat.integral_depuis is None
+        assert statuts == {cumul.REDUITE}
 
 
 # -- les droits de l'activité et la nouvelle pension (droit/seconde.py) -------------

@@ -1,0 +1,38 @@
+date: "2026-10-24"
+session: "action 138, étape 12 : la base des non-salariés, suspendue le nombre de mois que le dépassement épuise, et la durée requise des libéraux"
+consulte: >-
+  python scripts/veille_droit.py (trois fiches à relire, aucune de ce sujet). L'index
+  LEGI du dépôt, mis à jour au 23 octobre 2026 (huit incréments), et la liste des textes
+  (aucune rédaction nouvelle) : D. 634-11-5 dans ses cinq rédactions (2004, 2010, 2015,
+  2017, 2020) ; D. 643-10-2 (2011, 2015, 2017) ; D. 643-10 (2004, 2005, 2008, 2010, 2011,
+  2015) ; D. 643-10-1 (2011, 2015) ; D. 634-11-2 (2004, 2010, 2015) ; D. 634-11-3 et
+  D. 634-11-4 ; L. 643-6 (2004, 2008, 2014, 2015, 2023). À la base de législation de
+  l'Assurance retraite, par son API de recherche (« montant mensuel net de la pension »,
+  « arrondi à l'entier inférieur », « nombre de mois égal au rapport ») : les circulaires
+  RSI n° 2007/109 du 16 août 2007, n° 2009/044 du 15 octobre 2009 et n° 2010/013 du 18
+  mars 2010, lues en entier pour la suspension de la base.
+trouve: >-
+  Au-delà du seuil, la pension de base de l'artisan et du commerçant n'est suspendue que
+  « pour un nombre de mois égal au rapport entre le montant du dépassement constaté et le
+  montant mensuel net de la pension, arrondi à l'entier inférieur », un au moins
+  (D. 634-11-5, depuis les pensions de 2004), et, depuis 2010, pas plus que les mois de
+  l'activité de l'année, borne que la lettre ministérielle du 8 mars 2010 étend aux
+  revenus de 2008 et de 2009 ; la pension compte « pour son montant net, c'est-à-dire après
+  déduction des prélèvements sociaux » (RSI 2007/109, § 4.2.1), et la complémentaire est
+  suspendue le même nombre de mois (RSI 2009/044 et 2010/013). Celle du libéral, de même
+  depuis le 17 janvier 2011, sans minimum (D. 643-10-2) ; avant, son seuil est « égal,
+  annuellement, au plafond », sans le rapporter à la durée de l'activité (D. 643-10). La
+  réduction de 2017 vaut aussi pour le libéral « à compter du 1er janvier 2017 »
+  (D. 643-10-2 de 2017). Le cumul intégral exige la durée de L. 351-1, que le modèle
+  comptait nulle pour une carrière tout en points. Porté dans les deux moteurs, la
+  pension nette tirée des prélèvements de chaque année ; deux exemples de la circulaire
+  2010/013 entrent au registre, le premier rouge avant le changement ; aucun témoin
+  d'avant ne bouge. Le commerçant de 2013 à 65 % du salaire moyen perd 4 769,77 € au lieu
+  de 17 168,71 € ; le médecin seulement libéral, 19 554,88 € au lieu de rien.
+reste: >-
+  Une instruction de la CNAVPL ou un exemple d'une section pour D. 643-10-2 ; le mois où
+  la caisse suspend, après la notification du dépassement, que le modèle place à la fin
+  de l'année ; la majoration pour enfants et l'ASPA dans la pension nette, la CSG au
+  taux réduit ; les exemples 6 et 7 de la circulaire 2010/013, qui ne rapportent pas la
+  moitié du plafond à la durée de l'activité, quand D. 634-11-2 de 2004 la rapporte ; aux
+  pages, la phrase du motif hors_des_mois_suspendus.

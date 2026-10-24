@@ -89,7 +89,10 @@ versions:
       au RCO ou au NRCO » ; applicables le 23 septembre 2009, ces règles entrent en vigueur
       « rétroactivement au 1er janvier 2009 », « en accord avec la tutelle » (circulaire
       RSI n° 2009-044, § 2.1.2, 2.2 et 2.4) ; le RCI les reprend en 2013, « comme dans le
-      régime de base » (circulaire RSI n° 2013-004, § 3.1.3.2)
+      régime de base » (circulaire RSI n° 2013-004, § 3.1.3.2). Depuis 2010, cette durée
+      est le nombre de mois que le dépassement épuise, borné à l'activité de l'année
+      (D. 634-11-5) : « Cette durée de 12 mois de suspension sera appliquée à la retraite
+      complémentaire, si elle a été liquidée » (circulaire RSI n° 2010-013, point 2, A)
     parametres:
       suit_la_base: suspension
       cumul_integral: true
@@ -229,7 +232,8 @@ sources:
       « Retraite personnelle complémentaire » (« Les règles du cumul emploi-retraite du
       régime de base des travailleurs indépendants s'appliquent au régime
       complémentaire »), lus par l'API de la base de législation de l'Assurance retraite
-      le 23 octobre 2026
+      le 23 octobre 2026 ; la circulaire RSI n° 2010-013 du 18 mars 2010 (point 2, la
+      durée de la suspension, que la complémentaire suit), lue le 24 octobre 2026
     url: https://legislation.lassuranceretraite.fr/
     date: 2026-03-06
 code:

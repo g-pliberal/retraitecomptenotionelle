@@ -43,6 +43,7 @@ import {
   ValeursPoint,
 } from "./regimes.js";
 import { formatFixe } from "./format.js";
+import { chargerPrelevementsHistoriques } from "./prelevements-historiques.js";
 import { RevalorisationsPensions, menerAuMois } from "./revalorisation.js";
 import { Fiabilite } from "./serie.js";
 import * as lesDeparts from "./droit/departs.js";
@@ -109,6 +110,10 @@ export class ScenarioActuel {
     this.pensionMajoreeReference = new PensionMajoreeReference(paquet, macro);
     this.complementDifferentielRco = new ComplementDifferentielRco(paquet, macro);
     this.baremesTrimestre = new BaremesTrimestre(paquet, macro);
+    // Les prélèvements des pensions de chaque année, dont le cumul de
+    // l'artisan, du commerçant et du libéral tire la pension nette que le
+    // dépassement épuise (`droit/cumul.js`).
+    this.prelevementsHistoriques = chargerPrelevementsHistoriques(paquet);
     // Les revalorisations des pensions servies, qui portent aussi le
     // traitement d'une pension différée : voir `coefficientTraitementDiffere`.
     this.revalorisationsPensions = new RevalorisationsPensions(paquet);

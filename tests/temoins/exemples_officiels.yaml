@@ -480,6 +480,55 @@ exemples:
       emploi_retraite: {debut: "2023-01", fin: "2026-07"}
     attendu: {plafonds_des_nouvelles_pensions: {regime_general: 2403.0}}
 
+  # ---- RSI, circulaire 2010/013 du 18 mars 2010 -------------------------
+  # La pension de l'artisan ou du commerçant que le dépassement suspend l'est
+  # « pour un nombre de mois égal au rapport entre le montant du dépassement
+  # constaté et le montant mensuel net de la pension, arrondi à l'entier
+  # inférieur, sans que ce nombre puisse être inférieur à un, ni supérieur au
+  # nombre de mois » de l'activité de l'année (D. 634-11-5 de 2010). La
+  # circulaire ne dit ni la naissance ni la durée : chaque exemple les pose
+  # sans la durée requise, avant l'âge du taux plein automatique, pour que le
+  # cumul ne soit pas intégral, et prête à la pension de base le montant
+  # mensuel de l'exemple, douze fois.
+  - id: rsi_2010_013_suspension_d_un_mois
+    source: {editeur: "RSI", reference: "circulaire 2010/013 du 18 mars 2010, Mise en œuvre des règles de cumul emploi-retraite, point 2, A, exemple 4", verifie_le: "2010-03-18"}
+    enonce: >-
+      Un ancien artisan, retraité depuis le 1er mai 2008, a une retraite de base de
+      660 € par mois en 2010 ; il reprend une activité commerciale de janvier à
+      décembre 2010, pour 18 000 € de revenu. Le dépassement de la moitié du plafond,
+      18 000 − 17 310 €, divisé par la pension, 1,04, le suspend un mois, « plus
+      favorable » que les douze de son activité.
+    carriere:
+      naissance: "1948-01"
+      sexe: H
+      affiliation: artisan
+      liquidation: "2008-05"
+      trimestres_valides: 120
+      emploi_retraite: {debut: "2010-01", fin: "2011-01", affiliation: commercant}
+      pensions_annuelles_en_cumul: {rsi: 7920}
+      revenus_apres_depart: {2010: 18000}
+    attendu: {deductions_annuelles_du_cumul: {rsi: 660.0}}
+
+  - id: rsi_2010_013_suspension_bornee_aux_mois_d_activite
+    source: {editeur: "RSI", reference: "circulaire 2010/013 du 18 mars 2010, Mise en œuvre des règles de cumul emploi-retraite, point 2, A, exemple 2", verifie_le: "2010-03-18"}
+    enonce: >-
+      Un ancien commerçant, retraité depuis le 1er juillet 2006, a une retraite de base
+      de 420 € par mois en 2010 ; il reprend une activité commerciale du 15 mai au
+      20 septembre 2010, pour 26 000 €. Le dépassement le suspendrait 47 mois ; la
+      période de son cumul, de mai à septembre, borne la suspension à cinq. La
+      circulaire rapporte la moitié du plafond aux jours de l'activité, comme l'ancien
+      régime des commerçants, le modèle à ses mois : le nombre de mois est le même.
+    carriere:
+      naissance: "1946-01"
+      sexe: H
+      affiliation: commercant
+      liquidation: "2006-07"
+      trimestres_valides: 120
+      emploi_retraite: {debut: "2010-05", fin: "2010-10"}
+      pensions_annuelles_en_cumul: {rsi: 5040}
+      revenus_apres_depart: {2010: 26000}
+    attendu: {deductions_annuelles_du_cumul: {rsi: 2100.0}}
+
   # ---- Cnav, circulaire 2026-07 du 5 mars 2026 --------------------------
   - id: cnav_2026_07_age_legal_1964
     source: {editeur: "Cnav", reference: "circulaire 2026-07 du 5 mars 2026, Âge légal de la retraite et durée d'assurance, point 1.1 exemple 1 et point 2.1 exemple 1", verifie_le: "2026-03-05"}

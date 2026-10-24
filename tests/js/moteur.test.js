@@ -1130,6 +1130,106 @@ test("les autres complémentaires suivent leurs règles en cumul", () => {
 });
 
 /**
+ * La base de l'artisan, du commerçant et du libéral que le dépassement
+ * suspend ne l'est que les mois qu'il épuise (D. 634-11-5, D. 643-10-2) : le
+ * rapport du dépassement de l'année à la pension nette, arrondi à l'entier
+ * inférieur, borné aux mois de l'activité, au moins un pour l'artisan, placé
+ * à la fin de l'année ; la complémentaire « pour la même durée » la suit,
+ * celle de la CARMF perd ce que ces mois n'absorbent pas ; le libéral d'avant
+ * 2011 a le plafond de l'année pour seuil ; le libéral tout en points ne
+ * cumule entièrement qu'avec la durée de L. 351-1. Rejoue les tests de la
+ * suspension (test_emploi_retraite.py), la pension prêtée comme l'exemple de
+ * la caisse la pose.
+ */
+test("la base des non-salariés n'est suspendue que les mois que le dépassement épuise", () => {
+  const simulateur = new Contexte(paquet).simulateur();
+  const moteur = simulateur.scenarioActuel;
+  const plafond = (annee) => simulateur.macro.plafond_securite_sociale.valeur(annee);
+  const parcours = (naissance, depart, metiers, activite) => simulateur.carriereParcours({
+    annee_naissance: naissance, sexe: "F", jour_naissance: 15, age_liquidation: depart,
+    metiers: metiers.map(([affiliation, age]) => ({ affiliation, age_debut: age,
+      niveau_salaire: 1 })),
+    emploi_retraite: { employeur: "autre", niveau_salaire: 1, ...activite },
+  });
+  const pretee = (naissance, depart, metiers, activite, pensions, revenus) => {
+    const carriere = parcours(naissance, depart, metiers, activite);
+    const copie = Object.assign(Object.create(Object.getPrototypeOf(carriere)), carriere, {
+      lignes_apres_depart: carriere.lignes_apres_depart.map((ligne) => Object.assign(
+        Object.create(Object.getPrototypeOf(ligne)), ligne,
+        { revenu: revenus[ligne.annee] ?? ligne.revenu })),
+    });
+    return leCumul.cumuler(moteur, copie, moteur.calculer(copie), () => [{ ...pensions }, 0.0],
+      simulateur.parametres.annee_courante);
+  };
+  const parMois = (cumul, regime) => {
+    const sorts = new Map();
+    for (const tranche of cumul.tranches) {
+      const pension = tranche.par_regime.find((p) => p.regime === regime);
+      if (pension === undefined) continue;
+      for (let k = 0; k < tranche.mois; k += 1) {
+        sorts.set(tranche.debut.rang + k, [pension.statut, pension.motif, pension.reduction]);
+      }
+    }
+    return sorts;
+  };
+  const suspendus = (sorts) => [...sorts].filter(([, sort]) => sort[0] === leCumul.SUSPENDUE)
+    .map(([rangDuMois]) => DateMois.depuisRang(rangDuMois).mois);
+  const derniers = (nombre) => Array.from({ length: nombre }, (_, k) => 13 - nombre + k);
+  const hors = [leCumul.PLAFONNEE, leCumul.HORS_DES_MOIS_SUSPENDUS, 0.0];
+  // L'artisane partie en 2008, toute l'année 2010 : cinq mois, un, douze.
+  for (const [revenu, nombre] of [[22010, 5], [17610, 1], [40000, 12]]) {
+    const cumul = pretee(1948, 60 + 4 / 12, [["artisan", 30]],
+      { age: 61 + 11 / 12, fin: 62 + 11 / 12, affiliation: "artisan" },
+      { rsi: 12000, rco_artisans: 3000 }, { 2010: revenu });
+    const base = parMois(cumul, "rsi");
+    const complementaire = parMois(cumul, "rco_artisans");
+    assert.equal(base.size, 12);
+    assert.deepEqual(suspendus(base), derniers(nombre));
+    assert.deepEqual(suspendus(complementaire), derniers(nombre));
+    for (const [rangDuMois, sort] of base) {
+      if (sort[0] === leCumul.SUSPENDUE) continue;
+      assert.deepEqual(sort, hors);
+      assert.deepEqual(complementaire.get(rangDuMois), hors);
+    }
+  }
+  const liberale = (metier) => [["salarie_prive_non_cadre", 26], [metier, 30]];
+  // La dentiste partie en 2012, toute l'année 2013 : trois mois, aucun.
+  for (const [depassement, nombre] of [[1400, 3], [400, 0]]) {
+    const cumul = pretee(1951, 61.5, liberale("chirurgien_dentiste_ou_sage_femme"),
+      { age: 61 + 11 / 12, fin: 62 + 11 / 12, affiliation: "chirurgien_dentiste_ou_sage_femme" },
+      { cnavpl: 6000, carcdsf_complementaire: 12000 }, { 2013: plafond(2013) + depassement });
+    assert.deepEqual(suspendus(parMois(cumul, "cnavpl")), derniers(nombre));
+    assert.deepEqual(suspendus(parMois(cumul, "carcdsf_complementaire")), derniers(nombre));
+  }
+  // Le médecin parti en 2012 : quatre mois de base, 270 € de complémentaire.
+  const medecin = pretee(1951, 61.5, liberale("medecin_liberal"),
+    { age: 61 + 11 / 12, fin: 62 + 11 / 12, affiliation: "medecin_liberal" },
+    { cnavpl: 6000, carmf_complementaire: 12000 }, { 2013: plafond(2013) + 2270 });
+  assert.deepEqual(suspendus(parMois(medecin, "cnavpl")), derniers(4));
+  const carmf = [...parMois(medecin, "carmf_complementaire").values()];
+  assert.ok(carmf.every(([statut, motif]) => statut === leCumul.REDUITE && motif === "depassement"));
+  assert.ok(Math.abs(carmf.reduce((somme, sort) => somme + sort[2], 0.0) - 270) < 1e-9);
+  // Le médecin parti en 2008, de juillet à décembre 2009 : le plafond de l'année.
+  for (const [part, statut] of [[0.7, leCumul.PLAFONNEE], [1.2, leCumul.SUSPENDUE]]) {
+    const sorts = [...parMois(pretee(1946, 62, liberale("medecin_liberal"),
+      { age: 63 + 5 / 12, fin: 63 + 11 / 12, affiliation: "medecin_liberal" },
+      { cnavpl: 6000 }, { 2009: part * plafond(2009) }), "cnavpl").values()];
+    assert.equal(sorts.length, 6);
+    assert.ok(sorts.every((sort) => sort[0] === statut));
+  }
+  // Le médecin seulement libéral : la durée de L. 351-1, à 144 trimestres, puis à 168.
+  for (const [debut, depart, integral] of [[26, 62, false], [21, 63, true]]) {
+    const cumul = simulateur.echeancier(parcours(1954, depart, [["medecin_liberal", debut]],
+      { age: depart + 1, fin: depart + 2.5, affiliation: "medecin_liberal", niveau_salaire: 3 }))
+      .auDepart.cumul;
+    const statuts = new Set(cumul.tranches.map(
+      (t) => t.par_regime.find((p) => p.regime === "cnavpl").statut));
+    assert.deepEqual([...statuts], [integral ? leCumul.INTEGRAL : leCumul.REDUITE]);
+    assert.equal(cumul.integral_depuis?.rang ?? null, integral ? cumul.debut.rang : null);
+  }
+});
+
+/**
  * Le plafond des primes du RAFP : « dans la limite de 20 % du traitement
  * indiciaire brut total » (décret n° 2004-569, art. 2). Deux agentes au même
  * traitement, primes au plafond pour l'une, au-delà pour l'autre : même

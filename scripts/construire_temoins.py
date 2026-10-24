@@ -900,6 +900,21 @@ def _cas() -> list[dict]:
         "liquidation": "62.25", "emploi_retraite": "2022-08", "emploi_retraite_fin": "2024-02",
         "emploi_retraite_statut": "notaire", "emploi_retraite_salaire": "0.3",
     }))
+    # La base des non-salariés suspendue le nombre de mois que le dépassement
+    # épuise (D. 634-11-5 ; action 138, étape 12) : le commerçant de 2013, à 65 %
+    # du salaire moyen, l'est un mois en 2013, trois en 2014, un en 2015, sa
+    # complémentaire avec elle ; et le médecin seulement libéral, que la durée
+    # de L. 351-1 prive du cumul intégral.
+    cas.append(("cumul_commercant_mois_suspendus_2013", {
+        "naissance": "1952", "statut": "commercant", "debut": "26", "liquidation": "61",
+        "emploi_retraite": "2013-08", "emploi_retraite_fin": "2015-02",
+        "emploi_retraite_salaire": "0.65",
+    }))
+    cas.append(("cumul_medecin_seulement_liberal_2017", {
+        "naissance": "1954", "statut": "medecin_liberal", "debut": "26", "liquidation": "62",
+        "emploi_retraite": "2017-02", "emploi_retraite_fin": "2018-08",
+        "emploi_retraite_statut": "medecin_liberal", "emploi_retraite_salaire": "3",
+    }))
     # LES DROITS DE L'ACTIVITÉ APRÈS LE DÉPART (droit/seconde.py) : la nouvelle
     # pension et la seconde retraite de l'Agirc-Arrco en cumul intégral depuis
     # 2023, écrêtée à 5 % du plafond au-delà ; celle d'une première pension de

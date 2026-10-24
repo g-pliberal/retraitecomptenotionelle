@@ -79,6 +79,7 @@ from ..donnees.chargement import (
     valeur_par_generation,
 )
 from ..donnees.macro import DonneesMacro
+from ..donnees.prelevements_historiques import charger_prelevements_historiques
 from ..donnees.regimes import CatalogueRegimes, ClassesCotisation, SalairesForfaitaires
 from ..droit import coordonner
 from ..droit import completer as _completer
@@ -3323,6 +3324,11 @@ class ScenarioActuel:
         self.complement_differentiel_rco = ComplementDifferentielRco(
             parametres.racine_donnees, macro)
         self.baremes_trimestre = BaremesTrimestre(parametres.racine_donnees, macro)
+        #: Les prélèvements des pensions de chaque année, dont le cumul de
+        #: l'artisan, du commerçant et du libéral tire la pension nette que le
+        #: dépassement épuise (:mod:`~retraite_notionnelle.droit.cumul`).
+        self.prelevements_historiques = charger_prelevements_historiques(
+            parametres.racine_donnees)
         #: Les revalorisations des pensions servies, qui portent aussi le
         #: traitement d'une pension différée : voir
         #: :func:`~retraite_notionnelle.revalorisation.coefficient_traitement_differe`.

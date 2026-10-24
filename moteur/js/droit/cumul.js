@@ -15,13 +15,17 @@
  * 2015 pour les activités de 2017, les trois régimes selon l'âge de 2027),
  * l'artisan et le commerçant (L. 634-6), et leur complémentaire, qui suit
  * leur base, le libéral (L. 643-6), et la complémentaire de sa section, que
- * ses statuts règlent, le fonctionnaire (L. 84 à L. 86 du code des pensions),
- * l'Agirc-Arrco, l'Ircantec, la RCO agricole. Chaque régime ne réduit que ses pensions,
- * pour l'activité qui relève de lui : voir le Python, qui dit les textes.
+ * ses statuts règlent — suspendus le nombre de mois que le dépassement de
+ * l'année épuise (D. 634-11-5, D. 643-10-2) —, le fonctionnaire (L. 84 à L. 86
+ * du code des pensions), l'Agirc-Arrco, l'Ircantec, la RCO agricole. Chaque
+ * régime ne réduit que ses pensions, pour l'activité qui relève de lui : voir
+ * le Python, qui dit les textes.
  */
 
 import { DateMois } from "../calendrier.js";
+import { periodeDeLiquidation } from "./commun.js";
 import * as lesDeparts from "./departs.js";
+import { dureeRequise } from "./ouvrir.js";
 
 /** Ce que le droit fait d'une pension, pour un mois d'activité. */
 export const LIBRE = "libre";
@@ -32,6 +36,12 @@ export const SUSPENDUE = "suspendue";
 export const REDUITE = "reduite";
 export const SEUIL_NON_PUBLIE = "seuil_non_publie";
 export const NON_CALCULE = "non_calcule";
+
+/**
+ * Le motif d'un mois de l'année du dépassement où la pension du non-salarié
+ * n'est pas suspendue : le dépassement en épuise moins que l'activité n'en compte.
+ */
+export const HORS_DES_MOIS_SUSPENDUS = "hors_des_mois_suspendus";
 
 /** L'ordre où se dit le statut d'un mois : celui de la pension la plus touchée. */
 export const PRIORITE = [NON_DUE, SUSPENDUE, REDUITE, SEUIL_NON_PUBLIE, NON_CALCULE,
@@ -77,6 +87,12 @@ export const ORDRE_DES_AGES = rang(2014, 2);
 export const PREMIERE_2015 = rang(2015, 1);
 export const REDUCTION_SALARIES = rang(2017, 4);
 export const REDUCTION_NON_SALARIES = rang(2017, 1);
+/**
+ * Décret n° 2011-62, pour les périodes postérieures au 16 janvier 2011 : le
+ * seuil du libéral rapporté à la durée de son activité, et sa pension
+ * suspendue un nombre de mois ; le premier mois entier.
+ */
+export const LIBERAUX_2011 = rang(2011, 2);
 export const PREMIERE_2027 = rang(2027, 1);
 /** Les règlements du RCO et du NRCO de 2009, que la caisse applique depuis janvier. */
 export const COMPLEMENTAIRES_2009 = rang(2009, 1);
@@ -208,6 +224,16 @@ function moisDe(texte) {
 }
 
 const indexDuStatut = (statut) => PRIORITE.indexOf(statut);
+
+/**
+ * La durée que L. 351-1 exige pour le taux plein, condition du cumul intégral
+ * à l'âge légal : celle du régime général, pour la génération et le départ.
+ */
+export function dureeDuTauxPlein(moteur, carriere) {
+  const periode = periodeDeLiquidation(moteur.catalogue.obtenir("regime_general"),
+    carriere.dateLiquidation);
+  return dureeRequise(moteur, periode, carriere)[0];
+}
 
 /**
  * La pension de l'État est-elle militaire, et la limite d'âge de l'emploi
@@ -350,7 +376,10 @@ class Calcul {
     this.ageLegal = lesDeparts.ageLegal(moteur, carriere);
     const automatique = moteur.agesAnnulationDecote.age(carriere.generation);
     this.ageAutomatique = automatique !== null ? automatique[0] : 65.0;
-    this.duree = resultat.trimestres_valides >= resultat.trimestres_requis;
+    // La durée du cumul intégral : celle des régimes en annuités, ou, à une
+    // carrière tout en points, celle de L. 351-1.
+    const requis = resultat.trimestres_requis || dureeDuTauxPlein(moteur, carriere);
+    this.duree = resultat.trimestres_valides >= requis;
     [this.militaire, this.limiteDAge] = fonctionPubliqueQuittee(moteur, carriere);
     this.independant = carriere.lignes.some((ligne) => ligne.annee <= this.declare.annee
       && INDEPENDANTS.has(ligne.affiliation));
@@ -363,6 +392,7 @@ class Calcul {
     this.annees = new Map();
     this.revalorisations = new Map();
     this.deductions = new Map();
+    this.suspensions = new Map();
   }
 
   // -- la carrière d'avant le départ --------------------------------------------------
@@ -621,14 +651,95 @@ class Calcul {
     else if (mois.rang < REDUCTION_NON_SALARIES) regle = PREMIERES_2015;
     else regle = REDUCTION_2015;
     if (integral) return [INTEGRAL, regle, "taux_plein", 0.0, null];
-    const seuil = SEUILS_NON_SALARIES[groupe] * annee.plafondSecuriteSociale / 12.0;
+    const seuil = this.seuilNonSalarie(mois, groupe, annee);
     const depassement = annee.revenu - seuil;
     if (depassement <= 0) return [PLAFONNEE, regle, "sous_le_plafond", 0.0, seuil];
-    if (regle !== REDUCTION_2015) return [SUSPENDUE, regle, "depassement", montant, seuil];
+    if (regle !== REDUCTION_2015) {
+      const suspension = this.suspension(mois, groupe);
+      if (suspension !== null && !suspension[0].has(mois.rang)) {
+        return [PLAFONNEE, regle, HORS_DES_MOIS_SUSPENDUS, 0.0, seuil];
+      }
+      return [SUSPENDUE, regle, "depassement", montant, seuil];
+    }
     const duGroupe = servies.filter(([code, , g]) => this.concerne(code, g))
       .reduce((somme, [code]) => somme + montants[code], 0.0);
     const part = duGroupe > 0 ? montant / duGroupe : 0.0;
     return [REDUITE, regle, "depassement", depassement * part, seuil];
+  }
+
+  /**
+   * Le seuil par mois d'activité : la moitié du plafond pour l'artisan et le
+   * commerçant ; le plafond pour le libéral, et avant le 17 janvier 2011 celui
+   * de l'année, sur ses seuls mois d'activité.
+   */
+  seuilNonSalarie(mois, groupe, annee) {
+    if (groupe === "liberaux" && mois.rang < LIBERAUX_2011) {
+      return annee.plafondSecuriteSociale / annee.mois;
+    }
+    return SEUILS_NON_SALARIES[groupe] * annee.plafondSecuriteSociale / 12.0;
+  }
+
+  /**
+   * Les mois de l'année de `mois` que le dépassement suspend (un `Set` de
+   * rangs), et le nombre de ceux de l'activité hors du cumul intégral ; `null`
+   * quand la pension l'est chaque mois au-delà du seuil — le libéral avant le
+   * 17 janvier 2011, ou faute de pension de base. Voir le Python.
+   */
+  suspension(mois, groupe) {
+    if (groupe === "liberaux" && mois.rang < LIBERAUX_2011) return null;
+    const cle = `${groupe}:${mois.annee}`;
+    if (!this.suspensions.has(cle)) this.suspensions.set(cle, this.suspendre(groupe, mois.annee));
+    return this.suspensions.get(cle);
+  }
+
+  suspendre(groupe, anneeCivile) {
+    const annee = this.annee(anneeCivile);
+    const couverts = [];
+    for (let r = this.debut.rang; r < this.fin.rang; r += 1) {
+      const mois = DateMois.depuisRang(r);
+      if (mois.annee === anneeCivile && !this.integral(mois)
+          && (groupe !== "liberaux" || r >= LIBERAUX_2011)) {
+        couverts.push(mois);
+      }
+    }
+    const dernier = couverts[couverts.length - 1];
+    const pensions = new Map();
+    for (const [regime, dateEffet, g] of this.pensions) {
+      const annuelle = annee.pensions[regime] ?? 0.0;
+      if (this.concerne(regime, g) && dateEffet <= dernier.rang && annuelle > 0) {
+        pensions.set(regime, annuelle / 12.0);
+      }
+    }
+    let brute = 0.0;
+    for (const montant of pensions.values()) brute += montant;
+    if (brute <= 0) return null;
+    const seuil = this.seuilNonSalarie(dernier, groupe, annee);
+    const depassement = (annee.revenu - seuil) * couverts.length;
+    let nombre = Math.floor(depassement / (brute * this.partNette(anneeCivile, pensions))
+      + 1e-9);
+    if (groupe === "independants") nombre = Math.max(1, nombre);
+    nombre = Math.min(nombre, couverts.length);
+    return [new Set(couverts.slice(couverts.length - nombre).map((m) => m.rang)),
+      couverts.length];
+  }
+
+  /**
+   * Ce que les prélèvements de l'année laissent de ces pensions (une `Map`),
+   * en part de leur brut : la CSG au taux plein, la CRDS, la CASA, et la
+   * cotisation maladie de leur régime.
+   */
+  partNette(anneeCivile, pensions) {
+    const historiques = this.moteur.prelevementsHistoriques;
+    let brute = 0.0;
+    for (const montant of pensions.values()) brute += montant;
+    const parts = new Map();
+    for (const serie of [...historiques.regimes_des_pensions.keys()].sort()) {
+      const regimes = historiques.regimes_des_pensions.get(serie);
+      let part = 0.0;
+      for (const [regime, montant] of pensions) if (regimes.has(regime)) part += montant;
+      if (part > 0) parts.set(serie, part / brute);
+    }
+    return 1.0 - historiques.tauxPensionAnnuel(anneeCivile, parts);
   }
 
   /**
@@ -722,21 +833,26 @@ class Calcul {
     if (this.groupe !== "liberaux") return [LIBRE, "", "autre_regime", 0.0, null];
     const [statut, , motif, , seuil] = this.nonSalarie(mois, dateEffet, "liberaux", montant,
       annee, integral, servies, montants);
-    if (statut !== SUSPENDUE && statut !== REDUITE) {
+    const hors = motif === HORS_DES_MOIS_SUSPENDUS;
+    if (statut !== SUSPENDUE && statut !== REDUITE && !hors) {
       return [statut, SECTIONS_STATUTS, motif, 0.0, seuil];
     }
     const depassement = annee.revenu - seuil;
     if (regleDesStatuts === DEPASSEMENT_ENTIER) {
-      return [REDUITE, SECTIONS_STATUTS, motif, depassement, seuil];
+      return [REDUITE, SECTIONS_STATUTS, "depassement", depassement, seuil];
     }
     if (regleDesStatuts === APRES_LA_BASE) {
-      const base = servies.filter(([, , groupe]) => groupe === "liberaux")
+      let base = servies.filter(([, , groupe]) => groupe === "liberaux")
         .reduce((somme, [code]) => somme + montants[code], 0.0);
+      // La base suspendue quelques mois n'absorbe du dépassement que ces mois-là.
+      const suspension = statut === REDUITE ? null : this.suspension(mois, "liberaux");
+      if (suspension !== null) base *= suspension[0].size / suspension[1];
       if (depassement <= base) {
         return [PLAFONNEE, SECTIONS_STATUTS, "imputee_sur_la_base", 0.0, seuil];
       }
-      return [REDUITE, SECTIONS_STATUTS, motif, depassement - base, seuil];
+      return [REDUITE, SECTIONS_STATUTS, "depassement", depassement - base, seuil];
     }
+    if (hors) return [PLAFONNEE, SECTIONS_STATUTS, motif, 0.0, seuil];
     if (statut === SUSPENDUE) return [SUSPENDUE, SECTIONS_STATUTS, motif, montant, seuil];
     if (regleDesStatuts === AVEC_LA_BASE) {
       return [PLAFONNEE, SECTIONS_STATUTS, "base_reduite", 0.0, seuil];
