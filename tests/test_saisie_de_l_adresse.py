@@ -11,6 +11,8 @@ ne gelait, ne se voit que de node (``tests/js/saisie.test.js``).
 
 from __future__ import annotations
 
+from urllib.parse import parse_qsl
+
 import pytest
 
 from retraite_notionnelle.web.site import ErreurSite, disponible, module, site
@@ -88,3 +90,19 @@ def test_l_annee_refusee_se_cite_telle_que_l_adresse_la_porte(annee):
     with pytest.raises(ErreurSite, match=refus_de_la_saisie(
             f"hors du champ du modèle : {annee}\\. ")):
         saisie_du_portage({"naissance": annee})
+
+
+@pytest.mark.parametrize("champ, valeur", [
+    ("revenu_fiscal", "1234567"),
+    ("salaire", "2534.567"),
+])
+def test_l_adresse_reecrite_garde_chaque_chiffre(champ, valeur):
+    """L'adresse réécrite — le lien de la page, les bascules — ne gardait que
+    six chiffres significatifs de chaque nombre (``formatG``, le ``:g`` du
+    Python) : un revenu fiscal de 1 234 567 € s'y relisait 1 234 570, un
+    salaire de 2 534,567 € 2 534,57. Elle écrit le nombre saisi, qui se relit
+    tel qu'il a été saisi."""
+    saisie = saisie_du_portage({"unite_revenu": "euros_mois", champ: valeur})
+    reecrite = dict(parse_qsl(saisie.requete()))
+    assert reecrite[champ] == valeur
+    assert getattr(saisie_du_portage(reecrite), champ) == float(valeur)

@@ -32,7 +32,6 @@ import {
   FORMES_D_UNION, dateDeclaree, naissanceDeclaree, plusAns, valeur as valeurPresumee,
 } from "./chronologie.js";
 import { CONJOINTS_COLLABORATEURS } from "./carriere.js";
-import { formatG } from "./format.js";
 import * as g from "./gabarit.js";
 import { AGE_TERMINAL } from "./mortalite.js";
 
@@ -3617,9 +3616,14 @@ export function parmi(parametres, nom, options, defaut) {
   return options.some(([code]) => code === valeur) ? valeur : defaut;
 }
 
-/** Valeur telle qu'elle est réinjectée dans un champ de formulaire. */
+/**
+ * Valeur telle qu'elle est réinjectée dans un champ de formulaire, et écrite
+ * dans l'adresse réécrite : l'écriture la plus courte qui se relise en ce même
+ * nombre, celle de JavaScript. Six chiffres significatifs (`formatG`, le `:g`
+ * du Python) relisaient un revenu fiscal de 1 234 567 € 1 234 570.
+ */
 export function nombreBrut(valeur) {
-  return formatG(valeur);
+  return String(valeur);
 }
 
 /** Le premier du mois est un ORDINAL en français : « 1er », et non « 1 ». */
