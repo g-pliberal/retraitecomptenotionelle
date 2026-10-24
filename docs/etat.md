@@ -27,7 +27,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | manquantes | 1 |
 | à vérifier | 2 |
 
-- Confrontées à au moins un exemple officiel : **61 sur 255** (214 exemples : 202 reproduits, 12 en écart connu, section 2).
+- Confrontées à au moins un exemple officiel : **61 sur 255** (215 exemples : 203 reproduits, 12 en écart connu, section 2).
 - Citées dans le code par leur identifiant : **118 sur 255**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
 - Désignées par les interrupteurs des périodes de régime : **48 sur 255**, par 2 462 renvois ; chacune déclare la valeur que le moteur lit (`code.interrupteurs`) et dit ce qu'il en fait.
 - Mûres, sans rien qui manque à leur contrat : **149 sur 255**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
@@ -39,10 +39,10 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | Statut | Rédactions |
 |---|---|
 | rattachées à une version | 1 427 |
-| sans effet | 58 |
-| à rattacher | 555 |
+| sans effet | 61 |
+| à rattacher | 556 |
 | à examiner | 4 216 |
-| sans statut | 9 536 |
+| sans statut | 9 532 |
 
 **La personne** (§ 5) : une chronologie de faits datés, dans un réseau de personnes — aujourd'hui l'assuré, ses enfants et son conjoint —, que le relevé et le parcours déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : 30 présomptions au vocabulaire, dont 3 posent leur fait dans la chronologie ; les autres s'appliquent dans le code, jusqu'à l'étape qui posera le leur.
 
@@ -88,7 +88,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | `compter_les_durees` | `droit/compter.py` | les trimestres de chaque compte, par régime et par année ; ceux des enfants | `apprentissage`, `bonification_cinquieme_militaires`, `bonification_cinquieme_police_penitentiaire`, `bonification_cinquieme_sapeurs_pompiers`, `conge_supplementaire_naissance`, `enfants_crpcen`, `enfants_fonction_publique`, `enfants_ieg`, `enfants_ratp`, `enfants_sncf`, `fin_indemnisation_chomage`, `majoration_duree_assurance_enfants`, `majoration_duree_elus_locaux`, `majoration_duree_hospitaliers_actifs`, `majoration_duree_sapeurs_pompiers_volontaires`, `priorite_majorations_enfants`, `service_civique`, `services_et_duree_fonction_publique`, `sportifs_haut_niveau`, `stages_formation_professionnelle`, `volontariat_civil_et_international` |
 | `acquerir_les_droits` | `droit/acquerir.py` | les points et les cotisations, la durée plafonnée, les points gratuits | `agirc_arrco_valeur_achat`, `assiette_minimale_agricole`, `assiette_minimale_independants`, `asv_autres_professions_de_sante`, `asv_medecins_ajustement`, `asv_medecins_points`, `chomage_retraite_complementaire`, `cotisation_par_classes_liberales`, `cultes_retraite_complementaire_taux_specifiques`, `droits_apres_la_premiere_pension`, `financement_chomage_complementaire`, `garantie_minimale_points_agirc`, `igrante_points`, `ipacte_points`, `ircantec_valeurs_point`, `micro_social_abattement`, `organic_conjoints_de_commercants`, `points_au_prorata_des_cotisations`, `points_invalidite_independants`, `rafp_compte_epargne_temps`, `rafp_cotisation_volontaire_outre_mer`, `rafp_gipa_hors_plafond`, `ravgdt_allocation_viagere`, `rci_seuil_premiere_tranche`, `rco_points_gratuits`, `rco_points_gratuits_66`, `retraite_proportionnelle_msa`, `services_passes_outre_mer` |
 
-**La liquidation** (§ 7.3, 7.4 et 7.7) : `liquider(demande, état, contexte)`, une fonction pure (`src/retraite_notionnelle/droit/liquidation.py`, et son jumeau), enchaîne l'acquisition et trois étapes, et mesure par des liquidations d'essai ce qu'apporte chaque avantage. L'échéancier (`echeancier.py`) l'appelle au départ, applique à l'échéance les deux étapes qui ne liquident rien, et inscrit tout à son journal (`journal.py`) ; le pilote (`pilote.py`) date les départs des cas types sans rien liquider. Les 904 témoins font chacun de 1 à 12 appels de `liquider`, liquidations d'essai comprises, et au plus 6 par départ ; aucun ne dépasse les 6 par départ que le nombre déclaré accorde (§ 7.8).
+**La liquidation** (§ 7.3, 7.4 et 7.7) : `liquider(demande, état, contexte)`, une fonction pure (`src/retraite_notionnelle/droit/liquidation.py`, et son jumeau), enchaîne l'acquisition et trois étapes, et mesure par des liquidations d'essai ce qu'apporte chaque avantage. L'échéancier (`echeancier.py`) l'appelle au départ, applique à l'échéance les deux étapes qui ne liquident rien, et inscrit tout à son journal (`journal.py`) ; le pilote (`pilote.py`) date les départs des cas types sans rien liquider. Les 907 témoins font chacun de 1 à 12 appels de `liquider`, liquidations d'essai comprises, et au plus 6 par départ ; aucun ne dépasse les 6 par départ que le nombre déclaré accorde (§ 7.8).
 
 | Étape | Module | Ce qu'elle écrit | Fiches qui disent l'appliquer |
 |---|---|---|---|
@@ -376,7 +376,7 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   | `code` | 57 |
   | `approximations` | 28 |
 
-- **Les textes** : 555 rédactions à rattacher à une version de la fiche qui les cite, 4 216 à examiner, et 9 536 sans statut, que le cliquet tient à 9 536 au plus. Les textes qui en ont le plus : `css` 4 944, `decret_46_2769` 938, `rural` 855, `cpcmr` 571, `decret_90_1215` 325 (`python scripts/textes.py`).
+- **Les textes** : 556 rédactions à rattacher à une version de la fiche qui les cite, 4 216 à examiner, et 9 532 sans statut, que le cliquet tient à 9 532 au plus. Les textes qui en ont le plus : `css` 4 941, `decret_46_2769` 938, `rural` 855, `cpcmr` 570, `decret_90_1215` 325 (`python scripts/textes.py`).
 - **Les relectures prévues les plus proches** : 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`agirc_arrco_valeur_achat`) ; 2026-12-31 (`carriere_longue`) ; 2026-12-31 (`certification_legi_perimee`).
 - **Les régimes hors champ** : 23, chacun avec sa raison dans l'inventaire.
 

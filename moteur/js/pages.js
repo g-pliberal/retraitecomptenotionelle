@@ -16410,11 +16410,11 @@ export const MESURES_BLOCAGES = {
   // jour, les civils de l'État pesés sur leurs départs actifs, super-actifs
   // et sédentaires (même étape) ont porté sa dette à 73 %, et le coût des
   // 18 % à 2,2 points.
-  solde_moyen_proposition: -1.0,
+  solde_moyen_proposition: -1.1,
   solde_moyen_actuel: -1.1,
-  dette_2070_proposition: 69,
+  dette_2070_proposition: 73,
   dette_2070_actuel: 66,
-  coefficient_minimum: 0.84,
+  coefficient_minimum: 0.83,
   decennie_coefficient_minimum: 2040,
   coefficient_2070: 1.01,
   // donnees/tva.py : ce que la TVA à taux unique rapporte de plus que les
