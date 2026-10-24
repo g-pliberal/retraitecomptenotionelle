@@ -1,15 +1,15 @@
 # Étape 7, première partie : les quotients projetés de l'INSEE au lieu de la loi de Gompertz-Makeham
 
-**Reprise, au 23 octobre 2026.** Fait : les quotients projetés, la marche de
+**Reprise, au 24 octobre 2026.** Fait : les quotients projetés, la marche de
 1941, les variantes démographiques et l'indexation sous elles ; la mortalité
 différentielle des cas types ; la queue observée ; le 19, 2025 sous la loi
 seule, la prémisse du déficit, les inaptes et les ex-invalides de la Cnav
-dans la grille du coût, chacun à sa mortalité, et l'inapte recalé ; le 23, le
-déficit des scénarios 3 et 5, le diviseur sur la seule part du compte ouverte
-à la bascule. Reste, une session par point : aux pages, les décimales du
-coefficient au-dessus de un ; la forme de la surmortalité ; à la fin de
-l'étape, la limite. Au propriétaire : les départs qui suivent l'espérance de
-vie. Détail : « Ce qui reste » de la note « la part ouverte à la bascule ».
+dans la grille du coût, et l'inapte recalé ; le 23, le déficit des scénarios
+3 et 5 ; le 24, la forme de la surmortalité des inaptes et des ex-invalides,
+un facteur par tranche d'âge publiée. Reste, une session par point : aux
+pages, les décimales du coefficient au-dessus de un ; à la fin de l'étape, la
+limite. Au propriétaire : les départs qui suivent l'espérance de vie.
+Détail : « Ce qui reste » de la note « la forme de la surmortalité ».
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.7 ». L'étape 7 de
 l'action : « La démographie en variantes : les quotients projetés âge par âge

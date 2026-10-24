@@ -29,10 +29,11 @@
 # À faire vivre l'inapte et l'ex-invalide de la grille du coût au rythme des
 # inaptes et des ex-invalides de la Cnav (action 138, étape 7). Comme les
 # pensionnés civils de l'État (esperances_vie_populations.csv), chaque type
-# est une population dont le modèle cale un FACTEUR sur la force de
-# mortalité de la table générale de l'année observée, de sorte qu'elle
-# rende l'espérance à 65 ans publiée ici, puis le tient constant ; les
-# autres âges ne servent qu'au contrôle (tests/test_donnees.py).
+# est une population dont le modèle cale des FACTEURS sur la force de
+# mortalité de la table générale de l'année observée, un par tranche d'âge,
+# de chaque âge publié au suivant, de sorte qu'elle rende chacune des six
+# espérances publiées ici, puis les tient constants
+# (DonneesMortalite.facteurs_par_age, tests/test_donnees.py).
 #
 # CE QU'IL FAUT SAVOIR AVANT DE S'EN SERVIR
 # ------------------------------------------
@@ -40,9 +41,14 @@
 # du dépôt pour 2017 — d'un an à 65 ans pour les hommes, d'un an et demi pour
 # les femmes —, et ses inaptes la rejoignent vers 85 ans. La valeur publiée
 # est prise telle quelle : la Cnav ne publie pas l'ensemble de ses retraités,
-# auquel la rapporter. Un facteur constant rend l'espérance des inaptes à
-# 62 ans à quatre dixièmes près, mais les fait mourir trop vite au-delà de
-# 80 ans : 4,8 ans à 85 ans pour les hommes, quand la Cnav en mesure 6,3.
+# auquel la rapporter. Jusqu'au 24 octobre 2026, un facteur constant, calé à
+# 65 ans, rendait l'espérance des inaptes à 62 ans à quatre dixièmes près,
+# mais les faisait mourir trop vite au-delà de 80 ans : 4,8 ans à 85 ans pour
+# les hommes, quand la Cnav en mesure 6,3. Leur surmortalité s'éteint avec
+# l'âge, et les tranches la suivent : la force de mortalité des inaptes et
+# des ex-invalides, deux fois celle de la table générale avant 65 ans, la
+# rejoint presque après 85. Entre deux âges publiés, rien n'est supposé de
+# plus qu'un facteur.
 annee,population,sexe,mesure,valeur,fiabilite
 2017,cnav_pension_normale,H,e62,22.9,moyenne
 2017,cnav_pension_normale,H,e65,20.4,moyenne

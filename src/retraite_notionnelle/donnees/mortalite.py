@@ -281,6 +281,18 @@ def serialiser_calibrations(table: dict[str, list]) -> str:
 _QUOTIENTS_EN_CACHE: dict[tuple[str, int, int], dict | None] = {}
 
 
+def _facteur_de_l_age(facteurs: tuple[tuple[int, float], ...], age: int) -> float:
+    """Le facteur de la tranche où tombe ``age``, dans des facteurs par
+    tranche d'âge ``((âge, facteur), …)`` : celui du dernier âge de début qui
+    ne le dépasse pas, le premier en deçà."""
+    retenu = facteurs[0][1]
+    for debut, facteur in facteurs[1:]:
+        if age < debut:
+            break
+        retenu = facteur
+    return retenu
+
+
 class DonneesMortalite:
     """Tables du moment et tables de génération pour les deux sexes."""
 
@@ -334,6 +346,7 @@ class DonneesMortalite:
             (annees_projetees[0], annees_projetees[-1]) if annees_projetees else None)
         self._populations = self._charger_populations()
         self._facteurs: dict[tuple[str, str], float] = {}
+        self._facteurs_par_age: dict[tuple[str, str], tuple[tuple[int, float], ...]] = {}
 
     # -- populations particulières ------------------------------------------
 
@@ -346,8 +359,9 @@ class DonneesMortalite:
         valeur est calée telle quelle sur la table générale de l'année.
         ``esperances_vie_pensions_cnav.csv`` fait de même des retraités du
         régime général par type de pension — normale, pour inaptitude,
-        d'ex-invalide —, que la Cnav publie de 62 à 85 ans : l'espérance à
-        65 ans seule fait la population, les autres âges contrôlent.
+        d'ex-invalide —, que la Cnav publie de 62 à 85 ans : chaque âge
+        publié y cale sa tranche (:meth:`facteurs_par_age`), et l'espérance à
+        65 ans reste celle que rend :meth:`esperance_publiee`.
         ``esperances_vie_niveau_de_vie.csv`` porte les vingtiles de niveau de
         vie de l'INSEE, avec l'« ensemble » de la même étude : un vingtile
         est calé sur son RAPPORT à cet ensemble, appliqué à la table
@@ -357,6 +371,7 @@ class DonneesMortalite:
         publiée sert de population.
         """
         table: dict[str, dict[str, tuple[int, float, float | None]]] = {}
+        par_age: dict[tuple[str, str, int], dict[int, float]] = {}
         for nom in ("esperances_vie_populations.csv", "esperances_vie_pensions_cnav.csv"):
             chemin = self.racine / "reference" / "mortalite" / nom
             if not chemin.exists():
@@ -364,11 +379,23 @@ class DonneesMortalite:
             with chemin.open(encoding="utf-8") as flux:
                 lignes = (l for l in flux if not l.lstrip().startswith("#"))
                 for ligne in csv.DictReader(lignes):
+                    par_age.setdefault(
+                        (ligne["population"], ligne["sexe"], int(ligne["annee"])), {},
+                    )[int(ligne["mesure"].removeprefix("e"))] = float(ligne["valeur"])
                     if ligne["mesure"] != "e65":
                         continue
                     table.setdefault(ligne["population"], {})[ligne["sexe"]] = (
                         int(ligne["annee"]), float(ligne["valeur"]), None,
                     )
+        #: Les populations publiées à plusieurs âges, l'année de leur espérance
+        #: à 65 ans : ``{population: {sexe: (annee, {âge: espérance})}}``.
+        self._esperances_par_age: dict[str, dict[str, tuple[int, dict[int, float]]]] = {}
+        for population, sexes in table.items():
+            for sexe, (annee, _, _) in sexes.items():
+                esperances = par_age[(population, sexe, annee)]
+                if len(esperances) > 1:
+                    self._esperances_par_age.setdefault(population, {})[sexe] = (
+                        annee, esperances)
         chemin = self.racine / "reference" / "mortalite" / "esperances_vie_niveau_de_vie.csv"
         self._niveaux_de_vie: dict[int, float] = {}
         if chemin.exists():
@@ -468,15 +495,35 @@ class DonneesMortalite:
         est tenu constant sur toutes les années, faute d'observation
         ailleurs. La calibration est une bissection sur une fonction
         monotone : plus le facteur est petit, plus on vit longtemps.
+
+        Une population publiée à plusieurs âges n'a pas de facteur unique :
+        elle en a un par tranche d'âge (:meth:`facteurs_par_age`).
         """
         cle = (population, sexe)
         memorise = self._facteurs.get(cle)
         if memorise is not None:
             return memorise
+        if self._publiee_par_age(population, sexe):
+            raise ValueError(
+                f"population {population!r} publiée à plusieurs âges pour le sexe "
+                f"{sexe!r} : ses facteurs sont par tranche d'âge (facteurs_par_age)")
         annee, cible = self.cible_population(population, sexe)
+        facteur = self._caler(65.0, annee, sexe, cible)
+        self._facteurs[cle] = facteur
+        return facteur
 
+    def _publiee_par_age(self, population: str, sexe: str) -> bool:
+        return sexe in self._esperances_par_age.get(population, {})
+
+    def _caler(self, age: float, annee: int, sexe: str, cible: float,
+               plus_ages: tuple[tuple[int, float], ...] = ()) -> float:
+        """Le facteur qui rend ``cible`` comme espérance à ``age`` sur la table
+        du moment de ``annee`` : dès ``age``, ou jusqu'à la première tranche de
+        ``plus_ages``, déjà calées. Une bissection sur une fonction monotone :
+        plus le facteur est petit, plus on vit longtemps."""
         def esperance(facteur: float) -> float:
-            courbe = self._courbe_brute(65.0, float(annee), sexe, False, facteur)
+            facteurs = ((0, facteur), *plus_ages) if plus_ages else facteur
+            courbe = self._courbe_brute(age, float(annee), sexe, False, facteurs)
             return somme_ordonnee(0.5 * (courbe[t] + courbe[t + 1]) for t in range(len(courbe) - 1))
 
         bas, haut = 0.05, 8.0
@@ -486,18 +533,63 @@ class DonneesMortalite:
                 bas = milieu
             else:
                 haut = milieu
-        facteur = math.sqrt(bas * haut)
-        self._facteurs[cle] = facteur
-        return facteur
+        return math.sqrt(bas * haut)
+
+    def facteurs_par_age(self, population: str, sexe: str) -> tuple[tuple[int, float], ...]:
+        """Les facteurs sur la force de mortalité d'une population, par tranche
+        d'âge : ``((âge, facteur), …)``, chacun valant de son âge au suivant,
+        le premier dès la naissance, le dernier jusqu'au bout de la table.
+
+        Une population publiée au seul âge de 65 ans n'a qu'une tranche, son
+        facteur (:meth:`facteur_population`). Une population publiée à
+        plusieurs âges — les types de pension de la Cnav, de 62 à 85 ans — a
+        une tranche par âge publié : de 62 à 65 ans, la première, prolongée
+        avant 62 ; à partir de 85, la dernière. Elles se calent de la plus
+        âgée à la plus jeune, chacune sur l'espérance publiée à son âge, sur la
+        table du moment de l'année observée, les plus âgées étant déjà calées :
+        la table corrigée rend chaque espérance publiée. Puis elles sont tenues
+        constantes sur toutes les années, comme le facteur unique.
+
+        LE FACTEUR UNIQUE NE SUIVAIT PAS L'ÂGE (action 138, étape 7). Calé à
+        65 ans, il rendait l'espérance des inaptes de la Cnav à 62 ans à quatre
+        dixièmes près ; mais leur surmortalité s'éteint avec l'âge, et il les
+        faisait mourir trop vite au-delà de 80 ans, où la Cnav les voit
+        rejoindre la population générale : 4,8 ans à 85 ans pour les hommes,
+        quand elle en mesure 6,3. Prisme leur applique des quotients à chaque
+        âge ; la Cnav n'en publie que six espérances, et la tranche n'en
+        suppose pas davantage.
+        """
+        cle = (population, sexe)
+        memorises = self._facteurs_par_age.get(cle)
+        if memorises is not None:
+            return memorises
+        if not self._publiee_par_age(population, sexe):
+            facteurs: tuple[tuple[int, float], ...] = (
+                (0, self.facteur_population(population, sexe)),)
+        else:
+            annee, esperances = self._esperances_par_age[population][sexe]
+            ages = sorted(esperances)
+            facteurs = ()
+            for rang in range(len(ages) - 1, -1, -1):
+                age = ages[rang]
+                facteur = self._caler(float(age), annee, sexe, esperances[age], facteurs)
+                facteurs = ((0 if rang == 0 else age, facteur), *facteurs)
+        self._facteurs_par_age[cle] = facteurs
+        return facteurs
 
     def facteurs_populations(self) -> dict[str, float]:
-        """Tous les facteurs, sous la clé ``population|sexe`` — ce que le paquet
-        de données transporte pour que le navigateur ne recalibre rien."""
+        """Tous les facteurs uniques, sous la clé ``population|sexe`` — ce que
+        le paquet de données transporte pour que le navigateur ne recalibre
+        rien. Les populations publiées à plusieurs âges n'y sont pas : le
+        portage ne sert qu'un facteur par population, celui du diviseur, et
+        seul le coût, que le navigateur ne calcule pas, fait vivre les types de
+        pension de la Cnav (``CasType.mortalite``)."""
         return {
             f"{population}|{sexe}": self.facteur_population(population, sexe)
             for population in self.populations
             for sexe in self.SEXES
             if sexe in self._populations[population]
+            and not self._publiee_par_age(population, sexe)
         }
 
     # -- tables réelles, si présentes ---------------------------------------
@@ -636,12 +728,13 @@ class DonneesMortalite:
         return self.loi(annee, sexe).survie(float(age), 1.0)
 
     def survie_annuelle(self, age: float, annee: float, sexe: str,
-                        facteur: float = 1.0) -> float:
+                        facteur: float | tuple[tuple[int, float], ...] = 1.0) -> float:
         """Probabilité de survivre un an à partir de ``age`` en ``annee``.
 
         ``facteur`` multiplie la force de mortalité de chaque cellule — la
         survie est élevée à cette puissance. Il vaut un pour la population
-        générale ; voir :meth:`facteur_population`.
+        générale ; voir :meth:`facteur_population`. Par tranche d'âge
+        (:meth:`facteurs_par_age`), chaque cellule reçoit celui de son âge.
 
         **L'âge et la date sont fractionnaires, et tous deux comptent.** La
         méthode lisait ``quotients[int(age)]`` : la part OBSERVÉE de la table —
@@ -669,8 +762,11 @@ class DonneesMortalite:
         """
         age_entier, part_age = math.floor(age), age - math.floor(age)
         annee_entiere, part_annee = math.floor(annee), annee - math.floor(annee)
+        par_age = isinstance(facteur, tuple)
         if part_age <= 1e-9 and part_annee <= 1e-9:
             cellule = self._survie_cellule(int(age_entier), int(annee_entiere), sexe)
+            if par_age:
+                facteur = _facteur_de_l_age(facteur, int(age_entier))
             return cellule if facteur == 1.0 else cellule ** facteur
 
         # Les deux coordonnées avancent à la même vitesse : le trajet franchit
@@ -684,15 +780,18 @@ class DonneesMortalite:
         cumul = 0.0
         for debut, fin in zip(bornes, bornes[1:]):
             milieu = 0.5 * (debut + fin)
+            age_cellule = int(age_entier + math.floor(part_age + milieu))
             cellule = self._survie_cellule(
-                int(age_entier + math.floor(part_age + milieu)),
+                age_cellule,
                 int(annee_entiere + math.floor(part_annee + milieu)),
                 sexe,
             )
             # Force de mortalité de la cellule, appliquée sur la durée du
-            # tronçon : -ln p, puis somme, puis exponentielle.
-            cumul += (fin - debut) * -math.log(max(cellule, 1e-300))
-        return math.exp(-cumul * facteur)
+            # tronçon : -ln p, puis somme, puis exponentielle. Par tranche
+            # d'âge, chaque tronçon reçoit le facteur de la sienne.
+            force = (fin - debut) * -math.log(max(cellule, 1e-300))
+            cumul += force * _facteur_de_l_age(facteur, age_cellule) if par_age else force
+        return math.exp(-cumul) if par_age else math.exp(-cumul * facteur)
 
     # -- tables de génération ------------------------------------------------
 
@@ -705,7 +804,9 @@ class DonneesMortalite:
         ``population`` désigne une population particulière de
         ``esperances_vie_populations.csv`` : sa courbe est celle de la
         population générale, corrigée du facteur que :meth:`facteur_population`
-        lui cale. ``None`` est la population générale.
+        lui cale, ou, publiée à plusieurs âges, de ceux que
+        :meth:`facteurs_par_age` lui cale par tranche. ``None`` est la
+        population générale.
 
         ``annee_debut`` peut porter une fraction : c'est la position de la
         liquidation dans son année civile, ``(mois - 1) / 12``. Elle dit sous
@@ -718,11 +819,17 @@ class DonneesMortalite:
         table de génération. L'ignorer surestime la pension des générations
         récentes, dont la longévité continue de progresser.
         """
-        facteur = 1.0 if population is None else self.facteur_population(population, sexe)
+        if population is None:
+            facteur: float | tuple[tuple[int, float], ...] = 1.0
+        elif self._publiee_par_age(population, sexe):
+            facteur = self.facteurs_par_age(population, sexe)
+        else:
+            facteur = self.facteur_population(population, sexe)
         return self._courbe_brute(age_debut, annee_debut, sexe, generation, facteur)
 
     def _courbe_brute(self, age_debut: float, annee_debut: float, sexe: str,
-                      generation: bool, facteur: float) -> tuple[float, ...]:
+                      generation: bool,
+                      facteur: float | tuple[tuple[int, float], ...]) -> tuple[float, ...]:
         probabilites = [1.0]
         courante = 1.0
         duree = 0

@@ -280,7 +280,9 @@ export class DonneesMortalite {
     this._courbes = new Map();
     // Les populations particulières : facteurs calibrés par
     // `construire_donnees.py` et espérances publiées, sous la clé
-    // `population|sexe`. Le navigateur lit, il ne recalibre qu'à défaut.
+    // `population|sexe`. Le navigateur lit, il ne recalibre qu'à défaut. Les
+    // populations publiées à plusieurs âges n'y sont pas : leurs facteurs par
+    // tranche d'âge (`facteurs_par_age`) ne servent qu'au coût.
     const populations = paquet.populations || {};
     this._facteursPaquet = populations.facteurs || {};
     this._esperancesPubliees = populations.esperances || {};

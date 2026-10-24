@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+import math
 import shutil
 
 import pytest
@@ -2249,13 +2250,14 @@ def test_les_inaptes_de_la_cnav_vivent_au_moins_quatre_ans_de_moins(mortalite):
     normales chez les hommes, 4,1 chez les femmes ; les ex-invalides, 6,2 et
     4,4.
 
-    Chaque type est une population, que son facteur cale sur l'espérance à
-    65 ans publiée, appliquée telle quelle à la table générale de 2017, comme
-    celle des pensionnés civils de l'État. Tenu constant, il rend l'espérance
-    des inaptes à 62 ans à quatre dixièmes près ; mais il les fait mourir trop
-    vite au-delà de quatre-vingts ans, où la Cnav les voit rejoindre la
-    population générale : c'est la limite d'un facteur, qu'un test ne doit pas
-    taire."""
+    Chaque type est une population, appliquée telle quelle à la table
+    générale de 2017, comme celle des pensionnés civils de l'État ; mais la
+    Cnav la publie à six âges, et chacun compte. Un facteur constant, calé à
+    65 ans, rendait l'espérance des inaptes à 62 ans à quatre dixièmes près,
+    et les faisait mourir trop vite au-delà de quatre-vingts ans, où la Cnav
+    les voit rejoindre la population générale : 4,8 ans à 85 ans pour les
+    hommes, quand elle en mesure 6,3. Le modèle rend désormais les six
+    espérances publiées, de chaque type et de chaque sexe, au centième."""
     chemin = RACINE_DONNEES / "reference" / "mortalite" / "esperances_vie_pensions_cnav.csv"
     with chemin.open(encoding="utf-8") as flux:
         lignes = list(csv.DictReader(l for l in flux if not l.lstrip().startswith("#")))
@@ -2271,20 +2273,73 @@ def test_les_inaptes_de_la_cnav_vivent_au_moins_quatre_ans_de_moins(mortalite):
         for population in ("cnav_pension_normale", "cnav_inaptitude", "cnav_ex_invalide"):
             publiees = ESPERANCES_CADRAGE_40[(population, sexe)]
             assert mortalite.esperance_publiee(population, sexe) == (2017, publiees[1])
-            assert mortalite.esperance_residuelle(
-                65, 2017, sexe, generation=False, population=population,
-            ) == pytest.approx(publiees[1], abs=0.01), (population, sexe)
-        # La table générale de 2017 est entre les pensions normales et les
-        # autres : le facteur les fait vivre plus longtemps, ou moins.
-        assert mortalite.facteur_population("cnav_pension_normale", sexe) < 1.0
-        assert 1.0 < mortalite.facteur_population("cnav_inaptitude", sexe) < 2.0
-        inaptes = ESPERANCES_CADRAGE_40[("cnav_inaptitude", sexe)]
-        assert mortalite.esperance_residuelle(
-            62, 2017, sexe, generation=False, population="cnav_inaptitude",
-        ) == pytest.approx(inaptes[0], abs=0.4), sexe
-        assert mortalite.esperance_residuelle(
-            85, 2017, sexe, generation=False, population="cnav_inaptitude",
-        ) < inaptes[-1] - 1.0, sexe
+            for age, publiee in zip(AGES_CADRAGE_40, publiees):
+                assert mortalite.esperance_residuelle(
+                    age, 2017, sexe, generation=False, population=population,
+                ) == pytest.approx(publiee, abs=0.01), (population, sexe, age)
+
+
+def test_la_surmortalite_des_inaptes_et_des_ex_invalides_suit_l_age(mortalite):
+    """La forme de la surmortalité des types de pension de la Cnav (action
+    138, étape 7, onzième partie, point 2) : un facteur sur la force de
+    mortalité de la table générale par tranche d'âge, de chaque âge publié au
+    suivant — le premier dès la naissance, le dernier jusqu'au bout de la
+    table —, calé de la tranche la plus âgée à la plus jeune, chacun sur
+    l'espérance publiée à son âge, les tranches plus âgées étant déjà calées.
+    Prisme a des quotients à chaque âge ; la Cnav n'en publie que six
+    espérances, et le modèle n'en suppose pas davantage.
+
+    La règle, posée à la main sur la table du modèle. Une cellule (âge entier
+    × millésime) voit sa survie élevée au facteur de la tranche de son âge,
+    chaque année de la table de génération comme celle de 2017 ; une année
+    qui franchit l'âge d'une tranche en partage l'exposition : de 64 ans et
+    demi à 65 ans et demi en 2040, la moitié de la force de 64 ans au facteur
+    de la première tranche, la moitié de celle de 65 ans au facteur de la
+    seconde. Avant 70 ans, la force de mortalité des inaptes et des
+    ex-invalides vaut plus d'une fois et demie celle de la population
+    générale ; après 85 ans, elle la rejoint à un sixième près : la Cnav leur
+    mesure 6,3 et 5,7 ans à 85 ans chez les hommes, 8,2 et 7,3 chez les
+    femmes, quand la table générale de 2017 en donne 6,2 et 7,7.
+
+    Le paquet du navigateur n'en porte rien : le portage ne sert qu'un
+    facteur par population, celui du diviseur, et seul le coût, que le
+    navigateur ne calcule pas, fait vivre l'inapte et l'ex-invalide de la
+    grille (`CasType.mortalite`). Une telle population n'a pas de facteur
+    unique, et le dit."""
+    for sexe in mortalite.SEXES:
+        for population in ("cnav_pension_normale", "cnav_inaptitude", "cnav_ex_invalide"):
+            facteurs = mortalite.facteurs_par_age(population, sexe)
+            assert tuple(age for age, _ in facteurs) == (0, *AGES_CADRAGE_40[1:]), population
+            with pytest.raises(ValueError, match="plusieurs âges"):
+                mortalite.facteur_population(population, sexe)
+            assert f"{population}|{sexe}" not in mortalite.facteurs_populations()
+        for population in ("cnav_inaptitude", "cnav_ex_invalide"):
+            facteurs = dict(mortalite.facteurs_par_age(population, sexe))
+            assert facteurs[0] > 1.5 and facteurs[65] > 1.5, (population, sexe)
+            assert abs(facteurs[85] - 1.0) < 1 / 6, (population, sexe)
+    # Les populations publiées au seul âge de 65 ans gardent leur facteur
+    # unique, dès la naissance, que le paquet porte au navigateur.
+    assert mortalite.facteurs_par_age("fonctionnaires_civils_etat", "H") == (
+        (0, mortalite.facteur_population("fonctionnaires_civils_etat", "H")),)
+    assert "fonctionnaires_civils_etat|H" in mortalite.facteurs_populations()
+
+    # La règle, cellule par cellule, en 2040 et au-delà.
+    facteurs = mortalite.facteurs_par_age("cnav_inaptitude", "H")
+    par_age = dict(facteurs)
+    sous_65, des_65 = par_age[0], par_age[65]
+    assert mortalite.survie_annuelle(70.0, 2040.0, "H", facteurs) == pytest.approx(
+        mortalite.survie_annuelle(70.0, 2040.0, "H") ** par_age[70], rel=1e-12)
+    force_64 = -math.log(mortalite.survie_annuelle(64.0, 2040.0, "H"))
+    force_65 = -math.log(mortalite.survie_annuelle(65.0, 2040.0, "H"))
+    assert mortalite.survie_annuelle(64.5, 2040.0, "H", facteurs) == pytest.approx(
+        math.exp(-(0.5 * force_64 * sous_65 + 0.5 * force_65 * des_65)), rel=1e-12)
+    courbe = mortalite.courbe(62.0, 2030.0, "H", True, "cnav_inaptitude")
+    attendue = 1.0
+    for rang in range(30):
+        age = 62 + rang
+        facteur = par_age[max(debut for debut in par_age if debut <= age)]
+        attendue *= mortalite.survie_annuelle(float(age), 2030.0 + rang, "H") ** facteur
+        assert courbe[rang + 1] == pytest.approx(attendue, rel=1e-12), rang
 
 
 #: Les tranches d'âge du tableau A-2 du jaune pensions annexé au PLF 2027, âge
