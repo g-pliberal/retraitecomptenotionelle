@@ -4741,16 +4741,16 @@ R. 111-2 ; la condition de L. 816-1 ; le tableau de 2008 des régimes
 
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
-**Reprise, au 23 octobre 2026.** Faits, des coupures au mois au forfait du collaborateur
-au compte. Restent : des classes, l'acte vétérinaire (au propriétaire), des décrets non
-lus ; de `coefficients_anticipation_agirc_arrco`, l'ASF réservée de 1983 à 2003 aux
-salariés et aux chômeurs (au propriétaire) ; de `decote_avant_1983`, l'ajournement des
-artisans et commerçants et les « soixante et un ans » agricoles, aux décrets de 1956 à
-1968 (au propriétaire) ; la durée du minimum de D. 634-14 (la Cnav, au propriétaire) ;
-`pension_non_salaries_agricoles_2026` ; les années au prorata de l'exploitant, celle du
-décès comprise (au propriétaire : la pratique de la MSA, l'option du conjoint survivant) ;
-l'assiette minimale des indépendants au compte (D. 633-2 ; au propriétaire : la carte la
-laisse sans décision) ; l'AVI du collaborateur, sur les revenus du chef. Détail : les notes.
+**Reprise, au 24 octobre 2026.** Faits, des coupures au mois au revenu des années que le
+chef agricole a cotisées au minimum (L. 732-24, I, 1°). Restent : des classes, l'acte
+vétérinaire (au propriétaire), des décrets non lus ; de `coefficients_anticipation_agirc_arrco`,
+l'ASF de 1983 à 2003 (au propriétaire) ; de `decote_avant_1983`, l'ajournement des artisans
+et commerçants et les « soixante et un ans » agricoles (au propriétaire) ; la durée du
+minimum de D. 634-14 (la Cnav, au propriétaire) ; de `pension_non_salaries_agricoles_2026`,
+les durées de R. 173-3-2 et les points de 1952 à 1972 (R. 732-67) ; les années au prorata
+de l'exploitant (au propriétaire) ; l'assiette minimale des indépendants au compte
+(au propriétaire) ; l'AVI du collaborateur, sur les revenus du chef, qui demande un champ
+de saisie (une session du site). Détail : les notes.
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre
 session, à la demande du propriétaire, après avoir vérifié qu'elle ne lui

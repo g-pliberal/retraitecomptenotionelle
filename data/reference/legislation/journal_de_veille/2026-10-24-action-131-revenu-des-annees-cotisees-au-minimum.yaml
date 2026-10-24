@@ -1,0 +1,42 @@
+date: "2026-10-24"
+session: >-
+  l'action 131 : le revenu des années de 2016 à 2025 que le chef d'exploitation
+  agricole a cotisées au minimum, que L. 732-24, I, 1°, tire de ses cotisations ;
+  lot du 24 octobre 2026, onze sessions qui n'ont pas besoin du propriétaire
+consulte: >-
+  python scripts/veille_droit.py ; les index LEGI et JORF du dépôt, récupérés, LEGI
+  mis à jour jusqu'aux incréments du 23 octobre 2026 ; python scripts/textes.py
+  --inscrire, aucune rédaction nouvelle ; au code de la sécurité sociale, R. 173-3-2
+  (1er août 2026) ; au code rural, L. 732-24 (2026), R. 732-60 et R. 732-67 (2026),
+  L. 731-42 (rédactions de 2010 et de 2023), D. 731-120 (2014 et 2024), D. 731-121
+  (2012), D. 731-122 (2014), D. 731-124 (2015 et 2024) et D. 731-125 (2012) ; au
+  Journal officiel, le décret n° 2024-688 du 5 juillet 2024, articles 5 et 6. Sur le
+  web : la page de la MSA « Réforme de la retraite des exploitants : 25 meilleures
+  années » (27 avril 2026), dont l'outil ne lit que les deux premières sections ; la
+  notice « Le calcul de vos cotisations non salariées agricoles 2025 » de la MSA
+  d'Île-de-France (octobre 2025).
+trouve: >-
+  L. 732-24, I, 1°, second alinéa : pour les assurés dont l'AVI de 2016 à 2025 a été
+  « portée à [sa] valeur minimale », les revenus « sont égaux au rapport entre les
+  montants totaux des cotisations qu'ils ont acquittées au titre de l'assurance
+  vieillesse de base et les taux des cotisations en vigueur pour l'année considérée
+  » ; aucun décret ne le précise. Le chef doit l'AVI, 3,32 % sur 800 SMIC horaires au
+  moins, l'AVA plafonnée, 11,55 %, et l'AVA déplafonnée, 2,14 % en 2016 et 2,24 %
+  depuis, sur 600 SMIC au moins ; le chef à titre secondaire ne doit pas l'AVI (L.
+  731-42, 1°, « à l'exception des personnes mentionnées à l'article L. 732-28 »). La
+  MSA applique ces taux et ces minimums en 2025 ; les 2,36 % de D. 731-124, en vigueur
+  depuis le 7 juillet 2024, ne valent que pour les périodes de 2026 (décret n°
+  2024-688, article 6). Une année au minimum vaut ainsi 638,81 SMIC, 639,04 en 2016,
+  au lieu des 600 du plancher que le moteur lui donnait ; le moteur tire désormais ce
+  revenu des cotisations, dans les deux moteurs, pour le chef à titre principal
+  affilié avant 2016.
+reste: >-
+  Le collaborateur et l'aide familial, dont l'AVI se prenait jusqu'en 2025 des
+  revenus du chef, que la saisie ne connaît pas : leur revenu se tirerait de leurs
+  cotisations quand celle-ci était au minimum. L'assuré affilié depuis 2016, que la
+  phrase ne vise pas, garde le plancher de 600 SMIC. Aucun exemple publié ne chiffre
+  la règle. Les autres restes de la fiche pension_non_salaries_agricoles_2026 : les
+  durées de R. 173-3-2, que le texte arrête au 31 décembre de l'année d'effet pour le
+  régime agricole, et dont l'année de cessation comptée entière couvre le cas
+  ordinaire ; les majorations de points de 1952 à 1972 (R. 732-67), qui renvoient à
+  D. 732-76 et D. 732-77 dans leurs rédactions d'avant 2026 et au barème d'avant 1990.
