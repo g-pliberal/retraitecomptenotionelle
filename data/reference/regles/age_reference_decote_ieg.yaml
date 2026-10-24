@@ -6,6 +6,7 @@ intitule: >-
   agents en services actifs nés avant 1975 ; à qui a ouvert son droit avant le 1er
   janvier 2025, la CNIEG garde, quelle que soit la date d'effet, l'âge d'avant, l'âge
   minimum majoré de cinq ans dont se retranche la diminution de l'année.
+regimes: [ieg]
 etat: conforme
 effet: >-
   La fiche portait l'âge d'ouverture majoré de CINQ ans — 63,75 ans pour les liquidations
@@ -87,3 +88,15 @@ code:
     l'âge d'ouverture majoré de cinq ans (`ieg_actif_2011` dans `legislation/ages_regimes.csv`),
     dont le barème des régimes spéciaux retranche la diminution de l'année ; qui les
     réunit ensuite a soixante-deux ans (`ieg_actif_2023`), sans diminution.
+  python: >-
+    droit/ouvrir.py : age_taux_plein, mois_ouverture_des_droits ; droit/liquider.py :
+    decote_opposable, millesime_du_bareme ; scenarios/actuel.py : AgesRegimes
+  javascript: >-
+    moteur/js/droit/ouvrir.js : ageTauxPlein, moisOuvertureDesDroits ;
+    moteur/js/droit/liquider.js : decoteOpposable, millesimeDuBareme ;
+    moteur/js/regimes.js : AgesRegimes
+  parametres: >-
+    regimes/ieg.yaml : age_taux_plein, age_table ; legislation/ages_regimes.csv :
+    ieg_actif_2011, ieg_actif_2023
+  tests: [tests/test_simulateur.py, tests/test_oracle.py, tests/js/moteur.test.js,
+    tests/temoins/simulations.json]

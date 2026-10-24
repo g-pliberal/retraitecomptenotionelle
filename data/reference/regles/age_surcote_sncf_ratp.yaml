@@ -4,6 +4,7 @@ intitule: >-
   La surcote de la SNCF et de la RATP ne compte que les trimestres accomplis au-delà
   d'un âge propre : soixante ans pour les nés avant 1957, puis l'âge légal décalé
   de cinq générations, soixante-quatre ans à compter de 1970.
+regimes: [ratp, sncf]
 etat: conforme
 effet: >-
   Le modèle comptait la surcote depuis l'âge d'ouverture de la fiche — cinquante-quatre
@@ -54,3 +55,15 @@ code:
     décalé de cinq générations que les décrets de la SNCF (article 37-1, IV) et de la
     RATP (article 51-1, II, 3°) écrivent, soixante-quatre ans à compter de la génération
     1970 —, et non au-delà de l'âge d'ouverture de la période.
+  python: >-
+    droit/ouvrir.py : age_surcote ; droit/liquider.py : liquider_chaque_regime,
+    trimestres_de_surcote_regimes_speciaux ; scenarios/actuel.py :
+    AgesSurcoteRegimesSpeciaux
+  javascript: >-
+    moteur/js/droit/ouvrir.js : ageSurcote ; moteur/js/droit/liquider.js :
+    liquiderChaqueRegime, trimestresDeSurcoteRegimesSpeciaux ; moteur/js/regimes.js :
+    AgesSurcoteRegimesSpeciaux
+  parametres: >-
+    legislation/age_surcote_regimes_speciaux.csv : age
+  tests: [tests/test_simulateur.py, tests/js/moteur.test.js,
+    tests/temoins/simulations.json]

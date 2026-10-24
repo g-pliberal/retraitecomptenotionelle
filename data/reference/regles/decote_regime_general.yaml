@@ -3,6 +3,9 @@ id: decote_regime_general
 intitule: >-
   1,25 % du taux plein par trimestre manquant, le plus petit des deux décomptes
   (durée, âge), arrondi au trimestre supérieur, vingt trimestres au plus.
+regimes: [cancava, cancava_avant_1973, cavimac, cps_saint_pierre_et_miquelon,
+  msa_salaries, nric, organic, organic_avant_1973, rci, rco_artisans, regime_general,
+  rsi]
 etat: conforme
 etape: liquider_chaque_regime
 effet: >-
@@ -42,3 +45,20 @@ code:
     droit (2,5 % par trimestre) que pour la montée en charge de la loi Fillon (jusqu'à
     1,25 % à partir de la génération 1953) : elle se branche donc sur toutes les périodes
     des régimes alignés depuis 1983.
+  python: >-
+    droit/liquider.py : liquider_chaque_regime, decote_opposable, trimestres_de_decote,
+    _au_trimestre_superieur ; droit/ouvrir.py : age_taux_plein ; scenarios/actuel.py :
+    CoefficientsMinoration
+  javascript: >-
+    moteur/js/droit/liquider.js : liquiderChaqueRegime, decoteOpposable,
+    trimestresDeDecote, auTrimestreSuperieur ; moteur/js/droit/ouvrir.js :
+    ageTauxPlein ; moteur/js/regimes.js : CoefficientsMinoration
+  parametres: >-
+    regimes/cancava.yaml, regimes/cancava_avant_1973.yaml, regimes/cavimac.yaml,
+    regimes/cps_saint_pierre_et_miquelon.yaml, regimes/msa_salaries.yaml,
+    regimes/nric.yaml, regimes/organic.yaml, regimes/organic_avant_1973.yaml,
+    regimes/rci.yaml, regimes/rco_artisans.yaml, regimes/regime_general.yaml,
+    regimes/rsi.yaml : decote_par_trimestre, taux_plein, age_taux_plein,
+    duree_requise_trimestres ; legislation/coefficient_minoration.csv : coefficient
+  tests: [tests/test_simulateur.py, tests/test_oracle.py, tests/js/moteur.test.js,
+    tests/temoins/simulations.json]

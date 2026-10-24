@@ -8,6 +8,7 @@ intitule: >-
   d'annulation est l'âge de référence du régime diminué de seize trimestres, diminution
   réduite de deux trimestres chaque 1er juillet jusqu'en 2013, puis d'un jusqu'au 30 juin
   2024.
+regimes: [comedie_francaise, crpcen, ieg, ratp, sncf]
 etat: conforme
 etape: liquider_chaque_regime
 effet: >-
@@ -436,3 +437,26 @@ code:
     d'ouverture d'avant le décret n° 2023-689 majoré de cinq ans pour qui a réuni les
     conditions avant 2025 — la diminution s'en retranche (article 85-2, II) —, soixante-sept
     ans ensuite (article 85-1, I, 1°).
+  python: >-
+    droit/liquider.py : liquider_chaque_regime, decote_opposable, millesime_du_bareme,
+    trimestres_de_decote, borne_de_la_duree, retranche_decote, _au_trimestre_superieur,
+    _BAREMES_DECOTE_EN_TABLE, _BAREMES_REGIMES_SPECIAUX ; droit/ouvrir.py :
+    age_taux_plein, age_ouverture, mois_ouverture_des_droits, duree_propre ;
+    droit/compter.py : trimestres_de_la_ligne_entre ; scenarios/actuel.py :
+    DecoteRegimesSpeciaux, AgesRegimes, DureesRequisesRegimes
+  javascript: >-
+    moteur/js/droit/liquider.js : liquiderChaqueRegime, decoteOpposable,
+    millesimeDuBareme, trimestresDeDecote, borneDeLaDuree, retrancheDecote,
+    auTrimestreSuperieur, BAREMES_DECOTE_EN_TABLE, BAREMES_REGIMES_SPECIAUX ;
+    moteur/js/droit/ouvrir.js : ageTauxPlein, ageOuverture, moisOuvertureDesDroits,
+    dureePropre ; moteur/js/droit/compter.js : trimestresDeLaLigneEntre ;
+    moteur/js/regimes.js : DecoteRegimesSpeciaux, AgesRegimes, DureesRequisesRegimes
+  parametres: >-
+    regimes/comedie_francaise.yaml, regimes/crpcen.yaml, regimes/ieg.yaml,
+    regimes/ratp.yaml, regimes/sncf.yaml : age_taux_plein, age_table, age_ouverture,
+    duree_requise_trimestres, duree_requise_table ;
+    legislation/decote_regimes_speciaux.csv : trimestres_avant_limite, coefficient ;
+    legislation/ages_regimes.csv : age_taux_plein ;
+    legislation/duree_requise_regimes_speciaux.csv : retranche_decote
+  tests: [tests/test_simulateur.py, tests/test_oracle.py, tests/js/moteur.test.js,
+    tests/temoins/simulations.json]

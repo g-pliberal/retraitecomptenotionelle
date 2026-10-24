@@ -4,6 +4,7 @@ intitule: >-
   Régime de base des avocats : la pension est majorée de 0,75 % par trimestre cotisé
   accompli du 1er janvier 2004 au 30 juin 2010, et de 1,25 % par trimestre accompli
   depuis le 1er juillet 2010, après l'âge de L. 351-1 et au-delà de la durée requise.
+regimes: [cnbf]
 etat: conforme
 effet: >-
   La fiche servait 0,75 % à tout trimestre de surcote : un avocat né en 1945, parti
@@ -45,3 +46,16 @@ code:
   moteur: >-
     `surcote_bareme: cnbf` : 0,75 % pour les trimestres accomplis du 1er janvier 2004
     au 30 juin 2010, 1,25 % depuis le 1er juillet 2010 (R. 653-3).
+  python: >-
+    droit/liquider.py : liquider_chaque_regime, coefficient_surcote_datee ;
+    droit/ouvrir.py : age_surcote, age_ouverture_commun ; scenarios/actuel.py :
+    SurcoteBaremes
+  javascript: >-
+    moteur/js/droit/liquider.js : liquiderChaqueRegime, coefficientSurcoteDatee ;
+    moteur/js/droit/ouvrir.js : ageSurcote, ageOuvertureCommun ; moteur/js/regimes.js :
+    SurcoteBaremes
+  parametres: >-
+    regimes/cnbf.yaml : surcote_par_trimestre, duree_requise_trimestres, age_ouverture ;
+    legislation/surcote_baremes.csv : cnbf
+  tests: [tests/test_sections_juridiques.py, tests/js/moteur.test.js,
+    tests/temoins/simulations.json]

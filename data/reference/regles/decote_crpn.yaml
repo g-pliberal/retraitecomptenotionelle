@@ -4,6 +4,7 @@ intitule: >-
   Navigants de l'aviation civile (CRPN) : taux plein à trente annuités, décote de
   5 % par annuité manquante sur la seule durée depuis 2022, et aucune décote à partir
   de soixante ans, l'âge du premier alinéa de L. 6521-4 du code des transports.
+regimes: [crpnpac, crpnpac_tranche_2]
 etat: approchee
 effet: >-
   L'âge d'annulation passe de 65 à 60 ans pour toute liquidation depuis 2012, et
@@ -65,3 +66,17 @@ code:
     décote est abaissée par la table `crpn_2022`
     (`legislation/duree_requise_regimes_speciaux.csv`), qui ne répond qu'à qui
     liquide à cinquante-cinq ans ou plus (colonne `age_minimum`).
+  python: >-
+    droit/liquider.py : liquider_chaque_regime, decote_opposable, trimestres_de_decote,
+    retranche_decote ; droit/ouvrir.py : age_taux_plein, duree_propre ;
+    scenarios/actuel.py : DureesRequisesRegimes
+  javascript: >-
+    moteur/js/droit/liquider.js : liquiderChaqueRegime, decoteOpposable,
+    trimestresDeDecote, retrancheDecote ; moteur/js/droit/ouvrir.js : ageTauxPlein,
+    dureePropre ; moteur/js/regimes.js : DureesRequisesRegimes
+  parametres: >-
+    regimes/crpnpac.yaml, regimes/crpnpac_tranche_2.yaml : decote_par_trimestre,
+    age_taux_plein, duree_requise_trimestres, duree_requise_table ;
+    legislation/duree_requise_regimes_speciaux.csv : crpn_2022, retranche_decote,
+    age_minimum
+  tests: [tests/test_simulateur.py]

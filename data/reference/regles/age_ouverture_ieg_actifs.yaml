@@ -7,6 +7,7 @@ intitule: >-
   —, puis l'âge de L. 161-17-2 abaissé de cinq ans, 59 ans, que la suspension de
   2026 ne change pas ; la surcote au-delà de l'âge du 1° du I de l'article 16, 64
   ans à compter de 1970.
+regimes: [ieg]
 etat: conforme
 effet: >-
   LA SUSPENSION NE CHANGE RIEN, MAIS LA FICHE ÉTAIT FAUSSE. Elle portait l'âge des
@@ -61,3 +62,17 @@ code:
     du 1° du I de l'article 16 de l'annexe 3, dont le 1° du V de l'article 45 écrit le
     même calendrier que la SNCF et la RATP ; le moteur le lit dans la même table, `legislation/age_surcote_regimes_speciaux.csv`,
     que la fiche `age_surcote_sncf_ratp` décrit.
+  python: >-
+    droit/ouvrir.py : age_ouverture, age_ouverture_commun, age_surcote ;
+    droit/liquider.py : liquider_chaque_regime, trimestres_de_surcote_regimes_speciaux ;
+    scenarios/actuel.py : AgesRegimes, AgesSurcoteRegimesSpeciaux
+  javascript: >-
+    moteur/js/droit/ouvrir.js : ageOuverture, ageOuvertureCommun, ageSurcote ;
+    moteur/js/droit/liquider.js : liquiderChaqueRegime,
+    trimestresDeSurcoteRegimesSpeciaux ; moteur/js/regimes.js : AgesRegimes,
+    AgesSurcoteRegimesSpeciaux
+  parametres: >-
+    regimes/ieg.yaml : age_ouverture, age_table ; legislation/ages_regimes.csv :
+    ieg_actif_2011, ieg_actif_2023 ; legislation/age_surcote_regimes_speciaux.csv : age
+  tests: [tests/test_simulateur.py, tests/test_limite_age.py, tests/js/moteur.test.js,
+    tests/temoins/simulations.json]

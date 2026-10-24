@@ -5,6 +5,7 @@ intitule: >-
   d'ouverture du droit, montée en charge 2006-2020, limite d'âge du grade ; la durée
   d'assurance qu'elle lit se compte au jour, sans arrondi, ses trimestres manquants
   arrondis à l'entier supérieur (fiche decompte_des_services_fonction_publique).
+regimes: [banque_de_france, cnracl, fonction_publique_etat, fspoeie]
 etat: conforme
 effet: Fonctionnaires liquidant avant le taux plein.
 sources:
@@ -48,3 +49,22 @@ code:
     pensions : le coefficient ET l'âge d'annulation y montent en charge de 2006 à 2020,
     ce dernier étant la LIMITE D'ÂGE du grade diminuée d'un nombre décroissant de trimestres
     (`legislation/decote_fonction_publique.csv`).
+  python: >-
+    droit/liquider.py : liquider_chaque_regime, decote_opposable, millesime_du_bareme,
+    trimestres_de_decote, _au_trimestre_superieur, _BAREMES_DECOTE_EN_TABLE ;
+    droit/ouvrir.py : age_taux_plein, annee_ouverture_des_droits, derogation_active ;
+    scenarios/actuel.py : DecoteFonctionPublique
+  javascript: >-
+    moteur/js/droit/liquider.js : liquiderChaqueRegime, decoteOpposable,
+    millesimeDuBareme, trimestresDeDecote, auTrimestreSuperieur,
+    BAREMES_DECOTE_EN_TABLE ; moteur/js/droit/ouvrir.js : ageTauxPlein,
+    anneeOuvertureDesDroits, derogationActive ; moteur/js/regimes.js :
+    DecoteFonctionPublique
+  parametres: >-
+    regimes/banque_de_france.yaml, regimes/cnracl.yaml,
+    regimes/fonction_publique_etat.yaml, regimes/fspoeie.yaml : age_taux_plein,
+    age_ouverture, duree_requise_trimestres ; legislation/decote_fonction_publique.csv :
+    trimestres_avant_limite, coefficient
+  tests: [tests/test_simulateur.py, tests/test_oracle.py,
+    tests/test_oracle_categorie_active.py, tests/test_decompte_des_services.py,
+    tests/js/moteur.test.js, tests/temoins/simulations.json]

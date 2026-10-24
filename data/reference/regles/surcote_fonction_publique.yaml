@@ -8,6 +8,7 @@ intitule: >-
   nés depuis le 1er septembre 1971), soixante-deux ans avant ces générations ; trimestres
   de DURÉE depuis le jour où les conditions sont réunies, et non trimestres civils,
   chacun au taux de sa date d'achèvement.
+regimes: [cnracl, fonction_publique_etat, fspoeie]
 etat: conforme
 effet: >-
   Fonctionnaires liquidant après l'âge légal avec la durée. Jusqu'au 24 septembre
@@ -81,3 +82,22 @@ code:
   moteur: >-
     `surcote_bareme: fonction_publique` : 0,75 % dans la limite de vingt trimestres jusqu'en
     2008, 1,25 % depuis (L. 14 III).
+  python: >-
+    droit/liquider.py : liquider_chaque_regime, coefficient_surcote_datee ;
+    droit/ouvrir.py : age_surcote, age_ouverture_commun, derogation_active,
+    statut_dominant, droit_militaire, SURCOTE_EMPLOIS_CLASSES, AGE_SURCOTE_AVANT_2023 ;
+    droit/coordonner.py : REGIMES_CODE_DES_PENSIONS ; scenarios/actuel.py :
+    SurcoteBaremes
+  javascript: >-
+    moteur/js/droit/liquider.js : liquiderChaqueRegime, coefficientSurcoteDatee ;
+    moteur/js/droit/ouvrir.js : ageSurcote, ageOuvertureCommun, derogationActive,
+    statutDominant, droitMilitaire, SURCOTE_EMPLOIS_CLASSES, AGE_SURCOTE_AVANT_2023 ;
+    moteur/js/droit/coordonner.js : REGIMES_CODE_DES_PENSIONS ; moteur/js/regimes.js :
+    SurcoteBaremes
+  parametres: >-
+    regimes/cnracl.yaml, regimes/fonction_publique_etat.yaml, regimes/fspoeie.yaml :
+    surcote_par_trimestre, duree_requise_trimestres, age_ouverture ;
+    legislation/surcote_baremes.csv : fonction_publique
+  tests: [tests/test_simulateur.py, tests/test_oracle.py, tests/test_cnracl.py,
+    tests/test_fonction_publique_etat.py, tests/js/moteur.test.js,
+    tests/temoins/simulations.json]

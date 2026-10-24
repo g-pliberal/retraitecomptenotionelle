@@ -4,6 +4,8 @@ intitule: >-
   Trimestres civils entiers cotisés après l'âge légal et au-delà de la durée requise,
   depuis le trimestre qui suit l'âge légal ou le mois qui suit la durée ; taux à
   la date de chaque trimestre (0,75 %, 1 %, 1,25 % après 65 ans, 1,25 % depuis 2009).
+regimes: [cancava, cavimac, cnavpl, msa_non_salaries, msa_salaries, organic,
+  regime_general, rsi]
 etat: conforme
 etape: liquider_chaque_regime
 effet: Toute liquidation après l'âge légal avec la durée requise.
@@ -42,6 +44,23 @@ code:
     L. 351-1-2, telle que la branche en annuités la sert — trimestres COTISÉS après l'âge
     légal et au-delà de la durée requise, au taux `surcote_par_trimestre` ; c'est celle
     de la CNAVPL (R. 643-8) et de la MSA des non-salariés (D. 732-42).
+  python: >-
+    droit/liquider.py : liquider_chaque_regime, coefficient_surcote_datee,
+    surcote_points, _trimestres_cotises_apres ; droit/ouvrir.py : age_surcote,
+    age_ouverture_commun ; scenarios/actuel.py : SurcoteBaremes
+  javascript: >-
+    moteur/js/droit/liquider.js : liquiderChaqueRegime, coefficientSurcoteDatee,
+    surcotePoints, trimestresCotisesApres ; moteur/js/droit/ouvrir.js : ageSurcote,
+    ageOuvertureCommun ; moteur/js/regimes.js : SurcoteBaremes
+  parametres: >-
+    regimes/cancava.yaml, regimes/cavimac.yaml, regimes/cnavpl.yaml,
+    regimes/msa_non_salaries.yaml, regimes/msa_salaries.yaml, regimes/organic.yaml,
+    regimes/regime_general.yaml, regimes/rsi.yaml : surcote_par_trimestre,
+    duree_requise_trimestres, age_ouverture ; legislation/surcote_baremes.csv :
+    regime_general
+  tests: [tests/test_simulateur.py, tests/test_oracle.py,
+    tests/test_oracle_periodes_assimilees.py, tests/js/moteur.test.js,
+    tests/temoins/simulations.json]
 referents:
   openfisca_france_pension:
     equivalent: >-

@@ -6,6 +6,7 @@ intitule: >-
   mais un âge d'annulation propre, leur âge minimum d'ouverture majoré de quatre trimestres
   pour qui réunit les conditions de juillet 2010 à juin 2011, de six l'année suivante et de
   huit ensuite.
+regimes: [opera_de_paris]
 etat: transcrite
 etape: liquider_chaque_regime
 effet: >-
@@ -148,3 +149,18 @@ code:
     quatre trimestres de juillet 2010 à juin 2011, de six l'année suivante, de huit ensuite,
     au lieu de l'âge de référence diminué de seize trimestres, puis de quatorze, puis de
     douze, comme dans les autres régimes spéciaux.
+  python: >-
+    droit/liquider.py : liquider_chaque_regime, decote_opposable, millesime_du_bareme,
+    trimestres_de_decote, borne_de_la_duree, _BAREMES_DECOTE_EN_TABLE,
+    _BAREMES_REGIMES_SPECIAUX ; droit/ouvrir.py : age_ouverture, age_taux_plein,
+    mois_ouverture_des_droits ; scenarios/actuel.py : DecoteRegimesSpeciaux
+  javascript: >-
+    moteur/js/droit/liquider.js : liquiderChaqueRegime, decoteOpposable,
+    millesimeDuBareme, trimestresDeDecote, borneDeLaDuree, BAREMES_DECOTE_EN_TABLE,
+    BAREMES_REGIMES_SPECIAUX ; moteur/js/droit/ouvrir.js : ageOuverture, ageTauxPlein,
+    moisOuvertureDesDroits ; moteur/js/regimes.js : DecoteRegimesSpeciaux
+  parametres: >-
+    regimes/opera_de_paris.yaml : age_ouverture, age_taux_plein,
+    duree_requise_trimestres ; legislation/decote_regimes_speciaux.csv :
+    trimestres_avant_limite, coefficient
+  tests: [tests/test_simulateur.py]

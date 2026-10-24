@@ -5,6 +5,7 @@ intitule: >-
   et Opéra : un coefficient par trimestre d'assurance cotisé et effectué après le 1er juillet
   2008, au-delà de l'âge que fixe chaque décret et en sus de la durée requise, pour qui
   totalise au moins cent soixante trimestres.
+regimes: [comedie_francaise, crpcen, ieg, opera_de_paris, ratp, sncf]
 etat: transcrite
 etape: liquider_chaque_regime
 effet: >-
@@ -80,3 +81,21 @@ code:
     de la surcote se lit dans `legislation/age_surcote_regimes_speciaux.csv`, le calendrier
     du b et du c de l'article 84, soixante ans avant 1957, soixante-quatre ans à compter de
     1970.
+  python: >-
+    droit/liquider.py : liquider_chaque_regime, trimestres_de_surcote_regimes_speciaux,
+    SURCOTE_REGIMES_SPECIAUX_DEPUIS, _BAREMES_REGIMES_SPECIAUX ; droit/compter.py :
+    trimestres_de_la_ligne_entre ; droit/ouvrir.py : age_surcote, age_ouverture_commun ;
+    scenarios/actuel.py : AgesSurcoteRegimesSpeciaux
+  javascript: >-
+    moteur/js/droit/liquider.js : liquiderChaqueRegime,
+    trimestresDeSurcoteRegimesSpeciaux, SURCOTE_REGIMES_SPECIAUX_DEPUIS,
+    BAREMES_REGIMES_SPECIAUX ; moteur/js/droit/compter.js : trimestresDeLaLigneEntre ;
+    moteur/js/droit/ouvrir.js : ageSurcote, ageOuvertureCommun ; moteur/js/regimes.js :
+    AgesSurcoteRegimesSpeciaux
+  parametres: >-
+    regimes/comedie_francaise.yaml, regimes/crpcen.yaml, regimes/ieg.yaml,
+    regimes/opera_de_paris.yaml, regimes/ratp.yaml, regimes/sncf.yaml :
+    surcote_par_trimestre, duree_requise_trimestres, age_ouverture ;
+    legislation/age_surcote_regimes_speciaux.csv : age
+  tests: [tests/test_simulateur.py, tests/js/moteur.test.js,
+    tests/temoins/simulations.json]

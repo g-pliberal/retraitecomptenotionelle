@@ -6,6 +6,8 @@ intitule: >-
   soixante ans, majorés de 1,25 point par trimestre d'ajournement — ; la durée
   n'ouvrait le taux de soixante-cinq ans qu'à des catégories nommées, dont, depuis 1978,
   les femmes justifiant de trente-sept ans et demi d'assurance.
+regimes: [cancava, cancava_avant_1973, msa_salaries, organic, organic_avant_1973,
+  regime_general]
 etat: approchee
 etape: liquider_chaque_regime
 effet: >-
@@ -478,3 +480,22 @@ code:
     `age_taux_plein_femmes`, `duree_taux_plein_femmes_trimestres` et
     `duree_taux_plein_femmes_regimes` des périodes de 1978 et de 1979 à 1982 annulent la
     décote des femmes qui réunissent la durée (`liquider.taux_plein_des_femmes`).
+  python: >-
+    droit/liquider.py : liquider_chaque_regime, decote_opposable, trimestres_de_decote,
+    ecart_au_taux_plein, taux_plein_des_femmes, taux_acquis_au_31_mars_1983,
+    taux_acquis_l_emporte, _trimestres_cotises_apres, ORDONNANCE_DU_26_MARS_1982 ;
+    droit/ouvrir.py : age_ouverture, age_taux_plein
+  javascript: >-
+    moteur/js/droit/liquider.js : liquiderChaqueRegime, decoteOpposable,
+    trimestresDeDecote, ecartAuTauxPlein, tauxPleinDesFemmes, tauxAcquisAu31Mars1983,
+    tauxAcquisLEmporte, trimestresCotisesApres, ORDONNANCE_DU_26_MARS_1982 ;
+    moteur/js/droit/ouvrir.js : ageOuverture, ageTauxPlein
+  parametres: >-
+    regimes/cancava.yaml, regimes/cancava_avant_1973.yaml, regimes/msa_salaries.yaml,
+    regimes/organic.yaml, regimes/organic_avant_1973.yaml, regimes/regime_general.yaml :
+    decote_par_trimestre, taux_plein, age_ouverture, age_taux_plein,
+    age_taux_plein_femmes, duree_taux_plein_femmes_trimestres,
+    duree_taux_plein_femmes_regimes
+  tests: [tests/test_simulateur.py, tests/test_coupures_au_mois.py,
+    tests/test_pension_maximale.py, tests/test_oracle.py, tests/js/moteur.test.js,
+    tests/temoins/simulations.json]

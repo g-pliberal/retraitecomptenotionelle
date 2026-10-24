@@ -184,18 +184,16 @@ def test_le_code_d_une_fiche_se_confronte_au_depot():
 #: d'emblée sous la forme que l'outil lit.
 EN_PROSE = frozenset("""
     abattement_rci age_annulation_decote age_legal_par_generation
-    age_ouverture_ieg_actifs age_reference_decote_ieg age_surcote_sncf_ratp
     assiette_minimale_agricole bareme_minoration_regimes_en_points
-    cnbf_surcote coefficient_anticipation_ircantec
+    coefficient_anticipation_ircantec
     coefficients_anticipation_agirc_arrco cotisation_par_classes_liberales
     cultes_retraite_complementaire cultes_salaire_annuel_moyen
-    date_effet_mois_suivant decote_avant_1983 decote_crpn decote_fonction_publique
-    decote_opera_de_paris decote_regime_general decote_regimes_speciaux
+    date_effet_mois_suivant
     duree_requise_par_generation majoration_duree_apres_65_ans
     pension_non_salaries_agricoles_2026
     points_au_prorata_des_cotisations raap_classe_speciale
-    retraite_proportionnelle_msa surcote_fonction_publique surcote_ircantec
-    surcote_par_age_seul surcote_regime_general surcote_regimes_speciaux
+    retraite_proportionnelle_msa surcote_ircantec
+    surcote_par_age_seul
     taux_plein_et_proratisation temps_partiel_fonction_publique
     trimestres_avant_1972 trimestres_retenus_1972_1974
 """.split())
