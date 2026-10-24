@@ -9747,42 +9747,176 @@ referents:
     confronte: [scenario_1]
     couvre: >-
       L'âge d'ouverture, l'âge et la durée du taux plein, la décote et la
-      surcote par génération, au projet de réforme annoncé le 10 janvier
-      2023, pas à la loi votée.
+      surcote, de 58 à 67 ans, sous le droit de janvier 2023 (son état
+      « now ») et sous le projet de réforme annoncé le 10 janvier 2023 (son
+      état « mac »), pas sous la loi votée.
+    version: "5e4abf1"
     confrontation: >-
-      Peu : son droit est un projet ; il garde la lecture d'un moment. Jamais
-      confronté : lu le 1er et le 4 octobre 2026 (écarts ci-dessous). Seul son
-      droit d'avant 2023 se compare au scénario 1, pour les pensions parties
-      avant le 1er septembre 2023.
+      Un calcul rejoué, le 24 octobre 2026 : son état « now », le droit de
+      janvier 2023, au commit `5e4abf1`, encore sa tête, exécuté à part sous
+      Node sur 6 944 carrières — nés de 1950 à 2010, entrés de 16 à 40 ans,
+      avec ou sans deux ans et demi sans validation, sans enfant, mère du
+      privé d'un ou de trois enfants, mère fonctionnaire de deux —, chacune à
+      ses dix âges, 69 440 départs. Le dépôt les a liquidés au droit
+      contrefactuel `au_31_aout_2023`, qui garde les lois de 2010 et de 2014,
+      pour un assuré né le 31 mars, et le 30 septembre pour 1951 : l'âge légal
+      y tombe en fin de trimestre civil, où le décompte de la caisse égale le
+      sien. Sa table d'âges et de durées est celle du dépôt, sauf 1951. Sur
+      les 43 644 départs que les deux ouvrent, 41 627 ont la même décote et la
+      même surcote ; les 2 017 autres, et 148 des 292 qu'un seul ouvre,
+      tiennent aux six premiers écarts ci-dessous, où les textes de sa date
+      tranchent pour le dépôt. Les 144 restants sont des mères parties depuis
+      septembre 2026, que le contrefactuel ouvre par la majoration pour
+      enfants réputée cotisée (D. 351-1-2-1, de 2026) : à sa date, le
+      simulateur a raison, et le contrefactuel le déclare. Son résumé, « peut
+      partir dès », dit l'âge au mois près ; sur 1 952 carrières entrées avant
+      vingt ans, il redonne le premier mois que le moteur ouvre pour 1 206, et
+      pour 224 entrées à seize ans, des générations 1955 à 2010, il dit 60
+      ans, au texte, quand le moteur dit 59 ans et 8 mois (fait_mieux
+      ci-dessous). Son état « mac », un projet, ne se compare qu'à lui-même.
+      Les cas que tests/test_referents.py tient : sa table de l'état « now »,
+      dix-neuf départs, et la mère de 1970.
     ecarts:
       - constat: >-
-          Son droit « mac » met toute la génération 1961 à 62 ans et
-          3 mois, avec 169 trimestres
-          (`legalParametersByYearOfBirth.json`, clé 1961).
+          Son état « now » sert à toute la génération 1951 l'âge des nés
+          du second semestre, 60 ans et 4 mois, et le taux plein à 65 ans
+          et 4 mois (`legalParametersByYearOfBirth.json`, clé 1951).
+          Rejoué, 373 départs des nés du premier semestre en sortent
+          faux : 92 qu'il ferme à 60 ans, 281 à qui il compte un ou deux
+          trimestres de surcote de moins ; leur décote aussi, avec
+          l'écart suivant.
+        tranche: >-
+          D. 161-2-1-9 (LEGIARTI000025089933, de 2011 à 2023) : « 1°
+          Soixante ans pour les assurés nés avant le 1er juillet 1951 » ;
+          L. 351-8, 1° (LEGIARTI000028498855) : le taux plein à cet âge
+          « augmenté de cinq années ». Le dépôt les sert ; l'écart est le
+          sien.
+        preuve: Index LEGI ; tests/test_referents.py
+      - constat: >-
+          Sa décote compte 1,25 % par trimestre à toutes les générations
+          (`utils/calculationUtils.js:118`). Rejoué, 588 départs des
+          générations 1950 à 1952 en sortent décotés de 0,25 à 7,5 points
+          de moins ; pour les nés de 1951 au premier semestre, l'âge du
+          taux plein de l'écart précédent s'y mêle.
+        tranche: >-
+          R. 351-27, II (LEGIARTI000024113020, de 2011 à 2023) : « 1,625 %
+          pour l'assuré né en 1950 ; 1,5 % pour l'assuré né en 1951 ;
+          1,375 % pour l'assuré né en 1952 ; 1,25 % pour l'assuré né après
+          1952 ». Le dépôt les applique (`coefficient_minoration.csv`,
+          certifié) ; l'écart est le sien.
+        preuve: Index LEGI ; tests/test_referents.py
+      - constat: >-
+          Quand l'âge du taux plein n'est pas un nombre entier d'années,
+          de 65 ans et 4 mois à 66 ans et 7 mois, il compte en fractions
+          de trimestre la durée qui en sépare le départ : 16,67 trimestres
+          à 62 ans pour un né en 1953 (`utils/calculationUtils.js:118`).
+          Rejoué, 452 départs des générations 1951 à 1954 en sortent
+          décotés de moins : de 0,42 et 0,83 point en 1953 et 1954, de
+          davantage en 1951, où le coefficient de l'écart précédent
+          s'ajoute.
+        tranche: >-
+          R. 351-27, I, 2° (LEGIARTI000024113020) : « le nombre de
+          trimestres correspondant est éventuellement arrondi au chiffre
+          immédiatement supérieur ». Le dépôt arrondit
+          (`_au_trimestre_superieur`, `droit/liquider.py`) ; l'écart est
+          le sien.
+        preuve: Index LEGI ; tests/test_referents.py
+      - constat: >-
+          Il ouvre la carrière longue à l'âge légal moins deux ans, dès 58
+          ans, à tout début d'activité avant vingt ans dont la durée
+          cotisée atteint la durée requise, aux générations 1950 à 1954
+          comme aux suivantes (`legalParametersByYearOfBirth.json`,
+          `AgeCL_now` ; `utils/calculationUtils.js:40, 99-108`). Rejoué,
+          il ouvre 56 départs de 58 à 60 ans des générations 1950 à 1952
+          que le droit de leur date fermait ; son résumé avance le départ
+          de 92 carrières de ces générations et des deux suivantes, à 59
+          ans et 2 mois pour un né de 1953 entré à seize ans.
+        tranche: >-
+          D. 351-1-1 dans sa rédaction de 2003 (LEGIARTI000006736521),
+          jusqu'en juin 2011 : avant soixante ans, 56 ou 58 ans pour un
+          début avant seize ans, 59 ans avant dix-sept, et une durée
+          d'assurance majorée de huit trimestres ; celle de 2010
+          (LEGIARTI000023397567), jusqu'en octobre 2012, y ajoute 60 ans
+          pour un début avant dix-huit ans ; celle de 2012
+          (LEGIARTI000026139949) ouvre 60 ans à un début avant vingt ans,
+          et ne garde 59 ans et 8 mois, pour un début avant dix-sept ans,
+          qu'aux nés de 1953. Le dépôt lit chaque rédaction à la date
+          d'effet ; l'écart est le sien.
+        preuve: Index LEGI ; tests/test_referents.py
+      - constat: >-
+          Il sert à la mère fonctionnaire la décote du régime général :
+          1,25 % par trimestre, jusqu'à l'âge du taux plein du privé
+          (`utils/calculationUtils.js:116-120`). Rejoué, 518 départs de
+          fonctionnaires nées de 1950 à 1957 en sortent décotés de 0,125
+          à 18,75 points de trop.
+        tranche: >-
+          L'article 66, III, de la loi n° 2003-775 (LEGIARTI000006758610),
+          jusqu'au 31 décembre 2019 : selon l'année où le droit s'ouvre, le
+          coefficient monte de 0,125 % en 2006 à 1,25 % en 2015, et la
+          décote s'annule à la limite d'âge moins seize à un trimestres. Le
+          dépôt l'applique (`decote_fonction_publique.csv`, certifié) ;
+          l'écart est le sien.
+        preuve: Index LEGI ; tests/test_referents.py
+      - constat: >-
+          Il laisse la fonctionnaire travailler, et surcoter, jusqu'à 67
+          ans. Rejoué, 178 départs de fonctionnaires nées de 1950 à 1954
+          en sortent surcotés de 1,25 à 10 points de trop.
+        tranche: >-
+          La limite d'âge du sédentaire, 65 ans pour les nés avant le 1er
+          juillet 1951, puis par génération jusqu'à 67 ans (loi n° 84-834,
+          article 1er, LEGIARTI000023031762 ; décret n° 2011-754, article
+          3, LEGIARTI000024272411), la radie des cadres, et sa pension se
+          liquide à cette date (fiche `limite_age_fonction_publique`). Le
+          dépôt l'y radie ; l'écart est le sien.
+        preuve: Index LEGI ; tests/test_referents.py
+      - constat: >-
+          Il donne à la mère fonctionnaire quatre trimestres par enfant
+          né avant 2004, sans condition (`utils/calculationUtils.js:55-60`).
+        tranche: >-
+          L. 12, b, du code des pensions (LEGIARTI000037200561, de 2018 à
+          2023) : la bonification n'est due qu'« à condition qu'ils aient
+          interrompu ou réduit leur activité » ; le congé de maternité y
+          suffit (R. 13). Le dépôt présume la condition remplie par la mère,
+          et le déclare (fiche `enfants_fonction_publique`) : rejoué, les
+          deux comptent les mêmes trimestres. L'écart est une présomption
+          que le simulateur tait.
+        preuve: Index LEGI ; tests/test_referents.py
+      - constat: >-
+          Une année de naissance hors de 1950 à 2010, que son formulaire
+          accepte de 1900 à 2022 (`pages/index.js:103`), arrête le calcul.
+          Rejoué : « TypeError: Cannot read properties of undefined
+          (reading 'DTP_mac') ».
+        tranche: >-
+          Le code lui-même : sa table n'a de clé que de 1950 à 2010, et la
+          ligne 44 lit `parameters.DTP_mac` sur `legalParameters[birthDate]`
+          (`:18`), indéfini ailleurs.
+        preuve: >-
+          `utils/calculationUtils.js:18, 44`, au commit `5e4abf1`, exécuté
+          sous Node
+      - constat: >-
+          Son état « mac » met toute la génération 1961 à 62 ans et 3
+          mois, avec 169 trimestres (`legalParametersByYearOfBirth.json`,
+          clé 1961), quand sa page d'informations écrit que la réforme
+          « est prévue pour s'appliquer pour les personnes nées à partir
+          de septembre 1961 » (`pages/informations.js:21`).
         tranche: >-
           L. 161-17-2 (LEGIARTI000053280889) et L. 161-17-3
           (LEGIARTI000053280903) : les nés de janvier à août 1961
           gardent 62 ans et 168 trimestres.
         preuve: Index LEGI
       - constat: >-
-          Il donne à la mère fonctionnaire quatre trimestres par
-          enfant né avant 2004, sans condition
-          (`calculationUtils.js:55-60`).
-        tranche: >-
-          L. 12 b CPCMR (LEGIARTI000053280361) : la bonification
-          n'est due qu'« à condition qu'ils aient interrompu ou
-          réduit leur activité ».
-        preuve: Index LEGI
-      - constat: >-
-          Ses deux états, le droit d'avant 2023 et le projet du 10
-          janvier 2023, sont tous deux périmés : 63 ans et 171
-          trimestres à 1964, et pas de carrière longue pour un début
-          d'activité avant 21 ans (`calculationUtils.js:37-48`).
+          Ses deux états ont vieilli : 63 ans et 171 trimestres à 1964, et
+          pas de carrière longue pour un début d'activité avant 21 ans
+          (`legalParametersByYearOfBirth.json` ;
+          `utils/calculationUtils.js:37-48`).
         tranche: >-
           La loi du 30 décembre 2025 donne 62 ans et 9 mois et 170
-          trimestres à 1964. D. 351-1-1 (LEGIARTI000054059621) ouvre
-          le départ à 63 ans pour un début avant 21 ans.
-        preuve: Index LEGI
+          trimestres à 1964. D. 351-1-1 (LEGIARTI000054059621) ouvre le
+          départ à 63 ans pour un début avant 21 ans. Un retard : arrêté
+          le 22 janvier 2023, il n'a suivi ni la loi du 14 avril 2023 ni
+          sa suspension ; rejoué, son état « now » est le droit de sa
+          date, hors des écarts ci-dessus.
+        preuve: Index LEGI ; tests/test_referents.py
     fait_mieux:
       - quoi: >-
           Il donne, de 58 à 67 ans et sous deux états du droit, ce que vaut
@@ -9795,23 +9929,55 @@ referents:
           `utils/calculationUtils.js:20`, au commit `5e4abf1`
         etat: a_reprendre
         chantier: "138.10"
+      - quoi: >-
+          Son résumé ouvre à 60 ans la carrière longue des nés de 1955 et
+          après entrés à seize ans dont la durée cotisée est atteinte plus
+          tôt. Le moteur leur ouvre 59 ans et 8 mois : sous le décret du 2
+          juillet 2012, il étend à toutes les générations suivantes la porte
+          des débuts avant dix-sept ans, que le texte réserve aux nés de
+          1952 et de 1953 (D. 351-1-1, II, A et B, LEGIARTI000026139949), et,
+          pour un début avant seize ans, celles qu'il ne donne qu'aux nés de
+          1953 à 1957. Au droit en vigueur, cela vaut pour les départs de
+          novembre 2012 à août 2023 ; au droit au 31 août 2023, à toute date.
+        preuve: >-
+          `components/Summary.js:83-84` et `utils/calculationUtils.js:99-108`,
+          au commit `5e4abf1`, exécutés sous Node ; au dépôt,
+          `CarriereLongue._portes` (`scenarios/actuel.py`)
+        verification: >-
+          Rejoué le 24 octobre 2026 : 224 carrières entrées à seize ans, des
+          générations 1955 à 2010, à qui son résumé dit 60 ans et le moteur
+          59 ans et 8 mois ; né en 1955, 1958, 1960 ou 1962, l'assuré y part
+          aussi au droit en vigueur. Pour 1954, les deux ont tort : 59 ans et
+          7 mois chez lui, 60 ans au texte.
+        etat: a_reprendre
+        chantier: "138.21"
     bilan: >-
-      Rien de neuf au-delà de la table d'âges déjà au registre. Son
-      droit est celui d'un moment, et les textes en vigueur le
-      contredisent sur trois points.
+      La lecture âge par âge reste son apport, et un point : la carrière
+      longue des débuts à seize ans, à 60 ans dès 1955, où le moteur a tort.
+      Rejoué au droit de sa date, son état « now » redonne le dépôt sur
+      41 627 des 43 644 départs que les deux ouvrent ; ailleurs, il sert à
+      toute la génération 1951 l'âge de son second semestre, 1,25 % de
+      décote aux générations 1950 à 1952, des fractions de trimestre, la
+      carrière longue de 2012 aux générations d'avant, et à sa fonctionnaire
+      la décote du privé et une surcote au-delà de la limite d'âge. Les
+      textes de sa date tranchent ces écarts en faveur du dépôt.
     sas: [nosretraites_simulateur_cas_types]
-    lu_le: 2026-10-04
+    lu_le: 2026-10-24
     lu_dans:
       - https://github.com/nosretraites/simulateur_cas_types
       - https://github.com/nosretraites/simulateur_cas_types_data
     note: >-
-      Dernier commit le 22 janvier 2023 ; ses données sont dans
-      `simulateur_cas_types_data`.
-      Comparé au dépôt le 1er octobre 2026 au commit `5e4abf1`, ses données au
-      commit `942e9f6`. La comparaison y trouve, sans citer le texte qui
-      tranche, toute la génération 1961 à 62,25 ans dans le droit « mac », et
-      la bonification des fonctionnaires pour enfants nés avant 2004 sans
-      condition d'interruption.
+      Dernier commit le 22 janvier 2023 ; ses données de juin 2022, dans
+      `simulateur_cas_types_data` (commit `942e9f6`), sont celles d'une
+      version antérieure, que le simulateur ne lit plus.
+      Comparé au dépôt le 1er octobre 2026 au commit `5e4abf1`. La
+      comparaison y trouvait, sans citer le texte qui tranche, toute la
+      génération 1961 à 62,25 ans dans le droit « mac », et la bonification
+      des fonctionnaires pour enfants nés avant 2004 sans condition
+      d'interruption. Rejoué le 24 octobre 2026 au même commit, encore sa
+      tête : `utils/calculationUtils.js` exécuté sous Node, sa seule ligne
+      d'import remplacée par sa table, puis le moteur sur les mêmes
+      carrières, par des fichiers de rejeu restés hors du dépôt.
 
   # ---- À l'étranger : les comptes notionnels --------------------------------
   # Ils confrontent l'arithmétique de la proposition : le diviseur, le

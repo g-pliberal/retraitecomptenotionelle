@@ -600,12 +600,16 @@ def page() -> str:
       f"documenté(s) sans leur code, {publications['non_public']} non public(s). "
       f"{len(tires)} ont déjà été confrontés au dépôt ou lui donnent des valeurs ("
       + ", ".join(r["nom"] for r in tires) + f") ; le registre compte {n_ecarts} "
-      f"écarts, dont {n_ecarts_tires} chez eux. {len(premiers)} sont à confronter au "
-      "scénario 1 en premier, parce que "
-      "leur code est ouvert, qu'ils ne l'ont jamais été et qu'ils ne dépendent d'aucune "
-      "autre source du registre ; dans l'ordre du registre, qui range les "
-      "administrations d'abord : " + ", ".join(f"`{r['id']}`" for r in premiers[:6])
-      + (f", et {len(premiers) - 6} autres." if len(premiers) > 6 else "."))
+      f"écarts, dont {n_ecarts_tires} chez eux. "
+      + (f"{len(premiers)} sont à confronter au scénario 1 en premier, parce que "
+         "leur code est ouvert, qu'ils ne l'ont jamais été et qu'ils ne dépendent d'aucune "
+         "autre source du registre ; dans l'ordre du registre, qui range les "
+         "administrations d'abord : " + ", ".join(f"`{r['id']}`" for r in premiers[:6])
+         + (f", et {len(premiers) - 6} autres." if len(premiers) > 6 else ".")
+         if premiers else
+         "Aucun n'est plus à confronter au scénario 1 en premier : tous ceux dont le "
+         "code est ouvert et qui ne dépendent d'aucune autre source du registre l'ont "
+         "été."))
     if mieux:
         ordre = sorted(chantiers, key=lambda c: tuple(int(n) for n in c.split(".")))
         w(f"- **Ce que les autres modèles font mieux** (action 138) : {len(mieux)} points, "

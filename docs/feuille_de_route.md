@@ -5698,16 +5698,16 @@ mémoire sur le seul code du modèle ; `actions/cache` sur GitHub.
 
 ### 137. Les autres modèles publics : le registre exhaustif, puis leur confrontation — `en cours`
 
-**Reprise, au 24 octobre 2026.** Fait : le registre (70 modèles), relu à
-l'action 138 ; Destinie 2, TRAJECTOiRE et Ines exécutés à part ; les pistes
-du 1er octobre, closes ; les treize « jamais confrontés », remis à plat (note
-du 22 octobre) ; modele-as, Catala et le simulateur de SUD éducation rejoués
-au droit de leur date (notes du 23 et du 24 octobre) : le dépôt a raison
-partout, et eux ont leurs erreurs, au registre. Le dernier qui reste à
-confronter, dans l'ordre du registre : Nos Retraites, au droit d'avant 2023.
-Restent aussi l'Agirc-Arrco d'EDIFIS, l'ASPA de Saphir, les années 2015 à
-2025 d'EUROMOD ; la campagne 2025 de l'EACR, au printemps 2027 (note du 14
-octobre) ; les `referents` des fiches, à leur relecture.
+**Reprise, au 24 octobre 2026.** Fait : le registre (70 modèles) ; Destinie
+2, TRAJECTOiRE et Ines exécutés à part ; les pistes du 1er octobre, closes ;
+les treize « jamais confrontés » (note du 22 octobre), tous confrontés, les
+quatre derniers — modele-as, Catala, SUD éducation, Nos Retraites — rejoués
+au droit de leur date (notes du 23 et du 24 octobre). Le dépôt a raison sur
+leurs écarts, sauf la carrière longue des débuts à seize ans, fausse au
+moteur (étape 138.21, ouverte). Restent, à commencer par l'Agirc-Arrco
+d'EDIFIS : l'ASPA de Saphir, les années 2015 à 2025 d'EUROMOD ; la campagne
+2025 de l'EACR, au printemps 2027 (note du 14 octobre) ; les `referents` des
+fiches, à leur relecture.
 
 **Demande**, le 1er octobre 2026 : « Quels sont les autres modèles publics
 autres que openfisca ? », puis : « Ajoute les modèles qui ne sont pas encore
@@ -6282,6 +6282,37 @@ décret n° 84-995, dont l'index ne garde que le titre.
     2023. Lire la règle dans l'accord du 17 novembre 2017 ; dater la valeur au
     mois dans les deux moteurs ; les témoins de simulation bougeront, et
     l'écart déclaré de `tests/test_trajectoire.py` tombera.
+
+**Le 24 octobre 2026, une étape nouvelle, que Nos Retraites révèle** (action
+137, note du 24 octobre ; registre, `nosretraites_cas_types`, 138.21) :
+
+21. La carrière longue d'avant 2023, au texte de chaque décret. Deux erreurs
+    du moteur, que les décrets lus pour trancher le rejeu ont montrées.
+    D'abord, `CarriereLongue._portes` (`scenarios/actuel.py`, et son jumeau
+    de `moteur/js/regimes.js`) retient pour chaque porte la ligne de la plus
+    haute génération qui ne dépasse pas celle de l'assuré : sous le décret du
+    2 juillet 2012 (D. 351-1-1, LEGIARTI000026139949), la porte des débuts
+    avant dix-sept ans, à 59 ans et 8 mois, que le texte ne donne qu'aux nés
+    de 1952 et de 1953, vaut ainsi pour toutes les générations suivantes ; de
+    même, pour un début avant seize ans, celle de 59 ans et 4 mois de 1956
+    dès 1957, et celle de 59 ans et 8 mois de 1957 dès 1958. Le né de 1955,
+    1958, 1960 ou 1962 entré à seize ans part à 59 ans et 8 mois au droit en
+    vigueur, de novembre 2012 à août 2023, quand le texte ne lui ouvre que 60
+    ans ; au droit au 31 août 2023, à toute date. La table
+    `carriere_longue.csv` dit la première génération d'une porte, non sa
+    dernière : il lui faut une fin, que sa certification
+    (`scripts/verifier_donnees.py`) lise aussi. Le décret de 2010
+    (LEGIARTI000023397567) a la même forme, sans effet connu, ses portes
+    étendues tombant après octobre 2012. Ensuite, les rédactions de 2003
+    (LEGIARTI000006736521) et de 2010 n'ouvrent la carrière longue qu'à qui
+    justifie, tous régimes, d'une durée d'assurance « au moins égale à la
+    limite [...] majorée de huit trimestres » ; le moteur ne le vérifie pas :
+    le né du 31 mars 1950 entré à seize ans, deux ans et demi sans
+    validation, qui n'a que 162 trimestres à 59 ans, part en avril 2009,
+    quand le texte le fait attendre 60 ans. Le test
+    d'abord : des cas posés à la main depuis les trois rédactions ; puis la
+    donnée, les deux moteurs et les témoins que la correction déplace ; puis
+    la fiche `carriere_longue`.
 
 **Demande**, le 4 octobre 2026 : « passe à l'étape 16 dans une nouvelle
 session ».

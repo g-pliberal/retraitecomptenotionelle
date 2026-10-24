@@ -1,0 +1,37 @@
+date: "2026-10-24"
+session: "action 137 : Nos Retraites, rejoué au droit de sa date"
+consulte: >-
+  Le simulateur de cas types de Nos Retraites (sans licence) au commit 5e4abf1, encore sa
+  tête, cloné à part : son utils/calculationUtils.js exécuté sous Node sur 6 944
+  carrières, 69 440 départs, son résumé (components/Summary.js) et son formulaire. Dans
+  l'index LEGI du dépôt, récupéré ce jour (à jour au 18 octobre 2026) : D. 161-2-1-9
+  (LEGIARTI000025089933), L. 351-8 (LEGIARTI000028498855), R. 351-27
+  (LEGIARTI000024113020), D. 351-1-1 dans ses rédactions de 2003, 2010 et 2012
+  (LEGIARTI000006736521, 023397567, 026139949), D. 351-1-2 (LEGIARTI000043506391), L. 12
+  et L. 14 du code des pensions (LEGIARTI000037200561, 037200740 et leurs versions de
+  2004 à 2023), l'article 66 de la loi n° 2003-775 (LEGIARTI000006758610), l'article 3
+  du décret n° 2011-754 (LEGIARTI000024272411). Le moteur, sous le droit contrefactuel au
+  31 août 2023, sur les mêmes carrières, et de mois en mois sur les 1 952 entrées avant
+  vingt ans. Le scénario 1 n'est pas touché : ni fiche, ni règle, et `textes.py
+  --inscrire` n'a pas tourné.
+trouve: >-
+  Sur les écarts du rejeu, rien qui contredise le dépôt : sur les 43 644 départs que les
+  deux ouvrent, 41 627 ont la même décote et la même surcote ; ailleurs, les textes de
+  sa date tranchent pour le dépôt. Ses erreurs : la génération 1951 entière à 60 ans et
+  4 mois, quand D. 161-2-1-9 en garde le premier semestre à soixante ans ; 1,25 % de
+  décote aux générations 1950 à 1952, contre le II de R. 351-27 ; des fractions de
+  trimestre, que le I arrondit au chiffre supérieur ; la carrière longue de 2012
+  appliquée aux générations d'avant ; à sa fonctionnaire, la décote du privé, sans
+  l'article 66 de la loi de 2003, et une surcote au-delà de la limite d'âge. Mais en
+  lisant D. 351-1-1 pour trancher sa carrière longue, deux erreurs du dépôt : le moteur
+  étend à toutes les générations suivantes les portes que la rédaction de 2012 réserve
+  à quelques-unes, et ouvre à 59 ans et 8 mois le né de 1955 et après entré à seize ans,
+  au droit en vigueur jusqu'en août 2023, quand le texte ne lui ouvre que 60 ans ; et il
+  ne vérifie pas la durée d'assurance majorée de huit trimestres que les rédactions de
+  2003 et de 2010 demandaient.
+reste: >-
+  L'étape 138.21, ouverte à la feuille de route, pour une session du modèle : les portes
+  de la carrière longue bornées aux générations que chaque rédaction nomme, et la durée
+  majorée de huit trimestres avant novembre 2012, dans la donnée, sa certification et
+  les deux moteurs. Le contrefactuel au 31 août 2023 garde D. 351-1-2-1 de 2026, qu'il
+  déclare : 144 départs de mères y diffèrent du droit de janvier 2023.

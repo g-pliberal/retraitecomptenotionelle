@@ -395,7 +395,8 @@ AGES_QUAND_PARTIR = {
 #: confrontée, sans quoi le tableau de bord les compterait jamais confrontés.
 CONFRONTES_PAR_LEURS_PARAMETRES = (
     {m for m, _, _ in CONSTATS}
-    | {"edifis", "simulateur_aurain", "outil_quand_partir", "modele_as", "catala"})
+    | {"edifis", "simulateur_aurain", "outil_quand_partir", "modele_as", "catala",
+       "nosretraites_cas_types"})
 
 
 @pytest.mark.parametrize("modele, donnee, valeurs", CONSTATS,
@@ -754,6 +755,181 @@ def test_sud_education_liquide_le_titulaire_du_depot_sauf_trois_erreurs(moteur_2
             "au dépôt ; sa ligne du registre se relit")
 
 
+# ---- Nos Retraites, rejoué ---------------------------------------------------
+# Le simulateur de cas types de Nos Retraites (sans licence : lu, cité, exécuté à
+# part), au commit `5e4abf1`, rejoué sous Node le 24 octobre 2026 (action 137), au
+# droit de sa date : son état « now », le droit de janvier 2023 — les lois de 2010
+# et de 2014 —, que le dépôt garde au droit contrefactuel `au_31_aout_2023`. Pour
+# une carrière continue depuis l'âge du début, moins des années sans validation,
+# il dit à chaque âge de 58 à 67 ans si le départ est possible, et sa décote et sa
+# surcote (`utils/calculationUtils.js`). Le dépôt liquide la même carrière d'un
+# assuré né le dernier jour d'un trimestre : l'âge légal et l'âge du taux plein y
+# tombent en fin de trimestre civil, où le décompte de la caisse, en trimestres
+# civils (circulaire Cnav 2018-04), égale le sien, en années. Ses réponses sont
+# celles du dépôt, sauf les erreurs, les siennes, que sa ligne du registre déclare.
+
+#: Sa table de l'état « now », par année de naissance (`utils/
+#: legalParametersByYearOfBirth.json`) : l'âge d'ouverture et l'âge du taux plein,
+#: en mois, la durée requise, en trimestres. Sa ligne 1951 est celle des nés du
+#: second semestre, qu'il sert à toute l'année.
+PARAMETRES_NR = {
+    1950: (720, 162, 780), 1951: (724, 163, 784), 1952: (729, 164, 789),
+    1953: (734, 165, 794), 1954: (739, 165, 799),
+    **{annee: (744, duree, 804) for duree, debut, fin in (
+        (166, 1955, 1958), (167, 1958, 1961), (168, 1961, 1964), (169, 1964, 1967),
+        (170, 1967, 1970), (171, 1970, 1973), (172, 1973, 2011))
+       for annee in range(debut, fin)},
+}
+
+#: Les nés avant le 1er juillet 1951 : « Soixante ans » (D. 161-2-1-9,
+#: LEGIARTI000025089933), et le taux plein cinq ans plus tard (L. 351-8, 1°,
+#: LEGIARTI000028498855).
+NES_AVANT_JUILLET_1951 = (720, 163, 780)
+
+#: Les familles de la grille : le sexe, le statut, et le nombre d'enfants, nés aux
+#: 25, 28 et 31 ans de la mère. La mère fonctionnaire de l'État, la seule que son
+#: menu ouvre au public, a ses deux enfants à 25 et 28 ans.
+FAMILLES_NR = {"aucune": ("H", "salarie_prive_non_cadre", 0),
+               "mere_privee_1": ("F", "salarie_prive_non_cadre", 1),
+               "mere_privee_3": ("F", "salarie_prive_non_cadre", 3),
+               "mere_publique_2": ("F", "fonctionnaire_etat", 2)}
+
+#: (naissance, mois de naissance, âge du début, années sans validation, famille,
+#: âge du départ) : (départ possible, décote %, surcote %), chez lui, ou
+#: ``(False,)`` pour un départ qu'il dit impossible. Né le 31 mars, ou le 30
+#: septembre ; les années sans validation posées à 31 ans.
+NOS_RETRAITES = {
+    (1969, 3, 21, 0, "aucune", 62): (True, 7.5, 0),           # sa saisie par défaut
+    (1969, 3, 21, 0, "aucune", 64): (True, 0, 2.5),
+    (1975, 3, 22, 0, "mere_privee_3", 62): (True, 0, 0),
+    (1980, 3, 17, 0, "aucune", 61): (True, 0, 0),              # carrière longue
+    (1953, 3, 21, 0, "aucune", 63): (True, 0, 3.75),
+    (1975, 3, 22, 0, "mere_publique_2", 62): (True, 5, 0),
+    (1990, 3, 24, 2.5, "mere_privee_1", 63): (True, 20, 0),
+    (2005, 3, 20, 0, "aucune", 67): (True, 0, 20),
+    (1962, 3, 19, 0, "mere_publique_2", 61): (True, 0, 0),     # carrière longue
+    (1951, 9, 21, 0, "aucune", 60): (False,),
+    (1950, 3, 18, 2.5, "aucune", 60): (True, 5, 0),
+    (1952, 3, 21, 0, "aucune", 61): (True, 5, 0),
+    (1951, 3, 21, 0, "aucune", 60): (False,),
+    (1953, 3, 23, 2.5, "aucune", 62): (True, 20.8333333333335, 0),
+    (1950, 3, 17, 0, "aucune", 58): (True, 0, 0),
+    (1952, 3, 18, 0, "aucune", 60): (True, 0, 0),
+    (1951, 9, 18, 0, "aucune", 60): (True, 0, 0),
+    (1954, 3, 24, 2.5, "mere_publique_2", 62): (True, 18.75, 0),
+    (1950, 3, 16, 0, "mere_publique_2", 66): (True, 0, 30),
+}
+
+#: Là où il se trompe, le droit de sa date posé à la main : (ouvert, décote %,
+#: surcote %), ou ``(False,)`` pour un départ que le droit n'ouvre pas.
+LOI_D_AVANT_2023_NR = {
+    # R. 351-27, II (LEGIARTI000024113020) : « 1,625 % pour l'assuré né en
+    # 1950 », « 1,375 % pour l'assuré né en 1952 » ; il compte 1,25 % à tous.
+    (1950, 3, 18, 2.5, "aucune", 60): (True, 4 * 1.625, 0),
+    (1952, 3, 21, 0, "aucune", 61): (True, 4 * 1.375, 0),
+    # D. 161-2-1-9 : soixante ans avant le 1er juillet 1951 ; sept trimestres
+    # manquent aux 163, à 1,5 % chacun.
+    (1951, 3, 21, 0, "aucune", 60): (True, 7 * 1.5, 0),
+    # R. 351-27, I, 2° : le nombre de trimestres « est éventuellement arrondi au
+    # chiffre immédiatement supérieur » ; de 62 ans à 66 ans et 2 mois, 16,67
+    # trimestres, soit 17, qu'il compte 16,67.
+    (1953, 3, 23, 2.5, "aucune", 62): (True, 17 * 1.25, 0),
+    # D. 351-1-1 de 2003 (LEGIARTI000006736521), qui vaut jusqu'en juin 2011 :
+    # avant soixante ans, qui a débuté avant seize ou dix-sept ans ; il ouvre
+    # 58 ans à tout début avant vingt ans.
+    (1950, 3, 17, 0, "aucune", 58): (False,),
+    # D. 351-1-1 de 2010 (LEGIARTI000023397567), du 1er juillet 2011 au 31
+    # octobre 2012 : à soixante ans, qui a débuté avant dix-huit ans, cinq
+    # trimestres avant la fin de cette année-là (D. 351-1-3) ; entré à 18 ans au
+    # printemps ou à l'automne, il n'en a que trois, ou un.
+    (1952, 3, 18, 0, "aucune", 60): (False,),
+    (1951, 9, 18, 0, "aucune", 60): (False,),
+    # Article 66, III, de la loi n° 2003-775 (LEGIARTI000006758610) : le droit
+    # ouvert en 2015, 1,25 % et la limite d'âge, 66 ans et 7 mois, moins cinq
+    # trimestres ; de 62 ans à 65 ans et 4 mois, 13,33 trimestres, soit 14. Il
+    # sert à la fonctionnaire la décote du régime général.
+    (1954, 3, 24, 2.5, "mere_publique_2", 62): (True, 14 * 1.25, 0),
+    # La limite d'âge du sédentaire, 65 ans pour les nés avant le 1er juillet
+    # 1951 (décret n° 2011-754, article 3, LEGIARTI000024272411) : radiée à 65
+    # ans, sa pension compte vingt trimestres de surcote ; il la laisse
+    # surcoter jusqu'à 67 ans.
+    (1950, 3, 16, 0, "mere_publique_2", 66): (True, 0, 20 * 1.25),
+}
+
+
+def _carriere_nos_retraites(moteur, naissance, mois, debut, sans_validation, famille,
+                            age) -> Carriere:
+    """La carrière d'un cas du rejeu : né le dernier jour du mois ``mois``, un
+    trimestre par trimestre civil, de l'anniversaire du début à la date d'effet,
+    moins ``sans_validation`` années posées à 31 ans (trois ans après le début,
+    s'il est plus tardif)."""
+    sexe, affiliation, nombre = FAMILLES_NR[famille]
+    trimestres = {annee: 4 for annee in range(naissance + debut + 1, naissance + age)}
+    trimestres[naissance + debut] = (12 - mois) // 3
+    trimestres[naissance + age] = mois // 3
+    if sans_validation:
+        depuis = naissance + max(debut + 2, 30) + 1
+        for annee in range(depuis, depuis + int(sans_validation)):
+            trimestres[annee] = 0
+        reste = round(4 * (sans_validation - int(sans_validation)))
+        if reste:
+            trimestres[depuis + int(sans_validation)] = 4 - reste
+    lignes = [LigneRelevee(annee, affiliation, 7_500.0 * nombre_de, nombre_de)
+              for annee, nombre_de in sorted(trimestres.items()) if nombre_de]
+    enfants = [f"{naissance + a}-06-01" for a in (25, 28, 31)[:nombre]]
+    return Carriere.depuis_releve(naissance, sexe, lignes, float(age), moteur.macro,
+                                  mois_naissance=mois, jour_naissance={3: 31, 9: 30}[mois],
+                                  nombre_enfants=nombre, naissances_enfants=enfants)
+
+
+def test_nos_retraites_a_les_ages_et_les_durees_du_depot_sauf_en_1951(moteur_2019):
+    """Sa table de l'état « now » est celle du droit au 31 août 2023, génération
+    par génération ; pour 1951, celle des nés du second semestre. Les nés du
+    premier semestre partent à 60 ans, et à taux plein à 65."""
+    for annee, chez_lui in PARAMETRES_NR.items():
+        for generation in ((annee, annee + 0.5) if annee == 1951 else (annee,)):
+            attendu = NES_AVANT_JUILLET_1951 if generation == 1951 else chez_lui
+            au_depot = (round(12 * moteur_2019.ages_ouverture.age(generation)[0]),
+                        moteur_2019.durees_requises.trimestres(generation)[0],
+                        round(12 * moteur_2019.ages_annulation_decote.age(generation)[0]))
+            assert au_depot == attendu, (
+                f"nosretraites_cas_types, génération {generation} : {chez_lui} chez lui, "
+                f"{au_depot} au dépôt, {attendu} attendus ; sa ligne du registre se relit")
+
+
+@pytest.mark.parametrize("cas", sorted(NOS_RETRAITES))
+def test_nos_retraites_ouvre_decote_et_surcote_comme_le_depot_sauf_ses_erreurs(
+        moteur_2019, cas):
+    chez_lui = NOS_RETRAITES[cas]
+    attendu = LOI_D_AVANT_2023_NR.get(cas, chez_lui)
+    resultat = moteur_2019.calculer(_carriere_nos_retraites(moteur_2019, *cas))
+    base = 0.75 if FAMILLES_NR[cas[4]][1] == "fonctionnaire_etat" else 0.5
+    taux = resultat.taux_liquidation / base
+    au_depot = (resultat.liquidation_ouverte, round(100 * max(0.0, 1 - taux), 6),
+                round(100 * max(0.0, taux - 1), 6))
+    assert au_depot[:len(attendu)] == pytest.approx(attendu, abs=1e-6), (
+        f"nosretraites_cas_types, {cas} : {chez_lui} chez lui, {au_depot} au dépôt, "
+        f"{attendu} attendus ; sa ligne du registre se relit")
+    if cas in LOI_D_AVANT_2023_NR:
+        assert chez_lui[:len(attendu)] != pytest.approx(attendu[:len(chez_lui)], abs=1e-6)
+
+
+def test_le_droit_au_31_aout_2023_garde_les_trimestres_d_enfant_reputes_cotises(moteur_2019):
+    """Le contrefactuel ne change que l'âge légal, la durée requise et les portes
+    de la carrière longue : il garde D. 351-1-2-1, qui répute cotisés deux
+    trimestres de la majoration pour enfants aux pensions prenant effet depuis le
+    1er septembre 2026. La mère née en 1970, entrée à 16 ans, qui n'a cotisé à 61
+    ans que 170 des 171 trimestres requis, y part en carrière longue ; le
+    simulateur, au droit de janvier 2023, la fait attendre 62 ans, et à sa date il
+    a raison. Sans enfant, le dépôt la fait attendre aussi."""
+    cas = (1970, 3, 16, 2.5, "mere_privee_1", 61)
+    mere = moteur_2019.calculer(_carriere_nos_retraites(moteur_2019, *cas))
+    sans_enfant = moteur_2019.calculer(
+        _carriere_nos_retraites(moteur_2019, *cas[:4], "aucune", cas[5]))
+    assert (mere.liquidation_ouverte, mere.motif_ouverture) == (True, "carriere_longue")
+    assert not sans_enfant.liquidation_ouverte
+
+
 def test_le_tableau_de_bord_dit_combien_d_ecarts_sont_chez_les_modeles_confrontes(referents):
     """L'état (§ 3.4) compte les modèles confrontés, puis les écarts : ceux du
     registre ne viennent pas tous d'eux, beaucoup d'une lecture d'un modèle
@@ -764,3 +940,21 @@ def test_le_tableau_de_bord_dit_combien_d_ecarts_sont_chez_les_modeles_confronte
     total = sum(len(r.get("ecarts", [])) for r in referents)
     chez_eux = sum(len(r.get("ecarts", [])) for r in confrontes)
     assert f"; le registre compte {total} écarts, dont {chez_eux} chez eux." in ligne
+
+
+def test_le_tableau_de_bord_dit_quand_plus_aucun_modele_n_est_a_confronter_en_premier(referents):
+    """Les modèles à confronter en premier — code ouvert, jamais confrontés, sans
+    source partagée — se nomment ; quand il n'en reste aucun, la ligne le dit, au
+    lieu d'en compter zéro et d'ouvrir une liste vide (action 137, le 24 octobre
+    2026, Nos Retraites rejoué, le dernier des treize)."""
+    etat = (RACINE / "docs" / "etat.md").read_text(encoding="utf-8")
+    ligne = next(l for l in etat.splitlines() if l.startswith("- **Les autres modèles**"))
+    premiers = [r for r in referents
+                if r["publication"] == "ouvert" and not r.get("depend_de")
+                and not (r.get("manifeste") or r.get("version"))
+                and "scenario_1" in r["confronte"]]
+    assert " : ." not in ligne
+    if not premiers:
+        assert ("Aucun n'est plus à confronter au scénario 1 en premier : tous ceux dont "
+                "le code est ouvert et qui ne dépendent d'aucune autre source du registre "
+                "l'ont été.") in ligne
