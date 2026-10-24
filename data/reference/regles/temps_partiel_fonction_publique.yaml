@@ -135,9 +135,9 @@ code:
     (`droit/compter.py`, `compter.js`), et la liquidation le traitement à temps
     plein (`droit/liquider.py`).
   python: >-
-    saisie.py : Saisie.temps_partiel_analyse ; chronologie.py : du_parcours,
-    du_releve ; carriere.py : _quotite_de_l_annee ; droit/compter.py : compter,
-    services_a_temps_partiel ; droit/liquider.py : salaire_de_reference
+    chronologie.py : du_parcours, du_releve ; carriere.py : _quotite_de_l_annee ;
+    droit/compter.py : compter, services_a_temps_partiel ; droit/liquider.py :
+    salaire_de_reference
   javascript: >-
     moteur/js/saisie.js : Saisie.tempsPartielAnalyse ; moteur/js/chronologie.js :
     duParcours, duReleve ; moteur/js/carriere.js : quotiteDeLAnnee ;

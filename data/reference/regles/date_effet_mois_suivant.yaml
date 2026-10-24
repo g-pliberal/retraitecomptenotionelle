@@ -105,7 +105,7 @@ code:
   python: >-
     calendrier.py : origine_des_ages ; carriere.py : Carriere.origine_des_ages,
     Carriere.date_de_l_age, Carriere.age_au, Carriere.mois_de_l_anniversaire ;
-    chronologie.py : completer ; saisie.py : Saisie.date_de
+    chronologie.py : completer
   javascript: >-
     moteur/js/calendrier.js : origineDesAges ; moteur/js/carriere.js :
     Carriere.origineDesAges, Carriere.dateDeLAge, Carriere.ageAu,

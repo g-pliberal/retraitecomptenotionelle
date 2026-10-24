@@ -71,6 +71,10 @@ rien vu de perdu ; `jumeaux.py` ne voit aucun renvoi mort. L'étape n'écrit
 aucune règle du scénario 1 : ni veille, ni entrée au journal. Rien n'est dû
 aux pages.
 
+Le lot publié, le bloc « Reprise » de l'action 161 disait que plus rien
+n'importe `saisie.py`, son prochain retrait : la date d'effet et le temps
+partiel ne nomment plus la saisie que dans son portage, `saisie.js`.
+
 ## Ce que l'étape laisse
 
 - `pension_non_salaries_agricoles_2026`, seule fiche de `EN_PROSE`, à la
