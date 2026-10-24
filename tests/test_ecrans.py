@@ -269,7 +269,7 @@ def test_les_cartes_a_publier_vont_deux_par_ligne_et_se_lisent():
     se lit : sa phrase et son détail ne tombent jamais sous douze pixels.
 
     Deux de front à 1 024 points, dans l'image réduite, porteraient leur détail
-    à neuf pixels et demi : les cartes y prennent les tailles de lecture du
+    à neuf pixels : les cartes y prennent les tailles de lecture du
     téléphone, et ne reprennent le format de l'image que le temps de la
     composer.
     """
