@@ -71,7 +71,6 @@ from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.carriere import AnneeCarriere, Carriere
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.donnees.regimes import BORNES_ASSIETTE
-from retraite_notionnelle.saisie import Saisie
 from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.droit import departs, invalidite, liquider, ouvrir
@@ -1583,6 +1582,16 @@ def _naissance(texte: str):
     return _mois(texte[:7]), (int(texte[8:10]) if len(texte) > 7 else None)
 
 
+def _quotites(texte: str) -> dict[int, float]:
+    """Le temps partiel d'un exemple, écrit comme le formulaire l'écrit —
+    « 2000:2009:80 » —, en quotité de chaque année."""
+    quotites = {}
+    for morceau in filter(None, (morceau.strip() for morceau in texte.split(","))):
+        debut, fin, quotite = (int(partie) for partie in morceau.split(":"))
+        quotites.update(dict.fromkeys(range(debut, fin + 1), quotite / 100.0))
+    return quotites
+
+
 def _carriere_exemple(simulateur: Simulateur, exemple: dict, decalage_mois: int = 0,
                       sans_enfants: bool = False):
     """La carrière que l'exemple décrit, liquidée au mois voulu.
@@ -1621,8 +1630,7 @@ def _carriere_exemple(simulateur: Simulateur, exemple: dict, decalage_mois: int 
             str(jour) for jour in c.get("naissances_enfants") or ()),
         interruptions={int(k): v for k, v in (c.get("interruptions") or {}).items()},
         # Le temps partiel, comme le formulaire l'écrit : « 2000:2009:80 ».
-        temps_partiel=Saisie(temps_partiel=str(c.get("temps_partiel") or "")
-                             ).temps_partiel_analyse(),
+        temps_partiel=_quotites(str(c.get("temps_partiel") or "")),
     )
     if "conjoint" in c:
         # Le conjoint et le décès, comme la saisie les déclare : le sexe du

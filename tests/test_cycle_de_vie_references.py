@@ -123,7 +123,6 @@ import pytest
 from retraite_notionnelle import pont
 from retraite_notionnelle.castypes import CAS_TYPES, CasType
 from retraite_notionnelle.config import Parametres
-from retraite_notionnelle.contexte import Contexte
 from retraite_notionnelle.donnees.prelevements_historiques import (
     charger_prelevements_historiques,
 )
@@ -169,13 +168,8 @@ def ocde() -> dict:
 
 
 @pytest.fixture(scope="module")
-def contexte() -> Contexte:
-    return Contexte()
-
-
-@pytest.fixture(scope="module")
-def simulateur(contexte) -> Simulateur:
-    return contexte.simulateur()
+def simulateur() -> Simulateur:
+    return Simulateur()
 
 
 @pytest.fixture(scope="module")
