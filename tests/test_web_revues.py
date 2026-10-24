@@ -4,7 +4,9 @@ de ce qu'elles ont fait naître : l'entrée depuis le site du parti (action
 29), la certification datée (action 13), les réglages des pages agrégées.
 
 Détachés de ``test_web.py`` le 30 septembre 2026 ; ce qu'ils partagent avec
-lui est dans ``outils_web.py``.
+lui est dans ``outils_web.py``. La saisie est celle du portage, la seule
+(action 161, étape 6) ; ce qui simule une saisie passe par le pont, le moteur
+Python sur la carrière que le portage bâtit ; le coût reste au contexte.
 """
 
 from __future__ import annotations
@@ -24,33 +26,11 @@ from retraite_notionnelle.donnees.chargement import (
     DonneeInsuffisante,
     charger_periodes_non_travaillees,
 )
-from retraite_notionnelle.saisie import (
-    AGE_DEBUT_MINIMAL,
-    AGE_LIQUIDATION_MAXIMAL,
-    AGES_REFERENCE,
-    ANNEE_CARRIERE_MAXIMALE,
-    ANNEE_CARRIERE_MINIMALE,
-    ANNEE_MAXIMALE,
-    ANNEE_MINIMALE,
-    ENFANTS_MAXIMUM,
-    INDEXATIONS,
-    LISSAGE_MAXIMUM,
-    METIERS_MAXIMUM,
-    PROFILS,
-    PROJECTIONS,
-    RELEVE_MAXIMUM,
-    SANS_EMPLOI,
-    POPULATIONS,
-    RATTACHEMENTS,
-    TABLES,
-    ErreurSaisie,
-    Saisie,
-)
-from retraite_notionnelle.contexte import Contexte, Montants
 from retraite_notionnelle.web.site import disponible, module, rendre, site
+from outils_pont import saisie_du_portage
 from outils_web import (
     FEUILLE_DE_STYLE, PAGES_AGREGEES, SIMULATION_TEMOIN, TITRES, _hors_depliants,
-    _prose, contexte, g, page, pages,
+    _prose, contexte, g, montants_du_portage, page, pages, saisies,
 )
 
 
@@ -1331,7 +1311,7 @@ def test_la_methode_dit_comment_le_site_est_construit():
     )
 
 
-def test_la_page_risque_chiffre_le_prelevement_depuis_le_modele(contexte):
+def test_la_page_risque_chiffre_le_prelevement_depuis_le_modele(contexte, saisies):
     """Ce que la retraite prélève, recalculé ici plutôt que recopié.
 
     La page tient trois chiffres qui ne viennent d'aucune source extérieure :
@@ -1346,12 +1326,14 @@ def test_la_page_risque_chiffre_le_prelevement_depuis_le_modele(contexte):
 
     corps = rendre("/risque", {})[1]
     # La carrière de référence de la page, à ses trois niveaux de salaire,
-    # simulée par le modèle.
-    exemples = [contexte.simuler(Saisie(
-        naissance=pages.NAISSANCE_RISQUE, statut="salarie_prive_non_cadre",
-        debut=pages.DEBUT_RISQUE, liquidation=pages.LIQUIDATION_RISQUE,
-        salaire=niveau, unite_revenu="moyen", demandee=True,
-    )) for _, niveau in pages.NIVEAUX_RISQUE]
+    # simulée par le modèle, sur la carrière que le portage en bâtit : la
+    # requête date la naissance au 1er janvier, le jour de la saisie en champs
+    # de la page (``saisieRisque``), que l'adresse présumerait sinon.
+    exemples = [saisies.simuler({
+        "naissance": f"{pages.NAISSANCE_RISQUE}-01-01", "statut": "salarie_prive_non_cadre",
+        "debut": str(pages.DEBUT_RISQUE), "liquidation": str(pages.LIQUIDATION_RISQUE),
+        "salaire": str(niveau), "unite_revenu": "moyen",
+    }) for _, niveau in pages.NIVEAUX_RISQUE]
 
     # Les trois lignes du tableau des salaires, au centime.
     for comparaison in exemples:
@@ -1727,7 +1709,7 @@ def test_les_reglages_suivent_le_lecteur_d_une_page_a_l_autre(page, chemin):
     assert '#/cout?indexation=prix' in g.entete(chemin)
 
 
-def test_un_reglage_deplace_le_cout_du_modele(contexte):
+def test_un_reglage_deplace_le_cout_du_modele(contexte, saisies):
     """Le Python garde tous ses réglages, et ce sont les CHIFFRES qui bougent.
 
     La page Coût ne montre plus que la référence ; le modèle, lui, se calcule
@@ -1737,9 +1719,7 @@ def test_un_reglage_deplace_le_cout_du_modele(contexte):
     s'en trouve nettement réduite.
     """
     defaut = contexte.cout()
-    prix = contexte.pour(
-        Saisie.modelisation({"indexation": "prix"}).parametres(contexte.base)
-    ).cout()
+    prix = contexte.pour(saisies.parametres({"indexation": "prix"})).cout()
     annee = defaut.derniere_annee
     for scenario in ("notionnel_retroactif", "notionnel_liberal"):
         assert prix.annee(annee).rapports[scenario] < defaut.annee(annee).rapports[scenario]
@@ -1766,14 +1746,13 @@ def test_une_adresse_qui_ne_porte_que_des_reglages_ne_demande_pas_de_calcul(page
     d'exemple que personne n'a saisie.
     """
     assert "Saisie refusée" not in page("/simuler", indexation="prix")
-    assert not Saisie.depuis_requete({"indexation": "prix"}).demandee
-    assert Saisie.depuis_requete({"naissance": "1975"}).demandee
+    assert not saisie_du_portage({"indexation": "prix"}).demandee
+    assert saisie_du_portage({"naissance": "1975"}).demandee
 
 
-def test_un_contexte_derive_partage_ce_qui_ne_depend_pas_des_regles(contexte):
+def test_un_contexte_derive_partage_ce_qui_ne_depend_pas_des_regles(contexte, saisies):
     """Dériver ne doit rien recharger : les séries observées sont les mêmes."""
-    derive = contexte.pour(
-        Saisie.modelisation({"bascule": "2030"}).parametres(contexte.base))
+    derive = contexte.pour(saisies.parametres({"bascule": "2030"}))
     assert derive is not contexte
     assert derive.depenses() is contexte.depenses()
     assert derive.comptes() is contexte.comptes()
@@ -1844,7 +1823,7 @@ def test_la_bascule_net_brut_decrit_la_meme_carriere():
     assert float(vers_net["salaire"]) == pytest.approx(2500, abs=2)
 
 
-def test_les_deux_modes_decrivent_la_meme_pension_a_neuf_points_pres(contexte):
+def test_les_deux_modes_decrivent_la_meme_pension_a_neuf_points_pres():
     """Même carrière, deux modes : le rapport des pensions est celui du barème.
 
     C'est le seul test qui relie les deux moitiés de la bascule — la saisie,
@@ -1869,14 +1848,14 @@ def test_les_deux_modes_decrivent_la_meme_pension_a_neuf_points_pres(contexte):
     en_brut = pension({**commun, "salaire": "3158", "montants": "brut"})
     en_net = pension({**commun, "salaire": "2500", "montants": "net"})
     # Le taux de la personne, que le modèle tire de sa pension du scénario 1 :
-    # 9,1 %, et 1 % de sa part complémentaire (action 138, étape 2).
-    saisie = Saisie.depuis_requete({**commun, "salaire": "3158", "montants": "brut"})
-    taux = Montants.depuis(saisie, contexte.base, contexte.simuler(saisie)).taux_pension
+    # 9,1 %, et 1 % de sa part complémentaire (action 138, étape 2) ; les
+    # montants du portage, que la page applique.
+    taux = montants_du_portage({**commun, "salaire": "3158", "montants": "brut"}).taux_pension
     assert 0.0 < taux <= 0.101
     assert en_net == pytest.approx(en_brut * (1 - taux), rel=2e-3)
 
 
-def test_la_complementaire_paie_sa_cotisation_maladie_sur_la_page(contexte):
+def test_la_complementaire_paie_sa_cotisation_maladie_sur_la_page():
     """En net, l'étage complémentaire du système 1 paie un point de plus que la
     base, celui de la cotisation maladie : la composition sous le montant le
     montre, et la note du mode dit le taux de la personne, le revenu fiscal
@@ -1897,8 +1876,7 @@ def test_la_complementaire_paie_sa_cotisation_maladie_sur_la_page(contexte):
     en_brut = etages(rendre("/simuler", {**commun, "montants": "brut"})[1])
     corps = rendre("/simuler", {**commun, "montants": "net"})[1]
     en_net = etages(corps)
-    saisie = Saisie.depuis_requete({**commun, "montants": "net"})
-    montants = Montants.depuis(saisie, contexte.base, contexte.simuler(saisie))
+    montants = montants_du_portage({**commun, "montants": "net"})
     taux, base_seule = montants.taux_pension, montants.taux_sans_maladie
     assert montants.taux_maladie == pytest.approx(0.01)
     base, complementaire = "retraite de base", "retraite complémentaire"
@@ -1920,9 +1898,9 @@ def test_le_mode_des_montants_voyage_dans_l_adresse():
     l'omettrait retomberait sur le défaut et décrirait une autre carrière.
     C'est pourquoi `requete` l'écrit toujours, comme l'unité.
     """
-    saisie = Saisie.depuis_requete({"naissance": "1975", "montants": "net"})
+    saisie = saisie_du_portage({"naissance": "1975", "montants": "net"})
     assert "montants=net" in saisie.requete()
-    assert "montants=brut" in Saisie.depuis_requete({"naissance": "1975"}).requete()
+    assert "montants=brut" in saisie_du_portage({"naissance": "1975"}).requete()
     # Et le formulaire le renvoie quand on le soumet, par un champ caché.
     corps = rendre("/simuler", {"naissance": "1975", "montants": "net"})[1]
     assert '<input type="hidden" name="montants" value="net">' in corps
@@ -2142,23 +2120,21 @@ def test_le_script_de_la_page_s_analyse():
     assert resultat.returncode == 0, resultat.stderr
 
 
-def test_le_reglage_des_frais_du_pilier_voyage_avec_les_autres():
-    """« frais=detail » se lit, s'applique aux paramètres et se réécrit dans
-    l'adresse ; le défaut ne s'écrit pas."""
-    from retraite_notionnelle.config import Parametres
-    from retraite_notionnelle.saisie import CLES_MODELISATION, Saisie
-
-    assert "frais" in CLES_MODELISATION
-    defaut = Saisie.depuis_requete({})
+def test_le_reglage_des_frais_du_pilier_voyage_avec_les_autres(saisies):
+    """« frais=detail » se lit, s'applique aux paramètres — ceux que le pont
+    rapporte au modèle — et se réécrit dans l'adresse ; le défaut ne s'écrit
+    pas."""
+    assert "frais" in module("saisie").CLES_MODELISATION
+    defaut = saisie_du_portage({})
     assert defaut.frais == "paliers" and defaut.requete_modelisation() == ""
-    saisie = Saisie.modelisation({"frais": "detail", "naissance": "1980-01"})
+    saisie = module("saisie").Saisie.modelisation({"frais": "detail", "naissance": "1980-01"})
     assert saisie.frais == "detail" and not saisie.demandee
-    parametres = saisie.parametres(Parametres())
+    parametres = saisies.parametres({"frais": "detail"})
     assert parametres.frais_arrerages_capitalisation == 0.0220
     assert parametres.frais_gestion_paliers == ()
     assert saisie.requete_modelisation() == "frais=detail"
     # Une valeur inconnue retombe sur le défaut, sans erreur.
-    assert Saisie.depuis_requete({"frais": "gratuit"}).frais == "paliers"
+    assert saisie_du_portage({"frais": "gratuit"}).frais == "paliers"
 
 
 def test_la_colonne_aspa_de_l_accueil_sert_le_bareme_de_l_aspa():
