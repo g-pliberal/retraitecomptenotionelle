@@ -144,6 +144,12 @@ function carriereEnDonnees(carriere) {
 function carrieresDesSaisies({ cas }) {
   return parCas(cas, ({ requete, prolonger = true }) => {
     const saisie = Saisie.depuisRequete(requete, false, contexte.paquet.presomptions);
+    // La carrière d'une saisie par la pension vient de la pension, que le
+    // contexte inverse en la simulant : elle ne se bâtit pas seule.
+    if (saisie.parPension) {
+      throw new Error("Une saisie par la pension ne passe pas le pont : sa carrière "
+        + "vient de la pension, que le contexte inverse en la simulant.");
+    }
     const parametres = saisie.parametres(contexte.base);
     // Un relevé que l'appelant a déjà prolongé à sa façon ne se prolonge pas
     // une seconde fois (`scripts/estimation_officielle.py`).

@@ -225,6 +225,19 @@ def test_sans_paquet_le_pont_reste_ouvert_d_une_demande_a_l_autre(monkeypatch):
         pont.fermer()
 
 
+def test_une_saisie_par_la_pension_ne_passe_pas_le_pont():
+    """Sa carrière vient de la pension, que le contexte inverse en la
+    simulant (``Contexte.simuler``) : le pont, qui ne rend qu'une carrière
+    bâtie, la refuse, au lieu d'en bâtir une au revenu de la saisie."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le pont ne se vérifie pas ici")
+    lus, refus = pont.carrieres_des_saisies(
+        [{"cle": "a", "requete": {**REQUETE, "saisie_par": "pension", "pension": "1500"}},
+         {"cle": "b", "requete": {**REQUETE, "situation": "retraite"}}])
+    assert lus == {}
+    assert all("par la pension" in motif for motif in refus.values()), refus
+
+
 def test_le_pont_ouvert_se_relance_quand_le_paquet_du_depot_change(monkeypatch):
     """Le paquet du dépôt se récrit à chaque fabrique : le pont ouvert sur
     l'ancien se referme, et le suivant lit le nouveau."""
