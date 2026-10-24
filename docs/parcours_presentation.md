@@ -338,8 +338,8 @@ Onglet **Droits non cotisés**. La page qui explique les écarts du
 simulateur : ce que le système actuel verse sans que personne l'ait cotisé.
 Trois chiffres :
 <!--chiffre:entrees(moteur/donnees.json:avantages.avantages?famille!=ecarts_structurels&fin=None)-->43<!--/--> dispositifs en vigueur, du minimum vieillesse à la bonification du
-cinquième ; <!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.gratuit/1000)-->99,9<!--/--> Md € en <!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.annee)-->2024<!--/--> pour les 23 que le modèle sait chiffrer, dont
-<!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.lignes.reversion/1000)-->38,3<!--/--> Md € de réversion, qui est lue et non calculée ; <!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.anticipee/1000)-->10,6<!--/--> Md € de pensions
+cinquième ; <!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.gratuit/1000)-->100,0<!--/--> Md € en <!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.annee)-->2024<!--/--> pour les 23 que le modèle sait chiffrer, dont
+<!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.lignes.reversion/1000)-->38,3<!--/--> Md € de réversion, qui est lue et non calculée ; <!--chiffre:valeur(moteur/donnees.json:agregats.avantages.annees.-1.anticipee/1000)-->11,1<!--/--> Md € de pensions
 servies avant l'âge légal. La page dit que ces deux montants sont des
 planchers. Le graphique du haut compte les dispositifs année par année depuis
 1831, où il n'y en avait qu'un.
@@ -356,7 +356,7 @@ puis « Qu'est-ce qui décide du résultat ? ». On peut s'arrêter au titre.
 
 Puis descendre, par-dessus « Pour aller plus loin », jusqu'à « D'où viennent
 les chiffres », le bon endroit pour conclure : « Rien ici n'est à
-croire sur parole. » <!--chiffre:somme(moteur/donnees.json:certification.series.*.valeurs)-->145 814<!--/--> valeurs recontrôlées automatiquement contre le
+croire sur parole. » <!--chiffre:somme(moteur/donnees.json:certification.series.*.valeurs)-->146 392<!--/--> valeurs recontrôlées automatiquement contre le
 fichier de l'institution qui les produit, sur <!--chiffre:entrees(moteur/donnees.json:certification.series)-->176<!--/--> séries ; <!--chiffre:entrees(moteur/donnees.json:inventaire)-->114<!--/--> régimes
 recensés dont <!--chiffre:entrees(moteur/donnees.json:regimes)-->80<!--/--> calculés ; <!--chiffre:valeur(moteur/donnees.json:institutions_citees)-->42<!--/--> institutions citées. Ce compte mesure la
 fidélité de la recopie, non la justesse des pensions : si on vous le demande,

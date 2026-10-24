@@ -16434,7 +16434,7 @@ export const MESURES_BLOCAGES = {
   // 18 % à 2,2 points.
   solde_moyen_proposition: -1.0,
   solde_moyen_actuel: -1.1,
-  dette_2070_proposition: 70,
+  dette_2070_proposition: 69,
   dette_2070_actuel: 66,
   coefficient_minimum: 0.84,
   decennie_coefficient_minimum: 2040,
