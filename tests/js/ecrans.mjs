@@ -363,7 +363,60 @@ const MESURER = (ecran) => `(() => {
   }
   vides.sort((x, y) => y.vide - x.vide);
 
+  // Le contraste de chaque texte sur son fond (WCAG 1.4.3 ; la règle
+  // color-contrast d'axe, que joue Lighthouse, action 174) : la couleur du
+  // texte, fondue sur le premier fond opaque de ses ancêtres, les voiles
+  // translucides fondus en chemin, l'opacité des ancêtres comptée. Un fond
+  // d'image ou de dégradé ne se calcule pas : le texte qui s'y pose est laissé
+  // de côté, comme axe le laisse. Le texte d'un dessin non plus, ni celui d'un
+  // champ désactivé, que WCAG exempte.
+  const couleur = (texte) => {
+    const lue = /^rgba?\\(([^)]+)\\)$/.exec(texte);
+    if (!lue) return null;
+    const [r, v, b, a = 1] = lue[1].split(/[\\s,/]+/).filter(Boolean).map(Number);
+    return [r, v, b, a];
+  };
+  const fondu = (dessus, dessous) => [0, 1, 2]
+    .map((i) => dessus[i] * dessus[3] + dessous[i] * (1 - dessus[3])).concat(1);
+  const canal = (c) => (c / 255 <= 0.04045 ? c / 255 / 12.92 : ((c / 255 + 0.055) / 1.055) ** 2.4);
+  const luminance = ([r, v, b]) => 0.2126 * canal(r) + 0.7152 * canal(v) + 0.0722 * canal(b);
+  const fondDe = (el) => {
+    const voiles = [];
+    for (let n = el; n; n = n.parentElement) {
+      const style = getComputedStyle(n);
+      if (style.backgroundImage !== "none") return null;
+      const teinte = couleur(style.backgroundColor);
+      if (teinte === null) return null;
+      if (teinte[3] > 0) voiles.push(teinte);
+      if (teinte[3] >= 1) break;
+    }
+    if (!voiles.length || voiles[voiles.length - 1][3] < 1) return null;
+    return voiles.reduceRight((dessous, dessus) => fondu(dessus, dessous));
+  };
+  const contrastes = [];
+  for (const el of tous) {
+    if (el.closest("svg") || el.matches(":disabled") || !montre(el)) continue;
+    if (![...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())) continue;
+    const style = getComputedStyle(el);
+    const encre = couleur(style.color);
+    const fond = fondDe(el);
+    if (encre === null || fond === null) continue;
+    let opacite = 1;
+    for (let n = el; n; n = n.parentElement) opacite *= Number(getComputedStyle(n).opacity);
+    const lu = fondu([...encre.slice(0, 3), encre[3] * opacite], fond);
+    const [clair, sombre] = [luminance(lu), luminance(fond)].sort((x, y) => y - x);
+    const rapport = (clair + 0.05) / (sombre + 0.05);
+    const taille = parseFloat(style.fontSize);
+    const grand = taille >= 24 || (taille >= 18.66 && Number(style.fontWeight) >= 700);
+    const seuil = grand ? 3 : 4.5;
+    if (rapport < seuil) {
+      contrastes.push(nommer(el) + " : " + rapport.toFixed(2) + " pour " + seuil
+        + " (" + style.color + " sur rgb(" + fond.slice(0, 3).map(Math.round).join(", ") + "))");
+    }
+  }
+
   return {
+    contrastes: contrastes.slice(0, 40), nombreContrastes: contrastes.length,
     vides: vides.slice(0, 12),
     deborde: document_.scrollWidth > largeur + 1 ? document_.scrollWidth : 0,
     defilants: defilants.slice(0, 40), nombreDefilants: defilants.length,

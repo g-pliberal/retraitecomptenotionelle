@@ -145,6 +145,10 @@
      translucide y devenait un gris sale. Peints SOUS les courbes, ils ne
      cachent rien. */
   --manque: #e8807f;
+  /* Le même rouge, écrit en petit : un ton plus clair, pour que le texte
+     tienne 4,5 pour 1 sur le fond des cartes, où le rouge des aplats ne fait
+     que 3,75 (WCAG 1.4.3, action 174). */
+  --manque-texte: #ed9a99;
   --reste: #8ac44a;
   /* Palette des graphiques : neuf teintes, assez distinctes pour se suivre
      empilées, assez proches pour ne pas jurer avec l'affiche. Toutes tiennent
@@ -1256,7 +1260,7 @@ table[data-pli="fiche"][data-plie] tbody td[data-titre]::before {
    graphiques, et non l'accent, qui dit ailleurs ce que la proposition
    RAPPORTE. */
 .scenario .finance .ecart { font-size: 0.95rem; font-weight: 700;
-                            color: var(--manque); white-space: nowrap; }
+                            color: var(--manque-texte); white-space: nowrap; }
 /* Les trois façons de combler le manque, dans le dépliant des résultats : une
    liste, pas un tableau. Un tableau de trois lignes et trois colonnes rangeait
    « 3,5 points d'assiette » en face de « 1,49 % du PIB » et laissait au

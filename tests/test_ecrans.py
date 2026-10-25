@@ -165,6 +165,22 @@ def test_aucune_case_de_tableau_ne_deborde_sur_sa_voisine():
     assert not fautes, f"{len(fautes)} cases débordent :\n" + "\n".join(fautes[:60])
 
 
+def test_tout_texte_se_detache_de_son_fond():
+    """Un texte se lit sur son fond : 4,5 pour 1 au moins entre leurs
+    luminances, 3 pour 1 en grand — 24 px, ou 18,66 px en gras. WCAG 1.4.3, et
+    la règle ``color-contrast`` d'axe, que joue Lighthouse (action 174) : le
+    25 octobre 2026, le manque en euros des cartes de résultats, écrit en
+    ``--manque`` sur le fond des cartes, n'y faisait que 3,75. La couleur du
+    texte se fond sur le premier fond opaque de ses ancêtres ; sur une image
+    ou un dégradé, elle ne se calcule pas, et le texte est laissé de côté,
+    comme axe le laisse.
+    """
+    fautes = [f"{_ou(visite, 'fermés' if etat == 'replie' else 'ouverts')} : {texte}"
+              for visite in mesures() for etat in ("replie", "deplie")
+              for texte in visite[etat]["contrastes"]]
+    assert not fautes, f"{len(fautes)} textes trop pâles :\n" + "\n".join(fautes[:60])
+
+
 #: Le plus grand vide admis entre deux blocs qui se suivent : quarante points
 #: sur un téléphone, où chaque ligne de blanc repousse la suivante hors de
 #: l'écran, cinquante-six au large.
