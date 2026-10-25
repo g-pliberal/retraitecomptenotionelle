@@ -4816,6 +4816,11 @@ _CUMUL_NOTAIRE_CPRN_2022 = {
     "emploi_retraite_fin": "2024-02", "emploi_retraite_statut": "notaire",
     "emploi_retraite_salaire": "0.3",
 }
+_CUMUL_CONTRACTUELLE_IRCANTEC_2020 = {
+    "profil": "ascendant", "naissance": "1958", "statut": "contractuel_public", "debut": "26",
+    "liquidation": "62.25", "emploi_retraite": "2020-08", "emploi_retraite_fin": "2022-02",
+    "emploi_retraite_statut": "contractuel_public",
+}
 _SECONDE_PENSION_ARTISANE_AU_MINIMUM_2026 = {
     "profil": "ascendant", "naissance": "1960", "sexe": "F", "debut": "20",
     "liquidation": "62.25", "unite_revenu": "moyen", "salaire": "1",
@@ -4977,6 +4982,47 @@ def test_la_complementaire_du_dentiste_est_suspendue_des_la_reprise(page):
             f"{_euros_du_cumul(33276 / 5)} par mois en 2008 : votre pension est servie "
             "entière ; votre retraite complémentaire est suspendue : les statuts de votre "
             "section la suspendent dès la reprise de votre profession.") in note
+
+
+def test_l_allocation_de_l_ircantec_est_reduite_comme_la_base_puis_servie_entiere(
+        page, saisies):
+    """Le règlement de l'Ircantec soumet le cumul aux conditions de L. 161-22
+    (arrêté du 30 décembre 1970, article 14), dont le troisième alinéa réduit
+    « chacune des pensions servies [...] à due concurrence du dépassement » : la
+    contractuelle partie en 2020 perd son allocation d'août à décembre, comme sa
+    base. Depuis le 19 décembre 2020, « à l'exception de son troisième alinéa » :
+    l'Ircantec « continue de vous verser la totalité », que le modèle sert
+    entière depuis janvier 2021 (note du 24 octobre, « la classe du cumul »).
+    La page comptait l'allocation avec la base, « chaque pension de base est
+    réduite du dépassement » de leur somme, et ne disait rien de l'allocation
+    servie entière (note du 25 octobre, « Ce qui reste », 1). Le plafond est
+    celui que le modèle tire des derniers salaires de la carrière."""
+    note, periodes = _note_du_cumul(page, _CUMUL_CONTRACTUELLE_IRCANTEC_2020)
+    assert len(periodes) == 2, f"deux périodes attendues, avant et depuis 2021 : {note}"
+    avant, depuis = periodes
+    cumul = saisies.simuler(_CUMUL_CONTRACTUELLE_IRCANTEC_2020).actuel.cumul
+
+    def plafond(annee: int) -> str:
+        return _euros_du_cumul(next(p.plafond for tranche in cumul.tranches
+                                    if tranche.debut.annee == annee
+                                    for p in tranche.par_regime if p.regime == "regime_general"))
+
+    base = _perte_par_mois(cumul, {"regime_general"}, (2020, 8), (2021, 1))
+    allocation = _perte_par_mois(cumul, {"ircantec"}, (2020, 8), (2021, 1))
+    assert allocation > 0
+    assert avant == (
+        "d'août 2020 à décembre 2020, vos revenus et vos pensions dépassent le plafond, "
+        f"{plafond(2020)} par mois en 2020 : chaque pension de base est réduite du "
+        f"dépassement, {_euros_du_cumul(base)} par mois en moyenne ; votre retraite "
+        f"complémentaire l'est aussi, {_euros_du_cumul(allocation)} par mois en moyenne ;")
+    assert _perte_par_mois(cumul, {"ircantec"}, (2021, 1), (2022, 2)) == 0
+    base = _perte_par_mois(cumul, {"regime_general"}, (2021, 1), (2022, 2))
+    assert depuis == (
+        "de janvier 2021 à janvier 2022, vos revenus et vos pensions dépassent le plafond, "
+        f"{plafond(2021)} par mois en 2021 : chaque pension de base est réduite du "
+        f"dépassement, {_euros_du_cumul(base)} par mois en moyenne ; votre retraite "
+        "complémentaire vous est servie entière : le règlement de l'Ircantec ne lui "
+        "applique plus l'alinéa de L. 161-22 qui réduit chaque pension du dépassement.")
 
 
 def test_la_page_dit_les_mois_que_le_depassement_suspend(page):

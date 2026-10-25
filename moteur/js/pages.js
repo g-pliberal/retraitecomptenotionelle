@@ -4356,23 +4356,25 @@ function sortDeLaComplementaire(complementaire) {
 }
 
 /**
- * Les retraites complémentaires des non-salariés — le RCI, le RCO et le NRCO de
- * l'artisan et du commerçant, celle de chaque section libérale —, que le cumul
- * règle sur leur base sans toujours leur en donner le sort (`droit/cumul.js`) :
- * la page les dit à part, et ce qu'elles perdent.
+ * Les retraites complémentaires que le cumul règle sur la base sans toujours
+ * leur en donner le sort (`droit/cumul.js`) — le RCI, le RCO et le NRCO de
+ * l'artisan et du commerçant, celle de chaque section libérale, l'allocation de
+ * l'Ircantec — : la page les dit à part, et ce qu'elles perdent.
  */
-const COMPLEMENTAIRES_DU_NON_SALARIE = new Set([...COMPLEMENTAIRES_DES_INDEPENDANTS,
-  ...COMPLEMENTAIRES_DES_LIBERAUX]);
+const COMPLEMENTAIRES_A_PART = new Set([...COMPLEMENTAIRES_DES_INDEPENDANTS,
+  ...COMPLEMENTAIRES_DES_LIBERAUX, "ircantec"]);
 
 /**
- * Ce que le droit fait de la retraite complémentaire d'un non-salarié, quand ce
- * n'est pas le sort de sa base : une proposition qui suit celle de la base, ou
+ * Ce que le droit fait d'une retraite complémentaire dite à part, quand ce
+ * n'est pas le sort de la base : une proposition qui suit celle de la base, ou
  * `""`. Le RCI n'est suspendu qu'avec la base (article 27 de son règlement) ;
  * depuis juillet 2024, il perd le dépassement comme elle ; pour une première
  * pension de 2027, ce que les bases n'absorbent pas (L. 161-22, III, A) ; la
- * complémentaire d'une section, ce que ses statuts disent.
+ * complémentaire d'une section, ce que ses statuts disent. L'allocation de
+ * l'Ircantec suit L. 161-22 depuis 2004, réduite du dépassement comme chaque
+ * pension ; depuis 2021, sans l'alinéa qui l'en réduit.
  */
-function sortDeLaComplementaireDuNonSalarie(complementaire, periode) {
+function sortDeLaComplementaireAPart(complementaire, periode) {
   if (complementaire === null) return "";
   switch (`${complementaire.statut}/${complementaire.motif}`) {
     case "suspendue/depassement":
@@ -4389,12 +4391,16 @@ function sortDeLaComplementaireDuNonSalarie(complementaire, periode) {
     case "plafonnee/imputee_sur_la_base":
       return " ; votre retraite complémentaire vous est servie entière : votre pension de "
         + "base absorbe toute la réduction";
+    case "plafonnee/sans_le_troisieme_alinea":
+      return " ; votre retraite complémentaire vous est servie entière : le règlement de "
+        + "l'Ircantec ne lui applique plus l'alinéa de L. 161-22 qui réduit chaque pension du "
+        + "dépassement";
     default:
       break;
   }
   if (complementaire.statut !== "reduite") return "";
   const perte = g.euros(periode.perteComplementaire / periode.mois);
-  if (complementaire.regle === "reduite_comme_la_base_2024") {
+  if (["reduite_comme_la_base_2024", "l_161_22_2004"].includes(complementaire.regle)) {
     return ` ; votre retraite complémentaire l'est aussi, ${perte} par mois en moyenne`;
   }
   if (complementaire.regle === "imputee_apres_les_bases_2027") {
@@ -4555,11 +4561,10 @@ function cumulEmploiRetraite(contexte, comparaison) {
   const suspendus = new Map();
   for (const tranche of cumul.tranches) {
     const bases = tranche.par_regime.filter((p) => !AGIRC_ARRCO_DU_CUMUL.has(p.regime)
-      && !COMPLEMENTAIRES_DU_NON_SALARIE.has(p.regime));
-    const duNonSalarie = tranche.par_regime
-      .filter((p) => COMPLEMENTAIRES_DU_NON_SALARIE.has(p.regime));
+      && !COMPLEMENTAIRES_A_PART.has(p.regime));
+    const aPart = tranche.par_regime.filter((p) => COMPLEMENTAIRES_A_PART.has(p.regime));
     const base = laPlusToucheeDuCumul(bases);
-    const complementaireDuNonSalarie = laPlusToucheeDuCumul(duNonSalarie);
+    const complementaireAPart = laPlusToucheeDuCumul(aPart);
     const complementaire = laPlusToucheeDuCumul(
       tranche.par_regime.filter((p) => AGIRC_ARRCO_DU_CUMUL.has(p.regime)));
     const perte = (pensions) => pensions.reduce((somme, p) => somme + p.reduction, 0.0)
@@ -4569,25 +4574,25 @@ function cumulEmploiRetraite(contexte, comparaison) {
       suspendus.set(annee, (suspendus.get(annee) ?? 0) + tranche.mois);
     }
     // Les mois hors de la suspension se disent par année : chacune a les siens.
-    const cle = [base?.statut, base?.motif, complementaireDuNonSalarie?.statut,
-      complementaireDuNonSalarie?.motif, complementaire?.statut,
+    const cle = [base?.statut, base?.motif, complementaireAPart?.statut,
+      complementaireAPart?.motif, complementaire?.statut,
       base?.motif === "hors_des_mois_suspendus" ? annee : ""].join("/");
     const derniere = periodes[periodes.length - 1];
     if (derniere !== undefined && derniere.cle === cle) {
       derniere.fin = tranche.fin;
       derniere.mois += tranche.mois;
       derniere.perteBase += perte(bases);
-      derniere.perteComplementaire += perte(duNonSalarie);
+      derniere.perteComplementaire += perte(aPart);
       continue;
     }
     periodes.push({ cle, debut: tranche.debut, fin: tranche.fin, mois: tranche.mois,
-      perteBase: perte(bases), perteComplementaire: perte(duNonSalarie), base,
-      complementaireDuNonSalarie, complementaire });
+      perteBase: perte(bases), perteComplementaire: perte(aPart), base,
+      complementaireAPart, complementaire });
   }
   for (const periode of periodes) periode.suspendus = suspendus.get(periode.debut.annee) ?? 0;
   const retenues = periodes.filter((periode) => periode.base !== null);
   const sorts = retenues.map((periode) => sortDeLaBase(periode.base, periode, cumul.groupe)
-    + sortDeLaComplementaireDuNonSalarie(periode.complementaireDuNonSalarie, periode)
+    + sortDeLaComplementaireAPart(periode.complementaireAPart, periode)
     + sortDeLaComplementaire(periode.complementaire));
   // Une seule période : une phrase ; plusieurs : une par période, datée.
   const droit = sorts.length === 1
