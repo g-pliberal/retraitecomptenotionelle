@@ -1,9 +1,7 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: rouge
-sources: acafe59501f68eaec80785fc1ae9fe20dfa8af2a
-date: 2026-10-25T14:13:13Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/40198785219
-echecs:
-  - "FAILED tests/test_ecrans.py::test_aucune_page_ne_deborde_en_largeur - AssertionError: file:///home/runner/work/retraitecomptenotionelle/retraitecomptenotionelle/tests/js/ecrans.mjs:63"
+etat: vert
+sources: d30d41e19bb47a2dfd5378cfef75e3893536bfea
+date: 2026-10-25T15:17:02Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/40203821356
 presomptions: vert
