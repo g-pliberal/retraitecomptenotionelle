@@ -11434,11 +11434,10 @@ ce qui retire des retraités et ajoute des cotisants. Chacun est chiffré seul,
 les deux autres laissés où ils sont, et mécaniquement : partir plus tard ne
 change pas la pension de qui part, et prélever davantage n'ôte rien au
 PIB.</p>
-<p>La question se pose aussi à l'envers, pour un autre solde que
-l'équilibre : un déficit qu'on accepte, ou un excédent qui rembourse.
-Choisissez-le, en part du PIB de chaque année : le tableau dit ce que chaque
-levier, seul, devrait faire pour que l'année y tombe. Un point de PIB vaut
-${g.milliards(comptes.pib.valeur(anneePib) / 100)} au PIB de ${anneePib}.</p>
+<p>Les mêmes leviers se chiffrent pour un autre solde que l'équilibre : un
+déficit qu'on accepte, ou un excédent qui rembourse. Choisissez-le, en part du
+PIB : un point vaut ${g.milliards(comptes.pib.valeur(anneePib) / 100)} au PIB
+de ${anneePib}.</p>
 ${choix}
 ${g.tableau(
     ["Système", ...ANNEES_LEVIERS.flatMap((annee) => [

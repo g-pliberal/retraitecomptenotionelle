@@ -79,7 +79,10 @@ poussée sans refaire les témoins (c56843d). Cinq rendus de page sur 82
 changent : les quatre de la page Coût gagnent le paragraphe et le sélecteur,
 sans rien d'autre, et le neuf. Au navigateur, `tests/test_ecrans.py` ne trouve
 ni débordement, ni grand vide, ni erreur aux cinq largeurs ; à 320 points, le
-sélecteur se replie sur trois lignes.
+sélecteur se replie sur trois lignes. Tout déplié, Coût compte 33 237 mots pour
+un budget de 33 250 (`test_une_page_depliee_tient_son_budget`) : la première
+rédaction du paragraphe, qui redisait la légende du tableau, le dépassait de
+neuf, et a été resserrée (3ae0c57, puis le commit suivant).
 
 **Ce qui reste.**
 
