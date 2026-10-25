@@ -231,7 +231,9 @@ approximations:
     pensions en cours de service au maximum de la date ; depuis, les pensions suivent
     les prix et le plafond les salaires, et le maximum ne mord plus sur la pension
     servie, sauf de 2021 à 2022, quand le plafond gelé n'a pas suivi la revalorisation
-    des pensions, si la Cnav l'appliquait.
+    des pensions, si la Cnav l'appliquait. Seul le jour de chaque majoration
+    forfaitaire de 1972 à 1982, la pension qu'elle relève, entière, est comparée au
+    maximum de ce jour (fiche majorations_forfaitaires_1972_1982).
   effet: non mesuré
 - version: [arretes_de_1986]
   ecart: >-
@@ -450,6 +452,11 @@ historique:
   décret n° 50-1225 de 1972 à 1974 et par les articles 2 du décret n° 51-727 et 71 ter
   du décret n° 50-1225 ensuite, borne leur pension depuis 1972, supposé celui du régime
   général.
+- >-
+  2026-10-25 — action 138, étape 4 : le jour de chaque majoration forfaitaire de 1972 à
+  1982, la pension entière, majorée, est comparée au maximum de ce jour, « à retenir
+  pour toutes les pensions servies » (circulaire Cnav n° 2/72, I, C ; fiche
+  majorations_forfaitaires_1972_1982) ; l'écart des arrérages le dit.
 effet: >-
   L'assuré du régime général dont la pension calculée passe la moitié du plafond — un
   salaire annuel moyen au-dessus du plafond de l'année, quand la revalorisation des

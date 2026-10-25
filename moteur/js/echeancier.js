@@ -675,6 +675,12 @@ export class Echeancier {
         detail += ", plancher sans les majorations forfaitaires de 1972 à 1982 "
           + `(− ${formatFixe(regime.plancher_non_majore, 2, true)} €)`;
       }
+      if (regime.maximum_du_jour) {
+        detail += ", pension entière majorée, sous le maximum du jour de sa "
+          + "dernière majoration forfaitaire "
+          + `(${regime.maximum_du_jour > 0 ? "+" : "−"} `
+          + `${formatFixe(Math.abs(regime.maximum_du_jour), 2, true)} €)`;
+      }
       if ((regime.majoration ?? 0.0) > 0) {
         detail += ", majoration exceptionnelle de 2023 comprise "
           + `(${formatFixe(regime.majoration, 2, true)} €)`;

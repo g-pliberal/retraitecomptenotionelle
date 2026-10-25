@@ -41,8 +41,10 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   juillet 1974, puis s'y cumule dans la limite de D. 355-1, ces retraites
   sorties de ses ressources, à sa date d'effet ou au jour où sa propre
   retraite, qu'il date, la suit ; les majorations forfaitaires de décembre 1982
-  et de janvier 1995, à leur date, et celles de la pension du défunt parti avant
-  1975, que sa réversion suit ; et, depuis 1988, la majoration forfaitaire pour
+  et de janvier 1995, à leur date, qui relèvent le maximum de la réversion avec
+  son taux, et celles de la pension du défunt parti avant 1975, que sa réversion
+  suit, et qui relèvent sa pension entière, comparée le jour de chacune au
+  maximum de ce jour ; et, depuis 1988, la majoration forfaitaire pour
   enfant à charge du survivant sans retraite (L. 353-5), jusqu'au mois qui suit
   l'âge limite du dernier enfant, ou sa propre retraite, servie par le régime
   de la dernière affiliation (D. 173-21-7) ; depuis le 24 octobre, l'enfant né

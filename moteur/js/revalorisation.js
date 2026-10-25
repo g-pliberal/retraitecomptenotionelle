@@ -263,6 +263,35 @@ export function plancherNonMajore(moteur, pension, depart, jusqua) {
   return servie - majoree;
 }
 
+/**
+ * Ce que le maximum du jour de la dernière majoration forfaitaire de 1972 à
+ * 1982 venue jusqu'à `jusqua` change à la pension `pension` de date d'effet
+ * `depart`, aux euros de ce jour-là : ajouté à `menee`, ce que le coefficient
+ * mène, il lui rend `ecretement`, ce que le maximum de sa liquidation en avait
+ * retiré, sous le sien ; négatif, il retire ce que le sien ne laisse pas. Le
+ * jour de chaque majoration, la pension servie est la plus basse de la pension
+ * entière, majorée, et du maximum de ce jour. Voir `maximum_du_jour` du Python.
+ */
+export function maximumDuJour(servie, pension, anneeLiquidation, depart, menee, ecretement,
+  jusqua) {
+  const moteur = servie.actuel;
+  const venues = majorationsDeLaPension(moteur, pension, depart)
+    .map((majoration) => String(majoration.date))
+    .filter((jour) => jour <= jusqua);
+  if (venues.length === 0) {
+    return 0.0;
+  }
+  const jour = venues.reduce((dernier, quand) => (quand > dernier ? quand : dernier));
+  const maximum = liquider.maximumDesPensions(moteur, pension.regime, jour,
+    Number(jour.slice(0, 4)));
+  if (maximum === null) {
+    return 0.0;
+  }
+  const coefficient = servie.coefficient(pension, anneeLiquidation, depart, jour, null)[0];
+  return Math.min(menee + ecretement,
+    maximum[0] * (pension.coefficient_du_maximum ?? 1.0) / coefficient) - menee;
+}
+
 export class PensionServie {
   constructor(simulateur) {
     this.actuel = simulateur.scenarioActuel;
@@ -391,7 +420,7 @@ export function menerAuMois(moteur, pensions, depart, jusqua) {
  */
 export function servieALEcheance(r) {
   return (r.au_depart - (r.conjoint_au_depart ?? 0.0)) * r.coefficient - (r.revision ?? 0.0)
-    - (r.plancher_non_majore ?? 0.0)
+    - (r.plancher_non_majore ?? 0.0) + (r.maximum_du_jour ?? 0.0)
     + (r.majoration ?? 0.0) + (r.relevement ?? 0.0) + (r.plans ?? 0.0) + (r.pmr ?? 0.0)
     + (r.conjoint ?? 0.0);
 }
@@ -442,6 +471,7 @@ export class Revalorisee {
         majoration_exceptionnelle: r.majoration ?? 0.0,
         relevement_des_exploitants: r.relevement ?? 0.0,
         ...(r.plancher_non_majore ? { plancher_non_majore: r.plancher_non_majore } : {}),
+        ...(r.maximum_du_jour ? { maximum_du_jour: r.maximum_du_jour } : {}),
         ...((r.conjoint || r.conjoint_au_depart)
           ? { majoration_conjoint_a_charge: r.conjoint } : {}),
         ...(r.plans ? { plans_de_revalorisation: r.plans } : {}),
@@ -544,15 +574,19 @@ export function faireVivre(simulateur, carriere, resultat, annee = null) {
   };
 
   // Ce que le plancher de la pension n'a pas des majorations forfaitaires
-  // venues à `quand`, en euros de ce jour, et le coefficient de la pension
-  // servie, que la majoration pour enfants suit. Voir `au_plancher` du Python.
-  const auPlancher = (pension, debut, montant, coefficient, quand) => {
+  // venues à `quand`, et ce que le maximum du jour de la dernière y change, en
+  // euros de ce jour, et le coefficient de la pension servie, que la majoration
+  // pour enfants suit. Voir `au_plancher` du Python.
+  const auPlancher = (pension, a, debut, montant, coefficient, quand) => {
     const nonMajore = plancherNonMajore(servie.actuel, pension, debut, quand);
-    if (!nonMajore) {
-      return [0.0, coefficient];
-    }
     const sansConjoint = montant - majorationDuConjoint(pension.conjoint, debut);
-    return [nonMajore * coefficient, coefficient * (1.0 - nonMajore / sansConjoint)];
+    const auMaximum = maximumDuJour(servie, pension, a, debut, sansConjoint - nonMajore,
+      (pension.ecretement_du_maximum ?? 0.0) * aLEffet.get(pension.regime), quand);
+    if (!nonMajore && !auMaximum) {
+      return [0.0, 0.0, coefficient];
+    }
+    return [nonMajore * coefficient, auMaximum * coefficient,
+      coefficient * (1.0 - (nonMajore - auMaximum) / sansConjoint)];
   };
 
   // Une pension qui prend effet en janvier 2020 n'était pas servie en
@@ -564,15 +598,15 @@ export function faireVivre(simulateur, carriere, resultat, annee = null) {
     const jusqu2019 = datees.map(([p, a, debut]) => (debut <= MOIS_DES_TRANCHES
       ? servie.coefficient(p, a, debut, MOIS_DES_TRANCHES, null)[0]
       : 0.0));
-    const planchers2019 = datees.map(([p, , debut, montant], rang) => auPlancher(
-      p, debut, montant, jusqu2019[rang], MOIS_DES_TRANCHES));
+    const planchers2019 = datees.map(([p, a, debut, montant], rang) => auPlancher(
+      p, a, debut, montant, jusqu2019[rang], MOIS_DES_TRANCHES));
     let somme = 0;
     datees.forEach(([p, , debut, montant], rang) => {
       somme += avecLeConjoint(p, debut, montant, jusqu2019[rang], MOIS_DES_TRANCHES)
-        - planchers2019[rang][0];
+        - planchers2019[rang][0] + planchers2019[rang][1];
     });
     mensuel2019 = (somme + majoration * coefficientDeLaMajoration(
-      planchers2019.map(([, servi]) => servi), MOIS_DES_TRANCHES)) / 12.0;
+      planchers2019.map(([, , servi]) => servi), MOIS_DES_TRANCHES)) / 12.0;
   }
 
   const regimes = [];
@@ -583,7 +617,8 @@ export function faireVivre(simulateur, carriere, resultat, annee = null) {
     const [coefficient, regle, fiabiliteRegime] = servie.coefficient(
       pension, a, debut, fin, mensuel2019,
     );
-    const [nonMajore, servi] = auPlancher(pension, debut, montant, coefficient, fin);
+    const [nonMajore, auMaximum, servi] = auPlancher(pension, a, debut, montant, coefficient,
+      fin);
     coefficients.push(servi);
     fiabilite = Math.min(fiabilite, fiabiliteRegime);
     // La majoration pour conjoint à charge : sa part du départ, que le
@@ -600,6 +635,7 @@ export function faireVivre(simulateur, carriere, resultat, annee = null) {
       aujourd_hui: avecLeConjoint(pension, debut, montant, coefficient, fin),
       revision: 0.0,
       plancher_non_majore: nonMajore,
+      maximum_du_jour: auMaximum,
       majoration: 0.0,
       relevement: 0.0,
       plans: 0.0,
@@ -607,7 +643,7 @@ export function faireVivre(simulateur, carriere, resultat, annee = null) {
       conjoint_au_depart: conjointAuDepart,
       conjoint,
     };
-    if (nonMajore) {
+    if (nonMajore || auMaximum) {
       regime.aujourd_hui = servieALEcheance(regime);
     }
     regimes.push(regime);

@@ -1,0 +1,49 @@
+date: "2026-10-25"
+session: "action 138, étape 4, dix-huitième partie : les majorations au maximum — la pension majorée sur son montant entier, comparée au maximum du jour de chaque majoration ; le maximum de la réversion relevé avec son taux en 1982 et en 1995"
+consulte: >-
+  veille_droit.py, lancé à l'ouverture de la session (dernière veille consignée :
+  2026-10-25 ; trois fiches à relire, sans rapport avec la réversion ni les
+  majorations) ; l'index LEGI, récupéré de la release index-dila et mis à jour par
+  ses neuf incréments jusqu'au 24 octobre 2026, puis textes.py --inscrire, qui n'a
+  rien inscrit. Par l'API de la base de législation de la Cnav (/api/v1/search/custom,
+  en phrase exacte, et /api/v1/reference/referencesByFileLeafRef), relues en entier :
+  les circulaires n° 2/72 du 31 janvier 1972 (I, C, le maximum des pensions ; IV, A),
+  n° 15/76 du 22 janvier 1976, n° 64/77 du 11 juillet 1977 et n° 79/82 du 24 août
+  1982, sur le maximum et l'écrêtement ; n° 120/82 du 28 décembre 1982 (§ 2 à 5) et
+  n° 3/95 du 5 janvier 1995 (§ 13 et § 21 à 25) ; cherchés par phrase, pour un
+  exemple chiffré, les textes que « non écrêtée » et « 3,846 » rendent, dont la
+  circulaire ministérielle n° DSS/VI/93/85 du 15 novembre 1993, parcourue.
+trouve: >-
+  La majoration « s'applique à la pension principale non écrêtée résultant des
+  versements » (n° 2/72, IV, A ; n° 15/76 et n° 64/77, A), et les maxima de 1972 à
+  1974 « sont à retenir pour toutes les pensions servies au cours des années
+  précitées, quelles que soit leur date d'entrée en jouissance », celui des
+  réversions « augmenté dans les mêmes proportions » (n° 2/72, I, C). Le modèle
+  majorait la pension ramenée au maximum à sa liquidation sans la comparer de
+  nouveau : il compare désormais, le jour de chaque majoration, la pension entière,
+  majorée, au maximum de ce jour. Celle de 1971 sur quatre-vingt-seize trimestres, au
+  salaire annuel moyen de 1,3 plafond, sert en décembre 1982 sa pension calculée
+  majorée, 4 % au-dessus de la pension ramenée ; à trois plafonds, le maximum de 1982.
+  La pension de 1970 sur la durée maximum, ramenée au maximum de sa liquidation, en
+  vaut, revalorisée et majorée, 1,07 fois celui d'octobre 1977 : elle y est ramenée.
+  Pour la réversion, la majoration de 4 % « répercute exactement l'augmentation du
+  taux » de 50 à 52 % (n° 120/82, § 2), dont le maximum vaut 52 % de celui de l'assuré
+  (§ 4) ; en 1995, la réversion est « revalorisée par le coefficient 1,03846. Le
+  montant revalorisé est ensuite comparé avec le montant minimum et le montant
+  maximum » (n° 3/95, § 241), celui de 54 % (§ 23). Le modèle comparait la réversion
+  majorée au maximum de sa date d'effet, à son taux d'alors : la réversion ramenée à
+  son maximum ne recevait rien. La veuve du cadre parti et mort en 1990 reçoit
+  désormais en 1995 199,76 euros de 1990 par an. La circulaire ministérielle de 1993
+  calcule de même la compensation de la revalorisation « sur la pension non
+  écrêtée », le maximum pouvant « continuer à être servi » : la caisse menait la
+  pension entière, et la comparait au maximum à chaque revalorisation. Aucun exemple
+  chiffré d'une majoration au maximum.
+reste: >-
+  La comparaison de la pension et de la réversion au maximum à chaque revalorisation,
+  que chaque arrêté faisait avant 1987, et non le seul jour des majorations ; le
+  plafond du semestre de la majoration de décembre 1982, que le modèle compte sur la
+  moyenne de l'année. La réversion réduite pour cumul, que la caisse ne majorait pas
+  en 1995 (n° 3/95, § 242), et que le modèle majore. Au propriétaire, comme les
+  sessions précédentes le disaient : les décrets n° 76-727 et n° 77-966, au
+  fac-similé, et le choix de la date de la demande. Au site : rien de neuf, la
+  pension servie et la réversion portant déjà les montants.

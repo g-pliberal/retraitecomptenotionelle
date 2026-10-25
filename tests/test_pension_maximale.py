@@ -182,6 +182,186 @@ def test_la_pension_sous_le_maximum_ne_bouge_pas(simulateur):
     assert "maximum des pensions" not in pension.detail
 
 
+# -- les majorations forfaitaires de 1972 à 1982 ----------------------------------
+
+def _au_dessus_du_plafond(monkeypatch, simulateur, annee: int, facteur: float) -> None:
+    """Le salaire annuel moyen du régime général porté à ``facteur`` plafonds de
+    ``annee`` : aucune carrière du modèle ne passe le maximum avant 1975, leurs
+    durées, comptées depuis 1945, restant loin de celles de leur date."""
+    plafond = simulateur.macro.plafond_securite_sociale(annee)
+    salaire_de_reference = liquider.salaire_de_reference
+
+    def au_dessus(moteur, code, *arguments, **options):
+        if code == "regime_general":
+            return facteur * plafond
+        return salaire_de_reference(moteur, code, *arguments, **options)
+
+    monkeypatch.setattr(liquider, "salaire_de_reference", au_dessus)
+
+
+@pytest.mark.parametrize("facteur, au_maximum_de_1982", [
+    # 1,3 plafond : la pension calculée, 41,6 % du plafond de 1971, est ramenée à
+    # 40 % ; majorée de 6 %, elle reste sous le maximum de 1982 : servie entière.
+    (1.3, False),
+    # 3 plafonds : 96 % du plafond de 1971, majorés, passent le maximum de 1982.
+    (3.0, True),
+])
+def test_la_pension_au_maximum_est_majoree_sur_son_montant_entier(
+        simulateur, monkeypatch, facteur, au_maximum_de_1982):
+    """« La majoration de 5 % s'applique à la pension principale non écrêtée »
+    (circulaires Cnav n° 2/72, IV, A, n° 15/76 et n° 64/77, A), « avant
+    comparaison au minimum et au maximum » (exposé « Montant de la retraite
+    personnelle ») ; et le maximum de l'année vaut « pour toutes les pensions
+    servies [...] quelles que soit leur date d'entrée en jouissance » (n° 2/72,
+    I, C). Le salarié parti à soixante-cinq ans en 1971, sur quatre-vingt-seize
+    trimestres, ramené au maximum de 1971, reçoit les 6 % de décembre 1982
+    (loi n° 82-599, article 1er) sur sa pension calculée, que le maximum de
+    1982, la moitié du plafond, borne."""
+    from retraite_notionnelle.revalorisation import faire_vivre
+    _au_dessus_du_plafond(monkeypatch, simulateur, 1971, facteur)
+    carriere, pension = _regime_general(simulateur, 1906, 65)
+    plafond = simulateur.macro.plafond_securite_sociale(1971)
+    calculee = facteur * plafond * 0.40 * 96 / 120
+    assert (carriere.annee_liquidation, "× 96/120" in pension.detail) == (1971, True)
+    assert pension.montant == pytest.approx(0.40 * plafond)
+    resultat = simulateur.scenario_actuel.calculer(carriere)
+    servie, = [r for r in faire_vivre(simulateur, carriere, resultat, 1982).regimes
+               if r.regime == "regime_general"]
+    maximum_de_1982 = 0.50 * simulateur.macro.plafond_securite_sociale(1982)
+    assert (calculee * servie.coefficient > maximum_de_1982) is au_maximum_de_1982
+    assert servie.aujourd_hui == pytest.approx(
+        maximum_de_1982 if au_maximum_de_1982 else calculee * servie.coefficient)
+
+
+#: Le jumeau JavaScript de ``maximum_du_jour``, sur les mêmes pensions.
+_JUMEAU_DU_MAXIMUM = """
+import { readFileSync } from "node:fs";
+import { Contexte } from "./moteur/js/contexte.js";
+import { PensionServie, maximumDuJour } from "./moteur/js/revalorisation.js";
+const paquet = JSON.parse(readFileSync("moteur/donnees.json", "utf8"));
+const servie = new PensionServie(new Contexte(paquet).simulateur());
+const cas = JSON.parse(process.argv[1]);
+process.stdout.write(JSON.stringify(cas.map(
+  ([pension, annee, depart, menee, ecretement, jusqua]) =>
+    maximumDuJour(servie, pension, annee, depart, menee, ecretement, jusqua))));
+"""
+
+
+def test_les_deux_moteurs_comparent_la_pension_majoree_au_maximum_du_jour(simulateur):
+    """Ce que le maximum du jour de la dernière majoration change à la pension,
+    au bit près dans les deux moteurs. La pension de 1971 ramenée au maximum
+    reprend sous celui de 1982 ce qu'il lui avait retiré, ou une part ; celle de
+    1970 sur la durée maximum en reprend une part sous celui de 1972, puis
+    s'arrête, ses trois majorations de 5 % menées plus vite que le plafond, sous
+    celui d'octobre 1977 ; de même la pension du salarié agricole de 1971, sans
+    maximum à sa liquidation, sous celui de 1982 ; celle de l'ajournement, sous le
+    maximum de 1972 qu'il multiplie ; celle de 1980 ne reçoit aucune majoration."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    from datetime import date
+
+    from retraite_notionnelle.donnees.chargement import Fiabilite
+    from retraite_notionnelle.droit.commun import PensionRegime
+    from retraite_notionnelle.revalorisation import PensionServie, maximum_du_jour
+    plafond = simulateur.macro.plafond_securite_sociale
+    general, agricole = ({"regime": "regime_general", "sur_la_duree_maximum": False},
+                         {"regime": "msa_salaries", "sur_la_duree_maximum": False})
+    sur_la_duree = {"regime": "regime_general", "sur_la_duree_maximum": True}
+    cas = [
+        (general, 1971, "1971-02-01", 0.40 * plafond(1971), 0.016 * plafond(1971), "1982-12-31"),
+        (general, 1971, "1971-02-01", 0.40 * plafond(1971), 0.56 * plafond(1971), "1990-12-31"),
+        (sur_la_duree, 1970, "1970-02-01", 0.40 * plafond(1970), 0.20 * plafond(1970),
+         "1972-12-31"),
+        (sur_la_duree, 1970, "1970-02-01", 0.40 * plafond(1970), 0.20 * plafond(1970),
+         "1977-12-31"),
+        (agricole, 1971, "1971-02-01", 0.30 * plafond(1971), 0.0, "1982-12-31"),
+        (agricole, 1971, "1971-02-01", 0.45 * plafond(1971), 0.0, "1982-12-31"),
+        ({**sur_la_duree, "coefficient_du_maximum": 1.2}, 1971, "1971-07-01",
+         0.48 * plafond(1971), 0.10 * plafond(1971), "1972-06-30"),
+        (sur_la_duree, 1980, "1980-02-01", 0.50 * plafond(1980), 0.10 * plafond(1980),
+         "1990-12-31"),
+    ]
+    servie = PensionServie(simulateur)
+    attendu = [maximum_du_jour(
+        servie, PensionRegime(regime=pension["regime"], montant=menee, type_calcul="annuites",
+                              detail="", fiabilite=Fiabilite.HAUTE,
+                              sur_la_duree_maximum=pension["sur_la_duree_maximum"],
+                              ecretement_du_maximum=ecretement,
+                              coefficient_du_maximum=pension.get("coefficient_du_maximum", 1.0)),
+        annee, date.fromisoformat(depart), menee, ecretement, date.fromisoformat(jusqu_a))
+        for pension, annee, depart, menee, ecretement, jusqu_a in cas]
+    assert attendu[0] == pytest.approx(cas[0][4])
+    assert all(0 < attendu[rang] < cas[rang][4] for rang in (1, 2, 6))
+    assert attendu[3] < 0 and attendu[5] < 0
+    assert attendu[4] == attendu[7] == 0.0
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", _JUMEAU_DU_MAXIMUM, json.dumps(
+            [[{"type_calcul": "annuites", "coefficient_du_maximum": 1.0, **pension}, annee,
+              depart, menee, ecretement, jusqu_a]
+             for pension, annee, depart, menee, ecretement, jusqu_a in cas])],
+        cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    assert json.loads(execution.stdout) == attendu
+
+
+#: Le jumeau JavaScript de « faire vivre », sur la même liquidation, dont la
+#: pension du régime général est ramenée au maximum.
+_JUMEAU_DE_FAIRE_VIVRE = """
+import { readFileSync } from "node:fs";
+import { Contexte } from "./moteur/js/contexte.js";
+import { faireVivre } from "./moteur/js/revalorisation.js";
+const paquet = JSON.parse(readFileSync("moteur/donnees.json", "utf8"));
+const simulateur = new Contexte(paquet).simulateur();
+const [options, montant, ecretement, annees] = JSON.parse(process.argv[1]);
+const carriere = simulateur.carriereSimple(options);
+const resultat = simulateur.scenarioActuel.calculer(carriere);
+for (const pension of resultat.pensions_par_regime) {
+  if (pension.regime === "regime_general") {
+    pension.montant = montant;
+    pension.ecretement_du_maximum = ecretement;
+  }
+}
+process.stdout.write(JSON.stringify(annees.map((annee) => {
+  const vivante = faireVivre(simulateur, carriere, resultat, annee);
+  return [vivante.donnees(), vivante.regimes.map((r) => r.aujourd_hui)];
+})));
+"""
+
+
+def test_les_deux_moteurs_font_vivre_la_pension_ramenee_au_maximum(simulateur):
+    """La pension de 1971 ramenée au maximum, que le maximum de 1982 arrête : la
+    même dans les deux moteurs, de 1981, avant la majoration, à 2026, ce que le
+    maximum du jour y change compris, et le mensuel de décembre 2019."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    from dataclasses import replace
+
+    from retraite_notionnelle.revalorisation import faire_vivre
+    options = {"annee_naissance": 1906, "sexe": "H", "affiliation": "salarie_prive_cadre",
+               "age_debut": 20, "age_liquidation": 65, "niveau_salaire": 5.0}
+    carriere = simulateur.carriere_simple(**options)
+    resultat = simulateur.scenario_actuel.calculer(carriere)
+    plafond = simulateur.macro.plafond_securite_sociale(1971)
+    montant, ecretement = 0.40 * plafond, 0.56 * plafond
+    resultat = replace(resultat, pensions_par_regime=tuple(
+        replace(p, montant=montant, ecretement_du_maximum=ecretement)
+        if p.regime == "regime_general" else p for p in resultat.pensions_par_regime))
+    annees = [1981, 1982, 1990, 2026]
+    attendu = json.loads(json.dumps([
+        [vivante.donnees(), [r.aujourd_hui for r in vivante.regimes]]
+        for vivante in (faire_vivre(simulateur, carriere, resultat, annee) for annee in annees)]))
+    jours = [{r["regime"]: r.get("maximum_du_jour", 0.0) for r in donnees["regimes"]}
+             for donnees, _ in attendu]
+    assert jours[0]["regime_general"] == 0.0
+    assert all(jour["regime_general"] > 0 for jour in jours[1:])
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", _JUMEAU_DE_FAIRE_VIVRE,
+         json.dumps([options, montant, ecretement, annees])],
+        cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    assert json.loads(execution.stdout) == attendu
+
+
 # -- la circulaire n° 22/83 ------------------------------------------------------
 
 #: Le maximum de 1983, 50 % du plafond de 88 920 F, dans l'unité de la

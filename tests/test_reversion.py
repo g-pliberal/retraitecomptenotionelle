@@ -204,11 +204,13 @@ def test_deux_ans_de_mariage_avant_2004_sauf_enfant(simulateur, enfants, attendu
 
 # -- le minimum et les majorations du régime général ------------------------------------
 
-def _servies(simulateur, carriere, pensions, annee, durees=None):
+def _servies(simulateur, carriere, pensions, annee, durees=None,
+             majorations_des_pensions=None):
     """Chaque ligne de la réversion, sous son régime."""
     resultat = reversion(simulateur.scenario_actuel,
                          [(regime, base, HAUTE) for regime, base in pensions],
-                         carriere, annee, durees=durees)
+                         carriere, annee, durees=durees,
+                         majorations_des_pensions=majorations_des_pensions)
     return {r.regime: r for r in resultat.regimes}
 
 
@@ -1354,6 +1356,46 @@ def test_les_majorations_forfaitaires_de_1982_et_de_1995(simulateur, deces, base
                      int(deces[:4]))["regime_general"]
     assert tuple((jour, round(montant)) for jour, montant
                  in ligne.majorations_forfaitaires) == attendues
+
+
+@pytest.mark.parametrize("naissance, depart, deces, base, personnelles, attendues", [
+    # Attribuée en avril 1980 et ramenée à son maximum, la moitié du maximum
+    # des pensions : 52 % de lui en décembre 1982, puis 54 % en 1995.
+    (1918, 60.0, "1980-03-10", 10000.0, (), lambda maximum, calcule: (
+        ("1982-12-01", maximum * 0.04), ("1995-01-01", maximum * 1.04 * 0.03846))),
+    # Sous son maximum, mais que les 6 % de la pension du défunt, partie en
+    # 1971, et ses 4 % portent au-dessus de 52 % du maximum des pensions : ce
+    # maximum.
+    (1906, 65.0, "1980-03-10", 4400.0, (("1982-12-01", 0.06),), lambda maximum, calcule: (
+        ("1982-12-01", maximum * 1.04 - calcule), ("1995-01-01", maximum * 1.04 * 0.03846))),
+    # Attribuée en 1990 au taux de 52 % et ramenée à son maximum : 54 % en 1995.
+    (1918, 60.0, "1990-03-10", 30000.0, (), lambda maximum, calcule: (
+        ("1995-01-01", maximum * 0.03846),)),
+])
+def test_les_majorations_de_la_reversion_relevent_son_maximum(
+        simulateur, naissance, depart, deces, base, personnelles, attendues):
+    """La majoration de 4 % « répercute exactement l'augmentation du taux de la
+    pension de réversion », de 50 à 52 %, et son maximum est « égal à 52% du
+    maximum qui était ou aurait été opposable à l'assuré décédé » (circulaire
+    Cnav n° 120/82, § 2 et § 4) ; en 1995, la réversion est « revalorisée par le
+    coefficient 1,03846. Le montant revalorisé est ensuite comparé avec le
+    montant minimum et le montant maximum », celui de 54 % (circulaire Cnav
+    n° 3/95, § 13, § 23 et § 241). La réversion ramenée à son maximum en reçoit
+    donc la part du taux, que le maximum de sa date d'effet lui retirait."""
+    carriere = _carriere(simulateur, naissance, depart, "1920-06-10", deces)
+    annee = int(deces[:4])
+    ligne = _servies(simulateur, carriere, [("regime_general", base)], annee,
+                     majorations_des_pensions={"regime_general": personnelles}
+                     )["regime_general"]
+    # Le maximum de la date d'effet : son taux, 50 % puis 52 %, de la moitié du
+    # plafond de l'année.
+    maximum = (0.50 if annee < 1982 else 0.52) * 0.5 * simulateur.macro.plafond_securite_sociale(
+        annee)
+    assert ligne.maximum == pytest.approx(maximum)
+    assert ligne.montant == pytest.approx(min(maximum, ligne.taux * base))
+    assert tuple((jour, round(montant, 2)) for jour, montant
+                 in ligne.majorations_forfaitaires) == tuple(
+        (jour, round(montant, 2)) for jour, montant in attendues(maximum, ligne.taux * base))
 
 
 def test_la_majoration_forfaitaire_pour_enfant_a_charge(simulateur):
@@ -2877,6 +2919,38 @@ def test_la_reversion_suit_les_majorations_de_la_pension_du_defunt(saisies):
     assert general.majorations_forfaitaires == (
         ("1982-12-01", pytest.approx(calcule * (1.06 * 1.04 - 1))),
         ("1995-01-01", pytest.approx(calcule * 1.06 * 1.04 * 0.03846)))
+
+
+def test_les_deux_moteurs_relevent_le_maximum_de_la_reversion(saisies):
+    """Le cadre parti en 1990 et mort la même année laisse une réversion ramenée
+    à 52 % du maximum des pensions, que la majoration de 1995 porte à 54 %
+    (circulaire Cnav n° 3/95, § 23 et § 241) : 3,846 % de ce maximum, les deux
+    moteurs au bit près."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    racine = Path(__file__).resolve().parents[1]
+    sys.path.insert(0, str(racine / "scripts"))
+    from construire_temoins import _fini
+    cas = {"naissance": "1925", "liquidation": "65", "conjoint": "1930", "salaire": "5",
+           "statut": "salarie_prive_cadre", "deces": "1990-09"}
+    attendus = [{"requete": cas, "resultat": _fini(saisies.simuler(cas).dictionnaire())}]
+    ligne, = (r for r in attendus[0]["resultat"]["reversion"]["regimes"]
+              if r["regime"] == "regime_general")
+    assert ligne["motif"] == "maximum" and ligne["montant"] == pytest.approx(ligne["maximum"])
+    majoration, = ligne["majorations_forfaitaires"]
+    assert (majoration["date"], majoration["montant"]) == (
+        "1995-01-01", pytest.approx(ligne["maximum"] * 0.03846))
+    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
+                                     delete=False) as fichier:
+        fichier.write(json.dumps(attendus, ensure_ascii=False))
+        chemin = fichier.name
+    try:
+        execution = subprocess.run(
+            ["node", str(racine / "tests" / "js" / "comparer.mjs"), chemin],
+            cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False)
+    finally:
+        Path(chemin).unlink()
+    assert execution.returncode == 0, (execution.stdout + execution.stderr)[-2000:]
 
 
 # -- ce qui n'est pas porté ----------------------------------------------------------

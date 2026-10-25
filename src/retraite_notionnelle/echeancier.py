@@ -612,6 +612,11 @@ class Echeancier:
             if regime.plancher_non_majore > 0:
                 detail += (f", plancher sans les majorations forfaitaires de 1972 à 1982 "
                            f"(− {regime.plancher_non_majore:,.2f} €)")
+            if regime.maximum_du_jour:
+                detail += (", pension entière majorée, sous le maximum du jour de sa "
+                           f"dernière majoration forfaitaire "
+                           f"({'+' if regime.maximum_du_jour > 0 else '−'} "
+                           f"{abs(regime.maximum_du_jour):,.2f} €)")
             if regime.majoration > 0:
                 detail += (f", majoration exceptionnelle de 2023 comprise "
                            f"({regime.majoration:,.2f} €)")

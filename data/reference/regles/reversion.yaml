@@ -998,13 +998,19 @@ approximations:
     les majorations forfaitaires de 4 % au 1er décembre 1982 et de 3,846 % au 1er
     janvier 1995 (exposé de la Cnav) s'écrivent à leur date, hors du montant, sur la
     réversion calculée, portée au minimum et ramenée au maximum de la date d'effet,
-    sans la réviser pour ressources ni pour cumul ; de même celles des retraites
+    dont elles relèvent le taux, à 52 puis 54 % du maximum des pensions (circulaires
+    Cnav n° 120/82, § 2 et § 4, et n° 3/95, § 23 et § 241), sans la réviser pour
+    ressources ni pour cumul : la caisse ne majorait pas en 1995 la réversion réduite
+    pour cumul, « les limites de cumul applicables étant celles en vigueur lors de
+    leur dernière application » (n° 3/95, § 242) ; de même celles des retraites
     personnelles d'avant 1975 (1972, 1976, 1977, 1982, selon la durée de l'assuré),
     que la réversion suit « dès lors que l'assuré décédé aurait pu en bénéficier »
-    (fiche majorations_forfaitaires_1972_1982), le même jour avant les siennes
+    (fiche majorations_forfaitaires_1972_1982), le même jour avant les siennes. Le
+    maximum est celui de la date d'effet, mené comme les pensions, et non celui du
+    jour de chaque majoration
   effet: >-
-    quelques pour cent de la réversion attribuée avant 1995, à partir de sa date ;
-    non mesuré
+    quelques pour cent de la réversion attribuée avant 1995, à partir de sa date,
+    que le modèle sert aussi réduite pour cumul ; non mesuré
 - ecart: >-
     avant 1973, l'âge de soixante ans, au lieu de soixante-cinq, est celui du
     survivant « inapte au travail », que le modèle tient pour celui qui déclare son
@@ -1526,6 +1532,22 @@ sources:
       circulaire Cnav n° 3/95 du 5 janvier 1995, lue le 9 octobre 2026 : § 13, le maximum
       « est égal à 54 % du maximum qui était ou aurait été opposable à l'assuré
       décédé » ; § 23, le même pour les réversions d'avant 1995, majorées de 3,846 %
+    date: 1995-01-05
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_395_05011995.aspx
+  - type: circulaire_cnav
+    reference: >-
+      circulaires Cnav n° 120/82 du 28 décembre 1982 et n° 3/95 du 5 janvier 1995, relues
+      le 25 octobre 2026 par l'API de la base de législation de la Cnav : la majoration
+      de 4 % de décembre 1982 « répercute exactement l'augmentation du taux de la
+      pension de réversion » de 50 à 52 % ; elle « est applicable au montant calculé de
+      la pension avant qu'elle n'ait été portée éventuellement au minimum » (n° 120/82,
+      § 2), et le maximum vaut 52 % de celui de l'assuré (§ 4) ; en 1995, les réversions
+      servies sans droit propre « sont revalorisées par le coefficient 1,03846. Le
+      montant revalorisé est ensuite comparé avec le montant minimum et le montant
+      maximum » (n° 3/95, § 241), ce maximum « identique à celui des pensions dont le
+      point de départ est postérieur au 31 décembre 1994 » (§ 23) ; la réversion réduite
+      pour cumul « n'est pas revalorisée » (§ 242), celle qui se cumule entièrement est
+      majorée (§ 243)
     date: 1995-01-05
     url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_395_05011995.aspx
   - type: circulaire_cnav
@@ -2304,6 +2326,13 @@ historique:
   Chaque version dit ses moments (ressources_examinees), et chaque ligne celui qui
   a décidé (ressources_examinees_au) ; les versions d'avant 2004 disent leurs mois
   (periodes_de_reference), qui ne sont plus nuls.
+- >-
+  2026-10-25 — action 138, étape 4, dix-huitième partie : les majorations de 4 % de
+  décembre 1982 et de 3,846 % de 1995 relèvent le maximum de la réversion avec son
+  taux, à 52 puis 54 % du maximum des pensions (circulaires Cnav n° 120/82, § 2 et
+  § 4, n° 3/95, § 23 et § 241) : la réversion ramenée au maximum de sa date d'effet
+  en reçoit la part du taux, que ce maximum lui retirait. La veuve du cadre parti et
+  mort en 1990 reçoit en 1995 3,846 % de son maximum, 199,76 euros de 1990 par an.
 effet: >-
   Tout conjoint, ou ex-conjoint, d'un assuré du régime général ou d'un régime aligné
   qui décède : 4,41 millions de bénéficiaires d'un droit dérivé tous régimes fin 2024

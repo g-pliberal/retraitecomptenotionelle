@@ -1335,10 +1335,11 @@ function regimeDeLaMajoration(moteur, carriere, candidats, jusquA, durees, redui
 function majorationsUlterieures(parametres, dateEffet, calcule, minimum, maximum,
   personnelles = [], autres = 0.0) {
   // `autres` : les réversions que le minimum compte avec elle (D. 634-14), que
-  // les majorations de la réversion relèvent aussi : voir le Python.
+  // les majorations de la réversion relèvent aussi ; le maximum suit les
+  // siennes, de 50 à 52 puis 54 % du maximum des pensions : voir le Python.
   const servie = (facteur, propre) => {
     const montant = Math.max(minimum - autres * propre, calcule * facteur);
-    return maximum > 0 ? Math.min(montant, maximum) : montant;
+    return maximum > 0 ? Math.min(montant, maximum * propre) : montant;
   };
   // Celles de la pension du défunt passent, le même jour, avant celle de la
   // réversion : voir le Python.

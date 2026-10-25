@@ -10,8 +10,9 @@ intitule: >-
   le sont en 1972 et en 1982. Elles relèvent la pension des cotisations, que la pension
   servie compare ensuite au minimum des pensions et au plancher de la pension
   substituée, qu'elles ne relèvent pas, sauf, en 1982, la pension d'invalidité de
-  l'ex-invalide parti avant 1973. La réversion du conjoint de l'assuré qui aurait pu en
-  bénéficier les suit.
+  l'ex-invalide parti avant 1973 ; et la pension non écrêtée, que la pension servie
+  compare, le jour de chaque majoration, au maximum de ce jour. La réversion du
+  conjoint de l'assuré qui aurait pu en bénéficier les suit.
 domaine: revalorisation
 regimes: [regime_general, msa_salaries]
 etape: faire_vivre
@@ -24,12 +25,17 @@ lit:
 - les planchers auxquels l'étape « compléter » a porté la pension — la pension minimum
   d'avant le 1er avril 1983, l'AVTS et la pension d'invalidité de l'ex-invalide —, et
   la pension d'avant eux
+- ce que le maximum des pensions a retiré de la pension à sa liquidation, et le
+  maximum du jour de chaque majoration (fiche pension_maximale_regime_general)
 ecrit:
 - le coefficient qui mène la pension jusqu'à l'échéance, chaque majoration comprise à
   partir de sa date, et la bonification pour enfants avec la pension servie
 - ce que les majorations ne donnent pas au plancher, retiré de ce que le coefficient
   mène, la pension servie étant la plus haute de la pension des cotisations, majorée,
   et de chaque plancher, des seules majorations que sa version lui donne
+- ce que le maximum du jour de la dernière majoration change à ce que le coefficient
+  mène, la pension servie étant, ce jour-là, la plus basse de la pension entière,
+  majorée, et de ce maximum
 - les majorations que la réversion reçoit après l'année de ses montants
 dates_qui_decident:
 - liquidation.date_effet
@@ -281,17 +287,23 @@ approximations:
     majorée, passait sa pension d'invalidité, ou si, du premier groupe, il était porté
     au plancher ; non mesuré
 - ecart: >-
-    les majorations relèvent aussi « le montant de base, avant comparaison [...] au
-    maximum » (exposé de la Cnav, « Montant de la retraite personnelle ») : la pension
-    ramenée au maximum à sa liquidation, que la caisse majorait sur son montant entier
-    avant de la ramener au maximum de l'année, 44 % à 50 % du plafond de 1972 à 1975
-    (fiche pension_maximale_regime_general), est majorée par le modèle sur son montant
-    ramené, et n'est plus comparée au maximum
+    les majorations relèvent « la pension principale non écrêtée » (circulaires Cnav
+    n° 2/72, IV, A, n° 15/76 et n° 64/77, A), « avant comparaison [...] au maximum »
+    (exposé de la Cnav, « Montant de la retraite personnelle »), et le maximum de
+    l'année, 44 % à 50 % du plafond de 1972 à 1975, vaut « pour toutes les pensions
+    servies [...] quelles que soit leur date d'entrée en jouissance » (n° 2/72, I, C) :
+    le modèle compare la pension entière, majorée, au maximum du jour de chaque
+    majoration (revalorisation.maximum_du_jour), puis la revalorise comme les pensions,
+    sans la comparer au maximum aux autres revalorisations, que chaque arrêté bornait
+    avant 1987 (fiche pension_maximale_regime_general) ; ce maximum se compte sur le
+    plafond moyen de l'année, et non sur celui du semestre de la majoration
   effet: >-
-    la pension liquidée avant 1975 au maximum, que le modèle sert sous ce que la caisse
-    servait tant que son montant entier, majoré, reste sous le maximum de l'année ; nul
-    sur les témoins, dont aucune pension d'avant 1975 n'est ramenée au maximum ; non
-    mesuré
+    la pension liquidée avant 1975 que le maximum ramène, ou que ses majorations
+    portent au-dessus de lui : la pension de 1970 sur la durée maximum, ramenée au
+    maximum de sa liquidation, en vaut, revalorisée et majorée, 1,07 fois celui
+    d'octobre 1977 ; la caisse la bornait à chaque revalorisation, le modèle le jour de
+    chaque majoration. Nul sur les témoins, dont aucune pension d'avant 1975 n'est
+    ramenée au maximum ; non mesuré
 - ecart: >-
     les majorations de 1976 et de 1977 ne relèvent pas les pensions des salariés
     agricoles : leurs lois ne les nomment pas, et les décrets qui les leur ont étendues
@@ -441,6 +453,18 @@ sources:
     date: 1982-08-24
   - type: circulaire_cnav
     reference: >-
+      circulaire Cnav n° 2/72 du 31 janvier 1972, I, C, et IV, A, relue le 25 octobre
+      2026 par l'API de la base de législation de la Cnav : le maximum de 1972 à 1974,
+      44, 46 et 48 % du plafond, « Ces maxima sont à retenir pour toutes les pensions
+      servies au cours des années précitées, quelles que soit leur date d'entrée en
+      jouissance », celui des réversions « augmenté dans les mêmes proportions » ;
+      « La majoration de 5 % s'applique à la pension principale non écrêtée résultant
+      des versement[s] », comme aux circulaires n° 15/76 et n° 64/77, A ; aucun exemple
+      chiffré d'une pension au maximum
+    date: 1972-01-31
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_272_31011972.aspx
+  - type: circulaire_cnav
+    reference: >-
       exposé « Montant de la retraite personnelle », « Avant le 01/12/1982 - Majorations
       forfaitaires » : « Ces majorations s'appliquaient au montant de base, avant
       comparaison au minimum et au maximum » ; « Les titulaires de retraites substituées
@@ -473,13 +497,14 @@ textes_sans_effet:
 textes_a_rattacher: []
 code:
   python: >-
-    revalorisation.py : majorations_forfaitaires, plancher_non_majore,
+    revalorisation.py : majorations_forfaitaires, plancher_non_majore, maximum_du_jour,
     PensionServie.coefficient, faire_vivre ; droit/commun.py : PensionRegime ;
     droit/completer.py : completer ; echeancier.py : Echeancier._pensions_au_deces ;
     droit/reversion.py : reversion, _majorations_ulterieures
   javascript: >-
     moteur/js/revalorisation.js : majorationsForfaitaires, plancherNonMajore,
-    PensionServie.coefficient, faireVivre ; moteur/js/droit/completer.js : completer ;
+    maximumDuJour, PensionServie.coefficient, faireVivre ; moteur/js/droit/completer.js :
+    completer ;
     moteur/js/echeancier.js : Echeancier._pensionsAuDeces ; moteur/js/droit/reversion.js
     : reversion, majorationsUlterieures
   parametres: >-
@@ -487,13 +512,16 @@ code:
   tests: >-
     tests/test_reversion.py ; tests/test_invalidite.py et
     tests/test_pension_minimum_avant_1983.py, les majorations comparées au plancher ;
+    tests/test_pension_maximale.py, la pension majorée sur son montant entier, comparée
+    au maximum du jour ;
     les témoins retraite_majoree_en_1982 et reversion_majorations_avant_1983 des
     simulations
   moteur: >-
     PensionRegime dit si la pension est sur la durée maximum (sur_la_duree_maximum), à
     quels planchers l'étape « compléter » l'a portée et ce qu'elle était avant eux
     (planchers, avant_les_planchers) ; RegimeServi, ce que le plancher n'a pas des
-    majorations (plancher_non_majore).
+    majorations (plancher_non_majore), et ce que le maximum du jour de la dernière
+    change à la pension, majorée sur son montant entier (maximum_du_jour).
 historique:
 - >-
   2026-10-09 — née et lue par le moteur, à l'étape 4 de l'action 138 : la note du 9
@@ -513,6 +541,13 @@ historique:
   pensions et au plancher de la pension substituée ; les 6 % et 4 % de 1982 relèvent la
   pension d'invalidité de l'ex-invalide (planchers) ; l'écart de l'ex-invalide récrit,
   celui du maximum ouvert.
+- >-
+  2026-10-25 — le maximum, à l'étape 4 de l'action 138 : les majorations relèvent la
+  pension « non écrêtée », que la pension servie compare, le jour de chaque
+  majoration, au maximum de ce jour (maximum_du_jour) ; celle que le maximum de sa
+  liquidation a ramenée en reprend ce qu'il lui avait retiré, et celle que ses
+  majorations portent au-dessus du maximum du jour y est ramenée. L'écart du maximum
+  récrit : reste la comparaison à chaque revalorisation.
 effet: >-
   Les retraités du régime général partis avant 1975 sur la durée maximum de leur date :
   jusqu'à 22,7 % de plus pour une pension d'avant 1972, depuis décembre 1982 ; et la
@@ -520,3 +555,7 @@ effet: >-
   ou à l'AVTS de la pension substituée n'en reçoit que ce qui fait passer sa pension
   des cotisations au-dessus d'eux : rien des 6 % de 1982 à la pension de 1970 portée
   à la pension minimum, que la pension des cotisations, majorée, laisse en dessous.
+  Celui que le maximum a ramené les reçoit sur sa pension entière, sous le maximum du
+  jour de chacune : la pension de 1971 sur quatre-vingt-seize trimestres, au salaire
+  annuel moyen de 1,3 plafond, sert en décembre 1982 sa pension calculée, majorée de
+  6 %, 4 % au-dessus de la pension ramenée ; à trois plafonds, le maximum de 1982.

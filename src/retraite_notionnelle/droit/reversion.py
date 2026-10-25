@@ -1449,10 +1449,17 @@ def _majorations_ulterieures(parametres: dict, date_effet: str, calcule: float,
     réversion portée au minimum et ramenée au maximum, ``(jour, montant)``.
     ``autres`` est le montant calculé des réversions que le minimum compte
     avec elle (D. 634-14), que les majorations de la réversion relèvent aussi,
-    et que la réversion portée au minimum laisse sous lui."""
+    et que la réversion portée au minimum laisse sous lui.
+
+    Le maximum suit les siennes : la majoration de 4 % « répercute exactement
+    l'augmentation du taux de la pension de réversion », dont le maximum est
+    « égal à 52% du maximum qui était ou aurait été opposable à l'assuré
+    décédé » (circulaire Cnav n° 120/82, § 2 et § 4) ; celle de 1995 porte le
+    montant, « ensuite comparé avec le montant minimum et le montant
+    maximum », sous celui de 54 % (circulaire Cnav n° 3/95, § 23 et § 241)."""
     def servie(facteur: float, propre: float) -> float:
         montant = max(minimum - autres * propre, calcule * facteur)
-        return min(montant, maximum) if maximum > 0 else montant
+        return min(montant, maximum * propre) if maximum > 0 else montant
     datees = sorted([(jour, 0, taux) for jour, taux in personnelles if jour > date_effet]
                     + [(str(majoration["date"]), 1, float(majoration["taux"]))
                        for majoration in parametres.get("majorations_forfaitaires") or ()
