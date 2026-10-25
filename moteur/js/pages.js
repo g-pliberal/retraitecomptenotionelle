@@ -8070,60 +8070,70 @@ export function reglageProposition(solde) {
 }
 
 /**
- * Assez de décimales pour qu'un coefficient sous un ne s'écrive pas 1,00.
+ * Assez de décimales pour qu'un coefficient autre que un ne s'écrive pas 1,00.
  *
  * Avec la TVA à taux unique, le plus bas de la proposition est de 0,999 : à
  * deux décimales, la page écrivait « au plus bas 1,00 » d'un facteur qu'elle
- * venait de dire inférieur à un, et « un manque de 0 % ».
+ * venait de dire inférieur à un, et « un manque de 0 % ». Au-dessus de un, de
+ * même : le 19 octobre 2026, la proposition finissait à 1,0013, et Coût
+ * écrivait « une marge de 0 % » (action 138, étape 7).
  */
-export function decimalesSousUn(valeur) {
+export function decimalesHorsDeUn(valeur) {
   for (const decimales of [2, 3, 4]) {
     const facteur = 10 ** decimales;
-    if (Math.round(valeur * facteur) / facteur < 1.0) return decimales;
+    if (Math.round(valeur * facteur) / facteur !== 1.0) return decimales;
   }
   return 4;
 }
 
+/**
+ * Ce que dit le facteur, de quelque côté de un que tombe la proposition : les
+ * trois branches de la phrase de Cas types finissent sur elle, que le
+ * catalogue des affirmations cite. Le coefficient de 2070, à quelques
+ * millièmes de un, change de côté au gré du modèle (action 138, étape 7).
+ */
+const LECTURE_DU_REGLAGE = "Au-dessus de un, il permettrait de relever les "
+  + "cases d'autant ; au-dessous, il faudrait les abaisser, ou financer "
+  + "l'écart autrement.";
+
 /** La phrase de Cas types : de quel côté de un, et de combien. */
-function lectureReglageProposition(r) {
+export function lectureReglageProposition(r) {
+  const minimum = g.nombre(r.minimum, decimalesHorsDeUn(r.minimum));
+  const dernier = g.nombre(r.dernier, decimalesHorsDeUn(r.dernier));
+  let cote;
   if (r.sousUn === 0) {
-    return "Pour la proposition, ce facteur est supérieur à un sur chacune "
-      + `des années projetées, de ${r.debut} à ${r.fin} : à `
-      + "prélèvement égal, le système aurait de quoi servir davantage que "
-      + "ces cases n'affichent. <strong>Un coefficient supérieur à un est "
-      + "une marge</strong>, de quoi relever toutes les cases d'autant.";
+    cote = "supérieur à un sur chacune des années projetées, de "
+      + `${r.debut} à ${r.fin} : à prélèvement égal, le système a de la marge.`;
+  } else if (r.sousUn === r.total) {
+    cote = `inférieur à un de ${r.debut} à ${r.fin} : ${minimum} au plus bas `
+      + `en ${r.anneeMinimum}, ${dernier} en ${r.fin}, le coût de la `
+      + "transition au taux unique.";
+  } else {
+    cote = `inférieur à un ${r.sousUn} années sur ${r.total} entre `
+      + `${r.debut} et ${r.fin}, au plus bas ${minimum} en ${r.anneeMinimum}, `
+      + `et supérieur les autres, jusqu'à ${dernier} en ${r.fin}.`;
   }
-  if (r.sousUn === r.total) {
-    return "Pour la proposition, ce facteur est inférieur à un de "
-      + `${r.debut} à ${r.fin} : `
-      + `${g.nombre(r.minimum, decimalesSousUn(r.minimum))} au plus `
-      + `bas en ${r.anneeMinimum}, `
-      + `${g.nombre(r.dernier, decimalesSousUn(r.dernier))} en `
-      + `${r.fin}. Appliqué, il aurait abaissé les cases d'autant, `
-      + `jusqu'à ${g.pourcentage(1 - r.minimum, false, 0)} en `
-      + `${r.anneeMinimum}. <strong>Un coefficient inférieur à un est `
-      + "un manque</strong>, le coût de la transition au taux unique.";
-  }
-  return `Pour la proposition, ce facteur est inférieur à un ${r.sousUn} `
-    + `années sur ${r.total} entre ${r.debut} et ${r.fin}, au plus `
-    + `bas ${g.nombre(r.minimum, decimalesSousUn(r.minimum))} en `
-    + `${r.anneeMinimum}, et `
-    + `supérieur les autres, jusqu'à ${g.nombre(r.dernier, 2)} en `
-    + `${r.fin}. Au-dessus de un, il permettrait de relever les cases `
-    + "d'autant ; au-dessous, il faudrait les abaisser, ou financer l'écart "
-    + "autrement.";
+  return `Pour la proposition, ce facteur est ${cote} ${LECTURE_DU_REGLAGE}`;
 }
 
-/** La note de Coût : le coefficient se lit dans les deux sens, jamais en économie. */
-function noteLectureCoefficient(r) {
-  // Sous un, assez de décimales pour ne pas écrire 1,00 ni un manque de 0 %,
-  // comme pour le plus bas : la proposition peut finir tout près de un.
-  const decimalesDernier = r.dernier < 1.0 ? decimalesSousUn(r.dernier) : 2;
+/**
+ * La note de Coût : le coefficient se lit dans les deux sens, jamais en économie.
+ *
+ * Elle SUIT LE SIGNE du coefficient, sous peine de démentir le nombre qu'elle
+ * commente. Elle ne connaissait qu'une marge, et le jour où la recette de la
+ * proposition est devenue ses 18 % sur l'assiette, le facteur est passé sous
+ * un : la page lisait « une économie de −9 % » au-dessus d'un 0,92. Le
+ * catalogue des affirmations du site le tient.
+ */
+export function noteLectureCoefficient(r) {
+  // Assez de décimales pour ne pas écrire 1,00, ni une marge ou un manque de
+  // 0 %, comme pour le plus bas : la proposition peut finir tout près de un.
+  const decimalesDernier = decimalesHorsDeUn(r.dernier);
   const dernier = g.nombre(r.dernier, decimalesDernier);
   let lecture;
   if (r.dernier >= 1.0) {
     lecture = `Les ${dernier} de la proposition en ${r.fin} disent une `
-      + `marge de ${g.pourcentage(r.dernier - 1, false, 0)}`;
+      + `marge de ${g.pourcentage(r.dernier - 1, false, decimalesDernier - 2)}`;
   } else {
     lecture = `Les ${dernier} de la proposition en ${r.fin} disent un `
       + `manque de ${g.pourcentage(1 - r.dernier, false, decimalesDernier - 2)}`;
@@ -8134,7 +8144,7 @@ function noteLectureCoefficient(r) {
       + `${g.pourcentage(1 - r.minimum, false, 0)} : le coût `
       + "de transition du taux unique.";
   } else if (r.minimum < 1.0) {
-    const decimales = decimalesSousUn(r.minimum);
+    const decimales = decimalesHorsDeUn(r.minimum);
     lecture += `, et son plus bas, ${g.nombre(r.minimum, decimales)} en `
       + `${r.anneeMinimum}, un manque de `
       + `${g.pourcentage(1 - r.minimum, false, decimales - 2)}.`;
@@ -11112,34 +11122,6 @@ function coutDetailEquilibre(contexte) {
       equilibre ? String(equilibre) : "jamais",
     ];
   });
-  // La dernière note SUIT LE SIGNE du coefficient, sous peine de démentir le
-  // nombre qu'elle commente. Elle ne connaissait qu'une marge, et le jour où la
-  // recette de la proposition est devenue ses 18 % sur l'assiette, le facteur
-  // est passé sous un : la page lisait « une économie de −9 % » au-dessus d'un
-  // 0,92. Le catalogue des affirmations du site le tient.
-  // Sous un, assez de décimales pour ne pas écrire 1,00 ni « rogner de 0 % » :
-  // la proposition finit à 0,998 depuis le 16 octobre 2026.
-  const coefficient = horizon.coefficient("notionnel_liberal");
-  const decimalesCoefficient = coefficient < 1.0 ? decimalesSousUn(coefficient) : 2;
-  const lectureCoefficient = coefficient >= 1.0
-    ? "<strong>Un coefficient supérieur à un est une marge, et une "
-      + `marge se sert.</strong> Lire les ${g.nombre(coefficient, 2)} de la `
-      + "proposition comme une économie de "
-      + `${g.pourcentage(1 - 1 / coefficient, false, 0)} serait un `
-      + "contresens : à ces recettes-là, ce système servirait davantage que "
-      + "ce que la colonne « dépense » lui prête, et autrement réparti entre "
-      + "les carrières."
-    : "<strong>Un coefficient inférieur à un est un manque, et un manque "
-      + `se règle.</strong> Les ${g.nombre(coefficient, decimalesCoefficient)} de la proposition `
-      + `en ${solde.derniereAnnee} disent qu'à ses recettes, `
-      + `${g.pourcentage(horizon.tauxLiberal, false, 0)} appliqués à `
-      + "l'assiette des revenus d'activité, sans les impôts affectés ni les "
-      + "transferts qui payaient des droits supprimés, le système servirait "
-      + `${g.pourcentage(coefficient, false, decimalesCoefficient - 2)} de ce que la colonne `
-      + "« dépense » lui prête. Il faudrait rogner de "
-      + `${g.pourcentage(1 - coefficient, false, decimalesCoefficient - 2)}, relever le taux, ou `
-      + "financer autrement. C'est au réglage annuel du programme de "
-      + "l'absorber, et il déplacerait toutes les pensions du même facteur.";
   return g.depliant(
     "Le coefficient d'équilibre : de combien faudrait-il rogner ?", `
 <p>Un système en comptes notionnels se pilote par un seul chiffre : le facteur

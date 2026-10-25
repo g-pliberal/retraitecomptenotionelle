@@ -1816,10 +1816,10 @@ def _(m: Modele):
     dernier = reglage["dernier"]
     cout = TEMOINS_PAR_NOM["cout"]["texte"]
     cas_types = TEMOINS_PAR_NOM["cas_types"]["texte"]
-    # La page Coût nomme l'écart du dernier coefficient, dans le bon sens ; sous
-    # un, avec assez de décimales pour ne pas l'écrire 1,00.
+    # La page Coût nomme l'écart du dernier coefficient, dans le bon sens, avec
+    # assez de décimales pour ne pas l'écrire 1,00, d'un côté de un ou de l'autre.
     sens = "un manque de" if dernier < 1.0 else "une marge de"
-    decimales = pages.decimales_sous_un(dernier) if dernier < 1.0 else 2
+    decimales = pages.decimales_hors_de_un(dernier)
     ecart = abs(1.0 - dernier)
     attendu = normaliser(f"de la proposition en {reglage['fin']} disent {sens} "
                          f"{g.pourcentage(ecart, decimales=decimales - 2)}")
@@ -1836,7 +1836,8 @@ def _(m: Modele):
                 f"{reglage['total']}")
     assert cote in cas_types, cote
     for nom, texte in (("cout", cout), ("cas_types", cas_types)):
-        if nom == "cout" or sous_un:
+        # Cas types écrit le dernier coefficient dès qu'une année est sous un.
+        if nom == "cout" or reglage["sous_un"]:
             assert normaliser(g.nombre(dernier, decimales)) in texte, nom
         if reglage["sous_un"]:
             assert normaliser(g.nombre(reglage["minimum"], 2)) in texte, nom

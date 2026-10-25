@@ -403,32 +403,28 @@ def test_cas_types_dit_du_reglage_ce_que_le_solde_dit(contexte):
     cas_types = rendre("/cas-types", {})[1]
     cout = rendre("/cout", {})[1]
     minimum = g.nombre(coefficients[annee_minimum], 2)
-    dernier = g.nombre(coefficients[fin], 2)
+    # Assez de décimales pour qu'un coefficient autre que un ne s'écrive pas
+    # 1,00 : le plus bas depuis la TVA à taux unique, 0,999 en 2044 ; le
+    # dernier depuis qu'il frôle un, de part et d'autre (action 138, étape 7).
+    precis = g.nombre(coefficients[annee_minimum],
+                      pages.decimales_hors_de_un(coefficients[annee_minimum]))
+    dernier = g.nombre(coefficients[fin], pages.decimales_hors_de_un(coefficients[fin]))
 
     if sous_un == 0:
         assert (f"supérieur à un sur chacune des années projetées, de {debut} à {fin}"
                 in cas_types)
-        assert "Un coefficient supérieur à un est une marge" in cas_types
+        assert "à prélèvement égal, le système a de la marge" in cas_types
         assert "inférieur à un" not in cas_types
         assert f"Les {dernier} de la proposition en {fin} disent une marge" in cout
     elif sous_un == len(coefficients):
-        # Sous un partout, le dernier aussi s'écrit sans 1,00, comme le plus
-        # bas : la proposition peut finir tout près de un.
-        precis = g.nombre(coefficients[annee_minimum],
-                          pages.decimales_sous_un(coefficients[annee_minimum]))
-        dernier = g.nombre(coefficients[fin], pages.decimales_sous_un(coefficients[fin]))
         assert f"inférieur à un de {debut} à {fin}" in cas_types
         assert f"{precis} au plus bas en {annee_minimum}" in cas_types
         assert f"{dernier} en {fin}" in cas_types
-        assert "Un coefficient inférieur à un est un manque" in cas_types
+        assert "le coût de la transition au taux unique" in cas_types
         assert "supérieur à un chaque année" not in cas_types
         assert f"Les {dernier} de la proposition en {fin} disent un manque" in cout
         assert f"son plus bas, {minimum} en {annee_minimum}" in cout
     else:
-        # Assez de décimales pour qu'un plus bas sous un ne s'écrive pas 1,00 :
-        # c'est le cas depuis la TVA à taux unique, 0,999 en 2044.
-        precis = g.nombre(coefficients[annee_minimum],
-                          pages.decimales_sous_un(coefficients[annee_minimum]))
         assert f"inférieur à un {sous_un} années sur {len(coefficients)}" in cas_types
         assert f"{precis} en {annee_minimum}" in cas_types
         assert f"{dernier} en {fin}" in cas_types
@@ -436,6 +432,88 @@ def test_cas_types_dit_du_reglage_ce_que_le_solde_dit(contexte):
     # Et dans aucun cas la page ne lit plus un coefficient comme une économie.
     assert "comme\nune économie" not in cout
     assert "Le coefficient se lit dans les deux sens" in cout
+
+
+def _reglage(dernier, sous_un, minimum=0.8315, annee_minimum=2048):
+    """Un réglage de la proposition posé à la main, de 2026 à 2070, sous les
+    noms que le portage lui donne (``reglageProposition``)."""
+    return {"debut": 2026, "fin": 2070, "premier": 0.9128, "dernier": dernier,
+            "minimum": minimum, "anneeMinimum": annee_minimum,
+            "sousUn": sous_un, "total": 45}
+
+
+def _lu(fragment: str) -> str:
+    """Ce qu'on lit d'un fragment de page : balises ôtées, espaces repliées,
+    l'espace fine d'avant « % » comprise."""
+    texte = html.unescape(re.sub(r"<[^>]+>", " ", fragment)).replace(" ", " ")
+    return re.sub(r"\s+", " ", texte).strip()
+
+
+@pytest.mark.parametrize("dernier, sous_un, cas_types, cout", [
+    # Le coefficient de 2070 le 19 octobre 2026 (action 138, étape 7), à deux
+    # moments du jour : les pages écrivaient « jusqu'à 1,00 » et « une marge de
+    # 0 % ».
+    (1.0013, 44, "jusqu'à 1,001 en 2070",
+     "Les 1,001 de la proposition en 2070 disent une marge de 0,1 %"),
+    (1.0026, 44, "jusqu'à 1,003 en 2070",
+     "Les 1,003 de la proposition en 2070 disent une marge de 0,3 %"),
+    # À plus d'un demi-centième de un, deux décimales suffisent.
+    (1.0063, 44, "jusqu'à 1,01 en 2070",
+     "Les 1,01 de la proposition en 2070 disent une marge de 1 %"),
+    # Sous un, ce que les pages faisaient déjà : 0,998 le 16 octobre 2026.
+    (0.9984, 45, "0,998 en 2070",
+     "Les 0,998 de la proposition en 2070 disent un manque de 0,2 %"),
+])
+def test_un_coefficient_tout_juste_au_dessus_de_un_ne_s_ecrit_pas_1_00(
+        dernier, sous_un, cas_types, cout):
+    """Au-dessus de un comme au-dessous, assez de décimales pour qu'un
+    coefficient qui n'est pas un ne s'écrive pas 1,00.
+
+    Le 19 octobre 2026, l'ex-invalide de la Cnav a fait passer celui de la
+    proposition en 2070 de 0,9955 à 1,0013 : Cas types écrivait « supérieur
+    les autres, jusqu'à 1,00 en 2070 », Coût « Les 1,00 de la proposition en
+    2070 disent une marge de 0 % », une marge chiffrée à rien. Sous un, les
+    deux pages prenaient les décimales qu'il faut depuis la TVA à taux unique ;
+    au-dessus, elles s'en tenaient à deux.
+    """
+    r = _reglage(dernier, sous_un)
+    assert cas_types in _lu(pages._lecture_reglage_proposition(r))
+    assert cout in _lu(pages._note_lecture_coefficient(r))
+
+
+def test_la_phrase_du_reglage_tient_quel_que_soit_le_signe():
+    """Le coefficient de 2070 change de côté de un au gré du modèle — dessous
+    le 16 octobre 2026, dessus le 19, d'un millième —, et la phrase de Cas
+    types change de branche avec lui. Ce jour-là, rien du site ne doit tomber :
+    les trois branches finissent sur la même phrase, celle que cite l'entrée
+    ``cas_types.coefficient_sous_un`` du catalogue des affirmations ; aucune
+    ne met en gras ce que le catalogue devrait suivre ; et la page tient son
+    budget de lecture sous la plus longue des trois.
+    """
+    import yaml
+
+    from test_web import BUDGETS_DE_LECTURE, _mots
+
+    catalogue = Path(__file__).resolve().parents[1] / "data/reference/site/affirmations.yaml"
+    extrait = next(entree["extrait"] for entree in
+                   yaml.safe_load(catalogue.read_text(encoding="utf-8"))["affirmations"]
+                   if entree["id"] == "cas_types.coefficient_sous_un")
+    phrases = {nom: pages._lecture_reglage_proposition(r) for nom, r in {
+        "dessus partout": _reglage(1.05, 0, minimum=1.02, annee_minimum=2026),
+        "dessous partout": _reglage(0.9984, 45),
+        "dessous sauf en 2070": _reglage(1.0013, 44),
+    }.items()}
+    for nom, phrase in phrases.items():
+        assert extrait in _lu(phrase), nom
+        assert "<strong" not in phrase, nom
+    # La page telle qu'elle est, sa branche remplacée par la plus longue.
+    affichee = pages._lecture_reglage_proposition(
+        pages._reglage_proposition(site().contexte.cout().solde))
+    visible = _hors_depliants(rendre("/cas-types", {})[1])
+    assert affichee in visible
+    prose = _mots(re.sub(r"<table\b.*?</table>", " ", visible, flags=re.S))
+    plus_longue = max(_mots(phrase) for phrase in phrases.values())
+    assert prose - _mots(affichee) + plus_longue <= BUDGETS_DE_LECTURE["/cas-types"][0]
 
 
 def test_le_README_donne_le_solde_que_la_page_cout_calcule(contexte):

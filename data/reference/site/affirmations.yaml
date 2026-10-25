@@ -1004,11 +1004,14 @@ affirmations:
   # (action 138, étape 7) le repasse au-dessus, d'un millième (1,0013) : la
   # page dit la branche du milieu, sous un quarante-quatre années sur
   # quarante-cinq ; l'identifiant reste. Le contrôle vérifie le signe sur le
-  # solde, chaque branche comprise.
+  # solde, chaque branche comprise. Le 25 octobre, les trois branches
+  # finissent sur la phrase que l'extrait cite (`LECTURE_DU_REGLAGE`, dans
+  # `pages.js`), sans gras à elles : l'entrée tient de quelque côté de un que
+  # le coefficient tombe (`test_la_phrase_du_reglage_tient_quel_que_soit_le_signe`).
   - id: cas_types.coefficient_sous_un
     page: /cas-types
     extrait: "Au-dessus de un, il permettrait de relever les cases d'autant"
-    porte: la proposition est sous un chaque année projetée sauf 2070, où elle le dépasse d'un millième, et la page le dit depuis le solde, avec son plus bas et son dernier coefficient
+    porte: la page dit, depuis le solde, de quel côté de un la proposition se tient chaque année projetée, avec son plus bas et son dernier coefficient, et ce que le coefficient ferait des cases de part et d'autre de un
     etat: verifiee
     controle: note_du_coefficient_suit_son_signe
 
