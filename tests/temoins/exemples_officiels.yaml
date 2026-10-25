@@ -2055,6 +2055,31 @@ exemples:
       par le régime général mais non par le RSI, la MSA et la CNAVPL). »
     carriere: {naissance: "1940-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2000-01", age_debut: 20, conjoint: "1953-01", ressources_conjoint: 25200, activite_conjoint: 18000, activite_conjoint_variations: {"2006-03": 12000}, activite_conjoint_fin: "2006-04-01", conjoint_retraite: "2006-04", deces: "2005-08", pensions_du_defunt_mensuelles: {regime_general: 1000}}
     attendu: {ressources_retenues_mensuelles_aux_revisions: {regime_general: {"2006-05-01": 1433.33}}}
+  # Circulaire RSI n° 2007/061, annexe 3, § 7 : quand la situation familiale
+  # change dans la période de référence, « en attribution ou en révision »,
+  # « Les ressources viagères et non viagères à prendre en compte sont celles
+  # comprises entre la date de changement de situation et la date d'effet de
+  # l'attribution ou de la révision de la pension de réversion. Ces ressources
+  # sont ensuite transposées sur 3 mois (ou, le cas échéant, 12 mois) », en
+  # mois de trente jours ; le décès de l'assuré en est un (lettre de la Cnav du
+  # 18 avril 2007). L'exemple illustre la transposition, et n'abat pas le
+  # salaire : en février 2005, la réversion attendait cinquante-cinq ans, et
+  # l'abattement de 30 % des revenus d'activité, en vigueur depuis le 1er
+  # janvier 2005, touchait toute survivante qui y avait droit. Le témoin le
+  # transpose en février 2008, quand la réversion n'attend que cinquante et un
+  # ans, à une survivante de cinquante-deux ans ; la pension du défunt n'est pas
+  # dite, et ne compte pas.
+  - id: rsi_2007_061_transposition_depuis_le_deces
+    source: {editeur: "RSI", reference: "circulaire n° 2007/061 du 24 avril 2007, annexe 3, Note d'application, § 7, exemple 1 (en attribution)", verifie_le: "2026-10-25"}
+    enonce: >-
+      Assuré décédé le 12 février ; date d'effet de la réversion au 1er mars ;
+      période de référence du 1er décembre au 28 février. « En raison du
+      changement de situation familiale », les ressources perçues par le seul
+      conjoint survivant à compter du 12 février, sur dix-neuf jours : salaire
+      de février, 1 500 € ; 1 500 € × 19 / 30 = 950 € ; « [950 € / 19j] x 90 j =
+      4 500 € pour 3 mois (soit une moyenne de 1 500 €/mois) ».
+    carriere: {naissance: "1945-01", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2005-01", age_debut: 20, conjoint: "1955-06-01", ressources_conjoint: 18000, activite_conjoint: 18000, deces: "2008-02-12", pensions_du_defunt_mensuelles: {regime_general: 1000}}
+    attendu: {ressources_retenues_mensuelles: {regime_general: 1500}}
 
   # ---- L'invalidité et l'inaptitude ---------------------------------------
   # Le quatrième domaine (docs/architecture.md, § 11). L'ex-invalide de la

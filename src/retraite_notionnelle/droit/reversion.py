@@ -294,6 +294,11 @@ class ReversionRegime:
     #: couple, les réversions des autres régimes de base ; 0 sans plafond.
     plafond: float = 0.0
     ressources_retenues: float = 0.0
+    #: Les mois de la période de référence de ces ressources, à la date
+    #: d'effet (R. 353-1) : les trois mois civils qui la précèdent, les douze
+    #: quand celles des trois mois excèdent le quart du plafond ; 0 quand la
+    #: version les compare sur l'année, à leur montant de ce jour.
+    periode_de_reference: int = 0
     #: La part du survivant dans la réversion du régime, partagée avec les
     #: précédents conjoints au prorata des mariages (L. 353-3) : 1 sans eux.
     part: float = 1.0
@@ -336,7 +341,7 @@ class ReversionRegime:
     revisions: tuple[tuple[str, float], ...] = ()
     #: Les ressources que chaque révision retient à côté de la réversion, par
     #: an, ``(jour, ressources)`` dans l'ordre de ``revisions`` : celles des
-    #: trois mois qui la précèdent (:func:`_ressources_des_trois_mois`), et les
+    #: trois mois qui la précèdent (:func:`_ressources_de_la_periode`), et les
     #: réversions des autres régimes de base ce jour-là.
     ressources_des_revisions: tuple[tuple[str, float], ...] = ()
     #: Le jour d'où la réversion soumise aux règles de ressources n'est plus
@@ -361,7 +366,8 @@ class ReversionRegime:
                 "minimum_contributif": self.minimum_contributif,
                 "ecretement_du_maximum": self.ecretement_du_maximum,
                 "maximum": self.maximum, "plafond": self.plafond,
-                "ressources_retenues": self.ressources_retenues, "part": self.part,
+                "ressources_retenues": self.ressources_retenues,
+                "periode_de_reference": self.periode_de_reference, "part": self.part,
                 "fin": self.fin, "limite_cumul": self.limite_cumul,
                 "majoration_forfaitaire_enfants": self.majoration_forfaitaire_enfants,
                 "majoration_forfaitaire_enfants_etapes": [
@@ -846,7 +852,7 @@ def _revisions(moteur: ScenarioActuel, fiche: dict, parametres: dict, conjoint: 
     coefficients qui revalorisent les pensions, en 2020 ceux des pensions de
     2 000 € par mois au plus, que ne passent pas les ressources d'un survivant
     sous le plafond ; à côté de la réversion, les ressources « des 3 mois qui
-    précèdent cette date de révision » (:func:`_ressources_des_trois_mois`),
+    précèdent cette date de révision » (:func:`_ressources_de_la_periode`),
     qui portent encore, le mois qui suit un changement, celles d'avant lui —
     un changement du jour même ne compte qu'à la révision du mois qui suit —,
     et ``bases(jour)``, les réversions des autres régimes de base ce jour-là.
@@ -859,8 +865,14 @@ def _revisions(moteur: ScenarioActuel, fiche: dict, parametres: dict, conjoint: 
     « dernière révision (cristallisation) » au 1er avril) —, sauf quand elle
     n'y change rien : les textes ne disent pas ce que la caisse fait de ces
     trois mois après la première révision, et sans elle les revenus d'avant le
-    changement pèseraient jusqu'au suivant. Le recalcul aux règles de 2004
-    compte, comme une date d'effet, ses ressources de ce jour, l'année
+    changement pèseraient jusqu'au suivant. La date d'effet, qui retient les
+    trois mois civils qui la précèdent (:func:`_ressources_a_la_date_d_effet`),
+    en est une : un changement de ce jour-là la révise le mois qui suit, et
+    celui que sa période compte tel que perçu, le premier mois dont les trois
+    mois ne portent plus que ce qui le suit, comme la caisse qui, la date
+    d'effet passée, « calcule différents dépassements jusqu'à stabilisation des
+    ressources » (circulaire RSI n° 2007/061, annexe 3, exemples). Le
+    recalcul aux règles de 2004 compte ses ressources de ce jour, l'année
     entière, sa retraite et son ménage du jour même
     (:func:`_ressources_du_plafond`). La réversion revue est ``entiere``,
     d'avant les ressources et le cumul, avec les majorations forfaitaires
@@ -870,17 +882,25 @@ def _revisions(moteur: ScenarioActuel, fiche: dict, parametres: dict, conjoint: 
     retraite = conjoint.retraite
     # Chaque jour de révision, et s'il est celui du recalcul aux règles de 2004.
     jours: dict[str, bool] = {}
+    # Le jour d'où partent les révisions, et si ce qu'il retient compte ce qui
+    # change ce jour-là : le recalcul aux règles de 2004, ses ressources de ce
+    # jour ; la date d'effet, les mois qui la précèdent, quand la version les
+    # dit (:func:`_ressources_a_la_date_d_effet`).
     if parametres.get("cumul") is not None:
         if retraite is None or retraite <= date_effet or retraites <= 0 or servie <= 0:
             return ()
-        depuis = retraite
+        depuis, du_jour = retraite, True
         jours[retraite] = True
     elif parametres.get("ressources") == "ecretement":
-        depuis = date_effet
-        if retraite is not None and retraite > date_effet and retraites > 0:
-            jours[mois_suivant(retraite)] = False
+        depuis, du_jour = date_effet, not parametres.get("periodes_de_reference")
     else:
         return ()
+
+    def apres_lui(change: str | None) -> bool:
+        return change is not None and (change > depuis or (change == depuis and not du_jour))
+
+    if apres_lui(retraite) and retraites > 0:
+        jours[mois_suivant(retraite)] = False
     # Les changements de ses ressources, comptés tels que perçus : la fin de son
     # activité, ses revenus qui varient, ce qu'apporte son nouveau conjoint, qui
     # varie ; et le ménage qu'il forme ou qui se défait, dont les ressources
@@ -892,7 +912,7 @@ def _revisions(moteur: ScenarioActuel, fiche: dict, parametres: dict, conjoint: 
         familiaux = [conjoint.nouvelle_union_depuis, conjoint.nouvelle_union_fin]
         percus += [quand for quand, _ in conjoint.variations_du_nouveau_conjoint]
     for change in percus + familiaux:
-        if change is not None and change > depuis:
+        if apres_lui(change):
             jours.setdefault(mois_suivant(change), False)
     alors = moteur.reversions.version(fiche, depuis, deces)
     regles = alors["parametres"] if alors is not None else {}
@@ -902,19 +922,27 @@ def _revisions(moteur: ScenarioActuel, fiche: dict, parametres: dict, conjoint: 
         if abattement > depuis and _activite_au(conjoint, abattement, True):
             jours.setdefault(mois_suivant(abattement), False)
     # Le premier mois dont les trois mois ne portent plus que ce qui suit chaque
-    # changement compté tel que perçu, sa retraite comprise quand la révision
-    # qu'elle ouvre ne la compte que pour ce qu'elle sert.
-    if (parametres.get("cumul") is None and retraite is not None and retraite > date_effet
-            and retraites > 0):
-        premiere = moteur.reversions.version(fiche, mois_suivant(retraite), deces)
-        if not _retraites_entieres(premiere["parametres"] if premiere is not None else {},
-                                   regime, mois_suivant(retraite)):
+    # changement compté tel que perçu — à une révision, ou dans les mois de la
+    # date d'effet —, sa retraite comprise quand ce qui la compte le premier,
+    # la révision qu'elle ouvre ou la date d'effet, ne la compte que pour ce
+    # qu'elle sert.
+    if parametres.get("cumul") is None and retraite is not None and retraites > 0:
+        if apres_lui(retraite):
+            alors = moteur.reversions.version(fiche, mois_suivant(retraite), deces)
+            percue = not _retraites_entieres(alors["parametres"] if alors is not None else {},
+                                             regime, mois_suivant(retraite))
+        else:
+            percue = not du_jour and not _retraites_entieres(parametres, regime, depuis)
+        if percue:
             percus.append(retraite)
     apres: set[str] = set()
     for change in percus:
-        if change is not None and change > depuis and _apres_les_trois_mois(change) not in jours:
-            jours[_apres_les_trois_mois(change)] = False
-            apres.add(_apres_les_trois_mois(change))
+        if change is None:
+            continue
+        jour = _apres_les_trois_mois(change)
+        if (jour > depuis if not du_jour else apres_lui(change)) and jour not in jours:
+            jours[jour] = False
+            apres.add(jour)
     revisions = []
     for jour in sorted(jours):
         if derniere is not None and jour > derniere:
@@ -930,8 +958,9 @@ def _revisions(moteur: ScenarioActuel, fiche: dict, parametres: dict, conjoint: 
             retenues, facteur = _ressources_du_plafond(
                 regles, conjoint, ressources - (0.0 if commencees else retraites), jour)
         else:
-            retenues, facteur = _ressources_des_trois_mois(
-                regles, conjoint, retraites, jour, _retraites_entieres(regles, regime, jour))
+            retenues, facteur = _ressources_de_la_periode(
+                regles, conjoint, retraites, jour, _retraites_entieres(regles, regime, jour),
+                deces)
         an = _annee_du_plafond(moteur, annee, jour)
         coefficient, fiabilite_coefficient = moteur.revalorisations_pensions.generale(
             date(annee, 12, 31), date(an, 12, 31), False, 0.0)
@@ -992,38 +1021,43 @@ def _percu(montant: float, changements, debut: float, fin: float) -> float:
     return (total + montant * (fin - depuis)) / (fin - debut)
 
 
-def _ressources_des_trois_mois(parametres: dict, conjoint: Conjoint, retraites: float,
-                               jour: str, entieres: bool) -> tuple[float, float]:
-    """Les ressources du survivant qu'une révision du jour ``jour`` retient
-    sous le plafond de la version, par an, et le facteur qui multiplie ce
-    plafond (R. 353-1-1).
+def _ressources_de_la_periode(parametres: dict, conjoint: Conjoint, retraites: float,
+                              jour: str, entieres: bool, deces: str | None,
+                              mois: int = 3) -> tuple[float, float]:
+    """Les ressources du survivant que retiennent sous le plafond de la
+    version les ``mois`` mois civils qui précèdent le jour ``jour`` — une
+    révision, ou la date d'effet —, par an, et le facteur qui multiplie ce
+    plafond (R. 353-1, R. 353-1-1).
 
     « Les ressources sont examinées sur les 3 mois qui précèdent cette date de
     révision » (exposé de la Cnav, « Condition de ressources »), « les 3 mois
     civils précédant la date d'effet de la révision » (circulaire RSI
-    n° 2007/061, annexe 3, § 5.2), en mois de trente jours (:func:`_en_mois`) :
-    ses revenus d'activité « pour leur montant réellement perçu au cours de la
-    période de référence » (§ 6.1), et de même ce qu'apporte son nouveau
-    conjoint ; ses ``retraites`` personnelles pour ce qu'elles servent dans
-    ces trois mois, depuis le jour où elles prennent effet, « les sommes
-    réellement perçues au titre du nouvel avantage » (circulaire Cnav
-    n° 2010/58, § 22), ou ``entieres`` dès qu'elles ont commencé
-    (:func:`_retraites_entieres`). Quand sa situation familiale change dans ces
-    trois mois — le ménage formé ou défait —, les ressources d'après le
-    changement « sont ensuite transposées sur la période de référence
-    entière » (exposé « Condition de ressources » ; circulaire Cnav
-    n° 2005/17, § 146 ; circulaire RSI n° 2007/061, annexe 3, § 7). Ses revenus
-    d'activité sont abattus quand il a l'âge de l'abattement ce jour-là,
-    « quel que soit l'âge atteint au moment où ces revenus ont été perçus »
-    (circulaire Cnav n° 2006-37, § 7) ; le plafond est celui du ménage quand il
-    vit en couple ce jour-là, comme à la date d'effet
-    (:func:`_ressources_du_plafond`)."""
+    n° 2007/061, annexe 3, § 5.2), comme ceux, ou les douze, qui précèdent la
+    date d'effet (R. 353-1 ; § 5.1), en mois de trente jours
+    (:func:`_en_mois`) : ses revenus d'activité « pour leur montant réellement
+    perçu au cours de la période de référence » (§ 6.1), et de même ce
+    qu'apporte son nouveau conjoint ; ses ``retraites`` personnelles pour ce
+    qu'elles servent dans ces mois, depuis le jour où elles prennent effet,
+    « les sommes réellement perçues au titre du nouvel avantage » (circulaire
+    Cnav n° 2010/58, § 22), ou ``entieres`` dès qu'elles ont commencé
+    (:func:`_retraites_entieres`). Quand sa situation familiale change dans la
+    période — le décès de l'assuré, le ``deces``, « en attribution ou en
+    révision » (§ 7, exemple 1 ; lettre de la Cnav du 18 avril 2007), le ménage
+    formé ou défait —, les ressources d'après le changement « sont ensuite
+    transposées sur la période de référence entière » (exposé « Condition de
+    ressources » ; circulaire Cnav n° 2005/17, § 146 ; circulaire RSI
+    n° 2007/061, annexe 3, § 7). Ses revenus d'activité sont abattus quand il a
+    l'âge de l'abattement ce jour-là, « quel que soit l'âge atteint au moment où
+    ces revenus ont été perçus » (circulaire Cnav n° 2006-37, § 7) ; le plafond
+    est celui du ménage quand il vit en couple la veille de ce jour."""
     fin = _en_mois(jour)
-    debut = fin - 3
+    debut = fin - mois
+    familiaux = [deces]
     if conjoint.nouvelle_union is not None:
-        for change in (conjoint.nouvelle_union_depuis, conjoint.nouvelle_union_fin):
-            if change is not None and change < jour:
-                debut = max(debut, _en_mois(change))
+        familiaux += [conjoint.nouvelle_union_depuis, conjoint.nouvelle_union_fin]
+    for change in familiaux:
+        if change is not None and change < jour:
+            debut = max(debut, _en_mois(change))
     changements = list(conjoint.variations_d_activite)
     if conjoint.fin_d_activite is not None:
         changements.append((conjoint.fin_d_activite, 0.0))
@@ -1050,6 +1084,41 @@ def _ressources_des_trois_mois(parametres: dict, conjoint: Conjoint, retraites: 
     apport = _percu(float(conjoint.ressources_du_nouveau_conjoint or 0.0),
                     conjoint.variations_du_nouveau_conjoint, debut, fin)
     return ressources + apport, float(facteur)
+
+
+def _ressources_a_la_date_d_effet(parametres: dict, conjoint: Conjoint, ressources: float,
+                                  retraites: float, date_effet: str, deces: str,
+                                  regime: str, smic: float, reversions: float
+                                  ) -> tuple[float, float, int]:
+    """Les ressources du survivant que la date d'effet ``date_effet`` retient
+    sous le plafond de la version, par an, le facteur qui multiplie ce
+    plafond, et les mois de leur période de référence (R. 353-1).
+
+    « Les ressources à prendre en compte lors de la demande sont celles
+    afférentes aux trois mois civils précédant la date d'effet de la pension
+    de réversion. Lorsqu'elles excèdent le quart du plafond [...], il leur est
+    substitué celles afférentes aux douze mois civils précédant cette date,
+    qui sont alors comparées au montant annuel de ce plafond » : les mois que
+    la version dit (``periodes_de_reference``), comptés comme à une révision
+    (:func:`_ressources_de_la_periode`) — ses ``retraites`` personnelles pour
+    ce qu'elles y servent, rien de celle qui commence ce jour-là, que la
+    révision du mois qui suit compte (circulaire RSI n° 2007/061, annexe 3,
+    exemple 3) —, et avec elles, sous le plafond de ``smic`` horaire, les
+    ``reversions`` des autres régimes de base, ressources du survivant
+    (R. 353-1, 2°). La version qui ne dit pas ces mois, avant juillet 2004,
+    compare sur l'année ses ``ressources`` de ce jour
+    (:func:`_ressources_du_plafond`) : 0 mois."""
+    periodes = parametres.get("periodes_de_reference")
+    if not periodes:
+        retenues, facteur = _ressources_du_plafond(parametres, conjoint, ressources, date_effet)
+        return retenues, facteur, 0
+    entieres = _retraites_entieres(parametres, regime, date_effet)
+    for mois in periodes:
+        retenues, facteur = _ressources_de_la_periode(parametres, conjoint, retraites,
+                                                      date_effet, entieres, deces, int(mois))
+        if retenues + reversions <= facteur * float(parametres["plafond_smic_heures"]) * smic:
+            break
+    return retenues, facteur, int(mois)
 
 
 def _trois_mois_apres(jour: str) -> str:
@@ -1880,15 +1949,19 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
                 montant, motif = minimum - autres, "minimum"
                 fiabilite = min(fiabilite, minimum_de_l_annee[1])
         # Le plafond, d'une personne seule ou du ménage, et ce qu'il retient à
-        # côté de la réversion : les ressources du survivant, ou du ménage, et
-        # les réversions des autres régimes de base — avant juillet 2004, ses
-        # ressources personnelles « sans tenir compte des avantages de
-        # réversion » (R. 353-1, rédactions de 1985 et de 1990).
-        retenues, facteur = _ressources_du_plafond(
-            parametres, conjoint, ressources - (retraites_personnelles - retraites), date_effet)
+        # côté de la réversion : les ressources du survivant, ou du ménage, des
+        # trois ou des douze mois qui précèdent la date d'effet, et les
+        # réversions des autres régimes de base — avant juillet 2004, ses
+        # ressources personnelles de ce jour, « sans tenir compte des avantages
+        # de réversion » (R. 353-1, rédactions de 1985 et de 1990).
+        ecretable = parametres["ressources"] == "ecretement"
+        retenues, facteur, periode = _ressources_a_la_date_d_effet(
+            parametres, conjoint, ressources - (retraites_personnelles - retraites),
+            retraites_personnelles, date_effet, deces, regime, moteur.macro.smic_horaire(annee),
+            bases_des_autres if ecretable else 0.0)
         plafond_annuel = (facteur * float(parametres["plafond_smic_heures"])
                           * moteur.macro.smic_horaire(annee))
-        reversions = autres_bases if parametres["ressources"] == "ecretement" else 0.0
+        reversions = autres_bases if ecretable else 0.0
         if parametres.get("cumul") is not None:
             # Avant juillet 2004, ses retraites personnelles « n'étaient pas
             # retenues dans les ressources » : elles se cumulaient avec la
@@ -1987,6 +2060,7 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
             minimum=minimum, majoration_trois_enfants=trois_enfants,
             minimum_contributif=contributif, ecretement_du_maximum=ecretement,
             maximum=maximum, plafond=plafond_annuel, ressources_retenues=retenues,
+            periode_de_reference=periode,
             part=part, limite_cumul=limite_cumul, majorations_forfaitaires=ulterieures,
             cumul_effet=cumul_effet, reduction_du_cumul=reduction_du_cumul,
             revision_effet=revision_effet, reduction_de_la_revision=reduction_de_la_revision,

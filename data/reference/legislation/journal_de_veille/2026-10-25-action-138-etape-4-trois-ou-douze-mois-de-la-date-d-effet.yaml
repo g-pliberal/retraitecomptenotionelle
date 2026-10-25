@@ -1,0 +1,58 @@
+date: "2026-10-25"
+session: "action 138, étape 4, quinzième partie : les trois ou douze mois civils qui précèdent la date d'effet de la réversion du régime général et des régimes alignés (R. 353-1), et le décès qui commence la période de référence"
+consulte: >-
+  veille_droit.py, lancé à l'ouverture de la session (dernière veille consignée :
+  2026-10-24) ; l'index LEGI, récupéré de la release index-dila et mis à jour par ses
+  neuf incréments jusqu'au 24 octobre 2026, puis textes.py --inscrire, qui a inscrit
+  « à examiner » six articles du décret n° 61-272, cité depuis la veille par la fiche
+  pension_d_invalidite_substituee ; L. 161-17-2 et L. 161-17-3, sans rédaction
+  postérieure à celle du 31 décembre 2025 (fiche fin_de_la_suspension_2028). Dans
+  l'index LEGI : R. 353-1, ses neuf rédactions, de celle du 21 décembre 1985
+  (LEGIARTI000006749451) à celle du 8 juillet 2019 (LEGIARTI000038790257), et la
+  différence mot à mot des rédactions de 2009, 2010, 2017 et 2019. Par l'API de la
+  base de législation de la Cnav : l'exposé « Condition de ressources » (16 avril
+  2026) ; la circulaire n° 2005/17 (§ 141 à 146, 31, 321, 4112) ; la lettre de la
+  Cnav du 18 avril 2007, « Notion de changement de situation familiale pour
+  l'appréciation des ressources » ; et, en PDF, la circulaire RSI n° 2007/061 du 24
+  avril 2007, annexe 3 (§ 5 à 7 et ses questions, exemples 1 à 3).
+trouve: >-
+  Depuis le 25 août 2004, « Les ressources à prendre en compte lors de la demande sont
+  celles afférentes aux trois mois civils précédant la date d'effet de la pension de
+  réversion. Lorsqu'elles excèdent le quart du plafond [...], il leur est substitué
+  celles afférentes aux douze mois civils précédant cette date, qui sont alors
+  comparées au montant annuel de ce plafond » (R. 353-1), la même phrase dans chaque
+  rédaction jusqu'à celle de 2019 ; de 1990 à 2004, les trois ou douze mois
+  « précédant la date de la demande », et, en 1985 comme en 1990, la condition non
+  remplie à la demande appréciée « à la date du décès, compte tenu des dispositions
+  en vigueur à cette date ». La rédaction de 2010 ne fait que nommer le « code rural
+  et de la pêche maritime » ; celle de 2017 nomme autrement les régimes de base dont
+  les réversions complémentaires ne comptent pas. La caisse : l'exposé et la
+  circulaire n° 2005/17 (§ 143) le redisent, avec la tolérance de la lettre
+  ministérielle du 29 mars 1965 — quand la date d'effet est le mois qui suit le
+  dépôt, les trois ou douze mois qui précèdent la demande — ; quand la situation
+  familiale change dans la période, les ressources d'après le changement y sont
+  transposées (§ 146), et le « décès du conjoint » en est un, non celui de
+  l'ex-conjoint d'une personne divorcée (lettre du 18 avril 2007). La circulaire RSI,
+  § 5.1 : « Il s'agit des 3 mois civils précédant la date d'effet de la PR », les 12
+  quand les ressources dépassent le plafond, et ses deux exemples de périodes, sans
+  montants ; § 7, exemple 1, en attribution, rejoué au témoin des exemples officiels :
+  le décès du 12 février, « on retient les ressources perçues par le seul conjoint
+  survivant à compter du 12/02 », dix-neuf jours transposés sur quatre-vingt-dix,
+  1 500 € par mois ; ses questions, exemple 3 : le droit propre du conjoint qui
+  commence le jour de la date d'effet, « non pris en compte à la date d'effet de la
+  PR », compté à la « Révision (glissement) » du mois qui suit, et le régime général
+  qui, instruisant après la date d'effet, « calcule différents dépassements jusqu'à
+  stabilisation des ressources dans la limite de la date d'instruction ». Aucun
+  exemple chiffré ne fait jouer les douze mois. Le modèle retient désormais, à la
+  date d'effet d'après juillet 2004, les trois ou douze mois que chaque version dit
+  (periodes_de_reference), la période commençant au décès quand il y tombe, à la
+  date d'effet comme à une révision ; aucune réversion des 907 témoins de simulation
+  ne bouge.
+reste: >-
+  Avant juillet 2004, la date de la demande et celle du décès (R. 353-1, rédactions
+  de 1985 et de 1990), que le modèle ne connaît pas : il compare sur l'année les
+  ressources de la date d'effet. La tolérance de la demande ; les réversions des
+  autres régimes de base, comptées pour ce qu'elles servent le jour de l'examen ; la
+  période de la complémentaire des indépendants (fiche reversion_rci) ; les rédactions
+  de R. 353-1 de 2010 et de 2017, à rattacher aux versions qu'elles touchent. Au site,
+  la phrase qui dirait la période des ressources retenues.

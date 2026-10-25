@@ -2361,6 +2361,91 @@ def test_les_ressources_qui_varient_apres_sa_derniere_revision_ne_changent_rien(
     assert (ligne.revisions, ligne.derniere_revision) == ((), None)
 
 
+def test_la_date_d_effet_retient_les_trois_mois_qui_la_precedent_depuis_le_deces(simulateur):
+    """« Les ressources à prendre en compte lors de la demande sont celles
+    afférentes aux trois mois civils précédant la date d'effet de la pension
+    de réversion » (R. 353-1), les revenus d'activité « pour leur montant
+    réellement perçu au cours de la période de référence » (circulaire RSI
+    n° 2007/061, annexe 3, § 6.1) ; quand la situation familiale change dans
+    la période — le décès de l'assuré en est un (lettre de la Cnav du 18 avril
+    2007) —, celles qui suivent le changement, « transposées sur 3 mois », en
+    mois de trente jours (§ 7, exemple 1). La veuve de 2006, née le 15
+    septembre 1953, gagne 20 000 € par an ; son mari meurt le 10 octobre, et
+    son activité cesse le 25 : sa réversion part le 1er novembre, sur les
+    vingt et un jours qui suivent le décès, dont quinze de salaire, soit
+    14 285,71 € par an, qui la réduisent sous le plafond de 2006, 2 080 fois
+    8,03 €. Le modèle la révise le premier mois dont les trois mois ne portent
+    plus de salaire, le 1er février 2007, comme la caisse qui, la date d'effet
+    passée, « calcule différents dépassements jusqu'à stabilisation des
+    ressources » (circulaire RSI n° 2007/061, annexe 3, exemples) : elle
+    redevient entière."""
+    carriere = _carriere(simulateur, 1945, 60.0, "1953-09-15", "2006-10-10",
+                         ressources=20000.0, activite=20000.0, fin_d_activite="2006-10-25")
+    ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                     2006)["regime_general"]
+    percus = 20000.0 * 15 / 21
+    reduite = 2080 * 8.03 - percus
+    assert ligne.date_effet == "2006-11-01"
+    assert ligne.ressources_retenues == pytest.approx(percus)
+    assert (round(ligne.montant, 2), ligne.motif) == (round(reduite, 2), "ecretee")
+    assert ligne.periode_de_reference == 3
+    assert 2080 * 8.27 / _coefficient(simulateur, 2006, 2007) > 5400.0
+    assert ligne.revisions == (("2007-02-01", pytest.approx(reduite - 5400.0)),)
+    assert ligne.ressources_des_revisions == (("2007-02-01", 0.0),)
+
+
+def test_au_dela_du_quart_du_plafond_la_date_d_effet_retient_les_douze_mois(simulateur):
+    """« Lorsqu'elles excèdent le quart du plafond [...], il leur est substitué
+    celles afférentes aux douze mois civils précédant cette date, qui sont
+    alors comparées au montant annuel de ce plafond » (R. 353-1). La veuve de
+    2010, née le 10 juin 1956, attend ses cinquante-cinq ans : sa réversion part
+    le 1er juillet 2011. Elle gagne 10 000 € par an, 40 000 € depuis le 1er mai
+    2011 : avril, mai et juin, abattus de 30 %, valent 21 000 € par an, plus
+    que le plafond de 2010, 2 080 fois 8,86 € ; les douze mois de juillet 2010
+    à juin 2011, 10 500 €, la laissent entière. Une révision n'apprécie que
+    trois mois (circulaire Cnav n° 2005/17, § 321) : le 1er août, quand ils ne
+    portent plus que son nouveau salaire, 28 000 € abattus la suspendent."""
+    carriere = _carriere(simulateur, 1950, 60.0, "1956-06-10", "2010-03-10",
+                         ressources=10000.0, activite=10000.0,
+                         variations=(("2011-05-01", 40000.0),))
+    ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                     2010)["regime_general"]
+    assert 0.7 * (10000.0 + 2 * 40000.0) / 3 > 2080 * 8.86
+    assert ligne.date_effet == "2011-07-01"
+    assert ligne.ressources_retenues == pytest.approx(0.7 * (10 * 10000.0 + 2 * 40000.0) / 12)
+    assert (round(ligne.montant, 2), ligne.motif) == (5400.0, "servie")
+    assert ligne.periode_de_reference == 12
+    assert ligne.revisions == (("2011-08-01", pytest.approx(5400.0)),)
+    assert ligne.ressources_des_revisions == (("2011-08-01", pytest.approx(0.7 * 40000.0)),)
+
+
+def test_sa_retraite_du_jour_de_la_date_d_effet_ne_compte_qu_a_la_revision(simulateur):
+    """Les trois mois civils qui précèdent la date d'effet ne portent pas le
+    droit propre qui commence ce jour-là : la caisse ne le compte pas « à la
+    date d'effet de la PR puisque la date d'effet du DP est le 01/10/06 », et
+    le compte à la révision du mois qui suit (circulaire RSI n° 2007/061,
+    annexe 3, exemple 3). La veuve de 2015, née le 5 avril 1952, prend sa
+    retraite, 18 000 € par an, le 1er avril, quand sa réversion part : entière
+    à sa date d'effet ; révisée le 1er mai, sur les cinquante et un jours qui
+    suivent le décès du 10 mars, dont trente de retraite, qui la laissent
+    entière ; puis le 1er juillet, sa dernière révision, sur trois mois de
+    retraite, qui la réduisent sous le plafond de 2015, 2 080 fois 9,61 €."""
+    carriere = _carriere(simulateur, 1950, 65.0, "1952-04-05", "2015-03-10",
+                         ressources=18000.0, retraite="2015-04-01")
+    ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                     2015)["regime_general"]
+    assert ligne.date_effet == "2015-04-01"
+    assert ligne.ressources_retenues == 0.0
+    assert (round(ligne.montant, 2), ligne.motif) == (5400.0, "servie")
+    assert ligne.periode_de_reference == 3
+    revue = 2080 * 9.61 - 18000.0
+    assert ligne.revisions == (("2015-05-01", pytest.approx(0.0)),
+                               ("2015-07-01", pytest.approx(5400.0 - revue)))
+    assert ligne.ressources_des_revisions == (
+        ("2015-05-01", pytest.approx(18000.0 * 30 / 51)), ("2015-07-01", pytest.approx(18000.0)))
+    assert ligne.derniere_revision == "2015-07-01"
+
+
 #: Des saisies où la réversion du régime général se révise avant la retraite
 #: du survivant, ou sans elle : le veuf de 2015 qui travaille et se remarie en
 #: 2018 ; la veuve de 2010, sans ressources, remariée avant son âge légal ; le
@@ -2527,6 +2612,56 @@ def test_les_deux_moteurs_comptent_ses_retraites_entieres_avant_juillet_2010(sai
     with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
                                      delete=False) as fichier:
         fichier.write(json.dumps([attendu], ensure_ascii=False))
+        chemin = fichier.name
+    try:
+        execution = subprocess.run(
+            ["node", str(racine / "tests" / "js" / "comparer.mjs"), chemin],
+            cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False)
+    finally:
+        Path(chemin).unlink()
+    assert execution.returncode == 0, (execution.stdout + execution.stderr)[-2000:]
+
+
+#: Des saisies où la date d'effet de la réversion du régime général retient
+#: les trois ou les douze mois qui la précèdent (R. 353-1) : la veuve de 2006
+#: dont l'activité cesse quinze jours après le décès ; la veuve de 2010 dont le
+#: salaire quadruple deux mois avant ses cinquante-cinq ans ; la veuve de 2015,
+#: retraitée le jour où sa réversion part. Chacune avec les mois de sa période
+#: de référence et les jours de ses révisions.
+CAS_DE_LA_DATE_D_EFFET = [
+    ({"naissance": "1945", "liquidation": "60", "conjoint": "1953-09-15",
+      "deces": "2006-10-10", "ressources_conjoint": "20000", "activite_conjoint": "20000",
+      "activite_conjoint_fin": "2006-10-25"}, 3, ["2007-02-01"]),
+    ({"naissance": "1950", "liquidation": "60", "conjoint": "1956-06-10",
+      "deces": "2010-03-10", "ressources_conjoint": "10000", "activite_conjoint": "10000",
+      "activite_conjoint_variations": "2011-05-01:40000"}, 12, ["2011-08-01"]),
+    ({"naissance": "1950", "liquidation": "65", "conjoint": "1952-04-05",
+      "deces": "2015-03-10", "ressources_conjoint": "18000", "conjoint_retraite": "2015-04"},
+     3, ["2015-05-01", "2015-07-01"]),
+]
+
+
+def test_les_deux_moteurs_retiennent_les_trois_ou_douze_mois_de_la_date_d_effet(saisies):
+    """Le résultat entier, des six scénarios, est le même en Python et en
+    JavaScript ; chaque cas retient, à la date d'effet de la réversion du régime
+    général, les mois qu'il dit, et la révise aux jours qu'il dit. Le portage
+    lit la période de référence dans les versions de son paquet : le cas est du
+    niveau ``complet``, que GitHub joue sur le paquet qu'il refait."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    racine = Path(__file__).resolve().parents[1]
+    sys.path.insert(0, str(racine / "scripts"))
+    from construire_temoins import _fini
+    attendus = [{"requete": cas, "resultat": _fini(saisies.simuler(cas).dictionnaire())}
+                for cas, _, _ in CAS_DE_LA_DATE_D_EFFET]
+    for attendu, (_, mois, revisions) in zip(attendus, CAS_DE_LA_DATE_D_EFFET):
+        ligne, = (r for r in attendu["resultat"]["reversion"]["regimes"]
+                  if r["regime"] == "regime_general")
+        assert (ligne["periode_de_reference"], [r["date"] for r in ligne["revisions"]]) == (
+            mois, revisions), ligne
+    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
+                                     delete=False) as fichier:
+        fichier.write(json.dumps(attendus, ensure_ascii=False))
         chemin = fichier.name
     try:
         execution = subprocess.run(

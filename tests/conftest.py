@@ -154,6 +154,8 @@ EXCEPTIONS = {
     # refait avant de jouer la suite complète.
     ("test_reversion.py",
      "test_les_deux_moteurs_comptent_ses_retraites_entieres_avant_juillet_2010"): "complet",
+    ("test_reversion.py",
+     "test_les_deux_moteurs_retiennent_les_trois_ou_douze_mois_de_la_date_d_effet"): "complet",
     # Les exemples officiels sont des règles, et la suite rapide les joue.
     ("test_oracle.py", "test_les_exemples_publies_par_les_caisses_sont_reproduits"): "rapide",
     ("test_oracle.py", "test_le_temoin_des_exemples_officiels_est_source"): "rapide",

@@ -1,15 +1,15 @@
 # Étape 4, première partie : le minimum et les majorations de la réversion du régime général
 
-**Reprise, au 24 octobre 2026.** Fait : le minimum, les majorations (7 octobre) ; le
+**Reprise, au 25 octobre 2026.** Fait : le minimum, les majorations (7 octobre) ; le
 maximum, le plafond du ménage, l'assuré mort avant son départ, le partage, le cumul
 d'avant 2004, la majoration pour enfant (9 octobre) ; ses parts, son régime ; la
-révision de la réversion sur trois mois ; l'Alsace-Moselle et l'ancien invalide,
-lus ; le plancher de la pension substituée et la catégorie de la pension
-d'invalidité (24 octobre). Reste, une session par point : au propriétaire, les
-décrets agricoles de 1976 et 1977, au fac-similé ; les trois ou douze mois de la
-date d'effet ; les majorations de 1972 à 1982 comparées au plancher. Au site : les
-études, l'enfant né après le départ, les révisions, leurs quatre champs, la
-catégorie. Détail : `…-plancher-de-la-pension-substituee.md`.
+révision sur trois mois ; l'Alsace-Moselle et l'ancien invalide, lus ; le plancher
+de la pension substituée, la catégorie (24 octobre) ; les trois ou douze mois de la
+date d'effet (25 octobre). Reste, une session par point : au propriétaire, les
+décrets agricoles de 1976 et 1977, au fac-similé ; les majorations de 1972 à 1982
+comparées au plancher ; la date de la demande et celle du décès, avant juillet
+2004. Au site : les études, l'enfant né après le départ, les révisions, leurs
+quatre champs, la catégorie, la période. Détail : `…-date-d-effet.md`.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « Quels sont les écarts
 encore présents avec trajectoire et destinie 2 ? J'aimerais combler les manques

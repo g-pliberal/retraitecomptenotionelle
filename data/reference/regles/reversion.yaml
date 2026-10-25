@@ -134,6 +134,7 @@ versions:
       - {date: "1982-12-01", taux: 0.04}
       - {date: "1995-01-01", taux: 0.03846}
       retraites_entieres_a_la_revision: null
+      periodes_de_reference: null
       fiabilite: moyenne
   exemples: aucun trouvé
 - id: avant_juillet_1974
@@ -179,6 +180,7 @@ versions:
       - {date: "1982-12-01", taux: 0.04}
       - {date: "1995-01-01", taux: 0.03846}
       retraites_entieres_a_la_revision: null
+      periodes_de_reference: null
       fiabilite: moyenne
   exemples: aucun trouvé
 - id: avant_1982
@@ -232,6 +234,7 @@ versions:
       - {date: "1982-12-01", taux: 0.04}
       - {date: "1995-01-01", taux: 0.03846}
       retraites_entieres_a_la_revision: null
+      periodes_de_reference: null
       fiabilite: moyenne
   exemples: aucun trouvé
 - id: taux_52
@@ -285,6 +288,7 @@ versions:
       majorations_forfaitaires:
       - {date: "1995-01-01", taux: 0.03846}
       retraites_entieres_a_la_revision: null
+      periodes_de_reference: null
       fiabilite: haute
   exemples: aucun trouvé
 - id: taux_54
@@ -332,6 +336,7 @@ versions:
       minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       retraites_entieres_a_la_revision: null
+      periodes_de_reference: null
       fiabilite: haute
   exemples: aucun trouvé
 - id: reforme_2004
@@ -384,6 +389,7 @@ versions:
       minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       retraites_entieres_a_la_revision: {regime_general: "2010-07-01"}
+      periodes_de_reference: [3, 12]
       fiabilite: haute
   exemples: aucun trouvé
 - id: abattement_2005
@@ -433,6 +439,7 @@ versions:
       minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       retraites_entieres_a_la_revision: {regime_general: "2010-07-01"}
+      periodes_de_reference: [3, 12]
       fiabilite: haute
   exemples: [cnav_2010_58_revision_a_sa_retraite, cnav_2006_37_revision_au_constat,
              cnav_2010_58_revision_a_la_fin_de_son_activite]
@@ -478,6 +485,7 @@ versions:
       minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       retraites_entieres_a_la_revision: {regime_general: "2010-07-01"}
+      periodes_de_reference: [3, 12]
       fiabilite: haute
   exemples: [cnav_2005_17_reversion_ecretee, cnav_2006_37_abattement_au_1er_aout,
              cnav_2006_37_abattement_au_1er_septembre,
@@ -529,8 +537,9 @@ versions:
       minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       retraites_entieres_a_la_revision: {regime_general: "2010-07-01"}
+      periodes_de_reference: [3, 12]
       fiabilite: haute
-  exemples: aucun trouvé
+  exemples: [rsi_2007_061_transposition_depuis_le_deces]
 - id: age_55_2009
   statut: lue
   textes:
@@ -575,6 +584,7 @@ versions:
       minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       retraites_entieres_a_la_revision: {regime_general: "2010-07-01"}
+      periodes_de_reference: [3, 12]
       fiabilite: haute
   exemples: aucun trouvé
 - id: age_51_2009
@@ -619,6 +629,7 @@ versions:
       minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       retraites_entieres_a_la_revision: {regime_general: "2010-07-01"}
+      periodes_de_reference: [3, 12]
       fiabilite: haute
   exemples: aucun trouvé
 - id: majoration_2010
@@ -665,6 +676,7 @@ versions:
       minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       retraites_entieres_a_la_revision: {regime_general: "2010-07-01"}
+      periodes_de_reference: [3, 12]
       fiabilite: haute
   exemples: [cnav_2018_4_reversion_surcote_au_maximum,
              cnav_2005_17_divorce_dans_la_periode_de_reference,
@@ -710,6 +722,7 @@ versions:
       minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       retraites_entieres_a_la_revision: {regime_general: "2010-07-01"}
+      periodes_de_reference: [3, 12]
       fiabilite: haute
   exemples: aucun trouvé
 - id: minimum_2012
@@ -756,6 +769,7 @@ versions:
       minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       retraites_entieres_a_la_revision: null
+      periodes_de_reference: [3, 12]
       fiabilite: haute
   exemples: aucun trouvé
 - id: minimum_2012_age_51
@@ -797,6 +811,7 @@ versions:
       minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       retraites_entieres_a_la_revision: null
+      periodes_de_reference: [3, 12]
       fiabilite: haute
   exemples: aucun trouvé
 - id: minimum_2026
@@ -842,6 +857,7 @@ versions:
       minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       retraites_entieres_a_la_revision: null
+      periodes_de_reference: [3, 12]
       fiabilite: haute
   exemples: [ur_reversion_prive_63_ans, ur_reversion_prive_50_ans_deux_enfants,
              ur_reversion_prive_ressources_plafond_2024,
@@ -886,6 +902,7 @@ versions:
       minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       retraites_entieres_a_la_revision: null
+      periodes_de_reference: [3, 12]
       fiabilite: haute
   exemples: aucun trouvé
 approximations:
@@ -999,37 +1016,52 @@ approximations:
   effet: non mesuré
 - ecart: >-
     le ménage du survivant est celui qu'il déclare, depuis le jour qu'il dit ou dès
-    le décès, jusqu'au jour qu'il dit : le plafond du ménage s'applique dès la date
-    d'effet quand il est formé ce jour-là ou avant, et pas encore défait, comme la
-    circulaire Cnav n° 2005-17, § 146, transpose sur la période de référence les
-    ressources d'après un changement de situation ; formé ou défait après, il révise
-    la réversion le mois qui suit (R. 353-1-1), ses ressources d'après le changement
-    transposées de même sur les trois mois qui précèdent la révision. Chaque
-    révision examine « les 3 mois qui précèdent cette date de révision » (exposé
-    « Condition de ressources ») : les revenus d'activité « pour leur montant
-    réellement perçu au cours de la période de référence » (circulaire RSI
-    n° 2007/061, annexe 3, § 6.1), en mois de trente jours (§ 7), qui portent encore,
-    le mois qui suit un changement, ceux d'avant lui. Le modèle la révise encore le
-    premier mois dont les trois mois ne portent plus que ce qui suit chaque
-    changement compté tel que perçu — pour une retraite, la dernière révision, trois
-    mois après elle —, quand cela y change quelque chose : c'est sa lecture, les
-    textes ne disant pas ce que la caisse fait de ces trois mois après la première
-    révision, qu'elle n'ouvre qu'au changement déclaré ou au contrôle des
-    ressources, à cinquante-cinq ans, à l'âge légal et à l'âge du taux plein
-    augmenté de trois mois (exposé « Condition de ressources ») ; sans elle, les
-    revenus d'avant le changement pèseraient jusqu'au suivant. Le modèle ne connaît
-    que les variations que la saisie date, chacune un montant annuel à partir d'un
-    jour. À la date d'effet, les ressources se comparent sur l'année, et non sur les
-    trois mois qui précèdent, les douze à défaut (R. 353-1), ce qui ne change rien à
-    des ressources égales chaque mois ; les ressources du survivant et de son nouveau
-    conjoint sont celles
-    que la saisie déclare, comptées entières : le modèle n'en ôte ni ce que le droit
-    de l'allocation supplémentaire exclut, ni la majoration pour enfants des
-    retraites du survivant (lettre ministérielle n° 237 du 22 mars 2005)
+    le décès, jusqu'au jour qu'il dit : le plafond du ménage s'applique à la date
+    d'effet quand il est formé avant elle, et pas encore défait, ses ressources
+    transposées sur la période de référence depuis le changement, comme le dit la
+    circulaire Cnav n° 2005-17, § 146 ; formé ou défait ce jour-là ou après, il
+    révise la réversion le mois qui suit (R. 353-1-1), ses ressources d'après le
+    changement transposées de même sur les trois mois qui précèdent la révision. La
+    date d'effet retient les trois mois civils qui la précèdent, les douze quand ceux
+    des trois mois excèdent le quart du plafond (R. 353-1), et chaque révision « les
+    3 mois qui précèdent cette date de révision » (exposé « Condition de
+    ressources ») : les revenus d'activité « pour leur montant réellement perçu au
+    cours de la période de référence » (circulaire RSI n° 2007/061, annexe 3, § 6.1),
+    en mois de trente jours (§ 7), transposés depuis le décès quand il tombe dans la
+    période (§ 7, exemple 1), qui portent encore, le mois qui suit un changement,
+    ceux d'avant lui. Le modèle la révise encore le premier mois dont les trois mois
+    ne portent plus que ce qui suit chaque changement compté tel que perçu, à une
+    révision ou dans la période de la date d'effet — pour une retraite, la dernière
+    révision, trois mois après elle —, quand cela y change quelque chose : c'est sa
+    lecture, les textes ne disant pas ce que la caisse fait de ces trois mois après
+    la première révision, qu'elle n'ouvre qu'au changement déclaré ou au contrôle
+    des ressources, à cinquante-cinq ans, à l'âge légal et à l'âge du taux plein
+    augmenté de trois mois (exposé « Condition de ressources »), quand le régime
+    général, instruisant après la date d'effet, « calcule différents dépassements
+    jusqu'à stabilisation des ressources dans la limite de la date d'instruction »
+    (circulaire RSI n° 2007/061, annexe 3, exemples) ; sans elle, les revenus d'avant
+    le changement pèseraient jusqu'au suivant, comme les douze mois de la date
+    d'effet, qu'une révision n'apprécie pas (circulaire Cnav n° 2005/17, § 321). Le
+    modèle ne connaît que les variations que la saisie date, après le décès, chacune
+    un montant annuel à partir d'un jour : la période de référence n'en demande pas
+    d'autres, le décès la commençant quand il y tombe. Il ne connaît pas la date de
+    la demande, que la caisse peut prendre pour la période quand la date d'effet est
+    le mois qui suit le dépôt (circulaire Cnav n° 2005/17, § 143) ; avant juillet
+    2004, il compare sur l'année les ressources de la date d'effet, quand R. 353-1 les
+    apprécie à la date de la demande, sur ses trois ou ses douze mois depuis le 30
+    novembre 1990, puis à la date du décès quand elles n'y remplissent pas la
+    condition. Les réversions des autres régimes de base comptent pour ce qu'elles
+    servent le jour de l'examen, non pour ce qu'elles ont servi dans sa période. Les
+    ressources du survivant et de son nouveau conjoint sont celles que la saisie
+    déclare, comptées entières : le modèle n'en ôte ni ce que le droit de
+    l'allocation supplémentaire exclut, ni la majoration pour enfants des retraites
+    du survivant (lettre ministérielle n° 237 du 22 mars 2005)
   effet: >-
-    non mesuré ; la révision que le modèle ajoute trois mois après un changement
-    avance, quand la caisse ne réexamine les ressources qu'au contrôle suivant, la
-    réversion que ses revenus nouveaux réduisent ou relèvent
+    les trois ou douze mois de la date d'effet ne déplacent aucune réversion des 907
+    témoins de simulation, le 25 octobre 2026 ; la révision que le modèle ajoute
+    trois mois après un changement avance, quand la
+    caisse ne réexamine les ressources qu'au contrôle suivant, la réversion que ses
+    revenus nouveaux réduisent ou relèvent : non mesuré
 - ecart: >-
     les montants sont ceux de l'année du décès — l'année courante pour un décès à
     venir, l'année du départ s'il la suit —, au SMIC horaire du 1er janvier de cette
@@ -1172,7 +1204,7 @@ presomptions:
     la réversion que la page montre sans décès déclaré, pour un décès supposé juste
     après le départ, ou cette année pour qui est déjà parti
 sources:
-  lu_le: 2026-10-24
+  lu_le: 2026-10-25
   prochaine_relecture: 2027-03-31
   lectures_divergentes:
   - >-
@@ -1211,9 +1243,9 @@ sources:
   - >-
     Ce que les versions ne portent pas encore : la réversion d'un assuré disparu
     (L. 353-2), la révision de la pension quand les ayants droit changent (R. 353-4),
-    les ressources des trois mois qui précèdent chaque révision, telles que perçues,
-    quand le modèle compte celles d'après le changement, et la pension de vieillesse
-    de veuve ou de veuf.
+    les ressources d'avant juillet 2004, appréciées à la date de la demande, puis à
+    celle du décès quand elles n'y remplissent pas la condition (R. 353-1, rédactions
+    de 1985 et de 1990), et la pension de vieillesse de veuve ou de veuf.
     Les limites de cumul d'avant juillet 2004 (D. 355-1), l'âge d'avant 1973 et les
     majorations forfaitaires de 1982 et de 1995 sont portés depuis le 9 octobre 2026,
     la majoration forfaitaire pour enfant à charge (L. 353-5) dans sa propre fiche,
@@ -1222,7 +1254,10 @@ sources:
     octobre 2026, comme, le même jour, la révision qu'ouvrent le ménage qu'il forme
     ou qui se défait, la fin de son activité, ses revenus d'activité et les
     ressources de son nouveau conjoint qui varient, et ses cinquante-cinq ans, avant
-    sa retraite ou sans elle, et la dernière révision sans retraite, à son âge légal.
+    sa retraite ou sans elle, la dernière révision sans retraite, à son âge légal, et
+    les ressources des trois mois qui précèdent chaque révision, telles que perçues ;
+    celles des trois ou des douze mois qui précèdent la date d'effet, depuis le 25
+    octobre 2026.
   - >-
     Avant le 1er juillet 1974, la réversion « ne se cumulait pas avec un avantage
     personnel » : l'exposé de la Cnav dit « avant le 01/01/1974 », quand la loi
@@ -1833,6 +1868,77 @@ sources:
       fait des trois mois après la première révision
     url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=circulaire_rsi_2007_061_24042007.pdf
     date: 2026-10-24
+  - type: legifrance
+    reference: >-
+      relu le 25 octobre 2026 dans l'index LEGI, mis à jour jusqu'au 24 octobre :
+      R. 353-1, dans ses neuf rédactions. Celle du 21 décembre 1985
+      (LEGIARTI000006749451) apprécie les ressources « à la date de la demande de
+      pension de réversion », et « Si les conditions de ressources ne sont pas remplies
+      à la date de la demande, elles sont appréciées à la date du décès, compte tenu
+      des dispositions en vigueur à cette date » ; celle du 30 novembre 1990
+      (LEGIARTI000006749452) y ajoute : « Les ressources à prendre en compte sont
+      celles afférentes aux trois mois civils précédant la date de la demande ; leur
+      montant ne doit pas alors excéder le quart du montant annuel prévu ci-dessus
+      [...]. Dans le cas contraire, ce montant annuel est comparé aux ressources
+      afférentes aux douze mois civils précédant la date de la demande ». Depuis le 25
+      août 2004 (LEGIARTI000006749453, puis 6749454, 6749455, 020082979, et 038790257
+      du 8 juillet 2019) : « Les ressources à prendre en compte lors de la demande sont
+      celles afférentes aux trois mois civils précédant la date d'effet de la pension
+      de réversion. Lorsqu'elles excèdent le quart du plafond applicable en vertu du
+      premier alinéa de l'article L. 353-1, il leur est substitué celles afférentes aux
+      douze mois civils précédant cette date, qui sont alors comparées au montant annuel
+      de ce plafond ». Les rédactions du 8 mai 2010 (LEGIARTI000022287566), qui dit
+      « code rural et de la pêche maritime », et du 6 mai 2017 (LEGIARTI000034596023),
+      qui nomme autrement les régimes de base dont les réversions complémentaires ne
+      comptent pas — « L. 200-2, L. 611-1 et L. 640-1 du présent code, ainsi qu'aux
+      articles L. 722-8 et L. 722-20 du code rural et de la pêche maritime » —, gardent
+      la même phrase ; elles restent à rattacher aux versions qu'elles touchent
+    date: 2026-10-25
+  - type: circulaire_cnav
+    reference: >-
+      relus le 25 octobre 2026 par l'API de la base de législation de la Cnav : l'exposé
+      « Condition de ressources » (16 avril 2026), « Période de référence » : « Les
+      ressources retenues sont celles des 3 mois civils qui précèdent le point de
+      départ de la retraite de réversion. Si les ressources dépassent le plafond
+      autorisé, les ressources retenues sont celles des 12 mois civils qui précèdent le
+      point de départ » ; « Si le point de départ est fixé le 1er jour du mois qui suit
+      le dépôt de la demande, les ressources peuvent être examinées sur la période des 3
+      mois ou 12 mois qui précèdent cette demande » ; « Si la situation familiale change
+      au cours de la période de référence, les ressources sont celles comprises entre la
+      date du changement de situation et le point de départ » ; avant le 1er juillet
+      2004, les trois ou douze mois « précédant la date de la demande », puis, la
+      condition non remplie, ceux qui précèdent le décès. Circulaire n° 2005/17, § 143 :
+      « Si les conditions ne sont pas remplies, les ressources des douze mois civils
+      précédant la date d'effet sont alors examinées », et la tolérance de la lettre
+      ministérielle du 29 mars 1965 ; § 146 : le changement de situation — « décès du
+      conjoint, remariage, divorce, pacs ou concubinage » — transposé « sur trois mois
+      ou sur douze mois selon le cas ». Lettre de la Cnav du 18 avril 2007 : le « décès
+      du conjoint, du concubin, du partenaire pacsé » est un changement de situation
+      familiale, non le décès de l'ex-conjoint d'une personne divorcée, dont la
+      « composition de la "famille" n'est pas affectée »
+    date: 2026-10-25
+    url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=retraite_reversion_ressource_condition_ressource_ex.aspx
+  - type: autre
+    reference: >-
+      circulaire RSI n° 2007/061 du 24 avril 2007, annexe 3, relue le 25 octobre 2026
+      en PDF par la base de législation de la Cnav : § 5.1, « A l'attribution », « Il
+      s'agit des 3 mois civils précédant la date d'effet de la PR. Lorsque les
+      ressources sont supérieures au plafond autorisé, l'examen des ressources doit
+      s'effectuer sur les 12 mois précédant la date d'effet de la PR (R. 353-1 CSS) »,
+      et ses exemples, sans montants : le décès du 15 octobre 2005, date d'effet au 1er
+      novembre, « la période du 01/08/2005 au 31/10/2005 (3 mois) ou [...] celles du
+      01/11/2004 au 31/10/2005 (12 mois) » ; § 7, le changement de situation familiale
+      « en attribution ou en révision », dont l'exemple 1, rejoué au témoin des
+      exemples officiels : le décès du 12 février, « on retient les ressources perçues
+      par le seul conjoint survivant à compter du 12/02 », dix-neuf jours, « [950 € /
+      19j] x 90 j = 4 500 € pour 3 mois ». Ses questions, exemple 3 : le droit propre
+      du conjoint du 1er octobre 2006, « non pris en compte à la date d'effet de la PR
+      puisque la date d'effet du DP est le 01/10/06 », compté à la « Révision
+      (glissement) » du 1er novembre ; et, quand le régime général instruit après la
+      date d'effet, « il calcule différents dépassements jusqu'à stabilisation des
+      ressources dans la limite de la date d'instruction »
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=circulaire_rsi_2007_061_24042007.pdf
+    date: 2026-10-25
 textes_a_rattacher: []
 textes_sans_effet:
 - id: LEGIARTI000006753812
@@ -1863,7 +1969,8 @@ code:
     _admis_ailleurs, _fin_au_remariage, _jusqu_au_remariage, _premiere_date_d_effet,
     _date_d_effet_du_regime_general, _cumuler, _retraites_au, _cumul_a_la_retraite,
     _annee_du_plafond, _servie_au, _revisions, _retraites_entieres, _en_mois, _percu,
-    _ressources_des_trois_mois, _trois_mois_apres, _apres_les_trois_mois, _generation,
+    _ressources_de_la_periode, _ressources_a_la_date_d_effet, _trois_mois_apres,
+    _apres_les_trois_mois, _generation,
     _derniere_revision, _venu, _activite_au, _apport_au,
     _majorations_ulterieures ; scenarios/actuel.py : Reversions ; echeancier.py :
     Echeancier._reverser, Echeancier._pensions_au_deces,
@@ -1880,7 +1987,8 @@ code:
     remarieAvant, admisAuRegimeGeneral, admisAilleurs, finAuRemariage,
     jusquAuRemariage, premiereDateDEffet, dateDEffetDuRegimeGeneral, cumuler,
     retraitesAu, cumulALaRetraite, anneeDuPlafond, servieAu, revisionsDeLaReversion,
-    retraitesEntieres, enMois, percu, ressourcesDesTroisMois, troisMoisApres,
+    retraitesEntieres, enMois, percu, ressourcesDeLaPeriode, ressourcesALaDateDEffet,
+    troisMoisApres,
     apresLesTroisMois, generationDe, derniereRevision, venu, activiteAu, apportAu,
     majorationsUlterieures ;
     moteur/js/regimes.js : Reversions ;
@@ -1898,7 +2006,7 @@ code:
     minimum_tous_regimes, majoration_taux, majoration_enfants_taux,
     majoration_enfants_minimum, age_inaptitude, cumul, cumul_taux, droits_d_avant_1973,
     minimum_avec_les_droits_d_avant_1973, majorations_forfaitaires,
-    retraites_entieres_a_la_revision, fiabilite ;
+    retraites_entieres_a_la_revision, periodes_de_reference, fiabilite ;
     macro/smic_horaire.csv ; legislation/minimum_reversion.csv,
     legislation/plafond_majoration_reversion.csv, legislation/limite_cumul_reversion.csv
     ; legislation/age_annulation_decote.csv ; macro/plafond_securite_sociale.csv
@@ -2028,6 +2136,17 @@ historique:
   de plus le premier mois dont les trois mois ne portent plus que ce qui suit chaque
   changement, la dernière pour une retraite, quand elle change quelque chose ; les
   deux exemples de la circulaire RSI n° 2007/061 rejoués.
+- >-
+  2026-10-25 — action 138, étape 4, quinzième partie : la date d'effet d'après
+  juillet 2004 retient les ressources des trois mois civils qui la précèdent, telles
+  que perçues, celles des douze quand elles excèdent le quart du plafond (R. 353-1),
+  les mois que chaque version dit (periodes_de_reference) ; la période, de la date
+  d'effet ou d'une révision, commence au décès quand il y tombe, un changement de
+  situation familiale (circulaire RSI n° 2007/061, annexe 3, § 7, dont l'exemple 1
+  est rejoué) ; un changement du jour de la date d'effet, la retraite du survivant
+  comprise, la révise le mois qui suit, et celui que sa période compte tel que perçu,
+  le premier mois dont les trois mois ne portent plus que ce qui le suit. Chaque
+  ligne dit les mois de sa période (periode_de_reference), que le paquet porte.
 effet: >-
   Tout conjoint, ou ex-conjoint, d'un assuré du régime général ou d'un régime aligné
   qui décède : 4,41 millions de bénéficiaires d'un droit dérivé tous régimes fin 2024

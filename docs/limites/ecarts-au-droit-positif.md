@@ -63,7 +63,12 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   les ressources des trois mois qui la précèdent, telles que perçues — les
   retraites du survivant pour ce qu'elles servent, au régime général depuis le
   30 juin 2010 —, et le modèle la révise encore quand ces trois mois ne portent
-  plus que ce qui suit le changement, ce que les textes ne disent pas. Restent
+  plus que ce qui suit le changement, ce que les textes ne disent pas. Depuis le
+  25 octobre, sa date d'effet compte de même les ressources des trois mois civils
+  qui la précèdent, celles des douze quand elles excèdent le quart du plafond
+  (R. 353-1), la période commençant au décès quand il y tombe ; avant juillet
+  2004, le modèle compare encore sur l'année celles de la date d'effet, quand le
+  texte les apprécie à la date de la demande, puis à celle du décès. Restent
   dehors la révision quand ses ayants droit changent, le
   complément de la fonction publique,
   le droit que recouvre le survivant quand sa nouvelle union cesse, les
