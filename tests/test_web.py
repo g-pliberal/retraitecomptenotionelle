@@ -22,6 +22,7 @@ import json
 import math
 import re
 import sys
+from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import parse_qsl, urlencode
 
@@ -2412,6 +2413,52 @@ def test_aucun_titre_ne_saute_un_niveau(page, chemin):
     assert not sauts, f"{chemin} : {sauts}"
 
 
+class _FiguresLegendees(HTMLParser):
+    """Les figures d'une page qui portent un rôle ET une légende en
+    ``<figcaption>`` enfant : la pile des éléments ouverts dit qui est le
+    parent de chaque légende."""
+
+    VIDES = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link",
+             "meta", "source", "track", "wbr"}
+
+    def __init__(self):
+        super().__init__()
+        self.pile: list[list] = []
+        self.fautes: list[str] = []
+
+    def handle_starttag(self, balise, attributs):
+        if balise == "figcaption" and self.pile and self.pile[-1][0] == "figure":
+            self.pile[-1][2] = True
+        if balise not in self.VIDES:
+            attributs = dict(attributs)
+            libelle = f'{attributs.get("class", "")} « {attributs.get("aria-label", "")[:40]} »'
+            self.pile.append([balise, attributs.get("role"), False, libelle])
+
+    def handle_endtag(self, balise):
+        while self.pile:
+            ouverte, role, legendee, libelle = self.pile.pop()
+            if ouverte == "figure" and role and legendee:
+                self.fautes.append(f'figure {libelle} : role="{role}"')
+            if ouverte == balise:
+                break
+
+
+@pytest.mark.parametrize("chemin", [*TITRES, "résultats"])
+def test_une_figure_legendee_ne_porte_pas_de_role(page, chemin):
+    """Une ``<figure>`` dont un enfant est un ``<figcaption>`` n'accepte aucun
+    rôle hors ``doc-example`` (ARIA in HTML ; règle ``aria-allowed-role``
+    d'axe). Lighthouse la compte dans l'arbre d'accessibilité que lisent les
+    agents (action 174) : un ``role="group"`` sur un graphique légendé y fait
+    échouer la page. Son rôle implicite, ``figure``, nommé par son
+    ``aria-label``, ne l'annonce pas pour autant comme une image. Toute la
+    page, sections repliées comprises : dépliées, elles comptent aussi."""
+    rendu = page("/simuler", **SIMULATION_TEMOIN) if chemin == "résultats" else page(chemin)
+    lecteur = _FiguresLegendees()
+    lecteur.feed(rendu)
+    lecteur.close()
+    assert not lecteur.fautes, f"{chemin} : {sorted(set(lecteur.fautes))}"
+
+
 @pytest.mark.parametrize("chemin", list(TITRES))
 def test_aucune_information_ne_vit_dans_une_infobulle(chemin):
     """``title`` ne s'ouvre ni au clavier, ni au doigt, ni sous synthèse vocale.
@@ -4413,7 +4460,7 @@ def test_un_schema_de_sankey_se_lit_aussi_en_tableau():
     replié dessous, de qui à qui et combien, et le texte est échappé partout."""
     html = g.sankey("Essai", "Un essai", _caisses_d_essai(), 1.0,
                     ("D'où", "Où"))
-    assert html.startswith('<figure class="sankey" role="group" aria-label="Essai">')
+    assert html.startswith('<figure class="sankey" aria-label="Essai">')
     assert "<figcaption>Un essai</figcaption>" in html
     tableau = html[html.index('<details class="donnees-sankey">'):]
     assert "(7 lignes)" in tableau
@@ -4640,9 +4687,11 @@ def test_un_graphique_porte_de_quoi_se_lire_au_survol():
     figure = re.search(r"<figure[^>]*>", html).group(0)
     assert f'data-gauche="{g.nombre_brut(g.MARGE_GAUCHE)}"' in figure
     assert f'data-droite="{g.nombre_brut(g.LARGEUR_TRACE - g.MARGE_DROITE)}"' in figure
-    # Focusable, et annoncée comme un groupe : les flèches y parcourent les
-    # années, ce qu'une image ne saurait pas faire.
-    assert 'tabindex="0"' in figure and 'role="group"' in figure
+    # Focusable : les flèches y parcourent les années, ce qu'une image ne
+    # saurait pas faire. Sans rôle ajouté, puisque sa légende est un
+    # `<figcaption>` : son rôle implicite, `figure`, est nommé.
+    assert 'tabindex="0"' in figure and "role=" not in figure
+    assert 'aria-label="Un essai"' in figure
     # La place où le script dessine, et celle où il écrit. Vides dans le HTML
     # servi : la page reste lisible sans une ligne de script.
     assert '<g class="survol"></g>' in html

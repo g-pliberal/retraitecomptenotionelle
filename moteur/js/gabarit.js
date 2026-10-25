@@ -1668,9 +1668,12 @@ export function graphique(titre, annees, series, unite = "", empile = false,
   // dans le tableau de points posé juste dessous, mises en forme exactement
   // comme la page les écrit.
   //
-  // La figure est focusable et porte un `role="group"` : les flèches y
-  // parcourent les années, ce qu'une image ne saurait pas faire.
-  return `<figure class="graphique${ECRAN === null ? "" : " etroit"}" tabindex="0" role="group" `
+  // La figure est focusable : les flèches y parcourent les années, ce qu'une
+  // image ne saurait pas faire. Elle garde son rôle implicite, `figure`, nommé
+  // par son `aria-label` : une figure que légende un `<figcaption>` refuse le
+  // `role="group"` qu'elle portait (ARIA in HTML ; action 174), et le rôle
+  // `figure` ne l'annonce pas davantage comme une image.
+  return `<figure class="graphique${ECRAN === null ? "" : " etroit"}" tabindex="0" `
     + `aria-label="${echapper(titre)}" `
     + `data-gauche="${gauche}" data-droite="${droite}">`
     + `<svg viewBox="0 0 ${CADRE.largeur} ${CADRE.hauteur}" role="img" `
@@ -1912,7 +1915,7 @@ export function friseFlux(titre, annees) {
     [""].concat(Array(6).fill("nombre")),
     `${titre}, en points de PIB et en milliards d'euros`, true,
   );
-  return `<figure class="frise" role="group" aria-label="${echapper(titre)}">`
+  return `<figure class="frise" aria-label="${echapper(titre)}">`
     + `<div class="annees">${dessins.join("")}</div>${legende}</figure>`
     + '<details class="donnees-frise">'
     + sommaire(`Les chiffres de cette frise, année par année (${annees.length} lignes)`)
@@ -2122,8 +2125,10 @@ export function cascade(titre, marches, unite = "", decimales = 1,
   const grilleHtml = tableau(
     [libelleMarche, `Effet${enTete}`, `Cumul${enTete}`],
     lignesTableau, ["", "nombre", "nombre"], titre, true);
-  // La figure est focusable : les flèches y parcourent les marches.
-  return `<figure class="cascade" tabindex="0" role="group" aria-label="${echapper(titre)}">`
+  // La figure est focusable : les flèches y parcourent les marches. Sans rôle
+  // ajouté, comme celle d'un graphique, puisque sa légende est un
+  // `<figcaption>`.
+  return `<figure class="cascade" tabindex="0" aria-label="${echapper(titre)}">`
     + `<svg viewBox="0 0 ${largeur} ${hauteur}" role="img" aria-label="${echapper(titre)}">`
     + `${grille.join("")}${barres.join("")}${textes.join("")}${uniteHtml}`
     + '<g class="survol"></g></svg>'
@@ -2466,7 +2471,7 @@ export function sankey(titre, nom, caisses, echelle, colonnes = ["", ""], largeu
   const hauteur = Math.ceil(bas + MARGE_BAS_SANKEY);
   const grille = tableau(["De", "Vers", "Montant"], lignes, ["", "", "nombre"],
     titre, true);
-  return `<figure class="sankey" role="group" aria-label="${echapper(titre)}">`
+  return `<figure class="sankey" aria-label="${echapper(titre)}">`
     + `<figcaption>${echapper(nom)}</figcaption>`
     + `<div class="defilant" tabindex="0" role="region" aria-label="${echapper(titre)}">`
     + `<svg viewBox="0 0 ${geo.largeur} ${hauteur}" role="img" `
