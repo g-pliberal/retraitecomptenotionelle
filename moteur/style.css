@@ -862,7 +862,12 @@ details.section > summary {
 details.section > summary:hover { color: var(--or); }
 details.section > .dedans { padding: 0 0 1.2rem 1.65rem; }
 details.section > .dedans > :first-child { margin-top: 0; }
-details.section > .dedans > h4 {
+/* L'intertitre d'une section repliée : un `<h3>` quand la section se pose sous
+   un `<h2>` (action 174), dessiné comme le `<h4>` qu'il était. Le sélecteur
+   reste moins fort que celui du premier enfant, qui le colle au haut de la
+   section. */
+details.section > .dedans > h4,
+.dedans > h3.intertitre {
   font-size: 1rem; font-weight: 700; margin: 1.5rem 0 0.4rem;
 }
 /* Un tableau plus large que l'écran défile horizontalement. La zone qui défile

@@ -7922,7 +7922,7 @@ function parOrigine(comparaison, catalogue) {
   }
 
   return `
-<h4>Les quatre systèmes, régime par régime${g.bulle(
+<h3 class="intertitre">Les quatre systèmes, régime par régime${g.bulle(
     "Comment lire ce tableau",
     "Au système 1, la ligne d'un régime est la pension qu'il sert, avec ce "
     + "que le droit y a déjà porté — un minimum, des trimestres d'enfants, une "
@@ -7932,7 +7932,7 @@ function parOrigine(comparaison, catalogue) {
     + "vient que des cotisations — et, au système 4, de la garantie "
     + "vieillesse. Chaque case est arrondie au centime ; un étage de plusieurs "
     + "régimes additionne les lignes qui le suivent.",
-  )}</h4>
+  )}</h3>
 <p>Au système 1, chaque régime calcule sa pension selon ses propres règles. Dans
 les trois comptes, la ligne d'un régime est ce que valent les cotisations qu'il
 a encaissées : le capital qu'elles y ont formé, divisé par le coefficient de
@@ -8102,7 +8102,7 @@ l'année du départ.${g.bulle(
     + "calcul s'additionne : convertir chaque ligne au pouvoir d'achat d'une "
     + "autre année ferait des totaux faux.",
   )}</p>
-<h4>Système 1 — de quoi votre pension actuelle est faite${g.bulle(
+<h3 class="intertitre">Système 1 — de quoi votre pension actuelle est faite${g.bulle(
     "Comment lire ce tableau",
     "La retraite de base d'abord, puis les complémentaires ; un étage de "
     + "plusieurs régimes les additionne, et chacun se lit dessous, en retrait. "
@@ -8111,10 +8111,10 @@ l'année du départ.${g.bulle(
     + "compris dans la ligne du régime qui le sert : le sous-total contributif "
     + "l'en retire, et la ligne suivante le rend visible — c'est la même "
     + "somme, comptée une fois.",
-  )}</h4>
+  )}</h3>
 ${regimes}
 ${part}
-<h4>Système 2 — construction du compte notionnel rétroactif</h4>
+<h3 class="intertitre">Système 2 — construction du compte notionnel rétroactif</h3>
 <div class="fiches">${reperes}</div>
 ${compte}
 ${parOrigine(comparaison, catalogue)}
@@ -9715,7 +9715,7 @@ function avantagesDetailListe(contexte) {
     ]);
     if (lignes.length === 0) continue;
     blocs.push(
-      `<h4>${echapper(famille.libelle)}</h4><p>${echapper(famille.quoi)}</p>`
+      `<h3 class="intertitre">${echapper(famille.libelle)}</h3><p>${echapper(famille.quoi)}</p>`
       + g.tableau(["Dispositif", "Base légale", "Depuis", "Jusqu'à",
         "Dans le modèle"], lignes, ["", "texte", "nombre", "texte", "texte"],
       `${famille.libelle} : ${lignes.length} dispositifs`, true),
@@ -9781,7 +9781,7 @@ function avantagesDetailEtats(contexte) {
     (ligne) => `<p><strong>${echapper(ligne)}</strong> — ${echapper(c.refus[ligne])}</p>`,
   ).join("");
   const note = refus
-    ? `<h4>Ce que le modèle a refusé de mesurer</h4><p>Un refus est un `
+    ? `<h3 class="intertitre">Ce que le modèle a refusé de mesurer</h3><p>Un refus est un `
       + `résultat : il dit qu'une contrefactuelle existe mais ne vaut rien, `
       + `ce qui est plus sûr qu'un chiffre plausible.</p>${refus}`
     : "";
@@ -9922,7 +9922,7 @@ function coutDetailDepense(contexte) {
       `<strong>${partGratuite}</strong>`,
     ]);
     nonCotise = `
-<h4>Ce que personne n'a cotisé</h4>
+<h3 class="intertitre">Ce que personne n'a cotisé</h3>
 <p>Sur ces ${milliards(avantages.observee, 1)} de ${avantages.annee},
 ${milliards(avantages.gratuit, 1)}, soit ${partGratuite}, servent des droits
 qu'aucune cotisation n'a ouverts : la pension du conjoint survivant, les
@@ -9981,7 +9981,7 @@ ${milliards(autres.aide_sociale_locale, 1)} de dépendance,
 ${milliards(autres.supplementaire, 1)} de capitalisation et
 ${milliards(autres.solidarite_etat, 1)} de solidarité de l'État.</p>
 
-<h4>La même dépense, en euros</h4>
+<h3 class="intertitre">La même dépense, en euros</h3>
 ${g.graphique(
     `Dépenses du risque vieillesse-survie de ${c.premiereAnnee} à ${derniere}, `
     + "en milliards d'euros",
@@ -9992,7 +9992,7 @@ multipliés par treize. En euros constants, la multiplication est par quinze :
 c'est celle-là qui est réelle. C'est pour éviter ce genre de piège que les cartes du haut sont en part
 du PIB.</p>
 
-<h4>Système par système</h4>
+<h3 class="intertitre">Système par système</h3>
 ${g.graphique(
     `Dépenses de vieillesse-survie par système, ${premiereVentilee}-${derniere}, `
     + "en milliards d'euros courants",
@@ -10353,7 +10353,7 @@ ${g.pourcentage(horizon.derive - 1, false, 1)} en ${fin}.`;
       g.pourcentage(c.detteDerive.horizon(scenario), false, 0)],
   ];
   return `
-<h4>La fourchette que cet écart impose${bulleHypothesesCout()}</h4>
+<h3 class="intertitre">La fourchette que cet écart impose${bulleHypothesesCout()}</h3>
 <p>Le rapport pris au modèle porte cet écart, et deux lectures
 l'encadrent. <strong>Si l'écart est partagé
 par tous les systèmes</strong>, parce que la grille compte mal qui part, quand
@@ -10720,7 +10720,7 @@ ${enMilliards(comptes, manqueFin, soldeActuel.derniereAnnee)}${auPib(comptes, so
 — comparer un scénario à lui, c'est le
 comparer à un système qui dérive.</p>
 
-<h4>Ce qu'ils auraient coûté depuis ${c.premiereAnnee}</h4>
+<h3 class="intertitre">Ce qu'ils auraient coûté depuis ${c.premiereAnnee}</h3>
 <p>La dépense observée n'est pas modélisée : elle est ce qu'elle est. Ce qui est
 modélisé, c'est le <strong>rapport</strong> entre ce qui a été versé et ce que
 chaque système aurait versé aux mêmes retraités — la moyenne des écarts de
@@ -10775,7 +10775,7 @@ ${milliards(c.cumul("notionnel_retroactif_employeur"), 0)}, et il applique une
 <a href="${g.lien("/methode", "indexation")}">règle d'indexation</a> dont la page
 Méthode montre qu'elle domine tout le reste.</p>
 
-<h4>Ce qu'ils coûteraient d'ici ${avenir.derniereAnnee}</h4>
+<h3 class="intertitre">Ce qu'ils coûteraient d'ici ${avenir.derniereAnnee}</h3>
 <p>Le système actuel de ce tableau est <strong>celui du Conseil d'orientation
 des retraites</strong>, année par année : ${g.pourcentage(corHorizon, false, 1)}
 du PIB en ${avenir.derniereAnnee}, ${g.milliards(corFin)} en euros constants de
@@ -10828,7 +10828,7 @@ pour la suite —, mais le site ne les compare plus : la proposition du parti es
 rétroactive, et c'est elle qu'il s'agit de chiffrer.</p>
 ${coutFourchette(contexte)}
 
-<h4>Ce qui pousse la dépense, et ce qui la retient</h4>
+<h3 class="intertitre">Ce qui pousse la dépense, et ce qui la retient</h3>
 ${g.tableau(
     ["Horizon", "65 ans et plus par 20-64 ans", "Système actuel",
       "Compte notionnel, les deux parts", "La proposition libérale"],
@@ -11527,7 +11527,7 @@ taux comble ce qui sépare le solde du solde visé, et l'âge recule, ou avance,
 jusqu'à ce que les retraités et les cotisants qu'il déplace y portent
 l'année.${caseVide}</p>`;
   return `
-<h4>Rogner, prélever plus ou partir plus tard</h4>
+<h3 class="intertitre">Rogner, prélever plus ou partir plus tard</h3>
 <p>Le coefficient n'est que l'un des trois leviers qui feraient tomber une
 année juste, ceux que le Conseil d'orientation des retraites chiffre chaque
 année pour le système actuel : rogner toutes les pensions, relever le taux de
@@ -13408,7 +13408,7 @@ même chose. Rien n'est mélangé pour autant : du modèle, les deux premières
 cartes n'empruntent qu'un <strong>rapport</strong> entre systèmes, qui est sans
 dimension.</p>
 
-<h4>Le compte du système de retraite — Conseil d'orientation des retraites</h4>
+<h3 class="intertitre">Le compte du système de retraite — Conseil d'orientation des retraites</h3>
 <p>Dépenses, ressources et solde du même ensemble de régimes, sous la même
 convention, de ${solde.premiereAnnee} à ${solde.derniereAnnee}. Champ : régimes
 légalement obligatoires, FSV compris, RAFP exclu — ni dépendance, ni
@@ -13498,8 +13498,8 @@ que le tableau européen publie. Ni l'un ni l'autre n'est faux : un engagement
 acquis n'a pas de niveau propre, il a un taux. C'est pourquoi le dépôt affiche
 les deux et ne choisit pas.</p>
 
-<h4>Ce que d'autres caisses versent — rapports à la Commission des comptes de
-la Sécurité sociale</h4>
+<h3 class="intertitre">Ce que d'autres caisses versent — rapports à la Commission des comptes de
+la Sécurité sociale</h3>
 <p>Le poste « transferts » du compte du COR, ventilé par celui qui paie, de
 ${comptes.premiereAnneeTransferts} à ${comptes.derniereAnneeTransferts} :
 la fiche de la CNAF pour l'assurance vieillesse des parents au foyer et les
@@ -13511,7 +13511,7 @@ premier qui arrête une année l'emporte. Les rapports d'avant 2013 sont chiffr�
 ou compressés d'une façon que le lecteur du dépôt n'ouvre pas : la série
 commence là.</p>
 
-<h4>Les comptes de la protection sociale — DREES</h4>
+<h3 class="intertitre">Les comptes de la protection sociale — DREES</h3>
 <p>La dépense, risque par risque, depuis ${c.premiereAnnee}. Le risque
 <strong>vieillesse-survie</strong> entier vaut
 ${g.pourcentage(depenses.partPib(derniere), false, 2)} du PIB en ${derniere},
@@ -13526,7 +13526,7 @@ ${enMilliards(comptes, 0.003, derniere)}, séparent cette répartition
 obligatoire du périmètre du COR : c'est le meilleur recoupement dont ces deux
 séries disposent, et un test du dépôt le tient.</p>
 
-<h4>Le modèle du dépôt</h4>
+<h3 class="intertitre">Le modèle du dépôt</h3>
 <p>Treize carrières types croisées avec ${c.generations.length} générations, de
 ${c.generations[0]} à ${c.generations[c.generations.length - 1]}, pesées par les effectifs réels
 de l'INSEE et par les effectifs de retraités que la DREES publie caisse par
@@ -15010,7 +15010,7 @@ function methodeCarriere(contexte) {
   const fusionne = contexte.simulateur().regimeFusionne;
   const nombreRegimes = contexte.simulateur().catalogue.taille;
   return g.depliant("Comment une carrière est décrite", `
-<h4>La fusion des régimes</h4>
+<h3 class="intertitre">La fusion des régimes</h3>
 <p>À compter de l'année de bascule, les ${nombreRegimes} régimes du catalogue
 sont remplacés par un régime unique dont chaque paramètre est le plus
 défavorable de l'ensemble : ouverture à ${age(fusionne.age_ouverture)}, taux
@@ -15019,7 +15019,7 @@ ${fusionne.duree_requise_trimestres} trimestres requis, cotisation de
 ${g.pourcentage(fusionne.taux_cotisation_retraite, false, 2)} sur assiette
 déplafonnée.</p>
 
-<h4>Une carrière, plusieurs métiers</h4>
+<h3 class="intertitre">Une carrière, plusieurs métiers</h3>
 <p>Une carrière se décrit comme une <strong>suite de métiers</strong> : chacun
 porte un statut d'affiliation, un âge de début et un niveau de revenu, et court
 jusqu'au début du suivant. Chaque changement fait passer d'un régime à un
@@ -15080,7 +15080,7 @@ le tiennent</a> · <a href="${g.DEPOT}/tree/main/tests">les tests</a></p>`);
 function methodeUnites(contexte) {
   const [anneeAncrage, niveauAncrage] = ancrageSalaireMoyen(contexte.simulateur().macro);
   return g.depliant("En quelles unités, et sur quel périmètre", `
-<h4 id="unites">Brut, et pas net</h4>
+<h3 class="intertitre" id="unites">Brut, et pas net</h3>
 <p>Tout ce que le modèle manipule est <strong>brut</strong> : le revenu saisi,
 les cotisations versées, le capital notionnel, les quatre pensions. « Brut » a ici
 le sens des comptes nationaux : <strong>avant</strong>
@@ -15108,7 +15108,7 @@ toutes les pensions, mais presque pas les <strong>rapports</strong> entre
 scénarios, qui sont l'objet du modèle : seuls le plafond de la Sécurité sociale
 et les minima, qui ne le suivent pas, en tirent de petits écarts.</p>
 
-<h4>Périmètre</h4>
+<h3 class="intertitre">Périmètre</h3>
 <p>Origine 1941 (allocation aux vieux travailleurs salariés), premier dispositif
 où les cotisations des actifs financent les prestations des retraités. Les
 assurances sociales de 1930, en capitalisation individuelle, et le RAFP sont
@@ -15417,7 +15417,7 @@ projection parce qu'ils disent ce qui a été payé —, et les âges, durées e
 coefficients propres à chaque régime, repris des textes.</p>`, "donnees-series");
 
   const depliantFiabilite = g.depliant("Ce que vaut chaque décennie, et chaque régime", `
-<h4>Les séries macroéconomiques, décennie par décennie</h4>
+<h3 class="intertitre">Les séries macroéconomiques, décennie par décennie</h3>
 ${g.tableau(
     ["Période", "Inflation", "Salaire moyen", "Productivité", "Ensemble"],
     periodes,
@@ -15428,7 +15428,7 @@ ${g.tableau(
 <p class="discret">Une projection ne se fait jamais passer pour une observation :
 au-delà de la dernière année observée, la fiabilité retombe à « estimée ».</p>
 
-<h4>Les ${simulateur.catalogue.taille} régimes calculés</h4>
+<h3 class="intertitre">Les ${simulateur.catalogue.taille} régimes calculés</h3>
 ${g.tableau(["Niveau", "Nombre", "Régimes"], regimes, ["", "nombre", "texte"],
     "Nombre de régimes par niveau de fiabilité", true)}`, "donnees-fiabilite");
 

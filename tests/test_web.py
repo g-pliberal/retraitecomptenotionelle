@@ -2402,25 +2402,84 @@ def test_aucun_titre_ne_saute_un_niveau(page, chemin):
     """Une synthèse vocale parcourt une page par ses titres : un ``<h3>`` posé
     sous le ``<h1>``, sans ``<h2>`` entre eux, lui fait croire qu'une partie
     manque. WCAG 1.3.1, et la règle ``heading-order`` d'axe, que joue
-    Lighthouse (action 174) : comme elle, on ne lit que ce que la page montre
-    à l'ouverture, hors des sections repliées et des onglets cachés."""
+    Lighthouse (action 174). Lui ne lit que ce que la page montre à
+    l'ouverture, hors des sections repliées et des onglets cachés ; une
+    synthèse vocale lit aussi ce qu'on déplie : sous « Pour aller plus loin »,
+    les intertitres d'une section repliée sont des ``<h3>``."""
     rendu = page("/simuler", **SIMULATION_TEMOIN) if chemin == "résultats" else page(chemin)
-    titres = [(int(niveau), html.unescape(re.sub(r"<[^>]+>", "", texte)).strip()[:50])
-              for niveau, texte in re.findall(r"<h([1-6])\b[^>]*>(.*?)</h\1>",
-                                               _hors_depliants(rendu), re.S)]
-    sauts = [f"h{avant} « {titre_avant} » → h{apres} « {titre} »"
-             for (avant, titre_avant), (apres, titre) in zip(titres, titres[1:])
-             if apres > avant + 1]
-    assert not sauts, f"{chemin} : {sauts}"
+    for vue, corps in (("à l'ouverture", _hors_depliants(rendu)), ("dépliée", rendu)):
+        titres = [(int(niveau), html.unescape(re.sub(r"<[^>]+>", "", texte)).strip()[:50])
+                  for niveau, texte in re.findall(r"<h([1-6])\b[^>]*>(.*?)</h\1>", corps, re.S)]
+        sauts = [f"h{avant} « {titre_avant} » → h{apres} « {titre} »"
+                 for (avant, titre_avant), (apres, titre) in zip(titres, titres[1:])
+                 if apres > avant + 1]
+        assert not sauts, f"{chemin}, {vue} : {sauts}"
+
+
+#: Les éléments HTML sans balise fermante, que les lecteurs ci-dessous
+#: n'empilent pas.
+ELEMENTS_VIDES = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link",
+                  "meta", "source", "track", "wbr"}
+
+
+class _IntertitresDesDepliants(HTMLParser):
+    """Le niveau du premier intertitre de chaque section repliée, et celui du
+    titre sous lequel elle se pose. Ce que contient une section ne vaut que
+    pour elle : la section suivante se pose sous le même titre."""
+
+    def __init__(self):
+        super().__init__()
+        self.pile: list[str] = []
+        self.niveau = 1
+        #: Par section ouverte : le niveau sous lequel elle se pose, sa
+        #: profondeur dans la pile, et si son premier intertitre reste à lire.
+        self.sections: list[list] = []
+        self.fautes: list[tuple[int, int]] = []
+
+    def handle_starttag(self, balise, attributs):
+        classes = (dict(attributs).get("class") or "").split()
+        if balise == "details" and "section" in classes:
+            self.sections.append([self.niveau, len(self.pile) + 1, True])
+        if re.fullmatch(r"h[1-6]", balise):
+            niveau = int(balise[1])
+            section = self.sections[-1] if self.sections else None
+            # Un intertitre est un enfant de `.dedans`, enfant de la section.
+            if (section and section[2] and len(self.pile) == section[1] + 1
+                    and self.pile[-1] == "div"):
+                section[2] = False
+                if niveau != section[0] + 1:
+                    self.fautes.append((section[0], niveau))
+            self.niveau = niveau
+        if balise not in ELEMENTS_VIDES:
+            self.pile.append(balise)
+
+    def handle_endtag(self, balise):
+        while self.pile:
+            ouverte = self.pile.pop()
+            if ouverte == "details" and self.sections and self.sections[-1][1] == len(self.pile) + 1:
+                self.niveau = self.sections.pop()[0]
+            if ouverte == balise:
+                break
+
+
+@pytest.mark.parametrize("chemin", [*TITRES, "résultats"])
+def test_une_section_repliee_s_ouvre_sur_le_niveau_sous_son_titre(page, chemin):
+    """Une section repliée se range sous le titre qui la précède : son premier
+    intertitre est d'un niveau plus bas, un ``<h3>`` sous un ``<h2>`` — que la
+    section voisine en porte ou non (action 174). Sans quoi ses ``<h4>``, posés
+    après les ``<h3>`` d'une voisine, passent pour leurs enfants."""
+    rendu = page("/simuler", **SIMULATION_TEMOIN) if chemin == "résultats" else page(chemin)
+    lecteur = _IntertitresDesDepliants()
+    lecteur.feed(rendu)
+    lecteur.close()
+    fautes = sorted({f"h{titre} puis h{intertitre}" for titre, intertitre in lecteur.fautes})
+    assert not fautes, f"{chemin} : {fautes}"
 
 
 class _FiguresLegendees(HTMLParser):
     """Les figures d'une page qui portent un rôle ET une légende en
     ``<figcaption>`` enfant : la pile des éléments ouverts dit qui est le
     parent de chaque légende."""
-
-    VIDES = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link",
-             "meta", "source", "track", "wbr"}
 
     def __init__(self):
         super().__init__()
@@ -2430,7 +2489,7 @@ class _FiguresLegendees(HTMLParser):
     def handle_starttag(self, balise, attributs):
         if balise == "figcaption" and self.pile and self.pile[-1][0] == "figure":
             self.pile[-1][2] = True
-        if balise not in self.VIDES:
+        if balise not in ELEMENTS_VIDES:
             attributs = dict(attributs)
             libelle = f'{attributs.get("class", "")} « {attributs.get("aria-label", "")[:40]} »'
             self.pile.append([balise, attributs.get("role"), False, libelle])
