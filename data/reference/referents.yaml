@@ -6745,8 +6745,19 @@ referents:
           octobre 2026
         verification: >-
           Méthode ; la même qu'Oscar (plage de 62 à 70 ans) et que les
-          cas types du COR.
-        etat: a_reprendre
+          cas types du COR. Repris par l'étape 10 de l'action 138, close
+          le 25 octobre 2026. La page des résultats donne, au format de
+          l'estimation (« Comme votre estimation officielle »), ses trois
+          départs — au plus tôt, au taux plein, au taux plein automatique
+          —, chacun avec son mois, ce qu'il est (« âge légal, avec décote
+          »), ses trimestres pour ceux que la génération requiert,
+          ajoutés le 25 octobre, le brut de chaque étage et le net ;
+          puis, au dépliant « Partir plus tôt ou plus tard » (16
+          octobre), chaque année de l'âge d'ouverture au taux plein
+          automatique. Un autre âge s'ajoute en le saisissant : le
+          résultat le suit, jusqu'à 119 ans (action 151).
+          `tests/test_estimation_du_site.py` tient les deux.
+        etat: repris
         chantier: "138.10"
     bilan: >-
       Le moteur qui fait foi auprès des assurés n'est ni publié ni
@@ -6929,8 +6940,19 @@ referents:
           grilles indiciaires par génération. Le site du dépôt
           montre une pension à un seul âge.
         preuve: doc. n° 10, p. 17 du PDF
-        verification: Méthode ; c'est la même que celle des cas types du COR.
-        etat: a_reprendre
+        verification: >-
+          Méthode ; c'est la même que celle des cas types du COR. Repris
+          par l'étape 10 de l'action 138, close le 25 octobre 2026, pour
+          la plage d'âges : le dépliant « Partir plus tôt ou plus tard »
+          (16 octobre) liquide la carrière saisie chaque année, de l'âge
+          d'ouverture, carrière longue comprise, au taux plein
+          automatique, comme l'estimation officielle ; au-delà, la saisie
+          liquide à tout âge, jusqu'à 119 ans (action 151). Les cas types
+          du dépôt se balaient de même, de trimestre en trimestre, par
+          génération et sous les trois productivités du COR
+          (`scripts/cycle_de_vie.py --ages`, étape 9). Les grilles
+          indiciaires par génération sont l'action 158.
+        etat: repris
         chantier: "138.10"
       - quoi: >-
           Son moteur du système actuel a été « testé avec succès sur
@@ -7340,8 +7362,15 @@ referents:
           Il présente chaque cas type à six âges de départ (62 à 67
           ans) pour les générations 1975, 1980, 1990 et 2003.
         preuve: étude d'impact de 2020, p. 207 du PDF (tableau 51)
-        verification: Méthode.
-        etat: a_reprendre
+        verification: >-
+          Méthode. Repris par l'étape 10 de l'action 138, close le 25
+          octobre 2026 : le dépliant « Partir plus tôt ou plus tard » (16
+          octobre) donne chaque année de départ de la carrière saisie, de
+          l'âge d'ouverture que le droit oppose à sa génération jusqu'au
+          taux plein automatique ; les cas types, à chaque âge et pour les
+          générations qu'on lui nomme, `scripts/cycle_de_vie.py --ages
+          … --generations …` (étape 9).
+        etat: repris
         chantier: "138.10"
     bilan: >-
       Osiris, maquette interne de la DSS, ne publie que ses cas types de
@@ -9553,8 +9582,22 @@ referents:
           `duree_assurance_requise.csv`). Ses bornes B0 (63 ans et
           171 trimestres à 1964) sont celles des versions du 1er
           septembre 2023.
-        etat: a_reprendre
+        etat: coupe
         chantier: "138.10"
+        raison: >-
+          Léger, coupé le 25 octobre 2026, à la clôture de l'étape 10,
+          comme la coupe du 14 octobre le permet (action 138, classement
+          du 9 octobre) : aucun chiffre du site ne bouge. La page donne
+          le gain de la génération saisie, à son mois de naissance, plus
+          fin que le trimestre de l'outil, et pour la carrière même,
+          carrière longue comprise : le dépliant « Avec ou sans la réforme
+          de 2023 » (19 octobre), sous le droit contrefactuel
+          `loi_2023_sans_suspension`. La table de toutes les générations
+          redirait les textes que les tables du dépôt portent
+          (`age_ouverture_avant_suspension.csv`,
+          `duree_requise_avant_suspension.csv`) ; une page qui compare
+          les générations est l'action 143, que le propriétaire n'a pas
+          lancée.
       - quoi: >-
           Il porte les seuils de CSG à 1, 2, 2,5 et 3 parts, avec le
           supplément par demi-part (3 484, 4 555 et 7 066 €), et la
@@ -10318,7 +10361,23 @@ referents:
           résultat.
         preuve: >-
           `utils/calculationUtils.js:20`, au commit `5e4abf1`
-        etat: a_reprendre
+        verification: >-
+          Repris par l'étape 10 de l'action 138, close le 25 octobre 2026.
+          Sous le résultat, le dépliant « Partir plus tôt ou plus tard »
+          (16 octobre) donne la pension de chaque année, de l'âge
+          d'ouverture, carrière longue comprise, au taux plein
+          automatique, sous les quatre systèmes que le site montre — il
+          n'en montre plus six (`SCENARIOS_MONTRES`, `pages.js`) — ; «
+          Avec ou sans la réforme de 2023 » (19 octobre), le départ au
+          plus tôt et au taux plein sous trois états du droit ; « Comme
+          votre estimation officielle », ce que vaut chacun de ses trois
+          âges — « âge légal, avec décote », « carrière longue, taux plein
+          », « taux plein automatique » —, avec ses trimestres pour ceux
+          que la génération requiert (25 octobre). La surcote ne s'y
+          nomme pas : elle se lit à la durée qui passe celle requise et à
+          la pension qui monte d'un âge au suivant ; la nommer est léger,
+          et coupé.
+        etat: repris
         chantier: "138.10"
       - quoi: >-
           Son résumé ouvre à 60 ans la carrière longue des nés de 1955 et

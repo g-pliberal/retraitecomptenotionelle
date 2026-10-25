@@ -1,15 +1,5 @@
 # Étape 10, première partie : plusieurs âges de départ côte à côte, sur la page des résultats
 
-**Reprise, au 25 octobre 2026.** Les cinq points de l'étape sont faits : les
-âges de départ côte à côte (16 octobre), les droits contrefactuels et le
-contrôle d'un relevé (19 octobre), l'indice majoré et le solveur inverse
-(25 octobre : sur la page Coût, les leviers qui portent l'année à un solde
-visé, `SOLDES_VISES`). Restent des « s'il le faut », chacun au « Ce qui
-reste » de sa note, et, au registre, cinq points du chantier 138.10 encore
-`a_reprendre` (Marel, Oscar, Osiris, Nos retraites, le gain de la suspension),
-à relire avant de clore l'étape. L'indice dans le relevé attend l'action 158.
-Détail : la note `2026-10-25-etape-10-solveur-inverse.md`.
-
 **La demande.** Le premier point de l'étape 10 de l'action, le reste 1 de la
 note `2026-10-16-etape-9-ages-de-depart-au-portage.md` : montrer, pour la
 carrière saisie, plusieurs âges de départ côte à côte, avec ce que le portage
