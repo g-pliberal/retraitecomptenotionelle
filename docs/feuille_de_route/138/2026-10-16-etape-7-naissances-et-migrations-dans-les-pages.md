@@ -1,14 +1,14 @@
 # Étape 7, septième partie : la fécondité et les migrations sur la page Coût
 
-**Reprise, au 19 octobre 2026.** Fait : la page Coût montre, dans la section
+**Reprise, au 25 octobre 2026.** Fait : la page Coût montre, dans la section
 « Naissances et migrations » (`cout-demographie`), le coût des quatre
 systèmes sous les variantes de fécondité et de migrations de l'INSEE. Faits
 depuis : l'indexation sous la variante, la mortalité différentielle, la queue
 observée, les inaptes de la Cnav et la phrase des poids ; le 19, l'ex-invalide
-dans la grille, à la mortalité de son vingtile. Reste aux pages : avec sa
-mortalité, sa phrase ; le coefficient de 2070 tout juste au-dessus de un
-(note « ex-invalides de la Cnav »). Au propriétaire : la table des poids et sa
-phrase du partage, que l'inapte et l'ex-invalide démentent ; le rapport de
+dans la grille, puis à sa mortalité, nommé dans la phrase (quatorzième
+partie) ; le 25, le coefficient tout juste au-dessus de un (dix-septième). Il
+ne reste rien aux pages ; au propriétaire : la table des poids et sa phrase
+du partage, que l'inapte et l'ex-invalide démentent ; le rapport de
 dépendance (point 3 ici) ; les départs qui suivent l'espérance de vie.
 
 **La demande.** Vague quater du 16 octobre 2026, session 1 : le point 1 de
