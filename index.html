@@ -19,6 +19,13 @@
      sa source, que rien ne fabrique. -->
 <link rel="stylesheet" href="moteur/style.css">
 <link rel="preload" href="moteur/donnees.json" as="fetch" crossorigin>
+<!-- Les deux polices du texte, dans leur jeu latin, celui du français. Le
+     serif n'était demandé qu'au rendu de la page, où il arrivait après coup :
+     le chapeau perdait une ligne, et tout ce qui le suit remontait sous les
+     yeux du lecteur (action 174). Demandées ici, elles sont là bien avant le
+     moteur. `crossorigin` est celui de toute police, même servie d'ici. -->
+<link rel="preload" href="moteur/polices/public-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="moteur/polices/instrument-serif-latin.woff2" as="font" type="font/woff2" crossorigin>
 
 <!-- Le portage est un graphe de modules profond de cinq niveaux : sans ces
      déclarations le navigateur ne découvre chaque niveau qu'après avoir reçu le
@@ -215,13 +222,26 @@ async function preparer() {
 
 function coquille() {
   amorce.remove();
-  // Le pied est posé une fois, à côté de <main> et non dedans : un <footer>
-  // imbriqué dans <main> n'est pas un repère « contentinfo » et disparaît de la
-  // navigation par repères. Il est statique, le reconstruire à chaque rendu ne
-  // servait rien non plus.
+  // L'en-tête est posé plein, celui de la page qu'on ouvre. Vide sous l'écran
+  // d'attente, il se remplissait avec la page et poussait tout <main> de la
+  // hauteur du bandeau : le décalage que Lighthouse comptait près de 1 (action
+  // 174). Le rendu le repose à l'identique, ses liens portant alors les
+  // réglages du lecteur.
   document.body.insertAdjacentHTML("beforeend",
-    '<div id="entete"></div><main id="contenu" tabindex="-1"></main>'
-    + gabarit.pied());
+    `<div id="entete">${gabarit.entete(adresse().chemin)}</div>`
+    + '<main id="contenu" tabindex="-1"></main>');
+}
+
+// Le pied est posé une fois, à côté de <main> et non dedans : un <footer>
+// imbriqué dans <main> n'est pas un repère « contentinfo » et disparaît de la
+// navigation par repères. Il est statique, le reconstruire à chaque rendu ne
+// servait rien non plus. Il attend le premier rendu : posé sous l'écran
+// d'attente, il s'y voyait, puis plongeait de plusieurs écrans quand la page
+// arrivait — l'autre moitié du même décalage.
+function poserLePied() {
+  if (!document.querySelector("body > footer")) {
+    document.body.insertAdjacentHTML("beforeend", gabarit.pied());
+  }
 }
 
 // Ce que la synthèse vocale doit entendre après un calcul. Le contenu de <main>
@@ -445,6 +465,7 @@ async function afficher() {
     contenu.removeAttribute("aria-busy");
     contenu.innerHTML = '<div class="erreur"><strong>Le calcul a échoué.</strong> '
       + neutraliser(erreur) + "</div>";
+    poserLePied();
     routeAffichee = null;
     annoncer(`Le calcul a échoué. ${String(erreur)}`);
     return;
@@ -452,6 +473,7 @@ async function afficher() {
 
   document.getElementById("entete").innerHTML = gabarit.entete(cible.chemin);
   contenu.innerHTML = corps;
+  poserLePied();
   routeAffichee = cible.chemin;
   requeteAffichee = requeteDeLAdresse();
   if (gabarit.options()) { reglesVues = true; }

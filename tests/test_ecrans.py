@@ -59,6 +59,10 @@ ROUTES = ["/", "/simuler", RESULTATS, "/cout", "/risque", "/partager",
 #: tablette en largeur, sur une page qui pose des schémas de front.
 RETRECIR = {"depuis": 1440, "vers": {"largeur": 1024, "hauteur": 768}}
 
+#: Les écrans où chaque route s'ouvre à neuf, comme Lighthouse l'ouvre en
+#: mobile puis en bureau, pour mesurer ce qu'elle décale en se chargeant.
+CHARGEMENTS = [(390, 800), (1440, 900)]
+
 
 def navigateur() -> str | None:
     """Un Chromium ou un Chrome : celui que désigne ``NAVIGATEUR``, celui des
@@ -89,10 +93,21 @@ class _Silencieux(http.server.SimpleHTTPRequestHandler):
         pass
 
 
-@functools.lru_cache(maxsize=None)
 def mesures() -> tuple:
-    """Ce que le navigateur a mesuré, une fois par processus : chaque route à
-    chaque largeur, dépliants fermés puis ouverts."""
+    """Ce que le navigateur a mesuré : chaque route à chaque largeur,
+    dépliants fermés puis ouverts."""
+    return tuple(_pilote()["visites"])
+
+
+def chargements() -> tuple:
+    """Chaque route ouverte à neuf, à chaque écran de ``CHARGEMENTS`` : les
+    décalages de mise en page notés jusqu'à la fin du rendu, et leur CLS."""
+    return tuple(_pilote()["chargements"])
+
+
+@functools.lru_cache(maxsize=None)
+def _pilote() -> dict:
+    """Le pilote du navigateur, joué une fois par processus."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pilote du navigateur ne tourne pas sans lui")
     chemin = navigateur()
@@ -111,6 +126,7 @@ def mesures() -> tuple:
             "ecrans": [{"largeur": l, "hauteur": h} for l, h in ECRANS],
             "routes": ROUTES,
             "retrecir": RETRECIR,
+            "chargements": [{"largeur": l, "hauteur": h} for l, h in CHARGEMENTS],
         }), encoding="utf-8")
         execution = subprocess.run(
             ["node", str(PILOTE), chemin, str(plan)], cwd=RACINE,
@@ -119,7 +135,7 @@ def mesures() -> tuple:
         serveur.shutdown()
         plan.unlink(missing_ok=True)
     assert execution.returncode == 0, execution.stderr[-3000:]
-    return tuple(json.loads(execution.stdout))
+    return json.loads(execution.stdout)
 
 
 def _ou(visite: dict, etat: str) -> str:
@@ -163,6 +179,29 @@ def test_aucune_case_de_tableau_ne_deborde_sur_sa_voisine():
               for visite in mesures() for etat in ("replie", "deplie")
               for case in visite[etat]["chevauchees"]]
     assert not fautes, f"{len(fautes)} cases débordent :\n" + "\n".join(fautes[:60])
+
+
+#: Le CLS admis au chargement : 100 au Lighthouse en demande 0,04 au plus, et
+#: rien ne doit bouger.
+CLS_MAXIMAL = 0.01
+
+
+def test_aucune_page_ne_se_decale_en_se_chargeant():
+    """Ouverte à neuf, une page ne bouge pas sous les yeux de qui la lit.
+
+    Le 25 octobre 2026, Lighthouse comptait à presque toutes un CLS proche de
+    1, le quart de la note de Performance (action 174) : l'en-tête, posé vide
+    sous l'écran d'attente, se remplissait avec la page et poussait tout
+    ``<main>`` ; le pied, posé sous l'attente, plongeait de plusieurs écrans ;
+    le serif du chapeau, demandé au rendu seulement, arrivait après coup et
+    lui ôtait une ligne. Chaque route s'ouvre ici à neuf, en mobile puis en
+    bureau, comme Lighthouse l'ouvre.
+    """
+    fautes = [f"{c['route'][:40]} à {c['largeur']} points : CLS {c['cls']:.3f} — "
+              + " ; ".join(f"{d['valeur']:.3f} à {d['instant']} ms : {', '.join(d['sources'])}"
+                           for d in c["decalages"])
+              for c in chargements() if c["cls"] > CLS_MAXIMAL]
+    assert not fautes, f"{len(fautes)} chargements décalent :\n" + "\n".join(fautes)
 
 
 def test_tout_texte_se_detache_de_son_fond():

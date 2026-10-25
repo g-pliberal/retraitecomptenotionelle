@@ -2046,9 +2046,10 @@ def test_le_pied_est_pose_hors_du_contenu_remplace():
     """Un ``<footer>`` dans ``<main>`` n'est pas un repère « contentinfo ».
 
     Il disparaît alors de la navigation par repères des lecteurs d'écran. Le
-    pied est donc inséré au montage de la coquille, à côté de ``<main>``, et le
-    rendu d'une page ne réinjecte que le corps — il est statique, le
-    reconstruire à chaque calcul ne servait rien non plus.
+    pied est donc inséré une fois, au premier rendu, à côté de ``<main>`` — et
+    non sous l'écran d'attente, d'où il plongeait quand la page arrivait
+    (action 174) —, et le rendu d'une page ne réinjecte que le corps : il est
+    statique, le reconstruire à chaque calcul ne servait rien non plus.
     """
     import re
     from pathlib import Path
@@ -2056,7 +2057,7 @@ def test_le_pied_est_pose_hors_du_contenu_remplace():
     page = (Path(__file__).resolve().parents[1] / "index.html").read_text(encoding="utf-8")
 
     assert re.search(r"insertAdjacentHTML\([^)]*gabarit\.pied\(\)", page, re.S), (
-        "le pied doit être posé une fois, au montage de la coquille"
+        "le pied doit être posé une fois, au premier rendu"
     )
     assert "contenu.innerHTML = corps;" in page, (
         "le rendu d'une page ne doit réinjecter que le corps"

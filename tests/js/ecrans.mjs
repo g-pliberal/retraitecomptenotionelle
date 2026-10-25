@@ -82,6 +82,28 @@ const { sessionId } = await envoyer("Target.attachToTarget", { targetId, flatten
 const page = (methode, parametres) => envoyer(methode, parametres, sessionId);
 await page("Page.enable");
 await page("Runtime.enable");
+// Les décalages de mise en page, notés dès le début de chaque document : un
+// nœud déplacé puis retiré du DOM se nomme tant qu'il y est encore.
+await page("Page.addScriptToEvaluateOnNewDocument", { source: `
+  window.decalagesDuChargement = [];
+  new PerformanceObserver((liste) => {
+    for (const entree of liste.getEntries()) {
+      if (entree.hadRecentInput) continue;
+      window.decalagesDuChargement.push({
+        instant: Math.round(entree.startTime), valeur: entree.value,
+        sources: (entree.sources || []).map((source) => {
+          const noeud = source.node;
+          const nom = !noeud ? "?" : noeud.nodeType !== 1 ? "texte"
+            : noeud.tagName.toLowerCase() + (noeud.id ? "#" + noeud.id : "")
+              + (typeof noeud.className === "string" && noeud.className.trim()
+                ? "." + noeud.className.trim().split(/\\s+/).join(".") : "");
+          return nom + " de " + Math.round(source.previousRect.y)
+            + " à " + Math.round(source.currentRect.y);
+        }),
+      });
+    }
+  }).observe({ type: "layout-shift", buffered: true });
+` });
 
 /** Évalue une expression dans la page et rend sa valeur, promesse attendue. */
 async function evaluer(expression) {
@@ -548,7 +570,37 @@ try {
       });
     }
   }
-  process.stdout.write(JSON.stringify(resultats));
+  // Chaque route ouverte à neuf, comme Lighthouse l'ouvre : ce que la page
+  // décale en se chargeant, jusqu'à la fin du rendu et des polices (action
+  // 174). Le CLS est la fenêtre de session la plus lourde, comme le compte
+  // web-vitals : des décalages à moins d'une seconde l'un de l'autre, sur cinq
+  // secondes au plus.
+  const chargements = [];
+  for (const ecran of plan.chargements || []) {
+    await poserLEcran(ecran);
+    for (const route of plan.routes) {
+      await page("Page.navigate", { url: "about:blank" });
+      await page("Page.navigate", { url: `${plan.adresse}#${route}` });
+      await attendreLeRendu();
+      await evaluer("new Promise((r) => setTimeout(() => r(true), 300))");
+      const decalages = await evaluer("window.decalagesDuChargement");
+      let cls = 0;
+      let fenetre = 0;
+      let debut = 0;
+      let precedent = -Infinity;
+      for (const { instant, valeur } of decalages) {
+        if (instant - precedent > 1000 || instant - debut > 5000) {
+          fenetre = 0;
+          debut = instant;
+        }
+        fenetre += valeur;
+        precedent = instant;
+        cls = Math.max(cls, fenetre);
+      }
+      chargements.push({ largeur: ecran.largeur, route, cls, decalages });
+    }
+  }
+  process.stdout.write(JSON.stringify({ visites: resultats, chargements }));
 } catch (erreur) {
   process.stderr.write(String(erreur?.stack || erreur));
   process.exitCode = 1;
