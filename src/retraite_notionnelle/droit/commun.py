@@ -107,6 +107,16 @@ class PensionRegime:
     #: 136 en 1973, 144 en 1974 — ? Les majorations forfaitaires de 1972 à 1982
     #: le lisent (fiche ``majorations_forfaitaires_1972_1982``).
     sur_la_duree_maximum: bool = False
+    #: Les planchers auxquels l'étape « compléter » a comparé la pension,
+    #: chacun ``(nature, montant)`` — ``minimum``, la pension minimum d'avant
+    #: le 1er avril 1983 (L. 345) ; ``avts`` et ``pension_d_invalidite``, le
+    #: plancher de la pension substituée (L. 341-15) —, et la pension d'avant
+    #: eux, aux euros de sa date d'effet. Les majorations forfaitaires de 1972
+    #: à 1982 relèvent celle-ci, et des planchers ceux que leur version nomme :
+    #: elles s'appliquaient « au montant de base, avant comparaison au minimum
+    #: et au maximum » (exposé de la Cnav, « Montant de la retraite personnelle »).
+    planchers: tuple[tuple[str, float], ...] = ()
+    avant_les_planchers: float = 0.0
 
 
 def majoration_du_conjoint(etapes, quand: str) -> float:

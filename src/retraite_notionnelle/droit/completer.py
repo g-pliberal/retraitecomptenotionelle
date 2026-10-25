@@ -1752,6 +1752,11 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                            else "au minimum contributif")
                         + f" par + {complement:,.2f} €"
                     ),
+                    # La pension minimum est un plancher, que les majorations
+                    # forfaitaires de 1972 à 1982 ne relèvent pas.
+                    **({"planchers": (("minimum", pensions[indice].montant + complement),),
+                        "avant_les_planchers": pensions[indice].montant}
+                       if pension_minimum else {}),
                 )
             total += releve_minimum
             minimum_applique = True
@@ -1796,7 +1801,17 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                              if plancher_substitue is not None
                              and pension.regime == plancher_substitue.regime), None)
     if indice_substitue is not None:
+        # Ses deux planchers, que les majorations forfaitaires de 1972 à 1982
+        # comparent à la pension d'avant eux, qu'elles relèvent.
         pension = pensions[indice_substitue]
+        pension = replace(
+            pension,
+            planchers=pension.planchers + (("avts", plancher_substitue.avts),) + (
+                (("pension_d_invalidite", plancher_substitue.pension_d_invalidite),)
+                if plancher_substitue.pension_d_invalidite is not None else ()),
+            avant_les_planchers=(pension.avant_les_planchers if pension.planchers
+                                 else pension.montant))
+        pensions[indice_substitue] = pension
         ecart = plancher_substitue.montant - pension.montant
         if ecart > 0:
             quoi = ("la pension d'invalidité d'avant le 31 mai 1983, revalorisée"

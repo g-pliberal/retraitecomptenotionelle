@@ -276,9 +276,11 @@ versions:
   exemples: [cnav_2024_25_substitution_d_office, cnav_2024_25_cumul_de_l_ex_invalide]
 approximations:
 - ecart: >-
-    le plancher se compare à la date d'effet, puis suit la pension ; depuis 1983, la
-    caisse compare la pension à l'AVTS « chaque fois que l'un d'entre eux augmentera »,
-    l'AVTS se fixant par décret à ses propres dates (circulaire Cnav n° 84/83, II)
+    le plancher se compare à la date d'effet, puis suit la pension, sans les majorations
+    forfaitaires de 1972 à 1982 que sa version ne lui donne pas (fiche
+    majorations_forfaitaires_1972_1982) ; depuis 1983, la caisse compare la pension à
+    l'AVTS « chaque fois que l'un d'entre eux augmentera », l'AVTS se fixant par décret à
+    ses propres dates (circulaire Cnav n° 84/83, II)
   effet: >-
     l'ex-invalide porté à l'AVTS : de juillet 1983 à janvier 2004, l'AVTS a crû de 3,8 %
     de moins que les pensions, et le modèle le sert jusqu'à 3,8 % au-dessus d'elle ; de
@@ -532,6 +534,11 @@ historique:
   ou présumée (présomption categorie_de_la_pension_d_invalidite) ; la version
   ordonnance_1945 coupée au 30 mars 1961, quand le décret n° 61-272 porte le deuxième
   groupe de 40 % à 50 %.
+- >-
+  2026-10-25 — les majorations forfaitaires de 1972 à 1982 comparées au plancher (action
+  138, étape 4) : la pension des cotisations les reçoit, le plancher non, sauf la pension
+  d'invalidité, que les 6 % et 4 % de 1982 relèvent (fiche
+  majorations_forfaitaires_1972_1982).
 effet: >-
   Les titulaires d'une pension d'invalidité à l'âge légal : 0,90 million de retraités
   partis au taux plein à ce titre fin 2016 (DREES, EIR). Le modèle les fait partir à

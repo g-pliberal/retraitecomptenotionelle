@@ -144,6 +144,44 @@ def test_la_regle_bascule_au_1er_avril_1983(simulateur):
     assert minimum.pension_minimum(1944, 12) == (0.0, Fiabilite.CERTIFIEE)
 
 
+def test_les_six_pour_cent_de_1982_ne_relevent_pas_la_pension_minimum(simulateur):
+    """Les majorations forfaitaires de 1972 à 1982 « s'appliquaient au montant
+    de base, avant comparaison au minimum et au maximum » (exposé de la Cnav
+    « Montant de la retraite personnelle ») ; elles ne jouent pas « sur le
+    minimum des pensions » (circulaires Cnav n° 2/72, IV, A, n° 15/76 et
+    n° 64/77, A). Né en 1905, salarié depuis 1945 à 18 % du salaire moyen, parti
+    à soixante-cinq ans en avril 1970 : sa pension, sur cent trimestres, est
+    portée à la pension minimum. Les 6 % de décembre 1982, que la pension prise
+    avant 1972 reçoit quelle que soit sa durée (loi n° 82-599, article 1er), la
+    laissent sous le minimum, servi revalorisé, sans eux."""
+    from datetime import date
+
+    from retraite_notionnelle.revalorisation import faire_vivre
+
+    carriere = Carriere.depuis_parcours(
+        annee_naissance=1905, mois_naissance=3, jour_naissance=15, sexe="H",
+        metiers=[Metier(affiliation="salarie_prive_non_cadre", age_debut=40.0,
+                        niveau_salaire=0.18)],
+        age_liquidation=65.0, macro=simulateur.macro)
+    assert date_d_effet(carriere) == "1970-04-01"
+    resultat = simulateur.scenario_actuel.calculer(carriere)
+    general = next(p for p in resultat.pensions_par_regime if p.regime == "regime_general")
+    minimum, = (a for a in resultat.avantages_appliques if a.code == "minimum_contributif")
+    assert minimum.libelle == "Pension minimum (AVTS)"
+    assert (general.montant - minimum.montant) * 1.06 < general.montant
+
+    def servie(annee: int) -> float:
+        vivante = faire_vivre(simulateur, carriere, resultat, annee)
+        return next(r.aujourd_hui for r in vivante.regimes if r.regime == "regime_general")
+
+    def revalorisee(annee: int) -> float:
+        return simulateur.scenario_actuel.revalorisations_pensions.generale(
+            date(1970, 1, 1), date(annee, 12, 31), False, None)[0]
+
+    assert servie(1981) == pytest.approx(general.montant * revalorisee(1981))
+    assert servie(1983) == pytest.approx(general.montant * revalorisee(1983))
+
+
 def test_la_serie_datee_redonne_l_avts_de_chaque_31_decembre():
     """Chaque montant au 31 décembre de la série datée est celui de la colonne
     ``avts`` du minimum vieillesse d'avant l'ASPA : les deux tables lisent le

@@ -799,6 +799,12 @@ historique:
   points, ne porte plus le total des deux au-delà du minimum entier jusqu'en 1989
   (décret n° 73-937, article 7), ni au-delà du minimum au prorata de leur durée totale
   depuis 1990 (D. 634-6), au régime général aussi depuis 2020 (action 131).
+- >-
+  2026-10-25 — la pension minimum d'avant le 1er avril 1983 n'a pas les majorations
+  forfaitaires de 1972 à 1982 (action 138, étape 4) : elles relevaient « le montant de
+  base, avant comparaison au minimum » (exposé de la Cnav, « Montant de la retraite
+  personnelle ») ; la pension la garde tant que la pension des cotisations, majorée, reste
+  sous elle (fiche majorations_forfaitaires_1972_1982).
 exemples:
 - cnav_2005_30_minimum_majore_monopensionne
 - sp_a15703_minimum_contributif_2026

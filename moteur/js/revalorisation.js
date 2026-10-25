@@ -208,6 +208,15 @@ export const FICHE_DES_MAJORATIONS_FORFAITAIRES = "majorations_forfaitaires_1972
  * l'ordre. Voir `majorations_forfaitaires` du Python.
  */
 export function majorationsForfaitaires(moteur, pension, depart) {
+  return majorationsDeLaPension(moteur, pension, depart)
+    .map((majoration) => [String(majoration.date), Number(majoration.taux)]);
+}
+
+/**
+ * Les majorations de la version qui valent pour `pension`, telles que la fiche
+ * les écrit. Voir `_majorations_de_la_pension` du Python.
+ */
+function majorationsDeLaPension(moteur, pension, depart) {
   const regle = moteur.fichesDatees.regle(FICHE_DES_MAJORATIONS_FORFAITAIRES, depart);
   if (!regle) {
     return [];
@@ -215,8 +224,43 @@ export function majorationsForfaitaires(moteur, pension, depart) {
   return (regle.majorations ?? [])
     .filter((majoration) => majoration.regimes.includes(pension.regime)
       && String(majoration.date) > depart
-      && (pension.sur_la_duree_maximum || !majoration.duree_maximum))
-    .map((majoration) => [String(majoration.date), Number(majoration.taux)]);
+      && (pension.sur_la_duree_maximum || !majoration.duree_maximum));
+}
+
+/**
+ * Ce que les majorations forfaitaires de 1972 à 1982 venues jusqu'à `jusqua`
+ * (AAAA-MM-JJ) ne donnent pas à la pension `pension` portée à un plancher, aux
+ * euros de sa date d'effet `depart` : la part de son montant que le
+ * coefficient, qui les porte sur toute la pension, ne mène pas. La pension
+ * servie est la plus haute de la pension d'avant les planchers, majorée, et de
+ * chaque plancher, des seules majorations que sa version lui donne. Voir
+ * `plancher_non_majore` du Python.
+ */
+export function plancherNonMajore(moteur, pension, depart, jusqua) {
+  const planchers = pension.planchers ?? [];
+  if (planchers.length === 0) {
+    return 0.0;
+  }
+  const venues = majorationsDeLaPension(moteur, pension, depart)
+    .filter((majoration) => String(majoration.date) <= jusqua);
+  if (venues.length === 0) {
+    return 0.0;
+  }
+  // Les majorations que ce plancher n'a pas, que le coefficient porte.
+  const manquantes = (nature) => {
+    let facteur = 1.0;
+    for (const majoration of venues) {
+      if (!(majoration.planchers ?? []).includes(nature)) {
+        facteur *= 1 + Number(majoration.taux);
+      }
+    }
+    return facteur;
+  };
+  const base = pension.avant_les_planchers ?? 0.0;
+  const servie = Math.max(base, ...planchers.map(([, niveau]) => niveau));
+  const majoree = Math.max(base,
+    ...planchers.map(([nature, niveau]) => niveau / manquantes(nature)));
+  return servie - majoree;
 }
 
 export class PensionServie {
@@ -347,6 +391,7 @@ export function menerAuMois(moteur, pensions, depart, jusqua) {
  */
 export function servieALEcheance(r) {
   return (r.au_depart - (r.conjoint_au_depart ?? 0.0)) * r.coefficient - (r.revision ?? 0.0)
+    - (r.plancher_non_majore ?? 0.0)
     + (r.majoration ?? 0.0) + (r.relevement ?? 0.0) + (r.plans ?? 0.0) + (r.pmr ?? 0.0)
     + (r.conjoint ?? 0.0);
 }
@@ -396,6 +441,7 @@ export class Revalorisee {
         fiabilite: nomFiabilite(r.fiabilite), revision: r.revision ?? 0.0,
         majoration_exceptionnelle: r.majoration ?? 0.0,
         relevement_des_exploitants: r.relevement ?? 0.0,
+        ...(r.plancher_non_majore ? { plancher_non_majore: r.plancher_non_majore } : {}),
         ...((r.conjoint || r.conjoint_au_depart)
           ? { majoration_conjoint_a_charge: r.conjoint } : {}),
         ...(r.plans ? { plans_de_revalorisation: r.plans } : {}),
@@ -497,6 +543,18 @@ export function faireVivre(simulateur, carriere, resultat, annee = null) {
     return pondere / masse;
   };
 
+  // Ce que le plancher de la pension n'a pas des majorations forfaitaires
+  // venues à `quand`, en euros de ce jour, et le coefficient de la pension
+  // servie, que la majoration pour enfants suit. Voir `au_plancher` du Python.
+  const auPlancher = (pension, debut, montant, coefficient, quand) => {
+    const nonMajore = plancherNonMajore(servie.actuel, pension, debut, quand);
+    if (!nonMajore) {
+      return [0.0, coefficient];
+    }
+    const sansConjoint = montant - majorationDuConjoint(pension.conjoint, debut);
+    return [nonMajore * coefficient, coefficient * (1.0 - nonMajore / sansConjoint)];
+  };
+
   // Une pension qui prend effet en janvier 2020 n'était pas servie en
   // décembre : le montant du mois précédent était nul.
   let mensuel2019 = null;
@@ -506,28 +564,33 @@ export function faireVivre(simulateur, carriere, resultat, annee = null) {
     const jusqu2019 = datees.map(([p, a, debut]) => (debut <= MOIS_DES_TRANCHES
       ? servie.coefficient(p, a, debut, MOIS_DES_TRANCHES, null)[0]
       : 0.0));
+    const planchers2019 = datees.map(([p, , debut, montant], rang) => auPlancher(
+      p, debut, montant, jusqu2019[rang], MOIS_DES_TRANCHES));
     let somme = 0;
     datees.forEach(([p, , debut, montant], rang) => {
-      somme += avecLeConjoint(p, debut, montant, jusqu2019[rang], MOIS_DES_TRANCHES);
+      somme += avecLeConjoint(p, debut, montant, jusqu2019[rang], MOIS_DES_TRANCHES)
+        - planchers2019[rang][0];
     });
-    mensuel2019 = (somme
-      + majoration * coefficientDeLaMajoration(jusqu2019, MOIS_DES_TRANCHES)) / 12.0;
+    mensuel2019 = (somme + majoration * coefficientDeLaMajoration(
+      planchers2019.map(([, servi]) => servi), MOIS_DES_TRANCHES)) / 12.0;
   }
 
   const regimes = [];
+  // Le coefficient de chaque pension servie, que la majoration pour enfants suit.
   const coefficients = [];
   let fiabilite = Fiabilite.CERTIFIEE;
   for (const [pension, a, debut, montant] of datees) {
     const [coefficient, regle, fiabiliteRegime] = servie.coefficient(
       pension, a, debut, fin, mensuel2019,
     );
-    coefficients.push(coefficient);
+    const [nonMajore, servi] = auPlancher(pension, debut, montant, coefficient, fin);
+    coefficients.push(servi);
     fiabilite = Math.min(fiabilite, fiabiliteRegime);
     // La majoration pour conjoint à charge : sa part du départ, que le
     // coefficient ne mène pas, et celle de l'échéance, nominale.
     const conjointAuDepart = majorationDuConjoint(pension.conjoint, debut);
     const conjoint = majorationDuConjoint(pension.conjoint, fin);
-    regimes.push({
+    const regime = {
       regime: pension.regime,
       au_depart: montant,
       coefficient,
@@ -536,13 +599,18 @@ export function faireVivre(simulateur, carriere, resultat, annee = null) {
       hors_repartition: horsRepartition(pension),
       aujourd_hui: avecLeConjoint(pension, debut, montant, coefficient, fin),
       revision: 0.0,
+      plancher_non_majore: nonMajore,
       majoration: 0.0,
       relevement: 0.0,
       plans: 0.0,
       pmr: 0.0,
       conjoint_au_depart: conjointAuDepart,
       conjoint,
-    });
+    };
+    if (nonMajore) {
+      regime.aujourd_hui = servieALEcheance(regime);
+    }
+    regimes.push(regime);
   }
   const coefficientMajoration = coefficientDeLaMajoration(coefficients, fin);
   reviserLeMinimum(simulateur.scenarioActuel, carriere, resultat, regimes, an);

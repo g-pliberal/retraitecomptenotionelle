@@ -671,6 +671,10 @@ export class Echeancier {
     for (const regime of vivante.regimes) {
       const origine = `pension_${regime.regime}`;
       let detail = `× ${regime.coefficient.toFixed(6)}, règle ${regime.regle}`;
+      if ((regime.plancher_non_majore ?? 0.0) > 0) {
+        detail += ", plancher sans les majorations forfaitaires de 1972 à 1982 "
+          + `(− ${formatFixe(regime.plancher_non_majore, 2, true)} €)`;
+      }
       if ((regime.majoration ?? 0.0) > 0) {
         detail += ", majoration exceptionnelle de 2023 comprise "
           + `(${formatFixe(regime.majoration, 2, true)} €)`;

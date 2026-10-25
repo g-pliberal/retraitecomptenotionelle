@@ -1,0 +1,47 @@
+date: "2026-10-25"
+session: "action 138, étape 4, seizième partie : les majorations forfaitaires de 1972 à 1982 comparées au plancher de la pension substituée et au minimum des pensions, qu'elles ne relèvent pas, sauf la pension d'invalidité de l'ex-invalide en 1982"
+consulte: >-
+  veille_droit.py, lancé à l'ouverture de la session (dernière veille consignée :
+  2026-10-25) ; l'index LEGI, récupéré de la release index-dila et mis à jour par ses
+  neuf incréments jusqu'au 24 octobre 2026, puis textes.py --inscrire, qui n'a rien
+  inscrit. Par la recherche de la base de législation de la Cnav (/api/v1/search/custom,
+  en phrase exacte, et /api/v1/expose/exposeByFileLeafRef), relues en entier : les
+  circulaires n° 2/72 du 31 janvier 1972 (III et IV, A, B, C), n° 15/76 du 22 janvier
+  1976, n° 64/77 du 11 juillet 1977 et n° 79/82 du 24 août 1982 (A, B, 1° et 2°, C) ;
+  l'exposé « Montant de la retraite personnelle » (6 mars 2026), « Avant le 01/12/1982 -
+  Majorations forfaitaires » ; cherchés par mots, pour un exemple chiffré, dans les
+  cent vingt-cinq textes que les phrases « ex-invalides », « majoration forfaitaire »,
+  « pension de vieillesse de substitution » et « pension d'invalidité précédemment
+  servie » rendent : la circulaire n° 120/82 du 28 décembre 1982 et l'exposé « Retraite
+  substituée à pension d'invalidité », parcourus.
+trouve: >-
+  Les majorations ne relèvent que « la pension de vieillesse résultant des
+  cotisations » ; « pour les ex-invalides, une nouvelle comparaison devrait, en
+  principe, être faite entre cette pension de vieillesse majorée et la pension
+  d'invalidité afin de servir le montant le plus élevé, comparaison qui nécessiterait
+  la reprise de tous les dossiers » ; par simplification, les deuxième et troisième
+  groupes, à 50 % du salaire annuel moyen, n'ont pas les 5 % de 1972, 1976 et 1977, ni
+  les 5,5 % et 1,5 % de 1982, le premier groupe les a d'office, et « en cas de
+  réclamation, les redressements nécessaires devront être effectués lorsque l'assuré y
+  aura intérêt » (n° 2/72, IV, B ; n° 15/76, n° 64/77 et n° 79/82, B). Les 6 % et les
+  4 % de 1982, « notamment destinées à compenser le calcul du salaire annuel moyen »,
+  vont à « tous les ex-invalides (quel que soit leur groupe) » (n° 79/82, B, 1°). La
+  majoration « ne joue pas [...] sur le minimum des pensions » (A). L'exposé : « Ces
+  majorations s'appliquaient au montant de base, avant comparaison au minimum et au
+  maximum » ; « Les titulaires de retraites substituées à des pensions d'invalidité de
+  2e et 3e catégories ont bénéficié seulement des majorations de 6 % et 4 % au
+  01/12/1982 ». Aucun exemple chiffré. Le modèle majorait la pension servie, plancher
+  et pension minimum d'avant 1983 compris ; il compare désormais la pension des
+  cotisations, majorée, à chaque plancher, de ses seules majorations — la pension
+  d'invalidité reçoit celles de 1982, le minimum des pensions et l'AVTS aucune. Aucun
+  témoin ne bouge ; l'ex-invalide de 1969 porté à l'AVTS et le retraité de 1970 porté à
+  la pension minimum perdent en 2026 les 6 % de 1982, 185,76 € et 183,99 € par an, que
+  l'ASPA leur rend.
+reste: >-
+  La pension ramenée au maximum à sa liquidation, que la caisse majorait sur son montant
+  entier avant de la comparer au maximum de l'année, et que le modèle majore sur son
+  montant ramené. Le minimum des pensions et l'AVTS de la pension substituée, que le
+  modèle revalorise comme les pensions : suivaient-ils chaque décret de l'AVTS pour les
+  pensions servies ? Au fac-similé, avec le décret n° 45-0179 d'avant 1976. Au site : la
+  phrase de la carte qui dirait le plancher non majoré. Au propriétaire : les décrets
+  n° 76-727 et n° 77-966, au fac-similé, comme les sessions précédentes le disaient.

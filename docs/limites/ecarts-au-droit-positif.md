@@ -459,13 +459,15 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   leur ouvre, et l'ASPA au même âge ; la pension de vieillesse remplace d'office
   la pension d'invalidité, et ne descend ni sous l'allocation aux vieux
   travailleurs salariés, ni sous la pension d'invalidité liquidée avant le
-  31 mai 1983, au taux de sa catégorie, déclarée ou présumée ; le fonctionnaire
-  radié liquide à sa radiation, sans décote, à ses planchers et avec sa rente
-  viagère. Restent dehors ce plancher comparé de nouveau à chaque majoration de
-  1972 à 1982, que le modèle ajoute au plancher, et à chaque changement de
-  l'allocation ; celui des indépendants ; l'inaptitude des régimes que la fiche
-  `inaptitude_au_travail` ne nomme pas ; les réputés inaptes qui ne se déclarent
-  pas (allocation aux adultes handicapés, carte d'invalidité) ; le militaire
+  31 mai 1983, au taux de sa catégorie, déclarée ou présumée ; les majorations
+  forfaitaires de 1972 à 1982 relèvent sa pension des cotisations, que la pension
+  servie compare à ce plancher, qu'elles ne relèvent pas, sauf celles de 1982 des
+  pensions d'avant 1973, qui vont à la pension d'invalidité de tout ex-invalide ;
+  le fonctionnaire radié liquide à sa radiation, sans décote, à ses planchers et
+  avec sa rente viagère. Restent dehors ce plancher comparé de nouveau à chaque
+  changement de l'allocation ; celui des indépendants ; l'inaptitude des régimes
+  que la fiche `inaptitude_au_travail` ne nomme pas ; les réputés inaptes qui ne
+  se déclarent pas (allocation aux adultes handicapés, carte d'invalidité) ; le militaire
   réformé ; la majoration pour tierce personne. Les autres taux pleins de
   L. 351-8 se déclarent aussi : l'ancien déporté ou interné, la mère de famille
   ouvrière, le travailleur manuel d'avant 1983, l'ancien combattant ou

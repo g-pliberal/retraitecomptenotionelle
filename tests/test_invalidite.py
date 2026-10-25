@@ -554,6 +554,100 @@ def test_la_deuxieme_categorie_passe_de_40_a_50_pour_cent_en_1961(simulateur):
         assert version["parametres"]["taux_des_categories"] == taux, jour
 
 
+# -- les majorations forfaitaires de 1972 à 1982, comparées au plancher --------------
+
+def _servie(simulateur, carriere, resultat, annee: int) -> float:
+    """La pension du régime général que « faire vivre » sert au 31 décembre de
+    ``annee``."""
+    from retraite_notionnelle.revalorisation import faire_vivre
+
+    vivante = faire_vivre(simulateur, carriere, resultat, annee)
+    return next(r.aujourd_hui for r in vivante.regimes if r.regime == "regime_general")
+
+
+def _revalorisee(simulateur, annee_d_effet: int, annee: int) -> float:
+    """Ce que les revalorisations des pensions du régime général, seules, font
+    d'un montant de l'année d'effet, au 31 décembre de ``annee``."""
+    from datetime import date
+
+    return simulateur.scenario_actuel.revalorisations_pensions.generale(
+        date(annee_d_effet, 1, 1), date(annee, 12, 31), False, None)[0]
+
+
+def test_les_majorations_de_1972_a_1977_ne_relevent_pas_la_pension_d_invalidite(simulateur):
+    """« La majoration forfaitaire de 5 % s'applique uniquement à la pension de
+    vieillesse résultant des cotisations. En conséquence, pour les ex-invalides,
+    une nouvelle comparaison devrait, en principe, être faite entre cette
+    pension de vieillesse majorée et la pension d'invalidité afin de servir le
+    montant le plus élevé » (circulaires Cnav n° 2/72, IV, B, n° 15/76 et
+    n° 64/77, B) ; les 6 % et les 4 % de 1982 vont à « tous les ex-invalides
+    (quel que soit leur groupe) » (n° 79/82, B, 1°). Né en 1909, salarié au
+    tiers du salaire moyen depuis 1945, invalide de 1960 à ses soixante ans : sa pension
+    de vieillesse d'avril 1969 est portée à sa pension d'invalidité de deuxième
+    catégorie. Tenue pour liquidée sur la durée maximum de sa date — cent vingt
+    trimestres, qu'aucune carrière du modèle, comptée au régime général depuis
+    1945, n'atteint avant 1975 —, elle reçoit les trois 5 %, qui la laissent
+    sous son plancher : le plancher est servi, revalorisé sans eux ; puis les 6 %
+    de 1982, qui le relèvent. Déclarée de première catégorie, à 30 %, la pension
+    d'invalidité est sous la pension de vieillesse, qui reçoit les quatre."""
+    from dataclasses import replace
+
+    def au_maximum(resultat):
+        return replace(resultat, pensions_par_regime=[
+            replace(p, sur_la_duree_maximum=True) if p.regime == "regime_general" else p
+            for p in resultat.pensions_par_regime])
+
+    carriere = _ex_invalide(simulateur, 1909, 36.0, 0.3, range(1960, 1970), 60.0)
+    resultat, general = _general(simulateur, carriere)
+    assert carriere.date_liquidation == DateMois(1969, 4)
+    plancher, = (a for a in resultat.avantages_appliques
+                 if a.libelle == "Plancher de la pension substituée")
+    base = general.montant - plancher.montant
+    trois = 1.05 * 1.05 * 1.05
+    assert base * trois < general.montant
+    assert _servie(simulateur, carriere, au_maximum(resultat), 1978) == pytest.approx(
+        general.montant * _revalorisee(simulateur, 1969, 1978))
+    assert _servie(simulateur, carriere, au_maximum(resultat), 1983) == pytest.approx(
+        general.montant * 1.06 * _revalorisee(simulateur, 1969, 1983))
+
+    premiere = _ex_invalide(simulateur, 1909, 36.0, 0.3, range(1960, 1970), 60.0,
+                            declaree={"pension": 50 + 10 / 12, "categorie": 1})
+    resultat, servie = _general(simulateur, premiere)
+    assert "plancher" not in servie.detail
+    assert _servie(simulateur, premiere, au_maximum(resultat), 1983) == pytest.approx(
+        servie.montant * trois * 1.06 * _revalorisee(simulateur, 1969, 1983))
+
+
+def test_les_six_pour_cent_de_1982_ne_relevent_pas_l_avts_de_l_ex_invalide(simulateur):
+    """Les majorations forfaitaires « s'appliquaient au montant de base, avant
+    comparaison au minimum et au maximum » (exposé de la Cnav « Montant de la
+    retraite personnelle ») ; elles ne jouent pas « sur le minimum des
+    pensions » (circulaire Cnav n° 2/72, IV, A). Né en 1909, salarié depuis 1945
+    à 12 % du salaire moyen, invalide de 1960 à ses soixante ans : sa pension de
+    vieillesse d'avril 1969, sur quatre-vingt-six trimestres, est portée au
+    minimum entier de l'ex-invalide, l'AVTS, au-dessus de sa pension
+    d'invalidité de deuxième catégorie. Les 6 % de décembre 1982 relèvent l'une
+    et l'autre, qui restent sous l'AVTS : servie, elle n'a pas les 6 %."""
+    from retraite_notionnelle.droit.invalidite import plancher_de_la_substitution
+
+    moteur = simulateur.scenario_actuel
+    carriere = _ex_invalide(simulateur, 1909, 36.0, 0.12, range(1960, 1970), 60.0)
+    resultat, general = _general(simulateur, carriere)
+    assert carriere.date_liquidation == DateMois(1969, 4)
+    avts = moteur.minimum_contributif.avts(1969, 4)[0]
+    assert general.montant == pytest.approx(avts, abs=0.01)
+    minimum, = (a for a in resultat.avantages_appliques
+                if a.libelle == "Pension minimum (AVTS)")
+    invalidite = plancher_de_la_substitution(moteur, carriere, ["regime_general"])
+    assert invalidite.categorie == 2
+    assert max(general.montant - minimum.montant,
+               invalidite.pension_d_invalidite) * 1.06 < avts
+    assert _servie(simulateur, carriere, resultat, 1981) == pytest.approx(
+        avts * _revalorisee(simulateur, 1969, 1981))
+    assert _servie(simulateur, carriere, resultat, 1983) == pytest.approx(
+        avts * _revalorisee(simulateur, 1969, 1983))
+
+
 #: Ce que les requêtes du plancher ne disent pas : les réglages des témoins.
 REQUETE_DU_PLANCHER = {
     "age_reference": "fixe_apres_bascule", "bascule": "2026",
@@ -575,9 +669,10 @@ REQUETES_DU_PLANCHER = [
 ]
 
 
-def test_les_deux_moteurs_servent_le_meme_plancher():
-    """Chaque étape de la liquidation écrit la même donnée en Python et en
-    JavaScript, et chaque requête est portée au plancher."""
+def _les_deux_moteurs(cas: list[dict]) -> list[str]:
+    """Ce que le Python écrit de chaque requête — la liquidation, ses étapes et
+    le journal, échéance comprise —, en texte, une fois vérifié que le
+    JavaScript écrit la même donnée."""
     import json
     import shutil
     import subprocess
@@ -589,7 +684,7 @@ def test_les_deux_moteurs_servent_le_meme_plancher():
     from test_liquidation import _ecarts, _python
 
     racine = Path(__file__).resolve().parents[1]
-    requetes = [{**REQUETE_DU_PLANCHER, **cas} for cas in REQUETES_DU_PLANCHER]
+    requetes = [{**REQUETE_DU_PLANCHER, **requete} for requete in cas]
     with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
                                      delete=False) as fichier:
         json.dump(requetes, fichier)
@@ -607,9 +702,41 @@ def test_les_deux_moteurs_servent_le_meme_plancher():
     for rang, (obtenu, attendu) in enumerate(zip(obtenus, attendus)):
         _ecarts(obtenu, attendu, f"requête {rang}", ecarts)
     assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])
-    for rang, attendu in enumerate(attendus):
-        assert "plancher de la pension substituée" in json.dumps(
-            attendu, ensure_ascii=False), rang
+    return [json.dumps(attendu, ensure_ascii=False) for attendu in attendus]
+
+
+def test_les_deux_moteurs_servent_le_meme_plancher():
+    """Chaque étape de la liquidation écrit la même donnée en Python et en
+    JavaScript, et chaque requête est portée au plancher."""
+    for rang, attendu in enumerate(_les_deux_moteurs(REQUETES_DU_PLANCHER)):
+        assert "plancher de la pension substituée" in attendu, rang
+
+
+#: Les requêtes des majorations de 1972 à 1982 comparées au plancher :
+#: l'ex-invalide de 1969 porté à l'AVTS ; celui que sa pension d'invalidité de
+#: deuxième catégorie relève, et que les 6 % de 1982 relèvent avec elle ; le
+#: salarié de 1970 porté à la pension minimum.
+REQUETES_DES_MAJORATIONS = [
+    {"naissance": "1909-03-15", "debut": "1945-03", "liquidation": "1969-04",
+     "interruptions": "1960:1969:invalidite", "salaire": "0.12"},
+    {"naissance": "1909-03-15", "debut": "1945-03", "liquidation": "1969-04",
+     "interruptions": "1960:1969:invalidite", "salaire": "0.3"},
+    {"naissance": "1905-03-15", "debut": "1945-03", "liquidation": "1970-04",
+     "salaire": "0.18"},
+]
+
+
+def test_les_deux_moteurs_comparent_les_majorations_au_plancher():
+    """Chaque étape de la liquidation et de l'échéance écrit la même donnée en
+    Python et en JavaScript : les 6 % de décembre 1982 ne relèvent ni l'AVTS de
+    l'ex-invalide ni la pension minimum, et relèvent la pension d'invalidité.
+    Le portage lit les planchers de chaque majoration dans son paquet : le cas
+    est du niveau ``complet``, que GitHub joue sur le paquet qu'il refait."""
+    retire = "plancher sans les majorations forfaitaires de 1972 à 1982"
+    a_l_avts, a_l_invalidite, au_minimum = _les_deux_moteurs(REQUETES_DES_MAJORATIONS)
+    assert retire in a_l_avts and retire in au_minimum
+    assert "plancher de la pension substituée" in a_l_invalidite
+    assert retire not in a_l_invalidite
 
 
 # -- la retraite pour invalidité des fonctionnaires ------------------------------

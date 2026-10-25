@@ -609,6 +609,9 @@ class Echeancier:
         for regime in vivante.regimes:
             origine = f"pension_{regime.regime}"
             detail = f"× {regime.coefficient:.6f}, règle {regime.regle}"
+            if regime.plancher_non_majore > 0:
+                detail += (f", plancher sans les majorations forfaitaires de 1972 à 1982 "
+                           f"(− {regime.plancher_non_majore:,.2f} €)")
             if regime.majoration > 0:
                 detail += (f", majoration exceptionnelle de 2023 comprise "
                            f"({regime.majoration:,.2f} €)")

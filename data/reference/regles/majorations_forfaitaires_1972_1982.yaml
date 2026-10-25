@@ -7,7 +7,10 @@ intitule: >-
   date — 120 trimestres avant 1972, 128 en 1972 — ; au 1er décembre 1982, de 6 % celles
   d'avant 1972, de 4 % celles de 1972, de 5,5 % celles de 1973 liquidées sur 136
   trimestres et de 1,5 % celles de 1974 liquidées sur 144. Celles des salariés agricoles
-  le sont en 1972 et en 1982. La réversion du conjoint de l'assuré qui aurait pu en
+  le sont en 1972 et en 1982. Elles relèvent la pension des cotisations, que la pension
+  servie compare ensuite au minimum des pensions et au plancher de la pension
+  substituée, qu'elles ne relèvent pas, sauf, en 1982, la pension d'invalidité de
+  l'ex-invalide parti avant 1973. La réversion du conjoint de l'assuré qui aurait pu en
   bénéficier les suit.
 domaine: revalorisation
 regimes: [regime_general, msa_salaries]
@@ -18,16 +21,25 @@ lit:
 - la date d'effet de la pension et son régime
 - la durée d'assurance que sa liquidation a retenue, et la durée maximum que sa date
   prenait en compte
+- les planchers auxquels l'étape « compléter » a porté la pension — la pension minimum
+  d'avant le 1er avril 1983, l'AVTS et la pension d'invalidité de l'ex-invalide —, et
+  la pension d'avant eux
 ecrit:
 - le coefficient qui mène la pension jusqu'à l'échéance, chaque majoration comprise à
-  partir de sa date, et la bonification pour enfants avec elle
+  partir de sa date, et la bonification pour enfants avec la pension servie
+- ce que les majorations ne donnent pas au plancher, retiré de ce que le coefficient
+  mène, la pension servie étant la plus haute de la pension des cotisations, majorée,
+  et de chaque plancher, des seules majorations que sa version lui donne
 - les majorations que la réversion reçoit après l'année de ses montants
 dates_qui_decident:
 - liquidation.date_effet
 # Les versions forment un partage de la date d'effet de la PENSION PERSONNELLE ;
 # chacune dit les majorations qui la relèvent après cette date, leur jour, leur
-# taux, les régimes que leur loi nomme, et si elles ne valent que pour la
-# pension liquidée sur la durée maximum de sa date (`duree_maximum`).
+# taux, les régimes que leur loi nomme, si elles ne valent que pour la
+# pension liquidée sur la durée maximum de sa date (`duree_maximum`), et les
+# planchers qu'elles relèvent avec la pension des cotisations (`planchers`) :
+# aucun, sauf la pension d'invalidité de l'ex-invalide, que les 6 % et 4 % de
+# 1982 relèvent (circulaire Cnav n° 79/82, B, 1°).
 versions:
 - id: avant_1972
   statut: lue
@@ -95,7 +107,8 @@ versions:
     droit: >-
       5 % au 1er janvier 1972, au 1er juillet 1976 et au 1er octobre 1977 à la pension
       liquidée sur cent vingt trimestres, la première aux salariés agricoles aussi ; 6 %
-      au 1er décembre 1982 à toutes, quelle que soit leur durée
+      au 1er décembre 1982 à toutes, quelle que soit leur durée, et à la pension
+      d'invalidité qui sert de plancher à l'ex-invalide (circulaire Cnav n° 79/82, B, 1°)
     beneficiaire: >-
       le retraité du régime général, et des salariés agricoles en 1972 et en 1982, dont
       la pension a pris effet avant le 1er janvier 1972
@@ -106,10 +119,11 @@ versions:
       minimum des pensions (circulaire Cnav n° 15/76, A)
     parametres:
       majorations:
-      - {date: "1972-01-01", taux: 0.05, duree_maximum: true, regimes: [regime_general, msa_salaries]}
-      - {date: "1976-07-01", taux: 0.05, duree_maximum: true, regimes: [regime_general]}
-      - {date: "1977-10-01", taux: 0.05, duree_maximum: true, regimes: [regime_general]}
-      - {date: "1982-12-01", taux: 0.06, duree_maximum: false, regimes: [regime_general, msa_salaries]}
+      - {date: "1972-01-01", taux: 0.05, duree_maximum: true, regimes: [regime_general, msa_salaries], planchers: []}
+      - {date: "1976-07-01", taux: 0.05, duree_maximum: true, regimes: [regime_general], planchers: []}
+      - {date: "1977-10-01", taux: 0.05, duree_maximum: true, regimes: [regime_general], planchers: []}
+      - {date: "1982-12-01", taux: 0.06, duree_maximum: false, regimes: [regime_general, msa_salaries],
+         planchers: [pension_d_invalidite]}
       fiabilite: haute
   exemples: aucun trouvé
 - id: en_1972
@@ -139,14 +153,15 @@ versions:
     droit: >-
       5 % au 1er juillet 1976 et au 1er octobre 1977 à la pension liquidée sur cent
       vingt-huit trimestres ; 4 % au 1er décembre 1982 à toutes, aux salariés agricoles
-      aussi
+      aussi, et à la pension d'invalidité qui sert de plancher à l'ex-invalide
     beneficiaire: le retraité dont la pension a pris effet en 1972
     conditions: la durée maximum de 1972, cent vingt-huit trimestres, sauf pour celle de 1982
     parametres:
       majorations:
-      - {date: "1976-07-01", taux: 0.05, duree_maximum: true, regimes: [regime_general]}
-      - {date: "1977-10-01", taux: 0.05, duree_maximum: true, regimes: [regime_general]}
-      - {date: "1982-12-01", taux: 0.04, duree_maximum: false, regimes: [regime_general, msa_salaries]}
+      - {date: "1976-07-01", taux: 0.05, duree_maximum: true, regimes: [regime_general], planchers: []}
+      - {date: "1977-10-01", taux: 0.05, duree_maximum: true, regimes: [regime_general], planchers: []}
+      - {date: "1982-12-01", taux: 0.04, duree_maximum: false, regimes: [regime_general, msa_salaries],
+         planchers: [pension_d_invalidite]}
       fiabilite: haute
   exemples: aucun trouvé
 - id: en_1973
@@ -177,7 +192,8 @@ versions:
     conditions: trente-quatre années d'assurance
     parametres:
       majorations:
-      - {date: "1982-12-01", taux: 0.055, duree_maximum: true, regimes: [regime_general, msa_salaries]}
+      - {date: "1982-12-01", taux: 0.055, duree_maximum: true, regimes: [regime_general, msa_salaries],
+         planchers: []}
       fiabilite: haute
   exemples: aucun trouvé
 - id: en_1974
@@ -208,7 +224,8 @@ versions:
     conditions: trente-six années d'assurance
     parametres:
       majorations:
-      - {date: "1982-12-01", taux: 0.015, duree_maximum: true, regimes: [regime_general, msa_salaries]}
+      - {date: "1982-12-01", taux: 0.015, duree_maximum: true, regimes: [regime_general, msa_salaries],
+         planchers: []}
       fiabilite: haute
   exemples: aucun trouvé
 - id: depuis_1975
@@ -240,22 +257,41 @@ approximations:
 - ecart: >-
     les majorations ne relèvent que « la pension de vieillesse résultant des
     cotisations », que la caisse devait « en principe » comparer à la pension
-    d'invalidité de l'ex-invalide « afin de servir le montant le plus élevé » : la
-    pension substituée ne peut être inférieure à la pension d'invalidité (ordonnance de
-    1945, article 62). Les circulaires en tirent que l'ex-invalide des deuxième et
-    troisième groupes, dont la pension substituée vaut 50 % de son salaire annuel moyen,
-    plus que la pension majorée sur la durée maximum de sa date — 46,30 % au plus avant
-    1972, 47,04 % en 1972, 47,82 % en 1973, 48,72 % en 1974 —, n'a pas les majorations de
-    1972, 1976 et 1977, ni celles de 5,5 % et de 1,5 % de 1982 ; et elles donnent les 6 % et
-    les 4 % de 1982 à tous les ex-invalides, quel que soit leur groupe. Le modèle sert
-    le plancher à la liquidation, au taux du groupe de la pension d'invalidité, déclaré
-    ou présumé (fiche pension_d_invalidite_substituee, depuis le 24 octobre 2026), puis
-    majore la pension servie, plancher compris, sans la comparer de nouveau : il majore
-    le plancher, quand la caisse ne majorait que la pension des cotisations
+    d'invalidité de l'ex-invalide « afin de servir le montant le plus élevé »,
+    « comparaison qui nécessiterait la reprise de tous les dossiers » (circulaires Cnav
+    n° 2/72, IV, B, n° 15/76, n° 64/77 et n° 79/82, B). Par simplification, la caisse ne
+    comparait pas : l'ex-invalide des deuxième et troisième groupes, dont la pension
+    substituée vaut 50 % de son salaire annuel moyen, plus que la pension majorée sur la
+    durée maximum de sa date — 46,30 % au plus avant 1972, 47,04 % en 1972, 47,82 % en
+    1973, 48,72 % en 1974 —, n'avait pas les majorations de 1972, 1976 et 1977, ni celles
+    de 5,5 % et de 1,5 % de 1982 ; celui du premier groupe, à 30 %, les avait d'office ;
+    « en cas de réclamation, les redressements nécessaires devront être effectués
+    lorsque l'assuré y aura intérêt ». Le modèle compare, chaque fois, la pension des
+    cotisations, majorée, au plancher (revalorisation.plancher_non_majore) : il sert ce
+    que la réclamation donne, le même montant que la simplification tant que la pension
+    des cotisations, majorée, reste sous la pension d'invalidité des deuxième et
+    troisième groupes et au-dessus de celle du premier, comme les circulaires le
+    supposent d'un même salaire annuel moyen, que le modèle calcule pour chacune sur
+    ses années. Les 6 % et 4 % de 1982, donnés à « tous
+    les ex-invalides (quel que soit leur groupe) » (n° 79/82, B, 1°), relèvent la pension
+    d'invalidité, non l'AVTS, minimum des pensions, que la circulaire ne nomme pas
   effet: >-
-    l'ex-invalide des deuxième et troisième groupes parti avant 1975, servi à 50 % de
-    son salaire annuel moyen, dont le modèle majore le plancher des majorations de 1972,
-    1976 et 1977 et des 5,5 % et 1,5 % de 1982, qu'il n'avait pas ; non mesuré
+    nul sur les témoins, dont aucun ex-invalide ne part avant 1975 ; l'ex-invalide parti
+    avant 1975, que la simplification servait autrement si sa pension des cotisations,
+    majorée, passait sa pension d'invalidité, ou si, du premier groupe, il était porté
+    au plancher ; non mesuré
+- ecart: >-
+    les majorations relèvent aussi « le montant de base, avant comparaison [...] au
+    maximum » (exposé de la Cnav, « Montant de la retraite personnelle ») : la pension
+    ramenée au maximum à sa liquidation, que la caisse majorait sur son montant entier
+    avant de la ramener au maximum de l'année, 44 % à 50 % du plafond de 1972 à 1975
+    (fiche pension_maximale_regime_general), est majorée par le modèle sur son montant
+    ramené, et n'est plus comparée au maximum
+  effet: >-
+    la pension liquidée avant 1975 au maximum, que le modèle sert sous ce que la caisse
+    servait tant que son montant entier, majoré, reste sous le maximum de l'année ; nul
+    sur les témoins, dont aucune pension d'avant 1975 n'est ramenée au maximum ; non
+    mesuré
 - ecart: >-
     les majorations de 1976 et de 1977 ne relèvent pas les pensions des salariés
     agricoles : leurs lois ne les nomment pas, et les décrets qui les leur ont étendues
@@ -282,9 +318,16 @@ approximations:
     général est majorée comme toute autre
   effet: nul sur ce que le modèle calcule, qui ne sert pas la pension du code local
 sources:
-  lu_le: 2026-10-24
+  lu_le: 2026-10-25
   prochaine_relecture: 2027-10-31
   a_relire:
+  - >-
+    Le minimum des pensions d'avant le 1er avril 1983 (L. 345) et l'AVTS de la pension
+    substituée suivaient-ils, pour les pensions servies, chaque décret qui fixait l'AVTS,
+    comme la caisse le fait du plancher depuis 1983 (circulaire Cnav n° 84/83, II) ? Le
+    modèle les compare à la date d'effet, puis les revalorise comme les pensions, sans
+    les majorations : à lire au décret n° 45-0179 d'avant 1976 et aux décrets « fixant
+    le montant de divers avantages de vieillesse », au fac-similé du Journal officiel.
   - >-
     Ouverte le 9 octobre 2026, à l'étape 4 de l'action 138 : lue dans l'index LEGI et
     dans les circulaires de la Cnav. Les circulaires donnent les taux de la pension au
@@ -383,6 +426,28 @@ sources:
       leur groupe) » ; « en cas de réclamation, les redressements nécessaires devront
       être effectués lorsque l'assuré y aura intérêt »
     date: 1982-08-24
+  - type: circulaire_cnav
+    reference: >-
+      circulaires Cnav n° 2/72, IV, A et B, n° 15/76, n° 64/77 et n° 79/82, A, B et C,
+      relues en entier le 25 octobre 2026 par la recherche de la base de législation de
+      la Cnav : la majoration « ne joue pas [...] sur le minimum des pensions » ; les
+      6 % et les 4 % de 1982 « étant notamment destinées à compenser le calcul du
+      salaire annuel moyen, il a été décidé d'en faire bénéficier tous les ex-invalides
+      (quel que soit leur groupe), en considérant que la pension de vieillesse calculée
+      sur le salaire annuel moyen résultant des dix meilleures années d'assurance aurait
+      été d'un montant supérieur à celui de la pension d'invalidité » (n° 79/82, B, 1°) ;
+      ceux du premier groupe ont les 5,5 % et les 1,5 %, « par mesure de simplification »,
+      ceux des deuxième et troisième non (B, 2°)
+    date: 1982-08-24
+  - type: circulaire_cnav
+    reference: >-
+      exposé « Montant de la retraite personnelle », « Avant le 01/12/1982 - Majorations
+      forfaitaires » : « Ces majorations s'appliquaient au montant de base, avant
+      comparaison au minimum et au maximum » ; « Les titulaires de retraites substituées
+      à des pensions d'invalidité de 2e et 3e catégories ont bénéficié seulement des
+      majorations de 6 % et 4 % au 01/12/1982 »
+    date: 2026-03-06
+    url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=retraite_personnelle_montant_montant_ex.aspx
 textes_sans_effet:
 - id: LEGIARTI000006755697
   article: loi n° 75-1279 du 30 décembre 1975, article 7
@@ -408,20 +473,27 @@ textes_sans_effet:
 textes_a_rattacher: []
 code:
   python: >-
-    revalorisation.py : majorations_forfaitaires, PensionServie.coefficient ;
-    droit/commun.py : PensionRegime ; echeancier.py : Echeancier._pensions_au_deces ;
+    revalorisation.py : majorations_forfaitaires, plancher_non_majore,
+    PensionServie.coefficient, faire_vivre ; droit/commun.py : PensionRegime ;
+    droit/completer.py : completer ; echeancier.py : Echeancier._pensions_au_deces ;
     droit/reversion.py : reversion, _majorations_ulterieures
   javascript: >-
-    moteur/js/revalorisation.js : majorationsForfaitaires, PensionServie.coefficient ;
+    moteur/js/revalorisation.js : majorationsForfaitaires, plancherNonMajore,
+    PensionServie.coefficient, faireVivre ; moteur/js/droit/completer.js : completer ;
     moteur/js/echeancier.js : Echeancier._pensionsAuDeces ; moteur/js/droit/reversion.js
     : reversion, majorationsUlterieures
   parametres: >-
     contenu.parametres de chaque version : majorations, fiabilite
   tests: >-
-    tests/test_reversion.py ; les témoins retraite_majoree_en_1982 et
-    reversion_majorations_avant_1983 des simulations
+    tests/test_reversion.py ; tests/test_invalidite.py et
+    tests/test_pension_minimum_avant_1983.py, les majorations comparées au plancher ;
+    les témoins retraite_majoree_en_1982 et reversion_majorations_avant_1983 des
+    simulations
   moteur: >-
-    PensionRegime dit si la pension est sur la durée maximum (sur_la_duree_maximum).
+    PensionRegime dit si la pension est sur la durée maximum (sur_la_duree_maximum), à
+    quels planchers l'étape « compléter » l'a portée et ce qu'elle était avant eux
+    (planchers, avant_les_planchers) ; RegimeServi, ce que le plancher n'a pas des
+    majorations (plancher_non_majore).
 historique:
 - >-
   2026-10-09 — née et lue par le moteur, à l'étape 4 de l'action 138 : la note du 9
@@ -435,7 +507,16 @@ historique:
   2026-10-24 — le plancher de la pension substituée servi à la liquidation (fiche
   pension_d_invalidite_substituee) : reste la comparaison à chaque majoration, que
   l'écart de l'ex-invalide dit.
+- >-
+  2026-10-25 — la comparaison au plancher, à l'étape 4 de l'action 138 : les majorations
+  relèvent la pension des cotisations, que la pension servie compare au minimum des
+  pensions et au plancher de la pension substituée ; les 6 % et 4 % de 1982 relèvent la
+  pension d'invalidité de l'ex-invalide (planchers) ; l'écart de l'ex-invalide récrit,
+  celui du maximum ouvert.
 effet: >-
   Les retraités du régime général partis avant 1975 sur la durée maximum de leur date :
   jusqu'à 22,7 % de plus pour une pension d'avant 1972, depuis décembre 1982 ; et la
-  réversion de leur conjoint.
+  réversion de leur conjoint. Celui que la liquidation a porté au minimum des pensions
+  ou à l'AVTS de la pension substituée n'en reçoit que ce qui fait passer sa pension
+  des cotisations au-dessus d'eux : rien des 6 % de 1982 à la pension de 1970 portée
+  à la pension minimum, que la pension des cotisations, majorée, laisse en dessous.

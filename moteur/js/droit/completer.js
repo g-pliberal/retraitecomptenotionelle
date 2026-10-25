@@ -1502,6 +1502,12 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
             + `${formatFixe(pensions[indice].montant, 2, true)} €, porté `
             + (pensionMinimum !== null ? "à la pension minimum" : "au minimum contributif")
             + ` par + ${formatFixe(complement, 2, true)} €`,
+          // La pension minimum est un plancher, que les majorations
+          // forfaitaires de 1972 à 1982 ne relèvent pas.
+          ...(pensionMinimum !== null ? {
+            planchers: [["minimum", pensions[indice].montant + complement]],
+            avant_les_planchers: pensions[indice].montant,
+          } : {}),
         };
       }
       total += releveMinimum;
@@ -1538,7 +1544,18 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
   const indiceSubstitue = plancherSubstitue === null ? -1
     : pensions.findIndex((p) => p.regime === plancherSubstitue.regime);
   if (indiceSubstitue >= 0) {
-    const pension = pensions[indiceSubstitue];
+    // Ses deux planchers, que les majorations forfaitaires de 1972 à 1982
+    // comparent à la pension d'avant eux, qu'elles relèvent.
+    const avant = pensions[indiceSubstitue];
+    const deja = avant.planchers ?? [];
+    const pension = {
+      ...avant,
+      planchers: [...deja, ["avts", plancherSubstitue.avts],
+        ...(plancherSubstitue.pension_d_invalidite !== null
+          ? [["pension_d_invalidite", plancherSubstitue.pension_d_invalidite]] : [])],
+      avant_les_planchers: deja.length > 0 ? avant.avant_les_planchers : avant.montant,
+    };
+    pensions[indiceSubstitue] = pension;
     const ecart = plancherSubstitue.montant - pension.montant;
     if (ecart > 0) {
       const quoi = plancherSubstitue.montant > plancherSubstitue.avts

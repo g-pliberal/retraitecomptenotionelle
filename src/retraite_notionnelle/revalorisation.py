@@ -302,6 +302,11 @@ class RegimeServi:
     #: l'échéance, quand une pension étrangère commence après le départ
     #: (R. 173-8, :func:`reviser_le_minimum`).
     revision: float = 0.0
+    #: Ce que les majorations forfaitaires de 1972 à 1982, que le coefficient
+    #: porte, ne donnent pas au plancher auquel la pension est portée — le
+    #: minimum des pensions, l'AVTS, la pension d'invalidité de l'ex-invalide —,
+    #: en euros de l'échéance (:func:`plancher_non_majore`) : retiré.
+    plancher_non_majore: float = 0.0
     #: La majoration exceptionnelle des petites pensions, due depuis le
     #: 1er septembre 2023, en euros de l'échéance
     #: (:func:`majorer_les_petites_pensions`). La réversion ne la lit pas.
@@ -327,8 +332,8 @@ class RegimeServi:
     @property
     def aujourd_hui(self) -> float:
         return ((self.au_depart - self.conjoint_au_depart) * self.coefficient
-                - self.revision + self.majoration + self.relevement + self.plans + self.pmr
-                + self.conjoint)
+                - self.revision - self.plancher_non_majore
+                + self.majoration + self.relevement + self.plans + self.pmr + self.conjoint)
 
 
 @dataclass(frozen=True)
@@ -450,6 +455,8 @@ class Revalorisee:
                          "revision": r.revision,
                          "majoration_exceptionnelle": r.majoration,
                          "relevement_des_exploitants": r.relevement}
+                        | ({"plancher_non_majore": r.plancher_non_majore}
+                           if r.plancher_non_majore else {})
                         | ({"majoration_conjoint_a_charge": r.conjoint}
                            if r.conjoint or r.conjoint_au_depart else {})
                         | ({"plans_de_revalorisation": r.plans} if r.plans else {})
@@ -582,13 +589,59 @@ def majorations_forfaitaires(moteur, pension, depart: str) -> tuple[tuple[str, f
     pour enfants », non la majoration pour conjoint à charge (circulaire Cnav
     n° 15/76, A) : le coefficient de la pension la porte, et la majoration pour
     enfants, qui le suit."""
+    return tuple((str(majoration["date"]), float(majoration["taux"]))
+                 for majoration in _majorations_de_la_pension(moteur, pension, depart))
+
+
+def _majorations_de_la_pension(moteur, pension, depart: str) -> list[dict]:
+    """Les majorations de la version qui valent pour ``pension``, telles que la
+    fiche les écrit : :func:`majorations_forfaitaires`."""
     regle = moteur.fiches_datees.regle(FICHE_DES_MAJORATIONS_FORFAITAIRES, depart)
     if not regle:
-        return ()
-    return tuple((str(majoration["date"]), float(majoration["taux"]))
-                 for majoration in regle.get("majorations") or ()
-                 if pension.regime in majoration["regimes"] and str(majoration["date"]) > depart
-                 and (pension.sur_la_duree_maximum or not majoration["duree_maximum"]))
+        return []
+    return [majoration for majoration in regle.get("majorations") or ()
+            if pension.regime in majoration["regimes"] and str(majoration["date"]) > depart
+            and (pension.sur_la_duree_maximum or not majoration["duree_maximum"])]
+
+
+def plancher_non_majore(moteur, pension, depart: str, jusqu_a: str) -> float:
+    """Ce que les majorations forfaitaires de 1972 à 1982 venues jusqu'à
+    ``jusqu_a`` (AAAA-MM-JJ) ne donnent pas à la pension ``pension`` portée à un
+    plancher, aux euros de sa date d'effet ``depart`` : la part de son montant
+    que le coefficient, qui les porte sur toute la pension
+    (:meth:`PensionServie.coefficient`), ne mène pas.
+
+    Elles s'appliquaient « au montant de base, avant comparaison au minimum et
+    au maximum » (exposé de la Cnav, « Montant de la retraite personnelle ») ;
+    « pour les ex-invalides, une nouvelle comparaison devrait, en principe,
+    être faite entre cette pension de vieillesse majorée et la pension
+    d'invalidité afin de servir le montant le plus élevé » (circulaires Cnav
+    n° 2/72, IV, B, n° 15/76 et n° 64/77, B). La pension servie est donc la
+    plus haute de la pension d'avant les planchers, majorée, et de chaque
+    plancher (``PensionRegime.planchers``), des seules majorations que sa
+    version lui donne : la pension d'invalidité de l'ex-invalide reçoit les
+    6 % et les 4 % de 1982, « quel que soit [son] groupe » (n° 79/82, B, 1°),
+    le minimum des pensions et l'AVTS aucune. Tous se revalorisent ensuite
+    comme les pensions."""
+    if not pension.planchers:
+        return 0.0
+    venues = [majoration for majoration in _majorations_de_la_pension(moteur, pension, depart)
+              if str(majoration["date"]) <= jusqu_a]
+    if not venues:
+        return 0.0
+
+    def manquantes(nature: str) -> float:
+        # Les majorations que ce plancher n'a pas, que le coefficient porte.
+        facteur = 1.0
+        for majoration in venues:
+            if nature not in (majoration.get("planchers") or ()):
+                facteur *= 1 + float(majoration["taux"])
+        return facteur
+
+    base = pension.avant_les_planchers
+    servie = max(base, *(niveau for _, niveau in pension.planchers))
+    majoree = max(base, *(niveau / manquantes(nature) for nature, niveau in pension.planchers))
+    return servie - majoree
 
 
 class PensionServie:
@@ -802,6 +855,20 @@ def faire_vivre(simulateur, carriere, resultat, annee: int | None = None) -> Rev
         return somme_ordonnee(part * a_l_effet.get(code, 1.0) * par_regime.get(code, 1.0)
                    for code, part in servies) / masse
 
+    def au_plancher(pension, debut: date, montant: float, coefficient: float,
+                    quand: date) -> tuple[float, float]:
+        """Ce que le plancher de la pension n'a pas des majorations forfaitaires
+        venues à ``quand``, en euros de ce jour (:func:`plancher_non_majore`),
+        et le coefficient de la pension servie, que la majoration pour enfants
+        suit : « la bonification pour enfants dont le montant est lié à celui
+        de la pension principale » (circulaire Cnav n° 15/76, A)."""
+        non_majore = plancher_non_majore(servie.actuel, pension, debut.isoformat(),
+                                         quand.isoformat())
+        if not non_majore:
+            return 0.0, coefficient
+        sans_conjoint = montant - majoration_du_conjoint(pension.conjoint, debut.isoformat())
+        return non_majore * coefficient, coefficient * (1.0 - non_majore / sans_conjoint)
+
     # LA TRANCHE DE 2020 se choisit sur le montant total de décembre 2019 :
     # toutes les retraites, de base, complémentaires et additionnelles,
     # majorations comprises. Il faut donc d'abord mener chaque pension
@@ -817,19 +884,25 @@ def faire_vivre(simulateur, carriere, resultat, annee: int | None = None) -> Rev
             if debut <= MOIS_DES_TRANCHES else 0.0
             for p, a, debut, _ in datees
         ]
+        planchers_2019 = [au_plancher(p, debut, montant, c, MOIS_DES_TRANCHES)
+                          for (p, _, debut, montant), c in zip(datees, jusqu_2019)]
         mensuel_2019 = (
-            somme_ordonnee(avec_le_conjoint(p, debut, montant, c, MOIS_DES_TRANCHES)
-                           for (p, _, debut, montant), c in zip(datees, jusqu_2019))
-            + majoration * coefficient_de_la_majoration(jusqu_2019, MOIS_DES_TRANCHES)
+            somme_ordonnee(avec_le_conjoint(p, debut, montant, c, MOIS_DES_TRANCHES) - retire
+                           for (p, _, debut, montant), c, (retire, _)
+                           in zip(datees, jusqu_2019, planchers_2019))
+            + majoration * coefficient_de_la_majoration(
+                [servi for _, servi in planchers_2019], MOIS_DES_TRANCHES)
         ) / 12.0
 
     regimes = []
+    # Le coefficient de chaque pension servie, que la majoration pour enfants suit.
     coefficients = []
     fiabilite = Fiabilite.CERTIFIEE
     for pension, a, debut, montant in datees:
         coefficient, regle, fiabilite_regime = servie.coefficient(
             pension, a, debut, fin, mensuel_2019)
-        coefficients.append(coefficient)
+        non_majore, servi = au_plancher(pension, debut, montant, coefficient, fin)
+        coefficients.append(servi)
         fiabilite = min(fiabilite, fiabilite_regime)
         regimes.append(RegimeServi(
             regime=pension.regime,
@@ -837,6 +910,7 @@ def faire_vivre(simulateur, carriere, resultat, annee: int | None = None) -> Rev
             coefficient=coefficient,
             regle=regle,
             fiabilite=fiabilite_regime,
+            plancher_non_majore=non_majore,
             hors_repartition=isoler and simulateur.catalogue[pension.regime].hors_repartition,
             conjoint_au_depart=majoration_du_conjoint(pension.conjoint, debut.isoformat()),
             conjoint=majoration_du_conjoint(pension.conjoint, fin.isoformat()),
