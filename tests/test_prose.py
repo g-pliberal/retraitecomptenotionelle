@@ -846,16 +846,18 @@ def test_hors_de_linux_seul_le_bit_pres_du_portage_ne_derive_pas(monkeypatch):
 # --- L'outillage d'interface : la prose et le script qui l'installe --------
 
 def test_l_outillage_annonce_les_versions_qu_il_installe():
-    """`docs/outillage_interface.md` cite trois versions, et le dépôt les porte.
+    """`docs/outillage_interface.md` cite les versions qu'il décrit, et le dépôt
+    les porte.
 
     C'est la dérive que l'action 41 poursuit, dans un coin où le contrôle par
     ancre ne peut rien : `verifier_prose.py` ne lit pas un numéro de version —
     « 0.1.20 » n'est pas un chiffre au sens de son motif. Les poids en
     mégaoctets que ces versions portent, eux, sont tenus par le test suivant.
     Les VERSIONS sont dans le dépôt : la compétence porte la
-    sienne dans son en-tête, le moteur dans son fichier `VERSION`, et le CLI
-    Playwright dans le script d'installation. Une prose qui les cite et un
-    script qui en installe d'autres se seraient séparés sans bruit.
+    sienne dans son en-tête, le moteur dans son fichier `VERSION`, le CLI
+    Playwright dans le script d'installation, et Lighthouse dans le script qui
+    le lance (action 174). Une prose qui les cite et un script qui en installe
+    d'autres se seraient séparés sans bruit.
     """
     doc = (RACINE / "docs" / "outillage_interface.md").read_text(encoding="utf-8")
 
@@ -867,6 +869,8 @@ def test_l_outillage_annonce_les_versions_qu_il_installe():
     installe = (RACINE / "scripts" / "setup_ui_tools.sh").read_text(encoding="utf-8")
     playwright = re.search(r"^PLAYWRIGHT_CLI_VERSION=(\S+)$", installe,
                            re.MULTILINE).group(1)
+    lighthouse = re.search(r'^VERSION = "(\S+)"$', (RACINE / "scripts" / "notes_lighthouse.py")
+                           .read_text(encoding="utf-8"), re.MULTILINE).group(1)
 
     attendus = {
         f"{competence} (compétence), moteur {moteur}":
@@ -879,6 +883,10 @@ def test_l_outillage_annonce_les_versions_qu_il_installe():
             "la ligne Playwright CLI du même tableau",
         f"**`@playwright/cli@{playwright}`**":
             "la puce « Ce qui demande le réseau »",
+        f"| Lighthouse | {lighthouse} |":
+            "la ligne Lighthouse du tableau « Ce qu'un clone frais contient déjà »",
+        f"**`lighthouse@{lighthouse}`**":
+            "sa puce « Ce qui demande le réseau »",
     }
     manquants = [f"{quoi} : « {texte} »"
                  for texte, quoi in attendus.items() if texte not in doc]

@@ -8,12 +8,15 @@ factices qui se comptent."""
 
 from __future__ import annotations
 
+import gzip
+import json
 import multiprocessing
 import os
 import pickle
 import re
 import subprocess
 import sys
+import urllib.request
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from contextlib import contextmanager
 from pathlib import Path
@@ -28,6 +31,7 @@ _CODE_HORS_DU_MODELE = memoire._code_hors_du_modele
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "scripts"))
 
+import notes_lighthouse as lighthouse  # noqa: E402
 import mesures_prose  # noqa: E402
 import regenerer  # noqa: E402
 import resumer_temoins  # noqa: E402
@@ -1082,3 +1086,164 @@ def test_le_controle_de_la_prose_ouvre_une_campagne_de_ses_mesures(monkeypatch, 
     assert reecrits == ["doc.md"]
     assert "-->12<!--/--> %" in (tmp_path / "doc.md").read_text(encoding="utf-8")
     assert [a.genre for a in anomalies] == ["derive"]
+
+
+# -- la mesure Lighthouse (action 174) ------------------------------------------
+
+
+def test_lighthouse_audite_les_routes_que_visitent_les_ecrans():
+    """Les dix routes de ``tests/test_ecrans.py``, dans leur ordre : les neuf
+    pages, et les résultats du formulaire calculé tel qu'il s'ouvre. Ce que
+    Lighthouse note est ce que le navigateur des tests mesure."""
+    import test_ecrans
+
+    assert lighthouse.ROUTES == test_ecrans.ROUTES
+    assert [lighthouse.nom_de_route(route) for route in lighthouse.ROUTES] == [
+        "accueil", "simuler", "resultats", "cout", "risque", "partager",
+        "saviez-vous", "cas-types", "avantages", "methode"]
+
+
+def test_lighthouse_se_lance_a_sa_version_figee():
+    """Lighthouse n'est pas une dépendance du dépôt : ``npx`` le tire à la
+    version que le script fige. Le bureau est son préréglage ``desktop`` ; le
+    mobile, son profil par défaut."""
+    mobile = lighthouse.commande("https://exemple.org/", "/cout", "mobile", Path("m.json"))
+    bureau = lighthouse.commande("https://exemple.org/", "/cout", "bureau", Path("b.json"))
+    assert mobile[:3] == ["npx", "--yes", f"lighthouse@{lighthouse.VERSION}"]
+    assert "https://exemple.org/#/cout" in mobile
+    assert "--output=json" in mobile and "--output-path=m.json" in mobile
+    assert any(argument.startswith("--chrome-flags=--headless=new") for argument in mobile)
+    assert "--preset=desktop" in bureau and "--preset=desktop" not in mobile
+
+
+def _rapport(notes: dict, audits: dict, references: dict) -> dict:
+    """Un rapport Lighthouse réduit à ce que le relevé en lit."""
+    return {
+        "categories": {categorie: {"score": note, "auditRefs": references.get(categorie, [])}
+                       for categorie, note in notes.items()},
+        "audits": audits,
+    }
+
+
+def test_le_releve_lighthouse_dit_les_notes_et_les_audits_qui_les_baissent():
+    """Une note sur cent par catégorie, les cinq métriques, et les audits qui
+    pèsent dans une note et y échouent, chacun avec son premier élément
+    fautif ou sa valeur. Un audit sans poids, ou sans objet, ne baisse
+    aucune note : le relevé le tait."""
+    rapport = _rapport(
+        {"performance": 0.59, "accessibility": 0.97, "best-practices": 1, "seo": 1,
+         "agentic-browsing": 1},
+        {
+            "first-contentful-paint": {"score": 0.03, "displayValue": "6.3\u00a0s"},
+            "largest-contentful-paint": {"score": 0, "displayValue": "10.5\u00a0s"},
+            "cumulative-layout-shift": {"score": 1, "displayValue": "0"},
+            "color-contrast": {"score": 0, "details": {"items": [
+                {"node": {"selector": "span.ecart"}}, {"node": {"selector": "span.autre"}}]}},
+            "aria-allowed-role": {"score": 0},
+            "llms-txt": {"score": None},
+        },
+        {"performance": [{"id": "first-contentful-paint", "weight": 10},
+                         {"id": "largest-contentful-paint", "weight": 25},
+                         {"id": "cumulative-layout-shift", "weight": 25}],
+         "accessibility": [{"id": "color-contrast", "weight": 7},
+                           {"id": "aria-allowed-role", "weight": 0}],
+         "agentic-browsing": [{"id": "llms-txt", "weight": 0}]},
+    )
+    releve = lighthouse.relever(rapport, "mobile", "/simuler?x=1")
+    assert releve.notes == {"performance": 59, "accessibility": 97, "best-practices": 100,
+                            "seo": 100, "agentic-browsing": 100}
+    assert releve.metriques == {"FCP": "6.3 s", "LCP": "10.5 s", "TBT": "—", "CLS": "0",
+                                "SI": "—"}
+    assert releve.defauts == [
+        ("performance", "first-contentful-paint", "6.3 s"),
+        ("performance", "largest-contentful-paint", "10.5 s"),
+        ("accessibility", "color-contrast", "span.ecart"),
+    ]
+
+
+def test_le_resume_lighthouse_tient_une_ligne_par_route_et_profil():
+    """Le tableau des notes, une ligne par profil et par route, puis les
+    audits en défaut ; une route dont le rapport manque le dit."""
+    pleine = dict.fromkeys(lighthouse.CATEGORIES, 100)
+    releves = [
+        lighthouse.Releve("mobile", "/", {**pleine, "performance": 35},
+                          dict.fromkeys(lighthouse.METRIQUES.values(), "1 s"),
+                          [("performance", "largest-contentful-paint", "10.5 s")]),
+        lighthouse.Releve("bureau", "/cout", None, {}, []),
+    ]
+    texte = lighthouse.resumer(releves)
+    assert "| mobile | accueil | 35 | 100 | 100 | 100 | 100 | 1 s | 1 s | 1 s | 1 s | 1 s |" in texte
+    assert "| bureau | cout | pas de rapport |" in texte
+    assert "mobile accueil, performance : largest-contentful-paint (10.5 s)" in texte
+
+
+def test_lighthouse_ne_se_dit_satisfait_que_de_notes_pleines():
+    """``--verifier`` sort en erreur dès qu'une note manque ou n'est pas pleine."""
+    pleine = dict.fromkeys(lighthouse.CATEGORIES, 100)
+    assert lighthouse.code_de_sortie([lighthouse.Releve("mobile", "/", pleine, {}, [])]) == 0
+    assert lighthouse.code_de_sortie([
+        lighthouse.Releve("mobile", "/", pleine, {}, []),
+        lighthouse.Releve("bureau", "/", {**pleine, "performance": 99}, {}, []),
+    ]) == 1
+    assert lighthouse.code_de_sortie([lighthouse.Releve("bureau", "/", None, {}, [])]) == 1
+
+
+def test_lighthouse_lance_les_audits_un_a_un_et_relit_leurs_rapports(tmp_path):
+    """Un audit après l'autre : en parallèle, leurs mesures de performance se
+    gêneraient. Chaque rapport se range sous son profil et le nom de sa
+    route ; un audit qui n'écrit rien laisse sa route sans notes."""
+    lancees = []
+
+    def executer(commande, **options):
+        lancees.append(commande)
+        sortie = Path(next(a for a in commande if a.startswith("--output-path="))
+                      .split("=", 1)[1])
+        if "#/cout" not in " ".join(commande):
+            sortie.write_text(json.dumps(_rapport(
+                dict.fromkeys(lighthouse.CATEGORIES, 1), {}, {})), encoding="utf-8")
+        return subprocess.CompletedProcess(commande, 0)
+
+    releves = lighthouse.auditer("https://exemple.org/", ["mobile", "bureau"],
+                                 ["/", "/cout"], tmp_path, executer=executer)
+    assert [(r.profil, r.route) for r in releves] == [
+        ("mobile", "/"), ("mobile", "/cout"), ("bureau", "/"), ("bureau", "/cout")]
+    assert len(lancees) == 4
+    assert (tmp_path / "bureau" / "accueil.json").exists()
+    assert releves[0].notes["seo"] == 100 and releves[1].notes is None
+
+
+def test_le_serveur_local_compresse_comme_github_pages(tmp_path):
+    """Servi d'ici, l'arbre se transfère compressé, comme GitHub Pages le
+    sert : sans quoi la performance se mesurerait sur cinq fois plus d'octets.
+    Un navigateur qui ne demande pas la compression reçoit le fichier tel
+    quel."""
+    feuille = tmp_path / "style.css"
+    feuille.write_text("body { color: red; }\n" * 200, encoding="utf-8")
+    ouvreur = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+    with lighthouse.servir(tmp_path) as adresse:
+        demande = urllib.request.Request(adresse + "style.css",
+                                         headers={"Accept-Encoding": "gzip"})
+        with ouvreur.open(demande) as reponse:
+            assert reponse.headers["Content-Encoding"] == "gzip"
+            assert gzip.decompress(reponse.read()) == feuille.read_bytes()
+        with ouvreur.open(adresse + "style.css") as reponse:
+            assert reponse.headers.get("Content-Encoding") is None
+            assert reponse.read() == feuille.read_bytes()
+
+
+def test_lighthouse_trouve_le_chromium_des_sessions(tmp_path, monkeypatch):
+    """Celui que désigne ``CHROME_PATH``, la variable de Lighthouse, puis
+    ``NAVIGATEUR``, celle des tests, puis le Chromium de Playwright que les
+    sessions Claude Code préinstallent."""
+    for variable in ("CHROME_PATH", "NAVIGATEUR"):
+        monkeypatch.delenv(variable, raising=False)
+    chrome = tmp_path / "chromium-1243" / "chrome-linux64" / "chrome"
+    chrome.parent.mkdir(parents=True)
+    chrome.write_text("", encoding="utf-8")
+    monkeypatch.setenv("PLAYWRIGHT_BROWSERS_PATH", str(tmp_path))
+    assert lighthouse.navigateur() == str(chrome)
+    monkeypatch.setenv("NAVIGATEUR", "/le/navigateur/des/tests")
+    assert lighthouse.navigateur() == "/le/navigateur/des/tests"
+    monkeypatch.setenv("CHROME_PATH", "/celui/de/lighthouse")
+    assert lighthouse.navigateur() == "/celui/de/lighthouse"
+

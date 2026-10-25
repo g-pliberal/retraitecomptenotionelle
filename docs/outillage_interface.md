@@ -3,7 +3,8 @@
 Le dépôt embarque trois outils de revue d'interface comme compétences Claude
 Code, dans `.claude/skills/`. Ce fichier dit où chacun vit, ce qu'un clone frais
 contient déjà, ce qu'il faut encore installer, et comment on change une version
-figée. Rien ici ne touche au modèle, aux données ni au site : c'est de
+figée. Un quatrième, Lighthouse, n'est pas une compétence : un script le lance
+(action 174). Rien ici ne touche au modèle, aux données ni au site : c'est de
 l'outillage, et il ne doit rien coûter à ceux qui ne s'en servent pas.
 
 Un seul geste met tout en place, et on peut le répéter sans risque :
@@ -21,6 +22,7 @@ scripts/setup_ui_tools.sh --essai    # en plus, ouvre et ferme un Chromium pour 
 | Impeccable | 4.3.1 (compétence), moteur 0.1.5 | `.claude/skills/impeccable/` (SKILL.md, références, lanceur `scripts/impeccable`, `scripts/VERSION`), les quatre agents `.claude/agents/impeccable-*.md`, le hook dans `.claude/settings.json` | le moteur natif (<!--chiffre:tenu(test_les_chiffres_de_l_outillage_sont_ceux_des_versions_figees)-->16<!--/--> Mo), dans `~/.impeccable/bin/0.1.5/` |
 | Web Interface Guidelines | 1.0.0 (compétence), règles figées au commit `e3d624b` | `.claude/skills/web-design-guidelines/` (SKILL.md, `guidelines.md`, `guidelines.provenance.yaml`) | rien |
 | Playwright CLI | `@playwright/cli` 0.1.20 | `.claude/skills/playwright-cli/` (SKILL.md livré par ce paquet), `.playwright/cli.config.json` | le paquet npm global, et le Chromium qu'il attend |
+| Lighthouse | 13.5.0 | `scripts/notes_lighthouse.py`, qui le lance et résume ses rapports | le paquet npm, que `npx` garde dans son cache |
 
 Ce qui n'est **pas** dans Git, et ne doit pas y entrer : le binaire du moteur
 Impeccable (`.claude/skills/impeccable/scripts/bin/`, ignoré), les navigateurs,
@@ -41,6 +43,10 @@ session, ignoré).
   globalement par npm (jamais dans le dépôt : pas de `node_modules`, pas de
   `package.json`, `pyproject.toml` intact). Le script n'installe que si la
   commande manque ou répond une autre version.
+- **`lighthouse@13.5.0`**, depuis `registry.npmjs.org`, que `npx` tire au
+  premier lancement de `scripts/notes_lighthouse.py` et garde dans son cache :
+  jamais dans le dépôt non plus. Il lance le Chromium que désigne
+  `CHROME_PATH`, ou celui que les machines Claude Code Cloud préinstallent.
 - **Chromium** (« Chrome for Testing », une archive de ~<!--chiffre:tenu(test_les_chiffres_de_l_outillage_sont_ceux_des_versions_figees)-->190<!--/--> Mo), depuis `cdn.playwright.dev`,
   par `playwright-cli install-browser chromium`, le mécanisme officiel. Le
   script ne le lance que si la révision attendue par cette version du CLI est
@@ -91,6 +97,22 @@ version : modifier `PLAYWRIGHT_CLI_VERSION` dans `scripts/setup_ui_tools.sh`,
 relancer le script, puis recopier la SKILL.md livrée par le nouveau paquet
 dans `.claude/skills/playwright-cli/` si elle a changé. Pas de Playwright MCP :
 tout passe par la ligne de commande.
+
+## Lighthouse
+
+`python scripts/notes_lighthouse.py` note les dix routes que visite
+`tests/test_ecrans.py`, en mobile puis au bureau, l'une après l'autre : en
+parallèle, leurs mesures de performance se gêneraient. Il lit le site en
+ligne ; `--local` sert d'ici l'arbre de travail, compressé comme GitHub Pages
+le sert, mais en HTTP/1.1 : l'accessibilité, les bonnes pratiques, le SEO,
+Agentic et le CLS y valent ceux du site en ligne, le reste de la performance
+n'y est qu'indicatif. `--profils` et `--routes` restreignent la mesure ;
+`--verifier` sort en erreur dès qu'une note manque ou n'est pas pleine. Les
+rapports JSON restent sous `.cache/lighthouse/`, et le résumé dit, par route,
+les cinq notes, les métriques, et les audits qui baissent une note. Pour
+changer de version : modifier `VERSION` dans le script, le relancer, et relire
+ce que les notes ont gagné ou perdu — la catégorie Agentic Browsing, neuve,
+est dite « en développement » par Lighthouse.
 
 ## Web Interface Guidelines : règles figées
 

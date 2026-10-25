@@ -37,7 +37,9 @@ types et Droits non cotisés lisent ce que le Python en a fabriqué
   replie (`plierLesTableaux`, dans `index.html`).
 - **L'outillage d'audit d'interface** (Impeccable, Web Interface Guidelines,
   Playwright CLI) : `.claude/skills/`, mis en place par
-  `scripts/setup_ui_tools.sh` ; voir `docs/outillage_interface.md`.
+  `scripts/setup_ui_tools.sh` ; les notes Lighthouse des dix routes, par
+  `python scripts/notes_lighthouse.py` (`--local` pour l'arbre de travail) ;
+  voir `docs/outillage_interface.md`.
 
 ## Listes de contrôle
 
