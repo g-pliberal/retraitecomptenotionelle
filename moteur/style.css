@@ -1162,6 +1162,12 @@ table[data-pli="fiche"][data-plie] tbody td[data-titre]::before {
 .onglets:has(#grille-notionnel_retroactif_employeur:checked) ~ .panneaux > .panneau[data-onglet="notionnel_retroactif_employeur"] {
   display: block;
 }
+/* Le titre d'un panneau posé sous celui de la page est un `<h2>` (action
+   174), dessiné comme le `<h3>` qu'il était. */
+.panneaux > .panneau > h2 {
+  font-size: 1.25rem; margin: 2rem 0 0.5rem; font-weight: 700; line-height: inherit;
+  letter-spacing: -0.01em; text-transform: none;
+}
 /* Un résultat de simulation : l'intitulé, le montant, l'écart, et la barre qui
    donne une forme au montant. Les quatre se suivent, séparés d'un filet, sur
    le fond de la page — pas dans des cartes, qui auraient fait quatre objets là
@@ -1434,8 +1440,10 @@ table[data-pli="fiche"][data-plie] tbody td[data-titre]::before {
           grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr));
           gap: 1.5rem; margin: 2rem 0; }
 .points .point { border-top: 3px solid var(--or); padding: 1rem 0 0; }
-.points .point > h3 {
-  margin: 0 0 0.4rem; font-size: 1.25rem; font-weight: 900;
+/* Un `<h2>`, sous le titre de la page (action 174), dessiné comme le `<h3>`
+   qu'il était : l'interligne est celui du bloc, non le serré des titres. */
+.points .point > h2 {
+  margin: 0 0 0.4rem; font-size: 1.25rem; font-weight: 900; line-height: inherit;
   letter-spacing: -0.02em; text-transform: uppercase;
 }
 .points .point > p { margin: 0; font-size: 1rem; color: var(--texte-doux); }
@@ -1448,9 +1456,11 @@ section.cle {
   border-radius: 0; padding: 1.5rem clamp(1.25rem, 3vw, 1.75rem) 1.25rem;
   margin: 2.5rem 0;
 }
-section.cle > h3 {
+/* La question est un `<h2>` (action 174) ; les intertitres d'une carte, des
+   `<h3>`, s'écrivent de même. */
+section.cle > :is(h2, h3) {
   margin: 0; font-size: clamp(1.375rem, 3vw, 1.75rem); font-weight: 900;
-  letter-spacing: -0.03em; text-transform: uppercase;
+  line-height: inherit; letter-spacing: -0.03em; text-transform: uppercase;
 }
 section.cle > .reponse {
   font-size: 1.1875rem; line-height: 1.5; max-width: 46rem; margin: 0.5rem 0 0.2rem;

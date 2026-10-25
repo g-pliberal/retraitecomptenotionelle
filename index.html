@@ -2485,7 +2485,7 @@ async function imageDuGraphique(carte) {
   const mesure = document.createElement("canvas").getContext("2d");
   const largeurTexte = LARGEUR_IMAGE - 2 * MARGE_IMAGE;
   mesure.font = `600 38px ${SERIF}`;
-  const titre = enLignes(mesure, texteDe(carte, "h3"), largeurTexte);
+  const titre = enLignes(mesure, texteDe(carte, ":scope > h2"), largeurTexte);
   mesure.font = `28px ${SERIF}`;
   const reponse = enLignes(mesure, texteDe(carte, ".reponse"), largeurTexte);
   mesure.font = `19px ${SERIF}`;
@@ -2740,7 +2740,7 @@ function imageDeLaCarte(carte) {
 }
 
 function nomDeFichier(carte) {
-  const titre = carte.querySelector("h3")
+  const titre = carte.querySelector(":scope > h2")
     || carte.querySelector("figcaption")
     || carte.querySelector(".surtitre");
   const question = (titre?.textContent || "carte")
@@ -2768,7 +2768,7 @@ function texteDeLaCarte(carte) {
   // Une carte à publier ne pose pas de question : elle annonce un chiffre. Sa
   // « réponse » est donc le chiffre suivi de sa phrase, qui se lisent d'un
   // trait — « 1 320 € par mois au minimum, pour une personne seule. »
-  const question = affiche ? texteDe(carte, ".surtitre") : texteDe(carte, "h3");
+  const question = affiche ? texteDe(carte, ".surtitre") : texteDe(carte, ":scope > h2");
   const reponse = affiche
     ? [texteDe(carte, ".chiffre"), texteDe(carte, ".phrase")]
       .filter(Boolean).join(" ")

@@ -8491,7 +8491,7 @@ function casTypes(contexte, regards = null) {
   const panneaux = GRILLES_CAS_TYPES.map(([scenario, , titre, alt, lecture], rang) => (
     `<div class="panneau" data-onglet="${scenario}"`
     + (rang === 0 ? "" : " hidden") + ">"
-    + `<h3>${echapper(titre)} ${badgeScenario(scenario)}</h3>${grille(scenario, alt)}`
+    + `<h2>${echapper(titre)} ${badgeScenario(scenario)}</h2>${grille(scenario, alt)}`
     + `<p class="discret">${echapper(lecture + (departs[scenario] ?? ""))}</p></div>`
   )).join("");
 

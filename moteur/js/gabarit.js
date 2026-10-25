@@ -927,15 +927,17 @@ export function mot(terme, definition) {
  * autres. Une liste à puces dirait la même chose, mais elle se lit de haut en
  * bas et donne au premier point une importance que les autres n'ont pas.
  *
- * Les titres sont de vrais `<h3>` : c'est par eux qu'une synthèse vocale
- * parcourt une page. `texte` est du HTML.
+ * Les titres sont de vrais titres : c'est par eux qu'une synthèse vocale
+ * parcourt une page. Des `<h2>`, parce que les points se posent sous le titre
+ * de la page, et qu'un `<h3>` y sauterait un niveau (action 174). `texte` est
+ * du HTML.
  */
 export function points(entrees) {
   if (!entrees.length) {
     return "";
   }
   const corps = entrees
-    .map(([titre, texte]) => `<div class="point"><h3>${echapper(titre)}</h3>`
+    .map(([titre, texte]) => `<div class="point"><h2>${echapper(titre)}</h2>`
       + `<p>${texte}</p></div>`)
     .join("");
   return `<div class="points">${corps}</div>`;
@@ -983,7 +985,7 @@ export function depliant(titre, corps, identifiant = "") {
  */
 const SECTION_DU_PLAN = new RegExp(
   '<details class="section" id="([^"]+)"><summary>.*?<span>(.*?)</span></summary>'
-  + '|<section class="cle" id="([^"]+)" tabindex="-1"><h3>(.*?)</h3>',
+  + '|<section class="cle" id="([^"]+)" tabindex="-1"><h2>(.*?)</h2>',
   "g",
 );
 
@@ -1052,6 +1054,9 @@ export function barrePartage() {
  * capture d'écran de ce bloc porte la question, la réponse, le graphique et sa
  * source — elle se comprend hors du site.
  *
+ * La question est un `<h2>` : les cartes se posent sous le titre de la page,
+ * et un `<h3>` y sauterait un niveau (action 174).
+ *
  * `reponse` et `source` sont du HTML ; `question` est du texte.
  */
 export function cle(question, reponse, corps, source = "", identifiant = "") {
@@ -1075,7 +1080,7 @@ export function cle(question, reponse, corps, source = "", identifiant = "") {
   // Identifiée, la carte est joignable depuis le plan de la page ; le
   // `tabindex` lui permet de recevoir le focus quand on y arrive par lui.
   const cible = identifiant ? ` id="${echapper(identifiant)}" tabindex="-1"` : "";
-  return `<section class="cle"${cible}><h3>${echapper(question)}</h3>`
+  return `<section class="cle"${cible}><h2>${echapper(question)}</h2>`
     + `<p class="reponse">${reponse}</p>${corps}${fin}${partage}</section>`;
 }
 

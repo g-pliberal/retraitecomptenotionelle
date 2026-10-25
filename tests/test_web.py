@@ -2395,6 +2395,23 @@ def test_toute_zone_defilante_est_atteignable_au_clavier(chemin):
         )
 
 
+@pytest.mark.parametrize("chemin", [*TITRES, "résultats"])
+def test_aucun_titre_ne_saute_un_niveau(page, chemin):
+    """Une synthèse vocale parcourt une page par ses titres : un ``<h3>`` posé
+    sous le ``<h1>``, sans ``<h2>`` entre eux, lui fait croire qu'une partie
+    manque. WCAG 1.3.1, et la règle ``heading-order`` d'axe, que joue
+    Lighthouse (action 174) : comme elle, on ne lit que ce que la page montre
+    à l'ouverture, hors des sections repliées et des onglets cachés."""
+    rendu = page("/simuler", **SIMULATION_TEMOIN) if chemin == "résultats" else page(chemin)
+    titres = [(int(niveau), html.unescape(re.sub(r"<[^>]+>", "", texte)).strip()[:50])
+              for niveau, texte in re.findall(r"<h([1-6])\b[^>]*>(.*?)</h\1>",
+                                               _hors_depliants(rendu), re.S)]
+    sauts = [f"h{avant} « {titre_avant} » → h{apres} « {titre} »"
+             for (avant, titre_avant), (apres, titre) in zip(titres, titres[1:])
+             if apres > avant + 1]
+    assert not sauts, f"{chemin} : {sauts}"
+
+
 @pytest.mark.parametrize("chemin", list(TITRES))
 def test_aucune_information_ne_vit_dans_une_infobulle(chemin):
     """``title`` ne s'ouvre ni au clavier, ni au doigt, ni sous synthèse vocale.
@@ -4284,7 +4301,7 @@ def test_chaque_carte_de_la_page_cout_porte_sa_question_et_sa_reponse():
     cartes = re.findall(r'<section class="cle"[^>]*>(.*?)</section>', corps, re.S)
     assert len(cartes) == 3, f"{len(cartes)} cartes, trois attendues"
     for carte in cartes:
-        titre = re.match(r"<h3>(.*?)</h3>", carte, re.S)
+        titre = re.match(r"<h2>(.*?)</h2>", carte, re.S)
         assert titre, carte[:80]
         assert titre.group(1).endswith("?"), (
             f"une carte ne pose pas de question : {titre.group(1)}"

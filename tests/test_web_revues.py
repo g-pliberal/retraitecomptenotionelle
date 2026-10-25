@@ -613,7 +613,7 @@ def test_chaque_tableau_de_scenarios_distingue_proposition_et_contrefactuel():
     Le système actuel n'en a pas : c'est la référence.
     """
     cas_types = rendre("/cas-types", {})[1]
-    titres = re.findall(r'<div class="panneau" data-onglet="([^"]+)"[^>]*><h3>.*?'
+    titres = re.findall(r'<div class="panneau" data-onglet="([^"]+)"[^>]*><h2>.*?'
                         r'<span class="badge (\w+)">', cas_types)
     assert titres == [("notionnel_liberal", "proposition")] + [
         (code, "contrefactuel") for code in ("notionnel_retroactif",
