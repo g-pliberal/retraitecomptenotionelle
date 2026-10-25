@@ -242,7 +242,13 @@ rangs ; la part de chaque nature y suit désormais la masse de sa classe,
 1,80 fois celle de l'échantillon aux classes p10 et p25, 0,24 fois aux classes
 p95 et p99, et les femmes nées en 1950 comptent 4,60 années de maladie,
 d'AVPF et de chômage, et non plus 3,42, pour 4,53 que l'échantillon leur
-trouve.
+trouve. La vingt-huitième (le 25 octobre 2026) fait entrer plus tôt les
+carrières incomplètes des femmes du salariat privé que leur génération allonge
+au-delà de 21 ans avant l'âge légal (:data:`ALLONGEES_COMME_LES_PLEINES`) :
+elles entraient toutes à 21 ans, l'entrée du gabarit, et la condition d'entrée
+de la carrière longue leur était fermée ; elles entrent désormais comme les
+carrières pleines, à l'âge légal moins leurs années, puis cinquième par
+cinquième au premier trimestre cotisé de leur génération.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -729,6 +735,30 @@ MOTIFS_DES_NATURES = ("service_militaire", "maladie", "education_enfant", "choma
 #: quelques-unes, et les plus courtes portent le reste. La douzième version.
 DUREE_DES_FEMMES_SELON_LA_GENERATION = True
 
+#: La vingt-huitième version (action 138, étape 14, le 25 octobre 2026) : les
+#: carrières allongées entrent comme les pleines. Sous
+#: :data:`DUREE_DES_FEMMES_SELON_LA_GENERATION`, une carrière incomplète de
+#: femme gagne les années de sa génération sans passer l'âge légal, depuis
+#: l'entrée du gabarit, 21 ans : celle de trente à quarante ans, qui en gagne
+#: six en 1950 et douze en 1955, y butait, 39 années de 21 à 60 ans, 41 de 21
+#: à 62, et la condition d'entrée de la carrière longue, des trimestres cotisés
+#: à la fin de l'année des 16, 17 ou 20 ans (D. 351-1-1), lui était fermée :
+#: 37 % des femmes du régime général de la population, quand l'EIR compte
+#: 13,0 % des nées en 1953 parties en carrière longue. Sous cette constante, la
+#: carrière incomplète d'une femme du salariat privé dont les années ne
+#: tiennent pas entre 21 ans et l'âge légal entre à l'âge légal moins ses
+#: années, jamais avant l'entrée des carrières pleines de sa génération
+#: (:data:`ENTREE_SELON_LA_GENERATION`), qui borne ses années
+#: (:func:`debut_des_annees`) ; puis, comme elles
+#: (:data:`ENTREE_AU_PREMIER_TRIMESTRE`), elle se décline en cinquièmes, chacun
+#: entrant à l'âge où sa génération cotise son premier trimestre s'il vient
+#: plus tard, jamais après 21 ans, et validant d'autant moins d'années
+#: (:func:`allongees_au_premier_trimestre`) : la carrière finit où elle
+#: finissait. Elle garde ses années assimilées, au chômage, comme toute
+#: carrière incomplète ; le calage de la durée des femmes la compte à l'entrée
+#: de sa génération, comme il compte les carrières pleines.
+ALLONGEES_COMME_LES_PLEINES = True
+
 #: La persistance au Smic : une part des carrières du salariat privé de chaque
 #: sexe est payée le Smic toute la carrière. Celle de la coupe de l'année à
 #: temps complet sous :data:`SEUIL_VOISINAGE` fois le Smic, en moyenne des
@@ -1059,12 +1089,14 @@ class CasTypeLarge(CasType):
         """Les interruptions de cette génération : celles du cas type, ou, pour
         une carrière incomplète dont la durée suit la génération (``cibles``,
         :data:`DUREE_DES_FEMMES_SELON_LA_GENERATION`), celles de ses années
-        validées de cette génération (:func:`decalages_de_tranche`)."""
+        validées de cette génération, comptées de son entrée
+        (:func:`decalages_de_tranche`)."""
         if not self.cibles:
             return self.interruptions_relatives
         base, duree, assimilee, etalee = self.tranche_de_base
         cible = int(round(_par_generation(self.cibles, generation, 0.0)))
-        return decalages_de_tranche(base, duree, cible, assimilee, etalee, self.age_debut)
+        return decalages_de_tranche(base, duree, cible, assimilee, etalee,
+                                    self.debut_de(generation))
 
     def debut_de(self, generation: int) -> float:
         """L'âge d'entrée de cette génération : celui des ``entrees``, paires
@@ -1895,24 +1927,27 @@ def age_du_premier_trimestre(parts: dict[int, dict[int, float]], generation: int
 
 
 def classes_d_entree(regle: tuple[tuple[int, float], ...], parts: dict[int, dict[int, float]],
-                     valides: dict[int, dict[int, float]] | None = None
+                     valides: dict[int, dict[int, float]] | None = None,
+                     au_plus_tard: float | None = None
                      ) -> list[tuple[int, tuple[tuple[int, float], ...],
                                      tuple[tuple[int, float], ...], float]]:
     """Les cinquièmes d'une carrière pleine (:data:`ENTREE_AU_PREMIER_TRIMESTRE`),
     ``(rang, entrées, services, poids)`` : chacun entre, génération par
     génération, à l'âge où sa génération cotise le premier trimestre du milieu
     de son cinquième (:func:`age_du_premier_trimestre`), ou à celui de
-    ``regle`` s'il vient plus tard. Sous ``valides``, la part des affiliés qui
-    ont validé un trimestre, il fait son service national les années d'avant,
-    depuis l'âge où sa génération valide ce premier trimestre, jamais avant
-    celui de ``regle`` (:data:`SERVICE_AVANT_LE_PREMIER_TRIMESTRE`) ; sans
-    elles, ``services`` est vide. Ceux qui entrent au même âge et servent les
-    mêmes années à chaque génération n'en font qu'un, sous le rang du premier."""
+    ``regle`` s'il vient plus tard, et à ``au_plus_tard`` au plus tard s'il est
+    donné. Sous ``valides``, la part des affiliés qui ont validé un trimestre,
+    il fait son service national les années d'avant, depuis l'âge où sa
+    génération valide ce premier trimestre, jamais avant celui de ``regle``
+    (:data:`SERVICE_AVANT_LE_PREMIER_TRIMESTRE`) ; sans elles, ``services`` est
+    vide. Ceux qui entrent au même âge et servent les mêmes années à chaque
+    génération n'en font qu'un, sous le rang du premier."""
+    borne = math.inf if au_plus_tard is None else au_plus_tard
     classes: dict[tuple, list] = {}
     for rang in range(CLASSES_D_ENTREE):
         milieu = (2 * rang + 1) / (2 * CLASSES_D_ENTREE)
-        entrees = tuple((generation, max(age, float(age_du_premier_trimestre(
-            parts, generation, milieu)))) for generation, age in regle)
+        entrees = tuple((generation, min(borne, max(age, float(age_du_premier_trimestre(
+            parts, generation, milieu))))) for generation, age in regle)
         services: tuple[tuple[int, float], ...] = ()
         if valides is not None:
             services = tuple(
@@ -2112,13 +2147,15 @@ def natures_a_leur_part(classes: list[tuple[int, tuple[tuple[int, float], ...],
 
 def masses_moyennes(variantes: list[Variante]) -> dict[str, float]:
     """La part assimilée moyenne des carrières pleines qui entrent selon leur
-    génération, hors des départs avec surcote, de chaque sexe de
+    génération, hors des départs avec surcote et des carrières incomplètes
+    allongées (:data:`ALLONGEES_COMME_LES_PLEINES`), de chaque sexe de
     :data:`NATURES_SELON_LE_RANG` : celle de chaque carrière, que sa classe de
     centiles tient de l'EIR (:data:`ASSIMILEES_SELON_LE_RANG`), pesée par sa
     part de la Cnav, comme sous :func:`parts_des_tranches`."""
     masses: dict[str, list[float]] = {}
     for v in variantes:
-        if v.cas.sexe in NATURES_SELON_LE_RANG and v.cas.entrees and not v.surcote:
+        if (v.cas.sexe in NATURES_SELON_LE_RANG and v.cas.entrees and not v.cas.cibles
+                and not v.surcote):
             somme = masses.setdefault(v.cas.sexe, [0.0, 0.0])
             somme[0] += v.retraites[0][1] * v.cas.tranche_de_base[2]
             somme[1] += v.retraites[0][1]
@@ -2161,6 +2198,27 @@ def refaire_le_bloc(interruptions: dict[int, str], annees: tuple[int, int, int, 
         interruptions[annee] = motif
 
 
+def allongees_au_premier_trimestre(v: Variante, parts: dict[int, dict[int, float]]
+                                   ) -> list[Variante]:
+    """Une carrière incomplète allongée (:data:`ALLONGEES_COMME_LES_PLEINES`)
+    en ses cinquièmes (:func:`classes_d_entree`) : chacun entre, génération par
+    génération, à l'âge où sa génération cotise le premier trimestre de son
+    rang s'il vient après celui de la carrière, jamais après l'entrée de son
+    cas type, et valide d'autant moins d'années, sa carrière finissant où elle
+    finissait ; il garde sa part assimilée. Le premier cinquième garde son
+    code, les autres prennent leur rang, « ~entree4 »."""
+    sortie = []
+    for rang, entrees, _, poids in classes_d_entree(v.cas.entrees, parts,
+                                                    au_plus_tard=float(v.cas.age_debut)):
+        cibles = tuple((generation, cible - (siennes - entree))
+                       for (generation, cible), (_, entree), (_, siennes)
+                       in zip(v.cas.cibles, v.cas.entrees, entrees))
+        code = v.cas.code if rang == 1 else f"{v.cas.code}~entree{rang}"
+        sortie.append(v.fois(poids, cas=replace(v.cas, code=code, entrees=entrees,
+                                                cibles=cibles)))
+    return sortie
+
+
 def entrees_au_premier_trimestre(variantes: list[Variante], racine: Path) -> list[Variante]:
     """Chaque carrière pleine qui entre selon sa génération, hors des départs
     avec surcote, en ses cinquièmes (:func:`classes_d_entree`), ceux des hommes
@@ -2172,7 +2230,10 @@ def entrees_au_premier_trimestre(variantes: list[Variante], racine: Path) -> lis
     :data:`NATURES_SELON_LE_RANG` (:func:`natures_au_rang`) : le premier
     cinquième garde son code, les autres prennent leur rang, « ~entree3 » ; la
     classe de nature de rang zéro garde celui de son cinquième, les autres
-    prennent leur rang, « ~nature1 » ; les autres variantes telles quelles."""
+    prennent leur rang, « ~nature1 ». Une carrière incomplète allongée
+    (:data:`ALLONGEES_COMME_LES_PLEINES`) se décline en ses seuls cinquièmes
+    (:func:`allongees_au_premier_trimestre`) ; les autres variantes telles
+    quelles."""
     parts = premiers_trimestres(racine)
     valides = ({"H": premiers_trimestres(racine, "valide")["H"]}
                if SERVICE_AVANT_LE_PREMIER_TRIMESTRE else {})
@@ -2185,6 +2246,9 @@ def entrees_au_premier_trimestre(variantes: list[Variante], racine: Path) -> lis
     for v in variantes:
         if not v.cas.entrees or v.surcote:
             sortie.append(v)
+            continue
+        if v.cas.cibles:
+            sortie.extend(allongees_au_premier_trimestre(v, parts[v.cas.sexe]))
             continue
         assimilees = v.assimilees if a_leur_part else None
         facteur = (v.cas.tranche_de_base[2] / moyennes[v.cas.sexe]
@@ -2593,7 +2657,7 @@ def salaires_population(variantes: list[Variante],
                            plancher_smic=PLANCHER_SMIC, volumes=volumes,
                            entrees=(donnees.entrees[cas.sexe]
                                     if ENTREE_SELON_LA_GENERATION and v.tranche == "40_plus"
-                                    else ()))
+                                    else cas.entrees))
             classes = [(rang, part)]
             if nom == CENTILES[0][0] and (PERSISTANCE_SMIC or SOUS_CLASSES_DU_BAS > 1):
                 persistants = (donnees.persistants[cas.sexe] * part / base
@@ -2952,25 +3016,39 @@ def incomplete(v: Variante) -> bool:
     return v.groupe in GROUPES_INTERROMPUS and v.tranche not in (None, "40_plus")
 
 
-def annees_incompletes(v: Variante, ecart: float, legal: float) -> float:
+def annees_incompletes(v: Variante, ecart: float, legal: float,
+                       debut: float | None = None) -> float:
     """Les années validées d'une carrière incomplète, ``ecart`` gagné ou perdu :
-    une au moins, et pas au-delà de l'âge légal de sa génération."""
-    return min(max(1.0, v.duree + ecart), legal - v.cas.age_debut)
+    une au moins, et pas plus que de ``debut``, son entrée par défaut, à l'âge
+    légal de sa génération."""
+    return min(max(1.0, v.duree + ecart), legal - (v.cas.age_debut if debut is None else debut))
+
+
+def debut_des_annees(v: Variante, entree: float) -> float:
+    """L'âge d'où une carrière incomplète de femme compte les années qu'elle
+    peut valider avant l'âge légal : sous :data:`ALLONGEES_COMME_LES_PLEINES`,
+    pour une carrière du salariat privé, ``entree``, celle des carrières pleines
+    de sa génération ; la sienne, sinon."""
+    if ALLONGEES_COMME_LES_PLEINES and v.cas.code.split("~", 1)[0] == GABARIT:
+        return entree
+    return v.cas.age_debut
 
 
 def duree_moyenne_des_femmes(femmes: list[tuple[Variante, float]], ecart: float,
                              legal: float, entree: float) -> float:
     """La durée validée moyenne des femmes d'une génération, en années, comme
     :func:`ecarts_des_femmes` la compte : une carrière incomplète à ses années
-    (:func:`annees_incompletes`), une carrière pleine de l'entrée à l'âge légal
-    — à ``entree`` pour le salariat privé —, les deux avec les majorations de
+    (:func:`annees_incompletes`), bornées depuis ``entree`` sous
+    :data:`ALLONGEES_COMME_LES_PLEINES` pour le salariat privé
+    (:func:`debut_des_annees`), une carrière pleine de l'entrée à l'âge légal —
+    à ``entree`` pour le salariat privé —, les deux avec les majorations de
     durée de ses enfants, huit trimestres chacun ; une carrière statutaire à sa
     durée."""
     majoration = 2.0 * ENFANTS
     somme = total = 0.0
     for v, p in femmes:
         if incomplete(v):
-            annees = annees_incompletes(v, ecart, legal) + majoration
+            annees = annees_incompletes(v, ecart, legal, debut_des_annees(v, entree)) + majoration
         elif v.groupe in GROUPES_INTERROMPUS:
             debut = entree if v.cas.code.split("~", 1)[0] == GABARIT else v.cas.age_debut
             annees = legal - debut + majoration
@@ -3016,22 +3094,32 @@ def femmes_selon_la_generation(variantes: list[Variante], effectifs,
                                racine: Path) -> list[Variante]:
     """Les carrières incomplètes des femmes, chacune à ses années validées de
     chaque génération (:func:`ecarts_des_femmes`, :func:`annees_incompletes`),
-    à l'année près ; les autres variantes telles quelles."""
+    à l'année près ; sous :data:`ALLONGEES_COMME_LES_PLEINES`, celle du
+    salariat privé dont les années ne tiennent pas entre son entrée et l'âge
+    légal entre à l'âge légal moins ses années, à l'année près, chaque
+    génération ; les autres variantes telles quelles."""
     from retraite_notionnelle.scenarios.actuel import AgesOuverture
 
     legaux = AgesOuverture(racine)
     ecarts = ecarts_des_femmes(variantes, effectifs, source, racine)
+    pleines = entrees_des_carrieres_pleines(racine)["F"]
     sortie = []
     for v in variantes:
         if v.cas.sexe != "F" or not incomplete(v):
             sortie.append(v)
             continue
-        cibles = []
+        cibles, entrees = [], []
         for generation, ecart in sorted(ecarts.items()):
             lu = legaux.age(generation)
             legal = lu[0] if lu is not None else 60.0
-            cibles.append((generation, float(round(annees_incompletes(v, ecart, legal)))))
-        sortie.append(replace(v, cas=replace(v.cas, cibles=tuple(cibles))))
+            debut = debut_des_annees(v, _par_generation(pleines, generation, v.cas.age_debut))
+            cible = float(round(annees_incompletes(v, ecart, legal, debut)))
+            cibles.append((generation, cible))
+            entrees.append((generation, min(float(v.cas.age_debut),
+                                            max(debut, float(round(legal - cible))))))
+        allongee = any(age < v.cas.age_debut for _, age in entrees)
+        sortie.append(replace(v, cas=replace(v.cas, cibles=tuple(cibles),
+                                             entrees=tuple(entrees) if allongee else ())))
     return sortie
 
 

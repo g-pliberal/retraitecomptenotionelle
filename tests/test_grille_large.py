@@ -1382,6 +1382,72 @@ def test_les_carrieres_des_femmes_suivent_la_duree_de_leur_generation(simulateur
     assert validees[1935] < courte.duree < validees[1965]
 
 
+def test_les_carrieres_allongees_entrent_comme_les_pleines(simulateur, source, parametres,
+                                                           monkeypatch):
+    """Sous ``ALLONGEES_COMME_LES_PLEINES``, la carrière incomplète d'une femme
+    du salariat privé dont les années de sa génération ne tiennent pas entre
+    21 ans, l'entrée du gabarit, et l'âge légal entre plus tôt : à l'âge légal
+    moins ses années, jamais avant l'entrée des carrières pleines de sa
+    génération, qui borne ses années ; puis, cinquième par cinquième, à l'âge
+    où sa génération cotise son premier trimestre s'il vient plus tard, jamais
+    après 21 ans, ses années bornées par l'âge légal. Nées en 1955, parties à
+    62 ans, les carrières pleines entrent à 18 ans (62 − 44,4, arrondi) : la
+    carrière de trente à quarante ans, que sa génération allonge de plus de
+    neuf années, en valide 44, et non 41 ; les nées en 1955 cotisent leur
+    premier trimestre aux rangs 0,1 à 0,9 à 16, 17, 18, 19 et 21 ans, et ses
+    cinquièmes entrent à 18 ans pour trois, à 19 et à 21, pour 44, 43 et 41
+    années. Celle de la classe p95, une année assimilée sur trente-neuf, au
+    chômage, entrée à 18 ans, compte à 60 ans 168 trimestres cotisés ou
+    réputés tels — quarante-deux années, dont les quatre trimestres de chômage
+    que D. 351-1-2 répute depuis avril 2014 —, pour les 166 de sa génération :
+    elle part à 60 ans en carrière longue ; entrée à 21 ans, à 62 ans au taux
+    plein, comme avant. La carrière garde son poids ; celle de dix à vingt
+    ans, qui tient entre 21 ans et l'âge légal, et celles des hommes gardent
+    leur entrée ; les carrières pleines, leurs cinquièmes et leurs natures, que
+    la masse assimilée des seules carrières pleines règle
+    (``NATURES_SELON_LE_RANG``)."""
+    assert G.ALLONGEES_COMME_LES_PLEINES
+    racine = parametres.racine_donnees
+    assert G._par_generation(G.entrees_des_carrieres_pleines(racine)["F"], 1955, 21.0) == 18.0
+    parts = G.premiers_trimestres(racine)["F"]
+    assert [G.age_du_premier_trimestre(parts, 1955, rang) for rang in (0.1, 0.3, 0.5, 0.7, 0.9)
+            ] == [16, 17, 18, 19, 21]
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    poids = _poids(variantes, simulateur.effectifs, source.millesime)
+    trente = f"{G.GABARIT}~f~30_40~p95"
+    classes = [v for v in variantes
+               if v.cas.code == trente or v.cas.code.startswith(f"{trente}~entree")]
+    total = sum(poids[v.cas.code] for v in classes)
+    repartition: dict[tuple[float, float], float] = {}
+    for v in classes:
+        cle = (v.cas.debut_de(1955), G._par_generation(v.cas.cibles, 1955, 0.0))
+        repartition[cle] = repartition.get(cle, 0.0) + poids[v.cas.code] / total
+    assert repartition == pytest.approx({(18.0, 44.0): 0.6, (19.0, 43.0): 0.2,
+                                         (21.0, 41.0): 0.2})
+    projection = simulateur.pour_la_projection()
+    tot = next(v for v in classes if v.cas.debut_de(1955) == 18.0)
+    tard = next(v for v in classes if v.cas.debut_de(1955) == 21.0)
+    lignes = tot.cas.carriere_a(simulateur, 1955, 62.0).lignes
+    assert [l.annee - 1955 for l in lignes if l.type_periode in (
+        "emploi", "chomage_indemnise")] == list(range(18, 62))
+    assert sum(1 for l in lignes if l.type_periode == "chomage_indemnise") == 1
+    assert G.condition_au_depart(projection, tot.cas, 1955) == (
+        pytest.approx(60.0), "carriere_longue")
+    assert G.condition_au_depart(projection, tard.cas, 1955) == (
+        pytest.approx(62.0), "taux_plein_autre")
+    par_code = {v.cas.code: v.cas for v in variantes}
+    assert par_code[f"{G.GABARIT}~f~10_20~p50"].debut_de(1955) == 21
+    assert par_code[f"{G.GABARIT}~h~30_40~p95"].debut_de(1955) == 21
+    monkeypatch.setattr(G, "ALLONGEES_COMME_LES_PLEINES", False)
+    avant = {v.cas.code: v for v in G.grille("population", simulateur.effectifs, source, ())}
+    assert avant[trente].cas.debut_de(1955) == 21
+    assert G._par_generation(avant[trente].cas.cibles, 1955, 0.0) == 41.0
+    assert _poids(list(avant.values()), simulateur.effectifs,
+                  source.millesime)[trente] == pytest.approx(total)
+    assert {v.cas.code: v.cas for v in variantes if v.tranche == "40_plus"} == {
+        code: v.cas for code, v in avant.items() if v.tranche == "40_plus"}
+
+
 def test_les_quintiles_eqcc_se_lisent_dans_le_fichier_certifie(parametres):
     """Les quintiles de la pension en équivalent carrière complète de l'EIR
     2020 : 23,1 % des femmes du premier ont moins de dix années validées hors
