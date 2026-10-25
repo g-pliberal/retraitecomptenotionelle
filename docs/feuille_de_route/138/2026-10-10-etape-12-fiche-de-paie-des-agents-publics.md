@@ -5,11 +5,11 @@ micro-entrepreneur (14 au 18) ; l'indépendant en cumul (19) ; le RCI en cumul
 et son versement unique (23) ; le 24, la classe du cumul, puis la base des
 non-salariés, suspendue les mois que le dépassement épuise, et la durée requise
 des libéraux ; le 25, aux pages, les phrases du RCI, de sa complémentaire
-réduite, du notaire libéral, du mois hors de la suspension. Reste, une session
-par point : la veille du projet de loi de financement pour 2027 ; aux pages,
-l'Ircantec, encore comptée avec la base. Au propriétaire : le RCO et le NRCO
-d'avant 2009 (action 89) ; la part de base de D. 133-4 de 2016 à 2019. Détail :
-`…-phrases-du-cumul.md`.
+réduite, du notaire libéral, du mois hors de la suspension, puis l'Ircantec,
+dite à part de la base. Reste, une session : la veille du projet de loi de
+financement pour 2027. Au propriétaire : le RCO et le NRCO d'avant 2009
+(action 89) ; la part de base de D. 133-4 de 2016 à 2019. Détail :
+`…-ircantec-a-part.md`.
 
 **Le 10 octobre 2026, la demande.** Le propriétaire : porter sur la fiche de
 paie, en Python puis en JavaScript, la cotisation de la RAFP sur les primes,
