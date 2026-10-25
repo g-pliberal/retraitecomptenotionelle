@@ -18,6 +18,7 @@ import json
 import shutil
 import subprocess
 import tempfile
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -451,6 +452,37 @@ def test_le_pilote_date_un_depart_sans_rien_liquider(simulateur, cas):
     assert liquidation.appels() == avant
     assert age == cas.age_liquidation_pour(simulateur, 1960)
     assert pilote.age_de_depart(simulateur, cas, 1960, "absolu") == cas.age_liquidation
+
+
+def test_le_pilote_fait_attendre_l_age_d_annulation_a_une_carriere_qui_ne_valide_plus(
+        simulateur):
+    """Une carrière sans activité n'atteint pas sa durée en attendant. Né en
+    1955, entré à vingt ans et sans activité après quarante et une années, un
+    salarié a 164 trimestres des 166 de sa génération dès l'âge légal, et les
+    garde : il n'a le taux plein qu'à l'âge d'annulation de la décote, 67 ans
+    pour les nés depuis 1955 (L. 351-8, 1°), et part avant lui au taux de
+    50 − 2 × 0,625 = 48,75 % (R. 351-27). Le pilote datait sa durée comme s'il
+    validait encore quatre trimestres par an (``ouvrir.age_taux_plein_droit``)
+    et s'arrêtait au bout de ses passes (:data:`pilote.PASSES_LIQUIDATION`) :
+    de 64 ans, l'âge écrit, à 64 ans et demi, 65, 65 et demi et 66, où il le
+    faisait partir décoté, quand sa règle le fait partir au taux plein. Il ne
+    liquide toujours rien."""
+    cas = replace(next(c for c in CAS_TYPES if c.code == "salaire_moyen"),
+                  code="salaire_moyen~inactif", age_debut=20,
+                  interruptions_relatives=tuple((decalage, "inactivite")
+                                                for decalage in range(41, 51)))
+    assert cas.sexe == "H" and cas.nombre_enfants == 0
+
+    def au_depart(age: float):
+        return simulateur.echeancier(cas.carriere_a(simulateur, 1955, age)).au_depart
+
+    assert (au_depart(62.0).trimestres_valides, au_depart(62.0).trimestres_requis) == (164, 166)
+    assert au_depart(66.0).taux_liquidation == pytest.approx(0.50 - 2 * 0.00625)
+    avant = liquidation.appels()
+    age = pilote.age_de_depart(simulateur, cas, 1955)
+    assert liquidation.appels() == avant
+    assert age == pytest.approx(67.0)
+    assert au_depart(age).taux_liquidation == pytest.approx(0.50)
 
 
 # -- le nombre d'appels déclaré ----------------------------------------------------

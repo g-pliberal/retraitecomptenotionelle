@@ -1258,7 +1258,9 @@ def age_taux_plein_droit(moteur, carriere: Carriere) -> float | None:
       simuler : il manque à cette carrière ``requis - acquis`` trimestres,
       et une année pleine en rend quatre. La soustraction est signée — une
       carrière qui a déjà trop de trimestres l'avait donc atteinte plus
-      tôt, et la règle le lit dans le même calcul ;
+      tôt, et la règle le lit dans le même calcul. Une carrière sans
+      activité n'en rend aucun : le pilote, qui la connaît à tout âge, la
+      reprend de l'âge d'annulation (:func:`~retraite_notionnelle.pilote.age_de_depart`) ;
     * l'âge d'annulation de la décote, qui donne le taux plein sans
       condition de durée. C'est lui qui borne : au-delà, attendre ne
       rapporte plus de taux, et les cas types ne surcotent pas.

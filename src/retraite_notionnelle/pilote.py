@@ -53,6 +53,8 @@ VARIANTES_LIQUIDATION: tuple[str, ...] = ("droit", "absolu")
 #: l'ANNÉE de liquidation — celle de la SNCF et celle des IEG montent d'un
 #: trimestre par millésime —, si bien que déplacer l'âge déplace la réponse.
 #: Deux passes suffisent partout dans la grille ; les deux autres sont la marge.
+#: Elles ne suffisent pas à une carrière qui ne valide plus, que
+#: :func:`age_de_depart` reprend de l'âge d'annulation de la décote.
 PASSES_LIQUIDATION = 4
 
 
@@ -80,6 +82,20 @@ def age_de_depart(simulateur: Simulateur, cas: CasType, generation: int,
     refuse. Dans ce cas la règle ne descend pas plus bas que l'âge que ce
     départ-là confirme, et reste où elle est s'il n'y en a pas de plus
     précoce.
+
+    **Le taux plein d'une carrière qui ne valide plus.** Le droit date la
+    durée requise comme si la carrière validait encore quatre trimestres par
+    an (:func:`~retraite_notionnelle.droit.ouvrir.age_taux_plein_droit`) :
+    sans activité, à deux trimestres de sa durée, elle montait d'un semestre
+    à chaque passe sans en gagner aucun, et le pilote la laissait au bout des
+    siennes avant l'âge d'annulation, avec la décote que sa règle lui refuse
+    — un salarié né en 1955 partait à 66 ans au taux de 48,75 %. Quand la
+    montée s'arrête sur un âge où la carrière n'a pas le taux plein, la
+    recherche reprend donc de l'âge d'annulation de la décote, où le droit le
+    sert sans condition de durée
+    (:func:`~retraite_notionnelle.droit.ouvrir.age_annulation_droit`), et
+    descend comme toute autre jusqu'à l'âge où la carrière a sa durée, s'il
+    en est un avant lui (action 138, étape 14).
     """
     if variante not in VARIANTES_LIQUIDATION:
         raise ValueError(
@@ -94,8 +110,21 @@ def age_de_depart(simulateur: Simulateur, cas: CasType, generation: int,
         raise ValueError(
             f"règle de liquidation inconnue : {cas.regle_liquidation!r}"
         )
-    return point_fixe(cas.age_liquidation,
-                      lambda age: age_propose(simulateur, cas, generation, age))
+    proposes: dict[float, float | None] = {}
+
+    def proposer(age: float) -> float | None:
+        if age not in proposes:
+            proposes[age] = age_propose(simulateur, cas, generation, age)
+        return proposes[age]
+
+    age = point_fixe(cas.age_liquidation, proposer)
+    if cas.regle_liquidation != "taux_plein":
+        return age
+    propose = proposer(age)
+    if propose is None or propose <= age + 1e-9:
+        return age
+    annulation = age_annulation(simulateur, cas, generation, age)
+    return age if annulation is None else point_fixe(annulation, proposer)
 
 
 def point_fixe(age: float, proposer: Callable[[float], float | None]) -> float:
@@ -146,3 +175,13 @@ def age_propose(simulateur: Simulateur, cas: CasType, generation: int,
         else ouvrir.age_ouverture_droit(actuel, carriere)
     )
     return None if reference is None else reference + cas.ecart_liquidation
+
+
+def age_annulation(simulateur: Simulateur, cas: CasType, generation: int,
+                   age: float) -> float | None:
+    """L'âge d'annulation de la décote que le droit oppose à la carrière du
+    cas type liquidée à ``age``, décalé comme :func:`age_propose` décale le
+    sien : celui d'où :func:`age_de_depart` reprend une montée arrêtée."""
+    carriere = cas._carriere(simulateur, generation, age)
+    annulation = ouvrir.age_annulation_droit(simulateur.scenario_actuel, carriere)
+    return None if annulation is None else annulation + cas.ecart_liquidation
