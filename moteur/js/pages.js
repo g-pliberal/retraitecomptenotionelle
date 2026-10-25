@@ -42,7 +42,8 @@ import { AssietteActivite } from "./assiette.js";
 import { AssietteTva } from "./tva.js";
 import { chargerFrontiere } from "./frontiere.js";
 import {
-  AGIRC_ARRCO as AGIRC_ARRCO_DU_CUMUL, PRIORITE as PRIORITE_DU_CUMUL,
+  AGIRC_ARRCO as AGIRC_ARRCO_DU_CUMUL, COMPLEMENTAIRES_DES_INDEPENDANTS,
+  COMPLEMENTAIRES_DES_LIBERAUX, PRIORITE as PRIORITE_DU_CUMUL,
 } from "./droit/cumul.js";
 import { radiation as radiationALaLimite } from "./droit/limite_age.js";
 import { financer } from "./bilan.js";
@@ -4269,6 +4270,20 @@ function sortDeLaBase(base, periode, groupe) {
           + "est servie entière"
         : `vos revenus restent sous le seuil de votre régime, ${plafond} : votre pension `
           + "est servie entière";
+    case "plafonnee/hors_des_mois_suspendus":
+      // Le dépassement de l'année ne suspend la pension du non-salarié que le
+      // nombre de mois qu'il épuise (D. 634-11-5, D. 643-10-2), que le modèle
+      // place à la fin de l'activité de l'année.
+      if (periode.suspendus === 0) {
+        return `vos revenus dépassent le seuil de votre régime, ${plafond}, mais le `
+          + "dépassement de l'année n'atteint pas un mois de votre pension nette : elle vous "
+          + "est servie entière";
+      }
+      return `vos revenus dépassent le seuil de votre régime, ${plafond}, mais le dépassement `
+        + "de l'année, rapporté à votre pension nette, ne la suspend "
+        + (periode.suspendus === 1 ? "qu'un mois, le dernier"
+          : `que ${periode.suspendus} mois, les derniers`)
+        + " : jusque-là, elle vous est servie entière";
     case "plafonnee/quart_de_la_pension":
       return "votre rémunération publique ne dépasse pas le quart de votre pension : elle "
         + "vous est servie entière";
@@ -4334,6 +4349,55 @@ function sortDeLaComplementaire(complementaire) {
     default:
       return "";
   }
+}
+
+/**
+ * Les retraites complémentaires des non-salariés — le RCI, le RCO et le NRCO de
+ * l'artisan et du commerçant, celle de chaque section libérale —, que le cumul
+ * règle sur leur base sans toujours leur en donner le sort (`droit/cumul.js`) :
+ * la page les dit à part, et ce qu'elles perdent.
+ */
+const COMPLEMENTAIRES_DU_NON_SALARIE = new Set([...COMPLEMENTAIRES_DES_INDEPENDANTS,
+  ...COMPLEMENTAIRES_DES_LIBERAUX]);
+
+/**
+ * Ce que le droit fait de la retraite complémentaire d'un non-salarié, quand ce
+ * n'est pas le sort de sa base : une proposition qui suit celle de la base, ou
+ * `""`. Le RCI n'est suspendu qu'avec la base (article 27 de son règlement) ;
+ * depuis juillet 2024, il perd le dépassement comme elle ; pour une première
+ * pension de 2027, ce que les bases n'absorbent pas (L. 161-22, III, A) ; la
+ * complémentaire d'une section, ce que ses statuts disent.
+ */
+function sortDeLaComplementaireDuNonSalarie(complementaire, periode) {
+  if (complementaire === null) return "";
+  switch (`${complementaire.statut}/${complementaire.motif}`) {
+    case "suspendue/depassement":
+      return " ; votre retraite complémentaire l'est aussi, pour la même durée";
+    case "suspendue/reprise":
+      return " ; votre retraite complémentaire est suspendue : les statuts de votre section "
+        + "la suspendent dès la reprise de votre profession";
+    case "non_due/notaire_liberal":
+      return " ; votre retraite complémentaire ne vous est pas servie : les statuts de votre "
+        + "caisse la disent incompatible avec l'exercice libéral du notariat";
+    case "plafonnee/base_reduite":
+      return " ; votre retraite complémentaire vous est servie entière : elle n'est suspendue "
+        + "qu'avec votre pension de base, que le dépassement ne fait que réduire";
+    case "plafonnee/imputee_sur_la_base":
+      return " ; votre retraite complémentaire vous est servie entière : votre pension de "
+        + "base absorbe toute la réduction";
+    default:
+      break;
+  }
+  if (complementaire.statut !== "reduite") return "";
+  const perte = g.euros(periode.perteComplementaire / periode.mois);
+  if (complementaire.regle === "reduite_comme_la_base_2024") {
+    return ` ; votre retraite complémentaire l'est aussi, ${perte} par mois en moyenne`;
+  }
+  if (complementaire.regle === "imputee_apres_les_bases_2027") {
+    return " ; votre retraite complémentaire perd ce que votre pension de base n'en absorbe "
+      + `pas, ${perte} par mois en moyenne`;
+  }
+  return ` ; votre retraite complémentaire est réduite, ${perte} par mois en moyenne`;
 }
 
 /** Où se sert une pension que l'activité après le départ ouvre, dit au lecteur. */
@@ -4415,10 +4479,11 @@ function droitsDuCumul(contexte, droits) {
       : `${moisDuCumul(periode.debut, periode.fin).replace(/^./, (c) => c.toUpperCase())}, `
         + `votre activité ${periode.texte}.`);
   }
-  const bases = droits.pensions.filter((p) => p.regime !== "agirc_arrco");
+  const bases = droits.pensions.filter((p) => !["agirc_arrco", "rci"].includes(p.regime));
+  const rci = droits.pensions.find((p) => p.regime === "rci");
   const complementaire = droits.pensions.find((p) => p.regime === "agirc_arrco");
-  if (bases.length > 0 || complementaire !== undefined) {
-    const premiere = bases[0] ?? complementaire;
+  if (bases.length > 0 || rci !== undefined || complementaire !== undefined) {
+    const premiere = bases[0] ?? rci ?? complementaire;
     const morceaux = bases.map((p) => {
       const ou = aupresDe(catalogue, p.regime);
       const ecrete = p.plafond !== null && p.brute > p.plafond
@@ -4426,6 +4491,16 @@ function droitsDuCumul(contexte, droits) {
       return `une nouvelle pension de ${g.euros(p.montant)} par an ${ou} — `
         + `${p.trimestres} trimestres, au taux plein${ecrete} —`;
     });
+    // Sous quarante points, un versement unique remplace la pension du RCI
+    // (article 39 de son règlement).
+    if (rci !== undefined) {
+      const points = formatFixe(rci.points, 0, true);
+      morceaux.push(rci.capital !== null
+        ? `une seconde retraite complémentaire des indépendants de ${points} points : moins `
+          + `de quarante, elle vous est versée en une fois, ${g.euros(rci.capital)}`
+        : `une seconde retraite complémentaire des indépendants de ${g.euros(rci.montant)} `
+          + `par an, sur ${points} points`);
+    }
     if (complementaire !== undefined) {
       morceaux.push(`une seconde retraite complémentaire Agirc-Arrco de `
         + `${g.euros(complementaire.montant)} par an, sur `
@@ -4472,26 +4547,43 @@ function cumulEmploiRetraite(contexte, comparaison) {
   if (!cumul) return "";
   const affiliations = contexte.simulateur().affiliations;
   const periodes = [];
+  // Les mois de chaque année où la base est suspendue.
+  const suspendus = new Map();
   for (const tranche of cumul.tranches) {
-    const base = laPlusToucheeDuCumul(
-      tranche.par_regime.filter((p) => !AGIRC_ARRCO_DU_CUMUL.has(p.regime)));
+    const bases = tranche.par_regime.filter((p) => !AGIRC_ARRCO_DU_CUMUL.has(p.regime)
+      && !COMPLEMENTAIRES_DU_NON_SALARIE.has(p.regime));
+    const duNonSalarie = tranche.par_regime
+      .filter((p) => COMPLEMENTAIRES_DU_NON_SALARIE.has(p.regime));
+    const base = laPlusToucheeDuCumul(bases);
+    const complementaireDuNonSalarie = laPlusToucheeDuCumul(duNonSalarie);
     const complementaire = laPlusToucheeDuCumul(
       tranche.par_regime.filter((p) => AGIRC_ARRCO_DU_CUMUL.has(p.regime)));
-    const perteBase = tranche.par_regime.filter((p) => !AGIRC_ARRCO_DU_CUMUL.has(p.regime))
-      .reduce((somme, p) => somme + p.reduction, 0.0) * tranche.mois;
-    const cle = [base?.statut, base?.motif, complementaire?.statut].join("/");
+    const perte = (pensions) => pensions.reduce((somme, p) => somme + p.reduction, 0.0)
+      * tranche.mois;
+    const annee = tranche.debut.annee;
+    if (base?.statut === "suspendue") {
+      suspendus.set(annee, (suspendus.get(annee) ?? 0) + tranche.mois);
+    }
+    // Les mois hors de la suspension se disent par année : chacune a les siens.
+    const cle = [base?.statut, base?.motif, complementaireDuNonSalarie?.statut,
+      complementaireDuNonSalarie?.motif, complementaire?.statut,
+      base?.motif === "hors_des_mois_suspendus" ? annee : ""].join("/");
     const derniere = periodes[periodes.length - 1];
     if (derniere !== undefined && derniere.cle === cle) {
       derniere.fin = tranche.fin;
       derniere.mois += tranche.mois;
-      derniere.perteBase += perteBase;
+      derniere.perteBase += perte(bases);
+      derniere.perteComplementaire += perte(duNonSalarie);
       continue;
     }
     periodes.push({ cle, debut: tranche.debut, fin: tranche.fin, mois: tranche.mois,
-      perteBase, base, complementaire });
+      perteBase: perte(bases), perteComplementaire: perte(duNonSalarie), base,
+      complementaireDuNonSalarie, complementaire });
   }
+  for (const periode of periodes) periode.suspendus = suspendus.get(periode.debut.annee) ?? 0;
   const retenues = periodes.filter((periode) => periode.base !== null);
   const sorts = retenues.map((periode) => sortDeLaBase(periode.base, periode, cumul.groupe)
+    + sortDeLaComplementaireDuNonSalarie(periode.complementaireDuNonSalarie, periode)
     + sortDeLaComplementaire(periode.complementaire));
   // Une seule période : une phrase ; plusieurs : une par période, datée.
   const droit = sorts.length === 1

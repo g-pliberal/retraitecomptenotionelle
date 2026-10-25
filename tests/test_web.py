@@ -4783,3 +4783,299 @@ def test_le_filigrane_ne_paraît_qu_une_fois_et_traverse_l_image():
         assert "toBlob" in page[depart:depart + 600], (
             "le filigrane doit être posé en dernier, juste avant l'export"
         )
+
+
+# -- le cumul emploi-retraite ---------------------------------------------------
+
+# Ce que le droit fait de chaque pension pendant l'activité exercée après le
+# départ, dit par la page de résultats (`cumulEmploiRetraite`, `droitsDuCumul`).
+# La retraite complémentaire d'un non-salarié — le RCI, le RCO et le NRCO de
+# l'artisan et du commerçant, celle d'une section libérale — suit sa base sans
+# toujours en partager le sort : la page la dit à part, avec ce qu'elle perd,
+# au lieu de la compter dans la base (action 138, étape 12, notes du 23 et du
+# 24 octobre 2026). Les carrières sont celles des témoins de simulation du même
+# nom (`scripts/construire_temoins.py`), au profil de leur cas de base, que la
+# saisie déduirait sinon du statut.
+_CUMUL_ARTISAN_2024 = {
+    "profil": "ascendant", "naissance": "1960", "statut": "artisan", "debut": "26",
+    "liquidation": "62.25", "emploi_retraite": "2022-08", "emploi_retraite_fin": "2025-02",
+    "emploi_retraite_salaire": "0.6",
+}
+_CUMUL_COMMERCANT_SUSPENDU_2013 = {
+    "profil": "ascendant", "naissance": "1952", "statut": "commercant", "debut": "26",
+    "liquidation": "61", "emploi_retraite": "2013-08", "emploi_retraite_fin": "2015-02",
+}
+_CUMUL_ARTISAN_CARRIERE_LONGUE_2028 = {
+    "profil": "ascendant", "naissance": "1968", "statut": "artisan", "debut": "17",
+    "liquidation": "60", "emploi_retraite": "2029-02", "emploi_retraite_fin": "2032-02",
+    "emploi_retraite_salaire": "0.6",
+}
+_CUMUL_NOTAIRE_CPRN_2022 = {
+    "profil": "ascendant", "naissance": "1960", "debut": "26", "metier2_debut": "30",
+    "metier2_statut": "notaire", "liquidation": "62.25", "emploi_retraite": "2022-08",
+    "emploi_retraite_fin": "2024-02", "emploi_retraite_statut": "notaire",
+    "emploi_retraite_salaire": "0.3",
+}
+_SECONDE_PENSION_ARTISANE_AU_MINIMUM_2026 = {
+    "profil": "ascendant", "naissance": "1960", "sexe": "F", "debut": "20",
+    "liquidation": "62.25", "unite_revenu": "moyen", "salaire": "1",
+    "emploi_retraite": "2024-01", "emploi_retraite_fin": "2026-01",
+    "emploi_retraite_salaire": "0.1", "emploi_retraite_statut": "artisan",
+}
+_SECONDE_PENSION_COMMERCANT_2025 = {
+    "profil": "ascendant", "naissance": "1960", "sexe": "F", "debut": "20",
+    "liquidation": "62.25", "unite_revenu": "moyen", "salaire": "1", "emploi_retraite": "2023-02",
+    "emploi_retraite_fin": "2025-08", "emploi_retraite_salaire": "0.5",
+    "emploi_retraite_statut": "commercant",
+}
+#: Les complémentaires de l'artisan et du commerçant, une seule pension.
+_RCI = {"rci", "rco_artisans", "nric"}
+
+
+def _texte_du_cumul(fragment: str) -> str:
+    return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", fragment))).strip()
+
+
+def _note_du_cumul(page, requete: dict) -> tuple[str, list[str]]:
+    """Le texte de la note de l'activité après le départ, et celui de chacune
+    des périodes qu'elle date, quand elle en date plusieurs."""
+    corps = page("/simuler", **requete)
+    note = re.search(r'<div class="note"><strong>Vous travaillez après votre départ.*?</div>',
+                     corps, re.S)
+    assert note, "la page ne dit plus l'activité exercée après le départ"
+    return (_texte_du_cumul(note.group(0)),
+            [_texte_du_cumul(item) for item in re.findall(r"<li>(.*?)</li>", note.group(0), re.S)])
+
+
+def _euros_du_cumul(montant: float) -> str:
+    """Un montant comme la page l'écrit, ses espaces fines lues comme les autres."""
+    return re.sub(r"\s+", " ", g.euros(montant))
+
+
+def _perte_par_mois(cumul, regimes: set[str], debut: tuple[int, int],
+                    fin: tuple[int, int]) -> float:
+    """Ce que perdent ces pensions par mois, en moyenne, de ``debut`` à ``fin``
+    exclu, (année, mois), d'après les tranches du modèle Python."""
+    perte = mois = 0.0
+    for tranche in cumul.tranches:
+        if debut <= (tranche.debut.annee, tranche.debut.mois) < fin:
+            perte += sum(p.reduction for p in tranche.par_regime if p.regime in regimes) \
+                * tranche.mois
+            mois += tranche.mois
+    return perte / mois
+
+
+def test_la_complementaire_de_l_artisan_est_reduite_comme_sa_base_depuis_juillet_2024(
+        page, saisies):
+    """Le règlement du RCI ne suspend sa pension qu'avec la base, « pour la même
+    durée » (article 27) : quand le dépassement ne fait que réduire la base
+    (L. 634-6, depuis 2017), elle est servie entière. Depuis l'arrêté du 19 juin
+    2024, en vigueur le 26, la section 3 lui est « applicable » : chacune perd le
+    dépassement, 112,85 € par mois en 2024 (note du 23 octobre). La page dit les
+    deux périodes et ce que perd chacune des deux pensions ; elle disait « votre
+    pension est réduite du dépassement » de leur somme, sur toute l'activité. Le
+    seuil, la moitié du plafond : 1 714 € en 2022, 1 932 € en 2024."""
+    note, periodes = _note_du_cumul(page, _CUMUL_ARTISAN_2024)
+    assert len(periodes) == 2, f"deux périodes attendues, avant et depuis juillet 2024 : {note}"
+    avant, depuis = periodes
+    cumul = saisies.simuler(_CUMUL_ARTISAN_2024).actuel.cumul
+    base = _perte_par_mois(cumul, {"regime_general"}, (2022, 8), (2024, 7))
+    assert avant == (
+        "d'août 2022 à juin 2024, vos revenus dépassent le seuil de votre régime, "
+        f"{_euros_du_cumul(3428 / 2)} par mois en 2022 : votre pension est réduite du "
+        f"dépassement, {_euros_du_cumul(base)} par mois en moyenne ; votre retraite "
+        "complémentaire vous est servie entière : elle n'est suspendue qu'avec votre "
+        "pension de base, que le dépassement ne fait que réduire ;")
+    base = _perte_par_mois(cumul, {"regime_general"}, (2024, 7), (2025, 2))
+    complementaire = _perte_par_mois(cumul, _RCI, (2024, 7), (2025, 2))
+    # Chacune perd le dépassement entier : autant l'une que l'autre.
+    assert complementaire == pytest.approx(base)
+    assert depuis == (
+        "de juillet 2024 à janvier 2025, vos revenus dépassent le seuil de votre régime, "
+        f"{_euros_du_cumul(3864 / 2)} par mois en 2024 : votre pension est réduite du "
+        f"dépassement, {_euros_du_cumul(base)} par mois en moyenne ; votre retraite "
+        f"complémentaire l'est aussi, {_euros_du_cumul(complementaire)} par mois en "
+        "moyenne.")
+
+
+def test_la_complementaire_du_commercant_est_suspendue_avec_sa_base(page):
+    """« Lorsque l'assuré est soumis à une suspension dans le régime de base
+    [...], le service de la pension de vieillesse complémentaire est suspendu
+    pour la même durée » (règlements du RCO et du NRCO de 2009, puis du RCI,
+    article 27) : le commerçant parti en 2013, au salaire moyen, perd la sienne
+    avec sa base (note du 23 octobre). La page le dit, au lieu de la taire."""
+    note, _ = _note_du_cumul(page, _CUMUL_COMMERCANT_SUSPENDU_2013)
+    assert ("Le droit en vigueur : vos revenus dépassent le seuil de votre régime, "
+            f"{_euros_du_cumul(3086 / 2)} par mois en 2013 : votre pension est suspendue ; "
+            "votre retraite complémentaire l'est aussi, pour la même durée.") in note
+
+
+def test_la_complementaire_d_une_premiere_pension_de_2027_perd_ce_que_la_base_n_absorbe_pas(
+        page, saisies):
+    """L. 161-22, III, A, de 2027 vise toute pension « de base ou
+    complémentaire », la réduction « appliquée, par priorité, sur les pensions
+    versées par les régimes de retraite de base » (arrêté du 21 septembre 2026,
+    pour le RCI) : avant l'âge légal, l'artisan parti en carrière longue en 2028
+    perd toute sa base, et sa complémentaire ce que sa base n'absorbe pas de son
+    revenu (note du 23 octobre). La page disait la somme des deux, comme celle
+    d'une seule pension."""
+    _, periodes = _note_du_cumul(page, _CUMUL_ARTISAN_CARRIERE_LONGUE_2028)
+    cumul = saisies.simuler(_CUMUL_ARTISAN_CARRIERE_LONGUE_2028).actuel.cumul
+    base = _perte_par_mois(cumul, {"regime_general"}, (2029, 2), (2031, 11))
+    complementaire = _perte_par_mois(cumul, _RCI, (2029, 2), (2031, 11))
+    assert periodes[0] == (
+        "de février 2029 à octobre 2031, avant l'âge légal, votre pension est réduite de "
+        f"tout votre revenu d'activité, {_euros_du_cumul(base)} par mois en moyenne ; "
+        "votre retraite complémentaire perd ce que votre pension de base n'en absorbe "
+        f"pas, {_euros_du_cumul(complementaire)} par mois en moyenne ;")
+
+
+def test_la_complementaire_est_servie_entiere_quand_la_base_absorbe_la_reduction(
+        page, saisies):
+    """Le même artisan, à 30 % du salaire moyen : sa base absorbe tout son
+    revenu, et sa complémentaire, que la réduction ne touche qu'après la base,
+    lui est servie entière (L. 161-22, III, A, de 2027)."""
+    requete = {**_CUMUL_ARTISAN_CARRIERE_LONGUE_2028, "emploi_retraite_salaire": "0.3"}
+    _, periodes = _note_du_cumul(page, requete)
+    cumul = saisies.simuler(requete).actuel.cumul
+    assert _perte_par_mois(cumul, _RCI, (2029, 2), (2031, 11)) == 0
+    base = _perte_par_mois(cumul, {"regime_general"}, (2029, 2), (2031, 11))
+    assert periodes[0] == (
+        "de février 2029 à octobre 2031, avant l'âge légal, votre pension est réduite de "
+        f"tout votre revenu d'activité, {_euros_du_cumul(base)} par mois en moyenne ; "
+        "votre retraite complémentaire vous est servie entière : votre pension de base "
+        "absorbe toute la réduction ;")
+
+
+def test_la_complementaire_du_notaire_liberal_ne_lui_est_pas_servie(page):
+    """Les statuts de la CPRN (2017) : la pension complémentaire « est
+    incompatible avec l'exercice de la profession de notaire libéral ». Sous le
+    seuil du libéral, le plafond, 3 428 € en 2022, la base du notaire lui est
+    servie entière, sa complémentaire de 367,18 € par mois ne l'est pas (note du
+    24 octobre, « la classe du cumul »). La page disait, par sa phrase par
+    défaut, sa pension « servie entière », la règle « pas encore lue »."""
+    note, _ = _note_du_cumul(page, _CUMUL_NOTAIRE_CPRN_2022)
+    assert "n'a pas encore lu la règle" not in note
+    assert ("Le droit en vigueur : vos revenus restent sous le seuil de votre régime, "
+            f"{_euros_du_cumul(3428)} par mois en 2022 : votre pension est servie entière ; "
+            "votre retraite complémentaire ne vous est pas servie : les statuts de votre "
+            "caisse la disent incompatible avec l'exercice libéral du notariat.") in note
+
+
+def test_la_complementaire_du_dentiste_est_suspendue_des_la_reprise(page):
+    """Les statuts de la CARCDSF de 2007 suspendent la complémentaire du
+    chirurgien-dentiste et de la sage-femme dès la reprise de leur profession,
+    quel que soit leur revenu, jusqu'à ceux de 2011 (note du 24 octobre). Le
+    dentiste parti en 2008, sous le seuil du libéral — le plafond de l'année
+    rapporté à ses cinq mois d'activité, 33 276 € en 2008 —, garde sa base."""
+    requete = {"naissance": "1946", "statut": "chirurgien_dentiste_ou_sage_femme",
+               "debut": "26", "liquidation": "62", "emploi_retraite": "2008-08",
+               "emploi_retraite_fin": "2010-02", "emploi_retraite_salaire": "0.3"}
+    note, _ = _note_du_cumul(page, requete)
+    assert "n'a pas encore lu la règle" not in note
+    assert ("Le droit en vigueur : vos revenus restent sous le seuil de votre régime, "
+            f"{_euros_du_cumul(33276 / 5)} par mois en 2008 : votre pension est servie "
+            "entière ; votre retraite complémentaire est suspendue : les statuts de votre "
+            "section la suspendent dès la reprise de votre profession.") in note
+
+
+def test_la_page_dit_les_mois_que_le_depassement_suspend(page):
+    """D. 634-11-5 ne suspend la pension de l'artisan et du commerçant que
+    « pour un nombre de mois égal au rapport entre le montant du dépassement
+    constaté et le montant mensuel net de la pension, arrondi à l'entier
+    inférieur, sans que ce nombre puisse être inférieur à un » : le commerçant
+    de 2013 à 65 % du salaire moyen l'est un mois en 2013, trois en 2014, un en
+    2015, sa complémentaire avec elle, et le modèle place ces mois en fin
+    d'année (note du 24 octobre, « la suspension des non-salariés »). Les autres
+    mois, sa pension lui est servie ; la page disait, par sa phrase par défaut,
+    que le modèle n'en avait pas lu la règle."""
+    requete = {**_CUMUL_COMMERCANT_SUSPENDU_2013, "emploi_retraite_salaire": "0.65"}
+    note, periodes = _note_du_cumul(page, requete)
+    assert "n'a pas encore lu la règle" not in note
+    seuil_2013, seuil_2014 = _euros_du_cumul(3086 / 2), _euros_du_cumul(3129 / 2)
+    assert periodes == [
+        f"d'août 2013 à novembre 2013, vos revenus dépassent le seuil de votre régime, "
+        f"{seuil_2013} par mois en 2013, mais le dépassement de l'année, rapporté à votre "
+        "pension nette, ne la suspend qu'un mois, le dernier : jusque-là, elle vous est "
+        "servie entière ;",
+        f"en décembre 2013, vos revenus dépassent le seuil de votre régime, {seuil_2013} "
+        "par mois en 2013 : votre pension est suspendue ; votre retraite complémentaire "
+        "l'est aussi, pour la même durée ;",
+        f"de janvier 2014 à septembre 2014, vos revenus dépassent le seuil de votre "
+        f"régime, {seuil_2014} par mois en 2014, mais le dépassement de l'année, rapporté "
+        "à votre pension nette, ne la suspend que 3 mois, les derniers : jusque-là, elle "
+        "vous est servie entière ;",
+        f"d'octobre 2014 à janvier 2015, vos revenus dépassent le seuil de votre régime, "
+        f"{seuil_2014} par mois en 2014 : votre pension est suspendue ; votre retraite "
+        "complémentaire l'est aussi, pour la même durée.",
+    ]
+
+
+def test_un_depassement_qui_n_epuise_pas_un_mois_ne_suspend_rien(page, saisies):
+    """Le libéral, depuis le 17 janvier 2011, de même, mais sans minimum
+    (D. 643-10-2) : le médecin parti en 2012 à 15 % au-delà du plafond ne voit
+    sa base suspendue aucun mois, ni en 2012 ni en 2013. Sa complémentaire de la
+    CARMF, que ses statuts suspendent « à concurrence du montant du dépassement »
+    après les autres pensions, en perd chaque mois sa part ; la page la dit à
+    part, comme toute complémentaire d'une section."""
+    requete = {"naissance": "1950", "statut": "medecin_liberal", "debut": "28",
+               "liquidation": "62", "emploi_retraite": "2012-08",
+               "emploi_retraite_fin": "2013-08", "emploi_retraite_statut": "medecin_liberal",
+               "emploi_retraite_salaire": "1.15"}
+    _, periodes = _note_du_cumul(page, requete)
+    cumul = saisies.simuler(requete).actuel.cumul
+    assert _perte_par_mois(cumul, {"cnavpl"}, (2012, 8), (2013, 8)) == 0
+    carmf = {"carmf_complementaire"}
+    assert periodes == [
+        f"d'août 2012 à décembre 2012, vos revenus dépassent le seuil de votre régime, "
+        f"{_euros_du_cumul(3031)} par mois en 2012, mais le dépassement de l'année "
+        "n'atteint pas un mois de votre pension nette : elle vous est servie entière ; "
+        "votre retraite complémentaire est réduite, "
+        f"{_euros_du_cumul(_perte_par_mois(cumul, carmf, (2012, 8), (2013, 1)))} par mois "
+        "en moyenne ;",
+        f"de janvier 2013 à juillet 2013, vos revenus dépassent le seuil de votre régime, "
+        f"{_euros_du_cumul(3086)} par mois en 2013, mais le dépassement de l'année "
+        "n'atteint pas un mois de votre pension nette : elle vous est servie entière ; "
+        "votre retraite complémentaire est réduite, "
+        f"{_euros_du_cumul(_perte_par_mois(cumul, carmf, (2013, 1), (2013, 8)))} par mois "
+        "en moyenne.",
+    ]
+
+
+def test_la_seconde_retraite_du_rci_de_moins_de_quarante_points_est_versee_en_une_fois(
+        page, saisies):
+    """Sous quarante points, « le service de la pension est remplacé par un
+    versement forfaitaire unique », ses points au revenu de référence de la date
+    d'effet (règlement du RCI, article 39), la seconde pension comme la première
+    (article 27) : l'artisane revenue au minimum en 2024 et 2025 acquiert 15,66
+    points, 340,17 € en une fois au lieu de 21,09 € par an (note du 23 octobre).
+    La page disait une pension annuelle, de « 0 trimestres, au taux plein »."""
+    requete = _SECONDE_PENSION_ARTISANE_AU_MINIMUM_2026
+    note, _ = _note_du_cumul(page, requete)
+    simulateur = saisies.simulateur(requete)
+    assert simulateur.scenario_actuel.fiches_datees.regle(
+        "versement_unique_rci", "2026-01-01")["seuil_points"] == 40
+    seconde = next(p for p in saisies.simuler(requete).actuel.droits_apres_depart.pensions
+                   if p.regime == "rci")
+    assert seconde.points < 40 and seconde.capital is not None
+    assert "0 trimestres" not in note
+    assert (f"et une seconde retraite complémentaire des indépendants de "
+            f"{round(seconde.points)} points : moins de quarante, elle vous est versée en "
+            f"une fois, {_euros_du_cumul(seconde.capital)}, en euros de cette année-là."
+            ) in note
+
+
+def test_la_seconde_retraite_du_rci_se_dit_en_points(page, saisies):
+    """Une retraite complémentaire n'a ni trimestres ni taux plein : la seconde
+    retraite du RCI du commerçant revenu en 2023 se dit, comme celle de
+    l'Agirc-Arrco, par son montant et ses points (R. 634-1, D. 634-3 ; règlement
+    du RCI, article 27)."""
+    requete = _SECONDE_PENSION_COMMERCANT_2025
+    note, _ = _note_du_cumul(page, requete)
+    seconde = next(p for p in saisies.simuler(requete).actuel.droits_apres_depart.pensions
+                   if p.regime == "rci")
+    assert seconde.capital is None
+    assert "0 trimestres" not in note
+    assert (f"et une seconde retraite complémentaire des indépendants de "
+            f"{_euros_du_cumul(seconde.montant)} par an, sur {round(seconde.points)} "
+            "points, en euros de cette année-là.") in note
