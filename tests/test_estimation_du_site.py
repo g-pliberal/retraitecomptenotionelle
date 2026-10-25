@@ -341,6 +341,58 @@ def test_une_carriere_qui_ne_valide_plus_n_a_le_taux_plein_qu_a_l_age_d_annulati
             (("taux_plein", "automatique"), pytest.approx(67.0), trimestres, 172)], trimestres
 
 
+def _departs_dits(requetes: list[dict], droit: str | None = None) -> list[list[tuple]]:
+    """Ce que le portage dit de chaque départ de chaque requête : ce qu'il
+    réunit, son âge, ses trimestres, ceux que le droit requiert, ce qui
+    l'ouvre."""
+    return [[(depart.quoi, depart.age, depart.trimestres, depart.trimestres_requis,
+              depart.motif_ouverture) for depart in departs]
+            for departs in _departs_du_portage(requetes, droit)]
+
+
+def test_une_carriere_qui_ne_valide_plus_part_a_l_age_ou_la_carriere_longue_l_ouvre():
+    """Né le 15 janvier 1966, entré en janvier 1982, à seize ans, et sans
+    activité de 2025 à 2045, un salarié a 43 × 4 = 172 trimestres cotisés à la
+    fin de 2024, ceux de sa génération. Il en a validé cinq avant la fin de
+    l'année de ses dix-huit ans, non de ses seize — 1982 n'en compte que
+    quatre — : la carrière longue lui ouvre son départ à 60 ans, au taux plein
+    (L. 351-1-1 et D. 351-1-1, version du 1er septembre 2023), avant l'âge
+    légal de 63 ans et 3 mois. Elle date sa durée cotisée comme s'il cotisait
+    encore quatre trimestres par an (``CarriereLongue.agePropose``) : à tout
+    âge passé 2024, elle la disait atteinte à cet âge même, et la descente du
+    pilote, partie des 64 ans que la saisie demande, s'arrêtait à l'âge légal.
+    Sous le droit au 31 août 2023, qui ne leur en requiert que 169, les deux
+    carrières entrées en 1983 du test précédent ont de même leur durée cotisée
+    à 60 ans, que leur début avant vingt ans leur ouvre (D. 351-1-1, rédaction
+    du décret du 2 juillet 2012) : la descente s'arrêtait à 61 ans et 3 mois,
+    au bout de ses passes, et à 62 ans, l'âge légal (action 138, étape 14)."""
+    salarie = {"naissance": "1966-01-15", "debut": "1982-01",
+               "interruptions": "2025:2045:sans_activite"}
+    assert _departs_dits([salarie]) == [[
+        (("legal", "taux_plein"), pytest.approx(60.0), 172, 172, "carriere_longue"),
+        (("automatique",), pytest.approx(67.0), 172, 172, "age_legal")]]
+    requetes = [{"naissance": "1966-01-15", "debut": debut,
+                 "interruptions": "2026:2045:sans_activite"} for debut in ("1983-07", "1983-10")]
+    assert _departs_dits(requetes, "au_31_aout_2023") == [[
+        (("legal", "taux_plein"), pytest.approx(60.0), trimestres, 169, "carriere_longue"),
+        (("automatique",), pytest.approx(67.0), trimestres, 169, "age_legal")]
+        for trimestres in (170, 169)]
+
+
+def test_un_depart_que_la_saisie_refuse_ne_tait_pas_l_estimation():
+    """La saisie refuse un départ qui précède l'un de ses métiers. Chercher un
+    départ plus précoce que l'âge légal ne fait pas taire le bloc d'une
+    carrière qui n'en a pas : celle des trois âges, salariée cadre à compter de
+    septembre 2031, six mois avant son âge légal, garde ses trois départs, aux
+    mêmes âges et avec les mêmes trimestres — passer cadre ne change ni le
+    régime de base ni la durée validée."""
+    cadre = {**REQUETES["trois_ages"], "metier2_debut": "2031-09",
+             "metier2_statut": "salarie_prive_cadre"}
+    dits, attendus = _departs_dits([cadre, REQUETES["trois_ages"]])
+    assert len(attendus) == 3
+    assert dits == attendus
+
+
 def test_la_carriere_longue_part_au_taux_plein_avant_l_age_legal(saisies):
     premier, *_ = _departs("carriere_longue")
     assert premier.quoi == ("legal", "taux_plein")

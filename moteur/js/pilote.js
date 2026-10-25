@@ -87,9 +87,14 @@ export const DEPARTS_DE_L_ESTIMATION = Object.freeze(["legal", "taux_plein", "au
  * chaque passe sans en gagner aucun, et le taux plein s'arrêtait au bout des
  * passes, décoté. Quand la montée s'arrête sans lui, la recherche reprend donc
  * de l'âge d'annulation de la décote, comme `age_de_depart` (pilote.py ;
- * action 138, étape 14). Deux âges peuvent se confondre : la page
- * les réunit (`departsDeLEstimation`, contexte.js). `null` quand le droit
- * n'oppose aucun âge à cette carrière.
+ * action 138, étape 14). La carrière longue date de même la durée cotisée
+ * (`ageOuvertureDroit`) : sans activité depuis qu'elle l'a réunie, la carrière
+ * la réunissait à chaque passe à l'âge même du départ, et la descente
+ * s'arrêtait au-dessus de l'âge où la carrière longue ouvre le départ. Tant
+ * qu'un départ un an plus tôt s'ouvre encore, la recherche du premier âge en
+ * reprend donc ; un départ que la saisie refuse n'ouvre rien (`sansRefus`).
+ * Deux âges peuvent se confondre : la page les réunit (`departsDeLEstimation`,
+ * contexte.js). `null` quand le droit n'oppose aucun âge à cette carrière.
  */
 export function agesDeLEstimation(actuel, batir, depart) {
   // Les trois règles répondent `null` dans le même cas : aucun régime retenu.
@@ -111,8 +116,38 @@ export function agesDeLEstimation(actuel, batir, depart) {
         trouve = pointFixe(annulation, proposer);
       }
     }
+    if (quoi === "legal") {
+      const sonder = sansRefus(proposer);
+      for (;;) {
+        const essai = pointFixe(trouve - 1, sonder);
+        const confirme = essai < trouve - 1e-9 ? sonder(essai) : null;
+        if (confirme === null || confirme > essai + 1e-9) {
+          break;
+        }
+        trouve = essai;
+      }
+    }
     age = rang > 0 ? Math.max(age, trouve) : trouve;
     ages[quoi] = age;
   });
   return ages;
+}
+
+/**
+ * `proposer`, qui répond `null` à un départ que la saisie ou le modèle
+ * refusent — un départ qui précède l'un des métiers — : il n'ouvre rien. Une
+ * faute de programme remonte, comme dans `departsDeLEstimation` (contexte.js).
+ */
+function sansRefus(proposer) {
+  return (age) => {
+    try {
+      return proposer(age);
+    } catch (erreur) {
+      if (erreur instanceof TypeError || erreur instanceof ReferenceError
+          || erreur instanceof RangeError || erreur instanceof SyntaxError) {
+        throw erreur;
+      }
+      return null;
+    }
+  };
 }
