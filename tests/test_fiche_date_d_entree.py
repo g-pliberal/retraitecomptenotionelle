@@ -33,14 +33,15 @@ import pytest
 
 from retraite_notionnelle import Parametres
 from retraite_notionnelle.calendrier import DateMois
-from retraite_notionnelle.carriere import AnneeCarriere, Carriere
+from retraite_notionnelle.carriere import AnneeCarriere, Carriere, LigneRelevee
 from retraite_notionnelle.config import PartCotisation
 from retraite_notionnelle.moteur.compte import ConstructeurCompte
 from retraite_notionnelle.remuneration import (
     famille_du_statut, fiche_depuis_brut, profil_de_la_fiche, salaire_brut_depuis_net,
     salaire_net_depuis_brut)
 from retraite_notionnelle.simulateur import Simulateur
-from retraite_notionnelle.web.site import module, site
+from retraite_notionnelle.web.site import ErreurSite, module, site
+from outils_pont import refus_de_la_saisie, saisie_du_portage
 
 PARAMETRES = Parametres()
 RACINE = Path(__file__).resolve().parents[1]
@@ -204,6 +205,45 @@ def test_la_remuneration_de_la_carriere_garde_le_regime(simulateur):
         assert _regimes(simulateur, annee.droit_en_vigueur) == {"sncf"}, annee.annee
 
 
+# -- l'entrée d'un relevé qu'ouvre une interruption ----------------------------
+
+LIBERAL = "liberal_non_reglemente"
+
+
+def _releve_du_liberal(installe_en_2018: bool) -> list[LigneRelevee]:
+    """Salarié de 2008 à 2017, puis libéral non réglementé, actif depuis 2019 ;
+    en 2018, installé, ou sans activité sous le même statut."""
+    return ([LigneRelevee(annee=an, affiliation="salarie_prive_non_cadre", revenu=REVENU)
+             for an in range(2008, 2018)]
+            + [LigneRelevee(annee=2018, affiliation=LIBERAL,
+                            revenu=REVENU if installe_en_2018 else 0.0,
+                            type_periode="emploi" if installe_en_2018 else "sans_activite")]
+            + [LigneRelevee(annee=an, affiliation=LIBERAL, revenu=REVENU)
+               for an in range(2019, 2026)])
+
+
+@pytest.mark.parametrize("installe_en_2018, entree, regimes", [
+    (True, 2018, {"cnavpl", "cipav_complementaire"}),
+    (False, 2019, {"regime_general", "rci"}),
+], ids=["installe-en-2018", "sans-activite-en-2018"])
+def test_un_releve_date_l_entree_de_sa_premiere_annee_d_emploi(
+        simulateur, installe_en_2018, entree, regimes):
+    """Le libéral non réglementé « créant [son] activité » depuis le 1er janvier
+    2019 relève du régime général et du RCI ; « affilié avant » à la CNAVPL et à
+    la Cipav, il y reste (loi n° 2017-1836, art. 15, 8°). Le relevé ne dit
+    l'installation que par sa première année d'emploi sous le statut : sans
+    activité en 2018, l'assuré ne s'installe qu'en 2019, et la ligne de 2018,
+    qui nomme le statut, ne l'y affilie pas. Le compte de 2020 reçoit les
+    régimes de cette date."""
+    carriere = Carriere.depuis_releve(1985, "H", _releve_du_liberal(installe_en_2018), 64,
+                                      simulateur.macro)
+    assert carriere.date_entree(LIBERAL) == DateMois(entree, 1)
+    compte = ConstructeurCompte(
+        simulateur.macro, simulateur.catalogue, simulateur.affiliations,
+        simulateur.indexation, PARAMETRES.avec(part_cotisation=PartCotisation.SALARIALE))
+    assert set(dict(compte.cotisation_annuelle(carriere, 2020).par_regime)) == regimes
+
+
 # -- le portage JavaScript ----------------------------------------------------
 
 #: Les cas que le jumeau rejoue : chaque statut fermé, entré avant et sans
@@ -290,3 +330,50 @@ def test_le_portage_javascript_lit_la_date_d_entree(simulateur):
                     statut, cle, code)
             assert obtenu[cle]["net"] == pytest.approx(attendu[cle]["net"], abs=1e-6), (
                 statut, cle)
+
+
+def _saisie_du_releve(lignes: list[LigneRelevee]):
+    """La saisie de ce relevé : ses lignes, et ses années d'interruption."""
+    requete = {"naissance": "1985", "liquidation": "64",
+               "releve": ",".join(f"{ligne.annee}:{ligne.affiliation}:{ligne.revenu:.0f}"
+                                  for ligne in lignes)}
+    interruptions = [f"{ligne.annee}:{ligne.annee}:{ligne.type_periode}"
+                     for ligne in lignes if ligne.type_periode != "emploi"]
+    if interruptions:
+        requete["interruptions"] = ",".join(interruptions)
+    return saisie_du_portage(requete)
+
+
+@pytest.mark.parametrize("installe_en_2018", [True, False],
+                         ids=["installe-en-2018", "sans-activite-en-2018"])
+def test_le_portage_date_l_entree_d_un_releve_comme_le_modele(simulateur, installe_en_2018):
+    """La carrière que le portage bâtit de la même saisie — le relevé et ses
+    interruptions — date l'entrée comme le modèle ; la saisie, qui choisit la
+    fiche de paie d'un net (``Saisie.dateEntree``), comme elle."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    lignes = _releve_du_liberal(installe_en_2018)
+    attendue = Carriere.depuis_releve(1985, "H", lignes, 64, simulateur.macro).date_entree(
+        LIBERAL)
+    saisie = _saisie_du_releve(lignes)
+    for lue in (site().contexte.carriere(saisie).date_entree(LIBERAL),
+                saisie.date_entree(LIBERAL)):
+        assert (lue.annee, lue.mois) == (attendue.annee, attendue.mois)
+
+
+def test_le_refus_d_un_statut_ferme_lit_la_premiere_annee_d_emploi():
+    """« Recrutés avant le 1er septembre 2023 » (code des transports,
+    L. 2142-4-2, loi n° 2023-270, art. 1er) : l'agent de la RATP au chômage en
+    2023, sous le statut, et au travail depuis 2024, n'y est recruté qu'en
+    2024 ; le relevé se refuse, et nomme cette année."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    lignes = ([LigneRelevee(annee=an, affiliation="salarie_prive_non_cadre", revenu=REVENU)
+               for an in range(2008, 2023)]
+              + [LigneRelevee(annee=2023, affiliation="agent_ratp", revenu=REVENU,
+                              type_periode="chomage_indemnise")]
+              + [LigneRelevee(annee=an, affiliation="agent_ratp", revenu=REVENU)
+                 for an in (2024, 2025)])
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie(
+            "la première année déclarée en emploi sous ce statut est 2024")):
+        site().contexte.carriere(_saisie_du_releve(lignes))

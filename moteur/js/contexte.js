@@ -1015,9 +1015,10 @@ function verifierStatutsOuverts(affiliations, carriere, parcours) {
  *
  * Le relevé ne compte pas de métiers : il porte des ANNÉES, dont chacune nomme
  * son statut. La date opposée à la fermeture est donc la première année
- * déclarée sous ce statut — janvier, faute d'un mois que le relevé ne donne
- * pas —, et la phrase le dit plutôt que de parler d'un « métier n° 2 » qui
- * n'existe nulle part sur la page.
+ * d'emploi déclarée sous ce statut, celle du recrutement (`anneeDEntree`) —
+ * janvier, faute d'un mois que le relevé ne donne pas —, et la phrase le dit
+ * plutôt que de parler d'un « métier n° 2 » qui n'existe nulle part sur la
+ * page.
  */
 function verifierStatutsReleve(affiliations, carriere) {
   for (const code of carriere.affiliationsUtilisees()) {
@@ -1028,7 +1029,7 @@ function verifierStatutsReleve(affiliations, carriere) {
     const [fermeture, entree] = ferme;
     throw new ErreurSaisie(phraseStatutFerme(
       affiliations, code, fermeture,
-      `la première année déclarée sous ce statut est ${entree.annee}`,
+      `la première année déclarée en emploi sous ce statut est ${entree.annee}`,
     ));
   }
 }

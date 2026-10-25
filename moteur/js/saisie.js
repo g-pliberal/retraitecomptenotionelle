@@ -31,7 +31,7 @@ import {
 import {
   FORMES_D_UNION, dateDeclaree, naissanceDeclaree, plusAns, valeur as valeurPresumee,
 } from "./chronologie.js";
-import { CONJOINTS_COLLABORATEURS } from "./carriere.js";
+import { CONJOINTS_COLLABORATEURS, anneeDEntree } from "./carriere.js";
 import * as g from "./gabarit.js";
 import { AGE_TERMINAL } from "./mortalite.js";
 
@@ -1518,7 +1518,8 @@ export class Saisie {
   /**
    * Le mois d'entrée dans cette affiliation, tel que la carrière le datera
    * (`Carriere.dateEntree`) : l'ouverture du premier métier qui la porte, ou
-   * janvier de la première année du relevé ; `null` si elle n'y figure pas, ou
+   * janvier de sa première année d'emploi sur le relevé (`anneeDEntree`), une
+   * année d'interruption ne l'ouvrant pas ; `null` si elle n'y figure pas, ou
    * tant que le relevé ne se lit pas. C'est lui qui choisit la fiche de paie
    * d'un régime fermé aux nouveaux entrants, par laquelle un net remonte au
    * brut (`Contexte.echelle`) : l'agent de la SNCF entré avant 2020 garde sa
@@ -1533,9 +1534,8 @@ export class Saisie {
         if (!(erreur instanceof ErreurSaisie)) throw erreur;
         return null;
       }
-      const annees = lignes.filter((ligne) => ligne.affiliation === affiliation)
-        .map((ligne) => ligne.annee);
-      return annees.length ? new DateMois(Math.min(...annees), 1) : null;
+      const annee = anneeDEntree(lignes, affiliation);
+      return annee === null ? null : new DateMois(annee, 1);
     }
     const debuts = this.lignesCarriere.filter((ligne) => !ligne.sans_emploi
       && this.affiliationDe(ligne.statut) === affiliation).map((ligne) => ligne.debut);

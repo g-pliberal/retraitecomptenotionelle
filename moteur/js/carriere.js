@@ -723,6 +723,28 @@ function ligneAnnuelle({
 }
 
 /**
+ * L'année d'entrée dans ce statut parmi ces lignes — d'une carrière, ou d'un
+ * relevé saisi —, null s'il n'y figure pas : sa première année d'emploi. Les
+ * textes datent l'entrée du recrutement ou de l'installation, qu'une ligne ne
+ * dit que par une année d'emploi : une année d'interruption sous le statut,
+ * non travaillée, ne l'ouvre pas. Un statut qu'aucune année d'emploi ne porte
+ * se date de sa première ligne. Voir le Python (`Carriere._entrees`).
+ */
+export function anneeDEntree(lignes, affiliation) {
+  let premiere = null;
+  let emploi = null;
+  for (const ligne of lignes) {
+    if (ligne.affiliation !== affiliation) continue;
+    if (premiere === null || ligne.annee < premiere) premiere = ligne.annee;
+    if ((ligne.type_periode ?? "emploi") === "emploi"
+      && (emploi === null || ligne.annee < emploi)) {
+      emploi = ligne.annee;
+    }
+  }
+  return emploi ?? premiere;
+}
+
+/**
  * Carrière complète d'un assuré.
  *
  * **Une ligne par année ET PAR ACTIVITÉ.** Une année ne porte d'ordinaire
@@ -1520,25 +1542,21 @@ export class Carriere {
 
   // -- agrégats --------------------------------------------------------------
 
-  /** Année d'entrée dans ce statut, ou null s'il ne figure pas dans la carrière.
+  /** Année d'entrée dans ce statut, sa première année d'emploi
+   * (`anneeDEntree`), ou null s'il ne figure pas dans la carrière.
    *
    * C'est elle qui décide de la CLAUSE DU GRAND-PÈRE : un régime fermé aux
-   * nouveaux entrants reste celui de qui était déjà là. Les lignes étant
-   * chronologiques, la première rencontre suffit.
+   * nouveaux entrants reste celui de qui était déjà là.
    */
   entree(affiliation) {
-    for (const ligne of this.lignes) {
-      if (ligne.affiliation === affiliation) {
-        return ligne.annee;
-      }
-    }
-    return null;
+    return anneeDEntree(this.lignes, affiliation);
   }
 
   /**
    * Mois d'entrée dans ce statut, ou null s'il n'y figure pas : celui que le
-   * parcours a daté quand il en vient ; sinon janvier de la première ligne,
-   * ce qui vaut pour une carrière construite ligne à ligne.
+   * parcours a daté quand il en vient ; sinon janvier de la première année
+   * d'emploi, ce qui vaut pour une carrière construite ligne à ligne, et pour
+   * un relevé.
    */
   dateEntree(affiliation) {
     if (Object.prototype.hasOwnProperty.call(this.dates_entree, affiliation)) {

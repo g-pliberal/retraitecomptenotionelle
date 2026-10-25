@@ -1382,13 +1382,22 @@ class Carriere:
 
     @cached_property
     def _entrees(self) -> dict[str, int]:
-        """Première année de chaque statut dans la carrière.
+        """Première année d'emploi de chaque statut dans la carrière.
 
         C'est elle qui décide de la CLAUSE DU GRAND-PÈRE : un régime fermé aux
-        nouveaux entrants reste celui de qui était déjà là. Les lignes étant
-        chronologiques, la première rencontre suffit.
+        nouveaux entrants reste celui de qui était déjà là. Les textes datent
+        l'entrée du recrutement ou de l'installation — les « recrutés avant le
+        1er septembre 2023 » de la RATP, le libéral « créant [son] activité »
+        depuis 2019 (loi n° 2023-270, art. 1er ; loi n° 2017-1836, art. 15,
+        8°) —, qu'une ligne de relevé ne dit que par une année d'emploi : une
+        année d'interruption sous le statut, non travaillée, ne l'ouvre pas. Un
+        statut qu'aucune année d'emploi ne porte se date de sa première ligne.
+        Les lignes étant chronologiques, la première rencontre suffit.
         """
         entrees: dict[str, int] = {}
+        for ligne in self.lignes:
+            if ligne.type_periode == "emploi":
+                entrees.setdefault(ligne.affiliation, ligne.annee)
         for ligne in self.lignes:
             entrees.setdefault(ligne.affiliation, ligne.annee)
         return entrees
@@ -1401,7 +1410,8 @@ class Carriere:
         """Mois d'entrée dans ce statut, ou ``None`` s'il n'y figure pas.
 
         Celui que le parcours a daté quand il en vient ; sinon janvier de la
-        première ligne, ce qui vaut pour une carrière construite ligne à ligne.
+        première année d'emploi (:attr:`_entrees`), ce qui vaut pour une
+        carrière construite ligne à ligne, et pour un relevé.
         """
         if affiliation in self.dates_entree:
             return self.dates_entree[affiliation]
