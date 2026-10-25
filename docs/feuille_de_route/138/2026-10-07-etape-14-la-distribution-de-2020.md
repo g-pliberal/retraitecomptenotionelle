@@ -2,13 +2,14 @@
 
 **Reprise, au 25 octobre 2026.** Fait : chaque grille contre l'EIR en 2020
 (7 octobre) ; la population de l'action 136, reprise du 16 au 25 octobre, de
-la décote aux natures assimilées, lues dans l'EIC, puis les carrières de 30 à
-40 années des femmes, entrées comme les pleines : 12,4 % des nées en 1955 en
-carrière longue (EIR 13,0). Reste, une session par point : la décote selon la
-génération ; le pilote des carrières inactives ; les hommes selon le rang, aux
+la décote aux natures assimilées, aux carrières allongées des femmes, puis à
+la décote selon la génération : 8,8 % de la grille 1955 décotée (EIR 10,7).
+Reste, une session par point : le pilote des carrières inactives ; la décote
+rapportée aux carrières qui peuvent décoter ; les hommes selon le rang, aux
 classeurs de leur génération ; les invalides et les inaptes ; la surcote des
 statutaires ; les indépendants, les agricoles ; l'ASPA ; les limites. Au
-propriétaire : 152, 157, le CASD, l'incitation. Détail : `…-allongees.md`.
+propriétaire : 152, 157, le CASD, l'incitation. Détail :
+`…-decote-selon-la-generation.md`.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.14 ». L'étape :
 « Ce qui demande une population ou des microdonnées, avec l'action 136 (étape
