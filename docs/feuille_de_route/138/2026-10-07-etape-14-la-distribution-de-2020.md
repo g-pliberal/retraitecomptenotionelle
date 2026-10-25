@@ -1,15 +1,15 @@
 # Étape 14, première partie : les pensions de 2020, simulées contre publiées
 
 **Reprise, au 25 octobre 2026.** Fait : chaque grille contre l'EIR en 2020
-(7 octobre) ; la population de l'action 136, reprise du 16 au 25 octobre, de
-la décote aux natures assimilées, aux carrières allongées des femmes, puis à
-la décote selon la génération : 8,8 % de la grille 1955 décotée (EIR 10,7).
-Reste, une session par point : le pilote des carrières inactives ; la décote
-rapportée aux carrières qui peuvent décoter ; les hommes selon le rang, aux
-classeurs de leur génération ; les invalides et les inaptes ; la surcote des
-statutaires ; les indépendants, les agricoles ; l'ASPA ; les limites. Au
-propriétaire : 152, 157, le CASD, l'incitation. Détail :
-`…-decote-selon-la-generation.md`.
+(7 octobre) ; la population de l'action 136, du 16 au 25 octobre, de la
+décote aux natures, aux carrières allongées, à la décote selon la génération ;
+le pilote des carrières inactives, au modèle, qui ne déplace aucun couple
+mesuré. Reste, une session par point : la décote rapportée aux carrières qui
+peuvent décoter ; les départs entre l'âge légal et l'âge d'annulation ; les
+hommes selon le rang ; les invalides, les inaptes ; la surcote des statutaires ;
+les indépendants, les agricoles ; l'ASPA ; les limites. Au site : l'estimation,
+même défaut. Au propriétaire : 152, 157, le CASD, l'incitation. Détail :
+`…-pilote-des-carrieres-inactives.md`.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.14 ». L'étape :
 « Ce qui demande une population ou des microdonnées, avec l'action 136 (étape
