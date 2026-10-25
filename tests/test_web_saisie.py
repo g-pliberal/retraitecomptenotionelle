@@ -1832,3 +1832,35 @@ def test_la_page_traduit_le_net_par_la_fiche_de_la_date_d_entree():
     echelle = site().contexte.echelle(saisie_du_portage(_SNCF))
     assert smic == round(echelle.smic * _PART_NETTE_SNCF)
     assert moyen == round(echelle.mensuel(1) * _PART_NETTE_SNCF)
+
+
+# LES DATES DE PENSION DU FORMULAIRE (action 138, étape 9 ; note « la date
+# d'entrée dans la saisie en net », « Trouvé en chemin ») : le formulaire
+# propose la date de chaque pension de base que la carrière porte, quand elle
+# en porte plusieurs. Il la lit comme elle, sous l'affiliation de chaque
+# métier, à la date d'entrée dans cette affiliation : le micro-entrepreneur
+# des professions que la Cipav garde relève de la CNAVPL et de la Cipav
+# (D. 613-4, b ; fiche micro_social_abattement), et le libéral non réglementé
+# affilié avant le 1er janvier 2019 à la CNAVPL et à la Cipav « reste
+# affilié » à ces régimes (loi n° 2017-1836, art. 15), même si un second
+# métier du formulaire dit, en 2020, que son revenu change.
+@pytest.mark.parametrize("champs, pensions", [
+    # De 2009 à 2014 à la Cipav, salarié ensuite : la CNAVPL, puis le régime
+    # général. Le formulaire proposait le RSI, le régime du statut.
+    ({"statut": "micro_entrepreneur", "micro": "cipav", "debut": "2009-01",
+      "metier2_debut": "2015-01", "metier2_statut": "salarie_prive_non_cadre"},
+     ["cnavpl", "regime_general"]),
+    # Installé en 2010, un revenu qui change en 2020 : la CNAVPL seule, dont
+    # le départ dit la date. Le formulaire datait le second métier de 2020,
+    # et proposait aussi le régime général.
+    ({"statut": "liberal_non_reglemente", "debut": "2010-01",
+      "metier2_debut": "2020-01", "metier2_statut": "liberal_non_reglemente"},
+     []),
+], ids=["micro-cipav", "liberal-installe-en-2010"])
+def test_le_formulaire_date_les_pensions_que_la_carriere_porte(champs, pensions):
+    """Les champs de date des pensions, dans l'ordre des métiers. La naissance
+    se déclare entière ; ni son jour ni le sexe ne changent les régimes."""
+    corps = rendre("/simuler", {"naissance": "1985-03-15", **champs})[1]
+    assert "Saisie refusée" not in corps
+    assert 'id="progressive"' in corps, "le bloc des dates des pensions manque"
+    assert re.findall(r'<input type="date" id="demande_(\w+)"', corps) == pensions

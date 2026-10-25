@@ -1213,7 +1213,10 @@ function conjointFormulaire(saisie, contexte) {
  * Les régimes de base de la carrière saisie, dans l'ordre des métiers — ou des
  * lignes du relevé — : celui de chaque statut à sa dernière année, sous sa
  * date d'entrée. Ce sont les pensions dont le formulaire propose la date ;
- * vide quand la carrière ne se lit pas encore.
+ * vide quand la carrière ne se lit pas encore. Un métier se lit comme la
+ * carrière le lira : sous son affiliation, celle du libéral pour le
+ * micro-entrepreneur de la Cipav (`Saisie.affiliationDe`), et à l'entrée dans
+ * cette affiliation, non à son propre début (`Saisie.dateEntree`).
  */
 function regimesDeBaseSaisis(saisie, affiliations, catalogue) {
   const statuts = [];
@@ -1242,7 +1245,8 @@ function regimesDeBaseSaisis(saisie, affiliations, catalogue) {
         } else if (suivante !== undefined) {
           fin = saisie.dateDe(suivante.debut);
         }
-        statuts.push([ligne.statut, saisie.dateDe(ligne.debut), fin.plusMois(-1).annee]);
+        const statut = saisie.affiliationDe(ligne.statut);
+        statuts.push([statut, saisie.dateEntree(statut), fin.plusMois(-1).annee]);
       });
     }
   } catch (erreur) {
