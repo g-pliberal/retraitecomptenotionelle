@@ -412,3 +412,123 @@ def test_les_cartes_a_publier_vont_deux_par_ligne_et_se_lisent():
             if grille["plusPetite"] < TAILLE_LUE_MINIMALE:
                 fautes.append(f"{lieu} : une carte se lit à {grille['plusPetite']} pixels")
     assert not fautes, f"{len(fautes)} grilles de cartes :\n" + "\n".join(fautes)
+
+
+# -- le lancement du navigateur ----------------------------------------------
+
+#: Le module par lequel le pilote lance Chromium et attend son protocole, et
+#: un programme qui l'appelle comme lui, sur un faux navigateur : l'adresse du
+#: protocole sur sa sortie, ou l'erreur, qui l'arrête.
+LANCEUR = RACINE / "tests" / "js" / "navigateur.mjs"
+OUVRIR = """
+const [lanceur, chemin, delai] = process.argv.slice(1);
+const { ouvrirLeNavigateur } = await import(lanceur);
+const { adresse, fermer } = await ouvrirLeNavigateur(chemin, { delai: Number(delai) });
+fermer();
+process.stdout.write(adresse);
+"""
+
+_FAUX_NAVIGATEUR = pytest.mark.skipif(
+    shutil.which("node") is None or os.name == "nt",
+    reason="le faux navigateur est un script sh, que node lance")
+
+
+def _ouvrir(chemin: Path, delai: int, timeout: float = 60) -> subprocess.CompletedProcess:
+    return subprocess.run(
+        ["node", "--input-type=module", "-e", OUVRIR, LANCEUR.as_uri(), str(chemin), str(delai)],
+        cwd=RACINE, capture_output=True, text=True, encoding="utf-8", timeout=timeout,
+        check=False)
+
+
+def _faux_navigateur(dossier: Path, muets: int) -> Path:
+    """Un faux Chromium : il note chaque lancement, son processus et ses
+    arguments, et écrit d'abord, comme le vrai, une erreur de D-Bus ; puis il se
+    tait à ses ``muets`` premiers lancements, et ouvre son protocole aux
+    suivants."""
+    journal = dossier / "lancements"
+    faux = dossier / "chrome"
+    faux.write_text(
+        "#!/bin/sh\n"
+        f"echo \"$$ $*\" >> '{journal}'\n"
+        "echo '[1:2:1025/135455.621031:ERROR:dbus/bus.cc:405] Failed to connect to the bus' >&2\n"
+        f"if [ $(wc -l < '{journal}') -gt {muets} ]; then\n"
+        "  echo \"DevTools listening on ws://127.0.0.1:9/devtools/browser/$$\" >&2\n"
+        "fi\n"
+        "exec sleep 60\n", encoding="utf-8")
+    faux.chmod(0o755)
+    return faux
+
+
+def _lancements(dossier: Path) -> list[tuple[int, str]]:
+    """Chaque lancement du faux navigateur : son processus, son profil."""
+    journal = dossier / "lancements"
+    if not journal.exists():
+        return []
+    lancements = []
+    for ligne in journal.read_text(encoding="utf-8").splitlines():
+        processus, *arguments = ligne.split()
+        lancements.append((int(processus), next(
+            argument.split("=", 1)[1] for argument in arguments
+            if argument.startswith("--user-data-dir="))))
+    return lancements
+
+
+def _vivant(processus: int) -> bool:
+    try:
+        os.kill(processus, 0)
+    except ProcessLookupError:
+        return False
+    return True
+
+
+@_FAUX_NAVIGATEUR
+def test_un_navigateur_muet_a_son_premier_lancement_est_relance_sur_un_profil_neuf(tmp_path):
+    """Le 25 octobre 2026, deux courses de suite, GitHub a perdu les tests des
+    écrans : sur la machine neuve, chargée par les autres tests, le premier
+    Chromium n'avait pas ouvert son protocole au bout de trente secondes. Un
+    lancement suivant l'ouvrait, ce que les premiers avaient lu du disque resté
+    en mémoire. Muet passé le délai, Chromium est tué et relancé, sur un profil
+    neuf, que rien de ce que le mort a laissé n'encombre.
+    """
+    ouvert = _ouvrir(_faux_navigateur(tmp_path, muets=1), delai=2000)
+    assert ouvert.returncode == 0, ouvert.stderr
+    (muet, profil_du_muet), (relance, profil_relance) = _lancements(tmp_path)
+    assert ouvert.stdout == f"ws://127.0.0.1:9/devtools/browser/{relance}"
+    assert profil_du_muet != profil_relance
+    assert not _vivant(muet), "le premier navigateur, muet, n'a pas été tué"
+    assert not Path(profil_du_muet).exists() and not Path(profil_relance).exists()
+
+
+@_FAUX_NAVIGATEUR
+def test_un_navigateur_toujours_muet_n_est_relance_qu_une_fois(tmp_path):
+    """Muet deux fois, il échoue, et dit ce qu'il a écrit à chaque lancement."""
+    ouvert = _ouvrir(_faux_navigateur(tmp_path, muets=2), delai=1000)
+    assert ouvert.returncode == 1
+    assert "n'a pas ouvert son protocole" in ouvert.stderr, ouvert.stderr
+    assert ouvert.stderr.count("Failed to connect to the bus") == 2, ouvert.stderr
+    lancements = _lancements(tmp_path)
+    assert len(lancements) == 2
+    assert not any(_vivant(processus) or Path(profil).exists()
+                   for processus, profil in lancements)
+
+
+@_FAUX_NAVIGATEUR
+@pytest.mark.parametrize("cas", ["absent", "casse"])
+def test_un_navigateur_absent_ou_casse_echoue_aussitot_avec_son_message(tmp_path, cas):
+    """Ni attendu ni relancé : ce qui manque est sur la machine, et son message
+    le dit."""
+    chemin = tmp_path / "chrome"
+    if cas == "casse":
+        chemin.write_text(
+            "#!/bin/sh\n"
+            f"echo \"$$ $*\" >> '{tmp_path / 'lancements'}'\n"
+            "echo \"chrome: error while loading shared libraries: libnss3.so\" >&2\n"
+            "exit 127\n", encoding="utf-8")
+        chemin.chmod(0o755)
+    # Aussitôt : bien avant le délai, que le processus n'attendrait pas.
+    ouvert = _ouvrir(chemin, delai=120_000, timeout=30)
+    assert ouvert.returncode == 1
+    attendu = (f"spawn {chemin} ENOENT" if cas == "absent"
+               else "error while loading shared libraries: libnss3.so")
+    assert attendu in ouvert.stderr, ouvert.stderr
+    assert len(_lancements(tmp_path)) == (1 if cas == "casse" else 0)

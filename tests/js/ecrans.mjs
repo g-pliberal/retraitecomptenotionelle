@@ -27,10 +27,9 @@
  * l'ancre, comme le lecteur, et de largeur par l'émulation de l'écran.
  */
 
-import { spawn } from "node:child_process";
-import { mkdtempSync, readFileSync, rmSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { readFileSync } from "node:fs";
+
+import { ouvrirLeNavigateur } from "./navigateur.mjs";
 
 const [navigateur, cheminPlan] = process.argv.slice(2);
 const plan = JSON.parse(readFileSync(cheminPlan, "utf-8"));
@@ -40,36 +39,9 @@ const DELAI_RENDU = 30000;
 
 // -- le navigateur -----------------------------------------------------------
 
-const profil = mkdtempSync(join(tmpdir(), "ecrans-"));
-const chrome = spawn(navigateur, [
-  "--headless=new", "--remote-debugging-port=0", `--user-data-dir=${profil}`,
-  "--no-first-run", "--no-default-browser-check", "--disable-gpu",
-  "--disable-extensions", "--hide-scrollbars", "--mute-audio",
-  // Le bac à sable de Chromium refuse de tourner sous root, ce que sont les
-  // conteneurs des sessions ; la page servie est celle du dépôt, rien d'autre.
-  "--no-sandbox",
-  "about:blank",
-], { stdio: ["ignore", "ignore", "pipe"] });
-
-function fermer() {
-  try { chrome.kill("SIGKILL"); } catch { /* déjà parti */ }
-  try { rmSync(profil, { recursive: true, force: true }); } catch { /* tant pis */ }
-}
-process.on("exit", fermer);
-
-/** L'adresse du WebSocket, que Chromium écrit sur sa sortie d'erreur. */
-const adresseDuProtocole = await new Promise((resoudre, rejeter) => {
-  let lu = "";
-  const delai = setTimeout(() => rejeter(new Error(
-    `le navigateur n'a pas ouvert son protocole : ${lu.slice(-500)}`)), 30000);
-  chrome.stderr.on("data", (morceau) => {
-    lu += morceau.toString();
-    const trouve = lu.match(/DevTools listening on (ws:\/\/\S+)/);
-    if (trouve) { clearTimeout(delai); resoudre(trouve[1]); }
-  });
-  chrome.on("exit", (code) => rejeter(new Error(
-    `le navigateur s'est arrêté (${code}) : ${lu.slice(-500)}`)));
-});
+// Une minute pour ouvrir son protocole, et un second lancement s'il s'est tu :
+// à froid, sur GitHub, trente secondes n'y suffisaient pas (`navigateur.mjs`).
+const { adresse: adresseDuProtocole, fermer } = await ouvrirLeNavigateur(navigateur);
 
 // -- le protocole ------------------------------------------------------------
 
