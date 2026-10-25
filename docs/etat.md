@@ -38,13 +38,13 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 
 | Statut | Rédactions |
 |---|---|
-| rattachées à une version | 1 437 |
+| rattachées à une version | 1 444 |
 | sans effet | 72 |
 | à rattacher | 560 |
-| à examiner | 4 216 |
-| sans statut | 9 518 |
+| à examiner | 4 213 |
+| sans statut | 9 514 |
 
-**La personne** (§ 5) : une chronologie de faits datés, dans un réseau de personnes — aujourd'hui l'assuré, ses enfants et son conjoint —, que le relevé et le parcours déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : 31 présomptions au vocabulaire, dont 3 posent leur fait dans la chronologie ; les autres s'appliquent dans le code, jusqu'à l'étape qui posera le leur.
+**La personne** (§ 5) : une chronologie de faits datés, dans un réseau de personnes — aujourd'hui l'assuré, ses enfants et son conjoint —, que le relevé et le parcours déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : 32 présomptions au vocabulaire, dont 3 posent leur fait dans la chronologie ; les autres s'appliquent dans le code, jusqu'à l'étape qui posera le leur.
 
 | Présomption | Valeur | Fiches qui la lisent | Où elle s'applique |
 |---|---|---|---|
@@ -68,6 +68,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | `aucun_autre_revenu_que_ses_pensions` | la pension du système 1, et les ressources du conjoint déclaré, abattues de 10 % | `csg_des_pensions_selon_le_revenu` | le net (moteur/js/contexte.js, Montants.duFoyer), quand la saisie ne dit pas le revenu fiscal ; son fait entrera à l'étape `foyer_et_net` |
 | `conjoint_de_l_autre_sexe` | l'autre sexe | `reversion_agirc_arrco`, `reversion_crpcen`, `reversion_fonction_publique`, `reversion_ieg`, `reversion_ircantec` | la saisie, qui donne au conjoint l'autre sexe quand elle ne le dit pas (moteur/js/saisie.js, Saisie.conjointDeclare) ; son fait entrera à l'étape `preparer_la_chronologie` |
 | `reversion_demandee_dans_l_annee` | dans l'année | `majoration_forfaitaire_reversion`, `reversion`, `reversion_agirc_arrco`, `reversion_ircantec`, `reversion_rafp`, `reversion_rci` | la date d'effet de la réversion (droit/reversion.py), au premier jour du mois qui suit le décès, ou qui suit l'âge requis ; son jumeau JavaScript ; son fait entrera à l'étape `liquider_chaque_regime` |
+| `reversion_demandee_le_mois_avant_sa_date_d_effet` | le mois qui précède la date d'effet | `reversion` | _ressources_a_la_date_d_effet (droit/reversion.py), qui examine les ressources d'une réversion du régime général d'avant juillet 2004 sur les trois ou douze mois civils qui précèdent ce mois, puis, la condition non remplie, sur ceux qui précèdent le décès (R. 353-1) ; son jumeau JavaScript ; son fait entrera à l'étape `liquider_chaque_regime` |
 | `deces_apres_le_depart` | au départ | `reversion`, `reversion_agirc_arrco`, `reversion_crpcen`, `reversion_fonction_publique`, `reversion_ieg`, `reversion_ircantec`, `reversion_rafp`, `reversion_rci`, `reversion_sncf` | l'échéancier (echeancier.py), qui liquide alors une réversion d'essai, hors du journal ; son jumeau JavaScript ; son fait entrera à l'étape `echeancier` |
 | `validation_ircantec_demandee` | demandée | `retablissement_fonction_publique` | retablir (droit/coordonner.py), et l'assiette de l'Ircantec des années rétablies (droit/acquerir.py) ; leurs jumeaux JavaScript ; son fait entrera à l'étape `coordonner_les_affiliations` |
 | `depart_de_chaque_regime` | au départ déclaré, à l'ouverture du régime, ou à la sortie de l'armée | `liquidation_regime_par_regime` | departs (droit/departs.py), que l'échéancier et le scénario 1 lisent ; son jumeau JavaScript ; son fait entrera à l'étape `echeancier` |
@@ -376,7 +377,7 @@ Et 36 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   | `code` | 57 |
   | `approximations` | 28 |
 
-- **Les textes** : 560 rédactions à rattacher à une version de la fiche qui les cite, 4 216 à examiner, et 9 518 sans statut, que le cliquet tient à 9 518 au plus. Les textes qui en ont le plus : `css` 4 927, `decret_46_2769` 938, `rural` 855, `cpcmr` 570, `decret_90_1215` 325 (`python scripts/textes.py`).
+- **Les textes** : 560 rédactions à rattacher à une version de la fiche qui les cite, 4 213 à examiner, et 9 514 sans statut, que le cliquet tient à 9 514 au plus. Les textes qui en ont le plus : `css` 4 923, `decret_46_2769` 938, `rural` 855, `cpcmr` 570, `decret_90_1215` 325 (`python scripts/textes.py`).
 - **Les relectures prévues les plus proches** : 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`agirc_arrco_valeur_achat`) ; 2026-12-31 (`carriere_longue`) ; 2026-12-31 (`certification_legi_perimee`).
 - **Les régimes hors champ** : 23, chacun avec sa raison dans l'inventaire.
 
