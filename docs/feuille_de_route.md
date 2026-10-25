@@ -7068,3 +7068,42 @@ lance les deux premières : « vas-y ».
 **Ce que le propriétaire tranche** : les chiffres à unité du parcours, puis,
 une à une, les étapes 3 et 5. Les quatre gardes de l'étape 2 sont faites le
 17 octobre 2026.
+
+### 174. Les notes Lighthouse au maximum, sur toutes les pages du site — `en cours`
+
+**Reprise, au 25 octobre 2026.** Fait, l'étape 1, le diagnostic des dix routes,
+en mobile et en bureau : Bonnes pratiques et SEO à 100 ; Performance de 35 à
+66, rien ne se peignant avant le moteur (1,9 Mo compressés), et l'en-tête
+poussant la page (CLS proche de 1) ; Accessibilité de 97 à 100, Agentic de 1 à
+100. Figée sans script, une page tient 98 à 100 en mobile, 100 en bureau ; les
+résultats d'une simulation, calculés chez le lecteur, n'auront pas 100 en
+Performance. Au propriétaire : les adresses par page, où se fabriquent les
+pages, le sort des résultats. Par quoi commencer, sans attendre : l'étape 2.
+Détail : `174/2026-10-25-diagnostic-lighthouse.md`.
+
+**D'où elle vient.** Le 25 octobre 2026, le propriétaire : « Je veux que
+toutes les pages aient un score maximal dans toutes les catégories lighthouse.
+On commence par un diagnostic de toutes les pages. » Lighthouse 13 en note
+cinq : Performance, Accessibilité, Bonnes pratiques, SEO et Agentic Browsing.
+
+**Les étapes.**
+
+1. **Le diagnostic**, fait le 25 octobre 2026 : les dix routes de
+   `tests/test_ecrans.py`, en mobile et en bureau, sur le site en ligne, et
+   quatre pages figées sans script, pour mesurer ce que vaudrait le pré-rendu.
+2. **Les défauts sans architecture** : l'en-tête posé avec `<main>`, la police
+   de titre sans bascule visible, l'ordre des titres, le contraste de l'écart
+   des cartes, le rôle des figures légendées ; Accessibilité et Agentic à 100
+   sur les dix routes.
+3. **La mesure au dépôt** : un script qui rejoue les audits, et, dans la suite,
+   les gardes qui n'ont pas besoin de Lighthouse.
+4. **Le pré-rendu** : une page HTML statique par adresse, graphiques et
+   tableaux tenus sans script, le moteur sorti de l'en-tête.
+5. **Le moteur à la demande** : au premier calcul, ou dans un Web Worker.
+6. **Les résultats** : ce qui s'y gagne, sans le 100 de Performance.
+
+**Ce que le propriétaire tranche** : les adresses par page (`…/cout/` au lieu
+de `…/#/cout`, les anciennes redirigées), sans quoi pas de pré-rendu ; où se
+fabriquent les pages, commitées par la fabrique ou faites au déploiement, dans
+une garde ; et si les résultats d'une simulation restent sous 100 en
+Performance.
