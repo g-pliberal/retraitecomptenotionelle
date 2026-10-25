@@ -2,7 +2,7 @@
 
 **Le 25 octobre 2026 : « Mon estimation retraite » ne dit plus au taux plein,
 avant l'âge d'annulation de la décote, une saisie sans activité jusqu'à son
-départ à qui il manque des trimestres ; sur `main` (1eb4c5c). La correction
+départ à qui il manque des trimestres ; sur `main` (279a48a). La correction
 est celle du pilote des cas types (63dbccd) : quand la montée du taux plein
 s'arrête sans lui, la recherche reprend de l'âge d'annulation. Aucun témoin ne
 bouge. En chemin : la même datation de la durée arrête trop haut la descente
