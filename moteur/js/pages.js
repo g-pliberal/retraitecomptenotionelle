@@ -4992,10 +4992,11 @@ function departEnClair(depart) {
 /**
  * Le système 1 au format de « Mon estimation retraite » (info-retraite.fr),
  * l'estimation que chacun consulte : à chaque âge que sa synthèse chiffre — au
- * plus tôt, au taux plein, au taux plein automatique —, le brut mensuel de
- * chaque étage, en euros de l'année de référence, le total, puis le net. La
- * dernière colonne reçoit le total brut que l'estimation officielle affiche au
- * même âge, et l'écart s'écrit à côté.
+ * plus tôt, au taux plein, au taux plein automatique —, ses trimestres, pour
+ * ceux que la génération requiert, le brut mensuel de chaque étage, en euros
+ * de l'année de référence, le total, puis le net. La dernière colonne reçoit
+ * le total brut que l'estimation officielle affiche au même âge, et l'écart
+ * s'écrit à côté.
  *
  * LES CHAMPS APPARTIENNENT AU FORMULAIRE DU HAUT (`form="simulateur"`) : ils
  * partent avec le reste de la saisie, dans l'adresse, et restent dans le
@@ -5032,7 +5033,8 @@ function estimationOfficielle(contexte, saisie, montants) {
       etages.map(([etage]) => mensuel(depart, etage)), total);
     return [
       `${age(depart.age)}<span class="aide">${echapper(String(new DateMois(annee, mois)))}, `
-        + `${departEnClair(depart)}</span>`,
+        + `${departEnClair(depart)}, ${depart.trimestres}${" "}trimestres pour `
+        + `${depart.trimestres_requis}${" "}requis</span>`,
       ...parts.map((part) => g.euros(part)),
       g.euros(total),
       g.euros(montants.netDUnDepart(depart.total, depart.assiette_maladie,
@@ -5069,10 +5071,9 @@ function estimationOfficielle(contexte, saisie, montants) {
     : "";
   return `
 <h2 id="estimation-officielle">Comme votre estimation officielle</h2>
-<p class="chapeau">Le système 1 au format de « Mon estimation retraite », que
-chacun consulte sur <a href="https://www.info-retraite.fr/">info-retraite.fr</a>,
-aux âges qu'elle chiffre. Recopiez le total brut de la vôtre dans la colonne
-« Votre estimation » : l'écart s'affiche à côté.</p>
+<p class="chapeau">Le système 1 au format de « Mon estimation retraite », sur
+<a href="https://www.info-retraite.fr/">info-retraite.fr</a>. Recopiez le total brut
+de la vôtre dans la colonne « Votre estimation » : l'écart s'affiche à côté.</p>
 <div class="carte estimation-officielle">
   ${tableau}
   <p class="comparer"><button type="submit" form="simulateur" id="comparer-estimation">Comparer</button></p>

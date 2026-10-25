@@ -433,6 +433,35 @@ def test_sans_estimation_recopiee_la_page_n_a_pas_de_colonne_d_ecart(page):
     assert '<h2 id="estimation-officielle"' not in page("/simuler", **REQUETES["parti"])
 
 
+def test_chaque_depart_dit_ses_trimestres_comme_l_estimation_officielle(page):
+    """« Mon estimation retraite » donne, à chaque âge, ses trimestres et son
+    montant (registre, ``marel``, chantier 138.10) : chaque rangée dit la durée
+    tous régimes du départ, enfants compris, et celle que sa génération
+    requiert (L. 161-17-3). Le départ légal du né en mai 1968 entré à
+    vingt-deux ans tombe sous la durée requise, d'où sa décote ; son taux plein
+    vient au mois où la durée l'atteint (L. 351-1, R. 351-27) ; il la dépasse
+    au taux plein automatique. La carrière longue part au taux plein, la durée
+    atteinte ; la mère de trois enfants la dépasse dès l'âge légal."""
+    for nom in ("trois_ages", "carriere_longue", "mere"):
+        departs = _departs(nom)
+        rangees = re.findall(r'<tr><th[^>]*scope="row">(.*?)</th>',
+                             _bloc(page("/simuler", **REQUETES[nom])))
+        assert len(rangees) == len(departs) >= 2, nom
+        for tete, depart in zip(rangees, departs):
+            texte = re.sub(r"[ \xa0]", " ", html.unescape(re.sub(r"<[^>]+>", " ", tete)))
+            assert (f"{depart.trimestres} trimestres pour {depart.trimestres_requis} requis"
+                    in texte), (nom, texte)
+    tot, plein, automatique = _departs("trois_ages")
+    assert tot.trimestres < tot.trimestres_requis == 172
+    assert plein.trimestres == plein.trimestres_requis
+    assert automatique.trimestres > automatique.trimestres_requis
+    longue, _ = _departs("carriere_longue")
+    assert longue.motif_ouverture == "carriere_longue"
+    assert longue.trimestres >= longue.trimestres_requis
+    mere, _ = _departs("mere")
+    assert mere.trimestres > mere.trimestres_requis
+
+
 def _ages_de_depart(corps: str) -> str:
     debut = corps.index("Partir plus tôt ou plus tard")
     return corps[debut:corps.index("</details>", debut)]
