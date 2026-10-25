@@ -55,6 +55,10 @@ RESULTATS = (
 ROUTES = ["/", "/simuler", RESULTATS, "/cout", "/risque", "/partager",
           "/saviez-vous", "/cas-types", "/avantages", "/methode"]
 
+#: La fenêtre qu'on rétrécit sans changer de page, au large : du bureau à la
+#: tablette en largeur, sur une page qui pose des schémas de front.
+RETRECIR = {"depuis": 1440, "vers": {"largeur": 1024, "hauteur": 768}}
+
 
 def navigateur() -> str | None:
     """Un Chromium ou un Chrome : celui que désigne ``NAVIGATEUR``, celui des
@@ -106,6 +110,7 @@ def mesures() -> tuple:
             "adresse": f"http://127.0.0.1:{serveur.server_address[1]}/index.html",
             "ecrans": [{"largeur": l, "hauteur": h} for l, h in ECRANS],
             "routes": ROUTES,
+            "retrecir": RETRECIR,
         }), encoding="utf-8")
         execution = subprocess.run(
             ["node", str(PILOTE), chemin, str(plan)], cwd=RACINE,
@@ -261,6 +266,103 @@ def test_une_grille_repliee_garde_ses_colonnes():
               for visite in mesures() for etat in ("replie", "deplie")
               for rangee in visite[etat]["grilles"]]
     assert not fautes, f"{len(fautes)} rangées de grille éparpillées :\n" + "\n".join(fautes[:60])
+
+
+#: Dès cette largeur, les schémas de Sankey qu'une carte compare vont de front.
+#: À 1 440 points, ceux de la carte « Qui paie quoi », le système actuel et la
+#: proposition, s'empilaient sur 1 340 pixels, pour un écran de 900 : on ne
+#: voyait jamais le second avec le premier (action 173, étape 5).
+DEUX_SCHEMAS_DE_FRONT = 1024
+
+
+def test_les_schemas_qu_une_carte_compare_se_voient_ensemble():
+    """Deux schémas à la même échelle se comparent d'un regard : de front dès
+    qu'il y a la place, à la même hauteur, et au bureau tous deux dans un seul
+    écran, de leurs titres au bas du plus haut. Un milliard y a la même
+    épaisseur ; encore faut-il voir les deux épaisseurs en même temps.
+
+    Sur la tablette en largeur, sous un bandeau de deux rangées, ils prennent à
+    peu près toute la hauteur de l'écran : la borne n'y est pas tenue, que le
+    moindre nœud de plus ferait tomber, et leurs caisses, alignées en haut, s'y
+    comparent quand même. Sur un téléphone et une tablette en hauteur, ils
+    restent l'un sous l'autre, chacun à la largeur de la colonne.
+    """
+    fautes = []
+    for visite in mesures():
+        lieu = _ou(visite, "fermés")
+        if visite["route"] == "/cout":
+            assert visite["replie"]["schemas"], f"{lieu} : la carte des flux n'a plus deux schémas"
+        if visite["largeur"] < DEUX_SCHEMAS_DE_FRONT:
+            continue
+        for carte in visite["replie"]["schemas"]:
+            if carte["colonnes"] < carte["nombre"] or carte["rangees"] > 1:
+                fautes.append(f"{lieu}, carte {carte['carte']} : {carte['nombre']} schémas sur "
+                              f"{carte['colonnes']} colonne(s) et {carte['rangees']} rangée(s)")
+            au_bureau = (visite["largeur"], visite["hauteur"]) == ECRANS[-1]
+            if au_bureau and carte["etendue"] > carte["place"]:
+                fautes.append(f"{lieu}, carte {carte['carte']} : les schémas s'étagent sur "
+                              f"{carte['etendue']} points, pour {carte['place']} à l'écran")
+    assert not fautes, f"{len(fautes)} schémas loin l'un de l'autre :\n" + "\n".join(fautes)
+
+
+def test_une_fenetre_retrecie_redessine_ses_schemas_a_leur_demi_colonne():
+    """Une fenêtre qu'on rétrécit au large garde ses schémas de front à leur
+    taille : la page se redessine sur place, chacun à sa nouvelle demi-colonne,
+    ses textes à la taille que la feuille de style leur donne.
+
+    Le redimensionnement ne redessinait une page qu'en passant les 720 points,
+    où ses courbes changent de cadre ; un schéma dessiné à la demi-colonne du
+    bureau, 532 unités, se serait montré sur 432 points sur la tablette,
+    réduit d'un cinquième.
+    """
+    retrecies = [(visite, visite["retrecie"]) for visite in mesures() if visite["retrecie"]]
+    assert retrecies, f"aucune page de schémas rétrécie depuis {RETRECIR['depuis']} points"
+    fautes = []
+    for visite, retrecie in retrecies:
+        lieu = f"{visite['route'][:40]}, de {visite['largeur']} à {retrecie['largeur']} points"
+        if not retrecie["redessinee"]:
+            fautes.append(f"{lieu} : la page ne s'est pas redessinée")
+        for schema in retrecie["schemas"]:
+            if abs(schema["dessin"] - schema["montre"]) > 4:
+                fautes.append(f"{lieu} : un schéma dessiné sur {schema['dessin']} unités "
+                              f"se montre sur {schema['montre']} points")
+    assert not fautes, "\n".join(fautes)
+
+
+def test_l_image_d_une_carte_pose_de_front_les_schemas_qu_elle_compare():
+    """L'image que compose « Partager » a 1 200 pixels de large, quel que soit
+    l'écran qui la compose : les schémas qu'une carte compare s'y posent de
+    front, chacun sur sa moitié, à la même hauteur, quand ils y tiennent sans
+    rétrécir — dessinés à la demi-colonne, ou à la largeur d'un téléphone.
+    Aucun n'y rétrécit : ses textes y gardent au moins la taille que la page
+    leur donne. Ceux que la tablette en hauteur dessine sur sa colonne
+    entière s'y empilent, chacun à toute sa largeur.
+
+    Elle les empilait toujours : ceux qu'un téléphone de 320 points dessine y
+    prenaient près de quatre fois leur taille, et l'image près de cinq mille
+    pixels de haut. Posés de front sans y regarder, ceux de la tablette en
+    hauteur y auraient eu des textes de dix pixels.
+    """
+    fautes = []
+    for visite in mesures():
+        if visite["route"] != "/cout":
+            continue
+        lieu = _ou(visite, "ouverts")
+        image = visite["image"]
+        assert image and image["largeur"], f"{lieu} : « Partager » n'a composé aucune image"
+        traces = image["traces"]
+        if len(traces) != 2:
+            fautes.append(f"{lieu} : {len(traces)} schémas dans l'image, deux attendus")
+            continue
+        for trace, dessin in zip(traces, image["dessins"]):
+            if trace["largeur"] < dessin:
+                fautes.append(f"{lieu} : un schéma dessiné sur {dessin} unités rétrécit "
+                              f"à {trace['largeur']} pixels dans l'image")
+        if visite["largeur"] < 768 or visite["largeur"] >= DEUX_SCHEMAS_DE_FRONT:
+            gauche, droite = sorted(traces, key=lambda trace: trace["x"])
+            if gauche["y"] != droite["y"] or gauche["x"] + gauche["largeur"] > droite["x"]:
+                fautes.append(f"{lieu} : les schémas de l'image ne sont pas de front — {traces}")
+    assert not fautes, f"{len(fautes)} images :\n" + "\n".join(fautes)
 
 
 def test_les_quatre_systemes_se_comparent_d_un_seul_regard():

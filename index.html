@@ -358,8 +358,11 @@ let reglesVues = false;
 // laquelle la page affichée a été dessinée — `null` au large —, et une
 // colonne qui change de largeur — un téléphone qu'on tourne, une fenêtre
 // qu'on étire — fait redessiner la page sur place quand ses tracés ne
-// tombent plus juste. Les tableaux, eux, se replient sans redessin.
+// tombent plus juste. Les tableaux, eux, se replient sans redessin. Au large,
+// les tracés qu'une carte pose de front se dessinent à la demi-colonne
+// (`demiRendue`) : une page qui en porte se redessine aussi quand elle change.
 let ecranRendu = null;
+let demiRendue = null;
 
 function largeurDeLaColonne() {
   const contenu = document.getElementById("contenu");
@@ -373,12 +376,12 @@ let attenteDeRedessin = null;
 window.addEventListener("resize", () => {
   clearTimeout(attenteDeRedessin);
   attenteDeRedessin = setTimeout(() => {
-    const largeur = largeurDeLaColonne();
-    const attendue = largeur && largeur < gabarit.LARGEUR_TRACE
-      ? Math.max(gabarit.ECRAN_MINIMAL, Math.floor(largeur)) : null;
+    const [attendue, demi] = gabarit.ecransDe(largeurDeLaColonne());
     const traces = document.querySelector(
       "#contenu :is(figure.graphique, figure.sankey, figure.cascade)");
-    if (traces && routeAffichee && attendue !== ecranRendu) { afficher(); }
+    const deFront = document.querySelector("#contenu .de-front");
+    if (traces && routeAffichee
+        && (attendue !== ecranRendu || (deFront && demi !== demiRendue))) { afficher(); }
   }, 250);
 });
 
@@ -436,6 +439,7 @@ async function afficher() {
     [titre, corps] = rendre(contexte, cible.chemin in TITRES ? cible.chemin : "/",
       cible.parametres, largeurDeLaColonne());
     ecranRendu = gabarit.ecran();
+    demiRendue = gabarit.demiColonne();
   } catch (erreur) {
     document.body.classList.remove("calcul-en-cours");
     contenu.removeAttribute("aria-busy");
@@ -2215,6 +2219,9 @@ const PROPRIETES_TRACE = [
 
 const LARGEUR_IMAGE = 1200;
 const MARGE_IMAGE = 52;
+// L'écart entre deux schémas de front dans l'image : celui de la page, à
+// l'échelle où l'image les agrandit.
+const ECART_DE_FRONT_IMAGE = 32;
 
 // Les deux familles du site. Une toile ne sait rien des polices de la page tant
 // qu'elles ne sont pas chargées : `polices()` les réclame avant la première
@@ -2460,6 +2467,8 @@ async function imageDuGraphique(carte) {
     const sankey = figure.classList.contains("sankey");
     return {
       image,
+      sankey,
+      dessin: boite?.width || 720,
       rapport: boite?.width ? boite.height / boite.width : 300 / 720,
       titre: sankey ? texteDuNoeud(figure.querySelector("figcaption")) : "",
       legendes: sankey ? [] : legendesDe(figure),
@@ -2482,14 +2491,40 @@ async function imageDuGraphique(carte) {
   mesure.font = `19px ${SERIF}`;
   const source = enLignes(mesure, texteDe(carte, ".source"), largeurTexte);
 
-  // La hauteur de chaque tracé suit son repère. Le titre d'un schéma prend une
-  // ligne au-dessus de lui, plus aérée entre deux schémas qu'après la réponse ;
-  // un graphique seul retrouve exactement la mise en page d'avant les schémas.
-  for (const trace of traces) { trace.hauteur = Math.round(largeurTexte * trace.rapport); }
+  // LES SCHÉMAS QU'UNE CARTE COMPARE VONT DE FRONT, deux par rangée, chacun sur
+  // sa moitié, quand aucun n'y rétrécit : dessinés à la demi-colonne, que le
+  // gabarit borne à cette moitié, ou à la largeur d'un téléphone. L'image a
+  // toujours 1 200 pixels, la largeur d'un bureau. Empilés à toute sa largeur,
+  // ceux de la carte des flux y prenaient près de quatre fois la taille que le
+  // plus petit téléphone leur donne, et l'image près de cinq mille pixels de
+  // haut. Ceux qu'une tablette en hauteur dessine sur sa colonne entière s'y
+  // empilent encore : de front, leurs textes tomberaient à dix pixels. Un
+  // graphique a sa rangée à lui.
+  const moitie = (largeurTexte - ECART_DE_FRONT_IMAGE) / 2;
+  const rangees = [];
+  for (const trace of traces) {
+    const derniere = rangees[rangees.length - 1];
+    const deFront = trace.sankey && derniere?.length === 1 && derniere[0].sankey
+      && Math.max(trace.dessin, derniere[0].dessin) <= moitie;
+    if (deFront) { derniere.push(trace); } else { rangees.push([trace]); }
+  }
+  // La hauteur de chaque tracé suit son repère, à la largeur que sa rangée lui
+  // laisse. Le titre d'un schéma prend une ligne au-dessus de lui, plus aérée
+  // entre deux rangées qu'après la réponse ; un graphique seul retrouve
+  // exactement la mise en page d'avant les schémas.
+  for (const rangee of rangees) {
+    const largeur = (largeurTexte - (rangee.length - 1) * ECART_DE_FRONT_IMAGE) / rangee.length;
+    rangee.forEach((trace, colonne) => {
+      trace.x = MARGE_IMAGE + colonne * (largeur + ECART_DE_FRONT_IMAGE);
+      trace.largeur = largeur;
+      trace.hauteur = Math.round(largeur * trace.rapport);
+    });
+  }
   const avantTitre = (rang) => (rang === 0 ? 10 : 34);
-  const hauteurTraces = traces.reduce((somme, trace, rang) => somme
-    + (trace.titre ? avantTitre(rang) + 40 : 0) + trace.hauteur + 16
-    + trace.legendes.length * 30 + (rang < traces.length - 1 ? 16 : 0), 0);
+  const hauteurTraces = rangees.reduce((somme, rangee, rang) => somme
+    + Math.max(...rangee.map((trace) => (trace.titre ? avantTitre(rang) + 40 : 0)
+      + trace.hauteur + 16 + trace.legendes.length * 30))
+    + (rang < rangees.length - 1 ? 16 : 0), 0);
   const hauteur = MARGE_IMAGE + titre.length * 48 + 14 + reponse.length * 40
     + 22 + hauteurTraces + 26 + source.length * 28
     + 30 + 18 + 59 + MARGE_IMAGE;
@@ -2512,30 +2547,37 @@ async function imageDuGraphique(carte) {
   for (const ligne of reponse) { dessin.fillText(ligne, MARGE_IMAGE, y); y += 40; }
 
   y += 22;
-  traces.forEach((trace, rang) => {
-    if (trace.titre) {
-      y += avantTitre(rang);
-      dessin.font = `700 24px ${SANS}`;
-      dessin.fillStyle = encre;
-      dessin.fillText(trace.titre, MARGE_IMAGE, y);
-      y += 40;
-    }
-    dessin.drawImage(trace.image, MARGE_IMAGE, y - 30, largeurTexte, trace.hauteur);
-    y += trace.hauteur - 14;
+  rangees.forEach((rangee, rang) => {
+    // Chaque tracé de la rangée part de son haut ; la rangée finit sous le
+    // plus long.
+    const haut = y;
+    for (const trace of rangee) {
+      let yTrace = haut;
+      if (trace.titre) {
+        yTrace += avantTitre(rang);
+        dessin.font = `700 24px ${SANS}`;
+        dessin.fillStyle = encre;
+        dessin.fillText(trace.titre, trace.x, yTrace, trace.largeur);
+        yTrace += 40;
+      }
+      dessin.drawImage(trace.image, trace.x, yTrace - 30, trace.largeur, trace.hauteur);
+      yTrace += trace.hauteur - 14;
 
-    dessin.font = `20px ${SERIF}`;
-    for (const entree of trace.legendes) {
-      entree.couleurs.forEach((pastille, position) => {
-        dessin.globalAlpha = Number.isFinite(pastille.voile) ? pastille.voile : 1;
-        dessin.fillStyle = pastille.fond;
-        dessin.fillRect(MARGE_IMAGE + position * 16, y - 11, 13, 13);
-      });
-      dessin.globalAlpha = 1;
-      dessin.fillStyle = doux;
-      dessin.fillText(entree.texte, MARGE_IMAGE + entree.couleurs.length * 16 + 8, y);
-      y += 30;
+      dessin.font = `20px ${SERIF}`;
+      for (const entree of trace.legendes) {
+        entree.couleurs.forEach((pastille, position) => {
+          dessin.globalAlpha = Number.isFinite(pastille.voile) ? pastille.voile : 1;
+          dessin.fillStyle = pastille.fond;
+          dessin.fillRect(trace.x + position * 16, yTrace - 11, 13, 13);
+        });
+        dessin.globalAlpha = 1;
+        dessin.fillStyle = doux;
+        dessin.fillText(entree.texte, trace.x + entree.couleurs.length * 16 + 8, yTrace);
+        yTrace += 30;
+      }
+      y = Math.max(y, yTrace);
     }
-    if (rang < traces.length - 1) { y += 16; }
+    if (rang < rangees.length - 1) { y += 16; }
   });
 
   y += 26;

@@ -11755,15 +11755,18 @@ function coutCarteFlux(contexte, regards = null) {
     "Année des schémas",
     offertes.map((millesime) => [String(millesime), lienVue(vues, "flux", millesime)]),
     String(annee));
-  const schemas = g.sankey(
+  // De front au large, chacun dans sa moitié de la carte : à la même échelle,
+  // on compare deux épaisseurs d'un regard.
+  const demi = g.demiColonne();
+  const schemas = g.deFront(g.sankey(
     `D'où vient l'argent du système actuel et où il va, en ${annee}, `
     + "en milliards d'euros",
-    `Le système actuel, en ${annee}`, actuel, echelle, colonnes,
-  ) + g.sankey(
+    `Le système actuel, en ${annee}`, actuel, echelle, colonnes, demi,
+  ), g.sankey(
     `D'où viendrait l'argent de la proposition et où il irait, en ${annee}, `
     + "en milliards d'euros",
-    `Notre proposition, en ${annee}`, proposition, echelle, colonnes,
-  );
+    `Notre proposition, en ${annee}`, proposition, echelle, colonnes, demi,
+  ));
 
   // Ce qui manque est emprunté, ce qui reste est placé ; le verbe n'est redit
   // pour le système actuel que s'il change.

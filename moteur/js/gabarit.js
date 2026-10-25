@@ -131,18 +131,67 @@ export function options() {
  */
 let ECRAN = null;
 
+/**
+ * La largeur de chacun de deux tracés qu'une carte pose de front — ou `null`,
+ * quand ils s'empilent : dans une colonne étroite, où chacun la prend entière,
+ * et là où la page n'est sous les yeux de personne.
+ *
+ * Au large, les deux schémas de Sankey de la carte des flux s'empilaient à
+ * 720 unités sur 1 340 pixels, pour un écran de 900 : on ne voyait jamais le
+ * second avec le premier. Ils vont de front, chacun dessiné à sa moitié de la
+ * carte, que la colonne donne, moins les retraits de la carte et l'écart qui
+ * les sépare (`.de-front`, dans la feuille de style).
+ */
+let DEMI_COLONNE = null;
+
 /** La largeur en deçà de laquelle un tracé ne se dessine plus : 260 points. */
 export const ECRAN_MINIMAL = 260;
 
-/** Fixe la largeur de la colonne. Voir `ECRAN`. */
+// Le retrait d'une carte au large, de chaque côté, et l'écart entre deux
+// tracés de front : 1,75 et 1,5 rem.
+const RETRAIT_CARTE = 28;
+const ECART_DE_FRONT = 24;
+// Un tracé de front ne se dessine pas plus large que la moitié de l'image que
+// compose « Partager » (`index.html`) : 1 200 pixels, moins deux marges de 52
+// et l'écart de 32, en deux. Plus large, il y rétrécirait, et ses textes avec :
+// au bureau, la feuille de style l'agrandit de quelques points.
+const DEMI_COLONNE_MAXIMALE = 532;
+
+/**
+ * Ce qu'une colonne de cette largeur pose au gabarit : `[ECRAN,
+ * DEMI_COLONNE]`. La page s'en sert à chaque rendu, et `index.html` pour
+ * savoir si une colonne qui a changé de largeur demande un nouveau dessin.
+ */
+export function ecransDe(largeur) {
+  if (!largeur) return [null, null];
+  if (largeur < LARGEUR_TRACE) return [Math.max(ECRAN_MINIMAL, Math.floor(largeur)), null];
+  return [null, Math.min(DEMI_COLONNE_MAXIMALE,
+    Math.floor((largeur - 2 * RETRAIT_CARTE - ECART_DE_FRONT) / 2))];
+}
+
+/** Fixe la largeur de la colonne. Voir `ECRAN` et `DEMI_COLONNE`. */
 export function poserEcran(largeur) {
-  ECRAN = largeur && largeur < LARGEUR_TRACE
-    ? Math.max(ECRAN_MINIMAL, Math.floor(largeur)) : null;
+  [ECRAN, DEMI_COLONNE] = ecransDe(largeur);
 }
 
 /** La largeur de la colonne, `null` au large. */
 export function ecran() {
   return ECRAN;
+}
+
+/** La largeur d'un tracé posé de front, `null` quand ils s'empilent. */
+export function demiColonne() {
+  return DEMI_COLONNE;
+}
+
+/**
+ * Des tracés qu'une carte compare : de front, chacun dans sa moitié, quand la
+ * colonne en a la place (`DEMI_COLONNE`), l'un sous l'autre sinon. Chacun
+ * garde dessous ce qui le suit, son tableau replié.
+ */
+export function deFront(...blocs) {
+  if (DEMI_COLONNE === null) return blocs.join("");
+  return `<div class="de-front">${blocs.map((bloc) => `<div>${bloc}</div>`).join("")}</div>`;
 }
 
 /**
@@ -2236,8 +2285,9 @@ function colonneSankey(noeuds, haut, echelle) {
  * LE SCHÉMA SUR UN ÉCRAN ÉTROIT. Au large, ses deux colonnes d'étiquettes
  * tiennent dans 152 et 170 unités, et le schéma dans 720 ; réduit à la
  * largeur d'un téléphone, ses textes y faisaient six pixels, et le schéma
- * défilait. Dans une colonne étroite (`ECRAN`), il en prend la largeur, et
- * ses textes leur taille. Un libellé se coupe alors en deux lignes au plus,
+ * défilait. Dans une colonne étroite (`ECRAN`), ou dans la moitié d'une carte
+ * qui en pose deux de front (`DEMI_COLONNE`), il en prend la largeur, et ses
+ * textes leur taille. Un libellé se coupe alors en deux lignes au plus,
  * au mot, et chaque colonne d'étiquettes ne prend que la place de la plus
  * longue de ses lignes ; l'écart entre deux nœuds loge trois lignes au lieu
  * de deux, et les titres des colonnes passent sur leur propre ligne, au-dessus
@@ -2268,9 +2318,12 @@ function coupeSankey(libelle) {
   return meilleure;
 }
 
-/** La géométrie du schéma, pour ces caisses : celle du large, ou la resserrée. */
-function geometrieSankey(caisses) {
-  if (ECRAN === null) return GEOMETRIE_SANKEY_LARGE;
+/**
+ * La géométrie du schéma, pour ces caisses : celle du large, ou la resserrée,
+ * à la largeur d'une colonne étroite ou d'une demi-colonne.
+ */
+function geometrieSankey(caisses, largeur) {
+  if (largeur === null) return GEOMETRIE_SANKEY_LARGE;
   GEOMETRIE_SANKEY = { ...GEOMETRIE_SANKEY_LARGE, couper: true };
   const place = (noeuds) => Math.max(0, ...noeuds.flatMap((noeud) =>
     coupeSankey(noeud.libelle).concat([noeud.montant]))
@@ -2278,9 +2331,9 @@ function geometrieSankey(caisses) {
   const gauche = place(caisses.flatMap((caisse) => caisse.sources));
   const droite = place(caisses.flatMap((caisse) => caisse.usages));
   const xSources = Math.ceil(gauche + RETRAIT_SANKEY);
-  const xUsages = Math.floor(ECRAN - droite - RETRAIT_SANKEY - LARGEUR_NOEUD_SANKEY);
+  const xUsages = Math.floor(largeur - droite - RETRAIT_SANKEY - LARGEUR_NOEUD_SANKEY);
   return {
-    largeur: ECRAN, xSources, xUsages,
+    largeur, xSources, xUsages,
     xCaisse: Math.floor((xSources + xUsages) / 2),
     haut: 60, yTitres: 14, ecartNoeuds: ECART_NOEUDS_SANKEY + INTERLIGNE_SANKEY,
     couper: true,
@@ -2303,12 +2356,15 @@ function geometrieSankey(caisses) {
  * Le dessin a son tableau, replié dessous : flux par flux, de qui à qui, et
  * combien. Un schéma est une image, et le RGAA demande pour une image complexe
  * une description détaillée ; pour un Sankey, c'est la liste de ses rubans.
+ *
+ * `largeur` est celle d'un schéma posé de front (`demiColonne`) ; sans elle,
+ * il prend celle de la colonne.
  */
-export function sankey(titre, nom, caisses, echelle, colonnes = ["", ""]) {
+export function sankey(titre, nom, caisses, echelle, colonnes = ["", ""], largeur = null) {
   if (!caisses.length) {
     return "";
   }
-  GEOMETRIE_SANKEY = geometrieSankey(caisses);
+  GEOMETRIE_SANKEY = geometrieSankey(caisses, largeur ?? ECRAN);
   const geo = GEOMETRIE_SANKEY;
   const sortieSources = geo.xSources + LARGEUR_NOEUD_SANKEY;
   const sortieCaisse = geo.xCaisse + LARGEUR_NOEUD_SANKEY;

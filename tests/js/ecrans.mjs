@@ -17,7 +17,11 @@
  *
  *     {"adresse": "http://127.0.0.1:8000/index.html",
  *      "ecrans": [{"largeur": 390, "hauteur": 800}, ...],
- *      "routes": ["/", "/cout", "/simuler?naissance=…", ...]}
+ *      "routes": ["/", "/cout", "/simuler?naissance=…", ...],
+ *      "retrecir": {"depuis": 1440, "vers": {"largeur": 1024, "hauteur": 768}}}
+ *
+ * `retrecir` rétrécit la fenêtre, sans changer d'adresse, sur une page qui
+ * pose des schémas de front, et dit ce qu'elle a redessiné.
  *
  * Le paquet de données n'est chargé qu'une fois : on change de page par
  * l'ancre, comme le lecteur, et de largeur par l'émulation de l'écran.
@@ -98,6 +102,9 @@ function envoyer(methode, parametres = {}, session = undefined) {
   });
 }
 
+// « Partager » enregistre l'image qu'il compose : le pilote la regarde se
+// dessiner, et le navigateur n'écrit rien sur le disque.
+await envoyer("Browser.setDownloadBehavior", { behavior: "deny" });
 const { targetId } = await envoyer("Target.createTarget", { url: "about:blank" });
 const { sessionId } = await envoyer("Target.attachToTarget", { targetId, flatten: true });
 const page = (methode, parametres) => envoyer(methode, parametres, sessionId);
@@ -159,7 +166,8 @@ async function allerA(route) {
 /**
  * Ce qui se mesure dans la page, une fois rendue : ce qui dépasse la largeur
  * de l'écran, ce qui défile en largeur dans son cadre, et la place de ce qui
- * doit se voir ensemble — un tracé et sa légende, les quatre montants.
+ * doit se voir ensemble — un tracé et sa légende, les quatre montants, les
+ * schémas qu'une carte compare.
  */
 const MESURER = (ecran) => `(() => {
   // La largeur de l'écran émulé, et non celle de la fenêtre : un téléphone
@@ -334,6 +342,24 @@ const MESURER = (ecran) => `(() => {
       };
     });
 
+  // Les schémas de Sankey qu'une carte compare : combien vont de front, et la
+  // hauteur qu'ils prennent ensemble, du titre du premier au bas du dernier.
+  const schemas = [...document.querySelectorAll("#contenu section.cle")]
+    .map((carte) => [carte, [...carte.querySelectorAll("figure.sankey")].filter(montre)])
+    .filter(([, figures]) => figures.length > 1)
+    .map(([carte, figures]) => {
+      const cadres = figures.map((el) => el.getBoundingClientRect());
+      return {
+        carte: carte.id || nommer(carte).slice(0, 60),
+        nombre: figures.length,
+        colonnes: new Set(cadres.map((cadre) => Math.round(cadre.left))).size,
+        rangees: new Set(cadres.map((cadre) => Math.round(cadre.top))).size,
+        etendue: Math.round(Math.max(...cadres.map((cadre) => cadre.bottom))
+          - Math.min(...cadres.map((cadre) => cadre.top))),
+        place: Math.round(hauteur - sousLeBandeau),
+      };
+    });
+
   // Les vides : l'écart vertical entre deux blocs voisins de la page, ceux
   // qui se suivent dans une même colonne. Seuls comptent les parents dont
   // tous les enfants sont des boîtes : entre deux blocs séparés par du texte
@@ -371,9 +397,91 @@ const MESURER = (ecran) => `(() => {
     defilants: defilants.slice(0, 40), nombreDefilants: defilants.length,
     sortants: sortants.slice(0, 40), nombreSortants: sortants.length,
     traces, montants, empilees: empilees.slice(0, 40), grilles: grilles.slice(0, 40),
-    chevauchees: chevauchees.slice(0, 40), cartes,
+    chevauchees: chevauchees.slice(0, 40), cartes, schemas,
   };
 })()`;
+
+/**
+ * L'image que « Partager » compose pour la première carte qui compare des
+ * schémas : la place de chaque schéma dans l'image, et sa taille. Le pilote
+ * épie la toile — chaque tracé y entre par `drawImage`, en SVG —, clique, et
+ * rend ce qu'il a vu quand l'image s'exporte. La feuille de partage du
+ * système est écartée : seul l'enregistrement, refusé, reste.
+ */
+const IMAGE_DES_SCHEMAS = `new Promise((resoudre) => {
+  const carte = [...document.querySelectorAll("#contenu section.cle")]
+    .find((c) => c.querySelectorAll("figure.sankey").length > 1);
+  const bouton = carte && carte.querySelector("button.partager");
+  if (!bouton) { resoudre(null); return; }
+  // La largeur de chaque dessin dans la page, dans l'ordre où l'image les prend.
+  const dessins = [...carte.querySelectorAll("figure.sankey svg")]
+    .map((svg) => Math.round(svg.viewBox.baseVal.width));
+  const traces = [];
+  const dessiner = CanvasRenderingContext2D.prototype.drawImage;
+  const exporter = HTMLCanvasElement.prototype.toBlob;
+  const finir = (image) => {
+    CanvasRenderingContext2D.prototype.drawImage = dessiner;
+    HTMLCanvasElement.prototype.toBlob = exporter;
+    resoudre(image);
+  };
+  CanvasRenderingContext2D.prototype.drawImage = function (image, ...place) {
+    if (image instanceof HTMLImageElement && image.src.startsWith("data:image/svg")) {
+      const [x, y, largeur, hauteur] = place.map(Math.round);
+      traces.push({ x, y, largeur, hauteur });
+    }
+    return dessiner.call(this, image, ...place);
+  };
+  HTMLCanvasElement.prototype.toBlob = function (...suite) {
+    finir({ traces, dessins, largeur: this.width, hauteur: this.height });
+    return exporter.apply(this, suite);
+  };
+  Object.defineProperty(navigator, "canShare", { value: () => false, configurable: true });
+  bouton.click();
+  setTimeout(() => finir({ traces, dessins, largeur: 0, hauteur: 0 }), ${DELAI_RENDU});
+})`;
+
+/** Pose l'écran émulé : ce que fait le lecteur qui tourne ou étire sa fenêtre. */
+function poserLEcran(ecran) {
+  return page("Emulation.setDeviceMetricsOverride", {
+    width: ecran.largeur, height: ecran.hauteur, deviceScaleFactor: 1,
+    mobile: ecran.largeur < 768,
+  });
+}
+
+/**
+ * Change l'écran de la page affichée, sans changer d'adresse, et attend
+ * qu'elle se redessine sur place ; rend `false` si elle ne l'a pas fait dans
+ * le délai d'un rendu. Le redessin attend un quart de seconde que la fenêtre
+ * ne bouge plus, puis remplace le contenu, et le marqueur avec.
+ */
+async function changerDEcran(ecran) {
+  await evaluer(`(() => {
+    const marqueur = document.createElement("i");
+    marqueur.id = "marqueur-ecrans";
+    document.getElementById("contenu").append(marqueur);
+    return true;
+  })()`);
+  await poserLEcran(ecran);
+  return evaluer(`new Promise((resoudre) => {
+    const debut = Date.now();
+    const sonder = () => {
+      if (!document.getElementById("marqueur-ecrans")
+          && !document.body.classList.contains("calcul-en-cours")) { resoudre(true); return; }
+      if (Date.now() - debut > ${DELAI_RENDU}) {
+        document.getElementById("marqueur-ecrans")?.remove();
+        resoudre(false);
+        return;
+      }
+      setTimeout(sonder, 40);
+    };
+    sonder();
+  })`);
+}
+
+/** Chaque schéma de la page : la largeur de son dessin, celle où il se montre. */
+const SCHEMAS_DESSINES = `[...document.querySelectorAll("#contenu figure.sankey svg")]
+  .map((svg) => ({ dessin: Math.round(svg.viewBox.baseVal.width),
+    montre: Math.round(svg.getBoundingClientRect().width) }))`;
 
 // -- la visite ---------------------------------------------------------------
 
@@ -381,10 +489,7 @@ const resultats = [];
 try {
   let charge = false;
   for (const ecran of plan.ecrans) {
-    await page("Emulation.setDeviceMetricsOverride", {
-      width: ecran.largeur, height: ecran.hauteur, deviceScaleFactor: 1,
-      mobile: ecran.largeur < 768,
-    });
+    await poserLEcran(ecran);
     if (!charge) {
       await page("Page.navigate", { url: `${plan.adresse}#/` });
       await attendreLeRendu();
@@ -403,9 +508,18 @@ try {
       })()`);
       await evaluer("new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(() => r(true))))");
       const deplie = await evaluer(MESURER(ecran));
+      const image = replie.schemas.length ? await evaluer(IMAGE_DES_SCHEMAS) : null;
+      // La fenêtre qu'on rétrécit, au large, sur une page qui pose des
+      // schémas de front : ce qu'elle redessine. Puis l'écran de la visite.
+      let retrecie = null;
+      if (replie.schemas.length && plan.retrecir?.depuis === ecran.largeur) {
+        const redessinee = await changerDEcran(plan.retrecir.vers);
+        retrecie = { ...plan.retrecir.vers, redessinee, schemas: await evaluer(SCHEMAS_DESSINES) };
+        await changerDEcran(ecran);
+      }
       resultats.push({
         largeur: ecran.largeur, hauteur: ecran.hauteur, route,
-        replie, deplie, erreurs: [...erreursDeLaPage],
+        replie, deplie, image, retrecie, erreurs: [...erreursDeLaPage],
       });
     }
   }
