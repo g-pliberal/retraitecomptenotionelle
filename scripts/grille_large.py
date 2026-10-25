@@ -248,7 +248,12 @@ au-delà de 21 ans avant l'âge légal (:data:`ALLONGEES_COMME_LES_PLEINES`) :
 elles entraient toutes à 21 ans, l'entrée du gabarit, et la condition d'entrée
 de la carrière longue leur était fermée ; elles entrent désormais comme les
 carrières pleines, à l'âge légal moins leurs années, puis cinquième par
-cinquième au premier trimestre cotisé de leur génération.
+cinquième au premier trimestre cotisé de leur génération. La vingt-neuvième
+(le même jour) fait suivre leur génération aux départs avec décote
+(:data:`DECOTE_SELON_LA_GENERATION`) : la quinzième donnait à toutes la part
+des retraités de 2020, 8,8 % des femmes et 4,5 % des hommes, quand l'EIR en
+compte 7,9 et 5,6 % chez les nés en 1950, 12,4 et 8,6 % chez les nés en 1953 ;
+chaque génération a désormais la sienne, dont la mesure pèse ses cohortes.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -256,7 +261,8 @@ Une population. Les axes sont tenus pour indépendants — le salaire ne dépend
 ni du sexe ni de la durée —, chaque déclinaison garde l'âge d'entrée et le
 profil de son cas type, et les parts sont celles des retraités de 2020,
 appliquées à toutes les générations ; seules les carrières incomplètes des
-femmes changent de durée avec la leur. La dispersion des salaires est celle d'une
+femmes changent de durée avec la leur, et la part des départs avec décote avec
+la sienne. La dispersion des salaires est celle d'une
 coupe de l'année à temps complet, plus large que celle d'un salaire de
 carrière ; les dix années de salariat d'un polypensionné et les deux enfants
 d'une femme sont des conventions, que l'EIR ne chiffre pas. Ce que la mesure
@@ -293,6 +299,7 @@ from retraite_notionnelle.carriere import (  # noqa: E402
 from retraite_notionnelle.castypes import (  # noqa: E402
     CAS_TYPES, GRILLE_DU_COUT, CasType, cas_type_affiche, parts_des_caisses)
 from retraite_notionnelle.config import Parametres  # noqa: E402
+from retraite_notionnelle.controle_eacr import conditions_publiees  # noqa: E402
 from retraite_notionnelle.donnees.assiette import AssietteActivite  # noqa: E402
 from retraite_notionnelle.donnees.caracteristiques import CaracteristiquesRetraites  # noqa: E402
 from retraite_notionnelle.donnees.depenses import DepensesRetraite  # noqa: E402
@@ -304,6 +311,10 @@ from retraite_notionnelle.donnees.equilibre import (  # noqa: E402
 )
 from retraite_notionnelle.donnees.macro import ANNEE_CREATION_AVPF, DonneesMacro  # noqa: E402
 from retraite_notionnelle.donnees.population import Population  # noqa: E402
+from retraite_notionnelle.facteurs_depense import (  # noqa: E402
+    ANNEE_DU_FLUX, CAISSE_DU_FLUX, GENERATION_DES_DECOTES, GENERATION_DU_FLUX,
+    part_decotee_de_la_generation,
+)
 from retraite_notionnelle.revalorisation import RevalorisationServie  # noqa: E402
 from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
 
@@ -879,6 +890,31 @@ MINIMUM_AU_PREMIER_QUINTILE = True
 #: d'ouverture, et la part ne dépend ni du rang de salaire ni de la tranche.
 DEPARTS_AVEC_DECOTE = True
 
+#: La vingt-neuvième version (action 138, étape 14, le 25 octobre 2026) : la
+#: part des départs avec décote suit la génération (:func:`decotes_des_generations`),
+#: quand la quinzième donnait à toutes celle des retraités de 2020. L'EIR
+#: compte 7,9 % de femmes et 5,6 % d'hommes partis avec une décote chez les nés
+#: en 1950, 12,4 et 8,6 % chez les nés en 1953 (``departs_generations.csv``) ;
+#: la Cnav en décote 13,7 et 13,0 % de ses liquidants de 2024 (EACR, table H),
+#: que la grille du coût prête à la génération 1960
+#: (``facteurs_depense.part_decotee_de_la_generation``). Chaque génération a la
+#: sienne, en droite ligne entre ces trois-là ; celles d'avant 1950, celle qui
+#: garde au stock de 2020 la part que l'EIR mesure aux résidents, 8,3 et 3,6 %.
+#: Les deux jumelles de chaque carrière incomplète gardent le poids de la
+#: quinzième version ; chacune porte ce que chaque génération y change
+#: (:func:`parts_des_jumelles`), et la mesure pèse chaque cohorte de la part de
+#: sa génération (:meth:`GrilleEnTetes.part_de`). Trois conventions : les parts
+#: des nés en 1950 et en 1953 sont celles de tous les retraités, résidents ou
+#: non, quand la population et le stock de 2020 ne comptent que des résidents ;
+#: les générations d'avant 1950 ont toutes la même ; la page, et la pesée qui
+#: recale chaque groupe sur sa dépense, voient la population sans elles, au
+#: poids de la quinzième version.
+DECOTE_SELON_LA_GENERATION = True
+
+#: Le témoin des tables de l'EACR, dont la table H dit la part décotée des
+#: liquidants de la Cnav (:func:`decote_du_flux`).
+TEMOIN_EACR = RACINE / "tests" / "temoins" / "drees_eacr_tables_2026.json"
+
 #: La dix-neuvième version (action 138, étape 14, le 18 octobre 2026) : une part
 #: des carrières qui ont le taux plein part après lui, avec une surcote — 14,2 %
 #: des femmes et 14,5 % des hommes nés en 1953 (``departs_generations.csv``),
@@ -1242,11 +1278,22 @@ class Variante:
     #: Les années qu'elle attend après l'âge légal, avec une surcote
     #: (:data:`DEPARTS_AVEC_SURCOTE`) ; zéro sans elle.
     surcote: float = 0.0
+    #: Ce que chaque génération donne à son poids, paires ``(génération,
+    #: part)`` triées : la part des départs avec décote de sa génération,
+    #: rapportée à celle que son poids porte (:data:`DECOTE_SELON_LA_GENERATION`) ;
+    #: vide, une partout. La mesure en pèse chaque cohorte, à son année de
+    #: naissance (:meth:`GrilleEnTetes.part_de`).
+    parts_des_generations: tuple[tuple[int, float], ...] = ()
 
     def fois(self, part: float, **changements) -> "Variante":
         """La même, pour ``part`` de son poids, avec ces changements."""
         return replace(self, retraites=_echelle(self.retraites, part),
                        cotisants=_echelle(self.cotisants, part), **changements)
+
+    def part_de_la_generation(self, generation: int) -> float:
+        """Ce que la génération ``generation`` donne à son poids : une, sans
+        :attr:`parts_des_generations`."""
+        return _par_generation(self.parts_des_generations, generation, 1.0)
 
 
 def _echelle(parts: tuple[tuple[str, float], ...], facteur: float):
@@ -2719,7 +2766,9 @@ def population(effectifs, source: CaracteristiquesRetraites,
         variantes = femmes_selon_la_generation(variantes, effectifs, source, racine)
     donnees = donnees_population(racine)
     if DEPARTS_AVEC_DECOTE:
-        variantes = departs_avec_decote(variantes, effectifs, source, donnees.quintiles)
+        decotes = decotes_des_generations(racine) if DECOTE_SELON_LA_GENERATION else None
+        variantes = departs_avec_decote(variantes, effectifs, source, donnees.quintiles,
+                                        decotes)
     variantes = salaires_population(variantes, donnees)
     if ASSIMILEES_SELON_LE_RANG:
         variantes = assimilees_selon_le_rang(variantes, donnees.quintiles)
@@ -2730,6 +2779,25 @@ def population(effectifs, source: CaracteristiquesRetraites,
     return variantes
 
 
+def poids_des_incompletes(variantes: list[Variante], effectifs,
+                          source: CaracteristiquesRetraites
+                          ) -> dict[str, tuple[float, float]]:
+    """Le poids de tous les retraités de chaque sexe, et celui de ses carrières
+    incomplètes (:func:`incomplete`), l'année de l'enquête."""
+    poids = poids_retraites(variantes, effectifs, source.millesime)
+    return {sexe: (somme_ordonnee(p for v, p in zip(variantes, poids) if v.cas.sexe == sexe),
+                   somme_ordonnee(p for v, p in zip(variantes, poids)
+                                  if v.cas.sexe == sexe and incomplete(v)))
+            for sexe in ("F", "H")}
+
+
+def part_des_incompletes(decote: float, tous: float, incompletes: float) -> float:
+    """La part des carrières incomplètes qui part avec une décote pour que ses
+    départs pèsent ``decote`` parmi tous les retraités du sexe, ``tous`` et
+    ``incompletes`` les poids de :func:`poids_des_incompletes` ; un au plus."""
+    return min(1.0, decote * tous / incompletes) if incompletes else 0.0
+
+
 def parts_avec_decote(variantes: list[Variante], effectifs,
                       source: CaracteristiquesRetraites,
                       quintiles: dict) -> dict[str, float]:
@@ -2737,32 +2805,117 @@ def parts_avec_decote(variantes: list[Variante], effectifs,
     décote (:data:`DEPARTS_AVEC_DECOTE`) : celle des départs avec décote que
     l'EIR mesure à tous les retraités du sexe, divisée par le poids des
     carrières incomplètes parmi eux, l'année de l'enquête ; un au plus."""
-    poids = poids_retraites(variantes, effectifs, source.millesime)
+    return {sexe: part_des_incompletes(quintiles[("ensemble", "part_decote", sexe)] / 100.0,
+                                       tous, incompletes)
+            for sexe, (tous, incompletes)
+            in poids_des_incompletes(variantes, effectifs, source).items()}
+
+
+def decote_du_flux(sexe: str) -> float:
+    """La part des liquidants de la Cnav de :data:`ANNEE_DU_FLUX` partis avec
+    une décote, ``sexe`` par sexe, parmi ceux partis au taux plein, avec une
+    décote ou avec une surcote (EACR, table H,
+    ``controle_eacr.conditions_publiees``) : 13,7 % des femmes, 13,0 % des
+    hommes, que ``facteurs_depense.part_decotee_du_flux`` réunit."""
+    temoin = json.loads(TEMOIN_EACR.read_text(encoding="utf-8"))
+    return next(conditions.decote
+                for conditions in conditions_publiees(temoin, ANNEE_DU_FLUX, sexe)
+                if conditions.caisse == CAISSE_DU_FLUX and conditions.champ == "flux")
+
+
+def decotes_des_generations(racine: Path) -> dict[str, tuple[tuple[int, float], ...]]:
+    """La part des départs avec décote de chaque génération parmi tous ses
+    retraités, sexe par sexe, en paires ``(génération, part)`` triées
+    (:data:`DECOTE_SELON_LA_GENERATION`) : celle que l'EIR compte aux nés en
+    1950 et en 1953 (``departs_generations.csv``), en droite ligne entre eux ;
+    celle des liquidants de la Cnav de :data:`ANNEE_DU_FLUX`
+    (:func:`decote_du_flux`) depuis la génération :data:`GENERATION_DU_FLUX`,
+    en droite ligne depuis 1953, comme la grille du coût
+    (``facteurs_depense.part_decotee_de_la_generation``) ; avant 1950, celle
+    qui donne aux générations que l'enquête de 2020 voit toutes parties,
+    jusqu'à celle de 1953, chacune pesée de son effectif INSEE de 2020, la part
+    que l'EIR mesure aux résidents (``part_decote`` de
+    ``quintiles_eqcc_residents.csv``)."""
+    publies = departs_publies(racine)
+    residents = quintiles_eqcc(racine, residents=True)
+    premiere, derniere = min(ENQUETES_DES_DEPARTS), GENERATION_DES_DECOTES
+    annee = ENQUETES_DES_DEPARTS[derniere]
+    pyramide = Population(racine)
+    recentes = {generation: pyramide.effectif(annee - generation, annee)
+                for generation in range(premiere, derniere + 1)}
+    anciennes = pyramide.effectif_tranche(annee - premiere + 1, pyramide.age_maximal, annee)
     sortie = {}
     for sexe in ("F", "H"):
-        tous = somme_ordonnee(p for v, p in zip(variantes, poids) if v.cas.sexe == sexe)
-        incompletes = somme_ordonnee(p for v, p in zip(variantes, poids)
-                                     if v.cas.sexe == sexe and incomplete(v))
-        cible = quintiles[("ensemble", "part_decote", sexe)] / 100.0
-        sortie[sexe] = min(1.0, cible * tous / incompletes) if incompletes else 0.0
+        de_la_premiere, de_la_derniere = (
+            publies[(generation, "condition", "decote", sexe, "part")] / 100.0
+            for generation in (premiere, derniere))
+        du_flux = decote_du_flux(sexe)
+
+        def part(generation: int) -> float:
+            if generation >= derniere:
+                return part_decotee_de_la_generation(generation, de_la_derniere, du_flux)
+            return de_la_premiere + ((de_la_derniere - de_la_premiere)
+                                     * (generation - premiere) / (derniere - premiere))
+
+        stock = residents[("ensemble", "part_decote", sexe)] / 100.0
+        avant = (stock * (anciennes + somme_ordonnee(recentes.values()))
+                 - somme_ordonnee(effectif * part(generation)
+                                  for generation, effectif in recentes.items())) / anciennes
+        sortie[sexe] = ((premiere - 1, avant),) + tuple(
+            (generation, part(generation))
+            for generation in range(premiere, GENERATION_DU_FLUX + 1))
+    return sortie
+
+
+def parts_des_jumelles(variantes: list[Variante], effectifs,
+                       source: CaracteristiquesRetraites, parts: dict[str, float],
+                       decotes: dict[str, tuple[tuple[int, float], ...]]
+                       ) -> dict[str, tuple[tuple[tuple[int, float], ...], ...]]:
+    """Ce que chaque génération donne au poids des deux jumelles de chaque
+    carrière incomplète (:data:`DECOTE_SELON_LA_GENERATION`), sexe par sexe :
+    celle qui part au taux plein, puis celle qui décote, en paires
+    ``(génération, part)`` triées. La jumelle qui décote pèse la part
+    ``parts`` de la carrière (:func:`parts_avec_decote`) ; sa génération en
+    fait partir la part ``decotes`` parmi tous les retraités du sexe
+    (:func:`decotes_des_generations`), rapportée aux carrières incomplètes
+    comme ``parts`` (:func:`part_des_incompletes`). Ensemble, les deux gardent
+    à chaque génération le poids de la carrière."""
+    sortie = {}
+    for sexe, (tous, incompletes) in poids_des_incompletes(variantes, effectifs,
+                                                            source).items():
+        base = parts[sexe]
+        if not base:
+            continue
+        pleine, decotee = [], []
+        for generation, decote in decotes[sexe]:
+            part = part_des_incompletes(decote, tous, incompletes)
+            pleine.append((generation, (1.0 - part) / (1.0 - base) if base < 1.0 else 1.0))
+            decotee.append((generation, part / base))
+        sortie[sexe] = (tuple(pleine), tuple(decotee))
     return sortie
 
 
 def departs_avec_decote(variantes: list[Variante], effectifs,
-                        source: CaracteristiquesRetraites,
-                        quintiles: dict) -> list[Variante]:
+                        source: CaracteristiquesRetraites, quintiles: dict,
+                        decotes: dict[str, tuple[tuple[int, float], ...]] | None = None
+                        ) -> list[Variante]:
     """Chaque carrière incomplète en deux : la part de son sexe
     (:func:`parts_avec_decote`) part à l'ouverture du droit, avec une décote,
-    le reste au taux plein ; les autres variantes telles quelles."""
+    le reste au taux plein ; les autres variantes telles quelles. Sous
+    ``decotes``, la part des départs avec décote de chaque génération
+    (:func:`decotes_des_generations`), chaque jumelle porte ce que chaque
+    génération donne à son poids (:func:`parts_des_jumelles`)."""
     parts = parts_avec_decote(variantes, effectifs, source, quintiles)
+    jumelles = parts_des_jumelles(variantes, effectifs, source, parts, decotes) if decotes else {}
     sortie = []
     for v in variantes:
         part = parts[v.cas.sexe]
         if not incomplete(v) or v.cas.regle_liquidation != "taux_plein" or not part:
             sortie.append(v)
             continue
-        sortie.append(v.fois(1.0 - part))
-        sortie.append(v.fois(part, decote=True, cas=replace(
+        pleine, decotee = jumelles.get(v.cas.sexe, ((), ()))
+        sortie.append(v.fois(1.0 - part, parts_des_generations=pleine))
+        sortie.append(v.fois(part, decote=True, parts_des_generations=decotee, cas=replace(
             v.cas, code=f"{v.cas.code}~decote", regle_liquidation="ouverture")))
     return sortie
 
@@ -3369,7 +3522,9 @@ INTITULES_SEXES = {"ensemble": "Ensemble", "F": "Femmes", "H": "Hommes"}
 def pensions_de_l_annee(pensionnes: list, cas_types: tuple[CasType, ...],
                         poids: dict[str, float], population: Population,
                         revalorisation: RevalorisationServie, macro: DonneesMacro,
-                        annee_euros: int, annee: int) -> list[tuple[float, float, str]]:
+                        annee_euros: int, annee: int,
+                        parts: dict[str, tuple[tuple[int, float], ...]] | None = None,
+                        ) -> list[tuple[float, float, str]]:
     """Ce que la grille sert l'année ``annee``, en TÊTES : une ligne par cohorte
     liquidée, (pension mensuelle de droit direct du scénario 1 en euros de
     l'année, poids, sexe).
@@ -3384,32 +3539,38 @@ def pensions_de_l_annee(pensionnes: list, cas_types: tuple[CasType, ...],
     part (``coefficient_servi``) —, ramenée des euros constants à ceux de
     l'année. Sans la complétude des cohortes (``Pensionne.completude``) : elle
     allège la MASSE d'une cohorte d'une moyenne, que la distribution ne sait
-    pas répartir entre ses membres ; chaque ligne décrit une carrière.
+    pas répartir entre ses membres ; chaque ligne décrit une carrière. Chaque
+    cohorte pèse enfin ce que son année de naissance donne au poids de son cas
+    type, ``parts`` par code (:attr:`GrilleEnTetes.parts`) ; une, sans elles.
     """
     sexes = {cas.code: cas.sexe for cas in cas_types}
     return [(montant, poids_tete, sexes[pensionne.code])
             for pensionne, montant, poids_tete in cohortes_de_l_annee(
-                pensionnes, poids, population, revalorisation, macro, annee_euros, annee)]
+                pensionnes, poids, population, revalorisation, macro, annee_euros, annee,
+                parts)]
 
 
 def cohortes_de_l_annee(pensionnes: list, poids: dict[str, float], population: Population,
                         revalorisation: RevalorisationServie, macro: DonneesMacro,
-                        annee_euros: int, annee: int):
+                        annee_euros: int, annee: int,
+                        parts: dict[str, tuple[tuple[int, float], ...]] | None = None):
     """Les cohortes de :func:`pensions_de_l_annee`, chacune avec son couple :
     ``(couple, pension mensuelle, poids en têtes)``."""
+    parts = parts or {}
     vers_l_annee = macro.coefficient_prix(annee_euros, annee) / 12.0
     alignees = C._survies_alignees(pensionnes, poids, annee)
     for pensionne in pensionnes:
         part = poids.get(pensionne.code, 0.0)
         if part <= 0.0:
             continue
+        siennes = parts.get(pensionne.code, ())
         for decalage in range(-C._DEMI_TRANCHE, C._DEMI_TRANCHE + 1):
             liquidation = pensionne.liquidation(decalage)
             if annee < liquidation:
                 continue
-            effectif = population.effectif(
-                annee - pensionne.generation - decalage, annee
-            ) * alignees.get((pensionne.code, pensionne.generation, decalage), 1.0)
+            effectif = (population.effectif(annee - pensionne.generation - decalage, annee)
+                        * alignees.get((pensionne.code, pensionne.generation, decalage), 1.0)
+                        * _par_generation(siennes, pensionne.generation + decalage, 1.0))
             if effectif <= 0.0:
                 continue
             montant = pensionne.pensions["actuel"] * vers_l_annee * C.coefficient_servi(
@@ -3545,18 +3706,26 @@ class GrilleEnTetes:
     macro: DonneesMacro
     annee_euros: int
     echecs: dict[str, int] = field(default_factory=dict)
+    #: Ce que chaque génération donne au poids de chaque cas type, par code :
+    #: les :attr:`Variante.parts_des_generations` de ses variantes qui en ont.
+    parts: dict[str, tuple[tuple[int, float], ...]] = field(default_factory=dict)
+
+    def part_de(self, code: str, naissance: int) -> float:
+        """Ce que l'année de naissance ``naissance`` donne au poids du cas type
+        ``code`` (:data:`DECOTE_SELON_LA_GENERATION`) : une, sans part."""
+        return _par_generation(self.parts.get(code, ()), naissance, 1.0)
 
     def pensions(self, annee: int) -> list[tuple[float, float, str]]:
         """:func:`pensions_de_l_annee`, pour cette grille."""
         return pensions_de_l_annee(self.pensionnes, self.cas_types, self.poids(annee),
                                    self.population, self.revalorisation, self.macro,
-                                   self.annee_euros, annee)
+                                   self.annee_euros, annee, self.parts)
 
     def cohortes(self, annee: int) -> list:
         """:func:`cohortes_de_l_annee`, pour cette grille."""
         return list(cohortes_de_l_annee(self.pensionnes, self.poids(annee), self.population,
                                         self.revalorisation, self.macro, self.annee_euros,
-                                        annee))
+                                        annee, self.parts))
 
     def pensions_par_cas_type(self, annee: int) -> list[tuple[float, float, str, str]]:
         """:meth:`pensions`, chaque ligne avec le cas type dont sa carrière se
@@ -3590,7 +3759,9 @@ def en_tetes(parametres: Parametres, variantes: list[Variante],
         pensionnes, population,
         revalorisation, DecompositionDepense(racine / "reference" / "macro"))
     return GrilleEnTetes(pensionnes, cas_types, poids, population, revalorisation,
-                         simulateur.macro, parametres.annee_euros_constants, echecs)
+                         simulateur.macro, parametres.annee_euros_constants, echecs,
+                         {v.cas.code: v.parts_des_generations for v in variantes
+                          if v.parts_des_generations})
 
 
 # -- la pension en équivalent carrière complète, contre l'EIR ---------------------
@@ -4093,7 +4264,8 @@ def departs(parametres: Parametres, tetes: GrilleEnTetes, publies: dict,
     l'enquête voit la sienne — 66 ans pour les nés en 1950, 67 pour les nés en
     1953 —, ses seuls départs déjà pris à cet âge, chaque cas type du poids
     que la page lui donne cette année-là et de sa survie propre, à nombre de
-    décès égal (``cout._survies_alignees``)."""
+    décès égal (``cout._survies_alignees``), et de ce que la génération donne à
+    son poids (:meth:`GrilleEnTetes.part_de`)."""
     from retraite_notionnelle.scenarios.actuel import AgesAnnulationDecote, AgesOuverture
 
     racine = parametres.racine_donnees
@@ -4115,8 +4287,9 @@ def departs(parametres: Parametres, tetes: GrilleEnTetes, publies: dict,
             lu = lus.get((pensionne.code, pensionne.generation))
             if pensionne.generation != generation or lu is None or lu[0] >= vu + 1.0:
                 continue
-            part = poids.get(pensionne.code, 0.0) * alignees.get(
-                (pensionne.code, generation, 0), 1.0)
+            part = (poids.get(pensionne.code, 0.0)
+                    * alignees.get((pensionne.code, generation, 0), 1.0)
+                    * tetes.part_de(pensionne.code, generation))
             if part > 0.0:
                 lignes.append((generation, cas_par_code[pensionne.code].sexe, part,
                                position_du_depart(lu[0], legal, annulation), lu[1],

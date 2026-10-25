@@ -278,16 +278,20 @@ def parts(variantes: list, poids: list[float], lignes: list[tuple],
           coefficients: dict[int, float], groupes_de) -> dict:
     """Les parts de chaque groupe, sexe par sexe. ``groupes_de(génération,
     mesure)`` dit à quels groupes une ligne appartient, et pour quelle part de
-    son poids : la génération, entière, ou les années de liquidation."""
+    son poids : la génération, entière, ou les années de liquidation. Chaque
+    ligne pèse de plus ce que sa génération donne au poids de sa carrière
+    (``grille_large.Variante.part_de_la_generation``, la décote selon la
+    génération)."""
     groupes: dict = {}
     for indice, generation, mesure in lignes:
         if mesure is None:
             continue
-        sexe = variantes[indice].cas.sexe
+        variante = variantes[indice]
+        pese = poids[indice] * variante.part_de_la_generation(generation)
         for groupe, part in groupes_de(generation, mesure):
-            for s in ("ensemble", sexe):
+            for s in ("ensemble", variante.cas.sexe):
                 groupes.setdefault(groupe, {}).setdefault(s, []).append(
-                    (poids[indice] * part, mesure))
+                    (pese * part, mesure))
     return {groupe: {s: _part(lot, coefficients) for s, lot in sorted(par_sexe.items())}
             for groupe, par_sexe in sorted(groupes.items())}
 

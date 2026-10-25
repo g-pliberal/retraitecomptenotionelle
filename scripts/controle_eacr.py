@@ -20,6 +20,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from dataclasses import replace
 from pathlib import Path
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -68,6 +69,20 @@ def mesure(lot: list[M.Cohorte], temoin: dict) -> dict:
     }
 
 
+def cohortes_de_la_population(tetes) -> list[M.Cohorte]:
+    """Les cohortes de la population de ``grille_large.py`` en
+    :data:`~retraite_notionnelle.controle_eacr.ANNEE_EACR`, comme celles de la
+    grille (``controle_eacr.cohortes``), chacune de plus pesée de ce que sa
+    génération donne au poids de son cas type (``GrilleEnTetes.part_de``, la
+    décote selon la génération)."""
+    lot = M.cohortes(tetes.pensionnes, tetes.poids(M.ANNEE_EACR), tetes.population,
+                     tetes.revalorisation,
+                     tetes.macro.coefficient_prix(tetes.annee_euros, M.ANNEE_EACR))
+    return [replace(cohorte, tetes=cohorte.tetes
+                    * tetes.part_de(cohorte.code, M.ANNEE_EACR - cohorte.age))
+            for cohorte in lot]
+
+
 def population(processus: int) -> tuple[list[M.Cohorte], dict[str, float]]:
     """La population de ``grille_large.py`` en 2024, et la part de ses
     retraités du régime général partis avec une décote, en flux et en stock."""
@@ -81,9 +96,7 @@ def population(processus: int) -> tuple[list[M.Cohorte], dict[str, float]]:
     variantes = G.grille("population", Simulateur(parametres).effectifs, G.eir(racine),
                          G.multiplicateurs(valeurs))
     tetes = G.en_tetes(parametres, variantes, processus, alleges=True)
-    lot = M.cohortes(tetes.pensionnes, tetes.poids(M.ANNEE_EACR), tetes.population,
-                     tetes.revalorisation,
-                     tetes.macro.coefficient_prix(tetes.annee_euros, M.ANNEE_EACR))
+    lot = cohortes_de_la_population(tetes)
     par_code = {v.cas.code: v for v in variantes}
     decotes = G.proratisations(
         parametres, {(par_code[c.code].cas, c.generation) for c in lot

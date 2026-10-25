@@ -1800,6 +1800,35 @@ def test_les_tetes_se_lisent_sur_des_couples_alleges(parametres):
     assert G.departs(parametres, alleges, publies) == G.departs(parametres, entiers, publies)
 
 
+def test_la_mesure_pese_chaque_cohorte_de_la_part_de_sa_generation(parametres):
+    """La mesure pèse chaque cohorte de la part que sa génération donne à sa
+    carrière (``GrilleEnTetes.parts``, :data:`DECOTE_SELON_LA_GENERATION`),
+    la cohorte comptée à son année de naissance : les pensions de l'année,
+    et les départs des générations qu'elle confronte à l'EIR. Sans part,
+    une ; la grille du dépôt n'en a pas."""
+    grille = G.en_tetes(parametres, G.reference())
+    assert grille.parts == {}
+    code = grille.cas_types[0].code
+    generations = sorted({p.generation for p in grille.pensionnes if p.code == code})
+    coupure = generations[len(generations) // 2]
+    pesee = replace(grille, parts={code: ((0, 3.0), (coupure - C._DEMI_TRANCHE, 0.5))})
+    for annee in (2020, 2040):
+        for (p, m, w), (q, n, x) in zip(grille.cohortes(annee), pesee.cohortes(annee),
+                                        strict=True):
+            assert (p.code, p.generation, m) == (q.code, q.generation, n)
+            facteur = 1.0 if p.code != code else (3.0 if p.generation < coupure else 0.5)
+            assert x == pytest.approx(facteur * w, rel=1e-12)
+    publies = G.departs_publies(parametres.racine_donnees)
+    hommes = {cas.code for cas in grille.cas_types if cas.sexe == "H"}
+    sans_les_hommes_d_apres_1952 = replace(
+        grille, parts={c: ((0, 1.0), (1953, 0.0)) for c in hommes})
+    base = G.departs(parametres, grille, publies)
+    mesure = G.departs(parametres, sans_les_hommes_d_apres_1952, publies)
+    assert mesure["1950"] == base["1950"]
+    assert "H" in base["1955"] and "H" not in mesure["1955"]
+    assert mesure["1955"]["F"] == base["1955"]["F"]
+
+
 def test_la_mesure_appliquee_a_l_enquete_redonne_l_enquete(parametres):
     """L'enquête, mise en atomes au milieu de ses tranches de cent euros, se
     confronte à elle-même sans écart aux bornes des tranches, et ses quantiles
@@ -1874,6 +1903,95 @@ def test_une_part_des_carrieres_incompletes_part_avec_une_decote(simulateur, sou
     conduite = next(v for v in variantes if v.cas.code.startswith("agent_sncf_conduite"))
     assert conduite.cas.regle_liquidation == "ouverture"
     assert not decotee(conduite.cas, 1958) and decotee(conduite.cas, 1962)
+
+
+def test_la_part_des_departs_avec_decote_suit_la_generation(simulateur, source, parametres,
+                                                           monkeypatch):
+    """Sous ``DECOTE_SELON_LA_GENERATION``, la part des départs avec décote suit
+    la génération, sexe par sexe, parmi tous les retraités du sexe : celle que
+    l'EIR mesure aux nés en 1950 — 7,9 % des femmes, 5,6 % des hommes — et aux
+    nés en 1953 — 12,4 et 8,6 % —, en droite ligne entre les deux ; celle des
+    liquidants de la Cnav de 2024 (EACR, table H) — 13,7 et 13,0 % —, depuis la
+    génération 1960, en droite ligne depuis 1953, comme la grille du coût ;
+    avant 1950, celle qui garde aux générations que 2020 voit toutes parties,
+    jusqu'à celle de 1953, pesées de leur effectif INSEE de 2020, la part que
+    l'EIR mesure aux résidents, 8,8 et 4,5 % : 8,3 et 3,6 %. Les deux jumelles
+    de chaque carrière incomplète gardent leur poids, celui de la quinzième
+    version ; chacune porte la part que chaque génération donne à ce poids :
+    génération par génération, les départs avec décote pèsent parmi tous les
+    retraités du sexe la part de leur génération, et chaque carrière ce
+    qu'elle pèse. Sans la version, une part partout, et la décote de 2020 à
+    toutes les générations."""
+    import json
+
+    from retraite_notionnelle.donnees.population import Population
+
+    racine = parametres.racine_donnees
+    publies = G.departs_publies(racine)
+    residents = G.quintiles_eqcc(racine, residents=True)
+    temoin = Path(__file__).resolve().parent / "temoins" / "drees_eacr_tables_2026.json"
+    flux = json.loads(temoin.read_text(encoding="utf-8"))[
+        "conditions_liquidation"]["series"]["0015"]["flux"]
+    pyramide = Population(racine)
+    parties = {g: pyramide.effectif(2020 - g, 2020) for g in range(1900, 1954)}
+    attendues: dict[str, dict[int, float]] = {}
+    for sexe in ("F", "H"):
+        de_1950 = publies[(1950, "condition", "decote", sexe, "part")] / 100.0
+        de_1953 = publies[(1953, "condition", "decote", sexe, "part")] / 100.0
+        ligne = flux[sexe]["2024"]
+        du_flux = ligne["decote"] / (ligne["decote"] + ligne["taux_plein"] + ligne["surcote"])
+
+        def part(g: int, avant: float) -> float:
+            if g < 1950:
+                return avant
+            if g <= 1953:
+                return de_1950 + (de_1953 - de_1950) * (g - 1950) / 3
+            if g >= 1960:
+                return du_flux
+            return de_1953 + (du_flux - de_1953) * (g - 1953) / 7
+
+        stock = residents[("ensemble", "part_decote", sexe)] / 100.0
+        anciennes = sum(e for g, e in parties.items() if g < 1950)
+        avant = (stock * sum(parties.values())
+                 - sum(e * part(g, 0.0) for g, e in parties.items() if g >= 1950)) / anciennes
+        attendues[sexe] = {g: part(g, avant)
+                           for g in (1925, 1949, 1950, 1952, 1953, 1955, 1958, 1960, 1980)}
+    assert attendues["F"][1950] == pytest.approx(0.079)
+    assert attendues["H"][1953] == pytest.approx(0.086)
+    assert attendues["F"][1960] == pytest.approx(46637 / (46637 + 226331 + 66672))
+    assert attendues["H"][1980] == pytest.approx(40139 / (40139 + 212871 + 55696))
+    assert attendues["F"][1925] == pytest.approx(0.083, abs=5e-4)
+    assert attendues["H"][1925] == pytest.approx(0.036, abs=5e-4)
+    decotes = G.decotes_des_generations(racine)
+    for sexe, parts in attendues.items():
+        for g, attendue in parts.items():
+            assert G._par_generation(decotes[sexe], g, 0.0) == pytest.approx(
+                attendue, rel=1e-9), (sexe, g)
+
+    def pesees(variantes, poids, generation: int, sexe: str) -> tuple[float, float, float]:
+        du_sexe = [v for v in variantes if v.cas.sexe == sexe]
+        siennes = {v.cas.code: poids[v.cas.code] * v.part_de_la_generation(generation)
+                   for v in du_sexe}
+        return (sum(siennes[v.cas.code] for v in du_sexe if v.decote),
+                sum(siennes.values()), sum(poids[v.cas.code] for v in du_sexe))
+
+    assert G.DECOTE_SELON_LA_GENERATION
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    poids = _poids(variantes, simulateur.effectifs, source.millesime)
+    for sexe, parts in attendues.items():
+        for g, attendue in parts.items():
+            decotees, toutes, sans_part = pesees(variantes, poids, g, sexe)
+            assert decotees / toutes == pytest.approx(attendue, rel=1e-6), (sexe, g)
+            assert toutes == pytest.approx(sans_part, rel=1e-9), (sexe, g)
+    assert all(v.part_de_la_generation(1952) == 1.0 for v in variantes if not G.incomplete(v))
+    monkeypatch.setattr(G, "DECOTE_SELON_LA_GENERATION", False)
+    sans = G.grille("population", simulateur.effectifs, source, ())
+    assert all(v.part_de_la_generation(g) == 1.0 for v in sans for g in (1925, 1955, 1980))
+    poids = _poids(sans, simulateur.effectifs, source.millesime)
+    for sexe in ("F", "H"):
+        decotees, toutes, _ = pesees(sans, poids, 1955, sexe)
+        assert decotees / toutes == pytest.approx(
+            residents[("ensemble", "part_decote", sexe)] / 100.0, abs=1e-9)
 
 
 def test_les_departs_avec_decote_se_comptent_quintile_par_quintile(parametres):

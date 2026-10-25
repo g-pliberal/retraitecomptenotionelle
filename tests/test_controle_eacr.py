@@ -99,6 +99,33 @@ def test_une_cohorte_compte_ses_tetes_et_dit_si_elle_part_l_annee_meme():
     assert [c.nouvelle for c in lot].count(True) == 1
 
 
+def test_la_population_pese_chaque_cohorte_de_la_part_de_sa_generation():
+    """La population de ``scripts/grille_large.py`` se compte en 2024 comme la
+    grille, chaque cohorte de plus pesée de la part que sa génération donne à
+    sa carrière (``GrilleEnTetes.part_de``, la décote selon la génération) :
+    nées en 1961 et en 1962, les deux dernières cohortes de la génération 1960
+    du cas type d'essai pèsent le double."""
+    import sys
+
+    sys.path.insert(0, str(RACINE / "scripts"))
+    import controle_eacr as S
+
+    population = SimpleNamespace(effectif=lambda age, annee: 10.0 if annee == 2024 else 0.0)
+    pensionne = SimpleNamespace(
+        code="essai", generation=1960, annee_liquidation=2022,
+        liquidation=lambda decalage: 2022 + decalage,
+        pensions={"actuel": 12_000.0}, parts_regimes={}, completude=lambda decalage: 1.0)
+    tetes = SimpleNamespace(
+        pensionnes=[pensionne], poids=lambda annee: {"essai": 0.5}, population=population,
+        revalorisation=None, macro=SimpleNamespace(coefficient_prix=lambda de, vers: 2.0),
+        annee_euros=2024,
+        part_de=lambda code, naissance: 2.0 if code == "essai" and naissance >= 1961 else 1.0)
+    lot = S.cohortes_de_la_population(tetes)
+    assert sorted((c.age, c.tetes) for c in lot) == [
+        (62, 10.0), (63, 10.0), (64, 5.0), (65, 5.0), (66, 5.0)]
+    assert all(c.pension == pytest.approx(2000.0) for c in lot)
+
+
 def test_les_conditions_de_depart_se_lisent_en_parts(eacr):
     """Chaque caisse de la table H en 2024, flux et stock : ses parts font un,
     la surcote absente à l'Agirc-Arrco, qui n'en sert pas ; les nouveaux

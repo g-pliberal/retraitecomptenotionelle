@@ -185,6 +185,25 @@ def test_les_retraites_de_l_etranger_se_pesent_par_tranche():
     assert toutes[len(variantes)][0] == len(variantes)
 
 
+def test_chaque_carriere_pese_la_part_de_sa_generation():
+    """Sous la décote selon la génération (``grille_large.DECOTE_SELON_LA_GENERATION``),
+    chaque carrière de la population pèse, à chaque génération, la part que
+    celle-ci donne à son poids : la carrière qui part avec une décote, sans le
+    minimum, pèse la moitié du sien chez les nés en 1950, le double chez les nés
+    en 1955, et la part au minimum de la génération 1955 baisse d'autant."""
+    from types import SimpleNamespace as N
+
+    decotee = N(cas=N(sexe="F"), part_de_la_generation=lambda g: 2.0 if g >= 1955 else 0.5)
+    pleine = N(cas=N(sexe="F"), part_de_la_generation=lambda g: 1.0)
+    lignes = [(0, 1950, (2010, 1, 0.0, False, None)), (1, 1950, (2010, 1, 50.0, False, None)),
+              (0, 1955, (2017, 1, 0.0, False, None)), (1, 1955, (2017, 1, 50.0, False, None))]
+    par_generation = P.parts([decotee, pleine], [1.0, 3.0], lignes, {2010: 1.0, 2017: 1.0},
+                             lambda generation, mesure: [(generation, 1.0)])
+    assert par_generation[1950]["F"]["part"] == pytest.approx(100.0 * 3.0 / 3.5)
+    assert par_generation[1955]["F"]["part"] == pytest.approx(100.0 * 3.0 / 5.0)
+    assert par_generation[1955]["ensemble"]["poids"] == pytest.approx(5.0)
+
+
 def test_les_salaries_agricoles_sont_ceux_de_l_eir():
     """Sous ``SALARIES_AGRICOLES``, la part de la MSA salariés parmi les
     retraités du régime général et d'elle est celle de l'EIR 2020 : 4,5 % des
