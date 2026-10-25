@@ -320,6 +320,27 @@ def test_les_ages_sont_ceux_que_le_droit_oppose(saisies):
     assert legal.total < plein.total < automatique.total
 
 
+def test_une_carriere_qui_ne_valide_plus_n_a_le_taux_plein_qu_a_l_age_d_annulation():
+    """Née le 15 janvier 1966 et sans activité de 2026 à 2045, une carrière
+    entrée en juillet 1983 a 42 × 4 + 2 = 170 trimestres — deux trimestres
+    civils en 1983 —, 169 entrée en octobre, des 172 de sa génération, qui
+    ouvre son droit à 63 ans et 3 mois (L. 161-17-2 et L. 161-17-3, après la
+    suspension de la loi n° 2025-1403, article 105), et n'en gagne plus : elle
+    n'a le taux plein qu'à l'âge d'annulation de la décote, 67 ans pour les
+    nés depuis 1955 (L. 351-8, 1°), où il est aussi automatique. Le pilote
+    datait sa durée comme si elle validait encore quatre trimestres par an
+    (``ageTauxPleinDroit``), et s'arrêtait au bout de ses passes
+    (``PASSES_LIQUIDATION``) : il la disait au taux plein, décotée, à 65 ans
+    et 3 mois, et à 66 ans et 3 mois (action 138, étape 14)."""
+    requetes = [{"naissance": "1966-01-15", "debut": debut,
+                 "interruptions": "2026:2045:sans_activite"} for debut in ("1983-07", "1983-10")]
+    for departs, trimestres in zip(_departs_du_portage(requetes), (170, 169)):
+        assert [(depart.quoi, depart.age, depart.trimestres, depart.trimestres_requis)
+                for depart in departs] == [
+            (("legal",), pytest.approx(63.25), trimestres, 172),
+            (("taux_plein", "automatique"), pytest.approx(67.0), trimestres, 172)], trimestres
+
+
 def test_la_carriere_longue_part_au_taux_plein_avant_l_age_legal(saisies):
     premier, *_ = _departs("carriere_longue")
     assert premier.quoi == ("legal", "taux_plein")

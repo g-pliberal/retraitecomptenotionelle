@@ -81,7 +81,13 @@ export const DEPARTS_DE_L_ESTIMATION = Object.freeze(["legal", "taux_plein", "au
  * Chacun est un point fixe, comme le départ d'un cas type : la carrière dépend
  * de l'âge, et ce que le droit lui oppose dépend de la carrière. Le premier
  * part de `depart`, l'âge que la saisie demande ; chacun des suivants part du
- * précédent, et ne le précède jamais. Deux âges peuvent se confondre : la page
+ * précédent, et ne le précède jamais. Le droit date la durée requise comme si
+ * la carrière validait encore quatre trimestres par an (`ageTauxPleinDroit`) :
+ * sans activité, à deux trimestres de sa durée, elle montait d'un semestre à
+ * chaque passe sans en gagner aucun, et le taux plein s'arrêtait au bout des
+ * passes, décoté. Quand la montée s'arrête sans lui, la recherche reprend donc
+ * de l'âge d'annulation de la décote, comme `age_de_depart` (pilote.py ;
+ * action 138, étape 14). Deux âges peuvent se confondre : la page
  * les réunit (`departsDeLEstimation`, contexte.js). `null` quand le droit
  * n'oppose aucun âge à cette carrière.
  */
@@ -96,8 +102,15 @@ export function agesDeLEstimation(actuel, batir, depart) {
   const ages = {};
   let age = depart;
   DEPARTS_DE_L_ESTIMATION.forEach((quoi, rang) => {
-    const regle = regles[rang];
-    const trouve = pointFixe(age, (a) => regle(actuel, batir(a)));
+    const proposer = (a) => regles[rang](actuel, batir(a));
+    let trouve = pointFixe(age, proposer);
+    const propose = quoi === "taux_plein" ? proposer(trouve) : null;
+    if (propose !== null && propose > trouve + 1e-9) {
+      const annulation = ouvrir.ageAnnulationDroit(actuel, batir(trouve));
+      if (annulation !== null) {
+        trouve = pointFixe(annulation, proposer);
+      }
+    }
     age = rang > 0 ? Math.max(age, trouve) : trouve;
     ages[quoi] = age;
   });
