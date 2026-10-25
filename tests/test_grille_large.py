@@ -50,6 +50,17 @@ def points(parametres):
     return G.multiplicateurs(G.centiles(parametres.racine_donnees)[1])
 
 
+@pytest.fixture
+def sans_le_reperage_des_decotes(monkeypatch):
+    """La population sans le repérage des carrières qui peuvent décoter
+    (``DECOTE_DES_CARRIERES_QUI_LE_PEUVENT``), pour les tests qui la
+    reconstruisent sous ``monkeypatch`` sans regarder la décote : le repérage
+    demande au droit une vingtaine de secondes à chaque construction, que la
+    mémoire des calculs, muette sous ``monkeypatch``, ne garde pas. Il ne
+    change que les parts des jumelles, jamais une carrière ni son poids."""
+    monkeypatch.setattr(G, "DECOTE_DES_CARRIERES_QUI_LE_PEUVENT", False)
+
+
 def _poids(variantes, effectifs, annee):
     cas_types, retraites, _ = G.pseudo(variantes)
     return poids_effectifs(G.EffectifsRepartis(effectifs, retraites), annee, cas_types)
@@ -562,6 +573,7 @@ def test_l_age_du_premier_trimestre_se_lit_dans_le_fichier_certifie(parametres):
         16, 17, 17, 18, 21]
 
 
+@pytest.mark.usefixtures("sans_le_reperage_des_decotes")
 def test_les_carrieres_pleines_entrent_au_premier_trimestre_de_leur_cinquieme(
         simulateur, source, monkeypatch):
     """Sous ``ENTREE_AU_PREMIER_TRIMESTRE``, chaque carrière pleine du
@@ -655,6 +667,7 @@ def test_le_premier_trimestre_valide_precede_le_premier_cotise(parametres):
     assert G.age_du_premier_trimestre(cotises["H"], 1946, 0.9) == 22
 
 
+@pytest.mark.usefixtures("sans_le_reperage_des_decotes")
 def test_le_dernier_cinquieme_des_hommes_fait_son_service_avant_de_cotiser(
         simulateur, source, monkeypatch):
     """Sous ``SERVICE_AVANT_LE_PREMIER_TRIMESTRE``, le cinquième d'une
@@ -721,6 +734,7 @@ def test_la_part_assimilee_suit_le_quintile_de_la_classe(parametres):
     assert set(femmes) == {nom for nom, _ in G.CENTILES}
 
 
+@pytest.mark.usefixtures("sans_le_reperage_des_decotes")
 def test_la_carriere_pleine_d_une_femme_du_haut_part_en_carriere_longue(
         simulateur, source, monkeypatch):
     """Sous ``ASSIMILEES_SELON_LE_RANG``, la femme née en 1953 d'une carrière
@@ -828,6 +842,7 @@ def test_les_classes_de_nature_rendent_les_parts_de_l_echantillon(parametres, mo
     assert sum(1 for *_, natures, _ in classes if not natures) == len(entrees)
 
 
+@pytest.mark.usefixtures("sans_le_reperage_des_decotes")
 def test_le_service_et_la_maladie_rendent_la_carriere_longue_aux_hommes_de_1950(
         simulateur, source, monkeypatch):
     """Sous ``NATURES_SELON_LA_GENERATION``, l'homme né en 1950 d'une carrière
@@ -964,6 +979,7 @@ def test_les_natures_vont_a_leur_part_et_a_leurs_annees_sous_la_masse(parametres
     assert masse(femmes) == pytest.approx(2.8)
 
 
+@pytest.mark.usefixtures("sans_le_reperage_des_decotes")
 def test_le_chomage_a_sa_part_rend_la_carriere_longue_aux_hommes_qui_n_en_ont_pas(
         simulateur, source, monkeypatch):
     """Sous ``NATURES_A_LEUR_PART``, l'homme né en 1950 d'une carrière pleine du
@@ -1085,6 +1101,7 @@ def test_les_malades_sont_au_chomage_a_la_part_des_autres(parametres, monkeypatc
     assert masse(femmes) == pytest.approx(5.0)
 
 
+@pytest.mark.usefixtures("sans_le_reperage_des_decotes")
 def test_le_malade_sans_chomage_part_en_carriere_longue(simulateur, source, monkeypatch):
     """Sous ``MALADIE_INDEPENDANTE``, l'homme né en 1955 d'une carrière pleine
     du salariat privé de la classe p50, du premier cinquième, entré à 17 ans :
@@ -1385,6 +1402,7 @@ def test_les_carrieres_des_femmes_suivent_la_duree_de_leur_generation(simulateur
     assert validees[1935] < courte.duree < validees[1965]
 
 
+@pytest.mark.usefixtures("sans_le_reperage_des_decotes")
 def test_les_carrieres_allongees_entrent_comme_les_pleines(simulateur, source, parametres,
                                                            monkeypatch):
     """Sous ``ALLONGEES_COMME_LES_PLEINES``, la carrière incomplète d'une femme
@@ -1905,28 +1923,15 @@ def test_une_part_des_carrieres_incompletes_part_avec_une_decote(simulateur, sou
     assert not decotee(conduite.cas, 1958) and decotee(conduite.cas, 1962)
 
 
-def test_la_part_des_departs_avec_decote_suit_la_generation(simulateur, source, parametres,
-                                                           monkeypatch):
-    """Sous ``DECOTE_SELON_LA_GENERATION``, la part des départs avec décote suit
-    la génération, sexe par sexe, parmi tous les retraités du sexe : celle que
-    l'EIR mesure aux nés en 1950 — 7,9 % des femmes, 5,6 % des hommes — et aux
-    nés en 1953 — 12,4 et 8,6 % —, en droite ligne entre les deux ; celle des
-    liquidants de la Cnav de 2024 (EACR, table H) — 13,7 et 13,0 % —, depuis la
-    génération 1960, en droite ligne depuis 1953, comme la grille du coût ;
-    avant 1950, celle qui garde aux générations que 2020 voit toutes parties,
-    jusqu'à celle de 1953, pesées de leur effectif INSEE de 2020, la part que
-    l'EIR mesure aux résidents, 8,8 et 4,5 % : 8,3 et 3,6 %. Les deux jumelles
-    de chaque carrière incomplète gardent leur poids, celui de la quinzième
-    version ; chacune porte la part que chaque génération donne à ce poids :
-    génération par génération, les départs avec décote pèsent parmi tous les
-    retraités du sexe la part de leur génération, et chaque carrière ce
-    qu'elle pèse. Sans la version, une part partout, et la décote de 2020 à
-    toutes les générations."""
+def _decotes_attendues(racine: Path, generations: tuple[int, ...]) -> dict[str, dict[int, float]]:
+    """La part des départs avec décote de chacune de ces ``generations`` parmi
+    tous les retraités du sexe (``DECOTE_SELON_LA_GENERATION``), refaite à la
+    main des fichiers certifiés de l'EIR, du témoin de l'EACR et de la
+    pyramide de l'INSEE."""
     import json
 
     from retraite_notionnelle.donnees.population import Population
 
-    racine = parametres.racine_donnees
     publies = G.departs_publies(racine)
     residents = G.quintiles_eqcc(racine, residents=True)
     temoin = Path(__file__).resolve().parent / "temoins" / "drees_eacr_tables_2026.json"
@@ -1954,8 +1959,33 @@ def test_la_part_des_departs_avec_decote_suit_la_generation(simulateur, source, 
         anciennes = sum(e for g, e in parties.items() if g < 1950)
         avant = (stock * sum(parties.values())
                  - sum(e * part(g, 0.0) for g, e in parties.items() if g >= 1950)) / anciennes
-        attendues[sexe] = {g: part(g, avant)
-                           for g in (1925, 1949, 1950, 1952, 1953, 1955, 1958, 1960, 1980)}
+        attendues[sexe] = {g: part(g, avant) for g in generations}
+    return attendues
+
+
+def test_la_part_des_departs_avec_decote_suit_la_generation(simulateur, source, parametres,
+                                                           monkeypatch):
+    """Sous ``DECOTE_SELON_LA_GENERATION``, la part des départs avec décote suit
+    la génération, sexe par sexe, parmi tous les retraités du sexe : celle que
+    l'EIR mesure aux nés en 1950 — 7,9 % des femmes, 5,6 % des hommes — et aux
+    nés en 1953 — 12,4 et 8,6 % —, en droite ligne entre les deux ; celle des
+    liquidants de la Cnav de 2024 (EACR, table H) — 13,7 et 13,0 % —, depuis la
+    génération 1960, en droite ligne depuis 1953, comme la grille du coût ;
+    avant 1950, celle qui garde aux générations que 2020 voit toutes parties,
+    jusqu'à celle de 1953, pesées de leur effectif INSEE de 2020, la part que
+    l'EIR mesure aux résidents, 8,8 et 4,5 % : 8,3 et 3,6 %. Les deux jumelles
+    de chaque carrière incomplète gardent leur poids, celui de la quinzième
+    version ; chacune porte la part que chaque génération donne à ce poids :
+    génération par génération, les départs avec décote pèsent parmi tous les
+    retraités du sexe la part de leur génération, et chaque carrière ce
+    qu'elle pèse. Sans la version, une part partout, et la décote de 2020 à
+    toutes les générations. La version seule, rapportée à toutes les carrières
+    incomplètes : la trentième, qui la rapporte à celles qui peuvent décoter,
+    a son test."""
+    racine = parametres.racine_donnees
+    residents = G.quintiles_eqcc(racine, residents=True)
+    attendues = _decotes_attendues(racine, (1925, 1949, 1950, 1952, 1953, 1955, 1958, 1960,
+                                            1980))
     assert attendues["F"][1950] == pytest.approx(0.079)
     assert attendues["H"][1953] == pytest.approx(0.086)
     assert attendues["F"][1960] == pytest.approx(46637 / (46637 + 226331 + 66672))
@@ -1976,6 +2006,7 @@ def test_la_part_des_departs_avec_decote_suit_la_generation(simulateur, source, 
                 sum(siennes.values()), sum(poids[v.cas.code] for v in du_sexe))
 
     assert G.DECOTE_SELON_LA_GENERATION
+    monkeypatch.setattr(G, "DECOTE_DES_CARRIERES_QUI_LE_PEUVENT", False)
     variantes = G.grille("population", simulateur.effectifs, source, ())
     poids = _poids(variantes, simulateur.effectifs, source.millesime)
     for sexe, parts in attendues.items():
@@ -1992,6 +2023,92 @@ def test_la_part_des_departs_avec_decote_suit_la_generation(simulateur, source, 
         decotees, toutes, _ = pesees(sans, poids, 1955, sexe)
         assert decotees / toutes == pytest.approx(
             residents[("ensemble", "part_decote", sexe)] / 100.0, abs=1e-9)
+
+
+def test_une_carriere_decote_a_l_ouverture_quand_le_droit_l_y_ouvre_avant_son_taux_plein(
+        simulateur, source):
+    """Une carrière qui part au taux plein décoterait à l'ouverture du droit
+    (``decote_a_l_ouverture``) quand le droit de sa génération l'y ouvre avant
+    son taux plein. Né en 1955, l'homme d'une carrière de vingt-cinq années a
+    100 des 166 trimestres de sa génération à 62 ans, l'âge légal (L. 161-17-2),
+    et n'a le taux plein qu'à 67 ans (L. 351-8, 1°) : il décoterait. Née en
+    1955, la femme d'une carrière de trente à quarante ans, que sa génération
+    porte à 44 années validées (``DUREE_DES_FEMMES_SELON_LA_GENERATION``), en a
+    176, et les huit trimestres de chacun de ses deux enfants (L. 351-4) la
+    mènent à 192 : elle a le taux plein dès 62 ans, et ne décoterait pas. Née
+    en 1925, la même carrière n'a que 32 années, 144 trimestres avec ses
+    enfants, des 150 que le taux plein demande à 60 ans depuis 1983 : elle
+    décoterait. Une carrière qui part à l'ouverture de son statut y décote
+    quand elle y prend un taux plus bas que son taux plein (``avec_decote``) :
+    l'agent des IEG né en 1955 part à 55 ans, en 2010, au taux de 75 %, la
+    décote des régimes spéciaux ne mordant pas encore ; né en 1965, il part à
+    56 ans et 4 mois, au taux de 60 %."""
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    par_code = {v.cas.code: v.cas for v in variantes}
+    projection = simulateur.pour_la_projection()
+    homme = par_code[f"{G.GABARIT}~h~20_30~p50"]
+    femme = par_code[f"{G.GABARIT}~f~30_40~p50"]
+    assert G._par_generation(femme.cibles, 1955, 0.0) == 44.0
+    assert G._par_generation(femme.cibles, 1925, 0.0) == 32.0
+    assert G.decote_a_l_ouverture(projection, homme, 1955)
+    assert not G.decote_a_l_ouverture(projection, femme, 1955)
+    assert G.decote_a_l_ouverture(projection, femme, 1925)
+    agent = par_code["agent_ieg~mono~h~p50"]
+    assert agent.regle_liquidation == "ouverture"
+    assert not G.decote_a_l_ouverture(projection, agent, 1955)
+    assert G.decote_a_l_ouverture(projection, agent, 1965)
+
+
+def test_la_part_des_departs_avec_decote_se_rapporte_aux_carrieres_qui_peuvent_decoter(
+        simulateur, source, parametres):
+    """Sous ``DECOTE_DES_CARRIERES_QUI_LE_PEUVENT``, la part des départs avec
+    décote de chaque génération se rapporte aux seules carrières incomplètes
+    qui peuvent décoter à l'ouverture du droit (``decote_a_l_ouverture``),
+    comme la grille du coût (``facteurs_depense.part_avec_decote``), et non à
+    toutes ; elle se prend sans ce que les carrières qui partent à l'ouverture
+    de leur statut, les agents des IEG et de la conduite, y décotent déjà —
+    aucun des nés de 1953 à 1957, tous ceux de 1963 à 1967. Génération par
+    génération, les départs avec décote, des jumelles et des agents, pèsent
+    parmi tous les retraités du sexe la part de leur génération, refaite à la
+    main ; une jumelle qui ne peut pas décoter ne pèse rien — celle de la femme
+    née en 1955 d'une carrière de trente à quarante ans, qui a sa durée à
+    62 ans —, sa carrière gardant son poids."""
+    assert G.DECOTE_DES_CARRIERES_QUI_LE_PEUVENT
+    generations = (1955, 1965)
+    naissances = {g: range(g - C._DEMI_TRANCHE, g + C._DEMI_TRANCHE + 1) for g in generations}
+    attendues = _decotes_attendues(parametres.racine_donnees,
+                                   tuple(n for g in generations for n in naissances[g]))
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    poids = _poids(variantes, simulateur.effectifs, source.millesime)
+    projection = simulateur.pour_la_projection()
+    jumelles = [v for v in variantes if v.decote]
+    agents = [v for v in variantes if v.cas.regle_liquidation == "ouverture" and not v.decote]
+    assert {v.cas.code.split("~")[0] for v in agents} == {"agent_ieg", "agent_sncf_conduite"}
+    for generation in generations:
+        decotent = set()
+        for v in agents:
+            depart = projection.echeancier(v.cas.construire(projection, generation)).au_depart
+            if G.avec_decote(projection, v.cas, generation, depart.taux_liquidation):
+                decotent.add(v.cas.code)
+        assert decotent == (set() if generation == 1955 else {v.cas.code for v in agents})
+        for v in jumelles:
+            if any(v.part_de_la_generation(n) > 0.0 for n in naissances[generation]):
+                assert G.decote_a_l_ouverture(
+                    projection, replace(v.cas, regle_liquidation="taux_plein"), generation
+                ), (v.cas.code, generation)
+        for sexe in ("F", "H"):
+            du_sexe = [v for v in variantes if v.cas.sexe == sexe]
+            for n in naissances[generation]:
+                toutes = sum(poids[v.cas.code] * v.part_de_la_generation(n) for v in du_sexe)
+                decotees = sum(poids[v.cas.code] * v.part_de_la_generation(n) for v in du_sexe
+                               if v.decote or v.cas.code in decotent)
+                assert toutes == pytest.approx(sum(poids[v.cas.code] for v in du_sexe),
+                                               rel=1e-9), (sexe, n)
+                assert decotees / toutes == pytest.approx(attendues[sexe][n], rel=1e-6), (
+                    sexe, n)
+    femme = next(v for v in jumelles if v.cas.code == f"{G.GABARIT}~f~30_40~decote~p50")
+    assert femme.part_de_la_generation(1955) == 0.0
+    assert femme.part_de_la_generation(1925) > 0.0
 
 
 def test_les_departs_avec_decote_se_comptent_quintile_par_quintile(parametres):
