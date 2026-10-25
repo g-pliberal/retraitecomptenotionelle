@@ -1,4 +1,4 @@
-import { DateMois } from "./calendrier.js";
+import { DateMois, MOIS_PAR_AN } from "./calendrier.js";
 import { anneesRevolues } from "./chronologie.js";
 import { Fiabilite, fiabiliteDepuisTexte } from "./serie.js";
 import { applicable } from "./versions.js";
@@ -2718,6 +2718,8 @@ export class Affiliations {
       throw new Error("aucun profil d'affiliation chargé");
     }
     this.codes = Object.keys(this._profils).sort();
+    // `maintien`, statut par statut : chaque routage le demande.
+    this._maintiens = new Map();
   }
 
   contient(code) {
@@ -2771,6 +2773,45 @@ export class Affiliations {
   /** Le statut de droit commun dont relève qui entre après la fermeture. */
   relevePar(affiliation) {
     return this._profils[affiliation].releve_par ?? null;
+  }
+
+  /**
+   * La borne du grand-père que la loi ne tient qu'à une affiliation continue,
+   * et les années que s'y maintient une affiliation suspendue ou rompue avant
+   * elle, `[borne, annees]` ; null pour un statut qui garde ses anciens sans
+   * condition. Voir le Python (`Affiliations.maintien`).
+   */
+  maintien(affiliation) {
+    if (!this._maintiens.has(affiliation)) {
+      const periode = this.periodes(affiliation).find(
+        (p) => p.maintien != null && p.entres_avant != null);
+      this._maintiens.set(affiliation, periode === undefined ? null
+        : [DateMois.depuisRang(rangBorne(periode.entres_avant)), Number(periode.maintien)]);
+    }
+    return this._maintiens.get(affiliation);
+  }
+
+  /**
+   * La date d'entrée qui décide des régimes de ce statut cette année-là : celle
+   * de la carrière, sauf sous un régime fermé qui ne garde que ses anciens
+   * restés affiliés — la CRPCEN et les IEG depuis le 1er septembre 2023 —, où
+   * le retour que rien ne maintient la date (`Carriere.retours`). Voir le
+   * Python (`Affiliations.date_entree`), qui porte les sources.
+   */
+  dateEntree(carriere, affiliation, annee) {
+    let entree = carriere.dateEntree(affiliation);
+    const regle = this.maintien(affiliation);
+    if (entree === null || regle === null) return entree;
+    const [borne, annees] = regle;
+    for (const retour of carriere.retours(affiliation)) {
+      if (retour.annee > annee) break;
+      if (new DateMois(retour.annee, 1).rang < borne.rang) continue;
+      const maintenu = new DateMois(retour.depart, MOIS_PAR_AN).rang < borne.rang
+        ? retour.annee - retour.depart <= annees
+        : retour.suspendu;
+      if (!maintenu) entree = new DateMois(retour.annee, 1);
+    }
+    return entree;
   }
 
   /**

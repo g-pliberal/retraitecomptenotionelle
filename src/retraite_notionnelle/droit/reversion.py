@@ -1401,7 +1401,9 @@ def _dernieres_affiliations(moteur: ScenarioActuel, carriere: Carriere,
     for ligne in carriere.lignes:
         if not ligne.cotise or ligne.annee > jusqu_a:
             continue
-        for code in regimes_de(moteur, ligne, ligne.annee, carriere.date_entree(ligne.affiliation),
+        for code in regimes_de(moteur, ligne, ligne.annee,
+                               moteur.affiliations.date_entree(
+                                   carriere, ligne.affiliation, ligne.annee),
                                revenu=ligne.revenu, plafond=plafond(ligne.annee)):
             dernieres[code] = max(dernieres.get(code, 0), ligne.annee)
     return dernieres

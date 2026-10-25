@@ -531,10 +531,12 @@ export class ConstructeurCompte {
 
     // Les services passés ne portent rien au compte : l'Arrco les valide sans
     // cotisation. Voir compte.py.
-    const [services] = this.affiliations.servicesPasses(
-      ligne.affiliation, annee, carriere.dateEntree(ligne.affiliation));
+    // L'entrée qui décide du régime de l'année : celle du retour qu'aucun
+    // maintien ne couvre, sous un régime fermé (`Affiliations.dateEntree`).
+    const entree = this.affiliations.dateEntree(carriere, ligne.affiliation, annee);
+    const [services] = this.affiliations.servicesPasses(ligne.affiliation, annee, entree);
     const codes = this.affiliations.regimes(
-      ligne.affiliation, annee, carriere.dateEntree(ligne.affiliation),
+      ligne.affiliation, annee, entree,
       ligne.cotise ? ligne.revenu : ligne.revenu_reference,
       this.macro.plafond_securite_sociale.valeur(annee),
     ).filter((code) => !services.has(code));

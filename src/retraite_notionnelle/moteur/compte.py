@@ -662,8 +662,12 @@ class ConstructeurCompte:
         # l'interruption.
         familles_admises = None if ligne.cotise else set(ligne.familles_financees)
 
+        # L'entrée qui décide du régime de l'année : celle du retour qu'aucun
+        # maintien ne couvre, sous un régime fermé qui ne garde que ses anciens
+        # restés affiliés (`Affiliations.date_entree`).
+        entree = self.affiliations.date_entree(carriere, ligne.affiliation, annee)
         codes = self.affiliations.regimes(
-            ligne.affiliation, annee, carriere.date_entree(ligne.affiliation),
+            ligne.affiliation, annee, entree,
             revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
             plafond=self.macro.plafond_securite_sociale(annee),
         )
@@ -672,8 +676,7 @@ class ConstructeurCompte:
         # compte d'un salarié calédonien portait jusqu'au 3 octobre 2026 les
         # cotisations de trente-quatre ans d'Arrco que personne n'avait
         # payées (`Affiliations.services_passes`).
-        services, _ = self.affiliations.services_passes(
-            ligne.affiliation, annee, carriere.date_entree(ligne.affiliation))
+        services, _ = self.affiliations.services_passes(ligne.affiliation, annee, entree)
         if services:
             codes = tuple(code for code in codes if code not in services)
         sans_employeur = self.affiliations.sans_employeur(ligne.affiliation)

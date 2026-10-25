@@ -412,7 +412,8 @@ export function acquerir(moteur, coordination, durees, avecPointsGratuits = true
     // prise depuis la généralisation de l'Arrco au statut seulement. Voir
     // acquerir.py.
     const [services, generalisation] = moteur.affiliations.servicesPasses(
-      ligne.affiliation, ligne.annee, carriere.dateEntree(ligne.affiliation));
+      ligne.affiliation, ligne.annee,
+      moteur.affiliations.dateEntree(carriere, ligne.affiliation, ligne.annee));
     // LE FORFAIT DU MICRO-ENTREPRENEUR : ses points s'achètent avec la part
     // de base et la part complémentaire de son forfait (D. 613-6), chacune à
     // la période de sa tranche, et non au barème sur son revenu abattu

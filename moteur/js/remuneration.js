@@ -1833,7 +1833,7 @@ export function remunerationDeLaCarriere(carriere, macro, catalogue, affiliation
   }
   const statut = carriere.ligne(anneesActives[0]).affiliation;
   // Chaque fiche lit les régimes de la date d'entrée dans le statut.
-  const entree = carriere.dateEntree(statut);
+  const entree = affiliations.dateEntree(carriere, statut, anneesActives[0]);
   const codeProfil = profilDeLaFiche(
     affiliations, catalogue, statut, anneesActives[0], entree,
   );

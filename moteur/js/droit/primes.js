@@ -71,7 +71,8 @@ function ligneDeReference(moteur, code, carriere, anneeLiquidation) {
     const ligne = carriere.lignes[i];
     if (!ligne.cotise || ligne.annee > anneeLiquidation) continue;
     const regimes = moteur.affiliations.regimes(
-      ligne.affiliation, ligne.annee, carriere.dateEntree(ligne.affiliation));
+      ligne.affiliation, ligne.annee,
+      moteur.affiliations.dateEntree(carriere, ligne.affiliation, ligne.annee));
     if (regimes.includes(code)) return ligne;
   }
   return null;

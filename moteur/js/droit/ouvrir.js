@@ -926,7 +926,7 @@ export function periodesParcourues(moteur, carriere) {
       continue;
     }
     for (const code of coordonner.regimesDe(moteur, 
-      ligne, ligne.annee, carriere.dateEntree(ligne.affiliation),
+      ligne, ligne.annee, moteur.affiliations.dateEntree(carriere, ligne.affiliation, ligne.annee),
       ligne.cotise ? ligne.revenu : ligne.revenu_reference,
       moteur.macro.plafond_securite_sociale.valeur(ligne.annee),
     )) {

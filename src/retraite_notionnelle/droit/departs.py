@@ -170,7 +170,8 @@ def _routage(moteur: ScenarioActuel, carriere: Carriere
     plafond = moteur.macro.plafond_securite_sociale
     return [
         (ligne, tuple(coordonner.regimes_de(
-            moteur, ligne, ligne.annee, carriere.date_entree(ligne.affiliation),
+            moteur, ligne, ligne.annee,
+            moteur.affiliations.date_entree(carriere, ligne.affiliation, ligne.annee),
             revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
             plafond=plafond(ligne.annee))))
         for ligne in carriere.lignes if ligne.annee <= carriere.annee_liquidation

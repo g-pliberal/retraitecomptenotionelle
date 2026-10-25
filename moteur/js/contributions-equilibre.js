@@ -95,7 +95,7 @@ function forfait(catalogue, regimes, annee, macro, part) {
 function dues(lues, simulateur, carriere, ligne) {
   const affiliations = simulateur.affiliations;
   const annee = ligne.annee;
-  const entree = carriere.dateEntree(ligne.affiliation);
+  const entree = affiliations.dateEntree(carriere, ligne.affiliation, annee);
   const [services] = affiliations.servicesPasses(ligne.affiliation, annee, entree);
   const codes = new Set(affiliations.regimes(ligne.affiliation, annee, entree, ligne.revenu,
     simulateur.macro.plafond_securite_sociale.valeur(annee))

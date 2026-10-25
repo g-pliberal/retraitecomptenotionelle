@@ -1,0 +1,221 @@
+schema_version: 1
+id: maintien_affiliation_crpcen_ieg
+intitule: >-
+  La CRPCEN et les IEG ne servent la pension de vieillesse qu'aux recrutés d'avant le
+  1er septembre 2023 qui remplissent, à compter de cette date, les conditions
+  d'affiliation : l'affiliation se maintient dix ans au plus après une suspension ou une
+  rupture antérieure ; un mois ou un an après une rupture postérieure, selon qu'elle vient
+  du salarié ou de l'employeur, et jusqu'à la reprise d'une activité affiliée ailleurs ;
+  pendant les congés que deux décrets énumèrent. Revenu après qu'elle a cessé, l'assuré est
+  un nouvel entrant, au régime général et à l'Agirc-Arrco.
+domaine: coordination
+regimes: [crpcen, ieg]
+etape: coordonner_les_affiliations
+face: droit
+etat: approchee
+lit:
+- les lignes de la carrière sous le statut, années d'emploi et interruptions avec leur
+  motif (`Carriere.retours`), et la date d'entrée dans le statut (`Carriere.date_entree`)
+- legislation/affiliations.yaml (`entres_avant` et `maintien` des périodes de
+  clerc_de_notaire et d'agent_ieg)
+ecrit:
+- la date d'entrée qui décide des régimes de chaque année (`Affiliations.date_entree`),
+  que lisent les étapes du scénario 1, le compte, la fiche de paie et les contributions
+  d'équilibre
+dates_qui_decident:
+- entree_dans_un_regime
+- cessation_d_activite
+- revenu.annee
+- liquidation.date_effet
+versions:
+- id: avant_la_fermeture
+  statut: lue
+  textes:
+  - {id: JORFARTI000047445082, article: "loi n° 2023-270 du 14 avril 2023, article 1er, IX", en_vigueur: 2023-04-15}
+  bornes:
+    liquidation.date_effet: [null, 2023-09-01]
+  contenu:
+    droit: >-
+      sans objet : les deux régimes sont ouverts à tout recruté ; leur fermeture, et la
+      condition d'affiliation qui l'accompagne, entrent en vigueur le 1er septembre 2023
+  exemples: aucun trouvé
+- id: loi_2023_270
+  statut: lue
+  textes:
+  - {id: JORFARTI000047445082, article: "loi n° 2023-270 du 14 avril 2023, article 1er, III et V", publie_le: 2023-04-15}
+  - {id: LEGIARTI000047452586, article: "loi du 12 juillet 1937, article 1er, § 2", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047452582, article: "loi n° 2004-803 du 9 août 2004, article 16, I", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047909906, article: "décret n° 90-1215 du 20 décembre 1990, article 2, 2°", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047908882, article: "statut national du personnel des IEG (décret n° 46-1541), annexe 3, article 1er", en_vigueur: 2023-09-01}
+  nee_de: JORFARTI000047445082
+  bornes:
+    liquidation.date_effet: [2023-09-01, 2024-01-01]
+  contenu:
+    beneficiaire: >-
+      « les clercs et employés de notaire recrutés avant le 1er septembre 2023 et qui
+      remplissent, sans aucune interruption à compter de cette date, les conditions
+      d'affiliation à la caisse » ; « les personnels salariés recrutés avant le
+      1er septembre 2023 et qui remplissent, sans aucune interruption à compter de cette
+      date, les conditions d'affiliation à ce régime » (IEG)
+    droit: la pension de vieillesse et de réversion du régime spécial
+    autres: le régime général et l'Agirc-Arrco ; la caisse garde la maladie, l'invalidité et le décès
+  exemples: aucun trouvé
+- id: lfss_2024
+  statut: lue
+  textes:
+  - {id: JORFARTI000048668717, article: "loi n° 2023-1250 du 26 décembre 2023, article 15, V, VI et VIII", publie_le: 2023-12-27}
+  - {id: LEGIARTI000048701185, article: "loi du 12 juillet 1937, article 1er, § 2", en_vigueur: 2024-01-01}
+  - {id: LEGIARTI000048701181, article: "loi n° 2004-803 du 9 août 2004, article 16, I", en_vigueur: 2024-01-01}
+  - {id: LEGIARTI000051830772, article: "décret n° 90-1215 du 20 décembre 1990, article 2, 2°", en_vigueur: 2025-07-02}
+  - {id: LEGIARTI000051830767, article: "décret n° 90-1215 du 20 décembre 1990, article 4, 2°", en_vigueur: 2025-07-02}
+  - {id: LEGIARTI000052088701, article: "décret n° 2025-799 du 11 août 2025, article 1er", en_vigueur: 2025-08-14}
+  - {id: LEGIARTI000052046341, article: "décret n° 2025-761 du 4 août 2025, article 1er", en_vigueur: 2025-08-06}
+  - {id: LEGIARTI000052046924, article: "statut national du personnel des IEG (décret n° 46-1541), annexe 3, article 1er", en_vigueur: 2025-08-06}
+  nee_de: JORFARTI000048668717
+  bornes:
+    liquidation.date_effet: [2024-01-01, null]
+  contenu:
+    beneficiaire: >-
+      les recrutés d'avant le 1er septembre 2023 « qui remplissent, à compter de cette
+      date, les conditions d'affiliation » : « sans aucune interruption » est supprimé (V,
+      1°, a), et le VIII applique la rédaction « aux congés et aux suspensions et aux
+      ruptures du contrat de travail intervenus avant » le 1er janvier 2024
+    maintien_avant: >-
+      « En cas de suspension ou de rupture du contrat de travail intervenue avant le
+      1er septembre 2023, quelle qu'en soit la cause, l'affiliation est maintenue pour une
+      durée maximale de dix ans à compter de la suspension ou de la rupture du contrat »
+    maintien_apres: >-
+      après une rupture postérieure, « 1° Pour une durée d'un mois à compter de la rupture
+      du contrat lorsque cette rupture est à l'initiative du salarié ou d'un commun
+      accord ; 2° Pour une durée d'un an [...] lorsque cette rupture est à l'initiative de
+      l'employeur » ; « Par dérogation aux 1° et 2°, l'affiliation est maintenue jusqu'à
+      la reprise d'une activité entraînant une affiliation auprès d'un autre régime de
+      sécurité sociale lorsque cette reprise d'activité intervient avant l'expiration »
+      de ces durées
+    conges: >-
+      les congés et suspensions « qui ne donnent lieu ni au versement de cotisations ni à
+      la constitution de droits à pension » et maintiennent pourtant l'affiliation :
+      treize pour la CRPCEN (décret n° 2025-799), dix-sept pour les IEG (décret
+      n° 2025-761) — l'adoption internationale, le congé parental d'éducation, la présence
+      parentale, la solidarité familiale, le proche aidant, le congé sabbatique, la
+      mobilité volontaire sécurisée, les mandats parlementaires et locaux, la réserve
+      opérationnelle, la création ou la reprise d'entreprise, la grève, la sanction, la
+      détention, et « tout autre congé ou absence dont la durée est inférieure à un mois » ;
+      aux IEG s'y ajoutent les congés sans solde du statut national, la solidarité
+      internationale et une mobilité de cinq ans au plus hors du statut ; à la CRPCEN, le
+      congé des natifs d'outre-mer de la convention collective (art. 18.6)
+    application: >-
+      la CNIEG : une suspension qui « donne lieu au versement de cotisations et/ou à la
+      constitution de droits à pension vieillesse », l'arrêt maladie à salaire maintenu,
+      maintient l'affiliation ; toute autre, hors de la liste, « entraine la rupture
+      d'affiliation » ; parti le 1er mars 2021 et réembauché le 1er février 2026, l'agent
+      « bénéficie d'un maintien d'affiliation au régime spécial des IEG »
+  exemples: aucun trouvé
+approximations:
+- version: [loi_2023_270, lfss_2024]
+  ecart: >-
+    Le modèle ne connaît la carrière qu'à l'année. Un départ et un retour qui ne laissent
+    entre eux aucune année civile entière sans emploi sous le statut ne rompent rien, quand
+    le droit rompt l'affiliation un mois après une démission ou une rupture
+    conventionnelle, un an après un licenciement, ou dès la reprise d'une activité
+    affiliée ailleurs ; une année civile entière dépasse l'un et l'autre maintien. Le
+    départ se date de la fin de sa dernière année d'emploi sous le statut, le retour de
+    janvier : celui de 2023 précède la fermeture, le départ de 2023 la suit.
+  effet: non mesuré ; aucune carrière des témoins ne revient au statut
+- version: lfss_2024
+  ecart: >-
+    Le modèle ne connaît ni le contrat ni le congé. Une année d'interruption déclarée sous
+    le statut le suspend, sauf le chômage et la préretraite, qui supposent le contrat rompu
+    (`INTERRUPTIONS_DE_RUPTURE`) : la maladie, la maternité et l'invalidité, qui ouvrent
+    des droits, le maintiennent comme le veut le texte ; l'inactivité, les études et le
+    service sont présumés l'un des congés des deux listes, quand un congé hors liste, sans
+    cotisation ni droit, rompt l'affiliation. À l'inverse, une année passée sous un autre
+    statut rompt toujours : le modèle ne voit ni la mobilité de cinq ans au plus hors des
+    IEG (décret n° 2025-761, 12°) ni le congé de création d'entreprise, qui la maintiennent
+    pendant que l'assuré travaille ailleurs.
+  effet: non mesuré
+- version: lfss_2024
+  ecart: >-
+    Une suspension ou une rupture d'avant le 1er septembre 2023 se maintient dix ans quoi
+    qu'il s'y passe : le texte ne la borne que par sa durée, « quelle qu'en soit la cause »,
+    et la dérogation de la reprise d'activité ne vise que les 1° et 2° ; le modèle ne coupe
+    pas non plus ce maintien à une rupture postérieure survenue pendant une suspension, que
+    le texte ne règle pas.
+  effet: non mesuré
+- version: loi_2023_270
+  ecart: >-
+    Pour une pension prise de septembre à décembre 2023, le modèle applique la rédaction de
+    2024 : une interruption de ces quatre mois, que « sans aucune interruption »
+    sanctionnait, ne se voit pas à l'année.
+  effet: nul, à l'année
+sources:
+  lu_le: 2026-10-25
+  prochaine_relecture: 2027-10-25
+  lectures:
+  - type: legifrance
+    reference: >-
+      index LEGI du dépôt, à jour au 24 octobre 2026 : loi du 12 juillet 1937, article 1er
+      (LEGIARTI000047452586, LEGIARTI000048701185) ; loi n° 2004-803, article 16
+      (LEGIARTI000047452582, LEGIARTI000048701181) ; décret n° 90-1215, articles 2 et 4
+      (LEGIARTI000047909906, LEGIARTI000047909901, LEGIARTI000051830772,
+      LEGIARTI000051830767) ; décrets n° 2025-799 et n° 2025-761, article 1er
+      (LEGIARTI000052088701, LEGIARTI000052046341) ; statut national des IEG, annexe 3
+      (LEGIARTI000047908882, LEGIARTI000047909955, LEGIARTI000052046924) ; code des
+      transports, L. 2142-4-2 (LEGIARTI000047449920) et décret n° 2008-637, article 1er
+      (LEGIARTI000050710739), pour la RATP ; code monétaire et financier, L. 142-9
+      (LEGIARTI000047452588), pour la Banque de France
+    date: 2026-10-25
+  - type: jorf
+    reference: >-
+      loi n° 2023-1250 du 26 décembre 2023 de financement de la sécurité sociale pour 2024,
+      article 15 (JORFARTI000048668717), ses V, VI et VIII, dans l'index JORF du dépôt
+    date: 2023-12-27
+  - type: autre
+    reference: >-
+      CNIEG, « L'affiliation au régime spécial de retraite des IEG » et « La continuité
+      d'affiliation au régime spécial des IEG », lues le 25 octobre 2026, sans date de mise
+      à jour
+    url: https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/affiliation-retraite-ieg.html
+    date: 2026-10-25
+  a_relire:
+  - >-
+    La doctrine de la CRPCEN, que la session n'a pas lue : comment elle date la rupture
+    et le retour, et si elle maintient l'affiliation dix ans à qui a travaillé ailleurs
+    entre une rupture d'avant le 1er septembre 2023 et son retour, comme la CNIEG le fait
+    dans son exemple.
+  - >-
+    Une rupture postérieure au 1er septembre 2023 pendant une suspension commencée avant :
+    le maintien de dix ans court-il encore, ou celui d'un mois ou d'un an ? Le texte ne le
+    dit pas.
+historique:
+- >-
+  2026-10-25 — née avec l'action 138, étape 9 : le retour à la CRPCEN et aux IEG après
+  le 1er septembre 2023, que le modèle gardait au régime spécial, la carrière datant
+  l'entrée du premier recrutement.
+code:
+  python: >-
+    carriere.py : Affiliations.maintien, Affiliations.date_entree, Carriere.retours,
+    INTERRUPTIONS_DE_RUPTURE ; droit/coordonner.py : coordonner, regimes_de ;
+    moteur/compte.py : ConstructeurCompte._cotisation_ligne ; remuneration.py :
+    remuneration_de_la_carriere ; contributions_equilibre.py : _dues
+  javascript: >-
+    moteur/js/regimes.js : Affiliations.maintien, Affiliations.dateEntree ;
+    moteur/js/carriere.js : Carriere.retours, INTERRUPTIONS_DE_RUPTURE ;
+    moteur/js/droit/coordonner.js : coordonner, regimesDe ; moteur/js/compte.js :
+    ConstructeurCompte._cotisationLigne ; moteur/js/remuneration.js :
+    remunerationDeLaCarriere ; moteur/js/contributions-equilibre.js : dues
+  parametres: >-
+    legislation/affiliations.yaml : affiliations.clerc_de_notaire.periodes,
+    affiliations.agent_ieg.periodes
+  tests:
+  - tests/test_retour_crpcen_ieg.py
+  moteur: >-
+    chaque routage lit la date d'entrée de l'année, celle d'Affiliations.date_entree :
+    les étapes du scénario 1, le compte, la fiche de paie, les contributions d'équilibre,
+    et au portage le cycle de vie
+effet: >-
+  Les clercs et les agents des IEG recrutés avant le 1er septembre 2023 qui quittent le
+  statut et y reviennent : le retour que rien ne maintient — après une rupture
+  postérieure, une année civile entière ailleurs ou au chômage ; après une rupture ou une
+  suspension antérieure, plus de dix ans — cotise au régime général et à l'Agirc-Arrco,
+  quand le modèle lui gardait le régime spécial.

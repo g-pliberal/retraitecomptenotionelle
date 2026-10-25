@@ -225,7 +225,7 @@ def _dues(regles, simulateur, carriere, ligne):
     d'un cadre : ``None`` quand elle n'en doit aucune."""
     affiliations = simulateur.affiliations
     annee = ligne.annee
-    entree = carriere.date_entree(ligne.affiliation)
+    entree = affiliations.date_entree(carriere, ligne.affiliation, annee)
     plafond_annuel = simulateur.macro.plafond_securite_sociale(annee)
     codes = frozenset(affiliations.regimes(ligne.affiliation, annee, entree,
                                            revenu=ligne.revenu, plafond=plafond_annuel))

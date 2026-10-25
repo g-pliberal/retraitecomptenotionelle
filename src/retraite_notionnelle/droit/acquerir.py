@@ -501,7 +501,8 @@ def acquerir(moteur: ScenarioActuel, coordination: Coordination, durees: Durees,
         # seulement : avant, le régime n'existait pas pour ce statut, et le
         # modèle lui servait trente-quatre ans d'Arrco calédonien.
         services, generalisation = moteur.affiliations.services_passes(
-            ligne.affiliation, ligne.annee, carriere.date_entree(ligne.affiliation))
+            ligne.affiliation, ligne.annee,
+            moteur.affiliations.date_entree(carriere, ligne.affiliation, ligne.annee))
         # LE FORFAIT DU MICRO-ENTREPRENEUR : ses points s'achètent avec ce
         # qu'il a versé, la part de base et la part complémentaire de son
         # forfait (D. 613-6 ; la clef de la Cnav avant le décret n° 2022-1529),

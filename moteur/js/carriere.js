@@ -47,6 +47,15 @@ export const PERIODES_NON_COTISEES = new Set([
 ]);
 
 /**
+ * Les interruptions qui supposent le contrat de travail ROMPU : le chômage et
+ * la préretraite ; les autres le suspendent. Voir le Python
+ * (`INTERRUPTIONS_DE_RUPTURE`).
+ */
+export const INTERRUPTIONS_DE_RUPTURE = new Set([
+  "chomage_indemnise", "chomage_solidarite", "chomage_non_indemnise", "preretraite_fne",
+]);
+
+/**
  * Les statuts de CONJOINT COLLABORATEUR d'un artisan ou d'un commerçant, dont
  * le revenu de la ligne est l'assiette choisie (`assietteDuConjointCollaborateur`).
  */
@@ -1564,6 +1573,35 @@ export class Carriere {
     }
     const annee = this.entree(affiliation);
     return annee === null ? null : new DateMois(annee, 1);
+  }
+
+  /**
+   * Les retours à ce statut, dans l'ordre : chaque année d'emploi qui en suit
+   * au moins une sans emploi sous lui, `{annee, depart, suspendu}` — sa
+   * dernière année d'emploi avant, et si chaque année d'entre elles porte une
+   * interruption du statut qui le suspend. Voir le Python (`Carriere.retours`).
+   */
+  retours(affiliation) {
+    const emplois = new Set();
+    const suspendues = new Set();
+    for (const ligne of this.lignes) {
+      if (ligne.affiliation !== affiliation) continue;
+      const nature = ligne.type_periode ?? "emploi";
+      if (nature === "emploi") emplois.add(ligne.annee);
+      else if (!INTERRUPTIONS_DE_RUPTURE.has(nature)) suspendues.add(ligne.annee);
+    }
+    const ordonnees = [...emplois].sort((a, b) => a - b);
+    const retours = [];
+    for (let i = 1; i < ordonnees.length; i += 1) {
+      const [depart, annee] = [ordonnees[i - 1], ordonnees[i]];
+      if (annee <= depart + 1) continue;
+      let suspendu = true;
+      for (let entre = depart + 1; entre < annee; entre += 1) {
+        if (!suspendues.has(entre)) suspendu = false;
+      }
+      retours.push({ annee, depart, suspendu });
+    }
+    return retours;
   }
 
   get anneesCotisees() {

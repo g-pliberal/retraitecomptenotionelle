@@ -2694,7 +2694,7 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
             continue
         if codes_admis.isdisjoint(coordonner.regimes_de(moteur, 
                 ligne, ligne.annee,
-                carriere.date_entree(ligne.affiliation),
+                moteur.affiliations.date_entree(carriere, ligne.affiliation, ligne.annee),
                 revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
                 plafond=moteur.macro.plafond_securite_sociale(ligne.annee))):
             continue
@@ -2840,7 +2840,7 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
             ligne for ligne in carriere.lignes_de(annee_liquidation)
             if not codes_admis.isdisjoint(coordonner.regimes_de(moteur, 
                 ligne, annee_liquidation,
-                carriere.date_entree(ligne.affiliation),
+                moteur.affiliations.date_entree(carriere, ligne.affiliation, annee_liquidation),
                 revenu=ligne.revenu,
                 plafond=moteur.macro.plafond_securite_sociale(annee_liquidation)))
         ), None)
@@ -2848,7 +2848,8 @@ def salaire_de_reference(moteur, code: str, carriere: Carriere,
                 and derniere.fraction_annee > 0
                 and not codes_admis.isdisjoint(coordonner.regimes_de(moteur, 
                     derniere, annee_liquidation,
-                    carriere.date_entree(derniere.affiliation),
+                    moteur.affiliations.date_entree(
+                        carriere, derniere.affiliation, annee_liquidation),
                     revenu=derniere.revenu,
                     plafond=moteur.macro.plafond_securite_sociale(annee_liquidation)))):
             # À temps plein : le traitement indiciaire du grade, que le temps

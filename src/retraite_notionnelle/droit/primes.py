@@ -111,7 +111,8 @@ def _ligne_de_reference(moteur: ScenarioActuel, code: str, carriere: Carriere,
         if not ligne.cotise or ligne.annee > annee_liquidation:
             continue
         regimes = moteur.affiliations.regimes(
-            ligne.affiliation, ligne.annee, carriere.date_entree(ligne.affiliation))
+            ligne.affiliation, ligne.annee,
+            moteur.affiliations.date_entree(carriere, ligne.affiliation, ligne.annee))
         if code in regimes:
             return ligne
     return None

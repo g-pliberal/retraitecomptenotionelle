@@ -640,7 +640,7 @@ function netAnnualise(simulateur, carriere, ligne, indemnite = 0.0, imposable = 
   const { macro, catalogue, affiliations } = simulateur;
   // Les régimes de la date d'entrée dans le statut : l'agent de la SNCF entré
   // avant 2020 paie le sien après la fermeture.
-  const entree = carriere.dateEntree(ligne.affiliation);
+  const entree = affiliations.dateEntree(carriere, ligne.affiliation, ligne.annee);
   const fiche = ficheDepuisBrut(simulateur.baremePrelevements, macro, catalogue, affiliations,
     ligne.affiliation, ligne.annee, ligne.revenuAnnualise, ligne.part_primes, indemnite,
     entree);
@@ -1498,7 +1498,7 @@ export function beneficesParAnnee(simulateur, carriere) {
   for (const ligne of carriere.lignes) {
     if (!ligne.cotise) continue;
     revenus.set(ligne.annee, (revenus.get(ligne.annee) ?? 0.0) + ligne.revenu);
-    const entree = carriere.dateEntree(ligne.affiliation);
+    const entree = simulateur.affiliations.dateEntree(carriere, ligne.affiliation, ligne.annee);
     const profil = profilDeLaFiche(simulateur.affiliations, simulateur.catalogue,
       ligne.affiliation, ligne.annee, entree);
     if (profil !== "independant") continue;

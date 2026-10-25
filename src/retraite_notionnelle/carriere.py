@@ -93,6 +93,18 @@ PERIODES_NON_COTISEES = {
     "etudes",
 }
 
+#: Les interruptions qui supposent le contrat de travail ROMPU : le chômage,
+#: indemnisé ou non, et la préretraite. Les autres le suspendent : la maladie,
+#: la maternité et l'invalidité, que la caisse indemnise ou valide ; l'éducation
+#: d'un enfant, le service, l'inactivité et les études, que le modèle présume
+#: être l'un des congés qui maintiennent l'affiliation (décrets n° 2025-761 et
+#: n° 2025-799). C'est ce qui sépare, sous un régime fermé que la loi ne garde
+#: qu'à une affiliation continue, l'année qui la rompt de celle qui la suspend
+#: (:meth:`Carriere.retours`).
+INTERRUPTIONS_DE_RUPTURE = frozenset({
+    "chomage_indemnise", "chomage_solidarite", "chomage_non_indemnise", "preretraite_fne",
+})
+
 #: Les statuts de CONJOINT COLLABORATEUR d'un artisan ou d'un commerçant. Le
 #: revenu de leur ligne est l'assiette qu'ils ont choisie ; une ligne d'emploi
 #: sans revenu cotise sur le forfait du tiers du plafond, celui que le texte
@@ -867,6 +879,20 @@ class ExConjoint:
     remariage: str | None = None
 
 
+@dataclass(frozen=True)
+class Retour:
+    """Un retour à un statut après au moins une année civile sans emploi sous
+    lui (:meth:`Carriere.retours`)."""
+
+    #: L'année du retour : la première année d'emploi qui suit l'interruption.
+    annee: int
+    #: La dernière année d'emploi sous le statut avant elle.
+    depart: int
+    #: Chaque année d'entre elles porte-t-elle une interruption du statut qui
+    #: le suspend, sans le rompre (:data:`INTERRUPTIONS_DE_RUPTURE`) ?
+    suspendu: bool
+
+
 @dataclass
 class Carriere:
     """Carrière complète d'un assuré.
@@ -1405,6 +1431,38 @@ class Carriere:
     def entree(self, affiliation: str) -> int | None:
         """Année d'entrée dans ce statut, ou ``None`` s'il n'y figure pas."""
         return self._entrees.get(affiliation)
+
+    @cached_property
+    def _retours(self) -> dict[str, tuple[Retour, ...]]:
+        emplois: dict[str, set[int]] = {}
+        suspendues: dict[str, set[int]] = {}
+        for ligne in self.lignes:
+            if ligne.type_periode == "emploi":
+                emplois.setdefault(ligne.affiliation, set()).add(ligne.annee)
+            elif ligne.type_periode not in INTERRUPTIONS_DE_RUPTURE:
+                suspendues.setdefault(ligne.affiliation, set()).add(ligne.annee)
+        retours: dict[str, tuple[Retour, ...]] = {}
+        for affiliation, annees in emplois.items():
+            ordonnees = sorted(annees)
+            suspension = suspendues.get(affiliation, set())
+            retours[affiliation] = tuple(
+                Retour(annee, depart, all(entre in suspension
+                                          for entre in range(depart + 1, annee)))
+                for depart, annee in zip(ordonnees, ordonnees[1:]) if annee > depart + 1)
+        return retours
+
+    def retours(self, affiliation: str) -> tuple[Retour, ...]:
+        """Les retours à ce statut, dans l'ordre : chaque année d'emploi qui en
+        suit au moins une sans emploi sous lui.
+
+        Ce sont des faits de la carrière, que la loi lit : un régime fermé que
+        la loi ne garde qu'à une affiliation continue (``maintien``) tient pour
+        un nouvel entrant le retour que rien ne maintient
+        (:meth:`Affiliations.date_entree`). Le modèle ne voit que les années
+        civiles : un départ et un retour qui n'en laissent aucune entière
+        entre eux ne font pas de retour.
+        """
+        return self._retours.get(affiliation, ())
 
     def date_entree(self, affiliation: str) -> DateMois | None:
         """Mois d'entrée dans ce statut, ou ``None`` s'il n'y figure pas.
@@ -3195,6 +3253,8 @@ class Affiliations:
         self._hors_routage: dict[str, str] = contenu.get(
             "regimes_sans_affiliation", {}
         )
+        #: :meth:`maintien`, statut par statut : chaque routage le demande.
+        self._maintiens: dict[str, tuple[DateMois, int] | None] = {}
 
     def __contains__(self, code: str) -> bool:
         return code in self._profils
@@ -3243,6 +3303,65 @@ class Affiliations:
     def releve_par(self, affiliation: str) -> str | None:
         """Le statut de droit commun dont relève qui entre après la fermeture."""
         return self._profils[affiliation].get("releve_par")
+
+    def maintien(self, affiliation: str) -> tuple[DateMois, int] | None:
+        """La borne du grand-père que la loi ne tient qu'à une affiliation
+        continue, et le nombre d'années que s'y maintient une affiliation
+        suspendue ou rompue avant elle : la période qui porte ``entres_avant``
+        et ``maintien``. ``None`` pour un statut qui garde ses anciens sans
+        condition — la RATP garde « les anciens agents […] recrutés avant le
+        1er septembre 2023 » (décret n° 2008-637, art. 1er, 1°)."""
+        if affiliation not in self._maintiens:
+            self._maintiens[affiliation] = next(
+                ((DateMois.depuis_rang(rang_borne(periode["entres_avant"])),
+                  int(periode["maintien"]))
+                 for periode in self.periodes(affiliation)
+                 if periode.get("maintien") is not None
+                 and periode.get("entres_avant") is not None), None)
+        return self._maintiens[affiliation]
+
+    def date_entree(self, carriere: Carriere, affiliation: str,
+                    annee: int) -> DateMois | None:
+        """La date d'entrée qui décide des régimes de ce statut cette année-là.
+
+        Celle de la carrière (:meth:`Carriere.date_entree`), sauf sous un régime
+        fermé qui ne garde que ses anciens restés affiliés (:meth:`maintien`) :
+        la CRPCEN et les IEG, depuis le 1er septembre 2023, ne servent la
+        pension de vieillesse qu'aux recrutés d'avant « qui remplissent, à
+        compter de cette date, les conditions d'affiliation » (loi du 12 juillet
+        1937, art. 1er, § 2 ; loi n° 2004-803, art. 16, I ; rédactions de la loi
+        n° 2023-1250, art. 15, V et VI). L'affiliation se maintient dix ans au
+        plus après une suspension ou une rupture antérieure, « quelle qu'en soit
+        la cause » ; un mois ou un an après une rupture postérieure, jusqu'à la
+        reprise d'une activité affiliée ailleurs, et pendant les congés que les
+        décrets n° 2025-761 et n° 2025-799 énumèrent. Un retour que rien ne
+        maintient (:meth:`Carriere.retours`) est un recrutement d'après la
+        borne : il date l'entrée de cette année et des suivantes.
+
+        Le modèle ne connaît la carrière qu'à l'année : le départ se date de la
+        fin de sa dernière année d'emploi, le retour de janvier. Une année
+        civile entière sans emploi sous le statut, après une rupture
+        postérieure, passe le mois comme l'an ; seules la maintiennent les
+        années d'une interruption qui suspend le statut. Revenu avant la
+        borne, l'assuré est recruté avant elle, et garde son régime.
+        """
+        entree = carriere.date_entree(affiliation)
+        regle = self.maintien(affiliation)
+        if entree is None or regle is None:
+            return entree
+        borne, annees = regle
+        for retour in carriere.retours(affiliation):
+            if retour.annee > annee:
+                break
+            if DateMois(retour.annee, 1).rang < borne.rang:
+                continue
+            if DateMois(retour.depart, MOIS_PAR_AN).rang < borne.rang:
+                maintenu = retour.annee - retour.depart <= annees
+            else:
+                maintenu = retour.suspendu
+            if not maintenu:
+                entree = DateMois(retour.annee, 1)
+        return entree
 
     @property
     def hors_routage(self) -> dict[str, str]:

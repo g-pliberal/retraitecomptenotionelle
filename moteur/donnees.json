@@ -495,7 +495,7 @@
 "libelle":"Agent des industries électriques et gazières",
 "part_salariale_seule":false,
 "pension_militaire":null,
-"periodes":[{"debut":1946,"entres_avant":"2023-09","fin":null,"regimes":["ieg"]},{"debut":2023,"entres_depuis":"2023-09","fin":null,"regimes":["regime_general","agirc_arrco"]}],
+"periodes":[{"debut":1946,"entres_avant":"2023-09","fin":null,"maintien":10,"regimes":["ieg"]},{"debut":2023,"entres_depuis":"2023-09","fin":null,"regimes":["regime_general","agirc_arrco"]}],
 "releve_par":"salarie_prive_non_cadre",
 "sans_employeur":false
 },
@@ -615,7 +615,7 @@
 "libelle":"Clerc ou employé de notaire",
 "part_salariale_seule":false,
 "pension_militaire":null,
-"periodes":[{"debut":1937,"entres_avant":"2023-09","fin":null,"regimes":["crpcen"]},{"debut":2023,"entres_depuis":"2023-09","fin":null,"regimes":["regime_general","agirc_arrco"]}],
+"periodes":[{"debut":1937,"entres_avant":"2023-09","fin":null,"maintien":10,"regimes":["crpcen"]},{"debut":2023,"entres_depuis":"2023-09","fin":null,"regimes":["regime_general","agirc_arrco"]}],
 "releve_par":"salarie_prive_non_cadre",
 "sans_employeur":false
 },

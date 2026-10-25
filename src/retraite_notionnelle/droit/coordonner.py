@@ -217,7 +217,7 @@ def droit_a_pension(moteur: ScenarioActuel, code: str, carriere: Carriere,
             continue
         if regimes.isdisjoint(moteur.affiliations.regimes(
                 ligne.affiliation, ligne.annee,
-                carriere.date_entree(ligne.affiliation))):
+                moteur.affiliations.date_entree(carriere, ligne.affiliation, ligne.annee))):
             continue
         retenue = par_annee.get(ligne.annee)
         if retenue is None or ligne.fraction_annee > retenue.fraction_annee:
@@ -302,7 +302,8 @@ def _retablir(moteur: ScenarioActuel, carriere: Carriere
             if (ligne.cotise and ligne.annee <= annee_liquidation
                     and not droit.regimes.isdisjoint(moteur.affiliations.regimes(
                         ligne.affiliation, ligne.annee,
-                        carriere.date_entree(ligne.affiliation)))):
+                        moteur.affiliations.date_entree(
+                            carriere, ligne.affiliation, ligne.annee)))):
                 retablies[id(ligne)] = traitement * ligne.fraction_annee
     if not retablies:
         return carriere, ()
@@ -385,7 +386,7 @@ def coordonner(moteur: ScenarioActuel, carriere: Carriere) -> Coordination:
     plafond = moteur.macro.plafond_securite_sociale
     regimes = tuple(
         regimes_de(moteur, ligne, ligne.annee,
-                   carriere.date_entree(ligne.affiliation),
+                   moteur.affiliations.date_entree(carriere, ligne.affiliation, ligne.annee),
                    revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
                    plafond=plafond(ligne.annee))
         for ligne in carriere.lignes)

@@ -1925,7 +1925,7 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
       continue;
     }
     if (!coordonner.regimesDe(moteur,
-      ligne, ligne.annee, carriere.dateEntree(ligne.affiliation),
+      ligne, ligne.annee, moteur.affiliations.dateEntree(carriere, ligne.affiliation, ligne.annee),
       ligne.cotise ? ligne.revenu : ligne.revenu_reference,
       moteur.macro.plafond_securite_sociale.valeur(ligne.annee),
     ).some((c) => codesAdmis.has(c))) {
@@ -2074,7 +2074,7 @@ export function salaireDeReference(moteur, code, carriere, periode, anneeLiquida
     const derniere = carriere.lignesDe(anneeLiquidation).find(
       (ligne) => coordonner.regimesDe(moteur, 
         ligne, anneeLiquidation,
-        carriere.dateEntree(ligne.affiliation),
+        moteur.affiliations.dateEntree(carriere, ligne.affiliation, anneeLiquidation),
         ligne.revenu, moteur.macro.plafond_securite_sociale.valeur(anneeLiquidation))
         .some((c) => codesAdmis.has(c)),
     ) ?? null;

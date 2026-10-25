@@ -2500,7 +2500,7 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
         return None
 
     statut = carriere.ligne(annees_actives[0]).affiliation
-    entree = carriere.date_entree(statut)
+    entree = affiliations.date_entree(carriere, statut, annees_actives[0])
     code_profil = profil_de_la_fiche(
         affiliations, catalogue, statut, annees_actives[0], entree)
     if code_profil is None:

@@ -178,7 +178,8 @@ export function droitAPension(moteur, code, carriere, anneeLiquidation) {
       continue;
     }
     if (!moteur.affiliations.regimes(
-      ligne.affiliation, ligne.annee, carriere.dateEntree(ligne.affiliation),
+      ligne.affiliation, ligne.annee,
+      moteur.affiliations.dateEntree(carriere, ligne.affiliation, ligne.annee),
     ).some((c) => regimes.has(c))) {
       continue;
     }
@@ -262,7 +263,8 @@ function retablirEnDetail(moteur, carriere) {
     faits.push([droit, traitement]);
     for (const ligne of carriere.lignes) {
       if (ligne.cotise && ligne.annee <= anneeLiquidation && moteur.affiliations.regimes(
-        ligne.affiliation, ligne.annee, carriere.dateEntree(ligne.affiliation),
+        ligne.affiliation, ligne.annee,
+        moteur.affiliations.dateEntree(carriere, ligne.affiliation, ligne.annee),
       ).some((c) => droit.regimes.has(c))) {
         retablies.set(ligne, traitement * ligne.fraction_annee);
       }
@@ -349,7 +351,8 @@ export class Coordination {
 export function coordonner(moteur, carriereSaisie) {
   const { carriere, retablissements } = retablirEnDetail(moteur, carriereSaisie);
   const regimes = carriere.lignes.map((ligne) => regimesDe(
-    moteur, ligne, ligne.annee, carriere.dateEntree(ligne.affiliation),
+    moteur, ligne, ligne.annee,
+    moteur.affiliations.dateEntree(carriere, ligne.affiliation, ligne.annee),
     ligne.cotise ? ligne.revenu : ligne.revenu_reference,
     moteur.macro.plafond_securite_sociale.valeur(ligne.annee),
   ));

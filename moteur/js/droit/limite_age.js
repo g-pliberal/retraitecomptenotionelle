@@ -158,13 +158,14 @@ export function classeDe(moteur, affiliation, annee, entree = null) {
 
 /** L'emploi d'une ligne de la carrière, à sa date d'entrée dans le statut. */
 function emploiDeLaLigne(moteur, carriere, ligne) {
-  return emploiDe(moteur, ligne.affiliation, ligne.annee, carriere.dateEntree(ligne.affiliation));
+  return emploiDe(moteur, ligne.affiliation, ligne.annee,
+    moteur.affiliations.dateEntree(carriere, ligne.affiliation, ligne.annee));
 }
 
 /** Les régimes d'une ligne de la carrière, à sa date d'entrée dans le statut. */
 function regimesDeLaLigne(moteur, carriere, ligne) {
   return moteur.affiliations.regimes(ligne.affiliation, ligne.annee,
-    carriere.dateEntree(ligne.affiliation));
+    moteur.affiliations.dateEntree(carriere, ligne.affiliation, ligne.annee));
 }
 
 /** Les exceptions que la fiche de la limite ouvre ce jour-là. */

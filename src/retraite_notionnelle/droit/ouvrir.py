@@ -1067,7 +1067,7 @@ def periodes_parcourues(
             continue
         codes.update(coordonner.regimes_de(moteur, 
             ligne, ligne.annee,
-            carriere.date_entree(ligne.affiliation),
+            moteur.affiliations.date_entree(carriere, ligne.affiliation, ligne.annee),
             revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
             plafond=moteur.macro.plafond_securite_sociale(ligne.annee),
         ))

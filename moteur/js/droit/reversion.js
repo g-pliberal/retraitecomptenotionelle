@@ -1293,7 +1293,7 @@ function dernieresAffiliations(moteur, carriere, jusquA) {
       continue;
     }
     for (const code of regimesDe(moteur, ligne, ligne.annee,
-      carriere.dateEntree(ligne.affiliation), ligne.revenu,
+      moteur.affiliations.dateEntree(carriere, ligne.affiliation, ligne.annee), ligne.revenu,
       moteur.macro.plafond_securite_sociale.valeur(ligne.annee))) {
       dernieres.set(code, Math.max(dernieres.get(code) ?? 0, ligne.annee));
     }

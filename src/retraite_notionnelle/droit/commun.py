@@ -56,7 +56,8 @@ def ligne_cotisee(moteur, carriere, ligne) -> bool:
     gratuitement (:meth:`~retraite_notionnelle.carriere.Affiliations.validee_sans_cotisation`).
     La carrière longue et le minimum contributif majoré lisent ce compte."""
     return ligne.cotise and not moteur.affiliations.validee_sans_cotisation(
-        ligne.affiliation, ligne.annee, carriere.date_entree(ligne.affiliation))
+        ligne.affiliation, ligne.annee,
+        moteur.affiliations.date_entree(carriere, ligne.affiliation, ligne.annee))
 
 
 @dataclass(frozen=True)

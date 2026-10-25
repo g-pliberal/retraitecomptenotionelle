@@ -286,13 +286,14 @@ def classe_de(moteur: ScenarioActuel, affiliation: str, annee: int,
 def _emploi(moteur: ScenarioActuel, carriere: Carriere, ligne) -> tuple[str, str] | None:
     """L'emploi d'une ligne de la carrière, à sa date d'entrée dans le statut."""
     return emploi_de(moteur, ligne.affiliation, ligne.annee,
-                     carriere.date_entree(ligne.affiliation))
+                     moteur.affiliations.date_entree(carriere, ligne.affiliation, ligne.annee))
 
 
 def _regimes(moteur: ScenarioActuel, carriere: Carriere, ligne) -> tuple[str, ...]:
     """Les régimes d'une ligne de la carrière, à sa date d'entrée dans le statut."""
-    return moteur.affiliations.regimes(ligne.affiliation, ligne.annee,
-                                       carriere.date_entree(ligne.affiliation))
+    return moteur.affiliations.regimes(
+        ligne.affiliation, ligne.annee,
+        moteur.affiliations.date_entree(carriere, ligne.affiliation, ligne.annee))
 
 
 def _exceptions(moteur: ScenarioActuel, nom: str, jour: str) -> frozenset[str]:

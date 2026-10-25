@@ -51,7 +51,8 @@ export function dateDEffet(carriere) {
  */
 export function ligneCotisee(moteur, carriere, ligne) {
   return ligne.cotise && !moteur.affiliations.valideeSansCotisation(
-    ligne.affiliation, ligne.annee, carriere.dateEntree(ligne.affiliation));
+    ligne.affiliation, ligne.annee,
+    moteur.affiliations.dateEntree(carriere, ligne.affiliation, ligne.annee));
 }
 
 /**

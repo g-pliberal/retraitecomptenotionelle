@@ -19,6 +19,19 @@
 # commun dont relève qui l'embrasse après la fermeture — c'est ce que le
 # formulaire oppose à qui se déclarerait mineur en 2015.
 #
+# La période qui porte `entres_avant` peut porter aussi `maintien`, en années :
+# le régime fermé ne reste alors qu'à qui lui demeure AFFILIÉ depuis la borne.
+# C'est la CRPCEN et les IEG, qui ne gardent que les recrutés d'avant le
+# 1er septembre 2023 « qui remplissent, à compter de cette date, les
+# conditions d'affiliation » (loi du 12 juillet 1937, art. 1er, § 2 ; loi
+# n° 2004-803, art. 16, I ; rédactions de la loi n° 2023-1250, art. 15, V et
+# VI). Une suspension ou une rupture antérieure à la borne maintient
+# l'affiliation `maintien` ans, « quelle qu'en soit la cause » ; une rupture
+# postérieure, un mois ou un an, et une année civile entière sans emploi sous
+# le statut la rompt — sauf les années d'une interruption qui le suspend
+# (`INTERRUPTIONS_DE_RUPTURE`). Un retour que rien ne maintient date
+# l'entrée (`Carriere.retours`, `Affiliations.date_entree`).
+#
 # Une période peut porter `services_passes: {regimes: [...], pension_depuis:
 # AAAA}` : ceux de ses régimes qui VALIDENT l'année sans cotisation, parce
 # qu'elle précède la généralisation de la retraite complémentaire au statut.
@@ -989,13 +1002,18 @@ affiliations:
     famille: special
     releve_par: salarie_prive_non_cadre
     periodes:
-      - {debut: 1946, fin: null, regimes: [ieg], entres_avant: 2023-09}
+      - {debut: 1946, fin: null, regimes: [ieg], entres_avant: 2023-09, maintien: 10}
       - {debut: 2023, fin: null, regimes: [regime_general, agirc_arrco],
          entres_depuis: 2023-09}
     note: >-
       Régime fermé aux agents RECRUTÉS depuis le 1er septembre 2023 (loi
       n° 2023-270, art. 1er V, JORFARTI000047445082) ; celui qui était déjà
-      là le garde jusqu'à sa retraite.
+      là le garde jusqu'à sa retraite, tant qu'il en remplit « à compter de
+      cette date, les conditions d'affiliation » (loi n° 2004-803, art. 16, I,
+      LEGIARTI000048701181, rédaction de la loi n° 2023-1250, art. 15, VI) :
+      dix ans au plus après une suspension ou une rupture d'avant la date, un
+      mois ou un an après une rupture postérieure, pendant les congés que le
+      décret n° 2025-761 énumère (fiche `maintien_affiliation_crpcen_ieg`).
 
   marin:
     libelle: Marin professionnel
@@ -1025,7 +1043,7 @@ affiliations:
     famille: special
     releve_par: salarie_prive_non_cadre
     periodes:
-      - {debut: 1937, fin: null, regimes: [crpcen], entres_avant: 2023-09}
+      - {debut: 1937, fin: null, regimes: [crpcen], entres_avant: 2023-09, maintien: 10}
       - {debut: 2023, fin: null, regimes: [regime_general, agirc_arrco],
          entres_depuis: 2023-09}
     note: >-
@@ -1036,7 +1054,12 @@ affiliations:
       compter de cette date, les conditions d'affiliation » ; les autres
       relèvent du régime général et de l'Agirc-Arrco, la caisse ne gardant
       que la maladie, l'invalidité et le décès. Celui qui était déjà là
-      garde son régime.
+      garde son régime. Depuis le 1er janvier 2024, « sans aucune
+      interruption » n'y est plus (loi n° 2023-1250, art. 15, V,
+      LEGIARTI000048701185) : l'affiliation se maintient dix ans au plus
+      après une suspension ou une rupture d'avant la date, un mois ou un an
+      après une rupture postérieure, pendant les congés que le décret
+      n° 2025-799 énumère (fiche `maintien_affiliation_crpcen_ieg`).
 
   agent_banque_de_france:
     libelle: Agent titulaire de la Banque de France
