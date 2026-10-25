@@ -1,0 +1,30 @@
+date: "2026-10-25"
+session: "action 138, étape 9 : le retour à la CRPCEN et aux IEG après le 1er septembre 2023"
+consulte: >-
+  L'index LEGI du dépôt, mis à jour jusqu'au 24 octobre 2026, et celui du JORF :
+  `textes.py --inscrire` n'apporte aucune rédaction neuve. La loi du 12 juillet 1937,
+  article 1er, et la loi n° 2004-803, article 16, dans leurs rédactions du
+  1er septembre 2023 (loi n° 2023-270, art. 1er, III et V) et du 1er janvier 2024 (loi
+  n° 2023-1250, art. 15, V, VI et VIII) ; le décret n° 90-1215, articles 2 et 4, dans leur
+  rédaction du 2 juillet 2025 (décret n° 2025-598) ; les décrets n° 2025-799 (CRPCEN) et
+  n° 2025-761 (IEG), qui énumèrent les congés ; l'annexe 3 du statut national des IEG, du
+  6 août 2025. Pour la classe : L. 2142-4-2 du code des transports et le décret
+  n° 2008-637, article 1er (RATP), L. 142-9 du code monétaire et financier (Banque de
+  France). Les deux pages de la CNIEG sur l'affiliation, lues en ligne.
+trouve: >-
+  « Sans aucune interruption », que citaient affiliations.yaml et la note du 25 octobre,
+  n'est plus le droit depuis le 1er janvier 2024 : l'affiliation se maintient dix ans au
+  plus après une suspension ou une rupture d'avant le 1er septembre 2023, quelle qu'en soit
+  la cause ; un mois ou un an après une rupture postérieure, jusqu'à la reprise d'une
+  activité affiliée ailleurs ; pendant treize congés à la CRPCEN, dix-sept aux IEG, dont
+  toute absence de moins d'un mois. La CNIEG l'applique ainsi, et l'illustre : parti le
+  1er mars 2021, réembauché le 1er février 2026, l'agent garde le régime. Le modèle gardait
+  le régime spécial à tout retour : il date désormais l'entrée du retour que rien ne
+  maintient (fiche `maintien_affiliation_crpcen_ieg`, état « approchée »). La RATP garde
+  au contraire ses « anciens agents » recrutés avant (décret n° 2008-637, art. 1er, 1°) ; la
+  Banque de France ne dit que « recrutés avant » : ni l'une ni l'autre n'a de condition
+  d'affiliation continue.
+reste: >-
+  La doctrine de la CRPCEN, non lue ; une rupture postérieure au 1er septembre 2023 pendant
+  une suspension commencée avant, que le texte ne règle pas (fiche, `a_relire`). Le plafond
+  de 2027 ; la limite 5 ante ter (2), en fin d'étape.
