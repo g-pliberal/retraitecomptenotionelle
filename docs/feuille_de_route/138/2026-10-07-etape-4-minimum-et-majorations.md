@@ -3,13 +3,13 @@
 **Reprise, au 25 octobre 2026.** Fait : le minimum, les majorations (7 octobre) ; le
 maximum, le plafond du ménage, l'assuré mort avant son départ, le partage, le cumul
 d'avant 2004, la majoration pour enfant (9 octobre) ; ses parts, son régime ; la
-révision sur trois mois ; le plancher de la pension substituée, la catégorie (24
-octobre) ; les trois ou douze mois de la date d'effet, les majorations de 1972 à 1982
-comparées au plancher (25 octobre). Reste, une session par point : au propriétaire,
-les décrets agricoles de 1976 et 1977, au fac-similé ; la date de la demande et celle
-du décès, avant juillet 2004 ; les majorations au maximum. Au site : les études,
-l'enfant né après le départ, les révisions, leurs quatre champs, la catégorie, la
-période, le plancher non majoré. Détail : `…-comparees-au-plancher.md`.
+révision sur trois mois ; le plancher, la catégorie (24 octobre) ; la date d'effet,
+les majorations au plancher, la demande et le décès d'avant 2004 (25 octobre). Reste,
+une session par point : au propriétaire, les décrets agricoles de 1976 et 1977, au
+fac-similé, et le choix de la date de la demande, présumée le mois qui précède la
+date d'effet ; les majorations au maximum. Au site : les études, l'enfant né après le
+départ, les révisions, leurs quatre champs, la catégorie, la période et son moment,
+le plancher non majoré. Détail : `…-date-de-la-demande-et-du-deces.md`.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « Quels sont les écarts
 encore présents avec trajectoire et destinie 2 ? J'aimerais combler les manques

@@ -38559,6 +38559,7 @@ null
 "ressources_du_survivant":{"dit":"le conjoint survivant n'a d'autres ressources que les réversions qu'il reçoit, ni son nouveau conjoint quand il vit en couple","valeur":0},
 "retraites_du_survivant_servies":{"dit":"les ressources du survivant hors de ses revenus d'activité, que le modèle tient pour ses retraites personnelles, lui sont servies dès la date d'effet de sa réversion, et depuis plus de trois mois","valeur":"dès la date d'effet"},
 "reversion_demandee_dans_l_annee":{"dit":"le survivant demande sa réversion dans l'année qui suit le décès","valeur":"dans l'année"},
+"reversion_demandee_le_mois_avant_sa_date_d_effet":{"dit":"le survivant demande sa réversion le mois qui précède sa date d'effet : celui du décès, ou celui où il atteint l'âge requis","valeur":"le mois qui précède la date d'effet"},
 "survivant_sans_droit_propre":{"dit":"le conjoint survivant qui n'a ni retraites, ni revenus d'activité, ni retraite datée n'a jamais travaillé : il ne peut prétendre à aucune retraite personnelle","valeur":"aucune retraite personnelle"},
 "survivant_seul":{"dit":"le conjoint survivant vit seul après le décès : ni remarié, ni pacsé, ni en concubinage","valeur":"seul"},
 "validation_ircantec_demandee":{"dit":"l'agent rétabli au régime général a demandé que l'Ircantec valide ses services","valeur":"demandée"}
@@ -224598,9 +224599,10 @@ null
 "minimum_proratise":false,
 "minimum_tous_regimes":false,
 "minimum_trimestres":60,
-"periodes_de_reference":null,
+"periodes_de_reference":[3,12],
 "plafond_smic_heures":2080,
 "ressources":"condition",
+"ressources_examinees":["deces"],
 "retraites_entieres_a_la_revision":null,
 "taux":0.5
 },
@@ -224630,9 +224632,10 @@ null
 "minimum_proratise":false,
 "minimum_tous_regimes":false,
 "minimum_trimestres":60,
-"periodes_de_reference":null,
+"periodes_de_reference":[3,12],
 "plafond_smic_heures":2080,
 "ressources":"condition",
+"ressources_examinees":["deces"],
 "retraites_entieres_a_la_revision":null,
 "taux":0.5
 },
@@ -224662,9 +224665,10 @@ null
 "minimum_proratise":false,
 "minimum_tous_regimes":false,
 "minimum_trimestres":60,
-"periodes_de_reference":null,
+"periodes_de_reference":[3,12],
 "plafond_smic_heures":2080,
 "ressources":"condition",
+"ressources_examinees":["demande","deces"],
 "retraites_entieres_a_la_revision":null,
 "taux":0.5
 },
@@ -224694,9 +224698,10 @@ null
 "minimum_proratise":true,
 "minimum_tous_regimes":false,
 "minimum_trimestres":60,
-"periodes_de_reference":null,
+"periodes_de_reference":[3,12],
 "plafond_smic_heures":2080,
 "ressources":"condition",
+"ressources_examinees":["demande","deces"],
 "retraites_entieres_a_la_revision":null,
 "taux":0.52
 },
@@ -224726,9 +224731,10 @@ null
 "minimum_proratise":true,
 "minimum_tous_regimes":false,
 "minimum_trimestres":60,
-"periodes_de_reference":null,
+"periodes_de_reference":[3,12],
 "plafond_smic_heures":2080,
 "ressources":"condition",
+"ressources_examinees":["demande","deces"],
 "retraites_entieres_a_la_revision":null,
 "taux":0.54
 },
@@ -224761,6 +224767,7 @@ null
 "periodes_de_reference":[3,12],
 "plafond_smic_heures":2080,
 "ressources":"ecretement",
+"ressources_examinees":["date_d_effet"],
 "retraites_entieres_a_la_revision":{"regime_general":"2010-07-01"},
 "taux":0.54
 },
@@ -224793,6 +224800,7 @@ null
 "periodes_de_reference":[3,12],
 "plafond_smic_heures":2080,
 "ressources":"ecretement",
+"ressources_examinees":["date_d_effet"],
 "retraites_entieres_a_la_revision":{"regime_general":"2010-07-01"},
 "taux":0.54
 },
@@ -224825,6 +224833,7 @@ null
 "periodes_de_reference":[3,12],
 "plafond_smic_heures":2080,
 "ressources":"ecretement",
+"ressources_examinees":["date_d_effet"],
 "retraites_entieres_a_la_revision":{"regime_general":"2010-07-01"},
 "taux":0.54
 },
@@ -224857,6 +224866,7 @@ null
 "periodes_de_reference":[3,12],
 "plafond_smic_heures":2080,
 "ressources":"ecretement",
+"ressources_examinees":["date_d_effet"],
 "retraites_entieres_a_la_revision":{"regime_general":"2010-07-01"},
 "taux":0.54
 },
@@ -224889,6 +224899,7 @@ null
 "periodes_de_reference":[3,12],
 "plafond_smic_heures":2080,
 "ressources":"ecretement",
+"ressources_examinees":["date_d_effet"],
 "retraites_entieres_a_la_revision":{"regime_general":"2010-07-01"},
 "taux":0.54
 },
@@ -224921,6 +224932,7 @@ null
 "periodes_de_reference":[3,12],
 "plafond_smic_heures":2080,
 "ressources":"ecretement",
+"ressources_examinees":["date_d_effet"],
 "retraites_entieres_a_la_revision":{"regime_general":"2010-07-01"},
 "taux":0.54
 },
@@ -224953,6 +224965,7 @@ null
 "periodes_de_reference":[3,12],
 "plafond_smic_heures":2080,
 "ressources":"ecretement",
+"ressources_examinees":["date_d_effet"],
 "retraites_entieres_a_la_revision":{"regime_general":"2010-07-01"},
 "taux":0.54
 },
@@ -224985,6 +224998,7 @@ null
 "periodes_de_reference":[3,12],
 "plafond_smic_heures":2080,
 "ressources":"ecretement",
+"ressources_examinees":["date_d_effet"],
 "retraites_entieres_a_la_revision":{"regime_general":"2010-07-01"},
 "taux":0.54
 },
@@ -225017,6 +225031,7 @@ null
 "periodes_de_reference":[3,12],
 "plafond_smic_heures":2080,
 "ressources":"ecretement",
+"ressources_examinees":["date_d_effet"],
 "retraites_entieres_a_la_revision":null,
 "taux":0.54
 },
@@ -225049,6 +225064,7 @@ null
 "periodes_de_reference":[3,12],
 "plafond_smic_heures":2080,
 "ressources":"ecretement",
+"ressources_examinees":["date_d_effet"],
 "retraites_entieres_a_la_revision":null,
 "taux":0.54
 },
@@ -225081,6 +225097,7 @@ null
 "periodes_de_reference":[3,12],
 "plafond_smic_heures":2080,
 "ressources":"ecretement",
+"ressources_examinees":["date_d_effet"],
 "retraites_entieres_a_la_revision":null,
 "taux":0.54
 },
@@ -225113,6 +225130,7 @@ null
 "periodes_de_reference":[3,12],
 "plafond_smic_heures":2080,
 "ressources":"ecretement",
+"ressources_examinees":["date_d_effet"],
 "retraites_entieres_a_la_revision":null,
 "taux":0.54
 },

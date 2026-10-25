@@ -1,0 +1,58 @@
+date: "2026-10-25"
+session: "action 138, étape 4, dix-septième partie : avant juillet 2004, les ressources de la réversion du régime général examinées à la date de la demande, puis à celle du décès (R. 353-1, rédactions de 1985 et de 1990), et avant juillet 1974 au décès seul (décret n° 71-123)"
+consulte: >-
+  veille_droit.py, lancé à l'ouverture de la session (dernière veille consignée :
+  2026-10-25) ; l'index LEGI, récupéré de la release index-dila et mis à jour par ses
+  neuf incréments jusqu'au 24 octobre 2026, puis textes.py --inscrire, qui n'a rien
+  inscrit ; l'index JORF, récupéré de la même release. Dans l'index LEGI : R. 353-1,
+  rédactions du 21 décembre 1985 (LEGIARTI000006749451) et du 30 novembre 1990
+  (LEGIARTI000006749452) ; l'article 81 a du décret n° 45-179, rédactions du 12 mars
+  1981 et du 7 décembre 1982 ; R. 815-25 à R. 815-32, rédactions du 21 décembre 1985,
+  auxquelles R. 353-1 renvoyait ; R. 353-7, rédactions de 1985 et de 1986, et
+  l'article 83 du décret n° 45-179 (1977), la date d'entrée en jouissance. Dans
+  l'index JORF : le décret n° 90-1061 du 26 novembre 1990, article 3. Par l'API de
+  la base de législation de la Cnav : l'exposé « Condition de ressources » (16 avril
+  2026), « Avant le 01/07/2004 - Période de référence » ; les circulaires n° 31/75
+  (§ 21, 233 à 235, 2351, 2352), n° 46/75 (§ 232, 233), n° 23/71, n° 42/77
+  (tableau de synthèse n° 13), n° 49/86 (§ 22) ; le décret n° 71-123 du 11 février
+  1971 ; la lettre ministérielle n° 189/AG du 6 octobre 1977. Leur recherche avancée
+  ne trouve aucune circulaire qui applique le décret n° 90-1061.
+trouve: >-
+  Depuis le 1er juillet 1974, « les ressources doivent être appréciées : soit à la
+  date de la demande, soit, si la condition n'est pas remplie à cette date, à la
+  date du décès » (circulaire n° 31/75, § 233), dans les conditions du décret
+  n° 64-300 — les trois mois civils qui précèdent la demande quand l'entrée en
+  jouissance est le premier jour du mois qui suit, les douze au-delà du quart du
+  plafond (circulaire n° 42/77, tableau n° 13) — ; l'article 81 a du décret
+  n° 45-179 en 1981 et 1982, R. 353-1 en 1985 le disent, et R. 353-1 écrit en 1990
+  les trois et douze mois « précédant la date de la demande ». Au décès, « compte
+  tenu des dispositions en vigueur à cette date », les trois mois qui le précèdent,
+  puis les douze (exposé « Condition de ressources ») ; « Si les ressources
+  examinées à la date de la demande et à la date du décès dépassaient le plafond
+  autorisé, la demande était rejetée », et le survivant refusé peut « formuler une
+  nouvelle demande » quand ses revenus diminuent (circulaire n° 46/75, § 233). Du
+  1er mars 1971 au 30 juin 1974, les ressources s'apprécient « à la date du décès »
+  seule, sous le SMIC du 1er janvier de son année (décret n° 71-123, article 2) ;
+  avant, le conjoint « à charge », sous le plafond de l'AVTS diminué de la
+  majoration pour conjoint, ou, sous les règles de 1971, à la date de la demande
+  (article 5). R. 353-7 fixe la date d'entrée en jouissance au premier jour du mois
+  qui suit le décès quand la demande vient dans l'année (1986), au lendemain du
+  décès avant le 1er décembre 1986. Aucun exemple chiffré. Le modèle examine
+  désormais, avant juillet 2004, les trois ou douze mois qui précèdent la demande,
+  présumée le mois qui précède la date d'effet (présomption
+  reversion_demandee_le_mois_avant_sa_date_d_effet, nouvelle), puis ceux qui
+  précèdent le décès, sous les paramètres de la version du décès ; avant juillet
+  1974, le décès seul. Aucune réversion des 907 témoins de simulation ne bouge.
+reste: >-
+  La nouvelle demande du survivant refusé, quand ses ressources baissent (circulaire
+  n° 46/75, § 233), que le modèle ne sert pas ; avant le 1er mars 1971, le conjoint à
+  charge et la demande des règles de 1971 (décret n° 71-123, article 5) ; le SMIC de
+  la demande, quand elle suit l'année du décès (circulaire n° 31/75, § 2351) ; la
+  date d'entrée en jouissance au lendemain du décès, avant le 1er décembre 1986
+  (R. 353-7, rédaction de 1985 ; article 83 du décret n° 45-179), que le modèle
+  place au premier jour du mois qui suit ; depuis juillet 2004, la tolérance qui
+  prend les mois de la demande quand la date d'effet est le mois qui suit le dépôt
+  (circulaire n° 2005/17, § 143). Le choix de la date de la demande, au
+  propriétaire : la présomption la place le mois qui précède la date d'effet ; une
+  demande plus tardive dans l'année, que la caisse servirait de la même date
+  d'effet, examinerait d'autres mois.

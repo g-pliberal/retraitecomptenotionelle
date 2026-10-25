@@ -96,10 +96,16 @@ versions:
     1985, telles que R. 353-1 les codifie en 1985 ; la réversion ne se cumule pas
     avec une retraite personnelle, mais en complète le montant (exposé de la Cnav,
     « Retraite de réversion cumulable », d'après la circulaire ministérielle du 29
-    juin 1949)
+    juin 1949) ; les ressources s'apprécient à la date du décès seule, dans les
+    conditions du décret n° 64-300 — les trois mois civils qui le précèdent, ou les
+    douze —, sous 2 080 fois le SMIC horaire du 1er janvier de son année, depuis le
+    1er mars 1971 (décret n° 71-123, article 2), ce que le modèle prête aux décès
+    d'avant, quand le conjoint devait être à charge, sous le plafond de l'AVTS
+    diminué de la majoration pour conjoint (circulaire Cnav n° 31/75, § 2352)
   fiabilite: moyenne
   textes:
   - {id: LEGIARTI000006761979, article: "décret n° 72-1098, article 1er", en_vigueur: 1973-01-01}
+  - {reference: "décret n° 71-123 du 11 février 1971, article 2 (base de législation de la Cnav)", en_vigueur: 1971-03-01, change: "les ressources du survivant, appréciées à la date du décès, sous le SMIC annuel du 1er janvier de son année"}
   bornes:
     liquidation.date_effet: [null, 1973-01-01]
   contenu:
@@ -108,7 +114,8 @@ versions:
     conditions: >-
       soixante-cinq ans, soixante en cas d'inaptitude au travail ; deux ans de mariage
       à la date du décès, sauf enfant issu du mariage ; des ressources personnelles qui
-      ne dépassent pas 2 080 fois le SMIC horaire, ses retraites exceptées
+      ne dépassent pas 2 080 fois le SMIC horaire, ses retraites exceptées, appréciées
+      au décès, sur les trois mois civils qui le précèdent, ou les douze
     parametres:
       taux: 0.50
       age_minimum: 65
@@ -134,7 +141,8 @@ versions:
       - {date: "1982-12-01", taux: 0.04}
       - {date: "1995-01-01", taux: 0.03846}
       retraites_entieres_a_la_revision: null
-      periodes_de_reference: null
+      periodes_de_reference: [3, 12]
+      ressources_examinees: [deces]
       fiabilite: moyenne
   exemples: aucun trouvé
 - id: avant_juillet_1974
@@ -142,10 +150,12 @@ versions:
   hypothese: >-
     l'âge de cinquante-cinq ans est celui du décret n° 72-1098 ; le reste, comme la
     version avant_1973 : le cumul avec une retraite personnelle n'est ouvert qu'au 1er
-    juillet 1974 (loi n° 75-3, article 21)
+    juillet 1974 (loi n° 75-3, article 21), et les ressources ne s'apprécient qu'au
+    décès (décret n° 71-123, article 2)
   fiabilite: moyenne
   textes:
   - {id: LEGIARTI000006761979, article: "décret n° 72-1098, article 1er", en_vigueur: 1973-01-01}
+  - {reference: "décret n° 71-123 du 11 février 1971, article 2 (base de législation de la Cnav)", en_vigueur: 1971-03-01, change: "les ressources du survivant, appréciées à la date du décès, sous le SMIC annuel du 1er janvier de son année"}
   bornes:
     liquidation.date_effet: [1973-01-01, 1974-07-01]
   contenu:
@@ -154,7 +164,8 @@ versions:
     conditions: >-
       cinquante-cinq ans ; deux ans de mariage à la date du décès, sauf enfant issu du
       mariage ; des ressources personnelles qui ne dépassent pas 2 080 fois le SMIC
-      horaire, ses retraites exceptées
+      horaire, ses retraites exceptées, appréciées au décès, sur les trois mois civils
+      qui le précèdent, ou les douze
     parametres:
       taux: 0.50
       age_minimum: 55
@@ -180,23 +191,29 @@ versions:
       - {date: "1982-12-01", taux: 0.04}
       - {date: "1995-01-01", taux: 0.03846}
       retraites_entieres_a_la_revision: null
-      periodes_de_reference: null
+      periodes_de_reference: [3, 12]
+      ressources_examinees: [deces]
       fiabilite: moyenne
   exemples: aucun trouvé
 - id: avant_1982
   statut: supposee
   hypothese: >-
     le taux de 50 % est celui que la circulaire Cnav n° 120/82 dit porté à 52 % au
-    1er décembre 1982 ; les conditions d'âge, de durée de mariage et de ressources
-    sont prêtées à ce texte d'avant la codification de 1985, telles que R. 353-1 les
-    codifie en 1985 ; le cumul avec les retraites personnelles, dans la limite de
-    la moitié de leur total et de la pension du défunt, est lu dans l'article 90 du
-    décret n° 45-179, dans sa rédaction de 1975
+    1er décembre 1982 ; les conditions d'âge et de durée de mariage sont prêtées à
+    ce texte d'avant la codification de 1985, telles que R. 353-1 les codifie en
+    1985 ; celle de ressources est lue dans la circulaire Cnav n° 31/75 (§ 233 à
+    235) et dans l'article 81 a du décret n° 45-179, dans sa rédaction de 1981 ; le
+    cumul avec les retraites personnelles, dans la limite de la moitié de leur total
+    et de la pension du défunt, est lu dans l'article 90 du décret n° 45-179, dans
+    sa rédaction de 1975
   fiabilite: moyenne
   textes:
   - {id: LEGIARTI000006755945, article: "loi n° 75-3, article 21", en_vigueur: 1974-07-01}
   - {id: LEGIARTI000006760643, article: "décret n° 45-179, article 90", en_vigueur: 1975-02-26}
   - {id: LEGIARTI000006765831, article: "décret n° 73-937, article 7-2", en_vigueur: 1976-03-05}
+  - {reference: "circulaire Cnav n° 31/75 du 5 mars 1975, § 233 à 235", en_vigueur: 1974-07-01, change: "les ressources appréciées à la date de la demande, puis, la condition non remplie, à celle du décès, dans les conditions du décret n° 64-300"}
+  - {id: LEGIARTI000006760629, article: "décret n° 45-179, article 81 a", en_vigueur: 1981-03-12, change: "la même condition de ressources, à la date de la demande, puis du décès « compte tenu des dispositions en vigueur à cette date »"}
+  - {id: LEGIARTI000006760634, article: "décret n° 45-179, article 83", en_vigueur: 1977-10-27, change: "la date d'entrée en jouissance, au lendemain du décès si la demande est déposée dans l'année, au premier jour du mois qui suit la réception de la demande sinon"}
   bornes:
     liquidation.date_effet: [1974-07-01, 1982-12-01]
   contenu:
@@ -208,7 +225,8 @@ versions:
     conditions: >-
       cinquante-cinq ans ; deux ans de mariage à la date du décès, sauf enfant issu
       du mariage ; des ressources personnelles qui ne dépassent pas 2 080 fois le SMIC
-      horaire, ses retraites exceptées
+      horaire, ses retraites exceptées, appréciées à la demande et, à défaut, au
+      décès, sur les trois mois civils qui précèdent chacun, ou les douze
     parametres:
       taux: 0.50
       age_minimum: 55
@@ -234,7 +252,8 @@ versions:
       - {date: "1982-12-01", taux: 0.04}
       - {date: "1995-01-01", taux: 0.03846}
       retraites_entieres_a_la_revision: null
-      periodes_de_reference: null
+      periodes_de_reference: [3, 12]
+      ressources_examinees: [demande, deces]
       fiabilite: moyenne
   exemples: aucun trouvé
 - id: taux_52
@@ -254,6 +273,11 @@ versions:
   - {id: LEGIARTI000006765860, article: "décret n° 73-937, article 13-5", en_vigueur: 1984-02-24}
   - {id: LEGIARTI000006765834, article: "décret n° 73-937, article 9", en_vigueur: 1990-01-01}
   - {id: LEGIARTI000006738001, article: D. 634-14, en_vigueur: 1990-01-01}
+  - {id: LEGIARTI000006760630, article: "décret n° 45-179, article 81 a", en_vigueur: 1982-12-07, change: "les ressources appréciées à la date de la demande, puis du décès « compte tenu des dispositions en vigueur à cette date », comme en 1981, au taux de 52 %"}
+  - {id: LEGIARTI000006753697, article: R. 815-25, en_vigueur: 1985-12-21, change: "les ressources que compte l'allocation supplémentaire, auxquelles R. 353-1 renvoie (« R. 815-25 et suivants »)"}
+  - {id: LEGIARTI000006753755, article: R. 815-32, en_vigueur: 1985-12-21, change: "les ressources des trois mois qui précèdent l'entrée en jouissance, sous le quart du plafond, sinon des douze, que R. 353-1 rend applicables jusqu'au 30 novembre 1990 (« R. 815-25 et suivants »)"}
+  - {id: LEGIARTI000006750051, article: R. 353-7, en_vigueur: 1985-12-21, change: "la date d'entrée en jouissance, au lendemain du décès si la demande est déposée dans l'année, au premier jour du mois qui suit la réception de la demande sinon"}
+  - {id: LEGIARTI000006750052, article: R. 353-7, en_vigueur: 1986-12-01, change: "la date d'entrée en jouissance, au premier jour du mois qui suit le décès si la demande est déposée dans l'année, au premier jour du mois qui suit sa réception sinon, jamais avant le mois qui suit le cinquante-cinquième anniversaire"}
   nee_de: LEGIARTI000006736586
   bornes:
     liquidation.date_effet: [1982-12-01, 1995-01-01]
@@ -263,7 +287,8 @@ versions:
     conditions: >-
       cinquante-cinq ans ; deux ans de mariage à la date du décès, sauf enfant issu
       du mariage ; des ressources personnelles qui ne dépassent pas 2 080 fois le SMIC
-      horaire, appréciées à la demande et, à défaut, au décès
+      horaire, appréciées à la demande et, à défaut, au décès, sur les trois mois
+      civils qui précèdent chacun, ou les douze
     parametres:
       taux: 0.52
       age_minimum: 55
@@ -288,7 +313,8 @@ versions:
       majorations_forfaitaires:
       - {date: "1995-01-01", taux: 0.03846}
       retraites_entieres_a_la_revision: null
-      periodes_de_reference: null
+      periodes_de_reference: [3, 12]
+      ressources_examinees: [demande, deces]
       fiabilite: haute
   exemples: aucun trouvé
 - id: taux_54
@@ -303,6 +329,7 @@ versions:
   - {id: LEGIARTI000006736555, article: D. 355-1, en_vigueur: 1985-12-21}
   - {id: LEGIARTI000006765835, article: "décret n° 73-937, article 9", en_vigueur: 1995-01-10}
   - {id: LEGIARTI000006738001, article: D. 634-14, en_vigueur: 1990-01-01}
+  - {id: LEGIARTI000006750052, article: R. 353-7, en_vigueur: 1986-12-01, change: "la date d'entrée en jouissance, au premier jour du mois qui suit le décès si la demande est déposée dans l'année, au premier jour du mois qui suit sa réception sinon, jamais avant le mois qui suit le cinquante-cinquième anniversaire"}
   nee_de: LEGIARTI000006736587
   bornes:
     liquidation.date_effet: [1995-01-01, 2004-07-01]
@@ -312,7 +339,8 @@ versions:
     conditions: >-
       cinquante-cinq ans ; deux ans de mariage à la date du décès, sauf enfant issu
       du mariage ; des ressources personnelles qui ne dépassent pas 2 080 fois le SMIC
-      horaire
+      horaire, appréciées à la demande et, à défaut, au décès, sur les trois mois
+      civils qui précèdent chacun, ou les douze
     parametres:
       taux: 0.54
       age_minimum: 55
@@ -336,7 +364,8 @@ versions:
       minimum_avec_les_droits_d_avant_1973: true
       majorations_forfaitaires: []
       retraites_entieres_a_la_revision: null
-      periodes_de_reference: null
+      periodes_de_reference: [3, 12]
+      ressources_examinees: [demande, deces]
       fiabilite: haute
   exemples: aucun trouvé
 - id: reforme_2004
@@ -390,6 +419,7 @@ versions:
       majorations_forfaitaires: []
       retraites_entieres_a_la_revision: {regime_general: "2010-07-01"}
       periodes_de_reference: [3, 12]
+      ressources_examinees: [date_d_effet]
       fiabilite: haute
   exemples: aucun trouvé
 - id: abattement_2005
@@ -440,6 +470,7 @@ versions:
       majorations_forfaitaires: []
       retraites_entieres_a_la_revision: {regime_general: "2010-07-01"}
       periodes_de_reference: [3, 12]
+      ressources_examinees: [date_d_effet]
       fiabilite: haute
   exemples: [cnav_2010_58_revision_a_sa_retraite, cnav_2006_37_revision_au_constat,
              cnav_2010_58_revision_a_la_fin_de_son_activite]
@@ -486,6 +517,7 @@ versions:
       majorations_forfaitaires: []
       retraites_entieres_a_la_revision: {regime_general: "2010-07-01"}
       periodes_de_reference: [3, 12]
+      ressources_examinees: [date_d_effet]
       fiabilite: haute
   exemples: [cnav_2005_17_reversion_ecretee, cnav_2006_37_abattement_au_1er_aout,
              cnav_2006_37_abattement_au_1er_septembre,
@@ -538,6 +570,7 @@ versions:
       majorations_forfaitaires: []
       retraites_entieres_a_la_revision: {regime_general: "2010-07-01"}
       periodes_de_reference: [3, 12]
+      ressources_examinees: [date_d_effet]
       fiabilite: haute
   exemples: [rsi_2007_061_transposition_depuis_le_deces]
 - id: age_55_2009
@@ -585,6 +618,7 @@ versions:
       majorations_forfaitaires: []
       retraites_entieres_a_la_revision: {regime_general: "2010-07-01"}
       periodes_de_reference: [3, 12]
+      ressources_examinees: [date_d_effet]
       fiabilite: haute
   exemples: aucun trouvé
 - id: age_51_2009
@@ -630,6 +664,7 @@ versions:
       majorations_forfaitaires: []
       retraites_entieres_a_la_revision: {regime_general: "2010-07-01"}
       periodes_de_reference: [3, 12]
+      ressources_examinees: [date_d_effet]
       fiabilite: haute
   exemples: aucun trouvé
 - id: majoration_2010
@@ -677,6 +712,7 @@ versions:
       majorations_forfaitaires: []
       retraites_entieres_a_la_revision: {regime_general: "2010-07-01"}
       periodes_de_reference: [3, 12]
+      ressources_examinees: [date_d_effet]
       fiabilite: haute
   exemples: [cnav_2018_4_reversion_surcote_au_maximum,
              cnav_2005_17_divorce_dans_la_periode_de_reference,
@@ -723,6 +759,7 @@ versions:
       majorations_forfaitaires: []
       retraites_entieres_a_la_revision: {regime_general: "2010-07-01"}
       periodes_de_reference: [3, 12]
+      ressources_examinees: [date_d_effet]
       fiabilite: haute
   exemples: aucun trouvé
 - id: minimum_2012
@@ -770,6 +807,7 @@ versions:
       majorations_forfaitaires: []
       retraites_entieres_a_la_revision: null
       periodes_de_reference: [3, 12]
+      ressources_examinees: [date_d_effet]
       fiabilite: haute
   exemples: aucun trouvé
 - id: minimum_2012_age_51
@@ -812,6 +850,7 @@ versions:
       majorations_forfaitaires: []
       retraites_entieres_a_la_revision: null
       periodes_de_reference: [3, 12]
+      ressources_examinees: [date_d_effet]
       fiabilite: haute
   exemples: aucun trouvé
 - id: minimum_2026
@@ -858,6 +897,7 @@ versions:
       majorations_forfaitaires: []
       retraites_entieres_a_la_revision: null
       periodes_de_reference: [3, 12]
+      ressources_examinees: [date_d_effet]
       fiabilite: haute
   exemples: [ur_reversion_prive_63_ans, ur_reversion_prive_50_ans_deux_enfants,
              ur_reversion_prive_ressources_plafond_2024,
@@ -903,6 +943,7 @@ versions:
       majorations_forfaitaires: []
       retraites_entieres_a_la_revision: null
       periodes_de_reference: [3, 12]
+      ressources_examinees: [date_d_effet]
       fiabilite: haute
   exemples: aucun trouvé
 approximations:
@@ -1044,13 +1085,12 @@ approximations:
     d'effet, qu'une révision n'apprécie pas (circulaire Cnav n° 2005/17, § 321). Le
     modèle ne connaît que les variations que la saisie date, après le décès, chacune
     un montant annuel à partir d'un jour : la période de référence n'en demande pas
-    d'autres, le décès la commençant quand il y tombe. Il ne connaît pas la date de
-    la demande, que la caisse peut prendre pour la période quand la date d'effet est
-    le mois qui suit le dépôt (circulaire Cnav n° 2005/17, § 143) ; avant juillet
-    2004, il compare sur l'année les ressources de la date d'effet, quand R. 353-1 les
-    apprécie à la date de la demande, sur ses trois ou ses douze mois depuis le 30
-    novembre 1990, puis à la date du décès quand elles n'y remplissent pas la
-    condition. Les réversions des autres régimes de base comptent pour ce qu'elles
+    d'autres, le décès la commençant quand il y tombe. La demande, qu'il présume
+    déposée le mois qui précède la date d'effet (présomption
+    reversion_demandee_le_mois_avant_sa_date_d_effet), ne lui donne pas, depuis
+    juillet 2004, la période que la caisse peut prendre quand la date d'effet est le
+    mois qui suit le dépôt (circulaire Cnav n° 2005/17, § 143). Les réversions des
+    autres régimes de base comptent pour ce qu'elles
     servent le jour de l'examen, non pour ce qu'elles ont servi dans sa période. Les
     ressources du survivant et de son nouveau conjoint sont celles que la saisie
     déclare, comptées entières : le modèle n'en ôte ni ce que le droit de
@@ -1062,6 +1102,32 @@ approximations:
     trois mois après un changement avance, quand la
     caisse ne réexamine les ressources qu'au contrôle suivant, la réversion que ses
     revenus nouveaux réduisent ou relèvent : non mesuré
+- version: [avant_1973, avant_juillet_1974, avant_1982, taux_52, taux_54]
+  ecart: >-
+    avant juillet 2004, la demande est celle que la présomption
+    reversion_demandee_le_mois_avant_sa_date_d_effet date, le mois qui précède la
+    date d'effet : celui du décès, dont les mois sont alors ceux de la demande, ou
+    celui où le survivant atteint l'âge requis. Une demande plus tardive dans
+    l'année, que la caisse servirait de la même date d'effet (R. 353-7),
+    examinerait d'autres mois ; la demande que renouvelle le survivant refusé quand
+    ses ressources baissent (circulaire Cnav n° 46/75, § 233) n'est pas portée : sa
+    réversion reste refusée. Ses ressources personnelles se transposent depuis le
+    décès ou l'union qui tombe dans la période, comme celles de l'allocation
+    supplémentaire, dont elles suivent les conditions (circulaire Cnav n° 42/77,
+    tableau n° 13). Le plafond, à la demande comme au décès, est celui de l'année
+    des montants, quand la caisse prend à la demande le SMIC « en vigueur à cette
+    date » (circulaire Cnav n° 31/75, § 2351). Avant le 1er mars 1971, le conjoint
+    devait être à charge, sous le plafond de l'AVTS diminué de la majoration pour
+    conjoint, ou, sous les règles de 1971, ses ressources s'appréciaient à la
+    demande, au plafond du 1er janvier de son année (décret n° 71-123, article 5) :
+    le modèle examine celles du décès, sous 2 080 fois le SMIC
+  effet: >-
+    aucune réversion des 907 témoins de simulation ne bouge, le 25 octobre 2026 :
+    aucun survivant d'avant juillet 2004 n'y a de revenus d'activité ; la survivante
+    qui cesse son activité le mois du décès, que la date d'effet ouvrait, se voit
+    refuser sa réversion quand ses salaires des trois ou douze mois qui le précèdent
+    passent le plafond, et le survivant qui prend une activité après le décès la
+    garde par les mois du décès
 - ecart: >-
     les montants sont ceux de l'année du décès — l'année courante pour un décès à
     venir, l'année du départ s'il la suit —, au SMIC horaire du 1er janvier de cette
@@ -1200,6 +1266,10 @@ presomptions:
   reversion_demandee_dans_l_annee: >-
     la date d'effet, au premier jour du mois qui suit le décès, ou qui suit l'âge
     requis
+  reversion_demandee_le_mois_avant_sa_date_d_effet: >-
+    les ressources d'avant juillet 2004, examinées sur les trois ou douze mois civils
+    qui précèdent le mois de la demande, celui qui précède la date d'effet, puis,
+    la condition non remplie, sur ceux qui précèdent le décès
   deces_apres_le_depart: >-
     la réversion que la page montre sans décès déclaré, pour un décès supposé juste
     après le départ, ou cette année pour qui est déjà parti
@@ -1243,9 +1313,9 @@ sources:
   - >-
     Ce que les versions ne portent pas encore : la réversion d'un assuré disparu
     (L. 353-2), la révision de la pension quand les ayants droit changent (R. 353-4),
-    les ressources d'avant juillet 2004, appréciées à la date de la demande, puis à
-    celle du décès quand elles n'y remplissent pas la condition (R. 353-1, rédactions
-    de 1985 et de 1990), et la pension de vieillesse de veuve ou de veuf.
+    la nouvelle demande du survivant refusé avant juillet 2004, quand ses ressources
+    baissent (circulaire Cnav n° 46/75, § 233), et la pension de vieillesse de veuve
+    ou de veuf.
     Les limites de cumul d'avant juillet 2004 (D. 355-1), l'âge d'avant 1973 et les
     majorations forfaitaires de 1982 et de 1995 sont portés depuis le 9 octobre 2026,
     la majoration forfaitaire pour enfant à charge (L. 353-5) dans sa propre fiche,
@@ -1257,7 +1327,8 @@ sources:
     sa retraite ou sans elle, la dernière révision sans retraite, à son âge légal, et
     les ressources des trois mois qui précèdent chaque révision, telles que perçues ;
     celles des trois ou des douze mois qui précèdent la date d'effet, depuis le 25
-    octobre 2026.
+    octobre 2026, et, le même jour, avant juillet 2004, celles qui précèdent la
+    demande, puis le décès.
   - >-
     Avant le 1er juillet 1974, la réversion « ne se cumulait pas avec un avantage
     personnel » : l'exposé de la Cnav dit « avant le 01/01/1974 », quand la loi
@@ -1939,6 +2010,78 @@ sources:
       ressources dans la limite de la date d'instruction »
     url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=circulaire_rsi_2007_061_24042007.pdf
     date: 2026-10-25
+  - type: legifrance
+    reference: >-
+      relu le 25 octobre 2026 dans l'index LEGI, mis à jour jusqu'au 24 octobre :
+      l'article 81 a du décret n° 45-179, rédactions du 12 mars 1981
+      (LEGIARTI000006760629) et du 7 décembre 1982 (LEGIARTI000006760630) — le
+      conjoint qui « ne dispose pas, à la date de la demande de pension de réversion,
+      de ressources personnelles dépassant le montant annuel du salaire minimum de
+      croissance », « appréciées dans les conditions fixées par le décret du 1er avril
+      1964 », puis, « si les conditions de ressources ne sont pas remplies à la date de
+      la demande », « à la date du décès, compte tenu des dispositions en vigueur à
+      cette date », la phrase que R. 353-1 codifie en 1985 ; R. 815-25 et R. 815-32,
+      rédactions du 21 décembre 1985 (LEGIARTI000006753697, 6753755), auxquelles
+      R. 353-1 renvoie jusqu'au 30 novembre 1990 : « les ressources à prendre en
+      considération sont celles afférentes à la période de trois mois précédant la
+      date d'entrée en jouissance » de l'allocation, sous « le quart des chiffres
+      limite », puis celles des « douze mois précédant la date d'entrée en
+      jouissance » ; R. 353-7, rédactions du 21 décembre 1985 (LEGIARTI000006750051,
+      « au lendemain du décès si la demande est déposée dans le délai d'un an ») et du
+      1er décembre 1986 (LEGIARTI000006750052, « au premier jour du mois suivant
+      celui au cours duquel l'assuré est décédé si la demande est déposée dans le
+      délai d'un an suivant le décès », sinon « au premier jour du mois suivant la
+      date de réception de la demande », jamais avant celui qui suit le
+      cinquante-cinquième anniversaire), et l'article 83 du décret n° 45-179, du 27
+      octobre 1977 (LEGIARTI000006760634), la même date d'entrée en jouissance que la
+      rédaction de 1985 ; le décret n° 90-1061 du 26 novembre 1990, article 3
+      (JORFARTI000001563886, index JORF), qui écrit les trois et douze mois « précédant
+      la date de la demande »
+    date: 2026-10-25
+  - type: circulaire_cnav
+    reference: >-
+      relus le 25 octobre 2026 par l'API de la base de législation de la Cnav : la
+      circulaire n° 31/75 du 5 mars 1975, § 21 (« Les nouvelles règles s'appliquent
+      quelle que soit la date de décès [...] pour tous les avantages qui prennent effet
+      postérieurement au 30 juin 1974 »), § 233 (« les ressources doivent être
+      appréciées : soit à la date de la demande, soit, si la condition n'est pas
+      remplie à cette date, à la date du décès »), § 234 (« dans les conditions prévues
+      par le décret n° 64-300 du 1er avril 1964 », sans les avantages de réversion ni
+      « les avantages personnels de vieillesse ou d'invalidité non cumulables »),
+      § 2351 (à la demande, le SMIC annuel « en vigueur à cette date ») et § 2352 (au
+      décès, « celle qui était applicable à cette dernière date » : le SMIC du décès
+      après le 30 juin 1974, celui du 1er janvier de son année du 1er mars 1971 au 30
+      juin 1974, avant, le plafond de l'AVTS d'une personne seule diminué de la
+      majoration pour conjoint à charge) ; la circulaire n° 46/75 du 4 avril 1975,
+      § 233 (« La condition de ressources peut désormais être appréciée à la date de la
+      demande quelle que soit la date du décès », et le survivant refusé peut
+      « formuler une nouvelle demande » quand ses revenus diminuent) ; le décret
+      n° 71-123 du 11 février 1971, article 2 (« appréciées à la date du décès de
+      l'assuré dans les conditions fixées par le décret n° 64-300 », sous le SMIC « au
+      1er janvier de l'année au cours de laquelle est survenu le décès ») et article 5
+      (pour un décès antérieur, « à la date de la demande », au plafond « en vigueur au
+      1er janvier de l'année où cette demande a été formulée »), et la circulaire
+      n° 23/71 qui l'applique au 1er mars 1971 ; la circulaire n° 42/77 du 11 mai 1977,
+      tableau de synthèse n° 13 (décret n° 64-300) : « les 3 mois civils précédant la
+      date de la demande si l'entrée en jouissance est fixée au 1er jour du mois
+      suivant la date de départ de ladite demande », « les 12 mois civils précédant la
+      date de la demande (ou l'entrée en jouissance), si les ressources des 3 derniers
+      mois sont supérieures au 1/4 du maximum annuel autorisé », et, la situation de
+      famille changée dans la période, « Transposer sur 3 mois (ou 12 mois) les
+      ressources comprises entre la date de changement de situation et la date
+      d'entrée en jouissance (ou le 1er jour du mois au cours duquel la demande a été
+      déposée) » ; l'exposé « Condition de ressources » (16 avril 2026), « Avant le
+      01/07/2004 - Période de référence » : « Les ressources retenues étaient celles
+      des 3 mois civils précédant la date de la demande. Si ces ressources dépassaient
+      le plafond autorisé, les ressources retenues étaient celles des 12 mois civils
+      précédant la date de la demande. Si la condition de ressources n'était pas
+      remplie à la date de la demande, elle était examinée à la date du décès. Les
+      ressources retenues étaient celles des 3 mois civils précédant le décès », puis
+      des douze, et « Si les ressources examinées à la date de la demande et à la date
+      du décès dépassaient le plafond autorisé, la demande était rejetée ». Aucun
+      exemple chiffré ne fait jouer la demande ni le décès
+    date: 2026-10-25
+    url: https://legislation.lassuranceretraite.fr/#/references-reglementaires?file_leaf_ref=CR_CN_3175_05031975.aspx
 textes_a_rattacher: []
 textes_sans_effet:
 - id: LEGIARTI000006753812
@@ -1969,7 +2112,8 @@ code:
     _admis_ailleurs, _fin_au_remariage, _jusqu_au_remariage, _premiere_date_d_effet,
     _date_d_effet_du_regime_general, _cumuler, _retraites_au, _cumul_a_la_retraite,
     _annee_du_plafond, _servie_au, _revisions, _retraites_entieres, _en_mois, _percu,
-    _ressources_de_la_periode, _ressources_a_la_date_d_effet, _trois_mois_apres,
+    _ressources_de_la_periode, _mois_de_la_demande, _ressources_a_la_date_d_effet,
+    _trois_mois_apres,
     _apres_les_trois_mois, _generation,
     _derniere_revision, _venu, _activite_au, _apport_au,
     _majorations_ulterieures ; scenarios/actuel.py : Reversions ; echeancier.py :
@@ -1987,7 +2131,8 @@ code:
     remarieAvant, admisAuRegimeGeneral, admisAilleurs, finAuRemariage,
     jusquAuRemariage, premiereDateDEffet, dateDEffetDuRegimeGeneral, cumuler,
     retraitesAu, cumulALaRetraite, anneeDuPlafond, servieAu, revisionsDeLaReversion,
-    retraitesEntieres, enMois, percu, ressourcesDeLaPeriode, ressourcesALaDateDEffet,
+    retraitesEntieres, enMois, percu, ressourcesDeLaPeriode, moisDeLaDemande,
+    ressourcesALaDateDEffet,
     troisMoisApres,
     apresLesTroisMois, generationDe, derniereRevision, venu, activiteAu, apportAu,
     majorationsUlterieures ;
@@ -2006,7 +2151,8 @@ code:
     minimum_tous_regimes, majoration_taux, majoration_enfants_taux,
     majoration_enfants_minimum, age_inaptitude, cumul, cumul_taux, droits_d_avant_1973,
     minimum_avec_les_droits_d_avant_1973, majorations_forfaitaires,
-    retraites_entieres_a_la_revision, periodes_de_reference, fiabilite ;
+    retraites_entieres_a_la_revision, periodes_de_reference, ressources_examinees,
+    fiabilite ;
     macro/smic_horaire.csv ; legislation/minimum_reversion.csv,
     legislation/plafond_majoration_reversion.csv, legislation/limite_cumul_reversion.csv
     ; legislation/age_annulation_decote.csv ; macro/plafond_securite_sociale.csv
@@ -2147,6 +2293,17 @@ historique:
   comprise, la révise le mois qui suit, et celui que sa période compte tel que perçu,
   le premier mois dont les trois mois ne portent plus que ce qui le suit. Chaque
   ligne dit les mois de sa période (periode_de_reference), que le paquet porte.
+- >-
+  2026-10-25 — action 138, étape 4, dix-septième partie : avant juillet 2004, les
+  ressources du survivant s'examinent sur les trois ou douze mois civils qui
+  précèdent sa demande, puis, la condition non remplie, sur ceux qui précèdent le
+  décès, aux paramètres de la version du décès (R. 353-1, rédactions de 1985 et de
+  1990 ; circulaire Cnav n° 31/75, § 233) ; avant le 1er juillet 1974, au décès
+  seul (décret n° 71-123, article 2). La demande est présumée le mois qui précède la
+  date d'effet (présomption reversion_demandee_le_mois_avant_sa_date_d_effet).
+  Chaque version dit ses moments (ressources_examinees), et chaque ligne celui qui
+  a décidé (ressources_examinees_au) ; les versions d'avant 2004 disent leurs mois
+  (periodes_de_reference), qui ne sont plus nuls.
 effet: >-
   Tout conjoint, ou ex-conjoint, d'un assuré du régime général ou d'un régime aligné
   qui décède : 4,41 millions de bénéficiaires d'un droit dérivé tous régimes fin 2024

@@ -118,6 +118,8 @@ PRESOMPTIONS_DU_5_6 = {
     "retraites du survivant servies dès": "retraites_du_survivant_servies",
     "survivant qui n'a jamais travaillé": "survivant_sans_droit_propre",
     "réversion demandée dans l'année du décès": "reversion_demandee_dans_l_annee",
+    "réversion demandée le mois qui précède sa date d'effet":
+        "reversion_demandee_le_mois_avant_sa_date_d_effet",
     "décès supposé juste après le départ": "deces_apres_le_depart",
     "chaque pension demandée au départ déclaré": "depart_de_chaque_regime",
     "les exceptions à la limite d'âge du fonctionnaire": "exceptions_a_la_limite_d_age",

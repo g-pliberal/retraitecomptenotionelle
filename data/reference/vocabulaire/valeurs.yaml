@@ -524,6 +524,22 @@ listes:
           décès quand la demande vient dans l'année (R. 353-7), et le premier
           jour du mois qui suit la demande sinon ; le formulaire ne demande pas
           la date de la demande
+      reversion_demandee_le_mois_avant_sa_date_d_effet:
+        dit: >-
+          le survivant demande sa réversion le mois qui précède sa date
+          d'effet : celui du décès, ou celui où il atteint l'âge requis
+        valeur: le mois qui précède la date d'effet
+        appliquee_par: _ressources_a_la_date_d_effet (droit/reversion.py), qui examine les ressources d'une réversion du régime général d'avant juillet 2004 sur les trois ou douze mois civils qui précèdent ce mois, puis, la condition non remplie, sur ceux qui précèdent le décès (R. 353-1) ; son jumeau JavaScript
+        entrera_a: liquider_chaque_regime
+        raison: >-
+          avant juillet 2004, les ressources s'apprécient sur les trois mois
+          civils qui précèdent la demande, ou les douze (R. 353-1, rédaction
+          de 1990), et la date d'effet que la présomption
+          reversion_demandee_dans_l_annee donne est le premier jour du mois
+          qui suit le dépôt quand il vient ce mois-là (R. 353-7) ; le
+          formulaire ne demande pas la date de la demande. Une demande plus
+          tardive dans l'année, que la caisse servirait de la même date
+          d'effet, examinerait d'autres mois
       deces_apres_le_depart:
         dit: >-
           sans décès déclaré, l'assuré qui déclare un conjoint est supposé décéder

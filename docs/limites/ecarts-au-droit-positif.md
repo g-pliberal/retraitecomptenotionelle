@@ -67,8 +67,10 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   25 octobre, sa date d'effet compte de même les ressources des trois mois civils
   qui la précèdent, celles des douze quand elles excèdent le quart du plafond
   (R. 353-1), la période commençant au décès quand il y tombe ; avant juillet
-  2004, le modèle compare encore sur l'année celles de la date d'effet, quand le
-  texte les apprécie à la date de la demande, puis à celle du décès. Restent
+  2004, les mêmes mois précèdent la demande, présumée le mois qui précède la date
+  d'effet, puis, la condition non remplie, le décès (R. 353-1, rédactions de 1985
+  et de 1990), et le décès seul avant juillet 1974 ; la nouvelle demande du
+  survivant refusé, quand ses ressources baissent, n'est pas portée. Restent
   dehors la révision quand ses ayants droit changent, le
   complément de la fonction publique,
   le droit que recouvre le survivant quand sa nouvelle union cesse, les

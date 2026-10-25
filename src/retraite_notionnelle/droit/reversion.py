@@ -299,6 +299,11 @@ class ReversionRegime:
     #: quand celles des trois mois excèdent le quart du plafond ; 0 quand la
     #: version les compare sur l'année, à leur montant de ce jour.
     periode_de_reference: int = 0
+    #: Le moment que précèdent ces mois : la date d'effet (``date_d_effet``),
+    #: depuis juillet 2004 ; avant, la demande (``demande``), puis le décès
+    #: (``deces``) quand la condition n'est pas remplie à la demande — le
+    #: dernier examiné quand elle ne l'est à aucun. ``None`` sans plafond.
+    ressources_examinees_au: str | None = None
     #: La part du survivant dans la réversion du régime, partagée avec les
     #: précédents conjoints au prorata des mariages (L. 353-3) : 1 sans eux.
     part: float = 1.0
@@ -367,7 +372,8 @@ class ReversionRegime:
                 "ecretement_du_maximum": self.ecretement_du_maximum,
                 "maximum": self.maximum, "plafond": self.plafond,
                 "ressources_retenues": self.ressources_retenues,
-                "periode_de_reference": self.periode_de_reference, "part": self.part,
+                "periode_de_reference": self.periode_de_reference,
+                "ressources_examinees_au": self.ressources_examinees_au, "part": self.part,
                 "fin": self.fin, "limite_cumul": self.limite_cumul,
                 "majoration_forfaitaire_enfants": self.majoration_forfaitaire_enfants,
                 "majoration_forfaitaire_enfants_etapes": [
@@ -1086,13 +1092,29 @@ def _ressources_de_la_periode(parametres: dict, conjoint: Conjoint, retraites: f
     return ressources + apport, float(facteur)
 
 
+def _mois_de_la_demande(date_effet: str) -> str:
+    """Le premier jour du mois où le survivant est présumé demander sa
+    réversion : celui qui précède sa date d'effet ``date_effet``, le mois du
+    décès ou celui où il atteint l'âge requis, dont la date d'effet est « le
+    premier jour du mois suivant » (R. 353-7 ; présomption
+    ``reversion_demandee_le_mois_avant_sa_date_d_effet``). « Les 3 mois
+    civils précédant la date de la demande » sont ceux qui précèdent ce mois,
+    la demande y comptant du « 1er jour du mois au cours duquel la demande a
+    été déposée » (circulaire Cnav n° 42/77, tableau n° 13)."""
+    annee, mois = int(date_effet[:4]), int(date_effet[5:7])
+    annee, mois = (annee - 1, 12) if mois == 1 else (annee, mois - 1)
+    return f"{annee:04d}-{mois:02d}-01"
+
+
 def _ressources_a_la_date_d_effet(parametres: dict, conjoint: Conjoint, ressources: float,
                                   retraites: float, date_effet: str, deces: str,
-                                  regime: str, smic: float, reversions: float
-                                  ) -> tuple[float, float, int]:
+                                  regime: str, smic: float, reversions: float,
+                                  au_deces: dict | None = None
+                                  ) -> tuple[float, float, int, str]:
     """Les ressources du survivant que la date d'effet ``date_effet`` retient
     sous le plafond de la version, par an, le facteur qui multiplie ce
-    plafond, et les mois de leur période de référence (R. 353-1).
+    plafond, les mois de leur période de référence (R. 353-1), et le moment
+    qu'ils précèdent (``ressources_examinees_au`` de la ligne).
 
     « Les ressources à prendre en compte lors de la demande sont celles
     afférentes aux trois mois civils précédant la date d'effet de la pension
@@ -1105,20 +1127,41 @@ def _ressources_a_la_date_d_effet(parametres: dict, conjoint: Conjoint, ressourc
     révision du mois qui suit compte (circulaire RSI n° 2007/061, annexe 3,
     exemple 3) —, et avec elles, sous le plafond de ``smic`` horaire, les
     ``reversions`` des autres régimes de base, ressources du survivant
-    (R. 353-1, 2°). La version qui ne dit pas ces mois, avant juillet 2004,
+    (R. 353-1, 2°).
+
+    Avant juillet 2004, les mêmes mois précèdent les moments que la version
+    dit, l'un après l'autre (``ressources_examinees``) : depuis le 1er
+    juillet 1974, « les ressources à prendre en compte sont celles
+    afférentes aux trois mois civils précédant la date de la demande », ou
+    aux douze, et « si les conditions de ressources ne sont pas remplies à la
+    date de la demande, elles sont appréciées à la date du décès, compte tenu
+    des dispositions en vigueur à cette date » (R. 353-1, rédactions de 1985
+    et de 1990 ; circulaire Cnav n° 31/75, § 233) — celles de ``au_deces``,
+    les paramètres de la version du décès ; « Les ressources retenues étaient
+    celles des 3 mois civils précédant le décès » (exposé de la Cnav,
+    « Condition de ressources ») ; avant, « à la date du décès » seule
+    (décret n° 71-123, article 2). La demande tombe le mois qui précède la
+    date d'effet (:func:`_mois_de_la_demande`). Quand aucun moment ne remplit
+    la condition, ceux du dernier examiné. La version qui ne dit pas de mois
     compare sur l'année ses ``ressources`` de ce jour
     (:func:`_ressources_du_plafond`) : 0 mois."""
     periodes = parametres.get("periodes_de_reference")
     if not periodes:
         retenues, facteur = _ressources_du_plafond(parametres, conjoint, ressources, date_effet)
-        return retenues, facteur, 0
-    entieres = _retraites_entieres(parametres, regime, date_effet)
-    for mois in periodes:
-        retenues, facteur = _ressources_de_la_periode(parametres, conjoint, retraites,
-                                                      date_effet, entieres, deces, int(mois))
-        if retenues + reversions <= facteur * float(parametres["plafond_smic_heures"]) * smic:
-            break
-    return retenues, facteur, int(mois)
+        return retenues, facteur, 0, "date_d_effet"
+    examinees = None
+    for moment in parametres.get("ressources_examinees") or ("date_d_effet",):
+        regles = (au_deces or parametres) if moment == "deces" else parametres
+        jour = {"date_d_effet": date_effet, "demande": _mois_de_la_demande(date_effet),
+                "deces": deces[:8] + "01"}[moment]
+        entieres = _retraites_entieres(regles, regime, jour)
+        for mois in regles.get("periodes_de_reference") or periodes:
+            retenues, facteur = _ressources_de_la_periode(regles, conjoint, retraites, jour,
+                                                          entieres, deces, int(mois))
+            examinees = (retenues, facteur, int(mois), str(moment))
+            if retenues + reversions <= facteur * float(regles["plafond_smic_heures"]) * smic:
+                return examinees
+    return examinees
 
 
 def _trois_mois_apres(jour: str) -> str:
@@ -1952,22 +1995,25 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
         # côté de la réversion : les ressources du survivant, ou du ménage, des
         # trois ou des douze mois qui précèdent la date d'effet, et les
         # réversions des autres régimes de base — avant juillet 2004, ses
-        # ressources personnelles de ce jour, « sans tenir compte des avantages
-        # de réversion » (R. 353-1, rédactions de 1985 et de 1990).
+        # ressources personnelles des mois qui précèdent sa demande, ou son
+        # décès, « sans tenir compte des avantages de réversion » (R. 353-1,
+        # rédactions de 1985 et de 1990), ni de ses retraites personnelles,
+        # qui « n'étaient pas retenues dans les ressources » : elles se
+        # cumulaient avec la réversion dans une limite (exposé de la Cnav,
+        # « Condition de ressources »).
         ecretable = parametres["ressources"] == "ecretement"
-        retenues, facteur, periode = _ressources_a_la_date_d_effet(
-            parametres, conjoint, ressources - (retraites_personnelles - retraites),
-            retraites_personnelles, date_effet, deces, regime, moteur.macro.smic_horaire(annee),
-            bases_des_autres if ecretable else 0.0)
+        sans_ses_retraites = parametres.get("cumul") is not None
+        au_deces = table.version(fiche, deces, deces)
+        retenues, facteur, periode, examinees_au = _ressources_a_la_date_d_effet(
+            parametres, conjoint,
+            ressources - retraites_personnelles if sans_ses_retraites
+            else ressources - (retraites_personnelles - retraites),
+            0.0 if sans_ses_retraites else retraites_personnelles, date_effet, deces, regime,
+            moteur.macro.smic_horaire(annee), bases_des_autres if ecretable else 0.0,
+            au_deces["parametres"] if au_deces is not None else None)
         plafond_annuel = (facteur * float(parametres["plafond_smic_heures"])
                           * moteur.macro.smic_horaire(annee))
         reversions = autres_bases if ecretable else 0.0
-        if parametres.get("cumul") is not None:
-            # Avant juillet 2004, ses retraites personnelles « n'étaient pas
-            # retenues dans les ressources » : elles se cumulaient avec la
-            # réversion dans une limite (exposé de la Cnav, « Condition de
-            # ressources »).
-            retenues -= min(retenues, retraites)
         disponible = plafond_annuel - retenues - reversions
         retenues += reversions
         if not _mariage_dure(conjoint, deces, enfants, parametres["mariage_minimum_annees"]):
@@ -2060,7 +2106,7 @@ def reversion(moteur: ScenarioActuel, pensions: list[tuple[str, float, Fiabilite
             minimum=minimum, majoration_trois_enfants=trois_enfants,
             minimum_contributif=contributif, ecretement_du_maximum=ecretement,
             maximum=maximum, plafond=plafond_annuel, ressources_retenues=retenues,
-            periode_de_reference=periode,
+            periode_de_reference=periode, ressources_examinees_au=examinees_au,
             part=part, limite_cumul=limite_cumul, majorations_forfaitaires=ulterieures,
             cumul_effet=cumul_effet, reduction_du_cumul=reduction_du_cumul,
             revision_effet=revision_effet, reduction_de_la_revision=reduction_de_la_revision,

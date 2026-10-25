@@ -816,6 +816,11 @@ Le relevé des droits et le résultat le signalent.
     plus révisable à partir du premier jour du mois qui suit son âge légal
     (action 138, étape 4) ;
   - réversion demandée dans l'année du décès ;
+  - réversion demandée le mois qui précède sa date d'effet — celui du décès,
+    ou celui où le survivant atteint l'âge requis : avant juillet 2004, ses
+    ressources s'examinent sur les trois ou douze mois civils qui précèdent ce
+    mois, puis, la condition non remplie, sur ceux qui précèdent le décès
+    (action 138, étape 4) ;
   - décès supposé juste après le départ, ou cette année pour qui est déjà
     parti, quand un conjoint est déclaré sans décès : la page montre ce que
     le conjoint recevrait ;

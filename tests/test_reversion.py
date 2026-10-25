@@ -2446,6 +2446,85 @@ def test_sa_retraite_du_jour_de_la_date_d_effet_ne_compte_qu_a_la_revision(simul
     assert ligne.derniere_revision == "2015-07-01"
 
 
+#: Le plafond de 1996, 2 080 fois le SMIC horaire du 1er janvier, 36,98 francs.
+PLAFOND_DE_1996 = 2080 * 36.98 / 6.55957
+
+
+def test_avant_juillet_2004_le_deces_ouvre_ce_que_la_demande_ferme(simulateur):
+    """« Les ressources à prendre en compte sont celles afférentes aux trois
+    mois civils précédant la date de la demande ; leur montant ne doit pas
+    alors excéder le quart du montant annuel [...]. Dans le cas contraire, ce
+    montant annuel est comparé aux ressources afférentes aux douze mois civils
+    précédant la date de la demande. Si les conditions de ressources ne sont
+    pas remplies à la date de la demande, elles sont appréciées à la date du
+    décès, compte tenu des dispositions en vigueur à cette date » (R. 353-1,
+    rédaction du 30 novembre 1990) : « celles des 3 mois civils précédant le
+    décès », puis des douze (exposé de la Cnav, « Condition de ressources »).
+    La veuve de 1996, née le 15 juin 1945, n'a pas d'activité quand son mari
+    meurt, le 10 mars ; elle en prend une le 1er janvier 1997, qui lui rapporte
+    30 000 € par an. Sa réversion part le 1er juillet 2000, à cinquante-cinq
+    ans ; sa demande, présumée le mois qui précède, en juin, retient mars, avril
+    et mai, puis juin 1999 à mai 2000, au-dessus du plafond ; les trois mois
+    qui précèdent le décès, de décembre 1995 à février 1996, ne portent rien :
+    elle la reçoit entière."""
+    carriere = _carriere(simulateur, 1935, 60.0, "1945-06-15", "1996-03-10",
+                         mariage="1965-05-01", variations=(("1997-01-01", 30000.0),))
+    ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                     1996)["regime_general"]
+    assert 30000.0 > PLAFOND_DE_1996
+    assert (ligne.version, ligne.date_effet) == ("taux_54", "2000-07-01")
+    assert (round(ligne.montant, 2), ligne.motif) == (5400.0, "servie")
+    assert (ligne.ressources_examinees_au, ligne.periode_de_reference) == ("deces", 3)
+    assert ligne.ressources_retenues == 0.0
+
+
+def test_avant_juillet_2004_la_demande_retient_les_douze_mois_qui_la_precedent(simulateur):
+    """Au-delà du quart du plafond, les douze mois civils qui précèdent la
+    demande (R. 353-1, rédaction du 30 novembre 1990), que le survivant est
+    présumé déposer le mois qui précède sa date d'effet. La veuve de 1996, née
+    le 15 juin 1945, gagne 6 000 € par an quand son mari meurt, 36 000 € depuis
+    le 1er avril 2000 : mars, avril et mai valent 26 000 € par an, plus que le
+    plafond ; les douze mois de juin 1999 à mai 2000, 11 000 €, moins. Sa
+    réversion, au 1er juillet 2000, est entière, quand les trois mois qui
+    précèdent sa date d'effet, puis les douze, la lui auraient refusée."""
+    carriere = _carriere(simulateur, 1935, 60.0, "1945-06-15", "1996-03-10",
+                         mariage="1965-05-01", ressources=6000.0, activite=6000.0,
+                         variations=(("2000-04-01", 36000.0),))
+    ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
+                     1996)["regime_general"]
+    assert (6000.0 + 2 * 36000.0) / 3 > PLAFOND_DE_1996 > (10 * 6000.0 + 2 * 36000.0) / 12
+    assert (9 * 6000.0 + 3 * 36000.0) / 12 > PLAFOND_DE_1996
+    assert ligne.date_effet == "2000-07-01"
+    assert (round(ligne.montant, 2), ligne.motif) == (5400.0, "servie")
+    assert (ligne.ressources_examinees_au, ligne.periode_de_reference) == ("demande", 12)
+    assert ligne.ressources_retenues == pytest.approx(11000.0)
+
+
+def test_avant_juillet_1974_les_ressources_s_apprecient_au_deces(simulateur):
+    """« Pour l'ouverture du droit à pension de réversion [...], est
+    considéré comme à charge le conjoint dont les ressources personnelles,
+    appréciées à la date du décès de l'assuré dans les conditions fixées par
+    le décret n° 64-300 du 1er avril 1964, ne dépassent pas le montant annuel
+    du salaire minimum de croissance » (décret n° 71-123, article 2, depuis le
+    1er mars 1971) ; c'est à partir du 1er juillet 1974 qu'elles s'apprécient
+    « soit à la date de la demande, soit, si la condition n'est pas remplie à
+    cette date, à la date du décès » (circulaire Cnav n° 31/75, § 233). La
+    veuve de 1972, née le 15 mars 1907, gagne 3 000 € par an jusqu'au 30 juin,
+    la veille de sa date d'effet : les trois mois qui précèdent le décès du 10
+    juin, puis les douze, passent le plafond de 1972, 2 080 fois 3,94 francs.
+    Sa réversion est refusée."""
+    carriere = _carriere(simulateur, 1905, 65.0, "1907-03-15", "1972-06-10",
+                         mariage="1930-05-01", ressources=3000.0, activite=3000.0,
+                         fin_d_activite="1972-06-30")
+    ligne = _servies(simulateur, carriere, [("regime_general", 1000.0)],
+                     1972)["regime_general"]
+    assert 3000.0 > 2080 * 3.94 / 6.55957
+    assert (ligne.version, ligne.date_effet) == ("avant_1973", "1972-07-01")
+    assert (ligne.montant, ligne.motif) == (0.0, "ressources")
+    assert (ligne.ressources_examinees_au, ligne.periode_de_reference) == ("deces", 12)
+    assert ligne.ressources_retenues == pytest.approx(3000.0)
+
+
 #: Des saisies où la réversion du régime général se révise avant la retraite
 #: du survivant, ou sans elle : le veuf de 2015 qui travaille et se remarie en
 #: 2018 ; la veuve de 2010, sans ressources, remariée avant son âge légal ; le
@@ -2659,6 +2738,57 @@ def test_les_deux_moteurs_retiennent_les_trois_ou_douze_mois_de_la_date_d_effet(
                   if r["regime"] == "regime_general")
         assert (ligne["periode_de_reference"], [r["date"] for r in ligne["revisions"]]) == (
             mois, revisions), ligne
+    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
+                                     delete=False) as fichier:
+        fichier.write(json.dumps(attendus, ensure_ascii=False))
+        chemin = fichier.name
+    try:
+        execution = subprocess.run(
+            ["node", str(racine / "tests" / "js" / "comparer.mjs"), chemin],
+            cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False)
+    finally:
+        Path(chemin).unlink()
+    assert execution.returncode == 0, (execution.stdout + execution.stderr)[-2000:]
+
+
+#: Des saisies où la réversion du régime général d'avant juillet 2004 examine
+#: les ressources de la demande, puis celles du décès (R. 353-1) : la veuve de
+#: 1996 qui prend une activité après le décès, que le décès ouvre ; celle dont
+#: le salaire sextuple deux mois avant sa demande, que les douze mois de sa
+#: demande ouvrent ; la veuve de 1972, que les ressources de son décès ferment.
+#: Chacune avec le moment de ses ressources, les mois de leur période, et le
+#: motif de sa réversion.
+CAS_DE_LA_DEMANDE = [
+    ({"naissance": "1935", "liquidation": "60", "conjoint": "1945-06-15", "mariage": "1965-05",
+      "deces": "1996-03-10", "activite_conjoint_variations": "1997-01-01:30000"},
+     "deces", 3, "servie"),
+    ({"naissance": "1935", "liquidation": "60", "conjoint": "1945-06-15", "mariage": "1965-05",
+      "deces": "1996-03-10", "ressources_conjoint": "6000", "activite_conjoint": "6000",
+      "activite_conjoint_variations": "2000-04-01:36000"}, "demande", 12, "servie"),
+    ({"naissance": "1905", "liquidation": "65", "conjoint": "1907-03-15", "mariage": "1930-05",
+      "deces": "1972-06-10", "ressources_conjoint": "3000", "activite_conjoint": "3000",
+      "activite_conjoint_fin": "1972-06-30"}, "deces", 12, "ressources"),
+]
+
+
+def test_les_deux_moteurs_examinent_la_demande_puis_le_deces(saisies):
+    """Le résultat entier, des six scénarios, est le même en Python et en
+    JavaScript ; chaque cas retient les ressources du moment qu'il dit, sur les
+    mois qu'il dit, et en tire le motif qu'il dit. Le portage lit les moments
+    dans les versions de son paquet : le cas est du niveau ``complet``, que
+    GitHub joue sur le paquet qu'il refait."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    racine = Path(__file__).resolve().parents[1]
+    sys.path.insert(0, str(racine / "scripts"))
+    from construire_temoins import _fini
+    attendus = [{"requete": cas, "resultat": _fini(saisies.simuler(cas).dictionnaire())}
+                for cas, _, _, _ in CAS_DE_LA_DEMANDE]
+    for attendu, (_, moment, mois, motif) in zip(attendus, CAS_DE_LA_DEMANDE):
+        ligne, = (r for r in attendu["resultat"]["reversion"]["regimes"]
+                  if r["regime"] == "regime_general")
+        assert (ligne["ressources_examinees_au"], ligne["periode_de_reference"],
+                ligne["motif"]) == (moment, mois, motif), ligne
     with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
                                      delete=False) as fichier:
         fichier.write(json.dumps(attendus, ensure_ascii=False))

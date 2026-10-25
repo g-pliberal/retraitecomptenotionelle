@@ -156,6 +156,7 @@ EXCEPTIONS = {
      "test_les_deux_moteurs_comptent_ses_retraites_entieres_avant_juillet_2010"): "complet",
     ("test_reversion.py",
      "test_les_deux_moteurs_retiennent_les_trois_ou_douze_mois_de_la_date_d_effet"): "complet",
+    ("test_reversion.py", "test_les_deux_moteurs_examinent_la_demande_puis_le_deces"): "complet",
     # Le portage lit les planchers des majorations forfaitaires dans le paquet.
     ("test_invalidite.py",
      "test_les_deux_moteurs_comparent_les_majorations_au_plancher"): "complet",

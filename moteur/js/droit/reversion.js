@@ -125,7 +125,8 @@ export class ReversionRegime {
     minimum = 0.0, majoration_trois_enfants = 0.0, majoration_petites_retraites = 0.0,
     majoration_petites_retraites_effet = null, minimum_contributif = 0.0,
     ecretement_du_maximum = 0.0, maximum = 0.0, plafond = 0.0,
-    ressources_retenues = 0.0, periode_de_reference = 0, part = 1.0, fin = null,
+    ressources_retenues = 0.0, periode_de_reference = 0, ressources_examinees_au = null,
+    part = 1.0, fin = null,
     limite_cumul = 0.0,
     majoration_forfaitaire_enfants = 0.0, majoration_forfaitaire_enfants_etapes = [],
     majorations_forfaitaires = [], cumul_effet = null, reduction_du_cumul = 0.0,
@@ -169,6 +170,11 @@ export class ReversionRegime {
     // (R. 353-1) : trois, douze quand celles des trois mois excèdent le quart du
     // plafond ; 0 quand la version les compare sur l'année.
     this.periode_de_reference = periode_de_reference;
+    // Le moment que précèdent ces mois : la date d'effet (`date_d_effet`),
+    // depuis juillet 2004 ; avant, la demande (`demande`), puis le décès
+    // (`deces`) quand la condition n'est pas remplie à la demande — le dernier
+    // examiné quand elle ne l'est à aucun. null sans plafond.
+    this.ressources_examinees_au = ressources_examinees_au;
     // La part du survivant, partagée avec les précédents conjoints au prorata
     // des mariages (L. 353-3) : 1 sans eux.
     this.part = part;
@@ -229,7 +235,8 @@ export class ReversionRegime {
       ecretement_du_maximum: this.ecretement_du_maximum,
       maximum: this.maximum, plafond: this.plafond,
       ressources_retenues: this.ressources_retenues,
-      periode_de_reference: this.periode_de_reference, part: this.part, fin: this.fin,
+      periode_de_reference: this.periode_de_reference,
+      ressources_examinees_au: this.ressources_examinees_au, part: this.part, fin: this.fin,
       limite_cumul: this.limite_cumul,
       majoration_forfaitaire_enfants: this.majoration_forfaitaire_enfants,
       majoration_forfaitaire_enfants_etapes: this.majoration_forfaitaire_enfants_etapes.map(
@@ -980,36 +987,66 @@ function ressourcesDeLaPeriode(parametres, conjoint, retraites, jour, entieres, 
 }
 
 /**
+ * Le premier jour du mois où le survivant est présumé demander sa réversion :
+ * celui qui précède sa date d'effet `dateEffet`, le mois du décès ou celui où
+ * il atteint l'âge requis (présomption
+ * `reversion_demandee_le_mois_avant_sa_date_d_effet`). Voir
+ * `_mois_de_la_demande` du Python.
+ */
+function moisDeLaDemande(dateEffet) {
+  let annee = Number(dateEffet.slice(0, 4));
+  let mois = Number(dateEffet.slice(5, 7));
+  if (mois === 1) {
+    annee -= 1;
+    mois = 12;
+  } else {
+    mois -= 1;
+  }
+  return `${String(annee).padStart(4, "0")}-${String(mois).padStart(2, "0")}-01`;
+}
+
+/**
  * Les ressources du survivant que la date d'effet `dateEffet` retient sous le
- * plafond de la version, par an, le facteur qui multiplie ce plafond, et les
- * mois de leur période de référence : `[ressources, facteur, mois]`. Celles
- * des trois mois civils qui la précèdent, celles des douze quand, avec les
- * `reversions` des autres régimes de base, elles excèdent le quart du plafond
- * de `smic` horaire (R. 353-1) : les mois que la version dit
- * (`periodes_de_reference`), comptés comme à une révision. La version qui ne
- * les dit pas, avant juillet 2004, compare sur l'année ses `ressources` de ce
+ * plafond de la version, par an, le facteur qui multiplie ce plafond, les
+ * mois de leur période de référence et le moment qu'ils précèdent :
+ * `[ressources, facteur, mois, moment]`. Celles des trois mois civils qui la
+ * précèdent, celles des douze quand, avec les `reversions` des autres régimes
+ * de base, elles excèdent le quart du plafond de `smic` horaire (R. 353-1) :
+ * les mois que la version dit (`periodes_de_reference`), comptés comme à une
+ * révision. Avant juillet 2004, ces mois précèdent les moments que la version
+ * dit, l'un après l'autre (`ressources_examinees`) : la demande, le mois qui
+ * précède la date d'effet, puis le décès, sous les paramètres `auDeces` de la
+ * version du décès ; quand aucun ne remplit la condition, ceux du dernier. La
+ * version qui ne dit pas de mois compare sur l'année ses `ressources` de ce
  * jour : 0 mois. Voir `_ressources_a_la_date_d_effet` du Python.
  */
 function ressourcesALaDateDEffet(parametres, conjoint, ressources, retraites, dateEffet, deces,
-  regime, smic, reversions) {
+  regime, smic, reversions, auDeces = null) {
   const periodes = parametres.periodes_de_reference ?? [];
   if (periodes.length === 0) {
     const [retenues, facteur] = ressourcesDuPlafond(parametres, conjoint, ressources, dateEffet);
-    return [retenues, facteur, 0];
+    return [retenues, facteur, 0, "date_d_effet"];
   }
-  const entieres = retraitesEntieres(parametres, regime, dateEffet);
-  let retenues;
-  let facteur;
-  let mois;
-  for (const periode of periodes) {
-    mois = Math.trunc(Number(periode));
-    [retenues, facteur] = ressourcesDeLaPeriode(parametres, conjoint, retraites, dateEffet,
-      entieres, deces, mois);
-    if (retenues + reversions <= facteur * Number(parametres.plafond_smic_heures) * smic) {
-      break;
+  let examinees = null;
+  const moments = (parametres.ressources_examinees ?? []).length > 0
+    ? parametres.ressources_examinees : ["date_d_effet"];
+  for (const moment of moments) {
+    const regles = moment === "deces" ? (auDeces ?? parametres) : parametres;
+    const jour = { date_d_effet: dateEffet, demande: moisDeLaDemande(dateEffet),
+      deces: `${deces.slice(0, 8)}01` }[moment];
+    const entieres = retraitesEntieres(regles, regime, jour);
+    const propres = regles.periodes_de_reference ?? [];
+    for (const periode of propres.length > 0 ? propres : periodes) {
+      const mois = Math.trunc(Number(periode));
+      const [retenues, facteur] = ressourcesDeLaPeriode(regles, conjoint, retraites, jour,
+        entieres, deces, mois);
+      examinees = [retenues, facteur, mois, String(moment)];
+      if (retenues + reversions <= facteur * Number(regles.plafond_smic_heures) * smic) {
+        return examinees;
+      }
     }
   }
-  return [retenues, facteur, mois];
+  return examinees;
 }
 
 /** Le premier jour du troisième mois qui suit celui de `jour`. */
@@ -1858,23 +1895,26 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
     // Le plafond, d'une personne seule ou du ménage, et ce qu'il retient à côté
     // de la réversion : les ressources du survivant, ou du ménage, des trois ou
     // des douze mois qui précèdent la date d'effet, et les réversions des autres
-    // régimes de base — avant juillet 2004, ses ressources personnelles de ce
-    // jour, « sans tenir compte des avantages de réversion » (R. 353-1,
-    // rédactions de 1985 et de 1990).
+    // régimes de base — avant juillet 2004, ses ressources personnelles des mois
+    // qui précèdent sa demande, ou son décès, « sans tenir compte des avantages
+    // de réversion » (R. 353-1, rédactions de 1985 et de 1990), ni de ses
+    // retraites personnelles, qui « n'étaient pas retenues dans les
+    // ressources » : elles se cumulaient dans une limite.
     const ecretable = parametres.ressources === "ecretement";
-    const [personnelles, facteur, periode] = ressourcesALaDateDEffet(parametres, conjoint,
-      ressources - (retraitesPersonnelles - retraites), retraitesPersonnelles, dateEffet,
-      deces, regime, moteur.macro.smic_horaire.valeur(annee),
-      ecretable ? basesDesAutres : 0.0);
+    const sansSesRetraites = (parametres.cumul ?? null) !== null;
+    const auDeces = table.version(fiche, deces, deces);
+    const [personnelles, facteur, periode, examineesAu] = ressourcesALaDateDEffet(
+      parametres, conjoint,
+      sansSesRetraites ? ressources - retraitesPersonnelles
+        : ressources - (retraitesPersonnelles - retraites),
+      sansSesRetraites ? 0.0 : retraitesPersonnelles, dateEffet, deces, regime,
+      moteur.macro.smic_horaire.valeur(annee), ecretable ? basesDesAutres : 0.0,
+      auDeces === null || auDeces === undefined ? null : auDeces.parametres);
     const plafondAnnuel = facteur * Number(parametres.plafond_smic_heures)
       * moteur.macro.smic_horaire.valeur(annee);
     const reversions = ecretable ? autresBases : 0.0;
-    // Avant juillet 2004, ses retraites personnelles « n'étaient pas retenues
-    // dans les ressources » : elles se cumulaient dans une limite.
-    const sansRetraites = (parametres.cumul ?? null) !== null
-      ? personnelles - Math.min(personnelles, retraites) : personnelles;
-    const disponible = plafondAnnuel - sansRetraites - reversions;
-    const retenues = sansRetraites + reversions;
+    const disponible = plafondAnnuel - personnelles - reversions;
+    const retenues = personnelles + reversions;
     if (!mariageDure(conjoint, deces, enfants, parametres.mariage_minimum_annees)) {
       montant = 0.0;
       motif = "mariage";
@@ -1973,7 +2013,8 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
       taux, dateEffet, fiabilite).avec({
       minimum, majoration_trois_enfants: troisEnfants, minimum_contributif: contributif,
       ecretement_du_maximum: ecretement, maximum, plafond: plafondAnnuel,
-      ressources_retenues: retenues, periode_de_reference: periode, part,
+      ressources_retenues: retenues, periode_de_reference: periode,
+      ressources_examinees_au: examineesAu, part,
       limite_cumul: limiteCumul, majorations_forfaitaires: ulterieures, cumul_effet: cumulEffet,
       reduction_du_cumul: reductionDuCumul, revision_effet: revisionEffet,
       reduction_de_la_revision: reductionDeLaRevision, revisions,
