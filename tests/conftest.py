@@ -219,6 +219,7 @@ EXCEPTIONS = {
     ("test_leviers.py",
      "test_le_recul_deplace_des_generations_entieres_et_avance_sur_une_marge"): "rapide",
     ("test_leviers.py", "test_les_leviers_et_les_ecarts_se_lisent_dans_le_bilan"): "rapide",
+    ("test_leviers.py", "test_le_solveur_dose_chaque_levier_pour_le_solde_vise"): "rapide",
     ("test_leviers.py", "test_le_geste_de_l_age_refait_les_ages_d_equilibre_du_cor"): "rapide",
     # Le témoin d'Ancetre, et la mesure sur une grille d'essai.
     ("test_controle_ancetre.py",

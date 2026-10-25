@@ -4046,21 +4046,12 @@ def test_la_page_cout_donne_les_trois_leviers_de_l_equilibre():
                         tableau.group(0), re.S)
     assert [numero for numero, _ in lignes] == ["1", "2", "3", "4"]
 
-    def unite(valeur: float, mot: str) -> str:
-        return mot + ("s" if abs(valeur) >= 2 else "")
-
     vides = 0
     for (scenario, _), (_, cellules) in zip(pages.SCENARIOS_COMPARES, lignes):
         attendues = []
         for annee in pages.ANNEES_LEVIERS:
             ligne = leviers.annee(scenario, annee)
-            points = 100 * ligne.prelevement
-            attendues += [
-                f"{_ecart_signe(100 * ligne.pension, 0)}\u202f%",
-                f"{_ecart_signe(points, 1)}\u202f{unite(points, 'point')}",
-                "—" if ligne.age is None
-                else f"{_ecart_signe(ligne.age, 1)}\u202f{unite(ligne.age, 'an')}",
-            ]
+            attendues += _cellules_des_leviers(ligne)
             vides += ligne.age is None
         assert re.findall(r'<td class="nombre">(.*?)</td>', cellules) == attendues, scenario
     # Les retours à la ligne de la source, et eux seuls : l'espace fine est un
@@ -4068,14 +4059,88 @@ def test_la_page_cout_donne_les_trois_leviers_de_l_equilibre():
     texte = re.sub(r"[ \n]+", " ", section.group(0))
     actuel, proposition = (leviers.horizon(scenario, fin).tax_gap
                            for scenario in ("actuel", "notionnel_liberal"))
+    points = "point" + ("s" if abs(100 * actuel) >= 2 else "")
     assert (f"de {leviers.debut} à {fin}, le « tax gap » du COR, vaut "
-            f"{_ecart_signe(100 * actuel, 1)}\u202f{unite(100 * actuel, 'point')} de taux "
+            f"{_ecart_signe(100 * actuel, 1)}\u202f{points} de taux "
             f"pour le système actuel, {_ecart_signe(100 * proposition, 1)} pour la "
             "proposition") in texte
     bas, haut = leviers.recul
     bornes = (f"aucun âge, de {g.nombre(-bas, 0)} ans plus tôt à {g.nombre(haut, 0)} ans "
               "plus tard, n'équilibrerait l'année")
     assert (bornes in texte) == bool(vides)
+
+
+def test_la_page_cout_resout_les_leviers_a_l_envers_pour_un_solde_vise():
+    """Le solveur inverse (action 138, étape 10 ; registre,
+    ``simulateur_aurain``) : au-dessus du tableau des leviers, un sélecteur
+    « Solde visé » propose les soldes que la table porte, de deux points de
+    PIB de déficit à un d'excédent, l'équilibre compris, et le tableau donne,
+    pour le solde choisi, ce que chaque levier, seul, devrait faire, tel que
+    la table le fige — un déficit de 1 % du PIB, ici. Sans regard, ou pour un
+    solde que la liste n'a pas, c'est l'équilibre. Les liens du sélecteur
+    gardent l'année de la cascade, et ceux de la cascade le solde visé."""
+    from retraite_notionnelle.config import RACINE_DONNEES
+    from retraite_notionnelle.donnees.agregats import charger_agregats
+
+    leviers = charger_agregats(RACINE_DONNEES).leviers
+    assert leviers.soldes_vises == tuple(pages.SOLDES_VISES)
+
+    def section(regards: dict) -> tuple[str, str]:
+        corps = rendre("/cout", regards)[1]
+        trouvee = re.search(r'<details class="section" id="cout-equilibre">.*?</details>',
+                            corps, re.S)
+        assert trouvee, "la page Coût n'a pas la section du coefficient d'équilibre"
+        return trouvee.group(0), corps
+
+    def selecteur(html_: str, legende: str) -> str:
+        trouve = re.search(rf'<div class="bascule" role="group" aria-label="{legende}">.*?</div>',
+                           html_, re.S)
+        assert trouve, f"pas de sélecteur « {legende} »"
+        return trouve.group(0)
+
+    vise, corps = section({"solde": "-1", "cascade": "2050"})
+    choix = selecteur(vise, "Solde visé")
+    assert re.findall(r'(?:<a href="[^"]*">|<span class="actif" aria-current="true">)([^<]*)<',
+                      choix) == ["-2\u202f%", "-1,5\u202f%", "-1\u202f%", "-0,5\u202f%",
+                                 "équilibre", "+0,5\u202f%", "+1\u202f%"]
+    assert '<span class="actif" aria-current="true">-1\u202f%</span>' in choix
+    liens = re.findall(r'<a href="([^"]*)">', choix)
+    assert [dict(parse_qsl(lien.split("?", 1)[1])) for lien in liens] == [
+        {"cascade": "2050", "solde": solde} for solde in ("-2", "-1.5", "-0.5", "0", "0.5", "1")]
+    for lien in re.findall(r'<a href="([^"]*)">', selecteur(corps, "Année décomposée")):
+        assert dict(parse_qsl(lien.split("?", 1)[1]))["solde"] == "-1", lien
+    tableau = re.search(r"<caption><span>Ce que chaque levier, seul, devrait faire pour que "
+                        r"l&#x27;année finisse sur un déficit de 1\u202f% du PIB.*?</table>",
+                        vise, re.S)
+    assert tableau, "le tableau des leviers ne vise pas le solde choisi"
+    lignes = re.findall(r'<tr><th class="" scope="row">(\d)\. .*?</th>(.*?)</tr>',
+                        tableau.group(0), re.S)
+    assert [numero for numero, _ in lignes] == ["1", "2", "3", "4"]
+    for (scenario, _), (_, cellules) in zip(pages.SCENARIOS_COMPARES, lignes):
+        attendues = [cellule for annee in pages.ANNEES_LEVIERS
+                     for cellule in _cellules_des_leviers(leviers.vise(scenario, -0.01, annee))]
+        assert re.findall(r'<td class="nombre">(.*?)</td>', cellules) == attendues, scenario
+    for regards in ({}, {"solde": "-0.7"}, {"solde": "un"}):
+        equilibre, _ = section(regards)
+        assert ('<span class="actif" aria-current="true">équilibre</span>'
+                in selecteur(equilibre, "Solde visé")), regards
+        assert re.search(r"<caption><span>Ce que chaque levier, seul, devrait faire pour que "
+                         r"l&#x27;année tombe juste", equilibre), regards
+
+
+def _cellules_des_leviers(ligne) -> list[str]:
+    """Les trois cellules d'un système une année, comme la page les écrit :
+    la pension en pour cent, le taux en points, l'âge en années, ou un tiret
+    quand nul recul des bornes n'y suffit."""
+    def unite(valeur: float, mot: str) -> str:
+        return mot + ("s" if abs(valeur) >= 2 else "")
+
+    points = 100 * ligne.prelevement
+    return [
+        f"{_ecart_signe(100 * ligne.pension, 0)}\u202f%",
+        f"{_ecart_signe(points, 1)}\u202f{unite(points, 'point')}",
+        "—" if ligne.age is None else f"{_ecart_signe(ligne.age, 1)}\u202f{unite(ligne.age, 'an')}",
+    ]
 
 
 def test_la_page_cout_dit_ce_que_chaque_ministere_verse_au_compte_pensions():

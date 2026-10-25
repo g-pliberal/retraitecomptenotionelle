@@ -2601,6 +2601,10 @@ def _pages() -> dict:
         # bascule : 2025 est une année de la cascade, pas des schémas, qui ne
         # dessinent pas une caisse qui n'existe pas.
         ("cout_cascade_hors_liste", "/cout", {"cascade": "1999", "flux": "2025"}),
+        # Le solveur inverse (action 138, étape 10) : le tableau des leviers
+        # vise un déficit d'un point de PIB au lieu de l'équilibre, et la
+        # phrase du COR, qui ne chiffre que l'équilibre, y cède la place.
+        ("cout_solde_vise", "/cout", {"solde": "-1"}),
         ("methode", "/methode", {}),
         ("risque", "/risque", {}),
         ("partager", "/partager", {}),

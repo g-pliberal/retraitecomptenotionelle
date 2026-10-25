@@ -59,6 +59,19 @@ Comme ceux du COR, ces leviers sont MÉCANIQUES : reculer l'âge ne change pas
 la pension de qui part plus tard, ni les cotisations n'ôtent rien au PIB. Ils
 disent la taille du manque dans trois unités, non une réforme.
 
+LE SOLVEUR INVERSE (action 138, étape 10). Le simulateur de dépense publique
+de S. Aurain « résout un problème budgétaire à l'envers, par dichotomie »
+(registre, ``simulateur_aurain``) : on fixe la cible, l'outil dose chaque
+levier. Ici, la cible est un solde, en part du PIB (``solde_vise``) — un
+déficit qu'on accepte, un excédent qui rembourse —, et chaque levier, seul, y
+porte l'année : la pension égale les ressources moins le solde visé, le taux
+comble l'écart du solde au solde visé, et le recul de l'âge, que la
+bissection cherche comme à l'équilibre, y porte les ressources, qui suivent
+les cotisants, moins la dépense, qui suit les retraités. Viser zéro redonne
+les leviers de l'équilibre, au bit près. La page Coût propose les soldes de
+``SOLDES_VISES`` (``moteur/js/pages.js``), aux années où elle montre les
+leviers ; la table du paquet les fige (``vises``).
+
 CE QUI EST PRÉSUMÉ, ET DÉCLARÉ.
 
 * Les retraités sont ceux du modèle (``AvenirAnnuel.tetes``), les mêmes pour
@@ -76,7 +89,7 @@ CE QUI EST PRÉSUMÉ, ET DÉCLARÉ.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Mapping, Sequence
 
 from .somme import somme_ordonnee
@@ -116,7 +129,7 @@ def population_entre(population, annee: int, debut: float, fin: float) -> float:
 
 def releve_age(rapport: float, retraites: float, cotisants: float, population,
                annee: int, age: float = AGE_DE_DEPART, part_en_emploi: float = 0.5,
-               precision: float = 1e-6) -> float:
+               precision: float = 1e-6, visee: float = 0.0) -> float:
     """Le recul de l'âge effectif, en années, qui multiplie le rapport des
     cotisants aux retraités par ``rapport`` — la dépense sur les ressources.
 
@@ -124,17 +137,26 @@ def releve_age(rapport: float, retraites: float, cotisants: float, population,
     ``age + Δ`` ans, et en ajoute aux cotisants la part ``part_en_emploi``.
     Négatif quand le système a une marge (``rapport`` sous un) : l'âge avance.
     Bissection : le rapport croît avec le recul.
+
+    ``visee`` est le solde visé, rapporté aux ressources d'avant le recul :
+    zéro, l'équilibre. Les ressources suivant les cotisants et la dépense les
+    retraités, le recul cherché est celui après lequel les ressources moins
+    la dépense valent ``visee`` fois les ressources d'avant ; le terme ajouté
+    s'annule à l'équilibre, dont le recul ne change pas d'un bit.
     """
     cible = rapport * cotisants / retraites
 
     def ecart(recul: float) -> float:
         deplaces = population_entre(population, annee, age, age + recul)
-        return (cotisants + part_en_emploi * deplaces) / (retraites - deplaces) - cible
+        restants = retraites - deplaces
+        return ((cotisants + part_en_emploi * deplaces) / restants - cible
+                - visee * cotisants / restants)
 
     bas, haut = RECUL_MINIMAL, RECUL_MAXIMAL
     if ecart(bas) > 0.0 or ecart(haut) < 0.0:
         raise ValueError(f"{annee} : aucun recul de {bas:g} à {haut:g} ans "
-                         f"ne multiplie le rapport démographique par {rapport:.4f}")
+                         f"ne multiplie le rapport démographique par {rapport:.4f}"
+                         + (f", au solde visé de {visee:.4f} des ressources" if visee else ""))
     while haut - bas > precision:
         milieu = (bas + haut) / 2.0
         if ecart(milieu) < 0.0:
@@ -190,11 +212,16 @@ def demographie_du_modele(avenir, macro, rapport_ancrage: float,
 def leviers(solde, scenario: str, part_assiette: float,
             demographie: Mapping[int, Demographie], population,
             annees: Sequence[int], age: float = AGE_DE_DEPART,
-            part_en_emploi: float = 0.5) -> dict[int, Leviers]:
-    """Les trois leviers de ``scenario``, chaque année de ``annees``.
+            part_en_emploi: float = 0.5, solde_vise: float = 0.0) -> dict[int, Leviers]:
+    """Les trois leviers de ``scenario``, chaque année de ``annees``, qui
+    portent son solde à ``solde_vise``, en part de PIB : zéro, l'équilibre.
 
     ``solde`` est le bilan que rend ``calculer_cout`` (``Cout.solde``),
-    ``part_assiette`` les revenus d'activité en part de PIB.
+    ``part_assiette`` les revenus d'activité en part de PIB. Le solde visé
+    se retranche des ressources que la pension doit égaler, s'ajoute au manque
+    que le taux comble, et se rapporte aux ressources pour l'âge
+    (:func:`releve_age`) ; à zéro, les trois leviers sont ceux de l'équilibre,
+    au bit près.
     """
     resultat: dict[int, Leviers] = {}
     for annee in annees:
@@ -202,16 +229,18 @@ def leviers(solde, scenario: str, part_assiette: float,
         if ligne is None or annee not in demographie:
             raise ValueError(f"{annee} : absente du bilan ou des retraités du modèle")
         coefficient = ligne.coefficient(scenario)
+        depense = ligne.depense(scenario)
         effectifs = demographie[annee]
         try:
             recul = releve_age(1.0 / coefficient, effectifs.retraites, effectifs.cotisants,
-                               population, annee, age, part_en_emploi)
+                               population, annee, age, part_en_emploi,
+                               visee=solde_vise / (coefficient * depense))
         except ValueError:
             recul = None
         resultat[annee] = Leviers(
             annee=annee,
-            pension=coefficient - 1.0,
-            prelevement=-ligne.solde(scenario) / part_assiette,
+            pension=coefficient - 1.0 - solde_vise / depense,
+            prelevement=(solde_vise - ligne.solde(scenario)) / part_assiette,
             age=recul,
         )
     return resultat
@@ -264,18 +293,26 @@ def pib_constant(avenir) -> dict[int, float]:
 @dataclass(frozen=True)
 class LeviersDuModele:
     """Les leviers d'un système, chaque année, et ses écarts sur les horizons
-    du COR."""
+    du COR ; puis, pour chaque solde visé, les leviers qui y portent ses
+    années visées."""
 
     annuels: dict[int, Leviers]
     horizons: dict[int, EcartsSurHorizon]
+    #: Par solde visé, en part de PIB, dans l'ordre demandé : les leviers de
+    #: chaque année visée.
+    vises: dict[float, dict[int, Leviers]] = field(default_factory=dict)
 
 
 def leviers_du_modele(parametres, scenario: str = "actuel",
-                      annees: Sequence[int] = tuple(range(2025, 2071))) -> LeviersDuModele:
+                      annees: Sequence[int] = tuple(range(2025, 2071)),
+                      soldes_vises: Sequence[float] = (),
+                      annees_visees: Sequence[int] = ()) -> LeviersDuModele:
     """Les leviers de ``scenario`` sous ces réglages : le bilan que
     ``calculer_cout`` rend (par la mémoire des calculs), les 20 ans et plus de
     l'INSEE, l'assiette mesurée, les cotisants par retraité que le COR observe
-    en 2024, la part des reportés en emploi des réglages."""
+    en 2024, la part des reportés en emploi des réglages. Ceux de
+    l'équilibre chaque année de ``annees`` ; ceux de chaque solde de
+    ``soldes_vises`` chaque année de ``annees_visees`` (en-tête du module)."""
     from . import memoire
     from .donnees.assiette import AssietteActivite
     from .donnees.equilibre import DecompositionDepense
@@ -291,10 +328,15 @@ def leviers_du_modele(parametres, scenario: str = "actuel",
     if rapport is None:
         raise ValueError(f"le COR ne publie pas de cotisants par retraité en {ANNEE_ANCRAGE}")
     demographie = demographie_du_modele(cout.avenir, Simulateur(parametres).macro, rapport)
-    annuels = leviers(cout.solde, scenario, part_assiette, demographie,
-                      Population(racine, parametres.hypothese_esperance_vie), annees,
+    population = Population(racine, parametres.hypothese_esperance_vie)
+    annuels = leviers(cout.solde, scenario, part_assiette, demographie, population, annees,
                       part_en_emploi=parametres.part_reportes_en_emploi)
+    vises = {float(solde): leviers(cout.solde, scenario, part_assiette, demographie,
+                                   population, annees_visees,
+                                   part_en_emploi=parametres.part_reportes_en_emploi,
+                                   solde_vise=float(solde))
+             for solde in soldes_vises}
     pib = pib_constant(cout.avenir)
     horizons = {fin: ecarts_sur_horizon(cout.solde, scenario, part_assiette, pib, fin=fin)
                 for fin in HORIZONS_COR}
-    return LeviersDuModele(annuels=annuels, horizons=horizons)
+    return LeviersDuModele(annuels=annuels, horizons=horizons, vises=vises)

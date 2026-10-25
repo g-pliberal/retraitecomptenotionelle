@@ -9517,7 +9517,23 @@ referents:
         preuve: >-
           `app/retraites.html:784-789, 1523-1548, 1939-1943,
           2025-2028`, au commit `59b7985`
-        etat: a_reprendre
+        verification: >-
+          Repris le 25 octobre 2026 (action 138, étape 10), pour le
+          solveur. Relu au même commit, `resoudre` dose chaque profil de
+          leviers par quarante bissections, jusqu'à la somme à dégager
+          l'année choisie (`app/retraites.html:1548-1554`). Le dépôt vise
+          un solde plutôt qu'une somme, et dose chacun des trois leviers du
+          COR, seul : `leviers.leviers(…, solde_vise=…)`, l'âge par
+          bissection, la pension et le taux par leur formule, l'équilibre
+          redonné au bit près. La page Coût propose sept soldes, de deux
+          points de PIB de déficit à un d'excédent (`SOLDES_VISES`,
+          `pages.js`), en 2050 et en 2070, que la table du paquet fige
+          (`leviers`, `vises`) ; `tests/test_leviers.py` pose le cas à la
+          main, `tests/test_web.py` la page. La comparaison A/B et le
+          rapport ne sont pas repris : la page Coût ne montre que la
+          référence, à côté de ses variantes démographiques, et le site a
+          sa feuille d'impression.
+        etat: repris
         chantier: "138.10"
       - quoi: >-
           Il compare, au trimestre de naissance, la loi de 2023 sans

@@ -457,10 +457,12 @@ export function rendre(contexte, cheminDemande, parametres = null, largeur = nul
  * `cascade` est l'année que la cascade de la page Coût décompose. Il est écrit
  * ici, et non dans `Saisie` : une année de lecture n'est pas une règle de
  * calcul, et la mettre parmi les réglages l'aurait fait voyager vers Cas types
- * et Avantages, qui n'ont rien à en faire.
+ * et Avantages, qui n'ont rien à en faire. `solde` est le solde que le tableau
+ * des leviers vise (`SOLDES_VISES`) : la table les porte tous, il choisit
+ * lequel on montre.
  */
 export const VUES_DE_PAGE = {
-  "/cout": ["cascade", "flux"],
+  "/cout": ["cascade", "flux", "solde"],
 };
 
 /**
@@ -8863,7 +8865,7 @@ plus large que les cartes).
     coutDetailEsperanceVie(contexte),
     coutDetailDemographie(contexte),
     coutDetailCascade(contexte, regards),
-    coutDetailEquilibre(contexte),
+    coutDetailEquilibre(contexte, regards),
     coutDetailPostes(contexte),
     coutDetailDette(contexte),
     coutDetailBilanCompte(contexte),
@@ -10991,13 +10993,33 @@ function pibCascade(contexte, annee) {
 }
 
 /**
- * Les regards que l'adresse de la page Coût porte, chacun ramené à une année
- * offerte.
+ * Le solde visé tel que l'adresse l'écrit : en points de PIB, « -1.5 », au
+ * millième de PIB, que deux soldes de la liste ne partagent pas.
+ */
+function soldeEnAdresse(solde) {
+  return String(Math.round(solde * 1000) / 10);
+}
+
+/**
+ * Le solde que l'adresse demande au tableau des leviers, parmi ceux que la
+ * table porte, ou l'équilibre. Un solde hors de la liste est RAMENÉ à
+ * l'équilibre plutôt que refusé, comme une année de la cascade à l'année
+ * mesurée.
+ */
+function soldeVise(leviers, regards) {
+  const demande = (regards || {}).solde;
+  const trouve = leviers.soldesVises.find((solde) => soldeEnAdresse(solde) === demande);
+  return trouve === undefined ? 0 : trouve;
+}
+
+/**
+ * Les regards que l'adresse de la page Coût porte, chacun ramené à une valeur
+ * offerte : une année, ou un solde visé.
  *
- * DEUX SÉLECTEURS, ET L'UN GARDE L'AUTRE : choisir l'année des schémas ne doit
- * pas ramener la cascade à la sienne, ni l'inverse. Seules les années RAMENÉES
- * voyagent, jamais le texte de l'adresse : recopié dans un lien, il y porterait
- * n'importe quoi.
+ * TROIS SÉLECTEURS, ET CHACUN GARDE LES AUTRES : choisir l'année des schémas ne
+ * doit pas ramener la cascade à la sienne, ni l'inverse, ni le solde que vise
+ * le tableau des leviers. Seules les valeurs RAMENÉES voyagent, jamais le texte
+ * de l'adresse : recopié dans un lien, il y porterait n'importe quoi.
  */
 function vuesCout(contexte, regards) {
   const demandes = regards || {};
@@ -11006,17 +11028,21 @@ function vuesCout(contexte, regards) {
   const vues = {};
   if ("cascade" in demandes) { vues.cascade = anneeCascade(solde, bascule, demandes); }
   if ("flux" in demandes) { vues.flux = anneeFlux(solde, bascule, demandes); }
+  if ("solde" in demandes) {
+    vues.solde = soldeEnAdresse(soldeVise(contexte.agregats().leviers, demandes));
+  }
   return vues;
 }
 
 /**
- * L'adresse de la page Coût, ce regard posé sur `annee`, les autres gardés. Les
- * réglages de modélisation que `g.lien` porte déjà sont conservés : un sélecteur
- * change ce qu'on REGARDE, jamais sous quelles règles la page se calcule.
+ * L'adresse de la page Coût, ce regard posé sur `valeur`, les autres gardés.
+ * Les réglages de modélisation que `g.lien` porte déjà sont conservés : un
+ * sélecteur change ce qu'on REGARDE, jamais sous quelles règles la page se
+ * calcule.
  */
-function lienVue(vues, cle, annee) {
+function lienVue(vues, cle, valeur) {
   const adresse = g.lien("/cout");
-  const poses = { ...vues, [cle]: annee };
+  const poses = { ...vues, [cle]: valeur };
   const requete = Object.keys(poses).sort().map((nom) => `${nom}=${poses[nom]}`).join("&");
   return adresse + (adresse.includes("?") ? "&" : "?") + requete;
 }
@@ -11171,8 +11197,11 @@ coefficient d'équilibre dit ce qui manque.</div>
 `, "cout-cascade");
 }
 
-/** Le coefficient d'équilibre : de combien il faudrait rogner, ou pouvoir servir. */
-function coutDetailEquilibre(contexte) {
+/**
+ * Le coefficient d'équilibre : de combien il faudrait rogner, ou pouvoir
+ * servir. `regards` porte le solde que vise le tableau des leviers.
+ */
+function coutDetailEquilibre(contexte, regards = null) {
   const c = contexte.cout();
   const solde = c.solde;
   const comptes = contexte.comptes();
@@ -11246,7 +11275,7 @@ du PIB et un coefficient de
 ${g.nombre(c.soldeDerive.annee(c.soldeDerive.derniereAnnee)
     .coefficient("notionnel_liberal"), 2)} en ${solde.derniereAnnee} : le
 dépliant des quatre systèmes donne la fourchette.</p>
-${coutLeviers(contexte)}
+${coutLeviers(contexte, regards)}
 
 <div class="note"><strong>Dix-huit pour cent de quoi ?</strong> Le système 4
 remplace tous les taux de cotisation par un seul, parts salariale et patronale
@@ -11285,11 +11314,21 @@ ${noteLectureCoefficient(reglageProposition(solde))}
 }
 
 /**
- * Les années où la page Coût montre les leviers de l'équilibre : le milieu de
- * la transition et l'horizon. La table les porte toutes, de 2025 à 2070 ; la
- * fabrique n'en lit rien.
+ * Les années où la page Coût montre les leviers : le milieu de la transition
+ * et l'horizon. La table porte ceux de l'équilibre toutes les années, de 2025
+ * à 2070 ; ceux des soldes visés à celles-ci seulement, que la fabrique lit
+ * ici.
  */
 export const ANNEES_LEVIERS = [2050, 2070];
+
+/**
+ * Les soldes que la page Coût propose de viser, en part du PIB : de deux
+ * points de déficit à un point d'excédent, de demi-point en demi-point,
+ * l'équilibre compris, le seul que le COR chiffre. La fabrique y fige les
+ * leviers aux années `ANNEES_LEVIERS` — le solveur inverse, action 138,
+ * étape 10 (`leviers.py`) — ; la page n'en refait aucune opération.
+ */
+export const SOLDES_VISES = [-0.02, -0.015, -0.01, -0.005, 0, 0.005, 0.01];
 
 /** Un écart signé, « +3,0 » ou « -2,5 », sans signe quand l'arrondi tombe sur zéro. */
 function ecartSigne(valeur, decimales) {
@@ -11303,6 +11342,18 @@ function avecUnite(valeur, decimales, mot) {
   return `${ecartSigne(valeur, decimales)}${"\u202f"}${mot}${Math.abs(valeur) >= 2 ? "s" : ""}`;
 }
 
+/** Un solde visé en points de PIB, à la décimale près s'il en a une : 1,5 ou 1. */
+function pointsDuSolde(solde) {
+  const points = Math.round(Math.abs(solde) * 1000) / 10;
+  return g.nombre(points, Number.isInteger(points) ? 0 : 1);
+}
+
+/** Le libellé d'un solde visé dans son sélecteur : « -1,5 % », « équilibre », « +1 % ». */
+function libelleSoldeVise(solde) {
+  if (solde === 0) return "équilibre";
+  return `${solde > 0 ? "+" : "-"}${pointsDuSolde(solde)}${"\u202f"}%`;
+}
+
 /**
  * Les trois leviers qui feraient tomber une année juste, à la manière du COR
  * (rapport de juin 2026, figure 2.24 et tableau 2.11 ; action 138, étape 3) :
@@ -11313,15 +11364,34 @@ function avecUnite(valeur, decimales, mot) {
  * en montre `ANNEES_LEVIERS` et l'horizon, sans en refaire aucune opération.
  * Le classeur du COR n'alimente aucun chiffre : la page dit seulement que le
  * modèle le retrouve, ce que le catalogue des affirmations contrôle.
+ *
+ * LE PROBLÈME À L'ENVERS (action 138, étape 10 ; registre,
+ * `simulateur_aurain`, qui « résout un problème budgétaire à l'envers, par
+ * dichotomie ») : le lecteur fixe le solde, et le tableau dit ce que chaque
+ * levier, seul, devrait faire pour que l'année y tombe. La table porte les
+ * leviers de chaque solde de `SOLDES_VISES`, que la fabrique cherche par
+ * bissection pour l'âge (`leviers.py`) ; `regards` porte celui qu'on montre,
+ * l'équilibre par défaut, la seule cible que le COR chiffre, et la seule où la
+ * phrase qui le cite vaut.
  */
-function coutLeviers(contexte) {
+function coutLeviers(contexte, regards = null) {
   const leviers = contexte.agregats().leviers;
+  const comptes = contexte.comptes();
+  const anneePib = comptes.pib.derniereAnnee;
   const fin = leviers.annees[leviers.annees.length - 1];
+  const vise = soldeVise(leviers, regards);
+  const vues = vuesCout(contexte, regards);
+  const choix = g.bascule(
+    "Solde visé",
+    leviers.soldesVises.map((solde) => [
+      libelleSoldeVise(solde), lienVue(vues, "solde", soldeEnAdresse(solde))]),
+    libelleSoldeVise(vise));
   let vides = 0;
   const lignes = SCENARIOS_COMPARES.map(([scenario, libelle]) => [
     nomScenario(scenario, libelle),
     ...ANNEES_LEVIERS.flatMap((annee) => {
-      const ligne = leviers.annee(scenario, annee);
+      const ligne = vise === 0 ? leviers.annee(scenario, annee)
+        : leviers.vise(scenario, vise, annee);
       if (ligne.age === null) vides += 1;
       return [
         `${ecartSigne(100 * ligne.pension, 0)}${"\u202f"}%`,
@@ -11332,9 +11402,28 @@ function coutLeviers(contexte) {
   ]);
   const ecart = (scenario) => 100 * leviers.horizon(scenario, fin).taxGap;
   const [reculMinimal, reculMaximal] = leviers.recul;
-  const caseVide = vides === 0 ? "" : ` Une case vide : aucun âge, de
-${g.nombre(-reculMinimal, 0)} ans plus tôt à ${g.nombre(reculMaximal, 0)} ans plus tard,
-n'équilibrerait l'année.`;
+  const bornes = `aucun âge, de
+${g.nombre(-reculMinimal, 0)} ans plus tôt à ${g.nombre(reculMaximal, 0)} ans plus tard,`;
+  const caseVide = vides === 0 ? "" : ` Une case vide : ${bornes}
+${vise === 0 ? "n'équilibrerait l'année" : "n'y porterait l'année"}.`;
+  const cible = vise === 0 ? "tombe juste"
+    : `finisse sur un ${vise < 0 ? "déficit" : "excédent"} de `
+      + `${pointsDuSolde(vise)}${"\u202f"}% du PIB`;
+  const lecture = vise === 0 ? `
+<p class="discret"><strong>Pour le système actuel, le COR trouve les mêmes
+leviers.</strong> Chaque année de 2030 à 2070, ceux du modèle sont les siens à
+un point de pension, un dixième de point de taux et un dixième d'année près
+(rapport de juin 2026, figure 2.24). L'ajustement immédiat et durable qui
+équilibrerait en moyenne les années de ${leviers.debut} à ${fin}, le « tax
+gap » du COR, vaut ${avecUnite(ecart("actuel"), 1, "point")} de taux pour le
+système actuel, ${ecartSigne(ecart("notionnel_liberal"), 1)} pour la
+proposition.${caseVide}</p>` : `
+<p class="discret">Le Conseil d'orientation des retraites ne chiffre que
+l'équilibre, et c'est là que le modèle retrouve ses leviers. Les autres soldes
+se résolvent de même : la pension égale les ressources moins le solde visé, le
+taux comble ce qui sépare le solde du solde visé, et l'âge recule, ou avance,
+jusqu'à ce que les retraités et les cotisants qu'il déplace y portent
+l'année.${caseVide}</p>`;
   return `
 <h4>Rogner, prélever plus ou partir plus tard</h4>
 <p>Le coefficient n'est que l'un des trois leviers qui feraient tomber une
@@ -11345,24 +11434,22 @@ ce qui retire des retraités et ajoute des cotisants. Chacun est chiffré seul,
 les deux autres laissés où ils sont, et mécaniquement : partir plus tard ne
 change pas la pension de qui part, et prélever davantage n'ôte rien au
 PIB.</p>
+<p>La question se pose aussi à l'envers, pour un autre solde que
+l'équilibre : un déficit qu'on accepte, ou un excédent qui rembourse.
+Choisissez-le, en part du PIB de chaque année : le tableau dit ce que chaque
+levier, seul, devrait faire pour que l'année y tombe. Un point de PIB vaut
+${g.milliards(comptes.pib.valeur(anneePib) / 100)} au PIB de ${anneePib}.</p>
+${choix}
 ${g.tableau(
     ["Système", ...ANNEES_LEVIERS.flatMap((annee) => [
       `Pension ${annee}`, `Taux ${annee}`, `Âge ${annee}`])],
     lignes,
     ["", ...ANNEES_LEVIERS.flatMap(() => ["nombre", "nombre", "nombre"])],
-    "Ce que chaque levier, seul, devrait faire pour que l'année tombe juste : "
+    `Ce que chaque levier, seul, devrait faire pour que l'année ${cible} : `
     + "la pension, le taux de prélèvement, en points de revenu d'activité, et "
     + "l'âge effectif de départ, en années de plus ou de moins",
     true,
-  )}
-<p class="discret"><strong>Pour le système actuel, le COR trouve les mêmes
-leviers.</strong> Chaque année de 2030 à 2070, ceux du modèle sont les siens à
-un point de pension, un dixième de point de taux et un dixième d'année près
-(rapport de juin 2026, figure 2.24). L'ajustement immédiat et durable qui
-équilibrerait en moyenne les années de ${leviers.debut} à ${fin}, le « tax
-gap » du COR, vaut ${avecUnite(ecart("actuel"), 1, "point")} de taux pour le
-système actuel, ${ecartSigne(ecart("notionnel_liberal"), 1)} pour la
-proposition.${caseVide}</p>`;
+  )}${lecture}`;
 }
 
 /**

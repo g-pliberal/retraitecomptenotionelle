@@ -1067,34 +1067,48 @@ CHAMPS_LEVIERS = ("pension", "prelevement", "age")
 CHAMPS_ECARTS_HORIZON = ("pension_gap", "tax_gap")
 
 
+def _leviers_par_annee(annuels: dict) -> dict:
+    """Les leviers de chaque année, sous leurs noms, l'année en clé."""
+    return {str(annee): {champ: getattr(ligne, champ) for champ in CHAMPS_LEVIERS}
+            for annee, ligne in sorted(annuels.items())}
+
+
 def figer_leviers(leviers: dict) -> dict:
     """Les trois leviers qui équilibreraient chaque système chaque année, et
     ses écarts sur les horizons du COR (``leviers``, par système, ce que
     ``leviers.leviers_du_modele`` rend). Tous les systèmes ont les mêmes
     années et les mêmes horizons, qui partent tous de la même année ; l'âge
     d'une année que nul recul des bornes cherchées n'équilibre reste ``None``,
-    et la table porte ces bornes."""
+    et la table porte ces bornes. Puis les leviers de chaque solde visé, dans
+    l'ordre des soldes (``soldes_vises``), aux mêmes années pour tous
+    (``annees_visees``) : le solveur inverse de la page Coût."""
     from ..leviers import RECUL_MAXIMAL, RECUL_MINIMAL
 
     annees = {tuple(sorted(systeme.annuels)) for systeme in leviers.values()}
     horizons = {tuple(sorted(systeme.horizons)) for systeme in leviers.values()}
     debuts = {ecart.debut for systeme in leviers.values() for ecart in systeme.horizons.values()}
+    soldes = {tuple(systeme.vises) for systeme in leviers.values()}
+    visees = {tuple(sorted(annuels)) for systeme in leviers.values()
+              for annuels in systeme.vises.values()}
     if len(annees) != 1 or len(horizons) != 1 or len(debuts) != 1:
         raise ValueError(f"les systèmes n'ont pas les mêmes années : {annees}, {horizons}, "
                          f"{debuts}")
+    if len(soldes) != 1 or len(visees) > 1:
+        raise ValueError(f"les systèmes n'ont pas les mêmes soldes visés : {soldes}, {visees}")
     return {
         "debut": debuts.pop(),
         "annees": list(annees.pop()),
         "horizons": list(horizons.pop()),
         "recul": [RECUL_MINIMAL, RECUL_MAXIMAL],
+        "soldes_vises": list(soldes.pop()),
+        "annees_visees": list(visees.pop()) if visees else [],
         "systemes": {
             scenario: {
-                "annuels": {str(annee): {champ: getattr(ligne, champ)
-                                         for champ in CHAMPS_LEVIERS}
-                            for annee, ligne in sorted(systeme.annuels.items())},
+                "annuels": _leviers_par_annee(systeme.annuels),
                 "horizons": {str(fin): {champ: getattr(ecart, champ)
                                         for champ in CHAMPS_ECARTS_HORIZON}
                              for fin, ecart in sorted(systeme.horizons.items())},
+                "vises": [_leviers_par_annee(annuels) for annuels in systeme.vises.values()],
             }
             for scenario, systeme in leviers.items()},
     }
@@ -1120,7 +1134,8 @@ class LeviersFiges:
     chaque année — rogner la pension, relever le taux de prélèvement, reculer
     l'âge —, et l'ajustement immédiat qui l'équilibrerait en moyenne depuis
     ``debut`` jusqu'à chaque horizon du COR (action 138, étape 3). La page Coût
-    les met sous le coefficient d'équilibre."""
+    les met sous le coefficient d'équilibre, avec ceux qui porteraient chaque
+    système à un autre solde (action 138, étape 10)."""
 
     def __init__(self, brut: dict) -> None:
         self._systemes = brut["systemes"]
@@ -1130,9 +1145,24 @@ class LeviersFiges:
         #: Les bornes du recul cherché, en années, hors desquelles l'âge vaut
         #: ``None``.
         self.recul: tuple[float, float] = tuple(brut["recul"])
+        #: Les soldes que la page propose de viser, en part de PIB, et les
+        #: années où elle montre les leviers qui y portent.
+        self.soldes_vises: tuple[float, ...] = tuple(float(solde)
+                                                     for solde in brut["soldes_vises"])
+        self.annees_visees: tuple[int, ...] = tuple(int(annee)
+                                                    for annee in brut["annees_visees"])
 
     def annee(self, scenario: str, annee: int) -> LeviersAnnuelsFiges:
         annuels = _lire(self._systemes, scenario, "système")["annuels"]
+        return LeviersAnnuelsFiges(_lire(annuels, str(annee), "année"))
+
+    def vise(self, scenario: str, solde: float, annee: int) -> LeviersAnnuelsFiges:
+        """Les leviers qui portent ``scenario`` au solde visé ``solde`` en
+        ``annee``."""
+        if solde not in self.soldes_vises:
+            raise KeyError(f"solde visé absent de la table figée : {solde!r}")
+        vises = _lire(self._systemes, scenario, "système")["vises"]
+        annuels = vises[self.soldes_vises.index(solde)]
         return LeviersAnnuelsFiges(_lire(annuels, str(annee), "année"))
 
     def horizon(self, scenario: str, fin: int) -> EcartsHorizonFiges:

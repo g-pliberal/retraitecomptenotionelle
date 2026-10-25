@@ -48,11 +48,13 @@ ETAPES: dict[str, tuple[str, ...]] = {
 
 #: Ce que ``construire_donnees.py`` lit de ``pages.js`` : les systèmes que le
 #: site montre et ceux du bilan, le classement comparé, l'écart de taux de la
-#: dette, les années des variantes d'espérance de vie, et la saisie des
-#: carrières d'exemple du bilan figé, avec les constantes qu'elle nomme.
+#: dette, les années des variantes d'espérance de vie, les soldes visés et les
+#: années des leviers, et la saisie des carrières d'exemple du bilan figé, avec
+#: les constantes qu'elle nomme.
 _LU_DE_PAGES = ("SCENARIOS_MONTRES", "SYSTEMES_BILAN", "CLASSEMENT_COMPARE",
-                "ECART_TAUX_DETTE", "ANNEES_ESPERANCE_VIE", "NIVEAUX_RISQUE",
-                "NAISSANCE_RISQUE", "STATUT_RISQUE", "DEBUT_RISQUE", "LIQUIDATION_RISQUE")
+                "ECART_TAUX_DETTE", "ANNEES_ESPERANCE_VIE", "SOLDES_VISES", "ANNEES_LEVIERS",
+                "NIVEAUX_RISQUE", "NAISSANCE_RISQUE", "STATUT_RISQUE", "DEBUT_RISQUE",
+                "LIQUIDATION_RISQUE")
 
 #: Ce qu'une étape lit d'un fichier sans le lire tout entier : le paquet ne
 #: prend de ``pages.js`` que ce que la fabrique y lit, une déclaration à la

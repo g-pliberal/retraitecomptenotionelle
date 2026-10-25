@@ -24,7 +24,8 @@ def test_un_extrait_de_pages_js_ne_retient_que_sa_declaration():
 def test_le_paquet_suit_tout_ce_que_la_fabrique_lit_de_pages_js():
     """La fabrique lit de ``pages.js`` les systèmes montrés et ceux du bilan,
     le classement comparé, l'écart de taux de la dette, les années des
-    variantes d'espérance de vie, et la saisie des carrières d'exemple du
+    variantes d'espérance de vie, les soldes visés et les années des leviers
+    (action 138, étape 10), et la saisie des carrières d'exemple du
     bilan figé, que le portage simule (action 161, étape 5) : chaque
     déclaration qu'elle lit, et chaque constante qu'une fonction lue nomme,
     entre dans l'empreinte du paquet, retrouvée dans la page du jour."""

@@ -135,7 +135,7 @@ CALIBRATIONS = DONNEES / "derive" / "calibrations_mortalite.json"
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas : le site
 #: attend la sienne (``VERSION_PAQUET``, ``moteur/js/contexte.js``), et redemande
 #: au serveur un paquet qui n'a pas celle-là, depuis le 11 octobre 2026.
-VERSION = 33
+VERSION = 34
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -2488,9 +2488,15 @@ def _agregats(contexte=None, paquet: bytes | None = None) -> dict:
         # 3) : ce que la pension, le taux de prélèvement ou l'âge devrait
         # faire, seul, pour équilibrer chaque système chaque année, et
         # l'ajustement immédiat qui l'équilibrerait en moyenne jusqu'à chaque
-        # horizon du COR. Lus sur le bilan du coût, que ``memoire`` garde.
-        "leviers": figer_leviers({scenario: leviers_du_modele(contexte.base, scenario)
-                                  for scenario in pages.SCENARIOS_MONTRES}),
+        # horizon du COR. Lus sur le bilan du coût, que ``memoire`` garde. Puis
+        # LE SOLVEUR INVERSE (action 138, étape 10) : les mêmes leviers pour
+        # chaque solde que la page propose de viser, aux années où elle les
+        # montre.
+        "leviers": figer_leviers({
+            scenario: leviers_du_modele(contexte.base, scenario,
+                                        soldes_vises=tuple(pages.SOLDES_VISES),
+                                        annees_visees=tuple(pages.ANNEES_LEVIERS))
+            for scenario in pages.SCENARIOS_MONTRES}),
     }
 
 

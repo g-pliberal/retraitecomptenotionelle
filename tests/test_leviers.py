@@ -137,6 +137,40 @@ def test_les_leviers_et_les_ecarts_se_lisent_dans_le_bilan():
     assert ecarts.tax_gap == pytest.approx(0.0175)
 
 
+def test_le_solveur_dose_chaque_levier_pour_le_solde_vise():
+    """Le solveur inverse (action 138, étape 10 ; registre,
+    ``simulateur_aurain``) : le solde qu'on se fixe, et ce que chaque levier,
+    seul, doit faire pour l'atteindre. Le système du test précédent, 40 % de
+    revenus d'activité, 20 millions de retraités et 30 de cotisants, une
+    pyramide plate de 800 000 personnes par âge : pour un déficit de 0,7 point
+    de PIB au lieu de 1,4, la pension perd 5 % (13,3 de dépense pour 12,6 de
+    ressources et 0,7 de déficit), le taux gagne 1,75 point (0,7 sur 40), et
+    l'âge recule de 25/26 d'an — 769 231 retraités de moins, 384 615 cotisants
+    de plus, 12,76 de ressources pour 13,46 de dépense. Pour un excédent de
+    0,7 point : 15 %, 5,25 points, 75/26 d'an. L'année juste, viser un déficit
+    de 0,7 point rend 5 % de pension et 1,75 point de taux, et avance l'âge de
+    15/16 d'an. Viser l'équilibre redonne les leviers de l'équilibre, au bit
+    près."""
+    bilan = _bilan({2030: 0.0, 2031: -0.014}, {2030: 0.14, 2031: 0.14})
+    plate = _Population(800_000.0)
+    demographie = {annee: Demographie(retraites=20e6, cotisants=30e6) for annee in (2030, 2031)}
+
+    def vise(solde: float) -> dict:
+        return leviers(bilan, "actuel", 0.4, demographie, plate, (2030, 2031), solde_vise=solde)
+
+    deficit, excedent = vise(-0.007), vise(0.007)
+    assert deficit[2031].pension == pytest.approx(-0.05)
+    assert deficit[2031].prelevement == pytest.approx(0.0175)
+    assert deficit[2031].age == pytest.approx(25 / 26, abs=1e-5)
+    assert excedent[2031].pension == pytest.approx(-0.15)
+    assert excedent[2031].prelevement == pytest.approx(0.0525)
+    assert excedent[2031].age == pytest.approx(75 / 26, abs=1e-5)
+    assert deficit[2030].pension == pytest.approx(0.05)
+    assert deficit[2030].prelevement == pytest.approx(-0.0175)
+    assert deficit[2030].age == pytest.approx(-15 / 16, abs=1e-5)
+    assert vise(0.0) == leviers(bilan, "actuel", 0.4, demographie, plate, (2030, 2031))
+
+
 def _retraites_par_taux(annee: int) -> float:
     """Les retraités de droit direct que le COR compte, à l'année : ceux de
     la DREES fin 2023, qui croissent comme le COR les fait croître

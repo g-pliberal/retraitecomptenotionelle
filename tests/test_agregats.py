@@ -523,7 +523,11 @@ def test_les_deux_lecteurs_lisent_le_meme_bilan_du_compte(montres):
 def leviers(contexte, montres):
     from retraite_notionnelle.leviers import leviers_du_modele
 
-    return {scenario: leviers_du_modele(contexte.base, scenario) for scenario in montres}
+    pages = module("pages")
+    return {scenario: leviers_du_modele(contexte.base, scenario,
+                                        soldes_vises=tuple(pages.SOLDES_VISES),
+                                        annees_visees=tuple(pages.ANNEES_LEVIERS))
+            for scenario in montres}
 
 
 def test_les_leviers_figes_sont_ceux_que_le_modele_calcule(leviers, montres):
@@ -532,8 +536,11 @@ def test_les_leviers_figes_sont_ceux_que_le_modele_calcule(leviers, montres):
     chaque année de 2025 à 2070, et ses écarts sur les horizons du COR, le
     pension gap et le tax gap, tels que ``leviers.leviers_du_modele`` les
     calcule. Un âge que nul recul des bornes cherchées ne donne reste
-    ``None`` : le système 2, qui encaisse plus qu'il ne sert. Le lecteur n'en
-    refait aucune opération."""
+    ``None`` : le système 2, qui encaisse plus qu'il ne sert. Puis le
+    solveur inverse (action 138, étape 10) : pour chaque solde que la page
+    Coût propose de viser (``SOLDES_VISES``), les leviers qui y portent chaque
+    système aux années qu'elle montre (``ANNEES_LEVIERS``) ; viser l'équilibre
+    redonne ses leviers. Le lecteur n'en refait aucune opération."""
     from dataclasses import fields
 
     from retraite_notionnelle.leviers import (
@@ -560,6 +567,21 @@ def test_les_leviers_figes_sont_ceux_que_le_modele_calcule(leviers, montres):
             lu = fige.horizon(scenario, fin)
             for champ in agregats.CHAMPS_ECARTS_HORIZON:
                 assert getattr(lu, champ) == getattr(ecart, champ), (scenario, fin, champ)
+        assert tuple(leviers[scenario].vises) == fige.soldes_vises, scenario
+        for solde, annuels in leviers[scenario].vises.items():
+            assert tuple(sorted(annuels)) == fige.annees_visees, (scenario, solde)
+            for annee, ligne in annuels.items():
+                lu = fige.vise(scenario, solde, annee)
+                for champ in agregats.CHAMPS_LEVIERS:
+                    assert getattr(lu, champ) == getattr(ligne, champ), (
+                        scenario, solde, annee, champ)
+        for annee in fige.annees_visees:
+            equilibre, vise = fige.annee(scenario, annee), fige.vise(scenario, 0.0, annee)
+            for champ in agregats.CHAMPS_LEVIERS:
+                assert getattr(vise, champ) == getattr(equilibre, champ), (scenario, annee, champ)
+    pages = module("pages")
+    assert fige.soldes_vises == tuple(pages.SOLDES_VISES)
+    assert fige.annees_visees == tuple(pages.ANNEES_LEVIERS)
     assert fige.annee("notionnel_retroactif", fige.annees[-1]).age is None
     with pytest.raises(KeyError, match="absent de la table figée"):
         fige.annee("notionnel_bascule", fige.annees[-1])
@@ -567,6 +589,10 @@ def test_les_leviers_figes_sont_ceux_que_le_modele_calcule(leviers, montres):
         fige.annee("actuel", fige.annees[-1] + 1)
     with pytest.raises(KeyError, match="absent de la table figée"):
         fige.horizon("actuel", 2040)
+    with pytest.raises(KeyError, match="absent de la table figée"):
+        fige.vise("actuel", 0.0025, fige.annees_visees[-1])
+    with pytest.raises(KeyError, match="absent de la table figée"):
+        fige.vise("actuel", 0.0, fige.annees_visees[-1] + 1)
 
 
 @sans_node
@@ -575,6 +601,8 @@ def test_les_deux_lecteurs_lisent_les_memes_leviers(montres):
     fige = AGREGATS.leviers
     assert (js.debut, tuple(js.annees), tuple(js.horizons), tuple(js.recul)) == (
         fige.debut, fige.annees, fige.horizons, fige.recul)
+    assert (tuple(js.soldesVises), tuple(js.anneesVisees)) == (
+        fige.soldes_vises, fige.annees_visees)
     for scenario in montres:
         for annee in fige.annees:
             lu, ligne = js.annee(scenario, annee), fige.annee(scenario, annee)
@@ -584,3 +612,9 @@ def test_les_deux_lecteurs_lisent_les_memes_leviers(montres):
             lu, ecart = js.horizon(scenario, fin), fige.horizon(scenario, fin)
             for champ in agregats.CHAMPS_ECARTS_HORIZON:
                 assert getattr(lu, champ) == getattr(ecart, champ), (scenario, fin, champ)
+        for solde in fige.soldes_vises:
+            for annee in fige.annees_visees:
+                lu, ligne = js.vise(scenario, solde, annee), fige.vise(scenario, solde, annee)
+                for champ in agregats.CHAMPS_LEVIERS:
+                    assert getattr(lu, champ) == getattr(ligne, champ), (
+                        scenario, solde, annee, champ)

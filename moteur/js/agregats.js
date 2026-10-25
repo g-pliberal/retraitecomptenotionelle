@@ -621,7 +621,9 @@ const CHAMPS_ECARTS_HORIZON = ["pension_gap", "tax_gap"];
  * chaque année — rogner la pension, relever le taux de prélèvement, reculer
  * l'âge —, et l'ajustement immédiat qui l'équilibrerait en moyenne depuis
  * `debut` jusqu'à chaque horizon du COR (action 138, étape 3). L'âge d'une
- * année que nul recul de `recul` n'équilibre vaut `null`. `figer_leviers`
+ * année que nul recul de `recul` n'équilibre vaut `null`. Puis ceux qui
+ * porteraient chaque système à un autre solde, chacun de `soldesVises` aux
+ * années `anneesVisees` (action 138, étape 10). `figer_leviers`
  * (`donnees/agregats.py`) l'écrit.
  */
 export class LeviersFiges {
@@ -632,12 +634,26 @@ export class LeviersFiges {
     this.horizons = brut.horizons.map(Number);
     /** Les bornes du recul cherché, en années, hors desquelles l'âge vaut `null`. */
     this.recul = brut.recul.map(Number);
+    /**
+     * Les soldes que la page propose de viser, en part de PIB, et les années
+     * où elle montre les leviers qui y portent.
+     */
+    this.soldesVises = brut.soldes_vises.map(Number);
+    this.anneesVisees = brut.annees_visees.map(Number);
   }
 
   /** Les leviers d'un système une année : `pension`, `prelevement`, `age`. */
   annee(scenario, annee) {
     const annuels = lire(this._systemes, scenario, "système").annuels;
     return champs(lire(annuels, String(annee), "année"), CHAMPS_LEVIERS);
+  }
+
+  /** Les leviers qui portent un système au solde visé `solde` une année. */
+  vise(scenario, solde, annee) {
+    const rang = this.soldesVises.indexOf(solde);
+    if (rang < 0) { throw new Error(`solde visé absent de la table figée : ${solde}`); }
+    const vises = lire(this._systemes, scenario, "système").vises;
+    return champs(lire(vises[rang], String(annee), "année"), CHAMPS_LEVIERS);
   }
 
   /** Les écarts d'un système sur un horizon : `pensionGap`, `taxGap`. */
