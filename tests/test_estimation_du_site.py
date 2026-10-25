@@ -379,6 +379,26 @@ def test_une_carriere_qui_ne_valide_plus_part_a_l_age_ou_la_carriere_longue_l_ou
         for trimestres in (170, 169)]
 
 
+def test_une_carriere_longue_arretee_avec_un_trimestre_de_trop_y_descend_aussi():
+    """Née le 15 janvier 1968, entrée en octobre 1983, à quinze ans et neuf
+    mois, et sans activité depuis 2027, une salariée a validé cinq trimestres
+    avant la fin de l'année de ses seize ans, un en 1983 et quatre en 1984 : la
+    carrière longue lui ouvre son départ à 58 ans (D. 351-1-1, version du
+    1er septembre 2023) dès qu'elle a les 172 trimestres cotisés de sa
+    génération, à la fin de septembre 2026, avant ses 59 ans. Elle en a 173
+    quand elle s'arrête : la descente ne gagnait qu'un trimestre par passe, et
+    s'arrêtait au bout des siennes, à 63 ans. Une recherche qui ne retiendrait
+    que les âges que le droit confirme s'y arrêterait encore : la carrière
+    liquidée à 61 ans s'ouvre à 60 ans et 9 mois, non à 61 ans (action 138,
+    étape 14)."""
+    [[(quoi, age, trimestres, requis, motif), _]] = _departs_dits([{
+        "naissance": "1968-01-15", "debut": "1983-10",
+        "interruptions": "2027:2045:sans_activite"}])
+    assert (quoi, trimestres, requis, motif) == (
+        ("legal", "taux_plein"), 172, 172, "carriere_longue")
+    assert 58.0 < age < 59.0
+
+
 def test_un_depart_que_la_saisie_refuse_ne_tait_pas_l_estimation():
     """La saisie refuse un départ qui précède l'un de ses métiers. Chercher un
     départ plus précoce que l'âge légal ne fait pas taire le bloc d'une
