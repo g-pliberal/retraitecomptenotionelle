@@ -9818,7 +9818,7 @@ referents:
           par la valeur du point.
         preuve: >-
           `static/js/retraites.js:12-67`, au commit `eec62c9`
-        etat: a_reprendre
+        etat: repris
         chantier: "138.10"
       - quoi: >-
           Il compare le droit de 2019 au système universel à points

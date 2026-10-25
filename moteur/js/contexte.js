@@ -310,6 +310,8 @@ export class Contexte {
       versBrut: saisie.saisieEnNet ? versBrut : null,
       versNet,
       versBrutDirect: versBrut,
+      point: valeurDuPoint(this.paquet, annee),
+      annee,
     });
   }
 
@@ -948,6 +950,18 @@ function auJour(affiliations, affiliation, annee) {
   return affiliations.periodes(affiliation).some((periode) => periode.debut <= annee
     && (periode.fin === null || periode.fin === undefined || annee <= periode.fin)
     && (periode.regimes ?? []).some((code) => REGIMES_CODE_DES_PENSIONS.has(code)));
+}
+
+/**
+ * La valeur annuelle du point d'indice de la fonction publique en vigueur au
+ * 1er janvier de l'année, celle que le paquet garde pour le minimum garanti
+ * (`point_indice_fonction_publique.csv`, décret n° 85-1148, article 3) ; `null`
+ * avant la série. Le traitement brut d'un indice majoré en est le produit.
+ */
+function valeurDuPoint(paquet, annee) {
+  const serie = paquet.minimum_garanti?.point_indice ?? {};
+  const connues = Object.keys(serie).map(Number).filter((connue) => connue <= annee);
+  return connues.length ? serie[String(Math.max(...connues))][0] : null;
 }
 
 /** Les régimes de base qui valident l'année d'un salarié à son revenu. */

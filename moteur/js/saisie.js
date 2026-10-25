@@ -364,6 +364,38 @@ export const STATUT_MICRO = "micro_entrepreneur";
 export const STATUT_MICRO_CIPAV = "profession_liberale";
 
 /**
+ * Ce que saisit le fonctionnaire (action 138, étape 10 ; registre,
+ * `simulateur_sud_education`) : sa rémunération, comme tout le monde, ou
+ * l'INDICE MAJORÉ de son bulletin de paie, qui fait lire comme un indice le
+ * revenu de ses périodes payées à l'indice. Son traitement brut est cet indice
+ * fois la valeur du point (décret n° 85-1148 du 24 octobre 1985, article 3),
+ * celle de l'année du modèle, comme les euros saisis sont ceux d'aujourd'hui ;
+ * ses primes s'y ajoutent, à la part que la saisie en dit (`primes`), que le
+ * traitement laisse. Le vide garde le sens d'avant.
+ */
+export const INDICES = [
+  ["", "votre rémunération"],
+  ["majore", "votre indice majoré"],
+];
+
+/**
+ * Les statuts payés à l'indice : ceux dont le régime de base est celui de
+ * l'État ou la CNRACL, les fonctionnaires titulaires, civils et militaires, des
+ * trois versants, que le décret n° 85-1148 paie au point. Ni l'ouvrier de
+ * l'État, payé au salaire de sa profession, ni le fonctionnaire de
+ * Nouvelle-Calédonie, à son propre point, ni l'agent non titulaire, que son
+ * contrat paie. Le test les recoupe aux affiliations.
+ */
+export const STATUTS_A_L_INDICE = Object.freeze([
+  "fonctionnaire_etat", "fonctionnaire_etat_actif", "fonctionnaire_etat_super_actif",
+  "policier", "militaire", "militaire_officier",
+  "fonctionnaire_territorial_hospitalier", "fonctionnaire_territorial_hospitalier_actif",
+  "fonctionnaire_territorial_hospitalier_super_actif", "fonctionnaire_hospitalier_actif",
+  "aide_soignant", "sapeur_pompier_professionnel",
+]);
+const A_L_INDICE = new Set(STATUTS_A_L_INDICE);
+
+/**
  * Le barème de la Lodeom que l'employeur applique, en Guadeloupe, en Guyane, en
  * Martinique ou à La Réunion, à la place de la réduction générale (L. 752-3-2,
  * III ; action 138, étape 18) : ceux du bloc `lodeom` de
@@ -803,6 +835,9 @@ export const DEFAUTS = Object.freeze({
   //: comme un chiffre d'affaires (`ACTIVITES_MICRO`) ; vide, comme un revenu
   //: déjà abattu.
   micro: "",
+  //: « majore » fait lire le revenu des périodes payées à l'indice comme un
+  //: indice majoré (`INDICES`) ; vide, comme une rémunération.
+  indice: "",
   //: Le barème de la Lodeom de l'employeur d'outre-mer (`BAREMES_LODEOM`), que
   //: portent tous les emplois, métiers et lignes du relevé ; vide, la réduction
   //: générale.
@@ -1050,6 +1085,7 @@ export class Saisie {
         : entier(parametres, "guerre", 0),
       travail_manuel: parmi(parametres, "travail_manuel", TRAVAUX_MANUELS, ""),
       micro: parmi(parametres, "micro", ACTIVITES_MICRO, ""),
+      indice: parmi(parametres, "indice", INDICES, ""),
       lodeom: parmi(parametres, "lodeom", BAREMES_LODEOM, ""),
       collaborateur: parmi(parametres, "collaborateur", ASSIETTES_COLLABORATEUR, ""),
       reversion_agricole: (parametres.reversion_agricole || "").trim(),
@@ -1159,7 +1195,7 @@ export class Saisie {
         + `fixé en ${this.dateDe(this.debut)}.`,
       );
     }
-    this.verifierRevenu(this.salaire, 1);
+    this.verifierRevenu(this.salaire, 1, this.statut);
     if (!(this.primes >= 0 && this.primes <= 0.6)) {
       throw new ErreurSaisie("Part de primes attendue entre 0 et 0,6.");
     }
@@ -1238,7 +1274,7 @@ export class Saisie {
           + `fixé en ${depart}.`,
         );
       }
-      this.verifierRevenu(metier.salaire, rang);
+      this.verifierRevenu(metier.salaire, rang, metier.statut);
       precedent = metier.debut;
     });
   }
@@ -1277,7 +1313,7 @@ export class Saisie {
         + `tard au départ, fixé en ${depart}.`,
       );
     }
-    this.verifierRevenu(metier.salaire, rang);
+    this.verifierRevenu(metier.salaire, rang, metier.statut);
   }
 
   /**
@@ -1340,9 +1376,16 @@ export class Saisie {
    * Un revenu saisi, contrôlé dans l'unité où il a été écrit. Le message parle
    * la langue du champ : refuser « 2 500 € par mois » au motif qu'il faut
    * « entre 0,1 et 10 fois le salaire moyen » ne dirait rien à qui n'a jamais
-   * entendu parler de cette unité.
+   * entendu parler de cette unité. Un indice majoré n'a pas d'unité : seul le
+   * zéro s'y refuse ici, et ses bornes, au calcul (`verifierNiveau`).
    */
-  verifierRevenu(valeur, rang) {
+  verifierRevenu(valeur, rang, statut = "") {
+    if (this.enIndice(statut)) {
+      if (!(valeur > 0)) {
+        throw refus(rang, "L'indice majoré doit être strictement positif.");
+      }
+      return;
+    }
     if (this.revenu_en_euros) {
       if (!(valeur > 0)) {
         throw refus(rang, "Le revenu doit être strictement positif.");
@@ -1381,21 +1424,30 @@ export class Saisie {
    * un montant n'en a que rapporté à son année.
    */
   niveaux(echelle) {
-    const lignes = this.lignesCarriere;
-    let saisis = lignes.map((ligne) => ligne.salaire);
+    return this.lignesCarriere.map((ligne) => this.niveauDe(ligne.salaire, ligne.statut,
+      echelle));
+  }
+
+  /**
+   * Le nombre saisi d'une ligne de ce statut, ramené à l'unité du modèle. Un
+   * indice majoré vaut la rémunération de son traitement, en toute unité et en
+   * tout mode : il n'est ni un brut ni un net.
+   */
+  niveauDe(valeur, statut, echelle) {
+    if (this.enIndice(statut)) {
+      return echelle.niveau(echelle.remuneration(valeur, this.primes));
+    }
     if (!this.revenu_en_euros) {
-      return saisis;
+      return valeur;
     }
     // En mode net, le nombre saisi n'est pas encore un brut : on remonte
     // d'abord jusqu'à lui, statut par statut, PUIS on ramène à l'unité du
     // modèle. L'ordre compte — le salaire moyen de l'échelle est un brut.
     // Un chiffre d'affaires n'est ni brut ni net : il se lit tel quel.
-    if (this.saisieEnNet) {
-      saisis = saisis.map((valeur, index) => (
-        this.enChiffreDAffaires(lignes[index].statut)
-          ? valeur : echelle.brutMensuel(valeur, lignes[index].statut)));
+    if (this.saisieEnNet && !this.enChiffreDAffaires(statut)) {
+      return echelle.niveau(echelle.brutMensuel(valeur, statut));
     }
-    return saisis.map((valeur) => echelle.niveau(valeur));
+    return echelle.niveau(valeur);
   }
 
   /**
@@ -1406,6 +1458,16 @@ export class Saisie {
    */
   enChiffreDAffaires(statut) {
     return Boolean(this.micro) && statut === STATUT_MICRO;
+  }
+
+  /**
+   * Le revenu d'une ligne de ce statut est-il un indice majoré ? Celui d'une
+   * période payée à l'indice (`STATUTS_A_L_INDICE`), quand la saisie le dit.
+   * Comme l'activité du micro-entrepreneur, le choix dit sans une telle période
+   * ne change rien et ne se refuse pas.
+   */
+  enIndice(statut) {
+    return this.indice === "majore" && A_L_INDICE.has(statut);
   }
 
   /**
@@ -1597,6 +1659,17 @@ export class Saisie {
   verifierNiveau(niveau, rang, echelle, statut = "") {
     if (niveau >= 0.1 && niveau <= 10) {
       return;
+    }
+    if (this.enIndice(statut)) {
+      // Les bornes valent pour la rémunération : le refus les redit en indices,
+      // le nombre que le champ porte, et ceux qu'il nomme sont acceptés.
+      const [bas, haut] = echelle.indicesDansLesBornes(this.primes);
+      throw refus(
+        rang,
+        `Cet indice majoré vaut ${g.nombre(niveau, 2)} fois le salaire moyen, `
+        + "primes comprises ; le modèle en accepte de 0,1 à 10 fois, soit un indice "
+        + `majoré de ${g.nombre(bas, 0)} à ${g.nombre(haut, 0)}.`,
+      );
     }
     if (this.enChiffreDAffaires(statut)) {
       // Les bornes valent pour le revenu abattu : le refus les redit en chiffre
@@ -2334,8 +2407,8 @@ export class Saisie {
   /**
    * L'activité exercée après le départ que la saisie déclare, telle que la
    * chronologie la reçoit : ses deux âges, son statut, son revenu en multiples
-   * du salaire moyen, et l'employeur ; `null` sans elle. En euros, le revenu
-   * se convertit sur `echelle`, comme ceux des métiers (`niveaux`).
+   * du salaire moyen, et l'employeur ; `null` sans elle. En euros ou en indice,
+   * le revenu se convertit sur `echelle`, comme ceux des métiers (`niveaux`).
    */
   emploiRetraiteDeclare(echelle = null) {
     if (this.emploi_retraite === null) {
@@ -2343,13 +2416,18 @@ export class Saisie {
     }
     const dernier = this.dernierMetier;
     const statut = this.emploi_retraite_statut || dernier.statut;
-    let salaire = this.emploi_retraite_salaire !== null
-      ? this.emploi_retraite_salaire : dernier.salaire;
+    const herite = this.emploi_retraite_salaire === null;
+    let salaire = herite ? dernier.salaire : this.emploi_retraite_salaire;
+    // Un revenu hérité se lit comme sur la ligne qui le porte : l'indice du
+    // dernier métier reste un indice.
+    const indice = this.enIndice(herite ? dernier.statut : statut);
     let niveau = salaire;
-    if (this.revenu_en_euros) {
-      if (echelle === null) {
-        throw new Error("un revenu en euros se convertit sur une échelle");
-      }
+    if ((indice || this.revenu_en_euros) && echelle === null) {
+      throw new Error("un revenu en euros ou en indice se convertit sur une échelle");
+    }
+    if (indice) {
+      niveau = echelle.niveau(echelle.remuneration(salaire, this.primes));
+    } else if (this.revenu_en_euros) {
       if (this.saisieEnNet && !this.enChiffreDAffaires(statut)) {
         salaire = echelle.brutMensuel(salaire, statut);
       }
@@ -2416,10 +2494,12 @@ export class Saisie {
       );
     }
     if (this.emploi_retraite_salaire !== null) {
-      if (this.revenu_en_euros) {
-        if (this.emploi_retraite_salaire <= 0) {
+      const statut = this.emploi_retraite_statut || this.dernierMetier.statut;
+      if (this.revenu_en_euros || this.enIndice(statut)) {
+        if (!(this.emploi_retraite_salaire > 0)) {
           throw new ErreurSaisie(
-            `Activité après le départ, en ${debut} : son revenu doit être strictement `
+            `Activité après le départ, en ${debut} : son `
+            + `${this.enIndice(statut) ? "indice majoré" : "revenu"} doit être strictement `
             + "positif.",
           );
         }
@@ -3157,6 +3237,7 @@ export class Saisie {
         ["travail_manuel", this.travail_manuel || null],
       ].filter(([, valeur]) => valeur !== null)),
       ...(this.micro ? { micro: this.micro } : {}),
+      ...(this.indice ? { indice: this.indice } : {}),
       ...(this.lodeom ? { lodeom: this.lodeom } : {}),
       ...(this.collaborateur ? { collaborateur: this.collaborateur } : {}),
       ...Object.fromEntries([
@@ -3782,7 +3863,7 @@ export function age(valeur) {
  */
 export class Echelle {
   constructor({ moyen, smic, plafond, versBrut = null, versNet = null,
-    versBrutDirect = null }) {
+    versBrutDirect = null, point = null, annee = null }) {
     // Ce qui remonte d'un net mensuel au brut qui le laisse, statut par
     // statut. `versBrut` est nul en mode brut — il n'y a rien à convertir —,
     // les deux autres sont toujours là : la bascule doit traduire quel que
@@ -3796,6 +3877,48 @@ export class Echelle {
     this.smic = smic;
     // Plafond mensuel de la Sécurité sociale de la même année.
     this.plafond = plafond;
+    // Valeur annuelle du point d'indice de la fonction publique, la même année,
+    // et cette année-là : le traitement d'un indice majoré en est le produit.
+    this.point = point;
+    this.annee = annee;
+  }
+
+  /** Le traitement brut mensuel d'un indice majoré, au point de l'année. */
+  traitement(indice) {
+    if (!(this.point > 0)) {
+      throw new Error("un indice se convertit au point d'indice de l'année");
+    }
+    return (indice * this.point) / MOIS_PAR_AN;
+  }
+
+  /**
+   * La rémunération brute mensuelle d'un indice majoré, primes comprises : le
+   * traitement n'en est que la part que les primes laissent, `1 − primes`,
+   * comme la fiche de paie le partage.
+   */
+  remuneration(indice, primes) {
+    return this.traitement(indice) / (1.0 - primes);
+  }
+
+  /** L'opération inverse : l'indice qu'une rémunération brute mensuelle suppose. */
+  indice(remuneration, primes) {
+    return remuneration / this.traitement(1.0) * (1.0 - primes);
+  }
+
+  /**
+   * Le plus petit et le plus grand indice ENTIERS que le modèle accepte à cette
+   * part de primes, de 0,1 à 10 fois le salaire moyen : ceux que le refus
+   * nomme, et que la reprise d'une pension ne quitte pas (`eurosDansLesBornes`).
+   */
+  indicesDansLesBornes(primes) {
+    const niveau = (indice) => this.niveau(this.remuneration(indice, primes));
+    let bas = Math.ceil(this.indice(this.mensuel(NIVEAU_MINIMAL), primes));
+    while (niveau(bas) < NIVEAU_MINIMAL) bas += 1;
+    while (bas > 1 && niveau(bas - 1) >= NIVEAU_MINIMAL) bas -= 1;
+    let haut = Math.floor(this.indice(this.mensuel(NIVEAU_MAXIMAL), primes));
+    while (niveau(haut) > NIVEAU_MAXIMAL) haut -= 1;
+    while (niveau(haut + 1) <= NIVEAU_MAXIMAL) haut += 1;
+    return [bas, haut];
   }
 
   /** Un salaire mensuel brut, en multiples du salaire moyen. */

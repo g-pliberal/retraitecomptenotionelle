@@ -1,14 +1,14 @@
 # Étape 10, première partie : plusieurs âges de départ côte à côte, sur la page des résultats
 
-**Reprise, au 19 octobre 2026.** Fait : plusieurs âges de départ côte à côte
+**Reprise, au 25 octobre 2026.** Fait : plusieurs âges de départ côte à côte
 (16 octobre, `partirPlusTotOuPlusTard`) ; le 19, les droits contrefactuels
-(`Parametres.droit_contrefactuel`, dépliant « Avec ou sans la réforme de
-2023 »), puis le contrôle d'un relevé : chaque année de salarié du régime
-général ou des salariés agricoles contre les trimestres que son revenu valide
-au seuil de l'année (`controleDuReleve`, dépliant « Votre relevé, contrôlé »).
-Reste, une session par point : l'indice majoré ; le solveur inverse. Puis le
-retrait du jumeau `cycle_de_vie.py` (action 161). Détail : « Ce qui reste » de
-la note `2026-10-19-etape-10-controle-d-un-releve.md`.
+(dépliant « Avec ou sans la réforme de 2023 ») et le contrôle d'un relevé
+(`controleDuReleve`) ; le 25, l'indice majoré : le menu « Fonctionnaire, vous
+saisissez » fait lire le revenu des périodes payées à l'indice comme un
+indice, que la valeur du point fait traitement (`Saisie.enIndice`). Reste : le
+solveur inverse, une session ; puis le retrait du jumeau `cycle_de_vie.py`
+(action 161). L'indice dans le relevé attend l'action 158. Détail : « Ce qui
+reste » de la note `2026-10-25-etape-10-indice-majore.md`.
 
 **La demande.** Le premier point de l'étape 10 de l'action, le reste 1 de la
 note `2026-10-16-etape-9-ages-de-depart-au-portage.md` : montrer, pour la

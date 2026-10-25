@@ -1093,6 +1093,16 @@ def _cas() -> list[dict]:
             "debut": "2009-01", "liquidation": "2039-04", "micro": activite,
             "unite_revenu": "euros_mois", "salaire": salaire,
         }))
+    # L'INDICE MAJORÉ (action 138, étape 10) : le fonctionnaire de l'État saisi
+    # par l'indice de son bulletin de paie, que le point de l'année fait
+    # traitement, sans primes puis avec le cinquième de sa rémunération en
+    # primes, que le traitement laisse.
+    for nom, primes in (("", "0"), ("_et_primes", "0.2")):
+        cas.append((f"fonctionnaire_indice_majore{nom}", {
+            "statut": "fonctionnaire_etat", "naissance": "1975-03-15",
+            "debut": "1998-09", "liquidation": "2039-04", "indice": "majore",
+            "unite_revenu": "euros_mois", "salaire": "500", "primes": primes,
+        }))
     cas.append(("taux_plein_travailleur_manuel_1978", {
         "naissance": "1918-03-15", "debut": "1933-09", "liquidation": "1978-04",
         "travail_manuel": "penible",
@@ -2136,7 +2146,7 @@ FORMULAIRE_ENTIER = frozenset({
     "simuler_reversion", "simuler_demande_de_pension", "simuler_radiation_invalidite",
     "simuler_carriere_hors_de_france", "simuler_handicap", "simuler_micro_entrepreneur",
     "simuler_periodes_assimilees", "simuler_conjoint_collaborateur",
-    "simuler_reversion_agricole",
+    "simuler_reversion_agricole", "simuler_indice_majore",
 })
 _FORMULAIRE = re.compile(r'(<form class="carte"[^>]*>).*?(</form>)', re.DOTALL)
 
@@ -2183,6 +2193,21 @@ def _pages() -> dict:
             **BASE, "statut": "micro_entrepreneur", "debut": "2009-01",
             "unite_revenu": "euros_mois", "salaire": "3500", "micro": "vente",
             "saisie_par": "pension", "pension": "900",
+        }),
+        # L'indice majoré (action 138, étape 10) : la fonctionnaire de l'État
+        # saisie par son indice, avec le cinquième de sa rémunération en primes ;
+        # le menu, et le champ qui dit l'indice et son traitement. Puis la même,
+        # saisie par sa pension : le revenu trouvé remonte en indice.
+        ("simuler_indice_majore", "/simuler", {
+            **BASE, "sexe": "F", "statut": "fonctionnaire_etat",
+            "unite_revenu": "euros_mois", "indice": "majore", "salaire": "520",
+            "primes": "0.2",
+        }),
+        ("simuler_indice_majore_par_pension", "/simuler", {
+            **BASE, "sexe": "F", "statut": "fonctionnaire_etat", "naissance": "1958-03",
+            "debut": "1981-09", "liquidation": "2021-04", "unite_revenu": "euros_mois",
+            "indice": "majore", "salaire": "520", "primes": "0.2",
+            "situation": "retraite", "saisie_par": "pension", "pension": "2200",
         }),
         # La Lodeom (action 138, étape 18) : le salarié dont l'employeur
         # d'outre-mer applique le barème de compétitivité renforcée ; sa fiche de

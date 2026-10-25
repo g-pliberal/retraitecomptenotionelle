@@ -18,6 +18,7 @@ from urllib.parse import parse_qsl
 
 import pytest
 
+from retraite_notionnelle.carriere import Affiliations
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.donnees.chargement import charger_periodes_non_travaillees
 from retraite_notionnelle.web.site import ErreurSite, disponible, module, rendre, site
@@ -1538,6 +1539,170 @@ def test_un_chiffre_d_affaires_trop_petit_se_refuse_en_chiffre_d_affaires():
     with pytest.raises(ErreurSite,
                        match=refus_de_la_saisie("Ce chiffre d'affaires, abattu à 29 %")):
         saisie.parcours(site().contexte.echelle(saisie))
+
+
+# L'INDICE MAJORÉ (action 138, étape 10 ; registre, `simulateur_sud_education`,
+# chantier 138.10) : le fonctionnaire titulaire, civil ou militaire, de l'État,
+# de la territoriale ou de l'hospitalière dit le revenu de ses périodes par
+# l'indice majoré de son bulletin de paie. Son traitement brut est cet indice
+# fois la valeur du point, 5 907,34 € par an pour cent points en 2026 (décret
+# n° 85-1148 du 24 octobre 1985, article 3) ; ses primes s'y ajoutent, à la part
+# que la saisie en dit, que le traitement laisse (1 − part). L'indice 500 vaut
+# ainsi 2 461,39 € bruts par mois, 3 076,74 € avec 20 % de primes ; l'indice
+# 600, 2 953,67 € : posés à la main.
+_INDICE = {"statut": "fonctionnaire_etat", "naissance": "1975", "debut": "1998-09",
+           "unite_revenu": "euros_mois", "montants": "brut", "indice": "majore",
+           "salaire": "500"}
+
+
+@pytest.mark.parametrize("champs,mensuel", [
+    ({}, 2461.39),
+    ({"primes": "0.2"}, 3076.74),
+    ({"statut": "fonctionnaire_territorial_hospitalier"}, 2461.39),
+    ({"statut": "militaire_officier"}, 2461.39),
+    # Ni brut ni net, et sans unité : l'indice se lit tel quel.
+    ({"montants": "net"}, 2461.39),
+    ({"unite_revenu": "moyen"}, 2461.39),
+], ids=["etat", "primes", "territorial", "militaire", "net", "multiples"])
+def test_l_indice_majore_vaut_le_traitement_qu_il_paie(champs, mensuel):
+    saisie = saisie_du_portage({**_INDICE, **champs})
+    echelle = site().contexte.echelle(saisie)
+    [metier] = saisie.parcours(echelle)
+    assert metier.niveau_salaire == pytest.approx(echelle.niveau(mensuel), rel=1e-5)
+
+
+def test_seules_les_periodes_payees_a_l_indice_le_lisent():
+    """Le salarié et l'agent non titulaire gardent leurs euros ; le fonctionnaire
+    territorial qui suit lit le sien."""
+    saisie = saisie_du_portage({
+        **_INDICE,
+        "metier2_debut": "2008-01", "metier2_statut": "salarie_prive_cadre",
+        "metier2_salaire": "4000",
+        "metier3_debut": "2014-01", "metier3_statut": "contractuel_public",
+        "metier3_salaire": "2500",
+        "metier4_debut": "2018-01", "metier4_statut": "fonctionnaire_territorial_hospitalier",
+        "metier4_salaire": "600",
+    })
+    echelle = site().contexte.echelle(saisie)
+    niveaux = [metier.niveau_salaire for metier in saisie.parcours(echelle)]
+    assert niveaux == pytest.approx(
+        [echelle.niveau(mensuel) for mensuel in (2461.39, 4000.0, 2500.0, 2953.67)],
+        rel=1e-5)
+
+
+def test_les_statuts_payes_a_l_indice_sont_ceux_de_l_etat_et_de_la_cnracl():
+    """La liste de la saisie se recoupe aux affiliations : les statuts dont le
+    régime de base est, l'année du modèle, celui de l'État ou la CNRACL. Ni
+    l'ouvrier de l'État (FSPOEIE), ni le fonctionnaire de Nouvelle-Calédonie,
+    ni l'agent non titulaire."""
+    parametres = Parametres()
+    affiliations = Affiliations(parametres.racine_donnees)
+    attendus = {code for code in affiliations.codes
+                if {"fonction_publique_etat", "cnracl"}
+                & set(affiliations.regimes(code, parametres.annee_courante))}
+    assert len(attendus) == 12
+    assert set(SAISIE.STATUTS_A_L_INDICE) == attendus
+
+
+def test_un_indice_hors_des_bornes_se_refuse_en_indice():
+    """Le refus redit les bornes du revenu en indices, le nombre que le champ
+    porte ; les deux indices qu'il nomme passent, leurs voisins non."""
+    saisie = saisie_du_portage({**_INDICE, "salaire": "50"})
+    echelle = site().contexte.echelle(saisie)
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie("Cet indice majoré")) as refus:
+        saisie.parcours(echelle)
+    bornes = re.search(r"soit un indice majoré de ([\d ]+) à ([\d ]+)",
+                       str(refus.value))
+    assert bornes, str(refus.value)
+    bas, haut = (int(borne.replace(" ", "")) for borne in bornes.groups())
+    for indice in (bas, haut):
+        saisie_du_portage({**_INDICE, "salaire": str(indice)}).parcours(echelle)
+    for indice in (bas - 1, haut + 1):
+        with pytest.raises(ErreurSite, match=refus_de_la_saisie("Cet indice majoré")):
+            saisie_du_portage({**_INDICE, "salaire": str(indice)}).parcours(echelle)
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie("indice majoré")):
+        saisie_du_portage({**_INDICE, "salaire": "0"})
+
+
+def test_l_indice_majore_revient_dans_l_adresse():
+    assert "indice=majore" in saisie_du_portage(_INDICE).requete()
+    sans = {cle: valeur for cle, valeur in _INDICE.items() if cle != "indice"}
+    assert "indice" not in dict(parse_qsl(saisie_du_portage(sans).requete()))
+    # Un choix inconnu retombe, comme tout menu, sur le défaut.
+    assert saisie_du_portage({**_INDICE, "indice": "brut"}).indice == ""
+
+
+def test_l_activite_d_apres_le_depart_d_un_fonctionnaire_se_dit_en_indice():
+    """Sans revenu à elle, elle prend celui du dernier métier : un indice, qui
+    vaut son traitement, et non autant d'euros."""
+    saisie = saisie_du_portage({**_INDICE, "liquidation": "2039-10",
+                                "emploi_retraite": "2040-01",
+                                "emploi_retraite_fin": "2041-01"})
+    echelle = site().contexte.echelle(saisie)
+    emploi = saisie.emploi_retraite_declare(echelle)
+    assert emploi.niveau_salaire == pytest.approx(echelle.niveau(2461.39), rel=1e-5)
+
+
+def test_le_menu_de_l_indice_ne_parait_qu_avec_une_periode_payee_a_l_indice():
+    """Comme celui du micro-entrepreneur : avec une période de fonctionnaire, ou
+    un choix déjà dit, que le formulaire garde d'une saisie à l'autre."""
+    sans = {cle: valeur for cle, valeur in _INDICE.items() if cle != "indice"}
+    sans["salaire"] = "2800"
+    assert 'name="indice"' in rendre("/simuler", sans)[1]
+    salarie = {**sans, "statut": "salarie_prive_non_cadre"}
+    assert 'name="indice"' not in rendre("/simuler", salarie)[1]
+    assert 'name="indice"' in rendre("/simuler", {**salarie, "indice": "majore"})[1]
+
+
+def test_le_champ_du_fonctionnaire_demande_son_indice_et_en_dit_le_traitement():
+    corps = rendre("/simuler", {**_INDICE, "primes": "0.2"})[1]
+    assert "Saisie refusée" not in corps
+    assert re.search(r'<label for="salaire">Indice majoré', corps)
+    # Le traitement de l'indice 500 au point de 2026, et la rémunération que la
+    # part de primes en tire.
+    assert "traitement de 2 461 € bruts par mois" in corps
+    assert "3 077 € primes comprises" in corps
+
+
+def _lien_des_montants(corps):
+    bloc = re.search(r'<div class="bascule"[^>]*aria-label="Montants".*?</div>',
+                     corps, re.S)
+    assert bloc, "la bascule des montants a disparu"
+    lien = re.search(r'href="#/simuler\?([^"]*)"', bloc.group(0))
+    return dict(parse_qsl(html.unescape(lien.group(1))))
+
+
+def test_les_bascules_laissent_l_indice_tel_quel():
+    """Un indice n'a ni unité, ni brut, ni net : les deux bascules le passent tel
+    quel, et traduisent le revenu des autres périodes."""
+    champs = {**_INDICE, "metier2_debut": "2010-01",
+              "metier2_statut": "salarie_prive_cadre", "metier2_salaire": "4000"}
+    vers_les_multiples, _ = _lien_de_bascule(champs)
+    assert vers_les_multiples["unite_revenu"] == "moyen"
+    assert vers_les_multiples["salaire"] == "500"
+    assert float(vers_les_multiples["metier2_salaire"]) == pytest.approx(
+        _echelle().niveau(4000.0), abs=0.001)
+    vers_le_net = _lien_des_montants(rendre("/simuler", champs)[1])
+    assert vers_le_net["montants"] == "net"
+    assert vers_le_net["salaire"] == "500"
+    assert float(vers_le_net["metier2_salaire"]) < 4000
+
+
+def test_le_revenu_que_la_pension_suppose_se_dit_en_indice():
+    """Saisi par sa pension, le fonctionnaire lit l'indice que le revenu trouvé
+    suppose, au point de l'année, et le lien de reprise l'écrit."""
+    corps = rendre("/simuler", {**_INDICE, "naissance": "1958-03-15",
+                                "debut": "1981-09", "liquidation": "2021-04",
+                                "saisie_par": "pension", "pension": "2200"})[1]
+    assert "Saisie refusée" not in corps
+    phrase = re.search(r"Soit l&#x27;indice majoré ([\d ]+)|Soit l'indice majoré "
+                       r"([\d ]+)", corps)
+    assert phrase, "le revenu déduit ne dit pas son indice"
+    indice = int(next(groupe for groupe in phrase.groups() if groupe).replace(" ", ""))
+    reprise = re.search(r'<a href="#/simuler\?([^"]*)">Reprendre cette carrière', corps)
+    suite = dict(parse_qsl(html.unescape(reprise.group(1))))
+    assert suite["saisie_par"] == "revenu"
+    assert int(suite["salaire"]) == indice
 
 
 # LA DATE D'ENTRÉE DANS LA SAISIE EN NET (action 138, étape 9 ; note « la date

@@ -86,7 +86,7 @@ import {
   SALAIRE_DEFAUT, SANS_EMPLOI, SITUATIONS, SITUATIONS_FOYER, Saisie, TABLES,
   MOIS_DE_GUERRE_MAXIMUM, TRAJECTOIRES_EMPLOI, TRAVAUX_MANUELS, UNITES_REVENU, age, entier, estEntier, jourEnClair,
   ABATTEMENTS_MICRO, ACTIVITES_MICRO, STATUT_MICRO, BAREMES_LODEOM,
-  ASSIETTES_COLLABORATEUR, PARTS_COLLABORATEUR,
+  ASSIETTES_COLLABORATEUR, PARTS_COLLABORATEUR, INDICES, STATUTS_A_L_INDICE,
   nombreBrut, parmi, reel, refus,
 } from "./saisie.js";
 import {
@@ -1074,7 +1074,7 @@ export function formulaire(saisie, contexte, comparaison = null) {
   ${desaccordDeSituation(saisie, contexte)}
   <div class="grille">${identite}</div>
   <h3>La carrière, période par période${bulleDesPeriodes()}</h3>
-  ${metiersFormulaire(saisie, affiliations, echelle)}${microFormulaire(saisie)}${collaborateurFormulaire(saisie)}${reversionAgricoleFormulaire(saisie)}
+  ${metiersFormulaire(saisie, affiliations, echelle)}${microFormulaire(saisie)}${indiceFormulaire(saisie, echelle)}${collaborateurFormulaire(saisie)}${reversionAgricoleFormulaire(saisie)}
   ${blocPension(saisie)}
   ${lienAutreSaisie(saisie)}
   ${saisie.parPension ? "" : basculeUnite(saisie, echelle)}
@@ -1696,6 +1696,29 @@ function champChiffreDAffaires(nom, saisie, valeur, vide) {
 }
 
 /**
+ * Le champ d'une période payée à l'indice, quand le fonctionnaire le dit : son
+ * indice majoré, dont l'aide chiffre le traitement, et la rémunération que la
+ * part de primes en tire. Ni brut ni net, ni euros ni multiple ; la saisie lui
+ * oppose les bornes du revenu.
+ */
+function champIndice(nom, saisie, echelle, valeur, bref, vide) {
+  let aide = "celui de votre bulletin de paie";
+  if (Number(valeur) > 0) {
+    aide = `traitement de ${g.euros(echelle.traitement(Number(valeur)))} bruts par mois`;
+    if (saisie.primes > 0) {
+      aide += `, ${g.euros(echelle.remuneration(Number(valeur), saisie.primes))} `
+        + "primes comprises";
+    }
+  }
+  return g.champ(nom, "Indice majoré", valeur, `${aide}${vide}`, "number",
+    { min: "1", step: "1" },
+    bref ? ""
+      : "Celui de votre bulletin de paie. Le modèle en fait votre traitement "
+        + "d'aujourd'hui, au point de l'année, puis le suit, comme un revenu en "
+        + "euros, le long du salaire moyen, année après année.");
+}
+
+/**
  * Le champ d'une période de conjoint collaborateur : le revenu du chef
  * d'entreprise, dont l'option ne cotise qu'une part, et que le forfait ignore
  * (D. 633-19-2). Ses bornes sont celles d'un revenu, que la saisie oppose aussi.
@@ -1736,6 +1759,9 @@ function champRevenuDuChef(nom, saisie, valeur, vide) {
 function champRevenu(nom, saisie, echelle, valeur, bref = false, siVide = "",
   statut = "") {
   const vide = siVide ? ` ; ${siVide}` : "";
+  if (saisie.enIndice(statut)) {
+    return champIndice(nom, saisie, echelle, valeur, bref, vide);
+  }
   if (saisie.enChiffreDAffaires(statut)) {
     return champChiffreDAffaires(nom, saisie, valeur, vide);
   }
@@ -1980,10 +2006,13 @@ function remplacementsUnite(saisie, echelle) {
   const versLesEuros = !saisie.revenu_en_euros;
   const autre = versLesEuros ? "euros_mois" : "moyen";
   // `niveaux` ramène les montants à l'unité du modèle quelle que soit celle de
-  // la saisie : la traduction dans l'autre sens part donc toujours de là.
-  const valeurs = saisie.niveaux(echelle).map((niveau) => nombreBrut(
-    versLesEuros ? echelle.eurosDansLesBornes(niveau)
-      : arrondir(niveau, DECIMALES_MULTIPLE),
+  // la saisie : la traduction dans l'autre sens part donc toujours de là. Un
+  // indice majoré n'a pas d'unité : il passe tel quel.
+  const lignes = saisie.lignesCarriere;
+  const valeurs = saisie.niveaux(echelle).map((niveau, index) => nombreBrut(
+    saisie.enIndice(lignes[index].statut) ? lignes[index].salaire
+      : versLesEuros ? echelle.eurosDansLesBornes(niveau)
+        : arrondir(niveau, DECIMALES_MULTIPLE),
   ));
   const remplacements = { unite_revenu: autre, salaire: valeurs[0] };
   valeurs.slice(1).forEach((valeur, index) => {
@@ -2152,6 +2181,28 @@ function microFormulaire(saisie) {
     + "d'affaires mensuel. Les architectes, ingénieurs-conseils, ostéopathes, "
     + "psychologues, moniteurs de ski, et qui y était affilié avant 2019, "
     + "relèvent de la Cipav.")}</div>`;
+}
+
+/**
+ * Ce que saisit le fonctionnaire (action 138, étape 10) : sa rémunération,
+ * comme avant, ou l'indice majoré de son bulletin de paie, que le modèle
+ * multiplie par la valeur du point. Le menu ne paraît qu'avec une période payée
+ * à l'indice, ou un choix déjà dit.
+ */
+function indiceFormulaire(saisie, echelle) {
+  const statuts = [...saisie.lignesCarriere.map((ligne) => ligne.statut),
+    saisie.emploi_retraite_statut];
+  if (!statuts.some((statut) => STATUTS_A_L_INDICE.includes(statut)) && !saisie.indice) {
+    return "";
+  }
+  return `<div class="grille">${g.liste("indice", "Fonctionnaire, vous saisissez",
+    INDICES, saisie.indice, "votre rémunération, ou votre indice majoré", {},
+    "Titulaire, civil ou militaire, votre traitement brut est votre indice majoré, "
+    + "celui de votre bulletin de paie, multiplié par la valeur du point : "
+    + `${g.nombre(100 * echelle.point, 2)} € par an pour cent points en `
+    + `${echelle.annee} (décret n° 85-1148 du 24 octobre 1985, article 3). Vos primes `
+    + "s'y ajoutent, à la part que vous en dites dans les options de modélisation ; "
+    + "sans elle, le modèle n'en compte aucune.")}</div>`;
 }
 
 /**
@@ -3686,8 +3737,10 @@ function revenuDeduit(contexte, comparaison, saisie, montants) {
     ? nombreBrut(arrondir(affiche, 0))
     : nombreBrut(arrondir(trouve.niveau, DECIMALES_MULTIPLE));
   // Une ligne de micro-entrepreneur relit un chiffre d'affaires : le revenu
-  // trouvé y remonte, brut, de son abattement.
+  // trouvé y remonte, brut, de son abattement. Une ligne payée à l'indice relit
+  // un indice : celui que le revenu trouvé suppose, au point de l'année.
   const valeurDe = (statut) => {
+    if (saisie.enIndice(statut)) return nombreBrut(indiceDeduit(saisie, echelle, brut));
     if (!saisie.enChiffreDAffaires(statut)) return valeur;
     const part = 1.0 - ABATTEMENTS_MICRO[saisie.micro];
     return saisie.revenu_en_euros
@@ -3709,7 +3762,7 @@ function revenuDeduit(contexte, comparaison, saisie, montants) {
   return `
 <div class="carte revenu-deduit">
   <h3 style="margin-top:0">Le revenu que votre pension suppose</h3>
-  <p class="cle-chiffre">${g.euros(affiche)} ${mot} par mois</p>${chiffreDAffairesDeduit(saisie, brut)}
+  <p class="cle-chiffre">${g.euros(affiche)} ${mot} par mois</p>${chiffreDAffairesDeduit(saisie, brut)}${phraseDeLIndice(saisie, echelle, brut)}
   <p>C'est le revenu d'activité dont le <strong>système actuel</strong> tire
   exactement la pension que vous avez saisie. Il vaut pour ${quand}. Les quatre
   montants ci-dessous sont calculés sur cette carrière-là.</p>
@@ -3731,6 +3784,28 @@ function chiffreDAffairesDeduit(saisie, brut) {
   const abattement = ABATTEMENTS_MICRO[saisie.micro];
   return `<p>Soit un chiffre d'affaires de ${g.euros(brut / (1.0 - abattement))} par `
     + `mois, que le droit abat de ${Math.round(100 * abattement)} %.</p>`;
+}
+
+/**
+ * L'indice majoré entier que suppose une rémunération brute mensuelle, à la
+ * part de primes de la saisie, dans les bornes du modèle : celui que le lien de
+ * reprise écrit, et que la page lit (`indicesDansLesBornes`).
+ */
+function indiceDeduit(saisie, echelle, brut) {
+  const [bas, haut] = echelle.indicesDansLesBornes(saisie.primes);
+  return Math.min(Math.max(Math.round(echelle.indice(brut, saisie.primes)), bas), haut);
+}
+
+/**
+ * L'indice que le revenu déduit suppose, quand la première période est payée à
+ * l'indice et que le fonctionnaire le dit.
+ */
+function phraseDeLIndice(saisie, echelle, brut) {
+  if (!saisie.enIndice(saisie.statut)) return "";
+  const primes = saisie.primes > 0
+    ? `, avec ${g.pourcentage(saisie.primes, false, 0)} de primes` : "";
+  return `<p>Soit l'indice majoré ${g.nombre(indiceDeduit(saisie, echelle, brut), 0)}, `
+    + `au point de ${echelle.annee}${primes}.</p>`;
 }
 
 /**
@@ -6292,7 +6367,7 @@ function mentionConversion(saisie, echelle) {
   }
   const sans = saisie.lignesCarriere.filter(
     (ligne) => !ligne.sans_emploi && !saisie.enChiffreDAffaires(ligne.statut)
-      && !echelle.convertit(ligne.statut),
+      && !saisie.enIndice(ligne.statut) && !echelle.convertit(ligne.statut),
   );
   if (!sans.length) {
     return "";
@@ -6355,9 +6430,11 @@ function remplacementsMontants(saisie, echelle, tauxPension) {
   // moyen est un rapport entre deux bruts, que le mode ne touche pas.
   if (saisie.revenu_en_euros) {
     const lignes = saisie.lignesCarriere;
-    // Un chiffre d'affaires n'est ni brut ni net : il passe tel quel.
+    // Un chiffre d'affaires n'est ni brut ni net, un indice non plus : ils
+    // passent tels quels.
     const traduits = lignes.map((ligne) => nombreBrut(Math.round(
-      saisie.enChiffreDAffaires(ligne.statut) ? ligne.salaire
+      saisie.enChiffreDAffaires(ligne.statut) || saisie.enIndice(ligne.statut)
+        ? ligne.salaire
         : versLeNet
           ? echelle.netMensuel(ligne.salaire, ligne.statut)
           : echelle.brutMensuelDirect(ligne.salaire, ligne.statut),
