@@ -1538,3 +1538,132 @@ def test_un_chiffre_d_affaires_trop_petit_se_refuse_en_chiffre_d_affaires():
     with pytest.raises(ErreurSite,
                        match=refus_de_la_saisie("Ce chiffre d'affaires, abattu à 29 %")):
         saisie.parcours(site().contexte.echelle(saisie))
+
+
+# LA DATE D'ENTRÉE DANS LA SAISIE EN NET (action 138, étape 9 ; note « la date
+# d'entrée dans la fiche de paie ») : un régime fermé ne l'est qu'aux nouveaux
+# entrants, et la saisie ne déclare un statut fermé qu'avant sa fermeture. Le
+# net remonte donc au brut par la fiche de la date d'entrée dans le statut, que
+# la carrière datera : l'ouverture du premier métier qui le porte, ou janvier de
+# la première année du relevé. Celle de l'agent de la SNCF entré avant 2020 (loi
+# du 27 juin 2018) retient 10,85 % du traitement, puis la CSG, 9,2 %
+# (L. 136-8, I, 1°), et la CRDS, 0,5 % (ordonnance n° 96-50, art. 19), sur
+# 98,25 % (L. 136-1-1, III, 1°) : 2 653,99 € nets par mois font 3 333,33 €
+# bruts, posés à la main. Sans la date, la saisie remontait par la fiche d'un
+# nouvel entrant, celle d'un salarié du privé : 3 352,62 €.
+_PART_NETTE_SNCF = 1.0 - 0.1085 - (0.092 + 0.005) * 0.9825
+_NET_SNCF = f"{40_000.0 * _PART_NETTE_SNCF / 12:.2f}"
+_SNCF = {"naissance": "1975", "statut": "agent_sncf", "debut": "1996-09",
+         "unite_revenu": "euros_mois", "montants": "net", "salaire": _NET_SNCF}
+
+
+def _bruts(champs):
+    """Le revenu de chaque métier, remonté au brut mensuel."""
+    saisie = saisie_du_portage(champs)
+    echelle = site().contexte.echelle(saisie)
+    return [echelle.mensuel(niveau) for niveau in saisie.niveaux(echelle)]
+
+
+def test_le_net_remonte_au_brut_par_la_fiche_de_la_date_d_entree():
+    """L'agent de la SNCF entré en 1996 ; celui qui y entre en 2015, après
+    dix-huit ans dans le privé, dont seul le métier de la SNCF remonte par sa
+    retenue ; l'activité exercée après le départ dans le même statut."""
+    assert _bruts(_SNCF) == pytest.approx([3333.33], abs=0.01)
+    [prive] = _bruts({**_SNCF, "statut": "salarie_prive_non_cadre"})
+    assert _bruts({**_SNCF, "statut": "salarie_prive_non_cadre",
+                   "metier2_debut": "2015-01", "metier2_statut": "agent_sncf",
+                   "metier2_salaire": _NET_SNCF}) == pytest.approx([prive, 3333.33], abs=0.01)
+    saisie = saisie_du_portage({**_SNCF, "liquidation": "62", "emploi_retraite": "63",
+                                "emploi_retraite_fin": "65"})
+    echelle = site().contexte.echelle(saisie)
+    emploi = saisie.emploi_retraite_declare(echelle)
+    assert echelle.mensuel(emploi.niveau_salaire) == pytest.approx(3333.33, abs=0.01)
+
+
+def test_le_liberal_non_reglemente_remonte_par_la_fiche_de_son_installation():
+    """Le statut reste ouvert, mais le régime change à l'installation : le
+    libéral non réglementé installé avant le 1er janvier 2019 « reste
+    affilié » à la CNAVPL et à la Cipav (loi n° 2017-1836, art. 15), et son
+    net remonte par la fiche de la profession libérale réglementée, qui les a
+    aussi ; installé depuis, il relève du régime général et du RCI, comme un
+    commerçant (L. 640-1, rédaction du 1er janvier 2018)."""
+    champs = {"naissance": "1985", "unite_revenu": "euros_mois", "montants": "net",
+              "salaire": "3000"}
+
+    def brut(statut, debut):
+        [mensuel] = _bruts({**champs, "statut": statut, "debut": debut})
+        return mensuel
+
+    assert brut("liberal_non_reglemente", "2018-12") == pytest.approx(
+        brut("profession_liberale", "2018-12"), abs=0.01)
+    assert brut("liberal_non_reglemente", "2019-01") == pytest.approx(
+        brut("commercant", "2019-01"), abs=0.01)
+    assert brut("profession_liberale", "2018-12") != pytest.approx(
+        brut("commercant", "2019-01"), abs=1.0)
+
+
+@pytest.mark.parametrize("champs", [
+    {"naissance": "1975", "statut": "agent_sncf", "debut": "1996-09"},
+    {"naissance": "1975", "statut": "salarie_prive_non_cadre", "debut": "1996-09",
+     "metier2_debut": "2015-01", "metier2_statut": "agent_sncf"},
+    # La ligne du micro-entrepreneur de la Cipav porte l'affiliation du libéral.
+    {"naissance": "1985", "statut": "micro_entrepreneur", "micro": "cipav",
+     "debut": "2009-01", "metier2_debut": "2020-01",
+     "metier2_statut": "profession_liberale"},
+    {"naissance": "1975", "liquidation": "62",
+     "releve": ",".join(f"{annee}:agent_sncf:30000:4" for annee in range(1996, 2026))},
+], ids=["un-metier", "deux-metiers", "micro-cipav", "releve"])
+def test_la_saisie_date_l_entree_comme_la_carriere(champs):
+    """La date d'entrée que la saisie donne à la fiche est celle que la
+    carrière bâtie de la même saisie retient, affiliation par affiliation."""
+    saisie = saisie_du_portage({**champs, "unite_revenu": "moyen", "salaire": "1"})
+    carriere = site().contexte.carriere(saisie)
+    for code in {ligne.affiliation for ligne in carriere.lignes}:
+        attendue, lue = carriere.date_entree(code), saisie.date_entree(code)
+        assert (lue.annee, lue.mois) == (attendue.annee, attendue.mois), code
+
+
+def test_le_releve_date_l_entree_de_l_activite_apres_le_depart():
+    """Sur un relevé, l'entrée est la première année qui porte le statut,
+    comme la carrière la date, et non le métier du formulaire, que le relevé
+    remplace : l'agent de la SNCF depuis 1996 qui travaille après son départ
+    dans le même statut y garde sa retenue."""
+    releve = ",".join(f"{annee}:agent_sncf:30000:4" for annee in range(1996, 2026))
+    saisie = saisie_du_portage({
+        "naissance": "1975", "liquidation": "62", "releve": releve,
+        "unite_revenu": "euros_mois", "montants": "net", "emploi_retraite": "63",
+        "emploi_retraite_fin": "65", "emploi_retraite_statut": "agent_sncf",
+        "emploi_retraite_salaire": _NET_SNCF})
+    echelle = site().contexte.echelle(saisie)
+    emploi = saisie.emploi_retraite_declare(echelle)
+    assert echelle.mensuel(emploi.niveau_salaire) == pytest.approx(3333.33, abs=0.01)
+
+
+def test_un_releve_illisible_se_refuse_aussi_en_net():
+    """La date d'entrée se lit dans le relevé, que le champ du revenu convertit
+    avant que la simulation ne le refuse : illisible, il ne date rien, et la
+    page dit son refus au lieu de tomber."""
+    corps = rendre("/simuler", {**_SNCF, "liquidation": "62", "releve": "1996:agent_sncf"})[1]
+    assert "Saisie refusée" in corps
+
+
+def test_la_page_traduit_le_net_par_la_fiche_de_la_date_d_entree():
+    """Ce que la page dit du net de l'agent de la SNCF entré en 1996 : le lien
+    vers le brut porte 3 333 € pour 2 654 € nets, celui qui en revient
+    2 654 €, et les repères du champ sont les nets de sa fiche — le SMIC et le
+    salaire moyen, moins sa retenue, la CSG et la CRDS."""
+    corps = html.unescape(rendre("/simuler", {**_SNCF, "salaire": "2654"})[1])
+    lien = re.search(r'<a href="#/simuler\?([^"]*)">brut</a>', corps)
+    assert lien, "la page ne porte pas de branche « brut »"
+    vers_brut = dict(parse_qsl(lien.group(1)))
+    assert vers_brut["salaire"] == "3333"
+    retour = html.unescape(rendre("/simuler", vers_brut)[1])
+    lien = re.search(r'<a href="#/simuler\?([^"]*)">net avant impôt</a>', retour)
+    assert lien, "la page ne porte pas de branche « net »"
+    assert dict(parse_qsl(lien.group(1)))["salaire"] == "2654"
+    reperes = re.search(r"Repères : SMIC ([^€]+)€, salaire moyen ([^€]+)€", corps)
+    assert reperes, "le champ du revenu ne donne plus ses repères"
+    smic, moyen = (int(re.sub(r"\D", "", chiffre)) for chiffre in reperes.groups())
+    echelle = site().contexte.echelle(saisie_du_portage(_SNCF))
+    assert smic == round(echelle.smic * _PART_NETTE_SNCF)
+    assert moyen == round(echelle.mensuel(1) * _PART_NETTE_SNCF)

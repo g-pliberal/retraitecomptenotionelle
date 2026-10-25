@@ -1444,8 +1444,40 @@ export class Saisie {
     if (!this.enChiffreDAffaires(statut)) {
       return [niveau, statut];
     }
-    const route = this.micro === "cipav" ? STATUT_MICRO_CIPAV : statut;
-    return [niveau * (1.0 - ABATTEMENTS_MICRO[this.micro]), route];
+    return [niveau * (1.0 - ABATTEMENTS_MICRO[this.micro]), this.affiliationDe(statut)];
+  }
+
+  /** L'affiliation d'une ligne de ce statut, celle que `parcours` lui donne. */
+  affiliationDe(statut) {
+    return this.enChiffreDAffaires(statut) && this.micro === "cipav"
+      ? STATUT_MICRO_CIPAV : statut;
+  }
+
+  /**
+   * Le mois d'entrée dans cette affiliation, tel que la carrière le datera
+   * (`Carriere.dateEntree`) : l'ouverture du premier métier qui la porte, ou
+   * janvier de la première année du relevé ; `null` si elle n'y figure pas, ou
+   * tant que le relevé ne se lit pas. C'est lui qui choisit la fiche de paie
+   * d'un régime fermé aux nouveaux entrants, par laquelle un net remonte au
+   * brut (`Contexte.echelle`) : l'agent de la SNCF entré avant 2020 garde sa
+   * retenue, et non les cotisations d'un salarié du privé.
+   */
+  dateEntree(affiliation) {
+    if (this.releveActif) {
+      let lignes;
+      try {
+        lignes = this.releveAnalyse();
+      } catch (erreur) {
+        if (!(erreur instanceof ErreurSaisie)) throw erreur;
+        return null;
+      }
+      const annees = lignes.filter((ligne) => ligne.affiliation === affiliation)
+        .map((ligne) => ligne.annee);
+      return annees.length ? new DateMois(Math.min(...annees), 1) : null;
+    }
+    const debuts = this.lignesCarriere.filter((ligne) => !ligne.sans_emploi
+      && this.affiliationDe(ligne.statut) === affiliation).map((ligne) => ligne.debut);
+    return debuts.length ? this.dateDe(Math.min(...debuts)) : null;
   }
 
   /**
