@@ -1263,13 +1263,16 @@ def test_les_morceaux_de_la_grille_tiennent_dans_le_pont():
     toutes les générations, 1,4 à 1,7 Mo avec le paquet des données : les
     3 742 cas types de la population de la vingt-quatrième version, sur quatre
     cœurs, faisaient huit morceaux de 468, qui ne passaient pas. Ils en font
-    dix-neuf, de 200 au plus, bout à bout dans leur ordre ; une petite grille
-    garde ses deux morceaux par cœur, cent cas types en huit, de treize et du
-    reste."""
+    trente-huit, de 100 au plus, bout à bout dans leur ordre : un morceau de
+    deux cents cas types de la population de la vingt-huitième version tenait
+    2,6 Go au plus, son portage compris, un de cent 1,7, et quatre cœurs
+    passaient sinon les 10 Go que la mesure ne doit pas passer. Une petite
+    grille garde ses deux morceaux par cœur, cent cas types en huit, de treize
+    et du reste."""
     grille = tuple(range(3742))
     morceaux = G.morceaux_de(grille, 4)
-    assert G.CAS_TYPES_PAR_MORCEAU == 200
-    assert len(morceaux) == 19 and max(len(morceau) for morceau in morceaux) == 200
+    assert G.CAS_TYPES_PAR_MORCEAU == 100
+    assert len(morceaux) == 38 and max(len(morceau) for morceau in morceaux) == 100
     assert tuple(cas for morceau in morceaux for cas in morceau) == grille
     assert [len(morceau) for morceau in G.morceaux_de(tuple(range(100)), 4)] == [13] * 7 + [9]
 

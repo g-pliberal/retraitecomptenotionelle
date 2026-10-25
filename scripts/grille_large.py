@@ -3222,8 +3222,12 @@ def _simuler_morceau(parametres: Parametres, morceau: tuple[CasType, ...]):
 #: 512 Mo, et chaque cas type y porte ses carrières de toutes les générations,
 #: 1,4 à 1,7 Mo avec le paquet des données. Les morceaux de 468 cas types de
 #: la population de la vingt-quatrième version, sur quatre cœurs, ne passaient
-#: pas ; ceux de 383, de la vingt-troisième, passaient de peu.
-CAS_TYPES_PAR_MORCEAU = 200
+#: pas ; ceux de 383, de la vingt-troisième, passaient de peu. Cent, et non plus
+#: deux cents (le 25 octobre 2026) : le morceau de deux cents cas types de la
+#: population de la vingt-huitième version tenait 2,6 Go au plus, le worker et
+#: son portage réunis, celui de cent 1,7, pour 1,54 et 1,65 seconde par cas
+#: type ; quatre workers passaient sinon les 10 Go.
+CAS_TYPES_PAR_MORCEAU = 100
 
 
 def morceaux_de(cas_types: tuple[CasType, ...], processus: int) -> list[tuple[CasType, ...]]:
