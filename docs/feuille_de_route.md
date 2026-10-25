@@ -7071,14 +7071,14 @@ une à une, les étapes 3 et 5. Les quatre gardes de l'étape 2 sont faites le
 
 ### 174. Les notes Lighthouse au maximum, sur toutes les pages du site — `en cours`
 
-**Reprise, au 25 octobre 2026.** Faites, les étapes 1, le diagnostic, et 2, les
-correctifs sans architecture : sur les dix routes, en mobile et en bureau,
-Accessibilité, Bonnes pratiques, SEO et Agentic à 100, CLS nul ; Performance
-de 58 à 60 en mobile et de 87 à 88 au bureau, sur un banc local. Le reste
-attend le moteur : FCP et LCP ne descendront qu'avec le pré-rendu (étape 4),
-qu'ouvrent les choix du propriétaire — les adresses par page, où se fabriquent
-les pages, le sort des résultats. Sans eux, peuvent commencer l'étape 3 et les
-titres des sections repliées. Détail : `174/2026-10-25-etape-2-correctifs.md`.
+**Reprise, au 25 octobre 2026.** Faites, les étapes 1 à 3 : le diagnostic, les
+correctifs sans architecture, la mesure au dépôt (`scripts/notes_lighthouse.py`).
+En ligne, sur les dix routes, Accessibilité, Bonnes pratiques, SEO et Agentic à
+100, CLS nul ; Performance de 59 à 60 en mobile, de 87 à 90 au bureau. Ce qui
+la baisse n'est plus que la vitesse, qui attend le pré-rendu (étape 4) : rien
+ne s'y fait sans les choix du propriétaire — les adresses par page, où se
+fabriquent les pages, le sort des résultats. Détail :
+`174/2026-10-25-etape-3-la-mesure-au-depot.md`.
 
 **D'où elle vient.** Le 25 octobre 2026, le propriétaire : « Je veux que
 toutes les pages aient un score maximal dans toutes les catégories lighthouse.
@@ -7094,7 +7094,8 @@ cinq : Performance, Accessibilité, Bonnes pratiques, SEO et Agentic Browsing.
    posé avec `<main>`, la police de titre sans bascule visible, l'ordre des
    titres, le contraste de l'écart des cartes, le rôle des figures légendées ;
    Accessibilité et Agentic à 100 sur les dix routes.
-3. **La mesure au dépôt** : un script qui rejoue les audits, et, dans la suite,
+3. **La mesure au dépôt**, faite le 25 octobre 2026 :
+   `scripts/notes_lighthouse.py`, qui rejoue les audits, et, dans la suite,
    les gardes qui n'ont pas besoin de Lighthouse.
 4. **Le pré-rendu** : une page HTML statique par adresse, graphiques et
    tableaux tenus sans script, le moteur sorti de l'en-tête.
