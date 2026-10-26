@@ -7071,15 +7071,15 @@ une à une, les étapes 3 et 5. Les quatre gardes de l'étape 2 sont faites le
 
 ### 174. Les notes Lighthouse au maximum, sur toutes les pages du site — `en cours`
 
-**Reprise, au 26 octobre 2026.** Faites, les étapes 1 à 3 : le diagnostic, les
-correctifs sans architecture, la mesure au dépôt (`scripts/notes_lighthouse.py`).
-En ligne, sur les dix routes, Accessibilité, Bonnes pratiques, SEO et Agentic à
-100, CLS nul ; Performance de 59 à 60 en mobile, de 87 à 90 au bureau. Ne la
-baisse plus que la vitesse, qui attend le pré-rendu (étape 4), donc les choix
-du propriétaire. Le premier, une adresse par page, a sa proposition écrite :
-des dossiers (`cout/`), le lecteur derrière le `#`, les anciennes adresses
-redirigées (`174/2026-10-26-proposition-des-adresses.md`). Elle attend sa
-réponse ; rien n'en est commencé.
+**Reprise, au 26 octobre 2026.** Faites, les étapes 1 à 3. En ligne, sur les
+dix routes, Accessibilité, Bonnes pratiques, SEO et Agentic à 100, CLS nul ;
+Performance de 59 à 60 en mobile, de 87 à 90 au bureau, que seule la vitesse
+baisse. Le propriétaire a tranché le 26 octobre : une adresse par page, selon
+`174/2026-10-26-proposition-des-adresses.md`, les pages commitées dans le
+dépôt, l'adresse canonique sous `partiliberalfrancais.fr/retraite/`. Par quoi
+commencer : l'étape 4 (a), le routeur qui lit les deux formes d'adresse, sorti
+d'`index.html` dans un module, sans rien changer pour le lecteur. Reste au
+propriétaire : le sort des résultats (étape 6).
 
 **D'où elle vient.** Le 25 octobre 2026, le propriétaire : « Je veux que
 toutes les pages aient un score maximal dans toutes les catégories lighthouse.
@@ -7098,13 +7098,24 @@ cinq : Performance, Accessibilité, Bonnes pratiques, SEO et Agentic Browsing.
 3. **La mesure au dépôt**, faite le 25 octobre 2026 :
    `scripts/notes_lighthouse.py`, qui rejoue les audits, et, dans la suite,
    les gardes qui n'ont pas besoin de Lighthouse.
-4. **Le pré-rendu** : une page HTML statique par adresse, graphiques et
-   tableaux tenus sans script, le moteur sorti de l'en-tête.
+4. **Une adresse par page, puis le pré-rendu**, dans l'ordre de la
+   proposition du 26 octobre 2026 : (a) le routeur lit les deux formes
+   d'adresse, sorti d'`index.html` dans un module partagé, sans rien changer
+   pour le lecteur ; (b) une page par dossier (`cout/`), les liens sous la
+   nouvelle forme, l'accueil qui redirige les anciennes adresses, le document
+   d'intégration mis à jour le même jour ; (c) le pré-rendu : chaque page
+   toute faite, graphiques et tableaux tenus sans script, le moteur sorti de
+   l'en-tête, les pages commitées par la fabrique, chacune disant son adresse
+   canonique sous `partiliberalfrancais.fr/retraite/`.
 5. **Le moteur à la demande** : au premier calcul, ou dans un Web Worker.
 6. **Les résultats** : ce qui s'y gagne, sans le 100 de Performance.
 
-**Ce que le propriétaire tranche** : les adresses par page (`…/cout/` au lieu
-de `…/#/cout`, les anciennes redirigées), sans quoi pas de pré-rendu ; où se
-fabriquent les pages, commitées par la fabrique ou faites au déploiement, dans
-une garde ; et si les résultats d'une simulation restent sous 100 en
-Performance.
+**Ce que le propriétaire a tranché**, le 26 octobre 2026 : les adresses par
+page, telles que la proposition les décrit — des dossiers, le lecteur derrière
+le `#`, les anciennes adresses redirigées ; les pages dans le dépôt, commitées
+par la fabrique, puisque la copie du parti se fait en copiant le dépôt ;
+l'adresse qui fait foi pour les moteurs de recherche, celle de la copie du
+parti. L'hôte sera vu avec le propriétaire à sa prochaine copie (ses deux
+retouches d'`index.html`, la classe `plf-embedded` à chaque chargement du
+cadre). **Ce qu'il tranche encore** : si les résultats d'une simulation
+restent sous 100 en Performance.
