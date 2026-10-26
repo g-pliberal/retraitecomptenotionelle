@@ -158,9 +158,11 @@ serveur de la copie, ce que le document d'intégration promet.
 - *Les témoins* des pages : chaque lien qu'elles écrivent change de forme ; le
   diff ne doit montrer que cela.
 - *La documentation* : le document d'intégration (12 adresses citées), la
-  carte du dépôt (12), le parcours de présentation (3), que
-  `tests/test_parcours.py` rejoue, le README (2), l'architecture (1). Les
-  récits de la feuille de route gardent les anciennes, vraies à leur date.
+  carte du dépôt (12), dont `tests/test_carte_du_depot.py` confronte le
+  tableau des pages au site et n'y lit que des adresses en `#/`, le parcours
+  de présentation (3), que `tests/test_parcours.py` rejoue, le README (2),
+  l'architecture (1). Les récits de la feuille de route gardent les
+  anciennes, vraies à leur date.
 
 Ni les scripts ni le paquet Python n'écrivent ces adresses. Le dépôt n'a ni
 `404.html`, ni `sitemap.xml`, ni `robots.txt` : les deux derniers pourront
