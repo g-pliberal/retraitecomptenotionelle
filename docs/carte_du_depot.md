@@ -90,7 +90,7 @@ flowchart LR
   adresse["L'adresse<br/>#/simuler?…"]
   releve["Relevé de carrière<br/>du visiteur, lu sur place"]
   paquet["Paquet de données<br/>moteur/donnees.json"]
-  routeur["Routeur<br/>index.html, puis<br/>rendre() de pages.js"]
+  routeur["Routeur<br/>moteur/js/routeur.js, puis<br/>rendre() de pages.js"]
   simuler["Simuler<br/>saisie.js lit et vérifie"]
   agregees["Coût, Carrières types,<br/>Droits non cotisés"]
   texte["Programme, Pourquoi changer,<br/>Partager, Le saviez-vous ?,<br/>Méthode et sources"]

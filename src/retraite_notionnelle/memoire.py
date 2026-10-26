@@ -163,6 +163,9 @@ HORS_DU_MODELE = (
     # Le texte des pages, qu'aucun module du portage que le pont importe
     # n'importe (action 161, étape 5) : ``tests/test_outillage.py`` le tient.
     "moteur/js/pages.js",
+    # Le routeur du site, sorti d'``index.html`` (action 174) : le pont ne
+    # l'importe pas davantage, et le même fichier de tests le tient.
+    "moteur/js/routeur.js",
 )
 
 #: Les calculs de ce processus, par leur nom : l'objet picklé, dont chaque

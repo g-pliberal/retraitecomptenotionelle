@@ -30,6 +30,15 @@ FEUILLE_DE_STYLE = (Path(__file__).resolve().parents[1] / "moteur" / "style.css"
     encoding="utf-8")
 
 
+def page_et_routeur() -> str:
+    """``index.html`` et son routeur, ``moteur/js/routeur.js``, bout à bout : ce
+    que les tests lisent du script de la page, depuis qu'il en est sorti dans
+    son module (action 174)."""
+    racine = Path(__file__).resolve().parents[1]
+    return "\n".join((racine / chemin).read_text(encoding="utf-8")
+                     for chemin in ("index.html", "moteur/js/routeur.js"))
+
+
 #: Le contexte et les pages rendues, un par processus : les trois fichiers du
 #: site partagent ce que le seul ``test_web.py`` partageait avant son
 #: découpage, sans quoi chaque processus les refaisait trois fois — une minute

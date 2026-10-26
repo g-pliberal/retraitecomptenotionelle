@@ -30,7 +30,7 @@ from retraite_notionnelle.web.site import disponible, module, rendre, site
 from outils_pont import saisie_du_portage
 from outils_web import (
     FEUILLE_DE_STYLE, PAGES_AGREGEES, SIMULATION_TEMOIN, TITRES, _hors_depliants,
-    _prose, contexte, g, montants_du_portage, page, pages, saisies,
+    _prose, contexte, g, montants_du_portage, page, page_et_routeur, pages, saisies,
 )
 
 
@@ -290,7 +290,7 @@ def test_les_pages_longues_portent_leur_plan():
 
     from pathlib import Path
 
-    page_html = (Path(__file__).resolve().parents[1] / "index.html").read_text(encoding="utf-8")
+    page_html = page_et_routeur()
     assert 'closest("a[data-vers]")' in page_html and "noeud.open = true" in page_html
 
 
@@ -335,7 +335,7 @@ def test_l_inventaire_est_une_table_qui_se_filtre_et_se_trie(contexte):
 
     from pathlib import Path
 
-    page_html = (Path(__file__).resolve().parents[1] / "index.html").read_text(encoding="utf-8")
+    page_html = page_et_routeur()
     assert 'closest?.(".filtres[data-cible]")' in page_html
     assert 'closest("th > button.tri")' in page_html and 'setAttribute("aria-sort"' in page_html
 
@@ -1306,7 +1306,7 @@ def test_les_adresses_des_pages_parties_menent_a_leur_contenu():
     portage = (racine / "moteur" / "js" / "pages.js").read_text(encoding="utf-8")
     assert '"/trajectoire": ["/simuler", "cumul"],' in portage
     assert '"/donnees": ["/methode", "sources"],' in portage
-    script = (racine / "index.html").read_text(encoding="utf-8")
+    script = page_et_routeur()
     assert "ANCIENNES_ROUTES[route]" in script
     assert "if (section) { ouvrirSection(section); }" in script
 
@@ -1344,7 +1344,7 @@ def test_sur_un_telephone_le_groupe_pour_verifier_se_replie():
     assert 'nav .deplier[aria-expanded="false"] + .liens { display: none; }' in etroit[1]
 
     from pathlib import Path
-    script = (Path(__file__).resolve().parents[1] / "index.html").read_text(encoding="utf-8")
+    script = page_et_routeur()
     assert 'closest?.("nav button.deplier")' in script
     assert 'bouton.setAttribute("aria-expanded", String(ouvrir));' in script
 
@@ -1529,7 +1529,7 @@ def test_la_page_donnees_se_lit_comme_une_base():
 
     from pathlib import Path
 
-    page_html = (Path(__file__).resolve().parents[1] / "index.html").read_text(encoding="utf-8")
+    page_html = page_et_routeur()
     assert 'compte.dataset.unite' in page_html
 
 
@@ -1544,7 +1544,7 @@ def test_chaque_route_porte_sa_description():
         assert 60 <= len(description) <= 250, f"{chemin} : {len(description)} caractères"
         assert description.endswith("."), chemin
     racine = Path(__file__).resolve().parents[1]
-    page = (racine / "index.html").read_text(encoding="utf-8")
+    page = page_et_routeur()
     assert "DESCRIPTIONS[cible.chemin]" in page
     assert "description.content = " in page
     # La description de l'accueil est celle que le HTML servi porte déjà : la
@@ -1864,8 +1864,7 @@ def test_le_routeur_ne_prend_pas_une_adresse_reglee_pour_une_simulation():
     """
     from pathlib import Path
 
-    page = (Path(__file__).resolve().parents[1] / "index.html").read_text(
-        encoding="utf-8")
+    page = page_et_routeur()
     assert "CLES_MODELISATION" in page, (
         "le routeur doit savoir distinguer une règle d'un champ de carrière"
     )
@@ -2184,18 +2183,16 @@ def test_la_bascule_des_resultats_precede_les_montants():
 
 
 def test_le_script_de_la_page_s_analyse():
-    """Le script d'``index.html`` n'est chargé par aucun test dans un navigateur :
-    une déclaration en double y a rendu le site blanc le 19 septembre 2026 sans
-    qu'aucun test ne le dise. ``node --check`` le lit comme le navigateur le
-    lira, et refuse ce qui ne s'analyse pas."""
+    """Une déclaration en double dans le script de la page l'a rendue blanche le
+    19 septembre 2026 sans qu'aucun test ne le dise. ``node --check`` le lit
+    comme le navigateur le lira, et refuse ce qui ne s'analyse pas : le
+    routeur, sorti d'``index.html`` dans son module (action 174), qui ne garde
+    plus de script en ligne."""
     import subprocess
-    import tempfile
     from pathlib import Path
-    page = (Path(__file__).resolve().parents[1] / "index.html").read_text(encoding="utf-8")
-    script = re.search(r'<script type="module">(.*?)</script>', page, re.S).group(1)
-    with tempfile.NamedTemporaryFile("w", suffix=".mjs", delete=False, encoding="utf-8") as fichier:
-        fichier.write(script)
-    resultat = subprocess.run(["node", "--check", fichier.name],
+    racine = Path(__file__).resolve().parents[1]
+    assert '<script type="module">' not in (racine / "index.html").read_text(encoding="utf-8")
+    resultat = subprocess.run(["node", "--check", str(racine / "moteur" / "js" / "routeur.js")],
                               capture_output=True, text=True, encoding="utf-8")
     assert resultat.returncode == 0, resultat.stderr
 

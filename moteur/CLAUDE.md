@@ -34,7 +34,7 @@ types et Droits non cotisés lisent ce que le Python en a fabriqué
   aucun grand vide (action 173). Un graphique se dessine à la largeur de la
   colonne, que `rendre` reçoit et pose au gabarit (`g.poserEcran`) ; les
   témoins sont rendus au large. Un tableau trop large ne défile pas : il se
-  replie (`plierLesTableaux`, dans `index.html`).
+  replie (`plierLesTableaux`, dans `moteur/js/routeur.js`).
 - **L'outillage d'audit d'interface** (Impeccable, Web Interface Guidelines,
   Playwright CLI) : `.claude/skills/`, mis en place par
   `scripts/setup_ui_tools.sh` ; les notes Lighthouse des dix routes, par

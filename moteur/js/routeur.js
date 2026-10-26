@@ -1,0 +1,2983 @@
+/**
+ * Le routeur du site : ce que fait la page une fois chargée — lire l'adresse,
+ * préparer le contexte, rendre la page demandée, répondre aux gestes du
+ * lecteur (formulaire, bascules, graphiques, partage, relevé déposé).
+ *
+ * Il vivait en ligne dans ``index.html`` ; il en est sorti (action 174) pour
+ * que les pages posées chacune dans son dossier le partagent, et que le
+ * navigateur ne le charge qu'une fois. Ses imports et le paquet de données se
+ * résolvent depuis lui, non depuis la page qui le charge.
+ */
+import {
+  CLES_MODELISATION, CODES_SANS_EMPLOI, RELEVE_MAXIMUM, Saisie,
+} from "./saisie.js";
+import { Contexte, VERSION_PAQUET } from "./contexte.js";
+import {
+  ANCIENNES_ROUTES, DESCRIPTIONS, TITRES, rendre, requeteBasculee, requeteSansPeriode,
+} from "./pages.js";
+import * as gabarit from "./gabarit.js";
+import { NOMS_DE_MOIS } from "./calendrier.js";
+import { revenuDesPoints } from "./droit/releve.js";
+
+// Le paquet de données, résolu depuis ce module et non depuis la page : une
+// page posée dans un dossier (`cout/`) le trouve au même endroit. C'est
+// l'adresse que le `<link rel="preload">` de l'en-tête désigne : la requête
+// qui s'en écarterait téléchargerait le paquet deux fois.
+const PAQUET = new URL("../donnees.json", import.meta.url);
+
+// La signature des images composées ici vient du gabarit, comme tout ce
+// que le site écrit : elle ne doit exister qu'à un seul endroit.
+const { SIGNATURE, SIGNATURE_SITE, ADRESSE_SITE } = gabarit;
+
+const amorce = document.getElementById("amorce");
+let contexte = null;
+
+function echec(titre, detail) {
+  amorce.innerHTML = `<h1>${titre}</h1><div class="replique">${detail}</div>`;
+}
+
+// Ce qu'un message d'erreur peut porter de texte arbitraire — le nom d'un
+// fichier, une chaîne renvoyée par le navigateur — ne doit jamais être lu comme
+// du balisage. La page n'échappait que les chevrons, et seulement par endroits.
+function neutraliser(texte) {
+  return String(texte).replace(/[&<>"']/g, (caractere) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#x27;",
+  }[caractere]));
+}
+
+// -- démarrage ---------------------------------------------------------------
+
+async function preparer() {
+  // Requête volontairement nue : c'est celle que décrit le <link rel="preload">
+  // de l'en-tête, `crossorigin` compris. Toute option qui s'en écarterait ferait
+  // manquer le préchargement, et le paquet serait téléchargé deux fois.
+  const reponse = await fetch(PAQUET, { cache: "force-cache" });
+  if (!reponse.ok) {
+    throw new Error(`moteur/donnees.json introuvable (${reponse.status})`);
+  }
+  let paquet = await reponse.json();
+  // UN PAQUET D'AVANT CE CODE, que le navigateur a gardé : on le redemande au
+  // serveur, sans cache. Les pages qui le lisaient le rattrapaient chacune à
+  // sa façon — deux refaisaient le calcul qu'il ne portait pas encore — ;
+  // depuis le 11 octobre 2026, aucune n'a plus à savoir qu'il en existe
+  // d'autres que celui de sa version (`VERSION_PAQUET`, contexte.js).
+  if (paquet.version !== VERSION_PAQUET) {
+    const frais = await fetch(PAQUET, { cache: "reload" });
+    if (frais.ok) { paquet = await frais.json(); }
+    if (paquet.version !== VERSION_PAQUET) {
+      throw new Error(`moteur/donnees.json est en version ${paquet.version}, `
+        + `et ce code lit la ${VERSION_PAQUET} : rechargez la page dans un moment`);
+    }
+  }
+
+  contexte = new Contexte(paquet);
+  // Construit le simulateur du jeu de paramètres par défaut — séries, tables de
+  // mortalité et catalogue des régimes. C'est la seule opération qui coûte, et
+  // les simulations suivantes la réutilisent.
+  contexte.simulateur();
+}
+
+// -- rendu -------------------------------------------------------------------
+
+function coquille() {
+  amorce.remove();
+  // L'en-tête est posé plein, celui de la page qu'on ouvre. Vide sous l'écran
+  // d'attente, il se remplissait avec la page et poussait tout <main> de la
+  // hauteur du bandeau : le décalage que Lighthouse comptait près de 1 (action
+  // 174). Le rendu le repose à l'identique, ses liens portant alors les
+  // réglages du lecteur.
+  document.body.insertAdjacentHTML("beforeend",
+    `<div id="entete">${gabarit.entete(adresse().chemin)}</div>`
+    + '<main id="contenu" tabindex="-1"></main>');
+}
+
+// Le pied est posé une fois, à côté de <main> et non dedans : un <footer>
+// imbriqué dans <main> n'est pas un repère « contentinfo » et disparaît de la
+// navigation par repères. Il est statique, le reconstruire à chaque rendu ne
+// servait rien non plus. Il attend le premier rendu : posé sous l'écran
+// d'attente, il s'y voyait, puis plongeait de plusieurs écrans quand la page
+// arrivait — l'autre moitié du même décalage.
+function poserLePied() {
+  if (!document.querySelector("body > footer")) {
+    document.body.insertAdjacentHTML("beforeend", gabarit.pied());
+  }
+}
+
+// Ce que la synthèse vocale doit entendre après un calcul. Le contenu de <main>
+// est remplacé en bloc : sans cette annonce, valider le formulaire ne produit
+// aucun retour audible, alors que c'est l'interaction centrale du site.
+function annoncer(texte) {
+  const region = document.getElementById("annonce");
+  // Vider d'abord : deux calculs qui donnent le même texte doivent s'entendre
+  // deux fois, et une région dont le contenu ne change pas reste muette.
+  region.textContent = "";
+  setTimeout(() => { region.textContent = texte; }, 50);
+}
+
+// Résumé parlé d'une page rendue : le refus de saisie s'il y en a un, sinon les
+// scénarios chiffrés, sinon le seul titre.
+function resume(titre, contenu) {
+  const refus = contenu.querySelector(".erreur");
+  if (refus) { return `${titre}. ${refus.textContent.trim()}`; }
+
+  // « .principal .somme », et non « .mensuel » : cette dernière classe n'a
+  // jamais existé dans le HTML rendu, si bien que le montant était toujours
+  // indéfini, la liste toujours vide, et l'annonce réduite au seul titre —
+  // exactement ce que cette région est là pour éviter.
+  const scenarios = [...contenu.querySelectorAll(".scenario")].map((bloc) => {
+    const nom = bloc.querySelector(".titre")?.textContent.trim();
+    const mensuel = bloc.querySelector(".principal .somme")?.textContent.trim();
+    // L'ÉTIQUETTE EST LUE, ELLE AUSSI. Le système 4 annonce « retraite
+    // jusqu'à » : son montant est un plafond, qu'on n'atteint qu'en plaçant
+    // les cinq points rendus. Sans ce mot, l'annonce vocale donnait pour
+    // acquis ce que l'œil lit comme conditionnel — un écart de sens entre
+    // deux lectures de la même page, et c'est précisément ce que cette
+    // région est là pour éviter. Le mot « retraite » lui-même ne se dit pas :
+    // le titre du scénario vient de le dire.
+    const nuance = (bloc.querySelector(".principal .categorie")?.textContent
+      .trim() ?? "").replace(/^retraite\s*/i, "");
+    return nom && mensuel
+      ? `${nom} : ${nuance ? `${nuance} ` : ""}${mensuel} par mois` : null;
+  }).filter(Boolean);
+
+  return scenarios.length
+    ? `${titre}. ${scenarios.length} scénarios calculés. ${scenarios.join(". ")}.`
+    : `${titre}.`;
+}
+
+function chargement(message) {
+  return `<div class="chargement">${message}<div class="jauge"><span></span></div></div>`;
+}
+
+function adresse() {
+  return lireAdresse(location.hash);
+}
+
+// La requête de l'adresse courante, telle qu'elle est écrite : c'est elle que
+// la mémoire du simulateur compare, au caractère près.
+function requeteDeLAdresse() {
+  const brut = location.hash;
+  const separation = brut.indexOf("?");
+  return separation === -1 ? "" : brut.slice(separation + 1);
+}
+
+function lireAdresse(ancre) {
+  const brut = String(ancre || "").replace(/^#/, "") || "/";
+  const separation = brut.indexOf("?");
+  const chemin = separation === -1 ? brut : brut.slice(0, separation);
+  const requete = separation === -1 ? "" : brut.slice(separation + 1);
+  const parametres = {};
+  new URLSearchParams(requete).forEach((valeur, cle) => { parametres[cle] = valeur; });
+  // Les adresses partagées avant que l'accueil ne devienne le programme
+  // portaient la simulation sur « #/ » ; leur rendre le formulaire coûte une
+  // ligne, et les perdre coûterait la simulation qu'elles décrivent.
+  //
+  // Une adresse qui ne porte que des RÈGLES n'en est pas une : depuis que les
+  // réglages suivent le lecteur, tous les liens du site les portent, celui de
+  // l'accueil compris. Sans cette réserve, cliquer « Programme » après avoir
+  // changé l'indexation envoyait sur le simulateur.
+  const route = chemin || "/";
+  const ancienne = route === "/" && Object.keys(parametres).some(
+    (cle) => !CLES_MODELISATION.includes(cle),
+  );
+  // Les adresses des deux pages parties le 23 septembre 2026 — « Cumul versé »
+  // et « Sources » — mènent à ce qui les a remplacées, et y ouvrent la section
+  // qui porte leur contenu. Le site parent et des partages les portent encore.
+  const [remplacante, section] = ANCIENNES_ROUTES[route] || [];
+  if (remplacante) { return { chemin: remplacante, parametres, section }; }
+  return { chemin: ancienne ? "/simuler" : route, parametres, section: "" };
+}
+
+// Ce qu'annonce l'écran d'attente des pages qui calculent longtemps : mieux
+// vaut dire ce qui prend du temps que laisser une jauge tourner sans motif.
+const MESSAGES_ATTENTE = {
+  "/cas-types": "Calcul des 12 cas types sur 7 générations…",
+  // L'accueil ne calcule rien : annoncer un « calcul en cours » y serait faux.
+  // Partager non plus, depuis qu'elle lit le bilan figé du paquet.
+  "/": "Ouverture…",
+  "/partager": "Ouverture…",
+  "/cout": "Calcul des 12 cas types sur 28 générations, puis de cent onze "
+    + "années de dépense, observées puis projetées…",
+  "/avantages": "Recalcul de chaque carrière type sans ses avantages non "
+    + "contributifs, puis de soixante-six années de dépense…",
+  "/risque": "Lecture des comptes du système de retraite, observés puis "
+    + "projetés jusqu'en 2070…",
+};
+
+// Les options de modélisation restent ouvertes d'une simulation à l'autre :
+// qui les a dépliées une fois y revient.
+let optionsDepliees = false;
+
+// Le premier rendu ne déplace pas le focus — voir `reprendre`.
+let premierRendu = true;
+// La section qu'un renvoi venu d'une autre page demande d'ouvrir une fois la
+// page d'arrivée rendue — voir « le plan d'une page longue », plus bas.
+let sectionEnAttente = null;
+
+// La route dont la page est affichée, et la requête sous laquelle elle l'a
+// été : un rendu qui ne change pas de route se fait SUR PLACE — voir
+// `afficher`. Nulle tant que rien n'est affiché, ou quand le dernier rendu a
+// échoué.
+let routeAffichee = null;
+let requeteAffichee = "";
+
+// Un numéro par rendu. Deux rendus peuvent se chevaucher — un second clic
+// pendant un calcul long, un retour arrière — ; seul le plus récent pose sa
+// page, et l'autre s'efface sans rien toucher.
+let numeroDeRendu = 0;
+
+// Vrai dès qu'une page a été rendue sous des règles qui ne sont pas celles
+// par défaut. Voir `reprendreLaSaisie` : c'est ce qui dit si une adresse sans
+// règles est un choix du lecteur, ou une absence d'avis.
+let reglesVues = false;
+
+// La largeur de la colonne, que les graphiques épousent : le gabarit les
+// dessine à cette largeur sous 720 points, au large au-delà (`poserEcran`).
+// Elle se mesure sur <main>, moins ses marges. `ecranRendu` est celle sous
+// laquelle la page affichée a été dessinée — `null` au large —, et une
+// colonne qui change de largeur — un téléphone qu'on tourne, une fenêtre
+// qu'on étire — fait redessiner la page sur place quand ses tracés ne
+// tombent plus juste. Les tableaux, eux, se replient sans redessin. Au large,
+// les tracés qu'une carte pose de front se dessinent à la demi-colonne
+// (`demiRendue`) : une page qui en porte se redessine aussi quand elle change.
+let ecranRendu = null;
+let demiRendue = null;
+
+function largeurDeLaColonne() {
+  const contenu = document.getElementById("contenu");
+  if (!contenu) { return null; }
+  const style = getComputedStyle(contenu);
+  return contenu.clientWidth - parseFloat(style.paddingLeft || "0")
+    - parseFloat(style.paddingRight || "0");
+}
+
+let attenteDeRedessin = null;
+window.addEventListener("resize", () => {
+  clearTimeout(attenteDeRedessin);
+  attenteDeRedessin = setTimeout(() => {
+    const [attendue, demi] = gabarit.ecransDe(largeurDeLaColonne());
+    const traces = document.querySelector(
+      "#contenu :is(figure.graphique, figure.sankey, figure.cascade)");
+    const deFront = document.querySelector("#contenu .de-front");
+    if (traces && routeAffichee
+        && (attendue !== ecranRendu || (deFront && demi !== demiRendue))) { afficher(); }
+  }, 250);
+});
+
+async function afficher() {
+  const numero = ++numeroDeRendu;
+  // Ce que le lecteur vient de faire, s'il vient de faire quelque chose : un
+  // retour arrière n'a pas de déclencheur, et un déclencheur de plus de deux
+  // secondes n'est pas celui de ce rendu — un clic dont la navigation a été
+  // annulée, par exemple.
+  const action = declencheur && Date.now() - declencheur.temps < 2000
+    ? declencheur : null;
+  declencheur = null;
+
+  let cible = adresse();
+  // Qui revient sur le simulateur sans carrière dans l'adresse — par le
+  // bandeau, par un signet, le lendemain — retrouve la sienne.
+  const reprise = cible.chemin === "/simuler"
+    && !porteUneCarriere(cible.parametres) && reprendreLaSaisie(cible.parametres);
+  if (reprise) { cible = adresse(); }
+
+  const contenu = document.getElementById("contenu");
+  // `details.options`, et non le premier `<details>` venu : le formulaire en
+  // porte deux depuis qu'on peut y coller un relevé de carrière, et le relevé
+  // vient AVANT les options. Un sélecteur de position aurait fait rouvrir le
+  // relevé à qui avait déplié les options.
+  const details = contenu.querySelector("form details.options");
+  if (details) { optionsDepliees = details.open; }
+
+  // SUR PLACE, RIEN NE SE VIDE. Remplacer la page par l'écran d'attente la
+  // réduisait à quelques lignes : le navigateur ramenait le défilement en
+  // haut, puis le rendu le renvoyait plus bas — deux sauts à chaque clic sur
+  // une bascule, sur « Calculer », sur l'année de la cascade. Quand la route
+  // ne change pas, la page reste en place, estompée le temps du calcul, et
+  // l'on note ce qui était ouvert et où se trouvait ce qu'on a cliqué, pour
+  // le retrouver au même endroit de l'écran. Changer de page, en revanche, se
+  // lit depuis le haut : l'écran d'attente y a toute sa place.
+  const surPlace = cible.chemin === routeAffichee;
+  const ouverts = surPlace ? detailsOuverts(contenu) : [];
+  const repere = surPlace && action ? repereDe(action.element, contenu) : null;
+
+  document.body.classList.add("calcul-en-cours");
+  contenu.setAttribute("aria-busy", "true");
+  if (!surPlace) {
+    contenu.innerHTML = chargement(
+      MESSAGES_ATTENTE[cible.chemin] || "Calcul en cours…",
+    );
+  }
+  // Laisse le navigateur peindre l'attente avant de bloquer sur le calcul.
+  await new Promise((suite) => { setTimeout(suite, 20); });
+  if (numero !== numeroDeRendu) { return; }
+
+  let titre;
+  let corps;
+  try {
+    [titre, corps] = rendre(contexte, cible.chemin in TITRES ? cible.chemin : "/",
+      cible.parametres, largeurDeLaColonne());
+    ecranRendu = gabarit.ecran();
+    demiRendue = gabarit.demiColonne();
+  } catch (erreur) {
+    document.body.classList.remove("calcul-en-cours");
+    contenu.removeAttribute("aria-busy");
+    contenu.innerHTML = '<div class="erreur"><strong>Le calcul a échoué.</strong> '
+      + neutraliser(erreur) + "</div>";
+    poserLePied();
+    routeAffichee = null;
+    annoncer(`Le calcul a échoué. ${String(erreur)}`);
+    return;
+  }
+
+  document.getElementById("entete").innerHTML = gabarit.entete(cible.chemin);
+  contenu.innerHTML = corps;
+  poserLePied();
+  routeAffichee = cible.chemin;
+  requeteAffichee = requeteDeLAdresse();
+  if (gabarit.options()) { reglesVues = true; }
+  document.title = `${titre} — Retraite en comptes notionnels`;
+  // La description suit la route, comme le titre : c'est ce qu'un partage ou
+  // un enregistrement de la page reprend. Le gabarit la porte, une par page.
+  const description = document.querySelector('meta[name="description"]');
+  if (description && DESCRIPTIONS[cible.chemin]) {
+    description.content = DESCRIPTIONS[cible.chemin];
+  }
+  document.body.classList.remove("calcul-en-cours");
+  contenu.removeAttribute("aria-busy");
+
+  const nouveauDetails = contenu.querySelector("form details.options");
+  if (nouveauDetails && optionsDepliees) { nouveauDetails.open = true; }
+  rouvrir(contenu, ouverts);
+  plierLesTableaux(contenu);
+  daterStatuts(contenu);
+  suivreLesDates(contenu);
+  brancherLeDepot(contenu);
+  const memoire = retenir(contenu, cible, action, reprise);
+  preremplirLeSimulateurCourt(contenu);
+  annoncer((memoire ? `${memoire} ` : "") + resume(titre, contenu));
+  for (const figure of contenu.querySelectorAll("figure.graphique")) {
+    dimensionnerLecture(figure);
+  }
+  // En dernier : tout ce qui change la hauteur de la page — dépliants
+  // rouverts, saisie remise dans ses champs, légendes dimensionnées — doit
+  // être fait avant qu'on mesure où poser la lecture.
+  reprendre(contenu, { action, surPlace, repere });
+  // Puis la section qu'une ancienne adresse, ou un renvoi venu d'une autre
+  // page, désigne : on l'ouvre, et on y va. Un renvoi qui n'a pas trouvé la
+  // sienne ne survit pas au rendu suivant.
+  const section = cible.section || sectionEnAttente;
+  sectionEnAttente = null;
+  if (section) { ouvrirSection(section); }
+}
+
+// -- les statuts, aux seules dates où leur régime recrutait -------------------
+//
+// Le formulaire arrive avec les statuts fermés à la date d'entrée saisie déjà
+// grisés — c'est le modèle qui les grise, en Python comme ici. Mais l'année de
+// naissance et l'âge de début changent sous les yeux du lecteur, et le menu
+// doit suivre sans attendre le calcul : un mineur né en 2000 ne doit pas
+// pouvoir se déclarer mineur. Chaque option fermée porte sa date en
+// `data-fermeture` (« 2010-09 » : septembre 2010), et le tri se refait ici à
+// chaque saisie. L'option déjà choisie n'est jamais désactivée : un navigateur
+// n'envoie pas la valeur d'une option désactivée, et la saisie repartirait sur
+// le statut par défaut sans que rien ne le dise — c'est le calcul qui refuse.
+function rangMois(annee, mois) { return annee * 12 + (mois - 1); }
+
+// Le rang du mois qu'une date de formulaire porte : « 1996-09-01 » -> le mois
+// de septembre 1996. Les champs date renvoient TOUJOURS cette forme, quelle que
+// soit celle — « 01/09/1996 » en français — sous laquelle ils l'affichent ; le
+// jour ne sert à rien, le modèle comptant en mois.
+const MOIS_ISO = /^(\d{4})-(\d{2})/;
+
+function rangDeDate(valeur) {
+  const trouve = MOIS_ISO.exec(String(valeur || ""));
+  return trouve ? rangMois(Number(trouve[1]), Number(trouve[2])) : null;
+}
+
+function dateDeRang(rang) {
+  const annee = String(Math.floor(rang / 12)).padStart(4, "0");
+  const mois = String((rang % 12) + 1).padStart(2, "0");
+  return `${annee}-${mois}-01`;
+}
+
+function daterStatuts(contenu) {
+  const formulaire = contenu.querySelector("form");
+  if (!formulaire) { return; }
+  const lire = (nom) => {
+    const champ = formulaire.elements[nom];
+    return champ ? rangDeDate(champ.value) : null;
+  };
+  const trier = () => {
+    const naissance = lire("naissance");
+    for (const menu of formulaire.querySelectorAll("select[name$='statut']")) {
+      const rang = menu.name === "statut" ? 1 : Number(menu.name.replace(/\D/g, ""));
+      // Une période sans emploi ne paie aucun revenu : son champ s'en va dès
+      // que le motif est choisi, plutôt qu'au rendu suivant. Désactivé autant
+      // que masqué — un champ caché mais soumis reste une saisie invisible.
+      const revenu = rang === 1
+        ? null : formulaire.elements[`metier${rang}_salaire`];
+      if (revenu) {
+        const creux = CODES_SANS_EMPLOI.has(menu.value);
+        revenu.disabled = creux;
+        revenu.closest("div").hidden = creux;
+      }
+      if (rang > 1) { montrerAjout(rang, CODES_SANS_EMPLOI.has(menu.value)); }
+      const debut = rang === 1 ? lire("debut") : lire(`metier${rang}_debut`);
+      const entree = naissance !== null && debut !== null && debut > naissance
+        ? debut
+        : null;
+      for (const option of menu.options) {
+        const fermeture = option.dataset.fermeture;
+        if (!fermeture) { continue; }
+        const [annee, moisFermeture] = fermeture.split("-").map(Number);
+        option.disabled = entree !== null && option.value !== menu.value
+          && entree >= rangMois(annee, moisFermeture);
+      }
+    }
+  };
+  // Une activité qui S'AJOUTE à celle en cours a une date de fin ; celle qui
+  // la remplace n'en a pas, et une période sans emploi n'a ni l'une ni
+  // l'autre. Désactivés autant que masqués : un champ caché mais soumis
+  // resterait une saisie invisible, que le calcul refuserait sans qu'on voie
+  // pourquoi.
+  const montrerAjout = (rang, creux) => {
+    const ajout = formulaire.elements[`metier${rang}_cumul`];
+    const fin = formulaire.elements[`metier${rang}_fin`];
+    if (ajout) {
+      ajout.disabled = creux;
+      ajout.closest("div").hidden = creux;
+    }
+    if (fin) {
+      const sansFin = creux || !ajout || ajout.value !== "oui";
+      fin.disabled = sansFin;
+      fin.closest("div").hidden = sansFin;
+    }
+  };
+  for (const ajout of formulaire.querySelectorAll("select[name$='_cumul']")) {
+    montrerAjout(Number(ajout.name.replace(/\D/g, "")), false);
+  }
+  formulaire.addEventListener("input", trier);
+  formulaire.addEventListener("change", trier);
+}
+
+// -- ce qu'une date vaut en âge ----------------------------------------------
+//
+// Le formulaire ne demande plus d'âges : il demande des dates — on sait quand
+// on est né, quand on a commencé, quand on veut partir —, et dit sous chaque
+// champ l'âge qu'elles font. Le rendu l'a écrit une fois ; il se refait ici à
+// chaque frappe, parce que rien de tout cela n'attend un calcul : c'est une
+// soustraction de mois.
+//
+// Les bornes des calendriers se refont de même. Elles sont des ÂGES dans le
+// modèle — on entre dans la vie active entre 14 et 40 ans, on part entre 40 et
+// 119 —, que chaque champ porte en `data-age-min` et `data-age-max` ; changer la
+// date de naissance les déplace toutes, et le calendrier n'ouvre plus alors que
+// sur des dates que le calcul acceptera.
+function moisEnClair(rang) {
+  return `${NOMS_DE_MOIS[rang % 12]} ${Math.floor(rang / 12)}`;
+}
+
+function ageEnClair(mois) {
+  const annees = Math.floor(mois / 12);
+  const reste = mois % 12;
+  return reste === 0 ? `${annees} ans` : `${annees} ans et ${reste} mois`;
+}
+
+// Les mêmes phrases que le rendu, au mot près : `Saisie.calculDe` et
+// `Saisie.naissanceEnClair`, dans `moteur/js/pages.js`. Deux formulations pour
+// la même chose donneraient l'impression que le texte change de sens quand il
+// ne fait que se rafraîchir.
+function calculEnClair(rang, naissance) {
+  const mois = rang - naissance;
+  return mois < 0
+    ? `en ${moisEnClair(rang)}, avant la date de naissance`
+    : `en ${moisEnClair(rang)}, soit ${ageEnClair(mois)}`;
+}
+
+// Le mois d'où ce champ compte ses âges. Le départ se compte du premier mois
+// où l'âge est révolu — celui qui suit la naissance, sauf pour qui est né un
+// 1er (R. 351-37) — ; un début d'activité, du mois de naissance. C'est
+// `origineDesAges` du moteur, et `Saisie.dateDe`.
+function origineDuChamp(champ, naissance, valeurNaissance) {
+  if (champ.dataset.origine !== "depart") { return naissance; }
+  const jour = /^\d{4}-\d{2}-(\d{2})$/.exec(String(valeurNaissance || ""));
+  return jour && Number(jour[1]) !== 1 ? naissance + 1 : naissance;
+}
+
+function naissanceEnClair(champ) {
+  const trouve = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(champ.value || ""));
+  if (!trouve) { return ""; }
+  const jour = Number(trouve[3]);
+  return `le ${jour === 1 ? "1er" : jour} ${NOMS_DE_MOIS[Number(trouve[2]) - 1]} `
+    + `${Number(trouve[1])}`;
+}
+
+function suivreLesDates(contenu) {
+  const formulaire = contenu.querySelector("form");
+  if (!formulaire) { return; }
+  const champs = [...formulaire.querySelectorAll("input[type=date][data-age-min]")];
+  if (!champs.length) { return; }
+  const suivre = () => {
+    const acte = formulaire.elements.naissance;
+    const naissance = rangDeDate(acte?.value);
+    if (naissance === null) { return; }
+    const dateDite = document.getElementById("naissance-calcul");
+    if (dateDite) { dateDite.textContent = naissanceEnClair(acte); }
+    for (const champ of champs) {
+      const origine = origineDuChamp(champ, naissance, acte.value);
+      champ.min = dateDeRang(origine + Number(champ.dataset.ageMin) * 12);
+      champ.max = dateDeRang(origine + Number(champ.dataset.ageMax) * 12);
+      const rang = rangDeDate(champ.value);
+      // La ligne de métier vide n'a pas d'âge à afficher tant qu'elle est
+      // vide : sa ligne de calcul n'est donc pas rendue, et naît ici le jour
+      // où une date y est posée.
+      let calcul = document.getElementById(`${champ.id}-calcul`);
+      if (!calcul && rang !== null) {
+        calcul = document.createElement("span");
+        calcul.className = "calcul";
+        calcul.id = `${champ.id}-calcul`;
+        calcul.setAttribute("aria-live", "polite");
+        champ.after(calcul);
+        champ.setAttribute("aria-describedby", calcul.id);
+      }
+      if (calcul) {
+        calcul.textContent = rang === null ? "" : calculEnClair(rang, origine);
+      }
+    }
+  };
+  formulaire.addEventListener("input", suivre);
+  formulaire.addEventListener("change", suivre);
+}
+
+// Où reprend la lecture après un rendu.
+//
+// Le contenu de <main> est remplacé en bloc : l'élément qui avait le focus —
+// le bouton « Calculer », un lien de la page — vient d'être détruit, et le
+// navigateur renvoie alors le focus sur <body>. Au clavier, la tabulation
+// suivante repart du tout début du document : il faut retraverser l'en-tête et
+// le formulaire entier pour revenir là où l'on était. Le focus est donc reposé
+// à la main, sur ce que le lecteur vient de demander.
+//
+// Trois cas, selon ce qui a déclenché le rendu.
+//
+// Un CALCUL aboutit sur ses résultats, et non en haut de page : c'est ce qu'on
+// vient de demander, et les faire défiler sous les yeux plutôt que renvoyer au
+// formulaire épargne la moitié d'un écran de retour en arrière. Sur la même
+// page, le défilement est doux — c'est un déplacement qu'on doit pouvoir
+// suivre, pas un saut —, sauf pour qui a demandé à son système de réduire le
+// mouvement.
+//
+// Un geste SUR PLACE — une bascule, l'année de la cascade, « Recalculer cette
+// page » — ne déplace rien : ce qu'on a cliqué est retrouvé dans la nouvelle
+// page et reposé au même endroit de l'écran, au pixel près. Le contenu autour
+// change ; la page, elle, ne bouge pas. Un retour arrière, qui n'a pas de
+// déclencheur, garde le défilement que le navigateur a rendu.
+//
+// Une NAVIGATION vers une autre page se lit depuis son début.
+
+// Ce que le lecteur vient de faire : l'élément cliqué et la nature du geste.
+// Posé par les écouteurs de clic et de soumission, consommé — une fois — par
+// `afficher`, qui mesure où l'élément se trouve à l'écran juste avant de
+// recalculer la page : rien n'a bougé depuis le clic.
+let declencheur = null;
+
+function noterDeclencheur(element, nature, extra = {}) {
+  declencheur = { element, nature, temps: Date.now(), ...extra };
+}
+
+// Le cadre qui contient cette page, quand elle est ouverte dans un cadre de
+// même origine — c'est ainsi que le site partiliberalfrancais.fr la sert sur
+// son accueil. Nul hors cadre ; nul aussi depuis une autre origine, où le
+// navigateur refuse l'accès.
+function cadreHote() {
+  try { return window.frameElement || null; } catch (erreur) { return null; }
+}
+
+function mouvementReduit() {
+  return Boolean(window.matchMedia?.("(prefers-reduced-motion: reduce)").matches);
+}
+
+// La hauteur de ce que le lecteur voit : la fenêtre, ou celle de la page hôte
+// — dans un cadre à la hauteur de son contenu, la fenêtre de ce document est
+// la page entière.
+function hauteurVisible() {
+  const cadre = cadreHote();
+  try {
+    if (cadre) { return cadre.ownerDocument.defaultView.innerHeight; }
+  } catch (erreur) {
+    // L'hôte a refusé : on retombe sur ce document.
+  }
+  return window.innerHeight;
+}
+
+// Le haut d'un élément dans ce que le lecteur VOIT : la fenêtre, ou celle de
+// la page hôte quand le site est dans un cadre. L'hôte donne au cadre la
+// hauteur de son contenu : ce document n'a pas d'ascenseur, c'est la page
+// hôte qui défile, et c'est dans sa fenêtre que « au même endroit de
+// l'écran » a un sens.
+function hautVisible(element) {
+  const haut = element.getBoundingClientRect().top;
+  const cadre = cadreHote();
+  if (!cadre) { return haut; }
+  try { return cadre.getBoundingClientRect().top + haut; } catch (erreur) { return haut; }
+}
+
+// Fait défiler ce que le lecteur voit pour que le haut de `element` soit à
+// `haut` pixels du haut de l'écran.
+//
+// Dans un cadre, juste après un rendu, le cadre a encore la hauteur de la page
+// d'AVANT, et l'hôte ne la remesure que toutes les demi-secondes : un clic en
+// bas du programme laissait le lecteur sur la fin du formulaire et le pied du
+// site, et « Calculer » le laissait sur le haut du formulaire, sans un
+// résultat en vue. On règle donc soi-même la hauteur du cadre, puis on fait
+// défiler la page hôte.
+function amener(element, haut, doux = false) {
+  const comportement = doux && !mouvementReduit() ? "smooth" : "auto";
+  const cadre = cadreHote();
+  if (cadre) {
+    try {
+      const style = getComputedStyle(document.body);
+      const hauteur = document.body.getBoundingClientRect().height
+        + parseFloat(style.marginTop || 0) + parseFloat(style.marginBottom || 0);
+      if (hauteur > 0) { cadre.style.height = `${Math.ceil(hauteur) + 2}px`; }
+      cadre.ownerDocument.defaultView.scrollBy({
+        top: hautVisible(element) - haut, behavior: comportement,
+      });
+      return;
+    } catch (erreur) {
+      // L'hôte a refusé : on retombe sur ce document.
+    }
+  }
+  window.scrollBy({
+    top: element.getBoundingClientRect().top - haut, behavior: comportement,
+  });
+}
+
+// Les dépliants ouverts, pour les rouvrir après un rendu sur place : la page
+// est recalculée, pas relue, et le dépliant où l'on venait de cliquer — celui
+// de la cascade, sur la page Coût — se refermait sous le doigt. Un dépliant se
+// reconnaît à son identifiant s'il en a un, sinon à son titre, et à son rang
+// parmi ceux qui portent le même. Le titre est lu SANS SES CHIFFRES : celui
+// de la cascade dit « De 422 Md € à 279 Md € », et change avec l'année qu'on
+// vient de choisir. La ligne vide « Ajouter une période » n'en est pas :
+// remplie, elle devient un métier, et c'est la ligne vide SUIVANTE qui
+// porterait son titre.
+function clesDesDetails(contenu) {
+  const rangs = new Map();
+  return [...contenu.querySelectorAll("details")].map((details) => {
+    const titre = details.id ? `#${details.id}`
+      : (details.querySelector(":scope > summary")?.textContent || "")
+        .replace(/[\d\s\u202f\u00a0.,]+/g, " ").trim();
+    const rang = rangs.get(titre) || 0;
+    rangs.set(titre, rang + 1);
+    return [details, `${rang}:${titre}`];
+  }).filter(([details]) => !details.classList.contains("facultatif"));
+}
+
+function detailsOuverts(contenu) {
+  return clesDesDetails(contenu)
+    .filter(([details]) => details.open).map(([, cle]) => cle);
+}
+
+function rouvrir(contenu, cles) {
+  if (!cles.length) { return; }
+  const voulus = new Set(cles);
+  for (const [details, cle] of clesDesDetails(contenu)) {
+    if (voulus.has(cle)) { details.open = true; }
+  }
+}
+
+// Ce qui permet de retrouver, dans la page recalculée, l'endroit où l'on a
+// cliqué. Pas l'élément lui-même — le rendu l'a détruit —, mais ce qui le
+// contient et qui survit au rendu : le groupe de la bascule, désigné par sa
+// légende ; le formulaire, par sa cible ; à défaut, l'ancêtre identifié le
+// plus proche. Avec son rang parmi ses semblables : « Montants » est deux fois
+// sur la page du simulateur, au-dessus du formulaire et des résultats.
+function repereDe(element, contenu) {
+  if (!element || !element.isConnected || !contenu.contains(element)) { return null; }
+  let genre;
+  let cle;
+  let ancre = element.closest(".bascule[aria-label]");
+  if (ancre) {
+    genre = "bascule";
+    cle = ancre.getAttribute("aria-label");
+  } else if ((ancre = element.closest("form"))) {
+    genre = "formulaire";
+    cle = ancre.getAttribute("action") || "";
+  } else if ((ancre = element.closest("[id]")) && ancre !== contenu) {
+    genre = "identifiant";
+    cle = ancre.id;
+  } else {
+    return null;
+  }
+  const repere = { genre, cle, rang: 0, haut: 0, bouton: element.matches("button") };
+  repere.rang = semblables(contenu, repere).indexOf(ancre);
+  repere.haut = hautVisible(ancre);
+  return repere;
+}
+
+function semblables(contenu, repere) {
+  if (repere.genre === "bascule") {
+    return [...contenu.querySelectorAll(".bascule[aria-label]")]
+      .filter((groupe) => groupe.getAttribute("aria-label") === repere.cle);
+  }
+  if (repere.genre === "formulaire") {
+    return [...contenu.querySelectorAll("form")]
+      .filter((formulaire) => (formulaire.getAttribute("action") || "") === repere.cle);
+  }
+  const trouve = document.getElementById(repere.cle);
+  return trouve && contenu.contains(trouve) ? [trouve] : [];
+}
+
+// Où poser le focus une fois le repère retrouvé. Sur une bascule, l'état que
+// l'on vient de choisir — la synthèse vocale le lit, « brut », et la
+// tabulation repart de là ; sur un formulaire, son bouton ; sinon, le repère
+// lui-même.
+function foyerDe(ancre, repere) {
+  if (repere.genre === "bascule") {
+    const actif = ancre.querySelector(".actif");
+    if (actif) {
+      actif.setAttribute("tabindex", "-1");
+      return actif;
+    }
+  }
+  if (repere.genre === "formulaire" && repere.bouton) {
+    const bouton = ancre.querySelector("button[type=submit]");
+    if (bouton) { return bouton; }
+  }
+  if (!ancre.matches("a[href], button, input, select, textarea, [tabindex]")) {
+    ancre.setAttribute("tabindex", "-1");
+  }
+  return ancre;
+}
+
+function reprendre(contenu, { action, surPlace, repere }) {
+  // Sauf au tout premier rendu : personne n'a encore rien demandé, le focus
+  // est là où le navigateur l'a laissé — au début du document —, et le lien
+  // d'évitement est le premier élément qu'une tabulation rencontre. Le
+  // déplacer ici le rendrait inatteignable en avant, ce qui priverait la page
+  // du raccourci qu'elle vient d'ajouter.
+  if (premierRendu) {
+    premierRendu = false;
+    return;
+  }
+
+  // Le défilement doux suppose qu'on reste sur la page : il montre où l'on
+  // va depuis où l'on était. Venu d'une autre page — le simulateur court de
+  // l'accueil —, on arrive sur une page neuve, et la traverser en entier pour
+  // descendre aux résultats ne montrerait rien.
+  if (action && action.nature === "calcul") {
+    const resultats = contenu.querySelector("#resultats");
+    if (resultats) {
+      resultats.focus({ preventScroll: true });
+      amener(resultats, 0, surPlace);
+      return;
+    }
+    // Un calcul refusé aboutit sur son refus : la phrase qui dit quoi
+    // corriger, et non le haut de la page, où elle n'est pas toujours.
+    const refus = contenu.querySelector(".erreur");
+    if (refus) {
+      refus.setAttribute("tabindex", "-1");
+      refus.focus({ preventScroll: true });
+      amener(refus, Math.round(hauteurVisible() / 4), surPlace);
+      return;
+    }
+  }
+
+  // Effacer la saisie la fait recommencer : on remonte en haut du
+  // formulaire, où la phrase qui le confirme vient d'être posée.
+  if (action && action.effacement) {
+    const note = contenu.querySelector("form .memoire:not([hidden])");
+    const formulaire = formulaireDuSimulateur(contenu);
+    const cible = note || formulaire;
+    if (cible) {
+      cible.setAttribute("tabindex", "-1");
+      cible.focus({ preventScroll: true });
+      amener(formulaire || cible, 16, true);
+      return;
+    }
+  }
+
+  // Une période retirée : ce qui prend sa place — la période suivante, ou la
+  // demande d'en ajouter une — vient là où elle était, et reçoit le focus.
+  if (action && action.retrait) {
+    const ligne = contenu.querySelectorAll("form .metiers > .metier")[action.retrait - 1];
+    if (ligne) {
+      const foyer = ligne.querySelector(":scope > summary") || ligne;
+      if (foyer === ligne) { ligne.setAttribute("tabindex", "-1"); }
+      amener(ligne, action.haut);
+      foyer.focus({ preventScroll: true });
+      return;
+    }
+  }
+
+  if (surPlace && !(action && action.nature === "navigation")) {
+    const ancre = repere ? semblables(contenu, repere)[repere.rang] : null;
+    if (ancre) {
+      // Ce qu'on vient de cliquer était visible : ses dépliants l'étaient.
+      for (let details = ancre.closest("details"); details;
+        details = details.parentElement?.closest("details")) {
+        details.open = true;
+      }
+      amener(ancre, repere.haut);
+      foyerDe(ancre, repere).focus({ preventScroll: true });
+      return;
+    }
+    // Rien à retrouver — un retour arrière, un repère que le rendu a fait
+    // disparaître : la page reste où elle est.
+    if (action) { contenu.focus({ preventScroll: true }); }
+    return;
+  }
+
+  if (cadreHote()) { amener(document.body, 0); } else { window.scrollTo({ top: 0 }); }
+  contenu.focus({ preventScroll: true });
+}
+
+// -- la mémoire du simulateur -----------------------------------------------
+//
+// LE SIMULATEUR RETIENT CE QU'ON LUI A DIT. Jusqu'ici, l'adresse était sa
+// seule mémoire : il suffisait d'aller lire le programme ou la page Coût,
+// puis de revenir par le bandeau, pour retrouver l'exemple de 1975 à la place
+// de sa carrière ; et ce qu'on avait tapé sans encore calculer se perdait au
+// premier lien suivi. La saisie est donc gardée dans le stockage local du
+// navigateur, et rendue à qui revient.
+//
+// ELLE NE SORT PAS DU NAVIGATEUR, comme le reste : `localStorage` reste sur
+// cette machine, dans ce navigateur, et rien ne l'envoie nulle part. Un bouton
+// « Réinitialiser », sous le formulaire, l'en retire et rend l'exemple — c'est
+// ce qu'il faut sur un ordinateur partagé —, et le chapeau du simulateur le
+// dit. Un navigateur qui refuse le stockage — un réglage de confidentialité, un
+// cadre d'une autre origine — ne retient rien, et le simulateur marche comme
+// avant.
+//
+// Deux choses sont gardées, sous une seule clé :
+//
+// - `requete`, la dernière simulation que le lecteur a produite lui-même —
+//   par « Calculer », par une bascule, ou en tapant dans le formulaire d'une
+//   simulation affichée. Une adresse partagée qu'on ne fait que regarder ne
+//   remplace pas la sienne ;
+// - `brouillon`, ce qui a été tapé depuis sans être calculé : la requête sous
+//   laquelle le formulaire a été rendu (`base`), et ce qu'il porte
+//   (`valeurs`). Il n'est remis dans les champs que sur cette même base : un
+//   brouillon tapé sur une autre simulation n'a pas de sens sur celle-ci.
+
+const MEMOIRE = "retraite-notionnelle.simulateur";
+
+// Ce qui ne sort pas intact du stockage — une autre version, une valeur
+// abîmée — n'est pas lu : un brouillon sans valeurs viderait le formulaire en
+// croyant le remplir.
+function lireMemoire() {
+  try {
+    const brut = window.localStorage.getItem(MEMOIRE);
+    const memoire = brut ? JSON.parse(brut) : null;
+    const texte = (valeur) => typeof valeur === "string" && valeur !== "";
+    const valide = memoire && memoire.version === 1
+      && (memoire.requete === null || texte(memoire.requete))
+      && (memoire.brouillon === null || (typeof memoire.brouillon?.base === "string"
+        && texte(memoire.brouillon?.valeurs)));
+    return valide ? memoire : null;
+  } catch (erreur) {
+    return null;
+  }
+}
+
+function ecrireMemoire(changements) {
+  try {
+    const memoire = { requete: null, brouillon: null, ...lireMemoire(), ...changements };
+    if (!memoire.requete && !memoire.brouillon) {
+      window.localStorage.removeItem(MEMOIRE);
+      return;
+    }
+    window.localStorage.setItem(MEMOIRE, JSON.stringify({ ...memoire, version: 1 }));
+  } catch (erreur) {
+    // Stockage refusé ou plein : on ne retient rien, le reste marche.
+  }
+}
+
+function oublierMemoire() {
+  try { window.localStorage.removeItem(MEMOIRE); } catch (erreur) { /* rien à oublier */ }
+}
+
+function memoireOccupee() {
+  const memoire = lireMemoire();
+  return Boolean(memoire && (memoire.requete || memoire.brouillon));
+}
+
+// Une requête en objet `{ clé: valeur }`, comme `adresse` la lit.
+function enObjet(requete) {
+  const objet = {};
+  new URLSearchParams(requete || "").forEach((valeur, cle) => { objet[cle] = valeur; });
+  return objet;
+}
+
+// Les champs d'un formulaire, écrits comme une requête : ce que « Calculer »
+// envoie, les champs vides en moins.
+function requeteDuFormulaire(formulaire) {
+  const parametres = new URLSearchParams();
+  new FormData(formulaire).forEach((valeur, cle) => {
+    if (String(valeur).trim() !== "") { parametres.set(cle, valeur); }
+  });
+  return parametres.toString();
+}
+
+// Vrai si une requête décrit une carrière, et pas seulement des règles —
+// `Saisie.demandee`, vu d'ici.
+function porteUneCarriere(parametres) {
+  return Object.keys(parametres).some((cle) => !CLES_MODELISATION.includes(cle));
+}
+
+// Les règles d'une requête, écrites comme le site les écrit : ce qui s'écarte
+// du défaut, et rien d'autre. Le formulaire du simulateur écrit toutes ses
+// règles, un lien n'écrit que celles qui changent : c'est ainsi qu'on voit
+// que les deux disent la même chose.
+function reglesDe(parametres) {
+  try {
+    return Saisie.modelisation(parametres).requeteModelisation();
+  } catch (erreur) {
+    return null;
+  }
+}
+
+function formulaireDuSimulateur(contenu) {
+  return contenu?.querySelector('form.carte[action="#/simuler"]') || null;
+}
+
+// La saisie retenue, telle que le formulaire la porterait : le brouillon s'il
+// y en a un, la dernière simulation sinon.
+function saisieRetenue() {
+  const memoire = lireMemoire();
+  if (!memoire) { return null; }
+  if (memoire.brouillon) { return enObjet(memoire.brouillon.valeurs); }
+  return memoire.requete ? enObjet(memoire.requete) : null;
+}
+
+// Les règles à emporter quand on rend au lecteur une saisie retenue.
+//
+// LES RÈGLES SUIVENT LE LECTEUR : tous les liens du site portent celles qu'il
+// a choisies, et c'est l'adresse qui les dit. Une adresse qui n'en porte pas
+// peut pourtant vouloir dire deux choses : qu'il les a remises au défaut —
+// il l'a fait sur une autre page, et y revenir ne doit pas les rétablir —, ou
+// qu'il n'en a encore rien dit — il ouvre le site, et ses options de la
+// dernière fois sont dans la saisie retenue. `reglesVues` fait la différence :
+// tant qu'aucune page de cette visite n'a été calculée sous d'autres règles
+// que celles par défaut, une adresse sans règles n'est pas un avis.
+function reglesAEmporter(retenue, ici) {
+  const reglesIci = reglesDe(ici);
+  if (reglesIci === "" && !reglesVues) {
+    return Object.fromEntries(Object.entries(retenue)
+      .filter(([cle]) => CLES_MODELISATION.includes(cle)));
+  }
+  return Object.fromEntries(Object.entries(ici)
+    .filter(([cle]) => CLES_MODELISATION.includes(cle)));
+}
+
+// Une saisie retenue, complétée des règles à emporter.
+function composer(retenue, regles, remplacements = {}) {
+  const parametres = new URLSearchParams();
+  for (const [cle, valeur] of Object.entries(retenue)) {
+    if (!CLES_MODELISATION.includes(cle)) { parametres.set(cle, valeur); }
+  }
+  for (const [cle, valeur] of Object.entries(regles)) { parametres.set(cle, valeur); }
+  for (const [cle, valeur] of Object.entries(remplacements)) { parametres.set(cle, valeur); }
+  return parametres.toString();
+}
+
+// Qui arrive sur le simulateur sans carrière dans l'adresse retrouve la
+// dernière qu'il a calculée. L'adresse est RÉÉCRITE, sans nouvelle entrée
+// d'historique : elle doit dire ce que la page montre — c'est elle qu'on
+// partage et qu'on recharge —, et le retour arrière doit toujours ramener à
+// la page d'où l'on venait. Vrai si une saisie a été reprise.
+function reprendreLaSaisie(ici) {
+  const memoire = lireMemoire();
+  if (!memoire || !memoire.requete) { return false; }
+  const retenue = enObjet(memoire.requete);
+  let requete = memoire.requete;
+  const regles = reglesAEmporter(retenue, ici);
+  if (reglesDe(regles) !== reglesDe(retenue)) {
+    requete = composer(retenue, regles);
+    // Le brouillon a été tapé sous les anciennes règles, que le formulaire
+    // porte aussi : le remettre les rétablirait en douce.
+    ecrireMemoire({ requete, brouillon: null });
+  }
+  history.replaceState(history.state, "", `#/simuler?${requete}`);
+  return true;
+}
+
+// « 1996-09 » → « 1996-09-01 » : un champ date n'accepte que la forme
+// entière, et les adresses du site écrivent les dates de carrière au mois.
+function enDate(valeur) {
+  return /^\d{4}-\d{2}$/.test(valeur) ? `${valeur}-01` : valeur;
+}
+
+// Remet des valeurs dans les champs d'un formulaire, et dit si quelque chose a
+// changé. Un champ absent de `valeurs` était vide quand elles ont été lues —
+// une requête ne porte pas les champs vides —, sauf si `noms` restreint ce
+// qu'on touche. LES CHAMPS CACHÉS NE SE REMPLISSENT PAS : ils disent la forme
+// du formulaire — la situation, l'unité, le net ou le brut —, que le rendu a
+// fixée, et les réécrire ferait envoyer une forme que la page ne montre pas.
+// Un dépliant dont un champ change s'ouvre : une valeur remise dans un champ
+// replié serait une saisie invisible.
+function remplir(formulaire, valeurs, noms = null) {
+  let change = false;
+  for (const champ of formulaire.elements) {
+    if (!champ.name || champ.type === "hidden" || champ.type === "file"
+        || champ.tagName === "BUTTON") { continue; }
+    if (noms && (!noms.includes(champ.name) || !(champ.name in valeurs))) { continue; }
+    const brut = champ.name in valeurs ? String(valeurs[champ.name]) : "";
+    const valeur = champ.type === "date" ? enDate(brut) : brut;
+    if (champ.value === valeur) { continue; }
+    if (champ.tagName === "SELECT"
+        && ![...champ.options].some((option) => option.value === valeur)) { continue; }
+    champ.value = valeur;
+    // Le navigateur refuse ce qui n'a pas la forme du champ — une date
+    // mal écrite reste vide : on n'insiste pas.
+    if (champ.value !== valeur) { continue; }
+    change = true;
+    for (let details = champ.closest("details"); details;
+      details = details.parentElement?.closest("details")) {
+      details.open = true;
+    }
+  }
+  // Comme au dépôt d'un relevé : les écouteurs qui suivent la saisie — l'âge
+  // sous chaque date, les statuts fermés — doivent l'apprendre.
+  if (change) { formulaire.dispatchEvent(new Event("input", { bubbles: true })); }
+  return change;
+}
+
+// Un brouillon ne se remet que sur la simulation sous laquelle il a été tapé.
+// Sur le formulaire de l'exemple, qui n'a pas de carrière dans l'adresse, il
+// suffit que les règles soient les mêmes.
+function brouillonSApplique(base, parametres) {
+  if (porteUneCarriere(enObjet(base))) { return base === requeteAffichee; }
+  return !porteUneCarriere(parametres) && reglesDe(enObjet(base)) === reglesDe(parametres);
+}
+
+// Une saisie refusée se rend avec le refus EN TÊTE, avant le formulaire ; une
+// erreur de calcul, après lui. Seule la première a pu perdre des champs.
+function estUnRefus(contenu, formulaire) {
+  const refus = contenu.querySelector(".erreur");
+  return Boolean(refus)
+    && Boolean(refus.compareDocumentPosition(formulaire) & Node.DOCUMENT_POSITION_FOLLOWING);
+}
+
+// Ce que la page dit de la mémoire : le bouton qui l'efface, et, quand une
+// saisie vient d'être reprise ou effacée, une phrase sous la consigne du
+// formulaire — qui prend alors sa place, « l'exemple est déjà rempli » n'étant
+// plus vrai. Le bouton, que le rendu montre devant une carrière saisie, paraît
+// aussi dès qu'une saisie est retenue, ou que le formulaire diffère de ce que
+// le rendu a écrit : un navigateur qui ne retient rien le cachait à jamais.
+function montrerLaMemoire(formulaire, phrase = "") {
+  const bouton = formulaire.querySelector("button.oublier");
+  if (bouton) {
+    bouton.hidden = bouton.hidden && !memoireOccupee()
+      && requeteDuFormulaire(formulaire) === formulaire._rendue;
+  }
+  if (!phrase) { return; }
+  let note = formulaire.querySelector(".memoire");
+  if (!note) {
+    note = document.createElement("p");
+    note.className = "memoire";
+    const consigne = formulaire.querySelector(".consigne");
+    if (consigne) { consigne.after(note); } else { formulaire.prepend(note); }
+  }
+  note.textContent = phrase;
+  const consigne = formulaire.querySelector(".consigne");
+  if (consigne) { consigne.hidden = true; }
+}
+
+const PHRASE_REPRISE = "Votre dernière saisie a été reprise. Votre navigateur la "
+  + "garde, et elle n'en sort pas.";
+const PHRASE_EFFACEE = "Votre saisie a été effacée : le simulateur ne la "
+  + "retient plus. L'exemple est de nouveau rempli.";
+
+// Après chaque rendu : ce que la page doit à la mémoire. Rend la phrase à
+// ajouter à l'annonce vocale, ou rien.
+function retenir(contenu, cible, action, reprise) {
+  const formulaire = formulaireDuSimulateur(contenu);
+  if (!formulaire) { return ""; }
+  const carriere = porteUneCarriere(cible.parametres);
+  // Ce que le formulaire porte au sortir du rendu : c'est de là que partent
+  // les liens des bascules, et c'est à cela qu'on compare pour savoir si le
+  // lecteur a tapé quelque chose depuis.
+  formulaire._rendue = requeteDuFormulaire(formulaire);
+
+  // Ce que le lecteur vient de faire devient sa saisie retenue.
+  if (action && action.nature !== "navigation" && carriere) {
+    ecrireMemoire({ requete: requeteAffichee, brouillon: null });
+  }
+
+  let reprisIci = false;
+  // Une saisie refusée est remontrée telle qu'elle se lit — voir `rendre`.
+  // Ce qui ne s'y lit pas, une ligne de métier à moitié remplie, est remis
+  // ici dans la ligne vide qui l'attend : il ne doit rester qu'à corriger la
+  // faute, et non à retaper. Seuls les champs envoyés : ceux qu'une adresse
+  // ne porte pas ont été rendus à leur défaut, qui est aussi ce que le calcul
+  // en aurait lu.
+  if (carriere && estUnRefus(contenu, formulaire)) {
+    remplir(formulaire, cible.parametres, Object.keys(cible.parametres));
+  }
+  // Puis ce qui avait été tapé sans être calculé, s'il appartient à cette
+  // simulation.
+  const brouillon = lireMemoire()?.brouillon;
+  if (brouillon && brouillonSApplique(brouillon.base, cible.parametres)) {
+    reprisIci = remplir(formulaire, enObjet(brouillon.valeurs));
+  }
+
+  if (action && action.effacement) {
+    montrerLaMemoire(formulaire, PHRASE_EFFACEE);
+    return PHRASE_EFFACEE;
+  }
+  if (reprise || reprisIci) {
+    montrerLaMemoire(formulaire, PHRASE_REPRISE);
+    return PHRASE_REPRISE;
+  }
+  montrerLaMemoire(formulaire);
+  return "";
+}
+
+// Chaque frappe dans le formulaire du simulateur est retenue. Taper dans le
+// formulaire d'une simulation affichée en fait SA simulation : c'est elle que
+// le lecteur retrouvera, avec ce qu'il y a changé.
+function noterLeBrouillon(formulaire) {
+  const valeurs = requeteDuFormulaire(formulaire);
+  const base = requeteAffichee;
+  ecrireMemoire({
+    requete: porteUneCarriere(enObjet(base)) ? base : null,
+    brouillon: valeurs === formulaire._rendue ? null : { base, valeurs },
+  });
+  montrerLaMemoire(formulaire);
+}
+
+for (const type of ["input", "change"]) {
+  document.addEventListener(type, (evenement) => {
+    const formulaire = evenement.target.closest?.("form");
+    if (formulaire && formulaire === formulaireDuSimulateur(
+      document.getElementById("contenu"))) {
+      noterLeBrouillon(formulaire);
+    }
+  });
+}
+
+// « Réinitialiser » : la mémoire est vidée, et le formulaire revient à
+// l'exemple, sous les règles en vigueur.
+document.addEventListener("click", (evenement) => {
+  const bouton = evenement.target.closest?.("button.oublier");
+  if (!bouton) { return; }
+  oublierMemoire();
+  const regles = gabarit.options();
+  noterDeclencheur(bouton, "sur-place", { effacement: true });
+  naviguer(`#/simuler${regles ? `?${regles}` : ""}`);
+});
+
+// « Retirer cette période » : le formulaire repart sans elle, les périodes qui
+// la suivaient remontées d'un rang (`requeteSansPeriode`). Rien ne se vérifie
+// avant — c'est souvent la ligne fautive qu'on retire. La page ne bouge pas,
+// et le focus va à ce qui prend sa place : voir `reprendre`.
+document.addEventListener("click", (evenement) => {
+  const bouton = evenement.target.closest?.("button.retirer");
+  const contenu = document.getElementById("contenu");
+  const formulaire = bouton ? formulaireDuSimulateur(contenu) : null;
+  if (!formulaire || !formulaire.contains(bouton)) { return; }
+  const periode = bouton.closest(".metier");
+  const rang = Number(bouton.dataset.rang);
+  const requete = new URLSearchParams(
+    requeteSansPeriode(enObjet(requeteDuFormulaire(formulaire)), rang)).toString();
+  noterDeclencheur(periode, "sur-place", { retrait: rang, haut: hautVisible(periode) });
+  naviguer(`#/simuler?${requete}`);
+});
+
+// Le simulateur court de l'accueil — « Et vous, ça donne combien ? » — est
+// une porte du même simulateur : il montre la saisie retenue, et l'envoie
+// entière. Sans cela, ses quatre champs repartaient de l'exemple, et
+// « Calculer » écrasait la carrière retenue par une carrière de quatre
+// champs, au revenu de l'exemple.
+function preremplirLeSimulateurCourt(contenu) {
+  const formulaire = contenu.querySelector('form.simulateur-court[action="#/simuler"]');
+  const retenue = formulaire ? saisieRetenue() : null;
+  if (!retenue) { return; }
+  remplir(formulaire, retenue, ["naissance", "debut", "statut", "liquidation"]);
+}
+
+function fusionnerAvecLaMemoire(courts) {
+  const retenue = saisieRetenue() || {};
+  return composer(retenue, reglesAEmporter(retenue, enObjet(gabarit.options())), courts);
+}
+
+// Les bascules du simulateur — en activité ou à la retraite, l'unité, le net
+// ou le brut — sont des liens écrits au rendu, depuis la saisie calculée. Si
+// le lecteur a tapé quelque chose depuis, les suivre le perdait : l'adresse
+// est donc refaite au clic, sur ce que le formulaire porte, par
+// `requeteBasculee` — la même traduction des montants que celle du rendu.
+// Tant que rien n'a été tapé, le lien est suivi tel quel.
+document.addEventListener("click", (evenement) => {
+  if (evenement.defaultPrevented || evenement.button !== 0 || evenement.metaKey
+      || evenement.ctrlKey || evenement.shiftKey || evenement.altKey) { return; }
+  const lien = evenement.target.closest?.('a[href^="#/simuler?"]');
+  const contenu = document.getElementById("contenu");
+  if (!lien || !contenu?.contains(lien) || routeAffichee !== "/simuler") { return; }
+  const formulaire = formulaireDuSimulateur(contenu);
+  if (!formulaire) { return; }
+  const valeurs = requeteDuFormulaire(formulaire);
+  if (valeurs === formulaire._rendue) { return; }
+  evenement.preventDefault();
+  // Ce que « Calculer » refuserait, la bascule le refuse aussi, et de la
+  // même façon : le navigateur montre le champ fautif.
+  if (!formulaire.reportValidity()) { return; }
+  let requete;
+  try {
+    requete = requeteBasculee(contexte, enObjet(valeurs),
+      enObjet(lien.getAttribute("href").split("?")[1]));
+  } catch (erreur) {
+    // La saisie ne se lit pas : il n'y a rien à traduire. Elle part telle
+    // quelle, et c'est le refus qui s'affiche — la saisie remise dans ses
+    // champs, pour qu'on la corrige avant de basculer.
+    requete = valeurs;
+  }
+  noterDeclencheur(lien, "sur-place");
+  naviguer(`#/simuler?${requete}`);
+});
+
+// Tout lien interne note ce qu'il est : un geste sur place s'il reste sur la
+// page affichée et part de son contenu, une navigation sinon. En capture,
+// pour passer avant les écouteurs qui pourraient suivre le lien autrement.
+document.addEventListener("click", (evenement) => {
+  const lien = evenement.target.closest?.('a[href^="#/"]');
+  if (!lien || lien.matches("a[data-vers], a.evitement")) { return; }
+  if (evenement.button !== 0 || evenement.metaKey || evenement.ctrlKey
+      || evenement.shiftKey || evenement.altKey) { return; }
+  const vers = lireAdresse(lien.getAttribute("href")).chemin;
+  const contenu = document.getElementById("contenu");
+  noterDeclencheur(lien, vers === routeAffichee && contenu?.contains(lien)
+    ? "sur-place" : "navigation");
+}, true);
+
+function naviguer(cible) {
+  if (location.hash === cible) { afficher(); } else { location.hash = cible; }
+}
+
+// -- le relevé de carrière déposé --------------------------------------------
+//
+// Recopier quarante-cinq lignes de chiffres est ce qui fermait la saisie exacte
+// à presque tout le monde. Le document existe pourtant déjà, en PDF, sur le
+// compte retraite de chacun : le navigateur le lit ici, `moteur/js/lecture-pdf.js`
+// en tire les lignes et `moteur/js/releve-lu.js` la carrière.
+//
+// LE FICHIER NE SORT PAS DE LA PAGE. Il n'est ni téléversé, ni conservé : il
+// est lu en mémoire, et ce qui en reste est la carrière écrite dans le champ,
+// que le lecteur voit et peut corriger. C'est la même promesse que le reste du
+// site, et c'est elle qui rend ce dépôt acceptable — un relevé de carrière est
+// le document le plus personnel qu'une administration française délivre.
+//
+// Les deux modules sont chargés À LA DEMANDE, et non préchargés avec le
+// moteur : ils ne servent qu'ici, et les faire partir avec le reste coûterait
+// à tous les lecteurs qui ne déposeront jamais rien. La conversion des points
+// en revenu, elle, est du moteur (`moteur/js/droit/releve.js`) : préchargée
+// avec lui, elle s'importe en tête du script, et non à la demande.
+
+// « %PDF » : les quatre premiers octets de tout fichier PDF. Un relevé collé
+// dans un fichier texte se lit, lui, tel quel.
+function estUnPdf(octets) {
+  return octets.length > 4 && octets[0] === 0x25 && octets[1] === 0x50
+    && octets[2] === 0x44 && octets[3] === 0x46;
+}
+
+function brancherLeDepot(contenu) {
+  const champ = contenu.querySelector("input.releve-fichier");
+  const zone = contenu.querySelector(".depot");
+  if (!champ || !zone) { return; }
+  champ.addEventListener("change", () => {
+    const fichier = champ.files && champ.files[0];
+    if (fichier) { deposerLeReleve(contenu, fichier); }
+  });
+  // Le glisser-déposer par-dessus l'encadré, en plus du sélecteur : c'est le
+  // geste que fait quiconque vient de télécharger un fichier.
+  for (const nom of ["dragenter", "dragover"]) {
+    zone.addEventListener(nom, (evenement) => {
+      evenement.preventDefault();
+      zone.classList.add("survol");
+    });
+  }
+  for (const nom of ["dragleave", "drop"]) {
+    zone.addEventListener(nom, (evenement) => {
+      evenement.preventDefault();
+      zone.classList.remove("survol");
+    });
+  }
+  zone.addEventListener("drop", (evenement) => {
+    const fichier = evenement.dataTransfer && evenement.dataTransfer.files[0];
+    if (fichier) { deposerLeReleve(contenu, fichier); }
+  });
+}
+
+// Le libellé d'un champ, et lui seul : l'étiquette porte aussi le bouton du
+// glossaire et sa bulle, dont le texte entier se retrouvait dans la phrase.
+// Les nœuds de TEXTE de l'étiquette sont le libellé, le reste est du balisage.
+function nomDuChamp(formulaire, champ) {
+  const etiquette = formulaire.querySelector(`label[for="${champ.id}"]`);
+  if (!etiquette) { return champ.name; }
+  const mots = [...etiquette.childNodes]
+    .filter((noeud) => noeud.nodeType === Node.TEXT_NODE)
+    .map((noeud) => noeud.textContent.trim()).filter(Boolean).join(" ");
+  return mots || champ.name;
+}
+
+/**
+ * Ramène les dates du formulaire dans les bornes d'âge de la naissance lue.
+ *
+ * Elles ne sont pas libres : le début d'activité tombe entre 14 et 40 ans, le
+ * départ entre 40 et 119, et chaque champ porte ces deux âges. Rendre les champs
+ * qui ont bougé permet de le DIRE — déplacer une date sans le dire serait pire
+ * que de laisser le formulaire coincé.
+ */
+function recadrerLesDates(formulaire) {
+  const naissance = rangDeDate(formulaire.elements.naissance?.value);
+  if (naissance === null) { return []; }
+  const bouges = [];
+  for (const champ of formulaire.querySelectorAll("input[type=date][data-age-min]")) {
+    const rang = rangDeDate(champ.value);
+    if (rang === null) { continue; }
+    const origine = origineDuChamp(champ, naissance, formulaire.elements.naissance.value);
+    const plancher = origine + Number(champ.dataset.ageMin) * 12;
+    const plafond = origine + Number(champ.dataset.ageMax) * 12;
+    const dedans = Math.min(Math.max(rang, plancher), plafond);
+    if (dedans !== rang) {
+      champ.value = dateDeRang(dedans);
+      bouges.push(champ);
+    }
+  }
+  return bouges;
+}
+
+/** Les lignes que la lecture n'a pas comprises, montrées et non tues. */
+function lignesIgnorees(ignorees) {
+  if (!ignorees.length) { return ""; }
+  // Tronquées : une couche de doublure colle parfois toute une page sur une
+  // seule ligne, et deux mille caractères de charabia dans le compte rendu
+  // noieraient les quatre lignes qui méritent d'être lues.
+  // LES PLUS COURTES D'ABORD. Ce que le lecteur peut reprendre à la main, ce
+  // sont les lignes de tableau — courtes, une année et deux colonnes. Les
+  // longues sont des couches de doublure où toute une page a été collée bout à
+  // bout : elles ne portent rien qu'il puisse recopier, et l'ordre du document
+  // les faisait passer devant.
+  const rangees = [...ignorees].sort((a, b) => a.length - b.length);
+  const montrees = rangees.slice(0, 4).map((ligne) => {
+    const courte = ligne.length > 90 ? `${ligne.slice(0, 90)}…` : ligne;
+    return `<li><code>${neutraliser(courte)}</code></li>`;
+  }).join("");
+  const reste = rangees.length > 4
+    ? `<li>… et ${rangees.length - 4} autres.</li>` : "";
+  return `<p>Lignes non comprises, à reporter à la main s'il le faut :</p>`
+    + `<ul>${montrees}${reste}</ul>`;
+}
+
+async function deposerLeReleve(contenu, fichier) {
+  const rapport = contenu.querySelector(".rapport-releve");
+  const champ = contenu.querySelector('textarea[name="releve"]');
+  const formulaire = contenu.querySelector("form");
+  if (!rapport || !champ || !formulaire) { return; }
+  const dire = (html, echec = false) => {
+    rapport.className = echec ? "rapport-releve echec" : "rapport-releve";
+    rapport.innerHTML = html;
+  };
+
+  dire(`Lecture de <code>${neutraliser(fichier.name)}</code>…`);
+  try {
+    const octets = new Uint8Array(await fichier.arrayBuffer());
+    let lignes;
+    if (estUnPdf(octets)) {
+      const { lignesPdf } = await import("./lecture-pdf.js");
+      lignes = await lignesPdf(octets);
+      if (lignes.length === 0) {
+        dire("Ce PDF ne porte aucun texte : c'est une image, un scan ou une "
+          + "capture d'écran. Rien ne s'y lit, et le relevé reste à saisir à "
+          + "la main. Retéléchargez-le depuis votre compte retraite plutôt que "
+          + "de le photographier.", true);
+        return;
+      }
+    } else {
+      lignes = new TextDecoder().decode(octets).split(/\r?\n/);
+    }
+
+    const { lireReleve, parametresDe } = await import("./releve-lu.js");
+    // L'année courante borne ce qui peut être une carrière : un relevé ne
+    // rapporte jamais l'avenir, et les documents d'estimation en portent
+    // beaucoup — « En partant au 01/06/2060, vous pourriez avoir droit à… ».
+    // Les points d'une année que le relevé ne chiffre pas en euros disent son
+    // revenu, au barème du droit en vigueur : le scénario 1 retrouve le plus
+    // bas qui les ouvre, plutôt que de lire l'année à zéro.
+    const moteur = contexte.simulateur().scenarioActuel;
+    const lecture = lireReleve(lignes, new Date().getFullYear(),
+      (...arguments_) => revenuDesPoints(moteur, ...arguments_));
+    if (lecture.lignes.length === 0) {
+      dire("Aucune année de carrière n'a été reconnue dans ce fichier. "
+        + "S'il s'agit bien d'un relevé, sa mise en page est inconnue du "
+        + "simulateur : la saisie à la main, ci-dessous, reste ouverte."
+        + lignesIgnorees(lecture.ignorees), true);
+      return;
+    }
+    if (lecture.lignes.length > RELEVE_MAXIMUM) {
+      dire(`${lecture.lignes.length} années ont été lues, et le simulateur en `
+        + `accepte ${RELEVE_MAXIMUM} — une carrière n'en compte pas tant. La `
+        + "lecture s'est égarée dans ce document : rien n'a été rempli.", true);
+      return;
+    }
+
+    const parametres = parametresDe(lecture);
+    champ.value = parametres.releve;
+    const details = champ.closest("details");
+    if (details) { details.open = true; }
+
+    const faits = [];
+    const annees = lecture.lignes.map((ligne) => ligne.annee);
+    const statuts = [...new Set(lecture.lignes.map((ligne) => ligne.statut))];
+    const affiliations = contexte.simulateur().affiliations;
+    faits.push(`<strong>${annees.length} années lues</strong>, de `
+      + `${Math.min(...annees)} à ${Math.max(...annees)} : `
+      + `${neutraliser(statuts.map((code) => affiliations.libelle(code)).join(", "))}.`);
+
+    const naissance = formulaire.elements.naissance;
+    // Le relevé d'info-retraite ne porte que le mois de naissance, par le
+    // numéro de sécurité sociale : le calendrier demande un jour, et reçoit
+    // celui que le modèle présume quand on ne le dit pas, nommé comme tel.
+    const jour = contexte.paquet.presomptions.jour_de_naissance.valeur;
+    const reprise = lecture.naissance
+      ?? (lecture.moisDeNaissance ? `${lecture.moisDeNaissance}-${String(jour).padStart(2, "0")}` : null);
+    if (reprise && naissance) {
+      naissance.value = reprise;
+      faits.push(lecture.naissance
+        ? "Date de naissance reprise du relevé."
+        : "Mois et année de naissance repris du numéro de sécurité sociale du "
+          + `relevé, qui ne dit pas le jour : il est présumé le ${jour}, corrigez-le.`);
+      // Les autres dates sont des ÂGES déguisés : le formulaire les borne
+      // entre deux âges comptés depuis la naissance, et le navigateur refuse
+      // de soumettre une date qui en sort. Reprendre la naissance du relevé
+      // déplaçait donc ces bornes sous une date de départ que personne
+      // n'avait touchée : le bouton « Calculer » ne faisait plus rien, et
+      // une bulle du navigateur accusait un champ resté tel quel.
+      for (const champ of recadrerLesDates(formulaire)) {
+        faits.push(`La date « ${neutraliser(nomDuChamp(formulaire, champ))} » `
+          + "sortait des bornes de cette date de naissance : elle y a été "
+          + "ramenée, vérifiez-la.");
+      }
+    }
+    const interruptions = formulaire.elements.interruptions;
+    if (interruptions) {
+      interruptions.value = parametres.interruptions;
+      if (parametres.interruptions) {
+        faits.push(`${lecture.interruptions.length} période(s) non travaillée(s) `
+          + "reportée(s) dans les options de modélisation.");
+        const options = formulaire.querySelector("details.options");
+        if (options) { options.open = true; }
+      }
+    }
+    // Les champs viennent de changer sans qu'une touche ait été frappée : les
+    // écouteurs qui suivent la saisie — l'âge sous chaque date, les statuts
+    // fermés — ne se réveilleraient pas sans cela.
+    formulaire.dispatchEvent(new Event("input", { bubbles: true }));
+
+    const notes = lecture.notes.map((note) => `<li>${neutraliser(note)}</li>`).join("");
+    dire(`<p>${faits.join(" ")}</p>`
+      + (notes ? `<ul>${notes}</ul>` : "")
+      + lignesIgnorees(lecture.ignorees)
+      + "<p>Vérifiez la carrière ci-dessous, puis calculez.</p>");
+  } catch (erreur) {
+    dire(`La lecture a échoué : ${neutraliser(erreur)}`, true);
+  }
+}
+
+// -- navigation --------------------------------------------------------------
+
+document.addEventListener("submit", (evenement) => {
+  const formulaire = evenement.target.closest("form");
+  if (!formulaire) { return; }
+  evenement.preventDefault();
+
+  let requete = requeteDuFormulaire(formulaire);
+  // La route vient de l'action du formulaire, jamais d'une constante écrite
+  // ici : le simulateur a changé d'adresse le jour où l'accueil est devenu le
+  // programme, et une route figée aurait renvoyé chaque calcul sur l'accueil.
+  const route = (formulaire.getAttribute("action") || "#/simuler").replace(/^#/, "");
+  // Le simulateur court de l'accueil envoie la saisie retenue entière, ses
+  // quatre champs par-dessus — voir `preremplirLeSimulateurCourt`.
+  if (formulaire.matches(".simulateur-court") && route === "/simuler") {
+    requete = fusionnerAvecLaMemoire(enObjet(requete));
+  }
+  // Un formulaire qui simule mène à des résultats ; les autres — « Recalculer
+  // cette page » — recalculent la page sous les yeux du lecteur. Un contrôle
+  // rattaché au formulaire sans y être (`form="…"`) le fait aussi : le bouton
+  // « Comparer » et les montants recopiés sous l'estimation officielle
+  // laissent le lecteur devant le tableau qu'il vient de remplir. Entrée dans
+  // l'un de ces champs soumet par le premier bouton du formulaire : c'est
+  // alors le champ qui dit d'où l'on vient.
+  const declenche = evenement.submitter && !formulaire.contains(evenement.submitter)
+    ? evenement.submitter : document.activeElement;
+  const dehors = declenche?.form === formulaire && !formulaire.contains(declenche);
+  const simule = route === "/simuler" && !dehors;
+  noterDeclencheur(dehors ? declenche : evenement.submitter || formulaire,
+    simule ? "calcul" : "sur-place");
+  naviguer(`#${route}?${requete}`);
+});
+
+// Le groupe « Pour vérifier » du bandeau, replié sur un téléphone derrière un
+// `<button class="deplier" aria-expanded>` que le gabarit écrit : la feuille de
+// style montre ses liens quand l'état dit « ouvert », et c'est tout ce que ce
+// geste change. Au-delà de l'écran étroit, le bouton n'est pas affiché.
+document.addEventListener("click", (evenement) => {
+  const bouton = evenement.target.closest?.("nav button.deplier");
+  if (!bouton) { return; }
+  const ouvrir = bouton.getAttribute("aria-expanded") !== "true";
+  bouton.setAttribute("aria-expanded", String(ouvrir));
+});
+
+// -- les mots du glossaire ---------------------------------------------------
+//
+// Un mot de spécialiste porte sa définition, et elle s'ouvre sur place. Le
+// gabarit écrit pour cela un `<button class="terme" aria-expanded>` suivi de sa
+// bulle : c'est ici que le bouton se met à basculer.
+//
+// En écoute DÉLÉGUÉE, sur le document, et non sur chaque bouton : le contenu de
+// <main> est remplacé en bloc à chaque rendu, et des écouteurs posés un par un
+// disparaîtraient avec les boutons qui les portaient. Un clic n'importe où
+// ailleurs referme la bulle ouverte — c'est ce qu'on attend d'une bulle, et
+// sans cela deux définitions se recouvriraient.
+function fermerLesMots(sauf) {
+  for (const bouton of document.querySelectorAll('.mot > .terme[aria-expanded="true"]')) {
+    if (bouton === sauf) { continue; }
+    bouton.setAttribute("aria-expanded", "false");
+    bouton.nextElementSibling.hidden = true;
+  }
+}
+
+document.addEventListener("click", (evenement) => {
+  const terme = evenement.target.closest(".mot > .terme");
+  fermerLesMots(terme);
+  if (!terme) { return; }
+  // Un appel de bulle posé dans un <label> ferait, sans cela, DEUX choses d'un
+  // seul clic : ouvrir la bulle, et donner le focus au champ que le libellé
+  // désigne — sur un champ date, le calendrier s'ouvrirait par-dessus la bulle.
+  evenement.preventDefault();
+  const ouvrir = terme.getAttribute("aria-expanded") !== "true";
+  terme.setAttribute("aria-expanded", String(ouvrir));
+  terme.nextElementSibling.hidden = !ouvrir;
+});
+
+// Échap referme, et rend le focus au mot : c'est ce que fait toute fenêtre
+// surgissante, et sans cela le clavier n'a aucun moyen de refermer celle-ci
+// (WCAG 1.4.13).
+document.addEventListener("keydown", (evenement) => {
+  // Le mot du glossaire est un `<span role="button">` — un vrai bouton ne
+  // coule pas dans une phrase sous Chromium — et doit donc répondre à Entrée
+  // et à Espace comme un bouton le ferait de lui-même.
+  if ((evenement.key === "Enter" || evenement.key === " ")
+      && evenement.target.matches?.('.mot > .terme[role="button"]')) {
+    evenement.preventDefault();
+    evenement.target.click();
+    return;
+  }
+  if (evenement.key !== "Escape") { return; }
+  const ouvert = document.querySelector('.mot > .terme[aria-expanded="true"]');
+  if (!ouvert) { return; }
+  fermerLesMots(null);
+  ouvert.focus();
+});
+
+// -- les tableaux, à la largeur de l'écran ------------------------------------
+//
+// Un tableau plus large que son cadre y défilait en largeur : sur un
+// téléphone, presque tous ceux de plus de trois colonnes, et ce qu'il fallait
+// lire était à droite, hors de l'écran. Il se replie désormais quand son cadre
+// devient trop étroit : chaque rangée devient un bloc, son intitulé dessus, et
+// ses cases se rangent dessous, chacune sous le nom de sa colonne. La feuille
+// de style dessine le pli ; le script décide, parce qu'il faut mesurer.
+//
+// DEUX FAÇONS. En RANGÉE, pour deux ou trois colonnes de valeurs courtes :
+// l'en-tête du tableau reste une ligne, et chaque rangée garde ses valeurs
+// côte à côte, sous leur colonne — c'est encore un tableau, dont l'intitulé
+// de rangée passe au-dessus. En FICHE, au-delà, ou dès qu'une case porte une
+// phrase : chaque valeur sous le nom de sa colonne, deux par ligne, une phrase
+// sur toute la largeur. Un tableau de nombres sur trois colonnes tient dans
+// un téléphone, et ne se replie pas.
+//
+// UNE GRILLE, plus de trois colonnes de nombres courts sous des en-têtes
+// courts — les écarts de Carrières types, une génération par colonne —, se lit
+// en colonnes, d'une rangée à l'autre : elle se replie en rangée, ses valeurs
+// sous la ligne de ses en-têtes, et ne passe en fiche que si elles n'y
+// tiennent pas (`data-grille`, action 173, étape 8).
+//
+// QUAND. Tout tableau qui déborderait de son cadre se replie. Ceux de texte
+// se replient plus tôt, avant d'avoir mis un mot par ligne : sous trente rem
+// en rangée, quarante en fiche — ou sous la largeur minimale que la feuille
+// de style leur donne, quand elle en donne une plus grande. La mesure se
+// refait quand le cadre change de largeur : un téléphone qu'on tourne, un
+// dépliant qu'on ouvre.
+//
+// Les rôles ARIA redisent ce que les balises disent déjà : une cellule
+// affichée en bloc perd son rôle de cellule chez certaines synthèses vocales,
+// et le tableau replié doit s'annoncer comme le tableau qu'il est.
+const LONGUEUR_D_UNE_PHRASE = 60;
+const LONGUEUR_D_UNE_CASE_DE_GRILLE = 8;
+let surveillantDesTableaux = null;
+
+// Ce qu'une case MONTRE : son texte, sans celui des bulles du glossaire,
+// cachées tant qu'on ne les ouvre pas. Compté avec elles, un mot du glossaire
+// faisait d'une valeur courte une phrase, qui prenait la ligne entière et
+// rejetait sa voisine dessous (action 173, étape 3).
+function texteMontre(cellule) {
+  const copie = cellule.cloneNode(true);
+  for (const bulle of copie.querySelectorAll(".bulle")) { bulle.remove(); }
+  return copie.textContent.replace(/\s+/g, " ").trim();
+}
+
+function ajusterLePli(table, cadre) {
+  const largeur = cadre.clientWidth;
+  if (!largeur) { return; }
+  const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+  delete table.dataset.plie;
+  table.dataset.pli = table._pli;
+  const minimum = Math.max(table._plierEnDeca * rem,
+    parseFloat(getComputedStyle(table).minWidth) || 0);
+  if (largeur < minimum || table.scrollWidth > largeur + 1) {
+    table.dataset.plie = "";
+    // Des valeurs trop longues pour tenir côte à côte, même en rangée : elles
+    // passent en fiche, l'une sous l'autre. Le tableau n'en est pas toujours
+    // plus large : ses colonnes se partagent la largeur, et une valeur qui ne
+    // se coupe pas passe sur la case voisine — « 422 Md €13,9 % » sur la page
+    // Pourquoi changer, à 390 points (action 173, étape 6). Chaque case se mesure.
+    if (table._pli === "rangee" && (table.scrollWidth > largeur + 1
+        || [...table.querySelectorAll("th, td")]
+          .some((case_) => case_.scrollWidth > case_.clientWidth + 1))) {
+      table.dataset.pli = "fiche";
+    }
+  }
+}
+
+function plierLesTableaux(racine) {
+  surveillantDesTableaux?.disconnect();
+  surveillantDesTableaux = new ResizeObserver((entrees) => {
+    for (const { target: cadre } of entrees) {
+      if (cadre.clientWidth === cadre._largeurVue) { continue; }
+      cadre._largeurVue = cadre.clientWidth;
+      for (const table of cadre._tables || []) { ajusterLePli(table, cadre); }
+    }
+  });
+  for (const table of racine.querySelectorAll("table")) {
+    const tete = table.tHead?.rows[table.tHead.rows.length - 1];
+    const noms = [...(tete?.cells || [])]
+      .map((cellule) => cellule.textContent.replace(/\s+/g, " ").trim());
+    if (noms.length < 2) { continue; }
+    let phrases = false;
+    let texte = false;
+    let grille = noms.length > 4
+      && noms.slice(1).every((nom) => nom.length <= LONGUEUR_D_UNE_CASE_DE_GRILLE);
+    for (const corps of table.tBodies) {
+      for (const ligne of corps.rows) {
+        [...ligne.cells].forEach((cellule, rang) => {
+          if (rang === 0) { return; }
+          if (noms[rang]) { cellule.dataset.titre = noms[rang]; }
+          const montre = texteMontre(cellule);
+          if (montre.length > LONGUEUR_D_UNE_PHRASE) {
+            phrases = true;
+            cellule.classList.add("pleine");
+          }
+          if (!cellule.classList.contains("nombre")) { texte = true; }
+          if (texte || montre.length > LONGUEUR_D_UNE_CASE_DE_GRILLE) { grille = false; }
+        });
+      }
+    }
+    const fiche = phrases || (noms.length > 4 && !grille);
+    table._pli = fiche ? "fiche" : "rangee";
+    table.dataset.pli = table._pli;
+    if (grille) { table.dataset.grille = ""; }
+    // Le seuil, en rem : zéro pour des nombres sur trois colonnes au plus, et
+    // pour une grille, qui ne se replient que s'ils débordent.
+    table._plierEnDeca = fiche ? 40 : (noms.length === 4 || (noms.length === 3 && texte) ? 30 : 0);
+    table.style.setProperty("--colonnes", String(noms.length - 1));
+    table.setAttribute("role", "table");
+    for (const groupe of table.querySelectorAll(":scope > :is(thead, tbody, tfoot)")) {
+      groupe.setAttribute("role", "rowgroup");
+    }
+    for (const ligne of table.rows) {
+      ligne.setAttribute("role", "row");
+      for (const cellule of ligne.cells) {
+        cellule.setAttribute("role", cellule.closest("thead") ? "columnheader"
+          : (cellule.tagName === "TH" ? "rowheader" : "cell"));
+      }
+    }
+    const cadre = table.closest(".defilant") || table.parentElement;
+    (cadre._tables ||= []).push(table);
+    surveillantDesTableaux.observe(cadre);
+  }
+}
+
+// -- lire un graphique à la souris, au doigt et au clavier --------------------
+//
+// Un tracé dit une forme ; il ne dit pas un chiffre. Jusqu'ici, qui voulait la
+// valeur d'une année devait déplier le tableau de points sous le graphique et
+// l'y chercher. Elle s'affiche maintenant là où le doigt se pose.
+//
+// D'OÙ VIENNENT LES CHIFFRES. De ce tableau, et de nulle part ailleurs. Il est
+// produit par la fonction qui trace, à partir des mêmes séries, et déjà mis en
+// forme comme la page écrit ses nombres. Les redire dans un attribut du SVG
+// ferait deux vérités là où il en faut une — et Python et JavaScript n'écrivent
+// pas les flottants de la même façon, ce qui ferait diverger les deux portages
+// sur un contenu qu'aucun œil ne lit.
+//
+// La figure porte `data-gauche` et `data-droite` : les abscisses du premier et
+// du dernier point, en unités du repère du SVG. C'est tout ce qu'il faut pour
+// passer d'une position de pointeur au rang d'une année, avec la largeur du
+// repère, que dit son `viewBox` : 720 au large, celle de la colonne sur un
+// écran étroit.
+
+/** La largeur du repère d'un graphique, en unités du `viewBox`. */
+function largeurDuRepere(figure) {
+  return figure.querySelector("svg")?.viewBox.baseVal.width || 720;
+}
+
+/** Le haut et le bas du tracé : la première et la dernière ligne de grille. */
+function hautEtBasDuTrace(svg) {
+  const lignes = [...svg.querySelectorAll("line.grille")]
+    .map((ligne) => Number(ligne.getAttribute("y1")));
+  return lignes.length ? [Math.min(...lignes), Math.max(...lignes)] : [34, 266];
+}
+
+/** Le tableau de points d'un graphique, lu une fois puis gardé. */
+function pointsDuGraphique(figure) {
+  if (figure._points) { return figure._points; }
+  const grille = figure.nextElementSibling?.querySelector("table");
+  if (!grille) { return null; }
+  // Le nom court d'une série : « Ce qui sort : les pensions versées (% du PIB) »
+  // devient « Ce qui sort ». Une boîte de lecture porte quatre lignes ; les
+  // libellés entiers, qui sont écrits pour une légende, y déborderaient, et
+  // l'unité y serait répétée à chaque ligne alors qu'elle vaut pour toutes.
+  const court = (libelle) => libelle
+    .replace(/\s*\([^)]*\)\s*$/, "").split(" : ")[0].trim();
+  const entetes = [...grille.querySelectorAll("thead th")]
+    .slice(1).map((cellule) => court(cellule.textContent));
+  // L'unité, elle, est dite une fois, à côté de l'année.
+  const premiere = grille.querySelector("thead th:nth-child(2)")?.textContent || "";
+  const unite = (premiere.match(/\(([^)]*)\)\s*$/) || [, ""])[1];
+  const lignes = [...grille.querySelectorAll("tbody tr")].map((ligne) => {
+    const cellules = [...ligne.children].map((c) => c.textContent.trim());
+    return { abscisse: cellules[0], valeurs: cellules.slice(1) };
+  });
+  // Les couleurs viennent de la légende, dans le même ordre que les colonnes :
+  // c'est la même liste de séries qui a produit les deux.
+  const couleurs = [...figure.querySelectorAll("figcaption .pastille")]
+    .map((pastille) => getComputedStyle(pastille).backgroundColor);
+  figure._points = { entetes, lignes, couleurs, unite };
+  return figure._points;
+}
+
+/** Le rang de l'année la plus proche d'une position, en fraction de largeur. */
+function rangVise(figure, part, total) {
+  const gauche = Number(figure.dataset.gauche) / largeurDuRepere(figure);
+  const droite = Number(figure.dataset.droite) / largeurDuRepere(figure);
+  if (!(droite > gauche) || total < 2) { return 0; }
+  const position = (part - gauche) / (droite - gauche);
+  return Math.max(0, Math.min(total - 1, Math.round(position * (total - 1))));
+}
+
+// Les cases de la légende prennent, dès le rendu, la largeur de la plus
+// large valeur de leur série : c'est ce qui fait que rien ne bouge au survol.
+// MESURÉE, et non estimée en `ch` : les chiffres tabulaires en graisse 800
+// sont plus larges que le zéro courant qui définit le `ch`, et une case
+// estimée débordait d'un pixel sur un téléphone. On mesure les valeurs les
+// plus longues dans la case elle-même, avant de la vider.
+function dimensionnerLecture(figure) {
+  // Sur un écran étroit, la case a sa propre ligne, sous le libellé : elle
+  // n'a pas de largeur à réserver.
+  if (figure.classList.contains("etroit")) { return; }
+  const points = pointsDuGraphique(figure);
+  if (!points) { return; }
+  for (const entree of figure.querySelectorAll("figcaption li[data-serie]")) {
+    const colonne = Number(entree.dataset.serie);
+    const case_ = entree.querySelector(".lu");
+    if (!case_) { continue; }
+    const valeurs = [...new Set(points.lignes.map((ligne) => ligne.valeurs[colonne])
+      .filter((valeur) => valeur && valeur !== "—"))];
+    valeurs.sort((a, b) => b.length - a.length);
+    let largeur = 0;
+    for (const valeur of valeurs.slice(0, 6)) {
+      case_.textContent = valeur;
+      largeur = Math.max(largeur, case_.getBoundingClientRect().width);
+    }
+    case_.textContent = "";
+    case_.style.minWidth = `${Math.ceil(largeur)}px`;
+  }
+}
+
+function effacerLecture(figure) {
+  const survol = figure.querySelector(".survol");
+  if (survol) { survol.replaceChildren(); }
+  const lecture = figure.querySelector(".lecture");
+  if (lecture) { lecture.hidden = true; }
+  for (const case_ of figure.querySelectorAll("figcaption .lu")) { case_.textContent = ""; }
+  figure._rang = null;
+}
+
+function montrerLecture(figure, rang) {
+  const points = pointsDuGraphique(figure);
+  const svg = figure.querySelector("svg");
+  const survol = figure.querySelector(".survol");
+  const lecture = figure.querySelector(".lecture");
+  if (!points || !svg || !survol || !lecture) { return; }
+  const ligne = points.lignes[rang];
+  if (!ligne) { return; }
+  figure._rang = rang;
+
+  const gauche = Number(figure.dataset.gauche);
+  const droite = Number(figure.dataset.droite);
+  const total = points.lignes.length;
+  const x = total < 2 ? gauche
+    : gauche + (droite - gauche) * (rang / (total - 1));
+
+  // Le trait de repère, puis un point sur chaque courbe qui a une valeur cette
+  // année-là. Les ordonnées sont relues dans le tracé lui-même : les chemins
+  // portent déjà les coordonnées, et les recalculer supposerait de connaître
+  // l'échelle, que le SVG ne dit pas.
+  // Du haut du cadre à son bas, que les lignes de grille bornent : le même
+  // trait sur le tracé du large et sur celui d'un téléphone.
+  const [haut, bas] = hautEtBasDuTrace(svg);
+  const dessins = [`<line class="guide" x1="${x}" y1="${haut - 12}" x2="${x}" y2="${bas}"/>`];
+  const courbes = [...svg.querySelectorAll("path.courbe")];
+  ligne.valeurs.forEach((valeur, colonne) => {
+    const courbe = courbes[colonne];
+    if (!courbe || valeur === "—") { return; }
+    const y = ordonneeSurLaCourbe(courbe, x);
+    if (y === null) { return; }
+    dessins.push(`<circle class="point" cx="${x}" cy="${y}" r="4" `
+      + `fill="${points.couleurs[colonne] || "currentColor"}"/>`);
+  });
+  // L'année, en haut du trait, du côté où il reste de la place — et jamais
+  // sur l'unité de l'axe, qui occupe le coin gauche de la même ligne : pour
+  // les premières années, l'étiquette s'écarte du trait plutôt que de la
+  // recouvrir.
+  const aGauche = x > (gauche + droite) / 2;
+  const uniteAxe = svg.querySelector('text.graduation[x="0"]');
+  const bord = uniteAxe ? uniteAxe.getBBox().width + 10 : 0;
+  const xAnnee = aGauche ? x - 6 : Math.max(x + 6, bord);
+  dessins.push(`<text class="annee-lue" x="${xAnnee}" y="${haut - 16}" `
+    + `text-anchor="${aGauche ? "end" : "start"}">${neutraliser(ligne.abscisse)}</text>`);
+  survol.innerHTML = dessins.join("");
+
+  // Les valeurs s'écrivent dans les cases de la légende, dimensionnées au
+  // rendu : la figure ne change pas de forme.
+  for (const entree of figure.querySelectorAll("figcaption li[data-serie]")) {
+    const valeur = ligne.valeurs[Number(entree.dataset.serie)];
+    const case_ = entree.querySelector(".lu");
+    if (case_) { case_.textContent = valeur && valeur !== "—" ? valeur : ""; }
+  }
+
+  // Ce que la synthèse vocale entend : la même chose, en une phrase.
+  const items = ligne.valeurs.map((valeur, colonne) =>
+    valeur === "—" ? "" : `${points.entetes[colonne]} : ${valeur}`).filter(Boolean);
+  const unite = points.unite ? ` (${points.unite})` : "";
+  lecture.textContent = `${ligne.abscisse}${unite}. ${items.join(". ")}.`;
+  lecture.hidden = false;
+}
+
+// L'ordonnée d'une courbe à une abscisse donnée, lue dans son propre chemin.
+// Le tracé est une suite de segments droits : on cherche celui qui encadre `x`
+// et on y interpole, exactement comme le trait le fait à l'écran.
+function ordonneeSurLaCourbe(courbe, x) {
+  const sommets = [...courbe.getAttribute("d").matchAll(/[ML](-?[\d.]+) (-?[\d.]+)/g)]
+    .map((trouve) => [Number(trouve[1]), Number(trouve[2])]);
+  if (!sommets.length) { return null; }
+  for (let rang = 1; rang < sommets.length; rang += 1) {
+    const [x0, y0] = sommets[rang - 1];
+    const [x1, y1] = sommets[rang];
+    if (x >= x0 - 0.01 && x <= x1 + 0.01 && x1 > x0) {
+      return y0 + (y1 - y0) * ((x - x0) / (x1 - x0));
+    }
+  }
+  // Hors du tracé de cette courbe — une série qui s'arrête avant la fin, ou qui
+  // commence après le début. Aucun point à poser : c'est le cas de la courbe
+  // d'avant 2002 sur le graphique de tête.
+  const [premierX, premierY] = sommets[0];
+  const [dernierX, dernierY] = sommets[sommets.length - 1];
+  if (Math.abs(x - premierX) < 0.01) { return premierY; }
+  if (Math.abs(x - dernierX) < 0.01) { return dernierY; }
+  return null;
+}
+
+document.addEventListener("pointermove", (evenement) => {
+  const figure = evenement.target.closest("figure.graphique");
+  if (!figure) { return; }
+  const points = pointsDuGraphique(figure);
+  if (!points) { return; }
+  const cadre = figure.querySelector("svg").getBoundingClientRect();
+  if (!cadre.width) { return; }
+  const part = (evenement.clientX - cadre.left) / cadre.width;
+  montrerLecture(figure, rangVise(figure, part, points.lignes.length));
+});
+
+// En capture, `pointerleave` arrive pour CHAQUE élément que le pointeur
+// quitte — une courbe, un cercle, le trait de repère lui-même, que le survol
+// vient de redessiner sous le doigt. Chacun effaçait la lecture, que le
+// mouvement suivant redessinait : c'est ce qui faisait clignoter la légende
+// en balayant vite. Seule la sortie de la figure compte.
+document.addEventListener("pointerleave", (evenement) => {
+  const figure = evenement.target.closest?.("figure.graphique");
+  if (!figure) { return; }
+  if (evenement.relatedTarget && figure.contains(evenement.relatedTarget)) { return; }
+  if (evenement.target !== figure && evenement.relatedTarget) { return; }
+  effacerLecture(figure);
+}, true);
+
+// Le clavier : les flèches parcourent les années, Échap referme. C'est ce qui
+// rend le graphique lisible sans pointeur — et la lecture sort dans une région
+// `aria-live`, donc elle est aussi énoncée.
+document.addEventListener("keydown", (evenement) => {
+  const figure = document.activeElement?.closest?.("figure.graphique");
+  if (!figure) { return; }
+  const points = pointsDuGraphique(figure);
+  if (!points) { return; }
+  const total = points.lignes.length;
+  const courant = figure._rang === null || figure._rang === undefined
+    ? total - 1 : figure._rang;
+  const pas = { ArrowLeft: -1, ArrowRight: 1, Home: -total, End: total };
+  if (evenement.key === "Escape") {
+    effacerLecture(figure);
+    return;
+  }
+  if (!(evenement.key in pas)) { return; }
+  evenement.preventDefault();
+  montrerLecture(figure, Math.max(0, Math.min(total - 1, courant + pas[evenement.key])));
+});
+
+document.addEventListener("focusout", (evenement) => {
+  const figure = evenement.target.closest?.("figure.graphique");
+  if (figure && !figure.contains(evenement.relatedTarget)) {
+    effacerLecture(figure);
+  }
+});
+
+
+// -- la lecture d'une cascade ------------------------------------------------
+//
+// MÊME CONTRAT QUE LES COURBES : les chiffres viennent du tableau posé sous la
+// figure, et de nulle part ailleurs. Ce qui change est la géométrie — une
+// cascade n'a pas d'abscisse continue, elle a des marches, une par ligne — et
+// la façon de viser : on cherche la barre dont le milieu est le plus proche du
+// pointeur, en hauteur et en coordonnées d'écran, plutôt que de rejouer
+// l'échelle du viewBox. C'est ce qui rend la lecture juste quelle que soit la
+// largeur.
+
+/** Les marches d'une cascade : leur rect, leur ligne de tableau, lues une fois. */
+function marchesDeLaCascade(figure) {
+  if (figure._marches) { return figure._marches; }
+  const grille = figure.nextElementSibling?.querySelector("table");
+  if (!grille) { return null; }
+  const entetes = [...grille.querySelectorAll("thead th")]
+    .slice(1).map((cellule) => cellule.textContent.replace(/\s*\([^)]*\)\s*$/, "").trim());
+  const unite = (grille.querySelector("thead th:nth-child(2)")?.textContent
+    .match(/\(([^)]*)\)\s*$/) || [, ""])[1];
+  const lignes = [...grille.querySelectorAll("tbody tr")].map((ligne) => {
+    const cellules = [...ligne.children].map((c) => c.textContent.trim());
+    // Le nom seul : la glose qui le suit dans la cellule est écrite pour un
+    // tableau, et une boîte de lecture d'une ligne n'en veut pas.
+    const nom = ligne.querySelector("th")?.firstChild?.textContent?.trim()
+      || cellules[0];
+    return { nom, valeurs: cellules.slice(1) };
+  });
+  const rects = [...figure.querySelectorAll("rect.marche")]
+    .sort((a, b) => Number(a.dataset.rang) - Number(b.dataset.rang));
+  figure._marches = { entetes, lignes, rects, unite };
+  return figure._marches;
+}
+
+function effacerCascade(figure) {
+  const survol = figure.querySelector(".survol");
+  if (survol) { survol.replaceChildren(); }
+  const lecture = figure.querySelector(".lecture");
+  if (lecture) { lecture.hidden = true; }
+  for (const rect of figure.querySelectorAll("rect.marche.visee")) {
+    rect.classList.remove("visee");
+  }
+  figure._rang = null;
+}
+
+function montrerCascade(figure, rang) {
+  const marches = marchesDeLaCascade(figure);
+  const survol = figure.querySelector(".survol");
+  const lecture = figure.querySelector(".lecture");
+  if (!marches || !survol || !lecture) { return; }
+  const ligne = marches.lignes[rang];
+  const rect = marches.rects[rang];
+  if (!ligne || !rect) { return; }
+  figure._rang = rang;
+
+  // Le cadre est dessiné DANS le SVG, aux coordonnées du rect visé : il suit
+  // donc l'échelle sans qu'on ait à la connaître. Une marche nulle est haute
+  // d'une unité ; le cadre garde une hauteur lisible, sinon il disparaîtrait
+  // sur celle-là même qu'on cherchait à montrer.
+  const x = Number(rect.getAttribute("x"));
+  const largeur = Number(rect.getAttribute("width"));
+  const hauteur = Math.max(Number(rect.getAttribute("height")), 3);
+  const y = Number(rect.getAttribute("y")) - (hauteur > 3 ? 0 : 1);
+  survol.innerHTML = `<rect class="cadre" x="${x - 3}" y="${y - 3}" `
+    + `width="${largeur + 6}" height="${hauteur + 6}"/>`;
+  for (const autre of marches.rects) { autre.classList.remove("visee"); }
+  rect.classList.add("visee");
+
+  const unite = marches.unite ? ` <span class="part">(${neutraliser(marches.unite)})</span>` : "";
+  const items = ligne.valeurs.map((valeur, colonne) =>
+    `<span class="part">${neutraliser(marches.entetes[colonne])}</span> `
+    + neutraliser(valeur)).join(" · ");
+  lecture.innerHTML = `${neutraliser(ligne.nom)}${unite} — ${items}`;
+  lecture.hidden = false;
+}
+
+/** Le rang de la marche dont le centre est le plus proche du pointeur. */
+function marcheVisee(marches, clientY) {
+  let meilleur = 0;
+  let distance = Infinity;
+  marches.rects.forEach((rect, rang) => {
+    const cadre = rect.getBoundingClientRect();
+    const ecart = Math.abs(clientY - (cadre.top + cadre.height / 2));
+    if (ecart < distance) { distance = ecart; meilleur = rang; }
+  });
+  return meilleur;
+}
+
+document.addEventListener("pointermove", (evenement) => {
+  const figure = evenement.target.closest?.("figure.cascade");
+  if (!figure) { return; }
+  const marches = marchesDeLaCascade(figure);
+  if (!marches || !marches.rects.length) { return; }
+  montrerCascade(figure, marcheVisee(marches, evenement.clientY));
+});
+
+document.addEventListener("pointerleave", (evenement) => {
+  const figure = evenement.target.closest?.("figure.cascade");
+  if (!figure) { return; }
+  if (evenement.relatedTarget && figure.contains(evenement.relatedTarget)) { return; }
+  if (evenement.target !== figure && evenement.relatedTarget) { return; }
+  effacerCascade(figure);
+}, true);
+
+// Le clavier : les flèches parcourent les marches, Échap referme. Le focus est
+// sur la figure, qui porte `tabindex`.
+document.addEventListener("keydown", (evenement) => {
+  const figure = document.activeElement?.closest?.("figure.cascade");
+  if (!figure) { return; }
+  const marches = marchesDeLaCascade(figure);
+  if (!marches || !marches.rects.length) { return; }
+  const total = marches.rects.length;
+  if (evenement.key === "Escape") { effacerCascade(figure); return; }
+  const pas = { ArrowUp: -1, ArrowDown: 1, ArrowLeft: -1, ArrowRight: 1,
+    Home: -total, End: total };
+  if (!(evenement.key in pas)) { return; }
+  evenement.preventDefault();
+  const courant = figure._rang === null || figure._rang === undefined
+    ? 0 : figure._rang;
+  montrerCascade(figure, Math.max(0, Math.min(total - 1, courant + pas[evenement.key])));
+});
+
+document.addEventListener("focusout", (evenement) => {
+  const figure = evenement.target.closest?.("figure.cascade");
+  if (figure && !figure.contains(evenement.relatedTarget)) { effacerCascade(figure); }
+});
+
+// -- composer l'image d'une carte --------------------------------------------
+//
+// Une carte du site se lit dans une page ; une image se lit dans un fil. Ce qui
+// suit compose la seconde à partir de la première, dans le navigateur, sans
+// serveur et sans bibliothèque : la question, la réponse, le tracé, sa légende,
+// sa source, et la signature du compte.
+//
+// LE TRACÉ EST UN SVG QUI TIENT SES COULEURS DE LA FEUILLE DE STYLE. Sorti de
+// la page, il les perdrait toutes et sortirait noir sur transparent. On recopie
+// donc, sur chaque nœud du clone, les quelques propriétés calculées qui le
+// dessinent — c'est plus sûr que de rejouer les règles CSS, qui changeront.
+
+const PROPRIETES_TRACE = [
+  "fill", "stroke", "stroke-width", "stroke-dasharray", "stroke-linecap",
+  "stroke-linejoin", "opacity", "font-size", "font-family", "font-weight",
+  "text-anchor",
+];
+
+const LARGEUR_IMAGE = 1200;
+const MARGE_IMAGE = 52;
+// L'écart entre deux schémas de front dans l'image : celui de la page, à
+// l'échelle où l'image les agrandit.
+const ECART_DE_FRONT_IMAGE = 32;
+
+// Les deux familles du site. Une toile ne sait rien des polices de la page tant
+// qu'elles ne sont pas chargées : `polices()` les réclame avant la première
+// composition, et le repli système reste écrit dans la déclaration pour le cas
+// où elles n'arriveraient pas.
+const SANS = '"Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif';
+// La carte d'un graphique reste composée en serif système : ses lignes sont du
+// texte courant, et « Instrument Serif » est un caractère d'affiche, dessiné
+// pour un chiffre de 150 px et illisible en 19.
+const SERIF = '"Iowan Old Style", Palatino, Georgia, serif';
+
+let policesDemandees = null;
+
+function polices() {
+  if (!policesDemandees) {
+    policesDemandees = Promise.all([
+      document.fonts?.load(`900 150px "Public Sans"`),
+      document.fonts?.load(`700 32px "Public Sans"`),
+      document.fonts?.load(`400 52px "Instrument Serif"`),
+    ].filter(Boolean)).catch(() => {});
+  }
+  return policesDemandees;
+}
+
+function svgAutonome(svg) {
+  const clone = svg.cloneNode(true);
+  // Le clone a exactement la structure de l'original : c'est ce qui permet de
+  // lire le style calculé sur l'un et de l'écrire sur l'autre en les parcourant
+  // de front. La zone de survol n'est donc retirée qu'APRÈS ce parcours — la
+  // retirer avant décalerait les deux listes d'un nœud, et le style de chaque
+  // élément irait au suivant.
+  const originaux = [svg, ...svg.querySelectorAll("*")];
+  const copies = [clone, ...clone.querySelectorAll("*")];
+  originaux.forEach((noeud, rang) => {
+    const calcule = getComputedStyle(noeud);
+    const style = PROPRIETES_TRACE
+      .map((propriete) => `${propriete}:${calcule.getPropertyValue(propriete)}`)
+      .join(";");
+    copies[rang].setAttribute("style", style);
+    copies[rang].removeAttribute("class");
+  });
+  // Elle décrit un geste, pas une donnée : une image n'a pas de pointeur.
+  copies[originaux.indexOf(svg.querySelector(".survol"))]?.remove();
+  clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+  // Le double du repère : 1440 × 600 pour une courbe, et la hauteur propre
+  // d'un schéma de Sankey, dont chaque exemplaire a la sienne.
+  const boite = svg.viewBox.baseVal;
+  clone.setAttribute("width", String(2 * (boite?.width || 720)));
+  clone.setAttribute("height", String(2 * (boite?.height || 300)));
+  return "data:image/svg+xml;charset=utf-8,"
+    + encodeURIComponent(new XMLSerializer().serializeToString(clone));
+}
+
+// -- écrire sur une toile -----------------------------------------------------
+
+/** La largeur d'un texte, interlettrage compris. */
+function largeurDe(contexte, texte, espacement = 0) {
+  return contexte.measureText(texte).width + espacement * Math.max(texte.length - 1, 0);
+}
+
+/** Écrit un texte, en posant les lettres une à une s'il est interlettré. */
+function ecrire(contexte, texte, x, y, espacement = 0) {
+  if (!espacement) { contexte.fillText(texte, x, y); return; }
+  let curseur = x;
+  for (const caractere of texte) {
+    contexte.fillText(caractere, curseur, y);
+    curseur += contexte.measureText(caractere).width + espacement;
+  }
+}
+
+/** Découpe un texte en lignes qui tiennent dans une largeur donnée.
+ *
+ * Un saut de ligne écrit dans le texte — ce qu'un `<br>` de la carte devient —
+ * est RESPECTÉ : il sépare deux phrases que l'auteur a voulu voir l'une sous
+ * l'autre, et les recoller pour les recouper ailleurs perdrait ce choix.
+ */
+function enLignes(contexte, texte, largeur, espacement = 0) {
+  const lignes = [];
+  for (const paragraphe of String(texte).split("\n")) {
+    let courante = "";
+    for (const mot of paragraphe.split(/\s+/).filter(Boolean)) {
+      const essai = courante ? `${courante} ${mot}` : mot;
+      if (courante && largeurDe(contexte, essai, espacement) > largeur) {
+        lignes.push(courante);
+        courante = mot;
+      } else {
+        courante = essai;
+      }
+    }
+    if (courante) { lignes.push(courante); }
+  }
+  return lignes;
+}
+
+// -- le filigrane -------------------------------------------------------------
+//
+// UN SEUL, et c'est la deuxième leçon de ce dispositif. Il a d'abord été une
+// GRILLE — le compte répété en diagonale sur toute la surface, soixante-dix
+// fois —, ce qui était la réponse littérale à « qu'il ne puisse pas être
+// rogné » : aucun découpage ne pouvait les manquer toutes. Mais une image
+// couverte de son propre filigrane ressemble à une planche de contact, et
+// personne ne republie une planche de contact. « Je ne veux le voir apparaître
+// qu'une fois. »
+//
+// Une seule marque, donc — et pour qu'un recadrage la trouve quand même, elle
+// est posée SUR LA DIAGONALE et mise à l'échelle de l'image : sa largeur est
+// une part fixe de cette diagonale, mesurée sur la police effectivement
+// chargée plutôt que devinée. Elle traverse ainsi le cadre d'un coin à
+// l'autre, et un rognage qui l'enlève entièrement enlève avec elle l'essentiel
+// de ce qu'il y avait à publier.
+//
+// Ce n'est pas ce que faisait la grille, et il faut le dire : un filigrane
+// unique se recadre, si l'on y met le prix. C'est le maximum qu'une seule
+// marque puisse opposer, et c'est ce qui a été demandé.
+//
+// Elle est posée EN DERNIER, par-dessus le tracé comme par-dessus le texte :
+// posée avant, une aire pleine la recouvrirait. Et elle est plus pâle que ne
+// l'était la grille, à opacité apparente égale : une lettre de 300 px se
+// remarque plus qu'une de 14, parce qu'elle occupe l'œil d'un coup et non par
+// une texture. Enfin elle est dans l'encre de la page, et non dans l'or de la
+// charte — l'or attire l'œil, une teinte de texte se fond dans le fond.
+const OPACITE_FILIGRANE = 0.035;
+
+//: Ce que la marque occupe de la diagonale de l'image. Au-dessous des deux
+//: tiers, elle cesse de traverser le cadre et se rogne comme un coin.
+const PART_FILIGRANE = 0.86;
+
+function filigrane(dessin, largeur, hauteur, couleur) {
+  dessin.save();
+  dessin.globalAlpha = OPACITE_FILIGRANE;
+  dessin.fillStyle = couleur;
+  dessin.textAlign = "center";
+  dessin.textBaseline = "middle";
+  // La diagonale exacte, et non un angle choisi : la marque doit aller d'un
+  // coin à l'autre, et l'angle d'une image de 1200 × 675 n'est pas celui d'une
+  // image de 1200 × 1080.
+  dessin.translate(largeur / 2, hauteur / 2);
+  dessin.rotate(-Math.atan2(hauteur, largeur));
+  // La taille se CHERCHE, sur une mesure : elle dépend de la police, donc de
+  // ce que le navigateur a fini par charger, et une constante ne serait juste
+  // que pour une police. On part d'une estimation, on mesure, on corrige.
+  const vise = Math.hypot(largeur, hauteur) * PART_FILIGRANE;
+  let taille = 200;
+  dessin.font = `600 ${taille}px ${SANS}`;
+  const mesure = dessin.measureText(SIGNATURE).width;
+  if (mesure > 0) {
+    taille = Math.round((taille * vise) / mesure);
+    dessin.font = `600 ${taille}px ${SANS}`;
+  }
+  dessin.fillText(SIGNATURE, 0, 0);
+  dessin.restore();
+}
+
+/** Le pied d'une image composée : le compte, ce qu'est le site, où aller.
+ *
+ * Il double le filigrane, et ne fait pas double emploi avec lui : le filigrane
+ * dit à qui l'image appartient, le pied dit où elle mène. Il rend la hauteur
+ * qu'il a prise, pour que l'appelant n'ait pas à la recalculer.
+ */
+function piedDImage(dessin, bas, encre, accent, doux) {
+  dessin.save();
+  dessin.strokeStyle = doux;
+  dessin.globalAlpha = 0.35;
+  dessin.beginPath();
+  dessin.moveTo(MARGE_IMAGE, bas);
+  dessin.lineTo(LARGEUR_IMAGE - MARGE_IMAGE, bas);
+  dessin.stroke();
+  dessin.globalAlpha = 1;
+  const ligne = bas + 34;
+  dessin.font = `600 27px ${SERIF}`;
+  dessin.fillStyle = accent;
+  dessin.fillText(SIGNATURE, MARGE_IMAGE, ligne);
+  dessin.font = `17px ${SERIF}`;
+  dessin.fillStyle = doux;
+  dessin.fillText(SIGNATURE_SITE, MARGE_IMAGE, ligne + 25);
+  dessin.font = `600 21px ${SERIF}`;
+  dessin.textAlign = "right";
+  dessin.fillText(ADRESSE_SITE, LARGEUR_IMAGE - MARGE_IMAGE, ligne);
+  dessin.textAlign = "left";
+  dessin.restore();
+  return 34 + 25;
+}
+
+// -- l'image d'une carte ------------------------------------------------------
+//
+// Deux cartes se partagent, et elles ne se composent pas de la même façon :
+// celle d'un graphique porte un tracé qu'il faut redessiner, celle de la page
+// Partager porte un chiffre et trois lignes que la feuille de style met déjà en
+// page. Le reste — le filigrane, le pied, le message, les boutons — leur est
+// commun, et n'est écrit qu'une fois.
+
+/** Le texte d'un élément, SANS les définitions du glossaire qu'il contient.
+ *
+ * Elles sont dans le HTML même repliées — c'est ce qui permet de les ouvrir
+ * sans rien recharger —, et `textContent` les rend comme le reste : sans ce
+ * tri, la source d'une carte se lisait « En part du PIBLe PIB, c'est tout ce
+ * que la France produit… ». Un `<br>` devient un saut de ligne, que le
+ * découpage en lignes respecte.
+ */
+function texteDuNoeud(noeud) {
+  if (!noeud) { return ""; }
+  const sans = noeud.cloneNode(true);
+  sans.querySelectorAll(".mot > .bulle").forEach((bulle) => bulle.remove());
+  sans.querySelectorAll("br").forEach((saut) => saut.replaceWith("\n"));
+  return sans.textContent.replace(/[^\S\n]+/g, " ").replace(/ ?\n ?/g, "\n").trim();
+}
+
+function texteDe(carte, selecteur) {
+  return texteDuNoeud(carte.querySelector(selecteur)).replace(/\n/g, " ");
+}
+
+/** Les entrées de la légende d'un graphique, avec leurs pastilles.
+ *
+ * Une entrée porte une pastille, sauf celle du ruban d'écart, qui en porte
+ * deux — une par teinte. Les dessiner toutes est la seule façon de rendre
+ * lisible « vert s'il en reste, rouge s'il en manque ».
+ */
+function legendesDe(figure) {
+  return [...figure.querySelectorAll("figcaption li")].map((item) => ({
+    texte: [...item.children].filter((enfant) => !enfant.classList.contains("pastille"))
+      .map((enfant) => enfant.textContent).join(" ").replace(/\s+/g, " ").trim(),
+    couleurs: [...item.querySelectorAll(".pastille")].map((pastille) => {
+      const calcule = getComputedStyle(pastille);
+      return { fond: calcule.backgroundColor, voile: Number(calcule.opacity) };
+    }),
+  }));
+}
+
+async function imageDuGraphique(carte) {
+  // Les tracés de la carte, dans leur ordre : la courbe d'un graphique, ou les
+  // deux schémas de Sankey de la carte des flux. Un schéma porte son titre en
+  // tête, un graphique sa légende en pied ; chacun garde les proportions de son
+  // repère — une courbe fait 720 × 300, un schéma la hauteur de ses caisses.
+  const figures = [...carte.querySelectorAll("figure.graphique, figure.sankey")]
+    .filter((figure) => figure.querySelector("svg"));
+  if (!figures.length) { return null; }
+  const traces = await Promise.all(figures.map(async (figure) => {
+    const svg = figure.querySelector("svg");
+    const image = new Image();
+    image.src = svgAutonome(svg);
+    await image.decode();
+    const boite = svg.viewBox.baseVal;
+    const sankey = figure.classList.contains("sankey");
+    return {
+      image,
+      sankey,
+      dessin: boite?.width || 720,
+      rapport: boite?.width ? boite.height / boite.width : 300 / 720,
+      titre: sankey ? texteDuNoeud(figure.querySelector("figcaption")) : "",
+      legendes: sankey ? [] : legendesDe(figure),
+    };
+  }));
+
+  const style = getComputedStyle(document.body);
+  const fond = style.backgroundColor;
+  const encre = style.color;
+  const doux = getComputedStyle(carte.querySelector(".source") || carte).color;
+  const accent = getComputedStyle(document.documentElement)
+    .getPropertyValue("--accent").trim() || encre;
+
+  const mesure = document.createElement("canvas").getContext("2d");
+  const largeurTexte = LARGEUR_IMAGE - 2 * MARGE_IMAGE;
+  mesure.font = `600 38px ${SERIF}`;
+  const titre = enLignes(mesure, texteDe(carte, ":scope > h2"), largeurTexte);
+  mesure.font = `28px ${SERIF}`;
+  const reponse = enLignes(mesure, texteDe(carte, ".reponse"), largeurTexte);
+  mesure.font = `19px ${SERIF}`;
+  const source = enLignes(mesure, texteDe(carte, ".source"), largeurTexte);
+
+  // LES SCHÉMAS QU'UNE CARTE COMPARE VONT DE FRONT, deux par rangée, chacun sur
+  // sa moitié, quand aucun n'y rétrécit : dessinés à la demi-colonne, que le
+  // gabarit borne à cette moitié, ou à la largeur d'un téléphone. L'image a
+  // toujours 1 200 pixels, la largeur d'un bureau. Empilés à toute sa largeur,
+  // ceux de la carte des flux y prenaient près de quatre fois la taille que le
+  // plus petit téléphone leur donne, et l'image près de cinq mille pixels de
+  // haut. Ceux qu'une tablette en hauteur dessine sur sa colonne entière s'y
+  // empilent encore : de front, leurs textes tomberaient à dix pixels. Un
+  // graphique a sa rangée à lui.
+  const moitie = (largeurTexte - ECART_DE_FRONT_IMAGE) / 2;
+  const rangees = [];
+  for (const trace of traces) {
+    const derniere = rangees[rangees.length - 1];
+    const deFront = trace.sankey && derniere?.length === 1 && derniere[0].sankey
+      && Math.max(trace.dessin, derniere[0].dessin) <= moitie;
+    if (deFront) { derniere.push(trace); } else { rangees.push([trace]); }
+  }
+  // La hauteur de chaque tracé suit son repère, à la largeur que sa rangée lui
+  // laisse. Le titre d'un schéma prend une ligne au-dessus de lui, plus aérée
+  // entre deux rangées qu'après la réponse ; un graphique seul retrouve
+  // exactement la mise en page d'avant les schémas.
+  for (const rangee of rangees) {
+    const largeur = (largeurTexte - (rangee.length - 1) * ECART_DE_FRONT_IMAGE) / rangee.length;
+    rangee.forEach((trace, colonne) => {
+      trace.x = MARGE_IMAGE + colonne * (largeur + ECART_DE_FRONT_IMAGE);
+      trace.largeur = largeur;
+      trace.hauteur = Math.round(largeur * trace.rapport);
+    });
+  }
+  const avantTitre = (rang) => (rang === 0 ? 10 : 34);
+  const hauteurTraces = rangees.reduce((somme, rangee, rang) => somme
+    + Math.max(...rangee.map((trace) => (trace.titre ? avantTitre(rang) + 40 : 0)
+      + trace.hauteur + 16 + trace.legendes.length * 30))
+    + (rang < rangees.length - 1 ? 16 : 0), 0);
+  const hauteur = MARGE_IMAGE + titre.length * 48 + 14 + reponse.length * 40
+    + 22 + hauteurTraces + 26 + source.length * 28
+    + 30 + 18 + 59 + MARGE_IMAGE;
+
+  const toile = document.createElement("canvas");
+  toile.width = LARGEUR_IMAGE * 2;
+  toile.height = hauteur * 2;
+  const dessin = toile.getContext("2d");
+  dessin.scale(2, 2);
+  dessin.fillStyle = fond;
+  dessin.fillRect(0, 0, LARGEUR_IMAGE, hauteur);
+  dessin.textBaseline = "alphabetic";
+
+  let y = MARGE_IMAGE + 38;
+  dessin.fillStyle = encre;
+  dessin.font = `600 38px ${SERIF}`;
+  for (const ligne of titre) { dessin.fillText(ligne, MARGE_IMAGE, y); y += 48; }
+  y += 14;
+  dessin.font = `28px ${SERIF}`;
+  for (const ligne of reponse) { dessin.fillText(ligne, MARGE_IMAGE, y); y += 40; }
+
+  y += 22;
+  rangees.forEach((rangee, rang) => {
+    // Chaque tracé de la rangée part de son haut ; la rangée finit sous le
+    // plus long.
+    const haut = y;
+    for (const trace of rangee) {
+      let yTrace = haut;
+      if (trace.titre) {
+        yTrace += avantTitre(rang);
+        dessin.font = `700 24px ${SANS}`;
+        dessin.fillStyle = encre;
+        dessin.fillText(trace.titre, trace.x, yTrace, trace.largeur);
+        yTrace += 40;
+      }
+      dessin.drawImage(trace.image, trace.x, yTrace - 30, trace.largeur, trace.hauteur);
+      yTrace += trace.hauteur - 14;
+
+      dessin.font = `20px ${SERIF}`;
+      for (const entree of trace.legendes) {
+        entree.couleurs.forEach((pastille, position) => {
+          dessin.globalAlpha = Number.isFinite(pastille.voile) ? pastille.voile : 1;
+          dessin.fillStyle = pastille.fond;
+          dessin.fillRect(trace.x + position * 16, yTrace - 11, 13, 13);
+        });
+        dessin.globalAlpha = 1;
+        dessin.fillStyle = doux;
+        dessin.fillText(entree.texte, trace.x + entree.couleurs.length * 16 + 8, yTrace);
+        yTrace += 30;
+      }
+      y = Math.max(y, yTrace);
+    }
+    if (rang < rangees.length - 1) { y += 16; }
+  });
+
+  y += 26;
+  dessin.font = `19px ${SERIF}`;
+  dessin.fillStyle = doux;
+  for (const ligne of source) { dessin.fillText(ligne, MARGE_IMAGE, y); y += 28; }
+
+  piedDImage(dessin, y + 18, encre, accent, doux);
+  filigrane(dessin, LARGEUR_IMAGE, hauteur, encre);
+
+  return new Promise((rendre) => toile.toBlob(rendre, "image/png"));
+}
+
+/** Un bloc de la carte à publier, lu dans son aperçu.
+ *
+ * Police, graisse, taille, couleur, interlettrage, interligne, marge : tout
+ * vient de la FEUILLE DE STYLE, à l'échelle près. L'aperçu de la page est en
+ * centièmes de la largeur de sa colonne ; l'image est le même bloc à 1200 px de
+ * large. Rien n'est donc décrit deux fois, et changer la carte dans le style
+ * change l'image.
+ */
+function blocDeCarte(dessin, affiche, selecteur, echelle, largeurMax) {
+  const noeud = affiche.querySelector(selecteur);
+  if (!noeud) { return null; }
+  const style = getComputedStyle(noeud);
+  const taille = parseFloat(style.fontSize) * echelle;
+  const espacement = style.letterSpacing === "normal"
+    ? 0 : parseFloat(style.letterSpacing) * echelle;
+  const bornePropre = parseFloat(style.maxWidth);
+  const largeur = Number.isFinite(bornePropre)
+    ? Math.min(largeurMax, bornePropre * echelle) : largeurMax;
+  const brut = texteDuNoeud(noeud);
+  const texte = style.textTransform === "uppercase" ? brut.toUpperCase() : brut;
+  const police = `${style.fontWeight} ${taille}px ${style.fontFamily}`;
+  dessin.font = police;
+  const lignes = enLignes(dessin, texte, largeur, espacement);
+  const interligne = style.lineHeight === "normal"
+    ? taille * 1.15 : parseFloat(style.lineHeight) * echelle;
+  return {
+    police, couleur: style.color, espacement, interligne, lignes, taille,
+    marge: (parseFloat(style.marginTop) || 0) * echelle,
+    hauteur: lignes.length * interligne,
+  };
+}
+
+/** Pose un bloc mesuré par `blocDeCarte`, et rend l'ordonnée d'après. */
+function poserBloc(dessin, bloc, x, y) {
+  if (!bloc) { return y; }
+  dessin.font = bloc.police;
+  dessin.fillStyle = bloc.couleur;
+  let ligne = y + bloc.taille * 0.82;
+  for (const texte of bloc.lignes) {
+    ecrire(dessin, texte, x, ligne, bloc.espacement);
+    ligne += bloc.interligne;
+  }
+  return y + bloc.hauteur;
+}
+
+/** L'image d'une carte de la page Partager, à 1200 × 675.
+ *
+ * C'est le format de X et de LinkedIn, et la carte a été dessinée pour lui.
+ * Elle a longtemps été rendue à sa taille réelle dans un cadre qui défilait, à
+ * charge pour le lecteur d'en faire une capture d'écran et de la recadrer :
+ * deux gestes, un outil, et une image dont la signature partait au premier
+ * rognage. Elle se compose maintenant ici, aux mêmes dimensions, à partir de ce
+ * que la feuille de style dit de son aperçu.
+ *
+ * Une carte étroite, celle d'un téléphone ou l'une des deux qui vont de front
+ * sur une tablette, se LIT dans un autre format que celui de l'image : à la
+ * largeur de sa colonne, en tailles de lecture. Le temps de la composer, la
+ * carte reprend celui de l'image — la classe `en-image` lui rend ses 36 rem et
+ * son 16/9 —, et le quitte avant que l'écran ne se redessine.
+ */
+async function imageDeCarteAPublier(affiche) {
+  await polices();
+  const cadreCarte = affiche.closest(".cadre-carte");
+  cadreCarte?.classList.add("en-image");
+  let composee;
+  try {
+    composee = dessinerCarteAPublier(affiche);
+  } finally {
+    cadreCarte?.classList.remove("en-image");
+  }
+  if (!composee) { return null; }
+  const { toile, dessin, hauteur, couleur } = composee;
+  filigrane(dessin, LARGEUR_IMAGE, hauteur, couleur);
+  return new Promise((rendre) => toile.toBlob(rendre, "image/png"));
+}
+
+/** Le fond et les textes d'une carte à publier, sans le filigrane : celui-ci
+ * se pose en dernier, à l'export, comme sur l'image d'un graphique. */
+function dessinerCarteAPublier(affiche) {
+  const cadre = affiche.getBoundingClientRect();
+  if (!cadre.width) { return null; }
+  const echelle = LARGEUR_IMAGE / cadre.width;
+  const hauteur = Math.round(cadre.height * echelle);
+  const style = getComputedStyle(affiche);
+  const marge = parseFloat(style.paddingLeft) * echelle;
+  const largeurTexte = LARGEUR_IMAGE - 2 * marge;
+
+  const toile = document.createElement("canvas");
+  toile.width = LARGEUR_IMAGE * 2;
+  toile.height = hauteur * 2;
+  const dessin = toile.getContext("2d");
+  dessin.scale(2, 2);
+  dessin.fillStyle = style.backgroundColor;
+  dessin.fillRect(0, 0, LARGEUR_IMAGE, hauteur);
+  dessin.textBaseline = "alphabetic";
+
+  const surtitre = blocDeCarte(dessin, affiche, ".surtitre", echelle, largeurTexte);
+  const chiffre = blocDeCarte(dessin, affiche, ".chiffre", echelle, largeurTexte);
+  const phrase = blocDeCarte(dessin, affiche, ".phrase", echelle, largeurTexte);
+  const detail = blocDeCarte(dessin, affiche, ".detail", echelle, largeurTexte);
+  const compte = blocDeCarte(dessin, affiche, ".pied .compte", echelle, largeurTexte);
+  const adresse = blocDeCarte(dessin, affiche, ".pied .adresse", echelle, largeurTexte);
+
+  // Le pied, d'abord : c'est lui qui borne la place du milieu. La carte est une
+  // boîte flexible en `space-between` — sur-titre en haut, pied en bas, le reste
+  // centré dans ce qui reste —, et l'image la reproduit telle quelle.
+  const stylePied = getComputedStyle(affiche.querySelector(".pied"));
+  const hautPied = hauteur - marge
+    - (parseFloat(stylePied.paddingTop) * echelle
+       + Math.max(compte?.hauteur || 0, adresse?.hauteur || 0));
+  dessin.strokeStyle = stylePied.borderTopColor;
+  dessin.lineWidth = Math.max(parseFloat(stylePied.borderTopWidth) * echelle, 1);
+  dessin.beginPath();
+  dessin.moveTo(marge, hautPied);
+  dessin.lineTo(LARGEUR_IMAGE - marge, hautPied);
+  dessin.stroke();
+  const ligneDuPied = hautPied + parseFloat(stylePied.paddingTop) * echelle;
+  poserBloc(dessin, compte, marge, ligneDuPied);
+  if (adresse) {
+    dessin.font = adresse.police;
+    const large = largeurDe(dessin, adresse.lignes[0] || "", adresse.espacement);
+    poserBloc(dessin, adresse, LARGEUR_IMAGE - marge - large, ligneDuPied);
+  }
+
+  const basSurtitre = poserBloc(dessin, surtitre, marge, marge);
+  const milieu = [chiffre, phrase, detail].filter(Boolean);
+  const hauteurMilieu = milieu.reduce(
+    (somme, bloc, rang) => somme + bloc.hauteur + (rang ? bloc.marge : 0), 0);
+  let y = basSurtitre
+    + Math.max((hautPied - basSurtitre - hauteurMilieu) / 2, 0);
+  milieu.forEach((bloc, rang) => {
+    y = poserBloc(dessin, bloc, marge, y + (rang ? bloc.marge : 0));
+  });
+
+  return { toile, dessin, hauteur, couleur: style.color };
+}
+
+/** Le conteneur d'une barre de partage : la carte d'un graphique, ou celle
+ * d'une image à publier. Les deux portent la même barre et le même code. */
+function carteDe(bouton) {
+  return bouton.closest("section.cle, figure.carte");
+}
+
+function imageDeLaCarte(carte) {
+  const affiche = carte.querySelector(".carte-partage");
+  return affiche ? imageDeCarteAPublier(affiche) : imageDuGraphique(carte);
+}
+
+function nomDeFichier(carte) {
+  const titre = carte.querySelector(":scope > h2")
+    || carte.querySelector("figcaption")
+    || carte.querySelector(".surtitre");
+  const question = (titre?.textContent || "carte")
+    .toLowerCase()
+    .normalize("NFD").replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
+  return `retraite-${question || "carte"}.png`;
+}
+
+// Le texte d'un partage : ce que la carte pose comme question, ce qu'elle
+// répond, d'où elle le tient, et où aller. C'est le pendant écrit de l'image —
+// la même carte, dite plutôt que dessinée.
+//
+// Il est BORNÉ. X coupe à 280 caractères, et compte toute adresse pour 23
+// quelle qu'en soit la longueur : le budget réel est donc 280 moins 23, moins
+// le compte et les passages à la ligne. Ce qui saute quand ça ne tient pas est
+// choisi, et non subi — la source d'abord, qui est la moins utile dans un
+// message court, puis la réponse, tronquée au dernier espace pour ne pas
+// couper un mot en deux.
+const LIMITE_X = 280;
+const COUT_ADRESSE = 23;
+
+function texteDeLaCarte(carte) {
+  const affiche = carte.querySelector(".carte-partage");
+  // Une carte à publier ne pose pas de question : elle annonce un chiffre. Sa
+  // « réponse » est donc le chiffre suivi de sa phrase, qui se lisent d'un
+  // trait — « 1 320 € par mois au minimum, pour une personne seule. »
+  const question = affiche ? texteDe(carte, ".surtitre") : texteDe(carte, ":scope > h2");
+  const reponse = affiche
+    ? [texteDe(carte, ".chiffre"), texteDe(carte, ".phrase")]
+      .filter(Boolean).join(" ")
+    : texteDe(carte, ".reponse");
+  const source = affiche ? texteDe(carte, ".detail") : texteDe(carte, ".source");
+  // L'adresse d'un graphique est celle de la page où le lecteur était : elle la
+  // rouvre, ce qui est tout l'intérêt d'un lien dans un message. Une carte à
+  // publier, elle, renvoie au simulateur — nul ne clique pour arriver sur une
+  // page de cartes à publier. Sauf celles de « Le saviez-vous ? », que la page
+  // marque : qui doute d'une règle doit trouver, en cliquant, le texte qui la
+  // fonde, et ce texte est sous la carte.
+  const adresse = affiche && !carte.closest("[data-partage-ici]")
+    ? `${location.origin}${location.pathname}#/simuler`
+    : location.href;
+  const pied = `${adresse} ${SIGNATURE}`;
+
+  const assembler = (avecSource, corps) => [
+    question, corps, avecSource && source ? `Source : ${source}` : "", pied,
+  ].filter(Boolean).join("\n\n");
+
+  // Le coût d'un texte tel que X le compte : l'adresse vaut 23, le reste vaut
+  // sa longueur.
+  const cout = (texte) => texte.length - adresse.length + COUT_ADRESSE;
+
+  let propose = assembler(true, reponse);
+  if (cout(propose) <= LIMITE_X) { return propose; }
+  propose = assembler(false, reponse);
+  if (cout(propose) <= LIMITE_X) { return propose; }
+
+  // Il faut tronquer la réponse. On calcule la place qui lui reste une fois le
+  // reste posé, et on coupe au dernier espace avant cette place.
+  const sansReponse = cout(assembler(false, ""));
+  const place = LIMITE_X - sansReponse - 1;
+  if (place < 20) { return assembler(false, "").trim(); }
+  const coupe = reponse.slice(0, place);
+  const espace = coupe.lastIndexOf(" ");
+  return assembler(false, `${(espace > 20 ? coupe.slice(0, espace) : coupe).trim()}…`);
+}
+
+// -- les deux gestes du partage -----------------------------------------------
+//
+// La barre en portait trois — publier sur X, télécharger l'image, copier le
+// texte —, ce qui demandait de choisir avant d'agir et laissait chacun des
+// trois incomplet : l'image sans le message, le message sans l'image. Elle en
+// porte deux, et chacun rend un post complet.
+
+/** Enregistre une image dans les téléchargements. */
+function telecharger(image, nom) {
+  const adresse = URL.createObjectURL(image);
+  const lien = document.createElement("a");
+  lien.href = adresse;
+  lien.download = nom;
+  lien.click();
+  URL.revokeObjectURL(adresse);
+}
+
+/** Met un texte dans le presse-papiers. Rend `false` si le navigateur refuse.
+ *
+ * Le repli historique — un champ hors flux, sélectionné, et la commande
+ * d'édition du document — sert aux navigateurs sans API de presse-papiers, et
+ * aux pages servies sans chiffrement, où l'API n'existe pas.
+ */
+async function copierTexte(texte) {
+  try {
+    await navigator.clipboard.writeText(texte);
+    return true;
+  } catch {
+    const champ = document.createElement("textarea");
+    champ.value = texte;
+    champ.setAttribute("readonly", "");
+    champ.style.cssText = "position:fixed;top:-9999px;opacity:0";
+    document.body.append(champ);
+    champ.select();
+    let copie = false;
+    try { copie = document.execCommand("copy"); } catch { copie = false; }
+    champ.remove();
+    return copie;
+  }
+}
+
+/** Affiche le message dans le champ de repli, pour une copie à la main. */
+function ouvrirRepli(carte, texte) {
+  const repli = carte.querySelector(".partage > .repli");
+  if (!repli) { return; }
+  repli.value = texte;
+  repli.hidden = false;
+  repli.select();
+}
+
+/** Le compte rendu du geste, à côté des boutons et non dans leur libellé. */
+function compteRendu(carte, message) {
+  const etat = carte.querySelector(".partage > .etat");
+  if (etat) { etat.textContent = message; }
+}
+
+// « Partager ». Un seul geste pour un post complet : l'image ET le message.
+//
+// Sur téléphone, la feuille de partage du système les porte tous les deux vers
+// le réseau que le militant utilise — c'est la seule voie qui donne un post
+// complet sans passer par le dossier des téléchargements. Ailleurs, l'image est
+// enregistrée et le message mis dans le presse-papiers : il ne reste qu'à
+// coller et à joindre.
+document.addEventListener("click", async (evenement) => {
+  const bouton = evenement.target.closest("button.partager");
+  if (!bouton) { return; }
+  const carte = carteDe(bouton);
+  if (!carte) { return; }
+  bouton.disabled = true;
+  compteRendu(carte, "Composition de l'image…");
+  try {
+    const image = await imageDeLaCarte(carte);
+    if (!image) { throw new Error("aucune image à composer"); }
+    const nom = nomDeFichier(carte);
+    const fichier = new File([image], nom, { type: "image/png" });
+    const texte = texteDeLaCarte(carte);
+    let partage = false;
+    if (navigator.canShare?.({ files: [fichier], text: texte })) {
+      try {
+        await navigator.share({ files: [fichier], text: texte });
+        partage = true;
+      } catch (erreur) {
+        // Un partage refusé par l'utilisateur n'est pas une erreur : il ne veut
+        // pas partager, et lui enregistrer l'image quand même serait lui forcer
+        // la main.
+        if (erreur?.name === "AbortError") {
+          compteRendu(carte, "");
+          bouton.disabled = false;
+          return;
+        }
+        // Safari retire l'autorisation de partager dès que la composition a duré
+        // plus qu'un geste. On retombe alors sur l'enregistrement, qui ne la
+        // demande pas.
+      }
+    }
+    if (partage) {
+      compteRendu(carte, "");
+    } else {
+      telecharger(image, nom);
+      if (await copierTexte(texte)) {
+        compteRendu(carte, "Image enregistrée, message copié : collez-le dans "
+          + "votre publication et joignez l'image.");
+      } else {
+        compteRendu(carte, "Image enregistrée. Le message est ci-dessous, à "
+          + "copier à la main.");
+        ouvrirRepli(carte, texte);
+      }
+    }
+  } catch {
+    compteRendu(carte, "Ce navigateur ne sait pas composer l'image ici.");
+  }
+  bouton.disabled = false;
+});
+
+// « Publier sur X ». La fenêtre de X s'ouvre D'ABORD, avant toute composition :
+// un navigateur n'autorise une page à ouvrir une fenêtre que dans le geste même
+// du clic, et l'attente de l'image le lui ferait perdre. L'image est enregistrée
+// ensuite, pour être jointe à la publication : le navigateur n'autorise pas une
+// page à attacher un fichier à l'intention de X, et la lever demanderait une
+// image composée côté serveur, ce qu'un site statique ne fait pas.
+document.addEventListener("click", async (evenement) => {
+  const bouton = evenement.target.closest("button.partager-x");
+  if (!bouton) { return; }
+  const carte = carteDe(bouton);
+  if (!carte) { return; }
+  const texte = texteDeLaCarte(carte);
+  window.open(`https://x.com/intent/post?text=${encodeURIComponent(texte)}`,
+              "_blank", "noopener");
+  compteRendu(carte, "Publication ouverte sur X. Composition de l'image…");
+  try {
+    const image = await imageDeLaCarte(carte);
+    if (!image) { throw new Error("aucune image à composer"); }
+    telecharger(image, nomDeFichier(carte));
+    compteRendu(carte, "Publication ouverte sur X, image enregistrée : il ne "
+      + "reste qu'à la joindre.");
+  } catch {
+    compteRendu(carte, "Publication ouverte sur X, sans l'image : ce navigateur "
+      + "ne sait pas la composer.");
+  }
+});
+
+// Le lien d'évitement ne peut pas se contenter de son « #contenu » : ici
+// l'adresse EST la route, et y écrire une ancre de section renverrait le
+// lecteur à l'accueil, perdant la simulation en cours. Il déplace donc le
+// focus lui-même, sans toucher à l'adresse.
+document.addEventListener("click", (evenement) => {
+  if (!evenement.target.closest("a.evitement")) { return; }
+  evenement.preventDefault();
+  const contenu = document.getElementById("contenu");
+  if (!contenu) { return; }
+  contenu.focus();
+  contenu.scrollIntoView({ block: "start" });
+});
+
+// -- le plan d'une page longue ------------------------------------------------
+//
+// Le gabarit écrit, en tête des pages Coût et Données, la liste de leurs
+// sections ; chaque lien porte la route de la page (qui ne change rien) et
+// `data-vers`, l'identifiant de la section. C'est le mécanisme du lien
+// d'évitement, étendu au corps de la page : ouvrir la section si elle est
+// repliée — et celles qui l'enveloppent —, y poser le focus, y faire défiler,
+// sans toucher à l'adresse.
+//
+// La section peut être sur une AUTRE page — Carrières types renvoie au
+// coefficient d'équilibre de la page Coût, les autres pages à la partie
+// « D'où viennent les chiffres » de Méthode et sources. Le lien suit alors sa
+// route, et c'est le rendu de la page d'arrivée qui ouvre la section —
+// `sectionEnAttente`, déclarée avec les autres états du routeur.
+
+function ouvrirSection(identifiant) {
+  const cible = document.getElementById(identifiant);
+  if (!cible) { return false; }
+  for (let noeud = cible; noeud; noeud = noeud.parentElement) {
+    if (noeud.tagName === "DETAILS") { noeud.open = true; }
+  }
+  // Le résumé d'un dépliant est focusable de naissance ; une carte porte
+  // `tabindex="-1"` pour l'être. C'est là que la lecture reprend.
+  const foyer = cible.tagName === "DETAILS" ? cible.querySelector("summary") : cible;
+  foyer.focus({ preventScroll: true });
+  cible.scrollIntoView({ block: "start" });
+  return true;
+}
+
+document.addEventListener("click", (evenement) => {
+  const lien = evenement.target.closest("a[data-vers]");
+  if (!lien) { return; }
+  if (!document.getElementById(lien.dataset.vers)) {
+    sectionEnAttente = lien.dataset.vers;
+    return;
+  }
+  evenement.preventDefault();
+  ouvrirSection(lien.dataset.vers);
+});
+
+// -- filtrer et trier un tableau ----------------------------------------------
+//
+// Le gabarit écrit un groupe de filtres (`.filtres[data-cible]`) devant la
+// table qu'il désigne, et chaque ligne de cette table porte en `data-` ce
+// que les menus comparent ; le champ de recherche, lui, cherche dans le texte
+// de la ligne. Une ligne écartée n'est que masquée — le HTML la porte
+// toujours —, et vider les filtres rend tout. Le compte de ce qui reste est
+// écrit dans une région `aria-live`, pour qu'une synthèse vocale l'entende.
+function filtrer(groupe) {
+  const table = document.getElementById(groupe.dataset.cible);
+  if (!table || !table.tBodies.length) { return; }
+  const criteres = {};
+  for (const champ of groupe.querySelectorAll("[data-filtre]")) {
+    criteres[champ.dataset.filtre] = champ.value.trim().toLowerCase();
+  }
+  let total = 0;
+  let visibles = 0;
+  for (const ligne of table.tBodies[0].rows) {
+    total += 1;
+    let gardee = true;
+    for (const [nom, valeur] of Object.entries(criteres)) {
+      if (!valeur) { continue; }
+      gardee = gardee && (nom === "texte"
+        ? ligne.textContent.toLowerCase().includes(valeur)
+        : (ligne.dataset[nom] || "").toLowerCase() === valeur);
+    }
+    ligne.hidden = !gardee;
+    if (gardee) { visibles += 1; }
+  }
+  const compte = document.querySelector(`[data-compte-de="${groupe.dataset.cible}"]`);
+  if (compte) {
+    const unite = compte.dataset.unite || "lignes";
+    compte.textContent = visibles === total
+      ? `${total} ${unite}` : `${visibles} ${unite} sur ${total}`;
+  }
+}
+
+for (const type of ["input", "change"]) {
+  document.addEventListener(type, (evenement) => {
+    const groupe = evenement.target.closest?.(".filtres[data-cible]");
+    if (groupe) { filtrer(groupe); }
+  });
+}
+
+// Le tri : l'en-tête d'une colonne triable est un bouton. Un clic trie sur
+// cette colonne, un second inverse le sens, et `aria-sort` sur l'en-tête dit
+// où l'on en est. Les nombres se comparent en nombres — « 1 245 » avant
+// « 987 » serait un tri de dictionnaire —, le reste en français.
+function nombreEnTete(texte) {
+  const trouve = /^[+-]?\d[\d \s]*(?:[.,]\d+)?/.exec(texte);
+  return trouve
+    ? Number(trouve[0].replace(/[ \s]/g, "").replace(",", "."))
+    : null;
+}
+
+document.addEventListener("click", (evenement) => {
+  const bouton = evenement.target.closest("th > button.tri");
+  if (!bouton) { return; }
+  const entete = bouton.parentElement;
+  const table = entete.closest("table");
+  if (!table || !table.tBodies.length) { return; }
+  const colonne = Number(bouton.dataset.colonne);
+  const sens = entete.getAttribute("aria-sort") === "ascending" ? "descending" : "ascending";
+  for (const autre of table.tHead.querySelectorAll("th[aria-sort]")) {
+    autre.removeAttribute("aria-sort");
+  }
+  entete.setAttribute("aria-sort", sens);
+  const corps = table.tBodies[0];
+  const texte = (ligne) => ligne.cells[colonne]?.textContent.trim() ?? "";
+  const lignes = [...corps.rows].sort((a, b) => {
+    const [ta, tb] = [texte(a), texte(b)];
+    const [na, nb] = [nombreEnTete(ta), nombreEnTete(tb)];
+    const ordre = na !== null && nb !== null && na !== nb
+      ? na - nb
+      : ta.localeCompare(tb, "fr", { numeric: true, sensitivity: "base" });
+    return sens === "ascending" ? ordre : -ordre;
+  });
+  corps.append(...lignes);
+});
+
+window.addEventListener("hashchange", afficher);
+
+preparer().then(() => {
+  coquille();
+  return afficher();
+}).catch((erreur) => {
+  echec(
+    "Le simulateur n'a pas pu se charger",
+    `<p>${neutraliser(erreur)}</p>`
+    + "<p>Le modèle et ses données sont servis depuis ce dépôt : un réseau "
+    + "coupé pendant le chargement, ou un navigateur qui bloque les modules "
+    + "JavaScript, peuvent l'empêcher d'aboutir. Recharger la page suffit "
+    + "souvent ; sinon, un navigateur à jour (Firefox, Chrome, Safari, Edge) "
+    + "règle le problème.</p>"
+    + '<p><a href="https://github.com/g-pliberal/retraitecomptenotionelle">'
+    + "Le dépôt du projet</a></p>",
+  );
+});

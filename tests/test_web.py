@@ -41,7 +41,7 @@ from retraite_notionnelle.web.site import disponible, module, rendre, site
 from outils_pont import RefusDuPortage, Saisies, saisie_du_portage
 from outils_web import (
     FEUILLE_DE_STYLE, SIMULATION_TEMOIN, TITRES, _hors_depliants, _sans_blocs, contexte,
-    g, montants_du_portage, page, pages, saisies,
+    g, montants_du_portage, page, page_et_routeur, pages, saisies,
 )
 from outils_portage import moitie_python
 
@@ -1560,7 +1560,7 @@ def test_les_selecteurs_du_resume_vocal_existent_dans_le_html():
     from pathlib import Path
 
     racine = Path(__file__).resolve().parents[1]
-    amorce = (racine / "index.html").read_text(encoding="utf-8")
+    amorce = page_et_routeur()
     resume = amorce[amorce.index("function resume("):amorce.index("function chargement(")]
     selecteurs = re.findall(r'querySelector(?:All)?\("([^"]+)"\)', resume)
     assert selecteurs, "le résumé vocal ne vise plus aucune classe"
@@ -1913,9 +1913,9 @@ def test_la_page_ne_depend_d_aucun_service_exterieur():
     """« Tout doit déjà être là » : aucune requête vers un tiers au chargement."""
     from pathlib import Path
 
-    page = (Path(__file__).resolve().parents[1] / "index.html").read_text()
+    page = page_et_routeur()
     assert 'href="moteur/style.css"' in page
-    assert 'from "./moteur/js/pages.js"' in page
+    assert 'src="moteur/js/routeur.js"' in page and 'from "./pages.js"' in page
     assert "cdn.jsdelivr.net" not in page
 
     #: Les deux polices de l'affiche sont servies par le dépôt — les charger
@@ -1954,14 +1954,21 @@ def test_le_prechargement_du_paquet_correspond_a_la_requete():
     donc verrouillées ensemble ici : ``crossorigin`` sur le lien, et un ``fetch``
     nu, sans ``mode`` ni ``credentials`` qui s'en écarteraient.
     """
+    import posixpath
     import re
-    from pathlib import Path
 
-    page = (Path(__file__).resolve().parents[1] / "index.html").read_text(encoding="utf-8")
+    page = page_et_routeur()
 
-    prechargement = re.search(r"<link rel=\"preload\"[^>]*donnees\.json[^>]*>", page)
-    appel = re.search(r"fetch\(\"moteur/donnees\.json\",\s*(\{[^}]*\})\)", page)
-    assert prechargement and appel, "préchargement ou requête introuvables dans index.html"
+    prechargement = re.search(r"<link rel=\"preload\" href=\"([^\"]*donnees\.json)\"[^>]*>",
+                              page)
+    appel = re.search(r"fetch\(PAQUET,\s*(\{[^}]*\})\)", page)
+    assert prechargement and appel, "préchargement ou requête introuvables"
+    # La requête part du routeur, sous une adresse résolue depuis son module
+    # (action 174) : elle doit désigner le fichier que l'en-tête précharge.
+    paquet = re.search(r'const PAQUET = new URL\("([^"]+)", import\.meta\.url\);', page)
+    assert paquet, "le routeur ne dit plus d'où il lit le paquet"
+    assert posixpath.normpath(posixpath.join("moteur/js", paquet.group(1))) \
+        == prechargement.group(1), "la requête et le préchargement visent deux fichiers"
 
     assert "crossorigin" in prechargement.group(0), (
         "le préchargement doit porter crossorigin, sinon il ne correspond pas au fetch"
@@ -1976,7 +1983,7 @@ def test_le_prechargement_du_paquet_correspond_a_la_requete():
 def test_le_site_attend_la_version_du_paquet():
     """Le paquet porte sa version, et le site attend la même.
 
-    ``index.html`` redemande au serveur, sans cache, tout paquet qui n'a pas la
+    Le routeur redemande au serveur, sans cache, tout paquet qui n'a pas la
     version que son code lit (``VERSION_PAQUET``, ``moteur/js/contexte.js``) :
     un navigateur qui garde un paquet d'avant ne le donne plus à des pages qui
     ne le comprennent pas (11 octobre 2026). Les deux nombres ne doivent donc
@@ -1988,9 +1995,9 @@ def test_le_site_attend_la_version_du_paquet():
                         .read_text(encoding="utf-8"))
     assert paquet["version"] == _construction().VERSION
     assert module("contexte").VERSION_PAQUET == paquet["version"]
-    page = (Path(__file__).resolve().parents[1] / "index.html").read_text(encoding="utf-8")
+    page = page_et_routeur()
     assert "paquet.version !== VERSION_PAQUET" in page
-    assert re.search(r'fetch\("moteur/donnees\.json", \{ cache: "reload" \}\)', page)
+    assert re.search(r'fetch\(PAQUET, \{ cache: "reload" \}\)', page)
 
 
 def test_les_modules_sont_tous_precharges():
@@ -2018,12 +2025,13 @@ def test_les_modules_sont_tous_precharges():
     from pathlib import Path
 
     racine = Path(__file__).resolve().parents[1]
-    page = (racine / "index.html").read_text(encoding="utf-8")
+    page = page_et_routeur()
 
     precharges = set(re.findall(
         r'<link rel="modulepreload" href="moteur/js/([\w./-]+\.js)">', page))
+    # Importés à la demande par le routeur, depuis son dossier (action 174).
     a_la_demande = set(re.findall(
-        r'import\(\s*"\./moteur/js/([\w./-]+\.js)"\s*\)', page))
+        r'import\(\s*"\./([\w./-]+\.js)"\s*\)', page))
     # Les étapes du droit ont leur dossier, moteur/js/droit/ : elles sont du
     # graphe comme les autres modules.
     dossier = racine / "moteur" / "js"
@@ -2054,7 +2062,7 @@ def test_le_pied_est_pose_hors_du_contenu_remplace():
     import re
     from pathlib import Path
 
-    page = (Path(__file__).resolve().parents[1] / "index.html").read_text(encoding="utf-8")
+    page = page_et_routeur()
 
     assert re.search(r"insertAdjacentHTML\([^)]*gabarit\.pied\(\)", page, re.S), (
         "le pied doit être posé une fois, au premier rendu"
@@ -2076,7 +2084,7 @@ def test_le_resultat_est_annonce_aux_lecteurs_d_ecran():
     import re
     from pathlib import Path
 
-    page = (Path(__file__).resolve().parents[1] / "index.html").read_text(encoding="utf-8")
+    page = page_et_routeur()
 
     region = re.search(r'<p id="annonce"[^>]*>', page)
     assert region, "la région d'annonce a disparu de la page"
@@ -2100,7 +2108,7 @@ def test_le_style_d_amorcage_ne_vise_que_des_elements_existants():
     import re
     from pathlib import Path
 
-    page = (Path(__file__).resolve().parents[1] / "index.html").read_text(encoding="utf-8")
+    page = page_et_routeur()
     style = re.search(r"<style>(.*?)</style>", page, re.S).group(1)
     reste = page.replace(style, "")
 
@@ -2782,7 +2790,7 @@ def test_le_focus_ne_retombe_pas_au_debut_du_document_apres_un_rendu():
     tabulation suivante repart alors du tout début du document."""
     from pathlib import Path
 
-    page = (Path(__file__).resolve().parents[1] / "index.html").read_text(encoding="utf-8")
+    page = page_et_routeur()
     assert 'main id="contenu" tabindex="-1"' in page, (
         "<main> doit pouvoir recevoir le focus"
     )
@@ -3533,7 +3541,7 @@ def test_le_site_ne_dessine_plus_aucun_pictogramme_a_la_main():
     for chemin in TITRES:
         corps = rendre(chemin, {})[1]
         assert not emoji.findall(corps), f"{chemin} porte un emoji"
-    for fichier in ("index.html", "moteur/style.css"):
+    for fichier in ("index.html", "moteur/js/routeur.js", "moteur/style.css"):
         texte = (racine / fichier).read_text(encoding="utf-8")
         assert not emoji.findall(texte), f"{fichier} porte un emoji"
 
@@ -3545,7 +3553,7 @@ def test_l_icone_du_site_est_un_fichier_de_la_meme_grille():
 
     racine = Path(__file__).resolve().parents[1]
     icone = (racine / "moteur" / "icone.svg").read_text(encoding="utf-8")
-    page = (racine / "index.html").read_text(encoding="utf-8")
+    page = page_et_routeur()
     assert 'href="moteur/icone.svg"' in page, "la page ne charge plus son icône"
     assert "<text" not in icone, "l'icône du site est redevenue un caractère"
     # Le même tracé que le pictogramme de la bibliothèque, au trait près.
@@ -3631,8 +3639,7 @@ def test_le_script_du_site_sait_ouvrir_les_mots_du_glossaire():
     """
     from pathlib import Path
 
-    page = (Path(__file__).resolve().parents[1] / "index.html").read_text(
-        encoding="utf-8")
+    page = page_et_routeur()
     assert '.closest(".mot > .terme")' in page
     assert 'setAttribute("aria-expanded"' in page
     # Échap referme, et rend le focus au mot : sans cela le clavier n'a aucun
@@ -4790,8 +4797,7 @@ def test_le_script_du_site_sait_lire_et_exporter_un_graphique():
     """
     from pathlib import Path
 
-    page = (Path(__file__).resolve().parents[1] / "index.html").read_text(
-        encoding="utf-8")
+    page = page_et_routeur()
     # La lecture au survol, au doigt et au clavier.
     assert '.closest("figure.graphique")' in page
     assert "dataset.gauche" in page and "dataset.droite" in page
@@ -4843,8 +4849,7 @@ def test_la_signature_des_images_nomme_le_compte_et_le_site():
 def _script_du_site() -> str:
     from pathlib import Path
 
-    return (Path(__file__).resolve().parents[1] / "index.html").read_text(
-        encoding="utf-8")
+    return page_et_routeur()
 
 
 def test_le_filigrane_ne_paraît_qu_une_fois_et_traverse_l_image():

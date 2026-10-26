@@ -732,6 +732,18 @@ def test_le_budget_de_calcul_mesure_les_carrieres_que_le_portage_batit(monkeypat
     assert [type(carriere) for _, carriere in saisies] == [Carriere, Carriere]
 
 
+def test_le_routeur_du_site_est_hors_de_l_empreinte():
+    """Le routeur du site, sorti d'``index.html`` dans son module (action 174),
+    n'est lu d'aucun calcul : le pont ne l'importe pas. Hors de l'empreinte,
+    comme le texte des pages, une retouche du site ne refait pas le coût."""
+    import jumeaux
+
+    importes = jumeaux.JavaScript(RACINE, jumeaux.fichiers_suivis()).fermeture(
+        ["src/retraite_notionnelle/pont.mjs"])
+    assert "moteur/js/routeur.js" not in importes
+    assert not memoire.du_modele("moteur/js/routeur.js")
+
+
 def test_le_portage_que_le_pont_fait_tourner_est_dans_l_empreinte():
     """La grille du coût se simule par le portage (action 161, étape 5) :
     l'empreinte lit chaque module que le pont importe — le moteur du portage,
