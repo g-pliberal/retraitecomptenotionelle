@@ -1290,7 +1290,8 @@ def test_les_adresses_des_pages_parties_menent_a_leur_contenu():
 
     Leurs adresses restent valides — le site parent et des partages les
     portent — et rendent la page qui les a remplacées ; la section qui porte
-    leur contenu existe sur cette page, et le routeur d'``index.html`` l'ouvre.
+    leur contenu existe sur cette page, et le routeur l'ouvre. Elles vivent avec
+    les adresses (``adresses.js``, action 174).
     """
     from pathlib import Path
 
@@ -1303,12 +1304,11 @@ def test_les_adresses_des_pages_parties_menent_a_leur_contenu():
         assert f'id="{section}"' in corps, (ancienne, section)
 
     racine = Path(__file__).resolve().parents[1]
-    portage = (racine / "moteur" / "js" / "pages.js").read_text(encoding="utf-8")
-    assert '"/trajectoire": ["/simuler", "cumul"],' in portage
-    assert '"/donnees": ["/methode", "sources"],' in portage
-    script = page_et_routeur()
-    assert "ANCIENNES_ROUTES[route]" in script
-    assert "if (section) { ouvrirSection(section); }" in script
+    adresses = (racine / "moteur" / "js" / "adresses.js").read_text(encoding="utf-8")
+    assert '"/trajectoire": ["/simuler", "cumul"],' in adresses
+    assert '"/donnees": ["/methode", "sources"],' in adresses
+    assert "ANCIENNES_ROUTES[route]" in adresses
+    assert "if (section) { ouvrirSection(section); }" in page_et_routeur()
 
 
 def test_sur_un_telephone_le_groupe_pour_verifier_se_replie():

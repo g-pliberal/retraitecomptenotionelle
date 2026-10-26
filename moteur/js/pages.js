@@ -17,6 +17,7 @@
  * les commentaires ci-dessous résument.
  */
 
+import { ANCIENNES_ROUTES } from "./adresses.js";
 import {
   MOIS_PAR_AN, NOMS_DE_MOIS, DateMois, enMois, formaterAge, moisTravailles,
 } from "./calendrier.js";
@@ -296,22 +297,11 @@ export const TITRES = {
 };
 
 /**
- * Les adresses de deux pages qui n'existent plus, et ce qu'elles montrent
- * désormais : la page, et la section à ouvrir. Le routeur d'`index.html` la
- * lit pour ouvrir cette section.
- *
- * HUIT PAGES AU LIEU DE DIX, depuis le 23 septembre 2026 : « Cumul versé »
- * redisait, sur une page à elle, le dépliant « Ce que chaque système finit par
- * verser » des résultats — le même graphique, calculé par la même fonction ;
- * « Sources » répondait à la question que pose la page Méthode, « comment le
- * sait-on ? ». Leurs adresses restent valides — le site parent et des partages
- * les portent — et mènent à ce qui les a remplacées : les résultats du
- * simulateur, cumul ouvert, et la partie Sources de la page Méthode.
+ * Les adresses de deux pages qui n'existent plus vivent avec les adresses
+ * (`adresses.js`, action 174) : `rendre` les lit pour rendre la page qui les a
+ * remplacées, et les réexporte pour qui les cherchait ici.
  */
-export const ANCIENNES_ROUTES = {
-  "/trajectoire": ["/simuler", "cumul"],
-  "/donnees": ["/methode", "sources"],
-};
+export { ANCIENNES_ROUTES };
 
 /**
  * Contenu d'une page : ``[titre, corps HTML]``. Les erreurs de saisie sont

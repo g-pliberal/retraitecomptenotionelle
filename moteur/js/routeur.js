@@ -12,8 +12,9 @@ import {
   CLES_MODELISATION, CODES_SANS_EMPLOI, RELEVE_MAXIMUM, Saisie,
 } from "./saisie.js";
 import { Contexte, VERSION_PAQUET } from "./contexte.js";
+import { lireAdresse } from "./adresses.js";
 import {
-  ANCIENNES_ROUTES, DESCRIPTIONS, TITRES, rendre, requeteBasculee, requeteSansPeriode,
+  DESCRIPTIONS, TITRES, rendre, requeteBasculee, requeteSansPeriode,
 } from "./pages.js";
 import * as gabarit from "./gabarit.js";
 import { NOMS_DE_MOIS } from "./calendrier.js";
@@ -149,43 +150,34 @@ function chargement(message) {
   return `<div class="chargement">${message}<div class="jauge"><span></span></div></div>`;
 }
 
+// La racine du site : deux dossiers au-dessus de ce module, `moteur/js/`. Une
+// page posée dans son dossier (`cout/`) s'y repère comme l'accueil.
+const RACINE = new URL("../../", import.meta.url);
+
+// Le chemin d'une adresse, relatif à la racine du site : "" pour l'accueil,
+// "cout/" pour une page.
+function depuisLaRacine(chemin) {
+  return chemin.startsWith(RACINE.pathname)
+    ? decodeURIComponent(chemin.slice(RACINE.pathname.length)) : "";
+}
+
+// Ce que désigne l'adresse affichée : la page, ce que le lecteur y porte, la
+// section à ouvrir, sous l'une ou l'autre forme (`adresses.js`, action 174).
 function adresse() {
-  return lireAdresse(location.hash);
+  return lireAdresse(depuisLaRacine(location.pathname), location.hash);
 }
 
 // La requête de l'adresse courante, telle qu'elle est écrite : c'est elle que
 // la mémoire du simulateur compare, au caractère près.
 function requeteDeLAdresse() {
-  const brut = location.hash;
-  const separation = brut.indexOf("?");
-  return separation === -1 ? "" : brut.slice(separation + 1);
+  return adresse().requete;
 }
 
-function lireAdresse(ancre) {
-  const brut = String(ancre || "").replace(/^#/, "") || "/";
-  const separation = brut.indexOf("?");
-  const chemin = separation === -1 ? brut : brut.slice(0, separation);
-  const requete = separation === -1 ? "" : brut.slice(separation + 1);
-  const parametres = {};
-  new URLSearchParams(requete).forEach((valeur, cle) => { parametres[cle] = valeur; });
-  // Les adresses partagées avant que l'accueil ne devienne le programme
-  // portaient la simulation sur « #/ » ; leur rendre le formulaire coûte une
-  // ligne, et les perdre coûterait la simulation qu'elles décrivent.
-  //
-  // Une adresse qui ne porte que des RÈGLES n'en est pas une : depuis que les
-  // réglages suivent le lecteur, tous les liens du site les portent, celui de
-  // l'accueil compris. Sans cette réserve, cliquer « Programme » après avoir
-  // changé l'indexation envoyait sur le simulateur.
-  const route = chemin || "/";
-  const ancienne = route === "/" && Object.keys(parametres).some(
-    (cle) => !CLES_MODELISATION.includes(cle),
-  );
-  // Les adresses des deux pages parties le 23 septembre 2026 — « Cumul versé »
-  // et « Sources » — mènent à ce qui les a remplacées, et y ouvrent la section
-  // qui porte leur contenu. Le site parent et des partages les portent encore.
-  const [remplacante, section] = ANCIENNES_ROUTES[route] || [];
-  if (remplacante) { return { chemin: remplacante, parametres, section }; }
-  return { chemin: ancienne ? "/simuler" : route, parametres, section: "" };
+// Ce que désigne un lien : son adresse résolue depuis la page, comme le
+// navigateur la suivra.
+function adresseDuLien(href) {
+  const cible = new URL(href, location.href);
+  return lireAdresse(depuisLaRacine(cible.pathname), cible.hash);
 }
 
 // Ce qu'annonce l'écran d'attente des pages qui calculent longtemps : mieux
@@ -1246,7 +1238,7 @@ document.addEventListener("click", (evenement) => {
   if (!lien || lien.matches("a[data-vers], a.evitement")) { return; }
   if (evenement.button !== 0 || evenement.metaKey || evenement.ctrlKey
       || evenement.shiftKey || evenement.altKey) { return; }
-  const vers = lireAdresse(lien.getAttribute("href")).chemin;
+  const vers = adresseDuLien(lien.getAttribute("href")).chemin;
   const contenu = document.getElementById("contenu");
   noterDeclencheur(lien, vers === routeAffichee && contenu?.contains(lien)
     ? "sur-place" : "navigation");
