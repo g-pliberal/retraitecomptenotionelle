@@ -7071,14 +7071,15 @@ une à une, les étapes 3 et 5. Les quatre gardes de l'étape 2 sont faites le
 
 ### 174. Les notes Lighthouse au maximum, sur toutes les pages du site — `en cours`
 
-**Reprise, au 25 octobre 2026.** Faites, les étapes 1 à 3 : le diagnostic, les
+**Reprise, au 26 octobre 2026.** Faites, les étapes 1 à 3 : le diagnostic, les
 correctifs sans architecture, la mesure au dépôt (`scripts/notes_lighthouse.py`).
 En ligne, sur les dix routes, Accessibilité, Bonnes pratiques, SEO et Agentic à
-100, CLS nul ; Performance de 59 à 60 en mobile, de 87 à 90 au bureau. Ce qui
-la baisse n'est plus que la vitesse, qui attend le pré-rendu (étape 4) : rien
-ne s'y fait sans les choix du propriétaire — les adresses par page, où se
-fabriquent les pages, le sort des résultats. Détail :
-`174/2026-10-25-etape-3-la-mesure-au-depot.md`.
+100, CLS nul ; Performance de 59 à 60 en mobile, de 87 à 90 au bureau. Ne la
+baisse plus que la vitesse, qui attend le pré-rendu (étape 4), donc les choix
+du propriétaire. Le premier, une adresse par page, a sa proposition écrite :
+des dossiers (`cout/`), le lecteur derrière le `#`, les anciennes adresses
+redirigées (`174/2026-10-26-proposition-des-adresses.md`). Elle attend sa
+réponse ; rien n'en est commencé.
 
 **D'où elle vient.** Le 25 octobre 2026, le propriétaire : « Je veux que
 toutes les pages aient un score maximal dans toutes les catégories lighthouse.
