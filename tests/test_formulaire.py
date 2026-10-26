@@ -330,8 +330,9 @@ def test_le_simulateur_court_deplace_ses_bornes_avec_la_naissance():
 
 
 def _script() -> str:
-    page = (RACINE / "index.html").read_text(encoding="utf-8")
-    return re.search(r'<script type="module">(.*?)</script>', page, re.S).group(1)
+    """Le routeur de la page, ``moteur/js/routeur.js`` : le script qu'``index.html``
+    portait en ligne jusqu'à l'action 174."""
+    return (RACINE / "moteur" / "js" / "routeur.js").read_text(encoding="utf-8")
 
 
 def _fonction(script: str, nom: str) -> str:
