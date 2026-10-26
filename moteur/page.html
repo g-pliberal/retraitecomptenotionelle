@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- LE GABARIT DES NEUF PAGES DU SITE (action 174). Aucune n'est écrite à la
+     main : scripts/construire_pages.py met dans ce gabarit le rendu de chaque
+     page pour ses réglages par défaut, et écrit l'accueil à la racine, les huit
+     autres chacune dans son dossier. C'est ce fichier qu'on retouche pour
+     changer la coquille ; regenerer.py refait les pages. Les commentaires du
+     gabarit ne sont pas servis. -->
+<!-- La couleur du bandeau de tête, la même dans les deux thèmes : sur un
+     téléphone, la barre du navigateur la reprend, et la page commence où elle
+     commence. -->
+<meta name="theme-color" content="#003340">
+<title>{{titre}}</title>
+<meta name="description" content="{{description}}">
+<!-- L'adresse que les moteurs de recherche retiennent : celle de la copie du
+     parti, décision du 26 octobre 2026. Le même site vit aussi sur GitHub Pages. -->
+<link rel="canonical" href="{{canonique}}">
+<!-- L'icône du site est un fichier, et un dessin : l'emoji qui tenait ce rôle
+     n'avait ni la même forme ni la même taille d'un système à l'autre, et se
+     brouillait en petit. Voir moteur/icones/README.md. -->
+<link rel="icon" href="{{racine}}moteur/icone.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="{{racine}}moteur/icone.svg">
+
+<!-- La feuille de style n'existe qu'en un seul endroit : moteur/style.css,
+     sa source, que rien ne fabrique. -->
+<link rel="stylesheet" href="{{racine}}moteur/style.css">
+<!-- Les deux polices du texte, dans leur jeu latin, celui du français. Le
+     serif n'était demandé qu'au rendu de la page, où il arrivait après coup :
+     le chapeau perdait une ligne, et tout ce qui le suit remontait sous les
+     yeux du lecteur (action 174). Demandées ici, elles sont là avec la page.
+     `crossorigin` est celui de toute police, même servie d'ici. -->
+<link rel="preload" href="{{racine}}moteur/polices/public-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{racine}}moteur/polices/instrument-serif-latin.woff2" as="font" type="font/woff2" crossorigin>
+<!-- NI MODULEPRELOAD NI PRÉCHARGE DU PAQUET. La page est lisible sans le
+     moteur : le routeur ne le charge que pour un réglage ou une carrière que
+     la page toute faite ne porte pas, et chaque octet demandé ici avant la
+     peinture la retarde (action 174). -->
+</head>
+<body>
+
+<p id="annonce" class="hors-ecran" role="status" aria-live="polite"></p>
+<noscript><div class="erreur">Le calcul se fait dans votre navigateur et a besoin de JavaScript : les pages se lisent sans, mais le simulateur ne calcule pas.</div></noscript>
+<div id="entete">{{entete}}</div>
+<main id="contenu" tabindex="-1" data-prerendu="{{route}}">{{contenu}}</main>
+{{pied}}
+<!-- Le routeur du site, que les neuf pages partagent. -->
+<script type="module" src="{{racine}}moteur/js/routeur.js"></script>
+</body>
+</html>

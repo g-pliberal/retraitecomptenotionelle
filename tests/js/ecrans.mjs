@@ -18,13 +18,17 @@
  *     {"racine": "http://127.0.0.1:8000/",
  *      "ecrans": [{"largeur": 390, "hauteur": 800}, ...],
  *      "routes": ["./", "cout/", "simuler/#naissance=…", ...],
- *      "retrecir": {"depuis": 1440, "vers": {"largeur": 1024, "hauteur": 768}}}
+ *      "retrecir": {"depuis": 1440, "vers": [{"largeur": 1024, "hauteur": 768}, ...]}}
  *
  * Une route est l'adresse d'une page, relative à la racine du site : l'accueil
  * (`./`), ou une page dans son dossier (`cout/`), le lecteur derrière le `#`.
  *
  * `retrecir` rétrécit la fenêtre, sans changer d'adresse, sur une page qui
- * pose des schémas de front, et dit ce qu'elle a redessiné.
+ * pose des schémas de front, aux écrans que dit `vers` l'un après l'autre, et
+ * dit pour chacun si la page s'est redessinée et à quelle taille se montre
+ * chaque schéma. Une page toute faite se redessine quand son dessin est à plus
+ * de 12 % de la colonne, pas avant : l'écran qu'on rétrécit peu ne la
+ * redessine pas, et le dernier écran la redessine.
  *
  * `adresses` est une liste de scénarios : chacun ouvre une adresse (`depart`, relative à la racine),
  * fait des gestes (`gestes` : cliquer sur un sélecteur, en changeant de page ou
@@ -48,6 +52,8 @@ const plan = JSON.parse(readFileSync(cheminPlan, "utf-8"));
 
 /** Le délai au-delà duquel une page qui ne se rend pas fait échouer la visite. */
 const DELAI_RENDU = 30000;
+// Le quart de seconde que le routeur attend, et une marge large pour un poste chargé.
+const DELAI_DE_DECISION = 1500;
 
 // -- le navigateur -----------------------------------------------------------
 
@@ -151,6 +157,7 @@ async function attendreLeRendu() {
     const sonder = () => {
       const contenu = document.getElementById("contenu");
       const pret = contenu && !document.getElementById("marqueur-ecrans")
+        && "pret" in document.body.dataset
         && !document.body.classList.contains("calcul-en-cours")
         && !contenu.hasAttribute("aria-busy") && contenu.children.length > 0
         && !contenu.querySelector(".chargement");
@@ -518,39 +525,46 @@ function poserLEcran(ecran) {
 }
 
 /**
- * Change l'écran de la page affichée, sans changer d'adresse, et attend
- * qu'elle se redessine sur place ; rend `false` si elle ne l'a pas fait dans
- * le délai d'un rendu. Le redessin attend un quart de seconde que la fenêtre
- * ne bouge plus, puis remplace le contenu, et le marqueur avec.
+ * Change l'écran de la page affichée, sans changer d'adresse, et dit si elle
+ * s'est redessinée sur place. Le routeur attend un quart de seconde que la
+ * fenêtre ne bouge plus, puis décide : une page toute faite dont le dessin
+ * convient à la colonne n'est pas touchée, et le marqueur qu'on y a posé reste ;
+ * sinon il la redessine, la page cesse d'être prête le temps du rendu, et le
+ * marqueur part avec le contenu. Rend `false` si elle n'a pas bougé, ou si le
+ * rendu passe le délai d'un rendu.
  */
 async function changerDEcran(ecran) {
   await evaluer(`(() => {
+    document.getElementById("marqueur-ecrans")?.remove();
     const marqueur = document.createElement("i");
     marqueur.id = "marqueur-ecrans";
     document.getElementById("contenu").append(marqueur);
     return true;
   })()`);
   await poserLEcran(ecran);
+  await pause(DELAI_DE_DECISION);
   return evaluer(`new Promise((resoudre) => {
     const debut = Date.now();
     const sonder = () => {
-      if (!document.getElementById("marqueur-ecrans")
-          && !document.body.classList.contains("calcul-en-cours")) { resoudre(true); return; }
-      if (Date.now() - debut > ${DELAI_RENDU}) {
-        document.getElementById("marqueur-ecrans")?.remove();
-        resoudre(false);
-        return;
-      }
+      const enCours = !("pret" in document.body.dataset)
+        || document.body.classList.contains("calcul-en-cours");
+      const redessinee = !document.getElementById("marqueur-ecrans");
+      if (!enCours) { resoudre(redessinee); return; }
+      if (Date.now() - debut > ${DELAI_RENDU}) { resoudre(false); return; }
       setTimeout(sonder, 40);
     };
     sonder();
-  })`);
+  })`).finally(() => evaluer(`document.getElementById("marqueur-ecrans")?.remove()`));
 }
 
-/** Chaque schéma de la page : la largeur de son dessin, celle où il se montre. */
+/**
+ * Chaque schéma que la page montre : la largeur de son dessin, celle où il se
+ * montre. Une page toute faite porte deux dessins de chacun, l'un caché.
+ */
 const SCHEMAS_DESSINES = `[...document.querySelectorAll("#contenu figure.sankey svg")]
   .map((svg) => ({ dessin: Math.round(svg.viewBox.baseVal.width),
-    montre: Math.round(svg.getBoundingClientRect().width) }))`;
+    montre: Math.round(svg.getBoundingClientRect().width) }))
+  .filter((schema) => schema.montre > 0)`;
 
 // -- les adresses ------------------------------------------------------------
 
@@ -567,6 +581,7 @@ const SONDE = `(() => {
     chemin: location.pathname.slice(${JSON.stringify(BASE)}.length).replace(/index\\.html$/, ""),
     hash: location.hash,
     pret: Boolean(contenu) && !document.getElementById("marqueur-ecrans")
+      && "pret" in document.body.dataset
       && !document.body.classList.contains("calcul-en-cours")
       && !contenu.hasAttribute("aria-busy") && contenu.children.length > 0
       && !contenu.querySelector(".chargement"),
@@ -682,11 +697,16 @@ try {
       const deplie = await evaluer(MESURER(ecran));
       const image = replie.schemas.length ? await evaluer(IMAGE_DES_SCHEMAS) : null;
       // La fenêtre qu'on rétrécit, au large, sur une page qui pose des
-      // schémas de front : ce qu'elle redessine. Puis l'écran de la visite.
+      // schémas de front : ce qu'elle redessine, écran après écran. Puis
+      // l'écran de la visite.
       let retrecie = null;
       if (replie.schemas.length && plan.retrecir?.depuis === ecran.largeur) {
-        const redessinee = await changerDEcran(plan.retrecir.vers);
-        retrecie = { ...plan.retrecir.vers, redessinee, schemas: await evaluer(SCHEMAS_DESSINES) };
+        retrecie = [];
+        for (const vers of plan.retrecir.vers) {
+          const redessinee = await changerDEcran(vers);
+          retrecie.push({ largeur: vers.largeur, hauteur: vers.hauteur, redessinee,
+            schemas: await evaluer(SCHEMAS_DESSINES) });
+        }
         await changerDEcran(ecran);
       }
       resultats.push({

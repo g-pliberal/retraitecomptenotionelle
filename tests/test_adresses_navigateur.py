@@ -24,8 +24,15 @@ from test_ecrans import REQUETE, jouer
 #: Ce que dit la page Coût quand ses réglages ne sont pas ceux par défaut.
 REGLAGES_PAR_DEFAUT = "Ces chiffres sont ceux des réglages par défaut, pas des vôtres."
 
-#: Le suffixe que le routeur donne au titre de l'onglet.
+#: Le titre de l'onglet d'une page : son nom, puis celui du site ; l'accueil a le
+#: sien, celui qu'un moteur de recherche affiche (action 174).
 TITRE = " — Retraite en comptes notionnels"
+TITRE_DE_L_ACCUEIL = "Retraite à comptes notionnels — programme et simulateur"
+
+
+def _onglet(scenario: dict) -> str:
+    nom = scenario["titre"]
+    return TITRE_DE_L_ACCUEIL if nom == "Programme" else f"{nom}{TITRE}"
 
 #: Chaque scénario : d'où l'on part (``depart``, relatif à la racine du site),
 #: ce qu'on fait (``gestes``), où l'on doit arriver (``attend``) et ce que la
@@ -96,9 +103,10 @@ SCENARIOS = [
      "titre": "Simuler", "meme_document": True},
     {"nom": "calculer depuis l'accueil mène aux résultats, et les retient",
      "depart": "index.html",
-     "attend": {"chemin": "simuler/", "hash_commence": "#naissance="},
+     "attend": {"chemin": "simuler/", "hash_commence": "#resultats&naissance="},
      "gestes": [{"cliquer": "form.simulateur-court button[type=submit]", "vers": "page"}],
-     "titre": "Simuler", "montre": ["Résultats"], "memoire": "naissance="},
+     "titre": "Simuler", "montre": ["Résultats"], "memoire": "naissance=",
+     "actif": "resultats"},
     {"nom": "un renvoi vers la section d'une autre page l'ouvre",
      "depart": "cas-types/",
      "attend": {"chemin": "cout/", "hash": "#cout-equilibre"},
@@ -137,7 +145,7 @@ def test_une_adresse_mene_ou_le_lecteur_l_attend(scenario):
             f"{scenario['depart']} arrive à {_ou(etat)}")
     else:
         assert etat["hash"] == attendu["hash"], f"{scenario['depart']} arrive à {_ou(etat)}"
-    assert etat["titre"] == f"{scenario['titre']}{TITRE}"
+    assert etat["titre"] == _onglet(scenario)
     for texte in scenario.get("montre", []):
         assert etat["montre"][texte], f"{scenario['depart']} : la page ne dit pas « {texte} »"
     for identifiant in scenario.get("ouvertes", []):

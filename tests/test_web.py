@@ -1946,13 +1946,21 @@ def _sans_nan(valeur):
 
 
 def test_la_page_ne_depend_d_aucun_service_exterieur():
-    """« Tout doit déjà être là » : aucune requête vers un tiers au chargement."""
+    """« Tout doit déjà être là » : aucune requête vers un tiers au chargement,
+    d'aucune des neuf pages."""
     from pathlib import Path
 
-    page = page_et_routeur()
-    assert 'href="moteur/style.css"' in page
-    assert 'src="moteur/js/routeur.js"' in page and 'from "./pages.js"' in page
-    assert "cdn.jsdelivr.net" not in page
+    racine = Path(__file__).resolve().parents[1]
+    routeur = (racine / "moteur" / "js" / "routeur.js").read_text(encoding="utf-8")
+    coquille = (racine / "moteur" / "page.html").read_text(encoding="utf-8")
+    assert 'from "./pages.js"' in routeur
+    pages_html = {route: (racine / g.dossierDe(route) / "index.html").read_text(encoding="utf-8")
+                  for route in g.PAGES}
+    for route, texte in pages_html.items():
+        niveau = "" if route == "/" else "../"
+        assert f'href="{niveau}moteur/style.css"' in texte, route
+        assert f'src="{niveau}moteur/js/routeur.js"' in texte, route
+        assert "cdn.jsdelivr.net" not in texte, route
 
     #: Les deux polices de l'affiche sont servies par le dépôt — les charger
     #: chez Google aurait emporté l'adresse IP du lecteur chez un tiers à
@@ -1965,55 +1973,32 @@ def test_la_page_ne_depend_d_aucun_service_exterieur():
         assert (polices.parent / fichier).is_file(), f"police absente : {fichier}"
     assert len(re.findall(r"@font-face", feuille)) == 4
 
-    #: Seules adresses tolérées, et aucune n'est chargée avec la page : le
-    #: dépôt lui-même (liens que le lecteur suit s'il le veut), l'espace de
-    #: noms SVG, qui n'est jamais requêté, et l'intention de publication de X,
-    #: que le bouton « Publier sur X » ouvre dans un onglet — c'est une
-    #: navigation demandée par le lecteur, pas une requête faite dans son dos.
+    #: Seules adresses tolérées dans le routeur et la coquille des pages, et
+    #: aucune n'est chargée avec la page : le dépôt lui-même (liens que le
+    #: lecteur suit s'il le veut), l'espace de noms SVG, qui n'est jamais
+    #: requêté, et l'intention de publication de X, que le bouton « Publier sur
+    #: X » ouvre dans un onglet — c'est une navigation demandée par le lecteur,
+    #: pas une requête faite dans son dos.
     autorisees = ("https://github.com/g-pliberal/", "http://www.w3.org/2000/svg",
                   "https://x.com/intent/post")
-    for hote in ("http://", "https://"):
-        for morceau in page.split(hote)[1:]:
-            adresse = hote + morceau.split('"')[0]
-            assert adresse.startswith(autorisees), (
-                f"adresse extérieure dans la page : {adresse}"
-            )
+    for nom, texte in (("routeur.js", routeur), ("page.html", coquille)):
+        for hote in ("http://", "https://"):
+            for morceau in texte.split(hote)[1:]:
+                adresse = hote + morceau.split('"')[0]
+                assert adresse.startswith(autorisees), (
+                    f"adresse extérieure dans {nom} : {adresse}"
+                )
 
-
-def test_le_prechargement_du_paquet_correspond_a_la_requete():
-    """Un préchargement qui ne correspond pas au ``fetch`` est pire qu'inutile.
-
-    Le navigateur ne réutilise le ``<link rel="preload">`` que si la requête a
-    exactement le même mode et les mêmes identifiants. Sinon il télécharge le
-    paquet **deux fois** — 186 Ko en trop à chaque première visite — en n'émettant
-    qu'un avertissement de console que personne ne lit. Les deux déclarations sont
-    donc verrouillées ensemble ici : ``crossorigin`` sur le lien, et un ``fetch``
-    nu, sans ``mode`` ni ``credentials`` qui s'en écarteraient.
-    """
-    import posixpath
-    import re
-
-    page = page_et_routeur()
-
-    prechargement = re.search(r"<link rel=\"preload\" href=\"([^\"]*donnees\.json)\"[^>]*>",
-                              page)
-    appel = re.search(r"fetch\(PAQUET,\s*(\{[^}]*\})\)", page)
-    assert prechargement and appel, "préchargement ou requête introuvables"
-    # La requête part du routeur, sous une adresse résolue depuis son module
-    # (action 174) : elle doit désigner le fichier que l'en-tête précharge.
-    paquet = re.search(r'const PAQUET = new URL\("([^"]+)", import\.meta\.url\);', page)
-    assert paquet, "le routeur ne dit plus d'où il lit le paquet"
-    assert posixpath.normpath(posixpath.join("moteur/js", paquet.group(1))) \
-        == prechargement.group(1), "la requête et le préchargement visent deux fichiers"
-
-    assert "crossorigin" in prechargement.group(0), (
-        "le préchargement doit porter crossorigin, sinon il ne correspond pas au fetch"
-    )
-    options = appel.group(1)
-    assert "credentials" not in options and "mode" not in options, (
-        f"la requête s'écarte du préchargement ({options}) : le paquet serait "
-        "téléchargé deux fois"
-    )
+    #: Les pages, elles, citent leurs sources : des liens que le lecteur suit
+    #: s'il le veut. Aucune balise n'y charge rien d'ailleurs que du dépôt ; la
+    #: seule adresse extérieure d'un ``<link>`` est l'adresse canonique, que les
+    #: moteurs de recherche lisent et que le navigateur ne requête pas.
+    chargeurs = re.compile(r"<(?:link|script|img|iframe|source|video|audio|object|embed)\b"
+                           r"[^>]*?\b(?:href|src|data)=\"(https?://[^\"]+)\"")
+    for route, texte in pages_html.items():
+        sans_canonique = re.sub(r'<link rel="canonical"[^>]*>', "", texte)
+        assert chargeurs.findall(sans_canonique) == [], f"{route} charge un service extérieur"
+        assert "@import" not in sans_canonique and "url(http" not in sans_canonique, route
 
 
 def test_le_site_attend_la_version_du_paquet():
@@ -2036,79 +2021,29 @@ def test_le_site_attend_la_version_du_paquet():
     assert re.search(r'fetch\(PAQUET, \{ cache: "reload" \}\)', page)
 
 
-def test_les_modules_sont_tous_precharges():
-    """La liste de préchargement doit suivre le contenu de ``moteur/js/``.
-
-    Le portage est un graphe profond de cinq niveaux : sans déclaration, le
-    navigateur ne découvre chaque niveau qu'après avoir reçu le précédent, soit
-    cinq aller-retours avant le premier calcul — une seconde entière sur une
-    connexion mobile. Les ``modulepreload`` les font partir ensemble.
-
-    Une liste écrite à la main dérive dès qu'un module est ajouté ou renommé :
-    un module oublié réintroduit silencieusement la cascade, un module fantôme
-    fait télécharger un fichier qui n'existe plus. Les deux échouent ici.
-
-    DEUX MODULES N'EN SONT PAS, et c'est délibéré : le lecteur de PDF et la
-    lecture du relevé ne servent qu'à celui qui dépose un relevé de carrière
-    sur le simulateur. Les précharger ferait payer à tous les autres — la
-    grande majorité — quarante kilo-octets qu'ils n'ouvriront jamais, et sur le
-    chemin critique du premier calcul. Ils sont donc importés à la demande,
-    dans le gestionnaire du dépôt, et le test l'exige dans les deux sens : ce
-    qui est chargé à la demande n'est jamais préchargé, et ce qui ne l'est pas
-    doit l'être.
-    """
-    import re
-    from pathlib import Path
-
-    racine = Path(__file__).resolve().parents[1]
-    page = page_et_routeur()
-
-    precharges = set(re.findall(
-        r'<link rel="modulepreload" href="moteur/js/([\w./-]+\.js)">', page))
-    # Importés à la demande par le routeur, depuis son dossier (action 174).
-    a_la_demande = set(re.findall(
-        r'import\(\s*"\./([\w./-]+\.js)"\s*\)', page))
-    # Les étapes du droit ont leur dossier, moteur/js/droit/ : elles sont du
-    # graphe comme les autres modules.
-    dossier = racine / "moteur" / "js"
-    presents = {chemin.relative_to(dossier).as_posix() for chemin in dossier.rglob("*.js")}
-
-    assert a_la_demande <= presents, (
-        f"importés à la demande mais absents du dossier : {a_la_demande - presents}"
-    )
-    assert not (precharges & a_la_demande), (
-        "préchargés ET importés à la demande, donc téléchargés deux fois : "
-        f"{sorted(precharges & a_la_demande)}"
-    )
-    assert precharges == presents - a_la_demande, (
-        f"préchargés mais absents du dossier : {precharges - presents} ; "
-        f"présents mais non préchargés : {presents - a_la_demande - precharges}"
-    )
-
-
 def test_le_pied_est_pose_hors_du_contenu_remplace():
     """Un ``<footer>`` dans ``<main>`` n'est pas un repère « contentinfo ».
 
     Il disparaît alors de la navigation par repères des lecteurs d'écran. Le
-    pied est donc inséré une fois, au premier rendu, à côté de ``<main>`` — et
-    non sous l'écran d'attente, d'où il plongeait quand la page arrivait
-    (action 174) —, et le rendu d'une page ne réinjecte que le corps : il est
-    statique, le reconstruire à chaque calcul ne servait rien non plus.
+    pied est donc écrit dans chaque page toute faite, après ``<main>`` et
+    jamais dedans (action 174) ; le routeur ne le pose plus, et le rendu d'une
+    page ne réinjecte que le corps : le pied est statique, le reconstruire à
+    chaque calcul ne servait rien non plus.
     """
-    import re
     from pathlib import Path
 
-    page = page_et_routeur()
-
-    assert re.search(r"insertAdjacentHTML\([^)]*gabarit\.pied\(\)", page, re.S), (
-        "le pied doit être posé une fois, au premier rendu"
-    )
-    assert "contenu.innerHTML = corps;" in page, (
+    racine = Path(__file__).resolve().parents[1]
+    routeur = (racine / "moteur" / "js" / "routeur.js").read_text(encoding="utf-8")
+    assert "contenu.innerHTML = corps;" in routeur, (
         "le rendu d'une page ne doit réinjecter que le corps"
     )
-    assert "corps + gabarit.pied()" not in page, (
-        "le pied ne doit plus être réinséré dans <main> à chaque rendu"
-    )
+    assert "gabarit.pied()" not in routeur, "le routeur ne pose plus le pied : la page l'a"
+    for route in g.PAGES:
+        texte = (racine / g.dossierDe(route) / "index.html").read_text(encoding="utf-8")
+        assert texte.count("<footer>") == 1, route
+        assert texte.index("</main>") < texte.index("<footer>"), (
+            f"{route} : le pied doit suivre <main>, non s'y trouver"
+        )
 
 
 def test_le_resultat_est_annonce_aux_lecteurs_d_ecran():
@@ -2132,33 +2067,6 @@ def test_le_resultat_est_annonce_aux_lecteurs_d_ecran():
     assert page.count("annoncer(") >= 3, (
         "le résultat, le refus de saisie et l'échec de calcul doivent tous être annoncés"
     )
-
-
-def test_le_style_d_amorcage_ne_vise_que_des_elements_existants():
-    """Pas de règle orpheline dans la page : ce qui ne sert plus s'enlève.
-
-    L'écran d'attente a déjà survécu à un moteur entier ; ses règles lui
-    survivaient à leur tour. Chaque classe et chaque identifiant stylés doivent
-    donc se retrouver dans le corps de la page ou dans le script qui le remplace.
-    """
-    import re
-    from pathlib import Path
-
-    page = page_et_routeur()
-    style = re.search(r"<style>(.*?)</style>", page, re.S).group(1)
-    reste = page.replace(style, "")
-
-    selecteurs = " ".join(re.findall(r"^([^{}@]+)\{", style, re.M))
-    for nom in set(re.findall(r"[#.]([\w-]+)", selecteurs)):
-        assert nom in reste, (
-            f"« {nom} » est stylé dans index.html mais n'existe nulle part dans la page"
-        )
-
-    balises = set(re.findall(r"\b(\w+)(?=\s*[.#{]|\s+[\w.#])", selecteurs))
-    for balise in balises & {"code", "table", "img", "button", "input", "ul", "li"}:
-        assert f"<{balise}" in reste, (
-            f"la règle visant <{balise}> ne correspond à aucun élément de la page"
-        )
 
 
 def test_le_moteur_javascript_est_versionne():
@@ -3264,35 +3172,46 @@ def test_les_bornes_d_assiette_sont_les_memes_des_deux_cotes():
     )
 
 
-def test_le_README_dit_le_vrai_poids_du_paquet():
-    """Ce que le premier chargement transfère, et qui le tient.
+def test_le_README_dit_le_vrai_poids_d_une_page_et_du_paquet():
+    """Ce qu'une page transfère, ce que le premier calcul y ajoute, et qui le tient.
 
     Ce test mesurait `moteur/donnees.json` seul, à cinq pour cent près, pour
-    une phrase qui annonce TOUT le premier chargement — les données, la
+    une phrase qui annonçait TOUT le premier chargement — les données, la
     feuille de style, les vingt-cinq modules préchargés et la page. Il est
     donc resté vert pendant que la phrase dérivait de 310 Ko à plus du
     double : il recoupait la mauvaise grandeur.
 
-    La phrase porte maintenant ses deux sondes, et
-    `tests/test_prose.py::test_aucun_chiffre_ancre_n_a_derive` les recalcule à
+    Depuis que les pages arrivent toutes faites (action 174), lire une page ne
+    demande plus le paquet de données : la phrase dit d'abord le poids d'une
+    page, le code du site et l'accueil, puis celui du paquet, que seul le
+    premier calcul va chercher. Chacun porte ses deux sondes, que
+    `tests/test_prose.py::test_aucun_chiffre_ancre_n_a_derive` recalcule à
     chaque exécution. Ce qui reste à tenir ici, c'est qu'on ne puisse pas les
-    retirer : un chiffre désancré redeviendrait un souvenir, en silence.
+    retirer, ni remettre le paquet dans le poids d'une page : un chiffre
+    désancré redeviendrait un souvenir, en silence.
     """
     import re
     from pathlib import Path
 
     readme = (Path(__file__).resolve().parents[1] / "README.md").read_text(encoding="utf-8")
-    annonce = re.search(
-        r"chargement transfère <!--chiffre:poids_comprime\(([^)]*)\)-->[\d  ]+<!--/--> Ko compressés\s*"
-        r"\(<!--chiffre:poids\(([^)]*)\)-->[\d  ]+<!--/--> Ko bruts\)", readme)
-    assert annonce, "le README ne dit plus, sous sonde, ce que le premier chargement transfère"
-    for charge in annonce.groups():
-        for morceau in ("moteur/donnees.json", "moteur/style.css",
-                        "moteur/js/*.js", "index.html"):
+    page = re.search(
+        r"Lire une page transfère .*?<!--chiffre:poids_comprime\(([^)]*)\)-->[\d  ]+<!--/--> Ko compressés\s*"
+        r"\(<!--chiffre:poids\(([^)]*)\)-->[\d  ]+<!--/--> Ko bruts\)", readme, re.S)
+    assert page, "le README ne dit plus, sous sonde, ce qu'une page transfère"
+    for charge in page.groups():
+        for morceau in ("moteur/style.css", "moteur/js/*.js", "index.html"):
             assert morceau in charge, (
-                f"la sonde du premier chargement oublie {morceau} : c'est ainsi "
+                f"la sonde du poids d'une page oublie {morceau} : c'est ainsi "
                 "que l'ancienne mesure comptait le paquet pour le tout"
             )
+        assert "moteur/donnees.json" not in charge, (
+            "lire une page ne demande pas le paquet : il part au premier calcul"
+        )
+    paquet = re.search(
+        r"le paquet\s+de données, <!--chiffre:poids_comprime\(([^)]*)\)-->[\d  ]+<!--/--> Ko compressés "
+        r"\(<!--chiffre:poids\(([^)]*)\)-->[\d  ]+<!--/--> Ko bruts\)", readme)
+    assert paquet, "le README ne dit plus, sous sonde, ce que pèse le paquet de données"
+    assert paquet.groups() == ("moteur/donnees.json", "moteur/donnees.json")
 
 
 def test_le_balayage_des_temoins_visite_six_generations():

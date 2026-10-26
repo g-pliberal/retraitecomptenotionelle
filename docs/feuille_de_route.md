@@ -7071,14 +7071,14 @@ une à une, les étapes 3 et 5. Les quatre gardes de l'étape 2 sont faites le
 
 ### 174. Les notes Lighthouse au maximum, sur toutes les pages du site — `en cours`
 
-**Reprise, au 26 octobre 2026.** Faites, les étapes 1 à 3 et 4 (a) et (b) :
-chaque page a son dossier (`cout/`…), ses liens relatifs, ses anciennes
-adresses redirigées par le routeur, et le document d'intégration le dit
-(`174/2026-10-26-etape-4b-les-pages-en-dossier.md`). En ligne, avant le
-pré-rendu : Accessibilité, Bonnes pratiques, SEO et Agentic à 100, CLS nul ;
-Performance de 59 à 60 en mobile, de 87 à 90 au bureau. Par quoi commencer :
-l'étape 4 (c), le pré-rendu — chaque page écrite toute faite par
-`scripts/construire_pages.py`, le moteur sorti de l'en-tête —, puis 5, le
+**Reprise, au 26 octobre 2026.** Faites, les étapes 1 à 4 : chaque page est
+écrite toute faite par `scripts/construire_pages.py` (neuf pages, `sitemap.xml`,
+l'adresse canonique de la copie du parti), et le routeur l'anime sans moteur
+(`174/2026-10-26-etape-4c-les-pages-toutes-faites.md`). Mesuré en local :
+Accessibilité, Bonnes pratiques, SEO et Agentic à 100, CLS nul ; Performance de
+89 à 99 en mobile et de 99 à 100 au bureau, hors résultats (67 et 71). Par quoi
+commencer : mesurer en ligne une fois la copie déployée, puis le fil principal en
+mobile (mise en page des pages longues, tracés écrits deux fois), avant 5, le
 moteur à la demande. Reste au propriétaire : le sort des résultats (6), et
 l'hôte à sa prochaine copie.
 

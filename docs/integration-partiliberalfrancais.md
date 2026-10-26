@@ -13,7 +13,7 @@ Chaque page du simulateur a désormais son adresse, un dossier de son nom :
 `/retraite/simuler/`, `/retraite/cout/`… au lieu de `/retraite/#/simuler`,
 `/retraite/#/cout`… Les raisons, et ce que cela change pour le lecteur, sont
 dans la note de décision 0004 (`docs/decisions/0004-une-adresse-par-page.md`).
-Pour l'hôte, quatre choses :
+Pour l'hôte, six choses :
 
 1. **Les anciennes adresses marchent toujours.** `/retraite/#/simuler`, le lien
    que ce fichier recommandait, charge l'accueil, dont le script lit la suite
@@ -21,10 +21,10 @@ Pour l'hôte, quatre choses :
    marque-pages et les partages mènent où ils menaient.
 2. **La copie doit contenir les dossiers des pages** : `simuler/`, `cout/`,
    `risque/`, `partager/`, `saviez-vous/`, `cas-types/`, `avantages/` et
-   `methode/`, chacun avec son `index.html`, en plus de `index.html` et de
-   `moteur/`. « Recopier le dépôt tel quel » les emporte. Sans eux,
-   `/retraite/cout/` répond 404 — et c'est l'adresse que le simulateur écrit
-   dans ses liens.
+   `methode/`, chacun avec son `index.html`, en plus de `index.html`, de
+   `sitemap.xml` et de `moteur/`. « Recopier le dépôt tel quel » les emporte.
+   Sans eux, `/retraite/cout/` répond 404 — et c'est l'adresse que le
+   simulateur écrit dans ses liens.
 3. **Aucune règle de serveur n'est requise** : un dossier qui porte son
    `index.html` est servi à `/retraite/cout/`, et `/retraite/cout` redirige vers
    `/retraite/cout/`, comme `/retraite` vers `/retraite/`.
@@ -33,6 +33,27 @@ Pour l'hôte, quatre choses :
    recommande l'abandon depuis le 17 septembre 2026 ; avec une page par
    dossier, c'est le moment — voir « L'intégration recommandée ». À régler
    avec le mainteneur de l'hôte à la prochaine copie.
+5. **Chaque page est écrite toute faite.** Le HTML que le serveur envoie porte
+   déjà le titre, la description, le texte, les tableaux et les graphiques de la
+   page, pour ses réglages par défaut : elle se lit et s'affiche sans attendre
+   le moteur de calcul, et un moteur de recherche qui n'exécute pas les scripts
+   y trouve tout son texte. Le script de la page (`moteur/js/routeur.js`) ne fait
+   que l'animer — il replie les tableaux, branche le formulaire, ouvre la
+   section que l'adresse nomme — ; il ne va chercher le paquet de données et ne
+   construit le simulateur que pour ce que la page toute faite ne porte pas, une
+   carrière ou des réglages derrière le `#`. Ces fichiers sont fabriqués
+   (`scripts/construire_pages.py`) et commités avec le dépôt : la copie les
+   recopie tels quels, sans rien à construire.
+6. **L'adresse que les moteurs de recherche retiennent est celle de la copie du
+   parti.** Chaque page déclare, dans son en-tête,
+   `<link rel="canonical" href="https://partiliberalfrancais.fr/retraite/cout/">`
+   (et ainsi de suite pour chacune) : le site sur GitHub Pages, qui porte les
+   mêmes fichiers, ne fait pas concurrence à la copie. `sitemap.xml`, à la
+   racine de la copie, liste les neuf adresses. Pour qu'un moteur le lise,
+   l'hôte peut le déclarer dans le `robots.txt` de son site
+   (`Sitemap: https://partiliberalfrancais.fr/retraite/sitemap.xml`) ou dans la
+   console de ce moteur : cela ne dépend que de lui, et se règle avec lui à la
+   prochaine copie.
 
 ## La frontière
 
@@ -133,7 +154,8 @@ Vérifié sur la copie en production et sur GitHub Pages.
   <!--chiffre:poids_comprime(moteur/donnees.json)-->788<!--/--> Ko compressés) et `moteur/js/*.js`,
   dont les étapes du droit dans `moteur/js/droit/`, relativement à sa propre
   adresse ; la page d'un dossier (`cout/index.html`) les charge un niveau plus
-  haut (`../moteur/…`). Le répertoire peut s'appeler autrement que `retraite` ;
+  haut (`../moteur/…`). Le paquet de données ne part qu'au premier calcul : lire
+  une page ne le demande pas. Le répertoire peut s'appeler autrement que `retraite` ;
   il doit être servi avec sa barre finale (ou rediriger vers elle), sinon les
   chemins relatifs se résolvent un niveau trop haut. Les liens que les pages
   écrivent sont relatifs aussi (`../cout/`) : le même fichier sert à GitHub

@@ -2220,6 +2220,19 @@ body.calcul-en-cours::after {
   body.calcul-en-cours::after { width: 100%; }
 }
 
+/* Les tracés d'une page toute faite (action 174) : Coût et Droits non cotisés
+   dessinent leurs graphiques à la largeur de la colonne, que le serveur ne
+   connaît pas. La page porte donc chaque tracé deux fois, dessiné pour un
+   téléphone et pour le large, et un seul se voit. Le seuil est celui du
+   gabarit : une colonne de moins de 720 points, soit un écran de moins de 800
+   (la marge atteint ses 40 points à 800). Le routeur laisse la page telle
+   quand le dessin convient à la colonne mesurée, et la redessine sinon. */
+.variante-etroite { display: none; }
+@media (max-width: 799.98px) {
+  .variante-etroite { display: block; }
+  .variante-large { display: none; }
+}
+
 /* Impression : le lecteur qui imprime une simulation veut les chiffres, et il
    les veut en noir sur blanc — une affiche vert profond pleine page coûterait
    une cartouche pour ne rien dire de plus. Tout est donc reteinté à

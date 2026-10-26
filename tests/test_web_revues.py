@@ -1566,22 +1566,18 @@ def test_la_page_donnees_se_lit_comme_une_base():
 
 
 def test_chaque_route_porte_sa_description():
-    """Une méta-description par page, que le routeur pose comme il pose le
-    titre."""
+    """Une méta-description par page, écrite dans le HTML de la page : chaque
+    page est son fichier (action 174), et le routeur n'a plus à la poser."""
     from pathlib import Path
 
     DESCRIPTIONS = pages.DESCRIPTIONS
     assert set(DESCRIPTIONS) == set(TITRES)
+    racine = Path(__file__).resolve().parents[1]
     for chemin, description in DESCRIPTIONS.items():
         assert 60 <= len(description) <= 250, f"{chemin} : {len(description)} caractères"
         assert description.endswith("."), chemin
-    racine = Path(__file__).resolve().parents[1]
-    page = page_et_routeur()
-    assert "DESCRIPTIONS[cible.chemin]" in page
-    assert "description.content = " in page
-    # La description de l'accueil est celle que le HTML servi porte déjà : la
-    # première page ne doit pas changer de description en s'ouvrant.
-    assert f'<meta name="description" content="{DESCRIPTIONS["/"]}">' in page
+        texte = (racine / g.dossierDe(chemin) / "index.html").read_text(encoding="utf-8")
+        assert f'<meta name="description" content="{description}">' in texte, chemin
 
 
 # -- la revue du 15 septembre 2026 : le thème « gommer la touche IA » ----------

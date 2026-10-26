@@ -1,165 +1,58 @@
 <!doctype html>
-<!-- Page fabriquée par scripts/construire_pages.py depuis index.html : ne la retouchez pas, refaites-la. -->
+<!-- Page fabriquée par scripts/construire_pages.py, depuis moteur/page.html : ne la retouchez pas, refaites-la. -->
 <html lang="fr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- La couleur du bandeau de tête, la même dans les deux thèmes : sur un
-     téléphone, la barre du navigateur la reprend, et la page commence où elle
-     commence. -->
 <meta name="theme-color" content="#003340">
 <title>Le saviez-vous ? — Retraite en comptes notionnels</title>
 <meta name="description" content="Douze règles du système de retraite actuel en une carte chacune : les seuils, les cotisations sans droits, la réversion, les caisses à part. Chaque carte cite le texte officiel qui la fonde.">
-<!-- L'icône du site est un fichier, et un dessin : l'emoji qui tenait ce rôle
-     n'avait ni la même forme ni la même taille d'un système à l'autre, et se
-     brouillait en petit. Voir moteur/icones/README.md. -->
+<link rel="canonical" href="https://partiliberalfrancais.fr/retraite/saviez-vous/">
 <link rel="icon" href="../moteur/icone.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../moteur/icone.svg">
 
-<!-- La feuille de style n'existe qu'en un seul endroit : moteur/style.css,
-     sa source, que rien ne fabrique. -->
 <link rel="stylesheet" href="../moteur/style.css">
-<link rel="preload" href="../moteur/donnees.json" as="fetch" crossorigin>
-<!-- Les deux polices du texte, dans leur jeu latin, celui du français. Le
-     serif n'était demandé qu'au rendu de la page, où il arrivait après coup :
-     le chapeau perdait une ligne, et tout ce qui le suit remontait sous les
-     yeux du lecteur (action 174). Demandées ici, elles sont là bien avant le
-     moteur. `crossorigin` est celui de toute police, même servie d'ici. -->
 <link rel="preload" href="../moteur/polices/public-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../moteur/polices/instrument-serif-latin.woff2" as="font" type="font/woff2" crossorigin>
-
-<!-- Le portage est un graphe de modules profond de cinq niveaux : sans ces
-     déclarations le navigateur ne découvre chaque niveau qu'après avoir reçu le
-     précédent, soit cinq aller-retours avant que le modèle puisse tourner. Les
-     annoncer tous ici les fait partir ensemble, dès la lecture de l'en-tête.
-     La liste est verrouillée sur le contenu de moteur/js/ par un test. -->
-<link rel="modulepreload" href="../moteur/js/routeur.js">
-<link rel="modulepreload" href="../moteur/js/adresses.js">
-<link rel="modulepreload" href="../moteur/js/pages.js">
-<link rel="modulepreload" href="../moteur/js/saisie.js">
-<link rel="modulepreload" href="../moteur/js/contexte.js">
-<link rel="modulepreload" href="../moteur/js/simulateur.js">
-<link rel="modulepreload" href="../moteur/js/scenario-notionnel.js">
-<link rel="modulepreload" href="../moteur/js/age-reference.js">
-<link rel="modulepreload" href="../moteur/js/assiette.js">
-<link rel="modulepreload" href="../moteur/js/capitalisation.js">
-<link rel="modulepreload" href="../moteur/js/carriere.js">
-<link rel="modulepreload" href="../moteur/js/chronologie.js">
-<link rel="modulepreload" href="../moteur/js/compte.js">
-<link rel="modulepreload" href="../moteur/js/conversion.js">
-<link rel="modulepreload" href="../moteur/js/contributions-equilibre.js">
-<link rel="modulepreload" href="../moteur/js/cycle-de-vie.js">
-<link rel="modulepreload" href="../moteur/js/prelevements-historiques.js">
-<link rel="modulepreload" href="../moteur/js/impot-revenu.js">
-<link rel="modulepreload" href="../moteur/js/frontiere.js">
-<link rel="modulepreload" href="../moteur/js/bilan.js">
-<link rel="modulepreload" href="../moteur/js/agregats.js">
-<link rel="modulepreload" href="../moteur/js/inventaire.js">
-<link rel="modulepreload" href="../moteur/js/depenses.js">
-<link rel="modulepreload" href="../moteur/js/distribution.js">
-<link rel="modulepreload" href="../moteur/js/patrimoine.js">
-<link rel="modulepreload" href="../moteur/js/vie-en-couple.js">
-<link rel="modulepreload" href="../moteur/js/effectifs.js">
-<link rel="modulepreload" href="../moteur/js/equilibre.js">
-<link rel="modulepreload" href="../moteur/js/fusion.js">
-<link rel="modulepreload" href="../moteur/js/garantie.js">
-<link rel="modulepreload" href="../moteur/js/gabarit.js">
-<link rel="modulepreload" href="../moteur/js/indexation.js">
-<link rel="modulepreload" href="../moteur/js/macro.js">
-<link rel="modulepreload" href="../moteur/js/mortalite.js">
-<link rel="modulepreload" href="../moteur/js/scenario-actuel.js">
-<link rel="modulepreload" href="../moteur/js/echeancier.js">
-<link rel="modulepreload" href="../moteur/js/journal.js">
-<link rel="modulepreload" href="../moteur/js/pilote.js">
-<link rel="modulepreload" href="../moteur/js/droit/acquerir.js">
-<link rel="modulepreload" href="../moteur/js/droit/categories.js">
-<link rel="modulepreload" href="../moteur/js/droit/commun.js">
-<link rel="modulepreload" href="../moteur/js/droit/completer.js">
-<link rel="modulepreload" href="../moteur/js/droit/compter.js">
-<link rel="modulepreload" href="../moteur/js/droit/coordonner.js">
-<link rel="modulepreload" href="../moteur/js/droit/cultes.js">
-<link rel="modulepreload" href="../moteur/js/droit/cumul.js">
-<link rel="modulepreload" href="../moteur/js/droit/departs.js">
-<link rel="modulepreload" href="../moteur/js/droit/etranger.js">
-<link rel="modulepreload" href="../moteur/js/droit/invalidite.js">
-<link rel="modulepreload" href="../moteur/js/droit/limite_age.js">
-<link rel="modulepreload" href="../moteur/js/droit/foyer.js">
-<link rel="modulepreload" href="../moteur/js/droit/liquidation.js">
-<link rel="modulepreload" href="../moteur/js/droit/liquider.js">
-<link rel="modulepreload" href="../moteur/js/droit/ouvrir.js">
-<link rel="modulepreload" href="../moteur/js/droit/preparer.js">
-<link rel="modulepreload" href="../moteur/js/droit/primes.js">
-<link rel="modulepreload" href="../moteur/js/droit/progressive.js">
-<link rel="modulepreload" href="../moteur/js/droit/releve.js">
-<link rel="modulepreload" href="../moteur/js/droit/reversion.js">
-<link rel="modulepreload" href="../moteur/js/droit/seconde.js">
-<link rel="modulepreload" href="../moteur/js/calendrier.js">
-<link rel="modulepreload" href="../moteur/js/config.js">
-<link rel="modulepreload" href="../moteur/js/format.js">
-<link rel="modulepreload" href="../moteur/js/regimes.js">
-<link rel="modulepreload" href="../moteur/js/primes.js">
-<link rel="modulepreload" href="../moteur/js/versions.js">
-<link rel="modulepreload" href="../moteur/js/caracteristiques.js">
-<link rel="modulepreload" href="../moteur/js/credits-ministeres.js">
-<link rel="modulepreload" href="../moteur/js/serie.js">
-<link rel="modulepreload" href="../moteur/js/taux.js">
-<link rel="modulepreload" href="../moteur/js/libm.js">
-<link rel="modulepreload" href="../moteur/js/remuneration.js">
-<link rel="modulepreload" href="../moteur/js/indemnite_csg.js">
-<link rel="modulepreload" href="../moteur/js/restitution.js">
-<link rel="modulepreload" href="../moteur/js/revalorisation.js">
-<link rel="modulepreload" href="../moteur/js/tva.js">
-
-<style>
-  /* Écran d'attente. Il ne s'affiche qu'au-delà d'un tiers de seconde : sur une
-     connexion rapide le simulateur est prêt avant, et un écran qui n'aurait
-     clignoté que le temps d'être aperçu vaut moins que rien. Le retard est en
-     CSS et non en JavaScript, parce que l'attente qu'il couvre se produit
-     justement avant que le moindre script ne soit chargé. */
-  #amorce { max-width: 34rem; margin: 0 auto; padding: 5rem 1.5rem; text-align: center;
-            animation: paraitre 0.25s ease-out 0.35s both; }
-  #amorce h1 { font-size: 1.4rem; font-weight: 600; margin: 0 0 0.75rem; }
-  #amorce p { color: var(--texte-doux); font-size: 0.98rem; }
-  #amorce .jauge { height: 6px; width: min(24rem, 80%); margin: 2rem auto 0;
-                   background: var(--fond-appui); border-radius: 3px; overflow: hidden; }
-  #amorce .jauge > span { display: block; height: 100%; width: 30%;
-                          background: var(--accent);
-                          animation: glisse 1.4s ease-in-out infinite; }
-  @keyframes paraitre { from { opacity: 0; } to { opacity: 1; } }
-  /* Lue par les synthèses vocales, jamais affichée : le contenu de <main> est
-     remplacé en bloc à chaque calcul, ce qu'un lecteur d'écran ne signale pas
-     de lui-même. */
-  .hors-ecran { position: absolute; width: 1px; height: 1px; overflow: hidden;
-                clip-path: inset(50%); white-space: nowrap; }
-  .replique { text-align: left; border-left: 3px solid var(--accent);
-              background: var(--fond-appui); padding: 0.9rem 1.1rem; margin-top: 1.5rem;
-              font-size: 0.92rem; }
-  /* La feuille de style principale coupe déjà les animations quand le système
-     demande d'en réduire le mouvement ; la jauge, elle, doit encore dire que
-     quelque chose travaille. Immobile et pleine, elle le dit. */
-  @media (prefers-reduced-motion: reduce) {
-    #amorce .jauge > span { width: 100%; }
-  }
-</style>
 </head>
 <body>
 
 <p id="annonce" class="hors-ecran" role="status" aria-live="polite"></p>
+<noscript><div class="erreur">Le calcul se fait dans votre navigateur et a besoin de JavaScript : les pages se lisent sans, mais le simulateur ne calcule pas.</div></noscript>
+<div id="entete"><a class="evitement" href="#contenu">Aller au contenu</a>
+<header class="bandeau"><div class="interieur">
+  <p class="nom"><a href="../"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M16 7h6v6" /><path d="m22 7-8.5 8.5-5-5L2 17" /></svg><span>Retraite à comptes notionnels</span></a></p>
+  <nav aria-label="Navigation principale"><span class="groupe"><span class="etiquette">L&#x27;essentiel</span><span class="liens"><a href="../">Programme</a><a href="../simuler/">Simuler</a><a href="../cout/">Coût</a><a href="../risque/">Pourquoi changer</a></span></span><span class="groupe"><span class="etiquette">Faire connaître</span><span class="liens"><a href="../partager/">Partager</a><a href="./" aria-current="page">Le saviez-vous ?</a></span></span><span class="groupe secondaire"><span class="etiquette">Pour vérifier</span><button type="button" class="deplier" aria-expanded="false" aria-controls="pages-a-verifier">Pour vérifier<svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg></button><span class="liens" id="pages-a-verifier"><a href="../cas-types/">Carrières types</a><a href="../avantages/">Droits non cotisés</a><a href="../methode/">Méthode et sources</a></span></span></nav>
+</div></header></div>
+<main id="contenu" tabindex="-1" data-prerendu="/saviez-vous">
+<div class="affiche"><p class="surtitre">Le saviez-vous ?</p><h1>Douze règles du système actuel, <span class="cle-texte">textes à l'appui.</span></h1><p class="chapeau">Textes lus dans leur version en vigueur le 4 octobre 2026 ; chaque carte se partage d'un bouton.</p></div>
 
-<div id="amorce">
-  <h1>Retraite à comptes notionnels</h1>
-  <p>Le site se prépare. Le modèle et les données de référence s'exécutent dans
-  votre navigateur : rien n'est envoyé à un serveur, et il n'y a rien à
-  installer.</p>
-  <div class="jauge"><span></span></div>
-  <noscript>
-    <div class="replique">Ce simulateur a besoin de JavaScript : le calcul se fait
-    dans votre navigateur, il n'y a pas de serveur pour le faire à sa place.</div>
-  </noscript>
-</div>
+<section class="theme"><div class="cartes" data-partage-ici><div class="intro"><h2>Un seuil, et tout bascule</h2><p class="chapeau">Une heure, un point ou un mois de plus font basculer un droit.</p></div><figure class="carte"><figcaption>Les 150 heures</figcaption><div class="cadre-carte"><div class="carte-partage"><p class="surtitre">Le saviez-vous ?</p><div><div class="chiffre">150 heures</div><div class="phrase">payées au SMIC valident un trimestre de retraite. 149 heures n'en valident aucun.</div><div class="detail">Code de la sécurité sociale, art. R. 351-9</div></div><div class="pied"><span class="compte">@pliberal</span><span class="adresse">partiliberalfrancais.fr/#simulateur</span></div></div></div><p class="partage"><button type="button" class="partager"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /><line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></svg><span>Partager</span></button><button type="button" class="partager-x">Publier sur X</button><span class="etat" role="status"></span><textarea class="repli" hidden readonly rows="3" aria-label="Texte à copier à la main"></textarea></p><details class="source"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Ce que dit le texte</span></summary><p>Quatre trimestres au plus par an : 600 heures au SMIC en valident autant qu'une année entière à temps plein. Le texte : <a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000053335598">code de la sécurité sociale, art. R. 351-9</a>.</p></details></figure><figure class="carte"><figcaption>Le point de trop</figcaption><div class="cadre-carte"><div class="carte-partage"><p class="surtitre">Le saviez-vous ?</p><div><div class="chiffre">5 125 points</div><div class="phrase">pour toucher en rente la retraite additionnelle des fonctionnaires. Avec 5 124, elle est versée d'un coup.</div><div class="detail">Décret n° 2004-569 du 18 juin 2004, art. 9</div></div><div class="pied"><span class="compte">@pliberal</span><span class="adresse">partiliberalfrancais.fr/#simulateur</span></div></div></div><p class="partage"><button type="button" class="partager"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /><line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></svg><span>Partager</span></button><button type="button" class="partager-x">Publier sur X</button><span class="etat" role="status"></span><textarea class="repli" hidden readonly rows="3" aria-label="Texte à copier à la main"></textarea></p><details class="source"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Ce que dit le texte</span></summary><p>Le RAFP, la retraite que les fonctionnaires acquièrent sur leurs primes, se verse sous le seuil en un capital calculé sur sa rente. Le texte : <a href="https://www.legifrance.gouv.fr/loda/article_lc/LEGIARTI000037483756">décret n° 2004-569, art. 9</a>.</p></details></figure><figure class="carte"><figcaption>Le semestre des marins</figcaption><div class="cadre-carte"><div class="carte-partage"><p class="surtitre">Le saviez-vous ?</p><div><div class="chiffre">3 mois</div><div class="phrase">de service en plus valent six mois dans la pension d'un marin. Deux mois et demi ne valent rien.</div><div class="detail">Code des pensions de retraite des marins, art. R. 12</div></div><div class="pied"><span class="compte">@pliberal</span><span class="adresse">partiliberalfrancais.fr/#simulateur</span></div></div></div><p class="partage"><button type="button" class="partager"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /><line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></svg><span>Partager</span></button><button type="button" class="partager-x">Publier sur X</button><span class="etat" role="status"></span><textarea class="repli" hidden readonly rows="3" aria-label="Texte à copier à la main"></textarea></p><details class="source"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Ce que dit le texte</span></summary><p>Les services se comptent au semestre : une fraction d'au moins trois mois compte pour six, une fraction plus courte est négligée. Le texte : <a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000006791988">code des pensions de retraite des marins, art. R. 12</a>.</p></details></figure></div></section>
+<section class="theme"><div class="cartes" data-partage-ici><div class="intro"><h2>Cotiser sans acquérir de droits</h2><p class="chapeau">Une part de ce qu'on verse pour sa retraite n'y ouvre aucun droit.</p></div><figure class="carte"><figcaption>Le pourcentage d'appel</figcaption><div class="cadre-carte"><div class="carte-partage claire"><p class="surtitre">Le saviez-vous ?</p><div><div class="chiffre">38 %</div><div class="phrase">de la cotisation complémentaire d'un salarié payé sous le plafond n'achète aucun point de retraite.</div><div class="detail">Agirc-Arrco, accord du 17 novembre 2017</div></div><div class="pied"><span class="compte">@pliberal</span><span class="adresse">partiliberalfrancais.fr/#simulateur</span></div></div></div><p class="partage"><button type="button" class="partager"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /><line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></svg><span>Partager</span></button><button type="button" class="partager-x">Publier sur X</button><span class="etat" role="status"></span><textarea class="repli" hidden readonly rows="3" aria-label="Texte à copier à la main"></textarea></p><details class="source"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Ce que dit le texte</span></summary><p>Sur 10,02 % du salaire versés, 6,20 % achètent des points. Le reste, un « pourcentage d'appel » de 127 % et une contribution d'équilibre, n'ouvre aucun droit. Le texte : <a href="https://reglementation.agirc-arrco.fr/home/liste-fiche-reglementaires/listes-area/liste-de-fiches-reglementaires/taux-de-cotisations.html">Agirc-Arrco, taux de cotisation</a>.</p></details></figure><figure class="carte"><figcaption>Au-delà du plafond</figcaption><div class="cadre-carte"><div class="carte-partage claire"><p class="surtitre">Le saviez-vous ?</p><div><div class="chiffre">2,51 %</div><div class="phrase">du salaire au-dessus du plafond de la sécurité sociale va encore à la retraite de base, qui ne compte pas ce salaire.</div><div class="detail">Code de la sécurité sociale, art. D. 242-4 et R. 351-29</div></div><div class="pied"><span class="compte">@pliberal</span><span class="adresse">partiliberalfrancais.fr/#simulateur</span></div></div></div><p class="partage"><button type="button" class="partager"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /><line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></svg><span>Partager</span></button><button type="button" class="partager-x">Publier sur X</button><span class="etat" role="status"></span><textarea class="repli" hidden readonly rows="3" aria-label="Texte à copier à la main"></textarea></p><details class="source"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Ce que dit le texte</span></summary><p>La pension du régime général ne retient le salaire que jusqu'au plafond, 4 005 € par mois en 2026. La cotisation « déplafonnée », 2,11 % pour l'employeur et 0,40 % pour le salarié, court au-delà. Le texte : <a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000053302465">art. D. 242-4</a> ; <a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000053335651">art. R. 351-29</a> ; <a href="https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000053143451">arrêté du 22 décembre 2025</a>.</p></details></figure><figure class="carte"><figcaption>L'équilibre technique</figcaption><div class="cadre-carte"><div class="carte-partage claire"><p class="surtitre">Le saviez-vous ?</p><div><div class="chiffre">0,35 %</div><div class="phrase">du salaire, dès le premier euro, pour qui gagne plus que le plafond, sans un seul point de retraite en échange.</div><div class="detail">Agirc-Arrco, accord du 17 novembre 2017</div></div><div class="pied"><span class="compte">@pliberal</span><span class="adresse">partiliberalfrancais.fr/#simulateur</span></div></div></div><p class="partage"><button type="button" class="partager"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /><line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></svg><span>Partager</span></button><button type="button" class="partager-x">Publier sur X</button><span class="etat" role="status"></span><textarea class="repli" hidden readonly rows="3" aria-label="Texte à copier à la main"></textarea></p><details class="source"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Ce que dit le texte</span></summary><p>Cette contribution d'équilibre technique, 0,21 % pour l'employeur et 0,14 % pour le salarié, est « non génératrice de droits ». Le texte : <a href="https://reglementation.agirc-arrco.fr/home/liste-fiche-reglementaires/listes-area/liste-de-fiches-reglementaires/taux-de-cotisations.html">Agirc-Arrco, taux de cotisation</a>.</p></details></figure></div></section>
+<section class="theme"><div class="cartes" data-partage-ici><div class="intro"><h2>Un même deuil, trois règles</h2><p class="chapeau">La pension de réversion dépend de la caisse du défunt.</p></div><figure class="carte"><figcaption>Trois taux</figcaption><div class="cadre-carte"><div class="carte-partage long"><p class="surtitre">Le saviez-vous ?</p><div><div class="chiffre">54, 60 ou 50 %</div><div class="phrase">de la pension du défunt, selon sa caisse, sous des conditions d'âge et de ressources différentes.</div><div class="detail">Code de la sécurité sociale, art. D. 353-1 ; Agirc-Arrco ; code des pensions, art. L. 38</div></div><div class="pied"><span class="compte">@pliberal</span><span class="adresse">partiliberalfrancais.fr/#simulateur</span></div></div></div><p class="partage"><button type="button" class="partager"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /><line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></svg><span>Partager</span></button><button type="button" class="partager-x">Publier sur X</button><span class="etat" role="status"></span><textarea class="repli" hidden readonly rows="3" aria-label="Texte à copier à la main"></textarea></p><details class="source"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Ce que dit le texte</span></summary><p>Régime général : 54 %, à partir de 55 ans, sous plafond de ressources. Agirc-Arrco : 60 %, à partir de 55 ans, sans plafond. Fonction publique de l'État : 50 %, sans condition d'âge ni de ressources. Le texte : <a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000053356066">art. D. 353-1</a> ; <a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000020090020">art. D. 353-3</a> ; <a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000047453693">art. L. 353-1</a> ; <a href="https://www.agirc-arrco.fr/particuliers/ma-retraite/demander-ma-retraite/la-pension-de-reversion/">Agirc-Arrco</a> ; <a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000053549564">code des pensions civiles et militaires, art. L. 38</a>.</p></details></figure><figure class="carte"><figcaption>Le PACS</figcaption><div class="cadre-carte"><div class="carte-partage"><p class="surtitre">Le saviez-vous ?</p><div><div class="chiffre">0 €</div><div class="phrase">de réversion pour un partenaire de PACS ou un concubin, même après trente ans de vie commune.</div><div class="detail">Code de la sécurité sociale, art. L. 353-1 ; Agirc-Arrco ; code des pensions, art. L. 38</div></div><div class="pied"><span class="compte">@pliberal</span><span class="adresse">partiliberalfrancais.fr/#simulateur</span></div></div></div><p class="partage"><button type="button" class="partager"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /><line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></svg><span>Partager</span></button><button type="button" class="partager-x">Publier sur X</button><span class="etat" role="status"></span><textarea class="repli" hidden readonly rows="3" aria-label="Texte à copier à la main"></textarea></p><details class="source"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Ce que dit le texte</span></summary><p>Les textes ne connaissent que le « conjoint » : seul le mariage ouvre la réversion, au régime général, à l'Agirc-Arrco et dans la fonction publique. Le texte : <a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000047453693">code de la sécurité sociale, art. L. 353-1</a> ; <a href="https://www.agirc-arrco.fr/particuliers/ma-retraite/demander-ma-retraite/la-pension-de-reversion/">Agirc-Arrco</a> ; <a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000053549564">code des pensions civiles et militaires, art. L. 38</a>.</p></details></figure><figure class="carte"><figcaption>Le remariage</figcaption><div class="cadre-carte"><div class="carte-partage long"><p class="surtitre">Le saviez-vous ?</p><div><div class="chiffre">Se remarier</div><div class="phrase">fait perdre la réversion de l'Agirc-Arrco et celle de l'État, pas celle du régime général.</div><div class="detail">Code des pensions civiles et militaires, art. L. 46 ; Agirc-Arrco ; code de la sécurité sociale, art. L. 353-1</div></div><div class="pied"><span class="compte">@pliberal</span><span class="adresse">partiliberalfrancais.fr/#simulateur</span></div></div></div><p class="partage"><button type="button" class="partager"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /><line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></svg><span>Partager</span></button><button type="button" class="partager-x">Publier sur X</button><span class="etat" role="status"></span><textarea class="repli" hidden readonly rows="3" aria-label="Texte à copier à la main"></textarea></p><details class="source"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Ce que dit le texte</span></summary><p>L'État la retire aussi pour un « concubinage notoire », et la rend si la nouvelle union prend fin. Au régime général, les revenus du nouveau ménage ne comptent que pour le plafond de ressources. Le texte : <a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000025076807">code des pensions civiles et militaires, art. L. 46</a> ; <a href="https://www.agirc-arrco.fr/particuliers/ma-retraite/demander-ma-retraite/la-pension-de-reversion/">Agirc-Arrco</a> ; <a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000047453693">code de la sécurité sociale, art. L. 353-1</a>.</p></details></figure></div></section>
+<section class="theme"><div class="cartes" data-partage-ici><div class="intro"><h2>Chaque caisse a son histoire</h2><p class="chapeau">Chaque métier, chaque époque a laissé des règles qui coexistent encore.</p></div><figure class="carte"><figcaption>L'Opéra de Paris</figcaption><div class="cadre-carte"><div class="carte-partage claire"><p class="surtitre">Le saviez-vous ?</p><div><div class="chiffre">40 ans</div><div class="phrase">est l'âge où un artiste du ballet de l'Opéra de Paris peut toucher sa pension.</div><div class="detail">Décret n° 68-382 du 5 avril 1968, art. 6</div></div><div class="pied"><span class="compte">@pliberal</span><span class="adresse">partiliberalfrancais.fr/#simulateur</span></div></div></div><p class="partage"><button type="button" class="partager"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /><line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></svg><span>Partager</span></button><button type="button" class="partager-x">Publier sur X</button><span class="etat" role="status"></span><textarea class="repli" hidden readonly rows="3" aria-label="Texte à copier à la main"></textarea></p><details class="source"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Ce que dit le texte</span></summary><p>Les artistes des chœurs peuvent partir à 57 ans, les musiciens à 60, la plupart des autres personnels à 62. Le texte : <a href="https://www.legifrance.gouv.fr/loda/article_lc/LEGIARTI000029135150">décret n° 68-382, art. 6</a>.</p></details></figure><figure class="carte"><figcaption>Colbert</figcaption><div class="cadre-carte"><div class="carte-partage claire"><p class="surtitre">Le saviez-vous ?</p><div><div class="chiffre">1673</div><div class="phrase">est l'année où Colbert fonde le fonds des invalides de la marine, dont la caisse des marins tient encore son nom.</div><div class="detail">Enim, « Notre histoire »</div></div><div class="pied"><span class="compte">@pliberal</span><span class="adresse">partiliberalfrancais.fr/#simulateur</span></div></div></div><p class="partage"><button type="button" class="partager"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /><line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></svg><span>Partager</span></button><button type="button" class="partager-x">Publier sur X</button><span class="etat" role="status"></span><textarea class="repli" hidden readonly rows="3" aria-label="Texte à copier à la main"></textarea></p><details class="source"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Ce que dit le texte</span></summary><p>La pension des marins date de 1689. Elle se calcule toujours sur un salaire forfaitaire, fixé pour vingt catégories de fonctions à bord. Le texte : <a href="https://www.enim.eu/lenim/notre-histoire">Enim, « Notre histoire »</a> ; <a href="https://www.legifrance.gouv.fr/loda/article_lc/LEGIARTI000044510001">décret n° 52-540, art. 1</a>.</p></details></figure><figure class="carte"><figcaption>Les TUC</figcaption><div class="cadre-carte"><div class="carte-partage claire"><p class="surtitre">Le saviez-vous ?</p><div><div class="chiffre">2023</div><div class="phrase">est l'année où les TUC des années 1980 ont commencé à compter pour la retraite.</div><div class="detail">Code de la sécurité sociale, art. L. 351-3 et R. 351-12</div></div><div class="pied"><span class="compte">@pliberal</span><span class="adresse">partiliberalfrancais.fr/#simulateur</span></div></div></div><p class="partage"><button type="button" class="partager"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /><line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></svg><span>Partager</span></button><button type="button" class="partager-x">Publier sur X</button><span class="etat" role="status"></span><textarea class="repli" hidden readonly rows="3" aria-label="Texte à copier à la main"></textarea></p><details class="source"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Ce que dit le texte</span></summary><p>Depuis le 1er septembre 2023, ces stages, dont l'État payait les cotisations, valident des trimestres. Le texte : <a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000053279221">art. L. 351-3, 9°</a> ; <a href="https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000054167657">art. R. 351-12</a>.</p></details></figure></div></section>
 
-<!-- Le routeur du site, sorti de cette page dans son module pour que les
-     pages le partagent (action 174). -->
+<div class="note"><strong>Notre proposition.</strong> Un compte à votre nom,
+en euros, où chaque cotisation est inscrite, avec les mêmes règles pour tous.
+Pas de trimestres, pas de barèmes, pas de surprise.
+<a href="../">Le programme</a> le détaille, et
+<a href="../simuler/">le simulateur</a> l'applique à votre
+carrière.</div>
+</main>
+<footer>
+  <p><strong>Ce simulateur n'a aucune valeur officielle.</strong> Il n'émane
+  d'aucune caisse et ne vaut ni relevé de carrière, ni estimation de vos droits.
+  Seule votre caisse fait foi
+  (<a href="https://www.info-retraite.fr/">info-retraite.fr</a>).</p>
+  <p>Modèle ouvert, code et données sur <a href="https://github.com/g-pliberal/retraitecomptenotionelle">GitHub</a> (code sous licence
+  Apache 2.0, infographies et textes sous
+  <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr">CC BY-SA 4.0</a>).
+  Pensions et salaires s'affichent au brut ou au net, à votre choix, par la
+  bascule « Montants » ; le tout en euros constants de l'année de référence.
+  Les séries d'avant 1950 et les paramètres de régime restent saisis à la main :
+  <a href="https://github.com/g-pliberal/retraitecomptenotionelle/blob/main/docs/limites.md">lire les limites</a> avant de citer un chiffre.</p>
+  <p class="retour-site">Un outil du <a href="https://partiliberalfrancais.fr/" target="_top">Parti libéral français</a>.</p>
+</footer>
 <script type="module" src="../moteur/js/routeur.js"></script>
 </body>
 </html>

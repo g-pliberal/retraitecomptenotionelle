@@ -1,164 +1,400 @@
 <!doctype html>
+<!-- Page fabriquée par scripts/construire_pages.py, depuis moteur/page.html : ne la retouchez pas, refaites-la. -->
 <html lang="fr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- La couleur du bandeau de tête, la même dans les deux thèmes : sur un
-     téléphone, la barre du navigateur la reprend, et la page commence où elle
-     commence. -->
 <meta name="theme-color" content="#003340">
 <title>Retraite à comptes notionnels — programme et simulateur</title>
 <meta name="description" content="Le programme du Parti libéral français pour les retraites : un régime unique en comptes notionnels, un taux de 18 % pour tous, une garantie vieillesse individualisée — et le simulateur qui le chiffre, carrière par carrière, dans votre navigateur.">
-<!-- L'icône du site est un fichier, et un dessin : l'emoji qui tenait ce rôle
-     n'avait ni la même forme ni la même taille d'un système à l'autre, et se
-     brouillait en petit. Voir moteur/icones/README.md. -->
+<link rel="canonical" href="https://partiliberalfrancais.fr/retraite/">
 <link rel="icon" href="moteur/icone.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="moteur/icone.svg">
 
-<!-- La feuille de style n'existe qu'en un seul endroit : moteur/style.css,
-     sa source, que rien ne fabrique. -->
 <link rel="stylesheet" href="moteur/style.css">
-<link rel="preload" href="moteur/donnees.json" as="fetch" crossorigin>
-<!-- Les deux polices du texte, dans leur jeu latin, celui du français. Le
-     serif n'était demandé qu'au rendu de la page, où il arrivait après coup :
-     le chapeau perdait une ligne, et tout ce qui le suit remontait sous les
-     yeux du lecteur (action 174). Demandées ici, elles sont là bien avant le
-     moteur. `crossorigin` est celui de toute police, même servie d'ici. -->
 <link rel="preload" href="moteur/polices/public-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="moteur/polices/instrument-serif-latin.woff2" as="font" type="font/woff2" crossorigin>
-
-<!-- Le portage est un graphe de modules profond de cinq niveaux : sans ces
-     déclarations le navigateur ne découvre chaque niveau qu'après avoir reçu le
-     précédent, soit cinq aller-retours avant que le modèle puisse tourner. Les
-     annoncer tous ici les fait partir ensemble, dès la lecture de l'en-tête.
-     La liste est verrouillée sur le contenu de moteur/js/ par un test. -->
-<link rel="modulepreload" href="moteur/js/routeur.js">
-<link rel="modulepreload" href="moteur/js/adresses.js">
-<link rel="modulepreload" href="moteur/js/pages.js">
-<link rel="modulepreload" href="moteur/js/saisie.js">
-<link rel="modulepreload" href="moteur/js/contexte.js">
-<link rel="modulepreload" href="moteur/js/simulateur.js">
-<link rel="modulepreload" href="moteur/js/scenario-notionnel.js">
-<link rel="modulepreload" href="moteur/js/age-reference.js">
-<link rel="modulepreload" href="moteur/js/assiette.js">
-<link rel="modulepreload" href="moteur/js/capitalisation.js">
-<link rel="modulepreload" href="moteur/js/carriere.js">
-<link rel="modulepreload" href="moteur/js/chronologie.js">
-<link rel="modulepreload" href="moteur/js/compte.js">
-<link rel="modulepreload" href="moteur/js/conversion.js">
-<link rel="modulepreload" href="moteur/js/contributions-equilibre.js">
-<link rel="modulepreload" href="moteur/js/cycle-de-vie.js">
-<link rel="modulepreload" href="moteur/js/prelevements-historiques.js">
-<link rel="modulepreload" href="moteur/js/impot-revenu.js">
-<link rel="modulepreload" href="moteur/js/frontiere.js">
-<link rel="modulepreload" href="moteur/js/bilan.js">
-<link rel="modulepreload" href="moteur/js/agregats.js">
-<link rel="modulepreload" href="moteur/js/inventaire.js">
-<link rel="modulepreload" href="moteur/js/depenses.js">
-<link rel="modulepreload" href="moteur/js/distribution.js">
-<link rel="modulepreload" href="moteur/js/patrimoine.js">
-<link rel="modulepreload" href="moteur/js/vie-en-couple.js">
-<link rel="modulepreload" href="moteur/js/effectifs.js">
-<link rel="modulepreload" href="moteur/js/equilibre.js">
-<link rel="modulepreload" href="moteur/js/fusion.js">
-<link rel="modulepreload" href="moteur/js/garantie.js">
-<link rel="modulepreload" href="moteur/js/gabarit.js">
-<link rel="modulepreload" href="moteur/js/indexation.js">
-<link rel="modulepreload" href="moteur/js/macro.js">
-<link rel="modulepreload" href="moteur/js/mortalite.js">
-<link rel="modulepreload" href="moteur/js/scenario-actuel.js">
-<link rel="modulepreload" href="moteur/js/echeancier.js">
-<link rel="modulepreload" href="moteur/js/journal.js">
-<link rel="modulepreload" href="moteur/js/pilote.js">
-<link rel="modulepreload" href="moteur/js/droit/acquerir.js">
-<link rel="modulepreload" href="moteur/js/droit/categories.js">
-<link rel="modulepreload" href="moteur/js/droit/commun.js">
-<link rel="modulepreload" href="moteur/js/droit/completer.js">
-<link rel="modulepreload" href="moteur/js/droit/compter.js">
-<link rel="modulepreload" href="moteur/js/droit/coordonner.js">
-<link rel="modulepreload" href="moteur/js/droit/cultes.js">
-<link rel="modulepreload" href="moteur/js/droit/cumul.js">
-<link rel="modulepreload" href="moteur/js/droit/departs.js">
-<link rel="modulepreload" href="moteur/js/droit/etranger.js">
-<link rel="modulepreload" href="moteur/js/droit/invalidite.js">
-<link rel="modulepreload" href="moteur/js/droit/limite_age.js">
-<link rel="modulepreload" href="moteur/js/droit/foyer.js">
-<link rel="modulepreload" href="moteur/js/droit/liquidation.js">
-<link rel="modulepreload" href="moteur/js/droit/liquider.js">
-<link rel="modulepreload" href="moteur/js/droit/ouvrir.js">
-<link rel="modulepreload" href="moteur/js/droit/preparer.js">
-<link rel="modulepreload" href="moteur/js/droit/primes.js">
-<link rel="modulepreload" href="moteur/js/droit/progressive.js">
-<link rel="modulepreload" href="moteur/js/droit/releve.js">
-<link rel="modulepreload" href="moteur/js/droit/reversion.js">
-<link rel="modulepreload" href="moteur/js/droit/seconde.js">
-<link rel="modulepreload" href="moteur/js/calendrier.js">
-<link rel="modulepreload" href="moteur/js/config.js">
-<link rel="modulepreload" href="moteur/js/format.js">
-<link rel="modulepreload" href="moteur/js/regimes.js">
-<link rel="modulepreload" href="moteur/js/primes.js">
-<link rel="modulepreload" href="moteur/js/versions.js">
-<link rel="modulepreload" href="moteur/js/caracteristiques.js">
-<link rel="modulepreload" href="moteur/js/credits-ministeres.js">
-<link rel="modulepreload" href="moteur/js/serie.js">
-<link rel="modulepreload" href="moteur/js/taux.js">
-<link rel="modulepreload" href="moteur/js/libm.js">
-<link rel="modulepreload" href="moteur/js/remuneration.js">
-<link rel="modulepreload" href="moteur/js/indemnite_csg.js">
-<link rel="modulepreload" href="moteur/js/restitution.js">
-<link rel="modulepreload" href="moteur/js/revalorisation.js">
-<link rel="modulepreload" href="moteur/js/tva.js">
-
-<style>
-  /* Écran d'attente. Il ne s'affiche qu'au-delà d'un tiers de seconde : sur une
-     connexion rapide le simulateur est prêt avant, et un écran qui n'aurait
-     clignoté que le temps d'être aperçu vaut moins que rien. Le retard est en
-     CSS et non en JavaScript, parce que l'attente qu'il couvre se produit
-     justement avant que le moindre script ne soit chargé. */
-  #amorce { max-width: 34rem; margin: 0 auto; padding: 5rem 1.5rem; text-align: center;
-            animation: paraitre 0.25s ease-out 0.35s both; }
-  #amorce h1 { font-size: 1.4rem; font-weight: 600; margin: 0 0 0.75rem; }
-  #amorce p { color: var(--texte-doux); font-size: 0.98rem; }
-  #amorce .jauge { height: 6px; width: min(24rem, 80%); margin: 2rem auto 0;
-                   background: var(--fond-appui); border-radius: 3px; overflow: hidden; }
-  #amorce .jauge > span { display: block; height: 100%; width: 30%;
-                          background: var(--accent);
-                          animation: glisse 1.4s ease-in-out infinite; }
-  @keyframes paraitre { from { opacity: 0; } to { opacity: 1; } }
-  /* Lue par les synthèses vocales, jamais affichée : le contenu de <main> est
-     remplacé en bloc à chaque calcul, ce qu'un lecteur d'écran ne signale pas
-     de lui-même. */
-  .hors-ecran { position: absolute; width: 1px; height: 1px; overflow: hidden;
-                clip-path: inset(50%); white-space: nowrap; }
-  .replique { text-align: left; border-left: 3px solid var(--accent);
-              background: var(--fond-appui); padding: 0.9rem 1.1rem; margin-top: 1.5rem;
-              font-size: 0.92rem; }
-  /* La feuille de style principale coupe déjà les animations quand le système
-     demande d'en réduire le mouvement ; la jauge, elle, doit encore dire que
-     quelque chose travaille. Immobile et pleine, elle le dit. */
-  @media (prefers-reduced-motion: reduce) {
-    #amorce .jauge > span { width: 100%; }
-  }
-</style>
 </head>
 <body>
 
 <p id="annonce" class="hors-ecran" role="status" aria-live="polite"></p>
+<noscript><div class="erreur">Le calcul se fait dans votre navigateur et a besoin de JavaScript : les pages se lisent sans, mais le simulateur ne calcule pas.</div></noscript>
+<div id="entete"><a class="evitement" href="#contenu">Aller au contenu</a>
+<header class="bandeau"><div class="interieur">
+  <p class="nom"><a href="./"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M16 7h6v6" /><path d="m22 7-8.5 8.5-5-5L2 17" /></svg><span>Retraite à comptes notionnels</span></a></p>
+  <nav aria-label="Navigation principale"><span class="groupe"><span class="etiquette">L&#x27;essentiel</span><span class="liens"><a href="./" aria-current="page">Programme</a><a href="simuler/">Simuler</a><a href="cout/">Coût</a><a href="risque/">Pourquoi changer</a></span></span><span class="groupe"><span class="etiquette">Faire connaître</span><span class="liens"><a href="partager/">Partager</a><a href="saviez-vous/">Le saviez-vous ?</a></span></span><span class="groupe secondaire"><span class="etiquette">Pour vérifier</span><button type="button" class="deplier" aria-expanded="false" aria-controls="pages-a-verifier">Pour vérifier<svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg></button><span class="liens" id="pages-a-verifier"><a href="cas-types/">Carrières types</a><a href="avantages/">Droits non cotisés</a><a href="methode/">Méthode et sources</a></span></span></nav>
+</div></header></div>
+<main id="contenu" tabindex="-1" data-prerendu="/">
+<div class="affiche"><p class="surtitre">Notre programme pour les retraites</p><h1>La seule retraite qui vous rend <span class="cle-texte">vraiment</span> ce que vous avez cotisé.</h1><p class="chapeau"><strong class="cle-texte">Un compte à votre nom, en euros.</strong> Pas de trimestres, pas de barèmes, pas de surprise.</p></div>
 
-<div id="amorce">
-  <h1>Retraite à comptes notionnels</h1>
-  <p>Le site se prépare. Le modèle et les données de référence s'exécutent dans
-  votre navigateur : rien n'est envoyé à un serveur, et il n'y a rien à
-  installer.</p>
-  <div class="jauge"><span></span></div>
-  <noscript>
-    <div class="replique">Ce simulateur a besoin de JavaScript : le calcul se fait
-    dans votre navigateur, il n'y a pas de serveur pour le faire à sa place.</div>
-  </noscript>
+
+<form class="creme simulateur-court" method="get" action="simuler/">
+  <div class="tete">
+    <h2 class="serif">Et vous, ça donne combien&nbsp;?</h2>
+    <span class="etiquette">Le simulateur</span>
+  </div>
+  <div class="grille"><div><label for="naissance">Date de naissance<span class="aide">seul le mois compte</span></label><input type="date" id="naissance" name="naissance" value="2000-01-01" aria-describedby="naissance-calcul" min="1900-01-01" max="2020-12-31" autocomplete="bday"><span class="calcul" id="naissance-calcul" aria-live="polite">le 1er janvier 2000</span></div><div><label for="debut">Début de carrière<span class="aide">le premier mois cotisé</span></label><input type="date" id="debut" name="debut" value="2021-01-01" aria-describedby="debut-calcul" min="2014-01-01" max="2040-01-01" data-age-min="14" data-age-max="40"><span class="calcul" id="debut-calcul" aria-live="polite">en janvier 2021, soit 21 ans</span></div><div><label for="statut">Statut<span class="aide">celui du premier emploi</span></label><select id="statut" name="statut"><optgroup label="Salariés du privé"><option value="artiste_auteur">Artiste-auteur (écrivain, illustrateur, photographe…) (depuis 1977)</option><option value="auteur_dramatique">Auteur ou compositeur dramatique, auteur de l&#x27;audiovisuel (SACD) (depuis 1964)</option><option value="auteur_lyrique">Auteur ou compositeur de musique (SACEM) (depuis 1962)</option><option value="maitre_enseignement_prive">Maître de l&#x27;enseignement privé sous contrat (depuis 1945)</option><option value="salarie_prive_cadre">Salarié du secteur privé, cadre</option><option value="salarie_prive_cadre_entreprise_recente">Salarié du secteur privé, cadre, entreprise créée après 1981</option><option value="salarie_prive_non_cadre" selected>Salarié du secteur privé, non cadre</option><option value="salarie_prive_non_cadre_entreprise_recente">Salarié du secteur privé, non cadre, entreprise créée après 1997</option><option value="salarie_regime_professionnel_integre" disabled data-fermeture="1994-01">Salarié d&#x27;une banque AFB, d&#x27;un organisme de sécurité sociale ou d&#x27;une caisse d&#x27;épargne, entré avant l&#x27;intégration à l&#x27;Agirc-Arrco (recrutés avant 1994)</option></optgroup><optgroup label="Fonction publique et militaires"><option value="aide_soignant">Aide-soignant de la fonction publique hospitalière (catégorie active) (depuis 1945)</option><option value="contractuel_public">Agent non titulaire de la fonction publique (depuis 1945)</option><option value="fonctionnaire_etat">Fonctionnaire titulaire de l&#x27;État (civil ou militaire)</option><option value="fonctionnaire_etat_actif">Fonctionnaire de l&#x27;État, emploi de catégorie active</option><option value="fonctionnaire_etat_super_actif">Fonctionnaire de l&#x27;État, emploi de catégorie super-active (pénitentiaire)</option><option value="fonctionnaire_hospitalier_actif">Fonctionnaire hospitalier, emploi de catégorie active (agent de service hospitalier) (depuis 1945)</option><option value="fonctionnaire_territorial_hospitalier">Fonctionnaire territorial ou hospitalier (depuis 1945)</option><option value="fonctionnaire_territorial_hospitalier_actif">Fonctionnaire territorial ou hospitalier, emploi de catégorie active (depuis 1945)</option><option value="fonctionnaire_territorial_hospitalier_super_actif">Fonctionnaire territorial ou hospitalier, emploi de catégorie super-active (égoutier) (depuis 1945)</option><option value="militaire">Militaire non officier (militaire du rang, sous-officier)</option><option value="militaire_officier">Officier de carrière</option><option value="ouvrier_etat">Ouvrier des établissements industriels de l&#x27;État</option><option value="ouvrier_etat_actif">Ouvrier de l&#x27;État, emploi insalubre ou de catégorie active</option><option value="policier">Policier, services actifs de la police nationale (catégorie super-active)</option><option value="sapeur_pompier_professionnel">Sapeur-pompier professionnel (emploi de catégorie active) (depuis 1945)</option></optgroup><optgroup label="Indépendants et professions libérales"><option value="agent_general_assurance">Agent général d&#x27;assurance (depuis 1949)</option><option value="artisan">Artisan (depuis 1949)</option><option value="auxiliaire_medical">Auxiliaire médical libéral (infirmier, masseur-kinésithérapeute, orthophoniste) (depuis 1949)</option><option value="avocat">Avocat (depuis 1948)</option><option value="biologiste_liberal">Biologiste libéral non médecin (directeur de laboratoire) (depuis 1949)</option><option value="chirurgien_dentiste_ou_sage_femme">Chirurgien-dentiste libéral (depuis 1949)</option><option value="commercant">Commerçant ou industriel (depuis 1949)</option><option value="conjoint_collaborateur_artisan">Conjoint collaborateur d&#x27;un artisan (depuis 1983)</option><option value="conjoint_collaborateur_commercant">Conjoint collaborateur d&#x27;un commerçant ou d&#x27;un industriel (depuis 1983)</option><option value="expert_comptable">Expert-comptable ou commissaire aux comptes (depuis 1949)</option><option value="gerant_debit_tabac">Gérant de débit de tabac (buraliste) (depuis 1949)</option><option value="liberal_non_reglemente">Profession libérale non réglementée (consultant, formateur, coach, développeur…) (depuis 1949)</option><option value="medecin_liberal">Médecin libéral en secteur 1 (depuis 1949)</option><option value="medecin_liberal_secteur_2">Médecin libéral en secteur 2 (honoraires libres) (depuis 1949)</option><option value="micro_entrepreneur">Micro-entrepreneur (commerçant, artisan ou libéral non réglementé) (depuis 1949)</option><option value="notaire">Notaire libéral (depuis 1949)</option><option value="officier_ministeriel">Officier ministériel ou public (commissaire de justice, greffier de tribunal de commerce, avocat aux Conseils) (depuis 1949)</option><option value="pharmacien">Pharmacien libéral (depuis 1949)</option><option value="profession_liberale">Profession libérale (CNAVPL et CIPAV) (depuis 1949)</option><option value="sage_femme">Sage-femme libérale (depuis 1949)</option><option value="veterinaire">Vétérinaire libéral (depuis 1949)</option></optgroup><optgroup label="Agriculture"><option value="collaborateur_agricole">Conjoint collaborateur ou aide familial d&#x27;exploitation agricole (depuis 1952)</option><option value="exploitant_agricole">Chef d&#x27;exploitation ou d&#x27;entreprise agricole (depuis 1952)</option><option value="salarie_agricole">Salarié agricole</option></optgroup><optgroup label="Régimes spéciaux"><option value="agent_banque_de_france" data-fermeture="2023-09">Agent titulaire de la Banque de France (recrutés avant septembre 2023)</option><option value="agent_chemins_fer_secondaires" disabled data-fermeture="1955-01">Agent des chemins de fer secondaires d&#x27;intérêt général (recrutés avant 1955)</option><option value="agent_ieg" data-fermeture="2023-09">Agent des industries électriques et gazières (depuis 1946, recrutés avant septembre 2023)</option><option value="agent_port_strasbourg">Agent du Port autonome de Strasbourg</option><option value="agent_ratp" data-fermeture="2023-09">Agent statutaire de la RATP (recrutés avant septembre 2023)</option><option value="agent_seita" disabled data-fermeture="1981-01">Agent du personnel de la SEITA (depuis 1935, recrutés avant 1981)</option><option value="agent_sncf" disabled data-fermeture="2020-01">Agent du cadre permanent de la SNCF (recrutés avant 2020)</option><option value="clerc_de_notaire" data-fermeture="2023-09">Clerc ou employé de notaire (depuis 1937, recrutés avant septembre 2023)</option><option value="marin">Marin professionnel</option><option value="membre_congregation">Membre d&#x27;une congrégation religieuse, sans rémunération individuelle</option><option value="mineur" disabled data-fermeture="2010-09">Mineur (recrutés avant septembre 2010)</option><option value="ministre_du_culte">Ministre du culte ou religieux percevant une rémunération individuelle</option><option value="personnel_comedie_francaise">Personnel de la Comédie-Française</option><option value="personnel_navigant">Personnel navigant professionnel de l&#x27;aéronautique civile (depuis 1945)</option><option value="personnel_opera">Personnel de l&#x27;Opéra national de Paris</option></optgroup><optgroup label="Outre-mer"><option value="fonctionnaire_pacifique">Fonctionnaire de Nouvelle-Calédonie (CLR) (depuis 1959)</option><option value="salarie_mayotte">Salarié de Mayotte (depuis 1987)</option><option value="salarie_nouvelle_caledonie">Salarié de Nouvelle-Calédonie (depuis 1958)</option><option value="salarie_polynesie">Salarié de Polynésie française (depuis 1968)</option><option value="salarie_saint_pierre_et_miquelon">Salarié de Saint-Pierre-et-Miquelon (depuis 1987)</option><option value="salarie_wallis_et_futuna">Salarié de Wallis-et-Futuna (depuis 1975)</option></optgroup><optgroup label="Élus et assemblées"><option value="elu_local">Élu local indemnisé (maire, adjoint, conseiller) (depuis 1973)</option><option value="membre_cese" data-fermeture="2023-09">Membre du Conseil économique, social et environnemental (depuis 1957, recrutés avant septembre 2023)</option><option value="parlementaire">Député ou sénateur (indemnité parlementaire)</option></optgroup><optgroup label="Hors emploi"><option value="sans_activite">Sans activité professionnelle</option></optgroup></select></div><div><label for="liquidation">Départ souhaité<span class="aide">effectif, ou souhaité</span></label><input type="date" id="liquidation" name="liquidation" value="2064-01-01" aria-describedby="liquidation-calcul" min="2040-01-01" max="2119-01-01" data-age-min="40" data-age-max="119"><span class="calcul" id="liquidation-calcul" aria-live="polite">en janvier 2064, soit 64 ans</span></div>
+    <div class="action"><button type="submit">Calculer →</button></div>
+  </div>
+  <p class="discret" style="margin:0.9rem 0 0">Quatre montants côte à côte :
+  les règles d'aujourd'hui, et les nôtres. Tout se calcule dans votre
+  navigateur, rien n'est envoyé.</p>
+</form>
+
+<section class="engagements" aria-label="Nos quatre engagements"><div class="grille"><div class="engagement"><div class="rang">01</div><div class="chiffre">1 050 €</div><div class="promesse">par mois au minimum, seul.<br><strong class="cle-texte">1 600 €</strong> pour un couple.</div><div class="detail"><strong class="cle-texte">800 € par personne</strong>, plus <strong class="cle-texte">250 € d'allocation d'isolement</strong>. Payés par l'impôt, dès 65 ans.</div></div><div class="engagement"><div class="rang">02</div><div class="chiffre">18 % + 5 %</div><div class="promesse">de cotisation : la répartition, <strong class="cle-texte">plus un capital à votre nom</strong>.</div><div class="detail">Aujourd'hui, 28 % du salaire brut d'un salarié du privé, employeur compris. Demain, <strong class="cle-texte">le même taux pour tout le monde</strong>. Le capital, placé sans risque, vous appartient et se transmet. Les 5 % d'écart vous reviennent en salaire : vous pouvez les épargner aussi, <strong class="cle-texte">à effort inchangé</strong>.</div></div><div class="engagement"><div class="rang">03</div><div class="chiffre">1 compte</div><div class="promesse"><strong class="cle-texte">en euros</strong>, lisible par tous.</div><div class="detail">Vous voyez <strong class="cle-texte">votre solde comme sur un relevé bancaire</strong>.</div></div><div class="engagement"><div class="rang">04</div><div class="chiffre">100 %</div><div class="promesse">de ce que vous avez cotisé <strong class="cle-texte">vous revient</strong>.</div><div class="detail">Partir plus tôt donne moins, plus tard donne plus — <strong class="cle-texte">dans le rapport exact de ce que ça coûte</strong>.</div></div></div></section>
+
+<div class="paire">
+  <div id="le-calcul" tabindex="-1">
+    <p class="surtitre">Le calcul</p>
+    <h2 style="margin-top:0">Comment ça marche, en trois gestes</h2>
+    <ol class="gestes"><li><span class="rang">1</span><span><strong>On inscrit</strong> chaque cotisation sur votre compte, au premier euro, sans plafond.</span></li><li><span class="rang">2</span><span><strong>On revalorise</strong> le compte chaque année, au rythme des salaires du pays.</span></li><li><span class="rang">3</span><span><strong>On divise</strong>, au départ, par les années qu'il vous reste à vivre en moyenne. C'est votre pension.</span></li></ol>
+    <p class="discret">Rien n'y est placé : les cotisations de l'année paient
+    les pensions de l'année. C'est toujours la <span class="mot"><span class="terme" role="button" tabindex="0" aria-expanded="false">répartition</span><span class="bulle" role="note" hidden>Les cotisations d&#x27;aujourd&#x27;hui paient les pensions d&#x27;aujourd&#x27;hui. Rien n&#x27;est mis de côté : chaque euro prélevé sur une fiche de paie est reversé aussitôt à un retraité.</span></span>.</p>
+  </div>
+  <div class="encadre">
+    <h2 class="serif" style="margin-top:0">Le plancher regarde chacun, pas le
+    couple</h2>
+    <p>Aujourd'hui, le minimum vieillesse (l'ASPA) regarde le couple :</p>
+    <div class="defilant" tabindex="0" role="region" aria-label="Ce que le plancher individualisé change, par mois"><table><caption><span>Ce que le plancher individualisé change, par mois</span></caption><thead><tr><th class="" scope="col">Pensions des deux personnes</th><th class="nombre" scope="col">Aujourd&#x27;hui (ASPA 2026)</th><th class="nombre" scope="col">Avec la garantie</th></tr></thead><tbody><tr><th class="" scope="row">300 € et 300 €</th><td class="nombre">1 020 €</td><td class="nombre">1 000 €</td></tr><tr><th class="" scope="row">300 € et 1 500 €</th><td class="nombre">0 €</td><td class="nombre">500 €</td></tr><tr><th class="" scope="row">900 € et 900 €</th><td class="nombre">0 €</td><td class="nombre">0 €</td></tr><tr><th class="" scope="row">300 € et 5 000 €</th><td class="nombre">0 €</td><td class="nombre">500 €</td></tr><tr><th class="" scope="row">Personne seule, 300 €</th><td class="nombre">744 €</td><td class="nombre">750 €</td></tr></tbody></table></div>
+  </div>
 </div>
 
-<!-- Le routeur du site, sorti de cette page dans son module pour que les
-     pages le partagent (action 174). -->
+<h2>Ce que cela change</h2>
+<div class="defilant" tabindex="0" role="region" aria-label="Le système actuel et notre programme, terme à terme"><table><caption><span>Le système actuel et notre programme, terme à terme</span></caption><thead><tr><th class="" scope="col"></th><th class="texte" scope="col">Aujourd&#x27;hui</th><th class="texte" scope="col">Avec notre programme</th></tr></thead><tbody><tr><th class="" scope="row">Ce qui ouvre un droit</th><td class="texte">des <span class="mot"><span class="terme" role="button" tabindex="0" aria-expanded="false">trimestres</span><span class="bulle" role="note" hidden>L&#x27;unité dans laquelle le système actuel compte une carrière : quatre par année pleine, et un trimestre est acquis dès qu&#x27;on a gagné dans l&#x27;année l&#x27;équivalent de 150 heures au SMIC. Il en faut un nombre fixé par génération pour partir sans décote.</span></span>, et 80 barèmes différents</td><td class="texte">une cotisation versée, et elle seule</td></tr><tr><th class="" scope="row">Ce qui fait le montant</th><td class="texte">vos <span class="mot"><span class="terme" role="button" tabindex="0" aria-expanded="false">25 meilleures années</span><span class="bulle" role="note" hidden>Le salaire sur lequel le système actuel calcule la pension : la moyenne des 25 meilleures années au régime général, le dernier traitement dans la fonction publique.</span></span>, un taux, une durée</td><td class="texte">votre compte, divisé par votre espérance de vie</td></tr><tr><th class="" scope="row">Votre retraite</th><td class="texte">ce que votre régime promet</td><td class="texte">de l'ordre d'un quart de moins, en médiane</td></tr><tr><th class="" scope="row">L'âge de départ</th><td class="texte">selon génération et statut</td><td class="texte">65 ans pour tous, dès 2026</td></tr><tr><th class="" scope="row">Partir un an plus tôt</th><td class="texte">une <span class="mot"><span class="terme" role="button" tabindex="0" aria-expanded="false">décote</span><span class="bulle" role="note" hidden>La réduction appliquée à toute la pension quand on part avant d&#x27;avoir la durée exigée, tant qu&#x27;on n&#x27;a pas atteint l&#x27;âge du taux plein. Elle se compte par trimestre manquant.</span></span>, que chaque réforme revoit</td><td class="texte">moins de cotisations, plus d'années de pension</td></tr><tr><th class="" scope="row">Changer de métier</th><td class="texte">changer de régime et de calcul</td><td class="texte">rien : le même compte</td></tr><tr><th class="" scope="row">Savoir où vous en êtes</th><td class="texte">un relevé en trimestres et en points</td><td class="texte">un solde, en euros</td></tr><tr><th class="" scope="row">Tenir l'équilibre</th><td class="texte">une réforme, tous les huit ans en moyenne</td><td class="texte">un chiffre publié chaque année</td></tr><tr><th class="" scope="row">Décès avant la retraite</th><td class="texte">vos cotisations restent au système</td><td class="texte">votre capital revient à vos héritiers</td></tr></tbody></table></div>
+<p class="discret">Ce compte existe déjà en Suède, en Italie, en Pologne et en
+Lettonie.</p>
+
+<h2>Vos questions</h2>
+<details class="section"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Ma retraite va-t-elle baisser ?</span></summary><div class="dedans">
+<p><strong>Le plus souvent, elle sera plus basse que ce que le système actuel
+promet, de l'ordre d'un quart.</strong> Sur nos <a href="cas-types/">treize carrières types</a>, la baisse médiane est de
+26 % pour qui n'est pas encore à la
+retraite, de 14 % s'il
+place aussi les 5 % que la proposition lui rend sur son salaire, et de
+28 % sur la pension d'un retraité d'aujourd'hui, garantie
+vieillesse comprise. Votre retraite vaudra ce que vous aurez
+cotisé ; le système actuel promet davantage que ce que les cotisations paient,
+et ses recettes n'y suffisent déjà plus. En échange, un salarié du privé cotise 23 % au lieu de 28 %, et son
+salaire net augmente. Pour votre carrière, <a href="simuler/">le simulateur</a> met les deux montants
+côte à côte, avec ce que chacun des deux systèmes a vraiment de quoi
+payer.</p></div></details>
+<details class="section"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Je suis déjà à la retraite : qu&#x27;est-ce qui change pour moi ?</span></summary><div class="dedans">
+<p><strong>Votre pension serait recalculée sur ce qui a été réellement
+cotisé</strong>, depuis la première cotisation : ce que le système actuel
+ajoute sans cotisation n'est plus servi. Elle reste ensuite revalorisée sur les
+prix. Si elle est modeste, la garantie vieillesse la complète à partir de 65
+ans, jusqu'à 1 050 € par mois pour qui vit seul et 800 € chacun en couple ;
+c'est une avance, reprise sur la succession. Sur nos carrières types, la pension
+d'aujourd'hui baisse ainsi de 28 % en médiane. Pour votre cas,
+choisissez « à la retraite » dans <a href="simuler/">le simulateur</a>.</p></div></details>
+<details class="section" id="pourquoi-changer"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Pourquoi changer de système ?</span></summary><div class="dedans">
+<p>La retraite française ? Un empilement de régimes, plus qu'un système.
+Ce site en <a href="methode/#sources" data-vers="sources">recense 114</a>, actuels et
+disparus, et en calcule 80. Chacun a son âge de départ, son assiette, son
+taux, sa durée exigée et son minimum.</p>
+<ul class="serree">
+  <li><strong>Illisible, d'abord.</strong> Le montant dépend de sept règles qui ne
+  se lisent sur aucune fiche de paie. Personne, pas même les caisses, ne sait
+  dire à un actif ce qu'il a acquis, autrement qu'en trimestres et en points.</li>
+  <li><strong>Inégal, ensuite.</strong> À salaire et à durée égaux, la pension
+  change selon le statut, et l'écart ne vient d'aucune différence de cotisation.
+  <a href="cas-types/">Treize carrières le mesurent</a>.</li>
+  <li><strong>Et personne ne le pilote.</strong> L'équilibre se rattrape par
+  des réformes (1993, 2003, 2010, 2014, 2023), qui déplacent chaque fois
+  l'effort sur ceux qui n'ont pas encore pris leur retraite.
+  <a href="cout/">Le solde est ici</a>.</li>
+</ul>
+<p>Votre retraite sera-t-elle payée, et que dit la recherche du risque d'une
+retraite par répartition ? C'est l'objet de la page
+<a href="risque/">Pourquoi changer</a>.</p>
+<h3>En quoi ce serait plus juste</h3>
+<h4>Entre deux personnes</h4>
+<ul class="serree">
+  <li><strong>À cotisation égale, pension égale.</strong> Un fonctionnaire, un
+  artisan et un salarié qui versent la même somme acquièrent le même droit. Les
+  80 barèmes disparaissent, et avec eux les comparaisons que personne ne
+  sait trancher.</li>
+  <li><strong>Une carrière hachée n'est plus punie deux fois.</strong>
+  Aujourd'hui, une interruption fait perdre des trimestres, donc le taux plein,
+  donc une décote qui s'applique à <em>toute</em> la pension. Avec un compte,
+  elle fait perdre les cotisations de ces années-là, et rien de plus.</li>
+  <li><strong>La solidarité devient visible.</strong> Ce que la collectivité
+  ajoute ne se cache plus dans un barème : c'est une allocation votée, chiffrée
+  et financée par l'impôt.</li>
+</ul>
+
+<h4>Entre deux générations</h4>
+<p>C'est ce que le système actuel tient le plus mal : une pension y est promise
+par une règle et payée par la génération suivante, la règle change quand le
+compte n'y est pas, et ce qu'un euro cotisé rapporte dépend ainsi de l'année de
+naissance, sans que personne ne l'ait voté.</p>
+<ul class="serree">
+  <li><strong>Le rendement est le même pour tous</strong> : la croissance de la
+  masse des salaires, c'est-à-dire exactement ce que la répartition peut payer à
+  taux inchangé.</li>
+  <li><strong>Chacun est divisé par sa propre espérance de vie.</strong> Vivre
+  plus longtemps étale le même capital sur plus d'années, au lieu d'envoyer la
+  facture à la génération d'après.</li>
+  <li><strong>Le taux ne bouge pas.</strong> Fixé une fois, il retire aux actifs
+  d'aujourd'hui le moyen de s'accorder des droits que les actifs de demain
+  devraient financer.</li>
+  <li><strong>L'écart se solde chaque année</strong>, au lieu de s'accumuler en
+  silence jusqu'à la réforme suivante.</li>
+</ul></div></details>
+<details class="section"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Que deviennent mes trimestres et mes points ?</span></summary><div class="dedans">
+<p><strong>Toute votre carrière est recalculée depuis la première
+cotisation</strong>, comme si le compte avait toujours existé. Chaque
+cotisation versée, la vôtre et celle de votre employeur, y est inscrite, puis
+revalorisée chaque année au rythme des salaires. Trimestres et points
+disparaissent, et avec eux les droits qu'aucune cotisation n'a payés :
+trimestres gratuits, majorations, minimums. <a href="./#le-calcul" data-vers="le-calcul">Le calcul, en trois gestes</a>.</p></div></details>
+<details class="section"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>À quel âge pourrai-je partir ?</span></summary><div class="dedans">
+<p>C'est vous qui choisissez, à partir de 65 ans, l'âge minimum de tous dès 2026. Il n'y a plus d'âge
+du <span class="mot"><span class="terme" role="button" tabindex="0" aria-expanded="false">taux plein</span><span class="bulle" role="note" hidden>Le taux de pension entier, sans décote : on l&#x27;obtient avec la durée exigée, ou à l&#x27;âge où la décote s&#x27;annule quelle que soit la durée.</span></span>, ni <span class="mot"><span class="terme" role="button" tabindex="0" aria-expanded="false">décote</span><span class="bulle" role="note" hidden>La réduction appliquée à toute la pension quand on part avant d&#x27;avoir la durée exigée, tant qu&#x27;on n&#x27;a pas atteint l&#x27;âge du taux plein. Elle se compte par trimestre manquant.</span></span>, ni <span class="mot"><span class="terme" role="button" tabindex="0" aria-expanded="false">surcote</span><span class="bulle" role="note" hidden>La majoration accordée pour chaque trimestre travaillé au-delà de l&#x27;âge légal, une fois la durée exigée atteinte.</span></span> :
+<strong>partir plus tôt donne une pension plus faible, partir plus tard une
+pension plus forte</strong>, dans le rapport exact de ce que cela coûte. La
+garantie vieillesse, elle, n'est versée qu'à partir de 65 ans.
+<a href="methode/">Le détail du calcul</a>.</p></div></details>
+<details class="section" id="les-impots"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Qu&#x27;est-ce qui change sur ma fiche de paie ?</span></summary><div class="dedans">
+<p>Pour un salarié du privé, la cotisation retraite passe de 28 % du
+salaire brut, employeur compris, à 23 % : 18 % pour la retraite de tous,
+5 % épargnés à votre nom. <strong>Les 5 % d'écart vous
+reviennent en salaire</strong>, et la CSG baisse de 1,12 point. Libre à vous d'épargner aussi ces
+5 % : <a href="simuler/">le simulateur</a> montre ce qu'ils vous rapporteraient, et ce qu'il
+vous reste alors chaque mois.</p>
+<h3>Les impôts que nous supprimons : 32 Md € rendus aux
+salaires</h3>
+<p>La retraite est financée à 15 % par des
+<strong>impôts</strong> (64 Md € en
+2026) qui n'ouvrent de droit à personne : un compte notionnel, qui ne rend
+que ce qui a été cotisé, ne sait les porter au crédit de personne.
+<strong>Nous cessons donc de les affecter à la retraite.</strong></p>
+<p><strong>Et nous ne les gardons pas.</strong> Laissée au budget, cette
+recette irait tout entière au déficit. Nous la partageons en deux :
+<strong>32 Md € rendus aux salaires</strong>, autant
+pour <strong>éteindre de la dette</strong>.</p>
+<ul class="serree">
+  <li><strong>La taxe sur les salaires est supprimée</strong>, pour la part qui
+  finance la retraite, 58,35 % de son produit ; la
+  paient les employeurs non assujettis à la TVA : hôpitaux, cliniques, banques,
+  assurances, associations.</li>
+  <li><strong>Le forfait social est supprimé</strong> : assis sur
+  l'intéressement, la participation et l'épargne salariale, il va en entier à
+  l'assurance vieillesse. Avec la taxe sur les salaires, cela fait
+  18 Md €.</li>
+  <li><strong>La CSG sur les revenus d'activité baisse de
+  1,12 point</strong> : c'est le solde de ce que
+  nous rendons, et l'assiette la plus large qui porte sur le travail.</li>
+</ul>
+<p>L'intuition dit le contraire, mais <strong>la CSG sur les revenus d'activité
+ne finance aujourd'hui aucune retraite.</strong> Ses 9,2 % vont
+à la branche famille, à l'assurance maladie, à la dette sociale, à l'assurance
+chômage et à l'autonomie : nous ne vous rendons pas une cotisation, nous
+supprimons un impôt, avec de l'argent que la retraite n'encaisse plus.</p></div></details>
+<details class="section" id="le-plancher"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Et les petites retraites ?</span></summary><div class="dedans">
+<p>Les quatre minimums d'aujourd'hui sont remplacés par <strong>une garantie
+unique, calculée pour chacun</strong>, sans regarder les ressources du
+conjoint : 1 050 € par mois pour une personne seule, 800 € chacun en
+couple, à partir de 65 ans, payés par l'impôt. C'est une avance, reprise sur
+la succession sans que les héritiers paient jamais de leur poche.</p>
+
+<h3>Le plancher, et ce qu'il change pour les petites pensions</h3>
+<p>Le système actuel superpose l'ASPA, le minimum contributif, le minimum
+garanti de la fonction publique, l'assurance vieillesse des parents au foyer,
+les majorations de durée et la majoration pour trois enfants, chacun avec son
+barème, son âge et sa condition : toute pension modeste en devient impossible
+à prévoir.</p>
+<p>Nous les remplaçons par <strong>une seule prestation</strong>, différentielle
+comme l'ASPA mais <strong>individualisée</strong>, en euros de
+2026 revalorisés sur les prix.</p>
+<p><strong>Une avance, pas un don.</strong> Ce que la garantie verse est une
+créance de l'État, qui porte intérêt au taux auquel il emprunte, pour que les
+finances publiques n'y perdent rien, et qui est <strong>reprise sur la
+succession dès le premier euro</strong>, là où l'ASPA n'est récupérée
+qu'au-delà d'un seuil d'actif net. Quatre règles l'encadrent :</p>
+<ul class="serree">
+  <li>elle ne s'exerce que sur ce que la succession contient : les héritiers
+  ne paient jamais de leur poche, et l'impôt ne finance que ce que l'actif ne
+  couvre pas ;</li>
+  <li>le logement est repris comme le reste, mais la reprise attend le décès
+  du conjoint survivant qui l'occupe, les intérêts courant entre-temps ;</li>
+  <li>les donations des dix ans qui précèdent la garantie, ou faites depuis,
+  sont réintégrées, comme l'aide sociale départementale le fait déjà : la
+  créance se poursuit contre le donataire, à hauteur de ce qu'il a reçu ; de
+  même les primes d'assurance-vie de cette période, contre leur bénéficiaire,
+  pour qu'un placement fait à soixante ans ne mette pas l'épargne hors
+  d'atteinte ;</li>
+  <li>la créance est garantie par une hypothèque légale inscrite dès le
+  premier versement, de sorte qu'un bien donné la porte avec lui.</li>
+</ul>
+<p>Elle se demande, comme l'ASPA, et se refuse : personne ne se voit imposer
+une dette, et qui préfère transmettre plutôt que recevoir peut ne pas la
+réclamer. Le programme retient qu'un ayant droit sur deux la réclame, ce que
+la DREES observe sur l'ASPA, et chiffre son coût ainsi.</p>
+<p>Le 11 juin 2026, l'Assemblée nationale a voté, sans une voix contre, <a
+href="https://www.assemblee-nationale.fr/dyn/17/textes/l17t0308_texte-adopte-seance">la
+fin de la récupération de l'ASPA sur succession</a>, remplacée par une baisse
+forfaitaire de l'allocation pour qui est propriétaire de son logement ou logé
+gratuitement : la crainte de cette récupération détourne de l'ASPA une partie
+de ceux qui y ont droit. Nous faisons l'inverse, parce que la garantie est
+payée par l'impôt de tous, y compris de ceux qui n'auront rien à transmettre :
+<strong>la collectivité doit à chacun un minimum de son vivant, et rien à ses
+héritiers.</strong></p>
+<h3>Le minimum vieillesse est d'abord une affaire de femmes</h3>
+<p>L'échantillon interrégimes de retraités de la DREES le mesure, sur les
+pensions de droit direct de 2020 :</p>
+<div class="defilant" tabindex="0" role="region" aria-label="Pensions de droit direct sous 1 050 € par mois, retraités de 2020"><table><caption><span>Pensions de droit direct sous 1 050 € par mois, retraités de 2020</span></caption><thead><tr><th class="" scope="col">Retraités</th><th class="nombre" scope="col">Pension sous le plancher</th><th class="nombre" scope="col">Ce qui leur manque, en moyenne</th></tr></thead><tbody><tr><th class="" scope="row">Femmes</th><td class="nombre">45 %</td><td class="nombre">456 € par mois</td></tr><tr><th class="" scope="row">Hommes</th><td class="nombre">12 %</td><td class="nombre">365 € par mois</td></tr></tbody></table></div>
+<p>Deux femmes retraitées sur cinq touchent aujourd'hui moins que ce plancher,
+contre moins d'un homme sur cinq : carrières interrompues, temps partiels,
+salaires plus bas. La dernière colonne se lit aussi : l'homme qui tombe sous
+le plancher tombe en général plus bas, mais ce sont de rares carrières très
+courtes ; chez les femmes, c'est la règle plutôt que l'accident. La même
+inégalité se retrouve à la fin de la vie : au recensement de 2021,
+62 % des femmes de 65 ans vivent en
+couple, 26 % à 85 ans, quand
+65 % des hommes du même âge vivent
+encore avec quelqu'un. Les femmes vivent plus longtemps, épousent des hommes
+plus âgés, et finissent seules : la <strong>veuve pauvre</strong> est la
+figure centrale de ce dispositif, hier comme demain.</p>
+
+<h3 id="la-veuve" tabindex="-1">Ce que cela change pour une veuve, et pour ses
+enfants</h3>
+<p>Disons-le sans détour : c'est le point où notre proposition prend le plus.
+Aujourd'hui, une veuve touche une <strong>pension de réversion</strong> : une
+part de la pension de son mari, jusqu'à sa mort, qu'elle ne rembourse jamais
+et qui ne touche pas à ce que ses enfants hériteront. <strong>Notre système ne
+sert aucune réversion</strong> : chacun reçoit ce qu'il a cotisé, et rien de
+plus. Pour une femme dont la pension propre est petite, la garantie en prend
+la place.</p>
+<p>Or cette garantie est une avance : la créance s'accumule tant que la veuve
+vit seule, et se reprend à sa mort sur la succession, qui porte le patrimoine
+du couple, et souvent aussi l'avance de son mari, laissée courir jusque-là. <a
+href="cout/">La page Coût</a> chiffre ce que cela donne : les
+bénéficiaires de la garantie sont aux deux tiers des femmes, une succession
+porte en moyenne plus d'une avance, et quand le patrimoine est une maison
+modeste, l'héritage y passe en entier. Les héritiers ne paient jamais de leur
+poche ; mais ils héritent souvent de rien.</p>
+<p>C'est un choix, et nous l'assumons : un minimum garanti à chacun de son
+vivant, financé d'abord par ce qu'il laisse derrière lui, avant de l'être par
+le contribuable.</p>
+
+<p>Le tableau du haut de page le montre : c'est le changement d'assiette, du
+foyer à la personne, plus que le montant, qui fait la différence pour les
+femmes aux pensions les plus faibles.
+<a href="cout/">Ce qu'elle coûterait</a> est calculé sur la
+distribution réelle des pensions, non sur des cas types.</p></div></details>
+<details class="section"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Et si je meurs ? Et mon conjoint ?</span></summary><div class="dedans">
+<p>Si vous mourez avant votre retraite, <strong>le capital de votre épargne
+retraite revient à vos héritiers</strong>, en entier. La pension de
+répartition, elle, s'éteint avec vous, et notre système ne sert pas de pension
+de réversion : chacun reçoit ce qu'il a cotisé. Pour un conjoint survivant aux
+ressources modestes, c'est la garantie vieillesse qui prend le relais.
+<a href="./#la-veuve" data-vers="la-veuve">Ce que cela change pour une veuve</a>.</p></div></details>
+<details class="section" id="la-part-capitalisee"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Mon argent sera-t-il placé en Bourse ?</span></summary><div class="dedans">
+<p><strong>Non.</strong> La retraite reste une retraite par répartition : les
+cotisations de l'année paient les pensions de l'année, et rien n'est placé.
+Seule l'épargne à votre nom l'est (5 %, et ce que vous y ajoutez), sur
+des titres d'État parmi les mieux notés de la zone euro, gardés jusqu'à leur
+échéance : aucune action, aucun pari.</p>
+
+<h3>La part capitalisée : 5 % obligatoires, et 5 % de plus si vous le voulez</h3>
+<p>À compter de 2026, 5 % de votre rémunération
+sont prélevés <strong>en plus</strong> des 18 % de la répartition, et
+placés à votre nom dans un plan d'épargne retraite, l'enveloppe que des
+millions de Français détiennent déjà, sans passer par le compte notionnel. Les
+années d'avant gardent leurs taux, et qui a déjà liquidé ne cotise rien.</p>
+<p><strong>À ces 5 % s'ajoutent 5 % que personne ne vous
+impose.</strong> Le système actuel prélève
+28 % de la rémunération d'un salarié
+du privé pour la retraite ; 18 % et 5 % en font 23 %, et la
+proposition vous rend donc les cinq points qui restent. Le site suppose que vous
+les remettez au même endroit, sur le même compte, aux mêmes conditions : votre
+effort revient alors à 28 %, c'est-à-dire à ce qu'il est déjà aujourd'hui,
+et les deux systèmes se comparent enfin <strong>à prix égal</strong>. Vous êtes
+libre de ne pas le faire : les montants du simulateur disent aussi ce que vous
+toucheriez sans.</p>
+<ul class="serree">
+  <li><strong>Il vous appartient.</strong> Si vous mourez avant d'avoir liquidé,
+  il revient en entier à vos héritiers.</li>
+  <li><strong>Il ne sort qu'à la retraite.</strong> Ni achat de résidence
+  principale, ni sortie anticipée : l'argent n'en sort qu'en rente viagère, ou
+  par l'héritage, pour les 5 % obligatoires comme pour les 5 % que
+  vous ajoutez.</li>
+  <li><strong>Il est placé sans risque.</strong> L'échéance des titres est
+  longue tant que la retraite est loin, courte à l'approche du départ.</li>
+  <li><strong>Il ne remplace rien.</strong> La retraite par répartition reste ce
+  qu'elle est, et le compte notionnel la calcule sans regarder ce capital. Les
+  deux montants sont affichés côte à côte, jamais confondus.</li>
+</ul>
+<p>L'enveloppe prélève des frais : le simulateur les montre euro par euro, avec
+le rendement qui reste, et la page <a href="methode/">Méthode</a>
+dit à quels taux l'argent est placé, d'où ils viennent et ce qu'ils
+supposent.</p></div></details>
+<details class="section"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Et les fonctionnaires, les régimes spéciaux ?</span></summary><div class="dedans">
+<p>Ils rejoignent le même compte, au même taux que tout le monde :
+<strong>à cotisation égale, pension égale</strong>, quel que soit le statut, et
+les 80 barèmes d'aujourd'hui disparaissent.
+<strong>Les employeurs publics suivent la même règle.</strong> L'État verse
+aujourd'hui pour ses fonctionnaires un taux qui n'est pas un prix du travail,
+mais le solde qui équilibre leur régime ; il cotisera 18 % comme tout
+employeur. Il gardera ce qu'il payait pour des départs anticipés, qui
+disparaissent ; du reste de ce qu'il cesse de verser, la moitié ira au
+traitement de ses agents, l'autre moitié aux pensions déjà promises, qui
+restent dues. C'est la seule augmentation de traitement que ce programme
+contienne, et elle n'est pas petite.</p></div></details>
+<details class="section" id="la-transition"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Comment passe-t-on d&#x27;un système à l&#x27;autre ?</span></summary><div class="dedans">
+<p>La bascule recalcule tout, depuis la première cotisation.</p>
+<div class="defilant" tabindex="0" role="region" aria-label="Du système actuel au régime unique"><table><caption><span>Du système actuel au régime unique</span></caption><thead><tr><th class="" scope="col">Étape</th><th class="texte" scope="col">Ce qu&#x27;elle fait</th></tr></thead><tbody><tr><th class="" scope="row">1. Le compte unique</th><td class="texte">Ce que chacun a cotisé est rassemblé sur un compte unique et converti en euros. Les régimes continuent de liquider selon leurs règles : rien ne change encore pour personne, mais le relevé de carrière devient lisible. Les données existent déjà.</td></tr><tr><th class="" scope="row">2. La bascule (2026)</th><td class="texte">Chaque carrière est recalculée depuis sa première cotisation, y compris celles dont la pension est déjà liquidée : le compte notionnel remplace la pension du droit en vigueur, et ce qui n'a pas été cotisé n'est plus servi. Les régimes fusionnent en un seul.</td></tr><tr><th class="" scope="row">3. Le taux unique</th><td class="texte">Toute cotisation postérieure à la bascule est prélevée à 18 % de la rémunération, parts salariale et patronale additionnées, quel que soit le statut. Les taux qui dépassaient ce niveau baissent, ceux qui restaient en deçà montent.</td></tr><tr><th class="" scope="row">4. La garantie vieillesse</th><td class="texte">Elle est le seul plancher du système, et remplace le jour de la bascule les quatre d'aujourd'hui : l'ASPA, le minimum contributif, le minimum garanti de la fonction publique et la pension majorée de référence. Elle passe au budget de l'État, et aucun minimum ne se calcule plus dans le barème de la pension.</td></tr><tr><th class="" scope="row">5. Le pilotage</th><td class="texte">Le chiffre qui ramène l'année à zéro est publié et appliqué chaque année. C'est ce qui remplace les réformes.</td></tr><tr><th class="" scope="row">6. Le régime de croisière</th><td class="texte">La dernière pension dont une part des cotisations a été versée aux anciens taux est liquidée une quarantaine d'années après la bascule. D'ici là, chaque compte porte des années cotisées aux taux réels de son régime et des années au taux unique.</td></tr></tbody></table></div>
+<p>Après la bascule, un seul régime : départ possible à
+65 ans, assiette déplafonnée, même taux pour tous.</p></div></details>
+<details class="section" id="les-blocages"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Combien cela coûte-t-il, et qui paie ?</span></summary><div class="dedans">
+<p>Baisser la cotisation à 18 % a un prix : pendant la transition, la proposition encaisse moins qu'elle ne verse. L'âge légal de 65 ans en rend une part : son déficit moyen égale, au dixième de point près, celui du système actuel. <a href="cout/">La page Coût</a> le chiffre année par année, garantie vieillesse comprise.</p>
+
+<h3>Ce qui pouvait nous arrêter, et ce que nous en avons fait</h3>
+<div class="defilant" tabindex="0" role="region" aria-label="Cinq points de blocage, regardés avant de choisir"><table><caption><span>Cinq points de blocage, regardés avant de choisir</span></caption><thead><tr><th class="" scope="col">Le point</th><th class="texte" scope="col">Ce que nous avons regardé</th><th class="texte" scope="col">Ce que nous en retenons</th></tr></thead><tbody><tr><th class="" scope="row">La fusion des régimes</th><td class="texte">Quatre barèmes possibles pour le régime unique : le taux d'aujourd'hui déplafonné, le statut du salarié du privé avec ses tranches, le régime général seul, la moyenne des régimes. Un taux plus bas n'est pas plus négociable, il est impayable : les pensions déjà acquises sont servies avec moins de cotisations, et sous les deux derniers barèmes le déficit dépasse cinq points de PIB par an de 2030 à 2040, plus de 150 Md € au PIB de 2025.</td><td class="texte">Un régime unique se vote par une loi ordinaire : le projet de 2020 l'a établi, et le Conseil d'État n'y a vu aucun obstacle de principe, ni pour les fonctionnaires ni pour les complémentaires. Le taux, lui, est le nôtre, et son coût est chiffré deux lignes plus bas.</td></tr><tr><th class="" scope="row">Les pensions déjà servies, recalculées</th><td class="texte">C'est le point que le juge constitutionnel regarderait en premier : une pension liquidée est une situation acquise, et la loi qui la touche doit le justifier et rester proportionnée. Nous ne retirons que ce qui n'a pas été cotisé, l'indexation sur les prix est conservée, la garantie est relevée dans le même texte. L'objection la plus forte, celle de l'assuré parti à l'âge que sa loi lui ouvrait, a été chiffrée : lui prendre le diviseur de 65 ans plutôt que celui de son âge coûte 0,2 point de PIB par an, 6,0 Md € au PIB de 2025, et plus rien à partir de 2060.</td><td class="texte">Le recalcul est maintenu. La version qui laisse le stock intact a été chiffrée et écartée : −3,2 points de PIB par an en moyenne jusqu'en 2070, un besoin de 96 Md € par an au PIB de 2025 : elle n'est pas finançable.</td></tr><tr><th class="" scope="row">Le taux de 18 %</th><td class="texte">Face au taux d'aujourd'hui, 26,4 % part patronale comprise, les 18 % coûtent 2,3 points de PIB par an sur 2026-2070, 69 Md € au PIB de 2025, sous les mêmes règles de recette et l'âge légal de 65 ans compris. Le solde de la proposition est de −1,1 point par an en moyenne contre −1,1 pour le système actuel, un besoin de 33 Md € par an contre 33 Md €, et la dette qu'elle accumule en 2070 vaut 73 % du PIB contre 66 %, 2 183 Md € contre 1 974 Md €.</td><td class="texte">C'est le prix d'un prélèvement plus bas, et il est écrit sur la page Coût plutôt que caché. Le pilotage annuel, que ces chiffres n'appliquent pas, est ce qui le tient : le coefficient d'équilibre descend à 0,83 dans les années 2040 et revient à 1,01 en 2070.</td></tr><tr><th class="" scope="row">La garantie vieillesse</th><td class="texte">Le préambule de 1946 garantit aux vieux travailleurs des moyens convenables d'existence, et un compte purement contributif y répond mal.</td><td class="texte">La garantie est relevée par rapport à l'ASPA, individualisée, et portée dans la même loi que le régime : le juge lira les deux ensemble.</td></tr><tr><th class="" scope="row">Le chemin législatif</th><td class="texte">Une réforme systémique n'entre pas dans une loi de financement de la sécurité sociale, où le Conseil constitutionnel écarte les cavaliers. Il faut une loi ordinaire, une étude d'impact que le Conseil d'État lira ligne à ligne, et une trajectoire qui s'explique devant la procédure européenne pour déficit excessif.</td><td class="texte">Nous publions l'étude d'impact avant le texte : c'est ce site, ses réserves comprises.</td></tr></tbody></table></div>
+<p class="discret">Mesures de trois scripts du dépôt — le solde sous quatre régimes uniques, le stock à l'âge légal, la proposition prospective — et du coût par défaut. Cette page les cite sans les recalculer ; des tests le font à chaque modification du modèle, et la feuille de route du <a href="https://github.com/g-pliberal/retraitecomptenotionelle/blob/main/docs/feuille_de_route.md">dépôt</a> les détaille, décision par décision.</p></div></details>
+<details class="section" id="tout-verifier"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Ces chiffres sont-ils fiables ?</span></summary><div class="dedans">
+<p>Ils viennent des institutions publiques (INSEE, Conseil d'orientation des
+retraites, caisses de retraite), et un programme les recontrôle contre leur
+source. Le modèle est public : chacun peut le relire et le refaire tourner. Il
+ne vaut pas relevé de carrière pour autant : pour vos droits, seule votre
+caisse fait foi, sur <a href="https://www.info-retraite.fr/">info-retraite.fr</a>.
+<a href="methode/#sources" data-vers="sources">D'où viennent les chiffres</a>.</p>
+
+<div class="note signee">
+<p><strong>Pourquoi ce site.</strong> Nous avons choisi de publier un modèle
+plutôt qu'un slogan. Une proposition de retraite se juge sur ce qu'elle verse
+à chacun et sur ce qu'elle coûte à tous, et nous voulions que n'importe qui
+puisse le vérifier sur sa propre carrière. Nos réserves sont écrites page par
+page : le modèle reste un modèle, ses séries d'avant 1950 sont fragiles, et le
+niveau des pensions notionnelles dépend d'un réglage annuel qu'il calcule sans
+l'appliquer. Nous préférons un chiffre discutable à une promesse qu'on ne peut
+pas discuter.</p>
+<p class="discret">Le Parti libéral français, septembre 2026.</p>
+</div></div></details>
+
+<div class="creme">
+<p class="surtitre">Vérifiez plutôt que de nous croire</p>
+<h2 class="serif" style="margin:0">Tout est chiffré, sur des données publiques
+et un modèle ouvert.</h2>
+<p class="actions"><a class="bouton" href="simuler/">Simuler ma
+retraite</a><a href="cout/">Ce que ça coûte, et qui paie</a></p>
+</div>
+</main>
+<footer>
+  <p><strong>Ce simulateur n'a aucune valeur officielle.</strong> Il n'émane
+  d'aucune caisse et ne vaut ni relevé de carrière, ni estimation de vos droits.
+  Seule votre caisse fait foi
+  (<a href="https://www.info-retraite.fr/">info-retraite.fr</a>).</p>
+  <p>Modèle ouvert, code et données sur <a href="https://github.com/g-pliberal/retraitecomptenotionelle">GitHub</a> (code sous licence
+  Apache 2.0, infographies et textes sous
+  <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr">CC BY-SA 4.0</a>).
+  Pensions et salaires s'affichent au brut ou au net, à votre choix, par la
+  bascule « Montants » ; le tout en euros constants de l'année de référence.
+  Les séries d'avant 1950 et les paramètres de régime restent saisis à la main :
+  <a href="https://github.com/g-pliberal/retraitecomptenotionelle/blob/main/docs/limites.md">lire les limites</a> avant de citer un chiffre.</p>
+  <p class="retour-site">Un outil du <a href="https://partiliberalfrancais.fr/" target="_top">Parti libéral français</a>.</p>
+</footer>
 <script type="module" src="moteur/js/routeur.js"></script>
 </body>
 </html>

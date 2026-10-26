@@ -28,6 +28,14 @@ export const DEPOT = "https://github.com/g-pliberal/retraitecomptenotionelle";
 export const SITE_PARENT = "https://partiliberalfrancais.fr/";
 
 /**
+ * L'adresse que les moteurs de recherche retiennent, celle de la copie du parti
+ * (décision du 26 octobre 2026) : chaque page toute faite la nomme, sous son
+ * dossier, en `<link rel="canonical">`. Le même site vit aussi sur GitHub
+ * Pages ; une seule de ses deux adresses doit faire foi.
+ */
+export const ADRESSE_CANONIQUE = `${SITE_PARENT}retraite/`;
+
+/**
  * Ce qui signe une carte exportée en image. Une image quittant le site n'a plus
  * ni barre d'adresse ni pied de page : sans ces deux lignes, elle circule sans
  * dire d'où elle vient ni qui l'a produite, et le premier qui la republie en
@@ -217,6 +225,69 @@ export function poserEcran(largeur) {
   [ECRAN, DEMI_COLONNE] = ecransDe(largeur);
 }
 
+// -- le pré-rendu des tracés ---------------------------------------------------
+//
+// Une page toute faite (action 174) est écrite pour les réglages par défaut,
+// avant qu'aucun écran la montre. Deux de ses pages, Coût et Droits non cotisés,
+// portent des tracés que le gabarit dessine à la largeur de la colonne : ils
+// sont donc dessinés deux fois, pour un téléphone et pour le large, et la
+// feuille de style montre l'un ou l'autre (`.variante-etroite`,
+// `.variante-large`). Le routeur laisse la page telle quand le dessin convient
+// à la colonne qu'il mesure, et la redessine, moteur chargé, sinon.
+
+/**
+ * La colonne du dessin étroit : celle d'un téléphone courant, un écran de
+ * 390 points moins ses deux marges de 19. Les colonnes de 330 à 410 points
+ * s'en accommodent, dans la tolérance.
+ */
+export const ECRAN_ETROIT_PRERENDU = 360;
+
+/**
+ * La colonne du dessin large : celle d'un portable, où les schémas posés de
+ * front prennent chacun 480 points. La colonne va de 720 à 1 200 points (la
+ * page tient dans 80 rem, moins deux marges de 40), et ces schémas de 432 à
+ * 532 : le dessin de 480 convient à tous les écrans de 1 024 points et plus.
+ */
+export const COLONNE_LARGE_PRERENDUE = 1040;
+
+/** L'écart relatif au-delà duquel un dessin n'est plus à la taille de lecture. */
+export const TOLERANCE_DES_TRACES = 0.12;
+
+/**
+ * Un dessin tout fait convient-il à cette colonne ? `attendue` et `demi` sont
+ * ce que `ecransDe` rend de la largeur mesurée : sous 720 points, le dessin
+ * étroit sert, s'il est à moins de 12 % de la colonne ; au-delà, le dessin
+ * large sert, dont seuls les schémas de front dépendent de la colonne. Sans
+ * mesure, tout dessin convient.
+ */
+export function tracesConviennent(attendue, demi) {
+  if (attendue !== null) {
+    return Math.abs(attendue - ECRAN_ETROIT_PRERENDU) <= TOLERANCE_DES_TRACES * attendue;
+  }
+  if (demi === null) { return true; }
+  const prerendue = ecransDe(COLONNE_LARGE_PRERENDUE)[1];
+  return Math.abs(demi - prerendue) <= TOLERANCE_DES_TRACES * demi;
+}
+
+let MARQUER_LES_TRACES = false;
+const DEBUT_DE_TRACE = "<!--trace-->";
+const FIN_DE_TRACE = "<!--/trace-->";
+
+/**
+ * Le générateur des pages toutes faites demande que chaque tracé soit entouré
+ * de marques : c'est elles qui lui font retrouver, dans les deux rendus d'une
+ * page, ce qui change d'un écran à l'autre. Elles n'existent que le temps de
+ * son travail et ne sont jamais servies.
+ */
+export function marquerLesTraces(oui) {
+  MARQUER_LES_TRACES = oui;
+}
+
+/** Un tracé, avec ses marques quand le générateur les demande. */
+function trace(html) {
+  return MARQUER_LES_TRACES ? `${DEBUT_DE_TRACE}${html}${FIN_DE_TRACE}` : html;
+}
+
 /** La largeur de la colonne, `null` au large. */
 export function ecran() {
   return ECRAN;
@@ -233,8 +304,8 @@ export function demiColonne() {
  * garde dessous ce qui le suit, son tableau replié.
  */
 export function deFront(...blocs) {
-  if (DEMI_COLONNE === null) return blocs.join("");
-  return `<div class="de-front">${blocs.map((bloc) => `<div>${bloc}</div>`).join("")}</div>`;
+  if (DEMI_COLONNE === null) return trace(blocs.join(""));
+  return trace(`<div class="de-front">${blocs.map((bloc) => `<div>${bloc}</div>`).join("")}</div>`);
 }
 
 /**
@@ -1739,7 +1810,7 @@ export function graphique(titre, annees, series, unite = "", empile = false,
   // par son `aria-label` : une figure que légende un `<figcaption>` refuse le
   // `role="group"` qu'elle portait (ARIA in HTML ; action 174), et le rôle
   // `figure` ne l'annonce pas davantage comme une image.
-  return `<figure class="graphique${ECRAN === null ? "" : " etroit"}" tabindex="0" `
+  return trace(`<figure class="graphique${ECRAN === null ? "" : " etroit"}" tabindex="0" `
     + `aria-label="${echapper(titre)}" `
     + `data-gauche="${gauche}" data-droite="${droite}">`
     + `<svg viewBox="0 0 ${CADRE.largeur} ${CADRE.hauteur}" role="img" `
@@ -1755,7 +1826,7 @@ export function graphique(titre, annees, series, unite = "", empile = false,
     + '<p class="aide-clavier">Flèches gauche et droite : parcourir les '
     + 'années. Échap : quitter.</p></figure>'
     + donneesDuGraphique(titre, annees, series, unite,
-      decimalesDonnees === null ? decimales : decimalesDonnees, nomAbscisse, pib);
+      decimalesDonnees === null ? decimales : decimalesDonnees, nomAbscisse, pib));
 }
 
 /**
@@ -2194,7 +2265,7 @@ export function cascade(titre, marches, unite = "", decimales = 1,
   // La figure est focusable : les flèches y parcourent les marches. Sans rôle
   // ajouté, comme celle d'un graphique, puisque sa légende est un
   // `<figcaption>`.
-  return `<figure class="cascade" tabindex="0" aria-label="${echapper(titre)}">`
+  return trace(`<figure class="cascade" tabindex="0" aria-label="${echapper(titre)}">`
     + `<svg viewBox="0 0 ${largeur} ${hauteur}" role="img" aria-label="${echapper(titre)}">`
     + `${grille.join("")}${barres.join("")}${textes.join("")}${uniteHtml}`
     + '<g class="survol"></g></svg>'
@@ -2205,7 +2276,7 @@ export function cascade(titre, marches, unite = "", decimales = 1,
     + '<details class="donnees-cascade">'
     + sommaire(`Les chiffres de cette cascade, marche par marche `
       + `(${marches.length} lignes)`)
-    + `${grilleHtml}</details>`;
+    + `${grilleHtml}</details>`);
 }
 
 // -- le schéma de Sankey ------------------------------------------------------
@@ -2537,7 +2608,7 @@ export function sankey(titre, nom, caisses, echelle, colonnes = ["", ""], largeu
   const hauteur = Math.ceil(bas + MARGE_BAS_SANKEY);
   const grille = tableau(["De", "Vers", "Montant"], lignes, ["", "", "nombre"],
     titre, true);
-  return `<figure class="sankey" aria-label="${echapper(titre)}">`
+  return trace(`<figure class="sankey" aria-label="${echapper(titre)}">`
     + `<figcaption>${echapper(nom)}</figcaption>`
     + `<div class="defilant" tabindex="0" role="region" aria-label="${echapper(titre)}">`
     + `<svg viewBox="0 0 ${geo.largeur} ${hauteur}" role="img" `
@@ -2546,7 +2617,7 @@ export function sankey(titre, nom, caisses, echelle, colonnes = ["", ""], largeu
     + "</figure>"
     + '<details class="donnees-sankey">'
     + sommaire(`Les chiffres de ce schéma, flux par flux (${lignes.length} lignes)`)
-    + `${grille}</details>`;
+    + `${grille}</details>`);
 }
 
 /**

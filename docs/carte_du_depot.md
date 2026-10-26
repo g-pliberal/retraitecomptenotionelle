@@ -20,7 +20,7 @@ page ou une couche de plus, et ce test demande à la carte de suivre.
 |---|---|---|
 | Données | `data/` | Ce que le modèle sait du droit et de l'économie : les fiches de règles, les régimes, les séries, les scénarios. En YAML et en CSV, chaque valeur rattachée à sa source. Consignes : `data/CLAUDE.md`. |
 | Modèle | `src/` | Le calcul de référence, en Python. Il fait foi, et toute règle s'y écrit d'abord. Consignes : `src/CLAUDE.md`. |
-| Site | `index.html`, `moteur/` | La copie du modèle en JavaScript, le texte des pages, la feuille de style : des fichiers servis tels quels, sans rien à construire. Consignes : `moteur/CLAUDE.md`. |
+| Site | `index.html` et un dossier par page (`cout/`…), `moteur/` | Les neuf pages toutes faites, la copie du modèle en JavaScript, le texte des pages, la feuille de style : des fichiers servis tels quels, sans rien à construire. Consignes : `moteur/CLAUDE.md`. |
 | Atelier | `scripts/`, `tests/`, `.github/` | Ce qui fabrique et vérifie : le paquet de données, les témoins, les tests, la publication. |
 | Hors du dépôt | | Les sources officielles, les visiteurs du site, et les sessions Claude qui font le travail. |
 
@@ -39,7 +39,8 @@ flowchart LR
   temoins["Témoins et tests<br/>tests/temoins/"]
   jumeau["Jumeau JavaScript<br/>moteur/js/"]
   pages["Texte des pages<br/>pages.js, gabarit.js, style.css"]
-  site["Site en ligne<br/>index.html, servi par GitHub Pages,<br/>calcule dans le navigateur"]
+  toutes["Pages toutes faites<br/>index.html et un dossier par page,<br/>construire_pages.py"]
+  site["Site en ligne<br/>servi par GitHub Pages,<br/>calcule dans le navigateur"]
 
   sources -->|"relevées, citées"| donnees
   donnees -->|"lues"| python
@@ -50,7 +51,9 @@ flowchart LR
   temoins -->|"vérifient"| jumeau
   python -.->|"recopié à la main"| jumeau
   jumeau -->|"calcule"| pages
-  pages -->|"affichées"| site
+  pages -->|"écrites d'avance"| toutes
+  toutes -->|"servies"| site
+  pages -->|"recalculées si les réglages changent"| site
 
   classDef z_dehors stroke:#8a9a97,stroke-width:2px
   classDef z_donnees stroke:#4f9a2b,stroke-width:2px
@@ -61,7 +64,7 @@ flowchart LR
   class donnees z_donnees
   class python z_modele
   class paquet,temoins z_atelier
-  class jumeau,pages,site z_site
+  class jumeau,pages,toutes,site z_site
 ```
 
 Le modèle Python lit les données et fabrique deux choses : le paquet que
@@ -88,6 +91,7 @@ le site le lit sans le recalculer (`moteur/js/agregats.js`).
 ```mermaid
 flowchart LR
   adresse["L'adresse<br/>simuler/#…"]
+  faite["Page toute faite<br/>le HTML servi à cette adresse"]
   releve["Relevé de carrière<br/>du visiteur, lu sur place"]
   paquet["Paquet de données<br/>moteur/donnees.json"]
   routeur["Routeur<br/>moteur/js/routeur.js, puis<br/>rendre() de pages.js"]
@@ -98,8 +102,10 @@ flowchart LR
   agregats["Tables du coût<br/>agregats.js, lues sans recalcul"]
   ecran["Page affichée<br/>gabarit.js, style.css"]
 
-  adresse -->|"lue à chaque changement"| routeur
-  paquet -->|"devient le Contexte"| routeur
+  adresse -->|"le chemin"| faite
+  faite -->|"animée par"| routeur
+  adresse -->|"le #, lu à chaque changement"| routeur
+  paquet -->|"chargé à la demande,<br/>devient le Contexte"| routeur
   routeur -->|"simuler/"| simuler
   routeur -->|"cout/, cas-types/, avantages/"| agregees
   routeur -->|"les autres adresses"| texte
@@ -116,16 +122,20 @@ flowchart LR
   classDef z_atelier stroke:#c9506d,stroke-width:2px
   class releve z_dehors
   class paquet z_atelier
-  class adresse,routeur,simuler,agregees,texte,simulateur,agregats,ecran z_site
+  class adresse,faite,routeur,simuler,agregees,texte,simulateur,agregats,ecran z_site
 ```
 
-Le site n'a pas de serveur de calcul : chaque page charge le paquet et le
-moteur, et le navigateur du visiteur fait le reste ; rien de ce qu'il saisit
-ne quitte sa machine. Chaque page est un dossier de la racine du site, avec son
-`index.html` (`scripts/construire_pages.py` fabrique ceux des huit pages
-autres que l'accueil, depuis celui de la racine) : le serveur la sert à son
-adresse, `cout/`, sans réglage. Le visiteur, sa carrière et ses réglages, vit
-derrière le `#`, que le navigateur ne transmet à aucun serveur
+Le site n'a pas de serveur de calcul. Chaque page arrive toute faite, pour ses
+réglages par défaut (`scripts/construire_pages.py` l'écrit depuis
+`moteur/page.html` et le texte de `moteur/js/pages.js` : l'accueil à la racine, les huit
+autres chacune dans son dossier, avec `sitemap.xml`) : le serveur la sert à son
+adresse, `cout/`, sans réglage, et elle se lit sans le moteur. Le routeur
+l'anime ; il ne va chercher le paquet de données et ne construit le simulateur
+que pour ce que la page toute faite ne porte pas, une carrière ou des réglages
+derrière le `#`. Le navigateur du visiteur fait alors le reste ; rien de ce
+qu'il saisit ne quitte sa machine.
+Le visiteur, sa carrière et ses réglages, vit derrière le `#`, que le
+navigateur ne transmet à aucun serveur
 (`#naissance=1965-03-01&sexe=H`, derrière `simuler/`) : l'adresse porte toute
 la simulation, elle se cite et se partage telle quelle. Les adresses du site sont sa surface publique
 (`docs/architecture.md`, annexe C) : elles ne changent pas sans note de

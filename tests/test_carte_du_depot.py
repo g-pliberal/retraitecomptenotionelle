@@ -123,9 +123,12 @@ def test_chaque_scenario_porte_les_couches_de_son_univers():
 
 
 def test_la_carte_n_est_pas_une_page_du_site():
-    """Rien de ce que charge le navigateur ne la nomme : ni `index.html`, ni le
-    moteur et le texte des pages, ni la feuille de style."""
-    charge = [RACINE / "index.html", RACINE / "moteur" / "style.css",
+    """Rien de ce que charge le navigateur ne la nomme : ni les neuf pages ni leur
+    gabarit, ni le moteur et le texte des pages, ni la feuille de style."""
+    # L'accueil, et chaque autre page dans son dossier (action 174).
+    pages = [RACINE / "index.html", *sorted(RACINE.glob("*/index.html"))]
+    assert len(pages) >= 9, f"neuf pages attendues, {len(pages)} trouvées"
+    charge = [*pages, RACINE / "moteur" / "page.html", RACINE / "moteur" / "style.css",
               *sorted((RACINE / "moteur" / "js").rglob("*.js"))]
     la_nomment = [str(f.relative_to(RACINE)) for f in charge
                   if "carte_du_depot" in f.read_text(encoding="utf-8")]

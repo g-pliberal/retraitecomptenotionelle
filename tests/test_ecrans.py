@@ -61,9 +61,13 @@ RESULTATS = f"simuler/#{REQUETE}"
 ROUTES = ["./", "simuler/", RESULTATS, "cout/", "risque/", "partager/",
           "saviez-vous/", "cas-types/", "avantages/", "methode/"]
 
-#: La fenêtre qu'on rétrécit sans changer de page, au large : du bureau à la
-#: tablette en largeur, sur une page qui pose des schémas de front.
-RETRECIR = {"depuis": 1440, "vers": {"largeur": 1024, "hauteur": 768}}
+#: La fenêtre qu'on rétrécit sans changer de page, au large, sur une page qui
+#: pose des schémas de front, d'un écran à l'autre : du bureau à la tablette en
+#: largeur, où la demi-colonne passe de 532 à 432 points, sans que la page
+#: toute faite, dessinée à 480, ait à changer ; puis à un écran de 900 points,
+#: où elle tombe à 370 et où le dessin ne tient plus.
+RETRECIR = {"depuis": 1440, "vers": [{"largeur": 1024, "hauteur": 768},
+                                      {"largeur": 900, "hauteur": 700}]}
 
 #: Les écrans où chaque route s'ouvre à neuf, comme Lighthouse l'ouvre en
 #: mobile puis en bureau, pour mesurer ce qu'elle décale en se chargeant.
@@ -374,6 +378,15 @@ def test_les_schemas_qu_une_carte_compare_se_voient_ensemble():
     assert not fautes, f"{len(fautes)} schémas loin l'un de l'autre :\n" + "\n".join(fautes)
 
 
+def _retrecissements(largeur: int):
+    """Les pages de schémas de front, rétrécies à cet écran : la visite et ce
+    que la page a fait de la fenêtre qui rétrécit."""
+    retrecies = [(visite, retrecie) for visite in mesures() for retrecie in visite["retrecie"] or []
+                 if retrecie["largeur"] == largeur]
+    assert retrecies, f"aucune page de schémas rétrécie de {RETRECIR['depuis']} à {largeur} points"
+    return retrecies
+
+
 def test_une_fenetre_retrecie_redessine_ses_schemas_a_leur_demi_colonne():
     """Une fenêtre qu'on rétrécit au large garde ses schémas de front à leur
     taille : la page se redessine sur place, chacun à sa nouvelle demi-colonne,
@@ -382,17 +395,33 @@ def test_une_fenetre_retrecie_redessine_ses_schemas_a_leur_demi_colonne():
     Le redimensionnement ne redessinait une page qu'en passant les 720 points,
     où ses courbes changent de cadre ; un schéma dessiné à la demi-colonne du
     bureau, 532 unités, se serait montré sur 432 points sur la tablette,
-    réduit d'un cinquième.
+    réduit d'un cinquième. Ici la fenêtre tombe à 900 points : la demi-colonne
+    à 370, loin des 480 du dessin tout fait.
     """
-    retrecies = [(visite, visite["retrecie"]) for visite in mesures() if visite["retrecie"]]
-    assert retrecies, f"aucune page de schémas rétrécie depuis {RETRECIR['depuis']} points"
     fautes = []
-    for visite, retrecie in retrecies:
+    for visite, retrecie in _retrecissements(900):
         lieu = f"{visite['route'][:40]}, de {visite['largeur']} à {retrecie['largeur']} points"
         if not retrecie["redessinee"]:
             fautes.append(f"{lieu} : la page ne s'est pas redessinée")
         for schema in retrecie["schemas"]:
             if abs(schema["dessin"] - schema["montre"]) > 4:
+                fautes.append(f"{lieu} : un schéma dessiné sur {schema['dessin']} unités "
+                              f"se montre sur {schema['montre']} points")
+    assert not fautes, "\n".join(fautes)
+
+
+def test_une_page_toute_faite_garde_son_dessin_dans_la_tolerance_de_la_colonne():
+    """Le dessin tout fait des schémas de front, 480 unités, convient aux
+    demi-colonnes de 432 à 532 points : la fenêtre qui passe de 1 440 à
+    1 024 points ne redessine pas la page, dont le moteur n'a pas à charger ;
+    ses schémas se montrent à moins de 12 % de leur dessin."""
+    fautes = []
+    for visite, retrecie in _retrecissements(1024):
+        lieu = f"{visite['route'][:40]}, de {visite['largeur']} à {retrecie['largeur']} points"
+        if "#" not in visite["route"] and retrecie["redessinee"]:
+            fautes.append(f"{lieu} : la page toute faite s'est redessinée pour 11 % d'écart")
+        for schema in retrecie["schemas"]:
+            if abs(schema["dessin"] - schema["montre"]) > 0.12 * schema["dessin"] + 4:
                 fautes.append(f"{lieu} : un schéma dessiné sur {schema['dessin']} unités "
                               f"se montre sur {schema['montre']} points")
     assert not fautes, "\n".join(fautes)

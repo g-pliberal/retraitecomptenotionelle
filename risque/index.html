@@ -1,165 +1,499 @@
 <!doctype html>
-<!-- Page fabriquée par scripts/construire_pages.py depuis index.html : ne la retouchez pas, refaites-la. -->
+<!-- Page fabriquée par scripts/construire_pages.py, depuis moteur/page.html : ne la retouchez pas, refaites-la. -->
 <html lang="fr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- La couleur du bandeau de tête, la même dans les deux thèmes : sur un
-     téléphone, la barre du navigateur la reprend, et la page commence où elle
-     commence. -->
 <meta name="theme-color" content="#003340">
 <title>Pourquoi changer — Retraite en comptes notionnels</title>
 <meta name="description" content="Votre retraite sera-t-elle payée ? Ce que la recherche universitaire sait du risque de défaut d'une retraite par répartition, et ce que les comptes du COR en disent pour la France.">
-<!-- L'icône du site est un fichier, et un dessin : l'emoji qui tenait ce rôle
-     n'avait ni la même forme ni la même taille d'un système à l'autre, et se
-     brouillait en petit. Voir moteur/icones/README.md. -->
+<link rel="canonical" href="https://partiliberalfrancais.fr/retraite/risque/">
 <link rel="icon" href="../moteur/icone.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../moteur/icone.svg">
 
-<!-- La feuille de style n'existe qu'en un seul endroit : moteur/style.css,
-     sa source, que rien ne fabrique. -->
 <link rel="stylesheet" href="../moteur/style.css">
-<link rel="preload" href="../moteur/donnees.json" as="fetch" crossorigin>
-<!-- Les deux polices du texte, dans leur jeu latin, celui du français. Le
-     serif n'était demandé qu'au rendu de la page, où il arrivait après coup :
-     le chapeau perdait une ligne, et tout ce qui le suit remontait sous les
-     yeux du lecteur (action 174). Demandées ici, elles sont là bien avant le
-     moteur. `crossorigin` est celui de toute police, même servie d'ici. -->
 <link rel="preload" href="../moteur/polices/public-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../moteur/polices/instrument-serif-latin.woff2" as="font" type="font/woff2" crossorigin>
-
-<!-- Le portage est un graphe de modules profond de cinq niveaux : sans ces
-     déclarations le navigateur ne découvre chaque niveau qu'après avoir reçu le
-     précédent, soit cinq aller-retours avant que le modèle puisse tourner. Les
-     annoncer tous ici les fait partir ensemble, dès la lecture de l'en-tête.
-     La liste est verrouillée sur le contenu de moteur/js/ par un test. -->
-<link rel="modulepreload" href="../moteur/js/routeur.js">
-<link rel="modulepreload" href="../moteur/js/adresses.js">
-<link rel="modulepreload" href="../moteur/js/pages.js">
-<link rel="modulepreload" href="../moteur/js/saisie.js">
-<link rel="modulepreload" href="../moteur/js/contexte.js">
-<link rel="modulepreload" href="../moteur/js/simulateur.js">
-<link rel="modulepreload" href="../moteur/js/scenario-notionnel.js">
-<link rel="modulepreload" href="../moteur/js/age-reference.js">
-<link rel="modulepreload" href="../moteur/js/assiette.js">
-<link rel="modulepreload" href="../moteur/js/capitalisation.js">
-<link rel="modulepreload" href="../moteur/js/carriere.js">
-<link rel="modulepreload" href="../moteur/js/chronologie.js">
-<link rel="modulepreload" href="../moteur/js/compte.js">
-<link rel="modulepreload" href="../moteur/js/conversion.js">
-<link rel="modulepreload" href="../moteur/js/contributions-equilibre.js">
-<link rel="modulepreload" href="../moteur/js/cycle-de-vie.js">
-<link rel="modulepreload" href="../moteur/js/prelevements-historiques.js">
-<link rel="modulepreload" href="../moteur/js/impot-revenu.js">
-<link rel="modulepreload" href="../moteur/js/frontiere.js">
-<link rel="modulepreload" href="../moteur/js/bilan.js">
-<link rel="modulepreload" href="../moteur/js/agregats.js">
-<link rel="modulepreload" href="../moteur/js/inventaire.js">
-<link rel="modulepreload" href="../moteur/js/depenses.js">
-<link rel="modulepreload" href="../moteur/js/distribution.js">
-<link rel="modulepreload" href="../moteur/js/patrimoine.js">
-<link rel="modulepreload" href="../moteur/js/vie-en-couple.js">
-<link rel="modulepreload" href="../moteur/js/effectifs.js">
-<link rel="modulepreload" href="../moteur/js/equilibre.js">
-<link rel="modulepreload" href="../moteur/js/fusion.js">
-<link rel="modulepreload" href="../moteur/js/garantie.js">
-<link rel="modulepreload" href="../moteur/js/gabarit.js">
-<link rel="modulepreload" href="../moteur/js/indexation.js">
-<link rel="modulepreload" href="../moteur/js/macro.js">
-<link rel="modulepreload" href="../moteur/js/mortalite.js">
-<link rel="modulepreload" href="../moteur/js/scenario-actuel.js">
-<link rel="modulepreload" href="../moteur/js/echeancier.js">
-<link rel="modulepreload" href="../moteur/js/journal.js">
-<link rel="modulepreload" href="../moteur/js/pilote.js">
-<link rel="modulepreload" href="../moteur/js/droit/acquerir.js">
-<link rel="modulepreload" href="../moteur/js/droit/categories.js">
-<link rel="modulepreload" href="../moteur/js/droit/commun.js">
-<link rel="modulepreload" href="../moteur/js/droit/completer.js">
-<link rel="modulepreload" href="../moteur/js/droit/compter.js">
-<link rel="modulepreload" href="../moteur/js/droit/coordonner.js">
-<link rel="modulepreload" href="../moteur/js/droit/cultes.js">
-<link rel="modulepreload" href="../moteur/js/droit/cumul.js">
-<link rel="modulepreload" href="../moteur/js/droit/departs.js">
-<link rel="modulepreload" href="../moteur/js/droit/etranger.js">
-<link rel="modulepreload" href="../moteur/js/droit/invalidite.js">
-<link rel="modulepreload" href="../moteur/js/droit/limite_age.js">
-<link rel="modulepreload" href="../moteur/js/droit/foyer.js">
-<link rel="modulepreload" href="../moteur/js/droit/liquidation.js">
-<link rel="modulepreload" href="../moteur/js/droit/liquider.js">
-<link rel="modulepreload" href="../moteur/js/droit/ouvrir.js">
-<link rel="modulepreload" href="../moteur/js/droit/preparer.js">
-<link rel="modulepreload" href="../moteur/js/droit/primes.js">
-<link rel="modulepreload" href="../moteur/js/droit/progressive.js">
-<link rel="modulepreload" href="../moteur/js/droit/releve.js">
-<link rel="modulepreload" href="../moteur/js/droit/reversion.js">
-<link rel="modulepreload" href="../moteur/js/droit/seconde.js">
-<link rel="modulepreload" href="../moteur/js/calendrier.js">
-<link rel="modulepreload" href="../moteur/js/config.js">
-<link rel="modulepreload" href="../moteur/js/format.js">
-<link rel="modulepreload" href="../moteur/js/regimes.js">
-<link rel="modulepreload" href="../moteur/js/primes.js">
-<link rel="modulepreload" href="../moteur/js/versions.js">
-<link rel="modulepreload" href="../moteur/js/caracteristiques.js">
-<link rel="modulepreload" href="../moteur/js/credits-ministeres.js">
-<link rel="modulepreload" href="../moteur/js/serie.js">
-<link rel="modulepreload" href="../moteur/js/taux.js">
-<link rel="modulepreload" href="../moteur/js/libm.js">
-<link rel="modulepreload" href="../moteur/js/remuneration.js">
-<link rel="modulepreload" href="../moteur/js/indemnite_csg.js">
-<link rel="modulepreload" href="../moteur/js/restitution.js">
-<link rel="modulepreload" href="../moteur/js/revalorisation.js">
-<link rel="modulepreload" href="../moteur/js/tva.js">
-
-<style>
-  /* Écran d'attente. Il ne s'affiche qu'au-delà d'un tiers de seconde : sur une
-     connexion rapide le simulateur est prêt avant, et un écran qui n'aurait
-     clignoté que le temps d'être aperçu vaut moins que rien. Le retard est en
-     CSS et non en JavaScript, parce que l'attente qu'il couvre se produit
-     justement avant que le moindre script ne soit chargé. */
-  #amorce { max-width: 34rem; margin: 0 auto; padding: 5rem 1.5rem; text-align: center;
-            animation: paraitre 0.25s ease-out 0.35s both; }
-  #amorce h1 { font-size: 1.4rem; font-weight: 600; margin: 0 0 0.75rem; }
-  #amorce p { color: var(--texte-doux); font-size: 0.98rem; }
-  #amorce .jauge { height: 6px; width: min(24rem, 80%); margin: 2rem auto 0;
-                   background: var(--fond-appui); border-radius: 3px; overflow: hidden; }
-  #amorce .jauge > span { display: block; height: 100%; width: 30%;
-                          background: var(--accent);
-                          animation: glisse 1.4s ease-in-out infinite; }
-  @keyframes paraitre { from { opacity: 0; } to { opacity: 1; } }
-  /* Lue par les synthèses vocales, jamais affichée : le contenu de <main> est
-     remplacé en bloc à chaque calcul, ce qu'un lecteur d'écran ne signale pas
-     de lui-même. */
-  .hors-ecran { position: absolute; width: 1px; height: 1px; overflow: hidden;
-                clip-path: inset(50%); white-space: nowrap; }
-  .replique { text-align: left; border-left: 3px solid var(--accent);
-              background: var(--fond-appui); padding: 0.9rem 1.1rem; margin-top: 1.5rem;
-              font-size: 0.92rem; }
-  /* La feuille de style principale coupe déjà les animations quand le système
-     demande d'en réduire le mouvement ; la jauge, elle, doit encore dire que
-     quelque chose travaille. Immobile et pleine, elle le dit. */
-  @media (prefers-reduced-motion: reduce) {
-    #amorce .jauge > span { width: 100%; }
-  }
-</style>
 </head>
 <body>
 
 <p id="annonce" class="hors-ecran" role="status" aria-live="polite"></p>
+<noscript><div class="erreur">Le calcul se fait dans votre navigateur et a besoin de JavaScript : les pages se lisent sans, mais le simulateur ne calcule pas.</div></noscript>
+<div id="entete"><a class="evitement" href="#contenu">Aller au contenu</a>
+<header class="bandeau"><div class="interieur">
+  <p class="nom"><a href="../"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M16 7h6v6" /><path d="m22 7-8.5 8.5-5-5L2 17" /></svg><span>Retraite à comptes notionnels</span></a></p>
+  <nav aria-label="Navigation principale"><span class="groupe"><span class="etiquette">L&#x27;essentiel</span><span class="liens"><a href="../">Programme</a><a href="../simuler/">Simuler</a><a href="../cout/">Coût</a><a href="./" aria-current="page">Pourquoi changer</a></span></span><span class="groupe"><span class="etiquette">Faire connaître</span><span class="liens"><a href="../partager/">Partager</a><a href="../saviez-vous/">Le saviez-vous ?</a></span></span><span class="groupe secondaire"><span class="etiquette">Pour vérifier</span><button type="button" class="deplier" aria-expanded="false" aria-controls="pages-a-verifier">Pour vérifier<svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg></button><span class="liens" id="pages-a-verifier"><a href="../cas-types/">Carrières types</a><a href="../avantages/">Droits non cotisés</a><a href="../methode/">Méthode et sources</a></span></span></nav>
+</div></header></div>
+<main id="contenu" tabindex="-1" data-prerendu="/risque">
+<div class="affiche"><p class="surtitre">Pourquoi changer</p><h1>Ce que la retraite vous prend, <span class="cle-texte">et ce qu'elle ne rendra pas.</span></h1><p class="chapeau">967 € par mois prélevés sur un salaire moyen, pour une promesse que la loi révise à la baisse depuis trente ans.</p></div>
 
-<div id="amorce">
-  <h1>Retraite à comptes notionnels</h1>
-  <p>Le site se prépare. Le modèle et les données de référence s'exécutent dans
-  votre navigateur : rien n'est envoyé à un serveur, et il n'y a rien à
-  installer.</p>
-  <div class="jauge"><span></span></div>
-  <noscript>
-    <div class="replique">Ce simulateur a besoin de JavaScript : le calcul se fait
-    dans votre navigateur, il n'y a pas de serveur pour le faire à sa place.</div>
-  </noscript>
-</div>
+<div class="note resume"><strong>En clair.</strong> La retraite ne met rien de
+côté : elle verse aussitôt ce qu'elle encaisse, et votre pension attendra les
+cotisations de vos enfants. Or ils seront moins nombreux, et ce qu'on vous
+promet dépasse déjà ce que vos cotisations financent. Le système ne cessera
+pas de payer : il paiera moins, comme depuis trente ans sans le dire, en
+revalorisant les pensions moins vite que les salaires.</div>
 
-<!-- Le routeur du site, sorti de cette page dans son module pour que les
-     pages le partagent (action 174). -->
+<div class="fiches reperes"><div class="fiche"><div class="valeur">967 €</div><div class="etiquette">Prélevé chaque mois sur un salaire moyen</div><div class="precision">cotisation salariale et patronale réunies</div></div><div class="fiche"><div class="valeur">33 %</div><div class="etiquette">Promis au-delà de ce que VOS cotisations achèteraient</div><div class="precision">de VOTRE pension, à la charge de quelqu'un d'autre</div></div><div class="fiche"><div class="valeur">16 %</div><div class="etiquette">Que les recettes du SYSTÈME ne couvriront pas en 2070</div><div class="precision">des pensions dues cette année-là</div></div></div>
+
+<p class="discret"><strong>Ces deux pourcentages ne s'additionnent
+pas.</strong> Les 33 % comparent une
+pension aux cotisations de cet assuré ; les
+16 %, les dépenses du système à ses
+recettes.<span class="mot"><button type="button" class="terme appel" aria-expanded="false" aria-label="Pourquoi ces deux parts diffèrent"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><path d="M12 17h.01" /></svg></button><span class="bulle" role="note" hidden>La première est une question de justice : ce que cet assuré
+reçoit au-delà de ce que ses propres cotisations achèteraient. La seconde est
+une question de solvabilité : ce que le système doit verser au-delà de ce
+qu'il encaisse, une année donnée. La première est la plus grosse parce qu'elle
+ne compte que les cotisations, quand la seconde compte tout ce que le système
+encaisse, impôts affectés compris.</span></span></p>
+
+<nav class="plan" aria-label="Dans cette page"><p class="etiquette">Dans cette page</p><ol><li><a href="./#risque-prelevement" data-vers="risque-prelevement">Combien la retraite vous prend-elle chaque mois ?</a></li><li><a href="./#risque-promesse" data-vers="risque-promesse">Est-ce que vous le reverrez ?</a></li><li><a href="./#risque-salaire" data-vers="risque-salaire">Ces cotisations sont votre salaire, y compris celles de l&#x27;employeur</a></li><li><a href="./#risque-croissance" data-vers="risque-croissance">Ce que le financement coûte à la croissance, selon le COR lui-même</a></li><li><a href="./#risque-pauvres" data-vers="risque-pauvres">Les plus pauvres y perdent le plus</a></li><li><a href="./#risque-jeunes" data-vers="risque-jeunes">Les jeunes cotisent plus pour recevoir moins</a></li><li><a href="./#risque-evince" data-vers="risque-evince">Le premier poste du budget, et ce qui recule à côté</a></li><li><a href="./#risque-deja" data-vers="risque-deja">La promesse a déjà été rompue : 1993, 2003, 2010, 2014, 2023</a></li><li><a href="./#risque-objections" data-vers="risque-objections">« Il n&#x27;y a pas de problème » : huit objections, huit réponses</a></li><li><a href="./#risque-ailleurs" data-vers="risque-ailleurs">Ce qui arrive quand on attend trop longtemps</a></li><li><a href="./#risque-droit" data-vers="risque-droit">Ce que la loi ne vous garantit pas</a></li><li><a href="./#risque-sources" data-vers="risque-sources">Sources</a></li></ol></nav>
+
+<section class="cle" id="risque-prelevement" tabindex="-1"><h2>Combien la retraite vous prend-elle chaque mois ?</h2><p class="reponse"><strong>967 € sur un salaire moyen</strong>, en
+comptant ce que verse l'employeur : le premier poste de votre fiche de paie,
+avant l'impôt sur le revenu, avant la maladie. Sur une carrière entière, plus
+de quatre cent mille euros.</p><div class="defilant" tabindex="0" role="region" aria-label="Ce que la retraite prélève chaque mois sur un salarié du privé en 2026, part patronale comprise"><table><caption><span>Ce que la retraite prélève chaque mois sur un salarié du privé en 2026, part patronale comprise</span></caption><thead><tr><th class="" scope="col">Niveau de salaire</th><th class="nombre" scope="col">Salaire brut</th><th class="nombre" scope="col">Prélevé pour la retraite</th><th class="nombre" scope="col">Part du brut</th><th class="nombre" scope="col">Net touché</th></tr></thead><tbody><tr><th class="" scope="row">Au SMIC</th><td class="nombre">2 052 €</td><td class="nombre">321 €</td><td class="nombre">15,7 %</td><td class="nombre">1 625 €</td></tr><tr><th class="" scope="row">Au salaire moyen</th><td class="nombre">3 732 €</td><td class="nombre">967 €</td><td class="nombre">25,9 %</td><td class="nombre">2 954 €</td></tr><tr><th class="" scope="row">À deux fois le salaire moyen</th><td class="nombre">7 463 €</td><td class="nombre">2 073 €</td><td class="nombre">27,8 %</td><td class="nombre">5 939 €</td></tr></tbody></table></div><p class="source">Calcul du modèle pour un salarié du privé né en
+1990, entré à 22 ans, aux taux de 2026,
+allègements généraux compris : d'où le taux plus faible au SMIC.
+<a href="../simuler/">Le calcul sur votre propre salaire</a> est à un
+clic.</p></section>
+
+<section class="cle" id="risque-promesse" tabindex="-1"><h2>Est-ce que vous le reverrez ?</h2><p class="reponse">Pas en entier. Au rendement qu'une répartition peut servir sans
+toucher à son taux, ces cotisations financent
+<strong>67 %</strong> de la pension
+promise. Le reste attend des cotisants qui ne sont pas nés, et il manque déjà
+5,1 Md € par an.</p><div class="defilant" tabindex="0" role="region" aria-label="Ce que le système verse et ce qu&#x27;il encaisse, en part du PIB et en milliards d&#x27;euros, de 2025 à 2070"><table><caption><span>Ce que le système verse et ce qu&#x27;il encaisse, en part du PIB et en milliards d&#x27;euros, de 2025 à 2070</span></caption><thead><tr><th class="" scope="col">Année</th><th class="nombre" scope="col">Pensions versées</th><th class="nombre" scope="col">Recettes</th><th class="nombre" scope="col">Part non financée</th></tr></thead><tbody><tr><th class="" scope="row">2025 (observé)</th><td class="nombre">14,1 % · 422 Md €</td><td class="nombre">13,9 % · 417 Md €</td><td class="nombre">1,2 %</td></tr><tr><th class="" scope="row">2035</th><td class="nombre">14,0 % · 418 Md €</td><td class="nombre">13,6 % · 407 Md €</td><td class="nombre">2,7 %</td></tr><tr><th class="" scope="row">2045</th><td class="nombre">14,2 % · 424 Md €</td><td class="nombre">13,3 % · 397 Md €</td><td class="nombre">6,2 %</td></tr><tr><th class="" scope="row">2055</th><td class="nombre">14,6 % · 436 Md €</td><td class="nombre">13,0 % · 390 Md €</td><td class="nombre">10,5 %</td></tr><tr><th class="" scope="row">2070</th><td class="nombre">15,3 % · 458 Md €</td><td class="nombre">12,9 % · 386 Md €</td><td class="nombre">15,6 %</td></tr></tbody></table></div><p class="source">Sources : le modèle du site pour la part financée, les comptes du
+Conseil d'orientation des retraites pour le solde, observés puis projetés dans
+son scénario de référence ; les milliards projetés sont au PIB de
+2025. Le détail année par année est sur la page
+<a href="../cout/">Coût</a> ; ce que les recettes paient de VOTRE
+pension, à VOTRE date de départ, sur <a href="../simuler/">le
+simulateur</a>.</p></section>
+
+<div class="note"><strong>Ce que nous proposons d'en faire.</strong> Un
+<span class="mot"><span class="terme" role="button" tabindex="0" aria-expanded="false">compte notionnel</span><span class="bulle" role="note" hidden>Un compte virtuel à votre nom, où chaque cotisation versée est inscrite. Au départ en retraite, le total est divisé par le nombre d&#x27;années qu&#x27;il vous reste à vivre en moyenne : c&#x27;est la pension. Rien n&#x27;est placé — c&#x27;est toujours la répartition, mais la règle de calcul change.</span></span> ne crée pas d'argent. Il inscrit chaque euro
+versé sur un compte à votre nom, ramène le prélèvement de 28 % à 18 %, et
+règle l'écart chaque année par un <span class="mot"><span class="terme" role="button" tabindex="0" aria-expanded="false">coefficient d&#x27;équilibre</span><span class="bulle" role="note" hidden>Le facteur commun qui, chaque année, ramènerait toutes les pensions à ce que les cotisations permettent de payer : au-dessus de 1 il en reste, en dessous il en manque. Le modèle le calcule mais ne l&#x27;applique pas aux pensions affichées.</span></span> que
+tout le monde peut lire, au lieu d'une réforme qui tombe sur une génération.
+<a href="../">La proposition</a> est chiffrée carrière par
+carrière.</div>
+
+<h2>Pour aller plus loin</h2>
+
+<details class="section" id="risque-salaire"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Ces cotisations sont votre salaire, y compris celles de l&#x27;employeur</span></summary><div class="dedans">
+<p>Sur la fiche de paie, la retraite se partage en deux lignes : celle que le
+salarié voit retirée de son brut, et celle que l'employeur verse par-dessus,
+622 € par mois au salaire moyen. La seconde passe pour un
+cadeau ; la recherche montre que le salarié la paie, en salaire qu'il ne
+touche pas.</p>
+
+<p><strong>Le résultat est récent, français, et il est net.</strong> Antoine
+Bozio, Thomas Breda, Julien Grenet et Arthur Guillouzouic
+(<em>Review of Economic Studies</em>, 2026) ont comparé trois réformes
+françaises qui ont déplacé des cotisations au-dessus du plafond de la sécurité
+sociale, en suivant les salariés jusqu'à huit ans après. Quand la cotisation
+ouvre un droit visible, elle est reportée sur le salaire à hauteur de
+<strong>100 %</strong> : c'est le cas de la hausse des cotisations de retraite
+complémentaire entre 2000 et 2005. Quand elle n'ouvre aucun droit individuel,
+le report tombe à 21 % pour la famille et à 6 % pour la maladie, sans que ces
+chiffres se distinguent de zéro. Leur méta-analyse de vingt et une estimations
+internationales donne le même partage : <strong>103 % de report pour les
+cotisations liées à un droit, 15 % pour les autres</strong>.</p>
+
+<p>Le cas chilien avait montré la même chose en sens inverse. Jonathan Gruber
+(<em>Journal of Labor Economics</em>, 1997) a suivi la chute du taux de
+cotisation patronale de 30 % à 5 % après la réforme de 1981 : les salaires ont
+absorbé la baisse presque exactement, et l'emploi n'a pas bougé. Sur
+l'ensemble des cotisations, la méta-analyse d'Ángel Melguizo et José Manuel
+González-Páramo (<em>SERIEs</em>, 2013), qui porte sur cinquante-deux travaux,
+conclut que le salarié en supporte environ deux tiers à long terme en Europe
+continentale.</p>
+
+<p><strong>La conséquence est celle que personne ne dit.</strong> Augmenter les
+cotisations retraite d'un point ne coûte pas un point aux entreprises : cela
+coûte un point de salaire, avec un délai de quelques années. Chaque fois
+qu'on relève le taux pour tenir la promesse, le salaire net des générations
+suivantes en paie le prix.</p>
+
+<p class="discret">Réserve de méthode, qu'il faut connaître pour discuter le
+chiffre : cette littérature mesure le report d'une <em>variation</em> de taux,
+plutôt que la part du niveau actuel supportée par le salarié. Le passage de l'un à
+l'autre est une inférence.</p></div></details><details class="section" id="risque-croissance"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Ce que le financement coûte à la croissance, selon le COR lui-même</span></summary><div class="dedans">
+<p>Le Conseil d'orientation des retraites a fait chiffrer par trois équipes
+indépendantes, la direction générale du Trésor, l'OFCE et une équipe de
+l'École d'économie de Paris, l'effet macroéconomique des quatre façons de
+rétablir l'équilibre. Son rapport de juin 2026 écrit :</p>
+
+<blockquote><p>« Quel que soit le modèle retenu, trois des quatre leviers
+étudiés – baisse relative des pensions, hausse des cotisations salariales et
+hausse des cotisations employeurs – présentent un caractère récessif. »</p></blockquote>
+
+<p>Et il dit à qui la facture est transmise :</p>
+
+<blockquote><p>« Les trois premiers leviers ont toutefois un impact récessif,
+qui pèse sur les recettes publiques et dégrade le solde hors retraites : ils
+renforcent les difficultés à financer les dépenses publiques autres que les
+retraites, à l'instar de l'école, la santé ou la sécurité. »</p></blockquote>
+
+<p><strong>Financer la promesse par les cotisations réduit donc l'activité, et
+réduit l'argent disponible pour l'école et l'hôpital.</strong> Le COR ajoute
+que les ajustements devront en pratique être plus forts que ses propres
+calculs ne le laissent croire, pour tenir compte de ce caractère récessif
+« qui conduit à abaisser le PIB par habitant ».</p>
+
+<h3>D'où l'on part</h3>
+<p>La France prélève déjà sur le travail plus que presque personne. Dans
+<em>Taxing Wages 2026</em>, l'OCDE mesure le coin socio-fiscal d'un célibataire
+au salaire moyen à <strong>47,2 %</strong> du <span class="mot"><span class="terme" role="button" tabindex="0" aria-expanded="false">coût du travail</span><span class="bulle" role="note" hidden>Ce que votre emploi coûte à votre employeur : votre salaire brut, plus les cotisations qu&#x27;il verse par-dessus, moins l&#x27;allègement dont il bénéficie sur les bas salaires. C&#x27;est le montant qui ne change pas quand on déplace une cotisation.</span></span> en
+2025, contre <strong>35,1 %</strong> en moyenne dans l'OCDE : douze points
+d'écart, et le troisième rang sur trente-huit pays. Pour un couple avec un
+seul salaire et deux enfants, la France est deuxième, à 39,1 % contre 26,2 %.
+La particularité française tient à la part patronale, dont le premier poste
+est la retraite : 27,98 points de salaire brut en 2026 sur la première
+tranche, cotisations salariale et patronale réunies.</p>
+
+<h3>Ce que le système fait travailler moins</h3>
+<p>C'est le résultat le plus solide de toute cette littérature, parce qu'il
+repose sur des réformes traitées comme des expériences. Jonathan Gruber et
+David Wise, dans l'enquête de référence du Bureau national de la recherche
+économique américain (1999), ont mesuré ce qu'un assuré perd à travailler une
+année de plus. <strong>En France, cette taxation implicite atteignait 80 % de
+l'année travaillée</strong>, l'une des plus élevées des onze pays étudiés, et
+les hommes de 55 à 65 ans y laissaient inemployés <strong>60 % de leur
+capacité productive</strong>, contre 37 % aux États-Unis et 48 % en Allemagne.</p>
+<p>Les réformes françaises l'ont vérifié dans l'autre sens, et elles montrent
+aussi la limite de l'exercice. Antoine Bozio (INSEE, 2011) mesure que la
+réforme de 1993 a reporté le départ de neuf mois par année de durée exigée
+chez les hommes. Yves Dubois et Malik Koubi (INSEE, 2016) trouvent, pour la
+réforme de 2010, un taux d'activité à 60 ans en hausse de vingt-quatre points
+chez les hommes, <strong>mais un taux de chômage en hausse de sept
+points</strong> : entre un tiers et la moitié de ce que la retraite ne verse
+plus part ailleurs, en chômage ou en invalidité. Simon Rabaté et Julie Rochut
+(2020) concluent de même.</p>
+
+<h3>Ce que le système n'épargne pas</h3>
+<p>Un régime qui ne met rien de côté ne finance aucun investissement, et il
+décourage ceux qui voudraient le faire à sa place. L'ordre de grandeur admis
+est qu'<strong>un euro de droits à retraite se substitue à vingt à cinquante
+centimes d'épargne privée</strong> : c'est la fourchette du Congressional
+Budget Office américain (1998), retrouvée par Rob Alessie, Viola Angelini et
+Peter van Santen sur données européennes (2013) et par Marta Lachowska et
+Michał Myck sur la réforme polonaise (2018). Orazio Attanasio et Susann
+Rohwedder (2003) ajoutent une précision qui vise directement un régime
+contributif : c'est la partie proportionnelle au salaire qui évince l'épargne,
+le socle forfaitaire ne l'évince pas.</p>
+<p>Le résultat le plus net est ailleurs. David Bloom et ses coauteurs (2007)
+montrent que l'allongement de la vie pousse partout les ménages à épargner
+davantage, <strong>sauf dans les pays dotés d'une répartition généreuse, où
+cet effet disparaît</strong>.</p>
+<p class="discret">Deux bornes d'honnêteté. Martin Feldstein chiffrait en 1996
+la perte à un point de PIB par an à perpétuité,
+30 Md € par an au PIB de
+2025, soit un cinquième des cotisations ; son travail
+fondateur de 1974 portait une erreur de programmation révélée par Dean Leimer
+et Selig Lesnoy en 1982, et son estimation est restée discutée depuis.
+Hans-Werner Sinn (2000) objecte qu'en valeur actuelle rien ne se gagne à une
+transition, puisqu'il faut de toute façon payer les retraités en place. Notre
+argument ne repose sur aucun des deux.</p>
+
+<h3>Ce qu'un compte notionnel y change</h3>
+<p>Feldstein et Jeffrey Liebman l'ont chiffré (2002) : rendre le lien visible
+entre ce qu'on verse et ce qu'on touchera <strong>divise par trois le taux de
+prélèvement ressenti comme une taxe</strong>, et il resterait à 71 % même si le
+rendement du système était nul. Un compte notionnel ne crée pas d'épargne, et
+les auteurs le disent ; il supprime la part du prélèvement que personne ne
+compte aujourd'hui comme un droit.</p></div></details><details class="section" id="risque-pauvres"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Les plus pauvres y perdent le plus</span></summary><div class="dedans">
+<p><strong>Ils meurent plus tôt, et touchent donc moins longtemps.</strong>
+L'INSEE mesure, sur la période 2020-2024, un écart d'espérance de vie de
+<strong>13,0 ans entre les 5 % d'hommes les plus aisés et les 5 % les plus
+modestes</strong>, et de 8,7 ans chez les femmes. L'écart s'est creusé depuis
+2012-2016, l'espérance de vie des 25 % les plus modestes stagnant ou reculant.
+Autour de mille euros de niveau de vie, cent euros de plus par mois valent
+neuf mois d'espérance de vie chez les hommes.</p>
+
+<p>Un régime qui ouvre les droits au même âge pour tous transforme cet écart en
+transfert. Yves Dubois et Anthony Marino (INSEE, 2015) l'ont mesuré sur le
+rendement des cotisations : chez les hommes, le rendement passe de 1,53 % pour
+ceux qui ont fini leurs études le plus tôt à 0,98 % pour les plus diplômés. En
+neutralisant la mortalité différentielle, l'écart se creuserait jusqu'à 0,65 %.
+<strong>La mort prématurée des uns rend donc au sommet de la distribution
+environ un tiers de ce que les règles lui reprennent.</strong></p>
+
+<p><strong>Ils paient aussi le chômage.</strong> Le coût du travail le plus
+élevé de l'OCDE se paie d'abord sur les emplois les moins qualifiés. En 2024,
+le taux de chômage français atteint 13,8 % chez ceux qui ont au plus le
+brevet, contre 5,0 % chez les diplômés du supérieur. L'État en a tiré la
+conséquence sans jamais le dire ainsi : il consacre <strong>75 milliards
+d'euros par an</strong>, 2,7 points de PIB, à effacer ces cotisations sur les
+bas salaires, et le rapport d'Antoine Bozio et Étienne Wasmer au Premier
+ministre (2024) estime que leur suppression détruirait
+<strong>980 000 emplois</strong>.</p>
+
+<p><strong>Et la pauvreté n'est plus là où on la cherche.</strong> En 2023,
+10,5 % des retraités vivent sous le seuil de pauvreté, contre 15,4 % de
+l'ensemble de la population et <strong>21,9 % des moins de dix-huit ans</strong>.
+Le filet de sécurité le dit mieux que tout : l'allocation de solidarité aux
+personnes âgées atteint 77 % du seuil de pauvreté, le revenu de solidarité
+active 42 %.</p></div></details><details class="section" id="risque-jeunes"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Les jeunes cotisent plus pour recevoir moins</span></summary><div class="dedans">
+<p><strong>Le taux monte, le rendement descend.</strong> Yves Dubois et
+Anthony Marino (INSEE, <em>Économie et Statistique</em>, 2015) ont calculé ce
+que chaque génération retire de ses cotisations. Le rendement interne vaut
+environ <strong>2,5 % pour la génération 1950</strong>, puis tombe à
+<strong>1,75 % à partir de la génération 1970</strong> et s'y stabilise. Sur
+la même période, le taux de prélèvement supporté passe de 24 % pour la
+génération 1950 à 28 % pour la génération 1985. La seule réforme de 1993
+retire 0,4 point de rendement aux générations 1950 à 1985.</p>
+
+<p>Le COR poursuit le calcul sur une carrière type de salarié du privé : le
+rendement de la <strong>génération 2000 serait de 0,8 %</strong> par an, et de
+0,5 % si les gains d'espérance de vie sont plus faibles que prévu. Un placement
+sans risque fait mieux : sur cent vingt-six ans, les obligations d'État
+américaines ont rendu 1,6 % par an en termes réels, les actions 6,6 %
+(Dimson, Marsh et Staunton, 2026). Les deux grandeurs ne se mesurent pas de la
+même façon, et la comparaison ne vaut que par son ordre de grandeur : un
+facteur deux à huit.</p>
+
+<p><strong>Ce qu'ils touchent recule aussi.</strong> Le COR projette la pension
+moyenne rapportée au revenu d'activité moyen de <strong>54,6 % en 2025 à
+45,3 % en 2070</strong>, et le niveau de vie relatif des retraités de 100,2 %
+en 2023 à 90,3 % en 2070. Les pensions progresseraient de 0,2 % par an en
+euros constants quand les salaires progresseraient de 0,7 %.</p>
+
+<p><strong>Et le patrimoine, lui, ne bouge pas.</strong> Début 2021, un ménage
+dont la personne de référence a moins de trente ans détient un patrimoine
+médian de 20 400 €, contre 232 800 € entre soixante et soixante-neuf ans. Les
+ménages retraités sont 38,4 % des ménages et détiennent 40 % du patrimoine
+brut. L'âge moyen auquel on hérite est passé de trente ans au début du siècle
+dernier à environ <strong>cinquante ans</strong> aujourd'hui, pendant que le
+flux successoral annuel passait de moins de 5 % à plus de 15 % du revenu
+national (Conseil d'analyse économique, 2021).</p>
+
+<p class="discret">Deux réserves, parce qu'elles seront opposées. Hippolyte
+d'Albis et Ikpidi Badji (INSEE, 2017) montrent que, sur les cohortes nées entre
+1901 et 1979, aucune génération n'a vécu moins bien que celles qui l'ont
+précédée ; leurs données s'arrêtent en 2011. Et les comptes de transferts
+nationaux montrent que la part publique du financement de la consommation des
+plus de soixante ans a reculé depuis 1979. Le problème est dans la pente, non
+dans un pillage.</p></div></details><details class="section" id="risque-evince"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Le premier poste du budget, et ce qui recule à côté</span></summary><div class="dedans">
+<p>En 2025, la retraite a coûté <strong>422 milliards d'euros, 14,1 % du PIB
+et 24,3 % de l'ensemble des dépenses publiques</strong>. Le COR écrit que
+l'évolution de cette dépense « explique à elle seule une grande partie de la
+progression des dépenses publiques depuis une vingtaine d'années ». Rapportée
+au PIB, la France y consacre le deuxième montant de l'OCDE, derrière l'Italie,
+et quatre points de PIB de plus que l'Allemagne, 120 Md €
+par an au PIB de 2025.</p>
+
+<p>Pendant que ce poste montait, d'autres reculaient. La dépense d'éducation
+est passée de <strong>7,8 % du PIB en 1995 à 6,7 % en 2023</strong> : au PIB de
+2025, 233 Md € puis
+200 Md €, 33 Md € de
+moins chaque année. La France
+dépense aujourd'hui 13 % de moins que la moyenne de l'OCDE par élève du
+primaire, tout en dépensant 24 % de plus par lycéen. Ses résultats en
+mathématiques à l'enquête PISA de 2022 comptent parmi les plus bas jamais
+mesurés, et la baisse récente y est qualifiée de sans précédent. L'effort de
+recherche plafonne à 2,18 % du PIB, 65 Md € au PIB
+de 2025, pour un objectif de 3 %, 90 Md €, et
+une Allemagne à 3,1 %.</p>
+
+<p class="discret">Ce rapprochement décrit un arbitrage, il ne démontre pas un
+mécanisme : aucun travail n'établit que la dépense de retraite cause le recul
+de la dépense d'éducation, et nous ne l'affirmons pas. Ce qui est établi, et
+que le COR écrit lui-même, c'est que les hausses de cotisations et les baisses
+de pensions « renforcent les difficultés à financer les dépenses publiques
+autres que les retraites, à l'instar de l'école, la santé ou la sécurité ».</p></div></details><details class="section" id="risque-deja"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>La promesse a déjà été rompue : 1993, 2003, 2010, 2014, 2023</span></summary><div class="dedans">
+<p>La France n'a jamais baissé une pension en euros courants. Elle a fait
+autre chose, à cinq reprises. En 1993, le régime général passe des dix aux
+vingt-cinq meilleures années et revalorise les salaires portés au compte sur
+les prix plutôt que sur les salaires. En 2003, la durée requise s'allonge avec
+l'espérance de vie. En 2010, l'âge légal passe de 60 à 62 ans. En 2014, la
+durée monte à 43 ans. En 2023, l'âge passe à 64 ans, avant d'être suspendu fin
+2025 pour trois générations.</p>
+
+<p><strong>Ce que ces réformes ont retiré se mesure.</strong> L'INSEE a
+calculé que sans elles, les dépenses de retraite seraient supérieures de
+3,7 points de PIB en 2018, 87 Md €, et de
+<strong>6,3 points en 2070</strong>, 188 Md €
+au PIB de 2025, dont 2,6 pour la seule revalorisation
+sur les prix, 78 Md €. Sur les pensions déjà versées, la
+Caisse nationale d'assurance vieillesse a mesuré l'effet de la réforme de
+1993 : six retraités sur dix touchés, 6 % de moins en moyenne, et jusqu'à 20 %
+sur vingt-cinq ans de retraite. Patrick Aubert et Simon Rabaté (2014) ont
+chiffré l'autre bout : sans les réformes de 2003, 2010 et 2014, les trois
+quarts des gains d'espérance de vie seraient allés à la retraite ; il en reste
+un tiers.</p>
+
+<p><strong>Les pensions déjà servies ont été touchées aussi.</strong> De 2014
+à 2017, l'Agirc et l'Arrco, qui versent près d'un tiers de la retraite d'un
+salarié du privé, n'ont pas revalorisé leur point une seule fois ; l'accord de
+2015 a fixé pour trois ans une revalorisation inférieure d'un point à
+l'inflation, et les générations nées à partir de 1957 reçoivent 10 % de moins
+pendant trois ans si elles partent dès le taux plein. Personne n'a parlé de
+rupture de promesse : la mesure était négociée, et elle est passée.</p></div></details><details class="section" id="risque-objections"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>« Il n&#x27;y a pas de problème » : huit objections, huit réponses</span></summary><div class="dedans">
+<h3>« Le déficit est faible : un demi-point de PIB »</h3>
+<p>Vrai jusqu'en 2030, faux ensuite. Le COR projette −0,2 point de PIB en 2030,
+<strong>−0,9 en 2045 et −2,4 en 2070</strong> : au PIB de 2025, un
+besoin de 6,0 Md € par an, puis de 27 Md €, puis de 71 Md €.
+L'argument tire sa force d'un horizon qui s'arrête là où la courbe part.
+Henri Sterdyniak, qui le porte, écrit d'ailleurs dans la même note que la
+stabilité des dépenses « ne proviendrait que de l'hypothèse d'une nette baisse
+à l'avenir du rapport retraite/salaire », et nomme la chose : « l'acceptation
+de la paupérisation progressive des retraités ».</p>
+
+<h3>« Le déficit vient du désengagement de l'État, pas du système »</h3>
+<p>Le COR a calculé le solde sous la convention qui annule exactement ce
+désengagement, en figeant la contribution de l'État en part de PIB. Le besoin
+de financement reste de <strong>1,5 point de PIB</strong> en 2070, 45 Md € au
+PIB de 2025. Le retrait de l'État explique 0,9 point sur 2,4, 27 Md €
+sur 71 Md €. Il est une partie du problème, il n'est pas le problème.</p>
+
+<h3>« La part des retraites dans le PIB est stable »</h3>
+<p>Elle l'est, et le COR dit pourquoi dans la phrase qui suit : cette stabilité
+est « freinée par la baisse de la pension moyenne relative au revenu d'activité
+moyen qui passerait de <strong>54,6 % en 2025 à 45,3 % en 2070</strong> ».
+Présenter cette stabilité comme une preuve de bonne santé revient à prendre
+l'ajustement pour la preuve qu'il n'y a rien à ajuster.</p>
+
+<h3>« Il suffit d'un point de cotisation »</h3>
+<p>Les propositions chiffrées demandent trois points et demi, environ vingt-cinq
+milliards par an. Le coin socio-fiscal français est déjà le troisième de
+l'OCDE, douze points au-dessus de la moyenne. Et le COR a fait mesurer l'effet
+par trois équipes : une hausse de cotisations est récessive, elle dégrade les
+recettes publiques et « renforce les difficultés à financer les dépenses
+publiques autres que les retraites ».</p>
+
+<h3>« Le problème, c'est le chômage »</h3>
+<p>Le COR a chiffré la variante. Un chômage ramené à 5 % améliorerait le solde
+de 2070 de <strong>0,2 point sur les 2,4 qui manquent</strong>, soit un
+douzième : 6,0 Md € sur 71 Md € au PIB de 2025. La France n'est pas
+passée sous 7 % depuis 1982. Une productivité haute laisserait encore
+1,7 point de déficit, 51 Md €, et le COR conclut que « le
+système de retraite demeurerait durablement en besoin de financement dans
+l'ensemble des scénarios considérés ».</p>
+
+<h3>« Les retraités sont pauvres »</h3>
+<p>Leur niveau de vie vaut 100,2 % de celui de l'ensemble de la population en
+2023, et 106,5 % en comptant le logement dont ils sont propriétaires. Leur
+taux de pauvreté est de 10,5 %, contre 15,4 % pour l'ensemble et 21,9 % pour
+les moins de dix-huit ans. La France a l'un des trois taux de pauvreté des
+plus de soixante-cinq ans les plus bas de l'OCDE. Un retraité sur dix vit
+pourtant sous le seuil, et cela justifie un minimum, pas le refus de tout
+ajustement.</p>
+
+<h3>« La capitalisation, c'est le casino »</h3>
+<p>La répartition a son rendement, et le COR le calcule : <strong>0,8 % par
+an</strong> pour une carrière type de la génération 2000. Un placement sans
+risque a fait mieux sur cent vingt-six ans. La question n'est pas le risque
+contre la sécurité, elle est de savoir quel risque on porte : celui d'un
+marché, ou celui de la démographie et d'un vote.</p>
+
+<h3>« Les réformes passées ont réglé le problème »</h3>
+<p>La réforme de 2023 devait rapporter 17,7 milliards en 2030 et équilibrer le
+système. Elle a été suspendue moins de trois ans après son adoption, pour un
+coût de 1,8 milliard par an jusqu'en 2032, et le système est projeté en
+déficit sur tout l'horizon. C'est l'argument qui résiste le moins : la
+trajectoire le dément toute seule.</p></div></details><details class="section" id="risque-ailleurs"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Ce qui arrive quand on attend trop longtemps</span></summary><div class="dedans">
+<p><strong>Un régime public ne cesse pas de payer, sauf si l'État s'effondre.</strong>
+Le seul cas documenté est russe : entre 1996 et 1998, quatorze millions de
+pensionnés sur trente-neuf n'ont rien reçu pendant des mois, l'État ne
+recouvrant plus les cotisations. Robert Jensen et Kaspar Richter
+(<em>Journal of Public Economics</em>, 2004) en ont mesuré les conséquences sur
+les enquêtes de ménages : un dixième de nourriture en moins, des soins
+abandonnés, et pour les hommes des ménages touchés une probabilité de décès
+accrue de cinq points en deux ans.</p>
+
+<p><strong>Ce qui arrive, ailleurs, c'est la coupe.</strong> La Grèce a réduit
+ses pensions dix fois entre 2010 et 2013, pour un cumul allant de 14 % sur les
+petites pensions à près de 50 % sur les grandes. Platon Tinios (2016) en tire
+la leçon : couper des pensions déjà servies « a fait sauter le plancher de la
+promesse ». Aux États-Unis, la réserve de la Social Security s'épuise en 2033,
+et les cotisations ne couvriront alors que 77 % des pensions dues. La Suède,
+qui règle son régime par une formule automatique, a baissé ses pensions de
+3,0 %, 4,3 % et 2,7 % en 2010, 2011 et 2014.</p>
+
+<p>Le point commun de ces épisodes est le calendrier : aucun pays n'a ajusté
+tant qu'il pouvait attendre, et l'ajustement a été d'autant plus brutal qu'il
+avait été différé. Les pays qui avaient inscrit la règle d'ajustement dans la
+loi avant la crise ont baissé de quelques pour cent ; ceux qui ont attendu la
+tutelle de leurs créanciers, de moitié.</p></div></details><details class="section" id="risque-droit"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Ce que la loi ne vous garantit pas</span></summary><div class="dedans">
+<p>Un relevé de carrière ressemble à un contrat. Il n'en est pas un. Une
+pension de répartition est une règle de calcul votée, que le Parlement peut
+changer, et les trimestres inscrits n'engagent personne sur le montant qu'ils
+vaudront. La Cour suprême des États-Unis l'a jugé dès 1960 dans l'affaire
+<em>Flemming v. Nestor</em> : le bénéficiaire n'a pas de droit de propriété sur
+sa prestation future. Aucune juridiction française n'a jamais reconnu un tel
+droit non plus.</p>
+
+<p>La recherche a donc renoncé à parler de défaut, et travaille avec une
+échelle. John McHale (1999) l'a posée en comparant les pays du G7 : tout en
+haut le non-paiement, puis la baisse en euros courants d'une pension déjà
+servie, puis le gel, puis le recul de l'âge et le recalcul des droits en cours
+d'acquisition. Son résultat tient toujours : les réformes réduisent surtout ce
+que toucheront les actifs, et protègent ceux qui sont déjà partis.</p>
+
+<p>La Banque mondiale (Holzmann, Palacios et Zviniene, 2004) a cherché les cas
+de défaut complet sur des engagements de retraite et n'en a trouvé
+« que peu, même dans des situations extrêmes ». Le défaut partiel, lui, est la
+règle : le Royaume-Uni, le Japon, l'Allemagne, les États-Unis, la France et
+l'Italie ont tous révisé à la baisse ce qu'ils serviront aux générations
+suivantes. Les auteurs concluent qu'il est peut-être plus facile de faire
+défaut sur une promesse de retraite que sur une obligation, « mais ni l'un ni
+l'autre n'est sans coût ».</p></div></details><details class="section" id="risque-sources"><summary><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6" /></svg><span>Sources</span></summary><div class="dedans">
+<p>Chaque chiffre de cette page vient d'un texte lu, cité avec son année. La
+bibliographie complète, avec ce qui a été lu dans le texte et ce qui n'a pu
+l'être qu'en résumé, est dans
+<a href="https://github.com/g-pliberal/retraitecomptenotionelle/blob/main/docs/risque_de_defaut.md">le dépôt</a>. Les
+principales :</p>
+<ul class="serree">
+  <li><strong>Conseil d'orientation des retraites</strong>, rapport annuel de
+  juin 2026 : le solde, la pension relative, le niveau de vie, la sensibilité
+  au chômage et à la productivité, le rendement par génération, l'effet
+  macroéconomique des leviers, et la convention comptable.</li>
+  <li>Bozio, A., Breda, T., Grenet, J. et Guillouzouic, A. (2026),
+  <em>Review of Economic Studies</em> 93(3) ; Gruber, J. (1997),
+  <em>Journal of Labor Economics</em> 15(3) ; Melguizo, Á. et
+  González-Páramo, J. M. (2013), <em>SERIEs</em> 4(3) — l'incidence des
+  cotisations.</li>
+  <li>OCDE, <em>Taxing Wages 2026</em> ; Bozio, A. et Wasmer, É. (2024),
+  rapport au Premier ministre sur les exonérations de cotisations.</li>
+  <li>Dubois, Y. et Marino, A. (2015), <em>Économie et Statistique</em>
+  481-482 ; Aubert, P. et Bachelet, M. (2012), INSEE ; Aubert, P. et
+  Rabaté, S. (2014), <em>Économie et Statistique</em> 474.</li>
+  <li>INSEE, <em>Insee Première</em> 2085 sur l'espérance de vie par niveau de
+  vie, 2063 sur la pauvreté, Focus 287 sur le patrimoine ; Conseil d'analyse
+  économique, note 69, <em>Repenser l'héritage</em> (2021).</li>
+  <li>Chabaud, M. et Rubin, J. (2025), INSEE, sur ce que les règles
+  d'indexation ont retiré ; Bridenne, I. et Brossard, C. (2008),
+  <em>Retraite et société</em>, sur la réforme de 1993.</li>
+  <li>DEPP, compte de l'éducation 2024 ; OCDE, <em>Regards sur l'éducation
+  2025</em> et <em>PISA 2022</em>.</li>
+  <li>Jensen, R. et Richter, K. (2004), <em>Journal of Public Economics</em>
+  88 ; Tinios, P. (2016), LSE Hellenic Observatory ; McHale, J. (1999),
+  NBER 7031 ; Holzmann, R., Palacios, R. et Zviniene, A. (2004), Banque
+  mondiale ; <em>Flemming v. Nestor</em>, 363 U.S. 603 (1960).</li>
+  <li>Feldstein, M. (1974, 1996) et sa réfutation par Leimer, D. et
+  Lesnoy, S. (1982), <em>Journal of Political Economy</em> — l'effet sur
+  l'épargne, cité comme un ordre de grandeur discuté.</li>
+  <li>Dimson, E., Marsh, P. et Staunton, M. (2026),
+  <em>Global Investment Returns Yearbook</em> ; d'Albis, H. et Badji, I.
+  (2017), <em>Économie et Statistique</em> 491-492, cité contre notre propre
+  thèse.</li>
+</ul></div></details>
+</main>
+<footer>
+  <p><strong>Ce simulateur n'a aucune valeur officielle.</strong> Il n'émane
+  d'aucune caisse et ne vaut ni relevé de carrière, ni estimation de vos droits.
+  Seule votre caisse fait foi
+  (<a href="https://www.info-retraite.fr/">info-retraite.fr</a>).</p>
+  <p>Modèle ouvert, code et données sur <a href="https://github.com/g-pliberal/retraitecomptenotionelle">GitHub</a> (code sous licence
+  Apache 2.0, infographies et textes sous
+  <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr">CC BY-SA 4.0</a>).
+  Pensions et salaires s'affichent au brut ou au net, à votre choix, par la
+  bascule « Montants » ; le tout en euros constants de l'année de référence.
+  Les séries d'avant 1950 et les paramètres de régime restent saisis à la main :
+  <a href="https://github.com/g-pliberal/retraitecomptenotionelle/blob/main/docs/limites.md">lire les limites</a> avant de citer un chiffre.</p>
+  <p class="retour-site">Un outil du <a href="https://partiliberalfrancais.fr/" target="_top">Parti libéral français</a>.</p>
+</footer>
 <script type="module" src="../moteur/js/routeur.js"></script>
 </body>
 </html>

@@ -354,13 +354,15 @@ def test_chaque_etape_a_son_script_et_sait_verifier():
 def test_l_ordre_suit_ce_que_chaque_etape_lit():
     """L'inventaire avant tout ; les témoins après le paquet, dont ils rendent
     les pages, et après les mesures de l'accueil, qu'ils rendent aussi
-    (action 163) ; le tableau de bord, qui compte les témoins, puis les
-    chiffres ancrés, qui sondent tout, à la fin, et le contrôle de
-    conservation en dernier."""
+    (action 163) ; les pages toutes faites, qui rendent le site avec le même
+    paquet et les mêmes mesures (action 174) ; le tableau de bord, qui compte
+    les témoins, puis les chiffres ancrés, qui sondent tout, à la fin, et le
+    contrôle de conservation en dernier."""
     premier, milieu, dernier = regenerer.TEMPS
     assert regenerer.INVENTAIRE in premier[0]
     assert (regenerer.PAQUET, regenerer.ACCUEIL, regenerer.TEMOINS) in milieu
-    assert dernier == ((regenerer.TABLEAU_DE_BORD, regenerer.PROSE, regenerer.CONSERVATION),)
+    assert dernier == ((regenerer.PAGES, regenerer.TABLEAU_DE_BORD, regenerer.PROSE,
+                        regenerer.CONSERVATION),)
     assert regenerer.etapes(regenerer.TEMPS_PROSE) == [
         regenerer.TABLEAU_DE_BORD, regenerer.PROSE, regenerer.CONSERVATION]
 

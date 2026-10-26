@@ -19,10 +19,31 @@ types et Droits non cotisés lisent ce que le Python en a fabriqué
   une section. `moteur/js/adresses.js` lit les deux formes d'adresse, l'ancienne
   (`#/cout?indexation=prix`) comprise, et écrit la nouvelle ; le gabarit écrit
   chaque lien relatif à la page rendue (`lien`, `route`, `versLaPage`), et le
-  routeur redirige les anciennes adresses. `index.html` est la source des huit
-  pages en dossier, que `scripts/construire_pages.py` fabrique (`regenerer.py`
-  les refait, `.gitattributes` les déclare fabriquées) : on retouche
-  `index.html`, jamais une page de dossier.
+  routeur redirige les anciennes adresses.
+- **Les neuf pages sont écrites toutes faites, et fabriquées** : aucune ne se
+  retouche. `scripts/construire_pages.py` met dans la coquille
+  `moteur/page.html` le rendu de chaque page pour ses réglages par défaut — le
+  titre, la description, l'adresse canonique de la copie du parti, le corps, le
+  pied —, avec `sitemap.xml` ; `regenerer.py` les refait, `.gitattributes` les
+  déclare fabriquées. On retouche `moteur/page.html`, `pages.js` ou
+  `gabarit.js`, jamais une page. La coquille ne charge que la feuille de style,
+  les deux polices et `routeur.js` : ni `modulepreload` ni préchargement du
+  paquet, chaque octet demandé avant la peinture la retarde.
+- **Le routeur anime la page, il ne la recalcule pas** (`hydrater`,
+  `peutHydrater`, dans `routeur.js`) : il replie les tableaux, branche le
+  formulaire, ouvre la section de l'adresse. Il ne prépare le moteur (le
+  paquet de données, le simulateur : `moteur()`) que pour ce que la page toute
+  faite ne porte pas — des réglages ou une carrière derrière le `#`, une saisie
+  retenue à reprendre, un tracé qui ne convient plus à la colonne — et garde
+  alors la hauteur de la page le temps du premier calcul. Une page recalculée
+  perd sa marque `data-prerendu`.
+- **Un tracé qui dépend de l'écran s'écrit deux fois** dans la page toute
+  faite, pour une colonne de téléphone (<!--chiffre:tenu(test_les_constantes_du_pre_rendu_sont_celles_du_gabarit)-->360<!--/--> points) et pour le large (1040,
+  schémas de front à 480) ; `.variante-etroite` et `.variante-large`, dans la
+  feuille de style, en montrent un seul (seuil de <!--chiffre:tenu(test_la_feuille_de_style_montre_un_seul_dessin_a_la_fois)-->800<!--/--> points). Un dessin
+  convient à une colonne à <!--chiffre:tenu(test_un_dessin_convient_a_la_colonne_dans_la_tolerance)-->12<!--/--> % près (`tracesConviennent`) : au-delà, la
+  fenêtre redessine la page par le moteur. `marquerLesTraces` ne sert qu'au
+  générateur, qui retrouve ainsi chaque tracé.
 - **Les exponentielles du moteur passent par `libm.js`** : `exp`, `log` et
   `pow`, au bit près de la libm de Linux, dont le Python tient les siennes ;
   jamais `Math.exp`, `Math.log` ni `**`, qui rendraient celles du navigateur,
@@ -60,8 +81,10 @@ types et Droits non cotisés lisent ce que le Python en a fabriqué
   (`test_le_simulateur_tient_en_peu_de_mots`) ; toute phrase en gras d'une
   page figée au catalogue `data/reference/site/affirmations.yaml`, avec son
   contrôle ; `python scripts/construire_temoins.py`, puis
-  `python scripts/resumer_temoins.py` ; `python -m pytest -m site`, qui joue
-  aussi le site dans le navigateur.
+  `python scripts/resumer_temoins.py` ; `python scripts/construire_pages.py`,
+  qui refait les neuf pages (`regenerer.py` aussi, `tests/test_pages_en_dossier.py`
+  les juge périmées) ; `python -m pytest -m site`, qui joue aussi le site dans
+  le navigateur.
 - **Une retouche de `moteur/style.css` ou d'un dessin du gabarit** : d'abord
   la mesure qui dit ce qui doit changer, vue rouge, dans
   `tests/test_ecrans.py` ; puis `python -m pytest tests/test_ecrans.py`.

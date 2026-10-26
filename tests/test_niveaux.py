@@ -28,7 +28,6 @@ def _fonctions(fichier: str) -> set[str]:
 #: rapide (action 163, garde 3), et les deux derniers gardent les comptes du
 #: parcours et les tableaux de ses carrières.
 GARDES_RAPIDES = (
-    ("test_web.py", "test_les_modules_sont_tous_precharges"),
     ("test_web.py", "test_le_README_n_ecrit_a_la_main_ni_statuts_ni_regimes"),
     ("test_web_revues.py", "test_le_menu_des_statuts_est_groupe_par_famille"),
     ("test_niveaux.py", "test_chaque_exception_vise_un_test_qui_existe"),

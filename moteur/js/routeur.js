@@ -1,40 +1,67 @@
 /**
  * Le routeur du site : ce que fait la page une fois chargée — lire l'adresse,
- * préparer le contexte, rendre la page demandée, répondre aux gestes du
- * lecteur (formulaire, bascules, graphiques, partage, relevé déposé).
+ * rendre la page demandée, répondre aux gestes du lecteur (formulaire, bascules,
+ * graphiques, partage, relevé déposé).
  *
  * Il vivait en ligne dans ``index.html`` ; il en est sorti (action 174) pour
- * que les pages posées chacune dans son dossier le partagent, et que le
- * navigateur ne le charge qu'une fois. Ses imports et le paquet de données se
- * résolvent depuis lui, non depuis la page qui le charge.
+ * que les neuf pages le partagent, et que le navigateur ne le charge qu'une
+ * fois. Ses imports et le paquet de données se résolvent depuis lui, non depuis
+ * la page qui le charge.
+ *
+ * LA PAGE EST DÉJÀ ÉCRITE. Chaque page arrive toute faite (`scripts/construire_pages.py`),
+ * pour ses réglages par défaut : le routeur l'ANIME — il replie les tableaux,
+ * branche le formulaire, ouvre la section que l'adresse nomme — sans la
+ * recalculer, et sans le moteur. Il ne charge le moteur et le paquet de
+ * données que pour ce que la page toute faite ne porte pas : des réglages ou
+ * une carrière dans l'adresse, une saisie retenue à reprendre, un tracé qui ne
+ * convient pas à la colonne (`peutHydrater`).
  */
 import {
   CLES_MODELISATION, CODES_SANS_EMPLOI, RELEVE_MAXIMUM, Saisie,
 } from "./saisie.js";
 import { Contexte, VERSION_PAQUET } from "./contexte.js";
 import { ecrireAdresse, lireAdresse } from "./adresses.js";
-import {
-  DESCRIPTIONS, TITRES, rendre, requeteBasculee, requeteSansPeriode,
-} from "./pages.js";
+import { rendre, requeteBasculee, requeteSansPeriode } from "./pages.js";
 import * as gabarit from "./gabarit.js";
 import { NOMS_DE_MOIS } from "./calendrier.js";
 import { revenuDesPoints } from "./droit/releve.js";
 
 // Le paquet de données, résolu depuis ce module et non depuis la page : une
-// page posée dans un dossier (`cout/`) le trouve au même endroit. C'est
-// l'adresse que le `<link rel="preload">` de l'en-tête désigne : la requête
-// qui s'en écarterait téléchargerait le paquet deux fois.
+// page posée dans un dossier (`cout/`) le trouve au même endroit. Aucune page
+// ne le précharge : elle se lit sans lui, et il ne part qu'au premier calcul.
 const PAQUET = new URL("../donnees.json", import.meta.url);
 
 // La signature des images composées ici vient du gabarit, comme tout ce
 // que le site écrit : elle ne doit exister qu'à un seul endroit.
 const { SIGNATURE, SIGNATURE_SITE, ADRESSE_SITE } = gabarit;
 
-const amorce = document.getElementById("amorce");
 let contexte = null;
 
+// Le moteur n'a pas pu se charger : la page toute faite reste lisible, et le
+// message le dit au-dessus d'elle.
 function echec(titre, detail) {
-  amorce.innerHTML = `<h1>${titre}</h1><div class="replique">${detail}</div>`;
+  const contenu = document.getElementById("contenu");
+  const message = `<div class="erreur"><strong>${titre}</strong> ${detail}</div>`;
+  // Sous l'écran d'attente, le message le remplace ; sur une page toute faite,
+  // il la précède.
+  contenu.innerHTML = contenu.querySelector(".chargement") ? message : message + contenu.innerHTML;
+  document.body.classList.remove("calcul-en-cours");
+  contenu.removeAttribute("aria-busy");
+}
+
+function echecDuChargement(erreur) {
+  echec(
+    "Le simulateur n'a pas pu se charger",
+    `<p>${neutraliser(erreur)}</p>`
+    + "<p>Le modèle et ses données sont servis depuis ce dépôt : un réseau "
+    + "coupé pendant le chargement, ou un navigateur qui bloque les modules "
+    + "JavaScript, peuvent l'empêcher d'aboutir. Recharger la page suffit "
+    + "souvent ; sinon, un navigateur à jour (Firefox, Chrome, Safari, Edge) "
+    + "règle le problème.</p>"
+    + '<p><a href="https://github.com/g-pliberal/retraitecomptenotionelle">'
+    + "Le dépôt du projet</a></p>",
+  );
+  pret();
 }
 
 // Ce qu'un message d'erreur peut porter de texte arbitraire — le nom d'un
@@ -48,10 +75,20 @@ function neutraliser(texte) {
 
 // -- démarrage ---------------------------------------------------------------
 
+// Le moteur, chargé une fois et à la demande : la page toute faite se lit sans
+// lui. Un échec se retente au calcul suivant.
+let preparation = null;
+function moteur() {
+  preparation ||= preparer().catch((erreur) => {
+    preparation = null;
+    throw erreur;
+  });
+  return preparation;
+}
+
 async function preparer() {
-  // Requête volontairement nue : c'est celle que décrit le <link rel="preload">
-  // de l'en-tête, `crossorigin` compris. Toute option qui s'en écarterait ferait
-  // manquer le préchargement, et le paquet serait téléchargé deux fois.
+  // Le cache du navigateur sert le paquet qu'il a déjà : il ne change qu'avec
+  // une version du code, et la version qu'il porte le dit (plus bas).
   const reponse = await fetch(PAQUET, { cache: "force-cache" });
   if (!reponse.ok) {
     throw new Error(`moteur/donnees.json introuvable (${reponse.status})`);
@@ -79,30 +116,6 @@ async function preparer() {
 }
 
 // -- rendu -------------------------------------------------------------------
-
-function coquille() {
-  amorce.remove();
-  // L'en-tête est posé plein, celui de la page qu'on ouvre. Vide sous l'écran
-  // d'attente, il se remplissait avec la page et poussait tout <main> de la
-  // hauteur du bandeau : le décalage que Lighthouse comptait près de 1 (action
-  // 174). Le rendu le repose à l'identique, ses liens portant alors les
-  // réglages du lecteur.
-  document.body.insertAdjacentHTML("beforeend",
-    `<div id="entete">${gabarit.entete(adresse().chemin)}</div>`
-    + '<main id="contenu" tabindex="-1"></main>');
-}
-
-// Le pied est posé une fois, à côté de <main> et non dedans : un <footer>
-// imbriqué dans <main> n'est pas un repère « contentinfo » et disparaît de la
-// navigation par repères. Il est statique, le reconstruire à chaque rendu ne
-// servait rien non plus. Il attend le premier rendu : posé sous l'écran
-// d'attente, il s'y voyait, puis plongeait de plusieurs écrans quand la page
-// arrivait — l'autre moitié du même décalage.
-function poserLePied() {
-  if (!document.querySelector("body > footer")) {
-    document.body.insertAdjacentHTML("beforeend", gabarit.pied());
-  }
-}
 
 // Ce que la synthèse vocale doit entendre après un calcul. Le contenu de <main>
 // est remplacé en bloc : sans cette annonce, valider le formulaire ne produit
@@ -272,13 +285,27 @@ window.addEventListener("resize", () => {
     const traces = document.querySelector(
       "#contenu :is(figure.graphique, figure.sankey, figure.cascade)");
     const deFront = document.querySelector("#contenu .de-front");
-    if (traces && routeAffichee
-        && (attendue !== ecranRendu || (deFront && demi !== demiRendue))) { afficher(); }
+    if (!traces || !routeAffichee) { return; }
+    // La page toute faite porte ses tracés pour deux écrans : elle convient
+    // tant que le dessin est à moins de 12 % de la colonne, et l'autre dessin
+    // se mesure quand la fenêtre le fait paraître. Une page recalculée, elle,
+    // est dessinée à la largeur exacte.
+    const toutFaite = document.getElementById("contenu").dataset.prerendu !== undefined;
+    if (toutFaite) {
+      if (gabarit.tracesConviennent(attendue, demi)) {
+        dimensionnerLesTraces(document.getElementById("contenu"));
+      } else {
+        afficher();
+      }
+    } else if (attendue !== ecranRendu || (deFront && demi !== demiRendue)) {
+      afficher();
+    }
   }, 250);
 });
 
 async function afficher() {
   const numero = ++numeroDeRendu;
+  delete document.body.dataset.pret;
   // Ce que le lecteur vient de faire, s'il vient de faire quelque chose : un
   // retour arrière n'a pas de déclencheur, et un déclencheur de plus de deux
   // secondes n'est pas celui de ce rendu — un clic dont la navigation a été
@@ -314,13 +341,23 @@ async function afficher() {
   // l'on note ce qui était ouvert et où se trouvait ce qu'on a cliqué, pour
   // le retrouver au même endroit de l'écran. Changer de page, en revanche, se
   // lit depuis le haut : l'écran d'attente y a toute sa place.
-  const surPlace = cible.chemin === routeAffichee;
+  // La page toute faite est déjà là : elle s'estompe le temps du calcul, comme
+  // une page qu'on recalcule — hors le simulateur, dont la page toute faite est
+  // un formulaire vierge qu'on ne veut pas voir remplir sous le calcul.
+  const surPlace = cible.chemin === routeAffichee
+    || (contenu.dataset.prerendu === cible.chemin && cible.chemin !== "/simuler");
   const ouverts = surPlace ? detailsOuverts(contenu) : [];
   const repere = surPlace && action ? repereDe(action.element, contenu) : null;
 
   document.body.classList.add("calcul-en-cours");
   contenu.setAttribute("aria-busy", "true");
   if (!surPlace) {
+    // La page toute faite garde sa hauteur le temps du calcul : sans cela le pied
+    // remonterait sous les yeux, puis retomberait — deux décalages de mise en
+    // page pour rien. `pret` la libère.
+    if (contenu.dataset.prerendu !== undefined) {
+      contenu.style.minHeight = `${contenu.offsetHeight}px`;
+    }
     contenu.innerHTML = chargement(
       MESSAGES_ATTENTE[cible.chemin] || "Calcul en cours…",
     );
@@ -328,11 +365,19 @@ async function afficher() {
   // Laisse le navigateur peindre l'attente avant de bloquer sur le calcul.
   await new Promise((suite) => { setTimeout(suite, 20); });
   if (numero !== numeroDeRendu) { return; }
+  // Le moteur, s'il n'est pas déjà là : le premier calcul le charge.
+  try {
+    await moteur();
+  } catch (erreur) {
+    echecDuChargement(erreur);
+    return;
+  }
+  if (numero !== numeroDeRendu) { return; }
 
   let titre;
   let corps;
   try {
-    [titre, corps] = rendre(contexte, cible.chemin in TITRES ? cible.chemin : "/",
+    [titre, corps] = rendre(contexte, gabarit.PAGES.includes(cible.chemin) ? cible.chemin : "/",
       cible.parametres, largeurDeLaColonne());
     ecranRendu = gabarit.ecran();
     demiRendue = gabarit.demiColonne();
@@ -341,25 +386,21 @@ async function afficher() {
     contenu.removeAttribute("aria-busy");
     contenu.innerHTML = '<div class="erreur"><strong>Le calcul a échoué.</strong> '
       + neutraliser(erreur) + "</div>";
-    poserLePied();
     routeAffichee = null;
     annoncer(`Le calcul a échoué. ${String(erreur)}`);
+    pret();
     return;
   }
 
   document.getElementById("entete").innerHTML = gabarit.entete(cible.chemin);
   contenu.innerHTML = corps;
-  poserLePied();
+  // Ce n'est plus la page toute faite : son dessin n'est plus celui de deux écrans.
+  delete contenu.dataset.prerendu;
   routeAffichee = cible.chemin;
   requeteAffichee = requeteDeLAdresse();
   if (gabarit.options()) { reglesVues = true; }
-  document.title = `${titre} — Retraite en comptes notionnels`;
-  // La description suit la route, comme le titre : c'est ce qu'un partage ou
-  // un enregistrement de la page reprend. Le gabarit la porte, une par page.
-  const description = document.querySelector('meta[name="description"]');
-  if (description && DESCRIPTIONS[cible.chemin]) {
-    description.content = DESCRIPTIONS[cible.chemin];
-  }
+  // Le titre de l'onglet et la description sont ceux de la page toute faite :
+  // chaque page est son propre document.
   document.body.classList.remove("calcul-en-cours");
   contenu.removeAttribute("aria-busy");
 
@@ -373,9 +414,7 @@ async function afficher() {
   const memoire = retenir(contenu, cible, action, reprise);
   preremplirLeSimulateurCourt(contenu);
   annoncer((memoire ? `${memoire} ` : "") + resume(titre, contenu));
-  for (const figure of contenu.querySelectorAll("figure.graphique")) {
-    dimensionnerLecture(figure);
-  }
+  dimensionnerLesTraces(contenu);
   // En dernier : tout ce qui change la hauteur de la page — dépliants
   // rouverts, saisie remise dans ses champs, légendes dimensionnées — doit
   // être fait avant qu'on mesure où poser la lecture.
@@ -383,6 +422,24 @@ async function afficher() {
   // Puis la section que l'adresse désigne — un renvoi venu d'une autre page la
   // porte derrière le `#` (`cout/#cout-equilibre`) : on l'ouvre, et on y va.
   if (cible.section) { ouvrirSection(cible.section); }
+  pret();
+}
+
+// Les cases de la légende d'un graphique prennent la largeur de leur plus
+// grande valeur : seul un tracé qui se voit se mesure. Une page toute faite
+// porte ses tracés pour deux écrans, et celui qui n'est pas montré n'a pas de
+// taille — il se mesure quand la fenêtre le fait paraître.
+function dimensionnerLesTraces(contenu) {
+  for (const figure of contenu.querySelectorAll("figure.graphique")) {
+    if (figure.getClientRects().length) { dimensionnerLecture(figure); }
+  }
+}
+
+// La page est prête — rendue, animée, branchée : les tests, qui n'ont pas à
+// deviner quand l'attendre, le lisent ici.
+function pret() {
+  document.getElementById("contenu").style.minHeight = "";
+  document.body.dataset.pret = "";
 }
 
 // -- les statuts, aux seules dates où leur régime recrutait -------------------
@@ -1564,10 +1621,11 @@ document.addEventListener("submit", (evenement) => {
   // Calculer depuis une autre page mène au simulateur par un chargement, et le
   // document neuf ne saura pas de quel geste il vient : ce que le lecteur
   // vient de calculer est retenu avant de partir.
-  if (simule && route !== pageDuDocument()) {
-    ecrireMemoire({ requete, brouillon: null });
-  }
-  action.hash = requete;
+  const d_ailleurs = simule && route !== pageDuDocument();
+  if (d_ailleurs) { ecrireMemoire({ requete, brouillon: null }); }
+  // Et il arrive sur les résultats, que le calcul sur place montre d'un
+  // défilement : la section est dans l'adresse (`simuler/#resultats&…`).
+  action.hash = d_ailleurs ? `resultats&${requete}` : requete;
   naviguer(action);
 });
 
@@ -2388,8 +2446,10 @@ async function imageDuGraphique(carte) {
   // deux schémas de Sankey de la carte des flux. Un schéma porte son titre en
   // tête, un graphique sa légende en pied ; chacun garde les proportions de son
   // repère — une courbe fait 720 × 300, un schéma la hauteur de ses caisses.
+  // Les tracés qui se voient : une page toute faite porte les siens pour deux
+  // écrans, et seul l'un des deux est montré.
   const figures = [...carte.querySelectorAll("figure.graphique, figure.sankey")]
-    .filter((figure) => figure.querySelector("svg"));
+    .filter((figure) => figure.querySelector("svg") && figure.getClientRects().length);
   if (!figures.length) { return null; }
   const traces = await Promise.all(figures.map(async (figure) => {
     const svg = figure.querySelector("svg");
@@ -3017,26 +3077,49 @@ document.addEventListener("click", (evenement) => {
 
 window.addEventListener("hashchange", afficher);
 
-// Une ancienne adresse est remplacée avant tout : charger le paquet de données
-// pour quitter la page aussitôt serait un travail perdu.
+// -- la page toute faite, animée ------------------------------------------------
+
+// Peut-on laisser la page telle que le serveur l'a envoyée ? Oui quand c'est
+// celle de ce document, pour ses réglages par défaut — l'adresse ne porte ni
+// réglage ni carrière —, sans saisie retenue à reprendre sur le simulateur, et
+// quand le dessin de ses tracés convient à la colonne qu'on mesure. Sinon le
+// moteur la recalcule.
+function peutHydrater(cible) {
+  const contenu = document.getElementById("contenu");
+  if (contenu?.dataset.prerendu !== cible.chemin) { return false; }
+  if (Object.keys(cible.parametres).length) { return false; }
+  if (cible.chemin === "/simuler" && lireMemoire()?.requete) { return false; }
+  return gabarit.tracesConviennent(...gabarit.ecransDe(largeurDeLaColonne()));
+}
+
+// La page est là, rendue : le routeur y fait ce qu'il fait après chaque rendu,
+// sans rendre.
+function hydrater(cible) {
+  const contenu = document.getElementById("contenu");
+  routeAffichee = cible.chemin;
+  requeteAffichee = "";
+  premierRendu = false;
+  plierLesTableaux(contenu);
+  daterStatuts(contenu);
+  suivreLesDates(contenu);
+  brancherLeDepot(contenu);
+  retenir(contenu, cible, null, false);
+  preremplirLeSimulateurCourt(contenu);
+  dimensionnerLesTraces(contenu);
+  if (cible.section) { ouvrirSection(cible.section); }
+  pret();
+}
+
+// Une ancienne adresse est remplacée avant tout : charger le moteur pour quitter
+// la page aussitôt serait un travail perdu.
 const ancienne = adresse();
 const quitte = ancienne.ancienne && !passerALaNouvelleAdresse(ancienne);
 
 if (!quitte) {
-  preparer().then(() => {
-    coquille();
-    return afficher();
-  }).catch((erreur) => {
-    echec(
-      "Le simulateur n'a pas pu se charger",
-      `<p>${neutraliser(erreur)}</p>`
-      + "<p>Le modèle et ses données sont servis depuis ce dépôt : un réseau "
-      + "coupé pendant le chargement, ou un navigateur qui bloque les modules "
-      + "JavaScript, peuvent l'empêcher d'aboutir. Recharger la page suffit "
-      + "souvent ; sinon, un navigateur à jour (Firefox, Chrome, Safari, Edge) "
-      + "règle le problème.</p>"
-      + '<p><a href="https://github.com/g-pliberal/retraitecomptenotionelle">'
-      + "Le dépôt du projet</a></p>",
-    );
-  });
+  const cible = adresse();
+  if (peutHydrater(cible)) {
+    hydrater(cible);
+  } else {
+    afficher();
+  }
 }
