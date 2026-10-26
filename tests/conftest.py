@@ -67,9 +67,12 @@ COMPLETS = {
     "test_parcours.py",
     # Le pont par lequel le Python lit le site : il lance node.
     "test_site.py",
-    # Le site dans un vrai navigateur, à cinq largeurs d'écran : vingt-cinq
-    # secondes de Chromium.
+    # Le site dans un vrai navigateur, à cinq largeurs d'écran : une minute et
+    # demie de Chromium, chaque page s'ouvrant à neuf (action 174).
     "test_ecrans.py",
+    # Les adresses du site dans le même navigateur : les anciennes qui mènent
+    # aux nouvelles, les liens, les formulaires (action 174).
+    "test_adresses_navigateur.py",
     # Le système 1 au format de « Mon estimation retraite » : les deux
     # moteurs, et la page qui le montre.
     "test_estimation_du_site.py",
@@ -313,6 +316,9 @@ SITE = {
     ("test_ecrans.py", "test_aucune_page_ne_leve_d_erreur_a_aucune_largeur"),
     ("test_ecrans.py", "test_un_trace_et_sa_legende_se_voient_ensemble"),
     ("test_ecrans.py", "test_les_quatre_systemes_se_comparent_d_un_seul_regard"),
+    # Où une adresse mène, ancienne ou neuve : une retouche du routeur ou d'un
+    # lien le déplace.
+    ("test_adresses_navigateur.py", "test_une_adresse_mene_ou_le_lecteur_l_attend"),
 }
 
 

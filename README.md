@@ -188,8 +188,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->1803<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->9 151<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->1805<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->9 159<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Neuf pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -220,8 +220,11 @@ du code, celle des infographies, l'obligation de citer le producteur d'une
 série — se lit sous **Méthode et sources**, section « Licences et
 réutilisation ».
 
-La simulation vit sous `#/simuler`, et son adresse contient tous ses
-paramètres — elle peut être citée ou partagée telle quelle. Chaque résultat est
+Chaque page a son adresse, un dossier du site — `simuler/`, `cout/`,
+`methode/`… — ; la simulation vit sous `simuler/`, et son adresse contient tous
+ses paramètres, derrière le `#`, que le navigateur ne transmet à aucun serveur :
+elle peut être citée ou partagée telle quelle. Les adresses d'avant, la page
+derrière le `#` (`#/simuler?…`), mènent aux nouvelles. Chaque résultat est
 consultable en JSON au bas de la page.
 
 <details>

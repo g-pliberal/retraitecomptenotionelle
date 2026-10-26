@@ -7,11 +7,38 @@ intégration qui suffise. Tout ce qui décrit le site parent y est daté : ce si
 évolue sans que ce dépôt le sache, et rien ici ne doit être lu comme une
 promesse sur son état futur.
 
+## Ce qui a changé le 26 octobre 2026 : une adresse par page
+
+Chaque page du simulateur a désormais son adresse, un dossier de son nom :
+`/retraite/simuler/`, `/retraite/cout/`… au lieu de `/retraite/#/simuler`,
+`/retraite/#/cout`… Les raisons, et ce que cela change pour le lecteur, sont
+dans la note de décision 0004 (`docs/decisions/0004-une-adresse-par-page.md`).
+Pour l'hôte, quatre choses :
+
+1. **Les anciennes adresses marchent toujours.** `/retraite/#/simuler`, le lien
+   que ce fichier recommandait, charge l'accueil, dont le script lit la suite
+   et remplace l'adresse par `/retraite/simuler/` ; les liens publiés, les
+   marque-pages et les partages mènent où ils menaient.
+2. **La copie doit contenir les dossiers des pages** : `simuler/`, `cout/`,
+   `risque/`, `partager/`, `saviez-vous/`, `cas-types/`, `avantages/` et
+   `methode/`, chacun avec son `index.html`, en plus de `index.html` et de
+   `moteur/`. « Recopier le dépôt tel quel » les emporte. Sans eux,
+   `/retraite/cout/` répond 404 — et c'est l'adresse que le simulateur écrit
+   dans ses liens.
+3. **Aucune règle de serveur n'est requise** : un dossier qui porte son
+   `index.html` est servi à `/retraite/cout/`, et `/retraite/cout` redirige vers
+   `/retraite/cout/`, comme `/retraite` vers `/retraite/`.
+4. **Les deux retouches faites côté hôte dans `index.html`** (`plf-theme.css`,
+   le bandeau `plf-back-link`) ne couvrent plus que l'accueil. Ce fichier en
+   recommande l'abandon depuis le 17 septembre 2026 ; avec une page par
+   dossier, c'est le moment — voir « L'intégration recommandée ». À régler
+   avec le mainteneur de l'hôte à la prochaine copie.
+
 ## La frontière
 
-- **Ce dépôt** contrôle l'application de retraite : `index.html`, `moteur/`,
-  les données et le modèle. Il la publie tel quel sur GitHub Pages
-  (`g-pliberal.github.io/retraitecomptenotionelle/`).
+- **Ce dépôt** contrôle l'application de retraite : `index.html` et les
+  dossiers de ses pages, `moteur/`, les données et le modèle. Il la publie tel
+  quel sur GitHub Pages (`g-pliberal.github.io/retraitecomptenotionelle/`).
 - **Le site partiliberalfrancais.fr** n'est pas contrôlé d'ici. Ni son HTML,
   ni ses feuilles, ni ses scripts, ni sa configuration de serveur. Il est
   traité en lecture seule ; il n'a été ni modifié, ni déployé par le travail
@@ -49,27 +76,40 @@ Deux conséquences de cette intégration, telles qu'elle était ce jour-là :
 
 ## Les adresses stables
 
-Le simulateur tient dans une seule page ; tout ce qui suit `#` est traité dans
-le navigateur, aucune route n'a besoin d'être configurée côté serveur.
+Chaque page est un dossier, avec son `index.html` ; tout ce qui suit `#` est
+traité dans le navigateur, et aucune route n'a besoin d'être configurée côté
+serveur.
 
 | Adresse | Ce qu'elle montre |
 |---|---|
-| `/retraite/` | L'accueil : le programme, puis les liens vers les sept autres pages. |
-| `/retraite/#/simuler` | Le formulaire de simulation, vide de tout résultat. |
-| `/retraite/#/simuler?…` | Une simulation, tous paramètres dans l'adresse : elle se partage, se cite, se recharge. Exemple : `#/simuler?naissance=1965-03-01&sexe=H&statut=salarie_prive_non_cadre&debut=1985-09-01&liquidation=2029-03-01`. |
-| `/retraite/#/cout`, `#/risque`, `#/partager` | Les autres pages de l'électeur : le coût, pourquoi changer, les chiffres à partager. |
-| `/retraite/#/cas-types`, `#/avantages`, `#/methode` | Les pages qui prouvent : les carrières types, les droits non cotisés, la méthode et les sources. |
-| `/retraite/#/trajectoire`, `#/donnees` | Les adresses de deux pages fondues dans d'autres le 23 septembre 2026, qui restent valides : la première rend les résultats du simulateur, cumul versé ouvert ; la seconde, la page Méthode et sources, à sa partie « D'où viennent les chiffres ». |
+| `/retraite/` | L'accueil : le programme, puis les liens vers les autres pages. |
+| `/retraite/simuler/` | Le formulaire de simulation, vide de tout résultat. |
+| `/retraite/simuler/#…` | Une simulation, tous paramètres derrière le `#` : elle se partage, se cite, se recharge. Exemple : `/retraite/simuler/#naissance=1965-03-01&sexe=H&statut=salarie_prive_non_cadre&debut=1985-09-01&liquidation=2029-03-01`. |
+| `/retraite/cout/`, `risque/`, `partager/`, `saviez-vous/` | Les pages de l'électeur : le coût, pourquoi changer, les chiffres à partager, les règles du système actuel. |
+| `/retraite/cas-types/`, `avantages/`, `methode/` | Les pages qui prouvent : les carrières types, les droits non cotisés, la méthode et les sources. |
+| `/retraite/cout/#indexation=prix` | Une page sous d'autres réglages : les réglages du lecteur sont derrière le `#`, comme sa carrière. |
+| `/retraite/methode/#sources` | Une section d'une page : un mot sans `=` derrière le `#`. |
+
+**Les anciennes adresses**, celles d'avant le 26 octobre 2026, restent valides
+et sont redirigées vers les précédentes, sans être empilées dans l'historique :
+`/retraite/#/simuler` mène à `/retraite/simuler/`, `/retraite/#/simuler?…` à
+`/retraite/simuler/#…`, `/retraite/#/cout` à `/retraite/cout/`, et de même pour
+chaque page ; l'ancienne simulation de l'accueil, `/retraite/#/?…`, mène au
+simulateur. `/retraite/#/trajectoire` et `/retraite/#/donnees`, les adresses de
+deux pages fondues dans d'autres le 23 septembre 2026, mènent toujours à ce qui
+les a remplacées : la première aux résultats du simulateur, cumul versé ouvert ;
+la seconde à la page Méthode et sources, à sa partie « D'où viennent les
+chiffres ». La redirection coûte un chargement de plus, une fois, avant que le
+moteur ne parte.
 
 Ces adresses sont celles que les pages du simulateur écrivent elles-mêmes ;
-elles ne changeront pas sans que ce fichier le dise. Les anciennes adresses de
-simulation sur `#/?…` restent lues.
+elles ne changeront pas sans que ce fichier le dise.
 
-### Quel lien poser : `/retraite/` ou `/retraite/#/simuler` ?
+### Quel lien poser : `/retraite/` ou `/retraite/simuler/` ?
 
 Une analyse d'usage, pas un avis sur le fond.
 
-| | `/retraite/` | `/retraite/#/simuler` |
+| | `/retraite/` | `/retraite/simuler/` |
 |---|---|---|
 | Ce qu'on voit | Le programme (proposition, trois chiffres, quatre idées, le plancher), la navigation vers Simuler | Le formulaire, cinq champs préremplis, le bouton « Calculer les quatre systèmes » |
 | Gestes avant un premier résultat | Deux : cliquer « Simuler », puis « Calculer » (ou ajuster puis calculer) | Un : « Calculer » — ou ajuster puis calculer |
@@ -77,7 +117,7 @@ Une analyse d'usage, pas un avis sur le fond.
 | Correspond littéralement à un lien nommé « simulateur » | Non : c'est une page de programme qui mène au simulateur | Oui |
 
 **Recommandation** : un lien libellé « simulateur » pointe sur
-`/retraite/#/simuler` ; un lien libellé « notre programme pour les retraites »
+`/retraite/simuler/` ; un lien libellé « notre programme pour les retraites »
 ou « retraites notionnelles » pointe sur `/retraite/`. Les deux sont stables,
 et les deux pages mènent l'une à l'autre en un clic.
 
@@ -91,14 +131,20 @@ Vérifié sur la copie en production et sur GitHub Pages.
 - **Les chemins relatifs conservés** : `index.html` charge `moteur/style.css`,
   `moteur/donnees.json` (<!--chiffre:poids(moteur/donnees.json)-->5 729<!--/--> Ko bruts,
   <!--chiffre:poids_comprime(moteur/donnees.json)-->788<!--/--> Ko compressés) et `moteur/js/*.js`,
-  dont les étapes du droit dans `moteur/js/droit/`, relativement à sa propre adresse. Le répertoire peut s'appeler autrement que
-  `retraite` ; il doit être servi avec sa barre finale (ou rediriger vers
-  elle), sinon les chemins relatifs se résolvent un niveau trop haut.
+  dont les étapes du droit dans `moteur/js/droit/`, relativement à sa propre
+  adresse ; la page d'un dossier (`cout/index.html`) les charge un niveau plus
+  haut (`../moteur/…`). Le répertoire peut s'appeler autrement que `retraite` ;
+  il doit être servi avec sa barre finale (ou rediriger vers elle), sinon les
+  chemins relatifs se résolvent un niveau trop haut. Les liens que les pages
+  écrivent sont relatifs aussi (`../cout/`) : le même fichier sert à GitHub
+  Pages et à la copie.
 - **Les types MIME usuels** : `text/html`, `text/css`, `application/json`,
   `text/javascript` pour les modules ES.
 - **JavaScript activé**, modules ES et `fetch` : tout navigateur de ces cinq
   dernières années. Sans script, la page dit pourquoi elle ne calcule pas.
-- **Aucune règle de réécriture** : le routage passe par `#`.
+- **Aucune règle de réécriture** : chaque page est un dossier qui porte son
+  `index.html`, que tout serveur statique sert à `…/cout/` ; le reste du
+  routage passe par `#`.
 - **La compression** (`gzip` ou `brotli`) est souhaitable pour `donnees.json`,
   pas requise.
 - Aucun en-tête particulier n'est requis. Une `Content-Security-Policy`, si
@@ -122,9 +168,12 @@ parent, le dépôt GitHub, info-retraite.fr, la licence Creative Commons.
 Tout est calculé dans le navigateur. Ce qui est saisi — dates, statuts,
 revenus, relevé de carrière — ne quitte pas la machine du lecteur ; il
 n'existe aucun serveur à qui l'envoyer. Les paramètres sont écrits dans
-l'adresse (`#/simuler?…`), donc dans l'historique du navigateur et dans tout
+l'adresse (`simuler/#…`), donc dans l'historique du navigateur et dans tout
 lien partagé, et le fragment `#…` n'est **pas** transmis au serveur par le
-navigateur. L'hébergeur voit passer la visite, comme pour toute page.
+navigateur : c'est la raison pour laquelle la carrière est derrière le `#` et
+non dans une requête (`?…`), que le serveur lirait et inscrirait dans ses
+journaux. L'hébergeur voit passer la visite — la page demandée —, comme pour
+toute page.
 
 Le simulateur ne porte **aucune mention légale** : ni identification de
 l'éditeur, ni politique de données personnelles, ni déclaration
@@ -140,8 +189,8 @@ couvrir `/retraite/` : l'identification de l'éditeur (loi n° 2004-575 du
 rien, comme décrit ci-dessus — et l'état d'accessibilité. Ce que le dépôt
 continue de porter, parce que lui seul le connaît, est sa licence : code sous
 Apache 2.0, infographies et textes sous CC BY-SA 4.0, séries à citer chez leur
-producteur ; c'est en pied de page et sous `#/methode`, section « Licences et
-réutilisation ».
+producteur ; c'est en pied de page et sur la page `methode/`, section « Licences
+et réutilisation ».
 
 Une conséquence à peser : l'adresse GitHub Pages
 (`g-pliberal.github.io/retraitecomptenotionelle/`) n'a pas de site parent pour
@@ -154,7 +203,7 @@ elle doit rester une adresse publique, ses mentions sont à poser ailleurs
 La plus petite intégration qui suffise, et la plus robuste :
 
 ```html
-<a href="/retraite/#/simuler">Simuler ma retraite</a>
+<a href="/retraite/simuler/">Simuler ma retraite</a>
 ```
 
 ou, pour le programme, `<a href="/retraite/">Retraites notionnelles</a>`.
@@ -178,15 +227,29 @@ faisait l'objet des deux modifications côté hôte :
   voir « Le contrat visuel ».
 
 Mettre à jour la copie revient à recopier le dépôt tel quel, sans rien y
-changer. Le mieux est de copier une version taguée ou un commit précis de
-`main`, et de noter lequel.
+changer — les dossiers des pages compris (`simuler/`, `cout/`…). Le mieux est
+de copier une version taguée ou un commit précis de `main`, et de noter lequel.
+
+**Depuis le 26 octobre 2026, les deux retouches de l'hôte ne tiennent plus
+seules.** `plf-theme.css` et le bandeau `plf-back-link`, insérés dans
+`index.html`, ne couvriraient que l'accueil ; les refaire dans les neuf pages,
+à chaque copie, serait un coût sans objet puisque ni l'une ni l'autre n'est
+nécessaire (voir ci-dessus). Les abandonner est la suite logique de la
+recommandation du 17 septembre.
 
 ### L'iframe, en option
 
 Le site ouvre aujourd'hui le simulateur dans un cadre, sur `/#simulateur`.
 Cela fonctionne, et le simulateur n'a rien à faire de particulier pour cela ;
 vérifié le 17 septembre 2026 : le cadre se charge, se redimensionne, le
-routage par `#` du simulateur ne touche pas celui du site.
+routage par `#` du simulateur ne touche pas celui du site. Depuis le
+26 octobre 2026, changer de page dans le cadre charge une nouvelle page dans le
+cadre, et non plus une nouvelle ancre : **la classe `plf-embedded` doit être
+posée à chaque chargement du cadre** (son événement `load`), pas une seule
+fois — sinon la ligne « Un outil du Parti libéral français » réapparaît en pied
+de page, ce qui ne casse rien. Le simulateur règle lui-même la hauteur du cadre
+à chaque rendu, donc à chaque chargement. À vérifier avec le mainteneur de
+l'hôte.
 
 Ce qui est garanti côté simulateur si l'hôte garde ce mode :
 
@@ -276,21 +339,28 @@ Ce que l'hôte n'a **pas** besoin de connaître, et ne doit pas citer :
    de tête porte le nom du simulateur, puis les onglets de l'électeur
    — Programme, Simuler, Coût, Pourquoi changer, Partager — et, derrière
    l'étiquette « Pour vérifier », en plus petit, les cinq pages qui prouvent.
-2. `/retraite/#/simuler` ouvre le formulaire ; « Calculer les quatre
+2. `/retraite/simuler/` ouvre le formulaire ; « Calculer les quatre
    systèmes » affiche le résumé « En bref » puis les quatre montants, et fait
    défiler jusqu'à eux.
 3. L'adresse d'exemple ci-dessus, collée dans la barre, affiche quatre systèmes
    sans passer par le formulaire ; recharger la page les réaffiche ; le bouton
    « précédent » du navigateur revient au formulaire.
-4. Sur un téléphone (ou une fenêtre de 390 px) : pas de défilement
+4. Chaque dossier de page est dans la copie : `/retraite/cout/`,
+   `/retraite/risque/`, `/retraite/partager/`, `/retraite/saviez-vous/`,
+   `/retraite/cas-types/`, `/retraite/avantages/` et `/retraite/methode/`
+   s'ouvrent, chacune avec son titre dans l'onglet ; `/retraite/cout` sans
+   barre redirige vers `/retraite/cout/`.
+5. Une ancienne adresse, `/retraite/#/simuler`, mène à
+   `/retraite/simuler/` sans que « précédent » ne ramène à elle.
+6. Sur un téléphone (ou une fenêtre de 390 px) : pas de défilement
    horizontal, la navigation tient sous le titre.
-5. La console du navigateur ne montre **aucune** requête vers une autre
+7. La console du navigateur ne montre **aucune** requête vers une autre
    origine que le site.
-6. En thème sombre du système, la page est sombre ; en clair, claire ; le
+8. En thème sombre du système, la page est sombre ; en clair, claire ; le
    bandeau est le même dans les deux cas.
-7. Si `/#simulateur` est encore un cadre : le simulateur s'y affiche sans sa
-   ligne de retour en pied, et le titre « Retraite à comptes notionnels »
-   reste lisible.
-8. Aucun fichier de ce dépôt n'a été modifié dans la copie ; s'il en reste un
+9. Si `/#simulateur` est encore un cadre : le simulateur s'y affiche sans sa
+   ligne de retour en pied, y compris après un changement de page dans le
+   cadre, et le titre « Retraite à comptes notionnels » reste lisible.
+10. Aucun fichier de ce dépôt n'a été modifié dans la copie ; s'il en reste un
    (`plf-theme.css`, `plf-back-link`), il est signalé comme dette dans ce
    fichier.

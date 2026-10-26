@@ -35,7 +35,9 @@ pages = module("pages")
 
 
 def _formulaire(requete: dict) -> str:
-    """Le formulaire que le site rend pour cette saisie, lue par sa saisie à lui."""
+    """Le formulaire que le site rend pour cette saisie, lue par sa saisie à lui,
+    sur la page du simulateur : c'est d'elle que son action est écrite."""
+    module("gabarit").poserPage("/simuler")
     return pages.formulaire(module("saisie").Saisie.depuis_requete(requete), site().contexte)
 
 RACINE = Path(__file__).resolve().parents[1]
@@ -96,7 +98,7 @@ class _Soumission(HTMLParser):
             self._zone[1] += donnees
 
 
-def _soumettre(html: str, action: str = "#/simuler") -> dict[str, str]:
+def _soumettre(html: str, action: str = "./") -> dict[str, str]:
     lecteur = _Soumission(action)
     lecteur.feed(html)
     assert lecteur.champs, f"aucun formulaire vers {action}"

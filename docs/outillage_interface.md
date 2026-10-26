@@ -106,7 +106,9 @@ parallèle, leurs mesures de performance se gêneraient. Il lit le site en
 ligne ; `--local` sert d'ici l'arbre de travail, compressé comme GitHub Pages
 le sert, mais en HTTP/1.1 : l'accessibilité, les bonnes pratiques, le SEO,
 Agentic et le CLS y valent ceux du site en ligne, le reste de la performance
-n'y est qu'indicatif. `--profils` et `--routes` restreignent la mesure ;
+n'y est qu'indicatif. `--profils` et `--routes` restreignent la mesure — une
+route est l'adresse d'une page, relative à la racine du site : `./` pour
+l'accueil, `cout/` pour une page dans son dossier ;
 `--verifier` sort en erreur dès qu'une note manque ou n'est pas pleine. Les
 rapports JSON restent sous `.cache/lighthouse/`, et le résumé dit, par route,
 les cinq notes, les métriques, et les audits qui baissent une note. Pour

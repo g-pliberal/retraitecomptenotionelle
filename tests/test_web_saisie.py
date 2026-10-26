@@ -470,7 +470,7 @@ def _lien_de_bascule(parametres):
     bloc = re.search(r'<div class="bascule" role="group" aria-label="Unité">'
                      r'.*?</div>', corps, re.S)
     assert bloc, "le formulaire ne porte plus de bascule d'unité"
-    lien = re.search(r'<a href="#/simuler\?([^"]*)">([^<]*)</a>', bloc.group(0))
+    lien = re.search(r'<a href="\./#([^"]*)">([^<]*)</a>', bloc.group(0))
     assert lien, "la bascule d'unité ne propose aucun autre état"
     return dict(parse_qsl(html.unescape(lien.group(1)))), html.unescape(lien.group(2))
 
@@ -729,7 +729,7 @@ def test_le_lien_de_reprise_decrit_la_meme_carriere():
     # aurait mesuré la bascule en croyant mesurer la reprise.
     bloc = re.search(r'<div class="carte revenu-deduit">(.*?)</div>', corps, re.S)
     assert bloc, "le bloc du revenu déduit a disparu de la page"
-    lien = re.search(r'href="#/simuler\?([^"]*saisie_par=revenu[^"]*)"',
+    lien = re.search(r'href="\./#([^"]*saisie_par=revenu[^"]*)"',
                      bloc.group(1))
     assert lien, "la page ne propose pas de reprendre la carrière en revenu"
     requete = dict(parse_qsl(html.unescape(lien.group(1))))
@@ -782,7 +782,7 @@ def test_la_situation_est_la_premiere_question_et_commande_la_saisie():
 
     # Le lien de la bascule porte les DEUX réglages : cliquer reconfigure le
     # formulaire d'un coup, sans passer par un second contrôle.
-    lien = re.search(r'aria-label="Vous êtes".*?href="#/simuler\?([^"]*)"',
+    lien = re.search(r'aria-label="Vous êtes".*?href="\./#([^"]*)"',
                      actif, re.S)
     assert lien, "la bascule de situation ne mène nulle part"
     requete = dict(parse_qsl(html.unescape(lien.group(1))))
@@ -846,7 +846,7 @@ def test_un_retraite_peut_encore_saisir_ce_qu_il_gagnait():
     # porte elle aussi « saisie_par=revenu », mais elle change de situation en
     # même temps. Chercher au plus court aurait mesuré la bascule.
     lien = re.search(
-        r'href="#/simuler\?([^"]*)">Ou saisir ce que vous gagniez\.</a>',
+        r'href="\./#([^"]*)">Ou saisir ce que vous gagniez\.</a>',
         retraite)
     assert lien, "un retraité ne peut plus saisir ce qu'il gagnait"
     requete = dict(parse_qsl(html.unescape(lien.group(1))))
@@ -876,7 +876,7 @@ def test_la_bascule_net_brut_traduit_la_pension_saisie():
     bloc = re.search(r'<div class="bascule"[^>]*aria-label="Montants".*?</div>',
                      corps, re.S)
     assert bloc, "la bascule des montants a disparu"
-    lien = re.search(r'href="#/simuler\?([^"]*)"', bloc.group(0))
+    lien = re.search(r'href="\./#([^"]*)"', bloc.group(0))
     assert lien, "la bascule ne mène nulle part"
     vers_brut = dict(parse_qsl(html.unescape(lien.group(1))))
     assert vers_brut["montants"] == "brut"
@@ -1668,7 +1668,7 @@ def _lien_des_montants(corps):
     bloc = re.search(r'<div class="bascule"[^>]*aria-label="Montants".*?</div>',
                      corps, re.S)
     assert bloc, "la bascule des montants a disparu"
-    lien = re.search(r'href="#/simuler\?([^"]*)"', bloc.group(0))
+    lien = re.search(r'href="\./#([^"]*)"', bloc.group(0))
     return dict(parse_qsl(html.unescape(lien.group(1))))
 
 
@@ -1699,7 +1699,7 @@ def test_le_revenu_que_la_pension_suppose_se_dit_en_indice():
                        r"([\d ]+)", corps)
     assert phrase, "le revenu déduit ne dit pas son indice"
     indice = int(next(groupe for groupe in phrase.groups() if groupe).replace(" ", ""))
-    reprise = re.search(r'<a href="#/simuler\?([^"]*)">Reprendre cette carrière', corps)
+    reprise = re.search(r'<a href="\./#([^"]*)">Reprendre cette carrière', corps)
     suite = dict(parse_qsl(html.unescape(reprise.group(1))))
     assert suite["saisie_par"] == "revenu"
     assert int(suite["salaire"]) == indice
@@ -1818,12 +1818,12 @@ def test_la_page_traduit_le_net_par_la_fiche_de_la_date_d_entree():
     2 654 €, et les repères du champ sont les nets de sa fiche — le SMIC et le
     salaire moyen, moins sa retenue, la CSG et la CRDS."""
     corps = html.unescape(rendre("/simuler", {**_SNCF, "salaire": "2654"})[1])
-    lien = re.search(r'<a href="#/simuler\?([^"]*)">brut</a>', corps)
+    lien = re.search(r'<a href="\./#([^"]*)">brut</a>', corps)
     assert lien, "la page ne porte pas de branche « brut »"
     vers_brut = dict(parse_qsl(lien.group(1)))
     assert vers_brut["salaire"] == "3333"
     retour = html.unescape(rendre("/simuler", vers_brut)[1])
-    lien = re.search(r'<a href="#/simuler\?([^"]*)">net avant impôt</a>', retour)
+    lien = re.search(r'<a href="\./#([^"]*)">net avant impôt</a>', retour)
     assert lien, "la page ne porte pas de branche « net »"
     assert dict(parse_qsl(lien.group(1)))["salaire"] == "2654"
     reperes = re.search(r"Repères : SMIC ([^€]+)€, salaire moyen ([^€]+)€", corps)

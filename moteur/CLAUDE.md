@@ -12,6 +12,17 @@ simulateur calcule, une carrière : le coût n'y est pas, et Coût, Carrières
 types et Droits non cotisés lisent ce que le Python en a fabriqué
 (`agregats.js`, `docs/architecture.md`, § 7.1).
 
+- **Une adresse par page** (action 174, note de décision 0004) : l'accueil est
+  la racine du site, `index.html` ; chaque autre page est un dossier de son
+  nom, qui porte son `index.html` (`cout/`, `simuler/`…). Le lecteur, sa
+  carrière et ses réglages, est derrière le `#`, et un mot sans `=` y désigne
+  une section. `moteur/js/adresses.js` lit les deux formes d'adresse, l'ancienne
+  (`#/cout?indexation=prix`) comprise, et écrit la nouvelle ; le gabarit écrit
+  chaque lien relatif à la page rendue (`lien`, `route`, `versLaPage`), et le
+  routeur redirige les anciennes adresses. `index.html` est la source des huit
+  pages en dossier, que `scripts/construire_pages.py` fabrique (`regenerer.py`
+  les refait, `.gitattributes` les déclare fabriquées) : on retouche
+  `index.html`, jamais une page de dossier.
 - **Les exponentielles du moteur passent par `libm.js`** : `exp`, `log` et
   `pow`, au bit près de la libm de Linux, dont le Python tient les siennes ;
   jamais `Math.exp`, `Math.log` ni `**`, qui rendraient celles du navigateur,

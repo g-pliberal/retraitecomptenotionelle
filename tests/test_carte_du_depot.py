@@ -83,9 +83,11 @@ def test_les_pages_de_la_carte_sont_celles_du_site():
     site = dict(re.findall(r'"([^"]+)":\s*"([^"]+)"', bloc.group(1)))
     carte = {}
     for page, adresse, *_ in _tableau(_texte(), "Page |")[1:]:
-        route = re.fullmatch(r"`#(/[^`]*)`", adresse)
-        assert route, f"« {adresse} » n'est pas une adresse du site"
-        carte[route.group(1)] = page
+        # Chaque page est un dossier de la racine du site (action 174) ; l'accueil
+        # est la racine elle-même.
+        dossier = re.fullmatch(r"`(\./|[a-z-]+/)`", adresse)
+        assert dossier, f"« {adresse} » n'est pas une adresse du site"
+        carte["/" if dossier.group(1) == "./" else "/" + dossier.group(1).rstrip("/")] = page
     assert carte == site, (
         "les pages de la carte ne sont plus celles du site (TITRES, "
         f"moteur/js/pages.js) : carte {carte}, site {site}")

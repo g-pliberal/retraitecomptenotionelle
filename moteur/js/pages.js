@@ -247,7 +247,7 @@ function arrondir(valeur, decimales) {
 /** Titre de chaque page, dans l'ordre de la navigation. */
 /**
  * La description de chaque page, pour la balise `<meta name="description">`
- * que le routeur d'`index.html` réécrit à chaque rendu — comme il réécrit le
+ * que le routeur (`routeur.js`) réécrit à chaque rendu — comme il réécrit le
  * titre. Une phrase par page, qui dit ce qu'on y trouve. Le site tient dans une
  * seule page servie une fois : c'est le navigateur, et non le serveur, qui
  * pose cette description, ce qui vaut pour qui partage ou enregistre la page,
@@ -324,6 +324,7 @@ export { ANCIENNES_ROUTES };
 export function rendre(contexte, cheminDemande, parametres = null, largeur = null) {
   g.poserEcran(largeur);
   const chemin = (ANCIENNES_ROUTES[cheminDemande] || [cheminDemande])[0];
+  g.poserPage(chemin);
   const requete = parametres || {};
   let regles;
   let refus = "";
@@ -588,7 +589,7 @@ export function statuts(contexte) {
  * servait de référence jusqu'à la phase 8, ne nommait dans son « except » que
  * les fautes prévues : ErreurSaisie, DonneeInsuffisante, KeyError, ValueError.
  * Les exceptions ci-dessous sont l'équivalent JavaScript de ce qu'il ne
- * rattrapait pas ; elles remontent jusqu'à index.html, qui dit « Le calcul a
+ * rattrapait pas ; elles remontent jusqu'au routeur, qui dit « Le calcul a
  * échoué » et en montre le détail, sans mettre la faute sur personne.
  */
 /**
@@ -909,7 +910,7 @@ function consigneDuFormulaire(saisie) {
 
 /**
  * « Réinitialiser » : la saisie oubliée, le formulaire rendu à l'exemple
- * (`index.html`). Il se voit dès qu'il y a quelque chose à réinitialiser — une
+ * (`routeur.js`). Il se voit dès qu'il y a quelque chose à réinitialiser — une
  * carrière saisie, celle d'une adresse partagée —, et non plus seulement quand
  * le navigateur a retenu une saisie : celui qui ne retient rien laissait
  * changer les données sans dire comment repartir de zéro. Devant l'exemple, il
@@ -1613,7 +1614,7 @@ export const EXEMPLE_RELEVE = "1998:salarie_prive_non_cadre:14200:4\n"
  * saisi : sinon, l'adresse porterait une carrière que la page ne montrerait
  * pas. Le champ de fichier n'a pas de `name` — un formulaire en GET porterait
  * sinon le nom du fichier dans l'adresse, et une adresse partagée dirait à tous
- * d'où vient la carrière. Ce qui le branche est dans `index.html`, avec le
+ * d'où vient la carrière. Ce qui le branche est dans `routeur.js`, avec le
  * reste de ce qui vit entre deux rendus.
  */
 function releveFormulaire(saisie) {
@@ -1923,9 +1924,9 @@ function desaccordDeSituation(saisie, contexte) {
 function basculeSituation(saisie) {
   const actif = saisie.situation === "actif";
   const autre = actif ? "retraite" : "actif";
-  const cible = `#/simuler?${echapper(saisie.requete({
+  const cible = g.lienAvecRequete("/simuler", echapper(saisie.requete({
     situation: autre, saisie_par: SAISIE_DE_LA_SITUATION[autre],
-  }))}`;
+  })));
   const [enActivite, aLaRetraite] = SITUATIONS.map(([, libelle]) => libelle);
   const branches = [
     [enActivite, actif ? "#" : cible],
@@ -1951,7 +1952,7 @@ function basculeSituation(saisie) {
  */
 function lienAutreSaisie(saisie) {
   if (!saisie.parPension) return "";
-  const cible = `#/simuler?${echapper(saisie.requete({ saisie_par: "revenu" }))}`;
+  const cible = g.lienAvecRequete("/simuler", echapper(saisie.requete({ saisie_par: "revenu" })));
   return `<p class="discret"><a href="${cible}">Ou saisir ce que vous `
     + "gagniez.</a></p>";
 }
@@ -1981,8 +1982,8 @@ function aideProfil(paquet, profil, affiliation = null) {
  */
 function basculeUnite(saisie, echelle) {
   const versLesEuros = !saisie.revenu_en_euros;
-  const cible = `#/simuler?${echapper(saisie.requete(
-    remplacementsUnite(saisie, echelle)))}`;
+  const cible = g.lienAvecRequete("/simuler", echapper(saisie.requete(
+    remplacementsUnite(saisie, echelle))));
   // Le MÊME composant que la bascule des montants, juste au-dessus d'elle :
   // deux réglages de même nature n'avaient pas la même forme, et l'un des deux
   // ne se voyait pas.
@@ -2545,7 +2546,7 @@ function sousValidees(controle) {
   return ` Sur votre relevé, ${moins > 1 ? `${moins} années` : "une année"} `
     + `${moins > 1 ? "retiennent" : "retient"} moins de trimestres que `
     + `${moins > 1 ? "leur" : "son"} revenu n'en valide : `
-    + `<a href="${g.route("/simuler")}" data-vers="releve-controle">voyez `
+    + `<a href="${g.route("/simuler", "releve-controle")}" data-vers="releve-controle">voyez `
     + `${moins > 1 ? "lesquelles" : "laquelle"}</a>.`;
 }
 
@@ -3748,7 +3749,7 @@ function revenuDeduit(contexte, comparaison, saisie, montants) {
   saisie.metiers.forEach((metier, index) => {
     remplacements[`metier${index + 2}_salaire`] = valeurDe(metier.statut);
   });
-  const reprise = `#/simuler?${echapper(saisie.requete(remplacements))}`;
+  const reprise = g.lienAvecRequete("/simuler", echapper(saisie.requete(remplacements)));
 
   const [debut, fin] = bornesDeformation(contexte.paquet, saisie.profil,
     saisie.statut);
@@ -4747,7 +4748,7 @@ function enBref(comparaison, saisie, montants, constants, capitaliseVolontaire,
   // Le renvoi vers « qui paiera » ne s'écrit que si le dépliant existe : il
   // suit le manque du système actuel.
   const renvoi = manqueActuel > 0.0
-    ? ` <a href="${g.route("/simuler")}" `
+    ? ` <a href="${g.route("/simuler", "resultats-financement")}" `
       + 'data-vers="resultats-financement">Qui paiera ce qui '
       + "manque ?</a>"
     : "";
@@ -5471,12 +5472,13 @@ ${uniteReference}.</p>`;
   // Ce qu'il faut savoir pour lire les chiffres, sous les barres : que le
   // troisième n'est pas une prévision, et le taux de CSG que le net suppose.
   // Le renvoi passe par `data-vers` : un lien « #resultats-financement »
-  // prenait la place de la route dans l'adresse, et ramenait à l'accueil.
+  // prenait la place du lecteur dans l'adresse, et lui faisait perdre sa
+  // simulation.
   let aSavoir = "";
   if (Object.values(finances).some((finance) => finance.manque > 0.0)) {
     aSavoir = "Le chiffre « vraiment payé » n'est pas une prévision : il dit de "
       + "combien les comptes du système sont courts — "
-      + `<a href="${g.route("/simuler")}" data-vers="resultats-financement">`
+      + `<a href="${g.route("/simuler", "resultats-financement")}" data-vers="resultats-financement">`
       + "qui peut payer la différence</a>. ";
   }
   aSavoir = `<p class="discret">${aSavoir}${noteDuMode(montants)}</p>`;
@@ -6484,11 +6486,11 @@ function mentionConversion(saisie, echelle) {
  */
 function basculeMontants(saisie, echelle, tauxPension) {
   const versLeNet = !saisie.enNet;
-  // PAS D'ANCRE AU BOUT DE L'ADRESSE : la route vit déjà dans le fragment,
+  // PAS D'ANCRE AU BOUT DE L'ADRESSE : le fragment est déjà celui du lecteur,
   // et un second `#` allonge la dernière valeur de la requête au lieu de
   // désigner une section — `montants=brut#resultats` n'est pas un mode.
-  const cible = `#/simuler?${echapper(saisie.requete(
-    remplacementsMontants(saisie, echelle, tauxPension)))}`;
+  const cible = g.lienAvecRequete("/simuler", echapper(saisie.requete(
+    remplacementsMontants(saisie, echelle, tauxPension))));
   // L'état courant n'a pas d'adresse : c'est celle où l'on est déjà. Le brut
   // d'abord, comme l'estimation officielle et comme le défaut.
   const branches = versLeNet
@@ -8581,7 +8583,7 @@ générations déjà liquidées, où la proposition encaisse plusieurs fois ce
 qu'elle verse. Le simulateur montre, carrière par carrière, ce que les recettes
 de chaque système paient de la pension qu'il promet.`)}
 ${lectureReglageProposition(reglage)}
-<a href="${g.lien("/cout")}" data-vers="cout-equilibre">La page Coût le
+<a href="${g.lien("/cout", "cout-equilibre")}" data-vers="cout-equilibre">La page Coût le
 chiffre</a>.</div>
 
 <div class="fiches reperes">${reperes}</div>
@@ -11133,10 +11135,9 @@ function vuesCout(contexte, regards) {
  * calcule.
  */
 function lienVue(vues, cle, valeur) {
-  const adresse = g.lien("/cout");
   const poses = { ...vues, [cle]: valeur };
   const requete = Object.keys(poses).sort().map((nom) => `${nom}=${poses[nom]}`).join("&");
-  return adresse + (adresse.includes("?") ? "&" : "?") + requete;
+  return g.lienAvecRequete("/cout", [g.options(), requete].filter(Boolean).join("&"));
 }
 
 /**
@@ -11258,7 +11259,7 @@ ${choix}
 ${milliards(arriveeMeur, 0)}${auPib(comptes, annee)}, soit
 ${milliards(ecart * 1000, 0)} de moins,
 ${g.pourcentage(ecart * 1000 / depense, false, 0)} de la facture. Tout est
-pris sur le compte du <a href="${g.lien("/methode")}" data-vers="sources">Conseil
+pris sur le compte du <a href="${g.lien("/methode", "sources")}" data-vers="sources">Conseil
 d'orientation des retraites</a>, le même que les cartes du haut, et il tient ses deux bouts
 jusqu'en ${solde.derniereAnnee}.</p>
 
@@ -13530,7 +13531,7 @@ lui depuis les rapports à la Commission des comptes de la Sécurité sociale ; 
 tout ce qui passe par un rapport de masses est <strong>estimé</strong>, sans
 pouvoir être autre chose — aucune institution ne publie ce qu'aurait coûté un
 système qui n'a pas existé. Tout est détaillé sur la page
-<a href="${g.lien("/methode")}" data-vers="sources">Méthode et sources</a>.</p>
+<a href="${g.lien("/methode", "sources")}" data-vers="sources">Méthode et sources</a>.</p>
 `, "cout-sources");
 }
 
@@ -14902,7 +14903,7 @@ ces trois séries : la
 <strong>médiane</strong> est un taux nominal trois années sur quatre, donc elle
 suit les prix et cesse d'être une règle d'austérité ; la <strong>moyenne</strong>
 est plus sévère que les prix, parce qu'elle incorpore un tiers de productivité
-réelle <em>chaque</em> année. Les deux sont dans les options.</p>`);
+réelle <em>chaque</em> année. Les deux sont dans les options.</p>`, "indexation");
 }
 
 /** Ce que l'étalon reproduit du droit en vigueur. */
@@ -15060,7 +15061,7 @@ l'historique du dépôt.</p>
 <p>Les données que le site charge sont produites par un script à partir des
 mêmes fichiers que le modèle, et un test refuse un paquet périmé. Les séries
 sont recontrôlées contre le fichier de l'institution qui les produit — la
-partie <a href="${g.lien("/methode")}" data-vers="sources">« D'où viennent les
+partie <a href="${g.lien("/methode", "sources")}" data-vers="sources">« D'où viennent les
 chiffres »</a>, plus bas, dit lesquelles, et à quelle date.</p>
 <p class="discret"><a href="${g.DEPOT}">Le dépôt</a> ·
 <a href="${g.DEPOT}/blob/main/README.md">ce qu'il contient, et combien de tests
@@ -15158,7 +15159,7 @@ function periodeInventaire(creation, fermeture, extinction) {
  * sa fiche quand il en a une, ses dates, ses statuts, ce qui lui manque —, et
  * elle se filtre et se trie sur place : un champ de recherche, un menu par
  * famille, un menu par couverture, et chaque en-tête de colonne est un bouton
- * de tri. Le comportement est dans `index.html`, en écoute déléguée ; sans lui,
+ * de tri. Le comportement est dans `routeur.js`, en écoute déléguée ; sans lui,
  * la table se lit entière, dans l'ordre du fichier, ce qui est exactement ce
  * qu'elle était.
  *
@@ -15663,7 +15664,7 @@ function programmePourquoi(contexte) {
   const inventaire = (contexte.paquet.inventaire || []).length;
   return `
 <p>La retraite française ? Un empilement de régimes, plus qu'un système.
-Ce site en <a href="${g.lien("/methode")}" data-vers="sources">recense ${inventaire}</a>, actuels et
+Ce site en <a href="${g.lien("/methode", "sources")}" data-vers="sources">recense ${inventaire}</a>, actuels et
 disparus, et en calcule ${regimes}. Chacun a son âge de départ, son assiette, son
 taux, sa durée exigée et son minimum.</p>
 <ul class="serree">
@@ -15821,8 +15822,8 @@ function programmeQuestions(contexte) {
       + `dès ${base.annee_bascule}`;
 
   // Les renvois. Vers une autre page, un lien ; vers un dépliant de celle-ci,
-  // `data-vers`, que le script d'index.html ouvre sans toucher à la route.
-  const vers = (section, texte) => `<a href="${g.lien("/")}" data-vers="${section}">${texte}</a>`;
+  // `data-vers`, que le routeur ouvre sans toucher à l'adresse.
+  const vers = (section, texte) => `<a href="${g.lien("/", section)}" data-vers="${section}">${texte}</a>`;
   const simulateur = `<a href="${g.lien("/simuler")}">le simulateur</a>`;
   const calcul = vers("le-calcul", "Le calcul, en trois gestes");
   const veuve = vers("la-veuve", "Ce que cela change pour une veuve");
@@ -15856,7 +15857,7 @@ function programmeQuestions(contexte) {
       + `proposition encaisse moins qu'elle ne verse.${consequence} ${cout} le `
       + "chiffre année par année, garantie vieillesse comprise.";
   }
-  const sources = `<a href="${g.lien("/methode")}" data-vers="sources">`
+  const sources = `<a href="${g.lien("/methode", "sources")}" data-vers="sources">`
     + "D'où viennent les chiffres</a>";
 
   // La CSG rendue n'existe que si la proposition rend une part des impôts
@@ -16172,7 +16173,7 @@ function engagements(contexte) {
  * ordinaire ; la page Simuler porte le formulaire entier, et le lien y mène
  * pour une carrière hachée. Les noms des champs sont exactement ceux du grand
  * formulaire (`naissance`, `debut`, `statut`, `liquidation`), parce que c'est
- * la même adresse qui les reçoit — et que l'écoute de soumission d'`index.html`
+ * la même adresse qui les reçoit — et que l'écoute de soumission du routeur
  * lit l'`action`, sans rien savoir du formulaire.
  *
  * `vers` est la page qui reçoit la saisie : l'accueil renvoie au simulateur,

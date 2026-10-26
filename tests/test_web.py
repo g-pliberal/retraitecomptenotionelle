@@ -373,13 +373,49 @@ def test_statuts():
 # -- liens -------------------------------------------------------------------
 
 
-def test_les_liens_passent_par_l_ancre():
-    """Sur GitHub Pages le site est servi dans un sous-chemin : pas de lien absolu."""
+def test_les_liens_sont_relatifs_a_la_page_ou_ils_sont_ecrits():
+    """Sur GitHub Pages le site est servi dans un sous-chemin, et la copie du
+    parti dans un autre : pas de lien absolu. Une page est un dossier et
+    l'accueil la racine ; un lien va de l'un à l'autre par un chemin relatif
+    (action 174)."""
     _, corps = rendre("/simuler")
-    entete = g.entete("/")
-    assert 'href="#/cas-types"' in entete
-    assert 'href="/cas-types"' not in entete
-    assert 'action="#/simuler"' in corps
+    assert 'href="../cas-types/"' in g.entete("/simuler")
+    assert 'href="cas-types/"' in g.entete("/")
+    assert 'href="/cas-types' not in g.entete("/simuler")
+    # Le formulaire du simulateur vise sa propre page ; celui de l'accueil, le
+    # simulateur.
+    assert 'action="./"' in corps
+    assert 'action="simuler/"' in rendre("/")[1]
+
+
+def test_une_page_ecrit_ses_liens_depuis_son_propre_dossier():
+    """`rendre` pose la page dont il écrit le corps : chaque lien, résolu depuis
+    son dossier, mène à la page qu'il désigne, et le même lien s'écrit autrement
+    depuis l'accueil et depuis une page."""
+    accueil = rendre("/")[1]
+    cout = rendre("/cout")[1]
+    assert 'href="methode/"' in accueil and 'href="../methode/"' not in accueil
+    assert 'href="../methode/"' in cout and 'href="methode/"' not in cout
+    # Rendre une page n'oublie pas la précédente : la suivante repart de la sienne.
+    assert 'href="methode/"' in rendre("/")[1]
+
+
+def test_un_lien_porte_la_section_visee_derriere_le_croisillon():
+    """La section d'une page est un mot derrière le `#`, les réglages du lecteur
+    viennent après : `../methode/#sources&indexation=prix`. Le lien reste une
+    adresse que l'on peut copier."""
+    rendre("/cout", {})
+    assert g.lien("/methode", "sources") == "../methode/#sources"
+    rendre("/cout", {"indexation": "prix"})
+    assert g.lien("/methode", "sources") == "../methode/#sources&indexation=prix"
+    assert g.lien("/methode") == "../methode/#indexation=prix"
+    assert g.lien("/cout") == "./#indexation=prix"
+    assert g.route("/methode", "sources") == "../methode/#sources"
+    assert g.route("/methode") == "../methode/"
+    assert g.lienAvecRequete("/simuler", "naissance=1970&sexe=F") \
+        == "../simuler/#naissance=1970&sexe=F"
+    rendre("/", {})
+    assert g.lien("/methode") == "methode/"
 
 
 def test_aucun_renvoi_vers_un_service_qui_n_existe_pas():
@@ -4236,10 +4272,10 @@ def test_la_page_cout_resout_les_leviers_a_l_envers_pour_un_solde_vise():
                                  "équilibre", "+0,5\u202f%", "+1\u202f%"]
     assert '<span class="actif" aria-current="true">-1\u202f%</span>' in choix
     liens = re.findall(r'<a href="([^"]*)">', choix)
-    assert [dict(parse_qsl(lien.split("?", 1)[1])) for lien in liens] == [
+    assert [dict(parse_qsl(lien.split("#", 1)[1])) for lien in liens] == [
         {"cascade": "2050", "solde": solde} for solde in ("-2", "-1.5", "-0.5", "0", "0.5", "1")]
     for lien in re.findall(r'<a href="([^"]*)">', selecteur(corps, "Année décomposée")):
-        assert dict(parse_qsl(lien.split("?", 1)[1]))["solde"] == "-1", lien
+        assert dict(parse_qsl(lien.split("#", 1)[1]))["solde"] == "-1", lien
     tableau = re.search(r"<caption><span>Ce que chaque levier, seul, devrait faire pour que "
                         r"l&#x27;année finisse sur un déficit de 1\u202f% du PIB.*?</table>",
                         vise, re.S)
@@ -4673,7 +4709,7 @@ def test_l_annee_des_schemas_se_choisit_et_garde_celle_de_la_cascade(contexte):
                       r'schémas">.*?</div>', carte).group(0)
     assert '<span class="actif" aria-current="true">2070</span>' in choix
     liens = re.findall(r'<a href="([^"]+)">(\d{4})</a>', choix)
-    assert liens and all(adresse == f"#/cout?cascade=2040&flux={annee}"
+    assert liens and all(adresse == f"./#cascade=2040&flux={annee}"
                          for adresse, annee in liens), liens
     cascade = re.search(r'<div class="bascule" role="group" aria-label="Année '
                         r'décomposée">.*?</div>', corps).group(0)
@@ -4691,7 +4727,7 @@ def test_l_annee_des_schemas_se_choisit_et_garde_celle_de_la_cascade(contexte):
     # ramenée, et c'est l'année ramenée que les liens de la cascade portent.
     corps = rendre("/cout", {"flux": '"><script>alert(1)</script>'})[1]
     assert "<script>alert" not in corps
-    assert f'<a href="#/cout?cascade=2030&flux={bascule}">2030</a>' in corps
+    assert f'<a href="./#cascade=2030&flux={bascule}">2030</a>' in corps
 
 
 def test_chaque_carte_a_publier_part_d_un_bouton_et_non_d_une_capture():

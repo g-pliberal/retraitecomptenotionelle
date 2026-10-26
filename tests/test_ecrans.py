@@ -40,9 +40,9 @@ PILOTE = RACINE / "tests" / "js" / "ecrans.mjs"
 ECRANS = [(320, 640), (390, 800), (768, 1024), (1024, 768), (1440, 900)]
 
 #: Une carrière entière, telle que le simulateur la met dans l'adresse quand
-#: on calcule le formulaire tel qu'il s'ouvre : la page des résultats.
-RESULTATS = (
-    "/simuler?unite_revenu=euros_mois&montants=brut&situation=actif"
+#: on calcule le formulaire tel qu'il s'ouvre.
+REQUETE = (
+    "unite_revenu=euros_mois&montants=brut&situation=actif"
     "&saisie_par=revenu&naissance=2000-01-01&liquidation=2064-01-01"
     "&debut=2021-01-01&statut=salarie_prive_non_cadre&salaire=3500"
     "&emploi_retraite_employeur=autre&sexe=H&profil=auto&primes=0&enfants=0"
@@ -52,8 +52,14 @@ RESULTATS = (
     "&stock=prix&frais=paliers&taux=forwards&bascule=2026&euros=2026"
 )
 
-ROUTES = ["/", "/simuler", RESULTATS, "/cout", "/risque", "/partager",
-          "/saviez-vous", "/cas-types", "/avantages", "/methode"]
+#: La page des résultats : le simulateur, la carrière derrière le `#`.
+RESULTATS = f"simuler/#{REQUETE}"
+
+#: Les dix routes, des adresses relatives à la racine du site : l'accueil, puis
+#: chaque page dans son dossier (action 174), les résultats entre le
+#: formulaire vierge et la page Coût.
+ROUTES = ["./", "simuler/", RESULTATS, "cout/", "risque/", "partager/",
+          "saviez-vous/", "cas-types/", "avantages/", "methode/"]
 
 #: La fenêtre qu'on rétrécit sans changer de page, au large : du bureau à la
 #: tablette en largeur, sur une page qui pose des schémas de front.
@@ -105,9 +111,10 @@ def chargements() -> tuple:
     return tuple(_pilote()["chargements"])
 
 
-@functools.lru_cache(maxsize=None)
-def _pilote() -> dict:
-    """Le pilote du navigateur, joué une fois par processus."""
+def jouer(plan_du_pilote: dict) -> dict:
+    """Le pilote du navigateur, joué sur le dépôt servi tel quel : ``plan_du_pilote``
+    dit ce qu'il visite (``tests/js/ecrans.mjs``), le serveur et l'adresse de la
+    racine sont ajoutés ici."""
     if shutil.which("node") is None:
         pytest.skip("node absent : le pilote du navigateur ne tourne pas sans lui")
     chemin = navigateur()
@@ -119,14 +126,11 @@ def _pilote() -> dict:
     # Un plan par processus : la suite se répartit sur plusieurs, et chacun a
     # son serveur, sur son port.
     plan = RACINE / ".cache" / f"ecrans-{os.getpid()}.json"
+    racine = f"http://127.0.0.1:{serveur.server_address[1]}/"
     try:
         plan.parent.mkdir(exist_ok=True)
         plan.write_text(json.dumps({
-            "adresse": f"http://127.0.0.1:{serveur.server_address[1]}/index.html",
-            "ecrans": [{"largeur": l, "hauteur": h} for l, h in ECRANS],
-            "routes": ROUTES,
-            "retrecir": RETRECIR,
-            "chargements": [{"largeur": l, "hauteur": h} for l, h in CHARGEMENTS],
+            "racine": racine, **plan_du_pilote,
         }), encoding="utf-8")
         execution = subprocess.run(
             ["node", str(PILOTE), chemin, str(plan)], cwd=RACINE,
@@ -136,6 +140,17 @@ def _pilote() -> dict:
         plan.unlink(missing_ok=True)
     assert execution.returncode == 0, execution.stderr[-3000:]
     return json.loads(execution.stdout)
+
+
+@functools.lru_cache(maxsize=None)
+def _pilote() -> dict:
+    """Le pilote du navigateur sur les écrans, joué une fois par processus."""
+    return jouer({
+        "ecrans": [{"largeur": l, "hauteur": h} for l, h in ECRANS],
+        "routes": ROUTES,
+        "retrecir": RETRECIR,
+        "chargements": [{"largeur": l, "hauteur": h} for l, h in CHARGEMENTS],
+    })
 
 
 def _ou(visite: dict, etat: str) -> str:
@@ -279,8 +294,7 @@ def test_un_trace_et_sa_legende_se_voient_ensemble():
 #: Carrières types, à l'étape 8, où une rangée en porte sept ; Droits non
 #: cotisés, à l'étape 9 ; Méthode et sources, à l'étape 10 : toutes les pages
 #: du site.
-COTE_A_COTE = ["/", "/simuler", RESULTATS, "/cout", "/risque", "/partager",
-               "/saviez-vous", "/cas-types", "/avantages", "/methode"]
+COTE_A_COTE = ROUTES
 
 
 def test_deux_valeurs_courtes_d_une_rangee_repliee_se_lisent_cote_a_cote():
@@ -345,7 +359,7 @@ def test_les_schemas_qu_une_carte_compare_se_voient_ensemble():
     fautes = []
     for visite in mesures():
         lieu = _ou(visite, "fermés")
-        if visite["route"] == "/cout":
+        if visite["route"] == "cout/":
             assert visite["replie"]["schemas"], f"{lieu} : la carte des flux n'a plus deux schémas"
         if visite["largeur"] < DEUX_SCHEMAS_DE_FRONT:
             continue
@@ -400,7 +414,7 @@ def test_l_image_d_une_carte_pose_de_front_les_schemas_qu_elle_compare():
     """
     fautes = []
     for visite in mesures():
-        if visite["route"] != "/cout":
+        if visite["route"] != "cout/":
             continue
         lieu = _ou(visite, "ouverts")
         image = visite["image"]
@@ -459,7 +473,7 @@ def test_les_cartes_a_publier_vont_deux_par_ligne_et_se_lisent():
     fautes = []
     for visite in mesures():
         lieu = _ou(visite, "fermés")
-        if visite["route"] in ("/partager", "/saviez-vous"):
+        if visite["route"] in ("partager/", "saviez-vous/"):
             assert visite["replie"]["cartes"], f"{lieu} : aucune grille de cartes"
         for grille in visite["replie"]["cartes"]:
             if visite["largeur"] >= DEUX_CARTES_DE_FRONT and grille["colonnes"] < 2:

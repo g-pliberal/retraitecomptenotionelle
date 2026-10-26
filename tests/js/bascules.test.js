@@ -39,7 +39,7 @@ function liensDesBascules(html) {
   const liens = [];
   const groupes = /<div class="bascule" role="group" aria-label="([^"]+)">(.*?)<\/div>/gs;
   for (const [, legende, corps] of html.matchAll(groupes)) {
-    for (const [, requete] of corps.matchAll(/<a href="#\/simuler\?([^"]*)">/g)) {
+    for (const [, requete] of corps.matchAll(/<a href="\.\/#([^"]*)">/g)) {
       liens.push([legende, requete.replace(/&[a-z#0-9]+;/g, (entite) => ENTITES[entite])]);
     }
   }

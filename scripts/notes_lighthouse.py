@@ -3,13 +3,14 @@
 
     python scripts/notes_lighthouse.py              # le site en ligne
     python scripts/notes_lighthouse.py --local      # l'arbre de travail, servi d'ici
-    python scripts/notes_lighthouse.py --profils mobile --routes / /cout
+    python scripts/notes_lighthouse.py --profils mobile --routes ./ cout/
     python scripts/notes_lighthouse.py --verifier   # sortie 1 si une note n'est pas pleine
 
 Lighthouse n'est pas une dépendance du dépôt : ``npx`` le tire, à la version
 que ``VERSION`` fige, la première fois qu'on le lance, et le garde dans son
 cache. Les routes sont celles que ``tests/test_ecrans.py`` visite, et un test
-les tient égales. Les audits se suivent un à un : en parallèle, leurs mesures
+les tient égales : l'adresse de chaque page, relative à la racine du site
+(``cout/``, ``./`` pour l'accueil). Les audits se suivent un à un : en parallèle, leurs mesures
 de performance se gêneraient. Chaque rapport est gardé en JSON sous
 ``.cache/lighthouse/``, et le résumé dit, par profil et par route, les cinq
 notes, les cinq métriques, et les audits qui baissent une note.
@@ -36,6 +37,7 @@ import subprocess
 import sys
 import threading
 from pathlib import Path
+from urllib.parse import urljoin
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -47,9 +49,10 @@ VERSION = "13.5.0"
 EN_LIGNE = "https://g-pliberal.github.io/retraitecomptenotionelle/"
 
 #: Les routes que ``tests/test_ecrans.py`` visite, dans son ordre : les neuf
-#: pages, et les résultats du formulaire calculé tel qu'il s'ouvre.
+#: pages, chacune à l'adresse de son dossier, et les résultats du formulaire
+#: calculé tel qu'il s'ouvre, sa carrière derrière le ``#``.
 RESULTATS = (
-    "/simuler?unite_revenu=euros_mois&montants=brut&situation=actif"
+    "simuler/#unite_revenu=euros_mois&montants=brut&situation=actif"
     "&saisie_par=revenu&naissance=2000-01-01&liquidation=2064-01-01"
     "&debut=2021-01-01&statut=salarie_prive_non_cadre&salaire=3500"
     "&emploi_retraite_employeur=autre&sexe=H&profil=auto&primes=0&enfants=0"
@@ -58,8 +61,8 @@ RESULTATS = (
     "&foyer=seul&projection=cor_reference&esperance_vie=centrale&emploi=cor_2026"
     "&stock=prix&frais=paliers&taux=forwards&bascule=2026&euros=2026"
 )
-ROUTES = ["/", "/simuler", RESULTATS, "/cout", "/risque", "/partager",
-          "/saviez-vous", "/cas-types", "/avantages", "/methode"]
+ROUTES = ["./", "simuler/", RESULTATS, "cout/", "risque/", "partager/",
+          "saviez-vous/", "cas-types/", "avantages/", "methode/"]
 
 #: Les deux profils : le mobile, celui de Lighthouse sans préréglage, et le
 #: bureau, son préréglage ``desktop``.
@@ -90,12 +93,10 @@ class Releve:
 
 def nom_de_route(route: str) -> str:
     """Le nom d'une route dans un fichier ou un tableau : ``accueil``,
-    ``resultats`` pour le formulaire calculé, sinon son chemin."""
-    if route == "/":
-        return "accueil"
-    if "?" in route:
+    ``resultats`` pour le formulaire calculé, sinon son dossier."""
+    if "#" in route:
         return "resultats"
-    return route.strip("/")
+    return route.strip("./") or "accueil"
 
 
 def navigateur() -> str | None:
@@ -116,12 +117,13 @@ def navigateur() -> str | None:
 
 def commande(adresse: str, route: str, profil: str, sortie: Path) -> list[str]:
     """La ligne de commande d'un audit, Lighthouse tiré par ``npx`` à sa
-    version figée."""
+    version figée. La route est l'adresse de la page, relative à la racine du
+    site ``adresse``."""
     drapeaux = "--headless=new"
     # Sous root, dans un conteneur, Chromium ne démarre pas dans son bac à sable.
     if getattr(os, "geteuid", lambda: 1)() == 0:
         drapeaux += " --no-sandbox"
-    arguments = ["npx", "--yes", f"lighthouse@{VERSION}", f"{adresse}#{route}", "--quiet",
+    arguments = ["npx", "--yes", f"lighthouse@{VERSION}", urljoin(adresse.rstrip("/") + "/", route), "--quiet",
                  "--output=json", f"--output-path={sortie}", f"--chrome-flags={drapeaux}"]
     if profil == "bureau":
         arguments.append("--preset=desktop")

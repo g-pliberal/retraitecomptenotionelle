@@ -1,0 +1,165 @@
+<!doctype html>
+<!-- Page fabriquée par scripts/construire_pages.py depuis index.html : ne la retouchez pas, refaites-la. -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- La couleur du bandeau de tête, la même dans les deux thèmes : sur un
+     téléphone, la barre du navigateur la reprend, et la page commence où elle
+     commence. -->
+<meta name="theme-color" content="#003340">
+<title>Pourquoi changer — Retraite en comptes notionnels</title>
+<meta name="description" content="Votre retraite sera-t-elle payée ? Ce que la recherche universitaire sait du risque de défaut d'une retraite par répartition, et ce que les comptes du COR en disent pour la France.">
+<!-- L'icône du site est un fichier, et un dessin : l'emoji qui tenait ce rôle
+     n'avait ni la même forme ni la même taille d'un système à l'autre, et se
+     brouillait en petit. Voir moteur/icones/README.md. -->
+<link rel="icon" href="../moteur/icone.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../moteur/icone.svg">
+
+<!-- La feuille de style n'existe qu'en un seul endroit : moteur/style.css,
+     sa source, que rien ne fabrique. -->
+<link rel="stylesheet" href="../moteur/style.css">
+<link rel="preload" href="../moteur/donnees.json" as="fetch" crossorigin>
+<!-- Les deux polices du texte, dans leur jeu latin, celui du français. Le
+     serif n'était demandé qu'au rendu de la page, où il arrivait après coup :
+     le chapeau perdait une ligne, et tout ce qui le suit remontait sous les
+     yeux du lecteur (action 174). Demandées ici, elles sont là bien avant le
+     moteur. `crossorigin` est celui de toute police, même servie d'ici. -->
+<link rel="preload" href="../moteur/polices/public-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../moteur/polices/instrument-serif-latin.woff2" as="font" type="font/woff2" crossorigin>
+
+<!-- Le portage est un graphe de modules profond de cinq niveaux : sans ces
+     déclarations le navigateur ne découvre chaque niveau qu'après avoir reçu le
+     précédent, soit cinq aller-retours avant que le modèle puisse tourner. Les
+     annoncer tous ici les fait partir ensemble, dès la lecture de l'en-tête.
+     La liste est verrouillée sur le contenu de moteur/js/ par un test. -->
+<link rel="modulepreload" href="../moteur/js/routeur.js">
+<link rel="modulepreload" href="../moteur/js/adresses.js">
+<link rel="modulepreload" href="../moteur/js/pages.js">
+<link rel="modulepreload" href="../moteur/js/saisie.js">
+<link rel="modulepreload" href="../moteur/js/contexte.js">
+<link rel="modulepreload" href="../moteur/js/simulateur.js">
+<link rel="modulepreload" href="../moteur/js/scenario-notionnel.js">
+<link rel="modulepreload" href="../moteur/js/age-reference.js">
+<link rel="modulepreload" href="../moteur/js/assiette.js">
+<link rel="modulepreload" href="../moteur/js/capitalisation.js">
+<link rel="modulepreload" href="../moteur/js/carriere.js">
+<link rel="modulepreload" href="../moteur/js/chronologie.js">
+<link rel="modulepreload" href="../moteur/js/compte.js">
+<link rel="modulepreload" href="../moteur/js/conversion.js">
+<link rel="modulepreload" href="../moteur/js/contributions-equilibre.js">
+<link rel="modulepreload" href="../moteur/js/cycle-de-vie.js">
+<link rel="modulepreload" href="../moteur/js/prelevements-historiques.js">
+<link rel="modulepreload" href="../moteur/js/impot-revenu.js">
+<link rel="modulepreload" href="../moteur/js/frontiere.js">
+<link rel="modulepreload" href="../moteur/js/bilan.js">
+<link rel="modulepreload" href="../moteur/js/agregats.js">
+<link rel="modulepreload" href="../moteur/js/inventaire.js">
+<link rel="modulepreload" href="../moteur/js/depenses.js">
+<link rel="modulepreload" href="../moteur/js/distribution.js">
+<link rel="modulepreload" href="../moteur/js/patrimoine.js">
+<link rel="modulepreload" href="../moteur/js/vie-en-couple.js">
+<link rel="modulepreload" href="../moteur/js/effectifs.js">
+<link rel="modulepreload" href="../moteur/js/equilibre.js">
+<link rel="modulepreload" href="../moteur/js/fusion.js">
+<link rel="modulepreload" href="../moteur/js/garantie.js">
+<link rel="modulepreload" href="../moteur/js/gabarit.js">
+<link rel="modulepreload" href="../moteur/js/indexation.js">
+<link rel="modulepreload" href="../moteur/js/macro.js">
+<link rel="modulepreload" href="../moteur/js/mortalite.js">
+<link rel="modulepreload" href="../moteur/js/scenario-actuel.js">
+<link rel="modulepreload" href="../moteur/js/echeancier.js">
+<link rel="modulepreload" href="../moteur/js/journal.js">
+<link rel="modulepreload" href="../moteur/js/pilote.js">
+<link rel="modulepreload" href="../moteur/js/droit/acquerir.js">
+<link rel="modulepreload" href="../moteur/js/droit/categories.js">
+<link rel="modulepreload" href="../moteur/js/droit/commun.js">
+<link rel="modulepreload" href="../moteur/js/droit/completer.js">
+<link rel="modulepreload" href="../moteur/js/droit/compter.js">
+<link rel="modulepreload" href="../moteur/js/droit/coordonner.js">
+<link rel="modulepreload" href="../moteur/js/droit/cultes.js">
+<link rel="modulepreload" href="../moteur/js/droit/cumul.js">
+<link rel="modulepreload" href="../moteur/js/droit/departs.js">
+<link rel="modulepreload" href="../moteur/js/droit/etranger.js">
+<link rel="modulepreload" href="../moteur/js/droit/invalidite.js">
+<link rel="modulepreload" href="../moteur/js/droit/limite_age.js">
+<link rel="modulepreload" href="../moteur/js/droit/foyer.js">
+<link rel="modulepreload" href="../moteur/js/droit/liquidation.js">
+<link rel="modulepreload" href="../moteur/js/droit/liquider.js">
+<link rel="modulepreload" href="../moteur/js/droit/ouvrir.js">
+<link rel="modulepreload" href="../moteur/js/droit/preparer.js">
+<link rel="modulepreload" href="../moteur/js/droit/primes.js">
+<link rel="modulepreload" href="../moteur/js/droit/progressive.js">
+<link rel="modulepreload" href="../moteur/js/droit/releve.js">
+<link rel="modulepreload" href="../moteur/js/droit/reversion.js">
+<link rel="modulepreload" href="../moteur/js/droit/seconde.js">
+<link rel="modulepreload" href="../moteur/js/calendrier.js">
+<link rel="modulepreload" href="../moteur/js/config.js">
+<link rel="modulepreload" href="../moteur/js/format.js">
+<link rel="modulepreload" href="../moteur/js/regimes.js">
+<link rel="modulepreload" href="../moteur/js/primes.js">
+<link rel="modulepreload" href="../moteur/js/versions.js">
+<link rel="modulepreload" href="../moteur/js/caracteristiques.js">
+<link rel="modulepreload" href="../moteur/js/credits-ministeres.js">
+<link rel="modulepreload" href="../moteur/js/serie.js">
+<link rel="modulepreload" href="../moteur/js/taux.js">
+<link rel="modulepreload" href="../moteur/js/libm.js">
+<link rel="modulepreload" href="../moteur/js/remuneration.js">
+<link rel="modulepreload" href="../moteur/js/indemnite_csg.js">
+<link rel="modulepreload" href="../moteur/js/restitution.js">
+<link rel="modulepreload" href="../moteur/js/revalorisation.js">
+<link rel="modulepreload" href="../moteur/js/tva.js">
+
+<style>
+  /* Écran d'attente. Il ne s'affiche qu'au-delà d'un tiers de seconde : sur une
+     connexion rapide le simulateur est prêt avant, et un écran qui n'aurait
+     clignoté que le temps d'être aperçu vaut moins que rien. Le retard est en
+     CSS et non en JavaScript, parce que l'attente qu'il couvre se produit
+     justement avant que le moindre script ne soit chargé. */
+  #amorce { max-width: 34rem; margin: 0 auto; padding: 5rem 1.5rem; text-align: center;
+            animation: paraitre 0.25s ease-out 0.35s both; }
+  #amorce h1 { font-size: 1.4rem; font-weight: 600; margin: 0 0 0.75rem; }
+  #amorce p { color: var(--texte-doux); font-size: 0.98rem; }
+  #amorce .jauge { height: 6px; width: min(24rem, 80%); margin: 2rem auto 0;
+                   background: var(--fond-appui); border-radius: 3px; overflow: hidden; }
+  #amorce .jauge > span { display: block; height: 100%; width: 30%;
+                          background: var(--accent);
+                          animation: glisse 1.4s ease-in-out infinite; }
+  @keyframes paraitre { from { opacity: 0; } to { opacity: 1; } }
+  /* Lue par les synthèses vocales, jamais affichée : le contenu de <main> est
+     remplacé en bloc à chaque calcul, ce qu'un lecteur d'écran ne signale pas
+     de lui-même. */
+  .hors-ecran { position: absolute; width: 1px; height: 1px; overflow: hidden;
+                clip-path: inset(50%); white-space: nowrap; }
+  .replique { text-align: left; border-left: 3px solid var(--accent);
+              background: var(--fond-appui); padding: 0.9rem 1.1rem; margin-top: 1.5rem;
+              font-size: 0.92rem; }
+  /* La feuille de style principale coupe déjà les animations quand le système
+     demande d'en réduire le mouvement ; la jauge, elle, doit encore dire que
+     quelque chose travaille. Immobile et pleine, elle le dit. */
+  @media (prefers-reduced-motion: reduce) {
+    #amorce .jauge > span { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<p id="annonce" class="hors-ecran" role="status" aria-live="polite"></p>
+
+<div id="amorce">
+  <h1>Retraite à comptes notionnels</h1>
+  <p>Le site se prépare. Le modèle et les données de référence s'exécutent dans
+  votre navigateur : rien n'est envoyé à un serveur, et il n'y a rien à
+  installer.</p>
+  <div class="jauge"><span></span></div>
+  <noscript>
+    <div class="replique">Ce simulateur a besoin de JavaScript : le calcul se fait
+    dans votre navigateur, il n'y a pas de serveur pour le faire à sa place.</div>
+  </noscript>
+</div>
+
+<!-- Le routeur du site, sorti de cette page dans son module pour que les
+     pages le partagent (action 174). -->
+<script type="module" src="../moteur/js/routeur.js"></script>
+</body>
+</html>

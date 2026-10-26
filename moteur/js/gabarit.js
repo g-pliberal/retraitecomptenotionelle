@@ -89,6 +89,33 @@ export const GROUPE_SECONDAIRE = "Pour vérifier";
 
 export const LIENS = GROUPES_NAVIGATION.flatMap(([, liens]) => liens);
 
+/** Les pages du site, dans l'ordre du bandeau : leurs routes. */
+export const PAGES = LIENS.map(([chemin]) => chemin);
+
+/**
+ * Le dossier d'une page, relatif à la racine du site (action 174) : l'accueil
+ * EST la racine, une page est un dossier de son nom, qui porte son
+ * `index.html`. Tout serveur statique sert `cout/` sans réglage, et redirige
+ * `cout` vers `cout/` : c'est ce qui permet à la copie du parti de recopier le
+ * dépôt tel quel.
+ */
+export function dossierDe(page) {
+  return page === "/" ? "" : `${page.slice(1)}/`;
+}
+
+/**
+ * L'adresse relative qui mène d'une page à une autre, ou à elle-même (`./`).
+ *
+ * Toute page est à un niveau de la racine, sauf l'accueil, qui l'est : on
+ * remonte d'un cran avant de descendre au dossier visé. Relative, parce que le
+ * site vit à deux adresses — GitHub Pages et la copie du parti — sans en
+ * connaître aucune, et que la même page toute faite doit servir aux deux.
+ */
+export function versLaPage(depuis, vers) {
+  if (depuis === vers) { return "./"; }
+  return `${depuis === "/" ? "" : "../"}${dossierDe(vers)}`;
+}
+
 /**
  * Les réglages de modélisation en vigueur, écrits comme une requête —
  * « indexation=prix&bascule=2030 » —, et vides tant que tout est au défaut.
@@ -113,6 +140,22 @@ export function poserOptions(requete) {
 /** Les réglages en vigueur, pour qui doit les écrire lui-même. */
 export function options() {
   return OPTIONS;
+}
+
+/**
+ * La page dont le corps s'écrit, la route d'où partent les liens relatifs.
+ *
+ * Un état de module, pour la même raison que `OPTIONS` : `lien` s'appelle au
+ * fond de corps de page qui ne reçoivent rien d'autre que leur contexte. Il est
+ * posé au même endroit, `pages.rendre`, et remis à chaque appel : une page ne
+ * peut pas écrire ses liens depuis celle d'avant. L'en-tête, lui, reçoit la
+ * page active en argument (`entete`) et n'en dépend pas.
+ */
+let PAGE = "/";
+
+/** Fixe la page dont les liens s'écrivent ; une route inconnue vaut l'accueil. */
+export function poserPage(chemin) {
+  PAGE = PAGES.includes(chemin) ? chemin : "/";
 }
 
 /**
@@ -152,14 +195,14 @@ export const ECRAN_MINIMAL = 260;
 const RETRAIT_CARTE = 28;
 const ECART_DE_FRONT = 24;
 // Un tracé de front ne se dessine pas plus large que la moitié de l'image que
-// compose « Partager » (`index.html`) : 1 200 pixels, moins deux marges de 52
+// compose « Partager » (`routeur.js`) : 1 200 pixels, moins deux marges de 52
 // et l'écart de 32, en deux. Plus large, il y rétrécirait, et ses textes avec :
 // au bureau, la feuille de style l'agrandit de quelques points.
 const DEMI_COLONNE_MAXIMALE = 532;
 
 /**
  * Ce qu'une colonne de cette largeur pose au gabarit : `[ECRAN,
- * DEMI_COLONNE]`. La page s'en sert à chaque rendu, et `index.html` pour
+ * DEMI_COLONNE]`. La page s'en sert à chaque rendu, et `routeur.js` pour
  * savoir si une colonne qui a changé de largeur demande un nouveau dessin.
  */
 export function ecransDe(largeur) {
@@ -195,33 +238,53 @@ export function deFront(...blocs) {
 }
 
 /**
+ * L'adresse d'une page depuis `depuis`, puis ce que le lecteur y porte derrière
+ * le `#` : les morceaux non vides, joints par `&`. Voir `lien`.
+ */
+function adresseDepuis(depuis, chemin, ...morceaux) {
+  const fragment = morceaux.filter(Boolean).join("&");
+  return `${versLaPage(depuis, chemin)}${fragment ? `#${fragment}` : ""}`;
+}
+
+/**
  * Adresse d'une page interne, réglages de modélisation compris.
  *
- * Le site tient dans une seule page : la navigation passe par l'ancre de
- * l'adresse (`#/cas-types`). L'ancre de section, elle, ne peut pas s'y ajouter
- * — la place est prise — et n'est acceptée que pour que les appels disent vers
- * quoi ils pointent.
+ * Chaque page est un dossier (`cout/`), l'accueil la racine : l'adresse est le
+ * chemin de la page, relatif à celle où le lien est posé (`../cout/`). Ce qui
+ * appartient au lecteur — ses réglages, sa carrière — reste derrière le `#`, que
+ * le navigateur ne transmet à aucun serveur (action 174).
  *
  * Quand le lecteur a changé un réglage, l'adresse le porte : c'est ainsi que
  * les trois pages agrégées calculent sous les règles qu'il a choisies, et non
- * sous celles par défaut. Tant qu'il n'a rien changé, la requête est vide et
- * l'adresse est celle d'avant, au caractère près.
+ * sous celles par défaut. Tant qu'il n'a rien changé, il n'y a pas de `#`.
+ *
+ * `ancre` est la section de la page visée : un mot, qui précède les réglages
+ * (`../methode/#sources&indexation=prix`). Le routeur de la page d'arrivée
+ * l'ouvre ; sur la page même, `data-vers` le fait sans changer d'adresse. Le
+ * lien reste une adresse que l'on peut copier.
  */
 export function lien(chemin, ancre = "") {
-  return `#${chemin}${OPTIONS ? `?${OPTIONS}` : ""}`;
+  return adresseDepuis(PAGE, chemin, ancre, OPTIONS);
+}
+
+/**
+ * L'adresse d'une page sous une requête que l'appelant écrit lui-même — la
+ * carrière du lecteur, avec ses réglages —, et non sous celle de la page.
+ */
+export function lienAvecRequete(chemin, requete, ancre = "") {
+  return adresseDepuis(PAGE, chemin, ancre, requete);
 }
 
 /**
  * L'adresse NUE d'une page, sans les réglages : la cible d'un formulaire.
  *
  * Un formulaire en `GET` écrit lui-même la requête, à partir de ses champs ;
- * le routeur d'`index.html` colle celle-ci derrière l'action. Une action qui
- * porterait déjà une requête en donnerait donc deux —
- * « #/cout?indexation=prix?indexation=prix ». Les formulaires visent la route,
- * les liens visent `lien`.
+ * le routeur la colle derrière le `#` de l'action. Une action qui porterait
+ * déjà des réglages en donnerait donc deux. Les formulaires visent la page,
+ * les liens visent `lien`. `ancre`, comme pour `lien`, désigne une section.
  */
-export function route(chemin) {
-  return `#${chemin}`;
+export function route(chemin, ancre = "") {
+  return adresseDepuis(PAGE, chemin, ancre);
 }
 
 /**
@@ -232,7 +295,7 @@ export function route(chemin) {
  * intertitre de menu.
  */
 export function navigation(cheminActif = "/") {
-  const liensDuGroupe = (liens) => liens.map(([chemin, libelle]) => `<a href="${lien(chemin)}"`
+  const liensDuGroupe = (liens) => liens.map(([chemin, libelle]) => `<a href="${adresseDepuis(cheminActif, chemin, OPTIONS)}"`
     + (chemin === cheminActif ? ' aria-current="page"' : "")
     + `>${echapper(libelle)}</a>`).join("");
   const groupe = (etiquette, liens) => {
@@ -270,7 +333,7 @@ export function navigation(cheminActif = "/") {
 export function entete(cheminActif = "/") {
   return `<a class="evitement" href="#contenu">Aller au contenu</a>
 <header class="bandeau"><div class="interieur">
-  <p class="nom"><a href="${lien("/")}">${icone("trending-up")}<span>Retraite à comptes notionnels</span></a></p>
+  <p class="nom"><a href="${adresseDepuis(cheminActif, "/", OPTIONS)}">${icone("trending-up")}<span>Retraite à comptes notionnels</span></a></p>
   <nav aria-label="Navigation principale">${navigation(cheminActif)}</nav>
 </div></header>`;
 }
@@ -405,7 +468,7 @@ export function franciser(texte) {
  * Un complément d'information, sous un point d'interrogation.
  *
  * Même mécanique que `mot` — un bouton, une bulle, le basculement en écoute
- * déléguée dans `index.html` —, mais l'ancre n'est pas un mot de la phrase :
+ * déléguée dans `routeur.js` —, mais l'ancre n'est pas un mot de la phrase :
  * c'est un appel, posé après un titre ou un libellé de champ. Ce qui est
  * nécessaire pour remplir un champ ou lire un chiffre reste écrit ; ce qui
  * explique, nuance ou justifie tient ici, et ne s'ouvre que si on le demande.
@@ -715,7 +778,7 @@ export function tableau(entetes, lignes, classesColonnes = null, titre = "",
                         enteteDeLigne = false, attributsLignes = null,
                         triable = false, identifiant = "") {
   const classes = classesColonnes || entetes.map(() => "");
-  // `triable` fait de chaque en-tête un bouton que le script d'`index.html`
+  // `triable` fait de chaque en-tête un bouton que le routeur (`routeur.js`)
   // écoute ; `attributsLignes` pose sur chaque `<tr>` ce que le filtre lit.
   const tete = entetes.map((intitule, i) => `<th class="${classes[i]}" scope="col">`
     + (triable
@@ -894,7 +957,7 @@ export function sommaire(texte) {
  * donc le paragraphe en deux, et la fin de la phrase tombait à la ligne, hors du
  * paragraphe. Un `<button>` est du contenu de phrase — il ne ferme rien —, et il
  * porte en plus le bon état : `aria-expanded` dit si la définition est ouverte,
- * ce qu'un dépliant bricolé ne dirait pas. Le basculement est dans `index.html`,
+ * ce qu'un dépliant bricolé ne dirait pas. Le basculement est dans `routeur.js`,
  * en écoute déléguée : le contenu de la page est remplacé en bloc à chaque
  * rendu, et un écouteur posé sur chaque mot disparaîtrait avec lui.
  */
@@ -904,7 +967,7 @@ export function mot(terme, definition) {
   // dise, et un bloc ne coule pas dans une phrase — dans une case étroite,
   // « vos 25 meilleures années, un taux » se brisait en quatre lignes autour du
   // mot. Le rôle et la tabulation lui rendent ce que la balise donnait ; Entrée
-  // et Espace, c'est `index.html` qui les écoute. L'appel de bulle (`bulle`),
+  // et Espace, c'est `routeur.js` qui les écoute. L'appel de bulle (`bulle`),
   // lui, reste un vrai bouton : c'est un pictogramme, pas un mot de la phrase.
   return '<span class="mot"><span class="terme" role="button" tabindex="0" '
     + `aria-expanded="false">${echapper(terme)}</span>`
@@ -997,13 +1060,14 @@ const SECTION_DU_PLAN = new RegExp(
  * dériver — un titre changé, une section ajoutée, et le plan suit sans qu'on y
  * pense.
  *
- * Les liens ne touchent pas à l'adresse. Ici l'adresse EST la route (`#/cout`),
- * et un `href="#une-section"` renverrait le lecteur à l'accueil ; le lien porte
- * donc la route de la page, qui ne change rien, et `data-vers` désigne la
- * section. Le script d'`index.html` l'ouvre, y pose le focus et y fait défiler
- * — c'est le mécanisme du lien d'évitement, étendu au corps de la page. Sans
- * script, le lien ne fait rien, et le plan reste ce qu'il est : la liste de ce
- * que la page contient.
+ * Les liens ne touchent pas à l'adresse. Derrière le `#` vit le lecteur, sa
+ * carrière et ses réglages, et un `href="#une-section"` les remplacerait ; le
+ * lien porte donc l'adresse de la page, avec la section (`./#cout-equilibre`,
+ * les réglages en vigueur derrière), et `data-vers` désigne la section. Le
+ * routeur l'ouvre, y pose le focus et y fait défiler sans changer l'adresse —
+ * c'est le mécanisme du lien d'évitement, étendu au corps de la page. Sans
+ * script, le lien est une ancre ordinaire, qui mène à la section quand aucun
+ * réglage ne la suit.
  *
  * Une page sans section identifiée n'a pas de plan : le vide, plutôt qu'une
  * liste vide.
@@ -1015,7 +1079,7 @@ export function plan(corps, chemin, etiquette = "Dans cette page") {
     return "";
   }
   const liens = entrees
-    .map(([identifiant, titre]) => `<li><a href="${lien(chemin)}" `
+    .map(([identifiant, titre]) => `<li><a href="${lien(chemin, identifiant)}" `
       + `data-vers="${identifiant}">${titre}</a></li>`)
     .join("");
   return `<nav class="plan" aria-label="${echapper(etiquette)}">`
@@ -1030,7 +1094,7 @@ export function plan(corps, chemin, etiquette = "Dans cette page") {
  * l'une posait trois boutons, l'autre demandait une capture d'écran. Le lecteur
  * ne voit plus qu'un geste, au même endroit, avec le même libellé.
  *
- * Le comportement est dans `index.html`, en écoute déléguée sur ces classes.
+ * Le comportement est dans `routeur.js`, en écoute déléguée sur ces classes.
  */
 export function barrePartage() {
   return '<p class="partage">'
@@ -1066,7 +1130,7 @@ export function cle(question, reponse, corps, source = "", identifiant = "") {
   // doit être là où l'on regarde le graphique, et non dans une page à part que
   // personne ne trouve. DEUX gestes : `partager` compose l'image ET le message
   // puis ouvre la feuille de partage du système, `partager-x` ouvre X avec le
-  // message déjà rédigé. Le comportement des deux est dans `index.html`, en
+  // message déjà rédigé. Le comportement des deux est dans `routeur.js`, en
   // écoute déléguée, et c'est le même que celui des cartes de la page Partager.
   // Le `<span class="etat">` porte le compte rendu, le `<textarea>` le repli du
   // presse-papiers : vides et masqués tant qu'on n'en a pas besoin.
@@ -2493,7 +2557,7 @@ export function sankey(titre, nom, caisses, echelle, colonnes = ["", ""], largeu
  */
 function legende(series, libelleEcart = "") {
   // `data-serie` et la case `.lu` : là où le script écrit la valeur de
-  // l'année survolée — voir `montrerLecture` dans index.html.
+  // l'année survolée — voir `montrerLecture` dans routeur.js.
   let entrees = series.map((serie, rang) => `<li data-serie="${rang}"><span class="pastille" `
     + `style="background:${serie.couleur}"></span>`
     + `<span>${echapper(serie.libelle)}`

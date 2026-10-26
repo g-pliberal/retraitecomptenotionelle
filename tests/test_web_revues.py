@@ -30,7 +30,8 @@ from retraite_notionnelle.web.site import disponible, module, rendre, site
 from outils_pont import saisie_du_portage
 from outils_web import (
     FEUILLE_DE_STYLE, PAGES_AGREGEES, SIMULATION_TEMOIN, TITRES, _hors_depliants,
-    _prose, contexte, g, montants_du_portage, page, page_et_routeur, pages, saisies,
+    _prose, contexte, g, liens_internes, montants_du_portage, page, page_et_routeur, pages,
+    saisies, vise,
 )
 
 
@@ -256,12 +257,12 @@ def test_une_classe_du_bloc_scenario_ne_reprend_pas_un_composant():
 
 
 def test_les_pages_longues_portent_leur_plan():
-    """Un plan déduit des sections, et qui les ouvre sans toucher à la route.
+    """Un plan déduit des sections, et qui les ouvre sans toucher à l'adresse.
 
     Coût et Données listent, sous leurs trois chiffres, chaque carte et chaque
-    section repliée qu'elles contiennent ; chaque lien porte la route de la
-    page et l'identifiant de la section, et la section porte cet identifiant.
-    Les autres pages, courtes, n'ont pas de plan.
+    section repliée qu'elles contiennent ; chaque lien porte l'adresse de la
+    page et la section derrière le `#` (``./#cout-bilan``), et la section porte
+    cet identifiant. Les autres pages, courtes, n'ont pas de plan.
     """
     for chemin, attendus in (
         ("/cout", ["cout-bilan", "cout-provenance", "cout-flux", "cout-depenses",
@@ -279,7 +280,7 @@ def test_les_pages_longues_portent_leur_plan():
         assert plan, f"{chemin} : pas de plan"
         liens = re.findall(r'<a href="([^"]+)" data-vers="([^"]+)">', plan.group(0))
         assert [vers for _, vers in liens] == attendus
-        assert {href for href, _ in liens} == {g.lien(chemin)}
+        assert [href for href, _ in liens] == [f"./#{vers}" for vers in attendus]
         for identifiant in attendus:
             assert f' id="{identifiant}"' in corps, identifiant
         # Le plan vient APRÈS les trois chiffres : le résultat d'abord, la
@@ -910,12 +911,14 @@ def test_le_retraite_lit_le_chemin_de_sa_pension_depuis_son_depart():
     assert "Pour vous, 1 573,32 € en décembre 2019 : +1,0 %." in texte
 
 
-def test_aucun_lien_ne_remplace_la_route_par_une_ancre():
-    """Ici l'adresse EST la route : un lien « #resultats-financement » la
-    remplaçait, et le routeur, ne reconnaissant aucune page, rendait
-    l'accueil — le lecteur qui cliquait dans la clé de lecture perdait sa
-    simulation. Tout lien interne vise une route ; une section se rejoint par
-    ``data-vers``, que le script de la page traite sans toucher à l'adresse."""
+def test_aucun_lien_ne_remplace_le_lecteur_par_une_ancre():
+    """Derrière le `#` vit le lecteur — sa carrière, ses réglages. Un lien
+    « #resultats-financement » le remplaçait : le routeur relisait la page sans
+    la simulation, et le lecteur qui cliquait dans la clé de lecture la
+    perdait. Tout lien interne nomme sa page ; une section se rejoint par
+    ``data-vers``, que le script de la page traite sans toucher à l'adresse, ou
+    par une adresse qui nomme la page et la section
+    (``../cout/#cout-equilibre``)."""
     pages = [("/simuler", SIMULATION_TEMOIN)] + [(chemin, {}) for chemin in TITRES]
     for chemin, parametres in pages:
         corps = rendre(chemin, parametres)[1]
@@ -924,35 +927,63 @@ def test_aucun_lien_ne_remplace_la_route_par_une_ancre():
 
 
 def test_tout_lien_interne_mene_a_une_page_qui_existe():
-    """Un lien vers « #/methode/ » ne mène pas à la page Méthode : le routeur
-    ne connaît pas cette route, et rend l'accueil. Trois liens du site
-    portaient cette barre de trop — vers Méthode depuis l'accueil et depuis
-    les résultats, vers les sources depuis les résultats —, et l'électeur qui
-    les suivait revenait au programme sans comprendre pourquoi."""
+    """Un lien relatif mal compté ne mène nulle part. Depuis le dossier d'une
+    page, « methode/ » descend dans un dossier qui n'existe pas : il faut
+    remonter d'un cran (« ../methode/ »). Chaque lien du site, résolu depuis la
+    page où il est posé comme le navigateur le suit, aboutit à l'une des neuf
+    pages ; et un lien vers un site extérieur ne se prend pas pour l'un d'eux."""
     pages = [("/simuler", SIMULATION_TEMOIN)] + [(chemin, {}) for chemin in TITRES]
     for chemin, parametres in pages:
         corps = g.entete(chemin) + rendre(chemin, parametres)[1]
-        for cible in re.findall(r'href="#(/[^"?]*)', corps):
-            assert cible in TITRES, f"{chemin} : lien vers {cible!r}, route inconnue"
+        for adresse, route, _ in liens_internes(chemin, corps):
+            assert route in TITRES, (
+                f"{chemin} : le lien {adresse!r} mène à {route!r}, qui n'est pas une page")
 
 
 def test_chaque_renvoi_vise_une_section_qui_existe():
-    """``data-vers`` ouvre une section sans toucher à la route : une cible
+    """``data-vers`` ouvre une section sans toucher à la page : une cible
     absente laisse le lien agir en lien ordinaire, et le lecteur arrive en
     haut d'une page au lieu de la section promise. La cible est cherchée sur
     la page que le lien désigne — la même, le plus souvent ; celle de Coût
-    quand Carrières types renvoie au coefficient d'équilibre."""
+    quand Carrières types renvoie au coefficient d'équilibre.
+
+    L'adresse du lien nomme la même section derrière son `#` : d'une page à
+    l'autre c'est elle qui la porte, le routeur de la page d'arrivée l'ouvre
+    (action 174), et le lien se copie sans rien perdre."""
     pages = [("/simuler", SIMULATION_TEMOIN)] + [(chemin, {}) for chemin in TITRES]
     rendues = {}
     for chemin, parametres in pages:
         corps = rendre(chemin, parametres)[1]
         rendues.setdefault(chemin, corps)
-        for route, cible in re.findall(
-                r'href="#(/[^"?]*)[^"]*" data-vers="([^"]+)"', corps):
+        for adresse, cible in re.findall(r'<a href="([^"]*)"[^>]* data-vers="([^"]+)"', corps):
+            route, fragment = vise(chemin, adresse)
+            assert route in TITRES, f"{chemin} : {adresse!r} ne mène à aucune page"
             destination = corps if route == chemin else rendues.setdefault(
                 route, rendre(route, {})[1])
             assert f'id="{cible}"' in destination, (
                 f"{chemin} : section {cible!r} absente de {route}")
+            assert cible in fragment.split("&"), (
+                f"{chemin} : {adresse!r} ne nomme pas la section {cible!r}")
+
+
+def test_toute_section_visee_par_une_adresse_existe():
+    """Une adresse qui nomme une section derrière le `#` (``../methode/#sources``)
+    la trouve sur la page qu'elle vise : un mot sans « = » est une section, et
+    une section absente laissait le lecteur en haut de la page sans rien lui
+    dire (action 174)."""
+    pages = [("/simuler", SIMULATION_TEMOIN)] + [(chemin, {}) for chemin in TITRES]
+    rendues = {}
+    for chemin, parametres in pages:
+        corps = g.entete(chemin) + rendre(chemin, parametres)[1]
+        rendues.setdefault(chemin, corps)
+        for adresse, route, fragment in liens_internes(chemin, corps):
+            for morceau in fragment.split("&"):
+                if not morceau or "=" in morceau or morceau == "contenu":
+                    continue
+                destination = rendues.setdefault(route, rendre(route, {})[1])
+                assert f'id="{morceau}"' in destination, (
+                    f"{chemin} : {adresse!r} vise la section {morceau!r}, "
+                    f"absente de {route}")
 
 
 #: Les questions de l'accueil, dans l'ordre où elles s'y posent.
@@ -1090,7 +1121,7 @@ def test_l_accueil_dit_de_combien_la_retraite_baisse(contexte):
     assert (f"la pension d'aujourd'hui baisse ainsi de "
             f"{g.pourcentage(-ecarts.deja_liquidees, decimales=0)} en médiane") in texte
     # La preuve est à un clic : la grille des carrières types.
-    assert '<a href="#/cas-types">treize carrières types</a>' in texte
+    assert '<a href="cas-types/">treize carrières types</a>' in texte
 
 
 @pytest.mark.parametrize(("part", "mots"), [
@@ -1253,15 +1284,15 @@ def test_la_navigation_met_l_electeur_d_abord():
     pages = [re.findall(r'href="([^"]+)"', liens) for _, _, liens in groupes]
     # « Le saviez-vous ? » rejoint Partager le 4 octobre 2026 : des cartes à
     # publier, ce qu'on fait APRÈS avoir lu, et non un cinquième onglet en tête.
-    assert pages == [["#/", "#/simuler", "#/cout", "#/risque"],
-                     ["#/partager", "#/saviez-vous"],
-                     ["#/cas-types", "#/avantages", "#/methode"]]
+    assert pages == [["../", "../simuler/", "./", "../risque/"],
+                     ["../partager/", "../saviez-vous/"],
+                     ["../cas-types/", "../avantages/", "../methode/"]]
     libelles = [re.findall(r">([^<]+)</a>", liens) for _, _, liens in groupes]
     assert libelles == [["Programme", "Simuler", "Coût", "Pourquoi changer"],
                         ["Partager", "Le saviez-vous ?"],
                         ["Carrières types", "Droits non cotisés",
                          "Méthode et sources"]]
-    assert 'href="#/cout" aria-current="page"' in entete
+    assert 'href="./" aria-current="page"' in entete
     assert [chemin for chemin, _ in g.LIENS] == [
         "/", "/simuler", "/cout", "/risque", "/partager", "/saviez-vous",
         "/cas-types", "/avantages", "/methode"]
@@ -1308,7 +1339,7 @@ def test_les_adresses_des_pages_parties_menent_a_leur_contenu():
     assert '"/trajectoire": ["/simuler", "cumul"],' in adresses
     assert '"/donnees": ["/methode", "sources"],' in adresses
     assert "ANCIENNES_ROUTES[route]" in adresses
-    assert "if (section) { ouvrirSection(section); }" in page_et_routeur()
+    assert "if (cible.section) { ouvrirSection(cible.section); }" in page_et_routeur()
 
 
 def test_sur_un_telephone_le_groupe_pour_verifier_se_replie():
@@ -1361,9 +1392,10 @@ def test_les_pages_complementaires_se_renvoient_l_une_a_l_autre():
     for depuis, vers in (("/", "/methode"), ("/", "/cas-types"),
                          ("/methode", "/"), ("/methode", "/cas-types"),
                          ("/cas-types", "/methode"), ("/cas-types", "/")):
-        assert f'href="{g.lien(vers)}"' in pages[depuis], f"{depuis} ne renvoie pas vers {vers}"
+        assert f'href="{g.versLaPage(depuis, vers)}"' in pages[depuis], (
+            f"{depuis} ne renvoie pas vers {vers}")
     assert "treize carrières types</a> montrent ce\nqu'elle déplace" in pages["/methode"]
-    assert '<a href="#/">la proposition</a>' in pages["/cas-types"]
+    assert '<a href="../">la proposition</a>' in pages["/cas-types"]
 
 
 def test_la_methode_dit_comment_le_site_est_construit():
@@ -1382,7 +1414,7 @@ def test_la_methode_dit_comment_le_site_est_construit():
     for attendu in (f'href="{g.DEPOT}/tree/main/src"', "portage en JavaScript",
                     "comparées nombre par nombre", "chaque page est figée en témoin",
                     f'href="{g.DEPOT}/tree/main/tests"',
-                    'href="#/methode" data-vers="sources"'):
+                    'href="./#sources" data-vers="sources"'):
         assert attendu in dedans, attendu
     assert not re.search(r"\b\d{3,} (?:tests|témoins|carrières)", dedans), (
         "un nombre de tests ou de témoins écrit à la main dériverait"
@@ -1483,9 +1515,9 @@ def test_la_page_risque_range_ses_sections_et_se_relie():
         "risque-evince", "risque-deja", "risque-objections",
         "risque-ailleurs", "risque-droit", "risque-sources",
     ]
-    for chemin in ("/simuler", "/cout", "/"):
-        assert f'href="{g.lien(chemin)}"' in corps, chemin
-    assert f'href="{g.lien("/risque")}"' in rendre("/", {})[1]
+    for adresse in ("../simuler/", "../cout/", "../"):
+        assert f'href="{adresse}"' in corps, adresse
+    assert 'href="risque/"' in rendre("/", {})[1]
     # Le dépliant des objections dit dans son titre combien il en range, une
     # par intertitre (action 173, étape 6) : une objection de plus le change.
     objections = re.search(r'<details class="section" id="risque-objections">.*?</details>',
@@ -1732,10 +1764,10 @@ def test_une_page_agregee_au_defaut_ne_dit_rien_des_reglages(page, chemin):
     """
     corps = page(chemin)
     assert ENCADRE_REFERENCE not in corps
-    assert '<a href="#/cout"' in corps or '<a href="#/simuler"' in corps
+    assert any(route in ("/cout", "/simuler") for _, route, _ in liens_internes(chemin, corps))
     vues = {cle for cles in pages._VUES_DE_PAGE.values() for cle in cles}
-    for requete in re.findall(r'<a href="#/[a-z-]+\?([^"]*)"', corps):
-        portees = {couple.split("=")[0] for couple in requete.split("&")}
+    for requete in re.findall(r'<a href="[^"#]*#([^"]*=[^"]*)"', corps):
+        portees = {couple.split("=")[0] for couple in requete.split("&") if "=" in couple}
         assert portees <= vues, (
             f"{chemin} : un lien porte {portees - vues}, qui n'est pas une vue"
         )
@@ -1773,9 +1805,13 @@ def test_une_adresse_reglee_rend_la_reference_sous_un_encadre(chemin):
     # L'apostrophe est échappée dans la page : on compare sur le texte lu.
     assert "règle d'indexation : Prix" in html.unescape(encadre)
     assert "année de bascule : 2030" in encadre
-    requete = re.search(r'<a href="#/simuler\?([^"]+)">simulateur</a>', encadre).group(1)
+    requete = re.search(r'<a href="\.\./simuler/#([^"]+)">simulateur</a>', encadre).group(1)
     assert sorted(requete.split("&")) == ["bascule=2030", "indexation=prix"]
-    reste = reste.replace(f"?{requete}&", "?").replace(f"?{requete}\"", '"')
+    # Les réglages sont derrière le `#`, après la section quand le lien en nomme
+    # une, avant les vues quand il en porte : sans eux, on retrouve l'adresse
+    # de la page par défaut.
+    reste = (reste.replace(f"#{requete}&", "#").replace(f"#{requete}\"", '"')
+             .replace(f"&{requete}\"", '"'))
     assert reste == rendre(chemin, {})[1]
 
 
@@ -1783,10 +1819,12 @@ def test_une_adresse_reglee_rend_la_reference_sous_un_encadre(chemin):
 def test_les_reglages_suivent_le_lecteur_d_une_page_a_l_autre(page, chemin):
     """Une page qui ne les applique pas les garde pour le simulateur."""
     corps = page(chemin, indexation="prix")
-    assert '<a href="#/simuler?indexation=prix"' in corps
-    assert '#/methode?indexation=prix' in corps
+    liens = {(route, fragment) for _, route, fragment in liens_internes(chemin, corps)}
+    assert ("/simuler", "indexation=prix") in liens
+    assert ("/methode", "indexation=prix") in liens
     # Le bandeau de navigation les porte aussi : c'est lui qu'on clique.
-    assert '#/cout?indexation=prix' in g.entete(chemin)
+    assert ("/cout", "indexation=prix") in {
+        (route, fragment) for _, route, fragment in liens_internes(chemin, g.entete(chemin))}
 
 
 def test_un_reglage_deplace_le_cout_du_modele(contexte, saisies):
@@ -1856,8 +1894,8 @@ def test_les_champs_de_modelisation_sont_ceux_du_simulateur():
 def test_le_routeur_ne_prend_pas_une_adresse_reglee_pour_une_simulation():
     """« #/?indexation=prix » est l'accueil réglé, et non une vieille adresse.
 
-    Le routeur d'``index.html`` renvoie sur le simulateur toute adresse qui
-    porte « #/ » suivi d'une requête : ce sont les liens partagés d'avant que
+    Le routeur renvoie sur le simulateur toute ancienne adresse qui porte
+    « #/ » suivi d'une requête : ce sont les liens partagés d'avant que
     l'accueil ne devienne le programme. Depuis que les réglages suivent le
     lecteur, le lien de l'accueil en porte une lui aussi — et cliquer
     « Programme » après avoir changé l'indexation envoyait sur le simulateur.
@@ -1887,7 +1925,7 @@ def test_la_bascule_net_brut_decrit_la_meme_carriere():
     # au passage que « net » est bien marqué comme l'état courant.
     corps = rendre("/simuler", depart)[1]
     assert '<span class="actif" aria-current="true">net avant impôt</span>' in corps
-    lien = re.search(r'<a href="#/simuler\?([^"]*)">brut</a>', corps)
+    lien = re.search(r'<a href="\./#([^"]*)">brut</a>', corps)
     assert lien, "la page ne porte pas de branche « brut »"
     vers_brut = dict(parse_qsl(html.unescape(lien.group(1))))
     assert vers_brut["montants"] == "brut"
@@ -1896,7 +1934,7 @@ def test_la_bascule_net_brut_decrit_la_meme_carriere():
 
     retour = rendre("/simuler", vers_brut)[1]
     assert '<span class="actif" aria-current="true">brut</span>' in retour
-    lien = re.search(r'<a href="#/simuler\?([^"]*)">net avant impôt</a>', retour)
+    lien = re.search(r'<a href="\./#([^"]*)">net avant impôt</a>', retour)
     assert lien, "la page ne porte pas de branche « net »"
     vers_net = dict(parse_qsl(html.unescape(lien.group(1))))
     assert float(vers_net["salaire"]) == pytest.approx(2500, abs=2)
@@ -2116,9 +2154,10 @@ def test_la_cle_de_lecture_ne_dement_jamais_les_chiffres_qu_elle_explique():
 def test_aucune_adresse_du_site_ne_porte_deux_croisillons():
     """Le bogue qui a cassé la bascule, et que rien ne voyait venir.
 
-    Ici la ROUTE vit dans le fragment : `#/simuler?...`. Ajouter une ancre de
-    section au bout — `#resultats`, pour revenir sur les chiffres — ne fabrique
-    donc pas une ancre, mais allonge la DERNIÈRE VALEUR de la requête. La
+    Le fragment porte le lecteur : `simuler/#naissance=...`. Ajouter une ancre
+    de section au bout — `#resultats`, pour revenir sur les chiffres — ne
+    fabrique donc pas une ancre, mais allonge la DERNIÈRE VALEUR de la requête.
+    La
     bascule des résultats écrivait `montants=brut#resultats`, qui n'est pas un
     mode connu : le modèle retombait sur son défaut, la page revenait en net,
     et le salaire déjà converti en brut y était relu comme un net — une
@@ -2138,8 +2177,8 @@ def test_aucune_adresse_du_site_ne_porte_deux_croisillons():
             fragment = html.unescape(adresse)
             assert fragment.count("#") <= 1, (
                 f"{route} : l'adresse {fragment!r} porte deux croisillons ; "
-                "la route occupe déjà le fragment, un second `#` entre dans "
-                "la requête")
+                "le fragment est déjà celui du lecteur, un second `#` entre "
+                "dans la requête")
 
 
 def test_les_deux_branches_d_une_bascule_ne_se_separent_jamais():

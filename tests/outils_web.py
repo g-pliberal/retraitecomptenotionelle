@@ -12,6 +12,7 @@ from __future__ import annotations
 import html
 import re
 from pathlib import Path
+from urllib.parse import urljoin, urlsplit
 
 import pytest
 
@@ -75,6 +76,41 @@ def montants_du_portage(requete: dict, simuler: bool = True):
     if not simuler:
         return module("contexte").Montants.depuis(saisie, simulateur)
     return module("contexte").Montants.depuis(saisie, simulateur, portage.simuler(saisie))
+
+
+#: Le site, tel que les tests le résolvent : un hôte, sous un dossier, comme la
+#: copie du parti. Les pages sont ses sous-dossiers, l'accueil sa racine.
+HOTE = "https://exemple.org/retraite/"
+
+
+def vise(chemin: str, adresse: str) -> tuple[str | None, str]:
+    """Ce qu'une adresse écrite dans la page ``chemin`` désigne, résolue comme le
+    navigateur la suit (action 174) : la route de la page visée, ``None`` quand
+    elle sort du site, et son fragment, ce qui suit le ``#``. Une adresse
+    relative se lit depuis le dossier de la page."""
+    cible = urlsplit(urljoin(HOTE + g.dossierDe(chemin), html.unescape(adresse)))
+    if (cible.scheme, cible.netloc) != ("https", "exemple.org"):
+        return None, cible.fragment
+    dossier = urlsplit(HOTE).path
+    if not cible.path.startswith(dossier):
+        return None, cible.fragment
+    relatif = cible.path[len(dossier):].rstrip("/")
+    return (f"/{relatif}" if relatif else "/"), cible.fragment
+
+
+def liens_internes(chemin: str, corps: str) -> list[tuple[str, str | None, str]]:
+    """Les liens d'une page qui restent sur le site : pour chacun, l'adresse
+    écrite, la route de la page qu'il vise (``None`` s'il en sort) et son
+    fragment. Les liens vers d'autres sites sont écartés ; ``chemin`` est la
+    page où ``corps`` est posé."""
+    sortie = []
+    for brut in re.findall(r'href="([^"]*)"', corps):
+        adresse = html.unescape(brut)
+        if re.match(r"[a-z][a-z0-9+.-]*:", adresse):
+            continue
+        route, fragment = vise(chemin, adresse)
+        sortie.append((adresse, route, fragment))
+    return sortie
 
 
 def _echelle():

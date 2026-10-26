@@ -12,10 +12,12 @@
  * `#/cout?indexation=prix`. C'est celle des partages publiés avant le
  * changement ; elle se lit encore, et `ancienne` la signale.
  *
- * Le moteur importe le gabarit, qui écrira ses liens d'ici : ce module ne lit
- * donc rien du texte des pages.
+ * Le gabarit dit où va chaque page (`dossierDe`) et comment on y va depuis une
+ * autre (`versLaPage`) ; ce module lit une adresse, et écrit la nouvelle forme
+ * d'une ancienne. Il ne lit rien du texte des pages.
  */
 
+import { PAGES, dossierDe } from "./gabarit.js";
 import { CLES_MODELISATION } from "./saisie.js";
 
 /**
@@ -97,4 +99,19 @@ export function lireAdresse(chemin, ancre) {
     section: morceaux.find((morceau) => morceau && !morceau.includes("=")) || "",
     ancienne: false,
   };
+}
+
+/**
+ * L'adresse de la nouvelle forme qui désigne ce que désigne `adresse` (le
+ * résultat de `lireAdresse`), relative à la racine du site : le dossier de la
+ * page, puis ce que le lecteur y porte derrière le `#`, la section en tête.
+ *
+ * C'est la redirection d'une ancienne adresse (`#/cout?indexation=prix` devient
+ * `cout/#indexation=prix`), mais elle écrit aussi bien une adresse déjà neuve.
+ * Une page qui n'existe pas mène à l'accueil, comme le rendu la remplace : son
+ * dossier n'existerait pas.
+ */
+export function ecrireAdresse({ chemin, requete, section }) {
+  const fragment = [section, requete].filter(Boolean).join("&");
+  return `${dossierDe(PAGES.includes(chemin) ? chemin : "/")}${fragment ? `#${fragment}` : ""}`;
 }

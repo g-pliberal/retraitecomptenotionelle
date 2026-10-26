@@ -171,7 +171,7 @@ nets, par mois, en euros de <!--chiffre:mesure(parametre?nom=annee_euros_constan
 
 **Au SMIC toute sa vie**, salarié du privé non cadre depuis 1996 à 1 443 €
 net :
-<https://g-pliberal.github.io/retraitecomptenotionelle/#/simuler?naissance=1975-01-01&debut=1996-01-01&statut=salarie_prive_non_cadre&salaire=1443&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01>
+<https://g-pliberal.github.io/retraitecomptenotionelle/simuler/#naissance=1975-01-01&debut=1996-01-01&statut=salarie_prive_non_cadre&salaire=1443&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01>
 
 | Système | Pension nette par mois | Écart |
 |---|---|---|
@@ -187,7 +187,7 @@ dépliant « Le système 4 : un taux pour tous, et une garantie payée par
 l'impôt », sous les résultats, en donne la règle.
 
 **Fonctionnaire titulaire de l'État**, entré en septembre 1998, 3 000 € net :
-<https://g-pliberal.github.io/retraitecomptenotionelle/#/simuler?naissance=1975-01-01&debut=1998-09-01&statut=fonctionnaire_etat&salaire=3000&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01>
+<https://g-pliberal.github.io/retraitecomptenotionelle/simuler/#naissance=1975-01-01&debut=1998-09-01&statut=fonctionnaire_etat&salaire=3000&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01>
 
 | Système | Pension nette par mois | Écart |
 |---|---|---|
@@ -209,7 +209,7 @@ d'autres.
 
 **Née en 2000, salariée du privé au salaire moyen**, 2 751 € net, entrée en
 septembre 2022, départ en janvier 2064 à 64 ans :
-<https://g-pliberal.github.io/retraitecomptenotionelle/#/simuler?naissance=2000-01-01&debut=2022-09-01&statut=salarie_prive_non_cadre&salaire=2751&unite_revenu=euros_mois&montants=net&liquidation=2064-01-01>
+<https://g-pliberal.github.io/retraitecomptenotionelle/simuler/#naissance=2000-01-01&debut=2022-09-01&statut=salarie_prive_non_cadre&salaire=2751&unite_revenu=euros_mois&montants=net&liquidation=2064-01-01>
 
 | Système | Pension nette par mois | Écart |
 |---|---|---|

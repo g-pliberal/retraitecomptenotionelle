@@ -15,16 +15,28 @@
  *
  * Le plan :
  *
- *     {"adresse": "http://127.0.0.1:8000/index.html",
+ *     {"racine": "http://127.0.0.1:8000/",
  *      "ecrans": [{"largeur": 390, "hauteur": 800}, ...],
- *      "routes": ["/", "/cout", "/simuler?naissance=…", ...],
+ *      "routes": ["./", "cout/", "simuler/#naissance=…", ...],
  *      "retrecir": {"depuis": 1440, "vers": {"largeur": 1024, "hauteur": 768}}}
+ *
+ * Une route est l'adresse d'une page, relative à la racine du site : l'accueil
+ * (`./`), ou une page dans son dossier (`cout/`), le lecteur derrière le `#`.
  *
  * `retrecir` rétrécit la fenêtre, sans changer d'adresse, sur une page qui
  * pose des schémas de front, et dit ce qu'elle a redessiné.
  *
- * Le paquet de données n'est chargé qu'une fois : on change de page par
- * l'ancre, comme le lecteur, et de largeur par l'émulation de l'écran.
+ * `adresses` est une liste de scénarios : chacun ouvre une adresse (`depart`, relative à la racine),
+ * fait des gestes (`gestes` : cliquer sur un sélecteur, en changeant de page ou
+ * non), attend la page à l'adresse que dit `attend`, et rend ce qu'elle montre
+ * — l'adresse d'arrivée, le titre, les sections ouvertes, les ressources en
+ * erreur. Chaque page du site a son dossier (action 174) : changer de page est
+ * un chargement, et les anciennes adresses (`index.html#/cout`) y mènent par
+ * une redirection.
+ *
+ * Le paquet de données n'est chargé qu'une fois par page : on passe d'une page
+ * à l'autre par son adresse, comme le lecteur, et de largeur par l'émulation
+ * de l'écran.
  */
 
 import { readFileSync } from "node:fs";
@@ -53,6 +65,11 @@ await new Promise((resoudre, rejeter) => {
 let numero = 0;
 const enAttente = new Map();
 const erreursDeLaPage = [];
+// Les ressources que la page n'a pas pu charger : un chemin relatif faux dans
+// le dossier d'une page ne charge rien, et la page reste sur son attente.
+// Annulée par une redirection ou une navigation, une requête n'est pas une
+// erreur.
+const ressourcesEnErreur = [];
 ws.onmessage = (message) => {
   const recu = JSON.parse(message.data);
   if (recu.id && enAttente.has(recu.id)) {
@@ -60,6 +77,12 @@ ws.onmessage = (message) => {
     enAttente.delete(recu.id);
     if (recu.error) { rejeter(new Error(`${recu.error.message} ${recu.error.data || ""}`)); }
     else { resoudre(recu.result); }
+  } else if (recu.method === "Network.responseReceived"
+      && recu.params.response.status >= 400) {
+    ressourcesEnErreur.push(`${recu.params.response.status} ${recu.params.response.url}`);
+  } else if (recu.method === "Network.loadingFailed"
+      && recu.params.errorText !== "net::ERR_ABORTED") {
+    ressourcesEnErreur.push(`${recu.params.errorText} ${recu.params.requestId}`);
   } else if (recu.method === "Runtime.exceptionThrown") {
     erreursDeLaPage.push(recu.params.exceptionDetails?.exception?.description
       || recu.params.exceptionDetails?.text || "exception");
@@ -82,6 +105,7 @@ const { sessionId } = await envoyer("Target.attachToTarget", { targetId, flatten
 const page = (methode, parametres) => envoyer(methode, parametres, sessionId);
 await page("Page.enable");
 await page("Runtime.enable");
+if (plan.adresses?.length) { await page("Network.enable"); }
 // Les décalages de mise en page, notés dès le début de chaque document : un
 // nœud déplacé puis retiré du DOM se nomme tant qu'il y est encore.
 await page("Page.addScriptToEvaluateOnNewDocument", { source: `
@@ -142,17 +166,15 @@ async function attendreLeRendu() {
     + "requestAnimationFrame(() => requestAnimationFrame(() => r(true)))))");
 }
 
-async function allerA(route) {
-  const change = await evaluer(`(() => {
-    const ancre = ${JSON.stringify(`#${route}`)};
-    if (location.hash === ancre) return false;
-    const marqueur = document.createElement("i");
-    marqueur.id = "marqueur-ecrans";
-    document.getElementById("contenu")?.append(marqueur);
-    location.hash = ancre;
-    return true;
-  })()`);
-  if (change) { await attendreLeRendu(); }
+/**
+ * Ouvre une route à neuf : chaque page a son dossier (action 174), et y aller
+ * est un chargement. On passe par une page vide, pour qu'aucun reste de la
+ * précédente ne passe pour la nouvelle.
+ */
+async function ouvrir(route) {
+  await page("Page.navigate", { url: "about:blank" });
+  await page("Page.navigate", { url: new URL(route, plan.racine).href });
+  await attendreLeRendu();
 }
 
 // -- la mesure ---------------------------------------------------------------
@@ -530,24 +552,127 @@ const SCHEMAS_DESSINES = `[...document.querySelectorAll("#contenu figure.sankey 
   .map((svg) => ({ dessin: Math.round(svg.viewBox.baseVal.width),
     montre: Math.round(svg.getBoundingClientRect().width) }))`;
 
+// -- les adresses ------------------------------------------------------------
+
+const BASE = plan.racine ? new URL(plan.racine).pathname : "/";
+const DELAI_ADRESSE = 20000;
+
+const pause = (ms) => new Promise((resoudre) => { setTimeout(resoudre, ms); });
+
+/** Ce que la page montre là où elle est : son adresse relative à la racine du
+ * site, et si elle est rendue. */
+const SONDE = `(() => {
+  const contenu = document.getElementById("contenu");
+  return {
+    chemin: location.pathname.slice(${JSON.stringify(BASE)}.length).replace(/index\\.html$/, ""),
+    hash: location.hash,
+    pret: Boolean(contenu) && !document.getElementById("marqueur-ecrans")
+      && !document.body.classList.contains("calcul-en-cours")
+      && !contenu.hasAttribute("aria-busy") && contenu.children.length > 0
+      && !contenu.querySelector(".chargement"),
+    avant: Boolean(window.__avant),
+  };
+})()`;
+
+/**
+ * Attend la page à l'adresse que dit `attend`, rendue. Un geste qui change de
+ * page (`vers: "page"`) la veut dans un document neuf (`avant` tombé), un geste
+ * sur place (`vers: "ici"`) dans le même, son marqueur disparu. Une page qui
+ * n'arrive pas est rendue telle qu'elle est : c'est le test qui juge.
+ */
+async function attendreLaPage(attend, vers) {
+  const debut = Date.now();
+  while (Date.now() - debut < DELAI_ADRESSE) {
+    try {
+      const etat = await evaluer(SONDE);
+      const bonne = etat.chemin === attend.chemin
+        && (attend.hash === undefined || etat.hash === attend.hash)
+        && (attend.hash_commence === undefined || etat.hash.startsWith(attend.hash_commence));
+      if (etat.pret && bonne && (vers !== "page" || !etat.avant)) { return true; }
+    } catch (erreur) {
+      // Le document change sous nos pieds : on recommence sur le neuf.
+    }
+    await pause(100);
+  }
+  return false;
+}
+
+/** L'état d'une page, une fois arrivée. */
+const ETAT_D_ARRIVEE = (montre) => `(() => {
+  const contenu = document.getElementById("contenu");
+  // Le texte de la page, et non ce que le style en fait : innerText rend les
+  // capitales d'un titre, textContent ce que la page écrit.
+  const texte = contenu ? contenu.textContent.replace(/\\s+/g, " ") : "";
+  return {
+    chemin: location.pathname.slice(${JSON.stringify(BASE)}.length).replace(/index\\.html$/, ""),
+    hash: location.hash,
+    titre: document.title,
+    montre: Object.fromEntries(${JSON.stringify(montre)}.map((m) => [m, texte.includes(m)])),
+    ouvertes: [...document.querySelectorAll("#contenu details[open]")]
+      .map((d) => d.id).filter(Boolean),
+    actif: document.activeElement ? document.activeElement.id : "",
+    memoire: localStorage.getItem("retraite-notionnelle.simulateur"),
+    meme_document: Boolean(window.__avant),
+    historique: history.length,
+  };
+})()`;
+
+/** Un geste : cliquer sur un sélecteur. Vers une autre page (`page`), sur place
+ * avec un nouveau rendu (`ici`), ou sans rendu — une section qui s'ouvre
+ * (`section`). */
+async function faire(geste) {
+  const marquer = geste.vers !== "section";
+  await evaluer(`(() => {
+    window.__avant = true;
+    if (${marquer}) {
+      const marqueur = document.createElement("i");
+      marqueur.id = "marqueur-ecrans";
+      document.getElementById("contenu").append(marqueur);
+    }
+    document.querySelector(${JSON.stringify(geste.cliquer)}).click();
+    return true;
+  })()`);
+}
+
+async function jouerUnScenario(scenario) {
+  // Chaque scénario part d'un navigateur sans mémoire, sur un document neuf.
+  await page("Storage.clearDataForOrigin", {
+    origin: new URL(plan.racine).origin, storageTypes: "local_storage",
+  });
+  await page("Page.navigate", { url: "about:blank" });
+  const avant = await evaluer("history.length");
+  erreursDeLaPage.length = 0;
+  ressourcesEnErreur.length = 0;
+  await page("Page.navigate", { url: `${plan.racine}${scenario.depart}` });
+  // Sans geste, la page attendue est celle d'arrivée ; avec, c'est d'abord celle
+  // d'où l'on part, que rien ne redirige.
+  const premiere = scenario.gestes?.length
+    ? { chemin: scenario.depart.replace(/#.*$/, "").replace(/^index\.html$/, "") }
+    : scenario.attend;
+  let arrivee = await attendreLaPage(premiere, "page");
+  for (const geste of scenario.gestes || []) {
+    if (!arrivee) { break; }
+    await faire(geste);
+    if (geste.vers === "section") { await pause(400); }
+    arrivee = await attendreLaPage(scenario.attend, geste.vers);
+  }
+  const etat = await evaluer(ETAT_D_ARRIVEE(scenario.montre || []));
+  return {
+    nom: scenario.nom, ...etat, historique: etat.historique - avant, delai: !arrivee,
+    erreurs: [...erreursDeLaPage], ressources: [...ressourcesEnErreur],
+  };
+}
+
 // -- la visite ---------------------------------------------------------------
 
 const resultats = [];
 try {
-  let charge = false;
   for (const ecran of plan.ecrans) {
     await poserLEcran(ecran);
-    if (!charge) {
-      await page("Page.navigate", { url: `${plan.adresse}#/` });
-      await attendreLeRendu();
-      charge = true;
-    }
     for (const route of plan.routes) {
       erreursDeLaPage.length = 0;
-      // On passe par une autre page : une même adresse, redemandée, ne se
-      // rend pas, et chaque page doit l'être à la largeur qu'on mesure.
-      await allerA(route === "/partager" ? "/" : "/partager");
-      await allerA(route);
+      // Chaque page est ouverte à la largeur qu'on mesure.
+      await ouvrir(route);
       const replie = await evaluer(MESURER(ecran));
       await evaluer(`(() => {
         for (const d of document.querySelectorAll("#contenu details")) d.open = true;
@@ -579,9 +704,7 @@ try {
   for (const ecran of plan.chargements || []) {
     await poserLEcran(ecran);
     for (const route of plan.routes) {
-      await page("Page.navigate", { url: "about:blank" });
-      await page("Page.navigate", { url: `${plan.adresse}#${route}` });
-      await attendreLeRendu();
+      await ouvrir(route);
       await evaluer("new Promise((r) => setTimeout(() => r(true), 300))");
       const decalages = await evaluer("window.decalagesDuChargement");
       let cls = 0;
@@ -600,7 +723,11 @@ try {
       chargements.push({ largeur: ecran.largeur, route, cls, decalages });
     }
   }
-  process.stdout.write(JSON.stringify({ visites: resultats, chargements }));
+  const adresses = [];
+  for (const scenario of plan.adresses || []) {
+    adresses.push(await jouerUnScenario(scenario));
+  }
+  process.stdout.write(JSON.stringify({ visites: resultats, chargements, adresses }));
 } catch (erreur) {
   process.stderr.write(String(erreur?.stack || erreur));
   process.exitCode = 1;

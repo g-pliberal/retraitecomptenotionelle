@@ -7071,15 +7071,16 @@ une à une, les étapes 3 et 5. Les quatre gardes de l'étape 2 sont faites le
 
 ### 174. Les notes Lighthouse au maximum, sur toutes les pages du site — `en cours`
 
-**Reprise, au 26 octobre 2026.** Faites, les étapes 1 à 3. En ligne, sur les
-dix routes, Accessibilité, Bonnes pratiques, SEO et Agentic à 100, CLS nul ;
-Performance de 59 à 60 en mobile, de 87 à 90 au bureau, que seule la vitesse
-baisse. Le propriétaire a tranché le 26 octobre : une adresse par page, selon
-`174/2026-10-26-proposition-des-adresses.md`, les pages commitées dans le
-dépôt, l'adresse canonique sous `partiliberalfrancais.fr/retraite/`. Par quoi
-commencer : l'étape 4 (a), le routeur qui lit les deux formes d'adresse, sorti
-d'`index.html` dans un module, sans rien changer pour le lecteur. Reste au
-propriétaire : le sort des résultats (étape 6).
+**Reprise, au 26 octobre 2026.** Faites, les étapes 1 à 3 et 4 (a) et (b) :
+chaque page a son dossier (`cout/`…), ses liens relatifs, ses anciennes
+adresses redirigées par le routeur, et le document d'intégration le dit
+(`174/2026-10-26-etape-4b-les-pages-en-dossier.md`). En ligne, avant le
+pré-rendu : Accessibilité, Bonnes pratiques, SEO et Agentic à 100, CLS nul ;
+Performance de 59 à 60 en mobile, de 87 à 90 au bureau. Par quoi commencer :
+l'étape 4 (c), le pré-rendu — chaque page écrite toute faite par
+`scripts/construire_pages.py`, le moteur sorti de l'en-tête —, puis 5, le
+moteur à la demande. Reste au propriétaire : le sort des résultats (6), et
+l'hôte à sa prochaine copie.
 
 **D'où elle vient.** Le 25 octobre 2026, le propriétaire : « Je veux que
 toutes les pages aient un score maximal dans toutes les catégories lighthouse.

@@ -1119,13 +1119,25 @@ def test_lighthouse_se_lance_a_sa_version_figee():
     """Lighthouse n'est pas une dépendance du dépôt : ``npx`` le tire à la
     version que le script fige. Le bureau est son préréglage ``desktop`` ; le
     mobile, son profil par défaut."""
-    mobile = lighthouse.commande("https://exemple.org/", "/cout", "mobile", Path("m.json"))
-    bureau = lighthouse.commande("https://exemple.org/", "/cout", "bureau", Path("b.json"))
+    mobile = lighthouse.commande("https://exemple.org/", "cout/", "mobile", Path("m.json"))
+    bureau = lighthouse.commande("https://exemple.org/", "cout/", "bureau", Path("b.json"))
     assert mobile[:3] == ["npx", "--yes", f"lighthouse@{lighthouse.VERSION}"]
-    assert "https://exemple.org/#/cout" in mobile
+    assert "https://exemple.org/cout/" in mobile
     assert "--output=json" in mobile and "--output-path=m.json" in mobile
     assert any(argument.startswith("--chrome-flags=--headless=new") for argument in mobile)
     assert "--preset=desktop" in bureau and "--preset=desktop" not in mobile
+
+
+def test_lighthouse_ouvre_chaque_page_a_son_adresse():
+    """Chaque page a son dossier (action 174) : une route est son adresse, relative
+    à la racine du site. L'accueil est la racine ; le lecteur — sa carrière — va
+    derrière le `#`, que le navigateur ne transmet pas."""
+    racine = "https://g-pliberal.github.io/retraitecomptenotionelle/"
+    adresses = [next(a for a in lighthouse.commande(racine, route, "mobile", Path("m.json"))
+                     if a.startswith("https://"))
+                for route in ("./", "simuler/", "cout/", "simuler/#naissance=1970-01-01")]
+    assert adresses == [racine, f"{racine}simuler/", f"{racine}cout/",
+                        f"{racine}simuler/#naissance=1970-01-01"]
 
 
 def _rapport(notes: dict, audits: dict, references: dict) -> dict:
@@ -1178,10 +1190,10 @@ def test_le_resume_lighthouse_tient_une_ligne_par_route_et_profil():
     audits en défaut ; une route dont le rapport manque le dit."""
     pleine = dict.fromkeys(lighthouse.CATEGORIES, 100)
     releves = [
-        lighthouse.Releve("mobile", "/", {**pleine, "performance": 35},
+        lighthouse.Releve("mobile", "./", {**pleine, "performance": 35},
                           dict.fromkeys(lighthouse.METRIQUES.values(), "1 s"),
                           [("performance", "largest-contentful-paint", "10.5 s")]),
-        lighthouse.Releve("bureau", "/cout", None, {}, []),
+        lighthouse.Releve("bureau", "cout/", None, {}, []),
     ]
     texte = lighthouse.resumer(releves)
     assert "| mobile | accueil | 35 | 100 | 100 | 100 | 100 | 1 s | 1 s | 1 s | 1 s | 1 s |" in texte
@@ -1192,12 +1204,12 @@ def test_le_resume_lighthouse_tient_une_ligne_par_route_et_profil():
 def test_lighthouse_ne_se_dit_satisfait_que_de_notes_pleines():
     """``--verifier`` sort en erreur dès qu'une note manque ou n'est pas pleine."""
     pleine = dict.fromkeys(lighthouse.CATEGORIES, 100)
-    assert lighthouse.code_de_sortie([lighthouse.Releve("mobile", "/", pleine, {}, [])]) == 0
+    assert lighthouse.code_de_sortie([lighthouse.Releve("mobile", "./", pleine, {}, [])]) == 0
     assert lighthouse.code_de_sortie([
-        lighthouse.Releve("mobile", "/", pleine, {}, []),
-        lighthouse.Releve("bureau", "/", {**pleine, "performance": 99}, {}, []),
+        lighthouse.Releve("mobile", "./", pleine, {}, []),
+        lighthouse.Releve("bureau", "./", {**pleine, "performance": 99}, {}, []),
     ]) == 1
-    assert lighthouse.code_de_sortie([lighthouse.Releve("bureau", "/", None, {}, [])]) == 1
+    assert lighthouse.code_de_sortie([lighthouse.Releve("bureau", "./", None, {}, [])]) == 1
 
 
 def test_lighthouse_lance_les_audits_un_a_un_et_relit_leurs_rapports(tmp_path):
@@ -1210,15 +1222,15 @@ def test_lighthouse_lance_les_audits_un_a_un_et_relit_leurs_rapports(tmp_path):
         lancees.append(commande)
         sortie = Path(next(a for a in commande if a.startswith("--output-path="))
                       .split("=", 1)[1])
-        if "#/cout" not in " ".join(commande):
+        if "https://exemple.org/cout/" not in commande:
             sortie.write_text(json.dumps(_rapport(
                 dict.fromkeys(lighthouse.CATEGORIES, 1), {}, {})), encoding="utf-8")
         return subprocess.CompletedProcess(commande, 0)
 
     releves = lighthouse.auditer("https://exemple.org/", ["mobile", "bureau"],
-                                 ["/", "/cout"], tmp_path, executer=executer)
+                                 ["./", "cout/"], tmp_path, executer=executer)
     assert [(r.profil, r.route) for r in releves] == [
-        ("mobile", "/"), ("mobile", "/cout"), ("bureau", "/"), ("bureau", "/cout")]
+        ("mobile", "./"), ("mobile", "cout/"), ("bureau", "./"), ("bureau", "cout/")]
     assert len(lancees) == 4
     assert (tmp_path / "bureau" / "accueil.json").exists()
     assert releves[0].notes["seo"] == 100 and releves[1].notes is None

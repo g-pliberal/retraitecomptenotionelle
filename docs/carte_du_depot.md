@@ -87,7 +87,7 @@ le site le lit sans le recalculer (`moteur/js/agregats.js`).
 
 ```mermaid
 flowchart LR
-  adresse["L'adresse<br/>#/simuler?…"]
+  adresse["L'adresse<br/>simuler/#…"]
   releve["Relevé de carrière<br/>du visiteur, lu sur place"]
   paquet["Paquet de données<br/>moteur/donnees.json"]
   routeur["Routeur<br/>moteur/js/routeur.js, puis<br/>rendre() de pages.js"]
@@ -100,8 +100,8 @@ flowchart LR
 
   adresse -->|"lue à chaque changement"| routeur
   paquet -->|"devient le Contexte"| routeur
-  routeur -->|"#/simuler"| simuler
-  routeur -->|"#/cout, #/cas-types, #/avantages"| agregees
+  routeur -->|"simuler/"| simuler
+  routeur -->|"cout/, cas-types/, avantages/"| agregees
   routeur -->|"les autres adresses"| texte
   simuler -->|"carrière et réglages"| simulateur
   agregees -->|"lisent"| agregats
@@ -119,27 +119,35 @@ flowchart LR
   class adresse,routeur,simuler,agregees,texte,simulateur,agregats,ecran z_site
 ```
 
-Le site n'a pas de serveur de calcul : `index.html` charge le paquet et le
+Le site n'a pas de serveur de calcul : chaque page charge le paquet et le
 moteur, et le navigateur du visiteur fait le reste ; rien de ce qu'il saisit
-ne quitte sa machine. L'adresse porte toute la simulation : elle se cite et se
-partage telle quelle. Les adresses du site sont sa surface publique
+ne quitte sa machine. Chaque page est un dossier de la racine du site, avec son
+`index.html` (`scripts/construire_pages.py` fabrique ceux des huit pages
+autres que l'accueil, depuis celui de la racine) : le serveur la sert à son
+adresse, `cout/`, sans réglage. Le visiteur, sa carrière et ses réglages, vit
+derrière le `#`, que le navigateur ne transmet à aucun serveur
+(`#naissance=1965-03-01&sexe=H`, derrière `simuler/`) : l'adresse porte toute
+la simulation, elle se cite et se partage telle quelle. Les adresses du site sont sa surface publique
 (`docs/architecture.md`, annexe C) : elles ne changent pas sans note de
-décision, et les anciennes, `#/trajectoire` et `#/donnees`, mènent à ce qui
-les a remplacées. Le relevé de carrière déposé par le visiteur se lit dans le
-navigateur (`moteur/js/lecture-pdf.js`, `moteur/js/releve-lu.js`), sans rien
-envoyer.
+décision (`docs/decisions/0004-une-adresse-par-page.md`). Les anciennes, la
+page derrière le `#` (`#/cout?indexation=prix`), et celles des deux pages
+fondues, `#/trajectoire` et `#/donnees`, mènent à la nouvelle ou à ce qui les a
+remplacées, par une redirection que fait le routeur
+(`moteur/js/adresses.js`). Le relevé de carrière déposé par le visiteur se lit
+dans le navigateur (`moteur/js/lecture-pdf.js`, `moteur/js/releve-lu.js`), sans
+rien envoyer.
 
 | Page | Adresse | Ce qu'elle montre | Calcul |
 |---|---|---|---|
-| Programme | `#/` | L'accueil : la proposition, ce qu'elle change, les questions d'un électeur. | texte et paquet |
-| Simuler | `#/simuler` | Une carrière, saisie ou lue sur le relevé : les montants, le détail du calcul, l'écart décomposé règle par règle. | en direct |
-| Coût | `#/cout` | Ce qui rentre, ce qui sort, ce qui manque, et qui paie quoi. | précalculé |
-| Pourquoi changer | `#/risque` | Votre retraite sera-t-elle payée, et ce qu'en sait la recherche. | texte et paquet |
-| Partager | `#/partager` | Les chiffres du programme, en cartes à partager en image. | texte et paquet |
-| Le saviez-vous ? | `#/saviez-vous` | Des règles du système actuel, chacune avec son texte officiel. | texte et paquet |
-| Carrières types | `#/cas-types` | La grille des carrières types, génération par génération. | précalculé |
-| Droits non cotisés | `#/avantages` | Ce que le système donne sans cotisation, et ce qu'on paie sans rien recevoir. | précalculé |
-| Méthode et sources | `#/methode` | Comment le calcul se fait, la fiabilité des séries, les licences. | texte et paquet |
+| Programme | `./` | L'accueil : la proposition, ce qu'elle change, les questions d'un électeur. | texte et paquet |
+| Simuler | `simuler/` | Une carrière, saisie ou lue sur le relevé : les montants, le détail du calcul, l'écart décomposé règle par règle. | en direct |
+| Coût | `cout/` | Ce qui rentre, ce qui sort, ce qui manque, et qui paie quoi. | précalculé |
+| Pourquoi changer | `risque/` | Votre retraite sera-t-elle payée, et ce qu'en sait la recherche. | texte et paquet |
+| Partager | `partager/` | Les chiffres du programme, en cartes à partager en image. | texte et paquet |
+| Le saviez-vous ? | `saviez-vous/` | Des règles du système actuel, chacune avec son texte officiel. | texte et paquet |
+| Carrières types | `cas-types/` | La grille des carrières types, génération par génération. | précalculé |
+| Droits non cotisés | `avantages/` | Ce que le système donne sans cotisation, et ce qu'on paie sans rien recevoir. | précalculé |
+| Méthode et sources | `methode/` | Comment le calcul se fait, la fiabilité des séries, les licences. | texte et paquet |
 
 Les pages précalculées montrent toujours la référence : une adresse qui leur
 porte d'autres réglages rend la référence, sous un encadré qui le dit.

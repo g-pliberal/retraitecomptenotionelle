@@ -12,7 +12,7 @@ import {
   CLES_MODELISATION, CODES_SANS_EMPLOI, RELEVE_MAXIMUM, Saisie,
 } from "./saisie.js";
 import { Contexte, VERSION_PAQUET } from "./contexte.js";
-import { lireAdresse } from "./adresses.js";
+import { ecrireAdresse, lireAdresse } from "./adresses.js";
 import {
   DESCRIPTIONS, TITRES, rendre, requeteBasculee, requeteSansPeriode,
 } from "./pages.js";
@@ -155,16 +155,16 @@ function chargement(message) {
 const RACINE = new URL("../../", import.meta.url);
 
 // Le chemin d'une adresse, relatif à la racine du site : "" pour l'accueil,
-// "cout/" pour une page.
+// "cout/" pour une page ; nul hors du site.
 function depuisLaRacine(chemin) {
   return chemin.startsWith(RACINE.pathname)
-    ? decodeURIComponent(chemin.slice(RACINE.pathname.length)) : "";
+    ? decodeURIComponent(chemin.slice(RACINE.pathname.length)) : null;
 }
 
 // Ce que désigne l'adresse affichée : la page, ce que le lecteur y porte, la
 // section à ouvrir, sous l'une ou l'autre forme (`adresses.js`, action 174).
 function adresse() {
-  return lireAdresse(depuisLaRacine(location.pathname), location.hash);
+  return lireAdresse(depuisLaRacine(location.pathname) ?? "", location.hash);
 }
 
 // La requête de l'adresse courante, telle qu'elle est écrite : c'est elle que
@@ -174,10 +174,34 @@ function requeteDeLAdresse() {
 }
 
 // Ce que désigne un lien : son adresse résolue depuis la page, comme le
-// navigateur la suivra.
+// navigateur la suivra. Nul quand elle sort du site.
 function adresseDuLien(href) {
   const cible = new URL(href, location.href);
-  return lireAdresse(depuisLaRacine(cible.pathname), cible.hash);
+  const chemin = cible.origin === location.origin ? depuisLaRacine(cible.pathname) : null;
+  return chemin === null ? null : lireAdresse(chemin, cible.hash);
+}
+
+// La page que ce document porte, d'après son seul chemin : l'accueil à la
+// racine, une page dans son dossier. L'ancienne forme d'adresse, elle, désigne
+// une page par son fragment, quel que soit le document qui la charge.
+function pageDuDocument() {
+  return lireAdresse(depuisLaRacine(location.pathname), "").chemin;
+}
+
+// Une ancienne adresse (`#/cout?indexation=prix`) mène à la même chose sous la
+// nouvelle forme (`cout/#indexation=prix`) : la page dans le chemin, le lecteur
+// derrière le `#`. L'adresse est REMPLACÉE, non empilée — « précédent » ne
+// ramène pas à l'ancienne, qui renverrait aussitôt à la nouvelle. Vrai quand on
+// reste sur ce document, la nouvelle adresse posée ; faux quand on le quitte
+// pour le dossier de la page visée.
+function passerALaNouvelleAdresse(ancienne) {
+  const cible = new URL(ecrireAdresse(ancienne), RACINE);
+  if (adresseDuLien(cible.href).chemin !== pageDuDocument()) {
+    location.replace(cible);
+    return false;
+  }
+  history.replaceState(history.state, "", `${location.pathname}${location.search}${cible.hash}`);
+  return true;
 }
 
 // Ce qu'annonce l'écran d'attente des pages qui calculent longtemps : mieux
@@ -202,9 +226,6 @@ let optionsDepliees = false;
 
 // Le premier rendu ne déplace pas le focus — voir `reprendre`.
 let premierRendu = true;
-// La section qu'un renvoi venu d'une autre page demande d'ouvrir une fois la
-// page d'arrivée rendue — voir « le plan d'une page longue », plus bas.
-let sectionEnAttente = null;
 
 // La route dont la page est affichée, et la requête sous laquelle elle l'a
 // été : un rendu qui ne change pas de route se fait SUR PLACE — voir
@@ -267,6 +288,10 @@ async function afficher() {
   declencheur = null;
 
   let cible = adresse();
+  if (cible.ancienne) {
+    if (!passerALaNouvelleAdresse(cible)) { return; }
+    cible = adresse();
+  }
   // Qui revient sur le simulateur sans carrière dans l'adresse — par le
   // bandeau, par un signet, le lendemain — retrouve la sienne.
   const reprise = cible.chemin === "/simuler"
@@ -355,12 +380,9 @@ async function afficher() {
   // rouverts, saisie remise dans ses champs, légendes dimensionnées — doit
   // être fait avant qu'on mesure où poser la lecture.
   reprendre(contenu, { action, surPlace, repere });
-  // Puis la section qu'une ancienne adresse, ou un renvoi venu d'une autre
-  // page, désigne : on l'ouvre, et on y va. Un renvoi qui n'a pas trouvé la
-  // sienne ne survit pas au rendu suivant.
-  const section = cible.section || sectionEnAttente;
-  sectionEnAttente = null;
-  if (section) { ouvrirSection(section); }
+  // Puis la section que l'adresse désigne — un renvoi venu d'une autre page la
+  // porte derrière le `#` (`cout/#cout-equilibre`) : on l'ouvre, et on y va.
+  if (cible.section) { ouvrirSection(cible.section); }
 }
 
 // -- les statuts, aux seules dates où leur régime recrutait -------------------
@@ -932,7 +954,7 @@ function reglesDe(parametres) {
 }
 
 function formulaireDuSimulateur(contenu) {
-  return contenu?.querySelector('form.carte[action="#/simuler"]') || null;
+  return contenu?.querySelector("form.carte#simulateur") || null;
 }
 
 // La saisie retenue, telle que le formulaire la porterait : le brouillon s'il
@@ -992,7 +1014,8 @@ function reprendreLaSaisie(ici) {
     // porte aussi : le remettre les rétablirait en douce.
     ecrireMemoire({ requete, brouillon: null });
   }
-  history.replaceState(history.state, "", `#/simuler?${requete}`);
+  const section = adresse().section;
+  history.replaceState(history.state, "", `#${[section, requete].filter(Boolean).join("&")}`);
   return true;
 }
 
@@ -1157,9 +1180,8 @@ document.addEventListener("click", (evenement) => {
   const bouton = evenement.target.closest?.("button.oublier");
   if (!bouton) { return; }
   oublierMemoire();
-  const regles = gabarit.options();
   noterDeclencheur(bouton, "sur-place", { effacement: true });
-  naviguer(`#/simuler${regles ? `?${regles}` : ""}`);
+  naviguer(`#${gabarit.options()}`);
 });
 
 // « Retirer cette période » : le formulaire repart sans elle, les périodes qui
@@ -1176,7 +1198,7 @@ document.addEventListener("click", (evenement) => {
   const requete = new URLSearchParams(
     requeteSansPeriode(enObjet(requeteDuFormulaire(formulaire)), rang)).toString();
   noterDeclencheur(periode, "sur-place", { retrait: rang, haut: hautVisible(periode) });
-  naviguer(`#/simuler?${requete}`);
+  naviguer(`#${requete}`);
 });
 
 // Le simulateur court de l'accueil — « Et vous, ça donne combien ? » — est
@@ -1185,7 +1207,7 @@ document.addEventListener("click", (evenement) => {
 // « Calculer » écrasait la carrière retenue par une carrière de quatre
 // champs, au revenu de l'exemple.
 function preremplirLeSimulateurCourt(contenu) {
-  const formulaire = contenu.querySelector('form.simulateur-court[action="#/simuler"]');
+  const formulaire = contenu.querySelector("form.simulateur-court");
   const retenue = formulaire ? saisieRetenue() : null;
   if (!retenue) { return; }
   remplir(formulaire, retenue, ["naissance", "debut", "statut", "liquidation"]);
@@ -1205,9 +1227,11 @@ function fusionnerAvecLaMemoire(courts) {
 document.addEventListener("click", (evenement) => {
   if (evenement.defaultPrevented || evenement.button !== 0 || evenement.metaKey
       || evenement.ctrlKey || evenement.shiftKey || evenement.altKey) { return; }
-  const lien = evenement.target.closest?.('a[href^="#/simuler?"]');
+  const lien = evenement.target.closest?.("a[href]");
   const contenu = document.getElementById("contenu");
   if (!lien || !contenu?.contains(lien) || routeAffichee !== "/simuler") { return; }
+  const visee = adresseDuLien(lien.getAttribute("href"));
+  if (visee?.chemin !== "/simuler" || !visee.requete) { return; }
   const formulaire = formulaireDuSimulateur(contenu);
   if (!formulaire) { return; }
   const valeurs = requeteDuFormulaire(formulaire);
@@ -1218,8 +1242,7 @@ document.addEventListener("click", (evenement) => {
   if (!formulaire.reportValidity()) { return; }
   let requete;
   try {
-    requete = requeteBasculee(contexte, enObjet(valeurs),
-      enObjet(lien.getAttribute("href").split("?")[1]));
+    requete = requeteBasculee(contexte, enObjet(valeurs), visee.parametres);
   } catch (erreur) {
     // La saisie ne se lit pas : il n'y a rien à traduire. Elle part telle
     // quelle, et c'est le refus qui s'affiche — la saisie remise dans ses
@@ -1227,25 +1250,54 @@ document.addEventListener("click", (evenement) => {
     requete = valeurs;
   }
   noterDeclencheur(lien, "sur-place");
-  naviguer(`#/simuler?${requete}`);
+  naviguer(`#${requete}`);
 });
 
 // Tout lien interne note ce qu'il est : un geste sur place s'il reste sur la
 // page affichée et part de son contenu, une navigation sinon. En capture,
 // pour passer avant les écouteurs qui pourraient suivre le lien autrement.
 document.addEventListener("click", (evenement) => {
-  const lien = evenement.target.closest?.('a[href^="#/"]');
+  const lien = evenement.target.closest?.("a[href]");
   if (!lien || lien.matches("a[data-vers], a.evitement")) { return; }
   if (evenement.button !== 0 || evenement.metaKey || evenement.ctrlKey
       || evenement.shiftKey || evenement.altKey) { return; }
-  const vers = adresseDuLien(lien.getAttribute("href")).chemin;
+  const visee = adresseDuLien(lien.getAttribute("href"));
+  if (!visee) { return; }
   const contenu = document.getElementById("contenu");
-  noterDeclencheur(lien, vers === routeAffichee && contenu?.contains(lien)
+  noterDeclencheur(lien, visee.chemin === routeAffichee && contenu?.contains(lien)
     ? "sur-place" : "navigation");
 }, true);
 
+// Un lien vers la page où l'on est ne la recharge pas — le « Simuler » du
+// bandeau, sur le simulateur : sans `#`, il quitterait le document pour le
+// même, et la page repartirait de zéro. Il vide le `#`, la page se rend de
+// nouveau sur place, et le simulateur reprend sa dernière saisie. Avec un `#`,
+// le navigateur fait déjà de même, sans recharger.
+document.addEventListener("click", (evenement) => {
+  if (evenement.defaultPrevented || evenement.button !== 0 || evenement.metaKey
+      || evenement.ctrlKey || evenement.shiftKey || evenement.altKey) { return; }
+  const lien = evenement.target.closest?.("a[href]");
+  if (!lien || lien.target || lien.matches("a[data-vers], a.evitement")) { return; }
+  const visee = adresseDuLien(lien.getAttribute("href"));
+  if (!visee || visee.chemin !== routeAffichee) { return; }
+  if (new URL(lien.getAttribute("href"), location.href).hash) { return; }
+  evenement.preventDefault();
+  if (location.hash) { location.hash = ""; }
+});
+
+// Va à une adresse. Sur la page du document, seul le `#` change et `afficher`
+// suit, sans recharger ; vers une autre page, c'est un chargement, celui de son
+// dossier (action 174).
 function naviguer(cible) {
-  if (location.hash === cible) { afficher(); } else { location.hash = cible; }
+  const url = new URL(cible, location.href);
+  const visee = adresseDuLien(url.href);
+  if (!visee || visee.chemin !== pageDuDocument()) {
+    location.assign(url);
+  } else if (url.hash === location.hash) {
+    afficher();
+  } else {
+    location.hash = url.hash;
+  }
 }
 
 // -- le relevé de carrière déposé --------------------------------------------
@@ -1486,10 +1538,11 @@ document.addEventListener("submit", (evenement) => {
   evenement.preventDefault();
 
   let requete = requeteDuFormulaire(formulaire);
-  // La route vient de l'action du formulaire, jamais d'une constante écrite
+  // La page vient de l'action du formulaire, jamais d'une constante écrite
   // ici : le simulateur a changé d'adresse le jour où l'accueil est devenu le
   // programme, et une route figée aurait renvoyé chaque calcul sur l'accueil.
-  const route = (formulaire.getAttribute("action") || "#/simuler").replace(/^#/, "");
+  const action = new URL(formulaire.getAttribute("action") || "simuler/", location.href);
+  const route = adresseDuLien(action.href)?.chemin || "/simuler";
   // Le simulateur court de l'accueil envoie la saisie retenue entière, ses
   // quatre champs par-dessus — voir `preremplirLeSimulateurCourt`.
   if (formulaire.matches(".simulateur-court") && route === "/simuler") {
@@ -1508,7 +1561,14 @@ document.addEventListener("submit", (evenement) => {
   const simule = route === "/simuler" && !dehors;
   noterDeclencheur(dehors ? declenche : evenement.submitter || formulaire,
     simule ? "calcul" : "sur-place");
-  naviguer(`#${route}?${requete}`);
+  // Calculer depuis une autre page mène au simulateur par un chargement, et le
+  // document neuf ne saura pas de quel geste il vient : ce que le lecteur
+  // vient de calculer est retenu avant de partir.
+  if (simule && route !== pageDuDocument()) {
+    ecrireMemoire({ requete, brouillon: null });
+  }
+  action.hash = requete;
+  naviguer(action);
 });
 
 // Le groupe « Pour vérifier » du bandeau, replié sur un téléphone derrière un
@@ -2654,7 +2714,7 @@ function texteDeLaCarte(carte) {
   // marque : qui doute d'une règle doit trouver, en cliquant, le texte qui la
   // fonde, et ce texte est sous la carte.
   const adresse = affiche && !carte.closest("[data-partage-ici]")
-    ? `${location.origin}${location.pathname}#/simuler`
+    ? new URL(gabarit.route("/simuler"), location.href).href
     : location.href;
   const pied = `${adresse} ${SIGNATURE}`;
 
@@ -2838,17 +2898,17 @@ document.addEventListener("click", (evenement) => {
 // -- le plan d'une page longue ------------------------------------------------
 //
 // Le gabarit écrit, en tête des pages Coût et Données, la liste de leurs
-// sections ; chaque lien porte la route de la page (qui ne change rien) et
-// `data-vers`, l'identifiant de la section. C'est le mécanisme du lien
-// d'évitement, étendu au corps de la page : ouvrir la section si elle est
-// repliée — et celles qui l'enveloppent —, y poser le focus, y faire défiler,
-// sans toucher à l'adresse.
+// sections ; chaque lien porte l'adresse de la page, avec la section derrière
+// le `#` (`./#cout-depenses`), et `data-vers`, l'identifiant de la section.
+// C'est le mécanisme du lien d'évitement, étendu au corps de la page : ouvrir
+// la section si elle est repliée — et celles qui l'enveloppent —, y poser le
+// focus, y faire défiler, sans toucher à l'adresse.
 //
 // La section peut être sur une AUTRE page — Carrières types renvoie au
 // coefficient d'équilibre de la page Coût, les autres pages à la partie
-// « D'où viennent les chiffres » de Méthode et sources. Le lien suit alors sa
-// route, et c'est le rendu de la page d'arrivée qui ouvre la section —
-// `sectionEnAttente`, déclarée avec les autres états du routeur.
+// « D'où viennent les chiffres » de Méthode et sources. Le lien suit alors son
+// adresse (`../cout/#cout-equilibre`), qui porte la section : c'est le rendu
+// de la page d'arrivée qui l'ouvre, en lisant l'adresse (`afficher`).
 
 function ouvrirSection(identifiant) {
   const cible = document.getElementById(identifiant);
@@ -2867,10 +2927,10 @@ function ouvrirSection(identifiant) {
 document.addEventListener("click", (evenement) => {
   const lien = evenement.target.closest("a[data-vers]");
   if (!lien) { return; }
-  if (!document.getElementById(lien.dataset.vers)) {
-    sectionEnAttente = lien.dataset.vers;
-    return;
-  }
+  // Vers une autre page, le lien suit son adresse, qui porte la section.
+  const visee = adresseDuLien(lien.getAttribute("href"));
+  if (visee && visee.chemin !== routeAffichee) { return; }
+  if (!document.getElementById(lien.dataset.vers)) { return; }
   evenement.preventDefault();
   ouvrirSection(lien.dataset.vers);
 });
@@ -2957,19 +3017,26 @@ document.addEventListener("click", (evenement) => {
 
 window.addEventListener("hashchange", afficher);
 
-preparer().then(() => {
-  coquille();
-  return afficher();
-}).catch((erreur) => {
-  echec(
-    "Le simulateur n'a pas pu se charger",
-    `<p>${neutraliser(erreur)}</p>`
-    + "<p>Le modèle et ses données sont servis depuis ce dépôt : un réseau "
-    + "coupé pendant le chargement, ou un navigateur qui bloque les modules "
-    + "JavaScript, peuvent l'empêcher d'aboutir. Recharger la page suffit "
-    + "souvent ; sinon, un navigateur à jour (Firefox, Chrome, Safari, Edge) "
-    + "règle le problème.</p>"
-    + '<p><a href="https://github.com/g-pliberal/retraitecomptenotionelle">'
-    + "Le dépôt du projet</a></p>",
-  );
-});
+// Une ancienne adresse est remplacée avant tout : charger le paquet de données
+// pour quitter la page aussitôt serait un travail perdu.
+const ancienne = adresse();
+const quitte = ancienne.ancienne && !passerALaNouvelleAdresse(ancienne);
+
+if (!quitte) {
+  preparer().then(() => {
+    coquille();
+    return afficher();
+  }).catch((erreur) => {
+    echec(
+      "Le simulateur n'a pas pu se charger",
+      `<p>${neutraliser(erreur)}</p>`
+      + "<p>Le modèle et ses données sont servis depuis ce dépôt : un réseau "
+      + "coupé pendant le chargement, ou un navigateur qui bloque les modules "
+      + "JavaScript, peuvent l'empêcher d'aboutir. Recharger la page suffit "
+      + "souvent ; sinon, un navigateur à jour (Firefox, Chrome, Safari, Edge) "
+      + "règle le problème.</p>"
+      + '<p><a href="https://github.com/g-pliberal/retraitecomptenotionelle">'
+      + "Le dépôt du projet</a></p>",
+    );
+  });
+}

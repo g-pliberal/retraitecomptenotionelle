@@ -84,6 +84,12 @@ ACCUEIL = Etape("accueil", "mesures_accueil.py", (), ("--verifier",),
                 "moteur/js/pages.js (MESURES_BLOCAGES)")
 TEMOINS = Etape("témoins", "construire_temoins.py", (), ("--verifier",),
                 "tests/temoins/simulations.json, tests/temoins/pages.json")
+#: Les pages du site, une par dossier (action 174) : la coquille d'``index.html``
+#: avec le titre et la description de chacune. Ne lit ni le paquet ni le modèle.
+PAGES = Etape("pages", "construire_pages.py", (), ("--verifier",),
+              "simuler/index.html, cout/index.html, risque/index.html, "
+              "partager/index.html, saviez-vous/index.html, cas-types/index.html, "
+              "avantages/index.html, methode/index.html")
 CHIFFRAGE = Etape("chiffrage", "chiffrage_plf.py", (), ("--verifier",),
                   "docs/chiffrage_plf.md, docs/chiffrage_plf.csv")
 TABLEAUX = Etape("tableaux", "construire_tableaux_md.py", (), ("--verifier",),
@@ -99,7 +105,7 @@ CONSERVATION = Etape("conservation", "conservation.py", (), (),
 #: d'étapes. Les branches d'un même temps ne se lisent pas l'une l'autre.
 TEMPS: tuple[tuple[tuple[Etape, ...], ...], ...] = (
     ((INVENTAIRE, REGIMES),),
-    ((PAQUET, ACCUEIL, TEMOINS), (CHIFFRAGE,), (TABLEAUX,)),
+    ((PAQUET, ACCUEIL, TEMOINS), (CHIFFRAGE,), (TABLEAUX,), (PAGES,)),
     ((TABLEAU_DE_BORD, PROSE, CONSERVATION),),
 )
 #: Ce que ``--prose`` relance : ce qui ne lit que les documents et les registres.

@@ -92,8 +92,10 @@ HORS_PAGE: dict[str, dict[str, str]] = {
 #: se présente sous ses trois formes.
 NOMBRE = re.compile(r"(?<![\d  ])([+-]?)(?!0\d)"
                     r"(\d[\d   ]*(?:,\d+)?)\s?(Md\s?€|€|%)")
-ADRESSE = re.compile(r"<https://g-pliberal\.github\.io/retraitecomptenotionelle/#"
-                     r"(/[a-z-]+)\?([^>]+)>")
+#: L'adresse d'une carrière : la page dans son dossier, la carrière derrière le
+#: `#` (action 174).
+ADRESSE = re.compile(r"<https://g-pliberal\.github\.io/retraitecomptenotionelle/"
+                     r"([a-z-]+)/#([^>]+)>")
 LIGNE_TABLEAU = re.compile(r"^\|\s*(\d)\.\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|$",
                            re.M)
 BLOC_SCENARIO = re.compile(r'<div class="scenario">(.*?)<div class="glose">(.*?)</div>',
@@ -322,7 +324,7 @@ def test_le_parcours_rejoue_ses_carrieres(parcours):
     adresses = list(ADRESSE.finditer(parcours))
     assert len(adresses) >= 3, "le parcours ne donne plus ses carrières en adresse"
     for adresse in adresses:
-        chemin, requete = adresse.group(1), html.unescape(adresse.group(2))
+        chemin, requete = f"/{adresse.group(1)}", html.unescape(adresse.group(2))
         parametres = dict(parse_qsl(requete))
         qui = f"{parametres.get('statut')} {parametres.get('salaire')}"
         rendues = _lignes_rendues(chemin, parametres)

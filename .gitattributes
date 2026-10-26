@@ -69,3 +69,14 @@ docs/etat.md                   -merge
 data/reference/regimes/inventaire.yaml -merge
 .github/etat_suite.yaml        -merge
 .github/verdicts.tsv           -merge
+
+# Les pages du site, une par dossier : fabriquées depuis index.html par
+# scripts/construire_pages.py (action 174). Elles ne se retouchent pas.
+simuler/index.html       -merge
+cout/index.html          -merge
+risque/index.html        -merge
+partager/index.html      -merge
+saviez-vous/index.html   -merge
+cas-types/index.html     -merge
+avantages/index.html     -merge
+methode/index.html       -merge
