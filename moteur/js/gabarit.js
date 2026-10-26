@@ -1137,8 +1137,10 @@ export function cle(question, reponse, corps, source = "", identifiant = "") {
   // La barre n'apparaît que si la carte porte un TRACÉ : c'est lui que l'image
   // compose, et une carte qui n'en a pas donnerait un bouton qui échoue. Un
   // schéma de Sankey est un tracé comme un autre : `imageDuGraphique` le compose.
-  const partage = corps.includes('<figure class="graphique"')
-    || corps.includes('<figure class="sankey"')
+  // Un graphique dessiné dans une colonne étroite porte aussi la classe
+  // `etroit` : le tracé se reconnaît à sa première classe, non à la chaîne
+  // entière (action 174).
+  const partage = /<figure class="(?:graphique|sankey)[ "]/.test(corps)
     ? barrePartage()
     : "";
   // Identifiée, la carte est joignable depuis le plan de la page ; le

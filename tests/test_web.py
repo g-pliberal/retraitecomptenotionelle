@@ -4771,6 +4771,18 @@ def test_la_barre_de_partage_n_est_ecrite_qu_une_fois():
     assert barre.count("<button") == 2, barre
 
 
+@pytest.mark.parametrize("chemin", ["/cout", "/avantages"])
+def test_une_carte_a_trace_porte_sa_barre_de_partage_a_toute_largeur(chemin):
+    """Sur un téléphone, un graphique se dessine à la largeur de la colonne et sa
+    figure porte la classe ``etroit`` : la carte qui le contient ne reconnaissait
+    plus son tracé, et perdait sa barre de partage — deux sur trois, sur la page
+    Coût, à 360 points (action 174). La barre ne dépend pas de la largeur."""
+    barres = {largeur: rendre(chemin, {}, largeur)[1].count('class="partage"')
+              for largeur in (None, 360, 920)}
+    assert barres[None] > 0, f"{chemin} : aucune carte à tracé"
+    assert barres[360] == barres[920] == barres[None], barres
+
+
 # -- lire un graphique, et le faire sortir en image ----------------------------
 
 
