@@ -1953,7 +1953,8 @@ def test_la_page_ne_depend_d_aucun_service_exterieur():
     racine = Path(__file__).resolve().parents[1]
     routeur = (racine / "moteur" / "js" / "routeur.js").read_text(encoding="utf-8")
     coquille = (racine / "moteur" / "page.html").read_text(encoding="utf-8")
-    assert 'from "./pages.js"' in routeur
+    # Le texte des pages vient du dépôt, au premier calcul (action 174, étape 5).
+    assert 'import("./pages.js")' in routeur
     pages_html = {route: (racine / g.dossierDe(route) / "index.html").read_text(encoding="utf-8")
                   for route in g.PAGES}
     for route, texte in pages_html.items():
@@ -3172,7 +3173,16 @@ def test_les_bornes_d_assiette_sont_les_memes_des_deux_cotes():
     )
 
 
-def test_le_README_dit_le_vrai_poids_d_une_page_et_du_paquet():
+def _termes(expression: str) -> tuple[set[str], set[str]]:
+    """Les fichiers qu'une sonde de poids ajoute, et ceux qu'elle retire."""
+    morceaux = re.split(r"\s([+-])\s", f"+ {expression.strip()}"[2:])
+    ajoutes, retires = {morceaux[0].strip()}, set()
+    for signe, terme in zip(morceaux[1::2], morceaux[2::2]):
+        (ajoutes if signe == "+" else retires).add(terme.strip())
+    return ajoutes, retires
+
+
+def test_le_README_dit_le_vrai_poids_d_une_page_et_du_moteur():
     """Ce qu'une page transfère, ce que le premier calcul y ajoute, et qui le tient.
 
     Ce test mesurait `moteur/donnees.json` seul, à cinq pour cent près, pour
@@ -3181,32 +3191,38 @@ def test_le_README_dit_le_vrai_poids_d_une_page_et_du_paquet():
     donc resté vert pendant que la phrase dérivait de 310 Ko à plus du
     double : il recoupait la mauvaise grandeur.
 
-    Depuis que les pages arrivent toutes faites (action 174), lire une page ne
-    demande plus le paquet de données : la phrase dit d'abord le poids d'une
-    page, le code du site et l'accueil, puis celui du paquet, que seul le
-    premier calcul va chercher. Chacun porte ses deux sondes, que
+    Les pages arrivent toutes faites, et le moteur se charge à la demande
+    (action 174, étapes 4 et 5) : lire une page ne demande que son texte et de
+    quoi l'animer. La sonde de ce poids nomme donc exactement les modules que le
+    démarrage importe (``tests/test_demarrage.py``), la feuille de style et la
+    page ; celle du moteur, tout le reste du portage, hors la lecture d'un relevé
+    qui ne part qu'au dépôt d'un fichier ; celle du paquet, le paquet. Chacune
+    porte ses deux sondes, que
     `tests/test_prose.py::test_aucun_chiffre_ancre_n_a_derive` recalcule à
     chaque exécution. Ce qui reste à tenir ici, c'est qu'on ne puisse pas les
-    retirer, ni remettre le paquet dans le poids d'une page : un chiffre
-    désancré redeviendrait un souvenir, en silence.
+    retirer, ni les faire mentir sur ce que le navigateur demande.
     """
     import re
     from pathlib import Path
 
+    from test_demarrage import AU_DEMARRAGE
+
     readme = (Path(__file__).resolve().parents[1] / "README.md").read_text(encoding="utf-8")
+    demarrage = {f"moteur/js/{module_js}" for module_js in AU_DEMARRAGE}
     page = re.search(
         r"Lire une page transfère .*?<!--chiffre:poids_comprime\(([^)]*)\)-->[\d  ]+<!--/--> Ko compressés\s*"
         r"\(<!--chiffre:poids\(([^)]*)\)-->[\d  ]+<!--/--> Ko bruts\)", readme, re.S)
     assert page, "le README ne dit plus, sous sonde, ce qu'une page transfère"
     for charge in page.groups():
-        for morceau in ("moteur/style.css", "moteur/js/*.js", "index.html"):
-            assert morceau in charge, (
-                f"la sonde du poids d'une page oublie {morceau} : c'est ainsi "
-                "que l'ancienne mesure comptait le paquet pour le tout"
-            )
-        assert "moteur/donnees.json" not in charge, (
-            "lire une page ne demande pas le paquet : il part au premier calcul"
-        )
+        assert _termes(charge) == (demarrage | {"moteur/style.css", "index.html"}, set()), (
+            f"la sonde du poids d'une page ne nomme pas ce que le démarrage charge : {charge}")
+    moteur = re.search(
+        r"le premier calcul\s+y\s+ajoute\s+le\s+moteur,\s+<!--chiffre:poids_comprime\(([^)]*)\)-->[\d  ]+"
+        r"<!--/--> Ko compressés", readme, re.S | re.I)
+    assert moteur, "le README ne dit plus, sous sonde, ce que pèse le moteur"
+    ajoutes, retires = _termes(moteur.group(1))
+    assert ajoutes == {"moteur/js/*.js", "moteur/js/droit/*.js"}
+    assert retires == demarrage | {"moteur/js/lecture-pdf.js", "moteur/js/releve-lu.js"}
     paquet = re.search(
         r"le paquet\s+de données, <!--chiffre:poids_comprime\(([^)]*)\)-->[\d  ]+<!--/--> Ko compressés "
         r"\(<!--chiffre:poids\(([^)]*)\)-->[\d  ]+<!--/--> Ko bruts\)", readme)

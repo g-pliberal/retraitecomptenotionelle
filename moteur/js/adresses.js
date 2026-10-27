@@ -18,7 +18,7 @@
  */
 
 import { PAGES, dossierDe } from "./gabarit.js";
-import { CLES_MODELISATION } from "./saisie.js";
+import { CLES_MODELISATION } from "./cles.js";
 
 /**
  * Les adresses de deux pages qui n'existent plus, et ce qu'elles montrent

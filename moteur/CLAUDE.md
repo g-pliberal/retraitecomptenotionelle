@@ -34,9 +34,16 @@ types et Droits non cotisés lisent ce que le Python en a fabriqué
   formulaire, ouvre la section de l'adresse. Il ne prépare le moteur (le
   paquet de données, le simulateur : `moteur()`) que pour ce que la page toute
   faite ne porte pas — des réglages ou une carrière derrière le `#`, une saisie
-  retenue à reprendre, un tracé qui ne convient plus à la colonne — et garde
-  alors la hauteur de la page le temps du premier calcul. Une page recalculée
-  perd sa marque `data-prerendu`.
+  retenue à reprendre, un tracé qui ne convient plus à la colonne
+  (`dessinConvient`) — et garde alors la hauteur de la page le temps du premier
+  calcul. Une page recalculée perd sa marque `data-prerendu`.
+- **Le démarrage n'importe que de quoi animer la page** (action 174, étape 5) :
+  `routeur.js`, `adresses.js`, `cles.js`, `gabarit.js`, `format.js`,
+  `calendrier.js`. La saisie, le contexte, le texte des pages et la lecture du
+  relevé s'importent à la demande (`lesModules`, que `moteur()` attend), et un
+  geste qui s'en sert les attend d'abord. Une constante que le démarrage lit va
+  dans `cles.js`, que `saisie.js` reprend ; `tests/test_demarrage.py` refuse
+  tout import statique de plus.
 - **Un tracé qui dépend de l'écran s'écrit deux fois** dans la page toute
   faite, pour une colonne de téléphone (<!--chiffre:tenu(test_les_constantes_du_pre_rendu_sont_celles_du_gabarit)-->360<!--/--> points) et pour le large (1040,
   schémas de front à 480) ; `.variante-etroite` et `.variante-large`, dans la

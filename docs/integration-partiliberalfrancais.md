@@ -39,9 +39,9 @@ Pour l'hôte, six choses :
    le moteur de calcul, et un moteur de recherche qui n'exécute pas les scripts
    y trouve tout son texte. Le script de la page (`moteur/js/routeur.js`) ne fait
    que l'animer — il replie les tableaux, branche le formulaire, ouvre la
-   section que l'adresse nomme — ; il ne va chercher le paquet de données et ne
-   construit le simulateur que pour ce que la page toute faite ne porte pas, une
-   carrière ou des réglages derrière le `#`. Ces fichiers sont fabriqués
+   section que l'adresse nomme — ; il ne charge le moteur de calcul, son code
+   comme le paquet de données, que pour ce que la page toute faite ne porte pas,
+   une carrière ou des réglages derrière le `#`. Ces fichiers sont fabriqués
    (`scripts/construire_pages.py`) et commités avec le dépôt : la copie les
    recopie tels quels, sans rien à construire.
 6. **L'adresse que les moteurs de recherche retiennent est celle de la copie du
@@ -154,8 +154,9 @@ Vérifié sur la copie en production et sur GitHub Pages.
   <!--chiffre:poids_comprime(moteur/donnees.json)-->788<!--/--> Ko compressés) et `moteur/js/*.js`,
   dont les étapes du droit dans `moteur/js/droit/`, relativement à sa propre
   adresse ; la page d'un dossier (`cout/index.html`) les charge un niveau plus
-  haut (`../moteur/…`). Le paquet de données ne part qu'au premier calcul : lire
-  une page ne le demande pas. Le répertoire peut s'appeler autrement que `retraite` ;
+  haut (`../moteur/…`). Le moteur et le paquet de données ne partent qu'au premier
+  calcul : lire une page ne demande que sa feuille de style, ses deux polices et
+  les quelques modules qui l'animent. Le répertoire peut s'appeler autrement que `retraite` ;
   il doit être servi avec sa barre finale (ou rediriger vers elle), sinon les
   chemins relatifs se résolvent un niveau trop haut. Les liens que les pages
   écrivent sont relatifs aussi (`../cout/`) : le même fichier sert à GitHub

@@ -629,6 +629,10 @@ const ETAT_D_ARRIVEE = (montre) => `(() => {
     memoire: localStorage.getItem("retraite-notionnelle.simulateur"),
     meme_document: Boolean(window.__avant),
     historique: history.length,
+    // Ce que le document a demandé du moteur : ses modules, le paquet.
+    charge: performance.getEntriesByType("resource")
+      .map((entree) => new URL(entree.name).pathname.slice(${JSON.stringify(BASE)}.length))
+      .filter((chemin) => chemin.startsWith("moteur/")),
   };
 })()`;
 

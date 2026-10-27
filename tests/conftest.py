@@ -318,6 +318,9 @@ SITE = {
     # Où une adresse mène, ancienne ou neuve : une retouche du routeur ou d'un
     # lien le déplace.
     ("test_adresses_navigateur.py", "test_une_adresse_mene_ou_le_lecteur_l_attend"),
+    # Ce qu'une page charge en s'ouvrant : une retouche des imports du routeur
+    # le déplace (action 174, étape 5).
+    ("test_adresses_navigateur.py", "test_le_moteur_ne_se_charge_que_pour_calculer"),
 }
 
 

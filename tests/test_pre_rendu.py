@@ -67,6 +67,29 @@ def test_un_dessin_convient_a_la_colonne_dans_la_tolerance(attendue, demi, convi
     assert g.tracesConviennent(attendue, demi) is convient
 
 
+@pytest.mark.parametrize("colonne, traces, de_front, convient", [
+    # Une page sans tracé convient à toute colonne : rien n'y dépend de l'écran,
+    # pas même sur une tablette en hauteur, dont la colonne tombe entre deux.
+    (300, False, False, True), (688, False, False, True), (720, False, False, True),
+    (780, False, False, True), (1200, False, False, True),
+    # Des graphiques sans schémas de front : le dessin large sert dès 720 points.
+    (720, True, False, True), (780, True, False, True), (1200, True, False, True),
+    # Des schémas de front : leur demi-colonne compte.
+    (720, True, True, False), (780, True, True, False), (944, True, True, True),
+    (1200, True, True, True),
+    # Le téléphone : sa colonne compte, de front ou non.
+    (360, True, False, True), (372, True, True, True), (600, True, False, False),
+])
+def test_une_page_toute_faite_convient_a_la_colonne_selon_ses_traces(colonne, traces, de_front,
+                                                                       convient):
+    """La page toute faite se garde quand rien de ce qu'elle dessine ne dépend de
+    la colonne qu'on mesure : le routeur ne la recalculait pas seulement pour un
+    tracé trop loin de sa colonne, mais pour toute page, tracés ou non, dès que la
+    demi-colonne du large s'écartait de 480 — sur une tablette en hauteur, chaque
+    page chargeait le moteur."""
+    assert g.dessinConvient(colonne, traces, de_front) is convient
+
+
 def test_une_colonne_inconnue_convient_a_tout_dessin():
     """Sans mesure — le Python qui lit la page, un témoin — rien ne s'oppose au
     dessin tout fait."""

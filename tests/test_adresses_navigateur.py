@@ -170,6 +170,30 @@ def test_aucune_page_ne_charge_une_ressource_qui_manque(scenario):
     assert etat["erreurs"] == [], etat["erreurs"]
 
 
+#: Ce qu'une page ne demande qu'au premier calcul : le texte des pages, la saisie,
+#: le contexte du moteur et le paquet de données (action 174, étape 5).
+MOTEUR = ("moteur/js/pages.js", "moteur/js/saisie.js", "moteur/js/contexte.js",
+          "moteur/donnees.json")
+
+
+@pytest.mark.parametrize("nom, calcule", [
+    ("chaque page s'ouvre par son dossier", False),
+    ("l'ancien accueil", False),
+    ("un renvoi vers une section de la même page ne change pas l'adresse", False),
+    ("une section ouverte par l'adresse", True),
+])
+def test_le_moteur_ne_se_charge_que_pour_calculer(nom, calcule):
+    """Une page toute faite se lit et s'anime sans le moteur : elle n'en demande
+    rien, ni son code ni son paquet. Des résultats, qu'il faut calculer, le
+    demandent entier."""
+    charge = _etats()[nom]["charge"]
+    demandes = [chemin for chemin in MOTEUR if chemin in charge]
+    if calcule:
+        assert demandes == list(MOTEUR), f"{nom} : le moteur n'a pas été chargé ({charge})"
+    else:
+        assert demandes == [], f"{nom} : la page toute faite a demandé {demandes}"
+
+
 @pytest.mark.parametrize("scenario", [s for s in SCENARIOS if s.get("ancienne")],
                          ids=lambda s: s["nom"])
 def test_une_ancienne_adresse_est_remplacee_et_non_empilee(scenario):

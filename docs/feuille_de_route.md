@@ -7071,16 +7071,16 @@ une à une, les étapes 3 et 5. Les quatre gardes de l'étape 2 sont faites le
 
 ### 174. Les notes Lighthouse au maximum, sur toutes les pages du site — `en cours`
 
-**Reprise, au 26 octobre 2026.** Faites, les étapes 1 à 4 : chaque page est
-écrite toute faite par `scripts/construire_pages.py` (neuf pages, `sitemap.xml`,
-l'adresse canonique de la copie du parti), et le routeur l'anime sans moteur
-(`174/2026-10-26-etape-4c-les-pages-toutes-faites.md`). En ligne : Accessibilité,
-Bonnes pratiques, SEO et Agentic à 100, CLS nul ; Performance de 80 à 97 en
-mobile (59 à 60 avant) et de 99 à 100 au bureau, hors résultats (65 et 70). Par
-quoi commencer : l'étape 5, le moteur à la demande — le démarrage du routeur ne
-doit évaluer que de quoi animer la page, l'animation se découpe en tâches
-courtes —, mesurée trois fois de chaque côté (le bruit est de l'ordre du
-résultat). Reste au propriétaire : le sort des résultats (6), et l'hôte.
+**Reprise, au 27 octobre 2026.** Faites, les étapes 1 à 5 : chaque page est
+écrite toute faite (neuf pages, `sitemap.xml`, l'adresse canonique de la copie
+du parti), et le routeur l'anime sans charger le moteur, qui ne part qu'au
+premier calcul (`174/2026-10-27-etape-5-le-moteur-a-la-demande.md`). En local :
+Performance de 97 à 99 en mobile et 100 au bureau hors résultats (73 et 76),
+les quatre autres catégories à 100, CLS nul. Par quoi commencer : mesurer en
+ligne ; puis le premier contenu en mobile (1,3 à 1,9 s), que retarde la
+feuille de style, bloquante et faite surtout pour les autres pages — trois
+mesures de chaque côté, le bruit est de l'ordre du résultat. Reste au
+propriétaire : le sort des résultats (6), et l'hôte.
 
 **D'où elle vient.** Le 25 octobre 2026, le propriétaire : « Je veux que
 toutes les pages aient un score maximal dans toutes les catégories lighthouse.

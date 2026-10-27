@@ -269,6 +269,17 @@ export function tracesConviennent(attendue, demi) {
   return Math.abs(demi - prerendue) <= TOLERANCE_DES_TRACES * demi;
 }
 
+/**
+ * Une page toute faite convient-elle à la colonne qu'on mesure ? Oui quand rien
+ * de ce qu'elle dessine n'en dépend : une page sans tracé convient à toute
+ * colonne, et la demi-colonne du large ne compte que pour des schémas de front.
+ */
+export function dessinConvient(colonne, traces, deFront) {
+  if (!traces) { return true; }
+  const [attendue, demi] = ecransDe(colonne);
+  return tracesConviennent(attendue, deFront ? demi : null);
+}
+
 let MARQUER_LES_TRACES = false;
 const DEBUT_DE_TRACE = "<!--trace-->";
 const FIN_DE_TRACE = "<!--/trace-->";

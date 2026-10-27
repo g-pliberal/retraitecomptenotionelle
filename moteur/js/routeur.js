@@ -15,16 +15,49 @@
  * données que pour ce que la page toute faite ne porte pas : des réglages ou
  * une carrière dans l'adresse, une saisie retenue à reprendre, un tracé qui ne
  * convient pas à la colonne (`peutHydrater`).
+ *
+ * LE MOTEUR NE SE CHARGE QU'À LA DEMANDE (action 174, étape 5). Ce module
+ * n'importe que de quoi animer la page : la lecture des adresses, les clés que
+ * la saisie partage avec elles, le gabarit, le calendrier. La saisie, le
+ * contexte du moteur, le texte des pages et la lecture du relevé — soixante-dix
+ * modules, que l'ouverture d'une page chargeait tous sans en appeler une
+ * fonction — viennent au premier calcul, ou au premier geste qui en a besoin
+ * (`lesModules`). `tests/test_demarrage.py` le tient.
  */
-import {
-  CLES_MODELISATION, CODES_SANS_EMPLOI, RELEVE_MAXIMUM, Saisie,
-} from "./saisie.js";
-import { Contexte, VERSION_PAQUET } from "./contexte.js";
+import { CLES_MODELISATION, CODES_SANS_EMPLOI } from "./cles.js";
 import { ecrireAdresse, lireAdresse } from "./adresses.js";
-import { rendre, requeteBasculee, requeteSansPeriode } from "./pages.js";
 import * as gabarit from "./gabarit.js";
 import { NOMS_DE_MOIS } from "./calendrier.js";
-import { revenuDesPoints } from "./droit/releve.js";
+
+// Ce que le premier calcul charge : la saisie, le contexte du moteur, le texte
+// des pages, la lecture du relevé. Ces liaisons restent vides tant que
+// `lesModules` ne les a pas remplies ; seuls les calculs et les gestes qui
+// l'attendent d'abord s'en servent.
+let Saisie = null;
+let RELEVE_MAXIMUM = null;
+let Contexte = null;
+let VERSION_PAQUET = null;
+let rendre = null;
+let requeteBasculee = null;
+let requeteSansPeriode = null;
+let revenuDesPoints = null;
+
+let modules = null;
+function lesModules() {
+  modules ||= Promise.all([
+    import("./saisie.js"), import("./contexte.js"), import("./pages.js"),
+    import("./droit/releve.js"),
+  ]).then(([saisie, moduleContexte, pages, releve]) => {
+    ({ Saisie, RELEVE_MAXIMUM } = saisie);
+    ({ Contexte, VERSION_PAQUET } = moduleContexte);
+    ({ rendre, requeteBasculee, requeteSansPeriode } = pages);
+    ({ revenuDesPoints } = releve);
+  }).catch((erreur) => {
+    modules = null;
+    throw erreur;
+  });
+  return modules;
+}
 
 // Le paquet de données, résolu depuis ce module et non depuis la page : une
 // page posée dans un dossier (`cout/`) le trouve au même endroit. Aucune page
@@ -87,9 +120,10 @@ function moteur() {
 }
 
 async function preparer() {
-  // Le cache du navigateur sert le paquet qu'il a déjà : il ne change qu'avec
-  // une version du code, et la version qu'il porte le dit (plus bas).
-  const reponse = await fetch(PAQUET, { cache: "force-cache" });
+  // Le code du moteur et le paquet partent ensemble. Le cache du navigateur sert
+  // le paquet qu'il a déjà : il ne change qu'avec une version du code, et la
+  // version qu'il porte le dit (plus bas).
+  const [reponse] = await Promise.all([fetch(PAQUET, { cache: "force-cache" }), lesModules()]);
   if (!reponse.ok) {
     throw new Error(`moteur/donnees.json introuvable (${reponse.status})`);
   }
@@ -292,7 +326,7 @@ window.addEventListener("resize", () => {
     // est dessinée à la largeur exacte.
     const toutFaite = document.getElementById("contenu").dataset.prerendu !== undefined;
     if (toutFaite) {
-      if (gabarit.tracesConviennent(attendue, demi)) {
+      if (gabarit.dessinConvient(largeurDeLaColonne(), true, Boolean(deFront))) {
         dimensionnerLesTraces(document.getElementById("contenu"));
       } else {
         afficher();
@@ -320,9 +354,20 @@ async function afficher() {
     cible = adresse();
   }
   // Qui revient sur le simulateur sans carrière dans l'adresse — par le
-  // bandeau, par un signet, le lendemain — retrouve la sienne.
-  const reprise = cible.chemin === "/simuler"
-    && !porteUneCarriere(cible.parametres) && reprendreLaSaisie(cible.parametres);
+  // bandeau, par un signet, le lendemain — retrouve la sienne. La reprendre
+  // lit ses règles par la saisie : le moteur se charge d'abord.
+  let reprise = false;
+  if (cible.chemin === "/simuler" && !porteUneCarriere(cible.parametres)
+      && lireMemoire()?.requete) {
+    try {
+      await lesModules();
+    } catch (erreur) {
+      echecDuChargement(erreur);
+      return;
+    }
+    if (numero !== numeroDeRendu) { return; }
+    reprise = reprendreLaSaisie(cible.parametres);
+  }
   if (reprise) { cible = adresse(); }
 
   const contenu = document.getElementById("contenu");
@@ -1252,10 +1297,13 @@ document.addEventListener("click", (evenement) => {
   if (!formulaire || !formulaire.contains(bouton)) { return; }
   const periode = bouton.closest(".metier");
   const rang = Number(bouton.dataset.rang);
-  const requete = new URLSearchParams(
-    requeteSansPeriode(enObjet(requeteDuFormulaire(formulaire)), rang)).toString();
-  noterDeclencheur(periode, "sur-place", { retrait: rang, haut: hautVisible(periode) });
-  naviguer(`#${requete}`);
+  const valeurs = enObjet(requeteDuFormulaire(formulaire));
+  const haut = hautVisible(periode);
+  lesModules().then(() => {
+    const requete = new URLSearchParams(requeteSansPeriode(valeurs, rang)).toString();
+    noterDeclencheur(periode, "sur-place", { retrait: rang, haut });
+    naviguer(`#${requete}`);
+  }, echecDuChargement);
 });
 
 // Le simulateur court de l'accueil — « Et vous, ça donne combien ? » — est
@@ -1297,18 +1345,26 @@ document.addEventListener("click", (evenement) => {
   // Ce que « Calculer » refuserait, la bascule le refuse aussi, et de la
   // même façon : le navigateur montre le champ fautif.
   if (!formulaire.reportValidity()) { return; }
+  basculer(lien, valeurs, visee.parametres);
+});
+
+// La traduction des montants passe par le moteur, qu'une page toute faite n'a
+// pas encore chargé.
+async function basculer(lien, valeurs, parametres) {
   let requete;
   try {
-    requete = requeteBasculee(contexte, enObjet(valeurs), visee.parametres);
+    await moteur();
+    requete = requeteBasculee(contexte, enObjet(valeurs), parametres);
   } catch (erreur) {
     // La saisie ne se lit pas : il n'y a rien à traduire. Elle part telle
     // quelle, et c'est le refus qui s'affiche — la saisie remise dans ses
-    // champs, pour qu'on la corrige avant de basculer.
+    // champs, pour qu'on la corrige avant de basculer. Un moteur qui ne se
+    // charge pas le dira de même, au rendu.
     requete = valeurs;
   }
   noterDeclencheur(lien, "sur-place");
   naviguer(`#${requete}`);
-});
+}
 
 // Tout lien interne note ce qu'il est : un geste sur place s'il reste sur la
 // page affichée et part de son contenu, une navigation sinon. En capture,
@@ -1507,9 +1563,10 @@ async function deposerLeReleve(contenu, fichier) {
     // Les points d'une année que le relevé ne chiffre pas en euros disent son
     // revenu, au barème du droit en vigueur : le scénario 1 retrouve le plus
     // bas qui les ouvre, plutôt que de lire l'année à zéro.
-    const moteur = contexte.simulateur().scenarioActuel;
+    await moteur();
+    const actuel = contexte.simulateur().scenarioActuel;
     const lecture = lireReleve(lignes, new Date().getFullYear(),
-      (...arguments_) => revenuDesPoints(moteur, ...arguments_));
+      (...arguments_) => revenuDesPoints(actuel, ...arguments_));
     if (lecture.lignes.length === 0) {
       dire("Aucune année de carrière n'a été reconnue dans ce fichier. "
         + "S'il s'agit bien d'un relevé, sa mise en page est inconnue du "
@@ -1589,10 +1646,14 @@ async function deposerLeReleve(contenu, fichier) {
 
 // -- navigation --------------------------------------------------------------
 
-document.addEventListener("submit", (evenement) => {
+document.addEventListener("submit", async (evenement) => {
   const formulaire = evenement.target.closest("form");
   if (!formulaire) { return; }
   evenement.preventDefault();
+  // Ce qui déclenche l'envoi se lit avant toute attente : le focus peut bouger
+  // pendant que le moteur se charge.
+  const declenche = evenement.submitter && !formulaire.contains(evenement.submitter)
+    ? evenement.submitter : document.activeElement;
 
   let requete = requeteDuFormulaire(formulaire);
   // La page vient de l'action du formulaire, jamais d'une constante écrite
@@ -1603,7 +1664,14 @@ document.addEventListener("submit", (evenement) => {
   // Le simulateur court de l'accueil envoie la saisie retenue entière, ses
   // quatre champs par-dessus — voir `preremplirLeSimulateurCourt`.
   if (formulaire.matches(".simulateur-court") && route === "/simuler") {
-    requete = fusionnerAvecLaMemoire(enObjet(requete));
+    // Les règles de la saisie retenue se lisent par la saisie.
+    try {
+      await lesModules();
+      requete = fusionnerAvecLaMemoire(enObjet(requete));
+    } catch (erreur) {
+      // Sans la saisie, les quatre champs partent seuls : le simulateur
+      // dira, en se chargeant, ce qui l'en empêche.
+    }
   }
   // Un formulaire qui simule mène à des résultats ; les autres — « Recalculer
   // cette page » — recalculent la page sous les yeux du lecteur. Un contrôle
@@ -1612,8 +1680,6 @@ document.addEventListener("submit", (evenement) => {
   // laissent le lecteur devant le tableau qu'il vient de remplir. Entrée dans
   // l'un de ces champs soumet par le premier bouton du formulaire : c'est
   // alors le champ qui dit d'où l'on vient.
-  const declenche = evenement.submitter && !formulaire.contains(evenement.submitter)
-    ? evenement.submitter : document.activeElement;
   const dehors = declenche?.form === formulaire && !formulaire.contains(declenche);
   const simule = route === "/simuler" && !dehors;
   noterDeclencheur(dehors ? declenche : evenement.submitter || formulaire,
@@ -3088,8 +3154,15 @@ function peutHydrater(cible) {
   const contenu = document.getElementById("contenu");
   if (contenu?.dataset.prerendu !== cible.chemin) { return false; }
   if (Object.keys(cible.parametres).length) { return false; }
-  if (cible.chemin === "/simuler" && lireMemoire()?.requete) { return false; }
-  return gabarit.tracesConviennent(...gabarit.ecransDe(largeurDeLaColonne()));
+  // Une saisie retenue, même un brouillon, se reprend par le moteur : savoir si
+  // le brouillon appartient à ces règles demande la saisie (`reglesDe`).
+  const memoire = cible.chemin === "/simuler" ? lireMemoire() : null;
+  if (memoire?.requete || memoire?.brouillon) { return false; }
+  // Une page sans tracé convient à toute colonne ; une page qui en porte, à la
+  // colonne où son dessin tombe juste.
+  return gabarit.dessinConvient(largeurDeLaColonne(),
+    Boolean(contenu.querySelector(".variante-etroite")),
+    Boolean(contenu.querySelector(".de-front")));
 }
 
 // La page est là, rendue : le routeur y fait ce qu'il fait après chaque rendu,
