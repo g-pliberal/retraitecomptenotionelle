@@ -78,6 +78,26 @@ TBT de 0 à 41 ms. Lire l'accueil transfère 146 Ko compressés au lieu de 1 033
 le premier calcul y ajoute 889 Ko de moteur et 788 de paquet. Les tests des
 écrans passent de 87 s à 44 s.
 
+**En ligne**, le 27 octobre 2026, la suite verte et la copie déployée : les
+quatre autres catégories à 100 et le CLS nul sur les dix routes ; Performance,
+de l'étape 4 (c) à celle-ci, et ce qu'une page transfère :
+
+| Page | Mobile | Bureau | Transféré |
+|---|---|---|---|
+| Programme | 80 → 95 | 100 → 100 | 1 112 → 198 Ko |
+| Simuler | 86 → 99 | 99 → 100 | 1 116 → 201 Ko |
+| Résultats | 65 → 73 | 70 → 85 | 1 948 → 1 950 Ko |
+| Coût | 89 → 98 | 99 → 100 | 1 192 → 278 Ko |
+| Pourquoi changer | 83 → 98 | 100 → 100 | 1 111 → 196 Ko |
+| Partager | 97 → 100 | 100 → 100 | 1 099 → 185 Ko |
+| Le saviez-vous ? | 95 → 99 | 100 → 100 | 1 101 → 187 Ko |
+| Carrières types | 87 → 99 | 100 → 100 | 1 105 → 190 Ko |
+| Droits non cotisés | 85 → 99 | 100 → 100 | 1 137 → 223 Ko |
+| Méthode et sources | 83 → 98 | 99 → 100 | 1 141 → 226 Ko |
+
+Une mesure par route : le Programme, à 95, a le TBT le plus haut (108 ms), à
+remesurer avant d'y chercher une cause.
+
 ## Ce qui reste
 
 - **Le premier contenu en mobile**, de 1,3 à 1,9 s (le plus grand de 1,8 à
@@ -88,4 +108,3 @@ le premier calcul y ajoute 889 Ko de moteur et 788 de paquet. Les tests des
   au propriétaire). Au bureau, leur plus grand contenu tombe à 2,5 s au lieu de
   0,5 : le formulaire tout fait cède plus tôt la place à l'écran d'attente, le
   routeur démarrant avant le moteur.
-- **Mesurer en ligne**, la suite verte et la copie déployée.
