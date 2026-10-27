@@ -30,6 +30,13 @@
  * de 12 % de la colonne, pas avant : l'écran qu'on rétrécit peu ne la
  * redessine pas, et le dernier écran la redessine.
  *
+ * `styles` dit, pour une route et un écran, si la page se peint pareil avec son
+ * seul style — les règles que son en-tête porte (action 174) — qu'avec la
+ * feuille entière, que le pilote refuse alors au navigateur ; avec
+ * `sans_onload`, il ôte de la page le gestionnaire qui rend la feuille entière
+ * effective, comme le ferait une politique de sécurité stricte, et dit si elle
+ * l'est devenue quand même.
+ *
  * `adresses` est une liste de scénarios : chacun ouvre une adresse (`depart`, relative à la racine),
  * fait des gestes (`gestes` : cliquer sur un sélecteur, en changeant de page ou
  * non), attend la page à l'adresse que dit `attend`, et rend ce qu'elle montre
@@ -89,6 +96,8 @@ ws.onmessage = (message) => {
   } else if (recu.method === "Network.loadingFailed"
       && recu.params.errorText !== "net::ERR_ABORTED") {
     ressourcesEnErreur.push(`${recu.params.errorText} ${recu.params.requestId}`);
+  } else if (recu.method === "Fetch.requestPaused") {
+    intercepter(recu.params).catch((erreur) => erreursDeLaPage.push(String(erreur)));
   } else if (recu.method === "Runtime.exceptionThrown") {
     erreursDeLaPage.push(recu.params.exceptionDetails?.exception?.description
       || recu.params.exceptionDetails?.text || "exception");
@@ -101,6 +110,24 @@ function envoyer(methode, parametres = {}, session = undefined) {
     enAttente.set(numero, { resoudre, rejeter });
     ws.send(JSON.stringify({ id: numero, method: methode, params: parametres, sessionId: session }));
   });
+}
+
+// Ce que le pilote fait des requêtes qu'il intercepte (`styles`) : refuser la
+// feuille entière, ou ôter de la page l'`onload` qui la rend effective.
+async function intercepter({ requestId, request, resourceType, responseHeaders }) {
+  if (resourceType === "Document") {
+    const { body, base64Encoded } = await page("Fetch.getResponseBody", { requestId });
+    const texte = base64Encoded ? Buffer.from(body, "base64").toString("utf-8") : body;
+    const sans = texte.replace(` onload="this.media='all'"`, "");
+    await page("Fetch.fulfillRequest", {
+      requestId, responseCode: 200, responseHeaders,
+      body: Buffer.from(sans, "utf-8").toString("base64"),
+    });
+  } else if (request.url.endsWith("moteur/style.css")) {
+    await page("Fetch.failRequest", { requestId, errorReason: "BlockedByClient" });
+  } else {
+    await page("Fetch.continueRequest", { requestId });
+  }
 }
 
 // « Partager » enregistre l'image qu'il compose : le pilote la regarde se
@@ -682,6 +709,71 @@ async function jouerUnScenario(scenario) {
   };
 }
 
+// -- le style de chaque page -------------------------------------------------
+
+/** Chaque élément de la page : sa boîte, et ce que le style décide de lui. */
+const INSTANTANE = `(() => {
+  const proprietes = ["display", "visibility", "color", "background-color", "font-size",
+    "font-weight", "font-family", "line-height", "text-transform"];
+  return [...document.querySelectorAll("body *")].map((el) => {
+    const boite = el.getBoundingClientRect();
+    const style = getComputedStyle(el);
+    const classes = typeof el.className === "string" && el.className.trim()
+      ? "." + el.className.trim().split(/\\s+/).join(".") : "";
+    return [el.tagName.toLowerCase() + (el.id ? "#" + el.id : "") + classes,
+      Math.round(boite.x), Math.round(boite.y), Math.round(boite.width),
+      Math.round(boite.height), ...proprietes.map((p) => style.getPropertyValue(p))].join(" | ");
+  });
+})()`;
+
+/** La feuille entière est-elle effective ? Attend jusqu'à cinq secondes. */
+const FEUILLE_EFFECTIVE = `new Promise((resoudre) => {
+  const debut = Date.now();
+  const sonder = () => {
+    const lien = document.querySelector("link[data-feuille]");
+    if (!lien || lien.media === "all" || Date.now() - debut > 5000) {
+      resoudre(lien ? lien.media : "absent");
+      return;
+    }
+    setTimeout(sonder, 40);
+  };
+  sonder();
+})`;
+
+async function mesurerLeStyle({ route, largeur, hauteur, sans_onload: sansOnload }) {
+  await poserLEcran({ largeur, hauteur });
+  if (sansOnload) {
+    await page("Fetch.enable", { patterns: [{ urlPattern: "*", resourceType: "Document",
+      requestStage: "Response" }] });
+    try {
+      await ouvrir(route);
+    } finally {
+      await page("Fetch.disable");
+    }
+    return { route, largeur, sans_onload: true, media: await evaluer(FEUILLE_EFFECTIVE) };
+  }
+  await ouvrir(route);
+  const media = await evaluer(FEUILLE_EFFECTIVE);
+  await evaluer("new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(() => r(true))))");
+  const entiere = await evaluer(INSTANTANE);
+  await page("Fetch.enable", { patterns: [{ urlPattern: "*moteur/style.css", requestStage: "Request" }] });
+  let seule;
+  try {
+    await ouvrir(route);
+    seule = await evaluer(INSTANTANE);
+  } finally {
+    await page("Fetch.disable");
+  }
+  const ecarts = [];
+  if (seule.length !== entiere.length) {
+    ecarts.push(`${seule.length} éléments avec le seul style, ${entiere.length} avec la feuille entière`);
+  }
+  for (let i = 0; i < Math.min(seule.length, entiere.length) && ecarts.length < 6; i += 1) {
+    if (seule[i] !== entiere[i]) { ecarts.push(`seul : ${seule[i]} — entière : ${entiere[i]}`); }
+  }
+  return { route, largeur, media, elements: entiere.length, ecarts };
+}
+
 // -- la visite ---------------------------------------------------------------
 
 const resultats = [];
@@ -751,7 +843,11 @@ try {
   for (const scenario of plan.adresses || []) {
     adresses.push(await jouerUnScenario(scenario));
   }
-  process.stdout.write(JSON.stringify({ visites: resultats, chargements, adresses }));
+  const styles = [];
+  for (const cas of plan.styles || []) {
+    styles.push(await mesurerLeStyle(cas));
+  }
+  process.stdout.write(JSON.stringify({ visites: resultats, chargements, adresses, styles }));
 } catch (erreur) {
   process.stderr.write(String(erreur?.stack || erreur));
   process.exitCode = 1;

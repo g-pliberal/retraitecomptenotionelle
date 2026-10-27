@@ -59,6 +59,16 @@ function lesModules() {
   return modules;
 }
 
+// La feuille entière, que la page charge sans retenir son affichage — déclarée
+// pour l'impression, elle porte le style des gestes et des résultats, la page
+// ayant en tête le sien : son `onload` la rend effective une fois chargée. Une
+// politique de sécurité qui refuse les gestionnaires en ligne le neutraliserait ;
+// le routeur, qui n'en est pas un, le fait aussi.
+for (const feuille of document.querySelectorAll("link[data-feuille]")) {
+  const appliquer = () => { feuille.media = "all"; };
+  if (feuille.sheet) { appliquer(); } else { feuille.addEventListener("load", appliquer, { once: true }); }
+}
+
 // Le paquet de données, résolu depuis ce module et non depuis la page : une
 // page posée dans un dossier (`cout/`) le trouve au même endroit. Aucune page
 // ne le précharge : elle se lit sans lui, et il ne part qu'au premier calcul.

@@ -35,6 +35,9 @@ Ce qu'il écrit
   rendus sont fusionnés : tout ce qui n'est pas un tracé doit être identique, et
   chaque tracé est écrit pour les deux écrans, ``variante-etroite`` et
   ``variante-large``, dont la feuille de style montre un seul.
+* **Le style de la page**, en tête : les règles de ``moteur/style.css`` qui
+  peuvent la toucher (``scripts/feuille_de_page.py``). La page se peint sans
+  attendre la feuille entière, qui suit sans retenir l'affichage.
 * **Le plan du site**, ``sitemap.xml``, qui liste les neuf adresses de la copie
   du parti : celles que les moteurs de recherche retiennent.
 
@@ -60,7 +63,15 @@ sys.path.insert(0, str(RACINE / "src"))
 
 from retraite_notionnelle.web.site import module, rendre  # noqa: E402
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from feuille_de_page import feuille_de_la_page, jetons  # noqa: E402
+
 GABARIT = RACINE / "moteur" / "page.html"
+#: La feuille de style, dont chaque page porte en tête ce qui peut la toucher.
+FEUILLE = RACINE / "moteur" / "style.css"
+#: Le routeur, qui pose des classes à l'ouverture : leurs règles sont du style de
+#: la page.
+ROUTEUR = RACINE / "moteur" / "js" / "routeur.js"
 
 #: Ce que la page porte en tête, pour qui voudrait la retoucher à la main.
 MENTION = ("<!-- Page fabriquée par scripts/construire_pages.py, depuis moteur/page.html : "
@@ -219,8 +230,14 @@ def page(route: str, gabarit: str | None = None) -> str:
         "pied": g.pied(),
     }
     # Un champ du gabarit que le générateur ne remplit pas est une erreur (KeyError) ;
-    # ce qu'on insère n'est pas relu.
-    return re.sub(r"\{\{(\w+)\}\}", lambda m: valeurs[m.group(1)], _sans_commentaires(gabarit))
+    # ce qu'on insère n'est pas relu. Le style vient en dernier : il se choisit
+    # sur la page écrite.
+    valeurs["style"] = "{{style}}"
+    ecrite = re.sub(r"\{\{(\w+)\}\}", lambda m: valeurs[m.group(1)], _sans_commentaires(gabarit))
+    style = feuille_de_la_page(FEUILLE.read_text(encoding="utf-8"),
+                               jetons(ecrite, ROUTEUR.read_text(encoding="utf-8")),
+                               valeurs["racine"])
+    return ecrite.replace("<style>{{style}}</style>", f"<style>\n{style}</style>", 1)
 
 
 def plan_du_site() -> str:

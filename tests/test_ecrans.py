@@ -378,6 +378,45 @@ def test_les_schemas_qu_une_carte_compare_se_voient_ensemble():
     assert not fautes, f"{len(fautes)} schémas loin l'un de l'autre :\n" + "\n".join(fautes)
 
 
+#: Les neuf pages toutes faites, aux deux écrans que Lighthouse émule, et une page
+#: dont le pilote ôte l'``onload`` de la feuille entière.
+STYLES = [{"route": route, "largeur": largeur, "hauteur": hauteur}
+          for route in ROUTES if "#" not in route
+          for largeur, hauteur in CHARGEMENTS] + [
+    {"route": "risque/", "largeur": 390, "hauteur": 800, "sans_onload": True}]
+
+
+@functools.lru_cache(maxsize=None)
+def _styles() -> list[dict]:
+    """Chaque page ouverte deux fois : avec la feuille entière, puis la feuille
+    refusée au navigateur, la page n'ayant que le style de son en-tête."""
+    return jouer({"ecrans": [], "routes": [], "chargements": [], "adresses": [],
+                  "styles": STYLES})["styles"]
+
+
+def test_chaque_page_se_peint_avec_son_seul_style():
+    """Le style qu'une page porte en tête suffit à la peindre telle que la
+    feuille entière la peint : chaque élément à la même place, de la même taille,
+    dans la même couleur et la même police — routeur passé, tableaux repliés. Il
+    ne lui manque rien qu'on verrait arriver avec la feuille entière (action 174,
+    proposition du 27 octobre 2026)."""
+    fautes = [f"{cas['route']} à {cas['largeur']} points : " + " ; ".join(cas["ecarts"])
+              for cas in _styles() if cas.get("ecarts")]
+    assert not fautes, "\n".join(fautes)
+
+
+def test_la_feuille_entiere_devient_effective_meme_sans_son_onload():
+    """Déclarée pour l'impression, la feuille entière ne bloque pas l'affichage ;
+    son ``onload`` la rend effective une fois chargée. Une politique de sécurité
+    qui refuse les gestionnaires en ligne le neutraliserait : le routeur le fait
+    alors, sans quoi les gestes et les résultats resteraient sans style."""
+    for cas in _styles():
+        assert cas["media"] == "all", (
+            f"{cas['route']} à {cas['largeur']} points"
+            f"{' sans son onload' if cas.get('sans_onload') else ''} : "
+            f"la feuille entière reste en « {cas['media']} »")
+
+
 def _retrecissements(largeur: int):
     """Les pages de schémas de front, rétrécies à cet écran : la visite et ce
     que la page a fait de la fenêtre qui rétrécit."""

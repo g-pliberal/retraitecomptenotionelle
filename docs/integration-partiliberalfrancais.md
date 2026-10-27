@@ -173,9 +173,12 @@ Vérifié sur la copie en production et sur GitHub Pages.
 - Aucun en-tête particulier n'est requis. Une `Content-Security-Policy`, si
   le site en pose une un jour, doit autoriser `'self'` pour les scripts, les
   styles, les images (`data:` n'est pas utilisé) et `connect-src` — le
-  simulateur ne parle à aucune autre origine. Le style de l'écran d'attente
-  est **en ligne** dans `index.html` (`<style>`) : une CSP sans
-  `'unsafe-inline'` pour les styles le neutraliserait, sans casser le reste.
+  simulateur ne parle à aucune autre origine. Chaque page porte **en ligne**,
+  dans son en-tête (`<style>`), les règles de style qui la touchent, et charge
+  la feuille entière sans bloquer son affichage, que rend effective un
+  gestionnaire `onload` en ligne ou, à défaut, le routeur. Une CSP sans
+  `'unsafe-inline'` pour les styles et les scripts ne casserait rien : la page
+  attendrait la feuille entière et le routeur pour prendre son style.
 
 ## Ce que le simulateur charge à l'exécution
 

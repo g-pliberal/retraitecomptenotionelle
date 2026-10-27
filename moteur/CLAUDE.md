@@ -26,9 +26,12 @@ types et Droits non cotisés lisent ce que le Python en a fabriqué
   titre, la description, l'adresse canonique de la copie du parti, le corps, le
   pied —, avec `sitemap.xml` ; `regenerer.py` les refait, `.gitattributes` les
   déclare fabriquées. On retouche `moteur/page.html`, `pages.js` ou
-  `gabarit.js`, jamais une page. La coquille ne charge que la feuille de style,
-  les deux polices et `routeur.js` : ni `modulepreload` ni préchargement du
-  paquet, chaque octet demandé avant la peinture la retarde.
+  `gabarit.js`, jamais une page. Chaque page porte en tête les règles de
+  `moteur/style.css` qui peuvent la toucher (`scripts/feuille_de_page.py`) et
+  ne demande avant de peindre que ses deux polices : la feuille entière suit
+  sans bloquer (`media="print"`, rendue effective par son `onload` ou par le
+  routeur), et `routeur.js` s'exécute après. Ni `modulepreload` ni
+  préchargement du paquet : chaque octet demandé avant la peinture la retarde.
 - **Le routeur anime la page, il ne la recalcule pas** (`hydrater`,
   `peutHydrater`, dans `routeur.js`) : il replie les tableaux, branche le
   formulaire, ouvre la section de l'adresse. Il ne prépare le moteur (le
@@ -94,7 +97,11 @@ types et Droits non cotisés lisent ce que le Python en a fabriqué
   le navigateur.
 - **Une retouche de `moteur/style.css` ou d'un dessin du gabarit** : d'abord
   la mesure qui dit ce qui doit changer, vue rouge, dans
-  `tests/test_ecrans.py` ; puis `python -m pytest tests/test_ecrans.py`.
+  `tests/test_ecrans.py` ; puis `python scripts/construire_pages.py`, chaque
+  page portant en tête les règles qui la touchent, et
+  `python -m pytest tests/test_ecrans.py`, où
+  `test_chaque_page_se_peint_avec_son_seul_style` dit s'il en manque une — une
+  classe que le routeur pose autrement que par une chaîne ou par `dataset`.
 - **Un champ de saisie de plus** : d'abord le test qui le lit et le vérifie,
   vu rouge ; la saisie, `saisie.js`, seule depuis l'action 161 — la lecture,
   la vérification, la réécriture de l'adresse — ; toute borne `min` ou `max` du

@@ -24,16 +24,25 @@
 <link rel="icon" href="{{racine}}moteur/icone.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="{{racine}}moteur/icone.svg">
 
-<!-- La feuille de style n'existe qu'en un seul endroit : moteur/style.css,
-     sa source, que rien ne fabrique. -->
-<link rel="stylesheet" href="{{racine}}moteur/style.css">
 <!-- Les deux polices du texte, dans leur jeu latin, celui du français. Le
      serif n'était demandé qu'au rendu de la page, où il arrivait après coup :
      le chapeau perdait une ligne, et tout ce qui le suit remontait sous les
-     yeux du lecteur (action 174). Demandées ici, elles sont là avec la page.
-     `crossorigin` est celui de toute police, même servie d'ici. -->
+     yeux du lecteur (action 174). Demandées ici, avant le style de la page,
+     elles partent les premières. `crossorigin` est celui de toute police, même
+     servie d'ici. -->
 <link rel="preload" href="{{racine}}moteur/polices/public-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="{{racine}}moteur/polices/instrument-serif-latin.woff2" as="font" type="font/woff2" crossorigin>
+<!-- La feuille de style n'existe qu'en un seul endroit : moteur/style.css,
+     sa source, que rien ne fabrique. Elle bloquait l'affichage : la page porte
+     donc ici les règles qui peuvent la toucher, que scripts/feuille_de_page.py
+     choisit (action 174), et se peint sans l'attendre. La feuille entière suit
+     sans retenir l'affichage : déclarée pour l'impression, elle ne bloque rien,
+     et son chargement la rend effective — son `onload`, ou le routeur si une
+     politique de sécurité refuse les gestionnaires en ligne. Sans script, le
+     lien ordinaire du `<noscript>` la charge. -->
+<style>{{style}}</style>
+<link rel="stylesheet" href="{{racine}}moteur/style.css" media="print" onload="this.media='all'" data-feuille>
+<noscript><link rel="stylesheet" href="{{racine}}moteur/style.css"></noscript>
 <!-- NI MODULEPRELOAD NI PRÉCHARGE DU PAQUET. La page est lisible sans le
      moteur : le routeur ne le charge que pour un réglage ou une carrière que
      la page toute faite ne porte pas, et chaque octet demandé ici avant la

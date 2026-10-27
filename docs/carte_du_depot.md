@@ -129,7 +129,8 @@ Le site n'a pas de serveur de calcul. Chaque page arrive toute faite, pour ses
 réglages par défaut (`scripts/construire_pages.py` l'écrit depuis
 `moteur/page.html` et le texte de `moteur/js/pages.js` : l'accueil à la racine, les huit
 autres chacune dans son dossier, avec `sitemap.xml`) : le serveur la sert à son
-adresse, `cout/`, sans réglage, et elle se lit sans le moteur. Le routeur
+adresse, `cout/`, sans réglage, avec en tête le style qui la touche
+(`scripts/feuille_de_page.py`), et elle se lit sans le moteur. Le routeur
 l'anime ; il ne charge le moteur — son code, `moteur/js/saisie.js`,
 `moteur/js/pages.js` et ce qu'ils importent, puis le paquet de données — que
 pour ce que la page toute faite ne porte pas, une carrière ou des réglages

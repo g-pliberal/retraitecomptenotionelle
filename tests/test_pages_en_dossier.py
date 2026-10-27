@@ -104,19 +104,38 @@ def test_une_page_porte_son_titre_sa_description_et_son_adresse_canonique(chemin
 def test_une_page_toute_faite_est_la_page_entiere(chemin):
     """Le bandeau, la page et le pied sont dans le HTML servi : rien ne les
     attend. Pas d'écran d'attente, pas de précharge du moteur : la page s'affiche
-    avec la feuille de style et les deux polices, et le routeur ne charge le
+    avec son propre style et les deux polices, et le routeur ne charge le
     moteur que s'il en a besoin."""
     route, texte = _route(chemin), _page(chemin)
     assert '<div id="entete"><a class="evitement"' in texte
     assert f'<main id="contenu" tabindex="-1" data-prerendu="{route}">' in texte
     assert "<footer>" in texte and texte.count("<footer>") == 1
     assert "amorce" not in texte and 'rel="modulepreload"' not in texte
-    assert "<style" not in texte, "la feuille de style est un fichier : aucune règle en ligne"
     assert 'rel="preload" href="' in texte and texte.count('rel="preload"') == 2
     assert 'as="font"' in texte and "donnees.json" not in texte
     racine = "" if route == "/" else "../"
     assert f'<script type="module" src="{racine}moteur/js/routeur.js"></script>' in texte
-    assert f'<link rel="stylesheet" href="{racine}moteur/style.css">' in texte
+
+
+@pytest.mark.parametrize("chemin", _chemins())
+def test_une_page_porte_son_style_et_charge_la_feuille_entiere_sans_bloquer(chemin):
+    """La page se peint avec les règles qui la touchent, écrites dans son en-tête
+    (``scripts/feuille_de_page.py``) : la feuille entière, qui bloquait
+    l'affichage, suit sans le retenir. Déclarée pour l'impression, elle ne bloque
+    rien ; son chargement la rend effective, par son ``onload`` ou par le
+    routeur ; sans script, le lien ordinaire du ``<noscript>`` la charge."""
+    route, texte = _route(chemin), _page(chemin)
+    racine = "" if route == "/" else "../"
+    tete = texte[:texte.index("</head>")]
+    assert tete.count("<style>") == 1 and texte.count("<style") == 1
+    style = tete[tete.index("<style>") + len("<style>"):tete.index("</style>")]
+    feuille = (RACINE / "moteur" / "style.css").read_text(encoding="utf-8")
+    assert 0 < len(style) < len(feuille) / 2, len(style)
+    assert "@media print" not in style and f"url({racine}moteur/polices/" in style
+    assert (f'<link rel="stylesheet" href="{racine}moteur/style.css" media="print" '
+            f'onload="this.media=\'all\'" data-feuille>') in tete
+    assert f'<noscript><link rel="stylesheet" href="{racine}moteur/style.css"></noscript>' in tete
+    assert tete.count('rel="stylesheet"') == 2
     # Les chemins sont ceux de la page : un niveau plus haut dans un dossier.
     mal_remontes = re.findall(r'(?:href|src)="(?:\.\./)?moteur/', texte)
     assert all(chemin.endswith(f'="{racine}moteur/') for chemin in mal_remontes), mal_remontes

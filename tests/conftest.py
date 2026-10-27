@@ -315,6 +315,7 @@ SITE = {
     ("test_ecrans.py", "test_aucune_page_ne_leve_d_erreur_a_aucune_largeur"),
     ("test_ecrans.py", "test_un_trace_et_sa_legende_se_voient_ensemble"),
     ("test_ecrans.py", "test_les_quatre_systemes_se_comparent_d_un_seul_regard"),
+    ("test_ecrans.py", "test_chaque_page_se_peint_avec_son_seul_style"),
     # Où une adresse mène, ancienne ou neuve : une retouche du routeur ou d'un
     # lien le déplace.
     ("test_adresses_navigateur.py", "test_une_adresse_mene_ou_le_lecteur_l_attend"),
