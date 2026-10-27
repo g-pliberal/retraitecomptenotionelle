@@ -7072,15 +7072,14 @@ une à une, les étapes 3 et 5. Les quatre gardes de l'étape 2 sont faites le
 ### 174. Les notes Lighthouse au maximum, sur toutes les pages du site — `en cours`
 
 **Reprise, au 27 octobre 2026.** Faites, les étapes 1 à 5 : chaque page est
-écrite toute faite (neuf pages, `sitemap.xml`, l'adresse canonique de la copie
-du parti), et le routeur l'anime sans charger le moteur, qui ne part qu'au
-premier calcul (`174/2026-10-27-etape-5-le-moteur-a-la-demande.md`). En ligne :
-Performance de 95 à 100 en mobile et 100 au bureau hors résultats (73 et 85),
-les quatre autres catégories à 100, CLS nul. Par quoi commencer : le premier
-contenu en mobile (1,2 à 1,7 s), que retarde la feuille de style, bloquante et
-faite surtout pour les autres pages — trois mesures de chaque côté, le bruit
-est de l'ordre du résultat. Reste au propriétaire : le sort des résultats (6),
-et l'hôte.
+écrite toute faite, et le routeur l'anime sans charger le moteur, qui ne part
+qu'au premier calcul (`174/2026-10-27-etape-5-le-moteur-a-la-demande.md`). En
+ligne : Performance de 95 à 100 en mobile et 100 au bureau hors résultats (73 et
+85), les autres catégories à 100, CLS nul. Le premier affichage en mobile a sa
+proposition (`174/2026-10-27-proposition-premier-affichage.md`) : le CSS de
+chaque page dans son HTML, la feuille entière sans bloquer, mesuré de 0,3 à
+0,6 s plus tôt. Par quoi commencer : la réponse du propriétaire. Reste à lui :
+la proposition, le sort des résultats (6), et l'hôte.
 
 **D'où elle vient.** Le 25 octobre 2026, le propriétaire : « Je veux que
 toutes les pages aient un score maximal dans toutes les catégories lighthouse.
