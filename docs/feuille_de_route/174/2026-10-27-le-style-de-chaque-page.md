@@ -70,9 +70,31 @@ médianes du premier contenu et du plus grand, en secondes.
 
 Le CLS reste nul, les quatre autres catégories à 100.
 
+**En ligne**, le 27 octobre 2026, la suite verte et la copie déployée, deux
+mesures (la première a vu GitHub Pages répondre 503 sur `config.js` pendant les
+résultats : le simulateur a dit qu'il ne pouvait se charger, et cette mesure-là
+ne compte pas pour eux). Performance mobile, de l'étape 5 à celle-ci :
+Programme 95 → 99 et 99, Simuler 99 → 99 et 98, Coût 98 → 97 et 97, Pourquoi
+changer 98 → 99 et 99, Partager 100 → 99 et 99, Le saviez-vous ? 99 → 100 et 99,
+Carrières types 99 → 98 et 99, Droits non cotisés 99 → 98 et 98, Méthode 98 → 99
+et 99 ; au bureau, 100 partout. Le premier contenu en mobile tombe à 1,2 à 1,4 s
+sur la plupart des pages (Coût et Droits non cotisés, 1,5 à 1,8 s). Deux choses à
+suivre :
+
+- **Le saviez-vous ?**, à la seconde mesure, décale de 0,016 en mobile : la
+  page peint désormais avant que ses polices soient là, et leur arrivée la
+  recompose. C'est la fragilité notée plus haut, plus exposée qu'avant.
+- **Les résultats** : 70 au lieu de 73 en mobile, 80 au lieu de 85 au bureau.
+  Le premier contenu venant plus tôt, la fenêtre du TBT s'ouvre plus tôt, et le
+  calcul du moteur y tombe davantage (2,3 s de TBT mobile au lieu de 1,6) : la
+  page est plus vite visible, la note ne le dit pas.
+
 ## Ce qui reste
 
-- **Mesurer en ligne**, la suite verte et la copie déployée.
+- **Les polices sans décalage** : des polices de repli à leurs métriques
+  (`size-adjust`, `ascent-override`), ou `font-display: optional`, qui garde la
+  police du système le temps d'une première visite lente — un choix sur
+  l'identité de l'affiche, au propriétaire.
 - **La proposition 2**, au propriétaire : les tableaux de données de Coût et de
   Droits non cotisés chargés à l'ouverture de leur volet, contre leur lecture
   sans script.
