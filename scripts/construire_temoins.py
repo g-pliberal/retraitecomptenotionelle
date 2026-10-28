@@ -2259,6 +2259,14 @@ def _pages() -> dict:
             **BASE, "naissance": "1962-03-15", "liquidation": "2026-10",
             "conjoint": "1964", "ressources_conjoint": "14000",
         }),
+        # La majoration pour enfant à charge servie après la date d'effet de la
+        # réversion (action 138, étape 4) : l'enfant posthume, né en février
+        # 2031 du père mort en juin 2030, l'ouvre le 1er mars, et la carte la
+        # dit en plus, à sa date.
+        ("simuler_reversion_enfant_posthume", "/simuler", {
+            **BASE, "naissance": "1960", "liquidation": "62", "enfants": "1",
+            "naissances": "2031-02", "conjoint": "1975", "deces": "2030-06",
+        }),
         # UN DÉPART PAR RÉGIME (droit/departs.py) : l'aide-soignante partie de
         # l'hôpital, dont le régime général et l'Arrco attendent l'âge légal.
         # Partie en 2022, sa pension d'aujourd'hui ne les compte pas encore ;

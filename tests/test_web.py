@@ -986,6 +986,28 @@ def test_la_reversion_de_la_sncf_paie_sa_cotisation_sous_la_moitie_du_plafond(sa
     assert "de majoration pour enfants, la moitié de la vôtre" in cellules[3]
 
 
+def test_la_majoration_pour_enfant_servie_apres_la_date_d_effet_se_dit():
+    """« La majoration est due à la date d'entrée en jouissance de la pension
+    de réversion si, à cette date, les conditions d'ouverture du droit à cette
+    majoration sont remplies ou à compter du premier jour du mois suivant la
+    date à laquelle ces conditions sont satisfaites » (R. 353-10). L'enfant
+    posthume, né en février 2031 du père mort en juin 2030, l'ouvre à sa veuve
+    le 1er mars, nulle à la date d'effet de sa réversion, le 1er juillet 2030,
+    jusqu'au mois qui suit sa majorité, mars 2049 : 113,59 € par mois, le
+    barème de 2026, l'année des montants d'un décès à venir. La carte la dit en
+    plus à sa date, comme la majoration de 11,1 % qui commence après la date
+    d'effet, quand elle la taisait."""
+    champs = {"naissance": "1960", "sexe": "H", "liquidation": "62", "enfants": "1",
+              "naissances": "2031-02", "conjoint": "1975", "deces": "2030-06",
+              "montants": "brut"}
+    carte = _bloc(rendre("/simuler", champs)[1], 'id="resultats-reversion"',
+                  "Dans les systèmes 2, 3 et 4")
+    cellules = next(c for c in _cellules(carte) if c[0].startswith("Régime général"))
+    assert cellules[4] == "juillet 2030"
+    assert ("(114 € de plus à partir de mars 2031, majoration pour enfants à charge, "
+            "plus rien à partir de mars 2049)") in cellules[3], cellules[3]
+
+
 def test_le_detail_range_la_base_avant_les_complementaires():
     """Le moteur rend les régimes dans l'ordre alphabétique de leurs codes,
     l'Agirc avant le régime général. Le détail les range par étage — la base,

@@ -6334,15 +6334,23 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
       parts.push(`dont ${g.euros(mensuel(ligne.majoration_trois_enfants, ligne.regime))} `
         + "de majoration pour trois enfants");
     }
+    // Ce que la majoration pour enfant à charge devient quand un enfant n'est
+    // plus à charge, ou que sa propre retraite commence.
+    const devient = (etapes) => etapes.map(([jour, montant]) => (montant > 0
+      ? `${g.euros(mensuel(montant, ligne.regime))} à partir de ${mois(jour)}`
+      : `plus rien à partir de ${mois(jour)}`));
+    const etapes = ligne.majoration_forfaitaire_enfants_etapes ?? [];
     if (ligne.majoration_forfaitaire_enfants > 0) {
-      // Ce qu'elle devient quand un enfant n'est plus à charge, ou que sa
-      // propre retraite commence.
-      const suite = (ligne.majoration_forfaitaire_enfants_etapes ?? []).map(
-        ([jour, montant]) => (montant > 0
-          ? `${g.euros(mensuel(montant, ligne.regime))} à partir de ${mois(jour)}`
-          : `plus rien à partir de ${mois(jour)}`));
+      const suite = devient(etapes);
       parts.push(`dont ${g.euros(mensuel(ligne.majoration_forfaitaire_enfants, ligne.regime))} `
         + "de majoration pour enfants à charge" + (suite.length ? `, ${suite.join(", ")}` : ""));
+    } else if (etapes.length) {
+      // Nulle à la date d'effet, elle commence avec la part de l'enfant né ou
+      // redevenu à charge après elle (R. 353-10) : en plus, à sa date.
+      const [[jour, montant], ...apres] = etapes;
+      const suite = devient(apres);
+      parts.push(`${g.euros(mensuel(montant, ligne.regime))} de plus à partir de ${mois(jour)}, `
+        + "majoration pour enfants à charge" + (suite.length ? `, ${suite.join(", ")}` : ""));
     }
     // Avant juillet 2004, la limite de cumul revue quand sa propre retraite
     // suit la réversion.
