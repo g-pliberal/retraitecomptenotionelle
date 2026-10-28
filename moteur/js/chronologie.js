@@ -162,13 +162,11 @@ export function naissanceDeclaree(valeur) {
     throw new Error(`naissance d'un enfant attendue en AAAA, AAAA-MM ou AAAA-MM-JJ, reçu '${valeur}'`);
   }
   const [annee, mois, quantieme] = [...morceaux.map(Number), 1, 1].slice(0, 3);
-  const date = new Date(Date.UTC(annee, mois - 1, quantieme));
-  if (date.getUTCFullYear() !== annee || date.getUTCMonth() !== mois - 1
-      || date.getUTCDate() !== quantieme) {
+  const date = dateControlee(annee, mois, quantieme);
+  if (date === null) {
     throw new Error(`naissance d'un enfant impossible : '${valeur}'`);
   }
-  return [`${quatre(annee)}-${deux(mois)}-${deux(quantieme)}`,
-    ["annee", "mois", "jour"][morceaux.length - 1]];
+  return [date, ["annee", "mois", "jour"][morceaux.length - 1]];
 }
 
 /** Le quantième d'une date de la chronologie : 15 pour « 1962-03-15 ». */
@@ -176,9 +174,18 @@ export function jourDe(date) {
   return Number(date.slice(8, 10));
 }
 
-/** Une date AAAA-MM-JJ, contrôlée ; nulle si elle n'existe pas. */
+/**
+ * Une date AAAA-MM-JJ, contrôlée ; nulle si elle n'existe pas. Ses années vont
+ * de 1 à 9999, comme les dates du contrat C.1 (`date.fromisoformat` du
+ * Python) ; `setUTCFullYear` les date toutes, quand `Date.UTC` enverrait les
+ * années 0 à 99 au vingtième siècle.
+ */
 function dateControlee(annee, mois, quantieme) {
-  const date = new Date(Date.UTC(annee, mois - 1, quantieme));
+  if (!(annee >= 1 && annee <= 9999)) {
+    return null;
+  }
+  const date = new Date(0);
+  date.setUTCFullYear(annee, mois - 1, quantieme);
   if (date.getUTCFullYear() !== annee || date.getUTCMonth() !== mois - 1
       || date.getUTCDate() !== quantieme) {
     return null;
@@ -231,13 +238,11 @@ export function dateDeclaree(valeur, quoi) {
     throw new Error(`${quoi} attendu(e) en AAAA, AAAA-MM ou AAAA-MM-JJ, reçu '${valeur}'`);
   }
   const [annee, mois, quantieme] = [...morceaux.map(Number), 1, 1].slice(0, 3);
-  const date = new Date(Date.UTC(annee, mois - 1, quantieme));
-  if (date.getUTCFullYear() !== annee || date.getUTCMonth() !== mois - 1
-      || date.getUTCDate() !== quantieme) {
+  const date = dateControlee(annee, mois, quantieme);
+  if (date === null) {
     throw new Error(`${quoi} impossible : '${valeur}'`);
   }
-  return [`${quatre(annee)}-${deux(mois)}-${deux(quantieme)}`,
-    ["annee", "mois", "jour"][morceaux.length - 1]];
+  return [date, ["annee", "mois", "jour"][morceaux.length - 1]];
 }
 
 /**

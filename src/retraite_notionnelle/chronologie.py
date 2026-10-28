@@ -212,6 +212,16 @@ def lien(ident: str, de: str, vers: str, sorte: str, roles: dict,
 
 # -- construire : ce que la personne déclare -----------------------------------
 
+def _nombres(morceaux: list[str]) -> list[int]:
+    """Les nombres d'une date déclarée, morceau par morceau : des chiffres, et
+    rien d'autre. ``int`` prendrait « +962 », « 1_62 », les chiffres pleine
+    chasse et un blanc entre deux tirets, que le portage refuse
+    (``/^[0-9]+$/``). Vide si un morceau n'est pas fait de chiffres."""
+    if all(m.isascii() and m.isdigit() for m in morceaux):
+        return [int(m) for m in morceaux]
+    return []
+
+
 def naissance_declaree(valeur) -> tuple[str, str]:
     """La naissance déclarée d'un enfant : sa date (AAAA-MM-JJ) et sa
     précision. On déclare une année (``1995``), un mois (``1995-06``) ou un
@@ -219,10 +229,7 @@ def naissance_declaree(valeur) -> tuple[str, str]:
     au 1er janvier, comme pour le mois de naissance de l'assuré."""
     texte = str(valeur).strip()
     morceaux = texte.split("-")
-    try:
-        nombres = [int(m) for m in morceaux]
-    except ValueError:
-        nombres = []
+    nombres = _nombres(morceaux)
     if not 1 <= len(nombres) <= 3 or any(len(m) != n for m, n in zip(morceaux, (4, 2, 2))):
         raise ValueError(f"naissance d'un enfant attendue en AAAA, AAAA-MM ou "
                          f"AAAA-MM-JJ, reçu {valeur!r}")
@@ -242,10 +249,7 @@ def date_declaree(valeur, quoi: str) -> tuple[str, str]:
     dans le message d'erreur."""
     texte = str(valeur).strip()
     morceaux = texte.split("-")
-    try:
-        nombres = [int(m) for m in morceaux]
-    except ValueError:
-        nombres = []
+    nombres = _nombres(morceaux)
     if not 1 <= len(nombres) <= 3 or any(len(m) != n for m, n in zip(morceaux, (4, 2, 2))):
         raise ValueError(f"{quoi} attendu(e) en AAAA, AAAA-MM ou AAAA-MM-JJ, reçu {valeur!r}")
     annee, mois, jour = (nombres + [1, 1])[:3]

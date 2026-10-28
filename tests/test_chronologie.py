@@ -524,6 +524,79 @@ def test_une_naissance_mal_declaree_est_refusee(naissances, message):
         chronologie.du_parcours(**PARCOURS, naissances_enfants=naissances)
 
 
+#: Des dates déclarées, et ce que les deux lecteurs en font : la date et sa
+#: précision, ou le refus, de forme (« attendu ») ou de calendrier
+#: (« impossible »).
+DATES_DECLAREES = {
+    "1995": ["1995-01-01", "annee"],
+    " 1995-06 ": ["1995-06-01", "mois"],
+    "1995-06-14": ["1995-06-14", "jour"],
+    "0050": ["0050-01-01", "annee"],
+    "0099-12-31": ["0099-12-31", "jour"],
+    "0001-01-01": ["0001-01-01", "jour"],
+    "0000": "impossible",
+    "1995-13": "impossible",
+    "1987-02-29": "impossible",
+    "+962": "attendu",
+    "1_62": "attendu",
+    "１９９５": "attendu",
+    "1995- 6": "attendu",
+    "1995-6": "attendu",
+    "95": "attendu",
+}
+
+_LECTEURS_JS = """
+import { dateDeclaree, naissanceDeclaree } from "./moteur/js/chronologie.js";
+const lu = (lire, texte) => {
+  try {
+    return lire(texte);
+  } catch (erreur) {
+    return erreur.message.includes("impossible") ? "impossible" : "attendu";
+  }
+};
+console.log(JSON.stringify(JSON.parse(process.argv[1]).map((texte) => [
+  lu(naissanceDeclaree, texte), lu((t) => dateDeclaree(t, "le décès"), texte)])));
+"""
+
+
+def test_les_deux_lecteurs_lisent_les_memes_dates_declarees():
+    """Une date déclarée — la naissance d'un enfant, le décès, le mariage… —
+    s'écrit en chiffres, AAAA, AAAA-MM ou AAAA-MM-JJ, et c'est une date du
+    contrat C.1 (``date.fromisoformat``), de l'an 1 à l'an 9999. Le Python la
+    lisait par ``int``, qui prend « +962 », « 1_62 », les chiffres pleine
+    chasse et un blanc entre deux tirets ; le portage datait par ``Date.UTC``,
+    qui envoie les années 0 à 99 au vingtième siècle, et refusait « 0050 »
+    comme impossible. Les deux lisent désormais les mêmes dates."""
+    import json
+    import shutil
+    import subprocess
+    from pathlib import Path
+
+    def lu(lire, texte):
+        try:
+            return list(lire(texte))
+        except ValueError as erreur:
+            return "impossible" if "impossible" in str(erreur) else "attendu"
+
+    ecarts = [(texte, "Python", lu(lire, texte), attendu)
+              for texte, attendu in DATES_DECLAREES.items()
+              for lire in (chronologie.naissance_declaree,
+                           lambda t: chronologie.date_declaree(t, "le décès"))
+              if lu(lire, texte) != attendu]
+    if shutil.which("node") is not None:
+        execution = subprocess.run(
+            ["node", "--input-type=module", "-e", _LECTEURS_JS,
+             json.dumps(list(DATES_DECLAREES))],
+            cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True,
+            encoding="utf-8", check=False)
+        assert execution.returncode == 0, execution.stderr[-2000:]
+        for (texte, attendu), lus in zip(DATES_DECLAREES.items(),
+                                        json.loads(execution.stdout)):
+            ecarts += [(texte, "portage", lu_, attendu) for lu_ in lus if lu_ != attendu]
+    assert not ecarts, "\n".join(f"{t!r} ({cote}) : {lu_} au lieu de {a}"
+                                 for t, cote, lu_, a in ecarts)
+
+
 def test_les_copies_de_travail_gardent_leur_chronologie(macro):
     carriere = Carriere.depuis_parcours(macro=macro, **PARCOURS)
     assert carriere.avec_lignes(carriere.lignes).chronologie is carriere.chronologie
