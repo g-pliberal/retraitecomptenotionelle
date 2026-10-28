@@ -1,15 +1,15 @@
 # Étape 3, première partie : la part des reportés en emploi, lue dans les évaluations de 2010
 
-**Reprise, au 24 octobre 2026.** Fait : les reportés en emploi (7 octobre) ;
+**Reprise, au 28 octobre 2026.** Fait : les reportés en emploi (7 octobre) ;
 l'Ageing Report (13) ; les leviers du COR, la CSG effective (14) ; Ancetre,
 l'EACR, la CNRACL, l'État (16) ; la part stable de l'AWG (17) ; la date de
 chaque cohorte (18, 19) ; la page Coût, l'entrée, la décote (19, 23) ; le 24,
 l'âge de départ de chaque génération, le militaire, les caisses, les
-naissances de l'année, le taux effectif, au modèle et au paquet. Reste, au
-site, une session par point : la dépense nette ; la phrase des poids. Au
+naissances de l'année, le taux effectif, au modèle et au paquet ; le 28, sur
+la page Coût, la dépense nette. Reste, au site : la phrase des poids. Au
 propriétaire : les cohortes nées toute l'année, ou la grille ; la forme des
 départs projetés ; l'entrée selon la génération ; l'Ircantec ; la table des
-poids ; l'officier. Détail : « Ce qui reste » des notes du 24 octobre.
+poids ; l'officier. Détail : « Ce qui reste » des notes du 24 et du 28 octobre.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.3 ». L'étape est
 vaste — sept chantiers, vingt-neuf points du registre — ; cette session en

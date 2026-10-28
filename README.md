@@ -189,7 +189,7 @@ Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses don
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Lire une page transfère son
 texte et de quoi l'animer : <!--chiffre:poids_comprime(moteur/style.css + moteur/js/routeur.js + moteur/js/adresses.js + moteur/js/cles.js + moteur/js/gabarit.js + moteur/js/format.js + moteur/js/calendrier.js + index.html)-->155<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/style.css + moteur/js/routeur.js + moteur/js/adresses.js + moteur/js/cles.js + moteur/js/gabarit.js + moteur/js/format.js + moteur/js/calendrier.js + index.html)-->496<!--/--> Ko bruts) pour l'accueil. Le premier calcul y ajoute
+(<!--chiffre:poids(moteur/style.css + moteur/js/routeur.js + moteur/js/adresses.js + moteur/js/cles.js + moteur/js/gabarit.js + moteur/js/format.js + moteur/js/calendrier.js + index.html)-->497<!--/--> Ko bruts) pour l'accueil. Le premier calcul y ajoute
 le moteur, <!--chiffre:poids_comprime(moteur/js/*.js + moteur/js/droit/*.js - moteur/js/routeur.js - moteur/js/adresses.js - moteur/js/cles.js - moteur/js/gabarit.js - moteur/js/format.js - moteur/js/calendrier.js - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->889<!--/--> Ko compressés, et le paquet
 de données, <!--chiffre:poids_comprime(moteur/donnees.json)-->788<!--/--> Ko compressés (<!--chiffre:poids(moteur/donnees.json)-->5 729<!--/--> Ko bruts) ; le tout prend quelques dixièmes
 de seconde, et les chargements suivants sont immédiats.
