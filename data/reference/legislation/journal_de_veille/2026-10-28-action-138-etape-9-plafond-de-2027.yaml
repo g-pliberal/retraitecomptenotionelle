@@ -1,0 +1,35 @@
+date: "2026-10-28"
+session: "action 138, étape 9, suite de la huitième partie : le plafond de 2027 de la cotisation maladie de la SNCF, attendu de la revalorisation du 1er janvier 2027"
+consulte: >-
+  `python scripts/veille_droit.py`. L'index LEGI, à jour de l'incrément du
+  27 octobre 2026, puis `python scripts/textes.py --inscrire` : le décret
+  n° 2007-1056, art. 7, IV et VII (LEGIARTI000052041125), L. 161-23-1
+  (LEGIARTI000051289722) et L. 161-25 (LEGIARTI000031781092). Le barème
+  « Coefficients de revalorisation des retraites » de la Cnav, par son API. Le
+  projet de loi de financement pour 2027, n° 3211, article 35 (données ouvertes
+  de l'Assemblée nationale) ; les dossiers législatifs de l'Assemblée
+  (`PLFSS_2027`) et du Sénat (`plfss2027`).
+trouve: >-
+  Rien ne fixe encore le plafond de 2027, 4 × 5 128 € revalorisés « dans les
+  mêmes conditions que les pensions » : le barème de la Cnav s'arrête au
+  1er janvier 2026 (1,009). L'article 35 du projet déroge pour 2027 à
+  L. 161-23-1 : le coefficient de cet article jusqu'à 1 260 € de pensions par
+  mois, un coefficient réduit par décret jusqu'à 1 281 €, un au-delà tant qu'un
+  décret, publiable jusqu'au 31 octobre 2027 et rétroactif au 1er janvier, n'en
+  fixe pas un autre, par tranches jusqu'à 2 034 €. Sous la convention du dépôt,
+  la tranche d'une pension mensuelle de la taille du plafond (2 132 €), il
+  resterait à 25 582 €. L'Assemblée nationale a rejeté le projet en première
+  lecture le 23 octobre 2026 (T.A. n° 358) ; le Sénat n'en a pas encore de
+  texte. L'inscription porte 67 rédactions « à examiner », des textes que
+  citent les fiches de la CRPCEN et des IEG.
+reste: >-
+  Reprendre le plafond quand la Cnav publiera la ligne du 1er janvier 2027 : ses
+  trois dernières circulaires de revalorisation ont paru du 22 au 29 décembre,
+  celle des tranches de 2020 le 4 février. Suivre la loi de financement pour
+  2027 jusqu'à sa promulgation et la décision du Conseil constitutionnel ; si
+  l'article 35 survit, ses décrets du II, b, et du III. La lecture du VII sous
+  des tranches, que la caisse ne publie pas, à confronter à son avis de
+  revalorisation de janvier.
+prochaine_veille: >-
+  à la promulgation de la loi de financement pour 2027, puis à la circulaire de
+  la Cnav sur la revalorisation du 1er janvier 2027
