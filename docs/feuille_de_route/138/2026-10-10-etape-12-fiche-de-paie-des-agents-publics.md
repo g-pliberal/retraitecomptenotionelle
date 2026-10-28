@@ -1,15 +1,14 @@
 # Étape 12, première partie : la fiche de paie d'un agent public — la RAFP, l'indemnité compensatrice de la CSG, le taux d'équilibre sur le traitement
 
-**Reprise, au 25 octobre 2026.** Fait : l'agent public (10 octobre) ; le
+**Reprise, au 28 octobre 2026.** Fait : l'agent public (10 octobre) ; le
 micro-entrepreneur (14 au 18) ; l'indépendant en cumul (19) ; le RCI en cumul
-et son versement unique (23) ; le 24, la classe du cumul, puis la base des
-non-salariés, suspendue les mois que le dépassement épuise, et la durée requise
-des libéraux ; le 25, aux pages, les phrases du RCI, de sa complémentaire
-réduite, du notaire libéral, du mois hors de la suspension, puis l'Ircantec,
-dite à part de la base. Reste, une session : la veille du projet de loi de
-financement pour 2027. Au propriétaire : le RCO et le NRCO d'avant 2009
-(action 89) ; la part de base de D. 133-4 de 2016 à 2019. Détail :
-`…-ircantec-a-part.md`.
+et son versement unique (23) ; la classe du cumul, la base des non-salariés
+suspendue, la durée des libéraux (24) ; aux pages, les phrases du cumul,
+l'Ircantec à part (25) ; le 28, la veille du projet de loi de financement pour
+2027, rejeté par l'Assemblée le 23 octobre. Reste : le suivre au Sénat jusqu'à
+la loi ; voté, la revalorisation de 2027 et la majoration forfaitaire, à leurs
+décrets. Au propriétaire : le RCO et le NRCO d'avant 2009 (action 89) ; la part
+de base de D. 133-4 de 2016 à 2019. Détail : `…-veille-du-plfss-2027.md`.
 
 **Le 10 octobre 2026, la demande.** Le propriétaire : porter sur la fiche de
 paie, en Python puis en JavaScript, la cotisation de la RAFP sur les primes,

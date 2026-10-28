@@ -1,0 +1,72 @@
+date: "2026-10-28"
+session: >-
+  action 138, étape 12, seizième partie : la veille du projet de loi de financement de
+  la sécurité sociale pour 2027 — ce qu'il changerait aux pensions, au cumul
+  emploi-retraite et aux cotisations que le dépôt calcule, sans rien en coder
+consulte: >-
+  veille_droit.py, lancé à l'ouverture (dernière veille consignée : 2026-10-28 ; trois
+  fiches à relire, dont fin_de_la_suspension_2028, qui renvoie au projet). L'index LEGI,
+  récupéré de la release index-dila et mis à jour jusqu'à l'incrément du 27 octobre
+  2026, puis textes.py --inscrire : 67 rédactions anciennes de cinq textes nouvellement
+  cités, « à examiner », qu'une autre session de la vague avait déjà poussées ; les
+  dernières rédactions de L. 351-12, L. 353-1, L. 161-23-1, L. 161-17-2, L. 161-17-3,
+  L. 161-22-1-5, L. 241-3-3, LO 111-7 et LO 111-7-1. L'index JORF, mis à jour jusqu'au
+  28 octobre 2026 : les lois et décrets parus depuis le 15 octobre, dont les décrets
+  n° 2026-972, 2026-973, 2026-974, 2026-986, 2026-987 et 2026-995. Sur le site de
+  l'Assemblée nationale, par ses données ouvertes : le projet de loi de financement pour
+  2027, n° 3211, en entier, dispositif, exposés des motifs et annexe (page
+  PRJLANR5L17B3211, sha256:b68128d00b620e25e0aece7b9697e02f1bdc43434d4f720b60e1fa888cfd1bf1) ;
+  son dossier législatif et le T.A. n° 358 du 23 octobre 2026 ; le rapport n° 3345 de
+  la commission des affaires sociales, tome II (commentaires des articles 34 et 35, et
+  l'annexe 9 qu'ils citent) et tome III (les votes de la commission) ; le projet de loi
+  de finances pour 2027, n° 3210, article 3 et son exposé des motifs, et son dossier.
+  Le dossier du Sénat, mis à jour le 28 octobre 2026.
+trouve: >-
+  L'Assemblée a rejeté le projet en première lecture le 23 octobre 2026 (T.A. n° 358) :
+  n'en ayant pas adopté la deuxième partie, elle n'a pu en discuter la troisième, celle
+  des dépenses, où sont les articles 34 et 35 (LO 111-7-1, I). La commission, qui avait
+  adopté l'article 34 et supprimé le 35, avait rejeté l'ensemble ; la séance discutant le
+  texte du Gouvernement (Constitution, article 42), le Sénat examinera le texte déposé,
+  que son dossier n'inscrit pas encore. Aux pensions, deux articles. Le 34 forfaitiserait
+  la majoration pour enfants des pensions de base prenant effet à compter du 1er juillet
+  2027 (L. 173-1-6 nouveau ; L. 351-12, L. 353-1, L. 353-3, L. 342-4, L. 357-10 ; L. 732-38
+  du code rural ; L. 18, L. 18 bis et L. 18 ter du code des pensions civiles et
+  militaires ; L. 5552-22 du code des transports), montants par décret, revalorisés comme
+  les pensions : de 105 à 110 € par mois pour une carrière complète, proratisés sur la
+  durée d'assurance, et de 85 à 90 € de forfait complémentaire aux régimes intégrés, plus
+  un forfait dès le quatrième enfant (annexe 9, citée par le rapport) ; l'Agirc-Arrco et
+  l'Ircantec gardent leur majoration proportionnelle. Au dépôt, il remplacerait le taux de
+  _taux_majoration_enfants et de tauxMajorationEnfants, et celui de la réversion ; la
+  proposition, qui ne sert aucune majoration, ne bougerait pas. Le 35 revaloriserait les
+  pensions de base en 2027 selon le total mensuel des pensions, complémentaires comprises,
+  au 31 décembre 2026 : le coefficient légal jusqu'à 1 260 €, au-delà des coefficients par
+  décret, entre un et le coefficient légal, et un au-delà de 1 281 € jusqu'au décret, pour
+  de bon s'il n'est pas publié au 31 octobre 2027 ; l'étude
+  d'impact envisage rien au-delà de 1 260 € (4,0 milliards d'euros) ou la moitié jusqu'à
+  2 000 € et rien au-delà (3,4 milliards). Voté, il entrerait dans
+  revalorisation_pensions.csv par seuils, comme 2020, dont la série porte les bornes. Au
+  cumul emploi-retraite, rien : aucun article ne touche L. 161-22 ni ses suivants. Aux
+  cotisations, aucun taux ne bouge : l'article 7 compterait l'épargne salariale et la
+  prime de partage de la valeur dans la rémunération qui règle la réduction générale,
+  récrirait L. 137-15 et abrogerait le malus de L. 241-3-3 ; l'article 6 plafonnerait au
+  plafond annuel l'exonération des indemnités de rupture ; l'article 4 rendrait pérenne
+  une réduction des employeurs de sapeurs-pompiers volontaires (L. 241-21) ; les articles
+  13, 14 et 44 ne déplacent que des recettes, dont les majorations pour enfants de la
+  CNRACL, mises à la charge de la branche famille. Le dépôt, qui règle la réduction
+  générale sur le seul salaire et ne porte ni épargne salariale, ni prime de partage, ni
+  indemnités de rupture, n'en verrait rien. À côté, l'article 3 du projet de loi de
+  finances pour 2027 borne à 3 000 € l'abattement de 10 % des pensions de retraite, sous le
+  plafond de 4 439 €, que l'impôt du dépôt applique. Les décrets parus depuis le
+  15 octobre ne touchent rien de ce que le dépôt calcule ; aucune rédaction nouvelle des
+  articles relus. Trois fiches mises à jour (majoration_dix_pour_cent,
+  revalorisation_des_pensions, fin_de_la_suspension_2028) ; rien au scénario 1.
+reste: >-
+  Suivre le projet au Sénat, puis en commission mixte paritaire, en nouvelle lecture, au
+  Conseil constitutionnel, jusqu'à la promulgation. Voté, porter l'article 35 dans
+  revalorisation_pensions.csv, par seuils, au décret des coefficients de 2027 et à la
+  circulaire de la Cnav, et l'article 34, au décret des montants et de la proratisation,
+  dans les deux moteurs, le test d'abord. Suivre l'article 3 du projet de loi de finances
+  pour l'impôt sur le revenu (étape 5).
+prochaine_veille: >-
+  à l'examen du projet par le Sénat, puis à sa promulgation, et au décret des
+  coefficients de revalorisation de 2027
