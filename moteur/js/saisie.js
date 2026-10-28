@@ -29,8 +29,8 @@ import {
   sousRegimeTaux,
 } from "./config.js";
 import {
-  FORMES_D_UNION, MOTIFS_DE_PROLONGATION, dateDeclaree, naissanceDeclaree, plusAns,
-  valeur as valeurPresumee,
+  CATEGORIES_D_INVALIDITE, FORMES_D_UNION, MOTIFS_DE_PROLONGATION, dateDeclaree,
+  naissanceDeclaree, plusAns, valeur as valeurPresumee,
 } from "./chronologie.js";
 import { CONJOINTS_COLLABORATEURS, anneeDEntree } from "./carriere.js";
 import * as g from "./gabarit.js";
@@ -751,7 +751,8 @@ export const DEFAUTS = Object.freeze({
   //: L'invalidité et l'inaptitude (fiches `pension_d_invalidite_substituee`,
   //: `inaptitude_au_travail` et `retraite_pour_invalidite_fonction_publique`) :
   //: l'âge où la pension d'invalidité de la Sécurité sociale a commencé, que
-  //: l'adresse porte en date comme un début d'activité, nul sans elle ;
+  //: l'adresse porte en date comme un début d'activité, nul sans elle, et sa
+  //: catégorie, 1, 2 ou 3 (L. 341-4), nulle quand elle n'est pas dite ;
   //: l'inaptitude au travail, reconnue ou que la loi présume ; l'âge de la
   //: radiation des cadres pour invalidité d'un fonctionnaire, en date lui
   //: aussi, son imputabilité au service et le taux d'invalidité reconnu, en
@@ -759,6 +760,7 @@ export const DEFAUTS = Object.freeze({
   //: (fiche `retraite_anticipee_handicap`), en date lui aussi. Voir
   //: `invaliditeDeclaree`.
   invalidite: null,
+  categorie_invalidite: null,
   inaptitude: false,
   radiation_invalidite: null,
   invalidite_imputable: false,
@@ -1015,6 +1017,8 @@ export class Saisie {
       demandes: demandesSaisies(parametres, origineDesAges(moisDeNaissance, jourNaissance)),
       invalidite: [undefined, null, ""].includes(parametres.invalidite) ? null
         : ageSaisi(parametres, "invalidite", 0.0, moisDeNaissance),
+      categorie_invalidite: [undefined, null, ""].includes(parametres.categorie_invalidite)
+        ? null : entier(parametres, "categorie_invalidite", 0),
       inaptitude: oui(parametres, "inaptitude"),
       radiation_invalidite: [undefined, null, ""].includes(parametres.radiation_invalidite)
         ? null : ageSaisi(parametres, "radiation_invalidite", 0.0, moisDeNaissance),
@@ -2514,8 +2518,9 @@ export class Saisie {
 
   /**
    * L'invalidité et l'inaptitude que la saisie déclare, telles que la
-   * chronologie les reçoit : l'âge où la `pension` d'invalidité a commencé,
-   * l'`inaptitude`, et la `radiation` pour invalidité d'un fonctionnaire — son
+   * chronologie les reçoit : l'âge où la `pension` d'invalidité a commencé, et
+   * sa `categorie` quand elle est dite, l'`inaptitude`, et la `radiation` pour
+   * invalidité d'un fonctionnaire — son
    * âge, son imputabilité, son taux en pour cent —, et l'âge depuis lequel
    * l'incapacité permanente atteint 50 % (`handicap`) ; et les autres titres au
    * taux plein de L. 351-8 (`deporte`, `mois_de_guerre`, `travail_manuel`).
@@ -2536,6 +2541,11 @@ export class Saisie {
       pension: this.invalidite, inaptitude: this.inaptitude, radiation,
       handicap: this.handicap,
     };
+    // La catégorie, seulement quand elle est dite : sinon, la présomption
+    // `categorie_de_la_pension_d_invalidite` la pose.
+    if (this.categorie_invalidite !== null) {
+      declaree.categorie = this.categorie_invalidite;
+    }
     // Les autres titres, seulement quand ils sont dits.
     for (const [nom, valeur] of [["deporte", this.deporte || null],
       ["mois_de_guerre", this.mois_de_guerre], ["travail_manuel", this.travail_manuel || null]]) {
@@ -2547,9 +2557,12 @@ export class Saisie {
   }
 
   /**
-   * La pension d'invalidité commence dans la carrière, avant le départ ; la
-   * radiation pour invalidité d'un fonctionnaire tombe dans la carrière, au
-   * plus tard au départ ; son imputabilité et son taux ne servent qu'à elle.
+   * La pension d'invalidité commence dans la carrière, avant le départ, et sa
+   * catégorie, l'une des trois de L. 341-4, ne sert qu'à elle, datée : la
+   * pension que la présomption `pension_d_invalidite_de_la_periode` tire d'une
+   * période d'invalidité n'a pas de fait qui la porte. La radiation pour
+   * invalidité d'un fonctionnaire tombe dans la carrière, au plus tard au
+   * départ ; son imputabilité et son taux ne servent qu'à elle.
    * Que la radiation tombe dans un emploi de fonctionnaire, c'est au contexte
    * de le dire, qui a les affiliations ; ce que le droit fait de tout cela —
    * l'âge de la substitution, le taux plein, la pension du fonctionnaire —, au
@@ -2570,6 +2583,17 @@ export class Saisie {
     if (this.taux_invalidite !== null
         && !(this.taux_invalidite >= 1 && this.taux_invalidite <= 100)) {
       throw new ErreurSaisie("Taux d'invalidité : en pour cent, entre 1 et 100.");
+    }
+    if (this.categorie_invalidite !== null && this.invalidite === null) {
+      throw new ErreurSaisie(
+        "« categorie_invalidite » ne sert qu'à la pension d'invalidité : dites aussi le "
+        + "mois où elle a commencé (« invalidite »).",
+      );
+    }
+    if (this.categorie_invalidite !== null
+        && !CATEGORIES_D_INVALIDITE.includes(this.categorie_invalidite)) {
+      throw new ErreurSaisie("Catégorie de la pension d'invalidité : 1, 2 ou 3 "
+        + `(reçu : ${this.categorie_invalidite}).`);
     }
     if (this.mois_de_guerre !== null
         && !(this.mois_de_guerre >= 1 && this.mois_de_guerre <= MOIS_DE_GUERRE_MAXIMUM)) {
@@ -3248,6 +3272,7 @@ export class Saisie {
         ([code, age_]) => [`${PREFIXE_DEMANDE}${code}`, this.moisDe(age_, true)])),
       ...Object.fromEntries([
         ["invalidite", this.invalidite === null ? null : this.moisDe(this.invalidite)],
+        ["categorie_invalidite", this.categorie_invalidite],
         ["inaptitude", this.inaptitude ? OUI : null],
         ["radiation_invalidite", this.radiation_invalidite === null
           ? null : this.moisDe(this.radiation_invalidite)],

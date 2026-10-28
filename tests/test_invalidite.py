@@ -66,6 +66,26 @@ def test_la_saisie_lit_l_invalidite_et_la_rend_a_l_adresse():
     assert _saisie().invalidite_declaree() is None
 
 
+def test_la_saisie_lit_la_categorie_de_la_pension_d_invalidite():
+    """La catégorie de la pension d'invalidité, qui en fixe le taux (L. 341-4),
+    se dit avec elle : 1, 2 ou 3, que la chronologie reçoit
+    (``invalidite.categorie``), et l'adresse la rend telle qu'elle l'a reçue.
+    Non dite, la déclaration n'en porte pas : la présomption
+    ``categorie_de_la_pension_d_invalidite`` la pose."""
+    saisie = _saisie(invalidite="2019-03", categorie_invalidite="3")
+    assert saisie.categorie_invalidite == 3
+    assert saisie.invalidite_declaree() == {
+        "pension": saisie.invalidite, "inaptitude": False, "radiation": None,
+        "handicap": None, "categorie": 3}
+    requete = dict(pair.split("=", 1) for pair in saisie.requete().split("&"))
+    assert requete["categorie_invalidite"] == "3"
+    assert saisie_du_portage(requete).invalidite_declaree() == saisie.invalidite_declaree()
+    sans = _saisie(invalidite="2019-03")
+    assert sans.categorie_invalidite is None
+    assert "categorie" not in sans.invalidite_declaree()
+    assert "categorie_invalidite" not in sans.requete()
+
+
 @pytest.mark.parametrize("champs, refus", [
     ({"taux_invalidite": "50"},
      "« taux_invalidite » ne sert qu'à la retraite pour invalidité d'un fonctionnaire"),
@@ -79,6 +99,18 @@ def test_la_saisie_lit_l_invalidite_et_la_rend_a_l_adresse():
     ({"radiation_invalidite": "2029-02"}, "elle ne suit pas le départ"),
     ({"handicap": "1965-06"}, "Incapacité d'au moins 50 % en juin 1965 : elle suit la naissance"),
     ({"handicap": "2029-02"}, "Incapacité d'au moins 50 % en février 2029 : elle ne suit pas"),
+    # La catégorie : sans la pension qu'elle qualifie, même présumée d'une
+    # période d'invalidité, que la chronologie ne date pas ; hors de L. 341-4.
+    ({"categorie_invalidite": "2"},
+     "« categorie_invalidite » ne sert qu'à la pension d'invalidité : dites aussi le "
+     "mois où elle a commencé"),
+    ({"interruptions": "2019:2028:invalidite", "categorie_invalidite": "2"},
+     "« categorie_invalidite » ne sert qu'à la pension d'invalidité"),
+    ({"invalidite": "2019-03", "categorie_invalidite": "4"},
+     r"Catégorie de la pension d'invalidité : 1, 2 ou 3 \(reçu : 4\)\."),
+    ({"invalidite": "2019-03", "categorie_invalidite": "0"},
+     r"Catégorie de la pension d'invalidité : 1, 2 ou 3 \(reçu : 0\)\."),
+    ({"invalidite": "2019-03", "categorie_invalidite": "deux"}, "doit être un nombre entier"),
 ])
 def test_la_saisie_refuse_ce_qui_ne_tient_pas(champs, refus):
     with pytest.raises(ErreurSite, match=refus_de_la_saisie(refus)):
@@ -192,6 +224,9 @@ REQUETES = [
      "metier2_statut": "sans_activite"},
     {"naissance": "1970-06-01", "debut": "2004-01", "liquidation": "2027-06",
      "handicap": "1990-03"},
+    {"naissance": "1920-03-15", "debut": "1936-09", "liquidation": "1982-07",
+     "interruptions": "1975:1982:invalidite", "invalidite": "1975-01",
+     "categorie_invalidite": "1"},
 ]
 
 #: Ce que le portage lit de la carrière que la saisie bâtit.
@@ -217,7 +252,7 @@ const sortie = JSON.parse(readFileSync(0, "utf8")).map((requete) => {
   return {
     pension: pension === null ? null : {
       debut: mois(pension.debut), presomption: pension.presomption,
-      affiliations: [...pension.affiliations] },
+      affiliations: [...pension.affiliations], categorie: pension.categorie },
     inaptitude: vue.inaptitude,
     radiation: radiation === null ? null : {
       date: mois(radiation.date), affiliations: [...radiation.affiliations],
@@ -240,7 +275,7 @@ def _lu_par_python(saisies: Saisies, requete: dict) -> dict:
     return {
         "pension": None if pension is None else {
             "debut": mois(pension.debut), "presomption": pension.presomption,
-            "affiliations": list(pension.affiliations)},
+            "affiliations": list(pension.affiliations), "categorie": pension.categorie},
         "inaptitude": vue.inaptitude,
         "radiation": None if radiation is None else {
             "date": mois(radiation.date), "affiliations": list(radiation.affiliations),
@@ -253,8 +288,9 @@ def _lu_par_python(saisies: Saisies, requete: dict) -> dict:
 
 def test_le_portage_lit_les_memes_faits(saisies):
     """La carrière des deux moteurs lit les mêmes faits de la même saisie :
-    la pension d'invalidité, déclarée ou présumée, l'inaptitude, la
-    radiation et les affiliations qui les entourent."""
+    la pension d'invalidité, déclarée ou présumée, et sa catégorie, quand elle
+    est dite, l'inaptitude, la radiation et les affiliations qui les
+    entourent."""
     import json
     import shutil
     import subprocess
@@ -276,6 +312,8 @@ def test_le_portage_lit_les_memes_faits(saisies):
     assert attendus[2]["radiation"]["taux"] == 60
     assert attendus[3]["radiation"]["affiliations"] == ["fonctionnaire_territorial_hospitalier"]
     assert attendus[4]["incapacite"] == {"debut": "1990-03", "taux": 50}
+    assert attendus[0]["pension"]["categorie"] is None
+    assert attendus[5]["pension"]["categorie"] == 1
 
 
 # -- le moteur : le taux plein de l'inapte, la substitution ----------------------
@@ -539,6 +577,47 @@ def test_la_categorie_se_declare_ou_se_presume(simulateur):
     with pytest.raises(ValueError, match="la catégorie de la pension d'invalidité"):
         _ex_invalide(simulateur, 1942, 20.0, 1.0, range(1982, 2003), 60.0,
                      declaree={"pension": 39 + 10 / 12, "categorie": 4})
+
+
+#: L'ex-invalide de 1975 substitué en avril 1980 (témoin de simulation
+#: ``invalidite_substituee_en_1980``), qui date sa pension d'invalidité.
+_SUBSTITUE_EN_1980 = {"naissance": "1920-03-15", "debut": "1936-09", "liquidation": "1982-07",
+                      "interruptions": "1975:1982:invalidite", "invalidite": "1975-01"}
+
+
+def test_la_categorie_dite_au_site_fixe_le_plancher_de_la_pension_substituee(saisies):
+    """Né en 1920, salarié depuis 1936, invalide depuis 1975, substitué en
+    avril 1980 : il ne travaille plus, et sa pension d'invalidité, présumée de
+    deuxième catégorie, à 50 % du salaire annuel moyen de ses dix meilleures
+    années d'après 1947 (R. 341-4 ; décret n° 45-0179, article 59), refaite à la
+    main, est le plancher de sa pension de vieillesse. La catégorie que la
+    saisie dit va au modèle : de troisième, au taux de la deuxième, le même
+    plancher, sans présomption ; de première, à 30 %, la pension d'invalidité
+    reste sous la pension de vieillesse, servie seule (L. 341-4, L. 341-15)."""
+    simulateur = saisies.simulateur(_SUBSTITUE_EN_1980)
+    carriere = saisies.carriere(_SUBSTITUE_EN_1980)
+    attendue = _pension_d_invalidite_a_la_main(simulateur, carriere, 1975, (1980, 4), 0.5)
+
+    def servie(**categorie):
+        """La pension du régime général à sa date d'effet, et le détail de son
+        plancher."""
+        actuel = _actuel(saisies, **_SUBSTITUE_EN_1980, **categorie)
+        pension = _pension(actuel, "regime_general")
+        assert pension.date_effet == "1980-04-01"
+        plancher = [a.detail for a in actuel.avantages_appliques
+                    if a.libelle == "Plancher de la pension substituée"]
+        return pension.montant_a_l_effet, plancher
+
+    presumee, plancher = servie()
+    assert presumee == pytest.approx(attendue, abs=0.01)
+    assert "de deuxième catégorie présumée :" in plancher[0]
+    troisieme, plancher = servie(categorie_invalidite="3")
+    assert troisieme == pytest.approx(attendue, abs=0.01)
+    assert "de troisième catégorie :" in plancher[0]
+    premiere, plancher = servie(categorie_invalidite="1")
+    assert plancher == []
+    assert _pension_d_invalidite_a_la_main(
+        simulateur, carriere, 1975, (1980, 4), 0.3) < premiere < attendue
 
 
 def test_la_deuxieme_categorie_passe_de_40_a_50_pour_cent_en_1961(simulateur):
