@@ -9,6 +9,7 @@ intitule: >-
   ses services. Le rétablissement au régime général de qui était parti sans droit
   est annulé quand il revient dans un régime interpénétré. Le militaire titulaire
   d'une pension militaire la garde, sauf renonciation (L. 77).
+regimes: [cnracl, fonction_publique_etat, fspoeie, pensions_civiles_1853]
 etat: transcrite
 etape: coordonner_les_affiliations
 effet: >-
@@ -75,3 +76,40 @@ textes_a_rattacher:
     L. 24 du code des pensions (LEGIARTI000047452804) et article 25 du décret n°
     2003-1306 (LEGIARTI000050941689) : dix-sept ans de services actifs « accomplis
     indifféremment dans de tels emplois »
+code:
+  moteur: >-
+    `regimes_interpenetres` dit les régimes du code des pensions qu'une carrière
+    réunit (`REGIMES_CODE_DES_PENSIONS`) : les trois, ou la CNRACL et le FSPOEIE seuls
+    quand l'assuré n'a servi l'État que sous l'uniforme, et garde sa pension militaire
+    (L. 77). `groupes_de_succession` les range sous une même tête
+    (`REGIMES_INTERPENETRES_TETE`), et le régime de la dernière période les liquide
+    ensemble (`liquider_chaque_regime`) : un traitement, celui de la fin de la carrière
+    publique, et une proratisation sur tous leurs services. `droit_a_pension` compte
+    sur les trois ensemble, pensions civiles d'avant 1948 comprises, la durée qui
+    ouvre la pension : le retour dans l'un d'eux annule ainsi le rétablissement. La
+    pension de l'État n'est pas scindée entre services civils et militaires.
+  python: >-
+    droit/coordonner.py : regimes_interpenetres, groupes_de_succession,
+    droit_a_pension, REGIMES_CODE_DES_PENSIONS, REGIMES_INTERPENETRES_TETE ;
+    droit/liquider.py : liquider_chaque_regime
+  javascript: >-
+    moteur/js/droit/coordonner.js : regimesInterpenetres, groupesDeSuccession,
+    droitAPension, REGIMES_CODE_DES_PENSIONS, REGIMES_INTERPENETRES_TETE ;
+    moteur/js/droit/liquider.js : liquiderChaqueRegime
+  parametres: >-
+    aucun : les trois régimes sont nommés dans le code (`REGIMES_CODE_DES_PENSIONS`),
+    et le traitement comme la durée sont ceux de leurs fiches
+  tests:
+  - tests/test_interpenetration.py
+  - >-
+    tests/test_retablissement.py, où le retour dans un régime interpénétré annule le
+    rétablissement
+  - >-
+    tests/test_cumul_activites.py, tests/test_droit.py et tests/test_web.py, qui
+    confrontent les deux moteurs sur des carrières qui la portent
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    quatre témoins changent sans elle — metiers_etat_puis_territorial,
+    metiers_etat_prive_hospitalier, metiers_ouvrier_etat_puis_etat et
+    enfants_etat_et_territorial_un_an_chacun ; metiers_militaire_puis_territorial,
+    que L. 77 laisse hors de la réunion, ne bouge pas

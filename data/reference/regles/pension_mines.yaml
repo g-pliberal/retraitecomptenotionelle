@@ -7,6 +7,7 @@ intitule: >-
   vingt trimestres au plus, sauf ceux accomplis avant cinquante-cinq ans ; ouverture
   à cinquante-cinq ans, abaissée d'un an par quatre années au fond jusqu'à cinquante
   ans pour trente années d'affiliation.
+regimes: [mines]
 etat: approchee
 effet: >-
   Mineurs. Jusqu'au 24 septembre 2026, la fiche ne portait ni le coefficient de
@@ -67,3 +68,45 @@ textes_a_rattacher:
 - reference: arrêtés annuels du coefficient de majoration, 2003 à 2026
 exemples:
 - cor_mines_cent_vingt_trimestres_2024
+code:
+  moteur: >-
+    `acquerir` porte aux mines un point par trimestre de services
+    (`points_par_trimestre_valide`), et borne leur total à `trimestres_maximum`, cent
+    vingt, sauf ceux accomplis avant `trimestres_maximum_leve_avant_age`,
+    cinquante-cinq ans, comptés jusqu'au mois de l'anniversaire.
+    `liquider_chaque_regime` les multiplie par le coefficient de majoration et la
+    valeur du trimestre de la date d'effet (`bareme_trimestre`), que
+    `BaremesTrimestre.valeurs` lit au mois dans `bareme_trimestre_mines.csv`, et
+    prolonge au-delà de sa dernière ligne, la valeur par les prix de l'année écoulée,
+    le coefficient par le quotient de la loi ; avant sa première ligne, de juillet
+    1992, la fiche reprend sa valeur (`valeur_point_euros`). `ouverture_par_services`
+    ouvre la pension à cinquante ans à qui réunit trente ans de services
+    (`age_ouverture_services`, `services_ouverture_annees`) : l'âge du fond, prêté à
+    tout mineur de trente années, sans la bonification de l'article 138.
+  python: >-
+    droit/acquerir.py : acquerir ; droit/liquider.py : liquider_chaque_regime ;
+    scenarios/actuel.py : BaremesTrimestre, BaremesTrimestre.valeurs ;
+    droit/ouvrir.py : ouverture_par_services
+  javascript: >-
+    moteur/js/droit/acquerir.js : acquerir ; moteur/js/droit/liquider.js :
+    liquiderChaqueRegime ; moteur/js/regimes.js : BaremesTrimestre,
+    BaremesTrimestre.valeurs ; moteur/js/droit/ouvrir.js : ouvertureParServices
+  parametres: >-
+    regimes/mines.yaml : points_par_trimestre_valide, trimestres_maximum,
+    trimestres_maximum_leve_avant_age, bareme_trimestre, valeur_point_euros,
+    age_ouverture, age_ouverture_services, services_ouverture_annees ;
+    legislation/bareme_trimestre_mines.csv : date_effet, valeur_trimestre, coefficient
+  tests:
+  - tests/test_mines.py
+  - tests/test_droit.py
+  - >-
+    tests/temoins/exemples_officiels.yaml, que tests/test_oracle.py rejoue :
+    cor_mines_cent_vingt_trimestres_2024
+  - >-
+    tests/test_cumul_activites.py, tests/test_liquidation.py et tests/test_web.py,
+    qui confrontent les deux moteurs sur des carrières qui la portent
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    statut_mineur et ses générations 1925 à 1968, sept témoins, changent sans le
+    plafond de cent vingt trimestres comme sans l'ouverture à cinquante ans, et tous
+    sauf celui de 1925, parti avant juillet 1992, sans le barème du trimestre

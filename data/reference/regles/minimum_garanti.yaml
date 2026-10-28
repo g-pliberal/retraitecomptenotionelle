@@ -9,6 +9,7 @@ intitule: >-
   avant 2011 (L. 17, c). Sans la durée, ouvert à l'âge d'annulation de la décote,
   minoré de neuf, sept, cinq, trois et un trimestres pour un âge d'ouverture atteint
   de 2011 à 2015.
+regimes: [banque_de_france, cnracl, fonction_publique_etat, fspoeie]
 etat: conforme
 etape: completer_tous_regimes
 effet: >-
@@ -194,3 +195,61 @@ referents:
       ans et la condition de taux plein concordent, rapportés à la référence ; il lit
       les services de l'État pour la CNRACL, sert le d à l'ancien droit et ignore la
       minoration de 2011 à 2015 : les écarts sont les siens (registre)
+code:
+  moteur: >-
+    `liquider_chaque_regime` retient au minimum garanti la pension de chaque régime
+    dont la période le déclare (`avantages_non_contributifs`), sur ses services
+    effectifs arrondis au décompte final, sans les bonifications
+    (`Durees.services_effectifs`), avant 2004 sur le décompte de la pension
+    (`EligibleMinimumGaranti`). Il le dit ouvert à l'invalidité, à qui avait atteint
+    l'âge d'ouverture avant 2011, au taux plein, ou à l'âge d'annulation de la décote,
+    minoré de neuf à un trimestre de 2011 à 2015 (`MINORATION_AGE_MINIMUM_GARANTI`) ;
+    sous quinze ans, le d de L. 17 rapporte la référence à la durée qui ouvre le
+    pourcentage maximum, le c, en quinzièmes, restant à l'ancien droit et à
+    l'invalidité. `completer` porte la pension, surcote parentale comprise, au plancher
+    que `MinimumGaranti.montant` lit au barème de l'année (`MinimumGaranti.bareme`) et
+    à la référence de la date d'effet, revalorisée comme les pensions civiles
+    (`MinimumGaranti.reference`). La Banque de France le reçoit au même barème, sans
+    le d ni la minoration. Ni l'écrêtement, sans décret, ni les périodes d'AVPF et
+    d'aidant de 2023 ne sont portés.
+  python: >-
+    droit/liquider.py : liquider_chaque_regime, EligibleMinimumGaranti,
+    MINORATION_AGE_MINIMUM_GARANTI ; droit/compter.py : Durees.services_effectifs ;
+    droit/completer.py : completer ; scenarios/actuel.py : MinimumGaranti,
+    MinimumGaranti.montant, MinimumGaranti.bareme, MinimumGaranti.reference
+  javascript: >-
+    moteur/js/droit/liquider.js : liquiderChaqueRegime, MINORATION_AGE_MINIMUM_GARANTI ;
+    moteur/js/droit/compter.js : Durees.servicesEffectifs ;
+    moteur/js/droit/completer.js : completer ; moteur/js/regimes.js : MinimumGaranti,
+    MinimumGaranti.montant, MinimumGaranti.bareme, MinimumGaranti.reference
+  parametres: >-
+    regimes/banque_de_france.yaml, regimes/cnracl.yaml,
+    regimes/fonction_publique_etat.yaml, regimes/fspoeie.yaml :
+    avantages_non_contributifs ; legislation/minimum_garanti.csv : indice_majore,
+    part_15_ans, points_15_30, points_30_40, trimestres_seuil ;
+    legislation/minimum_garanti_montants.csv : valeur
+  tests:
+  - tests/test_fonction_publique_etat.py
+  - tests/test_simulateur.py
+  - tests/test_oracle_minima.py
+  - tests/test_invalidite.py
+  - tests/test_parents_trois_enfants.py
+  - tests/test_decompte_des_services.py
+  - tests/test_departs.py
+  - tests/test_flux_fonction_publique.py
+  - >-
+    tests/test_trajectoire.py, la confrontation aux cas types de TRAJECTOiRE
+  - >-
+    tests/temoins/exemples_officiels.yaml, que tests/test_oracle.py rejoue :
+    sre_minimum_garanti_de_l_invalidite
+  - >-
+    tests/test_cumul_activites.py, tests/test_etranger.py, tests/test_liquidation.py et
+    tests/test_oracle_categorie_active.py, qui confrontent les deux moteurs sur des
+    carrières qui le portent
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    deux témoins changent sans lui — invalidite_radiation_minimum_garanti_quinziemes et
+    releve_prolonge_radiation —, un sans le d sous quinze ans,
+    metiers_etat_trois_ans_depuis_2011 ; aucun sans sa condition de taux plein, ni sans
+    son décompte des services, que seuls tiennent trois tests qui confrontent les deux
+    moteurs

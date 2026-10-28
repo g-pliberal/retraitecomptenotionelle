@@ -220,6 +220,9 @@ CODE_ET_REGIMES_ECRITS = frozenset("""
     assiette_minimale_independants asv_medecins_ajustement baremes_cnbf carpimko_ages_2015
     carpimko_assiette_2026 cavom_assiette_2016 cipav_seconde_tranche cnavpl_valeur_service
     decret_2026_418_liberaux raap_taux_amenage_racd_racl rci_valeurs_point
+    cese_affiliation_2023 interpenetration_fonction_publique marins_ouverture_cinquante_ans
+    marins_salaire_de_reference minimum_garanti pension_mines rafp_assiette_plafond
+    rafp_beneficiaires regimes_speciaux_et_non_salaries retablissement_fonction_publique
 """.split())
 
 

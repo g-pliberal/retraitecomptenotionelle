@@ -4,6 +4,7 @@ intitule: >-
   Les membres du CESE entrant en fonction à compter du 1er septembre 2023 sont
   affiliés au régime général et à l'Ircantec ; les membres désignés avant restent
   à la caisse de retraites du Conseil.
+regimes: [cese_membres, ircantec, regime_general]
 etat: conforme
 effet: >-
   Les membres du CESE entrés en fonction depuis le 1er septembre 2023. Le
@@ -51,3 +52,37 @@ textes_a_rattacher:
 - reference: loi n° 2023-270, article 1er, VI, 4° et 14°, et IX (JORFARTI000047445082)
 - reference: L. 381-32 CSS
 - reference: L. 921-2-1 CSS (LEGIARTI000048701019)
+code:
+  moteur: >-
+    Le statut de membre du CESE (`membre_cese`) porte deux périodes au routage : la
+    caisse du Conseil pour qui est entré avant le 1er septembre 2023 (`entres_avant`),
+    le régime général et l'Ircantec pour qui est entré depuis (`entres_depuis`), que
+    `Affiliations._periode` choisit à la date d'entrée dans le statut, au mois. Le
+    statut déclare celui qui le relève, l'agent non titulaire (`releve_par`) :
+    `Affiliations.fermeture_entrants` en lit la fermeture, et la saisie du portage
+    refuse le membre entré depuis, qu'elle renvoie à ce statut (`statutFerme`,
+    `phraseStatutFerme`). Le compte notionnel demande au routage, sans la date
+    d'entrée, si la ligne a un employeur (`ConstructeurCompte.a_un_employeur`) : le
+    membre entré avant en gagne un pour ses années depuis 2024, celles du régime
+    général et de l'Ircantec, quand le scénario 1 le garde à la caisse du Conseil.
+  python: >-
+    carriere.py : Affiliations.regimes, Affiliations._periode,
+    Affiliations.fermeture_entrants, Affiliations.releve_par ; moteur/compte.py :
+    ConstructeurCompte.a_un_employeur
+  javascript: >-
+    moteur/js/regimes.js : Affiliations.regimes, Affiliations._periode,
+    Affiliations.fermetureEntrants, Affiliations.relevePar ; moteur/js/contexte.js :
+    statutFerme, phraseStatutFerme ; moteur/js/compte.js :
+    ConstructeurCompte.aUnEmployeur
+  parametres: >-
+    legislation/affiliations.yaml : affiliations.membre_cese.periodes,
+    affiliations.membre_cese.releve_par
+  tests:
+  - >-
+    tests/test_donnees.py, qui veut le statut fermé routé, depuis sa fermeture, comme
+    celui qui le relève
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    trois témoins changent sans la fermeture — statut_membre_cese et ses générations
+    1965 et 1968 —, dans leur seul compte notionnel, qui lit le routage sans la date
+    d'entrée

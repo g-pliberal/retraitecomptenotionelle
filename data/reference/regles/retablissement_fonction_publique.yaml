@@ -11,6 +11,8 @@ intitule: >-
   dans la limite du plafond ; l'Ircantec valide les services suivant sa propre réglementation
   ; les primes restent au RAFP. Pour qui a quitté son régime après le 28 janvier
   1950. Le retour dans un régime interpénétré annule le rétablissement.
+regimes: [assurances_sociales, cnracl, fonction_publique_etat, fspoeie, igrante, ipacte,
+  ircantec, pensions_civiles_1853, regime_general, seita]
 etat: transcrite
 etape: coordonner_les_affiliations
 effet: >-
@@ -100,3 +102,46 @@ textes_a_rattacher:
 - reference: >-
     L. 6 du code des pensions (LEGIARTI000006362671, LEGIARTI000006362672, LEGIARTI000028498970)
     et loi n° 2014-40, article 42 (JORFARTI000028493863)
+code:
+  moteur: >-
+    `retablir` lit, pour chaque régime rétabli (`REGIMES_RETABLIS` : l'État, pensions
+    civiles d'avant 1948 comprises, la CNRACL, le FSPOEIE et la SEITA), le droit de
+    l'agent (`droit_a_pension`) : les années que le régime a reçues, les trois régimes
+    interpénétrés comptés ensemble, la radiation au 1er janvier qui suit la dernière,
+    ou le départ, et la durée qu'elle exige, quinze ans pour qui est radié avant 2011,
+    deux depuis, le militaire à son premier engagement
+    (`ServicesOuvrantPension.annees`). Sans elle, et radié après le 28 janvier 1950
+    (`RETABLISSEMENT_DEPUIS`), chacune de ses années reçoit son dernier traitement,
+    hors primes (`revenu_retabli`) : `regimes_de` la route où va le contractuel du
+    public, le régime général et l'Ircantec ou ses devancières, les assurances
+    sociales du salarié avant 1945 (`STATUTS_DU_RETABLISSEMENT`), et lui garde le
+    RAFP ; `assiette_de_reference` porte ce traitement au compte du régime général, et
+    `acquerir` valide à l'Ircantec celui de l'année.
+  python: >-
+    droit/coordonner.py : retablir, _retablir, droit_a_pension, regimes_de,
+    REGIMES_RETABLIS, RETABLISSEMENT_DEPUIS, STATUTS_DU_RETABLISSEMENT ;
+    scenarios/actuel.py : ServicesOuvrantPension, ServicesOuvrantPension.annees ;
+    droit/liquider.py : assiette_de_reference ; droit/acquerir.py : acquerir
+  javascript: >-
+    moteur/js/droit/coordonner.js : retablir, retablirEnDetail, droitAPension,
+    regimesDe, REGIMES_RETABLIS, RETABLISSEMENT_DEPUIS, STATUTS_DU_RETABLISSEMENT ;
+    moteur/js/regimes.js : ServicesOuvrantPension, ServicesOuvrantPension.annees ;
+    moteur/js/droit/liquider.js : assietteDeReference ; moteur/js/droit/acquerir.js :
+    acquerir
+  parametres: >-
+    legislation/services_ouvrant_pension.csv : fonction_publique_etat, militaires,
+    cnracl, fspoeie, seita, radiation_depuis, annees, annees_en_fonctions ;
+    legislation/affiliations.yaml : affiliations.contractuel_public.periodes,
+    affiliations.salarie_prive_non_cadre.periodes
+  tests:
+  - tests/test_retablissement.py
+  - tests/test_droit.py
+  - >-
+    tests/test_cumul_activites.py, tests/test_liquidation.py et tests/test_web.py,
+    qui confrontent les deux moteurs sur des carrières qui la portent
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    cinq témoins changent sans lui — enfants_fonctionnaire_un_an_puis_prive,
+    metiers_hospitalier_treize_ans_puis_prive,
+    metiers_hospitalier_treize_ans_puis_sans_activite,
+    metiers_militaire_dix_ans_puis_prive et metiers_militaire_engage_en_2012_quatre_ans

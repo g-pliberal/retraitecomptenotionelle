@@ -4,6 +4,7 @@ intitule: >-
   Salaire de référence des marins : forfait de la catégorie moyenne des trente-six
   derniers mois, ou de fonctions supérieures tenues cinq ans ; services décomptés
   au semestre.
+regimes: [marins]
 etat: approchee
 effet: >-
   Le modèle prend la catégorie de la DERNIÈRE année, rangée par le revenu, et compte
@@ -36,3 +37,33 @@ textes_a_rattacher:
 - reference: >-
     code des pensions de retraite des marins, R. 11 (LEGIARTI000006791987), R. 12
     (LEGIARTI000006791988) et R. 31
+code:
+  moteur: >-
+    La période des marins liquide le dernier salaire (`salaire_reference`) :
+    `salaire_de_reference` prend l'assiette de la dernière ligne que le régime reçoit
+    l'année du départ, annualisée. `assiette_de_reference` la lit, pour un régime à
+    grille (`assiette_grille`), au forfait de la catégorie dont le montant est le plus
+    proche du revenu annualisé de l'année (`SalairesForfaitaires.forfait`), proratisé
+    sur ses mois : la catégorie de la dernière année, rangée par le revenu, et non la
+    catégorie moyenne des trente-six derniers mois, ni celle de fonctions supérieures
+    tenues cinq ans. Hors des années que la grille publie, la plus proche est portée
+    par le salaire moyen, de fiabilité estimée. Les services se comptent au trimestre,
+    non au semestre.
+  python: >-
+    droit/liquider.py : salaire_de_reference, assiette_de_reference ;
+    donnees/regimes.py : SalairesForfaitaires, SalairesForfaitaires.forfait
+  javascript: >-
+    moteur/js/droit/liquider.js : salaireDeReference, assietteDeReference ;
+    moteur/js/regimes.js : SalairesForfaitaires, SalairesForfaitaires.forfait
+  parametres: >-
+    regimes/marins.yaml : salaire_reference, assiette, assiette_grille ;
+    regimes/salaires_forfaitaires.csv : marins, annee, categorie, montant_annuel
+  tests:
+  - tests/test_simulateur.py
+  - >-
+    tests/test_cumul_activites.py, tests/test_liquidation.py et tests/test_web.py,
+    qui confrontent les deux moteurs sur des carrières qui le portent
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    neuf témoins changent sans le forfait à la liquidation — statut_marin et ses
+    générations 1925 à 1968, marin_avant_cinquante_cinq et metiers_maximum

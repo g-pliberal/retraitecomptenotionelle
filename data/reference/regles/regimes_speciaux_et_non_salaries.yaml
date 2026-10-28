@@ -4,6 +4,12 @@ intitule: >-
   Fermetures de 2023 (RATP, IEG, clercs, Banque de France, CESE), réformes 2023-2026
   des sections libérales, de la MSA, de Mayotte, de Saint-Pierre-et-Miquelon, des
   collectivités du Pacifique.
+regimes: [agirc_arrco, asv_conventionnes, banque_de_france, cafat_nouvelle_caledonie,
+  carcdsf_complementaire, carpimko_complementaire, cavec_complementaire,
+  cavp_complementaire, cese_membres, cipav_complementaire, cnavpl, cprn_complementaire,
+  cps_polynesie, cps_polynesie_tranche_b, cps_saint_pierre_et_miquelon, crpcen,
+  cssm_mayotte, enseignants_prive_additionnel, fonctionnaires_pacifique, ieg,
+  msa_non_salaries, ratp]
 etat: transcrite
 effet: >-
   Populations petites ; chaque fiche dit ce qu'elle ne porte pas (regimes.md, limites.md
@@ -54,3 +60,79 @@ reformes:
 - cavec_report_2026
 - spm_2026
 - mayotte_2026
+code:
+  moteur: >-
+    Chaque réforme de la fiche (`reformes`) est coupée dans les périodes des fiches de
+    régime à sa date d'effet, ou absorbée par une table par génération :
+    `Regime.periode` sert à chaque année, et `periode_de_liquidation` à chaque date
+    d'effet (`Regime.periode_a_l_effet`), la période qui la porte ;
+    `reformes_non_portees` dit toute réforme du calendrier (`charger_reformes`) qu'une
+    fiche ne coupe, n'absorbe ni ne déclare non appliquée. L'avenant 17 de
+    l'Agirc-Arrco ne change rien : le modèle ne porte pas les coefficients de
+    solidarité qu'il supprime. Les fermetures de 2023 sont au routage : l'agent de la
+    RATP, des IEG ou de la Banque de France, le clerc de notaire et le membre du CESE
+    entrés avant le 1er septembre 2023 gardent leur régime (`entres_avant`), ceux
+    entrés depuis vont au régime général et à l'Agirc-Arrco, ou à l'Ircantec pour le
+    CESE (`entres_depuis`), et la saisie du portage refuse le statut fermé, qu'elle
+    renvoie à celui qui le relève (`Affiliations.fermeture_entrants`, `statutFerme`).
+  python: >-
+    donnees/regimes.py : Regime.periode, Regime.periode_a_l_effet, Reforme,
+    charger_reformes, reformes_non_portees ; droit/commun.py : periode_de_liquidation ;
+    carriere.py : Affiliations.regimes, Affiliations._periode,
+    Affiliations.fermeture_entrants
+  javascript: >-
+    moteur/js/regimes.js : Regime.periode, Regime.periodeALEffet, Affiliations.regimes,
+    Affiliations._periode, Affiliations.fermetureEntrants ; moteur/js/droit/commun.js :
+    periodeDeLiquidation ; moteur/js/contexte.js : statutFerme
+  parametres: >-
+    legislation/reformes.yaml : reformes ; legislation/affiliations.yaml :
+    affiliations.agent_ratp.periodes, affiliations.agent_ieg.periodes,
+    affiliations.clerc_de_notaire.periodes, affiliations.agent_banque_de_france.periodes,
+    affiliations.membre_cese.periodes ; regimes/agirc_arrco.yaml,
+    regimes/asv_conventionnes.yaml, regimes/cafat_nouvelle_caledonie.yaml,
+    regimes/carcdsf_complementaire.yaml, regimes/carpimko_complementaire.yaml,
+    regimes/cavec_complementaire.yaml, regimes/cavp_complementaire.yaml,
+    regimes/cipav_complementaire.yaml, regimes/cnavpl.yaml,
+    regimes/cprn_complementaire.yaml, regimes/cps_polynesie.yaml,
+    regimes/cps_polynesie_tranche_b.yaml, regimes/cps_saint_pierre_et_miquelon.yaml,
+    regimes/cssm_mayotte.yaml, regimes/enseignants_prive_additionnel.yaml,
+    regimes/fonctionnaires_pacifique.yaml, regimes/msa_non_salaries.yaml :
+    age_ouverture, age_taux_plein, assiette, avantages_non_contributifs,
+    decote_par_trimestre, duree_requise_trimestres, salaire_reference,
+    surcote_age_maximum, surcote_par_trimestre, taux_cotisation_retraite, type_calcul,
+    valeur_point_euros
+  tests:
+  - >-
+    tests/test_donnees.py, qui veut chaque réforme du calendrier coupée, absorbée ou
+    déclarée non appliquée, et tests/test_carte.py, une fiche à chacune depuis 2023
+  - >-
+    tests/test_retour_crpcen_ieg.py, tests/test_fiche_date_d_entree.py,
+    tests/test_limite_age.py, tests/test_remuneration.py, tests/test_pages_en_dossier.py
+    et tests/test_web.py, qui tombent sans les fermetures de 2023
+  - >-
+    tests/test_simulateur.py, tests/test_sections_juridiques.py,
+    tests/test_sections_liberales.py, tests/test_sections_sante.py,
+    tests/test_independants.py, tests/test_pont.py et tests/test_regle_de_chacun.py,
+    qui tombent sans les réformes des libéraux, de la CPRN, de la MSA ou d'outre-mer
+  - >-
+    tests/temoins/exemples_officiels.yaml, que tests/test_oracle.py rejoue :
+    carmf_2026_temps_choisi_65_ans, cavamac_rbl_surcote_six_trimestres
+  - >-
+    tests/test_coupures_au_mois.py, tests/test_cumul_activites.py,
+    tests/test_cycle_de_vie_script.py, tests/test_droit.py,
+    tests/test_fiche_des_liberaux.py, tests/test_liquidation.py,
+    tests/test_minima_agricoles.py, tests/test_pcv_sante.py et tests/test_web.py, qui
+    confrontent les deux moteurs sur des carrières qui les portent
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js),
+    chaque groupe de régimes ramené à sa période d'avant sa première réforme : 49
+    témoins changent sans les réformes des libéraux — les quatorze statuts libéraux et
+    leurs générations 1965 et 1968, et sept carrières libérales —, neuf sans celles de
+    la MSA et du RAFEP — l'exploitant, le collaborateur agricole, le maître du privé et
+    leurs deux générations —, quatorze dans le scénario 1 sans celles d'outre-mer — les
+    salariés de Polynésie, de Nouvelle-Calédonie, de Saint-Pierre-et-Miquelon et de
+    Mayotte, le fonctionnaire du Pacifique —, et 896 autres hors de lui, par le régime
+    fusionné de la proposition, dont l'âge du taux plein, le plus élevé des régimes,
+    passe de 67 ans, celui du régime général, à 69, celui de Mayotte d'avant 2026 ;
+    trois sans les fermetures de 2023, les membres du CESE, dans le seul compte
+    notionnel ; aucun sans l'avenant 17 de l'Agirc-Arrco

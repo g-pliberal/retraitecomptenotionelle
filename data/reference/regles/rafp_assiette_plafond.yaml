@@ -6,6 +6,7 @@ intitule: >-
   « dans la limite de 20 % du traitement indiciaire brut total ou de la solde brute
   totale perçus au cours de l'année considérée » ; cotisation de 10 %, moitié agent,
   moitié employeur.
+regimes: [rafp]
 etat: conforme
 effet: >-
   Fonctionnaires, magistrats et militaires dont les primes dépassent le cinquième
@@ -47,3 +48,41 @@ textes_a_rattacher:
     LEGIARTI000049424057 (en vigueur depuis le 17 avril 2024), la limite de 20 %
     dans toutes
 - reference: 'loi n° 2003-775, article 76, II (LEGIARTI000048691415) : bénéficiaires'
+code:
+  moteur: >-
+    L'assiette du RAFP est faite des seules primes (`primes_uniquement`) :
+    `PeriodeRegime.part_du_revenu` les borne à `plafond_primes_traitement`, 20 %, du
+    traitement seul, hors de la prime soumise à retenue d'un policier, d'un
+    aide-soignant ou d'un sapeur-pompier (`part_soumise`, `PrimesSoumises.parts`), que
+    la pension civile prend avec le traitement. Le scénario 1 (`acquerir`) et le compte
+    notionnel (`ConstructeurCompte._cotisation_ligne`) découpent tous deux la ligne par
+    là, et y prélèvent `taux_cotisation_retraite`, 10 %, la moitié à l'agent
+    (`part_salariale`). Ni la GIPA ni les jours du compte épargne-temps, qui échappent
+    au plafond, ne sont portés.
+  python: >-
+    donnees/regimes.py : PeriodeRegime.part_du_revenu ; droit/acquerir.py : acquerir,
+    part_soumise ; donnees/primes.py : PrimesSoumises.parts ; moteur/compte.py :
+    ConstructeurCompte._cotisation_ligne
+  javascript: >-
+    moteur/js/regimes.js : PeriodeRegime.partDuRevenu ; moteur/js/droit/acquerir.js :
+    acquerir, partSoumise ; moteur/js/primes.js : PrimesSoumises.parts ;
+    moteur/js/compte.js : ConstructeurCompte._cotisationLigne
+  parametres: >-
+    regimes/rafp.yaml : assiette, plafond_primes_traitement, taux_cotisation_retraite,
+    part_salariale
+  tests:
+  - tests/test_simulateur.py
+  - tests/test_primes_soumises_a_retenue.py
+  - tests/test_remuneration.py
+  - tests/test_indemnite_csg.py
+  - >-
+    tests/test_trajectoire.py, la confrontation aux cas types de TRAJECTOiRE
+  - >-
+    tests/test_liquidation.py, tests/test_pont.py et tests/test_web.py, qui
+    confrontent les deux moteurs sur des carrières qui la portent
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    neuf témoins changent sans le plafond — primes_fonction_publique,
+    fonctionnaire_indice_majore_et_primes, releve_fonction_publique,
+    departs_super_actif_rafp_a_l_age_legal, progressive_fonctionnaire_2024,
+    invalidite_radiation_puis_prive et les trois réversions d'un fonctionnaire

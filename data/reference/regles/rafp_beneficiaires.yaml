@@ -4,6 +4,7 @@ intitule: >-
   Le RAFP n'est ouvert qu'aux fonctionnaires civils, aux magistrats de l'ordre
   judiciaire et aux militaires : les ouvriers de l'État, dont la pension est celle
   du FSPOEIE, n'y cotisent pas.
+regimes: [fspoeie, rafp]
 etat: conforme
 effet: >-
   Les deux statuts d'ouvrier de l'État, que le routage affiliait au RAFP de 2005
@@ -42,3 +43,31 @@ sources:
     date: 2026-09-28
 textes_a_rattacher:
 - reference: 'loi n° 2003-775, article 76, II (LEGIARTI000048691415) : bénéficiaires'
+code:
+  moteur: >-
+    Le routage n'affilie au RAFP, depuis 2005, que les statuts de fonctionnaire de
+    l'État, territorial ou hospitalier, et de militaire : l'ouvrier de l'État,
+    sédentaire ou actif, n'est routé qu'au FSPOEIE (`ouvrier_etat`,
+    `ouvrier_etat_actif`). `Affiliations.regimes` rend les régimes de chaque ligne, que
+    `regimes_de` reprend pour la coordination : aucune ligne de l'ouvrier ne cotise au
+    RAFP ni n'y acquiert de points, et aucune rente du RAFP ne s'ajoute à sa pension.
+  python: >-
+    carriere.py : Affiliations.regimes ; droit/coordonner.py : regimes_de
+  javascript: >-
+    moteur/js/regimes.js : Affiliations.regimes ; moteur/js/droit/coordonner.js :
+    regimesDe
+  parametres: >-
+    legislation/affiliations.yaml : affiliations.ouvrier_etat.periodes,
+    affiliations.ouvrier_etat_actif.periodes
+  tests:
+  - >-
+    tests/test_limite_age.py, où l'ouvrier de l'État n'est radié que du FSPOEIE
+  - >-
+    tests/test_cumul_activites.py, tests/test_droit.py, tests/test_liquidation.py et
+    tests/test_web.py, qui confrontent les deux moteurs sur des carrières qui la
+    portent
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    sept témoins changent sans elle, d'une ligne du RAFP à zéro —
+    statut_ouvrier_etat et ses générations 1955, 1965 et 1968,
+    statut_ouvrier_etat_actif et ses générations 1965 et 1968

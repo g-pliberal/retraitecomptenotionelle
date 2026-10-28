@@ -4,6 +4,7 @@ intitule: >-
   Pension d'ancienneté des marins ouverte à cinquante ans pour vingt-cinq années
   de services, plafonnée à vingt-cinq annuités avant cinquante-cinq ans, plafond
   levé à cinquante-deux ans et demi pour trente-sept annuités et demie.
+regimes: [marins]
 etat: conforme
 effet: >-
   La fiche opposait cinquante-cinq ans à tout marin : c'est l'âge qui borne l'entrée
@@ -44,3 +45,40 @@ textes_a_rattacher:
 - reference: code des transports, L. 5552-4, L. 5552-5 et L. 5552-19
 exemples:
 - enim_anciennete_a_cinquante_ans
+code:
+  moteur: >-
+    `ouverture_par_services` ouvre la pension d'ancienneté à `age_ouverture_services`,
+    cinquante ans, à qui réunit `services_ouverture_annees`, vingt-cinq ans, de
+    services dans les statuts que le régime route (`services_dans_le_regime`), au plus
+    tard de cet âge et de celui où la durée est atteinte ; `age_ouverture` la préfère
+    à l'âge de la période, cinquante-cinq ans, quand elle vient avant.
+    `liquider_chaque_regime` borne avant `duree_maximum_avant_age`, cinquante-cinq
+    ans, les trimestres liquidés à `duree_maximum_avant_age_trimestres`, cent, sauf
+    pour le marin de `duree_maximum_levee_age`, cinquante-deux ans et demi, qui en
+    réunit `duree_maximum_levee_trimestres`, cent cinquante.
+  python: >-
+    droit/ouvrir.py : ouverture_par_services, services_dans_le_regime, age_ouverture ;
+    droit/liquider.py : liquider_chaque_regime
+  javascript: >-
+    moteur/js/droit/ouvrir.js : ouvertureParServices, servicesDansLeRegime,
+    ageOuverture ; moteur/js/droit/liquider.js : liquiderChaqueRegime
+  parametres: >-
+    regimes/marins.yaml : age_ouverture, age_ouverture_services,
+    services_ouverture_annees, duree_maximum_avant_age,
+    duree_maximum_avant_age_trimestres, duree_maximum_levee_age,
+    duree_maximum_levee_trimestres
+  tests:
+  - tests/test_simulateur.py
+  - >-
+    tests/temoins/exemples_officiels.yaml, que tests/test_oracle.py rejoue :
+    enim_anciennete_a_cinquante_ans
+  - >-
+    tests/test_liquidation.py et tests/test_web.py, qui confrontent les deux moteurs
+    sur des carrières qui la portent
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    huit témoins changent sans l'ouverture à cinquante ans — statut_marin et ses
+    générations 1925 à 1968, et marin_avant_cinquante_cinq —, un sans le plafond de
+    vingt-cinq annuités, marin_avant_cinquante_cinq, et statut_marin dans son seul
+    compte notionnel prospectif ; aucun sans sa levée à cinquante-deux ans et demi,
+    que seul tests/test_simulateur.py tient
