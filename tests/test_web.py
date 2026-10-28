@@ -1080,6 +1080,35 @@ def test_la_ligne_ecretee_ne_dit_le_menage_que_forme_a_sa_date_d_effet(depuis, d
         assert "83 € de moins à partir d'avril 2034" in cellules[3], cellules[3]
 
 
+@pytest.mark.parametrize("ajout, jusqu_a", [
+    ({}, " ; révisable jusqu'à sa retraite"),
+    ({"conjoint_retraite": "2034-03"}, " ; révisable jusqu'en juin 2034"),
+])
+def test_la_carte_dit_revisable_la_reversion_que_rien_ne_revise(ajout, jusqu_a):
+    """La réversion du régime général « est révisable en cas de variation dans
+    le montant des ressources » (R. 353-1-1), même quand aucune ne change. Le
+    veuf de 2030 qui gagne 30 000 € sans que rien change la garde révisable
+    jusqu'à sa retraite, qu'il ne date pas (circulaire Cnav n° 2007-35,
+    § 222) ; datée de mars 2034, « trois mois après » (R. 353-1-1), jusqu'en
+    juin 2034. La carte ne le disait qu'avec une révision, et la ligne qui
+    n'en avait pas ne se distinguait pas de celle de l'Agirc-Arrco, que ses
+    ressources ne réduisent pas."""
+    champs = {"naissance": "1960", "sexe": "F", "liquidation": "62", "conjoint": "1975-01",
+              "deces": "2030-06", "ressources_conjoint": "30000",
+              "activite_conjoint": "30000", "montants": "brut", **ajout}
+    carte = _bloc(rendre("/simuler", champs)[1], 'id="resultats-reversion"',
+                  "Dans les systèmes 2, 3 et 4")
+    cellules = _cellules(carte)
+    general = next(c for c in cellules if c[0].startswith("Régime général"))
+    assert ("ressources des trois mois qui précèdent sa date d'effet : 21 000 € "
+            "par an" + jusqu_a) in general[3], general[3]
+    complementaires = [c for c in cellules
+                       if "Agirc-Arrco" in c[0] or "complémentaire des salariés" in c[0]]
+    assert len(complementaires) == 2
+    for complementaire in complementaires:
+        assert "révisable" not in complementaire[3], complementaire[3]
+
+
 @pytest.mark.parametrize("ajout, effet, ressources", [
     ({}, "juillet 2030",
      "ressources des trois mois qui précèdent sa date d'effet : 21 000 € par an"),

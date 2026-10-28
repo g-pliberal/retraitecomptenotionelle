@@ -6496,10 +6496,16 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
       parts.push(`${sens} ${aPartirDe(jour)}${sur}`);
       retiree = reduction;
     });
-    if ((ligne.revisions ?? []).length > 0) {
-      parts.push(ligne.derniere_revision === null || ligne.derniere_revision === undefined
+    // Depuis juillet 2004, la ligne que son plafond mesure à sa date d'effet le
+    // reste sans révision ; rien ne la dit qui n'est plus révisable dès son
+    // point de départ, ni celle que ses ressources ne réduisent pas.
+    const derniere = ligne.derniere_revision ?? null;
+    if ((ligne.revisions ?? []).length > 0
+        || (ligne.ressources_examinees_au === "date_d_effet"
+          && (derniere === null || derniere > ligne.date_effet))) {
+      parts.push(derniere === null
         ? "révisable jusqu'à sa retraite"
-        : `révisable jusqu'en ${mois(ligne.derniere_revision)}`);
+        : `révisable jusqu'en ${mois(derniere)}`);
     }
     // Avant 1995, les majorations forfaitaires qui l'ont portée de 50 % ou de
     // 52 % à 54 %, à leur date.
