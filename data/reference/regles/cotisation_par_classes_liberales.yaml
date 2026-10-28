@@ -13,11 +13,11 @@ effet: >-
   le 14 octobre 2026, la grille de chaque exercice est celle de son texte à la Cipav (1979
   à 2022) et à la CAVEC (1980 à 2025) : les classes de l'article 2 dans sa rédaction de
   l'exercice, le montant que le décret annuel donne à la classe de référence, lu dans les
-  index LEGI et JORF pour 35 exercices de la Cipav et 39 de la CAVEC, et les bornes que la
+  index LEGI et JORF pour 38 exercices de la Cipav et 40 de la CAVEC, et les bornes que la
   caisse publie (Cipav 2019 et 2022, CAVEC 2022 à 2026)
   (`classes_cotisation_epoques.yaml`). Restent des conventions, chacune déclarée : un
-  exercice sans décret lu (Cipav de 1979 à 1985, 1989 et 1991 ; CAVEC de 1980 à 1983,
-  1989, 1991 et 2008) prend le montant lu le plus proche ramené au rapport des plafonds ;
+  exercice sans décret lu (Cipav de 1979 à 1983 et 1989 ; CAVEC de 1980 à 1983, 1989 et
+  2008) prend le montant lu le plus proche ramené au rapport des plafonds ;
   les bornes des autres exercices sont les publiées les plus proches ramenées de même, et
   une époque de moins de classes (six à la Cipav jusqu'en 2012, six puis sept à la CAVEC
   jusqu'en 2007) en prend les premières, rang pour rang. Les classes 5, 7 et 10 de la
@@ -51,20 +51,25 @@ effet: >-
 exemples:
 - cipav_cotisations_2022
 sources:
-  lu_le: 2026-10-16
+  lu_le: 2026-10-28
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
     Fait le 14 octobre 2026 pour la Cipav et la CAVEC, le 16 octobre pour la CARPV de 1998 à
-    2015 (`classes_cotisation_epoques.yaml`). Restent : la valeur de l'acte médical
+    2015, le 28 octobre pour les décrets de 1984, de 1985 et de 1991
+    (`classes_cotisation_epoques.yaml`). Restent : la valeur de l'acte médical
     vétérinaire (l'acte médical ordinal) de 1997 à 2015, que fixait le Conseil supérieur de
     l'ordre des vétérinaires et qu'aucun texte du Journal officiel ne porte (index LEGI et
     JORF, 16 octobre 2026) : la demander à l'ordre ou à la CARPV, ou la chercher dans ses
     bulletins, et remplacer la convention de 2016 prolongée ; le barème réduit des moins de
     trente-trois ans (décret n° 97-1112, article 3, II : 304, 380 et 456 AMV) ; les
-    décrets de la Cipav de 1979 à 1985 et de 1989 et 1991 (n° 89-313 et 91-864, dont l'index
-    n'a que le sommaire), de la CAVEC de 1980 à 1983 ; la date d'effet de la grille A à H de
-    la CAVEC, que le décret n° 2008-85 ne dit pas, et le montant de 2 262 € de 2008. Les
+    décrets de la Cipav de 1979 à 1983 (n° 79-372, 80-404, 81-831, 82-678, 83-651), de la
+    CAVEC de 1980 à 1983 (n° 80-439, 81-828, 82-674, 83-619) et des deux de 1989 (n° 89-313),
+    dont les index n'ont que le titre ou le sommaire : leur texte n'est qu'au fac-similé du
+    Journal officiel, que le réseau de la session n'atteint pas (au propriétaire, le 28
+    octobre 2026) ; la date d'effet de la grille A à H de la CAVEC, qu'aucun texte publié ne
+    donne (le décret n° 2008-85, les statuts de 2008 et leur modification de 2010), et le
+    montant de 2 262 € de 2008 : à demander à la CAVEC (au propriétaire). Les
     montants publiés de la classe H (17 583 € en 2019 à la Cipav, 20 925 € en 2022 à la
     CAVEC) s'écartent de quelques euros du multiple de la classe A que le moteur appelle
     (17 589 €, 20 937,50 €) : la caisse arrondit au point.
@@ -114,6 +119,63 @@ sources:
       classes_cotisation_epoques.yaml. Le décret n° 2008-85 (JORFARTI000017991856) récrit
       l'article 2 de la CAVEC sans date d'effet
     date: 2026-10-14
+  - type: legifrance
+    reference: >-
+      décrets annuels de la section des architectes, agréés en architecture, ingénieurs,
+      techniciens, experts et conseils (Cipav), article 1 : « Pour l'année 1984, les montants
+      des cotisations des six classes prévues à l'article 2 du décret n° 79-262 du 21 mars
+      1979 susvisé sont fixés ainsi qu'il suit : Classe 1 2.038 F Classe 2 4.076 F Classe 3
+      6.114 F Classe 5 10.190 F Classe 7 14.266 F Classe 10 20.380 F » (décret n° 84-442 du
+      12 juin 1984, LEGIARTI000006767456) ; pour 1985, de « Classe 1 ... 2180 F » à « Classe
+      10 ... 21800 F » (décret n° 85-1092 du 10 octobre 1985, LEGIARTI000006768801). Chaque
+      classe est le multiple de la classe 1 que l'article 2 écrit. Lu dans l'index LEGI du
+      dépôt
+    date: 2026-10-28
+  - type: jorf
+    reference: >-
+      décret n° 91-864 du 30 août 1991 (JORFTEXT000000882367), dont l'index JORF n'a sous son
+      titre que le sommaire, et range les articles sous le « Décret du 3 septembre 1991
+      portant délégation de signature », paru au même Journal officiel du 5 septembre :
+      « Art. 1er. - Pour l'année 1991 les montants annuels des cotisations des régimes
+      d'assurance vieillesse complémentaire des personnes non salariées des professions
+      libérales sont fixés ainsi qu'il suit : Section professionnelle des architectes,
+      agréés en architecture, ingénieurs, techniciens experts et conseils : Classe 1 (classe
+      de référence) : 2772F » (JORFARTI000001376516) ; « Section professionnelle des
+      experts-comptables et comptables agréés et des commissaires aux comptes : Classe 3 :
+      6624 F ; Classe 4 : 8832 F », jusqu'à « Classe 18 : 39744 F » (JORFARTI000001183737).
+      Ce sont les articles du n° 91-864 : leurs hausses sur 1990 (décret n° 90-311) sont
+      celles que son sommaire annonce, « ENTRE 3,85% ET 5% A L'EXCEPTION DES SECTIONS
+      PROFESSIONNELLES DES GEOMETRES-EXPERTS (+11,01%) ET DES CHIRURGIENS-DENTISTES
+      (14,74%) » (de 9 504 F à 10 550 F, de 9 120 F à 10 464 F ; les infirmiers de 2 288 F à
+      2 376 F, 3,85 %), la part proportionnelle des médecins passe de 2 à 5 %, et
+      l'invalidité-décès des architectes et des experts-comptables reste à 572 F et de
+      1 142 F à 3 426 F, comme il l'écrit
+    date: 2026-10-28
+  - type: jorf
+    reference: >-
+      les décrets annuels que l'index JORF ne porte que par leur titre ou leur sommaire, et
+      l'index LEGI pas du tout, leur texte n'étant qu'au fac-similé du Journal officiel.
+      Cipav : n° 79-372 du 2 mai 1979 (JORFTEXT000000702959), n° 80-404 du 4 juin 1980
+      (JORFTEXT000000518282), « A COMPTER DU 01-01-1980 », n° 81-831 du 3 septembre 1981
+      (JORFTEXT000000701112), n° 82-678 du 2 août 1982 (JORFTEXT000000686796, rectifié au
+      Journal officiel du 7 septembre 1982, page 2726), n° 83-651 du 13 juillet 1983
+      (JORFTEXT000000686082). CAVEC : n° 80-439 du 17 juin 1980 (JORFTEXT000000696609),
+      « MONTANT DES COTISATIONS A COMPTER DU 01-01-1980 », n° 81-828 du 3 septembre 1981
+      (JORFTEXT000000878448), n° 82-674 du 2 août 1982 (JORFTEXT000000859680, même
+      rectificatif), n° 83-619 du 1er juillet 1983 (JORFTEXT000000507436). Les deux : n° 89-313
+      du 11 mai 1989 (JORFTEXT000000522924), dont le sommaire nomme les huit sections
+    date: 2026-10-28
+  - type: jorf
+    reference: >-
+      CAVEC, la date d'effet de la grille A à H, que rien ne donne. Décret n° 2008-85 du 24
+      janvier 2008 (JORFTEXT000017991848), ses quatre articles : l'intitulé, l'article 1er et
+      l'article 2 du décret de 1953 récrits, l'exécution. Statuts approuvés le 22 février
+      2008 (JORFARTI000018197778) : l'article 3.3 donne les huit classes et laisse au conseil
+      d'administration « la cotisation correspondant à un point de retraite » ; l'article
+      3.17 nomme les « points de retraite acquis avant la mise en œuvre des présents
+      statuts », sans la dater. Arrêté du 26 novembre 2010 (JORFTEXT000023172855) : rien sur
+      les classes
+    date: 2026-10-28
   - type: legifrance
     reference: >-
       décret n° 50-1318 du 21 octobre 1950, article 2 (CARPV), ses onze versions. De 1950 à

@@ -309,6 +309,32 @@ def test_la_carpv_de_1998_a_2015_suit_le_taux_d_appel_du_decret():
         0.77 / 1.04 * 27349 / 38040, rel=1e-3)
 
 
+@pytest.mark.parametrize("regime,annee,francs", [
+    # Décret n° 84-442 du 12 juin 1984, article 1 (LEGIARTI000006767456).
+    ("cipav_complementaire", 1984, (2038, 4076, 6114, 10190, 14266, 20380)),
+    # Décret n° 85-1092 du 10 octobre 1985, article 1 (LEGIARTI000006768801).
+    ("cipav_complementaire", 1985, (2180, 4360, 6540, 10900, 15260, 21800)),
+    # Décret n° 91-864 du 30 août 1991, article 1, que l'index JORF range sous
+    # un décret de délégation de signature du même Journal officiel : la classe
+    # 1 de la Cipav (JORFARTI000001376516), deux, trois, cinq, sept et dix fois
+    # elle ensuite ; les classes 4 à 18 de la CAVEC (JORFARTI000001183737).
+    ("cipav_complementaire", 1991, (2772, 5544, 8316, 13860, 19404, 27720)),
+    ("cavec_complementaire", 1991, (8832, 11040, 15456, 22080, 26496, 33120, 39744)),
+])
+def test_la_classe_de_reference_est_celle_du_decret_de_l_exercice(regime, annee, francs):
+    """Action 131 : les décrets annuels de 1984, de 1985 et de 1991, que le
+    dépôt n'avait pas lus, fixent la classe de référence de la Cipav et de la
+    CAVEC, dont chaque classe est le multiple que l'article 2 écrit
+    (`classes_cotisation_epoques.yaml`)."""
+    from pathlib import Path
+
+    from retraite_notionnelle.donnees.regimes import ClassesCotisation
+
+    classes = ClassesCotisation(Path(__file__).resolve().parents[1] / "data")
+    assert [c.cotisation for c in classes.grille(regime, annee)] == pytest.approx(
+        [f / 6.55957 for f in francs], abs=0.01)
+
+
 def _points_de_l_annee(points, code: str, annee: int) -> float:
     """Les points qu'un régime porte au compte d'une année, depuis les crédits
     ``(régime, année, points, …)`` du relevé."""

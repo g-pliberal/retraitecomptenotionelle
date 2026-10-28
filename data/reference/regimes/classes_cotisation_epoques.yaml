@@ -75,11 +75,24 @@ cipav_complementaire:
   - {debut: 2013, fin: 2022, multiples: [1, 2, 3, 5, 7, 11, 12, 13]}
   # Les montants de la classe de référence, une seule suite de 1979 à 2022 :
   # la classe A de 2013 (1 184 €) prolonge la classe 1 de 2012 (1 156 €).
+  # Les décrets de 1984 et de 1985 donnent les six classes, chacune le
+  # multiple de l'article 2 (1984 : 2 038, 4 076, 6 114, 10 190, 14 266 et
+  # 20 380 F). Celui de 1991 n'est dans l'index JORF que rangé sous le
+  # « Décret du 3 septembre 1991 portant délégation de signature », paru au
+  # même Journal officiel du 5 septembre : ses hausses sont celles que le
+  # sommaire du n° 91-864 annonce (géomètres 11,01 %, chirurgiens-dentistes
+  # 14,74 %, les autres de 3,85 à 5 %). Ceux de 1979 à 1983 (n° 79-372,
+  # 80-404, 81-831, 82-678, 83-651) et de 1989 (n° 89-313) n'ont dans les
+  # index que leur titre ou leur sommaire : leur texte n'est qu'au fac-similé
+  # du Journal officiel, non lu.
   montants:
+      1984: {montant: 2038, monnaie: FRF, texte: LEGIARTI000006767456, decret: "n° 84-442, art. 1"}
+      1985: {montant: 2180, monnaie: FRF, texte: LEGIARTI000006768801, decret: "n° 85-1092, art. 1"}
       1986: {montant: 2288, monnaie: FRF, texte: LEGIARTI000006769506, decret: "n° 86-1022, art. 1"}
       1987: {montant: 2360, monnaie: FRF, texte: LEGIARTI000006769918, decret: "n° 87-296, art. 1"}
       1988: {montant: 2440, monnaie: FRF, texte: LEGIARTI000006770752, decret: "n° 88-94, art. 1"}
       1990: {montant: 2640, monnaie: FRF, texte: LEGIARTI000006774899, decret: "n° 90-311, art. 1"}
+      1991: {montant: 2772, monnaie: FRF, texte: JORFARTI000001376516, decret: "n° 91-864, art. 1"}
       1992: {montant: 2870, monnaie: FRF, texte: LEGIARTI000006776246, decret: "n° 92-326, art. 1"}
       1993: {montant: 2986, monnaie: FRF, texte: LEGIARTI000006930455, decret: "n° 93-646, art. 1"}
       1994: {montant: 3060, monnaie: FRF, texte: LEGIARTI000006777592, decret: "du 6 juillet 1994, art. 1"}
@@ -131,7 +144,10 @@ cavec_complementaire:
   # professionnel net ». La classe III, maintenue pour les revenus
   # insuffisants « dans les conditions fixées par les statuts », et l'option
   # pour la classe supérieure ne sont pas servies : le dépôt ne prête pas un
-  # choix qu'il ne connaît pas.
+  # choix qu'il ne connaît pas. Les décrets annuels de 1980 à 1983 (n° 80-439,
+  # 81-828, 82-674, 83-619) n'ont dans les index que leur titre ou leur
+  # sommaire, leur texte n'étant qu'au fac-similé : ces exercices prennent le
+  # montant de 1984 ramené.
   - debut: 1980
     fin: 1986
     points: [48, 60, 84, 120, 144, 180]
@@ -141,7 +157,10 @@ cavec_complementaire:
       1986: {montant: 7440, monnaie: FRF, texte: LEGIARTI000006769506, decret: "n° 86-1022, art. 1"}
   # Version du 13 mars 1987 (LEGIARTI000006770088) : une septième classe,
   # « Classe 18 correspondant à 216 points de retraite ». À partir de 1996,
-  # le décret ne fixe plus que la « Classe IV ».
+  # le décret ne fixe plus que la « Classe IV ». Le décret de 1989
+  # (n° 89-313) n'a dans les index que son sommaire : 1989 prend 1988 ramené.
+  # Celui de 1991 (n° 91-864) y est rangé sous un autre titre (voir la
+  # Cipav) ; il fixe aussi une « Classe 3 » à 6 624 F, la classe III.
   - debut: 1987
     fin: 2007
     points: [48, 60, 84, 120, 144, 180, 216]
@@ -149,6 +168,7 @@ cavec_complementaire:
       1987: {montant: 7656, monnaie: FRF, texte: LEGIARTI000006769918, decret: "n° 87-296, art. 1"}
       1988: {montant: 7920, monnaie: FRF, texte: LEGIARTI000006770752, decret: "n° 88-94, art. 1"}
       1990: {montant: 8448, monnaie: FRF, texte: LEGIARTI000006774899, decret: "n° 90-311, art. 1"}
+      1991: {montant: 8832, monnaie: FRF, texte: JORFARTI000001183737, decret: "n° 91-864, art. 1, classes 4 à 18"}
       1992: {montant: 9144, monnaie: FRF, texte: LEGIARTI000006776246, decret: "n° 92-326, art. 1"}
       1993: {montant: 9552, monnaie: FRF, texte: LEGIARTI000006930455, decret: "n° 93-646, art. 1"}
       1994: {montant: 9840, monnaie: FRF, texte: LEGIARTI000006777592, decret: "du 6 juillet 1994, art. 1"}
@@ -171,7 +191,13 @@ cavec_complementaire:
   # du point de la classe 4 de 2007 et non de celui de 2009 (480 €) : servi
   # tel quel, il appellerait 70 687 € la classe H. Ce montant n'est pas
   # servi tant que la date d'effet de la nouvelle grille n'est pas lue ;
-  # 2008 prend celui de 2009 ramené.
+  # 2008 prend celui de 2009 ramené. Aucun texte publié ne la date : ni le
+  # décret n° 2008-85, en vigueur le 28 janvier 2008, dont aucun des quatre
+  # articles n'en dit une ; ni les statuts approuvés le 22 février 2008
+  # (JORFARTI000018197778), dont l'article 3.3 donne les huit classes et
+  # laisse au conseil d'administration « la cotisation correspondant à un
+  # point de retraite » ; ni leur modification du 26 novembre 2010
+  # (JORFTEXT000023172855). À demander à la CAVEC.
   - debut: 2008
     fin: 2025
     points: [48, 180, 284, 444, 708, 1080, 1200, 1500]
