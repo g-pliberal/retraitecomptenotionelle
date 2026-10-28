@@ -3,9 +3,11 @@
 `departs_generations.csv` est écrit par `scripts/verifier_donnees.py` depuis ce
 que `scripts/fetch/drees_departs_generations.py` lit dans les classeurs
 « Caractéristiques des retraités nés en 1950 (EIR 2016) » et « nés en 1953
-(EIR 2020) » de la DREES : trois feuilles, l'âge de liquidation, la position
-du départ par rapport à l'âge légal et à l'âge d'annulation de la décote, et
-la condition de liquidation dans le régime principal. Les classeurs restent
+(EIR 2020) » de la DREES : quatre feuilles, l'âge de liquidation, la position
+du départ par rapport à l'âge légal et à l'âge d'annulation de la décote, la
+condition de liquidation dans le régime principal, et la résidence, en France
+ou à l'étranger, d'où la population, qui ne compte que des résidents, tire la
+décote de chaque génération (action 138, étape 14). Les classeurs restent
 dans `data/brut/` : le lecteur se teste sur des grilles rendues comme les
 leurs, et le fichier certifié sur ce que les classeurs impriment.
 
@@ -147,6 +149,90 @@ def test_le_lecteur_refuse_des_colonnes_qui_ne_redonnent_pas_l_ensemble():
         recuperateur.lire_tableau(_grille(casse), "age_liquidation")
 
 
+#: La feuille « Naissance-Résidence » du classeur des nés en 1953, telle qu'elle
+#: se lit : les retraités selon leur lieu de naissance, que le lecteur ne lit
+#: pas, et selon leur résidence ; l'effectif, la part dans la génération,
+#: celle des carrières complètes et celle de chaque condition de liquidation
+#: parmi les retraités de la colonne, que le classeur ne donne ici qu'aux
+#: colonnes de la résidence.
+_ENTETES_RESIDENCE = [
+    "Retraités nés à l'étranger et résidents à l'étranger",
+    "Retraités nés à l'étranger et résidents en France",
+    "Retraités nés en France et résidents à l'étranger",
+    "Retraités nés en France et résidents en France",
+    "Retraités nés à l'étranger", "Retraités nés en France",
+    "Retraités résidents à l'étranger", "Retraités résidents en France", "Ensemble"]
+_NAISSANCES = [None] * 6
+_LIGNES_RESIDENCE: dict[tuple[str, str], dict[str, list]] = {
+    ("Effectifs", "Effectifs (en milliers)"): {
+        "Ensemble": [17.0, 114.0, 6.0, 619.0, 131.0, 625.0, 24.0, 733.0, 757.0],
+        "Femme": [7.0, 57.0, 3.0, 325.0, 65.0, 329.0, 11.0, 383.0, 393.0],
+        "Homme": [10.0, 57.0, 3.0, 293.0, 66.0, 297.0, 13.0, 350.0, 363.0]},
+    ("Effectifs", "Part parmi l'ensemble des retraités (en %)"): {
+        "Ensemble": [2.3, 15.1, 0.9, 81.8, 17.4, 82.6, 3.1, 96.9, 100.0],
+        "Femme": [1.9, 14.6, 0.8, 82.7, 16.5, 83.5, 2.7, 97.3, 100.0],
+        "Homme": [2.7, 15.6, 0.9, 80.8, 18.3, 81.7, 3.6, 96.4, 100.0]},
+    ("Carrière complète", "Part d'assurés à carrière complète (en %)"): {
+        "Ensemble": [5.6, 43.7, 22.6, 69.1, 38.7, 68.6, 10.2, 65.1, 63.4],
+        "Femme": [5.4, 40.6, 17.2, 61.8, 36.5, 61.4, 8.8, 58.7, 57.3],
+        "Homme": [5.7, 46.9, 27.5, 77.1, 40.8, 76.5, 11.3, 72.2, 70.0]},
+    **{("Conditions de liquidation", intitule): {
+        sexe: [*_NAISSANCES, *valeurs] for sexe, valeurs in zip(
+            ("Ensemble", "Femme", "Homme"), residences)}
+       for intitule, residences in {
+           "Part de départs anticipés pour carrière longue (en %)": (
+               [4.1, 20.8, 20.3], [2.0, 13.2, 12.9], [5.7, 29.2, 28.3]),
+           "Part de départ avec décote (en %)": (
+               [31.7, 9.9, 10.6], [29.9, 11.9, 12.4], [33.1, 7.7, 8.6]),
+           "Part de départ où la décote est inapplicable (en %)": (
+               [0.6, 3.3, 3.2], [0.4, 2.4, 2.4], [0.7, 4.3, 4.2]),
+           "Part de départ avec surcote (en %)": (
+               [16.3, 14.3, 14.3], [13.6, 14.2, 14.2], [18.5, 14.4, 14.5]),
+           "Part des retraités ayant liquidé pour invalidité (en %)": (
+               [3.3, 8.0, 7.9], [3.4, 8.3, 8.2], [3.3, 7.7, 7.5]),
+           "Part de départ au taux plein pour un autre motif que l'âge, la durée, "
+           "l'invalidité ou l'inaptitude (en %)": (
+               [0.5, 1.5, 1.4], [0.7, 1.2, 1.1], [0.4, 1.8, 1.7]),
+           "Part des retraités ayant liquidé pour inaptitude (en %)": (
+               [5.9, 7.0, 7.0], [5.1, 8.0, 7.9], [6.5, 6.0, 6.0]),
+           "Part de départ au taux plein par l'âge (en %)": (
+               [23.7, 9.5, 9.9], [31.3, 11.7, 12.2], [17.7, 7.1, 7.4]),
+           "Part de départ au taux plein par la durée (hors surcote et carrière "
+           "longue, en %)": (
+               [13.0, 24.8, 24.5], [13.1, 28.3, 27.9], [12.8, 21.1, 20.8]),
+       }.items()},
+}
+RESIDENCE = [["sexe", "Variable", "Intitulé", *_ENTETES_RESIDENCE]] + [
+    [sexe, variable, intitule, *valeurs]
+    for (variable, intitule), parsexe in _LIGNES_RESIDENCE.items()
+    for sexe, valeurs in parsexe.items()]
+
+
+def test_le_lecteur_lit_la_generation_selon_sa_residence():
+    """La feuille du lieu de naissance et de la résidence : les seules colonnes
+    de la résidence, en France ou à l'étranger, qui comptent toute la
+    génération, et l'ensemble ; chacune comme une colonne d'âge, l'effectif,
+    sa part, celle des carrières complètes et de chaque condition. Les
+    résidentes en France nées en 1953 sont parties avec une décote pour
+    11,9 %, celles de l'étranger pour 29,9 %, toutes pour 12,4 %."""
+    lu = recuperateur.lire_tableau(_grille(RESIDENCE), "residence")
+    assert sorted(lu) == ["ensemble", "etranger", "france"]
+    assert lu["france"]["F"]["condition_decote"] == 11.9
+    assert lu["etranger"]["F"]["condition_decote"] == 29.9
+    assert lu["ensemble"]["F"]["condition_decote"] == 12.4
+    assert lu["france"]["H"]["condition_decote"] == 7.7
+    assert lu["france"]["F"]["effectifs"] == 383.0
+    assert lu["etranger"]["ensemble"]["part"] == 3.1
+    assert lu["france"]["H"]["carriere_complete"] == 72.2
+    assert [recuperateur.code_de_colonne(entete, "residence")
+            for entete in _ENTETES_RESIDENCE] == [None] * 6 + ["etranger", "france",
+                                                              "ensemble"]
+    casse = [list(ligne) for ligne in RESIDENCE]
+    casse[2][-2] = 393.0
+    with pytest.raises(RuntimeError, match="effectifs"):
+        recuperateur.lire_tableau(_grille(casse), "residence")
+
+
 def _certifie() -> dict[tuple[str, str, str, str, str], float]:
     with FICHIER.open(encoding="utf-8") as flux:
         lignes = [ligne for ligne in flux if not ligne.startswith("#")]
@@ -177,12 +263,13 @@ def test_le_fichier_certifie_redonne_ce_que_les_classeurs_impriment():
 
 
 def test_le_fichier_certifie_compte_chaque_generation_entiere():
-    """Dans chaque génération et chaque feuille d'âge, les colonnes redonnent
-    l'effectif de l'ensemble et font cent ; la colonne de l'ensemble redonne,
-    condition par condition, la part que la feuille des conditions imprime."""
+    """Dans chaque génération et chaque feuille d'âge, et dans celle de la
+    résidence, les colonnes redonnent l'effectif de l'ensemble et font cent ;
+    la colonne de l'ensemble redonne, condition par condition, la part que la
+    feuille des conditions imprime."""
     lu = _certifie()
     for generation in ("1950", "1953"):
-        for tableau in ("age_liquidation", "position"):
+        for tableau in ("age_liquidation", "position", "residence"):
             for sexe in ("ensemble", "F", "H"):
                 colonnes = {c for (g, t, c, s, i) in lu
                             if (g, t, s, i) == (generation, tableau, sexe, "effectifs")
@@ -198,6 +285,29 @@ def test_le_fichier_certifie_compte_chaque_generation_entiere():
                            f"condition_{condition}")] == pytest.approx(
                     lu[(generation, "condition", condition, "ensemble", "part")],
                     abs=0.15), (generation, tableau, condition)
+
+
+def test_le_fichier_certifie_dit_la_decote_des_seuls_residents():
+    """Ce que les deux classeurs impriment de la résidence : nés en 1953, 383
+    milliers de femmes résident en France et 11 à l'étranger, 393 en tout ;
+    les résidentes sont parties avec une décote pour 11,9 %, les résidents
+    pour 7,7 %, quand toute la génération l'a fait pour 12,4 et 8,6 %, et
+    ceux de l'étranger pour 29,9 et 33,1 %. Nés en 1950 : 7,5 et 4,5 % des
+    résidents, 7,9 et 5,6 % de tous."""
+    lu = _certifie()
+    assert lu[("1953", "residence", "france", "F", "effectifs")] == 383.0
+    assert lu[("1953", "residence", "etranger", "F", "effectifs")] == 11.0
+    assert lu[("1953", "residence", "ensemble", "F", "effectifs")] == 393.0
+    assert lu[("1953", "residence", "france", "F", "condition_decote")] == 11.9
+    assert lu[("1953", "residence", "france", "H", "condition_decote")] == 7.7
+    assert lu[("1953", "residence", "etranger", "F", "condition_decote")] == 29.9
+    assert lu[("1953", "residence", "etranger", "H", "condition_decote")] == 33.1
+    assert lu[("1950", "residence", "france", "F", "condition_decote")] == 7.5
+    assert lu[("1950", "residence", "france", "H", "condition_decote")] == 4.5
+    for generation in ("1950", "1953"):
+        for sexe in ("F", "H"):
+            assert lu[(generation, "residence", "ensemble", sexe, "condition_decote")] == (
+                lu[(generation, "condition", "decote", sexe, "part")]), (generation, sexe)
 
 
 #: La feuille « QuintilesEQCC » du classeur des nés en 1953, telle qu'elle se

@@ -219,7 +219,7 @@
    "niveau": "certifiee",
    "source": "DREES, échantillon interrégimes de retraités (EIR)",
    "valeurs": 120,
-   "verifiee_le": "2026-10-12"
+   "verifiee_le": "2026-10-28"
   },
   "carriere_longue": {
    "ajoutees": 0,
@@ -275,6 +275,17 @@
    "source": "COR, rapport annuel, figures de sensibilité de la dépense et du solde aux hypothèses de productivité et de chômage",
    "valeurs": 360,
    "verifiee_le": "2026-10-06"
+  },
+  "conditions_selon_l_age_residents": {
+   "ajoutees": 330,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "9a9b5f1db517a407",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DREES, échantillon interrégimes de retraités (EIR)",
+   "valeurs": 330,
+   "verifiee_le": "2026-10-28"
   },
   "cotisants_regimes": {
    "ajoutees": 0,
@@ -376,15 +387,15 @@
    "verifiee_le": "2026-09-17"
   },
   "departs_generations": {
-   "ajoutees": 1296,
+   "ajoutees": 216,
    "colonne": "valeur",
    "corrigees": 0,
-   "empreinte": "5be916a5bb1b7068",
-   "identiques": 0,
+   "empreinte": "4ad1dc673faf83e4",
+   "identiques": 1296,
    "niveau": "certifiee",
    "source": "DREES, échantillon interrégimes de retraités (EIR), classeurs d'une génération",
-   "valeurs": 1296,
-   "verifiee_le": "2026-10-18"
+   "valeurs": 1512,
+   "verifiee_le": "2026-10-28"
   },
   "depenses_retraite": {
    "ajoutees": 0,
@@ -747,7 +758,7 @@
    "niveau": "haute",
    "source": "dérivée des quotients INED de Vallin et Meslé",
    "valeurs": 28,
-   "verifiee_le": "2026-10-24"
+   "verifiee_le": "2026-10-28"
   },
   "esperances_projetees": {
    "ajoutees": 0,
@@ -1110,7 +1121,7 @@
    "niveau": "certifiee",
    "source": "DREES, échantillon interrégimes de retraités (EIR)",
    "valeurs": 126,
-   "verifiee_le": "2026-10-12"
+   "verifiee_le": "2026-10-28"
   },
   "persistance_smic": {
    "ajoutees": 336,
@@ -1407,29 +1418,29 @@
    "niveau": "certifiee",
    "source": "DREES, échantillon interrégimes de retraités (EIR)",
    "valeurs": 198,
-   "verifiee_le": "2026-10-12"
+   "verifiee_le": "2026-10-28"
   },
   "quintiles_eqcc_generations": {
-   "ajoutees": 540,
+   "ajoutees": 0,
    "colonne": "valeur",
    "corrigees": 0,
    "empreinte": "22d152b702358280",
-   "identiques": 0,
+   "identiques": 540,
    "niveau": "certifiee",
    "source": "DREES, échantillon interrégimes de retraités (EIR), classeurs d'une génération",
    "valeurs": 540,
    "verifiee_le": "2026-10-28"
   },
   "quintiles_eqcc_residents": {
-   "ajoutees": 288,
+   "ajoutees": 0,
    "colonne": "valeur",
    "corrigees": 0,
    "empreinte": "9f2c235f1083598c",
-   "identiques": 252,
+   "identiques": 540,
    "niveau": "certifiee",
    "source": "DREES, échantillon interrégimes de retraités (EIR)",
    "valeurs": 540,
-   "verifiee_le": "2026-10-12"
+   "verifiee_le": "2026-10-28"
   },
   "quotients_mortalite": {
    "ajoutees": 770,
@@ -1660,7 +1671,7 @@
    "niveau": "haute",
    "source": "la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre",
    "valeurs": 512,
-   "verifiee_le": "2026-10-24"
+   "verifiee_le": "2026-10-28"
   },
   "taux_cotisation_annuels": {
    "ajoutees": 0,
@@ -1836,7 +1847,7 @@
    "niveau": "haute",
    "source": "OpenFisca-France, barème IPP de la cotisation forfaitaire annuelle de la garantie minimale de points (gmp_cot_f_a), transcrit le 2 octobre 2026",
    "valeurs": 29,
-   "verifiee_le": "2026-10-24"
+   "verifiee_le": "2026-10-28"
   },
   "valeurs_point_independants": {
    "ajoutees": 0,
@@ -1869,7 +1880,7 @@
    "niveau": "haute",
    "source": "Ircantec, page « Valeur du point » et paramètres annuels, 2022-2026, lus le 23 septembre 2026",
    "valeurs": 23,
-   "verifiee_le": "2026-10-24"
+   "verifiee_le": "2026-10-28"
   },
   "valeurs_point_msa": {
    "ajoutees": 1,

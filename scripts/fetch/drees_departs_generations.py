@@ -27,12 +27,17 @@ CE QU'ON EN GARDE, de chacun des deux classeurs, par sexe :
 * ``CondLiquidation`` (tableau ``condition``) — les retraités selon la
   condition de leur liquidation dans le régime principal : carrière longue,
   décote, décote inapplicable, surcote, taux plein pour invalidité, pour
-  inaptitude, pour un autre motif, par l'âge, par la durée.
+  inaptitude, pour un autre motif, par l'âge, par la durée ;
+* ``Naissance-Résidence`` (tableau ``residence``) — les mêmes selon qu'ils
+  résident en France ou à l'étranger, ses seules colonnes de la résidence, et
+  non celles du lieu de naissance, qui croisent les premières : la population
+  ne compte que des résidents, et y prend la décote de chaque génération
+  (action 138, étape 14).
 
 De chaque colonne : l'effectif, sa part dans la génération, la part des
-carrières complètes ; et, dans les deux premières feuilles, la part de chaque
-condition de liquidation parmi les départs de la colonne, une case vide se
-lisant zéro — nul ne surcote avant 60 ans.
+carrières complètes ; et, dans les feuilles de l'âge, de la position et de la
+résidence, la part de chaque condition de liquidation parmi les départs de la
+colonne, une case vide se lisant zéro — nul ne surcote avant 60 ans.
 
 Et ``QuintilesEQCC`` (``quintiles_eqcc``, action 138, étape 14) : la
 génération rangée par quintile de sa pension en équivalent carrière complète,
@@ -80,6 +85,7 @@ TABLEAUX: dict[str, str] = {
     "age_liquidation": "ÂgeLiq_Détails",
     "position": "ÂgeLiq",
     "condition": "CondLiquidation",
+    "residence": "Naissance-Résidence",
 }
 
 #: Les conditions de liquidation dans le régime principal, dans l'ordre des
@@ -110,6 +116,14 @@ _COLONNES_POSITION: dict[str, str] = {
     "Départ entre l'âge légal": "entre",
     "Départ à l'âge d'annulation": "age_annulation",
     "Départ après l'âge d'annulation": "apres_annulation",
+}
+
+#: Les en-têtes des colonnes de la résidence, entiers ; les autres colonnes de
+#: la feuille, le lieu de naissance, seul ou croisé avec la résidence, ne se
+#: lisent pas.
+_COLONNES_RESIDENCE: dict[str, str] = {
+    "Retraités résidents en France": "france",
+    "Retraités résidents à l'étranger": "etranger",
 }
 
 #: Les indicateurs lus dans chaque feuille, au début de leur libellé.
@@ -157,14 +171,18 @@ def _texte(valeur) -> str:
     return " ".join(str(valeur if valeur is not None else "").replace("’", "'").split())
 
 
-def code_de_colonne(entete: str, tableau: str) -> str:
+def code_de_colonne(entete: str, tableau: str) -> str | None:
     """Le code d'une colonne de ``tableau`` : « 62 », « 67_plus » ou
     « avant_60 » pour un âge, celui de :data:`_COLONNES_POSITION` ou de
-    :data:`CONDITIONS` pour une position ou une condition, « ensemble » pour
-    la colonne de toute la génération."""
+    :data:`CONDITIONS` pour une position ou une condition, celui de
+    :data:`_COLONNES_RESIDENCE` pour une résidence, « ensemble » pour la
+    colonne de toute la génération ; aucun pour une colonne de la feuille de
+    la résidence qui n'en est pas une, que le lecteur passe."""
     texte = _texte(entete)
     if texte == "Ensemble":
         return "ensemble"
+    if tableau == "residence":
+        return _COLONNES_RESIDENCE.get(texte)
     if tableau == "age_liquidation":
         if (trouve := re.fullmatch(r"Avant (\d+) ans", texte)):
             return f"avant_{trouve.group(1)}"
@@ -186,13 +204,14 @@ def lire_tableau(grille: dict[tuple[int, int], float | str], tableau: str
     {indicateur: valeur}}}``, vérifiée comme le dit l'en-tête du module.
 
     Les colonnes sont cherchées à partir de la quatrième, et leur en-tête
-    nommé par :func:`code_de_colonne` ; les indicateurs par le début de leur
-    libellé, à leur première occurrence.
+    nommé par :func:`code_de_colonne`, celles qu'il ne nomme pas passées ; les
+    indicateurs par le début de leur libellé, à leur première occurrence.
     """
     derniere_colonne = max(colonne for _, colonne in grille)
     derniere_ligne = max(ligne for ligne, _ in grille)
-    colonnes = {colonne: code_de_colonne(grille[(0, colonne)], tableau)
-                for colonne in range(3, derniere_colonne + 1) if (0, colonne) in grille}
+    colonnes = {colonne: code for colonne in range(3, derniere_colonne + 1)
+                if (0, colonne) in grille
+                and (code := code_de_colonne(grille[(0, colonne)], tableau)) is not None}
     indicateurs = dict(_INDICATEURS)
     if tableau != "condition":
         indicateurs.update(_INDICATEURS_CONDITION)

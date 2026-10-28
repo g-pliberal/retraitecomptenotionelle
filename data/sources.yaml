@@ -1306,12 +1306,21 @@ institutions:
           base —, avec leurs effectifs, leur proratisation, leurs pensions,
           leur part au minimum de pension et leurs tranches de durée validée
           hors majorations. Elle dit ce qu'une carrière courte acquiert par
-          année validée (action 136, étape 6).
+          année validée (action 136, étape 6). Du classeur des seuls
+          résidents en France, sa feuille « CondLiquidation » aussi, depuis le
+          28 octobre 2026, écrite dans
+          data/reference/macro/conditions_selon_l_age_residents.csv : pour
+          chaque condition de liquidation, et pour tous, l'effectif et l'âge
+          des retraités au 31 décembre, par tranche de cinq ans. La décote de
+          chaque tranche s'en tire — 8,8 % des résidentes de 85 ans et plus
+          en 2020, 4,6 % de celles de 75 à 79 ans —, que la population de la
+          page Coût prête aux générations d'avant 1950 (action 138, étape 14).
 
       - id: drees_eir_generations
         titre: >-
           Caractéristiques des retraités nés en 1950 (EIR 2016) et nés en 1953
-          (EIR 2020) : l'âge de liquidation et les conditions de départ
+          (EIR 2020) : l'âge de liquidation, les conditions de départ et la
+          résidence
         url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/3013_donnees-statistiques-sur-les-caracteristiques-des-retraites/
         acces: api
         statut_integration: certifie
@@ -1339,7 +1348,12 @@ institutions:
           carrière complète, avec, à chaque quintile, la durée validée hors
           majorations et la durée cotisée, dont l'écart est sa masse assimilée
           selon le rang, et la part des départs en carrière longue et avec
-          décote.
+          décote. Et sa feuille « Naissance-Résidence », le même jour, dans
+          departs_generations.csv : la génération selon qu'elle réside en
+          France ou à l'étranger, avec la part de chaque condition de départ.
+          11,9 % des résidentes nées en 1953 sont parties avec une décote,
+          29,9 % de celles de l'étranger, 12,4 % de toutes ; la population,
+          qui ne compte que des résidents, prend la part des premières.
 
       - id: drees_eic_droits_valides
         titre: >-

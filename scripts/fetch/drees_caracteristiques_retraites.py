@@ -63,6 +63,22 @@ de la page ne compte que des résidents, et c'est contre eux qu'elle se mesure.
 Il y lit, de plus, la durée validée majorations comprises, la durée cotisée,
 la part des départs avec décote, et la part de chaque régime principal,
 monopensionnés et polypensionnés de deux régimes, une case vide se lisant zéro.
+
+LA CONDITION DE LIQUIDATION SELON L'ÂGE (action 138, étape 14)
+---------------------------------------------------------------
+Du même classeur des résidents, la feuille « CondLiquidation » range les
+retraités par condition de leur liquidation dans leur régime principal —
+carrière longue, décote, décote inapplicable, surcote, taux plein pour
+invalidité, pour inaptitude, pour un autre motif, par l'âge, par la durée —,
+et dit, pour chacune et pour tous, l'âge des retraités au 31 décembre de
+l'enquête : l'âge moyen, la part de chaque tranche de cinq ans. Le récupérateur
+lit l'effectif et l'âge, une case vide se lisant zéro, et vérifie que les
+tranches de chaque condition font cent, que les conditions comptent les
+retraités de l'ensemble, un sur cent n'en ayant pas, et que les deux sexes le
+redonnent. La part des décotés dans chaque tranche s'en tire : 8,8 % des
+résidentes de 85 ans et plus sont parties avec une décote, 4,6 % de celles de
+75 à 79 ans ; la population de la page y prend la décote des générations
+d'avant 1950, que l'EIR ne suit pas une à une.
 """
 
 from __future__ import annotations
@@ -593,6 +609,139 @@ def quintiles_de_la_feuille(grille: dict[tuple[int, int], float | str],
     return valeurs
 
 
+#: La feuille des conditions de liquidation, lue dans le classeur des
+#: résidents pour l'âge des retraités de chaque condition (action 138, étape
+#: 14).
+FEUILLE_CONDITIONS = "CondLiquidation"
+
+#: Ses colonnes, sous le code que le dépôt leur donne et le début de l'en-tête
+#: que le classeur leur donne, le plus long gagnant : « Décote » commence
+#: « Décote non applicable ».
+COLONNES_CONDITIONS: dict[str, str] = {
+    "carriere_longue": "Carrière longue",
+    "decote": "Décote",
+    "decote_inapplicable": "Décote non applicable",
+    "surcote": "Surcote",
+    "invalidite": "Taux plein invalidité",
+    "inaptitude": "Taux plein inaptitude",
+    "autres_motifs": "Taux plein autres motifs",
+    "taux_plein_age": "Taux plein par âge",
+    "taux_plein_duree": "Taux plein par la durée",
+    "ensemble": "Ensemble",
+}
+
+#: Le début de la variable des lignes de l'âge, que suit l'année de l'enquête.
+VARIABLE_AGE = "Âge au 31 décembre"
+
+
+def _code_de_tranche(libelle: str) -> str | None:
+    """Le code d'une ligne de l'âge au 31 décembre : ``age_moyen``,
+    ``age_moins_50``, ``age_50_55``, ``age_85_plus`` ; aucun pour une autre."""
+    if libelle.startswith("Âge moyen"):
+        return "age_moyen"
+    if (trouve := re.fullmatch(r"Inférieur à (\d+) ans", libelle)):
+        return f"age_moins_{trouve.group(1)}"
+    if (trouve := re.match(r"Entre (\d+) et (\d+) ans", libelle)):
+        return f"age_{trouve.group(1)}_{trouve.group(2)}"
+    if (trouve := re.fullmatch(r"Au moins (\d+) ans", libelle)):
+        return f"age_{trouve.group(1)}_plus"
+    return None
+
+
+def conditions_selon_l_age(grille: dict[tuple[int, int], float | str]
+                           ) -> dict[str, dict[str, dict[str, float]]]:
+    """L'effectif et l'âge au 31 décembre des retraités de chaque condition de
+    liquidation, et de tous : condition, indicateur, sexe. Les indicateurs :
+    ``effectifs``, en milliers ; ``age_moyen``, en années ; et la part de
+    chaque tranche d'âge parmi les retraités de la condition, en pour cent,
+    une case vide se lisant zéro.
+
+    Les colonnes sont cherchées par le début de leur en-tête, le plus long
+    gagnant ; l'effectif à la première occurrence de son libellé, l'âge dans
+    les lignes de sa variable. Ce qui est lu se vérifie : les tranches de
+    chaque condition font cent, à l'arrondi près ; les conditions comptent les
+    retraités de l'ensemble, un sur cent n'en ayant pas ; les deux sexes le
+    redonnent.
+    """
+    derniere_colonne = max(colonne for _, colonne in grille)
+    derniere_ligne = max(ligne for ligne, _ in grille)
+    colonnes: dict[str, int] = {}
+    for colonne in range(3, derniere_colonne + 1):
+        entete = " ".join(str(grille.get((0, colonne), "")).split())
+        codes = [code for code, debut in COLONNES_CONDITIONS.items()
+                 if entete.startswith(debut)]
+        if codes:
+            code = max(codes, key=lambda c: len(COLONNES_CONDITIONS[c]))
+            colonnes.setdefault(code, colonne)
+    manquantes = set(COLONNES_CONDITIONS) - set(colonnes)
+    if manquantes:
+        raise RuntimeError(
+            f"feuille {FEUILLE_CONDITIONS!r} : colonnes absentes — "
+            f"{', '.join(sorted(manquantes))}")
+
+    valeurs: dict[str, dict[str, dict[str, float]]] = {code: {} for code in colonnes}
+    for ligne in range(1, derniere_ligne + 1):
+        sexe = SEXES.get(str(grille.get((ligne, 0), "")).strip())
+        variable = " ".join(str(grille.get((ligne, 1), "")).split())
+        libelle = " ".join(str(grille.get((ligne, 2), "")).split())
+        if sexe is None:
+            continue
+        if libelle.startswith("Effectifs (en milliers)"):
+            indicateur = "effectifs"
+        elif variable.startswith(VARIABLE_AGE):
+            indicateur = _code_de_tranche(libelle)
+        else:
+            continue
+        if indicateur is None:
+            continue
+        for code, colonne in colonnes.items():
+            serie = valeurs[code].setdefault(indicateur, {})
+            if sexe in serie:
+                continue
+            valeur = grille.get((ligne, colonne))
+            if isinstance(valeur, (int, float)):
+                serie[sexe] = float(valeur)
+            elif indicateur not in ("effectifs", "age_moyen") and str(
+                    valeur if valeur is not None else "").strip() == "":
+                serie[sexe] = 0.0
+    tranches = sorted({i for serie in valeurs.values() for i in serie
+                       if i.startswith("age_") and i != "age_moyen"})
+    manquants = [f"{code}/{indicateur}" for code, serie in valeurs.items()
+                 for indicateur in ("effectifs", "age_moyen", *tranches)
+                 if len(serie.get(indicateur, {})) < 3]
+    if manquants or len(tranches) < 5:
+        raise RuntimeError(f"conditions selon l'âge illisibles : "
+                           f"{', '.join(manquants) or 'trop peu de tranches'}")
+
+    for code, serie in valeurs.items():
+        for sexe in SEXES.values():
+            total = sum(serie[tranche][sexe] for tranche in tranches)
+            if abs(total - 100.0) > 0.6:
+                raise RuntimeError(f"conditions selon l'âge : les tranches de "
+                                   f"{code}/{sexe} font {total:g} %")
+    for sexe in SEXES.values():
+        ensemble = valeurs["ensemble"]["effectifs"][sexe]
+        somme = sum(serie["effectifs"][sexe] for code, serie in valeurs.items()
+                    if code != "ensemble")
+        if not 0.97 * ensemble <= somme <= ensemble + 3.0:
+            raise RuntimeError(f"conditions selon l'âge : les conditions comptent "
+                               f"{somme:g} milliers de retraités ({sexe}), les "
+                               f"effectifs de l'ensemble {ensemble:g}")
+    for code, serie in valeurs.items():
+        deux = serie["effectifs"]["F"] + serie["effectifs"]["H"]
+        if abs(deux - serie["effectifs"]["ensemble"]) > 3.0:
+            raise RuntimeError(f"conditions selon l'âge : les effectifs des deux sexes "
+                               f"font {deux:g} milliers ({code}), l'ensemble "
+                               f"{serie['effectifs']['ensemble']:g}")
+    return valeurs
+
+
+def lire_conditions_selon_l_age(contenu: bytes) -> dict[str, dict[str, dict[str, float]]]:
+    """:func:`conditions_selon_l_age`, sur la feuille du classeur."""
+    return conditions_selon_l_age(
+        feuilles(contenu, (FEUILLE_CONDITIONS,))[FEUILLE_CONDITIONS])
+
+
 def main() -> int:
     try:
         annee, titre, contenu = classeur_le_plus_recent()
@@ -620,6 +769,7 @@ def main() -> int:
         "quintiles_eqcc_residents": lire_quintiles_eqcc(residents,
                                                         INDICATEURS_EQCC_RESIDENTS,
                                                         VIDES_NULS_EQCC),
+        "conditions_selon_l_age_residents": lire_conditions_selon_l_age(residents),
     }
     SORTIE.parent.mkdir(parents=True, exist_ok=True)
     SORTIE.write_text(
@@ -633,6 +783,8 @@ def main() -> int:
           f"{len(INDICATEURS_EQCC)} indicateurs, trois sexes")
     print(f"  quintiles EQCC des résidents ({titre_residents}) : "
           f"{len(INDICATEURS_EQCC_RESIDENTS)} indicateurs")
+    print(f"  conditions selon l'âge des résidents : "
+          f"{len(charge['conditions_selon_l_age_residents'])} colonnes")
     return 0
 
 

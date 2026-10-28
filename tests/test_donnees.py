@@ -771,6 +771,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # Et les mêmes quintiles, des seuls résidents en France : la population
         # de la page ne compte qu'eux.
         "quintiles_eqcc_residents": "macro/quintiles_eqcc_residents.csv",
+        # Et le même classeur, l'âge des résidents de chaque condition de
+        # liquidation : la décote des générations d'avant 1950 (action 138,
+        # étape 14).
+        "conditions_selon_l_age_residents": "macro/conditions_selon_l_age_residents.csv",
         # Et les départs des nés en 1950 et en 1953, selon l'âge et la
         # condition de liquidation, contre lesquels la population juge ses
         # départs (action 138, étape 14).
