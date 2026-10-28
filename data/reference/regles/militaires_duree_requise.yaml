@@ -6,6 +6,7 @@ intitule: >-
   son droit s'ouvre (150 trimestres si c'est avant 2004, la table de la loi de 2003
   de 2004 à 2008) ; et s'il peut liquider à compter du 1er septembre 2023, 169 trimestres,
   170 en 2025, 171 en 2027, 172 à compter de 2028.
+regimes: [fonction_publique_etat]
 etat: transcrite
 effet: >-
   CORRIGÉ LE 23 SEPTEMBRE 2026. Le modèle opposait au militaire la durée de sa génération,
@@ -75,3 +76,35 @@ textes_a_rattacher:
 reformes:
 - reforme_2023
 - lfss_2026_suspension
+code:
+  moteur: >-
+    `duree_requise_avant_soixante_ans` oppose au militaire que `droit_militaire` fait
+    liquider avant soixante ans la durée de l'année où son droit s'ouvre
+    (`duree_de_l_annee`) : avant 2004, la durée que la période de cette année-là porte,
+    cent cinquante trimestres ; de 2004 à 2008, la table de la loi de 2003
+    (`legislation/duree_requise_fonction_publique.csv`) ; ensuite celle de L. 13, III
+    (lignes `l13_iii` de `legislation/duree_requise_avant_soixante_ans.csv`). Qui peut
+    liquider à compter du 1er septembre 2023 doit celle du C du XXIV
+    (`DureesRequisesAvantSoixanteAns.depuis_2023`, lignes `xxiv_c`) : 169 trimestres,
+    170 en 2025, 171 en 2027, 172 à compter de 2028.
+  python: >-
+    droit/ouvrir.py : duree_requise, duree_requise_avant_soixante_ans, droit_militaire,
+    duree_de_l_annee ; scenarios/actuel.py : DureesRequisesAvantSoixanteAns,
+    DureesRequisesAvantSoixanteAns.par_annee, DureesRequisesAvantSoixanteAns.depuis_2023,
+    DureesRequisesFonctionPublique
+  javascript: >-
+    moteur/js/droit/ouvrir.js : dureeRequise, dureeRequiseAvantSoixanteAns,
+    droitMilitaire, dureeDeLAnnee ; moteur/js/regimes.js :
+    DureesRequisesAvantSoixanteAns, DureesRequisesAvantSoixanteAns.parAnnee,
+    DureesRequisesAvantSoixanteAns.depuis2023, DureesRequisesFonctionPublique
+  parametres: >-
+    legislation/duree_requise_avant_soixante_ans.csv : l13_iii, xxiv_c, annee_ouverture,
+    trimestres ; legislation/duree_requise_fonction_publique.csv : annee_ouverture,
+    trimestres ; regimes/fonction_publique_etat.yaml : duree_requise_trimestres
+  tests: >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    sept des vingt-deux témoins militaires changent sans elle, statut_militaire et
+    droits_pension_militaire parmi eux ; la grille du coût la fait passer d'un moteur
+    à l'autre (tests/test_pont.py), et les cas types statutaires la confrontent aux
+    départs de 2025 (tests/test_flux_fonction_publique.py) ; aucun test ne la pose à la
+    main

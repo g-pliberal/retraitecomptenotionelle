@@ -201,6 +201,31 @@ def test_le_code_de_chaque_fiche_tient(fiches):
     assert sorted(nom for nom in EN_PROSE if not tenus.get(nom)) == []
 
 
+#: Les fiches dont le code et les régimes s'écrivent par lots, depuis le
+#: 28 octobre 2026 (action 130) : le 24, 57 fiches tirées du registre de
+#: veille n'avaient ni l'un ni l'autre, et trois un code sans régimes. La
+#: liste ne fait que grandir, d'un lot à l'autre : elle arrête la fiche qui
+#: les perdrait, jamais celle qui naît sans eux (§ 9.2).
+CODE_ET_REGIMES_ECRITS = frozenset("""
+    age_reference_decote_sncf_ratp categorie_active_duree_requise
+    categorie_active_super_active duree_requise_carriere_longue_fonction_publique
+    duree_requise_ieg duree_requise_sncf_ratp militaires_duree_requise
+    pension_differee_fonction_publique regimes_speciaux_par_generation
+    services_et_duree_fonction_publique taux_maximum_fonction_publique
+""".split())
+
+
+def test_les_fiches_ecrites_par_lots_ont_leur_code_et_leurs_regimes(fiches):
+    """Rien ne manque plus aux fiches de la liste, ni leur code, hors d'une
+    règle pas encore modélisée, ni leurs régimes ; ce code, le test qui
+    précède le confronte au dépôt."""
+    manques = carte.manques()
+    assert sorted(CODE_ET_REGIMES_ECRITS - set(fiches)) == []
+    manquants = {nom: sorted({"code", "regimes"} & set(manques.get(nom, [])))
+                 for nom in sorted(CODE_ET_REGIMES_ECRITS)}
+    assert {nom: absents for nom, absents in manquants.items() if absents} == {}
+
+
 def test_une_fiche_complete_est_mure(tmp_path):
     """La fiche A.1 de l'architecture, posée seule dans une carte : ni erreur,
     ni manque."""

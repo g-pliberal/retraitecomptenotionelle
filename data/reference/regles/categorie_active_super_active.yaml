@@ -4,6 +4,7 @@ intitule: >-
   Âge anticipé et minoré des emplois classés, par génération, décalé d'un trimestre
   par la suspension ; âge d'annulation propre ; dix-sept et vingt-sept ans de services
   classés, quinze et vingt-cinq relevés selon l'année où ils sont atteints.
+regimes: [cnracl, fonction_publique_etat, fspoeie]
 etat: transcrite
 effet: Fonctionnaires déclarés en catégorie active ou super-active.
 sources:
@@ -55,3 +56,37 @@ referents:
       dépôt lisait par génération et a corrigé ; il ne connaît pas la super-active —
       ni ses années, ni l'âge minoré, ni la bonification du cinquième : l'écart est le
       sien (registre)
+code:
+  moteur: >-
+    Le classement vient du statut (`Affiliations.classements_actifs`) : `derogation_active`
+    retient celui que la carrière a exercé le plus longtemps (`statut_dominant`), dans un
+    régime qui sert la catégorie active (`categorie_active` parmi ses
+    `avantages_non_contributifs`) et que ce statut route. Elle lit à la génération, dans
+    `legislation/categorie_active.csv`, l'âge anticipé ou minoré (`age_ouverture`), que la
+    suspension décale d'un trimestre, et l'âge d'annulation (`age_annulation`), que
+    `_age_ouverture_de_droit_commun` et `age_taux_plein` opposent. Elle suppose les
+    services classés que `services_actifs_requis` exige : la durée de base
+    (`services_requis_annees`), quinze ou vingt-cinq ans, relevée à dix-sept ou
+    vingt-sept selon l'année où elle est atteinte
+    (`legislation/duree_services_actifs.csv`) ; sans eux, l'agent reste au droit commun.
+  python: >-
+    carriere.py : Affiliations.classements_actifs ; droit/ouvrir.py : derogation_active,
+    statut_dominant, _age_ouverture_de_droit_commun, age_taux_plein ; droit/compter.py :
+    services_actifs_requis ; scenarios/actuel.py : AgesCategorieActive,
+    AgesCategorieActive.derogation, DureesServicesActifs
+  javascript: >-
+    moteur/js/regimes.js : Affiliations.classementsActifs, AgesCategorieActive,
+    AgesCategorieActive.derogation, DureesServicesActifs ; moteur/js/droit/ouvrir.js :
+    derogationActive, statutDominant, ageOuvertureDeDroitCommun, ageTauxPlein ;
+    moteur/js/droit/compter.js : servicesActifsRequis
+  parametres: >-
+    legislation/categorie_active.csv : classement, generation, age_ouverture,
+    age_annulation, services_requis_annees ; legislation/duree_services_actifs.csv :
+    classement, annee_atteinte, annees_requises ; regimes/cnracl.yaml,
+    regimes/fonction_publique_etat.yaml, regimes/fspoeie.yaml : avantages_non_contributifs
+  tests: [tests/test_simulateur.py, tests/test_fonction_publique_etat.py,
+    tests/test_oracle.py, tests/test_departs.py, tests/test_primes_soumises_a_retenue.py,
+    tests/test_bonifications_emplois.py, tests/test_limite_age.py, tests/test_pont.py,
+    tests/test_cycle_de_vie_script.py, tests/test_versements_uniques.py,
+    tests/test_oracle_categorie_active.py, tests/test_flux_fonction_publique.py,
+    tests/test_trajectoire.py, tests/js/moteur.test.js, tests/temoins/simulations.json]

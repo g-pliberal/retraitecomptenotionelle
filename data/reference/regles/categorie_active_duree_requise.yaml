@@ -9,6 +9,7 @@ intitule: >-
   » de la réforme de 2023 : non la durée de leur génération, mais celle des fonctionnaires
   qui atteignent soixante ans l'année où leur droit s'ouvre (L. 13, III, version
   de 2014).
+regimes: [cnracl, fonction_publique_etat, fspoeie]
 etat: conforme
 effet: >-
   PORTÉ LE 22 SEPTEMBRE 2026 pour les marches de 2023, par une colonne de plus dans
@@ -137,3 +138,39 @@ referents:
       : la durée qu'il oppose à la décote des actifs est celle du dépôt sur les sept
       profils, de 161 à 166 trimestres ; il proratise sur la durée de la génération,
       de un à trois trimestres de plus : l'écart est le sien (registre, L. 13, III)
+code:
+  moteur: >-
+    `derogation_active` lit, dans `legislation/categorie_active.csv`, le classement que
+    la carrière a exercé le plus longtemps (`statut_dominant`) : à compter de la
+    génération de septembre 1966 pour l'active, de septembre 1971 pour la super-active,
+    sa colonne `duree_requise_trimestres` porte la durée des marches de 2023, que
+    `duree_requise` oppose au lieu de celle de la génération. En deçà, la colonne est
+    vide, et `duree_requise_avant_soixante_ans` oppose à l'emploi classé dont le droit
+    s'ouvre avant soixante ans la durée de l'année d'ouverture (`duree_de_l_annee`) : la
+    table de la loi de 2003 de 2004 à 2008
+    (`legislation/duree_requise_fonction_publique.csv`), celle de L. 13, III, de 2009 à
+    2033, sa dernière ligne au-delà (lignes `l13_iii` de
+    `legislation/duree_requise_avant_soixante_ans.csv`), et avant 2004 la durée que la
+    période de cette année-là porte.
+  python: >-
+    droit/ouvrir.py : duree_requise, derogation_active, statut_dominant,
+    duree_requise_avant_soixante_ans, duree_de_l_annee ; scenarios/actuel.py :
+    AgesCategorieActive, AgesCategorieActive.derogation, DureesRequisesAvantSoixanteAns,
+    DureesRequisesAvantSoixanteAns.par_annee, DureesRequisesFonctionPublique
+  javascript: >-
+    moteur/js/droit/ouvrir.js : dureeRequise, derogationActive, statutDominant,
+    dureeRequiseAvantSoixanteAns, dureeDeLAnnee ; moteur/js/regimes.js :
+    AgesCategorieActive, AgesCategorieActive.derogation, DureesRequisesAvantSoixanteAns,
+    DureesRequisesAvantSoixanteAns.parAnnee, DureesRequisesFonctionPublique
+  parametres: >-
+    legislation/categorie_active.csv : classement, generation, duree_requise_trimestres ;
+    legislation/duree_requise_avant_soixante_ans.csv : l13_iii, annee_ouverture,
+    trimestres ; legislation/duree_requise_fonction_publique.csv : annee_ouverture,
+    trimestres ; regimes/cnracl.yaml, regimes/fonction_publique_etat.yaml,
+    regimes/fspoeie.yaml : avantages_non_contributifs, duree_requise_trimestres
+  tests: [tests/test_simulateur.py, tests/test_oracle.py,
+    tests/test_primes_soumises_a_retenue.py, tests/test_bonifications_emplois.py,
+    tests/test_fonction_publique_etat.py, tests/test_pont.py,
+    tests/test_cycle_de_vie_script.py, tests/test_versements_uniques.py,
+    tests/test_oracle_categorie_active.py, tests/test_flux_fonction_publique.py,
+    tests/test_trajectoire.py, tests/js/moteur.test.js, tests/temoins/simulations.json]

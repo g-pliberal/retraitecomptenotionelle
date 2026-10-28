@@ -11,6 +11,8 @@ intitule: >-
   professionnelle du fonctionnaire en activité ; congés de formation et congé civique
   ; détachement. Le chômage n'est pas une position statutaire : il n'ouvre aucun
   service.
+regimes: [cnracl, fonction_publique_etat, fonctionnaires_pacifique, fspoeie,
+  pensions_civiles_1853]
 etat: conforme
 etape: compter_les_durees
 effet: >-
@@ -57,3 +59,32 @@ textes_a_rattacher:
 - reference: L. 5 CPCMR
 - reference: L. 9 CPCMR
 - reference: L. 13 CPCMR
+code:
+  moteur: >-
+    Chaque ligne de la carrière dit si sa période ouvre des services
+    (`services_fonction_publique`) : une année d'emploi, toujours ; une période non
+    travaillée, selon son motif (`_ligne_annuelle`, `charger_periodes_non_travaillees`,
+    colonne `services_fonction_publique` de `legislation/periodes_non_travaillees.csv`) —
+    la maladie, la maternité, l'invalidité, l'accident du travail et le service
+    militaire, l'éducation d'un enfant dans la limite de trois ans par enfant
+    (`services_plafond_annees_par_enfant`), jamais le chômage, la préretraite ni
+    l'inactivité. `compter` ne crédite qu'à ces lignes les services de chaque régime, et
+    les régimes de la famille `fonction_publique` se proratisent sur eux
+    (`liquider_chaque_regime`) ; la durée d'assurance, que la décote lit, garde toute la
+    période.
+  python: >-
+    carriere.py : _ligne_annuelle ; donnees/chargement.py :
+    charger_periodes_non_travaillees ; droit/compter.py : compter ; droit/liquider.py :
+    liquider_chaque_regime
+  javascript: >-
+    moteur/js/carriere.js : ligneAnnuelle ; moteur/js/droit/compter.js : compter ;
+    moteur/js/droit/liquider.js : liquiderChaqueRegime
+  parametres: >-
+    legislation/periodes_non_travaillees.csv : motif, services_fonction_publique,
+    services_plafond_annees_par_enfant
+  tests: >-
+    tests/test_services_fonction_publique.py, dont
+    test_le_chomage_n_ouvre_aucun_service_a_l_etat ; les carrières hors de France dans
+    les deux moteurs, tests/test_etranger.py ; cinq des 193 témoins des fonctionnaires,
+    fonctionnaire_interrompu parmi eux (tests/temoins/simulations.json), que le portage
+    rejoue (tests/js/moteur.test.js)

@@ -4,6 +4,7 @@ intitule: >-
   Durée requise de la SNCF (agents de conduite) et de la RATP : chacune a SA table
   par génération, que la suspension de 2026 ne touche pas ; la SNCF compte en outre
   la décote par la durée sur une cible abaissée de deux à dix trimestres.
+regimes: [ratp, sncf]
 etat: conforme
 effet: >-
   Les deux fiches lisaient la table commune, suspension de 2026 comprise. Elles
@@ -47,3 +48,30 @@ textes_a_rattacher:
 reformes:
 - reforme_2023
 - lfss_2026_suspension
+code:
+  moteur: >-
+    La période de 2025 et après nomme ses tables (`duree_requise_table`), essayées dans
+    l'ordre avant la table commune : `sncf_conduite` puis `sncf_2014` à la SNCF, `ratp`
+    puis `ratp_2014` à la RATP, dans `legislation/duree_requise_regimes_speciaux.csv`.
+    Chacune se lit à la génération, pour qui réunit les conditions à compter de sa date
+    (`depuis`), au mois que `mois_ouverture_des_droits` dit (`duree_propre`) ; la
+    suspension, qui n'abaisse que la table commune, n'y entre pas. La table de la SNCF
+    porte aussi les trimestres que le II de l'article 35 retranche à la durée pour
+    compter la décote par la durée (`retranche_decote`).
+  python: >-
+    droit/ouvrir.py : duree_requise, duree_propre, mois_ouverture_des_droits ;
+    droit/liquider.py : retranche_decote ; scenarios/actuel.py : DureesRequisesRegimes,
+    DureesRequisesRegimes.ligne
+  javascript: >-
+    moteur/js/droit/ouvrir.js : dureeRequise, dureePropre, moisOuvertureDesDroits ;
+    moteur/js/droit/liquider.js : retrancheDecote ; moteur/js/regimes.js :
+    DureesRequisesRegimes, DureesRequisesRegimes.ligne
+  parametres: >-
+    regimes/ratp.yaml, regimes/sncf.yaml : duree_requise_table ;
+    legislation/duree_requise_regimes_speciaux.csv : ratp, sncf_conduite, depuis,
+    generation, trimestres, retranche_decote
+  tests: >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    statut_agent_sncf, enfants_sncf_trois_enfants et
+    sncf_surcote_apres_soixante_quatre_ans changent sans la table de l'agent de
+    conduite ; aucun test ne la pose à la main, et aucun témoin de la RATP n'en dépend

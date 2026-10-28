@@ -5,6 +5,7 @@ intitule: >-
   : une table par durée de services actifs (I bis de l'article 45), et en deçà de
   sa première génération la table d'avant le décret n° 2023-692 ; ni la table commune
   ni celle des sédentaires.
+regimes: [ieg]
 etat: conforme
 effet: >-
   La fiche lisait la table commune, suspension de 2026 comprise. Le cas type des
@@ -65,3 +66,28 @@ textes_a_rattacher:
 reformes:
 - reforme_2023
 - lfss_2026_suspension
+code:
+  moteur: >-
+    La période de 2025 et après nomme `ieg_actif_17`, puis `ieg_2014`
+    (`duree_requise_table`) : la table des dix-sept ans de services actifs, lue à la
+    génération pour qui réunit les conditions à compter de janvier 2025, et en deçà de
+    sa première génération la table d'avant le décret n° 2023-692 (`duree_propre`),
+    dans `legislation/duree_requise_regimes_speciaux.csv`. Les tables de cinq à
+    quatorze ans, `ieg_actif_5` à `ieg_actif_14`, sont transcrites sans qu'aucune période
+    ne les nomme.
+  python: >-
+    droit/ouvrir.py : duree_requise, duree_propre ; scenarios/actuel.py :
+    DureesRequisesRegimes, DureesRequisesRegimes.ligne
+  javascript: >-
+    moteur/js/droit/ouvrir.js : dureeRequise, dureePropre ; moteur/js/regimes.js :
+    DureesRequisesRegimes, DureesRequisesRegimes.ligne
+  parametres: >-
+    regimes/ieg.yaml : duree_requise_table ;
+    legislation/duree_requise_regimes_speciaux.csv : ieg_actif_17, ieg_2014, depuis,
+    generation, trimestres
+  tests: >-
+    tests/test_simulateur.py,
+    test_l_agent_des_ieg_qui_ouvre_son_droit_avant_2025_garde_les_regles_d_avant, 170
+    trimestres à l'agent né en janvier 1968 ; le cas type des IEG dans les deux moteurs,
+    tests/test_cycle_de_vie_script.py ; six des seize témoins des IEG
+    (tests/temoins/simulations.json), que le portage rejoue (tests/js/moteur.test.js)

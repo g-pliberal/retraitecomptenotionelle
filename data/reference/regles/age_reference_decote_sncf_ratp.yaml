@@ -4,6 +4,7 @@ intitule: >-
   Âge de référence de la décote à la SNCF et à la RATP depuis le 1er janvier 2025
   : cinquante-sept ans pour les agents de conduite et le personnel roulant, soixante-deux
   ans pour les autres agents, et non l'âge d'ouverture majoré de cinq ans.
+regimes: [ratp, sncf]
 etat: conforme
 effet: >-
   Les deux fiches faisaient monter l'âge de référence avec l'âge d'ouverture, cinq
@@ -67,3 +68,26 @@ textes_a_rattacher:
     (RATP)
 reformes:
 - reforme_2023
+code:
+  moteur: >-
+    L'âge de référence se lit à la génération dans la table d'âges que la période
+    nomme (`age_table`, colonne `age_taux_plein` de `legislation/ages_regimes.csv`) :
+    `sncf_conduite_2023` et `ratp_roulant_2023` portent cinquante-sept ans à compter de
+    la génération 1972, et la période de 2025 et après le même âge en repli
+    (`age_taux_plein`). `age_taux_plein` le rend à `decote_opposable`, qui en fait l'âge
+    d'annulation, diminué pendant la montée en charge des trimestres de son barème. Le
+    modèle n'a de table que pour l'agent de conduite et le personnel roulant : les
+    autres agents, à soixante-deux ans, n'y sont pas.
+  python: >-
+    droit/ouvrir.py : age_taux_plein ; droit/liquider.py : decote_opposable ;
+    scenarios/actuel.py : AgesRegimes, AgesRegimes.ages
+  javascript: >-
+    moteur/js/droit/ouvrir.js : ageTauxPlein ; moteur/js/droit/liquider.js :
+    decoteOpposable ; moteur/js/regimes.js : AgesRegimes, AgesRegimes.ages
+  parametres: >-
+    regimes/ratp.yaml, regimes/sncf.yaml : age_table, age_taux_plein ;
+    legislation/ages_regimes.csv : ratp_roulant_2023, sncf_conduite_2023, age_taux_plein
+  tests: >-
+    tests/test_simulateur.py, test_la_decote_des_regimes_speciaux_arrive_quatre_ans_apres,
+    cinquante-sept ans en 2025 comme en 2034 ; aucun témoin ne liquide une pension que
+    cet âge change, et aucun cas n'y confronte le portage

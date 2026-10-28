@@ -4,6 +4,7 @@ intitule: >-
   Pourcentage maximum de la pension civile : 75 % du traitement, que les bonifications
   seules peuvent porter jusqu'à 80 % ; les services restent plafonnés à la durée
   requise.
+regimes: [cnracl, fonction_publique_etat, fspoeie]
 etat: conforme
 effet: >-
   Fonctionnaires dont les services et les bonifications dépassent la durée requise,
@@ -54,3 +55,26 @@ referents:
       TRAJECTOiRE ne porte pas les 80 % ; la mère fonctionnaire de deux enfants nés
       avant 2004 a 166/166, 168/166 au dépôt et chez Destinie ; l'écart est le sien
       (registre)
+code:
+  moteur: >-
+    `compter` tient les bonifications à part des services (`Durees`,
+    `bonifications_par_regime`), et l'emploi classé dit si la sienne porte le
+    pourcentage au-delà du maximum (`TrimestresEmploi.au_dela_du_maximum`) : celle des
+    militaires, au i de L. 12, oui ; le cinquième des policiers, non.
+    `liquider_chaque_regime` borne les trimestres liquidés à la durée qui proratise, la
+    durée requise, augmentée de ces seules bonifications, et leur rapport à elle au taux
+    maximum bonifié sur le taux plein, 80 % sur 75 % (`taux_maximum_bonifie`,
+    `taux_plein`), un sans bonification.
+  python: >-
+    droit/compter.py : compter, Durees, Durees.bonifications_des_emplois,
+    TrimestresEmploi ; droit/liquider.py : liquider_chaque_regime
+  javascript: >-
+    moteur/js/droit/compter.js : compter, Durees, Durees.bonificationsDesEmplois,
+    TrimestresEmploi ; moteur/js/droit/liquider.js : liquiderChaqueRegime
+  parametres: >-
+    regimes/cnracl.yaml, regimes/fonction_publique_etat.yaml, regimes/fspoeie.yaml :
+    taux_maximum_bonifie, taux_plein
+  tests: [tests/test_services_fonction_publique.py,
+    tests/test_bonifications_emplois.py, tests/test_plafond_majoration_enfants.py,
+    tests/test_simulateur.py, tests/test_trajectoire.py, tests/js/moteur.test.js,
+    tests/temoins/simulations.json]

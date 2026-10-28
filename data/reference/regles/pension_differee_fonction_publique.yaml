@@ -8,6 +8,7 @@ intitule: >-
   comprise, celle du jour de la radiation non — ; avant 2004, la péréquation lui
   faisait suivre le point. En 2020, le coefficient de L. 161-25, 1 %, la dérogation
   de 0,3 % ne visant que les pensions servies.
+regimes: [cnracl, fonction_publique_etat, fspoeie]
 etat: transcrite
 effet: >-
   Fonctionnaires partis avant l'âge et qui liquident plus tard. Jusqu'au 24 septembre
@@ -66,3 +67,30 @@ textes_a_rattacher:
     décret n° 2004-1056, article 22 (LEGIARTI000006781496, LEGIARTI000023414145,
     LEGIARTI000047633370)
 - reference: loi n° 2019-1446, article 81 (JORFARTI000039675431)
+code:
+  moteur: >-
+    `salaire_de_reference` voit la pension différée quand, dans l'un des trois régimes du
+    code des pensions (`REGIMES_CODE_DES_PENSIONS`), la mise en paiement vient après le
+    1er janvier qui suit la dernière année de service, où le modèle présume la
+    radiation : le dernier traitement suit alors, de la radiation à la mise en
+    paiement, les revalorisations des pensions civiles (`coefficient_traitement_differe`,
+    `RevalorisationsPensions`) — la péréquation, qui suit le point d'indice, jusqu'en
+    2003 (`FIN_PEREQUATION`, `MinimumGaranti.ratio_point_indice`), les décrets de 2004 à
+    2008, L. 161-23-1 ensuite —, celle du jour de la mise en paiement comprise, celle du
+    jour de la radiation non. Une mise en paiement d'avant 2004 garde le point.
+  python: >-
+    droit/liquider.py : salaire_de_reference ; droit/coordonner.py :
+    REGIMES_CODE_DES_PENSIONS ; revalorisation.py : coefficient_traitement_differe,
+    RevalorisationsPensions, FIN_PEREQUATION ; scenarios/actuel.py :
+    MinimumGaranti.ratio_point_indice
+  javascript: >-
+    moteur/js/droit/liquider.js : salaireDeReference ; moteur/js/droit/coordonner.js :
+    REGIMES_CODE_DES_PENSIONS ; moteur/js/revalorisation.js :
+    coefficientTraitementDiffere, RevalorisationsPensions, FIN_PEREQUATION ;
+    moteur/js/regimes.js : MinimumGaranti.ratioPointIndice
+  parametres: >-
+    legislation/revalorisation_pensions.csv,
+    legislation/revalorisation_pensions_fonction_publique.csv : date_effet, coefficient ;
+    legislation/point_indice_fonction_publique.csv : annee, valeur
+  tests: [tests/test_cnracl.py, tests/test_simulateur.py,
+    tests/js/moteur.test.js, tests/temoins/simulations.json]

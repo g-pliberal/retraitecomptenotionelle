@@ -8,6 +8,7 @@ intitule: >-
   2025. Aux IEG, du 1er janvier 2017 au 31 décembre 2024, l'agent qui peut liquider
   avant soixante ans doit la durée exigée des agents qui atteignent soixante ans
   l'année où sa liquidation peut intervenir.
+regimes: [crpcen, ieg, ratp, sncf]
 etat: conforme
 effet: >-
   Les trois fiches portaient un âge par année de liquidation, celui de la seule
@@ -142,3 +143,36 @@ reformes:
 - regimes_speciaux_2008
 - speciaux_bornes_2017
 - reforme_2023
+code:
+  moteur: >-
+    Les âges d'ouverture et de référence se lisent à la génération, pour tous les agents,
+    dans la table que la période nomme (`age_table`, `legislation/ages_regimes.csv`) :
+    `age_ouverture_commun` et `age_taux_plein`. La durée requise se lit au mois où
+    l'agent réunit les conditions (`mois_ouverture_des_droits`, `duree_propre`) : les
+    tables de la période d'abord (`duree_requise_table`), chacune à compter de sa date
+    (`depuis`), le 1er juillet 2019 pour celles de 2014, le 1er janvier 2025 pour celles
+    de 2023 ; puis le calendrier de 2008 (`duree_requise_calendrier`,
+    `legislation/duree_requise_calendriers.csv`) ; puis la table commune
+    (`duree_requise`). La table `ieg_2014` porte un âge de lecture, soixante ans
+    (`age_de_lecture`) : l'agent qui réunit les conditions avant cet âge la lit à la
+    génération qui l'atteint ce mois-là.
+  python: >-
+    droit/ouvrir.py : age_ouverture_commun, age_taux_plein, duree_requise, duree_propre,
+    mois_ouverture_des_droits ; scenarios/actuel.py : AgesRegimes, AgesRegimes.ages,
+    DureesRequisesRegimes, DureesRequisesRegimes.ligne, CalendriersDureeRequise,
+    CalendriersDureeRequise.trimestres
+  javascript: >-
+    moteur/js/droit/ouvrir.js : ageOuvertureCommun, ageTauxPlein, dureeRequise,
+    dureePropre, moisOuvertureDesDroits ; moteur/js/regimes.js : AgesRegimes,
+    AgesRegimes.ages, DureesRequisesRegimes, DureesRequisesRegimes.ligne,
+    CalendriersDureeRequise, CalendriersDureeRequise.trimestres
+  parametres: >-
+    regimes/crpcen.yaml, regimes/ieg.yaml, regimes/ratp.yaml, regimes/sncf.yaml :
+    age_table, duree_requise_table, duree_requise_calendrier ;
+    legislation/ages_regimes.csv : table, generation, age_ouverture, age_taux_plein ;
+    legislation/duree_requise_regimes_speciaux.csv : table, depuis, generation,
+    trimestres, age_de_lecture ; legislation/duree_requise_calendriers.csv : calendrier,
+    depuis, trimestres
+  tests: [tests/test_simulateur.py, tests/test_oracle.py, tests/test_limite_age.py,
+    tests/test_minimum_pension_sncf.py, tests/test_cycle_de_vie_script.py,
+    tests/js/moteur.test.js, tests/temoins/simulations.json]

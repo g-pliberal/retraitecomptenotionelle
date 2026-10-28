@@ -10,6 +10,7 @@ intitule: >-
   avant 2009, elle était fixe, cent soixante trimestres et le supplément de la porte,
   et chaque porte ne s'ouvrait qu'à sa date : 59 ans en 2005, 58 au 1er juillet 2006,
   56 en 2008.
+regimes: [cnracl, fonction_publique_etat, fspoeie]
 etat: conforme
 effet: >-
   Fonctionnaires sédentaires partis en carrière longue. Jusqu'au 24 septembre 2026,
@@ -151,3 +152,45 @@ referents:
       corrigé ; il lit l'entrée avant vingt ans à seize ans, et l'entrée précoce de la
       CNRACL dans les services de l'État : les écarts sont les siens (registre) ; il
       date l'ouverture à l'âge de la porte, sans effet sur la pension
+code:
+  moteur: >-
+    `duree_requise_avant_soixante_ans` oppose au fonctionnaire de l'un des trois régimes
+    du code des pensions (`REGIMES_CODE_DES_PENSIONS`) dont la carrière longue ouvre le
+    droit avant soixante ans (`ouverture_carriere_longue`, qui lit `age_carriere_longue`
+    sur la durée de sa génération) la durée de l'année d'ouverture (`duree_de_l_annee`),
+    et, ouvert à compter du 1er septembre 2023, celle du C du XXIV
+    (`DureesRequisesAvantSoixanteAns.depuis_2023`, lignes `xxiv_c` de
+    `legislation/duree_requise_avant_soixante_ans.csv`). La condition de la carrière
+    longue (`CarriereLongue`) n'ouvre aux fonctionnaires de l'État et de la CNRACL chaque
+    porte qu'à sa date (`_portes`, `de_la_fonction_publique`), et leur oppose avant 2009
+    une durée fixe, cent soixante trimestres et le supplément de la porte (`_requis`) ;
+    la durée d'assurance que L. 25 bis, puis D. 16-1, exigent de tous jusqu'en
+    octobre 2012 est la colonne `trimestres_assurance_supplementaires` de
+    `legislation/carriere_longue.csv` (`age_propose`).
+  python: >-
+    droit/ouvrir.py : duree_requise, duree_requise_avant_soixante_ans,
+    ouverture_carriere_longue, age_carriere_longue, duree_de_l_annee ;
+    droit/coordonner.py : REGIMES_CODE_DES_PENSIONS ; scenarios/actuel.py :
+    DureesRequisesAvantSoixanteAns, DureesRequisesAvantSoixanteAns.depuis_2023,
+    CarriereLongue, CarriereLongue._portes, CarriereLongue.de_la_fonction_publique,
+    CarriereLongue._requis, CarriereLongue.age_propose
+  javascript: >-
+    moteur/js/droit/ouvrir.js : dureeRequise, dureeRequiseAvantSoixanteAns,
+    ouvertureCarriereLongue, ageCarriereLongue, dureeDeLAnnee ;
+    moteur/js/droit/coordonner.js : REGIMES_CODE_DES_PENSIONS ; moteur/js/regimes.js :
+    DureesRequisesAvantSoixanteAns, DureesRequisesAvantSoixanteAns.depuis2023,
+    CarriereLongue, CarriereLongue.portes, CarriereLongue.deLaFonctionPublique,
+    CarriereLongue.requisDe, CarriereLongue.agePropose
+  parametres: >-
+    legislation/duree_requise_avant_soixante_ans.csv : l13_iii, xxiv_c, annee_ouverture,
+    trimestres ; legislation/duree_requise_fonction_publique.csv : annee_ouverture,
+    trimestres ; legislation/carriere_longue.csv : age_depart, trimestres_supplementaires,
+    trimestres_assurance_supplementaires
+  tests: >-
+    tests/test_cnracl.py,
+    test_la_carriere_longue_avant_soixante_ans_lit_la_duree_a_l_ouverture, à l'État, à
+    la CNRACL et au FSPOEIE ; tests/test_oracle.py, l'exemple
+    `cnracl_carriere_longue_avant_soixante_ans` ; les portes datées, la durée fixe
+    d'avant 2009 et la durée cotisée, confrontées à OpenFisca et au portage,
+    tests/test_oracle_carriere_longue_fonction_publique.py ; aucun témoin ne part en
+    carrière longue de la fonction publique
