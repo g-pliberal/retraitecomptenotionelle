@@ -140,6 +140,65 @@ def test_le_minimum_se_lit_dans_le_scenario_1():
     assert mesures[1][2] == 0.0
 
 
+def test_le_minimum_du_rsi_se_lit_dans_le_scenario_1():
+    """Le juge propre des artisans (action 138, étape 14) : jusqu'en 2017,
+    l'artisan liquide sa pension de base au RSI, qui sert le minimum
+    contributif des régimes alignés. Un artisan au tiers du salaire moyen, né
+    en 1946, l'a relevée au minimum avant 2012, sans écrêtement, qui n'existe
+    pas encore ; né en 1950, il part après 2012, sous le plafond de
+    l'écrêtement ; la mesure du régime général ne voit ni l'un ni l'autre."""
+    from dataclasses import replace
+
+    artisan = replace({c.code: c for c in CAS_TYPES}["artisan"], niveau_salaire=0.3)
+    lignes = P._mesurer(Parametres(), ((0, artisan, 1946), (1, artisan, 1950)),
+                        regime=P.REGIME_DES_ARTISANS)
+    mesures = {indice: mesure for indice, _, mesure in lignes}
+    annee, _, minimum, _, avant = mesures[0]
+    assert annee < 2012 and minimum > 0.0 and avant is None
+    annee, _, minimum, _, avant = mesures[1]
+    assert 2012 <= annee < 2018
+    assert avant is not None and 0.0 < minimum <= avant
+    assert P._mesurer(Parametres(), ((0, artisan, 1946), (1, artisan, 1950))) == []
+
+
+def test_les_artisans_se_jugent_sur_ce_que_le_rsi_publie():
+    """Le RSI servait le minimum à 40 % de ses nouveaux retraités artisans de
+    2011 (COR, séance du 26 mars 2013, document n° 11, note 12) ; l'EACR en
+    trouve 44 % d'éligibles, avant l'écrêtement, en 2016, sans dire combien il
+    en sert (DREES, « Les retraités et les retraites », édition 2018, fiche 9,
+    tableau 1) ; l'EIR de 2012 met au minimum de leur régime 58 % des
+    artisanes unipensionnées nées en 1946 et 23 % des artisans (tableau 3).
+    Les artisans de la population se pèsent de même : servis l'année de leur
+    départ, éligibles avant l'écrêtement, ou au minimum dans leur génération,
+    sexe par sexe."""
+    from types import SimpleNamespace as N
+
+    rsi = P.RSI
+    assert rsi["liquidants_2011"]["servis"] == {"artisans": 40, "commercants": 47}
+    assert rsi["liquidants_2016"]["eligibles"] == {"artisans": 44, "commercants": 50}
+    assert rsi["generation_1946"]["unipensionnes"]["artisans"] == {
+        "ensemble": 33, "F": 58, "H": 23}
+
+    artisane = N(cas=N(sexe="F"), part_de_la_generation=lambda g: 1.0)
+    artisan = N(cas=N(sexe="H"), part_de_la_generation=lambda g: 1.0)
+    lignes = [(0, 1946, (2006, 1, 100.0, False, None)),
+              (1, 1946, (2006, 1, 0.0, False, None)),
+              # Partis en 2016 : servi, écrêté tout entier, sans minimum.
+              (0, 1952, (2016, 1, 30.0, False, 30.0)),
+              (1, 1952, (2016, 1, 0.0, False, 50.0)),
+              (1, 1953, (2016, 1, 0.0, False, None))]
+    juge = P.parts_des_artisans([artisane, artisan], [1.0, 3.0], lignes,
+                                {2006: 1.0, 2016: 1.0})
+    generation = juge["generation"][P.GENERATION_DE_L_EIR_2012]
+    assert generation["F"]["part"] == pytest.approx(100.0)
+    assert generation["H"]["part"] == pytest.approx(0.0)
+    assert generation["ensemble"]["part"] == pytest.approx(25.0)
+    depart = juge["par_annee"][2016]["ensemble"]
+    assert depart["part"] == pytest.approx(100.0 * 1.0 / 7.0)
+    assert depart["part_eligible"] == pytest.approx(100.0 * 4.0 / 7.0)
+    assert 2006 not in juge["par_annee"]
+
+
 def test_les_retraites_de_l_etranger_sont_ceux_de_l_eir():
     """La différence entre tous les retraités de l'EIR 2020 et ses résidents :
     3,3 % des femmes et 7,9 % des hommes, aux carrières françaises courtes,

@@ -1787,6 +1787,54 @@ sources:
       TRAJECTOiRE en surestime, et ce que les grilles du dépôt en font, est
       au registre des modèles (`trajectoire`, dernier écart).
 
+  - id: cor_rsi_perspectives_2013
+    url: https://www.cor-retraites.fr/sites/default/files/2019-06/doc-1948.pdf
+    nature: document
+    acces: session
+    regimes: [rsi]
+    a_en_tirer: >-
+      La part des nouveaux retraités du RSI que le minimum contributif relève,
+      avant que l'EACR les confonde avec la Cnav : le juge propre des artisans
+      de la population (action 138, étape 14).
+    statut: explore
+    explore_le: "2026-10-28"
+    note: >-
+      Le RSI, « Perspectives 2020, 2040 et 2060 : les régimes de retraite des
+      artisans, commerçants et industriels », COR, séance du 26 mars 2013,
+      document n° 11, lu le 28 octobre 2026. Sa note 12 : « En 2011, 40 % des
+      nouveaux retraités anciens artisans, 47 % des anciens commerçants »
+      bénéficient du minimum contributif ; sa note 10, que 30 % des nouveaux
+      retraités artisans partis à 60 ans en 2010 étaient encore actifs au
+      RSI, 20 % des commerçants. Les deux premières parts jugent les artisans
+      de la population (scripts/part_minimum_contributif.py, `RSI`,
+      `--artisans`).
+
+  - id: cor_drees_minima_de_pension_2018
+    url: https://www.cor-retraites.fr/sites/default/files/2019-06/doc-4251.pdf
+    nature: document
+    acces: session
+    regimes: [rsi, regime_general, msa_salaries]
+    a_en_tirer: >-
+      La part des retraités au minimum de pension selon leur régime principal,
+      les artisans et les commerçants du RSI à part, dans l'EIR de 2012 et
+      l'EACR de 2016 : le juge propre des artisans de la population.
+    statut: explore
+    explore_le: "2026-10-28"
+    note: >-
+      DREES, « Les retraités et les retraites », édition 2018, fiche 9, « Les
+      bénéficiaires d'un minimum de pension », que le COR reprend (séance du
+      24 mai 2018, document n° 3) ; lue le 28 octobre 2026 à cette adresse,
+      le site de la DREES ne répondant pas ce jour-là à la session. Tableau 1 :
+      des pensions liquidées en 2016, 44 % au RSI artisans et 50 % au RSI
+      commerçants sont éligibles au minimum, avant l'écrêtement ; combien il
+      en sert, l'EACR ne le dit pas, ni pour 2013 à 2016 (graphique 1, qui
+      trace le RSI de 2008 à 2012 sans en imprimer les valeurs). Tableau 3,
+      l'EIR de 2012 : parmi les retraités nés en 1946, ont un minimum dans
+      leur régime principal 33 % des artisans unipensionnés (58 % des
+      femmes, 23 % des hommes), 37 % des commerçants (40 et 34) ; 12 % des
+      artisans polypensionnés (31 et 8), 16 % des commerçants (29 et 9).
+      Repris dans scripts/part_minimum_contributif.py (`RSI`).
+
   - id: drees_er_1283_mda_enfants
     url: https://drees.solidarites-sante.gouv.fr/publications-communique-de-presse/etudes-et-resultats/retraite-parmi-les-femmes-beneficiant-de
     nature: document

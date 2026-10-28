@@ -4,6 +4,7 @@
     python scripts/part_minimum_contributif.py                     # les deux grilles
     python scripts/part_minimum_contributif.py --grille ensemble   # une seule
     python scripts/part_minimum_contributif.py --grille population # la population
+    python scripts/part_minimum_contributif.py --artisans          # ses artisans, au RSI
     python scripts/part_minimum_contributif.py --processus 4       # sur quatre cœurs
     python scripts/part_minimum_contributif.py --json part.json
 
@@ -69,6 +70,10 @@ ne compte que les résidents, et l'EACR tous les liquidants : sous
 ``grille_large.SALARIES_AGRICOLES``, elle distingue les salariés agricoles de
 la Cnav, par une part de chaque carrière du salariat privé, la même carrière
 liquidant à la MSA salariés la même pension qu'au régime général.
+
+Ses artisans ont de plus leur juge propre (``--artisans``, :data:`RSI`) : le
+RSI les liquidait jusqu'en 2017, et l'EACR ne les distingue plus depuis,
+quand le RSI, l'EACR et l'EIR de 2012 publiaient la part des siens au minimum.
 """
 
 from __future__ import annotations
@@ -167,16 +172,67 @@ SEXES = ("ensemble", "F", "H")
 #: ces femmes et 43 % de ces hommes, juge la mesure, sans la caler.
 NON_RESIDENTS = True
 
+#: Le régime qui liquide la pension de base des artisans et des commerçants
+#: jusqu'en 2017 : le régime général, ensuite (``rsi.yaml``, sa fermeture).
+REGIME_DES_ARTISANS = "rsi"
+
+#: Ce que le RSI, l'EACR et l'EIR de 2012 publient du minimum contributif des
+#: artisans et des commerçants, quand le RSI les liquidait encore : le juge
+#: propre des artisans de la population (action 138, étape 14, le 28 octobre
+#: 2026), que l'EACR ne distingue plus de la Cnav. Trois mesures, chacune sur
+#: son champ, en pour cent :
+#:
+#: * les nouveaux retraités de 2011 que le RSI sert au minimum : 40 % des
+#:   artisans, 47 % des commerçants (RSI, « Perspectives 2020, 2040 et 2060 :
+#:   les régimes de retraite des artisans, commerçants et industriels », COR,
+#:   séance du 26 mars 2013, document n° 11, note 12) ;
+#: * ceux de 2016 que l'EACR dit éligibles, avant l'écrêtement : 44 et 50 % ;
+#:   combien il en sert, il ne le dit pas (DREES, « Les retraités et les
+#:   retraites », édition 2018, fiche 9, tableau 1, que le COR reprend, séance
+#:   du 24 mai 2018, document n° 3) ;
+#: * les retraités nés en 1946 que l'EIR de 2012 trouve au minimum de leur
+#:   régime principal, unipensionnés ou polypensionnés, sexe par sexe (même
+#:   fiche, tableau 3).
+#:
+#: Les deux premières comptent tous les liquidants du RSI, polypensionnés
+#: compris, qui sont la plupart ; l'artisan de la population l'est toute sa
+#: carrière : les unipensionnés de l'EIR le jugent au plus près. Le cas type
+#: tient ensemble les artisans et les commerçants, que les sources séparent
+#: sans dire leurs effectifs : elles l'encadrent.
+RSI = {
+    "liquidants_2011": {
+        "source": "COR, 26 mars 2013, document n° 11 (RSI), note 12",
+        "servis": {"artisans": 40, "commercants": 47},
+    },
+    "liquidants_2016": {
+        "source": "DREES, Les retraités et les retraites, 2018, fiche 9, tableau 1",
+        "eligibles": {"artisans": 44, "commercants": 50},
+    },
+    "generation_1946": {
+        "source": "DREES, Les retraités et les retraites, 2018, fiche 9, tableau 3 (EIR 2012)",
+        "unipensionnes": {"artisans": {"ensemble": 33, "F": 58, "H": 23},
+                          "commercants": {"ensemble": 37, "F": 40, "H": 34}},
+        "polypensionnes": {"artisans": {"ensemble": 12, "F": 31, "H": 8},
+                           "commercants": {"ensemble": 16, "F": 29, "H": 9}},
+    },
+}
+
+#: Les années de liquidation où le RSI juge ses artisans, et la génération où
+#: l'EIR de 2012 le fait.
+ANNEES_DU_RSI = (2011, 2016)
+GENERATION_DE_L_EIR_2012 = 1946
+
 
 # -- la simulation ---------------------------------------------------------------
 
-def _mesurer(parametres: Parametres, morceau: tuple) -> list[tuple]:
+def _mesurer(parametres: Parametres, morceau: tuple, regime: str = REGIME) -> list[tuple]:
     """Le minimum de chaque carrière du morceau, au scénario 1 de la page.
 
     Rend, pour chaque ``(indice, cas type, génération)`` qui liquide une
-    pension du régime général, ``(indice, génération, (année et mois d'effet
-    de cette pension, minimum annuel qui la relève, majoration servie, minimum
-    avant écrêtement))``, ce dernier ``None`` avant 2012 ; ``(indice,
+    pension de ``regime`` — le régime général, ou le RSI des artisans
+    (:data:`REGIME_DES_ARTISANS`) —, ``(indice, génération, (année et mois
+    d'effet de cette pension, minimum annuel qui la relève, majoration servie,
+    minimum avant écrêtement))``, ce dernier ``None`` avant 2012 ; ``(indice,
     génération, None)`` pour une carrière que le moteur refuse.
     """
     simulateur = Simulateur(parametres).pour_la_projection()
@@ -189,7 +245,7 @@ def _mesurer(parametres: Parametres, morceau: tuple) -> list[tuple]:
             sortie.append((indice, generation, None))
             continue
         pensions = [p for p in actuel.pensions_par_regime
-                    if p.regime == REGIME and p.montant > 0.0]
+                    if p.regime == regime and p.montant > 0.0]
         if not pensions:
             continue
         annee, mois = min(
@@ -199,8 +255,8 @@ def _mesurer(parametres: Parametres, morceau: tuple) -> list[tuple]:
         minimum, majore = 0.0, False
         for avantage in actuel.avantages_appliques:
             if avantage.code == "minimum_contributif":
-                minimum += somme_ordonnee(montant for regime, montant in avantage.par_regime
-                                          if regime == REGIME)
+                minimum += somme_ordonnee(montant for nom, montant in avantage.par_regime
+                                          if nom == regime)
                 majore = majore or MAJORATION in avantage.detail
         avant = (None if actuel.minimum_ecrete is None
                  else actuel.minimum_ecrete.avant_ecretement)
@@ -208,26 +264,27 @@ def _mesurer(parametres: Parametres, morceau: tuple) -> list[tuple]:
     return sortie
 
 
-def _mesurer_morceau(parametres: Parametres, morceau: tuple) -> list[tuple]:
+def _mesurer_morceau(parametres: Parametres, morceau: tuple,
+                     regime: str = REGIME) -> list[tuple]:
     """Le morceau, gardé sous l'empreinte du modèle et le code de ce script."""
     return memoire.memoriser_pour(
-        parametres, ("part_minimum_contributif", parametres, morceau),
-        lambda: _mesurer(parametres, morceau))
+        parametres, ("part_minimum_contributif", parametres, morceau, regime),
+        lambda: _mesurer(parametres, morceau, regime))
 
 
 def simuler(parametres: Parametres, variantes: list, generations: tuple[int, ...],
-            processus: int) -> list[tuple]:
+            processus: int, regime: str = REGIME) -> list[tuple]:
     """Chaque carrière de la grille, à chaque génération : un morceau par
     génération, sur ``processus`` cœurs."""
     morceaux = [tuple((indice, v.cas, generation) for indice, v in enumerate(variantes))
                 for generation in generations]
     if processus <= 1:
-        resultats = [_mesurer_morceau(parametres, morceau) for morceau in morceaux]
+        resultats = [_mesurer_morceau(parametres, morceau, regime) for morceau in morceaux]
     else:
         with ProcessPoolExecutor(max_workers=processus,
                                  mp_context=multiprocessing.get_context("spawn")) as pool:
             resultats = list(pool.map(_mesurer_morceau, [parametres] * len(morceaux),
-                                      morceaux))
+                                      morceaux, [regime] * len(morceaux)))
     return [ligne for resultat in resultats for ligne in resultat]
 
 
@@ -235,7 +292,8 @@ def simuler(parametres: Parametres, variantes: list, generations: tuple[int, ...
 
 def _part(lot: list[tuple[float, tuple]], coefficients: dict[int, float]) -> dict:
     """Ce qu'un lot de carrières pesées dit du minimum : la part des
-    bénéficiaires, celle de la majoration, le minimum mensuel moyen d'un
+    bénéficiaires, celle des éligibles avant l'écrêtement — les bénéficiaires,
+    avant 2012 —, celle de la majoration, le minimum mensuel moyen d'un
     bénéficiaire en euros de :data:`ANNEE_EUROS`, la part des éligibles que
     l'écrêtement prive de tout."""
     total = somme_ordonnee(p for p, _ in lot)
@@ -246,9 +304,12 @@ def _part(lot: list[tuple[float, tuple]], coefficients: dict[int, float]) -> dic
     eligibles = somme_ordonnee(p for p, m in lot if m[4] is not None and m[4] > 0.0)
     prives = somme_ordonnee(p for p, m in lot
                             if m[4] is not None and m[4] > 0.0 and m[2] <= 0.0)
+    avant_l_ecretement = somme_ordonnee(
+        p for p, m in lot if (m[2] if m[4] is None else m[4]) > 0.0)
     return {
         "poids": total,
         "part": 100.0 * poids_servis / total,
+        "part_eligible": 100.0 * avant_l_ecretement / total,
         "part_majoree": 100.0 * somme_ordonnee(p for p, m in servis if m[3]) / total,
         "montant": (somme_ordonnee(p * m[2] / 12.0 * coefficients[m[0]] for p, m in servis)
                     / poids_servis) if poids_servis else 0.0,
@@ -319,6 +380,25 @@ def agricoles(variantes: list, racine: Path, avec_l_etranger: bool) -> list[floa
     n = len(variantes) // 2 if avec_l_etranger else len(variantes)
     residents, ailleurs = G.fractions_agricoles(variantes[:n], racine)
     return residents + (ailleurs if avec_l_etranger else [])
+
+
+def parts_des_artisans(variantes: list, poids: list[float], lignes: list[tuple],
+                       coefficients: dict[int, float]) -> dict:
+    """Les artisans au minimum du RSI, pesés comme le juge de chacune de ses
+    sources (:data:`RSI`) : les liquidants de chacune des
+    :data:`ANNEES_DU_RSI`, étalés sur leurs mois de naissance, et la
+    génération que l'EIR de 2012 voit partie, :data:`GENERATION_DE_L_EIR_2012`."""
+    return {
+        "par_annee": parts(variantes, poids, lignes, coefficients,
+                           lambda generation, mesure: [
+                               (annee, part) for annee, part
+                               in etalement(generation, mesure[0], mesure[1]).items()
+                               if annee in ANNEES_DU_RSI]),
+        "generation": parts(variantes, poids, lignes, coefficients,
+                            lambda generation, mesure: (
+                                [(generation, 1.0)]
+                                if generation == GENERATION_DE_L_EIR_2012 else [])),
+    }
 
 
 def _lire_eacr(racine: Path, nom: str, colonne: str) -> dict[tuple[int, str, str], float]:
@@ -445,6 +525,43 @@ def mesurer(noms: tuple[str, ...] = GRILLES, processus: int = 1,
     return resultat
 
 
+def mesurer_artisans(processus: int = 1, parametres: Parametres | None = None) -> dict:
+    """Les artisans de la population au minimum du RSI, contre ce que le RSI,
+    l'EACR et l'EIR de 2012 en publient (:data:`RSI`) : les seuls cas types
+    indépendants de la grille (``grille_large.INDEPENDANTS``), aux générations
+    que les :data:`ANNEES_DU_RSI` réclament, et les retraités de l'étranger
+    avec eux sous :data:`NON_RESIDENTS`, que les trois sources comptent."""
+    parametres = parametres if parametres is not None else Parametres()
+    racine = parametres.racine_donnees
+    source = G.eir(racine)
+    _, valeurs = G.centiles(racine)
+    simulateur = Simulateur(parametres)
+    effectifs = simulateur.effectifs
+    debut = time.time()
+    variantes = G.grille("population", effectifs, source, G.multiplicateurs(valeurs))
+    poids = G.poids_retraites(variantes, effectifs, source.millesime)
+    indices = [i for i, v in enumerate(variantes)
+               if v.cas.code.split("~", 1)[0] in G.INDEPENDANTS]
+    generations = tuple(sorted(
+        {g for annee in ANNEES_DU_RSI
+         for g in range(annee - AGES_DE_DEPART[1], annee - AGES_DE_DEPART[0] + 1)}
+        | {GENERATION_DE_L_EIR_2012}))
+    artisans, pesees = [variantes[i] for i in indices], [poids[i] for i in indices]
+    lignes = simuler(parametres, artisans, generations, processus, REGIME_DES_ARTISANS)
+    if NON_RESIDENTS:
+        ailleurs = G.poids_des_non_residents(variantes, poids, racine)
+        artisans, pesees, lignes = avec_les_non_residents(
+            artisans, pesees, [ailleurs[i] for i in indices], lignes, G.non_residents(racine))
+    coefficients = {a: simulateur.macro.coefficient_prix(a, ANNEE_EUROS)
+                    for a in {m[0] for _, _, m in lignes if m is not None}}
+    juge = parts_des_artisans(artisans, pesees, lignes, coefficients)
+    return {"carrieres": len(indices), "generations": list(generations),
+            "refusees": len([m for _, _, m in lignes if m is None]),
+            "par_annee": {str(a): v for a, v in juge["par_annee"].items()},
+            "generation": {str(g): v for g, v in juge["generation"].items()},
+            "rsi": RSI, "secondes": round(time.time() - debut, 1)}
+
+
 # -- l'impression ----------------------------------------------------------------
 
 def _pc(valeur: float | None) -> str:
@@ -493,6 +610,37 @@ def imprimer_caisses(caisses: dict, eacr: dict) -> None:
                   f"({_pc(eacr.get((annee, 'cnav', sexe))).strip()})    "
                   f"{_pc(msa.get('part'))} ({_pc(eacr.get((annee, 'msa_salaries', sexe))).strip()})"
                   f"      {_pc(poids)} ({_pc(deduite).strip()})")
+
+
+def imprimer_artisans(artisans: dict) -> None:
+    """Le juge propre des artisans (:func:`mesurer_artisans`) : la population
+    à gauche, ce que publient le RSI, l'EACR et l'EIR de 2012 à droite."""
+    rsi = artisans["rsi"]
+    print(f"\nLes artisans de la population au minimum contributif du RSI : "
+          f"{artisans['carrieres']} carrières, retraités de l'étranger compris, "
+          f"{artisans['refusees']} couples refusés, {artisans['secondes']} s")
+    print("                                   ensemble    femmes    hommes   "
+          "publié : artisans, commerçants")
+    lignes = (
+        ("2011", "part", "liquidants de 2011, servis",
+         "{artisans} et {commercants} % (RSI, au COR)".format(**rsi["liquidants_2011"]["servis"])),
+        ("2016", "part_eligible", "liquidants de 2016, éligibles",
+         "{artisans} et {commercants} % (EACR, avant écrêtement)".format(
+             **rsi["liquidants_2016"]["eligibles"])),
+        ("2016", "part", "liquidants de 2016, servis", "non publié"),
+    )
+    for annee, cle, intitule, publie in lignes:
+        par_sexe = artisans["par_annee"].get(annee, {})
+        print(f"  {intitule:31s}  " + "  ".join(
+            f"{_pc(par_sexe.get(s, {}).get(cle))}" for s in SEXES) + f"   {publie}")
+    generation = artisans["generation"].get(str(GENERATION_DE_L_EIR_2012), {})
+    uni = rsi["generation_1946"]["unipensionnes"]
+    print(f"  nés en {GENERATION_DE_L_EIR_2012}, au minimum          " + "  ".join(
+        f"{_pc(generation.get(s, {}).get('part'))}" for s in SEXES)
+        + "   unipensionnés de l'EIR 2012 :")
+    for nom, intitule in (("artisans", "artisans"), ("commercants", "commerçants")):
+        print(f"{'':71s}{intitule} " + " / ".join(
+            f"{uni[nom][s]}" for s in SEXES) + " %")
 
 
 def imprimer(resultat: dict) -> None:
@@ -590,9 +738,15 @@ def main(argv: list[str] | None = None) -> int:
     analyseur.add_argument("--processus", type=int, default=G.processus_par_defaut(),
                            help="cœurs de la simulation (défaut : tous)")
     analyseur.add_argument("--json", type=Path, help="écrit le résultat dans ce fichier")
+    analyseur.add_argument("--artisans", action="store_true",
+                           help="les seuls artisans de la population, au juge du RSI")
     arguments = analyseur.parse_args(argv)
-    resultat = mesurer(tuple(arguments.grille or GRILLES), arguments.processus)
-    imprimer(resultat)
+    if arguments.artisans:
+        resultat = mesurer_artisans(arguments.processus)
+        imprimer_artisans(resultat)
+    else:
+        resultat = mesurer(tuple(arguments.grille or GRILLES), arguments.processus)
+        imprimer(resultat)
     if arguments.json:
         arguments.json.write_bytes(
             json.dumps(resultat, ensure_ascii=False, indent=1).encode("utf-8"))
