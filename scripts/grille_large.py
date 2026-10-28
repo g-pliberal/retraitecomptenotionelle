@@ -264,7 +264,14 @@ trente et unième (le 28 octobre 2026) fait partir les départs avec décote
 entre l'âge légal et l'âge d'annulation de la décote aussi, comme ceux des nés
 en 1953 (:data:`DECOTE_ENTRE_LES_DEUX_AGES`) : l'EIR en voit la moitié chez
 les femmes, un gros tiers chez les hommes, partir à l'âge légal, où la
-population les faisait tous partir.
+population les faisait tous partir. La trente-deuxième (le même jour) fait
+partir au taux plein dès l'âge légal les invalides et les inaptes
+(:data:`INVALIDES_ET_INAPTES`) : la population n'en avait pas, et ses
+carrières incomplètes attendaient toutes le taux plein, ou décotaient ; une
+troisième jumelle de chacune, reconnue inapte au travail, pèse désormais la
+part des retraités de sa génération que l'EIR voit partir pour invalidité ou
+pour inaptitude sans carrière complète, 9,4 % des femmes et 7,6 % des hommes
+nés en 1953.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -272,8 +279,8 @@ Une population. Les axes sont tenus pour indépendants — le salaire ne dépend
 ni du sexe ni de la durée —, chaque déclinaison garde l'âge d'entrée et le
 profil de son cas type, et les parts sont celles des retraités de 2020,
 appliquées à toutes les générations ; seules les carrières incomplètes des
-femmes changent de durée avec la leur, et la part des départs avec décote avec
-la sienne. La dispersion des salaires est celle d'une
+femmes changent de durée avec la leur, et la part des départs avec décote, ou
+pour invalidité et inaptitude, avec la sienne. La dispersion des salaires est celle d'une
 coupe de l'année à temps complet, plus large que celle d'un salaire de
 carrière ; les dix années de salariat d'un polypensionné et les deux enfants
 d'une femme sont des conventions, que l'EIR ne chiffre pas. Ce que la mesure
@@ -962,6 +969,37 @@ DECOTE_DES_CARRIERES_QUI_LE_PEUVENT = True
 #: de l'âge légal de chacune, et ne dépendent pas du rang.
 DECOTE_ENTRE_LES_DEUX_AGES = True
 
+#: La trente-deuxième version (action 138, étape 14, le 28 octobre 2026) : les
+#: invalides et les inaptes. Reconnu inapte au travail, ou ex-invalide, que
+#: L. 341-15 range parmi eux, l'assuré a le taux plein quelle que soit sa durée
+#: (L. 351-8, 2°) dès l'âge légal, et dès 62 ans quand la réforme de 2023 le
+#: relève (L. 351-1-5). La population n'en avait pas — l'inapte et l'ex-invalide
+#: de la grille du coût cèdent leur part au gabarit (:func:`reference_population`)
+#: —, et ses carrières incomplètes attendaient toutes le taux plein, ou
+#: partaient avec une décote. Chacune a désormais une troisième jumelle,
+#: l'inapte, qui part au taux plein dès l'âge légal : la part des retraités du
+#: sexe que l'EIR voit partir pour invalidité ou pour inaptitude sans carrière
+#: complète, aux nés en 1950 et en 1953 (:func:`inaptes_des_generations` :
+#: 10,15 et 9,40 % des femmes, 7,70 et 7,58 % des hommes), rapportée,
+#: génération simulée par génération simulée, aux seules carrières dont
+#: l'inaptitude avance le départ (:func:`avance_par_l_inaptitude`), et prise
+#: sur la jumelle du taux plein (:func:`parts_des_jumelles`). Trois
+#: conventions : une seule jumelle pour les invalides et les inaptes, que le
+#: droit fait partir de même, à la mortalité de sa carrière ; l'inaptitude
+#: avance une carrière quand elle l'avance au salaire de son cas type, avant
+#: sa déclinaison par le rang, comme la décote ; la décote passe avant elle,
+#: une carrière ne donnant à son inapte que ce que sa décote lui laisse.
+INVALIDES_ET_INAPTES = True
+
+#: Les conditions de départ de l'EIR que :data:`INVALIDES_ET_INAPTES` réunit.
+CONDITIONS_DES_INAPTES = ("invalidite", "inaptitude")
+
+#: La génération de l'EIR dont les invalides et les inaptes donnent leur poids
+#: aux jumelles inaptes, celui que la page et la pesée des groupes du COR
+#: voient (:func:`parts_des_inaptes`) : les nés en 1953, que l'enquête de 2020
+#: voit presque tous partis.
+GENERATION_DES_INAPTES = 1953
+
 #: Le témoin des tables de l'EACR, dont la table H dit la part décotée des
 #: liquidants de la Cnav (:func:`decote_du_flux`).
 TEMOIN_EACR = RACINE / "tests" / "temoins" / "drees_eacr_tables_2026.json"
@@ -1291,7 +1329,8 @@ class CasTypeLarge(CasType):
             interruptions=interruptions,
             temps_partiel=self._temps_partiel(generation, interruptions),
             nombre_enfants=self.nombre_enfants, part_primes=self.part_primes,
-            identifiant=f"{self.libelle} (génération {generation})")
+            identifiant=f"{self.libelle} (génération {generation})",
+            **self._invalidite())
 
 
 def elargi(cas: CasType, **changements) -> CasTypeLarge:
@@ -1329,6 +1368,9 @@ class Variante:
     #: Part-elle à l'ouverture du droit, avec une décote
     #: (:data:`DEPARTS_AVEC_DECOTE`) ?
     decote: bool = False
+    #: Part-elle au taux plein dès l'âge légal, invalide ou inapte
+    #: (:data:`INVALIDES_ET_INAPTES`) ?
+    inapte: bool = False
     #: Les années qu'elle attend après l'âge légal, avec une surcote
     #: (:data:`DEPARTS_AVEC_SURCOTE`) ; zéro sans elle.
     surcote: float = 0.0
@@ -2693,7 +2735,8 @@ def salaires(variantes: list[Variante], points) -> list[Variante]:
 def reference_population() -> list[Variante]:
     """La grille du dépôt, son salariat privé réduit au gabarit : les quatre cas
     types de la Cnav lui cèdent chacun sa part de la caisse, et l'inapte et
-    l'ex-invalide de la grille du coût, leurs variantes, la leur ; le
+    l'ex-invalide de la grille du coût, leurs variantes, la leur, que les
+    carrières incomplètes rendent sous :data:`INVALIDES_ET_INAPTES` ; le
     contractuel aussi sous :data:`CONTRACTUELS_AU_SALARIAT`."""
     retires = SALARIAT_PRIVE + (("contractuel_public",) if CONTRACTUELS_AU_SALARIAT else ())
     variantes = [v for v in reference() if cas_type_affiche(v.cas.code) not in retires]
@@ -2825,8 +2868,12 @@ def population(effectifs, source: CaracteristiquesRetraites,
                       if decotes and DECOTE_DES_CARRIERES_QUI_LE_PEUVENT else None)
         attentes = (attentes_des_decotes(departs_publies(racine), racine)
                     if DECOTE_ENTRE_LES_DEUX_AGES else None)
+        inaptes = inaptes_des_generations(racine) if INVALIDES_ET_INAPTES else None
+        avances = (avances_par_l_inaptitude(variantes, racine)
+                   if inaptes and ouvertures is not None else None)
         variantes = departs_avec_decote(variantes, effectifs, source, donnees.quintiles,
-                                        decotes, ouvertures, attentes, ages_legaux(racine))
+                                        decotes, ouvertures, attentes, ages_legaux(racine),
+                                        inaptes, avances)
     variantes = salaires_population(variantes, donnees)
     if ASSIMILEES_SELON_LE_RANG:
         variantes = assimilees_selon_le_rang(variantes, donnees.quintiles)
@@ -2865,6 +2912,22 @@ def parts_avec_decote(variantes: list[Variante], effectifs,
     carrières incomplètes parmi eux, l'année de l'enquête ; un au plus."""
     return {sexe: part_des_incompletes(quintiles[("ensemble", "part_decote", sexe)] / 100.0,
                                        tous, incompletes)
+            for sexe, (tous, incompletes)
+            in poids_des_incompletes(variantes, effectifs, source).items()}
+
+
+def parts_des_inaptes(variantes: list[Variante], effectifs,
+                      source: CaracteristiquesRetraites,
+                      inaptes: dict[str, tuple[tuple[int, float], ...]],
+                      parts: dict[str, float]) -> dict[str, float]:
+    """La part des carrières incomplètes de chaque sexe que pèse leur jumelle
+    inapte (:data:`INVALIDES_ET_INAPTES`) : celle des invalides et des inaptes
+    sans carrière complète de :data:`GENERATION_DES_INAPTES` parmi tous les
+    retraités du sexe (:func:`inaptes_des_generations`), divisée, comme la
+    décote, par le poids des carrières incomplètes parmi eux, l'année de
+    l'enquête ; pas plus que ce que la décote ``parts`` laisse."""
+    return {sexe: min(1.0 - parts[sexe], part_des_incompletes(
+                _par_generation(inaptes[sexe], GENERATION_DES_INAPTES, 0.0), tous, incompletes))
             for sexe, (tous, incompletes)
             in poids_des_incompletes(variantes, effectifs, source).items()}
 
@@ -2925,6 +2988,30 @@ def decotes_des_generations(racine: Path) -> dict[str, tuple[tuple[int, float], 
     return sortie
 
 
+def inaptes_des_generations(racine: Path) -> dict[str, tuple[tuple[int, float], ...]]:
+    """La part des invalides et des inaptes sans carrière complète de chaque
+    génération parmi tous ses retraités, sexe par sexe, en paires
+    ``(génération, part)`` triées (:data:`INVALIDES_ET_INAPTES`) : la part des
+    départs que l'EIR compte aux nés en 1950 et en 1953 sous chacune des
+    :data:`CONDITIONS_DES_INAPTES`, fois celle de ses retraités sans carrière
+    complète (``departs_generations.csv``), en droite ligne entre eux ; celle
+    des nés en 1950 avant eux, celle des nés en 1953 après."""
+    publies = departs_publies(racine)
+    premiere, derniere = min(ENQUETES_DES_DEPARTS), max(ENQUETES_DES_DEPARTS)
+    sortie = {}
+    for sexe in ("F", "H"):
+        de_la_premiere, de_la_derniere = (somme_ordonnee(
+            publies[(generation, "condition", condition, sexe, "part")] / 100.0
+            * (1.0 - publies[(generation, "condition", condition, sexe,
+                              "carriere_complete")] / 100.0)
+            for condition in CONDITIONS_DES_INAPTES) for generation in (premiere, derniere))
+        sortie[sexe] = tuple(
+            (generation, de_la_premiere + ((de_la_derniere - de_la_premiere)
+                                           * (generation - premiere) / (derniere - premiere)))
+            for generation in range(premiere, derniere + 1))
+    return sortie
+
+
 def decote_a_l_ouverture(simulateur: Simulateur, cas: CasType, generation: int) -> bool:
     """Vrai si ce cas type part, ou partirait, avec une décote à l'ouverture
     de son droit (:data:`DECOTE_DES_CARRIERES_QUI_LE_PEUVENT`). Sous la règle
@@ -2976,6 +3063,49 @@ def ouvertures_decotees(variantes: list[Variante], racine: Path) -> dict[str, fr
                      generations), calcul)
 
 
+def avance_par_l_inaptitude(simulateur: Simulateur, cas: CasType, generation: int) -> bool:
+    """Vrai si l'inaptitude avance le départ de ce cas type, étant né en
+    ``generation`` (:data:`INVALIDES_ET_INAPTES`) : reconnu inapte, il a le taux
+    plein, que le pilote fixe, plus tôt que sans elle — dès l'âge légal, ou dès
+    62 ans quand la réforme de 2023 le relève, quand sa durée ne le lui donne
+    pas à cet âge. Un régime qui ne sert pas le taux plein à l'inapte (fiche
+    ``inaptitude_au_travail``) n'avance rien."""
+    apte = au_taux_plein(replace(cas, inaptitude=False))
+    return (replace(apte, inaptitude=True).age_liquidation_pour(simulateur, generation)
+            < apte.age_liquidation_pour(simulateur, generation) - 1e-6)
+
+
+def avances_par_l_inaptitude(variantes: list[Variante], racine: Path
+                             ) -> dict[str, frozenset[int]]:
+    """Les générations de la grille (``cout.generations``) où l'inaptitude
+    avance le départ de chaque carrière incomplète qui part au taux plein
+    (:func:`avance_par_l_inaptitude`), par code ; une génération que le modèle
+    refuse de calculer n'en est pas. Gardées sous l'empreinte du modèle et le
+    code de ce script."""
+    parametres = Parametres(racine_donnees=racine)
+    cas_types = tuple(v.cas for v in variantes
+                      if incomplete(v) and v.cas.regle_liquidation == "taux_plein")
+    generations = C.generations()
+
+    def calcul() -> dict[str, frozenset[int]]:
+        simulateur = Simulateur(parametres).pour_la_projection()
+        sortie = {}
+        for cas in cas_types:
+            siennes = []
+            for generation in generations:
+                try:
+                    if avance_par_l_inaptitude(simulateur, cas, generation):
+                        siennes.append(generation)
+                except (ValueError, KeyError):
+                    continue
+            sortie[cas.code] = frozenset(siennes)
+        return sortie
+
+    return memoire.memoriser_pour(
+        parametres, ("inaptitude_qui_avance_le_depart_de_la_population", parametres,
+                     cas_types, generations), calcul)
+
+
 def _en_paires(valeurs: list[tuple[int, float]]) -> tuple[tuple[int, float], ...]:
     """Des paires ``(génération, valeur)`` triées, une là où la valeur change."""
     sortie: list[tuple[int, float]] = []
@@ -2988,11 +3118,13 @@ def _en_paires(valeurs: list[tuple[int, float]]) -> tuple[tuple[int, float], ...
 def parts_des_jumelles(variantes: list[Variante], effectifs,
                        source: CaracteristiquesRetraites, parts: dict[str, float],
                        decotes: dict[str, tuple[tuple[int, float], ...]],
-                       ouvertures: dict[str, frozenset[int]] | None = None
+                       ouvertures: dict[str, frozenset[int]] | None = None,
+                       inaptes: dict[str, tuple[tuple[int, float], ...]] | None = None,
+                       avances: dict[str, frozenset[int]] | None = None
                        ) -> dict[str, tuple[tuple[tuple[int, float], ...], ...]]:
-    """Ce que chaque génération donne au poids des deux jumelles de chaque
-    carrière incomplète (:data:`DECOTE_SELON_LA_GENERATION`), par code de la
-    carrière : celle qui part au taux plein, puis celle qui décote, en paires
+    """Ce que chaque génération donne au poids des jumelles de chaque carrière
+    incomplète (:data:`DECOTE_SELON_LA_GENERATION`), par code de la carrière :
+    celle qui part au taux plein, celle qui décote, puis l'inapte, en paires
     ``(génération, part)`` triées. La jumelle qui décote pèse la part
     ``parts`` de la carrière (:func:`parts_avec_decote`) ; sa génération en
     fait partir la part ``decotes`` parmi tous les retraités du sexe
@@ -3002,9 +3134,18 @@ def parts_des_jumelles(variantes: list[Variante], effectifs,
     elle se rapporte aux seules carrières qui peuvent décoter à la génération
     simulée dont chaque année de naissance est une cohorte, et se prend sans
     ce que les carrières qui partent à l'ouverture de leur statut y décotent ;
-    la jumelle qui décote d'une carrière qui ne le peut pas ne pèse rien.
-    Ensemble, les deux gardent à chaque génération le poids de la carrière."""
+    la jumelle qui décote d'une carrière qui ne le peut pas ne pèse rien. Sous
+    ``inaptes`` (:func:`inaptes_des_generations`, :data:`INVALIDES_ET_INAPTES`),
+    l'inapte pèse la part :func:`parts_des_inaptes` de la carrière, et sa
+    génération en fait partir la part ``inaptes`` parmi tous les retraités du
+    sexe, rapportée aux carrières incomplètes, ou, sous ``ouvertures``, aux
+    seules carrières dont l'inaptitude avance le départ à la génération simulée
+    (``avances``, :func:`avances_par_l_inaptitude`) ; elle n'y prend jamais
+    plus que ce que la décote laisse. Sans ``inaptes``, l'inapte ne pèse rien.
+    Ensemble, les jumelles gardent à chaque génération le poids de la carrière."""
     poids = poids_retraites(variantes, effectifs, source.millesime)
+    bases_inaptes = (parts_des_inaptes(variantes, effectifs, source, inaptes, parts)
+                     if inaptes else {})
     simulees = [(naissance, generation) for generation in C.generations()
                 for naissance in range(generation - C._DEMI_TRANCHE,
                                        generation + C._DEMI_TRANCHE + 1)]
@@ -3013,24 +3154,35 @@ def parts_des_jumelles(variantes: list[Variante], effectifs,
         base = parts[sexe]
         if not base:
             continue
+        base_inapte = bases_inaptes.get(sexe, 0.0)
         du_sexe = [(v, p) for v, p in zip(variantes, poids) if v.cas.sexe == sexe]
         tous = somme_ordonnee(p for _, p in du_sexe)
         carrieres = [v for v, _ in du_sexe
                      if incomplete(v) and v.cas.regle_liquidation == "taux_plein"]
         codes = {v.cas.code for v in carrieres}
 
-        def jumelles(part: float) -> tuple[float, float]:
-            return ((1.0 - part) / (1.0 - base) if base < 1.0 else 1.0), part / base
+        def jumelles(part: float, inapte: float = 0.0) -> tuple[float, float, float]:
+            reste = 1.0 - base - base_inapte
+            return (((1.0 - part - inapte) / reste if reste > 0.0 else 1.0), part / base,
+                    inapte / base_inapte if base_inapte else 0.0)
+
+        def en_paires(valeurs: list[tuple[int, tuple[float, float, float]]]) -> tuple:
+            return tuple(_en_paires([(n, j[rang]) for n, j in valeurs]) for rang in range(3))
 
         if ouvertures is None:
             incompletes = somme_ordonnee(p for v, p in du_sexe if incomplete(v))
-            pleine, decotee = [], []
-            for generation, decote in decotes[sexe]:
-                au_taux_plein, avec = jumelles(part_des_incompletes(decote, tous, incompletes))
-                pleine.append((generation, au_taux_plein))
-                decotee.append((generation, avec))
+            generations = sorted({g for g, _ in decotes[sexe]}
+                                 | {g for g, _ in (inaptes or {}).get(sexe, ())})
+            valeurs = []
+            for generation in generations:
+                avec = part_des_incompletes(_par_generation(decotes[sexe], generation, 0.0),
+                                            tous, incompletes)
+                inapte = (min(1.0 - avec, part_des_incompletes(
+                    _par_generation(inaptes[sexe], generation, 0.0), tous, incompletes))
+                    if base_inapte else 0.0)
+                valeurs.append((generation, jumelles(avec, inapte)))
             for v in carrieres:
-                sortie[v.cas.code] = (tuple(pleine), tuple(decotee))
+                sortie[v.cas.code] = en_paires(valeurs)
             continue
         eligibles = {generation: somme_ordonnee(
             p for v, p in du_sexe if v.cas.code in codes
@@ -3040,6 +3192,11 @@ def parts_des_jumelles(variantes: list[Variante], effectifs,
             p for v, p in du_sexe if v.cas.regle_liquidation == "ouverture"
             and generation in ouvertures.get(v.cas.code, ()))
             for generation in C.generations()}
+        avancees = avances or {}
+        aptes = {generation: somme_ordonnee(
+            p for v, p in du_sexe if v.cas.code in codes
+            and generation in avancees.get(v.cas.code, ()))
+            for generation in C.generations()}
 
         def part(naissance: int, generation: int) -> float:
             if not eligibles[generation]:
@@ -3048,13 +3205,22 @@ def parts_des_jumelles(variantes: list[Variante], effectifs,
                      - statutaires[generation])
             return min(1.0, max(0.0, cible / eligibles[generation]))
 
+        def part_inapte(naissance: int, generation: int) -> float:
+            if not (base_inapte and aptes[generation]):
+                return 0.0
+            return min(1.0, _par_generation(inaptes[sexe], naissance, 0.0) * tous
+                       / aptes[generation])
+
         for v in carrieres:
             siennes = ouvertures.get(v.cas.code, frozenset())
-            valeurs = [(naissance, jumelles(part(naissance, generation)
-                                            if generation in siennes else 0.0))
-                       for naissance, generation in simulees]
-            sortie[v.cas.code] = (_en_paires([(n, j[0]) for n, j in valeurs]),
-                                  _en_paires([(n, j[1]) for n, j in valeurs]))
+            avancee = avancees.get(v.cas.code, frozenset())
+            valeurs = []
+            for naissance, generation in simulees:
+                avec = part(naissance, generation) if generation in siennes else 0.0
+                inapte = (min(1.0 - avec, part_inapte(naissance, generation))
+                          if generation in avancee else 0.0)
+                valeurs.append((naissance, jumelles(avec, inapte)))
+            sortie[v.cas.code] = en_paires(valeurs)
     return sortie
 
 
@@ -3124,7 +3290,9 @@ def departs_avec_decote(variantes: list[Variante], effectifs,
                         decotes: dict[str, tuple[tuple[int, float], ...]] | None = None,
                         ouvertures: dict[str, frozenset[int]] | None = None,
                         attentes: dict[str, list[tuple[float, float]]] | None = None,
-                        legaux: tuple[tuple[int, float], ...] = ()
+                        legaux: tuple[tuple[int, float], ...] = (),
+                        inaptes: dict[str, tuple[tuple[int, float], ...]] | None = None,
+                        avances: dict[str, frozenset[int]] | None = None
                         ) -> list[Variante]:
     """Chaque carrière incomplète en deux : la part de son sexe
     (:func:`parts_avec_decote`) part à l'ouverture du droit, avec une décote,
@@ -3137,9 +3305,17 @@ def departs_avec_decote(variantes: list[Variante], effectifs,
     décline à son tour : chaque attente prend sa part du poids de la jumelle,
     et part autant d'années après l'âge légal de sa génération, ``legaux``
     (:func:`ages_legaux`), à l'ouverture du droit encore ; celle qui n'attend
-    pas garde le code de la jumelle."""
+    pas garde le code de la jumelle. Sous ``inaptes``
+    (:func:`inaptes_des_generations`), une troisième jumelle : la part de son
+    sexe que pèse l'inapte (:func:`parts_des_inaptes`), prise sur la jumelle du
+    taux plein, part au taux plein dès l'âge légal, reconnue inapte au travail,
+    rapportée sous ``avances`` aux carrières dont l'inaptitude avance le départ
+    (:func:`avances_par_l_inaptitude`)."""
     parts = parts_avec_decote(variantes, effectifs, source, quintiles)
-    jumelles = (parts_des_jumelles(variantes, effectifs, source, parts, decotes, ouvertures)
+    parts_inaptes = (parts_des_inaptes(variantes, effectifs, source, inaptes, parts)
+                     if inaptes else {})
+    jumelles = (parts_des_jumelles(variantes, effectifs, source, parts, decotes, ouvertures,
+                                   inaptes, avances)
                 if decotes else {})
     sortie = []
     for v in variantes:
@@ -3147,24 +3323,30 @@ def departs_avec_decote(variantes: list[Variante], effectifs,
         if not incomplete(v) or v.cas.regle_liquidation != "taux_plein" or not part:
             sortie.append(v)
             continue
-        pleine, decotee = jumelles.get(v.cas.code, ((), ()))
-        sortie.append(v.fois(1.0 - part, parts_des_generations=pleine))
+        inapte = parts_inaptes.get(v.cas.sexe, 0.0)
+        pleine, decotee, de_l_inapte = jumelles.get(v.cas.code, ((), (), ()))
+        sortie.append(v.fois(1.0 - part - inapte, parts_des_generations=pleine))
         cas = replace(v.cas, code=f"{v.cas.code}~decote", regle_liquidation="ouverture")
         for attente, poids in (attentes[v.cas.sexe] if attentes else ((0.0, 1.0),)):
             sienne = (elargi(cas, code=f"{cas.code}{attente:.2f}", attente=attente,
                              legaux=legaux) if attente else cas)
             sortie.append(v.fois(part * poids, decote=True, parts_des_generations=decotee,
                                  cas=sienne))
+        if inapte:
+            sortie.append(v.fois(inapte, inapte=True, parts_des_generations=de_l_inapte,
+                                 cas=replace(v.cas, code=f"{v.cas.code}~inapte",
+                                             inaptitude=True)))
     return sortie
 
 
 def peut_surcoter(v: Variante) -> bool:
     """Vrai pour une carrière que :data:`DEPARTS_AVEC_SURCOTE` décline : du
     salariat ou des non-salariés, de trente années validées et plus
-    (:data:`TRANCHES_DES_SURCOTES`), qui part au taux plein, ni décotée ni
-    déjà déclinée."""
+    (:data:`TRANCHES_DES_SURCOTES`), qui part au taux plein, ni décotée, ni
+    inapte, ni déjà déclinée."""
     return (v.groupe in GROUPES_INTERROMPUS and v.tranche in TRANCHES_DES_SURCOTES
-            and v.cas.regle_liquidation == "taux_plein" and not v.decote and not v.surcote)
+            and v.cas.regle_liquidation == "taux_plein" and not v.decote and not v.inapte
+            and not v.surcote)
 
 
 def parts_avec_surcote(publies: dict) -> dict[str, float]:
@@ -4337,9 +4519,11 @@ PLACES_DES_DEPARTS = ("avant_age_legal", "age_legal", "entre", "age_annulation",
                       "apres_annulation")
 
 #: Les classes de conditions de départ que la population sait faire, et les
-#: conditions de l'EIR que chacune réunit : la population n'a ni invalides ni
-#: inaptes, ni de motif propre au taux plein ; ce qu'elle fait partir au taux
-#: plein d'un statut, sans décote, l'EIR le dit « décote inapplicable ».
+#: conditions de l'EIR que chacune réunit : la population fait partir ses
+#: invalides et ses inaptes au taux plein sans les distinguer
+#: (:data:`INVALIDES_ET_INAPTES`), et n'a pas de motif propre au taux plein ;
+#: ce qu'elle fait partir au taux plein d'un statut, sans décote, l'EIR le dit
+#: « décote inapplicable ».
 CLASSES_DE_CONDITIONS: dict[str, tuple[str, ...]] = {
     "carriere_longue": ("carriere_longue",),
     "decote": ("decote",),

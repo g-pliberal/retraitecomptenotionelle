@@ -2111,6 +2111,127 @@ def test_la_part_des_departs_avec_decote_se_rapporte_aux_carrieres_qui_peuvent_d
     assert femme.part_de_la_generation(1925) > 0.0
 
 
+#: La part des invalides et des inaptes sans carrière complète parmi tous les
+#: retraités du sexe, refaite à la main de l'EIR (``departs_generations.csv``) :
+#: la part des départs pour invalidité, fois celle de ses retraités sans
+#: carrière complète, et de même pour l'inaptitude.
+INAPTES_DE_L_EIR = {
+    "F": {1950: 0.071 * (1 - 0.663) + 0.089 * (1 - 0.128),
+          1953: 0.082 * (1 - 0.676) + 0.079 * (1 - 0.147)},
+    "H": {1950: 0.066 * (1 - 0.624) + 0.064 * (1 - 0.185),
+          1953: 0.075 * (1 - 0.653) + 0.060 * (1 - 0.171)},
+}
+
+
+def test_les_invalides_et_les_inaptes_sans_carriere_complete_se_lisent_dans_l_eir(parametres):
+    """Sous ``INVALIDES_ET_INAPTES``, la part des invalides et des inaptes qui
+    partent sans carrière complète suit la génération, sexe par sexe, parmi
+    tous ses retraités : celle des départs pour invalidité et pour inaptitude
+    que l'EIR compte aux nés en 1950 et en 1953, chacune fois la part de ses
+    retraités sans carrière complète. Nées en 1950, 7,1 % des femmes sont
+    parties pour invalidité, dont 66,3 % à carrière complète, et 8,9 % pour
+    inaptitude, dont 12,8 % : 10,15 % ; nées en 1953, 9,40 % ; les hommes,
+    7,70 et 7,58 %. En droite ligne entre elles ; celle des nés en 1950 avant
+    eux, celle des nés en 1953 après."""
+    assert G.INVALIDES_ET_INAPTES
+    assert INAPTES_DE_L_EIR["F"][1950] == pytest.approx(0.1015, abs=1e-4)
+    assert INAPTES_DE_L_EIR["F"][1953] == pytest.approx(0.0940, abs=1e-4)
+    assert INAPTES_DE_L_EIR["H"][1950] == pytest.approx(0.0770, abs=1e-4)
+    assert INAPTES_DE_L_EIR["H"][1953] == pytest.approx(0.0758, abs=1e-4)
+    inaptes = G.inaptes_des_generations(parametres.racine_donnees)
+    for sexe, parts in INAPTES_DE_L_EIR.items():
+        de_1950, de_1953 = parts[1950], parts[1953]
+        for generation, attendue in ((1900, de_1950), (1949, de_1950), (1950, de_1950),
+                                     (1951, de_1950 + (de_1953 - de_1950) / 3),
+                                     (1952, de_1950 + 2 * (de_1953 - de_1950) / 3),
+                                     (1953, de_1953), (1965, de_1953), (2000, de_1953)):
+            assert G._par_generation(inaptes[sexe], generation, 0.0) == pytest.approx(
+                attendue, rel=1e-9), (sexe, generation)
+
+
+def test_l_inaptitude_avance_le_depart_au_taux_plein_des_l_age_legal(
+        simulateur, source, sans_le_reperage_des_decotes):
+    """Reconnu inapte au travail, ou ex-invalide, que L. 341-15 range parmi
+    eux, l'assuré a le taux plein quelle que soit sa durée (L. 351-8, 2°) dès
+    l'âge légal de sa génération, et dès 62 ans quand la réforme de 2023 le
+    relève (L. 351-1-5, D. 351-1-14) : l'inaptitude avance son départ quand il
+    n'aurait pas sinon le taux plein à cet âge (``avance_par_l_inaptitude``).
+    Né en 1955, l'homme d'une carrière de vingt-cinq années, 100 des
+    166 trimestres de sa génération, n'a le taux plein qu'à 67 ans (L. 351-8,
+    1°) ; inapte, il l'a à 62 ans, l'âge légal de sa génération
+    (D. 161-2-1-9), au taux de 50 %, et son départ se range au taux plein, où
+    l'EIR compte l'invalidité et l'inaptitude. Née en 1955, la femme d'une
+    carrière de trente à quarante ans a sa durée dès 62 ans avec ses enfants :
+    l'inaptitude n'avance rien. Née en 1965, elle l'a à son âge légal, 62 ans
+    et 9 mois ; inapte, elle part à 62 ans."""
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    par_code = {v.cas.code: v.cas for v in variantes}
+    projection = simulateur.pour_la_projection()
+    homme = par_code[f"{G.GABARIT}~h~20_30~p50"]
+    femme = par_code[f"{G.GABARIT}~f~30_40~p50"]
+    inapte = replace(homme, inaptitude=True)
+    assert homme.age_liquidation_pour(projection, 1955) == 67.0
+    assert inapte.age_liquidation_pour(projection, 1955) == 62.0
+    depart = projection.echeancier(inapte.construire(projection, 1955)).au_depart
+    assert depart.trimestres_valides == 100
+    assert depart.taux_liquidation == pytest.approx(0.5)
+    assert G.condition_au_depart(projection, inapte, 1955) == (62.0, "taux_plein_autre")
+    assert G.avance_par_l_inaptitude(projection, homme, 1955)
+    assert G.avance_par_l_inaptitude(projection, inapte, 1955)
+    assert not G.avance_par_l_inaptitude(projection, femme, 1955)
+    assert femme.age_liquidation_pour(projection, 1965) == 62.75
+    assert replace(femme, inaptitude=True).age_liquidation_pour(projection, 1965) == 62.0
+    assert G.avance_par_l_inaptitude(projection, femme, 1965)
+
+
+def test_les_invalides_et_les_inaptes_partent_au_taux_plein_des_l_age_legal(
+        simulateur, source):
+    """Sous ``INVALIDES_ET_INAPTES``, chaque carrière incomplète qui part au
+    taux plein a une troisième jumelle, l'inapte, qui part au taux plein dès
+    l'âge légal. Génération par génération, les inaptes pèsent parmi tous les
+    retraités du sexe la part de l'EIR, refaite à la main, la jumelle du taux
+    plein leur cédant de son poids : chaque carrière garde le sien. Ils ne
+    pèsent qu'aux générations où l'inaptitude avance le départ de leur
+    carrière (``avance_par_l_inaptitude``), jugée au salaire de son cas type,
+    avant sa déclinaison par le rang, comme la décote : toutes les déclinaisons
+    de l'homme d'une carrière de vingt-cinq années, né en 1955 comme en 1965 ;
+    aucune de la femme d'une carrière de trente à quarante ans née en 1955, qui
+    a sa durée à 62 ans, toutes de celle née en 1965, que son âge légal fait
+    attendre 62 ans et 9 mois. L'inapte ne décote ni ne surcote."""
+    assert G.INVALIDES_ET_INAPTES
+    generations = (1955, 1965)
+    naissances = {g: range(g - C._DEMI_TRANCHE, g + C._DEMI_TRANCHE + 1) for g in generations}
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    poids = _poids(variantes, simulateur.effectifs, source.millesime)
+    inaptes = [v for v in variantes if v.inapte]
+    assert {v.cas.code.replace("~inapte", "", 1) for v in inaptes} == {
+        v.cas.code for v in variantes if G.incomplete(v) and v.cas.regle_liquidation
+        == "taux_plein" and not (v.decote or v.inapte or v.surcote)}
+    assert all(v.cas.inaptitude and v.cas.regle_liquidation == "taux_plein"
+               and "~inapte" in v.cas.code and G.incomplete(v)
+               and not v.decote and not v.surcote for v in inaptes)
+    assert not any(G.peut_surcoter(v) for v in inaptes)
+    assert not any(v.cas.inaptitude for v in variantes if not v.inapte)
+    homme = [v for v in inaptes if v.cas.code.startswith(f"{G.GABARIT}~h~20_30~inapte")]
+    femme = [v for v in inaptes if v.cas.code.startswith(f"{G.GABARIT}~f~30_40~inapte")]
+    assert homme and femme
+    assert all(v.part_de_la_generation(n) > 0.0 for v in homme
+               for g in generations for n in naissances[g])
+    assert all(v.part_de_la_generation(n) == 0.0 for v in femme for n in naissances[1955])
+    assert all(v.part_de_la_generation(n) > 0.0 for v in femme for n in naissances[1965])
+    for generation in generations:
+        for sexe in ("F", "H"):
+            du_sexe = [v for v in variantes if v.cas.sexe == sexe]
+            for n in naissances[generation]:
+                toutes = sum(poids[v.cas.code] * v.part_de_la_generation(n) for v in du_sexe)
+                pesees = sum(poids[v.cas.code] * v.part_de_la_generation(n)
+                             for v in du_sexe if v.inapte)
+                assert toutes == pytest.approx(sum(poids[v.cas.code] for v in du_sexe),
+                                               rel=1e-9), (sexe, n)
+                assert pesees / toutes == pytest.approx(INAPTES_DE_L_EIR[sexe][1953],
+                                                        rel=1e-6), (sexe, n)
+
+
 def test_les_departs_avec_decote_se_comptent_quintile_par_quintile(parametres):
     """Les départs avec décote se rangent dans leur quintile, sexe par sexe,
     contre ceux de l'EIR des résidents : 17,5 % des femmes du premier
