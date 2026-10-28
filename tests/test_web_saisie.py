@@ -18,6 +18,7 @@ from urllib.parse import parse_qsl
 
 import pytest
 
+from retraite_notionnelle import chronologie
 from retraite_notionnelle.carriere import Affiliations
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.donnees.chargement import charger_periodes_non_travaillees
@@ -89,6 +90,61 @@ def test_le_nombre_d_enfants_reste_borne():
     for refuse in ("-1", str(SAISIE.ENFANTS_MAXIMUM + 1), "999"):
         with pytest.raises(ErreurSite, match=REFUSEE):
             saisie_du_portage({"enfants": refuse})
+
+
+#: Une mère de trois enfants, dont deux ont leur naissance dite, et ce qui
+#: prolonge leur charge (action 138, étape 4), séparé comme on l'écrit.
+_CHARGE = {"naissance": "1960", "sexe": "F", "enfants": "3", "naissances": "1990-03, 1993",
+           "charge_enfants": " 1:etudes:2009-07 ; 2:Apprentissage:2012-09, 2:infirmité "}
+
+
+def test_la_saisie_dit_l_enfant_etudiant_apprenti_ou_infirme_et_jusqu_a_quand(saisies):
+    """L'enfant étudiant, apprenti ou infirme reste à charge jusqu'à vingt ans
+    (R. 313-12, R. 161-4) : le champ « charge_enfants » dit, pour chaque enfant
+    dont la naissance est dite, son rang, son motif — etudes, apprentissage ou
+    infirmite, écrit avec ses accents ou sans — et le mois où ses études ou
+    son apprentissage cessent, s'il le dit. La carrière que le portage bâtit en
+    porte les faits, que le modèle lit (``prolongations_de_la_charge``) ;
+    l'adresse et le formulaire le gardent tel qu'il est écrit."""
+    carriere = saisies.carriere(_CHARGE)
+    assert [chronologie.prolongations_de_la_charge(carriere.chronologie, enfant)
+            for enfant in ("enfant_1", "enfant_2", "enfant_3")] == [
+        [("1990-03-01", "2009-07-01")],
+        [("1993-01-01", "2012-09-01"), ("1993-01-01", None)], []]
+    ecrit = _CHARGE["charge_enfants"].strip()
+    assert dict(parse_qsl(saisie_du_portage(_CHARGE).requete()))["charge_enfants"] == ecrit
+    sans = {cle: valeur for cle, valeur in _CHARGE.items() if cle != "charge_enfants"}
+    assert "charge_enfants" not in dict(parse_qsl(saisie_du_portage(sans).requete()))
+    assert chronologie.prolongations_de_la_charge(
+        saisies.carriere(sans).chronologie, "enfant_1") == []
+    champ = re.search(r'<input[^>]*name="charge_enfants"[^>]*>', rendre("/simuler", _CHARGE)[1])
+    assert champ, "le formulaire ne demande pas la charge des enfants"
+    assert f'value="{html.escape(ecrit)}"' in champ.group(0)
+
+
+@pytest.mark.parametrize("charge, motif", [
+    ("1-etudes", "« 1-etudes » : attendu en rang:motif ou rang:motif:fin, par exemple "
+                 "1:etudes:2009-07."),
+    ("1:etudes:2009:07", "« 1:etudes:2009:07 » : attendu en rang:motif ou rang:motif:fin"),
+    ("0:etudes", "« 0:etudes » : vous déclarez 3 enfants."),
+    ("4:infirmite", "« 4:infirmite » : vous déclarez 3 enfants."),
+    ("3:etudes", "« 3:etudes » : dites d'abord sa naissance, dans « Naissance des enfants »."),
+    ("1:chomage", "« 1:chomage » : son motif est etudes, apprentissage ou infirmite."),
+    ("2:infirmite:2010", "« 2:infirmite:2010 » : l'infirmité ne finit pas ; seules les études "
+                         "et l'apprentissage se datent."),
+    ("1:etudes:2009-13", "« 1:etudes:2009-13 » : sa fin attendue en AAAA, AAAA-MM ou "
+                         "AAAA-MM-JJ, par exemple 2009-07."),
+    ("1:etudes:1990-03", "« 1:etudes:1990-03 » : elle finit avant sa naissance."),
+    ("1:etudes:2009-07, 1:études", "« 1:études » : ce motif est déjà dit pour l'enfant n° 1."),
+])
+def test_une_charge_d_enfant_mal_dite_est_refusee(charge, motif):
+    """Chaque entrée du champ se refuse avec ce qui ne va pas : sa forme, un
+    rang hors des enfants déclarés, un enfant sans naissance dite, un motif
+    inconnu, une infirmité datée, une fin illisible ou qui précède la
+    naissance, un motif dit deux fois pour le même enfant."""
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie(
+            re.escape(f"Enfant aux études, apprenti ou infirme {motif}"))):
+        saisie_du_portage({**_CHARGE, "charge_enfants": charge})
 
 
 def test_toute_borne_du_formulaire_est_opposable_hors_du_navigateur():

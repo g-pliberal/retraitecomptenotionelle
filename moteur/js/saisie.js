@@ -29,7 +29,8 @@ import {
   sousRegimeTaux,
 } from "./config.js";
 import {
-  FORMES_D_UNION, dateDeclaree, naissanceDeclaree, plusAns, valeur as valeurPresumee,
+  FORMES_D_UNION, MOTIFS_DE_PROLONGATION, dateDeclaree, naissanceDeclaree, plusAns,
+  valeur as valeurPresumee,
 } from "./chronologie.js";
 import { CONJOINTS_COLLABORATEURS, anneeDEntree } from "./carriere.js";
 import * as g from "./gabarit.js";
@@ -674,6 +675,12 @@ export const DEFAUTS = Object.freeze({
   //: § 5.6) ; celles qui le sont choisissent, enfant par enfant, la version des
   //: règles qui lui accordent des trimestres. Voir `naissancesEnfants`.
   naissances: "",
+  //: Ce qui prolonge jusqu'à vingt ans la charge des enfants dont la naissance
+  //: est dite, pour la majoration de la réversion (action 138, étape 4) :
+  //: « 1:etudes:2009-07, 2:infirmite », le rang de chacun, son motif et, pour
+  //: les études ou l'apprentissage, le mois où ils cessent, s'il le dit. Voir
+  //: `prolongationsDeLaChargeDeclarees`.
+  charge_enfants: "",
   //: Le conjoint, pour la réversion (docs/architecture.md, § 5.1) : sa
   //: naissance (AAAA ou AAAA-MM), son sexe — l'autre que celui de l'assuré
   //: s'il n'est pas dit (présomption `conjoint_de_l_autre_sexe`) —, la date du
@@ -962,6 +969,7 @@ export class Saisie {
       primes: reel(parametres, "primes", DEFAUTS.primes),
       enfants: entier(parametres, "enfants", DEFAUTS.enfants),
       naissances: (parametres.naissances || "").trim(),
+      charge_enfants: String(parametres.charge_enfants ?? "").trim(),
       conjoint: (parametres.conjoint || "").trim(),
       conjoint_sexe: (parametres.conjoint_sexe || "").trim().toUpperCase(),
       mariage: (parametres.mariage || "").trim(),
@@ -1145,6 +1153,7 @@ export class Saisie {
     this.tempsPartielAnalyse();
     this.dispensesAnalysees();
     this.verifierNaissances();
+    this.prolongationsDeLaChargeDeclarees();
     this.verifierConjoint();
     this.verifierReversionAgricole();
     this.verifierProgressive();
@@ -2185,6 +2194,66 @@ export class Saisie {
   }
 
   /**
+   * Ce qui prolonge la charge des enfants, tel que `avecProlongationsDeLaCharge`
+   * le reçoit, une entrée du champ `charge_enfants` après l'autre, séparées
+   * d'une virgule ou d'un point-virgule : le rang de l'`enfant`, de un au
+   * nombre des enfants, dont la naissance est dite ; son `motif`, écrit avec
+   * ses accents ou sans, une fois par enfant ; et la `fin` des études ou de
+   * l'apprentissage, s'il la dit, après la naissance — l'infirmité ne finit
+   * pas. Vide quand rien n'est dit, et la présomption
+   * `charge_jusqu_a_l_age_limite` tient.
+   */
+  prolongationsDeLaChargeDeclarees() {
+    const naissances = this.naissancesEnfants();
+    const motifs = `${MOTIFS_DE_PROLONGATION.slice(0, -1).join(", ")} ou `
+      + `${MOTIFS_DE_PROLONGATION.at(-1)}`;
+    const dits = new Set();
+    return this.charge_enfants.split(/[,;]/).map((entree) => entree.trim())
+      .filter((entree) => entree)
+      .map((entree) => {
+        const refus = (raison) => new ErreurSaisie(
+          `Enfant aux études, apprenti ou infirme « ${entree} » : ${raison}`);
+        const morceaux = entree.split(":").map((morceau) => morceau.trim());
+        if (morceaux.length < 2 || morceaux.length > 3 || !/^\d+$/.test(morceaux[0])) {
+          throw refus("attendu en rang:motif ou rang:motif:fin, par exemple 1:etudes:2009-07.");
+        }
+        const enfant = Number(morceaux[0]);
+        if (!(enfant >= 1 && enfant <= this.enfants)) {
+          throw refus(`vous déclarez ${this.enfants} enfant${this.enfants > 1 ? "s" : ""}.`);
+        }
+        if (enfant > naissances.length) {
+          throw refus("dites d'abord sa naissance, dans « Naissance des enfants ».");
+        }
+        const motif = morceaux[1].normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+          .toLowerCase();
+        if (!MOTIFS_DE_PROLONGATION.includes(motif)) {
+          throw refus(`son motif est ${motifs}.`);
+        }
+        if (dits.has(`${enfant}:${motif}`)) {
+          throw refus(`ce motif est déjà dit pour l'enfant n° ${enfant}.`);
+        }
+        dits.add(`${enfant}:${motif}`);
+        if (morceaux.length === 2) {
+          return { enfant, motif, fin: null };
+        }
+        if (motif === "infirmite") {
+          throw refus("l'infirmité ne finit pas ; seules les études et l'apprentissage "
+            + "se datent.");
+        }
+        let fin;
+        try {
+          [fin] = dateDeclaree(morceaux[2], "sa fin");
+        } catch {
+          throw refus("sa fin attendue en AAAA, AAAA-MM ou AAAA-MM-JJ, par exemple 2009-07.");
+        }
+        if (fin <= naissanceDeclaree(naissances[enfant - 1])[0]) {
+          throw refus("elle finit avant sa naissance.");
+        }
+        return { enfant, motif, fin: morceaux[2] };
+      });
+  }
+
+  /**
    * Le conjoint que la saisie déclare, tel que la chronologie le reçoit
    * (`personne`, dans `chronologie.js`) ; `null` sans conjoint.
    */
@@ -3118,6 +3187,7 @@ export class Saisie {
       releve: this.releve,
       primes: nombreBrut(this.primes), enfants: this.enfants,
       ...(naissances.length ? { naissances: naissances.join(",") } : {}),
+      ...(this.charge_enfants ? { charge_enfants: this.charge_enfants } : {}),
       ...Object.fromEntries([
         ["conjoint", this.conjoint], ["conjoint_sexe", this.conjoint_sexe],
         ["mariage", this.mariage],

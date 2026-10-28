@@ -2061,6 +2061,13 @@ def _cas() -> list[dict]:
         **variations, "nouvelle_union": "mariage", "nouvelle_union_depuis": "2018-05",
         "ressources_nouveau_conjoint": "20000",
         "ressources_nouveau_conjoint_variations": "2020-01:12000"}))
+    # Le 28 octobre 2026, ce qui prolonge la charge des enfants (action 138,
+    # étape 4) : le veuf de 2024 garde la majoration pour son aînée, étudiante,
+    # jusqu'à ses vingt ans, et pour son cadet, apprenti, jusqu'à la fin de son
+    # contrat, en septembre 2033, au lieu de leurs dix-huit ans.
+    cas.append(("reversion_enfants_etudiant_et_apprenti", {
+        **avant_le_depart, "sexe": "F", "conjoint_sexe": "H", "enfants": "2",
+        "naissances": "2012, 2014", "charge_enfants": "1:etudes, 2:apprentissage:2033-09"}))
 
     # Les carrières LUES sur un relevé, plutôt que reconstituées.
     cas.extend(_cas_releve())

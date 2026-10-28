@@ -1891,6 +1891,10 @@ def test_les_refus_de_saisie_disent_le_mot_du_modele(saisies):
         {"reversion_agricole": "2010-13", "reversion_agricole_mensuel": "150"},
         {"reversion_agricole": "1975-01", "reversion_agricole_mensuel": "150"},
         {"reversion_agricole": "2010-03", "reversion_agricole_mensuel": "-1"},
+        # La charge des enfants (action 138, étape 4) : un enfant sans naissance
+        # dite, des études qui finissent le mois de la naissance.
+        {"enfants": "2", "naissances": "1995", "charge_enfants": "2:etudes"},
+        {"enfants": "1", "naissances": "1995", "charge_enfants": "1:etudes:1995-01"},
     ]
     # Les voisines immédiates de ces refus, qui doivent au contraire calculer :
     # une borne posée d'un cran trop loin se verrait ici, et nulle part ailleurs.
@@ -1917,6 +1921,8 @@ def test_les_refus_de_saisie_disent_le_mot_du_modele(saisies):
         {"etranger1_pays": "autre", "etranger1_debut": "1995-01", "etranger1_fin": "1999-01",
          "etranger2_pays": "OI", "etranger2_debut": "1999-01", "etranger2_fin": "2001-01"},
         {"reversion_agricole": "1975-02", "reversion_agricole_mensuel": "0"},
+        {"enfants": "2", "naissances": "1995", "charge_enfants": "1:etudes"},
+        {"enfants": "1", "naissances": "1995", "charge_enfants": "1:etudes:1995-02"},
     ]
 
     for champs_, refuse in ((refuses, True), (acceptees, False)):

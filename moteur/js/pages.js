@@ -1003,6 +1003,18 @@ export function formulaire(saisie, contexte, comparaison = null) {
       + "suffit ; un mois se donne si on le connaît. Les naissances que vous ne "
       + "dites pas sont présumées à vos "
       + `${contexte.paquet.presomptions.naissance_des_enfants.valeur} ans.`),
+    // CE QUI PROLONGE LA CHARGE DES ENFANTS (action 138, étape 4) : facultatif,
+    // et des seuls enfants dont la naissance est dite. Sans lui, la présomption
+    // `charge_jusqu_a_l_age_limite` tient.
+    g.champ("charge_enfants", "Enfants aux études, apprentis ou infirmes",
+      saisie.charge_enfants, "facultatif : « 1:etudes:2009-07, 2:infirmite »", "text",
+      { autocomplete: "off", spellcheck: "false" },
+      "La majoration pour enfant à charge de la réversion du régime général suit "
+      + "chaque enfant jusqu'à ses seize ans — sa majorité depuis 2016 —, et jusqu'à "
+      + "ses vingt ans s'il est étudiant, apprenti ou infirme. Dites son rang dans "
+      + "l'ordre des naissances, la sienne dite, son motif — etudes, apprentissage "
+      + "ou infirmite — et le mois où ses études ou son apprentissage cessent, "
+      + "s'ils cessent avant."),
     g.champ("interruptions", "Interruptions", saisie.interruptions,
       "« 1995:1999:education_enfant », séparées par des virgules"),
     // LE TEMPS PARTIEL (action 136, étape 3 ; fiche temps_partiel_fonction_publique) :
