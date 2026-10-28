@@ -18,6 +18,23 @@
 <!-- L'adresse que les moteurs de recherche retiennent : celle de la copie du
      parti, décision du 26 octobre 2026. Le même site vit aussi sur GitHub Pages. -->
 <link rel="canonical" href="{{canonique}}">
+<!-- L'aperçu de la page collée dans un réseau social ou une messagerie : son
+     titre, sa description et une image, au lieu d'un lien nu. L'image est
+     l'affiche de l'accueil, la même pour les neuf pages, prise sur GitHub
+     Pages, qui porte toujours les fichiers du jour (IMAGE_APERCU, dans
+     gabarit.js ; scripts/fabriquer_apercu.py la dessine). Pas d'og:url : elle
+     enverrait les réseaux lire l'aperçu chez la copie du parti, qui peut
+     retarder sur le dépôt. -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="{{nom_du_site}}">
+<meta property="og:title" content="{{titre}}">
+<meta property="og:description" content="{{description}}">
+<meta property="og:image" content="{{image_apercu}}">
+<meta property="og:image:width" content="{{largeur_apercu}}">
+<meta property="og:image:height" content="{{hauteur_apercu}}">
+<meta property="og:image:alt" content="{{texte_apercu}}">
+<meta name="twitter:card" content="summary_large_image">
 <!-- L'icône du site est un fichier, et un dessin : l'emoji qui tenait ce rôle
      n'avait ni la même forme ni la même taille d'un système à l'autre, et se
      brouillait en petit. Voir moteur/icones/README.md. -->

@@ -36,6 +36,33 @@ export const SITE_PARENT = "https://partiliberalfrancais.fr/";
 export const ADRESSE_CANONIQUE = `${SITE_PARENT}retraite/`;
 
 /**
+ * L'adresse où ce dépôt se publie tel quel, à chaque envoi sur `main` : la seule
+ * dont on sait qu'elle porte toujours les fichiers du jour, quand la copie du
+ * parti se refait à la main (docs/integration-partiliberalfrancais.md).
+ */
+export const ADRESSE_GITHUB_PAGES = "https://g-pliberal.github.io/retraitecomptenotionelle/";
+
+/** Le nom du site : celui du bandeau, et celui que portent ses aperçus de partage. */
+export const NOM_DU_SITE = "Retraite à comptes notionnels";
+
+/**
+ * L'aperçu d'une page collée dans un réseau social ou une messagerie. Sans
+ * balises `og:`, WhatsApp, X, LinkedIn ou Facebook n'en montrent qu'un lien nu,
+ * et la rubrique « Faire connaître » partage des adresses que personne ne voit.
+ * Le titre et la description sont ceux de l'onglet ; l'image, la même pour les
+ * neuf pages, est l'affiche de l'accueil, que `scripts/fabriquer_apercu.py`
+ * dessine au format d'une grande image d'aperçu. Elle est prise sur GitHub
+ * Pages : la copie du parti peut retarder sur le dépôt, et une image absolue qui
+ * manque ne laisse, elle aussi, qu'un lien nu. Son texte de remplacement dit ce
+ * qu'elle montre : il se refait avec elle.
+ */
+export const IMAGE_APERCU = `${ADRESSE_GITHUB_PAGES}moteur/apercu.png`;
+export const LARGEUR_APERCU = 1200;
+export const HAUTEUR_APERCU = 630;
+export const TEXTE_APERCU = "« La seule retraite qui vous rend vraiment ce que vous avez "
+  + "cotisé. » Le programme du Parti libéral français pour les retraites, et son simulateur.";
+
+/**
  * Ce qui signe une carte exportée en image. Une image quittant le site n'a plus
  * ni barre d'adresse ni pied de page : sans ces deux lignes, elle circule sans
  * dire d'où elle vient ni qui l'a produite, et le premier qui la republie en
@@ -415,7 +442,7 @@ export function navigation(cheminActif = "/") {
 export function entete(cheminActif = "/") {
   return `<a class="evitement" href="#contenu">Aller au contenu</a>
 <header class="bandeau"><div class="interieur">
-  <p class="nom"><a href="${adresseDepuis(cheminActif, "/", OPTIONS)}">${icone("trending-up")}<span>Retraite à comptes notionnels</span></a></p>
+  <p class="nom"><a href="${adresseDepuis(cheminActif, "/", OPTIONS)}">${icone("trending-up")}<span>${NOM_DU_SITE}</span></a></p>
   <nav aria-label="Navigation principale">${navigation(cheminActif)}</nav>
 </div></header>`;
 }

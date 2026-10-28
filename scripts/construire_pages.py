@@ -23,7 +23,8 @@ Ce qu'il écrit
 * **Neuf pages** : l'accueil, ``index.html`` à la racine, et les huit autres
   chacune dans son dossier. Chacune est le gabarit ``moteur/page.html`` — le
   titre de l'onglet, la description, l'adresse canonique de la copie du parti,
-  le bandeau, le pied, le routeur — autour du rendu de la page pour ses réglages
+  l'aperçu de partage (``og:``), le bandeau, le pied, le routeur — autour du
+  rendu de la page pour ses réglages
   par défaut, celui que ``rendre`` de ``moteur/js/pages.js`` écrirait. Le rendu
   vient de node, par ``retraite_notionnelle.web.site`` : rien n'est écrit ici
   qu'ailleurs on lirait autrement.
@@ -223,6 +224,11 @@ def page(route: str, gabarit: str | None = None) -> str:
         "titre": _echapper(titre),
         "description": _echapper(pages.DESCRIPTIONS[route]),
         "canonique": f"{g.ADRESSE_CANONIQUE}{dossier}",
+        "nom_du_site": _echapper(g.NOM_DU_SITE),
+        "image_apercu": g.IMAGE_APERCU,
+        "largeur_apercu": str(g.LARGEUR_APERCU),
+        "hauteur_apercu": str(g.HAUTEUR_APERCU),
+        "texte_apercu": _echapper(g.TEXTE_APERCU),
         "racine": "" if route == "/" else "../",
         "route": route,
         "entete": g.entete(route),

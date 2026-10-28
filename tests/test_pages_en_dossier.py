@@ -12,6 +12,7 @@ ses réglages par défaut ; ils ne se retouchent pas et ne se fusionnent pas.
 from __future__ import annotations
 
 import re
+import struct
 import sys
 from pathlib import Path
 from urllib.parse import urljoin, urlsplit
@@ -98,6 +99,61 @@ def test_une_page_porte_son_titre_sa_description_et_son_adresse_canonique(chemin
         in texte
     assert texte.count("<title>") == 1 and texte.count('name="description"') == 1
     assert texte.count('rel="canonical"') == 1 and '<html lang="fr">' in texte
+
+
+#: L'image d'aperçu, la même pour les neuf pages, et l'adresse d'où les réseaux
+#: la prennent : GitHub Pages, où le dépôt se publie tel quel à chaque envoi sur
+#: `main` (docs/integration-partiliberalfrancais.md, « La frontière »).
+APERCU = RACINE / "moteur" / "apercu.png"
+IMAGE_APERCU = "https://g-pliberal.github.io/retraitecomptenotionelle/moteur/apercu.png"
+
+
+def _slogan() -> str:
+    """Le titre de l'affiche de l'accueil, sans ses balises : ce que l'image dit."""
+    titre = re.search(r'<div class="affiche">.*?<h1>(.*?)</h1>', _page("index.html"), re.S)
+    return re.sub(r"<[^>]+>", "", titre.group(1))
+
+
+@pytest.mark.parametrize("chemin", _chemins())
+def test_une_page_porte_son_apercu_de_partage(chemin):
+    """Collée dans WhatsApp, X, LinkedIn ou Facebook, l'adresse d'une page
+    s'affiche avec son titre, sa description et une image, et non comme un lien
+    nu : sans ces balises, la rubrique « Faire connaître » partage des adresses
+    que personne ne voit. Le titre et la description sont ceux de l'onglet ;
+    l'image est servie par GitHub Pages, la seule adresse qui porte toujours
+    les fichiers du jour. Pas d'``og:url`` : elle enverrait les réseaux lire
+    l'aperçu chez la copie du parti, qui peut retarder sur le dépôt."""
+    route, texte = _route(chemin), _page(chemin)
+    titre = TITRE_DE_L_ACCUEIL if route == "/" else \
+        f"{DOSSIERS[route.lstrip('/')]} — Retraite en comptes notionnels"
+    attendues = {
+        "og:type": "website",
+        "og:locale": "fr_FR",
+        "og:site_name": "Retraite à comptes notionnels",
+        "og:title": titre,
+        "og:description": module("pages").DESCRIPTIONS[route],
+        "og:image": IMAGE_APERCU,
+        "og:image:width": "1200",
+        "og:image:height": "630",
+    }
+    for propriete, valeur in attendues.items():
+        assert f'<meta property="{propriete}" content="{valeur}">' in texte, (chemin, propriete)
+        assert texte.count(f'property="{propriete}"') == 1, (chemin, propriete)
+    # Le texte de remplacement dit ce que l'image montre : le titre de l'affiche.
+    alternatif = re.search(r'<meta property="og:image:alt" content="([^"]+)">', texte)
+    assert alternatif and _slogan() in alternatif.group(1), chemin
+    assert '<meta name="twitter:card" content="summary_large_image">' in texte
+    assert 'property="og:url"' not in texte
+
+
+def test_l_image_d_apercu_est_au_format_des_reseaux():
+    """Un PNG de 1 200 × 630 points, le format d'une grande image d'aperçu chez
+    Facebook, LinkedIn et X, et léger : WhatsApp ne montre pas une image d'aperçu
+    trop lourde, et 300 Ko est le seuil sûr."""
+    octets = APERCU.read_bytes()
+    assert octets[:8] == b"\x89PNG\r\n\x1a\n"
+    assert struct.unpack(">II", octets[16:24]) == (1200, 630)
+    assert len(octets) < 300_000
 
 
 @pytest.mark.parametrize("chemin", _chemins())
