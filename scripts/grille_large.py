@@ -259,7 +259,12 @@ qui peuvent décoter à l'ouverture du droit, comme la grille du coût, et la
 prend sans ce que les agents des IEG et de la conduite décotent déjà à
 l'ouverture de leur statut (:data:`DECOTE_DES_CARRIERES_QUI_LE_PEUVENT`) : née
 en 1955, la femme d'une carrière de trente à quarante ans a sa durée dès
-62 ans avec ses enfants, et sa jumelle « décotée » partait au taux plein.
+62 ans avec ses enfants, et sa jumelle « décotée » partait au taux plein. La
+trente et unième (le 28 octobre 2026) fait partir les départs avec décote
+entre l'âge légal et l'âge d'annulation de la décote aussi, comme ceux des nés
+en 1953 (:data:`DECOTE_ENTRE_LES_DEUX_AGES`) : l'EIR en voit la moitié chez
+les femmes, un gros tiers chez les hommes, partir à l'âge légal, où la
+population les faisait tous partir.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -937,6 +942,26 @@ DECOTE_SELON_LA_GENERATION = True
 #: valident moins, ne décotent pas quand elle ne le peut pas.
 DECOTE_DES_CARRIERES_QUI_LE_PEUVENT = True
 
+#: La trente et unième version (action 138, étape 14, le 28 octobre 2026) : les
+#: départs avec décote se prennent aussi entre l'âge légal et l'âge
+#: d'annulation de la décote, comme ceux des nés en 1953
+#: (:func:`attentes_des_decotes`), et non tous à l'âge légal. Étalées jusqu'à
+#: 60 ans (:data:`AGE_FIN_ETALEMENT`), les carrières incomplètes ne valident
+#: plus rien à l'âge légal : leur jumelle qui décote y partait, celle du taux
+#: plein à l'âge d'annulation, jamais entre les deux ; les femmes de la
+#: génération 1955 y partaient pour 8,5 %, quand l'EIR compte 26,7 % des nées
+#: en 1953 entre les deux âges, dont 20,4 % avec une décote, et pour 53,9 % à
+#: l'âge légal (37,5). La jumelle qui décote se décline en trois : la part des
+#: départs avec décote des nés en 1953 que l'EIR range à l'âge légal y part, à
+#: l'ouverture du droit — la moitié chez les femmes, un gros tiers chez les
+#: hommes — ; le reste attend après lui, en deux attentes, un an et deux mois
+#: et trois ans et cinq mois chez les femmes. Deux conventions : la jumelle qui
+#: attend ne valide rien de plus, sa carrière restant celle de sa tranche, si
+#: bien que sa décote ne baisse que de l'âge, quand la durée ne la borne pas ;
+#: les attentes sont celles des nés en 1953 à toutes les générations, comptées
+#: de l'âge légal de chacune, et ne dépendent pas du rang.
+DECOTE_ENTRE_LES_DEUX_AGES = True
+
 #: Le témoin des tables de l'EACR, dont la table H dit la part décotée des
 #: liquidants de la Cnav (:func:`decote_du_flux`).
 TEMOIN_EACR = RACINE / "tests" / "temoins" / "drees_eacr_tables_2026.json"
@@ -1123,23 +1148,26 @@ class CasTypeLarge(CasType):
     annees_par_nature: tuple[tuple[int, tuple[int, int, int, int]], ...] = ()
     tranche_de_base: tuple = ()
     cibles: tuple[tuple[int, float], ...] = ()
-    #: Les années qu'un départ avec surcote attend après l'âge légal de sa
-    #: génération (:data:`DEPARTS_AVEC_SURCOTE`), et ces âges légaux, paires
+    #: Les années qu'un départ avec surcote, ou avec décote, attend après l'âge
+    #: légal de sa génération (:data:`DEPARTS_AVEC_SURCOTE`,
+    #: :data:`DECOTE_ENTRE_LES_DEUX_AGES`), et ces âges légaux, paires
     #: ``(génération, âge)`` triées.
     attente: float = 0.0
     legaux: tuple[tuple[int, float], ...] = ()
 
     def age_liquidation_pour(self, simulateur: Simulateur, generation: int,
                              variante: str = "droit") -> float:
-        """L'âge que le pilote fixe, ou, pour un départ avec surcote,
+        """L'âge que le pilote fixe, ou, pour un départ qui attend,
         :attr:`attente` années après l'âge légal de sa génération, jamais
-        avant celui que le pilote fixe, et seulement si la génération atteint
-        son âge légal depuis que la surcote existe (:data:`ANNEE_DE_LA_SURCOTE`)."""
+        avant celui que le pilote fixe : un départ avec décote, qui part à
+        l'ouverture du droit, à toute génération ; un départ avec surcote, au
+        taux plein, seulement si la génération atteint son âge légal depuis
+        que la surcote existe (:data:`ANNEE_DE_LA_SURCOTE`)."""
         age = super().age_liquidation_pour(simulateur, generation, variante)
         if not self.attente or variante == "absolu":
             return age
         legal = _par_generation(self.legaux, generation, 0.0)
-        if generation + legal < ANNEE_DE_LA_SURCOTE:
+        if self.regle_liquidation == "taux_plein" and generation + legal < ANNEE_DE_LA_SURCOTE:
             return age
         return max(age, legal + self.attente)
 
@@ -2795,8 +2823,10 @@ def population(effectifs, source: CaracteristiquesRetraites,
         decotes = decotes_des_generations(racine) if DECOTE_SELON_LA_GENERATION else None
         ouvertures = (ouvertures_decotees(variantes, racine)
                       if decotes and DECOTE_DES_CARRIERES_QUI_LE_PEUVENT else None)
+        attentes = (attentes_des_decotes(departs_publies(racine), racine)
+                    if DECOTE_ENTRE_LES_DEUX_AGES else None)
         variantes = departs_avec_decote(variantes, effectifs, source, donnees.quintiles,
-                                        decotes, ouvertures)
+                                        decotes, ouvertures, attentes, ages_legaux(racine))
     variantes = salaires_population(variantes, donnees)
     if ASSIMILEES_SELON_LE_RANG:
         variantes = assimilees_selon_le_rang(variantes, donnees.quintiles)
@@ -3028,10 +3058,73 @@ def parts_des_jumelles(variantes: list[Variante], effectifs,
     return sortie
 
 
+def attentes_des_decotes(publies: dict, racine: Path) -> dict[str, list[tuple[float, float]]]:
+    """Les départs avec décote des nés en 1953 (``GENERATION_DES_DECOTES``),
+    sexe par sexe, en trois attentes après l'âge légal de la génération,
+    ``(attente, part)`` triés (:data:`DECOTE_ENTRE_LES_DEUX_AGES`) : ceux de
+    l'âge légal même, qui n'attendent pas ; ceux des :data:`PREMIERES_ANNEES`
+    premières années de l'âge légal ; les autres, jusqu'à l'âge d'annulation
+    de la décote. L'âge légal pèse sa part dans la génération, fois celle de
+    ses départs qui décotent, que le tableau des places de l'EIR donne ;
+    chaque âge de liquidation de même, au tableau des âges — l'année de l'âge
+    légal sans ses départs de l'âge légal même —, et attend jusqu'au milieu de
+    l'âge : de l'âge légal à l'anniversaire qui le suit pour l'année de l'âge
+    légal, de l'anniversaire à l'âge d'annulation pour l'année de celui-ci,
+    l'âge et demi ensuite ; chaque attente au milieu de ses âges, pondéré, et
+    pesant leur part. Nul ne décote à l'âge d'annulation ni après lui ; les
+    départs avec décote d'avant l'âge légal, des statuts qui ouvrent plus tôt,
+    ne comptent pas."""
+    from retraite_notionnelle.scenarios.actuel import AgesAnnulationDecote, AgesOuverture
+
+    generation = GENERATION_DES_DECOTES
+    legal = AgesOuverture(racine).age(generation)[0]
+    annulation = AgesAnnulationDecote(racine).age(generation)[0]
+    sortie = {}
+    for sexe in ("F", "H"):
+        def decotes(tableau: str, colonne: str) -> float:
+            return (publies[(generation, tableau, colonne, sexe, "part")]
+                    * publies[(generation, tableau, colonne, sexe, "condition_decote")])
+
+        a_l_age_legal = decotes("position", "age_legal")
+        groupes = {0: [0.0, a_l_age_legal]}
+        for (lue, tableau, colonne, cle, indicateur) in publies:
+            if ((lue, tableau, cle, indicateur) != (generation, "age_liquidation", sexe, "part")
+                    or not colonne[0].isdigit()):
+                continue
+            age = float(colonne.split("_")[0])
+            if age + 1.0 <= legal or age >= annulation:
+                continue
+            masse = decotes(tableau, colonne)
+            if age == math.floor(legal):
+                masse = max(0.0, masse - a_l_age_legal)
+            milieu = (max(age, legal) + min(age + 1.0, annulation)) / 2.0
+            groupe = groupes.setdefault(
+                1 if age - math.floor(legal) < PREMIERES_ANNEES else 2, [0.0, 0.0])
+            groupe[0] += masse * (milieu - legal)
+            groupe[1] += masse
+        total = somme_ordonnee(masse for _, masse in groupes.values())
+        sortie[sexe] = sorted((attendue / masse, masse / total)
+                              for attendue, masse in groupes.values())
+    return sortie
+
+
+def ages_legaux(racine: Path) -> tuple[tuple[int, float], ...]:
+    """L'âge légal de chaque génération de la grille (``cout.generations``) qui
+    en a un, paires ``(génération, âge)`` triées : celui d'où se compte
+    l'attente d'un départ (:attr:`CasTypeLarge.attente`)."""
+    from retraite_notionnelle.scenarios.actuel import AgesOuverture
+
+    lus = AgesOuverture(racine)
+    return tuple((generation, lu[0]) for generation in C.generations()
+                 if (lu := lus.age(generation)) is not None)
+
+
 def departs_avec_decote(variantes: list[Variante], effectifs,
                         source: CaracteristiquesRetraites, quintiles: dict,
                         decotes: dict[str, tuple[tuple[int, float], ...]] | None = None,
-                        ouvertures: dict[str, frozenset[int]] | None = None
+                        ouvertures: dict[str, frozenset[int]] | None = None,
+                        attentes: dict[str, list[tuple[float, float]]] | None = None,
+                        legaux: tuple[tuple[int, float], ...] = ()
                         ) -> list[Variante]:
     """Chaque carrière incomplète en deux : la part de son sexe
     (:func:`parts_avec_decote`) part à l'ouverture du droit, avec une décote,
@@ -3039,7 +3132,12 @@ def departs_avec_decote(variantes: list[Variante], effectifs,
     ``decotes``, la part des départs avec décote de chaque génération
     (:func:`decotes_des_generations`), chaque jumelle porte ce que chaque
     génération donne à son poids (:func:`parts_des_jumelles`), rapporté sous
-    ``ouvertures`` aux carrières qui peuvent décoter (:func:`ouvertures_decotees`)."""
+    ``ouvertures`` aux carrières qui peuvent décoter (:func:`ouvertures_decotees`).
+    Sous ``attentes`` (:func:`attentes_des_decotes`), la jumelle qui décote se
+    décline à son tour : chaque attente prend sa part du poids de la jumelle,
+    et part autant d'années après l'âge légal de sa génération, ``legaux``
+    (:func:`ages_legaux`), à l'ouverture du droit encore ; celle qui n'attend
+    pas garde le code de la jumelle."""
     parts = parts_avec_decote(variantes, effectifs, source, quintiles)
     jumelles = (parts_des_jumelles(variantes, effectifs, source, parts, decotes, ouvertures)
                 if decotes else {})
@@ -3051,8 +3149,12 @@ def departs_avec_decote(variantes: list[Variante], effectifs,
             continue
         pleine, decotee = jumelles.get(v.cas.code, ((), ()))
         sortie.append(v.fois(1.0 - part, parts_des_generations=pleine))
-        sortie.append(v.fois(part, decote=True, parts_des_generations=decotee, cas=replace(
-            v.cas, code=f"{v.cas.code}~decote", regle_liquidation="ouverture")))
+        cas = replace(v.cas, code=f"{v.cas.code}~decote", regle_liquidation="ouverture")
+        for attente, poids in (attentes[v.cas.sexe] if attentes else ((0.0, 1.0),)):
+            sienne = (elargi(cas, code=f"{cas.code}{attente:.2f}", attente=attente,
+                             legaux=legaux) if attente else cas)
+            sortie.append(v.fois(part * poids, decote=True, parts_des_generations=decotee,
+                                 cas=sienne))
     return sortie
 
 

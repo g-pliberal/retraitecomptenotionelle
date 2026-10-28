@@ -2129,6 +2129,112 @@ def test_les_departs_avec_decote_se_comptent_quintile_par_quintile(parametres):
                                                               residents=True))["F"]
 
 
+def test_l_attente_des_departs_avec_decote_se_lit_dans_l_eir(parametres):
+    """Les départs avec décote des nés en 1953 après leur âge légal, 61 ans et
+    2 mois, en trois attentes. Ceux de l'âge légal même n'attendent pas :
+    37,5 % des femmes y partent, dont 15,4 % avec une décote. Ceux des deux
+    premières années, 61 et 62 ans, et les autres, de 63 ans à l'âge
+    d'annulation, 66 ans et 2 mois, attendent jusqu'au milieu de leur âge :
+    42,1 % des femmes partent à 61 ans, dont 14,8 % avec une décote, ceux de
+    l'âge légal compris, qui n'en sont pas, au milieu de ce qui reste de
+    l'année ; 14,9 % à 66 ans, dont 1,9 % avec une décote, au milieu des deux
+    mois d'avant l'âge d'annulation. Chaque attente au milieu de ses âges,
+    pondéré, et pesant leur part : la moitié des femmes décotées partent à
+    l'âge légal, un gros tiers des hommes. Nul ne décote après l'âge
+    d'annulation ; ceux d'avant l'âge légal, des statuts qui ouvrent plus tôt,
+    ne comptent pas."""
+    publies = G.departs_publies(parametres.racine_donnees)
+    lues = G.attentes_des_decotes(publies, parametres.racine_donnees)
+    legal, annulation = 61.17, 66.17
+    for sexe, a_l_age_legal, par_age in (
+            ("F", 37.5 * 15.4, {61: 42.1 * 14.8, 62: 8.9 * 19.6, 63: 5.0 * 20.6,
+                                64: 5.7 * 20.3, 65: 2.9 * 27.6, 66: 14.9 * 1.9}),
+            ("H", 24.4 * 11.0, {61: 29.7 * 10.3, 62: 8.2 * 14.9, 63: 5.2 * 14.5,
+                                64: 6.1 * 17.1, 65: 3.1 * 29.7, 66: 9.1 * 3.9})):
+        par_age[61] -= a_l_age_legal
+        attentes = {age: ((legal + 62.0) / 2 if age == 61 else (66.0 + annulation) / 2
+                          if age == 66 else age + 0.5) - legal for age in par_age}
+        total = a_l_age_legal + sum(par_age.values())
+        attendues = [(0.0, a_l_age_legal / total)] + [
+            (sum(par_age[a] * attentes[a] for a in ages) / sum(par_age[a] for a in ages),
+             sum(par_age[a] for a in ages) / total)
+            for ages in ((61, 62), (63, 64, 65, 66))]
+        assert [attente for attente, _ in lues[sexe]] == pytest.approx(
+            [attente for attente, _ in attendues]), sexe
+        assert [part for _, part in lues[sexe]] == pytest.approx(
+            [part for _, part in attendues]), sexe
+    assert lues["F"][0][1] == pytest.approx(0.51, abs=0.01)
+    assert lues["H"][0][1] == pytest.approx(0.37, abs=0.01)
+
+
+def test_les_departs_avec_decote_attendent_comme_ceux_des_nes_en_1953(
+        simulateur, source, parametres):
+    """Sous ``DECOTE_ENTRE_LES_DEUX_AGES``, la jumelle qui décote de chaque
+    carrière incomplète se décline comme les départs avec décote des nés en
+    1953 (``attentes_des_decotes``) : la part de son poids qu'ils prennent à
+    l'âge légal y part, à l'ouverture du droit, sous son code ; le reste
+    attend après lui, en deux attentes, à l'ouverture encore. Les trois pèsent
+    ensemble ce que pesait la jumelle, chacune de la part de sa génération
+    (``test_la_part_des_departs_avec_decote_se_rapporte_aux_carrieres_qui_peuvent_decoter``)."""
+    assert G.DECOTE_ENTRE_LES_DEUX_AGES
+    attentes = G.attentes_des_decotes(G.departs_publies(parametres.racine_donnees),
+                                      parametres.racine_donnees)
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    poids = _poids(variantes, simulateur.effectifs, source.millesime)
+    jumelles = {v.cas.code: v for v in variantes if v.decote}
+    attendantes: dict[str, set[float]] = {}
+    for v in jumelles.values():
+        assert v.cas.regle_liquidation == "ouverture"
+        if not v.cas.attente:
+            continue
+        immobile = jumelles[v.cas.code.replace(f"~decote{v.cas.attente:.2f}", "~decote")]
+        assert immobile.cas.attente == 0.0
+        assert v.parts_des_generations == immobile.parts_des_generations
+        parts = dict(attentes[v.cas.sexe])
+        assert poids[v.cas.code] / poids[immobile.cas.code] == pytest.approx(
+            parts[v.cas.attente] / parts[0.0])
+        attendantes.setdefault(immobile.cas.code, set()).add(v.cas.attente)
+    assert {code for code, v in jumelles.items() if not v.cas.attente} == set(attendantes)
+    for code, siennes in attendantes.items():
+        assert siennes == {a for a, _ in attentes[jumelles[code].cas.sexe] if a}, code
+
+
+def test_un_depart_avec_decote_qui_attend_decote_moins(simulateur, source, parametres):
+    """Née en 1955, la femme d'une carrière de dix à vingt ans du salariat
+    privé, de la classe médiane, a moins de 146 trimestres à 62 ans, ses
+    enfants compris, des 166 de sa génération : c'est l'âge qui borne sa
+    décote (R. 351-27). Partie à l'âge légal, il lui manque vingt trimestres
+    jusqu'à 67 ans, l'âge d'annulation des nés depuis 1955 (L. 351-8, 1°) :
+    elle liquide au taux de 50 − 20 × 0,625 = 37,5 %. Ses jumelles qui
+    attendent partent plus tard, décotées encore, d'autant de trimestres que
+    leur attente en laisse jusqu'à 67 ans, arrondis au trimestre supérieur :
+    seize, au taux de 40 %, après un an et deux mois ; sept, au taux de
+    45,625 %, après trois ans et cinq mois. Elles ne valident rien en
+    attendant. La surcote, née en 2004, n'attend qu'aux générations qui la
+    connaissent ; la décote baissait déjà avec l'âge : la même femme, née en
+    1940, attend autant après 60 ans."""
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    projection = simulateur.pour_la_projection()
+    attentes = G.attentes_des_decotes(G.departs_publies(parametres.racine_donnees),
+                                      parametres.racine_donnees)["F"]
+    par_code = {v.cas.code: v for v in variantes}
+    code = f"{G.GABARIT}~f~10_20~decote~p50"
+    valides = set()
+    for attente, _ in attentes:
+        jumelle = par_code[code.replace("~decote", f"~decote{attente:.2f}") if attente
+                           else code]
+        assert G.condition_au_depart(projection, jumelle.cas, 1955) == (
+            pytest.approx(62.0 + attente), "decote")
+        depart = projection.echeancier(jumelle.cas.construire(projection, 1955)).au_depart
+        valides.add(depart.trimestres_valides)
+        assert depart.taux_liquidation == pytest.approx(
+            0.5 - 0.00625 * math.ceil(4.0 * (5.0 - attente)))
+        assert jumelle.cas.age_liquidation_pour(projection, 1940) == pytest.approx(
+            60.0 + attente)
+    assert len(valides) == 1 and valides.pop() < 146
+    assert [round(a, 2) for a, _ in attentes] == [0.0, 1.14, 3.4]
+
+
 # -- les départs d'une génération, contre l'EIR (action 138, étape 14) ----------
 
 def test_les_departs_publies_se_lisent_dans_le_fichier_certifie(parametres):
