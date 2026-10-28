@@ -2759,7 +2759,7 @@ function lectureDesMontants(comparaison, saisie) {
       + "les prix, et le détail, régime par régime, est plus bas.";
   } else {
     quand = "Vous liquidez cette année : ces montants sont ceux de votre "
-      + `<strong>première pension</strong>, celle de ${date}. Le simulateur `
+      + `<strong>première pension</strong>, celle ${deMois(date)}. Le simulateur `
       + "s'arrête là et ne suit pas les revalorisations des années "
       + "suivantes.";
   }
@@ -4672,9 +4672,9 @@ celle que vous touchez une fois l'activité finie. ${droitsDuCumul(contexte,
     comparaison.actuel.droits_apres_depart)}</div>`;
 }
 
-/** « à partir de mars 2031 », mais « à partir d'avril 2033 » : `mois` écrit. */
-function aPartirDuMois(mois) {
-  return `à partir ${/^[aeiou]/.test(mois) ? "d'" : "de "}${mois}`;
+/** « de mars 2031 », mais « d'avril 2033 » : `mois` écrit, après sa préposition. */
+function deMois(mois) {
+  return `${/^[aeiou]/.test(mois) ? "d'" : "de "}${mois}`;
 }
 
 /**
@@ -4742,7 +4742,7 @@ function enBref(comparaison, saisie, montants, constants, capitaliseVolontaire,
         + `${echapper(String(complete))}, à ${age(carriere.ageAu(complete))} ; `
         + `elle commence en ${date}, à ${age(carriere.age_liquidation)}.`
       : `Avec le système actuel, votre retraite serait de ${somme(actuel)} `
-        + `${accord} par mois, ${aPartirDuMois(date)}, à `
+        + `${accord} par mois, à partir ${deMois(date)}, à `
         + `${age(carriere.age_liquidation)}.`;
   if (!comparaison.actuel.liquidation_ouverte) {
     phraseActuel += " À cet âge, pourtant, le droit actuel ne vous "
@@ -6332,9 +6332,6 @@ ${reserve}
 }
 
 /**
- * Ce que motive une ligne de réversion qui n'est pas servie entière.
- */
-/**
  * Ce que la ligne de réversion dit d'un minimum que la réversion ne compte
  * pas, par le libellé de son avantage ; un autre libellé se lit tel quel.
  */
@@ -6343,6 +6340,9 @@ const MINIMA_NON_REVERSES = Object.freeze({
   "Plancher de la pension substituée": "du plancher de la pension substituée",
 });
 
+/**
+ * Ce que motive une ligne de réversion qui n'est pas servie entière.
+ */
 const MOTIFS_DE_REVERSION = Object.freeze({
   minimum: "portée au minimum de la réversion",
   maximum: "ramenée au maximum de la réversion",
@@ -6418,7 +6418,7 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
   const nomRegime = (code) => (catalogue.contient(code) ? catalogue.obtenir(code).nom : code);
   const mois = (date) => echapper(String(new DateMois(
     Number(date.slice(0, 4)), Number(date.slice(5, 7)))));
-  const aPartirDe = (date) => aPartirDuMois(mois(date));
+  const aPartirDe = (date) => `à partir ${deMois(mois(date))}`;
 
   let quand;
   if (reversion.avant_le_depart) {
@@ -6508,9 +6508,10 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
       parts.push(`${sens} ${aPartirDe(jour)}${sur}`);
       retiree = reduction;
     });
-    // Depuis juillet 2004, la ligne que son plafond mesure à sa date d'effet le
-    // reste sans révision ; rien ne la dit qui n'est plus révisable dès son
-    // point de départ, ni celle que ses ressources ne réduisent pas.
+    // Révisable, elle l'est aussi sans révision depuis juillet 2004, quand son
+    // plafond la mesure à sa date d'effet ; rien ne le dit de celle qui ne
+    // l'est plus dès son point de départ, ni de celle que ses ressources ne
+    // réduisent pas.
     const derniere = ligne.derniere_revision ?? null;
     if ((ligne.revisions ?? []).length > 0
         || (ligne.ressources_examinees_au === "date_d_effet"
@@ -6547,9 +6548,9 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
   // Le régime général reverse la pension sans le minimum contributif qui la
   // relevait, et avec ce que le maximum des pensions en avait retiré : la
   // cellule dit ces parts, que le taux ne multiplie pas ou qu'il reprend.
-  // Sous le plafond du ménage, c'est avec ses ressources que la réversion
-  // dépasse (`plafond_du_menage`) : l'union formée après la date d'effet ne
-  // compte qu'à la révision qui la suit, ni avant juillet 2004.
+  // Sous le plafond du ménage (`plafond_du_menage`), c'est avec les ressources
+  // du ménage que la réversion dépasse : non quand l'union se forme après la
+  // date d'effet, que la révision qui suit compte, ni avant juillet 2004.
   const motif = (ligne) => (ligne.motif === "ecretee" && ligne.plafond_du_menage
     ? "réduite : avec les ressources du ménage, elle dépasserait le plafond"
     : MOTIFS_DE_REVERSION[ligne.motif]);

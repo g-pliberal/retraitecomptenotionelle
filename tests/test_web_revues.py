@@ -863,9 +863,10 @@ def test_le_resume_des_resultats_redit_les_chiffres_des_barres():
 
 
 def test_le_resume_elide_le_mois_d_un_depart_a_venir():
-    """« à partir de août 2039 », relevé le 28 octobre 2026 : la phrase du
-    système actuel élide devant avril, août et octobre, comme la carte de la
-    réversion, et garde « de » devant les autres mois."""
+    """« à partir de août 2039 », « celle de octobre 2026 », relevés le 28
+    octobre 2026 : la phrase du système actuel et celle qui dit de quand sont
+    les montants élident devant avril, août et octobre, comme la carte de la
+    réversion, et gardent « de » devant les autres mois."""
     def bref(liquidation: str) -> str:
         corps = rendre("/simuler", {**SIMULATION_TEMOIN, "liquidation": liquidation})[1]
         section = re.search(r'<section class="en-bref".*?</section>', corps, re.S).group(0)
@@ -874,6 +875,11 @@ def test_le_resume_elide_le_mois_d_un_depart_a_venir():
     assert "bruts par mois, à partir d'août 2039, à 64 ans et 7 mois." in bref("2039-08-01")
     assert "bruts par mois, à partir d'octobre 2039, à 64 ans et 9 mois." in bref("2039-10-01")
     assert "bruts par mois, à partir de janvier 2039, à 64 ans." in bref("2039-01-01")
+    for liquidation, celle in (("2026-10-01", "celle d'octobre 2026."),
+                               ("2026-03-01", "celle de mars 2026.")):
+        corps = rendre("/simuler", {**SIMULATION_TEMOIN, "naissance": "1962-01-01",
+                                    "liquidation": liquidation})[1]
+        assert f"<strong>première pension</strong>, {celle}" in corps
 
 
 def test_le_resume_dit_au_retraite_que_sa_pension_serait_recalculee():
