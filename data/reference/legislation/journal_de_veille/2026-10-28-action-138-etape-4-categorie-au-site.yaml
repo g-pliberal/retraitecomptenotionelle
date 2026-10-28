@@ -1,0 +1,17 @@
+date: "2026-10-28"
+session: >-
+  action 138, étape 4, au site : le champ de la catégorie de la pension d'invalidité
+  (`categorie_invalidite`), que le formulaire demande sous la pension datée et que la
+  saisie passe à la chronologie (`invalidite.categorie`)
+consulte: >-
+  Aucun texte neuf : l'étape ne touche à aucune règle et demande ce que le modèle lit
+  depuis le 24 octobre (L. 341-4, L. 341-15 ; R. 341-4 à R. 341-6 ; décret n° 61-272 ;
+  note `2026-10-24-etape-4-plancher-de-la-pension-substituee.md`).
+trouve: >-
+  Rien de neuf au droit. Le vocabulaire disait que le formulaire ne demande pas la
+  catégorie (présomption `categorie_de_la_pension_d_invalidite`) : il dit qu'il la
+  demande, avec la date de la pension.
+reste: >-
+  Rien pour la veille. Au site, la période et son moment, le plancher non majoré, et ce
+  que la note des révisions a vu en chemin (note
+  `2026-10-28-etape-4-categorie-au-site.md`).
