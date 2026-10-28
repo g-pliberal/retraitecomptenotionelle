@@ -5,11 +5,11 @@
 décote selon la génération, puis des carrières qui peuvent décoter ; le pilote
 des carrières inactives, au modèle et, au site, dans l'estimation ; le 28, les
 hommes selon le rang, l'ASPA, les invalides et les inaptes, la décote entre les deux
-âges ; au modèle, la descente, le militaire au mois. Reste, une session par point : le
-taux plein entre les deux âges ; la part d'avant 1950 sur le stock de 2020 ; la surcote
-des statutaires ; les artisans, les saisonniers agricoles ; les femmes âgées ; les
-limites. Au propriétaire : 152, 157, le CASD, l'incitation, le militaire, la
-sonde au mois, le recours de la page. Détail : `…-decote-des-carrieres-qui-le-peuvent.md`.
+âges, celle des résidents ; au modèle, la descente, le militaire au mois. Reste, une
+session par point : le taux plein entre les deux âges ; les agents décotés avant
+60 ans ; la surcote des statutaires ; les artisans, les saisonniers agricoles ; les
+femmes âgées ; les limites. Au propriétaire : 152, 157, le CASD, l'incitation, le
+militaire, la sonde au mois, le recours de la page. Détail : `…-decote-des-carrieres-qui-le-peuvent.md`.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.14 ». L'étape :
 « Ce qui demande une population ou des microdonnées, avec l'action 136 (étape
