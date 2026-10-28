@@ -4844,10 +4844,13 @@ const ETAGES_ACTUEL = [
  *
  * Chaque régime porte sa ligne à son étage, et la part qu'il sert de la
  * majoration pour enfants, que le moteur compte à côté des lignes ; un minimum
- * contributif ou garanti est déjà dans la ligne du régime qui le sert. Le
- * minimum vieillesse, qu'aucun régime ne sert, est un terme à part. Rend
- * `null` quand ces termes ne font pas le total : la page n'écrit pas une
- * somme fausse.
+ * contributif ou garanti est déjà dans la ligne du régime qui le sert. Pour qui
+ * est déjà parti, la ligne est la pension que le régime sert aujourd'hui
+ * (`aujourd_hui`) : menée par son coefficient, avec ce que « faire vivre » y
+ * retire ou y ajoute — le plancher que les majorations ne relèvent pas, la
+ * révision du minimum, la majoration de 2023, les relèvements. Le minimum
+ * vieillesse, qu'aucun régime ne sert, est un terme à part. Rend `null` quand
+ * ces termes ne font pas le total : la page n'écrit pas une somme fausse.
  *
  * `assiettes` dit, étage par étage, ce que la cotisation maladie frappe : les
  * lignes des régimes de `regimesMaladie`, sans leur majoration pour enfants ;
@@ -4870,28 +4873,28 @@ function etagesActuels(comparaison, catalogue, regimesMaladie = new Set(),
   const porter = (code, montant, ligne = false) => {
     const regime = catalogue.obtenir(code);
     if (isoler && regime.hors_repartition) return;
-    const coefficient = coefficients.has(code) ? coefficients.get(code) : 1.0;
-    etages.set(regime.etage, (etages.get(regime.etage) ?? 0.0) + montant * coefficient);
+    etages.set(regime.etage, (etages.get(regime.etage) ?? 0.0) + montant);
     if (!ligne) return;
     if (regimesMaladie.has(code)) {
-      assiettes.set(regime.etage,
-        (assiettes.get(regime.etage) ?? 0.0) + montant * coefficient);
+      assiettes.set(regime.etage, (assiettes.get(regime.etage) ?? 0.0) + montant);
     }
     if (regimesGeneraux.has(code)) {
-      generales.set(regime.etage,
-        (generales.get(regime.etage) ?? 0.0) + montant * coefficient);
+      generales.set(regime.etage, (generales.get(regime.etage) ?? 0.0) + montant);
     }
     if (!lignes.has(regime.etage)) lignes.set(regime.etage, new Map());
     const siennes = lignes.get(regime.etage);
-    siennes.set(code, (siennes.get(code) ?? 0.0) + montant * coefficient);
+    siennes.set(code, (siennes.get(code) ?? 0.0) + montant);
   };
   let minimum = 0.0;
-  for (const pension of actuel.pensions_par_regime) {
-    porter(pension.regime, pension.montant, true);
-  }
+  const pensions = servi === null
+    ? actuel.pensions_par_regime.map((pension) => [pension.regime, pension.montant])
+    : servi.regimes.map((r) => [r.regime, r.aujourd_hui]);
+  for (const [code, montant] of pensions) porter(code, montant, true);
   for (const avantage of actuel.avantages_appliques) {
     if (avantage.code === "majoration_enfants") {
-      for (const [code, part] of avantage.par_regime ?? []) porter(code, part);
+      for (const [code, part] of avantage.par_regime ?? []) {
+        porter(code, part * (coefficients.has(code) ? coefficients.get(code) : 1.0));
+      }
     } else if (avantage.code === "minimum_vieillesse") {
       minimum += avantage.montant;
     }

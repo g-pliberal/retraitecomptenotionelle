@@ -884,6 +884,48 @@ def test_le_systeme_actuel_dit_sa_base_et_ses_complementaires(nom, champs, libel
     assert sum(parts) == montant, f"{nom} : {ligne} ne fait pas {montant} €"
 
 
+@pytest.mark.parametrize("nom, champs, base, libelles", [
+    ("parti en avril 1970, porté à la pension minimum",
+     {"naissance": "1905-03-15", "debut": "1945-03", "liquidation": "1970-04",
+      "salaire": "0.18"}, 255.54,
+     ["retraite de base", "retraite complémentaire", "minimum vieillesse"]),
+    ("ex-invalide d'avril 1969, porté à la pension minimum",
+     {"naissance": "1909-03-15", "debut": "1945-03", "liquidation": "1969-04",
+      "salaire": "0.12", "interruptions": "1960:1969:invalidite"}, 258.01,
+     ["retraite de base", "retraite complémentaire", "minimum vieillesse"]),
+    ("au minimum contributif, majorée en septembre 2023",
+     {"naissance": "1955", "liquidation": "67", "unite_revenu": "moyen", "salaire": "0.3"},
+     None, ["retraite de base", "retraite complémentaire"]),
+])
+def test_la_composition_du_systeme_actuel_dit_ce_que_chaque_regime_sert(nom, champs, base,
+                                                                         libelles):
+    """Pour qui est déjà parti, la ligne sous le montant du système 1 dit ce
+    que chaque étage sert aujourd'hui : la pension que « Votre pension, de
+    votre départ à aujourd'hui » écrit en 2026 pour chaque régime, avec ce que
+    « faire vivre » y retire ou y ajoute. Elle menait chaque pension par son
+    seul coefficient : le salarié parti en avril 1970, porté à la pension
+    minimum, touche en 2026 du régime général 20,96 € × 12,9220 − 15,33 € =
+    255,54 € par mois, le plancher que les majorations forfaitaires de 1972 à
+    1982 ne relèvent pas retiré ; l'ex-invalide d'avril 1969, 19,69 € ×
+    13,8886 − 15,48 € = 258,01 € ; l'ASPA les porte l'un et l'autre à
+    1 043,59 € par mois. La pension au minimum contributif liquidée en 2022
+    reçoit la majoration de septembre 2023, que le coefficient ne mène pas.
+    Les termes dépassaient le total, et la page taisait la ligne."""
+    montant, ligne = _systeme_actuel(champs)
+    termes = re.findall(r"(\d[\d   ]*) ?€ de ([^+]+?)(?: \+|$)", ligne)
+    assert [libelle.strip() for _, libelle in termes] == libelles, f"{nom} : {ligne!r}"
+    parts = [int(re.sub(r"\D", "", euros)) for euros, _ in termes]
+    assert sum(parts) == montant, f"{nom} : {ligne} ne fait pas {montant} €"
+    corps = rendre("/simuler", champs)[1]
+    chemin = _bloc(corps, 'id="resultats-aujourdhui"', "</details>")
+    general = next(c for c in _cellules(chemin) if c[0].startswith("Régime général"))
+    servie, = _nombres(general[3])
+    assert abs(parts[0] - servie) < 1, f"{nom} : {ligne}, {servie} € servis"
+    if base is not None:
+        assert servie == pytest.approx(base, abs=0.02)
+        assert montant == 1044
+
+
 def test_un_regime_integre_se_dit_d_une_seule_pension():
     """Un agent de la SNCF n'a pas de complémentaire : son régime tient les
     deux rôles, et la ligne le dit au lieu de ne rien écrire."""
