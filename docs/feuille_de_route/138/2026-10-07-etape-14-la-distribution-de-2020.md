@@ -4,12 +4,12 @@
 (7 octobre) ; la population, du 16 au 25 octobre, de la décote aux natures, à la
 décote selon la génération, puis des carrières qui peuvent décoter ; le pilote
 des carrières inactives, au modèle et, au site, dans l'estimation ; le 28, les
-hommes selon le rang ; au modèle, la descente, le militaire au mois. Reste, une
-session par point : les départs entre l'âge légal et l'âge d'annulation ; la
+hommes selon le rang, l'ASPA ; au modèle, la descente, le militaire au mois. Reste,
+une session par point : les départs entre l'âge légal et l'âge d'annulation ; la
 part d'avant 1950 sur le stock de 2020 ; les invalides, les inaptes ; la surcote
-des statutaires ; les artisans, les saisonniers agricoles ; l'ASPA ; les
+des statutaires ; les artisans, les saisonniers agricoles ; les femmes âgées ; les
 limites. Au propriétaire : 152, 157, le CASD, l'incitation, le militaire, la
-sonde au mois. Détail : `…-decote-des-carrieres-qui-le-peuvent.md`.
+sonde au mois, le recours de la page. Détail : `…-decote-des-carrieres-qui-le-peuvent.md`.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « 138.14 ». L'étape :
 « Ce qui demande une population ou des microdonnées, avec l'action 136 (étape

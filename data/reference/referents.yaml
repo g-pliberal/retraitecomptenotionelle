@@ -4209,8 +4209,27 @@ referents:
           méthode : les cibles sont des effectifs servis, sur le
           champ de l'ERFS. Le taux de recours qu'elles impliquent
           demande les ayants droit, donc une population : ce n'est
-          plus proche du réel qu'avec des microdonnées.
-        etat: a_reprendre
+          plus proche du réel qu'avec des microdonnées. Mesuré le 28
+          octobre 2026 sur la population de l'étape 14
+          (`scripts/recours_aspa.py`, les allocataires servis de
+          l'enquête de la DREES par âge, sexe, isolés ou en couple) :
+          les femmes seules recourent à 49 % en 2016, les sexes
+          recalés, comme la DREES le mesure ; les hommes seuls et les
+          couples ne se mesurent pas sans les ménages, et les couples
+          à un allocataire sont surtout des couples dont les deux
+          membres ont l'âge, où un seul la demande, non ceux d'un seul
+          membre en âge, où Ines les tire. Comptés comme la page les
+          compte, sur la seule pension de droit direct, les ayants
+          droit sont trois à cinq fois les servis : le recours qui les
+          redonne est de 20 à 29 %
+          (`docs/feuille_de_route/138/2026-10-28-etape-14-recours-a-l-aspa.md`).
+        etat: a_trancher
+        raison: >-
+          Mesuré le 28 octobre 2026 : le recours de la page reste
+          50 %. Compter l'ASPA de l'effet retour comme le droit, la
+          réversion et le ménage compris, ou lui prendre le recours qui
+          redonne les servis sous sa convention, et le recours de la
+          garantie, hypothèse du programme, reviennent au propriétaire.
         chantier: "138.14"
       - quoi: >-
           Il sert l'ASI aux invalides avant l'âge de l'ASPA, seuls
