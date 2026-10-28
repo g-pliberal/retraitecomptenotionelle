@@ -66,9 +66,10 @@ export const TEXTE_APERCU = "« La seule retraite qui vous rend vraiment ce que 
  * Ce qui signe une carte exportée en image. Une image quittant le site n'a plus
  * ni barre d'adresse ni pied de page : sans ces deux lignes, elle circule sans
  * dire d'où elle vient ni qui l'a produite, et le premier qui la republie en
- * devient la source.
+ * devient la source. Le compte est celui du parti sur X, tel que son site le
+ * donne : @pliberalfr (décision du propriétaire, 28 octobre 2026).
  */
-export const SIGNATURE = "@pliberal";
+export const SIGNATURE = "@pliberalfr";
 export const SIGNATURE_SITE = "Parti libéral français — le simulateur de retraite";
 
 /**

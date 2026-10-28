@@ -573,6 +573,21 @@ def test_les_cartes_a_publier_vont_deux_par_ligne_et_se_lisent():
     assert not fautes, f"{len(fautes)} grilles de cartes :\n" + "\n".join(fautes)
 
 
+def test_l_adresse_d_une_carte_ne_se_coupe_que_faute_de_place():
+    """Le pied d'une carte porte le compte et l'adresse, un seul mot de
+    trente-six signes. Quand les deux ne tiennent pas sur une ligne, l'adresse
+    passe sous le compte, entière ; elle ne se coupe en plein mot que si elle ne
+    tient pas, seule, sur une ligne du pied. Le compte allongé en @pliberalfr
+    (28 octobre 2026), elle se coupait à 390 points, le téléphone le plus
+    courant : « …/#simulateu », puis « r »."""
+    fautes = []
+    for visite in mesures():
+        for grille in visite["replie"]["cartes"]:
+            fautes += [f"{_ou(visite, 'fermés')} : {adresse}"
+                       for adresse in grille["adressesCoupees"]]
+    assert not fautes, f"{len(fautes)} adresses coupées :\n" + "\n".join(fautes)
+
+
 # -- le lancement du navigateur ----------------------------------------------
 
 #: Le module par lequel le pilote lance Chromium et attend son protocole, et

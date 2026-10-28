@@ -277,7 +277,7 @@ export const DESCRIPTIONS = {
     + "presque tout, et d'où viennent les chiffres du site, série par "
     + "série et régime par régime.",
   "/partager": "Les chiffres du programme au format des réseaux sociaux, "
-    + "1200 × 675, en filigrane @pliberal : le plancher, le taux, "
+    + `1200 × 675, en filigrane ${g.SIGNATURE} : le plancher, le taux, `
     + "le déficit, et l'appel au simulateur.",
   "/saviez-vous": "Douze règles du système de retraite actuel en une carte "
     + "chacune : les seuils, les cotisations sans droits, la réversion, les "

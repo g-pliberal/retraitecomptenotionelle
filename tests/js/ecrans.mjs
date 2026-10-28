@@ -413,6 +413,22 @@ const MESURER = (ecran) => `(() => {
 
   // Les cartes à publier : combien chaque grille en range de front, et la plus
   // petite taille de ce qu'on y lit, la phrase et le détail.
+  // L'adresse du pied, un seul mot : coupée en plein mot alors qu'elle tiendrait
+  // entière sur une ligne du pied. Ses lignes sont celles de son texte, et sa
+  // largeur entière se mesure le temps de l'empêcher de se couper.
+  const coupees = (grille) => [...grille.querySelectorAll(".carte-partage .pied .adresse")]
+    .filter(montre).filter((adresse) => {
+      const texte = document.createRange();
+      texte.selectNodeContents(adresse);
+      const lignes = new Set([...texte.getClientRects()].map((r) => Math.round(r.top))).size;
+      if (lignes < 2) return false;
+      const avant = adresse.style.whiteSpace;
+      adresse.style.whiteSpace = "nowrap";
+      texte.selectNodeContents(adresse);
+      const entiere = texte.getBoundingClientRect().width;
+      adresse.style.whiteSpace = avant;
+      return entiere <= adresse.parentElement.clientWidth + 0.5;
+    }).map((adresse) => adresse.textContent);
   const cartes = [...document.querySelectorAll("#contenu .cartes")].filter(montre)
     .map((grille) => {
       const figures = [...grille.children].filter((el) => el.tagName === "FIGURE" && montre(el));
@@ -422,6 +438,7 @@ const MESURER = (ecran) => `(() => {
         colonnes: new Set(figures.map((el) => Math.round(el.getBoundingClientRect().left))).size,
         plusPetite: Math.round(Math.min(...tailles) * 10) / 10,
         largeur: Math.round(figures[0]?.getBoundingClientRect().width || 0),
+        adressesCoupees: coupees(grille),
       };
     });
 

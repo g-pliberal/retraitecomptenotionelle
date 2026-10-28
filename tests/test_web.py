@@ -4802,7 +4802,7 @@ def test_le_script_du_site_sait_lire_et_exporter_un_graphique():
     assert '.closest("button.partager-x")' in page
     assert '.partage > .etat' in page
     # La signature n'est pas écrite deux fois : elle vient du gabarit.
-    assert "@pliberal" not in page, (
+    assert g.SIGNATURE not in page, (
         "la signature est écrite en dur dans index.html — elle doit venir de "
         "gabarit.SIGNATURE, comme tout ce que le site écrit"
     )
@@ -4814,8 +4814,14 @@ def test_la_signature_des_images_nomme_le_compte_et_le_site():
     Sans ces trois lignes, elle sort du site sans dire d'où elle vient, ni où
     aller la vérifier, et le premier qui la republie en devient la source.
     """
-    assert g.SIGNATURE.startswith("@")
+    # Le compte est celui du parti sur X, tel que son site le donne
+    # (partiliberalfrancais.fr, lien « Twitter » de l'en-tête : x.com/pliberalfr).
+    # « @pliberal », signé de septembre au 28 octobre 2026, n'était pas ce
+    # compte.
+    assert g.SIGNATURE == "@pliberalfr"
     assert "libéral" in g.SIGNATURE_SITE.lower()
+    # La description de la page Partager le nomme par la même constante.
+    assert g.SIGNATURE in module("pages").DESCRIPTIONS["/partager"]
     # L'adresse est celle du site parent, et non celle de GitHub Pages : c'est
     # là que le lecteur d'un post doit atterrir.
     assert "partiliberalfrancais.fr" in g.ADRESSE_SITE

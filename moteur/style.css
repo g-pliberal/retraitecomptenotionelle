@@ -2195,11 +2195,14 @@ body.calcul-en-cours::after {
   .cartes .cadre-carte:not(.en-image) .detail {
     margin-top: 0.6rem; max-width: none; font-size: 0.8125rem;
   }
+  /* Le compte et l'adresse tiennent sur une ligne, ou vont sur deux : l'adresse
+     passe alors sous le compte, entière, au lieu de se couper en plein mot. */
   .cartes .cadre-carte:not(.en-image) .pied {
-    padding-top: 0.75rem; font-size: 0.875rem;
+    padding-top: 0.75rem; font-size: 0.875rem; flex-wrap: wrap; row-gap: 0.25rem;
   }
   /* L'adresse est un seul mot de trente-six signes : à 320 points, elle
-     sortait de l'écran. Elle se coupe où il faut. */
+     sortait de l'écran. Elle ne se coupe que si elle ne tient pas, seule, sur
+     sa ligne. */
   .cartes .cadre-carte:not(.en-image) .pied .adresse {
     font-size: 0.75rem; overflow-wrap: anywhere;
   }
