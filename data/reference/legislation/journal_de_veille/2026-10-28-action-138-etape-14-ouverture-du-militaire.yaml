@@ -1,0 +1,35 @@
+date: "2026-10-28"
+session: "action 138, étape 14 : au modèle, la descente des cas types et l'ouverture de la pension du militaire au mois près"
+consulte: >-
+  python scripts/veille_droit.py ; l'index LEGI du dépôt, récupéré (dump du 13 juillet
+  2025, à jour au 25 octobre 2026), mis à jour des incréments du 26 et du 27 octobre. Dans
+  LEGI : L. 24 du code des pensions civiles et militaires (LEGIARTI000047452804,
+  LEGIARTI000006362730), L. 26 (LEGIARTI000006362735, LEGIARTI000006362734), L. 90
+  (LEGIARTI000023034140), L. 13 (LEGIARTI000006362702, LEGIARTI000028498258) et l'article
+  66 de la loi n° 2003-775 (LEGIARTI000006758610) ; la loi n° 86-19 du 6 janvier 1986
+  (LEGITEXT000006068962), cherchée pour l'article de l'âge. python scripts/textes.py
+  --inscrire.
+trouve: >-
+  L. 24, II, 2°, ouvre la pension au militaire non officier qui « réunit, à la date de son
+  admission à la retraite, dix-sept ans de services effectifs » (quinze jusqu'au 1er juillet
+  2011) ; L. 26 en interdit la mise en paiement avant la radiation des cadres, et L. 90, I,
+  la dit due « à compter du premier jour du mois suivant la cessation de l'activité »
+  (pensions liquidées depuis le 1er juillet 2011). Le modèle l'ouvrait le mois même où les
+  services s'achèvent, un mois avant le premier départ qui les a : il l'ouvre le mois qui
+  suit, dans les deux moteurs, et les marins avec lui (R. 2 de leur code, par la même
+  date). L'article 66, II, de la loi de 2003 lit la durée à l'« Année au cours de laquelle
+  sont réunies les conditions mentionnées au I et au II de l'article L. 24 » : le modèle la
+  lit à l'année où les services s'achèvent, à quelque jour que le militaire soit né, et
+  non plus à l'anniversaire de son âge d'ouverture, qui déplaçait d'une année celui né un
+  1er janvier. L. 13 n'a pas de III de 2004 à 2014 ; depuis, le III lit la durée à «
+  l'année à compter de laquelle la liquidation peut intervenir ». L'index ne garde de la
+  loi n° 86-19 que son visa et des articles sans l'âge. L'inscription apportait sept
+  rédactions (décrets n° 86-1084 et n° 2005-368), qu'une fiche d'une autre session cite :
+  laissées à elle.
+reste: >-
+  L'année de la durée sous le III de L. 13 (2014 à 2023) et le XXIV, C, de la loi de 2023,
+  que le modèle compare au mois de l'anniversaire de l'âge d'ouverture, et l'article 5 de la
+  loi de 2003 (2009 à 2013), à lire (fiche militaires_duree_requise) ; le parent de trois
+  enfants, ouvert le mois même où ses conditions sont réunies, et l'emploi classé dont les
+  services s'achèvent après l'âge anticipé, de la même classe ; l'âge de la loi n° 86-19 sur
+  lequel descend l'exploitant né en 1925.
