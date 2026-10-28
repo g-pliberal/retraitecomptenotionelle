@@ -485,6 +485,39 @@ def test_le_pilote_fait_attendre_l_age_d_annulation_a_une_carriere_qui_ne_valide
     assert au_depart(age).taux_liquidation == pytest.approx(0.50)
 
 
+@pytest.mark.parametrize("regle", ["taux_plein", "ouverture"])
+def test_le_pilote_fait_descendre_a_la_carriere_longue_une_carriere_qui_ne_valide_plus(
+        simulateur, regle):
+    """Une carrière sans activité depuis qu'elle a sa durée l'avait déjà plus
+    tôt. Né en 1966, entré à seize ans et sans activité depuis 2025, l'année de
+    ses 59 ans, un salarié a 43 × 4 = 172 trimestres cotisés à la fin de 2024,
+    ceux de sa génération (L. 161-17-3) ; il en a validé cinq avant la fin de
+    l'année de ses dix-huit ans, non de ses seize, sa première année n'en
+    comptant que quatre : la carrière longue lui ouvre son départ à 60 ans, au
+    taux plein (L. 351-1-1, D. 351-1-1 dans sa version du 1er septembre 2023).
+    Le droit date la durée cotisée comme si la carrière cotisait encore
+    (``CarriereLongue.age_propose``) : liquidée à tout âge de 60 à 64 ans, elle
+    réunit ses trimestres à l'âge même de son départ, et le point fixe, parti
+    de l'âge écrit, y restait — 64 ans sous la règle du taux plein, 63 ans et
+    3 mois, l'âge légal, sous celle de l'ouverture. C'est la descente que
+    « Mon estimation retraite » fait depuis db3aef0 (``agesDeLEstimation``) :
+    le pilote reprend d'un an plus tôt tant que le départ s'y ouvre. Il ne
+    liquide toujours rien."""
+    cas = replace(next(c for c in CAS_TYPES if c.code == "salaire_moyen"),
+                  code="salaire_moyen~inactif_a_59_ans", age_debut=16,
+                  regle_liquidation=regle,
+                  interruptions_relatives=tuple((decalage, "inactivite")
+                                                for decalage in range(43, 64)))
+    assert cas.sexe == "H" and cas.nombre_enfants == 0
+    depart = simulateur.echeancier(cas.carriere_a(simulateur, 1966, 60.0)).au_depart
+    assert depart.motif_ouverture == "carriere_longue"
+    assert depart.taux_liquidation == pytest.approx(0.50)
+    avant = liquidation.appels()
+    age = pilote.age_de_depart(simulateur, cas, 1966)
+    assert liquidation.appels() == avant
+    assert age == pytest.approx(60.0)
+
+
 # -- le nombre d'appels déclaré ----------------------------------------------------
 
 def test_chaque_temoin_declare_ses_appels_de_liquider_sous_le_nombre_declare():

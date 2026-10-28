@@ -54,7 +54,8 @@ VARIANTES_LIQUIDATION: tuple[str, ...] = ("droit", "absolu")
 #: trimestre par millésime —, si bien que déplacer l'âge déplace la réponse.
 #: Deux passes suffisent partout dans la grille ; les deux autres sont la marge.
 #: Elles ne suffisent pas à une carrière qui ne valide plus, que
-#: :func:`age_de_depart` reprend de l'âge d'annulation de la décote.
+#: :func:`age_de_depart` reprend de l'âge d'annulation de la décote quand elle
+#: monte, et d'un an plus tôt quand elle descend (:func:`descendre`).
 PASSES_LIQUIDATION = 4
 
 
@@ -80,8 +81,9 @@ def age_de_depart(simulateur: Simulateur, cas: CasType, generation: int,
     jusqu'en 1972 et à soixante à partir de 1973, si bien qu'un artisan né
     en 1910 « ouvre » à soixante ans un droit que son année de départ lui
     refuse. Dans ce cas la règle ne descend pas plus bas que l'âge que ce
-    départ-là confirme, et reste où elle est s'il n'y en a pas de plus
-    précoce.
+    départ-là confirme ; le point fixe, qui ne sonde que les âges que le
+    droit propose, le laissait à soixante-quatre ans, l'âge écrit, et c'est
+    la descente d'un an en un an qui trouve 1973, à soixante-trois ans.
 
     **Le taux plein d'une carrière qui ne valide plus.** Le droit date la
     durée requise comme si la carrière validait encore quatre trimestres par
@@ -96,6 +98,25 @@ def age_de_depart(simulateur: Simulateur, cas: CasType, generation: int,
     (:func:`~retraite_notionnelle.droit.ouvrir.age_annulation_droit`), et
     descend comme toute autre jusqu'à l'âge où la carrière a sa durée, s'il
     en est un avant lui (action 138, étape 14).
+
+    **La descente.** Le point fixe ne sonde que les âges que le droit
+    propose : il manque le départ plus précoce que le droit ouvre sans le
+    proposer. Le droit date la durée cotisée de la carrière longue comme celle
+    du taux plein, comme si la carrière cotisait encore
+    (:meth:`~retraite_notionnelle.scenarios.actuel.CarriereLongue.age_propose`) :
+    sans activité depuis qu'elle a sa durée, liquidée à tout âge, elle la
+    réunit à l'âge même du départ, et le point fixe reste là d'où il part — né
+    en 1966, entré à seize ans et sans activité depuis ses 59 ans, un salarié
+    partait à 64 ans, l'âge écrit, quand la carrière longue lui ouvre 60 ans au
+    taux plein ; avec un trimestre de trop, il ne descend que d'un trimestre
+    par passe. Et l'âge que le droit propose peut précéder celui où ses
+    conditions sont réunies : le super-actif polypensionné de la population,
+    entré dans son corps après dix ans de privé, n'a ses services qu'à 59 ans,
+    quand le droit lui oppose 57 ans à tout âge plus tardif, et le point fixe
+    le laissait à 65 ans. Le point fixe fait, la recherche reprend donc d'un
+    an plus tôt tant que le départ s'y ouvre (:func:`descendre`), comme celle
+    du premier âge de « Mon estimation retraite » (``agesDeLEstimation``,
+    ``moteur/js/pilote.js``).
     """
     if variante not in VARIANTES_LIQUIDATION:
         raise ValueError(
@@ -118,13 +139,29 @@ def age_de_depart(simulateur: Simulateur, cas: CasType, generation: int,
         return proposes[age]
 
     age = point_fixe(cas.age_liquidation, proposer)
-    if cas.regle_liquidation != "taux_plein":
-        return age
-    propose = proposer(age)
-    if propose is None or propose <= age + 1e-9:
-        return age
-    annulation = age_annulation(simulateur, cas, generation, age)
-    return age if annulation is None else point_fixe(annulation, proposer)
+    if cas.regle_liquidation == "taux_plein":
+        propose = proposer(age)
+        if propose is not None and propose > age + 1e-9:
+            annulation = age_annulation(simulateur, cas, generation, age)
+            if annulation is not None:
+                age = point_fixe(annulation, proposer)
+    return descendre(age, proposer)
+
+
+def descendre(age: float, proposer: Callable[[float], float | None]) -> float:
+    """Le départ le plus précoce que ``proposer`` ouvre sous ``age`` : tant
+    qu'un départ un an plus tôt s'ouvre — le droit lui oppose un âge qui ne le
+    dépasse pas, qu'il se confirme ou non —, la recherche en reprend
+    (:func:`point_fixe`). C'est la boucle du premier âge d'``agesDeLEstimation``
+    (``moteur/js/pilote.js``), que :func:`age_de_depart` reprend."""
+    while True:
+        essai = point_fixe(age - 1.0, proposer)
+        if essai >= age - 1e-9:
+            return age
+        confirme = proposer(essai)
+        if confirme is None or confirme > essai + 1e-9:
+            return age
+        age = essai
 
 
 def point_fixe(age: float, proposer: Callable[[float], float | None]) -> float:
