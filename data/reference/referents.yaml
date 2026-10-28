@@ -2703,9 +2703,15 @@ referents:
           (`depense_nette.taux_effectifs`) : 6,8 % de 2020 à 2022. Le 24,
           le modèle le lit dans les montants certifiés
           (`DepensesRetraite.taux_effectif`), et le bilan figé porte la
-          dépense nette de chaque système ; la page Coût ne la montre pas
-          encore.
-        etat: a_reprendre
+          dépense nette de chaque système. Le 28, la page Coût la montre :
+          le bilan de la bascule, poste par poste, la porte sous le solde
+          pour les deux systèmes, 13,16 % du PIB en 2026 pour le système
+          actuel, 14,13 en brut ; « Et en BRUT, des deux côtés » chiffre la
+          masse nette à ce taux, et non plus « au plus » au taux plein, qui
+          en donnait la plus petite valeur. La CSG « circulaire » reste au
+          taux plein, une borne haute : le taux effectif mêle la CSG aux
+          trois autres prélèvements.
+        etat: repris
         chantier: "138.3"
       - quoi: >-
           Il cale le recours à l'ASPA, année par année, sur le
@@ -12834,8 +12840,17 @@ referents:
         verification: >-
           Définition AWG : « Net pension expenditure excludes taxes
           on pensions and compulsory social security contributions
-          paid by beneficiaries ».
-        etat: a_reprendre
+          paid by beneficiaries ». Repris le 28 octobre 2026 (action
+          138, étape 3) : le bilan porte depuis le 24 la dépense nette
+          de chaque système, au taux que la DREES mesure, un moins la
+          pension nette sur la brute, 6,8 % en 2022, tenu ensuite comme
+          l'AWG tient sa part ; la page Coût la montre à côté de la
+          brute, sous le solde du bilan de la bascule. Le système actuel
+          du modèle fait 12,70 % du PIB en net en 2022, pour 13,63 en
+          brut, quand l'AWG fait 12,8 pour 14,4 : il en retire 11,1 %,
+          l'impôt sur le revenu des pensions compris, que le dépôt
+          n'agrège pas (étape 5).
+        etat: repris
         chantier: "138.3"
     bilan: >-
       Il fait mieux sur l'analyse de la dépense : décomposition,
