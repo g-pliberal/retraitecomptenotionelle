@@ -296,6 +296,16 @@ fichiers:
       # Et le stock que la page sert à ses cas types statutaires, pesé comme
       # elle, face à celui du jaune, le 14 octobre 2026 (action 159, étape 4).
       - "**Le stock de la fonction publique, au jaune pensions"
+      # L'étape 14 de l'action 138, du 7 au 28 octobre 2026 : la distribution
+      # des pensions de 2020 que chaque grille sert, contre l'EIR ; puis la
+      # population, de sa quinzième à sa trente-quatrième version, ce qu'elle
+      # redonne et ce qu'elle laisse aux mesures du 28 octobre, et les
+      # questions laissées au propriétaire ce jour-là.
+      - "**La distribution des pensions de 2020, mesurée le 7 octobre 2026**"
+      - "**La population, de sa quinzième à sa trente-quatrième version"
+      - "**Où elle en est, le 28 octobre 2026.**"
+      - "**Ce qu'elle laisse, le 28 octobre 2026.**"
+      - "**Ce qui revient au propriétaire, le 28 octobre 2026.**"
 
   docs/limites/5-ter-trajectoire.md:
     defaut: etat

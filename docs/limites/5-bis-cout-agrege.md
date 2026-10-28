@@ -324,6 +324,140 @@ l'actif de la CNRACL, d'un à deux ans après les actifs (tableau 102) ; le
 militaire perd six points de taux de liquidation de 2016 à 2025, le flux
 réel quatre (tableau B-14).
 
+**La distribution des pensions de 2020, mesurée le 7 octobre 2026**
+(`scripts/grille_large.py --distribution`, action 138, étape 14). Chaque
+grille s'y lit en 2020 en têtes, comme la page les compte, chaque pension de
+droit direct du scénario 1 sans ASPA, en euros de 2020, contre la distribution
+que l'EIR publie par sexe, en tranches de cent euros, et les quantiles de ses
+résidents en France. La grille de la page n'a pas de bas : 8,4 % de ses
+retraités touchent moins de 900 € par mois, quand l'enquête en compte 30,0 % ;
+leur pension moyenne, 1 792 €, passe de 17 % la sienne, 1 536 ; toutes ses
+femmes ont la même carrière, l'interrompue, à 0,9 fois le salaire moyen. Ce
+que la page en tire tient pourtant : ses masses sont ancrées sur la dépense
+observée, et ce qui dépend du bas — la garantie, le minimum vieillesse — se
+chiffre sur la distribution de l'EIR, non sur sa grille. La grille élargie a
+un bas, au mauvais sexe : ses femmes touchent 13 % de trop, 1 329 € pour
+1 177, ses hommes 20 % de moins, 1 558 pour 1 957, et l'écart des sexes y est
+de 15 % quand l'EIR en mesure 40. Refaite le même jour sur le modèle du jour,
+la mesure du 5 octobre la trouve moins loin de la page sur le passé : l'écart
+des années observées s'y creuse de 2,51 points au scénario 2 et de 4,94 aux
+scénarios 4 et 6, et non de 4,55 et 8,03 ; le solde moyen de la proposition y
+vaut −0,40 point de PIB, pour −0,75 sur la page (−0,25 et −0,52 le 5 octobre).
+Le modèle ayant changé entre-temps, ces écarts ne disent pas le seul
+correctif.
+
+**La population, de sa quinzième à sa trente-quatrième version, du 16 au 28
+octobre 2026** (`scripts/grille_large.py --grille population`, action 138,
+étape 14). Les deux choses qui lui manquaient le 12 octobre, elle les a. Ses
+carrières incomplètes partent aussi avec une décote, chaque génération dans la
+part que l'EIR mesure à ses résidents — nés en 1950 et en 1953, ou, avant
+1950, de sa tranche d'âge dans le stock de 2020 — ou que l'EACR donne aux
+liquidants de la Cnav de 2024, dès la génération 1960 ; cette part se rapporte
+aux seules carrières qui peuvent décoter, sans ce que les agents des IEG et de
+la conduite décotent déjà à l'ouverture de leur statut, et se partage, comme
+chez les nés en 1953, entre l'âge légal et les années qui le suivent. Sa part
+au minimum contributif suit dès lors, depuis 2013, la pente de l'EACR, et ses
+hommes approchent son niveau : l'emploi fragmenté pèse sur une part des
+carrières du bas, et non sur toutes un peu ; les retraités de l'Ircantec sont
+rendus au salariat privé ; l'artisan prend la dispersion des revenus des
+non-salariés de son sexe ; la mesure compte les retraités de l'étranger. En
+2023, 11,4 % des hommes qui liquident aux régimes alignés sont au minimum,
+pour 12,2, à la dernière mesure, du 17 octobre. Elle a de plus des départs
+choisis, avec une surcote, au salariat et chez les non-salariés, puis chez les
+fonctionnaires civils, à la part et à la surcote moyenne que le jaune pensions
+trouve à leur catégorie ; des invalides et des inaptes, au taux plein dès
+l'âge légal ; des carrières pleines du salariat privé qui entrent, cinquième
+par cinquième, à l'âge où leur génération cotise son premier trimestre, que le
+service national précède chez certains hommes, et dont les périodes assimilées
+ont la nature et la part que l'échantillon interrégimes de cotisants publie,
+selon le rang aux deux sexes. En chemin, le modèle s'est corrigé quatre fois :
+D. 351-1-2 se lit dans sa rédaction en vigueur à la date d'effet de la pension
+; le pilote reprend de l'âge d'annulation une carrière sans activité dont la
+montée s'arrête sans le taux plein ; le départ d'un cas type descend, comme
+celui du site, d'un an plus tôt tant qu'il s'ouvre, ce qui avance trois
+départs anciens de la grille de la page ; la pension du militaire s'ouvre le
+mois qui suit ses services.
+
+**Où elle en est, le 28 octobre 2026.** Chacune des mesures du jour pèse sa
+version contre l'état qui la précède ; aucune ne les réunit toutes. Les
+retraitées de 2020 de la population décotent comme celles de l'EIR, 8,6 % pour
+8,8 ; ses retraités, 6,0 % pour 4,5, dont 1,2 point tient aux agents des IEG
+et de la conduite nés depuis 1960, partis avant 60 ans, qui décotent tous. Sa
+génération 1955, jugée sur les départs des nés en 1953, surcote 15,9 % (14,4)
+et part entre l'âge légal et l'âge d'annulation pour 26,7 % (26,6) ; 9,6 % de
+ses femmes partent à l'âge d'annulation (10,8), 5,1 % de ses hommes (5,5), et
+27,75 % de ses hommes en carrière longue (28,3). Ses fonctionnaires civils
+surcotent comme le jaune pensions le dit : 42,4 % des liquidants de l'État de
+2020 à 2025 (42,7), 24,4 % de ceux de la CNRACL (24,3). Restent loin : l'âge
+légal, qui prend 37,6 % des départs de la génération 1955 (31,2) et 49,3 % de
+ceux de ses femmes (37,5) ; le flux de 2024, dont 54,6 % partent à 62 ans,
+quand l'EACR en compte 26,0 %, et aucun à 68 ans ou plus (7,3), à 62,56 ans en
+moyenne pour 63,60 ; la distribution de 2020, qui a peu bougé depuis le 12
+octobre : 1 334 € de pension moyenne aux femmes (1 177), dont la part sous
+900 € par mois reste de 14,3 points sous celle de l'EIR, et 1 823 aux hommes
+(1 957), dont le neuvième décile reste à 3 015 € (3 242).
+
+**Ce qu'elle laisse, le 28 octobre 2026.** Le taux plein entre l'âge légal et
+l'âge d'annulation : chez les femmes, celles dont la carrière n'a sa durée
+qu'après l'âge légal, en validant encore, que le calage de leur durée et
+l'étalement des carrières courtes jusqu'à 60 ans excluent ; chez les hommes,
+deux fois trop de départs au taux plein entre les deux âges, 17,2 points de
+ceux de 1955 pour 8,9 avant la surcote des statutaires — l'artisan d'une
+carrière pleine entré à 24 ans, les fonctionnaires civils qui n'ont leur durée
+qu'après l'âge légal. Les agents des IEG et de la conduite partis avant 60
+ans, dont la part et la décote sont à juger sur ce que l'EIR dit des régimes
+spéciaux. La surcote du salariat, prise à l'EIR statutaires compris, qui
+compte une seconde fois la leur : les femmes de 1955 surcotent 17,4 % (14,3) ;
+et celle des fonctionnaires selon la génération, la part de 2025 valant pour
+toutes : la génération 1950 surcote 15,7 % (11,8), le stock de l'État de 2024
+30,3 % (EACR 22,6). Les artisans, qui ont désormais leur juge, le minimum
+contributif que le RSI servait : nés en 1946, 34,6 % d'entre eux y sont, pour
+33 % des artisans unipensionnés de l'EIR de 2012, mais 36,4 % des hommes pour
+23, 20,5 % des femmes pour 58 ; la part passagère de leur revenu, qu'une
+source approche par la mobilité, reste en variante : elle les ferait tomber à
+15,5 %. Les salariés agricoles, dont la MSA publie la carrière saisonnière —
+un quart de ses liquidants hommes depuis 2017 ont moins de 48 trimestres aux
+régimes alignés, quand 6,7 % de ceux de la population ont moins de dix ans —,
+et dont rien ne publie le salaire agricole. Les femmes âgées : la population
+pèse chaque âge comme les retraités de 2020, et l'alignement des survies ne
+rend pas aux femmes leur majorité au-delà de 80 ans, ce dont toute mesure par
+âge hérite ; ses plus vieilles retraitées de 2020 ne gardent que 6,3 à 8,1 %
+de décotées, quand leurs générations en font partir 8,8. Puis le détail, que
+les notes de l'étape tiennent : les natures des carrières incomplètes, la
+maternité, la durée des carrières pleines et le calage de celle des femmes, la
+part des générations 1946 à 1953 au minimum, la fragmentation selon la
+génération, la décote selon le rang, la carrière longue selon le rang, les
+attentes de la décote et de la surcote, la mortalité des invalides et des
+inaptes, et ceux d'entre eux qui partent entre les deux âges.
+
+**Ce qui revient au propriétaire, le 28 octobre 2026.** La page ne lit pas la
+population : aucune version de la population ne déplace un chiffre de la page,
+que seules les corrections du modèle atteignent. Sa bascule sur la page, qui
+pèserait aussi chaque cohorte de la part de sa génération, est l'action 157 ;
+les niveaux des cas types statutaires et non salariés, et la dispersion des
+libéraux, l'action 152. La confrontation pension par pension demande l'EIR au
+CASD, sur une habilitation que lui seul peut demander ; ses microdonnées
+diraient aussi combien de malades sont au chômage, la part de chaque nature
+selon le rang, et le recours des couples à l'ASPA, que gouvernent l'homogamie
+et le lien entre la vie seule et la pension propre. Les départs de la
+population doivent-ils suivre l'incitation du système simulé — partir plus
+tard quand le diviseur ou la surcote récompensent l'attente, plus tôt sous la
+décote, par un modèle de choix comme ceux de TRAJECTOiRE et de PRISME —, ou
+rester au même âge d'un scénario à l'autre ? Le recours à l'ASPA de la page :
+elle applique 50 % à des ayants droit qu'elle compte sur la seule pension de
+droit direct, chacun à part, 2,3 à 2,7 millions de personnes, trois à cinq
+fois les servis, et le recours qui redonne les servis sous cette convention
+est de 20 à 29 % ; la population confirme 50 % chez les femmes seules, 49 % en
+2016, non chez les hommes, dont le bas lui manque. Faut-il, pour l'ASPA de
+l'effet retour, compter comme le droit, la réversion et le ménage compris, ou
+prendre ce recours-là, et la garantie garde-t-elle 50 % ? Enfin, deux
+questions de méthode. Le balayage du militaire devait-il partir de son âge de
+radiation tant que l'âge où sa pension s'ouvre n'était pas trouvé au mois ?
+Cet âge l'est désormais : la question perd sa condition, et reste à clore. Un
+mois que la recherche manque vaut-il une sonde au mois ? Elle servirait à la
+carrière longue, et à l'ouverture de l'emploi classé, que la descente ne
+trouve qu'à l'année.
+
 **Ce qui, en revanche, n'est pas une approximation** : l'égalité des scénarios
 3 et 5 avec le système actuel sur toute la période observée. Elle est EXACTE, et
 au sens strict — le scénario prospectif recopie la pension du scénario actuel
