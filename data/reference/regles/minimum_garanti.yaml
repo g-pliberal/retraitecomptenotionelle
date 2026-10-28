@@ -240,6 +240,8 @@ code:
   - >-
     tests/test_trajectoire.py, la confrontation aux cas types de TRAJECTOiRE
   - >-
+    tests/test_avantages.py, où la ligne du minimum garanti a son montant
+  - >-
     tests/temoins/exemples_officiels.yaml, que tests/test_oracle.py rejoue :
     sre_minimum_garanti_de_l_invalidite
   - >-
