@@ -512,6 +512,16 @@ def lire_quintiles_eqcc(contenu: bytes, indicateurs: dict[str, str] = INDICATEUR
                         vides_nuls: tuple[str, ...] = ()
                         ) -> dict[str, dict[str, dict[str, float]]]:
     """Les ``indicateurs`` de la feuille des quintiles en équivalent carrière
+    complète du classeur (:func:`quintiles_de_la_feuille`)."""
+    return quintiles_de_la_feuille(feuilles(contenu, (FEUILLE_EQCC,))[FEUILLE_EQCC],
+                                   indicateurs, vides_nuls)
+
+
+def quintiles_de_la_feuille(grille: dict[tuple[int, int], float | str],
+                            indicateurs: dict[str, str] = INDICATEURS_EQCC,
+                            vides_nuls: tuple[str, ...] = ()
+                            ) -> dict[str, dict[str, dict[str, float]]]:
+    """Les ``indicateurs`` d'une feuille des quintiles en équivalent carrière
     complète : colonne, indicateur, sexe ; une case vide d'un indicateur de
     ``vides_nuls`` se lit zéro.
 
@@ -521,7 +531,6 @@ def lire_quintiles_eqcc(contenu: bytes, indicateurs: dict[str, str] = INDICATEUR
     cent, à l'arrondi près ; les cinq quintiles redonnent l'effectif de
     l'ensemble, et chacun compte le cinquième des retraités des deux sexes.
     """
-    grille = feuilles(contenu, (FEUILLE_EQCC,))[FEUILLE_EQCC]
     derniere_colonne = max(colonne for _, colonne in grille)
     derniere_ligne = max(ligne for ligne, _ in grille)
     colonnes: dict[str, int] = {}

@@ -32,8 +32,18 @@ CE QU'ON EN GARDE, de chacun des deux classeurs, par sexe :
 De chaque colonne : l'effectif, sa part dans la génération, la part des
 carrières complètes ; et, dans les deux premières feuilles, la part de chaque
 condition de liquidation parmi les départs de la colonne, une case vide se
-lisant zéro — nul ne surcote avant 60 ans. Le reste des feuilles (pensions,
-CSG, durées, régimes) n'est pas lu.
+lisant zéro — nul ne surcote avant 60 ans.
+
+Et ``QuintilesEQCC`` (``quintiles_eqcc``, action 138, étape 14) : la
+génération rangée par quintile de sa pension en équivalent carrière complète,
+lue comme la feuille de tous les retraités (``drees_caracteristiques_retraites``)
+— par quintile et par sexe, les effectifs, la proratisation, les pensions, la
+part au minimum, la durée validée hors majorations et ses tranches —, avec la
+durée validée, la durée cotisée, et la part des départs en carrière longue et
+avec décote. L'écart de la durée cotisée à la durée validée hors majorations
+est la masse assimilée de la génération à chaque rang, que la population
+compare à celle du stock des retraités de 2020. Le reste des feuilles
+(pensions, CSG, régimes) n'est pas lu.
 
 CE QUE LE LECTEUR VÉRIFIE. Les colonnes d'âge et de position comptent toute la
 génération : leurs effectifs redonnent celui de l'ensemble, à l'arrondi du
@@ -56,6 +66,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import drees_caracteristiques_retraites as caracteristiques  # noqa: E402
 from drees_caracteristiques_retraites import BASE, ENTETES  # noqa: E402
 from lecture_xlsx import feuilles  # noqa: E402
 
@@ -124,6 +135,21 @@ _INDICATEURS_CONDITION: dict[str, str] = {
 
 #: Les sexes, sous les noms du dépôt.
 SEXES = {"Ensemble": "ensemble", "Femme": "F", "Homme": "H"}
+
+#: Les indicateurs de la feuille « QuintilesEQCC » d'une génération, rangée par
+#: quintile de sa pension en équivalent carrière complète (action 138, étape
+#: 14) : ceux des quintiles de tous les retraités, la durée validée hors
+#: majorations sous l'intitulé qui se trompe ; la durée validée et la durée
+#: cotisée, dont l'écart à la première est la masse assimilée de la génération
+#: selon le rang ; la part des départs en carrière longue et avec décote, que
+#: la pente des natures déplace.
+INDICATEURS_EQCC: dict[str, str] = {
+    **caracteristiques.INDICATEURS_EQCC,
+    "duree_validee": "Moyenne de la durée validée (en années)",
+    "duree_cotisee": "Moyenne de la durée cotisée (en années)",
+    "part_carriere_longue": "Part de départs anticipés pour carrière longue (en %)",
+    "part_decote": "Part de départ avec décote (en %)",
+}
 
 
 def _texte(valeur) -> str:
@@ -227,14 +253,25 @@ def _verifier(lu: dict[str, dict[str, dict[str, float]]], tableau: str) -> None:
                            f"{lu['ensemble']['ensemble']['effectifs']:g}")
 
 
+def lire_quintiles(grille: dict[tuple[int, int], float | str]
+                   ) -> dict[str, dict[str, dict[str, float]]]:
+    """La feuille « QuintilesEQCC » d'une génération : quintile, indicateur,
+    sexe (:data:`INDICATEURS_EQCC`), lue et vérifiée comme celle de tous les
+    retraités (``quintiles_de_la_feuille``)."""
+    return caracteristiques.quintiles_de_la_feuille(grille, INDICATEURS_EQCC)
+
+
 def lire_generation(contenu: bytes) -> dict[str, dict]:
-    """Les trois tableaux du classeur d'une génération."""
-    grilles = feuilles(contenu, tuple(TABLEAUX.values()))
-    absentes = [feuille for feuille in TABLEAUX.values() if feuille not in grilles]
+    """Les trois tableaux du classeur d'une génération, ``tableaux``, et ses
+    quintiles en équivalent carrière complète, ``quintiles_eqcc``."""
+    noms = (*TABLEAUX.values(), caracteristiques.FEUILLE_EQCC)
+    grilles = feuilles(contenu, noms)
+    absentes = [feuille for feuille in noms if feuille not in grilles]
     if absentes:
         raise RuntimeError(f"feuilles absentes : {', '.join(absentes)}")
-    return {tableau: lire_tableau(grilles[feuille], tableau)
-            for tableau, feuille in TABLEAUX.items()}
+    return {"tableaux": {tableau: lire_tableau(grilles[feuille], tableau)
+                         for tableau, feuille in TABLEAUX.items()},
+            "quintiles_eqcc": lire_quintiles(grilles[caracteristiques.FEUILLE_EQCC])}
 
 
 def classeurs() -> list[tuple[int, int, str, bytes]]:
@@ -271,8 +308,7 @@ def main() -> int:
     charge = {"source": BASE, "lu_le": date.today().isoformat(), "generations": {}}
     for generation, millesime, titre, contenu in lus:
         charge["generations"][str(generation)] = {
-            "fichier": titre, "millesime": millesime,
-            "tableaux": lire_generation(contenu)}
+            "fichier": titre, "millesime": millesime, **lire_generation(contenu)}
         print(f"Nés en {generation} (EIR {millesime}) : {titre}")
     SORTIE.parent.mkdir(parents=True, exist_ok=True)
     SORTIE.write_text(json.dumps(charge, ensure_ascii=False, indent=1), encoding="utf-8")

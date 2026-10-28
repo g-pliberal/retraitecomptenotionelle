@@ -1333,7 +1333,13 @@ institutions:
           avec une surcote, 53,5 % de ceux partis à 63 ans. La population de
           la page Coût (action 138, étape 14) juge sur elles ses départs, que
           l'EACR ne compte qu'année par année. Aucun calcul du site ne les
-          lit.
+          lit. Sa feuille « QuintilesEQCC » aussi, depuis le 28 octobre 2026,
+          écrite dans data/reference/macro/quintiles_eqcc_generations.csv :
+          la génération rangée par quintile de sa pension en équivalent
+          carrière complète, avec, à chaque quintile, la durée validée hors
+          majorations et la durée cotisée, dont l'écart est sa masse assimilée
+          selon le rang, et la part des départs en carrière longue et avec
+          décote.
 
       - id: drees_eic_droits_valides
         titre: >-

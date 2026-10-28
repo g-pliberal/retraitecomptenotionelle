@@ -8,6 +8,12 @@ du départ par rapport à l'âge légal et à l'âge d'annulation de la décote,
 la condition de liquidation dans le régime principal. Les classeurs restent
 dans `data/brut/` : le lecteur se teste sur des grilles rendues comme les
 leurs, et le fichier certifié sur ce que les classeurs impriment.
+
+`quintiles_eqcc_generations.csv` vient des mêmes classeurs, de leur feuille
+« QuintilesEQCC » : chaque génération rangée par quintile de sa pension en
+équivalent carrière complète, la durée validée et la durée cotisée de chaque
+quintile, d'où la population tire la masse assimilée de chaque génération
+selon le rang (action 138, étape 14).
 """
 
 from __future__ import annotations
@@ -192,3 +198,156 @@ def test_le_fichier_certifie_compte_chaque_generation_entiere():
                            f"condition_{condition}")] == pytest.approx(
                     lu[(generation, "condition", condition, "ensemble", "part")],
                     abs=0.15), (generation, tableau, condition)
+
+
+#: La feuille « QuintilesEQCC » du classeur des nés en 1953, telle qu'elle se
+#: lit : chaque ligne lue, par sexe, aux cinq quintiles et à l'ensemble ; une
+#: ligne de plus, qui ne se lit pas.
+_LIGNES_EQCC: dict[str, dict[str, list[float]]] = {
+    "Effectifs (en milliers)": {
+        "Ensemble": [150, 150, 150, 150, 150, 757], "Femme": [109, 96, 70, 66, 51, 393],
+        "Homme": [42, 54, 80, 85, 99, 363]},
+    "Part de bénéficiaires du minimum de pension dans leur régime principal (en %)": {
+        "Ensemble": [55.0, 39.0, 9.0, 3.4, 0.5, 21.4], "Femme": [57.8, 47.0, 12.5, 4.6, 0.6, 30.6],
+        "Homme": [47.8, 24.9, 5.9, 2.5, 0.4, 11.4]},
+    "Montant moyen de la pension de retraite de droit direct brute (en euros/mois)": {
+        "Ensemble": [471, 936, 1387, 1852, 2922, 1510], "Femme": [468, 907, 1345, 1811, 2640, 1239],
+        "Homme": [479, 987, 1424, 1883, 3067, 1803]},
+    "Montant moyen de la pension de droit direct (dont les majorations pour enfants) brute "
+    "(en euros/mois)": {
+        "Ensemble": [487, 965, 1420, 1895, 3006, 1551], "Femme": [486, 937, 1374, 1843, 2696, 1269],
+        "Homme": [489, 1013, 1460, 1936, 3165, 1856]},
+    "Coeficient de proratisation moyen": {
+        "Ensemble": [67.0, 91.6, 98.1, 99.1, 97.9, 88.5], "Femme": [69.2, 92.0, 97.4, 99.3, 98.7, 86.0],
+        "Homme": [61.7, 91.1, 98.5, 99.0, 97.5, 91.1]},
+    "Moyenne de la durée validée (en années)": {
+        "Ensemble": [31, 41, 43, 43, 43, 40], "Femme": [31, 42, 44, 43, 43, 39],
+        "Homme": [30, 40, 43, 43, 42, 41]},
+    "Moyenne de la durée cotisée (en années)": {
+        "Ensemble": [19, 31, 38, 39, 39, 33], "Femme": [17, 29, 37, 38, 39, 30],
+        "Homme": [25, 35, 40, 39, 39, 37]},
+    "Moyenne de la durée cotisée hors majoration": {
+        "Ensemble": [27, 38, 41, 41, 41, 38], "Femme": [26, 37, 40, 40, 40, 35],
+        "Homme": [30, 40, 42, 42, 41, 40]},
+    "Proportion d'assurés dont la durée validée hors majoration est inférieure à 10 ans": {
+        "Ensemble": [13.0, 1.6, 0.4, 0.2, 0.2, 3.1], "Femme": [13.5, 1.9, 0.5, 0.2, 0.2, 4.4],
+        "Homme": [12.0, 1.1, 0.3, 0.2, 0.2, 1.8]},
+    "Proportion d'assurés dont la durée validée hors majoration est comprise entre 10 et 20 "
+    "ans": {
+        "Ensemble": [18.5, 4.7, 1.1, 1.3, 0.4, 5.3], "Femme": [20.4, 5.5, 1.4, 2.1, 0.7, 7.8],
+        "Homme": [13.4, 3.3, 0.9, 0.6, 0.3, 2.5]},
+    "Proportion d'assurés dont la durée validée hors majoration est comprise entre 20 et 30 "
+    "ans": {
+        "Ensemble": [23.2, 8.5, 2.9, 2.7, 1.9, 7.9], "Femme": [25.7, 9.7, 4.2, 3.8, 2.6, 11.3],
+        "Homme": [16.6, 6.4, 1.7, 1.9, 1.5, 4.2]},
+    "Proportion d'assurés dont la durée validée hors majoration est comprise entre 30 et 40 "
+    "ans": {
+        "Ensemble": [24.7, 26.5, 18.0, 19.5, 23.9, 22.6], "Femme": [24.8, 30.7, 25.1, 23.8, 33.0, 27.2],
+        "Homme": [24.3, 19.1, 11.7, 16.2, 19.3, 17.5]},
+    "Proportion d'assurés dont la durée validée hors majoration est supérieure ou égale à 40 "
+    "ans": {
+        "Ensemble": [20.7, 58.6, 77.6, 76.3, 73.5, 61.1], "Femme": [15.6, 52.1, 68.7, 70.2, 63.5, 49.3],
+        "Homme": [33.8, 70.2, 85.4, 81.0, 78.6, 73.9]},
+    "Part de départs anticipés pour carrière longue (en %)": {
+        "Ensemble": [2.7, 14.3, 32.7, 32.5, 19.8, 20.3], "Femme": [1.7, 10.8, 22.4, 24.4, 13.2, 12.9],
+        "Homme": [5.5, 20.3, 41.8, 38.7, 23.3, 28.3]},
+    "Part de départ avec décote (en %)": {
+        "Ensemble": [24.9, 7.5, 6.2, 6.0, 7.7, 10.6], "Femme": [25.9, 7.4, 6.3, 6.4, 8.2, 12.4],
+        "Homme": [22.3, 7.6, 6.2, 5.6, 7.5, 8.6]},
+    "Indice de Gini des pensions de retraite (droit direct + droit dérivé + majoration pour "
+    "enfants) brutes (en euros/mois)": {
+        "Ensemble": [0.393, 0.196, 0.11, 0.095, 0.167, 0.341],
+        "Femme": [0.372, 0.206, 0.128, 0.11, 0.133, 0.344],
+        "Homme": [0.444, 0.175, 0.093, 0.085, 0.176, 0.319]},
+}
+
+EQCC = [["sexe", "Variable", "Intitulé", "Premier quintile", "Deuxième quintile",
+         "Troisième quintile", "Quatrième quintile", "Cinquième quintile", "Ensemble"]] + [
+    [sexe, "", libelle, *valeurs] for libelle, sexes in _LIGNES_EQCC.items()
+    for sexe, valeurs in sexes.items()]
+
+
+def test_le_lecteur_lit_les_quintiles_de_la_generation():
+    """La feuille « QuintilesEQCC » d'une génération : chaque quintile et
+    l'ensemble, chaque sexe, sous le code des quintiles des résidents — la
+    durée validée hors majorations sous l'intitulé qui se trompe —, et la part
+    des départs en carrière longue et avec décote ; le reste de la feuille ne
+    se lit pas. Des tranches qui ne font pas cent, des quintiles inégaux se
+    refusent, comme chez les résidents."""
+    lu = recuperateur.lire_quintiles(_grille(EQCC))
+    assert sorted(lu) == ["ensemble", "q1", "q2", "q3", "q4", "q5"]
+    assert lu["ensemble"]["effectifs"]["ensemble"] == 757.0
+    assert lu["q1"]["duree_cotisee"]["H"] == 25.0
+    assert lu["q1"]["duree_validee_hors_majoration"]["H"] == 30.0
+    assert lu["q5"]["duree_validee"]["F"] == 43.0
+    assert lu["q3"]["part_carriere_longue"]["H"] == 41.8
+    assert lu["q1"]["part_decote"]["F"] == 25.9
+    assert lu["q2"]["part_minimum_pension_regime_principal"]["H"] == 24.9
+    assert not any("gini" in code for code in lu["q1"])
+    casse = [list(ligne) for ligne in EQCC]
+    rang = next(i for i, ligne in enumerate(casse) if ligne[0] == "Femme"
+                and ligne[2].endswith("inférieure à 10 ans"))
+    casse[rang][3] = 23.5
+    with pytest.raises(RuntimeError, match="tranches"):
+        recuperateur.lire_quintiles(_grille(casse))
+    casse = [list(ligne) for ligne in EQCC]
+    casse[1][3], casse[1][4] = 140.0, 160.0
+    with pytest.raises(RuntimeError, match="inégaux"):
+        recuperateur.lire_quintiles(_grille(casse))
+
+
+FICHIER_EQCC = RACINE / "data" / "reference" / "macro" / "quintiles_eqcc_generations.csv"
+
+
+def _quintiles_certifies() -> dict[tuple[str, str, str, str], float]:
+    with FICHIER_EQCC.open(encoding="utf-8") as flux:
+        lignes = [ligne for ligne in flux if not ligne.startswith("#")]
+    return {(l["generation"], l["quintile"], l["indicateur"], l["sexe"]): float(l["valeur"])
+            for l in csv.DictReader(lignes)}
+
+
+def test_les_quintiles_certifies_redonnent_ce_que_les_classeurs_impriment():
+    """Ce que les feuilles « QuintilesEQCC » des deux classeurs impriment. Nés
+    en 1950, 808 milliers de retraités ; les hommes du premier quintile ont
+    validé 28 années hors majorations, dont 25 cotisées, ceux du cinquième 41,
+    dont 39 ; les femmes du premier 24, dont 16. Nés en 1953, les hommes du
+    premier quintile 30, dont 25, du troisième 42, dont 40 ; 41,8 % de ces
+    derniers sont partis en carrière longue, 5,5 % de ceux du premier ; 25,9 %
+    des femmes du premier quintile avec une décote."""
+    lu = _quintiles_certifies()
+    assert lu[("1950", "ensemble", "effectifs", "ensemble")] == 808.0
+    assert lu[("1950", "q1", "duree_validee_hors_majoration", "H")] == 28.0
+    assert lu[("1950", "q1", "duree_cotisee", "H")] == 25.0
+    assert lu[("1950", "q5", "duree_validee_hors_majoration", "H")] == 41.0
+    assert lu[("1950", "q5", "duree_cotisee", "H")] == 39.0
+    assert lu[("1950", "q1", "duree_validee_hors_majoration", "F")] == 24.0
+    assert lu[("1950", "q1", "duree_cotisee", "F")] == 16.0
+    assert lu[("1953", "q1", "duree_validee_hors_majoration", "H")] == 30.0
+    assert lu[("1953", "q1", "duree_cotisee", "H")] == 25.0
+    assert lu[("1953", "q3", "duree_validee_hors_majoration", "H")] == 42.0
+    assert lu[("1953", "q3", "duree_cotisee", "H")] == 40.0
+    assert lu[("1953", "q3", "part_carriere_longue", "H")] == 41.8
+    assert lu[("1953", "q1", "part_carriere_longue", "H")] == 5.5
+    assert lu[("1953", "q1", "part_decote", "F")] == 25.9
+
+
+def test_les_quintiles_certifies_rangent_chaque_generation_en_cinquiemes():
+    """Dans chaque génération, les cinq quintiles comptent chacun le cinquième
+    de ses retraités, et redonnent, sexe par sexe, l'effectif de l'ensemble à
+    deux centièmes près, sans le passer ; dans chaque quintile, les cinq
+    tranches de durée validée hors majorations font cent."""
+    lu = _quintiles_certifies()
+    tranches = ("moins_10", "10_20", "20_30", "30_40", "40_plus")
+    quintiles = ("q1", "q2", "q3", "q4", "q5")
+    for generation in ("1950", "1953"):
+        ranges = [lu[(generation, q, "effectifs", "ensemble")] for q in quintiles]
+        assert max(ranges) - min(ranges) <= 0.01 * max(ranges), generation
+        for sexe in ("ensemble", "F", "H"):
+            somme = sum(lu[(generation, q, "effectifs", sexe)] for q in quintiles)
+            ensemble = lu[(generation, "ensemble", "effectifs", sexe)]
+            assert 0.98 * ensemble <= somme <= ensemble, (generation, sexe)
+            for quintile in (*quintiles, "ensemble"):
+                total = sum(lu[(generation, quintile,
+                                f"part_duree_validee_hors_majoration_{t}", sexe)]
+                            for t in tranches)
+                assert total == pytest.approx(100.0, abs=0.6), (generation, quintile, sexe)

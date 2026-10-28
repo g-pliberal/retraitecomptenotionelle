@@ -2732,6 +2732,35 @@ def source_departs_generations() -> dict[tuple, float]:
     }
 
 
+def source_quintiles_eqcc_generations() -> dict[tuple, float]:
+    """Les retraités nés en 1950 et en 1953 selon le quintile de leur pension en
+    équivalent carrière complète, chaque génération rangée en elle-même.
+
+    Les mêmes classeurs d'une génération que ``source_departs_generations``,
+    feuille « QuintilesEQCC » : par quintile et par sexe, les indicateurs des
+    quintiles de tous les retraités, la durée validée et la durée cotisée, la
+    part des départs en carrière longue et avec décote. L'écart de la durée
+    cotisée à la durée validée hors majorations y est la masse assimilée de la
+    génération selon le rang, que la population compare à celle du stock
+    (action 138, étape 14).
+
+    Clé (generation, quintile, indicateur, sexe).
+    """
+    charge = _lire_json("drees_departs_generations.json",
+                        "scripts/fetch/drees_departs_generations.py")
+    if any("quintiles_eqcc" not in lu for lu in charge["generations"].values()):
+        raise SourceAbsente(
+            "drees_departs_generations.json sans les quintiles EQCC des générations "
+            "(relancer scripts/fetch/drees_departs_generations.py)")
+    return {
+        (generation, quintile, indicateur, sexe): valeur
+        for generation, lu in sorted(charge["generations"].items())
+        for quintile, indicateurs in lu["quintiles_eqcc"].items()
+        for indicateur, serie in indicateurs.items()
+        for sexe, valeur in serie.items()
+    }
+
+
 def source_premier_trimestre() -> dict[tuple, float]:
     """La part des affiliés d'avant 23 ans qui ont validé un trimestre, et
     cotisé un trimestre, à chaque âge de 16 à 23 ans, génération par
@@ -7879,6 +7908,57 @@ CERTIFICATIONS = (
             "# des nés en 1950 sont partis à 60 ans, 14,3 % des nés en 1953 avec",
             "# une surcote, 28,3 % des hommes nés en 1953 en carrière longue. Aucun",
             "# calcul du site ne la lit.",
+            "#",
+            "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
+            "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="quintiles_eqcc_generations",
+        chemin=REFERENCE / "macro" / "quintiles_eqcc_generations.csv",
+        cles=("generation", "quintile", "indicateur", "sexe"),
+        colonne="valeur",
+        source=source_quintiles_eqcc_generations,
+        origine="DREES, échantillon interrégimes de retraités (EIR), classeurs d'une génération",
+        decimales=1,
+        tolerance=0.05,
+        entete=(
+            "# Les retraités nés en 1950 et en 1953 selon le quintile de leur",
+            "# pension en équivalent carrière complète",
+            "# source_id: drees_eir_generations",
+            "# unite: milliers de retraités (effectifs), pour cent (proratisation,",
+            "#        parts), euros bruts par mois (pensions), années (durées)",
+            "# fiabilite:",
+            "#   certifiee : feuille « QuintilesEQCC » des classeurs",
+            "#             « Caractéristiques des retraités nés en 1950 (EIR",
+            "#             2016) » et « nés en 1953 (EIR 2020) », diffusés par la",
+            "#             DREES et recontrôlés par scripts/verifier_donnees.py.",
+            "#",
+            "# Chaque génération vue l'année de son enquête, en 2016 à 66 ans, en",
+            "# 2020 à 67 ans, ses retraités de droit direct, tous lieux de",
+            "# résidence, rangés entre eux : chaque quintile en compte le",
+            "# cinquième. `quintile` : q1 à q5, et ensemble. `indicateur` : ceux",
+            "# de quintiles_eqcc.csv — effectifs ; coefficient_proratisation ;",
+            "# pension_droit_direct et pension_droit_direct_majorations ;",
+            "# part_minimum_pension_regime_principal ;",
+            "# duree_validee_hors_majoration, que le classeur intitule « durée",
+            "# cotisée hors majoration », et ses cinq tranches —, et d'autres :",
+            "# duree_validee, majorations comprises ; duree_cotisee ;",
+            "# part_carriere_longue et part_decote, la part des départs en",
+            "# carrière longue et avec décote, en pour cent des retraités du",
+            "# quintile.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À dire la masse assimilée de chaque génération selon le rang :",
+            "# l'écart de la durée cotisée à la durée validée hors majorations, que",
+            "# la population de scripts/grille_large.py prend au stock des",
+            "# résidents de 2020 (quintiles_eqcc_residents.csv) et qui n'y va pas",
+            "# de même (action 138, étape 14). Les hommes nés en 1950 du premier",
+            "# quintile ont validé 28 années hors majorations, dont 25 cotisées,",
+            "# ceux des trois derniers 41, dont 39 ; ceux du stock de 2020, 9,8 %",
+            "# de leur durée sans cotisation au cinquième quintile. Aucun calcul",
+            "# du site ne la lit.",
             "#",
             "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
             "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",

@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-10-24",
+ "dernier_passage_le": "2026-10-28",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -1408,6 +1408,17 @@
    "source": "DREES, échantillon interrégimes de retraités (EIR)",
    "valeurs": 198,
    "verifiee_le": "2026-10-12"
+  },
+  "quintiles_eqcc_generations": {
+   "ajoutees": 540,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "22d152b702358280",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DREES, échantillon interrégimes de retraités (EIR), classeurs d'une génération",
+   "valeurs": 540,
+   "verifiee_le": "2026-10-28"
   },
   "quintiles_eqcc_residents": {
    "ajoutees": 288,

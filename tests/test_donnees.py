@@ -775,6 +775,9 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # condition de liquidation, contre lesquels la population juge ses
         # départs (action 138, étape 14).
         "departs_generations": "macro/departs_generations.csv",
+        # Et les mêmes générations par quintile de leur pension en équivalent
+        # carrière complète : la masse assimilée de chacune selon le rang.
+        "quintiles_eqcc_generations": "macro/quintiles_eqcc_generations.csv",
         # Et l'âge du premier trimestre cotisé, génération par génération,
         # où la population fait entrer ses carrières pleines (action 138,
         # étape 14).
