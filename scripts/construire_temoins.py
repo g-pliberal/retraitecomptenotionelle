@@ -2163,7 +2163,7 @@ FORMULAIRE_ENTIER = frozenset({
     "simuler_reversion", "simuler_demande_de_pension", "simuler_radiation_invalidite",
     "simuler_carriere_hors_de_france", "simuler_handicap", "simuler_micro_entrepreneur",
     "simuler_periodes_assimilees", "simuler_conjoint_collaborateur",
-    "simuler_reversion_agricole", "simuler_indice_majore",
+    "simuler_reversion_agricole", "simuler_indice_majore", "simuler_reversion_revisee",
 })
 _FORMULAIRE = re.compile(r'(<form class="carte"[^>]*>).*?(</form>)', re.DOTALL)
 
@@ -2266,6 +2266,20 @@ def _pages() -> dict:
         ("simuler_reversion_enfant_posthume", "/simuler", {
             **BASE, "naissance": "1960", "liquidation": "62", "enfants": "1",
             "naissances": "2031-02", "conjoint": "1975", "deces": "2030-06",
+        }),
+        # Les révisions de la réversion (action 138, étape 4) : le veuf de 2030
+        # dont le salaire change, puis cesse, pacsé en 2034 avec une conjointe
+        # dont les ressources changent, et seul de nouveau en 2037 ; les quatre
+        # champs qui les disent, et la carte qui dit chaque révision et les
+        # ressources qu'elle retient.
+        ("simuler_reversion_revisee", "/simuler", {
+            **BASE, "naissance": "1960", "sexe": "F", "liquidation": "62",
+            "conjoint": "1975-01", "deces": "2030-06", "ressources_conjoint": "30000",
+            "activite_conjoint": "30000", "activite_conjoint_fin": "2036-05",
+            "activite_conjoint_variations": "2033-01:33000", "nouvelle_union": "pacs",
+            "nouvelle_union_depuis": "2034-10", "nouvelle_union_fin": "2037-04",
+            "ressources_nouveau_conjoint": "14000",
+            "ressources_nouveau_conjoint_variations": "2035-06:9000",
         }),
         # UN DÉPART PAR RÉGIME (droit/departs.py) : l'aide-soignante partie de
         # l'hôpital, dont le régime général et l'Arrco attendent l'âge légal.

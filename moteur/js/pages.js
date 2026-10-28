@@ -6336,6 +6336,11 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
   const nomRegime = (code) => (catalogue.contient(code) ? catalogue.obtenir(code).nom : code);
   const mois = (date) => echapper(String(new DateMois(
     Number(date.slice(0, 4)), Number(date.slice(5, 7)))));
+  // « à partir de mars 2031 », mais « à partir d'avril 2033 ».
+  const aPartirDe = (date) => {
+    const texte = mois(date);
+    return `à partir ${/^[aeiou]/.test(texte) ? "d'" : "de "}${texte}`;
+  };
 
   let quand;
   if (reversion.avant_le_depart) {
@@ -6368,8 +6373,8 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
     // Ce que la majoration pour enfant à charge devient quand un enfant n'est
     // plus à charge, ou que sa propre retraite commence.
     const devient = (etapes) => etapes.map(([jour, montant]) => (montant > 0
-      ? `${g.euros(mensuel(montant, ligne.regime))} à partir de ${mois(jour)}`
-      : `plus rien à partir de ${mois(jour)}`));
+      ? `${g.euros(mensuel(montant, ligne.regime))} ${aPartirDe(jour)}`
+      : `plus rien ${aPartirDe(jour)}`));
     const etapes = ligne.majoration_forfaitaire_enfants_etapes ?? [];
     if (ligne.majoration_forfaitaire_enfants > 0) {
       const suite = devient(etapes);
@@ -6380,28 +6385,50 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
       // redevenu à charge après elle (R. 353-10) : en plus, à sa date.
       const [[jour, montant], ...apres] = etapes;
       const suite = devient(apres);
-      parts.push(`${g.euros(mensuel(montant, ligne.regime))} de plus à partir de ${mois(jour)}, `
+      parts.push(`${g.euros(mensuel(montant, ligne.regime))} de plus ${aPartirDe(jour)}, `
         + "majoration pour enfants à charge" + (suite.length ? `, ${suite.join(", ")}` : ""));
     }
     // Avant juillet 2004, la limite de cumul revue quand sa propre retraite
     // suit la réversion.
     if (ligne.reduction_du_cumul > 0) {
-      parts.push(`${g.euros(mensuel(ligne.reduction_du_cumul, ligne.regime))} de moins à partir `
-        + `de ${mois(ligne.cumul_effet)}, limite de cumul avec sa propre retraite`);
+      parts.push(`${g.euros(mensuel(ligne.reduction_du_cumul, ligne.regime))} de moins `
+        + `${aPartirDe(ligne.cumul_effet)}, limite de cumul avec sa propre retraite`);
+    }
+    // Depuis, la révision sous le plafond de ressources (R. 353-1-1) : ce que
+    // chacune retire ou ajoute à la précédente, chaque réduction que le modèle
+    // rend se comptant depuis la date d'effet, et les ressources qu'elle retient ;
+    // puis jusqu'à quand la réversion reste révisable.
+    const retenues = new Map(ligne.ressources_des_revisions ?? []);
+    let retiree = 0;
+    (ligne.revisions ?? []).forEach(([jour, reduction], rang) => {
+      const ecart = mensuel(Math.abs(reduction - retiree), ligne.regime);
+      const sens = Math.round(ecart) === 0 ? "sans changement"
+        : `${g.euros(ecart)} de ${reduction > retiree ? "moins" : "plus"}`;
+      const sur = retenues.has(jour)
+        ? `, révisée sur ${g.euros(retenues.get(jour) * coefficient)}`
+          + (rang === 0 ? " de ressources par an" : "")
+        : "";
+      parts.push(`${sens} ${aPartirDe(jour)}${sur}`);
+      retiree = reduction;
+    });
+    if ((ligne.revisions ?? []).length > 0) {
+      parts.push(ligne.derniere_revision === null || ligne.derniere_revision === undefined
+        ? "révisable jusqu'à sa retraite"
+        : `révisable jusqu'en ${mois(ligne.derniere_revision)}`);
     }
     // Avant 1995, les majorations forfaitaires qui l'ont portée de 50 % ou de
     // 52 % à 54 %, à leur date.
     for (const [jour, montant] of ligne.majorations_forfaitaires ?? []) {
       if (montant > 0) {
-        parts.push(`${g.euros(mensuel(montant, ligne.regime))} de plus à partir de `
-          + `${mois(jour)}, majoration forfaitaire`);
+        parts.push(`${g.euros(mensuel(montant, ligne.regime))} de plus ${aPartirDe(jour)}, `
+          + "majoration forfaitaire");
       }
     }
     if (ligne.majoration_petites_retraites > 0) {
       const montant = g.euros(mensuel(ligne.majoration_petites_retraites, ligne.regime));
       parts.push(ligne.majoration_petites_retraites_effet <= ligne.date_effet
         ? `dont ${montant} de majoration de 11,1 %`
-        : `${montant} de plus à partir de ${mois(ligne.majoration_petites_retraites_effet)}, `
+        : `${montant} de plus ${aPartirDe(ligne.majoration_petites_retraites_effet)}, `
           + "majoration de 11,1 %");
     }
     // Partagée avec les précédents conjoints, la ligne dit sa part ; arrêtée par

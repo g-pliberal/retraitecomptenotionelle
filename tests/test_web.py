@@ -1008,6 +1008,48 @@ def test_la_majoration_pour_enfant_servie_apres_la_date_d_effet_se_dit():
             "plus rien à partir de mars 2049)") in cellules[3], cellules[3]
 
 
+@pytest.mark.parametrize("variation, revisions", [
+    ("2033-01:33000", "58 € de moins à partir de février 2033, révisée sur 21 700 € de "
+                      "ressources par an ; 117 € de moins à partir d'avril 2033, révisée sur "
+                      "23 100 €"),
+    ("2033-01:27000", "58 € de plus à partir de février 2033, révisée sur 20 300 € de "
+                      "ressources par an ; 117 € de plus à partir d'avril 2033, révisée sur "
+                      "18 900 €"),
+    ("2033-01:30000", "sans changement à partir de février 2033, révisée sur 21 000 € de "
+                      "ressources par an"),
+])
+def test_la_carte_dit_les_revisions_de_la_reversion_et_leurs_ressources(variation, revisions):
+    """La réversion du régime général « est révisable en cas de variation dans
+    le montant des ressources » (R. 353-1-1), le mois qui suit chaque
+    changement, sur les ressources des trois mois qui précèdent la révision.
+    Le veuf de 2030 gagne 30 000 € par an ; à cinquante-cinq ans, à la date
+    d'effet de sa réversion, le 1er juillet 2030, le régime général n'en compte
+    que 70 % (R. 353-1) : sous le plafond de 2 080 fois le SMIC horaire de
+    janvier 2026, 12,02 €, elle est écrêtée à 25 001,60 − 21 000 = 4 001,60 €
+    par an, 333 € par mois. Son salaire passe à 33 000 € en janvier 2033 : le
+    1er février, les trois mois retiennent 70 % de 31 000 €, 21 700 €, qui lui
+    retirent 700 € par an, 58 € par mois ; le 1er avril, 70 % de 33 000 €,
+    23 100 €, 1 400 € de plus, 117 € par mois. Son salaire tombé à 27 000 €,
+    les révisions lui rendent de même 58 €, puis 117 € ; resté à 30 000 €,
+    celle de février ne change rien. Il travaille, sans retraite datée : elle
+    reste révisable jusqu'à sa retraite (circulaire Cnav n° 2007-35, § 222) ;
+    sa retraite datée de mars 2034, jusqu'au 1er juin, trois mois après. La
+    carte disait le montant de la date d'effet, et taisait ce qui le révise."""
+    champs = {"naissance": "1960", "sexe": "F", "liquidation": "62", "conjoint": "1975-01",
+              "deces": "2030-06", "ressources_conjoint": "30000",
+              "activite_conjoint": "30000", "activite_conjoint_variations": variation,
+              "montants": "brut"}
+    for ajout, jusqu_a in (({}, "jusqu'à sa retraite"),
+                           ({"conjoint_retraite": "2034-03"}, "jusqu'en juin 2034")):
+        carte = _bloc(rendre("/simuler", {**champs, **ajout})[1], 'id="resultats-reversion"',
+                      "Dans les systèmes 2, 3 et 4")
+        cellules = next(c for c in _cellules(carte) if c[0].startswith("Régime général"))
+        assert cellules[4] == "juillet 2030"
+        assert cellules[3].startswith("333 € (réduite : avec ses ressources, elle "
+                                      "dépasserait le plafond)"), cellules[3]
+        assert f"({revisions} ; révisable {jusqu_a}" in cellules[3], cellules[3]
+
+
 def test_le_detail_range_la_base_avant_les_complementaires():
     """Le moteur rend les régimes dans l'ordre alphabétique de leurs codes,
     l'Agirc avant le régime général. Le détail les range par étage — la base,
