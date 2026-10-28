@@ -4885,6 +4885,12 @@ function etagesActuels(comparaison, catalogue, regimesMaladie = new Set(),
     const siennes = lignes.get(regime.etage);
     siennes.set(code, (siennes.get(code) ?? 0.0) + montant);
   };
+  // Une pension qui n'est pas encore servie aujourd'hui (`droit/departs.js`) :
+  // la ligne ne compose pas une retraite qui n'est pas complète.
+  if (servi !== null && actuel.pensions_par_regime.some(
+    (pension) => !servi.regimes.some((r) => r.regime === pension.regime))) {
+    return null;
+  }
   let minimum = 0.0;
   const pensions = servi === null
     ? actuel.pensions_par_regime.map((pension) => [pension.regime, pension.montant])

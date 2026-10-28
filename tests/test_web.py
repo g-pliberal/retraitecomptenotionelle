@@ -936,6 +936,20 @@ def test_un_regime_integre_se_dit_d_une_seule_pension():
     assert "€" not in ligne
 
 
+def test_la_composition_se_tait_tant_qu_une_pension_reste_a_venir():
+    """L'aide-soignante partie de l'hôpital en 2022, à cinquante-sept ans,
+    attend l'âge légal pour son régime général et son Arrco (droit/departs.py) :
+    sa pension d'aujourd'hui ne les compte pas encore. La ligne sous le montant
+    ne dit pas « une seule pension, sans complémentaire à part » de qui en
+    aura deux autres ; elle se tait, comme avant que la composition suive ce
+    que chaque régime sert."""
+    montant, ligne = _systeme_actuel({"sexe": "F", "naissance": "1965", "debut": "20",
+                                      "liquidation": "57", "metier2_debut": "30",
+                                      "metier2_statut": "fonctionnaire_territorial_hospitalier_actif"})
+    assert montant > 0
+    assert ligne == "", ligne
+
+
 @pytest.mark.parametrize("residence", [None, "ES"])
 def test_la_cotisation_de_la_sncf_reste_sur_son_regime_integre(saisies, residence):
     """Décret n° 2007-1056, art. 7, IV : l'agent de la SNCF paie 0,70 % de SA
