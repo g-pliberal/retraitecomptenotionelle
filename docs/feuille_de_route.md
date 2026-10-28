@@ -2805,16 +2805,16 @@ fabriqués.
 
 ### 130. L'architecture du dépôt : décidée, les phases 0 à 8 faites, les domaines à ouvrir — `en cours`
 
-**Reprise, au 24 octobre 2026.** Fait : phases 0 à 8, cinq domaines clos ; le
+**Reprise, au 28 octobre 2026.** Fait : phases 0 à 8, cinq domaines clos ; le
 sixième, les périodes assimilées manquantes, a ses étapes 1 à 6 faites
 (`130/2026-10-17-sixieme-domaine-etape-6.md`). Au propriétaire, README muet :
 sa septième étape, la décision de la proposition, et la retraite progressive,
 le cumul et la seconde pension. La carte mûrit : le code de toute fiche est
 confronté au dépôt par un test, hors de la seule de `EN_PROSE`, à l'action 131 ;
-restent 57 fiches sans code ni régimes, trois sans régimes, les 106 à lire au
-droit, 747 manques, et les points ouverts des phases 2 à 8. Par quoi commencer :
-écrire, par lots, le code et les régimes de ces 57 fiches. Détail :
-`130/2026-10-24-carte-des-fiches-cotisations-cultes-et-durees.md`.
+restent 46 fiches sans code ni régimes, trois sans régimes, les 106 à lire au
+droit, 725 manques, et les points ouverts des phases 2 à 8. Par quoi commencer :
+le lot suivant de ces 46 fiches, qui entre à `CODE_ET_REGIMES_ECRITS`. Détail :
+`130/2026-10-28-carte-des-fiches-regimes-speciaux-et-fonctionnaires.md`.
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de
