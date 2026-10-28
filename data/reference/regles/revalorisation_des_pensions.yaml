@@ -49,11 +49,29 @@ sources:
     paliers de 1 265, 1 270, 1 275 et 1 281 €, puis de 2 000 à 2 034 €, chacun au plus
     égal à celui du palier inférieur ; sans décret publié au plus tard le 31 octobre
     2027, le coefficient vaut un au-delà de 1 260 € (hors lissage du b du II) ; les
-    régimes en points reçoivent la règle par décret (IV). La commission des affaires
-    sociales a examiné puis rejeté le projet du 12 au 16 octobre 2026 ; la séance
-    publique s'ouvre le 20 octobre. Une revalorisation par seuils entrerait dans
-    `revalorisation_pensions.csv` comme les tranches de 2020.
+    régimes en points reçoivent la règle par décret (IV). Seules les pensions de base,
+    leurs majorations, accessoires et suppléments, minimum contributif compris, sont
+    revalorisées ainsi, non l'Agirc-Arrco ni l'Ircantec, que le seuil compte pourtant ;
+    la majoration pour tierce personne (L. 355-1) est hors du total. L'étude d'impact,
+    que cite le rapport n° 3345 (tome II), envisage deux décrets : rien au-delà de
+    1 260 € (4,0 milliards d'euros d'économie nette, dont 3,0 aux régimes de base) ;
+    ou la moitié du coefficient de 1 260 à 2 000 €, rien au-delà (3,4 milliards, dont
+    2,5). L'annexe du projet prévoit 2,1 % d'inflation hors tabac en 2026, 1,7 % en
+    2027, et une revalorisation moyenne des pensions de 0,2 % en 2027, mesure comprise.
+    L'Assemblée a rejeté le projet en première lecture le 23 octobre 2026 (T.A.
+    n° 358), faute d'en avoir adopté la deuxième partie (LO 111-7-1) : l'article 35
+    n'y a pas été discuté, et le Sénat examinera le texte déposé. Une revalorisation
+    par seuils entrerait dans `revalorisation_pensions.csv` comme les tranches de 2020.
   lectures:
+  - type: autre
+    reference: >-
+      Assemblée nationale, projet de loi de financement de la sécurité sociale pour 2027
+      rejeté le 23 octobre 2026, T.A. n° 358, en application de l'article L.O. 111-7-1 ;
+      rapport n° 3345 de la commission des affaires sociales, tome II, commentaire de
+      l'article 35 (les deux décrets de l'étude d'impact) ; annexe du projet, hypothèses
+      d'inflation et revalorisations moyennes de 2025 à 2030
+    url: https://www.assemblee-nationale.fr/dyn/17/textes/l17t0358_texte-adopte-seance
+    date: 2026-10-23
   - type: autre
     reference: >-
       Assemblée nationale, projet de loi de financement de la sécurité sociale pour 2027,

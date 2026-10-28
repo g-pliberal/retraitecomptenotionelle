@@ -13,7 +13,7 @@ effet: >-
   reste `a_verifier` parce que c'est un calendrier politique, non une lacune du
   dépôt.
 sources:
-  lu_le: 2026-10-19
+  lu_le: 2026-10-28
   prochaine_relecture: 2027-01-31
   a_relire:
   - >-
@@ -25,9 +25,17 @@ sources:
   - >-
     Le projet de loi de financement pour 2027 (n° 3211, déposé le 1er octobre 2026), tel
     que déposé, ne touche ni à L. 161-17-2 ni à L. 161-17-3 : ses articles retraite sont
-    le 34 (majoration pour enfants forfaitaire) et le 35 (revalorisation de 2027). Relire
-    le texte adopté, et la décision du Conseil constitutionnel, avant de lever la ligne.
+    le 34 (majoration pour enfants forfaitaire) et le 35 (revalorisation de 2027).
+    L'Assemblée l'a rejeté en première lecture le 23 octobre 2026 (T.A. n° 358) ; le
+    Sénat examinera le texte déposé. Relire le texte adopté, et la décision du Conseil
+    constitutionnel, avant de lever la ligne.
   lectures:
+  - type: legifrance
+    reference: >-
+      Index LEGI du dépôt, à jour de l'incrément du 27 octobre 2026 : ni L. 161-17-2 ni
+      L. 161-17-3 n'ont de version postérieure au 31 décembre 2025 (LEGIARTI000053280889,
+      LEGIARTI000053280903), toujours sans date de fin
+    date: 2026-10-27
   - type: legifrance
     reference: >-
       Index LEGI du dépôt, à jour de l'incrément du 19 octobre 2026 : ni L. 161-17-2 ni
