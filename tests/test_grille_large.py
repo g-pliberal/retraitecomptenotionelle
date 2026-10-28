@@ -1993,11 +1993,18 @@ def test_une_part_des_carrieres_incompletes_part_avec_une_decote(simulateur, sou
     assert not decotee(conduite.cas, 1958) and decotee(conduite.cas, 1962)
 
 
-def _decotes_attendues(racine: Path, generations: tuple[int, ...]) -> dict[str, dict[int, float]]:
+def _decotes_attendues(racine: Path, generations: tuple[int, ...],
+                       residents_seuls: bool = True) -> dict[str, dict[int, float]]:
     """La part des départs avec décote de chacune de ces ``generations`` parmi
     tous les retraités du sexe (``DECOTE_SELON_LA_GENERATION``), refaite à la
     main des fichiers certifiés de l'EIR, du témoin de l'EACR et de la
-    pyramide de l'INSEE."""
+    pyramide de l'INSEE. Sous ``residents_seuls`` (``DECOTE_DES_RESIDENTS``),
+    celle des nés en 1950 et en 1953 parmi les seuls résidents, et, avant
+    1950, celle de la tranche d'âge des résidents de 2020 où tombe chaque
+    génération, la tranche des nés de 1946 à 1950 moins ceux de 1950 ; sans,
+    celle des nés en 1950 et en 1953 de tous les retraités, et, avant 1950,
+    celle qui garde aux générations que 2020 voit toutes parties la part que
+    l'EIR mesure à tous les résidents."""
     import json
 
     from retraite_notionnelle.donnees.population import Population
@@ -2007,18 +2014,39 @@ def _decotes_attendues(racine: Path, generations: tuple[int, ...]) -> dict[str, 
     temoin = Path(__file__).resolve().parent / "temoins" / "drees_eacr_tables_2026.json"
     flux = json.loads(temoin.read_text(encoding="utf-8"))[
         "conditions_liquidation"]["series"]["0015"]["flux"]
+    with (racine / "reference" / "macro" / "conditions_selon_l_age_residents.csv").open(
+            encoding="utf-8") as fichier:
+        ages = {(l["condition"], l["indicateur"], l["sexe"]): float(l["valeur"])
+                for l in csv.DictReader(l for l in fichier if not l.startswith("#"))}
     pyramide = Population(racine)
     parties = {g: pyramide.effectif(2020 - g, 2020) for g in range(1900, 1954)}
     attendues: dict[str, dict[int, float]] = {}
     for sexe in ("F", "H"):
-        de_1950 = publies[(1950, "condition", "decote", sexe, "part")] / 100.0
-        de_1953 = publies[(1953, "condition", "decote", sexe, "part")] / 100.0
+        if residents_seuls:
+            de_1950 = publies[(1950, "residence", "france", sexe, "condition_decote")] / 100.0
+            de_1953 = publies[(1953, "residence", "france", sexe, "condition_decote")] / 100.0
+        else:
+            de_1950 = publies[(1950, "condition", "decote", sexe, "part")] / 100.0
+            de_1953 = publies[(1953, "condition", "decote", sexe, "part")] / 100.0
         ligne = flux[sexe]["2024"]
         du_flux = ligne["decote"] / (ligne["decote"] + ligne["taux_plein"] + ligne["surcote"])
 
+        def de_la_tranche(tranche: str) -> float:
+            return (ages[("decote", "effectifs", sexe)] * ages[("decote", tranche, sexe)]
+                    / (ages[("ensemble", "effectifs", sexe)] * ages[("ensemble", tranche, sexe)]))
+
         def part(g: int, avant: float) -> float:
             if g < 1950:
-                return avant
+                if not residents_seuls:
+                    return avant
+                if g <= 1935:
+                    return de_la_tranche("age_85_plus")
+                if g <= 1940:
+                    return de_la_tranche("age_80_85")
+                if g <= 1945:
+                    return de_la_tranche("age_75_80")
+                return ((de_la_tranche("age_70_75") * sum(parties[n] for n in range(1946, 1951))
+                         - de_1950 * parties[1950]) / sum(parties[n] for n in range(1946, 1950)))
             if g <= 1953:
                 return de_1950 + (de_1953 - de_1950) * (g - 1950) / 3
             if g >= 1960:
@@ -2051,11 +2079,13 @@ def test_la_part_des_departs_avec_decote_suit_la_generation(simulateur, source, 
     qu'elle pèse. Sans la version, une part partout, et la décote de 2020 à
     toutes les générations. La version seule, rapportée à toutes les carrières
     incomplètes : la trentième, qui la rapporte à celles qui peuvent décoter,
-    a son test."""
+    a son test ; et sans la décote des seuls résidents
+    (``DECOTE_DES_RESIDENTS``), qui a le sien."""
+    monkeypatch.setattr(G, "DECOTE_DES_RESIDENTS", False)
     racine = parametres.racine_donnees
     residents = G.quintiles_eqcc(racine, residents=True)
     attendues = _decotes_attendues(racine, (1925, 1949, 1950, 1952, 1953, 1955, 1958, 1960,
-                                            1980))
+                                            1980), residents_seuls=False)
     assert attendues["F"][1950] == pytest.approx(0.079)
     assert attendues["H"][1953] == pytest.approx(0.086)
     assert attendues["F"][1960] == pytest.approx(46637 / (46637 + 226331 + 66672))
@@ -2129,6 +2159,45 @@ def test_une_carriere_decote_a_l_ouverture_quand_le_droit_l_y_ouvre_avant_son_ta
     assert G.decote_a_l_ouverture(projection, agent, 1965)
 
 
+def test_la_decote_d_avant_1950_se_lit_au_stock_des_residents_selon_l_age(parametres,
+                                                                         monkeypatch):
+    """Sous ``DECOTE_DES_RESIDENTS``, la part des départs avec décote de chaque
+    génération est celle des seuls résidents en France, que la population et
+    le stock de 2020 comptent seuls : nés en 1950, 7,5 % des femmes et 4,5 %
+    des hommes, et non 7,9 et 5,6 % de tous les retraités ; nés en 1953, 11,9
+    et 7,7 %, et non 12,4 et 8,6. Avant 1950, celle de la tranche d'âge du
+    stock des résidents de 2020 où tombe chaque génération : 8,8 % des femmes
+    nées en 1935 et avant, qui ont 85 ans et plus, 6,3 % de celles nées de
+    1936 à 1940, 4,6 % de 1941 à 1945 ; 1,8, 1,5 et 1,9 % des hommes ; nés de
+    1946 à 1949, la tranche de 70 à 74 ans, 7,4 et 3,9 %, sans les nés en 1950,
+    qu'elle compte : 7,3 et 3,7 %. Sans la version, celle qui garde au stock de
+    2020 la part des résidents aux seules générations qu'il voit toutes
+    parties, 8,3 et 3,6 %, quand celles de 1954 à 1960 y décotent plus : 12,1 %
+    des résidentes de 65 à 69 ans, 11,5 % de celles de 60 à 64."""
+    racine = parametres.racine_donnees
+    naissances = (1900, 1925, 1935, 1936, 1940, 1941, 1945, 1946, 1949, 1950, 1951, 1953,
+                  1956, 1960, 1980)
+    attendues = _decotes_attendues(racine, naissances)
+    for sexe, valeurs in {"F": {1925: 0.0882, 1938: 0.0634, 1943: 0.0460, 1947: 0.0732,
+                                1950: 0.075, 1953: 0.119},
+                          "H": {1925: 0.0184, 1938: 0.0150, 1943: 0.0187, 1947: 0.0367,
+                                1950: 0.045, 1953: 0.077}}.items():
+        refaites = _decotes_attendues(racine, tuple(valeurs))[sexe]
+        for n, valeur in valeurs.items():
+            assert refaites[n] == pytest.approx(valeur, abs=5e-4), (sexe, n)
+    assert G.DECOTE_DES_RESIDENTS
+    decotes = G.decotes_des_generations(racine)
+    for sexe, parts in attendues.items():
+        for n, attendue in parts.items():
+            assert G._par_generation(decotes[sexe], n, 0.0) == pytest.approx(
+                attendue, rel=1e-9), (sexe, n)
+    monkeypatch.setattr(G, "DECOTE_DES_RESIDENTS", False)
+    sans = G.decotes_des_generations(racine)
+    assert G._par_generation(sans["F"], 1925, 0.0) == pytest.approx(0.083, abs=5e-4)
+    assert G._par_generation(sans["H"], 1925, 0.0) == pytest.approx(0.036, abs=5e-4)
+    assert G._par_generation(sans["F"], 1950, 0.0) == pytest.approx(0.079)
+
+
 def test_la_part_des_departs_avec_decote_se_rapporte_aux_carrieres_qui_peuvent_decoter(
         simulateur, source, parametres):
     """Sous ``DECOTE_DES_CARRIERES_QUI_LE_PEUVENT``, la part des départs avec
@@ -2140,11 +2209,13 @@ def test_la_part_des_departs_avec_decote_se_rapporte_aux_carrieres_qui_peuvent_d
     aucun des nés de 1953 à 1957, tous ceux de 1963 à 1967. Génération par
     génération, les départs avec décote, des jumelles et des agents, pèsent
     parmi tous les retraités du sexe la part de leur génération, refaite à la
-    main ; une jumelle qui ne peut pas décoter ne pèse rien — celle de la femme
-    née en 1955 d'une carrière de trente à quarante ans, qui a sa durée à
-    62 ans —, sa carrière gardant son poids."""
-    assert G.DECOTE_DES_CARRIERES_QUI_LE_PEUVENT
-    generations = (1955, 1965)
+    main, celle des seuls résidents (``DECOTE_DES_RESIDENTS``), de la tranche
+    d'âge de 2020 où tombent les nés de 1923 à 1927 et de 1938 à 1942 ; une
+    jumelle qui ne peut pas décoter ne pèse rien — celle de la femme née en
+    1955 d'une carrière de trente à quarante ans, qui a sa durée à 62 ans —, sa
+    carrière gardant son poids."""
+    assert G.DECOTE_DES_CARRIERES_QUI_LE_PEUVENT and G.DECOTE_DES_RESIDENTS
+    generations = (1925, 1940, 1955, 1965)
     naissances = {g: range(g - C._DEMI_TRANCHE, g + C._DEMI_TRANCHE + 1) for g in generations}
     attendues = _decotes_attendues(parametres.racine_donnees,
                                    tuple(n for g in generations for n in naissances[g]))
@@ -2160,7 +2231,7 @@ def test_la_part_des_departs_avec_decote_se_rapporte_aux_carrieres_qui_peuvent_d
             depart = projection.echeancier(v.cas.construire(projection, generation)).au_depart
             if G.avec_decote(projection, v.cas, generation, depart.taux_liquidation):
                 decotent.add(v.cas.code)
-        assert decotent == (set() if generation == 1955 else {v.cas.code for v in agents})
+        assert decotent == (set() if generation < 1965 else {v.cas.code for v in agents})
         for v in jumelles:
             if any(v.part_de_la_generation(n) > 0.0 for n in naissances[generation]):
                 assert G.decote_a_l_ouverture(

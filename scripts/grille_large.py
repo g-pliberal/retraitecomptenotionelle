@@ -277,7 +277,15 @@ fonctionnaires civils après leur taux plein, avec une surcote
 et chez les non-salariés, quand l'État surcote 38,9 % de ses liquidants civils
 de 2024 ; chaque catégorie de l'État et de la CNRACL surcote désormais dans la
 part et de la surcote moyenne que le jaune pensions lui trouve, comptée du
-premier âge où le modèle la lui sert.
+premier âge où le modèle la lui sert. La version de la décote des
+résidents (le même jour) prend la part des départs avec décote de chaque
+génération aux seuls résidents, que la population compte seuls
+(:data:`DECOTE_DES_RESIDENTS`) : celle des nés en 1950 et en 1953, et, avant
+1950, celle de la tranche d'âge du stock des résidents de 2020 où tombe chaque
+génération ; la vingt-neuvième donnait aux générations d'avant 1950 une seule
+part, qui ne gardait au stock de 2020 la sienne qu'aux générations qu'il voit
+toutes parties, sans celles de 1954 à 1960, qu'il voit partir et qui y
+décotent plus.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -303,6 +311,7 @@ import json
 import math
 import multiprocessing
 import os
+import re
 import sys
 import time
 from array import array
@@ -976,6 +985,30 @@ DECOTE_SELON_LA_GENERATION = True
 #: rang ; ses déclinaisons du bas, fragmentées ou à temps partiel, qui
 #: valident moins, ne décotent pas quand elle ne le peut pas.
 DECOTE_DES_CARRIERES_QUI_LE_PEUVENT = True
+
+#: La version de la décote des résidents (action 138, étape 14, le 28 octobre
+#: 2026) : la part des départs avec décote de chaque génération est celle des
+#: seuls résidents en France, que la population et le stock de 2020 comptent
+#: seuls. Nés en 1950 et en 1953, les résidents décotent moins que tous les
+#: retraités : 7,5 et 11,9 % des femmes, et non 7,9 et 12,4 ; 4,5 et 7,7 % des
+#: hommes, et non 5,6 et 8,6 (``departs_generations.csv``, tableau
+#: ``residence``), ceux de l'étranger, aux carrières françaises courtes,
+#: décotant pour 22 à 33 %. Avant 1950, chaque génération prend la part de la
+#: tranche d'âge du stock des résidents de 2020 où elle tombe
+#: (:func:`decotes_selon_l_age`, ``conditions_selon_l_age_residents.csv``) :
+#: 8,8 % des femmes nées en 1935 et avant, 6,3 % de celles nées de 1936 à
+#: 1940, 4,6 % de 1941 à 1945, 7,3 % de 1946 à 1949 ; 1,8, 1,5, 1,9 et 3,7 %
+#: des hommes (:func:`decotes_des_tranches`). La vingt-neuvième version leur
+#: prêtait à toutes une part, 8,3 et 3,6 %, celle qui gardait au stock de 2020
+#: la part de ses résidents aux seules générations qu'il voit toutes parties,
+#: jusqu'à celle de 1953, quand celles de 1954 à 1960, qu'il voit partir, y
+#: décotent plus : 12,1 % des résidentes de 65 à 69 ans, 11,5 % de celles de
+#: 60 à 64. Deux conventions : une tranche d'âge au 31 décembre 2020 compte les
+#: générations nées en 2020 moins ses âges, et chacune prend la part de sa
+#: tranche, celle de ses survivants de 2020 ; la tranche des nés de 1946 à 1950
+#: se prend sans les nés en 1950, qui ont la leur, chaque génération pesée de
+#: son effectif INSEE de 2020.
+DECOTE_DES_RESIDENTS = True
 
 #: La trente et unième version (action 138, étape 14, le 28 octobre 2026) : les
 #: départs avec décote se prennent aussi entre l'âge légal et l'âge
@@ -3111,6 +3144,63 @@ def decote_du_flux(sexe: str) -> float:
                 if conditions.caisse == CAISSE_DU_FLUX and conditions.champ == "flux")
 
 
+def decotes_selon_l_age(racine: Path) -> tuple[int, dict[str, dict[tuple[int, int | None],
+                                                                   float]]]:
+    """La part des départs avec décote de chaque tranche d'âge du stock des
+    résidents en France au 31 décembre de l'enquête, sexe par sexe
+    (``conditions_selon_l_age_residents.csv``) : l'effectif des décotés fois
+    leur part dans la tranche, divisé par celui de tous fois la leur.
+    L'année de l'enquête, et chaque tranche sous ``(premier âge, premier âge
+    de la suivante)``, la plus vieille sans fin."""
+    lignes = _lire_macro(racine, "conditions_selon_l_age_residents.csv")
+    valeurs = {(l["condition"], l["indicateur"], l["sexe"]): float(l["valeur"])
+               for l in lignes}
+    annee = int(lignes[0]["annee"])
+    sortie: dict[str, dict[tuple[int, int | None], float]] = {}
+    for (condition, indicateur, sexe), parmi_decotes in valeurs.items():
+        if condition != "decote" or sexe not in ("F", "H"):
+            continue
+        if (trouve := re.fullmatch(r"age_(?:moins_(\d+)|(\d+)_(\d+)|(\d+)_plus)",
+                                   indicateur)) is None:
+            continue
+        moins, debut, fin, plus = trouve.groups()
+        tranche = ((0, int(moins)) if moins else (int(debut), int(fin)) if debut
+                   else (int(plus), None))
+        parmi_tous = valeurs[("ensemble", indicateur, sexe)]
+        sortie.setdefault(sexe, {})[tranche] = (
+            valeurs[("decote", "effectifs", sexe)] * parmi_decotes
+            / (valeurs[("ensemble", "effectifs", sexe)] * parmi_tous)) if parmi_tous else 0.0
+    return annee, sortie
+
+
+def decotes_des_tranches(tranches: dict[tuple[int, int | None], float], annee: int,
+                         premiere: int, part: Callable[[int], float],
+                         effectif: Callable[[int], float]) -> tuple[tuple[int, float], ...]:
+    """Avant la génération ``premiere``, la part de chaque tranche d'âge du
+    stock de ``annee`` (:func:`decotes_selon_l_age`) aux générations qu'elle
+    compte, nées en ``annee`` moins ses âges, en paires ``(génération, part)``
+    triées, la plus vieille tranche sous la dernière génération qu'elle
+    compte. La tranche qui compte aussi ``premiere`` donne aux générations
+    d'avant elle la part qui, avec ``part`` aux autres, redonne la sienne,
+    chaque génération pesée de son ``effectif``."""
+    paires = []
+    for (debut, fin), valeur in sorted(tranches.items(), key=lambda paire: -paire[0][0]):
+        derniere = annee - debut
+        premiere_de_la_tranche = None if fin is None else annee - fin + 1
+        if premiere_de_la_tranche is not None and premiere_de_la_tranche >= premiere:
+            continue
+        if premiere_de_la_tranche is not None and derniere >= premiere:
+            naissances = range(premiere_de_la_tranche, derniere + 1)
+            avant = [n for n in naissances if n < premiere]
+            valeur = ((valeur * somme_ordonnee(effectif(n) for n in naissances)
+                       - somme_ordonnee(effectif(n) * part(n) for n in naissances
+                                        if n >= premiere))
+                      / somme_ordonnee(effectif(n) for n in avant))
+        paires.append((derniere if premiere_de_la_tranche is None else premiere_de_la_tranche,
+                       valeur))
+    return tuple(paires)
+
+
 def decotes_des_generations(racine: Path) -> dict[str, tuple[tuple[int, float], ...]]:
     """La part des départs avec décote de chaque génération parmi tous ses
     retraités, sexe par sexe, en paires ``(génération, part)`` triées
@@ -3119,23 +3209,32 @@ def decotes_des_generations(racine: Path) -> dict[str, tuple[tuple[int, float], 
     celle des liquidants de la Cnav de :data:`ANNEE_DU_FLUX`
     (:func:`decote_du_flux`) depuis la génération :data:`GENERATION_DU_FLUX`,
     en droite ligne depuis 1953, comme la grille du coût
-    (``facteurs_depense.part_decotee_de_la_generation``) ; avant 1950, celle
-    qui donne aux générations que l'enquête de 2020 voit toutes parties,
-    jusqu'à celle de 1953, chacune pesée de son effectif INSEE de 2020, la part
-    que l'EIR mesure aux résidents (``part_decote`` de
-    ``quintiles_eqcc_residents.csv``)."""
+    (``facteurs_depense.part_decotee_de_la_generation``). Sous
+    :data:`DECOTE_DES_RESIDENTS`, celle des nés en 1950 et en 1953 est celle
+    des seuls résidents en France ; et, avant 1950, chaque génération prend
+    celle de la tranche d'âge du stock des résidents de 2020 où elle tombe
+    (:func:`decotes_des_tranches`). Sans, avant 1950, celle qui donne aux
+    générations que l'enquête de 2020 voit toutes parties, jusqu'à celle de
+    1953, chacune pesée de son effectif INSEE de 2020, la part que l'EIR
+    mesure aux résidents (``part_decote`` de ``quintiles_eqcc_residents.csv``)."""
     publies = departs_publies(racine)
-    residents = quintiles_eqcc(racine, residents=True)
     premiere, derniere = min(ENQUETES_DES_DEPARTS), GENERATION_DES_DECOTES
     annee = ENQUETES_DES_DEPARTS[derniere]
     pyramide = Population(racine)
-    recentes = {generation: pyramide.effectif(annee - generation, annee)
-                for generation in range(premiere, derniere + 1)}
-    anciennes = pyramide.effectif_tranche(annee - premiere + 1, pyramide.age_maximal, annee)
+    if DECOTE_DES_RESIDENTS:
+        annee_du_stock, tranches = decotes_selon_l_age(racine)
+    else:
+        residents = quintiles_eqcc(racine, residents=True)
+        recentes = {generation: pyramide.effectif(annee - generation, annee)
+                    for generation in range(premiere, derniere + 1)}
+        anciennes = pyramide.effectif_tranche(annee - premiere + 1, pyramide.age_maximal,
+                                              annee)
     sortie = {}
     for sexe in ("F", "H"):
         de_la_premiere, de_la_derniere = (
-            publies[(generation, "condition", "decote", sexe, "part")] / 100.0
+            publies[(generation, "residence", "france", sexe, "condition_decote")
+                    if DECOTE_DES_RESIDENTS
+                    else (generation, "condition", "decote", sexe, "part")] / 100.0
             for generation in (premiere, derniere))
         du_flux = decote_du_flux(sexe)
 
@@ -3145,11 +3244,17 @@ def decotes_des_generations(racine: Path) -> dict[str, tuple[tuple[int, float], 
             return de_la_premiere + ((de_la_derniere - de_la_premiere)
                                      * (generation - premiere) / (derniere - premiere))
 
-        stock = residents[("ensemble", "part_decote", sexe)] / 100.0
-        avant = (stock * (anciennes + somme_ordonnee(recentes.values()))
-                 - somme_ordonnee(effectif * part(generation)
-                                  for generation, effectif in recentes.items())) / anciennes
-        sortie[sexe] = ((premiere - 1, avant),) + tuple(
+        if DECOTE_DES_RESIDENTS:
+            avant = decotes_des_tranches(
+                tranches[sexe], annee_du_stock, premiere, part,
+                lambda n: pyramide.effectif(annee_du_stock - n, annee_du_stock))
+        else:
+            stock = residents[("ensemble", "part_decote", sexe)] / 100.0
+            avant = ((premiere - 1, (stock * (anciennes + somme_ordonnee(recentes.values()))
+                                     - somme_ordonnee(effectif * part(generation)
+                                                      for generation, effectif
+                                                      in recentes.items())) / anciennes),)
+        sortie[sexe] = avant + tuple(
             (generation, part(generation))
             for generation in range(premiere, GENERATION_DU_FLUX + 1))
     return sortie
