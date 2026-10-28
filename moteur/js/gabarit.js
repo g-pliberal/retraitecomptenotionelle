@@ -35,13 +35,6 @@ export const SITE_PARENT = "https://partiliberalfrancais.fr/";
  */
 export const ADRESSE_CANONIQUE = `${SITE_PARENT}retraite/`;
 
-/**
- * L'adresse où ce dépôt se publie tel quel, à chaque envoi sur `main` : la seule
- * dont on sait qu'elle porte toujours les fichiers du jour, quand la copie du
- * parti se refait à la main (docs/integration-partiliberalfrancais.md).
- */
-export const ADRESSE_GITHUB_PAGES = "https://g-pliberal.github.io/retraitecomptenotionelle/";
-
 /** Le nom du site : celui du bandeau, et celui que portent ses aperçus de partage. */
 export const NOM_DU_SITE = "Retraite à comptes notionnels";
 
@@ -51,12 +44,14 @@ export const NOM_DU_SITE = "Retraite à comptes notionnels";
  * et la rubrique « Faire connaître » partage des adresses que personne ne voit.
  * Le titre et la description sont ceux de l'onglet ; l'image, la même pour les
  * neuf pages, est l'affiche de l'accueil, que `scripts/fabriquer_apercu.py`
- * dessine au format d'une grande image d'aperçu. Elle est prise sur GitHub
- * Pages : la copie du parti peut retarder sur le dépôt, et une image absolue qui
- * manque ne laisse, elle aussi, qu'un lien nu. Son texte de remplacement dit ce
- * qu'elle montre : il se refait avec elle.
+ * dessine au format d'une grande image d'aperçu. L'adresse de la page et celle
+ * de l'image sont sur la copie du parti, comme l'adresse canonique : le partage
+ * renvoie au site du parti, jamais à GitHub Pages (décision du propriétaire,
+ * 28 octobre 2026). L'aperçu ne s'affiche donc qu'une fois la copie refaite. Le
+ * texte de remplacement de l'image dit ce qu'elle montre : il se refait avec
+ * elle.
  */
-export const IMAGE_APERCU = `${ADRESSE_GITHUB_PAGES}moteur/apercu.png`;
+export const IMAGE_APERCU = `${ADRESSE_CANONIQUE}moteur/apercu.png`;
 export const LARGEUR_APERCU = 1200;
 export const HAUTEUR_APERCU = 630;
 export const TEXTE_APERCU = "« La seule retraite qui vous rend vraiment ce que vous avez "

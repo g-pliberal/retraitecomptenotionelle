@@ -102,10 +102,11 @@ def test_une_page_porte_son_titre_sa_description_et_son_adresse_canonique(chemin
 
 
 #: L'image d'aperçu, la même pour les neuf pages, et l'adresse d'où les réseaux
-#: la prennent : GitHub Pages, où le dépôt se publie tel quel à chaque envoi sur
-#: `main` (docs/integration-partiliberalfrancais.md, « La frontière »).
+#: la prennent : la copie du parti, comme l'adresse canonique. Le partage renvoie
+#: au site du parti, jamais à GitHub Pages (décision du propriétaire,
+#: 28 octobre 2026).
 APERCU = RACINE / "moteur" / "apercu.png"
-IMAGE_APERCU = "https://g-pliberal.github.io/retraitecomptenotionelle/moteur/apercu.png"
+IMAGE_APERCU = "https://partiliberalfrancais.fr/retraite/moteur/apercu.png"
 
 
 def _slogan() -> str:
@@ -120,16 +121,18 @@ def test_une_page_porte_son_apercu_de_partage(chemin):
     s'affiche avec son titre, sa description et une image, et non comme un lien
     nu : sans ces balises, la rubrique « Faire connaître » partage des adresses
     que personne ne voit. Le titre et la description sont ceux de l'onglet ;
-    l'image est servie par GitHub Pages, la seule adresse qui porte toujours
-    les fichiers du jour. Pas d'``og:url`` : elle enverrait les réseaux lire
-    l'aperçu chez la copie du parti, qui peut retarder sur le dépôt."""
+    l'adresse (``og:url``) et l'image sont celles de la copie du parti : le
+    partage renvoie au site du parti, jamais à GitHub Pages, qu'aucune page ne
+    nomme. L'aperçu ne s'affiche donc qu'une fois la copie refaite."""
     route, texte = _route(chemin), _page(chemin)
     titre = TITRE_DE_L_ACCUEIL if route == "/" else \
         f"{DOSSIERS[route.lstrip('/')]} — Retraite en comptes notionnels"
+    dossier = "" if route == "/" else route.lstrip("/") + "/"
     attendues = {
         "og:type": "website",
         "og:locale": "fr_FR",
         "og:site_name": "Retraite à comptes notionnels",
+        "og:url": f"https://partiliberalfrancais.fr/retraite/{dossier}",
         "og:title": titre,
         "og:description": module("pages").DESCRIPTIONS[route],
         "og:image": IMAGE_APERCU,
@@ -143,7 +146,7 @@ def test_une_page_porte_son_apercu_de_partage(chemin):
     alternatif = re.search(r'<meta property="og:image:alt" content="([^"]+)">', texte)
     assert alternatif and _slogan() in alternatif.group(1), chemin
     assert '<meta name="twitter:card" content="summary_large_image">' in texte
-    assert 'property="og:url"' not in texte
+    assert "github.io" not in texte, chemin
 
 
 def test_l_image_d_apercu_est_au_format_des_reseaux():

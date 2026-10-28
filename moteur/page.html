@@ -20,14 +20,15 @@
 <link rel="canonical" href="{{canonique}}">
 <!-- L'aperçu de la page collée dans un réseau social ou une messagerie : son
      titre, sa description et une image, au lieu d'un lien nu. L'image est
-     l'affiche de l'accueil, la même pour les neuf pages, prise sur GitHub
-     Pages, qui porte toujours les fichiers du jour (IMAGE_APERCU, dans
-     gabarit.js ; scripts/fabriquer_apercu.py la dessine). Pas d'og:url : elle
-     enverrait les réseaux lire l'aperçu chez la copie du parti, qui peut
-     retarder sur le dépôt. -->
+     l'affiche de l'accueil, la même pour les neuf pages (IMAGE_APERCU, dans
+     gabarit.js ; scripts/fabriquer_apercu.py la dessine). L'adresse de la page
+     et celle de l'image sont sur la copie du parti, comme la canonique : le
+     partage renvoie au site du parti, jamais à GitHub Pages (décision du
+     28 octobre 2026). -->
 <meta property="og:type" content="website">
 <meta property="og:locale" content="fr_FR">
 <meta property="og:site_name" content="{{nom_du_site}}">
+<meta property="og:url" content="{{canonique}}">
 <meta property="og:title" content="{{titre}}">
 <meta property="og:description" content="{{description}}">
 <meta property="og:image" content="{{image_apercu}}">

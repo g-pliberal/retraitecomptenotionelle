@@ -53,7 +53,10 @@ Pour l'hôte, six choses :
    l'hôte peut le déclarer dans le `robots.txt` de son site
    (`Sitemap: https://partiliberalfrancais.fr/retraite/sitemap.xml`) ou dans la
    console de ce moteur : cela ne dépend que de lui, et se règle avec lui à la
-   prochaine copie.
+   prochaine copie. L'aperçu d'une page partagée dans un réseau social ou une
+   messagerie renvoie lui aussi à la copie : son adresse (`og:url`) est la
+   canonique, et son image, `moteur/apercu.png`, est prise sur la copie,
+   jamais sur GitHub Pages. Il ne s'affiche donc qu'une fois la copie refaite.
 
 ## La frontière
 
