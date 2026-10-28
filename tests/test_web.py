@@ -2646,8 +2646,10 @@ def test_les_champs_qui_decrivent_la_personne_sont_reconnaissables(page):
     reconnaissent."""
     texte = page("/simuler")
     # « bday » et non « bday-year » : le champ demande la date entière depuis
-    # qu'il ouvre un calendrier, et c'est cette date que le navigateur sait
-    # remplir.
+    # qu'il ouvre un calendrier, et c'est elle que la norme nomme « bday ».
+    # Chrome, dont l'autoremplissage ne connaît que les trois jetons séparés,
+    # la dit « non standard » dans son onglet « Issues » : l'alerte est admise,
+    # pour cette raison, par `test_ecrans.py` (`ALERTES_ADMISES`).
     assert 'id="naissance"' in texte and 'autocomplete="bday"' in texte
     assert 'id="sexe"' in texte and 'autocomplete="sex"' in texte
 

@@ -7071,15 +7071,16 @@ une à une, les étapes 3 et 5. Les quatre gardes de l'étape 2 sont faites le
 
 ### 174. Les notes Lighthouse au maximum, sur toutes les pages du site — `en cours`
 
-**Reprise, au 27 octobre 2026.** Faites, les étapes 1 à 5 et la proposition 1
+**Reprise, au 28 octobre 2026.** Faites, les étapes 1 à 5 et la proposition 1
 du premier affichage : chaque page porte en tête son propre style, la feuille
-entière suit sans bloquer (`174/2026-10-27-le-style-de-chaque-page.md`). En
-ligne : de 97 à 99 en mobile et 100 au bureau hors résultats (70 et 80), CLS nul
-sauf 0,016 une fois sur Le saviez-vous ?. Par quoi commencer : l'arrivée des
-polices, qui recompose une page peinte avant elles (polices de repli à leurs
-métriques, ou `font-display: optional`, choix au propriétaire). Reste à lui :
-la proposition 2 (tableaux de données à la demande), le sort des résultats (6),
-et l'hôte.
+entière suit sans bloquer (`174/2026-10-27-le-style-de-chaque-page.md`) ;
+l'onglet « Issues » de Chrome est vide, sauf `bday`, déclaré
+(`174/2026-10-28-l-onglet-issues.md`). En ligne : de 97 à 99 en mobile et 100
+au bureau hors résultats (70 et 80), CLS nul sauf 0,016 une fois sur Le
+saviez-vous ?. Par quoi commencer : l'arrivée des polices, qui recompose une
+page peinte avant elles (polices de repli à leurs métriques, ou
+`font-display: optional`, choix au propriétaire). Reste à lui : la proposition 2
+(tableaux de données à la demande), le sort des résultats (6), et l'hôte.
 
 **D'où elle vient.** Le 25 octobre 2026, le propriétaire : « Je veux que
 toutes les pages aient un score maximal dans toutes les catégories lighthouse.

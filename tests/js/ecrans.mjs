@@ -83,6 +83,11 @@ const erreursDeLaPage = [];
 // Annulée par une redirection ou une navigation, une requête n'est pas une
 // erreur.
 const ressourcesEnErreur = [];
+// Ce que l'onglet « Issues » des outils de développement montre de la page, et
+// que la console seule ne dit pas : un champ sans nom, une valeur
+// d'`autocomplete` que Chrome ne connaît pas. Chaque alerte se décrit dès
+// qu'elle arrive : une page que le routeur recalcule remplace ses nœuds.
+const alertesDesOutils = [];
 ws.onmessage = (message) => {
   const recu = JSON.parse(message.data);
   if (recu.id && enAttente.has(recu.id)) {
@@ -101,8 +106,35 @@ ws.onmessage = (message) => {
   } else if (recu.method === "Runtime.exceptionThrown") {
     erreursDeLaPage.push(recu.params.exceptionDetails?.exception?.description
       || recu.params.exceptionDetails?.text || "exception");
+  } else if (recu.method === "Audits.issueAdded") {
+    alertesDesOutils.push(decrireLAlerte(recu.params.issue));
   }
 };
+
+/**
+ * Une alerte de l'onglet « Issues » en une ligne : son type, puis l'élément
+ * qu'elle vise, écrit en sélecteur avec l'attribut en cause —
+ * `FormEmptyIdAndNameAttributesForInputError textarea.repli`.
+ */
+async function decrireLAlerte({ code, details }) {
+  const generique = details.genericIssueDetails;
+  if (!generique) { return `${code} ${JSON.stringify(details).slice(0, 200)}`; }
+  if (!generique.violatingNodeId) { return generique.errorType; }
+  try {
+    const { node } = await page("DOM.describeNode", { backendNodeId: generique.violatingNodeId });
+    const attributs = {};
+    for (let i = 0; i < (node.attributes || []).length; i += 2) {
+      attributs[node.attributes[i]] = node.attributes[i + 1];
+    }
+    const nom = generique.violatingNodeAttribute;
+    return `${generique.errorType} ${node.localName}`
+      + (attributs.id ? `#${attributs.id}` : "")
+      + (attributs.class ? `.${attributs.class.trim().split(/\s+/).join(".")}` : "")
+      + (nom ? `[${nom}="${attributs[nom] ?? ""}"]` : "");
+  } catch (erreur) {
+    return `${generique.errorType} (élément introuvable : ${erreur.message})`;
+  }
+}
 
 function envoyer(methode, parametres = {}, session = undefined) {
   return new Promise((resoudre, rejeter) => {
@@ -138,6 +170,7 @@ const { sessionId } = await envoyer("Target.attachToTarget", { targetId, flatten
 const page = (methode, parametres) => envoyer(methode, parametres, sessionId);
 await page("Page.enable");
 await page("Runtime.enable");
+await page("Audits.enable");
 if (plan.adresses?.length) { await page("Network.enable"); }
 // Les décalages de mise en page, notés dès le début de chaque document : un
 // nœud déplacé puis retiré du DOM se nomme tant qu'il y est encore.
@@ -782,6 +815,7 @@ try {
     await poserLEcran(ecran);
     for (const route of plan.routes) {
       erreursDeLaPage.length = 0;
+      alertesDesOutils.length = 0;
       // Chaque page est ouverte à la largeur qu'on mesure.
       await ouvrir(route);
       const replie = await evaluer(MESURER(ecran));
@@ -808,6 +842,7 @@ try {
       resultats.push({
         largeur: ecran.largeur, hauteur: ecran.hauteur, route,
         replie, deplie, image, retrecie, erreurs: [...erreursDeLaPage],
+        alertes: [...new Set(await Promise.all(alertesDesOutils))],
       });
     }
   }

@@ -73,10 +73,12 @@ types et Droits non cotisés lisent ce que le Python en a fabriqué
   `tests/test_ecrans.py` pilote Chromium à plusieurs largeurs, du plus petit
   téléphone au bureau — rien ne déborde ni ne défile en largeur, une légende
   touche son tracé, les quatre systèmes du simulateur tiennent dans un écran,
-  aucun grand vide (action 173). Un graphique se dessine à la largeur de la
-  colonne, que `rendre` reçoit et pose au gabarit (`g.poserEcran`) ; les
-  témoins sont rendus au large. Un tableau trop large ne défile pas : il se
-  replie (`plierLesTableaux`, dans `moteur/js/routeur.js`).
+  aucun grand vide (action 173) ; l'onglet « Issues » de Chrome ne porte
+  aucune alerte qu'`ALERTES_ADMISES` ne déclare avec sa raison. Un graphique
+  se dessine à la largeur de la colonne, que `rendre` reçoit et pose au
+  gabarit (`g.poserEcran`) ; les témoins sont rendus au large. Un tableau trop
+  large ne défile pas : il se replie (`plierLesTableaux`, dans
+  `moteur/js/routeur.js`).
 - **L'outillage d'audit d'interface** (Impeccable, Web Interface Guidelines,
   Playwright CLI) : `.claude/skills/`, mis en place par
   `scripts/setup_ui_tools.sh` ; les notes Lighthouse des dix routes, par

@@ -1,0 +1,14 @@
+date: "2026-10-28"
+session: "action 174 : l'onglet « Issues » de Chrome, à la demande du propriétaire"
+consulte: >-
+  Aucun texte : la session ne touche pas au droit. Le site en ligne dans Chromium, sa console et
+  l'onglet « Issues » de ses outils de développement ; le code de Chromium qui juge les valeurs
+  d'autocomplete (components/autofill/core/common/autocomplete_parsing_util.cc) ; l'audit
+  inspector-issues de Lighthouse.
+trouve: >-
+  La console est vide. L'onglet portait deux alertes : les zones de texte de secours des barres de
+  partage, sans id ni name, désormais nommées ; la date de naissance, autocomplete="bday", juste
+  selon la norme HTML et le critère 1.3.5 des WCAG, que Chrome dit non standard faute de la
+  connaître, gardée et déclarée au test qui refuse toute autre alerte. Aucune simulation ne bouge.
+reste: >-
+  Rien pour la veille.

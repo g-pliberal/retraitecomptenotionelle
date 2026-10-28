@@ -272,6 +272,28 @@ def test_aucune_page_ne_leve_d_erreur_a_aucune_largeur():
     assert not fautes, "\n".join(fautes)
 
 
+#: Les alertes de l'onglet « Issues » qu'on garde, chacune pour sa raison.
+#: `bday` est la valeur que la norme HTML et le critère 1.3.5 des WCAG (RGAA
+#: 11.13) donnent à une date de naissance entière
+#: (`test_les_champs_qui_decrivent_la_personne_sont_reconnaissables`) ;
+#: l'autoremplissage de Chrome ne connaît que `bday-day`, `bday-month` et
+#: `bday-year`, et dit « non standard » toute autre valeur où se lit « bday ».
+ALERTES_ADMISES = {
+    'FormInputHasWrongButWellIntendedAutocompleteValueError input#naissance[autocomplete="bday"]',
+}
+
+
+def test_aucune_page_ne_porte_d_alerte_dans_l_onglet_issues():
+    """Ce que l'onglet « Issues » des outils de développement de Chrome
+    signale — un champ sans `id` ni `name`, une valeur d'`autocomplete` qu'il
+    ne connaît pas — se voit de qui ouvre la console : chaque alerte se
+    corrige, ou se déclare dans `ALERTES_ADMISES` avec sa raison."""
+    fautes = sorted({f"{visite['route'][:40]} : {alerte}"
+                     for visite in mesures() for alerte in visite["alertes"]
+                     if alerte not in ALERTES_ADMISES})
+    assert not fautes, f"{len(fautes)} alertes :\n" + "\n".join(fautes)
+
+
 def test_un_trace_et_sa_legende_se_voient_ensemble():
     """La légende touche son tracé, au-dessus ou à côté, et les deux tiennent
     dans un seul écran : la lecture au survol écrit ses valeurs dans la

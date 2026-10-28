@@ -1184,7 +1184,9 @@ export function barrePartage() {
     + `${icone("share-2")}<span>Partager</span></button>`
     + '<button type="button" class="partager-x">Publier sur X</button>'
     + '<span class="etat" role="status"></span>'
-    + '<textarea class="repli" hidden readonly rows="3"'
+    // Un nom, que Chrome demande à tout champ (son onglet « Issues ») : aucune
+    // page ne pose de barre de partage dans un formulaire, rien ne l'envoie.
+    + '<textarea class="repli" name="message" hidden readonly rows="3"'
     + ' aria-label="Texte à copier à la main"></textarea></p>';
 }
 
