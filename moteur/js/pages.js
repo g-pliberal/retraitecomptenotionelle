@@ -6307,6 +6307,27 @@ const MOTIFS_DE_REVERSION = Object.freeze({
 });
 
 /**
+ * Le moment que précèdent les mois des ressources qu'une ligne de réversion
+ * retient sous son plafond (`ressources_examinees_au`, R. 353-1) : sa date
+ * d'effet depuis juillet 2004 ; avant, la demande, puis le décès quand la
+ * condition n'y est pas remplie.
+ */
+const MOMENTS_DES_RESSOURCES = Object.freeze({
+  date_d_effet: "sa date d'effet",
+  demande: "sa demande",
+  deces: "votre décès",
+});
+
+/**
+ * Les mois de leur période (`periode_de_reference`), en lettres, et ce qui
+ * fait retenir les douze : celles des trois dépassent le plafond (R. 353-1).
+ */
+const PERIODES_DES_RESSOURCES = Object.freeze({
+  3: ["trois", ""],
+  12: ["douze", ", celles des trois derniers dépassant le plafond"],
+});
+
+/**
  * Ce que chaque régime reverse de la majoration pour enfants du défunt :
  * l'Agirc-Arrco en entier, hors du taux (accord du 17 novembre 2017, article
  * 109) ; les IEG et la SNCF la moitié, avec la pension (annexe 3 au statut
@@ -6367,6 +6388,21 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
       + `${echapper(String(comparaison.carriere.dateLiquidation))},`;
   }
 
+  // Les ressources que le plafond retient à la date d'effet : celles des trois
+  // mois qui précèdent le moment que la version dit, ou des douze (R. 353-1) ;
+  // tues quand le conjoint n'en a ni dites ni retenues.
+  const examinees = (ligne) => {
+    const moment = MOMENTS_DES_RESSOURCES[ligne.ressources_examinees_au];
+    const periode = PERIODES_DES_RESSOURCES[ligne.periode_de_reference];
+    if (moment === undefined || periode === undefined
+        || (ligne.ressources_retenues <= 0 && reversion.ressources_presumees)) {
+      return null;
+    }
+    const [mois, raison] = periode;
+    return `ressources des ${mois} mois qui précèdent ${moment} : `
+      + `${g.euros(ligne.ressources_retenues * coefficient)} par an${raison}`;
+  };
+
   // L'Agirc-Arrco reverse en entier la majoration pour enfants du défunt, hors
   // du taux, les IEG et la SNCF la moitié ; le régime général majore la
   // réversion de 10 % pour trois enfants, puis de 11,1 % aux petites
@@ -6374,6 +6410,10 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
   // chacune fait, ou quand la seconde commencera.
   const dont = (ligne) => {
     const parts = [];
+    const ressources = examinees(ligne);
+    if (ressources !== null) {
+      parts.push(ressources);
+    }
     if (ligne.majoration > 0) {
       const reversee = MAJORATION_REVERSEE[ligne.fiche];
       parts.push(`dont ${g.euros(reverse(ligne.majoration, ligne))} `
@@ -6513,6 +6553,12 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
   }
   if (comparaison.carriere.exConjoints.length === 0) {
     reserves.push("aucun précédent mariage, faute d'en avoir déclaré");
+  }
+  // Avant juillet 2004, les mois de la demande, que le modèle présume
+  // (`reversion_demandee_le_mois_avant_sa_date_d_effet`).
+  if (reversion.regimes.some((ligne) => ligne.ressources_examinees_au === "demande"
+      && examinees(ligne) !== null)) {
+    reserves.push("une demande de réversion le mois qui précède sa date d'effet");
   }
 
   return `

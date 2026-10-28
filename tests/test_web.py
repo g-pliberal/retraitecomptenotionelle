@@ -1047,7 +1047,76 @@ def test_la_carte_dit_les_revisions_de_la_reversion_et_leurs_ressources(variatio
         assert cellules[4] == "juillet 2030"
         assert cellules[3].startswith("333 € (réduite : avec ses ressources, elle "
                                       "dépasserait le plafond)"), cellules[3]
-        assert f"({revisions} ; révisable {jusqu_a}" in cellules[3], cellules[3]
+        assert ("(ressources des trois mois qui précèdent sa date d'effet : 21 000 € "
+                f"par an ; {revisions} ; révisable {jusqu_a}") in cellules[3], cellules[3]
+
+
+@pytest.mark.parametrize("ajout, effet, ressources", [
+    ({}, "juillet 2030",
+     "ressources des trois mois qui précèdent sa date d'effet : 21 000 € par an"),
+    ({"conjoint": "1980-01", "ressources_conjoint": "20000", "activite_conjoint": "20000",
+      "activite_conjoint_variations": "2034-11:60000"}, "février 2035",
+     "ressources des douze mois qui précèdent sa date d'effet : 21 000 € par an, "
+     "celles des trois derniers dépassant le plafond"),
+])
+def test_la_carte_dit_les_mois_des_ressources_de_la_date_d_effet(ajout, effet, ressources):
+    """« Les ressources à prendre en compte lors de la demande sont celles
+    afférentes aux trois mois civils précédant la date d'effet de la pension
+    de réversion. Lorsqu'elles excèdent le quart du plafond [...], il leur est
+    substitué celles afférentes aux douze mois civils précédant cette date »
+    (R. 353-1, depuis le 25 août 2004). Le veuf de 2030, né en janvier 1975,
+    gagne 30 000 € par an : les trois mois qui précèdent sa date d'effet, le
+    1er juillet 2030, en retiennent 70 %, 21 000 € par an, qui écrêtent sa
+    réversion. Né en janvier 1980, il ne la reçoit qu'à cinquante-cinq ans, le
+    1er février 2035 ; il gagne 20 000 € par an, puis 60 000 € depuis novembre
+    2034 : novembre, décembre et janvier valent, à 70 %, 42 000 € par an, plus
+    que le plafond de 2 080 fois 12,02 €, 25 001,60 € ; les douze mois de
+    février 2034 à janvier 2035, 70 % de 9 × 20 000 / 12 + 3 × 60 000 / 12 =
+    30 000 €, 21 000 €. La carte disait que ses ressources réduisent la
+    réversion, sans dire lesquelles."""
+    champs = {"naissance": "1960", "sexe": "F", "liquidation": "62", "conjoint": "1975-01",
+              "deces": "2030-06", "ressources_conjoint": "30000",
+              "activite_conjoint": "30000", "montants": "brut", **ajout}
+    carte = _bloc(rendre("/simuler", champs)[1], 'id="resultats-reversion"',
+                  "Dans les systèmes 2, 3 et 4")
+    cellules = next(c for c in _cellules(carte) if c[0].startswith("Régime général"))
+    assert cellules[4] == effet
+    assert f"({ressources}" in cellules[3], cellules[3]
+
+
+@pytest.mark.parametrize("ajout, ressources, suppose", [
+    ({"ressources_conjoint": "40000", "activite_conjoint": "40000",
+      "activite_conjoint_fin": "1999-01"},
+     "ressources des trois mois qui précèdent sa demande : 0 € par an",
+     "une demande de réversion le mois qui précède sa date d'effet"),
+    ({"ressources_conjoint": "0", "activite_conjoint": "0",
+      "activite_conjoint_variations": "1997-01:40000"},
+     "ressources des trois mois qui précèdent votre décès : 0 € par an", ""),
+])
+def test_avant_juillet_2004_la_carte_dit_les_mois_de_la_demande_ou_du_deces(
+        ajout, ressources, suppose):
+    """De juillet 1974 à juin 2004, les ressources s'apprécient « soit à la
+    date de la demande, soit, si la condition n'est pas remplie à cette date,
+    à la date du décès » (circulaire Cnav n° 31/75, § 233), sur « les trois
+    mois civils précédant la date de la demande », ou les douze (R. 353-1,
+    rédaction du 30 novembre 1990) ; le modèle présume la demande le mois qui
+    précède la date d'effet. La veuve de 1996, née en juin 1945, reçoit sa
+    réversion le 1er juillet 2000, à cinquante-cinq ans. Son activité, qui lui
+    rapportait 40 000 € par an, cesse en janvier 1999 : mars, avril et mai
+    2000, les trois mois qui précèdent sa demande, présumée en juin, ne portent
+    rien, et la carte dit la présomption. Sans activité au décès, en mars
+    1996, elle en prend une en janvier 1997, qui lui rapporte 40 000 € par an :
+    les trois mois qui précèdent sa demande, puis les douze, passent le
+    plafond, 2 080 fois le SMIC horaire, moins de 15 000 € ; ceux qui
+    précèdent le décès, de décembre 1995 à février 1996, ne portent rien."""
+    champs = {"naissance": "1935", "sexe": "H", "liquidation": "60", "conjoint": "1945-06",
+              "deces": "1996-03", "montants": "brut", **ajout}
+    corps = rendre("/simuler", champs)[1]
+    carte = _bloc(corps, 'id="resultats-reversion"', "Dans les systèmes 2, 3 et 4")
+    cellules = next(c for c in _cellules(carte) if c[0].startswith("Régime général"))
+    assert cellules[4] == "juillet 2000"
+    assert f"({ressources}" in cellules[3], cellules[3]
+    assert suppose in _bloc(corps, "Ce que ce montant suppose", "</p>")
 
 
 def test_le_detail_range_la_base_avant_les_complementaires():
