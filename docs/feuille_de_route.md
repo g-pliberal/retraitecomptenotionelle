@@ -2811,10 +2811,10 @@ sixième, les périodes assimilées manquantes, a ses étapes 1 à 6 faites
 sa septième étape, la décision de la proposition, et la retraite progressive,
 le cumul et la seconde pension. La carte mûrit : le code de toute fiche est
 confronté au dépôt par un test, hors de la seule de `EN_PROSE`, à l'action 131 ;
-restent 34 fiches sans code ni régimes, trois sans régimes, les 106 à lire au
-droit, 701 manques, et les points ouverts des phases 2 à 8. Par quoi commencer :
-le lot suivant de ces 34 fiches, qui entre à `CODE_ET_REGIMES_ECRITS`. Détail :
-`130/2026-10-28-carte-des-fiches-droits-familiaux.md`.
+restent 23 fiches sans code ni régimes, trois sans régimes, les 106 à lire au
+droit, 679 manques, et les points ouverts des phases 2 à 8. Par quoi commencer :
+le lot suivant de ces 23 fiches, qui entre à `CODE_ET_REGIMES_ECRITS`. Détail :
+`130/2026-10-28-carte-des-fiches-liberaux-et-independants.md`.
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de
