@@ -1176,10 +1176,11 @@ function conjointFormulaire(saisie, contexte) {
     // nouvelle et les ressources de son nouveau conjoint qui changent, plus
     // bas. Le régime général la révise le mois qui suit chacun.
     g.champ("activite_conjoint_fin", "Fin de son activité", saisie.activite_conjoint_fin,
-      "facultatif : le mois où elle cesse, « 2033-02 »", "text",
+      "facultatif : « 2033-02 »", "text",
       { autocomplete: "off", spellcheck: "false" },
-      "Ses revenus d'activité ne comptent plus : le régime général révise sa "
-      + "réversion le mois qui suit, tant qu'elle reste révisable."),
+      "Le mois où elle cesse : ses revenus d'activité ne comptent plus, et le "
+      + "régime général révise sa réversion le mois qui suit, tant qu'elle reste "
+      + "révisable."),
     g.champ("activite_conjoint_variations", "Changements de ses revenus d'activité",
       saisie.activite_conjoint_variations, "facultatif : « 2032-06:9500, 2035-01:12000 »",
       "text", { autocomplete: "off", spellcheck: "false" },
@@ -1210,11 +1211,11 @@ function conjointFormulaire(saisie, contexte) {
       + "révise la sienne le mois qui suit, sous le plafond du ménage, tant "
       + "qu'elle reste révisable."),
     g.champ("nouvelle_union_fin", "Fin de cette union", saisie.nouvelle_union_fin,
-      "facultatif : le mois où il revit seul, « 2036-09 »", "text",
+      "facultatif : « 2036-09 »", "text",
       { autocomplete: "off", spellcheck: "false" },
-      "Le régime général révise alors sa réversion le mois qui suit, sous le "
-      + "plafond d'une personne seule, sans les ressources de son ancien "
-      + "conjoint."),
+      "Le mois où il revit seul : le régime général révise sa réversion le mois "
+      + "qui suit, sous le plafond d'une personne seule, sans les ressources de "
+      + "son ancien conjoint."),
     g.champ("ressources_nouveau_conjoint", "Ressources de son nouveau conjoint",
       saisie.ressources_nouveau_conjoint === null
         ? "" : nombreBrut(saisie.ressources_nouveau_conjoint),

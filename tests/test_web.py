@@ -3905,7 +3905,9 @@ BUDGETS_DEPLIES: dict[str, int] = {
     # Le 28 octobre 2026, 7 297 mots : le dépliant « Votre revenu, avant et
     # après le départ » (action 138, étape 9) en ajoute 462, dont 426 dans ses
     # deux tableaux, la pension par étage et le revenu de vingt et une années.
-    "/simuler?" + urlencode(SIMULATION_TEMOIN): 7310,
+    # Le même jour, 7 350 mots : les quatre champs qui révisent la réversion
+    # (action 138, étape 4) en ajoutent 41, leurs libellés et leurs exemples.
+    "/simuler?" + urlencode(SIMULATION_TEMOIN): 7350,
     # Coût tout déplié : 33 549 mots le 24 octobre 2026 (action 173, étape 5),
     # dont près de dix-sept mille dans les tableaux des graphiques, que
     # l'étape laisse tels quels. Ses dépliants redisaient ce que la légende
