@@ -2125,13 +2125,15 @@ export class Carriere {
     etranger = null,
     periodes_assimilees = [],
     reversion_agricole = null,
+    prolongations_de_la_charge = [],
   }) {
-    const chronologie = preparer(chrono.avecPeriodesAssimilees(chrono.duReleve({
-      annee_naissance, sexe, releve, age_liquidation, mois_naissance,
-      nombre_enfants, part_primes, naissances_enfants, jour_naissance,
-      presomptions: macro.paquet.presomptions, conjoint, deces, retraite_progressive,
-      emploi_retraite, demandes_de_pension, invalidite, etranger, reversion_agricole,
-    }), periodes_assimilees), macro.paquet.presomptions);
+    const chronologie = preparer(chrono.avecProlongationsDeLaCharge(
+      chrono.avecPeriodesAssimilees(chrono.duReleve({
+        annee_naissance, sexe, releve, age_liquidation, mois_naissance,
+        nombre_enfants, part_primes, naissances_enfants, jour_naissance,
+        presomptions: macro.paquet.presomptions, conjoint, deces, retraite_progressive,
+        emploi_retraite, demandes_de_pension, invalidite, etranger, reversion_agricole,
+      }), periodes_assimilees), prolongations_de_la_charge), macro.paquet.presomptions);
     return Carriere.depuisChronologie(chronologie, macro, chrono.ASSURE, identifiant);
   }
 
@@ -2170,7 +2172,9 @@ export class Carriere {
    * non cotisée ; ``temps_partiel`` (une `Map`), à la quotité de l'activité
    * principale, qui réduit son revenu et les services de la fonction publique ;
    * ``dispenses`` (une `Map`), au motif qui dispense l'indépendant de
-   * l'assiette minimale, que portent toutes ses activités de l'année.
+   * l'assiette minimale, que portent toutes ses activités de l'année ;
+   * ``prolongations_de_la_charge``, les études, l'apprentissage et l'infirmité
+   * des enfants, que `avecProlongationsDeLaCharge` reçoit.
    *
    * **Une activité CUMULÉE ne remplace pas, elle s'ajoute** : un métier qui
    * porte `cumul: true` court de `age_debut` à `age_fin` (ou jusqu'à la
@@ -2202,15 +2206,17 @@ export class Carriere {
     periodes_assimilees = [],
     dispenses = null,
     reversion_agricole = null,
+    prolongations_de_la_charge = [],
   }) {
-    const chronologie = preparer(chrono.avecPeriodesAssimilees(chrono.duParcours({
-      annee_naissance, sexe, metiers, age_liquidation, mois_naissance,
-      profil_carriere, interruptions, temps_partiel, nombre_enfants, part_primes,
-      naissances_enfants,
-      jour_naissance, presomptions: macro.paquet.presomptions, conjoint, deces,
-      retraite_progressive, emploi_retraite, demandes_de_pension, invalidite, etranger,
-      dispenses, reversion_agricole,
-    }), periodes_assimilees), macro.paquet.presomptions);
+    const chronologie = preparer(chrono.avecProlongationsDeLaCharge(
+      chrono.avecPeriodesAssimilees(chrono.duParcours({
+        annee_naissance, sexe, metiers, age_liquidation, mois_naissance,
+        profil_carriere, interruptions, temps_partiel, nombre_enfants, part_primes,
+        naissances_enfants,
+        jour_naissance, presomptions: macro.paquet.presomptions, conjoint, deces,
+        retraite_progressive, emploi_retraite, demandes_de_pension, invalidite, etranger,
+        dispenses, reversion_agricole,
+      }), periodes_assimilees), prolongations_de_la_charge), macro.paquet.presomptions);
     return Carriere.depuisChronologie(chronologie, macro, chrono.ASSURE, identifiant);
   }
 

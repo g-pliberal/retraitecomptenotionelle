@@ -445,6 +445,80 @@ def test_les_periodes_assimilees_ont_leur_motif_et_la_carriere_ne_les_lit_pas(ma
     assert any("emploi_1" in e and "l'apprentissage est un emploi" in e for e in erreurs), erreurs
 
 
+#: Une mère de trois enfants, dont les deux premiers ont leur naissance dite.
+TROIS_ENFANTS = {**PARCOURS, "nombre_enfants": 3, "naissances_enfants": ["1990-03", "1993"]}
+
+
+def test_les_etudes_l_apprentissage_et_l_infirmite_d_un_enfant_sont_ses_faits(macro):
+    """Ce qui prolonge jusqu'à vingt ans la charge d'un enfant (R. 313-12,
+    R. 161-4 ; action 138, étape 4), que la saisie déclare jusqu'à sa fin :
+    ses études, une période d'études ; son contrat d'apprentissage, un emploi
+    qui le porte ; son infirmité, une décision médicale, sans fin. Chacun
+    court depuis la naissance de l'enfant, qui doit être dite : à charge
+    jusqu'à l'âge limite quoi qu'il fasse, il ne doit à son motif que ce qui
+    suit. :func:`chronologie.prolongations_de_la_charge` les relit, et la
+    carrière de l'assuré n'en change pas."""
+    assert chronologie.MOTIFS_DE_PROLONGATION == ("etudes", "apprentissage", "infirmite")
+    declarees = [{"enfant": 1, "motif": "etudes", "fin": "2009-07"},
+                 {"enfant": 2, "motif": "apprentissage", "fin": "2012-09-01"},
+                 {"enfant": 2, "motif": "infirmite"},
+                 {"enfant": 1, "motif": "etudes", "fin": None}]
+    construite = chronologie.du_parcours(**TROIS_ENFANTS)
+    avec = chronologie.completer(chronologie.avec_prolongations_de_la_charge(construite, declarees))
+    assert chronologie.controler(avec) == []
+    assert [(f["id"], f["personne"], f["sorte"], f["debut"], f["fin"], f["attributs"], f["origine"])
+            for f in avec["faits"] if f["id"].startswith("prolongation_")] == [
+        ("prolongation_1", "enfant_1", "periode_d_etudes", "1990-03-01", "2009-07-01", {},
+         "declare"),
+        ("prolongation_2", "enfant_2", "periode_d_activite", "1993-01-01", "2012-09-01",
+         {"apprentissage": True}, "declare"),
+        ("prolongation_3", "enfant_2", "decision_medicale", "1993-01-01", None,
+         {"decision": "infirmite"}, "declare"),
+        ("prolongation_4", "enfant_1", "periode_d_etudes", "1990-03-01", None, {}, "declare")]
+    assert [chronologie.prolongations_de_la_charge(avec, enfant)
+            for enfant in ("enfant_1", "enfant_2", "enfant_3")] == [
+        [("1990-03-01", "2009-07-01"), ("1990-03-01", None)],
+        [("1993-01-01", "2012-09-01"), ("1993-01-01", None)], []]
+    sans = chronologie.completer(construite)
+    assert chronologie.avec_prolongations_de_la_charge(construite, []) == construite
+    assert (Carriere.depuis_chronologie(avec, macro).lignes
+            == Carriere.depuis_chronologie(sans, macro).lignes)
+
+    # Les constructeurs de la carrière les reçoivent, d'un parcours ou d'un relevé.
+    parcours = Carriere.depuis_parcours(macro=macro, **TROIS_ENFANTS,
+                                        prolongations_de_la_charge=declarees)
+    assert parcours.chronologie == avec
+    releve = Carriere.depuis_releve(
+        annee_naissance=1965, sexe="F", age_liquidation=64.0, macro=macro,
+        releve=[LigneRelevee(annee=1987, affiliation="salarie_prive", revenu=20000.0)],
+        nombre_enfants=1, naissances_enfants=["1990-03"],
+        prolongations_de_la_charge=declarees[:1])
+    assert chronologie.prolongations_de_la_charge(releve.chronologie, "enfant_1") == [
+        ("1990-03-01", "2009-07-01")]
+
+
+@pytest.mark.parametrize("declaree, message", [
+    ({"enfant": 1, "motif": "chomage"},
+     "une prolongation de la charge pour motif « chomage » : etudes, apprentissage, infirmite"),
+    ({"enfant": 3, "motif": "etudes"},
+     "une prolongation de la charge de enfant_3, qui n'a pas de naissance dite"),
+    ({"enfant": 4, "motif": "infirmite"},
+     "une prolongation de la charge de enfant_4, qui n'a pas de naissance dite"),
+    ({"enfant": 1, "motif": "etudes", "fin": "1990-03"},
+     "des études de enfant_1 qui finissent le 1990-03-01, avant sa naissance"),
+    ({"enfant": 2, "motif": "apprentissage", "fin": "1992"},
+     "un apprentissage de enfant_2 qui finit le 1992-01-01, avant sa naissance"),
+    ({"enfant": 2, "motif": "infirmite", "fin": "2010"},
+     "l'infirmité de enfant_2 ne finit pas"),
+    ({"enfant": 1, "motif": "etudes", "fin": "2009-13"},
+     "la fin des études de enfant_1 impossible"),
+])
+def test_une_prolongation_de_la_charge_mal_declaree_est_refusee(declaree, message):
+    with pytest.raises(ValueError, match=message):
+        chronologie.avec_prolongations_de_la_charge(chronologie.du_parcours(**TROIS_ENFANTS),
+                                                    [declaree])
+
+
 def test_une_carriere_construite_ligne_a_ligne_recoit_sa_chronologie():
     """Sans périodes : sa naissance, ses enfants et son départ, et les
     présomptions qui les complètent."""
@@ -1003,11 +1077,37 @@ SAISIES = [
                             "trimestres": 1, "type_periode": "emploi"}]},
      "periodes_assimilees": [{"motif": "stage_de_formation_professionnelle",
                               "debut": "2016-01", "fin": "2016-02", "jours": 40}]},
+    # Les études, l'apprentissage et l'infirmité des enfants, qui prolongent
+    # leur charge (action 138, étape 4) ; et ce qui ne tient pas : un motif
+    # inconnu, un enfant sans naissance dite, une fin avant la naissance, une
+    # infirmité qui finit, une fin illisible.
+    *({"parcours": {"annee_naissance": 1960, "sexe": "H", "age_liquidation": 62.0,
+                    "nombre_enfants": 2, "naissances_enfants": ["1988-05", "1991-11-20"],
+                    "metiers": [{"affiliation": "salarie_prive", "age_debut": 21.0,
+                                 "niveau_salaire": 1.0, "cumul": False, "age_fin": None}]},
+       "prolongations_de_la_charge": prolongations}
+      for prolongations in (
+          [{"enfant": 1, "motif": "etudes", "fin": "2009-07"},
+           {"enfant": 2, "motif": "apprentissage", "fin": "2010-09-01"},
+           {"enfant": 2, "motif": "infirmite"}, {"enfant": 1, "motif": "etudes", "fin": None}],
+          [{"enfant": 1, "motif": "chomage"}],
+          [{"enfant": 3, "motif": "etudes"}],
+          [{"enfant": 2, "motif": "apprentissage", "fin": "1991"}],
+          [{"enfant": 2, "motif": "infirmite", "fin": "2010"}],
+          [{"enfant": 1, "motif": "etudes", "fin": "2009-13"}])),
+    {"releve": {"annee_naissance": 1966, "sexe": "F", "age_liquidation": 64.0,
+                "nombre_enfants": 1, "naissances_enfants": ["1995"],
+                "releve": [{"annee": 1985, "affiliation": "salarie_prive", "revenu": 2000.0,
+                            "trimestres": 1, "type_periode": "emploi"}]},
+     "prolongations_de_la_charge": [{"enfant": 1, "motif": "etudes", "fin": "2014-06"}]},
 ]
 
 
 def _python(saisie: dict) -> dict:
     def assimilees(construite: dict) -> dict:
+        if saisie.get("prolongations_de_la_charge"):
+            construite = chronologie.avec_prolongations_de_la_charge(
+                construite, saisie["prolongations_de_la_charge"])
         if not saisie.get("periodes_assimilees"):
             return construite
         return chronologie.avec_periodes_assimilees(construite, saisie["periodes_assimilees"])

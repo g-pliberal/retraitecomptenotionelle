@@ -124,6 +124,10 @@ ASSIMILEE = "periode_assimilee"
 #: Une période d'études, d'apprentissage ou de formation professionnelle :
 #: celle d'un enfant prolonge sa charge (:func:`prolongations_de_la_charge`).
 ETUDES = "periode_d_etudes"
+#: Ce qui prolonge la charge d'un enfant, tel qu'une saisie le déclare
+#: (:func:`avec_prolongations_de_la_charge`) : ses études, son apprentissage,
+#: son infirmité.
+MOTIFS_DE_PROLONGATION = ("etudes", "apprentissage", "infirmite")
 #: Ses motifs (vocabulaire, ``motifs_d_assimilation``), une sorte de période
 #: par fiche ; et les dispositifs d'un stage d'insertion
 #: (``dispositifs_d_insertion``).
@@ -1094,6 +1098,52 @@ def avec_periodes_assimilees(chronologie: dict, declarees: list | tuple,
                                  f"{jours} : un nombre entier, de un à {duree}")
             attributs["jours"] = jours
         faits.append(fait(f"assimilee_{rang}", personne, ASSIMILEE, debut, fin, attributs))
+    return {**chronologie, "faits": faits}
+
+
+def avec_prolongations_de_la_charge(chronologie: dict, declarees: list | tuple) -> dict:
+    """La chronologie, et ce qui prolonge la charge des enfants que la saisie
+    déclare : une copie, où chaque déclaration devient un fait de l'enfant,
+    dans l'ordre, après les autres faits, que
+    :func:`prolongations_de_la_charge` relit — ses études, une période
+    d'études ; son contrat d'apprentissage, un emploi qui le porte ; son
+    infirmité, une décision médicale.
+
+    Chaque déclaration est une table : le rang de l'``enfant``, dont la
+    naissance est dite ; son ``motif`` (``MOTIFS_DE_PROLONGATION``) ; et la
+    ``fin`` des études ou de l'apprentissage, s'il la dit, une année, un mois
+    ou un jour (:func:`date_declaree`), exclue, après la naissance — sans
+    elle, la règle les arrête à son âge ; l'infirmité n'en a pas. Chacune
+    court depuis la naissance de l'enfant : à charge jusqu'à l'âge limite quoi
+    qu'il fasse, il ne doit à son motif que ce qui suit."""
+    faits = [dict(f) for f in chronologie.get("faits") or []]
+    for rang, declaree in enumerate(declarees, 1):
+        motif = declaree.get("motif")
+        if motif not in MOTIFS_DE_PROLONGATION:
+            raise ValueError(f"une prolongation de la charge pour motif « {motif} » : "
+                             + ", ".join(MOTIFS_DE_PROLONGATION))
+        enfant = f"enfant_{declaree.get('enfant')}"
+        naissance = next((f for f in faits if f["sorte"] == "naissance"
+                          and f["personne"] == enfant), None)
+        if naissance is None:
+            raise ValueError(f"une prolongation de la charge de {enfant}, "
+                             "qui n'a pas de naissance dite")
+        fin = None
+        if declaree.get("fin") is not None:
+            if motif == "infirmite":
+                raise ValueError(f"l'infirmité de {enfant} ne finit pas")
+            quoi = "des études" if motif == "etudes" else "de l'apprentissage"
+            fin = date_declaree(declaree["fin"], f"la fin {quoi} de {enfant}")[0]
+            if fin <= naissance["debut"]:
+                raise ValueError(
+                    f"des études de {enfant} qui finissent le {fin}, avant sa naissance"
+                    if motif == "etudes" else
+                    f"un apprentissage de {enfant} qui finit le {fin}, avant sa naissance")
+        sorte, attributs = {"etudes": (ETUDES, {}),
+                            "apprentissage": (EMPLOI, {"apprentissage": True}),
+                            "infirmite": ("decision_medicale", {"decision": "infirmite"})}[motif]
+        faits.append(fait(f"prolongation_{rang}", enfant, sorte, naissance["debut"], fin,
+                          attributs))
     return {**chronologie, "faits": faits}
 
 

@@ -1685,29 +1685,35 @@ test("le seuil d'un trimestre est celui qu'un relevé se lit contre", () => {
  * d'apprentissage ou leur infirmité : la part de la majoration forfaitaire pour
  * enfant cesse avec la condition. Rejoue
  * `test_l_etudiant_l_apprenti_et_l_enfant_infirme_restent_a_charge_jusqu_a_vingt_ans`
- * (test_reversion.py), que le formulaire ne sait pas encore saisir.
+ * (test_reversion.py) ; la même condition, déclarée comme la saisie la déclare
+ * — le motif, et jusqu'à quand —, que le constructeur de la carrière reçoit
+ * (`prolongations_de_la_charge`), rend les mêmes étapes.
  */
 test("l'étudiant, l'apprenti et l'enfant infirme restent à charge jusqu'à vingt ans", () => {
   const simulateur = new Contexte(paquet).simulateur();
   const cas = [
     ["2003-03-10", "1945-01-10", "1990-03-15",
-      [["periode_d_etudes", "2005-09-01", "2009-07-01", {}]], [["2009-08-01", 0]]],
+      [["periode_d_etudes", "2005-09-01", "2009-07-01", {}]], [["2009-08-01", 0]],
+      { motif: "etudes", fin: "2009-07" }],
     ["2015-03-10", "1960-01-10", "2004-05-20",
-      [["periode_d_etudes", "2020-09-01", null, {}]], [["2024-06-01", 0]]],
+      [["periode_d_etudes", "2020-09-01", null, {}]], [["2024-06-01", 0]],
+      { motif: "etudes" }],
     ["2015-03-10", "1960-01-10", "2004-05-20",
       [["periode_d_activite", "2021-09-01", "2023-09-01",
-        { affiliation: "salarie_prive_non_cadre", apprentissage: true }]], [["2023-10-01", 0]]],
+        { affiliation: "salarie_prive_non_cadre", apprentissage: true }]], [["2023-10-01", 0]],
+      { motif: "apprentissage", fin: "2023-09" }],
     ["2003-03-10", "1945-01-10", "1990-03-15",
       [["decision_medicale", "1998-01-01", null, { decision: "infirmite" }]],
-      [["2010-04-01", 0]]],
+      [["2010-04-01", 0]], { motif: "infirmite" }],
   ];
-  for (const [deces, conjoint, naissance, faits, etapes] of cas) {
-    const carriere = simulateur.carriereParcours({
+  for (const [deces, conjoint, naissance, faits, etapes, declaration] of cas) {
+    const options = {
       annee_naissance: deces < "2010" ? 1940 : 1955, sexe: "H", age_liquidation: 60,
       metiers: [{ affiliation: "salarie_prive_non_cadre", age_debut: 21, niveau_salaire: 1 }],
       nombre_enfants: 1, naissances_enfants: [naissance],
       conjoint: { naissance: conjoint, sexe: "F", ressources: 0 }, deces,
-    });
+    };
+    const carriere = simulateur.carriereParcours(options);
     const ligne = (laCarriere) => reversion(simulateur.scenarioActuel,
       [["regime_general", 6000, Fiabilite.HAUTE]], laCarriere, Number(deces.slice(0, 4)))
       .regimes.find((r) => r.regime === "regime_general");
@@ -1723,5 +1729,9 @@ test("l'étudiant, l'apprenti et l'enfant infirme restent à charge jusqu'à vin
       sans.majoration_forfaitaire_enfants_etapes);
     assert.deepEqual(prolongee.majoration_forfaitaire_enfants_etapes.map(([jour, montant]) => [
       jour, Math.round(montant / prolongee.majoration_forfaitaire_enfants)]), etapes);
+    const declaree = ligne(simulateur.carriereParcours({
+      ...options, prolongations_de_la_charge: [{ enfant: 1, ...declaration }] }));
+    assert.deepEqual(declaree.majoration_forfaitaire_enfants_etapes,
+      prolongee.majoration_forfaitaire_enfants_etapes);
   }
 });

@@ -3,7 +3,8 @@
  *
  * Reçoit en argument un fichier JSON — une liste de saisies, chacune
  * `{ parcours: {...} }` ou `{ releve: {...} }`, les options de
- * `duParcours` ou de `duReleve`, et ses `periodes_assimilees` s'il en a — et écrit sur la sortie standard, pour
+ * `duParcours` ou de `duReleve`, ses `periodes_assimilees` et ses
+ * `prolongations_de_la_charge` s'il en a — et écrit sur la sortie standard, pour
  * chacune, la chronologie complétée par les présomptions du paquet, ou
  * l'erreur levée. `tests/test_chronologie.py` compare le tout au Python.
  *
@@ -20,11 +21,17 @@ const RACINE = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const paquet = JSON.parse(readFileSync(join(RACINE, "moteur/donnees.json"), "utf8"));
 const saisies = JSON.parse(readFileSync(process.argv[2], "utf8"));
 
-// Les périodes assimilées d'une saisie, s'il y en a, s'ajoutent à la
-// chronologie construite, avant les présomptions.
-const assimilees = (saisie, chronologie) => (saisie.periodes_assimilees
-  ? chrono.avecPeriodesAssimilees(chronologie, saisie.periodes_assimilees)
-  : chronologie);
+// Les prolongations de la charge des enfants, puis les périodes assimilées
+// d'une saisie, s'il y en a, s'ajoutent à la chronologie construite, avant les
+// présomptions.
+const assimilees = (saisie, construite) => {
+  const chronologie = saisie.prolongations_de_la_charge?.length
+    ? chrono.avecProlongationsDeLaCharge(construite, saisie.prolongations_de_la_charge)
+    : construite;
+  return saisie.periodes_assimilees
+    ? chrono.avecPeriodesAssimilees(chronologie, saisie.periodes_assimilees)
+    : chronologie;
+};
 
 const sortie = saisies.map((saisie) => {
   try {

@@ -48,6 +48,12 @@ export const ASSIMILEE = "periode_assimilee";
  * celle d'un enfant prolonge sa charge ({@link prolongationsDeLaCharge}).
  */
 export const ETUDES = "periode_d_etudes";
+/**
+ * Ce qui prolonge la charge d'un enfant, tel qu'une saisie le déclare
+ * ({@link avecProlongationsDeLaCharge}) : ses études, son apprentissage, son
+ * infirmité.
+ */
+export const MOTIFS_DE_PROLONGATION = Object.freeze(["etudes", "apprentissage", "infirmite"]);
 export const MOTIFS_D_ASSIMILATION = Object.freeze(["stage_de_formation_professionnelle",
   "stage_d_insertion", "sportif_de_haut_niveau", "conge_supplementaire_de_naissance"]);
 export const DISPOSITIFS_D_INSERTION = Object.freeze(["tuc", "stage_pratique_en_entreprise",
@@ -1102,6 +1108,55 @@ export function avecPeriodesAssimilees(chronologie, declarees, personne_ = ASSUR
       attributs.jours = jours;
     }
     faits.push(fait(`assimilee_${i + 1}`, personne_, ASSIMILEE, debut, fin, attributs));
+  });
+  return { ...chronologie, faits };
+}
+
+/** La sorte et les attributs du fait de chaque motif de prolongation. */
+const FAIT_DE_LA_PROLONGATION = Object.freeze({
+  etudes: [ETUDES, {}],
+  apprentissage: [EMPLOI, { apprentissage: true }],
+  infirmite: ["decision_medicale", { decision: "infirmite" }],
+});
+
+/**
+ * La chronologie, et ce qui prolonge la charge des enfants que la saisie
+ * déclare : une copie, où chaque déclaration — le rang de l'`enfant`, dont la
+ * naissance est dite, son `motif`, et la `fin` des études ou de
+ * l'apprentissage s'il la dit, exclue, après la naissance — devient un fait de
+ * l'enfant, depuis sa naissance, après les autres faits. Voir
+ * `avec_prolongations_de_la_charge` du Python.
+ */
+export function avecProlongationsDeLaCharge(chronologie, declarees) {
+  const faits = (chronologie.faits ?? []).map((f) => ({ ...f }));
+  declarees.forEach((declaree, i) => {
+    const { motif } = declaree;
+    if (!MOTIFS_DE_PROLONGATION.includes(motif)) {
+      throw new Error(`une prolongation de la charge pour motif « ${motif} » : `
+        + MOTIFS_DE_PROLONGATION.join(", "));
+    }
+    const enfant = `enfant_${declaree.enfant}`;
+    const naissance_ = faits.find((f) => f.sorte === "naissance" && f.personne === enfant);
+    if (!naissance_) {
+      throw new Error(`une prolongation de la charge de ${enfant}, `
+        + "qui n'a pas de naissance dite");
+    }
+    let fin = null;
+    if (declaree.fin !== null && declaree.fin !== undefined) {
+      if (motif === "infirmite") {
+        throw new Error(`l'infirmité de ${enfant} ne finit pas`);
+      }
+      const quoi = motif === "etudes" ? "des études" : "de l'apprentissage";
+      [fin] = dateDeclaree(declaree.fin, `la fin ${quoi} de ${enfant}`);
+      if (fin <= naissance_.debut) {
+        throw new Error(motif === "etudes"
+          ? `des études de ${enfant} qui finissent le ${fin}, avant sa naissance`
+          : `un apprentissage de ${enfant} qui finit le ${fin}, avant sa naissance`);
+      }
+    }
+    const [sorte, attributs] = FAIT_DE_LA_PROLONGATION[motif];
+    faits.push(fait(`prolongation_${i + 1}`, enfant, sorte, naissance_.debut, fin,
+      { ...attributs }));
   });
   return { ...chronologie, faits };
 }
