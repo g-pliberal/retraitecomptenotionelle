@@ -6547,16 +6547,10 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
   // Le régime général reverse la pension sans le minimum contributif qui la
   // relevait, et avec ce que le maximum des pensions en avait retiré : la
   // cellule dit ces parts, que le taux ne multiplie pas ou qu'il reprend.
-  // En couple à sa date d'effet, c'est avec les ressources du ménage que la
-  // réversion dépasse : l'union formée après, ou défaite avant, ne compte qu'à
-  // la révision qui la suit.
-  const enMenage = (ligne) => {
-    const union = comparaison.carriere.conjoint;
-    return union.nouvelle_union !== null && ligne.date_effet !== null
-      && (union.nouvelle_union_depuis === null || union.nouvelle_union_depuis < ligne.date_effet)
-      && (union.nouvelle_union_fin === null || union.nouvelle_union_fin >= ligne.date_effet);
-  };
-  const motif = (ligne) => (ligne.motif === "ecretee" && enMenage(ligne)
+  // Sous le plafond du ménage, c'est avec ses ressources que la réversion
+  // dépasse (`plafond_du_menage`) : l'union formée après la date d'effet ne
+  // compte qu'à la révision qui la suit, ni avant juillet 2004.
+  const motif = (ligne) => (ligne.motif === "ecretee" && ligne.plafond_du_menage
     ? "réduite : avec les ressources du ménage, elle dépasserait le plafond"
     : MOTIFS_DE_REVERSION[ligne.motif]);
   // Sous le code du minimum contributif, l'étape « compléter » écrit aussi la
