@@ -25,6 +25,7 @@ Le mois sert donc là, et seulement là, où le réel porte une date :
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 
 #: Mois par année. Nommé pour que les divisions par douze se lisent.
@@ -81,8 +82,16 @@ def en_mois(age: float) -> int:
     les écrit et que les URL du simulateur les portent. La conversion arrondit au
     mois le plus proche : un âge saisi en ans et en mois se retrouve à
     l'identique, et un âge saisi autrement se voit rattaché au mois qu'il désigne.
+
+    Le demi-mois exact compte le mois qui suit, comme ``Math.round`` dans le
+    portage : la pension prend effet le premier jour du mois qui suit celui où
+    l'âge est atteint (fiche ``date_effet_mois_suivant``). ``round``, qui va au
+    pair, le comptait ou le perdait selon la parité du mois : 64,125 ans
+    valaient 770 mois, 64,375 ans 772.
     """
-    return round(age * MOIS_PAR_AN)
+    mois = age * MOIS_PAR_AN
+    entier = math.floor(mois)
+    return entier + 1 if mois - entier >= 0.5 else entier
 
 
 def decomposer(age: float) -> tuple[int, int]:

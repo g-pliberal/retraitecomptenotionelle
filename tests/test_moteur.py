@@ -1151,6 +1151,53 @@ def test_les_ages_se_comptent_du_mois_qui_suit_la_naissance():
     assert presume.date_liquidation == ne_le(valeur("jour_de_naissance")).date_liquidation
 
 
+def test_un_demi_mois_compte_le_mois_qui_suit_dans_les_deux_moteurs():
+    """« Soixante-quatre ans, quatre mois et demi » part à soixante-quatre ans
+    et cinq mois.
+
+    Un âge décimal tombe au mois le plus proche (``en_mois``). Au demi-mois
+    exact, ``round`` allait au pair et ``Math.round``, dans le portage, monte :
+    64,375 ans valaient 772 mois en Python, 773 sur le site ; et le demi-mois
+    comptait ou se perdait selon la parité du mois — un mois et demi en
+    faisait deux, quatre et demi quatre —, le défaut que l'arrondi à l'année
+    avait au millésime. La pension prend effet le premier jour du mois qui
+    suit celui où l'âge est atteint (fiche ``date_effet_mois_suivant``) :
+    atteint à la moitié d'un mois, l'âge compte le mois qui suit, dans les
+    deux moteurs."""
+    import json
+    import shutil
+    import subprocess
+    from pathlib import Path
+
+    from retraite_notionnelle.calendrier import en_mois, formater_age
+    from retraite_notionnelle.carriere import Carriere
+
+    assert [en_mois(64 + k / 8) for k in (1, 3, 5, 7)] == [770, 773, 776, 779]
+    assert formater_age(64.375) == "64 ans et 5 mois"
+    # Né le 1er janvier 1962, il a ses âges le jour même : 64 ans et 5 mois
+    # au 1er juin 2026.
+    depart = Carriere(annee_naissance=1962, sexe="H", mois_naissance=1,
+                      age_liquidation=64.375, lignes=[], jour_naissance=1)
+    assert (depart.date_liquidation.annee, depart.date_liquidation.mois) == (2026, 6)
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    ages = sorted({n + k / 24 for n in range(16, 80) for k in range(24)}
+                  | {n / 8 for n in range(0, 800)} | {0.1 * n for n in range(1000)})
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e",
+         'import { enMois } from "./moteur/js/calendrier.js";'
+         "console.log(JSON.stringify(JSON.parse(process.argv[1]).map(enMois)));",
+         json.dumps(ages)],
+        cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    portage = json.loads(execution.stdout)
+    ecarts = [(age, en_mois(age), mois) for age, mois in zip(ages, portage)
+              if en_mois(age) != mois]
+    assert not ecarts, f"{len(ecarts)} écarts (âge, Python, portage) : {ecarts[:10]}"
+
+
 def test_l_annee_de_liquidation_est_portee_au_compte_au_prorata(macro):
     """Partir en décembre, ce n'est pas travailler onze mois pour rien.
 

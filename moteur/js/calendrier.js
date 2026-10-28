@@ -58,7 +58,11 @@ export class DateMois {
  *
  * Les âges circulent en années décimales — 64,25 pour soixante-quatre ans et
  * trois mois — parce que c'est ainsi que le code de la sécurité sociale les
- * écrit et que les adresses du simulateur les portent.
+ * écrit et que les adresses du simulateur les portent. La conversion arrondit
+ * au mois le plus proche, et le demi-mois exact compte le mois qui suit
+ * (`Math.round` monte) : la pension prend effet le premier jour du mois qui
+ * suit celui où l'âge est atteint (fiche `date_effet_mois_suivant`). Un
+ * arrondi au pair compterait ou perdrait le demi-mois selon la parité du mois.
  */
 export function enMois(age) {
   return Math.round(age * MOIS_PAR_AN);
