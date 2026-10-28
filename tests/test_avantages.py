@@ -856,11 +856,14 @@ def test_chaque_cohorte_part_l_annee_que_lui_donne_le_droit_de_sa_generation(scr
     parties = effectif(1963, 2024) + effectif(1964, 2024)
     assert script_cout.masses([datee], population, 2024, {"x": 1.0}) == pytest.approx(
         {cle: parties * montant for cle, montant in parts.items()}, rel=1e-12)
-    assert script_cout.masses_anticipees([datee], simulateur, population, 2024,
-                                         {"x": 1.0}) == pytest.approx(
-        (1.25 * parties,
-         {"carriere_longue": 1.25 * (effectif(1963, 2024) + 0.25 * effectif(1964, 2024)),
-          "classement": 0.0, "regime_special": 0.0}), rel=1e-12)
+    # Le total, puis sa ventilation : `pytest.approx` refuse, depuis pytest
+    # 9.2, un dictionnaire dans un tuple.
+    total, par_motif = script_cout.masses_anticipees([datee], simulateur, population, 2024,
+                                                     {"x": 1.0})
+    assert total == pytest.approx(1.25 * parties, rel=1e-12)
+    assert par_motif == pytest.approx(
+        {"carriere_longue": 1.25 * (effectif(1963, 2024) + 0.25 * effectif(1964, 2024)),
+         "classement": 0.0, "regime_special": 0.0}, rel=1e-12)
     seule = effectif(1963, 2024)
     assert script_cout.masses([grille], population, 2024, {"x": 1.0}) == pytest.approx(
         {cle: seule * montant for cle, montant in parts.items()}, rel=1e-12)
