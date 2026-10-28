@@ -2157,8 +2157,9 @@ export class Saisie {
 
   /**
    * Pas plus de naissances que d'enfants ; chacune une année ou un mois, après
-   * la naissance de l'assuré et avant son départ, où elle ne compterait plus
-   * pour rien.
+   * la naissance de l'assuré. Elle peut suivre son départ : la majoration pour
+   * enfant à charge de la réversion compte l'enfant né après lui (R. 353-10) ;
+   * c'est le décès qui la borne (`verifierConjoint`).
    */
   verifierNaissances() {
     const naissances = this.naissancesEnfants();
@@ -2182,12 +2183,6 @@ export class Saisie {
       if (jour <= this.naissanceIso) {
         throw new ErreurSaisie(
           `Naissance d'un enfant « ${valeur} » : elle précède la vôtre.`,
-        );
-      }
-      if (jour >= this.jourDe(this.liquidation, true)) {
-        throw new ErreurSaisie(
-          `Naissance d'un enfant « ${valeur} » : elle suit le départ à la `
-          + `retraite, fixé en ${this.dateDe(this.liquidation, true)}.`,
         );
       }
     }
@@ -2866,7 +2861,8 @@ export class Saisie {
   /**
    * Le conjoint et le décès : des dates lisibles, dans l'ordre de la vie — les
    * naissances, le mariage, le décès, l'invalidité du conjoint après sa
-   * naissance. Un décès avant le départ ouvre la réversion de la pension que
+   * naissance, les enfants nés au plus tard trois cents jours après le décès.
+   * Un décès avant le départ ouvre la réversion de la pension que
    * l'assuré eût obtenue (R. 353-6), pourvu qu'il suive le début de sa
    * carrière. Ses ressources, positives : ses revenus d'activité en sont une
    * part, et celles d'un nouveau conjoint supposent l'union où il vit, qui suit
@@ -3066,6 +3062,27 @@ export class Saisie {
       if ("nouvelle_union_depuis" in dates && dates.nouvelle_union_depuis <= dates.deces) {
         throw new ErreurSaisie(
           "La nouvelle union du conjoint précède votre décès : elle le suit.");
+      }
+      // L'enfant naît au plus tard trois cents jours après le décès, compté de
+      // son dernier jour possible quand il n'est dit qu'à l'année ou au mois :
+      // la loi le présume conçu au plus tôt trois cents jours avant sa
+      // naissance (code civil, article 311).
+      const [, precision] = dateDeclaree(this.deces, "le décès");
+      const limite = new Date(`${dates.deces}T00:00:00Z`);
+      if (precision === "annee") {
+        limite.setUTCFullYear(limite.getUTCFullYear() + 1, 0, 0);
+      } else if (precision === "mois") {
+        limite.setUTCMonth(limite.getUTCMonth() + 1, 0);
+      }
+      limite.setUTCDate(limite.getUTCDate() + 300);
+      for (const valeur of this.naissancesEnfants()) {
+        if (new Date(`${naissanceDeclaree(valeur)[0]}T00:00:00Z`) > limite) {
+          throw new ErreurSaisie(
+            `Naissance d'un enfant « ${valeur} » : elle suit de plus de trois cents `
+            + `jours votre décès, « ${this.deces} » ; l'enfant serait conçu après lui `
+            + "(code civil, article 311).",
+          );
+        }
       }
     }
     this.verifierExConjoints(dates);

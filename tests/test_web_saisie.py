@@ -147,6 +147,60 @@ def test_une_charge_d_enfant_mal_dite_est_refusee(charge, motif):
         saisie_du_portage({**_CHARGE, "charge_enfants": charge})
 
 
+#: Un père parti à soixante-deux ans, en 2022, dont l'enfant naît en mai 2023,
+#: et qui meurt en juin 2035, quand sa conjointe a cinquante-cinq ans (action
+#: 138, étape 4).
+_NE_APRES_LE_DEPART = {"naissance": "1960", "sexe": "H", "liquidation": "62",
+                       "enfants": "1", "naissances": "2023-05", "conjoint": "1980",
+                       "deces": "2035-06"}
+
+
+def test_l_enfant_ne_apres_le_depart_compte_a_la_majoration_de_la_reversion(saisies):
+    """« La majoration est due à la date d'entrée en jouissance de la pension
+    de réversion si, à cette date, les conditions d'ouverture du droit à cette
+    majoration sont remplies » (R. 353-10) : l'enfant né après le départ de son
+    père, à la charge de sa veuve quand il meurt, la lui ouvre. La saisie, qui
+    refusait toute naissance après le départ, où elle ne comptait plus pour
+    rien, la reçoit ; la réversion du régime général compte l'enfant de douze
+    ans dès le 1er juillet 2035 : 113,59 € par mois, le barème de 2026, l'année
+    des montants d'un décès à venir, jusqu'au mois qui suit sa majorité, le
+    1er juin 2041 (R. 161-4)."""
+    carriere = saisies.carriere(_NE_APRES_LE_DEPART)
+    assert carriere.naissances_des_enfants == (("enfant_1", "2023-05-01"),)
+    reversion = saisies.simuler(_NE_APRES_LE_DEPART).dictionnaire()["reversion"]
+    ligne = next(ligne for ligne in reversion["regimes"] if ligne["regime"] == "regime_general")
+    assert (reversion["annee"], ligne["date_effet"]) == (2026, "2035-07-01")
+    assert ligne["majoration_forfaitaire_enfants"] == pytest.approx(113.59 * 12)
+    assert ligne["majoration_forfaitaire_enfants_etapes"] == [
+        {"date": "2041-06-01", "montant": 0.0}]
+
+
+@pytest.mark.parametrize("deces, naissance, refusee", [
+    # Mort fin juin 2030 au plus tard : trois cents jours mènent au 26 avril 2031.
+    ("2030-06", "2031-04", False),
+    ("2030-06", "2031-05", True),
+    # Mort le 31 décembre 2030 au plus tard : au 27 octobre 2031.
+    ("2030", "2031-10", False),
+    ("2030", "2031-11", True),
+])
+def test_l_enfant_nait_au_plus_tard_trois_cents_jours_apres_le_deces(deces, naissance, refusee):
+    """La loi présume l'enfant « conçu pendant la période qui s'étend du trois
+    centième au cent quatre-vingtième jour, inclusivement, avant la date de la
+    naissance » (code civil, article 311) : l'enfant de l'assuré naît au plus
+    tard trois cents jours après son décès, compté de son dernier jour
+    possible quand il n'est dit qu'au mois ou à l'année. L'enfant posthume
+    reste reçu, que sa naissance suive ou non le départ."""
+    requete = {**_NE_APRES_LE_DEPART, "deces": deces, "naissances": naissance}
+    if not refusee:
+        assert saisie_du_portage(requete).naissancesEnfants() == [naissance]
+        return
+    with pytest.raises(ErreurSite, match=refus_de_la_saisie(re.escape(
+            f"Naissance d'un enfant « {naissance} » : elle suit de plus de trois cents "
+            f"jours votre décès, « {deces} » ; l'enfant serait conçu après lui (code "
+            "civil, article 311)."))):
+        saisie_du_portage(requete)
+
+
 def test_toute_borne_du_formulaire_est_opposable_hors_du_navigateur():
     """Aucun champ numérique ne doit être borné dans le seul HTML.
 

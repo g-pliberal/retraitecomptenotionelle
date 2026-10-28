@@ -2068,6 +2068,16 @@ def _cas() -> list[dict]:
     cas.append(("reversion_enfants_etudiant_et_apprenti", {
         **avant_le_depart, "sexe": "F", "conjoint_sexe": "H", "enfants": "2",
         "naissances": "2012, 2014", "charge_enfants": "1:etudes, 2:apprentissage:2033-09"}))
+    # Le même jour, l'enfant né après le départ (R. 353-10) : le père parti en
+    # 2022, dont le fils naît en mai 2023, laisse à sa mort, en juin 2035, la
+    # majoration pour enfant à charge à sa veuve ; mort en juin 2030, son enfant
+    # posthume, né en février 2031, la lui ouvre le 1er mars, nulle à la date
+    # d'effet de sa réversion.
+    apres_le_depart = {"naissance": "1960", "sexe": "H", "liquidation": "62", "enfants": "1"}
+    cas.append(("reversion_enfant_ne_apres_le_depart", {
+        **apres_le_depart, "naissances": "2023-05", "conjoint": "1980", "deces": "2035-06"}))
+    cas.append(("reversion_enfant_posthume", {
+        **apres_le_depart, "naissances": "2031-02", "conjoint": "1975", "deces": "2030-06"}))
 
     # Les carrières LUES sur un relevé, plutôt que reconstituées.
     cas.extend(_cas_releve())
