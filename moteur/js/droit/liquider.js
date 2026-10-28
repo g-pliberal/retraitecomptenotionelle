@@ -1502,6 +1502,56 @@ export function moyenneDesMeilleuresAnnees(valeurs, annees) {
 }
 
 /**
+ * Les points de chef de 1952 à 1972 se majorent (R. 732-67) : ceux des
+ * années civiles de la période. Voir le Python.
+ */
+export const PERIODE_DES_POINTS_MAJORES = [1952, 1972];
+
+/**
+ * Le taux dont se majorent les points de chef de 1952 à 1972, selon leur
+ * nombre annuel moyen P : 5 % de 15 à 19,51 points, 3,19 P - 57,23 % jusqu'à
+ * 27,34, 1,93 P - 22,74 % au-delà, dans la limite de 45 %, rien sous quinze
+ * (décret n° 86-1084, article 2 ; R. 732-67). Voir le Python.
+ */
+export function tauxDeMajorationDe1952A1972(moyenne) {
+  if (moyenne < 15.0) {
+    return 0.0;
+  }
+  if (moyenne <= 19.51) {
+    return 0.05;
+  }
+  if (moyenne <= 27.34) {
+    return (3.19 * moyenne - 57.23) / 100.0;
+  }
+  return Math.min(0.45, (1.93 * moyenne - 22.74) / 100.0);
+}
+
+/**
+ * Les points annuels `points` (une Map), ceux des années de `chef` de 1952 à
+ * 1972 majorés chacun du taux que fixe leur moyenne et arrondis à l'entier
+ * supérieur, avec ce taux et cette moyenne (R. 732-67). Voir le Python.
+ */
+export function majorerLesPointsDe1952A1972(points, chef) {
+  const [debut, fin] = PERIODE_DES_POINTS_MAJORES;
+  const annees = [...new Set(chef)]
+    .filter((annee) => debut <= annee && annee <= fin && (points.get(annee) ?? 0.0) > 0)
+    .sort((a, b) => a - b);
+  if (annees.length === 0) {
+    return [new Map(points), 0.0, 0.0];
+  }
+  const moyenne = annees.reduce((somme, annee) => somme + points.get(annee), 0)
+    / annees.length;
+  const taux = tauxDeMajorationDe1952A1972(moyenne);
+  const majores = new Map(points);
+  if (taux > 0) {
+    for (const annee of annees) {
+      majores.set(annee, Math.ceil(points.get(annee) * (1.0 + taux) - 1e-9));
+    }
+  }
+  return [majores, taux, moyenne];
+}
+
+/**
  * La pension des non-salariés agricoles depuis le 1er janvier 2026 :
  * L. 732-24 dans sa rédaction de 2026 — le revenu annuel moyen des
  * meilleures années depuis 2016 (1°), la retraite forfaitaire sur la durée
@@ -1561,7 +1611,15 @@ export function pensionDesNonSalariesAgricoles(moteur, periode, carriere, releve
     pointsParAnnee.set(annee,
       (pointsParAnnee.get(annee) ?? 0.0) + cotisation * rendement / service);
   }
-  const pointsAvant = [...pointsParAnnee].filter(([annee]) => annee < coupure)
+  // Les points de chef de 1952 à 1972, majorés année par année (R. 732-67).
+  const [pointsMajores, taux1952, moyenne1952] = majorerLesPointsDe1952A1972(
+    pointsParAnnee, [...pointsParAnnee.keys()].filter(
+      (annee) => ["chef", "chef_secondaire"].includes(carriere.qualiteAgricole(annee))));
+  const majoration1952 = taux1952 > 0
+    ? `points de chef de 1952 à 1972 majorés de ${formatPourcentage(taux1952, 2)}, `
+      + `pour une moyenne de ${formatFixe(moyenne1952, 2)} points par an (R. 732-67)`
+    : null;
+  const pointsAvant = [...pointsMajores].filter(([annee]) => annee < coupure)
     .map(([, points]) => points);
   const retenues = Math.min(anneesAvant, pointsAvant.length);
   const moyenne = dureeB > 0 ? moyenneDesMeilleuresAnnees(pointsAvant, anneesAvant) : 0;
@@ -1627,6 +1685,9 @@ export function pensionDesNonSalariesAgricoles(moteur, periode, carriere, releve
   if (partB > 0) {
     explications.push(`${moyenne} points par an, moyenne arrondie des ${retenues} `
       + `meilleures années d'avant 2016, sur ${dureeB} trimestres`);
+    if (majoration1952 !== null) {
+      explications.push(majoration1952);
+    }
   }
   if (part1 > 0) {
     explications.push(`revenu des ${anneesApres} meilleures années depuis 2016`);
@@ -1637,7 +1698,7 @@ export function pensionDesNonSalariesAgricoles(moteur, periode, carriere, releve
     // et les points d'après 2016 un à un.
     const retenue = Math.min(durees.trimestresParRegime.get(code) ?? 0, proratisation);
     const forfaitTotal = proratisation > 0 ? forfait * retenue / proratisation : 0.0;
-    const pointsApres = [...pointsParAnnee].filter(([annee]) => annee >= coupure)
+    const pointsApres = [...pointsMajores].filter(([annee]) => annee >= coupure)
       .reduce((somme, [, points]) => somme + points, 0);
     const pointsProvisoires = pointsB + pointsApres;
     const termesProvisoires = [];
@@ -1654,7 +1715,8 @@ export function pensionDesNonSalariesAgricoles(moteur, periode, carriere, releve
     if (provisoire > montant) {
       explications = partB > 0
         ? [`dont ${formatFixe(pointsB, 2, true)} points d'avant 2016, ${moyenne} par an, `
-          + `moyenne arrondie des ${retenues} meilleures années`]
+          + `moyenne arrondie des ${retenues} meilleures années`,
+        ...(majoration1952 !== null ? [majoration1952] : [])]
         : [];
       explications.push(`calcul provisoire de 2026 et 2027, que le recalcul de 2028 `
         + `ne dépasse pas (${formatFixe(montant, 2, true)} €)`);

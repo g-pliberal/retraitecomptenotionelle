@@ -6110,6 +6110,160 @@ process.stdout.write(JSON.stringify({ details, annuels }));
     assert [moyenne(d) for d in obtenus["details"]] == pytest.approx(moyennes, abs=0.01)
 
 
+def test_les_points_de_chef_de_1952_a_1972_se_majorent_annee_par_annee():
+    """Pour les pensions qui prennent effet depuis 2026, les majorations des
+    points acquis du 1er juillet 1952 au 31 décembre 1972, fixées selon « le
+    nombre moyen de leurs points au titre de l'ensemble de la période »,
+    « s'appliquent séparément pour chacune des années civiles comprises dans
+    cette période », et « sauf si le résultat est déjà entier, les nombres de
+    points annuels ainsi obtenus sont arrondis aux entiers supérieurs »
+    (R. 732-67). Leur taux est celui de D. 732-76 et D. 732-77 dans leur
+    rédaction antérieure au décret n° 2025-1409, qui codifiaient l'article 2
+    du décret n° 86-1084 : sur les points « acquis par les chefs
+    d'exploitation ou d'entreprise agricole », 5 % quand leur nombre annuel
+    moyen P est « compris entre 15 et 19,51 » ; « T p. 100 = 3,19 P - 57,23 »
+    jusqu'à 27,34 ; « T p. 100 = 1,93 P - 22,74 » au-delà, « dans la limite
+    d'une majoration de 45 % » (R. 732-67) ; rien sous quinze points. À
+    22,5 points, 3,19 × 22,5 - 57,23 = 14,545 % ; à 27,34, 29,9846 % ; à 30,
+    1,93 × 30 - 22,74 = 35,16 % ; à 40, 54,46 %, ramenés à 45 %. Le chef à
+    quinze points de 1961 à 1966 et à trente de 1967 à 1973 a 22,5 points de
+    moyenne sur les douze années de la période : 15 × 1,145 45 = 17,18 en
+    font 18, et 30 × 1,145 45 = 34,36 en font 35 ; 1973, après la période,
+    garde ses 30 points, et ses années de conjoint collaborateur, de 1955 à
+    1960, leurs 40, hors de la moyenne. À 20 et 15 points, la moyenne de 17,5
+    donne 5 % : 21 points tout ronds, et 15,75 en font 16. Sous quinze points
+    de moyenne, rien ne bouge. Dans les deux moteurs."""
+    import json
+    import shutil
+    import subprocess
+
+    moyennes = [14.9, 15.0, 19.5, 22.5, 27.34, 30.0, 40.0]
+    taux_attendus = [0.0, 0.05, 0.05, 0.14545, 0.299846, 0.3516, 0.45]
+    assert [liquider.taux_de_majoration_de_1952_a_1972(p) for p in moyennes] == pytest.approx(
+        taux_attendus, abs=1e-9)
+    cas = [
+        ({**{annee: 40.0 for annee in range(1955, 1961)},
+          **{annee: 15.0 for annee in range(1961, 1967)},
+          **{annee: 30.0 for annee in range(1967, 1974)}}, list(range(1961, 1974))),
+        ({1960: 20.0, 1961: 15.0}, [1960, 1961]),
+        ({1960: 14.5, 1961: 13.25}, [1960, 1961]),
+    ]
+    attendus = [
+        ({**{annee: 40.0 for annee in range(1955, 1961)},
+          **{annee: 18.0 for annee in range(1961, 1967)},
+          **{annee: 35.0 for annee in range(1967, 1973)}, 1973: 30.0}, 0.14545, 22.5),
+        ({1960: 21.0, 1961: 16.0}, 0.05, 17.5),
+        ({1960: 14.5, 1961: 13.25}, 0.0, 13.875),
+    ]
+    for (points, chef), (majores, taux, moyenne) in zip(cas, attendus):
+        obtenu = liquider.majorer_les_points_de_1952_a_1972(points, chef)
+        assert obtenu[0] == majores
+        assert obtenu[1:] == pytest.approx((taux, moyenne), abs=1e-9)
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    script = """
+import { majorerLesPointsDe1952A1972, tauxDeMajorationDe1952A1972 }
+  from "./moteur/js/droit/liquider.js";
+const { moyennes, cas } = JSON.parse(process.argv[1]);
+const taux = moyennes.map((p) => tauxDeMajorationDe1952A1972(p));
+const majores = cas.map(([points, chef]) => {
+  const [resultat, t, moyenne] = majorerLesPointsDe1952A1972(
+    new Map(Object.entries(points).map(([annee, p]) => [Number(annee), p])), chef);
+  return [Object.fromEntries(resultat), t, moyenne];
+});
+process.stdout.write(JSON.stringify({ taux, majores }));
+"""
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", script,
+         json.dumps({"moyennes": moyennes, "cas": cas})],
+        cwd=RACINE_TEMOINS.parent.parent, capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    obtenus = json.loads(execution.stdout)
+    assert obtenus["taux"] == pytest.approx(taux_attendus, abs=1e-9)
+    for (resultat, taux, moyenne), (majores, attendu, moyenne_attendue) in zip(
+            obtenus["majores"], attendus):
+        assert resultat == {str(annee): points for annee, points in majores.items()}
+        assert (taux, moyenne) == pytest.approx((attendu, moyenne_attendue), abs=1e-9)
+
+
+def test_la_pension_agricole_de_2026_majore_les_points_de_chef_de_1952_a_1972(simulateur):
+    """Le chef d'exploitation de 1968 à 1972, salarié ensuite jusqu'en 2012,
+    qui ne liquide qu'en février 2028, à soixante-dix-huit ans, retient au
+    régime trois années d'avant 2016 (R. 173-3-2) : ses années de chef y
+    entrent majorées (R. 732-67). Son revenu vaut chaque année 20 000 € de
+    2028, ramenés par les prix, sous le plafond de 1968 à 1972 : le moteur,
+    qui n'a pas le barème d'avant 1990, lui donne chaque année les mêmes
+    points, ceux que vaut leur rendement, et leur moyenne P, qu'il affiche,
+    fixe la majoration, que le test refait à la main : T = 3,19 P - 57,23 %
+    pour P de 19,51 à 27,34, puis P × (1 + T) arrondi à l'entier supérieur,
+    que valent ses trois meilleures années. Le conjoint collaborateur des
+    mêmes années, dont les points ne sont pas ceux d'un chef (décret
+    n° 86-1084, article 2), garde P, arrondi à l'entier le plus proche
+    (R. 732-66). Dans les deux moteurs."""
+    import json
+    import re
+    import shutil
+    import subprocess
+
+    def moyenne_arrondie(detail: str) -> tuple[int, int]:
+        trouve = re.search(r"(\d+) points par an, moyenne arrondie des (\d+) meilleures "
+                           r"années d'avant 2016", detail)
+        assert trouve is not None, detail
+        return int(trouve.group(1)), int(trouve.group(2))
+
+    macro = simulateur.scenario_actuel.macro
+    lignes = [[dict(annee=annee, revenu=20000.0 / macro.coefficient_prix(annee, 2028),
+                    affiliation=affiliation if annee < 1973 else "salarie_prive_non_cadre")
+               for annee in range(1968, 2013)]
+              for affiliation in ("exploitant_agricole", "collaborateur_agricole")]
+    carrieres = [Carriere(annee_naissance=1950, mois_naissance=1, jour_naissance=15, sexe="H",
+                          age_liquidation=78.0,
+                          lignes=[AnneeCarriere(**ligne) for ligne in liste])
+                 for liste in lignes]
+    assert [str(c.date_liquidation) for c in carrieres] == ["février 2028"] * 2
+    assert all(ligne["revenu"] < macro.plafond_securite_sociale(ligne["annee"])
+               for ligne in lignes[0][:5])
+    chef, collaborateur = [
+        next(p.detail for p in simulateur.scenario_actuel.calculer(c).pensions_par_regime
+             if p.regime == "msa_non_salaries") for c in carrieres]
+    trouve = re.search(r"points de chef de 1952 à 1972 majorés de ([\d.]+)%, pour une "
+                       r"moyenne de ([\d.]+) points par an \(R\. 732-67\)", chef)
+    assert trouve is not None, chef
+    taux, moyenne = float(trouve.group(1)) / 100, float(trouve.group(2))
+    assert 19.51 < moyenne <= 27.34
+    assert taux == pytest.approx((3.19 * moyenne - 57.23) / 100, abs=2e-4)
+    majores = moyenne * (1 + (3.19 * moyenne - 57.23) / 100)
+    # Loin d'un entier : la moyenne affichée à deux décimales suffit à l'arrondir.
+    assert abs(majores - round(majores)) > 0.02
+    assert moyenne_arrondie(chef) == (math.ceil(majores), 3)
+    assert "majorés" not in collaborateur
+    assert moyenne_arrondie(collaborateur) == (math.floor(moyenne + 0.5), 3)
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    script = """
+import { readFileSync } from "node:fs";
+import { AnneeCarriere, Carriere } from "./moteur/js/carriere.js";
+import { Contexte } from "./moteur/js/contexte.js";
+const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
+const simulateur = contexte.simulateur();
+const details = JSON.parse(process.argv[1]).map((lignes) => {
+  const carriere = new Carriere({
+    annee_naissance: 1950, mois_naissance: 1, jour_naissance: 15, sexe: "H",
+    age_liquidation: 78.0, lignes: lignes.map((ligne) => new AnneeCarriere(ligne)) });
+  return simulateur.scenarioActuel.calculer(carriere).pensions_par_regime
+    .find((p) => p.regime === "msa_non_salaries").detail;
+});
+process.stdout.write(JSON.stringify(details));
+"""
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", script, json.dumps(lignes)],
+        cwd=RACINE_TEMOINS.parent.parent, capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    assert json.loads(execution.stdout) == [chef, collaborateur]
+
+
 def test_l_annee_ou_l_exploitant_cesse_avant_son_depart_compte_entiere(simulateur):
     """L. 731-10-1 du code rural ne vise pas la seule année du départ : qui
     cesse en cours d'année, laquelle que ce soit, doit les cotisations « au

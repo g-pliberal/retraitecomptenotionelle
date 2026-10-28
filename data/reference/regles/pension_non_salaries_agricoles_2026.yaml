@@ -26,8 +26,7 @@ effet: >-
   « 31 pts x 22 ans = 682 pts » ; le salarié agricole n'a plus que ses six meilleures
   années sur dix, depuis le 28 septembre 2026 aussi. Restent approchés : les années d'avant 1990, dont le
   barème de points n'est pas lu, qui entrent dans la moyenne par les points que vaut
-  leur rendement ; les majorations de points de 1952 à 1972
-  (R. 732-67) et les rachats, qu'il ne connaît pas ; le revenu du collaborateur et de
+  leur rendement ; les rachats, qu'il ne connaît pas ; le revenu du collaborateur et de
   l'aide familial depuis 2016, que le moteur prend, depuis le 16 octobre 2026, de leur
   assiette forfaitaire (400 SMIC jusqu'en 2025, 600 depuis), quand L. 732-24 le tirerait
   de leurs cotisations jusqu'en 2025 si leur AVI, assise sur les revenus du chef que la
@@ -66,15 +65,50 @@ effet: >-
   trimestres civils qui précèdent l'effet (`compter.plafond_de_l_annee`). L'exploitant
   en stage de janvier à mai 2030, parti le 1er juin, compte 29 trimestres au régime
   général, et non 31 ; des vingt-cinq années, 4 aux régimes alignés et 21 à ce régime,
-  et non 5 et 20.
+  et non 5 et 20. Depuis le 28 octobre 2026 (action 131), les points de chef
+  d'exploitation de 1952 à 1972 entrent dans la moyenne majorés, chaque année, du taux
+  que fixe leur nombre annuel moyen P — 5 % de 15 à 19,51 points, 3,19 P - 57,23 %
+  jusqu'à 27,34, 1,93 P - 22,74 % au-delà, 45 % au plus, rien sous quinze —, et
+  arrondis à l'entier supérieur (R. 732-67, sur D. 732-76 et D. 732-77 d'avant 2026).
+  Faute du barème de ces années, qui n'existe qu'au fac-similé, le moteur majore les
+  points que vaut leur rendement : le chef de 1968 à 1972, à 20 000 € de 2028 par an
+  et salarié ensuite, parti en février 2028, a 22,79 points par an de moyenne, majorés
+  de 15,46 %, et sa moyenne d'avant 2016 passe de 23 à 27 points. Le conjoint
+  collaborateur des mêmes années n'a pas de majoration, réservée aux points « acquis
+  par les chefs d'exploitation ou d'entreprise agricole ». Les années pour lesquelles le
+  décret n° 68-571 accordait des points supplémentaires, que la majoration exclut,
+  années et points, le moteur ne les connaît pas.
 sources:
-  lu_le: 2026-10-24
+  lu_le: 2026-10-28
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Lire le barème de points d'avant 1990 (article 1123 de l'ancien code rural et ses
-    décrets) : les années d'avant 1990 entrent dans la moyenne par l'équivalent en points
-    de leur rendement.
+    Le barème des points d'avant 1990. De 1981 à 1989, il est lu (R. 732-69 ; décret
+    n° 80-808, article 8 et annexe) : quinze à soixante points par an selon le revenu
+    cadastral « servant de base aux cotisations », que la saisie ne connaît pas — un
+    champ de saisie, ou une convention, à décider par le propriétaire. Avant 1981, « le
+    nombre de points résulte des dispositions des décrets n° 65-346 du 30 avril 1965,
+    n° 67-570 du 21 juin 1967, n° 74-443 du 15 mai 1974 et n° 75-97 du 10 février
+    1975 » (R. 732-69), et du décret du 26 juin 1968 (n° 68-571) selon le décret
+    n° 80-808, qui date le second du « 21 janvier 1967 » : l'index JORF n'a que les
+    notices de 67-570, 68-571 et 74-443, rien de 65-346 ni de 75-97 ; leur texte n'est
+    qu'au fac-similé du Journal officiel, à lire par le propriétaire. D'ici là, les
+    années d'avant 1990 entrent dans la moyenne, et dans celle de 1952 à 1972 qui fixe
+    leur majoration (R. 732-67), par l'équivalent en points de leur rendement.
+  - >-
+    D. 732-76 et D. 732-77 dans leur rédaction de 2005 à 2025, auxquels R. 732-67
+    renvoie : l'index LEGI ne les porte que dans leur rédaction de 2026, sans rapport.
+    Le moteur prend le texte qu'ils codifiaient, l'article 2 du décret n° 86-1084, que
+    le décret n° 2005-368 abroge en codifiant le livre VII (article 3, 78°, « à
+    l'exception des articles 3 et 4 ») ; R. 732-67 en confirme les bornes (19,51 et
+    27,34 points) et la limite de 45 %. Relire les deux articles sur Légifrance, dans
+    un navigateur.
+  - >-
+    Les années pour lesquelles le décret n° 68-571 du 26 juin 1968 (« validation
+    d'annuités supplémentaires », selon sa notice) accordait des points supplémentaires,
+    que l'article 2 du décret n° 86-1084 exclut de la majoration, « ainsi que les points
+    afférents auxdites années » : le texte n'est qu'au fac-similé, et la saisie ne les
+    distingue pas.
   - >-
     Chercher un exemple publié d'une pension entière calculée par la réforme (MSA,
     circulaire ou fiche) : l'exemple de la MSA ne donne que la répartition des années et
@@ -275,6 +309,75 @@ sources:
       mois civil suivant la date de cessation de l'activité agricole non salariée ». Lus
       dans l'index LEGI du dépôt
     date: 2026-10-24
+  - type: legifrance
+    reference: >-
+      R. 732-67, rédaction du 1er janvier 2026 (LEGIARTI000053328816) : « Par dérogation
+      au I de l'article R. 732-66, les majorations de points octroyées aux assurés
+      remplissant les conditions, relatives au nombre moyen de leurs points au titre de
+      l'ensemble de la période comprise entre le 1er juillet 1952 et le 31 décembre
+      1972, mentionnées aux articles D. 732-76 et D. 732-77 dans leurs rédactions
+      antérieures au décret n° 2025-1409 [...] s'appliquent séparément pour chacune des
+      années civiles comprises dans cette période. Sauf si le résultat est déjà entier,
+      les nombres de points annuels ainsi obtenus sont arrondis aux entiers
+      supérieurs. » D. 732-77 « s'applique sous réserve de considérer que les formules
+      mentionnées à ses troisième et cinquième alinéas fixent l'ampleur des majorations
+      octroyées aux assurés dont le nombre moyen de points acquis est respectivement
+      compris entre 19,51 et 27,34 ou supérieur à 27,34, dans la limite d'une majoration
+      de 45 % s'agissant de la seconde de ces deux formules. » Le dernier alinéa compte
+      au même article les rachats de L. 732-35 et L. 732-35-1 demandés depuis 2026. Lu
+      dans l'index LEGI du dépôt
+    date: 2026-10-28
+  - type: legifrance
+    reference: >-
+      décret n° 86-1084 du 7 octobre 1986, article 1er (LEGIARTI000006769404) : « Le
+      nombre de points sur la base duquel sont calculées les retraites proportionnelles
+      est majoré, à compter du 1er juillet 1986, dans les conditions prévues aux articles
+      suivants » ; article 2 (LEGIARTI000006769405), tous deux du 8 octobre 1986 au
+      22 avril 2005 : « Pour le calcul des retraites proportionnelles prenant effet
+      postérieurement au 30 juin 1986, le nombre de points acquis par les chefs
+      d'exploitation ou d'entreprise agricole au titre de la période comprise entre le
+      1er juillet 1952 et le 31 décembre 1972 est majoré de : 1° 5 p. 100 lorsque le
+      nombre annuel moyen de points acquis par les intéressés au cours de cette période
+      est compris entre 15 et 19,51 ; 2° 5 à 30 p. 100 et de 30 à 45 p. 100 selon que [ce
+      nombre] est compris entre 19,51 et 27,34 ou est supérieur à 27,34. Dans le premier
+      cas, le taux est déterminé par la formule suivante : T p. 100 = 3,19 P - 57,23 Dans
+      le second cas, il est déterminé par la formule : T p. 100 = 1,93 P - 22,74 Le terme
+      P représentant le nombre annuel moyen de points acquis par l'assuré au cours de la
+      période visée ci-dessus. Pour l'application des dispositions du présent article,
+      sont exclues les années pour lesquelles des points supplémentaires ont été accordés
+      en application du décret susvisé du 26 juin 1968 ainsi que les points afférents
+      auxdites années. » Décret n° 2005-368 du 19 avril 2005, article 3, 78°
+      (LEGIARTI000006240372) : abrogé « à l'exception des articles 3 et 4 » le jour où
+      naissent D. 732-76 et D. 732-77. Lus dans l'index LEGI du dépôt
+    date: 2026-10-28
+  - type: legifrance
+    reference: >-
+      R. 732-69, rédactions du 22 avril 2005 (LEGIARTI000006597478) et du 28 octobre 2017
+      (LEGIARTI000035918355), jusqu'au 1er janvier 2026 : le nombre de points acquis
+      chaque année sur les cotisations d'avant la loi n° 90-85 « est déterminé selon le
+      barème suivant pour les années 1981 et suivantes : REVENU CADASTRAL NOMBRE DE
+      POINTS Au plus égal à 1 180 F (179,89 €). 15 De 1 180 F (179,80 €) à 5 571 F
+      (849,29 €). 30 De 5 571 F (849,29 €) à 9 830 F (1 498,57 €). 45 Supérieur à
+      9 830 F (1 498,57 €). 60 Pour les années antérieures à 1981, le nombre de points
+      résulte des dispositions des décrets n° 65-346 du 30 avril 1965, n° 67-570 du
+      21 juin 1967, n° 74-443 du 15 mai 1974 et n° 75-97 du 10 février 1975 ». Décret
+      n° 80-808 du 14 octobre 1980, article 8 (LEGIARTI000006769209, LEGIARTI000006769210,
+      LEGIARTI000006769211, de 1981 à 2005), et son annexe (LEGIARTI000006769235) : le
+      même barème, au « revenu cadastral servant de base aux cotisations », et, pour les
+      années antérieures, « les dispositions des décrets du 30 avril 1965, du 21 janvier
+      1967, du 26 juin 1968, du 15 mai 1974 et du 10 février 1975 ». Lus dans l'index LEGI
+      du dépôt
+    date: 2026-10-28
+  - type: jorf
+    reference: >-
+      Les décrets d'avant 1981 du barème, dans l'index JORF du dépôt : du décret n° 67-570
+      du 21 juin 1967 (JORFTEXT000000514415), la seule notice, « ART. 3 ET 4 : POINTS DE
+      RETRAITE : CALCUL » ; du décret n° 68-571 du 26 juin 1968 (JORFTEXT000000330850),
+      « VALIDATION D'ANNUITES SUPPLEMENTAIRES » ; du décret n° 74-443 du 15 mai 1974
+      (JORFTEXT000000328985), « MODIFICATION DES ART. 1ER ET 4 DU DECRET 67570 DU
+      21-06-1967 (COTISATION CADASTRALE) » ; rien des décrets n° 65-346 et n° 75-97. Leur
+      texte n'est qu'au fac-similé
+    date: 2026-10-28
 textes_a_rattacher:
 - id: LEGIARTI000053280317
   reference: >-
@@ -304,6 +407,34 @@ textes_a_rattacher:
   reference: >-
     code rural et de la pêche maritime, R. 732-68, rédaction du 1er janvier 2026 : le
     coefficient de minoration
+- id: LEGIARTI000053328816
+  reference: >-
+    code rural et de la pêche maritime, R. 732-67, rédaction du 1er janvier 2026 : les
+    points de chef de 1952 à 1972 majorés année par année
+- id: LEGIARTI000006597478
+  reference: >-
+    code rural et de la pêche maritime, R. 732-69, rédaction du 22 avril 2005 : le barème
+    des points de 1981 à 1989 au revenu cadastral, que le moteur n'applique pas
+- id: LEGIARTI000035918355
+  reference: >-
+    code rural et de la pêche maritime, R. 732-69, rédaction du 28 octobre 2017 : le
+    même barème, que le moteur n'applique pas
+- id: LEGIARTI000006769209
+  reference: >-
+    décret n° 80-808 du 14 octobre 1980, article 8, rédaction du 1er janvier 1981 : les
+    points au barème annexé, et ceux d'avant 1981 aux décrets de 1965 à 1975
+- id: LEGIARTI000006769210
+  reference: >-
+    décret n° 80-808 du 14 octobre 1980, article 8, rédaction du 21 septembre 1990 : le
+    même renvoi, pour les cotisations d'avant 1990
+- id: LEGIARTI000006769211
+  reference: >-
+    décret n° 80-808 du 14 octobre 1980, article 8, rédaction du 25 août 2004 : le même
+    renvoi, jusqu'à la codification de 2005
+- id: LEGIARTI000006769235
+  reference: >-
+    décret n° 80-808 du 14 octobre 1980, annexe : le barème des points au revenu
+    cadastral, de quinze à soixante points
 - id: LEGIARTI000054589934
   reference: >-
     code de la sécurité sociale, R. 173-3-2, rédaction du 1er août 2026 : la répartition
@@ -357,4 +488,10 @@ code:
     cotisé l'AVI au minimum se tire de ses cotisations
     (`liquider.revenu_des_cotisations_minimales`, `revenuDesCotisationsMinimales`),
     que `test_le_revenu_des_annees_cotisees_au_minimum_se_tire_des_cotisations` rejoue,
-    posé à la main, dans les deux moteurs.
+    posé à la main, dans les deux moteurs. Les points de chef de 1952 à 1972 entrent
+    dans la moyenne majorés année par année (`liquider.majorer_les_points_de_1952_a_1972`,
+    `majorerLesPointsDe1952A1972`), du taux que fixe leur moyenne
+    (`taux_de_majoration_de_1952_a_1972`, `tauxDeMajorationDe1952A1972`), que
+    `test_les_points_de_chef_de_1952_a_1972_se_majorent_annee_par_annee` et
+    `test_la_pension_agricole_de_2026_majore_les_points_de_chef_de_1952_a_1972`
+    rejouent, posés à la main, dans les deux moteurs.

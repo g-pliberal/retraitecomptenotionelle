@@ -490,9 +490,12 @@ points multipliée par vingt-deux années.
 Ce qui reste approché, et dans quel sens. Les années d'avant 1990, dont le
 barème de points n'est pas lu, entrent dans la moyenne par l'équivalent en
 points de leur rendement, qui les laisse sous les années du barème et hors des
-meilleures. Les majorations de points de 1952 à
-1972, les rachats et les conjoints collaborateurs manquent, comme avant la
-réforme.
+meilleures. Les années de chef de 1952 à 1972 y entrent majorées, chacune du
+taux que fixe leur moyenne (R. 732-67), mais sur ce même équivalent : le
+barème de ces années n'est qu'au fac-similé du Journal officiel. La même
+majoration manque aux pensions prises de juillet 1986 à 2025 (D. 732-76 et
+D. 732-77). Les rachats et les conjoints collaborateurs manquent, comme avant
+la réforme.
 
 ## La part patronale du public, et ce qu'on n'en sait pas
 

@@ -2133,6 +2133,57 @@ def moyenne_des_meilleures_annees(valeurs: list[float], annees: int) -> int:
     return math.floor(somme_ordonnee(meilleures) / len(meilleures) + 0.5 + 1e-9)
 
 
+#: LES POINTS DE CHEF DE 1952 À 1972 SE MAJORENT (R. 732-67) : ceux des années
+#: civiles de la période « comprise entre le 1er juillet 1952 et le 31 décembre
+#: 1972 ».
+PERIODE_DES_POINTS_MAJORES = (1952, 1972)
+
+
+def taux_de_majoration_de_1952_a_1972(moyenne: float) -> float:
+    """Le taux dont se majorent les points de chef de 1952 à 1972, selon leur
+    nombre annuel moyen P : 5 % de 15 à 19,51 points, « T p. 100 = 3,19 P -
+    57,23 » jusqu'à 27,34, « T p. 100 = 1,93 P - 22,74 » au-delà, rien sous
+    quinze (décret n° 86-1084, article 2, que D. 732-76 et D. 732-77 ont
+    codifié en 2005) ; la seconde formule « dans la limite d'une majoration de
+    45 % » (R. 732-67)."""
+    if moyenne < 15.0:
+        return 0.0
+    if moyenne <= 19.51:
+        return 0.05
+    if moyenne <= 27.34:
+        return (3.19 * moyenne - 57.23) / 100.0
+    return min(0.45, (1.93 * moyenne - 22.74) / 100.0)
+
+
+def majorer_les_points_de_1952_a_1972(
+        points: dict[int, float], chef) -> tuple[dict[int, float], float, float]:
+    """Les points annuels ``points``, ceux des années de ``chef`` de 1952 à
+    1972 majorés, le taux et la moyenne qui le fixe.
+
+    La majoration se fixe sur le nombre annuel moyen des points que le chef
+    d'exploitation a acquis dans la période — ceux « acquis par les chefs
+    d'exploitation ou d'entreprise agricole » (décret n° 86-1084, article 2),
+    et non par le conjoint ou l'aide familial —, mais « s'appliqu[e]
+    séparément pour chacune des années civiles comprises dans cette
+    période » ; « sauf si le résultat est déjà entier, les nombres de points
+    annuels ainsi obtenus sont arrondis aux entiers supérieurs » (R. 732-67).
+    Les années pour lesquelles le décret n° 68-571 accordait des points
+    supplémentaires, que la majoration exclut, le modèle ne les connaît pas.
+    """
+    debut, fin = PERIODE_DES_POINTS_MAJORES
+    annees = sorted(annee for annee in set(chef)
+                    if debut <= annee <= fin and points.get(annee, 0.0) > 0)
+    if not annees:
+        return dict(points), 0.0, 0.0
+    moyenne = somme_ordonnee(points[annee] for annee in annees) / len(annees)
+    taux = taux_de_majoration_de_1952_a_1972(moyenne)
+    majores = dict(points)
+    if taux > 0:
+        for annee in annees:
+            majores[annee] = float(math.ceil(points[annee] * (1.0 + taux) - 1e-9))
+    return majores, taux, moyenne
+
+
 def pension_des_non_salaries_agricoles(
         moteur, periode: PeriodeRegime, carriere: Carriere, releve: Releve,
         code: str, trimestres: int, requis_reference: int,
@@ -2223,6 +2274,14 @@ def pension_des_non_salaries_agricoles(
             fiabilite = min(fiabilite, fiabilite_rendement)
         points_par_annee[annee] = (points_par_annee.get(annee, 0.0)
                                    + cotisation * rendement / service)
+    # Les points de chef de 1952 à 1972, majorés année par année (R. 732-67).
+    points_par_annee, taux_1952, moyenne_1952 = majorer_les_points_de_1952_a_1972(
+        points_par_annee,
+        [annee for annee in points_par_annee
+         if carriere.qualite_agricole(annee) in ("chef", "chef_secondaire")])
+    majoration_1952 = (
+        f"points de chef de 1952 à 1972 majorés de {taux_1952:.2%}, pour une moyenne "
+        f"de {moyenne_1952:.2f} points par an (R. 732-67)" if taux_1952 > 0 else None)
     points_avant = [points for annee, points in points_par_annee.items()
                     if annee < coupure]
     retenues = min(annees_avant, len(points_avant))
@@ -2302,6 +2361,8 @@ def pension_des_non_salaries_agricoles(
         explications.append(
             f"{moyenne} points par an, moyenne arrondie des {retenues} "
             f"meilleures années d'avant 2016, sur {duree_b} trimestres")
+        if majoration_1952 is not None:
+            explications.append(majoration_1952)
     if part_1 > 0:
         explications.append(
             f"revenu des {annees_apres} meilleures années depuis 2016")
@@ -2327,6 +2388,7 @@ def pension_des_non_salaries_agricoles(
             explications = (
                 [f"dont {points_b:,.2f} points d'avant 2016, {moyenne} par an, "
                  f"moyenne arrondie des {retenues} meilleures années"]
+                + ([majoration_1952] if majoration_1952 is not None else [])
                 if part_b > 0 else [])
             explications.append(
                 f"calcul provisoire de 2026 et 2027, que le recalcul de 2028 "
