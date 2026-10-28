@@ -1171,6 +1171,22 @@ function conjointFormulaire(saisie, contexte) {
       "À cinquante-cinq ans, le régime général n'en compte que 70 % sous son "
       + "plafond. La majoration de 11,1 %, qui ne regarde que les retraites, ne "
       + "les compte pas."),
+    // CE QUI RÉVISE SA RÉVERSION (action 138, étape 4 ; R. 353-1-1) : la fin de
+    // son activité et ses revenus qui changent, ici ; la fin de son union
+    // nouvelle et les ressources de son nouveau conjoint qui changent, plus
+    // bas. Le régime général la révise le mois qui suit chacun.
+    g.champ("activite_conjoint_fin", "Fin de son activité", saisie.activite_conjoint_fin,
+      "facultatif : le mois où elle cesse, « 2033-02 »", "text",
+      { autocomplete: "off", spellcheck: "false" },
+      "Ses revenus d'activité ne comptent plus : le régime général révise sa "
+      + "réversion le mois qui suit, tant qu'elle reste révisable."),
+    g.champ("activite_conjoint_variations", "Changements de ses revenus d'activité",
+      saisie.activite_conjoint_variations, "facultatif : « 2032-06:9500, 2035-01:12000 »",
+      "text", { autocomplete: "off", spellcheck: "false" },
+      "Un salaire qui change, une activité reprise ou commencée après votre "
+      + "décès : chaque fois le mois, puis ce qu'elle lui rapporte par an à partir "
+      + "de lui, en euros bruts, 0 quand elle cesse. Le régime général révise sa "
+      + "réversion le mois qui suit chacun, tant qu'elle reste révisable."),
     g.champ("conjoint_retraite", "Sa propre retraite, depuis", saisie.conjoint_retraite,
       "facultatif : « 1990-08 » ; sans lui, dès sa réversion", "text",
       { autocomplete: "off", spellcheck: "false" },
@@ -1191,7 +1207,14 @@ function conjointFormulaire(saisie, contexte) {
       "facultatif : « 2031-06 » ; sans lui, dès votre décès", "text",
       { autocomplete: "off", spellcheck: "false" },
       "La réversion qu'elle lui retire est servie jusque-là. Le régime général "
-      + "ne compte le ménage que s'il est formé quand sa réversion commence."),
+      + "révise la sienne le mois qui suit, sous le plafond du ménage, tant "
+      + "qu'elle reste révisable."),
+    g.champ("nouvelle_union_fin", "Fin de cette union", saisie.nouvelle_union_fin,
+      "facultatif : le mois où il revit seul, « 2036-09 »", "text",
+      { autocomplete: "off", spellcheck: "false" },
+      "Le régime général révise alors sa réversion le mois qui suit, sous le "
+      + "plafond d'une personne seule, sans les ressources de son ancien "
+      + "conjoint."),
     g.champ("ressources_nouveau_conjoint", "Ressources de son nouveau conjoint",
       saisie.ressources_nouveau_conjoint === null
         ? "" : nombreBrut(saisie.ressources_nouveau_conjoint),
@@ -1199,6 +1222,13 @@ function conjointFormulaire(saisie, contexte) {
       { min: "0", step: "100" },
       "Elles s'ajoutent aux siennes sous le plafond du ménage. Sans elles, le "
       + "modèle n'en compte aucune."),
+    g.champ("ressources_nouveau_conjoint_variations",
+      "Changements des ressources de son nouveau conjoint",
+      saisie.ressources_nouveau_conjoint_variations, "facultatif : « 2034-01:11000 »",
+      "text", { autocomplete: "off", spellcheck: "false" },
+      "Pendant leur union, chaque fois le mois, puis ce qu'elles font par an à "
+      + "partir de lui. Le régime général révise sa réversion le mois qui suit "
+      + "chacun, tant qu'elle reste révisable."),
     g.champ("conjoint_invalidite", "Son invalidité", saisie.conjoint_invalidite,
       "facultatif : le mois où elle est reconnue, « 2024-02 »", "text",
       { autocomplete: "off", spellcheck: "false" },

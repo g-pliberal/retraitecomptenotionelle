@@ -201,6 +201,40 @@ def test_l_enfant_nait_au_plus_tard_trois_cents_jours_apres_le_deces(deces, nais
         saisie_du_portage(requete)
 
 
+#: Un veuf de 2031 dont la réversion se révise (action 138, étape 4) : son
+#: activité change, cesse, reprend ; pacsé en 2032 avec une conjointe dont les
+#: ressources changent, il revit seul en 2036.
+_REVISIONS = {"naissance": "1960", "sexe": "F", "liquidation": "2024-01", "conjoint": "1962-03",
+              "ressources_conjoint": "12000", "activite_conjoint": "9000",
+              "activite_conjoint_fin": "2033-02",
+              "activite_conjoint_variations": "2032-06:9500, 2035-01:12000",
+              "nouvelle_union": "pacs", "nouvelle_union_depuis": "2032-06",
+              "nouvelle_union_fin": "2036-09", "ressources_nouveau_conjoint": "14000",
+              "ressources_nouveau_conjoint_variations": "2034-01:11000", "deces": "2031-10"}
+
+
+def test_le_formulaire_demande_ce_qui_revise_la_reversion():
+    """La réversion du régime général se révise le mois qui suit la fin de
+    l'activité du conjoint, chaque changement de ses revenus d'activité ou des
+    ressources de son nouveau conjoint, et la fin de leur union (R. 353-1-1).
+    La saisie les lisait de l'adresse ; le formulaire les demande, dans le
+    dépliant du conjoint, chacun sous ce qu'il fait cesser ou varier, et les
+    rend tels qu'ils sont écrits."""
+    corps = rendre("/simuler", _REVISIONS)[1]
+    debut = corps.index("Conjoint et réversion</span></summary>")
+    bloc = corps[debut:corps.index("</details>", debut)]
+    noms = re.findall(r'\bname="([a-z_0-9]+)"', bloc)
+    for champ, sous in (("activite_conjoint_fin", "activite_conjoint"),
+                        ("activite_conjoint_variations", "activite_conjoint_fin"),
+                        ("nouvelle_union_fin", "nouvelle_union_depuis"),
+                        ("ressources_nouveau_conjoint_variations", "ressources_nouveau_conjoint")):
+        assert champ in noms, f"le formulaire ne demande pas « {champ} »"
+        assert noms[noms.index(champ) - 1] == sous, f"« {champ} » ne suit pas « {sous} »"
+        balise = re.search(rf'<input[^>]*name="{champ}"[^>]*>', bloc).group(0)
+        assert 'type="text"' in balise
+        assert f'value="{html.escape(_REVISIONS[champ])}"' in balise
+
+
 def test_toute_borne_du_formulaire_est_opposable_hors_du_navigateur():
     """Aucun champ numérique ne doit être borné dans le seul HTML.
 
