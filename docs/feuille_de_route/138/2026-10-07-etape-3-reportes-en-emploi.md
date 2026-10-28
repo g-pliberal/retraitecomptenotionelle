@@ -6,8 +6,8 @@ l'EACR, la CNRACL, l'État (16) ; la part stable de l'AWG (17) ; la date de
 chaque cohorte (18, 19) ; la page Coût, l'entrée, la décote (19, 23) ; le 24,
 l'âge de départ de chaque génération, le militaire, les caisses, les
 naissances de l'année, le taux effectif, au modèle et au paquet ; le 28, sur
-la page Coût, la dépense nette. Reste, au site : la phrase des poids. Au
-propriétaire : les cohortes nées toute l'année, ou la grille ; la forme des
+la page Coût, la dépense nette et la phrase des poids. Rien ne reste au site.
+Au propriétaire : les cohortes nées toute l'année, ou la grille ; la forme des
 départs projetés ; l'entrée selon la génération ; l'Ircantec ; la table des
 poids ; l'officier. Détail : « Ce qui reste » des notes du 24 et du 28 octobre.
 
