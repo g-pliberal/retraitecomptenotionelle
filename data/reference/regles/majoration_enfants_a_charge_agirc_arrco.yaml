@@ -140,10 +140,11 @@ versions:
 approximations:
 - version: [accord_du_25_avril_1996, accord_du_18_mars_2011, accord_du_17_novembre_2017]
   ecart: >-
-    Le modèle ne tient pour à charge que l'enfant de moins de dix-huit ans : la saisie ne
-    dit pas si l'enfant de dix-huit à vingt-cinq ans est étudiant, apprenti ou demandeur
-    d'emploi non indemnisé, ni s'il est devenu invalide avant vingt et un ans, ni s'il
-    cesse d'être à charge et le redevient.
+    Le modèle ne tient pour à charge que l'enfant de moins de dix-huit ans : il ne lit
+    pas, pour elle, les études ni l'apprentissage que la saisie dit pour la réversion
+    depuis le 28 octobre 2026, et la saisie ne dit pas si l'enfant de dix-huit à
+    vingt-cinq ans est demandeur d'emploi non indemnisé, ni s'il est devenu invalide avant
+    vingt et un ans, ni s'il cesse d'être à charge et le redevient.
   effet: >-
     sous-estime la majoration du participant dont un enfant de dix-huit à vingt-cinq ans
     étudie au départ, et sa durée

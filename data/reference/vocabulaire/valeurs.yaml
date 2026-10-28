@@ -443,7 +443,9 @@ listes:
           R. 161-4 ; exposé de la Cnav, « Qualité d'enfant à charge »), sur
           justificatif : un certificat de scolarité, le contrat
           d'apprentissage, un certificat médical (circulaire Cnav n° 76/88,
-          fiche n° 4). Le formulaire ne les demande pas encore
+          fiche n° 4). Le formulaire les demande, pour les enfants dont il dit
+          la naissance, jusqu'à la fin des études ou de l'apprentissage : ce
+          qu'il dit prend la place de la présomption
       majoration_demandee_des_sa_condition:
         dit: >-
           la part de la majoration pour enfant qui commence après la date

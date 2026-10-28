@@ -198,8 +198,9 @@ approximations:
     le modèle compte les enfants du défunt, tenus pour à la charge du survivant, nés
     avant ou après la date d'effet, chacun sous l'âge de la version en vigueur chaque
     jour ; il ne les tient à charge jusqu'à vingt ans que pendant les études,
-    l'apprentissage ou l'infirmité que la chronologie dit, que le formulaire ne demande
-    pas encore (présomption charge_jusqu_a_l_age_limite) ; il ne distingue ni l'apprenti
+    l'apprentissage ou l'infirmité que la chronologie dit, que le formulaire demande pour
+    les enfants dont il dit la naissance, chacun depuis elle jusqu'à la fin qu'il dit
+    (présomption charge_jusqu_a_l_age_limite) ; il ne distingue ni l'apprenti
     d'avant le 18 mai 1994, à charge jusqu'à dix-huit ans et sous 55 % du SMIC
     (circulaire Cnav n° 76/88, fiche n° 4 ; n° 44/94), ni l'enfant dont la maladie a
     interrompu les études, à charge avant 2016 jusqu'au 30 septembre de l'année de ses

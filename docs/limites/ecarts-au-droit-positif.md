@@ -52,7 +52,9 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   charge ont leur part le mois qui suit (R. 353-10), la réversion d'avant 1988
   la reçoit le 1er janvier 1988, et l'étudiant, l'apprenti et l'enfant infirme
   restent à charge jusqu'à vingt ans quand la chronologie le dit — le
-  formulaire ne le demande pas encore. Depuis le 24 octobre, la réversion
+  formulaire le demande depuis le 28 octobre, pour les enfants dont il dit la
+  naissance, jusqu'à la fin de leurs études ou de leur apprentissage. Depuis le
+  24 octobre, la réversion
   attribuée depuis juillet 2004 se révise sous le plafond de ressources le mois
   qui suit la retraite du survivant, le ménage qu'il forme ou qui se défait, la
   fin de son activité, ses revenus d'activité ou ceux de son nouveau conjoint
