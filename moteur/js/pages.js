@@ -12144,6 +12144,14 @@ function coutDetailPostes(contexte) {
     milliards(ligne.solde(s) * pib, 1),
     g.pourcentage(ligne.solde(s), true, 2), "—",
   ])]);
+  // La dépense nette, à côté de la brute : ce qu'il en reste une fois payés
+  // les prélèvements sociaux des retraités, au taux de l'année que le bilan
+  // porte, le même pour les deux systèmes. Hors du solde, brut des deux côtés.
+  lignes.push([
+    '<span class="dont">Pour mémoire, dépenses nettes des prélèvements sociaux '
+    + "des retraités</span>",
+    ...systemes.flatMap((s) => cellules(ligne.depenseNette(s), totalDepenses[s])),
+  ]);
   lignes.push([
     '<span class="dont">Pour mémoire, hors du compte : garantie vieillesse, '
     + "financée par l'impôt</span>", "—", "—", "—",
@@ -13374,7 +13382,12 @@ function coutDetailSources(contexte) {
   const massePensions = ["direct", "derive"]
     .reduce((somme, categorie) => somme + depenses.pensionsDroit(categorie, anneeMasse), 0);
   const masseBrute = massePensions / pibMasse;
-  const masseNette = masseBrute * (1 - pensionsNettes.tauxTotal);
+  // Le net au taux que le bilan porte cette année-là : ce que les prélèvements
+  // prennent vraiment à la masse, que la DREES mesure. Le taux plein n'en
+  // donnait que la plus petite valeur, les pensions modestes en étant
+  // exonérées ou au taux réduit.
+  const { tauxEffectif, anneeTauxEffectif } = solde.annee(anneeMasse);
+  const masseNette = masseBrute * (1 - tauxEffectif);
   const masseCirculaire = massePensions * pensionsNettes.csg_affectee_vieillesse;
   // Le stock, à côté des flux : les droits acquis à date du tableau
   // supplémentaire du SEC 2010. Les années sont lues et non déduites — une
@@ -13428,17 +13441,16 @@ change de signe : l'effort figé est SOUS le besoin jusqu'en ${croisement}, et
 au-dessus ensuite. Aucune des deux ne flatte ; elles déplacent
 le déficit dans le temps, et l'État n'a promis ni l'une ni l'autre.</p>
 <p class="discret"><strong>Et en BRUT, des deux côtés.</strong> Les pensions
-comptées ici sont celles qui sont versées, avant la contribution sociale
-généralisée, la CRDS et la CASA. Au taux plein, ces trois-là prélèvent
-${g.pourcentage(pensionsNettes.tauxTotal, false, 1)} d'une pension : la
-masse nette vaut donc au plus
+comptées ici sont celles qui sont versées, avant la CSG, la CRDS, la CASA et la
+cotisation maladie des complémentaires. Ces prélèvements en prennent
+${g.pourcentage(tauxEffectif, false, 1)}, exonérations et taux réduits
+compris : ce que la DREES mesure en ${anneeTauxEffectif}${anneeTauxEffectif < anneeMasse
+    ? ", dernière année publiée" : ""}, et que le modèle applique à tous les
+systèmes. La masse nette, avant l'impôt sur le revenu, vaut donc
 ${g.pourcentage(masseNette, false, 2)} du PIB en ${anneeMasse},
 ${g.milliards(masseNette * pibMasse)}, contre
 ${g.pourcentage(masseBrute, false, 2)} en brut,
-${g.milliards(masseBrute * pibMasse)}. « Au plus », parce que les
-pensions modestes en sont exonérées ou au taux réduit, et que le dépôt ne sait
-pas dire combien le sont : il faudrait le revenu fiscal du foyer, que personne
-ne publie par tranche de pension.</p>
+${g.milliards(masseBrute * pibMasse)}.</p>
 <p class="discret"><strong>Et une part de la recette est prélevée sur la
 dépense.</strong> L'article L. 131-8 du code de la sécurité sociale reverse
 ${g.nombre(pensionsNettes.csg_affectee_vieillesse * 100, 2)} des

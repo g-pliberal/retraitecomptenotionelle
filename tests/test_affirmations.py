@@ -1884,11 +1884,15 @@ def _(m: Modele):
     disait avant.
 
     LE BRUT. Les pensions du compte sont celles qui sont VERSÉES, avant CSG,
-    CRDS et CASA. Au taux plein ces trois-là prennent 9,1 %, et la masse nette
-    est donc plus basse que la masse brute d'environ un point de PIB. C'est une
-    BORNE : les pensions modestes sont exonérées ou au taux réduit, et le dépôt
-    ne sait pas combien le sont. Le contrôle exige que la page écrive les deux
-    masses, et que le net soit sous le brut.
+    CRDS, CASA et cotisation maladie des complémentaires. La masse nette est
+    celle du bilan, au taux que ces prélèvements prennent vraiment à la masse,
+    que la DREES mesure : un moins la pension nette sur la brute, la dernière
+    année publiée tenue ensuite. Jusqu'au 28 octobre 2026, la page la
+    chiffrait au taux plein, 9,1 %, et la disait « au plus » ; c'en était la
+    plus petite valeur, les pensions modestes étant exonérées ou au taux
+    réduit (action 138, étape 3). Le contrôle exige que la page écrive les
+    deux masses, et que le net soit sous le brut, mais au-dessus de ce que le
+    taux plein en laisserait.
 
     LA RECETTE CIRCULAIRE. L'article L. 131-8 reverse 2,94 des 8,30 points de
     CSG d'une pension à la branche vieillesse : une part de ce que le compte
@@ -1902,8 +1906,8 @@ def _(m: Modele):
                 depenses.derniere_annee)
     masse = sum(depenses.pensions_droit(c, annee) for c in ("direct", "derive"))
     pib = depenses.pib(annee)
-    brute, nette = masse / pib, masse / pib * (1.0 - pensions.taux_total)
-    assert 0.0 < nette < brute, (nette, brute)
+    brute, nette = masse / pib, masse / pib * (1.0 - depenses.taux_effectif(annee))
+    assert brute * (1.0 - pensions.taux_total) < nette < brute, (nette, brute)
 
     taux = pensions.csg_affectee_vieillesse
     assert 0.0 < taux < pensions.csg_taux_plein, taux

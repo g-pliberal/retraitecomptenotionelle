@@ -4667,6 +4667,68 @@ def test_l_annee_des_schemas_se_choisit_et_garde_celle_de_la_cascade(contexte):
     assert f'<a href="./#cascade=2030&flux={bascule}">2030</a>' in corps
 
 
+#: La pension moyenne de 2022, toutes pensions comprises, en euros par mois,
+#: brute et nette de la CSG, de la CRDS, de la CASA et de la cotisation maladie
+#: des complémentaires : le tableau 2.1-a de la DREES, édition fin 2022, le
+#: dernier publié (action 138, étape 3). Le reste, 117 € sur 1 719, est ce que
+#: ces prélèvements prennent vraiment à la masse des pensions.
+PENSION_MOYENNE_DREES_2022 = (1719, 1602)
+
+
+def test_le_bilan_de_la_bascule_montre_la_depense_nette_a_cote_de_la_brute(contexte):
+    """Le tableau poste par poste, bilan de l'année de bascule, dit sous la
+    dépense ce qu'il en reste une fois payés les prélèvements sociaux des
+    retraités : la même dépense, au taux que la DREES mesure sur toutes les
+    pensions en 2022, la dernière année publiée, que le bilan tient ensuite.
+    Les deux systèmes paient le même taux, l'hypothèse du site pour la pension
+    nette d'une personne (action 138, étape 3)."""
+    brute, nette = PENSION_MOYENNE_DREES_2022
+    bascule = contexte.base.annee_bascule
+    ligne = site().contexte.cout().solde.annee(bascule)
+    pib = pages._pib_de_conversion(site().contexte.comptes(), bascule)
+    corps = rendre("/cout", {})[1]
+    section = corps[corps.index('id="cout-postes"'):]
+    tableau = re.search(r"<table\b.*?</table>", section, re.S).group(0)
+    assert f"Ressources et dépenses du système de retraite en {bascule}," in tableau
+    libelles = [cellules[0] for cellules in _cellules(tableau)]
+    rangs = {cellules[0]: cellules[1:] for cellules in _cellules(tableau)}
+    libelle = "Pour mémoire, dépenses nettes des prélèvements sociaux des retraités"
+    assert libelle in rangs, "le bilan de la bascule ne dit pas la dépense nette"
+    # À côté de la brute : sous le total et le solde, que la ligne ne change
+    # pas, avant ce que le compte ne porte pas.
+    assert libelles.index(libelle) > libelles.index("Total des dépenses")
+    attendu = []
+    for systeme in pages.SYSTEMES_BILAN:
+        depense = ligne.depense(systeme) * nette / brute
+        attendu += [pages.milliards(depense * pib, 1), g.pourcentage(depense, False, 2),
+                    g.pourcentage(nette / brute, False, 1)]
+    assert rangs[libelle] == attendu
+
+
+def test_la_masse_nette_des_sources_est_au_taux_de_l_annee(contexte):
+    """« Et en BRUT, des deux côtés » chiffrait la masse nette au taux plein,
+    9,1 %, « au plus » : une borne, et dans le mauvais sens, le taux plein
+    donnant la plus petite des nettes. La page dit celle du bilan, au taux que
+    la DREES mesure, exonérations et taux réduits compris : 117 € de
+    prélèvements sur 1 719 € de pension moyenne en 2022, la dernière année
+    publiée (action 138, étape 3)."""
+    brute, nette = PENSION_MOYENNE_DREES_2022
+    depenses = contexte.depenses()
+    annee = min(depenses.pensions_droits["direct"].derniere_annee, depenses.derniere_annee)
+    assert annee > 2022, "le témoin suppose une masse postérieure au dernier taux publié"
+    masse = sum(depenses.pensions_droit(c, annee) for c in ("direct", "derive"))
+    part = masse / depenses.pib(annee)
+    corps = rendre("/cout", {})[1]
+    paragraphe = re.search(r"Et en BRUT, des deux côtés\..*?</p>", corps, re.S).group(0)
+    # Les blancs de la source sont repliés, mais pas les espaces fines des
+    # montants.
+    texte = html.unescape(re.sub(r"[ \t\n]+", " ", re.sub(r"<[^>]+>", "", paragraphe)))
+    assert f"{g.pourcentage(part * nette / brute, False, 2)} du PIB en {annee}" in texte
+    assert f"{g.pourcentage(part, False, 2)} en brut" in texte
+    assert f"{g.pourcentage(1 - nette / brute, False, 1)}" in texte and "2022" in texte
+    assert "au plus" not in texte.lower()
+
+
 def test_chaque_carte_a_publier_part_d_un_bouton_et_non_d_une_capture():
     """La page Partager demandait une capture d'écran ; elle n'en demande plus.
 

@@ -1047,7 +1047,7 @@ affirmations:
   - id: cout.compte_en_brut
     page: /cout
     extrait: "Et en BRUT, des deux côtés."
-    porte: la masse des pensions est comptée avant CSG, CRDS et CASA, et la page chiffre la masse nette en borne
+    porte: la masse des pensions est comptée avant CSG, CRDS, CASA et cotisation maladie, et la page chiffre la masse nette au taux que la DREES mesure
     etat: verifiee
     controle: compte_en_brut_et_recette_circulaire
 
