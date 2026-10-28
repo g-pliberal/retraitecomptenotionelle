@@ -1051,6 +1051,35 @@ def test_la_carte_dit_les_revisions_de_la_reversion_et_leurs_ressources(variatio
                 f"par an ; {revisions} ; révisable {jusqu_a}") in cellules[3], cellules[3]
 
 
+@pytest.mark.parametrize("depuis, debut", [
+    ({"nouvelle_union_depuis": "2034-03"},
+     "333 € (réduite : avec ses ressources, elle dépasserait le plafond)"),
+    ({}, "250 € (réduite : avec les ressources du ménage, elle dépasserait le plafond)"),
+])
+def test_la_ligne_ecretee_ne_dit_le_menage_que_forme_a_sa_date_d_effet(depuis, debut):
+    """« Le plafond annuel de ressources du ménage » (R. 353-1-1) ne mesure la
+    réversion que du ménage formé. Le veuf de 2030 qui gagne 30 000 €, pacsé en
+    mars 2034 avec une conjointe qui apporte 16 000 € par an, vit seul le
+    1er juillet 2030 : sa réversion y est écrêtée sur ses seules ressources,
+    70 % de son salaire, à 25 001,60 − 21 000 = 4 001,60 € par an, 333 € par
+    mois ; son union ouvre la révision du 1er avril, sous le plafond de
+    1,6 fois 25 001,60 €, 40 002,56 €, que 37 000 € de ressources laissent à
+    3 002,56 € : 999,04 € de moins par an, 83 € par mois. La ligne disait
+    « avec les ressources du ménage » dès qu'une union était dite. Pacsé dès
+    le décès, il y est en ménage : 250 € par mois."""
+    champs = {"naissance": "1960", "sexe": "F", "liquidation": "62", "conjoint": "1975-01",
+              "deces": "2030-06", "ressources_conjoint": "30000",
+              "activite_conjoint": "30000", "nouvelle_union": "pacs",
+              "ressources_nouveau_conjoint": "16000", "montants": "brut", **depuis}
+    carte = _bloc(rendre("/simuler", champs)[1], 'id="resultats-reversion"',
+                  "Dans les systèmes 2, 3 et 4")
+    cellules = next(c for c in _cellules(carte) if c[0].startswith("Régime général"))
+    assert cellules[4] == "juillet 2030"
+    assert cellules[3].startswith(debut), cellules[3]
+    if depuis:
+        assert "83 € de moins à partir d'avril 2034" in cellules[3], cellules[3]
+
+
 @pytest.mark.parametrize("ajout, effet, ressources", [
     ({}, "juillet 2030",
      "ressources des trois mois qui précèdent sa date d'effet : 21 000 € par an"),
