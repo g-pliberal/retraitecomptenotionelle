@@ -999,7 +999,7 @@ def test_le_chomage_a_sa_part_rend_la_carriere_longue_aux_hommes_qui_n_en_ont_pa
     réputés à 59 ans ; elle part à 60 ans, l'âge légal, au taux plein. Le test
     dit la version seule : la vingt-cinquième (``MALADIE_INDEPENDANTE``) en
     est ôtée, les classes plus fines de la vingt-sixième
-    (``CLASSES_DE_NATURE``), et la pente des hommes de la trente-troisième
+    (``CLASSES_DE_NATURE``), et la pente des hommes de la trente-quatrième
     (``NATURES_DES_HOMMES_SELON_LE_RANG``)."""
     assert G.NATURES_A_LEUR_PART
     monkeypatch.setattr(G, "MALADIE_INDEPENDANTE", False)

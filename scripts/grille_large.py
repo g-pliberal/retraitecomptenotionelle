@@ -285,7 +285,13 @@ génération aux seuls résidents, que la population compte seuls
 génération ; la vingt-neuvième donnait aux générations d'avant 1950 une seule
 part, qui ne gardait au stock de 2020 la sienne qu'aux générations qu'il voit
 toutes parties, sans celles de 1954 à 1960, qu'il voit partir et qui y
-décotent plus.
+décotent plus. La trente-quatrième (le même jour) donne aux hommes leurs
+natures selon leur rang, à la pente de leur génération
+(:data:`NATURES_DES_HOMMES_SELON_LE_RANG`) : la masse assimilée du stock de
+2020 remonte au haut de leurs rangs, celle des nés en 1950 et en 1953 descend
+avec eux, comme celle des femmes ; la part de chaque nature y suit désormais
+la masse de sa classe dans leur génération, 1,52 fois celle de l'échantillon à
+la classe p10 en 1950, 0,80 fois aux classes p50 à p99.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -744,7 +750,7 @@ MALADIE_INDEPENDANTE = True
 #: celle de leur génération (:data:`NATURES_DES_HOMMES_SELON_LE_RANG`).
 NATURES_SELON_LE_RANG = ("F",)
 
-#: La trente-troisième version (action 138, étape 14, le 28 octobre 2026) : les
+#: La trente-quatrième version (action 138, étape 14, le 28 octobre 2026) : les
 #: natures des hommes selon le rang, à la pente de leur génération. Sous la
 #: vingt-septième, ils gardaient la même part à chaque rang, la masse du stock
 #: remontant au haut des leurs ; celle de leur génération descend avec le
