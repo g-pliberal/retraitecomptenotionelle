@@ -994,7 +994,9 @@ DECOTE_DES_CARRIERES_QUI_LE_PEUVENT = True
 #: attend ne valide rien de plus, sa carrière restant celle de sa tranche, si
 #: bien que sa décote ne baisse que de l'âge, quand la durée ne la borne pas ;
 #: les attentes sont celles des nés en 1953 à toutes les générations, comptées
-#: de l'âge légal de chacune, et ne dépendent pas du rang.
+#: de l'âge légal de chacune, à l'échelle de l'écart entre ses deux âges —
+#: trois ans, et non cinq, chez les nés depuis 1970 (:func:`echelles_des_attentes`)
+#: —, et ne dépendent pas du rang.
 DECOTE_ENTRE_LES_DEUX_AGES = True
 
 #: La trente-deuxième version (action 138, étape 14, le 28 octobre 2026) : les
@@ -1275,9 +1277,13 @@ class CasTypeLarge(CasType):
     #: Les années qu'un départ avec surcote, ou avec décote, attend après l'âge
     #: légal de sa génération (:data:`DEPARTS_AVEC_SURCOTE`,
     #: :data:`DECOTE_ENTRE_LES_DEUX_AGES`), et ces âges légaux, paires
-    #: ``(génération, âge)`` triées.
+    #: ``(génération, âge)`` triées ; et, pour un départ avec décote, ce que
+    #: l'écart entre l'âge légal et l'âge d'annulation de chaque génération
+    #: fait de son attente (:func:`echelles_des_attentes`), paires
+    #: ``(génération, facteur)`` triées, vides pour un départ avec surcote.
     attente: float = 0.0
     legaux: tuple[tuple[int, float], ...] = ()
+    echelles: tuple[tuple[int, float], ...] = ()
     #: L'attente d'un fonctionnaire civil qui surcote se compte du premier âge
     #: où le modèle sert une surcote à sa pension (:data:`SURCOTE_DES_STATUTAIRES`),
     #: et non de l'âge légal.
@@ -1286,14 +1292,14 @@ class CasTypeLarge(CasType):
     def age_liquidation_pour(self, simulateur: Simulateur, generation: int,
                              variante: str = "droit") -> float:
         """L'âge que le pilote fixe, ou, pour un départ qui attend,
-        :attr:`attente` années après l'âge légal de sa génération, jamais
-        avant celui que le pilote fixe : un départ avec décote, qui part à
-        l'ouverture du droit, à toute génération ; un départ avec surcote, au
-        taux plein, seulement si la génération atteint son âge légal depuis
-        que la surcote existe (:data:`ANNEE_DE_LA_SURCOTE`) ;
-        sous :attr:`depuis_la_surcote`, :attr:`attente` années après le premier
-        âge où le modèle lui sert une surcote (:func:`debut_de_la_surcote`), s'il
-        lui en sert une."""
+        :attr:`attente` années après l'âge légal de sa génération, à
+        l'échelle de :attr:`echelles`, jamais avant celui que le pilote fixe :
+        un départ avec décote, qui part à l'ouverture du droit, à toute
+        génération ; un départ avec surcote, au taux plein, seulement si la
+        génération atteint son âge légal depuis que la surcote existe
+        (:data:`ANNEE_DE_LA_SURCOTE`) ; sous :attr:`depuis_la_surcote`,
+        :attr:`attente` années après le premier âge où le modèle lui sert une
+        surcote (:func:`debut_de_la_surcote`), s'il lui en sert une."""
         age = super().age_liquidation_pour(simulateur, generation, variante)
         if not self.attente or variante == "absolu":
             return age
@@ -1303,7 +1309,7 @@ class CasTypeLarge(CasType):
         if self.depuis_la_surcote:
             debut = debut_de_la_surcote(simulateur, self, generation, age)
             return age if debut is None else max(age, debut + self.attente)
-        return max(age, legal + self.attente)
+        return max(age, legal + self.attente * _par_generation(self.echelles, generation, 1.0))
 
     def niveau_de(self, generation: int) -> float:
         """Le niveau de salaire de cette génération."""
@@ -3032,7 +3038,7 @@ def population(effectifs, source: CaracteristiquesRetraites,
                    if inaptes and ouvertures is not None else None)
         variantes = departs_avec_decote(variantes, effectifs, source, donnees.quintiles,
                                         decotes, ouvertures, attentes, ages_legaux(racine),
-                                        inaptes, avances)
+                                        inaptes, avances, echelles_des_attentes(racine))
     variantes = salaires_population(variantes, donnees)
     if ASSIMILEES_SELON_LE_RANG:
         variantes = assimilees_selon_le_rang(variantes, donnees.quintiles)
@@ -3446,6 +3452,27 @@ def ages_legaux(racine: Path) -> tuple[tuple[int, float], ...]:
                  if (lu := lus.age(generation)) is not None)
 
 
+def echelles_des_attentes(racine: Path) -> tuple[tuple[int, float], ...]:
+    """L'écart entre l'âge légal et l'âge d'annulation de la décote de chaque
+    génération de la grille qui a l'un et l'autre, rapporté à celui des nés en
+    1953 (``GENERATION_DES_DECOTES``), paires ``(génération, facteur)`` triées :
+    les départs avec décote de chaque génération attendent la même part de
+    son écart que ceux des nés en 1953 (:data:`DECOTE_ENTRE_LES_DEUX_AGES`).
+    Les nés depuis 1970, de 64 à 67 ans, attendent trois cinquièmes de leurs
+    attentes, et ne passent pas l'âge d'annulation."""
+    from retraite_notionnelle.scenarios.actuel import AgesAnnulationDecote, AgesOuverture
+
+    legaux, annulations = AgesOuverture(racine), AgesAnnulationDecote(racine)
+
+    def ecart(generation: int) -> float | None:
+        legal, annulation = legaux.age(generation), annulations.age(generation)
+        return None if legal is None or annulation is None else annulation[0] - legal[0]
+
+    reference = ecart(GENERATION_DES_DECOTES)
+    return tuple((generation, siens / reference) for generation in C.generations()
+                 if (siens := ecart(generation)) is not None)
+
+
 def departs_avec_decote(variantes: list[Variante], effectifs,
                         source: CaracteristiquesRetraites, quintiles: dict,
                         decotes: dict[str, tuple[tuple[int, float], ...]] | None = None,
@@ -3453,7 +3480,8 @@ def departs_avec_decote(variantes: list[Variante], effectifs,
                         attentes: dict[str, list[tuple[float, float]]] | None = None,
                         legaux: tuple[tuple[int, float], ...] = (),
                         inaptes: dict[str, tuple[tuple[int, float], ...]] | None = None,
-                        avances: dict[str, frozenset[int]] | None = None
+                        avances: dict[str, frozenset[int]] | None = None,
+                        echelles: tuple[tuple[int, float], ...] = ()
                         ) -> list[Variante]:
     """Chaque carrière incomplète en deux : la part de son sexe
     (:func:`parts_avec_decote`) part à l'ouverture du droit, avec une décote,
@@ -3465,8 +3493,9 @@ def departs_avec_decote(variantes: list[Variante], effectifs,
     Sous ``attentes`` (:func:`attentes_des_decotes`), la jumelle qui décote se
     décline à son tour : chaque attente prend sa part du poids de la jumelle,
     et part autant d'années après l'âge légal de sa génération, ``legaux``
-    (:func:`ages_legaux`), à l'ouverture du droit encore ; celle qui n'attend
-    pas garde le code de la jumelle. Sous ``inaptes``
+    (:func:`ages_legaux`), à l'échelle de l'écart entre ses deux âges,
+    ``echelles`` (:func:`echelles_des_attentes`), à l'ouverture du droit
+    encore ; celle qui n'attend pas garde le code de la jumelle. Sous ``inaptes``
     (:func:`inaptes_des_generations`), une troisième jumelle : la part de son
     sexe que pèse l'inapte (:func:`parts_des_inaptes`), prise sur la jumelle du
     taux plein, part au taux plein dès l'âge légal, reconnue inapte au travail,
@@ -3490,7 +3519,7 @@ def departs_avec_decote(variantes: list[Variante], effectifs,
         cas = replace(v.cas, code=f"{v.cas.code}~decote", regle_liquidation="ouverture")
         for attente, poids in (attentes[v.cas.sexe] if attentes else ((0.0, 1.0),)):
             sienne = (elargi(cas, code=f"{cas.code}{attente:.2f}", attente=attente,
-                             legaux=legaux) if attente else cas)
+                             legaux=legaux, echelles=echelles) if attente else cas)
             sortie.append(v.fois(part * poids, decote=True, parts_des_generations=decotee,
                                  cas=sienne))
         if inapte:

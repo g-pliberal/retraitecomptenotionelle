@@ -2426,6 +2426,31 @@ def test_un_depart_avec_decote_qui_attend_decote_moins(simulateur, source, param
     assert [round(a, 2) for a, _ in attentes] == [0.0, 1.14, 3.4]
 
 
+def test_l_attente_d_un_depart_avec_decote_suit_l_ecart_des_deux_ages(
+        simulateur, source, parametres):
+    """Nés en 1953, les retraités ont cinq ans entre leur âge légal, 61 ans et
+    2 mois, et l'annulation de leur décote, 66 ans et 2 mois ; nés depuis
+    1970, trois : 64 ans (L. 161-17-2, depuis la loi du 14 avril 2023) et
+    67 ans (L. 351-8, 1°). La jumelle qui attendrait comme les nés en 1953
+    trois ans et cinq mois partirait après l'âge d'annulation, au taux plein ;
+    elle attend la même part de l'écart, trois cinquièmes de son attente, et
+    décote encore. Née en 1955, à cinq ans d'écart, elle attend son attente
+    entière."""
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    projection = simulateur.pour_la_projection()
+    attentes = G.attentes_des_decotes(G.departs_publies(parametres.racine_donnees),
+                                      parametres.racine_donnees)["F"]
+    par_code = {v.cas.code: v for v in variantes}
+    code = f"{G.GABARIT}~f~10_20~decote~p50"
+    for attente, _ in attentes:
+        jumelle = par_code[code.replace("~decote", f"~decote{attente:.2f}") if attente
+                           else code]
+        assert G.condition_au_depart(projection, jumelle.cas, 1970) == (
+            pytest.approx(64.0 + attente * 3.0 / 5.0), "decote")
+        assert jumelle.cas.age_liquidation_pour(projection, 1955) == pytest.approx(
+            62.0 + attente)
+
+
 # -- les départs d'une génération, contre l'EIR (action 138, étape 14) ----------
 
 def test_les_departs_publies_se_lisent_dans_le_fichier_certifie(parametres):
