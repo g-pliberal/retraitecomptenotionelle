@@ -1109,6 +1109,37 @@ def test_la_carte_dit_revisable_la_reversion_que_rien_ne_revise(ajout, jusqu_a):
         assert "révisable" not in complementaire[3], complementaire[3]
 
 
+_MORT_EN_1985 = {"debut": "1945-03", "conjoint": "1912", "deces": "1985-06"}
+
+
+@pytest.mark.parametrize("champs, nom", [
+    ({**_MORT_EN_1985, "naissance": "1905-03-15", "liquidation": "1970-04", "salaire": "0.18"},
+     "de pension minimum"),
+    ({**_MORT_EN_1985, "naissance": "1909-03-15", "liquidation": "1969-04", "salaire": "0.12",
+      "interruptions": "1960:1969:invalidite"}, "de pension minimum"),
+    ({**_MORT_EN_1985, "naissance": "1909-03-15", "liquidation": "1969-04", "salaire": "0.3",
+      "interruptions": "1960:1969:invalidite"}, "du plancher de la pension substituée"),
+    ({"naissance": "1955", "liquidation": "67", "unite_revenu": "moyen", "salaire": "0.3",
+      "conjoint": "1962", "deces": "2024-05"}, "de minimum contributif"),
+])
+def test_la_carte_nomme_le_minimum_que_la_reversion_ne_compte_pas(champs, nom):
+    """La réversion du régime général se calcule sur la pension du défunt
+    « avant comparaison au minimum » : sans le minimum contributif, sans la
+    pension minimum d'avant le 1er avril 1983, au montant de l'AVTS, qu'il
+    remplace (L. 345), sans le plancher de la pension substituée de
+    l'ex-invalide (L. 341-15). L'étape « compléter » les écrit sous un même
+    code, chacun sous son libellé ; la carte disait « de minimum contributif »
+    la part de chacun. Le salarié parti en avril 1970 et l'ex-invalide d'avril
+    1969 portés à la pension minimum, celui que sa pension d'invalidité
+    relève, morts en juin 1985 ; le salarié de 1955 au minimum contributif,
+    mort en mai 2024."""
+    carte = _bloc(rendre("/simuler", champs)[1], 'id="resultats-reversion"',
+                  "Dans les systèmes 2, 3 et 4")
+    cellules = next(c for c in _cellules(carte) if c[0].startswith("Régime général"))
+    assert re.search(rf"\(dont [\d ]+ € {nom}, que la réversion ne compte pas\)",
+                     cellules[1]), cellules[1]
+
+
 @pytest.mark.parametrize("ajout, effet, ressources", [
     ({}, "juillet 2030",
      "ressources des trois mois qui précèdent sa date d'effet : 21 000 € par an"),

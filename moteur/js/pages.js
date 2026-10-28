@@ -6331,6 +6331,15 @@ ${reserve}
 /**
  * Ce que motive une ligne de réversion qui n'est pas servie entière.
  */
+/**
+ * Ce que la ligne de réversion dit d'un minimum que la réversion ne compte
+ * pas, par le libellé de son avantage ; un autre libellé se lit tel quel.
+ */
+const MINIMA_NON_REVERSES = Object.freeze({
+  "Pension minimum (AVTS)": "de pension minimum",
+  "Plancher de la pension substituée": "du plancher de la pension substituée",
+});
+
 const MOTIFS_DE_REVERSION = Object.freeze({
   minimum: "portée au minimum de la réversion",
   maximum: "ramenée au maximum de la réversion",
@@ -6547,11 +6556,25 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
   const motif = (ligne) => (ligne.motif === "ecretee" && enMenage(ligne)
     ? "réduite : avec les ressources du ménage, elle dépasserait le plafond"
     : MOTIFS_DE_REVERSION[ligne.motif]);
+  // Sous le code du minimum contributif, l'étape « compléter » écrit aussi la
+  // pension minimum d'avant avril 1983, qu'il remplace, et le plancher de la
+  // pension substituée : la cellule nomme chacun par le libellé de son avantage,
+  // celui de la liquidation que la réversion lit, à moins qu'il ne soit mort
+  // avant son départ.
+  const minimum = (regime) => {
+    const noms = reversion.avant_le_depart ? [] : comparaison.actuel.avantages_appliques
+      .filter((avantage) => avantage.code === "minimum_contributif"
+        && (avantage.par_regime ?? []).some(([code, part]) => code === regime && part > 0))
+      .map((avantage) => MINIMA_NON_REVERSES[avantage.libelle]
+        ?? `de ${avantage.libelle.charAt(0).toLowerCase()}${avantage.libelle.slice(1)}`);
+    return noms.length > 0 ? [...new Set(noms)].join(" et ") : "de minimum contributif";
+  };
   const lignes = reversion.regimes.map((ligne) => [
     echapper(nomRegime(ligne.regime)),
     g.euros(mensuel(ligne.base, ligne.regime)) + (ligne.minimum_contributif > 0
       ? ` <span class="discret">(dont ${g.euros(mensuel(ligne.minimum_contributif,
-        ligne.regime))} de minimum contributif, que la réversion ne compte pas)</span>`
+        ligne.regime))} ${echapper(minimum(ligne.regime))}, que la réversion ne compte `
+        + "pas)</span>"
       : "") + (ligne.ecretement_du_maximum > 0
       ? ` <span class="discret">(et ${g.euros(mensuel(ligne.ecretement_du_maximum,
         ligne.regime))} que le maximum des pensions en retirait, `
