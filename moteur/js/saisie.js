@@ -340,6 +340,20 @@ export const TRAVAUX_MANUELS = [
 ];
 
 /**
+ * Les catégories de la pension d'invalidité, qui en fixent le taux (L. 341-4) :
+ * le menu du formulaire, que la saisie lit en entier (`CATEGORIES_D_INVALIDITE`
+ * de la chronologie). Sans réponse, la présomption
+ * `categorie_de_la_pension_d_invalidite` la pose, selon que l'invalide
+ * travaille ou non quand la pension de vieillesse la remplace.
+ */
+export const CATEGORIES_INVALIDITE = [
+  ["", "présumée selon votre activité"],
+  ["1", "première : capable d'une activité rémunérée"],
+  ["2", "deuxième : incapable de toute profession"],
+  ["3", "troisième : aidé d'une tierce personne"],
+];
+
+/**
  * L'activité du micro-entrepreneur, qui fait lire son revenu comme un CHIFFRE
  * D'AFFAIRES (action 138, étape 12 ; fiche `micro_social_abattement`). Ses
  * droits « sont calculés sur la base de leur chiffre d'affaires ou de leurs

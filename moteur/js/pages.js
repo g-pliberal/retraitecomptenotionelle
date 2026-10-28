@@ -90,6 +90,7 @@ import {
   RELEVE_MAXIMUM, REVALORISATIONS_STOCK, SAISIES, SAISIE_DE_LA_SITUATION,
   SALAIRE_DEFAUT, SANS_EMPLOI, SITUATIONS, SITUATIONS_FOYER, Saisie, TABLES,
   MOIS_DE_GUERRE_MAXIMUM, TRAJECTOIRES_EMPLOI, TRAVAUX_MANUELS, UNITES_REVENU, age, entier, estEntier, jourEnClair,
+  CATEGORIES_INVALIDITE,
   ABATTEMENTS_MICRO, ACTIVITES_MICRO, STATUT_MICRO, BAREMES_LODEOM,
   ASSIETTES_COLLABORATEUR, PARTS_COLLABORATEUR, INDICES, STATUTS_A_L_INDICE,
   nombreBrut, parmi, reel, refus,
@@ -1370,12 +1371,13 @@ function apresLeDepartFormulaire(saisie, contexte, affiliations, echelle) {
  * l'ancien combattant ou prisonnier de guerre, la mère de famille ouvrière ou le
  * travailleur manuel — : un bloc facultatif, replié tant qu'il est vide. La pension
  * d'invalidité et la radiation des cadres pour invalidité se datent comme un
- * début d'activité ; l'inaptitude, l'imputabilité au service et le taux
- * d'invalidité se disent ; l'incapacité permanente d'au moins 50 % se date
- * depuis sa reconnaissance, qui peut précéder la carrière (le départ anticipé
- * des assurés handicapés). La saisie refuse ce qui ne tient pas : une date hors
- * de la carrière, un taux hors de 1 à 100, l'imputabilité ou le taux sans
- * radiation, une incapacité avant la naissance ou après le départ.
+ * début d'activité ; la catégorie de la pension, l'inaptitude, l'imputabilité
+ * au service et le taux d'invalidité se disent ; l'incapacité permanente d'au
+ * moins 50 % se date depuis sa reconnaissance, qui peut précéder la carrière
+ * (le départ anticipé des assurés handicapés). La saisie refuse ce qui ne tient
+ * pas : une date hors de la carrière, un taux hors de 1 à 100, la catégorie
+ * sans la pension datée, l'imputabilité ou le taux sans radiation, une
+ * incapacité avant la naissance ou après le départ.
  */
 function invaliditeFormulaire(saisie) {
   const date = (age) => (age === null ? "" : saisie.jourDe(age));
@@ -1400,6 +1402,17 @@ function invaliditeFormulaire(saisie) {
       + "remplace d'office, au taux plein quelle que soit votre durée d'assurance. "
       + "Laissée vide, elle est présumée dès la première année d'une période "
       + "d'invalidité qui finit votre carrière."),
+    // SA CATÉGORIE (action 138, étape 4) : facultative, et de la seule pension
+    // datée. Sans elle, la présomption `categorie_de_la_pension_d_invalidite`.
+    g.liste("categorie_invalidite", "Catégorie de la pension d'invalidité",
+      CATEGORIES_INVALIDITE,
+      saisie.categorie_invalidite === null ? "" : String(saisie.categorie_invalidite),
+      "si elle a commencé avant juin 1983", {},
+      "La pension de vieillesse qui remplace une pension d'invalidité commencée avant "
+      + "juin 1983 ne peut lui être inférieure. Sa catégorie en fixe le taux : 30 % du "
+      + "salaire annuel moyen en première ; en deuxième et en troisième, 40 % jusqu'en "
+      + "mars 1961, 50 % depuis. Non dite, elle est présumée : la première si vous "
+      + "travaillez quand la pension de vieillesse la remplace, la deuxième sinon."),
     g.liste("inaptitude", "Inapte au travail", ouiNon, saisie.inaptitude ? OUI : "",
       "reconnu par votre caisse", {},
       "L'inapte a le taux plein quelle que soit sa durée d'assurance, à l'âge légal, "

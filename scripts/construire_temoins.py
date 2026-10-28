@@ -1166,6 +1166,15 @@ def _cas() -> list[dict]:
         "naissance": "1920-03-15", "debut": "1936-09", "liquidation": "1982-07",
         "interruptions": "1975:1982:invalidite",
     }))
+    # Le 28 octobre 2026, la catégorie de la pension d'invalidité (action 138,
+    # étape 4) : le même ex-invalide, qui la date et la dit de première
+    # catégorie, à 30 % du salaire annuel moyen ; sa pension de vieillesse
+    # n'est plus portée à sa pension d'invalidité.
+    cas.append(("invalidite_substituee_en_1980_premiere_categorie", {
+        "naissance": "1920-03-15", "debut": "1936-09", "liquidation": "1982-07",
+        "interruptions": "1975:1982:invalidite", "invalidite": "1975-01",
+        "categorie_invalidite": "1",
+    }))
     # LE DÉPART ANTICIPÉ DES ASSURÉS HANDICAPÉS (droit/invalidite.py, fiche
     # retraite_anticipee_handicap). Le salarié né en 1973 qui part à
     # cinquante-cinq ans avec ses 112 trimestres cotisés en situation de
@@ -2164,6 +2173,7 @@ FORMULAIRE_ENTIER = frozenset({
     "simuler_carriere_hors_de_france", "simuler_handicap", "simuler_micro_entrepreneur",
     "simuler_periodes_assimilees", "simuler_conjoint_collaborateur",
     "simuler_reversion_agricole", "simuler_indice_majore", "simuler_reversion_revisee",
+    "simuler_invalidite_categorie",
 })
 _FORMULAIRE = re.compile(r'(<form class="carte"[^>]*>).*?(</form>)', re.DOTALL)
 
@@ -2296,6 +2306,15 @@ def _pages() -> dict:
         ("simuler_invalidite_substituee", "/simuler", {
             **BASE, "naissance": "1965-06-15", "debut": "1986-09", "liquidation": "2029-07",
             "interruptions": "2019:2029:invalidite",
+        }),
+        # La catégorie de la pension d'invalidité (action 138, étape 4) :
+        # l'ex-invalide de 1975, substitué en avril 1980, la dit de troisième ;
+        # le formulaire la rend, et la ligne du plancher de sa pension de
+        # vieillesse la dit, sans présomption.
+        ("simuler_invalidite_categorie", "/simuler", {
+            **BASE, "naissance": "1920-03-15", "debut": "1936-09", "liquidation": "1982-07",
+            "interruptions": "1975:1982:invalidite", "invalidite": "1975-01",
+            "categorie_invalidite": "3",
         }),
         # Le fonctionnaire radié des cadres pour invalidité : sa pension à la
         # radiation, à tout âge, et la page dit pourquoi à cette date.

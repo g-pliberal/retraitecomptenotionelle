@@ -791,6 +791,18 @@ def test_les_deux_moteurs_servent_le_meme_plancher():
         assert "plancher de la pension substituée" in attendu, rang
 
 
+def test_les_deux_moteurs_lisent_la_categorie_que_la_saisie_dit():
+    """La catégorie que la saisie dit (action 138, étape 4), sur la pension
+    d'invalidité de 1982 : chaque étape de la liquidation écrit la même donnée
+    en Python et en JavaScript. Dite de troisième, au taux de la deuxième, elle
+    reste le plancher ; dite de première, à 30 %, elle n'en est plus un."""
+    troisieme, premiere = _les_deux_moteurs([
+        {**REQUETES_DU_PLANCHER[1], "invalidite": "1982-01", "categorie_invalidite": categorie}
+        for categorie in ("3", "1")])
+    assert "plancher de la pension substituée" in troisieme
+    assert "plancher de la pension substituée" not in premiere
+
+
 #: Les requêtes des majorations de 1972 à 1982 comparées au plancher :
 #: l'ex-invalide de 1969 porté à l'AVTS ; celui que sa pension d'invalidité de
 #: deuxième catégorie relève, et que les 6 % de 1982 relèvent avec elle ; le

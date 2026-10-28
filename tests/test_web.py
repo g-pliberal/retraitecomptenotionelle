@@ -3954,7 +3954,9 @@ BUDGETS_DEPLIES: dict[str, int] = {
     # deux tableaux, la pension par étage et le revenu de vingt et une années.
     # Le même jour, 7 350 mots : les quatre champs qui révisent la réversion
     # (action 138, étape 4) en ajoutent 41, leurs libellés et leurs exemples.
-    "/simuler?" + urlencode(SIMULATION_TEMOIN): 7350,
+    # Puis 7 362 : la catégorie de la pension d'invalidité (action 138, étape
+    # 4) en ajoute 12, son libellé et son indication, son menu n'y comptant pas.
+    "/simuler?" + urlencode(SIMULATION_TEMOIN): 7362,
     # Coût tout déplié : 33 549 mots le 24 octobre 2026 (action 173, étape 5),
     # dont près de dix-sept mille dans les tableaux des graphiques, que
     # l'étape laisse tels quels. Ses dépliants redisaient ce que la légende

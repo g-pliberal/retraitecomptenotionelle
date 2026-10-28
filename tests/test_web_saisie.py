@@ -235,6 +235,26 @@ def test_le_formulaire_demande_ce_qui_revise_la_reversion():
         assert f'value="{html.escape(_REVISIONS[champ])}"' in balise
 
 
+def test_le_formulaire_demande_la_categorie_de_la_pension_d_invalidite():
+    """La catégorie de la pension d'invalidité en fixe le taux (L. 341-4) : la
+    saisie la lisait de l'adresse ; le formulaire la demande sous la pension
+    qu'elle qualifie, dans le dépliant de l'invalidité, par un menu des trois
+    catégories, vide tant qu'elle n'est pas dite, et la rend telle qu'elle est
+    dite."""
+    def menu(corps):
+        debut = corps.index("Invalidité, inaptitude et taux plein</span></summary>")
+        bloc = corps[debut:corps.index("</details>", debut)]
+        noms = re.findall(r'\bname="([a-z_0-9]+)"', bloc)
+        assert "categorie_invalidite" in noms, "le formulaire ne demande pas la catégorie"
+        assert noms[noms.index("categorie_invalidite") - 1] == "invalidite"
+        return re.search(r'<select id="categorie_invalidite".*?</select>', bloc, re.S).group(0)
+
+    dite = menu(rendre("/simuler", {"invalidite": "2020-03", "categorie_invalidite": "2"})[1])
+    assert re.findall(r'<option value="([^"]*)"', dite) == ["", "1", "2", "3"]
+    assert '<option value="2" selected>' in dite
+    assert '<option value="" selected>' in menu(rendre("/simuler", {})[1])
+
+
 def test_toute_borne_du_formulaire_est_opposable_hors_du_navigateur():
     """Aucun champ numérique ne doit être borné dans le seul HTML.
 
