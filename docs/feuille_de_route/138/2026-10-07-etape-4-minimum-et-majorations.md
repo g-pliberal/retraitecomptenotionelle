@@ -5,11 +5,11 @@ maximum, le plafond du ménage, l'assuré mort avant son départ, le partage, le
 2004, la majoration pour enfant (9 octobre) ; ses parts, son régime ; la révision sur trois
 mois ; le plancher, la catégorie (24 octobre) ; la date d'effet, les majorations au
 plancher, la demande et le décès d'avant 2004, les majorations au maximum (25 octobre) ;
-les études, au site (28 octobre). Plus aucun point sans propriétaire. Au propriétaire : les
+au site, les études et l'enfant né après le départ (28 octobre). Au propriétaire : les
 décrets agricoles de 1976 et 1977, au fac-similé, et le choix de la date de la demande,
-présumée le mois qui précède la date d'effet. Au site : l'enfant né après le départ, les
-révisions, leurs quatre champs, la catégorie, la période et son moment, le plancher non
-majoré. Détail : `…-majorations-au-maximum.md`, `…-etudes-au-site.md`.
+présumée le mois qui précède la date d'effet. Au site : les révisions, leurs quatre champs,
+la catégorie, la période et son moment, le plancher non majoré ; au modèle, le décès supposé
+avant l'enfant né après lui. Détail : `…-majorations-au-maximum.md`, `…-apres-le-depart.md`.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « Quels sont les écarts
 encore présents avec trajectoire et destinie 2 ? J'aimerais combler les manques
