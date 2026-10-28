@@ -1,0 +1,38 @@
+date: "2026-10-28"
+session: "action 131 : les décrets non lus des classes de la Cipav et de la CAVEC"
+consulte: >-
+  python scripts/veille_droit.py ; les index LEGI et JORF du dépôt, récupérés (dump du 13
+  juillet 2025, à jour au 25 octobre 2026), LEGI mis à jour des incréments du 26 et du 27
+  octobre. Dans LEGI : les décrets n° 84-442 du 12 juin 1984 (LEGIARTI000006767456) et
+  n° 85-1092 du 10 octobre 1985 (LEGIARTI000006768801), article 1 ; la recherche, par leur
+  numéro, des décrets annuels de 1979 à 1983 et de 1989. Dans JORF : les titres et
+  sommaires de ces décrets, du n° 79-372 au n° 89-313 ; le décret n° 91-864
+  (JORFTEXT000000882367) et ses articles, rangés sous le « Décret du 3 septembre 1991
+  portant délégation de signature » (JORFARTI000001376516, JORFARTI000001183737,
+  JORFARTI000001569197) ; le décret n° 90-311, pour recouper ; les quatre articles du décret
+  n° 2008-85, les statuts de la CAVEC approuvés le 22 février 2008 (JORFARTI000018197778) et
+  leur modification du 26 novembre 2010 (JORFTEXT000023172855). python scripts/textes.py
+  --inscrire.
+trouve: >-
+  La classe 1 de la Cipav en 1984 (2 038 F) et en 1985 (2 180 F), avec ses six classes,
+  chacune le multiple de l'article 2 ; en 1991, la classe 1 de la Cipav (2 772 F) et les
+  classes 3 à 18 de la CAVEC (6 624 F à 39 744 F, 8 832 F la classe 4), au décret n° 91-864,
+  que l'index JORF range sous un décret de délégation de signature du même Journal
+  officiel : ses hausses sur 1990 sont celles que son sommaire annonce, au centième
+  (géomètres 11,01 %, chirurgiens-dentistes 14,74 %, infirmiers 3,85 %), et son
+  invalidité-décès reste inchangée comme il l'écrit. Le moteur sert ces quatre montants, dans
+  les deux moteurs par le paquet ; ils s'écartent de −0,55 % à +0,34 % de ce que la
+  convention servait. Les décrets de la Cipav de 1979 à 1983 (n° 79-372, 80-404, 81-831,
+  82-678, 83-651), de la CAVEC de 1980 à 1983 (n° 80-439, 81-828, 82-674, 83-619) et le
+  n° 89-313 de 1989 n'ont dans l'index JORF que leur titre ou leur sommaire, et ne sont pas
+  dans l'index LEGI : leur texte n'est qu'au fac-similé. Aucun texte publié ne date la
+  grille A à H de la CAVEC. La liste des textes prend les cinq rédactions des décrets
+  n° 84-442 et n° 85-1092, « à examiner », l'article 1 de chacun à rattacher par la lecture
+  de la fiche ; les 67 d'autres textes que l'inscription apportait aussi, une autre session
+  les avait inscrites le même jour.
+reste: >-
+  Au propriétaire : l'article 1 des dix décrets au fac-similé (Journal officiel du 11 mai
+  1979, des 11 et 21 juin 1980, des 8 et 9 septembre 1981, du 4 août 1982, des 10 et 17
+  juillet 1983, du 17 mai 1989), que Légifrance, refusé au conteneur, sert en fac-similé ; la
+  date d'effet de la grille A à H de la CAVEC et le sens du montant de 2 262 € de 2008, à
+  demander à la caisse.
