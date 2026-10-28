@@ -1,0 +1,39 @@
+date: "2026-10-28"
+session: >-
+  l'action 131 : les majorations des points de chef d'exploitation agricole de 1952 à
+  1972, que R. 732-67 applique année par année aux pensions qui prennent effet depuis
+  2026 ; vague du 28 octobre 2026, une session par tâche qui n'a pas besoin du
+  propriétaire
+consulte: >-
+  python scripts/veille_droit.py ; les index LEGI et JORF du dépôt, récupérés, LEGI
+  mis à jour jusqu'aux incréments du 27 octobre 2026 ; au code rural, R. 732-67
+  (2026), les rédactions de D. 732-74 à D. 732-77 que l'index porte, par leurs
+  extraits, R. 732-69 (2005 et 2017) et l'article 1123 de l'ancien code (1980) ;
+  le décret n° 86-1084 du 7 octobre 1986, articles 1er et 2, et ses visas ; le décret
+  n° 80-808 du 14 octobre 1980, article 8 (1981, 1990 et 2004) et son annexe ; le
+  décret n° 2005-368 du 19 avril 2005, article 3, 78° ; au Journal officiel, les
+  notices des décrets n° 67-570 du 21 juin 1967, n° 68-571 du 26 juin 1968 et
+  n° 74-443 du 15 mai 1974, et rien des décrets n° 65-346 et n° 75-97.
+trouve: >-
+  R. 732-67 applique « séparément pour chacune des années civiles » de 1952 à 1972 les
+  majorations que fixe le nombre moyen des points de la période, et arrondit les
+  points obtenus « aux entiers supérieurs » ; il renvoie à D. 732-76 et D. 732-77
+  d'avant 2026, que l'index n'a que dans leur rédaction de 2026, sans rapport. Leur
+  source, l'article 2 du décret n° 86-1084 (du 8 octobre 1986 au 22 avril 2005),
+  abrogé par le décret n° 2005-368 qui les codifie : sur les points « acquis par les
+  chefs d'exploitation ou d'entreprise agricole », 5 % pour une moyenne P de 15 à
+  19,51, « T p. 100 = 3,19 P - 57,23 » jusqu'à 27,34, « T p. 100 = 1,93 P - 22,74 »
+  au-delà, 45 % au plus selon R. 732-67, les années à points supplémentaires du décret
+  du 26 juin 1968 exclues. Le barème des points de 1981 à 1989 est au revenu
+  cadastral, de quinze à soixante points (R. 732-69 ; décret n° 80-808, annexe) ;
+  celui d'avant 1981, dans les décrets de 1965 à 1975, n'est qu'au fac-similé. Le
+  moteur majore depuis ce jour, dans les deux moteurs, les points de chef de 1952 à
+  1972, ceux que vaut leur rendement faute du barème.
+reste: >-
+  Le barème de 1952 à 1980, au fac-similé du Journal officiel (décrets n° 65-346,
+  67-570, 68-571, 74-443 et 75-97), et D. 732-76 et D. 732-77 de 2005 à 2025, à
+  relire sur Légifrance : au propriétaire. Le barème de 1981 à 1989, lu, demande le
+  revenu cadastral, que la saisie n'a pas : un champ ou une convention, au
+  propriétaire. La même majoration manque aux pensions prises de juillet 1986 à 2025,
+  que le moteur liquide au rendement sans équivalent en points. Le dernier alinéa de
+  R. 732-67, les rachats de L. 732-35 et L. 732-35-1, que le moteur ne connaît pas.
