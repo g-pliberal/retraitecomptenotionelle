@@ -3042,6 +3042,11 @@ def _interpole_tranches(profil: dict[str, float], milieux: dict[str, float],
     Au-delà du premier et du dernier milieu, la valeur du bord est reconduite :
     l'INSEE ne dit rien au-delà, et y prolonger la pente inventerait des
     salaires que personne n'a observés.
+
+    La position de l'âge dans la tranche se calcule d'abord, puis l'écart des
+    deux valeurs s'y proportionne : c'est l'écriture du portage, qui tombe sur
+    le flottant le plus proche de l'interpolation exacte au moins aussi
+    souvent que l'autre (action 161, étape 6).
     """
     points = sorted((milieux[t], v) for t, v in profil.items() if t in milieux)
     if not points:
@@ -3052,7 +3057,7 @@ def _interpole_tranches(profil: dict[str, float], milieux: dict[str, float],
         return points[-1][1]
     for (age_bas, bas), (age_haut, haut) in zip(points, points[1:]):
         if age_bas <= age <= age_haut:
-            return bas + (haut - bas) * (age - age_bas) / (age_haut - age_bas)
+            return bas + (haut - bas) * ((age - age_bas) / (age_haut - age_bas))
     return points[-1][1]
 
 
