@@ -1,0 +1,23 @@
+date: "2026-10-28"
+session: >-
+  action 138, étape 4, au modèle : le décès supposé avant l'enfant né après lui, dans la
+  réversion d'essai — une question au propriétaire, rien de changé
+consulte: >-
+  `python scripts/veille_droit.py` : trois fiches à relire, aucune de la réversion
+  (minimum_pension_ieg, cultes_retraite_complementaire_taux_specifiques,
+  fin_de_la_suspension_2028). La présomption deces_apres_le_depart
+  (data/reference/vocabulaire/valeurs.yaml) et la décision du propriétaire qui la fonde
+  (action 130, le 28 septembre 2026). Le code civil, article 311, tel que la session de la
+  saisie l'a lu le même jour (entrée `2026-10-28-action-138-etape-4-enfant-ne-apres-le-depart`),
+  sans le relire : l'index LEGI du dépôt ne garde que le champ social, et, aucune règle
+  n'étant écrite, il n'a pas été mis à jour.
+trouve: >-
+  Aucune règle du scénario 1 ne change. La réversion d'essai compte en enfant posthume
+  l'enfant dit né plus de trois cents jours après le décès supposé, que l'article 311
+  présume conçu après lui. Le texte écarte ce résultat sans choisir entre déplacer le
+  décès supposé et ne pas compter l'enfant ; l'hypothèse de décès étant la décision du
+  propriétaire, le choix lui revient.
+reste: >-
+  Au propriétaire, le choix (note `2026-10-28-etape-4-deces-suppose-avant-l-enfant.md`) ;
+  puis la règle aux deux moteurs, la présomption récrite avec son test, la phrase de la
+  carte de la réversion.
