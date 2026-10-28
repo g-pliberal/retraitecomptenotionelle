@@ -197,24 +197,25 @@ function dateControlee(annee, mois, quantieme) {
  * Le fait de naissance de l'assuré, au jour qu'il déclare, ou à celui que la
  * présomption `jour_de_naissance` pose quand il ne le dit pas. Le jour se pose
  * ici, et non dans {@link completer}, parce que les dates de la carrière se
- * comptent depuis lui. `presomptions` est la table du paquet. Voir
- * `naissance_de_l_assure` du Python.
+ * comptent depuis lui. `presomptions` est la table du paquet. Une naissance
+ * que le calendrier ne date pas se refuse, au jour présumé comme au jour
+ * déclaré : un fait sans date, que le contrat C.1 refuse, ne lèverait qu'en
+ * aval. Voir `naissance_de_l_assure` du Python.
  */
 export function naissanceDeLAssure(anneeNaissance, moisNaissance, sexe,
   jourNaissance = null, presomptions = null) {
-  if (jourNaissance === null || jourNaissance === undefined) {
-    return fait(`naissance_${ASSURE}`, ASSURE, "naissance",
-      dateControlee(anneeNaissance, moisNaissance,
-        valeur("jour_de_naissance", presomptions)),
-      null, { sexe, precision: "mois" }, "jour_de_naissance");
-  }
-  const date = dateControlee(anneeNaissance, moisNaissance, jourNaissance);
+  const presume = jourNaissance === null || jourNaissance === undefined;
+  const quantieme = presume ? valeur("jour_de_naissance", presomptions) : jourNaissance;
+  const date = dateControlee(anneeNaissance, moisNaissance, quantieme);
   if (date === null) {
-    throw new Error(`naissance impossible : le ${jourNaissance} du mois `
+    throw new Error(`naissance impossible : le ${quantieme} du mois `
       + `${moisNaissance} de ${anneeNaissance}`);
   }
-  return fait(`naissance_${ASSURE}`, ASSURE, "naissance", date, null,
-    { sexe, precision: "jour" });
+  return presume
+    ? fait(`naissance_${ASSURE}`, ASSURE, "naissance", date, null,
+      { sexe, precision: "mois" }, "jour_de_naissance")
+    : fait(`naissance_${ASSURE}`, ASSURE, "naissance", date, null,
+      { sexe, precision: "jour" });
 }
 
 /** Le mois d'où comptent les âges de qui est né à ce fait de naissance. */

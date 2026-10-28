@@ -646,6 +646,48 @@ def test_un_jour_qui_n_existe_pas_est_refuse():
         chronologie.du_parcours(**{**PARCOURS, "mois_naissance": 2}, jour_naissance=30)
 
 
+#: Des naissances que le calendrier ne date pas, au jour présumé : un mois hors
+#: de l'année, un jour présumé qui n'est pas dans le mois, une année hors des
+#: dates du contrat C.1.
+NAISSANCES_IMPOSSIBLES = [
+    (1962, 13, {"jour_de_naissance": {"valeur": 15}}),
+    (1962, 2, {"jour_de_naissance": {"valeur": 30}}),
+    (12000, 1, {"jour_de_naissance": {"valeur": 15}}),
+]
+
+
+def test_une_naissance_impossible_se_refuse_aussi_au_jour_presume():
+    """Au jour présumé comme au jour déclaré, une naissance que le calendrier
+    ne date pas se refuse. Le Python lève ; le portage rendait un fait de
+    naissance sans date (``debut: null``), que le contrat C.1 refuse, et qui ne
+    levait qu'en aval, au premier âge daté — ou jamais, sans âge de départ."""
+    import json
+    import shutil
+    import subprocess
+    from pathlib import Path
+
+    for annee, mois, presomptions in NAISSANCES_IMPOSSIBLES:
+        with pytest.raises(ValueError):
+            chronologie.naissance_de_l_assure(annee, mois, "H", presomptions=presomptions)
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e",
+         'import { naissanceDeLAssure } from "./moteur/js/chronologie.js";'
+         "console.log(JSON.stringify(JSON.parse(process.argv[1]).map(([a, m, p]) => {"
+         '  try { return naissanceDeLAssure(a, m, "H", null, p).debut; }'
+         "  catch (erreur) { return erreur.message; } })));",
+         json.dumps(NAISSANCES_IMPOSSIBLES)],
+        cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    assert json.loads(execution.stdout) == [
+        "naissance impossible : le 15 du mois 13 de 1962",
+        "naissance impossible : le 30 du mois 2 de 1962",
+        "naissance impossible : le 15 du mois 1 de 12000",
+    ]
+
+
 def test_la_carriere_lit_le_jour_que_la_chronologie_porte(macro):
     """Le jour déclaré revient à la carrière tiré de sa chronologie ; le jour
     présumé n'y est pas déclaré, mais la carrière le lit quand même, et ses
