@@ -21,6 +21,7 @@ code_du_service_national,Code du service national
 code_du_travail,Code du travail
 code_general_de_la_fonction_publique,Code général de la fonction publique
 code_general_des_impots,Code général des impôts
+code_monetaire_et_financier,Code monétaire et financier
 code_rural_ancien,Code rural (ancien)
 cpcmr,Code des pensions civiles et militaires de retraite
 css,Code de la sécurité sociale
@@ -87,6 +88,8 @@ decret_2023_435,"Décret n° 2023-435 du 3 juin 2023 portant application des art
 decret_2024_348,Décret n° 2024-348 du 9 avril 2024 relatif à la cotisation volontaire au régime de retraite additionnelle de la fonction publique
 decret_2024_839,Décret n° 2024-839 du 16 juillet 2024 relatif à la garantie de 4 000 € mentionnée à l'article 76 bis de la loi du 21 août 2003
 decret_2025_1076,"Décret n° 2025-1076 du 10 novembre 2025 fixant pour 2025 et 2026 les paramètres des régimes d'assurance vieillesse complémentaire des professionnels libéraux et pour 2025 les paramètres du régime de retraite de base des avocats, des régimes de prestations complémentaires de vieillesse des médecins et sages-femmes, des régimes d'invalidité-décès des professionnels libéraux et des régimes d'assurance vieillesse complémentaire des artistes-auteurs"
+decret_2025_761,Décret n° 2025-761 du 4 août 2025 relatif au régime spécial de retraite des industries électriques et gazières
+decret_2025_799,Décret n° 2025-799 du 11 août 2025 relatif au régime spécial de retraite des clercs et employés de notaires
 decret_45_0179,Décret n°45-0179 du 29 décembre 1945 RELATIF A L'APPLICATION DES DISPOSITIONS DU LIVRE III DU CODE DE LA SECURITE SOCIALE
 decret_46_1378,Décret n°46-1378 du 8 juin 1946 PORTANT REGLEMENT D'ADMINISTRATION PUBLIQUE POUR L'APPLICATION DE L'ORDONNANCE DU 4 OCTOBRE 1945 PORTANT ORGANISATION DE LA SECURITE SOCIALE.
 decret_46_1541,Décret n°46-1541 du 22 juin 1946 approuvant le statut national du personnel des industries électriques et gazières
@@ -169,6 +172,7 @@ loi_2003_1199,Loi n° 2003-1199 du 18 décembre 2003 de financement de la sécur
 loi_2003_1312,Loi n° 2003-1312 du 30 décembre 2003 de Finances rectificative pour 2003 (1).
 loi_2003_775,Loi n° 2003-775 du 21 août 2003 portant réforme des retraites (1).
 loi_2004_1370,Loi n° 2004-1370 du 20 décembre 2004 de financement de la sécurité sociale pour 2005 (1)
+loi_2004_803,Loi n° 2004-803 du 9 août 2004 relative au service public de l'électricité et du gaz et aux entreprises électriques et gazières
 loi_2010_1330,LOI n° 2010-1330 du 9 novembre 2010 portant réforme des retraites (1)
 loi_2011_1977,LOI n° 2011-1977 du 28 décembre 2011 de finances pour 2012 (1)
 loi_2014_1654,LOI n° 2014-1654 du 29 décembre 2014 de finances pour 2015 (1)
@@ -199,6 +203,7 @@ loi_90_1067,Loi n° 90-1067 du 28 novembre 1990 relative à la fonction publique
 loi_96_452,"Loi n° 96-452 du 28 mai 1996 portant diverses mesures d'ordre sanitaire, social et statutaire (1)"
 loi_97_1164,Loi n° 97-1164 du 19 décembre 1997 de financement de la sécurité sociale pour 1998 (1)
 loi_99_209,Loi n° 99-209 organique du 19 mars 1999 relative à la Nouvelle-Calédonie (1)
+loi_du_12_juillet_1937_instituant_une_caisse_de_retraite_et,Loi du 12 juillet 1937 instituant une caisse de retraite et d'assistance des clercs de notaires.
 loi_du_14_avril_1924_portant_reforme_du_regime_des_pensions,Loi du 14 avril 1924 portant réforme du régime des pensions civiles et des pensions militaires.
 loi_du_18_aout_1936_concernant_les_mises_a_la_retraite_par_a,Loi du 18 août 1936 concernant les mises à la retraite par ancienneté.
 marins,"Code des pensions de retraite des marins français du commerce, de pêche ou de plaisance"
