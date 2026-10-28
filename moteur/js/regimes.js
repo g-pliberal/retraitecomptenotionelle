@@ -2726,18 +2726,32 @@ export class Affiliations {
     return Object.prototype.hasOwnProperty.call(this._profils, code);
   }
 
+  /**
+   * Le profil de ce statut. Une affiliation que le fichier ne nomme pas est
+   * refusée, et aussi un nom que tout objet hérite de son prototype
+   * (`constructor`, `toString`), que le Python ne connaît pas davantage.
+   */
+  _profil(code) {
+    if (!this.contient(code)) {
+      throw new Error(
+        `affiliation inconnue : ${code}. Disponibles : ${this.codes.join(", ")}`,
+      );
+    }
+    return this._profils[code];
+  }
+
   libelle(code) {
-    return this._profils[code].libelle ?? code;
+    return this._profil(code).libelle ?? code;
   }
 
   /** Le groupe du menu où ce statut se range — une clé de FAMILLES_STATUT. */
   famille(code) {
-    return this._profils[code].famille;
+    return this._profil(code).famille;
   }
 
   /** Les tranches temporelles déclarées par ce statut, telles qu'écrites. */
   periodes(affiliation) {
-    return this._profils[affiliation].periodes || [];
+    return this._profil(affiliation).periodes || [];
   }
 
   /** Première année que le statut route — l'année où son régime naît. */
@@ -2772,7 +2786,7 @@ export class Affiliations {
 
   /** Le statut de droit commun dont relève qui entre après la fermeture. */
   relevePar(affiliation) {
-    return this._profils[affiliation].releve_par ?? null;
+    return this._profil(affiliation).releve_par ?? null;
   }
 
   /**
@@ -2979,12 +2993,7 @@ export class Affiliations {
 
   /** La période du statut qui couvre cette année, pour cette entrée. */
   _periode(affiliation, annee, anneeEntree = null) {
-    const profil = this._profils[affiliation];
-    if (profil === undefined) {
-      throw new Error(
-        `affiliation inconnue : ${affiliation}. Disponibles : ${this.codes.join(", ")}`,
-      );
-    }
+    const profil = this._profil(affiliation);
     let entree;
     if (anneeEntree === null || anneeEntree === undefined) {
       entree = new DateMois(annee, 1).rang;

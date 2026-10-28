@@ -28,6 +28,16 @@ import {
 } from "./calendrier.js";
 
 /**
+ * La valeur de `cle` dans une table, ou `undefined` : ses seules clés propres,
+ * jamais celles que tout objet hérite de son prototype (`constructor`,
+ * `toString`), que `table[cle]` et `cle in table` trouveraient. C'est le
+ * `dict.get` du Python (action 161, étape 6).
+ */
+function propre(table, cle) {
+  return table != null && Object.hasOwn(table, cle) ? table[cle] : undefined;
+}
+
+/**
  * Périodes non cotisées reconnues par le système actuel. Elles ouvrent des
  * droits gratuits aujourd'hui ; elles n'en ouvrent aucun dans les scénarios
  * notionnels, sauf si des cotisations ont réellement été versées.
@@ -260,7 +270,7 @@ export class ChomageComplementaires {
    * d'avant 1984 est de l'assurance, et l'allocation du FNE dont la
    * convention (`debut`) est d'avant : voir chargement.py. */
   nature(motif, annee, debut = null) {
-    const nature = this.motifs[motif] ?? null;
+    const nature = propre(this.motifs, motif) ?? null;
     const date = nature === "fne" && debut !== null ? debut : annee;
     if ((nature === "solidarite" || nature === "fne") && date < this.solidariteDepuis) {
       return "assurance";
@@ -287,7 +297,7 @@ export class ChomageComplementaires {
     const resultat = new Map();
     for (const [annee, presents] of motifs) {
       for (const motif of presents) {
-        const nature = this.motifs[motif] ?? null;
+        const nature = propre(this.motifs, motif) ?? null;
         let debut = annee;
         if (nature === "fne") {
           while (motifs.get(debut - 1)?.has(motif)) debut -= 1;
@@ -311,8 +321,8 @@ export class ChomageComplementaires {
   partValidee(code, annee, affiliation = null) {
     if (affiliation !== null && this.sansValidation.has(affiliation)) return 0.0;
     let part = 1.0;
-    for (const depuis of [this.validationDepuis[code],
-      affiliation === null ? undefined : this.validationDepuisAffiliations[affiliation]]) {
+    for (const depuis of [propre(this.validationDepuis, code),
+      affiliation === null ? undefined : propre(this.validationDepuisAffiliations, affiliation)]) {
       if (depuis === undefined) continue;
       const [debut, mois] = depuis;
       if (annee < debut) return 0.0;
@@ -343,7 +353,7 @@ export class ChomageComplementaires {
    * (`rupture`). Voir chargement.py. */
   tauxSolidarite(code, annee, points, rupture = null) {
     if (annee < this.solidariteDepuis) return null;
-    const regle = this.solidariteTaux[code];
+    const regle = propre(this.solidariteTaux, code);
     if (regle === undefined) return null;
     const [taux, depuis] = regle;
     const date = rupture === null ? annee : rupture;
@@ -422,7 +432,7 @@ export function dispenseAssietteMinimale(paquet, motif, statut, annee) {
   if (!motif) {
     return "";
   }
-  const regle = (paquet.dispenses_assiette_minimale ?? {})[motif];
+  const regle = propre(paquet.dispenses_assiette_minimale, motif);
   if (regle === undefined) {
     throw new Error(`dispense de l'assiette minimale inconnue : ${JSON.stringify(motif)}`);
   }
@@ -439,7 +449,7 @@ export function dispenseLesComplementaires(paquet, motif) {
   if (!motif) {
     return false;
   }
-  const regle = (paquet.dispenses_assiette_minimale ?? {})[motif];
+  const regle = propre(paquet.dispenses_assiette_minimale, motif);
   return regle !== undefined && regle[3] === true;
 }
 
@@ -546,7 +556,7 @@ export function limiterChomageNonIndemnise(lignes, anneeNaissance,
  * place (`trimestresAuxSeuilsMicro`). Voir `revenu_cotise` (carriere.py).
  */
 export function revenuCotise(macro, revenu, micro, annee, part = 1.0) {
-  const parAnnee = (macro.paquet.validation_micro ?? {})[micro];
+  const parAnnee = propre(macro.paquet.validation_micro, micro);
   let validant = revenu;
   if (parAnnee !== undefined) {
     const annees = Object.keys(parAnnee).map(Number);
@@ -588,7 +598,7 @@ function validantCompense(compensation, micro, annee, revenu, validant, smicHora
  * valide. Voir `trimestres_aux_seuils_micro` (chargement.py).
  */
 export function trimestresAuxSeuilsMicro(seuilsMicro, micro, annee, revenu) {
-  const seuils = ((seuilsMicro ?? {})[micro] ?? {})[String(annee)];
+  const seuils = propre(propre(seuilsMicro, micro), String(annee));
   if (seuils === undefined) {
     return null;
   }
@@ -603,7 +613,7 @@ export function trimestresAuxSeuilsMicro(seuilsMicro, micro, annee, revenu) {
  * dernière, la dernière. Voir `forfait_micro` (chargement.py).
  */
 export function forfaitMicro(macro, micro, annee) {
-  const entree = (macro.paquet.cotisation_micro ?? {})[micro];
+  const entree = propre(macro.paquet.cotisation_micro, micro);
   if (entree === undefined) {
     return null;
   }
@@ -639,7 +649,8 @@ function ligneAnnuelle({
   if (cotise) {
     revenu = assietteDuConjointCollaborateur(macro, affiliation, annee, revenu, part);
   }
-  const regle = cotise ? null : (motifs[typePeriode] ?? motifs.sans_activite ?? null);
+  const regle = cotise ? null
+    : (propre(motifs, typePeriode) ?? propre(motifs, "sans_activite") ?? null);
   const ouvreComplementaires = regle !== null && regle[1] === true;
   // Ces points sont-ils PAYÉS ? Par l'Unédic pour le chômage ; la maladie les
   // reçoit sans contrepartie de cotisations.
@@ -2703,7 +2714,7 @@ const TRANCHE_SECTEUR_AGEE = "Y_GE50";
 
 /** De combien la pente d'un secteur s'écarte de celle de l'économie. */
 function facteurSecteur(paquet, affiliation) {
-  const section = PROFIL_SECTEUR_PAR_AFFILIATION[affiliation];
+  const section = propre(PROFIL_SECTEUR_PAR_AFFILIATION, affiliation);
   if (section === undefined) {
     return 1.0;
   }
@@ -2729,7 +2740,7 @@ function facteurSecteur(paquet, affiliation) {
 
 /** Le groupe salarial que le modèle prête à une affiliation. */
 export function profilDeLAffiliation(affiliation) {
-  return PROFIL_PAR_AFFILIATION[affiliation] ?? PROFIL_PAR_DEFAUT;
+  return propre(PROFIL_PAR_AFFILIATION, affiliation) ?? PROFIL_PAR_DEFAUT;
 }
 
 /** Milieu prêté à chaque tranche du fichier par catégorie. */
@@ -2794,7 +2805,7 @@ export function profilSalaire(paquet, profil, age, annee, affiliation = null) {
   let categorie;
   if (profil === PROFIL_AUTOMATIQUE) {
     categorie = profilDeLAffiliation(affiliation ?? "");
-  } else if (profil in PROFILS_CATEGORIE) {
+  } else if (Object.hasOwn(PROFILS_CATEGORIE, profil)) {
     categorie = PROFILS_CATEGORIE[profil];
   } else {
     throw new Error(`profil de carrière inconnu : ${profil}`);
@@ -2812,7 +2823,7 @@ export function profilSalaire(paquet, profil, age, annee, affiliation = null) {
 
 /** Ce que le profil fait du niveau saisi, en début et en fin de carrière. */
 export function bornesDeformation(paquet, profil, affiliation = null) {
-  if (profil !== PROFIL_AUTOMATIQUE && !PROFILS_CATEGORIE[profil]) {
+  if (profil !== PROFIL_AUTOMATIQUE && !propre(PROFILS_CATEGORIE, profil)) {
     return [1.0, 1.0];
   }
   return [

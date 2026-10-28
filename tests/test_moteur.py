@@ -869,6 +869,132 @@ def test_les_deux_jumeaux_lisent_le_meme_profil_au_bit_pres():
     assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:12])
 
 
+#: Les noms que tout objet de JavaScript hérite de son prototype.
+NOMS_HERITES = ("constructor", "toString", "__proto__", "hasOwnProperty", "valueOf")
+
+_NOMS_HERITES_JS = """
+import { readFileSync } from "node:fs";
+import {
+  Carriere, bornesDeformation, chomageComplementaires, dispenseAssietteMinimale,
+  forfaitMicro, profilDeLAffiliation, profilSalaire,
+} from "./moteur/js/carriere.js";
+import { DonneesMacro } from "./moteur/js/macro.js";
+import { Affiliations } from "./moteur/js/regimes.js";
+const noms = JSON.parse(process.argv[1]);
+const paquet = JSON.parse(readFileSync("moteur/donnees.json", "utf8"));
+const macro = new DonneesMacro(paquet);
+const chomage = chomageComplementaires(paquet);
+const affiliations = new Affiliations(paquet);
+const lu = (calcul) => {
+  try {
+    const valeur = calcul();
+    return ["valeur", typeof valeur === "function" ? "une fonction" : valeur ?? null];
+  } catch (erreur) {
+    return ["refus", erreur.constructor.name === "TypeError" ? erreur.message : ""];
+  }
+};
+process.stdout.write(JSON.stringify(noms.map((nom) => ({
+  profil: lu(() => profilSalaire(paquet, nom, 30, 2000)),
+  bornes: lu(() => bornesDeformation(paquet, nom)),
+  groupe: lu(() => profilDeLAffiliation(nom)),
+  dispense: lu(() => dispenseAssietteMinimale(paquet, nom, "artisan", 2020)),
+  nature: lu(() => chomage.nature(nom, 2000)),
+  part: lu(() => chomage.partValidee(nom, 2000, nom)),
+  solidarite: lu(() => chomage.tauxSolidarite(nom, 2000, true)),
+  forfait: lu(() => forfaitMicro(macro, nom, 2020)),
+  releve: lu(() => Carriere.depuisReleve({
+    annee_naissance: 1960, sexe: "H", age_liquidation: 62, macro,
+    releve: [{ annee: 2000, affiliation: "salarie_prive_non_cadre", revenu: 20000,
+               trimestres: null, type_periode: "emploi" },
+             { annee: 2001, affiliation: "salarie_prive_non_cadre", revenu: 20000,
+               trimestres: null, type_periode: nom }],
+  }).lignes.map((ligne) => [ligne.trimestres_valides, ligne.services_fonction_publique,
+    ligne.services_plafond_trimestres_par_enfant, ligne.reputes_cotises_nature])),
+  libelle: lu(() => affiliations.libelle(nom)),
+  periodes: lu(() => affiliations.periodes(nom)),
+  regimes: lu(() => affiliations.regimes(nom, 2000)),
+}))));
+"""
+
+
+def _noms_herites_en_python(noms) -> list[dict]:
+    """Ce que le Python rend sous chacun de ces noms, comme le lit le portage :
+    une valeur, ou un refus — un ``ValueError`` ou un ``KeyError``, et jamais
+    une ``TypeError``, qui serait une faute de programme."""
+    from retraite_notionnelle.carriere import (
+        Affiliations, Carriere, LigneRelevee, bornes_deformation, profil_de_l_affiliation)
+    from retraite_notionnelle.donnees.chargement import (
+        charger_chomage_complementaires, charger_cotisation_micro,
+        charger_dispenses_assiette_minimale, dispense_assiette_minimale, forfait_micro)
+    from retraite_notionnelle.donnees.macro import DonneesMacro
+
+    macro = DonneesMacro(RACINE_DONNEES)
+    chomage = charger_chomage_complementaires(RACINE_DONNEES)
+    affiliations = Affiliations(RACINE_DONNEES)
+
+    def lu(calcul):
+        try:
+            return ["valeur", calcul()]
+        except (KeyError, ValueError):
+            return ["refus", ""]
+
+    def releve(nom):
+        lignes = [LigneRelevee(2000, "salarie_prive_non_cadre", 20000.0),
+                  LigneRelevee(2001, "salarie_prive_non_cadre", 20000.0, type_periode=nom)]
+        return [[ligne.trimestres_valides, ligne.services_fonction_publique,
+                 ligne.services_plafond_trimestres_par_enfant, ligne.reputes_cotises_nature]
+                for ligne in Carriere.depuis_releve(1960, "H", lignes, 62, macro).lignes]
+
+    return [{
+        "profil": lu(lambda: profil_salaire(RACINE_DONNEES, nom, 30, 2000)),
+        "bornes": lu(lambda: list(bornes_deformation(RACINE_DONNEES, nom))),
+        "groupe": lu(lambda: profil_de_l_affiliation(nom)),
+        "dispense": lu(lambda: dispense_assiette_minimale(
+            charger_dispenses_assiette_minimale(RACINE_DONNEES), nom, "artisan", 2020)),
+        "nature": lu(lambda: chomage.nature(nom, 2000)),
+        "part": lu(lambda: chomage.part_validee(nom, 2000, nom)),
+        "solidarite": lu(lambda: chomage.taux_solidarite(nom, 2000, True)),
+        "forfait": lu(lambda: forfait_micro(charger_cotisation_micro(RACINE_DONNEES), nom, 2020)),
+        "releve": lu(lambda: releve(nom)),
+        "libelle": lu(lambda: affiliations.libelle(nom)),
+        "periodes": lu(lambda: list(affiliations.periodes(nom))),
+        "regimes": lu(lambda: list(affiliations.regimes(nom, 2000))),
+    } for nom in noms]
+
+
+def test_un_nom_herite_du_prototype_n_est_dans_aucune_table_du_portage():
+    """Le portage lit ses tables dans des objets de JavaScript, qui héritent
+    de leur prototype : ``constructor`` ou ``toString`` y sont des clés, que
+    ``in`` et ``table[nom]`` trouvent ; le Python, qui lit des dictionnaires,
+    ne les connaît pas. Sous un tel nom, le portage calculait un profil au lieu
+    de le refuser, levait une ``TypeError`` sur une dispense, une part validée
+    du chômage ou le forfait d'un micro-entrepreneur, donnait au chômage une
+    nature qui est une fonction, et des trimestres NaN à l'année d'un relevé
+    que le Python tient sans activité ; une affiliation de ce nom avait un
+    libellé et des régimes. Aucune saisie n'y mène — la page ne laisse passer
+    que les noms de ses listes, que ``contient`` vérifie —, mais le jumeau qui
+    reste rend ce que rend le Python (action 161, étape 6)."""
+    import json
+    import shutil
+    import subprocess
+    from pathlib import Path
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", _NOMS_HERITES_JS, json.dumps(NOMS_HERITES)],
+        cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True,
+        encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    portage = json.loads(execution.stdout)
+    python = json.loads(json.dumps(_noms_herites_en_python(NOMS_HERITES)))
+    ecarts = [f"{nom}, {lecture} : python={python[rang][lecture]} portage={valeur}"
+              for rang, nom in enumerate(NOMS_HERITES)
+              for lecture, valeur in portage[rang].items()
+              if valeur != python[rang][lecture]]
+    assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts)
+
+
 # -- âge de référence --------------------------------------------------------
 
 
