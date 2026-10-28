@@ -1,15 +1,15 @@
 # Étape 4, première partie : le minimum et les majorations de la réversion du régime général
 
-**Reprise, au 28 octobre 2026.** Fait : le minimum, les majorations (7 octobre) ; le maximum, le plafond
-du ménage, l'assuré mort avant son départ, le partage, le cumul d'avant 2004, la majoration pour enfant
-(9 octobre) ; ses parts, son régime ; la révision sur trois mois ; le plancher, la catégorie
-(24 octobre) ; la date d'effet, les majorations au plancher, la demande et le décès d'avant 2004, les
-majorations au maximum (25 octobre) ; au site, les études, l'enfant né après le départ, les révisions, la
-catégorie, la période et son moment, le plancher non majoré (28 octobre). Au propriétaire : les décrets
-agricoles de 1976 et 1977, au fac-similé ; le choix de la date de la demande, présumée le mois qui
-précède la date d'effet ; le décès supposé avant l'enfant né après lui : le déplacer, ou ne pas compter
-l'enfant. Au site : ce que ses notes ont vu en chemin. Détail : `…-au-maximum.md`, `…-avant-l-enfant.md`,
-`…-revisions-au-site.md`, `…-categorie-au-site.md`, `…-moment-au-site.md`, `…-majore-au-site.md`.
+**Reprise, au 28 octobre 2026.** Fait : le minimum, les majorations (7 octobre) ; le maximum, le plafond du ménage,
+l'assuré mort avant son départ, le partage, le cumul d'avant 2004, la majoration pour enfant (9 octobre) ; ses
+parts, son régime ; la révision sur trois mois ; le plancher, la catégorie (24 octobre) ; la date d'effet, les
+majorations au plancher, la demande et le décès d'avant 2004, les majorations au maximum (25 octobre) ; au site,
+les études, l'enfant né après le départ, les révisions, la catégorie, la période et son moment, le plancher non
+majoré ; au modèle, les moments examinés et le plafond du ménage (28 octobre). Au propriétaire : les décrets
+agricoles de 1976 et 1977, au fac-similé ; le choix de la date de la demande, présumée le mois qui précède la date
+d'effet ; le décès supposé avant l'enfant né après lui : le déplacer, ou ne pas compter l'enfant. Au site : ce que
+ses notes ont vu en chemin. Détail : `…-au-maximum.md`, `…-avant-l-enfant.md`, `…-revisions-au-site.md`,
+`…-categorie-au-site.md`, `…-moment-au-site.md`, `…-majore-au-site.md`, `…-au-modele.md`.
 
 **Le 7 octobre 2026, la demande.** Le propriétaire : « Quels sont les écarts
 encore présents avec trajectoire et destinie 2 ? J'aimerais combler les manques

@@ -2333,6 +2333,13 @@ historique:
   § 4, n° 3/95, § 23 et § 241) : la réversion ramenée au maximum de sa date d'effet
   en reçoit la part du taux, que ce maximum lui retirait. La veuve du cadre parti et
   mort en 1990 reçoit en 1995 3,846 % de son maximum, 199,76 euros de 1990 par an.
+- >-
+  2026-10-28 — action 138, étape 4, au modèle : chaque ligne dit aussi les moments que
+  sa version a examinés, dans l'ordre, jusqu'à celui qui a décidé (moments_examines)
+  — avant juillet 2004, la demande refusée avant le décès —, et si son plafond est
+  celui du ménage (plafond_du_menage) : le survivant en couple au jour qu'il mesure,
+  au régime général sous 1,6 fois le plafond, à la complémentaire des indépendants
+  sous le même. Aucune règle ne change ; la page les lira sans les recalculer.
 effet: >-
   Tout conjoint, ou ex-conjoint, d'un assuré du régime général ou d'un régime aligné
   qui décède : 4,41 millions de bénéficiaires d'un droit dérivé tous régimes fin 2024

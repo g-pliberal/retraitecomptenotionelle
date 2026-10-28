@@ -1,0 +1,20 @@
+date: "2026-10-28"
+session: >-
+  action 138, étape 4, au modèle : ce que la ligne de la réversion dit de plus, dans les
+  deux moteurs — les moments que sa version a examinés (`moments_examines`), la demande
+  refusée avant le décès, et si son plafond est celui du ménage (`plafond_du_menage`)
+consulte: >-
+  Aucun texte neuf : les deux champs disent ce que le modèle calcule depuis le 9 et le
+  25 octobre, sans changer aucune règle (R. 353-1, rédactions de 1985 et de 1990 ;
+  circulaire Cnav n° 31/75, § 233 ; D. 353-1-1 ; circulaire Cnav n° 2005-17, § 141 et
+  § 145 ; règlement de la complémentaire des indépendants, article 17 ; notes
+  `2026-10-09-etape-4-plafond-du-menage.md` et
+  `2026-10-25-etape-4-date-de-la-demande-et-du-deces.md`).
+trouve: >-
+  Rien de neuf au droit. Le facteur du plafond ne suffit pas à dire le ménage : la
+  complémentaire des indépendants mesure le ménage sous le même plafond qu'une personne
+  seule (`facteur_menage: 1`) ; seul le calcul sait s'il a compté les ressources du
+  nouveau conjoint, et il le rend désormais.
+reste: >-
+  Rien pour la veille. Au site, la page qui dira les deux champs (note
+  `2026-10-28-etape-4-moments-et-menage-au-modele.md`).
