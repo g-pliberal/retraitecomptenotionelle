@@ -1010,10 +1010,10 @@ export function formulaire(saisie, contexte, comparaison = null) {
       saisie.charge_enfants, "facultatif : « 1:etudes:2009-07, 2:infirmite »", "text",
       { autocomplete: "off", spellcheck: "false" },
       "La majoration pour enfant à charge de la réversion du régime général suit "
-      + "chaque enfant jusqu'à ses seize ans — sa majorité depuis 2016 —, et jusqu'à "
+      + "chaque enfant jusqu'à ses seize ans (sa majorité depuis 2016), et jusqu'à "
       + "ses vingt ans s'il est étudiant, apprenti ou infirme. Dites son rang dans "
-      + "l'ordre des naissances, la sienne dite, son motif — etudes, apprentissage "
-      + "ou infirmite — et le mois où ses études ou son apprentissage cessent, "
+      + "l'ordre des naissances, la sienne dite, son motif (etudes, apprentissage "
+      + "ou infirmite) et le mois où ses études ou son apprentissage cessent, "
       + "s'ils cessent avant."),
     g.champ("interruptions", "Interruptions", saisie.interruptions,
       "« 1995:1999:education_enfant », séparées par des virgules"),
