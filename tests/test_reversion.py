@@ -721,15 +721,19 @@ def test_le_menage_compte_les_ressources_du_nouveau_conjoint(simulateur):
     plafond = _plafond(simulateur, 2023)
     pensions = [("regime_general", 20000.0)]
     seul = _carriere(simulateur, 1958, 62.0, "1960", "2023-05-10", ressources=10000.0)
-    assert _servies(simulateur, seul, pensions, 2023)["regime_general"].montant == 10800.0
+    ligne = _servies(simulateur, seul, pensions, 2023)["regime_general"]
+    assert (ligne.montant, ligne.plafond_du_menage) == (10800.0, False)
     pacse = _carriere(simulateur, 1958, 62.0, "1960", "2023-05-10", ressources=10000.0,
                       nouvelle_union="pacs")
-    assert _servies(simulateur, pacse, pensions, 2023)["regime_general"].montant == 10800.0
+    ligne = _servies(simulateur, pacse, pensions, 2023)["regime_general"]
+    assert (ligne.montant, ligne.plafond_du_menage) == (10800.0, True)
     menage = _carriere(simulateur, 1958, 62.0, "1960", "2023-05-10", ressources=10000.0,
                        nouvelle_union="pacs", apport=20000.0)
     ligne = _servies(simulateur, menage, pensions, 2023)["regime_general"]
     assert (ligne.motif, ligne.ressources_retenues) == ("ecretee", 30000.0)
     assert round(ligne.montant, 2) == round(1.6 * plafond - 30000.0, 2)
+    # La ligne dit que son plafond est celui du ménage : la page ne le recalcule pas.
+    assert ligne.plafond_du_menage is True
 
 
 def test_avant_juillet_2004_le_menage_ne_compte_pas(simulateur):
@@ -741,7 +745,7 @@ def test_avant_juillet_2004_le_menage_ne_compte_pas(simulateur):
     ligne = _servies(simulateur, carriere, [("regime_general", 10000.0)],
                      1999)["regime_general"]
     assert (ligne.motif, ligne.ressources_retenues) == ("servie", 5000.0)
-    assert ligne.plafond == _plafond(simulateur, 1999)
+    assert (ligne.plafond, ligne.plafond_du_menage) == (_plafond(simulateur, 1999), False)
 
 
 @pytest.mark.parametrize("conjoint, deces, retenues", [
@@ -1266,6 +1270,8 @@ def test_la_rci_compte_le_menage_sous_le_meme_plafond(simulateur):
     # 2 400 de réversion : 400 de trop.
     assert (ligne.plafond, ligne.ressources_retenues) == (plafond, plafond - 2000.0)
     assert (round(ligne.montant, 2), ligne.motif) == (2000.0, "ecretee")
+    # Le plafond du ménage, que rien ne distingue de celui d'une personne seule.
+    assert ligne.plafond_du_menage is True
 
 
 # -- l'âge d'avant 1973, le cumul d'avant 2004, les majorations forfaitaires -------------
@@ -1945,6 +1951,9 @@ def test_la_revision_compte_le_menage_forme_avant_elle(simulateur, depuis, fin, 
     plafond = 2080 * 10.15 / _coefficient(simulateur, 2015, 2020)
     revue = 1.6 * plafond - 30000.0 if menage else plafond - 18000.0
     assert (round(ligne.montant, 2), ligne.ressources_retenues) == (5400.0, 0.0)
+    # Formée après la date d'effet, l'union ne fait pas de son plafond celui du
+    # ménage.
+    assert ligne.plafond_du_menage is False
     assert ligne.reduction_de_la_revision == pytest.approx(5400.0 - revue)
 
 
@@ -2457,6 +2466,9 @@ def test_au_dela_du_quart_du_plafond_la_date_d_effet_retient_les_douze_mois(simu
     assert ligne.ressources_retenues == pytest.approx(0.7 * (10 * 10000.0 + 2 * 40000.0) / 12)
     assert (round(ligne.montant, 2), ligne.motif) == (5400.0, "servie")
     assert ligne.periode_de_reference == 12
+    # Les trois mois puis les douze, au seul moment de la date d'effet.
+    assert (ligne.ressources_examinees_au, ligne.moments_examines) == (
+        "date_d_effet", ("date_d_effet",))
     assert ligne.revisions == (("2011-08-01", pytest.approx(5400.0)),)
     assert ligne.ressources_des_revisions == (("2011-08-01", pytest.approx(0.7 * 40000.0)),)
 
@@ -2517,6 +2529,8 @@ def test_avant_juillet_2004_le_deces_ouvre_ce_que_la_demande_ferme(simulateur):
     assert (ligne.version, ligne.date_effet) == ("taux_54", "2000-07-01")
     assert (round(ligne.montant, 2), ligne.motif) == (5400.0, "servie")
     assert (ligne.ressources_examinees_au, ligne.periode_de_reference) == ("deces", 3)
+    # La demande, examinée d'abord, refusée : la ligne le dit.
+    assert ligne.moments_examines == ("demande", "deces")
     assert ligne.ressources_retenues == 0.0
 
 
@@ -2539,6 +2553,7 @@ def test_avant_juillet_2004_la_demande_retient_les_douze_mois_qui_la_precedent(s
     assert ligne.date_effet == "2000-07-01"
     assert (round(ligne.montant, 2), ligne.motif) == (5400.0, "servie")
     assert (ligne.ressources_examinees_au, ligne.periode_de_reference) == ("demande", 12)
+    assert ligne.moments_examines == ("demande",)
     assert ligne.ressources_retenues == pytest.approx(11000.0)
 
 
@@ -2564,6 +2579,8 @@ def test_avant_juillet_1974_les_ressources_s_apprecient_au_deces(simulateur):
     assert (ligne.version, ligne.date_effet) == ("avant_1973", "1972-07-01")
     assert (ligne.montant, ligne.motif) == (0.0, "ressources")
     assert (ligne.ressources_examinees_au, ligne.periode_de_reference) == ("deces", 12)
+    # Le décès seul, sans demande examinée avant lui.
+    assert ligne.moments_examines == ("deces",)
     assert ligne.ressources_retenues == pytest.approx(3000.0)
 
 
@@ -2798,25 +2815,27 @@ def test_les_deux_moteurs_retiennent_les_trois_ou_douze_mois_de_la_date_d_effet(
 #: 1996 qui prend une activité après le décès, que le décès ouvre ; celle dont
 #: le salaire sextuple deux mois avant sa demande, que les douze mois de sa
 #: demande ouvrent ; la veuve de 1972, que les ressources de son décès ferment.
-#: Chacune avec le moment de ses ressources, les mois de leur période, et le
-#: motif de sa réversion.
+#: Chacune avec les moments examinés, le dernier celui de ses ressources — la
+#: demande refusée avant le décès —, les mois de leur période, et le motif de
+#: sa réversion.
 CAS_DE_LA_DEMANDE = [
     ({"naissance": "1935", "liquidation": "60", "conjoint": "1945-06-15", "mariage": "1965-05",
       "deces": "1996-03-10", "activite_conjoint_variations": "1997-01-01:30000"},
-     "deces", 3, "servie"),
+     ["demande", "deces"], 3, "servie"),
     ({"naissance": "1935", "liquidation": "60", "conjoint": "1945-06-15", "mariage": "1965-05",
       "deces": "1996-03-10", "ressources_conjoint": "6000", "activite_conjoint": "6000",
-      "activite_conjoint_variations": "2000-04-01:36000"}, "demande", 12, "servie"),
+      "activite_conjoint_variations": "2000-04-01:36000"}, ["demande"], 12, "servie"),
     ({"naissance": "1905", "liquidation": "65", "conjoint": "1907-03-15", "mariage": "1930-05",
       "deces": "1972-06-10", "ressources_conjoint": "3000", "activite_conjoint": "3000",
-      "activite_conjoint_fin": "1972-06-30"}, "deces", 12, "ressources"),
+      "activite_conjoint_fin": "1972-06-30"}, ["deces"], 12, "ressources"),
 ]
 
 
 def test_les_deux_moteurs_examinent_la_demande_puis_le_deces(saisies):
     """Le résultat entier, des six scénarios, est le même en Python et en
-    JavaScript ; chaque cas retient les ressources du moment qu'il dit, sur les
-    mois qu'il dit, et en tire le motif qu'il dit. Le portage lit les moments
+    JavaScript ; chaque cas examine les moments qu'il dit, retient les
+    ressources du dernier, sur les mois qu'il dit, et en tire le motif qu'il
+    dit. Le portage lit les moments
     dans les versions de son paquet : le cas est du niveau ``complet``, que
     GitHub joue sur le paquet qu'il refait."""
     if shutil.which("node") is None:
@@ -2826,11 +2845,66 @@ def test_les_deux_moteurs_examinent_la_demande_puis_le_deces(saisies):
     from construire_temoins import _fini
     attendus = [{"requete": cas, "resultat": _fini(saisies.simuler(cas).dictionnaire())}
                 for cas, _, _, _ in CAS_DE_LA_DEMANDE]
-    for attendu, (_, moment, mois, motif) in zip(attendus, CAS_DE_LA_DEMANDE):
+    for attendu, (_, moments, mois, motif) in zip(attendus, CAS_DE_LA_DEMANDE):
         ligne, = (r for r in attendu["resultat"]["reversion"]["regimes"]
                   if r["regime"] == "regime_general")
-        assert (ligne["ressources_examinees_au"], ligne["periode_de_reference"],
-                ligne["motif"]) == (moment, mois, motif), ligne
+        assert (ligne["moments_examines"], ligne["ressources_examinees_au"],
+                ligne["periode_de_reference"], ligne["motif"]) == (
+                    moments, moments[-1], mois, motif), ligne
+    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
+                                     delete=False) as fichier:
+        fichier.write(json.dumps(attendus, ensure_ascii=False))
+        chemin = fichier.name
+    try:
+        execution = subprocess.run(
+            ["node", str(racine / "tests" / "js" / "comparer.mjs"), chemin],
+            cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False)
+    finally:
+        Path(chemin).unlink()
+    assert execution.returncode == 0, (execution.stdout + execution.stderr)[-2000:]
+
+
+#: Des saisies où la ligne dit si son plafond est celui du ménage, à sa date
+#: d'effet : la veuve de 2023 pacsée sans dire depuis quand, que le régime
+#: général mesure à son ménage (D. 353-1-1) ; la même, pacsée en janvier 2024,
+#: après sa date d'effet, que la révision qui suit mesure ; la veuve de
+#: l'artisan, en concubinage, que la complémentaire des indépendants mesure
+#: aussi à son ménage, sous le même plafond ; la veuve remariée de 1999, que la
+#: version d'avant juillet 2004 ne mesure qu'à ses ressources personnelles.
+#: Chacune avec ce que dit chaque ligne qui a un plafond.
+CAS_DU_MENAGE = [
+    ({"naissance": "1958", "liquidation": "62", "conjoint": "1960", "deces": "2023-05",
+      "ressources_conjoint": "10000", "nouvelle_union": "pacs",
+      "ressources_nouveau_conjoint": "20000"}, {"regime_general": True}),
+    ({"naissance": "1958", "liquidation": "62", "conjoint": "1960", "deces": "2023-05",
+      "ressources_conjoint": "10000", "nouvelle_union": "pacs",
+      "nouvelle_union_depuis": "2024-01", "ressources_nouveau_conjoint": "20000"},
+     {"regime_general": False}),
+    ({"naissance": "1958", "liquidation": "62", "statut": "artisan", "debut": "22",
+      "conjoint": "1960", "deces": "2026-05", "ressources_conjoint": "10000",
+      "nouvelle_union": "concubinage", "ressources_nouveau_conjoint": "20000"},
+     {"regime_general": True, "rci": True, "rco_artisans": True}),
+    ({"naissance": "1935", "liquidation": "60", "conjoint": "1938", "deces": "1999-05",
+      "ressources_conjoint": "5000", "activite_conjoint": "5000", "nouvelle_union": "mariage",
+      "ressources_nouveau_conjoint": "50000"}, {"regime_general": False}),
+]
+
+
+def test_les_deux_moteurs_disent_si_le_plafond_est_celui_du_menage(saisies):
+    """Le résultat entier, des six scénarios, est le même en Python et en
+    JavaScript ; chaque ligne qui a un plafond dit, comme le cas, s'il est
+    celui du ménage, ce que la page ne recalcule pas."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    racine = Path(__file__).resolve().parents[1]
+    sys.path.insert(0, str(racine / "scripts"))
+    from construire_temoins import _fini
+    attendus = [{"requete": cas, "resultat": _fini(saisies.simuler(cas).dictionnaire())}
+                for cas, _ in CAS_DU_MENAGE]
+    for attendu, (_, menages) in zip(attendus, CAS_DU_MENAGE):
+        regimes = attendu["resultat"]["reversion"]["regimes"]
+        assert {r["regime"]: r["plafond_du_menage"] for r in regimes
+                if r["plafond"] > 0} == menages, regimes
     with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
                                      delete=False) as fichier:
         fichier.write(json.dumps(attendus, ensure_ascii=False))

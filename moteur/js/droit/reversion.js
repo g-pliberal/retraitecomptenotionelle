@@ -125,7 +125,8 @@ export class ReversionRegime {
     minimum = 0.0, majoration_trois_enfants = 0.0, majoration_petites_retraites = 0.0,
     majoration_petites_retraites_effet = null, minimum_contributif = 0.0,
     ecretement_du_maximum = 0.0, maximum = 0.0, plafond = 0.0,
-    ressources_retenues = 0.0, periode_de_reference = 0, ressources_examinees_au = null,
+    ressources_retenues = 0.0, plafond_du_menage = false, periode_de_reference = 0,
+    ressources_examinees_au = null, moments_examines = [],
     part = 1.0, fin = null,
     limite_cumul = 0.0,
     majoration_forfaitaire_enfants = 0.0, majoration_forfaitaire_enfants_etapes = [],
@@ -166,6 +167,10 @@ export class ReversionRegime {
     // sans plafond.
     this.plafond = plafond;
     this.ressources_retenues = ressources_retenues;
+    // Ce plafond est-il celui du ménage : le survivant vit en couple au jour
+    // qu'il mesure, et les ressources de son nouveau conjoint s'ajoutent aux
+    // siennes ; non quand l'union se forme après ce jour, ni avant juillet 2004.
+    this.plafond_du_menage = plafond_du_menage;
     // Les mois de la période de référence de ces ressources, à la date d'effet
     // (R. 353-1) : trois, douze quand celles des trois mois excèdent le quart du
     // plafond ; 0 quand la version les compare sur l'année.
@@ -175,6 +180,11 @@ export class ReversionRegime {
     // (`deces`) quand la condition n'est pas remplie à la demande — le dernier
     // examiné quand elle ne l'est à aucun. null sans plafond.
     this.ressources_examinees_au = ressources_examinees_au;
+    // Les moments dont la version a examiné les ressources, dans l'ordre,
+    // jusqu'à celui-là : aucun de ceux qui le précèdent ne remplissait la
+    // condition — avant juillet 2004, la demande refusée, quand les ressources
+    // retenues sont celles du décès. Vide quand le moment est null.
+    this.moments_examines = Object.freeze([...moments_examines]);
     // La part du survivant, partagée avec les précédents conjoints au prorata
     // des mariages (L. 353-3) : 1 sans eux.
     this.part = part;
@@ -235,8 +245,10 @@ export class ReversionRegime {
       ecretement_du_maximum: this.ecretement_du_maximum,
       maximum: this.maximum, plafond: this.plafond,
       ressources_retenues: this.ressources_retenues,
+      plafond_du_menage: this.plafond_du_menage,
       periode_de_reference: this.periode_de_reference,
-      ressources_examinees_au: this.ressources_examinees_au, part: this.part, fin: this.fin,
+      ressources_examinees_au: this.ressources_examinees_au,
+      moments_examines: [...this.moments_examines], part: this.part, fin: this.fin,
       limite_cumul: this.limite_cumul,
       majoration_forfaitaire_enfants: this.majoration_forfaitaire_enfants,
       majoration_forfaitaire_enfants_etapes: this.majoration_forfaitaire_enfants_etapes.map(
@@ -930,14 +942,14 @@ function percu(montant, changements, debut, fin) {
 /**
  * Les ressources du survivant que retiennent sous le plafond de la version les
  * `mois` mois civils qui précèdent le jour `jour` — une révision, ou la date
- * d'effet —, par an, et le facteur qui multiplie ce plafond : `[ressources,
- * facteur]`. Ses revenus d'activité et ceux de son nouveau conjoint tels que
- * perçus, ses `retraites` pour ce qu'elles servent depuis le jour où elles
- * prennent effet, ou `entieres` dès qu'elles ont commencé ; transposées sur la
- * période depuis le dernier changement de sa situation familiale qu'elle
- * porte — le décès de l'assuré, `deces`, le ménage formé ou défait ; ses
- * revenus d'activité abattus quand il a l'âge de l'abattement ce jour-là. Voir
- * `_ressources_de_la_periode` du Python.
+ * d'effet —, par an, le facteur qui multiplie ce plafond, et s'il est celui du
+ * ménage : `[ressources, facteur, menage]`. Ses revenus d'activité et ceux de
+ * son nouveau conjoint tels que perçus, ses `retraites` pour ce qu'elles
+ * servent depuis le jour où elles prennent effet, ou `entieres` dès qu'elles
+ * ont commencé ; transposées sur la période depuis le dernier changement de sa
+ * situation familiale qu'elle porte — le décès de l'assuré, `deces`, le ménage
+ * formé ou défait ; ses revenus d'activité abattus quand il a l'âge de
+ * l'abattement ce jour-là. Voir `_ressources_de_la_periode` du Python.
  */
 function ressourcesDeLaPeriode(parametres, conjoint, retraites, jour, entieres, deces,
   mois = 3) {
@@ -979,11 +991,11 @@ function ressourcesDeLaPeriode(parametres, conjoint, retraites, jour, entieres, 
       || conjoint.nouvelle_union === null || conjoint.nouvelle_union === undefined
       || !(union === null || union < jour)
       || venu(conjoint.nouvelle_union_fin, jour, false)) {
-    return [retenues, 1.0];
+    return [retenues, 1.0, false];
   }
   const apport = percu(Number(conjoint.ressources_du_nouveau_conjoint ?? 0.0),
     conjoint.variations_du_nouveau_conjoint ?? [], debut, fin);
-  return [retenues + apport, Number(facteur)];
+  return [retenues + apport, Number(facteur), true];
 }
 
 /**
@@ -1007,30 +1019,34 @@ function moisDeLaDemande(dateEffet) {
 
 /**
  * Les ressources du survivant que la date d'effet `dateEffet` retient sous le
- * plafond de la version, par an, le facteur qui multiplie ce plafond, les
- * mois de leur période de référence et le moment qu'ils précèdent :
- * `[ressources, facteur, mois, moment]`. Celles des trois mois civils qui la
- * précèdent, celles des douze quand, avec les `reversions` des autres régimes
- * de base, elles excèdent le quart du plafond de `smic` horaire (R. 353-1) :
- * les mois que la version dit (`periodes_de_reference`), comptés comme à une
- * révision. Avant juillet 2004, ces mois précèdent les moments que la version
- * dit, l'un après l'autre (`ressources_examinees`) : la demande, le mois qui
- * précède la date d'effet, puis le décès, sous les paramètres `auDeces` de la
- * version du décès ; quand aucun ne remplit la condition, ceux du dernier. La
- * version qui ne dit pas de mois compare sur l'année ses `ressources` de ce
- * jour : 0 mois. Voir `_ressources_a_la_date_d_effet` du Python.
+ * plafond de la version, par an, le facteur qui multiplie ce plafond, s'il est
+ * celui du ménage, les mois de leur période de référence et les moments
+ * examinés jusqu'à celui qu'ils précèdent : `[ressources, facteur, menage,
+ * mois, moments]`. Celles des trois mois civils qui la précèdent, celles des
+ * douze quand, avec les `reversions` des autres régimes de base, elles
+ * excèdent le quart du plafond de `smic` horaire (R. 353-1) : les mois que la
+ * version dit (`periodes_de_reference`), comptés comme à une révision. Avant
+ * juillet 2004, ces mois précèdent les moments que la version dit, l'un après
+ * l'autre (`ressources_examinees`) : la demande, le mois qui précède la date
+ * d'effet, puis le décès, sous les paramètres `auDeces` de la version du
+ * décès ; quand aucun ne remplit la condition, ceux du dernier. La version qui
+ * ne dit pas de mois compare sur l'année ses `ressources` de ce jour : 0 mois.
+ * Voir `_ressources_a_la_date_d_effet` du Python.
  */
 function ressourcesALaDateDEffet(parametres, conjoint, ressources, retraites, dateEffet, deces,
   regime, smic, reversions, auDeces = null) {
   const periodes = parametres.periodes_de_reference ?? [];
   if (periodes.length === 0) {
-    const [retenues, facteur] = ressourcesDuPlafond(parametres, conjoint, ressources, dateEffet);
-    return [retenues, facteur, 0, "date_d_effet"];
+    const [retenues, facteur, menage] = ressourcesDuPlafond(parametres, conjoint, ressources,
+      dateEffet);
+    return [retenues, facteur, menage, 0, ["date_d_effet"]];
   }
   let examinees = null;
+  const examines = [];
   const moments = (parametres.ressources_examinees ?? []).length > 0
     ? parametres.ressources_examinees : ["date_d_effet"];
   for (const moment of moments) {
+    examines.push(String(moment));
     const regles = moment === "deces" ? (auDeces ?? parametres) : parametres;
     const jour = { date_d_effet: dateEffet, demande: moisDeLaDemande(dateEffet),
       deces: `${deces.slice(0, 8)}01` }[moment];
@@ -1038,9 +1054,9 @@ function ressourcesALaDateDEffet(parametres, conjoint, ressources, retraites, da
     const propres = regles.periodes_de_reference ?? [];
     for (const periode of propres.length > 0 ? propres : periodes) {
       const mois = Math.trunc(Number(periode));
-      const [retenues, facteur] = ressourcesDeLaPeriode(regles, conjoint, retraites, jour,
-        entieres, deces, mois);
-      examinees = [retenues, facteur, mois, String(moment)];
+      const [retenues, facteur, menage] = ressourcesDeLaPeriode(regles, conjoint, retraites,
+        jour, entieres, deces, mois);
+      examinees = [retenues, facteur, menage, mois, [...examines]];
       if (retenues + reversions <= facteur * Number(regles.plafond_smic_heures) * smic) {
         return examinees;
       }
@@ -1472,15 +1488,16 @@ function apportAu(conjoint, date, leJourMeme) {
 }
 
 /**
- * Les ressources du survivant que retient le plafond de la version, et le
- * facteur qui multiplie ce plafond : `[ressources, facteur]`. Ses revenus
- * d'activité de ce jour — ceux qu'il déclare au décès, rien une fois son
- * activité cessée, ceux qu'une variation leur substitue —, abattus de 30 %
- * quand il a cinquante-cinq ans à la date d'effet ; celles de son nouveau
- * conjoint en plus, de ce jour, sous le plafond du ménage, quand il vit en
- * couple et que la version dit ce facteur, le ménage formé et pas encore
- * défait. Chaque changement compte venu avant la date d'effet, ou ce jour même
- * quand `leJourMeme`. Voir `_ressources_du_plafond` du Python.
+ * Les ressources du survivant que retient le plafond de la version, le facteur
+ * qui multiplie ce plafond, et s'il est celui du ménage : `[ressources,
+ * facteur, menage]`. Ses revenus d'activité de ce jour — ceux qu'il déclare au
+ * décès, rien une fois son activité cessée, ceux qu'une variation leur
+ * substitue —, abattus de 30 % quand il a cinquante-cinq ans à la date
+ * d'effet ; celles de son nouveau conjoint en plus, de ce jour, sous le
+ * plafond du ménage, quand il vit en couple et que la version dit ce facteur,
+ * le ménage formé et pas encore défait. Chaque changement compte venu avant la
+ * date d'effet, ou ce jour même quand `leJourMeme`. Voir
+ * `_ressources_du_plafond` du Python.
  */
 function ressourcesDuPlafond(parametres, conjoint, ressources, dateEffet, leJourMeme = true) {
   let retenues = ressources;
@@ -1503,9 +1520,9 @@ function ressourcesDuPlafond(parametres, conjoint, ressources, dateEffet, leJour
   if (facteur === null || facteur === undefined
       || conjoint.nouvelle_union === null || conjoint.nouvelle_union === undefined || !formee
       || venu(conjoint.nouvelle_union_fin, dateEffet, leJourMeme)) {
-    return [retenues, 1.0];
+    return [retenues, 1.0, false];
   }
-  return [retenues + apportAu(conjoint, dateEffet, leJourMeme), Number(facteur)];
+  return [retenues + apportAu(conjoint, dateEffet, leJourMeme), Number(facteur), true];
 }
 
 /**
@@ -1904,7 +1921,7 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
     const ecretable = parametres.ressources === "ecretement";
     const sansSesRetraites = (parametres.cumul ?? null) !== null;
     const auDeces = table.version(fiche, deces, deces);
-    const [personnelles, facteur, periode, examineesAu] = ressourcesALaDateDEffet(
+    const [personnelles, facteur, menage, periode, examines] = ressourcesALaDateDEffet(
       parametres, conjoint,
       sansSesRetraites ? ressources - retraitesPersonnelles
         : ressources - (retraitesPersonnelles - retraites),
@@ -2014,8 +2031,8 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
       taux, dateEffet, fiabilite).avec({
       minimum, majoration_trois_enfants: troisEnfants, minimum_contributif: contributif,
       ecretement_du_maximum: ecretement, maximum, plafond: plafondAnnuel,
-      ressources_retenues: retenues, periode_de_reference: periode,
-      ressources_examinees_au: examineesAu, part,
+      ressources_retenues: retenues, plafond_du_menage: menage, periode_de_reference: periode,
+      ressources_examinees_au: examines[examines.length - 1], moments_examines: examines, part,
       limite_cumul: limiteCumul, majorations_forfaitaires: ulterieures, cumul_effet: cumulEffet,
       reduction_du_cumul: reductionDuCumul, revision_effet: revisionEffet,
       reduction_de_la_revision: reductionDeLaRevision, revisions,
@@ -2054,7 +2071,7 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
   }
   if (independantes.length > 0) {
     const premiers = independantes[0][4].parametres;
-    const [personnelles, facteur] = ressourcesDuPlafond(premiers, conjoint, ressources,
+    const [personnelles, facteur, menage] = ressourcesDuPlafond(premiers, conjoint, ressources,
       aLAge(conjoint.naissance, lendemain, Number(premiers.age_minimum)));
     const plafondAnnuel = facteur * Number(premiers.plafond_pass)
       * moteur.macro.plafond_securite_sociale.valeur(annee);
@@ -2076,7 +2093,7 @@ export function reversion(moteur, pensions, carriere, annee, decesSuppose = null
       const dateEffet = aLAge(conjoint.naissance, lendemain, Number(parametres.age_minimum));
       lignes.set(regime, ligne(regime, base, montant, motif, fiche, version, taux,
         dateEffet, fiabilite).avec({ plafond: plafondAnnuel, ressources_retenues: retenues,
-        part }));
+        plafond_du_menage: menage, part }));
     }
   }
 
