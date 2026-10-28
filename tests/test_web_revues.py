@@ -911,6 +911,43 @@ def test_le_retraite_lit_le_chemin_de_sa_pension_depuis_son_depart():
     assert "Pour vous, 1 573,32 € en décembre 2019 : +1,0 %." in texte
 
 
+def test_le_chemin_de_la_pension_dit_le_plancher_que_les_majorations_ne_relevent_pas():
+    """Les majorations forfaitaires de 1972 à 1982 « s'appliquaient au montant de
+    base, avant comparaison au minimum et au maximum » (exposé de la Cnav
+    « Montant de la retraite personnelle ») ; elles ne jouent pas « sur le
+    minimum des pensions » (circulaire Cnav n° 2/72, A), et les 6 % de 1982
+    vont à « tous les ex-invalides » (n° 79/82, B, 1°). La revalorisation de
+    la ligne les comprend : la cellule de la règle dit ce qu'elle retire.
+    Le salarié parti en avril 1970, porté à la pension minimum : 20,96 € par
+    mois au départ, ×12,9220, dont les 6 % de décembre 1982 que le plancher ne
+    reçoit pas, 20,96 × 12,9220 × 6/106 = 15,33 €. L'ex-invalide d'avril 1969
+    porté à la pension minimum entière, au montant de l'AVTS, son autre
+    plancher — la cellule nomme le premier, comme le détail de la liquidation —,
+    de même : 19,69 × 13,8886 × 6/106 = 15,48 €. Celui que sa pension
+    d'invalidité relève, que les 6 % relèvent avec elle, n'a rien de moins."""
+    def chemin(requete: dict) -> str:
+        corps = rendre("/simuler", requete)[1]
+        debut = corps.index('id="resultats-aujourdhui"')
+        bloc = corps[debut:corps.index("</details>", debut)]
+        return html.unescape(re.sub(r"[ \t\n]+", " ", re.sub(r"<[^>]+>", " ", bloc))
+                             ).replace("\u202f", " ")
+
+    retire = ("coefficients de l'article L. 161-23-1, date après date (moins {} : portée "
+              "à la pension minimum, plancher que les majorations forfaitaires de 1972 à "
+              "1982 comprises dans sa revalorisation ne relèvent pas)")
+    minimum = chemin({"naissance": "1905-03-15", "debut": "1945-03",
+                      "liquidation": "1970-04", "salaire": "0.18"})
+    assert "20,96 € ×12,9220 255,54 € " + retire.format("15,33 €") in minimum
+    ex_invalide = {"naissance": "1909-03-15", "debut": "1945-03", "liquidation": "1969-04",
+                   "interruptions": "1960:1969:invalidite"}
+    a_l_avts = chemin({**ex_invalide, "salaire": "0.12"})
+    assert "19,69 € ×13,8886 258,01 € " + retire.format("15,48 €") in a_l_avts
+    a_l_invalidite = chemin({**ex_invalide, "salaire": "0.3"})
+    assert "33,01 € ×13,8886 458,42 € coefficients de l'article L. 161-23-1, date après " \
+        "date Union nationale" in a_l_invalidite
+    assert "(moins " not in a_l_invalidite
+
+
 def test_aucun_lien_ne_remplace_le_lecteur_par_une_ancre():
     """Derrière le `#` vit le lecteur — sa carrière, ses réglages. Un lien
     « #resultats-financement » le remplaçait : le routeur relisait la page sans

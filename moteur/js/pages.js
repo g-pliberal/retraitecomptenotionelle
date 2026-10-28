@@ -6124,6 +6124,19 @@ const REGLES_DE_REVALORISATION = {
 const REGLE_PAR_DEFAUT_EN_CLAIR = "règle du régime général, faute de série propre "
   + "à ce régime";
 
+/**
+ * Les planchers auxquels la liquidation porte une pension
+ * (`PensionRegime.planchers`), et ce qu'en relèvent les majorations
+ * forfaitaires de 1972 à 1982 que son coefficient porte : rien du minimum des
+ * pensions ni de l'AVTS ; de la pension d'invalidité, les 6 % et les 4 % de
+ * 1982 seuls (fiche `majorations_forfaitaires_1972_1982`).
+ */
+const PLANCHERS_NON_MAJORES = {
+  minimum: ["la pension minimum", "ne relèvent pas"],
+  avts: ["l'allocation aux vieux travailleurs salariés", "ne relèvent pas"],
+  pension_d_invalidite: ["la pension d'invalidité qu'elle remplace", "ne relèvent pas toutes"],
+};
+
 /** Fin de la péréquation des pensions civiles et militaires, en année. */
 const ANNEE_FIN_PEREQUATION = 2004;
 
@@ -6167,12 +6180,30 @@ function pensionDAujourdhui(contexte, comparaison, saisie) {
 
   const mois = (annuel) => g.eurosCentimes(annuel / MOIS_PAR_AN);
 
+  // Portée à un plancher, le plus haut de ceux que sa liquidation a comparés —
+  // le premier à égalité, la pension minimum avant l'AVTS de l'ex-invalide,
+  // comme le dit son détail —, la pension ne reçoit pas toutes les majorations
+  // forfaitaires de 1972 à 1982 que son coefficient porte : la règle dit ce que
+  // le plancher en retire (`plancher_non_majore`, `revalorisation.js`).
+  const regleSuivie = (regime) => {
+    if ((regime.plancher_non_majore ?? 0.0) <= 0) return regleEnClair(regime);
+    const pension = comparaison.actuel.pensions_par_regime.find(
+      (p) => p.regime === regime.regime);
+    const [nature] = pension.planchers.reduce(
+      (haut, plancher) => (plancher[1] > haut[1] ? plancher : haut));
+    const [plancher, relevent] = PLANCHERS_NON_MAJORES[nature];
+    return `${regleEnClair(regime)} <span class="discret">(moins `
+      + `${mois(regime.plancher_non_majore)} : portée à ${plancher}, plancher que les `
+      + `majorations forfaitaires de 1972 à 1982 comprises dans sa revalorisation `
+      + `${relevent})</span>`;
+  };
+
   const lignes = [];
   for (const regime of actuel.regimes) {
     if (regime.hors_repartition || regime.au_depart <= 0) continue;
     lignes.push([echapper(nomRegime(regime.regime)), mois(regime.au_depart),
       `×${g.nombre(regime.coefficient, 4)}`, mois(regime.aujourd_hui),
-      regleEnClair(regime)]);
+      regleSuivie(regime)]);
   }
   if (actuel.majoration_enfants > 0) {
     lignes.push(["+ Majoration pour enfants", mois(actuel.majoration_enfants),
@@ -6197,7 +6228,7 @@ function pensionDAujourdhui(contexte, comparaison, saisie) {
     if (regime.hors_repartition && regime.au_depart > 0) {
       lignes.push([`hors total — ${echapper(nomRegime(regime.regime))}`,
         mois(regime.au_depart), `×${g.nombre(regime.coefficient, 4)}`,
-        mois(regime.aujourd_hui), regleEnClair(regime)]);
+        mois(regime.aujourd_hui), regleSuivie(regime)]);
     }
   }
   const tableau = g.tableau(
