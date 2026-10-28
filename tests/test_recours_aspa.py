@@ -145,6 +145,20 @@ def test_un_couple_a_droit_sous_le_plafond_du_couple_ses_deux_pensions_comptees(
         100 * (0.6 * 0.5 * 300.0 + 0.4 * 200.0) + 50 * 0.6 * 100.0)
 
 
+def test_la_page_compte_chacun_a_part_sous_son_plafond_ou_la_moitie_de_celui_du_couple():
+    """La page Coût compte les ayants droit de l'ASPA sur les seules pensions
+    de droit direct, chacun à part, sans réversion : qui vit seul sous le
+    plafond d'une personne seule, qui vit en couple sous la moitié de celui du
+    couple (``effet_retour.EffetRetour._aspa``). Une femme de 70 ans, 600 €,
+    cent têtes, en couple pour 40 % : soixante seules sous 1 000 €, quarante
+    en couple sous 750 €. Un homme de 70 ans, 800 €, cent têtes, en couple
+    pour 70 % : trente seuls sous 1 000 € ; 800 € passe 750. Cent trente."""
+    lignes = [R.Ligne("F", 70, 600.0, 100.0), R.Ligne("H", 70, 800.0, 100.0),
+              R.Ligne("F", 64, 100.0, 100.0)]
+    assert R.ayants_droit_comme_la_page(lignes, 1000.0, 1500.0,
+                                        _en_couple({"F": 0.4, "H": 0.7})) == pytest.approx(130.0)
+
+
 def test_le_recours_rapporte_les_foyers_servis_aux_foyers_qui_ont_droit():
     """130 000 hommes et 43 000 femmes servis en couple font 173 000 couples si
     aucun n'a deux allocataires, 130 000 si chaque femme servie l'est avec son

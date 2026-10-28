@@ -249,6 +249,21 @@ def ayants_droit(lignes: list[Ligne], plafond_seul: float, plafond_couple: float
     return droits
 
 
+def ayants_droit_comme_la_page(lignes: list[Ligne], plafond_seul: float, plafond_couple: float,
+                               en_couple: Callable[[int, str], float],
+                               age_minimal: int = AGE_DE_L_ASPA) -> float:
+    """Les ayants droit comme la page Coût les compte
+    (``effet_retour.EffetRetour._aspa``, que la garantie mêle de même) : la
+    seule pension de droit direct, chacun à part, sans réversion ; qui vit
+    seul sous le plafond d'une personne seule, qui vit en couple sous la
+    moitié de celui du couple."""
+    return somme_ordonnee(
+        ligne.tetes * ((1.0 - part) * (ligne.pension < plafond_seul)
+                       + part * (ligne.pension < plafond_couple / 2.0))
+        for ligne in lignes if ligne.age >= age_minimal
+        for part in (en_couple(ligne.age, ligne.sexe),))
+
+
 def couples_servis(hommes: float, femmes: float, part_a_deux: float) -> float:
     """Les couples que comptent ``hommes`` et ``femmes`` allocataires en couple,
     quand ``part_a_deux`` d'entre eux en ont deux : chaque couple compte un
@@ -355,6 +370,7 @@ def mesurer_annee(lignes: list[Ligne], racine: Path, annee: int, bareme: tuple[f
     femmes = somme_ordonnee(publies[("couple", "F", t)] for t in tranches)
     seules = somme_ordonnee(droits.seules.values())
     couples = droits.couples_un + droits.couples_deux
+    comme_la_page = ayants_droit_comme_la_page(lignes, bareme[0], bareme[1], couple.part)
     servis_couples = {"sans_couple_a_deux": couples_servis(hommes, femmes, 0.0),
                       "ines": couples_servis(hommes, femmes, PART_DES_COUPLES_A_DEUX),
                       "tous_a_deux": couples_servis(hommes, femmes, min(hommes, femmes)
@@ -382,6 +398,11 @@ def mesurer_annee(lignes: list[Ligne], racine: Path, annee: int, bareme: tuple[f
             "personnes_ayants_droit": {s: somme_ordonnee(droits.en_couple.get((s, t), 0.0)
                                                          for t in tranches) for s in SEXES},
         },
+        # La convention de la page compte des personnes : les servis aussi,
+        # seuls et en couple.
+        "comme_la_page": {"servis": seules_servies + hommes + femmes,
+                          "ayants_droit": comme_la_page,
+                          "recours": recours(seules_servies + hommes + femmes, comme_la_page)},
         "montants": droits.montants,
         "personnes": {cle: somme_ordonnee(v for (m, s, _), v in droits.personnes.items()
                                           if (m, s) == cle_)
@@ -419,6 +440,10 @@ def _milliers(valeur: float) -> str:
     return f"{valeur / 1000.0:,.1f}".replace(",", " ").replace(".", ",")
 
 
+def _millions(valeur: float) -> str:
+    return f"{valeur / 1e6:,.0f}".replace(",", " ")
+
+
 def _pc(valeur: float) -> str:
     return "—" if math.isnan(valeur) else f"{100.0 * valeur:.1f}".replace(".", ",")
 
@@ -446,10 +471,14 @@ def imprimer(resultat: dict) -> None:
         for cle, v in r["seules"]["par_tranche"].items():
             print(f"  {cle} : {_milliers(v['servies'])} / {_milliers(v['ayants_droit'])} / "
                   f"{_milliers(v['personnes'])}")
+        page = r["comme_la_page"]
+        print(f"  Comme la page les compte : {_milliers(page['servis'])} servis pour "
+              f"{_milliers(page['ayants_droit'])} ayants droit, un recours de "
+              f"{_pc(page['recours'])} %")
         print(f"  ASPA de tous les ayants droit, millions d'euros par an : seules "
-              f"{r['montants']['seules'] * 12 / 1e6:,.0f}, couples "
-              f"{r['montants']['couples'] * 12 / 1e6:,.0f} ; réversions des veufs "
-              f"{r['reversions_annuelles'] / 1e6:,.0f}".replace(",", " "))
+              f"{_millions(r['montants']['seules'] * 12)}, couples "
+              f"{_millions(r['montants']['couples'] * 12)} ; réversions des veufs "
+              f"{_millions(r['reversions_annuelles'])}")
 
 
 def main(argv: list[str] | None = None) -> int:
