@@ -15,11 +15,29 @@ effet: >-
   rend, pour un militaire entré à dix-huit ans et parti à quarante-cinq : +14,67
   % de pension au né en 1970, +3,58 % au né en 1980 (165 trimestres au lieu de 172)
   ; rien aux nés de 1985 et 1990, dont les services atteignent déjà le pourcentage
-  maximum.
+  maximum. CORRIGÉ LE 28 OCTOBRE 2026. Le droit ouvrait la pension militaire le mois
+  même où les services s'achèvent, un mois avant le premier départ qui les a (L. 24,
+  II, 2° ; L. 90, I) : elle s'ouvre le mois qui suit (Carriere.age_de_service), et
+  l'année de la durée est celle où les services s'achèvent, à quelque jour que le
+  militaire soit né (annee_ouverture_des_droits). Au scénario 1, l'âge d'ouverture des
+  témoins militaires recule d'un mois, et aucune durée ni aucune pension ne bouge ;
+  le notionnel prospectif, qui lit cet âge, sert de 0,55 à 0,60 % de moins à trois
+  d'entre eux.
 sources:
-  lu_le: 2026-09-23
+  lu_le: 2026-10-28
   prochaine_relecture: 2027-03-31
   a_relire:
+  - >-
+    Le III de L. 13 (2014 à 2023) lit la durée à « l'année à compter de laquelle la
+    liquidation peut intervenir », celle du mois qui suit les services, et le XXIV, C,
+    de la loi de 2023 vise « ceux pouvant liquider leur pension à compter du 1er
+    septembre 2023 » ; la Cour des comptes, elle, dit « l'année où ils ont accompli
+    le nombre d'années de service requis ». Le modèle compare au mois de
+    l'anniversaire de l'âge d'ouverture (duree_requise_avant_soixante_ans) : le mois
+    où les services s'achèvent pour qui est né en cours de mois, le suivant pour qui
+    est né un premier du mois. À trancher, pour le militaire comme pour l'emploi
+    classé et la carrière longue de la même fonction ; l'article 5 de la loi n°
+    2003-775 (2009 à 2013) reste à lire.
   - >-
     Aucun exemple chiffré publié : ni le SRE ni service-public ne donnent la durée
     d'un militaire par année d'ouverture, et la Cour la décrit sans la chiffrer.
@@ -51,6 +69,24 @@ sources:
       version LEGIARTI000006758610, tableau « Jusqu'en 2003 : 150 ; 2004 : 152 […]
       2008 : 160 » ; L. 161-17-3, version LEGIARTI000053280903, 6° : 172 trimestres.
     date: 2026-09-23
+  - type: legifrance
+    reference: >-
+      Lus dans l'index LEGI le 28 octobre 2026. L. 24 du code des pensions, version
+      LEGIARTI000047452804, II, 2° : « Lorsqu'un militaire non officier est radié
+      des cadres par limite d'âge, ou par suite d'infirmités, ou encore s'il réunit,
+      à la date de son admission à la retraite, dix-sept ans de services effectifs »
+      (quinze ans, version LEGIARTI000006362730, jusqu'au 1er juillet 2011) ; L. 26,
+      version LEGIARTI000006362735 : « La mise en paiement de la pension de retraite
+      […] ne peut être antérieure à la date de la décision de radiation des cadres » ;
+      L. 90, version LEGIARTI000023034140, I, pour les pensions liquidées depuis le
+      1er juillet 2011 : « La pension […] est due à compter du premier jour du mois
+      suivant la cessation de l'activité ». Loi n° 2003-775, article 66, II : le
+      tableau se lit à l'« Année au cours de laquelle sont réunies les conditions
+      mentionnées au I et au II de l'article L. 24 » ; L. 13, version
+      LEGIARTI000006362702 (2004 à 2014), n'a pas de III ; version
+      LEGIARTI000028498258, III : « celle exigée des fonctionnaires atteignant cet
+      âge l'année à compter de laquelle la liquidation peut intervenir ».
+    date: 2026-10-28
   - type: autre
     reference: >-
       Cour des comptes, « Les retraites des fonctionnaires de l'État », septembre

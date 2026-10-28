@@ -1610,13 +1610,17 @@ class Carriere:
 
     def age_de_service(self, affiliations: Iterable[str],
                        annees: float) -> float | None:
-        """Âge auquel la durée de service demandée est atteinte : l'âge au
-        mois que :meth:`date_de_service` date, compté comme tout âge
-        (:meth:`age_au`), pour que l'âge redonne ce mois-là."""
+        """Âge du premier départ qui a la durée de service demandée : celui du
+        mois qui suit le mois que :meth:`date_de_service` date, compté comme
+        tout âge (:meth:`age_au`). Les services s'achèvent à la fin de ce
+        mois, et la pension militaire « est due à compter du premier jour du
+        mois suivant la cessation de l'activité » (L. 90 du code des
+        pensions) ; liquidée le mois même, la carrière n'en a pas encore le
+        dernier, et l'âge ne se confirmait pas."""
         date = self.date_de_service(affiliations, annees)
         if date is None:
             return None
-        return self.age_au(date)
+        return self.age_au(date.plus_mois(1))
 
     @cached_property
     def trimestres_actuels(self) -> int:

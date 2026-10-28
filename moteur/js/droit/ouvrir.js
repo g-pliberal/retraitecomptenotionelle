@@ -1348,9 +1348,16 @@ export function anneeOuvertureDesDroits(moteur, periode, carriere, anneeLiquidat
       return Math.min(anneeLiquidation, parent.anneeDesParametres);
     }
   }
-  const ouverture = carriere.moisDeLAnniversaire(
-    ageOuverture(moteur, periode, carriere)).annee;
-  return Math.min(anneeLiquidation, ouverture);
+  // Le militaire les réunit le mois où ses services s'achèvent, celui qui
+  // précède sa pension (`ageDeService`, carriere.js), à quelque jour qu'il soit
+  // né : voir `annee_ouverture_des_droits` (ouvrir.py).
+  const age = ageOuverture(moteur, periode, carriere);
+  const militaire = droitMilitaire(moteur, periode, carriere);
+  const reunies = militaire !== null && !militaire.jouissanceDifferee
+    && Math.abs(age - militaire.ageOuverture) < 1e-9
+    ? carriere.dateDeLAge(age).plusMois(-1)
+    : carriere.moisDeLAnniversaire(age);
+  return Math.min(anneeLiquidation, reunies.annee);
 }
 
 export function moisOuvertureDesDroits(moteur, periode, carriere) {

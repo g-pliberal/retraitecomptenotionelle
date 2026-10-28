@@ -1558,6 +1558,12 @@ def annee_ouverture_des_droits(moteur, periode: PeriodeRegime,
     hors de l'ancien calcul, la loi du 9 novembre 2010 retient l'année de ses
     soixante ans, ou de l'âge de sa catégorie active, même postérieure à sa
     liquidation (:func:`depart_parent_trois_enfants`).
+
+    LE MILITAIRE les réunit le mois où ses services s'achèvent, celui qui
+    précède sa pension (:meth:`~retraite_notionnelle.carriere.Carriere.age_de_service`) :
+    né un 1er janvier, l'anniversaire de son âge d'ouverture tombe le mois de
+    sa pension, et un militaire dont les services s'achèvent en décembre 2004
+    se voyait opposer la durée de 2005.
     """
     parent = depart_parent_trois_enfants(moteur, periode, carriere)
     if parent is not None:
@@ -1566,9 +1572,14 @@ def annee_ouverture_des_droits(moteur, periode: PeriodeRegime,
         if parent.age_ouverture < age_ouverture(moteur, periode, carriere,
                                                 parents_compris=False):
             return min(annee_liquidation, parent.annee_des_parametres)
-    ouverture = carriere.mois_de_l_anniversaire(
-        age_ouverture(moteur, periode, carriere)).annee
-    return min(annee_liquidation, ouverture)
+    age = age_ouverture(moteur, periode, carriere)
+    militaire = droit_militaire(moteur, periode, carriere)
+    if (militaire is not None and not militaire.jouissance_differee
+            and abs(age - militaire.age_ouverture) < 1e-9):
+        reunies = carriere.date_de_l_age(age).plus_mois(-1)
+    else:
+        reunies = carriere.mois_de_l_anniversaire(age)
+    return min(annee_liquidation, reunies.annee)
 
 
 def mois_ouverture_des_droits(moteur, periode: PeriodeRegime,

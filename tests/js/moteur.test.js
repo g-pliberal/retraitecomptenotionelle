@@ -265,6 +265,30 @@ test("les régimes alignés se liquident ensemble depuis juillet 2017", () => {
  * (R. 13 b), bonification dès deux enfants (R. 14). Aucun témoin figé ne tient
  * le polypensionné : cet essai le fait.
  */
+/**
+ * La pension militaire s'ouvre le mois qui suit ses services, comme en Python
+ * (`test_la_pension_militaire_s_ouvre_le_mois_qui_suit_ses_services`,
+ * `tests/test_simulateur.py`) : né le 1er janvier 1972 et engagé à dix-huit
+ * ans, un sous-officier réunit ses quinze ans à la fin de décembre 2004, et sa
+ * pension est due au 1er janvier 2005 (L. 24, II, 2° ; L. 90, I), à 33 ans.
+ */
+test("la pension militaire s'ouvre le mois qui suit ses services", () => {
+  const simulateur = new Contexte(paquet).simulateur();
+  const scenario = simulateur.scenarioActuel;
+  const proche = (a, b) => assert.ok(Math.abs(a - b) < 1e-9, `${a} ≠ ${b}`);
+  const carriere = (age) => simulateur.carriereSimple({
+    annee_naissance: 1972, sexe: "H", affiliation: "militaire", age_debut: 18,
+    age_liquidation: age, niveau_salaire: 1.1, part_primes: 0.22, jour_naissance: 1,
+  });
+  const ouverture = (age) => ouvrir.ageOuvertureDroit(scenario, carriere(age));
+  proche(ouverture(33), 33);
+  proche(ouverture(45), 33);
+  assert.ok(ouverture(33 - 1 / 12) > 33);
+  // La durée, elle, est celle de 2004, l'année où ses services s'achèvent
+  // (loi n° 2003-775, article 66, II), comme en Python.
+  assert.equal(scenario.calculer(carriere(45)).trimestres_requis, 152);
+});
+
 test("les âges et la bonification des marins sont ceux du Python", () => {
   const contexte = new Contexte(paquet);
   const simulateur = contexte.simulateur();

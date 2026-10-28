@@ -7949,16 +7949,62 @@ def test_la_duree_militaire_se_lit_a_l_annee_ou_l_ancienne_est_atteinte(simulate
     génération. Un engagé à dix-huit ans en 1990 réunit ses quinze ans en 2004
     et les garde ; engagé en 2000, il les réunit fin 2014 et en doit seize ans
     et sept mois ; engagé en 2003, fin 2017, et il en doit dix-sept. Né un
-    1er janvier, ses âges se comptent de son mois de naissance.
+    1er janvier, ses âges se comptent de son mois de naissance, et sa pension
+    s'ouvre le mois qui suit ses services (le test suivant) : à 33 ans, à
+    34 ans et 7 mois, à 35 ans.
     """
     def ouverture(generation):
         return _pension_actuelle(
             simulateur, "militaire", generation, 45, age_debut=18, jour=1,
         ).age_ouverture_opposable
 
-    assert ouverture(1972) == pytest.approx(32.92, abs=0.02)   # quinze ans
-    assert ouverture(1982) == pytest.approx(34.50, abs=0.02)   # seize ans sept
-    assert ouverture(1985) == pytest.approx(34.92, abs=0.02)   # dix-sept ans
+    assert ouverture(1972) == pytest.approx(33.0, abs=0.02)         # quinze ans
+    assert ouverture(1982) == pytest.approx(34 + 7 / 12, abs=0.02)  # seize ans sept
+    assert ouverture(1985) == pytest.approx(35.0, abs=0.02)         # dix-sept ans
+
+
+def test_la_pension_militaire_s_ouvre_le_mois_qui_suit_ses_services(simulateur):
+    """Elle s'ouvre à qui « réunit, à la date de son admission à la retraite »,
+    ses années de services (L. 24, II, 2°), et sa jouissance « ne peut être
+    antérieure à la date de la décision de radiation des cadres » (L. 26) :
+    depuis le 1er juillet 2011, elle « est due à compter du premier jour du
+    mois suivant la cessation de l'activité » (L. 90, I). Né le 1er janvier
+    1972 et engagé à dix-huit ans, en janvier 1990, un sous-officier réunit
+    ses quinze ans à la fin de décembre 2004, avant le 1er juillet 2011 : sa
+    pension s'ouvre au 1er janvier 2005, à 33 ans, à quelque âge qu'il parte
+    ensuite. Liquidée au 1er décembre 2004, sa carrière n'a que quatorze ans
+    et onze mois de services, et le droit ne l'ouvre pas. Le droit la datait
+    du mois même où les services s'achèvent, un mois avant le premier départ
+    qui les a : aucun âge ne se confirmait, et la recherche du départ le plus
+    précoce (``agesDeLEstimation``, ``moteur/js/pilote.js``) ne l'atteignait
+    pas."""
+    actuel = simulateur.scenario_actuel
+
+    def ouverture(age):
+        carriere = simulateur.carriere_simple(
+            annee_naissance=1972, sexe="H", affiliation="militaire", age_debut=18,
+            age_liquidation=age, niveau_salaire=1.1, part_primes=0.22, jour_naissance=1)
+        return ouvrir.age_ouverture_droit(actuel, carriere)
+
+    assert ouverture(33.0) == pytest.approx(33.0)
+    assert ouverture(45.0) == pytest.approx(33.0)
+    assert ouverture(33.0 - 1 / 12) > 33.0
+
+
+def test_la_duree_du_militaire_se_lit_a_l_annee_ou_ses_services_s_achevent(simulateur):
+    """Jusqu'en 2008, le nombre de trimestres qui donne le pourcentage maximum
+    se lit à l'« Année au cours de laquelle sont réunies les conditions
+    mentionnées au I et au II de l'article L. 24 » (loi n° 2003-775, article
+    66, II) : 2004 pour le sous-officier né le 1er janvier 1972, engagé en
+    janvier 1990, dont les quinze ans s'achèvent fin décembre 2004, et 152
+    trimestres, quand sa pension ne s'ouvre qu'au 1er janvier 2005 (le test
+    précédent). L'année se lisait au mois de l'anniversaire de son âge
+    d'ouverture, que le jour de naissance déplace d'un mois."""
+    for jour in (1, 15):
+        carriere = simulateur.carriere_simple(
+            annee_naissance=1972, sexe="H", affiliation="militaire", age_debut=18,
+            age_liquidation=45, niveau_salaire=1.1, part_primes=0.22, jour_naissance=jour)
+        assert simulateur.scenario_actuel.calculer(carriere).trimestres_requis == 152, jour
 
 
 def test_le_militaire_de_moins_de_quinze_ans_reste_au_droit_commun(simulateur):

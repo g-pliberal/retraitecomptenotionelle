@@ -1755,12 +1755,17 @@ export class Carriere {
     return avant;
   }
 
-  /** Âge auquel la durée de service demandée est atteinte. */
+  /**
+   * Âge du premier départ qui a la durée de service demandée : celui du mois
+   * qui suit le mois que `dateDeService` date, la pension étant due le premier
+   * jour du mois suivant la cessation de l'activité (L. 90 du code des
+   * pensions). Voir `age_de_service` (carriere.py).
+   */
   ageDeService(affiliations, annees) {
     const date = this.dateDeService(affiliations, annees);
     return date === null
       ? null
-      : this.ageAu(date);
+      : this.ageAu(date.plusMois(1));
   }
 
   /**
