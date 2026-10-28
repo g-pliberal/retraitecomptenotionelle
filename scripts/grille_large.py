@@ -271,7 +271,13 @@ carrières incomplètes attendaient toutes le taux plein, ou décotaient ; une
 troisième jumelle de chacune, reconnue inapte au travail, pèse désormais la
 part des retraités de sa génération que l'EIR voit partir pour invalidité ou
 pour inaptitude sans carrière complète, 9,4 % des femmes et 7,6 % des hommes
-nés en 1953.
+nés en 1953. La trente-troisième (le même jour) fait partir une part des
+fonctionnaires civils après leur taux plein, avec une surcote
+(:data:`SURCOTE_DES_STATUTAIRES`) : la population ne surcotait qu'au salariat
+et chez les non-salariés, quand l'État surcote 38,9 % de ses liquidants civils
+de 2024 ; chaque catégorie de l'État et de la CNRACL surcote désormais dans la
+part et de la surcote moyenne que le jaune pensions lui trouve, comptée du
+premier âge où le modèle la lui sert.
 
 CE QUE LA MESURE N'EST PAS
 ---------------------------
@@ -329,6 +335,7 @@ from retraite_notionnelle.donnees.equilibre import (  # noqa: E402
 )
 from retraite_notionnelle.donnees.macro import ANNEE_CREATION_AVPF, DonneesMacro  # noqa: E402
 from retraite_notionnelle.donnees.population import Population  # noqa: E402
+from retraite_notionnelle.droit.coordonner import REGIMES_CODE_DES_PENSIONS  # noqa: E402
 from retraite_notionnelle.facteurs_depense import (  # noqa: E402
     ANNEE_DU_FLUX, CAISSE_DU_FLUX, GENERATION_DES_DECOTES, GENERATION_DU_FLUX,
     part_decotee_de_la_generation,
@@ -1047,6 +1054,64 @@ TRANCHES_DES_SURCOTES = ("30_40", "40_plus")
 #: deux attentes, ni ne reçoit celle des départs d'avant lui.
 PREMIERES_ANNEES = 2
 
+#: La trente-troisième version (action 138, étape 14, le 28 octobre 2026) : les
+#: fonctionnaires civils partent aussi après leur taux plein, avec une surcote,
+#: quand la population ne surcotait qu'au salariat et chez les non-salariés
+#: (:data:`DEPARTS_AVEC_SURCOTE`) ; l'État surcote 38,9 % de ses liquidants
+#: civils de 2024, deux fois plus que la Cnav (EACR, table H). Chaque carrière
+#: de fonctionnaire civil se décline (:func:`departs_des_fonctionnaires_avec_surcote`) :
+#: la part de sa catégorie que le jaune pensions voit surcoter — 48,5 % des
+#: sédentaires de l'État, 29,3 % de ses actifs, 8,1 % de ses super-actifs,
+#: 27,2 % des sédentaires de la CNRACL, 13,8 % de ses actifs
+#: (:func:`surcotes_des_fonctionnaires`) — part après le premier âge où le
+#: modèle sert une surcote à sa pension (:func:`debut_de_la_surcote`), autant
+#: de trimestres plus tard que la surcote moyenne de sa catégorie en compte ;
+#: le reste part au taux plein. L'actif, qui a le taux plein à sa limite d'âge
+#: sans la durée, ne surcote qu'une fois sa durée réunie. Le militaire, à qui ni
+#: le modèle ni la table H ne comptent de surcote, et les agents de la conduite
+#: et des IEG, qui partent à l'ouverture de leur statut, gardent leur départ.
+#: Cinq conventions : la part et l'attente de chaque catégorie sont celles
+#: des départs pour ancienneté de 2025, à toutes les générations, sans égard
+#: au sexe ni au rang ; une attente par catégorie, celle de sa surcote
+#: moyenne, le jaune ne publiant pas leur distribution ; le sédentaire de
+#: chaque caisse porte ses carrières longues (:data:`SURCOTES_DU_JAUNE`) ; le
+#: début de la surcote se lit au trimestre près ; comme au salariat, une
+#: génération qui atteint son âge légal avant 2004 n'attend pas
+#: (:data:`ANNEE_DE_LA_SURCOTE`).
+SURCOTE_DES_STATUTAIRES = True
+
+#: Les départs pour ancienneté de 2025 que chaque catégorie de fonctionnaire
+#: civil de la population porte, au jaune pensions annexé au PLF 2027
+#: (``macro/caracteristiques_fonction_publique.csv``, qu'aucun calcul ne lit) :
+#: lignes ``(départs, part qui surcote, taux moyen de leur surcote)``, celles
+#: qui se retranchent comptées en départs négatifs. Le sédentaire porte aussi
+#: les carrières longues de sa caisse (``castypes.DEPARTS_ETAT_CIVILS_2025``,
+#: ``DEPARTS_CNRACL_2025``) : à la CNRACL, le tableau B-5 dit leur surcote ; à
+#: l'État, le tableau B-4 ne la dit pas, et tous les départs pour ancienneté
+#: du tableau B-3, moins les deux catégories actives du B-4, la donnent avec
+#: celle des sédentaires.
+SURCOTES_DU_JAUNE = {
+    "fonctionnaire_etat": ((41_812.0, 0.427, 0.106), (-5_552.0, 0.293, 0.097),
+                           (-3_347.0, 0.081, 0.12)),
+    "fonctionnaire_etat_actif": ((5_552.0, 0.293, 0.097),),
+    "fonctionnaire_etat_super_actif": ((3_347.0, 0.081, 0.12),),
+    "fonctionnaire_territorial_hospitalier": ((27_477.0, 0.303, 0.102),
+                                              (15_054.0, 0.215, 0.12)),
+    "fonctionnaire_territorial_hospitalier_actif": ((10_597.0, 0.138, 0.084),),
+}
+
+#: Ce qu'un trimestre de surcote ajoute à la pension d'un fonctionnaire depuis
+#: 2009 (L. 14, III, du code des pensions ; barème ``fonction_publique`` de
+#: ``legislation/surcote_baremes.csv``) : la surcote moyenne d'une catégorie
+#: en dit le nombre moyen de trimestres.
+SURCOTE_DU_TRIMESTRE = 0.0125
+
+#: Les trimestres, de part et d'autre de son taux plein, où se cherche le
+#: début de la surcote d'un fonctionnaire (:func:`debut_de_la_surcote`) : dix
+#: ans, assez pour le super-actif, qui a le taux plein à 55 ans et ne surcote
+#: pas avant 62.
+TRIMESTRES_DE_RECHERCHE = 40
+
 #: La dix-septième version (action 138, étape 14, le 16 octobre 2026) : les
 #: retraités de l'Ircantec sont, pour la plupart, des salariés du privé passés
 #: par un contrat public, et non des contractuels de toute une carrière.
@@ -1192,6 +1257,10 @@ class CasTypeLarge(CasType):
     #: ``(génération, âge)`` triées.
     attente: float = 0.0
     legaux: tuple[tuple[int, float], ...] = ()
+    #: L'attente d'un fonctionnaire civil qui surcote se compte du premier âge
+    #: où le modèle sert une surcote à sa pension (:data:`SURCOTE_DES_STATUTAIRES`),
+    #: et non de l'âge légal.
+    depuis_la_surcote: bool = False
 
     def age_liquidation_pour(self, simulateur: Simulateur, generation: int,
                              variante: str = "droit") -> float:
@@ -1200,13 +1269,19 @@ class CasTypeLarge(CasType):
         avant celui que le pilote fixe : un départ avec décote, qui part à
         l'ouverture du droit, à toute génération ; un départ avec surcote, au
         taux plein, seulement si la génération atteint son âge légal depuis
-        que la surcote existe (:data:`ANNEE_DE_LA_SURCOTE`)."""
+        que la surcote existe (:data:`ANNEE_DE_LA_SURCOTE`) ;
+        sous :attr:`depuis_la_surcote`, :attr:`attente` années après le premier
+        âge où le modèle lui sert une surcote (:func:`debut_de_la_surcote`), s'il
+        lui en sert une."""
         age = super().age_liquidation_pour(simulateur, generation, variante)
         if not self.attente or variante == "absolu":
             return age
         legal = _par_generation(self.legaux, generation, 0.0)
         if self.regle_liquidation == "taux_plein" and generation + legal < ANNEE_DE_LA_SURCOTE:
             return age
+        if self.depuis_la_surcote:
+            debut = debut_de_la_surcote(simulateur, self, generation, age)
+            return age if debut is None else max(age, debut + self.attente)
         return max(age, legal + self.attente)
 
     def niveau_de(self, generation: int) -> float:
@@ -2879,6 +2954,8 @@ def population(effectifs, source: CaracteristiquesRetraites,
         variantes = assimilees_selon_le_rang(variantes, donnees.quintiles)
     if DEPARTS_AVEC_SURCOTE:
         variantes = departs_avec_surcote(variantes, departs_publies(racine), racine)
+    if SURCOTE_DES_STATUTAIRES:
+        variantes = departs_des_fonctionnaires_avec_surcote(variantes, racine)
     if ENTREE_AU_PREMIER_TRIMESTRE:
         variantes = entrees_au_premier_trimestre(variantes, racine)
     return variantes
@@ -3399,6 +3476,18 @@ def attentes_des_surcotes(publies: dict, racine: Path) -> dict[str, list[tuple[f
     return sortie
 
 
+def ages_legaux(racine: Path) -> tuple[tuple[int, float], ...]:
+    """L'âge légal de chaque génération de la grille (``cout.generations``),
+    paires ``(génération, âge)`` triées : celui d'où un départ avec surcote du
+    salariat compte son attente, et qui dit si la surcote existait
+    (:data:`ANNEE_DE_LA_SURCOTE`)."""
+    from retraite_notionnelle.scenarios.actuel import AgesOuverture
+
+    lus = AgesOuverture(racine)
+    return tuple((generation, lu[0]) for generation in C.generations()
+                 if (lu := lus.age(generation)) is not None)
+
+
 def departs_avec_surcote(variantes: list[Variante], publies: dict,
                          racine: Path) -> list[Variante]:
     """Chaque carrière qui peut surcoter (:func:`peut_surcoter`) se décline :
@@ -3406,13 +3495,9 @@ def departs_avec_surcote(variantes: list[Variante], publies: dict,
     répartie comme les départs avec surcote des nés en 1953
     (:func:`attentes_des_surcotes`), le reste part au taux plein ; les autres
     variantes telles quelles."""
-    from retraite_notionnelle.scenarios.actuel import AgesOuverture
-
     parts = parts_avec_surcote(publies)
     attentes = attentes_des_surcotes(publies, racine)
-    lus = AgesOuverture(racine)
-    legaux = tuple((generation, lu[0]) for generation in C.generations()
-                   if (lu := lus.age(generation)) is not None)
+    legaux = ages_legaux(racine)
     sortie = []
     for v in variantes:
         part = parts[v.cas.sexe]
@@ -3424,6 +3509,84 @@ def departs_avec_surcote(variantes: list[Variante], publies: dict,
             sortie.append(v.fois(part * poids, surcote=attente, cas=elargi(
                 v.cas, code=f"{v.cas.code}~surcote{attente:.2f}", attente=attente,
                 legaux=legaux)))
+    return sortie
+
+
+def surcotes_des_fonctionnaires() -> dict[str, tuple[float, float]]:
+    """La part des départs de chaque catégorie de fonctionnaire civil qui
+    surcote, et l'attente de ceux-là, en années (:data:`SURCOTES_DU_JAUNE`) :
+    autant de trimestres que leur surcote moyenne en compte, à
+    :data:`SURCOTE_DU_TRIMESTRE` le trimestre. Par affiliation."""
+    sortie = {}
+    for affiliation, lignes in SURCOTES_DU_JAUNE.items():
+        departs = somme_ordonnee(n for n, _, _ in lignes)
+        surcotes = somme_ordonnee(n * part for n, part, _ in lignes)
+        taux = somme_ordonnee(n * part * taux for n, part, taux in lignes) / surcotes
+        sortie[affiliation] = (surcotes / departs, taux / SURCOTE_DU_TRIMESTRE / 4.0)
+    return sortie
+
+
+def debut_de_la_surcote(simulateur: Simulateur, cas: CasType, generation: int,
+                        plein: float) -> float | None:
+    """Le premier âge d'où le modèle sert une surcote à la pension de
+    fonctionnaire de ce cas type, né en ``generation``, au trimestre près, sur
+    les trimestres comptés de l'âge ``plein`` de son taux plein : celui qui
+    précède le premier départ qu'il surcote. Le plus souvent, l'âge du taux
+    plein lui-même ; plus tard pour l'actif, qui a le taux plein à sa limite
+    d'âge, sans la durée, et ne surcote qu'une fois la durée réunie ; plus tôt
+    pour le super-actif polypensionné, dont le pilote fixe le taux plein à
+    l'âge où sa carrière a la durée requise de sa génération, quand sa pension
+    de l'État surcote dès 62 ans. Le premier trimestre surcoté se cherche en
+    doublant le pas, puis par dichotomie. ``None`` quand le modèle n'en sert
+    aucune dans les :data:`TRIMESTRES_DE_RECHERCHE` trimestres qui suivent le
+    taux plein, la limite d'âge l'interdisant."""
+
+    def surcote(trimestres: int) -> bool:
+        age = plein + trimestres / 4.0
+        depart = simulateur.echeancier(cas.carriere_a(simulateur, generation, age)).au_depart
+        return any(pension.surcote > 0.0 for pension in depart.pensions_par_regime
+                   if pension.regime in REGIMES_CODE_DES_PENSIONS)
+
+    if surcote(0):
+        bas, haut = -1, 0
+        while bas > -TRIMESTRES_DE_RECHERCHE and surcote(bas):
+            bas, haut = max(2 * bas, -TRIMESTRES_DE_RECHERCHE), bas
+    else:
+        bas, haut = 0, 1
+        while not surcote(haut):
+            if haut >= TRIMESTRES_DE_RECHERCHE:
+                return None
+            bas, haut = haut, min(2 * haut, TRIMESTRES_DE_RECHERCHE)
+    while haut - bas > 1:
+        milieu = (bas + haut) // 2
+        if surcote(milieu):
+            haut = milieu
+        else:
+            bas = milieu
+    return plein + (haut - 1) / 4.0
+
+
+def departs_des_fonctionnaires_avec_surcote(variantes: list[Variante],
+                                            racine: Path) -> list[Variante]:
+    """Chaque carrière de fonctionnaire civil qui part au taux plein se décline
+    (:data:`SURCOTE_DES_STATUTAIRES`) : la part de sa catégorie
+    (:func:`surcotes_des_fonctionnaires`) attend, après le premier âge où le
+    modèle lui sert une surcote, autant que la surcote moyenne de sa
+    catégorie, si sa génération atteint son âge légal depuis que la surcote
+    existe (:data:`ANNEE_DE_LA_SURCOTE`) ; le reste part au taux plein ; les
+    autres variantes telles quelles."""
+    surcotes = surcotes_des_fonctionnaires()
+    legaux = ages_legaux(racine)
+    sortie = []
+    for v in variantes:
+        part, attente = surcotes.get(v.cas.affiliation, (0.0, 0.0))
+        if not part or v.cas.regle_liquidation != "taux_plein" or v.decote or v.surcote:
+            sortie.append(v)
+            continue
+        sortie.append(v.fois(1.0 - part))
+        sortie.append(v.fois(part, surcote=attente, cas=elargi(
+            v.cas, code=f"{v.cas.code}~surcote{attente:.2f}", attente=attente,
+            legaux=legaux, depuis_la_surcote=True)))
     return sortie
 
 

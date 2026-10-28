@@ -12,6 +12,7 @@ générations, et que la mesure avait trouvée, n'y est plus depuis le
 
 from __future__ import annotations
 
+import csv
 import math
 import sys
 from dataclasses import replace
@@ -2472,8 +2473,9 @@ def test_une_part_des_carrieres_de_trente_ans_et_plus_part_avec_une_surcote(
     décline : la part de son sexe que l'EIR voit surcoter parmi les carrières
     complètes attend, après l'âge légal, autant que les départs avec surcote
     des nés en 1953, âge par âge ; le reste part au taux plein. Les carrières
-    plus courtes, les départs avec décote et les statutaires gardent leur
-    départ."""
+    plus courtes et les départs avec décote gardent leur départ ; les
+    fonctionnaires civils surcotent comme le jaune pensions les voit surcoter
+    (``SURCOTE_DES_STATUTAIRES``)."""
     assert G.DEPARTS_AVEC_SURCOTE
     publies = G.departs_publies(parametres.racine_donnees)
     parts = G.parts_avec_surcote(publies)
@@ -2482,6 +2484,7 @@ def test_une_part_des_carrieres_de_trente_ans_et_plus_part_avec_une_surcote(
     poids = _poids(variantes, simulateur.effectifs, source.millesime)
     for sexe in ("F", "H"):
         du_sexe = [v for v in variantes if v.cas.sexe == sexe
+                   and v.groupe in G.GROUPES_INTERROMPUS
                    and (v.surcote or G.peut_surcoter(v))]
         avec = [v for v in du_sexe if v.surcote]
         assert (sum(poids[v.cas.code] for v in avec)
@@ -2493,9 +2496,10 @@ def test_une_part_des_carrieres_de_trente_ans_et_plus_part_avec_une_surcote(
         total = sum(par_attente.values())
         assert {a: p / total for a, p in par_attente.items()} == pytest.approx(
             dict(attentes[sexe])), sexe
-    assert all(v.tranche in ("30_40", "40_plus") and v.groupe in G.GROUPES_INTERROMPUS
+    assert all(v.tranche in ("30_40", "40_plus")
                and v.cas.regle_liquidation == "taux_plein" and not v.decote
-               and v.cas.attente == v.surcote for v in variantes if v.surcote)
+               and v.cas.attente == v.surcote for v in variantes
+               if v.surcote and v.groupe in G.GROUPES_INTERROMPUS)
     assert not any(G.peut_surcoter(v) for v in variantes
                    if v.tranche not in ("30_40", "40_plus") or v.decote
                    or v.groupe not in G.GROUPES_INTERROMPUS)
@@ -2529,3 +2533,165 @@ def test_un_depart_avec_surcote_attend_apres_l_age_legal(simulateur, source):
         pytest.approx(62.0 + attentes["F"][0][0]), "surcote")
     assert (homme.cas.age_liquidation_pour(projection, 1940)
             == sans.cas.age_liquidation_pour(projection, 1940))
+
+
+@pytest.fixture(scope="module")
+def population(simulateur, source):
+    """La population du dépôt, construite une fois pour les tests qui la lisent
+    sans rien y changer."""
+    return G.grille("population", simulateur.effectifs, source, ())
+
+
+def _jaune(racine: Path) -> dict[tuple[str, str, str, str], float]:
+    """Les cases d'ensemble du jaune pensions annexé au PLF 2027, que le dépôt
+    certifie (``macro/caracteristiques_fonction_publique.csv``), par
+    ``(tableau, population, champ, indicateur)``."""
+    with (racine / "reference" / "macro" / "caracteristiques_fonction_publique.csv").open(
+            encoding="utf-8") as fichier:
+        return {(ligne["tableau"], ligne["population"], ligne["champ"], ligne["indicateur"]):
+                float(ligne["valeur"])
+                for ligne in csv.DictReader(l for l in fichier if not l.startswith("#"))
+                if ligne["modalite"] == "ensemble"}
+
+
+def test_la_surcote_des_fonctionnaires_civils_se_lit_dans_le_jaune(parametres):
+    """Le jaune pensions annexé au PLF 2027 dit, des départs pour ancienneté de
+    2025 de chaque catégorie de fonctionnaires civils, combien surcotent et de
+    combien (tableaux B-3 à B-5), que le dépôt certifie : à l'État, 42,7 % de
+    tous, au taux moyen de 10,6 %, 29,3 % des actifs, à 9,7 %, 8,1 % des
+    super-actifs, à 12,0 % ; à la CNRACL, 30,3 % des sédentaires, à 10,2 %,
+    21,5 % des carrières longues, à 12,0 %, 13,8 % des actifs, à 8,4 %. Le
+    sédentaire de chaque caisse porte aussi ses carrières longues : à l'État,
+    dont le tableau B-4 ne dit pas la surcote, tous les départs pour
+    ancienneté moins les deux catégories actives, 15 956 des 32 913 départs,
+    48,5 %. Un départ qui surcote attend autant de trimestres que la surcote
+    moyenne de sa catégorie en compte, à 1,25 % le trimestre depuis 2009 :
+    2,13 années au sédentaire de l'État."""
+    lues = _jaune(parametres.racine_donnees)
+
+    def ligne(tableau: str, population: str, champ: str, signe: int = 1):
+        departs, part, taux = (lues[(tableau, population, champ, indicateur)]
+                               for indicateur in ("departs", "part_surcote", "taux_surcote"))
+        return (signe * departs, part, taux)
+
+    assert G.SURCOTES_DU_JAUNE == {
+        "fonctionnaire_etat": (ligne("B-3", "fpe_civils", "anciennete"),
+                               ligne("B-4", "fpe_civils", "active_57", -1),
+                               ligne("B-4", "fpe_civils", "active_52", -1)),
+        "fonctionnaire_etat_actif": (ligne("B-4", "fpe_civils", "active_57"),),
+        "fonctionnaire_etat_super_actif": (ligne("B-4", "fpe_civils", "active_52"),),
+        "fonctionnaire_territorial_hospitalier": (
+            ligne("B-5", "cnracl_total", "sedentaire"),
+            ligne("B-5", "cnracl_total", "carriere_longue")),
+        "fonctionnaire_territorial_hospitalier_actif": (ligne("B-5", "cnracl_total", "active"),),
+    }
+    with (parametres.racine_donnees / "reference" / "legislation"
+          / "surcote_baremes.csv").open(encoding="utf-8") as fichier:
+        taux = [float(ligne["taux"])
+                for ligne in csv.DictReader(l for l in fichier if not l.startswith("#"))
+                if ligne["bareme"] == "fonction_publique"
+                and float(ligne["debut"]) <= 2025 <= float(ligne["fin"])]
+    assert taux == [G.SURCOTE_DU_TRIMESTRE] == [0.0125]
+    surcotes = G.surcotes_des_fonctionnaires()
+    etat = 41_812 * 0.427 - 5_552 * 0.293 - 3_347 * 0.081
+    assert etat == pytest.approx(15_956, abs=1)
+    assert surcotes["fonctionnaire_etat"] == pytest.approx((
+        etat / 32_913,
+        (41_812 * 0.427 * 0.106 - 5_552 * 0.293 * 0.097 - 3_347 * 0.081 * 0.120)
+        / etat / 0.0125 / 4))
+    assert surcotes["fonctionnaire_etat"][0] == pytest.approx(0.485, abs=5e-4)
+    assert surcotes["fonctionnaire_etat"][1] == pytest.approx(2.13, abs=5e-3)
+    cnracl = 27_477 * 0.303 + 15_054 * 0.215
+    assert surcotes["fonctionnaire_territorial_hospitalier"] == pytest.approx((
+        cnracl / (27_477 + 15_054),
+        (27_477 * 0.303 * 0.102 + 15_054 * 0.215 * 0.120) / cnracl / 0.0125 / 4))
+    assert surcotes["fonctionnaire_etat_actif"] == pytest.approx((0.293, 0.097 / 0.0125 / 4))
+    assert surcotes["fonctionnaire_etat_super_actif"] == pytest.approx(
+        (0.081, 0.120 / 0.0125 / 4))
+    assert surcotes["fonctionnaire_territorial_hospitalier_actif"] == pytest.approx(
+        (0.138, 0.084 / 0.0125 / 4))
+
+
+def test_une_part_de_chaque_categorie_de_fonctionnaires_civils_part_avec_une_surcote(
+        simulateur, source, population):
+    """Sous ``SURCOTE_DES_STATUTAIRES``, chaque carrière de fonctionnaire civil
+    de la population — le sédentaire, l'actif et le super-actif de l'État, le
+    sédentaire et l'actif de la CNRACL, seul de son régime ou polypensionné, à
+    chaque rang — se décline : la part de sa catégorie que le jaune voit
+    surcoter attend, après le premier âge où le modèle lui sert une surcote,
+    autant que la surcote moyenne de sa catégorie ; le reste part au taux
+    plein. Le militaire, que la loi ne surcote pas, et les agents de la
+    conduite et des IEG, qui partent à l'ouverture de leur statut, gardent
+    leur départ."""
+    assert G.SURCOTE_DES_STATUTAIRES
+    surcotes = G.surcotes_des_fonctionnaires()
+    poids = _poids(population, simulateur.effectifs, source.millesime)
+    civils = [v for v in population if v.groupe in ("fonction_publique_etat_civile", "cnracl")]
+    assert {v.cas.affiliation for v in civils} == set(surcotes)
+    for affiliation, (part, attente) in surcotes.items():
+        for sexe in ("F", "H"):
+            siens = [v for v in civils if v.cas.affiliation == affiliation
+                     and v.cas.sexe == sexe]
+            avec = [v for v in siens if v.surcote]
+            assert len(siens) == 2 * len(avec) == 28
+            assert all(v.surcote == pytest.approx(attente) and v.cas.depuis_la_surcote
+                       and v.cas.attente == pytest.approx(attente) for v in avec)
+            assert (sum(poids[v.cas.code] for v in avec)
+                    / sum(poids[v.cas.code] for v in siens)) == pytest.approx(part), (
+                affiliation, sexe)
+    assert not any(v.surcote for v in population
+                   if v.groupe in ("fonction_publique_etat_militaire", "regimes_speciaux"))
+    assert all(v in civils for v in population if getattr(v.cas, "depuis_la_surcote", False))
+
+
+def _depart_et_surcote(simulateur: Simulateur, cas, generation: int) -> tuple[float, float]:
+    """L'âge où ce cas type part, étant né en ``generation``, et les trimestres
+    de surcote que le modèle sert à sa pension de fonctionnaire : son
+    coefficient de surcote, à 1,25 % le trimestre."""
+    age = cas.age_liquidation_pour(simulateur, generation)
+    depart = simulateur.echeancier(cas.carriere_a(simulateur, generation, age)).au_depart
+    pension = next(p for p in depart.pensions_par_regime
+                   if p.regime in ("fonction_publique_etat", "cnracl"))
+    return age, (pension.montant / (pension.montant - pension.surcote) - 1.0) / 0.0125
+
+
+def test_un_fonctionnaire_civil_qui_surcote_part_avec_la_surcote_moyenne_de_sa_categorie(
+        simulateur, population):
+    """Le fonctionnaire civil de la classe médiane né en 1960, seul de son
+    régime ou polypensionné, qui surcote, part après son taux plein avec la
+    surcote moyenne que le jaune trouve à sa catégorie, au trimestre près : sa
+    surcote court du premier âge où le modèle la lui sert, et il attend autant
+    de trimestres que la surcote moyenne de sa catégorie en compte. Le
+    sédentaire de l'État, entré à 22 ans, a les 167 trimestres de sa
+    génération à 63 ans et 9 mois, son taux plein, d'où court sa surcote, et
+    part 2,13 années plus tard ; l'actif, dont le taux plein tombe à sa limite
+    d'âge sans la durée, ne surcote qu'une fois sa durée réunie, et part
+    d'autant plus tard ; le super-actif polypensionné, que le pilote fait
+    partir au taux plein après 63 ans, surcote dès 62 ans, et part plus tôt
+    qu'il ne partirait en comptant son attente du taux plein."""
+    projection = simulateur.pour_la_projection()
+    surcotes = G.surcotes_des_fonctionnaires()
+
+    def jumelle(affiliation: str, sexe: str, poly: bool) -> G.Variante:
+        return next(v for v in population if v.surcote and v.cas.affiliation == affiliation
+                    and v.cas.sexe == sexe and v.poly == poly
+                    and "p50" in v.cas.code.split("~"))
+
+    for affiliation, (_, attente) in surcotes.items():
+        for sexe in ("F", "H"):
+            for poly in (False, True):
+                cas = jumelle(affiliation, sexe, poly).cas
+                plein = G.au_taux_plein(cas).age_liquidation_pour(projection, 1960)
+                age, trimestres = _depart_et_surcote(projection, cas, 1960)
+                assert age > plein, (affiliation, sexe, poly)
+                assert (math.floor(4 * attente) <= round(trimestres)
+                        <= math.floor(4 * attente) + 1), (affiliation, sexe, poly, trimestres)
+                assert G.condition_au_depart(projection, cas, 1960) == (
+                    pytest.approx(age), "surcote")
+    sedentaire = jumelle("fonctionnaire_etat", "H", False).cas
+    assert sedentaire.age_liquidation_pour(projection, 1960) == pytest.approx(
+        22 + 167 / 4 + surcotes["fonctionnaire_etat"][1])
+    super_actif = jumelle("fonctionnaire_etat_super_actif", "H", True).cas
+    assert (super_actif.age_liquidation_pour(projection, 1960)
+            < G.au_taux_plein(super_actif).age_liquidation_pour(projection, 1960)
+            + surcotes["fonctionnaire_etat_super_actif"][1])
