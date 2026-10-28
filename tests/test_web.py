@@ -3874,7 +3874,10 @@ BUDGETS_DEPLIES: dict[str, int] = {
     # Simuler tout déplié : le formulaire et les résultats de la simulation
     # témoin, 7 092 mots le 23 octobre 2026 (action 173, étape 4). Ils disaient
     # cinq fois que les cinq points volontaires se placent ou se gardent.
-    "/simuler?" + urlencode(SIMULATION_TEMOIN): 6850,
+    # Le 28 octobre 2026, 7 297 mots : le dépliant « Votre revenu, avant et
+    # après le départ » (action 138, étape 9) en ajoute 462, dont 426 dans ses
+    # deux tableaux, la pension par étage et le revenu de vingt et une années.
+    "/simuler?" + urlencode(SIMULATION_TEMOIN): 7310,
     # Coût tout déplié : 33 549 mots le 24 octobre 2026 (action 173, étape 5),
     # dont près de dix-sept mille dans les tableaux des graphiques, que
     # l'étape laisse tels quels. Ses dépliants redisaient ce que la légende
@@ -5331,3 +5334,203 @@ def test_la_seconde_retraite_du_rci_se_dit_en_points(page, saisies):
     assert (f"et une seconde retraite complémentaire des indépendants de "
             f"{_euros_du_cumul(seconde.montant)} par an, sur {round(seconde.points)} "
             "points, en euros de cette année-là.") in note
+
+
+# -- la pension par étage, et le revenu autour du départ -----------------------
+#
+# Les tableaux 1 et 2 de Typfallsmodellen, le modèle des cas types de
+# Pensionsmyndigheten (registre, `typfallsmodellen`, chantier « 138.9 ») : la
+# pension du départ par étage, en part du dernier revenu, et le revenu de dix ans
+# avant le départ à dix ans après. Le portage les calcule, seul exemplaire
+# depuis l'action 161 (`pensionParEtage`, `revenusAutourDuDepart`,
+# `cycle-de-vie.js`) ; la page des résultats les montre dans un dépliant (action
+# 138, étape 9, note du 28 octobre 2026).
+
+#: Le titre du dépliant.
+_AUTOUR_DU_DEPART = "Votre revenu, avant et après le départ"
+#: Le salarié né le 15 janvier 1980, parti en février 2044, comme celui des
+#: tests du portage : il travaille encore en janvier.
+_PARTI_EN_2044 = {"naissance": "1980-01-15", "debut": "2002-09", "liquidation": "2044-02"}
+#: Les quatre systèmes de la page, dans l'ordre de ses colonnes.
+_SYSTEMES_DE_LA_PAGE = ("actuel", "notionnel_retroactif", "notionnel_retroactif_employeur",
+                        "notionnel_liberal")
+#: Chaque étage, dans l'ordre des rangées, et son nom dans la page.
+_ETAGES_DU_DEPART = {
+    "integre": "Régime intégré, base et complémentaire à la fois", "base": "Retraite de base",
+    "complementaire": "Retraite complémentaire", "additionnel": "Retraite additionnelle",
+    "notionnel": "Compte notionnel", "capitalise": "Pilier capitalisé",
+}
+#: Les trois taux, sous les étages.
+_TAUX_DU_DEPART = ("Taux de remplacement brut", "Taux de remplacement net",
+                   "Taux de remplacement après impôt")
+
+
+def _texte_lu(fragment: str) -> str:
+    """Le texte d'un fragment, ses espaces — fines et insécables comprises —
+    réduites à une."""
+    return re.sub(r"[\s\u202f\xa0]+", " ",
+                  html.unescape(re.sub(r"<[^>]+>", " ", fragment))).strip()
+
+
+def _depliant_autour_du_depart(corps: str) -> tuple[str, list]:
+    """Le dépliant, et chacun de ses tableaux : ses en-têtes de colonne, puis
+    chaque rangée, son en-tête et ses cellules, en texte."""
+    debut = corps.index(_AUTOUR_DU_DEPART)
+    bloc = corps[debut:corps.index("</details>", debut)]
+    tableaux = []
+    for tableau in re.findall(r"<table.*?</table>", bloc, re.S):
+        entetes = [_texte_lu(tete)
+                   for tete in re.findall(r'<th[^>]*scope="col">(.*?)</th>', tableau, re.S)]
+        rangees = [(_texte_lu(tete), [_texte_lu(cellule) for cellule in
+                                      re.findall(r"<td[^>]*>(.*?)</td>", cellules, re.S)])
+                   for tete, cellules in re.findall(
+                       r'<tr><th[^>]*scope="row">(.*?)</th>(.*?)</tr>', tableau, re.S)]
+        tableaux.append((entetes, rangees))
+    return bloc, tableaux
+
+
+def _autour_du_depart_du_portage(requete: dict):
+    """La comparaison de la saisie, son simulateur, et les flux nets, sous
+    l'impôt suivant les prix, que les deux tableaux lisent."""
+    saisie = saisie_du_portage(requete)
+    portage = site().contexte
+    comparaison = portage.simuler(saisie)
+    simulateur = portage.simulateur(saisie.parametres(portage.base))
+    systemes = module("cycle-de-vie").flux_des_systemes(
+        simulateur, comparaison, {"nets": True, "impot": "prix"})
+    return comparaison, simulateur, systemes
+
+
+def test_la_page_montre_la_pension_par_etage_en_part_du_dernier_revenu(page):
+    """Le tableau 1 de Typfallsmodellen : chaque étage de la pension du départ
+    en part du dernier revenu, sous les quatre systèmes, et, sous les étages,
+    leur somme, le taux de remplacement brut que donne la carte de chaque
+    système, puis le taux net et le taux après impôt (`pensionParEtage`).
+    Chaque étage du système 1 est la pension des régimes que le catalogue y
+    range, sur le dernier revenu annualisé : le régime général à la base,
+    l'Arrco et l'Agirc-Arrco à la complémentaire. Les parts, arrondies au
+    dixième de point, font leur total, comme les euros de la page font le
+    leur. Rien pour qui saisit sa pension, dont la carrière n'est pas la
+    sienne."""
+    comparaison, simulateur, systemes = _autour_du_depart_du_portage(_PARTI_EN_2044)
+    bloc, ((entetes, rangees), _) = _depliant_autour_du_depart(
+        page("/simuler", **_PARTI_EN_2044))
+    assert entetes == ["En part du dernier revenu", "Système 1", "Système 2", "Système 3",
+                       "Système 4"]
+    cycle = module("cycle-de-vie")
+    pensions = [cycle.pension_par_etage(simulateur, comparaison, scenario, systemes)
+                for scenario in _SYSTEMES_DE_LA_PAGE]
+    servis = [nom for etage, nom in _ETAGES_DU_DEPART.items()
+              if any(etage in pension.etages for pension in pensions)]
+    assert servis == ["Retraite de base", "Retraite complémentaire", "Compte notionnel",
+                      "Pilier capitalisé"]
+    assert [tete for tete, _ in rangees] == servis + list(_TAUX_DU_DEPART)
+    lignes = dict(rangees)
+
+    def dixiemes(cellule: str) -> int:
+        return round(10 * float(cellule.removesuffix(" %").replace(" ", "").replace(",", ".")))
+
+    par_etage = {}
+    for pension in comparaison.actuel.pensions_par_regime:
+        etage = simulateur.catalogue.obtenir(pension.regime).etage
+        par_etage[etage] = par_etage.get(etage, 0.0) + pension.montant
+    for etage, nom in (("base", "Retraite de base"),
+                       ("complementaire", "Retraite complémentaire")):
+        part = 1000 * par_etage[etage] / comparaison.dernier_revenu_annualise
+        assert abs(dixiemes(lignes[nom][0]) - part) < 1, nom
+    taux_des_cartes = (comparaison.taux_remplacement_actuel,
+                       comparaison.taux_remplacement_retroactif,
+                       comparaison.taux_remplacement("notionnel_retroactif_employeur"),
+                       comparaison.taux_remplacement_total("notionnel_liberal"))
+    assert lignes["Taux de remplacement brut"] == [_texte_lu(g.pourcentage(taux))
+                                                   for taux in taux_des_cartes]
+    for colonne, pension in enumerate(pensions):
+        parts, somme = pension.parts, 0
+        for etage, nom in _ETAGES_DU_DEPART.items():
+            if nom not in lignes:
+                continue
+            cellule = lignes[nom][colonne]
+            if etage not in parts:
+                assert cellule == "—", (nom, colonne)
+                continue
+            assert abs(dixiemes(cellule) - 1000 * parts[etage]) < 1, (nom, colonne)
+            somme += dixiemes(cellule)
+        assert somme == dixiemes(lignes["Taux de remplacement brut"][colonne]), colonne
+        for nom, taux in (("Taux de remplacement net", pension.remplacement_net),
+                          ("Taux de remplacement après impôt", pension.remplacement_apres_impot)):
+            assert taux is not None and lignes[nom][colonne] == _texte_lu(g.pourcentage(taux))
+    assert "une personne seule, sans enfant à charge" in bloc
+    assert _AUTOUR_DU_DEPART not in page("/simuler", situation="retraite", pension="1500")
+
+
+def test_la_page_montre_le_revenu_de_dix_ans_avant_le_depart_a_dix_ans_apres(page):
+    """Le tableau 2 de Typfallsmodellen : le revenu de chaque année, de dix ans
+    avant celle du départ à dix ans après — le revenu d'activité, la pension
+    des mois servis, leur net avant impôt, l'impôt et ce qu'il laisse —, au
+    système 1, par an, en euros de la page, chaque année ramenée par les prix
+    (`revenusAutourDuDepart`). Parti en février 2044, le salarié né le
+    15 janvier 1980 travaille encore en janvier : l'année de son départ compte
+    le douzième de son dernier revenu annualisé ; ensuite, il ne vit que de sa
+    pension."""
+    comparaison, simulateur, systemes = _autour_du_depart_du_portage(_PARTI_EN_2044)
+    _, (_, (entetes, rangees)) = _depliant_autour_du_depart(page("/simuler", **_PARTI_EN_2044))
+    assert entetes == ["Année", "Revenu d'activité brut", "Pension brute", "Net avant impôt",
+                       "Impôt", "Après impôt"]
+    assert [tete.split()[0] for tete, _ in rangees] == [str(annee) for annee in range(2034, 2055)]
+    # Dit en toutes lettres, sans style : une aide collée à l'année se lisait
+    # « 2044départ ».
+    assert [tete for tete, _ in rangees if tete != tete.split()[0]] == ["2044 (départ)"]
+
+    def euros(montant):
+        if montant is None:
+            return "—"
+        return _texte_lu(g.euros(comparaison.en_euros_constants(montant, "actuel")))
+
+    lignes = module("cycle-de-vie").revenus_autour_du_depart(
+        simulateur, comparaison, "actuel", systemes)
+    assert len(lignes) == len(rangees)
+    for (tete, cellules), ligne in zip(rangees, lignes):
+        assert cellules == [euros(ligne.revenu), euros(ligne.pension), euros(ligne.net),
+                            euros(ligne.impot), euros(ligne.apres_impot)], tete
+    depart = dict(rangees)["2044 (départ)"]
+    assert depart[0] == euros(comparaison.dernier_revenu_annualise / 12)
+    assert all(cellules[0] == "0 €" and cellules[1] != "0 €" for _, cellules in rangees[11:])
+    assert all(cellules[1] == "0 €" for _, cellules in rangees[:10])
+
+
+def test_sans_fiche_de_paie_le_depliant_ne_dit_ni_le_net_ni_l_impot(page):
+    """L'exploitant agricole n'a pas de fiche de paie dans le modèle : ni revenu
+    net ni revenu imposable (`revenusNets`, `avecLImpot`). Le dépliant donne ses
+    étages et son taux brut, et un tiret pour le net, l'impôt et l'après-impôt :
+    sans revenu imposable, l'impôt de ses années de travail s'écrirait nul."""
+    requete = {"naissance": "1970-01-01", "statut": "exploitant_agricole", "debut": "1992-01"}
+    _, ((_, etages), (_, annees)) = _depliant_autour_du_depart(page("/simuler", **requete))
+    lignes = dict(etages)
+    assert all(cellule.endswith("%") for cellule in lignes["Taux de remplacement brut"])
+    assert lignes["Taux de remplacement net"] == ["—"] * 4
+    assert lignes["Taux de remplacement après impôt"] == ["—"] * 4
+    assert all(cellules[2:] == ["—"] * 3 and cellules[1].endswith("€") for _, cellules in annees)
+
+
+def test_la_garantie_vieillesse_que_l_impot_finance_se_dit_sous_les_etages(page):
+    """La pension par étage ne compte que ce que les cotisations financent,
+    comme tout le cycle de vie (`pensionParEtage`) ; la carte du système 4
+    compte aussi la garantie vieillesse, que l'impôt finance. À 1 100 € bruts
+    par mois, elle porte son taux de remplacement bien au-dessus de ses deux
+    étages : la page le dit sous le tableau, au taux de la carte, plutôt que de
+    laisser deux taux de remplacement se contredire. Rien de tel quand les deux
+    coïncident."""
+    requete = {"naissance": "1985-01-01", "debut": "2010-01", "unite_revenu": "euros_mois",
+               "salaire": "1100"}
+    comparaison, simulateur, systemes = _autour_du_depart_du_portage(requete)
+    bloc, ((_, rangees), _) = _depliant_autour_du_depart(page("/simuler", **requete))
+    carte = comparaison.taux_remplacement_total("notionnel_liberal")
+    etages = module("cycle-de-vie").pension_par_etage(
+        simulateur, comparaison, "notionnel_liberal", systemes)
+    assert carte > etages.remplacement_brut + 0.1
+    assert dict(rangees)["Taux de remplacement brut"][3] == _texte_lu(
+        g.pourcentage(etages.remplacement_brut))
+    assert (f"la garantie vieillesse porte celui du système 4 à "
+            f"{_texte_lu(g.pourcentage(carte))}") in _texte_lu(bloc)
+    assert "porte celui du système" not in _texte_lu(
+        _depliant_autour_du_depart(page("/simuler", **_PARTI_EN_2044))[0])

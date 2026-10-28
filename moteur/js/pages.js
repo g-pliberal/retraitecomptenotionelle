@@ -64,7 +64,10 @@ import {
   varianteDuScenario,
 } from "./equilibre.js";
 import { Restitution } from "./restitution.js";
-import { ageDEquilibre, referenceDuCompte } from "./cycle-de-vie.js";
+import {
+  ETAGE_CAPITALISE, ETAGE_NOTIONNEL, ageDEquilibre, fluxDesSystemes, pensionParEtage,
+  referenceDuCompte, revenusAutourDuDepart,
+} from "./cycle-de-vie.js";
 import { Indexation } from "./indexation.js";
 import { echapper, formatFixe, formatG } from "./format.js";
 import * as g from "./gabarit.js";
@@ -5518,7 +5521,7 @@ ${reversionDuConjoint(contexte, comparaison, saisie, montants)}
 voulez voir.</p>
 ${releveControle(controle)}${pensionDAujourdhui(contexte, comparaison, saisie)}
 ${financement(contexte, comparaison, finances, montants)}
-${trajectoire(contexte, comparaison, saisie)}
+${trajectoire(contexte, comparaison, saisie)}${avantEtApresLeDepart(contexte, comparaison, saisie)}
 ${partirPlusTotOuPlusTard(contexte, saisie)}${avecOuSansLaReforme(contexte, saisie, montants)}
 ${fourchette(contexte, saisie, comparaison)}
 ${decomposition(contexte, saisie, comparaison)}
@@ -5527,6 +5530,141 @@ ${garantieVieillesse(comparaison, saisie)}
 ${pilierCapitalise(comparaison, saisie)}
 ${detail(contexte, comparaison)}
 `;
+}
+
+/**
+ * Les étages de la pension du départ, dans l'ordre des rangées de
+ * `avantEtApresLeDepart` : ceux du système 1, puis le compte d'un système
+ * notionnel et le pilier capitalisé de la proposition (`etagesAuDepart`,
+ * cycle-de-vie.js).
+ */
+const ETAGES_DU_DEPART = [
+  ...ETAGES_ACTUEL.map(([etage, titre]) => [etage, titre]),
+  [ETAGE_NOTIONNEL, "Compte notionnel"],
+  [ETAGE_CAPITALISE, "Pilier capitalisé"],
+];
+
+/**
+ * Ce que le montant d'un système compte de plus que sa pension par étage : ce
+ * que l'impôt finance, le minimum vieillesse au système 1, la garantie
+ * vieillesse dans la proposition.
+ */
+const FINANCE_PAR_L_IMPOT = {
+  actuel: "le minimum vieillesse",
+  notionnel_liberal: "la garantie vieillesse",
+};
+
+/**
+ * La pension du départ, étage par étage, et le revenu autour du départ (action
+ * 138, étape 9) : les tableaux 1 et 2 de Typfallsmodellen, le modèle des cas
+ * types de Pensionsmyndigheten (registre, `typfallsmodellen`). D'abord chaque
+ * étage de la pension du premier mois servi, en part du dernier revenu, sous
+ * les quatre systèmes, et dessous leur somme, le taux de remplacement brut,
+ * puis le net et l'après-impôt (`pensionParEtage`, cycle-de-vie.js) ; les
+ * parts, arrondies au dixième de point, font leur total. Comme tout le cycle de
+ * vie, elles ne comptent que ce que les cotisations financent : quand le
+ * montant d'un système y ajoute ce que l'impôt finance, la page le dit. Puis le
+ * revenu de chaque année du système 1, de dix ans avant celle du départ à dix
+ * ans après (`revenusAutourDuDepart`), par an, en euros de la page. Le net et
+ * l'impôt sont ceux de « Partir plus tôt ou plus tard », de l'OCDE : une
+ * personne seule, le barème suivant les prix ; sans fiche de paie, ni l'un ni
+ * l'autre. Rien pour une saisie par la pension, dont la carrière est
+ * reconstituée, ni quand le modèle refuse la carrière.
+ */
+function avantEtApresLeDepart(contexte, comparaison, saisie) {
+  if (saisie.parPension) return "";
+  const simulateur = contexte.simulateur(comparaison.parametres);
+  let pensions;
+  let annees;
+  try {
+    const systemes = fluxDesSystemes(simulateur, comparaison, { nets: true, impot: "prix" });
+    pensions = SCENARIOS_AFFICHES.map(([scenario]) =>
+      pensionParEtage(simulateur, comparaison, scenario, systemes));
+    annees = revenusAutourDuDepart(simulateur, comparaison, "actuel", systemes);
+  } catch (erreur) {
+    if (fauteDeProgramme(erreur)) throw erreur;
+    return "";
+  }
+  if (pensions[0].remplacement_brut === null) return "";
+  const numeros = SCENARIOS_AFFICHES.map(([, libelle]) => libelle.split(".")[0]);
+  const ouRien = (valeur, rendu) => (valeur === null ? "—" : rendu(valeur));
+  const taux = (valeur) => ouRien(valeur, (v) => g.pourcentage(v));
+
+  // Les parts de chaque système en dixièmes de point, qui font son total.
+  const parts = pensions.map((pension) => {
+    const servis = Object.keys(pension.parts);
+    const dixiemes = arrondisQuiSadditionnent(
+      servis.map((etage) => 1000 * pension.parts[etage]), 1000 * pension.remplacement_brut);
+    return new Map(servis.map((etage, rang) => [etage, dixiemes[rang] / 1000]));
+  });
+  const etages = g.tableau(
+    ["En part du dernier revenu", ...numeros.map((numero) => `Système ${numero}`)],
+    [
+      ...ETAGES_DU_DEPART
+        .filter(([etage]) => parts.some((siennes) => siennes.has(etage)))
+        .map(([etage, titre]) => [echapper(titre), ...parts.map((siennes) =>
+          (siennes.has(etage) ? g.pourcentage(siennes.get(etage)) : "—"))]),
+      ["Taux de remplacement brut", ...pensions.map((p) => taux(p.remplacement_brut))],
+      ["Taux de remplacement net", ...pensions.map((p) => taux(p.remplacement_net))],
+      ["Taux de remplacement après impôt",
+        ...pensions.map((p) => taux(p.remplacement_apres_impot))],
+    ],
+    ["", ...numeros.map(() => "nombre")],
+    "La pension du premier mois, étage par étage", true);
+
+  // Le montant de chaque système compte aussi ce que l'impôt finance, que le
+  // cycle de vie laisse de côté : la page dit l'écart plutôt que deux taux de
+  // remplacement qui se contredisent.
+  const ajouts = SCENARIOS_AFFICHES.flatMap(([scenario], rang) => {
+    const affiche = scenario === "actuel" ? comparaison.tauxRemplacementActuel
+      : comparaison.tauxRemplacementTotal(scenario);
+    if (g.pourcentage(affiche) === taux(pensions[rang].remplacement_brut)) return [];
+    return [`${FINANCE_PAR_L_IMPOT[scenario] ?? "ce que l'impôt finance"} porte celui du `
+      + `système ${numeros[rang]} à ${g.pourcentage(affiche)}`];
+  });
+  const ajout = ajouts.length === 0 ? "" : '<p class="discret">Ces étages ne comptent que '
+    + "ce que les cotisations financent. Plus haut, chaque système compte aussi ce que "
+    + `l'impôt finance, et son taux de remplacement avec : ${ajouts.join(", ")}.</p>`;
+
+  const depart = comparaison.carriere.anneeLiquidation;
+  const enEuros = (montant) => g.euros(comparaison.enEurosConstants(montant, "actuel"));
+  const revenus = g.tableau(
+    ["Année", "Revenu d'activité brut", "Pension brute", "Net avant impôt", "Impôt",
+      "Après impôt"],
+    annees.map((ligne) => [
+      ligne.annee === depart ? `${ligne.annee} (départ)` : String(ligne.annee),
+      enEuros(ligne.revenu),
+      enEuros(ligne.pension),
+      ouRien(ligne.net, enEuros),
+      // Sans fiche de paie, ni revenu net ni revenu imposable : l'impôt des
+      // années de travail s'écrirait nul.
+      ligne.net === null ? "—" : ouRien(ligne.impot, enEuros),
+      ouRien(ligne.apres_impot, enEuros),
+    ]),
+    ["", "nombre", "nombre", "nombre", "nombre", "nombre"],
+    `Le système 1, par an, en euros de ${saisie.euros}`, true);
+
+  return g.depliant("Votre revenu, avant et après le départ", `
+<p>Ce que verse chaque caisse au départ, en part de votre dernier revenu, puis
+votre revenu de chaque année, de dix ans avant le départ à dix ans après.${g.bulle(
+    "Comment ces chiffres sont comptés",
+    "La pension est celle du premier mois servi, annualisée, sans le minimum "
+    + "vieillesse ni la garantie vieillesse, que l'impôt finance ; le dernier revenu, "
+    + "celui de la dernière année cotisée, annualisé. Le taux net rapporte la "
+    + "pension nette de la CSG au taux plein, de la CRDS, de la CASA et de la "
+    + "cotisation maladie de l'année du départ au dernier revenu net de ses "
+    + "cotisations ; le taux après impôt, celui de l'OCDE (<i>Pensions at a "
+    + "Glance</i>), la pension après l'impôt d'une année entière d'elle seule au "
+    + "dernier revenu après le sien. L'impôt est celui d'une personne seule, sans "
+    + "enfant à charge, qui ne déclare que ses revenus d'activité et ses pensions, "
+    + "au barème de chaque année, que la page fait suivre les prix au-delà de la "
+    + "dernière loi de finances. Le second tableau suit le système 1, et ramène "
+    + `chaque année aux prix de ${saisie.euros} ; l'année du départ compte ses mois `
+    + "de travail et ses mois de pension. Sans fiche de paie, ni le net ni l'impôt "
+    + "ne se calculent : un tiret les remplace.",
+  )}</p>
+${etages}${ajout}
+${revenus}`);
 }
 
 /**
