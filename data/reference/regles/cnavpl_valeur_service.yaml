@@ -5,6 +5,7 @@ intitule: >-
   par la caisse et revalorisée comme les pensions du régime général : 0,484 € en
   2004, 0,6599 € au 1er janvier 2026, deux valeurs en 2022 (0,5795 € au 1er janvier,
   0,6027 € au 1er juillet).
+regimes: [cnavpl]
 etat: transcrite
 effet: >-
   Le dépôt ne lisait la valeur que dans les recueils, depuis 2021, et ramenait celle
@@ -34,3 +35,34 @@ textes_a_rattacher:
 - reference: >-
     D. 643-1 CSS dans ses rédactions de 2004 et 2005 (LEGIARTI000006738137, LEGIARTI000006738138)
 - reference: L. 161-23-1 CSS pour la revalorisation
+code:
+  moteur: >-
+    `ValeursPoint.service` lit dans `regimes/valeurs_point.csv` la valeur de service de
+    la CNAVPL au 31 décembre de chaque année de 2004 à 2026, que
+    `scripts/fetch/cnavpl_valeur_service.py` relève. `valeur_du_point` sert à la
+    liquidation celle de son année (`ValeursPoint.service_au`), que
+    `regimes/valeurs_service_datees.csv` ne date pas au mois : un départ du premier
+    semestre de 2022 prend celle de juillet, 0,6027 €. Elle porte par les prix celle de
+    2004 aux liquidations antérieures, et prolonge celle de 2026 par les prix de l'année
+    précédente (`ValeursPoint.indice_convenu`), de fiabilité moyenne dans les deux cas.
+  python: >-
+    scenarios/actuel.py : ValeursPoint.service, ValeursPoint.service_au,
+    ValeursPoint.indice_convenu ; droit/liquider.py : valeur_du_point
+  javascript: >-
+    moteur/js/regimes.js : ValeursPoint.service, ValeursPoint.serviceAu,
+    ValeursPoint.indiceConvenu ; moteur/js/droit/liquider.js : valeurDuPoint
+  parametres: >-
+    regimes/valeurs_point.csv : cnavpl, valeur_service
+  tests:
+  - tests/test_sections_liberales.py
+  - >-
+    scripts/verifier_donnees.py, qui certifie la série à sa source
+  - >-
+    tests/test_coupures_au_mois.py, tests/test_cumul_activites.py et
+    tests/test_liquidation.py, qui confrontent les deux moteurs sur des carrières qui la
+    portent
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) : 59
+    témoins changent sans les valeurs d'avant 2021 — les générations 1925 à 1955 des
+    quatorze statuts libéraux, cumul_medecin_carmf_2017,
+    cumul_medecin_seulement_liberal_2017 et progressive_liberale_puis_salariee_2016

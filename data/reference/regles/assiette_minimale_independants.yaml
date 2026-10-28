@@ -8,6 +8,8 @@ intitule: >-
   dispensés depuis 2016 le bénéficiaire du RSA ou de la prime d'activité, depuis
   2020 l'activité accessoire saisonnière (L. 613-11), et, de 2004 à 2015, le
   libéral dont l'activité n'est pas principale ou déjà pensionné (D. 642-4).
+regimes: [cancava, carpimko_complementaire, cavom_complementaire, cnavpl, organic,
+  regime_general, rsi]
 etat: approchee
 etape: acquerir_les_droits
 effet: >-
@@ -93,3 +95,60 @@ approximations:
   effet: >-
     non mesuré sur la population ; pour une carrière de 3 000 € par an, 16 trimestres
     sur 36 ans et un tiers du régime de base, voir `effet`
+code:
+  moteur: >-
+    `_ligne_annuelle` relève, pour l'artisan, le commerçant ou le libéral qui cotise sur
+    un revenu positif, hors du micro-entrepreneur, l'assiette de l'année au minimum que
+    `assiette_minimale` lit pour son statut et l'année dans
+    `legislation/assiette_minimale_independants.csv` : 200 SMIC horaires de 1985 à 2011
+    — pour le libéral, depuis 2004 et proratisés —, puis 5,25 %, 7,70 % et 11,5 % du
+    plafond, 450 SMIC horaires depuis 2023, rien sous quatre-vingt-dix jours
+    d'affiliation depuis 2012 (`AssietteMinimale.montant`). Ses trimestres se valident
+    sur le plus grand des deux, et la ligne porte le minimum (`assiette_minimale_base`),
+    que `acquerir.assiette_minimale` n'oppose qu'aux régimes de base que la table
+    nomme : les points de la CNAVPL (`acquerir`), le salaire annuel moyen des régimes
+    alignés (`salaire_de_reference`) et celui de la seconde pension (`_revenus`). Le
+    revenu de la ligne reste celui qui est déclaré : la complémentaire des artisans et
+    commerçants n'a pas de minimum, et le compte notionnel cotise sur ce revenu. Le
+    motif que le relevé porte à la ligne, ou le formulaire à l'année, annule le minimum
+    quand `legislation/dispenses_assiette_minimale.yaml` en dispense le statut cette
+    année-là (`dispense_assiette_minimale`) : le RSA et la prime d'activité depuis 2016,
+    l'activité accessoire saisonnière depuis 2020, l'activité libérale non principale et
+    le libéral pensionné de 2004 à 2015 ; les trois premiers écartent aussi l'assiette
+    minimale en plafonds de la CARPIMKO et de la CAVOM, au scénario 1 comme au compte
+    (`dispense_les_complementaires`).
+  python: >-
+    carriere.py : _ligne_annuelle ; donnees/chargement.py : AssietteMinimale.montant,
+    charger_assiettes_minimales, assiette_minimale, charger_dispenses_assiette_minimale,
+    dispense_assiette_minimale, dispense_les_complementaires ; droit/acquerir.py :
+    assiette_minimale, acquerir ; droit/liquider.py : salaire_de_reference ;
+    droit/seconde.py : _revenus ; moteur/compte.py :
+    ConstructeurCompte._cotisation_ligne
+  javascript: >-
+    moteur/js/carriere.js : ligneAnnuelle, assietteMinimale, montantAssietteMinimale,
+    dispenseAssietteMinimale, dispenseLesComplementaires ; moteur/js/droit/acquerir.js :
+    assietteMinimale, acquerir ; moteur/js/droit/liquider.js : salaireDeReference ;
+    moteur/js/droit/seconde.js : revenus ; moteur/js/compte.js :
+    ConstructeurCompte._cotisationLigne
+  parametres: >-
+    legislation/assiette_minimale_independants.csv : statuts, regimes, debut, fin,
+    heures_smic, part_pass, proratise, jours_minimum ;
+    legislation/dispenses_assiette_minimale.yaml : familles, dispenses ;
+    regimes/carpimko_complementaire.yaml, regimes/cavom_complementaire.yaml :
+    assiette_minimale_pass
+  tests:
+  - tests/test_independants.py
+  - tests/test_saisie_des_dispenses.py
+  - tests/test_simulateur.py
+  - tests/test_emploi_retraite.py
+  - tests/test_micro_social.py
+  - >-
+    tests/test_cumul_activites.py, tests/test_liquidation.py et
+    tests/test_versements_uniques.py, qui confrontent les deux moteurs sur des carrières
+    qui la portent
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    trois témoins changent sans le minimum — dispense_liberale_pensionnee,
+    dispense_saisonniere_cumulee et seconde_pension_artisane_au_minimum_2026 —, trois
+    sans les dispenses, les deux premiers et dispense_rsa_releve_artisane ;
+    tests/test_pont.py rejoue le premier à l'octet

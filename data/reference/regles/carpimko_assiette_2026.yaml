@@ -4,6 +4,7 @@ intitule: >-
   Complémentaire de la CARPIMKO depuis 2026 : 8,7 % du revenu entier, assiette relevée
   à un demi-plafond et coupée à trois ; points au coût d'acquisition, 391 € en 2026
   pour une valeur de service de 21,48 €.
+regimes: [carpimko_complementaire]
 etat: approchee
 effet: >-
   La fiche retranchait un demi-plafond de tout revenu et reconduisait le rendement
@@ -36,3 +37,43 @@ textes_a_rattacher:
 - reference: >-
     décret n° 2025-1076, articles 7 et 14 (JORFARTI000052565540, JORFARTI000052565558)
 - reference: arrêté du 14 novembre 2025 approuvant les statuts (JORFARTI000052604992)
+code:
+  moteur: >-
+    La période de 2026 de `carpimko_complementaire` cotise 8,7 %
+    (`taux_cotisation_retraite`) sur le revenu entier jusqu'à trois plafonds
+    (`plafonnee_3_pass`, dans `BORNES_ASSIETTE`), sans tranche en euros, et relève
+    l'assiette à un demi-plafond, proratisé aux mois de l'année
+    (`assiette_minimale_pass`, `PeriodeRegime.assiette_minimale`), au scénario 1
+    (`acquerir`) comme au compte notionnel (`ConstructeurCompte._cotisation_ligne`),
+    sauf l'année que le RSA, la prime d'activité ou l'activité saisonnière dispense
+    (`dispense_les_complementaires`). Le dépôt n'a pas de prix d'achat de la CARPIMKO :
+    `liquider_chaque_regime` sert les cotisations revalorisées au rendement que
+    `Rendements.rendement` lit à l'année de la liquidation, 5,49 % depuis 2026, 21,48 €
+    de service pour 391 €.
+  python: >-
+    donnees/regimes.py : BORNES_ASSIETTE, PeriodeRegime.bornes_assiette_en_euros,
+    PeriodeRegime.assiette_minimale ; donnees/chargement.py :
+    dispense_les_complementaires ; droit/acquerir.py : acquerir ; droit/liquider.py :
+    liquider_chaque_regime ; scenarios/actuel.py : Rendements.rendement ;
+    moteur/compte.py : ConstructeurCompte._cotisation_ligne
+  javascript: >-
+    moteur/js/regimes.js : BORNES_ASSIETTE, PeriodeRegime.bornesAssietteEnEuros,
+    PeriodeRegime.assietteMinimale, Rendements.rendement ; moteur/js/carriere.js :
+    dispenseLesComplementaires ; moteur/js/droit/acquerir.js : acquerir ;
+    moteur/js/droit/liquider.js : liquiderChaqueRegime ; moteur/js/compte.js :
+    ConstructeurCompte._cotisationLigne
+  parametres: >-
+    regimes/carpimko_complementaire.yaml : assiette, assiette_minimale_pass,
+    taux_cotisation_retraite ; regimes/rendements_points.csv : carpimko_complementaire,
+    rendement
+  tests:
+  - tests/test_independants.py
+  - >-
+    tests/test_cumul_activites.py et tests/test_fiche_des_liberaux.py, qui confrontent
+    les deux moteurs sur des carrières qui la portent
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    quatre témoins changent sans l'assiette de 2026 comme sans son rendement —
+    statut_auxiliaire_medical, ses générations 1965 et 1968, et
+    dispense_liberale_pensionnee, que tests/test_pont.py rejoue à l'octet ; aucun cas
+    posé à la main ne tient le rendement

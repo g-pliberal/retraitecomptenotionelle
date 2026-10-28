@@ -3,6 +3,10 @@ id: decret_2026_418_liberaux
 intitule: >-
   Décret n° 2026-418 du 29 mai 2026 réécrivant les régimes complémentaires et d'invalidité-décès
   des sections libérales, à confronter aux fiches.
+regimes: [asv_auxiliaires_medicaux, asv_conventionnes, carcdsf_complementaire,
+  carmf_complementaire, carpimko_complementaire, carpv_complementaire,
+  cavamac_complementaire, cavec_complementaire, cavom_complementaire,
+  cavp_complementaire, cipav_complementaire, cprn_complementaire]
 etat: transcrite
 effet: >-
   Lu pour les sections juridiques (articles 2 et 22), les sections de santé (articles
@@ -45,3 +49,32 @@ sources:
     date: 2026-09-23
 textes_a_rattacher:
 - reference: décret n° 2026-418 du 29 mai 2026 (JORF du 31 mai 2026)
+code:
+  moteur: >-
+    Le décret ne change aucun paramètre que le dépôt porte : les périodes des régimes
+    qu'il réécrit gardent leurs taux, leurs assiettes, leurs classes et leurs âges, que
+    `acquerir` sert en points et `liquider_chaque_regime` liquide comme avant. Ce qu'il
+    écrit à neuf et que le modèle porte, la majoration de 10 % pour trois enfants de la
+    Cipav (article 20), est la fiche `sections_liberales_majoration_enfants` ; ce qu'il
+    écrit et que le modèle ne porte pas, `sources.a_relire` le dit.
+  python: >-
+    droit/acquerir.py : acquerir ; droit/liquider.py : liquider_chaque_regime
+  javascript: >-
+    moteur/js/droit/acquerir.js : acquerir ; moteur/js/droit/liquider.js :
+    liquiderChaqueRegime
+  parametres: >-
+    regimes/asv_auxiliaires_medicaux.yaml, regimes/asv_conventionnes.yaml,
+    regimes/carcdsf_complementaire.yaml, regimes/carmf_complementaire.yaml,
+    regimes/carpimko_complementaire.yaml, regimes/carpv_complementaire.yaml,
+    regimes/cavamac_complementaire.yaml, regimes/cavec_complementaire.yaml,
+    regimes/cavom_complementaire.yaml, regimes/cavp_complementaire.yaml,
+    regimes/cipav_complementaire.yaml, regimes/cprn_complementaire.yaml : assiette,
+    taux_cotisation_retraite, avantages_non_contributifs
+  tests:
+  - >-
+    tests/test_sections_liberales.py, qui tient ce que la lecture du décret dans les
+    articles des trois sections a corrigé
+  - >-
+    tests/test_sections_juridiques.py, tests/test_sections_sante.py et
+    tests/test_pcv_sante.py, qui tiennent les paramètres des autres sections, que le
+    décret laisse

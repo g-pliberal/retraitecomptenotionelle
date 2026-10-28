@@ -4,6 +4,7 @@ intitule: >-
   Complémentaire de la Cipav : 9 % puis 11 % jusqu'à un plafond, 22 % puis 21 %
   au-delà, jusqu'à trois plafonds en 2023, trois et demi en 2024, quatre depuis
   2025.
+regimes: [cipav_complementaire]
 etat: transcrite
 effet: >-
   Un libéral de la Cipav au-delà de trois plafonds achetait trop peu de points depuis
@@ -28,3 +29,39 @@ sources:
 textes_a_rattacher:
 - reference: décret n° 79-262 du 21 mars 1979, article 2 (LEGIARTI000054168526)
 - reference: décret n° 2025-1076, article 12, 8° (taux et valeur d'achat de 2025)
+code:
+  moteur: >-
+    Depuis 2023, chaque année de `cipav_complementaire` a deux périodes : la première
+    cotise 9 %, 11 % depuis 2025, jusqu'au plafond (`plafonnee`) ; la seconde 22 %, 21 %
+    depuis 2025, d'un plafond à trois en 2023 (`tranche_1_3_pass`), à trois et demi en
+    2024 (`tranche_1_3_5_pass`) et à quatre depuis 2025 (`tranche_1_4_pass`).
+    `BORNES_ASSIETTE` en donne les bornes en plafonds, que `bornes_assiette_en_euros`
+    porte en euros de l'année. `acquerir` en cumule les cotisations, revalorisées par
+    les prix jusqu'à la liquidation, que `liquider_chaque_regime` sert au rendement de
+    la Cipav (`Rendements.rendement`), faute de prix d'achat au dépôt ; le compte
+    notionnel les reçoit (`ConstructeurCompte._cotisation_ligne`).
+  python: >-
+    donnees/regimes.py : BORNES_ASSIETTE, PeriodeRegime.bornes_assiette_en_euros ;
+    droit/acquerir.py : acquerir ; droit/liquider.py : liquider_chaque_regime ;
+    scenarios/actuel.py : Rendements.rendement ; moteur/compte.py :
+    ConstructeurCompte._cotisation_ligne, ConstructeurCompte._bornes_proratisees
+  javascript: >-
+    moteur/js/regimes.js : BORNES_ASSIETTE, PeriodeRegime.bornesAssietteEnEuros,
+    Rendements.rendement ; moteur/js/droit/acquerir.js : acquerir ;
+    moteur/js/droit/liquider.js : liquiderChaqueRegime ; moteur/js/compte.js :
+    ConstructeurCompte._cotisationLigne, ConstructeurCompte._bornesProratisees
+  parametres: >-
+    regimes/cipav_complementaire.yaml : assiette, taux_cotisation_retraite ;
+    regimes/rendements_points.csv : cipav_complementaire, rendement
+  tests:
+  - >-
+    tests/test_cumul_activites.py, tests/test_cycle_de_vie_script.py,
+    tests/test_droit.py, tests/test_fiche_date_d_entree.py,
+    tests/test_fiche_des_liberaux.py, tests/test_pont.py et tests/test_simulateur.py,
+    qui confrontent les deux moteurs sur des carrières qui portent les deux tranches
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    sept témoins changent sans la seconde tranche — statut_liberal_non_reglemente,
+    statut_profession_liberale, leurs générations 1965 et 1968, et enfants_liberale —,
+    aucun sans ses bornes de trois et demi et de quatre plafonds, qu'aucun test
+    n'atteint

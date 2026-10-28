@@ -217,6 +217,9 @@ CODE_ET_REGIMES_ECRITS = frozenset("""
     majoration_enfants_liberaux_avocats majoration_enfants_regimes_speciaux
     marins_bonification_enfants sam_parents_24_23 sections_liberales_majoration_enfants
     surcote_parentale
+    assiette_minimale_independants asv_medecins_ajustement baremes_cnbf carpimko_ages_2015
+    carpimko_assiette_2026 cavom_assiette_2016 cipav_seconde_tranche cnavpl_valeur_service
+    decret_2026_418_liberaux raap_taux_amenage_racd_racl rci_valeurs_point
 """.split())
 
 

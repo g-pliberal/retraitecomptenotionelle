@@ -7,6 +7,7 @@ intitule: >-
   quatre plafonds en 2016, cinq en 2017, six en 2018 et sept en 2019 ; l'assiette
   ne peut être inférieure au quart du plafond, puis à 19 % depuis le 1er janvier
   2019.
+regimes: [cavom_complementaire]
 etat: transcrite
 effet: >-
   La fiche portait huit plafonds dès 2016 et aucune assiette minimale : elle surestimait
@@ -44,3 +45,32 @@ textes_a_rattacher:
     décret n° 2015-1875 du 30 décembre 2015, article 1er, II (JORFTEXT000031740732)
 reformes:
 - cavom_2016
+code:
+  moteur: >-
+    Les périodes de `cavom_complementaire` cotisent 12,5 % (`taux_cotisation_retraite`)
+    jusqu'à quatre plafonds en 2016, cinq en 2017, six en 2018, sept en 2019 et huit
+    depuis 2020, comme avant 2016 (`plafonnee_4_pass` à `plafonnee_8_pass`, dans
+    `BORNES_ASSIETTE`), et relèvent l'assiette au quart du plafond de 2016 à 2018, à
+    19 % depuis 2019, proratisés aux mois de l'année (`assiette_minimale_pass`,
+    `PeriodeRegime.assiette_minimale`), au scénario 1 (`acquerir`) comme au compte
+    notionnel (`ConstructeurCompte._cotisation_ligne`), sauf l'année que le RSA, la
+    prime d'activité ou l'activité saisonnière dispense
+    (`dispense_les_complementaires`).
+  python: >-
+    donnees/regimes.py : BORNES_ASSIETTE, PeriodeRegime.bornes_assiette_en_pass,
+    PeriodeRegime.assiette_minimale ; donnees/chargement.py :
+    dispense_les_complementaires ; droit/acquerir.py : acquerir ; moteur/compte.py :
+    ConstructeurCompte._cotisation_ligne
+  javascript: >-
+    moteur/js/regimes.js : BORNES_ASSIETTE, PeriodeRegime.bornesAssietteEnPass,
+    PeriodeRegime.assietteMinimale ; moteur/js/carriere.js :
+    dispenseLesComplementaires ; moteur/js/droit/acquerir.js : acquerir ;
+    moteur/js/compte.js : ConstructeurCompte._cotisationLigne
+  parametres: >-
+    regimes/cavom_complementaire.yaml : assiette, assiette_minimale_pass,
+    taux_cotisation_retraite
+  tests:
+  - >-
+    tests/test_sections_juridiques.py, test_le_plafond_de_la_cavom_monte_par_marches,
+    qui lit les bornes et le minimum de chaque année ; aucun témoin ne change sans eux,
+    et aucun test ne tient ce qu'ils font à une cotisation ou à une pension de la CAVOM

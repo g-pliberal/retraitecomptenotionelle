@@ -4,6 +4,7 @@ intitule: >-
   Le taux de cotisation au RAAP est la moitié du taux de droit commun pour les personnes
   tenues de cotiser au RACD ou au RACL : 4 % depuis les revenus de 2019, la moitié
   de la montée en charge de 2016 à 2018.
+regimes: [ircec_raap, ircec_raap_taux_amenage]
 etat: conforme
 effet: >-
   Les statuts `auteur_dramatique` et `auteur_lyrique` cotisaient au RAAP à 8 % :
@@ -48,3 +49,38 @@ textes_a_rattacher:
     à 2019)
 reformes:
 - ircec_2016
+code:
+  moteur: >-
+    Depuis 2016, `legislation/affiliations.yaml` affilie l'auteur dramatique (SACD) et
+    l'auteur lyrique (SACEM), avec le régime général et le RACD ou le RACL, à
+    `ircec_raap_taux_amenage` au lieu du RAAP (`Affiliations.regimes`) : ses périodes
+    cotisent jusqu'à trois plafonds à 2,5 % en 2016, 3 % en 2017, 3,5 % en 2018 et 4 %
+    depuis 2019, la moitié des taux du RAAP, et son barème est celui du RAAP
+    (`points_de`) : `acquerir` en cumule les cotisations, revalorisées par les prix
+    jusqu'à la liquidation, que `liquider_chaque_regime` sert au rendement du RAAP
+    (`Rendements.rendement`), et le compte notionnel les reçoit
+    (`ConstructeurCompte._cotisation_ligne`). Le taux vaut pour tout le revenu de ces
+    deux statuts, qui le portent entier au RACD ou au RACL.
+  python: >-
+    carriere.py : Affiliations.regimes ; droit/acquerir.py : acquerir ;
+    droit/liquider.py : liquider_chaque_regime ; scenarios/actuel.py :
+    Rendements.rendement ; moteur/compte.py : ConstructeurCompte._cotisation_ligne
+  javascript: >-
+    moteur/js/regimes.js : Affiliations.regimes, Rendements.rendement ;
+    moteur/js/droit/acquerir.js : acquerir ; moteur/js/droit/liquider.js :
+    liquiderChaqueRegime ; moteur/js/compte.js : ConstructeurCompte._cotisationLigne
+  parametres: >-
+    regimes/ircec_raap.yaml, regimes/ircec_raap_taux_amenage.yaml :
+    taux_cotisation_retraite, assiette, points_de ; legislation/affiliations.yaml :
+    affiliations.auteur_dramatique.periodes, affiliations.auteur_lyrique.periodes ;
+    regimes/rendements_points.csv : ircec_raap, rendement
+  tests:
+  - tests/test_ircec_auteurs.py
+  - >-
+    tests/test_coupures_au_mois.py, tests/test_cumul_activites.py, tests/test_droit.py
+    et tests/test_liquidation.py, qui confrontent les deux moteurs sur des carrières qui
+    la portent
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    neuf témoins changent sans elle — les quatre de l'auteur dramatique et les quatre de
+    l'auteur lyrique nés depuis 1955, et auteur_dramatique_carriere_courte

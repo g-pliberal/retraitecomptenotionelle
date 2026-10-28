@@ -9,6 +9,7 @@ intitule: >-
   de l'âge du taux plein (jusqu'en 2023 : 4 % par année d'anticipation plus 0,25
   % par trimestre manquant pour les générations 1955 et antérieures). Majoration
   de 10 % pour trois enfants depuis 2024.
+regimes: [carpimko_complementaire]
 etat: approchee
 effet: >-
   La fiche lisait 67 ans dès la génération 1955 ; la table `carpimko_2016` arrête
@@ -49,3 +50,36 @@ textes_a_rattacher:
 reformes:
 - carpimko_report_2015
 - carpimko_2024
+code:
+  moteur: >-
+    Depuis 2016, les périodes de `carpimko_complementaire` nomment la table
+    `carpimko_2016` de `legislation/ages_regimes.csv` (`age_table`), que
+    `AgesRegimes.ages` lit à la génération : taux plein à 65 ans jusqu'à la génération
+    1955, quatre mois de plus par génération jusqu'à 67 ans pour celle de 1961 ; âge
+    minimal de 60 ans, du même pas jusqu'à 61 ans et 8 mois pour 1960, l'âge légal de la
+    génération ensuite. `age_taux_plein` en tire l'âge qui annule la décote, 1,25 % par
+    trimestre, sur le moindre des trimestres manquants à la durée requise et de ceux qui
+    séparent de cet âge (`decote_opposable`) ; la surcote se compte de cet âge, ou de
+    celui où la durée est atteinte, cherché depuis l'âge minimal (`surcote_points`,
+    `age_de_la_duree_atteinte`, `age_ouverture_commun`). La pension ne s'ouvre qu'avec
+    celle du régime de base, que la complémentaire suit (`ouvrir`). Ni l'abattement des
+    générations 1955 et antérieures de 2016 à 2023, ni les statuts d'avant 2015 : voir
+    `effet`.
+  python: >-
+    scenarios/actuel.py : AgesRegimes, AgesRegimes.ages ; droit/ouvrir.py : ouvrir,
+    age_taux_plein, age_ouverture_commun ; droit/liquider.py : decote_opposable,
+    trimestres_de_decote, surcote_points, age_de_la_duree_atteinte
+  javascript: >-
+    moteur/js/regimes.js : AgesRegimes, AgesRegimes.ages ; moteur/js/droit/ouvrir.js :
+    ouvrir, ageTauxPlein, ageOuvertureCommun ; moteur/js/droit/liquider.js :
+    decoteOpposable, trimestresDeDecote, surcotePoints, ageDeLaDureeAtteinte
+  parametres: >-
+    regimes/carpimko_complementaire.yaml : age_table, decote_par_trimestre,
+    surcote_par_trimestre, surcote_points, surcote_depuis_la_duree ;
+    legislation/ages_regimes.csv : carpimko_2016, generation, age_ouverture,
+    age_taux_plein
+  tests:
+  - tests/test_sections_sante.py
+  - >-
+    tests/test_simulateur.py ; aucun témoin ne change sans la table, et aucun test ne
+    confronte le portage à une carrière qu'elle change

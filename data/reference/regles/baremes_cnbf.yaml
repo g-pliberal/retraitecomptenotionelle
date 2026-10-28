@@ -4,6 +4,7 @@ intitule: >-
   Pension forfaitaire de base, cotisation forfaitaire, taux proportionnel et grille
   de cotisation du complémentaire des avocats (classe C1), année par année depuis
   2016.
+regimes: [cnbf, cnbf_complementaire]
 etat: approchee
 effet: >-
   Tout avocat. La grille du complémentaire était celle de 2026 depuis 2019, alors
@@ -51,3 +52,47 @@ approximations:
   effet: >-
     non mesuré ; léger : la coupe du 14 octobre 2026 le déclare sans le faire
     (action 138, classement du 9 octobre)
+code:
+  moteur: >-
+    Les deux fiches ont une période par année depuis 2016. Au régime de base,
+    `liquider_chaque_regime` sert la pension forfaitaire de la période en vigueur à la
+    date d'effet (`periode_de_liquidation`, `pension_forfaitaire_annuelle`), portée par
+    les prix depuis son année (`pension_forfaitaire_annee`), celle de 2016 pour les
+    périodes d'avant, et proratisée par la durée ; la cotisation, que le compte
+    notionnel reçoit (`ConstructeurCompte._cotisation_ligne`) et que la fiche de paie
+    prélève (`bloc_droit_en_vigueur`), est le forfait de croisière de l'année
+    (`cotisation_forfaitaire_euros`, `cotisation_forfaitaire_annee`) et la
+    proportionnelle sur le revenu entier, sans la limite que le barème écrit
+    (`taux_cotisation_retraite`, `deplafonnee`). Au complémentaire, chaque année porte
+    les cinq tranches de la classe C1 en euros (`borne_basse_euros`,
+    `borne_haute_euros`), que `bornes_assiette_en_euros`, et pour la fiche de paie
+    `bornes_en_euros`, font primer sur le plafond, et leurs taux : `acquerir` en achète
+    les points, le compte et la fiche de paie en reçoivent les cotisations ; avant 2016,
+    8 % sans plafond.
+  python: >-
+    droit/liquider.py : liquider_chaque_regime ; droit/commun.py :
+    periode_de_liquidation ; droit/acquerir.py : acquerir ; donnees/regimes.py :
+    PeriodeRegime.bornes_assiette_en_euros, PeriodeRegime.bornes_en_euros ;
+    moteur/compte.py : ConstructeurCompte._cotisation_ligne,
+    ConstructeurCompte._bornes_proratisees ; remuneration.py : bloc_droit_en_vigueur
+  javascript: >-
+    moteur/js/droit/liquider.js : liquiderChaqueRegime ; moteur/js/droit/commun.js :
+    periodeDeLiquidation ; moteur/js/droit/acquerir.js : acquerir ;
+    moteur/js/regimes.js : PeriodeRegime.bornesAssietteEnEuros,
+    PeriodeRegime.bornesEnEuros ; moteur/js/compte.js :
+    ConstructeurCompte._cotisationLigne, ConstructeurCompte._bornesProratisees ;
+    moteur/js/remuneration.js : blocDroitEnVigueur
+  parametres: >-
+    regimes/cnbf.yaml, regimes/cnbf_complementaire.yaml : pension_forfaitaire_annuelle,
+    pension_forfaitaire_annee, cotisation_forfaitaire_euros,
+    cotisation_forfaitaire_annee, taux_cotisation_retraite, assiette, borne_basse_euros,
+    borne_haute_euros
+  tests:
+  - tests/test_simulateur.py
+  - >-
+    tests/test_cumul_activites.py, tests/test_droit.py et tests/test_liquidation.py, qui
+    confrontent les deux moteurs sur des carrières qui la portent
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    huit témoins changent sans les barèmes de l'année, les sept de l'avocat et
+    metiers_maximum

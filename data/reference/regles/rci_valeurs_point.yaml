@@ -3,6 +3,7 @@ id: rci_valeurs_point
 intitule: >-
   Prix d'achat et valeur de service du point de la complémentaire des artisans et
   commerçants (RCI), 2024 à 2026.
+regimes: [rci]
 etat: transcrite
 effet: >-
   Faute de valeurs après 2023, le modèle achetait les points RCI au rendement de
@@ -24,3 +25,44 @@ textes_a_rattacher:
 - reference: >-
     délibérations du conseil de la protection sociale des travailleurs indépendants,
     reprises par les circulaires Cnav 2023/33, 2024/36 et 2025/31
+code:
+  moteur: >-
+    `ValeursPoint` lit dans `regimes/valeurs_point.csv` le prix d'achat
+    (`salaire_reference`) et la valeur de service du point RCI de 2013 à 2026, que
+    `scripts/fetch/cnav_baremes_rci.py` relève dans la base de législation de la Cnav :
+    `acquerir` achète les points de chaque année au prix de son année
+    (`ValeursPoint.achat_prolonge`, `ValeursPoint.achat`), et `valeur_du_point` les sert
+    à la valeur de l'année de la liquidation, celle de 2026 prolongée par les prix
+    au-delà. Le RCI n'a pas de prix prolongé, que `regimes/prolongement_points.csv` ne
+    nomme pas : ses cotisations d'après 2026 se servent au rendement de 6,20 % que
+    `Rendements.rendement` lit depuis 2024, dans `liquider_chaque_regime`.
+  python: >-
+    scenarios/actuel.py : ValeursPoint.achat, ValeursPoint.achat_prolonge,
+    ValeursPoint.service, Rendements.rendement ; droit/acquerir.py : acquerir ;
+    droit/liquider.py : valeur_du_point, liquider_chaque_regime
+  javascript: >-
+    moteur/js/regimes.js : ValeursPoint.achat, ValeursPoint.achatProlonge,
+    ValeursPoint.service, Rendements.rendement ; moteur/js/droit/acquerir.js :
+    acquerir ; moteur/js/droit/liquider.js : valeurDuPoint, liquiderChaqueRegime
+  parametres: >-
+    regimes/valeurs_point.csv : rci, salaire_reference, valeur_service ;
+    regimes/rendements_points.csv : rci, rendement
+  tests:
+  - tests/test_emploi_retraite.py
+  - tests/test_independants.py
+  - tests/test_micro_social.py
+  - >-
+    scripts/verifier_donnees.py, qui certifie les valeurs à la base de législation de la
+    Cnav
+  - >-
+    tests/test_cumul_activites.py, tests/test_cycle_de_vie_script.py,
+    tests/test_droit.py, tests/test_etranger.py, tests/test_liquidation.py,
+    tests/test_moteur.py, tests/test_pension_minimum_avant_1983.py,
+    tests/test_reversion.py et tests/test_versements_uniques.py, qui confrontent les
+    deux moteurs sur des carrières qui la portent
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) : 61
+    témoins changent sans les valeurs de 2024 à 2026 — ceux de l'artisan, du commerçant,
+    du gérant de débit de tabac, de leurs conjoints collaborateurs et du
+    micro-entrepreneur, à chaque génération, et ceux des cumuls, des métiers et des
+    réversions qui passent par eux ; tests/test_pont.py rejoue cumul_artisan à l'octet

@@ -4,6 +4,7 @@ intitule: >-
   ASV des médecins depuis 2012 : 27 points pour la cotisation forfaitaire, plus
   18 fois la cotisation d'ajustement divisée par le forfait, neuf points au plus
   par an.
+regimes: [asv_conventionnes]
 etat: approchee
 etape: acquerir_les_droits
 effet: >-
@@ -35,3 +36,38 @@ textes_a_rattacher:
 - reference: décret n° 2011-1644, article 3 (LEGIARTI000024853554)
 - reference: 'décret n° 2011-1644, article 2 (LEGIARTI000052567960) : 4 % depuis
     2026'
+code:
+  moteur: >-
+    Depuis 2012, chaque période de `asv_conventionnes` sert 6,75 points par trimestre
+    validé, 27 pour l'année entière (`points_par_trimestre_valide`), et `acquerir` y
+    ajoute les points d'ajustement : 18 fois le rapport de la cotisation d'ajustement au
+    forfait (`points_ajustement_par_forfait`), toutes deux comptées entières, la part de
+    l'assurance maladie comprise (`PeriodeRegime.ajustement_total`), neuf points au plus
+    pour une année entière, à proportion de ses mois sinon
+    (`points_ajustement_maximum`). Le forfait est celui que la période date
+    (`cotisation_forfaitaire_euros`, `cotisation_forfaitaire_annee`), porté par les prix
+    aux années qui n'en publient pas : de 2017 à 2024, celui de 2016.
+  python: >-
+    droit/acquerir.py : acquerir ; donnees/regimes.py : PeriodeRegime.ajustement_total
+  javascript: >-
+    moteur/js/droit/acquerir.js : acquerir ; moteur/js/regimes.js :
+    PeriodeRegime.ajustementTotal
+  parametres: >-
+    regimes/asv_conventionnes.yaml : points_par_trimestre_valide,
+    points_ajustement_par_forfait, points_ajustement_maximum,
+    cotisation_forfaitaire_euros, cotisation_forfaitaire_annee, assiette,
+    taux_cotisation_retraite, part_assurance_maladie_forfait,
+    part_assurance_maladie_taux
+  tests:
+  - >-
+    tests/test_pcv_sante.py, dont test_chaque_profession_de_sante_a_son_etage, qui ne
+    dit que l'étage suit le revenu : aucun cas posé à la main ne tient les points de la
+    calculette de la CARMF que l'effet cite
+  - >-
+    tests/test_cumul_activites.py, tests/test_droit.py et tests/test_liquidation.py, qui
+    confrontent les deux moteurs sur des carrières qui la portent
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    onze témoins changent sans les points d'ajustement — les huit du médecin libéral de
+    secteur 1 et de secteur 2 nés depuis 1955, cumul_medecin_carmf_2017,
+    cumul_medecin_seulement_liberal_2017 et cumul_salarie_et_liberal
