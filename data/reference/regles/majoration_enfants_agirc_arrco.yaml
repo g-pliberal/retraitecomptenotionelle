@@ -6,6 +6,14 @@ intitule: >-
   la prévoyait, 5 % pour l'Arrco de 1999 à 2011, 8 à 24 % pour l'Agirc d'avant 2012,
   10 % depuis ; plafond en euros sur l'ensemble, 1 000 € par régime au 1er janvier
   2012 pour les allocations de 2012 à 2018, celui du régime unifié depuis.
+regimes:
+- agirc
+- agirc_arrco
+- agirc_entreprises_nouvelles
+- arrco
+- arrco_cultes
+- arrco_tranche_2
+- arrco_tranche_2_entreprises_nouvelles
 etat: conforme
 effet: >-
   Parents de trois enfants salariés du privé avant 2019. Le modèle servait 10 %
@@ -84,3 +92,46 @@ referents:
       la minoration de la majoration avec l'allocation concordent au centime ; son
       plafond de 1 000 € par régime au 1er janvier 2012 était juste, le nôtre faux,
       repris dans les deux moteurs
+code:
+  moteur: >-
+    `acquerir` inscrit chaque point avec le taux de son année d'acquisition et du régime
+    qui l'inscrit, que `MajorationsEnfantsPoints.taux` lit au nombre d'enfants dans
+    `legislation/majoration_enfants_points.csv` : de 10 à 30 % pour l'Arrco d'avant
+    1999, que le modèle présume prévus au règlement de chaque caisse, 5 % de 1999 à
+    2011, de 8 à 24 % pour l'Agirc d'avant 2012, 10 % depuis. `completer` sert à la
+    pension le taux moyen de ses points, au barème commun ceux que la table ne dit pas,
+    sur l'allocation, coefficient d'anticipation compris ; puis il borne en euros la
+    majoration de chaque régime qui oppose le plafond (`plafond_majoration`,
+    `regime_du_plafond`) : 1 000 € au titre de l'Arrco et autant au titre de l'Agirc au
+    1er janvier 2012, suivis au point de chacun, pour les allocations de 2012 à 2018, le
+    plafond du régime unifié depuis 2019, aux seules générations nées depuis 1952.
+  python: >-
+    droit/acquerir.py : acquerir ; scenarios/actuel.py : MajorationsEnfantsPoints,
+    MajorationsEnfantsPoints.taux ; droit/completer.py : completer, plafond_majoration,
+    regime_du_plafond
+  javascript: >-
+    moteur/js/droit/acquerir.js : acquerir ; moteur/js/regimes.js :
+    MajorationsEnfantsPoints, MajorationsEnfantsPoints.taux ;
+    moteur/js/droit/completer.js : completer, plafondMajoration, regimeDuPlafond
+  parametres: >-
+    legislation/majoration_enfants_points.csv : regimes, acquis_debut, acquis_fin,
+    bareme, fiabilite ; regimes/agirc.yaml, regimes/agirc_arrco.yaml,
+    regimes/agirc_entreprises_nouvelles.yaml, regimes/arrco.yaml,
+    regimes/arrco_cultes.yaml, regimes/arrco_tranche_2.yaml,
+    regimes/arrco_tranche_2_entreprises_nouvelles.yaml : plafond_majoration_enfants,
+    plafond_majoration_annee, plafond_majoration_regime
+  tests:
+  - tests/test_destinie.py
+  - tests/test_droit.py
+  - tests/test_oracle_points_enfants_arrco.py
+  - tests/test_simulateur.py
+  - tests/test_trajectoire.py
+  - >-
+    tests/test_majoration_exceptionnelle.py et tests/test_taux_plein_par_categorie.py,
+    qui confrontent les deux moteurs sur des carrières qui la portent
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    cinq témoins changent sans les taux par année d'acquisition — enfants, enfants_pere,
+    enfants_carriere_incomplete, taux_plein_mere_ouvriere et
+    reversion_deces_avant_le_depart —, six sans le plafond,
+    departs_prive_puis_categorie_active_trois_enfants avec eux

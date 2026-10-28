@@ -4,6 +4,7 @@ intitule: >-
   Assurance vieillesse des parents au foyer : pendant l'interruption pour enfant, depuis
   le 1er juillet 1972, un salaire porté au compte du régime général sur une assiette
   forfaitaire de 169 heures par mois du SMIC du 1er juillet de l'année précédente.
+regimes: [msa_salaries, regime_general]
 etat: transcrite
 effet: >-
   Carrières interrompues pour enfant. L'assiette est celle que la Cnav publie, date par
@@ -55,3 +56,36 @@ textes_a_rattacher:
 - reference: L. 381-1 CSS
 - id: LEGIARTI000047961951
   reference: R. 381-3 CSS, l'assiette forfaitaire
+code:
+  moteur: >-
+    `_ligne_annuelle` porte à la ligne non cotisée d'une période qui l'ouvre —
+    l'éducation d'un enfant (colonne `avpf` de
+    `legislation/periodes_non_travaillees.csv`) — le salaire de l'assurance vieillesse
+    des parents au foyer, à sa part de l'année : `DonneesMacro.revenu_avpf` somme les
+    assiettes mensuelles que la Cnav publie, date par date, du 1er juillet 1972 au 1er
+    janvier 2026 (`assiette_avpf`), rien avant juillet 1972 (`ANNEE_CREATION_AVPF`), et
+    au-delà du barème 169 heures par mois du SMIC du 1er juillet de l'année précédente
+    (`HEURES_AVPF_PAR_MOIS`, `smic_horaire_au_1er_juillet`). `salaire_de_reference`
+    porte ce salaire au compte des périodes qui déclarent `avpf`, au régime général
+    depuis 1972, aux salariés agricoles pour les pensions prenant effet depuis le 1er
+    avril 1983 (`date_effet`), et en compte les trimestres avec les cotisés dans la
+    moyenne d'avant juillet 1995 ; `liquider` en mesure l'effet, la ligne `avpf` de la
+    cascade.
+  python: >-
+    carriere.py : _ligne_annuelle ; donnees/macro.py : DonneesMacro,
+    DonneesMacro.revenu_avpf, DonneesMacro.assiette_avpf,
+    DonneesMacro.smic_horaire_au_1er_juillet, ANNEE_CREATION_AVPF, HEURES_AVPF_PAR_MOIS
+    ; droit/liquider.py : salaire_de_reference ; droit/liquidation.py : liquider
+  javascript: >-
+    moteur/js/carriere.js : ligneAnnuelle ; moteur/js/macro.js : DonneesMacro,
+    DonneesMacro.revenuAvpf, DonneesMacro.smicHoraireAu1erJuillet, ANNEE_CREATION_AVPF,
+    HEURES_AVPF_PAR_MOIS ; moteur/js/droit/liquider.js : salaireDeReference ;
+    moteur/js/droit/liquidation.js : liquider
+  parametres: >-
+    legislation/assiette_avpf.csv : date_effet, assiette_mensuelle ;
+    legislation/periodes_non_travaillees.csv : avpf ; regimes/msa_salaries.yaml,
+    regimes/regime_general.yaml : avantages_non_contributifs, date_effet
+  tests:
+  - tests/test_liquidation.py
+  - tests/test_salaire_annuel_moyen.py
+  - tests/test_simulateur.py

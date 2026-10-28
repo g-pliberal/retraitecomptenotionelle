@@ -6,6 +6,7 @@ intitule: >-
   643-1-1), étendue à L. 351-4-1 et L. 351-4-2 en 2023 ; surcote parentale de L.
   351-1-2-1 pour les pensions prenant effet depuis le 1er septembre 2023 (I de L.
   643-3).
+regimes: [cnavpl]
 etat: approchee
 effet: >-
   La fiche les disait non portés, et le moteur ne cherchait la majoration de durée
@@ -45,3 +46,33 @@ textes_a_rattacher:
 reformes:
 - cnavpl_mda_2010
 - majoration_enfants_liberaux_2023
+code:
+  moteur: >-
+    Les périodes de la CNAVPL déclarent `mda` depuis 2010 et `surcote_parentale` depuis
+    2024. `majoration_pour_enfants` cherche la majoration de durée dans toute période
+    qui déclare `mda`, en points comme en annuités, et les bonifications aux seules
+    annuités : la libérale qui n'a cotisé qu'à sa section reçoit les trimestres de ses
+    enfants (fiche `majoration_duree_assurance_enfants`), que sa durée d'assurance
+    compte. `trimestres_de_surcote_parentale` lui compte ceux de la surcote parentale
+    (`SurcoteParentale`), que `completer` sert sur sa pension d'avant la surcote, dans
+    le coefficient de sa surcote.
+  python: >-
+    droit/compter.py : majoration_pour_enfants ; droit/completer.py :
+    trimestres_de_surcote_parentale, completer ; scenarios/actuel.py : SurcoteParentale,
+    SurcoteParentale.parametres
+  javascript: >-
+    moteur/js/droit/compter.js : majorationPourEnfants ; moteur/js/droit/completer.js :
+    trimestresDeSurcoteParentale, completer ; moteur/js/regimes.js : SurcoteParentale,
+    SurcoteParentale.parametres
+  parametres: >-
+    regimes/cnavpl.yaml : avantages_non_contributifs ; legislation/surcote_parentale.csv
+    : age_ouverture, taux_par_trimestre, trimestres_maximum
+  tests:
+  - tests/test_sections_liberales.py
+  - tests/test_simulateur.py
+  - >-
+    tests/test_coupures_au_mois.py, qui confronte les deux moteurs sur des carrières qui
+    les portent
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    enfants_liberale, seul témoin qui change sans elles

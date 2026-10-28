@@ -4,6 +4,7 @@ intitule: >-
   Vingt-quatre meilleures années pour qui bénéficie d'une majoration ou bonification
   au titre d'un enfant, vingt-trois pour deux et plus, pensions prenant effet à
   compter du 1er septembre 2026.
+regimes: [cavimac, msa_non_salaries, msa_salaries, regime_general]
 etat: transcrite
 effet: >-
   Mères (par défaut dans le modèle) liquidant depuis septembre 2026 : +1 à +2 %
@@ -33,3 +34,40 @@ textes_a_rattacher:
 - reference: loi n° 2025-1403, article 103
 reformes:
 - parents_2026
+code:
+  moteur: >-
+    `nombre_d_annees_retenues` retire une année aux meilleures que la génération retient
+    pour un enfant, deux pour deux enfants et plus, quand la carrière détient les
+    trimestres pour enfants (`Durees.enfants`, la mère par défaut) et que la pension
+    prend effet depuis le 1er septembre 2026 (`PARENTS_MEILLEURES_ANNEES_DEPUIS`, sur
+    `ScenarioActuel`). Seules le lisent les périodes qui comptent leurs années à la
+    génération (`salaire_reference_par_generation`) : celles du régime général et des
+    salariés agricoles, de la CAVIMAC, et des non-salariés agricoles depuis 2026.
+    `liquider_chaque_regime` en tire la moyenne de `salaire_de_reference` ;
+    `annees_des_regimes_alignes` et `pension_des_non_salaries_agricoles` répartissent ce
+    total entre les régimes alignés et les non-salariés agricoles.
+  python: >-
+    droit/liquider.py : nombre_d_annees_retenues, liquider_chaque_regime,
+    salaire_de_reference, annees_des_regimes_alignes, pension_des_non_salaries_agricoles
+    ; droit/compter.py : Durees ; scenarios/actuel.py : ScenarioActuel
+  javascript: >-
+    moteur/js/droit/liquider.js : nombreDAnneesRetenues, liquiderChaqueRegime,
+    salaireDeReference, anneesDesRegimesAlignes, pensionDesNonSalariesAgricoles ;
+    moteur/js/scenario-actuel.js : PARENTS_MEILLEURES_ANNEES_DEPUIS, ScenarioActuel
+  parametres: >-
+    regimes/cavimac.yaml, regimes/msa_non_salaries.yaml, regimes/msa_salaries.yaml,
+    regimes/regime_general.yaml : salaire_reference, salaire_reference_par_generation
+  tests:
+  - tests/test_liquidation.py
+  - >-
+    tests/test_cycle_de_vie_script.py, tests/test_pont.py,
+    tests/test_retraite_progressive.py et tests/test_simulateur.py, qui confrontent les
+    deux moteurs sur des carrières qui la portent
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    douze témoins changent sans elle — enfants, enfants_carriere_incomplete,
+    enfants_etat_et_territorial_un_an_chacun, surcote_parentale,
+    surcote_parentale_avec_surcote_ordinaire, surcote_parentale_duree_incomplete,
+    reversion_deces_avant_le_depart, reversion_enfants_a_charge,
+    reversion_enfants_jusqu_a_sa_retraite, auteur_dramatique_carriere_courte,
+    ircantec_quatre_enfants et ircantec_sept_enfants

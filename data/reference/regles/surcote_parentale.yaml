@@ -5,6 +5,7 @@ intitule: >-
   la durée requise, quatre au plus, dès que l'âge légal atteint 63 ans, à qui détient
   un trimestre de majoration de durée d'assurance pour enfants ; ces trimestres entrent
   dans le coefficient de la surcote ordinaire, sur la pension d'avant la surcote.
+regimes: [cnavpl, cnracl, fonction_publique_etat, fspoeie, msa_salaries, regime_general]
 etat: transcrite
 etape: completer_tous_regimes
 effet: >-
@@ -209,3 +210,45 @@ exemples:
 - cnracl_surcote_enfants_duree_atteinte_dans_l_annee
 reformes:
 - reforme_2023
+code:
+  moteur: >-
+    `trimestres_de_surcote_parentale` compte, pour chaque pension dont la période
+    déclare `surcote_parentale`, à qui détient des trimestres pour enfants, les
+    trimestres cotisés de l'année qui précède l'âge légal, datée au mois, dès que cet
+    âge atteint soixante-trois ans, et seulement ceux qui dépassent la durée requise,
+    trimestres pour enfants compris, quatre au plus (`SurcoteParentale`). `completer`
+    les compte avant les minima, le minimum garanti se comparant à la pension qui les
+    porte, puis les sert à 1,25 % chacun sur la pension d'avant la surcote, dans le
+    coefficient de la surcote ordinaire — celui de L. 14 au code des pensions —, avant
+    la majoration pour enfants ; la pension provisoire d'une retraite progressive qui
+    l'emporte les efface.
+  python: >-
+    droit/completer.py : trimestres_de_surcote_parentale, completer ;
+    scenarios/actuel.py : SurcoteParentale, SurcoteParentale.parametres
+  javascript: >-
+    moteur/js/droit/completer.js : trimestresDeSurcoteParentale, completer ;
+    moteur/js/regimes.js : SurcoteParentale, SurcoteParentale.parametres
+  parametres: >-
+    regimes/cnavpl.yaml, regimes/cnracl.yaml, regimes/fonction_publique_etat.yaml,
+    regimes/fspoeie.yaml, regimes/msa_salaries.yaml, regimes/regime_general.yaml :
+    avantages_non_contributifs ; legislation/surcote_parentale.csv : debut, fin,
+    age_ouverture, taux_par_trimestre, trimestres_maximum, fiabilite
+  tests:
+  - tests/test_oracle.py
+  - tests/test_retraite_progressive.py
+  - tests/test_simulateur.py
+  - >-
+    tests/test_cycle_de_vie_script.py et tests/test_pont.py, qui confrontent les deux
+    moteurs sur des carrières qui la portent
+  - >-
+    tests/temoins/exemples_officiels.yaml, que tests/test_oracle.py rejoue :
+    cnracl_surcote_enfants_duree_atteinte_dans_l_annee
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    douze témoins changent sans elle — surcote_parentale,
+    surcote_parentale_avec_surcote_ordinaire, surcote_parentale_fonction_publique,
+    enfants, enfants_dates_avant_et_apres_le_recrutement,
+    enfants_prive_puis_fonctionnaire_nes_depuis_2004, fonctionnaire_interrompu,
+    reversion_deces_avant_le_depart, reversion_enfants_a_charge,
+    reversion_enfants_jusqu_a_sa_retraite, ircantec_quatre_enfants et
+    ircantec_sept_enfants

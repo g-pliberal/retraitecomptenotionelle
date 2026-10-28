@@ -212,6 +212,11 @@ CODE_ET_REGIMES_ECRITS = frozenset("""
     duree_requise_ieg duree_requise_sncf_ratp militaires_duree_requise
     pension_differee_fonction_publique regimes_speciaux_par_generation
     services_et_duree_fonction_publique taux_maximum_fonction_publique
+    avpf carriere_longue_enfants_reputes_cotises cnavpl_majoration_duree_assurance
+    majoration_dix_pour_cent majoration_enfants_agirc_arrco majoration_enfants_ircec
+    majoration_enfants_liberaux_avocats majoration_enfants_regimes_speciaux
+    marins_bonification_enfants sam_parents_24_23 sections_liberales_majoration_enfants
+    surcote_parentale
 """.split())
 
 

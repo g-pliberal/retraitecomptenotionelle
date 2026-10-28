@@ -6,6 +6,7 @@ intitule: >-
   des géomètres au 1er janvier 2000 au moins, « au profit du demandeur ayant eu
   au moins trois enfants » ou les ayant élevés neuf ans, la CAVEC depuis l'arrêté
   du 4 juillet 2025.
+regimes: [cavamac_complementaire, cavec_complementaire, cipav_complementaire]
 etat: approchee
 effet: >-
   Aucune des trois fiches ne la portait : 10 % de complémentaire en moins pour tout
@@ -54,3 +55,22 @@ reformes:
 - cipav_geometres_2000
 - cavamac_statuts_2011
 - cavec_majoration_enfants_2025
+code:
+  moteur: >-
+    Les périodes de la complémentaire de la CAVAMAC depuis 2012, de la Cipav depuis
+    2000, et de la CAVEC pour les pensions prenant effet depuis le 7 juillet 2025
+    (`date_effet`), déclarent `majoration_enfants`, que `completer` sert au barème
+    commun de `_taux_majoration_enfants`, 10 % dès trois enfants, sur la pension de
+    chacune. Le nombre d'enfants seul l'ouvre : ni l'éducation de neuf ans de la Cipav,
+    ni les 5 % de la CAVAMAC par enfant ouvrant droit à l'allocation d'éducation de
+    l'enfant handicapé ne sont portés.
+  python: >-
+    droit/completer.py : completer, _taux_majoration_enfants
+  javascript: >-
+    moteur/js/droit/completer.js : completer, tauxMajorationEnfants
+  parametres: >-
+    regimes/cavamac_complementaire.yaml, regimes/cavec_complementaire.yaml,
+    regimes/cipav_complementaire.yaml : avantages_non_contributifs, date_effet
+  tests:
+  - tests/test_coupures_au_mois.py
+  - tests/test_sections_liberales.py

@@ -4,6 +4,7 @@ intitule: >-
   Majoration de 10 % de la pension de l'adhérent ayant eu ou élevé trois enfants
   : au RAAP depuis le règlement de 2013, au RACD depuis l'arrêté du 17 avril 2024
   ; aucune au RACL.
+regimes: [ircec_raap, ircec_raap_taux_amenage, ircec_racd]
 etat: conforme
 effet: >-
   Les fiches ne déclaraient aucune majoration : un auteur de trois enfants perdait
@@ -43,3 +44,22 @@ textes_a_rattacher:
 - reference: >-
     règlement du RACL, article 22 (arrêté du 13 mai 2025, JORFARTI000051592840)
     : aucune majoration
+code:
+  moteur: >-
+    Les périodes du RAAP depuis 2014, du RAAP à taux aménagé depuis sa création, en
+    2016, et du RACD depuis 2024 déclarent `majoration_enfants`, que `completer` sert au
+    barème commun de `_taux_majoration_enfants`, 10 % dès trois enfants, sur la pension
+    de chacune ; aucune période du RACL ne la déclare. Le nombre d'enfants seul l'ouvre
+    : la condition de neuf ans d'éducation avant seize ans n'est pas opposée.
+  python: >-
+    droit/completer.py : completer, _taux_majoration_enfants
+  javascript: >-
+    moteur/js/droit/completer.js : completer, tauxMajorationEnfants
+  parametres: >-
+    regimes/ircec_raap.yaml, regimes/ircec_raap_taux_amenage.yaml,
+    regimes/ircec_racd.yaml : avantages_non_contributifs
+  tests:
+  - tests/test_ircec_auteurs.py
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    auteur_dramatique_carriere_courte, seul témoin qui change sans elle

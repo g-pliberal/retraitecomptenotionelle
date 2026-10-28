@@ -5,6 +5,20 @@ intitule: >-
   que calculée, et chez les non-salariés agricoles depuis le 1er juillet 1974 ;
   plafonnée en euros à l'Agirc-Arrco, dont les taux sont ceux de la ligne
   `majoration_enfants_agirc_arrco`.
+regimes:
+- agirc
+- agirc_arrco
+- agirc_entreprises_nouvelles
+- arrco
+- arrco_cultes
+- arrco_tranche_2
+- arrco_tranche_2_entreprises_nouvelles
+- cancava
+- msa_non_salaries
+- msa_salaries
+- organic
+- regime_general
+- rsi
 etat: conforme
 etape: completer_tous_regimes
 effet: Parents de trois enfants.
@@ -97,3 +111,61 @@ exemples:
 - cnav_2022_26_majoration_enfants_sur_surcote
 - cnav_2022_26_majoration_enfants_au_taux_plein
 - cnav_2022_26_majoration_enfants_sur_decote
+code:
+  moteur: >-
+    `completer` majore, après les minima et la surcote parentale, chaque pension dont la
+    période de la date d'effet déclare `majoration_enfants`, au taux de
+    `_taux_majoration_enfants` : faute d'un barème propre à la période
+    (`taux_majoration_enfants`), 10 % dès trois enfants hors de la fonction publique. Le
+    régime général et les salariés agricoles la déclarent depuis 1945, les artisans et
+    les commerçants depuis leur alignement de 1973, les non-salariés agricoles depuis
+    1974 ; elle porte sur le montant que la pension sert alors, surcote et minimum
+    compris. À l'Agirc-Arrco, chaque point a le taux de son année d'acquisition (fiche
+    `majoration_enfants_agirc_arrco`), et la majoration de chaque régime qui oppose le
+    plafond (`plafond_majoration_regime`) est bornée par `plafond_majoration` : le
+    plafond de la période, publié l'année `plafond_majoration_annee` et suivi depuis au
+    point du régime, aux générations nées depuis 1952 et aux pensions prenant effet
+    depuis 2012 (`PREMIER_PLAFOND_MAJORATION`) ; `regime_du_plafond` oppose aux points
+    de l'Arrco et de l'Agirc servis depuis 2019 celui du régime unifié.
+  python: >-
+    droit/completer.py : completer, _taux_majoration_enfants, plafond_majoration,
+    regime_du_plafond, PREMIER_PLAFOND_MAJORATION
+  javascript: >-
+    moteur/js/droit/completer.js : completer, tauxMajorationEnfants, plafondMajoration,
+    regimeDuPlafond, PREMIER_PLAFOND_MAJORATION
+  parametres: >-
+    regimes/cancava.yaml, regimes/msa_non_salaries.yaml, regimes/msa_salaries.yaml,
+    regimes/organic.yaml, regimes/regime_general.yaml, regimes/rsi.yaml :
+    avantages_non_contributifs ; regimes/agirc.yaml, regimes/agirc_arrco.yaml,
+    regimes/agirc_entreprises_nouvelles.yaml, regimes/arrco.yaml,
+    regimes/arrco_cultes.yaml, regimes/arrco_tranche_2.yaml,
+    regimes/arrco_tranche_2_entreprises_nouvelles.yaml : plafond_majoration_enfants,
+    plafond_majoration_annee, plafond_majoration_regime
+  tests:
+  - tests/test_destinie.py
+  - tests/test_ircec_auteurs.py
+  - tests/test_minima_agricoles.py
+  - tests/test_oracle.py
+  - tests/test_oracle_points_enfants_arrco.py
+  - tests/test_revalorisation.py
+  - tests/test_simulateur.py
+  - tests/test_trajectoire.py
+  - >-
+    tests/test_exonerations_agirc_arrco.py, tests/test_majoration_exceptionnelle.py,
+    tests/test_pension_minimum_avant_1983.py, tests/test_taux_plein_par_categorie.py et
+    tests/test_versements_uniques.py, qui confrontent les deux moteurs sur des carrières
+    qui la portent
+  - >-
+    tests/temoins/exemples_officiels.yaml, que tests/test_oracle.py rejoue :
+    cnav_2022_26_majoration_enfants_au_taux_plein,
+    cnav_2022_26_majoration_enfants_sur_decote et
+    cnav_2022_26_majoration_enfants_sur_surcote
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    treize témoins changent sans la majoration du régime général et des régimes alignés
+    — enfants, enfants_pere, enfants_regime_aligne, enfants_exploitante_agricole,
+    enfants_carriere_incomplete, enfants_avant_1972, enfants_loi_boulin,
+    taux_plein_mere_ouvriere, departs_prive_puis_categorie_active_trois_enfants,
+    reversion_deces_avant_le_depart, auteur_dramatique_carriere_courte,
+    ircantec_quatre_enfants et ircantec_sept_enfants —, dont six sans le plafond de
+    l'Agirc-Arrco

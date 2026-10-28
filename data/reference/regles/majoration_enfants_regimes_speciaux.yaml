@@ -5,6 +5,16 @@ intitule: >-
   par enfant au-delà à la SNCF, à la RATP, aux IEG, à la CRPCEN, au SEITA, à l'Opéra
   et à la Comédie-Française ; 8,5 % puis 4,25 % à la Banque de France ; un dixième,
   sans supplément, aux mines.
+regimes:
+- banque_de_france
+- comedie_francaise
+- crpcen
+- ieg
+- mines
+- opera_de_paris
+- ratp
+- seita
+- sncf
 etat: transcrite
 effet: >-
   Parents de quatre enfants et plus dans ces régimes : le modèle servait 10 % quel
@@ -44,3 +54,25 @@ textes_a_rattacher:
 - reference: décret n° 68-960, article 16
 - reference: décret n° 2007-262, annexe, article 35
 - reference: décret n° 46-2769, article 139
+code:
+  moteur: >-
+    Les périodes de la SNCF, de la RATP, des IEG, de la CRPCEN, du SEITA, de l'Opéra, de
+    la Comédie-Française et de la Banque de France portent leur barème
+    (`taux_majoration_enfants`), par nombre d'enfants, le dernier taux valant au-delà :
+    10 % à trois enfants et 5 % de plus par enfant, 8,5 % puis 4,25 % à la Banque de
+    France. `_taux_majoration_enfants` le lit avant le barème commun, que les mines
+    gardent, 10 % dès trois enfants sans supplément ; `completer` sert la majoration de
+    chaque pension dont la période déclare `majoration_enfants`, sans la borner au
+    traitement, que le plafond de L. 18 (fiche
+    `majoration_enfants_plafond_fonction_publique`) ne vise pas.
+  python: >-
+    droit/completer.py : completer, _taux_majoration_enfants
+  javascript: >-
+    moteur/js/droit/completer.js : completer, tauxMajorationEnfants
+  parametres: >-
+    regimes/banque_de_france.yaml, regimes/comedie_francaise.yaml, regimes/crpcen.yaml,
+    regimes/ieg.yaml, regimes/opera_de_paris.yaml, regimes/ratp.yaml,
+    regimes/seita.yaml, regimes/sncf.yaml : taux_majoration_enfants,
+    avantages_non_contributifs ; regimes/mines.yaml : avantages_non_contributifs
+  tests:
+  - tests/test_simulateur.py

@@ -5,6 +5,7 @@ intitule: >-
   professions libérales (L. 643-1-1) et à celui des avocats (L. 653-3) pour les
   pensions prenant effet à compter du 1er septembre 2023 ; au régime complémentaire
   des avocats depuis le 1er janvier 2024 (article 16-1 de son règlement).
+regimes: [cnavpl, cnbf, cnbf_complementaire]
 etat: approchee
 effet: >-
   Les fiches de la CNAVPL, de la CNBF et de sa complémentaire ne la portaient pas
@@ -49,3 +50,23 @@ textes_a_rattacher:
 reformes:
 - majoration_enfants_liberaux_2023
 - cnbf_complementaire_enfants_2024
+code:
+  moteur: >-
+    Les périodes de 2024 et après de la CNAVPL, de la CNBF et de la complémentaire de la
+    CNBF déclarent `majoration_enfants`, que `completer` sert au barème commun de
+    `_taux_majoration_enfants`, 10 % dès trois enfants, sur la pension de chacune. La
+    maille est l'année : les pensions de base prenant effet de septembre à décembre 2023
+    n'en ont pas.
+  python: >-
+    droit/completer.py : completer, _taux_majoration_enfants
+  javascript: >-
+    moteur/js/droit/completer.js : completer, tauxMajorationEnfants
+  parametres: >-
+    regimes/cnavpl.yaml, regimes/cnbf.yaml, regimes/cnbf_complementaire.yaml :
+    avantages_non_contributifs
+  tests:
+  - tests/test_sections_juridiques.py
+  - tests/test_sections_sante.py
+  - >-
+    tests/test_coupures_au_mois.py, qui confronte les deux moteurs sur des carrières qui
+    la portent

@@ -4,6 +4,7 @@ intitule: >-
   Deux trimestres au plus de majoration pour enfants (maternité, adoption, éducation,
   congé parental, bonifications de la fonction publique) réputés cotisés pour la
   carrière longue, pensions dès le 1er septembre 2026.
+regimes: [cnracl, fonction_publique_etat, fspoeie, msa_salaries, regime_general]
 etat: transcrite
 effet: Mères à carrière longue à qui il manque un ou deux trimestres cotisés.
 sources:
@@ -32,3 +33,27 @@ textes_a_rattacher:
 - reference: D. 16-2, I, 4° CPCMR (décret n° 2026-700, LEGIARTI000054589198)
 reformes:
 - lfss_2026_suspension
+code:
+  moteur: >-
+    `CarriereLongue.cotises_reputes` ajoute à la durée cotisée que la carrière longue
+    oppose, après les périodes que D. 351-1-2 répute cotisées, les trimestres pour
+    enfants que `majoration_pour_enfants` attribue — majoration de durée d'assurance ou
+    bonification —, deux au plus sur toute la carrière
+    (`ENFANTS_REPUTES_COTISES_MAXIMUM`), pour les pensions prenant effet depuis le 1er
+    septembre 2026 (`ENFANTS_REPUTES_COTISES_DEPUIS`). `ouvrir`, `age_carriere_longue`
+    et `_carriere_longue_acquise` la lisent, au régime général et aux salariés agricoles
+    comme dans les trois régimes du code des pensions ; la majoration pour enfant
+    handicapé, que le modèle ne sert pas, n'y entre pas.
+  python: >-
+    scenarios/actuel.py : CarriereLongue, CarriereLongue.cotises_reputes ;
+    droit/ouvrir.py : ouvrir, age_carriere_longue ; droit/departs.py :
+    _carriere_longue_acquise ; droit/compter.py : majoration_pour_enfants
+  javascript: >-
+    moteur/js/regimes.js : CarriereLongue, CarriereLongue.cotisesReputes ;
+    moteur/js/droit/ouvrir.js : ouvrir, ageCarriereLongue ; moteur/js/droit/departs.js :
+    carriereLongueAcquise ; moteur/js/droit/compter.js : majorationPourEnfants
+  parametres: >-
+    aucun : la date d'effet et la limite de deux trimestres sont des constantes de
+    `CarriereLongue`, dans les deux moteurs
+  tests:
+  - tests/test_referents.py

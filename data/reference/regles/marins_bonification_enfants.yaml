@@ -3,6 +3,7 @@ id: marins_bonification_enfants
 intitule: >-
   Bonification de la pension des marins pour enfants élevés neuf ans : 5 % pour
   deux enfants, 10 % pour trois, 15 % au-delà.
+regimes: [marins]
 etat: conforme
 effet: >-
   La fiche ne déclarait aucune majoration pour enfants : un marin père de deux enfants
@@ -33,3 +34,22 @@ textes_a_rattacher:
 - reference: code des transports, L. 5552-22
 exemples:
 - enim_bonification_deux_enfants
+code:
+  moteur: >-
+    La période des marins porte son barème (`taux_majoration_enfants`) : rien pour un
+    enfant, 5 % pour deux, 10 % pour trois, 15 % au-delà, que `_taux_majoration_enfants`
+    lit avant le barème commun ; `completer` le sert dès deux enfants, seul barème du
+    catalogue qui commence si tôt. Le nombre d'enfants seul l'ouvre : la condition de
+    neuf ans d'éducation avant seize ans n'est pas opposée.
+  python: >-
+    droit/completer.py : completer, _taux_majoration_enfants
+  javascript: >-
+    moteur/js/droit/completer.js : completer, tauxMajorationEnfants
+  parametres: >-
+    regimes/marins.yaml : taux_majoration_enfants, avantages_non_contributifs
+  tests:
+  - tests/test_oracle.py
+  - tests/test_simulateur.py
+  - >-
+    tests/temoins/exemples_officiels.yaml, que tests/test_oracle.py rejoue :
+    enim_bonification_deux_enfants
