@@ -1,0 +1,36 @@
+date: "2026-10-28"
+session: "action 159, étape 9 : le plancher de la retraite progressive comparé à la pension complète surcote parentale comprise, dans les deux moteurs"
+consulte: >-
+  veille_droit.py, lancé à l'ouverture de la session (dernière veille consignée :
+  2026-10-28) ; l'index LEGI, récupéré de la release index-dila et mis à jour par ses deux
+  incréments jusqu'au 27 octobre 2026, puis textes.py --inscrire, dont une autre session
+  avait déjà publié les mêmes inscriptions. D. 161-2-24-7 CSS (LEGIARTI000047959215),
+  L. 161-22-1-7 (LEGIARTI000047450663), L. 351-1-2-1 (LEGIARTI000047449229 et
+  LEGIARTI000051289776). La base de législation de la Cnav, par sa recherche
+  (/api/v1/search/custom, en phrase exacte : « retraite progressive », « 161-22-1-5 »,
+  « 161-22-1-7 », « D.161-2-24-7 », « liquidation définitive », « pension complète »,
+  « montant entier ») et ses exposés (/api/v1/expose/exposeByFileLeafRef) : les
+  circulaires 2006/66 du 2 novembre 2006 (6, 7 et 9), 2011/14 du 3 février 2011 (2 et
+  6) et 2018/31 du 21 décembre 2018 (5 et 8), l'exposé « Retraite définitive » (modifié
+  le 24 octobre 2025).
+trouve: >-
+  D. 161-2-24-7, comme D. 351-15 depuis 2006, liquide la pension complète « dans les
+  conditions de droit commun » et la borne au « montant entier ayant servi de base au
+  calcul de la fraction », revalorisé, sans rien dire de la surcote. La Cnav compare deux
+  sommes, chacune du montant calculé, porté au minimum ou ramené au maximum, de la
+  majoration pour enfants, de la surcote et de la majoration des handicapés, l'une à la
+  date de la pension provisoire, revalorisée, l'autre à celle de la retraite définitive,
+  et sert la plus élevée (2018/31, 8.2 ; 2006/66, 92 ; 2011/14, 62) ; l'exposé de 2025 :
+  les droits sont réexaminés « (y compris la surcote) ». La surcote parentale est la
+  surcote de L. 351-1-2, son âge abaissé d'un an (rédaction de 2025) : elle se calcule sur
+  la pension d'avant le plancher, et le plancher, quand il l'emporte, l'efface. Le moteur
+  relevait la pension au plancher, puis la surcotait : 5 % de la provisoire en sus d'elle.
+  Corrigé dans les deux moteurs ; aucun des 909 témoins ne bouge, aucun n'ayant de
+  plancher qui lie. Aucune circulaire de la Cnav n'a suivi la réforme de 2023 sur la
+  retraite progressive ; aucune ne chiffre d'exemple.
+reste: >-
+  La circulaire Cnav de L. 351-1-2-1 et un exemple du régime général. Un exemple chiffré
+  de la retraite progressive (fiche retraite_progressive). Le plancher compté deux fois au
+  total contributif quand la liquidation d'essai sans les avantages non contributifs le
+  reçoit aussi, un défaut du modèle et non du droit (feuille de route, action 159, note du
+  28 octobre 2026).

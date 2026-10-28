@@ -1073,7 +1073,10 @@ précédent, et le modèle en prenait deux à l'envers.
    minimum garanti se compare à la pension qui les porte toutes deux, et les
    efface quand il l'emporte (service des retraites de l'État, « Le minimum
    garanti ») ; chez les libéraux, elles composent le coefficient de la
-   surcote de leurs points (L. 643-3, R. 643-8). Le V de L. 14, qui défend de
+   surcote de leurs points (L. 643-3, R. 643-8) ; au départ d'une retraite
+   progressive, la pension complète se compare à la pension provisoire
+   revalorisée surcote parentale comprise, et la provisoire, quand elle
+   l'emporte, l'efface (circulaire Cnav 2018/31, 8.2). Le V de L. 14, qui défend de
    cumuler les deux majorations du fonctionnaire, vise une même période, comme
    la CNRACL l'applique. Elle
    s'ouvre avec cet âge minimal : rien jusqu'à la génération 1964 ni pour les

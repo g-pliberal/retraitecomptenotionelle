@@ -292,9 +292,12 @@ approximations:
     demande depuis 2023 ne la reçoit pas ; non mesuré
 - ecart: >-
     le plancher de la pension complète se compare régime par régime, à la pension
-    provisoire revalorisée par la revalorisation de chaque régime, sans les majorations
-    qui s'y ajoutent ; avant le 8 juin 2006, la pension complète est la provisoire dans
-    les régimes de base, les complémentaires se recalculant
+    provisoire revalorisée par la revalorisation de chaque régime, surcote parentale
+    comprise, mais avant la majoration pour enfants, que la caisse met des deux côtés
+    (circulaire Cnav 2018/31, 8.2) : le plus élevé est le même tant que les deux pensions
+    la portent au même taux, les 10 % du régime général ; avant le 8 juin 2006, la
+    pension complète est la provisoire dans les régimes de base, les complémentaires se
+    recalculant
   effet: non mesuré
 sources:
   lu_le: 2026-09-29
@@ -305,7 +308,8 @@ sources:
     Aucun exemple chiffré publié n'a été trouvé : le parcours d'info-retraite, lu le
     19 octobre 2026, ne chiffre que la fraction (« pour un temps de travail à 80%, la
     retraite progressive est de 20% ; pour un temps de travail à 65%, elle est de
-    35% »), que le modèle rend. En chercher un (service-public, Cnav, simulateur de
+    35% »), que le modèle rend ; les circulaires Cnav 2006/66, 2011/14 et 2018/31, lues
+    le 28 octobre 2026, ne chiffrent rien. En chercher un (service-public, simulateur de
     l'Agirc-Arrco) avant de la dire conforme.
   - >-
     Couper en versions ce que le parcours d'info-retraite a fait relire le 19 octobre
@@ -387,6 +391,20 @@ sources:
       revenu minimal, le 1er janvier et la fraction provisionnelle des non-salariés, la
       retraite progressive des agents des régimes spéciaux
     date: 2026-10-19
+  - type: circulaire_cnav
+    reference: >-
+      circulaires 2006/66 du 2 novembre 2006 (6 et 9), 2011/14 du 3 février 2011 (2 et
+      62) et 2018/31 du 21 décembre 2018 (5 et 8), et l'exposé « Retraite définitive »,
+      modifié le 24 octobre 2025, par l'API de la base de législation, lus le 28 octobre
+      2026 : la pension complète recalcule tous ses éléments, « (y compris la surcote) »,
+      et la caisse compare « le montant entier ayant servi de base au calcul de la
+      fraction de retraite, revalorisé, soit : le montant calculé, éventuellement majoré
+      du minimum ou ramené au maximum ; la majoration pour enfants (10 %) ; la surcote ;
+      la majoration de retraite des assurés handicapés ; à la somme de ces éléments
+      calculés à la date d'effet de la retraite définitive » (2018/31, 8.2), et sert le
+      plus élevé ; s'y ajoutent la majoration pour tierce personne et l'ASPA
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2018_31_21122018.pdf
+    date: 2018-12-21
 textes_a_rattacher:
 - {id: LEGIARTI000006749395, article: "R. 351-40 CSS", en_vigueur: 1988-05-04, change: "les pièces de la demande"}
 - {id: LEGIARTI000006749398, article: "R. 351-42 CSS", en_vigueur: 1988-05-04, change: "la fraction révisée quand la quotité change"}
@@ -452,6 +470,12 @@ historique:
   déclarés sans être codés : la fraction d'un non-salarié servie au 1er janvier qui suit
   la demande, et la retraite progressive que les décrets de la SNCF, de la RATP et de la
   Banque de France ouvrent à leurs agents, et que le modèle leur refuse.
+- >-
+  2026-10-28 — le plancher de la pension complète se compare à la pension qui porte la
+  surcote parentale, dans les deux moteurs (fiche surcote_parentale, action 159, étape
+  9) : la caisse compare la pension provisoire, revalorisée, à la somme des éléments de
+  la pension complète, la surcote comprise, et sert la plus élevée (circulaire Cnav
+  2018/31, 8.2). Le modèle relevait la pension au plancher, puis la surcotait.
 effet: >-
   Les salariés, les indépendants et, depuis 2023, les fonctionnaires, les libéraux et les
   avocats qui passent à temps partiel en fin de carrière. Une salariée née en 1965,

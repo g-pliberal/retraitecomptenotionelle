@@ -31,9 +31,17 @@ effet: >-
   889 témoins ne bougeait ;
   `test_le_minimum_garanti_se_compare_a_la_pension_qui_porte_les_deux_surcotes` et
   `test_la_surcote_parentale_du_liberal_entre_dans_le_coefficient_de_sa_surcote`
-  tiennent la règle.
+  tiennent la règle. Jusqu'au 28 octobre 2026, la pension complète d'une retraite
+  progressive que la pension provisoire revalorisée relevait portait ensuite la surcote
+  parentale, calculée sur le montant relevé, là où la caisse compare la provisoire à la
+  pension complète surcote comprise et sert la plus élevée : posée 1 000 euros au-dessus
+  de la pension de la mère de deux enfants née en 1969, partie à 64 ans, la provisoire
+  lui faisait servir 5 % d'elle de trop, 1 412,83 euros par an. Aucun des 909 témoins ne
+  bougeait, aucun n'ayant de plancher qui lie ;
+  `test_le_plancher_se_compare_a_la_pension_qui_porte_la_surcote_parentale` tient la
+  règle.
 sources:
-  lu_le: 2026-10-23
+  lu_le: 2026-10-28
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
@@ -57,11 +65,6 @@ sources:
     `majoration_duree_assurance_enfants`). La date jouera quand l'une ou l'autre le sera ;
     d'ici là, seule une naissance déclarée dans l'année qui précède l'âge légal de la
     mère, que la saisie accepte, s'en écarte.
-  - >-
-    LA RETRAITE PROGRESSIVE. La pension complète que le plancher de la retraite
-    progressive relève porte ensuite la surcote parentale, calculée sur le montant relevé ;
-    lire si la caisse la calcule sur la pension d'avant le plancher, comme D. 351-2-1 le
-    veut du minimum contributif (fiche `retraite_progressive`).
   lectures:
   - type: legifrance
     reference: >-
@@ -164,6 +167,38 @@ sources:
     date: 2026-10-23
     url: >-
       https://www.lassuranceretraite.fr/portail-info/home/actif/vie-personnelle-retraite/parentalite-droits-retraite.html
+  - type: legifrance
+    reference: >-
+      D. 161-2-24-7 CSS (LEGIARTI000047959215, depuis le 1er septembre 2023), lu dans
+      l'index LEGI du dépôt le 28 octobre 2026 : la pension complète de la retraite
+      progressive « est liquidée dans les conditions de droit commun. Toutefois, elle ne
+      peut être inférieure au montant entier ayant servi de base au calcul de la fraction
+      », revalorisé, comme le disait D. 351-15 depuis 2006 ; rien sur la surcote.
+    date: 2023-09-01
+  - type: circulaire_cnav
+    reference: >-
+      circulaire 2018/31 du 21 décembre 2018, la dernière sur la retraite progressive,
+      8.2, lue le 28 octobre 2026 : « Pour déterminer le montant le plus élevé, il
+      convient de comparer : le montant entier ayant servi de base au calcul de la
+      fraction de retraite, revalorisé, soit : le montant calculé, éventuellement majoré
+      du minimum ou ramené au maximum ; la majoration pour enfants (10 %) ; la surcote ;
+      la majoration de retraite des assurés handicapés ; à la somme de ces éléments
+      calculés à la date d'effet de la retraite définitive ». De même les circulaires
+      2006/66 (92) et 2011/14 (62), qui y ajoutent la règle de chaque date. La surcote
+      parentale, surcote de L. 351-1-2 ouverte un an plus tôt, entre dans la pension
+      comparée au plancher, qui l'efface quand il l'emporte.
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2018_31_21122018.pdf
+    date: 2018-12-21
+  - type: circulaire_cnav
+    reference: >-
+      exposé « Retraite définitive » de la base de législation de la Cnav, modifié le 24
+      octobre 2025, lu le 28 octobre 2026 : « Tous les éléments de la retraite sont
+      recalculés au point de départ de la retraite définitive, et les droits de l'assuré
+      sont réexaminés (y compris la surcote). La retraite définitive ne peut pas être
+      inférieure à la retraite qui a servi de base au calcul de la fraction de retraite
+      progressive » ; il cite toujours la circulaire 2018/31, 8.2.
+    url: https://legislation.lassuranceretraite.fr/#/expose?file_leaf_ref=retraite_personnelle_retraite_progressive_retraite_definitive_ex.aspx
+    date: 2025-10-24
 textes_a_rattacher:
 - reference: >-
     L. 351-1-2-1 CSS (loi n° 2023-270, article 11 ; loi n° 2025-199, article 87)
