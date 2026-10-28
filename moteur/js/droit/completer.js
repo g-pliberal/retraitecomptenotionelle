@@ -1738,13 +1738,47 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
     }
   }
 
+  // Les pensions que le minimum contributif regarde, par leur indice.
+  const regardeesDuMinimum = new Map(
+    eligiblesMinimum.map((eligible) => [eligible.indice, eligible]));
+  // Le coefficient de surcote des régimes en points, par leur code.
+  const surcotesDesPoints = new Map(liquidees.surcotesDesPoints ?? []);
+  // La pension que le coefficient de la surcote parentale majore, celle d'avant
+  // la surcote ordinaire : la pension civile moins ce que la surcote de L. 14,
+  // III, y ajoute ; celle d'un régime que le minimum contributif regarde,
+  // d'avant sa surcote et d'avant le minimum ; celle des libéraux, d'avant la
+  // surcote de leurs points.
+  const avantLaSurcote = (indice, pension) => {
+    if (surcotesL18.has(indice)) {
+      return pension.montant - surcotesL18.get(indice);
+    }
+    if (regardeesDuMinimum.has(indice)) {
+      const eligible = regardeesDuMinimum.get(indice);
+      return (pension.montant - (ajoutsDuMinimum.get(indice) ?? 0.0)
+        - (eligible.horsMinimum ?? 0.0)) / eligible.surcote;
+    }
+    if (surcotesDesPoints.has(pension.regime)) {
+      return pension.montant / surcotesDesPoints.get(pension.regime);
+    }
+    return pension.montant;
+  };
+
   // LA PENSION COMPLÈTE D'UNE RETRAITE PROGRESSIVE (droit/progressive.js) :
   // elle ne peut être inférieure à la pension provisoire, revalorisée ; avant
-  // le décret du 8 juin 2006, elle l'était. Voir le Python.
+  // le décret du 8 juin 2006, elle l'était. Le plancher se compare à la
+  // pension qui porte sa surcote parentale, et l'efface quand il l'emporte :
+  // voir le Python, qui cite la circulaire Cnav 2018/31.
   let plancherProgressive = 0.0;
   for (const [regime, initiale] of initiales) {
     pensions.forEach((pension, indice) => {
-      if (pension.regime !== regime || (recalcul && pension.montant >= initiale)) {
+      if (pension.regime !== regime) {
+        return;
+      }
+      const parentale = parentaux.has(indice)
+        ? avantLaSurcote(indice, pension) * tauxParental * parentaux.get(indice)
+        : 0.0;
+      const normale = pension.montant + parentale;
+      if (recalcul && normale >= initiale) {
         return;
       }
       const ecart = initiale - pension.montant;
@@ -1754,48 +1788,34 @@ export function completer(moteur, releve, ouverture, liquidees, contexte = null,
         ...pension,
         montant: initiale,
         detail: recalcul
-          ? `${pension.detail} = ${formatFixe(pension.montant, 2, true)} €, porté à la `
-            + `pension provisoire revalorisée par + ${formatFixe(ecart, 2, true)} €`
+          ? `${pension.detail} = ${formatFixe(pension.montant, 2, true)} €, `
+            + (parentale
+              ? `${formatFixe(normale, 2, true)} € avec la surcote parentale, `
+              : "")
+            + `porté à la pension provisoire revalorisée par + ${formatFixe(ecart, 2, true)} €`
           : "la pension provisoire de la retraite progressive, revalorisée : "
             + `${formatFixe(initiale, 2, true)} €, qui ne se recalcule pas avant le `
             + "8 juin 2006",
       };
+      parentaux.delete(indice);
     });
   }
 
   // Surcote parentale (L. 351-1-2-1, L. 14, IV) : après les minima, avant la
   // majoration pour enfants qui se calcule sur la pension surcotée ; au code
   // des pensions, le minimum garanti se compare à la pension qui la porte, et
-  // l'efface quand il l'emporte (voir plus haut). Elle ne
+  // l'efface quand il l'emporte (voir plus haut), comme le plancher de la
+  // retraite progressive. Elle ne
   // compte pas les mêmes trimestres que la surcote ordinaire — celle-ci
   // au-delà de l'âge légal, celle-là dans l'année qui le précède — et les deux
   // se cumulent, en UN coefficient sur la pension d'avant la surcote : voir le
   // Python, qui cite la CNRACL et D. 351-2-1.
-  // Les pensions que le minimum contributif regarde, par leur indice.
-  const regardeesDuMinimum = new Map(
-    eligiblesMinimum.map((eligible) => [eligible.indice, eligible]));
-  // Le coefficient de surcote des régimes en points, par leur code.
-  const surcotesDesPoints = new Map(liquidees.surcotesDesPoints ?? []);
   if (parentaux.size > 0) {
     let gainParental = 0.0;
     let trimestresParentaux = 0;
     for (const [indice, trimestres] of parentaux) {
       const pension = pensions[indice];
-      // La pension que le coefficient majore, celle d'avant la surcote
-      // ordinaire : la pension civile moins ce que la surcote de L. 14, III, y
-      // ajoute ; celle d'un régime que le minimum contributif regarde, d'avant
-      // sa surcote et d'avant le minimum ; celle des libéraux, d'avant la
-      // surcote de leurs points.
-      let avantSurcote = pension.montant;
-      if (surcotesL18.has(indice)) {
-        avantSurcote = pension.montant - surcotesL18.get(indice);
-      } else if (regardeesDuMinimum.has(indice)) {
-        const eligible = regardeesDuMinimum.get(indice);
-        avantSurcote = (pension.montant - (ajoutsDuMinimum.get(indice) ?? 0.0)
-          - (eligible.horsMinimum ?? 0.0)) / eligible.surcote;
-      } else if (surcotesDesPoints.has(pension.regime)) {
-        avantSurcote = pension.montant / surcotesDesPoints.get(pension.regime);
-      }
+      const avantSurcote = avantLaSurcote(indice, pension);
       const supplement = avantSurcote * tauxParental * trimestres;
       pensions[indice] = {
         ...pension,

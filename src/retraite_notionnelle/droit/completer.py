@@ -1979,34 +1979,74 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
                 par_regime=tuple(parts_sncf),
             ))
 
+    #: Les pensions que le minimum contributif regarde, par leur indice : le
+    #: coefficient de leur surcote, et ce que le minimum n'en relève pas.
+    regardees_du_minimum = {eligible.indice: eligible for eligible in eligibles_minimum}
+    #: Le coefficient de surcote des régimes en points, par leur code.
+    surcotes_des_points = dict(liquidees.surcotes_des_points)
+
+    def avant_la_surcote(indice: int, pension: PensionRegime) -> float:
+        # LA PENSION QUE LE COEFFICIENT DE LA SURCOTE PARENTALE MAJORE, celle
+        # d'avant la surcote ordinaire : la pension civile, que le minimum
+        # garanti n'a pas relevée, moins ce que la surcote de L. 14, III, y
+        # ajoute ; celle d'un régime que le minimum contributif regarde,
+        # d'avant sa surcote et d'avant le minimum ; celle des libéraux,
+        # d'avant la surcote de leurs points. Le module majorait la pension
+        # surcotée : 1,025 × 1,05 pour deux trimestres de droit commun et
+        # quatre d'enfants, là où la caisse sert 1,075.
+        if indice in surcotes_l18:
+            return pension.montant - surcotes_l18[indice]
+        if indice in regardees_du_minimum:
+            eligible = regardees_du_minimum[indice]
+            return ((pension.montant - ajouts_du_minimum.get(indice, 0.0)
+                     - eligible.hors_minimum) / eligible.surcote)
+        if pension.regime in surcotes_des_points:
+            return pension.montant / surcotes_des_points[pension.regime]
+        return pension.montant
+
     # LA PENSION COMPLÈTE D'UNE RETRAITE PROGRESSIVE (droit/progressive.py) :
     # liquidée dans les conditions de droit commun, elle ne peut être
     # inférieure au montant entier qui a servi de base à la fraction,
     # revalorisé (D. 351-15, D. 161-2-24-7, D. 37-3) ; avant le décret du
     # 8 juin 2006, elle était ce montant. La comparaison se fait régime par
-    # régime, minima compris, avant la surcote parentale et la majoration.
+    # régime, minima compris, avant la majoration pour enfants, et à la
+    # pension qui porte sa surcote parentale : la caisse compare le montant
+    # entier, revalorisé, « à la somme de ces éléments calculés à la date
+    # d'effet de la retraite définitive », la surcote comprise, et sert le
+    # plus élevé (circulaire Cnav 2018/31, 8.2). Le plancher, quand il
+    # l'emporte, efface la surcote parentale ; le module relevait la pension
+    # au plancher, puis la surcotait.
     plancher = 0.0
     for regime, initiale in initiales:
         for indice, pension in enumerate(pensions):
-            if pension.regime != regime or (recalcul and pension.montant >= initiale):
+            if pension.regime != regime:
+                continue
+            parentale = (avant_la_surcote(indice, pension) * taux_parental
+                         * parentaux[indice] if indice in parentaux else 0.0)
+            normale = pension.montant + parentale
+            if recalcul and normale >= initiale:
                 continue
             ecart = initiale - pension.montant
             plancher += ecart
             total += ecart
             pensions[indice] = replace(
                 pension, montant=initiale,
-                detail=(f"{pension.detail} = {pension.montant:,.2f} €, porté à la "
-                        f"pension provisoire revalorisée par + {ecart:,.2f} €"
+                detail=(f"{pension.detail} = {pension.montant:,.2f} €, "
+                        + (f"{normale:,.2f} € avec la surcote parentale, "
+                           if parentale else "")
+                        + f"porté à la pension provisoire revalorisée par + {ecart:,.2f} €"
                         if recalcul else
                         f"la pension provisoire de la retraite progressive, "
                         f"revalorisée : {initiale:,.2f} €, qui ne se recalcule "
                         f"pas avant le 8 juin 2006"))
+            parentaux.pop(indice, None)
 
     # Surcote parentale (L. 351-1-2-1, L. 14, IV) : elle vient APRÈS les
     # minima, comme la surcote ordinaire, et AVANT la majoration pour
     # enfants, qui se calcule sur la pension surcotée ; au code des pensions,
     # le minimum garanti se compare à la pension qui la porte, et l'efface
-    # quand il l'emporte (voir plus haut). Elle ne récompense pas
+    # quand il l'emporte (voir plus haut), comme le plancher de la retraite
+    # progressive. Elle ne récompense pas
     # les mêmes trimestres que la surcote ordinaire — celle-ci ne compte
     # qu'au-delà de l'âge légal, celle-là dans l'année qui le précède — et
     # les deux se cumulent donc sans se recouvrir : le V de L. 14, qui défend
@@ -2016,35 +2056,12 @@ def completer(moteur: ScenarioActuel, releve: Releve, ouverture: Ouverture,
     # titre des enfants, exemple 1). Au régime général, l'âge de la surcote
     # « est abaissé d'un an » (rédaction de 2025), et elle se calcule « avant
     # qu'[elle] ne soit porté[e] au montant minimum » (D. 351-2-1).
-    #: Les pensions que le minimum contributif regarde, par leur indice : le
-    #: coefficient de leur surcote, et ce que le minimum n'en relève pas.
-    regardees_du_minimum = {eligible.indice: eligible for eligible in eligibles_minimum}
-    #: Le coefficient de surcote des régimes en points, par leur code.
-    surcotes_des_points = dict(liquidees.surcotes_des_points)
     if parentaux:
         gain_parental = 0.0
         trimestres_parentaux = 0
         for indice, acquis_parentaux in parentaux.items():
             pension = pensions[indice]
-            # LA PENSION QUE LE COEFFICIENT MAJORE, celle d'avant la surcote
-            # ordinaire : la pension civile, que le minimum garanti n'a pas
-            # relevée, moins ce que la surcote de L. 14, III, y ajoute ; celle
-            # d'un régime que le minimum contributif regarde, d'avant sa
-            # surcote et d'avant le minimum ; celle des libéraux, d'avant la
-            # surcote de leurs points. Le module majorait la pension
-            # surcotée : 1,025 × 1,05
-            # pour deux trimestres de droit commun et quatre d'enfants, là où
-            # la caisse sert 1,075.
-            if indice in surcotes_l18:
-                avant_surcote = pension.montant - surcotes_l18[indice]
-            elif indice in regardees_du_minimum:
-                eligible = regardees_du_minimum[indice]
-                avant_surcote = ((pension.montant - ajouts_du_minimum.get(indice, 0.0)
-                                  - eligible.hors_minimum) / eligible.surcote)
-            elif pension.regime in surcotes_des_points:
-                avant_surcote = pension.montant / surcotes_des_points[pension.regime]
-            else:
-                avant_surcote = pension.montant
+            avant_surcote = avant_la_surcote(indice, pension)
             supplement = avant_surcote * taux_parental * acquis_parentaux
             pensions[indice] = replace(
                 pension,

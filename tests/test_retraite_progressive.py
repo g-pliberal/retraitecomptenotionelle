@@ -13,6 +13,10 @@ se lit à temps plein.
 
 from __future__ import annotations
 
+import json
+import shutil
+import subprocess
+
 import pytest
 
 from retraite_notionnelle.calendrier import DateMois
@@ -22,7 +26,8 @@ from retraite_notionnelle.droit.compter import services_a_temps_partiel
 from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.web.site import ErreurSite
 
-from outils_pont import refus_de_la_saisie, saisie_du_portage
+from outils_pont import Saisies, refus_de_la_saisie, saisie_du_portage
+from test_liquidation import RACINE, _ecarts
 
 
 @pytest.fixture(scope="module")
@@ -317,6 +322,129 @@ def test_la_pension_complete_ne_descend_pas_sous_la_provisoire(simulateur):
     basse = liquidation.liquider(
         demande, liquidation.Etat(carriere, initiales=(("regime_general", 10.0),)), contexte)
     assert basse.total == pytest.approx(libre.total)
+
+
+def _mere_de_deux_enfants(simulateur: Simulateur) -> Carriere:
+    """La salariée née le 1er janvier 1969, mère de deux enfants, entrée à
+    dix-huit ans, partie à soixante-quatre ans, son âge légal : quatre
+    trimestres de surcote parentale, 5 % de sa pension."""
+    return simulateur.carriere_simple(
+        annee_naissance=1969, mois_naissance=1, jour_naissance=1, sexe="F",
+        affiliation="salarie_prive_non_cadre", age_debut=18, age_liquidation=64,
+        nombre_enfants=2)
+
+
+def test_le_plancher_se_compare_a_la_pension_qui_porte_la_surcote_parentale(simulateur):
+    """« Pour déterminer le montant le plus élevé, il convient de comparer » le
+    montant entier de la pension provisoire, revalorisé — le montant calculé,
+    éventuellement porté au minimum, la majoration pour enfants, la surcote et
+    la majoration des assurés handicapés — « à la somme de ces éléments
+    calculés à la date d'effet de la retraite définitive » (circulaire Cnav
+    2018/31, 8.2, sur D. 351-15, devenu D. 161-2-24-7). La surcote parentale
+    est la surcote de L. 351-1-2, ouverte un an plus tôt (L. 351-1-2-1) : elle
+    se calcule sur la pension d'avant le plancher, et le plancher se compare à
+    la pension qui la porte. Le moteur relevait la pension complète au
+    plancher, puis la surcotait : 5 % de la pension provisoire en sus d'elle.
+    """
+    moteur = simulateur.scenario_actuel
+    carriere = _mere_de_deux_enfants(simulateur)
+    demande = liquidation.demande_de_depart(carriere)
+    contexte = liquidation.Contexte(moteur)
+
+    def liquider(*initiales):
+        liquidee = liquidation.liquider(
+            demande, liquidation.Etat(carriere, initiales=initiales), contexte)
+        [general] = [p for p in liquidee.regimes if p.regime == "regime_general"]
+        return liquidee, general, {a.code: a.montant for a in liquidee.complements.avantages}
+
+    libre, complete, servis = liquider()
+    parentale = servis["surcote_parentale"]
+    avant = complete.montant - parentale
+    assert parentale == pytest.approx(0.05 * avant)
+
+    # Sous la pension complète, mais au-dessus de la même sans sa surcote
+    # parentale : la pension complète, que le plancher ne relève pas.
+    entre, servie, servis = liquider(("regime_general", avant + parentale / 2))
+    assert servie.montant == pytest.approx(complete.montant)
+    assert servis["surcote_parentale"] == pytest.approx(parentale)
+    assert "porté à la pension provisoire revalorisée" not in servie.detail
+    assert entre.complements.plancher == 0.0
+    assert entre.total == pytest.approx(libre.total)
+
+    # Au-dessus d'elle : la pension provisoire, qui efface la surcote
+    # parentale comme le minimum garanti l'efface au code des pensions.
+    haute = complete.montant + 1000.0
+    relevee, servie, servis = liquider(("regime_general", haute))
+    assert servie.montant == pytest.approx(haute)
+    assert "surcote_parentale" not in servis
+    assert f"{complete.montant:,.2f} € avec la surcote parentale, porté à la pension " \
+        "provisoire revalorisée" in servie.detail
+    assert relevee.complements.plancher == pytest.approx(haute - avant)
+    assert relevee.total == pytest.approx(libre.total + 1000.0)
+
+
+_LIQUIDER_EN_JAVASCRIPT = """
+import { readFileSync } from "node:fs";
+import { Contexte } from "./moteur/js/contexte.js";
+import { Saisie } from "./moteur/js/saisie.js";
+import { Contexte as ContexteDeLiquidation, Etat, demandeDeDepart, liquider }
+  from "./moteur/js/droit/liquidation.js";
+const [requete, cas] = JSON.parse(process.argv[1]);
+const contexte = new Contexte(JSON.parse(readFileSync("./moteur/donnees.json", "utf8")));
+const saisie = Saisie.depuisRequete(requete, false, contexte.paquet.presomptions);
+const moteur = contexte.simulateur(saisie.parametres(contexte.base)).scenarioActuel;
+const carriere = contexte.carriere(saisie);
+process.stdout.write(JSON.stringify(cas.map((initiales) => {
+  const liquidee = liquider(demandeDeDepart(carriere), new Etat(carriere, null, [], initiales),
+    new ContexteDeLiquidation(moteur));
+  return { liquidation: liquidee.donnees(), complements: liquidee.complements.donnees(),
+    total: liquidee.total, total_contributif: liquidee.totalContributif };
+})));
+"""
+
+
+def test_les_deux_moteurs_comparent_le_plancher_a_la_pension_qui_porte_la_surcote_parentale():
+    """Le jumeau JavaScript de l'étape qui complète compare comme le Python la
+    pension provisoire à la pension complète qui porte sa surcote parentale :
+    la mère de deux enfants, libre, puis sa pension provisoire posée entre la
+    pension complète et la même sans surcote parentale, puis au-dessus."""
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    requete = {"naissance": "1969", "naissance_mois": "1", "sexe": "F", "enfants": "2",
+               "statut": "salarie_prive_non_cadre", "debut": "18", "liquidation": "64",
+               "unite_revenu": "moyen", "salaire": "1"}
+    saisies = Saisies()
+    parametres, carriere = saisies.lire(requete)
+    moteur = saisies.simulateur(parametres).scenario_actuel
+
+    def liquider_en_python(initiales):
+        liquidee = liquidation.liquider(
+            liquidation.demande_de_depart(carriere),
+            liquidation.Etat(carriere, initiales=tuple(map(tuple, initiales))),
+            liquidation.Contexte(moteur))
+        return {"liquidation": liquidee.donnees(), "complements": liquidee.complements.donnees(),
+                "total": liquidee.total, "total_contributif": liquidee.total_contributif}
+
+    libre = liquidation.liquider(liquidation.demande_de_depart(carriere),
+                                 liquidation.Etat(carriere), liquidation.Contexte(moteur))
+    [complete] = [p for p in libre.regimes if p.regime == "regime_general"]
+    parentale = next(a.montant for a in libre.complements.avantages
+                     if a.code == "surcote_parentale")
+    avant = complete.montant - parentale
+    cas = [[], [["regime_general", avant + parentale / 2]],
+           [["regime_general", complete.montant + 1000.0]]]
+    attendus = json.loads(json.dumps([liquider_en_python(initiales) for initiales in cas]))
+    servis = [{d["code"] for d in attendu["complements"]["dispositifs"]} for attendu in attendus]
+    assert ["surcote_parentale" in codes for codes in servis] == [True, True, False]
+    execution = subprocess.run(
+        ["node", "--input-type=module", "-e", _LIQUIDER_EN_JAVASCRIPT,
+         json.dumps([requete, cas])],
+        cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
+    assert execution.returncode == 0, execution.stderr[-2000:]
+    ecarts: list[str] = []
+    for rang, (obtenu, attendu) in enumerate(zip(json.loads(execution.stdout), attendus)):
+        _ecarts(obtenu, attendu, f"cas {rang}", ecarts)
+    assert not ecarts, f"{len(ecarts)} écarts :\n" + "\n".join(ecarts[:20])
 
 
 def test_avant_2006_la_pension_complete_est_la_provisoire(simulateur):
