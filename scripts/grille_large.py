@@ -3809,12 +3809,12 @@ def debut_de_la_surcote(simulateur: Simulateur, cas: CasType, generation: int,
     précède le premier départ qu'il surcote. Le plus souvent, l'âge du taux
     plein lui-même ; plus tard pour l'actif, qui a le taux plein à sa limite
     d'âge, sans la durée, et ne surcote qu'une fois la durée réunie ; plus tôt
-    pour le super-actif polypensionné, dont le pilote fixe le taux plein à
-    l'âge où sa carrière a la durée requise de sa génération, quand sa pension
-    de l'État surcote dès 62 ans. Le premier trimestre surcoté se cherche en
-    doublant le pas, puis par dichotomie. ``None`` quand le modèle n'en sert
-    aucune dans les :data:`TRIMESTRES_DE_RECHERCHE` trimestres qui suivent le
-    taux plein, la limite d'âge l'interdisant."""
+    quand le pilote fixe le taux plein après le jour où la pension de
+    fonctionnaire a sa durée : le sédentaire polypensionné né en 1945, au taux
+    plein à 62 ans, surcote dès 60 ans et demi. Le premier trimestre surcoté
+    se cherche en doublant le pas, puis par dichotomie. ``None`` quand le
+    modèle n'en sert aucune dans les :data:`TRIMESTRES_DE_RECHERCHE`
+    trimestres qui suivent le taux plein, la limite d'âge l'interdisant."""
 
     def surcote(trimestres: int) -> bool:
         age = plein + trimestres / 4.0

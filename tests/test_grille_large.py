@@ -2861,9 +2861,9 @@ def test_un_fonctionnaire_civil_qui_surcote_part_avec_la_surcote_moyenne_de_sa_c
     génération à 63 ans et 9 mois, son taux plein, d'où court sa surcote, et
     part 2,13 années plus tard ; l'actif, dont le taux plein tombe à sa limite
     d'âge sans la durée, ne surcote qu'une fois sa durée réunie, et part
-    d'autant plus tard ; le super-actif polypensionné, que le pilote fait
-    partir au taux plein après 63 ans, surcote dès 62 ans, et part plus tôt
-    qu'il ne partirait en comptant son attente du taux plein."""
+    d'autant plus tard. Et quand le modèle surcote déjà à l'âge du taux
+    plein qu'on lui donne, la recherche redescend : partie de 65 ans, elle
+    retrouve les 63 ans et 9 mois du sédentaire."""
     projection = simulateur.pour_la_projection()
     surcotes = G.surcotes_des_fonctionnaires()
 
@@ -2886,7 +2886,5 @@ def test_un_fonctionnaire_civil_qui_surcote_part_avec_la_surcote_moyenne_de_sa_c
     sedentaire = jumelle("fonctionnaire_etat", "H", False).cas
     assert sedentaire.age_liquidation_pour(projection, 1960) == pytest.approx(
         22 + 167 / 4 + surcotes["fonctionnaire_etat"][1])
-    super_actif = jumelle("fonctionnaire_etat_super_actif", "H", True).cas
-    assert (super_actif.age_liquidation_pour(projection, 1960)
-            < G.au_taux_plein(super_actif).age_liquidation_pour(projection, 1960)
-            + surcotes["fonctionnaire_etat_super_actif"][1])
+    assert G.debut_de_la_surcote(projection, sedentaire, 1960, 65.0) == pytest.approx(
+        22 + 167 / 4)
