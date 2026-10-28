@@ -4672,6 +4672,11 @@ celle que vous touchez une fois l'activité finie. ${droitsDuCumul(contexte,
     comparaison.actuel.droits_apres_depart)}</div>`;
 }
 
+/** « à partir de mars 2031 », mais « à partir d'avril 2033 » : `mois` écrit. */
+function aPartirDuMois(mois) {
+  return `à partir ${/^[aeiou]/.test(mois) ? "d'" : "de "}${mois}`;
+}
+
 /**
  * Ce que l'électeur est venu chercher, en trois phrases, avant les barres.
  *
@@ -4737,7 +4742,7 @@ function enBref(comparaison, saisie, montants, constants, capitaliseVolontaire,
         + `${echapper(String(complete))}, à ${age(carriere.ageAu(complete))} ; `
         + `elle commence en ${date}, à ${age(carriere.age_liquidation)}.`
       : `Avec le système actuel, votre retraite serait de ${somme(actuel)} `
-        + `${accord} par mois, à partir de ${date}, à `
+        + `${accord} par mois, ${aPartirDuMois(date)}, à `
         + `${age(carriere.age_liquidation)}.`;
   if (!comparaison.actuel.liquidation_ouverte) {
     phraseActuel += " À cet âge, pourtant, le droit actuel ne vous "
@@ -6401,11 +6406,7 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
   const nomRegime = (code) => (catalogue.contient(code) ? catalogue.obtenir(code).nom : code);
   const mois = (date) => echapper(String(new DateMois(
     Number(date.slice(0, 4)), Number(date.slice(5, 7)))));
-  // « à partir de mars 2031 », mais « à partir d'avril 2033 ».
-  const aPartirDe = (date) => {
-    const texte = mois(date);
-    return `à partir ${/^[aeiou]/.test(texte) ? "d'" : "de "}${texte}`;
-  };
+  const aPartirDe = (date) => aPartirDuMois(mois(date));
 
   let quand;
   if (reversion.avant_le_depart) {
