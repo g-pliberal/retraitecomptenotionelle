@@ -1587,6 +1587,45 @@ institutions:
           ensemble laissent DEUX avances sur UNE succession, celle du
           survivant, et une avance deux fois plus grosse est moins bien
           couverte par un patrimoine donné.
+      - id: insee_allocataires_minimum_vieillesse
+        titre: >-
+          Allocataires du minimum vieillesse, données annuelles de 2005 à 2024
+          (INSEE, d'après l'enquête de la DREES sur les allocations du minimum
+          vieillesse)
+        url: https://www.insee.fr/fr/statistiques/2407793
+        acces: fichier
+        statut_integration: automatise
+        cible: data/reference/macro/allocataires_minimum_vieillesse.csv
+        recuperation: scripts/fetch/insee_allocataires_minimum_vieillesse.py
+        millesime: 2024
+        note: >-
+          Le classeur `reve-protec-alloc-mini-vieillesse.xlsx` donne, au
+          31 décembre de chaque année, les allocataires de l'ASV ou de l'Aspa
+          par tranche d'âge et par sexe, isolés, en couple et ensemble, France
+          entière ; le total de 2024, 753 908, est celui de la DREES, 754 460,
+          à 552 près. Isolés et en couple somment à l'ensemble à trois cents
+          près de 2009 à 2017, à dix depuis 2018. Lu le 28 octobre 2026, la
+          DREES ne répondant pas à la session : il rapporte les allocataires
+          servis aux ayants droit de la population, type de ménage par type de
+          ménage (action 138, étape 14, `scripts/recours_aspa.py`).
+      - id: insee_etat_matrimonial
+        titre: >-
+          La situation démographique en 2021 : pyramide des âges par état
+          matrimonial, tableau 6 (INSEE, estimations de population)
+        url: https://www.insee.fr/fr/statistiques/2418114
+        acces: fichier
+        statut_integration: automatise
+        cible: data/reference/macro/etat_matrimonial.csv
+        recuperation: scripts/fetch/insee_etat_matrimonial.py
+        millesime: 2020
+        note: >-
+          Le classeur `irsocsd2021_t6_fe.xlsx` donne la population au
+          1er janvier par sexe, âge et état matrimonial légal, de 2006 à 2020,
+          âge par âge jusqu'à 89 ans, puis à 90 ans ou plus ; de 60 à 89 ans,
+          ses quatre états somment exactement à `population_par_age.csv`.
+          Lu le 28 octobre 2026 : il dit qui, parmi les personnes qui ne
+          vivent pas en couple, est veuf et touche une réversion que l'ASPA
+          compte (action 138, étape 14, `scripts/recours_aspa.py`).
       - id: drees_non_recours_minimum_vieillesse
         titre: >-
           Le non-recours au minimum vieillesse des personnes seules (Les
