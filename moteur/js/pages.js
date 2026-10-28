@@ -13324,14 +13324,13 @@ function coutDetailPoids(contexte) {
   return g.depliant("Ce que chaque carrière type pèse dans ces chiffres", `
 <p><strong>Deux pondérations se composent.</strong> Celle de la génération est
 démographique, et vient de l'INSEE. Celle du <strong>cas type</strong> est
-sociologique, et elle se lit des deux côtés du bilan : dans les
-<strong>dépenses</strong>, un cas type pèse les retraités de sa caisse (combien
-ont eu cette carrière-là), publiés par la DREES, puis calés d'un même
-coefficient chaque année pour que chaque groupe de régimes pèse dans la masse
-la part que le COR donne à sa dépense en 2025 ; dans les
-<strong>recettes</strong>, il pèse ses cotisants, publiés et projetés par le
-COR. La colonne de droite rappelle ce que valait la convention antérieure, qui
-les pesait à égalité.</p>
+sociologique. Dans les <strong>dépenses</strong>, il pèse sa part des départs :
+les retraités de sa caisse, publiés par la DREES, divisés par les têtes que la
+pyramide donne aux cas types de la caisse, puis calés d'un même coefficient
+chaque année pour que chaque groupe de régimes pèse dans la masse la part que
+le COR donne à sa dépense en 2025. Dans les <strong>recettes</strong>, il pèse
+ses cotisants, publiés et projetés par le COR. La colonne de droite rappelle ce
+que valait la convention antérieure, qui les pesait à égalité.</p>
 
 ${g.tableau(
     ["Cas type", "Caisse dont il porte les effectifs",

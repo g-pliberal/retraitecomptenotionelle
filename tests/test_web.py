@@ -4071,6 +4071,28 @@ def test_la_page_cout_dit_au_rythme_de_qui_chaque_cas_type_survit():
         assert phrase in texte, code
 
 
+def test_la_page_cout_dit_que_chaque_caisse_se_divise_par_les_tetes_de_ses_cas_types():
+    """La colonne « Retraités » de la table des poids de Coût montre, depuis le
+    24 octobre 2026, une part des départs : chaque caisse se divise par les
+    têtes que la pyramide donne à ses cas types, le poids valant pour chaque
+    génération (``castypes.poids_effectifs``, action 138, étape 3). La phrase
+    qui présente la table disait encore qu'un cas type pèse les retraités de
+    sa caisse ; le modèle refuse désormais de les peser sans ces têtes."""
+    from retraite_notionnelle.castypes import GRILLE_DU_COUT
+    from retraite_notionnelle.cout import _ponderation
+
+    with pytest.raises(ValueError, match="têtes de leurs cas types"):
+        _ponderation(None, "effectifs", GRILLE_DU_COUT)
+    corps = rendre("/cout", {})[1]
+    section = re.search(r'<details class="section" id="cout-poids">.*?</details>', corps, re.S)
+    assert section, "la page Coût n'a pas la table des poids"
+    texte = html.unescape(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", section.group(0))))
+    assert ("il pèse sa part des départs : les retraités de sa caisse, publiés par la "
+            "DREES, divisés par les têtes que la pyramide donne aux cas types de la "
+            "caisse, puis calés") in texte
+    assert "pèse les retraités de sa caisse" not in texte
+
+
 def test_la_page_cout_montre_le_bilan_du_compte_de_chaque_systeme():
     """Le bilan du compte à la manière suédoise (action 138, étape 19), après
     la dette que les soldes à venir accumulent : pour chacun des quatre
