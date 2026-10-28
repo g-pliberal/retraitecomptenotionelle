@@ -729,12 +729,33 @@ MALADIE_INDEPENDANTE = True
 #: pleines des femmes, leurs classes pesées par leur poids
 #: (:func:`masses_moyennes`) : 0,24 fois aux classes p95 et p99, 1,80 fois aux
 #: classes p10 et p25 ; chacune de celles qui en ont garde les années de
-#: l'échantillon (:func:`natures_au_rang`). Les hommes gardent la même part à
-#: chaque rang : la masse du stock de 2020 remonte au haut des leurs, 4,9 % au
-#: troisième quintile, 9,8 % au cinquième, que ses générations anciennes
-#: portent et que les classeurs des nés en 1950 et en 1953, non certifiés, ne
-#: trouvent pas (note de la treizième partie).
+#: l'échantillon (:func:`natures_au_rang`). Les hommes n'y sont pas : la masse
+#: du stock de 2020 remonte au haut des leurs, 4,9 % au troisième quintile,
+#: 9,8 % au cinquième, que ses générations anciennes portent ; ils suivent
+#: celle de leur génération (:data:`NATURES_DES_HOMMES_SELON_LE_RANG`).
 NATURES_SELON_LE_RANG = ("F",)
+
+#: La trente-troisième version (action 138, étape 14, le 28 octobre 2026) : les
+#: natures des hommes selon le rang, à la pente de leur génération. Sous la
+#: vingt-septième, ils gardaient la même part à chaque rang, la masse du stock
+#: remontant au haut des leurs ; celle de leur génération descend avec le
+#: rang, comme celle des femmes : les nés en 1950 du premier quintile de la
+#: pension en équivalent carrière complète ont validé 28 années hors
+#: majorations, dont 25 cotisées, ceux des trois derniers 41, dont 39 ; les
+#: nés en 1953 du premier 30, dont 25, du cinquième 41, dont 39
+#: (``quintiles_eqcc_generations.csv``). Sous cette constante, la part des
+#: hommes d'une classe de centiles qui ont de la maladie, de l'AVPF ou du
+#: chômage est celle de l'échantillon, multipliée par le rapport de la masse
+#: de sa classe dans leur génération à celle de toutes les carrières pleines
+#: des hommes (:func:`pentes_des_generations`) : en 1950, 1,52 fois à la
+#: classe p10, 0,80 fois aux classes p50 à p99 ; en 1953, 1,75 et 0,66 fois
+#: aux classes p90 à p99 ; celle des nés en 1950 jusqu'à cette génération,
+#: celle des nés en 1953 après, en droite ligne entre elles. Le plafond reste
+#: la masse du stock (:data:`ASSIMILEES_SELON_LE_RANG`) : celui de la
+#: génération ne coupe rien, ni sans la pente, l'arrondi des années de chaque
+#: nature rendant ce qu'il ôte, ni avec elle, le haut des rangs passant
+#: dessous.
+NATURES_DES_HOMMES_SELON_LE_RANG = True
 
 #: Les natures qui croissent avec l'âge, que :func:`natures_assimilees` ne lit
 #: qu'à 60 ans : les générations que l'échantillon ne voit pas jusque-là
@@ -1778,6 +1799,19 @@ def quintiles_eqcc(racine: Path, residents: bool = False
             for l in _lire_macro(racine, fichier)}
 
 
+def quintiles_eqcc_des_generations(racine: Path
+                                   ) -> dict[int, dict[tuple[str, str, str], float]]:
+    """Les quintiles de la pension en équivalent carrière complète des nés en
+    1950 et en 1953, chaque génération rangée en elle-même
+    (``quintiles_eqcc_generations.csv``) : ``{génération: {(quintile,
+    indicateur, sexe): valeur}}``, comme :func:`quintiles_eqcc`."""
+    sortie: dict[int, dict[tuple[str, str, str], float]] = {}
+    for l in _lire_macro(racine, "quintiles_eqcc_generations.csv"):
+        sortie.setdefault(int(l["generation"]), {})[
+            (l["quintile"], l["indicateur"], l["sexe"])] = float(l["valeur"])
+    return sortie
+
+
 def association_rang_duree(quintiles: dict, sexe: str) -> dict[str, dict[str, float]]:
     """Le tableau croisé des tranches de durée et des classes de centiles d'un
     sexe, en parts de ses retraités, que l'EIR donne (:data:`RANG_SELON_LA_DUREE`).
@@ -2380,14 +2414,55 @@ def masses_moyennes(variantes: list[Variante]) -> dict[str, float]:
     return {sexe: masse / poids for sexe, (masse, poids) in masses.items()}
 
 
-def natures_au_rang(parts: dict[str, dict[int, tuple[float, float]]], facteur: float
+def pentes_des_generations(variantes: list[Variante], racine: Path
+                           ) -> dict[tuple[str, str], tuple[tuple[int, float], ...]]:
+    """Le facteur des natures de chaque classe de centiles des carrières
+    pleines des hommes (:data:`NATURES_DES_HOMMES_SELON_LE_RANG`), sous la clé
+    ``(tranche, classe)``, en paires ``(génération, facteur)`` triées : la
+    masse assimilée de la classe dans chaque génération de l'EIR
+    (``quintiles_eqcc_generations.csv``, :func:`parts_assimilees_des_classes`),
+    rapportée à celle de toutes les carrières pleines des hommes, chacune à la
+    masse de sa classe dans la génération, pesée par sa part de la Cnav, comme
+    sous :func:`masses_moyennes`."""
+    noms = {nom for nom, _ in CENTILES}
+    pleines = []
+    for v in variantes:
+        classe = next((m for m in v.cas.code.split("~") if m in noms), None)
+        if (v.cas.sexe == "H" and v.cas.entrees and not v.cas.cibles and not v.surcote
+                and v.tranche is not None and classe is not None):
+            pleines.append((v.tranche, classe, v.retraites[0][1]))
+    tranches = sorted({tranche for tranche, _, _ in pleines})
+    masses = {generation: {tranche: parts_assimilees_des_classes(quintiles, "H", tranche)
+                           for tranche in tranches}
+              for generation, quintiles in sorted(quintiles_eqcc_des_generations(racine).items())}
+    poids = somme_ordonnee(part for _, _, part in pleines)
+    moyennes = {generation: somme_ordonnee(part * siennes[tranche][classe]
+                                           for tranche, classe, part in pleines) / poids
+                for generation, siennes in masses.items()}
+    return {(tranche, classe): tuple((generation, siennes[tranche][classe] / moyennes[generation])
+                                     for generation, siennes in masses.items())
+            for tranche in tranches for classe in noms}
+
+
+def natures_au_rang(parts: dict[str, dict[int, tuple[float, float]]],
+                    facteur: float | tuple[tuple[int, float], ...]
                     ) -> dict[str, dict[int, tuple[float, float]]]:
     """Les natures de l'échantillon (:func:`natures_assimilees`) à une classe
     de centiles dont la masse fait ``facteur`` fois la moyenne
     (:data:`NATURES_SELON_LE_RANG`) : la part et le cumul de la maladie, de
     l'AVPF et du chômage multipliés par lui, les années de chacun de ceux qui
-    en ont restant les mêmes ; le service tel quel."""
-    return {nature: ({generation: (part * facteur, cumul * facteur)
+    en ont restant les mêmes ; le service tel quel. Un ``facteur`` en paires
+    ``(génération, facteur)``, celui des hommes
+    (:data:`NATURES_DES_HOMMES_SELON_LE_RANG`), s'interpole à chaque
+    génération de l'échantillon (:func:`_interpolee`) : celui des nés en 1950
+    jusqu'à elle, celui des nés en 1953 après, en droite ligne entre les
+    deux."""
+    def siens(generation: int) -> float:
+        if isinstance(facteur, tuple):
+            return _interpolee(dict(facteur), generation)
+        return facteur
+
+    return {nature: ({generation: (part * siens(generation), cumul * siens(generation))
                       for generation, (part, cumul) in lues.items()}
                      if nature in NATURES_LUES_A_60_ANS else lues)
             for nature, lues in parts.items()}
@@ -2444,11 +2519,14 @@ def entrees_au_premier_trimestre(variantes: list[Variante], racine: Path) -> lis
     :data:`SERVICE_AVANT_LE_PREMIER_TRIMESTRE`, et déclinés en leurs classes de
     nature sous :data:`NATURES_SELON_LA_GENERATION` (:func:`classes_de_nature`),
     ceux des deux sexes, à leurs années assimilées, sous
-    :data:`NATURES_A_LEUR_PART`, et ceux des femmes à la part de leur rang sous
-    :data:`NATURES_SELON_LE_RANG` (:func:`natures_au_rang`) : le premier
-    cinquième garde son code, les autres prennent leur rang, « ~entree3 » ; la
-    classe de nature de rang zéro garde celui de son cinquième, les autres
-    prennent leur rang, « ~nature1 ». Une carrière incomplète allongée
+    :data:`NATURES_A_LEUR_PART`, ceux des femmes à la part de leur rang sous
+    :data:`NATURES_SELON_LE_RANG` (:func:`natures_au_rang`), et ceux des hommes
+    à la part de leur rang dans leur génération sous
+    :data:`NATURES_DES_HOMMES_SELON_LE_RANG` (:func:`pentes_des_generations`) :
+    le premier cinquième garde son code, les autres prennent leur rang,
+    « ~entree3 » ; la classe de nature de rang zéro garde celui de son
+    cinquième, les autres prennent leur rang, « ~nature1 ». Une carrière
+    incomplète allongée
     (:data:`ALLONGEES_COMME_LES_PLEINES`) se décline en ses seuls cinquièmes
     (:func:`allongees_au_premier_trimestre`) ; les autres variantes telles
     quelles."""
@@ -2459,6 +2537,9 @@ def entrees_au_premier_trimestre(variantes: list[Variante], racine: Path) -> lis
     sexes = ("F", "H") if a_leur_part else ("H",) if NATURES_SELON_LA_GENERATION else ()
     parts_des_natures = {sexe: natures_assimilees(racine, sexe) for sexe in sexes}
     moyennes = masses_moyennes(variantes) if a_leur_part else {}
+    pentes = (pentes_des_generations(variantes, racine)
+              if a_leur_part and NATURES_DES_HOMMES_SELON_LE_RANG else {})
+    noms = {nom for nom, _ in CENTILES}
     classes: dict[tuple, list] = {}
     sortie = []
     for v in variantes:
@@ -2471,6 +2552,9 @@ def entrees_au_premier_trimestre(variantes: list[Variante], racine: Path) -> lis
         assimilees = v.assimilees if a_leur_part else None
         facteur = (v.cas.tranche_de_base[2] / moyennes[v.cas.sexe]
                    if v.cas.sexe in moyennes else 1.0)
+        if v.cas.sexe == "H" and pentes:
+            classe = next((m for m in v.cas.code.split("~") if m in noms), None)
+            facteur = pentes.get((v.tranche, classe), facteur)
         cle = (v.cas.sexe, v.cas.entrees, assimilees, facteur)
         if cle not in classes:
             cinquiemes = classes_d_entree(v.cas.entrees, parts[v.cas.sexe],

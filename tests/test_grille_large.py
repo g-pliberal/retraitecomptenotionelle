@@ -998,11 +998,13 @@ def test_le_chomage_a_sa_part_rend_la_carriere_longue_aux_hommes_qui_n_en_ont_pa
     quatre trimestres, puis trois de chômage : 148 trimestres cotisés ou
     réputés à 59 ans ; elle part à 60 ans, l'âge légal, au taux plein. Le test
     dit la version seule : la vingt-cinquième (``MALADIE_INDEPENDANTE``) en
-    est ôtée, et les classes plus fines de la vingt-sixième
-    (``CLASSES_DE_NATURE``)."""
+    est ôtée, les classes plus fines de la vingt-sixième
+    (``CLASSES_DE_NATURE``), et la pente des hommes de la trente-troisième
+    (``NATURES_DES_HOMMES_SELON_LE_RANG``)."""
     assert G.NATURES_A_LEUR_PART
     monkeypatch.setattr(G, "MALADIE_INDEPENDANTE", False)
     monkeypatch.setattr(G, "CLASSES_DE_NATURE", 5)
+    monkeypatch.setattr(G, "NATURES_DES_HOMMES_SELON_LE_RANG", False)
     variantes = {v.cas.code: v.cas for v in G.grille("population", simulateur.effectifs,
                                                       source, ())}
     projection = simulateur.pour_la_projection()
@@ -1205,6 +1207,26 @@ def test_les_classes_de_nature_plus_fines_tiennent_chaque_part_a_un_trentieme_pr
                     sexe, nom, generation)
 
 
+def _natures_par_classe(variantes, poids, sexe: str) -> dict[str, list]:
+    """Les carrières pleines du sexe, par classe de centiles : les années de
+    chaque nature de chacune, génération par génération, et ses têtes."""
+    noms = {nom for nom, _ in G.CENTILES}
+    sortie: dict[str, list] = {}
+    for v in variantes:
+        if v.cas.sexe == sexe and v.cas.annees_par_nature:
+            classe = next(m for m in v.cas.code.split("~") if m in noms)
+            sortie.setdefault(classe, []).append((v.cas.annees_par_nature, poids[v.cas.code]))
+    return sortie
+
+
+def _part_de_nature(lot: list, generation: int, rang: int) -> float:
+    """La part des têtes d'une classe de :func:`_natures_par_classe` qui ont,
+    à cette génération, la nature de ce rang : service, maladie, AVPF,
+    chômage."""
+    return (sum(p for natures, p in lot if G._par_generation(natures, generation, None)[rang])
+            / sum(p for _, p in lot))
+
+
 def test_les_natures_des_femmes_suivent_la_masse_de_leur_rang(parametres, simulateur, source):
     """Sous ``NATURES_SELON_LE_RANG``, la part des femmes d'une carrière pleine
     qui ont de la maladie, de l'AVPF ou du chômage suit, d'une classe de
@@ -1221,32 +1243,17 @@ def test_les_natures_des_femmes_suivent_la_masse_de_leur_rang(parametres, simula
     à la classe p10, 71,6, 67,6 et 34,9 %, onze, dix et cinq classes. Aux
     générations de l'échantillon, de 1942 à 1956, chaque nature tient à
     chaque classe sa part, et sur toutes, celle de l'échantillon, à un
-    trentième près. Les hommes gardent la même part à chaque rang."""
+    trentième près. Les hommes suivent la masse de leur génération
+    (``NATURES_DES_HOMMES_SELON_LE_RANG``, le test qui suit)."""
     assert G.NATURES_SELON_LE_RANG == ("F",)
     racine = parametres.racine_donnees
     variantes = G.grille("population", simulateur.effectifs, source, ())
     poids = _poids(variantes, simulateur.effectifs, source.millesime)
-    noms = {nom for nom, _ in G.CENTILES}
     masses = G.parts_assimilees_des_classes(G.quintiles_eqcc(racine, residents=True),
                                             "F", "40_plus")
     assert masses["p99"] == pytest.approx(1 / 39)
-
-    def par_classe(sexe: str) -> dict[str, list]:
-        """Les carrières pleines du sexe, par classe de centiles : les années
-        de chaque nature de chacune, génération par génération, et ses têtes."""
-        sortie: dict[str, list] = {}
-        for v in variantes:
-            if v.cas.sexe == sexe and v.cas.annees_par_nature:
-                classe = next(m for m in v.cas.code.split("~") if m in noms)
-                sortie.setdefault(classe, []).append((v.cas.annees_par_nature,
-                                                      poids[v.cas.code]))
-        return sortie
-
-    def part(lot: list, generation: int, rang: int) -> float:
-        return (sum(p for natures, p in lot if G._par_generation(natures, generation, None)[rang])
-                / sum(p for _, p in lot))
-
-    femmes = par_classe("F")
+    part = _part_de_nature
+    femmes = _natures_par_classe(variantes, poids, "F")
     tetes = {classe: sum(p for _, p in lot) for classe, lot in femmes.items()}
     moyenne = sum(tetes[c] * masses[c] for c in tetes) / sum(tetes.values())
     assert moyenne == pytest.approx(0.1082, abs=5e-5)
@@ -1259,7 +1266,6 @@ def test_les_natures_des_femmes_suivent_la_masse_de_leur_rang(parametres, simula
     assert {annees[2] for annees in siennes} == {0, 7}
     assert {annees[3] for annees in siennes} == {0, 4}
     assert {annees[1] for annees in siennes} == {0, 3}
-    hommes = par_classe("H")
     for rang, nom in ((1, "maladie"), (2, "avpf"), (3, "chomage")):
         lues = G.natures_assimilees(racine, "F")[nom]
         for generation in sorted(lues):
@@ -1271,8 +1277,71 @@ def test_les_natures_des_femmes_suivent_la_masse_de_leur_rang(parametres, simula
             ensemble = sum(tetes[c] * part(lot, generation, rang) for c, lot in femmes.items())
             assert abs(ensemble / sum(tetes.values()) - publiee) <= 1 / 30 + 1e-9, (
                 nom, generation)
-            parts_des_hommes = [part(lot, generation, rang) for lot in hommes.values()]
-            assert max(parts_des_hommes) - min(parts_des_hommes) < 1e-9, (nom, generation)
+
+
+def test_les_natures_des_hommes_suivent_la_masse_de_leur_generation(parametres, simulateur,
+                                                                    source):
+    """Sous ``NATURES_DES_HOMMES_SELON_LE_RANG``, la part des hommes d'une
+    carrière pleine qui ont de la maladie, de l'AVPF ou du chômage suit, d'une
+    classe de centiles à l'autre, la masse assimilée que l'EIR mesure aux
+    rangs de leur génération (``quintiles_eqcc_generations.csv``), et non à
+    ceux du stock de 2020, qui remonte au haut : la part de l'échantillon,
+    multipliée par le rapport de la masse de la classe dans la génération à
+    celle de toutes les carrières pleines des hommes, leurs classes pesées par
+    leurs têtes ; celle des nés en 1950 jusqu'à cette génération, celle des
+    nés en 1953 après. Nés en 1950, les hommes des trois derniers quintiles
+    ont validé 41 années hors majorations, dont 39 cotisées : les classes p50
+    à p99 en tiennent 2/41 d'assimilées, 0,799 fois la moyenne de 6,11 % ; la
+    classe p10, 9,26 %, 1,52 fois. Nés en 1953, la classe p10 13,05 %, 1,75
+    fois la moyenne de 7,44 %, les classes p90 à p99 2/41, 0,655 fois. Nés en
+    1950, 12,6 % des hommes ont de la maladie, 32,5 % du chômage : à la classe
+    p99, 10,1 et 26,0 %, deux et quatre classes de quinze ; à la classe p10,
+    19,1 et 49,3 %, trois et sept. Nés en 1955, 14,5 % et 39,0 % : à la
+    classe p10, 25,4 et 68,3 %, quatre et dix classes ; à la classe p99, 9,5
+    et 25,5 %, une et quatre. Aux générations 1945 à 1960, chaque nature tient
+    à chaque classe sa part, et sur toutes, celle de l'échantillon, à un
+    trentième près. Le plafond reste celui du stock : quatre années de la
+    carrière de la classe p99, 9,76 % de 43."""
+    assert G.NATURES_DES_HOMMES_SELON_LE_RANG
+    racine = parametres.racine_donnees
+    variantes = G.grille("population", simulateur.effectifs, source, ())
+    poids = _poids(variantes, simulateur.effectifs, source.millesime)
+    masses = {generation: G.parts_assimilees_des_classes(quintiles, "H", "40_plus")
+              for generation, quintiles in G.quintiles_eqcc_des_generations(racine).items()}
+    assert sorted(masses) == [1950, 1953]
+    for classe in ("p50", "p75", "p90", "p95", "p99"):
+        assert masses[1950][classe] == pytest.approx(2 / 41), classe
+    for classe in ("p90", "p95", "p99"):
+        assert masses[1953][classe] == pytest.approx(2 / 41), classe
+    part = _part_de_nature
+    hommes = _natures_par_classe(variantes, poids, "H")
+    tetes = {classe: sum(p for _, p in lot) for classe, lot in hommes.items()}
+    moyennes = {g: sum(tetes[c] * masses[g][c] for c in tetes) / sum(tetes.values())
+                for g in masses}
+    assert moyennes[1950] == pytest.approx(0.0611, abs=5e-5)
+    assert moyennes[1953] == pytest.approx(0.0744, abs=5e-5)
+    assert masses[1950]["p99"] / moyennes[1950] == pytest.approx(0.799, abs=5e-4)
+    assert masses[1950]["p10"] / moyennes[1950] == pytest.approx(1.52, abs=5e-3)
+    assert masses[1953]["p99"] / moyennes[1953] == pytest.approx(0.655, abs=5e-4)
+    assert masses[1953]["p10"] / moyennes[1953] == pytest.approx(1.75, abs=5e-3)
+    for generation, classe, attendues in ((1950, "p99", (2, 4)), (1950, "p10", (3, 7)),
+                                          (1955, "p10", (4, 10)), (1955, "p99", (1, 4))):
+        assert tuple(round(15 * part(hommes[classe], generation, rang)) for rang in (1, 3)) == (
+            attendues), (generation, classe)
+    for rang, nom in ((1, "maladie"), (2, "avpf"), (3, "chomage")):
+        lues = G.natures_assimilees(racine, "H")[nom]
+        for generation in (1945, 1950, 1955, 1960):
+            publiee = G.part_et_duree(lues, generation)[0]
+            de_l_eir = 1950 if generation <= 1950 else 1953
+            for classe, lot in hommes.items():
+                attendue = min(1.0, publiee * masses[de_l_eir][classe] / moyennes[de_l_eir])
+                assert abs(part(lot, generation, rang) - attendue) <= 1 / 30 + 1e-9, (
+                    nom, generation, classe)
+            ensemble = sum(tetes[c] * part(lot, generation, rang) for c, lot in hommes.items())
+            assert abs(ensemble / sum(tetes.values()) - publiee) <= 1 / 30 + 1e-9, (
+                nom, generation)
+    haute = next(v for v in variantes if v.cas.code == f"{G.GABARIT}~h~40_plus~p99")
+    assert (haute.duree, haute.assimilees) == (43, 4)
 
 
 def test_les_morceaux_de_la_grille_tiennent_dans_le_pont():
