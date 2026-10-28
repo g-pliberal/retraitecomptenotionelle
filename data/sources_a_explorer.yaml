@@ -1835,6 +1835,85 @@ sources:
       artisans polypensionnés (31 et 8), 16 % des commerçants (29 et 9).
       Repris dans scripts/part_minimum_contributif.py (`RSI`).
 
+  - id: insee_es_545_mobilite_des_revenus
+    url: https://www.insee.fr/fr/statistiques/fichier/8561915/04_ES545_Loisel-Siscic_FR.pdf
+    nature: document
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Ce que le revenu d'un indépendant garde de son rang au fil des années,
+      au regard d'un salaire : la part passagère de son revenu, que la
+      carrière de l'artisan de la population efface (action 138, étape 14).
+    statut: explore
+    explore_le: "2026-10-28"
+    note: >-
+      Tristan Loisel et Michaël Sicsic, « La mobilité des individus le long de
+      l'échelle des revenus en France sur la période 2003-2021 », Économie et
+      Statistique n° 545, Insee, 2024, lu le 28 octobre 2026. Le panel des
+      déclarations de revenus (POTE), les personnes de 25 à 49 ans en 2003 ;
+      leur revenu individuel compte les revenus d'activité, les allocations
+      de chômage et les pensions. § 3.1.6 : le rang d'un indépendant en 2021
+      se corrèle à 0,52 avec le sien de 2003, celui d'un salarié à 0,70, le
+      statut étant celui du revenu qui domine en 2003 ; les mobilités
+      extrêmes y sont deux fois plus fréquentes. Insee Analyses n° 82 (2023),
+      sur 2003-2019, en donnait 0,59 et 0,71
+      (https://www.insee.fr/fr/statistiques/6960027). Aucune des deux ne
+      sépare la part passagère d'un revenu de ce qui se déplace pour de bon,
+      ni les changements d'activité. Repris dans scripts/grille_large.py
+      (`CORRELATION_DES_RANGS`, `DISPERSION_DES_INDEPENDANTS`).
+
+  - id: msa_bilan_minimum_contributif_2018
+    url: https://statistiques.msa.fr/wp-content/uploads/2018/01/Le-minimum-contributif-2005-2015-SA-1.pdf
+    nature: document
+    acces: session
+    regimes: [msa_salaries]
+    a_en_tirer: >-
+      La carrière des nouveaux retraités de la MSA salariés que le minimum
+      contributif relève : la carrière saisonnière des salariés agricoles,
+      que la population n'a pas (action 138, étape 14).
+    statut: explore
+    explore_le: "2026-10-28"
+    note: >-
+      MSA, L'Observatoire économique et social, Synthèses, janvier 2018, « Le
+      bilan du minimum contributif au régime des salariés agricoles entre 2005
+      et 2015 », lu le 28 octobre 2026. Le nombre des bénéficiaires du minimum
+      y « est largement attribuable à la forte présence de saisonniers » : des
+      polypensionnés à peu de trimestres au régime, aux salaires agricoles
+      « peu élevés et non représentatifs des autres revenus perçus dans la
+      carrière ». Trois nouveaux pensionnés sur quatre ont moins de 40
+      trimestres au régime, 5 à 10 % plus de 150, presque aucun entre les
+      deux ; plus de 95 % sont polypensionnés, 90 % dans un autre régime
+      aligné (2015). Trois sur quatre sont éligibles au minimum, un sur deux
+      au régime général ; un quart le reçoit après 2012, les trois quarts
+      avant. Le graphique 9, les trimestres des partis de 2014, n'en imprime
+      pas les valeurs. Tout y précède la liquidation unique de 2017 : rien n'y
+      dit la carrière des liquidants que l'EACR compte de 2019 à 2024.
+
+  - id: msa_liquidation_unique_2021
+    url: https://statistiques.msa.fr/wp-content/uploads/2023/01/Etude-Lura-2021.pdf
+    nature: document
+    acces: session
+    regimes: [msa_salaries]
+    a_en_tirer: >-
+      La durée des nouveaux retraités de la MSA salariés depuis la
+      liquidation unique des régimes alignés : ce que la population devrait
+      donner à ses salariés agricoles, que l'EACR met au minimum trois fois
+      plus qu'elle (action 138, étape 14).
+    statut: explore
+    explore_le: "2026-10-28"
+    note: >-
+      MSA, Sylvain Allard, « La liquidation unique des régimes alignés au 31
+      décembre 2021 », étude, janvier 2023, lue le 28 octobre 2026. Du 1er
+      juillet 2017 au 31 décembre 2021, 69,1 % des nouveaux retraités de droit
+      propre de la MSA salariés liquident en Lura, 73,4 % au quatrième
+      trimestre 2021. Parmi eux, 25,7 % des hommes ont moins de 48 trimestres
+      aux régimes alignés, 12,3 % des femmes ; 42,1 et 47,9 % plus de 155 ;
+      19,8 % des hommes ont une pension de base de moins de 100 € par mois,
+      9,8 % des femmes, et 652 et 613 € en moyenne. Hors Lura, chez les nés à
+      partir de 1953 : 31,3 % ont moins de 16 trimestres au régime, 24,6 %
+      plus de 155, 16,3 % sont monopensionnés. Ni leurs salaires, ni leur
+      part au minimum.
+
   - id: drees_er_1283_mda_enfants
     url: https://drees.solidarites-sante.gouv.fr/publications-communique-de-presse/etudes-et-resultats/retraite-parmi-les-femmes-beneficiant-de
     nature: document

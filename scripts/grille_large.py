@@ -193,7 +193,12 @@ leur sert que 161 € par mois en moyenne. La dix-huitième (le 17 octobre 2026)
 donne à l'artisan la dispersion des revenus des non-salariés de son sexe
 (:data:`INDEPENDANTS_A_LEUR_DISPERSION`) : il avait celle des salaires des
 temps complets, et n'atteignait jamais le minimum contributif ; la mesure le
-juge sur les anciens artisans et commerçants de l'EIR. La dix-neuvième (le
+juge sur les anciens artisans et commerçants de l'EIR. La part passagère de son
+revenu reste en variante (le 28 octobre 2026,
+:data:`PART_PASSAGERE_DES_INDEPENDANTS`) : le rang d'un indépendant dans
+l'échelle des revenus de 2021 se corrèle moins au sien de 2003 que celui d'un
+salarié, 0,52 contre 0,70, mais la retraite et les changements d'activité s'y
+mêlent, et le juge propre des artisans la dément. La dix-neuvième (le
 18 octobre 2026) fait partir une part des carrières de trente années validées
 et plus après l'âge légal et le taux plein, avec une surcote
 (:data:`DEPARTS_AVEC_SURCOTE`) : 14,3 % des nés en 1953 sont partis ainsi,
@@ -1228,6 +1233,46 @@ SALARIES_AGRICOLES = True
 #: (:func:`confronter_non_salaries`).
 INDEPENDANTS_A_LEUR_DISPERSION = True
 
+#: La part passagère du revenu des indépendants, en variante (action 138,
+#: étape 14, le 28 octobre 2026). Sous :data:`INDEPENDANTS_A_LEUR_DISPERSION`,
+#: la coupe des revenus des non-salariés se resserre en carrière comme celle
+#: des salaires, faute d'une source sur la part passagère de leur revenu. Une
+#: source s'en approche, par la mobilité : entre 2003 et 2021, le rang d'un
+#: indépendant dans l'échelle des revenus se corrèle à 0,52 avec le sien,
+#: celui d'un salarié à 0,70 (:data:`CORRELATION_DES_RANGS`). Sous cette
+#: constante, la carrière d'un indépendant garde de la variance de la coupe ce
+#: qu'en garde celle d'un salarié, fois le rapport des deux corrélations : ses
+#: écarts au centre en gardent :data:`DISPERSION_DES_INDEPENDANTS`, 0,655, et
+#: non 0,76. Elle reste débrayée, pour deux raisons. La corrélation ne mesure
+#: pas la seule part passagère : elle y mêle les changements d'activité, plus
+#: fréquents chez les indépendants, et le passage à la retraite, les
+#: personnes de 25 à 49 ans en 2003 ayant 43 à 67 ans en 2021 ; sur 2003-2019,
+#: elle valait 0,59 et 0,71, et les deux années où partent les plus âgés du
+#: champ ôtent 0,07 à celle des indépendants, 0,01 à celle des salariés. Et le
+#: juge propre des artisans la dément (``part_minimum_contributif.py
+#: --artisans``) : sous elle, les artisans de la population nés en 1946
+#: seraient au minimum pour 15,5 % et non 34,6, quand l'EIR de 2012 en trouve
+#: 33 % chez les artisans unipensionnés et 37 % chez les commerçants. Le
+#: libéral, que la fiche des non-salariés compte aussi, garde avec la
+#: dispersion des salaires leur resserrement (action 152, au propriétaire).
+PART_PASSAGERE_DES_INDEPENDANTS = False
+
+#: La corrélation des rangs de 2003 et de 2021 dans l'échelle des revenus
+#: individuels, chez les personnes de 25 à 49 ans en 2003, selon leur statut
+#: d'activité de 2003, celui du revenu qui domine les leurs : Tristan Loisel
+#: et Michaël Sicsic, « La mobilité des individus le long de l'échelle des
+#: revenus en France sur la période 2003-2021 », Économie et Statistique
+#: n° 545, Insee, 2024, § 3.1.6. Sur 2003-2019, Insee Analyses n° 82 (2023)
+#: en donnait 0,59 et 0,71.
+CORRELATION_DES_RANGS = {"independants": 0.52, "salaries": 0.70}
+
+#: Ce que les écarts d'une carrière d'indépendant au centre du logarithme
+#: gardent de ceux de la coupe (:data:`PART_PASSAGERE_DES_INDEPENDANTS`) :
+#: :data:`DISPERSION_DE_CARRIERE`, fois la racine du rapport des
+#: corrélations de :data:`CORRELATION_DES_RANGS`, 0,655.
+DISPERSION_DES_INDEPENDANTS = DISPERSION_DE_CARRIERE * math.sqrt(
+    CORRELATION_DES_RANGS["independants"] / CORRELATION_DES_RANGS["salaries"])
+
 #: Les indépendants à leur part de femmes (le même jour). La population donnait
 #: à chaque cas type la part de femmes de son groupe : l'artisan, du régime
 #: général, en comptait 55 %, quand les anciens artisans et commerçants de
@@ -1667,13 +1712,14 @@ class DonneesPopulation:
     independants: dict[str, tuple[tuple[str, float, float], ...]]
 
 
-def resserrer(relatifs: dict[str, float], moyenne: float) -> dict[str, float]:
+def resserrer(relatifs: dict[str, float], moyenne: float,
+              dispersion: float = DISPERSION_DE_CARRIERE) -> dict[str, float]:
     """D'une coupe de l'année, une carrière : les écarts des sept points au
-    centre du logarithme ramenés à :data:`DISPERSION_DE_CARRIERE` fois les
-    leurs, et leur moyenne discrétisée portée à ``moyenne``."""
+    centre du logarithme ramenés à ``dispersion`` fois les leurs — par défaut
+    :data:`DISPERSION_DE_CARRIERE`, celle d'un salaire —, et leur moyenne
+    discrétisée portée à ``moyenne``."""
     centre = somme_ordonnee(math.log(relatifs[n]) * part for n, part in CENTILES)
-    resserres = {n: math.exp(centre + DISPERSION_DE_CARRIERE
-                             * (math.log(relatifs[n]) - centre))
+    resserres = {n: math.exp(centre + dispersion * (math.log(relatifs[n]) - centre))
                  for n, _ in CENTILES}
     discrete = somme_ordonnee(resserres[n] * part for n, part in CENTILES)
     return {n: valeur / discrete * moyenne for n, valeur in resserres.items()}
@@ -2053,18 +2099,23 @@ def dispersion_des_independants(racine: Path
     """Les multiplicateurs des indépendants (:data:`INDEPENDANTS_A_LEUR_DISPERSION`),
     sexe par sexe : les centiles du revenu des non-salariés classiques du sexe
     (:func:`centiles_des_non_salaries`), resserrés en carrière autour de leur
-    moyenne, puis divisés par la moyenne discrétisée des deux sexes réunis,
-    comme ceux des salaires (:func:`donnees_population`)."""
+    moyenne — de :data:`DISPERSION_DES_INDEPENDANTS` sous
+    :data:`PART_PASSAGERE_DES_INDEPENDANTS` —, puis divisés par la moyenne
+    discrétisée des deux sexes réunis, comme ceux des salaires
+    (:func:`donnees_population`)."""
     valeurs = {(l["sexe"], l["indicateur"]): float(l["valeur"])
                for l in _lire_macro(racine, "revenus_non_salaries.csv")
                if l["secteur"] == "ensemble"}
     tous = centiles_des_non_salaries(valeurs, "ensemble")
     moyenne = somme_ordonnee(tous[nom] * part for nom, part in CENTILES)
+    dispersion = (DISPERSION_DES_INDEPENDANTS if PART_PASSAGERE_DES_INDEPENDANTS
+                  else DISPERSION_DE_CARRIERE)
     points = {}
     for sexe in ("F", "H"):
         relatifs = centiles_des_non_salaries(valeurs, sexe)
         resserres = resserrer(relatifs, somme_ordonnee(relatifs[nom] * part
-                                                       for nom, part in CENTILES))
+                                                       for nom, part in CENTILES),
+                              dispersion)
         points[sexe] = tuple((nom, part, resserres[nom] / moyenne) for nom, part in CENTILES)
     return points
 

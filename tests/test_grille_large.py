@@ -278,6 +278,36 @@ def test_une_carriere_resserre_la_coupe_sans_toucher_a_sa_moyenne():
         G.DISPERSION_DE_CARRIERE * ecart)
 
 
+def test_la_carriere_d_un_independant_garde_moins_de_sa_coupe(monkeypatch, parametres):
+    """La part passagère du revenu des indépendants, en variante
+    (``PART_PASSAGERE_DES_INDEPENDANTS``, action 138, étape 14) : entre 2003
+    et 2021, le rang d'un indépendant dans l'échelle des revenus se corrèle à
+    0,52 avec le sien, celui d'un salarié à 0,70 (Loisel et Sicsic, Économie
+    et Statistique n° 545, 2024, § 3.1.6). Sous la variante, les écarts au
+    centre d'une carrière d'indépendant en gardent la racine de leur rapport,
+    fois ceux d'une carrière salariée : 0,76 × √(0,52 / 0,70), 0,655, la
+    moyenne gardée ; le premier décile d'une artisane, 640 € pour une médiane
+    de 2 760, s'approche de sa médiane. Débrayée, l'artisane garde le
+    resserrement des salaires."""
+    assert not G.PART_PASSAGERE_DES_INDEPENDANTS
+    assert G.DISPERSION_DES_INDEPENDANTS == pytest.approx(0.76 * math.sqrt(0.52 / 0.70))
+    assert G.DISPERSION_DES_INDEPENDANTS == pytest.approx(0.655, abs=5e-4)
+    relatifs = {"p10": 0.24, "p25": 0.44, "p50": 0.71, "p75": 1.06, "p90": 1.55,
+                "p95": 1.99, "p99": 3.56}
+    resserres = G.resserrer(relatifs, 0.87, G.DISPERSION_DES_INDEPENDANTS)
+    assert sum(resserres[n] * part for n, part in G.CENTILES) == pytest.approx(0.87)
+    assert math.log(resserres["p99"] / resserres["p10"]) == pytest.approx(
+        G.DISPERSION_DES_INDEPENDANTS * math.log(relatifs["p99"] / relatifs["p10"]))
+    racine = parametres.racine_donnees
+    debrayee = {nom: m for nom, _, m in G.dispersion_des_independants(racine)["F"]}
+    monkeypatch.setattr(G, "PART_PASSAGERE_DES_INDEPENDANTS", True)
+    embrayee = {nom: m for nom, _, m in G.dispersion_des_independants(racine)["F"]}
+    assert debrayee["p10"] / debrayee["p50"] == pytest.approx(
+        (640.0 / 2760.0) ** G.DISPERSION_DE_CARRIERE)
+    assert embrayee["p10"] / embrayee["p50"] == pytest.approx(
+        (640.0 / 2760.0) ** G.DISPERSION_DES_INDEPENDANTS)
+
+
 def test_l_artisan_a_la_dispersion_des_revenus_des_non_salaries(simulateur, source,
                                                                parametres):
     """Sous ``INDEPENDANTS_A_LEUR_DISPERSION``, l'artisan de la population se
