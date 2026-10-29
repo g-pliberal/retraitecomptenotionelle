@@ -1271,20 +1271,10 @@ function regimesDeBaseSaisis(saisie, affiliations, catalogue) {
         statuts.push([statut, new DateMois(premiere, 1), derniere]);
       }
     } else {
-      const lignes = saisie.lignesCarriere;
-      const depart = saisie.dateDe(saisie.liquidation, true);
-      lignes.forEach((ligne, index) => {
+      saisie.lignesCarriere.forEach((ligne, index) => {
         if (ligne.sans_emploi) return;
-        const suivante = ligne.cumul ? undefined
-          : lignes.slice(index + 1).find((autre) => !autre.cumul);
-        let fin = depart;
-        if (ligne.cumul && ligne.fin !== null) {
-          fin = saisie.dateDe(ligne.fin);
-        } else if (suivante !== undefined) {
-          fin = saisie.dateDe(suivante.debut);
-        }
         const statut = saisie.affiliationDe(ligne.statut);
-        statuts.push([statut, saisie.dateEntree(statut), fin.plusMois(-1).annee]);
+        statuts.push([statut, saisie.dateEntree(statut), saisie.derniereAnnee(index)]);
       });
     }
   } catch (erreur) {
@@ -1855,7 +1845,7 @@ function champRevenu(nom, saisie, echelle, valeur, bref = false, siVide = "",
   // conversion que l'avertissement voisin viendra démentir.
   const converti = enNet && echelle.convertit(saisie.statut);
   const repere = converti
-    ? ((montant) => echelle.netMensuel(montant, saisie.statut))
+    ? ((montant) => echelle.netMensuel(montant, saisie.statut, saisie.derniereAnnee(0)))
     : ((montant) => montant);
   const aide = bref
     ? `en euros ${mot}s par mois${vide}`
@@ -3785,7 +3775,7 @@ function revenuDeduit(contexte, comparaison, saisie, montants) {
   const echelle = contexte.echelle(saisie);
   const brut = echelle.mensuel(trouve.niveau);
   const affiche = saisie.enNet
-    ? echelle.netMensuel(brut, saisie.statut) : brut;
+    ? echelle.netMensuel(brut, saisie.statut, saisie.derniereAnnee(0)) : brut;
   const mot = saisie.enNet ? "nets" : "bruts";
 
   // Le revenu écrit dans le lien est dans l'unité de saisie, et dans le mode
@@ -6874,13 +6864,14 @@ function remplacementsMontants(saisie, echelle, tauxPension) {
   if (saisie.revenu_en_euros) {
     const lignes = saisie.lignesCarriere;
     // Un chiffre d'affaires n'est ni brut ni net, un indice non plus : ils
-    // passent tels quels.
-    const traduits = lignes.map((ligne) => nombreBrut(Math.round(
+    // passent tels quels. Les autres, par la fiche de leur dernière année,
+    // comme le calcul les lit (`Saisie.niveaux`).
+    const traduits = lignes.map((ligne, rang) => nombreBrut(Math.round(
       saisie.enChiffreDAffaires(ligne.statut) || saisie.enIndice(ligne.statut)
         ? ligne.salaire
         : versLeNet
-          ? echelle.netMensuel(ligne.salaire, ligne.statut)
-          : echelle.brutMensuelDirect(ligne.salaire, ligne.statut),
+          ? echelle.netMensuel(ligne.salaire, ligne.statut, saisie.derniereAnnee(rang))
+          : echelle.brutMensuelDirect(ligne.salaire, ligne.statut, saisie.derniereAnnee(rang)),
     ), 0));
     remplacements.salaire = traduits[0];
     traduits.slice(1).forEach((valeur, index) => {

@@ -32,7 +32,7 @@ import {
   CATEGORIES_D_INVALIDITE, FORMES_D_UNION, MOTIFS_DE_PROLONGATION, dateDeclaree,
   naissanceDeclaree, plusAns, valeur as valeurPresumee,
 } from "./chronologie.js";
-import { CONJOINTS_COLLABORATEURS, anneeDEntree } from "./carriere.js";
+import { CONJOINTS_COLLABORATEURS, anneeDEntree, retoursAuStatut } from "./carriere.js";
 import * as g from "./gabarit.js";
 import { AGE_TERMINAL } from "./mortalite.js";
 // Les motifs sans emploi et les clés des règles vivent dans `cles.js`, que le
@@ -1386,16 +1386,18 @@ export class Saisie {
    * un montant n'en a que rapporté à son année.
    */
   niveaux(echelle) {
-    return this.lignesCarriere.map((ligne) => this.niveauDe(ligne.salaire, ligne.statut,
-      echelle));
+    return this.lignesCarriere.map((ligne, rang) => this.niveauDe(ligne.salaire, ligne.statut,
+      echelle, this.derniereAnnee(rang)));
   }
 
   /**
    * Le nombre saisi d'une ligne de ce statut, ramené à l'unité du modèle. Un
    * indice majoré vaut la rémunération de son traitement, en toute unité et en
-   * tout mode : il n'est ni un brut ni un net.
+   * tout mode : il n'est ni un brut ni un net. Un net remonte par la fiche de
+   * l'entrée dans le statut que la carrière datera l'année `annee`, la
+   * dernière de la ligne (`derniereAnnee`).
    */
-  niveauDe(valeur, statut, echelle) {
+  niveauDe(valeur, statut, echelle, annee = null) {
     if (this.enIndice(statut)) {
       return echelle.niveau(echelle.remuneration(valeur, this.primes));
     }
@@ -1407,7 +1409,7 @@ export class Saisie {
     // modèle. L'ordre compte — le salaire moyen de l'échelle est un brut.
     // Un chiffre d'affaires n'est ni brut ni net : il se lit tel quel.
     if (this.saisieEnNet && !this.enChiffreDAffaires(statut)) {
-      return echelle.niveau(echelle.brutMensuel(valeur, statut));
+      return echelle.niveau(echelle.brutMensuel(valeur, statut, annee));
     }
     return echelle.niveau(valeur);
   }
@@ -1485,7 +1487,8 @@ export class Saisie {
    * tant que le relevé ne se lit pas. C'est lui qui choisit la fiche de paie
    * d'un régime fermé aux nouveaux entrants, par laquelle un net remonte au
    * brut (`Contexte.echelle`) : l'agent de la SNCF entré avant 2020 garde sa
-   * retenue, et non les cotisations d'un salarié du privé.
+   * retenue, et non les cotisations d'un salarié du privé. Avec `retours`, la
+   * loi lit la saisie comme elle lira la carrière (`Affiliations.dateEntree`).
    */
   dateEntree(affiliation) {
     if (this.releveActif) {
@@ -1502,6 +1505,89 @@ export class Saisie {
     const debuts = this.lignesCarriere.filter((ligne) => !ligne.sans_emploi
       && this.affiliationDe(ligne.statut) === affiliation).map((ligne) => ligne.debut);
     return debuts.length ? this.dateDe(Math.min(...debuts)) : null;
+  }
+
+  /**
+   * Les retours à cette affiliation, tels que la carrière les comptera
+   * (`Carriere.retours`) : sur les années du relevé, ou sur celles des métiers
+   * (`anneesDesMetiers`) ; vides tant que la carrière ne se lit pas. La loi les
+   * lit (`Affiliations.dateEntree`) : la CRPCEN et les IEG ne gardent que leurs
+   * anciens restés affiliés, et le net d'un retour que rien ne maintient
+   * remonte au brut par la fiche d'un nouvel entrant. La saisie n'y voit pas
+   * un retour que seule la projection d'un relevé ferait, après une
+   * interruption déclarée au-delà de sa dernière année.
+   */
+  retours(affiliation) {
+    let lignes;
+    try {
+      lignes = this.releveActif ? this.releveAnalyse() : this.anneesDesMetiers();
+    } catch (erreur) {
+      if (!(erreur instanceof ErreurSaisie)) throw erreur;
+      return [];
+    }
+    return retoursAuStatut(lignes, affiliation);
+  }
+
+  /**
+   * Les années des métiers, `{annee, affiliation, type_periode}`, comme la
+   * carrière les portera (`lignesDuParcours`), sans leur revenu : chacune au
+   * métier principal qui en occupe le plus de mois — à égalité, à celui qui
+   * l'ouvre —, de la nature qu'une interruption lui donne
+   * (`interruptionsDeCarriere`) ; puis une de plus, d'emploi, par année qu'une
+   * activité ajoutée touche, sous son affiliation.
+   */
+  anneesDesMetiers() {
+    const fin = this.dateLiquidation;
+    const metiers = this.lignesCarriere.filter((ligne) => !ligne.sans_emploi);
+    const principaux = metiers.filter((ligne) => !ligne.cumul);
+    const bornes = principaux.map((ligne, rang) => [
+      this.dateDe(ligne.debut),
+      rang + 1 < principaux.length ? this.dateDe(principaux[rang + 1].debut) : fin,
+    ]);
+    const interruptions = this.interruptionsDeCarriere();
+    const debut = bornes[0][0];
+    const annees = [];
+    for (let annee = debut.annee; annee <= fin.annee; annee += 1) {
+      if (moisTravailles(annee, debut, fin) <= 0) continue;
+      const mois = bornes.map(([ouverture, cloture]) => moisTravailles(annee, ouverture, cloture));
+      annees.push({
+        annee,
+        affiliation: this.affiliationDe(principaux[mois.indexOf(Math.max(...mois))].statut),
+        type_periode: interruptions.get(annee) ?? "emploi",
+      });
+    }
+    for (const ligne of metiers.filter((metier) => metier.cumul)) {
+      const ouverture = this.dateDe(ligne.debut);
+      const cloture = ligne.fin === null ? fin : this.dateDe(ligne.fin);
+      for (let annee = ouverture.annee; annee <= cloture.annee; annee += 1) {
+        if (moisTravailles(annee, ouverture, cloture) > 0) {
+          annees.push({ annee, affiliation: this.affiliationDe(ligne.statut),
+            type_periode: "emploi" });
+        }
+      }
+    }
+    return annees;
+  }
+
+  /**
+   * La dernière année de la ligne de ce rang (`lignesCarriere`) : celle du mois
+   * qui précède la ligne principale suivante, la fin d'une activité ajoutée, ou
+   * le départ. C'est sous la date d'entrée que la carrière donne au statut
+   * cette année-là que la ligne remonte du net au brut (`niveaux`), et qu'un
+   * métier dit ses régimes au formulaire.
+   */
+  derniereAnnee(rang) {
+    const lignes = this.lignesCarriere;
+    const ligne = lignes[rang];
+    const suivante = ligne.cumul ? undefined
+      : lignes.slice(rang + 1).find((autre) => !autre.cumul);
+    let fin = this.dateLiquidation;
+    if (ligne.cumul && ligne.fin !== null) {
+      fin = this.dateDe(ligne.fin);
+    } else if (suivante !== undefined) {
+      fin = this.dateDe(suivante.debut);
+    }
+    return fin.plusMois(-1).annee;
   }
 
   /**
@@ -2445,8 +2531,10 @@ export class Saisie {
     if (indice) {
       niveau = echelle.niveau(echelle.remuneration(salaire, this.primes));
     } else if (this.revenu_en_euros) {
+      // Sous l'entrée dans le statut que la carrière date l'année où l'activité
+      // commence : après un retour que rien ne maintient, celle du retour.
       if (this.saisieEnNet && !this.enChiffreDAffaires(statut)) {
-        salaire = echelle.brutMensuel(salaire, statut);
+        salaire = echelle.brutMensuel(salaire, statut, this.dateDe(this.emploi_retraite).annee);
       }
       niveau = echelle.niveau(salaire);
     }
@@ -4014,14 +4102,15 @@ export class Echelle {
   /**
    * Le brut mensuel d'un montant saisi, quel que soit le mode. En mode brut,
    * c'est le montant lui-même ; en mode net, ce que la fiche de paie du statut
-   * laisse. Les statuts que le modèle ne sait pas décrire rendent le montant
-   * inchangé : voir `convertit`.
+   * laisse, sous l'entrée que la carrière lui date l'année `annee` — sans
+   * elle, celle du premier recrutement. Les statuts que le modèle ne sait pas
+   * décrire rendent le montant inchangé : voir `convertit`.
    */
-  brutMensuel(montant, statut) {
+  brutMensuel(montant, statut, annee = null) {
     if (this.versBrut === null || montant <= 0) {
       return montant;
     }
-    return this.versBrut(montant, statut);
+    return this.versBrut(montant, statut, annee);
   }
 
   /**
@@ -4030,11 +4119,11 @@ export class Echelle {
    * bascule, elle, doit convertir depuis le mode où l'on est vers celui où l'on
    * va, donc sans condition.
    */
-  brutMensuelDirect(net, statut) {
+  brutMensuelDirect(net, statut, annee = null) {
     if (this.versBrutDirect === null || net <= 0) {
       return net;
     }
-    return this.versBrutDirect(net, statut);
+    return this.versBrutDirect(net, statut, annee);
   }
 
   /**
@@ -4042,11 +4131,11 @@ export class Echelle {
    * BASCULE, et non au calcul : passer du brut au net doit traduire le nombre
    * saisi, pour que la page revienne en décrivant la même carrière.
    */
-  netMensuel(brut, statut) {
+  netMensuel(brut, statut, annee = null) {
     if (this.versNet === null || brut <= 0) {
       return brut;
     }
-    return this.versNet(brut, statut);
+    return this.versNet(brut, statut, annee);
   }
 
   /**

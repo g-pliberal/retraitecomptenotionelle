@@ -765,6 +765,36 @@ export function anneeDEntree(lignes, affiliation) {
 }
 
 /**
+ * Les retours à ce statut parmi ces lignes — d'une carrière, ou de la saisie
+ * qui la bâtira —, dans l'ordre : chaque année d'emploi qui en suit au moins
+ * une sans emploi sous lui, `{annee, depart, suspendu}` — sa dernière année
+ * d'emploi avant, et si chaque année d'entre elles porte une interruption du
+ * statut qui le suspend. Voir le Python (`Carriere.retours`).
+ */
+export function retoursAuStatut(lignes, affiliation) {
+  const emplois = new Set();
+  const suspendues = new Set();
+  for (const ligne of lignes) {
+    if (ligne.affiliation !== affiliation) continue;
+    const nature = ligne.type_periode ?? "emploi";
+    if (nature === "emploi") emplois.add(ligne.annee);
+    else if (!INTERRUPTIONS_DE_RUPTURE.has(nature)) suspendues.add(ligne.annee);
+  }
+  const ordonnees = [...emplois].sort((a, b) => a - b);
+  const retours = [];
+  for (let i = 1; i < ordonnees.length; i += 1) {
+    const [depart, annee] = [ordonnees[i - 1], ordonnees[i]];
+    if (annee <= depart + 1) continue;
+    let suspendu = true;
+    for (let entre = depart + 1; entre < annee; entre += 1) {
+      if (!suspendues.has(entre)) suspendu = false;
+    }
+    retours.push({ annee, depart, suspendu });
+  }
+  return retours;
+}
+
+/**
  * Carrière complète d'un assuré.
  *
  * **Une ligne par année ET PAR ACTIVITÉ.** Une année ne porte d'ordinaire
@@ -1587,32 +1617,11 @@ export class Carriere {
   }
 
   /**
-   * Les retours à ce statut, dans l'ordre : chaque année d'emploi qui en suit
-   * au moins une sans emploi sous lui, `{annee, depart, suspendu}` — sa
-   * dernière année d'emploi avant, et si chaque année d'entre elles porte une
-   * interruption du statut qui le suspend. Voir le Python (`Carriere.retours`).
+   * Les retours à ce statut, dans l'ordre (`retoursAuStatut`). Voir le Python
+   * (`Carriere.retours`).
    */
   retours(affiliation) {
-    const emplois = new Set();
-    const suspendues = new Set();
-    for (const ligne of this.lignes) {
-      if (ligne.affiliation !== affiliation) continue;
-      const nature = ligne.type_periode ?? "emploi";
-      if (nature === "emploi") emplois.add(ligne.annee);
-      else if (!INTERRUPTIONS_DE_RUPTURE.has(nature)) suspendues.add(ligne.annee);
-    }
-    const ordonnees = [...emplois].sort((a, b) => a - b);
-    const retours = [];
-    for (let i = 1; i < ordonnees.length; i += 1) {
-      const [depart, annee] = [ordonnees[i - 1], ordonnees[i]];
-      if (annee <= depart + 1) continue;
-      let suspendu = true;
-      for (let entre = depart + 1; entre < annee; entre += 1) {
-        if (!suspendues.has(entre)) suspendu = false;
-      }
-      retours.push({ annee, depart, suspendu });
-    }
-    return retours;
+    return retoursAuStatut(this.lignes, affiliation);
   }
 
   get anneesCotisees() {

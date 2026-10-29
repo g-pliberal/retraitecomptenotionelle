@@ -1998,6 +1998,146 @@ def test_la_page_traduit_le_net_par_la_fiche_de_la_date_d_entree():
     assert moyen == round(echelle.mensuel(1) * _PART_NETTE_SNCF)
 
 
+# LE RETOUR À LA CRPCEN ET AUX IEG DANS LA SAISIE EN NET (action 138, étape 9 ;
+# note « le retour à la CRPCEN et aux IEG ») : les deux caisses ne servent plus
+# que les recrutés d'avant le 1er septembre 2023 restés affiliés. L'affiliation
+# se maintient dix ans après une suspension ou une rupture antérieure ; après
+# une rupture postérieure, le temps d'un congé des listes, un an au plus (loi
+# n° 2023-1250, art. 15, V et VI ; décrets n° 2025-761 et 2025-799). Un retour
+# que rien ne maintient date l'entrée de son année, et l'agent qui revient
+# ainsi relève, comme un recruté de cette année-là, du régime général et de
+# l'Agirc-Arrco (`affiliations.yaml`) : son net remonte au brut par la fiche
+# d'un nouvel entrant, et un retour que le maintien couvre, par celle de son
+# premier recrutement. La saisie remontait chaque ligne par la fiche du premier
+# recrutement : 2 500 € nets d'un clerc revenu en 2025 faisaient 3 228,32 €
+# bruts, la retenue de la CRPCEN, au lieu de 3 158,09 €.
+def _carriere_de(*lignes, **champs):
+    """Une saisie en net de ces lignes, `(statut, début)`, chaque métier à
+    2 500 € par mois ; une période sans emploi ne lit pas de revenu."""
+    (statut, debut), *suivantes = lignes
+    requete = {"naissance": "1985", "unite_revenu": "euros_mois", "montants": "net",
+               "salaire": "2500", "statut": statut, "debut": debut}
+    for rang, (statut, debut) in enumerate(suivantes, start=2):
+        requete |= {f"metier{rang}_debut": debut, f"metier{rang}_statut": statut}
+        if statut not in {"chomage_indemnise", "education_enfant"}:
+            requete[f"metier{rang}_salaire"] = "2500"
+    return {**requete, **champs}
+
+
+def _recrute(statut, debut):
+    """Le brut de 2 500 € nets d'un agent recruté à cette date, au plus tard
+    en janvier 2025, à quarante ans."""
+    [brut] = _bruts(_carriere_de((statut, debut)))
+    return brut
+
+
+def test_le_net_d_un_retour_que_rien_ne_maintient_remonte_comme_un_nouvel_entrant():
+    """Le clerc recruté en 2010, salarié du privé en 2024, revenu en 2025 ;
+    l'agent des IEG au chômage en 2024, revenu en 2025 ; le clerc parti fin
+    2014, revenu en 2026, plus de dix ans après : chacun revient comme un
+    recruté d'après la fermeture, et ce qui précède garde sa fiche."""
+    clerc, ieg = "clerc_de_notaire", "agent_ieg"
+    assert _recrute(clerc, "2010-01") != pytest.approx(_recrute(clerc, "2025-01"), abs=1.0)
+    assert _recrute(ieg, "2005-01") != pytest.approx(_recrute(ieg, "2025-01"), abs=1.0)
+    bruts = _bruts(_carriere_de((clerc, "2010-01"), ("salarie_prive_non_cadre", "2024-01"),
+                                (clerc, "2025-01")))
+    assert bruts == pytest.approx([_recrute(clerc, "2010-01"),
+                                   _recrute("salarie_prive_non_cadre", "2024-01"),
+                                   _recrute(clerc, "2025-01")], abs=0.01)
+    bruts = _bruts(_carriere_de((ieg, "2005-01"), ("chomage_indemnise", "2024-01"),
+                                (ieg, "2025-01")))
+    assert [bruts[0], bruts[2]] == pytest.approx(
+        [_recrute(ieg, "2005-01"), _recrute(ieg, "2025-01")], abs=0.01)
+    bruts = _bruts(_carriere_de((clerc, "2005-01"), ("salarie_prive_non_cadre", "2015-01"),
+                                (clerc, "2026-01")))
+    assert bruts[2] == pytest.approx(_recrute(clerc, "2025-01"), abs=0.01)
+
+
+def test_le_net_d_un_retour_que_le_maintien_couvre_remonte_par_le_premier_recrutement():
+    """L'agent des IEG parti fin 2020, revenu en 2026 : la rupture précède la
+    fermeture de moins de dix ans. Celui qui élève un enfant en 2024 et 2025,
+    un congé qui suspend l'affiliation, revenu en 2026. Tous deux gardent la
+    fiche des IEG."""
+    ieg = "agent_ieg"
+    bruts = _bruts(_carriere_de((ieg, "2005-01"), ("salarie_prive_non_cadre", "2021-01"),
+                                (ieg, "2026-01")))
+    assert bruts[2] == pytest.approx(_recrute(ieg, "2005-01"), abs=0.01)
+    bruts = _bruts(_carriere_de((ieg, "2005-01"), ("education_enfant", "2024-01"),
+                                (ieg, "2026-01")))
+    assert bruts[2] == pytest.approx(_recrute(ieg, "2005-01"), abs=0.01)
+
+
+def test_l_activite_apres_le_depart_remonte_par_la_fiche_du_retour():
+    """Le clerc revenu en 2025 sans que rien ne le maintienne, qui travaille
+    après son départ comme clerc, par ses métiers ou par son relevé : son
+    activité remonte comme celle d'un nouvel entrant."""
+    clerc = "clerc_de_notaire"
+    activite = {"liquidation": "64", "emploi_retraite": "65", "emploi_retraite_fin": "67",
+                "emploi_retraite_statut": clerc, "emploi_retraite_salaire": "2500"}
+    releve = ",".join([*(f"{annee}:{clerc}:30000:4" for annee in range(2010, 2024)),
+                       "2024:salarie_prive_non_cadre:30000:4", f"2025:{clerc}:30000:4"])
+    for champs in (_carriere_de((clerc, "2010-01"), ("salarie_prive_non_cadre", "2024-01"),
+                                (clerc, "2025-01"), **activite),
+                   _carriere_de((clerc, "2010-01"), releve=releve, **activite)):
+        saisie = saisie_du_portage(champs)
+        echelle = site().contexte.echelle(saisie)
+        emploi = saisie.emploi_retraite_declare(echelle)
+        assert echelle.mensuel(emploi.niveau_salaire) == pytest.approx(
+            _recrute(clerc, "2025-01"), abs=0.01)
+
+
+def test_la_bascule_traduit_le_retour_par_la_fiche_d_un_nouvel_entrant():
+    """La page du clerc revenu en 2025 : le lien vers le brut porte, pour
+    chaque ligne, le brut de sa fiche, et celui qui en revient, 2 500 € nets."""
+    clerc = "clerc_de_notaire"
+    champs = _carriere_de((clerc, "2010-01"), ("salarie_prive_non_cadre", "2024-01"),
+                          (clerc, "2025-01"))
+    corps = html.unescape(rendre("/simuler", champs)[1])
+    lien = re.search(r'<a href="\./#([^"]*)">brut</a>', corps)
+    assert lien, "la page ne porte pas de branche « brut »"
+    vers_brut = dict(parse_qsl(lien.group(1)))
+    assert vers_brut["salaire"] == str(round(_recrute(clerc, "2010-01")))
+    assert vers_brut["metier3_salaire"] == str(round(_recrute(clerc, "2025-01")))
+    retour = html.unescape(rendre("/simuler", vers_brut)[1])
+    lien = re.search(r'<a href="\./#([^"]*)">net avant impôt</a>', retour)
+    assert lien, "la page ne porte pas de branche « net »"
+    vers_net = dict(parse_qsl(lien.group(1)))
+    assert (vers_net["salaire"], vers_net["metier3_salaire"]) == ("2500", "2500")
+
+
+@pytest.mark.parametrize("champs", [
+    _carriere_de(("clerc_de_notaire", "2010-01"), ("salarie_prive_non_cadre", "2024-01"),
+                 ("clerc_de_notaire", "2025-01")),
+    _carriere_de(("agent_ieg", "2005-01"), ("chomage_indemnise", "2024-01"),
+                 ("agent_ieg", "2025-01")),
+    _carriere_de(("agent_ieg", "2005-01"), ("education_enfant", "2024-01"),
+                 ("agent_ieg", "2026-01")),
+    # L'année du retour revient à ce qui en occupe le plus de mois, à égalité à
+    # celui qui l'ouvre : le clerc revenu en juillet 2025 revient en 2026.
+    _carriere_de(("clerc_de_notaire", "2010-01"), ("salarie_prive_non_cadre", "2023-10"),
+                 ("clerc_de_notaire", "2025-07")),
+    _carriere_de(("clerc_de_notaire", "2010-01"), interruptions="2024:2024:chomage_indemnise"),
+    _carriere_de(("salarie_prive_non_cadre", "2010-01"), ("clerc_de_notaire", "2012-01"),
+                 ("clerc_de_notaire", "2025-01"), metier2_cumul="oui", metier2_fin="2015-01",
+                 metier3_cumul="oui"),
+    _carriere_de(("clerc_de_notaire", "2010-01"), releve=",".join([
+        *(f"{annee}:clerc_de_notaire:30000:4" for annee in range(2010, 2024)),
+        "2024:salarie_prive_non_cadre:30000:4",
+        *(f"{annee}:clerc_de_notaire:30000:4" for annee in range(2025, 2027))])),
+], ids=["prive-entre-deux", "chomage", "conge", "a-mi-annee", "interruption", "cumul",
+        "releve"])
+def test_la_saisie_compte_les_retours_comme_la_carriere(champs):
+    """Les retours que la saisie donne à la loi, statut par statut, sont ceux
+    que la carrière bâtie de la même saisie comptera (`Carriere.retours`)."""
+    saisie = saisie_du_portage({**champs, "unite_revenu": "moyen", "salaire": "1",
+                                **{cle: "1" for cle in champs if cle.endswith("_salaire")}})
+    carriere = site().contexte.carriere(saisie)
+    codes = {ligne.affiliation for ligne in carriere.lignes}
+    assert any(carriere.retours(code) for code in codes), "aucun retour à comparer"
+    for code in codes:
+        assert saisie.retours(code) == carriere.retours(code), code
+
+
 # LES DATES DE PENSION DU FORMULAIRE (action 138, étape 9 ; note « la date
 # d'entrée dans la saisie en net », « Trouvé en chemin ») : le formulaire
 # propose la date de chaque pension de base que la carrière porte, quand elle
