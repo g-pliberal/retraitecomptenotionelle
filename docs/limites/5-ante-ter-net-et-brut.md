@@ -27,23 +27,126 @@ non, d'où un euro de revenu fiscal au seuil du taux réduit. Les cinq
 systèmes notionnels gardent le taux de la
 personne au système 1, et la page le dit sous la clé de lecture.
 
-**2. La cotisation maladie de <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.maladie_complementaire.taux*100)-->1<!--/--> % sur la retraite complémentaire est comptée
-au système 1, et les cinq autres gardent le taux qui en résulte.** Elle porte sur
-ce que servent les complémentaires de salariés, majoration pour enfants exclue
-(L. 131-2, 1° ; D. 242-8), et non sur la base. Les scénarios notionnels n'ont
-qu'un compte, sans base ni complémentaire : ils appliquent à la pension de chacun
-son taux du système 1. C'est une hypothèse, que la page dit — la réforme ne change
-pas les prélèvements —, et le net y garde les rapports du brut. Restent hors du
-calcul la cotisation supplémentaire du régime local d'Alsace-Moselle, et ce que les
-régimes spéciaux, la fonction publique et les indépendants prélèvent par leurs
-propres textes, qui ne sont pas lus — ainsi la cotisation de la CAMIEG, que le
-retraité des IEG qui compte quinze ans de services paie sur sa pension et sa
-réversion, au taux de deux et quart pour cent (page « Prélèvements » de la
-CNIEG, lue le 5 octobre 2026). Qui réside hors de France ne doit ni CSG, ni
-CRDS, ni CASA ; si la France prend en charge ses soins, il doit une cotisation
-maladie sur la base du régime général et sur la complémentaire (fiche
-`cotisation_maladie_des_non_residents`) ; les conventions bilatérales qui
-rendraient la France seule compétente hors de l'Union ne sont pas lues.
+**2. La cotisation maladie des pensions est comptée au système 1, et les cinq
+autres gardent le taux qui en résulte.** Trois ont survécu, réduites, à la
+hausse de la CSG de 1998 : <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.maladie_complementaire.taux*100)-->1<!--/--> % sur ce que servent les complémentaires de
+salariés (L. 131-2, 1° ; D. 242-8), et non sur la base ; <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.maladie_regimes_speciaux.serie=maladie_sncf_sous_plafond.taux*100)-->0,70<!--/--> % de la
+pension de la SNCF sous un plafond, rien au-delà (décret n° 2007-1056, art. 7,
+IV) ; <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.maladie_regimes_speciaux.serie=maladie_mines.taux*100)-->0,50<!--/--> % de celle des mines et de ses avantages accessoires, sans
+plafond (décret n° 46-2769, art. 91). Toutes trois épargnent la majoration pour
+enfants — le texte le dit des complémentaires et des mines (art. 139 et 141),
+le dépôt le présume à la SNCF — et suivent la tranche de CSG du foyer
+(D. 242-9 ; R. 711-15). Le plafond de la SNCF, fixé à <!--chiffre:tenu(test_le_plafond_de_la_sncf_est_celui_du_texte_revalorise)-->5 128<!--/--> € par trimestre
+au 14 novembre 2010, est réduit de moitié pour une réversion et revalorisé
+« dans les mêmes conditions que les pensions » (VII). La caisse ne publie pas
+le plafond revalorisé : le dépôt le calcule, <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.maladie_regimes_speciaux.serie=maladie_sncf_sous_plafond.plafond_annuel)-->25 582<!--/--> € par an en <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.maladie_regimes_speciaux.serie=maladie_sncf_sous_plafond.annee)-->2026<!--/-->, et celui
+de l'année suivante attend la revalorisation de son 1er janvier. D'une
+revalorisation par tranches, comme celle de 2020, il retient la tranche d'une
+pension mensuelle de la taille du plafond : une lecture qu'aucune source ne
+confirme, le texte revalorisant un plafond, non la pension d'un assuré. Les
+autres régimes dont la maladie est lue n'en prélèvent plus, hors la CAMIEG
+(ci-dessous) ; celle des pensions de la SEITA, du port de Strasbourg, des
+marins, des cultes, des assemblées et du Conseil économique, social et
+environnemental n'est pas lue, ni aujourd'hui ni dans l'histoire, et le dépôt
+n'y prélève rien. La cotisation des complémentaires laisse l'Ircec et l'Arrco
+des cultes, à relire. Les scénarios notionnels n'ont qu'un compte, sans base ni
+complémentaire : ils appliquent à la pension de chacun son taux du système 1.
+C'est une hypothèse, que la page dit — la réforme ne change pas les
+prélèvements —, et le net y garde les rapports du brut.
+
+**Les années passées prennent la cotisation de leur date.** L'histoire des
+prélèvements, que lisent les indicateurs de cycle de vie, la prend à ses textes,
+lus au Journal officiel ou repris des barèmes de l'IPP, pour chaque régime de
+base calculé : le régime général, la
+fonction publique, les indépendants, les exploitants agricoles, les régimes
+spéciaux placés sous le régime général pour la maladie — l'Opéra de Paris, la
+Comédie-Française, les chemins de fer secondaires, qui ont leur propre taux
+avant soixante ans —, les IEG, la SNCF, la RATP, la Banque de France, la CRPCEN
+et les mines. Une série naît à son premier texte lu, et rien n'est prélevé
+avant. Quatre conventions la simplifient : un taux par tranches, ou borné par
+un plafond, est celui d'une pension sous le premier plafond, sauf à la SNCF
+depuis 2010 ; le taux est plein, sans les exonérations des retraités non
+imposables ni la réduction de l'exploitant soigné par un autre régime ; il
+s'applique aux pensions dues à sa date, sauf quand le texte en dit une autre ;
+un âge se compte au premier jour du mois. Les textes ne disent pas les taux que
+les conseils de la SNCF, de la RATP et de la Banque de France fixaient avant
+1991, où rien n'est donc prélevé, ni les plafonds de la SNCF de 1991 à 2010,
+hors 1996. Aux mines, les taux d'avant 1998 épargnent la majoration pour
+enfants, que le texte d'alors n'exceptait pas ; l'écart n'est pas mesuré.
+
+**Restent hors du calcul** la cotisation supplémentaire du régime local
+d'Alsace-Moselle, et la cotisation d'équilibre que le retraité des IEG qui
+compte quinze ans de services paie, sur sa pension et sa réversion, au régime
+complémentaire d'assurance maladie que gère la CAMIEG : deux et quart pour cent
+depuis 2023 (décret n° 2020-1689 ; page « Prélèvements » de la CNIEG, lue le
+5 octobre 2026). Ce n'est pas l'assurance maladie de base, mais un complément
+que le statut national rend obligatoire (art. 23, § 8) : du droit, par décret,
+quand la fiche de paie laisse la mutuelle d'entreprise d'un salarié, qui ne
+l'est pas. Qui réside hors de France ne doit ni CSG, ni CRDS, ni CASA ; si la
+France prend en charge ses soins, il doit une cotisation maladie sur la base du
+régime général et sur la complémentaire, et la sienne à la SNCF et aux mines
+(fiche `cotisation_maladie_des_non_residents`). La majoration pour trois
+enfants de la réversion du régime général y paie encore celle de la base, que
+L. 131-2, 1° exclurait comme les autres majorations pour enfants ; et ne sont
+lus ni les conventions bilatérales qui rendraient la France seule compétente
+hors de l'Union, ni ce que les autres régimes prélèvent sur sa pension.
+
+**Le régime d'une pension suit l'entrée dans le statut.** Un statut fermé aux
+nouveaux entrants — la SNCF, la RATP, la Banque de France, les IEG, la CRPCEN,
+les mines — garde son régime, et la retenue de sa fiche de paie, à qui y est
+entré avant la fermeture ; entré après, l'assuré relève du régime général et de
+sa complémentaire, dont la pension paie le <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.maladie_complementaire.taux*100)-->1<!--/--> %. La carrière date l'entrée
+dans le statut du début du premier métier qui l'exerce, ou, sur un relevé, de
+la première année d'emploi qui le nomme. Le clerc de notaire et l'agent des IEG
+recrutés avant le 1er septembre 2023 qui quittent le statut et y reviennent ne
+gardent leur régime que si leur affiliation s'est maintenue (loi n° 2023-1250,
+art. 15) : <!--chiffre:valeur(data/reference/legislation/affiliations.yaml:affiliations.agent_ieg.periodes.debut=1946.maintien)-->dix<!--/--> ans au plus après une suspension ou une rupture antérieure,
+quelle qu'en soit la cause ; un mois ou un an après une rupture postérieure,
+selon qu'elle vient du salarié ou de l'employeur, ou jusqu'à la reprise d'une
+activité affiliée ailleurs, si elle vient avant ; pendant les congés que deux décrets énumèrent
+(n° 2025-799 et 2025-761). Le modèle ne connaît la carrière qu'à l'année, et ne
+voit ni le contrat ni le congé : la fiche `maintien_affiliation_crpcen_ieg` en
+déclare les présomptions. Le départ se date de la fin de sa dernière année
+d'emploi sous le statut, le retour de janvier : un départ et un retour qui ne
+laissent entre eux aucune année civile entière ne rompent rien, et une année
+entière dépasse le mois comme l'an. Une année d'interruption déclarée sous le
+statut le suspend, sauf le chômage et la préretraite, qui supposent le contrat
+rompu : l'inactivité, les études et le service sont présumés l'un des congés
+des listes, quand un congé hors liste romprait l'affiliation. Une année passée
+sous un autre statut rompt toujours : la mobilité de cinq ans au plus hors des
+IEG et le congé de création d'entreprise, qui maintiennent l'affiliation pendant
+que l'assuré travaille ailleurs, ne se voient pas. Le maintien de <!--chiffre:valeur(data/reference/legislation/affiliations.yaml:affiliations.agent_ieg.periodes.debut=1946.maintien)-->dix<!--/--> ans
+se lit à la lettre, quoi qu'il s'y passe, et une rupture postérieure survenue
+pendant une suspension antérieure, que le texte ne règle pas, ne le coupe pas.
+Une pension prise de septembre à décembre 2023 suit la rédaction de 2024, sans
+effet à l'année. L'effet des autres présomptions n'est pas mesuré : aucune
+carrière des témoins ne revient au statut.
+
+**Au propriétaire, quatre points**, que le dépôt laisse ouverts sans rien en
+appliquer. *La CAMIEG* : la pension nette d'un retraité des IEG perd-elle sa
+cotisation d'équilibre, comme celle d'un agent de la SNCF perd la sienne ?
+*L'écrêtement du minimum de pension de la SNCF* (décret n° 2008-639, art. 15,
+IV) : depuis le 22 octobre 2023, le texte borne le total des pensions de droit
+direct au montant d'un décret de L. 17 du code des pensions civiles, qui n'a
+jamais paru, « ou, si celui-ci est plus élevé, [au] montant du minimum » ;
+faute du décret, le modèle n'écrête rien, quand l'autre lecture borne ce total
+au minimum lui-même et réduit le minimum de qui touche une autre pension —
+question à poser à la caisse. *L'ASPA de l'article 23* du même décret, qui porte
+la réversion du survivant seul de cinquante-cinq à soixante-quatre ans au
+montant de l'allocation de solidarité aux personnes âgées : la caisse la dit
+« sous conditions de ressources », que ni elle ni le texte ne détaillent, et le
+modèle ne la porte pas ; restent à choisir la lecture des ressources —
+différentielle, comme l'allocation, ou le plancher entier sous le plafond, à
+moins de la demander à la caisse — et la ligne qui la montrerait, qui ne dit
+qu'un montant à sa date d'effet. *Des textes au fac-similé du Journal officiel*,
+que l'index de la DILA ne garde qu'en notice, à lire depuis un poste : les
+décrets annuels de la protection sociale des exploitants de 1980 à 1989 et de
+1993, les arrêtés des mines du 27 octobre 1972 et du 30 juin 1987, la
+cotisation des chemins de fer secondaires de 1952 à 1954, la réduction du taux
+maladie du décret n° 67-803 de 1968 à 1977, les barèmes A du décret n° 82-1105
+de 1988 à 1991 et les décrets de 1987 sur la valeur du point, qui diraient le
+seuil de la contribution de solidarité ; la liste entière est dans les notes de
+l'étape 9 de l'action 138.
 
 **3. La rente du pilier capitalisé suit le barème des pensions**, et c'est une
 convention : le dépôt la traite en rente viagère à titre GRATUIT, ce qu'elle est
@@ -73,7 +176,14 @@ pension.
 
 **Et un mot sur la saisie.** En mode net, le nombre tapé est un net mensuel que
 le modèle convertit en brut en résolvant la fiche de paie du statut — ce n'est
-pas une estimation, c'est l'inverse exact du calcul qui produit le net. Les
+pas une estimation, c'est l'inverse exact du calcul qui produit le net. Chaque
+ligne remonte par la fiche de sa dernière année, sous l'entrée dans le statut
+et les retours que la réserve 2 décrit, avec deux approximations. Sur un relevé,
+la saisie ne voit pas le retour que seule la projection jusqu'au départ ferait,
+après une interruption déclarée au-delà de sa dernière année : l'activité après
+le départ remonte alors par la fiche d'avant. Une ligne qu'une interruption
+déclarée coupe d'un retour remonte tout entière par la fiche de sa dernière
+année : une ligne n'a qu'un revenu. Les
 statuts que le modèle ne sait pas décrire — exploitant agricole, élu,
 collectivités d'outre-mer — font exception : leur montant est lu tel quel, et le
 formulaire l'affiche plutôt que de le taire.
