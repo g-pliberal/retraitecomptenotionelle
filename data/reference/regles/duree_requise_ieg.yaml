@@ -1,12 +1,202 @@
 schema_version: 1
 id: duree_requise_ieg
 intitule: >-
-  Durée d'assurance requise des agents actifs des IEG depuis le 1er janvier 2025
-  : une table par durée de services actifs (I bis de l'article 45), et en deçà de
-  sa première génération la table d'avant le décret n° 2023-692 ; ni la table commune
-  ni celle des sédentaires.
+  La durée de services et bonifications qui donne à l'agent des IEG le pourcentage maximum
+  de 75 % : trente-sept annuités et demie, à 2 % chacune, jusqu'en 2008 ; 151 trimestres à
+  qui réunit les conditions au second semestre de 2008, un de plus chaque 1er janvier et
+  1er juillet jusqu'en 2012, le 1er décembre 2012, puis chaque 1er juillet jusqu'à 166 en
+  2018 ; à compter du 1er juillet 2019, 167 à 172 trimestres selon la génération, lue
+  depuis 2017 à celle qui a soixante ans l'année où le droit s'ouvre ; à qui les réunit
+  depuis le 1er janvier 2025, une table par durée de services actifs — 170 à 172 trimestres
+  pour les dix-sept ans de l'actif né depuis 1968 — et l'ancienne règle en deçà.
+domaine: duree
 regimes: [ieg]
-etat: conforme
+etape: ouvrir_le_droit
+face: droit
+etat: approchee
+lit:
+- le mois où l'agent réunit les conditions d'ouverture du droit (`age_ouverture_ieg_actifs`)
+- >-
+  sa génération, et, de 2017 à 2024, celle qui atteint soixante ans le mois où son droit
+  s'ouvre (article 9-1)
+- ses années de services actifs, présumées dix-sept
+ecrit:
+- >-
+  la durée des services et bonifications requise pour le pourcentage maximum de 75 %, à
+  laquelle se rapportent ses trimestres liquidés et que la décote compte par la durée
+  (`decote_regimes_speciaux`)
+dates_qui_decident:
+- ouverture_du_droit
+versions:
+- id: statut_de_1946
+  statut: lue
+  hypothese: >-
+    la réforme de 2008 ne dit rien de qui a réuni les conditions avant le 1er juillet 2008
+    et liquide plus tard : le calendrier, qui part de 151 trimestres pour le second
+    semestre de 2008, lui laisse les cent cinquante de l'annexe de 1946
+  textes:
+  - {id: LEGIARTI000006632496, article: "statut national, annexe 3, article 3, § 3, rédaction de 1946", en_vigueur: 1946-06-01}
+  nee_de: LEGIARTI000006632496
+  bornes:
+    ouverture_du_droit: [null, 2008-07-01]
+  contenu:
+    parametres:
+      trimestres: 150
+      pourcentage_maximum: 0.75
+    droit: >-
+      la pension est le produit du nombre d'annuités par « 2 % du salaire ou traitement
+      annuel », et « les prestations pensions d'ancienneté ne peuvent dépasser 75 % du
+      salaire ou traitement considéré » (article 3, § 3) : trente-sept annuités et demie,
+      cent cinquante trimestres, la portent au maximum
+  exemples: aucun trouvé
+- id: calendrier_de_2008
+  statut: lue
+  textes:
+  - {id: LEGIARTI000019226006, article: "statut national, annexe 3, articles 9 et 45, I, rédaction du décret n° 2008-627", en_vigueur: 2008-06-30, publie_le: 2008-06-29}
+  - {id: LEGIARTI000020085612, article: "même annexe, mêmes articles", en_vigueur: 2009-01-01}
+  - {id: LEGIARTI000023733902, article: "même annexe, mêmes articles", en_vigueur: 2011-03-21}
+  - {id: LEGIARTI000024588157, article: "même annexe, mêmes articles", en_vigueur: 2011-09-26}
+  - {id: LEGIARTI000026950690, article: "même annexe, mêmes articles", en_vigueur: 2013-04-01}
+  - {id: LEGIARTI000029150159, article: "même annexe, articles 9 et 45, I, rédaction du décret n° 2014-698", en_vigueur: 2014-06-28, publie_le: 2014-06-27}
+  - {id: LEGIARTI000030058926, article: "même annexe, mêmes articles", en_vigueur: 2015-01-01}
+  - {id: LEGIARTI000031800065, article: "même annexe, mêmes articles", en_vigueur: 2016-01-01}
+  - {id: LEGIARTI000029150204, article: "même annexe, articles 9, 9-1 et 45, I, rédaction pour les pensions prenant effet au 1er janvier 2017", en_vigueur: 2017-01-01, publie_le: 2014-06-27}
+  - {id: LEGIARTI000034764555, article: "même annexe, mêmes articles", en_vigueur: 2018-01-01}
+  - {id: LEGIARTI000036755043, article: "même annexe, mêmes articles", en_vigueur: 2018-03-31}
+  - {id: LEGIARTI000038189976, article: "même annexe, mêmes articles", en_vigueur: 2019-03-02}
+  nee_de: LEGIARTI000019226006
+  bornes:
+    ouverture_du_droit: [2008-07-01, 2019-07-01]
+  contenu:
+    parametres:
+      calendrier: {"2008-07": 151, "2009-01": 152, "2009-07": 153, "2010-01": 154, "2010-07": 155, "2011-01": 156, "2011-07": 157, "2012-01": 158, "2012-07": 159, "2012-12": 160, "2013-07": 161, "2014-07": 162, "2015-07": 163, "2016-07": 164, "2017-07": 165, "2018-07": 166}
+      pourcentage_maximum: 0.75
+    droit: >-
+      « Sous réserve des dispositions transitoires du I de l'article 45 ci-après, le nombre
+      de trimestres nécessaires pour obtenir le pourcentage maximum de la pension est fixé
+      à cent soixante trimestres et il évolue comme la durée des services et bonifications
+      exigée des fonctionnaires de l'Etat [...]. Le pourcentage maximum de la pension est
+      fixé à 75 % » (article 9) ; la durée « est fixée à 151 trimestres pour les personnes
+      remplissant les conditions définies à l'article 16 entre le 1er juillet et le 31
+      décembre 2008 inclus. Pour les personnes remplissant les conditions définies à
+      l'article 16 ci-dessus postérieurement au 31 décembre 2008, elle augmente d'un
+      trimestre au 1er janvier et au 1er juillet de chaque année jusqu'au 1er juillet 2012
+      inclus, d'un trimestre au 1er décembre 2012, puis d'un trimestre au 1er juillet de
+      chaque année jusqu'à atteindre la durée maximum définie à l'article 5 de la loi
+      n° 2003-775 » (article 45, I), que la rédaction du 28 juin 2014 arrête : « jusqu'à
+      atteindre la durée de 166 trimestres au 1er juillet 2018 », l'article 9 portant
+      désormais « cent soixante-douze »
+    conditions: >-
+      le décret n° 2008-627 entre en vigueur le 1er juillet 2008 (article 2) ; pour les
+      pensions prenant effet depuis le 1er janvier 2017 (décret n° 2011-290, article 25,
+      I), la durée « est celle qui est en vigueur lorsque les agents atteignent l'âge de
+      soixante ans », et, pour qui peut liquider avant, « celle exigée des agents
+      atteignant l'âge de soixante ans l'année à compter de laquelle la liquidation peut
+      intervenir » (article 9-1, rédaction du décret n° 2014-698) : sur ce calendrier, la
+      même, que la CNIEG lit « A la date au plus tôt d'ouverture des droits » (circulaire
+      n° 2024/15)
+  exemples:
+  - cnieg_decote_madame_d
+- id: table_de_2014
+  statut: lue
+  textes:
+  - {id: LEGIARTI000029150159, article: "statut national, annexe 3, article 45, I, rédaction du décret n° 2014-698", en_vigueur: 2014-06-28, publie_le: 2014-06-27}
+  - {id: LEGIARTI000029150204, article: "même annexe, articles 9-1 et 45, I, rédaction pour les pensions prenant effet au 1er janvier 2017", en_vigueur: 2017-01-01, publie_le: 2014-06-27}
+  - {id: LEGIARTI000034764555, article: "même annexe, mêmes articles", en_vigueur: 2018-01-01}
+  - {id: LEGIARTI000036755043, article: "même annexe, mêmes articles", en_vigueur: 2018-03-31}
+  - {id: LEGIARTI000038189976, article: "même annexe, mêmes articles", en_vigueur: 2019-03-02}
+  - {id: LEGIARTI000042597001, article: "même annexe, mêmes articles", en_vigueur: 2020-12-03}
+  - {id: LEGIARTI000047908882, article: "même annexe, mêmes articles", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047909955, article: "même annexe, article 45, I bis et I ter, rédaction du décret n° 2023-692", en_vigueur: 2025-01-01, publie_le: 2023-07-30}
+  nee_de: LEGIARTI000029150159
+  bornes:
+    ouverture_du_droit: [2019-07-01, 2025-01-01]
+  contenu:
+    parametres:
+      table_par_generation: {1959.5: 167, 1961: 168, 1964: 169, 1967: 170, 1970: 171, 1973: 172}
+      age_de_lecture: 60
+      pourcentage_maximum: 0.75
+    droit: >-
+      « A compter du 1er juillet 2019, elle est fixée à : 167 trimestres, pour les agents
+      nés entre le 1er juillet 1959 et le 31 décembre 1960 ; 168 trimestres, pour les agents
+      nés entre le 1er janvier 1961 et le 31 décembre 1963 ; 169 trimestres, pour les agents
+      nés entre le 1er janvier 1964 et le 31 décembre 1966 ; 170 trimestres, pour les agents
+      nés entre le 1er janvier 1967 et le 31 décembre 1969 ; 171 trimestres, pour les agents
+      nés entre le 1er janvier 1970 et le 31 décembre 1972 ; 172 trimestres, pour les agents
+      nés à partir du 1er janvier 1973 » (article 45, I) ; « la durée des services et des
+      bonifications exigée des agents qui remplissent les conditions de liquidation d'une
+      pension avant l'âge de soixante ans est celle exigée des agents atteignant l'âge de
+      soixante ans l'année à compter de laquelle la liquidation peut intervenir »
+      (article 9-1)
+    conditions: >-
+      la CNIEG lit la table à la génération qui a soixante ans le mois où le droit s'ouvre :
+      Monsieur A, né le 1er décembre 1964, dont le droit s'ouvre le 1er décembre 2020, doit
+      les 167 trimestres de la génération 1960 (circulaire n° 2024/15, exemple 1) ; à qui a
+      réuni les conditions avant le 1er janvier 2025, cette durée reste due après, « quelle
+      que soit leur génération ou le motif de départ » (article 45, I ter, et CNIEG,
+      « Tableau des durées d'assurance ») ; les rédactions de 2018 à 2023 gardent les deux
+      articles mot pour mot
+  exemples:
+  - cnieg_2024_15_monsieur_a
+- id: tables_de_2023
+  statut: lue
+  textes:
+  - {id: LEGIARTI000047909955, article: "statut national, annexe 3, articles 9, 9-1 et 45, I, I bis et I ter, rédaction du décret n° 2023-692", en_vigueur: 2025-01-01, publie_le: 2023-07-30}
+  - {id: LEGIARTI000052046924, article: "même annexe, mêmes articles", en_vigueur: 2025-08-06}
+  nee_de: LEGIARTI000047909955
+  bornes:
+    ouverture_du_droit: [2025-01-01, null]
+  contenu:
+    parametres:
+      tables_par_services_actifs:
+        5: {1964: 170, 1967: 171, 1969: 172}
+        8: {1965: 170, 1968: 171, 1970: 172}
+        11: {1966: 170, 1969: 171, 1971: 172}
+        14: {1967: 170, 1970: 171, 1972: 172}
+        17: {1968: 170, 1971: 171, 1973: 172}
+      table_des_sedentaires: {1959.5: 167, 1961: 168, 1963: 169, 1964: 170, 1966: 171, 1968: 172}
+      pourcentage_maximum: 0.75
+    droit: >-
+      « Par dérogation à l'article 9 de la présente annexe et au I du présent article, à
+      compter du 1er janvier 2025 : [...] 5° Pour les agents mentionnés au 2° du I de
+      l'article 16, qui ont accompli des services effectifs actifs, insalubres et
+      militaires pour une durée au moins égale à dix-sept ans, cette durée est égale : -
+      pour ceux nés avant le 1er janvier 1968, à celle applicable avant l'entrée en vigueur
+      du décret n° 2023-692 [...] ; - pour ceux nés à compter du 1er janvier 1968 et
+      jusqu'au 31 décembre 1970, à 170 trimestres ; - pour ceux nés à compter du 1er janvier
+      1971 et jusqu'au 31 décembre 1972, à 171 trimestres ; - pour ceux nés à compter du
+      1er janvier 1973, à 172 trimestres » (article 45, I bis), les 1° à 4° écrivant de
+      même les tables de cinq, huit, onze et quatorze ans ; pour les autres agents, le I
+      écrit 167 trimestres des nés du 1er juillet 1959 à 1960, 168 pour 1961 et 1962, 169
+      pour 1963, 170 pour 1964 et 1965, 171 pour 1966 et 1967, 172 à compter de 1968 ;
+      l'article 9-1 est abrogé
+    conditions: >-
+      « ces dispositions sont applicables aux pensions prenant effet à compter du 1er
+      janvier 2025 » (décret n° 2023-692, article 3, IV), et la durée « pour les assurés
+      remplissant les conditions de liquidation de la pension avant le 1er janvier 2025 »
+      reste celle d'avant (article 45, I ter) ; la CNIEG publie les mêmes tables, celle de
+      l'actif « au titre d'au moins 15 ans de services actifs » (« Tableau des durées
+      d'assurance requise à compter du 1er janvier 2025 ») ; la rédaction du 6 août 2025 ne
+      change que l'article 1er
+  exemples: aucun trouvé
+approximations:
+- version: calendrier_de_2008
+  ecart: >-
+    le modèle liquide les pensions du second semestre de 2008 sous la période de 1991 à
+    2008, à cent cinquante trimestres, quand l'agent qui a réuni les conditions ce
+    semestre-là en doit cent cinquante et un
+  effet: >-
+    une pension de 0,7 % trop haute au plus, à l'agent qui liquide ce semestre-là avec
+    moins de cent cinquante et un trimestres de services
+- version: [calendrier_de_2008, table_de_2014, tables_de_2023]
+  ecart: >-
+    l'agent est présumé en services actifs, de dix-sept ans (`age_ouverture_ieg_actifs`) :
+    il lit la durée au mois où son droit s'ouvre et, depuis 2025, la table des dix-sept
+    ans ; le sédentaire la lirait, depuis 2017, au mois de ses soixante ans (article 9-1)
+    et, depuis 2025, dans la table du I de l'article 45, que le modèle ne transcrit pas ;
+    l'agent de cinq à quatorze ans de services actifs, dans la sienne, transcrite et non
+    lue
+  effet: non mesuré
 effet: >-
   La fiche lisait la table commune, suspension de 2026 comprise. Le cas type des
   IEG part à l'âge légal abaissé de cinq ans, celui des dix-sept ans de services
@@ -23,16 +213,22 @@ effet: >-
   lise.
   La lecture du 22 septembre, qui voulait brancher la table du I, se trompait de
   population : elle est celle des sédentaires.
+  Approchée depuis le 29 octobre 2026 : les pensions du second semestre de 2008 gardent
+  cent cinquante trimestres, et l'agent est présumé en services actifs.
 sources:
-  lu_le: 2026-09-23
-  prochaine_relecture: 2027-03-31
+  lu_le: 2026-10-29
+  prochaine_relecture: 2027-10-29
   a_relire:
   - >-
-    Une carrière qui déclarerait moins de dix-sept ans de services actifs devrait
-    lire une autre table et partir plus tard : le modèle ne compte pas les années
-    actives aux IEG, et la fiche ne porte qu'un âge. La table des sédentaires (le
-    I) n'est pas transcrite. Et l'âge d'ouverture de la fiche, 59 ans en 2027, n'a
-    pas été confronté à la suspension de 2026.
+    Une carrière qui déclarerait moins de dix-sept ans de services actifs devrait lire une
+    autre table et partir plus tard : le modèle ne compte pas les années actives aux IEG.
+    La table des sédentaires (le I de l'article 45) n'est pas transcrite, ni leur lecture
+    de la durée à soixante ans (article 9-1) de 2017 à 2024.
+  - >-
+    Couper les périodes de `regimes/ieg.yaml` au 1er juillet 2008 (`date_effet`) servirait
+    aux pensions du second semestre de 2008 le calendrier de la réforme, et la surcote ;
+    celle-ci au taux de 0,75 % que L. 14 du code des pensions écrit jusqu'au 31 décembre
+    2008.
   lectures:
   - type: legifrance
     reference: >-
@@ -58,12 +254,42 @@ sources:
     url: >-
       https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/duree-assurance/tableau-duree-assurance.html
     date: 2026-09-22
-textes_a_rattacher:
-- reference: >-
-    annexe 3 du décret n° 46-1541 du 22 juin 1946, article 45, I et I bis (LEGIARTI000052046924),
-    et article 16, I, 2°
-- reference: décret n° 2023-692 du 28 juillet 2023
+  - type: legifrance
+    reference: >-
+      annexe 3 du statut national, ses vingt et une rédactions dans l'index LEGI du dépôt à
+      jour de l'incrément du 28 octobre 2026, de 1946 au 6 août 2025, articles 3, 9, 9-1 et
+      45 confrontés d'une rédaction à la suivante : la durée ne change qu'au 1er juillet
+      2008, au 28 juin 2014, au 1er janvier 2017 (article 9-1) et au 1er janvier 2025
+    date: 2026-10-29
+  - type: jorf
+    reference: >-
+      au Journal officiel par l'index JORF du dépôt : décrets n° 2008-69 du 22 janvier 2008
+      (article 1er) et n° 2008-627 du 27 juin 2008 (articles 1er et 2) ; décret n° 2011-290
+      du 18 mars 2011, articles 3 et 25 ; décret n° 2014-698 du 25 juin 2014, articles 2, 3
+      et 5, et sa notice ; décret n° 2023-692 du 28 juillet 2023
+    date: 2026-10-29
+  - type: autre
+    reference: >-
+      CNIEG, « Tableau des durées d'assurance requise à compter du 1er janvier 2025 »,
+      relu : les assurés qui ouvrent droit à une retraite avant le 1er janvier 2025,
+      « quelle que soit leur génération ou le motif de départ, conservent les paramètres de
+      calcul applicables jusqu'au 31 décembre 2024 » ; hors anticipation, 169 trimestres en
+      1963, 170 en 1964 et 1965, 171 en 1966 et 1967, 172 à compter de 1968 ; pour une
+      anticipation de cinq ans, 170 de 1968 à 1970, 171 en 1971 et 1972, 172 à compter de
+      1973 ; de même pour quatre, trois, deux et un an
+    url: >-
+      https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/duree-assurance/tableau-duree-assurance.html
+    date: 2026-10-29
+historique:
+- >-
+  2026-10-29 — lue au droit (action 130) : quatre versions sur le mois où le droit
+  s'ouvre — les trente-sept annuités et demie de 1946 ; le calendrier de 2008, de 151 à
+  166 trimestres ; la table par génération de 2014, depuis juillet 2019, lue depuis 2017 à
+  la génération qui a soixante ans à l'ouverture ; les tables par durée de services actifs
+  de 2025. Approchée : les pensions du second semestre de 2008, et l'agent présumé actif.
 reformes:
+- regimes_speciaux_2008
+- touraine_2014
 - reforme_2023
 - lfss_2026_suspension
 code:
@@ -77,16 +303,20 @@ code:
     ne les nomme.
   python: >-
     droit/ouvrir.py : duree_requise, duree_propre ; scenarios/actuel.py :
-    DureesRequisesRegimes, DureesRequisesRegimes.ligne
+    DureesRequisesRegimes, DureesRequisesRegimes.ligne, CalendriersDureeRequise
   javascript: >-
     moteur/js/droit/ouvrir.js : dureeRequise, dureePropre ; moteur/js/regimes.js :
     DureesRequisesRegimes, DureesRequisesRegimes.ligne
   parametres: >-
-    regimes/ieg.yaml : duree_requise_table ;
-    legislation/duree_requise_regimes_speciaux.csv : ieg_actif_17, ieg_2014, depuis,
-    generation, trimestres
+    contenu.parametres de chaque version : trimestres, pourcentage_maximum, calendrier,
+    table_par_generation, age_de_lecture, tables_par_services_actifs, table_des_sedentaires
+    ; regimes/ieg.yaml : duree_requise_trimestres, duree_requise_table,
+    duree_requise_calendrier, taux_plein ; legislation/duree_requise_regimes_speciaux.csv :
+    ieg_actif_5, ieg_actif_8, ieg_actif_11, ieg_actif_14, ieg_actif_17, ieg_2014, depuis,
+    generation, trimestres, age_de_lecture ; legislation/duree_requise_calendriers.csv :
+    regimes_speciaux_2008
   tests: >-
-    tests/test_simulateur.py,
+    tests/test_ieg.py, qui confronte les versions aux données ; tests/test_simulateur.py,
     test_l_agent_des_ieg_qui_ouvre_son_droit_avant_2025_garde_les_regles_d_avant, 170
     trimestres à l'agent né en janvier 1968 ; le cas type des IEG dans les deux moteurs,
     tests/test_cycle_de_vie_script.py ; six des seize témoins des IEG

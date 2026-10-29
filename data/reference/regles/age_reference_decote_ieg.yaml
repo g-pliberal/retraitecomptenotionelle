@@ -1,13 +1,143 @@
 schema_version: 1
 id: age_reference_decote_ieg
 intitule: >-
-  Âge d'annulation de la décote du régime spécial des IEG : l'âge minimum d'ouverture
-  majoré de TROIS ans depuis le 1er janvier 2025, et soixante-deux ans pour les
-  agents en services actifs nés avant 1975 ; à qui a ouvert son droit avant le 1er
-  janvier 2025, la CNIEG garde, quelle que soit la date d'effet, l'âge d'avant, l'âge
-  minimum majoré de cinq ans dont se retranche la diminution de l'année.
+  L'âge où s'annule la décote de l'agent des IEG : aucune décote à qui réunit les
+  conditions d'ouverture du droit avant le 1er juillet 2010 ; puis l'âge minimum
+  d'ouverture majoré de cinq ans, diminué de seize trimestres la première année, de deux
+  de moins chaque 1er juillet jusqu'en 2013, d'un ensuite, de rien depuis le 1er juillet
+  2024 ; à qui les réunit depuis le 1er janvier 2025, l'âge minimum majoré de trois ans,
+  et soixante-deux ans pour l'agent en services actifs né avant 1975 ; à qui a ouvert son
+  droit plus tôt, la CNIEG garde l'âge d'avant, quelle que soit la date d'effet.
+domaine: decote_surcote
 regimes: [ieg]
-etat: conforme
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- l'âge d'ouverture du droit de l'agent (`age_ouverture_ieg_actifs`)
+- >-
+  le mois où l'agent réunit les conditions d'ouverture du droit, qui donne la diminution
+  de l'année et sépare les règles d'avant et d'après le 1er janvier 2025
+- sa génération
+ecrit:
+- >-
+  l'âge d'annulation de la décote, d'où se comptent les trimestres de minoration par
+  l'âge (1° du I de l'article 10), que la fiche `decote_regimes_speciaux` applique
+dates_qui_decident:
+- ouverture_du_droit
+versions:
+- id: sans_decote
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006632496, article: "statut national, annexe 3, article 3, § 3, rédaction de 1946", en_vigueur: 1946-06-01}
+  - {id: LEGIARTI000019226006, article: "même annexe, article 45, II, rédaction du décret n° 2008-627", en_vigueur: 2008-06-30, publie_le: 2008-06-29}
+  - {id: LEGIARTI000020085612, article: "même annexe, article 45, II", en_vigueur: 2009-01-01}
+  nee_de: LEGIARTI000006632496
+  bornes:
+    ouverture_du_droit: [null, 2010-07-01]
+  contenu:
+    parametres:
+      majoration_de_l_age_minimum: null
+    droit: >-
+      l'annexe de 1946 ne connaît pas de décote : la pension est le produit des annuités
+      par « 2 % du salaire ou traitement annuel », jusqu'à 75 % (article 3, § 3) ; la
+      réforme de 2008 crée le coefficient de minoration, mais il « n'est applicable qu'aux
+      personnes remplissant les conditions définies à l'article 16 à compter du 1er juillet
+      2010 » (article 45, II)
+    conditions: >-
+      les rédactions suivantes gardent cette phrase mot pour mot, jusqu'à celle du 6 août
+      2025
+  exemples: aucun trouvé
+- id: age_minimum_majore_de_cinq_ans
+  statut: lue
+  textes:
+  - {id: LEGIARTI000019226006, article: "statut national, annexe 3, articles 10, I, 1°, et 45, II, rédaction du décret n° 2008-627", en_vigueur: 2008-06-30, publie_le: 2008-06-29}
+  - {id: LEGIARTI000020085612, article: "même annexe, mêmes articles", en_vigueur: 2009-01-01}
+  - {id: LEGIARTI000023733902, article: "même annexe, mêmes articles", en_vigueur: 2011-03-21}
+  - {id: LEGIARTI000024588157, article: "même annexe, mêmes articles", en_vigueur: 2011-09-26}
+  - {id: LEGIARTI000026950690, article: "même annexe, mêmes articles", en_vigueur: 2013-04-01}
+  - {id: LEGIARTI000029150159, article: "même annexe, mêmes articles", en_vigueur: 2014-06-28}
+  - {id: LEGIARTI000030058926, article: "même annexe, mêmes articles", en_vigueur: 2015-01-01}
+  - {id: LEGIARTI000031800065, article: "même annexe, mêmes articles", en_vigueur: 2016-01-01}
+  - {id: LEGIARTI000029150204, article: "même annexe, mêmes articles", en_vigueur: 2017-01-01}
+  - {id: LEGIARTI000034764555, article: "même annexe, mêmes articles", en_vigueur: 2018-01-01}
+  - {id: LEGIARTI000036755043, article: "même annexe, mêmes articles", en_vigueur: 2018-03-31}
+  - {id: LEGIARTI000038189976, article: "même annexe, mêmes articles", en_vigueur: 2019-03-02}
+  - {id: LEGIARTI000042597001, article: "même annexe, mêmes articles", en_vigueur: 2020-12-03}
+  - {id: LEGIARTI000047908882, article: "même annexe, mêmes articles", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000047909955, article: "même annexe, article 45, I ter et II, rédaction du décret n° 2023-692", en_vigueur: 2025-01-01, publie_le: 2023-07-30}
+  - {id: LEGIARTI000052046924, article: "même annexe, article 45, I ter et II", en_vigueur: 2025-08-06}
+  nee_de: LEGIARTI000019226006
+  bornes:
+    ouverture_du_droit: [2010-07-01, 2025-01-01]
+  contenu:
+    parametres:
+      majoration_de_l_age_minimum: 5
+      diminution_en_trimestres: {"2010-07": 16, "2011-07": 14, "2012-07": 12, "2013-07": 11, "2014-07": 10, "2015-07": 9, "2016-07": 8, "2017-07": 7, "2018-07": 6, "2019-07": 5, "2020-07": 4, "2021-07": 3, "2022-07": 2, "2023-07": 1, "2024-07": 0}
+    droit: >-
+      les trimestres de décote se comptent par « la durée qui sépare l'âge auquel la
+      pension est liquidée d'un âge de référence correspondant à l'âge minimum d'ouverture
+      du droit à pension applicable à l'assuré majoré de cinq ans » (article 10, I, 1°) ;
+      « L'âge auquel le coefficient de minoration s'annule correspond, pour la période
+      comprise entre le 1er juillet 2010 et le 30 juin 2011 inclus, à l'âge de référence
+      mentionné au 1° du I de l'article 10 ci-dessus diminué de seize trimestres. Pour les
+      périodes postérieures au 30 juin 2011, cette diminution est réduite de deux
+      trimestres au 1er juillet de chaque année jusqu'au 30 juin 2013 inclus puis d'un
+      trimestre au 1er juillet de chaque année jusqu'au 30 juin 2024 inclus »
+      (article 45, II)
+    conditions: >-
+      la diminution se lit au mois où l'agent réunit les conditions de l'article 16, comme
+      le taux de la minoration ; la CNIEG l'écrit « Age minimum + 4 trimestres » pour qui
+      les réunit du 1er juillet 2010 au 30 juin 2011, jusqu'à « Age minimum + 20
+      trimestres » du 1er juillet au 31 décembre 2024 ; l'âge minimum suit la génération
+      depuis le 21 mars 2011 (`age_ouverture_ieg_actifs`) ; les treize rédactions qui
+      suivent celle de 2008, jusqu'à celle du 1er septembre 2023, gardent les deux phrases
+      mot pour mot. Depuis le 1er janvier 2025, le II ne réserve plus la diminution
+      qu'aux « pensions prenant effet avant le 1er janvier 2025 », mais la CNIEG garde
+      ces paramètres à qui a ouvert son droit plus tôt, « quelle que soit la date d'effet
+      de la retraite IEG (cf art. 45 - I ter de l'annexe III) » (circulaire n° 2024/15,
+      § 3) : la version les sert jusqu'au bout, comme la caisse
+  exemples:
+  - cnieg_decote_madame_d
+  - cnieg_2024_15_monsieur_a
+- id: age_minimum_majore_de_trois_ans
+  statut: lue
+  textes:
+  - {id: LEGIARTI000047909955, article: "statut national, annexe 3, articles 10, I, 1°, et 45, II, rédaction du décret n° 2023-692", en_vigueur: 2025-01-01, publie_le: 2023-07-30}
+  - {id: LEGIARTI000052046924, article: "même annexe, mêmes articles", en_vigueur: 2025-08-06}
+  nee_de: LEGIARTI000047909955
+  bornes:
+    ouverture_du_droit: [2025-01-01, null]
+  contenu:
+    parametres:
+      majoration_de_l_age_minimum: 3
+      age_des_actifs_nes_avant_1975: 62
+    droit: >-
+      l'âge de référence est « l'âge minimum d'ouverture du droit à pension applicable à
+      l'assuré majoré de trois ans ou, lorsque celui-ci relève du 7° de l'article 16, de
+      cinq ans » (article 10, I, 1°) ; « Pour les pensions prenant effet à compter du 1er
+      janvier 2025, l'âge auquel le coefficient de minoration s'annule est égal à : -
+      soixante-deux ans pour les agents mentionnés au 2° du I de l'article 16 nés avant le
+      1er janvier 1975 », de soixante-trois à soixante-six ans pour les agents de quatorze
+      à cinq ans de services actifs nés avant 1974 à 1971, « soixante-sept ans pour les
+      agents mentionnés au 1° du I de l'article 16 nés avant le 1er janvier 1970 »
+      (article 45, II)
+    conditions: >-
+      l'actif né à compter de 1975 ouvre son droit à cinquante-neuf ans, et sa décote
+      s'annule à soixante-deux ; la CNIEG écrit « Age minimum + 3 ans (sauf exceptions) »,
+      « de façon à maintenir un âge d'annulation de la décote au plus tard à 67 ans » ; la
+      diminution d'avant 2025 n'a plus cours ; la rédaction du 6 août 2025 ne change que
+      l'article 1er
+  exemples: aucun trouvé
+approximations:
+- version: [age_minimum_majore_de_cinq_ans, age_minimum_majore_de_trois_ans]
+  ecart: >-
+    l'âge de référence est celui de l'agent en services actifs, que le modèle présume
+    (`age_ouverture_ieg_actifs`) : celui du sédentaire, cinq ans au-dessus, puis
+    soixante-sept ans pour les nés avant 1970 depuis 2025, celui de l'agent de cinq à
+    quatorze ans de services actifs, de soixante-trois à soixante-six ans depuis 2025, et
+    la majoration de cinq ans de l'agent inapte du 7° de l'article 16 ne sont pas servis
+  effet: non mesuré
 effet: >-
   La fiche portait l'âge d'ouverture majoré de CINQ ans — 63,75 ans pour les liquidations
   de 2025-2026, 64 ans ensuite —, règle d'avant la réforme de 2023. Un agent liquidant
@@ -29,14 +159,28 @@ effet: >-
   trimestres de décote de moins ; sur les témoins, celui né en 1965 parti à soixante ans
   gagne 3,2 % de pension, dont 2,6 points pour l'âge d'annulation. Les générations 1968
   et suivantes, qui ouvrent leur droit en 2025 ou après, gardent soixante-deux ans.
+  Approchée depuis le 29 octobre 2026 : l'âge de référence est celui de l'agent en
+  services actifs, que le modèle présume.
 sources:
-  lu_le: 2026-09-27
-  prochaine_relecture: 2027-03-31
+  lu_le: 2026-10-29
+  prochaine_relecture: 2027-10-29
+  lectures_divergentes:
+  - >-
+    Âge d'annulation des pensions de 2025 et après dont le droit s'est ouvert plus tôt : le
+    II de l'article 45 (rédaction du 1er janvier 2025) réserve la diminution aux « pensions
+    prenant effet avant le 1er janvier 2025 » et donne soixante-deux ans à l'actif pour les
+    suivantes ; la CNIEG garde à qui a ouvert son droit avant 2025 les paramètres d'avant la
+    réforme, « quelle que soit la date d'effet », sur le I ter, qui ne nomme que l'âge
+    d'ouverture et la durée. La fiche suit la caisse, comme `decote_regimes_speciaux`.
   a_relire:
   - >-
     Le 7° de l'article 16 des IEG garde les cinq ans, et la fiche ne distingue pas
     cette population. La question posée ici pour la SNCF et la RATP a été menée
     le 22 septembre 2026 : voir `age_reference_decote_sncf_ratp`.
+  - >-
+    L'âge de référence du sédentaire et des agents de cinq à quatorze ans de services
+    actifs, que le II de l'article 45 écrit depuis 2025 : à servir quand la saisie dira les
+    années de services actifs de l'agent.
   lectures:
   - type: legifrance
     reference: >-
@@ -72,11 +216,37 @@ sources:
     url: >-
       https://www.cnieg.fr/files/live/sites/portail/files/documents/Juridique/circulaire2024/J_Circulaire2024_15_Decote.pdf
     date: 2026-09-27
-textes_a_rattacher:
-- reference: >-
-    annexe 3 du décret n° 46-1541 du 22 juin 1946, article 10 I et article 45 (LEGIARTI000052046924)
-- reference: décret n° 2023-692 du 28 juillet 2023
+  - type: legifrance
+    reference: >-
+      annexe 3 du statut national, ses vingt et une rédactions dans l'index LEGI du dépôt à
+      jour de l'incrément du 28 octobre 2026, de 1946 au 6 août 2025, articles 3, 10 et 45
+      confrontés d'une rédaction à la suivante : la référence et sa diminution ne changent
+      qu'au 1er juillet 2008 et au 1er janvier 2025
+    date: 2026-10-29
+  - type: jorf
+    reference: >-
+      au Journal officiel par l'index JORF du dépôt : décret n° 2008-69 du 22 janvier 2008,
+      article 1er, qui crée la décote et sa diminution, puis le décret n° 2008-627 du 27 juin
+      2008, qui remplace l'annexe au 1er juillet 2008 ; décret n° 2023-692 du 28 juillet 2023
+    date: 2026-10-29
+  - type: autre
+    reference: >-
+      CNIEG, « Âge d'annulation de la décote », relue : par « Période au cours de laquelle
+      l'agent remplit les conditions nécessaires pour liquider sa pension », de « Age
+      minimum + 4 trimestres » du 1er juillet 2010 au 30 juin 2011 à « Age minimum + 20
+      trimestres » du 1er juillet au 31 décembre 2024, puis « Age minimum + 3 ans (sauf
+      exceptions) » à compter du 1er janvier 2025
+    url: >-
+      https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/decote/age-annulation-decote.html
+    date: 2026-10-29
+historique:
+- >-
+  2026-10-29 — lue au droit (action 130) : trois versions sur le mois où le droit s'ouvre —
+  aucune décote avant le 1er juillet 2010 ; l'âge minimum majoré de cinq ans, diminué de
+  seize trimestres à rien de 2010 à 2024 ; l'âge minimum majoré de trois ans depuis 2025,
+  soixante-deux ans pour l'actif. Approchée : l'agent est présumé en services actifs.
 reformes:
+- regimes_speciaux_2008
 - reforme_2023
 code:
   interrupteurs:
@@ -90,13 +260,17 @@ code:
     réunit ensuite a soixante-deux ans (`ieg_actif_2023`), sans diminution.
   python: >-
     droit/ouvrir.py : age_taux_plein, mois_ouverture_des_droits ; droit/liquider.py :
-    decote_opposable, millesime_du_bareme ; scenarios/actuel.py : AgesRegimes
+    decote_opposable, millesime_du_bareme ; scenarios/actuel.py : AgesRegimes,
+    DecoteRegimesSpeciaux
   javascript: >-
     moteur/js/droit/ouvrir.js : ageTauxPlein, moisOuvertureDesDroits ;
     moteur/js/droit/liquider.js : decoteOpposable, millesimeDuBareme ;
     moteur/js/regimes.js : AgesRegimes
   parametres: >-
-    regimes/ieg.yaml : age_taux_plein, age_table ; legislation/ages_regimes.csv :
-    ieg_actif_2011, ieg_actif_2023
-  tests: [tests/test_simulateur.py, tests/test_oracle.py, tests/js/moteur.test.js,
+    contenu.parametres de chaque version : majoration_de_l_age_minimum,
+    diminution_en_trimestres, age_des_actifs_nes_avant_1975 ; regimes/ieg.yaml :
+    age_taux_plein, age_table, age_taux_plein_a_l_ouverture, bareme_decote ;
+    legislation/ages_regimes.csv : ieg_actif_2011, ieg_actif_2023 ;
+    legislation/decote_regimes_speciaux.csv : annee, trimestres_avant_limite
+  tests: [tests/test_ieg.py, tests/test_simulateur.py, tests/test_oracle.py, tests/js/moteur.test.js,
     tests/temoins/simulations.json]

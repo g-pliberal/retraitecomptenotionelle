@@ -1,14 +1,208 @@
 schema_version: 1
 id: age_ouverture_ieg_actifs
 intitule: >-
-  Âge d'ouverture des agents actifs des IEG (dix-sept ans de services actifs) :
-  le calendrier du 2° du V de l'article 45 de l'annexe 3 jusqu'à la génération 1974
-  — 57 ans pour 1967, trois mois de plus par génération jusqu'à 58 ans et 9 mois
-  —, puis l'âge de L. 161-17-2 abaissé de cinq ans, 59 ans, que la suspension de
-  2026 ne change pas ; la surcote au-delà de l'âge du 1° du I de l'article 16, 64
-  ans à compter de 1970.
+  L'agent des industries électriques et gazières en services actifs ouvre son droit à
+  pension à cinquante-cinq ans depuis le statut de 1946, avec quinze ans de services
+  actifs depuis le 1er juillet 2008 ; depuis le 21 mars 2011, avec dix-sept ans, à un âge
+  relevé de quatre mois par génération née depuis 1962, cinquante-sept ans pour 1967 ;
+  pour les pensions de 2025 et après, de trois mois par génération jusqu'à cinquante-huit
+  ans et neuf mois pour 1974, puis à l'âge de L. 161-17-2 abaissé de cinq ans,
+  cinquante-neuf ans, que la suspension de 2026 ne change pas. Sa surcote, que la réforme
+  de 2008 crée, ne court qu'au-delà de soixante ans, puis de l'âge du 1° du I de l'article
+  16, relevé par génération jusqu'à soixante-quatre ans pour 1970.
+domaine: age
 regimes: [ieg]
-etat: conforme
+etape: ouvrir_le_droit
+face: droit
+etat: approchee
+lit:
+- la date de naissance de l'agent, dont la génération se lit au mois
+- >-
+  le statut d'agent des industries électriques et gazières, présumé en services actifs,
+  ses années de services actifs et sa durée minimale de services présumées acquises
+- la date d'effet de la pension, qui désigne la rédaction de l'annexe 3
+ecrit:
+- >-
+  l'âge d'ouverture du droit à pension de l'agent, d'où partent le mois où son droit
+  s'ouvre, la durée requise qui s'y lit (`duree_requise_ieg`) et l'âge d'annulation de sa
+  décote (`age_reference_decote_ieg`)
+- l'âge au-delà duquel ses trimestres comptent pour la surcote (II de l'article 10)
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: statut_de_1946
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006632496, article: "statut national, annexe 3, article 3, § 1 à 3, rédaction de 1946", en_vigueur: 1946-06-01}
+  nee_de: LEGIARTI000006632496
+  bornes:
+    liquidation.date_effet: [null, 2008-07-01]
+  contenu:
+    parametres:
+      ages_des_actifs: {1900: 55}
+      ages_de_surcote: null
+    droit: >-
+      « Pour avoir droit aux prestations : pension d'ancienneté, un agent doit avoir 55 ans
+      d'âge, s'il appartient aux services insalubres ou actifs, 60 ans d'âge, s'il
+      appartient aux services sédentaires - et doit totaliser 25 ans de service » ; la
+      pension proportionnelle, à quinze ans de service, a sa jouissance « différée jusqu'à
+      l'âge requis pour la pension d'ancienneté » (article 3, § 1 et 2) ; rien ne majore
+      les années passées au-delà, la pension ne pouvant « dépasser 75 % du salaire » (§ 3)
+    conditions: >-
+      « Les agents mères de famille ayant eu trois enfants bénéficieront d'une bonification
+      d'âge et de service d'une année par enfant » (§ 1) ; le texte ne dit pas combien
+      d'années de services actifs font l'agent actif, quinze selon la circulaire PERS 70 du
+      21 mai 1952, connue par sa citation (Cour de cassation, 9 mars 2016, n° 14-25.840)
+    beneficiaire: l'agent des services actifs ou insalubres
+  exemples: aucun trouvé
+- id: reforme_de_2008
+  statut: lue
+  textes:
+  - {id: LEGIARTI000019226006, article: "statut national, annexe 3, articles 10, II, et 16, I, rédaction du décret n° 2008-627", en_vigueur: 2008-06-30, publie_le: 2008-06-29}
+  - {id: LEGIARTI000020085612, article: "même annexe, articles 10, II, et 16, I", en_vigueur: 2009-01-01}
+  nee_de: LEGIARTI000019226006
+  bornes:
+    liquidation.date_effet: [2008-07-01, 2011-03-21]
+  contenu:
+    parametres:
+      ages_des_actifs: {1900: 55}
+      ages_de_surcote: {1900: 60}
+      services_actifs_requis: 15
+    droit: >-
+      « La liquidation de la pension de vieillesse intervient sur demande : 1° Lorsque
+      l'agent a atteint au moins l'âge de soixante ans ; 2° Lorsque l'agent a atteint au
+      moins l'âge de cinquante-cinq ans s'il totalise quinze ans de services effectifs
+      actifs, insalubres et militaires ou dix ans de services effectifs insalubres »,
+      l'âge de soixante ans étant abaissé « de un an par tranche de trois ans » de services
+      actifs pour qui en a moins, sous une durée minimale de quinze ans de services
+      (article 16, I) ; la surcote ne compte que les trimestres « cotisés et effectués après
+      le 1er juillet 2008, au-delà de l'âge de soixante ans » (article 10, II)
+    conditions: >-
+      le décret n° 2008-627 « entre en vigueur le 1er juillet 2008 » (article 2) ; la
+      rédaction du 1er janvier 2009 ne change, à l'article 10, que le décompte des
+      trimestres de surcote, « les trimestres entiers cotisés », et garde l'article 16 mot
+      pour mot ; les départs anticipés des parents (3° et 4° du I de l'article 16) relèvent
+      d'une autre fiche, `depart_anticipe_parents_trois_enfants`, qui les dit non servis
+  exemples: aucun trouvé
+- id: reforme_de_2011
+  statut: lue
+  textes:
+  - {id: LEGIARTI000023733902, article: "statut national, annexe 3, articles 10, II, 16, I, et 45, V, rédaction du décret n° 2011-290", en_vigueur: 2011-03-21, publie_le: 2011-03-20}
+  - {id: LEGIARTI000024588157, article: "même annexe, mêmes articles", en_vigueur: 2011-09-26}
+  - {id: LEGIARTI000026950690, article: "même annexe, mêmes articles", en_vigueur: 2013-04-01}
+  - {id: LEGIARTI000029150159, article: "même annexe, mêmes articles", en_vigueur: 2014-06-28}
+  - {id: LEGIARTI000030058926, article: "même annexe, mêmes articles", en_vigueur: 2015-01-01}
+  - {id: LEGIARTI000031800065, article: "même annexe, mêmes articles", en_vigueur: 2016-01-01}
+  - {id: LEGIARTI000029150204, article: "même annexe, mêmes articles", en_vigueur: 2017-01-01}
+  - {id: LEGIARTI000034764555, article: "même annexe, mêmes articles", en_vigueur: 2018-01-01}
+  - {id: LEGIARTI000036755043, article: "même annexe, mêmes articles", en_vigueur: 2018-03-31}
+  - {id: LEGIARTI000038189976, article: "même annexe, mêmes articles", en_vigueur: 2019-03-02}
+  - {id: LEGIARTI000042597001, article: "même annexe, mêmes articles", en_vigueur: 2020-12-03}
+  - {id: LEGIARTI000047908882, article: "même annexe, mêmes articles", en_vigueur: 2023-09-01}
+  nee_de: LEGIARTI000023733902
+  bornes:
+    liquidation.date_effet: [2011-03-21, 2025-01-01]
+  contenu:
+    parametres:
+      ages_des_actifs: {1900: 55, 1962: 55.33, 1963: 55.67, 1964: 56, 1965: 56.33, 1966: 56.67, 1967: 57}
+      ages_de_surcote: {1900: 60, 1957: 60.33, 1958: 60.67, 1959: 61, 1960: 61.33, 1961: 61.67, 1962: 62}
+      services_actifs_requis: 17
+    droit: >-
+      « 1° Lorsque l'agent a atteint au moins l'âge de soixante-deux ans ; 2° Lorsque
+      l'agent a atteint au moins l'âge de cinquante-sept ans s'il totalise dix-sept ans de
+      services effectifs actifs, insalubres et militaires ou dix ans de services effectifs
+      insalubres » (article 16, I) ; « L'âge d'ouverture du droit à pension de
+      cinquante-sept ans mentionné au 2° du I de l'article 16 s'applique aux agents nés à
+      compter du 1er janvier 1967. Pour les agents nés antérieurement à cette date, cet âge
+      est abaissé : -à cinquante-cinq ans pour les agents nés avant le 1er janvier 1962 ;
+      -à cinquante-cinq ans et quatre mois pour les agents nés en 1962 » — huit mois pour
+      1963, cinquante-six ans pour 1964, quatre et huit mois de plus pour 1965 et 1966
+      (article 45, V, 2°) ; soixante-deux ans au 1° pour les « agents nés à compter du 1er
+      janvier 1962 », soixante ans avant 1957, quatre mois de plus par génération entre les
+      deux (V, 1°) ; la surcote court au-delà de « l'âge mentionné au 1° du I de l'article
+      16 » (article 10, II), « L'âge de soixante ans mentionné au II de l'article 10 »
+      évoluant « jusqu'à atteindre l'âge de soixante-deux ans [...] dans les conditions
+      fixées par le 1° du présent V » (V, 3°)
+    conditions: >-
+      les dix-sept ans de services actifs sont abaissés à quinze ans pour qui les a atteints
+      avant le 1er janvier 2017, puis de quatre mois par an jusqu'à seize ans et huit mois
+      en 2021 (V, 4°) ; l'agent qui en a moins voit l'âge du 1° abaissé d'un à quatre ans
+      pour cinq à quatorze ans de services actifs, à un calendrier par génération (V, 6° à
+      9°) ; le décret n° 2011-290 ne reporte au 1er janvier 2017 ni l'article 16 ni le V de
+      l'article 45 (article 25) ; les onze rédactions suivantes, jusqu'à celle du 1er
+      septembre 2023, les gardent mot pour mot ; les générations nées depuis 1963, qui
+      n'ont soixante-deux ans qu'en 2025, et depuis 1968, qui n'ont cinquante-sept ans
+      qu'en 2025, ne relèvent que de la version suivante
+  exemples:
+  - cnieg_decote_madame_d
+  - cnieg_2024_15_monsieur_a
+- id: reforme_de_2023
+  statut: lue
+  textes:
+  - {id: LEGIARTI000047909955, article: "statut national, annexe 3, articles 10, II, 16, I, et 45, I ter et V, rédaction du décret n° 2023-692", en_vigueur: 2025-01-01, publie_le: 2023-07-30}
+  - {id: LEGIARTI000052046924, article: "même annexe, mêmes articles", en_vigueur: 2025-08-06}
+  - {id: LEGIARTI000047452768, article: "code de la sécurité sociale, L. 161-17-2", en_vigueur: 2023-09-01}
+  - {id: LEGIARTI000051289659, article: "code de la sécurité sociale, L. 161-17-2", en_vigueur: 2025-02-28}
+  - {id: LEGIARTI000053280889, article: "code de la sécurité sociale, L. 161-17-2", en_vigueur: 2025-12-31}
+  nee_de: LEGIARTI000047909955
+  bornes:
+    liquidation.date_effet: [2025-01-01, null]
+  contenu:
+    parametres:
+      ages_des_actifs: {1900: 55, 1962: 55.33, 1963: 55.67, 1964: 56, 1965: 56.33, 1966: 56.67, 1967: 57, 1968: 57.25, 1969: 57.5, 1970: 57.75, 1971: 58, 1972: 58.25, 1973: 58.5, 1974: 58.75, 1975: 59}
+      ages_de_surcote: {1900: 60, 1957: 60.33, 1958: 60.67, 1959: 61, 1960: 61.33, 1961: 61.67, 1962: 62, 1963: 62.25, 1964: 62.5, 1965: 62.75, 1966: 63, 1967: 63.25, 1968: 63.5, 1969: 63.75, 1970: 64}
+      services_actifs_requis: 17
+    droit: >-
+      « 1° Lorsque l'agent a atteint au moins l'âge mentionné à l'article L. 161-17-2 du
+      code de la sécurité sociale ; 2° Lorsque l'agent a atteint au moins l'âge mentionné à
+      l'article L. 161-17-2 du code de la sécurité sociale abaissé de cinq ans, s'il
+      totalise dix-sept ans de services effectifs actifs, insalubres et militaires »
+      (article 16, I) ; cet âge « s'applique aux agents nés à compter du 1er janvier 1975 »,
+      et le calendrier de 2011 se prolonge pour les générations antérieures de trois mois
+      par génération, « à cinquante-sept ans et trois mois pour les agents nés en 1968 »
+      jusqu'à « cinquante-huit ans et neuf mois pour les agents nés en 1974 » (article 45,
+      V, 2°) ; l'âge du 1°, celui de la surcote, s'applique « aux agents nés à compter du
+      1er janvier 1970 », soixante-deux ans pour 1962 puis trois mois de plus par génération
+      jusqu'à « soixante-trois ans et neuf mois pour les agents nés en 1969 » (V, 1°)
+    conditions: >-
+      « ces dispositions sont applicables aux pensions prenant effet à compter du 1er
+      janvier 2025 » (décret n° 2023-692, article 3, IV) ; à qui remplit les conditions
+      avant cette date, l'âge reste « égal à ceux applicables avant l'entrée en vigueur du
+      décret n° 2023-692 » (article 45, I ter), le même pour toute génération qui l'atteint
+      avant 2025 ; L. 161-17-2 donne soixante-quatre ans aux nés à compter de 1968, puis de
+      1969 depuis la suspension de 2026, qui ne touche pas les générations que l'annexe y
+      renvoie, 1970 et après pour le 1°, 1975 et après pour le 2° ; la rédaction du 6 août
+      2025 (décret n° 2025-761) ne change que l'article 1er
+  exemples: aucun trouvé
+approximations:
+- version: [statut_de_1946, reforme_de_2008, reforme_de_2011, reforme_de_2023]
+  ecart: >-
+    l'agent des IEG est présumé en services actifs, ses années de services actifs et sa
+    durée minimale de services acquises : le sédentaire, et l'agent qui a moins de quinze
+    ans de services actifs (dix-sept depuis 2011), que la saisie ne distingue pas, ouvrent
+    au modèle leur droit à l'âge de l'actif, jusqu'à cinq ans trop tôt
+  effet: non mesuré
+- version: statut_de_1946
+  ecart: >-
+    la mère de trois enfants, à qui l'article 3 donne une bonification d'âge d'une année
+    par enfant, n'ouvre pas son droit plus tôt au modèle
+  effet: non mesuré
+- version: reforme_de_2008
+  ecart: >-
+    le modèle liquide les pensions du second semestre de 2008 sous la période de 1991 à
+    2008, sans surcote : les trimestres cotisés depuis le 1er juillet 2008 au-delà de
+    soixante ans n'y comptent pas
+  effet: >-
+    au plus deux trimestres de surcote à 0,75 % (L. 14, III, du code des pensions, dans sa
+    rédaction de 2004), 1,5 % de pension, à l'agent de plus de soixante ans qui dépasse la
+    durée requise et cent soixante trimestres d'assurance
+textes_sans_effet:
+- reference: loi n° 2025-1403 du 30 décembre 2025, article 105
+  motif: >-
+    la suspension ne change L. 161-17-2 que pour les générations nées avant 1969, quand
+    l'annexe 3 n'y renvoie qu'à compter de 1970 pour le 1° du I de l'article 16, et de 1975
+    pour le 2° : elle écrit elle-même le calendrier des générations antérieures (article 45,
+    V, 1° et 2°)
 effet: >-
   LA SUSPENSION NE CHANGE RIEN, MAIS LA FICHE ÉTAIT FAUSSE. Elle portait l'âge des
   actifs lu dans le seul article 16 réécrit en 2023 : 58 ans et 9 mois dès 2025,
@@ -17,10 +211,23 @@ effet: >-
   et 9 mois. Elle suit désormais ce calendrier par année de liquidation, huit périodes
   de 2025 à 2034. Et la surcote partait de l'âge d'ouverture de la fiche : elle
   part de l'âge du 1° du I de l'article 16, par le drapeau `age_surcote_regimes_speciaux`,
-  le même calendrier qu'à la SNCF et à la RATP.
+  le même calendrier qu'à la SNCF et à la RATP. Le calendrier se lit depuis par
+  génération (`age_table: ieg_actif_2023`), et non plus par périodes annuelles. Approchée
+  depuis le 29 octobre 2026 : l'agent est présumé en services actifs, la bonification
+  d'âge des mères de 1946 n'est pas servie, et les pensions du second semestre de 2008
+  n'ont pas de surcote.
 sources:
-  lu_le: 2026-09-23
-  prochaine_relecture: 2027-03-31
+  lu_le: 2026-10-29
+  prochaine_relecture: 2027-10-29
+  a_relire:
+  - >-
+    Les années de services actifs de l'agent, et le taux de services actifs de son emploi
+    (décret n° 2011-1175), que la saisie ne porte pas : une saisie qui les dirait ouvrirait
+    l'âge des sédentaires et celui des agents de cinq à quatorze ans de services actifs
+    (V, 6° à 9°, de l'article 45).
+  - >-
+    La circulaire PERS 70 du 21 mai 1952, qui fixerait à quinze ans les services actifs de
+    l'agent actif d'avant 2008, n'est connue que par sa citation : la lire.
   lectures:
   - type: legifrance
     reference: >-
@@ -45,13 +252,44 @@ sources:
       1961 à 1968, soixante-quatre ans à compter de 1969 inchangé ; rien sur l'annexe
       3
     date: 2026-09-23
-textes_a_rattacher:
-- reference: >-
-    annexe 3 du décret n° 46-1541 du 22 juin 1946, article 16, I, 1° et 2°, article
-    10, II, et article 45, V, 1° et 2° (LEGIARTI000052046924)
-- reference: décret n° 2023-692 du 28 juillet 2023
-- reference: loi n° 2025-1403 du 30 décembre 2025, article 105
+  - type: legifrance
+    reference: >-
+      annexe 3 du statut national, ses vingt et une rédactions dans l'index LEGI du dépôt à
+      jour de l'incrément du 28 octobre 2026, de celle de 1946 (LEGIARTI000006632496) à
+      celle du 6 août 2025, articles 3, 10, 16 et 45 confrontés d'une rédaction à la
+      suivante : les quatre qui ne sont jamais entrées en vigueur mises à part, les âges ne
+      changent qu'au 1er juillet 2008, au 21 mars 2011 et au 1er janvier 2025 ; L. 161-17-2,
+      ses rédactions depuis le 1er septembre 2023
+    date: 2026-10-29
+  - type: jorf
+    reference: >-
+      au Journal officiel par l'index JORF du dépôt : décret n° 2008-69 du 22 janvier 2008,
+      article 1er, que le décret n° 2008-627 du 27 juin 2008 remplace avant son entrée en
+      vigueur (articles 1er et 2) ; décret n° 2011-290 du 18 mars 2011, articles 4, 7, 13 et
+      25 ; décret n° 2023-692 du 28 juillet 2023 ; décret n° 2025-761 du 4 août 2025
+    date: 2026-10-29
+  - type: autre
+    reference: >-
+      CNIEG, « Service actif » : « Pour les générations nées à compter de 1962, l'âge
+      d'ouverture du droit à pension de 55 ans est progressivement relevé à 59 ans », de 55
+      ans et 4 mois pour 1962 à 59 ans pour 1975 et au-delà ; la durée de services actifs
+      relevée de 15 à 17 ans, de quatre mois par an de 2017 à 2022 ; l'exemple de Monsieur B,
+      né le 28 février 1966, actif depuis 2004, qui part à 56 ans et 8 mois le 28 octobre
+      2022
+    url: >-
+      https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/ouverture-droit/age-legal/service-actif.html
+    date: 2026-10-29
+historique:
+- >-
+  2026-10-29 — lue au droit (action 130) : quatre versions sur la date d'effet — l'annexe
+  de 1946, cinquante-cinq ans sans surcote ; la réforme du 1er juillet 2008, quinze ans de
+  services actifs et la surcote au-delà de soixante ans ; celle du 21 mars 2011, le
+  calendrier par génération jusqu'à cinquante-sept ans et dix-sept ans de services actifs ;
+  celle des pensions de 2025, jusqu'à cinquante-neuf ans. Approchée : l'agent présumé
+  actif, la bonification d'âge des mères de 1946, la surcote du second semestre de 2008.
 reformes:
+- regimes_speciaux_2008
+- speciaux_bornes_2017
 - reforme_2023
 - lfss_2026_suspension
 code:
@@ -72,7 +310,9 @@ code:
     trimestresDeSurcoteRegimesSpeciaux ; moteur/js/regimes.js : AgesRegimes,
     AgesSurcoteRegimesSpeciaux
   parametres: >-
-    regimes/ieg.yaml : age_ouverture, age_table ; legislation/ages_regimes.csv :
+    contenu.parametres de chaque version : ages_des_actifs, ages_de_surcote,
+    services_actifs_requis ; regimes/ieg.yaml : age_ouverture, age_table,
+    age_surcote_regimes_speciaux, surcote_par_trimestre ; legislation/ages_regimes.csv :
     ieg_actif_2011, ieg_actif_2023 ; legislation/age_surcote_regimes_speciaux.csv : age
-  tests: [tests/test_simulateur.py, tests/test_limite_age.py, tests/js/moteur.test.js,
+  tests: [tests/test_ieg.py, tests/test_simulateur.py, tests/test_limite_age.py, tests/js/moteur.test.js,
     tests/temoins/simulations.json]
