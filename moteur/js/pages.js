@@ -1249,32 +1249,32 @@ function conjointFormulaire(saisie, contexte) {
 
 /**
  * Les régimes de base de la carrière saisie, dans l'ordre des métiers — ou des
- * lignes du relevé — : celui de chaque statut à sa dernière année, sous sa
- * date d'entrée. Ce sont les pensions dont le formulaire propose la date ;
- * vide quand la carrière ne se lit pas encore. Un métier se lit comme la
- * carrière le lira : sous son affiliation, celle du libéral pour le
- * micro-entrepreneur de la Cipav (`Saisie.affiliationDe`), et à l'entrée dans
- * cette affiliation, non à son propre début (`Saisie.dateEntree`).
+ * lignes du relevé — : ceux de chaque statut à sa dernière année, et à la
+ * dernière d'avant chaque retour qui en change la date d'entrée, chaque fois
+ * sous celle que la loi lui donne cette année-là (`Affiliations.dateEntree`).
+ * Ce sont les pensions dont le formulaire propose la date ; vide quand la
+ * carrière ne se lit pas encore. Un métier se lit comme la carrière le lira :
+ * sous son affiliation, celle du libéral pour le micro-entrepreneur de la
+ * Cipav (`Saisie.affiliationDe`), et à l'entrée dans cette affiliation, non à
+ * son propre début (`Saisie.dateEntree`) ; l'agent qui revient à la CRPCEN ou
+ * aux IEG sans que rien ne l'y maintienne, comme un nouvel entrant
+ * (`Saisie.retours`).
  */
 function regimesDeBaseSaisis(saisie, affiliations, catalogue) {
   const statuts = [];
   try {
     if (saisie.releveActif) {
-      const bornes = new Map();
+      const dernieres = new Map();
       for (const ligne of saisie.releveAnalyse()) {
         if ((ligne.type_periode ?? "emploi") !== "emploi") continue;
-        const [premiere, derniere] = bornes.get(ligne.affiliation) ?? [ligne.annee, ligne.annee];
-        bornes.set(ligne.affiliation,
-          [Math.min(premiere, ligne.annee), Math.max(derniere, ligne.annee)]);
+        dernieres.set(ligne.affiliation,
+          Math.max(dernieres.get(ligne.affiliation) ?? ligne.annee, ligne.annee));
       }
-      for (const [statut, [premiere, derniere]] of bornes) {
-        statuts.push([statut, new DateMois(premiere, 1), derniere]);
-      }
+      statuts.push(...dernieres);
     } else {
       saisie.lignesCarriere.forEach((ligne, index) => {
         if (ligne.sans_emploi) return;
-        const statut = saisie.affiliationDe(ligne.statut);
-        statuts.push([statut, saisie.dateEntree(statut), saisie.derniereAnnee(index)]);
+        statuts.push([saisie.affiliationDe(ligne.statut), saisie.derniereAnnee(index)]);
       });
     }
   } catch (erreur) {
@@ -1282,13 +1282,19 @@ function regimesDeBaseSaisis(saisie, affiliations, catalogue) {
     return [];
   }
   const codes = [];
-  for (const [statut, entree, annee] of statuts) {
+  for (const [statut, derniere] of statuts) {
     if (!affiliations.contient(statut)) continue;
-    for (const code of affiliations.regimes(statut, annee, entree)) {
-      if (catalogue.contient(code)
-          && ["base", "integre"].includes(catalogue.obtenir(code).etage)
-          && !codes.includes(code)) {
-        codes.push(code);
+    const entree = (annee) => affiliations.dateEntree(saisie, statut, annee);
+    const annees = saisie.retours(statut)
+      .filter((retour) => entree(retour.depart).rang !== entree(retour.annee).rang)
+      .map((retour) => retour.depart);
+    for (const annee of [...annees, derniere]) {
+      for (const code of affiliations.regimes(statut, annee, entree(annee))) {
+        if (catalogue.contient(code)
+            && ["base", "integre"].includes(catalogue.obtenir(code).etage)
+            && !codes.includes(code)) {
+          codes.push(code);
+        }
       }
     }
   }

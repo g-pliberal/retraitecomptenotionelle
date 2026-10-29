@@ -2147,7 +2147,12 @@ def test_la_saisie_compte_les_retours_comme_la_carriere(champs):
 # (D. 613-4, b ; fiche micro_social_abattement), et le libéral non réglementé
 # affilié avant le 1er janvier 2019 à la CNAVPL et à la Cipav « reste
 # affilié » à ces régimes (loi n° 2017-1836, art. 15), même si un second
-# métier du formulaire dit, en 2020, que son revenu change.
+# métier du formulaire dit, en 2020, que son revenu change. Un retour que rien
+# ne maintient à la CRPCEN ou aux IEG date l'entrée de son année (loi
+# n° 2023-1250, art. 15, V et VI ; décrets n° 2025-761 et 2025-799 ; fiche
+# maintien_affiliation_crpcen_ieg) : l'agent revient comme un recruté de cette
+# année-là, au régime général et à l'Agirc-Arrco, et ce qui précède garde le
+# régime de son premier recrutement.
 @pytest.mark.parametrize("champs, pensions", [
     # De 2009 à 2014 à la Cipav, salarié ensuite : la CNAVPL, puis le régime
     # général. Le formulaire proposait le RSI, le régime du statut.
@@ -2160,7 +2165,29 @@ def test_la_saisie_compte_les_retours_comme_la_carriere(champs):
     ({"statut": "liberal_non_reglemente", "debut": "2010-01",
       "metier2_debut": "2020-01", "metier2_statut": "liberal_non_reglemente"},
      []),
-], ids=["micro-cipav", "liberal-installe-en-2010"])
+    # Le clerc recruté en 2010, sans emploi de 2015 à 2024, revenu en 2025,
+    # plus de dix ans après une rupture d'avant la fermeture : la CRPCEN, puis
+    # le régime général. Le formulaire lisait chaque métier sous le premier
+    # recrutement, et ne voyait que la CRPCEN : par les métiers, par une
+    # interruption déclarée dans le métier, par un relevé.
+    ({"statut": "clerc_de_notaire", "debut": "2010-01",
+      "metier2_debut": "2015-01", "metier2_statut": "sans_activite",
+      "metier3_debut": "2025-01", "metier3_statut": "clerc_de_notaire"},
+     ["crpcen", "regime_general"]),
+    ({"statut": "clerc_de_notaire", "debut": "2010-01",
+      "interruptions": "2015:2024:sans_activite"},
+     ["crpcen", "regime_general"]),
+    ({"statut": "clerc_de_notaire", "debut": "2010-01", "releve": ",".join(
+        f"{annee}:clerc_de_notaire:30000:4" for annee in [*range(2010, 2015), 2025, 2026])},
+     ["crpcen", "regime_general"]),
+    # L'agent des IEG parti fin 2020, revenu en 2026 : la rupture précède la
+    # fermeture de moins de dix ans, et les IEG, sa seule pension, le gardent.
+    ({"statut": "agent_ieg", "debut": "2005-01",
+      "metier2_debut": "2021-01", "metier2_statut": "sans_activite",
+      "metier3_debut": "2026-01", "metier3_statut": "agent_ieg"},
+     []),
+], ids=["micro-cipav", "liberal-installe-en-2010", "retour-par-les-metiers",
+        "retour-dans-un-metier", "retour-par-le-releve", "retour-maintenu"])
 def test_le_formulaire_date_les_pensions_que_la_carriere_porte(champs, pensions):
     """Les champs de date des pensions, dans l'ordre des métiers. La naissance
     se déclare entière ; ni son jour ni le sexe ne changent les régimes."""
