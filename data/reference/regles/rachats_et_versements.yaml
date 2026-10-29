@@ -3,6 +3,7 @@ id: rachats_et_versements
 intitule: >-
   Rachats de trimestres (années d'études, années incomplètes), versements pour la
   retraite, surcotisation du temps partiel de la fonction publique.
+regimes: [fonction_publique_etat, msa_salaries, regime_general, rsi]
 etat: pas_encore_modelisee
 effet: Non saisissables dans le simulateur.
 sources:

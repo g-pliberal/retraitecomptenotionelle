@@ -26,6 +26,7 @@ intitule: >-
   les parts de la première et de la seconde tranche, « au prorata des
   cotisations acquittées sur chacune des tranches » (D. 643-1) ; à la
   complémentaire de la Cipav, la sienne.
+regimes: [cipav_complementaire, cnavpl, nric, rci, regime_general, rsi]
 etat: approchee
 etape: acquerir_les_droits
 effet: >-

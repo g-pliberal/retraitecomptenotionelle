@@ -4,6 +4,8 @@ intitule: >-
   Le plafond de vingt trimestres de décote est écrit dans trois textes et absent
   des deux autres ; il ne mord sur aucune liquidation que le droit ouvre, parce
   que l'écart entre l'âge d'ouverture et l'âge d'annulation vaut au plus vingt trimestres.
+regimes: [cnavpl, cnbf, cnracl, fonction_publique_etat, fspoeie, msa_non_salaries,
+  regime_general]
 etat: conforme
 effet: >-
   Aucun. Le modèle applique un plafond de vingt trimestres par défaut (`decote_trimestres_maximum`),
@@ -36,3 +38,45 @@ textes_a_rattacher:
 - reference: R. 723-38 CSS (avocats)
 - reference: L. 14 I du code des pensions civiles et militaires
 - reference: 'R. 351-27 2° CSS et R. 732-61 du code rural : aucun plafond'
+code:
+  moteur: >-
+    `trimestres_de_decote` compte les trimestres de décote — le moindre de ceux qui
+    manquent à la durée et de ceux qui séparent le départ de l'âge d'annulation, ou ceux
+    de l'âge seul avant 1983 — et les borne au plafond de la période de régime,
+    `decote_trimestres_maximum`. Le catalogue (`CatalogueRegimes._construire`) le met à
+    vingt dans toute période qui n'en écrit pas d'autre, à rien dans celle qui l'écrit
+    nul : le régime général et les non-salariés agricoles, dont le texte n'en a pas, le
+    reçoivent comme les libéraux, les avocats et les fonctionnaires, dont le texte
+    l'écrit.
+  python: >-
+    droit/liquider.py : trimestres_de_decote ; donnees/regimes.py :
+    CatalogueRegimes._construire, PeriodeRegime
+  javascript: >-
+    moteur/js/droit/liquider.js : trimestresDeDecote
+  parametres: >-
+    aucun : le plafond de vingt trimestres est la valeur que le catalogue des régimes
+    donne à `decote_trimestres_maximum` dans toute période qui n'en écrit pas d'autre
+  tests:
+  - >-
+    tests/test_simulateur.py, test_la_decote_est_plafonnee_a_vingt_trimestres et
+    test_l_age_d_annulation_de_la_decote_d_un_actif_est_sa_limite_d_age
+  - tests/test_parents_trois_enfants.py
+  - >-
+    tests/test_retraite_progressive.py, où la décote de la pension provisoire ne dépasse
+    pas 25 %
+  - >-
+    tests/test_cout_age_depart.py, qui balaie la grille et veut le plafond sans effet
+    sur toute liquidation ouverte
+  - >-
+    tests/test_cumul_activites.py, tests/test_etranger.py et
+    tests/test_oracle_categorie_active.py, qui confrontent les deux moteurs sur des
+    carrières qui le portent
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    huit témoins changent sans le plafond, tous au scénario 1 : les quatre parents de
+    trois enfants de la fonction publique partis avant 2012 (parents_trois_enfants_pere,
+    parents_trois_enfants_nouveau_calcul, parents_trois_enfants_active_nouveau_calcul,
+    parents_trois_enfants_ancien_calcul_decote), la complémentaire de la CPRN d'un
+    notaire parti à l'âge légal en 2022 (cumul_notaire_cprn_2022), les départs non
+    ouverts à cinquante-deux et cinquante-sept ans (liquidation_52, liquidation_57) et,
+    dans son seul détail, etranger_portugal_carriere_longue

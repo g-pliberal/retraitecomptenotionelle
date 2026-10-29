@@ -7,6 +7,8 @@ intitule: >-
   requise cotisée ; la borne des vingt ans par génération ; portes lues à la date d'effet,
   chacune aux seules générations que sa rédaction nomme ; jusqu'en octobre 2012, une durée
   d'assurance tous régimes de huit trimestres au-delà de la durée requise.
+regimes: [cancava, cnavpl, cnracl, fonction_publique_etat, fspoeie, msa_non_salaries,
+  msa_salaries, organic, regime_general, rsi]
 etat: conforme
 etape: ouvrir_le_droit
 effet: >-
@@ -178,3 +180,74 @@ referents:
       générations 1955 à 1964 partent au même mois, au titre de la carrière longue des
       deux côtés ; le cas type 10 né en 1970 en sort au dépôt, faute des deux trimestres
       de son année partagée que TRAJECTOiRE compte en trop (registre)
+code:
+  moteur: >-
+    `CarriereLongue` lit `carriere_longue.csv`, une porte par ligne : sa date d'effet,
+    ses générations, de `generation` à `generation_fin` exclue, sa borne d'entrée et ses
+    trimestres de début, son âge de départ, les trimestres cotisés qu'elle demande
+    au-delà de la durée requise et, jusqu'en octobre 2012, les trimestres d'assurance.
+    `_portes` retient celles du texte en vigueur à la date d'effet, chacune aux seules
+    générations qu'elle nomme, une par couple de borne et de supplément ; aux
+    fonctionnaires, chacune à sa date et sur leur durée fixe d'avant 2009
+    (`de_la_fonction_publique`, `_requis`). `_entree_precoce` lit la durée d'assurance
+    validée, périodes assimilées comprises, jusqu'à la fin de l'année civile de la borne :
+    cinq trimestres, quatre au né du dernier trimestre, que l'année même de
+    l'anniversaire doit porter avant novembre 2012. `age_de_depart` ouvre la plus
+    précoce des portes dont la durée cotisée, réputée comprise (`cotises_reputes`),
+    atteint la durée requise et le supplément, et dont la durée d'assurance tous régimes
+    (`duree_d_assurance`) atteint, quand la ligne le demande, la durée requise et ses
+    huit trimestres ; `age_propose` projette les mêmes conditions pour dater un départ.
+    `ouvrir` l'oppose au départ, sur les régimes qui opposent une durée ;
+    `age_carriere_longue` et `_carriere_longue_acquise` la lisent pour dater celui d'une
+    carrière, `ouverture_carriere_longue` pour un fonctionnaire. `avant` la ramène aux
+    décrets d'avant une date, pour un droit contrefactuel.
+  python: >-
+    scenarios/actuel.py : CarriereLongue, CarriereLongue._portes,
+    CarriereLongue.de_la_fonction_publique, CarriereLongue._requis,
+    CarriereLongue._entree_precoce, CarriereLongue.age_de_depart,
+    CarriereLongue.age_propose, CarriereLongue.avant ; droit/ouvrir.py : ouvrir,
+    age_carriere_longue, duree_d_assurance, ouverture_carriere_longue ; droit/departs.py :
+    _carriere_longue_acquise
+  javascript: >-
+    moteur/js/regimes.js : CarriereLongue, CarriereLongue.portes,
+    CarriereLongue.deLaFonctionPublique, CarriereLongue.requisDe,
+    CarriereLongue.entreePrecoce, CarriereLongue.ageDeDepart, CarriereLongue.agePropose,
+    CarriereLongue.avant ; moteur/js/droit/ouvrir.js : ouvrir, ageCarriereLongue,
+    dureeDAssurance, ouvertureCarriereLongue ; moteur/js/droit/departs.js :
+    carriereLongueAcquise
+  parametres: >-
+    legislation/carriere_longue.csv : date_effet, generation, generation_fin,
+    age_debut_maximum, trimestres_debut, age_depart, trimestres_supplementaires,
+    trimestres_assurance_supplementaires
+  tests:
+  - tests/test_simulateur.py
+  - tests/test_cnracl.py
+  - tests/test_droits_contrefactuels.py
+  - tests/test_etranger.py
+  - >-
+    tests/test_liquidation.py, où le pilote fait descendre à la carrière longue une
+    carrière qui ne valide plus
+  - tests/test_moteur.py, où le rattachement par la pension est un point fixe
+  - >-
+    tests/temoins/exemples_officiels.yaml, que tests/test_oracle.py rejoue : les
+    exemples de la Cnav (cnav_2026_29_racl_1964,
+    cnav_2026_29_racl_1965_premier_trimestre, cnav_2026_29_racl_1965_apres_avril,
+    cnav_2026_29_racl_1967, cnav_2026_29_racl_1970, cnav_2026_29_racl_1971,
+    cnav_2023_19_duree_1962_avant_septembre, cnav_2023_19_duree_1963_avant_septembre),
+    de l'Urssaf (ur_racl_1965_decembre, ur_racl_1966_avant_20, ur_racl_1966_avant_21,
+    ur_racl_1968_avant_18, ur_racl_1969_avant_16, ur_racl_1970_avant_16,
+    ur_racl_1970_avant_18) et de la CNRACL (cnracl_carriere_longue_avant_soixante_ans)
+  - >-
+    tests/test_cumul_activites.py, tests/test_cycle_de_vie_script.py,
+    tests/test_decompte_des_services.py, tests/test_etranger.py,
+    tests/test_oracle_carriere_longue_fonction_publique.py et tests/test_simulateur.py,
+    qui confrontent les deux moteurs sur des carrières qui la portent
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    cinq témoins changent sans elle, au seul scénario 1 — carriere_longue_hachee,
+    cumul_artisan_carriere_longue_2028, cumul_carriere_longue_2028,
+    etranger_portugal_carriere_longue et seconde_pension_carriere_longue_2036 —, un sans
+    la borne des générations que chaque porte nomme, etranger_portugal_carriere_longue ;
+    aucun sans la durée d'assurance d'avant novembre 2012, ni sans les quatre trimestres
+    du né du dernier trimestre, que seuls tiennent tests/test_simulateur.py et, pour la
+    première, tests/test_droits_contrefactuels.py

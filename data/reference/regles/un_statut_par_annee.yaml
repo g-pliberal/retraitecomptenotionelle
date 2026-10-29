@@ -5,6 +5,7 @@ intitule: >-
   puis chaque activité que l'assuré déclare cumulée, sous un autre statut. Trimestres
   validés par le revenu (150 heures de SMIC), plafonnés aux trimestres civils de
   l'année, et quatre au plus par année civile tous régimes confondus.
+regimes: [cancava, cnracl, msa_salaries, organic, regime_general, rsi]
 etat: approchee
 effet: >-
   DEPUIS LE 22 SEPTEMBRE 2026, DEUX ACTIVITÉS À LA FOIS se décrivent, dans les deux
@@ -61,3 +62,38 @@ approximations:
   effet: >-
     non mesuré ; léger : la coupe du 14 octobre 2026 le déclare sans le faire
     (action 138, classement du 9 octobre)
+code:
+  moteur: >-
+    `_lignes_du_parcours` bâtit une ligne par année et par activité : celle de
+    l'activité principale, la plus longue l'année d'un changement, puis une par activité
+    que l'assuré déclare cumulée (`Metier`, son champ `cumul`), sur ses propres mois.
+    `DonneesMacro.trimestres_valides` valide les trimestres d'une ligne sur son revenu,
+    un par seuil de deux cents heures de SMIC depuis 1972, de cent cinquante depuis 2014
+    (`DonneesMacro.seuil_d_un_trimestre`), quatre au plus ;
+    `Carriere.trimestres_ecoules` les borne aux trimestres civils des mois que la ligne
+    couvre avant le départ. `Carriere.trimestres_par_annee` borne la durée tous régimes
+    à quatre trimestres par année civile, ceux de l'activité qui en couvre le plus
+    (`Carriere._plafonds_trimestres`), et `Carriere.trimestres_cumules` en fait la
+    somme.
+  python: >-
+    carriere.py : _lignes_du_parcours, Metier, Carriere.trimestres_par_annee,
+    Carriere._plafonds_trimestres, Carriere.trimestres_cumules,
+    Carriere.trimestres_ecoules ; donnees/macro.py : DonneesMacro.trimestres_valides,
+    DonneesMacro.seuil_d_un_trimestre
+  javascript: >-
+    moteur/js/carriere.js : lignesDuParcours, Carriere.trimestresParAnnee,
+    Carriere.trimestresCumules, Carriere.trimestresEcoules ; moteur/js/macro.js :
+    DonneesMacro.trimestresValides, DonneesMacro.seuilDUnTrimestre
+  parametres: >-
+    macro/smic_horaire.csv : smic_horaire ; legislation/validation_trimestres.csv :
+    heures
+  tests:
+  - tests/test_cumul_activites.py
+  - >-
+    tests/test_cumul_activites.py et tests/test_minima_agricoles.py, qui confrontent les
+    deux moteurs sur des carrières qui la portent
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    trois témoins changent sans le plafond de quatre trimestres par année civile :
+    cumul_salarie_et_artisan_borne et dispense_saisonniere_cumulee, au scénario 1, et
+    cumul_salarie_et_liberal, dans sa seule durée

@@ -7,6 +7,7 @@ intitule: >-
   interruption un chômage indemnisé, quatre trimestres au plus, vingt pour l'assuré
   de cinquante-cinq ans qui a vingt ans de cotisations et ne relève plus d'aucun
   régime.
+regimes: [msa_salaries, regime_general]
 etat: transcrite
 effet: >-
   Carrières coupées de chômage non indemnisé. Le modèle validait quatre trimestres
@@ -49,3 +50,35 @@ sources:
 textes_a_rattacher:
 - reference: R. 351-12, 4°, d, CSS
 - reference: décret n° 2011-934 du 1er août 2011, article 2
+code:
+  moteur: >-
+    `limiter_chomage_non_indemnise` borne, dans l'ordre des années, les trimestres que
+    valident les lignes de chômage non indemnisé : aucun avant 1980 ; la première
+    période — la première série d'années, et ce qui reste de son enveloppe pour une
+    série qui ne suit pas un chômage indemnisé — quatre trimestres pour une année
+    d'avant 2011, six depuis (`CHOMAGE_NON_INDEMNISE_PREMIERE`) ; une série qui suit
+    sans interruption une année de chômage indemnisé ou de solidarité, quatre, vingt
+    pour l'assuré de cinquante-cinq ans qui a quatre-vingts trimestres cotisés et ne
+    retravaille plus (`CHOMAGE_NON_INDEMNISE_ULTERIEURE`). Une année dont un relevé
+    porte les trimestres reste telle quelle. `_lignes_du_releve` et
+    `_lignes_du_parcours` l'appliquent aux lignes qu'elles bâtissent ; la table des
+    périodes non travaillées donne quatre trimestres à l'année déclarée.
+  python: >-
+    carriere.py : limiter_chomage_non_indemnise, CHOMAGE_NON_INDEMNISE_PREMIERE,
+    CHOMAGE_NON_INDEMNISE_ULTERIEURE, _lignes_du_releve, _lignes_du_parcours
+  javascript: >-
+    moteur/js/carriere.js : limiterChomageNonIndemnise, CHOMAGE_NON_INDEMNISE_PREMIERE,
+    CHOMAGE_NON_INDEMNISE_ULTERIEURE, lignesDuReleve, lignesDuParcours
+  parametres: >-
+    legislation/periodes_non_travaillees.csv : chomage_non_indemnise,
+    trimestres_assimiles
+  tests:
+  - >-
+    tests/test_simulateur.py,
+    test_le_chomage_non_indemnise_ne_valide_que_dans_les_limites_de_r_351_12, et son
+    double de tests/js/moteur.test.js, sur les sept cas
+  - tests/test_moteur.py, où la carrière heurtée valide ce que le droit donne au chômage
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    aucun témoin ne change sans la limite du seul Python : le portage bâtit leurs
+    carrières, et y applique la sienne

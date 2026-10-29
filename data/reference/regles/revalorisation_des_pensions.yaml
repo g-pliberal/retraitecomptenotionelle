@@ -10,6 +10,9 @@ intitule: >-
   totale de décembre 2019) ; dans la fonction publique, la péréquation jusqu'en
   2003, un décret par an de 2004 à 2008, puis L. 161-23-1 (L. 16 du code des pensions
   civiles et militaires).
+regimes: [assurances_sociales, avts, cancava, cnracl, cssm_mayotte,
+  fonction_publique_etat, fspoeie, msa_non_salaries, msa_salaries, organic,
+  pensions_civiles_1853, regime_general, rsi]
 etat: conforme
 etape: faire_vivre
 effet: >-
@@ -123,3 +126,57 @@ textes_a_rattacher:
 - reference: >-
     décrets n° 2003-1304, 2005-166, 2006-316 et 2007-60 ; loi n° 2008-1330, art.
     6
+code:
+  moteur: >-
+    `RevalorisationsPensions` lit les coefficients des pensions servies, date par date,
+    et `generale` en fait le produit entre deux dates, celui de L. 161-23-1, les
+    dérogations de 2019 et de 2020 lues sur la retraite totale de décembre 2019
+    (`mensuel_superieur_a`, `mensuel_au_plus`). `PensionServie.coefficient` revalorise
+    chaque pension, de son départ à l'échéance, par la règle de son régime : la valeur
+    de son point pour un régime en points qui en publie une, la règle générale au-delà
+    de la dernière ; pour la fonction publique, la péréquation par le point d'indice
+    jusqu'en 2003, les décrets de 2004 à 2008, puis L. 161-23-1
+    (`PensionServie._fonction_publique`) ; L. 161-23-1 depuis le départ pour un régime
+    spécial ; depuis le 1er janvier de l'année du départ, majorations forfaitaires de
+    1972 à 1982 comprises, pour les autres, que le texte rattache à L. 161-23-1
+    (`REGIMES_REGLE_GENERALE`) ou non. `faire_vivre` mène ainsi la pension de départ
+    jusqu'à l'année demandée, et `pension_aujourd_hui` sert au simulateur la pension
+    d'aujourd'hui.
+  python: >-
+    revalorisation.py : RevalorisationsPensions, RevalorisationsPensions.generale,
+    PensionServie, PensionServie.coefficient, PensionServie._fonction_publique,
+    REGIMES_REGLE_GENERALE, REGIMES_FONCTION_PUBLIQUE, faire_vivre, pension_aujourd_hui
+  javascript: >-
+    moteur/js/revalorisation.js : RevalorisationsPensions,
+    RevalorisationsPensions.generale, PensionServie, PensionServie.coefficient,
+    PensionServie._fonctionPublique, REGIMES_REGLE_GENERALE, REGIMES_FONCTION_PUBLIQUE,
+    faireVivre, pensionAujourdhui
+  parametres: >-
+    legislation/revalorisation_pensions.csv : date_effet, coefficient,
+    mensuel_superieur_a, mensuel_au_plus ;
+    legislation/revalorisation_pensions_fonction_publique.csv : date_effet, coefficient
+  tests:
+  - tests/test_revalorisation.py
+  - tests/test_reversion.py
+  - tests/test_departs.py
+  - tests/test_invalidite.py
+  - tests/test_liquidation.py
+  - tests/test_minima_agricoles.py
+  - tests/test_pension_maximale.py
+  - tests/test_pension_minimum_avant_1983.py
+  - >-
+    tests/test_cumul_activites.py, tests/test_decompte_des_services.py,
+    tests/test_etranger.py, tests/test_exonerations_agirc_arrco.py,
+    tests/test_independants.py, tests/test_majoration_conjoint_a_charge.py,
+    tests/test_majoration_enfants_a_charge.py, tests/test_majoration_exceptionnelle.py,
+    tests/test_minima_agricoles.py, tests/test_minimum_pension_sncf.py,
+    tests/test_pcv_sante.py, tests/test_pension_maximale.py,
+    tests/test_pension_minimum_avant_1983.py, tests/test_pont.py,
+    tests/test_revalorisation.py, tests/test_reversion.py,
+    tests/test_taux_plein_par_categorie.py et tests/test_versements_uniques.py, qui
+    confrontent les deux moteurs sur des carrières qui la portent
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    467 témoins changent sans elle : 452 dans leur pension d'aujourd'hui, 82 au scénario
+    1, où un minimum, une majoration ou une réversion se revalorise depuis le départ, 45
+    dans leurs réversions et 50 dans leur compte notionnel

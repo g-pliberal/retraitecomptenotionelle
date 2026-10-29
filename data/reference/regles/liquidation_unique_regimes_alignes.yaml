@@ -4,6 +4,7 @@ intitule: >-
   Liquidation unique des régimes alignés (LURA) depuis le 1er juillet 2017 : un
   seul salaire annuel moyen, une seule durée, pour le régime général, la MSA des
   salariés et la sécurité sociale des indépendants.
+regimes: [cancava, msa_salaries, organic, regime_general, rsi]
 etat: conforme
 etape: coordonner_les_affiliations
 effet: >-
@@ -63,3 +64,50 @@ sources:
 textes_a_rattacher:
 - reference: L. 173-1-2 CSS
 - reference: R. 173-3-2 CSS
+code:
+  moteur: >-
+    `lura_applicable` ouvre la liquidation unique aux nés à compter de 1953
+    (`LURA_PREMIERE_GENERATION`) dont la pension prend effet depuis juillet 2017
+    (`LURA_DATE_EFFET`), au mois près. `groupes_de_succession` réunit alors les régimes
+    alignés que la carrière a traversés (`REGIMES_ALIGNES` : le régime général, les
+    salariés agricoles et les indépendants sous leurs trois noms) sous une seule tête
+    (`REGIMES_ALIGNES_TETE`), que liquide le régime de la dernière période active : un
+    salaire annuel moyen, une durée, une pension. Hors d'elle,
+    `annees_des_regimes_alignes` partage entre eux les années du salaire moyen depuis
+    2004, et `trimestres_etrangers_au_salaire_moyen` les réduit selon la rédaction de la
+    date d'effet ; la réversion impute un seul plafond de ressources à leurs réversions
+    (`reversion`), et `plancher_de_la_substitution` prend le régime aligné de la
+    liquidation unique.
+  python: >-
+    droit/coordonner.py : REGIMES_ALIGNES, REGIMES_ALIGNES_TETE,
+    LURA_PREMIERE_GENERATION, LURA_DATE_EFFET, lura_applicable, groupes_de_succession ;
+    droit/liquider.py : annees_des_regimes_alignes,
+    trimestres_etrangers_au_salaire_moyen ; droit/reversion.py : reversion ;
+    droit/invalidite.py : plancher_de_la_substitution
+  javascript: >-
+    moteur/js/droit/coordonner.js : REGIMES_ALIGNES, REGIMES_ALIGNES_TETE,
+    LURA_PREMIERE_GENERATION, LURA_DATE_EFFET, luraApplicable, groupesDeSuccession ;
+    moteur/js/droit/liquider.js : anneesDesRegimesAlignes,
+    trimestresEtrangersAuSalaireMoyen ; moteur/js/droit/reversion.js : reversion ;
+    moteur/js/droit/invalidite.js : plancherDeLaSubstitution
+  parametres: >-
+    aucun : les régimes alignés, la génération et la date d'effet sont des constantes de
+    `coordonner`, dans les deux moteurs
+  tests:
+  - >-
+    tests/test_simulateur.py, test_la_liquidation_unique_reunit_les_regimes_alignes, et
+    son pendant de tests/js/moteur.test.js
+  - tests/test_reversion.py
+  - tests/test_etranger.py
+  - >-
+    tests/temoins/exemples_officiels.yaml, que tests/test_oracle.py rejoue :
+    cleiss_lena_espagne_tunisie et cnav_2021_33_vingt_cinq_meilleures_annees
+  - >-
+    tests/test_etranger.py, qui confronte les deux moteurs sur des carrières qui la
+    portent
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    quatre témoins changent sans elle, tous hors de France et au scénario 1 —
+    etranger_allemagne_pension_nationale, etranger_espagne_minimum_proratise,
+    etranger_espagne_tunisie_etat_tiers et releve_prolonge_a_l_etranger — : la grille
+    n'exerce qu'un statut à la fois

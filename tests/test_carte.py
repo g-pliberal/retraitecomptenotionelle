@@ -223,6 +223,12 @@ CODE_ET_REGIMES_ECRITS = frozenset("""
     cese_affiliation_2023 interpenetration_fonction_publique marins_ouverture_cinquante_ans
     marins_salaire_de_reference minimum_garanti pension_mines rafp_assiette_plafond
     rafp_beneficiaires regimes_speciaux_et_non_salaries retablissement_fonction_publique
+    carriere_longue carriere_longue_regimes_en_points certification_legi_perimee
+    chomage_non_indemnise duree_opposee_aux_regimes_en_points fin_de_la_suspension_2028
+    liquidation_unique_regimes_alignes minimum_vieillesse parametres_annuels_2026
+    plafond_des_trimestres_de_decote rco_points_gratuits revalorisation_des_pensions
+    un_statut_par_annee inaptitude_invalidite_penibilite_amiante micro_social_abattement
+    rachats_et_versements
 """.split())
 
 

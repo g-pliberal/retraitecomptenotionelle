@@ -9,6 +9,7 @@ intitule: >-
   comme chef et du taux plein de son régime de base : la durée requise pour ce taux,
   tous régimes, jusqu'au 31 août 2023 ; une pension liquidée au taux plein, par
   la durée ou par l'âge, depuis le 1er septembre 2023.
+regimes: [msa_non_salaries, msa_rco]
 etat: conforme
 etape: acquerir_les_droits
 effet: >-
@@ -74,3 +75,38 @@ textes_a_rattacher:
 - reference: >-
     loi n° 2023-270 du 14 avril 2023, article 18, VI : en vigueur le 1er septembre
     2023, et applicable aux pensions prises avant pour les arrérages dus depuis
+code:
+  moteur: >-
+    `points_gratuits` attribue à la liquidation, au régime dont la période porte la
+    règle (`points_gratuits`, à la RCO), cent points par année de chef d'exploitation à
+    titre exclusif ou principal accomplie avant 2003 — une année valant les trimestres
+    validés au régime de base, bornés aux trimestres civils, divisés par quatre —, dans
+    la limite de trente-sept ans et demi moins les années d'affiliation à la RCO, à qui
+    réunit dix-sept ans et demi de chef et le taux plein : la durée requise tous
+    régimes, ou, pour une pension prenant effet depuis septembre 2023, l'âge du taux
+    plein du régime de base. `acquerir` les ajoute aux points cotisés ; la cascade les
+    isole dans leur ligne, sous le nom de la fiche (`FICHE_POINTS_GRATUITS`).
+  python: >-
+    droit/acquerir.py : points_gratuits, acquerir ; droit/releve.py :
+    FICHE_POINTS_GRATUITS
+  javascript: >-
+    moteur/js/droit/acquerir.js : pointsGratuits, acquerir ; moteur/js/droit/releve.js :
+    FICHE_POINTS_GRATUITS
+  parametres: >-
+    regimes/msa_rco.yaml : points_gratuits
+  tests:
+  - >-
+    tests/test_simulateur.py,
+    test_le_chef_d_exploitation_recoit_ses_points_gratuits_de_rco, et son pendant de
+    tests/js/moteur.test.js
+  - tests/test_droit.py
+  - tests/test_liquidation.py
+  - tests/test_minima_agricoles.py
+  - >-
+    tests/test_minima_agricoles.py, qui confronte les deux moteurs sur des carrières qui
+    les portent
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    cinq témoins changent sans eux, au scénario 1 et deux dans leur compte notionnel :
+    statut_exploitant_agricole et ses générations 1945, 1955 et 1965, et
+    statut_exploitant_agricole_ne_le_20_septembre_1968

@@ -11,6 +11,9 @@ intitule: >-
   l'allocation aux vieux travailleurs salariés (L. 814-2), puis l'allocation
   supplémentaire, depuis 1956, réduite de ce que son total et les ressources dépassent
   le plafond (L. 815-8).
+regimes: [avts, cancava, cancava_avant_1973, cnavpl, cps_saint_pierre_et_miquelon,
+  cssm_mayotte, msa_non_salaries, msa_salaries, organic, organic_avant_1973,
+  regime_general, rsi]
 etat: approchee
 etape: foyer_et_net
 presomptions:
@@ -213,3 +216,63 @@ approximations:
   effet: >-
     non mesuré ; léger : la coupe du 14 octobre 2026 le déclare sans le faire
     (action 138, classement du 9 octobre)
+code:
+  moteur: >-
+    `foyer_et_net` sert l'allocation de l'année quand l'âge est atteint, la condition de
+    résidence remplie (`condition_de_residence`) et les avantages non contributifs
+    gardés, sur les ressources de l'assuré : ses pensions françaises et celles qu'un
+    autre État lui sert (`pensions_etrangeres_servies`). Le barème est celui du foyer
+    (`conjoint_au_foyer`, `conjoint_allocataire`) : une personne seule reçoit ce qui lui
+    manque pour atteindre son plafond (`MinimumVieillesse.plafond`) ; un couple, ce qui
+    manque à leurs deux ressources pour atteindre le sien
+    (`MinimumVieillesse.plafond_couple`), par moitié à deux allocataires, entier à un
+    seul, au plus le montant d'une personne seule. Les montants se lisent par année,
+    puis suivent les prix au-delà de la dernière (`MinimumVieillesse._en_vigueur`).
+    Avant 2007, `avant_l_aspa` sert les deux étages de l'année
+    (`MinimumVieillesse.deux_etages`) : le premier porte la pension au montant de
+    l'allocation aux vieux travailleurs salariés, sous le plafond ; le second,
+    l'allocation supplémentaire, se réduit de ce que son total et les ressources du
+    ménage dépassent le plafond, par moitié entre deux allocataires.
+  python: >-
+    droit/foyer.py : foyer_et_net, avant_l_aspa, conjoint_au_foyer,
+    conjoint_allocataire, condition_de_residence, Foyer ; droit/etranger.py :
+    pensions_etrangeres_servies ; scenarios/actuel.py : MinimumVieillesse,
+    MinimumVieillesse.plafond, MinimumVieillesse.plafond_couple,
+    MinimumVieillesse.deux_etages, MinimumVieillesse._en_vigueur, DeuxEtages
+  javascript: >-
+    moteur/js/droit/foyer.js : foyerEtNet, avantLAspa, conjointAuFoyer,
+    conjointAllocataire, conditionDeResidence ; moteur/js/droit/etranger.js :
+    pensionsEtrangeresServies ; moteur/js/regimes.js : MinimumVieillesse,
+    MinimumVieillesse.plafond, MinimumVieillesse.plafondCouple,
+    MinimumVieillesse.deuxEtages, MinimumVieillesse._enVigueur
+  parametres: >-
+    legislation/minimum_vieillesse.csv, legislation/minimum_vieillesse_couple.csv :
+    annee, valeur ; legislation/minimum_vieillesse_avant_2007.csv : avts,
+    supplementaire, supplementaire_menage, plafond, plafond_couple
+  tests:
+  - tests/test_simulateur.py
+  - tests/test_liquidation.py
+  - tests/test_minima_agricoles.py
+  - tests/test_invalidite.py
+  - tests/test_etranger.py
+  - >-
+    tests/temoins/exemples_officiels.yaml, que tests/test_oracle.py rejoue :
+    sp_f16871_aspa_deux_allocataires, sp_f16871_aspa_un_seul_allocataire et
+    sp_f16871_aspa_un_seul_allocataire_au_maximum, qui tombent aussi sans le barème du
+    couple
+  - >-
+    tests/test_etranger.py, tests/test_exonerations_agirc_arrco.py,
+    tests/test_independants.py, tests/test_majoration_conjoint_a_charge.py,
+    tests/test_majoration_exceptionnelle.py, tests/test_minima_agricoles.py,
+    tests/test_minimum_pension_sncf.py, tests/test_pension_minimum_avant_1983.py,
+    tests/test_pont.py, tests/test_reversion.py et tests/test_versements_uniques.py, qui
+    confrontent les deux moteurs sur des carrières qui le portent
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    soixante-six témoins changent sans l'allocation, soixante-cinq dans leur pension
+    d'aujourd'hui, huit au scénario 1 et sept dans leur compte notionnel ; cinq sans les
+    deux étages d'avant 2007 — cultes_avant_1998, cultes_deux_fractions_avant_2006,
+    retraite_majoree_en_1982, reversion_avant_1973 et reversion_majorations_avant_1983 — ;
+    six sans le barème du couple — aspa_couple_deux_allocataires_aujourd_hui,
+    aspa_couple_un_seul_allocataire, reversion_agent_sncf_minimum, reversion_avant_1973,
+    reversion_majorations_avant_1983 et reversion_minimum_contributif

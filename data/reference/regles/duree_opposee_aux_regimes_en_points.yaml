@@ -5,6 +5,7 @@ intitule: >-
   les régimes en annuités : la pension est servie entière à qui a la durée requise,
   et minorée par un coefficient de réduction à qui ne l'a pas. Vaut pour la CNAVPL
   (professions libérales) et pour la MSA des non-salariés agricoles.
+regimes: [cnavpl, msa_non_salaries]
 etat: conforme
 effet: >-
   Le coefficient de réduction était DÉJÀ appliqué par le moteur (`_abattement_points`
@@ -50,3 +51,38 @@ textes_a_rattacher:
 - reference: >-
     L. 732-24 II du code rural (non-salariés agricoles), version du 1er janvier
     2026
+code:
+  moteur: >-
+    `periodes_opposant_une_duree` garde, parmi les périodes qui ne sont pas en annuités,
+    celles qui opposent la durée d'assurance tous régimes : toutes, hors de
+    l'Agirc-Arrco et de l'Ircantec, qui ont leurs coefficients d'anticipation.
+    `age_taux_plein_droit` en prend la plus longue durée requise quand la carrière n'a
+    aucune période en annuités, et date le taux plein à l'âge où la durée est atteinte,
+    sous l'âge d'annulation de la décote, au lieu de l'âge d'ouverture ; `ouvrir` en
+    fait, dans sa seconde passe, la durée de référence du départ, et `_ouverture`
+    (`ouvertureDe`) celle de la carrière longue. `abattement_points` minore, par
+    `abattement_regime_de_base`, la pension d'un régime de base en points de la décote
+    par trimestre manquant que sa fiche écrit, à qui part sans la durée et avant l'âge
+    d'annulation.
+  python: >-
+    droit/ouvrir.py : periodes_opposant_une_duree, age_taux_plein_droit, ouvrir ;
+    droit/departs.py : _ouverture ; droit/liquider.py : abattement_points,
+    abattement_regime_de_base
+  javascript: >-
+    moteur/js/droit/ouvrir.js : periodesOpposantUneDuree, ageTauxPleinDroit, ouvrir ;
+    moteur/js/droit/departs.js : ouvertureDe ; moteur/js/droit/liquider.js :
+    abattementPoints, abattementRegimeDeBase
+  parametres: >-
+    regimes/cnavpl.yaml, regimes/msa_non_salaries.yaml : type_calcul,
+    decote_par_trimestre, decote_par_generation
+  tests:
+  - >-
+    tests/test_emploi_retraite.py, où la première pension de 2027 réduit les
+    complémentaires après les bases
+  - >-
+    tests/test_cycle_de_vie_script.py, qui confronte les deux moteurs sur des carrières
+    qui la portent
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    aucun témoin ne change sans elle, ni aucun cas posé à la main : le libéral né en
+    1955 que la fiche cite n'a pas de test

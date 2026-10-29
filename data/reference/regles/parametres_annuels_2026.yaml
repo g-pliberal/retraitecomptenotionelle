@@ -4,6 +4,7 @@ intitule: >-
   Plafond de la sécurité sociale, SMIC horaire (trimestres), coefficients de revalorisation
   des salaires, montants des minima, valeur du point et salaire de référence Agirc-Arrco,
   pour l'année en cours.
+regimes: [agirc_arrco, msa_salaries, regime_general]
 etat: conforme
 effet: Toute liquidation de l'année.
 sources:
@@ -25,3 +26,43 @@ textes_a_rattacher:
 - reference: délibérations Agirc-Arrco
 exemples:
 - sp_a15703_minimum_contributif_2026
+code:
+  moteur: >-
+    Aucune règle à elle : la fiche dit les séries de l'année que les règles lisent,
+    chacune par son accesseur. Le plafond de la sécurité sociale
+    (`DonneesMacro.plafond_securite_sociale`) ; le SMIC horaire, dont cent cinquante
+    heures valident un trimestre (`DonneesMacro.seuil_d_un_trimestre`,
+    `DonneesMacro.trimestres_valides`) ; les coefficients de revalorisation des salaires
+    portés au compte (`DonneesMacro.coefficient_revalorisation_portee_au_compte`) ; les
+    montants du minimum contributif et son plafond d'écrêtement (`MinimumContributif`) ;
+    la valeur de service et le salaire de référence de l'Agirc-Arrco
+    (`ValeursPoint.service_au`, `ValeursPoint.achat`). Au-delà de la dernière valeur
+    publiée, chacune se prolonge par sa règle.
+  python: >-
+    donnees/macro.py : DonneesMacro.plafond_securite_sociale, DonneesMacro.smic_horaire,
+    DonneesMacro.seuil_d_un_trimestre, DonneesMacro.trimestres_valides,
+    DonneesMacro.coefficient_revalorisation_portee_au_compte ; scenarios/actuel.py :
+    MinimumContributif, ValeursPoint.service_au, ValeursPoint.achat
+  javascript: >-
+    moteur/js/macro.js : DonneesMacro, DonneesMacro.seuilDUnTrimestre,
+    DonneesMacro.trimestresValides, DonneesMacro.coefficientRevalorisationPorteeAuCompte ;
+    moteur/js/regimes.js : MinimumContributif, ValeursPoint.serviceAu,
+    ValeursPoint.achat
+  parametres: >-
+    macro/plafond_securite_sociale.csv : pass_eur ; macro/smic_horaire.csv :
+    smic_horaire ; legislation/revalorisation_salaires.csv : coefficient ;
+    legislation/minimum_contributif.csv : montant_base, montant_majore,
+    plafond_ecretement ; regimes/valeurs_point.csv : agirc_arrco, valeur_service,
+    salaire_reference
+  tests:
+  - >-
+    tests/test_donnees.py,
+    test_chaque_valeur_de_service_agirc_arrco_suit_le_relevement_publie, qui veut
+    certifiée la valeur de service du 1er novembre 2026
+  - >-
+    tests/test_revalorisation.py, test_le_cas_type_d_un_retraite_se_refait_a_la_main, à
+    la valeur de service de 2026
+  - >-
+    tests/temoins/exemples_officiels.yaml, que tests/test_oracle.py rejoue :
+    sp_a15703_minimum_contributif_2026
+  - scripts/verifier_donnees.py, qui recontrôle chaque série contre sa source

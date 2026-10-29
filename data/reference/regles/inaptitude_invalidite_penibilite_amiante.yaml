@@ -5,6 +5,7 @@ intitule: >-
   professionnel de prévention, cessation anticipée des travailleurs de l'amiante :
   l'inaptitude et l'invalidité, que la fiche portait aussi, ont leurs fiches depuis le
   30 septembre 2026.
+regimes: [msa_salaries, regime_general, rsi]
 etat: pas_encore_modelisee
 effet: Assurés concernés déclarés non ouverts ou décotés à tort.
 sources:

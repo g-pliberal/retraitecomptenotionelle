@@ -4,6 +4,7 @@ intitule: >-
   Le départ anticipé pour carrière longue est ouvert aux deux régimes de base en
   points, et le modèle le lit sur la même liste de périodes pour l'âge d'ouverture
   et pour l'âge du taux plein.
+regimes: [cnavpl, msa_non_salaries]
 etat: conforme
 effet: >-
   Le chef d'exploitation agricole des générations récentes part à soixante-trois
@@ -33,3 +34,36 @@ sources:
 textes_a_rattacher:
 - reference: L. 732-18-1 du code rural, version du 1er septembre 2023
 - reference: L. 643-3 II CSS, renvoi à L. 351-1-1
+code:
+  moteur: >-
+    `age_ouverture_droit` et `age_taux_plein_droit` lisent la carrière longue
+    (`age_carriere_longue`) sur la même liste, celle des périodes qui opposent une durée :
+    les périodes en annuités, ou, quand la carrière n'en a aucune, celles que
+    `periodes_opposant_une_duree` garde parmi les autres, hors de l'Agirc-Arrco, de
+    l'Ircantec et des complémentaires qui ont leurs âges (`sans_ages_propres`) — le
+    régime des professions libérales, en points, et celui des non-salariés agricoles,
+    mixte. `ouverture_de` (le départ d'une unité, `_ouverture` en Python) la lit de même
+    sur la durée acquise au départ déclaré (`_carriere_longue_acquise`) ; `ouvrir` ne
+    lit les régimes en points et mixtes, dans sa seconde passe, que si la première n'a
+    trouvé aucun régime en annuités.
+  python: >-
+    droit/ouvrir.py : age_ouverture_droit, age_taux_plein_droit, age_carriere_longue,
+    periodes_opposant_une_duree, sans_ages_propres, ouvrir ; droit/departs.py :
+    _ouverture, _carriere_longue_acquise
+  javascript: >-
+    moteur/js/droit/ouvrir.js : ageOuvertureDroit, ageTauxPleinDroit, ageCarriereLongue,
+    periodesOpposantUneDuree, sansAgesPropres, ouvrir ; moteur/js/droit/departs.js :
+    ouvertureDe, carriereLongueAcquise
+  parametres: >-
+    regimes/cnavpl.yaml, regimes/msa_non_salaries.yaml : type_calcul
+  tests:
+  - >-
+    tests/test_emploi_retraite.py, où la première pension de 2027 réduit les
+    complémentaires après les bases
+  - >-
+    tests/test_cycle_de_vie_script.py, qui confronte les deux moteurs sur des carrières
+    qui la portent
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    aucun témoin ne change sans elle, ni aucun cas posé à la main : le chef
+    d'exploitation parti à soixante-trois ans que la fiche cite n'a pas de test

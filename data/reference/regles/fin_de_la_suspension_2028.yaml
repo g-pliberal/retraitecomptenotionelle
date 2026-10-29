@@ -3,6 +3,18 @@ id: fin_de_la_suspension_2028
 intitule: >-
   La suspension court jusqu'au 1er janvier 2028 ; l'élection présidentielle de 2027
   peut abroger, prolonger ou refaire le calendrier.
+regimes: [agirc, agirc_arrco, agirc_entreprises_nouvelles, arrco, arrco_cultes,
+  arrco_tranche_2, arrco_tranche_2_entreprises_nouvelles, asv_chirurgiens_dentistes,
+  asv_conventionnes, asv_sages_femmes, banque_de_france, cancava, cancava_avant_1973,
+  carcdsf_complementaire, carmf_complementaire, carpimko_complementaire,
+  cavamac_complementaire, cavimac, cavom_complementaire, cavp_complementaire,
+  cese_membres, cipav_complementaire, cnavpl, cnbf, cnbf_complementaire, cnracl,
+  comedie_francaise, cprn_complementaire, crpcen, enseignants_prive_additionnel,
+  fonction_publique_etat, fspoeie, ieg, igrante, ipacte, ircantec, ircec_raap,
+  ircec_raap_taux_amenage, ircec_racd, ircec_racl, msa_non_salaries, msa_rco,
+  msa_salaries, nric, opera_de_paris, organic, organic_avant_1973,
+  organic_conjoints_batiment, rafp, ratp, rci, rco_artisans, regime_general, rsi, sncf,
+  unirs]
 etat: a_verifier
 effet: >-
   Tout changement de calendrier touche les générations 1965 et suivantes. Relu le
@@ -72,3 +84,68 @@ textes_a_rattacher:
 - reference: loi n° 2025-1403, article 105 VI
 reformes:
 - lfss_2026_suspension
+code:
+  moteur: >-
+    Le modèle porte la suspension telle que la loi n° 2025-1403 l'écrit, sans terme :
+    `age_ouverture_requis.csv` et `duree_assurance_requise.csv` gardent aux nés de 1964
+    au premier trimestre de 1965 soixante-deux ans et neuf mois et cent soixante-dix
+    trimestres, et décalent d'un trimestre le calendrier des générations qui suivent.
+    `duree_requise` oppose aux nés de 1964 et de 1965 la durée de la loi de 2023 pour
+    une pension prenant effet avant septembre 2026 (`SUSPENSION_2026_EFFET`,
+    `GENERATIONS_SUSPENSION`, `DureesRequisesAvantSuspension`). `_sous_le_droit` pose la
+    loi de 2023 sans la suspension sur les tables du droit en vigueur
+    (`TableRecouverte`, `AgesOuvertureAvantSuspension`), pour le droit contrefactuel
+    `loi_2023_sans_suspension` (`DROITS_CONTREFACTUELS`). Aucune date de 2028 n'est lue :
+    un changement du calendrier se porterait dans ces tables.
+  python: >-
+    droit/ouvrir.py : SUSPENSION_2026_EFFET, GENERATIONS_SUSPENSION, duree_requise ;
+    scenarios/actuel.py : AgesOuvertureAvantSuspension, DureesRequisesAvantSuspension,
+    TableRecouverte, DROITS_CONTREFACTUELS, ScenarioActuel._sous_le_droit
+  javascript: >-
+    moteur/js/regimes.js : SUSPENSION_2026_EFFET, GENERATIONS_SUSPENSION,
+    AgesOuvertureAvantSuspension, DureesRequisesAvantSuspension, TableRecouverte ;
+    moteur/js/droit/ouvrir.js : dureeRequise ; moteur/js/scenario-actuel.js :
+    DROITS_CONTREFACTUELS, ScenarioActuel._sousLeDroit
+  parametres: >-
+    legislation/age_ouverture_requis.csv,
+    legislation/age_ouverture_avant_suspension.csv,
+    legislation/duree_assurance_requise.csv,
+    legislation/duree_requise_avant_suspension.csv : generation, age, trimestres
+  tests:
+  - tests/test_droits_contrefactuels.py
+  - tests/test_simulateur.py
+  - tests/test_departs.py
+  - tests/test_emploi_retraite.py
+  - tests/test_invalidite.py
+  - tests/test_sections_sante.py
+  - >-
+    tests/test_avantages.py et tests/test_cout.py, où chaque cohorte part au droit de sa
+    génération
+  - >-
+    tests/temoins/exemples_officiels.yaml, que tests/test_oracle.py rejoue : trente-cinq
+    exemples : l'âge légal et la durée des générations de 1964 à 1968
+    (cnav_2026_07_age_legal_1964, cnav_2026_07_age_legal_1965_premier_trimestre,
+    cnav_2026_07_age_legal_1965_apres_avril, ur_age_legal_1968, sp_f21552_65_ans_158,
+    sp_f21552_67_ans_158, sp_f21552_taux_plein_170), leur carrière longue
+    (cnav_2026_29_racl_1964, cnav_2026_29_racl_1965_premier_trimestre,
+    cnav_2026_29_racl_1965_apres_avril, cnav_2026_29_racl_1967, cnav_2026_29_racl_1970,
+    ur_racl_1965_decembre, ur_racl_1966_avant_20), leurs décotes, surcotes et
+    minorations (sp_f19643_surcote, sp_f19666_decote,
+    sp_f20349_decote_fonction_publique, sp_f16494_surcote_fonction_publique,
+    ircantec_minoration_age_avant_l_age_legal, ircantec_minoration_duree_63_ans,
+    carmf_2026_temps_choisi_63_ans, carmf_2026_temps_choisi_65_ans,
+    sp_a15703_minimum_contributif_2026), leurs pensions hors de France
+    (cleiss_lena_burkina_faso, cleiss_lena_canada_uruguay, cleiss_lena_espagne_tunisie,
+    cleiss_lena_etats_unis_taux_atteint, cleiss_lena_etats_unis_taux_par_l_accord,
+    cleiss_lena_reglements_europeens) et leur RAFP (les six exemples erafp_1964_… et
+    erafp_1966_…) ; et test_un_ecart_connu_entre_et_ne_change_pas_en_silence
+  - >-
+    tests/test_cumul_activites.py, tests/test_decompte_des_services.py,
+    tests/test_etranger.py, tests/test_minima_agricoles.py,
+    tests/test_minimum_pension_sncf.py, tests/test_pont.py,
+    tests/test_saisie_assimilees.py et tests/test_simulateur.py, qui confrontent les
+    deux moteurs sur des carrières qui la portent
+  - >-
+    tests/temoins/simulations.json, que le portage rejoue (tests/js/moteur.test.js) :
+    117 témoins changent sans elle, des générations 1964 à 1968, tous au scénario 1,
+    trois dans leur compte notionnel et trois dans leur pension d'aujourd'hui

@@ -5,6 +5,9 @@ intitule: >-
   du 13 juillet 2025 plus les incréments quotidiens de la DILA) ; tout ce qu'il
   certifie l'est à la date du dernier incrément appliqué, que le fichier source
   et le journal de certification écrivent.
+regimes: [avts, cnracl, comedie_francaise, fonction_publique_etat, fspoeie, ieg, marins,
+  mines, msa_non_salaries, msa_rco, msa_salaries, opera_de_paris, ratp, regime_general,
+  sncf]
 etat: conforme
 effet: >-
   Toutes les séries lues dans LEGI ou dans le JORF le sont sur l'index à jour :
@@ -28,3 +31,29 @@ textes_a_rattacher:
 - reference: scripts/fetch/dila_legi_parametres_retraite.py
 - reference: scripts/fetch/dila_index.py
 - reference: data/derive/certification.json
+code:
+  moteur: >-
+    La règle vit hors des deux moteurs, dans les scripts de récupération :
+    `dila_index.py` tient l'index LEGI et l'index JORF du dépôt à jour des incréments de
+    la DILA (`mettre_a_jour`), et `filtrer_index` rejoue sur lui le filtre que chaque
+    récupérateur écrivait pour le dump global, `--dump` gardant celui-ci pour contrôle ;
+    `verifier_donnees.py --appliquer` recontrôle les séries contre leurs sources et
+    écrit le journal de certification. Les deux moteurs ne lisent que ce qu'ils
+    certifient : la fiabilité de chaque valeur, `certifiee` comprise
+    (`Fiabilite.depuis_texte`, `fiabiliteDepuisTexte`), et, pour la page Méthode, les
+    dates du journal (`journal_certification`).
+  python: >-
+    donnees/chargement.py : journal_certification, Fiabilite, Fiabilite.depuis_texte
+  javascript: >-
+    moteur/js/serie.js : Fiabilite, fiabiliteDepuisTexte, nomFiabilite
+  parametres: >-
+    aucun : chaque récupérateur écrit ses valeurs et leur fiabilité dans la série qu'il
+    tient, et le journal de certification hors des données de référence
+  tests:
+  - tests/test_dila_index.py
+  - >-
+    tests/test_web_revues.py, qui veut la page Méthode datée par le journal
+    (test_la_page_donnees_ne_promet_que_la_plus_ancienne_verification)
+  - >-
+    scripts/verifier_donnees.py, qui recontrôle les séries contre leurs sources et écrit
+    le journal
