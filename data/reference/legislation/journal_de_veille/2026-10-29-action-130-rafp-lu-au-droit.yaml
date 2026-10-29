@@ -1,0 +1,33 @@
+date: "2026-10-29"
+session: "action 130 : la carte des fiches, le RAFP lu au droit"
+consulte: >-
+  python scripts/veille_droit.py ; l'index LEGI du dépôt, récupéré (dump du 13 juillet
+  2025, à jour au 25 octobre 2026) et mis à jour des incréments jusqu'à celui du 28 octobre
+  au soir ; python scripts/textes.py --inscrire, avant et après la lecture. Dans LEGI : le
+  décret n° 2004-569, articles 1er à 5, toutes leurs rédactions — l'article 2 en six, de
+  LEGIARTI000006453300 à LEGIARTI000049424057, l'article 4 en deux ; la loi n° 2003-775,
+  article 76 en ses quatre rédactions (LEGIARTI000006758621, …023096773, …046874577,
+  …048691415) et article 76 bis en ses trois ; la loi n° 2022-1726, article 162
+  (LEGIARTI000046852332) ; la loi n° 2023-1268, article 33 (LEGIARTI000048681580) ;
+  l'arrêté du 26 novembre 2004, article 15, en ses quatre rédactions. Chez l'ERAFP : les
+  pages « Calculer vos cotisations et vos points RAFP », « Calcul et versements des
+  cotisations » (employeurs) et « Actif ».
+trouve: >-
+  La limite de 20 % du traitement indiciaire brut, le taux de 10 % et son partage par
+  moitié n'ont pas changé depuis 2004, et chaque période du régime les porte. L'assiette a
+  perdu deux éléments que la saisie ne porte pas : au 1er janvier 2022, la participation
+  de l'employeur public à la protection sociale complémentaire et le remboursement
+  forfaitaire de l'État (loi de finances pour 2023, article 162, IV et V, applicables à
+  cette date) ; au 1er septembre 2024, l'activité hospitalière des hospitalo-universitaires
+  (loi n° 2023-1268, article 33, IV). Le II de l'article 76, les bénéficiaires, n'a pas
+  changé d'un mot depuis 2005. L'ERAFP écarte du régime le statut local d'outre-mer, la
+  disponibilité et la position hors cadre, et le titulaire employé moins de vingt-huit
+  heures par semaine, que le texte ne nomme pas et que le modèle affilie, le statut ne
+  lisant pas la durée de travail. Aucun exemple chiffré de la limite chez l'ERAFP ; celui
+  des points, 350 € cotisés en 2026 pour 240 points, « arrondi au point supérieur ».
+  Fiches `rafp_assiette_plafond`, conforme, et `rafp_beneficiaires`, approchée.
+reste: >-
+  Le texte sur lequel l'ERAFP écarte le titulaire de moins de vingt-huit heures, que
+  l'index ne trouve pas (fiche `rafp_beneficiaires`, à relire). L'article 5 du décret,
+  les points de l'année, sans fiche : l'arrondi au point supérieur de l'ERAFP, que le
+  modèle ne fait pas.
