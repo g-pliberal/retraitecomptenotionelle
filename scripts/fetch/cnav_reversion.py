@@ -69,13 +69,13 @@ import html
 import json
 import re
 import sys
-import urllib.request
 from datetime import date
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import cnav_api  # noqa: E402
+
 RACINE = Path(__file__).resolve().parents[2]
-API = ("https://legislation.lassuranceretraite.fr/api/v1/baremes/"
-       "baremesByFileLeafRef/{}.aspx")
 MINIMUM = "retraite_reversion_montant_minimum_bar"
 PLAFOND = "retraite_reversion_plafond_ressource_majoration_retraite_reversion_bar"
 LIMITE = "retraite_reversion_limite_forfaitaire_cumul_bar"
@@ -83,7 +83,6 @@ ENFANT = "mfe_montant_bar"
 MAXIMUM = "retraite_reversion_montant_maximum_bar"
 BAREMES = (MINIMUM, PLAFOND, LIMITE, ENFANT, MAXIMUM)
 SORTIE = RACINE / "data" / "brut" / "cnav_reversion.json"
-ENTETES = {"User-Agent": "retraite-notionnelle/0.1 (recherche publique)"}
 
 #: Le taux de conversion du franc en euro, et l'ancien franc au centième.
 FRANCS_PAR_EURO = 6.55957
@@ -289,25 +288,11 @@ def ancres_annuelles(lignes: list[dict]) -> dict[int, float]:
     return {annee: au(f"{annee}-12-31") for annee in range(premiere, derniere + 1)}
 
 
-def telecharger(bareme: str) -> str:
-    requete = urllib.request.Request(API.format(bareme), headers=ENTETES)
-    with urllib.request.urlopen(requete, timeout=60) as reponse:
-        return json.loads(reponse.read().decode("utf-8-sig"))["contenu"]
-
-
 def main(argv: list[str] | None = None) -> int:
     analyseur = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    analyseur.add_argument(
-        "--fichier", type=Path,
-        help="réponse JSON de l'API des barèmes (liste complète) déjà "
-             "téléchargée, lue au lieu du réseau")
+    analyseur.add_argument("--fichier", type=Path, help=cnav_api.AIDE_FICHIER)
     arguments = analyseur.parse_args(argv)
-    if arguments.fichier:
-        tous = {b["fileLeafRef"]: b["contenu"] for b in
-                json.loads(arguments.fichier.read_text(encoding="utf-8-sig"))}
-        contenus = {nom: tous[f"{nom}.aspx"] for nom in BAREMES}
-    else:
-        contenus = {nom: telecharger(nom) for nom in BAREMES}
+    contenus = cnav_api.contenus(BAREMES, arguments.fichier)
     series = {"minimum": lire(contenus[MINIMUM]), "plafond": lire(contenus[PLAFOND]),
               "limite": corriger(lire_limite(contenus[LIMITE]), "limite"),
               "enfant": lire_enfant(contenus[ENFANT]),
@@ -320,7 +305,7 @@ def main(argv: list[str] | None = None) -> int:
     ancres = {nom: ancres_annuelles(series[nom]) for nom in ecrites}
     SORTIE.parent.mkdir(parents=True, exist_ok=True)
     SORTIE.write_text(json.dumps({
-        "source": " ; ".join(API.format(nom) for nom in BAREMES),
+        "source": " ; ".join(cnav_api.adresse_bareme(nom) for nom in BAREMES),
         "recupere_le": date.today().isoformat(),
         "note": "Le minimum annuel de la réversion du régime général (D. 353-1), le "
                 "plafond trimestriel de sa majoration de 11,1 % (D. 353-4), la limite "

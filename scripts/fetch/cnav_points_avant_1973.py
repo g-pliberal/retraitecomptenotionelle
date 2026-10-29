@@ -55,21 +55,20 @@ import shutil
 import subprocess
 import sys
 import tempfile
-import urllib.request
 from datetime import date
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import cnav_api  # noqa: E402
+
 RACINE = Path(__file__).resolve().parents[2]
 SORTIE = RACINE / "data" / "brut" / "cnav_points_avant_1973.json"
-ENTETES = {"User-Agent": "retraite-notionnelle/0.1 (recherche publique)"}
-CNAV = "https://legislation.lassuranceretraite.fr"
-BAREME = (CNAV + "/api/v1/baremes/baremesByFileLeafRef/"
-          "ti_prestation_valeur_point_retraite_commercant_bar.aspx")
+BAREME = "ti_prestation_valeur_point_retraite_commercant_bar"
 FICHES = {
-    "cancava_avant_1973": CNAV + "/Bareme/Pages/doc_communs/listes_baremes/"
-                                 "ti_prestation_valeur_point_retraite_artisan.pdf",
-    "organic_avant_1973": CNAV + "/Bareme/Pages/doc_communs/listes_baremes/"
-                                 "ti_prestation_valeur_point_retraite_commercant.pdf",
+    "cancava_avant_1973": cnav_api.SITE + "/Bareme/Pages/doc_communs/listes_baremes/"
+                                          "ti_prestation_valeur_point_retraite_artisan.pdf",
+    "organic_avant_1973": cnav_api.SITE + "/Bareme/Pages/doc_communs/listes_baremes/"
+                                          "ti_prestation_valeur_point_retraite_commercant.pdf",
 }
 IPP = "https://baremes.ipp.eu/parameters/regimes-de-retraites/{}/csv"
 PARAMETRES_IPP = {
@@ -90,9 +89,7 @@ DEBUT_IPP = 1960
 
 
 def _ouvrir(url: str) -> bytes:
-    requete = urllib.request.Request(url, headers=ENTETES)
-    with urllib.request.urlopen(requete, timeout=120) as reponse:
-        return reponse.read()
+    return cnav_api.telecharger(url, delai=120)
 
 
 def _texte(fragment: str) -> str:
@@ -233,7 +230,7 @@ def controler(regime: str, datees: dict[str, float]) -> list[str]:
 
 
 def main(argv: list[str]) -> int:
-    bareme = lire_bareme(json.loads(_ouvrir(BAREME).decode("utf-8"))["contenu"])
+    bareme = lire_bareme(cnav_api.bareme(BAREME)["contenu"])
     resultat: dict[str, dict[str, float]] = {}
     erreurs: list[str] = []
     for regime in FICHES:

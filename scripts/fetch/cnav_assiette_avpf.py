@@ -43,17 +43,16 @@ import html
 import json
 import re
 import sys
-import urllib.request
 from datetime import date
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import cnav_api  # noqa: E402
+
 RACINE = Path(__file__).resolve().parents[2]
-API = ("https://legislation.lassuranceretraite.fr/api/v1/baremes/"
-       "baremesByFileLeafRef/{}.aspx")
 BAREME = "cotisation_salaire_avpf_bar"
 BRUT = RACINE / "data" / "brut" / "cnav_assiette_avpf.json"
 SORTIE = RACINE / "data" / "reference" / "legislation" / "assiette_avpf.csv"
-ENTETES = {"User-Agent": "retraite-notionnelle/0.1 (recherche publique)"}
 
 #: Le taux de conversion du franc en euro, fixé le 31 décembre 1998.
 FRANCS_PAR_EURO = 6.55957
@@ -173,26 +172,11 @@ def controler(lus: list[tuple[str, float | None, str]]) -> list[str]:
     return erreurs
 
 
-def telecharger() -> str:
-    requete = urllib.request.Request(API.format(BAREME), headers=ENTETES)
-    with urllib.request.urlopen(requete, timeout=60) as reponse:
-        donnees = json.loads(reponse.read().decode("utf-8-sig"))
-    return (donnees[0] if isinstance(donnees, list) else donnees)["contenu"]
-
-
 def main(argv: list[str] | None = None) -> int:
     analyseur = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    analyseur.add_argument(
-        "--fichier", type=Path,
-        help="réponse JSON de l'API des barèmes (liste complète) déjà "
-             "téléchargée, lue au lieu du réseau")
+    analyseur.add_argument("--fichier", type=Path, help=cnav_api.AIDE_FICHIER)
     arguments = analyseur.parse_args(argv)
-    if arguments.fichier:
-        tous = {b["fileLeafRef"]: b["contenu"] for b in
-                json.loads(arguments.fichier.read_text(encoding="utf-8-sig"))}
-        contenu = tous[f"{BAREME}.aspx"]
-    else:
-        contenu = telecharger()
+    contenu = cnav_api.contenus([BAREME], arguments.fichier)[BAREME]
     lus = lire(contenu)
     erreurs = controler(lus)
     if erreurs:
@@ -200,7 +184,7 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     BRUT.parent.mkdir(parents=True, exist_ok=True)
     BRUT.write_text(json.dumps({
-        "source": API.format(BAREME),
+        "source": cnav_api.adresse_bareme(BAREME),
         "recupere_le": date.today().isoformat(),
         "note": "Assiette forfaitaire mensuelle de la métropole, en euros, à "
                 "chaque date du barème : les francs convertis à 6,55957.",

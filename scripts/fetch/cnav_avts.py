@@ -71,20 +71,19 @@ import html
 import json
 import re
 import sys
-import urllib.request
 from datetime import date
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import cnav_api  # noqa: E402
+
 RACINE = Path(__file__).resolve().parents[2]
-API = ("https://legislation.lassuranceretraite.fr/api/v1/baremes/"
-       "baremesByFileLeafRef/{}.aspx")
 AVTS = "ancienne_prestation_autre_prestation_montant_bar"
 SUPPLEMENTAIRE = "ancienne_prestation_allocation_supplementaire_montant_bar"
 PLAFOND = "ancienne_prestation_allocation_supplementaire_plafond_ressource_bar"
 SEUIL = "salaire_validant_un_trimestre_montant_bar"
 BAREMES = (AVTS, SUPPLEMENTAIRE, PLAFOND, SEUIL)
 SORTIE = RACINE / "data" / "brut" / "cnav_avts.json"
-ENTETES = {"User-Agent": "retraite-notionnelle/0.1 (recherche publique)"}
 
 #: Le taux de conversion du franc en euro ; l'ancien franc au centième ; le
 #: franc CFA de La Réunion, que la caisse écrit pour 1948, à deux anciens francs.
@@ -352,25 +351,11 @@ def controler(series: dict[str, list[dict]],
     return erreurs, ecarts
 
 
-def telecharger(bareme: str) -> str:
-    requete = urllib.request.Request(API.format(bareme), headers=ENTETES)
-    with urllib.request.urlopen(requete, timeout=60) as reponse:
-        return json.loads(reponse.read().decode("utf-8-sig"))["contenu"]
-
-
 def main(argv: list[str] | None = None) -> int:
     analyseur = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    analyseur.add_argument(
-        "--fichier", type=Path,
-        help="réponse JSON de l'API des barèmes (liste complète) déjà "
-             "téléchargée, lue au lieu du réseau")
+    analyseur.add_argument("--fichier", type=Path, help=cnav_api.AIDE_FICHIER)
     arguments = analyseur.parse_args(argv)
-    if arguments.fichier:
-        tous = {b["fileLeafRef"]: b["contenu"] for b in
-                json.loads(arguments.fichier.read_text(encoding="utf-8-sig"))}
-        contenus = {nom: tous[f"{nom}.aspx"] for nom in BAREMES}
-    else:
-        contenus = {nom: telecharger(nom) for nom in BAREMES}
+    contenus = cnav_api.contenus(BAREMES, arguments.fichier)
     series = lire_datees(contenus)
     bareme = lire_seuils(contenus[SEUIL])
     erreurs, ecarts = controler(series, bareme)
@@ -380,7 +365,7 @@ def main(argv: list[str] | None = None) -> int:
     seuils = seuil_trimestre(series["avts"])
     SORTIE.parent.mkdir(parents=True, exist_ok=True)
     SORTIE.write_text(json.dumps({
-        "source": " ; ".join(API.format(nom) for nom in BAREMES),
+        "source": " ; ".join(cnav_api.adresse_bareme(nom) for nom in BAREMES),
         "recupere_le": date.today().isoformat(),
         "note": "L'allocation aux vieux travailleurs salariés, l'allocation "
                 "supplémentaire (un et deux allocataires) et son plafond de "

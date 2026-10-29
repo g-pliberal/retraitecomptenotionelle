@@ -130,6 +130,9 @@ SOURCES = ("src", "data", "moteur/js", "scripts/construire_donnees.py")
 HORS_DU_MODELE = (
     "data/reference/legislation/journal_de_veille/",
     "data/reference/legislation/veille.yaml",
+    # Le registre de la base de législation de la Cnav, où chaque objet a son
+    # sort (action 175).
+    "data/reference/legislation/cnav/",
     "data/reference/prose/", "data/reference/site/", "data/reference/textes/",
     "data/reference/referents.yaml", "data/sources.yaml", "data/sources_a_explorer.yaml",
     "src/retraite_notionnelle/web/", "src/retraite_notionnelle/fabrique.py",

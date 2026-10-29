@@ -111,12 +111,12 @@ import json
 import re
 import sys
 import urllib.error
-import urllib.request
 from datetime import date
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from source_locale import lire_ou_telecharger  # noqa: E402
+import cnav_api  # noqa: E402
 
 #: Circulaires de revalorisation, par date d'effet. Les adresses portent le
 #: numéro et la date de publication de la circulaire : elles ne se devinent pas
@@ -140,7 +140,7 @@ CIRCULAIRES: tuple[tuple[str, str], ...] = (
     ("2026-01-01", "circulaire_cnav_2025_29_22122025.pdf"),
 )
 
-RACINE = "https://legislation.lassuranceretraite.fr/Pdf/"
+RACINE = cnav_api.PDF
 
 #: Borne du recoupement entre colonnes. La table publiée est arrondie à trois
 #: décimales, ce qui vaut déjà un pour mille sur les coefficients proches de 1 ;
@@ -156,7 +156,6 @@ SORTIE = Path("data/reference/legislation/revalorisation_salaires.csv")
 #: cloné et sans télécharger un seul PDF, l'écart entre ce que le modèle calcule
 #: et ce que la caisse a publié — année de liquidation par année de liquidation.
 TEMOIN = Path("tests/temoins/cnav_revalorisation_salaires.json")
-ENTETES = {"User-Agent": "retraite-notionnelle/0.1 (recherche publique)"}
 
 #: Le tableau visé porte cet intitulé. La circulaire en publie un second,
 #: « Cotisations », pour les années où le compte portait des cotisations et non
@@ -165,9 +164,7 @@ ENTETE_TABLEAU = r"Salaires Ann[ée]es Coefficients de revalorisation"
 
 
 def telecharger(url: str) -> bytes:
-    requete = urllib.request.Request(url, headers=ENTETES)
-    with urllib.request.urlopen(requete, timeout=180) as reponse:
-        return reponse.read()
+    return cnav_api.telecharger(url, delai=180)
 
 
 def texte_du_pdf(pdf: bytes) -> str:

@@ -38,20 +38,19 @@ import html
 import json
 import re
 import sys
-import urllib.request
 from datetime import date
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import cnav_api  # noqa: E402
+
 RACINE = Path(__file__).resolve().parents[2]
-API = ("https://legislation.lassuranceretraite.fr/api/v1/baremes/"
-       "baremesByFileLeafRef/{}.aspx")
 BAREMES = {
     "salaire_reference": "rci_valeur_achat_point_bar",
     "valeur_service": "rci_valeur_point_bar",
 }
 SORTIE = RACINE / "data" / "brut" / "cnav_baremes_rci.json"
 REFERENCE = RACINE / "data" / "reference" / "regimes" / "valeurs_point.csv"
-ENTETES = {"User-Agent": "retraite-notionnelle/0.1 (recherche publique)"}
 
 #: Dernière année que la transcription d'OpenFisca porte pour le RCI.
 FIN_OPENFISCA = 2023
@@ -102,16 +101,11 @@ def lire_service(contenu: str) -> dict[int, float]:
     return valeurs
 
 
-def telecharger(fichier: str) -> str:
-    requete = urllib.request.Request(API.format(fichier), headers=ENTETES)
-    with urllib.request.urlopen(requete, timeout=60) as reponse:
-        return json.loads(reponse.read().decode("utf-8"))["contenu"]
-
-
 def main() -> int:
+    contenus = cnav_api.contenus(BAREMES.values())
     lus = {
-        "salaire_reference": lire_achat(telecharger(BAREMES["salaire_reference"])),
-        "valeur_service": lire_service(telecharger(BAREMES["valeur_service"])),
+        "salaire_reference": lire_achat(contenus[BAREMES["salaire_reference"]]),
+        "valeur_service": lire_service(contenus[BAREMES["valeur_service"]]),
     }
     with REFERENCE.open(encoding="utf-8") as flux:
         depot = {

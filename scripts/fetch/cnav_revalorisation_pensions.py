@@ -45,19 +45,17 @@ import argparse
 import csv
 import html
 import io
-import json
 import re
 import sys
-import urllib.request
 from datetime import date
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import cnav_api  # noqa: E402
+
 RACINE = Path(__file__).resolve().parents[2]
-API = ("https://legislation.lassuranceretraite.fr/api/v1/baremes/"
-       "baremesByFileLeafRef/{}.aspx")
 BAREME = "revalorisation_coefficient_revalorisation_retraite_bar"
 SORTIE = RACINE / "data" / "reference" / "legislation" / "revalorisation_pensions.csv"
-ENTETES = {"User-Agent": "retraite-notionnelle/0.1 (recherche publique)"}
 
 #: Bornes de plausibilité d'un coefficient : jamais une baisse, et rien au-delà
 #: des 20 % du 1er avril 1953, le plus fort de la série.
@@ -219,21 +217,11 @@ def ecrire(lignes: list[dict]) -> str:
     return flux.getvalue()
 
 
-def telecharger() -> str:
-    requete = urllib.request.Request(API.format(BAREME), headers=ENTETES)
-    with urllib.request.urlopen(requete, timeout=60) as reponse:
-        return json.loads(reponse.read().decode("utf-8"))["contenu"]
-
-
 def main(argv: list[str] | None = None) -> int:
     analyseur = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    analyseur.add_argument(
-        "--fichier", type=Path,
-        help="réponse JSON de l'API déjà téléchargée, lue au lieu du réseau",
-    )
+    analyseur.add_argument("--fichier", type=Path, help=cnav_api.AIDE_FICHIER)
     arguments = analyseur.parse_args(argv)
-    contenu = (json.loads(arguments.fichier.read_text(encoding="utf-8"))["contenu"]
-               if arguments.fichier else telecharger())
+    contenu = cnav_api.contenus([BAREME], arguments.fichier)[BAREME]
     lignes = lire(contenu)
     erreurs = controler(lignes)
     if erreurs:

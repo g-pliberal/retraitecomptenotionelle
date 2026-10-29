@@ -66,16 +66,16 @@ import json
 import re
 import statistics
 import sys
-import urllib.request
 from datetime import date
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import cnav_api  # noqa: E402
+
 RACINE = Path(__file__).resolve().parents[2]
-PAGE = ("https://legislation.lassuranceretraite.fr/Bareme/Pages/doc_communs/"
+PAGE = (cnav_api.SITE + "/Bareme/Pages/doc_communs/"
         "listes_baremes/_layouts/CAMPUS/Campus-baremes/js/declare/"
         "decREVCOEFSALCOT.js")
-API = ("https://legislation.lassuranceretraite.fr/api/v1/baremes/"
-       "baremesByFileLeafRef/{}.aspx")
 #: Les deux barèmes de l'API qui comblent avril 2013 - septembre 2017, avec la
 #: date d'effet de leur colonne.
 BAREMES = (
@@ -84,7 +84,6 @@ BAREMES = (
 )
 BRUT = RACINE / "data" / "brut" / "cnav_revalorisation_salaires_anciennes.json"
 SORTIE = RACINE / "data" / "reference" / "legislation" / "revalorisation_salaires_anciennes.csv"
-ENTETES = {"User-Agent": "retraite-notionnelle/0.1 (recherche publique)"}
 
 #: La page ne date pas toutes ses colonnes juste : voir la docstring.
 DATES_CORRIGEES = {"1958-04-01": "1957-04-01", "avant_1949": "1946-05-14"}
@@ -141,9 +140,7 @@ date_effet,annee_perception,coefficient,fiabilite
 
 
 def telecharger(url: str) -> bytes:
-    requete = urllib.request.Request(url, headers=ENTETES)
-    with urllib.request.urlopen(requete, timeout=120) as reponse:
-        return reponse.read()
+    return cnav_api.telecharger(url, delai=120)
 
 
 def _nombre(cellule: str) -> float:
@@ -238,9 +235,7 @@ def main() -> int:
     references = {effet: reference for effet, (reference, _) in page.items()}
     colonnes = {effet: table for effet, (_, table) in page.items()}
     for effet, bareme in BAREMES:
-        reponse = json.loads(telecharger(API.format(bareme)).decode("utf-8-sig"))
-        reponse = reponse[0] if isinstance(reponse, list) else reponse
-        colonnes[effet] = lire_bareme(reponse["contenu"])
+        colonnes[effet] = lire_bareme(cnav_api.bareme(bareme)["contenu"])
         references[effet] = f"barème {bareme}"
     griefs = controler(colonnes)
     if griefs:
@@ -248,7 +243,7 @@ def main() -> int:
         return 1
     BRUT.parent.mkdir(parents=True, exist_ok=True)
     BRUT.write_text(json.dumps({
-        "sources": [PAGE] + [API.format(b) for _, b in BAREMES],
+        "sources": [PAGE] + [cnav_api.adresse_bareme(b) for _, b in BAREMES],
         "recupere_le": date.today().isoformat(),
         "references": references,
         "colonnes": {effet: {str(a): v for a, v in sorted(table.items())}

@@ -53,17 +53,16 @@ import html
 import json
 import re
 import sys
-import urllib.request
 from datetime import date
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import cnav_api  # noqa: E402
+
 RACINE = Path(__file__).resolve().parents[2]
-API = ("https://legislation.lassuranceretraite.fr/api/v1/baremes/"
-       "baremesByFileLeafRef/{}.aspx")
 MONTANT = "aspa_montant_bar"
 PLAFOND = "aspa_supplementaire_plafond_ressource_bar"
 SORTIE = RACINE / "data" / "brut" / "cnav_minimum_vieillesse.json"
-ENTETES = {"User-Agent": "retraite-notionnelle/0.1 (recherche publique)"}
 
 #: Les montants annuels que l'article D. 815-1 fixe, et que le barème doit
 #: redonner au centime à leur date : son a), une personne seule, et son b), un
@@ -208,25 +207,11 @@ def ancres_annuelles(montants: list[dict], mesure: str) -> dict[int, float]:
     return ancres
 
 
-def telecharger(bareme: str) -> str:
-    requete = urllib.request.Request(API.format(bareme), headers=ENTETES)
-    with urllib.request.urlopen(requete, timeout=60) as reponse:
-        return json.loads(reponse.read().decode("utf-8-sig"))["contenu"]
-
-
 def main(argv: list[str] | None = None) -> int:
     analyseur = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    analyseur.add_argument(
-        "--fichier", type=Path,
-        help="réponse JSON de l'API des barèmes (liste complète) déjà "
-             "téléchargée, lue au lieu du réseau")
+    analyseur.add_argument("--fichier", type=Path, help=cnav_api.AIDE_FICHIER)
     arguments = analyseur.parse_args(argv)
-    if arguments.fichier:
-        tous = {b["fileLeafRef"]: b["contenu"] for b in
-                json.loads(arguments.fichier.read_text(encoding="utf-8-sig"))}
-        contenus = {nom: tous[f"{nom}.aspx"] for nom in (MONTANT, PLAFOND)}
-    else:
-        contenus = {nom: telecharger(nom) for nom in (MONTANT, PLAFOND)}
+    contenus = cnav_api.contenus((MONTANT, PLAFOND), arguments.fichier)
     montants, plafonds = lire(contenus[MONTANT]), lire(contenus[PLAFOND])
     erreurs = controler(montants, plafonds)
     if erreurs:
@@ -235,7 +220,8 @@ def main(argv: list[str] | None = None) -> int:
     couple = ancres_annuelles(montants, "couple")
     SORTIE.parent.mkdir(parents=True, exist_ok=True)
     SORTIE.write_text(json.dumps({
-        "source": API.format(MONTANT) + " ; " + API.format(PLAFOND),
+        "source": (cnav_api.adresse_bareme(MONTANT) + " ; "
+                   + cnav_api.adresse_bareme(PLAFOND)),
         "recupere_le": date.today().isoformat(),
         "note": "Montants annuels de l'ASPA à chaque date de revalorisation "
                 "(datee : une personne seule, un couple d'allocataires), et, "

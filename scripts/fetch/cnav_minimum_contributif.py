@@ -45,17 +45,16 @@ import html
 import json
 import re
 import sys
-import urllib.request
 from datetime import date
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import cnav_api  # noqa: E402
+
 RACINE = Path(__file__).resolve().parents[2]
-API = ("https://legislation.lassuranceretraite.fr/api/v1/baremes/"
-       "baremesByFileLeafRef/{}.aspx")
 MINIMUM = "retraite_personnelle_montant_minimum_bar"
 PLAFOND = "retraite_personnelle_minimum_plafond_retraite_bar"
 SORTIE = RACINE / "data" / "brut" / "cnav_minimum_contributif.json"
-ENTETES = {"User-Agent": "retraite-notionnelle/0.1 (recherche publique)"}
 
 #: Le taux de conversion du franc en euro, fixé le 31 décembre 1998.
 FRANCS_PAR_EURO = 6.55957
@@ -168,25 +167,11 @@ def controler(lus: list[tuple[str, str, float, str]]) -> list[str]:
     return erreurs
 
 
-def telecharger(bareme: str) -> str:
-    requete = urllib.request.Request(API.format(bareme), headers=ENTETES)
-    with urllib.request.urlopen(requete, timeout=60) as reponse:
-        return json.loads(reponse.read().decode("utf-8"))["contenu"]
-
-
 def main(argv: list[str] | None = None) -> int:
     analyseur = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    analyseur.add_argument(
-        "--fichier", type=Path,
-        help="réponse JSON de l'API des barèmes (liste complète) déjà "
-             "téléchargée, lue au lieu du réseau")
+    analyseur.add_argument("--fichier", type=Path, help=cnav_api.AIDE_FICHIER)
     arguments = analyseur.parse_args(argv)
-    if arguments.fichier:
-        tous = {b["fileLeafRef"]: b["contenu"] for b in
-                json.loads(arguments.fichier.read_text(encoding="utf-8"))}
-        contenus = {nom: tous[f"{nom}.aspx"] for nom in (MINIMUM, PLAFOND)}
-    else:
-        contenus = {nom: telecharger(nom) for nom in (MINIMUM, PLAFOND)}
+    contenus = cnav_api.contenus((MINIMUM, PLAFOND), arguments.fichier)
     lus = lire_minimum(contenus[MINIMUM]) + lire_plafond(contenus[PLAFOND])
     erreurs = controler(lus)
     if erreurs:
@@ -194,7 +179,8 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     SORTIE.parent.mkdir(parents=True, exist_ok=True)
     SORTIE.write_text(json.dumps({
-        "source": API.format(MINIMUM) + " ; " + API.format(PLAFOND),
+        "source": (cnav_api.adresse_bareme(MINIMUM) + " ; "
+                   + cnav_api.adresse_bareme(PLAFOND)),
         "recupere_le": date.today().isoformat(),
         "note": "Montants en euros par an, à chaque date de revalorisation : "
                 "les francs convertis à 6,55957, le plafond mensuel multiplié "

@@ -56,9 +56,11 @@ import shutil
 import subprocess
 import sys
 import tempfile
-import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import cnav_api  # noqa: E402
 
 RACINE = Path(__file__).resolve().parents[2]
 SORTIE = RACINE / "tests" / "temoins" / "ines.json"
@@ -88,10 +90,7 @@ NON_CADRE, CADRE, FONCTIONNAIRE = "5411", "3721", "3311"
 #: Le barème de la caisse : les seuils de revenu fiscal de la CSG d'une
 #: pension, première part, demi-part et quart de part supplémentaires, en
 #: métropole.
-API_CNAV = ("https://legislation.lassuranceretraite.fr/api/v1/baremes/"
-            "baremesByFileLeafRef/{}.aspx")
 BAREME_CSG = "prelevement_sur_retraite_seuil_revenu_assujettissement_taux_csg_{}_bar"
-ENTETES = {"User-Agent": "retraite-notionnelle/0.1 (recherche publique)"}
 #: Les trois seuils, dans l'ordre du barème : au-delà du premier, le taux
 #: réduit ; au-delà du deuxième, le taux médian ; à partir du troisième, le
 #: taux plein.
@@ -220,9 +219,7 @@ def seuils_de_la_caisse(annee: int) -> dict:
     ``annee`` : première part, demi-part et quart de part, et la circulaire
     qu'il cite."""
     feuille = BAREME_CSG.format(annee)
-    requete = urllib.request.Request(API_CNAV.format(feuille), headers=ENTETES)
-    with urllib.request.urlopen(requete, timeout=60) as reponse:
-        bareme = json.load(reponse)
+    bareme = cnav_api.bareme(feuille)
     cellules = _cellules(bareme["contenu"])
     debut = cellules.index("Résidence en métropole")
     fin = next(i for i, c in enumerate(cellules) if i > debut and c.startswith("Résidence en"))
@@ -235,7 +232,7 @@ def seuils_de_la_caisse(annee: int) -> dict:
     circulaire = next(c for c in metropole if c.startswith("Circulaire Cnav"))
     return {"premiere_part": ligne("1"), "demi_part": ligne("par demi-part supplémentaire"),
             "quart_de_part": ligne("par quart de part supplémentaire"),
-            "circulaire": circulaire, "bareme": API_CNAV.format(feuille),
+            "circulaire": circulaire, "bareme": cnav_api.adresse_bareme(feuille),
             "titre": bareme["titre"], "modifie_le": bareme["dateModification"]}
 
 
