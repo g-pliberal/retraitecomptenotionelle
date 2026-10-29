@@ -213,7 +213,9 @@ qu'elle dure. D'où six règles.
   les récits nés depuis : `python scripts/conservation.py --figer`, qui
   refuse s'il y a une perte.
 - **Les dépendances** : PyYAML seul hors bibliothèque standard ; le portage
-  JavaScript n'en a aucune ; pytest et pytest-xdist ne servent qu'aux tests.
+  JavaScript n'en a aucune ; pytest et pytest-xdist ne servent qu'aux tests,
+  et xlrd qu'aux récupérateurs qui lisent un classeur `.xls` (action 176),
+  tous trois dans `.[dev]`.
   Node, qui fait tourner le portage, sert aussi au Python qui lit le site :
   les tests des pages, les témoins, la prose et le paquet.
 
