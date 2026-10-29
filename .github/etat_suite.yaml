@@ -1,9 +1,7 @@
 # Le verdict de la dernière course de tests.yml : écrit par GitHub
 # (scripts/publier_fabrique.sh), jamais à la main. Action 148.
-etat: rouge
-sources: 2c322a47ba1f48aecacd63a7b947fbfa64c61423
-date: 2026-10-28T15:52:20Z
-course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/40708735615
-echecs:
-  - "FAILED tests/test_grille_large.py::test_un_fonctionnaire_civil_qui_surcote_part_avec_la_surcote_moyenne_de_sa_categorie - assert 64.9 < (59.75 + 2.3999999999999995)"
+etat: vert
+sources: badb5352778fbef2402e3a19f432d9e13a78929d
+date: 2026-10-29T02:50:46Z
+course: https://github.com/g-pliberal/retraitecomptenotionelle/actions/runs/40803568792
 presomptions: vert
