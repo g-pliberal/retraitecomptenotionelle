@@ -3,8 +3,9 @@
  *
  * C'est le texte du site, écrit une fois, en JavaScript (docs/architecture.md,
  * § 8). Ce qui est du calcul n'est pas ici : la lecture de la saisie vit dans
- * ``saisie.js``, le contexte du site dans ``contexte.js``, portages de
- * ``src/retraite_notionnelle/saisie.py`` et ``contexte.py``.
+ * ``saisie.js``, son seul exemplaire depuis l'action 161, et le contexte du
+ * site dans ``contexte.js``, qui porte une partie de
+ * ``src/retraite_notionnelle/contexte.py``.
  *
  * Les pages sont figées en témoins, dans ``tests/temoins/pages.json``, par
  * ``scripts/construire_temoins.py``, qui les fait rendre par ce fichier ;

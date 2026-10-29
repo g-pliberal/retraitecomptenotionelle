@@ -6918,7 +6918,7 @@ de `contribution_etat`.
 
 ### 161. Un seul exemplaire du code : les doublons entre le Python et le JavaScript retirés une paire à la fois, chaque retrait relu — `en cours`
 
-**Reprise, au 28 octobre 2026.** Étape 6 : trois paires faites — la saisie
+**Reprise, au 29 octobre 2026.** Étape 6 : trois paires faites — la saisie
 de `contexte.py`, `saisie.py`, puis le pilote, dont le Python ne date plus que
 les cas types —, les trois défauts que la relecture de `saisie.py` laissait
 au portage, corrigés chacun par son test, et la paire de la carrière relue :
@@ -6926,8 +6926,8 @@ le profil s'interpole au bit près des deux côtés, le portage ne lit plus que
 les clés propres de ses tables (`2026-10-28-etape-6-la-paire-de-la-carriere.md`).
 Le calendrier et la chronologie, relus aussi : le demi-mois compte le mois qui
 suit, les deux côtés lisent les mêmes dates déclarées (`2026-10-28-etape-6-le-calendrier-et-la-chronologie.md`).
-Reste, sans le propriétaire, `pages.js`, ligne 7, à une session du site. Les
-paires suivantes attendent que le coût passe le pont ; deux de données, le propriétaire. Détail : `2026-10-24-etape-6-huitieme-partie-les-defauts-du-portage.md`.
+Les paires suivantes attendent que le coût passe le pont ; deux de données, le
+propriétaire. Détail : `2026-10-24-etape-6-huitieme-partie-les-defauts-du-portage.md`.
 
 **D'où elle vient.** La demande du propriétaire, le 14 octobre 2026 : « Je
 veux enlever les doublons entre JavaScript et python. […] Il faut le meilleur
