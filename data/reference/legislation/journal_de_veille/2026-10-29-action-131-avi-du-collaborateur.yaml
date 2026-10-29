@@ -1,0 +1,33 @@
+date: "2026-10-29"
+session: >-
+  l'action 131 : l'AVI du conjoint collaborateur et de l'aide familial, assise
+  jusqu'en 2025 sur les revenus du chef, et le revenu que L. 732-24 leur tirerait de
+  leurs cotisations quand elle était au minimum ; vague du 28 octobre 2026, la seule
+  session de la vague sur les pages
+consulte: >-
+  python scripts/veille_droit.py ; l'index LEGI du dépôt, récupéré et mis à jour
+  jusqu'à l'incrément du 28 octobre 2026 ; python scripts/textes.py --inscrire, aucune
+  rédaction nouvelle ; au code rural, L. 731-42 (rédactions de 2010 et de 2023),
+  D. 731-120 (rédactions de 2014 et de 2024), D. 731-121 (rédaction de 2012),
+  L. 732-24 (rédactions de la loi n° 2025-199 et de 2026), L. 732-18 et R. 732-60
+  (rédactions de 2026) ; la page de la MSA « Réforme des retraites des exploitants :
+  25 meilleures années », mise à jour le 27 avril 2026 ; l'annexe 9 du PLFSS pour
+  2025, fiches d'évaluation préalable.
+trouve: >-
+  L. 731-42 met les cotisations d'assurance vieillesse des non-salariés agricoles « à
+  la charge du chef d'exploitation ou d'entreprise », l'AVI du 1° comprise, « due pour
+  chaque personne non salariée âgée d'au moins seize ans » et calculée sur les
+  revenus du chef, 800 SMIC au moins (D. 731-120, 1°), à 3,32 % depuis 2016 (D. 731-121, e).
+  La phrase de L. 732-24, I, 1°, sur les cotisations portées à leur valeur minimale,
+  vise les assurés qui en ont été « redevables » et les ont « acquittées » : à la
+  lettre, le chef seul, et non le collaborateur ni l'aide familial, pour qui le chef
+  les payait. Ni la page de la MSA, qui ne décrit que les revenus de l'exploitant, ni
+  l'étude d'impact, dont le tableau donne au collaborateur l'AVI sur 800 SMIC au
+  moins et 14,87 % en tout, ne disent comment la caisse l'applique. Aucune règle
+  écrite : le moteur garde le forfait de 400 SMIC.
+reste: >-
+  Au propriétaire, deux questions (note 2026-10-29-avi-du-collaborateur.md) : si la
+  phrase vise le collaborateur et l'aide familial, à la lettre non, par son objet
+  489,31 SMIC les années où le chef était sous 800 SMIC, ou s'il faut le demander à la
+  CCMSA ; et la forme du champ du revenu du chef, que le compte demande en tout cas
+  pour l'AVI du collaborateur : le revenu de la période, un champ à part ou un menu.
