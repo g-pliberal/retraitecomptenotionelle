@@ -7121,3 +7121,137 @@ parti. L'hôte sera vu avec le propriétaire à sa prochaine copie (ses deux
 retouches d'`index.html`, la classe `plf-embedded` à chaque chargement du
 cadre). **Ce qu'il tranche encore** : si les résultats d'une simulation
 restent sous 100 en Performance.
+
+### 175. La base de législation de la Cnav, exploitée en entier par son API : chaque barème, exposé et circulaire à sa place dans le dépôt, puis tenue à jour — `en cours`
+
+**Reprise, au 29 octobre 2026.** Rien n'est fait : l'action s'ouvre sur le
+relevé de l'API du même jour (« La base », plus bas). Par quoi commencer :
+l'étape 1, le registre, dont les autres dépendent. Ensuite, les étapes 2 à 5 se
+mènent en parallèle : chacune tiendra son bloc « Reprise » sous le titre de sa
+note, et celui-ci ne se récrira plus. Les étapes 2 et 4 écrivent des règles du
+scénario 1 : sur Opus, après `python scripts/veille_droit.py`. Pas encore de
+note.
+
+**D'où elle vient.** Le 29 octobre 2026, le propriétaire : « Est-ce qu'on a
+exploité l'API CNAV ? » La réponse, mesurée le jour même : en partie — dix
+récupérateurs, 29 barèmes cités sur 386, la recherche des circulaires. Puis :
+« Je veux qu'on ouvre une ou plusieurs actions à réaliser sur l'exploitation
+exhaustive de l'API de la CNAV. » L'action reprend ce que l'action 89 laissait
+de la Cnav sans que rien ne le porte : « les 369 barèmes de la base de
+législation que le dépôt ne cite pas, et ses exposés, restent à dérouler »
+(journal de veille du 14 octobre 2026), quand le bloc « Reprise » de l'action
+89 compte la Cnav comme faite et que la ligne `cnav_legislation_portail` du
+vivier est restée `explore`. Une seule action, et non trois : les barèmes, les
+exposés et les circulaires se rangent dans les mêmes thèmes, et l'exhaustivité
+se mesure à un seul registre.
+
+**La base**, relevée le 29 octobre 2026. `legislation.lassuranceretraite.fr`
+est une application Angular, servie par une API publique et sans clé, sous
+`/api/v1`. Son script principal en nomme vingt-quatre routes ; trois autres,
+qu'il ne nomme pas, rendent chacune une collection entière d'un appel :
+`/baremes`, 397 barèmes sous 386 noms ; `/expose`, 633 exposés, rangés dans les
+dix-sept thèmes du menu `/menu/menuReglementation` ; `/liste`, 324 listes de
+références par sujet. Les barèmes ont leur propre menu, `/menu/menuBareme`. Les
+références que ces collections lient — quelque 1 777, des circulaires et des
+lettres de la Cnav et du ministère surtout, de 1910 à aujourd'hui, avec des
+règlements européens, des conventions et des décrets — se lisent une à une
+(`/reference/referencesByFileLeafRef/<nom>`) ou par la recherche plein texte
+(`POST /search/custom`, `docs/exploration_sources.md`), les dernières par
+`/reference/dernieresCirculaires/` ; leurs PDF sont sous `/Pdf/` (533 cités).
+Chaque barème et chaque exposé porte sa `dateModification` : 627 des 633
+exposés ont été modifiés en 2025 ou en 2026. `/reference` et `/documents`, sans
+nom, répondent 500.
+
+**Ce que le dépôt en tire déjà.** Dix récupérateurs interrogent l'API, les neuf
+`scripts/fetch/cnav_*.py` qui la nomment et `ines.py` : le point du RCI, le
+minimum contributif, l'ASPA, l'AVTS et les anciennes allocations, la réversion,
+l'assiette de l'AVPF, la revalorisation des pensions, les coefficients des
+salaires d'avril 2013 à septembre 2017, les points d'avant 1973, les seuils de
+la CSG. Le dépôt cite 29 barèmes par leur nom, plus la série de la CSG
+qu'`ines.py` compose année par année ; 77 exposés (dont 64 par le tableau des
+accords internationaux), 37 références et 44 PDF ; aucune liste. Les barèmes
+qu'il ne cite pas, rangés par le début de leur titre : 84 taux de change et de
+conversion des monnaies ; 63 salaires forfaitaires, apprentis et débuts
+d'activité ; 38 rachats de cotisations et versements pour la retraite ; 14 taux
+de cotisation des indépendants et des micro-entrepreneurs ; 154 autres — Smic,
+plafonds, assurance volontaire, veuvage, invalidité, tierce personne,
+succession, Mayotte, éditions des coefficients de revalorisation.
+
+**Ce qui est à faire**, une étape par session ; après la 1, en parallèle.
+
+1. **Le registre** (données) : un récupérateur de la base entière, qui lit les
+   trois collections et les menus, puis les références qu'ils lient, sans
+   relire ce que `dateModification` dit inchangé ; au dépôt, un registre où
+   chaque barème, exposé, liste et référence a son sort — `branche` (la série
+   et le script qui le lisent), `recoupe` (le test qui le confronte), `limite`
+   (la fiche ou la limite qui dit ce que le modèle n'en sert pas),
+   `hors_modele` (la raison) ou `a_lire` —, avec la date de modification lue.
+   Le registre ne garde que des noms, des titres, des thèmes et des dates ; les
+   réponses de l'API ne se versionnent pas. Un test refuse un objet sans sort,
+   et un sort dont le fichier ou le test nommé n'existe pas. Les dix
+   récupérateurs passent par un module commun — l'adresse, l'en-tête, la
+   lecture d'une réponse déjà téléchargée — au lieu de les redéfinir chacun. Au
+   départ, ce qu'ils lisent est `branche`, le reste `a_lire`.
+2. **Les barèmes du modèle** (données ; scénario 1, sur Opus, par
+   `docs/veille_droit.md`) : chacun lu par un récupérateur dans la série qu'il
+   nourrit, avec le test qui le recoupe à sa source, ou confronté par un test à
+   la série qu'il double ; un écart se corrige ou se déclare, en commit à part,
+   et un écart qui change le calcul passe à la session du modèle, les deux
+   moteurs ensemble. D'abord ceux que nommait la note du 14 octobre
+   (`89/2026-10-14-cnav-service-public.md`) : les taux de droit commun, lus le
+   14 octobre conformes à `taux_cotisation_annuels.csv`, sans test qui les y
+   confronte ; les taux, les assiettes minimales et maximales, le revenu
+   validant un trimestre et le début d'activité des indépendants, DOM compris,
+   et les taux globaux des micro-entrepreneurs ; les salaires forfaitaires des
+   apprentis depuis 1948, des artistes, des journalistes, des employés de
+   maison et des vendeurs à domicile ; l'assurance volontaire ; le pourcentage
+   de minoration ; la base de calcul et le point RVB des commerçants, rachat
+   global compris ; le plafond de cotisation du RCI. Puis le Smic et le salaire
+   plafond, Mayotte comprise (`cssm_mayotte`) ; les plafonds du cumul
+   emploi-retraite des indépendants ; le plafond de ressources de la majoration
+   pour conjoint à charge ; les seuils de la récupération de l'ASPA sur
+   succession, avec l'action 47 ; le point du régime complémentaire des
+   entrepreneurs du bâtiment, à rapprocher d'`organic_conjoints_batiment` ; les
+   dix éditions des coefficients de revalorisation des salaires, d'octobre 2017
+   à janvier 2026.
+3. **Les barèmes hors du modèle** (données) : chacun déclaré au registre avec
+   sa raison, et, s'il est de ceux que le modèle devrait servir, une limite et
+   sa fiche. A priori : les rachats et les versements pour la retraite, que le
+   modèle ne pratique pas (`rachats_et_versements.yaml`) ; l'invalidité, le
+   veuvage, la tierce personne ; les avantages en nature et les abandons de
+   créances. Les taux de change et de conversion se trient d'abord : la
+   conversion des anciens francs et des monnaies d'outre-mer peut servir les
+   carrières anciennes, comme `cnav_avts.py` le fait du franc CFA de La Réunion
+   en 1948.
+4. **Les exposés et leurs références, thème par thème** (scénario 1, sur Opus ;
+   une session par thème, par sous-thème pour les plus gros) : chaque exposé
+   lu, ses règles confrontées aux fiches de la carte et à `veille.yaml` — le
+   texte tel que la caisse l'applique —, ses exemples chiffrés au témoin
+   `exemples_officiels.yaml` (le mot « exemple » paraît dans 36 exposés), ce
+   que le modèle ne sert pas aux limites ; puis les listes et les références
+   qu'il lie, triées sur leur titre et leur date : lue, celle qui fixe une
+   règle à une date que le modèle calcule ; déclarée, l'autre. Un écart suit la
+   règle de l'étape 2. L'ordre proposé suit le poids dans le modèle : Retraite
+   personnelle de base (45 exposés) ; Carrière (169 : cotisations-salaires 65,
+   versements volontaires 49, périodes assimilées 25, majorations de durée
+   d'assurance 13, quatre autres 17) ; Avantages liés au décès de l'assuré
+   (27) ; Allocation du minimum (17) ; RCI (10) ; Anciennes prestations (29) ;
+   Régimes intégrés (29) ; Accords internationaux et d'outre-mer (223 : accords
+   184, règlements européens 24, outre-mer 15) ; Mayotte (24) ; puis Paiement
+   (18), Réclamation et contentieux (11), Transverse (11), Avantage
+   complémentaire (7), Erreur et fraude (4), État civil et identification (3),
+   Liquidation unique régimes alignés et Régularité du séjour (un chacun), et
+   quatre exposés hors du menu.
+5. **La veille** (données) : le registre garde la date de modification lue, et
+   `scripts/veille_droit.py` dit ce que la base a changé depuis — un barème ou
+   un exposé modifié, une circulaire nouvelle
+   (`/reference/dernieresCirculaires/`) —, pour que l'exploitation reste
+   entière. Quand le registre n'a plus rien `a_lire`, la ligne
+   `cnav_legislation_portail` passe `epuise`, et l'action se clôt.
+
+**Ce que le propriétaire tranche** : la profondeur des références — toutes
+lues, ou celles seulement qui fixent une règle à une date que le modèle
+calcule, les autres déclarées sur leur titre, comme l'étape 4 le propose ;
+l'ordre des thèmes ; le portail statistique de la Cnav (`cnav_statistiques`,
+`a_faire` au manifeste), qui n'est pas cette API et répondait 503 le 29
+octobre : dans cette action, ou dans une autre.
