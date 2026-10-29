@@ -3,11 +3,14 @@
 `scripts/fetch/cnav_api.py` est le module commun des récupérateurs qui lisent
 la base : l'adresse de son API, l'en-tête de leurs requêtes, la lecture d'une
 réponse déjà téléchargée. `scripts/fetch/cnav_legislation.py` lit la base
-entière — ses trois collections, ses menus, les références qu'elles lient — et
-tient le registre `data/reference/legislation/cnav/`, où chaque barème, exposé,
-liste et référence a son sort. Ces tests les tiennent ensemble, sans réseau :
-le module lit ce qu'on lui donne, le récupérateur range ce qu'il lit, aucun
-objet du registre n'est sans sort, et chaque sort renvoie à ce qui existe.
+entière — ses trois collections, ses menus, ses fenêtres d'information, les
+références qu'elles lient, et celles que les références citent, de proche en
+proche — et tient le registre `data/reference/legislation/cnav/`, où chaque
+barème, exposé, liste, référence et fenêtre a son sort, et où
+`citations.csv` garde qui cite qui. Ces tests les tiennent ensemble, sans
+réseau : le module lit ce qu'on lui donne, le récupérateur range ce qu'il lit,
+aucun objet du registre n'est sans sort, et chaque sort renvoie à ce qui
+existe.
 """
 
 from __future__ import annotations
@@ -25,8 +28,10 @@ import pytest
 RACINE = Path(__file__).resolve().parents[1]
 FETCH = RACINE / "scripts" / "fetch"
 REGISTRE = RACINE / "data" / "reference" / "legislation" / "cnav"
-GENRES = ("baremes", "exposes", "listes", "references")
+GENRES = ("baremes", "exposes", "listes", "references", "fenetres")
 SORTS = ("branche", "recoupe", "limite", "hors_modele", "a_lire")
+#: Les genres dont l'API peut ne pas servir un objet lié : il reste sans titre.
+SANS_TITRE_POSSIBLE = ("references", "fenetres")
 
 #: Les récupérateurs qui lisent la base : les dix que l'action 175 a relevés
 #: le 29 octobre 2026 — neuf `cnav_*.py` qui nomment l'API, et `ines.py` —,
@@ -107,8 +112,9 @@ def test_les_liens_d_un_contenu_disent_ce_qu_ils_visent():
     référence par la route du site ou un PDF de `/Pdf/`, au besoin sous le
     préfixe d'un partage (`/%3ab%3a/r`) et suivi de paramètres ; un barème ou
     une liste, que le site ouvre par la même route, au besoin sous un
-    sous-dossier ; un exposé. Légifrance, le CLEISS et les fenêtres
-    d'information (`#/infosupp/`) ne sont pas des objets de la base."""
+    sous-dossier ; un exposé ; une fenêtre d'information (`#/infosupp/`),
+    exemple, lexique ou complément, au besoin sous le préfixe d'un partage.
+    Légifrance et le CLEISS ne sont pas des objets de la base."""
     module = _module("cnav_legislation")
     contenu = "".join(f'<a href="{lien}">x</a>' for lien in (
         "#/references-reglementaires?file_leaf_ref=circulaire_cnav_2014_039_12062014.aspx#1",
@@ -121,6 +127,7 @@ def test_les_liens_d_un_contenu_disent_ce_qu_ils_visent():
         "http://www.legifrance.gouv.fr/affichCodeArticle.do?idArticle=LEGIARTI000006742631",
         "https://www.cleiss.fr/docs/ol/algerie.html",
         "#/infosupp/ex_delai.aspx",
+        "/%3au%3a/r#/infosupp/ex_carte_invalidite.aspx?csf=1&amp;web=1&amp;e=sw1Ggi",
         "#/references-reglementaires?file_leaf_ref=LE_MIN_10031970_59%20373%20AG.aspx",
         "/Pdf/circulaire_cnav_2024_28_14102024.pdf",
     ))
@@ -131,6 +138,8 @@ def test_les_liens_d_un_contenu_disent_ce_qu_ils_visent():
         ("bareme", "periode_guerre_validation_periode_list.aspx"),
         ("bareme", "cotisation_salaire_vente_domicile_2026_bar.aspx"),
         ("expose", "retraite_personnelle_taux_taux_retraite_ex.aspx"),
+        ("fenetre", "ex_delai.aspx"),
+        ("fenetre", "ex_carte_invalidite.aspx"),
         ("reference", "LE_MIN_10031970_59 373 AG.aspx"),
     ]
 
@@ -164,24 +173,78 @@ def test_un_bareme_prend_le_theme_de_son_menu_ou_du_bareme_qui_le_lie():
 
 
 def test_une_liste_et_une_reference_prennent_les_themes_de_ce_qui_les_lie():
-    """Une liste et une référence n'ont pas de menu : elles prennent le premier
-    niveau du thème de chaque objet qui les lie, une liste le passant aux
-    références qu'elle lie à son tour."""
+    """Une liste, une référence et une fenêtre n'ont pas de menu : elles
+    prennent le premier niveau du thème de chaque objet qui les lie, une liste
+    ou une fenêtre le passant à ce qu'elle lie à son tour. Une référence ne le
+    passe pas aux textes qu'elle cite : passé de citation en citation, le 29
+    octobre 2026, il en donnait plus de cinq à 1 637 références, et seize à un
+    article de code que toute la base cite ; `citations.csv` dit qui les
+    cite."""
     module = _module("cnav_legislation")
     themes = {("exposes", "e1.aspx"): "Carrière > Cotisations-salaires",
               ("exposes", "e2.aspx"): "Mayotte - Législation > Carrière",
               ("baremes", "b.aspx"): "Carrière > Salaire validant 1 trimestre"}
-    liens = {("exposes", "e1.aspx"): [("listes", "l.aspx"), ("references", "r1.aspx")],
+    liens = {("exposes", "e1.aspx"): [("listes", "l.aspx"), ("references", "r1.aspx"),
+                                      ("fenetres", "ex_delai.aspx")],
              ("exposes", "e2.aspx"): [("references", "r1.aspx")],
              ("baremes", "b.aspx"): [("references", "r2.pdf")],
              ("listes", "l.aspx"): [("references", "r3.aspx")],
-             ("listes", "seule.aspx"): [("references", "r4.aspx")]}
+             ("listes", "seule.aspx"): [("references", "r4.aspx")],
+             ("references", "r3.aspx"): [("references", "LO_CSS_R742-13.aspx")],
+             ("fenetres", "ex_delai.aspx"): [("references", "r5.aspx")]}
     assert module.themes_lies(liens, themes) == {
         ("listes", "l.aspx"): "Carrière",
         ("references", "r1.aspx"): "Carrière ; Mayotte - Législation",
         ("references", "r2.pdf"): "Carrière",
         ("references", "r3.aspx"): "Carrière",
+        ("fenetres", "ex_delai.aspx"): "Carrière",
+        ("references", "r5.aspx"): "Carrière",
     }
+
+
+def test_la_base_se_suit_de_reference_en_reference():
+    """Les références citent d'autres textes, et ceux-ci d'autres encore : le
+    29 octobre 2026, les 2 298 références que les collections lient en
+    citaient 2 020 autres, sur quatre rangs. La base est ce que les
+    collections et leurs fenêtres atteignent, de proche en proche ; une
+    référence que plus rien n'atteint n'en est plus."""
+    module = _module("cnav_legislation")
+    liens = {("exposes", "e.aspx"): [("references", "r1.aspx"), ("fenetres", "ex_delai.aspx")],
+             ("fenetres", "ex_delai.aspx"): [("references", "r4.aspx")],
+             ("references", "r1.aspx"): [("references", "r2.aspx")],
+             ("references", "r2.aspx"): [("references", "r3.pdf"), ("references", "r1.aspx")],
+             ("references", "orpheline.aspx"): [("references", "r1.aspx")]}
+    assert module.fermeture(liens) == {"r1.aspx", "r2.aspx", "r3.pdf", "r4.aspx"}
+
+
+def test_une_fenetre_dit_sa_nature(monkeypatch):
+    """L'API sert une fenêtre d'information sous sa nature — `exemple`,
+    `lexique` ou `complementInformation`, que son nom ne dit pas : le 29
+    octobre 2026, `ex_delai.aspx` était un complément —, et répond 500 à celle
+    qu'elle ne sert pas."""
+    import urllib.error
+
+    module = _module("cnav_legislation")
+    servies = {
+        "ex_delai.aspx": {"complementInformation": {
+            "titre": "Délai de distance", "date_modification": "2025-10-27T23:54:00Z[UTC]"}},
+        "conjoint_lex.aspx": {"lexique": {
+            "titre": "Conjoint", "date_modification": "2023-06-02T05:31:00Z[UTC]"}},
+    }
+
+    def obtenir(route, delai=60):
+        nom = route.rsplit("/", 1)[1]
+        if nom not in servies:
+            raise urllib.error.HTTPError(route, 500, "Internal Server Error", {}, None)
+        return servies[nom]
+
+    monkeypatch.setattr(module.cnav_api, "obtenir", obtenir)
+    monkeypatch.setattr(module.time, "sleep", lambda pause: None)
+    assert module._fenetre("ex_delai.aspx") == ("ex_delai.aspx", {
+        "titre": "Délai de distance", "date_modification": "2025-10-27T23:54:00Z[UTC]",
+        "nature": "complement"})
+    assert module._fenetre("conjoint_lex.aspx")[1]["nature"] == "lexique"
+    assert module._fenetre("date_arrete_compte_lex.aspx") == ("date_arrete_compte_lex.aspx", None)
 
 
 def test_un_texte_est_date_du_jour_que_son_titre_porte():
@@ -295,12 +358,18 @@ def test_une_reference_liee_sous_une_casse_fautive_prend_le_nom_que_l_api_sert(m
         "Circulaire_cnav_2016_35_02082016.pdf", servi)
     liens = {("exposes", "e.aspx"): [("references", "Circulaire_cnav_2016_35_02082016.pdf"),
                                      ("listes", "l.aspx")],
-             ("listes", "l.aspx"): [("references", "circulaire_cnav_2016_35_02082016.pdf")]}
+             ("listes", "l.aspx"): [("references", "circulaire_cnav_2016_35_02082016.pdf")],
+             ("references", "Circulaire_cnav_2016_35_02082016.pdf"): [
+                 ("references", "LO_CSS_R742-13.aspx")],
+             ("references", "circulaire_cnav_2016_35_02082016.pdf"): [
+                 ("references", "LO_CSS_R742-13.aspx"), ("references", "D_IM_2011007_07092011.aspx")]}
     assert module.renommer(liens, {"Circulaire_cnav_2016_35_02082016.pdf":
                                    "circulaire_cnav_2016_35_02082016.pdf"}) == {
         ("exposes", "e.aspx"): [("references", "circulaire_cnav_2016_35_02082016.pdf"),
                                 ("listes", "l.aspx")],
-        ("listes", "l.aspx"): [("references", "circulaire_cnav_2016_35_02082016.pdf")]}
+        ("listes", "l.aspx"): [("references", "circulaire_cnav_2016_35_02082016.pdf")],
+        ("references", "circulaire_cnav_2016_35_02082016.pdf"): [
+            ("references", "LO_CSS_R742-13.aspx"), ("references", "D_IM_2011007_07092011.aspx")]}
 
 
 # -- le registre ---------------------------------------------------------------
@@ -342,8 +411,9 @@ def test_le_registre_est_hors_de_l_empreinte_du_modele():
 
 
 def test_chaque_objet_de_la_base_a_son_sort():
-    """Le registre porte chaque barème, exposé, liste et référence une seule
-    fois, rangés par nom, et chacun a l'un des cinq sorts."""
+    """Le registre porte chaque barème, exposé, liste, référence et fenêtre une
+    seule fois, rangés par nom, et chacun a l'un des cinq sorts ; une fenêtre,
+    sa nature."""
     for genre, lignes in _registre().items():
         noms = [ligne["nom"] for ligne in lignes]
         assert noms, f"{genre} : registre vide"
@@ -353,8 +423,27 @@ def test_chaque_objet_de_la_base_a_son_sort():
         for ligne in lignes:
             assert ligne["sort"] in SORTS, (
                 f"{genre}/{ligne['nom']} : sort « {ligne['sort']} », hors de {SORTS}")
-            assert ligne["titre"].strip() or genre == "references", (
+            assert ligne["titre"].strip() or genre in SANS_TITRE_POSSIBLE, (
                 f"{genre}/{ligne['nom']} : sans titre")
+            if genre == "fenetres" and ligne["titre"].strip():
+                assert ligne["nature"] in ("exemple", "lexique", "complement"), ligne["nom"]
+
+
+def test_les_citations_relient_des_references_du_registre():
+    """`citations.csv` garde, pour chaque référence, les textes qu'elle cite :
+    ce que la base ne dit qu'en lisant chaque référence, et ce qui permet de la
+    relire sans redemander ce qui n'a pas changé. Chaque citation relie deux
+    références du registre, une fois, rangée."""
+    references = {ligne["nom"] for ligne in _registre()["references"]}
+    lignes = list(csv.DictReader(
+        ligne for ligne in (REGISTRE / "citations.csv").read_text(encoding="utf-8").splitlines()
+        if not ligne.startswith("#")))
+    paires = [(ligne["reference"], ligne["cite"]) for ligne in lignes]
+    assert len(paires) > 1000, "le graphe des citations a disparu"
+    assert paires == sorted(set(paires)), "citations en double ou en désordre"
+    for reference, cite in paires:
+        assert reference in references and cite in references, (reference, cite)
+        assert reference != cite, reference
 
 
 def test_un_sort_renvoie_a_ce_qui_existe():
@@ -378,6 +467,9 @@ def test_un_sort_renvoie_a_ce_qui_existe():
                 fichier, _, test = renvoi.partition("::")
                 assert (RACINE / fichier.split("#")[0]).is_file(), (
                     f"{objet} : {renvoi} n'existe pas")
+                assert not fichier.startswith("data/brut/"), (
+                    f"{objet} : {renvoi} n'est pas versionné, et n'existe pas sur un "
+                    "clone neuf : la série que le dépôt garde")
                 if sort == "recoupe":
                     assert test and re.search(rf"^def {re.escape(test)}\(", (
                         RACINE / fichier).read_text(encoding="utf-8"), re.M), (

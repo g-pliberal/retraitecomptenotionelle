@@ -1,9 +1,8 @@
 # Registre de la base de législation de la Cnav : les exposés
 # -----------------------------------------------------------
 # Action 175 de la feuille de route. La base, legislation.lassuranceretraite.fr,
-# se lit par son API (scripts/fetch/cnav_api.py) ; ce fichier et les trois
-# autres du dossier en portent chaque objet une fois, rangé par nom, avec son
-# sort.
+# se lit par son API (scripts/fetch/cnav_api.py) ; ce fichier et les autres du
+# dossier en portent chaque objet une fois, rangé par nom, avec son sort.
 #
 # Les colonnes nom, titre, theme et modifie_le sont écrites par
 # scripts/fetch/cnav_legislation.py, qui relit la base ; sort, renvoi et

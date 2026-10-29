@@ -1,11 +1,10 @@
 # Registre de la base de législation de la Cnav : les listes de références
 # ------------------------------------------------------------------------
 # Action 175 de la feuille de route. La base, legislation.lassuranceretraite.fr,
-# se lit par son API (scripts/fetch/cnav_api.py) ; ce fichier et les trois
-# autres du dossier en portent chaque objet une fois, rangé par nom, avec son
-# sort.
+# se lit par son API (scripts/fetch/cnav_api.py) ; ce fichier et les autres du
+# dossier en portent chaque objet une fois, rangé par nom, avec son sort.
 #
-# Les colonnes nom, titre, theme sont écrites par
+# Les colonnes nom, titre et theme sont écrites par
 # scripts/fetch/cnav_legislation.py, qui relit la base ; sort, renvoi et
 # script, par la session qui lit l'objet, et le script les garde.
 #
@@ -207,7 +206,7 @@ regime_securite_sociale_regime_base_obligatoire_list.aspx,Régimes de base oblig
 regime_securite_sociale_regime_special_article_d173_15_css_list.aspx,Régimes spéciaux relevant de l'article D173-15 du code de la sécurité sociale,Carrière ; Retraite personnelle de base,a_lire,,
 regime_securite_sociale_regime_special_article_d173_1_css_list.aspx,Régimes spéciaux relevant de l'article D173-1 du code de la sécurité sociale,Avantages liés au décès de l'assuré ; Retraite personnelle de base,a_lire,,
 regime_securite_sociale_regime_special_list.aspx,Régimes spéciaux,Accords internationaux et d'outre-mer ; Avantage complémentaire ; Carrière ; Retraite personnelle de base,a_lire,,
-reglement_europeen_pays_espace_economique_europeen_list.aspx,Pays de l'Espace économique européen,Accords internationaux et d'outre-mer ; Allocation du minimum ; Anciennes prestations ; Avantages liés au décès de l'assuré ; Carrière ; Mayotte - Législation ; Paiement ; Régularité du séjour,a_lire,,
+reglement_europeen_pays_espace_economique_europeen_list.aspx,Pays de l'Espace économique européen,Accords internationaux et d'outre-mer ; Allocation du minimum ; Anciennes prestations ; Avantages liés au décès de l'assuré ; Carrière ; Mayotte - Législation ; Paiement ; Retraite personnelle de base ; Régularité du séjour,a_lire,,
 reglement_europeen_pays_union_europeenne_list.aspx,Pays de l'Union européenne,Accords internationaux et d'outre-mer ; Anciennes prestations ; Carrière ; Retraite personnelle de base,a_lire,,
 reglement_europeen_pays_zone_euro_list.aspx,Pays de la zone euro,,a_lire,,
 reglement_europeen_personne_relevant_reglement_europeen_list.aspx,Personnes relevant des règlements européens,Accords internationaux et d'outre-mer ; Anciennes prestations ; Carrière,a_lire,,

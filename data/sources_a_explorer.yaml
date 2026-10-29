@@ -308,8 +308,8 @@ sources:
       thème. Depuis le 29 octobre 2026 (action 175, étape 1), la base
       entière a son registre, `data/reference/legislation/cnav/`, que
       tient `scripts/fetch/cnav_legislation.py` : chaque barème, exposé,
-      liste et référence y a son sort, et la ligne passe `epuise` quand
-      il n'y reste rien `a_lire`.
+      liste, fenêtre d'information et référence, citées comprises, y a son
+      sort, et la ligne passe `epuise` quand il n'y reste rien `a_lire`.
 
   - id: cnav_circulaire_2026_07
     url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2026_07_05032026.pdf

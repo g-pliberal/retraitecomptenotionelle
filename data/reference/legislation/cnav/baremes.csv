@@ -1,9 +1,8 @@
 # Registre de la base de législation de la Cnav : les barèmes
 # -----------------------------------------------------------
 # Action 175 de la feuille de route. La base, legislation.lassuranceretraite.fr,
-# se lit par son API (scripts/fetch/cnav_api.py) ; ce fichier et les trois
-# autres du dossier en portent chaque objet une fois, rangé par nom, avec son
-# sort.
+# se lit par son API (scripts/fetch/cnav_api.py) ; ce fichier et les autres du
+# dossier en portent chaque objet une fois, rangé par nom, avec son sort.
 #
 # Les colonnes nom, titre, theme et modifie_le sont écrites par
 # scripts/fetch/cnav_legislation.py, qui relit la base ; sort, renvoi et
@@ -255,7 +254,7 @@ revalorisation_coefficient_revalorisation_salaire_cotisation_04_2013_bar.aspx,Co
 revalorisation_coefficient_revalorisation_salaire_cotisation_07_2022_bar.aspx,Coefficients de revalorisation des salaires et cotisations - Retraite attribuée à compter du 01/07/2022,"Revalorisation > Salaires, revenus et cotisations",2023-05-31T08:11:00Z,a_lire,,
 revalorisation_coefficient_revalorisation_salaire_cotisation_10_2015_bar.aspx,Coefficients de revalorisation des salaires et cotisations - Retraite attribuée du 01/10/2015 au 30/09/2017,"Revalorisation > Salaires, revenus et cotisations",2023-05-31T07:57:00Z,branche,data/reference/legislation/revalorisation_salaires_anciennes.csv,scripts/fetch/cnav_revalorisation_salaires_anciennes.py
 revalorisation_coefficient_revalorisation_salaire_cotisation_10_2017_bar.aspx,Coefficients de revalorisation des salaires et cotisations - Retraite attribuée à compter du 01/10/2017,"Revalorisation > Salaires, revenus et cotisations",2023-05-31T08:03:00Z,a_lire,,
-revalorisation_coefficient_revalorisation_salaire_cotisation_bar.aspx,"Coefficients de revalorisation des salaires, revenus et cotisations","Revalorisation > Salaires, revenus et cotisations",2026-01-02T08:43:00Z,a_lire,,
+revalorisation_coefficient_revalorisation_salaire_cotisation_bar.aspx,"Coefficients de revalorisation des salaires, revenus et cotisations","Revalorisation > Salaires, revenus et cotisations",2026-01-02T08:43:00Z,branche,data/reference/legislation/revalorisation_salaires_anciennes.csv,scripts/fetch/cnav_revalorisation_salaires_anciennes.py
 salaire_plafond_mayotte_bar.aspx,Salaire plafond - Mayotte,Mayotte > Salaire plafond,2026-01-05T06:33:00Z,a_lire,,
 salaire_plafond_soumis_cotisation_bar.aspx,Salaire plafond soumis à cotisations,Plafond de sécurité sociale > Salaire plafond,2026-01-05T06:00:00Z,a_lire,,
 salaire_plafond_soumis_cotisation_selon_duree_activite_bar.aspx,Salaire plafond soumis à cotisations selon la durée de l'activité,Plafond de sécurité sociale > Salaire plafond,2026-01-05T06:01:00Z,a_lire,,
