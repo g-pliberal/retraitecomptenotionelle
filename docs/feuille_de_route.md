@@ -7264,7 +7264,9 @@ portail ne servait qu'une page de maintenance (« Le site est momentanément
 indisponible ») : par quoi commencer, vérifier qu'il répond de nouveau, avec
 l'en-tête des récupérateurs du dépôt et rien d'autre ; tant qu'il ne répond
 pas, l'action attend, et la session en prend une autre. Puis l'étape 1,
-l'inventaire, dont les autres dépendent. Pas encore de note.
+l'inventaire, dont les autres dépendent. Le propriétaire a admis une
+bibliothèque pour l'Excel 97, xlrd, qui entre avec le premier récupérateur qui
+la lit. Pas encore de note.
 
 **D'où elle vient.** Le 29 octobre 2026, à l'ouverture de l'action 175, sur la
 base de législation de la Cnav, le propriétaire : « toutes les circulaires, et
@@ -7318,9 +7320,15 @@ référents.
    ce qui se republie chaque année, les séries labellisées d'abord, pour que la
    lecture reste à jour.
 
-**Ce que le propriétaire tranche** : les classeurs au format Excel 97 (`.xls`),
-comme celui des nouveaux retraités, que la bibliothèque standard ne lit pas —
-une extraction à la main à chaque édition, comme le 19 octobre, ou une
-dépendance de plus, que `CLAUDE.md` exclut aujourd'hui (« PyYAML seul hors
-bibliothèque standard »). Les classeurs `.xlsx`, comme celui du stock, se
-lisent sans elle.
+**Ce que le propriétaire a tranché**, le 29 octobre 2026, pour les classeurs au
+format Excel 97 (`.xls`), comme celui des nouveaux retraités, que la
+bibliothèque standard ne lit pas : « Ajouter une bibliothèque », plutôt qu'une
+extraction à la main à chaque édition, comme le 19 octobre. Ce sera xlrd
+(2.0.2, juin 2025 ; licence BSD, pur Python, sans dépendance), qui ne lit que
+le `.xls` ; les classeurs `.xlsx`, comme celui du stock, se lisent sans lui. Il
+entre avec le premier récupérateur qui lit un `.xls`, et son test, dans le même
+commit que la ligne « Les dépendances » de `CLAUDE.md`, qui décrit le dépôt
+d'aujourd'hui : en dépendance optionnelle, que `pip install -e '.[dev]'`
+installe. Le hook d'ouverture et `tests.yml` lancent déjà cette commande : ni
+l'un ni l'autre, qui sont des gardes, n'a à changer. Le modèle et le site
+gardent PyYAML seul.
