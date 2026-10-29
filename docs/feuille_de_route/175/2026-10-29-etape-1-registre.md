@@ -96,11 +96,20 @@ textes que les références citent, et les fenêtres d'information. La seconde,
 contre les 25 routes que le script du site appelle, a trouvé les fenêtres que
 rien ne lie (216, servies par leurs trois collections), les avis de mise à
 jour, les documents joints, et les références que seule la recherche sert. Le
-propriétaire a tranché chaque fois pour l'exhaustivité. Ce qui reste hors du
-registre, et pourquoi : la zone libre de l'accueil (`/zone-libre`, la
-présentation du site), `/documents`, vide, les routes de navigation des menus,
-et les scripts de valeurs que chargent les pages jointes, qui font partie de
-leur page.
+propriétaire a tranché chaque fois pour l'exhaustivité. Une troisième passe, à
+son « Cherche encore », n'a plus rien trouvé dans la base : les onze pages de
+l'application sont celles que le registre couvre ; la recherche, menée par
+genre, sert 632 exposés, 386 barèmes et 194 listes, tous au registre ; aucune
+adresse du site, dans tout ce qui a été lu — pages jointes et références
+comprises —, ne mène à un objet qu'il n'a pas ; les 75 références que la base
+nomme sans les servir ne le sont sous aucune forme, ni en PDF sous `/Pdf/` ;
+deux images seulement portent un contenu, dans des fenêtres d'exemple ; le
+champ `imageRef` est vide partout. Ce qui reste hors du registre, et
+pourquoi : la zone libre de l'accueil (`/zone-libre`, la présentation du
+site), `/documents`, vide, les routes de navigation des menus, et les scripts
+de valeurs que chargent les pages jointes, qui font partie de leur page ; les
+textes d'autres sites que la base cite — 6 016 liens vers Légifrance, 166 vers
+le CLEISS —, que l'étape 4 lit dans l'objet qui les cite.
 
 **Ce que la lecture a trouvé.** La recherche est près d'être épuisée, sans
 preuve de l'être : les années et les mois servaient 6 131 références ;
