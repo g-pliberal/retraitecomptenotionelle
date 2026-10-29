@@ -3,11 +3,132 @@ id: cnavpl_majoration_duree_assurance
 intitule: >-
   Régime de base des professions libérales : majoration de durée d'assurance pour
   enfants de L. 351-4 pour les pensions prenant effet depuis le 1er avril 2010 (L.
-  643-1-1), étendue à L. 351-4-1 et L. 351-4-2 en 2023 ; surcote parentale de L.
-  351-1-2-1 pour les pensions prenant effet depuis le 1er septembre 2023 (I de L.
-  643-3).
+  643-1-1), étendue à celle de l'enfant handicapé (L. 351-4-1) le 11 novembre 2010, à
+  celle de l'aidant d'un adulte handicapé (L. 351-4-2) le 22 janvier 2014, et à la
+  majoration de pension de L. 351-12 pour les pensions prenant effet depuis le 1er
+  septembre 2023 ; surcote parentale pour les mêmes pensions (I de L. 643-3).
+domaine: enfants
 regimes: [cnavpl]
+etape: compter_les_durees
+face: droit
 etat: approchee
+lit:
+- la date d'effet de la pension, au mois
+- le sexe de l'assurée, ses enfants et leurs dates de naissance
+- >-
+  les régimes de base où elle a validé des trimestres, pour la priorité entre régimes
+  (fiche `priorite_majorations_enfants`)
+ecrit:
+- >-
+  les trimestres de majoration de durée d'assurance de chaque enfant, portés au régime de
+  base des libéraux quand la priorité le désigne (`majoration_pour_enfants`), que sa
+  durée d'assurance compte
+- >-
+  depuis le 1er septembre 2023, les trimestres de la surcote parentale
+  (`trimestres_de_surcote_parentale`)
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: avant_2010
+  statut: lue
+  textes:
+  - {id: LEGIARTI000021537910, article: "code de la sécurité sociale, L. 643-1-1", en_vigueur: 2009-12-28, publie_le: 2009-12-27}
+  nee_de: LEGIARTI000021537910
+  bornes:
+    liquidation.date_effet: [null, 2010-04-01]
+  contenu:
+    droit: >-
+      aucune majoration de durée d'assurance au régime de base des libéraux : L. 643-1-1,
+      qui la leur ouvre, ne vaut que pour « les pensions de retraite prenant effet à
+      compter du 1er avril 2010 » (loi n° 2009-1646, article 65, VIII)
+  exemples: aucun trouvé
+- id: l_351_4
+  statut: lue
+  textes:
+  - {id: LEGIARTI000021537910, article: "code de la sécurité sociale, L. 643-1-1", en_vigueur: 2009-12-28, publie_le: 2009-12-27}
+  nee_de: LEGIARTI000021537910
+  bornes:
+    liquidation.date_effet: [2010-04-01, 2010-11-11]
+  contenu:
+    droit: >-
+      « Les assurés du présent régime bénéficient des dispositions prévues à l'article
+      L. 351-4, adaptées en tant que de besoin par décret pour tenir compte des modalités
+      particulières de calcul de la pension de ce régime » (L. 643-1-1) : les trimestres
+      de maternité, d'adoption et d'éducation de chaque enfant, comme au régime général
+      (fiche `majoration_duree_assurance_enfants`)
+  exemples: aucun trouvé
+- id: l_351_4_a_351_4_2
+  statut: lue
+  textes:
+  - {id: LEGIARTI000023034968, article: "code de la sécurité sociale, L. 643-1-1", en_vigueur: 2010-11-11, publie_le: 2010-11-10}
+  - {id: LEGIARTI000028498913, article: "code de la sécurité sociale, L. 643-1-1", en_vigueur: 2014-01-22, publie_le: 2014-01-21}
+  - {id: LEGIARTI000025263095, article: "code de la sécurité sociale, D. 643-2, 5°", en_vigueur: 2012-03-01, publie_le: 2012-01-31}
+  - {id: LEGIARTI000039123748, article: "code de la sécurité sociale, D. 643-2, 5°", en_vigueur: 2019-11-01}
+  nee_de: LEGIARTI000023034968
+  bornes:
+    liquidation.date_effet: [2010-11-11, 2023-09-01]
+  contenu:
+    droit: >-
+      « Les assurés du présent régime bénéficient des dispositions prévues aux articles
+      L. 351-4 et L. 351-4-1 » (L. 643-1-1, rédaction de 2010), puis « aux articles
+      L. 351-4 à L. 351-4-2 » (rédaction de 2014), « applicable aux périodes de prise en
+      charge intervenues à compter du 1er février 2014 » (loi n° 2014-40, article 38, V)
+    conditions: >-
+      « Sont comptées comme périodes d'assurance dans le régime : [...] 5° Les périodes
+      attribuées par le présent régime au titre de la majoration de durée d'assurance pour
+      enfant mentionnée à l'article L. 643-1-1 » (D. 643-2, depuis le 1er mars 2012, mot
+      pour mot dans ses deux rédactions)
+  exemples: aucun trouvé
+- id: loi_de_2023
+  statut: lue
+  textes:
+  - {id: LEGIARTI000047453363, article: "code de la sécurité sociale, L. 643-1-1", en_vigueur: 2023-09-01, publie_le: 2023-04-15}
+  - {id: LEGIARTI000047453031, article: "code de la sécurité sociale, L. 643-3, I", en_vigueur: 2023-09-01, publie_le: 2023-04-15}
+  - {id: LEGIARTI000053280388, article: "code de la sécurité sociale, L. 643-3, I", en_vigueur: 2025-12-31}
+  - {id: LEGIARTI000039123748, article: "code de la sécurité sociale, D. 643-2, 5°", en_vigueur: 2019-11-01}
+  nee_de: LEGIARTI000047453363
+  bornes:
+    liquidation.date_effet: [2023-09-01, null]
+  contenu:
+    droit: >-
+      « Les assurés du présent régime bénéficient des dispositions prévues aux articles
+      L. 351-4 à L. 351-4-2 et L. 351-12 » (L. 643-1-1), pour « les pensions prenant
+      effet à compter du 1er septembre 2023 » (loi n° 2023-270, article 21, II) : la
+      majoration de pension de L. 351-12 est la fiche `majoration_enfants_liberaux_avocats`
+    conditions: >-
+      « Pour les assurés qui bénéficient d'au moins un trimestre de majoration de durée
+      d'assurance au titre des articles L. 351-4, L. 351-4-1 ou L. 351-5, la durée
+      d'assurance ayant donné lieu à cotisations à la charge de l'assuré, accomplie
+      l'année précédant l'âge mentionné à l'article L. 161-17-2, lorsque celui-ci est égal
+      ou supérieur à soixante-trois ans, et au delà de la limite mentionnée au deuxième
+      alinéa de l'article L. 351-1 ouvre droit à une majoration de pension » (I de L. 643-3,
+      mot pour mot dans ses deux rédactions, celle de 2025 ne changeant que le II) : la
+      surcote parentale (fiche `surcote_parentale`)
+  exemples: aucun trouvé
+approximations:
+- version: avant_2010
+  ecart: >-
+    les périodes de la CNAVPL déclarent `mda` à l'année, depuis celle de 2010 : une
+    pension qui prend effet de janvier à mars 2010 reçoit les trimestres que L. 643-1-1
+    ne donne qu'à compter du 1er avril
+  effet: >-
+    seize trimestres de plus pour une libérale née en 1949, mère de deux enfants, partie
+    en février 2010 (164 au lieu de 148), et une pension de base de 8 258 € au lieu de
+    6 239 €, 32 % de plus : un coefficient de surcote de 1,0225 au lieu d'une décote de
+    0,7725
+- version: [l_351_4_a_351_4_2, loi_de_2023]
+  ecart: >-
+    la majoration de l'enfant handicapé (L. 351-4-1) et celle de l'aidant d'un adulte
+    handicapé (L. 351-4-2) ne sont pas servies : la carrière ne saisit ni le handicap
+    d'un enfant ni la prise en charge d'un adulte
+  effet: non mesuré
+- version: loi_de_2023
+  ecart: >-
+    les périodes de la CNAVPL ne déclarent la surcote parentale qu'à compter de 2024,
+    quand elle vaut pour les pensions qui prennent effet depuis le 1er septembre 2023
+  effet: >-
+    nul : aucune pension de 2023 n'a d'âge de L. 161-17-2 égal ou supérieur à
+    soixante-trois ans
 effet: >-
   La fiche les disait non portés, et le moteur ne cherchait la majoration de durée
   que dans les régimes en annuités : une libérale qui n'avait cotisé qu'à sa section
@@ -15,15 +136,25 @@ effet: >-
   le 23 septembre 2026, `mda` sur les périodes de la CNAVPL depuis 2010, lu dans
   toute fiche qui le porte — les bonifications restant aux annuités —, et `surcote_parentale`
   depuis 2024 ; tenu par tests/test_sections_liberales.py et le témoin `enfants_liberale`.
-  Approximation : la maille est l'année, les pensions d'avril à décembre 2010 et
-  de septembre à décembre 2023 en sont privées.
+  Approximation : la maille est l'année. Lue au droit le 29 octobre 2026, elle ne prive
+  pas les pensions d'avril à décembre 2010, comme elle le disait : elle donne la
+  majoration à celles de janvier à mars, que le texte en exclut.
 sources:
-  lu_le: 2026-09-23
+  lu_le: 2026-10-29
   prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Les cent points par trimestre d'accouchement de D. 643-1, que le modèle ne sait
-    pas dater faute de la date de naissance des enfants.
+    Les cent points du trimestre civil d'un accouchement (L. 643-1, troisième alinéa ;
+    D. 643-1 : depuis 2004, sans porter les points de l'année au-delà de 550 depuis le 1er
+    mars 2012, de 582 depuis 2025), que le modèle ne sert pas quoiqu'il connaisse
+    désormais les naissances : aucune fiche ne les porte.
+  - >-
+    Couper les périodes de la CNAVPL au 1er avril 2010 et au 1er septembre 2023 par leur
+    `date_effet`, qui ôterait les deux décalages de la maille annuelle ; à mener avec la
+    fiche de la surcote, que R. 643-8 change à la même date (« Conformément au II de
+    l'article 7 du décret n° 2023-799 [...] aux pensions prenant effet à compter du 1er
+    septembre 2023 ») et que la période de 2024 porte de 0,75 % à 1,25 %, et avec la
+    majoration de L. 351-12 (fiche `majoration_enfants_liberaux_avocats`).
   lectures:
   - type: legifrance
     reference: >-
@@ -37,12 +168,32 @@ sources:
       », qui la décrit pour « les générations nées à partir du 1er avril 1965 ».
     url: https://www.cnavpl.fr/comprendre-sa-retraite/
     date: 2026-09-23
-textes_a_rattacher:
-- reference: >-
-    loi n° 2009-1646 du 24 décembre 2009, article 65, VIII : L. 643-1-1 CSS (LEGIARTI000021537910)
-- reference: >-
-    loi n° 2023-270 du 14 avril 2023 : L. 643-1-1 CSS (LEGIARTI000047453363) et
-    I de L. 643-3 CSS (LEGIARTI000047453031)
+  - type: legifrance
+    reference: >-
+      L. 643-1-1 dans ses quatre rédactions — L. 351-4 en 2009, L. 351-4 et L. 351-4-1 le
+      11 novembre 2010, L. 351-4 à L. 351-4-2 le 22 janvier 2014, et L. 351-12 le 1er
+      septembre 2023 —, L. 643-3 de 2023 et de 2025, et ses six autres pour ce qu'elles
+      disent des enfants, D. 643-2 depuis 2004, dans l'index LEGI du dépôt à jour de
+      l'incrément du 28 octobre 2026 ; le décret n° 2012-138, articles 3 et 4, au Journal
+      officiel du 31 janvier 2012 par l'index JORF du dépôt
+    date: 2026-10-29
+  - type: autre
+    reference: >-
+      CNAVPL, « Comprendre sa retraite », relue : « Trimestres pour enfants », quatre
+      trimestres de maternité, d'adoption et d'éducation par enfant ; « Une augmentation
+      de 10 % de la pension est accordée aux parents d'au moins 3 enfants. Cette
+      majoration de pension concerne les pensions prenant effet à partir du 1er septembre
+      2023 » (copie datée,
+      sha256:95559a0897456b5bc23a3948c92a848bb9e49ec9408f3e00913be574c690c925)
+    url: https://www.cnavpl.fr/comprendre-sa-retraite/
+    date: 2026-10-29
+historique:
+- >-
+  2026-10-29 — lue au droit (action 130) : quatre versions sur la date d'effet — rien avant
+  le 1er avril 2010 ; L. 351-4 ; L. 351-4 à L. 351-4-2 à compter du 11 novembre 2010 ;
+  L. 351-12 et la surcote parentale pour les pensions depuis le 1er septembre 2023. La
+  fiche se trompait de date pour L. 351-4-1 et L. 351-4-2, qu'elle disait de 2023, et de
+  sens pour la maille annuelle de 2010.
 reformes:
 - cnavpl_mda_2010
 - majoration_enfants_liberaux_2023

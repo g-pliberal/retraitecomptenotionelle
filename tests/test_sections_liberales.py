@@ -247,6 +247,55 @@ def test_les_points_des_exemples_de_la_cnavpl(simulateur, revenu, points):
         points, abs=0.05)
 
 
+def test_chaque_annee_de_la_cnavpl_porte_les_points_de_sa_version(simulateur):
+    """`points_au_prorata_des_cotisations`, lue au droit le 29 octobre 2026
+    (action 130) : la cotisation au plafond de chaque tranche de D. 642-3 ouvre
+    les points de D. 643-1 — 450 et 100 points de 2004 à 2014, sur 85 % du
+    plafond puis jusqu'à cinq plafonds ; 525 et 25 de 2015 à 2024, sur un
+    plafond et sur cinq ; 557 et 25 depuis 2025 — et, avant 2004, chaque
+    trimestre validé cent points (loi n° 2003-775, article 96, II). Chaque
+    année de revenu qu'une version couvre a, dans `regimes/cnavpl.yaml`, les
+    périodes qui portent ce qu'elle lit."""
+    from retraite_notionnelle.noyau import carte
+
+    regime = simulateur.catalogue["cnavpl"]
+    versions = carte.fiches()["points_au_prorata_des_cotisations"].get("versions") or []
+    assert versions
+    for version in versions:
+        lus = version["contenu"]["parametres"]
+        debut, fin = version["bornes"]["revenu.annee"]
+        for annee in range(debut.year if debut else regime.creation,
+                           fin.year if fin else 2041):
+            periodes = regime.periodes_actives(annee)
+            if "points_par_trimestre_valide" in lus:
+                assert [p.points_par_trimestre_valide for p in periodes] == [
+                    lus["points_par_trimestre_valide"]], (version["id"], annee)
+                continue
+            assert [p.points_maximum for p in periodes] == lus["points_au_plafond"], annee
+            assert [list(p.bornes_assiette_en_pass()) for p in periodes] == lus[
+                "tranches_en_plafonds"], annee
+            assert all(p.points_au_prorata_des_cotisations for p in periodes), annee
+
+
+def test_les_valeurs_que_d_643_1_ecrit_sont_celles_du_modele(simulateur):
+    """`cnavpl_valeur_service`, lue au droit le 29 octobre 2026 (action 130) :
+    D. 643-1 écrit la valeur de service lui-même, « 0,484 Euros » en 2004,
+    « 0,493 euros pour les prestations servies au titre de l'année 2005 »,
+    avant que L. 643-1 ne la fasse revaloriser comme les pensions ; la version
+    qui les lit et `regimes/valeurs_point.csv` disent les mêmes."""
+    from retraite_notionnelle.noyau import carte
+
+    lues = {}
+    for version in carte.fiches()["cnavpl_valeur_service"].get("versions") or []:
+        parametres = version["contenu"].get("parametres")
+        if isinstance(parametres, dict):
+            lues.update(parametres.get("valeurs_de_service", {}))
+    assert lues == {2004: 0.484, 2005: 0.493}
+    for annee, valeur in lues.items():
+        assert simulateur.scenario_actuel.valeurs_point.service("cnavpl", annee)[0] == (
+            pytest.approx(valeur))
+
+
 @pytest.mark.parametrize("annee", [2023, 2024, 2025, 2026])
 def test_l_assiette_minimale_valide_trois_trimestres(simulateur, annee):
     """450 SMIC horaires font trois seuils de 150 : la virgule flottante en

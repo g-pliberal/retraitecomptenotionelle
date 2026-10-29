@@ -251,6 +251,8 @@ def test_les_fiches_ecrites_par_lots_ont_leur_code_et_leurs_regimes(fiches):
 #: lecture lui a donné.
 LUES_AU_DROIT = frozenset("""
     rafp_assiette_plafond rafp_beneficiaires
+    cnavpl_majoration_duree_assurance cnavpl_valeur_service
+    points_au_prorata_des_cotisations
 """.split())
 
 

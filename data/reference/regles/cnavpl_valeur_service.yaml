@@ -1,23 +1,194 @@
 schema_version: 1
 id: cnavpl_valeur_service
 intitule: >-
-  Valeur de service du point du régime de base des professions libérales, fixée
-  par la caisse et revalorisée comme les pensions du régime général : 0,484 € en
-  2004, 0,6599 € au 1er janvier 2026, deux valeurs en 2022 (0,5795 € au 1er janvier,
-  0,6027 € au 1er juillet).
+  La pension de base des professions libérales est, depuis 2004, le produit de ses
+  points par la valeur de service du point, que D. 643-1 fixe à 0,484 € en 2004 et à
+  0,493 € pour 2005, revalorisée de 2006 à 2008 au moins comme les pensions du régime
+  général (décret n° 2005-1004), et que L. 643-1 fait revaloriser comme elles depuis
+  le 19 décembre 2008 : au 1er avril, puis au 1er octobre, au 1er janvier depuis 2019,
+  et de 4 % au 1er juillet 2022 — 0,6599 € au 1er janvier 2026 ; avant 2004, une
+  allocation, en soixantièmes de l'allocation aux vieux travailleurs salariés, dont les
+  droits liquidés sont devenus des points.
+domaine: points
 regimes: [cnavpl]
-etat: transcrite
+etape: liquider_chaque_regime
+face: droit
+etat: approchee
+lit:
+- la date d'effet de la pension, au mois
+- >-
+  la valeur de service au 31 décembre de chaque année depuis 2004
+  (`regimes/valeurs_point.csv`)
+- >-
+  avant 2004, la valeur de 2004 ramenée par les prix ; après la dernière publiée, cette
+  dernière prolongée par les prix de l'année précédente
+ecrit:
+- la valeur de service qui sert les points de la CNAVPL à la liquidation
+dates_qui_decident:
+- liquidation.date_effet
+versions:
+- id: avant_la_codification
+  statut: supposee
+  hypothese: >-
+    non lue : les textes du régime d'allocation de 1948 à 1985 n'existent qu'au
+    fac-similé du Journal officiel, dont l'index ne garde que l'analyse — « Égale après 15
+    ans d'assurance à l'allocation aux vieux travailleurs salariés, elle est désormais
+    égale pour des durées d'assurance inférieures ou supérieures à autant de 60e de
+    l'allocation aux vieux travailleurs salariés que de trimestres d'assurance » (décret
+    n° 83-677) ; le modèle y sert, comme après 1985, les points convertis en 2004 à la
+    valeur de 2004 ramenée par les prix
+  fiabilite: faible
+  textes:
+  - {id: JORFTEXT000000312716, reference: "loi n° 48-101 du 17 janvier 1948 instituant une allocation de vieillesse pour les personnes non salariées, analyse du JORF", publie_le: 1948-01-18}
+  - {id: JORFTEXT000000300180, reference: "décret n° 49-456 du 30 mars 1949, règlement d'administration publique du régime d'allocation vieillesse des non-salariés, analyse du JORF", publie_le: 1949-04-02}
+  - {id: JORFTEXT000000850073, reference: "décret n° 62-439 du 14 avril 1962, analyse du JORF", publie_le: 1962-04-15}
+  - {id: JORFTEXT000000686565, reference: "décret n° 83-677 du 18 juillet 1983 relatif au régime d'allocation de vieillesse des professions libérales, analyse du JORF", publie_le: 1983-07-27}
+  - {id: JORFTEXT000000700805, reference: "décret n° 84-1112 du 7 décembre 1984, analyse du JORF", publie_le: 1984-12-13}
+  bornes:
+    liquidation.date_effet: [null, 1985-12-21]
+  contenu:
+    droit: >-
+      non lu ; l'allocation, servie depuis le 1er janvier 1949, est égale à l'allocation
+      aux vieux travailleurs salariés après quinze ans d'assurance jusqu'au décret
+      n° 83-677, puis à autant de soixantièmes de cette allocation que de trimestres
+      d'assurance (analyses du JORF)
+  exemples: aucun trouvé
+- id: soixantiemes_de_l_allocation
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006743784, article: "code de la sécurité sociale, L. 643-1", en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006751837, article: "code de la sécurité sociale, R. 643-10", en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006751839, article: "code de la sécurité sociale, R. 643-11", en_vigueur: 1985-12-21}
+  - {id: LEGIARTI000006758645, article: "loi n° 2003-775, article 96, II", en_vigueur: 2004-01-01, publie_le: 2003-08-22}
+  - {id: LEGIARTI000006758646, article: "loi n° 2003-775, article 96, II", en_vigueur: 2003-12-19}
+  nee_de: LEGIARTI000006743784
+  bornes:
+    liquidation.date_effet: [1985-12-21, 2004-01-01]
+  contenu:
+    droit: >-
+      « L'allocation de vieillesse du régime des professions libérales est liquidée et
+      calculée en fonction du montant de l'allocation aux vieux travailleurs salariés [...]
+      compte tenu de la durée d'assurance de l'assuré ou périodes assimilées dans la
+      limite d'un maximum » (L. 643-1) : « autant de soixantièmes du montant de
+      l'allocation aux vieux travailleurs salariés [...] que l'assuré justifie de
+      trimestres d'assurance » jusqu'à quinze années, puis « un soixantième [...] par
+      trimestre d'assurance accompli au-delà du soixantième [...], dans la limite de
+      quatre-vingt-dix soixantièmes » (R. 643-10) ; l'allocation entière à qui a quinze
+      années d'assurance et d'exercice antérieur à l'obligation de cotiser (R. 643-11)
+    conditions: >-
+      « Les droits liquidés au titre du régime de base des professions libérales jusqu'au
+      31 décembre 2003 sont transformés en points [...], au prorata de leur montant
+      monétaire à la même date », un soixantième de l'allocation valant cent points (loi
+      n° 2003-775, article 96, II, mot pour mot dans ses deux rédactions) : servis depuis à
+      la valeur de service
+  exemples: aucun trouvé
+- id: valeur_fixee_par_decret
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006743785, article: "code de la sécurité sociale, L. 643-1", en_vigueur: 2004-01-01, publie_le: 2003-08-22}
+  - {id: LEGIARTI000006738137, article: "code de la sécurité sociale, D. 643-1, dernier alinéa", en_vigueur: 2004-01-01, publie_le: 2004-05-29}
+  - {id: LEGIARTI000006738138, article: "code de la sécurité sociale, D. 643-1, dernier alinéa", en_vigueur: 2005-08-24, publie_le: 2005-08-24}
+  - {id: LEGIARTI000006244142, article: "décret n° 2005-1004 du 22 août 2005, article 4", en_vigueur: 2005-08-24, publie_le: 2005-08-24}
+  nee_de: LEGIARTI000006743785
+  bornes:
+    liquidation.date_effet: [2004-01-01, 2008-12-19]
+  contenu:
+    parametres:
+      valeurs_de_service: {2004: 0.484, 2005: 0.493}
+    droit: >-
+      « Le montant de la pension servie par le régime d'assurance vieillesse de base des
+      professions libérales est obtenu par le produit du nombre total de points porté au
+      compte de l'intéressé par la valeur de service du point. La valeur de service du
+      point est fixée par décret, après avis de la Caisse nationale d'assurance vieillesse
+      des professions libérales, en fonction de l'équilibre des produits et des charges du
+      régime » (L. 643-1) ; « La valeur de service du point est égale à 0,484 Euros »
+      (D. 643-1, rédaction de 2004), puis « à 0,493 euros pour les prestations servies au
+      titre de l'année 2005 » (rédaction de 2005) ; « Pour les années 2006, 2007 et 2008,
+      la valeur de service du point [...] est revalorisée d'un coefficient qui ne peut être
+      inférieur à celui prévu à l'article L. 161-23-1 [...] pour les pensions de vieillesse
+      du régime général » (décret n° 2005-1004, article 4)
+    conditions: >-
+      la caisse date chaque valeur : 0,484 € au 1er janvier 2004, 0,493 € au 1er janvier
+      2005, 0,502 € en 2006, 0,512 € en 2007, 0,518 € au 1er janvier 2008, 0,522 € au 1er
+      septembre 2008 (« Valeur de service du point depuis 2004 »)
+  exemples: aucun trouvé
+- id: revalorisee_comme_les_pensions
+  statut: lue
+  textes:
+  - {id: LEGIARTI000019959482, article: "code de la sécurité sociale, L. 643-1", en_vigueur: 2008-12-19, publie_le: 2008-12-18}
+  - {id: LEGIARTI000021537907, article: "code de la sécurité sociale, L. 643-1", en_vigueur: 2009-12-28}
+  - {id: LEGIARTI000019959486, article: "code de la sécurité sociale, L. 161-23-1", en_vigueur: 2008-12-19}
+  - {id: LEGIARTI000023025187, article: "code de la sécurité sociale, L. 161-23-1", en_vigueur: 2010-11-11}
+  - {id: LEGIARTI000028498366, article: "code de la sécurité sociale, L. 161-23-1", en_vigueur: 2014-01-22}
+  - {id: LEGIARTI000031688460, article: "code de la sécurité sociale, L. 161-23-1", en_vigueur: 2015-12-23}
+  - {id: LEGIARTI000036393194, article: "code de la sécurité sociale, L. 161-23-1", en_vigueur: 2018-01-01}
+  - {id: LEGIARTI000051289722, article: "code de la sécurité sociale, L. 161-23-1", en_vigueur: 2026-01-01}
+  - {id: LEGIARTI000046188473, article: "loi n° 2022-1158 du 16 août 2022, article 9, I", en_vigueur: 2022-08-18}
+  nee_de: LEGIARTI000019959482
+  bornes:
+    liquidation.date_effet: [2008-12-19, null]
+  contenu:
+    parametres: regimes/valeurs_point.csv, lignes cnavpl
+    droit: >-
+      « La valeur de service du point est revalorisée dans les conditions prévues à
+      l'article L. 161-23-1 » (L. 643-1, mot pour mot dans ses deux rédactions) : par le
+      coefficient des pensions du régime général, fixé « au 1er avril de chaque année »
+      jusqu'au 21 janvier 2014, « au 1er octobre » ensuite, « au 1er janvier » depuis le
+      1er janvier 2018 (L. 161-23-1) ; et « le 1er juillet 2022, par application d'un
+      coefficient égal à 1,04 » (loi n° 2022-1158, article 9)
+    conditions: >-
+      la caisse date chaque valeur : 0,5272 € au 1er avril 2009, puis chaque 1er avril
+      jusqu'à 0,5620 € en 2013, chaque 1er octobre de 2014 à 2017 (0,5672 €), chaque 1er
+      janvier depuis 2019 (0,5690 €), 0,5795 € au 1er janvier 2022 et 0,6027 € au 1er
+      juillet, 0,6599 € au 1er janvier 2026 ; la pension se liquide à la valeur en
+      vigueur à sa date d'effet
+  exemples: aucun trouvé
+approximations:
+- version: avant_la_codification
+  ecart: >-
+    le droit n'est pas lu, et le modèle y sert les points convertis en 2004 à la valeur
+    de 2004 ramenée par les prix, comme après la codification
+  effet: non mesuré
+- version: soixantiemes_de_l_allocation
+  ecart: >-
+    le modèle sert cent points par trimestre à la valeur de 2004, 0,484 €, ramenée par
+    les prix à l'année de la liquidation ; le texte, un soixantième de l'allocation aux
+    vieux travailleurs salariés de l'année par trimestre
+  effet: >-
+    la valeur du point en deçà d'un soixantième de cette allocation pour cent points : de
+    1,7 % en 1985, de 0,8 % en 1990, à 0,2 % près depuis 1995
+    (`legislation/minimum_vieillesse_avant_2007.csv`)
+- version: [valeur_fixee_par_decret, revalorisee_comme_les_pensions]
+  ecart: >-
+    le modèle liquide à la valeur du 31 décembre de l'année de la date d'effet
+    (`regimes/valeurs_point.csv`), que `regimes/valeurs_service_datees.csv` ne date pas :
+    une pension qui prend effet avant le relèvement de son année reçoit d'avance la
+    valeur relevée
+  effet: >-
+    jusqu'au relèvement suivant, une valeur trop haute de 0,8 % de janvier à août 2008 ;
+    de janvier à mars, de 1,0 % en 2009, 0,9 % en 2010, 2,1 % en 2011 et en 2012, 1,3 %
+    en 2013 ; de janvier à septembre, de 0,1 % en 2015 et 0,8 % en 2017 ; de 4,0 % de
+    janvier à juin 2022 ; exacte sinon
 effet: >-
   Le dépôt ne lisait la valeur que dans les recueils, depuis 2021, et ramenait celle
   de 2021 vers le passé par les prix : les pensions de base liquidées de 1989 à
   2019 en sortaient trop basses de 1,4 à 5 %. La série est certifiée de 2004 à 2026
   par `scripts/fetch/cnavpl_valeur_service.py` et `verifier_donnees.py`, à la valeur
-  en vigueur au 31 décembre.
+  en vigueur au 31 décembre. Approchée depuis le 29 octobre 2026 : le modèle ne date
+  pas la valeur au jour de son relèvement, et sert les liquidations d'avant 2004 à la
+  valeur de 2004 ramenée par les prix.
 sources:
-  lu_le: 2026-09-23
+  lu_le: 2026-10-29
   prochaine_relecture: 2027-01-31
   a_relire:
-  - Rien d'autre que la valeur de 2027, quand la caisse l'aura publiée.
+  - >-
+    La valeur de 2027, quand la caisse l'aura publiée ; et les valeurs datées de la
+    caisse, qu'une ligne de `regimes/valeurs_service_datees.csv` servirait à la date
+    d'effet, comme celles de l'Agirc-Arrco.
+  - >-
+    Les textes du régime d'allocation de 1948 à 1985 — loi n° 48-101, décret n° 49-456 et
+    ses modifications, décret n° 62-439, décret n° 83-677, décret n° 84-1112 — n'existent
+    qu'au fac-similé du Journal officiel : signalés au propriétaire le 29 octobre 2026.
   lectures:
   - type: legifrance
     reference: >-
@@ -31,10 +202,33 @@ sources:
       recueils statistiques 2021 à 2025.
     url: https://www.cnavpl.fr/preparer-sa-retraite/
     date: 2026-09-23
-textes_a_rattacher:
-- reference: >-
-    D. 643-1 CSS dans ses rédactions de 2004 et 2005 (LEGIARTI000006738137, LEGIARTI000006738138)
-- reference: L. 161-23-1 CSS pour la revalorisation
+  - type: legifrance
+    reference: >-
+      L. 643-1, ses quatre rédactions, R. 643-10 et R. 643-11 de 1985, L. 161-23-1, ses sept
+      rédactions, l'article 4 du décret n° 2005-1004, l'article 96 de la loi n° 2003-775 et
+      l'article 9 de la loi n° 2022-1158, dans l'index LEGI du dépôt à jour de l'incrément
+      du 28 octobre 2026 ; au Journal officiel par l'index JORF du dépôt, l'article 90 de la
+      loi n° 2003-775 (L. 643-1, 2004), l'article 2 du décret n° 2004-461 (D. 643-1, 2004),
+      l'article 79 de la loi n° 2008-1330 (L. 643-1, 2008), et les seules analyses des
+      textes d'avant 1985
+    date: 2026-10-29
+  - type: autre
+    reference: >-
+      CNAVPL, « Valeur de service du point depuis 2004 », relue par
+      `scripts/fetch/cnavpl_valeur_service.py` : vingt-quatre valeurs datées, de 0,4840 € au
+      1er janvier 2004 à 0,6599 € au 1er janvier 2026, dont 0,5180 € au 1er janvier et
+      0,5220 € au 1er septembre 2008, et aucune en 2018 ; « Comprendre sa retraite » : « La
+      valeur du point est de 0,6599 € à compter du 1er janvier 2026 »
+    url: https://www.cnavpl.fr/preparer-sa-retraite/
+    date: 2026-10-29
+historique:
+- >-
+  2026-10-29 — lue au droit (action 130) : quatre versions sur la date d'effet — avant la
+  codification de 1985, que seuls les fac-similés portent ; l'allocation en soixantièmes
+  de l'allocation aux vieux travailleurs salariés ; la valeur fixée par décret de 2004 à
+  2008 ; la valeur revalorisée comme les pensions depuis le 19 décembre 2008. Approchée :
+  la valeur du 31 décembre sert toute l'année, et le point de 2004, ramené par les prix,
+  les liquidations d'avant.
 code:
   moteur: >-
     `ValeursPoint.service` lit dans `regimes/valeurs_point.csv` la valeur de service de
@@ -52,7 +246,8 @@ code:
     moteur/js/regimes.js : ValeursPoint.service, ValeursPoint.serviceAu,
     ValeursPoint.indiceConvenu ; moteur/js/droit/liquider.js : valeurDuPoint
   parametres: >-
-    regimes/valeurs_point.csv : cnavpl, valeur_service
+    contenu.parametres de chaque version : valeurs_de_service ; regimes/valeurs_point.csv
+    : cnavpl, valeur_service
   tests:
   - tests/test_sections_liberales.py
   - >-

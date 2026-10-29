@@ -1,24 +1,231 @@
 schema_version: 1
 id: points_au_prorata_des_cotisations
 intitule: >-
-  Au régime de base des professions libérales, les points se comptent « au prorata des
-  cotisations acquittées » : la cotisation annuelle au plafond en ouvre 525 (557 depuis
-  2025), celle de la seconde tranche 25, et une année d'affiliation incomplète, dont le
-  plafond est réduit à ses mois, n'en a que la part de sa cotisation (D. 643-1 depuis
-  2004).
+  Au régime de base des professions libérales, les points se comptent, depuis 2004, « au
+  prorata des cotisations acquittées » sur chaque tranche : la cotisation annuelle au
+  plafond de la première en ouvre 450 jusqu'en 2014, 525 de 2015 à 2024, 557 depuis
+  2025, celle de la seconde 100 puis 25 (D. 643-1), et une année d'affiliation
+  incomplète, dont les plafonds sont réduits au prorata de ses trimestres d'affiliation
+  (D. 642-3, jusqu'en 2020), puis de sa durée d'affiliation (R. 613-17, depuis 2019),
+  n'en a que la part de sa cotisation ; avant 2004, les droits acquis sont transformés
+  en points, cent pour un soixantième de l'allocation aux vieux travailleurs salariés.
+domaine: points
 regimes: [cnavpl]
-etat: transcrite
 etape: acquerir_les_droits
+face: droit
+etat: approchee
+lit:
+- >-
+  le revenu de chaque année d'activité libérale affiliée à la CNAVPL depuis 2004, et la
+  part de l'année que sa ligne couvre, au mois
+- le plafond annuel de la sécurité sociale de l'année
+- avant 2004, les trimestres que chaque année d'affiliation valide
+ecrit:
+- >-
+  les points de l'année, tranche par tranche, portés au compte du régime de base des
+  libéraux (`acquerir`) ; avant 2004, cent points par trimestre validé
+dates_qui_decident:
+- revenu.annee
+versions:
+- id: avant_2004
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006758645, article: "loi n° 2003-775, article 96, II", en_vigueur: 2004-01-01, publie_le: 2003-08-22}
+  - {id: LEGIARTI000006758646, article: "loi n° 2003-775, article 96, II", en_vigueur: 2003-12-19}
+  - {id: LEGIARTI000006751837, article: "code de la sécurité sociale, R. 643-10", en_vigueur: 1985-12-21}
+  nee_de: LEGIARTI000006758645
+  bornes:
+    revenu.annee: [null, 2004-01-01]
+  contenu:
+    parametres:
+      points_par_trimestre_valide: 100
+    droit: >-
+      aucun point au prorata de la cotisation : le régime servait une allocation, « autant
+      de soixantièmes du montant de l'allocation aux vieux travailleurs salariés [...] que
+      l'assuré justifie de trimestres d'assurance » jusqu'à quinze années, « majoré d'un
+      soixantième [...] par trimestre d'assurance accompli au-delà du soixantième [...],
+      dans la limite de quatre-vingt-dix soixantièmes » (R. 643-10, rédaction de 1985) ; le
+      1er janvier 2004, « les droits acquis par les personnes affiliées au régime de base
+      des professions libérales sont transformés en points. Pour le calcul de ces droits,
+      un soixantième de l'allocation visée à l'article L. 811-1 du code de la sécurité
+      sociale vaut 100 points » (loi n° 2003-775, article 96, II, mot pour mot dans ses deux
+      rédactions)
+    conditions: >-
+      la caisse en fait cent points par trimestre : « Les trimestres validés avant le 1er
+      janvier 2004 ont été convertis en points à raison de 100 points par trimestre »
+      (CNAVPL, « Comprendre sa retraite »)
+  exemples: aucun trouvé
+- id: points_de_2004
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006738137, article: "code de la sécurité sociale, D. 643-1", en_vigueur: 2004-01-01, publie_le: 2004-05-29}
+  - {id: LEGIARTI000006738138, article: "code de la sécurité sociale, D. 643-1", en_vigueur: 2005-08-24, publie_le: 2005-08-24}
+  - {id: LEGIARTI000023380432, article: "code de la sécurité sociale, D. 643-1", en_vigueur: 2010-12-31, publie_le: 2010-12-30}
+  - {id: LEGIARTI000025263086, article: "code de la sécurité sociale, D. 643-1", en_vigueur: 2012-03-01, publie_le: 2012-01-31}
+  - {id: LEGIARTI000006738115, article: "code de la sécurité sociale, D. 642-3, 1° et 2°", en_vigueur: 2004-01-01, publie_le: 2004-05-29}
+  - {id: LEGIARTI000006738116, article: "code de la sécurité sociale, D. 642-3, 1° et 2°", en_vigueur: 2007-04-21}
+  - {id: LEGIARTI000025629886, article: "code de la sécurité sociale, D. 642-3, 1° et 2°", en_vigueur: 2012-04-05}
+  - {id: LEGIARTI000026140019, article: "code de la sécurité sociale, D. 642-3, 1° et 2°", en_vigueur: 2012-07-04}
+  - {id: LEGIARTI000026704782, article: "code de la sécurité sociale, D. 642-3, 1° et 2°", en_vigueur: 2013-01-01}
+  - {id: LEGIARTI000006743771, article: "code de la sécurité sociale, L. 642-1", en_vigueur: 2004-01-01, publie_le: 2003-08-22}
+  - {id: LEGIARTI000025013900, article: "code de la sécurité sociale, L. 642-1", en_vigueur: 2011-12-23}
+  - {id: LEGIARTI000006751822, article: "code de la sécurité sociale, R. 643-1", en_vigueur: 1985-12-21}
+  nee_de: LEGIARTI000006738137
+  bornes:
+    revenu.annee: [2004-01-01, 2015-01-01]
+  contenu:
+    parametres:
+      points_au_plafond: [450, 100]
+      tranches_en_plafonds: [[0, 0.85], [0.85, 5]]
+    droit: >-
+      « Le versement de la cotisation annuelle correspondant au plafond de revenu fixé au
+      1° de l'article D. 642-3 ouvre droit à l'attribution de 450 points de retraite. Le
+      versement de la cotisation annuelle correspondant au plafond de la tranche des
+      revenus définie au 2° de l'article D. 642-3 ouvre droit à l'attribution de 100
+      points de retraite. Le nombre de points acquis est calculé au prorata des
+      cotisations acquittées sur chacune des tranches de revenus définies à l'article
+      D. 642-3, arrondi à la décimale la plus proche » (D. 643-1, mot pour mot dans ses
+      quatre rédactions) ; la première tranche est « la part de ces revenus n'excédant pas
+      85 % du plafond annuel », la seconde « la part de ces revenus excédant le seuil fixé
+      au 1°, dans la limite de cinq fois le plafond annuel » (D. 642-3, dans ses cinq
+      rédactions) ; « La cotisation afférente à chaque tranche ouvre droit à
+      l'acquisition d'un nombre de points déterminé par décret » (L. 642-1)
+    conditions: >-
+      « En cas de période d'affiliation inférieure à une année, les plafonds prévus aux 1°
+      et 2° ci-dessus sont réduits au prorata des trimestres d'affiliation » (D. 642-3) :
+      l'année incomplète a les points de sa cotisation rapportée à celle d'une année au
+      plafond ; l'immatriculation et la radiation prennent effet « le premier jour du
+      trimestre civil suivant le début ou la fin de l'activité professionnelle » (R. 643-1)
+      ; « Le versement de cotisations effectué en application de l'article
+      L. 643-2-1 n'ouvre pas droit à l'attribution de points de retraite supplémentaires »
+      (D. 643-1, depuis le 31 décembre 2010)
+  exemples: aucun trouvé
+- id: points_de_2015
+  statut: lue
+  textes:
+  - {id: LEGIARTI000029825121, article: "code de la sécurité sociale, D. 643-1", en_vigueur: 2015-01-01, publie_le: 2014-11-29}
+  - {id: LEGIARTI000029825130, article: "code de la sécurité sociale, D. 642-3, 1° et 2°", en_vigueur: 2015-01-01, publie_le: 2014-11-29}
+  - {id: LEGIARTI000030034616, article: "code de la sécurité sociale, D. 642-3, 1° et 2°", en_vigueur: 2015-01-01}
+  - {id: LEGIARTI000030818722, article: "code de la sécurité sociale, D. 642-3, 1° et 2°", en_vigueur: 2015-07-01}
+  - {id: LEGIARTI000030910750, article: "code de la sécurité sociale, D. 642-3, 1° et 2°", en_vigueur: 2015-07-19}
+  - {id: LEGIARTI000034624570, article: "code de la sécurité sociale, D. 642-3, 1° et 2°", en_vigueur: 2017-05-06}
+  - {id: LEGIARTI000041966479, article: "code de la sécurité sociale, D. 642-3, 1° et 2°", en_vigueur: 2020-05-25}
+  - {id: LEGIARTI000038750258, article: "code de la sécurité sociale, R. 613-17", en_vigueur: 2019-07-08}
+  - {id: LEGIARTI000029109141, article: "code de la sécurité sociale, L. 642-1", en_vigueur: 2015-01-01}
+  - {id: LEGIARTI000037062040, article: "code de la sécurité sociale, L. 642-1", en_vigueur: 2018-06-14}
+  - {id: LEGIARTI000030055082, article: "code de la sécurité sociale, R. 643-1", en_vigueur: 2015-01-01}
+  - {id: LEGIARTI000036704457, article: "code de la sécurité sociale, R. 643-1", en_vigueur: 2018-01-01}
+  - {id: LEGIARTI000047265883, article: "code de la sécurité sociale, R. 643-1", en_vigueur: 2023-03-05}
+  nee_de: LEGIARTI000029825121
+  bornes:
+    revenu.annee: [2015-01-01, 2025-01-01]
+  contenu:
+    parametres:
+      points_au_plafond: [525, 25]
+      tranches_en_plafonds: [[0, 1], [0, 5]]
+    droit: >-
+      la même phrase de D. 643-1, à 525 points pour la cotisation au plafond de la
+      première tranche et 25 pour celle de la seconde ; la première tranche est désormais
+      « la part de ces revenus n'excédant pas le plafond annuel », la seconde « la part de
+      ces revenus n'excédant pas cinq fois le plafond annuel » (D. 642-3, dans ses six
+      rédactions) : la seconde court depuis le premier euro
+    conditions: >-
+      le prorata des trimestres d'affiliation de D. 642-3 jusqu'au 25 mai 2020, quand la
+      rédaction nouvelle le retire ; depuis le 8 juillet 2019, « En cas de période
+      d'affiliation inférieure à une année, cette valeur [du plafond] est réduite au
+      prorata de la durée d'affiliation » (R. 613-17), pour tout travailleur indépendant ;
+      l'affiliation et la radiation toujours au premier jour du trimestre civil qui suit le
+      début ou la fin de l'activité (R. 643-1), hors de la section que son 11° nomme
+      depuis le 5 mars 2023
+  exemples: aucun trouvé
+- id: points_de_2025
+  statut: lue
+  textes:
+  - {id: LEGIARTI000049904642, article: "code de la sécurité sociale, D. 643-1", en_vigueur: 2024-07-07, publie_le: 2024-07-06}
+  - {id: LEGIARTI000049904651, article: "code de la sécurité sociale, D. 642-3, 1° et 2°", en_vigueur: 2024-07-07, publie_le: 2024-07-06}
+  - {id: LEGIARTI000038750258, article: "code de la sécurité sociale, R. 613-17", en_vigueur: 2019-07-08}
+  - {id: LEGIARTI000037062040, article: "code de la sécurité sociale, L. 642-1", en_vigueur: 2018-06-14}
+  - {id: LEGIARTI000051289006, article: "code de la sécurité sociale, L. 642-1", en_vigueur: 2026-01-01}
+  - {id: LEGIARTI000047265883, article: "code de la sécurité sociale, R. 643-1", en_vigueur: 2023-03-05}
+  nee_de: LEGIARTI000049904642
+  bornes:
+    revenu.annee: [2025-01-01, null]
+  contenu:
+    parametres:
+      points_au_plafond: [557, 25]
+      tranches_en_plafonds: [[0, 1], [0, 5]]
+    droit: >-
+      la même phrase de D. 643-1, à 557 points pour la première tranche et 25 pour la
+      seconde, que le décret n° 2024-688 applique « au titre des périodes courant à
+      compter du 1er janvier 2025 » ; les tranches de D. 642-3 inchangées, sur un plafond
+      et sur cinq
+    conditions: >-
+      le prorata de la durée d'affiliation de R. 613-17 ; la caisse calcule les points
+      « par trimestre » à trois décimales, puis arrondit leur total annuel « à 1 chiffre
+      après la virgule » (« Comprendre sa retraite »)
+  exemples: aucun trouvé
+approximations:
+- version: [points_de_2004, points_de_2015, points_de_2025]
+  ecart: >-
+    le modèle n'arrondit pas les points de l'année, que D. 643-1 arrondit « à la décimale
+    la plus proche » : les deux exemples de la caisse pour 2025, 236,5 et 2,1 points à
+    20 000 €, 557 et 8,5 à 80 000 €, y sont 236,52 et 2,12, 557 et 8,49
+    (tests/test_sections_liberales.py, au dixième)
+  effet: au plus cinq centièmes de point par tranche et par an, trois centimes de pension annuelle
+- version: [points_de_2004, points_de_2015, points_de_2025]
+  ecart: >-
+    le modèle réduit les plafonds d'une année incomplète à la part de l'année que sa ligne
+    couvre, au mois ; le texte, au prorata des trimestres d'affiliation (D. 642-3, jusqu'en
+    2020), puis de la durée d'affiliation (R. 613-17), qui commence et finit au « premier
+    jour du trimestre civil suivant le début ou la fin de l'activité professionnelle »
+    (R. 643-1, dans ses quatre rédactions) : une activité commencée en mai n'est affiliée
+    qu'au 1er juillet
+  effet: non mesuré ; nul pour une ligne qui commence et finit avec un trimestre civil
+textes_sans_effet:
+- id: LEGIARTI000006738136
+  reference: code de la sécurité sociale, D. 643-1, rédaction de 1985
+  motif: >-
+    elle avance l'âge de l'allocation des anciens combattants et des prisonniers de
+    guerre ; aucun point
+- id: LEGIARTI000006738112
+  reference: code de la sécurité sociale, D. 642-3, rédaction de 1985
+  motif: les exonérations de cotisation d'avant 2004, qui n'ouvraient aucun point
+- id: LEGIARTI000006738113
+  reference: code de la sécurité sociale, D. 642-3, rédaction de 1992
+  motif: >-
+    la cotisation proportionnelle assise sur le revenu de l'avant-dernière année, dans la
+    limite de cinq plafonds ; aucun point
+- id: LEGIARTI000006738114
+  reference: code de la sécurité sociale, D. 642-3, rédaction de 1995
+  motif: la même cotisation proportionnelle, sans point
+- id: LEGIARTI000006743766
+  reference: code de la sécurité sociale, L. 642-1, rédaction de 1985
+  motif: >-
+    les cotisations « destinées à financer le régime des allocations de vieillesse » ;
+    aucun point
+- id: LEGIARTI000006743767
+  reference: code de la sécurité sociale, L. 642-1, rédaction de 1991
+  motif: une cotisation forfaitaire et une cotisation proportionnelle, sans point
+- id: LEGIARTI000006743768
+  reference: code de la sécurité sociale, L. 642-1, rédaction de 1992
+  motif: les mêmes cotisations, dans la limite d'un plafond ; aucun point
+- id: LEGIARTI000006743769
+  reference: code de la sécurité sociale, L. 642-1, rédaction de 1993
+  motif: les mêmes cotisations, et la contribution du fonds de solidarité ; aucun point
+- id: LEGIARTI000006743770
+  reference: code de la sécurité sociale, L. 642-1, rédaction de 1995
+  motif: les mêmes cotisations, sur le revenu de l'avant-dernière année ; aucun point
 effet: >-
   Les libéraux dont une année est incomplète au régime de base de la CNAVPL : le début
   d'activité, l'année du départ. Jusqu'au 18 octobre 2026, le barème en points du
   modèle (`points_maximum`) leur rendait les points d'une année entière, son repère et
   l'assiette d'une ligne incomplète étant réduits ensemble : parti le 1er juillet 2020 à
   40 000 € par an, le libéral recevait 515,36 points pour ses six mois de 2020, au lieu
-  de 257,68.
+  de 257,68. Approchée depuis le 29 octobre 2026 : le modèle n'arrondit pas les points
+  au dixième, et réduit les plafonds au mois, non au trimestre d'affiliation.
 sources:
-  lu_le: 2026-10-18
-  prochaine_relecture: 2027-02-15
+  lu_le: 2026-10-29
+  prochaine_relecture: 2027-10-29
   a_relire:
   - >-
     Les autres régimes du même barème, qui gardent les points d'une année entière à une
@@ -33,8 +240,18 @@ sources:
     de la classe spéciale), l'ORGANIC et la CANCAVA d'avant 1973 : aucun texte lu sur
     l'année incomplète.
   - >-
-    La caisse arrondit les points « à la décimale la plus proche » (D. 643-1) ; le
-    modèle n'arrondit pas.
+    Le plafond des droits convertis en 2004 : R. 643-10 borne la majoration de
+    l'allocation au-delà de soixante trimestres « dans la limite de quatre-vingt-dix
+    soixantièmes » — cent cinquante trimestres, quinze mille points, si la limite est
+    celle de la majoration —, et le conseil d'administration pouvait la modifier ; la
+    caisse convertit « à raison de 100 points par trimestre » sans en dire de plafond, et
+    le modèle n'en a pas. À lire dans ses statuts ou dans sa pratique.
+  - >-
+    Les points que D. 643-1 attribue hors de la cotisation n'ont pas de fiche : 400
+    points par année d'exonération pour incapacité d'exercice de plus de six mois
+    (L. 642-3), 100 points pour le trimestre civil d'un accouchement (L. 643-1),
+    plafonnés à 550 points dans l'année depuis le 1er mars 2012 et 582 depuis 2025, 200
+    points par année d'assistance d'une tierce personne.
   lectures:
   - type: legifrance
     reference: >-
@@ -54,28 +271,35 @@ sources:
       indépendant : la valeur du plafond « est réduite au prorata de la durée
       d'affiliation ». Lus dans l'index LEGI du dépôt
     date: 2026-10-18
-textes_a_rattacher:
-- id: LEGIARTI000029825121
-  reference: >-
-    code de la sécurité sociale, D. 643-1, rédaction du 1er janvier 2015 : 525 et 25
-    points pour la cotisation annuelle au plafond de chaque tranche, au prorata des
-    cotisations acquittées
-- id: LEGIARTI000049904642
-  reference: >-
-    code de la sécurité sociale, D. 643-1, rédaction du 7 juillet 2024 : 557 et 25
-    points, au prorata des cotisations acquittées, pour les périodes depuis 2025
-- id: LEGIARTI000034624570
-  reference: >-
-    code de la sécurité sociale, D. 642-3, rédaction du 6 mai 2017 : les deux plafonds
-    réduits au prorata des trimestres d'affiliation d'une année incomplète
-- id: LEGIARTI000041966479
-  reference: >-
-    code de la sécurité sociale, D. 642-3, rédaction du 25 mai 2020 : les deux tranches,
-    sans le prorata, passé à R. 613-17
-- id: LEGIARTI000038750258
-  reference: >-
-    code de la sécurité sociale, R. 613-17, rédaction du 8 juillet 2019 : le plafond
-    des travailleurs indépendants réduit au prorata de la durée d'affiliation
+  - type: legifrance
+    reference: >-
+      D. 643-1, ses sept rédactions, D. 642-3, ses quinze, L. 642-1, ses dix, R. 643-1,
+      ses quatre, R. 643-10 de 1985, et l'article 96 de la loi n° 2003-775 dans ses deux
+      rédactions,
+      dans l'index LEGI du dépôt à jour de l'incrément du 28 octobre 2026 ; les décrets
+      qui ont écrit D. 643-1, au Journal officiel par l'index JORF du dépôt : n° 2004-461
+      (29 mai 2004), n° 2005-1004 (24 août 2005), n° 2010-1678 (30 décembre 2010),
+      n° 2012-138 (31 janvier 2012, le plafond de 550 points), n° 2014-1413 (29 novembre
+      2014, 525 et 25 points), n° 2024-688 (6 juillet 2024, 557 points)
+    date: 2026-10-29
+  - type: autre
+    reference: >-
+      CNAVPL, « Comprendre sa retraite », « Acquisition du nombre de points » : 450 et 100
+      points « au titre des années d'activités de 2004 à 2014 », 525 et 25 de 2015 à 2024,
+      557 et 25 « à compter de 2025 », « au prorata de la cotisation effective sur la
+      cotisation maximale et arrondi à la décimale la plus proche » ; les trimestres
+      d'avant 2004 « convertis en points à raison de 100 points par trimestre » ; deux
+      exemples de 2025, 238,6 points à 20 000 € et 565,5 à 80 000 € (copie datée,
+      sha256:95559a0897456b5bc23a3948c92a848bb9e49ec9408f3e00913be574c690c925)
+    url: https://www.cnavpl.fr/comprendre-sa-retraite/
+    date: 2026-10-29
+historique:
+- >-
+  2026-10-29 — lue au droit (action 130) : quatre versions sur l'année du revenu — avant
+  2004, l'allocation et sa conversion en points ; 450 et 100 points de 2004 à 2014 ; 525 et
+  25 de 2015 à 2024 ; 557 et 25 depuis 2025 —, que les périodes de `regimes/cnavpl.yaml`
+  portent toutes. Approchée : l'arrondi au dixième, et le prorata au mois plutôt qu'au
+  trimestre d'affiliation.
 code:
   interrupteurs:
     points_au_prorata_des_cotisations: true
@@ -86,13 +310,16 @@ code:
     l'assiette d'une telle ligne sont tous deux réduits à ses mois, et leur rapport
     rend le taux d'une année : sans l'interrupteur, une ligne de six mois reçoit les
     points d'une année entière. Les quatorze périodes en points de la CNAVPL, de 2004 à
-    aujourd'hui, renvoient à cette fiche.
+    aujourd'hui, renvoient à cette fiche ; celle d'avant 2004 porte cent points par
+    trimestre validé (`points_par_trimestre_valide`).
   python: >-
     droit/acquerir.py : acquerir ; donnees/regimes.py : PeriodeRegime.repere_assiette
   javascript: >-
     moteur/js/droit/acquerir.js : acquerir ; moteur/js/regimes.js :
     PeriodeRegime.repereAssiette
   parametres: >-
-    regimes/cnavpl.yaml : points_maximum, assiette
+    contenu.parametres de chaque version : points_par_trimestre_valide,
+    points_au_plafond, tranches_en_plafonds ; regimes/cnavpl.yaml : points_maximum,
+    assiette, points_par_trimestre_valide, points_au_prorata_des_cotisations
   tests: [tests/test_sections_liberales.py, tests/js/moteur.test.js,
     tests/temoins/simulations.json]
