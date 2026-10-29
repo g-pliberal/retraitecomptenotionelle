@@ -6410,11 +6410,19 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
   // la somme des lignes, et non le total au taux du titulaire. La réversion
   // paie celle de la SNCF sous la moitié de son plafond (décret n° 2007-1056,
   // art. 7, VII), quand la pension du défunt la paie sous le plafond entier ;
-  // la majoration pour enfants qu'elle reverse n'en paie aucune (L. 131-2, 1°).
+  // aucune majoration pour enfants n'en paie (L. 131-2, 1°) : ni celle du
+  // défunt qu'elle reverse, ni celles dont le régime général majore la
+  // réversion du survivant, pour trois enfants (L. 353-1) ou pour enfant à
+  // charge (L. 353-5).
   const mensuel = (annuel, regime) => montants.pensionDuRegime(
     annuel * coefficient, regime) / MOIS_PAR_AN;
-  const reverse = (annuel, ligne, majoration = ligne.majoration) => montants.pensionDuRegime(
-    annuel * coefficient, ligne.regime, true, majoration * coefficient) / MOIS_PAR_AN;
+  const majorationsPourEnfants = (ligne) => ligne.majoration + ligne.majoration_trois_enfants
+    + ligne.majoration_forfaitaire_enfants;
+  const reverse = (annuel, ligne, majoration = majorationsPourEnfants(ligne)) =>
+    montants.pensionDuRegime(annuel * coefficient, ligne.regime, true,
+      majoration * coefficient) / MOIS_PAR_AN;
+  // L'une d'elles, que la ligne dit à part.
+  const pourEnfants = (annuel, ligne) => reverse(annuel, ligne, annuel);
   const totalMensuel = reversion.regimes.reduce(
     (somme, ligne) => somme + reverse(ligne.montant, ligne), 0);
   const nomRegime = (code) => (catalogue.contient(code) ? catalogue.obtenir(code).nom : code);
@@ -6462,29 +6470,29 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
     }
     if (ligne.majoration > 0) {
       const reversee = MAJORATION_REVERSEE[ligne.fiche];
-      parts.push(`dont ${g.euros(reverse(ligne.majoration, ligne))} `
+      parts.push(`dont ${g.euros(pourEnfants(ligne.majoration, ligne))} `
         + `de majoration pour enfants${reversee === undefined ? "" : `, ${reversee}`}`);
     }
     if (ligne.majoration_trois_enfants > 0) {
-      parts.push(`dont ${g.euros(mensuel(ligne.majoration_trois_enfants, ligne.regime))} `
+      parts.push(`dont ${g.euros(pourEnfants(ligne.majoration_trois_enfants, ligne))} `
         + "de majoration pour trois enfants");
     }
     // Ce que la majoration pour enfant à charge devient quand un enfant n'est
     // plus à charge, ou que sa propre retraite commence.
     const devient = (etapes) => etapes.map(([jour, montant]) => (montant > 0
-      ? `${g.euros(mensuel(montant, ligne.regime))} ${aPartirDe(jour)}`
+      ? `${g.euros(pourEnfants(montant, ligne))} ${aPartirDe(jour)}`
       : `plus rien ${aPartirDe(jour)}`));
     const etapes = ligne.majoration_forfaitaire_enfants_etapes ?? [];
     if (ligne.majoration_forfaitaire_enfants > 0) {
       const suite = devient(etapes);
-      parts.push(`dont ${g.euros(mensuel(ligne.majoration_forfaitaire_enfants, ligne.regime))} `
+      parts.push(`dont ${g.euros(pourEnfants(ligne.majoration_forfaitaire_enfants, ligne))} `
         + "de majoration pour enfants à charge" + (suite.length ? `, ${suite.join(", ")}` : ""));
     } else if (etapes.length) {
       // Nulle à la date d'effet, elle commence avec la part de l'enfant né ou
       // redevenu à charge après elle (R. 353-10) : en plus, à sa date.
       const [[jour, montant], ...apres] = etapes;
       const suite = devient(apres);
-      parts.push(`${g.euros(mensuel(montant, ligne.regime))} de plus ${aPartirDe(jour)}, `
+      parts.push(`${g.euros(pourEnfants(montant, ligne))} de plus ${aPartirDe(jour)}, `
         + "majoration pour enfants à charge" + (suite.length ? `, ${suite.join(", ")}` : ""));
     }
     // Avant juillet 2004, la limite de cumul revue quand sa propre retraite

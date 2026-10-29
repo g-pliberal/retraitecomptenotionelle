@@ -1042,6 +1042,70 @@ def test_la_reversion_de_la_sncf_paie_sa_cotisation_sous_la_moitie_du_plafond(sa
     assert "de majoration pour enfants, la moitié de la vôtre" in cellules[3]
 
 
+#: Un salarié du privé parti à soixante-deux ans, en 2022, père de trois
+#: enfants, qui réside en Espagne sans pension espagnole : la France le soigne.
+_NON_RESIDENT_TROIS_ENFANTS = {"naissance": "1960", "liquidation": "62", "enfants": "3",
+                               "conjoint": "1962", "residence": "ES", "montants": "net"}
+
+
+@pytest.mark.parametrize("ajout", [
+    {},
+    # Mort en juin 2035, quand sa conjointe a cinquante-cinq ans et son dernier
+    # enfant, né en mai 2023, douze.
+    {"sexe": "H", "naissances": "2005, 2008, 2023-05", "conjoint": "1980",
+     "deces": "2035-06"},
+], ids=["trois enfants", "dont un à charge"])
+def test_le_non_resident_ne_paie_rien_sur_les_majorations_pour_enfants_de_la_reversion(
+        saisies, ajout):
+    """L. 131-2, 1° soumet à la cotisation d'assurance maladie les avantages de
+    retraite du régime général, « à l'exclusion des bonifications ou
+    majorations pour enfants autres que les annuités supplémentaires ». La
+    réversion du régime général « est majorée lorsque le bénéficiaire remplit
+    les conditions fixées à l'article L. 351-12 » (L. 353-1), de 10 %
+    (R. 353-2), et son titulaire a droit à « une majoration forfaitaire de sa
+    pension de réversion pour chaque enfant dont il a la charge » (L. 353-5).
+    Le non-résident que la France soigne paie 3,20 % de la base du régime
+    général et 4,20 % des complémentaires (L. 131-9 ; D. 242-8), sur aucune
+    d'elles : la carte de la réversion les ôtait de l'assiette à l'Agirc-Arrco,
+    qui reverse la majoration du défunt, et non au régime général, qui majore
+    la réversion du survivant. Chaque ligne, chaque majoration et le total, à
+    moins d'un euro du calcul posé à la main."""
+    champs = {**_NON_RESIDENT_TROIS_ENFANTS, **ajout}
+    montants = montants_du_portage(champs)
+    assert montants.non_resident and montants.couvert
+    reversion = saisies.simuler(champs).dictionnaire()["reversion"]
+    coefficient = saisies.simulateur().macro.coefficient_prix(
+        reversion["annee"], int(saisie_du_portage(champs).euros))
+    complementaires = charger_prelevements(Parametres().racine_donnees).pensions.regimes_maladie
+
+    def nette(ligne):
+        taux = (0.032 if ligne["regime"] == "regime_general"
+                else 0.042 if ligne["regime"] in complementaires else 0.0)
+        hors_assiette = (ligne["majoration"] + ligne["majoration_trois_enfants"]
+                         + ligne["majoration_forfaitaire_enfants"])
+        return (ligne["montant"] - taux * (ligne["montant"] - hors_assiette)) * coefficient / 12
+
+    generale = next(ligne for ligne in reversion["regimes"] if ligne["regime"] == "regime_general")
+    trois, a_charge = (generale[cle] * coefficient / 12
+                       for cle in ("majoration_trois_enfants", "majoration_forfaitaire_enfants"))
+    assert trois > 0 and (a_charge > 0) == bool(ajout)
+    assert any(ligne["majoration"] > 0 for ligne in reversion["regimes"])
+    carte = _bloc(rendre("/simuler", champs)[1], 'id="resultats-reversion"',
+                  "Dans les systèmes 2, 3 et 4")
+    cellules = _cellules(carte)[1:]
+    attendus = [nette(ligne) for ligne in reversion["regimes"]]
+    affiches = [_nombres(cellule[3])[0] for cellule in cellules]
+    assert len(affiches) == len(attendus) + 1, cellules
+    for (regime, *_), affiche, attendu in zip(cellules, affiches, attendus + [sum(attendus)]):
+        assert abs(affiche - attendu) < 1, (
+            f"{regime} : {affiche} € affichés, {attendu:.2f} € attendus")
+    cellule = next(c[3] for c in cellules if c[0].startswith("Régime général"))
+    for motif, attendu in (("pour trois enfants", trois), ("pour enfants à charge", a_charge)):
+        dont = re.findall(rf"dont ([\d ]+) € de majoration {motif}", cellule)
+        assert [abs(float(euros.replace(" ", "")) - attendu) < 1 for euros in dont] == (
+            [True] if attendu > 0 else []), f"{cellule} ; {attendu:.2f} € attendus"
+
+
 def test_la_majoration_pour_enfant_servie_apres_la_date_d_effet_se_dit():
     """« La majoration est due à la date d'entrée en jouissance de la pension
     de réversion si, à cette date, les conditions d'ouverture du droit à cette
