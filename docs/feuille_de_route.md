@@ -7129,10 +7129,11 @@ restent sous 100 en Performance.
 l'API et ce que sa recherche trouve, 9 069 objets en sept genres, 37
 `branche`, le reste `a_lire` ; `python scripts/fetch/cnav_legislation.py` le
 relit, `--chercher` y ajoute la recherche (note du 29 octobre). Les étapes 2 à
-5 se mènent en parallèle : chacune tient son bloc « Reprise » sous le titre de
-sa note, et celui-ci ne se récrit plus. Les étapes 2 et 4 écrivent des règles
-du scénario 1 : sur Opus, après `python scripts/veille_droit.py`. L'ordre des
-thèmes de l'étape 4 reste au propriétaire.
+6 se mènent en parallèle : chacune tient son bloc « Reprise » sous le titre de
+sa note, et celui-ci ne se récrit plus. Les étapes 2, 4 et 6 écrivent des
+règles du scénario 1 : sur Opus, après `python scripts/veille_droit.py`.
+L'étape 4 suit l'ordre de thèmes qu'elle propose ; la 6 lit les références
+sans thème.
 
 **D'où elle vient.** Le 29 octobre 2026, le propriétaire : « Est-ce qu'on a
 exploité l'API CNAV ? » La réponse, mesurée le jour même : en partie — dix
@@ -7249,6 +7250,22 @@ succession, Mayotte, éditions des coefficients de revalorisation.
    (`/reference/dernieresCirculaires/`) —, pour que l'exploitation reste
    entière. Quand le registre n'a plus rien `a_lire`, la ligne
    `cnav_legislation_portail` passe `epuise`, et l'action se clôt.
+6. **Les références sans thème** (scénario 1, sur Opus, pour ce qui y touche ;
+   une session par nature de texte, par période pour les circulaires) : les
+   4 663 références que seules d'autres références citent, ou que seule la
+   recherche de la base sert, que l'étape 4, menée par thème, n'atteint pas —
+   le registre leur laisse le thème vide. Les textes publiés — 1 020 décrets,
+   arrêtés et lois, 642 articles de code, 496 articles de règlements
+   européens — se confrontent à la liste de contrôle des textes
+   (`data/reference/textes/`) et à l'index LEGI du dépôt ; les circulaires,
+   les lettres, les instructions et les notes — 2 228, la moitié des années
+   1950 ou 2000 —, avec les 96 autres textes, se lisent par période, celles
+   qui fixent une règle que le modèle calcule portées à leur fiche ou à la
+   veille, les autres déclarées avec leur raison ; les 107 accords suivent le
+   thème des accords internationaux de l'étape 4 ; les 74 que la base nomme
+   sans les servir se déclarent. Une référence que l'étape 4 a lue en suivant
+   `citations.csv` depuis son thème ne s'y relit pas : le registre dit son
+   sort. Un écart suit la règle de l'étape 2.
 
 **Ce que le propriétaire a tranché**, le 29 octobre 2026 : « toutes les
 circulaires, et le portail statistique dans une autre action ». Les quelque
@@ -7259,8 +7276,10 @@ va à l'action 176. Le même jour, à deux relectures de l'étape 1 : le registr
 suit aussi les textes que les références citent, de proche en proche, et porte
 les fenêtres d'information, lues par leurs collections, les avis de mise à
 jour, les documents que les barèmes joignent, et les références que seule la
-recherche de la base sert (note `2026-10-29-etape-1-registre.md`). **Ce qu'il
-tranche encore** : l'ordre des thèmes de l'étape 4.
+recherche de la base sert (note `2026-10-29-etape-1-registre.md`). Le même
+jour encore : l'étape 4 suit l'ordre de thèmes qu'elle propose, par le poids
+dans le modèle, et les 4 663 références que le registre laisse sans thème ont
+leur étape, la 6.
 
 ### 176. Le portail statistique de la Cnav, exploité en entier : chaque série, recueil et étude à sa place dans le dépôt — `en cours`
 

@@ -135,11 +135,16 @@ lexique ne sont que des essais (`Test-bannière-Exposé.aspx`,
 qui passe ici : l'échec isolé, à pleine charge, que décrit la note de
 l'action 174 du 27 octobre.
 
-**Ce qui reste**, aux étapes 2 à 5, qui se mènent en parallèle. Les sorts : le
+**Ce qui reste**, aux étapes 2 à 6, qui se mènent en parallèle. Les sorts : le
 registre se lit par `grep ',a_lire,'` dans le fichier du genre, au thème de son
 étape — les références sans thème par `citations.csv`, depuis celles qui les
 citent —, et un sort s'y écrit à la main ; `scripts/fetch/cnav_legislation.py`
-le garde. Pour l'étape 4, les 37 exemples des fenêtres. Pour l'étape 5 : la
+le garde. Pour l'étape 4, menée dans l'ordre de thèmes qu'elle propose, les 37
+exemples des fenêtres. Pour l'étape 6, que le propriétaire a ouverte le même
+jour, les 4 663 références sans thème : 2 158 textes publiés, que la liste de
+contrôle des textes et l'index LEGI confrontent ; 2 228 circulaires, lettres,
+instructions et notes, par période ; 107 accords ; 96 autres textes ; 74 que la
+base nomme sans les servir. Pour l'étape 5 : la
 comparaison des dates du registre à la base, que le récupérateur imprime déjà
 (« modifiés ») ; les avis de mise à jour, qui datent chaque changement ; et la
 recherche (`--chercher`), à relancer pour les références que rien ne lie
