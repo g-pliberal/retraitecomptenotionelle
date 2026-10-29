@@ -1,0 +1,16 @@
+date: "2026-10-29"
+session: "action 175, étape 1 : le registre de la base de législation de la Cnav"
+consulte: >-
+  La base de législation de la Cnav entière, par son API : ses trois collections (386
+  barèmes, 633 exposés, 323 listes), ses deux menus, et les 2 298 références qu'elles
+  lient, 1 770 par la route du site et 528 en PDF, lues une à une, avec leur titre et la
+  date de leur texte. Aucune règle n'a été lue ni écrite : l'étape dresse le registre.
+trouve: >-
+  Les PDF de /Pdf/ sont des références à part entière, servies sous leur nom : ce sont
+  surtout les circulaires d'après 2015. Dix-neuf références ont une date que leur titre
+  contredit (la circulaire Unedic 97/18 du 7 novembre 1997, datée de 1966) ; l'API ne sert
+  qu'en minuscules quatre références que la base lie sous une majuscule fautive, et n'en
+  sert pas une (CR_CN_2006006_13012006). Vingt liens ne mènent à aucun objet.
+reste: >-
+  Les sorts, aux étapes 2 à 5 : 3 607 objets à lire, dont toutes les circulaires. La
+  circulaire 2026-17 du 12 juin 2026, que rien ne lie encore, attend l'étape 5.

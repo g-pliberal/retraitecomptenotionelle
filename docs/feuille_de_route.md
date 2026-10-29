@@ -7124,14 +7124,15 @@ restent sous 100 en Performance.
 
 ### 175. La base de législation de la Cnav, exploitée en entier par son API : chaque barème, exposé et circulaire à sa place dans le dépôt, puis tenue à jour — `en cours`
 
-**Reprise, au 29 octobre 2026.** Rien n'est fait : l'action s'ouvre sur le
-relevé de l'API du même jour (« La base », plus bas). Par quoi commencer :
-l'étape 1, le registre, dont les autres dépendent. Ensuite, les étapes 2 à 5 se
-mènent en parallèle : chacune tiendra son bloc « Reprise » sous le titre de sa
-note, et celui-ci ne se récrira plus. Les étapes 2 et 4 écrivent des règles du
-scénario 1 : sur Opus, après `python scripts/veille_droit.py`. Le propriétaire
-a tranché le jour même : toutes les circulaires se lisent (étape 4). Pas encore
-de note.
+**Reprise, au 29 octobre 2026.** L'étape 1 est faite : le registre,
+`data/reference/legislation/cnav/`, porte chaque barème, exposé, liste et
+référence de la base, 3 640 objets, 33 `branche`, le reste `a_lire` ; il se
+relit par `python scripts/fetch/cnav_legislation.py` (note
+`2026-10-29-etape-1-registre.md`). Les étapes 2 à 5 se mènent en parallèle :
+chacune tient son bloc « Reprise » sous le titre de sa note, et celui-ci ne se
+récrit plus. Les étapes 2 et 4 écrivent des règles du scénario 1 : sur Opus,
+après `python scripts/veille_droit.py`. Toutes les circulaires se lisent
+(étape 4) ; l'ordre de ses thèmes reste au propriétaire.
 
 **D'où elle vient.** Le 29 octobre 2026, le propriétaire : « Est-ce qu'on a
 exploité l'API CNAV ? » La réponse, mesurée le jour même : en partie — dix

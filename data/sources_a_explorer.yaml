@@ -293,8 +293,8 @@ sources:
       questions-réponses. C'est la source d'APPLICATION qu'exige
       docs/veille_droit.md à côté du texte de Légifrance. Dérouler la
       recherche par thème et par date, pas seulement la page d'accueil.
-    statut: explore
-    explore_le: 2026-10-14
+    statut: en_cours
+    explore_le: 2026-10-29
     note: >-
       Lu le 14 octobre 2026 par son API (`/api/v1/baremes`, 397 barèmes
       en un JSON) : neuf récupérateurs de `scripts/fetch/` l'interrogent
@@ -305,7 +305,11 @@ sources:
       `taux_cotisation_annuels.csv`, les rachats de cotisations de 2013
       à 2026, les salaires forfaitaires des apprentis, des artistes, des
       journalistes. Reste à dérouler les exposés et les circulaires, par
-      thème.
+      thème. Depuis le 29 octobre 2026 (action 175, étape 1), la base
+      entière a son registre, `data/reference/legislation/cnav/`, que
+      tient `scripts/fetch/cnav_legislation.py` : chaque barème, exposé,
+      liste et référence y a son sort, et la ligne passe `epuise` quand
+      il n'y reste rien `a_lire`.
 
   - id: cnav_circulaire_2026_07
     url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2026_07_05032026.pdf
