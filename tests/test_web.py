@@ -1052,7 +1052,9 @@ def test_la_majoration_pour_enfant_servie_apres_la_date_d_effet_se_dit():
     jusqu'au mois qui suit sa majorité, mars 2049 : 113,59 € par mois, le
     barème de 2026, l'année des montants d'un décès à venir. La carte la dit en
     plus à sa date, comme la majoration de 11,1 % qui commence après la date
-    d'effet, quand elle la taisait."""
+    d'effet, quand elle la taisait. Sans activité ni retraite, la veuve née en
+    1975 garde sa réversion révisable « à compter du 1er jour du mois qui suit
+    l'âge légal » (R. 353-1-1), soixante-quatre ans : février 2039."""
     champs = {"naissance": "1960", "sexe": "H", "liquidation": "62", "enfants": "1",
               "naissances": "2031-02", "conjoint": "1975", "deces": "2030-06",
               "montants": "brut"}
@@ -1061,7 +1063,8 @@ def test_la_majoration_pour_enfant_servie_apres_la_date_d_effet_se_dit():
     cellules = next(c for c in _cellules(carte) if c[0].startswith("Régime général"))
     assert cellules[4] == "juillet 2030"
     assert ("(114 € de plus à partir de mars 2031, majoration pour enfants à charge, "
-            "plus rien à partir de mars 2049)") in cellules[3], cellules[3]
+            "plus rien à partir de mars 2049 ; révisable jusqu'en février 2039)") \
+        in cellules[3], cellules[3]
 
 
 @pytest.mark.parametrize("variation, revisions", [
