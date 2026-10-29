@@ -2811,10 +2811,10 @@ sixième, les périodes assimilées manquantes, a ses étapes 1 à 6 faites
 sa septième étape, la décision de la proposition, et la retraite progressive,
 le cumul et la seconde pension. La carte mûrit : toute fiche a ses régimes et
 son code, confronté au dépôt par un test, hors de la seule de `EN_PROSE`, à
-l'action 131 ; le RAFP, premier lot, est lu au droit ; restent 104 fiches à
-lire, 618 manques, et les points ouverts des phases 2 à 8. Par quoi commencer :
+l'action 131 ; le RAFP et la CNAVPL sont lus au droit ; restent 101 fiches à
+lire, 600 manques, et les points ouverts des phases 2 à 8. Par quoi commencer :
 un lot de ces fiches, un régime ou un domaine, à mettre dans `LUES_AU_DROIT`
-(`docs/veille_droit.md`). Détail : `130/2026-10-29-carte-des-fiches-rafp-lu-au-droit.md`.
+(`docs/veille_droit.md`). Détail : `130/2026-10-29-carte-des-fiches-cnavpl-lu-au-droit.md`.
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de

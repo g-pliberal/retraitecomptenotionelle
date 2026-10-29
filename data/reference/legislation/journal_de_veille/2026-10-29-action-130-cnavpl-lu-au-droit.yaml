@@ -1,0 +1,45 @@
+date: "2026-10-29"
+session: "action 130 : la carte des fiches, la CNAVPL lue au droit"
+consulte: >-
+  python scripts/veille_droit.py ; l'index LEGI du dépôt, récupéré et mis à jour jusqu'à
+  l'incrément du 28 octobre au soir, et celui du JORF, récupéré et mis à jour jusqu'à celui
+  du 29 octobre ; python scripts/textes.py --inscrire, avant la lecture (aucune rédaction
+  nouvelle) et après. Dans LEGI : D. 643-1 (ses sept rédactions), D. 642-3 (quinze),
+  L. 642-1 (dix), L. 643-1 (quatre), L. 643-1-1 (quatre), R. 643-1 (quatre), D. 643-2
+  (quatre de ses cinq), L. 161-23-1 (sept) ; L. 643-3 de 2023 et de 2025, et ses six
+  autres pour ce qu'elles disent
+  des enfants ; R. 613-17 de 2015 à 2019 ; L. 642-3 de 2004 et de 2016 ; R. 643-10 et
+  R. 643-11 de 1985 ; R. 643-8 de 2023, en tête ; l'article 96 de la loi n° 2003-775 (deux
+  rédactions), l'article 13 du décret n° 2004-461, l'article 4 du décret n° 2005-1004,
+  l'article 9 de la loi n° 2022-1158. Au JORF : les articles 88, 90 et 96 de
+  la loi n° 2003-775, les articles 1er et 2 du décret n° 2004-461, l'article 79 de la loi
+  n° 2008-1330, le décret n° 2012-138, le décret n° 2014-1413, et les dates de publication
+  des textes qui font naître les versions ; les analyses, seules indexées, de la loi
+  n° 48-101, des décrets n° 49-456, n° 62-439, n° 83-677 et n° 84-1112. Chez la CNAVPL :
+  « Comprendre sa retraite » (copie datée) et « Valeur de service du point depuis 2004 »
+  (scripts/fetch/cnavpl_valeur_service.py), que le site a ensuite refusé de servir à la
+  session.
+trouve: >-
+  D. 643-1 donne 450 et 100 points à la cotisation au plafond de chaque tranche de 2004 à
+  2014, 525 et 25 de 2015 à 2024, 557 et 25 depuis 2025, au prorata de la cotisation et
+  arrondis au dixième, et chaque période de `regimes/cnavpl.yaml` les porte ; avant 2004,
+  la loi n° 2003-775 transforme l'allocation acquise en points, cent pour un soixantième
+  de l'allocation aux vieux travailleurs salariés. Une année incomplète se compte au
+  trimestre d'affiliation, que R. 643-1 fait commencer au trimestre civil qui suit le début
+  d'activité, le modèle au mois. La valeur de service, fixée par D. 643-1 en 2004 et 2005,
+  est revalorisée comme les pensions depuis la loi n° 2008-1330, à des dates que la caisse
+  publie et que le modèle ne date pas : une liquidation d'avant le relèvement de son année
+  reçoit d'avance la valeur relevée, jusqu'à 4 % de trop au premier semestre de 2022. La
+  majoration de durée pour enfants vaut depuis le 1er avril 2010, étendue à L. 351-4-1 le
+  11 novembre 2010 et à L. 351-4-2 le 22 janvier 2014, et non en 2023 comme la fiche le
+  disait ; la période annuelle de 2010 la donne aux pensions de janvier à mars, que le
+  texte en exclut. Fiches `points_au_prorata_des_cotisations` et `cnavpl_valeur_service`,
+  de transcrites approchées, et `cnavpl_majoration_duree_assurance`, approchée.
+reste: >-
+  Les textes du régime d'allocation des libéraux de 1948 à 1985 n'existent qu'au
+  fac-similé : signalés au propriétaire, la version qui les couvre est supposée. Le
+  plafond de R. 643-10 sur les droits convertis en 2004, à lire. Les points hors de la
+  cotisation — 400 de l'année d'incapacité, 100 du trimestre d'accouchement, 200 de
+  l'assistance d'une tierce personne — sans fiche. Couper les périodes de la CNAVPL au 1er
+  avril 2010 et au 1er septembre 2023 par leur date d'effet, avec la fiche de la surcote,
+  que R. 643-8 change au même jour.
