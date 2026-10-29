@@ -6374,8 +6374,8 @@ const MOMENTS_DES_RESSOURCES = Object.freeze({
  * fait retenir les douze : celles des trois dépassent le plafond (R. 353-1).
  */
 const PERIODES_DES_RESSOURCES = Object.freeze({
-  3: ["trois", ""],
-  12: ["douze", ", celles des trois derniers dépassant le plafond"],
+  3: ["trois", []],
+  12: ["douze", ["celles des trois derniers"]],
 });
 
 /**
@@ -6445,7 +6445,10 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
 
   // Les ressources que le plafond retient à la date d'effet : celles des trois
   // mois qui précèdent le moment que la version dit, ou des douze (R. 353-1) ;
-  // tues quand le conjoint n'en a ni dites ni retenues.
+  // tues quand le conjoint n'en a ni dites ni retenues. Ce qui les fait
+  // retenir se dit avec elles, chacune dépassant le plafond : les trois
+  // derniers des douze mois, et, avant juillet 2004, la demande examinée avant
+  // le décès (`moments_examines`).
   const examinees = (ligne) => {
     const moment = MOMENTS_DES_RESSOURCES[ligne.ressources_examinees_au];
     const periode = PERIODES_DES_RESSOURCES[ligne.periode_de_reference];
@@ -6453,9 +6456,12 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
         || (ligne.ressources_retenues <= 0 && reversion.ressources_presumees)) {
       return null;
     }
-    const [mois, raison] = periode;
+    const [mois, derniers] = periode;
+    const raisons = [...derniers, ...(ligne.moments_examines ?? []).slice(0, -1).map(
+      (precedent) => `celles des mois qui précèdent ${MOMENTS_DES_RESSOURCES[precedent]}`)];
     return `ressources des ${mois} mois qui précèdent ${moment} : `
-      + `${g.euros(ligne.ressources_retenues * coefficient)} par an${raison}`;
+      + `${g.euros(ligne.ressources_retenues * coefficient)} par an`
+      + (raisons.length ? `, ${raisons.join(" et ")} dépassant le plafond` : "");
   };
 
   // L'Agirc-Arrco reverse en entier la majoration pour enfants du défunt, hors
@@ -6632,8 +6638,9 @@ function reversionDuConjoint(contexte, comparaison, saisie, montants) {
     reserves.push("aucun précédent mariage, faute d'en avoir déclaré");
   }
   // Avant juillet 2004, les mois de la demande, que le modèle présume
-  // (`reversion_demandee_le_mois_avant_sa_date_d_effet`).
-  if (reversion.regimes.some((ligne) => ligne.ressources_examinees_au === "demande"
+  // (`reversion_demandee_le_mois_avant_sa_date_d_effet`) : retenus, ou
+  // examinés avant ceux du décès (`moments_examines`).
+  if (reversion.regimes.some((ligne) => (ligne.moments_examines ?? []).includes("demande")
       && examinees(ligne) !== null)) {
     reserves.push("une demande de réversion le mois qui précède sa date d'effet");
   }

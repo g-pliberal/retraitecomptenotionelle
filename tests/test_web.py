@@ -1296,17 +1296,26 @@ def test_la_carte_dit_les_mois_des_ressources_de_la_date_d_effet(ajout, effet, r
     assert f"({ressources}" in cellules[3], cellules[3]
 
 
-@pytest.mark.parametrize("ajout, ressources, suppose", [
+@pytest.mark.parametrize("ajout, effet, ressources, demande", [
     ({"ressources_conjoint": "40000", "activite_conjoint": "40000",
-      "activite_conjoint_fin": "1999-01"},
-     "ressources des trois mois qui précèdent sa demande : 0 € par an",
-     "une demande de réversion le mois qui précède sa date d'effet"),
+      "activite_conjoint_fin": "1999-01"}, "juillet 2000",
+     "ressources des trois mois qui précèdent sa demande : 0 € par an", True),
     ({"ressources_conjoint": "0", "activite_conjoint": "0",
-      "activite_conjoint_variations": "1997-01:40000"},
-     "ressources des trois mois qui précèdent votre décès : 0 € par an", ""),
+      "activite_conjoint_variations": "1997-01:40000"}, "juillet 2000",
+     "ressources des trois mois qui précèdent votre décès : 0 € par an, celles des mois "
+     "qui précèdent sa demande dépassant le plafond)", True),
+    ({"ressources_conjoint": "40000", "activite_conjoint": "40000", "euros": "1996"},
+     "juillet 2000",
+     "ressources des douze mois qui précèdent votre décès : 40 000 € par an, celles des "
+     "trois derniers et celles des mois qui précèdent sa demande dépassant le plafond)", True),
+    ({"naissance": "1905", "liquidation": "65", "conjoint": "1907-03", "deces": "1972-06",
+      "ressources_conjoint": "3000", "activite_conjoint": "3000", "euros": "1972"},
+     "juillet 1972",
+     "ressources des douze mois qui précèdent votre décès : 3 000 € par an, celles des "
+     "trois derniers dépassant le plafond)", False),
 ])
 def test_avant_juillet_2004_la_carte_dit_les_mois_de_la_demande_ou_du_deces(
-        ajout, ressources, suppose):
+        ajout, effet, ressources, demande):
     """De juillet 1974 à juin 2004, les ressources s'apprécient « soit à la
     date de la demande, soit, si la condition n'est pas remplie à cette date,
     à la date du décès » (circulaire Cnav n° 31/75, § 233), sur « les trois
@@ -1320,15 +1329,28 @@ def test_avant_juillet_2004_la_carte_dit_les_mois_de_la_demande_ou_du_deces(
     1996, elle en prend une en janvier 1997, qui lui rapporte 40 000 € par an :
     les trois mois qui précèdent sa demande, puis les douze, passent le
     plafond, 2 080 fois le SMIC horaire, moins de 15 000 € ; ceux qui
-    précèdent le décès, de décembre 1995 à février 1996, ne portent rien."""
+    précèdent le décès, de décembre 1995 à février 1996, ne portent rien. La
+    carte dit alors que ceux de la demande, examinés d'abord, dépassaient le
+    plafond, et la présomption qui la date (`moments_examines`) : elle ne
+    disait que les mois du décès. Active à 40 000 € par an du décès à sa
+    demande, elle passe le plafond aux deux moments : « Si les ressources
+    examinées à la date de la demande et à la date du décès dépassaient le
+    plafond autorisé, la demande était rejetée » (exposé de la Cnav,
+    « Condition de ressources ») ; la carte, en euros de 1996, dit les douze
+    mois du décès, 40 000 € par an, et ce qui les a fait retenir. Avant
+    juillet 1974, les ressources s'apprécient « à la date du décès de
+    l'assuré », seule (décret n° 71-123, article 2) : la veuve de 1972, née en
+    mars 1907, qui gagne 3 000 € par an, plus que 2 080 fois 3,94 francs, n'a
+    ni demande examinée ni présomption."""
     champs = {"naissance": "1935", "sexe": "H", "liquidation": "60", "conjoint": "1945-06",
               "deces": "1996-03", "montants": "brut", **ajout}
     corps = rendre("/simuler", champs)[1]
     carte = _bloc(corps, 'id="resultats-reversion"', "Dans les systèmes 2, 3 et 4")
     cellules = next(c for c in _cellules(carte) if c[0].startswith("Régime général"))
-    assert cellules[4] == "juillet 2000"
+    assert cellules[4] == effet
     assert f"({ressources}" in cellules[3], cellules[3]
-    assert suppose in _bloc(corps, "Ce que ce montant suppose", "</p>")
+    suppose = _bloc(corps, "Ce que ce montant suppose", "</p>")
+    assert ("une demande de réversion le mois qui précède sa date d'effet" in suppose) == demande
 
 
 def test_le_detail_range_la_base_avant_les_complementaires():
