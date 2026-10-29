@@ -7129,8 +7129,9 @@ relevé de l'API du même jour (« La base », plus bas). Par quoi commencer :
 l'étape 1, le registre, dont les autres dépendent. Ensuite, les étapes 2 à 5 se
 mènent en parallèle : chacune tiendra son bloc « Reprise » sous le titre de sa
 note, et celui-ci ne se récrira plus. Les étapes 2 et 4 écrivent des règles du
-scénario 1 : sur Opus, après `python scripts/veille_droit.py`. Pas encore de
-note.
+scénario 1 : sur Opus, après `python scripts/veille_droit.py`. Le propriétaire
+a tranché le jour même : toutes les circulaires se lisent (étape 4). Pas encore
+de note.
 
 **D'où elle vient.** Le 29 octobre 2026, le propriétaire : « Est-ce qu'on a
 exploité l'API CNAV ? » La réponse, mesurée le jour même : en partie — dix
@@ -7229,19 +7230,18 @@ succession, Mayotte, éditions des coefficients de revalorisation.
    texte tel que la caisse l'applique —, ses exemples chiffrés au témoin
    `exemples_officiels.yaml` (le mot « exemple » paraît dans 36 exposés), ce
    que le modèle ne sert pas aux limites ; puis les listes et les références
-   qu'il lie, triées sur leur titre et leur date : lue, celle qui fixe une
-   règle à une date que le modèle calcule ; déclarée, l'autre. Un écart suit la
-   règle de l'étape 2. L'ordre proposé suit le poids dans le modèle : Retraite
-   personnelle de base (45 exposés) ; Carrière (169 : cotisations-salaires 65,
-   versements volontaires 49, périodes assimilées 25, majorations de durée
-   d'assurance 13, quatre autres 17) ; Avantages liés au décès de l'assuré
-   (27) ; Allocation du minimum (17) ; RCI (10) ; Anciennes prestations (29) ;
-   Régimes intégrés (29) ; Accords internationaux et d'outre-mer (223 : accords
-   184, règlements européens 24, outre-mer 15) ; Mayotte (24) ; puis Paiement
-   (18), Réclamation et contentieux (11), Transverse (11), Avantage
-   complémentaire (7), Erreur et fraude (4), État civil et identification (3),
-   Liquidation unique régimes alignés et Régularité du séjour (un chacun), et
-   quatre exposés hors du menu.
+   qu'il lie, toutes lues : chacune portée à sa fiche, à la veille ou au
+   témoin, ou déclarée avec sa raison. Un écart suit la règle de l'étape 2.
+   L'ordre proposé suit le poids dans le modèle : Retraite personnelle de base
+   (45 exposés) ; Carrière (169 : cotisations-salaires 65, versements
+   volontaires 49, périodes assimilées 25, majorations de durée d'assurance 13,
+   quatre autres 17) ; Avantages liés au décès de l'assuré (27) ; Allocation du
+   minimum (17) ; RCI (10) ; Anciennes prestations (29) ; Régimes intégrés
+   (29) ; Accords internationaux et d'outre-mer (223 : accords 184, règlements
+   européens 24, outre-mer 15) ; Mayotte (24) ; puis Paiement (18), Réclamation
+   et contentieux (11), Transverse (11), Avantage complémentaire (7), Erreur et
+   fraude (4), État civil et identification (3), Liquidation unique régimes
+   alignés et Régularité du séjour (un chacun), et quatre exposés hors du menu.
 5. **La veille** (données) : le registre garde la date de modification lue, et
    `scripts/veille_droit.py` dit ce que la base a changé depuis — un barème ou
    un exposé modifié, une circulaire nouvelle
@@ -7249,9 +7249,78 @@ succession, Mayotte, éditions des coefficients de revalorisation.
    entière. Quand le registre n'a plus rien `a_lire`, la ligne
    `cnav_legislation_portail` passe `epuise`, et l'action se clôt.
 
-**Ce que le propriétaire tranche** : la profondeur des références — toutes
-lues, ou celles seulement qui fixent une règle à une date que le modèle
-calcule, les autres déclarées sur leur titre, comme l'étape 4 le propose ;
-l'ordre des thèmes ; le portail statistique de la Cnav (`cnav_statistiques`,
-`a_faire` au manifeste), qui n'est pas cette API et répondait 503 le 29
-octobre : dans cette action, ou dans une autre.
+**Ce que le propriétaire a tranché**, le 29 octobre 2026 : « toutes les
+circulaires, et le portail statistique dans une autre action ». Les quelque
+1 777 références se lisent toutes, et non celles seulement qui fixent une règle
+à une date que le modèle calcule, comme l'étape 4 le proposait d'abord ; le
+portail statistique de la Cnav (`cnav_statistiques`), qui n'est pas cette API,
+va à l'action 176. **Ce qu'il tranche encore** : l'ordre des thèmes de
+l'étape 4.
+
+### 176. Le portail statistique de la Cnav, exploité en entier : chaque série, recueil et étude à sa place dans le dépôt — `en cours`
+
+**Reprise, au 29 octobre 2026.** Rien n'est fait. Le jour de l'ouverture, le
+portail ne servait qu'une page de maintenance (« Le site est momentanément
+indisponible ») : par quoi commencer, vérifier qu'il répond de nouveau, avec
+l'en-tête des récupérateurs du dépôt et rien d'autre ; tant qu'il ne répond
+pas, l'action attend, et la session en prend une autre. Puis l'étape 1,
+l'inventaire, dont les autres dépendent. Pas encore de note.
+
+**D'où elle vient.** Le 29 octobre 2026, à l'ouverture de l'action 175, sur la
+base de législation de la Cnav, le propriétaire : « toutes les circulaires, et
+le portail statistique dans une autre action ». Le portail n'est pas la base de
+législation : il publie les statistiques et les études de la caisse, sous
+`www.statistiques-recherche.lassuranceretraite.fr`, et sa ligne du manifeste,
+`cnav_statistiques`, jointe à sa nouvelle adresse le 22 septembre 2026, est
+toujours `a_faire`.
+
+**Le portail.** Un site WordPress, dont les documents sont sous
+`/app/uploads/<année>/<mois>/`. Le 19 octobre 2026, il servait les classeurs
+des séries labellisées que l'action 138 a lus (étape 7) ; le 29 octobre, il ne
+rendait qu'une page de maintenance (503), sur sa racine comme sur `robots.txt`
+et `/wp-json/wp/v2/`, à l'en-tête des récupérateurs du dépôt. La recherche
+d'organisations de data.gouv.fr ne rend rien pour « cnav », « assurance
+retraite » ni « caisse nationale assurance vieillesse » : ce que la caisse
+publie en données ouvertes est sur son portail. Sa table des matières reste à
+relever (étape 1).
+
+**Ce que le dépôt en tire déjà.** Cinq lignes du manifeste : le portail
+lui-même (`cnav_statistiques`, `a_faire`) ; le Cadr@ge n° 40, sur l'espérance
+de vie des retraités pour inaptitude (`cnav_cadrage_40`, saisi dans
+`esperances_vie_pensions_cnav.csv`) ; le classeur des nouveaux retraités des
+séries labellisées (`cnav_series_labellisees`, saisi dans
+`nouveaux_retraites_cnav.csv`), quand le classeur du stock, lu le même jour, ne
+sert à aucun calcul ; l'étude de 2023 sur les nouveaux retraités pour
+inaptitude de 2021 (`cnav_inaptitude_2021`, saisie dans `castypes.py`) ; les
+simulations en comptes notionnels de PRISME, en 2009
+(`cnav_comptes_notionnels_2009`, en contrôle), avec la fiche `prisme` des
+référents.
+
+**Ce qui est à faire**, une étape par session ; après la 1, en parallèle.
+
+1. **L'inventaire** (données) : quand le portail répond, sa table des matières
+   entière — séries, recueils, données par territoire, publications, études —,
+   relevée par son plan du site ou par son API WordPress, s'il les ouvre ;
+   chaque document au vivier (`data/sources_a_explorer.yaml`), avec sa nature
+   et ce qu'il y a à en tirer, et ce que le dépôt en cite déjà, rapproché.
+2. **Les séries** (données) : chaque série chiffrée — effectifs, flux,
+   montants, âges, durées, par type de pension, par sexe, par génération —
+   portée aux référents (`referents.yaml`), que les tests confrontent au
+   modèle, ou à une série de `data/reference/`, avec le test qui la recoupe à
+   ses totaux publiés. D'abord le classeur du stock, lu le 19 octobre, qu'aucun
+   calcul ne lit.
+3. **Les études** (modèle) : ce que les études de la caisse mesurent et que le
+   modèle suppose — la mortalité par type de pension, les départs, les
+   carrières, les projections de PRISME —, confronté aux hypothèses du dépôt ;
+   un écart se corrige ou se déclare, en commit à part.
+4. **La clôture** (données) : chaque document du vivier `epuise` ou déclaré, la
+   ligne `cnav_statistiques` du manifeste à son statut, et un récupérateur pour
+   ce qui se republie chaque année, les séries labellisées d'abord, pour que la
+   lecture reste à jour.
+
+**Ce que le propriétaire tranche** : les classeurs au format Excel 97 (`.xls`),
+comme celui des nouveaux retraités, que la bibliothèque standard ne lit pas —
+une extraction à la main à chaque édition, comme le 19 octobre, ou une
+dépendance de plus, que `CLAUDE.md` exclut aujourd'hui (« PyYAML seul hors
+bibliothèque standard »). Les classeurs `.xlsx`, comme celui du stock, se
+lisent sans elle.
