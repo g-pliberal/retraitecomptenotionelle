@@ -3,11 +3,11 @@
 **Reprise, au 29 octobre 2026.** Fait : la maladie des pensions de tous les
 régimes de base calculés, sauf la SEITA, le port de Strasbourg, les marins, les
 cultes et les assemblées ; la SNCF et les mines au site ; la réversion et le
-minimum de la SNCF ; la date d'entrée et le retour à la CRPCEN et aux IEG ; les
-décrets sans marche, les chemins de fer secondaires, la date d'effet des
-marches ; le seuil de solidarité de 1987 à 1997 ; la limite 5 ante ter (2).
-Reste, une session par point : le plafond de 2027, au 1er janvier (note du 28) ;
-au site, les dates de pension d'un retour, et la majoration de la réversion au
+minimum de la SNCF ; la date d'entrée et le retour à la CRPCEN et aux IEG,
+jusqu'aux dates de pension du formulaire ; les décrets sans marche, les chemins
+de fer secondaires, la date d'effet des marches ; le seuil de solidarité de 1987
+à 1997 ; la limite 5 ante ter (2). Reste, une session par point : le plafond de
+2027, au 1er janvier (note du 28) ; au site, la majoration de la réversion au
 non-résident. Au propriétaire : la CAMIEG, l'écrêtement du minimum de la SNCF,
 l'ASPA de l'article 23, des textes au fac-similé. Détail : notes du 25 et du 29.
 
