@@ -1,0 +1,37 @@
+date: "2026-10-29"
+session: "action 130 : la carte des fiches, les IEG lus au droit"
+consulte: >-
+  python scripts/veille_droit.py ; les index LEGI et JORF du dépôt, récupérés et mis à
+  jour jusqu'aux incréments du 28 octobre (LEGI) et du 29 octobre (JORF) ; python
+  scripts/textes.py --inscrire, avant la lecture et après (aucune rédaction nouvelle).
+  Dans LEGI : l'annexe 3 du statut national des IEG, ses vingt et une rédactions de 1946
+  au 6 août 2025, articles 1er, 2, 3, 9, 9-1, 10, 16, 17-1 et 45 confrontés d'une
+  rédaction à la suivante ; L. 161-17-2 du code de la sécurité sociale, ses rédactions
+  depuis 2011 ; L. 14 du code des pensions civiles et militaires, ses rédactions depuis
+  2004. Au JORF : décret n° 2008-69 (article 1er), décret n° 2008-627 (articles 1er et 2),
+  décret n° 2011-290 (ses vingt-six articles), décret n° 2011-1175 (ses quatre), décret
+  n° 2014-698 (ses dix articles et sa notice), décret n° 2023-692, décret n° 2025-761.
+  Chez la CNIEG : « Service actif », « Âge d'annulation de la décote » et « Tableau des
+  durées d'assurance requise à compter du 1er janvier 2025 », relus le 29 octobre.
+trouve: >-
+  L'âge de l'agent actif des IEG reste cinquante-cinq ans de 1946 au 21 mars 2011, avec
+  quinze ans de services actifs depuis le 1er juillet 2008 ; le décret n° 2011-290 le
+  relève par génération jusqu'à cinquante-sept ans pour 1967, dès son entrée en vigueur,
+  et ne reporte au 1er janvier 2017 que l'article 9-1 et quelques autres (article 25) ; le
+  décret n° 2023-692 le porte, pour les pensions de 2025, jusqu'à cinquante-neuf ans pour
+  1975, ce que la suspension de 2026 ne touche pas. La surcote, créée au 1er juillet 2008,
+  court au-delà de soixante ans puis de l'âge du 1° du I de l'article 16. La décote ne
+  vaut qu'à qui réunit les conditions depuis le 1er juillet 2010, l'âge minimum majoré de
+  cinq ans moins une diminution de seize trimestres à rien, puis de trois ans depuis 2025.
+  La durée : 150 trimestres, puis le calendrier de 151 à 166, la table par génération de
+  2014 depuis juillet 2019, et les tables par durée de services actifs de 2025. Le modèle
+  liquide le second semestre de 2008 sous la période d'avant la réforme, sans surcote ni
+  ses 151 trimestres ; il présume tout agent actif de dix-sept ans. Les trois fiches, de
+  conformes, approchées.
+reste: >-
+  Couper les périodes de `regimes/ieg.yaml` au 1er juillet 2008 par leur date d'effet, avec
+  une période au second semestre de 2008 et sa surcote à 0,75 %. Les services actifs
+  bonifiés d'un sixième, les insalubres d'un tiers, sans fiche. La circulaire PERS 70 du 21
+  mai 1952, connue par sa citation. Les années de services actifs, que la saisie ne porte
+  pas, qui ouvriraient l'âge et la durée des sédentaires et des actifs de cinq à quatorze
+  ans.
