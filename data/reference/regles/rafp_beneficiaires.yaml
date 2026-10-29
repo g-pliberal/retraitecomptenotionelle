@@ -4,18 +4,91 @@ intitule: >-
   Le RAFP n'est ouvert qu'aux fonctionnaires civils, aux magistrats de l'ordre
   judiciaire et aux militaires : les ouvriers de l'État, dont la pension est celle
   du FSPOEIE, n'y cotisent pas.
+domaine: coordination
 regimes: [fspoeie, rafp]
-etat: conforme
+etape: coordonner_les_affiliations
+face: droit
+etat: approchee
+lit:
+- le statut de chaque ligne de la carrière, et son année
+ecrit:
+- >-
+  les régimes de la ligne : depuis 2005, le RAFP s'ajoute à la pension civile du
+  fonctionnaire de l'État et du militaire, et à la CNRACL du fonctionnaire territorial
+  ou hospitalier ; jamais au FSPOEIE de l'ouvrier de l'État
+dates_qui_decident:
+- revenu.annee
+versions:
+- id: avant_2005
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006758621, article: "loi n° 2003-775, article 76, VII", en_vigueur: 2005-01-01, publie_le: 2003-08-22}
+  nee_de: LEGIARTI000006758621
+  bornes:
+    revenu.annee: [null, 2005-01-01]
+  contenu:
+    droit: >-
+      aucun régime additionnel : l'article 76 « entrera en vigueur le 1er janvier
+      2005 »
+  exemples: aucun trouvé
+- id: fonctionnaires_magistrats_militaires
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006758621, article: "loi n° 2003-775, article 76, II", en_vigueur: 2005-01-01, publie_le: 2003-08-22}
+  - {id: LEGIARTI000023096773, article: "loi n° 2003-775, article 76, II", en_vigueur: 2011-07-01}
+  - {id: LEGIARTI000046874577, article: "loi n° 2003-775, article 76, II", en_vigueur: 2023-01-01}
+  - {id: LEGIARTI000048691415, article: "loi n° 2003-775, article 76, II", en_vigueur: 2024-09-01}
+  nee_de: LEGIARTI000006758621
+  bornes:
+    revenu.annee: [2005-01-01, null]
+  contenu:
+    beneficiaire: >-
+      « Le bénéfice du régime est ouvert : 1° Aux fonctionnaires civils auxquels
+      s'appliquent les lois n° 83-634 du 13 juillet 1983 portant droits et obligations
+      des fonctionnaires et n° 84-16 du 11 janvier 1984 […], ainsi que les lois n° 84-53
+      du 26 janvier 1984 […] et n° 86-33 du 9 janvier 1986 […] ; 2° Aux magistrats de
+      l'ordre judiciaire ; 3° Aux militaires de tous grades possédant le statut de
+      militaire de carrière ou servant en vertu d'un contrat ; 4° A leurs conjoints
+      survivants ainsi qu'à leurs orphelins », mot pour mot dans les quatre rédactions
+      de l'article
+    droit: >-
+      l'ouvrier de l'État n'est ni fonctionnaire au sens de ces lois, ni magistrat, ni
+      militaire : sa pension est celle du FSPOEIE, et il ne cotise pas au régime ; le 4°,
+      la réversion, est la fiche `reversion_rafp`
+    conditions: >-
+      l'ERAFP ouvre le régime au fonctionnaire civil « même en cas de détachement » et
+      au militaire « réserviste », et le ferme au « fonctionnaire territorial ou
+      hospitalier de statut local dans une collectivité d'Outre-Mer », au « fonctionnaire
+      en position de disponibilité ou « hors cadre » » et au « fonctionnaire titulaire
+      employé moins de 28 heures par semaine », que l'article 76 ne nomme pas
+  exemples: aucun trouvé
+approximations:
+- version: fonctionnaires_magistrats_militaires
+  ecart: >-
+    le titulaire territorial ou hospitalier employé moins de vingt-huit heures par
+    semaine, que l'ERAFP écarte du régime, y est affilié : le statut ne lit pas la
+    durée de travail, et le routage le porte au RAFP comme à la CNRACL, dont il ne
+    relève pas davantage (`legislation/affiliations.yaml`, note du statut
+    `fonctionnaire_territorial_hospitalier`)
+  effet: non mesuré
 effet: >-
   Les deux statuts d'ouvrier de l'État, que le routage affiliait au RAFP de 2005
   au 28 septembre 2026 : ils n'y cotisent plus, et la rente servie à part
   disparaît — 1 244,88 € par an, en euros du départ, pour un ouvrier né en 1970,
   à 20 % de primes, parti en 2034. Aucun total des quatre systèmes ne bouge, le
   RAFP en étant retiré ; les témoins, sans primes, n'y perdent qu'une ligne
-  nulle.
+  nulle. Approchée depuis le 29 octobre 2026 : le titulaire territorial ou
+  hospitalier de moins de vingt-huit heures par semaine reste affilié, le statut ne
+  lisant pas la durée de travail.
 sources:
-  lu_le: 2026-09-28
-  prochaine_relecture: 2027-09-30
+  lu_le: 2026-10-29
+  prochaine_relecture: 2027-10-29
+  a_relire:
+  - >-
+    Le texte sur lequel l'ERAFP écarte du régime le fonctionnaire titulaire employé
+    moins de vingt-huit heures par semaine : ni l'article 76 de la loi n° 2003-775,
+    dans ses quatre rédactions, ni le décret n° 2004-569 ne le nomment, et l'index LEGI
+    ne trouve aucun texte de la retraite additionnelle qui le dise.
   lectures:
   - type: legifrance
     reference: >-
@@ -41,16 +114,39 @@ sources:
     url: >-
       https://www.info-retraite.fr/portail-info/files/live/sites/PortailInformationnel/files/images/PDF/Rapport/RA%20UR%202024_RegimesRetraite-1.pdf
     date: 2026-09-28
-textes_a_rattacher:
-- reference: 'loi n° 2003-775, article 76, II (LEGIARTI000048691415) : bénéficiaires'
+  - type: legifrance
+    reference: >-
+      loi n° 2003-775, article 76, ses quatre rédactions (LEGIARTI000006758621,
+      …023096773, …046874577, …048691415), dans l'index LEGI du dépôt à jour de
+      l'incrément du 28 octobre 2026 : le II n'a pas changé d'un mot depuis 2005
+    date: 2026-10-29
+  - type: autre
+    reference: >-
+      ERAFP, « Actif », relu : « Vous ne pouvez pas cotiser au RAFP si vous êtes :
+      fonctionnaire territorial ou hospitalier de statut local dans une collectivité
+      d'Outre-Mer ; fonctionnaire en position de disponibilité ou « hors cadre » ;
+      fonctionnaire titulaire employé moins de 28 heures par semaine »
+    url: https://www.rafp.fr/actif/actif
+    date: 2026-10-29
+historique:
+- >-
+  2026-10-29 — lue au droit (action 130) : deux versions, avant et depuis le 1er
+  janvier 2005 ; le II de l'article 76, inchangé depuis, n'a pas d'autre coupure.
+  L'ERAFP écarte trois situations que le texte ne nomme pas : le statut local
+  d'outre-mer, que le routage n'affilie pas au RAFP (`fonctionnaire_pacifique`) ; la
+  disponibilité et la position hors cadre, sans rémunération de l'administration ;
+  le titulaire de moins de vingt-huit heures par semaine, que le statut ne distingue
+  pas, d'où l'approximation.
 code:
   moteur: >-
     Le routage n'affilie au RAFP, depuis 2005, que les statuts de fonctionnaire de
     l'État, territorial ou hospitalier, et de militaire : l'ouvrier de l'État,
     sédentaire ou actif, n'est routé qu'au FSPOEIE (`ouvrier_etat`,
-    `ouvrier_etat_actif`). `Affiliations.regimes` rend les régimes de chaque ligne, que
-    `regimes_de` reprend pour la coordination : aucune ligne de l'ouvrier ne cotise au
-    RAFP ni n'y acquiert de points, et aucune rente du RAFP ne s'ajoute à sa pension.
+    `ouvrier_etat_actif`), et le fonctionnaire de Nouvelle-Calédonie, de statut local,
+    qu'à sa caisse (`fonctionnaire_pacifique`). `Affiliations.regimes` rend les
+    régimes de chaque ligne, que `regimes_de` reprend pour la coordination : aucune
+    ligne de l'ouvrier ne cotise au RAFP ni n'y acquiert de points, et aucune rente du
+    RAFP ne s'ajoute à sa pension.
   python: >-
     carriere.py : Affiliations.regimes ; droit/coordonner.py : regimes_de
   javascript: >-
@@ -58,7 +154,9 @@ code:
     regimesDe
   parametres: >-
     legislation/affiliations.yaml : affiliations.ouvrier_etat.periodes,
-    affiliations.ouvrier_etat_actif.periodes
+    affiliations.ouvrier_etat_actif.periodes, affiliations.fonctionnaire_etat.periodes,
+    affiliations.fonctionnaire_territorial_hospitalier.periodes,
+    affiliations.militaire.periodes, affiliations.fonctionnaire_pacifique.periodes
   tests:
   - >-
     tests/test_limite_age.py, où l'ouvrier de l'État n'est radié que du FSPOEIE

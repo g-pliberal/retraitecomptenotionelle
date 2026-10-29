@@ -243,6 +243,33 @@ def test_les_fiches_ecrites_par_lots_ont_leur_code_et_leurs_regimes(fiches):
     assert {nom: absents for nom, absents in manquants.items() if absents} == {}
 
 
+#: Les fiches tirées du registre de veille que la carte lit au droit, par lots
+#: d'un régime ou d'un domaine, depuis le 29 octobre 2026 (action 130) : leurs
+#: versions, leur domaine, leur étape, ce qu'elles lisent et écrivent, leurs
+#: dates qui décident. Ce jour-là, 106 fiches attendaient cette lecture. La
+#: liste ne fait que grandir : elle arrête la fiche qui perdrait ce que la
+#: lecture lui a donné.
+LUES_AU_DROIT = frozenset("""
+    rafp_assiette_plafond rafp_beneficiaires
+""".split())
+
+
+def test_les_fiches_lues_au_droit_sont_mures(fiches):
+    """Rien ne manque plus aux fiches lues au droit, et ce qu'elles disent
+    d'elles-mêmes tient (``outils_carte``) ; une rédaction que leurs versions
+    citent n'est plus à rattacher."""
+    from outils_carte import ecarts
+    from retraite_notionnelle.noyau.textes import LEGIARTI
+
+    manques = carte.manques()
+    assert {nom: manques[nom] for nom in sorted(LUES_AU_DROIT) if nom in manques} == {}
+    assert [e for nom in sorted(LUES_AU_DROIT) for e in ecarts(fiches[nom])] == []
+    for nom in sorted(LUES_AU_DROIT):
+        citees = {t.get("id") for v in fiches[nom]["versions"] for t in v.get("textes") or []}
+        a_rattacher = set(LEGIARTI.findall(str(fiches[nom].get("textes_a_rattacher") or "")))
+        assert not citees & a_rattacher, (nom, sorted(citees & a_rattacher))
+
+
 def test_une_fiche_complete_est_mure(tmp_path):
     """La fiche A.1 de l'architecture, posée seule dans une carte : ni erreur,
     ni manque."""

@@ -9,7 +9,9 @@ pivot de soixante-deux, « ≥ 75 1,81 », pour les prestations qui prennent eff
 depuis le 1er mars 2015 ; le barème de conversion de 2005, puis celui du 16
 décembre 2021 au 1er janvier 2022 ; le capital fractionné de 4 600 points en mai
 2019, de 4 900 en avril 2024. L'ERAFP calcule l'âge « en tenant compte du nombre
-d'années et du nombre de mois ». Les carrières sont fictives.
+d'années et du nombre de mois ». Les carrières sont fictives. Et ce que le décret
+fixe lui-même de la cotisation — la limite de l'assiette, le taux et son partage
+—, que chaque période du régime porte (fiche `rafp_assiette_plafond`).
 """
 
 from __future__ import annotations
@@ -178,3 +180,32 @@ def test_le_portage_javascript_rend_les_memes_coefficients_au_bit_pres():
         cwd=RACINE, capture_output=True, text=True, encoding="utf-8", check=False)
     assert execution.returncode == 0, execution.stderr
     assert json.loads(execution.stdout) == json.loads(json.dumps(attendu))
+
+
+def test_chaque_periode_du_regime_porte_les_taux_que_le_decret_ecrit():
+    """La limite de 20 % du traitement indiciaire brut (décret n° 2004-569,
+    article 2), le taux de 10 % (article 3) et sa moitié à l'agent (loi
+    n° 2003-775, article 76, III), que la fiche `rafp_assiette_plafond` lit
+    version par version depuis le 1er janvier 2005 : la période du régime de
+    chaque année que la version couvre les porte."""
+    from datetime import timedelta
+
+    import yaml
+
+    from retraite_notionnelle.noyau import carte
+
+    fiche = carte.fiches()["rafp_assiette_plafond"]
+    regime = yaml.safe_load((RACINE / "data" / "reference" / "regimes" / "rafp.yaml")
+                            .read_text(encoding="utf-8"))
+    lus = []
+    for version in fiche.get("versions") or []:
+        parametres = (version.get("contenu") or {}).get("parametres") or {}
+        if not parametres:
+            continue
+        debut, fin = version["bornes"]["revenu.annee"]
+        for annee in range(debut.year, (fin - timedelta(days=1)).year + 1 if fin else 2051):
+            periode = next(p for p in regime["periodes"]
+                           if p["debut"] <= annee and (p["fin"] is None or annee <= p["fin"]))
+            assert {cle: periode.get(cle) for cle in parametres} == parametres, (version["id"], annee)
+            lus.append((version["id"], annee))
+    assert lus, "la fiche ne lit aucun taux dans le décret"

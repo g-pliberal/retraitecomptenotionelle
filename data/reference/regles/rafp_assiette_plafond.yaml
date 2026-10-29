@@ -6,8 +6,156 @@ intitule: >-
   « dans la limite de 20 % du traitement indiciaire brut total ou de la solde brute
   totale perçus au cours de l'année considérée » ; cotisation de 10 %, moitié agent,
   moitié employeur.
+domaine: cotisations
 regimes: [rafp]
+etape: acquerir_les_droits
+face: droit
 etat: conforme
+lit:
+- le traitement et les primes de chaque année de la ligne, que la saisie donne par la
+  part des primes dans la rémunération
+- la part des primes que la pension civile ou la CNRACL prend avec le traitement — la
+  prime soumise à retenue d'un policier, d'un aide-soignant ou d'un sapeur-pompier
+- le statut de la ligne, qui l'affilie ou non au RAFP (fiche `rafp_beneficiaires`)
+ecrit:
+- l'assiette du RAFP de l'année, bornée à 20 % du traitement, et la cotisation de 10 %
+  qu'elle porte, la moitié à l'agent, que reçoivent les points du RAFP au scénario 1
+  et le compartiment de capitalisation du compte notionnel
+dates_qui_decident:
+- revenu.annee
+versions:
+- id: avant_2005
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006758621, article: "loi n° 2003-775, article 76, VII", en_vigueur: 2005-01-01, publie_le: 2003-08-22}
+  nee_de: LEGIARTI000006758621
+  bornes:
+    revenu.annee: [null, 2005-01-01]
+  contenu:
+    droit: >-
+      aucune cotisation : le régime additionnel n'existe pas, l'article 76 « entrera
+      en vigueur le 1er janvier 2005 »
+  exemples: aucun trouvé
+- id: vingt_pour_cent
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006758621, article: "loi n° 2003-775, article 76, I et III", en_vigueur: 2005-01-01, publie_le: 2003-08-22}
+  - {id: LEGIARTI000023096773, article: "loi n° 2003-775, article 76, I et III", en_vigueur: 2011-07-01}
+  - {id: LEGIARTI000006453300, article: "décret n° 2004-569, article 2", en_vigueur: 2004-06-19}
+  - {id: LEGIARTI000036070837, article: "décret n° 2004-569, article 2", en_vigueur: 2017-11-23}
+  - {id: LEGIARTI000037457096, article: "décret n° 2004-569, article 2", en_vigueur: 2018-09-30}
+  - {id: LEGIARTI000039240968, article: "décret n° 2004-569, article 2", en_vigueur: 2019-10-19}
+  - {id: LEGIARTI000006453301, article: "décret n° 2004-569, article 3", en_vigueur: 2004-06-19}
+  - {id: LEGIARTI000006453302, article: "décret n° 2004-569, article 4", en_vigueur: 2004-06-19}
+  - {id: LEGIARTI000037457092, article: "décret n° 2004-569, article 4", en_vigueur: 2018-09-30}
+  - {id: LEGIARTI000019412517, article: "arrêté du 26 novembre 2004, article 15", en_vigueur: 2004-12-01}
+  - {id: LEGIARTI000019412576, article: "arrêté du 26 novembre 2004, article 15", en_vigueur: 2006-10-21}
+  - {id: LEGIARTI000021010549, article: "arrêté du 26 novembre 2004, article 15", en_vigueur: 2009-08-30}
+  - {id: LEGIARTI000037800310, article: "arrêté du 26 novembre 2004, article 15", en_vigueur: 2018-12-13}
+  nee_de: LEGIARTI000006453300
+  bornes:
+    revenu.annee: [2005-01-01, 2022-01-01]
+  contenu:
+    beneficiaire: >-
+      les fonctionnaires civils, les magistrats de l'ordre judiciaire et les militaires
+      (fiche `rafp_beneficiaires`)
+    droit: >-
+      le régime est « assis sur une fraction maximale, déterminée par décret en Conseil
+      d'Etat, de l'ensemble des éléments de rémunération de toute nature non pris en
+      compte dans l'assiette de calcul des pensions civiles et militaires de retraite »
+      (loi, article 76, I) : « Ces éléments sont pris en compte dans la limite de 20 %
+      du traitement indiciaire brut total perçu au cours de l'année considérée »
+      (décret, article 2) ; « Le taux global de cotisation est fixé à 10 % du montant
+      de l'assiette. Il est réparti à parts égales entre l'employeur et le
+      bénéficiaire » (article 3), comme la loi le veut (article 76, III)
+    conditions: >-
+      sont pris les éléments « perçus » au cours de l'année civile, et depuis le 30
+      septembre 2018 les « revenus d'activité dus au cours de l'année civile » tels que
+      la CSG les prend, hors de ceux qui entrent dans la pension civile ou celle de la
+      CNRACL ; la rémunération d'une activité privée lucrative autorisée « n'entre pas
+      dans l'assiette » ; la limite vaut pour la solde des militaires, que le texte nomme
+      depuis le 19 octobre 2019 (« ou de la solde brute totale ») ; détaché dans un
+      emploi qui ne conduit pas à pension, le bénéficiaire cotise sur la différence
+      entre sa rémunération et le traitement indiciaire de sa retenue pour pension, et
+      « La limite de 20 % prévue à l'article 2 s'apprécie au regard de ce traitement »
+      (article 4) ; chaque mois, l'employeur rapproche les éléments cotisables versés
+      depuis le début de l'année « du plafond de l'assiette déterminée à partir du
+      traitement indiciaire brut servi depuis le même début d'année » (arrêté du 26
+      novembre 2004, article 15) : la limite vaut pour l'année entière
+    parametres:
+      plafond_primes_traitement: 0.20
+      taux_cotisation_retraite: 0.10
+      part_salariale: 0.50
+  exemples: aucun trouvé
+- id: hors_protection_complementaire
+  statut: lue
+  textes:
+  - {id: LEGIARTI000046874577, article: "loi n° 2003-775, article 76, I et III", en_vigueur: 2023-01-01}
+  - {id: LEGIARTI000046852332, article: "loi n° 2022-1726, article 162, IV et V", en_vigueur: 2023-01-01}
+  - {id: LEGIARTI000039240968, article: "décret n° 2004-569, article 2", en_vigueur: 2019-10-19}
+  - {id: LEGIARTI000047751473, article: "décret n° 2004-569, article 2", en_vigueur: 2023-06-30}
+  - {id: LEGIARTI000049424057, article: "décret n° 2004-569, article 2", en_vigueur: 2024-04-17}
+  - {id: LEGIARTI000006453301, article: "décret n° 2004-569, article 3", en_vigueur: 2004-06-19}
+  - {id: LEGIARTI000037457092, article: "décret n° 2004-569, article 4", en_vigueur: 2018-09-30}
+  - {id: LEGIARTI000037800310, article: "arrêté du 26 novembre 2004, article 15", en_vigueur: 2018-12-13}
+  nee_de: LEGIARTI000046874577
+  bornes:
+    revenu.annee: [2022-01-01, 2024-09-01]
+  contenu:
+    beneficiaire: >-
+      les fonctionnaires civils, les magistrats de l'ordre judiciaire et les militaires
+      (fiche `rafp_beneficiaires`)
+    droit: >-
+      la limite, le taux et leur partage de la version précédente ; « Par dérogation au
+      premier alinéa, la participation d'un employeur public au financement d'un contrat
+      collectif de protection sociale complémentaire auquel la souscription des agents
+      est rendue obligatoire […] est exclue de cette assiette » (loi, article 76, I),
+      ainsi que « le remboursement prévu au II de l'article 4 de l'ordonnance n° 2021-175
+      du 17 février 2021 relative à la protection sociale complémentaire dans la
+      fonction publique, versé aux agents publics de l'Etat et aux militaires » (loi
+      n° 2022-1726, article 162, IV)
+    conditions: >-
+      les deux exclusions « sont applicables à compter du 1er janvier 2022 » (article
+      162, V) : la loi du 30 décembre 2022 les fait remonter d'un an ; depuis le 17
+      avril 2024, l'assiette « est constituée prioritairement des éléments de
+      rémunérations autres que ceux mentionnés au I de l'article 76 bis », les
+      indemnités d'outre-mer que l'agent de l'État peut choisir de cotiser au-delà de
+      la limite (fiche `rafp_cotisation_volontaire_outre_mer`)
+    parametres:
+      plafond_primes_traitement: 0.20
+      taux_cotisation_retraite: 0.10
+      part_salariale: 0.50
+  exemples: aucun trouvé
+- id: hors_activite_hospitaliere
+  statut: lue
+  textes:
+  - {id: LEGIARTI000048691415, article: "loi n° 2003-775, article 76, I et III", en_vigueur: 2024-09-01}
+  - {id: LEGIARTI000049424057, article: "décret n° 2004-569, article 2", en_vigueur: 2024-04-17}
+  - {id: LEGIARTI000006453301, article: "décret n° 2004-569, article 3", en_vigueur: 2004-06-19}
+  - {id: LEGIARTI000037457092, article: "décret n° 2004-569, article 4", en_vigueur: 2018-09-30}
+  - {id: LEGIARTI000037800310, article: "arrêté du 26 novembre 2004, article 15", en_vigueur: 2018-12-13}
+  nee_de: LEGIARTI000048691415
+  bornes:
+    revenu.annee: [2024-09-01, null]
+  contenu:
+    beneficiaire: >-
+      les fonctionnaires civils, les magistrats de l'ordre judiciaire et les militaires
+      (fiche `rafp_beneficiaires`)
+    droit: >-
+      la limite, le taux et leur partage des versions précédentes ; « sont exclus de
+      cette assiette : 1° La participation d'un employeur public au financement d'un
+      contrat collectif de protection sociale complémentaire […] ; 2° Les éléments de
+      rémunération perçus par les membres du personnel enseignant et hospitalier
+      titulaires mentionnés à l'article L. 952-21 du code de l'éducation au titre de
+      leur activité hospitalière » (loi, article 76, I)
+    conditions: >-
+      « Conformément au IV de l'article 33 de la loi n° 2023-1268 du 27 décembre 2023,
+      ces dispositions entrent en vigueur le 1er septembre 2024 »
+    parametres:
+      plafond_primes_traitement: 0.20
+      taux_cotisation_retraite: 0.10
+      part_salariale: 0.50
+  exemples: aucun trouvé
 effet: >-
   Fonctionnaires, magistrats et militaires dont les primes dépassent le cinquième
   du traitement, soit un sixième de la rémunération. Le modèle prenait toutes les
@@ -16,8 +164,8 @@ effet: >-
   par `test_les_primes_au_dela_du_plafond_ne_cotisent_pas_au_rafp` et son pendant
   JavaScript.
 sources:
-  lu_le: 2026-09-23
-  prochaine_relecture: 2027-09-30
+  lu_le: 2026-10-29
+  prochaine_relecture: 2027-10-29
   lectures:
   - type: legifrance
     reference: >-
@@ -35,6 +183,30 @@ sources:
     url: >-
       https://www.rafp.fr/actif/activite/calculer-vos-cotisations-et-vos-points-rafp
     date: 2026-09-23
+  - type: legifrance
+    reference: >-
+      dans l'index LEGI du dépôt, à jour de l'incrément du 28 octobre 2026 : le décret
+      n° 2004-569, articles 2 (ses six rédactions), 3 et 4 (ses deux rédactions) ; la loi
+      n° 2003-775, article 76 (ses quatre rédactions : la limite et le taux n'y changent
+      pas, l'assiette perd la protection sociale complémentaire en 2022 et l'activité
+      hospitalière des hospitalo-universitaires en 2024) ; la loi n° 2022-1726, article
+      162 ; la loi n° 2023-1268, article 33 ; l'arrêté du 26 novembre 2004, article 15,
+      ses quatre rédactions, qui toutes rapprochent chaque mois l'assiette cumulée depuis
+      janvier du plafond cumulé
+    date: 2026-10-29
+  - type: autre
+    reference: >-
+      ERAFP, « Calcul et versements des cotisations » (employeurs) : l'assiette
+      « correspond à l'ensemble des éléments de rémunération perçus au cours de
+      l'année civile et non soumis à cotisation vieillesse auprès du régime de base »,
+      sans le traitement indiciaire, la NBI, une activité lucrative privée ni les
+      remboursements de frais ; « Le plafond de l'assiette est établi à 20 % du seul
+      traitement indiciaire brut total perçu au cours de l'année considérée », par un
+      « calcul mensuel cumulé glissant » ; le complément de traitement indiciaire
+      n'entre ni dans l'assiette ni dans le calcul de la limite ; aucun exemple chiffré
+      de la limite, sur cette page ni sur celle des actifs
+    url: https://www.rafp.fr/employeur/calcul-et-versement-des-cotisations
+    date: 2026-10-29
 historique:
 - >-
   2026-10-04 — les deux exceptions au plafond, la GIPA et le compte épargne-temps,
@@ -42,12 +214,13 @@ historique:
   cotisation volontaire des agents de l'État outre-mer et sa garantie de 4 000 € :
   fiches `rafp_cotisation_volontaire_outre_mer` et `rafp_garantie_outre_mer`. Ni
   les unes ni les autres ne sont modélisées.
-textes_a_rattacher:
-- reference: >-
-    décret n° 2004-569, article 2, six versions de LEGIARTI000006453300 (2004) à
-    LEGIARTI000049424057 (en vigueur depuis le 17 avril 2024), la limite de 20 %
-    dans toutes
-- reference: 'loi n° 2003-775, article 76, II (LEGIARTI000048691415) : bénéficiaires'
+- >-
+  2026-10-29 — lue au droit (action 130) : quatre versions, coupées à la naissance
+  du régime en 2005 et aux deux exclusions que la loi a ajoutées à son assiette, la
+  protection sociale complémentaire en 2022, l'activité hospitalière des
+  hospitalo-universitaires en septembre 2024. La limite de 20 %, le taux de 10 % et
+  son partage n'ont pas changé depuis 2004, et chaque période du régime les porte
+  (`tests/test_rafp.py`).
 code:
   moteur: >-
     L'assiette du RAFP est faite des seules primes (`primes_uniquement`) :
@@ -58,7 +231,12 @@ code:
     notionnel (`ConstructeurCompte._cotisation_ligne`) découpent tous deux la ligne par
     là, et y prélèvent `taux_cotisation_retraite`, 10 %, la moitié à l'agent
     (`part_salariale`). Ni la GIPA ni les jours du compte épargne-temps, qui échappent
-    au plafond, ne sont portés.
+    au plafond, ne sont portés. La ligne est l'année, comme la limite : le calcul
+    cumulé de l'employeur, mois par mois, y revient. La saisie ne connaît ni le
+    détachement, ni ce que la loi et le décret retirent de l'assiette — l'activité
+    privée autorisée, la participation de l'employeur à la protection sociale
+    complémentaire, l'activité hospitalière des hospitalo-universitaires — : la part
+    de primes qu'elle demande est l'assiette avant la limite.
   python: >-
     donnees/regimes.py : PeriodeRegime.part_du_revenu ; droit/acquerir.py : acquerir,
     part_soumise ; donnees/primes.py : PrimesSoumises.parts ; moteur/compte.py :
@@ -68,10 +246,12 @@ code:
     acquerir, partSoumise ; moteur/js/primes.js : PrimesSoumises.parts ;
     moteur/js/compte.js : ConstructeurCompte._cotisationLigne
   parametres: >-
-    regimes/rafp.yaml : assiette, plafond_primes_traitement, taux_cotisation_retraite,
-    part_salariale
+    contenu.parametres de chaque version : plafond_primes_traitement,
+    taux_cotisation_retraite, part_salariale ; regimes/rafp.yaml : assiette,
+    plafond_primes_traitement, taux_cotisation_retraite, part_salariale
   tests:
   - tests/test_simulateur.py
+  - tests/test_rafp.py, où chaque période du régime porte les taux de chaque version
   - tests/test_primes_soumises_a_retenue.py
   - tests/test_remuneration.py
   - tests/test_indemnite_csg.py
