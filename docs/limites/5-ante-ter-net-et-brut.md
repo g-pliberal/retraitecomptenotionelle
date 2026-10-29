@@ -85,11 +85,15 @@ quand la fiche de paie laisse la mutuelle d'entreprise d'un salarié, qui ne
 l'est pas. Qui réside hors de France ne doit ni CSG, ni CRDS, ni CASA ; si la
 France prend en charge ses soins, il doit une cotisation maladie sur la base du
 régime général et sur la complémentaire, et la sienne à la SNCF et aux mines
-(fiche `cotisation_maladie_des_non_residents`). La majoration pour trois
-enfants de la réversion du régime général y paie encore celle de la base, que
-L. 131-2, 1° exclurait comme les autres majorations pour enfants ; et ne sont
-lus ni les conventions bilatérales qui rendraient la France seule compétente
-hors de l'Union, ni ce que les autres régimes prélèvent sur sa pension.
+(fiche `cotisation_maladie_des_non_residents`), mais aucune sur les majorations
+pour enfants (L. 131-2, 1°) : ni sur celle du défunt qu'une réversion reprend,
+ni sur celles dont le régime général majore la réversion du survivant, pour
+trois enfants et pour enfant à charge. Ce qu'une révision ou la limite de cumul
+retire à cette réversion, la carte de la réversion le nette encore comme si la
+part de la majoration pour trois enfants payait la cotisation : le modèle ne
+l'en sépare pas. Ne sont lus ni les conventions bilatérales qui rendraient la
+France seule compétente hors de l'Union, ni ce que les autres régimes
+prélèvent sur sa pension.
 
 **Le régime d'une pension suit l'entrée dans le statut.** Un statut fermé aux
 nouveaux entrants — la SNCF, la RATP, la Banque de France, les IEG, la CRPCEN,
