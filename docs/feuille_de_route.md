@@ -5272,16 +5272,16 @@ de statuts et les `manque` de la page Méthode.
 
 ### 135. Aller plus vite sans rien céder : l'outillage d'un changement de résultats — `en cours`
 
-**Reprise, au 17 octobre 2026.** Fait : les leviers 1, 2 et, pour
-l'essentiel, 3 ; le hook de démarrage ; « Économiser le contexte » ; l'arbre
-du dépôt ; le parcours `tenu` ; le contexte en cinq étapes ; la mémoire
-indexée sur le seul modèle ; `pousser.sh` publie une tête détachée ;
-`node --test` sauté quand rien de ce qu'il lit n'a bougé, les cumuls au
-hasard et le portage du coût (notes du 16) ; la lecture confiée à Haiku,
-`consommation.py` par modèle, le skill `claude-api` du dépôt (note du 17).
-Reste : `actions/cache` sur GitHub, le modèle et l'effort des sessions, que
-le propriétaire décide ; la part de l'éclaireur, à relever ; du portage
-rejoué, les pages au hasard, que la session des pages tient ; le 4 et 5.
+**Reprise, au 29 octobre 2026.** Fait : les leviers 1, 2 et, pour l'essentiel,
+3 ; le hook de démarrage ; « Économiser le contexte » ; l'arbre du dépôt ; le
+parcours `tenu` ; le contexte en cinq étapes ; la mémoire indexée sur le seul
+modèle ; `pousser.sh` publie une tête détachée ; `node --test` sauté quand
+rien de ce qu'il lit n'a bougé, les cumuls au hasard et le portage du coût
+(notes du 16) ; la lecture confiée à Haiku, `consommation.py` par modèle, le
+skill `claude-api` du dépôt (note du 17) ; les pages au hasard, laissées
+telles quelles (note du 29). Reste : `actions/cache` sur GitHub, le modèle et
+l'effort des sessions, que le propriétaire décide ; la part de l'éclaireur, à
+relever ; le paquet du dépôt dans la clé de `moitie_python` ; le 4 et 5.
 
 **Demande**, le 28 septembre 2026, l'action 132 close : « On passe un temps
 interminable à faire ces changements. Pourquoi ? Est-ce qu'on peut aller plus

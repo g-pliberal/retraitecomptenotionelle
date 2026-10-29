@@ -1,0 +1,14 @@
+date: "2026-10-29"
+session: "action 135 : les pages tirées au hasard, mesurées et laissées telles quelles"
+consulte: >-
+  Aucune source de droit : la session ne touche à aucune règle du scénario 1,
+  seulement à la mesure d'un test du site (tests/test_web.py).
+trouve: >-
+  Aucune règle n'a changé. Les pages au hasard font 11 s, dont 8,4 de pages,
+  ce que le test éprouve ; la mémoire des calculs n'en garderait que 1,2 s,
+  hors de ce qui fixe la durée de test_web.py, et rien sur GitHub : elles
+  restent telles quelles. Le paquet du dépôt, que le pont lit, n'est ni dans
+  l'empreinte de la mémoire ni dans la clé de moitie_python.
+reste: >-
+  Le paquet du dépôt dans la clé de moitie_python ; actions/cache sur GitHub,
+  que le propriétaire décide.
