@@ -28,10 +28,10 @@ import pytest
 RACINE = Path(__file__).resolve().parents[1]
 FETCH = RACINE / "scripts" / "fetch"
 REGISTRE = RACINE / "data" / "reference" / "legislation" / "cnav"
-GENRES = ("baremes", "exposes", "listes", "references", "fenetres")
+GENRES = ("baremes", "exposes", "listes", "references", "fenetres", "mises_a_jour", "documents")
 SORTS = ("branche", "recoupe", "limite", "hors_modele", "a_lire")
 #: Les genres dont l'API peut ne pas servir un objet lié : il reste sans titre.
-SANS_TITRE_POSSIBLE = ("references", "fenetres")
+SANS_TITRE_POSSIBLE = ("references", "fenetres", "documents")
 
 #: Les récupérateurs qui lisent la base : les dix que l'action 175 a relevés
 #: le 29 octobre 2026 — neuf `cnav_*.py` qui nomment l'API, et `ines.py` —,
@@ -113,7 +113,8 @@ def test_les_liens_d_un_contenu_disent_ce_qu_ils_visent():
     préfixe d'un partage (`/%3ab%3a/r`) et suivi de paramètres ; un barème ou
     une liste, que le site ouvre par la même route, au besoin sous un
     sous-dossier ; un exposé ; une fenêtre d'information (`#/infosupp/`),
-    exemple, lexique ou complément, au besoin sous le préfixe d'un partage.
+    exemple, lexique ou complément, au besoin sous le préfixe d'un partage ; un
+    document qu'un barème joint (`Bareme/Pages/doc_communs/`), page ou PDF.
     Légifrance et le CLEISS ne sont pas des objets de la base."""
     module = _module("cnav_legislation")
     contenu = "".join(f'<a href="{lien}">x</a>' for lien in (
@@ -127,6 +128,9 @@ def test_les_liens_d_un_contenu_disent_ce_qu_ils_visent():
         "http://www.legifrance.gouv.fr/affichCodeArticle.do?idArticle=LEGIARTI000006742631",
         "https://www.cleiss.fr/docs/ol/algerie.html",
         "#/infosupp/ex_delai.aspx",
+        "Bareme/Pages/doc_communs/listes_baremes/change/BNL-CETAUX_HONGRIE.htm",
+        "/%3ab%3a/rBareme/Pages/doc_communs/listes_baremes/"
+        "ti_cotisation_assiette_maximale_cotisation.pdf?csf=1&amp;web=1",
         "/%3au%3a/r#/infosupp/ex_carte_invalidite.aspx?csf=1&amp;web=1&amp;e=sw1Ggi",
         "#/references-reglementaires?file_leaf_ref=LE_MIN_10031970_59%20373%20AG.aspx",
         "/Pdf/circulaire_cnav_2024_28_14102024.pdf",
@@ -139,6 +143,8 @@ def test_les_liens_d_un_contenu_disent_ce_qu_ils_visent():
         ("bareme", "cotisation_salaire_vente_domicile_2026_bar.aspx"),
         ("expose", "retraite_personnelle_taux_taux_retraite_ex.aspx"),
         ("fenetre", "ex_delai.aspx"),
+        ("document", "listes_baremes/change/BNL-CETAUX_HONGRIE.htm"),
+        ("document", "listes_baremes/ti_cotisation_assiette_maximale_cotisation.pdf"),
         ("fenetre", "ex_carte_invalidite.aspx"),
         ("reference", "LE_MIN_10031970_59 373 AG.aspx"),
     ]
@@ -205,16 +211,101 @@ def test_une_liste_et_une_reference_prennent_les_themes_de_ce_qui_les_lie():
 def test_la_base_se_suit_de_reference_en_reference():
     """Les références citent d'autres textes, et ceux-ci d'autres encore : le
     29 octobre 2026, les 2 298 références que les collections lient en
-    citaient 2 020 autres, sur quatre rangs. La base est ce que les
-    collections et leurs fenêtres atteignent, de proche en proche ; une
-    référence que plus rien n'atteint n'en est plus."""
+    citaient 2 020 autres, sur quatre rangs. La base est ce que ses objets
+    atteignent, de proche en proche, et ce que sa recherche sert sans que rien
+    ne le lie, avec ce que cela cite — les racines ; une référence que rien
+    n'atteint n'en est pas."""
     module = _module("cnav_legislation")
     liens = {("exposes", "e.aspx"): [("references", "r1.aspx"), ("fenetres", "ex_delai.aspx")],
              ("fenetres", "ex_delai.aspx"): [("references", "r4.aspx")],
+             ("mises_a_jour", "232"): [("references", "r6.pdf")],
              ("references", "r1.aspx"): [("references", "r2.aspx")],
              ("references", "r2.aspx"): [("references", "r3.pdf"), ("references", "r1.aspx")],
-             ("references", "orpheline.aspx"): [("references", "r1.aspx")]}
-    assert module.fermeture(liens) == {"r1.aspx", "r2.aspx", "r3.pdf", "r4.aspx"}
+             ("references", "orpheline.aspx"): [("references", "r1.aspx")],
+             ("references", "AC_SS_04122003.aspx"): [("references", "r7.aspx")]}
+    assert module.fermeture(liens) == {"r1.aspx", "r2.aspx", "r3.pdf", "r4.aspx", "r6.pdf"}
+    assert module.fermeture(liens, racines={"AC_SS_04122003.aspx"}) == {
+        "r1.aspx", "r2.aspx", "r3.pdf", "r4.aspx", "r6.pdf", "AC_SS_04122003.aspx", "r7.aspx"}
+
+
+def test_un_document_joint_se_suit_de_page_en_page():
+    """Un barème joint des documents, pages ou PDF, sous
+    `Bareme/Pages/doc_communs/` ; une page en lie d'autres, par un chemin
+    relatif — le 29 octobre 2026, les 81 que lient les barèmes en atteignaient
+    134 —, et charge ses valeurs par un script, qui n'est pas un document."""
+    module = _module("cnav_legislation")
+    page = "".join((
+        '<link href="_layouts/CAMPUS/Campus-baremes/style/bnl_exp.css">',
+        '<script src="_layouts/CAMPUS/Campus-baremes/js/declare/changece/decCEHONGRIE.js">',
+        '<a href="https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=',
+        'taux_change_taux_change_monnaie_par_pays_bar.aspx">retour</a>',
+        '<a href="../../lb_global/BNL-GLOB-L_B_CEHONGRIE.htm">liste globale</a>',
+        '<img src="/_layouts/CAMPUS/Campus-baremes/images/som_prece_dp.gif">'))
+    assert module.liens(page, document="listes_baremes/change/BNL-CETAUX_HONGRIE.htm") == [
+        ("bareme", "taux_change_taux_change_monnaie_par_pays_bar.aspx"),
+        ("document", "lb_global/BNL-GLOB-L_B_CEHONGRIE.htm")]
+    assert module.date_http("Mon, 24 Apr 2023 09:24:32 GMT") == "2023-04-24T09:24:32Z"
+    assert module.date_http("") == ""
+
+
+def test_les_fenetres_se_lisent_par_leurs_collections():
+    """`/lexique`, `/exemple` et `/complementInformation` servent chacune ses
+    fenêtres d'un appel : 392 le 29 octobre 2026, quand les objets de la base
+    n'en liaient que 178. La collection dit la nature."""
+    module = _module("cnav_legislation")
+    collections = {
+        "lexique": [{"file_leaf_ref": "conjoint_lex.aspx", "titre": "Conjoint"}],
+        "exemple": [{"file_leaf_ref": "ex_dom_exonere.aspx", "titre": "Assuré DOM exonéré"}],
+        "complementInformation": [{"file_leaf_ref": "ex_delai.aspx", "titre": "Délai"}],
+    }
+    assert module.fenetres_des_collections(collections) == {
+        "conjoint_lex.aspx": {"file_leaf_ref": "conjoint_lex.aspx", "titre": "Conjoint",
+                              "nature": "lexique"},
+        "ex_dom_exonere.aspx": {"file_leaf_ref": "ex_dom_exonere.aspx",
+                                "titre": "Assuré DOM exonéré", "nature": "exemple"},
+        "ex_delai.aspx": {"file_leaf_ref": "ex_delai.aspx", "titre": "Délai",
+                          "nature": "complement"},
+    }
+
+
+def test_un_avis_prend_le_theme_de_ce_qu_il_met_a_jour():
+    """Un avis de mise à jour (`/mises-a-jour`) dit quels barèmes et exposés
+    ont changé, et selon quelle circulaire : il prend le premier niveau de leur
+    thème."""
+    module = _module("cnav_legislation")
+    liens = {("mises_a_jour", "232"): [("baremes", "asi_montant_bar.aspx"),
+                                       ("exposes", "asi_ex.aspx"),
+                                       ("references", "circulaire_cnav_2019_15_05042019.pdf")],
+             ("mises_a_jour", "233"): [("references", "circulaire_cnav_2019_16_05042019.pdf")]}
+    themes = {("baremes", "asi_montant_bar.aspx"):
+              "Allocations du minimum > Allocation supplémentaire d'invalidité",
+              ("exposes", "asi_ex.aspx"): "Allocation du minimum > ASI"}
+    assert module.themes_des_avis(liens, themes) == {
+        "232": "Allocation du minimum ; Allocations du minimum"}
+
+
+def test_la_recherche_se_mene_par_annees_mois_natures_et_mots_du_droit():
+    """La recherche de la base ne rend pas plus de 250 résultats par requête,
+    et ne compte rien : elle se mène par année, par mois de chaque année, par
+    nature de texte et par mot du droit des retraites — le 29 octobre 2026, les
+    années et les mois trouvaient 6 131 références ; soixante mots du droit,
+    36 de plus ; soixante autres, 7 de plus encore. Elle rend les noms qu'elle
+    sert, une fois chacun, et ne garde de ses résultats que ces noms : les
+    contenus des 1 672 premières requêtes pesaient 405 Mo."""
+    module = _module("cnav_legislation")
+    requetes = module.requetes_de_recherche()
+    assert len(requetes) == len(set(requetes))
+    assert {"1945", "2026", "/06/2014", "/12/1972", "circulaire", "arrangement", "retraite",
+            "Andorre", "note technique", "carrière longue"} <= set(requetes)
+    resultats = {"2014": [{"filename": "AC_SS_04122003.aspx", "contenu": "…"}, {"filename": ""},
+                          {"filename": "circulaire_cnav_2014_039_12062014.aspx"},
+                          {"filename": "searchWordCustomFilterFr", "type": "nimporteQuelsMots"}],
+                 "/06/2014": [{"filename": "AC_SS_04122003.aspx"}], "décret": None}
+    assert module.trouvees(resultats) == {"AC_SS_04122003.aspx",
+                                          "circulaire_cnav_2014_039_12062014.aspx"}
+    assert module.noms_par_requete(resultats) == {
+        "2014": ["AC_SS_04122003.aspx", "circulaire_cnav_2014_039_12062014.aspx"],
+        "/06/2014": ["AC_SS_04122003.aspx"], "décret": None}
 
 
 def test_une_fenetre_dit_sa_nature(monkeypatch):
@@ -391,11 +482,19 @@ def _chaines(chemin: Path) -> set[str]:
             and id(noeud) not in docstrings}
 
 
+def _cites(chaine: str) -> set[str]:
+    """Les noms qu'une chaîne du code peut donner à un objet : elle-même, et,
+    pour une adresse de document joint, son chemin sous `doc_communs/`."""
+    return {chaine, *([chaine.split("doc_communs/", 1)[1]] if "doc_communs/" in chaine else [])}
+
+
 def _nomme(chaines: set[str], nom: str) -> bool:
-    """Le script nomme-t-il l'objet : son nom, avec ou sans extension, ou un
-    motif qui le donne, `…_csg_{}_bar` pour l'année que le script y met ?"""
+    """Le script nomme-t-il l'objet : son nom, avec ou sans extension, son
+    adresse s'il est un document joint, ou un motif qui le donne,
+    `…_csg_{}_bar` pour l'année que le script y met ?"""
     souche = nom.rsplit(".", 1)[0]
-    return bool({nom, souche} & chaines) or any(
+    cites = set().union(*map(_cites, chaines)) if chaines else set()
+    return bool({nom, souche} & cites) or any(
         "{}" in chaine and re.fullmatch(re.escape(chaine).replace(r"\{\}", r"\d{4}"), souche)
         for chaine in chaines)
 
@@ -483,14 +582,17 @@ def test_un_sort_renvoie_a_ce_qui_existe():
 
 
 def test_ce_que_lit_un_recuperateur_est_branche_sur_lui():
-    """Un barème ou une circulaire que nomme le code d'un récupérateur de la
-    base est `branche`, et son registre nomme ce récupérateur : la base ne
-    nourrit aucune série sans que le registre le dise."""
-    registre = {ligne["nom"]: ligne for lignes in _registre().values() for ligne in lignes}
+    """Un barème, une circulaire ou un document joint que nomme le code d'un
+    récupérateur de la base est `branche`, et son registre nomme ce
+    récupérateur : la base ne nourrit aucune série sans que le registre le
+    dise. Un avis de mise à jour n'a pour nom que son numéro, que n'importe
+    quelle chaîne du code peut porter : il n'est pas de ce qu'un nom désigne."""
+    registre = {ligne["nom"]: ligne for genre, lignes in _registre().items()
+                if genre != "mises_a_jour" for ligne in lignes}
     par_souche = {nom.rsplit(".", 1)[0]: ligne for nom, ligne in registre.items()}
     for nom in LECTEURS_DE_LA_BASE:
         script = f"scripts/fetch/{nom}"
-        for chaine in sorted(_chaines(FETCH / nom)):
+        for chaine in sorted(set().union(*map(_cites, _chaines(FETCH / nom)))):
             ligne = registre.get(chaine) or par_souche.get(chaine)
             if ligne is None:
                 continue

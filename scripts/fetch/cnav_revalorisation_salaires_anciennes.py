@@ -76,9 +76,11 @@ RACINE = Path(__file__).resolve().parents[2]
 PAGE = (cnav_api.SITE + "/Bareme/Pages/doc_communs/"
         "listes_baremes/_layouts/CAMPUS/Campus-baremes/js/declare/"
         "decREVCOEFSALCOT.js")
-#: Le barème de la base dont la page charge ce fichier : le registre de la base
-#: (data/reference/legislation/cnav/) le dit lu par ce script (action 175).
+#: Le barème de la base dont la page joint le document qui charge ce fichier, et
+#: ce document : le registre de la base (data/reference/legislation/cnav/) les
+#: dit lus par ce script (action 175).
 BAREME_DE_LA_PAGE = "revalorisation_coefficient_revalorisation_salaire_cotisation_bar"
+DOCUMENT_DE_LA_PAGE = "listes_baremes/BNL-L_B_REVCOEFSALCOT.htm"
 #: Les deux barèmes de l'API qui comblent avril 2013 - septembre 2017, avec la
 #: date d'effet de leur colonne.
 BAREMES = (

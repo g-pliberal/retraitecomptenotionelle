@@ -7125,14 +7125,14 @@ restent sous 100 en Performance.
 ### 175. La base de législation de la Cnav, exploitée en entier par son API : chaque barème, exposé et circulaire à sa place dans le dépôt, puis tenue à jour — `en cours`
 
 **Reprise, au 29 octobre 2026.** L'étape 1 est faite : le registre,
-`data/reference/legislation/cnav/`, porte chaque barème, exposé, liste,
-fenêtre et référence de la base, citées comprises, 5 851 objets, 34
+`data/reference/legislation/cnav/`, porte ce que servent les 25 routes de
+l'API et ce que sa recherche trouve, 9 069 objets en sept genres, 37
 `branche`, le reste `a_lire` ; `python scripts/fetch/cnav_legislation.py` le
-relit (note `2026-10-29-etape-1-registre.md`). Les étapes 2 à 5 se mènent en
-parallèle : chacune tient son bloc « Reprise » sous le titre de sa note, et
-celui-ci ne se récrit plus. Les étapes 2 et 4 écrivent des règles du
-scénario 1 : sur Opus, après `python scripts/veille_droit.py`. Toutes les
-références se lisent (étape 4) ; l'ordre de ses thèmes reste au propriétaire.
+relit, `--chercher` y ajoute la recherche (note du 29 octobre). Les étapes 2 à
+5 se mènent en parallèle : chacune tient son bloc « Reprise » sous le titre de
+sa note, et celui-ci ne se récrit plus. Les étapes 2 et 4 écrivent des règles
+du scénario 1 : sur Opus, après `python scripts/veille_droit.py`. L'ordre des
+thèmes de l'étape 4 reste au propriétaire.
 
 **D'où elle vient.** Le 29 octobre 2026, le propriétaire : « Est-ce qu'on a
 exploité l'API CNAV ? » La réponse, mesurée le jour même : en partie — dix
@@ -7255,11 +7255,12 @@ circulaires, et le portail statistique dans une autre action ». Les quelque
 1 777 références se lisent toutes, et non celles seulement qui fixent une règle
 à une date que le modèle calcule, comme l'étape 4 le proposait d'abord ; le
 portail statistique de la Cnav (`cnav_statistiques`), qui n'est pas cette API,
-va à l'action 176. Le même jour, à la relecture de l'étape 1 : le registre
-suit aussi les textes que les références citent, de proche en proche — 2 019
-de plus, sur quatre rangs —, et porte les fenêtres d'information, exemples
-compris (note `2026-10-29-etape-1-registre.md`). **Ce qu'il tranche encore** :
-l'ordre des thèmes de l'étape 4.
+va à l'action 176. Le même jour, à deux relectures de l'étape 1 : le registre
+suit aussi les textes que les références citent, de proche en proche, et porte
+les fenêtres d'information, lues par leurs collections, les avis de mise à
+jour, les documents que les barèmes joignent, et les références que seule la
+recherche de la base sert (note `2026-10-29-etape-1-registre.md`). **Ce qu'il
+tranche encore** : l'ordre des thèmes de l'étape 4.
 
 ### 176. Le portail statistique de la Cnav, exploité en entier : chaque série, recueil et étude à sa place dans le dépôt — `en cours`
 
