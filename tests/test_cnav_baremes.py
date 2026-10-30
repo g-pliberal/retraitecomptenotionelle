@@ -967,3 +967,229 @@ def test_la_majoration_pour_conjoint_a_charge_a_les_montants_de_la_caisse():
         assert [debut for debut, _ in montants] == [debut for debut, _ in attendus]
         for (debut, lu), (_, attendu) in zip(montants, attendus):
             assert lu == pytest.approx(attendu, abs=1e-6), (version["id"], debut)
+
+
+# -- les points des régimes complémentaires des indépendants ---------------------
+
+POINTS = RACINE / "data" / "reference" / "regimes" / "valeurs_point.csv"
+
+#: Les tables de l'ex-RSI que joignent les barèmes du point du RCI
+#: (`rci_valeur_achat_point_bar.aspx`, `rci_valeur_point_bar.aspx`) : le
+#: revenu de référence du RCO des artisans, prix d'un point, par année
+#: (`rci_valeur_achat_artisan_avant_2013.pdf`), en francs jusqu'en 2001 ;
+REVENU_DE_REFERENCE_RCO = {
+    1979: 5.86, 1980: 6.58, 1981: 7.46, 1982: 8.41, 1983: 9.25, 1984: 10.13, 1985: 10.86,
+    1986: 11.21, 1987: 11.60, 1988: 12.13, 1989: 12.59, 1990: 13.19, 1991: 13.77,
+    1992: 14.24, 1993: 14.64, 1994: 14.87, 1995: 15.04, 1996: 15.38, 1997: 17.46,
+    1998: 18.88, 1999: 20.36, 2000: 21.53, 2001: 22.23,
+    2002: 3.461, 2003: 3.731, 2004: 3.882, 2005: 4.104, 2006: 4.145, 2007: 4.145,
+    2008: 4.207, 2009: 4.500, 2010: 4.692, 2011: 4.79053, 2012: 4.89113,
+}
+#: la valeur annuelle de son point, à chaque date d'effet
+#: (`rci_valeur_point_retraite_artisan_avant_2009.pdf`, puis
+#: `…_2009_2012.pdf`, pour les points acquis depuis 1997), en francs jusqu'en
+#: 2001 — un semestre commence le 1er janvier ou le 1er juillet ;
+VALEUR_DU_POINT_RCO = (
+    ("1979-01-01", 0.674), ("1980-01-01", 0.728), ("1980-07-01", 0.786),
+    ("1981-01-01", 0.836), ("1981-07-01", 0.880), ("1982-01-01", 0.940),
+    ("1982-07-01", 0.996), ("1983-01-01", 1.043), ("1983-07-01", 1.085),
+    ("1984-01-01", 1.134), ("1984-07-01", 1.196), ("1985-01-01", 1.232),
+    ("1985-07-01", 1.266), ("1986-01-01", 1.282), ("1986-07-01", 1.296),
+    ("1987-01-01", 1.322), ("1987-07-01", 1.346), ("1988-01-01", 1.382),
+    ("1988-07-01", 1.408), ("1989-01-01", 1.430), ("1989-07-01", 1.466),
+    ("1990-01-01", 1.498), ("1990-07-01", 1.536), ("1991-01-01", 1.568),
+    ("1991-07-01", 1.598), ("1992-01-01", 1.624), ("1992-07-01", 1.652),
+    ("1993-01-01", 1.674), ("1993-07-01", 1.694), ("1994-01-01", 1.710),
+    ("1995-01-01", 1.730), ("1996-01-01", 1.761), ("1996-07-01", 1.776),
+    ("1997-04-01", 1.8032), ("1999-04-01", 1.8084), ("2000-04-01", 1.8300),
+    ("2001-04-01", 1.8672), ("2002-04-01", 0.28728), ("2006-04-01", 0.29012),
+    ("2007-12-01", 0.29331), ("2008-04-01", 0.29770), ("2009-04-01", 0.30603),
+    ("2010-04-01", 0.30970), ("2011-04-01", 0.31620), ("2012-04-01", 0.32284),
+)
+#: la valeur du point du NRCO des commerçants
+#: (`rci_valeur_point_regime_complementaire_repris_commercant_2004_2012.pdf`) ;
+VALEUR_DU_POINT_NRCO = (
+    ("2004-01-01", 1.000), ("2005-01-01", 1.016), ("2006-01-01", 1.036),
+    ("2007-01-01", 1.055), ("2008-01-01", 1.067), ("2008-12-01", 1.073),
+    ("2009-04-01", 1.102), ("2010-04-01", 1.115), ("2011-04-01", 1.138),
+    ("2012-04-01", 1.162),
+)
+#: et la valeur d'achat et la valeur de service du RCI de 2013 à 2019
+#: (`rci_valeur_achat_01042013_31122019.pdf`, `rci_valeur_point_2013_2019.pdf`),
+#: celle-ci pour les points du NRCO, du RCI et du RCO acquis depuis 1997.
+POINT_RCI = (
+    ("2013-04-01", 17.309, 1.177), ("2015-10-01", 17.324, 1.178),
+    ("2017-10-01", 17.456, 1.187), ("2019-01-01", 17.515, 1.191),
+)
+
+#: Ce que la série, tirée des barèmes de l'IPP (`ipp_points_independants.py`),
+#: porte autrement que la caisse, au 31 décembre : sa valeur, en euros. Des
+#: écarts qui changent le calcul — les points d'une année, ou leur valeur à la
+#: liquidation —, à la session du modèle.
+ECARTS_POINTS = {
+    ("rco_artisans", "salaire_reference", 1997): 2.344666,  # 15,38 F, celui de 1996
+    ("rco_artisans", "salaire_reference", 1998): 2.66176,   # 17,46 F, celui de 1997
+    ("rco_artisans", "salaire_reference", 2002): 3.382,     # sous celui de 2001
+    ("rco_artisans", "salaire_reference", 2009): 4.324,
+    ("rco_artisans", "valeur_service", 1996): 0.268463,     # le 1er semestre
+    ("rco_artisans", "valeur_service", 2007): 0.29259,
+    ("nric", "valeur_service", 2008): 1.067,                # sans le 1er décembre
+    ("nric", "valeur_service", 2010): 1.110,
+}
+
+
+def test_les_points_des_complementaires_des_independants_sont_ceux_de_la_caisse():
+    """Le prix et la valeur du point du RCO des artisans (1979-2012), la
+    valeur du point du NRCO des commerçants (2004-2012) et ceux du RCI de 2013
+    à 2019 (`valeurs_point.csv`, la valeur en vigueur au 31 décembre) sont
+    ceux que la caisse publie, aux arrondis de l'IPP près, sauf
+    `ECARTS_POINTS`. Depuis 2009, la caisse sert aux points du RCO acquis
+    avant 1997 une valeur moindre (0,31008 € en 2012 pour ceux de 1979 à
+    1996, 0,30582 € pour ceux d'avant 1979 ; 1,132 et 1,112 € au RCI en
+    2019) : la série porte celle des points acquis depuis 1997, et l'écart
+    est connu (`ipp_points_independants.py`)."""
+    serie: dict[tuple[str, str, int], float] = {
+        (ligne["regime"], ligne["mesure"], int(ligne["annee"])): float(ligne["valeur"])
+        for ligne in _csv(POINTS) if ligne["regime"] in ("rco_artisans", "nric", "rci")}
+    attendus: dict[tuple[str, str, int], float] = {}
+    for annee, prix in REVENU_DE_REFERENCE_RCO.items():
+        attendus[("rco_artisans", "salaire_reference", annee)] = (
+            prix / FRANCS_PAR_EURO if annee < 2002 else prix)
+    for regime, table, debut, fin in (("rco_artisans", VALEUR_DU_POINT_RCO, 1980, 2012),
+                                      ("nric", VALEUR_DU_POINT_NRCO, 2004, 2012)):
+        for annee in range(debut, fin + 1):
+            jour, valeur = _en_vigueur(table, f"{annee}-12-31")
+            attendus[(regime, "valeur_service", annee)] = (
+                valeur / FRANCS_PAR_EURO if jour < "2002" else valeur)
+    for annee in range(2013, 2020):
+        _, prix, valeur = _en_vigueur(POINT_RCI, f"{annee}-12-31")
+        attendus[("rci", "salaire_reference", annee)] = prix
+        attendus[("rci", "valeur_service", annee)] = valeur
+    for cle, attendu in sorted(attendus.items()):
+        if cle in ECARTS_POINTS:
+            assert serie[cle] == pytest.approx(ECARTS_POINTS[cle], abs=1e-6), cle
+            assert serie[cle] != pytest.approx(attendu, abs=5e-5), (cle, "l'écart s'est résorbé")
+            continue
+        assert serie[cle] == pytest.approx(attendu, abs=5e-5), (cle, serie[cle], attendu)
+
+
+# -- l'assiette maximale des indépendants ---------------------------------------
+
+#: « Assiette annuelle maximale des cotisations des travailleurs
+#: indépendants » (`ti_cotisation_assiette_maximale_cotisation_bar.aspx`,
+#: version du 30 juin 2026) et la table de l'ex-RSI qu'il joint, 1973-2019
+#: (`ti_cotisation_assiette_maximale_cotisation.pdf`) : jusqu'où chaque régime
+#: assied sa cotisation, en plafonds de la sécurité sociale de l'année. Le
+#: régime de base, un plafond jusqu'en 2013 ; le RCO des artisans, trois puis
+#: quatre ; le NRCO des commerçants, trois ; le RCI, quatre ; le régime des
+#: conjoints de commerçants, un.
+ASSIETTE_MAXIMALE = {
+    "cancava": ((1973, 2005, 1),), "organic": ((1973, 2005, 1),), "rsi": ((2006, 2013, 1),),
+    "rco_artisans": ((1979, 1996, 3), (1997, 2012, 4)),
+    "nric": ((2004, 2012, 3),), "rci": ((2013, 2025, 4),),
+    "organic_conjoints_batiment": ((1973, 2003, 1),),
+}
+#: Des montants de la table, qui sont ces multiples : (régime, période, montant,
+#: unité, plafond de la période).
+REPERES_ASSIETTE_MAXIMALE = (
+    ("rco_artisans", "1996, 2e semestre", 487440, "F", 162480),
+    ("rco_artisans", "1997", 658560, "F", 164640),
+    ("rco_artisans", "2003", 116736, "€", 29184),
+    ("nric", "2004", 89136, "€", 29712),
+    ("rci", "2013", 148128, "€", 37032),
+    ("organic_conjoints_batiment", "2003", 29184, "€", 29184),
+)
+#: L'assiette de la fiche, en plafonds : sa borne haute.
+PLAFONDS_D_UNE_ASSIETTE = {
+    "plafonnee": 1, "plafonnee_3_pass": 3, "plafonnee_4_pass": 4, "tranche_1_4_pass": 4,
+    "plafonnee_033_pass": 1 / 3, "tranche_033_1_pass": 1,
+}
+#: L'écart, à la session du modèle : D. 635-4, dans sa rédaction du 26 février
+#: 1997 (LEGIARTI000006738337), assied le RCO des artisans « dans la limite d'un
+#: plafond égal à quatre fois » celui de la sécurité sociale ; la fiche garde
+#: trois plafonds jusqu'en 2004, et ne passe à quatre qu'avec D. 635-7 de 2004.
+ECARTS_ASSIETTE_MAXIMALE = {("rco_artisans", annee): 3 for annee in range(1997, 2005)}
+
+
+def test_l_assiette_maximale_des_independants_est_celle_de_la_caisse():
+    """Chaque fiche assied la cotisation de chaque année jusqu'au multiple du
+    plafond que la caisse publie, sauf `ECARTS_ASSIETTE_MAXIMALE`."""
+    for regime, _, montant, unite, plafond in REPERES_ASSIETTE_MAXIMALE:
+        assert any(abs(montant / plafond - m) < 1e-9
+                   for _, _, m in ASSIETTE_MAXIMALE[regime]), (regime, montant, unite)
+    for regime, periodes in ASSIETTE_MAXIMALE.items():
+        for debut, fin, multiple in periodes:
+            for annee in range(debut, fin + 1):
+                lu = max(PLAFONDS_D_UNE_ASSIETTE[assiette]
+                         for assiette in _taux_de_la_fiche(regime, annee))
+                attendu = ECARTS_ASSIETTE_MAXIMALE.get((regime, annee), multiple)
+                assert lu == pytest.approx(attendu), (regime, annee, lu)
+                if (regime, annee) in ECARTS_ASSIETTE_MAXIMALE:
+                    assert lu != pytest.approx(multiple), (regime, annee, "l'écart s'est résorbé")
+
+
+# -- le cumul emploi-retraite et la réversion du RCI ----------------------------
+
+REGLES = RACINE / "data" / "reference" / "regles"
+
+#: « Plafond cumul emploi retraite des travailleurs indépendants »
+#: (`ti_prestation_plafond_cumul_emploi_retraite_bar.aspx`, version du 5 janvier
+#: 2026) et la table de l'ex-RSI qu'il joint pour 2007 à 2019 : le plafond
+#: annuel hors des zones de revitalisation, en euros, la moitié du plafond de
+#: la sécurité sociale ; dans ces zones, le plafond entier.
+CUMUL_INDEPENDANTS = {
+    2007: 16092, 2008: 16638, 2009: 17154, 2010: 17310, 2011: 17676, 2012: 18186,
+    2013: 18516, 2014: 18774, 2015: 19020, 2016: 19308, 2017: 19614, 2018: 19866,
+    2019: 20262, 2020: 20568, 2021: 20568, 2022: 20568, 2023: 21996, 2024: 23184,
+    2025: 23550, 2026: 24030,
+}
+
+
+def test_le_plafond_du_cumul_des_artisans_et_commercants_est_celui_de_la_caisse():
+    """La fiche du cumul emploi-retraite (`cumul_emploi_retraite_et_retraite_progressive`)
+    plafonne les revenus de l'artisan et du commerçant à la moitié du plafond
+    de la sécurité sociale, là où elle le fait : c'est le plafond que la caisse
+    publie de 2007 à 2026, hors des zones de revitalisation rurale, où il est
+    entier — ce que la fiche déclare ne pas appliquer."""
+    import yaml
+
+    fiche = yaml.safe_load((REGLES / "cumul_emploi_retraite_et_retraite_progressive.yaml")
+                           .read_text(encoding="utf-8"))
+    seuils = {version["id"]: version["contenu"]["parametres"]["seuil_independants_en_pass"]
+              for version in fiche["versions"]
+              if "seuil_independants_en_pass" in ((version.get("contenu") or {})
+                                                  .get("parametres") or {})}
+    assert seuils and set(seuils.values()) == {0.5}, seuils
+    assert "revitalisation rurale, le plafond entier, n'est pas appliqué" in " ".join(
+        (REGLES / "cumul_emploi_retraite_et_retraite_progressive.yaml")
+        .read_text(encoding="utf-8").split())
+    plafond = _serie_annuelle(MACRO / "plafond_securite_sociale.csv", "pass_eur")
+    for annee, montant in CUMUL_INDEPENDANTS.items():
+        assert 0.5 * plafond[annee] == pytest.approx(montant), annee
+
+
+#: « Plafond de ressources de la retraite de réversion du régime
+#: complémentaire des travailleurs indépendants »
+#: (`rci_plafond_ressource_retraite_reversion_bar.aspx`, version du 5 janvier
+#: 2026) et la table de l'ex-RSI qu'il joint pour 2013 à 2019, en euros par an.
+PLAFOND_REVERSION_RCI = {
+    2013: 74064, 2014: 75096, 2015: 76080, 2016: 77232, 2017: 78456, 2018: 79464,
+    2019: 81048, 2020: 82272, 2021: 82272, 2022: 82272, 2023: 87984, 2024: 92736,
+    2025: 94200, 2026: 96120,
+}
+
+
+def test_le_plafond_de_la_reversion_du_rci_est_celui_de_la_caisse():
+    """La fiche `reversion_rci` plafonne les ressources du survivant à deux
+    plafonds de la sécurité sociale, depuis 2013 : ce que la caisse publie,
+    chaque année. Avant 2013, elle ne sert pas la réversion du RCO des
+    artisans, dont la caisse publie un plafond propre (35 326 € en 2009)."""
+    import yaml
+
+    fiche = yaml.safe_load((REGLES / "reversion_rci.yaml").read_text(encoding="utf-8"))
+    plafonds = {version["id"]: ((version.get("contenu") or {}).get("parametres") or {})
+                .get("plafond_pass") for version in fiche["versions"]}
+    assert plafonds == {"avant_2013": None, "reglement_2013": 2, "plafond_2021": 2}
+    plafond = _serie_annuelle(MACRO / "plafond_securite_sociale.csv", "pass_eur")
+    for annee, montant in PLAFOND_REVERSION_RCI.items():
+        assert 2 * plafond[annee] == pytest.approx(montant), annee
