@@ -13,7 +13,7 @@ consulte: >-
   « Aide aux chômeurs créateurs d'entreprise ». L'index LEGI à jour du 29 octobre 2026
   (D. 635-7, ses rédactions de 1985 à 2024 ; D. 635-4, sa rédaction du 26 février 1997 ;
   D. 633-2 ; D. 633-5 et D. 633-6, de 1985 à 2008 ; L. 131-6, de 1995 à 2011 ; L. 756-4
-  et L. 756-5, en vigueur) ;
+  et L. 756-5, en vigueur, et L. 756-4 de 2000 et de 2015) ;
   l'index JORF (décret n° 2007-1900 du 26 décembre 2007, article 1er ; décret
   n° 2022-1438 du 16 novembre 2022, article 1er).
 trouve: >-
@@ -30,14 +30,16 @@ trouve: >-
   cotisation_vieillesse_independants : avant 2007, la cotisation de l'année se calculait
   « à titre provisionnel » sur un revenu antérieur, et sur un forfait les deux premières
   années (D. 633-5, D. 633-6), L. 131-6 prévoyant une régularisation depuis 1995 ; le
-  modèle prend le revenu de l'année. Une limite pour les indépendants des DOM, abattement
-  et exonérations (L. 756-4, L. 756-5). Le reste concorde, aux conventions de la série
+  modèle prend le revenu de l'année. Une limite pour les indépendants des DOM : l'abattement
+  de moitié de L. 756-4 sur leur retraite de base de 2000 à 2016, d'où une assiette
+  minimale moitié moindre de 2009 à 2016, puis l'abattement dégressif depuis 2017, les
+  exonérations (L. 756-5), un RCO et un NRCO moindres de 2010 à 2012. Le reste concorde, aux conventions de la série
   près, déclarées. Des coquilles de la caisse : deux cellules du tableau de la
   minoration, la ligne de 2014 des taux des indépendants, 1955 dans l'édition de janvier
   2024 des coefficients, l'assiette maximale de 2024. Le registre de l'étape 1 ne suivait
   pas les pages que déclarent les scripts de valeurs : 471 documents de plus.
 reste: >-
-  Des indépendants : l'Acre et l'Accre (le plafond d'exonération, les micro-entrepreneurs
-  avant 2020), l'activité de faible importance des commerçants retraités avant 2004, les
-  tables des DOM de 2007 à 2019, celles des micro-entrepreneurs d'avant 2020, le prix du
-  point du NRCO avant 2013 ; et, pour la session du modèle, l'assiette d'avant 2007.
+  Des indépendants : l'Acre (le plafond d'exonération du début d'activité), l'activité de
+  faible importance des commerçants retraités avant 2004, les tables des
+  micro-entrepreneurs d'avant 2017 et leur Accre de 2019 ; et, pour la session du modèle,
+  l'assiette d'avant 2007.

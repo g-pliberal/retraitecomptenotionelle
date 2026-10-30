@@ -1,14 +1,14 @@
 # Étape 2 : les barèmes du modèle, confrontés à leurs séries
 
 **Reprise, au 30 octobre 2026.** Faits : le droit commun ; des indépendants,
-les taux, les assiettes, le revenu validant, les points, le cumul, les DOM,
-le début d'activité, les micro-entrepreneurs ; la minoration, le plafond, le
-Smic, Mayotte, les coefficients, le conjoint, les dernières valeurs. Reste :
-l'Acre (plafond d'exonération, micro-entrepreneurs avant 2020), l'activité
-de faible importance, les tables des DOM de 2007 à 2019 et des micro avant
-2020, le prix du point du NRCO avant 2013. À la session du modèle : le RCO de
-2008-2009 et sur quatre plafonds dès 1997, huit valeurs de point, l'assiette
-minimale avant 1985 et en 2022, Mayotte, et l'assiette d'avant 2007, que
+les taux, les assiettes, le revenu validant, les points, le cumul, les DOM et
+leurs tables d'avant 2020, le début d'activité, les micro-entrepreneurs
+depuis 2017 ; la minoration, le plafond, le Smic, Mayotte, les coefficients,
+le conjoint, les dernières valeurs. Reste : l'Acre (plafond d'exonération),
+l'activité de faible importance, les tables des micro-entrepreneurs d'avant
+2017 et leur Accre de 2019. À la session du modèle : le RCO de 2008-2009 et
+sur quatre plafonds dès 1997, huit valeurs de point, l'assiette minimale
+avant 1985 et en 2022, Mayotte, les DOM, l'assiette d'avant 2007, que
 `cotisation_vieillesse_independants` met à relire.
 
 **Le 30 octobre 2026, ce qui est fait.**
@@ -184,3 +184,20 @@ importance des commerçants retraités avant 2004, avec la fiche du cumul ; les
 tables des DOM de 2007 à 2019, à joindre au test ; celles des
 micro-entrepreneurs d'avant 2016 et d'avant 2020 ; le prix du point du NRCO
 avant 2013.
+
+**Puis les tables d'avant 2020.**
+
+- *Les DOM, de 2007 à 2019* : leurs taux de la retraite de base depuis 2007
+  et du RCI depuis 2013 sont ceux de la série, que le test des DOM lit
+  désormais. L. 756-4 assied leur retraite de base, de 2000 à 2016, sur la
+  moitié du revenu sous le plafond : la table de la caisse porte de 2009 à
+  2016 une assiette minimale moitié moindre (en heures du Smic jusqu'en 2012,
+  quand la métropole passe à une part du plafond), que le test tient comme un
+  écart (`ASSIETTE_MINIMALE_DOM_DE_MOITIE`) ; elle porte aussi, de 2010 à
+  2012, un RCO et un NRCO moindres sur leur première tranche. La limite des
+  indépendants des DOM le dit, et sa table des assiettes maximales, qui dit
+  l'abattement, y renvoie.
+- *Les micro-entrepreneurs d'outre-mer* : leurs taux réduits, depuis 2020,
+  `hors_modele`, comme ceux des DOM et de l'Acre.
+- *Un lien mort* : la table du prix du point du NRCO avant 2013, que le site
+  ne sert sous aucune graphie de son nom (404), `hors_modele`.
