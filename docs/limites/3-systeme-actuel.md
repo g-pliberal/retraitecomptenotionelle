@@ -99,6 +99,19 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   forfaits avant ; l'artiste du spectacle, à des taux réduits, et sur un
   salaire forfaitaire par jour s'il est occasionnel ou acteur de complément ;
   le journaliste, à des taux réduits depuis 1991.
+- **indépendants des DOM** — le modèle les traite comme ceux de la métropole,
+  aux taux et sur les assiettes, minimale comprise, que reprennent les barèmes
+  des DOM de la caisse. Il ne leur applique ni l'abattement que L. 756-4 fait
+  depuis 2017 sur l'assiette de leurs cotisations, le RCI et
+  l'invalidité-décès exceptés (la moitié de la part du revenu sous le plafond,
+  les trois quarts la troisième année d'activité, dégressif d'une fois et
+  demie à deux fois et demie le plafond), ni l'exonération de toute cotisation
+  d'assurance vieillesse sous un revenu que fixe un décret (L. 756-5, II), ni
+  celle, dégressive, des créateurs depuis 2018, dont les cotisations des deux
+  premières années, le RCI excepté, restent définitives sur la base
+  forfaitaire de début d'activité. Si la caisse porte au compte de la retraite
+  de base le revenu abattu, ou cette base forfaitaire, le modèle s'en écarte :
+  non mesuré.
 
 Un écart de quelques pour cent avec la pension réelle est attendu.
 

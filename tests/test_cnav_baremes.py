@@ -1321,3 +1321,49 @@ def test_les_dernieres_valeurs_de_la_caisse_sont_celles_des_series():
     assert 2080 * smic == pytest.approx(v["plafond de ressources de la réversion, personne seule"])
     assert 1.6 * 2080 * smic == pytest.approx(v["plafond de ressources de la réversion, couple"])
     assert MAJORATION_CONJOINT[-1][1] == v["majoration pour conjoint à charge"]
+
+
+# -- les indépendants des DOM -----------------------------------------------------
+
+#: « Taux de cotisations travailleurs indépendants - DOM » de 2020 à 2024
+#: (`ti_cotisation_taux_cotisation_dom_<année>_bar.aspx`, versions du 31 mai
+#: 2023 au 30 juin 2026) : la retraite de base sous le plafond et au-delà, le
+#: RCI jusqu'à son plafond propre puis jusqu'à quatre plafonds, en pour cent,
+#: et ce plafond propre, en euros.
+TAUX_DOM = {
+    2020: (17.75, 0.60, 7, 8, 38340), 2021: (17.75, 0.60, 7, 8, 38493),
+    2022: (17.75, 0.60, 7, 8, 38916), 2023: (17.75, 0.60, 7, 8, 40784),
+    2024: (17.75, 0.60, 7, 8, 42946),
+}
+#: « Assiettes et cotisations minimales des travailleurs indépendants - DOM »
+#: (version du 1er juillet 2026), « dans le cas où les seuils d'exonération
+#: sont dépassés » : l'assiette minimale de la retraite de base, en euros.
+ASSIETTE_MINIMALE_DOM = {2020: 4731, 2021: 4731, 2022: 4731, 2023: 5072, 2024: 5243,
+                         2025: 5346}
+
+
+def test_l_independant_des_dom_cotise_aux_taux_et_aux_assiettes_de_la_metropole():
+    """Ses abattements et ses exonérations mis à part, que le modèle ne sert
+    pas (`docs/limites/3-systeme-actuel.md`), l'indépendant des DOM cotise à la
+    retraite de base et au RCI aux taux de la série et de la fiche, et sur leurs
+    assiettes : la retraite de base sans plafond, 0,60 % au-delà du plafond, le
+    RCI jusqu'à quatre plafonds — l'assiette maximale de l'édition des DOM, de
+    2020 à 2022 —, et l'assiette minimale de la série. L'édition des DOM garde
+    pour 2022 11,5 % du plafond, comme la série, quand le décret n° 2022-1438
+    fixe 4 758 €, ce que `ECARTS_ASSIETTE_MINIMALE` déclare."""
+    general = _taux_annuels("regime_general")
+    (premiere,) = [p for p in _fiche("rci")["periodes"]
+                   if p["debut"] == 2013 and p["assiette"] == "plafonnee"]
+    for annee, (sous_plafond, au_dela, rci, rci_au_dela, plafond_rci) in TAUX_DOM.items():
+        plafonne = general[(annee, "taux_plafonne_non_salarie")]
+        totalite = general[(annee, "taux_deplafonne_non_salarie")]
+        assert plafonne + totalite == pytest.approx(sous_plafond / 100), annee
+        assert totalite == pytest.approx(au_dela / 100), annee
+        fiche = _taux_de_la_fiche("rci", annee)
+        assert (fiche["plafonnee"], fiche["tranche_1_4_pass"]) == pytest.approx(
+            (rci / 100, rci_au_dela / 100)), annee
+        assert premiere["borne_haute_par_annee"][annee] == plafond_rci, annee
+    smic = _serie_annuelle(MACRO / "smic_horaire.csv", "smic_horaire")
+    plafond = _serie_annuelle(MACRO / "plafond_securite_sociale.csv", "pass_eur")
+    for annee, publiee in ASSIETTE_MINIMALE_DOM.items():
+        assert _arrondi(_assiette_minimale_de_la_serie(annee, smic, plafond)) == publiee, annee
