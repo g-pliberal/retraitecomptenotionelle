@@ -33,10 +33,14 @@ def _taux_annuels(regime: str) -> dict[tuple[int, str], float]:
             if ligne["regime"] == regime}
 
 
+def _en_vigueur(periodes: tuple, jour: str) -> tuple:
+    """La période en vigueur le jour dit : la dernière qui a commencé ce
+    jour-là ou avant."""
+    return [periode for periode in periodes if periode[0] <= jour][-1]
+
+
 def _au_1er_janvier(periodes: tuple, annee: int) -> tuple:
-    """La période en vigueur au 1er janvier de l'année : la dernière qui a
-    commencé ce jour-là ou avant."""
-    return [periode for periode in periodes if periode[0] <= f"{annee}-01-01"][-1]
+    return _en_vigueur(periodes, f"{annee}-01-01")
 
 
 # -- les taux de droit commun --------------------------------------------------
@@ -642,3 +646,276 @@ def test_le_pourcentage_de_minoration_est_celui_de_la_caisse():
                 continue
             assert publie == pytest.approx(formule), (cle, manquants)
     assert min(serie) <= 1943 and max(serie) >= 1953
+
+
+# -- le salaire plafond, et la base des points de retraite des commerçants -------
+
+#: « Salaire plafond soumis à cotisations » (`salaire_plafond_soumis_cotisation_bar.aspx`,
+#: version du 5 janvier 2026) : chaque relèvement, du 1er juillet 1930 au
+#: 1er janvier 2026, et le plafond qu'il fixe, ramené à l'année — le barème le
+#: donne à l'année jusqu'en 1946, au mois ensuite —, en anciens francs jusqu'en
+#: 1959, en francs jusqu'en 2001, en euros depuis.
+PLAFOND = (
+    ("1930-07-01", 10800), ("1936-01-01", 12000), ("1937-01-01", 15000),
+    ("1938-07-01", 18000), ("1941-04-01", 30000), ("1942-01-01", 42000),
+    ("1944-01-01", 48000), ("1944-09-01", 60000), ("1945-04-01", 120000),
+    ("1946-10-01", 12 * 12500), ("1947-10-01", 12 * 17000), ("1948-03-01", 12 * 19000),
+    ("1949-03-01", 12 * 22000), ("1951-01-01", 12 * 27000), ("1951-10-01", 12 * 34000),
+    ("1952-04-01", 12 * 38000), ("1955-10-01", 12 * 44000), ("1958-01-01", 12 * 50000),
+    ("1959-01-01", 12 * 55000),
+    ("1960-01-01", 12 * 550), ("1960-07-01", 12 * 590), ("1961-01-01", 12 * 600),
+    ("1961-04-01", 12 * 700), ("1962-01-01", 12 * 800), ("1963-01-01", 12 * 870),
+    ("1964-01-01", 12 * 950), ("1965-01-01", 12 * 1020), ("1966-01-01", 12 * 1080),
+    ("1967-01-01", 12 * 1140), ("1968-01-01", 12 * 1200), ("1969-01-01", 12 * 1360),
+    ("1970-01-01", 12 * 1500), ("1971-01-01", 12 * 1650), ("1972-01-01", 12 * 1830),
+    ("1973-01-01", 12 * 2040), ("1974-01-01", 12 * 2320), ("1975-01-01", 12 * 2750),
+    ("1976-01-01", 12 * 3160), ("1977-01-01", 12 * 3610), ("1978-01-01", 12 * 4000),
+    ("1979-01-01", 12 * 4470), ("1980-01-01", 12 * 5010), ("1981-01-01", 12 * 5730),
+    ("1982-01-01", 12 * 6590), ("1982-07-01", 12 * 7080), ("1983-01-01", 12 * 7410),
+    ("1983-07-01", 12 * 7870), ("1984-01-01", 12 * 8110), ("1984-07-01", 12 * 8490),
+    ("1985-01-01", 12 * 8730), ("1985-07-01", 12 * 9060), ("1986-01-01", 12 * 9220),
+    ("1986-07-01", 12 * 9480), ("1987-01-01", 12 * 9630), ("1987-07-01", 12 * 9840),
+    ("1988-01-01", 12 * 9950), ("1988-07-01", 12 * 10110), ("1989-01-01", 12 * 10340),
+    ("1989-07-01", 12 * 10540), ("1990-01-01", 12 * 10800), ("1990-07-01", 12 * 11040),
+    ("1991-01-01", 12 * 11340), ("1991-07-01", 12 * 11620), ("1992-01-01", 12 * 11870),
+    ("1992-07-01", 12 * 12150), ("1993-01-01", 12 * 12360), ("1993-07-01", 12 * 12610),
+    ("1994-01-01", 12 * 12680), ("1994-07-01", 12 * 12840), ("1995-01-01", 12 * 12930),
+    ("1995-07-01", 12 * 13060), ("1996-01-01", 12 * 13330), ("1996-07-01", 12 * 13540),
+    ("1997-01-01", 12 * 13720), ("1998-01-01", 12 * 14090), ("1999-01-01", 12 * 14470),
+    ("2000-01-01", 12 * 14700), ("2001-01-01", 12 * 14950),
+    ("2002-01-01", 12 * 2352), ("2003-01-01", 12 * 2432), ("2004-01-01", 12 * 2476),
+    ("2005-01-01", 12 * 2516), ("2006-01-01", 12 * 2589), ("2007-01-01", 12 * 2682),
+    ("2008-01-01", 12 * 2773), ("2009-01-01", 12 * 2859), ("2010-01-01", 12 * 2885),
+    ("2011-01-01", 12 * 2946), ("2012-01-01", 12 * 3031), ("2013-01-01", 12 * 3086),
+    ("2014-01-01", 12 * 3129), ("2015-01-01", 12 * 3170), ("2016-01-01", 12 * 3218),
+    ("2017-01-01", 12 * 3269), ("2018-01-01", 12 * 3311), ("2019-01-01", 12 * 3377),
+    ("2020-01-01", 12 * 3428), ("2023-01-01", 12 * 3666), ("2024-01-01", 12 * 3864),
+    ("2025-01-01", 12 * 3925), ("2026-01-01", 12 * 4005),
+)
+
+
+def _en_euros(montant: float, annee: int) -> float:
+    """Un montant de l'année, en euros : l'ancien franc vaut un centième de
+    franc, et le franc 1 / 6,55957 euro."""
+    if annee >= 2002:
+        return montant
+    return montant / FRANCS_PAR_EURO / (100 if annee < 1960 else 1)
+
+
+def _plafond_de_l_annee(annee: int) -> float:
+    """Ce que le plafond fait sur l'année, mois par mois, en euros."""
+    return sum(_en_euros(_en_vigueur(PLAFOND, f"{annee}-{mois:02d}-01")[1], annee) / 12
+               for mois in range(1, 13))
+
+
+def test_le_plafond_de_la_serie_est_le_salaire_plafond_de_la_caisse():
+    """Le plafond annuel de la série (`plafond_securite_sociale.csv`) est,
+    de 1931 à 2026, ce que fait sur l'année, mois par mois, le salaire plafond
+    que la caisse date relèvement par relèvement — les deux semestres de 1982 à
+    1996, les mois de 1945 à 1961 —, à l'euro près : la série arrondit à l'euro
+    ses années d'avant 1963."""
+    serie = _serie_annuelle(MACRO / "plafond_securite_sociale.csv", "pass_eur")
+    for annee in range(1931, 2027):
+        assert serie[annee] == pytest.approx(_plafond_de_l_annee(annee), abs=0.5), annee
+
+
+#: « Base de calcul des points RVB - Commerçant »
+#: (`ti_prestation_base_calcul_point_fictif_commercant_bar.aspx`, version du
+#: 5 janvier 2026) depuis 2020, et la table de l'ex-RSI qu'il joint pour 1973 à
+#: 2019 (`ti_prestation_base_calcul_point_fictif_commercant.pdf`) : « 1/20e
+#: PASS », en francs jusqu'en 2001, en euros ensuite.
+BASE_POINTS_COMMERCANTS_EN_FRANCS = {
+    1973: 1224, 1974: 1392, 1975: 1650, 1976: 1896, 1977: 2166, 1978: 2400, 1979: 2682,
+    1980: 3006, 1981: 3438, 1982: 3954, 1983: 4446, 1984: 4866, 1985: 5238, 1986: 5532,
+    1987: 5778, 1988: 5970, 1989: 6204, 1990: 6480, 1991: 6804, 1992: 7122, 1993: 7416,
+    1994: 7608, 1995: 7758, 1996: 7998, 1997: 8232, 1998: 8454, 1999: 8682, 2000: 8820,
+    2001: 8970,
+}
+BASE_POINTS_COMMERCANTS_EN_EUROS = {
+    2002: 1411.20, 2003: 1459.20, 2004: 1485.60, 2005: 1509.60, 2006: 1553.40,
+    2007: 1609.20, 2008: 1663.80, 2009: 1715.40, 2010: 1731.00, 2011: 1767.60,
+    2012: 1818.60, 2013: 1851.60, 2014: 1877.40, 2015: 1902.00, 2016: 1930.80,
+    2017: 1961.40, 2018: 1986.60, 2019: 2026.20, 2020: 2056.80, 2021: 2056.80,
+    2022: 2056.80, 2023: 2199.60, 2024: 2318.40, 2025: 2355.00, 2026: 2403.00,
+}
+
+
+def test_un_point_de_retraite_du_commercant_vaut_un_vingtieme_du_plafond():
+    """La fiche des commerçants d'avant 1973 (`organic_avant_1973`) ouvre un
+    point par vingtième du plafond, vingt au plafond (`points_maximum`), par
+    l'équivalence de D. 634-8 : la base de calcul des points que la caisse
+    publie de 1973 à 2026 est ce vingtième, celui du plafond du 1er janvier —
+    les années de deux plafonds, de 1982 à 1996, le plafond de juillet n'ouvre
+    pas de point de plus."""
+    (periode,) = [p for p in _fiche("organic_avant_1973")["periodes"] if p["debut"] == 1949]
+    assert periode["points_maximum"] == 20 and periode["assiette"] == "plafonnee"
+    for annee, base in BASE_POINTS_COMMERCANTS_EN_FRANCS.items():
+        assert _au_1er_janvier(PLAFOND, annee)[1] / periode["points_maximum"] == base, annee
+    for annee, base in BASE_POINTS_COMMERCANTS_EN_EUROS.items():
+        assert _au_1er_janvier(PLAFOND, annee)[1] / periode["points_maximum"] == pytest.approx(
+            base), annee
+
+
+#: « Plafond d'assujettissement avant 1947 »
+#: (`plafond_assujettissement_securite_sociale_avant_1947_bar.aspx`, version du
+#: 25 juillet 2024) : la rémunération annuelle au-delà de laquelle le salarié
+#: n'était pas assuré, en anciens francs, à chaque date d'effet.
+PLAFOND_ASSUJETTISSEMENT = (
+    ("1930-07-01", 15000), ("1937-01-01", 21000), ("1938-07-01", 30000),
+    ("1942-01-01", 42000), ("1944-01-01", 48000), ("1944-09-01", 60000),
+    ("1945-04-01", 120000),
+)
+
+
+def test_le_plafond_d_assujettissement_d_avant_1947_est_celui_de_la_caisse():
+    """`plafond_assujettissement_avant_1947.csv`, tiré de ce barème le
+    18 octobre 2026, en porte chaque année ce que fait le plafond
+    mois par mois, en euros — 1930 au montant de juillet, l'année n'ayant pas
+    commencé avant."""
+    serie = _serie_annuelle(LEGISLATION / "plafond_assujettissement_avant_1947.csv", "valeur")
+    assert sorted(serie) == list(range(1930, 1947))
+    for annee in range(1930, 1947):
+        mois = [_en_vigueur(PLAFOND_ASSUJETTISSEMENT, max("1930-07-01", f"{annee}-{m:02d}-01"))[1]
+                for m in range(1, 13)]
+        assert serie[annee] == pytest.approx(sum(mois) / 12 / 100 / FRANCS_PAR_EURO), annee
+
+
+
+# -- le Smic --------------------------------------------------------------------
+
+#: « Smic horaire » (`smic_smig_smic_bar.aspx`, version du 11 juin 2026) : chaque
+#: relèvement depuis la création du Smic, le 1er mars 1970, hors Mayotte, en
+#: francs jusqu'en 2001, en euros depuis.
+SMIC_HORAIRE = (
+    ("1970-03-01", 3.36, "F"), ("1970-07-01", 3.50, "F"), ("1971-01-01", 3.63, "F"),
+    ("1971-04-01", 3.68, "F"), ("1971-07-01", 3.85, "F"), ("1971-12-01", 3.94, "F"),
+    ("1972-05-01", 4.10, "F"), ("1972-07-01", 4.30, "F"), ("1972-11-01", 4.55, "F"),
+    ("1973-02-01", 4.64, "F"), ("1973-07-01", 5.20, "F"), ("1973-10-01", 5.32, "F"),
+    ("1973-12-01", 5.43, "F"), ("1974-03-01", 5.60, "F"), ("1974-05-01", 5.95, "F"),
+    ("1974-07-01", 6.40, "F"), ("1974-09-01", 6.55, "F"), ("1974-12-01", 6.75, "F"),
+    ("1975-03-01", 6.95, "F"), ("1975-06-01", 7.12, "F"), ("1975-07-01", 7.55, "F"),
+    ("1975-10-01", 7.71, "F"), ("1976-01-01", 7.89, "F"), ("1976-04-01", 8.08, "F"),
+    ("1976-07-01", 8.58, "F"), ("1976-10-01", 8.76, "F"), ("1976-12-01", 8.94, "F"),
+    ("1977-04-01", 9.14, "F"), ("1977-06-01", 9.34, "F"), ("1977-07-01", 9.58, "F"),
+    ("1977-10-01", 9.79, "F"), ("1977-12-01", 10.06, "F"), ("1978-05-01", 10.45, "F"),
+    ("1978-07-01", 10.85, "F"), ("1978-09-01", 11.07, "F"), ("1978-12-01", 11.31, "F"),
+    ("1979-04-01", 11.60, "F"), ("1979-07-01", 12.15, "F"), ("1979-09-01", 12.42, "F"),
+    ("1979-12-01", 12.93, "F"), ("1980-03-01", 13.37, "F"), ("1980-05-01", 13.66, "F"),
+    ("1980-07-01", 14.00, "F"), ("1980-09-01", 14.29, "F"), ("1980-12-01", 14.79, "F"),
+    ("1981-03-01", 15.20, "F"), ("1981-06-01", 16.72, "F"), ("1981-09-01", 17.34, "F"),
+    ("1981-11-01", 17.76, "F"), ("1982-01-01", 18.15, "F"), ("1982-03-01", 18.62, "F"),
+    ("1982-05-01", 19.03, "F"), ("1982-07-01", 19.64, "F"), ("1982-12-01", 20.29, "F"),
+    ("1983-03-01", 21.02, "F"), ("1983-06-01", 21.65, "F"), ("1983-07-01", 21.89, "F"),
+    ("1983-10-01", 22.33, "F"), ("1984-01-01", 22.78, "F"), ("1984-05-01", 23.56, "F"),
+    ("1984-07-01", 23.84, "F"), ("1984-11-01", 24.36, "F"), ("1985-04-01", 24.90, "F"),
+    ("1985-05-01", 25.54, "F"), ("1985-07-01", 26.04, "F"), ("1986-06-01", 26.59, "F"),
+    ("1986-07-01", 26.92, "F"), ("1987-03-01", 27.57, "F"), ("1987-07-01", 27.84, "F"),
+    ("1988-06-01", 28.48, "F"), ("1988-07-01", 28.76, "F"), ("1989-03-01", 29.36, "F"),
+    ("1989-07-01", 29.91, "F"), ("1990-04-01", 30.51, "F"), ("1990-07-01", 31.28, "F"),
+    ("1990-12-01", 31.94, "F"), ("1991-07-01", 32.66, "F"), ("1992-03-01", 33.31, "F"),
+    ("1992-07-01", 34.06, "F"), ("1993-07-01", 34.83, "F"), ("1994-07-01", 35.56, "F"),
+    ("1995-07-01", 36.98, "F"), ("1996-05-01", 37.72, "F"), ("1996-07-01", 37.91, "F"),
+    ("1997-07-01", 39.43, "F"), ("1998-07-01", 40.22, "F"), ("1999-07-01", 40.72, "F"),
+    ("2000-07-01", 42.02, "F"), ("2001-07-01", 43.72, "F"), ("2002-01-01", 6.67, "€"),
+    ("2002-07-01", 6.83, "€"), ("2003-07-01", 7.19, "€"), ("2004-07-01", 7.61, "€"),
+    ("2005-07-01", 8.03, "€"), ("2006-07-01", 8.27, "€"), ("2007-07-01", 8.44, "€"),
+    ("2008-05-01", 8.63, "€"), ("2008-07-01", 8.71, "€"), ("2009-07-01", 8.82, "€"),
+    ("2010-01-01", 8.86, "€"), ("2011-01-01", 9.00, "€"), ("2011-12-01", 9.19, "€"),
+    ("2012-01-01", 9.22, "€"), ("2012-07-01", 9.40, "€"), ("2013-01-01", 9.43, "€"),
+    ("2014-01-01", 9.53, "€"), ("2015-01-01", 9.61, "€"), ("2016-01-01", 9.67, "€"),
+    ("2017-01-01", 9.76, "€"), ("2018-01-01", 9.88, "€"), ("2019-01-01", 10.03, "€"),
+    ("2020-01-01", 10.15, "€"), ("2021-01-01", 10.25, "€"), ("2021-10-01", 10.48, "€"),
+    ("2022-01-01", 10.57, "€"), ("2022-05-01", 10.85, "€"), ("2022-08-01", 11.07, "€"),
+    ("2023-01-01", 11.27, "€"), ("2023-05-01", 11.52, "€"), ("2024-01-01", 11.65, "€"),
+    ("2024-11-01", 11.88, "€"), ("2025-01-01", 11.88, "€"), ("2026-01-01", 12.02, "€"),
+    ("2026-06-01", 12.31, "€"),
+)
+
+#: « Smic mensuel » (`smic_smig_smic_mensuel_bar.aspx`, même date), hors
+#: Mayotte, depuis le 1er juillet 2005 : le Smic horaire fois 151,67 heures.
+SMIC_MENSUEL = (
+    ("2005-07-01", 1217.88), ("2006-07-01", 1254.28), ("2007-07-01", 1280.07), ("2008-05-01", 1308.88),
+    ("2008-07-01", 1321.02), ("2009-07-01", 1337.70), ("2010-01-01", 1343.77), ("2011-01-01", 1365.00),
+    ("2011-12-01", 1393.82), ("2012-01-01", 1398.37), ("2012-07-01", 1425.67), ("2013-01-01", 1430.22),
+    ("2014-01-01", 1445.38), ("2015-01-01", 1457.52), ("2016-01-01", 1466.62), ("2017-01-01", 1480.27),
+    ("2018-01-01", 1498.47), ("2019-01-01", 1521.22), ("2020-01-01", 1539.42), ("2021-01-01", 1554.58),
+    ("2021-10-01", 1589.47), ("2022-01-01", 1603.12), ("2022-05-01", 1645.58), ("2022-08-01", 1678.95),
+    ("2023-01-01", 1709.28), ("2023-05-01", 1747.20), ("2024-01-01", 1766.92), ("2024-11-01", 1801.80),
+    ("2025-01-01", 1801.80), ("2026-01-01", 1823.03), ("2026-06-01", 1867.02),
+)
+
+
+def test_le_smic_de_la_serie_est_celui_de_la_caisse():
+    """Le Smic horaire de la série (`smic_horaire.csv`), celui du 1er janvier
+    qui valide les trimestres, est celui que la caisse publie, de 1971 à 2026 ;
+    le Smic annuel (`smic_annuel.csv`, de l'INSEE) est, de 2006 à 2025, ce que
+    font sur l'année les Smic mensuels de la caisse, au centime d'arrondi
+    près."""
+    horaire = _serie_annuelle(MACRO / "smic_horaire.csv", "smic_horaire")
+    for annee in range(1971, 2027):
+        _, montant, unite = _au_1er_janvier(SMIC_HORAIRE, annee)
+        en_euros = montant / FRANCS_PAR_EURO if unite == "F" else montant
+        assert horaire[annee] == pytest.approx(en_euros, abs=5e-6), annee
+    annuel = _serie_annuelle(MACRO / "smic_annuel.csv", "smic_annuel")
+    for annee in range(2006, 2026):
+        de_la_caisse = sum(_en_vigueur(SMIC_MENSUEL, f"{annee}-{mois:02d}-01")[1]
+                           for mois in range(1, 13))
+        assert annuel[annee] == pytest.approx(de_la_caisse, abs=0.1), annee
+
+
+# -- les dix éditions des coefficients de revalorisation des salaires -----------
+
+
+def _recuperateur(nom: str):
+    import importlib.util
+    import sys
+
+    dossier = RACINE / "scripts" / "fetch"
+    if str(dossier) not in sys.path:
+        sys.path.insert(0, str(dossier))
+    specification = importlib.util.spec_from_file_location(nom, dossier / f"{nom}.py")
+    module = importlib.util.module_from_spec(specification)
+    specification.loader.exec_module(module)
+    return module
+
+
+def test_une_edition_du_bareme_des_coefficients_se_lit_salaires_seuls():
+    """Une édition du barème range ses coefficients sous des titres : ceux
+    des salaires, depuis 1947, et ceux des cotisations d'avant 1947, que le
+    modèle, qui porte des salaires, ne lit pas. Une cellule écrit les milliers
+    avec une espace, porte parfois une espace insécable ou un caractère de
+    largeur nulle."""
+    module = _recuperateur("cnav_revalorisation_salaires")
+    contenu = "".join((
+        "<h2>Coefficients applicables aux salaires de 1997 à 2021</h2><table><tbody>",
+        "<tr><td>2023</td><td>1,053</td></tr><tr><td>​2022</td><td>​1,103</td></tr>",
+        "</tbody></table><h2>Coefficients applicables aux salaires de 1947 à 1962</h2>",
+        "<table><tbody><tr><td align=\"center\">1947</td><td>165,572&nbsp;</td></tr></tbody></table>",
+        "<h2>Coefficients applicables aux cotisations avant 1947</h2><table><tbody>",
+        "<tr><td>1946</td><td>1 771,341</td></tr></tbody></table>"))
+    assert module.coefficients_du_bareme(contenu) == {2023: 1.053, 2022: 1.103, 1947: 165.572}
+
+
+def test_une_edition_du_bareme_qui_contredit_sa_circulaire_arrete_l_ecriture():
+    """Chaque édition du barème (`BAREMES`, une par date d'effet) redit la
+    colonne de sa circulaire, depuis 1947 : une valeur qui s'en écarte arrête
+    l'écriture, sauf la coquille déclarée (`COQUILLES_DES_BAREMES`) — qui se
+    retire quand la caisse la corrige."""
+    module = _recuperateur("cnav_revalorisation_salaires")
+    assert set(module.BAREMES) == {effet for effet, _ in module.CIRCULAIRES}
+    colonnes = {"2024-01-01": {1946: 212.561, 1955: 43.054, 2023: 1.053}}
+    assert module.confronter_aux_baremes(
+        colonnes, {"2024-01-01": {1955: 43.054, 2023: 1.053}}, coquilles={}) == []
+    griefs = module.confronter_aux_baremes(
+        colonnes, {"2024-01-01": {1955: 40.887, 2023: 1.053}}, coquilles={})
+    assert griefs and "1955" in griefs[0] and "40.887" in griefs[0]
+    coquilles = {("2024-01-01", 1955): 40.887}
+    assert module.confronter_aux_baremes(
+        colonnes, {"2024-01-01": {1955: 40.887, 2023: 1.053}}, coquilles=coquilles) == []
+    griefs = module.confronter_aux_baremes(
+        colonnes, {"2024-01-01": {1955: 43.054, 2023: 1.053}}, coquilles=coquilles)
+    assert griefs and "corrig" in griefs[0]
+    griefs = module.confronter_aux_baremes(
+        colonnes, {"2024-01-01": {2023: 1.053}}, coquilles={})
+    assert griefs and "1955" in griefs[0]
+    assert module.COQUILLES_DES_BAREMES == {("2024-01-01", 1955): 40.887}

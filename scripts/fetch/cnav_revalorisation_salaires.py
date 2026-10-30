@@ -107,6 +107,7 @@ le plafond, le SMIC et les valeurs du point.
 
 from __future__ import annotations
 
+import html
 import json
 import re
 import sys
@@ -156,6 +157,34 @@ SORTIE = Path("data/reference/legislation/revalorisation_salaires.csv")
 #: cloné et sans télécharger un seul PDF, l'écart entre ce que le modèle calcule
 #: et ce que la caisse a publié — année de liquidation par année de liquidation.
 TEMOIN = Path("tests/temoins/cnav_revalorisation_salaires.json")
+
+#: Le barème de la base qui redit chaque circulaire, une édition par date
+#: d'effet (« Retraite attribuée à compter du … ») : le récupérateur confronte
+#: chacune, depuis 1947, à la colonne de sa circulaire, et n'écrit rien si
+#: elles se contredisent (action 175, étape 2). Les colonnes restent celles
+#: des circulaires.
+BAREMES: dict[str, str] = {
+    "2017-10-01": "revalorisation_coefficient_revalorisation_salaire_cotisation_10_2017_bar",
+    "2019-01-01": "revalorisation_coefficient_revalorisation_salaire_cotisation_01_2019_bar",
+    "2020-01-01": "revalorisation_coefficient_revalorisation_salaire_cotisation_01_2020_bar",
+    "2021-01-01": "revalorisation_coefficient_revalorisation_salaire_cotisation_01_2021_bar",
+    "2022-01-01": "revalorisation_coefficient_revalorisation_salaire_cotisation_01_2022_bar",
+    "2022-07-01": "revalorisation_coefficient_revalorisation_salaire_cotisation_07_2022_bar",
+    "2023-01-01": "revalorisation_coefficient_revalorisation_salaire_cotisation_01_2023_bar",
+    "2024-01-01": "revalorisation_coefficient_revalorisation_salaire_cotisation_01_2024_bar",
+    "2025-01-01": "revalorisation_coefficient_revalorisation_salaire_cotisation_01_2025_bar",
+    "2026-01-01": "revalorisation_coefficient_revalorisation_salaire_cotisation_01_2026_bar",
+}
+#: Les coquilles du barème que sa circulaire dément, et la valeur qu'il
+#: imprime : l'édition de janvier 2024 recopie pour 1955 celle de janvier 2023,
+#: 40,887 ; la circulaire 2023/34 donne 43,054, que confirme le rapport des
+#: autres années aux éditions voisines (1,053 de 2023 à 2024).
+COQUILLES_DES_BAREMES: dict[tuple[str, int], float] = {("2024-01-01", 1955): 40.887}
+#: Avant 1947, les éditions portent des coefficients de cotisations.
+PREMIERE_ANNEE_DES_EDITIONS = 1947
+
+_TITRE = re.compile(r"<h2[^>]*>(.*?)</h2>", re.S | re.I)
+_LIGNE = re.compile(r"<tr[^>]*>\s*<td[^>]*>(.*?)</td>\s*<td[^>]*>(.*?)</td>", re.S | re.I)
 
 #: Le tableau visé porte cet intitulé. La circulaire en publie un second,
 #: « Cotisations », pour les années où le compte portait des cotisations et non
@@ -287,6 +316,52 @@ def controler(table: dict[int, float], effet: str) -> list[str]:
     return griefs
 
 
+def _cellule(contenu: str) -> str:
+    texte = html.unescape(re.sub(r"<[^>]+>", "", contenu))
+    return texte.replace("​", "").replace("\xa0", " ").strip()
+
+
+def coefficients_du_bareme(contenu: str) -> dict[int, float]:
+    """Les coefficients des salaires d'une édition du barème, par année de
+    perception : ceux des tableaux que leur titre dit « salaires » — non ceux
+    des cotisations d'avant 1947."""
+    lus: dict[int, float] = {}
+    morceaux = _TITRE.split(contenu)
+    for titre, corps in zip(morceaux[1::2], morceaux[2::2]):
+        if "salaires" not in _cellule(titre).lower():
+            continue
+        for annee, valeur in _LIGNE.findall(corps):
+            annee, valeur = _cellule(annee), _cellule(valeur)
+            if re.fullmatch(r"\d{4}", annee) and valeur:
+                lus[int(annee)] = float(valeur.replace(" ", "").replace(",", "."))
+    return lus
+
+
+def confronter_aux_baremes(colonnes: dict[str, dict[int, float]],
+                           baremes: dict[str, dict[int, float]],
+                           coquilles: dict[tuple[str, int], float]) -> list[str]:
+    """Ce que chaque édition du barème contredit dans la colonne de sa
+    circulaire, depuis 1947, hors les coquilles déclarées ; une coquille que
+    la caisse a corrigée est un grief aussi, pour qu'on la retire."""
+    griefs = []
+    for effet, bareme in sorted(baremes.items()):
+        colonne = colonnes[effet]
+        for annee in sorted(set(bareme) | {a for a in colonne if a >= PREMIERE_ANNEE_DES_EDITIONS}):
+            circulaire, imprime = colonne.get(annee), bareme.get(annee)
+            if (effet, annee) in coquilles:
+                if imprime == circulaire:
+                    griefs.append(f"{effet}, {annee} : la caisse a corrigé sa coquille "
+                                  f"({imprime}) — la retirer de COQUILLES_DES_BAREMES")
+                elif imprime != coquilles[(effet, annee)]:
+                    griefs.append(f"{effet}, {annee} : le barème imprime {imprime}, ni la "
+                                  f"coquille déclarée ni la circulaire ({circulaire})")
+                continue
+            if circulaire is None or imprime is None or abs(circulaire - imprime) > 1e-9:
+                griefs.append(f"{effet}, {annee} : la circulaire dit {circulaire}, "
+                              f"le barème {imprime}")
+    return griefs
+
+
 def au_1er_janvier(effet: str) -> bool:
     """Cette colonne décrit-elle l'état du compte au 1er janvier de son année ?"""
     return effet.endswith("-01-01")
@@ -415,6 +490,21 @@ def main(argv: list[str] | None = None) -> int:
             "travers — rien n'est écrit.",
             file=sys.stderr,
         )
+        return 1
+
+    try:
+        editions = cnav_api.contenus(BAREMES.values())
+    except (urllib.error.URLError, TimeoutError, OSError) as erreur:
+        print(f"échec de la lecture des éditions du barème : {erreur}", file=sys.stderr)
+        return 1
+    griefs = confronter_aux_baremes(
+        colonnes, {effet: coefficients_du_bareme(editions[nom]) for effet, nom in BAREMES.items()},
+        COQUILLES_DES_BAREMES)
+    if griefs:
+        for grief in griefs:
+            print(grief, file=sys.stderr)
+        print("les éditions du barème contredisent les circulaires — rien n'est écrit.",
+              file=sys.stderr)
         return 1
 
     BRUT.parent.mkdir(parents=True, exist_ok=True)
