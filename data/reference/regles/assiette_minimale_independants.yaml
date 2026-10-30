@@ -24,7 +24,11 @@ sources:
   lu_le: 2026-10-16
   prochaine_relecture: 2027-01-31
   a_relire:
-  - Lire les versions de D. 633-2 antérieures à 1985 dans le JORF.
+  - >-
+    Lire les versions de D. 633-2 antérieures à 1985 dans le JORF : la caisse
+    applique depuis 1973 une assiette de 200 heures du Smic (barème « Assiette
+    annuelle minimale des cotisations des travailleurs indépendants », lu le 30
+    octobre 2026), que la série ne porte pas.
   - >-
     Un exemple chiffré de l'Urssaf d'un indépendant au RSA ou saisonnier (urssaf.fr,
     refusé au réseau de la session le 16 octobre 2026) ; si la dispense des
@@ -71,12 +75,28 @@ sources:
       ou retraités »
     url: https://bpifrance-creation.fr/boiteaoutils/cotisations-minimales-dues-travailleurs-independants-2023
     date: 2026-10-16
+  - type: autre
+    reference: >-
+      barème de la Cnav « Assiette annuelle minimale des cotisations des travailleurs
+      indépendants » (ti_cotisation_assiette_minimale_cotisation_bar, version du 23
+      décembre 2025) et la table de l'ex-RSI qu'il joint, de 1973 à 2026, que
+      tests/test_cnav_baremes.py confronte à la série (action 175, étape 2)
+    url: https://legislation.lassuranceretraite.fr/
+    date: 2026-10-30
+  - type: jorf
+    reference: >-
+      décret n° 2022-1438 du 16 novembre 2022, article 1er (JORFARTI000046566175) :
+      « Par dérogation aux articles D. 633-2 et D. 642-4 [...], la cotisation annuelle
+      due au titre de l'année 2022 [...] ne peut être calculée sur une assiette
+      inférieure à 4 758 euros ». Index JORF du dépôt, lu le 30 octobre 2026
+    date: 2026-10-30
 textes_a_rattacher:
 - reference: >-
     code de la sécurité sociale, D. 633-2 (LEGIARTI000006737877 à LEGIARTI000048838330)
 - reference: >-
     code de la sécurité sociale, D. 642-4 (LEGIARTI000006738120 à LEGIARTI000048838321)
 - reference: décret n° 2023-1352 du 29 décembre 2023
+- reference: décret n° 2022-1438 du 16 novembre 2022, article 1er (JORFARTI000046566175)
 - reference: >-
     code de la sécurité sociale, L. 131-6-3 puis L. 613-9 puis L. 613-11
     (LEGIARTI000031675836 à LEGIARTI000041394691), et D. 613-7 (LEGIARTI000041967556)
@@ -95,6 +115,17 @@ approximations:
   effet: >-
     non mesuré sur la population ; pour une carrière de 3 000 € par an, 16 trimestres
     sur 36 ans et un tiers du régime de base, voir `effet`
+- ecart: >-
+    En 2022, le décret n° 2022-1438 fixe l'assiette minimale de l'artisan, du
+    commerçant et du libéral à 4 758 €, de quoi valider trois trimestres ; la série
+    garde 11,5 % du plafond, 4 731 €, qui n'en valident que deux. Avant 1985, la
+    caisse applique 200 heures du Smic depuis 1973, que la série ne porte pas : le
+    modèle n'y connaît aucun minimum. Deux écarts que tests/test_cnav_baremes.py
+    déclare, à corriger par la session du modèle, les deux moteurs ensemble.
+  effet: >-
+    un trimestre de moins en 2022 pour l'indépendant au minimum ; avant 1985, pour
+    celui qui déclarait moins de 200 heures du Smic, les trimestres et le revenu du
+    minimum ; non mesuré sur la population
 code:
   moteur: >-
     `_ligne_annuelle` relève, pour l'artisan, le commerçant ou le libéral qui cotise sur
