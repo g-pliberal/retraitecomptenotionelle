@@ -200,6 +200,19 @@ referents:
     trimestre sur l'année, au lieu de quatre (R. 815-29)
 approximations:
 - ecart: >-
+    L'allocation se récupère sur la succession de l'allocataire, au-delà d'un actif net
+    que la caisse publie (barèmes « Montant de la succession permettant la récupération
+    », de l'ASPA et de l'allocation supplémentaire, lus le 30 octobre 2026) : 150 000 F
+    de 1978 à 1982, 250 000 F ensuite, 39 000 € de 2002 au 31 août 2023 (100 000 €
+    outre-mer depuis mars 2017), 100 000 € puis 108 585,14 € en 2026 (150 000 €
+    outre-mer), dans la limite d'une somme par année d'allocation (8 463,42 € pour un
+    allocataire en 2026). Le modèle, qui calcule des pensions et non des successions,
+    ne sert pas cette récupération ; la proposition la remplace par la reprise de la
+    garantie dès le premier euro (action 47).
+  effet: >-
+    aucun sur l'allocation servie ; non mesuré sur ce qu'elle coûte, net de ce que la
+    caisse récupère
+- ecart: >-
     La série d'une personne seule ne porte qu'un montant par an : 2008, 2013 et 2015 y
     manquent, 2014 est au montant d'octobre, 2022 à celui de janvier, et l'annuel vaut
     douze fois le mensuel en 2007, en 2017 et depuis 2021 (9 638,40 € pour 9 638,42 € en
