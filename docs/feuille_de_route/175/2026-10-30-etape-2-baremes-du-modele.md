@@ -1,15 +1,15 @@
 # Étape 2 : les barèmes du modèle, confrontés à leurs séries
 
 **Reprise, au 30 octobre 2026.** Faits : le droit commun ; des indépendants,
-les taux, les assiettes minimale et maximale, le revenu validant, les points,
-le cumul, les micro-entrepreneurs ; la minoration, le plafond, le Smic,
-Mayotte (`cnav_mayotte.py`), les coefficients, le conjoint, les dernières
-valeurs ; `limite`, les forfaits des salariés et la récupération de l'ASPA.
-Reste : les 26 barèmes `a_lire` des indépendants, le début d'activité d'abord
-(ses forfaits, régularisés ou définitifs, période par période), puis les DOM,
-l'exonération, l'aide familial, l'ACRE. À la session du modèle : le RCO de
+les taux, les assiettes, le revenu validant, les points, le cumul, les DOM,
+le début d'activité, les micro-entrepreneurs ; la minoration, le plafond, le
+Smic, Mayotte, les coefficients, le conjoint, les dernières valeurs. Reste :
+l'Acre (plafond d'exonération, micro-entrepreneurs avant 2020), l'activité
+de faible importance, les tables des DOM de 2007 à 2019 et des micro avant
+2020, le prix du point du NRCO avant 2013. À la session du modèle : le RCO de
 2008-2009 et sur quatre plafonds dès 1997, huit valeurs de point, l'assiette
-minimale avant 1985 et en 2022, la série de Mayotte (`cssm_mayotte`).
+minimale avant 1985 et en 2022, Mayotte, et l'assiette d'avant 2007, que
+`cotisation_vieillesse_independants` met à relire.
 
 **Le 30 octobre 2026, ce qui est fait.**
 
@@ -145,3 +145,42 @@ les assiettes et l'exonération des DOM ; le plafond d'exonération, la
 régularisation de l'aide familial artisan, l'activité de faible importance
 des commerçants ; l'ACRE et les DOM des micro-entrepreneurs. Les barèmes des
 indépendants de Mayotte vont à l'étape 4, avec son thème.
+
+**Puis les indépendants, le même jour.**
+
+- *Les DOM* : leurs taux de 2020 à 2024, leurs assiettes minimale (2020 à
+  2025) et maximale (2020 à 2022) sont ceux de la série et de la fiche du RCI
+  (`test_l_independant_des_dom_cotise_aux_taux_et_aux_assiettes_de_la_metropole`).
+  Une limite, « indépendants des DOM » (`docs/limites/3-systeme-actuel.md`),
+  dit ce que le modèle ne leur applique pas : l'abattement de L. 756-4,
+  depuis 2017, l'exonération de L. 756-5, II, et celle des créateurs depuis
+  2018, dont les cotisations des deux premières années restent définitives
+  sur la base forfaitaire ; le début d'activité des DOM et la table
+  d'exonération d'avant 2020 y renvoient. L'édition des DOM garde pour 2022
+  une assiette minimale de 11,5 % du plafond, comme la série, quand celle de
+  la métropole et le décret n° 2022-1438 portent 4 758 €.
+- *Le début d'activité* : depuis 2007, ses forfaits sont des acomptes,
+  régularisés sur le revenu de l'année (`hors_modele`). Avant 2007, D. 633-5
+  calcule la cotisation « à titre provisionnel » sur un revenu antérieur
+  (déclaré l'année précédente en 1985, de l'année précédente en 1995, de
+  l'avant-dernière année en 2004), D. 633-6 celle des deux premières années
+  sur un forfait, et L. 131-6 prévoit depuis 1995 une régularisation. Que le
+  revenu porté au compte soit celui de l'année même, comme le modèle le
+  prend, reste à établir : la fiche `cotisation_vieillesse_independants` le
+  met à relire, pour la session du modèle.
+- *Les micro-entrepreneurs* : leurs taux réduits des DOM et de l'Acre, depuis
+  2020, n'entrent pas dans les droits, que la caisse calcule à taux plein
+  (circulaire Cnav 2026/12, § 2.3) : `hors_modele`.
+- *L'aide familial artisan*, dont la caisse publie le prix du point de
+  régularisation : un rachat, `limite` (`ecarts-au-droit-positif.md`).
+- *Les sorts* : 24 barèmes (8 `recoupe`, 6 `limite`, 10 `hors_modele`) et
+  6 documents (5 `limite`, 1 `hors_modele`).
+
+**Ce qui reste**, des indépendants : l'Acre et l'Accre — le plafond
+d'exonération du début d'activité, les tables des micro-entrepreneurs
+d'avant 2020 —, que le modèle ne sert pas et que décrit l'exposé « Aide aux
+chômeurs créateurs d'entreprise », à déclarer ; l'activité de faible
+importance des commerçants retraités avant 2004, avec la fiche du cumul ; les
+tables des DOM de 2007 à 2019, à joindre au test ; celles des
+micro-entrepreneurs d'avant 2016 et d'avant 2020 ; le prix du point du NRCO
+avant 2013.
