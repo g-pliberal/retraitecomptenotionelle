@@ -1,14 +1,15 @@
 # Étape 2 : les barèmes du modèle, confrontés à leurs séries
 
-**Reprise, au 30 octobre 2026.** Faits : le droit commun, les taux, l'assiette
-minimale et le revenu validant des indépendants, les micro-entrepreneurs, la
-minoration, le plafond, le Smic, la base des points RVB, les dix éditions des
-coefficients, la majoration pour conjoint (35 barèmes, 46 documents). Reste,
-dans l'ordre : les indépendants (assiette maximale, début d'activité, DOM,
-cotisations volontaires) ; les salaires forfaitaires et l'assurance
-volontaire ; Mayotte, par un récupérateur ; le cumul emploi-retraite des
-indépendants ; la récupération de l'ASPA, avec l'action 47. À la session du
-modèle : le RCO de 2008-2009, l'assiette minimale avant 1985 et en 2022.
+**Reprise, au 30 octobre 2026.** Faits : le droit commun ; des indépendants,
+les taux, les assiettes minimale et maximale, le revenu validant, les points,
+le cumul, les micro-entrepreneurs ; la minoration, le plafond, le Smic,
+Mayotte (`cnav_mayotte.py`), les coefficients, le conjoint, les dernières
+valeurs ; `limite`, les forfaits des salariés et la récupération de l'ASPA.
+Reste : les 26 barèmes `a_lire` des indépendants, le début d'activité d'abord
+(ses forfaits, régularisés ou définitifs, période par période), puis les DOM,
+l'exonération, l'aide familial, l'ACRE. À la session du modèle : le RCO de
+2008-2009 et sur quatre plafonds dès 1997, huit valeurs de point, l'assiette
+minimale avant 1985 et en 2022, la série de Mayotte (`cssm_mayotte`).
 
 **Le 30 octobre 2026, ce qui est fait.**
 
@@ -98,3 +99,49 @@ modèle : le RCO de 2008-2009, l'assiette minimale avant 1985 et en 2022.
 4. *Le cumul emploi-retraite des indépendants*, le minimum garanti, et la
    récupération de l'ASPA sur succession, que le modèle ne sert pas, avec
    l'action 47.
+
+**La suite, le même jour.**
+
+- *Les tables de l'ex-RSI*, confrontées à `valeurs_point.csv` et aux fiches :
+  le prix et la valeur du point du RCO des artisans (1979-2012), la valeur
+  du point du NRCO des commerçants (2004-2012) et ceux du RCI (2013-2019) ;
+  l'assiette maximale de chaque régime des indépendants ; le plafond du
+  cumul emploi-retraite des artisans et des commerçants ; le plafond de la
+  réversion du RCI.
+- *Mayotte* : `scripts/fetch/cnav_mayotte.py` lit le Smig mahorais (depuis
+  2002), le plafond de la caisse de Mayotte (depuis 2005) et le salaire qui
+  y valide un trimestre, et n'écrit `mayotte_smig_et_plafond.csv` que si le
+  Smig du 1er janvier, fois 200 heures puis 150 depuis 2017, redonne les
+  seize salaires validants publiés. Le Smic mensuel mahorais que la caisse
+  publie est ce Smig fois les heures du mois. Les trois barèmes sont
+  `branche` sur lui.
+- *Des limites* : les assiettes forfaitaires des salariés (apprentis avant
+  2014, vendeurs à domicile, employés de maison, artistes, journalistes),
+  dans `docs/limites/3-systeme-actuel.md` ; l'assurance volontaire, au champ
+  de `caisse_francais_etranger` ; la récupération de l'ASPA sur la
+  succession, dans la fiche `minimum_vieillesse`, avec l'action 47.
+- *Les dernières valeurs* de 2026, le récapitulatif de la caisse, sont
+  celles des séries, AVTS comprise ; l'ASPA d'un allocataire y garde l'écart
+  que sa fiche déclare.
+- *Les sorts*, depuis la note : 70 barèmes (6 `recoupe`, 3 `branche`,
+  58 `limite`, 3 `hors_modele`) et 46 documents (9 `recoupe`, 36 `limite`,
+  1 `hors_modele`).
+
+**Ce que la suite a trouvé, à la session du modèle.** Huit valeurs de point
+de `valeurs_point.csv`, tirées de l'IPP, ne sont pas celles de la caisse :
+le prix du point du RCO en 1997, 1998, 2002 et 2009, sa valeur de service en
+1996 et 2007, celle du NRCO en 2008 et 2010 (`ECARTS_POINTS`). D. 635-4,
+dans sa rédaction du 26 février 1997 (LEGIARTI000006738337), assied le RCO
+des artisans sur quatre plafonds, quand la fiche `rco_artisans` en garde
+trois jusqu'en 2004 (`ECARTS_ASSIETTE_MAXIMALE`). La fiche `cssm_mayotte`
+valide au Smic national et plafonne au plafond national : la série de
+Mayotte est à lui faire lire, les deux moteurs ensemble.
+
+**Ce qui reste** : les 26 barèmes `a_lire` des indépendants. Le début
+d'activité (douze barèmes, métropole et DOM), dont il faut lire d'abord, par
+période, si les forfaits étaient régularisés sur le revenu ou définitifs
+(D. 633-2 et l'arrêté qu'il nomme ; décret n° 78-351, article 3) ; les taux,
+les assiettes et l'exonération des DOM ; le plafond d'exonération, la
+régularisation de l'aide familial artisan, l'activité de faible importance
+des commerçants ; l'ACRE et les DOM des micro-entrepreneurs. Les barèmes des
+indépendants de Mayotte vont à l'étape 4, avec son thème.

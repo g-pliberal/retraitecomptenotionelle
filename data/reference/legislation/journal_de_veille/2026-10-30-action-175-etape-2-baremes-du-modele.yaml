@@ -1,27 +1,35 @@
 date: "2026-10-30"
 session: "action 175, étape 2 : les barèmes du modèle, confrontés à leurs séries"
 consulte: >-
-  La base de législation de la Cnav, par son API : 35 barèmes et 46 documents joints —
-  le taux de droit commun et ses pages d'avant 2014, les taux, l'assiette minimale et le
-  revenu validant des indépendants et leurs tables de l'ex-RSI, les micro-entrepreneurs,
-  la minoration, le plafond, le Smic, la base des points RVB des commerçants, les dix
-  éditions des coefficients de revalorisation des salaires, la majoration pour conjoint à
-  charge. L'index LEGI à jour du 29 octobre 2026 (D. 635-7, ses rédactions de 1985 à
-  2024 ; D. 633-2) ; l'index JORF (décret n° 2007-1900 du 26 décembre 2007, article 1er ;
-  décret n° 2022-1438 du 16 novembre 2022, article 1er).
+  La base de législation de la Cnav, par son API : le taux de droit commun et ses pages
+  d'avant 2014, les taux, les assiettes minimale et maximale, le revenu validant, les
+  points, le cumul et la réversion des indépendants et leurs tables de l'ex-RSI, les
+  micro-entrepreneurs, la minoration, le plafond, le Smic, la base des points RVB des
+  commerçants, les dix éditions des coefficients de revalorisation des salaires, la
+  majoration pour conjoint à charge, le Smig, le plafond et le salaire validant de
+  Mayotte, les salaires forfaitaires et l'assurance volontaire, la récupération de l'ASPA
+  sur succession, les dernières valeurs. L'index LEGI à jour du 29 octobre 2026 (D. 635-7,
+  ses rédactions de 1985 à 2024 ; D. 635-4, sa rédaction du 26 février 1997 ; D. 633-2) ;
+  l'index JORF (décret n° 2007-1900 du 26 décembre 2007, article 1er ; décret
+  n° 2022-1438 du 16 novembre 2022, article 1er).
 trouve: >-
-  Deux écarts qui changent le calcul, déclarés et passés à la session du modèle : le RCO
+  Des écarts qui changent le calcul, déclarés et passés à la session du modèle : le RCO
   des artisans de 2008 et 2009, que le décret n° 2007-1900 fixe « par dérogation » à 7 %
-  et 7 %, puis 7,1 % et 7,5 %, quand la fiche applique 7,2 % et 7,6 % ; l'assiette
-  minimale des indépendants, appliquée par la caisse depuis 1973 quand la série commence
-  en 1985, et fixée pour 2022 à 4 758 € par le décret n° 2022-1438, quand la série garde
-  4 731 €. Le reste concorde, aux conventions de la série près, déclarées. Des coquilles
-  de la caisse : deux cellules du tableau de la minoration, la ligne de 2014 des taux des
-  indépendants, 1955 dans l'édition de janvier 2024 des coefficients. Le registre de
-  l'étape 1 ne suivait pas les pages que déclarent les scripts de valeurs : 471 documents
-  de plus.
+  et 7 %, puis 7,1 % et 7,5 %, quand la fiche applique 7,2 % et 7,6 % ; le même RCO,
+  assis sur quatre plafonds dès 1997 (D. 635-4), quand la fiche en garde trois jusqu'en
+  2004 ; huit valeurs de point du RCO et du NRCO, tirées de l'IPP, qui ne sont pas celles
+  de la caisse ; l'assiette minimale des indépendants, appliquée par la caisse depuis
+  1973 quand la série commence en 1985, et fixée pour 2022 à 4 758 € par le décret
+  n° 2022-1438, quand la série garde 4 731 € ; Mayotte, que la fiche cssm_mayotte valide
+  au Smic et plafonne au plafond nationaux, quand la caisse y applique le Smig mahorais
+  et son plafond, désormais en série. Le reste concorde, aux conventions de la série
+  près, déclarées. Des coquilles de la caisse : deux cellules du tableau de la
+  minoration, la ligne de 2014 des taux des indépendants, 1955 dans l'édition de janvier
+  2024 des coefficients, l'assiette maximale de 2024. Le registre de l'étape 1 ne suivait
+  pas les pages que déclarent les scripts de valeurs : 471 documents de plus.
 reste: >-
-  Les indépendants (assiette maximale, début d'activité, DOM, cotisations volontaires),
-  les salaires forfaitaires (les apprentis d'abord, que la fiche apprentissage attend) et
-  l'assurance volontaire, Mayotte (Smig, plafond, salaire validant), le cumul
-  emploi-retraite des indépendants, la récupération de l'ASPA avec l'action 47.
+  Les 26 barèmes des indépendants encore à lire : le début d'activité, métropole et DOM,
+  dont il faut savoir par période si les forfaits étaient régularisés ou définitifs
+  (D. 633-2 et son arrêté, décret n° 78-351), les taux et assiettes des DOM, le plafond
+  d'exonération, l'aide familial artisan, l'activité de faible importance, l'ACRE et les
+  DOM des micro-entrepreneurs.
