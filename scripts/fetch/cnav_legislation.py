@@ -20,7 +20,9 @@ barèmes de chaque entrée du premier (``/baremes/baremesByMenuId/<id>``), qui
 en donnent le thème ; une fenêtre que ses objets lient hors de ses collections
 (``/main/findPopupDetailsByFileLeafRef/<nom>``) ; les documents que les barèmes
 joignent (``Bareme/Pages/doc_communs/``, pages et PDF, servis par le site
-hors de l'API), de page en page, relus chaque fois : ils sont peu. Puis, une à
+hors de l'API), de page en page — et de chaque page aux pages que déclare le
+script de valeurs qu'elle charge, une par période ou par pays —, relus chaque
+fois : ils sont peu. Puis, une à
 une (``/reference/referencesByFileLeafRef/<nom>``), les références que ces
 objets lient — circulaires, lettres, décrets, règlements et conventions, par
 la route du site ou en PDF sous ``/Pdf/`` —, et celles que ces références
@@ -152,6 +154,11 @@ _ROUTE = re.compile(r"#/(bareme|expose|references-reglementaires)\?file_leaf_ref
 _FENETRE = re.compile(r"#/infosupp/([^?#]+)")
 _DOCUMENT = re.compile(r"Bareme/Pages/doc_communs/([^?#]+)")
 _PDF = re.compile(r"/Pdf/([^?#]+)")
+#: Le script de valeurs qu'une page jointe charge, le dossier `depuis` lequel
+#: elle ouvre les pages qu'il déclare, et ces pages.
+_SCRIPT_DE_VALEURS = re.compile(r'src="([^"]*js/declare/[^"]+\.js)"', re.I)
+_DEPUIS = re.compile(r'depuis\s*=\s*"([^"]*)"')
+_DECLAREE = re.compile(r'"([^"]+\.html?)"', re.I)
 ROUTES = {"bareme": "bareme", "expose": "expose", "references-reglementaires": "reference"}
 
 ENTETE = """\
@@ -275,6 +282,42 @@ def liens(contenu: str, document: str = "") -> list[tuple[str, str]]:
         if cible[1] and cible not in vus:
             vus.append(cible)
     return vus
+
+
+def script_de_valeurs(contenu: str) -> str | None:
+    """Le script de valeurs qu'une page jointe charge, tel qu'elle le nomme,
+    s'il y en a un."""
+    trouve = _SCRIPT_DE_VALEURS.search(contenu)
+    return html.unescape(trouve.group(1)) if trouve else None
+
+
+def declarees(contenu: str, document: str, script: str) -> list[tuple[str, str]]:
+    """Les pages que déclare le script de valeurs d'une page jointe
+    (``contenu``, sous le chemin ``document``), une fois chacune, comme
+    :func:`liens` : la page les ouvre ``depuis`` le dossier qu'elle donne,
+    sinon à côté d'elle."""
+    depuis = _DEPUIS.search(contenu)
+    vus: list[tuple[str, str]] = []
+    for nom in _DECLAREE.findall(script):
+        chemin = _joint(document, (depuis.group(1) if depuis else "") + nom)
+        if chemin and ("document", chemin) not in vus:
+            vus.append(("document", chemin))
+    return vus
+
+
+def sans_les_pages_declarees_absentes(documents: dict[str, dict | None],
+                                      liens_par_objet: dict[tuple[str, str], list[tuple[str, str]]],
+                                      declarees_seulement: set[str]) -> set[str]:
+    """Retire des documents, et des liens, les pages que seul un script de
+    valeurs déclare et que le site ne sert pas : chargé par une autre page que
+    la sienne, un script compose des chemins faux. Rend les noms retirés."""
+    retirees = {nom for nom in declarees_seulement if documents.get(nom, {}) is None}
+    for nom in retirees:
+        del documents[nom]
+    for objet, cibles in liens_par_objet.items():
+        liens_par_objet[objet] = [cible for cible in cibles
+                                  if not (cible[0] == "documents" and cible[1] in retirees)]
+    return retirees
 
 
 def chemins(menu: list[dict]) -> dict[str, str]:
@@ -605,6 +648,16 @@ def _document(nom: str) -> tuple[str, dict | None]:
     return nom, None
 
 
+def _script(document: str, script: str) -> str:
+    """Le script de valeurs qu'une page jointe charge, lu en latin-1 comme les
+    pages, ou rien si le site ne le sert pas."""
+    try:
+        return cnav_api.telecharger(urllib.parse.urljoin(DOCUMENTS + document, script),
+                                    delai=120).decode("latin-1")
+    except (urllib.error.URLError, TimeoutError, OSError):
+        return ""
+
+
 def _texte(fiche: dict) -> str:
     """Le texte d'une page jointe, dans le codage qu'elle dit, sinon UTF-8, sinon
     latin-1."""
@@ -704,10 +757,17 @@ def main(argv: list[str] | None = None) -> int:
 
     liens_par_objet: dict[tuple[str, str], list[tuple[str, str]]] = {}
     morts: set[tuple[str, str]] = set()
+    # Les documents qu'un lien nomme, et ceux que déclare un script de valeurs.
+    lies: set[str] = set()
+    declares_par_script: set[str] = set()
 
-    def ranger(genre: str, nom: str, contenu: str, document: str = "") -> None:
+    def ranger(genre: str, nom: str, contenu: str, document: str = "",
+               declares: list[tuple[str, str]] = ()) -> None:
         cibles: list[tuple[str, str]] = []
-        for route, cible in liens(contenu, document):
+        par_lien = liens(contenu, document)
+        lies.update(cible for route, cible in par_lien if route == "document")
+        declares_par_script.update(cible for _, cible in declares)
+        for route, cible in [*par_lien, *declares]:
             if route in ("reference", "fenetre", "document"):
                 trouve = (f"{route}s", cible)
             else:
@@ -759,9 +819,18 @@ def main(argv: list[str] | None = None) -> int:
                     copie.parent.mkdir(parents=True, exist_ok=True)
                     copie.write_bytes(fiche["corps"])
                 if nom.lower().endswith((".htm", ".html")):
-                    ranger("documents", nom, _texte(fiche), document=nom)
+                    texte = _texte(fiche)
+                    script = script_de_valeurs(texte)
+                    ranger("documents", nom, texte, document=nom, declares=declarees(
+                        texte, nom, _script(nom, script)) if script else [])
         a_ouvrir = {nom for (source, _), cibles in liens_par_objet.items() if source == "documents"
                     for genre, nom in cibles if genre == "documents"} - set(documents)
+    retirees = sans_les_pages_declarees_absentes(
+        documents, liens_par_objet,
+        declarees_seulement=declares_par_script - lies - set(registre["documents"]))
+    if retirees:
+        print(f"{len(retirees)} pages que déclarent des scripts de valeurs, et que le site ne "
+              f"sert pas, laissées hors du registre : {_resumer(sorted(retirees))}")
 
     # Les thèmes que donnent les menus.
     themes_baremes = themes_des_baremes(menu_baremes, par_menu, contenus["baremes"])

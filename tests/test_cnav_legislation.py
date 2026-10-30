@@ -248,6 +248,52 @@ def test_un_document_joint_se_suit_de_page_en_page():
     assert module.date_http("") == ""
 
 
+def test_une_page_jointe_suit_les_pages_que_declare_son_script_de_valeurs():
+    """Le script de valeurs d'une page jointe n'est pas un document, mais il
+    déclare souvent, pour chaque période ou chaque pays, la page qui porte les
+    valeurs : la page l'ouvre `depuis` le dossier qu'elle donne, sinon à côté
+    d'elle. Le 30 octobre 2026, treize pages en chargeaient un, qui déclaraient
+    plus de trois cents pages que rien d'autre ne lie : les taux de cotisation
+    d'avant 2014, les salaires forfaitaires des gens de maison, les taux de
+    change par pays."""
+    module = _module("cnav_legislation")
+    page = ('<script src="_layouts/CAMPUS/Campus-baremes/js/declare/decTAUXDECOTISATIONS.js">'
+            '</script><script>function orientelavaleur() { var valeur = 1; '
+            'depuis = "../listes_baremes/cotisation/"; orientevaleur(ovaleur,valeur,depuis); }'
+            '</script>')
+    assert module.script_de_valeurs(page) == (
+        "_layouts/CAMPUS/Campus-baremes/js/declare/decTAUXDECOTISATIONS.js")
+    script = ('var t_p = new Array("Du 01/11/2012 au 31/12/2013","BNL-TAUX_COTISATIONS2012.htm");'
+              'var t_p = new Array("01/07/1930 au 31/12/1935","BNL-TAUX_COTISATIONS3035cat5.htm");'
+              'var t_p = new Array("Du 01/11/2012 au 31/12/2013","BNL-TAUX_COTISATIONS2012.htm");')
+    assert module.declarees(page, "listes_baremes/BNL-L_B_TAUXDECOTISATIONS.htm", script) == [
+        ("document", "listes_baremes/cotisation/BNL-TAUX_COTISATIONS2012.htm"),
+        ("document", "listes_baremes/cotisation/BNL-TAUX_COTISATIONS3035cat5.htm")]
+    sans_depuis = '<script src="_layouts/CAMPUS/Campus-baremes/js/declare/decGENSMAIS.js"></script>'
+    assert module.declarees(sans_depuis, "listes_baremes/BNL-L_B_GENSMAIS.htm",
+                            'per = new Array ("ho", "m_100000", "gensmais/BNL-GM_H-48.htm");') == [
+        ("document", "listes_baremes/gensmais/BNL-GM_H-48.htm")]
+    assert module.script_de_valeurs('<a href="BNL-GM_H-48.htm">') is None
+
+
+def test_une_page_declaree_que_le_site_ne_sert_pas_n_entre_pas_au_registre():
+    """Un script de valeurs compose ses chemins depuis la page qui le charge
+    d'ordinaire : chargé par une autre — une sous-page, une « vision globale »
+    —, il en compose de faux (`listes_baremes/change/change/…`), et il déclare
+    des pages que le site n'a pas. Une page que seul un script déclare n'entre
+    donc au registre que si le site la sert ; un lien mort d'une page reste,
+    comme les autres objets que la base nomme sans les servir."""
+    module = _module("cnav_legislation")
+    documents = {"a.htm": {"corps": b""}, "b.htm": None, "c.htm": None}
+    liens = {("documents", "p.htm"): [("documents", "a.htm"), ("documents", "b.htm"),
+                                      ("documents", "c.htm"), ("references", "r.pdf")]}
+    assert module.sans_les_pages_declarees_absentes(
+        documents, liens, declarees_seulement={"a.htm", "b.htm"}) == {"b.htm"}
+    assert documents == {"a.htm": {"corps": b""}, "c.htm": None}
+    assert liens == {("documents", "p.htm"): [("documents", "a.htm"), ("documents", "c.htm"),
+                                              ("references", "r.pdf")]}
+
+
 def test_les_fenetres_se_lisent_par_leurs_collections():
     """`/lexique`, `/exemple` et `/complementInformation` servent chacune ses
     fenêtres d'un appel : 392 le 29 octobre 2026, quand les objets de la base
